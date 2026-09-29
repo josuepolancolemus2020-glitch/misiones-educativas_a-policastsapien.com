@@ -27,6 +27,9 @@
 <!-- La sección 🎬 Videos. Va DESPUÉS del CSS de la misión a propósito:
      se tiñe del --pri y del --sec que la misión acaba de declarar. -->
 <link rel="stylesheet" href="../../css/videos-mision.css">
+<!-- La animación que explica el tema, justo después de la historia. Va
+     DESPUÉS del CSS de la misión a propósito: se tiñe de su --pri y su --sec. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -74,6 +77,23 @@
     <div class="tip"><span class="ti">❓</span><div>La multiplicación estaba <strong>perfecta</strong>.
     Lo único que faltaba era saber dónde cae el punto, y eso no se adivina: se cuenta. ¿Cuánto era de
     verdad?</div></div>
+  </div>
+  <!-- La animación que explica el tema. Va justo DESPUÉS de la situación: la
+       historia es doña Chepa, que multiplicó 35 × 125 = 4375 sin el punto y
+       por poco cobra L 4,375 por tres libras y media de frijol. Arriba va la
+       compra de verdad y abajo su cuenta: quitarle el punto a cada factor es
+       multiplicarlo por diez, así que la cuenta salió cien veces más grande y
+       el punto del total salta dos lugares de regreso, uno por cada cifra
+       decimal. Al final, unas barras de L 12.50 en una regla lo comprueban.
+       La mueve el alumno, paso a paso. El aparato es compartido
+       (js/animacion-mision.js) y la escena es de esta misión
+       (js/animacion-punto.js). La frase de dentro es de reserva: si el
+       aparato no llega a cargar, se lee eso en vez de un hueco. -->
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira dónde cae el punto, y por qué</h2>
+    <div id="amPunto">
+      <p>Doña Chepa multiplicó 35 × 125 y le salió 4375. Quitarle el punto a 3.5 lo hace diez veces más grande, y quitárselo a 12.5 también: la cuenta salió cien veces más grande que la compra. Por eso el punto del total salta dos lugares a la izquierda, uno por cada cifra decimal de los factores, y el precio de verdad es L 43.75.</p>
+    </div>
   </div>
   <div class="card ac-purple">
     <h2>🔮 Predice antes de resolver</h2>
@@ -774,6 +794,9 @@
       siguiente: { id: 's-quiz', texto: '🧠 Ir al Quiz' }
     });
   </script>
+<!-- La animación del punto: primero el aparato, después la escena. -->
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-punto.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

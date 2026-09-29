@@ -6269,6 +6269,69 @@ plantadas a la vez (el 5 del frijol que no se corre, cuatro tiras donde el
 rótulo dice 50, el «5 > 0» en la columna equivocada y tres tiras rayadas donde
 dice 45), y salió roja con las cuatro.
 
+### La décima: Multiplicación de Decimales, y lo que enseñó
+
+En **Multiplicación de Decimales** (`misiones/2ciclo-multiplicacion-decimales/`,
+`js/animacion-punto.js`) la historia es doña Chepa: despachó 3.5 libras de
+frijol a L 12.50, hizo la cuenta sin el punto (35 × 125 = 4375) y por poco le
+cobra L 4,375 a la señora. La historia termina preguntando cuánto era de
+verdad. La animación pone arriba la compra de verdad (3.5 × 12.50 = ?) y abajo
+la cuenta de doña Chepa, en cuadrícula, con cada cifra debajo de la suya.
+Quitarle el punto a 3.5 es correrlo un lugar a la derecha: 35 es diez veces
+3.5. Con el precio pasa lo mismo, y su 0 del final se aparta porque no cambia
+nada: 125 es diez veces 12.5. Entonces 35 × 125 es otra compra, 35 libras a
+L 125, cien veces la de verdad. Para volver, el punto del total salta dos
+lugares a la izquierda: 43.75. De ahí sale la regla (una cifra decimal y otra
+son dos), y al final tres barras de L 12.50 y media, en una regla de lempiras,
+llegan justo a 43.75. Seis cosas que valen para las demás:
+
+1. ⚠️ **Aquí el punto salta y las cifras se quedan quietas.** Es el idioma de
+   esta misión («por 10, por 100 y por 1,000 el punto salta»). En Valor
+   Posicional y en Números Decimales se movían las cifras y el punto se quedaba
+   quieto, porque esas misiones enseñan el lugar. Cada salto a la derecha es
+   × 10 y cada uno a la izquierda es ÷ 10: los dos saltos de abajo, uno por
+   factor, son los dos de arriba, y eso es la regla.
+2. ⚠️ **Los números de la historia traen una trampa, y se enseña a la vista.**
+   12.50 tiene dos cifras decimales, pero doña Chepa multiplicó 125, o sea
+   12.5. Quien cuente tres (una de 3.5 y dos de 12.50) sobre 4375 escribe
+   4.375, que no paga ni una libra. Por eso el 0 del final queda pálido y en su
+   cuadro de raya cortada: se cuentan las cifras de lo que se multiplicó.
+3. ⚠️ **Los saltos van por DEBAJO de las cifras.** Dibujados por encima, la
+   curva cruzaba la cifra y «35» se leía «3/5». En una ruta llena de
+   fracciones, eso enseña otra cosa. Por debajo es además como se dibujan en el
+   cuaderno. El punto brinca por la curva: el brinco del aparato (`.am-salta`)
+   va hacia arriba, así que aquí va puesto de cabeza (`scale(1,-1)`).
+4. **Las cifras van en cuadrícula**, una por cuadro y el punto en la raya,
+   como en el cuaderno de cuadros. Sueltas y a paso parejo, «12.50» se leía
+   «1 2.5 0». Esto y lo de los saltos se vio en la primera captura, con la
+   sonda en verde.
+5. ⚠️ **La cuenta de la historia estaba en la prueba operativa.** La Forma 25
+   pedía «Un metro de manguera cuesta L 12.50. ¿Cuánto cuestan 3.5 metros?»,
+   que es la historia con otra ropa. Ahora `_fueraDeLaHistoria` corre al precio
+   siguiente de la lista cuando el azar arma esa cuenta, sin sacar otro número
+   del azar: las otras 29 formas salen idénticas, y en la 25 solo cambió ese
+   renglón (L 22.50). La evaluación conceptual y la ficha no la tenían.
+6. **Lo que solo se ve a medio camino.** Dos rótulos que se cambian en el mismo
+   sitio se enciman mientras uno se apaga y el otro se prende, y se leen como
+   una línea revuelta: el nuevo espera medio segundo. Y la punta de la flecha
+   encima del punto que aterriza se veía como un asterisco: la curva se corta
+   un poco antes de llegar. Las dos cosas se vieron congelando la animación a
+   mitad de un paso.
+
+La sonda de esta escena **lee cada número sobre el dibujo**: sus cifras de
+izquierda a derecha y el punto donde quedó, con la cuadrícula a paso parejo y el
+punto en una raya. Y **rehace las cuentas aparte**: que abajo esté cada factor
+por 10, que 4375 sea 35 × 125, que el total de arriba sea 3.5 × 12.5 y también
+4375 entre 100, que cada salto sea de un lugar y salga del punto de su factor,
+que lo resaltado sean justo las cifras decimales y que el círculo diga cuántas,
+y que las barras midan en la regla una libra de 12.5 cada una y acaben en el
+total. Comprueba además que el paso 0 no diga todavía dónde va el punto, y que
+nada de lo que pregunta el «Predice» (2.5 × 1.3, 0.2 × 0.3 y tres libras a
+L 42.50) salga en ningún paso. Se comprobó al revés con cuatro averías
+plantadas a la vez (el punto que salta una sola vez, el resaltado sobre la cifra
+equivocada, la media barra mal medida y un «3.25» en una frase), y salió roja
+con las cuatro.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:

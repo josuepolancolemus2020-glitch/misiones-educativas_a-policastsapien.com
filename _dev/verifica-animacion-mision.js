@@ -271,6 +271,46 @@ const LEER = `
       demas: todos('.dc-demas').map(function (t) { return t.textContent; })
     };
   };
+  /* Multiplicación de Decimales: la compra y la cuenta de doña Chepa, en
+     cuadrícula. Cada número se lee de sus cifras y de dónde quedó su punto;
+     un salto está trazado si su raya no está corrida; y la regla se lee de
+     sus marcas. Una cifra pálida (el 0 que se aparta) se lee aparte: se ve,
+     pero no cuenta. */
+  window.__amExtra.amPunto = function (raiz) {
+    var vis = window.__amVisible;
+    function todos(sel) { return [].filter.call(raiz.querySelectorAll(sel), vis); }
+    var svg = raiz.querySelector('svg'), s = svg.getBoundingClientRect(), k = s.width / svg.viewBox.baseVal.width;
+    function caja(el) { var b = el.getBoundingClientRect(); return { x0: (b.left - s.left) / k, x1: (b.right - s.left) / k, y0: (b.top - s.top) / k, y1: (b.bottom - s.top) / k }; }
+    function medio(el) { var c = caja(el); return { x: (c.x0 + c.x1) / 2, y: (c.y0 + c.y1) / 2 }; }
+    function palida(el) { var o = parseFloat(getComputedStyle(el).opacity); return o > 0.1 && o < 0.99 && vis(el.parentNode); }
+    function trazada(p) { return !!p && vis(p) && Math.abs(parseFloat(getComputedStyle(p).strokeDashoffset) || 0) < 1; }
+    function salto(g) {
+      var c = g.querySelector('.mp-curva'), t = g.querySelector('.mp-salto-txt');
+      return { de: +g.getAttribute('data-de'), a: +g.getAttribute('data-a'), trazada: trazada(c), dice: vis(t) ? t.textContent : '' };
+    }
+    return {
+      cifras: [].map.call(raiz.querySelectorAll('.mp-cifra'), function (t) {
+        var c = medio(t);
+        return { fila: +t.getAttribute('data-fila'), grupo: t.getAttribute('data-grupo'), cifra: t.textContent, x: c.x, y: c.y, ve: vis(t), palida: palida(t) };
+      }).filter(function (c) { return c.ve || c.palida; }),
+      puntos: todos('.mp-punto').map(function (p) { var c = medio(p); return { fila: +p.getAttribute('data-fila'), grupo: p.getAttribute('data-grupo'), x: c.x, y: c.y }; }),
+      fantasmas: todos('.mp-fantasma').map(function (p) { return medio(p); }),
+      x10: [].map.call(raiz.querySelectorAll('.mp-x10'), salto),
+      d10: [].map.call(raiz.querySelectorAll('.mp-d10'), salto),
+      x100: { trazada: trazada(raiz.querySelector('path.mp-x100')), dice: todos('text.mp-x100').map(function (t) { return t.textContent; }) },
+      hueco: todos('.mp-hueco').length,
+      aparte: todos('.mp-aparte').map(caja),
+      rotulos: todos('.mp-rotulo').map(function (t) { return t.textContent; }),
+      cuentas: todos('.mp-cuenta').map(function (g) {
+        return { grupo: g.getAttribute('data-grupo'), cuantas: +g.getAttribute('data-cuantas'), x0: +g.getAttribute('data-x0'), x1: +g.getAttribute('data-x1'),
+                 dice: g.querySelector('.mp-cuantas').textContent };
+      }),
+      ticks: todos('.mp-tick').map(function (t) { return { v: +t.getAttribute('data-v'), dice: t.textContent, x: medio(t).x }; }),
+      barras: todos('.mp-barra').map(function (g) { return Object.assign({ libras: +g.getAttribute('data-libras') }, caja(g.querySelector('.mp-barra-r'))); }),
+      marca: todos('text.mp-marca').map(function (t) { return { dice: t.textContent, x: medio(t).x }; }),
+      linea: todos('path.mp-marca').map(function (p) { return medio(p).x; })
+    };
+  };
   window.__amLeer = function (id) {
     var raiz = document.getElementById(id);
     var svg = raiz.querySelector('svg');
@@ -327,6 +367,142 @@ function regla(marcas, eje) {
 
 /* ── lo propio de cada escena ───────────────────────────────── */
 const ESCENAS = {
+  /* Multiplicación de Decimales: la compra (3.5 × 12.50) arriba y la
+     cuenta de doña Chepa (35 × 125 = 4375) abajo, en cuadrícula. Cada número
+     se lee del dibujo, cifra por cifra y con el punto donde quedó, y las
+     cuentas se rehacen AQUÍ, aparte: que abajo esté cada factor por 10, que
+     4375 sea 35 × 125, que el total de arriba sea 3.5 × 12.5 y también 4375
+     entre 100, que cada salto sea de un lugar (× 10 o ÷ 10), que lo resaltado
+     sean justo las cifras decimales, y que las barras midan en la regla lo
+     que dice el total. */
+  amPunto(e, n) {
+    const x = e.extra, r = [];
+    const cerca = (a, b, t = 1.5) => Math.abs(a - b) <= t;
+    const igual = (a, b) => Math.abs(a - b) < 1e-9;
+    const nb = t => String(t).replace(/\u00a0/g, ' ');
+    /* Un número: sus cifras de izquierda a derecha y el punto entre dos de
+       ellas. Las pálidas no entran en el número, pero se miran. */
+    function leer(fila, grupo) {
+      const cs = x.cifras.filter(c => c.fila === fila && c.grupo === grupo).sort((a, b) => a.x - b.x);
+      const vivas = cs.filter(c => c.ve);
+      const pts = x.puntos.filter(p => p.fila === fila && p.grupo === grupo);
+      let texto = '';
+      vivas.forEach((c, i) => { if (i > 0 && pts.some(p => p.x > vivas[i - 1].x && p.x < c.x)) texto += '.'; texto += c.cifra; });
+      const decimales = texto.includes('.') ? texto.split('.')[1].length : 0;
+      /* Cuadrícula: a paso parejo, y el punto en la raya entre dos cuadros. */
+      const paso = cs.length > 1 ? (cs[cs.length - 1].x - cs[0].x) / (cs.length - 1) : 0;
+      const parejo = cs.every((c, i) => i === 0 || cerca(c.x - cs[i - 1].x, paso, 0.6));
+      const enRaya = pts.length <= 1 && pts.every(p => vivas.some((c, i) => i > 0 && cerca(p.x, (c.x + vivas[i - 1].x) / 2, 1.2)));
+      return { texto, valor: texto ? +texto : NaN, decimales, cs, vivas, pts, paso, parejo, enRaya, palidas: cs.filter(c => c.palida) };
+    }
+    const A1 = leer(1, 'a'), B1 = leer(1, 'b'), C1 = leer(1, 'c');
+    const A2 = leer(2, 'a'), B2 = leer(2, 'b'), C2 = leer(2, 'c');
+    const todos = [A1, B1, C1, A2, B2, C2];
+    const P = A1.paso;
+    r.push([P > 15 && todos.every(q => q.parejo && q.enRaya && (!q.cs.length || cerca(q.paso || P, P, 0.6))),
+      `paso ${n}: una cifra por cuadro, todas a paso parejo, y cada punto en la raya entre dos cuadros`, todos.map(q => q.texto)]);
+
+    /* La compra: 3.5 × 12.50, y desde el paso 2 el 0 apartado. */
+    const aparte = n >= 2;
+    r.push([A1.texto === '3.5' && (aparte
+      ? B1.texto === '12.5' && B1.palidas.map(c => c.cifra).join() === '0' && B1.palidas[0].x > B1.vivas[B1.vivas.length - 1].x &&
+        x.aparte.length === 1 && x.aparte[0].x0 < B1.palidas[0].x && x.aparte[0].x1 > B1.palidas[0].x
+      : B1.texto === '12.50' && !B1.palidas.length && !x.aparte.length),
+      `paso ${n}: la compra es 3.5 × ${aparte ? '12.5 (el 0 del final, pálido y apartado)' : '12.50'}`, [A1.texto, B1.texto, B1.palidas.map(c => c.cifra), x.aparte.length]]);
+    r.push([igual(B1.valor, 12.5), `paso ${n}: con el 0 o sin él, el precio vale lo mismo (${B1.texto})`, B1.texto]);
+
+    /* El total de la compra: en blanco hasta el paso 4. */
+    const total = n >= 4;
+    r.push([total ? C1.texto === '43.75' && x.hueco === 0 : !C1.vivas.length && x.hueco === 2,
+      `paso ${n}: el total de la compra ${total ? 'se lee ' + C1.texto : 'sigue en blanco, con su signo de pregunta'}`, [C1.texto, x.hueco]]);
+
+    /* La cuenta de doña Chepa, y cada cifra debajo de la suya. */
+    const cuenta = n < 6;
+    if (cuenta) {
+      r.push([A2.texto === '35' && B2.texto === '125' && C2.texto === '4375' && !A2.pts.length && !B2.pts.length && !C2.pts.length,
+        `paso ${n}: la cuenta de doña Chepa, sin un solo punto: ${A2.texto} × ${B2.texto} = ${C2.texto}`, [A2.texto, B2.texto, C2.texto]]);
+      const bajo = (arr, abj) => abj.cs.every((c, i) => arr.cs[i] && cerca(c.x, arr.cs[i].x, 0.6));
+      r.push([bajo(A1, A2) && bajo(B1, B2) && (!total || bajo(C1, C2)), `paso ${n}: cada cifra de la cuenta cae en el cuadro de la misma cifra de la compra`]);
+      /* Las cuentas, rehechas aquí. */
+      r.push([igual(A2.valor, A1.valor * 10) && igual(B2.valor, B1.valor * 10) && igual(C2.valor, A2.valor * B2.valor),
+        `paso ${n}: ${A2.texto} es ${A1.texto} × 10, ${B2.texto} es ${B1.texto} × 10, y ${C2.texto} es ${A2.texto} × ${B2.texto}`, [A1.valor, B1.valor, A2.valor, B2.valor, C2.valor]]);
+    } else r.push([!A2.cs.length && !B2.cs.length && !C2.cs.length, 'paso 6: la cuenta de doña Chepa le deja su sitio a la regla']);
+    if (total) r.push([igual(C1.valor, A1.valor * B1.valor) && igual(C1.valor * 100, 4375) && C1.decimales === A1.decimales + B1.decimales,
+      `paso ${n}: ${C1.texto} es ${A1.texto} × ${B1.texto} y es 4375 entre 100, y lleva ${C1.decimales} cifras decimales: ${A1.decimales} + ${B1.decimales}`, [C1.valor, C1.decimales]]);
+
+    /* Los saltos × 10 de abajo: uno por factor, de un lugar, desde donde
+       tenía el punto la compra; y el punto que se fue, con raya cortada. */
+    const x10 = x.x10.filter(s => s.trazada);
+    const esperaX10 = n === 0 || n === 6 ? 0 : n === 1 ? 1 : 2;
+    const desde = [A1.pts[0], B1.pts[0]].filter(Boolean).map(p => p.x);
+    r.push([x10.length === esperaX10 && x.fantasmas.length === esperaX10 &&
+      x10.every(s => cerca(s.a - s.de, P) && s.dice === '×10' && desde.some(d => cerca(d, s.de)) && x.fantasmas.some(f => cerca(f.x, s.a))),
+      `paso ${n}: ${esperaX10} salto${esperaX10 === 1 ? '' : 's'} de un lugar a la derecha (× 10), cada uno desde el punto de su factor`, x10.map(s => [Math.round(s.de), Math.round(s.a), s.dice])]);
+
+    /* Cien veces: la flecha solo en el paso 3, y es 10 × 10. */
+    r.push([n === 3 ? x.x100.trazada && x.x100.dice.join() === '×100' && x10.length === 2 && igual(C2.valor / (A1.valor * B1.valor), 100) : !x.x100.trazada && !x.x100.dice.length,
+      `paso ${n}: ${n === 3 ? 'la flecha de × 100: diez veces por cada factor' : 'sin la flecha de × 100'}`, x.x100]);
+
+    /* Los saltos ÷ 10 del total: dos, de un lugar cada uno, encadenados
+       desde la raya del final hasta donde quedó el punto. */
+    const d10 = x.d10.filter(s => s.trazada).sort((a, b) => b.de - a.de);
+    if (n === 4) {
+      const ultima = C1.cs.length ? C1.cs[C1.cs.length - 1].x + P / 2 : NaN;
+      r.push([d10.length === 2 && d10.every(s => cerca(s.de - s.a, P) && s.dice === '÷10') && cerca(d10[0].de, ultima) && cerca(d10[1].de, d10[0].a) &&
+        C1.pts.length === 1 && cerca(d10[1].a, C1.pts[0].x) && igual(4375 / Math.pow(10, d10.length), C1.valor),
+        `paso 4: el punto entra por la raya del final y salta dos lugares a la izquierda (÷ 10 y ÷ 10): ${C1.texto}`, d10.map(s => [Math.round(s.de), Math.round(s.a), s.dice])]);
+    } else r.push([d10.length === 0, `paso ${n}: sin los saltos ÷ 10`, d10.length]);
+
+    /* Se cuenta: lo resaltado son justo las cifras decimales de cada número,
+       y su círculo dice cuántas. */
+    if (n === 5) {
+      const de = { a: A1, b: B1, c: C1 };
+      const bien = x.cuentas.length === 3 && x.cuentas.every(g => {
+        const q = de[g.grupo], dentro = q.vivas.filter(c => c.x > g.x0 && c.x < g.x1);
+        const despues = q.vivas.filter(c => q.pts[0] && c.x > q.pts[0].x);
+        return dentro.length === despues.length && dentro.every(c => despues.includes(c)) && dentro.length === g.cuantas && +g.dice === g.cuantas;
+      });
+      const [ca, cb, cc] = ['a', 'b', 'c'].map(g => (x.cuentas.find(q => q.grupo === g) || {}).cuantas);
+      const m = nb(e.cifra).match(/^(\d+) \+ (\d+) = (\d+)$/);
+      r.push([bien && ca + cb === cc && !!m && +m[1] === ca && +m[2] === cb && +m[3] === cc && cc === C1.decimales,
+        `paso 5: lo resaltado son las cifras decimales (${ca} de 3.5, ${cb} de 12.5, ${cc} del total) y el marcador dice ${e.cifra}`, x.cuentas.map(g => [g.grupo, g.cuantas, g.dice])]);
+    } else r.push([x.cuentas.length === 0, `paso ${n}: sin cifras resaltadas`, x.cuentas.length]);
+
+    /* La regla: tres barras de una libra y media, cada una de lo que vale una
+       libra, y la marca donde acaban. */
+    if (n === 6) {
+      const lee = regla(x.ticks.map(t => ({ v: t.v, x: t.x })), 'x');
+      const ticksBien = x.ticks.length === 6 && x.ticks.every(t => t.dice === 'L ' + t.v) && x.ticks.every((t, i, a) => i === 0 || t.x > a[i - 1].x);
+      const bs = x.barras.slice().sort((a, b) => a.x0 - b.x0);
+      let va = 0, bien = ticksBien && bs.length === 4 && !!lee;
+      for (const b of bs) {
+        if (!lee) break;
+        const i = lee(b.x0), f = lee(b.x1);
+        if (!cerca(i, va, 0.15) || !cerca(f - i, b.libras * B1.valor, 0.15)) bien = false;
+        va = f;
+      }
+      const libras = bs.reduce((a, b) => a + b.libras, 0);
+      r.push([bien && igual(libras, A1.valor) && cerca(va, C1.valor, 0.15),
+        `paso 6: ${bs.length} barras (${bs.map(b => b.libras).join(' + ')} = ${libras} libras), cada libra de ${B1.texto}, y llegan a ${Math.round(va * 100) / 100}`, bs.map(b => [b.libras, lee ? Math.round(lee(b.x0) * 100) / 100 : null])]);
+      r.push([x.marca.length === 1 && x.marca[0].dice === C1.texto && x.linea.length === 1 && lee && cerca(lee(x.linea[0]), C1.valor, 0.15) && nb(e.cifra) === 'L ' + C1.texto,
+        `paso 6: la marca dice ${x.marca.map(m => m.dice).join()} y está donde acaban las barras; el marcador dice ${e.cifra}`, [x.marca, x.linea]]);
+    } else r.push([x.ticks.length === 0 && x.barras.length === 0, `paso ${n}: la regla todavía no está`]);
+
+    /* El marcador dice lo que se ve. */
+    const dice = [C2.texto, A2.texto, B2.texto, C2.texto, C1.texto][n];
+    if (n <= 4) r.push([nb(e.cifra) === dice, `paso ${n}: el marcador dice ${e.cifra}, que es lo que se ve`, [e.cifra, dice]]);
+    if (n === 0) r.push([/4,375/.test(e.palabras) && !/43\.75/.test([e.texto, e.palabras, e.cifra].concat(x.rotulos).join(' ')),
+      'paso 0: pregunta por los L 4,375 de la historia y no dice todavía dónde va el punto', e.palabras]);
+
+    /* ⚠️ Lo que pregunta el «Predice» de abajo (dónde va el punto en 2.5 ×
+       1.3, cuánto es 0.2 × 0.3 y si tres libras a L 42.50 pasan de L 100) no
+       sale en ningún paso, ni en la frase ni en el dibujo. */
+    const todo = [e.texto, e.palabras, e.cifra].concat(x.rotulos, x.x10.map(s => s.dice), x.d10.map(s => s.dice), x.x100.dice, x.ticks.map(t => t.dice), x.marca.map(m => m.dice)).map(nb).join(' | ');
+    const regalo = todo.match(/(^|[^\d.])(3\.25|325|0\.06|0\.2|0\.3|2\.5|1\.3|42\.50?|127\.50?)(?![\d])|L 100(?![\d])/);
+    r.push([!regalo, `paso ${n}: no dice nada de lo que pregunta el «Predice» (2.5 × 1.3, 0.2 × 0.3, L 42.50)`, regalo ? regalo[0] : undefined]);
+    return r;
+  },
+
   /* Números Decimales: los centavos de Marvin. Cada precio se lee del
      dibujo mirando en qué columna cayó cada ficha (o de corrido, en el
      paso 0); cada cuadro de cien centavos se cuenta por el área de lo

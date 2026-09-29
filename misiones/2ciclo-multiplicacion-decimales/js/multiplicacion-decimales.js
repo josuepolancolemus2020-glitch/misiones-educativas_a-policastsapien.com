@@ -1165,6 +1165,15 @@ const _VI_COSAS = [['libras de arroz', 'arroz'], ['libras de frijoles', 'frijole
 const _VI_METROS = [[2.5, 'tela'], [1.5, 'lazo'], [3.5, 'manguera'], [4.5, 'cinta']];
 /* En lempiras nunca hay tres decimales: los totales se escriben con dos. */
 function _lps(x){ return 'L ' + (Math.round(x * 100) / 100).toFixed(2); }
+/* ⚠️ La cuenta de la historia no puede caer en la prueba. Doña Chepa
+   despachó 3.5 libras a L 12.50, y la animación que va después de la
+   historia la resuelve entera: si el azar arma «3.5 metros a L 12.50», el
+   alumno la contesta acordándose, no multiplicando. Pasaba en la Forma 25.
+   Se corre al precio siguiente de la lista SIN sacar otro número del azar:
+   así las otras 29 formas salen idénticas. */
+function _fueraDeLaHistoria(cantidad, precios, i) {
+  return cantidad === 3.5 && precios[i] === 12.50 ? precios[(i + 1) % precios.length] : precios[i];
+}
 function genVidaItems() {
   const items = [];
   { const nom = OP_NAMES[_opRint(0, OP_NAMES.length - 1)];
@@ -1172,7 +1181,8 @@ function genVidaItems() {
     const c = _VI_COSAS[_opRint(0, _VI_COSAS.length - 1)][0];
     items.push({ text: `${nom} compró ${k} ${c} a L ${p.toFixed(2)} cada uno. ¿Cuánto pagó en total? Escribe solo el número.`, ansTxt: [..._decAcc(_decMul(p, k)), (Math.round(p * 100) * k / 100).toFixed(2)], ansShow: _lps(Math.round(p * 100) * k / 100), just: `${k} × ${p.toFixed(2)}` }); }
   { const t = _VI_METROS[_opRint(0, _VI_METROS.length - 1)];
-    const p = [12.50, 22.50, 42.50, 15.50, 18.00, 25.00][_opRint(0, 5)];
+    const precios = [12.50, 22.50, 42.50, 15.50, 18.00, 25.00];
+    const p = _fueraDeLaHistoria(t[0], precios, _opRint(0, precios.length - 1));
     items.push({ text: `Un metro de ${t[1]} cuesta L ${p.toFixed(2)}. ¿Cuánto cuestan ${t[0]} metros?`, ansTxt: [..._decAcc(_decMul(p, t[0])), (Math.round(p * t[0] * 100) / 100).toFixed(2)], ansShow: _lps(p * t[0]), just: `${t[0]} × ${p.toFixed(2)}` }); }
   { const p = _DEC_PRECIOS[_opRint(0, _DEC_PRECIOS.length - 1)], k = _opRint(4, 8);
     const total = Number(_decMul(p, k)), paga = Math.floor(total / 50) * 50 + 50;
