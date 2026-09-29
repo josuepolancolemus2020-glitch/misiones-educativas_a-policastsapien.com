@@ -385,7 +385,7 @@ const evalTFBank=[
   {q:'1/2 + 1/4 = 2/6.',a:false,k:'tf-suma-mal'},
   {q:'6/9 reducida a lo más simple es 2/3.',a:true,k:'tf-reducir-6-9'},
   {q:'1/3 es mayor que 1/2.',a:false,k:'tf-tercio-mitad'},
-  {q:'5/5 es menos que un entero.',a:false,k:'tf-cinco-quintos'},
+  {q:'6/6 es menos que un entero.',a:false,k:'tf-seis-sextos'},
   {q:'7/4 es menor que 1.',a:false,k:'tf-siete-cuartos'},
   {q:'2/5 + 1/5 = 3/10.',a:false,k:'tf-suma-quintos'},
   {q:'Un pastel partido en 8 pedazos iguales, del que se comen 3, deja 5/8.',a:true,k:'tf-pastel'},

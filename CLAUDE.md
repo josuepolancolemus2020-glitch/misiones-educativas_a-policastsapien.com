@@ -6085,6 +6085,68 @@ vez (un piso de 10 × 9 con el marcador diciendo 100, el velo tapando la fila
 equivocada, un «5²» en una frase y el botón sin su degradado) y salió roja con
 las cuatro.
 
+### La séptima: Las Fracciones, y lo que enseñó
+
+En **Las Fracciones** (`misiones/2y3ciclo-fracciones/`, `js/animacion-sandia.js`)
+la historia es Kenia, que repartió una sandía entre los cinco de la casa en
+cinco pedazos «más o menos iguales», y el suyo salió la mitad del de su hermano.
+La animación es esa sandía vista desde arriba. Primero se corta como ella, a
+ojo, y dos copias de su pedazo llenan justo el de su hermano: son cinco
+pedazos, pero no son quintos. Después los cortes se corren hasta quedar a la
+misma distancia, y se escribe la fracción: un quinto (el de Kenia), dos quintos
+(con su hermano) y los cinco quintos, que son la sandía entera. Seis cosas que
+valen para las demás:
+
+1. ⚠️ **El dibujo tiene que ser verdad antes de ser bonito.** La primera idea
+   fue una sandía larga cortada en rodajas del mismo ancho, y eso da pedazos
+   DISTINTOS, porque las puntas son más angostas: el dibujo habría enseñado lo
+   contrario de lo que dice. Es redonda y se parte desde el centro, como el
+   pastel del bloque de abajo y el círculo de la prueba: cortes a la misma
+   distancia dan partes iguales de verdad.
+2. ⚠️ **El barrido de fracciones de la misión no puede entrar en la
+   animación.** Al cargar, la misión apila cada «3/4» de la página
+   (`Fr.barrer`), y eso habría metido HTML dentro del texto del dibujo, donde
+   un SVG no lo pinta, y habría dejado apilada la frase del primer paso y no la
+   de los demás. El aparato le cierra la puerta (`data-sinfr`) y escribe él las
+   fracciones: la del marcador, apilada con `MetasFracciones` cuando la misión
+   lo carga, y las del dibujo, con su número arriba, su raya y su número
+   abajo, cada uno su pieza. La frase las dice con palabras («un quinto»), que
+   es como las oye quien usa lector de pantalla.
+3. ⚠️ **La fracción del marcador medía 121 px de alto.** Con la letra grande,
+   la misión fuerza `.fr { font-size: 0.86em !important }` y le da
+   `line-height: 1.6` a todo `<span>`, y el marcador dejaba un hueco de tres
+   renglones en los pasos que no eran fracción. El aparato fija la fracción del
+   marcador (a 0,6 de la cifra, con su `!important` explicado) y ahora mide
+   también el alto de la cifra en cada paso, como ya medía la frase: 57 px, y
+   el dibujo no se mueve de un paso a otro.
+4. ⚠️ **Los colores de una misión no siempre alcanzan, y se miden.** El rosa
+   claro de esta misión (--pri-lt) se leía a 4,28:1 sobre la tarjeta oscura, y
+   la punta teal del botón dejaba la letra blanca a 3,44:1. El aparato acepta
+   ahora `--am-pri-oscuro`, como ya aceptaba `--am-boton`, y la misión declara
+   los dos en su CSS (#f783ac y #0b7d72): 6,7 y 5:1.
+5. ⚠️ **La cuenta de la animación en la prueba, otra vez.** El verdadero o
+   falso «5/5 es menos que un entero» es justo el último paso. Ahora pregunta
+   por 6/6, en la misión y en la ficha. Los dibujos de la prueba operativa (un
+   círculo partido en cinco con una parte pintada) se quedan: ahí lo que se
+   pregunta es leer el dibujo, contar las partes pintadas y las iguales, y eso
+   no se contesta acordándose.
+6. **Lo que gira, gira con su letra.** Las copias del pedazo de Kenia giran
+   hasta el de su hermano, y el número de cada una iba dentro: el «2» llegaba
+   acostado. Van aparte, derechos. Y el rótulo «hermano» sale a la cáscara en
+   ese paso, porque la raya entre las dos copias pasa justo por donde iba. Las
+   dos cosas solo se vieron mirando la captura.
+
+La sonda de esta escena **mide los cortes sobre el dibujo** (el ángulo de cada
+raya desde el centro) y de ahí saca los pedazos: que el de Kenia sea la mitad
+del de su hermano y ninguno de los cinco sea un quinto, que las dos copias midan
+lo que el de Kenia y llenen justo el de su hermano, que después los cinco midan
+72°, que lo marcado sean tantos quintos como dice el numerador del marcador y lo
+demás esté a media luz, que la fracción de la derecha diga lo mismo, y que en el
+último paso cada quinto lleve su 1/5. Se comprobó al revés con cuatro averías
+plantadas a la vez (el pedazo de Kenia que ya no es la mitad, un corte «igual»
+corrido, tres quintos marcados con el marcador diciendo 2/5 y las etiquetas
+diciendo cuartos) y salió roja con las cuatro.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -6107,8 +6169,14 @@ entrada a `ESCENAS`: lo que esa escena afirma, contado sobre el dibujo.
 
 Si el `--sec` de la misión es claro (un ámbar, un amarillo), la letra blanca
 del botón que avanza no se lee en su punta: la misión declara en su CSS
-`--am-boton` con un degradado donde sí se lea, como Potencias y Raíces. La
-sonda lo mide, así que no hace falta acordarse.
+`--am-boton` con un degradado donde sí se lea, como Potencias y Raíces. Y si su
+`--pri-lt` no llega a 4,5:1 sobre la tarjeta oscura, declara `--am-pri-oscuro`,
+como Las Fracciones. La sonda mide las dos cosas, así que no hace falta
+acordarse.
+
+Una escena de fracciones escribe la del marcador como texto («1/5») y el aparato
+la apila si la misión carga `js/metas-fracciones.js`; en el dibujo, cada
+fracción va en tres piezas (número, raya, número), nunca en un solo texto.
 
 **Antes de publicar una animación:**
 

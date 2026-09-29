@@ -37,15 +37,18 @@
    selectores con que la misión se pone oscura. El botón que avanza no
    cambia: lleva letra blanca, y esa se lee mejor sobre el tono de siempre. */
 [data-theme="dark"] .am-raiz {
-  --am-pri: var(--pri-lt, #5e92f3);
-  --am-sec: var(--sec-lt, #4ebaaa);
+  --am-pri: var(--am-pri-oscuro, var(--pri-lt, #5e92f3));
+  --am-sec: var(--am-sec-oscuro, var(--sec-lt, #4ebaaa));
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .am-raiz {
-    --am-pri: var(--pri-lt, #5e92f3);
-    --am-sec: var(--sec-lt, #4ebaaa);
+    --am-pri: var(--am-pri-oscuro, var(--pri-lt, #5e92f3));
+    --am-sec: var(--am-sec-oscuro, var(--sec-lt, #4ebaaa));
   }
 }
+/* Y si el --pri-lt de la misión tampoco llega a 4,5:1 sobre la tarjeta
+   oscura (el rosa de Las Fracciones se queda en 4,28), la misión declara el
+   suyo en --am-pri-oscuro, como declara --am-boton. La sonda lo mide. */
 
 /* La copia invisible donde se miden todas las frases y rótulos de la
    escena (js/animacion-mision.js, «igualar»): mismo ancho, misma letra,
@@ -116,6 +119,15 @@
   100% { opacity: 0; transform: translateY(-16px); }
 }
 .am-raiz .am-cifra.am-pop { animation: amPop 0.35s ease-out; }
+/* Una fracción en el marcador (js/metas-fracciones.js la apila) lleva cada
+   número a poco más de la mitad de la cifra: así ocupa casi lo mismo que un
+   número suelto, y el marcador no deja un hueco en los pasos que no son
+   fracción. El aparato mide ese alto para que el dibujo no se mueva.
+   ⚠️ El !important no es pereza: con la letra grande, la misión fuerza
+   `.fr { font-size: 0.86em !important }` y le da `line-height: 1.6` a todo
+   <span>; con eso, 1/5 medía 121 px de alto y el marcador dejaba un hueco
+   de tres renglones en los pasos que no eran fracción. */
+.am-raiz .am-cifra .fr { font-size: 0.6em !important; line-height: 1.05; }
 @keyframes amPop {
   0%, 100% { transform: scale(1); }
   40%      { transform: scale(1.12); }

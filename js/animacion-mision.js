@@ -147,6 +147,15 @@
      si no, nacen ya en su sitio final y la transición no se ve. */
   function asentar(n) { if (n && n.getBoundingClientRect) n.getBoundingClientRect(); }
 
+  /* La cifra del marcador puede ser una fracción («1/5»). Si la misión trae
+     js/metas-fracciones.js, se escribe como en el cuaderno, apilada; si no,
+     tal cual. El marcador no se anuncia (aria-hidden): quien usa lector de
+     pantalla la oye en la frase, dicha con palabras. */
+  function ponCifra(n, txt) {
+    if (window.MetasFracciones && /\d\/\d/.test(txt)) n.innerHTML = window.MetasFracciones.html(txt);
+    else n.textContent = txt;
+  }
+
   function crear(tag, clase, texto) {
     var n = document.createElement(tag);
     if (clase) n.className = clase;
@@ -164,6 +173,12 @@
        así que se quita. */
     raiz.textContent = '';
     raiz.classList.add('am-raiz');
+    /* ⚠️ Las fracciones de aquí las escribe el aparato, no el barrido de la
+       misión. Las misiones de fracciones apilan «3/4» en toda la página al
+       cargar (js/metas-fracciones.js, Fr.barrer), y ese barrido metería HTML
+       dentro del texto del dibujo, donde un SVG no lo pinta, y dejaría
+       apilada la frase del primer paso y no la de los demás. */
+    raiz.setAttribute('data-sinfr', '');
 
     var marcador = crear('div', 'am-marcador');
     marcador.setAttribute('aria-hidden', 'true');
@@ -241,8 +256,9 @@
       var dato = escena.marcador ? escena.marcador(m, antes) : null;
       if (!dato) { marcador.hidden = true; return; }
       marcador.hidden = false;
-      if (cifra.textContent !== dato.cifra) {
-        cifra.textContent = dato.cifra;
+      if (cifra._amTxt !== dato.cifra) {
+        cifra._amTxt = dato.cifra;
+        ponCifra(cifra, dato.cifra);
         cifra.classList.remove('am-pop');
         void cifra.offsetWidth;          // reinicia la animación del número
         cifra.classList.add('am-pop');
@@ -316,8 +332,15 @@
     medida.setAttribute('aria-hidden', 'true');
     var mTexto = crear('p', 'am-texto');
     var mPalabras = crear('em', 'am-palabras');
+    /* Y la cifra, que tampoco mide siempre lo mismo: una fracción apilada
+       ocupa dos renglones y un número, uno. Sin medirla, el dibujo bajaba en
+       los pasos de la fracción y subía en los del número. */
+    var mFila = crear('div', 'am-fila');
+    var mCifra = crear('b', 'am-cifra');
+    mFila.appendChild(mCifra);
     medida.appendChild(mTexto);
     medida.appendChild(mPalabras);
+    medida.appendChild(mFila);
     raiz.appendChild(medida);
     var anchoMedido = -1;
     function igualar(forzar) {
@@ -327,16 +350,19 @@
       if (!ancho) { anchoMedido = -1; return; }
       if (!forzar && ancho === anchoMedido) return;
       anchoMedido = ancho;
-      var altoT = 0, altoP = 0;
+      var altoT = 0, altoP = 0, altoC = 0;
       for (var m = 0; m < escena.pasos; m++) {
         mTexto.textContent = escena.texto(m);
         var dato = escena.marcador ? escena.marcador(m, m) : null;
         mPalabras.textContent = dato && dato.palabras ? dato.palabras : '';
+        ponCifra(mCifra, dato && dato.cifra ? dato.cifra : '');
         altoT = Math.max(altoT, mTexto.getBoundingClientRect().height);
         altoP = Math.max(altoP, mPalabras.getBoundingClientRect().height);
+        altoC = Math.max(altoC, mCifra.getBoundingClientRect().height);
       }
       texto.style.minHeight = Math.ceil(altoT) + 'px';
       palabras.style.minHeight = Math.ceil(altoP) + 'px';
+      fila.style.minHeight = Math.ceil(altoC) + 'px';
     }
     /* Los avisos se juntan: la letra grande llega al <body> DESPUÉS de
        montar (la pone js/metas-presentacion.js) y el cambio de alto que

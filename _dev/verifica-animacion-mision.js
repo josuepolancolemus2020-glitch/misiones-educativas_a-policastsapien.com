@@ -176,6 +176,41 @@ const LEER = `
       hilos: todos('.pr-hilo').map(function (l) { return l.getAttribute('data-eje'); })
     };
   };
+  window.__amExtra.amSandia = function (raiz) {
+    var vis = window.__amVisible;
+    function todos(sel) { return [].filter.call(raiz.querySelectorAll(sel), vis); }
+    var svg = raiz.querySelector('svg'), s = svg.getBoundingClientRect(), k = s.width / svg.viewBox.baseVal.width;
+    function aVista(el, x, y) {
+      var p = svg.createSVGPoint(); p.x = x; p.y = y; p = p.matrixTransform(el.getScreenCTM());
+      return { x: (p.x - s.left) / k, y: (p.y - s.top) / k };
+    }
+    var cb = raiz.querySelector('.fr-cascara').getBoundingClientRect();
+    var c = { x: (cb.left + cb.width / 2 - s.left) / k, y: (cb.top + cb.height / 2 - s.top) / k };
+    function angulo(q) { return (Math.atan2(q.x - c.x, -(q.y - c.y)) * 180 / Math.PI + 360) % 360; }
+    /* El ángulo en el dibujo de un rayo local (del centro del pedazo hacia
+       el ángulo a): se lleva un punto del rayo a la pantalla con todo lo que
+       el pedazo tenga encima (su giro, y el de la sandía). */
+    function rayo(el, a) { var t = (a - 90) * Math.PI / 180; return angulo(aVista(el, 50 * Math.cos(t), 50 * Math.sin(t))); }
+    function tramo(el) { return [rayo(el, +el.getAttribute('data-a0')), rayo(el, +el.getAttribute('data-a1'))]; }
+    function donde(el) { var b = el.getBoundingClientRect(); return angulo({ x: (b.left + b.width / 2 - s.left) / k, y: (b.top + b.height / 2 - s.top) / k }); }
+    var cifra = raiz.querySelector('.am-cifra .fr');
+    return {
+      cortes: todos('.fr-corte').map(function (g) { return angulo(aVista(g.querySelector('line'), 0, -50)); }),
+      marcas: todos('.fr-marca').map(function (m) { return { quien: m.getAttribute('data-quien'), a: tramo(m) }; }),
+      copias: todos('.fr-copia').map(function (g) { return { a: tramo(g) }; }),
+      copiaN: todos('.fr-copia-n').map(function (t) { return { a: donde(t), n: t.textContent }; }),
+      quintos: todos('.fr-quinto').map(tramo),
+      velos: todos('.fr-velo').map(tramo),
+      nombres: todos('.fr-nombre').map(function (t) { return { quien: t.getAttribute('data-quien'), a: donde(t) }; }),
+      etiquetas: todos('.fr-etq').map(function (g) { return { a: donde(g), num: g.querySelector('.fr-num').textContent, den: g.querySelector('.fr-den').textContent }; }),
+      panel: todos('.fr-panel').length ? {
+        num: todos('.fr-grande .fr-num').map(function (t) { return t.textContent; })[0] || null,
+        den: todos('.fr-grande .fr-den').map(function (t) { return t.textContent; })[0] || null,
+        entero: todos('.fr-entero').length > 0
+      } : null,
+      marcadorFr: cifra ? [].map.call(cifra.children, function (b) { return b.textContent; }) : null
+    };
+  };
   window.__amLeer = function (id) {
     var raiz = document.getElementById(id);
     var svg = raiz.querySelector('svg');
@@ -196,7 +231,12 @@ const LEER = `
       yBoton: raiz.querySelector('.am-sigue').getBoundingClientRect().top - tarjeta,
       yDibujo: raiz.querySelector('.am-escenario').getBoundingClientRect().top - tarjeta,
       paso: raiz.amControl.paso(),
-      cifra: raiz.querySelector('.am-cifra').textContent,
+      /* Una fracción del marcador se escribe apilada (js/metas-fracciones.js):
+         se lee como «1/5», que es lo que dice. */
+      cifra: (function () {
+        var c = raiz.querySelector('.am-cifra'), fr = c.querySelector('.fr');
+        return fr ? [].map.call(fr.children, function (b) { return b.textContent; }).join('/') : c.textContent;
+      })(),
       palabras: raiz.querySelector('.am-palabras').textContent,
       texto: raiz.querySelector('.am-texto').textContent,
       boton: raiz.querySelector('.am-sigue').textContent,
@@ -227,6 +267,77 @@ function regla(marcas, eje) {
 
 /* ── lo propio de cada escena ───────────────────────────────── */
 const ESCENAS = {
+  /* Las Fracciones: la sandía de Kenia. Los cortes se miden sobre el
+     dibujo (el ángulo de cada raya desde el centro), y de ahí salen los
+     pedazos: que el de Kenia sea la mitad del de su hermano y ninguno un
+     quinto, que las dos copias llenen justo el de su hermano, que después
+     los cinco midan lo mismo y que lo marcado sea lo que dice la fracción. */
+  amSandia(e, n) {
+    const x = e.extra, r = [];
+    const PARTES = 5, QUINTO = 360 / PARTES;
+    const cerca = (a, b, t = 0.8) => Math.abs(((a - b) % 360 + 540) % 360 - 180) <= t;
+    const cortes = x.cortes.slice().sort((a, b) => a - b);
+    const pedazos = cortes.map((a, i) => [a, i + 1 < cortes.length ? cortes[i + 1] : cortes[0] + 360]);
+    const mide = p => p[1] - p[0];
+    const dentro = (a, p) => { const b = a < p[0] ? a + 360 : a; return b > p[0] && b < p[1]; };
+    const deQuien = quien => { const t = x.nombres.find(m => m.quien === quien); return t ? pedazos.find(p => dentro(t.a, p)) : null; };
+    const esPedazo = t => pedazos.some(p => cerca(t[0], p[0]) && cerca(t[1] < t[0] ? t[1] + 360 : t[1], p[1] < p[0] ? p[1] + 360 : p[1]));
+
+    if (n === 0) r.push([x.cortes.length === 0 && e.cifra === '1', 'paso 0: la sandía está entera (sin un solo corte) y el marcador dice 1', x.cortes.length]);
+    else r.push([x.cortes.length === PARTES && e.cifra !== '' , `paso ${n}: se ven los ${PARTES} cortes`, x.cortes.length]);
+
+    if (n === 1 || n === 2) {
+      const k = deQuien('kenia'), h = deQuien('hermano');
+      r.push([!!k && !!h && k !== h && cerca(mide(h), 2 * mide(k), 1) && pedazos.every(p => !cerca(mide(p), QUINTO, 1)),
+        `paso ${n}: el pedazo de Kenia es la mitad del de su hermano, y ninguno de los cinco es un quinto`, pedazos.map(p => Math.round(mide(p)))]);
+      r.push([x.marcas.length === 2 && x.marcas.every(m => esPedazo(m.a)),
+        `paso ${n}: las dos rayas gruesas marcan dos pedazos de verdad (el de Kenia y el de su hermano)`, x.marcas.map(m => m.a.map(Math.round))]);
+      if (n === 1) r.push([+e.cifra === pedazos.length, 'paso 1: el marcador dice cuántos pedazos hay', e.cifra]);
+    } else r.push([x.marcas.length === 0, `paso ${n}: las rayas gruesas del corte de Kenia no están`, x.marcas.length]);
+
+    if (n === 2) {
+      const k = deQuien('kenia'), h = deQuien('hermano');
+      const cs = x.copias.map(c => c.a).sort((a, b) => a[0] - b[0]);
+      const pegadas = cs.length === 2 && cerca(cs[0][1], cs[1][0]) && cerca(cs[0][0], h[0]) && cerca(cs[1][1], h[1]);
+      r.push([cs.every(c => cerca(mide(c), mide(k), 1)) && pegadas && +e.cifra === cs.length,
+        `paso 2: ${cs.length} copias del pedazo de Kenia llenan justo el de su hermano, y el marcador dice ${e.cifra}`, cs.map(c => c.map(Math.round))]);
+      /* Y se cuentan: cada copia lleva su número, dentro de ella. */
+      const cuentan = cs.map(c => x.copiaN.filter(t => dentro(t.a, c)).map(t => t.n).join('')).join(',');
+      r.push([cuentan === '1,2', 'paso 2: las copias se cuentan: 1 y 2, cada número dentro de la suya', cuentan]);
+    } else r.push([x.copias.length === 0 && x.copiaN.length === 0, `paso ${n}: sin copias`, x.copias.length]);
+
+    if (n >= 3) {
+      r.push([pedazos.length === PARTES && pedazos.every(p => cerca(mide(p), QUINTO, 0.6)),
+        `paso ${n}: los ${PARTES} pedazos miden lo mismo (${QUINTO}°): son quintos`, pedazos.map(p => Math.round(mide(p) * 10) / 10)]);
+    }
+    if (n === 3) r.push([+e.cifra === PARTES && x.panel && x.panel.den === String(PARTES),
+      'paso 3: el marcador y la fracción de la derecha dicen 5 partes iguales', [e.cifra, x.panel]]);
+
+    const nombres = x.nombres.map(m => m.quien).sort().join(',');
+    const esperaN = { 1: 'hermano,kenia', 2: 'hermano,kenia', 3: 'hermano,kenia', 4: 'kenia', 5: 'hermano,kenia' }[n] || '';
+    r.push([nombres === esperaN && x.nombres.every(m => pedazos.some(p => dentro(m.a, p))),
+      `paso ${n}: ${esperaN ? 'los nombres van cada uno dentro de un pedazo' : 'sin nombres'}`, nombres]);
+
+    if (n >= 4) {
+      const [num, den] = (x.marcadorFr || []).map(Number);
+      r.push([den === pedazos.length && num === x.quintos.length && x.quintos.every(esPedazo) && x.velos.length === den - num && x.velos.every(esPedazo),
+        `paso ${n}: el marcador dice ${num}/${den}: ${num} quintos marcados de ${pedazos.length}, y los otros a media luz`, [x.marcadorFr, x.quintos.length, x.velos.length]]);
+      r.push([!!x.panel && +x.panel.num === num && +x.panel.den === den, `paso ${n}: la fracción de la derecha dice lo mismo que el marcador`, x.panel]);
+      if (n < 6) {
+        const k = deQuien('kenia');
+        r.push([!!k && x.quintos.some(t => cerca(t[0], k[0])), `paso ${n}: entre los marcados va el de Kenia`, k]);
+      }
+    } else r.push([x.quintos.length === 0 && x.velos.length === 0, `paso ${n}: nada marcado ni a media luz`, [x.quintos.length, x.velos.length]]);
+
+    if (n === 6) {
+      const cada = pedazos.map(p => x.etiquetas.filter(t => dentro(t.a, p)).length);
+      r.push([x.etiquetas.length === PARTES && cada.every(v => v === 1) && x.etiquetas.every(t => t.num === '1' && +t.den === PARTES) && x.panel.entero && x.panel.num === x.panel.den,
+        'paso 6: cada quinto lleva su 1/5, y los cinco juntos son un entero (5/5)', { cada, panel: x.panel }]);
+    } else r.push([x.etiquetas.length === 0, `paso ${n}: sin los 1/5 de cada pedazo`, x.etiquetas.length]);
+    if (n <= 2) r.push([!x.panel, `paso ${n}: la fracción escrita todavía no está`, x.panel]);
+    return r;
+  },
+
   /* Potencias y Raíces: las 144 baldosas de doña Nely. Se cuentan las del
      piso una por una (en qué celda cae cada una, sobre el dibujo) y se
      comparan con la pila, los corchetes, los carteles y el marcador: si la

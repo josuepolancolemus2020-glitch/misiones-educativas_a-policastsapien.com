@@ -560,3 +560,13 @@ body.letra-grande .fr-mix{font-size:inherit!important;}
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* La animación de la historia (css/animacion-mision.css) escribe en blanco
+   sobre el degradado de la misión y, en la pantalla oscura, con --pri-lt. Los
+   dos se quedaban cortos: la punta teal del botón dejaba el rótulo a 3,44:1 y
+   el rosa claro se leía a 4,28:1 sobre la tarjeta oscura. Con el teal un tono
+   más oscuro y un rosa más claro pasan de 5:1, y siguen siendo esta misión. */
+:root {
+  --am-boton: linear-gradient(135deg, #c2255c, #0b7d72);
+  --am-pri-oscuro: #f783ac;
+}

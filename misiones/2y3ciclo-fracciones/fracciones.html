@@ -28,6 +28,9 @@
 <!-- La sección 🎬 Videos. Va DESPUÉS del CSS de la misión a propósito:
      se tiñe del --pri y del --sec que la misión acaba de declarar. -->
 <link rel="stylesheet" href="../../css/videos-mision.css">
+<!-- La animación que explica el tema, justo después de la historia. Va
+     DESPUÉS del CSS de la misión a propósito: se tiñe de su --pri y su --sec. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -74,6 +77,21 @@
     <div class="tip"><span class="ti">❓</span><div>Es la parte de la definición que todo el mundo se
     salta: una fracción no es «un pedazo», es un pedazo de un todo dividido en <strong>partes
     iguales</strong>. Sin eso, 1/5 no significa nada, y el que corta siempre sale ganando.</div></div>
+  </div>
+  <!-- La animación que explica el tema. Va justo DESPUÉS de la situación: la
+       historia es la sandía que Kenia partió a ojo en cinco pedazos, y aquí se
+       ve por qué eso no son quintos: su pedazo cabe dos veces en el de su
+       hermano. Después se corta en partes iguales y se escribe la fracción:
+       un quinto, dos quintos y los cinco quintos, que son la sandía entera. La
+       mueve el alumno, paso a paso. El aparato es compartido
+       (js/animacion-mision.js) y la escena es de esta misión
+       (js/animacion-sandia.js). La frase de dentro es de reserva: si el
+       aparato no llega a cargar, se lee eso en vez de un hueco. -->
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira por qué no eran quintos</h2>
+    <div id="amSandia">
+      <p>El pedazo de Kenia cabía dos veces en el de su hermano: eran cinco pedazos, pero no quintos. Un quinto es una de cinco partes iguales, y se escribe 1/5: abajo el 5, en cuántas partes iguales se partió la sandía, y arriba el 1, cuántas se toman. Los cinco quintos juntos, 5/5, son la sandía entera.</p>
+    </div>
   </div>
   <div class="card ac-teal">
     <h2>🍕 ¿Qué es una fracción?</h2>
@@ -654,6 +672,9 @@
       siguiente: { id: 's-quiz', texto: '🧠 Ir al Quiz' }
     });
   </script>
+<!-- La animación de la sandía: primero el aparato, después la escena. -->
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-sandia.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>
