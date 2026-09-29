@@ -397,13 +397,17 @@ const prediceData = [
     wrongFeedback: 'Es 24 cm²: área = base × altura = 6 × 4. El 20 es el perímetro.',
     explore: 'area'
   },
+  /* Aquí preguntaba qué se calcula para poner una cerca, y eso ya lo contesta
+     la historia de Don Chele. Ahora sale de ella y pide pensar: la misma
+     malla no encierra siempre lo mismo, que es lo que el alumno descubre en
+     el Terreno más Grande. */
   {
-    q: 'Para poner una cerca alrededor de un patio, ¿qué debes calcular?',
-    opts: ['El perímetro', 'El área', 'El volumen'],
-    correct: 0,
-    feedback: '¡Exacto! La cerca rodea el patio: es el perímetro.',
-    wrongFeedback: 'Es el perímetro: la cerca rodea el borde del patio.',
-    explore: 'cerca'
+    q: 'Con los mismos 12 m de malla, Don Chele puede hacer el gallinero de 3 m por cada lado. Comparado con el de 4 m por 2 m, ¿cuánto espacio les queda a las gallinas?',
+    opts: ['El mismo: es la misma malla', 'Menos espacio', 'Más espacio'],
+    correct: 2,
+    feedback: '¡Bien pensado! La malla es la misma, pero lo de adentro no: 3 × 3 = 9 m² contra 4 × 2 = 8 m². Con la misma orilla, el que más se parece a un cuadrado encierra más.',
+    wrongFeedback: 'Les queda más: adentro caben 3 × 3 = 9 m², y en el de 4 m por 2 m, 8 m². Con la misma malla se pueden encerrar espacios distintos.',
+    explore: 'misma'
   }
 ];
 let prediceAnswered = new Set();
@@ -460,13 +464,22 @@ function _buildPredExplore(i,box){
     box.innerHTML=`<p class="pd-tip">El cuadrado tiene 4 lados iguales de 5. Toca para sumarlos:</p><div style="display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:center;margin:0.5rem 0;"><button class="btn btn-pri" onclick="predPerim(${i})">5 + 5 + 5 + 5</button></div><div class="pd-msg" id="pd-msg-${i}">👆 toca para sumar los lados</div>`;
   } else if(type==='area'){
     box.innerHTML=`<p class="pd-tip">El área cuenta los cuadraditos: 6 de ancho por 4 de alto. Toca para verlo:</p><div style="display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:center;margin:0.5rem 0;"><button class="btn btn-pri" onclick="predArea(${i})">6 × 4 cuadraditos</button></div><div class="pd-msg" id="pd-msg-${i}">👆 toca para contar</div>`;
-  } else if(type==='cerca'){
-    box.innerHTML=`<p class="pd-tip">¿La cerca va por el borde o cubre el piso? Toca la opción correcta:</p><div style="display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:center;margin:0.5rem 0;"><button class="btn btn-pri" onclick="predCerca(${i},true)">Rodea el borde</button><button class="btn btn-pri" onclick="predCerca(${i},false)">Cubre el piso</button></div><div class="pd-msg" id="pd-msg-${i}">👆 elige una opción</div>`;
+  } else if(type==='misma'){
+    box.innerHTML=`<p class="pd-tip">Los dos gallineros llevan 12 m de malla. Toca cada uno y cuenta los cuadritos de adentro:</p><div style="display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:center;margin:0.5rem 0;"><button class="btn btn-pri" onclick="predMisma(${i},4,2)">4 m por 2 m</button><button class="btn btn-pri" onclick="predMisma(${i},3,3)">3 m por cada lado</button></div><div class="pd-cnt" id="pd-cnt-${i}" style="text-align:center;font-size:1.1rem;line-height:1.35;"></div><div class="pd-msg" id="pd-msg-${i}">👆 toca un gallinero</div>`;
   }
 }
 function predPerim(i){ sfx('ok'); document.getElementById('pd-msg-'+i).innerHTML='5 + 5 + 5 + 5 = <strong>20 cm</strong>. ¡Ese es el perímetro! (o 4 × 5).'; }
 function predArea(i){ sfx('ok'); document.getElementById('pd-msg-'+i).innerHTML='6 × 4 = <strong>24 cuadraditos</strong> = 24 cm². ¡Esa es el área!'; }
-function predCerca(i,ok){ const msg=document.getElementById('pd-msg-'+i); if(ok){ sfx('ok'); msg.innerHTML='✅ La cerca <strong>rodea el borde</strong>: eso es el <strong>perímetro</strong>.'; } else { sfx('no'); msg.innerHTML='❌ Cubrir el piso sería el ÁREA. La cerca rodea el borde (perímetro).'; } }
+/* Cada cuadrito es un metro cuadrado del gallinero: se cuentan igual que en
+   la animación, fila por fila, y la orilla se suma lado por lado. */
+function predMisma(i,b,h){
+  sfx('click');
+  const cnt=document.getElementById('pd-cnt-'+i), msg=document.getElementById('pd-msg-'+i);
+  if(!cnt) return;
+  cnt.innerHTML=('🟫'.repeat(b)+'<br>').repeat(h);
+  msg.innerHTML=`Orilla: ${[b,h,b,h].join(' + ')} = <strong>${2*(b+h)} m</strong> de malla. Adentro: ${h} filas de ${b} = <strong>${b*h} m²</strong>.`+(b===h?' Uno más que el de 4 m por 2 m, con la misma malla.':'');
+  if(b===h) sfx('ok');
+}
 
 // ===================== LAB 1: PERÍMETROS =====================
 let labPScore=0, labPCur=null;

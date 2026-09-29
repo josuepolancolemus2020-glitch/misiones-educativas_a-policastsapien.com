@@ -27,9 +27,11 @@
 
    1. ⚠️ **Lo que va debajo NO se regala.** El «Predice» pregunta el
       perímetro de un cuadrado de 5 cm, el área de un rectángulo de 6 × 4
-      y qué se calcula para poner una cerca. La tercera ya la contesta la
-      historia; de las otras dos, aquí no sale ni un número (ni 5, ni 6, ni
-      10, ni 20, ni 24, ni 25). Se enseña el concepto con otro terreno.
+      y si con estos mismos 12 m de malla un gallinero de 3 m por cada lado
+      les deja más espacio a las gallinas. Aquí no sale ni un número de lo
+      que pregunta (ni 3, ni 5, ni 6, ni 9, ni 10, ni 20, ni 24, ni 25): se
+      enseña el concepto con otro terreno, y la comparación la hace el
+      alumno.
    2. **Un gallinero donde la orilla da MÁS que lo de adentro**, que es lo
       que le pasó a Don Chele: 12 m de orilla y 8 m² de adentro. Las
       cuentas del Aprende y del «Predice» van todas al revés (lo de adentro

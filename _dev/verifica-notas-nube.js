@@ -30,7 +30,7 @@
 const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
-const { abrir } = require('./lib-navegador');
+const { abrir, SIN_SW } = require('./lib-navegador');
 
 const RAIZ = path.resolve(__dirname, '..');
 const BASE = 'http://localhost:8123';
@@ -75,7 +75,13 @@ function misionDePrueba() {
   ] };
 
   const nav = await abrir({ args: ['--no-sandbox'] });
-  const ctx = await nav.newContext({ viewport: { width: 412, height: 915 }, isMobile: true, hasTouch: true, locale: 'es-HN' });
+  /* ⚠️ SIN service worker: la nube se finge con ctx.route, y lo que pasa por
+     el service worker no lo intercepta ctx.route. En cuanto sw.js toma el
+     control (skipWaiting + clients.claim, sin recargar), la petición se iba
+     a la nube de verdad y se quedaba colgada en «⏳ Trayendo…»: la sonda
+     salía roja en el paso 3 o en el 5, según cuándo lo tomara, sin que nada
+     del producto estuviera roto. Es la trampa de lib-navegador (SIN_SW). */
+  const ctx = await nav.newContext({ ...SIN_SW, viewport: { width: 412, height: 915 }, isMobile: true, hasTouch: true, locale: 'es-HN' });
   await ctx.route('**/*.supabase.co/**', r => r.abort());
   const pg = await ctx.newPage();
   const errores = [];

@@ -6837,10 +6837,13 @@ Cinco cosas que valen para las demás:
    que tocaría cada tamaño posible: cambiar el tamaño cuesta menos que
    cambiar la prueba.
 3. **Lo que va debajo no se regala.** El «Predice» pregunta el perímetro de un
-   cuadrado de 5 cm, el área de un rectángulo de 6 × 4 y qué se calcula para
-   poner una cerca. La tercera ya la contesta la historia. De las otras dos,
-   aquí no sale ningún número (ni 5, ni 6, ni 10, ni 20, ni 24, ni 25); se
-   enseña el concepto con otro terreno, y la sonda los busca en cada paso.
+   cuadrado de 5 cm, el área de un rectángulo de 6 × 4 y si con estos mismos
+   12 m de malla un gallinero de 3 m por cada lado deja más espacio (la
+   tercera preguntaba qué se calcula para poner una cerca, que la historia ya
+   contestaba; está contado más abajo, en la sección del «Predice»).
+   Aquí no sale ningún número de lo que pregunta (ni 3, ni 5, ni 6, ni 9, ni
+   10, ni 20, ni 24, ni 25); se enseña el concepto con otro terreno, y la
+   sonda los busca en cada paso.
 4. ⚠️ **La frase dice lo que el dibujo tiene, también en las gallinas.** La
    historia dice «se le salieron las gallinas» y en el dibujo se sale una: la
    frase dice «se salió una gallina». Las gallinas se paran en los cruces de
@@ -6986,11 +6989,12 @@ Cuatro cosas que valen para las demás:
    Lo que aplica la equivalencia a otra cantidad se quedó: los litros de 2 m³,
    la cuarta parte de 1 m³ y «¿cuál no cabe en 1 m³?». Es lo mismo que la
    tabla en Potencias: ahí lo que se pide es usar lo que se aprendió.
-2. **El «Predice» ya tenía una pregunta contestada por la historia**, la de los
-   litros de un tanque de 1 m³. No es de la animación, que solo enseña por qué.
-   De las otras dos, la caja de 4 × 3 × 2 y la arista que se duplica, aquí no
-   sale ni un número ni la palabra «doble»: se cuenta por capas, que es la
-   idea, con los números de la historia.
+2. **El «Predice» tenía una pregunta contestada por la historia**, la de los
+   litros de un tanque de 1 m³, y se cambió: ahora pregunta cuántos cubitos de
+   1 cm le cabrían a ese mismo tanque (contado más abajo, en la sección del
+   «Predice»). De las tres, la caja de 4 × 3 × 2, el millón y la
+   arista que se duplica, aquí no sale ni un número ni la palabra «doble»: se
+   cuenta por capas, que es la idea, con los números de la historia.
 3. **En un dibujo de tres dimensiones, cada bloque dice dónde está.** El tanque
    va en perspectiva, pintado de atrás hacia adelante y de abajo hacia arriba
    para que lo de adelante tape lo de atrás. Cada bloque de cubitos lleva en sus
@@ -7012,7 +7016,8 @@ La sonda de esta escena **cuenta los cubitos en el dibujo**. Comprueba:
   en todo el tanque, y que el marcador diga esos litros;
 - que el fondo vaya de otro color solo mientras se compara;
 - que al lado de cada capa llena vaya lo que se lleva contado hasta ella;
-- y que no salga un número del «Predice» ni se hable de duplicar.
+- y que no salga un número del «Predice», ni el millón de cubitos de 1 cm, ni
+  se hable de duplicar.
 
 Se comprobó al revés con seis averías plantadas a la vez (el marcador del fondo
 diciendo 10 L, la quinta capa rotulada 400 L, una fila del fondo que no llega,
@@ -7042,8 +7047,9 @@ Cinco cosas que valen para las demás:
 1. ⚠️ **Cuando el tema de la historia es lo que preguntan el «Predice» y la
    prueba, se elige el caso que no preguntan, y no se cuenta ni se nombra.** El
    «Predice» pregunta si una caja de zapatos y un dado tienen las mismas caras,
-   qué sale al girar un triángulo y si una cruz de seis cuadrados se dobla en un
-   cubo. La tercera ya la contesta la historia («pegadas donde van»). Y la prueba
+   qué sale al girar un triángulo y qué figura queda al estirar la etiqueta de
+   una lata (preguntaba si una cruz de seis cuadrados se dobla en un cubo, y eso
+   ya lo contestaba la historia: ver más abajo). Y la prueba
    pregunta cuántas caras, aristas y vértices tiene casi cada cuerpo, y de qué
    figuras son sus caras. Por eso:
    - la caja no es la del prisma triangular, que habría sido la más bonita de
@@ -7053,7 +7059,7 @@ Cinco cosas que valen para las demás:
      pregunta;
    - y la animación no dice cuántas caras tiene ni cómo se llama: enseña dónde
      va cada una. La sonda no deja pasar «prisma», «arista», «vértice», «dado»,
-     «cubo» ni un número del «Predice».
+     «cubo», «lata», «etiqueta», «rectángulo» ni un número del «Predice».
 2. **La operativa la preguntaba por su forma, y eso sí se cambió.** «Un prisma
    tiene una base de 4 lados: ¿cuántas caras tiene, contando las dos bases?» y
    «forrar una caja con forma de prisma de base de 4 lados» son la caja de la
@@ -7082,6 +7088,43 @@ la tira), la tapa de arriba puesta desde el paso 2, la que sobra más corta que
 el frente, el marcador del paso 2 diciendo «2 bocas» y «las seis caras» en la
 última frase. La primera se corrió aparte, porque deja a la sonda sin tira que
 medir y tapa a las demás; salieron rojas las seis.
+
+### ⚠️ Y el «Predice» que ya contestaba la historia
+
+Al terminar la ruta salieron tres misiones donde una pregunta del «🔮 Predice»,
+que va justo debajo de la historia y de la animación, ya la contestaba la
+propia historia, desde antes de las animaciones. El autor lo pidió el 29 de
+septiembre de 2026: «cambia esas preguntas, que el alumno tenga que pensar».
+
+| misión | preguntaba | ahora pregunta |
+|---|---|---|
+| Perímetro | qué se calcula para poner una cerca | si con los mismos 12 m de malla un gallinero de 3 m por cada lado deja más espacio que el de 4 m por 2 m |
+| Volumen | cuántos litros tiene un tanque de 1 m³ | cuántos cubitos de 1 cm le cabrían a ese mismo tanque |
+| Sólidos | si una cruz de seis cuadrados se dobla en un cubo | qué figura queda al estirar la etiqueta de una lata de leche |
+
+Tres reglas, y valen para la misión siguiente:
+
+1. **Se cambia la pregunta, no la historia.** La historia le da al alumno la
+   persona y el precio; lo que sobraba era la pregunta.
+2. ⚠️ **La pregunta nueva sale de la historia y pide un paso que la historia no
+   da.** Las tres usan lo que el alumno acaba de ver (el gallinero de 12 m, el
+   tanque de mil litros, un molde) y le piden llevarlo a otro caso. La
+   respuesta que parece obvia es la equivocada, y va entre las opciones: «el
+   mismo espacio, es la misma malla», «1,000, como los litros», «un círculo,
+   porque la lata es redonda». Y la buena no cae en el mismo botón que las
+   otras dos del mismo «Predice».
+3. **La pista cambia con la pregunta.** Cada pregunta trae su «🔍 Explorar la
+   pista»: la del gallinero cuenta los cuadritos de los dos, la del tanque baja
+   la escalera de las unidades y la de la lata dibuja la etiqueta estirada, sin
+   relleno para que se lea igual en la pantalla oscura. La pista vieja se
+   quitó con su pregunta: una función que ya no llama nadie es la que el
+   siguiente copia sin saber para qué era.
+
+**Y la sonda de la animación aprendió lo nuevo.** Lo que va debajo no se
+regala, así que cada escena tiene su lista de lo que no puede decir: ahora el
+3 y el 9 del gallinero cuadrado, el millón y los cubitos de 1 cm, la lata, la
+etiqueta y el rectángulo. Se comprobó al revés metiendo cada cosa en una frase
+de su animación, y salió roja con las tres.
 
 ### Cómo se pone en la misión siguiente
 
@@ -8576,8 +8619,14 @@ salen dos reglas:
   direcciones de CDN que en la sonda no contestan, así que tardaba lo
   suficiente y a las sondas les daba tiempo. El 9 de septiembre de 2026 esas
   dos direcciones se fueron y `verifica-convocatoria` se puso roja **sin que
-  nada del producto estuviera roto**. Son ocho sondas y ya lo llevan; la que
-  SÍ tiene que abrir con service worker es `verifica-service-worker`.
+  nada del producto estuviera roto**. Lo llevan todas las que fingen la nube;
+  la que SÍ tiene que abrir con service worker es `verifica-service-worker`.
+  ⚠️ Y una se había quedado sin él: `verifica-notas-nube` abortaba las
+  peticiones a Supabase con `ctx.route` y esperaba 700 ms. El 29 de
+  septiembre de 2026 salió roja en la tanda de navegador, parada en «⏳
+  Trayendo…» en el paso 3, y sola, en el paso 5: según cuándo tomara el
+  control el service worker. Con `SIN_SW`, verde tres de tres. Una sonda
+  nueva que finja la nube lo lleva desde el principio.
 - **El desfase de `www/` avisa, no falla.** Esa copia va atrasada *a propósito*
   hasta que se compila la app de Android, así que darlo por fallo pintaba de
   rojo el estado normal del repositorio. Lo que sí hace falta saber es cuánto le

@@ -735,8 +735,9 @@ const ESCENAS = {
      tiene que mostrar, y se compara con lo que muestra: qué boca cierra,
      si queda hueco, si una tapa sobra y cuelga, y cuántas bocas dice el
      marcador. ⚠️ Y ni el «Predice» ni la prueba se regalan: aquí no se
-     cuentan caras, aristas ni vértices, no se nombra el cuerpo, y no hay
-     dado, cubo ni nada que gire. */
+     cuentan caras, aristas ni vértices, no se nombra el cuerpo, no hay dado,
+     cubo ni nada que gire, y no se habla de la lata ni de su etiqueta, que es
+     el molde que el «Predice» pide imaginar. */
   amMolde(e, n) {
     const x = e.extra, r = [];
     const nb = t => String(t == null ? '' : t).replace(/ /g, ' ').trim();
@@ -745,7 +746,7 @@ const ESCENAS = {
        medir, y esto no puede quedarse sin mirar por eso. */
     const dicho = [e.texto, e.cifra, e.palabras].map(nb).join(' | ');
     const numsDichos = (dicho.match(/\d+/g) || []).map(Number);
-    r.push([![6, 8, 11, 12].some(v => numsDichos.includes(v)) && !/seis|ocho|once|doce|dado|cubo|cono|gir[ao]|prisma|arista|v[ée]rtice/i.test(dicho),
+    r.push([![6, 8, 12].some(v => numsDichos.includes(v)) && !/seis|ocho|doce|dado|cubo|cono|gir[ao]|prisma|arista|v[ée]rtice|lata|etiqueta|cilindro|rect[áa]ngulo/i.test(dicho),
       `paso ${n}: no cuenta caras, aristas ni vértices, no nombra el cuerpo y no sale nada del Predice`, numsDichos]);
     const cerca = (a, b, t = 0.6) => Math.abs(a - b) <= t;
     const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
@@ -832,8 +833,10 @@ const ESCENAS = {
      cubitos que se ven, uno por uno y sin repetir ninguno, y se comparan con
      el marcador (cada cubito es un litro) y con el rótulo de cada capa.
      ⚠️ Y lo que va debajo no se regala: el «Predice» pregunta la caja de
-     4 × 3 × 2 y qué le pasa al volumen si se duplica la arista; de eso aquí
-     no sale ni un número. */
+     4 × 3 × 2, cuántos cubitos de 1 cm le cabrían a este mismo tanque y qué
+     le pasa al volumen si se duplica la arista. De eso aquí no sale ni un
+     número, ni el millón, ni cubitos de 1 cm: la animación cuenta litros, y
+     bajar al centímetro lo hace el alumno. */
   amTanque(e, n) {
     const x = e.extra, r = [], N = 10;
     const nb = t => String(t == null ? '' : t).replace(/ /g, ' ').trim();
@@ -935,6 +938,8 @@ const ESCENAS = {
     const numsDichos = (dicho.match(/\d+/g) || []).map(Number);
     r.push([![2, 3, 4, 8, 12, 24].some(v => numsDichos.includes(v)) && !/doble|duplic|ocho|cuatro|veces mayor/i.test(dicho),
       `paso ${n}: no sale un número del Predice ni se habla de duplicar la arista`, numsDichos]);
+    r.push([!/1,000,000|mill[oó]n|100 × 100|(^|[^\d,])1 cm\b/i.test(dicho),
+      `paso ${n}: no dice cuántos cubitos de 1 cm caben, que es lo que pregunta el Predice`, dicho]);
     return r;
   },
   /* Área de Polígonos Regulares: la tapa de hexágono. La escala sale del
@@ -1247,8 +1252,10 @@ const ESCENAS = {
      cuentan los cuadritos de adentro, se mide cada tramo de malla y cada lado
      de la orilla, y se ve dónde está la gallina. Lo que dice el marcador
      tiene que ser lo que se cuenta en el dibujo. ⚠️ Y lo que va debajo no se
-     regala: el «Predice» pregunta el perímetro de un cuadrado de 5 cm y el
-     área de un rectángulo de 6 × 4. */
+     regala: el «Predice» pregunta el perímetro de un cuadrado de 5 cm, el
+     área de un rectángulo de 6 × 4 y si con estos mismos 12 m de malla un
+     gallinero de 3 m por cada lado deja más espacio. Esa comparación la hace
+     el alumno: aquí no sale ni el 3 ni el 9. */
   amGallinero(e, n) {
     const x = e.extra, r = [];
     const nb = t => String(t == null ? '' : t).replace(/ /g, ' ').trim();
@@ -1286,7 +1293,7 @@ const ESCENAS = {
 
     const dicho = [e.texto, e.cifra, e.palabras].map(nb).join(' | ');
     const numsDichos = (dicho.match(/\d+/g) || []).map(Number);
-    r.push([![5, 6, 10, 20, 24, 25].some(v => numsDichos.includes(v)),
+    r.push([![3, 5, 6, 9, 10, 20, 24, 25].some(v => numsDichos.includes(v)),
       `paso ${n}: no sale ningún número de lo que pregunta el Predice`, numsDichos]);
     const cifra = nb(e.cifra);
     const cifraNum = parseFloat(cifra);

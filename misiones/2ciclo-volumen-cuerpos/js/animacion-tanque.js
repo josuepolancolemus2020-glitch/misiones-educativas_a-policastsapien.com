@@ -26,12 +26,12 @@
    Cinco decisiones, y ninguna es de adorno:
 
    1. ⚠️ **Lo que va debajo NO se regala.** El «Predice» pregunta cuántos
-      cubitos caben en una caja de 4 × 3 × 2, cuántos litros tiene un
-      tanque de 1 m³ y qué le pasa al volumen de un cubo si se duplica su
-      arista. La segunda ya la contesta la historia, con esas palabras; de
-      las otras dos no sale aquí ni un número (ni 2, ni 3, ni 4, ni 8, ni
-      12, ni 24) ni se habla de duplicar. Se cuenta por capas, que es la
-      idea, con los números de la historia.
+      cubitos caben en una caja de 4 × 3 × 2, cuántos cubitos de 1 cm le
+      cabrían a este mismo tanque y qué le pasa al volumen de un cubo si se
+      duplica su arista. Aquí no sale ni un número de lo que pregunta (ni 2,
+      ni 3, ni 4, ni 8, ni 12, ni 24, ni el millón), ni se habla de cubitos
+      de 1 cm ni de duplicar. Se cuenta por capas, que es la idea, con los
+      números de la historia; bajar hasta el centímetro lo hace el alumno.
    2. **El litro es un cubito que se ve.** Un decímetro cúbico es un litro
       por definición: un cubito de 10 cm de cada lado. El de muestra se
       queda a la izquierda, grande, todo el tiempo, para que cada cubito

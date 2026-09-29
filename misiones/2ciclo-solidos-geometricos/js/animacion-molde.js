@@ -25,10 +25,10 @@
 
    1. ⚠️ **Lo que va debajo NO se regala.** El «Predice» pregunta si una
       caja de zapatos y un dado tienen las mismas caras, qué sale al girar
-      un triángulo y si una cruz de seis cuadrados se dobla en un cubo. La
-      tercera ya la contesta la historia («pegadas donde van»); de las
-      otras dos aquí no sale nada: no se cuentan caras, ni aristas, ni
-      vértices, no hay dado ni cubo y nada gira.
+      un triángulo y qué figura queda al estirar la etiqueta de una lata.
+      Aquí no sale nada de eso: no se cuentan caras, ni aristas, ni
+      vértices, no hay dado, cubo ni lata, nada gira y no se nombra ninguna
+      figura.
    2. ⚠️ **Y la prueba tampoco: por eso la caja no se nombra ni se cuenta.**
       La prueba pregunta cuántas caras, aristas y vértices tiene casi cada
       cuerpo, y de qué figuras son sus caras. La caja de Kenia es la de

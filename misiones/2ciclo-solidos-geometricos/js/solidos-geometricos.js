@@ -425,13 +425,17 @@ const prediceData = [
     wrongFeedback: 'Sale un cono. El rectángulo da el cilindro y el semicírculo la esfera; el triángulo da el cono.',
     explore: 'girar'
   },
+  /* Aquí preguntaba si una cruz de seis cuadrados se dobla en un cubo, y la
+     historia de Kenia ya lo contesta («pegadas donde van»). Ahora el molde es
+     el de un cuerpo redondo, que la historia no toca: hay que imaginar la
+     etiqueta estirada, y la respuesta no es la que parece. */
   {
-    q: 'Esta cruz de 6 cuadrados, ¿se puede doblar para formar un cubo?',
-    opts: ['Sí, siempre que sean 6 cuadrados', 'Solo si están colocados de cierta forma', 'No, nunca'],
-    correct: 1,
-    feedback: '¡Muy bien! Hacen falta 6 cuadrados Y bien colocados: de las muchas formas posibles, solo 11 arman un cubo.',
-    wrongFeedback: 'La respuesta es: solo si están bien colocados. Con 6 cuadrados hay muchos patrones, pero solo 11 se doblan y forman un cubo.',
-    explore: 'patron'
+    q: 'Si le despegas la etiqueta a una lata de leche y la estiras sobre la mesa, ¿qué figura queda?',
+    opts: ['Un círculo', 'Una tira curva, como un arco', 'Un rectángulo'],
+    correct: 2,
+    feedback: '¡Bien imaginado! La etiqueta da la vuelta a la lata, pero estirada es un rectángulo: lo largo es lo que mide la vuelta, y lo ancho, lo alto de la lata.',
+    wrongFeedback: 'Queda un rectángulo. La etiqueta envuelve la lata, pero estirada tiene sus cuatro orillas rectas: dos miden lo que da la vuelta y dos, lo alto de la lata.',
+    explore: 'etiqueta'
   }
 ];
 let prediceAnswered = new Set();
@@ -504,8 +508,8 @@ function _buildPredExplore(i,box){
     });
   } else if(type==='girar'){
     box.innerHTML=`<p class="pd-tip">Haz girar cada figura plana sobre su eje y mira qué sólido barre:</p><div style="display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:center;margin:0.5rem 0;"><button class="btn btn-pri" onclick="predGirar(${i},'rect')">▭ rectángulo</button><button class="btn btn-pri" onclick="predGirar(${i},'tri')">◺ triángulo</button><button class="btn btn-pri" onclick="predGirar(${i},'semi')">◗ semicírculo</button></div><div class="pd-cnt" id="pd-cnt-${i}" style="font-size:2.4rem;text-align:center;min-height:2.6rem;"></div><div class="pd-msg" id="pd-msg-${i}">👆 gira una figura</div>`;
-  } else if(type==='patron'){
-    box.innerHTML=`<p class="pd-tip">Prueba a doblar cada patrón de seis cuadrados:</p><div style="display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:center;margin:0.5rem 0;"><button class="btn btn-pri" onclick="predPatron(${i},'cruz')">✚ en cruz</button><button class="btn btn-pri" onclick="predPatron(${i},'fila')">▬ los seis en fila</button><button class="btn btn-pri" onclick="predPatron(${i},'T')">⊤ en forma de T</button></div><div class="pd-msg" id="pd-msg-${i}">👆 prueba un patrón</div>`;
+  } else if(type==='etiqueta'){
+    box.innerHTML=`<p class="pd-tip">Una lata de leche con su etiqueta. Despégala y estírala sobre la mesa:</p><div style="display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:center;margin:0.5rem 0;"><button class="btn btn-pri" onclick="predEtiqueta(${i},0)">🥫 la lata</button><button class="btn btn-pri" onclick="predEtiqueta(${i},1)">✂️ despegar y estirar</button></div><div class="pd-cnt" id="pd-cnt-${i}" style="text-align:center;min-height:2.6rem;"></div><div class="pd-msg" id="pd-msg-${i}">👆 toca para despegar la etiqueta</div>`;
   }
 }
 /* Girar la figura es lo que el currículo llama «obtener cuerpos por
@@ -521,12 +525,21 @@ function predGirar(i,fig){
   msg.innerHTML=`🔄 Sale <strong>${r[1]}</strong>: ${r[2]}.`;
   if(fig==='tri') sfx('ok');
 }
-function predPatron(i,p){
+/* La etiqueta es la cara curva de la lata, estirada: la pregunta es qué figura
+   queda, así que se dibuja, y la figura va sin relleno para que se lea igual en
+   la pantalla oscura y fotocopiada. */
+function predEtiqueta(i,paso){
   sfx('click');
-  const msg=document.getElementById('pd-msg-'+i);
-  if(p==='cruz'){ msg.innerHTML='✅ La cruz sí cierra: cuatro cuadrados dan la vuelta y los otros dos tapan arriba y abajo. Es uno de los <strong>11 patrones</strong> que arman un cubo.'; sfx('ok'); }
-  else if(p==='fila'){ msg.innerHTML='❌ En fila no cierra: al doblar, los cuadrados se montan unos encima de otros y no quedan tapas. Con seis cuadrados no basta: hay que colocarlos bien.'; }
-  else{ msg.innerHTML='✅ La T también cierra, y no se parece nada a la cruz. Por eso son <strong>11 patrones distintos</strong> y no uno solo.'; sfx('ok'); }
+  const cnt=document.getElementById('pd-cnt-'+i), msg=document.getElementById('pd-msg-'+i);
+  if(!cnt) return;
+  if(paso===0){
+    cnt.innerHTML='<span style="font-size:2.4rem;">🥫</span>';
+    msg.innerHTML='🥫 La etiqueta da toda la vuelta a la lata, de arriba abajo.';
+  } else {
+    cnt.innerHTML='<svg viewBox="0 0 160 52" width="176" height="57" aria-hidden="true"><rect x="2" y="2" width="156" height="48" rx="2" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>';
+    msg.innerHTML='✅ Estirada, la etiqueta es un <strong>rectángulo</strong>: lo largo es lo que mide la vuelta de la lata, y lo ancho, lo alto.';
+    sfx('ok');
+  }
 }
 
 // ===================== RETO FINAL (con parejas variables) =====================

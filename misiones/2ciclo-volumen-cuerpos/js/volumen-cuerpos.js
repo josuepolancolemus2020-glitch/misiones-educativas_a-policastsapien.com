@@ -409,12 +409,16 @@ const prediceData = [
     wrongFeedback: 'Caben 24. En cada capa entran 4 × 3 = 12 cubitos, y la caja tiene 2 capas de alto: 12 × 2 = 24 cm³.',
     explore: 'cubitos'
   },
+  /* Aquí preguntaba cuántos litros tiene un tanque de 1 m³, y eso ya lo
+     contesta la historia con esas palabras. Ahora sale de ella y pide bajar
+     un escalón más: el que piensa «cien por metro» se queda en 100,000, y el
+     que confunde los cubitos con los litros, en 1,000. */
   {
-    q: 'Un tanque de 1 m³ lleno de agua, ¿cuántos litros tiene?',
-    opts: ['100 litros', '1,000 litros', '10,000 litros'],
-    correct: 1,
-    feedback: '¡Exacto! Un m³ son 1,000 dm³, y cada dm³ es un litro: 1,000 litros.',
-    wrongFeedback: 'Son 1,000 litros. Un metro cúbico tiene 1,000 decímetros cúbicos, y cada dm³ es exactamente un litro.',
+    q: 'El tanque de la escuela guarda 1,000 litros: 1,000 cubitos de 10 cm por lado. ¿Cuántos cubitos de 1 cm por lado le cabrían?',
+    opts: ['1,000', '100,000', '1,000,000'],
+    correct: 2,
+    feedback: '¡Así es! En cada litro, un cubito de 10 cm, caben 10 × 10 × 10 = 1,000 cubitos de 1 cm. Y son 1,000 litros: 1,000 × 1,000 = 1,000,000 cm³.',
+    wrongFeedback: 'Le cabrían 1,000,000. Cada litro, un cubito de 10 cm, ya guarda 10 × 10 × 10 = 1,000 cubitos de 1 cm, y el tanque tiene 1,000 litros: 1,000 × 1,000.',
     explore: 'escalera'
   },
   {
@@ -509,7 +513,7 @@ function predCapas(i,n){
 function predEscalera(i,paso){
   sfx('click');
   const msg=document.getElementById('pd-msg-'+i);
-  if(paso===0) msg.innerHTML='📏 <strong>1 m³</strong>: un cubo de un metro por lado. Es el tanque de agua típico.';
+  if(paso===0) msg.innerHTML='📏 <strong>1 m³</strong>: un cubo de un metro por lado, como el tanque de la escuela.';
   else if(paso===1){ msg.innerHTML='🪜 Un metro son 10 dm, pero el volumen lleva las tres dimensiones: 10 × 10 × 10 = <strong>1,000 dm³</strong>. Y cada dm³ es un litro.'; sfx('ok'); }
   else msg.innerHTML='🪜 Otro escalón: 1 dm³ = <strong>1,000 cm³</strong>. Así que 1 m³ son 1,000,000 de cm³. Cada escalón vale 1,000, nunca 100.';
 }
