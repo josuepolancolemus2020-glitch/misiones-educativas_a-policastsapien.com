@@ -1373,7 +1373,7 @@ const ESCENAS = {
     if (n === 4) {
       const h = x.hueco[0];
       const vacio = x.fichas.every(c => !cerca(c.v, BUS + CAM));
-      r.push([x.hueco.length === 1 && cerca(dia(h), BUS + CAM) && +e.cifra === BUS + CAM && vacio && /6 \+ 8/.test(e.palabras),
+      r.push([x.hueco.length === 1 && cerca(dia(h), BUS + CAM) && +e.cifra === BUS + CAM && vacio && /6\s\+\s8/.test(e.palabras),
         `paso 4: 6 + 8 = ${BUS + CAM}, y en ese día no hay ficha de ninguno`, x.hueco.map(dia)]);
     } else r.push([x.hueco.length === 0, `paso ${n}: la marca del 14 no está`, x.hueco.length]);
     if (n === 5) {
