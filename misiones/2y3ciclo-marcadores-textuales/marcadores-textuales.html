@@ -25,6 +25,9 @@
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
 <link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La animación que explica el tema, justo después de la historia. Va
+     DESPUÉS del CSS de la misión a propósito: se tiñe de su --pri y su --sec. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -70,6 +73,14 @@
     <div class="tip"><span class="ti">❓</span><div>Ninguna palabra estaba mal escrita: faltaban las que
     <strong>amarran</strong> unas ideas con otras: primero, después, y, o, hasta que. Esas palabras no
     cuentan nada por sí solas, pero deciden qué entiende el que lee.</div></div>
+  </div>
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira qué cambia en la pizarra</h2>
+    <div id="amPizarra">
+      <p>Con solo comas, la pizarra se entendía de cuatro maneras: subrayar el texto o lo copiado, y todo
+      solo o todo en parejas. El maestro no cambia ni una palabra suya: escribe «Primero», «y» y
+      «Después», y queda una sola manera. Cada uno lee y subraya el texto, y copian en parejas.</p>
+    </div>
   </div>
   <div class="card ac-teal">
     <h2>🔗 ¿Qué son los marcadores textuales?</h2>
@@ -601,6 +612,9 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+<!-- La animación de la pizarra: primero el aparato, después la escena. -->
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-pizarra.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

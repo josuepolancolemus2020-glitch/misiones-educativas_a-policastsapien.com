@@ -7700,6 +7700,112 @@ juntas: «publíco» con la voz en «co», el dibujo de la voz de «publico» en
 frase, lo que dice «publico» cambiado y el hilo de «público» acabando sobre la
 «l». Salió roja con cada una.
 
+### La vigesimoséptima: Marcadores Textuales, y lo que enseñó
+
+La séptima de la Ruta de la Palabra es **Marcadores Textuales**
+(`misiones/2y3ciclo-marcadores-textuales/`, `js/animacion-pizarra.js`). La
+historia es la de la pizarra: el maestro dejó «leer el texto, subrayar, copiar
+en el cuaderno, en parejas», medio grado lo hizo solo y medio en parejas, unos
+subrayaron antes de copiar y otros después, llegaron cuatro trabajos distintos
+y hubo que repetir la clase. La animación pone esa pizarra y, debajo, los
+trabajos que salen de ella:
+
+- las tres comas llevan una marca de raya cortada debajo: son lo único que junta
+  las cuatro cosas;
+- las comas no dicen si se subraya el texto o lo copiado: sale un trabajo que
+  subraya y copia, y otro que copia y subraya;
+- tampoco dicen qué se hace en parejas: cada uno se parte en dos, solo y en
+  parejas. Cuatro trabajos, 2 × 2;
+- se escriben «Primero» y una «y» donde había coma: leer y subrayar el texto van
+  juntos, y se van los dos trabajos que subrayan en el cuaderno;
+- la coma que sigue a «subrayar» pasa a ser punto y «Después»: «en parejas»
+  queda con copiar, y sale un solo trabajo: cada uno lee y subraya, y copian en
+  parejas;
+- «Primero», «y» y «Después» son marcadores textuales: no agregan nada que
+  hacer, y deciden cómo lo entiende el que lee.
+
+Seis cosas que valen para las siguientes:
+
+1. ⚠️ **Ni una palabra del maestro cambia.** Las cuatro cosas de la pizarra son
+   las mismas en los seis pasos: solo se corren para hacerles sitio a las
+   nuevas. Es lo que dice la historia, «ninguna palabra estaba mal escrita», y
+   la sonda lo comprueba en cada paso.
+2. ⚠️ **Los trabajos no se le creen a la escena.** La sonda lee la pizarra que
+   se ve, saca de ese texto las lecturas que permite (si ya se sabe qué se
+   subraya, y si «en parejas» quedó en una oración donde solo se copia) y las
+   compara con las filas: el orden de sus tres cosas y cuáles caen dentro de la
+   banda de las parejas.
+3. ⚠️ **El trabajo que queda no es ninguno de los dos que quedaban.** Con
+   comas, «en parejas» se leyó para todo o para nada, que es como lo hizo el
+   grado según la historia. Con el punto y «Después» queda con copiar, y eso no
+   lo había hecho nadie. La frase lo dice, para que no parezca que uno de los
+   dos acertó. Y nadie lleva una ✗: la pizarra no decía.
+4. ⚠️ **La historia estaba en la prueba, y dos preguntas pedían justo las
+   palabras que la arreglan.** Una causa de pensamiento crítico era la historia
+   palabra por palabra («El maestro escribe en la pizarra «leer el texto,
+   subrayar…»»): ahora es la lista de útiles que dice «cartulina, papel de china»
+   sin decir si hacen falta las dos. El completar «___ lavamos los frijoles y, en
+   segundo lugar…» pedía «primero», y el verdadero o falso «En «Sembramos,
+   después regamos», «después» dice por qué regamos» preguntaba por «después»:
+   ahora piden «segundo» («En primer lugar… en ___ lugar») y hablan de «al
+   final». En la misión y en la ficha, que sigue en sus siete hojas. Y la
+   animación no nombra ninguna clase de marcador (son los pareados) ni sale
+   ninguna palabra de las respuestas de la prueba.
+5. ⚠️ **Al quitar una pregunta, otra que pasaba salió roja.** Con el verdadero o
+   falso viejo, «después» salía en tantas preguntas que la sonda de pistas la
+   tomaba por el tema de la prueba. Sin él, vio lo que eso tapaba: «lo que va
+   después de «así que» es lo que pasó» deja escrito «qué pasó después», que es
+   la respuesta de la pregunta de «luego». Ahora dice «lo que sigue a «así que»
+   es lo que ocurrió». **Cuando se cambia una pregunta, la sonda de pistas se
+   vuelve a correr.**
+6. ⚠️ **El apartado V de pensamiento crítico no preguntaba lo que traía.** Los
+   rótulos decían «Quieres…» y «¿Qué marcador usas?», y debajo había causas y
+   efectos: «Un compañero mete un marcador en cada oración», con la pauta
+   diciendo qué le pasa al texto. El alumno no sabía qué contestar. Ahora dicen
+   «Causa» y «Efecto», en la pantalla, en la hoja impresa y en la pauta, como
+   en las demás misiones.
+
+La pizarra es de verdad en las dos pantallas: verde, con marco de madera, tiza
+blanca para lo que escribió el maestro y tiza amarilla para lo que se agrega;
+los trabajos son de papel, con tinta oscura fija. Nada se dice solo con color:
+lo abierto va con raya cortada y lo que se agregó, con raya entera. Las marcas
+de las comas van **debajo** del renglón, como las de un corrector: la primera
+idea fue un aro alrededor de cada coma, y se montaba en las letras de al lado,
+que están a medio espacio. Junto a un marcador el espacio es un poco más ancho,
+para que en el último paso su aro no se pegue a la palabra de al lado. Y el
+botón que avanza lleva su `--am-boton`: con el ámbar de la misión la letra
+blanca se quedaba en 3,2:1 en su punta.
+
+La sonda de esta escena **lee la pizarra y saca de ella lo que permite**.
+Comprueba:
+
+- que cada renglón diga lo que tiene que decir, como se escribe (la coma y el
+  punto pegados, un espacio entre palabras) y dentro de la pizarra;
+- que las cuatro cosas del maestro sean las mismas en los seis pasos, y que lo
+  agregado sea «Primero,» y «y» en el paso 3, y «Después,» en el 4;
+- que los trabajos sean exactamente las lecturas que ese texto permite, y que
+  en el paso 1 todavía no digan quién va en parejas;
+- que cada trabajo diga encima qué se hizo solo y qué en parejas;
+- que mientras la pizarra deje más de una lectura cada coma lleve su marca de
+  raya cortada, y ninguna cuando ya se entiende de una sola manera;
+- que lo agregado vaya subrayado con raya entera, y «en parejas» con raya
+  cortada mientras está abierto;
+- que en el paso 5 cada marcador lleve su aro sin tocar a las palabras de al
+  lado, con la leyenda «marcadores textuales»;
+- que el marcador cuente los trabajos que se ven, y que en el paso 2
+  multiplique las dos preguntas abiertas;
+- y que no salga ninguna clase de marcador ni una palabra de las respuestas de
+  la prueba.
+
+Se comprobó al revés con nueve averías, plantadas una por una: una palabra del
+maestro cambiada, el trabajo final en parejas desde subrayar, un trabajo que
+tenía que irse y se queda, el marcador del paso 3 diciendo 3, «antes» en una
+frase, la marca de una coma que se queda con la pizarra ya clara, «Después,» sin
+subrayar, los aros tocando las palabras de al lado y las banderitas antes de
+preguntar por las parejas. Salió roja con cada una. Todas juntas fallan 21
+comprobaciones, y una avería se tapa: con el trabajo que no se va se ven tres,
+y el marcador que dice 3 cuadra. Por eso se plantan una por una.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -7745,7 +7851,10 @@ como una sola raya. El lector de la sonda vive dentro de una plantilla de texto,
 donde las barras de una expresión regular se pierden: lo que haga falta partir,
 se parte a mano. Una flecha acaba en su punta, no donde acaba su trazo. Y el
 ancla de una comprobación no puede ser el mismo texto que se comprueba: si ese
-texto falla, la sonda deja de medir todo lo demás.
+texto falla, la sonda deja de medir todo lo demás. Una marca alrededor de algo
+que va a medio espacio de otra cosa (una coma) se monta en las letras de al
+lado: se señala debajo del renglón. Y las averías de la prueba al revés se
+plantan una por una: juntas, dos pueden taparse entre sí.
 
 Si el `--sec` de la misión es claro (un ámbar, un amarillo), la letra blanca
 del botón que avanza no se lee en su punta: la misión declara en su CSS

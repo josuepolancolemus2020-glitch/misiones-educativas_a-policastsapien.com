@@ -978,6 +978,54 @@ const LEER = `
       textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
     };
   };
+  /* Marcadores Textuales: la pizarra del maestro. Se lee cada pedazo de
+     tiza con lo que es (del maestro, nuevo, coma o punto), su renglón, su
+     avance y su tinta; las marcas de las comas, los subrayados y los aros;
+     y cada trabajo de abajo: sus tres cosas en el orden en que se ven, qué
+     cae dentro de la banda de las parejas y sus banderitas. */
+  window.__amExtra.amPizarra = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(base.multiply(el.getScreenCTM())); return [q.x, q.y]; }
+    function caja(el) { var b = el.getBBox(), a = aVista(el, b.x, b.y), c = aVista(el, b.x + b.width, b.y + b.height); return { x0: Math.min(a[0], c[0]), y0: Math.min(a[1], c[1]), x1: Math.max(a[0], c[0]), y1: Math.max(a[1], c[1]) }; }
+    function raya(el) { var d = getComputedStyle(el).strokeDasharray; if (!d || d === 'none') return 0; var v = d.split(/[ ,]+/).map(parseFloat).filter(isFinite); return v.length ? Math.max.apply(null, v) : 0; }
+    function todos(sel) { return [].slice.call(raiz.querySelectorAll(sel)); }
+    var lienzo = document.createElement('canvas').getContext('2d');
+    /* La tinta de un texto y su avance, con la misma letra con que lo pinta
+       el navegador: la caja del renglón (getBBox) lleva el aire de encima de
+       las mayúsculas y acusaría a un aro bien puesto. */
+    function medir(t) {
+      var cs = getComputedStyle(t), s = t.textContent;
+      lienzo.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+      lienzo.textAlign = 'left';
+      var m = lienzo.measureText(s), x0 = +t.getAttribute('x'), y0 = +t.getAttribute('y');
+      var p = aVista(t, x0 - m.actualBoundingBoxLeft, y0 - m.actualBoundingBoxAscent), q = aVista(t, x0 + m.actualBoundingBoxRight, y0 + m.actualBoundingBoxDescent);
+      var a = aVista(t, x0, y0), b = aVista(t, x0 + m.width, y0);
+      return { tinta: { x0: p[0], y0: p[1], x1: q[0], y1: q[1] }, x0: a[0], x1: b[0], base: a[1] };
+    }
+    var ley = raiz.querySelector('[data-leyenda]');
+    return {
+      fondo: caja(raiz.querySelector('[data-pizarra-fondo]')),
+      tiza: todos('[data-pizarra]').filter(vis).map(function (t) {
+        var m = medir(t);
+        return { rol: t.getAttribute('data-pizarra'), renglon: +t.getAttribute('data-renglon'), dice: t.textContent, x0: m.x0, x1: m.x1, base: m.base, tinta: m.tinta };
+      }),
+      marcas: todos('[data-marca-coma]').filter(vis).map(function (p) { return { de: p.getAttribute('data-marca-coma'), caja: caja(p), raya: raya(p) }; }),
+      rayas: todos('[data-raya]').filter(vis).map(function (p) { return { de: p.getAttribute('data-raya'), caja: caja(p), raya: raya(p) }; }),
+      aros: todos('[data-aro-marcador]').filter(vis).map(function (p) { return { de: p.getAttribute('data-aro-marcador'), caja: caja(p), raya: raya(p) }; }),
+      leyenda: ley && vis(ley) ? { dice: ley.querySelector('[data-leyenda-dice]').textContent, caja: caja(ley), aro: raya(ley.querySelector('[data-leyenda-aro]')) } : null,
+      trabajos: todos('[data-trabajo]').filter(vis).map(function (g) {
+        return {
+          de: g.getAttribute('data-trabajo'),
+          papel: caja(g.querySelector('[data-papel]')),
+          acciones: [].slice.call(g.querySelectorAll('[data-accion]')).filter(vis).map(function (t) { return { dice: t.textContent, caja: medir(t).tinta }; }),
+          bandas: [].slice.call(g.querySelectorAll('[data-banda]')).filter(vis).map(function (b) { return { caja: caja(b), raya: raya(b) }; }),
+          banderas: [].slice.call(g.querySelectorAll('[data-bandera]')).filter(vis).map(function (t) { return { dice: t.textContent, caja: medir(t).tinta }; })
+        };
+      }),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -1064,6 +1112,172 @@ let keniaAdverbios = null;
 let mensajePron = null;
 
 const ESCENAS = {
+  /* Marcadores Textuales: la pizarra del maestro. Se lee la pizarra
+     renglón por renglón, como se escribe, y se comprueba que las cuatro
+     cosas del maestro sean las mismas en los seis pasos: solo cambian las
+     junturas. ⚠️ Los trabajos de abajo no se le creen a la escena: la sonda
+     saca de la pizarra que ve las lecturas que ese texto permite (si ya se
+     sabe qué se subraya, y para qué es «en parejas») y las compara con las
+     filas: el orden de sus tres cosas y cuáles caen dentro de la banda de
+     las parejas. En el paso 1 solo se pregunta el orden, y las filas no
+     llevan todavía ni banda ni banderitas. Mientras la pizarra deje más de
+     una lectura, cada coma lleva su marca de raya cortada debajo; lo que se
+     agrega va subrayado con raya entera; y en el 5 cada marcador lleva su
+     aro, sin tocar a las palabras de al lado. ⚠️ Y la prueba no se regala:
+     ninguna clase de marcador ni palabra de sus respuestas, ni «al final»
+     ni «segundo», que son las de las dos preguntas que cambiaron. */
+  amPizarra(e, n) {
+    const x = e.extra, r = [];
+    const nb = t => String(t == null ? '' : t).replace(/ /g, ' ').trim();
+    /* Lo que no depende del dibujo, primero: con una pieza mal puesta la
+       sonda deja de medir, y esto no puede quedarse sin mirar por eso. */
+    const dicho = [e.texto, e.cifra, e.palabras].concat(x.textos).map(nb).join(' | ').toLowerCase();
+    const EXACTAS = ['pero', 'porque', 'también', 'además', 'antes', 'luego', 'mientras', 'asimismo', 'incluso', 'aunque', 'igualmente',
+      'finalmente', 'tanto', 'segundo', 'ventana', 'causa', 'consecuencia', 'adición', 'contraste', 'ejemplo', 'tiempo', 'cierre', 'conclusión',
+      'cohesión', 'coherencia', 'conector', 'conectores', 'párrafo', 'motivo', 'resultado', 'aclara', 'opone', 'concluye', 'pasos'];
+    const RAICES = ['orden', 'organiz', 'suelt', 'ejemplific'];
+    const FRASES = ['así que', 'no obstante', 'dado que', 'o sea', 'en resumen', 'por eso', 'sin embargo', 'a continuación', 'para terminar',
+      'es decir', 'por consiguiente', 'por lo tanto', 'ya que', 'más tarde', 'al final', 'por último', 'en primer lugar', 'en cambio', 'por ejemplo'];
+    const suelto = ' ' + dicho.split(/[^a-záéíóúñü]+/).filter(Boolean).join(' ') + ' ';
+    const malas = suelto.trim().split(' ').filter(w => EXACTAS.includes(w) || RAICES.some(z => w.startsWith(z)))
+      .concat(FRASES.filter(f => suelto.includes(' ' + f + ' ')));
+    r.push([malas.length === 0, `paso ${n}: no sale ninguna clase de marcador ni una palabra de las respuestas de la prueba`, malas]);
+
+    const dentroDe = (c, k, tol = 0.5) => c.x0 >= k.x0 - tol && c.x1 <= k.x1 + tol && c.y0 >= k.y0 - tol && c.y1 <= k.y1 + tol;
+    const cruza = (a, b) => a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1;
+    const cortada = v => v > 0 && v < 8, entera = v => v === 0 || v > 20;
+
+    /* ── La pizarra, renglón por renglón, como se escribe: la coma y el
+       punto pegados a la palabra de antes, y un espacio entre palabras. ── */
+    const tz = x.tiza;
+    const renglon = k => tz.filter(t => t.renglon === k).sort((a, b) => a.x0 - b.x0);
+    const pegada = t => nb(t.dice) === ',' || nb(t.dice) === '.';
+    const leerR = ws => ws.map((w, i) => (i && !pegada(w) ? ' ' : '') + nb(w.dice)).join('');
+    const bienR = ws => ws.every((w, i) => {
+      if (!i) return true;
+      const g = w.x0 - ws[i - 1].x1;
+      return pegada(w) ? Math.abs(g) <= 0.6 : g > 3 && g < 7;
+    }) && ws.every(w => Math.abs(w.base - ws[0].base) < 0.5);
+    const conPrimero = n >= 3, conDespues = n >= 4;
+    const ESPERA = [
+      (conPrimero ? 'Primero, leer el texto y subrayar' : 'leer el texto, subrayar') + (conDespues ? '.' : ','),
+      (conDespues ? 'Después, ' : '') + 'copiar en el cuaderno,',
+      'en parejas' + (conDespues ? '.' : '')
+    ];
+    const lineas = [1, 2, 3].map(k => renglon(k));
+    lineas.forEach((ws, i) => {
+      r.push([leerR(ws) === ESPERA[i] && bienR(ws) && ws.every(w => dentroDe(w.tinta, x.fondo, 0.5)),
+        `paso ${n}: el renglón ${i + 1} dice «${ESPERA[i]}», como se escribe y dentro de la pizarra`, leerR(ws)]);
+    });
+    const deMaestro = lineas.flat().filter(t => t.rol === 'maestro').map(t => nb(t.dice));
+    r.push([JSON.stringify(deMaestro) === JSON.stringify(['leer el texto', 'subrayar', 'copiar en el cuaderno', 'en parejas']),
+      `paso ${n}: las cuatro cosas del maestro, las mismas y en su orden`, deMaestro]);
+    const nuevasV = lineas.flat().filter(t => t.rol === 'nueva').map(t => nb(t.dice));
+    const NUEVAS = conDespues ? ['Primero,', 'y', 'Después,'] : (conPrimero ? ['Primero,', 'y'] : []);
+    r.push([JSON.stringify(nuevasV) === JSON.stringify(NUEVAS), `paso ${n}: lo que se agregó: ${NUEVAS.join(' ') || 'nada'}`, nuevasV]);
+
+    /* ── Lo que la pizarra permite, sacado del texto que se ve: si ya se
+       sabe que se subraya el texto (con «Primero» y la «y», o con
+       «Después» delante de copiar) y si «en parejas» quedó en una oración
+       donde solo se copia. ── */
+    const texto = lineas.map(leerR).join(' ');
+    const ordenFijo = texto.includes('Primero, leer el texto y subrayar') || texto.includes('Después, copiar');
+    const conParejas = texto.split('.').find(o => o.includes('en parejas')) || '';
+    const parejasFija = conParejas.includes('copiar') && !conParejas.includes('leer') && !conParejas.includes('subrayar');
+    const ORDENES = ordenFijo ? ['leer subrayar copiar'] : ['leer copiar subrayar', 'leer subrayar copiar'];
+    const MODOS = parejasFija ? ['copiar'] : ['', 'copiar,leer,subrayar'];
+    const unica = ordenFijo && parejasFija;
+
+    /* ── Los trabajos: el orden de sus tres cosas y lo que cae dentro de la
+       banda de las parejas. ── */
+    const filas = x.trabajos.map(t => {
+      const acc = t.acciones.slice().sort((a, b) => a.caja.x0 - b.caja.x0);
+      const orden = acc.map(a => nb(a.dice)).join(' ');
+      const enPar = acc.filter(a => t.bandas.some(b => dentroDe(a.caja, b.caja, 0.5)));
+      return { de: t.de, t, acc, orden, enPar, par: enPar.map(a => nb(a.dice)).sort().join(',') };
+    });
+    r.push([filas.every(f => f.acc.length === 3 && f.acc.every(a => dentroDe(a.caja, f.t.papel, 0.5)) && f.t.papel.y0 > x.fondo.y1) &&
+      filas.every((f, i) => filas.every((g, j) => i === j || !cruza(f.t.papel, g.t.papel))),
+      `paso ${n}: cada trabajo, sus tres cosas en su tira de papel, debajo de la pizarra y sin montarse en otro`, filas.map(f => f.orden)]);
+    if (n === 0) {
+      r.push([filas.length === 0 && e.cifra === '¿?', 'paso 0: todavía no hay trabajos, y el marcador pregunta', filas.length]);
+    } else if (n === 1) {
+      r.push([JSON.stringify(filas.map(f => f.orden).sort()) === JSON.stringify(ORDENES) && filas.every(f => !f.t.bandas.length && !f.t.banderas.length),
+        'paso 1: un trabajo por cada orden que dejan las comas, todavía sin decir quién va en parejas', filas.map(f => f.orden)]);
+    } else {
+      const deben = [];
+      ORDENES.forEach(o => MODOS.forEach(m => deben.push(o + ' | ' + m)));
+      const hay = filas.map(f => f.orden + ' | ' + f.par).sort();
+      r.push([JSON.stringify(hay) === JSON.stringify(deben.sort()), `paso ${n}: los trabajos son las lecturas que la pizarra permite: ${deben.length}`, hay]);
+      /* Las banderitas: «solo» encima de lo que se hizo solo y «en parejas»
+         encima de la banda, cada una sobre la primera cosa de lo suyo. */
+      const bienBanderas = filas.every(f => {
+        const solas = f.acc.filter(a => !f.enPar.includes(a));
+        const deben = (solas.length ? ['solo'] : []).concat(f.enPar.length ? ['en parejas'] : []);
+        const tiene = f.t.banderas.map(b => nb(b.dice));
+        const sobre = (b, a) => !!a && b.caja.y1 < a.caja.y0 && a.caja.y0 - b.caja.y1 < 14 && a.caja.x0 - b.caja.x0 > -1 && a.caja.x0 - b.caja.x0 < 12;
+        return JSON.stringify(tiene.slice().sort()) === JSON.stringify(deben.slice().sort()) &&
+          f.t.banderas.every(b => sobre(b, nb(b.dice) === 'solo' ? solas[0] : f.enPar[0]));
+      });
+      r.push([bienBanderas, `paso ${n}: cada trabajo dice encima qué se hizo solo y qué en parejas`, filas.map(f => f.t.banderas.map(b => b.dice))]);
+    }
+
+    /* ── Las marcas de las comas: mientras la pizarra deje más de una
+       lectura, una debajo de cada coma, de raya cortada. ── */
+    const comas = tz.filter(t => nb(t.dice) === ',');
+    if (!unica) {
+      const bien = comas.length === x.marcas.length && comas.every(c => x.marcas.some(m => {
+        const cx = (m.caja.x0 + m.caja.x1) / 2;
+        return cx > c.x0 - 1.5 && cx < c.x1 + 1.5 && m.caja.y0 > c.base + 2 && m.caja.y0 < c.base + 8 && cortada(m.raya);
+      }));
+      r.push([bien, `paso ${n}: una marca de raya cortada debajo de cada coma (${comas.length})`, x.marcas.map(m => m.de)]);
+    } else {
+      r.push([x.marcas.length === 0, `paso ${n}: la pizarra ya se entiende de una manera, y ninguna coma lleva marca`, x.marcas.map(m => m.de)]);
+    }
+
+    /* ── Los subrayados: raya entera debajo de lo que se agregó (hasta el
+       paso 4), y raya cortada debajo de «en parejas» mientras no se sabe
+       para qué es. ── */
+    const bajo = (rr, w) => Math.abs(rr.caja.x0 - w.x0) < 1.2 && Math.abs(rr.caja.x1 - w.x1) < 1.2 && rr.caja.y0 > w.base + 2 && rr.caja.y0 < w.base + 7;
+    const nuevasT = tz.filter(t => t.rol === 'nueva');
+    const parejasT = tz.find(t => nb(t.dice) === 'en parejas');
+    const debenRayas = (n < 5 ? nuevasT.length : 0) + (n >= 2 && !parejasFija ? 1 : 0);
+    const bienRayas = x.rayas.length === debenRayas &&
+      (n < 5 ? nuevasT.every(w => x.rayas.some(rr => entera(rr.raya) && bajo(rr, w))) : true) &&
+      (n >= 2 && !parejasFija ? x.rayas.some(rr => cortada(rr.raya) && !!parejasT && bajo(rr, parejasT)) : true);
+    r.push([bienRayas, `paso ${n}: subrayado lo que se agregó (raya entera) y «en parejas» mientras está abierto (raya cortada)`, x.rayas.map(q => [q.de, q.raya])]);
+
+    /* ── 5 · Un aro de raya entera alrededor de cada marcador, sin tocar las
+       palabras de al lado, y la leyenda que dice qué son. ── */
+    if (n === 5) {
+      const bienAros = x.aros.length === nuevasT.length && nuevasT.every(w => x.aros.some(a => entera(a.raya) && dentroDe(w.tinta, a.caja, 0) &&
+        tz.filter(t => t.renglon === w.renglon && t !== w).every(o => !cruza(o.tinta, a.caja))));
+      r.push([bienAros, 'paso 5: un aro de raya entera alrededor de cada marcador, sin tocar las palabras de al lado', x.aros.map(a => a.de)]);
+      r.push([!!x.leyenda && nb(x.leyenda.dice) === 'marcadores textuales' && entera(x.leyenda.aro) && x.leyenda.caja.y0 > x.fondo.y1,
+        'paso 5: debajo de la pizarra, el aro quiere decir «marcadores textuales»', x.leyenda && x.leyenda.dice]);
+    } else {
+      r.push([x.aros.length === 0 && !x.leyenda, `paso ${n}: sin aros ni leyenda`, x.aros.length]);
+    }
+
+    /* ── El marcador y la frase, contra lo que se ve. ── */
+    if (n >= 1 && n <= 4) {
+      r.push([e.cifra === String(filas.length), `paso ${n}: el marcador cuenta los trabajos que se ven`, [e.cifra, filas.length]]);
+    }
+    if (n === 2) {
+      r.push([nb(e.palabras).includes(ORDENES.length + ' × ' + MODOS.length) && ORDENES.length * MODOS.length === filas.length,
+        'paso 2: el marcador multiplica las dos preguntas abiertas', e.palabras]);
+    }
+    const sinComa = w => w.replace(/,$/, '');
+    const NUEVAS_DEL_PASO = { 3: ['Primero', 'y'], 4: ['Después'], 5: ['Primero', 'y', 'Después'] };
+    if (NUEVAS_DEL_PASO[n]) {
+      r.push([NUEVAS_DEL_PASO[n].every(w => e.texto.includes('«' + w + '»')), `paso ${n}: la frase nombra lo que se agregó`, NUEVAS_DEL_PASO[n]]);
+    }
+    if (n === 5) {
+      r.push([e.cifra === String(x.aros.length) && x.aros.every(a => e.texto.includes('«' + sinComa(a.de) + '»')) && e.texto.includes('marcadores textuales'),
+        'paso 5: el marcador cuenta los aros, y la frase los nombra como marcadores textuales', [e.cifra, x.aros.length]]);
+    }
+    return r;
+  },
   /* La Acentuación: la rayita de doña Nely. Se lee el mensaje, que no
      cambia nunca, y cada lectura sobre el dibujo: sus tres sílabas, cuál
      subió y dónde está el dibujo de la voz. ⚠️ Dónde va la rayita no se le
