@@ -404,13 +404,47 @@ const LEER = `
       pregunta: todos('.ma-pregunta').map(function (t) { var m = medio(t); return { dice: t.textContent, x: m.x, y: m.y }; })
     };
   };
+  /* Ángulos y Bisectriz: la esquina del marco de la pizarra. De cada
+     listón se leen sus vértices ya puestos en la vista (con el movimiento que
+     lleve encima), y de ahí se mide su corte; lo mismo con la cuña del hueco,
+     la bisectriz, el marco entero y la hoja que se dobla. */
+  window.__amExtra.amMarco = function (raiz) {
+    var vis = window.__amVisible;
+    function todos(sel) { return [].filter.call(raiz.querySelectorAll(sel), vis); }
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(base.multiply(el.getScreenCTM())); return [q.x, q.y]; }
+    function puntos(el) { var out = []; for (var i = 0; i < el.points.length; i++) out.push(aVista(el, el.points[i].x, el.points[i].y)); return out; }
+    function extremos(el) { var L = el.getTotalLength(), a = el.getPointAtLength(0), b = el.getPointAtLength(L); return [aVista(el, a.x, a.y), aVista(el, b.x, b.y)]; }
+    function trazada(p) { return !!p && vis(p) && Math.abs(parseFloat(getComputedStyle(p).strokeDashoffset) || 0) < 1; }
+    var s = svg.getBoundingClientRect(), k = s.width / svg.viewBox.baseVal.width;
+    function medio(el) { var b = el.getBoundingClientRect(); return { x: (b.left + b.width / 2 - s.left) / k, y: (b.top + b.height / 2 - s.top) / k }; }
+    return {
+      listones: todos('.bm-liston').map(function (p) { return { juego: p.getAttribute('data-juego'), lado: p.getAttribute('data-lado'), pts: puntos(p) }; }),
+      sobras: todos('.bm-sobra').length,
+      sierras: [].filter.call(raiz.querySelectorAll('.bm-sierra'), trazada).length,
+      /* El borde de la madera va aparte (.bm-canto) y no pasa por el corte:
+         si el cuerpo o la sobra llevaran borde, el listón sin cortar ya
+         enseñaría por dónde se corta, que es lo que el paso 0 pregunta. */
+      bordeEnElCorte: todos('.bm-liston, .bm-sobra').filter(function (p) { return getComputedStyle(p).stroke !== 'none'; }).length,
+      hueco: todos('.bm-hueco').map(puntos),
+      rotulos: todos('.bm-rotulo').map(function (t) { var m = medio(t); return { dice: t.textContent, x: m.x, y: m.y }; }),
+      bisectriz: [].filter.call(raiz.querySelectorAll('.bm-bisectriz'), trazada).map(extremos),
+      lados: todos('.bm-rayo').map(extremos),
+      guia: todos('.bm-guia').length,
+      marco: todos('.bm-marco-liston').map(puntos),
+      pizarra: todos('.bm-pizarra').length,
+      hoja: todos('.bm-hoja').map(puntos),
+      solapa: todos('.bm-solapa').map(puntos),
+      pliegue: todos('.bm-pliegue').map(extremos)
+    };
+  };
   /* Las cuentas de la frase y de las palabras del marcador que el renglón
      parte en dos («315 ÷» arriba y «4.5 = 70» abajo). Se le pregunta al
      navegador: un Range por cuenta, y si sus pedazos caen en dos alturas,
      se partió. */
   window.__amPartidas = function (id) {
     var raiz = document.getElementById(id), out = [];
-    var RE = /[0-9](?:[0-9.,]*[0-9])?(?:[ \u00a0]*[×÷+−=<>][ \u00a0]*[0-9](?:[0-9.,]*[0-9])?)+/g;
+    var RE = /[0-9](?:[0-9.,]*[0-9])?°?(?:[ \u00a0]*[×÷+−=<>][ \u00a0]*[0-9](?:[0-9.,]*[0-9])?°?)+/g;
     ['.am-texto', '.am-palabras'].forEach(function (sel) {
       var nodo = raiz.querySelector(sel).firstChild;
       if (!nodo || nodo.nodeType !== 3) return;
@@ -482,6 +516,119 @@ function regla(marcas, eje) {
 
 /* ── lo propio de cada escena ───────────────────────────────── */
 const ESCENAS = {
+  /* Ángulos y Bisectriz: la esquina del marco de don Tulio. El corte de
+     cada listón se MIDE en sus vértices, tal como quedaron en la vista: que
+     diga 40° lo que está cortado a 40°, que la cuña del hueco sea justo lo
+     que le falta a la esquina (90° menos los dos cortes), que la bisectriz
+     salga de la esquina a 45° de cada lado, que las dos puntas a 45° casen
+     en una sola raya, que el marco entero lleve sus ocho cortes a 45° y
+     cada uno compartido por dos listones, y que el doblez de la hoja parta
+     su esquina en dos de 45° y la hoja quede abierta. */
+  amMarco(e, n) {
+    const x = e.extra, r = [];
+    const nb = t => String(t).replace(/ /g, ' ');
+    const cerca = (a, b, t = 0.6) => Math.abs(a - b) <= t;
+    const mismo = (p, q, t = 1) => Math.hypot(p[0] - q[0], p[1] - q[1]) <= t;
+    const ang = (a, b) => Math.atan2(b[1] - a[1], b[0] - a[0]) * 180 / Math.PI;
+    /* El corte de un listón, desde su canto de afuera: el de la derecha se
+       mide contra la horizontal y el de abajo contra la vertical. */
+    const corte = l => l.lado === 'h' ? ang(l.pts[0], l.pts[3]) : 90 - ang(l.pts[0], l.pts[1]);
+    const juego = j => x.listones.filter(l => l.juego === j);
+    const rotulos = t => x.rotulos.filter(q => nb(q.dice) === t);
+    const dentro = (p, poly) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      const [xi, yi] = poly[i], [xj, yj] = poly[j];
+      if ((yi > p[1]) !== (yj > p[1]) && p[0] < (xj - xi) * (p[1] - yi) / (yj - yi) + xi) c = !c; } return c; };
+    const nums = t => (nb(t).match(/\d+(\.\d+)?/g) || []).map(Number);
+
+    if (n <= 3) {
+      const ojo = juego('ojo'), bis = juego('bis'), l = n === 3 ? bis : n <= 1 ? ojo : [];
+      const h = l.find(q => q.lado === 'h'), v = l.find(q => q.lado === 'v');
+      if (n <= 1 || n === 3) {
+        r.push([l.length === 2 && !!h && !!v && (n === 3 ? !ojo.length : !bis.length), `paso ${n}: se ven los dos listones ${n === 3 ? 'nuevos' : 'de don Tulio'}`, x.listones.map(q => q.juego + q.lado)]);
+        if (!h || !v) return r;
+        const th = corte(h), tv = corte(v), punta = h.pts[0];
+        if (n === 0) {
+          r.push([x.sobras === 2 && x.guia === 1 && !mismo(h.pts[0], v.pts[0], 20) && !x.hueco.length && rotulos('90°').length === 1,
+            'paso 0: los listones están apartados, sin cortar, y la esquina vacía dice 90°', [x.sobras, x.guia]]);
+          r.push([x.sierras === 0 && x.bordeEnElCorte === 0,
+            'paso 0: los listones están enteros: ni la sierra ni el borde de la madera marcan todavía por dónde se corta', [x.sierras, x.bordeEnElCorte]]);
+        } else {
+          r.push([mismo(h.pts[0], v.pts[0]) && !x.sobras, `paso ${n}: los dos listones se juntan en la punta de la esquina`, [h.pts[0], v.pts[0]]]);
+          const t = n === 1 ? 40 : 45;
+          r.push([cerca(th, t) && cerca(tv, t), `paso ${n}: medidos en el dibujo, los dos cortes son de ${t}°`, [th.toFixed(2), tv.toFixed(2)]]);
+          const et = rotulos(t + '°');
+          r.push([et.length === 2 && dentro([et[0].x, et[0].y], h.pts) !== dentro([et[1].x, et[1].y], h.pts) &&
+            et.every(q => dentro([q.x, q.y], h.pts) || dentro([q.x, q.y], v.pts)),
+            `paso ${n}: cada listón dice ${t}° sobre su propia madera`, et.map(q => q.dice)]);
+          const falta = 90 - th - tv;
+          if (n === 1) {
+            const c = x.hueco[0];
+            const bien = !!c && mismo(c[0], punta) && cerca(ang(c[0], c[1]), th) && cerca(ang(c[0], c[3]), 90 - tv);
+            r.push([bien && cerca(ang(c[0], c[3]) - ang(c[0], c[1]), falta) && cerca(falta, 10) && rotulos('hueco').length === 1 && x.sierras === 2,
+              `paso 1: entre los dos cortes queda una cuña de ${falta.toFixed(1)}°, lo que le falta a la esquina, y dice «hueco»`, c]);
+            const m = nums(e.cifra);
+            r.push([m.length === 3 && cerca(m[0], th, 0.5) && cerca(m[1], tv, 0.5) && m[2] === m[0] + m[1] && nums(e.palabras)[0] === 90 - m[2],
+              `paso 1: el marcador dice ${nb(e.cifra)} y ${nb(e.palabras)}`, [e.cifra, e.palabras]]);
+          } else {
+            r.push([!x.hueco.length && cerca(falta, 0) && mismo(h.pts[3], v.pts[1]),
+              'paso 3: las dos puntas a 45° casan en una sola raya, sin hueco', [h.pts[3], v.pts[1]]]);
+            r.push([x.sierras === 2, 'paso 3: los dos listones nuevos se cortaron con la sierra, igual que los de a ojo', x.sierras]);
+            const b = x.bisectriz[0];
+            r.push([!!b && mismo(b[0], punta) && cerca(ang(b[0], b[1]), th), 'paso 3: la raya donde casan es la bisectriz', b]);
+            const m = nums(e.cifra);
+            r.push([m.length === 3 && m[0] === 45 && m[1] === 45 && m[2] === 90, `paso 3: el marcador dice ${nb(e.cifra)}`, e.cifra]);
+          }
+        }
+      } else {
+        /* La esquina sola, con su bisectriz. */
+        const ld = x.lados[0], b = x.bisectriz[0];
+        r.push([!x.listones.length && !!ld && !!b, 'paso 2: la esquina sola, con sus dos lados y la bisectriz', [x.listones.length, !!ld, !!b]]);
+        if (ld && b) {
+          const o = ld[0], conH = ang(b[0], b[1]), conV = 90 - conH;
+          r.push([mismo(b[0], o) && cerca(conH, 45) && cerca(conV, 45), `paso 2: la bisectriz sale de la esquina a ${conH.toFixed(1)}° de un lado y ${conV.toFixed(1)}° del otro`, [conH.toFixed(2)]]);
+          const et = rotulos('45°');
+          r.push([et.length === 2 && et.some(q => ang(o, [q.x, q.y]) < 45) && et.some(q => ang(o, [q.x, q.y]) > 45),
+            'paso 2: un «45°» a cada lado de la bisectriz', et.map(q => ang(o, [q.x, q.y]).toFixed(1))]);
+          const m = nums(e.cifra);
+          r.push([m.length === 3 && m[0] / m[1] === m[2] && cerca(m[2], conH, 0.5), `paso 2: el marcador dice ${nb(e.cifra)}, lo que mide la bisectriz`, e.cifra]);
+        }
+      }
+      r.push([!x.marco.length && !x.hoja.length, `paso ${n}: ni el marco entero ni la hoja todavía`, [x.marco.length, x.hoja.length]]);
+    } else if (n === 4) {
+      /* El marco entero: cuatro listones, ocho cortes a 45°, cada corte
+         compartido por dos listones (así casan). */
+      const cortes = [];
+      x.marco.forEach((p, i) => p.forEach((a, j) => {
+        const b = p[(j + 1) % p.length], g = Math.abs(ang(a, b)) % 90;
+        if (!cerca(g, 0, 1) && !cerca(g, 90, 1)) cortes.push({ i, a, b, g: Math.abs(ang(a, b)) });
+      }));
+      const en45 = cortes.every(c => cerca(c.g % 90, 45) || cerca(c.g % 90, 45));
+      const pareados = cortes.every(c => cortes.some(o => o.i !== c.i && ((mismo(o.a, c.a) && mismo(o.b, c.b)) || (mismo(o.a, c.b) && mismo(o.b, c.a)))));
+      r.push([x.marco.length === 4 && cortes.length === 8 && en45 && pareados && x.pizarra === 1,
+        `paso 4: cuatro listones, ${cortes.length} cortes a 45°, y cada corte casa con el del listón de al lado`, cortes.map(c => c.g.toFixed(1))]);
+      r.push([nums(e.cifra)[0] === cortes.length && /45/.test(nb(e.palabras)), `paso 4: el marcador dice ${nb(e.cifra)}, ${nb(e.palabras)}`, [e.cifra, e.palabras]]);
+      r.push([!x.listones.length && !x.hoja.length, 'paso 4: la esquina de cerca ya no está', x.listones.length]);
+    } else {
+      /* La hoja: abierta otra vez, con el doblez partiendo su esquina. */
+      const hb = x.hoja[0], so = x.solapa[0], pl = x.pliegue[0];
+      r.push([!!hb && !!so && !!pl, 'paso 5: la hoja, su solapa y el doblez', [!!hb, !!so, !!pl]]);
+      if (hb && so && pl) {
+        const o = hb[0], L = hb[2][1] - o[1];
+        const abierta = mismo(so[0], o) && mismo(so[1], [o[0] + L, o[1]]) && mismo(so[2], [o[0] + L, o[1] + L]);
+        r.push([abierta, 'paso 5: después de doblarse, la hoja quedó abierta: la solapa volvió a su sitio', so]);
+        r.push([mismo(pl[0], o) && cerca(ang(pl[0], pl[1]), 45) && mismo(pl[1], [o[0] + L, o[1] + L]),
+          `paso 5: el doblez sale de la esquina a ${ang(pl[0], pl[1]).toFixed(1)}° y llega a la esquina de enfrente`, pl]);
+        const et = rotulos('45°');
+        r.push([et.length === 2 && et.some(q => ang(o, [q.x, q.y]) < 45) && et.some(q => ang(o, [q.x, q.y]) > 45),
+          'paso 5: un «45°» a cada lado del doblez', et.map(q => ang(o, [q.x, q.y]).toFixed(1))]);
+      }
+      r.push([nb(e.cifra) === '45° y 45°' && /bisectriz/.test(e.palabras), 'paso 5: el marcador dice 45° y 45°', e.cifra]);
+      r.push([!x.listones.length && !x.marco.length, 'paso 5: solo la hoja', [x.listones.length, x.marco.length]]);
+    }
+    if (n === 0) r.push([nb(e.cifra) === '90°', 'paso 0: el marcador dice 90°, la esquina', e.cifra]);
+    return r;
+  },
+
   /* Numeración y Calendario Mayas: la piedra con tres signos tallados
      (cuatro puntos, dos barras y una concha) y la mesa donde se explican.
      Lo que dice cada signo se cuenta en lo que tiene tallado, y lo que dice

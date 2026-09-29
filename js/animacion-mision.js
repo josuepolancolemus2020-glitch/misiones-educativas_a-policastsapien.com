@@ -162,9 +162,12 @@
      escribe la frase con espacios normales y el renglón se corta donde cae.
      Se arregla AQUÍ, una vez: los espacios de dentro de una cuenta (entre
      una cifra, un signo y la cifra siguiente) pasan a ser de los que no se
-     parten. La escena escribe la frase como se lee y el aparato la cuida. */
+     parten. La escena escribe la frase como se lee y el aparato la cuida.
+     El «°» va pegado a su cifra y cuenta como parte de ella: «90° ÷ 2 =
+     45°» se partía después del ÷, porque entre el 0 y el signo iba el «°» y
+     la regla no lo veía. */
   function sinPartir(t) {
-    return String(t == null ? '' : t).replace(/(\d)[ \u00a0]*([×÷+−=<>])[ \u00a0]*(?=\d)/g, '$1\u00a0$2\u00a0');
+    return String(t == null ? '' : t).replace(/(\d°?)[ \u00a0]*([×÷+−=<>])[ \u00a0]*(?=\d)/g, '$1\u00a0$2\u00a0');
   }
 
   function crear(tag, clase, texto) {

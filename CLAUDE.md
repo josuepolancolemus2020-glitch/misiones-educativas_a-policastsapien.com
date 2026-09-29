@@ -6473,7 +6473,8 @@ en cada escena se olvida en la siguiente.
 
 Ahora lo hace el aparato (`sinPartir`, en `js/animacion-mision.js`): los
 espacios de dentro de una cuenta, entre una cifra, un signo y la cifra
-siguiente, pasan a ser de los que no se parten. Vale para la frase y para las
+siguiente, pasan a ser de los que no se parten. El «°» cuenta como parte de
+la cifra: «90° ÷ 2 = 45°» se partía después del ÷ (lo cazó la decimocuarta). Vale para la frase y para las
 palabras del marcador, y también para la copia invisible donde se miden. La
 escena escribe la frase como se lee.
 
@@ -6554,6 +6555,90 @@ plantadas a la vez (un signo con cinco puntos, otro con tres barras que decía
 10, una cuenta que saltaba del 3 al 5, una barra que decía 6, el marcador
 diciendo 11 y un «20» en lugar del «?»), y salió roja con las seis.
 
+### La decimocuarta: Ángulos y Bisectriz, y lo que enseñó
+
+En **Ángulos y Bisectriz** (`misiones/2y3ciclo-angulo-bisectriz/`,
+`js/animacion-marco.js`) la historia es la de don Tulio, que armó el marco de
+la pizarra nueva y cortó cada punta «a ojo, como a la mitad»: le quedó un hueco
+en cada esquina, volvió a cortar, el marco salió más chico y se quedó sin un
+listón. La animación es esa esquina de cerca. Primero, dos listones enteros y
+apartados, con la esquina vacía que dice 90°, y la pregunta de por dónde se
+cortan. La sierra los corta a ojo, digamos a 40°, las sobras se caen y los dos
+llegan a la esquina: las puntas suman 80° y entre ellas queda una cuña oscura de
+10°, el hueco. Después la esquina sola y su bisectriz, que la parte en dos de
+45° (90° ÷ 2 = 45°). Dos listones nuevos se cortan con la misma sierra a 45° y
+casan en una sola raya, que es la bisectriz. Luego el marco entero, con sus
+ocho cortes a 45°. Y al final, una hoja que se dobla por la esquina hasta que un
+borde cae sobre el otro, y se vuelve a abrir: el doblez es la bisectriz, y así
+se encuentra sin transportador. Seis cosas que valen para las demás:
+
+1. ⚠️ **El dibujo no puede enseñar el corte antes de cortar.** Cada listón se
+   pinta en dos piezas, el cuerpo y la sobra, y cada una llevaba su borde: el
+   listón «entero» ya tenía dibujada la diagonal por donde iba a cortarse, que
+   es justo lo que el paso 0 le pregunta al alumno. Ahora el borde de la madera
+   va aparte y no pasa por el corte; esa raya la pinta la sierra al cortar. Y
+   aun sin borde quedaba una costura tenue, porque dos piezas del mismo color
+   que solo se tocan dejan ver el fondo en la juntura: la sobra monta un pelo
+   (1,5) sobre el cuerpo, y al caerse se lo lleva.
+2. ⚠️ **«Apartados» tiene que verse apartado, y eso solo salió a medio
+   movimiento.** En las capturas del final de cada paso todo estaba bien. En los
+   cuadros de en medio, los dos listones «apartados» se encimaban 14 unidades
+   en la esquina (los separaba menos de lo que miden de ancho), y las dos sobras
+   caían hacia la esquina y se cruzaban en el aire. Ahora cada listón queda más
+   lejos que su propio ancho y cada sobra cae hacia su lado. **Una escena con
+   piezas que viajan se mira también a medio viaje.**
+3. **Los dos cortes se hacen igual.** Los listones de la bisectriz llegaban ya
+   cortados, y los de a ojo se cortaban con sierra. Ahora los dos pares se
+   cortan con la misma sierra y al mismo ritmo (`cortarYJuntar`), y lo único
+   distinto es por dónde. Comparar dos cosas hechas distinto no enseña cuál de
+   las dos diferencias importa.
+4. **Lo que el alumno puede hacer hoy, con lo que tiene.** Un transportador no
+   lo hay en todas las casas; una hoja de cuaderno sí. Doblar la esquina hasta
+   que un borde caiga sobre el otro da la bisectriz exacta, y no es un truco: el
+   doblez es el eje de simetría de la esquina. La hoja se ve doblarse y
+   abrirse, con sus renglones volteados mientras está doblada.
+5. ⚠️ **La cuenta de la animación en la prueba, otra vez.** La conceptual
+   preguntaba si dos ángulos de 45° suman 180° (la animación dice 45° + 45° =
+   90°) y partía un ángulo de 90° dos veces con la bisectriz. Ahora son dos de
+   75° y un ángulo de 116°, en la misión y en la ficha, con la misma respuesta
+   buena en el mismo lugar. Y las formas 5 y 23 de la operativa, que pedían la
+   mitad de 90°, se corrieron a 92° sin sacar otro número del azar
+   (`_fueraDeLaAnimacion`): las otras 28 salen iguales. Se quedan dos cosas, y
+   se pensó: el «45° y 45°» de «¿qué par es suplementario?», porque es el error
+   de verdad (confundir complementario con suplementario) y la respuesta buena
+   no depende de la animación; y el ejemplo «la bisectriz de 90° crea dos de
+   50°» de la instrucción del error, que enseña qué clase de error es y no es la
+   pregunta.
+6. **La madera es madera en las dos pantallas.** Los listones, la pizarra y la
+   hoja llevan su color siempre; lo que se escribe encima va en tinta oscura
+   fija, porque la tinta de la pantalla oscura es clara y sobre la madera no se
+   leería.
+
+⚠️ **Y dos del aparato y de la sonda, que valen para cualquier escena:**
+
+- **El «°» va pegado a su cifra.** «90° ÷ 2 = 45°» se partía después del ÷ en
+  un teléfono de 360 px: la regla de `sinPartir` pedía una cifra justo antes del
+  signo, y ahí iba el «°». Ahora el «°» cuenta como parte de la cifra, en el
+  aparato y en la sonda que lo vigila.
+- **Una escena no llama `pts` a nada suyo.** La sonda estática busca `pts(`,
+  que en las misiones es lo que da XP, y la escena tenía una función `pts()` que
+  escribía los vértices de un polígono. La sonda no acusaba sin motivo: el
+  nombre chocaba de verdad. Se llama `vertices()`.
+
+La sonda de esta escena **mide cada corte en los vértices de su listón**, tal
+como quedaron en la vista con el movimiento encima: que diga 40° lo que está
+cortado a 40°, que la cuña sea justo lo que le falta a la esquina (90° menos los
+dos cortes) y diga «hueco», que la bisectriz salga de la esquina a 45° de cada
+lado, que las dos puntas a 45° casen en una sola raya y esa raya sea la
+bisectriz, que el marco lleve ocho cortes a 45° y cada uno compartido por dos
+listones, y que el doblez de la hoja vaya de esquina a esquina con la solapa de
+vuelta en su sitio. Y en el paso 0, que los listones estén enteros: ni la sierra
+ni el borde de la madera marcan todavía el corte. Se comprobó al revés con
+cuatro averías plantadas a la vez (el cuerpo del listón con su borde otra vez,
+un corte a 42° con el marcador diciendo 40°, los listones de la bisectriz
+llegando cortados sin sierra y la hoja que se dobla y no se abre), y salió roja
+con las cuatro.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -6573,6 +6658,10 @@ sus `pasos`, `construir`, `pintar(n, antes)`, `texto(n)`, `boton(n)`,
 `atajo(n)` y `marcador(n)`; la cabecera de `js/animacion-mision.js` lo
 cuenta entero. Y en `_dev/verifica-animacion-mision.js` se le añade su
 entrada a `ESCENAS`: lo que esa escena afirma, contado sobre el dibujo.
+
+Ninguna función de la escena se llama `pts`: en las misiones, `pts()` es lo que
+da XP, y la sonda estática lo busca por ese nombre. Y una escena con piezas que
+viajan se mira también con fotos a medio viaje, no solo al final de cada paso.
 
 Si el `--sec` de la misión es claro (un ámbar, un amarillo), la letra blanca
 del botón que avanza no se lee en su punta: la misión declara en su CSS

@@ -28,6 +28,9 @@
   <!-- La sección 🎬 Videos. Va DESPUÉS del CSS de la misión a propósito:
        se tiñe del --pri y del --sec que la misión acaba de declarar. -->
   <link rel="stylesheet" href="../../css/videos-mision.css">
+  <!-- La animación que explica el tema, justo después de la historia. Va
+       DESPUÉS del CSS de la misión a propósito: se tiñe de su --pri y su --sec. -->
+  <link rel="stylesheet" href="../../css/animacion-mision.css">
   <style>
     /* Prueba Operativa · toggle de pestañas y estilos propios (patrón división-decimales) */
     .eval-mode-toggle{display:flex;gap:0.6rem;margin-bottom:1.2rem;flex-wrap:wrap;}
@@ -95,6 +98,22 @@
         <div class="tip"><span class="ti">❓</span><div>Para que dos listones casen en una esquina, cada
         corte tiene que ir por la <strong>mitad exacta</strong> del ángulo, y esa línea tiene nombre:
         <strong>bisectriz</strong>. A ojo se parece; en la madera se nota.</div></div>
+      </div>
+      <!-- La animación que explica el tema, justo después de la historia: la
+           esquina del marco de don Tulio. Cortadas a ojo (digamos a 40°), las
+           dos puntas suman 80° y queda un hueco de 10°; la bisectriz parte los
+           90° en dos de 45°, y cortadas por ahí casan. Después el marco entero,
+           con sus ocho cortes, y una hoja que se dobla por la bisectriz de su
+           esquina, que es como se encuentra sin transportador. La mueve el
+           alumno, paso a paso. El aparato es compartido (js/animacion-mision.js)
+           y la escena es de esta misión (js/animacion-marco.js). La frase de
+           dentro es de reserva: si el aparato no llega a cargar, se lee eso en
+           vez de un hueco. -->
+      <div class="card ac-teal" data-animacion>
+        <h2>👀 Mira por dónde se corta la esquina</h2>
+        <div id="amMarco">
+          <p>La esquina del marco mide 90°. Cortadas a ojo, digamos a 40° cada una, las dos puntas suman 80°: a la esquina le faltan 10° y queda un hueco. La mitad exacta de la esquina es la bisectriz: 90° ÷ 2 = 45°. Con cada punta cortada a 45°, las dos suman 90° y casan sin hueco. Y sin transportador: dobla la esquina de una hoja hasta que un borde caiga sobre el otro, y el doblez es la bisectriz.</p>
+        </div>
       </div>
       <div class="card ac-purple">
         <span class="bloom-badge bl-r">🧩 Nivel Bloom: Recordar + Comprender</span>
@@ -749,6 +768,9 @@
       siguiente: { id: 's-quiz', texto: '🧠 Ir al Quiz' }
     });
   </script>
+<!-- La animación del marco: primero el aparato, después la escena. -->
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-marco.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

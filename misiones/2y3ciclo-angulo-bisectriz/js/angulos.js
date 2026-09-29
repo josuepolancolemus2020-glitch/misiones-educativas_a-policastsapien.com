@@ -434,7 +434,7 @@ const evalTFBank=[
   {q:'25° y 65° son complementarios.',a:true,k:'tf-25-65'},
   {q:'100° y 90° son suplementarios.',a:false,k:'tf-100-90'},
   {q:'Si a un ángulo de 180° le trazas la bisectriz, salen dos de 90°.',a:true,k:'tf-bis-180'},
-  {q:'Dos ángulos de 45° suman 180°.',a:false,k:'tf-45-45'},
+  {q:'Dos ángulos de 75° suman 180°.',a:false,k:'tf-75-75'},
   {q:'El complemento de 15° es 75°.',a:true,k:'tf-comp-15'},
   {q:'Una vuelta completa, partida en cuatro partes iguales, da ángulos de 60°.',a:false,k:'tf-cuartos'}
 ];
@@ -447,7 +447,7 @@ const evalMCBank=[
   {q:'Si una vuelta completa se parte en 45 partes iguales, ¿cuánto mide cada una?',o:['a) 45°','b) 8°','c) 315°','d) 80°'],a:1,k:'mc-45-partes'},
   {q:'Un ángulo de 110° y otro de 25° juntos miden…',o:['a) 95°','b) 145°','c) 135°','d) 125°'],a:2,k:'mc-110-25'},
   {q:'Las manecillas del reloj a las 4:00 forman un ángulo de…',o:['a) 100°','b) 140°','c) 40°','d) 120°'],a:3,k:'mc-reloj-4'},
-  {q:'Si un ángulo de 90° se parte con su bisectriz y una de las mitades se vuelve a partir, ¿cuánto mide el ángulo más chico?',o:['a) 45°','b) 22.5°','c) 30°','d) 15°'],a:1,k:'mc-doble-bis'},
+  {q:'Si un ángulo de 116° se parte con su bisectriz y una de las mitades se vuelve a partir, ¿cuánto mide el ángulo más chico?',o:['a) 58°','b) 29°','c) 14.5°','d) 87°'],a:1,k:'mc-doble-bis'},
   {q:'El suplemento del suplemento de 40° es…',o:['a) 40°','b) 140°','c) 60°','d) 180°'],a:0,k:'mc-sup-sup'}
 ];
 const evalCPBank=[
@@ -825,12 +825,18 @@ function genProblemaAngItems() {
 }
 
 // V. Retos de olimpiada (10 + 5 + 5 = 20 pts · desafío)
+/* La animación de la historia (js/animacion-marco.js) parte la esquina de
+   90° del marco en dos de 45°. «Cada mitad de la bisectriz de 90°» es esa
+   misma cuenta, y el que acaba de ver la animación la contesta acordándose.
+   Se corre a 92° sin sacar otro número del azar: las demás formas salen
+   iguales. */
+function _fueraDeLaAnimacion(a) { return a === 90 ? 92 : a; }
 // (a) Ordenar 4 ángulos de MENOR a mayor combinando descripciones sin medirlos
 function genRetoOrden() {
   const gens = [
     () => { const x = _opRint(5, 85); return { label: `El complemento de ${x}°`, val: 90 - x }; },
     () => { const y = _opRint(95, 175); return { label: `El suplemento de ${y}°`, val: 180 - y }; },
-    () => { const a = 2 * _opRint(20, 80); return { label: `Cada mitad de la bisectriz de ${a}°`, val: a / 2 }; },
+    () => { const a = _fueraDeLaAnimacion(2 * _opRint(20, 80)); return { label: `Cada mitad de la bisectriz de ${a}°`, val: a / 2 }; },
     () => ({ label: 'La mitad de un ángulo llano', val: 90 }),
     () => { const z = _opRint(91, 179); return { label: `Un ángulo que mide ${z}°`, val: z }; }
   ];
@@ -851,7 +857,7 @@ function genRetoOrden() {
 // (p.ej. «la bisectriz de 90° crea dos de 50°» o confundir complemento con suplemento)
 function genRetoError() {
   if (_opRnd() < 0.5) {
-    const a = 2 * _opRint(20, 80); const wrong = a / 2 + _opRint(1, 2) * 5;
+    const a = _fueraDeLaAnimacion(2 * _opRint(20, 80)); const wrong = a / 2 + _opRint(1, 2) * 5;
     return { txt: `Una estudiante escribió: «La bisectriz de un ángulo de ${a}° crea dos ángulos de ${wrong}° cada uno». Es un error común («la bisectriz de 90° crea dos de 50°»): las mitades no suman el ángulo. Escribe el valor correcto de cada mitad.`, op: `${a}° ÷ 2`, ans: String(a / 2) };
   }
   const x = _opRint(10, 80);

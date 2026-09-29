@@ -495,3 +495,9 @@ html.fs-lg{font-size:20px;}
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* El botón que avanza en la animación (js/animacion-marco.js) lleva letra
+   blanca, y el verde de esta misión (#00b894) es claro: con él la punta del
+   degradado se leía a 2,5:1. Va del morado de la misión a un verde oscuro
+   (#00796b, 5,3:1). */
+:root { --am-boton: linear-gradient(135deg, #6c5ce7, #00796b); }
