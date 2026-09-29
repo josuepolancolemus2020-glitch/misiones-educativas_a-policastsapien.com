@@ -905,6 +905,79 @@ const LEER = `
       textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
     };
   };
+  /* La Acentuación: la rayita de doña Nely. Se lee el mensaje del globo,
+     su subrayado y la raya que baja de él; las sílabas de cada lectura, cuál
+     subió y dónde está el dibujo de la voz; la palabra escrita, con el sitio
+     exacto de su rayita medido con la misma letra; los hilos del paso 4; el
+     marco; las flechas del camino con sus minutos; y dónde está doña Nely. */
+  window.__amExtra.amRayita = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(base.multiply(el.getScreenCTM())); return [q.x, q.y]; }
+    function caja(el) { var b = el.getBBox(), a = aVista(el, b.x, b.y), c = aVista(el, b.x + b.width, b.y + b.height); return { x0: Math.min(a[0], c[0]), y0: Math.min(a[1], c[1]), x1: Math.max(a[0], c[0]), y1: Math.max(a[1], c[1]) }; }
+    function trazada(p) { return !!p && vis(p) && Math.abs(parseFloat(getComputedStyle(p).strokeDashoffset) || 0) < 1; }
+    function raya(el) { var d = getComputedStyle(el).strokeDasharray; if (!d || d === 'none') return 0; var v = d.split(/[ ,]+/).map(parseFloat).filter(isFinite); return v.length ? Math.max.apply(null, v) : 0; }
+    function todos(sel) { return [].slice.call(raiz.querySelectorAll(sel)); }
+    function extremos(p) { var L = p.getTotalLength(), a = p.getPointAtLength(0), b = p.getPointAtLength(L); return { a: aVista(p, a.x, a.y), b: aVista(p, b.x, b.y) }; }
+    var lienzo = document.createElement('canvas').getContext('2d');
+    /* Dónde está cada letra de un texto, con la misma letra y desde el mismo
+       sitio que la pinta el navegador. */
+    function letras(t) {
+      var cs = getComputedStyle(t), s = t.textContent;
+      lienzo.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+      lienzo.textAlign = 'left';
+      var total = lienzo.measureText(s).width, x0 = +t.getAttribute('x'), y0 = +t.getAttribute('y');
+      if (cs.textAnchor === 'middle') x0 -= total / 2; else if (cs.textAnchor === 'end') x0 -= total;
+      return s.split('').map(function (ch, i) {
+        var a = lienzo.measureText(s.slice(0, i)).width, m = lienzo.measureText(ch);
+        var p = aVista(t, x0 + a, y0 - m.actualBoundingBoxAscent), q = aVista(t, x0 + a + m.width, y0);
+        return { ch: ch, x0: p[0], x1: q[0], y0: p[1], y1: q[1] };
+      });
+    }
+    function fichas(g) {
+      return [].slice.call(g.querySelectorAll('[data-silaba]')).map(function (f) {
+        return { s: f.getAttribute('data-silaba'), carga: f.getAttribute('data-carga') === 'si', caja: caja(f.querySelector('rect')),
+                 dice: f.querySelector('text').textContent, raya: raya(f.querySelector('rect')) };
+      });
+    }
+    var neut = raiz.querySelector('[data-neutras]'), marco = raiz.querySelector('[data-marco]'), nely = raiz.querySelector('[data-nely] .ra-cara');
+    var enl = raiz.querySelector('[data-enlace]');
+    return {
+      globo: caja(raiz.querySelector('[data-globo]')),
+      mensaje: todos('[data-mensaje]').filter(vis).map(function (t) {
+        return { renglon: +t.getAttribute('data-mensaje'), dice: t.textContent, caja: caja(t), base: aVista(t, +t.getAttribute('x'), +t.getAttribute('y')) };
+      }),
+      subs: todos('[data-sub]').filter(vis).map(function (p) { return { de: p.getAttribute('data-sub'), caja: caja(p), raya: raya(p) }; }),
+      enlace: enl && trazada(enl) ? extremos(enl) : null,
+      neutras: neut && vis(neut) ? { fichas: fichas(neut), dudas: [].slice.call(neut.querySelectorAll('[data-duda]')).map(function (t) { return { s: t.getAttribute('data-duda'), caja: caja(t), dice: t.textContent }; }) } : null,
+      lecturas: todos('[data-lectura]').filter(vis).map(function (g) {
+        var w = g.querySelector('[data-escrita]'), v = g.querySelector('[data-voz]');
+        return { de: g.getAttribute('data-lectura'), fichas: fichas(g), voz: caja(v), escrita: w.textContent, caja: caja(w), letras: letras(w),
+                 dice: g.querySelector('[data-dice]').textContent, quien: g.querySelector('[data-quien]').textContent };
+      }),
+      /* El hilo del paso 4 va de la sílaba a la rayita («M x y L x y») y
+         después dibuja la punta: lo que cuenta es dónde acaba ese primer
+         tramo, no dónde acaba la punta. */
+      hilos: todos('[data-hilo]').filter(vis).map(function (p) {
+        var tk = p.getAttribute('d').split(' ');
+        return { de: p.getAttribute('data-hilo'), a: aVista(p, +tk[1], +tk[2]), b: aVista(p, +tk[4], +tk[5]) };
+      }),
+      marco: marco && vis(marco) ? { de: marco.getAttribute('data-marco'), caja: caja(marco), raya: raya(marco) } : null,
+      flechas: todos('[data-flecha]').filter(vis).map(function (g) {
+        var p = g.querySelector('path'), t = g.querySelector('text');
+        /* El trazo va de un extremo al otro («M x y H x») y después dibuja
+           la punta: la punta está donde acaba ese primer tramo. Se parte a
+           mano y no con una expresión regular, porque este lector vive en
+           una plantilla de texto y ahí las barras se pierden. */
+        var tk = p.getAttribute('d').split(' ');
+        return { de: g.getAttribute('data-flecha'), desde: aVista(p, +tk[1], +tk[2])[0], hasta: aVista(p, +tk[4], +tk[2])[0],
+                 minutos: +t.getAttribute('data-minutos'), dice: t.textContent };
+      }),
+      nely: nely && vis(nely) ? aVista(nely, +nely.getAttribute('cx'), +nely.getAttribute('cy')) : null,
+      lugares: todos('[data-lugar]').filter(vis).map(function (t) { return { de: t.getAttribute('data-lugar'), caja: caja(t) }; }),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -991,6 +1064,164 @@ let keniaAdverbios = null;
 let mensajePron = null;
 
 const ESCENAS = {
+  /* La Acentuación: la rayita de doña Nely. Se lee el mensaje, que no
+     cambia nunca, y cada lectura sobre el dibujo: sus tres sílabas, cuál
+     subió y dónde está el dibujo de la voz. ⚠️ Dónde va la rayita no se le
+     cree a la escena: la sonda la calcula con la regla (en estas tres
+     palabras, que terminan en vocal, la voz en «bli» va sin rayita y en otra
+     sílaba la lleva sobre su vocal) y la compara con la palabra escrita,
+     letra por letra. ⚠️ Las lecturas van de izquierda a derecha en el orden
+     en que la voz recorre la palabra, y la que aparece en cada paso es la
+     que nombran la frase y el marcador. En el paso 1 las flechas del camino
+     suman lo que dice el marcador; en el 4 cada hilo baja de la sílaba que
+     sube a la rayita de su palabra; en el 5 la raya baja del mensaje a la
+     lectura del maestro, enmarcada. ⚠️ Y la prueba no se regala: ninguna
+     clase, ninguna posición (la última, la penúltima…), ninguna palabra de
+     sus preguntas, ni «tilde» ni «diacrítica». */
+  amRayita(e, n) {
+    const x = e.extra, r = [];
+    const nb = t => String(t == null ? '' : t).replace(/ /g, ' ').trim();
+    /* Lo que no depende del dibujo, primero: con una pieza mal puesta la
+       sonda deja de medir, y esto no puede quedarse sin mirar por eso. */
+    const dicho = [e.texto, e.cifra, e.palabras].concat(x.textos).map(nb).join(' | ').toLowerCase();
+    const EXACTAS = ['aguda', 'agudas', 'llana', 'llanas', 'grave', 'graves', 'esdrújula', 'esdrújulas', 'sobresdrújula', 'sobresdrújulas',
+      'tónica', 'tónicas', 'átona', 'átonas', 'diptongo', 'triptongo', 'hiato', 'diacrítica', 'tilde', 'tildes', 'distingue', 'fuerte', 'fuertes',
+      'débil', 'débiles', 'última', 'penúltima', 'antepenúltima', 'café', 'azúcar', 'azucar', 'camioneta', 'teléfono', 'telefono', 'pared', 'sofá',
+      'jardín', 'álbum', 'ventilador', 'baúl', 'cuéntaselo', 'árbol', 'camión', 'murciélago', 'difícil', 'raíz', 'rápidamente', 'estómago',
+      'cómo', 'último', 'jóvenes', 'canción', 'lápiz', 'reloj', 'examen', 'brújula', 'música', 'fácilmente', 'maíz', 'comió', 'termino',
+      'terminó', 'término', 'célebre', 'celebre', 'papá', 'papa', 'sé', 'tú', 'él', 'mí'];
+    const malas = dicho.split(/[^a-záéíóúñü]+/).filter(w => w && EXACTAS.includes(w));
+    r.push([malas.length === 0, `paso ${n}: no sale ninguna clase, ninguna posición ni una palabra de la prueba`, malas]);
+
+    const dentroDe = (c, k, tol = 0.5) => c.x0 >= k.x0 - tol && c.x1 <= k.x1 + tol && c.y0 >= k.y0 - tol && c.y1 <= k.y1 + tol;
+    const medio = c => [(c.x0 + c.x1) / 2, (c.y0 + c.y1) / 2];
+    const cortada = v => v > 0 && v < 8, entera = v => v === 0 || v > 20;
+    const SIL = ['pu', 'bli', 'co'];
+    const DICE = { 'público': 'la gente que mira', publico: 'yo lo hago', 'publicó': 'ya pasó' };
+    const QUIEN = { 'público': 'otra palabra', publico: 'el maestro', 'publicó': 'doña Nely' };
+
+    /* El mensaje del maestro: el mismo en los seis pasos, sin rayita. */
+    const r1 = x.mensaje.filter(t => t.renglon === 1).sort((a, b) => a.caja.x0 - b.caja.x0), r2 = x.mensaje.filter(t => t.renglon === 2);
+    /* La palabra de la historia es la segunda del renglón, diga lo que
+       diga: si alguien le pone rayita, esto sale rojo y lo demás se sigue
+       midiendo. */
+    const pub = r1.length === 3 ? r1[1] : null;
+    r.push([r1.map(t => nb(t.dice)).join(' ') === 'Mañana publico la lista' && r2.map(t => nb(t.dice)).join(' ') === 'de los que van.' &&
+      x.mensaje.every(t => dentroDe(t.caja, x.globo, 1)) && r1.every(t => Math.abs(t.base[1] - r1[0].base[1]) < 0.5) && !!pub,
+      `paso ${n}: el mensaje dice «Mañana publico la lista de los que van.», sin rayita, dentro de su globo`, r1.map(t => t.dice)]);
+    if (!pub) return r;
+    const sub = x.subs.length === 1 ? x.subs[0] : null;
+    const bajoPub = !!sub && Math.abs(sub.caja.x0 - pub.caja.x0) < 1 && sub.caja.x1 <= pub.caja.x1 + 1 && sub.caja.x1 - sub.caja.x0 > 0.8 * (pub.caja.x1 - pub.caja.x0) &&
+      sub.caja.y0 > pub.base[1] && sub.caja.y0 < pub.base[1] + 7;
+    r.push([bajoPub && (n === 5 ? entera(sub.raya) : cortada(sub.raya)), `paso ${n}: «publico» subrayado con raya ${n === 5 ? 'entera: así se lee' : 'cortada: ¿cómo se lee?'}`,
+      x.subs.map(q => [q.de, q.raya])]);
+
+    /* Las sílabas de una lectura: pu, bli, co, en su orden y pegadas; como
+       mucho una subida, y el dibujo de la voz encima de ella. */
+    const bienFichas = fs => fs.length === 3 && fs.map(f => nb(f.dice)).join(' ') === SIL.join(' ') &&
+      fs.every((f, i) => !i || (f.caja.x0 > fs[i - 1].caja.x1 && f.caja.x0 - fs[i - 1].caja.x1 < 6));
+    const alto = fs => Math.max(...fs.map(f => f.caja.y0));
+
+    /* 0 · Las tres sílabas, ninguna subida, y una pregunta encima de cada una. */
+    if (n === 0) {
+      const q = x.neutras;
+      r.push([!!q && bienFichas(q.fichas) && q.fichas.every(f => Math.abs(f.caja.y0 - q.fichas[0].caja.y0) < 0.5 && !f.carga) &&
+        q.dudas.length === 3 && q.dudas.every((d, i) => nb(d.dice) === '?' && Math.abs(medio(d.caja)[0] - medio(q.fichas[i].caja)[0]) <= 1 && d.caja.y1 < q.fichas[i].caja.y0),
+        'paso 0: pu, bli y co, ninguna subida, con una pregunta encima de cada una', q && q.fichas.map(f => f.dice)]);
+      r.push([x.lecturas.length === 0 && e.cifra === '¿?', 'paso 0: todavía no hay lecturas, y el marcador pregunta', x.lecturas.length]);
+    } else {
+      r.push([!x.neutras, `paso ${n}: las sílabas sin voz ya se fueron`, !!x.neutras]);
+    }
+
+    /* Cada lectura: la sílaba que sube, la voz encima, y la palabra escrita
+       con la rayita donde la pone la regla. La regla la calcula la sonda: en
+       estas tres palabras, que terminan en vocal, con la voz en «bli» no hay
+       rayita; con la voz en otra, la rayita va en su vocal. */
+    const VOCAL = { pu: 'u', bli: 'i', co: 'o' }, TILDE = { u: 'ú', o: 'ó', i: 'í' };
+    const leidas = x.lecturas.map(l => {
+      const sube = l.fichas.filter(f => f.caja.y0 < alto(l.fichas) - 3);
+      const k = sube.length === 1 ? l.fichas.indexOf(sube[0]) : -1;
+      let esperada = null;
+      if (k >= 0) {
+        const s = SIL[k];
+        esperada = k === 1 ? 'publico' : SIL.map((q, i) => i === k ? q.replace(VOCAL[s], TILDE[VOCAL[s]]) : q).join('');
+      }
+      return Object.assign({}, l, { k, sube: sube[0], esperada });
+    });
+    leidas.forEach(l => {
+      const f = l.sube;
+      r.push([bienFichas(l.fichas) && l.k >= 0 && l.fichas.every(q => q.carga === (q === f)) && entera(f.raya) && Math.abs(medio(l.voz)[0] - medio(f.caja)[0]) <= 1 &&
+        l.voz.y1 < f.caja.y0 && l.voz.y0 > x.globo.y1,
+        `paso ${n}: en «${l.de}» sube una sola sílaba, con la voz encima`, l.fichas.map(q => q.dice + (q.caja.y0 < alto(l.fichas) - 3 ? '↑' : ''))]);
+      r.push([!!l.esperada && nb(l.escrita) === l.esperada && Math.abs(medio(l.caja)[0] - medio(l.fichas[1].caja)[0]) <= 1 && l.caja.y0 > Math.max(...l.fichas.map(q => q.caja.y1)),
+        `paso ${n}: debajo de sus sílabas se escribe «${l.esperada}»: la rayita donde la pone la regla`, [l.escrita, l.esperada]]);
+      r.push([nb(l.dice) === DICE[nb(l.escrita)] && nb(l.quien) === QUIEN[nb(l.escrita)], `paso ${n}: «${l.escrita}» dice «${DICE[nb(l.escrita)]}»`, [l.dice, l.quien]]);
+    });
+    /* Cuáles se ven en cada paso, y en qué orden: de izquierda a derecha,
+       por dónde carga la voz. */
+    const DESDE = { 'publicó': 1, publico: 2, 'público': 3 };
+    const deben = Object.keys(DESDE).filter(w => n >= DESDE[w]).sort();
+    r.push([JSON.stringify(leidas.map(l => nb(l.escrita)).sort()) === JSON.stringify(deben) &&
+      leidas.slice().sort((a, b) => a.caja.x0 - b.caja.x0).every((l, i, o) => !i || l.k > o[i - 1].k),
+      `paso ${n}: ${deben.length} lectura(s), de izquierda a derecha por dónde carga la voz`, leidas.map(l => l.escrita)]);
+
+    /* El camino: la casa a la izquierda, la escuela a la derecha, y doña
+       Nely en su casa en todos los pasos. En el 1, la ida y la vuelta. */
+    const casa = x.lugares.find(q => q.de === 'casa'), escuela = x.lugares.find(q => q.de === 'escuela');
+    r.push([!!casa && !!escuela && !!x.nely && x.nely[0] > casa.caja.x0 - 5 && x.nely[0] < medio(casa.caja)[0] + 40,
+      `paso ${n}: doña Nely está en su casa`, x.nely && x.nely.map(Math.round)]);
+    if (n === 1) {
+      const ida = x.flechas.find(q => q.hasta > q.desde), vuelta = x.flechas.find(q => q.hasta < q.desde);
+      const va = q => !!q && !!casa && !!escuela && Math.min(q.desde, q.hasta) < medio(casa.caja)[0] + 50 && Math.max(q.desde, q.hasta) > medio(escuela.caja)[0] - 70;
+      const suma = x.flechas.reduce((a, q) => a + (q.minutos || 0), 0);
+      r.push([x.flechas.length === 2 && va(ida) && va(vuelta) && x.flechas.every(q => nb(q.dice).startsWith(q.minutos + ' min')),
+        'paso 1: una flecha de ida y otra de vuelta entre la casa y la escuela, cada una con sus minutos', x.flechas.map(q => [q.de, q.dice])]);
+      r.push([e.cifra === String(suma) && /minutos/.test(e.palabras), 'paso 1: el marcador suma los minutos de las flechas', [e.cifra, suma]]);
+    } else {
+      r.push([x.flechas.length === 0, `paso ${n}: sin flechas en el camino`, x.flechas.length]);
+    }
+
+    /* Lo que nombran la frase y el marcador, contra lo que apareció. */
+    const nueva = leidas.find(l => DESDE[nb(l.escrita)] === n);
+    if (n >= 1 && n <= 3) {
+      r.push([!!nueva && e.texto.includes('«' + SIL[nueva.k] + '»') && e.texto.includes('«' + nb(nueva.escrita) + '»'),
+        `paso ${n}: la frase nombra la sílaba que subió y la palabra que se escribe`, nueva && [SIL[nueva.k], nueva.escrita]]);
+    }
+    if (n === 2) r.push([!!nueva && e.cifra === SIL[nueva.k], 'paso 2: el marcador dice la sílaba que subió', [e.cifra, nueva && SIL[nueva.k]]]);
+    if (n === 3) r.push([e.cifra === String(leidas.length), 'paso 3: el marcador cuenta las palabras que salieron de las mismas letras', e.cifra]);
+
+    /* 4 · De la sílaba que sube baja un hilo hasta la rayita de su palabra,
+       y solo en las que la llevan. */
+    const conRaya = leidas.filter(l => /[áéíóú]/.test(nb(l.escrita)));
+    if (n === 4) {
+      const ok = x.hilos.length === conRaya.length && conRaya.every(l => {
+        const h = x.hilos.find(q => q.de === nb(l.escrita)), le = l.letras.find(q => /[áéíóú]/.test(q.ch));
+        return !!h && !!le && h.a[0] >= l.sube.caja.x0 && h.a[0] <= l.sube.caja.x1 && Math.abs(h.a[1] - l.sube.caja.y1) <= 3 &&
+          h.b[0] >= le.x0 && h.b[0] <= le.x1 && h.b[1] < le.y0 + 1 && h.b[1] > le.y0 - 6;
+      });
+      r.push([ok, 'paso 4: de la sílaba que sube baja un hilo a la rayita de su palabra, y solo donde hay rayita', x.hilos.map(h => h.de)]);
+      r.push([e.cifra === String(conRaya.length) && /rayitas/.test(e.palabras), 'paso 4: el marcador cuenta las rayitas que se ven', [e.cifra, conRaya.length]]);
+    } else {
+      r.push([x.hilos.length === 0, `paso ${n}: sin hilos a las rayitas`, x.hilos.length]);
+    }
+
+    /* 5 · Del mensaje baja una raya a la lectura sin rayita, que queda
+       enmarcada: así se leía. */
+    if (n === 5) {
+      const sin = leidas.find(l => !/[áéíóú]/.test(nb(l.escrita))), m = x.marco;
+      const dentro = !!sin && !!m && [sin.caja, sin.voz].concat(sin.fichas.map(f => f.caja)).every(c => dentroDe(c, m.caja, 0.5)) &&
+        leidas.filter(l => l !== sin).every(l => l.fichas.every(f => f.caja.x1 < m.caja.x0 || f.caja.x0 > m.caja.x1));
+      r.push([dentro && entera(m.raya) && m.de === 'publico', 'paso 5: la lectura sin rayita queda enmarcada, y ninguna otra', m && m.de]);
+      const en = x.enlace;
+      r.push([!!en && !!m && Math.abs(en.a[0] - pub.caja.x1) <= 1.5 && en.a[1] > pub.base[1] && en.a[1] < pub.base[1] + 8 &&
+        Math.abs(en.b[1] - m.caja.y0) <= 1 && en.b[0] > m.caja.x0 && en.b[0] < m.caja.x1,
+        'paso 5: del final de «publico» baja una raya al marco', en && [en.a.map(Math.round), en.b.map(Math.round)]]);
+      r.push([e.cifra === '0' && e.texto.includes('«bli»'), 'paso 5: sin viaje de balde, y la frase dice dónde carga la voz', e.cifra]);
+    } else {
+      r.push([!x.marco && !x.enlace, `paso ${n}: sin marco ni raya del mensaje`, [!!x.marco, !!x.enlace]]);
+    }
+    return r;
+  },
   /* Los Pronombres: el mensaje del grupo de las familias. Se lee el mensaje
      palabra por palabra y se mide sobre el dibujo adónde llega cada hilo:
      «le» se prueba en los CINCO niños (un hilo y un aro a cada uno, y cada

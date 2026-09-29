@@ -982,8 +982,13 @@ const evalMCBank=[
   {q:'¿Cuál está bien escrita?',o:['a) cafe','b) café','c) cáfe','d) cafè'],a:1,k:'mc-cafe'},
   {q:'¿Cuál de estas palabras necesita tilde?',o:['a) mesa','b) ventana','c) azucar','d) perro'],a:2,k:'mc-azucar'},
   {q:'¿Cuántas sílabas tiene «camioneta»?',o:['a) 3','b) 4','c) 5','d) 6'],a:1,k:'mc-camioneta'},
-  {q:'¿En qué sílaba va la tilde de «telefono»?',o:['a) te','b) le','c) fo','d) no'],a:2,k:'mc-telefono'},
-  {q:'¿Cuál oración está bien escrita?',o:['a) Yo se la respuesta','b) Yo sé la respuesta','c) Yo sè la respuesta','d) Yo sé, la respuesta'],a:1,k:'mc-se'},
+  // Daba por buena «fo», y en «teléfono» la tilde va en «le» (te-lé-fo-no):
+  // el alumno que contestaba bien salía marcado mal, y la pauta de la ficha
+  // decía «4c». Con la correcta en la «b», la «b» pasaba a cuatro de diez y
+  // la 3, la 4 y la 5 salían seguidas en la «b»; por eso la de «sé» lleva
+  // ahora la suya en la «d», con las otras tres en el orden de antes.
+  {q:'¿En qué sílaba va la tilde de «telefono»?',o:['a) te','b) le','c) fo','d) no'],a:1,k:'mc-telefono'},
+  {q:'¿Cuál oración está bien escrita?',o:['a) Yo se la respuesta','b) Yo sè la respuesta','c) Yo sé, la respuesta','d) Yo sé la respuesta'],a:3,k:'mc-se'},
   {q:'¿Cuál de estas palabras se escribe sin tilde?',o:['a) pared','b) sofá','c) jardín','d) álbum'],a:0,k:'mc-pared'},
   {q:'En «Tú tienes tu libro», ¿cuál «tu» es el pronombre?',o:['a) el primero','b) el segundo','c) los dos','d) ninguno'],a:0,k:'mc-tu'},
   {q:'¿Qué sílaba suena más fuerte en «ventilador»?',o:['a) ven','b) ti','c) la','d) dor'],a:3,k:'mc-ventilador'},

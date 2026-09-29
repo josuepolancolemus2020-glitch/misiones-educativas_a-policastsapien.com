@@ -481,3 +481,61 @@ body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* ── La animación de la rayita (js/animacion-rayita.js) ───────────────
+   El botón que avanza va del morado al azul de la misión con letra
+   blanca, y con el azul de siempre la letra se quedaba en 3,9:1 en su
+   punta: va con el azul un tono más oscuro, a más de 5:1. El número grande
+   del marcador va en el --pri-lt de la misión en la pantalla oscura, que
+   ya se lee.
+
+   El globo del mensaje y las fichas de las sílabas son de papel: se
+   quedan como son en las dos pantallas, con tinta oscura fija. Lo que va
+   sobre el escenario (el dibujo de la voz, las palabras escritas, las
+   flechas del camino) lleva la tinta de la pantalla. Y nada se dice solo
+   con color: la sílaba que carga la voz sube, lleva el borde grueso y el
+   dibujo de la voz encima; lo que todavía no se sabe va con raya cortada. */
+:root {
+  --am-boton: linear-gradient(135deg, #6c5ce7, #0a6cbf);
+  --ra-linea: #5a4bd1;
+}
+[data-theme="dark"] { --ra-linea: #b3adff; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --ra-linea: #b3adff; }
+}
+/* El globo del grupo y lo que dice. */
+.am-raiz .ra-globo { fill: #ffffff; stroke: #b9c4cf; stroke-width: 1.2; stroke-linejoin: round; }
+.am-raiz .ra-tinta { fill: #22324a; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+.am-raiz .ra-grupo { fill: var(--dark); fill-opacity: 0.75; font-family: 'Fredoka', sans-serif; font-weight: 500; }
+.am-raiz .ra-sub-cortada { fill: none; stroke: #56606b; stroke-width: 2; stroke-dasharray: 3 2.2; }
+.am-raiz .ra-sub-entera { fill: none; stroke: #5a4bd1; stroke-width: 2.2; stroke-linecap: round; }
+.am-raiz .ra-enlace { fill: none; stroke: var(--ra-linea); stroke-width: 1.6; stroke-linecap: round; }
+/* Las fichas de las sílabas: la que carga la voz, con el borde grueso. */
+.am-raiz .ra-ficha rect { fill: #ffffff; stroke: #8a93a3; stroke-width: 1.2; }
+.am-raiz .ra-ficha-voz rect { fill: #efedff; stroke: #5a4bd1; stroke-width: 2.4; }
+.am-raiz .ra-voz circle { fill: var(--ra-linea); }
+.am-raiz .ra-voz path { fill: none; stroke: var(--ra-linea); stroke-width: 1.6; stroke-linecap: round; }
+.am-raiz .ra-duda { fill: var(--dark); fill-opacity: 0.8; font-family: 'Fredoka', sans-serif; font-weight: 700; }
+/* La palabra escrita, lo que dice y de quién es la lectura. */
+.am-raiz .ra-escrita { fill: var(--dark); font-family: 'Fredoka', sans-serif; font-weight: 600; }
+.am-raiz .ra-dice { fill: var(--dark); font-family: 'Fredoka', sans-serif; font-weight: 600; }
+.am-raiz .ra-quien { fill: var(--dark); fill-opacity: 0.72; font-family: 'Fredoka', sans-serif; font-weight: 500; }
+.am-raiz .ra-hilo { fill: none; stroke: var(--ra-linea); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.am-raiz .ra-marco { fill: none; stroke: var(--ra-linea); stroke-width: 2; }
+/* El camino de doña Nely, su casa y la escuela con su tablero vacío. */
+.am-raiz .ra-suelo { fill: none; stroke: var(--border); stroke-width: 1.4; }
+.am-raiz .ra-camino { fill: none; stroke: var(--dark); stroke-opacity: 0.45; stroke-width: 1.4; stroke-dasharray: 2 3; }
+.am-raiz .ra-techo { fill: #c0664a; stroke: #8f4631; stroke-width: 1; stroke-linejoin: round; }
+.am-raiz .ra-pared { fill: #f3e3c3; stroke: #b69a6c; stroke-width: 1; }
+.am-raiz .ra-puerta { fill: #7a5236; }
+.am-raiz .ra-ventana { fill: #bfe0f2; stroke: #6f94ab; stroke-width: 0.8; }
+.am-raiz .ra-tablero { fill: #ffffff; stroke: #6d7682; stroke-width: 1.2; }
+.am-raiz .ra-pata { fill: none; stroke: #6d7682; stroke-width: 1.4; }
+.am-raiz .ra-rotulo { fill: var(--dark); font-family: 'Fredoka', sans-serif; font-weight: 600; }
+.am-raiz .ra-flecha { fill: none; stroke: var(--ra-linea); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+/* Doña Nely. */
+.am-raiz .ra-cara { fill: #c68e5e; }
+.am-raiz .ra-pelo { fill: #3b2a20; }
+.am-raiz .ra-vestido { fill: #b0457d; }
+.am-raiz .ra-pierna { fill: none; stroke: #8a5a3a; stroke-width: 2.4; stroke-linecap: round; }
+.am-raiz .ra-bolso { fill: #6b4a2b; }

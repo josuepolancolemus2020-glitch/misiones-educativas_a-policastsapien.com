@@ -7598,6 +7598,108 @@ frase diciendo Kenia, el marcador del paso 2 diciendo 8, la respuesta «a
 Kenia», «enclítico» en una frase, la frase de antes cuatro puntos más arriba y
 el hilo de «le» subiendo a «olvidó»), y salió roja con las siete.
 
+### La vigesimosexta: La Acentuación, y lo que enseñó
+
+La sexta de la Ruta de la Palabra es **La Acentuación**
+(`misiones/2y3ciclo-acentuacion/`, `js/animacion-rayita.js`). La historia es la
+de doña Nely: el maestro escribió en el grupo «Mañana publico la lista de los
+que van», ella leyó «publicó», con la voz cargada al final, entendió que la
+lista ya estaba y caminó cuarenta minutos hasta la escuela y cuarenta de vuelta
+para nada. La animación pone el mensaje en su globo, la palabra partida en sus
+tres sílabas y, abajo, el camino de la casa de doña Nely a la escuela:
+
+- «publico» subrayado con raya cortada, y sus sílabas: pu · bli · co, con una
+  pregunta encima de cada una;
+- lo que leyó doña Nely: la sílaba «co» sube, con el dibujo de la voz encima,
+  y debajo se escribe «publicó»: ya pasó. Ella camina a la escuela y vuelve, y
+  quedan las dos flechas con sus cuarenta minutos: el marcador suma 80;
+- lo que escribió el maestro: sube «bli», «publico», como en «yo publico»;
+- la tercera: sube «pu», «público», la gente que mira. Las tres lecturas quedan
+  una al lado de la otra, de izquierda a derecha por dónde carga la voz;
+- de la sílaba que sube baja un hilo hasta la rayita de su palabra: solo
+  «publico» va sin rayita;
+- el mensaje leído bien: su subrayado pasa a raya entera, baja una raya hasta
+  la lectura del maestro, que queda enmarcada, y el camino queda sin flechas.
+
+Seis cosas que valen para las siguientes:
+
+1. ⚠️ **Dónde va la rayita no se le cree a la escena.** La sonda la calcula con
+   la regla (en estas tres palabras, que terminan en vocal, la voz en «bli» va
+   sin rayita y en otra sílaba la lleva sobre su vocal) y la compara con la
+   palabra escrita letra por letra, midiendo con la misma letra dónde está la
+   vocal con rayita. Y la rayita siempre cae en la misma sílaba que sube.
+2. ⚠️ **La rayita avisa dónde carga la voz; no «distingue palabras».**
+   «Publicó» y «público» la llevan por la regla general, y la prueba define la
+   tilde diacrítica justo como la que distingue dos palabras que se escriben
+   igual. Dicho aquí, el alumno llamaría diacrítica a la de «publicó». Por eso
+   la animación no dice «tilde»: dice «rayita», como la historia. Y no nombra
+   ninguna clase ni ninguna posición («la última», «la penúltima»), que son los
+   pareados y sus definiciones: la sílaba se dice por lo que suena.
+3. **La regla se dice solo de estas tres palabras.** «Solo «publico» va sin
+   rayita: carga en «bli»» es verdad de ellas; dicho de todas sería falso
+   («día» carga en la misma posición y lleva rayita).
+4. ⚠️ **La prueba daba por buena una respuesta equivocada, y estaba publicada
+   desde el 25 de septiembre.** «¿En qué sílaba va la tilde de «telefono»?»
+   tenía por correcta «fo», y en «teléfono» la tilde va en «le»: el alumno que
+   contestaba bien salía marcado mal, y la pauta de la ficha decía «4c». Se vio
+   leyendo la prueba para escribir la animación. Ahora es la «b», en la misión y
+   en la ficha; y como la «b» pasaba a cuatro de diez, con la 3, la 4 y la 5
+   seguidas, la de «sé» lleva su correcta en la «d». Se revisaron las demás
+   preguntas de sílabas del catálogo (todas son de esta misión, menos una del
+   Himno), y esta era la única mala.
+5. **El mensaje no cambia nunca.** El maestro escribió «publico», sin rayita, y
+   así se queda en los seis pasos: la rayita de «publicó» es la lectura de doña
+   Nely, no el mensaje. La sonda lo comprueba en cada paso.
+6. **Doña Nely camina de verdad, y no vuelve a caminar.** Va en dos capas, una
+   para la ida y otra para la vuelta; al volver a ese paso, o al salir de él,
+   las dos se mueven a la vez y se anulan, así que no se la ve caminar otra
+   vez. Y los aros alrededor de las rayitas, que fueron la primera idea del paso
+   4, se comían la letra de debajo y se leía «p⊙blico»: se cambiaron por el hilo.
+   Se vio mirando las fotos.
+
+El globo y las fichas de las sílabas son de papel: se quedan como son en las dos
+pantallas, con tinta oscura fija. Lo que va sobre el escenario (el dibujo de la
+voz, las palabras escritas, las flechas) lleva la tinta de la pantalla. Nada se
+dice solo con color: la sílaba que carga la voz sube, lleva el borde grueso y el
+dibujo de la voz encima. El botón que avanza lleva su `--am-boton`, porque con el
+azul de la misión la letra blanca se quedaba en 3,9:1 en su punta.
+
+⚠️ **Y la sonda tuvo tres averías antes de servir, las tres suyas.** Su
+lector vive dentro de una plantilla de texto, y ahí las barras de una expresión
+regular se pierden (`\s` llega como `s`): el camino de las flechas se parte a
+mano. El hilo del paso 4 acaba en su punta de flecha, y el final del trazo es la
+punta de una de sus barbas: se lee dónde acaba el primer tramo. Y la palabra del
+mensaje se buscaba por su texto, así que con la avería de ponerle rayita la
+sonda dejaba de medir todo lo demás: ahora es la segunda palabra del renglón,
+diga lo que diga.
+
+La sonda de esta escena **calcula dónde va la rayita y mide sobre el dibujo
+dónde está**. Comprueba:
+
+- que el mensaje diga «Mañana publico la lista de los que van.», sin rayita,
+  en los seis pasos, con «publico» subrayado a rayas y, al final, entero;
+- que en el paso 0 estén pu, bli y co, ninguna subida, con una pregunta encima
+  de cada una;
+- que en cada lectura suba una sola sílaba, con el dibujo de la voz encima, y
+  que debajo se escriba la palabra con la rayita donde la pone la regla, con lo
+  que dice y de quién es;
+- que se vean las lecturas de cada paso, de izquierda a derecha por dónde carga
+  la voz, y que la frase nombre la sílaba que subió y la palabra;
+- que en el paso 1 haya una flecha de ida y otra de vuelta entre la casa y la
+  escuela, y que el marcador sume sus minutos; y que doña Nely esté en su casa
+  en todos los pasos;
+- que en el paso 4 de cada sílaba que sube baje un hilo a la rayita de su
+  palabra, y solo donde hay rayita;
+- que en el paso 5 la lectura sin rayita quede enmarcada, y ninguna otra, con
+  la raya que baja del final de «publico» hasta el marco;
+- y que no salga ninguna clase, ninguna posición ni una palabra de la prueba.
+
+Se comprobó al revés con siete averías, plantadas una por una y después todas
+juntas: «publíco» con la voz en «co», el dibujo de la voz de «publico» encima de
+«pu», el marcador del paso 1 diciendo 60, el mensaje con rayita, «tilde» en una
+frase, lo que dice «publico» cambiado y el hilo de «público» acabando sobre la
+«l». Salió roja con cada una.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -7639,7 +7741,11 @@ por encima de la palabra de al lado. Y para decir si un marco rodea una
 palabra, la sonda mide su tinta con `measureText`, no su renglón con `getBBox`;
 si la palabra va centrada, el lienzo mide con el mismo `textAlign`. Dos hilos
 que salen del mismo punto van con ángulos bien distintos: casi juntos, se leen
-como una sola raya.
+como una sola raya. El lector de la sonda vive dentro de una plantilla de texto,
+donde las barras de una expresión regular se pierden: lo que haga falta partir,
+se parte a mano. Una flecha acaba en su punta, no donde acaba su trazo. Y el
+ancla de una comprobación no puede ser el mismo texto que se comprueba: si ese
+texto falla, la sonda deja de medir todo lo demás.
 
 Si el `--sec` de la misión es claro (un ámbar, un amarillo), la letra blanca
 del botón que avanza no se lee en su punta: la misión declara en su CSS

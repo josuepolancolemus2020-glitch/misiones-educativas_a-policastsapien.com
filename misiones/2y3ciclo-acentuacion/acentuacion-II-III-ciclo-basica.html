@@ -26,6 +26,9 @@
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
 <link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La animación que explica el tema, justo después de la historia. Va
+     DESPUÉS del CSS de la misión a propósito: se tiñe de su --pri y su --sec. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -75,6 +78,25 @@
         <div class="tip"><span class="ti">❓</span><div>Las mismas letras, en el mismo orden: lo único que cambió
         fue <strong>dónde carga la voz</strong>. Di en voz alta «publico», «publicó» y «público»: son tres
         palabras distintas y tres significados distintos. De eso trata esta misión.</div></div>
+      </div>
+      <!-- La animación que explica el tema, justo después de la historia: el
+           mensaje del maestro, «Mañana publico la lista de los que van.», y
+           la palabra «publico» partida en sus tres sílabas. Lo que leyó doña
+           Nely (la voz en «co»: «publicó») y lo que le costó; lo que escribió
+           el maestro (la voz en «bli»: «publico»); la tercera (la voz en
+           «pu»: «público»); dónde va la rayita, y el mensaje leído bien. La
+           mueve el alumno, paso a paso. El aparato es compartido
+           (js/animacion-mision.js) y la escena es de esta misión
+           (js/animacion-rayita.js). La frase de dentro es de reserva: si el
+           aparato no llega a cargar, se lee eso en vez de un hueco. -->
+      <div class="card ac-teal" data-animacion>
+        <h2>👀 Mira dónde carga la voz</h2>
+        <div id="amRayita">
+          <p>«Publico» tiene tres sílabas: pu, bli, co. Doña Nely cargó la voz en «co» y leyó «publicó»: ya pasó.
+          El maestro la cargaba en «bli»: «publico», la lista salía al día siguiente. Y cargada en «pu» es
+          otra palabra: «público». Solo «publico» va sin rayita; en las otras dos, la rayita avisa dónde carga
+          la voz.</p>
+        </div>
       </div>
       <div class="card ac-teal">
         <h2>🔤 ¿Qué es la Sílaba?</h2>
@@ -785,6 +807,9 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+<!-- La animación de la rayita: primero el aparato, después la escena. -->
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-rayita.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>
