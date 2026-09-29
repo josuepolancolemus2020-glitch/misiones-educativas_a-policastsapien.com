@@ -781,6 +781,57 @@ const LEER = `
       textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
     };
   };
+  /* Los Adverbios: el recado de Kenia, lo que copiaron en la libreta y el
+     plato. Todo en las coordenadas del dibujo, con cada pieza donde quedó. */
+  window.__amExtra.amRecado = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(base.multiply(el.getScreenCTM())); return [q.x, q.y]; }
+    function caja(el) { var b = el.getBBox(), a = aVista(el, b.x, b.y), c = aVista(el, b.x + b.width, b.y + b.height); return { x0: Math.min(a[0], c[0]), y0: Math.min(a[1], c[1]), x1: Math.max(a[0], c[0]), y1: Math.max(a[1], c[1]) }; }
+    function trazada(p) { return !!p && vis(p) && Math.abs(parseFloat(getComputedStyle(p).strokeDashoffset) || 0) < 1; }
+    function raya(el) { var d = getComputedStyle(el).strokeDasharray; if (!d || d === 'none') return 0; var v = d.split(/[ ,]+/).map(parseFloat).filter(isFinite); return v.length ? Math.max.apply(null, v) : 0; }
+    function todos(sel) { return [].slice.call(raiz.querySelectorAll(sel)); }
+    function extremos(p) { var L = p.getTotalLength(), a = p.getPointAtLength(0), b = p.getPointAtLength(L); return { a: aVista(p, a.x, a.y), b: aVista(p, b.x, b.y) }; }
+    function redondo(c) { var k = caja(c); return { c: [(k.x0 + k.x1) / 2, (k.y0 + k.y1) / 2], r: (k.x1 - k.x0) / 2 }; }
+    /* La TINTA de una palabra, no su renglón: getBBox da el alto de la
+       letra entera (con el aire de encima de las mayúsculas) y un marco
+       ceñido a lo que se ve saldría «fuera» sin estarlo. La mide el lienzo
+       con la misma letra. */
+    var lienzo = document.createElement('canvas').getContext('2d');
+    function tinta(t) {
+      var cs = getComputedStyle(t);
+      lienzo.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+      var m = lienzo.measureText(t.textContent), x0 = +t.getAttribute('x'), y0 = +t.getAttribute('y');
+      var a = aVista(t, x0 - m.actualBoundingBoxLeft, y0 - m.actualBoundingBoxAscent), b = aVista(t, x0 + m.actualBoundingBoxRight, y0 + m.actualBoundingBoxDescent);
+      return { x0: Math.min(a[0], b[0]), y0: Math.min(a[1], b[1]), x1: Math.max(a[0], b[0]), y1: Math.max(a[1], b[1]) };
+    }
+    var hueco = raiz.querySelector('[data-hueco]'), anillo = raiz.querySelector('[data-anillo]'), rb = raiz.querySelector('[data-rotulo-bocado]');
+    return {
+      libreta: caja(raiz.querySelector('[data-libreta]')),
+      recado: caja(raiz.querySelector('[data-recado]')),
+      rotulosPapel: todos('[data-rotulo-papel]').filter(vis).map(function (t) { return { de: t.getAttribute('data-rotulo-papel'), dice: t.textContent, caja: caja(t) }; }),
+      palabras: todos('[data-texto]').filter(vis).map(function (t) {
+        return { renglon: t.closest('[data-palabra]').getAttribute('data-renglon'), dice: t.textContent, caja: caja(t), tinta: tinta(t) };
+      }),
+      marcos: todos('[data-marco]').filter(vis).map(function (m) {
+        return { de: m.getAttribute('data-marco'), renglon: m.closest('[data-palabra]').getAttribute('data-renglon'), caja: caja(m), raya: raya(m) };
+      }),
+      hueco: hueco && vis(hueco) ? { caja: caja(hueco), raya: raya(hueco) } : null,
+      subraya: todos('[data-subraya]').filter(vis).map(function (p) { return { de: p.getAttribute('data-subraya'), caja: caja(p), raya: raya(p) }; }),
+      tiras: todos('[data-tira]').filter(vis).map(function (b) { return { de: b.getAttribute('data-tira'), caja: caja(b), raya: raya(b) }; }),
+      preguntas: todos('[data-pregunta]').filter(vis).map(function (t) { return { de: t.getAttribute('data-pregunta'), dice: t.textContent, caja: caja(t) }; }),
+      marcas: todos('[data-marca]').filter(vis).map(function (g) { return { de: g.getAttribute('data-marca'), caja: caja(g.querySelector('circle')) }; }),
+      plato: redondo(raiz.querySelector('[data-plato]')),
+      tortilla: redondo(raiz.querySelector('[data-tortilla-disco]')),
+      mordidas: todos('[data-bocado] circle').filter(vis).map(redondo),
+      anillo: anillo && vis(anillo) ? redondo(anillo) : null,
+      rotBocado: rb && vis(rb) ? { dice: rb.textContent, caja: caja(rb) } : null,
+      rotulos: todos('[data-rotulo]').filter(vis).map(function (g) { return { de: g.getAttribute('data-rotulo'), dice: g.querySelector('text').textContent, caja: caja(g.querySelector('rect')) }; }),
+      conectores: todos('[data-conector]').filter(trazada).map(function (p) { var e = extremos(p); return { de: p.getAttribute('data-conector'), palabra: p.getAttribute('data-de') || '', a: e.a, b: e.b }; }),
+      llave: todos('[data-llave]').filter(trazada).map(extremos),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -863,6 +914,7 @@ function regla(marcas, eje) {
 let escalaRedondel = 0;
 let escalaGallinero = null;
 let raizVerbos = null;
+let keniaAdverbios = null;
 
 const ESCENAS = {
   /* Los Verbos: el papel de Marvin. Se lee el papel palabra por palabra
@@ -1019,6 +1071,216 @@ const ESCENAS = {
     } else {
       r.push([x.rotulos.length + x.conectores.length === 0, `paso ${n}: todavía no hay rótulos`, [x.rotulos.length, x.conectores.length]]);
     }
+    return r;
+  },
+
+  /* Los Adverbios: el recado de Kenia. Se lee cada papel palabra por
+     palabra, y en qué papel quedó cada palabra, sin creerle a ningún
+     rótulo: el recado dice «Kenia casi no comió hoy.» y lo copiado, «Kenia
+     no comió hoy.». ⚠️ El plato es lo que pasó: a la tortilla le falta UN
+     bocado, en su orilla, y el anillo lo rodea; por eso el ✓ va al recado y
+     la ✗ a lo copiado. Al alinearse, cada palabra copiada queda debajo de
+     la suya y el hueco ocupa justo el sitio de «casi». Al recortarlos, los
+     tres adverbios salen de la nota con su borde de tijera y su pregunta, y
+     en la nota queda «Kenia comió.», que el marcador cuenta. ⚠️ «Kenia» no
+     se mueve nunca. ⚠️ Ninguna raya une «casi» con otra palabra: a qué
+     modifica es lo que la prueba pregunta en sus pareados. ⚠️ Y la prueba
+     no se regala: no sale ninguna palabra de sus preguntas, ni una clase de
+     adverbio. */
+  amRecado(e, n) {
+    const x = e.extra, r = [];
+    const nb = t => String(t == null ? '' : t).replace(/ /g, ' ').trim();
+    /* Lo que no depende del dibujo, primero: con una pieza mal puesta la
+       sonda deja de medir, y esto no puede quedarse sin mirar por eso. */
+    const dicho = [e.texto, e.cifra, e.palabras].concat(x.textos).map(nb).join(' | ');
+    const prohibidas = dicho.match(/bonit|\blent[ao]s?\b|feli[zc]|f[aá]cil|invariable|g[eé]nero|tranquil|\bserie\b|[a-záéíóúñ]+mente\b|cari[ñn]os|quiz[aá]s|lluev|\btela\b|despu[eé]s|recreo|lejos|\bt[íi]o\b|amable|alegre|veloz|\bbajo\b|biblioteca|temprano|lleg[aoó]|r[aá]pid|ma[ñn]ana|\br[íi]o\b|tal vez|\bluis\b|correct|honrad|deprisa|cort[eé]s|\bayer\b|comimos|\bbien\b|d[eé]bil|seren|educad|perro|ladr|fuerte|c[oó]mod|sincer|pr[aá]ctic|\bprima\b|cerca|\btarde\b|anoche|calor|choluteca|\blugar\b|tiempo|\bmodo\b|cantidad|afirmaci|negaci|\bduda\b|pronto|\bmuy\b|\balto\b|nunca|avi[oó]n|parque|aqu[íi]|\bcine\b|tampoco|demasiado|fiesta|abuel|bastante|tambi[eé]n|jam[aá]s|acaso|despacio|all[íi]\b|postre|\bnada\b|\bcomer\b|cumplea|examen|dif[íi]cil|herman|\bclaro\b|\bduro\b|\bpan\b|tortilla|mercado|siempre|mucho|afuera|pulper|leche|lempira|se[ñn]ora|\bpoco\b|\bm[aá]s\b/gi);
+    r.push([!prohibidas, `paso ${n}: no sale ninguna palabra de la prueba, ni una clase de adverbio`, prohibidas]);
+
+    const dentroDe = (c, k, tol = 0.5) => c.x0 >= k.x0 - tol && c.x1 <= k.x1 + tol && c.y0 >= k.y0 - tol && c.y1 <= k.y1 + tol;
+    const cruza = (a, b) => a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1;
+    const medio = c => [(c.x0 + c.x1) / 2, (c.y0 + c.y1) / 2];
+    const cortada = v => v > 0 && v < 8, entera = v => v === 0 || v > 20;
+    const orden = ws => ws.slice().sort((a, b) => a.caja.x0 - b.caja.x0);
+    const frase = ws => orden(ws).map(w => nb(w.dice)).join(' ').replace(/ \./g, '.');
+    /* Seguidas como se escriben: un espacio entre palabra y palabra, y el
+       punto pegado a la última. */
+    const seguidas = ws => orden(ws).every((w, i, o) => {
+      if (i === 0) return true;
+      const g = w.caja.x0 - o[i - 1].caja.x1;
+      return nb(w.dice) === '.' ? Math.abs(g) <= 1.5 : g > 2 && g < 7;
+    });
+    const PREG = { casi: '¿cuánto?', no: '¿sí o no?', hoy: '¿cuándo?' };
+
+    /* El recado: lo que dice, y qué quedó dentro de la nota. */
+    const rotR = x.rotulosPapel.find(q => q.de === 'recado');
+    r.push([!!rotR && nb(rotR.dice) === 'Recado de la mamá' && dentroDe(rotR.caja, x.recado), `paso ${n}: el recado lleva su rótulo, dentro de la nota`, rotR && rotR.dice]);
+    const enRecado = x.palabras.filter(w => w.renglon === 'recado');
+    const enNota = enRecado.filter(w => dentroDe(w.caja, x.recado, 1)), fueraNota = enRecado.filter(w => !dentroDe(w.caja, x.recado, 1));
+    const palabra = (lista, t) => lista.find(w => nb(w.dice) === t);
+    if (n === 4) {
+      r.push([frase(enNota) === 'Kenia comió.' && seguidas(enNota), 'paso 4: en la nota queda «Kenia comió.», seguido como se escribe', frase(enNota)]);
+      r.push([fueraNota.length === 3 && ['casi', 'no', 'hoy'].every(t => { const w = palabra(fueraNota, t); return !!w && dentroDe(w.caja, x.libreta) && w.caja.y0 > x.recado.y1; }),
+        'paso 4: «casi», «no» y «hoy» salieron de la nota y están en la libreta, debajo de ella', fueraNota.map(w => w.dice)]);
+    } else {
+      r.push([fueraNota.length === 0 && frase(enNota) === 'Kenia casi no comió hoy.' && seguidas(enNota),
+        `paso ${n}: el recado dice «Kenia casi no comió hoy.», seguido como se escribe`, [frase(enNota), fueraNota.map(w => w.dice)]]);
+    }
+    const kenia = palabra(enNota, 'Kenia');
+    if (!kenia) return r;
+    if (n === 0) keniaAdverbios = [kenia.caja.x0, kenia.caja.y1];
+    r.push([!!keniaAdverbios && Math.abs(kenia.caja.x0 - keniaAdverbios[0]) < 0.5 && Math.abs(kenia.caja.y1 - keniaAdverbios[1]) < 0.5,
+      `paso ${n}: «Kenia» no se movió ni un punto`, [keniaAdverbios, kenia.caja.x0]]);
+
+    /* Lo que copiaron en la libreta: debajo del recado, seguido en los dos
+       primeros pasos y alineado después, cada palabra debajo de la suya. */
+    const copiadas = x.palabras.filter(w => w.renglon === 'libreta');
+    const rotL = x.rotulosPapel.find(q => q.de === 'libreta');
+    if (n <= 3) {
+      r.push([frase(copiadas) === 'Kenia no comió hoy.' && copiadas.every(w => dentroDe(w.caja, x.libreta) && w.caja.y0 > x.recado.y1) &&
+        !!rotL && nb(rotL.dice) === 'Libreta de la escuela',
+        `paso ${n}: en la libreta, debajo del recado, dice «Kenia no comió hoy.»`, frase(copiadas)]);
+      if (n <= 1) {
+        r.push([seguidas(copiadas) && !x.hueco, `paso ${n}: lo copiado va seguido, como se escribió, y todavía sin hueco`, !!x.hueco]);
+      } else {
+        const debajo = copiadas.every(w => { const q = palabra(enNota, nb(w.dice)); return !!q && Math.abs(q.caja.x0 - w.caja.x0) <= 0.5; });
+        r.push([debajo, `paso ${n}: cada palabra copiada quedó debajo de la suya en el recado`, copiadas.map(w => [w.dice, Math.round(w.caja.x0)])]);
+        const casi = palabra(enNota, 'casi'), h = x.hueco;
+        const fila = { y0: Math.min(...copiadas.map(w => w.caja.y0)), y1: Math.max(...copiadas.map(w => w.caja.y1)) };
+        r.push([!!h && !!casi && cortada(h.raya) && Math.abs(h.caja.x0 - casi.caja.x0) <= 1 && Math.abs(h.caja.x1 - casi.caja.x1) <= 1 &&
+          h.caja.y0 < fila.y1 && h.caja.y1 > fila.y0 && !copiadas.some(w => cruza(w.caja, h.caja)),
+          `paso ${n}: en la libreta queda el hueco de «casi», con raya cortada, justo debajo de ella`, h && [Math.round(h.caja.x0), Math.round(h.caja.x1), h.raya]]);
+        if (n === 2 && h) {
+          const falta = enNota.find(w => Math.abs(w.caja.x0 - h.caja.x0) <= 1);
+          r.push([!!falta && e.cifra === nb(falta.dice) && e.texto.includes('«' + nb(falta.dice) + '»'),
+            'paso 2: el marcador y la frase dicen la palabra que hay encima del hueco', [e.cifra, falta && falta.dice]]);
+        }
+      }
+    } else {
+      r.push([copiadas.length === 0 && !rotL && !x.hueco, `paso ${n}: lo copiado ya se fue de la libreta`, copiadas.length]);
+    }
+
+    /* El ✓ y la ✗: el ✓ al lado del recado y la ✗ al lado de lo copiado. */
+    const bien = x.marcas.filter(m => m.de === 'bien'), mal = x.marcas.filter(m => m.de === 'mal');
+    const renglon = ws => ({ x1: Math.max(...ws.map(w => w.caja.x1)), y0: Math.min(...ws.map(w => w.caja.y0)), y1: Math.max(...ws.map(w => w.caja.y1)) });
+    const alLado = (m, ws) => { const q = renglon(ws); return m.caja.x0 > q.x1 && m.caja.y0 < q.y1 && m.caja.y1 > q.y0; };
+    const conBien = n >= 1 && n !== 4, conMal = n >= 1 && n <= 3;
+    r.push([bien.length === (conBien ? 1 : 0) && mal.length === (conMal ? 1 : 0) && (!conBien || alLado(bien[0], enNota)) && (!conMal || alLado(mal[0], copiadas)),
+      `paso ${n}: ${conBien ? '✓ al lado del recado' : 'sin ✓'}${conMal ? ' y ✗ al lado de lo copiado' : ', sin ✗'}`, [bien.length, mal.length]]);
+
+    /* El plato: a la tortilla le falta un bocado, en su orilla, y es poco:
+       lo que se comió se mide contando puntos de la tortilla que caen
+       dentro de las mordidas. */
+    const t = x.tortilla, ms = x.mordidas;
+    const dist = (p, q) => Math.hypot(p[0] - q[0], p[1] - q[1]);
+    const cm = ms.length ? [ms.reduce((a, m) => a + m.c[0], 0) / ms.length, ms.reduce((a, m) => a + m.c[1], 0) / ms.length] : null;
+    const unBocado = ms.length > 0 && ms.every(m => dist(m.c, cm) <= 8 && Math.abs(dist(m.c, t.c) - t.r) <= 3);
+    let dentroT = 0, comido = 0;
+    for (let px = t.c[0] - t.r; px <= t.c[0] + t.r; px += 0.5) for (let py = t.c[1] - t.r; py <= t.c[1] + t.r; py += 0.5) {
+      if (dist([px, py], t.c) > t.r) continue;
+      dentroT++;
+      if (ms.some(m => dist([px, py], m.c) <= m.r)) comido++;
+    }
+    const parte = dentroT ? comido / dentroT : 1;
+    r.push([unBocado && parte > 0.02 && parte < 0.15 && dist(t.c, x.plato.c) + t.r < x.plato.r,
+      `paso ${n}: a la tortilla le falta un bocado, en su orilla, y es poco (${Math.round(parte * 100)} %)`, [ms.length, Math.round(parte * 100)]]);
+    if (n === 0) {
+      r.push([!x.anillo && !x.rotBocado && e.cifra === '¿?', 'paso 0: el bocado está, pero nada lo señala todavía', [!!x.anillo, e.cifra]]);
+    } else {
+      const a = x.anillo;
+      r.push([!!a && !!cm && dist(a.c, cm) <= 3 && ms.every(m => dist(a.c, m.c) + m.r <= a.r + 0.5),
+        `paso ${n}: el anillo rodea el bocado`, a && [a.c.map(Math.round), a.r]]);
+      const rb = x.rotBocado;
+      r.push([!!rb && !!a && nb(rb.dice) === 'un bocado' && rb.caja.x0 > x.plato.c[0] + x.plato.r && Math.abs(medio(rb.caja)[1] - a.c[1]) <= 10,
+        `paso ${n}: al lado del anillo dice «un bocado»`, rb && rb.dice]);
+    }
+    if (n === 1) r.push([e.cifra === '1' && unBocado && /bocado/.test(e.palabras), 'paso 1: el marcador cuenta el bocado que falta', [e.cifra, e.palabras]]);
+
+    /* 2 · Lo que es igual en los dos papeles, enmarcado; y «casi»,
+       subrayada. Cada marco rodea su palabra y no se monta en la de al
+       lado. */
+    if (n === 2) {
+      const ok4 = ['recado', 'libreta'].every(rg => ['Kenia', 'comió'].every(tx => {
+        const m = x.marcos.find(q => q.renglon === rg && q.de === tx);
+        const lista = rg === 'recado' ? enNota : copiadas, w = palabra(lista, tx);
+        return !!m && !!w && dentroDe(w.tinta, m.caja, 0.5) && entera(m.raya) &&
+          !lista.some(o => o !== w && cruza(o.tinta, m.caja)) && !(x.hueco && cruza(x.hueco.caja, m.caja));
+      }));
+      r.push([x.marcos.length === 4 && ok4, 'paso 2: «Kenia» y «comió» enmarcados en los dos papeles, sin montarse en la palabra de al lado', x.marcos.map(q => [q.renglon, q.de])]);
+    } else {
+      r.push([x.marcos.length === 0, `paso ${n}: sin marcos`, x.marcos.length]);
+    }
+    const sub = x.subraya, casiN = palabra(enNota, 'casi');
+    if (n === 2 || n === 3) {
+      r.push([sub.length === 1 && !!casiN && entera(sub[0].raya) && Math.abs(sub[0].caja.x0 - casiN.caja.x0) <= 1.5 && Math.abs(sub[0].caja.x1 - casiN.caja.x1) <= 1.5 &&
+        sub[0].caja.y0 >= casiN.caja.y1 - 4 && sub[0].caja.y0 <= casiN.caja.y1 + 6,
+        `paso ${n}: «casi» va subrayada en el recado`, sub.map(q => q.de)]);
+    } else {
+      r.push([sub.length === 0, `paso ${n}: sin subrayado`, sub.length]);
+    }
+
+    /* 3 y 4 · Lo que dice cada adverbio: su pregunta, debajo de él. */
+    const esperadas = n === 3 ? ['casi'] : (n === 4 ? ['casi', 'no', 'hoy'] : []);
+    const pregOk = x.preguntas.length === esperadas.length && esperadas.every(tx => {
+      const q = x.preguntas.find(o => o.de === tx), w = palabra(enRecado, tx);
+      return !!q && !!w && nb(q.dice) === PREG[tx] && Math.abs(medio(q.caja)[0] - medio(w.caja)[0]) <= 1.5 && q.caja.y0 >= w.caja.y1 - 1 &&
+        !x.palabras.some(o => cruza(o.caja, q.caja));
+    }) && x.preguntas.every((q, i) => x.preguntas.every((o, j) => i === j || !cruza(q.caja, o.caja)));
+    r.push([pregOk, `paso ${n}: ${esperadas.length ? 'debajo de ' + esperadas.map(tx => '«' + tx + '» ' + PREG[tx]).join(', ') : 'ninguna pregunta'}, sin encimarse`, x.preguntas.map(q => [q.de, q.dice])]);
+    if (n === 3) r.push([e.cifra === PREG.casi, 'paso 3: el marcador dice lo que dice «casi»', e.cifra]);
+
+    /* 4 · Las tiras recortadas: cada adverbio con su borde de tijera, fuera
+       de la nota. Y lo que queda en la nota, contado. */
+    if (n === 4) {
+      r.push([x.tiras.length === 3 && ['casi', 'no', 'hoy'].every(tx => {
+        const b = x.tiras.find(q => q.de === tx), w = palabra(fueraNota, tx);
+        return !!b && !!w && cortada(b.raya) && dentroDe(w.tinta, b.caja, 0.5) && b.caja.y0 > x.recado.y1 && dentroDe(b.caja, x.libreta) &&
+          !x.palabras.some(o => o !== w && cruza(o.tinta, b.caja));
+      }), 'paso 4: cada adverbio recortado lleva su borde de tijera, fuera de la nota', x.tiras.map(q => q.de)]);
+      const enPie = enNota.filter(w => nb(w.dice) !== '.');
+      r.push([e.cifra === String(enPie.length) && e.palabras.includes('«' + frase(enNota) + '»') && e.texto.includes('«' + frase(enNota) + '»'),
+        'paso 4: el marcador cuenta las palabras que quedan en pie, y dice cuáles', [e.cifra, e.palabras]]);
+    } else {
+      r.push([x.tiras.length === 0, `paso ${n}: ninguna tira recortada`, x.tiras.length]);
+    }
+
+    /* 5 · Los nombres: «sustantivo» y «verbo» con su hilo hasta su
+       palabra, y los tres adverbios bajando a una misma raya de la que
+       cuelga el suyo. Ninguna raya une dos palabras. */
+    const rot = de => x.rotulos.find(q => q.de === de);
+    const con = de => x.conectores.filter(q => q.de === de);
+    const bajoDe = (p, w) => p[0] > w.caja.x0 && p[0] < w.caja.x1 && p[1] >= w.caja.y1 - 1 && p[1] <= w.caja.y1 + 6;
+    const enCaja = (p, k) => p[0] >= k.x0 - 2 && p[0] <= k.x1 + 2 && p[1] >= k.y0 - 2 && p[1] <= k.y1 + 2;
+    const une = (h, w, k) => !!h && !!w && !!k && ((bajoDe(h.a, w) && enCaja(h.b, k)) || (bajoDe(h.b, w) && enCaja(h.a, k)));
+    if (n === 5) {
+      r.push([x.rotulos.length === 3 && ['sustantivo', 'verbo', 'adverbios'].every(de => { const q = rot(de); return !!q && nb(q.dice) === de && q.caja.y0 > x.recado.y1 && dentroDe(q.caja, x.libreta); }),
+        'paso 5: los tres nombres, «sustantivo», «verbo» y «adverbios», en la libreta', x.rotulos.map(q => q.dice)]);
+      r.push([con('sustantivo').length === 1 && une(con('sustantivo')[0], kenia, rot('sustantivo') && rot('sustantivo').caja) &&
+        con('verbo').length === 1 && une(con('verbo')[0], palabra(enNota, 'comió'), rot('verbo') && rot('verbo').caja),
+        'paso 5: «sustantivo» cuelga de «Kenia» y «verbo», de «comió»', x.conectores.map(q => q.de)]);
+      const ticks = con('adverbio'), ll = x.llave[0];
+      const yL = ll ? ll.a[1] : NaN, xs = ticks.map(h => h.a[0]);
+      const ticksOk = ticks.length === 3 && ['casi', 'no', 'hoy'].every(tx => {
+        const h = ticks.find(q => q.palabra === tx), w = palabra(enNota, tx);
+        return !!h && !!w && bajoDe(h.a, w) && Math.abs(h.a[0] - h.b[0]) <= 0.5 && Math.abs(h.b[1] - yL) <= 1;
+      });
+      r.push([ticksOk && x.llave.length === 1 && Math.abs(ll.a[1] - ll.b[1]) <= 0.5 &&
+        Math.abs(Math.min(ll.a[0], ll.b[0]) - Math.min(...xs)) <= 1 && Math.abs(Math.max(ll.a[0], ll.b[0]) - Math.max(...xs)) <= 1,
+        'paso 5: de «casi», «no» y «hoy» baja una raya a cada uno, hasta la misma llave', ticks.map(h => h.palabra)]);
+      const tallo = con('adverbios')[0], rA = rot('adverbios');
+      r.push([con('adverbios').length === 1 && !!ll && !!rA && Math.abs(tallo.a[1] - yL) <= 1 && tallo.a[0] > Math.min(ll.a[0], ll.b[0]) && tallo.a[0] < Math.max(ll.a[0], ll.b[0]) && enCaja(tallo.b, rA.caja),
+        'paso 5: de la llave cuelga «adverbios»', tallo && [tallo.a.map(Math.round), tallo.b.map(Math.round)]]);
+      /* Las rayas de los adverbios no atraviesan los otros dos nombres. */
+      const otros = ['sustantivo', 'verbo'].map(rot).filter(Boolean);
+      r.push([ticks.every(h => otros.every(q => !(h.a[0] > q.caja.x0 - 1 && h.a[0] < q.caja.x1 + 1 && Math.min(h.a[1], h.b[1]) < q.caja.y1 && Math.max(h.a[1], h.b[1]) > q.caja.y0))),
+        'paso 5: las rayas de los adverbios no atraviesan «sustantivo» ni «verbo»']);
+      r.push([e.cifra === String(ticks.length) && ['casi', 'no', 'hoy'].every(tx => e.texto.toLowerCase().includes('«' + tx + '»')),
+        'paso 5: el marcador cuenta los adverbios que cuelgan de la llave, y la frase los nombra', [e.cifra, ticks.length]]);
+    } else {
+      r.push([x.rotulos.length + x.conectores.length + x.llave.length === 0, `paso ${n}: todavía sin nombres ni rayas`, [x.rotulos.length, x.conectores.length]]);
+    }
+    /* Ninguna raya une dos palabras del recado: a qué modifica «casi» es
+       una pregunta de la prueba. */
+    r.push([x.conectores.every(h => enRecado.filter(w => bajoDe(h.a, w) || bajoDe(h.b, w)).length <= 1), `paso ${n}: ninguna raya une dos palabras`]);
     return r;
   },
 

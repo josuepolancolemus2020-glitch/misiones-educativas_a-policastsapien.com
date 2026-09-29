@@ -2192,3 +2192,63 @@ body.letra-grande .sopa-cell {
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* ── La animación del recado de Kenia (js/animacion-recado.js) ────────
+   El botón que avanza va de teal a mostaza con letra blanca, y con el teal
+   y el mostaza de la misión la letra se quedaba en 3,4:1 y 2,9:1: va con
+   los dos un tono más oscuros, a más de 5:1. El número grande del marcador
+   va en el --pri-lt de la misión en la pantalla oscura, que ya se lee.
+
+   La libreta, el recado y el plato son cosas de verdad: se quedan como son
+   en las dos pantallas, con tinta oscura fija. Lo que se escribe fuera de
+   ellos (los rótulos del plato) lleva la tinta de la pantalla. Y nada se
+   dice solo con color: el hueco de lo que falta va con raya cortada, las
+   tiras recortadas con su borde de tijera, lo que acierta con ✓ y lo que
+   no, con ✗. */
+:root { --am-boton: linear-gradient(135deg, #00707c, #8a6500); }
+/* La libreta: la página, con su margen y sus renglones. */
+.am-raiz .ad-libreta { fill: #fdfdfb; stroke: #cfd6de; stroke-width: 1.2; }
+.am-raiz .ad-renglon { fill: none; stroke: #cfdff0; stroke-width: 1; }
+.am-raiz .ad-margen { fill: none; stroke: #efb4b4; stroke-width: 1; }
+/* El recado: un papelito amarillo, prendido con un clip. */
+.am-raiz .ad-recado { fill: #fff4c4; stroke: #d6c178; stroke-width: 1.2; }
+.am-raiz .ad-clip { fill: none; stroke: #7d8894; stroke-width: 1.7; stroke-linecap: round; }
+.am-raiz .ad-rotulo { fill: #5d6570; font-family: 'Fredoka', sans-serif; font-weight: 500; }
+.am-raiz .ad-tinta { fill: #22324a; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+/* La tira de cada adverbio: dentro del recado es del mismo amarillo y no
+   se ve; recortada, se ve sobre la libreta, con su borde de tijera. */
+.am-raiz .ad-tira { fill: #fff4c4; }
+.am-raiz .ad-tira-borde { fill: none; stroke: #9a8436; stroke-width: 1.2; stroke-dasharray: 3 2; }
+.am-raiz .ad-pregunta { fill: #22324a; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+/* Lo que es igual en los dos papeles, enmarcado; lo que falta, un hueco
+   con raya cortada; y la palabra que falta, subrayada entera. */
+.am-raiz .ad-marco { fill: none; stroke: #00707c; stroke-width: 1.5; }
+.am-raiz .ad-hueco { fill: none; stroke: #8b93a1; stroke-width: 1.3; stroke-dasharray: 4 3; }
+.am-raiz .ad-subraya { fill: none; stroke: #8a6500; stroke-width: 2.2; }
+/* Lo que acierta y lo que no. */
+.am-raiz .ad-bien-fondo { fill: #e8f5e9; stroke: #2e7d32; stroke-width: 1.4; }
+.am-raiz .ad-bien { fill: none; stroke: #2e7d32; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.am-raiz .ad-mal-fondo { fill: #ffebee; stroke: #c62828; stroke-width: 1.4; }
+.am-raiz .ad-mal { fill: none; stroke: #c62828; stroke-width: 2.2; stroke-linecap: round; }
+/* Los nombres del paso 5: «sustantivo» y «verbo» con borde gris; los tres
+   adverbios, con su llave y su rótulo en teal. */
+.am-raiz .ad-pildora rect { fill: #ffffff; stroke: #56606b; stroke-width: 1.4; }
+.am-raiz .ad-pildora-adv rect { stroke: #00707c; stroke-width: 1.8; }
+.am-raiz .ad-pildora-txt { fill: #22324a; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+.am-raiz .ad-hilo { fill: none; stroke: #56606b; stroke-width: 1.3; }
+.am-raiz .ad-hilo-adv { fill: none; stroke: #00707c; stroke-width: 1.6; }
+/* El plato, visto desde arriba. */
+.am-raiz .ad-plato-borde { fill: #ffffff; stroke: #b9c3ce; stroke-width: 1.2; }
+.am-raiz .ad-plato-fondo { fill: #f1f4f7; stroke: #d9e0e8; stroke-width: 1; }
+.am-raiz .ad-arroz { fill: #fbf6e8; stroke: #d6caa8; stroke-width: 0.9; }
+.am-raiz .ad-arroz-grano { fill: none; stroke: #cdbf99; stroke-width: 1; stroke-linecap: round; }
+.am-raiz .ad-frijol { fill: #6b3423; stroke: #4e2418; stroke-width: 0.9; }
+.am-raiz .ad-frijol-brillo { fill: none; stroke: #9a5a44; stroke-width: 1.2; stroke-linecap: round; }
+.am-raiz .ad-tortilla { fill: #efd9a2; stroke: #c3a260; stroke-width: 1; }
+.am-raiz .ad-tortilla-mancha { fill: #d4ae6c; }
+.am-raiz .ad-mordida { fill: #f1f4f7; }
+.am-raiz .ad-anillo { fill: none; stroke: #00707c; stroke-width: 2; }
+/* Lo que se escribe fuera de los papeles y del plato, con la tinta de la
+   pantalla. */
+.am-raiz .ad-afuera { fill: var(--dark); font-family: 'Fredoka', sans-serif; font-weight: 600; }
+.am-raiz .ad-afuera-suave { fill: var(--dark); fill-opacity: 0.75; font-family: 'Fredoka', sans-serif; font-weight: 500; }

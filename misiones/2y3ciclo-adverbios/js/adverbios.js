@@ -585,7 +585,8 @@ const identifyTaskDB = [
     { s: 'El perro corre rápidamente.', type: 'Adverbio de modo (rápidamente)' },
     { s: 'Comimos demasiado en la fiesta.', type: 'Adverbio de cantidad (demasiado)' },
     { s: 'Mi abuela vive lejos de aquí.', type: 'Adverbio de lugar (lejos, aquí)' },
-    { s: 'Tampoco quiero ir al cine hoy.', type: 'Adverbio de negación (Tampoco) / Adverbio de tiempo (hoy)' },
+    // «ahora» y no «hoy»: la animación del recado de Kenia ya señala «hoy».
+    { s: 'Tampoco quiero ir al cine ahora.', type: 'Adverbio de negación (Tampoco) / Adverbio de tiempo (ahora)' },
 ];
 const classifyTaskDB = [
     { w: 'aquí', tipo: 'Lugar' },
@@ -894,7 +895,9 @@ const evalCPBank=[
   {q:'El adverbio de «práctico» se arma con «___» + -mente.',a:'práctica',acc:['práctica'],k:'cp-practica'},
   {q:'En «Mi prima vive cerca», el adverbio es ___.',a:'cerca',acc:['cerca'],k:'cp-cerca'},
   {q:'Ellas duermen ___ (tarde / tardes).',a:'tarde',acc:['tarde'],k:'cp-tarde'},
-  {q:'En «Hoy hace calor en Choluteca», el adverbio es ___.',a:'hoy',acc:['hoy'],k:'cp-hoy'}
+  // «Anoche» y no «hoy»: la animación de la historia señala «hoy» en el
+  // recado de Kenia, y con eso esta raya se contestaba de memoria.
+  {q:'En «Anoche hizo calor en Choluteca», el adverbio es ___.',a:'anoche',acc:['anoche'],k:'cp-anoche'}
 ];
 const evalPRBank=[
   {term:'De lugar',def:'Responde ¿dónde?',k:'pr-lugar'},
@@ -1281,8 +1284,9 @@ const critTextBank = [
     },
     {
         scene: '🏪 En la pulpería',
-        html: '<u class="crit-adv">CERCA</u><sup>1</sup> de mi casa hay una pulpería. <u class="crit-adv">HOY</u><sup>2</sup> compré pan y pagué diez lempiras. La señora me atendió <u class="crit-adv">AMABLEMENTE</u><sup>3</sup>. «<u class="crit-adv">TAMBIÉN</u><sup>4</sup> llévate leche», me dijo. <u class="crit-adv">POSIBLEMENTE</u><sup>5</sup> regrese en la tarde.',
-        advs: [{ n: 1, w: 'CERCA', cls: 'lugar' }, { n: 2, w: 'HOY', cls: 'tiempo' }, { n: 3, w: 'AMABLEMENTE', cls: 'modo' }, { n: 4, w: 'TAMBIÉN', cls: 'afirmación' }, { n: 5, w: 'POSIBLEMENTE', cls: 'duda' }],
+        // TEMPRANO y no HOY: la animación del recado de Kenia ya señala «hoy».
+        html: '<u class="crit-adv">CERCA</u><sup>1</sup> de mi casa hay una pulpería. <u class="crit-adv">TEMPRANO</u><sup>2</sup> compré pan y pagué diez lempiras. La señora me atendió <u class="crit-adv">AMABLEMENTE</u><sup>3</sup>. «<u class="crit-adv">TAMBIÉN</u><sup>4</sup> llévate leche», me dijo. <u class="crit-adv">POSIBLEMENTE</u><sup>5</sup> regrese en la tarde.',
+        advs: [{ n: 1, w: 'CERCA', cls: 'lugar' }, { n: 2, w: 'TEMPRANO', cls: 'tiempo' }, { n: 3, w: 'AMABLEMENTE', cls: 'modo' }, { n: 4, w: 'TAMBIÉN', cls: 'afirmación' }, { n: 5, w: 'POSIBLEMENTE', cls: 'duda' }],
         effect: [
             { q: 'Si cambias POSIBLEMENTE (n.º 5) por SEGURAMENTE, ¿cómo cambia la certeza?', model: 'Aumenta la certeza: POSIBLEMENTE expresa duda; SEGURAMENTE expresa casi seguridad de que regresará.' },
             { q: 'Si eliminas el adverbio CERCA (n.º 1), ¿qué se pierde en la oración?', model: 'Se pierde el lugar: ya no sabríamos dónde está la pulpería respecto a la casa.' }

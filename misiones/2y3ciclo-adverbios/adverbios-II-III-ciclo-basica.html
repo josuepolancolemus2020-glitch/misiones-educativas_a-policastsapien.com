@@ -25,6 +25,9 @@
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
 <link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La animación que explica el tema, justo después de la historia. Va
+     DESPUÉS del CSS de la misión a propósito: se tiñe de su --pri y su --sec. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
   <style>
     /* ── Toggle de evaluación (Conceptual / Pensamiento Crítico) ── */
     .eval-mode-toggle{display:flex;gap:0.6rem;margin-bottom:1.2rem;flex-wrap:wrap;}
@@ -127,6 +130,24 @@
         <div class="tip"><span class="ti">❓</span><div>«Casi» es un <strong>adverbio</strong>: no cambia lo que se
         hizo, cambia <strong>cuánto</strong>. Quítale los adverbios a cualquier frase de esta página y mira qué
         queda en pie.</div></div>
+      </div>
+      <!-- La animación que explica el tema, justo después de la historia: el
+           recado de la mamá de Kenia prendido en la libreta de la escuela,
+           lo que copiaron debajo, y el plato de Kenia con un bocado menos.
+           El plato dice cuál de los dos acierta; lo copiado se corre debajo
+           del recado y queda el hueco de «casi»; y al recortar «casi», «no»
+           y «hoy» queda «Kenia comió.», que sigue en pie pero ya no dice
+           cuánto ni cuándo. La mueve el alumno, paso a paso. El aparato es
+           compartido (js/animacion-mision.js) y la escena es de esta misión
+           (js/animacion-recado.js). La frase de dentro es de reserva: si el
+           aparato no llega a cargar, se lee eso en vez de un hueco. -->
+      <div class="card ac-teal" data-animacion>
+        <h2>👀 Mira lo que decía la palabra borrada</h2>
+        <div id="amRecado">
+          <p>Al plato de Kenia le falta un bocado: el recado dice la verdad y la libreta no. En la libreta solo
+          falta «casi», y «casi» dice cuánto comió. Sin «casi», «no» y «hoy» queda «Kenia comió.»: la frase
+          sigue en pie, pero ya no dice cuánto ni cuándo. «Casi», «no» y «hoy» son adverbios.</p>
+        </div>
       </div>
       <div class="card ac-teal">
         <h2>🧭 ¿Qué es un Adverbio?</h2>
@@ -669,6 +690,9 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+<!-- La animación del recado de Kenia: primero el aparato, después la escena. -->
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-recado.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

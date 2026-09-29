@@ -7391,6 +7391,110 @@ marcador del paso 1 diciendo «-a», la noticia de después diciendo «Ya salió
 «mañana» en una frase, la raya de la raíz entera y la terminación despegada de
 la raíz), y salió roja con las siete.
 
+### La vigesimocuarta: Los Adverbios, y lo que enseñó
+
+La cuarta de la Ruta de la Palabra es **Los Adverbios**
+(`misiones/2y3ciclo-adverbios/`, `js/animacion-recado.js`). La historia es la
+del recado de la mamá de Kenia: «Kenia casi no comió hoy». Al copiarlo en la
+libreta de la escuela le quitaron una palabra y quedó «Kenia no comió hoy»: dos
+noticias distintas, y una es falsa. La animación pone el recado prendido con un
+clip en la libreta, lo copiado debajo y, abajo, el plato de Kenia:
+
+- el recado dice una cosa y la libreta otra: ¿cuál dice lo que pasó con su
+  plato?;
+- a la tortilla le falta un bocado: el recado lleva ✓ y lo copiado, ✗;
+- lo copiado se corre hasta quedar debajo del recado, palabra por palabra.
+  «Kenia» y «comió» están en los dos, enmarcados, y en la libreta queda el
+  hueco de «casi», con raya cortada;
+- «casi» no cambia lo que hizo Kenia: cambia cuánto. Debajo le sale su
+  pregunta, «¿cuánto?»;
+- se recortan «casi», «no» y «hoy», cada uno con su pregunta, y en la nota
+  queda «Kenia comió.»: la frase sigue en pie, pero ya no dice cuánto ni
+  cuándo;
+- vuelven a su sitio, y cada pieza con su nombre: el sustantivo, el verbo y
+  los tres adverbios, colgados de una misma llave.
+
+Seis cosas que valen para las siguientes:
+
+1. ⚠️ **El plato es lo que pasó, y lo que falta se mide.** Qué papel acierta no
+   lo dice un rótulo: lo dice el plato. «Casi no comió» es poco, así que a la
+   tortilla le falta UN bocado, en su orilla, y todo lo demás está entero. La
+   sonda cuenta los puntos de la tortilla que caen dentro de la mordida: hoy es
+   el 9 %, y tiene que quedar entre el 2 y el 15. Con media tortilla menos, el
+   dibujo le daría la razón a la libreta.
+2. ⚠️ **Nada dice a qué modifica «casi».** En «casi no comió», «casi» va con
+   «no», que es otro adverbio, y eso es justo lo que la prueba pregunta en sus
+   pareados («Lo que modifica «casi» en «casi nunca»»). Por eso «casi» lleva su
+   pregunta y ninguna raya lo une con otra palabra, y no se nombra ninguna
+   clase de adverbio: las clases son los otros pareados. La sonda comprueba en
+   cada paso que ninguna raya una dos palabras.
+3. ⚠️ **La cuenta de la animación estaba en la prueba, tres veces, y era
+   «hoy».** El completar «En «Hoy hace calor en Choluteca», el adverbio es
+   ___», una tarea con «Tampoco quiero ir al cine hoy» y el texto de la
+   pulpería de pensamiento crítico, que pedía clasificar «HOY». Con «hoy»
+   señalado en la animación, se contestaban de memoria. Ahora son «Anoche hizo
+   calor en Choluteca» (en la misión y en la ficha, que sigue en sus siete
+   hojas), «ahora» y «TEMPRANO». El calor se quedó: lo que se cambió es el
+   adverbio, no el clima de Choluteca. Lo que aplica la idea a otra
+   palabra se queda: «si quitas MUCHO, ¿qué se pierde?» es la animación hecha
+   por el alumno.
+4. ⚠️ **Lo que sale de un renglón baja primero y se aparta después.** Cada
+   tira va en dos capas, una por eje. En diagonal, la de «casi» pasaba por
+   encima de la «a» de «Kenia» y se leía «Kenic». Y de vuelta, las preguntas
+   se apagan antes de que las tiras se muevan: moviéndose encendidas se
+   enciman («¿cuántp o no?»). Las dos cosas solo se vieron en las fotos a
+   medio viaje, con la sonda en verde.
+5. **El ✓ se aparta mientras faltan los adverbios.** «Kenia comió.» no es
+   mentira (el bocado se lo comió), pero ya no es lo que dijo la mamá, y el ✓
+   era de su recado entero. Vuelve con ellos.
+6. **Los marcos van ceñidos.** Entre dos palabras hay cuatro puntos de
+   espacio, y un marco con tres de aire a cada lado se montaba en la palabra
+   de al lado. Van con uno y medio. Y el marcador no dice «un bocado menos»:
+   en una lección de adverbios, «menos» también es uno.
+
+Lo que es papel y comida se queda como es en las dos pantallas, con tinta
+oscura fija; los rótulos del plato llevan la tinta de la pantalla. Nada se dice
+solo con color: el hueco va con raya cortada, las tiras recortadas con su borde
+de tijera, y lo que acierta y lo que no, con ✓ y ✗. El botón que avanza lleva su
+`--am-boton`, porque con el teal y el mostaza de la misión la letra blanca se
+quedaba en 3,4:1 y 2,9:1.
+
+⚠️ **Y la sonda acusó dos veces a un dibujo sano antes de servir.** Medía cada
+palabra con `getBBox`, que da el alto de la letra entera, con el aire de encima
+de las mayúsculas: 21 puntos para una letra de 17. Con eso, un marco ceñido a lo
+que se ve «dejaba fuera» su palabra. Ahora mide la tinta con `measureText`, con
+la misma letra. Es la lección de «Cuadrado **Perfecto**» otra vez.
+
+La sonda de esta escena **lee cada papel palabra por palabra y mide en qué
+papel quedó cada una**, sin creerle a ningún rótulo. Comprueba:
+
+- que el recado diga «Kenia casi no comió hoy.», seguido como se escribe, y que
+  «Kenia» no se mueva ni un punto;
+- que lo copiado diga «Kenia no comió hoy.» debajo del recado: seguido en los
+  dos primeros pasos y, desde el tercero, cada palabra debajo de la suya, con
+  el hueco de raya cortada justo en el sitio de «casi»;
+- que el ✓ esté al lado del recado y la ✗ al lado de lo copiado, y que en el
+  paso 4 no haya ninguno;
+- que a la tortilla le falte un bocado en su orilla, y poco, y que el anillo lo
+  rodee con «un bocado» al lado;
+- que en el paso 2 los marcos rodeen la tinta de «Kenia» y «comió» en los dos
+  papeles sin montarse en la palabra de al lado, y que «casi» vaya subrayada;
+- que cada pregunta vaya debajo de su adverbio, sin encimarse: «¿cuánto?» en el
+  paso 3 y las tres en el 4;
+- que en el paso 4 las tres tiras estén fuera de la nota con su borde de
+  tijera, y que el marcador cuente lo que queda en la nota: «Kenia comió.»;
+- que en el paso 5 «sustantivo» cuelgue de «Kenia» y «verbo» de «comió», que
+  de cada adverbio baje una raya a la misma llave, que de la llave cuelgue
+  «adverbios», que esas rayas no atraviesen los otros dos nombres, y que el
+  marcador cuente los tres;
+- y que no salga ninguna palabra de la prueba ni una clase de adverbio.
+
+Se comprobó al revés con ocho averías plantadas a la vez (el anillo corrido
+siete puntos, «comió» copiado cuatro puntos fuera de su sitio, el marcador del
+paso 4 diciendo 3, «cantidad» en una frase, el ✓ en el paso 4, las preguntas de
+«no» y «hoy» cambiadas, el hueco corrido ocho puntos y una raya que unía «casi»
+con «no»), y salió roja con las ocho.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -7426,7 +7530,10 @@ Lo que sale de detrás de otra pieza se dibuja debajo de ella, y lo que se va en
 un paso se apaga, no se destraza: son las dos cosas que en Los Adjetivos solo
 se vieron a medio viaje. Y lo que ata una pieza que viaja a su destino (la raya
 del sobre hasta su punto, en Los Verbos) no viaja colgado de ella: va fijo en
-el destino y aparece cuando la pieza ya llegó.
+el destino y aparece cuando la pieza ya llegó. Lo que sale de un renglón y se
+aparta va en dos capas, una por eje, y baja antes de apartarse: en diagonal pasa
+por encima de la palabra de al lado. Y para decir si un marco rodea una
+palabra, la sonda mide su tinta con `measureText`, no su renglón con `getBBox`.
 
 Si el `--sec` de la misión es claro (un ámbar, un amarillo), la letra blanca
 del botón que avanza no se lee en su punta: la misión declara en su CSS
