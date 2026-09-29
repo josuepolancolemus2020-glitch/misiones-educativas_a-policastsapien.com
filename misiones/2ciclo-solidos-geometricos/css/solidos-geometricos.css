@@ -654,3 +654,42 @@ body.letra-grande p,body.letra-grande span,body.letra-grande li,body.letra-grand
 [data-theme="dark"] .juego-card{background:var(--card-bg);}
 [data-theme="dark"] .juego-card p{color:var(--dark);}
 [data-theme="dark"] .salto3d{color:var(--dark);}
+
+/* La animación del molde de la caja de Kenia, que va después de la historia
+   (js/animacion-molde.js).
+
+   El botón que avanza lleva letra blanca sobre el degradado de la misión, y
+   la punta de --sec (#00838f) la dejaba en 4,5:1 justo: con el teal un tono
+   más oscuro pasa de 5:1. Es el mismo degradado de Teoría de Números.
+
+   Los lados de la caja van en azul y las tapas en amarillo cartulina, en el
+   molde y en la caja; la tapa que se cambia de lugar lleva además el borde
+   del color de la misión en los dos dibujos, para que se vea que es la
+   misma. El hueco de arriba es oscuro, como se ve el fondo de una caja
+   abierta. */
+:root {
+  --am-boton: linear-gradient(135deg, #1565c0, #00796b);
+  --sg-lado: #86b8ec; --sg-sombra: #5d95d0; --sg-tapa: #f3c655; --sg-borde: #1d4f82;
+  --sg-hueco: #34414f; --sg-lazo: #d9483b;
+}
+[data-theme="dark"] {
+  --sg-lado: #3b70a9; --sg-sombra: #2b5787; --sg-tapa: #c89a2f; --sg-borde: #c9e4ff;
+  --sg-hueco: #0b1016; --sg-lazo: #e0665a;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --sg-lado: #3b70a9; --sg-sombra: #2b5787; --sg-tapa: #c89a2f; --sg-borde: #c9e4ff;
+    --sg-hueco: #0b1016; --sg-lazo: #e0665a;
+  }
+}
+.am-raiz .sg-cara { stroke: var(--sg-borde); stroke-width: 1; stroke-linejoin: round; }
+.am-raiz .sg-lado { fill: var(--sg-lado); }
+.am-raiz .sg-sombra { fill: var(--sg-sombra); }
+.am-raiz .sg-tapa { fill: var(--sg-tapa); }
+.am-raiz .sg-movida { stroke: var(--am-pri); stroke-width: 2.4; }
+.am-raiz .sg-raya { fill: none; stroke: var(--sg-borde); stroke-width: 1.2; stroke-dasharray: 3 2.5; }
+.am-raiz .sg-hueco { fill: var(--sg-hueco); stroke: var(--sg-borde); stroke-width: 1.4; stroke-dasharray: 4 3; }
+.am-raiz .sg-borde { fill: none; stroke: var(--sg-borde); stroke-width: 1.6; stroke-linejoin: round; }
+.am-raiz .sg-lazo { fill: var(--sg-lazo); stroke: none; }
+.am-raiz .sg-flecha { fill: none; stroke: var(--gray, #636e72); stroke-width: 2; stroke-linecap: round; }
+.am-raiz .sg-punta { fill: var(--gray, #636e72); }

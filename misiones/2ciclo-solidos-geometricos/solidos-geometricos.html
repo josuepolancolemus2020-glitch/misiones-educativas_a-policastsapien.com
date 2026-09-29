@@ -27,6 +27,9 @@
 <!-- La sección 🎬 Videos. Va DESPUÉS del CSS de la misión a propósito:
      se tiñe del --pri y del --sec que la misión acaba de declarar. -->
 <link rel="stylesheet" href="../../css/videos-mision.css">
+  <!-- La animación que explica el tema, justo después de la historia. Va
+       DESPUÉS del CSS de la misión a propósito: se tiñe de su --pri y su --sec. -->
+  <link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -74,6 +77,21 @@
     <div class="tip"><span class="ti">❓</span><div>Un molde no cierra por casualidad: cierra cuando
     tiene <strong>las caras que ese cuerpo tiene</strong>, ni una más ni una menos, y pegadas donde van.
     Por eso lo primero aquí es contar caras, aristas y vértices antes de gastar la cartulina.</div></div>
+  </div>
+  <!-- La animación que explica el tema, justo después de la historia: el
+       molde de la caja de Kenia, con los lados en tira y las dos tapas pegadas
+       abajo. Al doblarlo, una tapa cierra el fondo, a la otra no le queda
+       lugar y arriba queda un hueco; pegada arriba en el molde, la segunda
+       tapa cierra la caja. No cuenta caras ni nombra el cuerpo: eso lo
+       pregunta la prueba. La mueve el alumno, paso a paso. El aparato es
+       compartido (js/animacion-mision.js) y la escena es de esta misión
+       (js/animacion-molde.js). La frase de dentro es de reserva: si el
+       aparato no llega a cargar, se lee eso en vez de un hueco. -->
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira por qué la caja no cerró</h2>
+    <div id="amMolde">
+      <p>En el molde de Kenia las dos tapas iban pegadas abajo. Al doblarlo, una cierra el fondo y a la otra no le queda lugar: sobra. Arriba queda el hueco. Si esa tapa se pega arriba en el molde, al doblarla cierra la caja por arriba: cada cara pegada donde va.</p>
+    </div>
   </div>
   <div class="card ac-purple">
     <h2>🔮 Predice antes de resolver</h2>
@@ -924,6 +942,9 @@
       siguiente: { id: 's-quiz', texto: '🧠 Ir al Quiz' }
     });
   </script>
+<!-- La animación del molde: primero el aparato, después la escena. -->
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-molde.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

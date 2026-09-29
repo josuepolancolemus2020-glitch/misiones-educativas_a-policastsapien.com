@@ -624,6 +624,27 @@ const LEER = `
       })
     };
   };
+  /* Sólidos Geométricos: el molde de la caja de Kenia. De cada pieza del
+     molde y de cada cara de la caja que se ve se leen sus esquinas, ya
+     puestas en la vista con el movimiento que lleven encima (la tapa que se
+     cambia de lugar va girada); y los rótulos que se ven. */
+  window.__amExtra.amMolde = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(base.multiply(el.getScreenCTM())); return [q.x, q.y]; }
+    function puntos(el) { var out = []; for (var i = 0; i < el.points.length; i++) out.push(aVista(el, el.points[i].x, el.points[i].y)); return out; }
+    function medio(el) { var b = el.getBBox(); return aVista(el, b.x + b.width / 2, b.y + b.height / 2); }
+    function todos(sel) { return [].slice.call(raiz.querySelectorAll(sel)); }
+    return {
+      piezas: todos('[data-pieza]').filter(vis).map(function (p) {
+        return { nombre: p.getAttribute('data-pieza'), p: puntos(p), movida: p.classList.contains('sg-movida') };
+      }),
+      caras: todos('[data-cara]').filter(vis).map(function (p) {
+        return { nombre: p.getAttribute('data-cara'), p: puntos(p), movida: p.classList.contains('sg-movida') };
+      }),
+      dice: todos('.sg-dice').filter(vis).map(function (t) { return { que: t.getAttribute('data-dice'), dice: t.textContent, c: medio(t) }; })
+    };
+  };
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -707,6 +728,103 @@ let escalaRedondel = 0;
 let escalaGallinero = null;
 
 const ESCENAS = {
+  /* Sólidos Geométricos: el molde de la caja de Kenia. Del molde se mide
+     que la tira de los lados sea una tira (misma altura, pegados uno al
+     otro, los lados opuestos iguales) y dónde está pegada cada tapa: a qué
+     lado y si arriba o abajo, borde con borde. De ahí sale lo que la caja
+     tiene que mostrar, y se compara con lo que muestra: qué boca cierra,
+     si queda hueco, si una tapa sobra y cuelga, y cuántas bocas dice el
+     marcador. ⚠️ Y ni el «Predice» ni la prueba se regalan: aquí no se
+     cuentan caras, aristas ni vértices, no se nombra el cuerpo, y no hay
+     dado, cubo ni nada que gire. */
+  amMolde(e, n) {
+    const x = e.extra, r = [];
+    const nb = t => String(t == null ? '' : t).replace(/ /g, ' ').trim();
+    /* Ni el «Predice» ni la prueba: no se cuenta ni se nombra. Va primero,
+       porque no depende del dibujo: con una pieza mal puesta la sonda deja de
+       medir, y esto no puede quedarse sin mirar por eso. */
+    const dicho = [e.texto, e.cifra, e.palabras].map(nb).join(' | ');
+    const numsDichos = (dicho.match(/\d+/g) || []).map(Number);
+    r.push([![6, 8, 11, 12].some(v => numsDichos.includes(v)) && !/seis|ocho|once|doce|dado|cubo|cono|gir[ao]|prisma|arista|v[ée]rtice/i.test(dicho),
+      `paso ${n}: no cuenta caras, aristas ni vértices, no nombra el cuerpo y no sale nada del Predice`, numsDichos]);
+    const cerca = (a, b, t = 0.6) => Math.abs(a - b) <= t;
+    const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+    const caja = p => { const xs = p.map(q => q[0]), ys = p.map(q => q[1]); return { x0: Math.min(...xs), x1: Math.max(...xs), y0: Math.min(...ys), y1: Math.max(...ys), w: Math.max(...xs) - Math.min(...xs), h: Math.max(...ys) - Math.min(...ys) }; };
+    const pz = Object.fromEntries(x.piezas.map(p => [p.nombre, Object.assign(caja(p.p), { movida: p.movida })]));
+    const tira = ['izquierdo', 'frente', 'derecho', 'atras'].map(k => pz[k]);
+    r.push([tira.every(Boolean) && !!pz['tapa-fija'] && !!pz['tapa-movil'], `paso ${n}: el molde tiene su tira de lados y sus dos tapas`, Object.keys(pz)]);
+    if (!tira.every(Boolean) || !pz['tapa-fija'] || !pz['tapa-movil']) return r;
+    const [izq, fre, der, atr] = tira;
+    r.push([tira.every(p => cerca(p.y0, izq.y0) && cerca(p.y1, izq.y1)) && cerca(izq.x1, fre.x0) && cerca(fre.x1, der.x0) && cerca(der.x1, atr.x0) &&
+      cerca(izq.w, der.w) && cerca(fre.w, atr.w),
+      `paso ${n}: los lados van en tira, pegados, con los opuestos iguales`, tira.map(p => [p.x0.toFixed(1), p.w.toFixed(1)])]);
+
+    /* Dónde está pegada cada tapa: borde con borde, a lo ancho entero de un
+       lado, por arriba o por abajo. Y cada tapa mide lo que la cara de arriba
+       de la caja: el largo del frente por el ancho de un costado. */
+    const pegada = t => {
+      for (const [nom, p] of [['izquierdo', izq], ['frente', fre], ['derecho', der], ['atras', atr]]) {
+        if (!cerca(t.x0, p.x0) || !cerca(t.x1, p.x1)) continue;
+        if (cerca(t.y1, p.y0)) return { lado: nom, donde: 'arriba' };
+        if (cerca(t.y0, p.y1)) return { lado: nom, donde: 'abajo' };
+      }
+      return null;
+    };
+    const tapas = [pz['tapa-fija'], pz['tapa-movil']];
+    const pegadas = tapas.map(pegada);
+    const medida = t => { const m = [t.w, t.h].sort((a, b) => a - b), c = [fre.w, izq.w].sort((a, b) => a - b); return cerca(m[0], c[0]) && cerca(m[1], c[1]); };
+    r.push([pegadas.every(Boolean) && tapas.every(medida), `paso ${n}: cada tapa va pegada borde con borde a un lado, y mide lo que la cara de arriba`, pegadas]);
+    if (!pegadas.every(Boolean)) return r;
+    const arriba = pegadas.filter(p => p.donde === 'arriba').length, abajo = pegadas.filter(p => p.donde === 'abajo').length;
+    /* La historia: las dos abajo hasta el paso 2; después, una en cada boca. */
+    r.push([n <= 2 ? abajo === 2 && arriba === 0 : abajo === 1 && arriba === 1,
+      `paso ${n}: ${n <= 2 ? 'las dos tapas van abajo, como las pegó Kenia' : 'una tapa arriba y otra abajo'}`, [arriba, abajo]]);
+
+    /* La caja. */
+    const cf = Object.fromEntries(x.caras.map(c => [c.nombre, c]));
+    const cifra = nb(e.cifra);
+    if (n === 0) {
+      r.push([!x.caras.length && cifra === '¿?', 'paso 0: todavía no hay caja: solo el molde sobre la mesa', [x.caras.length, cifra]]);
+    } else {
+      const f = cf.frente && caja(cf.frente.p), d = cf.derecho && cf.derecho.p;
+      r.push([!!f && !!d && cerca(f.w / f.h, fre.w / izq.h, 0.02) && dist(d[0], [f.x1, f.y1]) < 0.8,
+        `paso ${n}: el frente de la caja tiene la forma del frente del molde, y el costado sale de su esquina`, f && [(f.w / f.h).toFixed(3), (fre.w / izq.h).toFixed(3)]]);
+      if (!f || !d) return r;
+      const dv = [d[1][0] - d[0][0], d[1][1] - d[0][1]];
+      /* Con las tapas sin doblar la caja tiene sus dos bocas abiertas; con las
+         tapas dobladas, lo que muestra sale de dónde están pegadas. */
+      const dobladas = n >= 2;
+      const conTapa = dobladas && arriba >= 1, sobran = dobladas ? Math.max(0, abajo - 1) + Math.max(0, arriba - 1) : 0;
+      const bocas = dobladas ? (arriba === 0 ? 1 : 0) + (abajo === 0 ? 1 : 0) : 2;
+      r.push([!!cf.hueco === !conTapa && !!cf['tapa-arriba'] === conTapa && !!cf['tapa-cuelga'] === (sobran > 0),
+        `paso ${n}: la caja muestra lo que sale del molde: ${conTapa ? 'tapada arriba' : 'hueco arriba'}${sobran ? ', y una tapa que sobra' : ''}`,
+        { hueco: !!cf.hueco, tapa: !!cf['tapa-arriba'], cuelga: !!cf['tapa-cuelga'] }]);
+      const top = cf.hueco || cf['tapa-arriba'];
+      if (top) r.push([dist(top.p[0], [f.x0, f.y0]) < 0.8 && dist(top.p[1], [f.x1, f.y0]) < 0.8 && dist([top.p[2][0] - top.p[1][0], top.p[2][1] - top.p[1][1]], dv) < 0.8,
+        `paso ${n}: lo de arriba cubre justo la boca de la caja`, null]);
+      if (cf['tapa-cuelga']) {
+        /* La que sobra cuelga del borde de abajo del costado, con su lado largo
+           hacia abajo: mide lo que el frente de largo. */
+        const c = cf['tapa-cuelga'].p;
+        r.push([dist(c[0], d[0]) < 0.8 && dist(c[1], d[1]) < 0.8 && cerca(c[3][1] - c[0][1], f.w, 0.8) && cerca(c[3][0], c[0][0]),
+          `paso ${n}: la tapa que sobra cuelga del borde de abajo del costado, con el largo del frente`, null]);
+      }
+      /* La tapa que se cambia de lugar lleva su marca en los dos dibujos. */
+      const suya = cf['tapa-cuelga'] || cf['tapa-arriba'];
+      if (suya && dobladas) r.push([pz['tapa-movil'].movida && suya.movida, `paso ${n}: la tapa que se cambia va marcada en el molde y en la caja`, null]);
+      r.push([cifra === `${bocas} boca${bocas === 1 ? '' : 's'}`, `paso ${n}: el marcador dice ${cifra} y la caja tiene ${bocas} ${bocas === 1 ? 'abierta' : 'abiertas'}`, [cifra, bocas]]);
+      /* Los rótulos: «hueco» si hay hueco, encima de él; «sobra» junto a la que sobra. */
+      const dH = x.dice.find(t => t.que === 'hueco'), dS = x.dice.find(t => t.que === 'sobra');
+      const topC = top ? [top.p.reduce((s, q) => s + q[0], 0) / 4, Math.min(...top.p.map(q => q[1]))] : null;
+      r.push([!!dH === !!cf.hueco && (!dH || (nb(dH.dice) === 'hueco' && Math.abs(dH.c[0] - topC[0]) < 12 && dH.c[1] < topC[1])),
+        `paso ${n}: «hueco» solo si hay hueco, y encima de él`, dH && dH.c]);
+      const cuC = cf['tapa-cuelga'] ? [cf['tapa-cuelga'].p.reduce((s, q) => s + q[0], 0) / 4, cf['tapa-cuelga'].p.reduce((s, q) => s + q[1], 0) / 4] : null;
+      r.push([!!dS === !!cf['tapa-cuelga'] && (!dS || (nb(dS.dice) === 'sobra' && dist(dS.c, cuC) < 36)),
+        `paso ${n}: «sobra» solo si una tapa sobra, y junto a ella`, dS && dS.c]);
+    }
+
+    return r;
+  },
   /* Volumen de Cuerpos: el tanque de mil litros. Las tres aristas del
      tanque dan la regla: cuánto se corre el dibujo por cada cubito a lo
      largo, hacia arriba y hacia el fondo. Con ella se mide cada bloque, que

@@ -1094,6 +1094,15 @@ function _mcmDe(a, b) { let m = a; while (m % b !== 0) m += a; return m; }
 // I. Cuenta las partes del sólido (5 × 4 = 20 pts) — Bloques 1, 2 y 4
 const _SOL_POL = _solPoliedros();
 const _SOL_TODOS = _SOL_K;
+/* ⚠️ La caja de la animación no cae en la prueba. La animación que va
+   después de la historia arma el molde de la caja de Kenia, con los lados
+   en tira y las dos tapas: un prisma de base de 4 lados contado por su
+   forma. Por eso aquí un prisma de base de 4 lados se corre al de 5, sin
+   sacar otro número del azar: el resto de cada forma sale igual. Salía en
+   11 ítems de las treinta formas. El prisma rectangular por su nombre sí
+   se queda: es la tabla de la misión, y la animación no lo nombra ni
+   cuenta sus caras. */
+function _fueraDeLaCaja(n) { return n === 4 ? 5 : n; }
 function genMultDivItems() {
   const items = [];
   { const k = _SOL_POL[_opRint(0, _SOL_POL.length - 1)], s = _SOL[k];
@@ -1102,7 +1111,7 @@ function genMultDivItems() {
     items.push({ text: `¿Cuántas aristas tiene el ${s.n}?`, ansNum: s.a }); }
   { const k = _SOL_POL[_opRint(0, _SOL_POL.length - 1)], s = _SOL[k];
     items.push({ text: `¿Cuántos vértices tiene el ${s.n}?`, ansNum: s.v }); }
-  { const n = _opRint(3, 8);
+  { const n = _fueraDeLaCaja(_opRint(3, 8));
     items.push({ text: `Un prisma tiene una base de ${n} lados. ¿Cuántas caras tiene en total, contando las dos bases?`, ansNum: n + 2 }); }
   { const n = _opRint(3, 8);
     items.push({ text: `Una pirámide tiene una base de ${n} lados. ¿Cuántas aristas tiene en total?`, ansNum: n * 2 }); }
@@ -1157,7 +1166,7 @@ const _VI_CAJAS = [['galletas', 'prisma rectangular'], ['jugos', 'prisma rectang
 const _VI_LADOS = [3, 4, 5, 6, 8];
 function genVidaItems() {
   const items = [];
-  { const nom = OP_NAMES[_opRint(0, OP_NAMES.length - 1)]; const n = _VI_LADOS[_opRint(0, _VI_LADOS.length - 1)];
+  { const nom = OP_NAMES[_opRint(0, OP_NAMES.length - 1)]; const n = _fueraDeLaCaja(_VI_LADOS[_opRint(0, _VI_LADOS.length - 1)]);
     items.push({ text: `${nom} va a forrar con papel una caja con forma de prisma de base de ${n} lados. ¿Cuántas caras tiene que forrar en total?`, ansNum: n + 2, just: `${n} caras laterales + 2 bases` }); }
   { const n = _VI_LADOS[_opRint(0, _VI_LADOS.length - 1)];
     items.push({ text: `Para armar el esqueleto de una pirámide de base de ${n} lados se usa un palito por arista. ¿Cuántos palitos hacen falta?`, ansNum: n * 2, just: `${n} de la base + ${n} que suben a la cúspide` }); }

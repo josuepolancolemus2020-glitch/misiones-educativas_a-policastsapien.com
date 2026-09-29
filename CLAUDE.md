@@ -6918,10 +6918,13 @@ Seis cosas que valen para las demás:
    al final del paso está donde tiene que estar: se vio en los cuadros a medio
    camino. Ahora se enciende encima del hexágono, se queda un momento y
    después viaja.
-6. **En una escena no hay ningún `pts(`, aunque sea otra cosa.** La función que
-   armaba los puntos del dibujo se llamaba así, y la sonda leída del archivo
-   la acusó de dar XP: es el nombre de la función del puntaje en todas las
-   misiones, y la sonda no adivina cuál es cuál. Se llama `puntos`.
+6. **Y volvió a pasar lo del `pts(`, que ya estaba escrito.** La función que
+   armaba los puntos del dibujo se llamaba así, como en la escena de la
+   bisectriz, y la sonda leída del archivo la acusó de dar XP: es el nombre de
+   la función del puntaje en todas las misiones, y la sonda no adivina cuál es
+   cuál. Se llama `puntos`. La regla está en «Cómo se pone en la misión
+   siguiente» desde entonces; escribir la escena sin releerla es lo que la
+   hizo volver.
 
 La sonda de esta escena **mide las dos tapas en el dibujo**. La escala sale del
 rótulo del lado del hexágono. Comprueba:
@@ -7016,6 +7019,70 @@ diciendo 10 L, la quinta capa rotulada 400 L, una fila del fondo que no llega,
 la muestra aplastada, «el doble» en una frase y el fondo de otro color hasta el
 final), y salió roja con las seis.
 
+### La vigésima: Sólidos Geométricos, y lo que enseñó
+
+En **Sólidos Geométricos** (`misiones/2ciclo-solidos-geometricos/`,
+`js/animacion-molde.js`) la historia es la de Kenia. Recortó en cartulina el
+molde de una caja para el regalo del Día de la Madre, dobló por las rayas y le
+quedó una cara de sobra por un lado y un hueco por el otro. Era la única
+cartulina de la casa, y el regalo fue sin envolver. La animación pone el molde a
+la izquierda y la caja a la derecha:
+
+- el molde de Kenia: los lados en tira y las dos tapas, las dos pegadas abajo;
+- se dobla por las rayas y los lados se juntan: la caja queda abierta arriba y
+  abajo;
+- las tapas se doblan: una cierra el fondo, a la otra no le queda lugar y
+  cuelga («sobra»), y arriba queda el hueco;
+- esa tapa se despega y se pega arriba del mismo lado, dándose la vuelta como
+  una solapa; en la caja deja de colgar y tapa el hueco;
+- la caja cierra, y el regalo va envuelto: le sale el lazo.
+
+Cinco cosas que valen para las demás:
+
+1. ⚠️ **Cuando el tema de la historia es lo que preguntan el «Predice» y la
+   prueba, se elige el caso que no preguntan, y no se cuenta ni se nombra.** El
+   «Predice» pregunta si una caja de zapatos y un dado tienen las mismas caras,
+   qué sale al girar un triángulo y si una cruz de seis cuadrados se dobla en un
+   cubo. La tercera ya la contesta la historia («pegadas donde van»). Y la prueba
+   pregunta cuántas caras, aristas y vértices tiene casi cada cuerpo, y de qué
+   figuras son sus caras. Por eso:
+   - la caja no es la del prisma triangular, que habría sido la más bonita de
+     doblar: su molde, con sus tres rectángulos y sus dos triángulos, es la
+     respuesta de dos preguntas de completar;
+   - es la caja de siempre, un prisma rectangular, que la prueba conceptual no
+     pregunta;
+   - y la animación no dice cuántas caras tiene ni cómo se llama: enseña dónde
+     va cada una. La sonda no deja pasar «prisma», «arista», «vértice», «dado»,
+     «cubo» ni un número del «Predice».
+2. **La operativa la preguntaba por su forma, y eso sí se cambió.** «Un prisma
+   tiene una base de 4 lados: ¿cuántas caras tiene, contando las dos bases?» y
+   «forrar una caja con forma de prisma de base de 4 lados» son la caja de la
+   animación contada. Salían en 11 ítems de las treinta formas; el 4 se corre al
+   5 sin sacar otro número del azar, así que 20 formas salen iguales y en las
+   otras 10 cambió solo ese ítem (la respuesta pasa de 6 a 7). Lo que la nombra,
+   «el prisma rectangular», se queda: es la tabla de la misión.
+3. **Lo que muestra la caja sale de lo que dice el molde, y la sonda lo
+   deduce.** Mide dónde está pegada cada tapa (a qué lado, arriba o abajo, borde
+   con borde) y de ahí saca qué boca cierra, si sobra una tapa y cuántas bocas
+   quedan abiertas. Después lo compara con la caja y con el marcador. Un dibujo
+   de la derecha que no sale del de la izquierda sale rojo.
+4. ⚠️ **Lo que no depende del dibujo se comprueba primero.** Con una pieza mal
+   puesta la sonda deja de medir, porque sin la tira bien armada no hay nada que
+   deducir. Por eso el guardia de palabras iba al final y se quedaba sin mirar:
+   la prueba al revés plantó «las seis caras» en una frase y no salió, porque
+   la tapa mal pegada cortaba antes. Ahora va primero.
+5. **El hueco se queda hasta que la tapa lo cubre.** Se iba al empezar el paso y
+   la tapa llegaba casi un segundo después: arriba de la caja no había ni hueco
+   ni tapa, que no es nada. Se vio en los cuadros a medio camino, con la sonda en
+   verde.
+
+Se comprobó al revés con seis averías plantadas: el lado derecho de la tira más
+ancho que el izquierdo, la tapa movida sin darse la vuelta (queda montada sobre
+la tira), la tapa de arriba puesta desde el paso 2, la que sobra más corta que
+el frente, el marcador del paso 2 diciendo «2 bocas» y «las seis caras» en la
+última frase. La primera se corrió aparte, porque deja a la sonda sin tira que
+medir y tapa a las demás; salieron rojas las seis.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -7035,6 +7102,9 @@ sus `pasos`, `construir`, `pintar(n, antes)`, `texto(n)`, `boton(n)`,
 `atajo(n)` y `marcador(n)`; la cabecera de `js/animacion-mision.js` lo
 cuenta entero. Y en `_dev/verifica-animacion-mision.js` se le añade su
 entrada a `ESCENAS`: lo que esa escena afirma, contado sobre el dibujo.
+Lo que no depende del dibujo, como las palabras y los números que no pueden
+salir, va primero en esa entrada: con una pieza mal puesta la sonda deja de
+medir, y lo que va después se queda sin mirar.
 
 Ninguna función de la escena se llama `pts`: en las misiones, `pts()` es lo que
 da XP, y la sonda estática lo busca por ese nombre. Una cuenta larga no va en el
