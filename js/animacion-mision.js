@@ -156,6 +156,17 @@
     else n.textContent = txt;
   }
 
+  /* ⚠️ Una cuenta no se parte entre dos renglones. «315 ÷ 4.5 = 70»
+     cortado después del ÷ se lee como dos cosas, y así estuvo publicado en
+     dos escenas, en un teléfono de 360 px, sin que nadie lo viera: la escena
+     escribe la frase con espacios normales y el renglón se corta donde cae.
+     Se arregla AQUÍ, una vez: los espacios de dentro de una cuenta (entre
+     una cifra, un signo y la cifra siguiente) pasan a ser de los que no se
+     parten. La escena escribe la frase como se lee y el aparato la cuida. */
+  function sinPartir(t) {
+    return String(t == null ? '' : t).replace(/(\d)[ \u00a0]*([×÷+−=<>])[ \u00a0]*(?=\d)/g, '$1\u00a0$2\u00a0');
+  }
+
   function crear(tag, clase, texto) {
     var n = document.createElement(tag);
     if (clase) n.className = clase;
@@ -263,7 +274,7 @@
         void cifra.offsetWidth;          // reinicia la animación del número
         cifra.classList.add('am-pop');
       }
-      palabras.textContent = dato.palabras || '';
+      palabras.textContent = sinPartir(dato.palabras);
       salto.classList.remove('am-sube');
       if (dato.salto) {
         salto.textContent = dato.salto;
@@ -279,7 +290,7 @@
       svg.classList.toggle('am-quieto', !animar || sinMovimiento.matches);
       escena.pintar(n, antes, ayuda);
 
-      texto.textContent = escena.texto(n);
+      texto.textContent = sinPartir(escena.texto(n));
       sigue.textContent = escena.boton(n);
       atras.disabled = n === 0;
       var a = escena.atajo ? escena.atajo(n) : null;
@@ -352,9 +363,9 @@
       anchoMedido = ancho;
       var altoT = 0, altoP = 0, altoC = 0;
       for (var m = 0; m < escena.pasos; m++) {
-        mTexto.textContent = escena.texto(m);
+        mTexto.textContent = sinPartir(escena.texto(m));
         var dato = escena.marcador ? escena.marcador(m, m) : null;
-        mPalabras.textContent = dato && dato.palabras ? dato.palabras : '';
+        mPalabras.textContent = sinPartir(dato && dato.palabras);
         ponCifra(mCifra, dato && dato.cifra ? dato.cifra : '');
         altoT = Math.max(altoT, mTexto.getBoundingClientRect().height);
         altoP = Math.max(altoP, mPalabras.getBoundingClientRect().height);

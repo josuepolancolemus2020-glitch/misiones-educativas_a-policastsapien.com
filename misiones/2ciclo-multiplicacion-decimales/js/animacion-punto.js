@@ -83,7 +83,7 @@
   var R0 = 24, R1 = 296, RY = 150, POR_L = (R1 - R0) / 50;
 
   var TEXTOS = [
-    'Doña Chepa multiplicó 35 × 125 y le salió 4375. Esa cuenta está bien hecha. ¿Dónde va el punto? Decídelo antes de tocar.',
+    'Doña Chepa multiplicó 35 × 125 y le dio 4375: la cuenta está bien. ¿Dónde va el punto? Decídelo antes de tocar.',
     'Para multiplicar, le quitó el punto a 3.5. Quitarlo es correrlo un lugar a la derecha: 35 es diez veces 3.5.',
     'Al precio le hizo lo mismo. El 0 del final no cambia nada: 12.50 es 12.5. Sin el punto queda 125, otra vez diez veces más.',
     'Así, 35 × 125 es la cuenta de otra compra: 35 libras a L 125. Diez veces más frijol y diez veces más caro: cien veces más.',

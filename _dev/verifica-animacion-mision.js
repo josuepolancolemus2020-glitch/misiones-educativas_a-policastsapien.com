@@ -11,6 +11,8 @@
    1. Que cada paso diga algo distinto, con frases de 25 palabras o
       menos: la misma vara que la ruta de IA, porque esto lo lee el
       alumno de cuarto.
+      Y que ninguna cuenta de la frase («315 ÷ 4.5 = 70») se parta entre
+      dos renglones: cortada después del ÷ se lee como dos cosas.
    2. Que «Atrás» vuelva, que el último paso empiece otra vez, y que
       Enter y la barra espaciadora avancen sin deslizar la página.
    3. Que con «reducir movimiento» no se mueva nada y sin él sí.
@@ -340,6 +342,63 @@ const LEER = `
       hueco: todos('.dl-hueco').length
     };
   };
+  /* Multiplicación Vertical: los siete renglones de 43 y la cuenta corta,
+     en cuadrícula. La cuadrícula se saca de sus propias rayas («M x y V …»
+     las de pie y «M x y H …» las acostadas); cada cifra dice de qué es (un
+     renglón, lo que se lleva, el resultado) y se mide dónde cae. */
+  window.__amExtra.amCopias = function (raiz) {
+    var vis = window.__amVisible;
+    function todos(sel) { return [].filter.call(raiz.querySelectorAll(sel), vis); }
+    var svg = raiz.querySelector('svg'), s = svg.getBoundingClientRect(), k = s.width / svg.viewBox.baseVal.width;
+    function caja(el) { var b = el.getBoundingClientRect(); return { x0: (b.left - s.left) / k, x1: (b.right - s.left) / k, y0: (b.top - s.top) / k, y1: (b.bottom - s.top) / k }; }
+    function medio(el) { var c = caja(el); return { x: (c.x0 + c.x1) / 2, y: (c.y0 + c.y1) / 2 }; }
+    var cols = [], filas = [];
+    raiz.querySelector('.mv-rejilla path').getAttribute('d').split('M').slice(1).forEach(function (t) {
+      var p = t.trim().split(/[ ,]+/);
+      if (p[2] === 'V') cols.push(+p[0]); else if (p[2] === 'H') filas.push(+p[1]);
+    });
+    function orden(a, b) { return a - b; }
+    return {
+      cols: cols.sort(orden), filas: filas.sort(orden),
+      cifras: todos('.mv-cifra').map(function (t) { var c = medio(t); return { grupo: t.getAttribute('data-grupo'), cifra: t.textContent, x: c.x, y: c.y }; }),
+      sumas: todos('.mv-suma').map(function (g) {
+        var ts = [].filter.call(g.querySelectorAll('text'), vis).map(function (t) { return { c: t.textContent, x: medio(t).x }; })
+          .sort(function (a, b) { return a.x - b.x; });
+        return { col: g.getAttribute('data-col'), dice: ts.map(function (t) { return t.c; }).join(''), y: medio(g).y };
+      }),
+      nota: todos('.mv-mas').map(function (t) { var c = medio(t); return { dice: t.textContent, x: c.x, y: c.y }; }),
+      signos: todos('.mv-signo').map(function (t) { var c = medio(t); return { dice: t.textContent, x: c.x, y: c.y }; }),
+      raya: todos('.mv-raya').map(function (p) { return medio(p).y; }),
+      bandas: todos('.mv-banda').map(function (b) { var c = caja(b); return { x: (c.x0 + c.x1) / 2, y0: c.y0, y1: c.y1 }; }),
+      rotulos: todos('.mv-rotulo').map(function (t) { return { dice: t.textContent, y: medio(t).y }; }),
+      hueco: todos('.mv-hueco').length,
+      aro: todos('.mv-aro').map(medio),
+      olvido: todos('.mv-olvido').map(medio),
+      mal: todos('.mv-mal').map(caja)
+    };
+  };
+  /* Las cuentas de la frase y de las palabras del marcador que el renglón
+     parte en dos («315 ÷» arriba y «4.5 = 70» abajo). Se le pregunta al
+     navegador: un Range por cuenta, y si sus pedazos caen en dos alturas,
+     se partió. */
+  window.__amPartidas = function (id) {
+    var raiz = document.getElementById(id), out = [];
+    var RE = /[0-9](?:[0-9.,]*[0-9])?(?:[ \u00a0]*[×÷+−=<>][ \u00a0]*[0-9](?:[0-9.,]*[0-9])?)+/g;
+    ['.am-texto', '.am-palabras'].forEach(function (sel) {
+      var nodo = raiz.querySelector(sel).firstChild;
+      if (!nodo || nodo.nodeType !== 3) return;
+      var s = nodo.textContent, m;
+      RE.lastIndex = 0;
+      while ((m = RE.exec(s))) {
+        var rg = document.createRange();
+        rg.setStart(nodo, m.index); rg.setEnd(nodo, m.index + m[0].length);
+        var altos = {};
+        [].forEach.call(rg.getClientRects(), function (q) { if (q.width > 0.5) altos[Math.round(q.top)] = 1; });
+        if (Object.keys(altos).length > 1) out.push(m[0].replace(/\u00a0/g, ' '));
+      }
+    });
+    return out;
+  };
   window.__amLeer = function (id) {
     var raiz = document.getElementById(id);
     var svg = raiz.querySelector('svg');
@@ -396,6 +455,163 @@ function regla(marcas, eje) {
 
 /* ── lo propio de cada escena ───────────────────────────────── */
 const ESCENAS = {
+  /* Multiplicación Vertical: las copias de la guía (7 hojas para cada uno
+     de sus 43 alumnos). La cuadrícula se saca de sus propias rayas y cada
+     renglón se lee por el cuadro donde cae cada cifra. Las cuentas se
+     rehacen AQUÍ, aparte: que cada suma que va corriendo sea su columna
+     sumada hasta ese renglón, que lo que se escribe y lo que se lleva sean
+     las unidades y las decenas de la columna, que los siete renglones sumen
+     lo que dice el resultado, que la cuenta corta dé lo mismo que la larga,
+     y lo que cuesta olvidarse del 2. */
+  amCopias(e, n) {
+    const x = e.extra, r = [];
+    const HISTORIA = { hojas: 7, alumnos: 43 };
+    const cerca = (a, b, t = 1.5) => Math.abs(a - b) <= t;
+    const nb = t => String(t).replace(/ /g, ' ');
+    const NUM = ['cero', 'una', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete'];
+
+    /* ── La cuadrícula, de sus propias rayas ── */
+    const { cols, filas } = x;
+    const P = cols[1] - cols[0], FILA = filas[1] - filas[0];
+    r.push([cols.length === 5 && filas.length >= 9 && cols.every((c, i) => i === 0 || cerca(c - cols[i - 1], P, 0.01)) &&
+      filas.every((f, i) => i === 0 || cerca(f - filas[i - 1], FILA, 0.01)),
+      `paso ${n}: la cuadrícula tiene cuatro columnas iguales (el signo, centenas, decenas y unidades) y renglones iguales`, [cols.length, filas.length]]);
+    const VALOR = [0, 100, 10, 1];
+    const celda = p => ({ col: cols.findIndex((c, i) => i < cols.length - 1 && p.x > c && p.x < cols[i + 1]),
+                          fila: filas.findIndex((f, i) => i < filas.length - 1 && p.y > f && p.y < filas[i + 1]) });
+    const cifras = x.cifras.map(c => Object.assign({}, c, celda(c)));
+    const llaves = cifras.map(c => c.col + ':' + c.fila);
+    r.push([cifras.every(c => c.col >= 1 && c.fila >= 0 && cerca(c.x, (cols[c.col] + cols[c.col + 1]) / 2, 2)) && new Set(llaves).size === llaves.length,
+      `paso ${n}: cada cifra va centrada en su cuadro, y una sola por cuadro`, cifras.map(c => c.cifra + '@' + c.col + ':' + c.fila)]);
+
+    /* ── Los renglones, leídos por su columna ── */
+    const renglon = f => cifras.filter(c => c.fila === f && c.grupo !== 'lleva').reduce((a, c) => a + VALOR[c.col] * +c.cifra, 0);
+    const filasDe = g => [...new Set(cifras.filter(c => c.grupo === g).map(c => c.fila))].sort((a, b) => a - b);
+    const sumandos = filasDe('sumando');
+    const signos = x.signos.map(sg => Object.assign({ dice: sg.dice }, celda(sg)));
+    const filaRaya = x.raya.length === 1 ? filas.findIndex(f => cerca(f, x.raya[0], 1.5)) : -1;
+    const lleva = cifras.filter(c => c.grupo === 'lleva');
+    const res = cifras.filter(c => c.grupo === 'resultado');
+    const filasRes = [...new Set(res.map(c => c.fila))];
+    const leido = res.length ? renglon(res[0].fila) : null;
+    const rot = t => x.rotulos.find(q => q.dice === t);
+    const enFila = (y, f) => f >= 0 && y > filas[f] && y < filas[f + 1];
+    const digitoDe = (f, col) => { const c = cifras.find(q => q.fila === f && q.col === col && q.grupo === 'sumando'); return c ? +c.cifra : 0; };
+
+    if (n <= 3) {
+      /* La suma larga: siete renglones de 43, uno por hoja. */
+      const seguidos = sumandos.every((f, i) => i === 0 || f === sumandos[i - 1] + 1);
+      r.push([sumandos.length === HISTORIA.hojas && seguidos && sumandos.every(f => renglon(f) === HISTORIA.alumnos),
+        `paso ${n}: son ${sumandos.length} renglones seguidos de ${HISTORIA.alumnos}, uno por hoja`, sumandos.map(renglon)]);
+      const ult = sumandos[sumandos.length - 1];
+      r.push([signos.length === 1 && signos[0].dice === '+' && signos[0].col === 0 && signos[0].fila === ult && filaRaya === ult + 1,
+        `paso ${n}: el + va en el último renglón y la raya debajo de él`, [signos.map(q => q.dice + '@' + q.col + ':' + q.fila), filaRaya]]);
+      r.push([sumandos.every((f, i) => { const q = rot('hoja ' + (i + 1)); return q && enFila(q.y, f); }) && x.rotulos.length === HISTORIA.hojas,
+        `paso ${n}: cada renglón dice de qué hoja es, de la 1 a la ${HISTORIA.hojas}`, x.rotulos.map(q => q.dice)]);
+      if (res.length) r.push([filasRes.length === 1 && filasRes[0] === ult + 1, `paso ${n}: el resultado va en el renglón de debajo de la raya`, filasRes]);
+
+      /* Las columnas, sumadas aparte. */
+      const colU = sumandos.map(f => digitoDe(f, 3)), colD = sumandos.map(f => digitoDe(f, 2));
+      const corrida = lista => lista.map((_, i) => lista.slice(0, i + 1).reduce((a, b) => a + b, 0));
+      const totU = corrida(colU)[colU.length - 1], totD = corrida(colD)[colD.length - 1];
+      const bandaCol = x.bandas.map(b => celda({ x: b.x, y: (b.y0 + b.y1) / 2 }).col);
+      const sumasDe = c => x.sumas.filter(q => q.col === c);
+      const bienSumas = (c, lista) => {
+        const qs = sumasDe(c), esperado = corrida(lista);
+        return qs.length === sumandos.length && sumandos.every((f, i) => { const q = qs.find(z => enFila(z.y, f)); return q && q.dice === String(esperado[i]); });
+      };
+      if (n === 0) {
+        r.push([res.length === 0 && x.hueco >= 1 && lleva.length === 0 && x.sumas.length === 0 && x.bandas.length === 0 && x.nota.length === 0,
+          'paso 0: el resultado todavía es un signo de pregunta, y no se ha sumado nada', [res.length, x.hueco, lleva.length, x.sumas.length]]);
+      }
+      if (n === 1) {
+        r.push([bandaCol.length === 1 && bandaCol[0] === 3 && bienSumas('U', colU) && sumasDe('D').length === 0,
+          `paso 1: la columna de las unidades se suma renglón por renglón: ${corrida(colU).join(', ')}`, sumasDe('U').map(q => q.dice)]);
+      }
+      if (n >= 2) {
+        r.push([bandaCol.length === 1 && bandaCol[0] === 2 && bienSumas('D', colD) && sumasDe('U').length === 0,
+          `paso ${n}: la columna de las decenas se suma renglón por renglón: ${corrida(colD).join(', ')}`, sumasDe('D').map(q => q.dice)]);
+      }
+      if (n >= 1) {
+        /* Lo que se escribe y lo que se lleva: las unidades y las decenas de
+           lo que dio la columna. */
+        const u = res.find(c => c.col === 3), ll = lleva[0];
+        r.push([!!u && +u.cifra === totU % 10 && lleva.length === 1 && ll.col === 2 && ll.fila === sumandos[0] - 1 && +ll.cifra === Math.floor(totU / 10),
+          `paso ${n}: de ${totU} se escribe el ${totU % 10} en las unidades y el ${Math.floor(totU / 10)} se lleva arriba de las decenas`, [u && u.cifra, ll && ll.cifra]]);
+      }
+      if (n === 2) r.push([res.length === 1 && x.nota.length === 0, 'paso 2: todavía no se suma el 2 que se llevaba', res.map(c => c.cifra)]);
+      if (n >= 2) r.push([x.aro.length === 1 && lleva.length === 1 && cerca(x.aro[0].x, lleva[0].x, 2) && cerca(x.aro[0].y, lleva[0].y, 4),
+        `paso ${n}: el 2 que se llevaba está marcado`, x.aro]);
+      if (n === 3) {
+        /* La cuenta de las decenas con lo que se llevaba: 28 + 2 = 30, en el
+           renglón de la última hoja, y el 30 partido en su cuadro. */
+        const nota = x.nota.slice().sort((a, b) => a.x - b.x), dice = nota.map(q => q.dice).join('');
+        const m = dice.match(/^\+(\d+)=(\d+)$/), total = totD + Math.floor(totU / 10);
+        r.push([!!m && nota.every(q => enFila(q.y, ult)) && +m[1] === +lleva[0].cifra && +m[2] === total,
+          `paso 3: a la derecha dice ${totD} + ${lleva[0] && lleva[0].cifra} = ${total}: las decenas y lo que se llevaba`, dice]);
+        const d = res.find(c => c.col === 2), c = res.find(q => q.col === 1);
+        r.push([!!d && !!c && +d.cifra === total % 10 && +c.cifra === Math.floor(total / 10),
+          `paso 3: de ${total} se escribe el ${total % 10} en las decenas y el ${Math.floor(total / 10)} va delante`, res.map(q => q.cifra)]);
+        const suma = sumandos.reduce((a, f) => a + renglon(f), 0);
+        r.push([leido === suma && suma === HISTORIA.hojas * HISTORIA.alumnos,
+          `paso 3: el resultado dice ${leido}, y los siete renglones sumados aparte dan ${suma}`, [leido, suma]]);
+      } else r.push([x.nota.length === 0, `paso ${n}: sin la cuenta de las decenas a la derecha`, x.nota.map(q => q.dice)]);
+    } else {
+      /* La cuenta corta: el 43, el × 7 y el resultado, en tres renglones. */
+      const arriba = sumandos[0], por = cifras.filter(c => c.grupo === 'por');
+      const m = por.length === 1 ? +por[0].cifra : NaN;
+      r.push([sumandos.length === 1 && renglon(arriba) === HISTORIA.alumnos && por.length === 1 && por[0].col === 3 && por[0].fila === arriba + 1 && m === HISTORIA.hojas &&
+        signos.length === 1 && signos[0].dice === '×' && signos[0].col === 0 && signos[0].fila === arriba + 1 && filaRaya === arriba + 2 && filasRes.length === 1 && filasRes[0] === arriba + 2,
+        `paso ${n}: en tres renglones: ${renglon(arriba)}, × ${m} y el resultado debajo de la raya`, [sumandos.map(renglon), por.map(q => q.cifra), signos.map(q => q.dice), filaRaya, filasRes]]);
+      const rotCorto = [['alumnos', arriba], ['hojas', arriba + 1], ['en total', arriba + 2]];
+      r.push([rotCorto.every(([t, f]) => { const q = rot(t); return q && enFila(q.y, f); }) && !x.rotulos.some(q => /^hoja \d/.test(q.dice)),
+        `paso ${n}: el 43 dice «alumnos», el 7 «hojas» y el resultado «en total»`, x.rotulos.map(q => q.dice)]);
+      const a = renglon(arriba), u = a % 10, dd = Math.floor(a / 10);
+      const llevaBien = Math.floor(u * m / 10), bien = a * m, sinLlevar = dd * m * 10 + (u * m) % 10;
+      if (n === 5) {
+        const faltan = bien - sinLlevar, completas = Math.floor(sinLlevar / m), sinGuia = HISTORIA.alumnos - completas;
+        r.push([lleva.length === 0 && x.olvido.length === 1 && cerca(x.olvido[0].x, (cols[2] + cols[3]) / 2, 2) && enFila(x.olvido[0].y, arriba - 1),
+          'paso 5: el 2 que se llevaba ya no está: queda su hueco, con raya cortada', [lleva.length, x.olvido]]);
+        r.push([leido === sinLlevar && x.mal.length === 1 && res.every(c => c.x > x.mal[0].x0 && c.x < x.mal[0].x1 && c.y > x.mal[0].y0 && c.y < x.mal[0].y1),
+          `paso 5: sin el 2 sale ${leido}: ${dd * m} en las decenas tal cual, y va marcado con raya cortada`, [leido, sinLlevar]]);
+        r.push([!!rot('sin el 2') && !!rot(`faltan ${faltan} hojas`) && new RegExp(`faltan ${faltan} hojas`).test(nb(e.texto)) &&
+          new RegExp(`${NUM[sinGuia]} alumnos se quedan sin la guía completa`).test(nb(e.texto)),
+          `paso 5: faltan ${faltan} hojas; con ${sinLlevar} alcanzan ${completas} guías de ${m}, y ${sinGuia} alumnos se quedan sin la suya`, [x.rotulos.map(q => q.dice), faltan, sinGuia]]);
+      } else {
+        r.push([lleva.length === 1 && lleva[0].col === 2 && lleva[0].fila === arriba - 1 && +lleva[0].cifra === llevaBien && x.olvido.length === 0,
+          `paso ${n}: arriba de las decenas sigue el ${llevaBien} que se lleva (${m} × ${u} = ${u * m})`, lleva.map(q => q.cifra)]);
+        r.push([leido === bien && x.mal.length === 0, `paso ${n}: ${a} × ${m} = ${leido}, lo mismo que la suma larga`, leido]);
+      }
+      if (n === 6) r.push([x.aro.length === 1, 'paso 6: el 2 que se lleva va marcado', x.aro.length]);
+      r.push([x.sumas.length === 0 && x.bandas.length === 0 && x.nota.length === 0 && x.hueco === 0,
+        `paso ${n}: sin las sumas de la suma larga`, [x.sumas.length, x.bandas.length, x.nota.length, x.hueco]]);
+    }
+
+    /* ── El marcador dice lo que se ve ── */
+    const dice = nb(e.cifra);
+    if (n === 0) r.push([dice === `${HISTORIA.alumnos} × ${sumandos.length}`, `paso 0: el marcador dice ${dice}: ${sumandos.length} renglones de ${HISTORIA.alumnos}`, dice]);
+    if (n === 1 || n === 2) {
+      const q = cuenta(dice), col = n === 1 ? 3 : 2, dig = digitoDe(sumandos[0], col), ult = x.sumas[x.sumas.length - 1];
+      r.push([dice === `${sumandos.length} × ${dig} = ${q.hecho}` && q.hecho === q.dice && !!ult && q.dice === +ult.dice,
+        `paso ${n}: el marcador dice ${dice}, que es la columna sumada`, [dice, ult && ult.dice]]);
+    }
+    if (n === 3) {
+      const q = cuenta(dice), nota = x.nota.slice().sort((a, b) => a.x - b.x).map(z => z.dice).join('');
+      r.push([q.hecho === q.dice && nota.endsWith('=' + q.dice) && dice.startsWith(String(x.sumas.map(z => +z.dice).reduce((a, b) => Math.max(a, b), 0))),
+        `paso 3: el marcador dice ${dice}, lo mismo que la cuenta de la derecha`, [dice, nota]]);
+    }
+    if (n === 4) { const q = cuenta(dice); r.push([q.hecho === q.dice && q.dice === leido, `paso 4: el marcador dice ${dice}, lo mismo que el dibujo`, [dice, leido]]); }
+    if (n >= 5) r.push([dice === String(leido), `paso ${n}: el marcador dice ${dice}, lo mismo que el resultado del dibujo`, [dice, leido]]);
+
+    /* ⚠️ Lo que pregunta el «Predice» de abajo (en qué cifra termina 34 × 5,
+       cuánto es 45 × 10 y si 23 × 14 pasa de 300) no sale en ningún paso:
+       ni una regla de la última cifra, ni multiplicar por diez, ni estimar. */
+    const todo = [e.texto, e.palabras, e.cifra].concat(x.rotulos.map(q => q.dice), x.nota.map(q => q.dice)).map(nb).join(' | ');
+    const regalo = todo.match(/(^|[^\d])(34|45|10|23|14|170|450|322|300)(?![\d])|termina|diez|mayor que|menor que|redonde|estim|aproxim/i);
+    r.push([!regalo, `paso ${n}: no dice nada de lo que pregunta el «Predice» (la última cifra, × 10, estimar)`, regalo ? regalo[0] : undefined]);
+    return r;
+  },
+
   /* División de Decimales: los galones de don Chele (4.5 galones por
      L 315, y allá pagan L 68 el galón). Los galones se cuentan sobre el
      dibujo, llenos y a la mitad; la división se lee de sus cifras y de su
@@ -1451,6 +1667,7 @@ function frases(t) {
     /* 1 · el recorrido entero, con el dedo */
     midiendo = true;
     const vistos = [];
+    let partidasTodas = 0;
     const escena = ESCENAS[m.id];
     for (let n = 0; n < base.pasos; n++) {
       const e = await pag.evaluate(id => window.__amLeer(id), m.id);
@@ -1459,11 +1676,15 @@ function frases(t) {
       const largas = frases(e.texto).filter(x => x > 25);
       if (!e.texto.trim() || largas.length) ok(false, `paso ${n}: la frase existe y ninguna pasa de 25 palabras`, largas);
       if (escena) for (const [bien, txt, extra] of escena(e, n)) ok(bien, txt, extra);
+      const partidas = await pag.evaluate(id => window.__amPartidas(id), m.id);
+      if (partidas.length) ok(false, `paso ${n}: ninguna cuenta se parte entre dos renglones`, partidas);
+      partidasTodas += partidas.length;
       await pag.click(`#${m.id} .am-sigue`);
     }
     const repetidas = vistos.filter((e, i) => i > 0 && e.texto === vistos[i - 1].texto).length;
     ok(repetidas === 0, 'cada paso dice algo distinto del anterior', repetidas);
     ok(vistos.every(e => e.texto.trim()) , `las ${vistos.length} frases existen y son de 25 palabras o menos`);
+    ok(partidasTodas === 0, 'ninguna cuenta de las frases se parte entre dos renglones', partidasTodas);
     const vuelta = await pag.evaluate(id => window.__amLeer(id), m.id);
     ok(vuelta.paso === 0 && vuelta.texto === vistos[0].texto, 'el último paso empieza otra vez desde el principio');
     /* ⚠️ El botón que avanza no se mueve de un paso a otro, ni el dibujo.

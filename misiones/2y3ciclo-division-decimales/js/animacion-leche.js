@@ -83,7 +83,7 @@
     'Diez entregas iguales son 45 galones y L 3,150. El galón sale al mismo precio: 315 ÷ 4.5 da lo mismo que 3150 ÷ 45.',
     'Eso es correr el punto un lugar en los dos: 4.5 se vuelve 45. A 315 le falta una cifra, y se le pone un 0: 3150.',
     'Ahora es una división de siempre: 3150 entre 45 da 70. A don Chele le pagan L 70 el galón.',
-    'El punto vuelve a su lugar y el resultado es el mismo: 315 ÷ 4.5 = 70. Cuatro galones a L 70 y medio a L 35 suman L 315.',
+    'El punto vuelve y el resultado no cambia: 315 ÷ 4.5 = 70. Cuatro galones a L 70 y medio a L 35 dan L 315.',
     'Allá, por los mismos 4.5 galones, le darían L 306: nueve lempiras menos en cada entrega. Le conviene quedarse.'
   ];
 

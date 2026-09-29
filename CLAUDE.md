@@ -5861,7 +5861,8 @@ demás:
    Solo se vio con la captura en modo oscuro.
 5. **Las cuentas de las frases van con espacios que no se parten**
    (` `): «38 − 24 = 14» se cortaba entre renglones y se leía como dos
-   cosas.
+   cosas. Desde la duodécima lo hace el aparato solo (más abajo: «una cuenta
+   no se parte entre dos renglones»).
 
 La sonda de esta escena **saca la regla de las marcas que se ven** (valor =
 a + b · posición) y con ella lee el dibujo en cada paso: el nivel del agua,
@@ -6396,6 +6397,97 @@ vez (una fila de la rejilla con cinco galones llenos, el medio galón a L 40, el
 punto del divisor que no salta y un «menor que 315» en una frase), y salió roja
 con las cuatro.
 
+### La duodécima: Multiplicación Vertical, y lo que enseñó
+
+En **Multiplicación Vertical** (`misiones/2ciclo-multiplicacion-vertical/`,
+`js/animacion-copias.js`) la historia es la del maestro que manda a fotocopiar
+la guía: 7 hojas para cada uno de sus 43 alumnos, y en el centro de copiado le
+piden el número exacto. La historia termina diciendo que sumar 43 siete veces
+sale pero se tarda y se falla, y que multiplicar es esa misma suma hecha corta,
+en tres renglones. La animación es eso: siete renglones de 43 en cuadrícula,
+uno por hoja, que se suman columna por columna. En las unidades las sumas van
+corriendo a la derecha, 3, 6, 9… hasta 21, que es 7 × 3, y el 21 se parte a la
+vista: el 1 baja a su cuadro y el 2 sube arriba de las decenas. En las decenas
+van 4, 8… hasta 28, que es 7 × 4, y el 2 que se llevaba baja de su cuadro:
+28 + 2 = 30, el 0 se escribe y el 3 va delante. Son 301. Después la misma
+cuenta se hace corta: los siete 43 se juntan en uno, las siete hojas se vuelven
+el 7, y 43 × 7 = 301 cabe en tres renglones, con el 2 donde estaba. Y lo que
+cuesta olvidar el 2: sale 281, faltan 20 hojas y tres alumnos se quedan sin la
+guía completa. Cinco cosas que valen para las demás:
+
+1. ⚠️ **Primero la suma larga, después la corta.** La tabla de multiplicar sale
+   de la suma que va corriendo (siete veces 3 es 7 × 3), y no al revés. Sin eso,
+   el 7 × 3 de la cuenta corta es una regla que se memoriza, y lo que se
+   memoriza sin saber de dónde sale se olvida al mes.
+2. ⚠️ **Llevar es partir un número en decenas y unidades, y se ve partirse.** El
+   21 de la columna no desaparece: se queda a la derecha y sus dos cifras salen
+   de él, cada una a su cuadro. Y el 2 llega de verdad a las decenas: baja de su
+   cuadro al 28. El error de olvidarlo (el Error 2 de la misión) se hace después
+   a la vista, con su precio.
+3. **Una idea por toque.** La primera versión hacía las decenas y el 2 que se
+   llevaba en el mismo paso: cuatro cosas moviéndose seguidas durante cuatro
+   segundos, y la captura tomada a los tres segundos enseñaba el resultado a
+   medias. Ahora son dos pasos: primero siete veces 4 son 28, con un aro sobre el
+   2 que dice que falta algo, y después 28 + 2.
+4. ⚠️ **Lo que va debajo NO se regala.** El «Predice» pregunta en qué cifra
+   termina 34 × 5, cuánto es 45 × 10 y si 23 × 14 pasa de 300. La animación no
+   enuncia ninguna regla de la última cifra (se escribe la de la columna, y ya),
+   no multiplica por diez y no estima. La sonda busca esos números y esas
+   palabras en cada paso.
+5. **La tinta de lo que se lee va oscura, no del color de la misión.** El teal
+   de esta misión (#00838f) se lee a 4,5:1 sobre blanco, pero a 3,8:1 sobre el
+   celeste del escenario. Las sumas que van corriendo y los rótulos van en la
+   tinta del texto; el teal queda para la banda que marca la columna, que es
+   dibujo.
+
+No hizo falta cambiar la prueba. Se armaron las 30 formas de la operativa con
+el mismo generador de la misión y se leyeron la evaluación conceptual y la
+ficha: ninguna pregunta multiplica 43 × 7. Salen cuentas de la tabla del 7 en
+«¿Qué escribo y qué llevo?» (3 × 7 = 21, 4 × 7 = 28), y se quedan: ahí el
+producto viene escrito y lo que se pregunta es partirlo, que no se contesta
+acordándose de la animación.
+
+La sonda de esta escena **saca la cuadrícula de sus propias rayas** y lee cada
+renglón por el cuadro donde cae cada cifra: siete renglones de 43, cada uno con
+su hoja. **Suma aparte cada columna**, renglón por renglón, y lo compara con
+las sumas que van corriendo; comprueba que lo que se escribe y lo que se lleva
+sean las unidades y las decenas de lo que dio la columna, que la cuenta de la
+derecha sea 28 más lo que se llevaba, que el resultado sea la suma de los siete
+renglones, que la cuenta corta dé lo mismo, y que sin el 2 salgan 281, con 20
+hojas de menos y tres alumnos sin guía (281 alcanzan para 40 guías de 7). Se
+comprobó al revés con seis averías plantadas a la vez (una suma corrida que
+decía 25, el 0 del resultado cambiado por un 1, la cuenta de la derecha con un
+3, el precio diciendo 30 hojas, un «45 × 10» en una frase y el 2 que se lleva
+cayendo en las centenas), y salió roja con las seis.
+
+### El aparato, otra vez: una cuenta no se parte entre dos renglones
+
+Al medir la duodécima salió una avería del aparato que llevaba publicada en dos
+escenas: **una cuenta de la frase se partía entre dos renglones**. En un
+teléfono de 360 px, «35 × 125» (Multiplicación de Decimales, paso 0) y
+«315 ÷ 4.5 = 70» (División de Decimales, paso 4) salían con una mitad arriba y
+la otra abajo, que se lee como dos cosas. Recta Numérica ya lo había resuelto a
+mano, escribiendo sus cuentas con espacios que no se parten, pero las escenas
+que vinieron después no lo copiaron: una regla que hay que acordarse de repetir
+en cada escena se olvida en la siguiente.
+
+Ahora lo hace el aparato (`sinPartir`, en `js/animacion-mision.js`): los
+espacios de dentro de una cuenta, entre una cifra, un signo y la cifra
+siguiente, pasan a ser de los que no se parten. Vale para la frase y para las
+palabras del marcador, y también para la copia invisible donde se miden. La
+escena escribe la frase como se lee.
+
+⚠️ **Y eso tiene un precio que hay que medir.** Una cuenta que no se parte
+empuja el renglón entero, y dos frases pasaron de cuatro renglones a cinco.
+Como el aparato iguala todas las frases al alto de la más larga, un renglón de
+más en una sola frase es un renglón de hueco en todos los pasos. Se acortaron
+las dos, sin quitarles nada de lo que dicen.
+
+Lo vigila la sonda de navegador en todas las escenas: le pregunta al navegador,
+con un Range por cuenta, si sus pedazos caen en dos alturas. Se comprobó al
+revés con el aparato y las frases de antes: salieron rojas las tres escenas que
+tenían una cuenta partida.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -6447,8 +6539,8 @@ de la historia y en la sección activa, el orden de la hoja y de los
 la frase de reserva, que no haya bucle de dibujo ni nada de fuera, que no
 llame a `fin()` ni a `pts()`, y que el aparato esté en el armazón del service
 worker. La segunda la recorre paso a paso en un teléfono de 360 px: que cada
-paso diga algo distinto y en frases de 25 palabras o menos, que «Atrás»
-vuelva y el último paso empiece otra vez, que el botón y el dibujo no se
+paso diga algo distinto y en frases de 25 palabras o menos, que ninguna
+cuenta de la frase se parta entre dos renglones, que «Atrás» vuelva y el último paso empiece otra vez, que el botón y el dibujo no se
 muevan de un paso a otro, el teclado, «reducir movimiento», los 44 px, que
 la letra del botón que avanza se lea en todo su degradado, que en la
 pantalla oscura el marcador y las cifras se lean, que no dé XP, que no
