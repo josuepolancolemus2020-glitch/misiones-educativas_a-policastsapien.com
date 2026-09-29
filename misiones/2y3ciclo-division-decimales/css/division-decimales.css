@@ -620,3 +620,9 @@ body.letra-grande p,body.letra-grande span,body.letra-grande li,body.letra-grand
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* El botón que avanza de la animación (css/animacion-mision.css) lleva letra
+   blanca sobre el degradado de la misión, y el naranja de esta misión deja esa
+   letra a 2,7:1 en la punta. Aquí se oscurece solo esa punta, a un naranja
+   tostado donde el blanco se lee (5:1). El resto de la misión no cambia. */
+:root { --am-boton: linear-gradient(135deg, #1976d2, #b45309); }

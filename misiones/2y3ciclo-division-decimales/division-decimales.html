@@ -27,6 +27,9 @@
 <!-- La sección 🎬 Videos. Va DESPUÉS del CSS de la misión a propósito:
      se tiñe del --pri y del --sec que la misión acaba de declarar. -->
 <link rel="stylesheet" href="../../css/videos-mision.css">
+<!-- La animación que explica el tema, justo después de la historia. Va
+     DESPUÉS del CSS de la misión a propósito: se tiñe de su --pri y su --sec. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -75,6 +78,22 @@
     <div class="tip"><span class="ti">❓</span><div>Dividir entre un decimal asusta, y tiene truco: se
     convierte en una división de siempre. Saca tú la cuenta antes de seguir y decide si don Chele se
     cambia.</div></div>
+  </div>
+  <!-- La animación que explica el tema. Va justo DESPUÉS de la situación: la
+       historia es don Chele, que entregó 4.5 galones de leche por L 315 y
+       tiene que dividir 315 entre 4.5 para saber si le conviene la otra ruta,
+       que paga L 68 el galón. Diez entregas iguales son diez veces la leche y
+       diez veces la plata, y el galón sale al mismo precio: por eso se puede
+       correr el punto un lugar en los dos números (315 recibe un 0). 3150
+       entre 45 da 70, y la entrega lo comprueba. La mueve el alumno, paso a
+       paso. El aparato es compartido (js/animacion-mision.js) y la escena es
+       de esta misión (js/animacion-leche.js). La frase de dentro es de
+       reserva: si el aparato no llega a cargar, se lee eso en vez de un hueco. -->
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira cómo se divide entre 4.5</h2>
+    <div id="amLeche">
+      <p>Diez entregas iguales serían 45 galones y L 3,150, y el galón saldría al mismo precio. Por eso 315 ÷ 4.5 da lo mismo que 3150 ÷ 45: se corre el punto un lugar en los dos números, y a 315 se le pone un 0. 3150 entre 45 da 70: a don Chele le pagan L 70 el galón, y en la otra ruta, L 68.</p>
+    </div>
   </div>
   <div class="card ac-purple">
     <h2>🔮 Predice antes de resolver</h2>
@@ -773,6 +792,9 @@
       siguiente: { id: 's-quiz', texto: '🧠 Ir al Quiz' }
     });
   </script>
+<!-- La animación de la leche: primero el aparato, después la escena. -->
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-leche.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

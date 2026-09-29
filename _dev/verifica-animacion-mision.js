@@ -311,6 +311,35 @@ const LEER = `
       linea: todos('path.mp-marca').map(function (p) { return medio(p).x; })
     };
   };
+  /* División de Decimales: los galones de don Chele y la división en su
+     tira de cuadrícula. Cada galón dice si va lleno o a la mitad y en qué
+     fila está; cada precio, de qué galón es; y la división se lee de sus
+     cifras y de su punto. */
+  window.__amExtra.amLeche = function (raiz) {
+    var vis = window.__amVisible;
+    function todos(sel) { return [].filter.call(raiz.querySelectorAll(sel), vis); }
+    var svg = raiz.querySelector('svg'), s = svg.getBoundingClientRect(), k = s.width / svg.viewBox.baseVal.width;
+    function caja(el) { var b = el.getBoundingClientRect(); return { x0: (b.left - s.left) / k, x1: (b.right - s.left) / k, y0: (b.top - s.top) / k, y1: (b.bottom - s.top) / k }; }
+    function medio(el) { var c = caja(el); return { x: (c.x0 + c.x1) / 2, y: (c.y0 + c.y1) / 2 }; }
+    function trazada(p) { return !!p && vis(p) && Math.abs(parseFloat(getComputedStyle(p).strokeDashoffset) || 0) < 1; }
+    return {
+      galones: todos('.dl-galon').map(function (g) {
+        var c = caja(g.querySelector('.dl-cuerpo'));
+        return { tipo: g.getAttribute('data-tipo'), fila: g.getAttribute('data-fila'), x: (c.x0 + c.x1) / 2, y: (c.y0 + c.y1) / 2, ancho: c.x1 - c.x0, arriba: c.y0 };
+      }),
+      precios: todos('.dl-precio').map(function (t) { var c = medio(t); return { fila: t.getAttribute('data-fila'), dice: t.textContent, x: c.x, y: c.y }; }),
+      totales: todos('.dl-total').map(function (t) { return { fila: t.getAttribute('data-fila'), dice: t.textContent }; }),
+      etiquetas: todos('.dl-etq').map(function (t) { return t.textContent; }),
+      cifras: todos('.dl-cifra').map(function (t) { return { grupo: t.getAttribute('data-grupo'), cifra: t.textContent, x: medio(t).x }; }),
+      punto: todos('.dl-punto').map(function (p) { return medio(p).x; }),
+      fantasmas: todos('.dl-fantasma').map(function (p) { return { grupo: p.getAttribute('data-grupo'), x: medio(p).x }; }),
+      saltos: [].map.call(raiz.querySelectorAll('.dl-x10'), function (g) {
+        var t = g.querySelector('.dl-salto-txt');
+        return { grupo: g.getAttribute('data-grupo'), de: +g.getAttribute('data-de'), a: +g.getAttribute('data-a'), trazada: trazada(g.querySelector('.dl-curva')), dice: vis(t) ? t.textContent : '' };
+      }),
+      hueco: todos('.dl-hueco').length
+    };
+  };
   window.__amLeer = function (id) {
     var raiz = document.getElementById(id);
     var svg = raiz.querySelector('svg');
@@ -367,6 +396,122 @@ function regla(marcas, eje) {
 
 /* ── lo propio de cada escena ───────────────────────────────── */
 const ESCENAS = {
+  /* División de Decimales: los galones de don Chele (4.5 galones por
+     L 315, y allá pagan L 68 el galón). Los galones se cuentan sobre el
+     dibujo, llenos y a la mitad; la división se lee de sus cifras y de su
+     punto; y las cuentas se rehacen AQUÍ: que diez entregas sean diez veces
+     la leche y la plata, que correr el punto sea un lugar en los dos, que el
+     cociente sea el mismo, y que los precios de cada galón sumen lo que dice
+     su fila. */
+  amLeche(e, n) {
+    const x = e.extra, r = [];
+    const cerca = (a, b, t = 1.5) => Math.abs(a - b) <= t;
+    const igual = (a, b) => Math.abs(a - b) < 1e-9;
+    const nb = t => String(t).replace(/\u00a0/g, ' ');
+    const lps = t => +nb(t).replace(/^L\s*/, '').replace(/,/g, '');
+    const HISTORIA = { galones: 4.5, pago: 315, otra: 68 };
+    const cuenta = lista => lista.reduce((a, g) => a + (g.tipo === 'medio' ? 0.5 : 1), 0);
+
+    /* Un número de la división: sus cifras de izquierda a derecha y el punto
+       donde cae entre ellas (solo el divisor lo trae a la vista). */
+    function leer(grupo) {
+      const cs = x.cifras.filter(c => c.grupo === grupo).sort((a, b) => a.x - b.x);
+      const pts = grupo === 'divisor' ? x.punto : [];
+      let texto = '';
+      cs.forEach((c, i) => { if (i > 0 && pts.some(p => p > cs[i - 1].x && p < c.x)) texto += '.'; texto += c.cifra; });
+      return { texto, valor: texto ? +texto : NaN, cs };
+    }
+    const dvd = leer('dividendo'), dvs = leer('divisor'), coc = leer('cociente');
+    const todas = [dvd, dvs, coc].filter(q => q.cs.length > 1);
+    const P = todas.length ? todas[0].cs[1].x - todas[0].cs[0].x : 0;
+    r.push([P > 15 && todas.every(q => q.cs.every((c, i) => i === 0 || cerca(c.x - q.cs[i - 1].x, P, 0.6))) &&
+      x.punto.every(p => dvs.cs.some((c, i) => i > 0 && cerca(p, (c.x + dvs.cs[i - 1].x) / 2, 1.2))),
+      `paso ${n}: la división va en cuadrícula, una cifra por cuadro, y el punto en una raya`, [dvd.texto, dvs.texto, coc.texto]]);
+
+    /* ── Los galones ── */
+    const vs = x.galones;
+    const filas = {};
+    vs.forEach(g => { const y = Math.round(g.y); (filas[y] = filas[y] || []).push(g); });
+    const rows = Object.keys(filas).map(Number).sort((a, b) => a - b).map(y => filas[y].sort((a, b) => a.x - b.x));
+    const mismaForma = rows.every(f => f.length === 5 && f.slice(0, 4).every(g => g.tipo === 'lleno') && f[4].tipo === 'medio');
+    const mismoTam = vs.every(g => cerca(g.ancho, vs[0].ancho, 0.6));
+    if (n === 0 || n === 4) {
+      r.push([vs.length === 5 && rows.length === 1 && mismaForma && vs.every(g => g.fila === 'aqui') && igual(cuenta(vs), HISTORIA.galones),
+        `paso ${n}: la entrega: cuatro galones llenos y uno a la mitad, ${cuenta(vs)} galones`, vs.map(g => g.tipo[0]).join('')]);
+    } else if (n <= 3) {
+      r.push([vs.length === 50 && rows.length === 10 && mismaForma && mismoTam && igual(cuenta(vs), 10 * HISTORIA.galones),
+        `paso ${n}: diez entregas iguales: ${rows.length} filas de ${HISTORIA.galones} galones, ${cuenta(vs)} en total`, [vs.length, rows.length]]);
+      const et = x.etiquetas.find(t => /galones/.test(t)) || '';
+      r.push([x.etiquetas.includes('diez entregas iguales') && igual(parseFloat(et), cuenta(vs)),
+        `paso ${n}: el rótulo dice «${et}», que es lo que se cuenta en el dibujo`, x.etiquetas]);
+    } else {
+      const aqui = vs.filter(g => g.fila === 'aqui'), alla = vs.filter(g => g.fila === 'alla');
+      r.push([vs.length === 10 && rows.length === 2 && mismaForma && aqui.length === 5 && alla.length === 5 && igual(cuenta(aqui), HISTORIA.galones) && igual(cuenta(alla), HISTORIA.galones) &&
+        Math.max(...aqui.map(g => g.y)) < Math.min(...alla.map(g => g.y)),
+        'paso 5: las dos filas, aquí arriba y la otra ruta abajo, cada una con los mismos 4.5 galones', [aqui.length, alla.length]]);
+    }
+    if (n === 0) r.push([x.etiquetas.includes('4.5 galones'), 'paso 0: el rótulo dice 4.5 galones', x.etiquetas]);
+
+    /* ── Lo que vale cada galón, y lo que suma cada fila ── */
+    const tarifa = { aqui: coc.cs.length ? coc.valor : NaN, alla: HISTORIA.otra };
+    const total = f => (x.totales.find(t => t.fila === f) || {}).dice;
+    if (n >= 4) {
+      for (const f of n === 5 ? ['aqui', 'alla'] : ['aqui']) {
+        const gs = vs.filter(g => g.fila === f), ps = x.precios.filter(p => p.fila === f);
+        const bien = gs.length === 5 && ps.length === 5 && gs.every(g => {
+          const p = ps.find(q => cerca(q.x, g.x, 2) && q.y < g.arriba);
+          return p && igual(lps(p.dice), tarifa[f] * (g.tipo === 'medio' ? 0.5 : 1));
+        });
+        const suma = ps.reduce((a, p) => a + lps(p.dice), 0);
+        r.push([bien && igual(suma, lps(total(f))) && igual(suma, tarifa[f] * HISTORIA.galones),
+          `paso ${n}: ${f === 'aqui' ? 'aquí' : 'en la otra ruta'}, cada galón lleno a L ${tarifa[f]} y el de la mitad a L ${tarifa[f] / 2}: suman ${total(f)}`, ps.map(p => p.dice)]);
+      }
+      r.push([igual(lps(total('aqui')), HISTORIA.pago), `paso ${n}: la fila de aquí suma lo que le pagaron (L ${HISTORIA.pago})`, total('aqui')]);
+    } else r.push([x.precios.length === 0, `paso ${n}: todavía no hay precio por galón`, x.precios.length]);
+    if (n === 0) r.push([igual(lps(total('aqui')), HISTORIA.pago), 'paso 0: la entrega dice lo que le pagaron (L 315)', total('aqui')]);
+    if (n >= 1 && n <= 3) r.push([igual(lps(total('rejilla')), 10 * HISTORIA.pago), `paso ${n}: diez entregas son ${total('rejilla')}`, total('rejilla')]);
+    r.push([x.etiquetas.some(t => nb(t) === 'Otra ruta: L ' + HISTORIA.otra + ' el galón'), `paso ${n}: el letrero de la otra ruta está a la vista`, x.etiquetas]);
+
+    /* ── La división ── */
+    const corrido = n === 2 || n === 3;
+    if (corrido) {
+      const ultima = q => q.cs[q.cs.length - 1].x;
+      r.push([dvd.texto === '3150' && dvs.texto === '45' && igual(dvd.valor, 10 * HISTORIA.pago) && igual(dvs.valor, 10 * HISTORIA.galones) && igual(dvd.valor / dvs.valor, HISTORIA.pago / HISTORIA.galones),
+        `paso ${n}: la división quedó ${dvd.texto} ÷ ${dvs.texto}: los dos números por 10, y el mismo cociente`, [dvd.texto, dvs.texto]]);
+      const sal = x.saltos.filter(t => t.trazada);
+      r.push([sal.length === 2 && sal.every(t => cerca(t.a - t.de, P) && t.dice === '×10') &&
+        ['dividendo', 'divisor'].every(g => { const t = sal.find(q => q.grupo === g), f = x.fantasmas.find(q => q.grupo === g), q = g === 'dividendo' ? dvd : dvs;
+          return t && f && cerca(f.x, t.a) && cerca(t.a, ultima(q) + P / 2); }),
+        `paso ${n}: el punto de cada número salta un lugar a la derecha (× 10) y queda detrás de su última cifra`, sal.map(t => [t.grupo, Math.round(t.de), Math.round(t.a), t.dice])]);
+    } else {
+      r.push([dvd.texto === String(HISTORIA.pago) && dvs.texto === String(HISTORIA.galones) && x.saltos.every(t => !t.trazada) && x.fantasmas.length === 0,
+        `paso ${n}: la división es la de la historia, ${dvd.texto} ÷ ${dvs.texto}, sin saltos`, [dvd.texto, dvs.texto]]);
+    }
+    if (n >= 3) r.push([coc.texto === '70' && x.hueco === 0 && igual(coc.valor, HISTORIA.pago / HISTORIA.galones) && igual(coc.valor * dvs.valor, dvd.valor),
+      `paso ${n}: el cociente es ${coc.texto}, y ${coc.texto} × ${dvs.texto} = ${dvd.texto}`, [coc.texto, dvs.texto, dvd.texto]]);
+    else r.push([!coc.cs.length && x.hueco === 2, `paso ${n}: el cociente todavía es un signo de pregunta`, [coc.texto, x.hueco]]);
+
+    /* ── El marcador dice lo que se ve ── */
+    const dice = nb(e.cifra);
+    const espera = [`${dvd.texto} ÷ ${dvs.texto}`, total('rejilla'), `${dvd.texto} ÷ ${dvs.texto}`, 'L ' + coc.texto, total('aqui'), `${tarifa.aqui} > ${tarifa.alla}`][n];
+    r.push([!!espera && dice === nb(espera), `paso ${n}: el marcador dice ${e.cifra}, que es lo que se ve`, [e.cifra, espera]]);
+    if (n === 5) {
+      const dif = lps(total('aqui')) - lps(total('alla'));
+      r.push([tarifa.aqui > tarifa.alla && dif === 9 && /L 306/.test(e.texto) && /nueve lempiras/.test(e.texto),
+        `paso 5: allá serían ${total('alla')}, ${dif} lempiras menos por entrega, y la frase dice eso`, [total('alla'), dif]]);
+    }
+    if (n === 0) r.push([!/(^|[^\d])70(?![\d])/.test([e.texto, e.palabras, e.cifra].concat(x.etiquetas).map(nb).join(' ')),
+      'paso 0: no dice todavía a cómo le pagan el galón', e.cifra]);
+
+    /* ⚠️ Lo que pregunta el «Predice» de abajo (si el resultado sale mayor o
+       menor que el dividendo, con 10 ÷ 0.50, 8 ÷ 0.2 y 15 ÷ 2.5) no sale en
+       ningún paso, ni en la frase ni en el dibujo. */
+    const todo = [e.texto, e.palabras, e.cifra].concat(x.etiquetas, x.precios.map(p => p.dice), x.totales.map(t => t.dice)).map(nb).join(' | ');
+    const regalo = todo.match(/(^|[^\d.])(0\.50?|0\.2|2\.5|8 ÷|10 ÷|15 ÷)(?![\d])|grupos|mayor que|menor que/i);
+    r.push([!regalo, `paso ${n}: no dice nada de lo que pregunta el «Predice» (el tamaño del cociente)`, regalo ? regalo[0] : undefined]);
+    return r;
+  },
+
   /* Multiplicación de Decimales: la compra (3.5 × 12.50) arriba y la
      cuenta de doña Chepa (35 × 125 = 4375) abajo, en cuadrícula. Cada número
      se lee del dibujo, cifra por cifra y con el punto donde quedó, y las

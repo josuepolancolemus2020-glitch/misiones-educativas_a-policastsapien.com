@@ -6332,6 +6332,70 @@ plantadas a la vez (el punto que salta una sola vez, el resaltado sobre la cifra
 equivocada, la media barra mal medida y un «3.25» en una frase), y salió roja
 con las cuatro.
 
+### La undécima: División de Decimales, y lo que enseñó
+
+En **División de Decimales** (`misiones/2y3ciclo-division-decimales/`,
+`js/animacion-leche.js`) la historia es don Chele: entregó 4.5 galones de leche
+por L 315, y en la otra ruta le ofrecen L 68 el galón. Para saber si se cambia
+tiene que dividir 315 entre 4.5. La animación pone arriba los galones (cuatro
+llenos y uno a la mitad) y abajo la división, en una tira de cuadrícula. Diez
+entregas iguales son 45 galones y L 3,150, y el galón sale al mismo precio: por
+eso 315 ÷ 4.5 da lo mismo que 3150 ÷ 45. Eso es correr el punto un lugar en los
+dos números, y a 315, que no tiene más cifras, se le pone un 0. 3150 entre 45
+da 70; el punto vuelve a su lugar y el resultado es el mismo, y se comprueba
+con la entrega: cuatro galones a L 70 y medio a L 35 suman L 315. Allá, los
+mismos 4.5 galones serían L 306, nueve lempiras menos por entrega. Seis cosas
+que valen para las demás:
+
+1. ⚠️ **Primero por qué, después cómo.** Diez entregas iguales es diez veces la
+   leche y diez veces la plata, y el galón sale al mismo precio: eso es lo que
+   deja correr el punto en los DOS números sin cambiar el resultado. Correr el
+   punto sin saber eso es un truco, y un truco se olvida al mes.
+2. **La misma idea se dibuja igual en toda la ruta.** El punto salta y las
+   cifras se quedan quietas, en cuadrícula y con los saltos por debajo, como en
+   la animación de Multiplicación de Decimales. El alumno que viene de la
+   anterior ya sabe leer el dibujo.
+3. ⚠️ **315 no tiene punto a la vista, y aun así lo tiene.** Se dibuja con raya
+   cortada detrás del 5, salta un lugar, y el 0 entra en el cuadro que queda
+   libre: es el Bloque 2 de la misión («agregar ceros cuando faltan cifras»)
+   hecho con la historia. La primera versión dibujaba cada número en sus
+   propios cuadros, y el cuadro vacío después de «315» dejaba un salto raro
+   antes del «÷». La tira es continua, como la hoja del cuaderno: el 0 cae en un
+   cuadro que ya estaba.
+4. ⚠️ **Lo que va debajo NO se regala.** El «Predice» pregunta si el resultado
+   sale mayor o menor que el dividendo según el divisor (10 ÷ 0.50, 8 ÷ 0.2 y
+   15 ÷ 2.5). La animación no habla de eso ni usa esos números: enseña a
+   convertir la división, y el tamaño del cociente lo adivina él. La sonda
+   busca en cada paso los números y las palabras de esa pregunta.
+5. ⚠️ **Lo que se enciende de a muchos, se enciende por capas.** Cuarenta y cinco
+   galones que se encendían y se apagaban cada uno por su cuenta bajaban un
+   teléfono barato a 183 ms por cuadro. Cada fila de la rejilla es una capa
+   (`.am-capa`), que se enciende entera y se esconde apagada; y la leche del
+   medio galón se dibuja con su propia forma, no recortando un rectángulo, que
+   se vuelve a calcular en cada cuadro. Con la CPU frenada seis veces quedó
+   entre 57 y 60 cuadros por segundo, y el peor en 67 ms.
+6. **Un objeto claro sobre la tarjeta clara no se ve.** La leche blanca con la
+   raya gris clara, sobre el celeste de la tarjeta, dejaba los galones casi
+   invisibles: la leche va color crema y el galón con raya firme. En la pantalla
+   oscura se ve igual de bien.
+
+No hizo falta cambiar la prueba. Se armaron las 30 formas de la operativa y las
+30 de la Forma R con el mismo generador de la misión, y se leyeron la
+evaluación conceptual y la ficha: ninguna pregunta divide 315 entre 4.5 ni
+nombra la otra ruta.
+
+La sonda de esta escena **cuenta los galones sobre el dibujo**, llenos y a la
+mitad, fila por fila: una entrega son 4.5 galones y la rejilla, diez filas
+iguales, 45. **Lee la división** por sus cifras y su punto, y **rehace las
+cuentas aparte**: que diez entregas sean 45 galones y L 3,150, que al correr el
+punto los dos números queden por 10 con el mismo cociente, que cada punto salte
+un lugar y quede detrás de su última cifra, que 70 × 4.5 dé 315, y que el precio
+escrito encima de cada galón (el lleno a la tarifa, el de la mitad a la mitad)
+sume lo que dice su fila. Se comprobó al revés con cuatro averías plantadas a la
+vez (una fila de la rejilla con cinco galones llenos, el medio galón a L 40, el
+punto del divisor que no salta y un «menor que 315» en una frase), y salió roja
+con las cuatro.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
