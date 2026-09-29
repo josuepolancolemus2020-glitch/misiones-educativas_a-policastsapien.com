@@ -692,6 +692,50 @@ const LEER = `
       textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
     };
   };
+  /* Los Adjetivos: los sacos de doña Nely. De cada saco se lee dónde está
+     su cuerpo, qué parches tiene, si lleva nudo o la boca abierta; de cada
+     etiqueta, dónde quedó, qué dice, con qué raya va y si está tenue; de
+     cada hilo, de dónde sale y adónde llega, y de su aro, qué rodea. Y lo que
+     dice el globo, palabra por palabra, con sus subrayados. */
+  window.__amExtra.amSacos = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(base.multiply(el.getScreenCTM())); return [q.x, q.y]; }
+    function caja(el) { var b = el.getBBox(), a = aVista(el, b.x, b.y), c = aVista(el, b.x + b.width, b.y + b.height); return { x0: Math.min(a[0], c[0]), y0: Math.min(a[1], c[1]), x1: Math.max(a[0], c[0]), y1: Math.max(a[1], c[1]) }; }
+    function trazada(p) { return !!p && vis(p) && Math.abs(parseFloat(getComputedStyle(p).strokeDashoffset) || 0) < 1; }
+    function raya(el) { var d = getComputedStyle(el).strokeDasharray; if (!d || d === 'none') return 0; var v = d.split(/[ ,]+/).map(parseFloat).filter(isFinite); return v.length ? Math.max.apply(null, v) : 0; }
+    function todos(sel) { return [].slice.call(raiz.querySelectorAll(sel)); }
+    function extremos(p) { var L = p.getTotalLength(), a = p.getPointAtLength(0), b = p.getPointAtLength(L); return { a: aVista(p, a.x, a.y), b: aVista(p, b.x, b.y) }; }
+    var m = raiz.querySelector('[data-marvin]'), cabeza = m && m.querySelector('.aj-cabeza');
+    return {
+      sacos: todos('[data-saco]').filter(vis).map(function (g) {
+        var nudo = g.querySelector('[data-nudo]');
+        return { i: +g.getAttribute('data-saco'), cuerpo: caja(g.querySelector('[data-cuerpo]')), todo: caja(g),
+                 parches: [].slice.call(g.querySelectorAll('[data-parche]')).filter(vis).map(caja),
+                 nudo: nudo && vis(nudo) ? caja(nudo) : null, boca: !!g.querySelector('[data-boca]') };
+      }),
+      palabras: todos('[data-renglon]').filter(vis).map(function (t) {
+        return { dice: t.textContent, palabra: t.getAttribute('data-palabra') || '', caja: caja(t) };
+      }),
+      rayas: todos('[data-raya]').filter(function (p) { return p.classList.contains('aj-subraya-cualquiera') ? vis(p) : trazada(p); })
+        .map(function (p) { return { de: p.getAttribute('data-raya'), caja: caja(p), raya: raya(p) }; }),
+      etiquetas: todos('[data-etiqueta]').filter(vis).map(function (g) {
+        var r = g.querySelector('rect');
+        return { de: g.getAttribute('data-etiqueta'), dice: g.querySelector('text').textContent, caja: caja(r), raya: raya(r),
+                 tenue: parseFloat(getComputedStyle(r).fillOpacity) < 0.9 };
+      }),
+      hilos: todos('[data-hilo]').filter(trazada).map(function (p) { var e = extremos(p); return { de: p.getAttribute('data-hilo'), a: e.a, b: e.b }; }),
+      aros: todos('[data-aro]').filter(trazada).map(function (c) {
+        return { de: c.getAttribute('data-aro'), c: aVista(c, +c.getAttribute('cx'), +c.getAttribute('cy')), r: +c.getAttribute('r'), raya: raya(c) };
+      }),
+      rotulos: todos('[data-rotulo]').filter(vis).map(function (g) {
+        return { de: g.getAttribute('data-rotulo'), dice: g.querySelector('text').textContent, caja: caja(g.querySelector('rect')) };
+      }),
+      conectores: todos('[data-conector]').filter(trazada).map(function (p) { var e = extremos(p); return { de: p.getAttribute('data-conector'), a: e.a, b: e.b }; }),
+      marvin: m && vis(m) ? { c: aVista(cabeza, +cabeza.getAttribute('cx'), +cabeza.getAttribute('cy')), caja: caja(m) } : null,
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -775,6 +819,141 @@ let escalaRedondel = 0;
 let escalaGallinero = null;
 
 const ESCENAS = {
+  /* Los Adjetivos: los sacos de doña Nely. Se mide sobre el dibujo sobre qué
+     saco se posa cada etiqueta (el más cercano, y por encima de él), qué
+     rodea cada aro y hasta dónde llega cada hilo; y lo que el marcador
+     cuenta, a cuántos sacos les queda «saco» y a cuántos «saco grande», tiene
+     que ser lo que se ve. ⚠️ La historia dice que bastaba UNA palabra, y
+     cualquiera de las tres: eso solo es verdad si el saco bueno es el ÚNICO
+     grande, el único con parches y el único amarrado, y se mide. Lo que le
+     queda a cualquiera va con raya cortada y lo que nombra a uno solo, con
+     raya entera. ⚠️ Y la prueba no se regala: no sale ninguna palabra de sus
+     preguntas, ni «ese» ni «este», ni «más», «muy» o «-ísimo». */
+  amSacos(e, n) {
+    const x = e.extra, r = [];
+    const nb = t => String(t == null ? '' : t).replace(/ /g, ' ').trim();
+    /* Lo que no depende del dibujo, primero: con una pieza mal puesta la
+       sonda deja de medir, y esto no puede quedarse sin mirar por eso. */
+    const dicho = [e.texto, e.cifra, e.palabras].concat(x.textos).map(nb).join(' | ');
+    const prohibidas = dicho.match(/blanc|\besos?\b|\besas?\b|\best[ae]s?\b|nuestr|varios|segundo|perro|puente|angost|limp|muchas|flores|mochila|\bni[ñn]os?\b|alegre|cantar|monta[ñn]a|verde|nosotros|\btu\b|cuaderno|\bbuen|peque[ñn]|algun|bonit|cinco|manzana|cielo|azul|carro|\brojo|sopa|caliente|[íi]simo|ventana|abiert|amarill|content|abuela|cari[ñn]os|camisa|\bfr[íi][ao]\b|feli[zc]|\bdos\b|libros?\b|pueblo|tranquil|positivo|comparativo|superlativo|igualdad|superioridad|inferioridad|concordancia|ep[íi]teto|determinativo|calificativo|acompa[ñn]|c[óo]mo es|\bmuy\b|\bm[áa]s\b|\bmenos\b|\btan\b/gi);
+    r.push([!prohibidas, `paso ${n}: no sale ninguna palabra de la prueba, ni «ese», ni un grado`, prohibidas]);
+    const cortada = v => v > 0 && v < 8, entera = v => v === 0 || v > 20;
+    const dentro = (p, c, t = 3) => p[0] >= c.x0 - t && p[0] <= c.x1 + t && p[1] >= c.y0 - t && p[1] <= c.y1 + t;
+    const medio = c => [(c.x0 + c.x1) / 2, (c.y0 + c.y1) / 2];
+    const alto = c => c.y1 - c.y0, ancho = c => c.x1 - c.x0;
+
+    /* Los cuatro sacos, y el bueno es el único grande, el único viejo y el
+       único amarrado de lleno. */
+    const sacos = x.sacos.slice().sort((a, b) => a.cuerpo.x0 - b.cuerpo.x0);
+    r.push([sacos.length === 4, `paso ${n}: en el corredor hay cuatro sacos`, sacos.length]);
+    if (sacos.length !== 4) return r;
+    /* Grande de alto y de ancho: el saco entero, con su boca o con la manta
+       recogida encima del nudo, y el cuerpo a lo ancho. */
+    const grandes = sacos.filter(s => sacos.every(o => o === s || (alto(s.todo) > 1.5 * alto(o.todo) && ancho(s.cuerpo) > 1.3 * ancho(o.cuerpo))));
+    const viejos = sacos.filter(s => s.parches.length > 0), llenos = sacos.filter(s => !!s.nudo);
+    r.push([grandes.length === 1 && viejos.length === 1 && llenos.length === 1 && grandes[0] === viejos[0] && viejos[0] === llenos[0] &&
+      sacos.filter(s => s !== grandes[0]).every(s => s.boca),
+      `paso ${n}: uno solo es grande, uno solo tiene parches y uno solo va amarrado, y es el mismo; los otros tres van abiertos`,
+      sacos.map(s => [Math.round(alto(s.todo)), Math.round(ancho(s.cuerpo)), s.parches.length, !!s.nudo, s.boca])]);
+    if (grandes.length !== 1) return r;
+    const bueno = grandes[0];
+    /* Sobre qué saco está algo: el más cercano a lo ancho, a menos de 3. */
+    const sobre = cx => { const s = sacos.reduce((m, q) => Math.abs(medio(q.cuerpo)[0] - cx) < Math.abs(medio(m.cuerpo)[0] - cx) ? q : m, sacos[0]); return Math.abs(medio(s.cuerpo)[0] - cx) < 3 ? s : null; };
+
+    /* El globo, palabra por palabra, de izquierda a derecha y sin encimarse. */
+    const pal = x.palabras.slice().sort((a, b) => a.caja.x0 - b.caja.x0);
+    const dice = pal.map(p => nb(p.dice)).join(' ');
+    r.push([dice === (n >= 2 ? 'Doña Nely: Tráeme el saco grande' : 'Doña Nely: Tráeme el saco'),
+      `paso ${n}: el globo dice lo que dice doña Nely${n >= 2 ? ', con la palabra que faltaba' : ''}`, dice]);
+    r.push([pal.every((p, i) => i === 0 || p.caja.x0 >= pal[i - 1].caja.x1 + 1), `paso ${n}: las palabras del globo no se enciman`, pal.map(p => [p.dice, Math.round(p.caja.x0), Math.round(p.caja.x1)])]);
+    const wSaco = pal.find(p => p.palabra === 'saco'), wAdj = pal.find(p => p.palabra === 'grande');
+    const bajo = (ra, w) => !!ra && !!w && ra.caja.x0 <= w.caja.x0 + 1.5 && ra.caja.x1 >= w.caja.x1 - 1.5 && ra.caja.x1 - ra.caja.x0 <= (w.caja.x1 - w.caja.x0) + 4 &&
+      ra.caja.y0 >= w.caja.y1 - 4 && ra.caja.y0 <= w.caja.y1 + 6;
+    const rS = x.rayas.find(q => q.de === 'saco'), rA = x.rayas.find(q => q.de === 'grande');
+    if (n >= 1) r.push([bajo(rS, wSaco) && cortada(rS.raya), `paso ${n}: «saco» va subrayada con raya cortada`, rS && rS.raya]);
+    else r.push([!rS, 'paso 0: todavía no se subraya nada', !!rS]);
+    if (n >= 2) r.push([bajo(rA, wAdj) && entera(rA.raya), `paso ${n}: «grande» va subrayada con raya entera`, rA && rA.raya]);
+    else r.push([!rA && !wAdj, `paso ${n}: todavía no está la palabra que faltaba`, [!!rA, !!wAdj]]);
+
+    /* «saco» se posa sobre cada uno de los cuatro. */
+    const etS = x.etiquetas.filter(t => t.de === 'saco'), etG = x.etiquetas.filter(t => t.de === 'grande');
+    const etV = x.etiquetas.filter(t => t.de === 'viejo'), etL = x.etiquetas.filter(t => t.de === 'lleno');
+    if (n === 0) {
+      r.push([x.etiquetas.length + x.hilos.length + x.aros.length === 0 && e.cifra === '¿?',
+        'paso 0: todavía no se prueba ninguna palabra y el marcador no cuenta nada', [x.etiquetas.length, x.hilos.length, e.cifra]]);
+    } else {
+      const bajoS = etS.map(t => sobre(medio(t.caja)[0]));
+      r.push([etS.length === 4 && bajoS.every((s, i) => s && etS[i].caja.y1 <= s.todo.y0 + 1 && s.todo.y0 - etS[i].caja.y1 < 12) && new Set(bajoS).size === 4,
+        `paso ${n}: «saco» se posa encima de cada uno de los cuatro, cada una el suyo`, bajoS.map(s => s && s.i)]);
+      r.push([!!wSaco && etS.every(t => nb(t.dice) === nb(wSaco.dice) && cortada(t.raya)),
+        `paso ${n}: cada etiqueta dice la palabra del globo, con raya cortada`, etS.map(t => [t.dice, t.raya])]);
+      r.push([etS.every(t => t.tenue === (n >= 2)), `paso ${n}: ${n >= 2 ? 'con la palabra que faltaba, «saco» sigue en los cuatro, pero tenue' : '«saco» se ve entera en los cuatro'}`, etS.map(t => t.tenue)]);
+    }
+    if (n === 1) r.push([e.cifra === String(etS.length) && e.cifra === '4' && /cuatro/.test(e.texto),
+      'paso 1: el marcador cuenta las etiquetas que se ven: 4, y la frase dice cuatro', [e.cifra, etS.length]]);
+
+    /* «grande», sobre uno solo, encima de su «saco». */
+    const suSaco = etS.find(t => sobre(medio(t.caja)[0]) === bueno);
+    if (n >= 2) {
+      const g = etG[0], s = g && sobre(medio(g.caja)[0]);
+      r.push([etG.length === 1 && s === bueno && !!suSaco && g.caja.y1 <= suSaco.caja.y0 + 1 && suSaco.caja.y0 - g.caja.y1 < 10,
+        `paso ${n}: «grande» se posa sobre uno solo, el grande, encima de su «saco»`, s && s.i]);
+      r.push([etG.length === 1 && !!wAdj && nb(g.dice) === nb(wAdj.dice) && entera(g.raya) && !g.tenue,
+        `paso ${n}: la etiqueta dice la palabra del globo, con raya entera`, g && [g.dice, g.raya]]);
+    } else {
+      r.push([etG.length === 0, `paso ${n}: todavía no hay etiqueta «grande»`, etG.length]);
+    }
+    if (n === 2) r.push([e.cifra === String(etG.length) && e.cifra === '1' && /grande/.test(e.palabras), 'paso 2: el marcador cuenta la etiqueta «grande»: 1', [e.cifra, e.palabras]]);
+
+    /* «viejo» y «lleno», cada una con su hilo hasta lo que la hace verdad. */
+    if (n === 3 || n === 4) {
+      const hV = x.hilos.find(h => h.de === 'viejo'), hL = x.hilos.find(h => h.de === 'lleno');
+      const aV = x.aros.find(a => a.de === 'viejo'), aL = x.aros.find(a => a.de === 'lleno');
+      r.push([etV.length === 1 && etL.length === 1 && nb(etV[0].dice) === 'viejo' && nb(etL[0].dice) === 'lleno' && entera(etV[0].raya) && entera(etL[0].raya),
+        `paso ${n}: «viejo» y «lleno», con raya entera`, [etV.length, etL.length]]);
+      const enBorde = (h, a) => !!h && !!a && Math.abs(Math.hypot(h.b[0] - a.c[0], h.b[1] - a.c[1]) - a.r) < 1.5;
+      r.push([!!hV && !!aV && etV.length === 1 && dentro(hV.a, etV[0].caja, 3) && enBorde(hV, aV) && entera(aV.raya) &&
+        bueno.parches.some(p => dentro(aV.c, p, 2)),
+        `paso ${n}: el hilo de «viejo» sale de su etiqueta y acaba en un aro alrededor de un parche del saco grande`, hV && [hV.a.map(Math.round), hV.b.map(Math.round)]]);
+      r.push([!!hL && !!aL && etL.length === 1 && dentro(hL.a, etL[0].caja, 3) && enBorde(hL, aL) && entera(aL.raya) &&
+        !!bueno.nudo && dentro(aL.c, bueno.nudo, 2),
+        `paso ${n}: el hilo de «lleno» sale de su etiqueta y acaba en un aro alrededor del nudo del saco grande`, hL && [hL.a.map(Math.round), hL.b.map(Math.round)]]);
+      /* Las tres en fila, sin encimarse, y ninguna tapa el «saco» del bueno. */
+      const fila = [etV[0], etG[0], etL[0]].filter(Boolean).sort((a, b) => a.caja.x0 - b.caja.x0);
+      r.push([fila.length === 3 && fila.every((t, i) => i === 0 || t.caja.x0 >= fila[i - 1].caja.x1 + 2) && !!suSaco && fila.every(t => t.caja.y1 <= suSaco.caja.y0 + 1),
+        `paso ${n}: las tres palabras van en fila, sin encimarse, encima del «saco» del grande`, fila.map(t => [t.dice, Math.round(t.caja.x0), Math.round(t.caja.x1)])]);
+    } else {
+      r.push([etV.length + etL.length + x.hilos.length + x.aros.length === 0, `paso ${n}: no hay «viejo» ni «lleno», ni sus hilos`, [etV.length, etL.length, x.hilos.length, x.aros.length]]);
+    }
+    if (n === 3) r.push([e.cifra === String(etG.length + etV.length + etL.length) && e.cifra === '3' && /cualquiera/.test(e.palabras),
+      'paso 3: el marcador cuenta las palabras que bastaban: 3', [e.cifra, e.palabras]]);
+
+    /* Qué es cada una, con su hilo hasta su palabra del globo. */
+    if (n >= 4) {
+      const rs = x.rotulos.find(t => t.de === 'sustantivo'), ra = x.rotulos.find(t => t.de === 'adjetivo');
+      r.push([x.rotulos.length === 2 && !!rs && !!ra && nb(rs.dice) === 'sustantivo' && nb(ra.dice) === 'adjetivo',
+        `paso ${n}: los dos rótulos, «sustantivo» y «adjetivo»`, x.rotulos.map(t => t.dice)]);
+      const cs = x.conectores.find(h => h.de === 'sustantivo'), ca = x.conectores.find(h => h.de === 'adjetivo');
+      r.push([x.conectores.length === 2 && !!cs && !!ca && !!rs && !!ra && !!wSaco && !!wAdj &&
+        dentro(cs.a, wSaco.caja, 8) && dentro(cs.b, rs.caja, 3) && dentro(ca.a, wAdj.caja, 8) && dentro(ca.b, ra.caja, 3),
+        `paso ${n}: «sustantivo» tiene su hilo hasta «saco», y «adjetivo» hasta «grande»`, x.conectores.map(h => [h.de, h.a.map(Math.round), h.b.map(Math.round)])]);
+    } else {
+      r.push([x.rotulos.length === 0 && x.conectores.length === 0, `paso ${n}: todavía no hay rótulos`, [x.rotulos.length, x.conectores.length]]);
+    }
+    if (n === 4) r.push([e.cifra === String(x.rotulos.length) && e.cifra === '2', 'paso 4: el marcador cuenta los rótulos: 2', e.cifra]);
+
+    /* Marvin: a la entrada del corredor, y al final, junto al grande. */
+    const mv = x.marvin;
+    if (n === 5) {
+      r.push([!!mv && Math.abs(mv.caja.x1 - bueno.cuerpo.x0) <= 3 && mv.c[0] > medio(sacos[1].cuerpo)[0] && mv.caja.y1 <= bueno.cuerpo.y1 + 1,
+        'paso 5: Marvin va derecho al saco grande', mv && [Math.round(mv.caja.x1), Math.round(bueno.cuerpo.x0)]]);
+      r.push([e.cifra === '1' && nb(e.palabras) === 'viaje, y no tres', 'paso 5: el marcador dice un viaje, y no tres', [e.cifra, e.palabras]]);
+    } else {
+      r.push([!!mv && mv.caja.x1 < sacos[0].cuerpo.x0, `paso ${n}: Marvin espera a la entrada del corredor`, mv && Math.round(mv.caja.x1)]);
+    }
+    return r;
+  },
+
   /* Los Sustantivos: la constancia de Kenia. Se mide sobre el dibujo sobre
      quién se posa cada etiqueta (la cabeza más cercana, y por encima de
      ella), alrededor de quién está cada aro, qué dice la libreta y qué dicen

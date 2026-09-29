@@ -587,7 +587,9 @@ function resetReto(){
 const identifyTaskDB=[
   {s:'El perro es muy rápido.',type:'Adjetivo calificativo (rápido)'},
   {s:'Ese libro es mío.',type:'Demostrativo (Ese) / Posesivo (mío)'},
-  {s:'La niña dibujó una casa grande.',type:'Calificativo (grande)'},
+  // La casa era «grande», que es la palabra que la animación de los sacos pone
+  // sobre el saco bueno: la tarea se contestaba acordándose de la animación.
+  {s:'La niña dibujó una casa redonda.',type:'Calificativo (redonda)'},
   {s:'Compré tres manzanas.',type:'Numeral (tres)'},
   {s:'El cielo azul me relaja.',type:'Calificativo (azul)'},
   {s:'Nuestra abuela nos visitó.',type:'Posesivo (Nuestra)'},
@@ -881,7 +883,10 @@ const evalTFBank=[
   {q:'«Nuestras» es un adjetivo posesivo.',a:true,k:'tf-nuestras'},
   {q:'«Varios» es un adjetivo numeral.',a:false,k:'tf-varios'},
   {q:'«Segundo» es un adjetivo numeral.',a:true,k:'tf-segundo'},
-  {q:'En «el perro grande», el adjetivo es «perro».',a:false,k:'tf-perro-grande'},
+  // Decía «el perro grande»: es la cuenta de la animación de los sacos («el
+  // saco grande») con otro sustantivo, y la tarjeta de «¿Qué es un adjetivo?»
+  // la escribe tal cual. Se contestaba acordándose, no pensando.
+  {q:'En «el puente angosto», el adjetivo es «puente».',a:false,k:'tf-puente-angosto'},
   {q:'La forma más intensa de «limpio» es «limpísimo».',a:true,k:'tf-limpisimo'},
   {q:'En «muchas flores», «muchas» dice cómo son las flores.',a:false,k:'tf-muchas'},
   {q:'«Esta mochila» lleva un adjetivo demostrativo.',a:true,k:'tf-esta'},

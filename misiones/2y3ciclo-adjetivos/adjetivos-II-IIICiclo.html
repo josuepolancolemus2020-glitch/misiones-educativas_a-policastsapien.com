@@ -24,6 +24,9 @@
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
 <link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La animación que explica el tema, justo después de la historia. Va
+     DESPUÉS del CSS de la misión a propósito: se tiñe de su --pri y su --sec. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- Estilos de la Prueba de Pensamiento Crítico (2ª evaluación de la misión) -->
 <style>
   .eval-mode-toggle{display:flex;gap:0.6rem;margin-bottom:1.2rem;flex-wrap:wrap;}
@@ -111,6 +114,24 @@
     <div class="tip"><span class="ti">❓</span><div>Esa palabra que faltaba es un <strong>adjetivo</strong>,
     y fíjate en lo que hace: no cambia el sustantivo (sigue siendo un saco), cambia <strong>cuál</strong>
     de todos. Sin adjetivos hay que ir a ver.</div></div>
+  </div>
+  <!-- La animación que explica el tema, justo después de la historia: la
+       palabra «saco» se prueba sobre los cuatro sacos del corredor y les queda
+       a todos; con otra palabra, «grande», le queda a uno solo, y «viejo» o
+       «lleno» también bastaban. «Saco» es el sustantivo y los otros son
+       adjetivos. La mueve el alumno, paso a paso. El aparato es compartido
+       (js/animacion-mision.js) y la escena es de esta misión
+       (js/animacion-sacos.js). La frase de dentro es de reserva: si el
+       aparato no llega a cargar, se lee eso en vez de un hueco. -->
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira qué hace la palabra que faltaba</h2>
+    <div id="amSacos">
+      <p>La palabra «saco» les queda a los cuatro sacos del corredor: con ella sola no se sabe cuál es.
+      Con otra palabra, «el saco grande», le queda a uno solo, porque es el único grande. «Viejo» o
+      «lleno» también bastaban: solo uno tiene parches, solo uno va lleno, y es el mismo. «Saco» es el
+      sustantivo y sigue siendo un saco; «grande», «viejo» y «lleno» son adjetivos, y dicen cuál de los
+      cuatro.</p>
+    </div>
   </div>
   <div class="card ac-teal">
     <h2>🎨 ¿Qué es un Adjetivo?</h2>
@@ -620,6 +641,9 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js?v=103"></script>
   <script src="../../js/metas-registro.js?v=103"></script>
+<!-- La animación de los sacos: primero el aparato, después la escena. -->
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-sacos.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

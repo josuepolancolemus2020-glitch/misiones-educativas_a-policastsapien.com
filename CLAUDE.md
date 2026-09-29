@@ -7212,6 +7212,92 @@ sobre un niño, el nombre sobre otra niña, el marcador diciendo 4, el rótulo e
 singular, «mayúscula» en una frase y el apellido en minúscula), y salió roja
 con las seis.
 
+### La vigesimosegunda: Los Adjetivos, y lo que enseñó
+
+La segunda de la Ruta de la Palabra es **Los Adjetivos**
+(`misiones/2y3ciclo-adjetivos/`, `js/animacion-sacos.js`). La historia es la
+de doña Nely, que mandó a Marvin al corredor con un «Tráeme el saco», y en el
+corredor había cuatro. Trajo uno y no era; trajo otro, tampoco; al tercer
+viaje bajó ella misma, de mal humor. Le habría bastado una palabra: el grande,
+el viejo, el que está lleno. La animación es ese corredor, con el globo de
+doña Nely arriba:
+
+- la palabra «saco» sale del globo y se posa sobre los cuatro, con raya
+  cortada: les queda a todos, y con ella sola hay que ir a ver;
+- se escribe «grande» y se posa sobre uno solo, encima de su «saco»: el
+  adjetivo no le quita el sustantivo, le añade cuál;
+- «viejo» y «lleno» salen de detrás de «grande» y cada una lleva su hilo
+  hasta lo que la hace verdad: un parche, y el nudo de un saco lleno;
+- «saco» es el sustantivo, y no cambia; «grande», «viejo» y «lleno» son
+  adjetivos, y dicen cuál de los cuatro;
+- con «el saco grande», Marvin lo trae a la primera.
+
+Seis cosas que valen para las siguientes:
+
+1. ⚠️ **La historia dice que bastaba UNA palabra, y cualquiera de las tres, y
+   eso hay que dibujarlo para que sea verdad.** El saco bueno es el único
+   grande, el único con parches y el único amarrado; los otros tres son chicos,
+   nuevos y van abiertos arriba. Si otro fuera grande, «el grande» no bastaría
+   y la pantalla le daría la razón a Marvin. La sonda lo mide en cada paso.
+2. ⚠️ **La cuenta de la animación estaba en la prueba, dos veces.** El
+   verdadero o falso «En «el perro grande», el adjetivo es «perro»» es «el saco
+   grande» con otro sustantivo, y la tarjeta de «¿Qué es un adjetivo?», justo
+   debajo, lo escribe tal cual: se contestaba acordándose. Ahora es «el puente
+   angosto», en la misión y en la ficha, que sigue en sus siete hojas. La tarea
+   «La niña dibujó una casa grande» pasó a «redonda». Y la sonda no deja salir
+   en la animación ninguna palabra de las preguntas, ni «ese» y «este», que la
+   prueba pregunta de qué clase son, ni «más», «muy» o «-ísimo», que son sus
+   grados: «solo ese saco» pasó a «solo uno… Es el mismo», y «con una palabra
+   más», a «con otra palabra».
+3. **Se subraya, no se encierra.** Un recuadro alrededor de cada palabra del
+   globo pide aire a los dos lados, y el renglón se leía «Tráeme el   saco»,
+   como si faltara algo en medio. Subrayada, la frase va con los espacios de
+   siempre, y subrayar el adjetivo es lo que pide la tarea de la misma misión.
+   Las posiciones salen de medir la Fredoka: «Tráeme el» mide 66,5, «saco» 31,2
+   y «grande» 47,5, con 3,5 de espacio.
+4. ⚠️ **Los sacos chicos parecían tinajas, dos veces.** Con la boca doblada y
+   plana, el doblez se leía como una tapa; abiertos y lisos, como ollas. Lo que
+   dice «esto es tela» es la trama, a lo ancho y a lo alto. La sonda estaba en
+   verde las dos veces: se vio en las capturas.
+5. ⚠️ **Lo que sale de detrás de otra pieza se dibuja debajo de ella.** «Viejo»
+   y «lleno» nacen donde está «grande»; puestas encima, las tres palabras se
+   leían revueltas mientras se apartaban. Y en el último paso sus hilos se
+   apagan en grupo en vez de destrazarse: una raya que se recoge deja pedazos
+   colgando en el aire. Las dos cosas se vieron solo en las fotos a medio viaje.
+6. **El saco sigue siendo saco.** Sobre el bueno quedan las dos etiquetas,
+   «saco» y encima «grande», como Kenia se quedaba con «niña» debajo de su
+   nombre. Es lo que dice el aviso de la historia: el adjetivo no cambia el
+   sustantivo, cambia cuál de todos.
+
+El globo, las etiquetas y los sacos son papel y manta, y se quedan como son en
+las dos pantallas; los hilos, los aros y los rótulos llevan el teal de la
+misión, oscuro en la clara y claro en la oscura. El botón que avanza lleva su
+`--am-boton`, porque con el teal y el mostaza la letra blanca se quedaba en
+3,3:1 y 2,9:1.
+
+La sonda de esta escena **mide sobre el dibujo sobre qué saco se posa cada
+cosa**: el más cercano a lo ancho, y por encima de él. Comprueba:
+
+- que haya cuatro sacos, y uno solo sea más grande que los otros (de alto y de
+  ancho), uno solo tenga parches y uno solo vaya amarrado, y que sea el mismo;
+- que el globo diga lo que dice doña Nely, sin encimarse las palabras, con
+  «saco» subrayada con raya cortada y «grande» con raya entera;
+- que «saco» se pose encima de cada uno de los cuatro, con raya cortada, y
+  quede tenue cuando llega «grande»;
+- que «grande» se pose sobre el grande, encima de su «saco», con raya entera;
+- que el hilo de «viejo» salga de su etiqueta y acabe en un aro alrededor de
+  un parche del grande, y el de «lleno», alrededor del nudo;
+- que los rótulos tengan su hilo hasta «saco» y hasta «grande»;
+- que Marvin espere a la entrada y al final quede junto al grande;
+- y que el marcador cuente lo que se ve: 4 etiquetas, 1, 3 palabras, 2
+  rótulos y 1 viaje.
+
+Se comprobó al revés con siete averías plantadas a la vez (una etiqueta «saco»
+sobre Marvin, «grande» sobre un saco chico, un parche en un saco nuevo, el aro
+de «lleno» alrededor de un parche, el marcador diciendo 3, «el más viejo» en
+una frase y la etiqueta «grande» con raya cortada), y salió roja con las
+siete.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -7243,6 +7329,9 @@ viajan se mira también con fotos a medio viaje, no solo al final de cada paso.
 Si la escena acerca la vista, lo que tiene que seguir al mundo (un instrumento,
 un punto) se mueve con su misma demora y su misma curva, y se mide cuadro a
 cuadro que no se despegue: en las fotos, la captura llega tarde y no lo enseña.
+Lo que sale de detrás de otra pieza se dibuja debajo de ella, y lo que se va en
+un paso se apaga, no se destraza: son las dos cosas que en Los Adjetivos solo
+se vieron a medio viaje.
 
 Si el `--sec` de la misión es claro (un ámbar, un amarillo), la letra blanca
 del botón que avanza no se lee en su punta: la misión declara en su CSS
