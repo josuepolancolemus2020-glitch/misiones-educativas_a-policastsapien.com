@@ -371,7 +371,7 @@ const evalMCBank=[
   {q:'«Lava el arroz. Luego, ponlo a hervir con sal». Es un texto…',o:['a) narrativo','b) instructivo','c) poético','d) descriptivo'],a:1,k:'mc-arroz'},
   {q:'«Había una vez un zorro que vivía cerca de una quebrada…» Es un texto…',o:['a) expositivo','b) argumentativo','c) narrativo','d) instructivo'],a:2,k:'mc-zorro'},
   {q:'«El colibrí es pequeñito, de plumas verdes brillantes y pico largo y fino». Es un texto…',o:['a) descriptivo','b) argumentativo','c) dialogado','d) instructivo'],a:0,k:'mc-colibri'},
-  {q:'«Pienso que el recreo debería durar más, porque jugar ayuda a aprender». Es un texto…',o:['a) narrativo','b) descriptivo','c) argumentativo','d) instructivo'],a:2,k:'mc-recreo'},
+  {q:'«Pienso que hay que desayunar antes de clases, porque con hambre no se pone atención». Es un texto…',o:['a) narrativo','b) descriptivo','c) argumentativo','d) instructivo'],a:2,k:'mc-desayuno'},
   {q:'«—¿Jugamos fútbol? —Claro, voy por la pelota». Es un texto…',o:['a) poético','b) dialogado','c) expositivo','d) descriptivo'],a:1,k:'mc-futbol'},
   {q:'«La Tierra tarda un año en dar la vuelta al Sol». Es un texto…',o:['a) expositivo','b) poético','c) dialogado','d) narrativo'],a:0,k:'mc-tierra'},
   {q:'«Luna de plata que alumbras / mi pueblo en la oscuridad…» Es un texto…',o:['a) instructivo','b) argumentativo','c) expositivo','d) poético'],a:3,k:'mc-luna'},

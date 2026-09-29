@@ -1026,6 +1026,73 @@ const LEER = `
       textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
     };
   };
+  /* Los Tipos de Textos: la carta de Kenia. Se lee cada pedazo de la carta
+     con su tinta y su línea base; quién la lee (el director o la prima) y
+     lo que dice su globo; cada pregunta del lector, con raya cortada o
+     entera y su ✓; los hilos de punta a punta, las llaves, los aros y la
+     leyenda; y la cancha: el candado, el ancho de la puerta y dónde están
+     las niñas. ⚠️ Aquí no van barras invertidas: esto vive dentro de una
+     plantilla de texto y se pierden. */
+  window.__amExtra.amCarta = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(base.multiply(el.getScreenCTM())); return [q.x, q.y]; }
+    function caja(el) { var b = el.getBBox(), a = aVista(el, b.x, b.y), c = aVista(el, b.x + b.width, b.y + b.height); return { x0: Math.min(a[0], c[0]), y0: Math.min(a[1], c[1]), x1: Math.max(a[0], c[0]), y1: Math.max(a[1], c[1]) }; }
+    function raya(el) { var d = getComputedStyle(el).strokeDasharray; if (!d || d === 'none') return 0; var v = d.split(',').join(' ').split(' ').map(parseFloat).filter(isFinite); return v.length ? Math.max.apply(null, v) : 0; }
+    function todos(sel) { return [].slice.call(raiz.querySelectorAll(sel)); }
+    var lienzo = document.createElement('canvas').getContext('2d');
+    /* La tinta y el avance de un texto, con la misma letra y el mismo
+       ancla con que lo pinta el navegador. */
+    function medir(t) {
+      var cs = getComputedStyle(t), s = t.textContent, ancla = t.getAttribute('text-anchor') || 'start';
+      lienzo.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+      lienzo.textAlign = ancla === 'end' ? 'right' : (ancla === 'middle' ? 'center' : 'left');
+      var m = lienzo.measureText(s), x0 = +t.getAttribute('x'), y0 = +t.getAttribute('y');
+      var ini = ancla === 'end' ? x0 - m.width : (ancla === 'middle' ? x0 - m.width / 2 : x0);
+      var p = aVista(t, x0 - m.actualBoundingBoxLeft, y0 - m.actualBoundingBoxAscent), q = aVista(t, x0 + m.actualBoundingBoxRight, y0 + m.actualBoundingBoxDescent);
+      var a = aVista(t, ini, y0), b = aVista(t, ini + m.width, y0);
+      return { tinta: { x0: p[0], y0: p[1], x1: q[0], y1: q[1] }, x0: a[0], x1: b[0], base: a[1] };
+    }
+    function punta(p, largo) { var q = p.getPointAtLength(largo); return aVista(p, q.x, q.y); }
+    var ley = raiz.querySelector('[data-leyenda]'), candado = raiz.querySelector('[data-candado]');
+    return {
+      papel: caja(raiz.querySelector('[data-papel]')),
+      lineas: todos('[data-linea]').filter(vis).map(function (t) {
+        var m = medir(t);
+        return { rol: t.getAttribute('data-linea'), dice: t.textContent, x0: m.x0, x1: m.x1, base: m.base, tinta: m.tinta,
+          ancla: t.getAttribute('text-anchor') || 'start' };
+      }),
+      lectores: todos('[data-lector]').filter(vis).map(function (g) { return { de: g.getAttribute('data-lector'), caja: caja(g) }; }),
+      dice: todos('[data-dice]').filter(vis).map(function (g) {
+        return { de: g.getAttribute('data-dice'), globo: caja(g.querySelector('[data-globo]')),
+          texto: [].slice.call(g.querySelectorAll('text')).map(function (t) { return t.textContent; }).join(' ') };
+      }),
+      preguntas: todos('[data-pregunta]').filter(vis).map(function (g) {
+        var ab = g.querySelector('[data-abierta]'), he = g.querySelector('[data-hecha]');
+        return { dice: g.getAttribute('data-pregunta'), de: g.getAttribute('data-de'),
+          abierta: vis(ab), hecha: vis(he), visto: vis(g.querySelector('[data-visto]')),
+          rayaAbierta: raya(ab), rayaHecha: raya(he), caja: caja(vis(he) ? he : ab) };
+      }),
+      hilos: todos('[data-hilo]').filter(vis).map(function (p) {
+        var largo = p.getTotalLength();
+        return { de: p.getAttribute('data-hilo'), ini: punta(p, 0), fin: punta(p, largo),
+          corrido: Math.abs(parseFloat(getComputedStyle(p).strokeDashoffset) || 0) };
+      }),
+      llaves: todos('[data-llave]').filter(vis).map(function (p) { return { de: p.getAttribute('data-llave'), caja: caja(p) }; }),
+      aros: todos('[data-aro]').filter(vis).map(function (p) { return { de: p.getAttribute('data-aro'), caja: caja(p), raya: raya(p) }; }),
+      leyenda: ley && vis(ley) ? { dice: ley.querySelector('[data-leyenda-dice]').textContent, caja: caja(ley), aro: raya(ley.querySelector('[data-leyenda-aro]')) } : null,
+      cancha: {
+        cerca: caja(raiz.querySelector('[data-cerca]')),
+        piso: caja(raiz.querySelector('[data-cancha]')),
+        puerta: caja(raiz.querySelector('[data-puerta-marco]')),
+        candado: !!candado && vis(candado),
+        grilletes: todos('[data-grillete]').filter(vis).map(function (p) { return p.getAttribute('data-grillete'); }),
+        ninas: todos('[data-nina]').filter(vis).map(function (g) { return caja(g); })
+      },
+      barrido: vis(raiz.querySelector('[data-barrido]')),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -1112,6 +1179,180 @@ let keniaAdverbios = null;
 let mensajePron = null;
 
 const ESCENAS = {
+  /* Los Tipos de Textos: la carta de Kenia. Se lee la carta renglón por
+     renglón, como se escribe, y se comprueba que los cuatro renglones de
+     Kenia sean los mismos en los seis pasos: lo que cambia es lo que se le
+     agrega. ⚠️ Lo que contesta el lector no se le cree a la escena: la
+     sonda saca de la carta que ve quién la lee (por el saludo), qué
+     renglones cuentan, cuáles piden y cuál da la razón, y de ahí qué
+     preguntas del lector tienen respuesta. Con eso compara las etiquetas
+     (raya cortada o entera y su ✓), los hilos de punta a punta, las llaves,
+     el globo, el marcador y la cancha: el candado, la puerta y dónde están
+     las niñas. Y en el 5, un aro alrededor de «Le pido» y de «porque», sin
+     tocar las palabras de al lado. ⚠️ Y la prueba no se regala: ningún
+     tipo de texto, ninguna pieza de los pareados, ni «convencer», que es
+     la respuesta del anuncio. */
+  amCarta(e, n) {
+    const x = e.extra, r = [];
+    const nb = t => String(t == null ? '' : t).replace(/\u00a0/g, ' ').trim();
+    /* Lo que no depende del dibujo, primero: con una pieza mal puesta la
+       sonda deja de medir, y esto no puede quedarse sin mirar por eso. */
+    const dicho = [e.texto, e.cifra, e.palabras].concat(x.textos).map(nb).join(' | ').toLowerCase();
+    const EXACTAS = ['narrativo', 'narrativa', 'narrativos', 'descriptivo', 'descriptiva', 'expositivo', 'expositiva', 'informativo',
+      'argumentativo', 'argumentativa', 'instructivo', 'instructiva', 'dialogado', 'dialogada', 'poético', 'poética', 'lírico',
+      'literario', 'literaria', 'literarios', 'inicio', 'nudo', 'desenlace', 'narrador', 'personaje', 'personajes', 'tesis',
+      'argumento', 'argumentos', 'propósito', 'conector', 'conectores', 'verso', 'versos', 'imperativo', 'adjetivo', 'adjetivos',
+      'objetivo', 'objetiva', 'raya', 'ingredientes', 'pasado', 'enciclopedia', 'tercera', 'presente', 'título', 'recibo',
+      'pulpería', 'opinión', 'convencer', 'convence', 'convenció', 'defiende'];
+    const FRASES = ['para qué se escribe', 'que une', 'no literario'];
+    const suelto = ' ' + dicho.split(/[^a-záéíóúñü]+/).filter(Boolean).join(' ') + ' ';
+    const malas = suelto.trim().split(' ').filter(w => EXACTAS.includes(w)).concat(FRASES.filter(f => suelto.includes(' ' + f + ' ')));
+    r.push([malas.length === 0, `paso ${n}: no sale ningún tipo de texto, ni una pieza de los pareados, ni una respuesta de la prueba`, malas]);
+    r.push([!x.barrido, `paso ${n}: el resaltador con que lee el director no se queda encendido`, x.barrido]);
+
+    const dentroDe = (c, k, tol = 0.5) => c.x0 >= k.x0 - tol && c.x1 <= k.x1 + tol && c.y0 >= k.y0 - tol && c.y1 <= k.y1 + tol;
+    const cruza = (a, b) => a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1;
+    const cortada = v => v > 0 && v < 8, entera = v => v === 0 || v > 20;
+    const une = cs => cs.reduce((a, c) => ({ x0: Math.min(a.x0, c.x0), y0: Math.min(a.y0, c.y0), x1: Math.max(a.x1, c.x1), y1: Math.max(a.y1, c.y1) }),
+      { x0: Infinity, y0: Infinity, x1: -Infinity, y1: -Infinity });
+
+    /* ── La carta, renglón por renglón, como se escribe: el punto y la coma
+       pegados a la palabra de antes, un espacio entre palabras, y todo
+       dentro de la hoja. ── */
+    const renglones = [];
+    x.lineas.slice().sort((a, b) => a.base - b.base || a.x0 - b.x0).forEach(t => {
+      const q = renglones.find(z => Math.abs(z.base - t.base) < 0.6);
+      if (q) q.piezas.push(t); else renglones.push({ base: t.base, piezas: [t] });
+    });
+    let espacios = true;
+    renglones.forEach(z => {
+      z.piezas.sort((a, b) => a.x0 - b.x0);
+      z.texto = z.piezas.map((p, i) => {
+        if (!i) return nb(p.dice);
+        const g = p.x0 - z.piezas[i - 1].x1, pegada = nb(p.dice) === '.' || nb(p.dice) === ',';
+        if (pegada ? Math.abs(g) > 0.6 : (g < 2.5 || g > 7)) espacios = false;
+        return (pegada ? '' : ' ') + nb(p.dice);
+      }).join('');
+      z.tinta = une(z.piezas.map(p => p.tinta));
+    });
+    const K = ['Jugar con mis compañeras', 'es lo más bonito del día.', 'Corremos, saltamos y nos', 'reímos. ¡Nadie se aburre!'];
+    const ESPERA = [n === 2 ? 'Querida prima:' : 'Señor director:'].concat(K)
+      .concat(n >= 3 ? ['Le pido que nos deje usar', 'la cancha en el recreo' + (n >= 4 ? ',' : '.')] : [])
+      .concat(n >= 4 ? ['porque a esa hora está vacía.'] : []).concat(['Kenia']);
+    const leidos = renglones.map(z => z.texto);
+    r.push([JSON.stringify(leidos) === JSON.stringify(ESPERA) && espacios, `paso ${n}: la carta dice lo que tiene que decir, renglón por renglón y como se escribe`, leidos]);
+    r.push([renglones.every(z => dentroDe(z.tinta, x.papel, 0)), `paso ${n}: todo lo escrito cabe en la hoja`, renglones.filter(z => !dentroDe(z.tinta, x.papel, 0)).map(z => z.texto)]);
+    r.push([renglones.every((z, i) => !i || z.tinta.y0 >= renglones[i - 1].tinta.y1 - 0.5), `paso ${n}: ningún renglón se monta en el de arriba`, renglones.map(z => Math.round(z.base))]);
+    const cuerpo = renglones.slice(1, -1), firma = renglones[renglones.length - 1];
+    const x0s = cuerpo.map(z => z.piezas[0].x0).concat(renglones.length ? [renglones[0].piezas[0].x0] : []);
+    r.push([x0s.length > 0 && Math.max(...x0s) - Math.min(...x0s) < 0.5, `paso ${n}: el saludo y los renglones empiezan todos en el mismo margen`, x0s.map(v => Math.round(v * 10) / 10)]);
+    r.push([!!firma && firma.piezas[0].ancla === 'end' && firma.tinta.y0 > Math.max(...cuerpo.map(z => z.tinta.y1)) + 4,
+      `paso ${n}: la firma va a la derecha, debajo del último renglón`, firma && firma.texto]);
+
+    /* ── Lo que la carta tiene, sacado del texto que se ve: quién la lee
+       (por el saludo), qué renglones cuentan, desde dónde pide y desde
+       dónde da la razón. ── */
+    const saludo = renglones.length ? renglones[0].texto : '';
+    const lector = saludo === 'Querida prima:' ? 'prima' : (saludo === 'Señor director:' ? 'director' : null);
+    const iP = cuerpo.findIndex(z => z.texto.split(' ').includes('pido'));
+    const iR = cuerpo.findIndex(z => z.texto.startsWith('porque'));
+    const partes = {
+      cuenta: cuerpo.slice(0, iP >= 0 ? iP : cuerpo.length),
+      pide: iP >= 0 ? cuerpo.slice(iP, iR >= 0 ? iR : cuerpo.length) : [],
+      razon: iR >= 0 ? cuerpo.slice(iR) : []
+    };
+    const hay = { cuenta: partes.cuenta.length > 0, pide: partes.pide.length > 0, razon: partes.razon.length > 0 };
+    const vistos = x.lectores.map(l => l.de);
+    r.push([!!lector && JSON.stringify(vistos) === JSON.stringify([lector]), `paso ${n}: la lee quien dice el saludo (${lector})`, vistos]);
+
+    /* ── Las preguntas del lector: sin respuesta, raya cortada; con
+       respuesta en la carta, raya entera, su ✓ y un hilo hasta la llave de
+       los renglones que la contestan. ── */
+    const BUSCA = { director: [['¿Qué me pide?', 'pide'], ['¿Por qué?', 'razon']], prima: [['¿Cómo te va?', 'cuenta']] };
+    const busca = n === 0 || !lector ? [] : BUSCA[lector];
+    const pregs = x.preguntas.map(p => nb(p.dice));
+    r.push([JSON.stringify(pregs.slice().sort()) === JSON.stringify(busca.map(b => b[0]).sort()),
+      `paso ${n}: ${busca.length ? 'las preguntas son las de quien lee: ' + busca.map(b => b[0]).join(' ') : 'todavía nadie pregunta nada'}`, pregs]);
+    let sinRespuesta = 0;
+    busca.forEach(([dice, de]) => {
+      const p = x.preguntas.find(q => nb(q.dice) === dice);
+      if (!p) return;
+      r.push([p.caja.x0 >= x.papel.x1, `paso ${n}: «${dice}» va fuera de la hoja, del lado del lector`, Math.round(p.caja.x0)]);
+      if (!hay[de]) {
+        sinRespuesta++;
+        r.push([p.abierta && !p.hecha && !p.visto && cortada(p.rayaAbierta) && !x.hilos.some(h => h.de === de),
+          `paso ${n}: «${dice}» no tiene respuesta en la carta: raya cortada, sin ✓ y sin hilo`, [p.abierta, p.hecha, p.visto, p.rayaAbierta]]);
+        return;
+      }
+      const tinta = une(partes[de].map(z => z.tinta));
+      const otros = cuerpo.filter(z => !partes[de].includes(z));
+      const ll = x.llaves.find(q => q.de === de);
+      const bienLlave = !!ll && ll.caja.y0 <= tinta.y0 + 0.5 && ll.caja.y1 >= tinta.y1 - 0.5 && ll.caja.x0 >= tinta.x1 - 0.2 &&
+        dentroDe(ll.caja, x.papel, 0) && otros.every(z => z.tinta.y1 <= ll.caja.y0 + 0.5 || z.tinta.y0 >= ll.caja.y1 - 0.5);
+      r.push([bienLlave, `paso ${n}: la llave de «${dice}» abarca justo los renglones que la contestan (${partes[de].length})`, ll && [Math.round(ll.caja.y0), Math.round(ll.caja.y1), Math.round(tinta.y0), Math.round(tinta.y1)]]);
+      const h = x.hilos.find(q => q.de === de);
+      const enPregunta = pt => Math.abs(pt[0] - p.caja.x0) <= 1.2 && pt[1] > p.caja.y0 && pt[1] < p.caja.y1;
+      const enLlave = pt => !!ll && Math.abs(pt[0] - ll.caja.x1) <= 1.2 && pt[1] >= ll.caja.y0 - 0.5 && pt[1] <= ll.caja.y1 + 0.5;
+      r.push([!!h && h.corrido <= 0.5 && ((enPregunta(h.ini) && enLlave(h.fin)) || (enPregunta(h.fin) && enLlave(h.ini))),
+        `paso ${n}: el hilo de «${dice}» va de la pregunta a su llave, dibujado entero`, h && [h.ini.map(Math.round), h.fin.map(Math.round), h.corrido]]);
+      r.push([p.hecha && p.visto && !p.abierta && entera(p.rayaHecha), `paso ${n}: «${dice}» tiene respuesta: raya entera y su ✓`, [p.abierta, p.hecha, p.visto]]);
+    });
+    const contestadas = busca.filter(b => hay[b[1]]).map(b => b[1]);
+    r.push([x.hilos.length === contestadas.length && x.llaves.length === contestadas.length,
+      `paso ${n}: un hilo y una llave por cada pregunta contestada (${contestadas.length}), y ninguno más`, [x.hilos.map(h => h.de), x.llaves.map(l => l.de)]]);
+
+    /* ── El marcador: las preguntas sin respuesta, y en el 5 las pistas. ── */
+    if (n === 0) r.push([nb(e.cifra) === '¿?', 'paso 0: el marcador pregunta', e.cifra]);
+    else if (n === 5) r.push([nb(e.cifra) === String(x.aros.length) && nb(e.palabras) === 'pistas de la carta que pide', 'paso 5: el marcador cuenta los aros: las pistas', [e.cifra, x.aros.length]]);
+    else r.push([nb(e.cifra) === String(sinRespuesta) && nb(e.palabras) === (sinRespuesta === 1 ? 'pregunta sin respuesta' : 'preguntas sin respuesta'),
+      `paso ${n}: el marcador dice ${sinRespuesta}, las preguntas de quien lee que la carta no contesta`, [e.cifra, e.palabras]]);
+
+    /* ── Lo que dice el lector, sacado de lo que la carta contesta. ── */
+    const DICE = lector === 'prima' ? '¡Qué bonito!' : (hay.pide && hay.razon ? '¡Sí! Úsenla desde el lunes.' : (hay.pide ? '¿Y por qué?' : '¡Qué bonito!'));
+    if (n === 0) r.push([x.dice.length === 0, 'paso 0: el director todavía no la ha leído, y no dice nada', x.dice.map(d => d.texto)]);
+    else {
+      const d = x.dice, fig = x.lectores[0];
+      r.push([d.length === 1 && nb(d[0].texto) === DICE && d[0].de === lector && !!fig && d[0].globo.y1 <= fig.caja.y0 + 1 &&
+        (d[0].globo.x0 + d[0].globo.x1) / 2 > fig.caja.x0 && (d[0].globo.x0 + d[0].globo.x1) / 2 < fig.caja.x1,
+        `paso ${n}: ${lector === 'prima' ? 'la prima' : 'el director'} dice «${DICE}», en un globo encima de su cabeza`, d.map(z => [z.de, z.texto])]);
+    }
+    /* Lo que se cita en la frase es lo que dice la carta, letra por letra. */
+    const sinPunto = zs => zs.map(z => z.texto).join(' ').replace(/[.,]$/, '');
+    if (n === 3) r.push([nb(e.texto).includes('«' + sinPunto(partes.pide) + '»'), 'paso 3: la frase cita lo que pide la carta, tal cual', sinPunto(partes.pide)]);
+    if (n === 4) r.push([nb(e.texto).includes('«' + sinPunto(partes.razon) + '»'), 'paso 4: la frase cita la razón de la carta, tal cual', sinPunto(partes.razon)]);
+
+    /* ── La cancha: abierta solo si la carta es al director y le contesta
+       las dos preguntas. Cerrada: candado con el gancho puesto, puerta
+       entera y las niñas afuera. Abierta: sin candado, la puerta girada y
+       las niñas adentro, en el piso de la cancha y sin montarse. ── */
+    const c = x.cancha, abierta = lector === 'director' && hay.pide && hay.razon;
+    const anchoPuerta = c.puerta.x1 - c.puerta.x0;
+    if (abierta) {
+      const dentro = c.ninas.every(q => q.x0 >= c.cerca.x0 + 44 && q.x1 <= c.cerca.x1 && q.y1 >= c.piso.y0 && q.y1 <= c.piso.y1 + 1);
+      const juntas = c.ninas.some((q, i) => c.ninas.some((w, j) => j > i && cruza(q, w)));
+      r.push([!c.candado && anchoPuerta <= 10 && c.ninas.length === 3 && dentro && !juntas,
+        `paso ${n}: la cancha se abre: sin candado, la puerta girada y las tres niñas adentro`, [c.candado, Math.round(anchoPuerta), c.ninas.map(q => Math.round(q.x0))]]);
+    } else {
+      r.push([c.candado && JSON.stringify(c.grilletes) === '["cerrado"]' && anchoPuerta >= 38 && c.ninas.length === 3 && c.ninas.every(q => q.x1 <= c.cerca.x0),
+        `paso ${n}: la cancha sigue cerrada: con candado, la puerta entera y las niñas afuera`, [c.candado, c.grilletes, Math.round(anchoPuerta), c.ninas.map(q => Math.round(q.x1))]]);
+    }
+
+    /* ── 5 · Un aro de raya entera alrededor de «Le pido» y de «porque», sin
+       tocar las palabras de al lado, y la leyenda. ── */
+    if (n === 5) {
+      const piezas = x.lineas;
+      const bienAros = ['Le pido', 'porque'].every(w => {
+        const a = x.aros.find(q => q.de === w), p = piezas.find(q => nb(q.dice) === w);
+        return !!a && !!p && entera(a.raya) && dentroDe(p.tinta, a.caja, 0) && piezas.every(o => o === p || !cruza(o.tinta, a.caja));
+      });
+      r.push([x.aros.length === 2 && bienAros, 'paso 5: un aro de raya entera alrededor de «Le pido» y de «porque», sin tocar las palabras de al lado', x.aros.map(a => a.de)]);
+      r.push([!!x.leyenda && nb(x.leyenda.dice) === 'las pistas' && entera(x.leyenda.aro) && x.leyenda.caja.x0 >= x.papel.x1,
+        'paso 5: al lado de la hoja, el aro quiere decir «las pistas»', x.leyenda && x.leyenda.dice]);
+    } else {
+      r.push([x.aros.length === 0 && !x.leyenda, `paso ${n}: sin aros ni leyenda`, x.aros.length]);
+    }
+    return r;
+  },
   /* Marcadores Textuales: la pizarra del maestro. Se lee la pizarra
      renglón por renglón, como se escribe, y se comprueba que las cuatro
      cosas del maestro sean las mismas en los seis pasos: solo cambian las

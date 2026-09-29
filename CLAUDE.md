@@ -7806,6 +7806,111 @@ preguntar por las parejas. Salió roja con cada una. Todas juntas fallan 21
 comprobaciones, y una avería se tapa: con el trabajo que no se va se ven tres,
 y el marcador que dice 3 cuadra. Por eso se plantan una por una.
 
+### La vigesimoctava: Los Tipos de Textos, y lo que enseñó
+
+La octava de la Ruta de la Palabra es **Los Tipos de Textos**
+(`misiones/2y3ciclo-tipos-de-textos/`, `js/animacion-carta.js`). La historia es
+la de Kenia: quería que el director les dejara usar la cancha en el recreo, le
+escribió una carta preciosa contando lo bonito que es jugar con sus compañeras,
+y él dijo «¡qué bonito!», la guardó, y la cancha siguió cerrada. No tenía ni una
+falta de ortografía: le faltaban una petición y una razón. La animación pone la
+carta a un lado, al que la lee al otro, y abajo la cancha con su candado:
+
+- antes de tocar, se busca el renglón donde Kenia pide la cancha: no está;
+- el director lee buscando dos cosas, «¿Qué me pide?» y «¿Por qué?», y no
+  encuentra ninguna: las dos quedan con raya cortada, él dice «¡Qué bonito!» y
+  la cancha sigue cerrada;
+- la misma carta, con otro saludo, para su prima: ella busca «¿Cómo te va?», y
+  los cuatro renglones de Kenia se lo contestan. Ahí el mismo «¡Qué bonito!» es
+  lo que Kenia quería oír;
+- de vuelta al director, Kenia escribe «Le pido que nos deje usar la cancha en
+  el recreo». Él pregunta: «¿Y por qué?»;
+- escribe la razón, «porque a esa hora está vacía». El director dice que sí, el
+  candado se abre y las niñas entran a la cancha;
+- «Le pido» y «porque» son las pistas de la carta que pide: contar y pedir se
+  escriben distinto, y por eso hay tipos de textos.
+
+Seis cosas que valen para las siguientes:
+
+1. ⚠️ **La carta de Kenia no estaba mal escrita, y se ve.** Es el paso de la
+   prima: los mismos cuatro renglones, sin cambiarles una letra, le sirven tal
+   cual a quien solo quiere saber cómo le va. Sin ese paso el alumno saldría
+   creyendo que contar está mal, cuando lo que está mal es contar si lo que se
+   quiere es la cancha. Es la regla del mensaje sin señales de los peligros de
+   la IA: una lección donde todo es error enseña a desconfiar de todo.
+2. ⚠️ **Lo que contesta el lector no se le cree a la escena.** La sonda lee la
+   carta, saca del saludo quién la lee y del texto qué renglones cuentan, cuáles
+   piden y cuál da la razón, y de ahí qué preguntas tienen respuesta. Con eso
+   compara las etiquetas, los hilos de punta a punta, las llaves, el globo, el
+   marcador y la cancha: el candado, la puerta y dónde están las niñas.
+3. ⚠️ **La carta arreglada estaba en la prueba, con otra ropa.** La selección
+   múltiple traía «Pienso que el recreo debería durar más, porque jugar ayuda a
+   aprender»: el recreo, el juego y un «porque», como la carta que la animación
+   deja escrita. Ahora es «Pienso que hay que desayunar antes de clases, porque
+   con hambre no se pone atención», con la respuesta en la misma letra, en la
+   misión y en la ficha, que sigue en sus siete hojas. Y la animación no nombra
+   ningún tipo de texto (son las respuestas de la selección múltiple), ninguna
+   pieza de los pareados, ni «convencer», que es la respuesta del anuncio: habla
+   de contar y de pedir.
+4. **El director dice que sí esta vez, no siempre.** Una carta no obliga a
+   nadie: pedir y dar una razón le da al que decide algo que contestar. La frase
+   lo dice así («Dice que sí»), para no prometer lo que una carta no puede.
+5. ⚠️ **Cuando cambia lo que se dice, cambia el globo entero.** El globo empezó
+   quieto y solo cambiaba la letra de adentro: entre una frase y la siguiente se
+   quedaba vacío casi dos segundos, como si el lector se hubiera quedado sin
+   palabras. Ahora cada cosa que dice lleva su propio globo. Se vio fotografiando
+   los pasos a medio camino, con la sonda en verde.
+6. ⚠️ **Las niñas entraban amontonadas.** Arrancaba primero la de atrás,
+   alcanzaba a las otras y cruzaban la puerta una encima de otra. Ahora arranca
+   la que está más cerca de la puerta. También se vio solo a medio camino.
+
+La carta y el globo son de papel en las dos pantallas, con tinta oscura; lo que
+Kenia escribe después va con otra tinta, violeta, y con su llave. La cancha, la
+malla y las personas son como son. Lo que va sobre el escenario (las preguntas y
+sus hilos) lleva la tinta de la pantalla. Nada se dice solo con color: una
+pregunta sin respuesta va con raya cortada, la contestada con raya entera y su
+✓. Y el botón del primer paso se partía en dos renglones a 360 px («👀 Que la
+lea el director»): ahora es «📨 Entregar la carta».
+
+La sonda de esta escena **lee la carta y saca de ella lo que contesta**.
+Comprueba:
+
+- que la carta diga lo que tiene que decir, renglón por renglón y como se
+  escribe, dentro de la hoja, con el saludo y los renglones en el mismo margen y
+  la firma a la derecha, debajo;
+- que los cuatro renglones de Kenia sean los mismos en los seis pasos;
+- que la lea quien dice el saludo, y que las preguntas sean las de ese lector;
+- que cada pregunta con respuesta en la carta lleve raya entera, su ✓ y un hilo
+  entero hasta una llave que abarca justo los renglones que la contestan, y que
+  la que no tiene respuesta vaya con raya cortada, sin ✓ ni hilo;
+- que el marcador cuente las preguntas sin respuesta, y en el paso 5 los aros;
+- que el lector diga lo que la carta le permite decir, en un globo encima de su
+  cabeza, y que la frase cite lo que pide la carta y su razón, letra por letra;
+- que la cancha esté cerrada (con candado, la puerta entera y las niñas afuera)
+  hasta que la carta sea al director y le conteste las dos preguntas, y abierta
+  después, con las tres niñas adentro y sin montarse;
+- que en el paso 5 «Le pido» y «porque» lleven su aro sin tocar las palabras de
+  al lado, con la leyenda «las pistas»;
+- y que no salga ningún tipo de texto, ni una pieza de los pareados, ni una
+  palabra de las respuestas de la prueba.
+
+⚠️ **Y la sonda se equivocó tres veces antes de servir, las tres por medir mal
+lo que ya estaba bien.** Pedía más aire entre la firma y el último renglón del
+que la carta deja, y acusaba una firma bien puesta. Leía el lazo de la prima,
+que asomaba sobre su pelo, como la cabeza metida en la punta del globo: se bajó
+el lazo en vez de aflojar la comprobación. Y el espacio duro de una expresión se
+escribió como un espacio normal, que a la vista es igual: todavía no había
+fallado nada, y se vio mirando los bytes. Ahora va escrito ` `.
+
+Se comprobó al revés con trece averías, plantadas una por una: un renglón de
+Kenia cambiado, el director diciendo «¡Qué bonito!» cuando ya le piden algo, la
+puerta que se abre con solo pedir, el hilo de «¿Por qué?» llegando a la llave de
+lo que pide, el marcador del paso 1 diciendo 1, «tesis» en una frase, la
+pregunta de la prima sin respuesta, los aros tocando las palabras de al lado, la
+carta a la prima con el saludo al director, dos niñas montadas al entrar, la
+llave de lo que pide abarcando también la razón, la frase citando otra cosa que
+la carta y el resaltador encendido. Salió roja con cada una.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -7854,7 +7959,14 @@ ancla de una comprobación no puede ser el mismo texto que se comprueba: si ese
 texto falla, la sonda deja de medir todo lo demás. Una marca alrededor de algo
 que va a medio espacio de otra cosa (una coma) se monta en las letras de al
 lado: se señala debajo del renglón. Y las averías de la prueba al revés se
-plantan una por una: juntas, dos pueden taparse entre sí.
+plantan una por una: juntas, dos pueden taparse entre sí. Cuando cambia lo que
+dice alguien, cambia el globo entero: un globo que se queda y solo cambia la
+letra se ve vacío entre una frase y otra. Lo que se esconde corriendo su trazo
+(`A.trazar`) se apaga también con `A.ver`: la sonda mira la opacidad, y un
+hilo con el trazo corrido sigue «encendido» para ella. Las piezas que caminan
+juntas arrancan por la de adelante: si arranca la de atrás, alcanza a las otras.
+Y un espacio duro en una expresión se escribe ` `: pegado tal cual, se ve
+igual que un espacio normal.
 
 Si el `--sec` de la misión es claro (un ámbar, un amarillo), la letra blanca
 del botón que avanza no se lee en su punta: la misión declara en su CSS
