@@ -352,6 +352,15 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 // (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
 // tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
 // Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
+// ⚠️ Y tampoco pregunta lo que ya contestan la historia o la animación que va
+// debajo de ella. «¿Por qué perdió dinero doña Chepa?» y la causa del maíz que
+// viene húmedo eran la historia palabra por palabra; el error de «la masa y el
+// volumen son lo mismo» es la frase de su recuadro; y la animación enseña la
+// balanza marcando lo que pesa, que era la respuesta de «¿qué instrumento mide
+// cuánta materia tiene un objeto?» y de la decisión de medir la masa con una
+// balanza o a ojo. Ahora preguntan por la ensalada, por el filtro, por el
+// congelador, por las partículas que no se ven y por cómo se separa la tierra
+// del agua turbia, con la respuesta buena en el mismo lugar.
 const evalTFBank=[
   {q:'El aire es materia.',a:true,k:'tf-aire'},
   {q:'Una piedra cambia de forma según el recipiente.',a:false,k:'tf-piedra'},
@@ -366,10 +375,10 @@ const evalTFBank=[
 ];
 const evalMCBank=[
   {q:'¿En qué se mide el espacio que ocupa un cuerpo?',o:['a) En litros o cm³','b) En grados','c) En metros por segundo','d) En horas'],a:0,k:'mc-litros'},
-  {q:'¿Qué instrumento mide cuánta materia tiene un objeto?',o:['a) El termómetro','b) La regla','c) El reloj','d) La balanza'],a:3,k:'mc-balanza'},
+  {q:'¿Qué les pasa a los ingredientes de una ensalada al revolverlos?',o:['a) Desaparecen','b) Se vuelven una sola cosa nueva','c) Se hacen más grandes','d) No cambian: solo se juntan'],a:3,k:'mc-ensalada'},
   {q:'El agua está hecha de…',o:['a) sal y arena','b) aire y tierra','c) hidrógeno y oxígeno','d) carbono y hierro'],a:2,k:'mc-hidrogeno'},
   {q:'¿Cuál es un ejemplo de estado gaseoso?',o:['a) Una piedra','b) El aceite','c) El vapor','d) La madera'],a:2,k:'mc-vapor'},
-  {q:'¿Por qué perdió dinero doña Chepa?',o:['a) Pagó por el agua que traía el maíz húmedo','b) Vendió muy barato','c) Le robaron','d) El maíz se pudrió'],a:0,k:'mc-chepa'},
+  {q:'¿Con qué se puede separar la arena del agua?',o:['a) Con un filtro o un colador','b) Con un imán','c) Con un termómetro','d) Soplándole'],a:0,k:'mc-filtro'},
   {q:'¿Qué propiedad sirve para identificar un material?',o:['a) Ocupar espacio','b) Tener partículas','c) Existir','d) La dureza'],a:3,k:'mc-dureza'},
   {q:'¿Qué hace el calor con la materia?',o:['a) La hace desaparecer','b) La hace cambiar de estado','c) La vuelve más pesada','d) Nada'],a:1,k:'mc-calor'},
   {q:'¿Cuál de estas es una mezcla?',o:['a) El oro','b) El agua pura','c) El agua con sal','d) La sal'],a:2,k:'mc-agua-sal'},
@@ -505,9 +514,9 @@ const critCaseGuides=[
   'Porque la materia forma todo lo que nos rodea; entenderla nos ayuda a explicar el mundo y a usar bien los materiales.',
 ];
 const critErrorBank=[
-  {k:'er-masa-volumen',txt:'"La masa y el volumen son lo mismo".',
-   g1:'La MASA es la cantidad de materia.',
-   g2:'El VOLUMEN es el lugar que ocupa; son propiedades distintas.'},
+  {k:'er-particulas',txt:'"Las partículas que forman la materia se pueden ver a simple vista".',
+   g1:'Las partículas son tan diminutas que NO se ven a simple vista.',
+   g2:'En una sola gota de agua hay MILLONES de millones de ellas.'},
   {k:'er-gas',txt:'"Un gas tiene forma y volumen fijos igual que un sólido".',
    g1:'El gas NO tiene forma ni volumen fijos.',
    g2:'El que tiene forma y volumen fijos es el SÓLIDO.'},
@@ -520,8 +529,8 @@ const critDecisionBank=[
    guide:'Conviene colarla con un filtro: el agua con arena es una mezcla y la arena no se disuelve, así que queda atrapada en el filtro y las dos sustancias se recuperan.'},
   {k:'de-reciclar',txt:'Para reducir la basura de materiales, conviene reutilizar y reciclar, o botarlo todo.',
    guide:'Conviene reutilizar y reciclar: los materiales son materia que puede volver a usarse; botarlo todo acumula basura y daña el ambiente.'},
-  {k:'de-balanza',txt:'Para medir la masa de un objeto, conviene usar una balanza, o calcularla a ojo.',
-   guide:'Conviene usar la balanza: la masa es la cantidad de materia y se mide en gramos y kilogramos con una balanza; a ojo no se puede medir.'},
+  {k:'de-reposar',txt:'Para separar la tierra del agua turbia, conviene dejarla reposar en un balde, o revolverla sin parar.',
+   guide:'Conviene dejarla reposar: la tierra se va asentando en el fondo y el agua de arriba queda más clara. Revolverla la mantiene mezclada.'},
 ];
 const critCompareBank=[
   {k:'co-atomo-molecula',a:'La partícula más pequeña que forma la materia.',b:'Se forma cuando se unen varios átomos.',
@@ -531,7 +540,7 @@ const critCompareBank=[
 ];
 const critCauseBank=[
   {k:'cau-sal',cause:'Echamos sal en el agua y revolvemos.',guide:'Se forma una mezcla; la sal se disuelve en el agua.'},
-  {k:'cau-chepa',cause:'Doña Chepa compra por libra un maíz que viene húmedo.',guide:'Paga también el peso del agua que trae el maíz.'},
+  {k:'cau-congelador',cause:'Metemos una botella con agua en el congelador.',guide:'El frío hace que el agua se congele: pasa de líquido a sólido (solidificación).'},
 ];
 const critEffectBank=[
   {k:'ef-globo',effect:'Un globo inflado ocupa espacio y pesa un poco más.',guide:'Porque el aire es materia: tiene masa y volumen.'},

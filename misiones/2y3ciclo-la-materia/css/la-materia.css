@@ -481,3 +481,34 @@ body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* ===================== LA ANIMACIÓN: DÓNDE SE METIÓ EL AGUA =====================
+   Las medidas, el maíz, las balanzas, la mesa y las monedas son cosas: se
+   quedan como son en la pantalla clara y en la oscura. Lo que va sobre la
+   tarjeta (la raya del borde, las guías) lleva la tinta de la pantalla. El
+   botón que avanza lleva su propio degradado: con el verde y el teal de la
+   misión, la letra blanca no llegaba a 4,5:1 en su punta. */
+:root { --am-boton: linear-gradient(135deg, #15803d, #0f766e); }
+.am-raiz .mt-mesa        { fill: #a16207; stroke: #713f12; stroke-width: 1; }
+.am-raiz .mt-pata        { fill: #854d0e; }
+.am-raiz .mt-balanza     { fill: #cbd5e1; stroke: #475569; stroke-width: 1.2; }
+.am-raiz .mt-plato       { fill: #94a3b8; stroke: #475569; stroke-width: 1; }
+.am-raiz .mt-dial        { fill: #ffffff; stroke: #475569; stroke-width: 1.2; }
+.am-raiz .mt-raya        { fill: none; stroke: #334155; stroke-width: 1; }
+.am-raiz .mt-aguja       { fill: none; stroke: #b91c1c; stroke-width: 1.8; stroke-linecap: round; }
+.am-raiz .mt-eje         { fill: #334155; }
+.am-raiz .mt-punta       { fill: none; stroke: none; }
+.am-raiz .mt-medida      { fill: #b45309; stroke: #78350f; stroke-width: 1.2; }
+.am-raiz .mt-dentro      { fill: #fef3c7; }
+.am-raiz .mt-agua        { fill: #3b82f6; fill-opacity: 0.55; }
+.am-raiz .mt-grano       { fill: #facc15; stroke: #a16207; stroke-width: 0.9; }
+.am-raiz .mt-gota        { fill: #3b82f6; stroke: #1e3a8a; stroke-width: 0.7; }
+.am-raiz .mt-jarra       { fill: #e2e8f0; stroke: #475569; stroke-width: 1.2; stroke-linejoin: round; }
+.am-raiz .mt-asa         { fill: none; stroke: #475569; stroke-width: 1.6; }
+.am-raiz .mt-chorro      { fill: none; stroke: #3b82f6; stroke-width: 3; stroke-linecap: round; }
+.am-raiz .mt-borde       { fill: none; stroke: var(--dark, #14342b); stroke-width: 1.4; stroke-dasharray: 5 3; }
+.am-raiz .mt-guia        { fill: none; stroke: var(--dark, #14342b); stroke-width: 1.1; stroke-linecap: round; }
+.am-raiz .mt-moneda      { fill: #fbbf24; stroke: #92400e; stroke-width: 1; }
+.am-raiz .mt-moneda-aro  { fill: none; stroke: #b45309; stroke-width: 0.8; }
+.am-raiz .mt-germen      { fill: #fef9c3; }
+.am-raiz .mt-halo        { fill: none; stroke: var(--card, #fff); stroke-width: 4; stroke-linecap: round; }

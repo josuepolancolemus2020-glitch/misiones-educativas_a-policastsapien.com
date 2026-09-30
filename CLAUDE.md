@@ -10032,6 +10032,135 @@ Salió roja con cada una.
 Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
 de 100 ms.
 
+### La cuadragésima sexta: La Materia, la primera de la Ruta de la Materia
+
+Con la Ruta de la Vida terminada sigue la Ruta de la Materia, y su primera
+misión es **La Materia** (`misiones/2y3ciclo-la-materia/`,
+`js/animacion-medida.js`). La historia es la de doña Chepa: compra el maíz por
+libra y lo vende por medida. Un día le llegó húmedo: al comprarlo pesaba más,
+pero al venderlo llenaba las mismas medidas de siempre. Pagó libras de agua y
+vendió el maíz de siempre, y no se dio cuenta hasta que hizo las cuentas del mes.
+La historia dice que confundió dos cosas que no son lo mismo: cuánto pesa y
+cuánto ocupa. La animación son dos medidas de maíz llenas hasta el borde, cada
+una sobre su balanza de aguja:
+
+- las dos medidas iguales y las dos agujas marcando lo mismo: ¿qué pasa si una
+  se moja?;
+- a la de la derecha le cae agua de una jarra, y su aguja sube: el agua también
+  pesa;
+- pero la medida no se llenó más: una raya va de un borde al otro, y el maíz de
+  las dos sigue hasta el mismo borde. El agua se metió entre grano y grano;
+- comprada por libra, la medida mojada le cuesta una moneda más, y esa moneda
+  lleva su gota: pagó el agua;
+- vendida por medida, por las dos cobra lo mismo: lo que pagó por el agua ya no
+  vuelve;
+- «cuánto pesa» con una raya a cada carátula, y «cuánto ocupa» junto a la raya
+  del borde: el agua cambió lo primero y no lo segundo;
+- y la pregunta es del alumno: llenar una taza con frijoles hasta el borde,
+  echarle agua despacito y ver cuánta cabe sin que se derrame.
+
+Siete cosas que valen para las que siguen:
+
+1. ⚠️ **El agua se ve entre los granos, y ningún grano se mueve.** Las cuatro
+   franjas de agua se dibujan ANTES que los granos, así el agua se ve solo en
+   los huecos; y cada grano está en el mismo sitio en los siete pasos. Con el
+   agua pintada encima, o con un grano subiendo, el dibujo diría que la medida
+   se llenó más, que es lo contrario de la historia. La sonda compara cada grano
+   con el paso 0 y mira el orden del documento.
+2. ⚠️ **Las monedas crecen lo mismo que la aguja.** La aguja de la seca gira 80°
+   desde el cero y la de la mojada, 100°: una cuarta parte más. Por libra, la
+   seca cuesta cuatro monedas y la mojada, cinco: una cuarta parte más. La sonda
+   saca las dos proporciones del dibujo y exige que sean iguales. No se escribe
+   ni un número, ni libras, ni lempiras: la cuenta es de monedas dibujadas.
+3. ⚠️ **La animación dice «cuánto pesa» y «cuánto ocupa», como la historia.**
+   Cómo se llaman esas dos cosas y en qué se miden es lo que pregunta la prueba,
+   en el completar y en los pareados. La sonda no deja salir ni la masa, ni el
+   volumen, ni el peso, ni la densidad, ni un estado, ni una mezcla.
+4. **Un grano de maíz no es una moneda.** La primera versión dibujaba los granos
+   redondos, y en una medida llena se leían como monedas, que después salen de
+   verdad en el paso 3. Ahora cada grano es ancho arriba y angosto abajo, con su
+   germen. Y la aguja de la mojada subía tan poco que no se notaba: el giro se
+   agrandó sin cambiar la proporción. Las dos cosas se vieron en las capturas,
+   con la sonda en verde.
+5. ⚠️ **Al volver con «Atrás», la jarra salía como un fantasma.** La jarra y el
+   chorro aparecen y se van en el mismo paso, así que van en dos envolturas: una
+   para aparecer y otra para irse. Volviendo del paso 1 al 0, las dos cambiaban
+   a la vez, una apagándose y la otra encendiéndose, y a medio camino se veía
+   una jarra tenue que no estaba en ningún paso. Ahora la envoltura que vuelve a
+   encenderse espera a que la otra se apague. Se vio con fotos a medio viaje
+   yendo hacia atrás.
+6. ⚠️ **La historia y la animación contestaban cinco preguntas de la prueba.**
+   «¿Por qué perdió dinero doña Chepa?» y la causa del maíz que viene húmedo eran
+   la historia palabra por palabra; el error de «la masa y el volumen son lo
+   mismo» es la frase del recuadro de la historia; y la animación enseña la
+   balanza marcando lo que pesa, que era la respuesta de «¿qué instrumento mide
+   cuánta materia tiene un objeto?» y de la decisión de medir con una balanza o
+   a ojo. Ahora preguntan por la ensalada, por el filtro, por el congelador, por
+   las partículas que no se ven y por cómo se separa la tierra del agua turbia,
+   en la misión y en la ficha, con la respuesta buena en el mismo lugar. La
+   felicitación de la ficha, en la hoja de los pareados, nombraba la masa, el
+   volumen, los tres estados, las mezclas y los átomos: ahora solo pide revisar.
+7. ⚠️ **El repuesto también se busca en la misión.** Uno de los míos preguntaba
+   cómo saber cuál de dos piedras es más dura, con «la más dura raya a la más
+   blanda» de respuesta. Es verdad, y la misión no lo enseña: la pauta le habría
+   pedido al alumno algo que nunca vio. Ninguna sonda lo caza, porque el examen
+   quedaba sin pistas. Ahora es la tierra del agua turbia, que se separa
+   «dejando reposar», como dice su Laboratorio.
+
+La sonda de esta escena **no le cree nada a la escena**. Comprueba:
+
+- que las dos balanzas y las dos medidas sean iguales, cada medida sobre el
+  plato de su balanza y cada balanza sobre la mesa;
+- que los granos de las dos medidas estén acomodados igual, dentro de su medida
+  y hasta el borde, y que ninguno se mueva en los siete pasos;
+- que el agua caiga solo en la medida de la derecha, dentro de ella, del borde
+  al fondo y sin pasar del borde, y que vaya detrás de los granos;
+- que en el paso 1 el chorro caiga antes de que se moje el maíz y se corte
+  cuando ya se mojó, que la jarra se vaya después y que al final del paso no
+  quede ninguno de los dos;
+- que cada aguja se lea por su punta contra las rayas de su carátula: iguales en
+  el paso 0 y la de la mojada más arriba después, moviéndose mientras le cae el
+  agua;
+- que la raya del borde vaya por el borde de las dos medidas, de una a la otra;
+- que por libra la mojada cueste una moneda más, con su gota, y que las monedas
+  crezcan lo mismo que la aguja; que por medida cobre lo mismo por las dos, y
+  que ninguna moneda se monte en otra;
+- que «seco» y «mojado» vayan al lado de su medida, que de «cuánto pesa» salga
+  una raya a cada carátula y que ningún rótulo se monte en otro, en una medida
+  ni en una moneda;
+- que el marcador cuente lo que se ve;
+- y que no salga ninguna palabra de la prueba ni un número.
+
+Se comprobó al revés con veinte averías, plantadas una por una:
+
+- los granos de la mojada subiendo;
+- el agua pasando del borde;
+- el agua pintada encima de los granos;
+- el agua cayendo en la medida seca;
+- la aguja de la mojada sin moverse;
+- la aguja marcando más de lo que se paga;
+- la moneda del agua sin su gota;
+- cobrando más por la mojada;
+- la jarra quedándose al final del paso 1;
+- el chorro cortándose antes de que termine de mojarse;
+- la aguja moviéndose antes de que caiga el agua;
+- la raya del borde más abajo que el borde;
+- «masa» en una frase;
+- el marcador del paso 3 diciendo +2;
+- «mojado» al lado de la medida seca;
+- la raya de «cuánto pesa» sin llegar a la carátula;
+- la medida mojada más ancha;
+- las monedas montadas unas en otras;
+- la medida flotando sobre el plato;
+- el maíz mojándose antes de que caiga el chorro.
+
+Salió roja con cada una. La del agua encima hubo que plantarla dos veces: la
+primera se metió antes de dibujar los granos, así que el agua seguía quedando
+detrás y la sonda, con razón, no dijo nada.
+
+Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
+de 50 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -10158,7 +10287,11 @@ su propia altura y se dibujan de atrás hacia adelante. Una raya que es una cosa
 (una soga café) lleva su color en una variable que cambia con la pantalla, y
 sobre un halo del color de la tarjeta si pasa por el cielo y por el suelo. Y a
 un animal con las alas abiertas no se le mide la caja, que es casi toda aire:
-si un rótulo lo toca, se le pregunta a su dibujo punto por punto.
+si un rótulo lo toca, se le pregunta a su dibujo punto por punto. Lo que tiene
+que verse solo entre otras piezas (el agua entre los granos) se dibuja antes que
+ellas. Y lo que aparece y se va en el mismo paso, en dos envolturas: al volver
+con «Atrás», la que se vuelve a encender espera a que la otra se apague, o a
+medio camino se cruzan y queda un fantasma que no está en ningún paso.
 
 Si el `--sec` de la misión es claro (un ámbar, un amarillo), la letra blanca
 del botón que avanza no se lee en su punta: la misión declara en su CSS

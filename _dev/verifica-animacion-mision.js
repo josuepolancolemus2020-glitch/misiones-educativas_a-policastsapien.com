@@ -1712,6 +1712,52 @@ const LEER = `
       textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
     };
   };
+  window.__amExtra.amMedida = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(m(el)); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function uno(sel, en) { return (en || raiz).querySelector(sel); }
+    function todos(sel, en) { return [].slice.call((en || raiz).querySelectorAll(sel)); }
+    function punto(c) { return aVista(c, +c.getAttribute('cx'), +c.getAttribute('cy')); }
+    function demora(el) { return parseFloat(el.style.getPropertyValue('--d')) || 0; }
+    function raya(el) { var d = (el.getAttribute('d') || '').split(' '); return [aVista(el, +d[1], +d[2]), aVista(el, +d[4], +d[5])]; }
+    var granos = todos('[data-grano]');
+    var agua = todos('[data-agua]');
+    /* El agua tiene que ir DETRÁS de los granos: antes en el documento. */
+    var detras = agua.every(function (a) { return granos.every(function (g) { return g.getAttribute('data-grano') !== '1' || (a.compareDocumentPosition(g) & 4); }); });
+    var jarra = uno('[data-jarra]'), chorro = uno('[data-chorro]');
+    return {
+      mesa: caja(uno('[data-mesa]')),
+      balanzas: todos('[data-balanza]').map(caja),
+      platos: todos('[data-plato]').map(caja),
+      medidas: todos('[data-medida]').map(caja),
+      dentros: todos('[data-dentro]').map(caja),
+      diales: todos('.mt-dial').map(function (c) { return { c: punto(c), r: +c.getAttribute('r') }; }),
+      marcas: todos('[data-marca]').map(function (l) { var r = raya(l); return { g: +l.getAttribute('data-marca'), a: r[0], b: r[1] }; }),
+      agujas: todos('[data-aguja]').map(function (g) { return { i: +g.getAttribute('data-aguja'), punta: punto(uno('[data-punta]', g)), d: demora(g) }; }),
+      granos: granos.map(function (g) { return { i: +g.getAttribute('data-grano'), ve: vis(g), c: aVista(g, +g.getAttribute('data-x'), +g.getAttribute('data-y')), caja: caja(g) }; }),
+      agua: agua.map(function (a) { return { ve: vis(a), caja: caja(a), d: demora(a) }; }),
+      aguaDetras: detras,
+      jarra: { ve: vis(jarra), dVa: demora(jarra.parentNode) },
+      chorro: { ve: vis(chorro), dVe: demora(chorro), dVa: demora(chorro.parentNode) },
+      gotaMedida: vis(uno('[data-gota="medida"]')),
+      borde: { ve: vis(uno('[data-borde]')), raya: raya(uno('[data-raya-borde]')) },
+      filas: todos('[data-fila]').map(function (g) {
+        return { k: g.getAttribute('data-fila'), de: +g.getAttribute('data-de'), ve: vis(g),
+                 monedas: todos('[data-moneda]', g).map(function (mo) { return { c: punto(uno('.mt-moneda', mo)), r: +uno('.mt-moneda', mo).getAttribute('r'), agua: mo.hasAttribute('data-del-agua'), gota: !!uno('.mt-gota', mo) }; }) };
+      }),
+      guias: todos('[data-guia]').map(function (l) { return { i: +l.getAttribute('data-guia'), ve: vis(l), ab: raya(l) }; }),
+      rotulos: todos('[data-rotulo]').map(function (t) { return { k: t.getAttribute('data-rotulo'), ve: vis(t), dice: t.textContent, caja: caja(t) }; }),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   window.__amExtra.amAmarra = function (raiz) {
     var vis = window.__amVisible;
     var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
@@ -2504,6 +2550,8 @@ let bocaVeneno = null, cubreVeneno = null;
 /* Los Ecosistemas: dónde estaban el pollo y la rata que se lleva el gavilán
    antes de que se los llevara, para ver que baja justo a su lomo. */
 let amarraAntes = null;
+/* La Materia: dónde estaba cada grano en el paso 0, para ver que no se mueve. */
+let medidaGranos = null;
 /* El área de un polígono (en la vista) que queda por debajo de un nivel:
    se recorta con la recta y se cuenta con la fórmula del cordón. */
 function areaDebajo(poly, nivel) {
@@ -2548,6 +2596,144 @@ const ESCENAS = {
      punto por punto sobre la hoja de don Tulio (media hoja con el veneno),
      y cada granito que se va, que se vaya a la boca del chapulín o al centro
      de una mancha. */
+  amMedida(e, n) {
+    const x = e.extra, r = [];
+    const nb = t => String(t == null ? '' : t).replace(/ /g, ' ').replace(/\s+/g, ' ').trim();
+    const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+    const monta = (a, b) => a.x0 < b.x1 - 0.5 && b.x0 < a.x1 - 0.5 && a.y0 < b.y1 - 0.5 && b.y0 < a.y1 - 0.5;
+    const dentroDe = (c, d, m = 0.5) => c.x0 >= d.x0 - m && c.x1 <= d.x1 + m && c.y0 >= d.y0 - m && c.y1 <= d.y1 + m;
+    const cx = c => (c.x0 + c.x1) / 2;
+    /* Lo que no depende del dibujo, primero. */
+    const dicho = [e.texto, e.cifra, e.palabras].concat(x.textos).map(nb).join(' | ').toLowerCase();
+    const EXACTAS = ['masa', 'volumen', 'peso', 'pesar', 'densidad', 'denso', 'densa', 'gravedad', 'fuerza', 'materia', 'lugar', 'espacio',
+      'litro', 'litros', 'cm', 'gramo', 'gramos', 'kilogramo', 'kilogramos', 'partícula', 'partículas', 'átomo', 'átomos', 'molécula', 'moléculas',
+      'millones', 'hidrógeno', 'oxígeno', 'aire', 'sólido', 'líquido', 'gaseoso', 'gas', 'hielo', 'vapor', 'estado', 'estados', 'fusión',
+      'evaporación', 'condensación', 'solidificación', 'congela', 'derrite', 'hierve', 'mezcla', 'mezclas', 'homogénea', 'heterogénea',
+      'sustancia', 'sustancias', 'pura', 'propiedad', 'propiedades', 'generales', 'específicas', 'dureza', 'duro', 'sol', 'reciclar', 'calor',
+      'frío', 'filtro', 'colador', 'arena', 'sal', 'disuelve', 'ensalada', 'infla', 'globo', 'termómetro', 'regla', 'lempira', 'lempiras'];
+    const suelto = ' ' + dicho.split(/[^a-záéíóúñü]+/).filter(Boolean).join(' ') + ' ';
+    const malas = EXACTAS.filter(w => suelto.includes(' ' + w + ' '));
+    r.push([malas.length === 0, `paso ${n}: no sale ninguna palabra de la prueba (ni cómo se llaman las dos cosas, ni en qué se miden)`, malas]);
+    const nums = [e.texto].concat(x.textos).map(nb).join(' ').match(/\d+/g) || [];
+    r.push([nums.length === 0, `paso ${n}: ningún número en la frase ni en el dibujo`, nums]);
+    const frase = nb(e.texto);
+    const FR = [['compra el maíz por libra y lo vende por medida', 'dos medidas llenas hasta el borde', '¿Qué pasa si una se moja?'],
+      ['A la de la derecha le cae agua', 'su balanza marca más', 'el agua también pesa'],
+      ['la medida no se llenó más', 'El agua se metió entre grano y grano', 'hasta el mismo borde'],
+      ['compra por libra', 'le cuesta una moneda más', 'Esa moneda pagó el agua'],
+      ['vende por medida', 'por las dos cobra lo mismo', 'ya no vuelve'],
+      ['La balanza dice cuánto pesa', 'la medida, cuánto ocupa', 'cambió lo primero y no lo segundo'],
+      ['¿Y tú?', 'una taza con frijoles hasta el borde', '¿Cuánta cabe sin que se derrame?']];
+    r.push([FR[n].every(w => frase.includes(w)), `paso ${n}: la frase dice lo que se ve (${FR[n].join(', ')})`, frase]);
+
+    /* ── La mesa, las balanzas, los platos y las medidas: cada cosa sobre la
+       otra, y las dos iguales ── */
+    const [b0, b1] = x.balanzas, [p0, p1] = x.platos, [m0, m1] = x.medidas, [d0, d1] = x.dentros;
+    const igual = (a, b) => Math.abs((a.x1 - a.x0) - (b.x1 - b.x0)) < 0.3 && Math.abs((a.y1 - a.y0) - (b.y1 - b.y0)) < 0.3 && Math.abs(a.y0 - b.y0) < 0.3;
+    r.push([x.balanzas.length === 2 && igual(b0, b1) && igual(p0, p1) && igual(m0, m1) && igual(d0, d1), `paso ${n}: las dos balanzas y las dos medidas son iguales`]);
+    r.push([[b0, b1].every(b => Math.abs(b.y1 - x.mesa.y0) < 0.5), `paso ${n}: las balanzas están sobre la mesa`, [b0.y1, x.mesa.y0]]);
+    r.push([[0, 1].every(i => Math.abs(x.medidas[i].y1 - x.platos[i].y0) < 0.5 && Math.abs(cx(x.medidas[i]) - cx(x.balanzas[i])) < 0.5 && x.platos[i].y1 <= x.balanzas[i].y0 + 0.5),
+      `paso ${n}: cada medida está sobre el plato de su balanza`]);
+
+    /* ── Los granos: los mismos en las dos, y no se mueven ── */
+    const g0 = x.granos.filter(g => g.i === 0), g1 = x.granos.filter(g => g.i === 1);
+    r.push([g0.length === g1.length && g0.length > 20 && x.granos.every(g => g.ve), `paso ${n}: las dos medidas tienen los mismos granos, y se ven todos`, [g0.length, g1.length]]);
+    const desp = cx(m1) - cx(m0);
+    r.push([g0.every((g, k) => Math.abs(g1[k].c[0] - g.c[0] - desp) < 0.3 && Math.abs(g1[k].c[1] - g.c[1]) < 0.3), `paso ${n}: los granos están acomodados igual en las dos medidas`]);
+    r.push([g0.every(g => dentroDe(g.caja, d0)) && g1.every(g => dentroDe(g.caja, d1)), `paso ${n}: cada grano está dentro de su medida`]);
+    const tope = gs => Math.min(...gs.map(g => g.caja.y0));
+    r.push([Math.abs(tope(g0) - m0.y0) < 1.5 && Math.abs(tope(g1) - m1.y0) < 1.5, `paso ${n}: las dos medidas están llenas hasta el borde`, [tope(g0) - m0.y0, tope(g1) - m1.y0]]);
+    if (n === 0) medidaGranos = x.granos.map(g => g.c);
+    if (medidaGranos) r.push([x.granos.every((g, k) => medidaGranos[k] && dist(g.c, medidaGranos[k]) < 0.3), `paso ${n}: ningún grano se movió de su sitio`]);
+
+    /* ── El agua: entre los granos de la derecha, y nunca más arriba del borde ── */
+    const ag = x.agua.filter(a => a.ve);
+    r.push([ag.length === (n >= 1 ? x.agua.length : 0), `paso ${n}: ${n >= 1 ? 'la medida de la derecha tiene agua' : 'ninguna medida tiene agua'}`, ag.length]);
+    r.push([x.agua.every(a => dentroDe(a.caja, d1)) && x.agua.every(a => a.caja.y0 >= m1.y0 - 0.5), `paso ${n}: el agua está dentro de la medida de la derecha, y no pasa del borde`]);
+    const arriba = Math.min(...x.agua.map(a => a.caja.y0)), abajo = Math.max(...x.agua.map(a => a.caja.y1));
+    r.push([Math.abs(arriba - d1.y0) < 0.6 && Math.abs(abajo - d1.y1) < 0.6, `paso ${n}: el agua llega a todos los huecos, de arriba abajo`, [arriba, abajo]]);
+    r.push([x.aguaDetras, `paso ${n}: el agua va detrás de los granos: se ve solo entre grano y grano`]);
+    r.push([x.gotaMedida === (n >= 1), `paso ${n}: la gota que dice «mojado» ${n >= 1 ? 'se ve' : 'no se ve'}`]);
+
+    /* ── La jarra y el chorro: solo mientras cae el agua ── */
+    r.push([!x.jarra.ve && !x.chorro.ve, `paso ${n}: al final del paso ya no están la jarra ni el chorro`, [x.jarra.ve, x.chorro.ve]]);
+    if (n === 1) {
+      const dA = x.agua.map(a => a.d);
+      r.push([x.chorro.dVe < Math.min(...dA) && x.chorro.dVa >= Math.max(...dA) && x.jarra.dVa >= x.chorro.dVa,
+        'paso 1: el chorro cae antes de que se moje el maíz y se corta cuando ya se mojó; la jarra se va después', { chorro: [x.chorro.dVe, x.chorro.dVa], agua: dA, jarra: x.jarra.dVa }]);
+    }
+
+    /* ── Las agujas: lo que marca cada balanza, leído de su punta ── */
+    const ang = (i) => { const d = x.diales[i], a = x.agujas.find(q => q.i === i); return Math.atan2(a.punta[0] - d.c[0], d.c[1] - a.punta[1]) * 180 / Math.PI; };
+    const marcas = x.marcas.slice(0, x.marcas.length / 2);
+    const cero = Math.min(...marcas.map(q => q.g));
+    const angMarca = Math.atan2(marcas[0].b[0] - x.diales[0].c[0], x.diales[0].c[1] - marcas[0].b[1]) * 180 / Math.PI;
+    r.push([Math.abs(angMarca - marcas[0].g) < 0.5, `paso ${n}: las rayitas de la carátula están donde dicen`, [angMarca, marcas[0].g]]);
+    const aS = ang(0) - cero, aM = ang(1) - cero;
+    if (n === 0) r.push([Math.abs(aS - aM) < 0.3, 'paso 0: las dos balanzas marcan lo mismo', [aS, aM]]);
+    else r.push([aM > aS + 5, `paso ${n}: la balanza de la mojada marca más`, [aS, aM]]);
+    if (n === 1) {
+      const dA = x.agua.map(a => a.d), dAg = x.agujas.find(q => q.i === 1).d;
+      r.push([dAg > Math.min(...dA) && dAg < Math.max(...dA), 'paso 1: la aguja se mueve mientras le cae el agua', [dAg, dA]]);
+    }
+
+    /* ── Las monedas: por libra paga lo que marca la balanza; por medida
+       cobra lo mismo ── */
+    const fila = (k, i) => x.filas.find(q => q.k === k && q.de === i);
+    const [pS, pM, cS, cM] = [fila('paga', 0), fila('paga', 1), fila('cobra', 0), fila('cobra', 1)];
+    r.push([pS.ve === (n >= 3) && pM.ve === (n >= 3), `paso ${n}: lo que pagó ${n >= 3 ? 'se ve' : 'todavía no se ve'}`]);
+    r.push([cS.ve === (n >= 4) && cM.ve === (n >= 4), `paso ${n}: lo que cobra ${n >= 4 ? 'se ve' : 'todavía no se ve'}`]);
+    const razonMonedas = pM.monedas.length / pS.monedas.length, razonAguja = aM / aS;
+    r.push([n === 0 || Math.abs(razonMonedas - razonAguja) < 0.02, `paso ${n}: lo que paga va con lo que marca la balanza (las monedas y la aguja crecen lo mismo)`, { monedas: razonMonedas, aguja: n ? razonAguja : null }]);
+    r.push([pM.monedas.length === pS.monedas.length + 1 && pM.monedas.filter(q => q.agua).length === 1 && pS.monedas.every(q => !q.agua) && pM.monedas.filter(q => q.agua).every(q => q.gota),
+      `paso ${n}: la mojada cuesta una moneda más, y esa moneda lleva su gota de agua`, [pS.monedas.length, pM.monedas.length]]);
+    r.push([cS.monedas.length === cM.monedas.length, `paso ${n}: por medida cobra lo mismo por las dos`, [cS.monedas.length, cM.monedas.length]]);
+    const centrada = (q, i) => Math.abs(q.monedas.reduce((a, b) => a + b.c[0], 0) / q.monedas.length - cx(x.medidas[i])) < 0.5;
+    r.push([centrada(pS, 0) && centrada(pM, 1) && centrada(cS, 0) && centrada(cM, 1), `paso ${n}: las monedas de cada medida van encima de ella`]);
+    const monedasVistas = x.filas.filter(q => q.ve).flatMap(q => q.monedas);
+    const chocan = monedasVistas.filter((q, k) => monedasVistas.some((o, j) => j !== k && dist(q.c, o.c) < q.r + o.r - 0.3)).length;
+    r.push([chocan === 0, `paso ${n}: ninguna moneda se monta en otra`, chocan]);
+
+    /* ── El borde ── */
+    const [ba, bb] = x.borde.raya;
+    r.push([x.borde.ve === (n >= 2), `paso ${n}: la raya del borde ${n >= 2 ? 'se ve' : 'todavía no se ve'}`]);
+    r.push([Math.abs(ba[1] - m0.y0) < 0.5 && Math.abs(bb[1] - m1.y0) < 0.5 && ba[0] <= m0.x0 && bb[0] >= m1.x1, `paso ${n}: la raya va por el borde de las dos medidas, de una a la otra`, [ba, bb]]);
+
+    /* ── Los rótulos ── */
+    const rot = k => x.rotulos.find(q => q.k === k) || {};
+    const DEBEN = { seco: [true, 'seco'], mojado: [n >= 1, 'mojado'], borde: [n >= 2 && n <= 4, 'hasta el mismo borde'], pago: [n >= 3, 'pagó'],
+      cobra: [n >= 4, 'cobra'], ocupa: [n >= 5, 'cuánto ocupa'], pesa: [n >= 5, 'cuánto pesa'] };
+    Object.keys(DEBEN).forEach(k => {
+      const q = rot(k), [debe, dice] = DEBEN[k];
+      r.push([q.ve === debe && (!q.ve || nb(q.dice) === dice), `paso ${n}: el rótulo «${dice}» ${debe ? 'se ve' : 'no se ve'}`, [q.ve, q.dice]]);
+    });
+    const rs = rot('seco'), rm = rot('mojado');
+    r.push([rs.caja.x1 < m0.x0 && rs.caja.y0 > m0.y0 && rs.caja.y1 < m0.y1 && rm.caja.x0 > m1.x1 && rm.caja.y0 > m1.y0 && rm.caja.y1 < m1.y1,
+      `paso ${n}: «seco» va al lado de la medida seca y «mojado» al lado de la mojada`]);
+    if (n >= 2 && n <= 4) { const q = rot('borde'); r.push([q.caja.y1 < ba[1] && Math.abs(cx(q.caja) - (m0.x1 + m1.x0) / 2) < 1, `paso ${n}: «hasta el mismo borde» va encima de la raya, en medio`]); }
+    if (n >= 3) { const q = rot('pago'); r.push([Math.abs((q.caja.y0 + q.caja.y1) / 2 - pS.monedas[0].c[1]) < 4, `paso ${n}: «pagó» va a la altura de lo que pagó`]); }
+    if (n >= 4) { const q = rot('cobra'); r.push([Math.abs((q.caja.y0 + q.caja.y1) / 2 - cS.monedas[0].c[1]) < 4, `paso ${n}: «cobra» va a la altura de lo que cobra`]); }
+    if (n >= 5) {
+      const qo = rot('ocupa'), qp = rot('pesa');
+      r.push([qo.caja.y0 > ba[1] && qo.caja.x0 > m0.x1 && qo.caja.x1 < m1.x0, `paso ${n}: «cuánto ocupa» va debajo de la raya del borde, entre las dos medidas`]);
+      r.push([qp.caja.x0 > b0.x1 && qp.caja.x1 < b1.x0, `paso ${n}: «cuánto pesa» va entre las dos balanzas`]);
+      const llega = x.guias.filter(q => q.ve).every(q => { const d = x.diales[q.i]; return Math.abs(dist(q.ab[1], d.c) - d.r) < 3; });
+      r.push([x.guias.filter(q => q.ve).length === 2 && llega, `paso ${n}: de «cuánto pesa» sale una raya a cada carátula`]);
+    }
+    const vis = x.rotulos.filter(q => q.ve);
+    const montados = [];
+    vis.forEach((p, i) => vis.slice(i + 1).forEach(q => { if (monta(p.caja, q.caja)) montados.push(p.k + '/' + q.k); }));
+    vis.forEach(p => { if (x.medidas.some(c => monta(p.caja, c)) || x.balanzas.some(c => monta(p.caja, c))) montados.push(p.k + '/cosa'); });
+    vis.forEach(p => monedasVistas.forEach(q => { if (monta(p.caja, { x0: q.c[0] - q.r, x1: q.c[0] + q.r, y0: q.c[1] - q.r, y1: q.c[1] + q.r })) montados.push(p.k + '/moneda'); }));
+    r.push([montados.length === 0, `paso ${n}: ningún rótulo se monta en otro, en una medida, en una balanza ni en una moneda`, [...new Set(montados)]]);
+
+    /* ── El marcador dice lo que se ve ── */
+    const cifra = nb(e.cifra);
+    const MAR = [String(x.medidas.length), aM > aS + 5 ? 'más' : '·', Math.abs(tope(g0) - tope(g1)) < 0.3 ? '=' : '·',
+      '+' + (pM.monedas.length - pS.monedas.length), cS.monedas.length === cM.monedas.length ? '=' : '·', '2', '?'];
+    r.push([cifra === MAR[n], `paso ${n}: el marcador dice lo que se ve (${MAR[n]})`, cifra]);
+    return r;
+  },
   amAmarra(e, n) {
     const x = e.extra, r = [];
     const nb = t => String(t == null ? '' : t).replace(/ /g, ' ').replace(/\s+/g, ' ').trim();

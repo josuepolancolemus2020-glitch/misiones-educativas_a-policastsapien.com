@@ -25,6 +25,9 @@
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
 <link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La animación que explica el tema: el aparato es compartido y va DESPUÉS
+     del CSS de la misión, que es de donde saca sus colores. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -71,6 +74,22 @@
     <div class="tip"><span class="ti">❓</span><div>Le pasó por confundir dos cosas que no son lo mismo:
     <strong>cuánto pesa</strong> y <strong>cuánto ocupa</strong>. Toda la materia tiene las dos, y son lo
     primero que vas a aprender aquí.</div></div>
+  </div>
+  <!-- La animación que explica el tema, justo después de la historia: dos
+       medidas de maíz llenas hasta el borde, cada una en su balanza. A una le
+       cae agua: su balanza marca más, pero la medida no se llena más, porque
+       el agua se mete entre grano y grano. Por libra, esa agua se paga; por
+       medida, no se cobra. La mueve el alumno, paso a paso. El aparato es
+       compartido (js/animacion-mision.js) y la escena es de esta misión
+       (js/animacion-medida.js). La frase de dentro es de reserva: si el
+       aparato no llega a cargar, se lee eso en vez de un hueco. -->
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira dónde se metió el agua</h2>
+    <div id="amMedida">
+      <p>Dos medidas de maíz, llenas hasta el borde. A una le cae agua: en la balanza marca más, pero la
+      medida no se llena más, porque el agua se mete entre grano y grano. Doña Chepa compra por libra y paga
+      esa agua; vende por medida y no la cobra. Cuánto pesa y cuánto ocupa son dos cosas distintas.</p>
+    </div>
   </div>
   <div class="card ac-teal">
     <h2>🧪 ¿Qué es la materia?</h2>
@@ -612,6 +631,8 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-medida.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>
