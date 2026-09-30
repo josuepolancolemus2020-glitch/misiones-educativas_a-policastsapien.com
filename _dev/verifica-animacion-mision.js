@@ -1715,6 +1715,86 @@ const LEER = `
   /* La Energía: el panel de la escuela. Se lee el techo y el panel, cada
      rayo (de dónde sale y a dónde llega, y si ya se dibujó), la nube y si
      tapa el sol, el cable con sus dos bandas y la pantalla. */
+  window.__amExtra.amBaleada = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(m(el)); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function centro(c) { return { x: (c.x0 + c.x1) / 2, y: (c.y0 + c.y1) / 2 }; }
+    function uno(sel, en) { return (en || raiz).querySelector(sel); }
+    function todos(sel, en) { return [].slice.call((en || raiz).querySelectorAll(sel)); }
+    function demora(el) { return parseFloat(el.style.getPropertyValue('--d')) || 0; }
+    /* Lo que corre una pieza su propio transform, sin el de sus padres: la
+       sonda suma los viajes de la tortilla por su cuenta. */
+    function corre(el) {
+      var t = getComputedStyle(el).transform;
+      if (!t || t === 'none') return [0, 0];
+      var n = t.match(/-?[0-9.]+/g).map(Number);
+      return [n[4], n[5]];
+    }
+    function puntosDe(p) {
+      var nums = (p.getAttribute('d').match(/-?[0-9.]+/g) || []).map(Number), r = [];
+      for (var i = 0; i + 1 < nums.length; i += 2) r.push(aVista(p, nums[i], nums[i + 1]));
+      return r;
+    }
+    function tortilla(cual) {
+      var g = uno('[data-tortilla="' + cual + '"]');
+      function hoja(c) { var e = uno('[data-capa="' + c + '"]', g); return e.matches('ellipse,path') ? e : e.querySelector('ellipse,path'); }
+      function sobre(c) { return uno('[data-capa="' + c + '"]', g); }
+      var dobl = sobre('doblada'), cuerpo = uno('[data-masa]', dobl), borde = uno('[data-borde]', dobl);
+      var base = g.firstElementChild;
+      return {
+        ve: vis(cuerpo) || vis(hoja('cruda')) || vis(hoja('cocida')),
+        dVe: demora(g),
+        cruda: vis(hoja('cruda')), cocida: vis(hoja('cocida')), frijoles: vis(hoja('frijoles')),
+        quemados: vis(hoja('quemados')), doblada: vis(cuerpo),
+        masa: cuerpo.getAttribute('data-masa'), borde: borde.getAttribute('data-borde'),
+        caja: caja(cuerpo),
+        base: corre(base),
+        viajes: ['comal', 'mesa', 'plato'].map(function (v) { var e = uno('[data-viaje="' + v + '"]', g); return { v: v, corre: corre(e), d: demora(e) }; }),
+        vuelta: demora(uno('[data-vuelta]', g)),
+        dCapa: { frijoles: demora(sobre('frijoles')), quemados: demora(sobre('quemados')), cocida: demora(sobre('cocida')), doblada: demora(dobl) }
+      };
+    }
+    function marca(k) {
+      var p = uno('[data-marca="' + k + '"]');
+      return { ve: vis(p), caja: caja(p), puntos: puntosDe(p).length, d: demora(p) };
+    }
+    var flecha = uno('[data-flecha]');
+    return {
+      lang: (window.MetasI18N && window.MetasI18N.idioma && window.MetasI18N.idioma()) === 'en' ? 'en' : 'es',
+      numeros: todos('[data-numero]').map(function (t) { return { n: +t.textContent, c: centro(caja(t)) }; }),
+      tarjetas: todos('[data-paso]').map(function (g) {
+        var marco = uno('.pc-tarjeta', g), txt = uno('.pc-paso', g);
+        return { k: g.getAttribute('data-paso'), ve: vis(marco), caja: caja(marco), txt: txt.textContent, cajaTxt: caja(txt), resalte: vis(uno('.pc-resalte', g)) };
+      }),
+      hechos: todos('[data-hecho]').map(function (p) { return { n: +p.getAttribute('data-hecho'), ve: vis(p), c: centro(caja(p)), d: demora(p) }; }),
+      flecha: {
+        ve: vis(uno('path', flecha)), dVe: demora(flecha), dFin: demora(uno('[data-flecha-fin]')),
+        c: centro(caja(uno('path', flecha))),
+        bajadas: todos('[data-flecha-baja]').map(function (g) { return { corre: corre(g), d: demora(g) }; })
+      },
+      titulos: todos('[data-titulo]').map(function (t) { return { k: t.getAttribute('data-titulo'), ve: vis(t), txt: t.textContent }; }),
+      llave: { ve: vis(uno('[data-llave] path')), caja: caja(uno('[data-llave] path')) },
+      rotulos: todos('[data-rotulo]').map(function (t) { return { k: t.getAttribute('data-rotulo'), ve: vis(t), txt: t.textContent, caja: caja(t) }; }),
+      platos: todos('[data-plato]').map(function (e) { return { k: e.getAttribute('data-plato'), caja: caja(e) }; }),
+      comal: caja(uno('[data-comal]')),
+      mesa: caja(uno('[data-mesa]')),
+      tazon: caja(uno('[data-tazon]')),
+      harina: { ve: vis(uno('[data-harina]')), d: demora(uno('[data-harina]')) },
+      masa: { ve: vis(uno('[data-masa] ellipse')), d: demora(uno('[data-masa]')) },
+      humo: { ve: vis(uno('[data-humo] circle')) },
+      kenia: tortilla('kenia'), receta: tortilla('receta'),
+      mal: marca('mal'), bien: marca('bien'),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   window.__amExtra.amMonte = function (raiz) {
     var vis = window.__amVisible;
     var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
@@ -2733,6 +2813,194 @@ function superficieEn(poly, x) {
 }
 
 const ESCENAS = {
+  /* El Pensamiento Computacional: las baleadas de Kenia.
+     ⚠️ Nada se le cree a la escena. La sonda lee de qué paso es cada
+     tarjeta y en qué renglón quedó (el de su número), y con ESE orden hace
+     la receta por su cuenta: si los frijoles están encima cuando la
+     tortilla va al comal, se queman y la masa queda cruda; si no, la
+     tortilla se cuece. Después mira el plato: qué masa tiene, qué asoma en
+     el doblez y si lleva una ✗ o un ✓. Y en las corridas, que la cocina
+     haga cada cosa mientras la flecha está en el renglón de esa tarjeta.
+     Es bilingüe: todo esto se comprueba en los dos idiomas. */
+  amBaleada(e, n) {
+    const x = e.extra, r = [];
+    const L = x.lang === 'en' ? 'en' : 'es';
+    const PASOS = {
+      es: { amasar: 'Amasar la harina', hacer: 'Hacer la tortilla', cocer: 'Cocerla en el comal', untar: 'Untar los frijoles', doblar: 'Doblarla' },
+      en: { amasar: 'Knead the flour', hacer: 'Shape the tortilla', cocer: 'Cook it on the griddle', untar: 'Spread the beans', doblar: 'Fold it' }
+    };
+    const KENIA = ['amasar', 'hacer', 'untar', 'cocer', 'doblar'];
+    const cerca = (a, b, t = 1.5) => Math.abs(a - b) <= t;
+    const cen = c => ({ x: (c.x0 + c.x1) / 2, y: (c.y0 + c.y1) / 2 });
+    const dentro = (p, c, h = 0) => p.x >= c.x0 - h && p.x <= c.x1 + h && p.y >= c.y0 - h && p.y <= c.y1 + h;
+    const idioma = L === 'en' ? 'inglés' : 'español';
+
+    /* ── lo que no depende del dibujo va primero ── */
+    const PROHIBIDAS = L === 'es'
+      ? /algoritm|instrucci|verbo|patr[oó]n|abstrac|descompon|ambig|exact|adivin|receta|mapa\b|mochila|comisi|cepillo|lugares|himno|manejable|ratito|programador|computadora|zapato|calcet|bandera/i
+      : /algorithm|instruction|\bverb|pattern|abstraction|decompos|ambigu|exact|guess|recipe|\bmap\b|backpack|committee|toothbrush|anthem|manageable|programmer|computer|shoe|sock|flag/i;
+    const dicho = [e.texto, e.palabras].concat(x.textos).join(' · ');
+    r.push([!PROHIBIDAS.test(dicho), `paso ${n}: no sale ninguna palabra de lo que pregunta la prueba (${L})`, (dicho.match(PROHIBIDAS) || [])[0]]);
+
+    /* ── la lista ── */
+    const nums = x.numeros.slice().sort((a, b) => a.c.y - b.c.y);
+    const fila = nums.length > 1 ? nums[1].c.y - nums[0].c.y : 0;
+    r.push([nums.length === 5 && nums.every((q, i) => q.n === i + 1 && (i === 0 || cerca(q.c.y - nums[i - 1].c.y, fila, 0.2))),
+      `paso ${n}: los lugares van numerados del 1 al 5, de arriba abajo y a la misma distancia`, nums.map(q => q.n)]);
+    const tarj = x.tarjetas.filter(t => t.ve);
+    const claves = tarj.map(t => t.k).sort().join();
+    r.push([tarj.length === 5 && claves === 'amasar,cocer,doblar,hacer,untar',
+      `paso ${n}: están los cinco pasos, sin que falte ni se repita ninguno`, claves]);
+    const lugarDe = t => { const c = cen(t.caja); const q = nums.find(q => cerca(q.c.y, c.y)); return q ? q.n : null; };
+    const orden = [];
+    tarj.forEach(t => { const l = lugarDe(t); if (l) orden[l - 1] = t.k; });
+    const leido = orden.join();
+    const movidas = KENIA.filter((k, i) => orden[i] !== k);
+    if (n <= 1) r.push([leido === KENIA.join(), `paso ${n}: las tarjetas están en el orden de Kenia, cada una en el renglón de su número`, orden]);
+    else {
+      const vecinas = movidas.length === 2 && Math.abs(KENIA.indexOf(movidas[0]) - KENIA.indexOf(movidas[1])) === 1;
+      r.push([vecinas && orden.indexOf('cocer') < orden.indexOf('untar'),
+        `paso ${n}: solo dos tarjetas cambiaron de lugar, eran vecinas, y ahora se cuece antes de untar`, { orden, movidas }]);
+    }
+    const malTxt = tarj.filter(t => t.txt !== PASOS[L][t.k]);
+    r.push([malTxt.length === 0, `paso ${n}: cada tarjeta dice su paso, en ${idioma}`, malTxt.map(t => t.txt)]);
+    const salidos = tarj.filter(t => t.cajaTxt.x1 > t.caja.x1 - 2 || t.cajaTxt.x0 < t.caja.x0 + 2);
+    r.push([salidos.length === 0, `paso ${n}: el nombre de cada paso cabe en su tarjeta (${L})`, salidos.map(t => t.txt)]);
+    const tit = x.titulos.filter(t => t.ve);
+    const titEspera = n <= 1 ? 'kenia' : 'receta';
+    const TIT = { es: { kenia: 'Así lo hizo Kenia:', receta: 'Con los mismos pasos:' }, en: { kenia: 'How Kenia did it:', receta: 'With the same steps:' } };
+    r.push([tit.length === 1 && tit[0].k === titEspera && tit[0].txt === TIT[L][titEspera],
+      `paso ${n}: arriba dice ${n <= 1 ? 'que es el orden de Kenia' : 'que son los mismos pasos'}, en ${idioma}`, tit.map(t => t.txt)]);
+
+    /* ── lo hecho: un ✓ en el lugar de cada paso que ya se hizo ── */
+    const hechos = x.hechos.filter(h => h.ve);
+    const hechosEspera = n === 0 || n === 2 ? 0 : 5;
+    r.push([hechos.length === hechosEspera && hechos.every(h => nums.some(q => q.n === h.n && cerca(q.c.y, h.c.y))),
+      `paso ${n}: ${hechosEspera} paso(s) hecho(s), cada ✓ en el renglón de su número`, hechos.map(h => h.n)]);
+    r.push([!x.flecha.ve, `paso ${n}: al terminar el paso, la flecha que va haciendo la lista ya no está`, x.flecha.ve]);
+
+    /* ── la receta, hecha por la sonda con el orden que se ve ── */
+    function hacer(ord) {
+      let frijoles = false, cocida = false, quemados = false;
+      for (const k of ord) {
+        if (k === 'untar') frijoles = true;
+        if (k === 'cocer') { if (frijoles) { quemados = true; frijoles = false; } else cocida = true; }
+      }
+      return { masa: cocida ? 'cocida' : 'cruda', borde: quemados ? 'quemados' : 'frijoles', buena: cocida && !quemados };
+    }
+    const platoDe = k => x.platos.find(p => p.k === k).caja;
+    function revisaPlato(tor, k, ord, quien) {
+      const esp = hacer(ord);
+      const c = cen(tor.caja), pl = platoDe(k);
+      r.push([tor.doblada && !tor.cruda && !tor.cocida && !tor.frijoles && !tor.quemados,
+        `paso ${n}: la tortilla ${quien} está doblada en su plato`, tor]);
+      r.push([c.x > pl.x0 && c.x < pl.x1 && cerca(tor.caja.y1, cen(pl).y, 6),
+        `paso ${n}: y la tortilla ${quien} está sentada sobre SU plato`, [c, pl]]);
+      r.push([tor.masa === esp.masa && tor.borde === esp.borde,
+        `paso ${n}: con ese orden la masa queda ${esp.masa} y en el doblez asoman ${esp.borde === 'quemados' ? 'los frijoles quemados' : 'los frijoles'}, y eso es lo que tiene el plato`, [tor.masa, tor.borde]]);
+      const m = esp.buena ? x.bien : x.mal, otra = esp.buena ? 'bien' : 'mal';
+      const mc = cen(m.caja);
+      r.push([m.ve && mc.x > pl.x0 && mc.x < pl.x1 + 10 && mc.y < pl.y0,
+        `paso ${n}: el plato ${quien} lleva ${esp.buena ? 'un ✓' : 'una ✗'}, encima`, otra]);
+      r.push([m.puntos === (esp.buena ? 3 : 4), `paso ${n}: ${esp.buena ? 'el ✓ es una raya quebrada' : 'la ✗ son dos rayas que se cruzan'}`, m.puntos]);
+      return esp;
+    }
+    const k = x.kenia, rc = x.receta;
+    if (n === 0) {
+      r.push([!k.ve && !rc.ve && !x.mal.ve && !x.bien.ve, 'paso 0: todavía no hay nada en los platos', [k.ve, rc.ve]]);
+      r.push([x.harina.ve && !x.masa.ve, 'paso 0: la harina espera en el tazón', x.harina]);
+    } else {
+      const esK = revisaPlato(k, 'kenia', KENIA, 'de Kenia');
+      const cap = x.rotulos.find(q => q.k === 'kenia');
+      r.push([cap.ve && cap.txt === (L === 'en' ? 'raw and burned' : 'cruda y quemada') && esK.masa === 'cruda' && esK.borde === 'quemados'
+        && cen(cap.caja).y > platoDe('kenia').y1 && cerca(cen(cap.caja).x, cen(platoDe('kenia')).x, 3),
+        `paso ${n}: debajo del plato de Kenia dice lo que tiene, en ${idioma}`, cap.txt]);
+    }
+    if (n >= 3) {
+      const esR = revisaPlato(rc, 'receta', orden, 'de los mismos pasos');
+      const cap = x.rotulos.find(q => q.k === 'receta');
+      r.push([cap.ve && cap.txt === (L === 'en' ? 'baleada!' : '¡baleada!') && esR.buena
+        && cen(cap.caja).y > platoDe('receta').y1 && cerca(cen(cap.caja).x, cen(platoDe('receta')).x, 3),
+        `paso ${n}: debajo del otro plato dice que es una baleada, en ${idioma}`, cap.txt]);
+    } else if (n > 0) {
+      r.push([!rc.ve && !x.bien.ve, `paso ${n}: el otro plato sigue vacío`, rc.ve]);
+    }
+    if (n === 2) r.push([x.harina.ve && !x.masa.ve, 'paso 2: la harina vuelve a esperar en el tazón', x.harina]);
+    if (n === 1 || n === 3 || n === 4) r.push([!x.harina.ve && !x.masa.ve && !x.humo.ve, `paso ${n}: la harina se usó y ya no hay humo`, [x.harina.ve, x.humo.ve]]);
+
+    /* ── la corrida: la cocina hace cada cosa mientras la flecha está en su
+       renglón. Se lee del dibujo cuándo llega la flecha a cada renglón y
+       cuándo hace cada cosa la cocina. ── */
+    if (n === 1 || n === 3) {
+      const tor = n === 1 ? k : rc;
+      const b = x.flecha.bajadas;
+      const llega = [x.flecha.dVe + 200].concat(b.map(q => q.d)).concat([x.flecha.dFin]);
+      r.push([b.length === 4 && b.every(q => cerca(q.corre[0], 0, 0.01) && cerca(q.corre[1], fila, 0.2)) && llega.every((t, i) => i === 0 || t > llega[i - 1]),
+        `paso ${n}: la flecha baja de renglón en renglón, uno a la vez y en orden`, llega]);
+      const tick = x.hechos.map(h => h.d);
+      r.push([tick.every((d, i) => d === llega[i + 1]), `paso ${n}: cada ✓ aparece cuando la flecha deja su renglón`, tick]);
+      const enVentana = (d, i) => d >= llega[i] && d < llega[i + 1];
+      const hace = {
+        amasar: [x.harina.d, x.masa.d],
+        hacer: [tor.dVe],
+        untar: [tor.dCapa.frijoles],
+        cocer: [tor.viajes[0].d, tor.vuelta],
+        doblar: [tor.viajes[2].d, tor.dCapa.doblada]
+      };
+      const fuera = orden.map((kk, i) => ({ k: kk, i, ok: hace[kk].every(d => enVentana(d, i)), d: hace[kk] })).filter(q => !q.ok);
+      r.push([fuera.length === 0, `paso ${n}: la cocina hace cada paso mientras la flecha está en el renglón de su tarjeta`, fuera]);
+      /* el comal: la tortilla llega a él, y de ahí sale */
+      const enComal = [tor.base[0] + tor.viajes[0].corre[0], tor.base[1] + tor.viajes[0].corre[1]];
+      const cm = cen(x.comal);
+      r.push([cerca(enComal[0], cm.x, 3) && enComal[1] < cm.y && enComal[1] > x.comal.y0 - 8,
+        `paso ${n}: al cocerla, la tortilla va a parar sobre el comal`, [enComal, cm]]);
+      const mesa = x.mesa;
+      r.push([tor.base[0] > mesa.x0 && tor.base[0] < mesa.x1 && tor.base[1] > mesa.y0 && tor.base[1] < mesa.y1,
+        `paso ${n}: la tortilla se hace sobre la mesa`, tor.base]);
+      if (n === 1) r.push([tor.dCapa.quemados > tor.dCapa.frijoles && tor.dCapa.quemados >= tor.viajes[0].d,
+        'paso 1: los frijoles se queman DESPUÉS de untarlos y cuando la tortilla ya va al comal', tor.dCapa]);
+      else r.push([tor.dCapa.cocida >= tor.viajes[0].d && tor.dCapa.frijoles > tor.dCapa.cocida,
+        'paso 3: la tortilla se cuece en el comal y los frijoles van DESPUÉS, encima de la cocida', tor.dCapa]);
+    }
+
+    /* ── lo que cuenta el marcador ── */
+    const buenas = [x.bien].filter(q => q.ve).length;
+    const cifraEspera = n === 0 || n === 4 ? tarj.length : n === 2 ? movidas.length : buenas;
+    r.push([+e.cifra === cifraEspera, `paso ${n}: el marcador dice ${e.cifra} y en el dibujo se cuentan ${cifraEspera}`, [e.cifra, cifraEspera]]);
+    if (n === 4) {
+      const res = tarj.filter(t => t.resalte).map(t => t.k).sort().join();
+      r.push([res === movidas.slice().sort().join(), 'paso 4: van marcadas justo las dos tarjetas que cambiaron de lugar', res]);
+      const filasMov = tarj.filter(t => movidas.includes(t.k)).map(t => t.caja);
+      const ll = x.llave.caja;
+      r.push([x.llave.ve && filasMov.length === 2 && cerca(ll.y0, Math.min(...filasMov.map(c => c.y0)), 3) && cerca(ll.y1, Math.max(...filasMov.map(c => c.y1)), 3),
+        'paso 4: la llave abraza las dos tarjetas que cambiaron de lugar', [ll, filasMov]]);
+      const lab = x.rotulos.find(q => q.k === 'cambian');
+      r.push([lab.ve && lab.txt === (L === 'en' ? 'swapped places' : 'cambiaron de lugar') && lab.caja.x1 <= 320,
+        `paso 4: al lado de la llave dice que cambiaron de lugar, en ${idioma}`, lab.txt]);
+    } else r.push([!x.llave.ve && tarj.every(t => !t.resalte), `paso ${n}: ni llave ni tarjetas marcadas`, x.llave.ve]);
+
+    /* ── la frase ── */
+    if (n === 1) r.push([L === 'en' ? /burned/.test(e.texto) && /raw/.test(e.texto) : /quemaron/.test(e.texto) && /cruda/.test(e.texto),
+      'paso 1: la frase dice lo que dice el plato: frijoles quemados y masa cruda', e.texto]);
+    const rotComal = x.rotulos.find(q => q.k === 'comal');
+    r.push([rotComal.ve && rotComal.txt === (L === 'en' ? 'griddle' : 'comal') && rotComal.caja.x1 <= 320 && rotComal.caja.y1 < x.comal.y0,
+      `paso ${n}: el comal lleva su nombre, en ${idioma}, encima de él`, rotComal.txt]);
+
+    /* ── ningún rótulo se monta en otro, ni queda pegado debajo de otro ──
+       Dos rótulos uno encima del otro, a medio renglón, se leen como UNO de
+       dos renglones: así salió la primera vez, «cambiaron de lugar» con
+       «comal» justo debajo. Se cuenta como pegado todo lo que queda a menos
+       de un renglón (9) y comparte algo de ancho. */
+    const vistos = x.rotulos.filter(q => q.ve && q.txt);
+    const apilados = [];
+    for (let i = 0; i < vistos.length; i++) for (let j = i + 1; j < vistos.length; j++) {
+      const a = vistos[i].caja, b = vistos[j].caja;
+      const hueco = Math.max(b.y0 - a.y1, a.y0 - b.y1);
+      if (a.x0 < b.x1 && b.x0 < a.x1 && hueco < 9) apilados.push([vistos[i].k, vistos[j].k, Math.round(hueco * 10) / 10]);
+    }
+    r.push([apilados.length === 0, `paso ${n}: ningún rótulo se monta en otro ni queda pegado debajo de otro`, apilados]);
+    return r;
+  },
   /* Los Cinco Reinos. «El veneno que no servía».
      ⚠️ Nada se le cree a la escena. Las mordidas se leen de la máscara y se
      comprueba que cada una muerda la orilla de la hoja de arriba; las patas
@@ -9511,6 +9779,55 @@ function frases(t) {
       return fondos.map(f => Math.round(razon(cs.color, f) * 100) / 100);
     }, m.id);
     ok(letraBoton.length > 0 && Math.min(...letraBoton) >= 4.5, 'la letra del botón que avanza se lee en todo su degradado (4,5:1 o más)', letraBoton);
+
+    /* 4-bis · ⚠️ Si la misión es BILINGÜE, la animación también. El motor de
+       idioma traduce buscando frases exactas de un diccionario, y las frases
+       de una animación no están en ninguno: sin esto, el alumno que estudia
+       en inglés se queda con la animación en español, sin un solo error. Se
+       toca 🌐 a media animación (tiene que quedarse en su paso), se recorre
+       entera en inglés con las mismas comprobaciones de su escena, y se
+       vuelve al español. */
+    const bilingue = await pag.evaluate(() => !!(window.MISION_EN && window.MetasI18N && typeof window.MetasI18N.set === 'function'));
+    if (bilingue) {
+      const ariaEs = await pag.evaluate(id => document.getElementById(id).querySelector('svg').getAttribute('aria-label'), m.id);
+      const antesEn = await pag.evaluate(id => window.__amLeer(id), m.id);
+      await pag.evaluate(() => window.MetasI18N.set('en'));
+      await pag.waitForTimeout(300);
+      const trasEn = await pag.evaluate(id => window.__amLeer(id), m.id);
+      ok(trasEn.paso === antesEn.paso && trasEn.texto !== antesEn.texto && trasEn.boton !== antesEn.boton,
+        'al tocar 🌐 a media animación, se queda en su paso y pasa a inglés', [antesEn.paso, trasEn.paso]);
+      const raizEn = await pag.evaluate(id => {
+        const r = document.getElementById(id);
+        return { omite: r.hasAttribute('data-i18n-omitir'), aria: r.querySelector('svg').getAttribute('aria-label'),
+                 atras: r.querySelector('.am-atras').getAttribute('aria-label') };
+      }, m.id);
+      ok(raizEn.omite, 'el motor de idioma no la toca (trae su inglés escrito)');
+      ok(raizEn.aria && raizEn.aria !== ariaEs && raizEn.atras === 'Previous step', 'el dibujo y el botón de atrás también se describen en inglés', raizEn);
+      await pag.evaluate(id => document.getElementById(id).amControl.ir(0), m.id);
+      const vistosEn = [];
+      let partidasEn = 0;
+      for (let n = 0; n < base.pasos; n++) {
+        const e = await pag.evaluate(id => window.__amLeer(id), m.id);
+        vistosEn.push(e);
+        const largas = frases(e.texto).filter(x => x > 25);
+        if (!e.texto.trim() || largas.length) ok(false, `paso ${n} (inglés): la frase existe y ninguna pasa de 25 palabras`, largas);
+        if (escena) for (const [bien, txt, extra] of escena(e, n)) ok(bien, txt, extra);
+        const partidas = await pag.evaluate(id => window.__amPartidas(id), m.id);
+        partidasEn += partidas.length;
+        await pag.click(`#${m.id} .am-sigue`);
+      }
+      const igualEs = vistosEn.filter((e, i) => e.texto === vistos[i].texto || e.boton === vistos[i].boton || e.palabras === vistos[i].palabras);
+      ok(igualEs.length === 0, 'en inglés, cada frase, cada botón y cada rótulo del marcador son otros (ninguno se quedó en español)', igualEs.map(e => e.paso));
+      ok(partidasEn === 0, 'en inglés, ninguna cuenta se parte entre dos renglones', partidasEn);
+      const rangoEn = k => Math.max(...vistosEn.map(e => e[k])) - Math.min(...vistosEn.map(e => e[k]));
+      ok(rangoEn('yBoton') <= 1 && rangoEn('yDibujo') <= 1, 'en inglés, el botón que avanza y el dibujo tampoco se mueven de un paso a otro',
+        { boton: Math.round(rangoEn('yBoton')), dibujo: Math.round(rangoEn('yDibujo')) });
+      await pag.evaluate(() => window.MetasI18N.set('es'));
+      await pag.waitForTimeout(300);
+      const deVuelta = await pag.evaluate(id => window.__amLeer(id), m.id);
+      ok(deVuelta.texto === vistos[deVuelta.paso].texto && deVuelta.boton === vistos[deVuelta.paso].boton,
+        'y al volver al español, dice otra vez lo mismo que decía', deVuelta.paso);
+    }
 
     /* 5 · no regala nada, no sale del sitio, no revienta */
     const fin = await pag.evaluate(() => ({ premios: window.__premios, xp: (document.getElementById('xpPts') || {}).textContent }));

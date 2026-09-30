@@ -57,8 +57,16 @@
         'spread the beans first and put the tortilla on the griddle afterward. The beans burned on the griddle and the ' +
         'dough stayed raw. There was no lunch in her house that day.</p>' +
         '<div class="tip"><span class="ti">❓</span>' +
-        '<div>No step was missing: <strong>one step was in the wrong place</strong>. Write down in your notebook the steps ' +
+        '<div>No step was missing: <strong>two of them had swapped places</strong>. Write down in your notebook the steps ' +
         'of something you do every day, swap two of them around, and you will watch the same mess happen.</div></div>',
+
+      /* La animación de las baleadas: solo el título y la frase de reserva.
+         Lo de dentro trae su inglés escrito en js/animacion-baleada.js. */
+      an: '👀 Watch Kenia’s steps, one by one',
+      anr:
+        'Kenia did the five steps of the baleada without skipping a single one, but she spread the beans before ' +
+        'cooking the tortilla: on the griddle, the beans ended up underneath and burned, and the dough stayed raw. ' +
+        'With the same five steps, swapping two of them, out comes the baleada.',
 
       a1:
         '<h2>🫓 What is an algorithm?</h2>' +
@@ -468,21 +476,21 @@
 
       /* ---------- Evaluación conceptual ---------- */
       evalTFBank: [
-        { q: 'Kenia was left alone making the baleadas.', a: true },
+        { q: 'Each step of a plan is an instruction.', a: true },
         { q: '«Add 2 spoonfuls of sugar» is an order everyone carries out the same way.', a: true },
         { q: 'Putting on your shoes before your socks turns out fine.', a: false },
         { q: 'Raising the flag on civic Monday follows steps in order.', a: true },
         { q: 'A stone from the river is a plan of steps.', a: false },
         { q: 'A good plan writes down every detail, even the useless ones.', a: false },
         { q: 'When a program fails, it is always the machine’s fault.', a: false },
-        { q: 'Folding the baleada before making the tortilla turns out fine.', a: false },
+        { q: 'Drying your hands before washing them turns out fine.', a: false },
         { q: 'A huge problem is best tackled all in one go.', a: false },
         { q: 'Planting beans can also be written as steps.', a: true }
       ],
 
       evalMCBank: [
         { q: 'Which of these instructions is EXACT?', o: ['Walk around over there', 'Take 3 steps forward', 'Move a little', 'Go fast'], a: 1 },
-        { q: 'What went wrong for Kenia with the baleadas?', o: ['She spread the beans before cooking the tortilla', 'She forgot to buy flour', 'She did not light the griddle', 'She ate the dough'], a: 0 },
+        { q: 'Which step comes first when brushing your teeth?', o: ['Put toothpaste on the brush', 'Rinse your mouth', 'Put the brush away', 'Brush up and down'], a: 0 },
         { q: 'What does a machine do with instructions?', o: ['It picks what it wants', 'It deletes them', 'It does exactly what they say', 'It changes their order'], a: 2 },
         { q: 'To organize the school fair, it is best to…', o: ['Do everything at once with no plan', 'Wait for it to organize itself', 'Cancel it', 'Split it into parts: food, games, invitations'], a: 3 },
         { q: 'Why does the order «add a little» fail?', o: ['Because it is too long', 'Because everyone understands a different amount', 'Because it is in Spanish', 'Because it has numbers'], a: 1 },
@@ -494,15 +502,15 @@
       ],
 
       evalCPBank: [
-        { q: 'Kenia was left making the baleadas while her mom went to the ___.', a: 'corner store', acc: ['corner store', 'store', 'shop'] },
-        { q: 'That day there was no ___ at Kenia’s house.', a: 'lunch', acc: ['lunch'] },
-        { q: 'Kenia’s beans ___ on the griddle.', a: 'burned', acc: ['burned', 'burnt'] },
+        { q: 'A good instruction has clear amounts and ___.', a: 'places', acc: ['places', 'place'] },
+        { q: 'After mashing the nances, you have to ___ the mixture.', a: 'strain', acc: ['strain', 'sieve'] },
+        { q: 'A small part is a ___ piece of a big problem.', a: 'manageable', acc: ['manageable', 'easy', 'simple'] },
         { q: 'Finding what repeats saves ___.', a: 'work', acc: ['work', 'time'] },
         { q: 'Writing a plan step by step is «programming» with pencil and ___.', a: 'paper', acc: ['paper'] },
         { q: 'The machine does not ___: it obeys.', a: 'guess', acc: ['guess'] },
         { q: 'If you already know how to make one baleada, you know how to make ___.', a: 'fifty', acc: ['fifty', '50', 'many'] },
         { q: 'To raise the flag, first you have to ___ up.', a: 'line', acc: ['line', 'form'] },
-        { q: 'Kenia put the tortilla on the griddle ___ spreading the beans.', a: 'after', acc: ['after'] },
+        { q: 'The flag is raised slowly while the ___ plays.', a: 'anthem', acc: ['anthem', 'national anthem'] },
         { q: 'To plant beans: cotton, a bean, light and ___ every day.', a: 'water', acc: ['water', 'watering'] }
       ],
 
@@ -521,7 +529,7 @@
 
       /* ---------- Prueba operativa ---------- */
       opOrdenBank: [
-        { tarea: 'Making a baleada', pasos: ['Knead the flour', 'Cook the tortilla on the griddle', 'Spread the beans', 'Fold it and serve it'] },
+        { tarea: 'Washing the dishes', pasos: ['Scrape off the leftover food', 'Wash them with soap', 'Rinse them with clean water', 'Set them to dry'] },
         { tarea: 'Brushing your teeth', pasos: ['Put toothpaste on the brush', 'Brush up and down', 'Rinse your mouth', 'Put the brush away'] },
         { tarea: 'Raising the flag at the Monday ceremony', pasos: ['Line up in the yard', 'Tie the flag to the rope', 'Raise it with the anthem', 'Give the salute'] },
         { tarea: 'Planting a bean in a cup', pasos: ['Put damp cotton in the cup', 'Place the bean on it', 'Leave it near the light', 'Water it every day'] },
@@ -530,7 +538,7 @@
         { tarea: 'Doing the homework', pasos: ['Take out the notebook', 'Read the instructions', 'Solve the exercises', 'Check the answers'] },
         { tarea: 'Feeding the chickens', pasos: ['Fill the gourd bowl with corn', 'Open the chicken coop', 'Scatter the corn on the ground', 'Change the water in the trough'] },
         { tarea: 'Sending a letter', pasos: ['Write the letter', 'Put it in the envelope', 'Write the name of the person it goes to', 'Hand it in at the post office'] },
-        { tarea: 'Making corn tortillas', pasos: ['Mix the masa', 'Roll the little balls', 'Pat out the tortilla', 'Cook it on the griddle', 'Keep them in the cloth napkin'] }
+        { tarea: 'Wrapping a present', pasos: ['Measure the paper', 'Cut the paper', 'Wrap the box', 'Tape it shut', 'Put the card on it'] }
       ],
 
       opEABank: [
@@ -555,7 +563,7 @@
       ],
 
       opFaltaBank: [
-        { tarea: 'Making a baleada', pasos: ['Knead the flour', 'Cook the tortilla', '___', 'Fold the baleada and serve it'], correcta: 'Spread the beans and the cheese', distractores: ['Wash the griddle', 'Put the flour away', 'Eat the baleada'] },
+        { tarea: 'Sharpening a pencil', pasos: ['Pick up the sharpener', 'Put the pencil in', '___', 'Throw away the shavings'], correcta: 'Turn the pencil', distractores: ['Wet the pencil', 'Paint the sharpener', 'Put the notebook away'] },
         { tarea: 'Washing your hands', pasos: ['Turn on the faucet', 'Wet your hands', '___', 'Rinse and dry them'], correcta: 'Scrub with soap', distractores: ['Close your eyes', 'Comb your hair', 'Dry the floor'] },
         { tarea: 'Planting a bean', pasos: ['Put damp cotton in the cup', '___', 'Leave the cup in the light', 'Water it every day'], correcta: 'Place the bean on the cotton', distractores: ['Eat the bean', 'Cover the cup with stones', 'Hide the cup'] },
         { tarea: 'Making a nance drink', pasos: ['Wash the nances', 'Mash them with water', '___', 'Add sugar and ice'], correcta: 'Strain the mixture', distractores: ['Freeze the whole nances', 'Throw out the water', 'Paint the glass'] },
@@ -566,7 +574,7 @@
       ],
 
       opVidaBank: [
-        { tema: 'Making a baleada for the snack break', pasos: ['Knead the flour with water', 'Shape the tortilla and cook it on the griddle', 'Spread beans and cheese', 'Fold it and serve it'] },
+        { tema: 'Washing clothes by hand', pasos: ['Soak the clothes in water', 'Scrub them with soap', 'Rinse them with clean water', 'Wring them out and hang them in the sun'] },
         { tema: 'Washing your hands before the snack break', pasos: ['Turn on the faucet', 'Wet your hands', 'Scrub with soap for 20 seconds', 'Rinse well', 'Turn off the faucet and dry them'] },
         { tema: 'Raising the flag at the Monday ceremony', pasos: ['Line up in the yard', 'Tie the flag to the rope', 'Raise it slowly while the anthem plays', 'Give the salute in silence', 'Go back to the classroom in an orderly line'] },
         { tema: 'Making a nance drink', pasos: ['Wash the nances', 'Mash them with a little water', 'Strain the mixture', 'Add water, sugar and ice', 'Serve the drink'] },
@@ -589,7 +597,7 @@
 
       opDetectiveBank: [
         { tarea: 'Brushing your teeth', pasos: ['Put toothpaste on the brush', 'Brush up and down', 'Rinse your mouth', 'Put the brush away'], malo: 'Do something with the water', tipo: 'A' },
-        { tarea: 'Making a baleada', pasos: ['Knead the flour', 'Cook the tortilla', 'Spread the beans', 'Fold it and serve it'], malo: 'Kick a ball around', tipo: 'I' },
+        { tarea: 'Making a paper airplane', pasos: ['Fold the sheet in half', 'Fold the corners to the middle', 'Fold the wings', 'Throw it'], malo: 'Kick a ball around', tipo: 'I' },
         { tarea: 'Raising the flag', pasos: ['Line up', 'Tie on the flag', 'Raise it with the anthem', 'Give the salute'], malo: 'Get it up there somehow', tipo: 'A' },
         { tarea: 'Planting a bean', pasos: ['Put in damp cotton', 'Place the bean', 'Leave it in the light', 'Water it every day'], malo: 'Watch television for a while', tipo: 'I' },
         { tarea: 'Making a nance drink', pasos: ['Wash the nances', 'Mash them with water', 'Strain the mixture', 'Serve it with ice'], malo: 'Add as much sugar as whoever walks by likes', tipo: 'A' },

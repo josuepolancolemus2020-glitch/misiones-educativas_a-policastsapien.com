@@ -57,6 +57,20 @@
      boton(n)                el rótulo del botón que avanza
      atajo(n)                { rotulo, a } o null: un salto opcional
      marcador(n, antes)      { cifra, palabras, salto }
+
+   Y si la misión es BILINGÜE (trae su -en.js y el botón 🌐):
+     bilingue   true
+     describe   { es, en } en vez de una frase
+     idioma(lang, a)         reescribe los rótulos del dibujo; el aparato
+                             la llama al montar y cada vez que se cambia
+                             de idioma, y la escena contesta texto, boton,
+                             atajo y marcador en el idioma que le dijeron.
+   ⚠️ En una bilingüe la animación NO la traduce el motor de idioma
+   (js/metas-i18n.js): el aparato marca su bloque data-i18n-omitir y la
+   escena trae sus dos idiomas escritos por una persona. El motor traduce
+   buscando frases EXACTAS de un diccionario, y una frase que la escena arma
+   con sus números no está en ninguno: el alumno que estudia en inglés se
+   quedaría con la animación en español, sin un solo error.
    ============================================================ */
 (function () {
   'use strict';
@@ -177,6 +191,17 @@
     return n;
   }
 
+  /* El idioma en que está la página. Lo lleva el motor de las misiones
+     bilingües (js/metas-i18n.js); sin él, español. */
+  function idiomaPagina() {
+    var i = window.MetasI18N;
+    return i && typeof i.idioma === 'function' && i.idioma() === 'en' ? 'en' : 'es';
+  }
+  var ROTULOS = {
+    es: { atras: 'Paso anterior', atrasCorto: 'Atrás' },
+    en: { atras: 'Previous step', atrasCorto: 'Back' }
+  };
+
   function montar(destino, escena) {
     var raiz = typeof destino === 'string' ? document.querySelector(destino) : destino;
     if (!raiz || !escena || !escena.pasos) return null;
@@ -193,6 +218,15 @@
        dentro del texto del dibujo, donde un SVG no lo pinta, y dejaría
        apilada la frase del primer paso y no la de los demás. */
     raiz.setAttribute('data-sinfr', '');
+    /* ⚠️ En una misión bilingüe, el motor de idioma no entra aquí: la escena
+       trae su inglés escrito (ver la cabecera). Sin esta marca, el motor
+       intentaría traducir cada frase buscándola en su diccionario, y a la
+       vuelta al español devolvería las que encontró a su frase de ANTES,
+       que ya no es la del paso en que está el alumno. */
+    var bilingue = !!escena.bilingue;
+    var lang = bilingue ? idiomaPagina() : 'es';
+    if (bilingue) raiz.setAttribute('data-i18n-omitir', '');
+    function enSuIdioma(v) { return v && typeof v === 'object' ? (v[lang] || v.es || '') : (v || ''); }
 
     var marcador = crear('div', 'am-marcador');
     marcador.setAttribute('aria-hidden', 'true');
@@ -210,7 +244,7 @@
     var svg = el('svg', {
       viewBox: '0 0 ' + vista[0] + ' ' + vista[1],
       role: 'img',
-      'aria-label': escena.describe || '',
+      'aria-label': enSuIdioma(escena.describe),
       focusable: 'false'
     });
     escenario.appendChild(svg);
@@ -232,8 +266,11 @@
     var sigue = crear('button', 'am-sigue');
     var atajo = crear('button', 'am-atajo');
     atras.type = sigue.type = atajo.type = 'button';
-    atras.setAttribute('aria-label', 'Paso anterior');
-    atras.title = 'Atrás';
+    function rotularAtras() {
+      atras.setAttribute('aria-label', ROTULOS[lang].atras);
+      atras.title = ROTULOS[lang].atrasCorto;
+    }
+    rotularAtras();
     mandos.appendChild(atras);
     mandos.appendChild(sigue);
     mandos.appendChild(atajo);
@@ -258,15 +295,20 @@
          «Atrás» hecho por código, o «reducir movimiento»). Lo que la escena
          anime con keyframes propios —un brinco— lo tiene que preguntar,
          porque .am-quieto solo apaga las transiciones. */
-      quieto: function () { return svg.classList.contains('am-quieto'); }
+      quieto: function () { return svg.classList.contains('am-quieto'); },
+      /* 'es' o 'en': en qué idioma habla la escena ahora mismo. */
+      idioma: function () { return lang; }
     };
 
     escena.construir(svg, ayuda);
+    if (bilingue && escena.idioma) escena.idioma(lang, ayuda);
 
     var n = 0;
     var destinoAtajo = null;
 
-    function marcar(m, antes) {
+    /* `callado`: al cambiar de idioma se reescribe el marcador del MISMO
+       paso, y eso no es un número nuevo: ni salta la cifra ni sube el «+10». */
+    function marcar(m, antes, callado) {
       var dato = escena.marcador ? escena.marcador(m, antes) : null;
       if (!dato) { marcador.hidden = true; return; }
       marcador.hidden = false;
@@ -274,10 +316,13 @@
         cifra._amTxt = dato.cifra;
         ponCifra(cifra, dato.cifra);
         cifra.classList.remove('am-pop');
-        void cifra.offsetWidth;          // reinicia la animación del número
-        cifra.classList.add('am-pop');
+        if (!callado) {
+          void cifra.offsetWidth;        // reinicia la animación del número
+          cifra.classList.add('am-pop');
+        }
       }
       palabras.textContent = sinPartir(dato.palabras);
+      if (callado) return;
       salto.classList.remove('am-sube');
       if (dato.salto) {
         salto.textContent = dato.salto;
@@ -320,6 +365,28 @@
     atajo.addEventListener('click', function () {
       if (destinoAtajo != null) ir(destinoAtajo, true);
     });
+
+    /* El alumno toca 🌐 con la animación a medio camino: se queda en el
+       MISMO paso y el dibujo no se mueve; cambian las palabras. Lo avisa el
+       motor de idioma con su evento, que llega después de que él termina. */
+    function cambiarIdioma(nuevo) {
+      if (!bilingue || nuevo === lang) return;
+      lang = nuevo;
+      if (escena.idioma) escena.idioma(lang, ayuda);
+      svg.setAttribute('aria-label', enSuIdioma(escena.describe));
+      rotularAtras();
+      texto.textContent = sinPartir(escena.texto(n));
+      sigue.textContent = escena.boton(n);
+      var a = escena.atajo ? escena.atajo(n) : null;
+      if (a) atajo.textContent = a.rotulo;
+      marcar(n, n, true);
+      igualar(true);
+    }
+    if (bilingue) {
+      document.addEventListener('metas:idioma', function (ev) {
+        cambiarIdioma(ev && ev.detail && ev.detail.lang === 'en' ? 'en' : 'es');
+      });
+    }
 
     /* El primer pintado no tiene de dónde venir: sin movimiento, y se
        asienta antes de soltar las transiciones. Si no, los huevos

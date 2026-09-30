@@ -136,12 +136,14 @@ for (const m of misiones) {
   ok(iAparato > 0, 'carga el aparato (js/animacion-mision.js)');
   ok(escenas.length > 0, 'carga su escena (js/animacion-<tema>.js)');
   let montaEse = false;
+  const fuentes = [];
   for (const e of escenas) {
     ok(e.i > iAparato, `la escena ${e.src} se carga DESPUÉS del aparato`);
     const ruta = path.join(m.carpeta, e.src);
     if (!fs.existsSync(ruta)) { ok(false, `existe ${e.src}`); continue; }
     const fuente = fs.readFileSync(ruta, 'utf8');
     const js = sinComentariosJs(fuente);
+    fuentes.push(js);
     if (js.includes(`AnimacionMision.montar('#${idCont}'`) || js.includes(`AnimacionMision.montar("#${idCont}"`)) montaEse = true;
 
     /* 5 · no gasta de más ni sale del sitio */
@@ -152,6 +154,26 @@ for (const m of misiones) {
     ok(!premios, `${e.src}: mirarla no da XP, ni estrella, ni logro`, premios || undefined);
   }
   ok(montaEse, `la escena monta el bloque que está en la tarjeta (#${idCont})`);
+
+  /* 8 · ⚠️ En una misión BILINGÜE (trae su -en.js y el botón 🌐), la
+     animación habla los dos idiomas. El motor de idioma traduce buscando
+     frases exactas de un diccionario, y las de una animación no están en
+     ninguno: el alumno que estudia en inglés se quedaba con la animación en
+     español, sin un solo error. La escena trae su inglés escrito; la
+     tarjeta entera NO lleva data-i18n, porque el motor le cambiaría el HTML
+     de dentro y se llevaría la animación montada; el título sí, con su
+     clave en el -en.js. */
+  const enSrc = (m.html.match(/src="(js\/[^"?]+-en\.js)/) || [])[1];
+  if (enSrc) {
+    ok(fuentes.some(js => /\bbilingue\s*:\s*true\b/.test(js)), 'la misión es bilingüe y su escena también (bilingue: true, con su inglés escrito)');
+    const abre = (html.slice(iAni).match(/<div\b[^>]*>/) || [''])[0];
+    ok(!/\bdata-i18n=/.test(abre), 'la tarjeta de la animación NO lleva data-i18n (el motor se llevaría la animación montada)', abre);
+    const h2 = (tarjeta.match(/<h2\b[^>]*>/) || [''])[0];
+    const clave = (h2.match(/data-i18n="([^"]+)"/) || [])[1];
+    ok(!!clave, 'su título lleva data-i18n, para que también se lea en inglés', h2);
+    const en = fs.readFileSync(path.join(m.carpeta, enSrc), 'utf8');
+    ok(!!clave && new RegExp('(^|[\\s,{])' + clave + '\\s*:').test(en), `y la clave «${clave}» tiene su inglés en ${enSrc}`);
+  }
 }
 
 console.log('\n' + (fallos ? `✘ ${fallos} comprobaciones fallaron` : '✓ la animación está donde va, se ve sin señal y no regala nada'));

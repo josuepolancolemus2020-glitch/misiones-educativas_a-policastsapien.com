@@ -541,3 +541,43 @@ body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* ===== La animación de las baleadas de Kenia (js/animacion-baleada.js) =====
+   La lista va con los colores de la misión y se aclara sola en la pantalla
+   oscura (--am-pri y --am-sec, del aparato). La cocina, no: una tortilla es
+   color tortilla en las dos pantallas, y lo quemado, negro. */
+#amBaleada .pc-tarjeta { fill: var(--card, #fff); stroke: var(--border, #bce8f1); stroke-width: 1.4; }
+#amBaleada .pc-resalte { fill: none; stroke: var(--am-sec); stroke-width: 2.4; }
+#amBaleada .pc-hecho { fill: none; stroke: var(--am-sec); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+#amBaleada .pc-flecha { fill: var(--am-pri); }
+#amBaleada .pc-llave { fill: none; stroke: var(--am-sec); stroke-width: 2; stroke-linejoin: round; }
+
+#amBaleada .pc-plato { fill: #fbfaf6; stroke: #b8b0a0; stroke-width: 1.2; }
+#amBaleada .pc-plato-fondo { fill: none; stroke: #ddd6c7; stroke-width: 0.9; }
+#amBaleada .pc-mesa { fill: #c98f58; stroke: #8b5a2b; stroke-width: 1.2; stroke-linejoin: round; }
+#amBaleada .pc-mesa-canto { fill: #9c6432; }
+#amBaleada .pc-tazon { fill: #b3562e; stroke: #7f3517; stroke-width: 1.1; }
+#amBaleada .pc-tazon-boca { fill: none; stroke: #7f3517; stroke-width: 1.1; }
+#amBaleada .pc-harina { fill: #fbf8f0; stroke: #d8cfbd; stroke-width: 0.8; }
+#amBaleada .pc-masa { fill: #eed9a8; stroke: #c6a466; stroke-width: 0.9; }
+#amBaleada .pc-fogon { fill: #b9673f; stroke: #7e3c1f; stroke-width: 1.2; stroke-linejoin: round; }
+#amBaleada .pc-boca { fill: #3b1d10; }
+#amBaleada .pc-fuego { fill: #f57c00; }
+#amBaleada .pc-fuego-2 { fill: #ffd54f; }
+#amBaleada .pc-comal { fill: #3a3a3a; stroke: #151515; stroke-width: 1.2; }
+#amBaleada .pc-humo { fill: #9aa0a6; fill-opacity: 0.6; }
+#amBaleada .pc-quemado { fill: #1c120e; stroke: #000; stroke-width: 0.6; }
+#amBaleada .pc-cruda { fill: #f5e6c4; stroke: #cfb07a; stroke-width: 0.9; }
+#amBaleada .pc-cocida { fill: #e0ad5a; stroke: #a8742f; stroke-width: 0.9; }
+#amBaleada .pc-tostado { fill: #92591f; }
+#amBaleada .pc-frijol { fill: #5e321a; stroke: #3d1e0e; stroke-width: 0.8; }
+#amBaleada .pc-borde-quemado { fill: none; stroke: #1c120e; stroke-width: 2.6; stroke-linecap: round; }
+#amBaleada .pc-borde-frijol { fill: none; stroke: #5e321a; stroke-width: 2.6; stroke-linecap: round; }
+#amBaleada .pc-mal { fill: none; stroke: #c62828; stroke-width: 2.8; stroke-linecap: round; }
+#amBaleada .pc-bien { fill: none; stroke: #2e7d32; stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; }
+[data-theme="dark"] #amBaleada .pc-mal { stroke: #ef5350; }
+[data-theme="dark"] #amBaleada .pc-bien { stroke: #66bb6a; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) #amBaleada .pc-mal { stroke: #ef5350; }
+  :root:not([data-theme="light"]) #amBaleada .pc-bien { stroke: #66bb6a; }
+}

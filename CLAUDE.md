@@ -10430,6 +10430,170 @@ Salió roja con cada una.
 Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
 de 83 ms, lo mismo que La Energía medida el mismo día.
 
+### La cuadragésima novena: El Pensamiento Computacional, la primera de la Ruta del Código
+
+La siguiente es la primera de la Ruta del Código: **El Pensamiento
+Computacional** (`misiones/2y3ciclo-pensamiento-computacional/`,
+`js/animacion-baleada.js`), y es la primera animación de una misión
+**bilingüe**. La historia es la de Kenia: la dejaron haciendo las baleadas
+mientras su mamá iba a la pulpería. Hizo todos los pasos, sin saltarse ni uno,
+pero untó los frijoles primero y echó la tortilla al comal después: los
+frijoles se quemaron, la masa quedó cruda y ese día en su casa no hubo
+almuerzo. No le faltó ningún paso: se le cambiaron de orden dos. La animación
+pone a la izquierda los cinco pasos en tarjetas, con el número de cada lugar,
+y a la derecha la cocina: el tazón y la mesa, el fogón con su comal y dos
+platos.
+
+- los pasos de Kenia, en su orden: son cinco y no falta ninguno. ¿Qué salió
+  mal?;
+- una flecha va bajando por la lista y la cocina hace lo que dice cada
+  tarjeta: la masa, la tortilla, los frijoles encima de la tortilla cruda, y
+  al echarla al comal cae volteada, como se echa una tortilla: los frijoles
+  quedan abajo, contra el comal, y se queman. La masa queda arriba, cruda. Al
+  plato llega doblada, con su ✗: «cruda y quemada»;
+- son los mismos cinco pasos, y solo dos cambian de lugar. Las tarjetas se
+  mueven y los números se quedan, porque el número es del lugar y no del
+  paso;
+- la lista corre otra vez: la tortilla se cuece sola en el comal, vuelve a la
+  mesa, los frijoles van encima de la cocida, y al plato llega con su ✓:
+  «¡baleada!»;
+- los dos platos, uno al lado del otro, y las dos tarjetas que cambiaron de
+  lugar marcadas con su llave. Y la pregunta es del alumno: escribir los
+  pasos de algo que hace y cambiar dos de lugar.
+
+Siete cosas que valen para las que siguen:
+
+1. ⚠️ **Una misión bilingüe lleva la animación en sus DOS idiomas, escritos
+   por una persona.** El motor de idioma (`js/metas-i18n.js`) traduce buscando
+   frases EXACTAS en un diccionario, y una frase que la escena arma no está en
+   ninguno: el alumno que estudia en inglés se habría quedado con la animación
+   en español, sin un solo error. Por eso el aparato sabe de idiomas: la escena
+   declara `bilingue: true`, `describe: { es, en }` e `idioma(lang, A)`, que
+   reescribe los rótulos del dibujo, y contesta `texto`, `boton` y `marcador`
+   en el idioma que le dicen. El aparato marca el bloque con
+   `data-i18n-omitir`, para que el motor no entre, escucha el aviso
+   `metas:idioma` del botón 🌐 y, si el alumno lo toca a media animación, se
+   queda en el MISMO paso y cambia solo las palabras: ni salta la cifra ni se
+   mueve el dibujo.
+2. ⚠️ **La tarjeta de la animación NO lleva `data-i18n`.** El motor de idioma
+   reemplaza el HTML entero de todo lo que lo lleva, y se habría llevado la
+   animación montada. Lo llevan solo su título (`an`) y la frase de reserva
+   (`anr`), con sus entradas en el `-en.js`. La sonda estática lo exige en
+   toda misión que cargue un `-en.js`, y la de navegador recorre la animación
+   entera también en inglés: que ninguna frase, botón ni palabra del marcador
+   se quede en español, que no se parta una cuenta, que nada se mueva de un
+   paso a otro y que al volver al español diga lo mismo que antes.
+3. ⚠️ **La historia en inglés decía otra cosa.** El español dice que se le
+   cambiaron de orden DOS pasos; el inglés decía «one step was in the wrong
+   place». Ahora dice «two of them had swapped places», que es lo que la
+   animación enseña. Es la trampa de siempre de las bilingües, con otra cara:
+   no una clave que falta, sino una traducción que cuenta otra historia.
+4. **Lo que pasa en la cocina sale del orden de la lista.** La misma función
+   hace las dos corridas: lee el paso que hay en cada lugar y hace ese. Y los
+   frijoles quedan abajo por algo que se ve, la tortilla volteada al caer en
+   el comal, no porque sí. La sonda no le cree nada a la escena: lee el orden
+   de las tarjetas en el dibujo, cocina ella misma con ese orden (si los
+   frijoles van antes de cocer, quedan contra el comal y se queman, y la masa
+   no se cuece) y compara con lo que tiene cada plato, con su marca y con lo
+   que dice debajo. Y comprueba que cada cosa pase en la cocina mientras la
+   flecha está en la tarjeta que la manda.
+5. ⚠️ **Una pieza tiene una sola demora, y esta escena lo pagó tres veces.**
+   Una tortilla que aparece y además viaja va en envolturas separadas (la
+   base, al comal, a la mesa, al plato). Cada capa (cruda, cocida, frijoles,
+   quemados) se enciende en una pieza y se apaga en otra. Y se apaga UNA sola
+   vez: al doblar se volvían a apagar los frijoles de Kenia, la demora nueva
+   pisaba la primera, y los frijoles reaparecían encima de la tortilla camino
+   del plato. Además, al reiniciar se apagaba la capa de los quemados mientras
+   la otra todavía se iba, y quedaba un fantasma a un cuarto de luz. Esas dos
+   se vieron en fotos a medio viaje, con la sonda en verde.
+6. **Los pasos no duran lo mismo.** Con el mismo tiempo para todos, la
+   tortilla de Kenia salía del comal apenas llegaba y el humo duraba un tercio
+   de segundo: en el comal es donde pasa lo que importa, y ese paso dura más.
+   Vista desde arriba, la tortilla doblada medía 8 px en un teléfono: ahora
+   se ve de lado, como una media luna, en platos más grandes. Y el rótulo
+   «comal», a la izquierda del comal, quedaba en el paso 4 justo debajo de
+   «cambiaron de lugar», y los dos se leían como un solo rótulo de dos
+   renglones. Ahora va a la derecha del comal, y la sonda no deja dos rótulos
+   pegados uno debajo del otro.
+7. ⚠️ **La historia y la animación contestaban siete preguntas de la
+   conceptual y cinco tareas de la operativa.** En la conceptual preguntaban
+   a quién dejaron sola, a dónde fue su mamá, qué le salió mal, qué se quemó,
+   qué no hubo, si echó la tortilla antes o después de untar los frijoles, y si
+   doblar la baleada antes de hacer la tortilla sale bien. Ahora preguntan que
+   cada paso de un plan es una instrucción, si secarse las manos antes de
+   lavarlas sale bien, qué va primero al lavarse los dientes, que una buena
+   instrucción lleva cantidades y lugares claros, qué se hace después de
+   machacar los nances, qué es una parte pequeña de un problema grande y qué
+   suena mientras se iza la bandera. Van con la misma respuesta en el mismo
+   sitio, en la misión, en su `-en.js` y en la ficha, que sigue en sus siete
+   hojas en los dos idiomas. En la operativa, la baleada salía en las cuatro
+   secciones y las tortillas de maíz en Ordena: ahora son lavar los platos,
+   envolver un regalo, sacarle punta al lápiz, lavar la ropa a mano y hacer un
+   avión de papel. La felicitación de la ficha resumía la misión: ahora solo
+   pide revisar.
+
+⚠️ **Lo que queda, y no es de la animación: la operativa se regala sola.**
+Armadas sus 30 formas con el generador de la misión, en **28** la respuesta de
+«¿Qué falta?» ya está escrita en otra sección de la misma prueba: «Colar la
+mezcla» es un paso del fresco de nance que se ordena en la sección I, y «Meterla
+en el sobre», «Amarrar la bandera a la cuerda» o «Revisar las respuestas», lo
+mismo. En **27** de las 30, una misma tarea sale en dos secciones. Los cuatro
+bancos de la operativa comparten tareas, y la sonda de pistas no los lee. El
+remedio es darle a cada banco tareas que no estén en ningún otro, en español y
+en inglés; queda para hacerlo aparte, midiéndolo con las 30 formas.
+
+La sonda de esta escena **no le cree nada a la escena**. Comprueba, en español
+y en inglés:
+
+- que los lugares vayan numerados del 1 al 5, de arriba abajo y a la misma
+  distancia, y que estén los cinco pasos, sin faltar ni repetirse ninguno;
+- que en los pasos 0 y 1 la lista esté en el orden de Kenia, y desde el 2 que
+  solo cambien de lugar dos tarjetas vecinas y que cocer quede antes de untar;
+- que cada tarjeta diga su paso en el idioma de la página y le quepa;
+- que haya un ✓ en el renglón de cada paso hecho, y que salga cuando la flecha
+  pasa por ahí;
+- que lo que tiene cada plato (la masa cruda o cocida, y lo que asoma en el
+  doblez) sea lo que da cocinar con ese orden, con su ✗ de dos rayas o su ✓ de
+  una raya quebrada y lo que dice debajo;
+- que la tortilla llegue al comal al cocerla, que empiece en la mesa y que cada
+  cosa pase en la cocina mientras la flecha está en su tarjeta;
+- que el marcador cuente lo que se ve;
+- que en el paso 4 la llave abrace justo las dos tarjetas que cambiaron;
+- que el comal lleve su nombre encima de él y que ningún rótulo se monte en
+  otro ni quede pegado debajo de otro;
+- y que no salga ninguna palabra de lo que pregunta la prueba.
+
+Se comprobó al revés con veintiuna averías, plantadas una por una:
+
+- una tarjeta que dice otro paso;
+- la segunda lista cambiando cuatro de lugar;
+- la cocina sin seguir a la lista;
+- la tortilla de Kenia saliendo cocida en el plato;
+- la ✗ encima del otro plato;
+- los ✓ de lo hecho quedándose al cambiar el orden;
+- la flecha saltando dos renglones de una vez;
+- los frijoles untándose antes de que llegue la flecha;
+- la tortilla sin llegar al comal;
+- el marcador del paso 1 diciendo 1;
+- «receta» en una frase;
+- el título en inglés quedándose en español;
+- una tarjeta en inglés quedándose en español;
+- las tarjetas más angostas, con el nombre saliéndose;
+- la llave abrazando tres tarjetas;
+- la harina sin volver para la segunda vez;
+- la animación sin pasar a inglés;
+- el ✓ de un paso saliendo antes de hacerlo;
+- los frijoles de Kenia sin quemarse en el comal;
+- el rótulo del comal fuera del dibujo;
+- el rótulo del comal otra vez debajo de «cambiaron de lugar».
+
+Salió roja con cada una. La de las tarjetas angostas salió verde la primera
+vez, y no era la sonda: con esa tarjeta el nombre más largo todavía cabía,
+medido en el navegador. Plantada con una tarjeta más angosta, sale roja.
+
+Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
+de 117 ms. Los Mayas, medida el mismo día, van a 60 y 50 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -10570,6 +10734,17 @@ pasos donde la pieza está. En una línea del tiempo cada punto es una fecha: lo
 que es de hoy (una persona) no se para sobre ella, va al lado, donde se acaba.
 Y una raya cortada son guiones cortos: la raya con que se dibuja un trazo
 (`A.trazar`) es un solo guion del largo del camino, y la sonda no las confunde.
+Dos rótulos no van uno debajo del otro a menos de un renglón: se leen como un
+solo rótulo de dos renglones.
+
+Si la misión es **bilingüe** (carga su `-en.js` y trae el botón 🌐), la escena
+lleva `bilingue: true`, `describe: { es, en }` e `idioma(lang, A)`, y sus
+frases, botones, marcadores y rótulos escritos en los dos idiomas; la llama a
+`idioma` va también al final de `construir`. La tarjeta NO lleva `data-i18n`:
+el motor de idioma le reemplazaría el HTML de dentro y se llevaría la animación
+montada. Lo llevan solo su `<h2>` y la frase de reserva, con claves nuevas en el
+`-en.js`. Y la historia se lee en los dos idiomas antes de escribir la escena:
+si el inglés cuenta otra cosa, la animación le da la razón a uno de los dos.
 
 Si el `--sec` de la misión es claro (un ámbar, un amarillo), la letra blanca
 del botón que avanza no se lee en su punta: la misión declara en su CSS

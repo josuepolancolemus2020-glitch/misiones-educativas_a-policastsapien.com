@@ -136,20 +136,20 @@
         '<h2>✍️ 5. Test Yourself! Activities</h2>' +
         '<h3>I. Fill in the blanks <span class="val">(Value: 10 points each)</span></h3>' +
         '<ol>' +
-        '<li>Kenia was left making the baleadas while her mom went to the <span class="linea-resp"></span>.</li>' +
-        '<li>That day there was no <span class="linea-resp"></span> at Kenia’s house.</li>' +
-        '<li>Kenia’s beans <span class="linea-resp"></span> on the griddle.</li>' +
+        '<li>A good instruction has clear amounts and <span class="linea-resp"></span>.</li>' +
+        '<li>After mashing the nances, you have to <span class="linea-resp"></span> the mixture.</li>' +
+        '<li>A small part is a <span class="linea-resp"></span> piece of a big problem.</li>' +
         '<li>Finding what repeats saves <span class="linea-resp"></span>.</li>' +
         '<li>Writing a plan step by step is «programming» with pencil and <span class="linea-resp"></span>.</li>' +
         '<li>The machine does not <span class="linea-resp"></span>: it obeys.</li>' +
         '<li>If you already know how to make one baleada, you know how to make <span class="linea-resp"></span>.</li>' +
         '<li>To raise the flag, first you have to <span class="linea-resp"></span> up.</li>' +
-        '<li>Kenia put the tortilla on the griddle <span class="linea-resp"></span> spreading the beans.</li>' +
+        '<li>The flag is raised slowly while the <span class="linea-resp"></span> plays.</li>' +
         '<li>To plant beans: cotton, a bean, light and <span class="linea-resp"></span> every day.</li>' +
         '</ol>' +
         '<h3>II. True or False <span class="val">(Value: 10 points each)</span></h3>' +
         '<ol>' +
-        '<li>____ Kenia was left alone making the baleadas.</li>' +
+        '<li>____ Each step of a plan is an instruction.</li>' +
         '<li>____ Putting on your shoes before your socks turns out fine.</li>' +
         '<li>____ «Add 2 spoonfuls of sugar» is an order everyone carries out the same way.</li>' +
         '<li>____ A stone from the river is a plan of steps.</li>' +
@@ -157,7 +157,7 @@
         '<li>____ A good plan writes down every detail, even the useless ones.</li>' +
         '<li>____ Planting beans can also be written as steps.</li>' +
         '<li>____ When a program fails, it is always the machine’s fault.</li>' +
-        '<li>____ Folding the baleada before making the tortilla turns out fine.</li>' +
+        '<li>____ Drying your hands before washing them turns out fine.</li>' +
         '<li>____ A huge problem is best tackled all in one go.</li>' +
         '</ol>',
 
@@ -173,12 +173,12 @@
         '<span class="op"><i>d</i> Go fast</span>' +
         '</div></div>' +
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">2</span>What went wrong for Kenia with the baleadas?</div>' +
+        '<div class="preg-q"><span class="preg-n">2</span>Which step comes first when brushing your teeth?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> She spread the beans before cooking the tortilla</span>' +
-        '<span class="op"><i>b</i> She forgot to buy flour</span>' +
-        '<span class="op"><i>c</i> She did not light the griddle</span>' +
-        '<span class="op"><i>d</i> She ate the dough</span>' +
+        '<span class="op"><i>a</i> Put toothpaste on the brush</span>' +
+        '<span class="op"><i>b</i> Rinse your mouth</span>' +
+        '<span class="op"><i>c</i> Put the brush away</span>' +
+        '<span class="op"><i>d</i> Brush up and down</span>' +
         '</div></div>' +
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">3</span>What does a machine do with instructions?</div>' +
@@ -264,9 +264,8 @@
         '<tr><td>10. ____ Backpack</td><td>J. A cooking algorithm</td></tr>' +
         '</table>' +
         '<div class="felic">' +
-        '🏅 <b>Congratulations! You have completed the Mission Computational Thinking.</b> Now you know how to write ' +
-        'algorithms with exact steps in the right order, hunt down ambiguous instructions, break big problems into small ' +
-        'parts and spot patterns like a real programmer. This is the first step of the Code Path! 🧠💻' +
+        '🏅 <b>Congratulations! You finished the test of the Mission Computational Thinking.</b> Before you hand it in, ' +
+        'check your answers one by one. This is the first step of the Code Path! 🧠💻' +
         '</div>' +
         '<h2>📏 Assessment Rubric</h2>' +
         '<table class="rubrica">' +
@@ -285,7 +284,7 @@
         '<h2>✅ Answer Key · Teacher’s Sheet</h2>' +
         '<p style="font-size:10pt;color:var(--gris);">This sheet is printed <strong>separately</strong>: it is only for the teacher or for guided self-assessment.</p>' +
         '<div class="pauta">' +
-        '<div><span class="pt">I. Fill in:</span> 1. corner store &nbsp; 2. lunch &nbsp; 3. burned &nbsp; 4. work &nbsp; 5. paper &nbsp; 6. guess &nbsp; 7. fifty &nbsp; 8. line &nbsp; 9. after &nbsp; 10. water</div>' +
+        '<div><span class="pt">I. Fill in:</span> 1. places &nbsp; 2. strain &nbsp; 3. manageable (or easy) &nbsp; 4. work &nbsp; 5. paper &nbsp; 6. guess &nbsp; 7. fifty &nbsp; 8. line &nbsp; 9. anthem &nbsp; 10. water</div>' +
         '<div><span class="pt">II. True or False:</span> 1T, 2F, 3T, 4F, 5T, 6F, 7T, 8F, 9F, 10F</div>' +
         '<div><span class="pt">III. Multiple choice:</span> 1b, 2a, 3c, 4d, 5b, 6c, 7d, 8b, 9c, 10a</div>' +
         '<div><span class="pt">IV. Matching:</span> 1C, 2H, 3E, 4I, 5A, 6G, 7J, 8B, 9F, 10D</div>' +

@@ -27,6 +27,9 @@
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
 <link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La animación que explica el tema: el aparato es compartido y va DESPUÉS
+     del CSS de la misión, que es de donde saca sus colores. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -73,6 +76,25 @@
     <div class="tip"><span class="ti">❓</span><div>No le faltó ningún paso: <strong>se le cambiaron de
     orden dos</strong>. Escribí en tu cuaderno los pasos de algo que hacés todos los días y cambiale el orden a
     dos de ellos: vas a ver salir el mismo estropicio.</div></div>
+  </div>
+  <!-- La animación va JUSTO después de la historia: los cinco pasos de Kenia
+       en una lista, y al lado la cocina, que hace lo que dice cada tarjeta.
+       Con su orden, los frijoles quedan abajo en el comal y se queman; con
+       los MISMOS cinco pasos, cambiando dos de lugar, sale la baleada. La
+       mueve el alumno, paso a paso. El aparato es compartido
+       (js/animacion-mision.js) y la escena es de esta misión
+       (js/animacion-baleada.js), con sus dos idiomas escritos: el motor de
+       idioma no la toca. Solo el título (data-i18n="an") y la frase de
+       reserva (data-i18n="anr") van por el diccionario de la misión. La
+       tarjeta entera NO lleva data-i18n: el motor le cambiaría el HTML de
+       dentro y se llevaría la animación montada. -->
+  <div class="card ac-teal" data-animacion>
+    <h2 data-i18n="an">👀 Mira los pasos de Kenia, uno por uno</h2>
+    <div id="amBaleada">
+      <p data-i18n="anr">Kenia hizo los cinco pasos de la baleada, sin saltarse ni uno, pero untó los frijoles
+      antes de cocer la tortilla: en el comal, los frijoles quedaron abajo y se quemaron, y la masa quedó
+      cruda. Con los mismos cinco pasos, cambiando dos de lugar, sale la baleada.</p>
+    </div>
   </div>
   <div class="card ac-teal" data-i18n="a1">
     <h2>🫓 ¿Qué es un algoritmo?</h2>
@@ -650,6 +672,8 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-baleada.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

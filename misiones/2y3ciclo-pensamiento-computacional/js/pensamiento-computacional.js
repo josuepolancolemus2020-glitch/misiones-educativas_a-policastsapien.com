@@ -401,21 +401,29 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 // (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
 // tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
 // Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
+// ⚠️ Siete preguntas se contestaban con la historia de Kenia o con la animación
+// que va después de ella (la lista de pasos que se hace de uno en uno): quién
+// estaba sola, a dónde fue su mamá, qué le salió mal, qué se quemó, qué no hubo,
+// si echó la tortilla antes o después, y doblar la baleada antes de hacer la
+// tortilla. El alumno las contestaba acordándose del cuento, no aplicando nada.
+// Se cambiaron el 30 de septiembre de 2026 por otras que la misión enseña, con
+// la misma respuesta en el mismo sitio (el V/F en su V o su F, la selección en
+// su letra), en esta prueba, en su -en.js y en la ficha.
 let evalTFBank=[
-  {q:'A Kenia la dejaron sola haciendo las baleadas.',a:true,k:'tf-kenia-sola'},
+  {q:'Cada paso de un plan es una instrucción.',a:true,k:'tf-instruccion'},
   {q:'«Agrega 2 cucharadas de azúcar» es una orden que todos cumplen igual.',a:true,k:'tf-cucharadas'},
   {q:'Ponerse los zapatos antes que los calcetines sale bien.',a:false,k:'tf-zapatos'},
   {q:'Izar la bandera el lunes cívico sigue pasos en orden.',a:true,k:'tf-bandera'},
   {q:'Una piedra del río es un plan de pasos.',a:false,k:'tf-piedra'},
   {q:'Un buen plan escribe cada detalle, aunque no sirva.',a:false,k:'tf-detalle'},
   {q:'Cuando un programa falla, la culpa siempre es de la máquina.',a:false,k:'tf-culpa'},
-  {q:'Doblar la baleada antes de hacer la tortilla sale bien.',a:false,k:'tf-doblar'},
+  {q:'Secarse las manos antes de lavarlas sale bien.',a:false,k:'tf-manos'},
   {q:'Un problemón se ataca mejor de un solo jalón.',a:false,k:'tf-jalon'},
   {q:'Sembrar frijoles también se puede escribir en pasos.',a:true,k:'tf-sembrar'}
 ];
 let evalMCBank=[
   {q:'¿Cuál de estas instrucciones es EXACTA?',o:['Camina por ahí','Da 3 pasos hacia adelante','Muévete un poco','Ve rápido'],a:1,k:'mc-exacta'},
-  {q:'¿Qué le salió mal a Kenia con las baleadas?',o:['Untó los frijoles antes de cocer la tortilla','Se le olvidó comprar harina','No encendió el comal','Se comió la masa'],a:0,k:'mc-kenia'},
+  {q:'¿Qué paso va primero al lavarse los dientes?',o:['Poner pasta en el cepillo','Enjuagar la boca','Guardar el cepillo','Cepillar arriba y abajo'],a:0,k:'mc-dientes'},
   {q:'¿Qué hace una máquina con las instrucciones?',o:['Elige lo que quiere','Las borra','Hace exactamente lo que dicen','Las cambia de orden'],a:2,k:'mc-maquina'},
   {q:'Para organizar la feria escolar conviene…',o:['Hacer todo a la vez sin plan','Esperar a que se organice sola','Cancelarla','Dividirla en partes: comida, juegos, invitaciones'],a:3,k:'mc-feria'},
   {q:'¿Por qué falla la orden «ponle un poco»?',o:['Porque es muy larga','Porque cada quien entiende una cantidad distinta','Porque está en español','Porque tiene números'],a:1,k:'mc-poco'},
@@ -426,15 +434,15 @@ let evalMCBank=[
   {q:'¿Qué se repite al hacer tortillas?',o:['Cada tortilla se palmea y se cuece igual','Nada, cada una es distinta','Solo la primera se cuece','Se cambia la masa cada vez'],a:0,k:'mc-tortillas'}
 ];
 let evalCPBank=[
-  {q:'A Kenia la dejaron haciendo las baleadas mientras su mamá iba a la ___.',a:'pulpería',acc:['pulpería','pulperia'],k:'cp-pulperia'},
-  {q:'Ese día en casa de Kenia no hubo ___.',a:'almuerzo',acc:['almuerzo'],k:'cp-almuerzo'},
-  {q:'A Kenia los frijoles se le ___ en el comal.',a:'quemaron',acc:['quemaron'],k:'cp-quemaron'},
+  {q:'Una buena instrucción lleva cantidades y ___ claros.',a:'lugares',acc:['lugares','lugar'],k:'cp-lugares'},
+  {q:'Después de machacar los nances, hay que ___ la mezcla.',a:'colar',acc:['colar','colarla'],k:'cp-colar'},
+  {q:'Una parte pequeña es un pedacito ___ de un problema grande.',a:'manejable',acc:['manejable','fácil','facil','sencillo'],k:'cp-manejable'},
   {q:'Descubrir lo que se repite ahorra ___.',a:'trabajo',acc:['trabajo','tiempo'],k:'cp-trabajo'},
   {q:'Escribir un plan paso a paso es «programar» con lápiz y ___.',a:'papel',acc:['papel'],k:'cp-papel'},
   {q:'La máquina no ___: obedece.',a:'adivina',acc:['adivina'],k:'cp-adivina'},
   {q:'Si ya sabes hacer una baleada, sabes hacer ___.',a:'cincuenta',acc:['cincuenta','50','muchas'],k:'cp-cincuenta'},
   {q:'Para izar la bandera, primero hay que ___.',a:'formarse',acc:['formarse','formarnos'],k:'cp-formarse'},
-  {q:'Kenia echó la tortilla al comal ___ de untar los frijoles.',a:'después',acc:['después','despues'],k:'cp-despues'},
+  {q:'La bandera se iza despacio mientras suena el ___.',a:'himno',acc:['himno','himno nacional'],k:'cp-himno'},
   {q:'Para sembrar frijoles: algodón, frijol, luz y ___ cada día.',a:'regar',acc:['regar','agua'],k:'cp-regar'}
 ];
 let evalPRBank=[
@@ -542,7 +550,7 @@ function _ordShuffleIdx(n, rng) { const idx = Array.from({ length: n }, (_, i) =
 
 // I. Ordena el algoritmo (5 × 4 = 20 pts)
 let opOrdenBank=[
-  {tarea:'Hacer una baleada',pasos:['Amasar la harina','Cocer la tortilla en el comal','Untar los frijoles','Doblarla y servirla']},
+  {tarea:'Lavar los platos',pasos:['Raspar la comida que sobró','Lavarlos con jabón','Enjuagarlos con agua limpia','Ponerlos a secar']},
   {tarea:'Lavarse los dientes',pasos:['Poner pasta en el cepillo','Cepillar arriba y abajo','Enjuagar la boca','Guardar el cepillo']},
   {tarea:'Izar la bandera el lunes cívico',pasos:['Formar filas en el patio','Amarrar la bandera a la cuerda','Izarla con el himno','Hacer el saludo']},
   {tarea:'Sembrar un frijol en un vaso',pasos:['Poner algodón húmedo en el vaso','Colocar el frijol','Ponerlo cerca de la luz','Regarlo cada día']},
@@ -551,7 +559,7 @@ let opOrdenBank=[
   {tarea:'Hacer la tarea',pasos:['Sacar el cuaderno','Leer la instrucción','Resolver los ejercicios','Revisar las respuestas']},
   {tarea:'Alimentar a las gallinas',pasos:['Llenar el guacal con maíz','Abrir el gallinero','Regar el maíz en el suelo','Cambiar el agua del bebedero']},
   {tarea:'Enviar una carta',pasos:['Escribir la carta','Meterla en el sobre','Escribir el nombre del destinatario','Entregarla al correo']},
-  {tarea:'Hacer tortillas de maíz',pasos:['Mezclar la masa','Hacer las bolitas','Palmear la tortilla','Cocerla en el comal','Guardarlas en la servilleta']},
+  {tarea:'Envolver un regalo',pasos:['Medir el papel','Cortar el papel','Envolver la caja','Pegarlo con cinta','Ponerle la tarjeta']},
 ];
 function genOrdenaItems(){
   return _pickF(opOrdenBank,5,_opRnd).map(t=>{
@@ -588,7 +596,7 @@ function genEAItems(){return _pickF(opEABank,5,_opRnd);}
 
 // III. Completa el paso que falta (5 × 4 = 20 pts, razonamiento inverso con opciones)
 let opFaltaBank=[
-  {tarea:'Hacer una baleada',pasos:['Amasar la harina','Cocer la tortilla','___','Doblar la baleada y servirla'],correcta:'Untar los frijoles y el queso',distractores:['Lavar el comal','Guardar la harina','Comerse la baleada']},
+  {tarea:'Sacarle punta al lápiz',pasos:['Tomar el sacapuntas','Meter el lápiz','___','Botar la basurita'],correcta:'Girar el lápiz',distractores:['Mojar el lápiz','Pintar el sacapuntas','Guardar el cuaderno']},
   {tarea:'Lavarse las manos',pasos:['Abrir el chorro','Mojarse las manos','___','Enjuagar y secarse'],correcta:'Frotar con jabón',distractores:['Cerrar los ojos','Peinarse','Secar el piso']},
   {tarea:'Sembrar un frijol',pasos:['Poner algodón húmedo en el vaso','___','Dejar el vaso con luz','Regar cada día'],correcta:'Colocar el frijol sobre el algodón',distractores:['Comerse el frijol','Tapar el vaso con piedras','Esconder el vaso']},
   {tarea:'Hacer un fresco de nance',pasos:['Lavar los nances','Machacarlos con agua','___','Agregar azúcar y hielo'],correcta:'Colar la mezcla',distractores:['Congelar los nances enteros','Botar el agua','Pintar el vaso']},
@@ -606,7 +614,7 @@ function genFaltaItems(){
 
 // IV. Problemas de la vida real (3 × 10 = 30 pts): algoritmos de tareas hondureñas.
 let opVidaBank=[
-  {tema:'Preparar una baleada para la merienda',pasos:['Amasar la harina con agua','Hacer la tortilla y cocerla en el comal','Untar frijoles y queso','Doblarla y servirla']},
+  {tema:'Lavar la ropa a mano',pasos:['Remojar la ropa en agua','Restregarla con jabón','Enjuagarla con agua limpia','Exprimirla y tenderla al sol']},
   {tema:'Lavarse las manos antes de la merienda',pasos:['Abrir el chorro','Mojarse las manos','Frotar con jabón por 20 segundos','Enjuagar bien','Cerrar el chorro y secarse']},
   {tema:'Izar la bandera el lunes cívico',pasos:['Formar filas en el patio','Amarrar la bandera a la cuerda','Izarla despacio mientras suena el himno','Hacer el saludo en silencio','Volver al aula en orden']},
   {tema:'Hacer un fresco de nance',pasos:['Lavar los nances','Machacarlos con un poco de agua','Colar la mezcla','Agregar agua, azúcar y hielo','Servir el fresco']},
@@ -638,7 +646,7 @@ function genRetoDescomp(){
 // (b) Detective del paso inútil o ambiguo
 let opDetectiveBank=[
   {tarea:'Lavarse los dientes',pasos:['Poner pasta en el cepillo','Cepillar arriba y abajo','Enjuagar la boca','Guardar el cepillo'],malo:'Hacer algo con el agua',tipo:'A'},
-  {tarea:'Hacer una baleada',pasos:['Amasar la harina','Cocer la tortilla','Untar los frijoles','Doblarla y servirla'],malo:'Patear una pelota',tipo:'I'},
+  {tarea:'Hacer un avión de papel',pasos:['Doblar la hoja a la mitad','Doblar las puntas hacia el centro','Doblar las alas','Lanzarlo'],malo:'Patear una pelota',tipo:'I'},
   {tarea:'Izar la bandera',pasos:['Formar filas','Amarrar la bandera','Izarla con el himno','Hacer el saludo'],malo:'Súbela como sea',tipo:'A'},
   {tarea:'Sembrar un frijol',pasos:['Poner algodón húmedo','Colocar el frijol','Dejarlo con luz','Regarlo cada día'],malo:'Ver televisión un rato',tipo:'I'},
   {tarea:'Hacer un fresco de nance',pasos:['Lavar los nances','Machacarlos con agua','Colar la mezcla','Servir con hielo'],malo:'Ponle azúcar al gusto de quien pase',tipo:'A'},
