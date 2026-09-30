@@ -352,13 +352,23 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 // (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
 // tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
 // Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
+//
+// ⚠️ Y ninguna repite lo que enseña la animación de la historia
+// (js/animacion-corte.js): Honduras cortada de norte a sur, con el mar Caribe
+// a un lado, el océano Pacífico al otro y lo más alto más cerca del Pacífico.
+// «Honduras tiene costas en dos mares» y «por el norte limita con el mar ___»
+// se ven dibujados, y «la costa del sur es más larga que la del norte» se
+// contestaba con el «lado norte largo, lado sur corto» de la animación. Ahora
+// preguntan por la cabecera departamental, si Honduras limita por tierra con
+// Belice y cómo se llaman las tierras bajas de las costas, con la misma
+// respuesta (verdadero, falso, una palabra) en el mismo sitio.
 const evalTFBank=[
-  {q:'Honduras tiene costas en dos mares.',a:true,k:'tf-dos-mares'},
+  {q:'Cada departamento tiene su cabecera departamental.',a:true,k:'tf-cabecera'},
   {q:'Cerca de las tres cuartas partes de Honduras son montañas.',a:true,k:'tf-montanas'},
   {q:'Chamelecón, Aguán y Patuca son ríos que corren hacia el norte.',a:true,k:'tf-rios-norte'},
   {q:'La estación lluviosa va de mayo a octubre.',a:true,k:'tf-lluviosa'},
   {q:'Honduras se divide en 18 departamentos.',a:true,k:'tf-18'},
-  {q:'La costa del sur es más larga que la del norte.',a:false,k:'tf-costa-sur'},
+  {q:'Honduras limita por tierra con Belice.',a:false,k:'tf-belice'},
   {q:'El valle de Sula es muy fértil.',a:true,k:'tf-sula'},
   {q:'Guatemala limita con Honduras por el este.',a:false,k:'tf-guatemala'},
   {q:'Santa Rosa de Copán está en la región occidental.',a:true,k:'tf-santa-rosa'},
@@ -378,7 +388,7 @@ const evalMCBank=[
 ];
 const evalCPBank=[
   {q:'Honduras mide unos ___ km².',a:'112,492',acc:['112,492','112492','112.492'],k:'cp-extension'},
-  {q:'Por el norte, Honduras limita con el mar ___.',a:'Caribe',acc:['Caribe'],k:'cp-caribe'},
+  {q:'Las tierras bajas y planas de las costas se llaman ___.',a:'llanuras',acc:['llanuras','llanura'],k:'cp-llanuras'},
   {q:'En la costa sur está la ciudad de San ___, con su muelle.',a:'Lorenzo',acc:['Lorenzo'],k:'cp-san-lorenzo'},
   {q:'Roatán, Utila y ___ están frente a la costa norte.',a:'Guanaja',acc:['Guanaja'],k:'cp-guanaja'},
   {q:'El punto más alto del país está en la Montaña de ___.',a:'Celaque',acc:['Celaque'],k:'cp-celaque'},
@@ -486,7 +496,11 @@ function evalSwitchMode(mode){
 }
 const critCaseBank=[
   {k:'ca-roatan',txt:'Una familia de Choluteca viaja de vacaciones a Roatán: sale del calor seco del sur y llega a una isla del norte.'},
-  {k:'ca-olancho',txt:'Una escuela de Olancho busca en el mapa hacia qué mar corren los ríos de su departamento.'},
+  // Aquí iba la escuela de Olancho que busca hacia qué mar corren sus ríos, y
+  // esa es la historia de esta misión, y lo que enseña su animación
+  // (js/animacion-corte.js). Ahora es la represa El Cajón, que la misión
+  // enseña en «Lagos y lagunas».
+  {k:'ca-cajon',txt:'Una escuela visita la represa El Cajón y ve cómo el agua guardada da electricidad a muchas casas.'},
   {k:'ca-ocotepeque',txt:'Un grupo de Ocotepeque sube a la montaña con suéter, aunque abajo, en el pueblo, hace calor.'},
   {k:'ca-cruceros',txt:'Una comunidad de la costa norte recibe cada año a turistas que llegan en crucero.'},
   {k:'ca-comayagua',txt:'Un agricultor de Comayagua riega su siembra con agua del río en la época seca.'},
@@ -508,15 +522,20 @@ const critErrorBank=[
   {k:'er-capital',txt:'"La capital de Honduras es San Pedro Sula y el país tiene 15 departamentos".',
    g1:'La capital es TEGUCIGALPA (Distrito Central).',
    g2:'Honduras tiene 18 departamentos.'},
-  {k:'er-rio-largo',txt:'"El río más largo de Honduras es el Ulúa y desemboca en el océano Pacífico".',
+  // Decía además que el Ulúa desemboca en el Pacífico, y lo que lo corrige
+  // (los ríos del lado norte bajan al Caribe) es lo que enseña la animación
+  // de la historia. Ahora la segunda parte es la frontera que hace el Coco.
+  {k:'er-rio-largo',txt:'"El río más largo de Honduras es el Ulúa".',
    g1:'El río más largo es el COCO O SEGOVIA.',
-   g2:'El Ulúa desemboca en el MAR CARIBE.'},
+   g2:'Y hace FRONTERA con Nicaragua.'},
   {k:'er-yojoa',txt:'"El lago de Yojoa es una laguna que está en La Mosquitia".',
    g1:'El lago de Yojoa es el ÚNICO LAGO NATURAL del país.',
    g2:'La laguna de La Mosquitia es la de CARATASCA.'},
-  {k:'er-norte-sur',txt:'"Honduras limita al norte con el océano Pacífico y al sur con el mar Caribe".',
-   g1:'Al NORTE está el mar Caribe.',
-   g2:'Al SUR está el golfo de Fonseca (Océano Pacífico).'},
+  // Aquí iba el norte y el sur cambiados, y la animación de la historia pone
+  // el mar Caribe al norte y el Pacífico al sur. Ahora es el de las regiones.
+  {k:'er-santa-rosa',txt:'"Santa Rosa de Copán queda en La Mosquitia".',
+   g1:'Santa Rosa de Copán está en la región OCCIDENTAL.',
+   g2:'La Mosquitia está al ORIENTE del país.'},
   {k:'er-plano',txt:'"Honduras es un país plano y su punto más alto es el Pico Bonito".',
    g1:'Honduras es MONTAÑOSO: unas tres cuartas partes son montañas.',
    g2:'El punto más alto es el CERRO LAS MINAS, en Celaque.'},
@@ -530,10 +549,13 @@ const critDecisionBank=[
 ];
 const critDecisionGuide='La mejor decisión aprovecha la geografía: el café se da en montañas frescas; los bananos del valle de Sula salen por Puerto Cortés porque está cerca y en el Caribe; los arrecifes están en las Islas de la Bahía; junto a un río que se desborda se construye en zonas altas; y el lago de Yojoa es agua dulce, ideal para aves y pesca.';
 const critCompareBank=[
-  {k:'co-costas',a:'Costa larga del norte, con puertos y bananeras.',b:'Costa corta del sur, dentro de un golfo.',
-   ga:'La costa del Caribe.',
-   gb:'La costa del Pacífico, en el golfo de Fonseca.',
-   gr:'Las dos son costas de Honduras, pero dan a mares distintos y la del norte es mucho más larga.'},
+  // Aquí iban la costa larga del norte y la corta del sur, y a qué mar da
+  // cada una: la animación de la historia pone el Caribe al norte y el
+  // Pacífico al sur. Ahora compara dos regiones.
+  {k:'co-norte-oriente',a:'Llanuras cálidas de la costa, con bananeras y puertos.',b:'Grandes bosques y ríos: la zona con menos gente del país.',
+   ga:'La región norte.',
+   gb:'La región oriental.',
+   gr:'Las dos son regiones de Honduras, pero el norte tiene llanuras con bananeras y puertos, y el oriente es de bosques y ríos, con muy poca gente.'},
   {k:'co-valle-montana',a:'Tierra plana entre montañas, como Sula o Comayagua.',b:'Tierra alta con cordilleras, como el Merendón.',
    ga:'Un valle.',
    gb:'Una montaña (cordillera).',
@@ -552,7 +574,9 @@ const critCauseBank=[
 const critEffectBank=[
   {k:'ef-turistas-islas',effect:'A Roatán, Utila y Guanaja llegan muchos turistas.',guide:'Tienen playas y arrecifes de coral.'},
   {k:'ef-sueter',effect:'En La Esperanza la gente usa suéter en diciembre.',guide:'Está en lo alto de la montaña: a más altura, más fresco.'},
-  {k:'ef-puentes',effect:'En la costa norte hay que cruzar muchos puentes grandes.',guide:'Allí bajan ríos largos y caudalosos.'},
+  // Aquí iban los puentes grandes de la costa norte, porque allí bajan ríos
+  // largos: es el paso 4 de la animación de la historia.
+  {k:'ef-camarones',effect:'En la costa del sur se crían camarones.',guide:'Allí está el golfo de Fonseca, en el Pacífico.'},
   {k:'ef-ventanas',effect:'Las casas de la costa tienen ventanas grandes y techos altos.',guide:'Hace calor todo el año.'},
 ];
 

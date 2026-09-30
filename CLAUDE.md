@@ -8897,6 +8897,124 @@ que llegue.
 Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
 de 83 ms.
 
+### La trigésima séptima: Geografía de Honduras, y lo que enseñó
+
+La octava y última de la Ruta del Planeta es **Geografía de Honduras**
+(`misiones/2y3ciclo-geografia-de-honduras/`, `js/animacion-corte.js`). La
+historia es la de la escuela de una aldea: con el temporal encima, la radio fue
+nombrando los departamentos en alerta y pidió que la gente de las riberas se
+moviera, y en la escuela nadie supo contestar en qué departamento quedaban ni si
+el río que tenían al lado bajaba al Caribe o al Pacífico. Esperaron a ver qué
+pasaba. La animación es Honduras cortada de norte a sur y vista de lado, con la
+escuela en la ladera del norte, junto a su río:
+
+- la escuela y el pedazo de río que tiene al lado: ¿baja al Caribe o al
+  Pacífico?;
+- llueve en lo más alto: dos gotas caen juntas, una a cada lado, se vuelven agua
+  que corre y terminan en mares distintos;
+- lo más alto parte el país en dos lados, cada uno con su nombre adentro: la
+  vertiente del Caribe y la del Pacífico;
+- la escuela está del lado norte: su río baja hasta el Caribe;
+- lo más alto queda cerca del Pacífico: los ríos del Caribe son largos y los del
+  Pacífico, cortos;
+- con el temporal llueve río arriba, y esa agua baja por el río y pasa por la
+  escuela: por eso la radio pide que se mueva la gente de las riberas;
+- saber de qué lado estás te dice adónde baja tu río. Y la radio nombra
+  departamentos: ¿en cuál está tu escuela? Búscalo en el mapa.
+
+Seis cosas que valen para las que siguen:
+
+1. ⚠️ **El agua siempre baja, y el dibujo no la deja atrapada.** La tierra sube
+   sin parar desde cada mar hasta lo más alto y baja sin parar hasta el otro. Un
+   hoyo en el perfil guardaría agua que en un corte no tiene por dónde salir, y
+   la frase «el agua siempre baja» quedaría mintiendo. La sonda lo mide punto por
+   punto.
+2. ⚠️ **Las gotas se vuelven el agua que corre.** En la primera versión se
+   quedaban arriba, en lo más alto, mientras el agua bajaba sin ellas: parecía
+   que las gotas se quedaban y el agua salía de otro lado. Se vio en las fotos a
+   medio viaje. Ahora cada gota va en tres piezas: la que cae, la que se apaga
+   al llegar al suelo y la gota misma, que se enciende al salir de la nube. Una
+   sola pieza no puede encenderse y apagarse en el mismo paso, porque tiene una
+   sola demora.
+3. ⚠️ **El departamento no se dibuja.** El repositorio no tiene con qué trazar
+   los dieciocho, y un mapa inventado enseñaría fronteras que no existen. Por eso
+   la primera pregunta de la historia termina siendo la actividad: buscar su
+   escuela en el mapa. Lo que la animación sí enseña es la segunda, de dónde a
+   dónde corre el agua.
+4. ⚠️ **Lo más alto queda cerca del Pacífico, y es de verdad.** La vertiente del
+   Pacífico es la franja angosta del sur, y la del Caribe, casi todo el resto:
+   por eso los ríos del Caribe son largos y los del Pacífico, cortos, como enseña
+   la misión. El corte es un esquema y lo dice: «Las montañas no van a su
+   tamaño».
+5. ⚠️ **La historia y la animación contestaban siete preguntas.** En la
+   conceptual, «Honduras tiene costas en dos mares» y «por el norte limita con el
+   mar ___» se ven dibujados, y «la costa del sur es más larga que la del norte»
+   se contestaba con el lado norte largo y el sur corto. Ahora preguntan por la
+   cabecera departamental, si Honduras limita por tierra con Belice y cómo se
+   llaman las tierras bajas de las costas, con la misma respuesta en el mismo
+   sitio, en la misión y en la ficha. En pensamiento crítico, el caso de la
+   escuela de Olancho que busca hacia qué mar corren sus ríos era la historia
+   misma, y el error del norte y el sur cambiados, la comparación de las dos
+   costas y el efecto de los puentes (porque allí bajan ríos largos) los contesta
+   la animación. Ahora son la represa El Cajón, el error de Santa Rosa de Copán en
+   La Mosquitia, la comparación de la región norte con la oriental y los
+   camarones del sur.
+6. ⚠️ **Al quitar preguntas, la sonda de pistas vio lo que eso tapaba.** El error
+   del río más largo decía además que el Ulúa desemboca en el Pacífico, y su
+   corrección, «MAR CARIBE», estaba escrita en dos decisiones («Puerto Cortés en
+   el Caribe», «el mar abierto»). Mientras cuatro preguntas nombraban el Caribe,
+   la palabra era el tema de la prueba; con tres menos, la sonda la vio. Y esa
+   segunda parte es también lo que enseña la animación. Ahora la segunda parte es
+   la frontera que hace el Coco. De paso, la felicitación de la ficha, que va en
+   la hoja del examen, decía «sus montañas y valles» con la pregunta de los
+   valles en la hoja de al lado: dice «sus montañas».
+
+La sonda de esta escena **no le cree nada a la escena**:
+
+- lee el perfil del dibujo: tiene que subir sin parar desde cada mar hasta lo
+  más alto y bajar sin parar hasta el otro, con lo más alto más cerca del
+  Pacífico y su raya justo encima de la cumbre;
+- sigue cada camino de agua punto por punto: pegado al suelo, siempre hacia
+  abajo y alejándose de lo más alto, hasta terminar adentro de su mar; y el mar
+  lo dice su nombre, no el de la escena;
+- las dos gotas: caen juntas, una a cada lado, llegan al suelo, se vuelven el
+  agua que baja y terminan en mares distintos;
+- cada lado va de su costa a lo más alto, con su nombre adentro;
+- el río de la escuela nace cerca de lo más alto, pasa por la escuela y llega al
+  Caribe, y es más largo que el del sur;
+- la tormenta cae río arriba de la escuela, y el río crecido empieza donde
+  llueve, pasa por la escuela y llega al mar, más ancho que el de siempre;
+- el marcador cuenta en el dibujo: los mares adonde llegaron las gotas, los
+  lados pintados y el mar donde termina el río de la escuela;
+- y no sale el nombre de un río, ni del golfo, ni de un país vecino, ni llanuras
+  ni valles, ni el clima, ni un mes, ni un número de más.
+
+Se comprobó al revés con dieciocho averías, plantadas una por una:
+
+- un hoyo en la ladera;
+- la raya de lo más alto corrida;
+- la gota del Caribe yéndose al Pacífico;
+- el río de la escuela sin llegar al mar;
+- la tormenta río abajo de la escuela;
+- el río crecido sin crecer;
+- los nombres de las vertientes cambiados de lado;
+- el marcador del paso 3 diciendo Pacífico;
+- «golfo» en una frase;
+- la escuela del lado sur;
+- el aviso de las montañas cambiado;
+- «su río» todavía escrito en el paso 1;
+- un 18 en el marcador;
+- la raya de lo más alto desde el paso 1;
+- la radio callada en el temporal;
+- las gotas sin volverse agua;
+- el pedazo de río llegando al mar;
+- los lados todavía pintados en el paso 3.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 60 cuadros por segundo, y el peor cuadro es
+de 67 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -8988,7 +9106,11 @@ demora, con el `transformOrigin` puesto a mano en el centro. Los nombres
 alrededor de un círculo no van a la misma distancia: cada uno a la más corta
 con la que su caja, medida en el navegador, queda libre de lo que se para ahí.
 Un dibujo que no va a su tamaño lo dice si la prueba pregunta tamaños, sin dar
-la cuenta. Y nada se va del dibujo sin que la frase diga por qué.
+la cuenta. Y nada se va del dibujo sin que la frase diga por qué. Lo que se
+enciende y se apaga en el mismo paso (una gota que cae y se vuelve agua) va en
+dos piezas, una para cada cosa: cada pieza tiene una sola demora. Y un camino
+de agua se parte en tramos del mismo largo que se dibujan uno detrás de otro:
+así corre a paso parejo, y el más largo tarda más.
 
 Si el `--sec` de la misión es claro (un ámbar, un amarillo), la letra blanca
 del botón que avanza no se lee en su punta: la misión declara en su CSS

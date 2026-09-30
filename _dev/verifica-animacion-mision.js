@@ -1712,6 +1712,62 @@ const LEER = `
       textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
     };
   };
+  window.__amExtra.amCorte = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(m(el)); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function uno(sel) { return raiz.querySelector(sel); }
+    function todos(sel) { return [].slice.call(raiz.querySelectorAll(sel)); }
+    function recorrido(path, n) {
+      var L = path.getTotalLength(), out = [];
+      for (var i = 0; i <= n; i++) { var q = path.getPointAtLength(L * i / n); out.push(aVista(path, q.x, q.y)); }
+      return out;
+    }
+    /* Un camino de agua: sus tramos, si cada uno está dibujado (la raya
+       corrida a cero), su ancho, y la punta de la flecha. */
+    function agua(g) {
+      var punta = g.querySelector('[data-punta]');
+      var pd = (punta.getAttribute('d').match(/[0-9.]+/g) || []).map(Number);
+      return {
+        tramos: [].slice.call(g.querySelectorAll('[data-tramo]')).map(function (t) {
+          var cs = getComputedStyle(t);
+          return { pts: recorrido(t, 12), largo: t.getTotalLength(), dibujado: vis(t) && Math.abs(parseFloat(cs.strokeDashoffset) || 0) < 1,
+                   ancho: parseFloat(cs.strokeWidth) || 0 };
+        }),
+        punta: { ve: vis(punta), p: aVista(punta, pd[2], pd[3]) }
+      };
+    }
+    var sup = uno('[data-superficie]');
+    return {
+      superficie: recorrido(sup, 400),
+      mares: todos('[data-mar]').map(function (r) { return { k: r.getAttribute('data-mar'), caja: caja(r) }; }),
+      lados: todos('[data-lado]').map(function (l) { return { k: l.getAttribute('data-lado'), ve: vis(l), pts: recorrido(l, 300) }; }),
+      cumbre: { ve: vis(uno('[data-cumbre]')), raya: (function () { var l = uno('[data-raya-cumbre]');
+        return [aVista(l, +l.getAttribute('x1'), +l.getAttribute('y1')), aVista(l, +l.getAttribute('x2'), +l.getAttribute('y2'))]; })() },
+      nombres: vis(uno('[data-nombres]')),
+      rios: todos('[data-rio]').map(function (g) { var a = agua(g); a.k = g.getAttribute('data-rio'); return a; }),
+      bajan: todos('[data-baja]').map(function (g) { var a = agua(g); a.k = g.getAttribute('data-baja'); return a; }),
+      crecido: agua(uno('[data-crecido]')),
+      trozo: { ve: vis(uno('[data-trozo]')), pts: recorrido(uno('[data-trozo]'), 20) },
+      escuela: caja(uno('[data-escuela]')),
+      radio: { ve: vis(uno('[data-radio]')), caja: caja(uno('[data-radio]')) },
+      nubeArriba: { ve: vis(uno('[data-nube="arriba"]')), caja: caja(uno('[data-nube="arriba"]')) },
+      gotas: todos('[data-gota-cae]').map(function (g) { return { k: g.getAttribute('data-gota-cae'), ve: vis(g), caja: caja(g) }; }),
+      tormenta: { ve: vis(uno('[data-tormenta]')), caja: caja(uno('[data-tormenta] .gh-nube')),
+        lluvia: todos('[data-lluvia]').map(function (l) { return [aVista(l, +l.getAttribute('x1'), +l.getAttribute('y1')), aVista(l, +l.getAttribute('x2'), +l.getAttribute('y2'))]; }) },
+      largos: vis(uno('[data-largos]')),
+      dudas: todos('[data-duda]').map(function (t) { return { k: t.getAttribute('data-duda'), ve: vis(t), dice: t.textContent, caja: caja(t) }; }),
+      rotulos: todos('[data-rotulo]').map(function (t) { return { k: t.getAttribute('data-rotulo'), ve: vis(t), dice: t.textContent, caja: caja(t) }; }),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   window.__amExtra.amVuelta = function (raiz) {
     var vis = window.__amVisible;
     var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
@@ -1957,6 +2013,197 @@ function superficieEn(poly, x) {
 }
 
 const ESCENAS = {
+  /* Geografía de Honduras. «¿A qué mar baja el río?».
+     ⚠️ Nada se le cree a la escena. El perfil se lee del dibujo: tiene que
+     subir sin parar desde cada mar hasta lo más alto y bajar sin parar
+     hasta el otro (si no, el agua se quedaría atrapada y «el agua siempre
+     baja» mentiría), con lo más alto más cerca del Pacífico. La raya de lo
+     más alto va donde el perfil llega arriba. Cada camino de agua se sigue
+     punto por punto: pegado al suelo, siempre hacia abajo y alejándose de
+     lo más alto, hasta terminar adentro de su mar; y el mar lo dice su
+     nombre, no el de la escena. De ahí sale lo demás: que las dos gotas
+     caigan juntas y terminen en mares distintos, que cada lado tenga su
+     nombre adentro, que el río de la escuela sea largo y el del sur corto,
+     que la tormenta caiga río arriba de la escuela y el río crecido pase
+     por ella, y lo que cuenta el marcador. ⚠️ Y la prueba no se regala: ni
+     el nombre de un río, ni del golfo, ni de un país vecino, ni llanuras ni
+     valles, ni el clima, ni un mes, ni un número de más. */
+  amCorte(e, n) {
+    const x = e.extra, r = [];
+    const nb = t => String(t == null ? '' : t).replace(/ /g, ' ').trim();
+    const cerca = (a, b, t) => Math.abs(a - b) <= t;
+    const cen = c => [(c.x0 + c.x1) / 2, (c.y0 + c.y1) / 2];
+    /* Lo que no depende del dibujo, primero. */
+    const dicho = [e.texto, e.cifra, e.palabras].concat(x.textos).map(nb).join(' | ').toLowerCase();
+    const EXACTAS = ['ulúa', 'ulua', 'chamelecón', 'chamelecon', 'aguán', 'aguan', 'patuca', 'coco', 'segovia', 'choluteca', 'goascorán', 'goascoran',
+      'nacaome', 'sula', 'fonseca', 'golfo', 'llanura', 'llanuras', 'valle', 'valles', 'cordillera', 'cordilleras', 'merendón', 'merendon', 'celaque',
+      'minas', 'nicaragua', 'guatemala', 'salvador', 'belice', 'méxico', 'mexico', 'tegucigalpa', 'comayagüela', 'comayaguela', 'lorenzo', 'cortés',
+      'roatán', 'roatan', 'utila', 'guanaja', 'isla', 'islas', 'yojoa', 'caratasca', 'mosquitia', 'cajón', 'cajon', 'clima', 'cálido', 'calido',
+      'fresco', 'seca', 'lluviosa', 'estación', 'mayo', 'octubre', 'noviembre', 'abril', 'municipio', 'municipios', 'región', 'regiones', 'corazón',
+      'centroamérica', 'café', 'banano', 'bananos', 'camarones', 'melones', 'capital', 'occidental', 'oriental', 'cabecera', 'puerto', 'puertos',
+      'caudaloso', 'caudalosos', 'kilómetros', 'km', 'lago', 'laguna', 'represa'];
+    const FRASES = ['tres cuartas', 'nombre de dios', 'el salvador', 'distrito central', 'la esperanza', 'santa rosa'];
+    const suelto = ' ' + dicho.split(/[^a-záéíóúñü]+/).filter(Boolean).join(' ') + ' ';
+    const malas = suelto.trim().split(' ').filter(w => EXACTAS.includes(w)).concat(FRASES.filter(f => suelto.includes(' ' + f + ' ')));
+    r.push([malas.length === 0, `paso ${n}: no sale ninguna palabra de la prueba (ni un río, ni el golfo, ni un país vecino, ni llanuras, ni valles)`, malas]);
+    const nums = (dicho.match(/\d+/g) || []).map(Number);
+    r.push([nums.every(k => k === 2), `paso ${n}: ningún número de la prueba`, nums.filter(k => k !== 2)]);
+    const frase = nb(e.texto);
+    const F = [['cortada de norte a sur', 'La escuela está junto a un río', '¿Ese río baja al Caribe o al Pacífico?'],
+      ['El agua siempre baja', 'Dos gotas caen juntas en lo más alto', 'una baja al Caribe', 'al Pacífico'],
+      ['Lo más alto parte el país en dos lados', 'del lado norte baja al Caribe', 'del sur, al Pacífico', 'Cada lado es una vertiente'],
+      ['La escuela está del lado norte de lo más alto', 'Su río baja cuesta abajo hasta el Caribe'],
+      ['Lo más alto queda cerca del Pacífico', 'los ríos que bajan al Caribe son largos', 'al Pacífico, cortos'],
+      ['llueve río arriba', 'pasa por la escuela', 'la radio pide que se mueva la gente de las riberas'],
+      ['Saber de qué lado estás', 'adónde baja tu río', 'la radio nombra departamentos', '¿en cuál está tu escuela?', 'Búscalo en el mapa']];
+    r.push([F[n].every(w => frase.includes(w)), `paso ${n}: la frase dice lo que se ve (${F[n].join(', ')})`, frase]);
+
+    /* ── El perfil, los mares y lo más alto ── */
+    const S = x.superficie.slice().sort((a, b) => a[0] - b[0]);
+    const iTop = S.reduce((m, p, i) => p[1] < S[m][1] ? i : m, 0), top = S[iTop];
+    const suelo = xx => { for (let i = 1; i < S.length; i++) if (xx >= S[i - 1][0] && xx <= S[i][0]) { const a = S[i - 1], b = S[i]; return b[0] === a[0] ? a[1] : a[1] + (b[1] - a[1]) * (xx - a[0]) / (b[0] - a[0]); } return null; };
+    const mar = k => x.mares.find(q => q.k === k);
+    const MC = mar('caribe'), MP = mar('pacifico');
+    const nivel = MC.caja.y0;
+    r.push([cerca(MP.caja.y0, nivel, 0.3) && MC.caja.x1 < top[0] && MP.caja.x0 > top[0], `paso ${n}: un mar a cada lado, al mismo nivel`]);
+    r.push([cerca(S[0][1], nivel, 0.6) && S[0][0] <= MC.caja.x1 + 0.5 && cerca(S[S.length - 1][1], nivel, 0.6) && S[S.length - 1][0] >= MP.caja.x0 - 0.5,
+      `paso ${n}: la tierra empieza y termina en el mar`, [S[0], S[S.length - 1]].map(p => p.map(Math.round))]);
+    const sube = S.slice(1, iTop + 1).every((p, i) => p[1] <= S[i][1] + 0.05), baja = S.slice(iTop + 1).every((p, i) => p[1] >= S[iTop + i][1] - 0.05);
+    r.push([sube && baja, `paso ${n}: la tierra sube sin parar hasta lo más alto y baja sin parar hasta el otro mar: el agua no se queda atrapada`]);
+    const aCar = top[0] - S[0][0], aPac = S[S.length - 1][0] - top[0];
+    r.push([aPac < 0.6 * aCar, `paso ${n}: lo más alto queda más cerca del Pacífico`, [aCar, aPac].map(Math.round)]);
+    const rot = k => x.rotulos.filter(q => q.k === k);
+    const r1 = k => rot(k)[0];
+    const rc = r1('caribe'), rp = r1('pacifico'), rn = r1('norte'), rs = r1('sur');
+    r.push([rc && nb(rc.dice) === 'mar Caribe' && rc.ve && rc.caja.x0 < MC.caja.x1 && rc.caja.x1 < top[0] && rc.caja.y0 > MC.caja.y1 &&
+      rp && nb(rp.dice) === 'océano Pacífico' && rp.ve && rp.caja.x1 > MP.caja.x0 && rp.caja.x0 > S[0][0] && rp.caja.y0 > MP.caja.y1,
+      `paso ${n}: cada mar lleva su nombre debajo: el Caribe a la izquierda, el Pacífico a la derecha`]);
+    r.push([rn && rs && nb(rn.dice) === '← norte' && nb(rs.dice) === 'sur →' && cen(rn.caja)[0] < top[0] && cen(rs.caja)[0] > top[0],
+      `paso ${n}: el norte del lado del Caribe y el sur del lado del Pacífico`]);
+    const esc = rot('escala');
+    r.push([esc.length === 2 && esc.every(q => q.ve) && esc.map(q => nb(q.dice)).join(' ') === 'Las montañas no van a su tamaño.',
+      `paso ${n}: el aviso de que las montañas no van a su tamaño`]);
+    const ray = x.cumbre.raya;
+    r.push([x.cumbre.ve === (n >= 2) && cerca(ray[0][0], top[0], 1.2) && cerca(ray[1][0], top[0], 1.2) && Math.max(ray[0][1], ray[1][1]) <= top[1] + 0.5 &&
+      top[1] - Math.max(ray[0][1], ray[1][1]) < 6 && (() => { const q = r1('cumbre'); return q && nb(q.dice) === 'lo más alto' && cerca(cen(q.caja)[0], top[0], 1.5) && q.caja.y1 < Math.min(ray[0][1], ray[1][1]); })(),
+      `paso ${n}: la raya de lo más alto ${n >= 2 ? 'va sobre la cumbre, con su nombre' : 'todavía no está'}`]);
+
+    /* ── La escuela, en la ladera del norte ── */
+    const E = x.escuela, ex = (E.x0 + E.x1) / 2;
+    const sE = suelo(ex);
+    r.push([ex < top[0] && ex > S[0][0] && sE !== null && cerca(E.y1, sE, 3.5), `paso ${n}: la escuela está parada en la ladera del norte`, [ex, E.y1, sE].map(Math.round)]);
+    const re = r1('escuela');
+    const hueco = (a, b) => Math.hypot(Math.max(0, a.x0 - b.x1, b.x0 - a.x1), Math.max(0, a.y0 - b.y1, b.y0 - a.y1));
+    r.push([re && re.ve && nb(re.dice) === 'la escuela' && hueco(re.caja, E) < 10, `paso ${n}: «la escuela» va junto a la escuela`]);
+
+    /* ── El agua: pegada al suelo, siempre hacia abajo, hasta su mar ── */
+    const pegado = pts => pts.every(p => { const s0 = suelo(p[0]); return s0 === null || p[1] > nivel - 0.5 || (s0 - p[1] >= 0.5 && s0 - p[1] <= 4.5); });
+    const marDe = p => [MC, MP].find(M => p[0] >= M.caja.x0 - 0.5 && p[0] <= M.caja.x1 + 0.5 && p[1] >= M.caja.y0 - 1 && p[1] <= M.caja.y1);
+    const nombreMar = M => M === MC ? 'Caribe' : M === MP ? 'Pacífico' : null;
+    const seguir = a => {
+      const pts = [].concat(...a.tramos.map(t => t.pts));
+      const hacia = Math.sign(pts[pts.length - 1][0] - pts[0][0]);
+      const baja = pts.slice(1).every((p, i) => p[1] >= pts[i][1] - 0.05 && (p[0] - pts[i][0]) * hacia >= -0.05);
+      const fin = pts[pts.length - 1];
+      return { pts, baja, pegado: pegado(pts), mar: marDe(fin), dibujado: a.tramos.every(t => t.dibujado), nada: a.tramos.every(t => !t.dibujado),
+        largo: a.tramos.reduce((s0, t) => s0 + t.largo, 0), ancho: Math.max(...a.tramos.map(t => t.ancho)), punta: a.punta, fin };
+    };
+    const bienHecho = (w, lado) => w.baja && w.pegado && w.mar && (lado === 'caribe' ? w.mar === MC : w.mar === MP) &&
+      cerca(w.punta.p[0], w.fin[0], 1) && cerca(w.punta.p[1], w.fin[1], 1);
+
+    /* Paso 0: el pedazo de río junto a la escuela, y las dos preguntas. */
+    const T = x.trozo;
+    r.push([T.ve && pegado(T.pts) && Math.min(...T.pts.map(p => p[0])) < ex && Math.max(...T.pts.map(p => p[0])) > ex && !T.pts.some(p => marDe(p)),
+      `paso ${n}: junto a la escuela se ve su pedazo de río, pegado al suelo y lejos de los dos mares`]);
+    const dudas = x.dudas;
+    r.push([dudas.length === 2 && dudas.every(q => q.ve === (n === 0) && nb(q.dice) === '?') &&
+      dudas.some(q => cen(q.caja)[0] < MC.caja.x1 + 2) && dudas.some(q => cen(q.caja)[0] > MP.caja.x0 - 2),
+      `paso ${n}: ${n === 0 ? 'un «?» sobre cada mar' : 'ya no hay «?» sobre los mares'}`]);
+    const rr = r1('rio');
+    r.push([rr && rr.ve === (n === 0) && nb(rr.dice) === 'su río' && (n !== 0 || T.pts.some(p => Math.hypot(p[0] - cen(rr.caja)[0], p[1] - cen(rr.caja)[1]) < 16)),
+      `paso ${n}: «su río» ${n === 0 ? 'va junto al pedazo de río' : 'ya no está'}`]);
+
+    /* Paso 1: dos gotas caen juntas en lo más alto y bajan a mares distintos. */
+    const B = { caribe: seguir(x.bajan.find(b => b.k === 'caribe')), pacifico: seguir(x.bajan.find(b => b.k === 'pacifico')) };
+    r.push([x.nubeArriba.ve === (n === 1) && (n !== 1 || cerca(cen(x.nubeArriba.caja)[0], top[0], 4) && x.nubeArriba.caja.y1 < top[1]),
+      `paso ${n}: ${n === 1 ? 'la nube está sobre lo más alto' : 'no hay nube sobre lo más alto'}`]);
+    const G = x.gotas;
+    if (n === 1) {
+      const gc = G.find(g => g.k === 'caribe'), gp = G.find(g => g.k === 'pacifico');
+      const cc = cen(gc.caja), cp = cen(gp.caja);
+      /* Llegan al suelo y se vuelven el agua que baja: al terminar el paso
+         ya no se ven, pero su sitio dice dónde cayeron. */
+      r.push([!gc.ve && !gp.ve && cc[0] < top[0] && cp[0] > top[0] && cp[0] - cc[0] < 14 && gc.caja.y1 <= suelo(cc[0]) + 0.5 && suelo(cc[0]) - gc.caja.y1 < 7 &&
+        gp.caja.y1 <= suelo(cp[0]) + 0.5 && suelo(cp[0]) - gp.caja.y1 < 7, 'paso 1: las dos gotas caen juntas, una a cada lado de lo más alto, llegan al suelo y se vuelven el agua que baja',
+        [cc, cp].map(p => p.map(Math.round))]);
+      r.push([bienHecho(B.caribe, 'caribe') && bienHecho(B.pacifico, 'pacifico') && B.caribe.dibujado && B.pacifico.dibujado && B.caribe.punta.ve && B.pacifico.punta.ve &&
+        cerca(B.caribe.pts[0][0], cc[0], 1.5) && cerca(B.pacifico.pts[0][0], cp[0], 1.5),
+        'paso 1: cada gota baja pegada al suelo, siempre hacia abajo, y termina en el mar de su lado',
+        [nombreMar(B.caribe.mar), nombreMar(B.pacifico.mar)]]);
+    } else {
+      r.push([G.every(g => !g.ve) && B.caribe.nada && B.pacifico.nada && !B.caribe.punta.ve && !B.pacifico.punta.ve, `paso ${n}: las dos gotas del paso 1 ya no están`]);
+    }
+
+    /* Paso 2: los dos lados, cada uno con su nombre adentro. */
+    const enPol = (pol, p) => { let c = false; for (let i = 0, j = pol.length - 1; i < pol.length; j = i++) {
+      const a = pol[i], b = pol[j]; if (((a[1] > p[1]) !== (b[1] > p[1])) && p[0] < (b[0] - a[0]) * (p[1] - a[1]) / (b[1] - a[1]) + a[0]) c = !c; } return c; };
+    const LN = x.lados.find(l => l.k === 'caribe'), LS = x.lados.find(l => l.k === 'pacifico');
+    r.push([LN.ve === (n === 2) && LS.ve === (n === 2) && x.nombres === (n === 2), `paso ${n}: los dos lados ${n === 2 ? 'se ven, con sus nombres' : 'no están pintados'}`]);
+    const xs = pol => pol.map(p => p[0]);
+    r.push([cerca(Math.min(...xs(LN.pts)), S[0][0], 1) && cerca(Math.max(...xs(LN.pts)), top[0], 1) && cerca(Math.min(...xs(LS.pts)), top[0], 1) &&
+      cerca(Math.max(...xs(LS.pts)), S[S.length - 1][0], 1), `paso ${n}: el lado del Caribe va de su costa a lo más alto, y el del Pacífico, de lo más alto a su costa`]);
+    const dentroDe = (pol, k) => rot(k).every(q => enPol(pol, cen(q.caja)) && enPol(pol, [q.caja.x0 + 1, cen(q.caja)[1]]) && enPol(pol, [q.caja.x1 - 1, cen(q.caja)[1]]));
+    const vc = rot('vertiente-caribe').concat(rot('vertiente-caribe2')), vp = rot('vertiente-pacifico').concat(rot('vertiente-pacifico2'));
+    r.push([vc.map(q => nb(q.dice)).join(' ') === 'vertiente del Caribe' && vp.map(q => nb(q.dice)).join(' ') === 'vertiente del Pacífico' &&
+      dentroDe(LN.pts, 'vertiente-caribe') && dentroDe(LN.pts, 'vertiente-caribe2') && dentroDe(LS.pts, 'vertiente-pacifico') && dentroDe(LS.pts, 'vertiente-pacifico2'),
+      `paso ${n}: cada lado lleva su nombre adentro: vertiente del Caribe y vertiente del Pacífico`]);
+
+    /* Paso 3 en adelante: el río de la escuela, hasta el Caribe. */
+    const RN = seguir(x.rios.find(q => q.k === 'caribe')), RS = seguir(x.rios.find(q => q.k === 'pacifico'));
+    const pasaPor = (w, xx) => w.pts.some((p, i) => i && (w.pts[i - 1][0] - xx) * (p[0] - xx) <= 0);
+    r.push([bienHecho(RN, 'caribe') && pasaPor(RN, ex) && RN.pts[0][0] > ex && RN.pts[0][0] < top[0] && top[0] - RN.pts[0][0] < 16,
+      `paso ${n}: el río de la escuela nace cerca de lo más alto, pasa por la escuela y baja hasta el Caribe`]);
+    r.push([n >= 3 ? RN.dibujado && RN.punta.ve : RN.nada && !RN.punta.ve, `paso ${n}: el río de la escuela ${n >= 3 ? 'se ve entero, hasta el Caribe' : 'todavía no se ve entero'}`]);
+    /* Paso 4: el del sur, corto; los nombres de los dos. */
+    r.push([bienHecho(RS, 'pacifico') && RS.pts[0][0] > top[0] && RS.pts[0][0] - top[0] < 16, `paso ${n}: el río del sur nace cerca de lo más alto y baja hasta el Pacífico`]);
+    r.push([n === 4 ? RS.dibujado && RS.punta.ve : RS.nada && !RS.punta.ve, `paso ${n}: el río del sur ${n === 4 ? 'se ve' : 'no está'}`]);
+    r.push([RN.largo > 1.4 * RS.largo, `paso ${n}: el río que baja al Caribe es mucho más largo que el que baja al Pacífico`, [RN.largo, RS.largo].map(Math.round)]);
+    const rl = r1('rio-largo'), rco = r1('rio-corto');
+    r.push([x.largos === (n === 4) && rl && rco && nb(rl.dice) === 'río largo' && nb(rco.dice) === 'río corto' &&
+      cen(rl.caja)[0] > S[0][0] && cen(rl.caja)[0] < top[0] && cen(rco.caja)[0] > top[0] && cen(rco.caja)[0] < S[S.length - 1][0],
+      `paso ${n}: «río largo» del lado del Caribe y «río corto» del lado del Pacífico${n === 4 ? '' : ', que no se ven'}`]);
+
+    /* Paso 5: la tormenta cae río arriba de la escuela, y el río crece desde ahí. */
+    const TM = x.tormenta, CR = seguir(x.crecido);
+    r.push([TM.ve === (n === 5), `paso ${n}: ${n === 5 ? 'llueve con el temporal' : 'no hay temporal'}`]);
+    const lluviaX = TM.lluvia.map(l => l[1][0]);
+    r.push([TM.lluvia.length >= 4 && TM.lluvia.every(l => { const s0 = suelo(l[1][0]); return s0 !== null && s0 - l[1][1] >= 0 && s0 - l[1][1] <= 4.5 && l[0][1] > TM.caja.y0; }) &&
+      Math.min(...lluviaX) > ex + 10 && Math.max(...lluviaX) < top[0] && cen(TM.caja)[0] > ex && cen(TM.caja)[0] < top[0],
+      `paso ${n}: la tormenta cae río arriba de la escuela, entre ella y lo más alto`]);
+    r.push([bienHecho(CR, 'caribe') && pasaPor(CR, ex) && CR.pts[0][0] >= Math.min(...lluviaX) - 2 && CR.pts[0][0] <= Math.max(...lluviaX) + 2 && CR.ancho > RN.ancho * 1.5,
+      `paso ${n}: el río crecido empieza donde llueve, pasa por la escuela y llega al Caribe, más ancho que el río de siempre`]);
+    r.push([n >= 5 ? CR.dibujado && CR.punta.ve : CR.nada && !CR.punta.ve, `paso ${n}: el río crecido ${n >= 5 ? 'se ve' : 'no está'}`]);
+    r.push([x.radio.ve === (n === 0 || n >= 5) && Math.hypot(cen(x.radio.caja)[0] - ex, cen(x.radio.caja)[1] - cen(E)[1]) < 35,
+      `paso ${n}: la radio, junto a la escuela, ${n === 0 || n >= 5 ? 'suena' : 'no está'}`]);
+    const rd = r1('departamento');
+    r.push([rd && rd.ve === (n === 6) && nb(rd.dice) === '¿qué departamento?' && hueco(rd.caja, E) < 12,
+      `paso ${n}: «¿qué departamento?» ${n === 6 ? 'junto a la escuela' : 'no está'}`]);
+
+    /* ── El marcador cuenta en el dibujo ── */
+    const maresGotas = new Set([B.caribe.mar, B.pacifico.mar].filter(Boolean)).size;
+    const lados = [LN, LS].filter(l => l.ve).length;
+    const mk = {
+      0: ['?', 'adónde baja el río de la escuela'],
+      1: [String(maresGotas), 'mares para dos gotas que cayeron juntas'],
+      2: [String(lados), 'lados: la vertiente del Caribe y la del Pacífico'],
+      3: [nombreMar(RN.mar), 'adonde baja el río de la escuela'],
+      4: ['largos', 'los ríos del Caribe; los del Pacífico, cortos'],
+      5: ['↓', 'la lluvia de río arriba pasa por la escuela'],
+      6: ['?', 'en qué departamento está tu escuela']
+    };
+    r.push([nb(e.cifra) === mk[n][0] && nb(e.palabras) === mk[n][1], `paso ${n}: el marcador dice «${mk[n][0]}» · ${mk[n][1]}`, [e.cifra, e.palabras]]);
+    return r;
+  },
   /* El Universo y el Sistema Solar. «Cuándo le llueve a la parcela».
      ⚠️ Nada se le cree a la escena. El camino tiene que ser un círculo con
      el Sol en el centro (la Tierra no se acerca ni se aleja en ningún mes),
