@@ -1340,6 +1340,162 @@ const LEER = `
       textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
     };
   };
+  /* Los Continentes: Europa, Asia y África. El mapa se lee como el de la
+     misión anterior (Equal Earth, proyectado por la sonda) y la mesa del
+     precio, pieza por pieza: cada taza con su centro y si tiene café, cada
+     quintal con su centro, lo que falta, lo que sobra, la pila de monedas y
+     el hilo de la etiqueta. ⚠️ Aquí no van barras invertidas: esto vive
+     dentro de una plantilla de texto y se pierden. */
+  window.__amExtra.amPrecio = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(base.multiply(el.getScreenCTM())); return [q.x, q.y]; }
+    function caja(el) { var b = el.getBBox(), a = aVista(el, b.x, b.y), c = aVista(el, b.x + b.width, b.y + b.height); return { x0: Math.min(a[0], c[0]), y0: Math.min(a[1], c[1]), x1: Math.max(a[0], c[0]), y1: Math.max(a[1], c[1]) }; }
+    function centroDe(el) { var c = caja(el); return [(c.x0 + c.x1) / 2, (c.y0 + c.y1) / 2]; }
+    function todos(sel) { return [].slice.call(raiz.querySelectorAll(sel)); }
+    function raya(el) { var d = getComputedStyle(el).strokeDasharray; if (!d || d === 'none') return 0; var v = d.split(',').join(' ').split(' ').map(parseFloat).filter(isFinite); return v.length ? Math.max.apply(null, v) : 0; }
+    function corrido(el) { return Math.abs(parseFloat(getComputedStyle(el).strokeDashoffset) || 0); }
+    var lienzo = document.createElement('canvas').getContext('2d');
+    function tinta(t) {
+      var cs = getComputedStyle(t), s = t.textContent, ancla = t.getAttribute('text-anchor') || cs.textAnchor || 'start';
+      lienzo.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+      lienzo.textAlign = ancla === 'end' ? 'right' : (ancla === 'middle' ? 'center' : 'left');
+      var m = lienzo.measureText(s), x0 = +t.getAttribute('x'), y0 = +t.getAttribute('y');
+      var p = aVista(t, x0 - m.actualBoundingBoxLeft, y0 - m.actualBoundingBoxAscent), q = aVista(t, x0 + m.actualBoundingBoxRight, y0 + m.actualBoundingBoxDescent);
+      return { x0: p[0], y0: p[1], x1: q[0], y1: q[1] };
+    }
+    function vertices(p) {
+      var t = p.getAttribute('d').split(' ').filter(function (v) { return v.length; }), out = [];
+      for (var i = 0; i < t.length; i++) if (t[i] === 'M' || t[i] === 'L') { out.push(aVista(p, +t[i + 1], +t[i + 2])); i += 2; }
+      return out;
+    }
+    function dentro(paths, p) {
+      var q = svg.createSVGPoint(); q.x = p[0]; q.y = p[1];
+      return paths.some(function (el) { return el.isPointInFill(q); });
+    }
+
+    /* ── Equal Earth, de la sonda ── */
+    var A1 = 1.340264, A2 = -0.081106, A3 = 0.000893, A4 = 0.003796, R3 = Math.sqrt(3);
+    var mundo = raiz.querySelector('[data-mundo]'), mar = raiz.querySelector('[data-mar]');
+    var L0 = +mundo.getAttribute('data-l0'), bb = mar.getBBox();
+    var XMAX = 2 * R3 * Math.PI / (3 * A1);
+    var YMAX = (function () { var t = Math.PI / 3, t2 = t * t, t6 = t2 * t2 * t2; return t * (A1 + A2 * t2 + t6 * (A3 + A4 * t2)); })();
+    var S = bb.width / (2 * XMAX), CX = bb.x + bb.width / 2, CY = bb.y + bb.height / 2;
+    function ee(lon, lat) {
+      var d = lon - L0;
+      while (d > 180) d -= 360;
+      while (d <= -180) d += 360;
+      var l = d * Math.PI / 180, f = lat * Math.PI / 180, t = Math.asin(R3 / 2 * Math.sin(f)), t2 = t * t, t6 = t2 * t2 * t2;
+      var X = 2 * R3 * l * Math.cos(t) / (3 * (9 * A4 * t6 * t2 + 7 * A3 * t6 + 3 * A2 * t2 + A1));
+      var Y = t * (A1 + A2 * t2 + t6 * (A3 + A4 * t2));
+      return [CX + S * X, CY - S * Y];
+    }
+
+    var tierras = todos('[data-tierra]'), C = window.CONTORNOS_MUNDO, faltan = 0, total = 0, peor = 0;
+    C.tierra.forEach(function (c, i) {
+      var v = tierras[i] ? vertices(tierras[i]) : [];
+      for (var j = 0; j < c.length; j += 2) {
+        if (c[j + 1] <= -89.9) continue;
+        total++;
+        var p = ee(c[j], c[j + 1]), mejor = 1e9;
+        for (var k = 0; k < v.length; k++) { var dd = Math.hypot(v[k][0] - p[0], v[k][1] - p[1]); if (dd < mejor) mejor = dd; }
+        if (mejor > 0.06) faltan++;
+        if (mejor > peor) peor = mejor;
+      }
+    });
+    /* La costura: un anillo que sale en más de un pedazo quedó partido. */
+    var partidos = tierras.filter(function (t) { return (t.getAttribute('d').match(/M/g) || []).length > 1; })
+      .map(function (t) { return t.getAttribute('data-tierra') + ' ' + t.getAttribute('data-anillo'); });
+
+    var luz = {}, gruposLuz = todos('[data-luz]');
+    gruposLuz.forEach(function (g) { luz[g.getAttribute('data-luz')] = { g: g, p: [].slice.call(g.querySelectorAll('path')) }; });
+    var ks = ['europa', 'asia', 'africa'];
+    function enLuces(p) { var o = {}; ks.forEach(function (k) { o[k] = !!luz[k] && dentro(luz[k].p, p); }); return o; }
+    /* El agua de dentro de la tierra, encima de las luces. */
+    var aguas = todos('[data-agua]');
+    var aguaEncima = aguas.length === 2 && aguas.every(function (a) {
+      return gruposLuz.every(function (g) { return !!(g.compareDocumentPosition(a) & 4); });
+    });
+
+    /* Ciudades de verdad, lejos de la costa, con el continente al que
+       pertenecen: la sonda lo sabe, no la escena. La frontera de Europa y
+       Asia pasa entre Ufá y Ekaterimburgo, y entre Tracia y Anatolia. */
+    var CIUDADES = [
+      ['Madrid', -3.7, 40.4, 'europa'], ['París', 2.35, 48.85, 'europa'], ['Berlín', 13.4, 52.5, 'europa'], ['Roma', 12.8, 42.5, 'europa'],
+      ['Atenas', 22, 39.5, 'europa'], ['Kiev', 30.5, 50.45, 'europa'], ['Moscú', 37.6, 55.8, 'europa'], ['Kazán', 49.1, 55.8, 'europa'],
+      ['Perm', 56.2, 58, 'europa'], ['Ufá', 56, 54.7, 'europa'], ['Astracán', 48, 46.6, 'europa'], ['Noruega', 10.5, 61, 'europa'],
+      ['Finlandia', 25.5, 62, 'europa'], ['Gran Bretaña', -1.9, 52.5, 'europa'], ['Irlanda', -8, 53.3, 'europa'],
+      ['Islandia', -18.5, 64.9, 'europa'], ['Tracia', 27, 41.6, 'europa'],
+      ['Ekaterimburgo', 60.6, 56.8, 'asia'], ['Cheliábinsk', 61.4, 55.2, 'asia'], ['Novosibirsk', 82.9, 55, 'asia'],
+      ['Pekín', 116.4, 39.9, 'asia'], ['Delhi', 77.2, 28.6, 'asia'], ['Bangkok', 100.5, 14.5, 'asia'], ['Ankara', 32.9, 39.9, 'asia'],
+      ['Anatolia', 28.5, 38.5, 'asia'], ['Jerusalén', 35.2, 31.8, 'asia'], ['Riad', 46.7, 24.7, 'asia'], ['Tiflis', 44.8, 41.7, 'asia'],
+      ['el Sinaí', 33.8, 29.5, 'asia'], ['Japón', 138.5, 36.2, 'asia'], ['Taiwán', 121, 23.8, 'asia'], ['Sri Lanka', 80.7, 7.8, 'asia'],
+      ['Java', 110.4, -7.5, 'asia'], ['Borneo', 114, 1, 'asia'], ['Luzón', 121, 16.5, 'asia'],
+      ['El Cairo', 31.2, 30, 'africa'], ['Jartum', 32.5, 15.6, 'africa'], ['Nairobi', 36.8, -1.3, 'africa'], ['Kinsasa', 15.3, -4.3, 'africa'],
+      ['Ibadán', 3.9, 7.4, 'africa'], ['el Senegal', -15.5, 14, 'africa'], ['Marrakech', -8, 31.6, 'africa'], ['el Karoo', 21, -32, 'africa'],
+      ['Madagascar', 46.9, -18.9, 'africa'],
+      ['Tegucigalpa', -87.2, 14.1, ''], ['Bogotá', -74.1, 4.7, ''], ['Groenlandia', -42, 72, ''], ['Alice Springs', 133.9, -23.7, ''],
+      ['Nueva Guinea', 144.2, -5.9, ''], ['la Antártida', 0, -80, '']
+    ];
+    var ciudades = CIUDADES.map(function (c) {
+      var p = ee(c[1], c[2]);
+      return { nombre: c[0], de: c[3], tierra: dentro(tierras, p), luz: enLuces(p) };
+    });
+
+    function punto(g) { return g ? aVista(g, 0, 0) : null; }
+    var casa = raiz.querySelector('[data-casa]'), hn = raiz.querySelector('[data-honduras]');
+    var rg = raiz.querySelector('[data-ruta]'), rr = rg && rg.querySelector('[data-raya]'), rp = rg && rg.querySelector('[data-punta]');
+    var ruta = null;
+    if (rr) {
+      var largo = rr.getTotalLength(), muestras = [];
+      for (var i = 0; i <= 20; i++) { var q = rr.getPointAtLength(largo * i / 20), pv = aVista(rr, q.x, q.y); muestras.push({ p: pv, tierra: dentro(tierras, pv) }); }
+      var dl = +rg.getAttribute('data-destino-lon'), dla = +rg.getAttribute('data-destino-lat'), punta = vertices(rp)[1];
+      ruta = { ve: vis(rr), corrido: corrido(rr), muestras: muestras, punta: punta, puntaVe: vis(rp),
+               destino: ee(dl, dla), luzPunta: enLuces(punta) };
+    }
+    function cerca(t, k) {
+      if (!luz[k]) return false;
+      var b = tinta(t), cx = (b.x0 + b.x1) / 2, cy = (b.y0 + b.y1) / 2;
+      for (var dx = -14; dx <= 14; dx += 2) for (var dy = -14; dy <= 14; dy += 2) if (dentro(luz[k].p, [cx + dx, cy + dy])) return true;
+      return false;
+    }
+    var bu = raiz.querySelector('[data-burbuja]');
+    var etiq = raiz.querySelector('.pc-etiqueta'), hilo = raiz.querySelector('.pc-hilo');
+    var finHilo = hilo ? (function () { var L = hilo.getTotalLength(), a = hilo.getPointAtLength(0), b = hilo.getPointAtLength(L); return [aVista(hilo, a.x, a.y), aVista(hilo, b.x, b.y)]; })() : null;
+    var fa = raiz.querySelector('[data-falta]'), so = raiz.querySelector('[data-sobran]');
+    return {
+      proy: { L0: L0, S: S, alto: bb.height, altoEE: 2 * YMAX * S, total: total, faltan: faltan, peor: Math.round(peor * 1000) / 1000,
+              dibujados: tierras.length, anillos: C.tierra.length, partidos: partidos, aguaEncima: aguaEncima },
+      ciudades: ciudades,
+      luces: ks.map(function (k) { return { k: k, ve: !!luz[k] && vis(luz[k].g) }; }),
+      casa: casa ? { ve: vis(casa), pos: punto(casa), lon: +casa.getAttribute('data-lon'), lat: +casa.getAttribute('data-lat'),
+                     proy: ee(+casa.getAttribute('data-lon'), +casa.getAttribute('data-lat')) } : null,
+      honduras: hn ? { ve: vis(hn), dice: hn.textContent, tinta: tinta(hn) } : null,
+      ruta: ruta,
+      nombres: todos('[data-nombre]').map(function (t) { return { k: t.getAttribute('data-nombre'), ve: vis(t), dice: t.textContent, cerca: cerca(t, t.getAttribute('data-nombre')) }; }),
+      burbuja: bu ? { ve: vis(bu), pos: punto(bu), raya: raya(bu.querySelector('circle')), signo: bu.querySelector('text').textContent } : null,
+      mesa: caja(raiz.querySelector('[data-mesa] rect')),
+      tazas: todos('[data-taza]').map(function (g) {
+        return { i: +g.getAttribute('data-taza'), ve: vis(g), c: centroDe(g.querySelector('[data-cuerpo]')),
+                 cafe: vis(g.querySelector('[data-cafe]')), vapor: vis(g.querySelector('[data-vapor]')) };
+      }),
+      sacos: todos('[data-saco]').map(function (g) {
+        return { k: +g.getAttribute('data-saco'), ve: vis(g), chele: g.hasAttribute('data-chele'), c: centroDe(g.querySelector('.pc-saco')),
+                 caja: caja(g.querySelector('.pc-saco')) };
+      }),
+      falta: fa ? { ve: vis(fa), c: centroDe(fa.querySelector('path')), raya: raya(fa.querySelector('path')), dice: fa.querySelector('text').textContent } : null,
+      sobran: so ? { ve: vis(so), caja: caja(so.querySelector('rect')), raya: raya(so.querySelector('rect')), dice: so.querySelector('text').textContent } : null,
+      precio: {
+        monedas: todos('[data-moneda]').filter(vis).length,
+        fantasmas: todos('[data-fantasma]').filter(vis).map(raya),
+        duda: (function () { var t = raiz.querySelector('[data-precio-duda]'); return t ? { ve: vis(t), dice: t.textContent } : null; })(),
+        etiqueta: etiq ? caja(etiq) : null,
+        hilo: finHilo
+      },
+      rotulos: todos('[data-rotulo]').map(function (t) { return { k: t.getAttribute('data-rotulo'), ve: vis(t), dice: t.textContent, tinta: tinta(t) }; }),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   /* El Adjetivo Avanzado: el acta de las dos comas. Se lee cada pedazo del
      acta con su tinta y su línea base; los subrayados, con su raya; las
      marquitas de las comas; cada alumno con su nota (la ✗ son dos rayas y la
@@ -1493,8 +1649,174 @@ let escalaGallinero = null;
 let raizVerbos = null;
 let keniaAdverbios = null;
 let mensajePron = null;
+let chelePrecio = null;
 
 const ESCENAS = {
+  /* Los Continentes: Europa, Asia y África. «El precio que no se pone
+     aquí». ⚠️ Nada se le cree a la escena. El mapa se mide como el de la
+     misión anterior: la sonda proyecta por su cuenta, cada punto de los
+     contornos tiene que estar donde cae, y ciudades de verdad dicen qué se
+     iluminó: Europa lleva Ufá y no Ekaterimburgo, Tracia y no Anatolia;
+     Asia, el Sinaí y no El Cairo; África, Madagascar y no Riad. La flecha
+     va de la casa, en Honduras, a un punto de Europa, y cruza el océano. En
+     la mesa, la sonda empareja cada taza con el quintal que tiene debajo:
+     tiene café la que tiene quintal, falta el que no está y sobran los que
+     no tienen taza encima; y de ahí saca el precio: con menos quintales que
+     tazas la pila es alta, con más, baja, y lo que se fue va con raya
+     cortada. El quintal de don Chele no se mueve de un paso a otro y se
+     vende los dos años. ⚠️ Y la prueba no se regala: ni tamaños, ni
+     países, ni lo que vende o compra Honduras, ni el mar entre Europa y
+     África, ni un número de más. */
+  amPrecio(e, n) {
+    const x = e.extra, r = [];
+    const nb = t => String(t == null ? '' : t).replace(/\u00a0/g, ' ').trim();
+    const d2 = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+    /* Lo que no depende del dibujo, primero: con una pieza mal puesta la
+       sonda deja de medir, y esto no puede quedarse sin mirar por eso. */
+    const dicho = [e.texto, e.cifra, e.palabras].concat(x.textos).map(nb).join(' | ').toLowerCase();
+    const EXACTAS = ['grande', 'grandes', 'pequeño', 'pequeña', 'tamaño', 'país', 'países', 'china', 'japón', 'corea', 'india',
+      'egipto', 'nigeria', 'sudáfrica', 'urales', 'alpes', 'pirineos', 'danubio', 'rin', 'volga', 'nilo', 'sahara', 'everest',
+      'himalaya', 'monzón', 'mediterráneo', 'colonialismo', 'koica', 'aacue', 'ue', 'unión', 'europea', 'euro', 'suez', 'roma',
+      'grecia', 'ganges', 'yangtsé', 'gobi', 'kilimanjaro', 'humanidad', 'joven', 'jazz', 'blues', 'francés', 'inglés', 'portugués',
+      'idioma', 'idiomas', 'muralla', 'eiffel', 'coliseo', 'taj', 'angkor', 'renacimiento', 'industrial', 'cristianismo', 'onu',
+      'oea', 'banano', 'textiles', 'mariscos', 'palma', 'ropa', 'tecnología', 'celulares', 'maquinaria', 'autos', 'petróleo',
+      'trenes', 'turismo', 'población', 'masa', 'eurasia', 'viejo', 'cooperación', 'becas', 'acuerdo', 'socios', 'socio', 'bloque',
+      'mercado', 'exporta', 'importa', 'exportación', 'importación', 'mar', 'atlántico', 'pacífico', 'mesopotamia', 'bruselas',
+      'clima', 'cumbres', 'marcala', 'caficultor', 'tigres', 'asean', 'cuna'];
+    const FRASES = ['misma masa', 'techo del mundo', 'más largo', 'mercado único', 'más grande', 'más poblado', 'socios comerciales',
+      'unión europea', 'unión africana', 'estados unidos', 'cambio climático'];
+    const suelto = ' ' + dicho.split(/[^a-záéíóúñü]+/).filter(Boolean).join(' ') + ' ';
+    const malas = suelto.trim().split(' ').filter(w => EXACTAS.includes(w)).concat(FRASES.filter(f => suelto.includes(' ' + f + ' ')));
+    r.push([malas.length === 0, `paso ${n}: no sale ninguna palabra de las respuestas de la prueba (ni tamaños, ni países, ni lo que vende o compra Honduras)`, malas]);
+    const nums = (dicho.match(/\d+/g) || []).map(Number);
+    const PERMITIDOS = [0, 1, 2, 3, 4, 8];
+    r.push([nums.every(k => PERMITIDOS.includes(k)), `paso ${n}: ningún número de la prueba (ni kilómetros, ni países, ni por ciento)`, nums.filter(k => !PERMITIDOS.includes(k))]);
+
+    const ORDEN = ['europa', 'asia', 'africa'];
+    const NOMBRE = { europa: 'Europa', asia: 'Asia', africa: 'África' };
+    const nombrados = n === 0 ? [] : n === 1 ? ['europa'] : n <= 4 ? ['europa', 'asia'] : ['europa', 'asia', 'africa'];
+
+    /* ── El mapa: una sola vez, porque no cambia ── */
+    if (n === 0) {
+      const p = x.proy;
+      r.push([p.dibujados === p.anillos && p.total > 1000 && p.faltan === 0,
+        'cada punto de los contornos está en el dibujo donde lo pone Equal Earth, proyectado por la sonda', p]);
+      r.push([Math.abs(p.alto - p.altoEE) <= 0.6, 'el mapa mide de alto lo que Equal Earth manda para su ancho: es un mapa de áreas verdaderas',
+        [Math.round(p.alto * 10) / 10, Math.round(p.altoEE * 10) / 10]]);
+      r.push([p.partidos.length === 0, 'la costura va por el estrecho de Bering: ningún continente sale partido (la Antártida da la vuelta entera y va de una pieza)', p.partidos]);
+      r.push([p.aguaEncima, 'el mar Negro y el Caspio se pintan encima de las luces: el agua no se ilumina', p.aguaEncima]);
+      const fuera = x.ciudades.filter(c => !c.tierra).map(c => c.nombre);
+      r.push([fuera.length === 0, 'las ciudades de prueba caen en tierra (la sonda no mide sobre el mar)', fuera]);
+      const mal = x.ciudades.filter(c => ORDEN.some(k => c.luz[k] !== (c.de === k)))
+        .map(c => c.nombre + ' → ' + (ORDEN.filter(k => c.luz[k]).join(', ') || 'ninguno'));
+      r.push([mal.length === 0, 'cada continente iluminado lleva sus ciudades y ninguna de otro (Ufá y Tracia son de Europa; Ekaterimburgo, Anatolia y el Sinaí, de Asia; El Cairo, de África)', mal]);
+    }
+
+    /* ── La casa, en Honduras ── */
+    const casa = x.casa;
+    r.push([!!casa && casa.ve && casa.lon >= -89.4 && casa.lon <= -83.1 && casa.lat >= 12.9 && casa.lat <= 16.5 && d2(casa.pos, casa.proy) <= 0.6,
+      `paso ${n}: la casa está en Honduras, y en el dibujo donde cae su punto`, casa && [casa.lon, casa.lat]]);
+    const hl = x.honduras;
+    const lejosDe = (c, p) => Math.max(c.x0 - p[0], p[0] - c.x1, c.y0 - p[1], p[1] - c.y1, 0);
+    r.push([!!hl && !!casa && hl.ve && nb(hl.dice) === 'Honduras' && lejosDe(hl.tinta, casa.pos) <= 10, `paso ${n}: y lleva «Honduras» al lado`, hl && hl.dice]);
+
+    /* ── Los continentes con nombre ── */
+    const luces = x.luces.filter(l => l.ve).map(l => l.k);
+    r.push([JSON.stringify(luces) === JSON.stringify(nombrados), `paso ${n}: se ilumina${nombrados.length === 1 ? '' : 'n'} ${nombrados.length ? nombrados.map(k => NOMBRE[k]).join(', ') : 'ninguno'}, y nada más`, luces]);
+    const nombres = x.nombres.filter(t => t.ve);
+    r.push([JSON.stringify(nombres.map(t => t.k)) === JSON.stringify(nombrados) && nombres.every(t => nb(t.dice) === NOMBRE[t.k]),
+      `paso ${n}: cada continente iluminado lleva su nombre escrito`, nombres.map(t => t.dice)]);
+    r.push([nombres.every(t => t.cerca), `paso ${n}: y cada nombre está sobre su continente o junto a él`, nombres.filter(t => !t.cerca).map(t => t.dice)]);
+
+    /* ── La flecha del café: de la casa a Europa, por el océano ── */
+    const ru = x.ruta;
+    if (!ru || !casa) r.push([false, `paso ${n}: la flecha del café existe`]);
+    else if (n === 0) r.push([!ru.puntaVe && (ru.corrido > 1 || !ru.ve), 'paso 0: el café todavía no sale: no hay flecha', [ru.corrido, ru.puntaVe]]);
+    else {
+      const ini = ru.muestras[0].p, medio = ru.muestras.slice(3, 18), xs = ru.muestras.map(m => m.p[0]);
+      r.push([ru.ve && ru.corrido <= 1 && ru.puntaVe, `paso ${n}: la flecha del café está entera, con su punta`, [ru.corrido, ru.puntaVe]]);
+      r.push([d2(ini, casa.pos) <= 12, `paso ${n}: sale de la casa, en Honduras`, ini.map(Math.round)]);
+      r.push([ru.luzPunta.europa && !ru.luzPunta.asia && !ru.luzPunta.africa && d2(ru.punta, ru.destino) <= 0.6,
+        `paso ${n}: y su punta llega a Europa, y a ningún otro continente`, ru.luzPunta]);
+      r.push([medio.every(m => !m.tierra) && xs.every((v, i) => i === 0 || v >= xs[i - 1] - 0.01),
+        `paso ${n}: cruza el océano, y va siempre hacia Europa`, medio.filter(m => m.tierra).length]);
+    }
+
+    /* ── El «?» del final, sobre la casa ── */
+    const bu = x.burbuja;
+    r.push([!!bu && !!casa && bu.ve === (n === 5) && (!bu.ve || (d2(bu.pos, casa.pos) <= 20 && bu.raya > 0 && bu.raya <= 3 && nb(bu.signo) === '?')),
+      `paso ${n}: ${n === 5 ? 'sobre la casa, un «?» con el aro de raya cortada: lo que vino a tu casa' : 'todavía no hay «?» sobre la casa'}`, bu && [bu.ve, bu.raya]]);
+
+    /* ── La mesa: tazas y quintales ── */
+    const tazas = x.tazas.filter(t => t.ve), sacos = x.sacos.filter(s => s.ve);
+    const nT = tazas.length, nS = sacos.length;
+    const nTazas = n === 0 ? 0 : n === 1 ? 2 : 4, nSacos = n <= 2 ? 1 : n === 3 ? 3 : 8;
+    r.push([nT === nTazas && nS === nSacos, `paso ${n}: en la mesa hay ${nTazas} taza${nTazas === 1 ? '' : 's'} y ${nSacos} quintal${nSacos === 1 ? '' : 'es'}`, [nT, nS]]);
+    const m = x.mesa;
+    r.push([tazas.map(t => t.c).concat(sacos.map(s => s.c)).every(c => c[0] > m.x0 && c[0] < m.x1 && c[1] > m.y0 && c[1] < m.y1),
+      `paso ${n}: las tazas y los quintales están sobre la mesa`]);
+    const debajo = t => sacos.find(s => Math.abs(s.c[0] - t.c[0]) <= 2 && s.c[1] > t.c[1]);
+    const conTaza = s => tazas.some(t => Math.abs(s.c[0] - t.c[0]) <= 2 && s.c[1] > t.c[1]);
+    if (n >= 3) {
+      r.push([tazas.every(t => t.cafe === !!debajo(t) && t.vapor === t.cafe), `paso ${n}: una taza tiene café si y solo si tiene un quintal debajo`,
+        tazas.map(t => [t.i, t.cafe, !!debajo(t)])]);
+    } else {
+      r.push([tazas.every(t => !t.cafe && !t.vapor), `paso ${n}: todavía nadie compró: las tazas están vacías`, tazas.map(t => t.cafe)]);
+    }
+    const sinCafe = tazas.filter(t => !t.cafe), sobrantes = n >= 3 ? sacos.filter(s => !conTaza(s)) : [];
+    const escasez = n >= 3 && nS < nT, sobra = n >= 3 && nS > nT;
+
+    /* ── El quintal de don Chele: el mismo, en el mismo sitio ── */
+    const dc = x.sacos.find(s => s.chele);
+    r.push([!!dc && dc.ve, `paso ${n}: el quintal de don Chele está en la mesa`]);
+    if (dc) {
+      if (chelePrecio == null || n === 0) chelePrecio = dc.c;
+      r.push([d2(dc.c, chelePrecio) <= 0.3, `paso ${n}: y no se mueve de un paso a otro: es el mismo quintal`, [dc.c, chelePrecio].map(q => q.map(v => Math.round(v * 10) / 10))]);
+      const rc = x.rotulos.find(t => t.k === 'chele');
+      r.push([!!rc && rc.ve && nb(rc.dice) === 'don Chele' && rc.tinta.y0 >= dc.caja.y1 - 1 && Math.abs((rc.tinta.x0 + rc.tinta.x1) / 2 - dc.c[0]) <= 3,
+        `paso ${n}: con «don Chele» escrito debajo`, rc && rc.dice]);
+      const h = x.precio.hilo, et = x.precio.etiqueta, cb = dc.caja;
+      r.push([!!h && !!et && lejosDe(et, h[0]) <= 0.5 && h[1][0] >= cb.x0 - 1 && h[1][0] <= cb.x1 + 1 && h[1][1] >= cb.y0 - 1 && h[1][1] <= cb.y0 + 8,
+        `paso ${n}: la etiqueta del precio cuelga del cuello de su quintal`, h && h.map(q => q.map(Math.round))]);
+      if (n >= 3) r.push([conTaza(dc) && tazas.some(t => Math.abs(dc.c[0] - t.c[0]) <= 2 && t.cafe), `paso ${n}: el quintal de don Chele se vende: tiene una taza con café encima`]);
+    }
+
+    /* ── Lo que falta y lo que sobra ── */
+    const fa = x.falta, so = x.sobran;
+    r.push([!!fa && fa.ve === escasez && (!fa.ve || (sinCafe.length === 1 && Math.abs(fa.c[0] - sinCafe[0].c[0]) <= 2 && fa.c[1] > sinCafe[0].c[1] && fa.raya > 0 && nb(fa.dice) === 'falta')),
+      `paso ${n}: ${escasez ? 'debajo de la taza sin café, el quintal que falta, con raya cortada y «falta»' : 'no falta ningún quintal'}`, fa && [fa.ve, fa.raya]]);
+    const enRecuadro = so ? sacos.filter(s => s.c[0] > so.caja.x0 && s.c[0] < so.caja.x1 && s.c[1] > so.caja.y0 && s.c[1] < so.caja.y1) : [];
+    r.push([!!so && so.ve === sobra && (!so.ve || (so.raya > 0 && nb(so.dice) === 'sobran' && sobrantes.length > 0 && enRecuadro.length === sobrantes.length && sobrantes.every(s => enRecuadro.includes(s)))),
+      `paso ${n}: ${sobra ? 'los quintales sin taza encima, y solo esos, van en el recuadro de raya cortada que dice «sobran»' : 'no sobra ningún quintal'}`, so && [so.ve, enRecuadro.length, sobrantes.length]]);
+    if (n >= 3 && !sobra) r.push([sobrantes.length === 0, `paso ${n}: todo quintal de la mesa tiene su taza`, sobrantes.length]);
+
+    /* ── El precio: sale de la mesa, no del rótulo ── */
+    const pr = x.precio;
+    const pila = n <= 2 ? 0 : escasez ? 3 : sobra ? 1 : -1;
+    r.push([pr.monedas === pila, `paso ${n}: ${n <= 2 ? 'todavía no hay precio' : escasez ? 'con menos quintales que tazas, la pila de monedas es alta' : 'con más quintales que tazas, la pila es baja'}`, [pr.monedas, pila]]);
+    r.push([!!pr.duda && pr.duda.ve === (n <= 2) && (!pr.duda.ve || nb(pr.duda.dice) === '?'), `paso ${n}: la etiqueta dice «?» mientras no hay quien compre y quien venda`, pr.duda]);
+    r.push([pr.fantasmas.length === (sobra ? 3 - pr.monedas : 0) && pr.fantasmas.every(v => v > 0),
+      `paso ${n}: ${sobra ? 'las monedas que se fueron quedan dibujadas con raya cortada' : 'no hay monedas con raya cortada'}`, pr.fantasmas]);
+    const rco = x.rotulos.find(t => t.k === 'compran');
+    r.push([!!rco && rco.ve === (n >= 1) && (!rco.ve || (nT > 0 && rco.tinta.x1 < Math.min(...tazas.map(t => t.c[0])) - 5 && Math.abs((rco.tinta.y0 + rco.tinta.y1) / 2 - tazas[0].c[1]) <= 6)),
+      `paso ${n}: ${n >= 1 ? '«compran», a la izquierda de las tazas' : 'todavía no hay quien compre'}`, rco && rco.ve]);
+
+    /* ── El marcador y la frase ── */
+    const frase = nb(e.texto);
+    if (n === 0) r.push([nb(e.cifra) === '?' && nb(e.palabras) === 'el precio de su quintal', 'paso 0: el marcador dice «?», como la etiqueta', [e.cifra, e.palabras]]);
+    if (n === 1 || n === 2) r.push([nb(e.cifra) === String(luces.length) && nb(e.palabras) === (luces.length === 1 ? 'continente que lo compra' : 'continentes que lo compran'),
+      `paso ${n}: el marcador cuenta los continentes iluminados (${luces.length})`, [e.cifra, e.palabras]]);
+    if (n === 3 || n === 4) r.push([nb(e.cifra) === String(nS) && nb(e.palabras) === `quintales para ${nT} que compran`,
+      `paso ${n}: el marcador cuenta los quintales y las tazas que se ven (${nS} para ${nT})`, [e.cifra, e.palabras]]);
+    if (n === 5) r.push([nb(e.cifra) === '?' && nb(e.palabras) === 'lo que vino a tu casa', 'paso 5: el marcador dice «?», como el de la casa', [e.cifra, e.palabras]]);
+    if (n === 1) r.push([frase.includes('Europa') && frase.includes('océano'), 'paso 1: la frase dice que el café cruza el océano hasta Europa', frase]);
+    if (n === 2) r.push([frase.includes('Asia'), 'paso 2: la frase nombra Asia', frase]);
+    if (n === 3) r.push([frase.includes('poco café') && frase.includes('No alcanza') && frase.includes('pagan bien') && escasez, 'paso 3: la frase dice que no alcanza, y en la mesa hay menos quintales que tazas', frase]);
+    if (n === 4) r.push([frase.includes('mucho café') && frase.includes('Sobra') && frase.includes('mismo quintal') && frase.includes('menos') && sobra,
+      'paso 4: la frase dice que sobra, y en la mesa hay más quintales que tazas', frase]);
+    if (n === 5) r.push([ORDEN.every(k => frase.includes(NOMBRE[k])) && frase.includes('casa') && frase.includes('no cambió nada'), 'paso 5: la frase nombra los tres continentes, la casa y que don Chele no cambió nada', frase]);
+    return r;
+  },
   /* Los Continentes: América, Oceanía y Antártida. «¿Y eso queda lejos?»
      ⚠️ Nada se le cree a la escena. La sonda proyecta por su cuenta
      (Equal Earth, con el meridiano del centro que declara el mapa y la

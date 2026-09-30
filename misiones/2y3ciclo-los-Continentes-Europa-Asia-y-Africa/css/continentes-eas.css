@@ -680,3 +680,46 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* ── La animación del precio (js/animacion-precio.js) ─────────
+   El mapa y la mesa son dibujo y papel: se quedan como son en las dos
+   pantallas, con tinta oscura fija y halo blanco en los nombres. Nada se
+   dice solo con color: cada continente lleva su nombre, la taza sin café
+   tiene «falta» debajo, lo que sobra va en un recuadro de raya cortada que
+   dice «sobran», y las monedas que ya no están se dibujan con raya
+   cortada. */
+.am-raiz .pc-mar { fill: #cfe8f5; stroke: #7fb3cc; stroke-width: 0.8; }
+.am-raiz .pc-tierra { fill: #e3e0d3; stroke: #9a9684; stroke-width: 0.35; stroke-linejoin: round; }
+.am-raiz .pc-agua { fill: #cfe8f5; stroke: #9a9684; stroke-width: 0.35; stroke-linejoin: round; }
+.am-raiz .pc-luz path { stroke-width: 0.7; stroke-linejoin: round; }
+.am-raiz .pc-luz-europa path { fill: #9b7fd6; stroke: #4a3290; }
+.am-raiz .pc-luz-asia path { fill: #f0a13a; stroke: #95560b; }
+.am-raiz .pc-luz-africa path { fill: #4caf6d; stroke: #1f6b3a; }
+.am-raiz .pc-flecha { fill: none; stroke: #1b2838; stroke-width: 1.3; stroke-linecap: round; }
+.am-raiz .pc-punta { fill: #1b2838; }
+.am-raiz .pc-pared { fill: #f5e4c2; stroke: #7b4e2c; stroke-width: 0.6; }
+.am-raiz .pc-techo { fill: #c8553d; stroke: #7b4e2c; stroke-width: 0.6; stroke-linejoin: round; }
+.am-raiz .pc-puerta { fill: #7b4e2c; }
+.am-raiz .pc-nombre { fill: #1b2838; stroke: #ffffff; stroke-width: 3px; stroke-linejoin: round; paint-order: stroke; font-family: 'Fredoka', sans-serif; font-weight: 700; text-anchor: middle; }
+.am-raiz .pc-lugar { fill: #1b2838; stroke: #ffffff; stroke-width: 2.6px; stroke-linejoin: round; paint-order: stroke; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+.am-raiz .pc-duda { fill: #ffffff; stroke: #1b2838; stroke-width: 1; stroke-dasharray: 2.2 1.6; }
+.am-raiz .pc-signo { fill: #1b2838; font-family: 'Fredoka', sans-serif; font-weight: 700; text-anchor: middle; }
+.am-raiz .pc-mesa { fill: #fbf6ec; stroke: #c9b89a; stroke-width: 1; }
+.am-raiz .pc-rotulo { fill: #1b2838; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+.am-raiz .pc-taza { fill: #ffffff; stroke: #5b4636; stroke-width: 1.1; stroke-linejoin: round; }
+.am-raiz .pc-asa { fill: none; stroke: #5b4636; stroke-width: 1.1; stroke-linecap: round; }
+.am-raiz .pc-cafe { fill: #6b3f22; }
+.am-raiz .pc-vapor { fill: none; stroke: #8a7a6a; stroke-width: 0.9; stroke-linecap: round; }
+.am-raiz .pc-saco { fill: #d8b77a; stroke: #7a5a2b; stroke-width: 1; stroke-linejoin: round; }
+.am-raiz .pc-amarre { fill: #7a5a2b; }
+.am-raiz .pc-falta { fill: none; stroke: #7a5a2b; stroke-width: 1; stroke-dasharray: 2.5 2; stroke-linejoin: round; }
+.am-raiz .pc-sobran { fill: none; stroke: #7a5a2b; stroke-width: 1; stroke-dasharray: 3 2.2; }
+.am-raiz .pc-etiqueta { fill: #fffdf5; stroke: #7a5a2b; stroke-width: 1; }
+.am-raiz .pc-ojal { fill: #fbf6ec; stroke: #7a5a2b; stroke-width: 0.8; }
+.am-raiz .pc-hilo { fill: none; stroke: #7a5a2b; stroke-width: 0.8; }
+.am-raiz .pc-moneda { fill: #f2c14e; stroke: #8a6100; stroke-width: 0.9; }
+.am-raiz .pc-fantasma { fill: none; stroke: #8a6100; stroke-width: 0.9; stroke-dasharray: 2 1.6; }
+/* La letra blanca del botón que avanza no se lee sobre el teal y el
+   mostaza de esta misión (3,3:1 y 2,9:1): va con el mismo degradado más
+   hondo que Geografía y Coordenadas, que tiene los mismos colores. */
+:root { --am-boton: linear-gradient(135deg, #2a7566, #8f6000); }

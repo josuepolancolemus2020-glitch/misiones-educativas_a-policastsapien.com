@@ -8282,6 +8282,118 @@ Salió roja con cada una.
 Con la CPU frenada seis veces va a 60 cuadros por segundo, y el peor cuadro
 es de 50 ms.
 
+### La trigésima segunda: Continentes: Europa, Asia y África, y lo que enseñó
+
+La tercera de la Ruta del Planeta es **Los Continentes: Europa, Asia y África**
+(`misiones/2y3ciclo-los-Continentes-Europa-Asia-y-Africa/`,
+`js/animacion-precio.js`). La historia es la de don Chele: corta el mismo café
+todos los años, y unos años le pagan bien por el quintal y otros, por el mismo
+quintal, mucho menos, sin haber cambiado nada. El precio se decide donde están
+los que lo compran y los que también lo venden, del otro lado del mundo. La
+animación pone arriba el mapa (dónde) y abajo la mesa del precio (qué pasa):
+
+- el quintal de don Chele, con su precio en «?»;
+- el café cruza el océano hasta Europa: allá lo compran, y en la mesa aparecen
+  dos tazas;
+- en Asia también compran café de Honduras: dos tazas más, y allá llega café de
+  muchas partes;
+- un año llega poco café de otras partes: tres quintales para cuatro tazas. Una
+  se queda sin café, debajo va el quintal que falta con raya cortada, y la pila
+  de monedas de su precio es alta;
+- otro año llega mucho: ocho quintales para las mismas cuatro tazas. Los que no
+  tienen taza encima se amontonan en un recuadro que dice «sobran», y la pila
+  baja a una moneda, con las dos que se fueron en raya cortada;
+- don Chele no cambió nada: cambió cuánto café llegó allá. Y la pregunta es del
+  alumno: qué hay en su casa que vino de Europa, de Asia o de África.
+
+Seis cosas que valen para las que siguen:
+
+1. ⚠️ **La misión no enseñaba por qué cambia el precio, y la historia lo
+   prometía.** Es lo que pasó con la hora en la misión anterior: la historia lo
+   pide y la animación lo cumple. Es la ley de la oferta y la demanda, contada
+   con un caso y sin una sola cifra de precio: el dinero es una pila de monedas
+   que sube y baja, y los quintales y las tazas son dibujo, no datos.
+2. ⚠️ **Quién compra, solo lo que la misión acredita; quién más vende, nadie.**
+   La misión dice que Honduras vende café a la Unión Europea y a Japón y Corea
+   del Sur: por eso se iluminan Europa y Asia, sin nombrar un país. De dónde
+   viene el otro café no lo dice ningún documento del repositorio, así que los
+   quintales llegan «de otras partes» y no se pone a nadie en el mapa. África
+   se nombra al final, en la pregunta del alumno, y no se le inventa un papel.
+   Y solo hay flecha hasta Europa: el café que va a Asia sale por el otro
+   océano, y con el Atlántico en medio esa flecha se saldría del mapa.
+3. ⚠️ **La historia contestaba dos preguntas de la prueba.** «¿Qué vende
+   Honduras a Europa?» (café, banano y textiles) se contestaba con la historia,
+   que cuenta que el café se vende del otro lado del mundo; ahora pide lo de
+   ADEMÁS del café, banano y textiles, en la misión y en la ficha, con la
+   respuesta en la misma letra. En la de pensamiento crítico, «¿por qué son
+   clave para Honduras?» tenía por respuesta la tesis de la historia (ahí están
+   sus socios); ahora pregunta dónde tratan Honduras y África el cambio
+   climático (en la ONU y en las cumbres del clima), que está en el
+   Laboratorio. Y el «café hacia Europa» de exportar o importar, que ya decía su
+   propio caso, pasó a «textiles hacia Europa». Los tres bancos siguen del mismo
+   largo, así que las formas eligen las mismas preguntas.
+4. ⚠️ **Europa y Asia se separan en el archivo compartido, sin tocar los otros
+   dos mapas.** El anillo de Eurasia sigue entero en `TIERRA`, y así lo dibujan
+   Coordenadas y la misión anterior, sin una raya de más; su partición
+   (`eurasia`) sale de la misma costa, cortada por los Urales, el río Ural, el
+   Caspio, la cresta del Cáucaso, el mar Negro y los estrechos. Las dos mitades
+   suman exactamente el anillo, la línea no cruza la costa en ningún punto y
+   veinticuatro ciudades caen del lado que les toca. Las islas llevan ahora su
+   continente («europa» o «asia»). Y el agua de dentro de la tierra se pinta
+   encima de las luces: si no, el mar Negro se iluminaba con Europa.
+5. **El mapa tiene el Atlántico en medio y la costura en el estrecho de Bering**
+   (el meridiano del centro es el 10° E). Ningún continente sale partido; la
+   Antártida da la vuelta entera y va de una pieza.
+6. ⚠️ **Volviendo con «Atrás», el precio vuelve enseguida.** Del año de mucho
+   café al de poco, los quintales de más se iban al instante y las monedas
+   esperaban lo que esperan al llegar: la etiqueta decía un momento «le pagan
+   menos» en el año en que le pagan bien. Se vio con fotos a medio viaje yendo
+   hacia atrás, con la sonda en verde. Y el quintal de arriba del montón llegaba
+   volando por encima de los de abajo: ahora llega el último.
+
+La sonda de esta escena **no le cree nada a la escena**:
+
+- proyecta por su cuenta con Equal Earth y busca en el dibujo los 1 498 puntos
+  de los contornos;
+- le pregunta al navegador dónde caen 50 lugares de verdad: Europa tiene que
+  llevar Ufá, Astracán y Tracia; Asia, Ekaterimburgo, Anatolia, Tiflis y el
+  Sinaí; África, El Cairo y Madagascar; y ninguno, Tegucigalpa ni Groenlandia;
+- comprueba que el agua quede encima de las luces y que la flecha vaya de la
+  casa a Europa por el océano;
+- en la mesa, empareja cada taza con el quintal que tiene debajo: tiene café la
+  que tiene quintal, «falta» va debajo de la que no, y el recuadro de «sobran»
+  encierra justo los quintales sin taza;
+- de ahí saca el precio: con menos quintales que tazas, la pila alta; con más,
+  baja, con las que se fueron en raya cortada;
+- el quintal de don Chele no se mueve de un paso a otro, se vende los dos años
+  y la etiqueta cuelga de su cuello;
+- y el marcador y cada frase dicen lo que se ve, sin una palabra de la prueba ni
+  un número de más.
+
+Se comprobó al revés con dieciséis averías, plantadas una por una:
+
+- el quintal de don Chele corrido cuatro puntos el año de mucho café;
+- la cuarta taza con café sin quintal debajo;
+- la pila alta en el año de mucho café;
+- el marcador del paso 4 diciendo 7;
+- el recuadro de «sobran» dejando fuera un quintal;
+- lo que falta, debajo de otra taza;
+- la flecha llegando a África;
+- la frontera de Europa y Asia corrida al este de Ekaterimburgo;
+- el agua debajo de las luces;
+- «banano» en una frase;
+- las monedas que se fueron, sin raya cortada;
+- Asia iluminada antes de nombrarla;
+- el «?» del precio quedándose en el año de poco café;
+- la casa en Guatemala;
+- la frase del año de poco café diciendo que le pagan menos;
+- la tercera taza llegando un paso tarde.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro
+es de 67 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -8344,9 +8456,14 @@ con fotos a medio viaje yendo hacia atrás. Y en una misión de lugares, el luga
 de la escena tampoco puede ser el de la prueba: se elige otro, con números que
 no salgan en ninguna pregunta, y la sonda lo comprueba sobre el dibujo.
 Una escena que necesite el mundo lee los contornos de `js/data/contornos-mundo.js`,
-nunca los copia. Y un lugar de la costa (una ciudad, un puerto) cae justo sobre
+nunca los copia. Si necesita Europa y Asia por separado, usa su partición
+(`eurasia`), que está ahí mismo, y pinta el agua de dentro de la tierra encima
+de las luces. Y un lugar de la costa (una ciudad, un puerto) cae justo sobre
 el contorno: en el borde `isPointInFill` contesta que no, así que la sonda lo
-prueba con un margen alrededor.
+prueba con un margen alrededor. Volviendo con «Atrás», lo que dice el
+resultado de un paso (un precio, una cuenta) vuelve con lo que lo produce, no
+con la demora que tiene al llegar: si no, dice un momento lo contrario de lo
+que el paso enseña.
 
 Si el `--sec` de la misión es claro (un ámbar, un amarillo), la letra blanca
 del botón que avanza no se lee en su punta: la misión declara en su CSS

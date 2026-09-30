@@ -20,8 +20,12 @@
    2. Nueva Guinea entera va con Oceanía, como la pone la misión de los
       continentes: «Australia, Nueva Zelanda, Papúa Nueva Guinea y miles de
       islas del Pacífico».
-   3. Europa y Asia son UN solo anillo, «eurasia». Partirlo en los Urales
-      es trabajo de la misión que las enseñe, y no se inventa aquí.
+   3. Europa y Asia son UN solo anillo en TIERRA, el 12, «eurasia», porque
+      son una sola tierra: así lo dibujan los mapas que no las separan, sin
+      una raya de más. Sus islas sí llevan su continente («europa» o
+      «asia»), y el anillo grande se parte en EURASIA, más abajo, para la
+      misión que las ilumina por separado. Chipre va con Asia: está frente a
+      su costa, y aquí manda la geografía, no la política.
 
    ⚠️ La costa de la Antártida en el meridiano 180 está a 78,5° S por los
    dos lados. La copia de Coordenadas decía 84° por el lado de −180 y 78,5°
@@ -192,14 +196,18 @@
     [-149.6,-17.5,-149.3,-17.55,-149.15,-17.8,-149.5,-17.85]   // Tahití
   ];
 
-  /* El continente de cada anillo de TIERRA, en el mismo orden. */
+  /* El continente de cada anillo de TIERRA, en el mismo orden. Las islas
+     de Asia: Sri Lanka (15), Hainán, Taiwán, las cuatro grandes de Japón,
+     Sajalín, Luzón, las Bisayas, Mindanao, Borneo, Sumatra, Java y Célebes
+     (29). Las de Europa: Islandia (35), Gran Bretaña, Irlanda, Svalbard,
+     Nueva Zembla, Sicilia, Cerdeña, Córcega y Creta (43). Chipre, el 44. */
   var CONTINENTE = [
     'america', 'america', 'america', 'america', 'america', 'america', 'america', 'america',   // 0–7
-    'america', 'america', 'america', 'america', 'eurasia', 'africa', 'africa', 'eurasia',   // 8–15
-    'eurasia', 'eurasia', 'eurasia', 'eurasia', 'eurasia', 'eurasia', 'eurasia', 'eurasia',   // 16–23
-    'eurasia', 'eurasia', 'eurasia', 'eurasia', 'eurasia', 'eurasia', 'oceania', 'oceania',   // 24–31
-    'oceania', 'oceania', 'oceania', 'eurasia', 'eurasia', 'eurasia', 'eurasia', 'eurasia',   // 32–39
-    'eurasia', 'eurasia', 'eurasia', 'eurasia', 'eurasia', 'antartida', 'oceania', 'oceania',   // 40–47
+    'america', 'america', 'america', 'america', 'eurasia', 'africa', 'africa', 'asia',   // 8–15
+    'asia', 'asia', 'asia', 'asia', 'asia', 'asia', 'asia', 'asia',   // 16–23
+    'asia', 'asia', 'asia', 'asia', 'asia', 'asia', 'oceania', 'oceania',   // 24–31
+    'oceania', 'oceania', 'oceania', 'europa', 'europa', 'europa', 'europa', 'europa',   // 32–39
+    'europa', 'europa', 'europa', 'europa', 'asia', 'antartida', 'oceania', 'oceania',   // 40–47
     'oceania', 'oceania', 'oceania', 'oceania', 'oceania', 'oceania', 'oceania', 'oceania',   // 48–55
     'oceania', 'oceania', 'oceania', 'oceania'   // 56–59
   ];
@@ -212,6 +220,47 @@
       53.9,37.2,51.5,36.8,49.5,37.5,48.9,38.4,49.4,40.2,48.8,41.4,47.5,43,47.1,44.2]
   ];
 
+  /* ── Europa y Asia, por separado ─────────────────────────────────
+     El anillo 12 se parte en dos por la línea con que se las separa: los
+     Urales, el río Ural, el Caspio, la cresta del Cáucaso, el mar Negro, el
+     Bósforo y los Dardanelos. La línea sale de un vértice de la costa del
+     mar de Kara (el 309, donde los Urales llegan al mar) y llega a uno de
+     los Dardanelos (el 59), así que las dos mitades se arman con la misma
+     costa, sin un punto inventado: Asia, del 59 al 309 hacia el este, y
+     vuelve por la línea; Europa, del 309 al 59 por el norte y el oeste, y
+     vuelve por la línea al revés. Juntas suman el anillo entero.
+
+     ⚠️ Es una convención, no una costa, y la misión lo dice: «se
+     consideran continentes distintos por sus diferencias culturales e
+     históricas». Por el Cáucaso corre la cresta, que es la que usan los
+     atlas de hoy; hay quien la pasa más al norte, por la depresión del
+     Kuma-Manych, y a esta escala la diferencia es de un par de puntos.
+
+     Por el Caspio y el mar Negro la línea va por el agua, que se pinta
+     encima de la tierra: de la raya solo se ve lo que va por tierra. */
+  var DESDE_KARA = 309, HASTA_DARDANELOS = 59;
+  var LIMITE = [
+    65.8,68.2, 64.8,66.8, 63,65.8, 60.4,65, 59.3,63.8, 59.3,62.3, 59.1,60.6, 59.4,59, 59.9,57.5, 59.7,56.2,   // los Urales
+    59.3,54.6, 59,53.4, 58.9,52.4, 58.6,51.2, 57.3,51.5, 55.1,51.8, 53.4,51.4, 51.4,51.2, 51.5,50,   // el río Ural
+    51.9,48.8, 51.9,47.5,
+    51.8,46.9, 50.2,41.6,   // el Caspio
+    49.1,40.9, 48.4,41.3, 47.4,41.6, 46.4,42, 45.4,42.5, 44.5,42.7, 43.4,43, 42.4,43.35, 41.2,43.6,   // el Cáucaso
+    40.2,43.8, 39.2,44.2, 38.2,44.6, 37.4,44.95,
+    29.2,41.2,   // el mar Negro, hasta el Bósforo
+    28.3,40.8, 27.3,40.5   // hasta los Dardanelos
+  ];
+  function partirEurasia() {
+    var c = TIERRA[12], n = c.length / 2, i, europa = [], asia = [];
+    function v(k, a) { a.push(c[2 * k], c[2 * k + 1]); }
+    for (i = HASTA_DARDANELOS; i !== DESDE_KARA; i = (i + 1) % n) v(i, asia);
+    v(DESDE_KARA, asia);
+    for (i = 0; i < LIMITE.length; i += 2) asia.push(LIMITE[i], LIMITE[i + 1]);
+    for (i = DESDE_KARA; i !== HASTA_DARDANELOS; i = (i + 1) % n) v(i, europa);
+    v(HASTA_DARDANELOS, europa);
+    for (i = LIMITE.length - 2; i >= 0; i -= 2) europa.push(LIMITE[i], LIMITE[i + 1]);
+    return { europa: europa, asia: asia };
+  }
+
   if (CONTINENTE.length !== TIERRA.length) throw new Error('contornos-mundo: cada anillo necesita su continente');
-  raiz.CONTORNOS_MUNDO = { tierra: TIERRA, continente: CONTINENTE, agua: AGUA };
+  raiz.CONTORNOS_MUNDO = { tierra: TIERRA, continente: CONTINENTE, agua: AGUA, eurasia: partirEurasia() };
 })(this);

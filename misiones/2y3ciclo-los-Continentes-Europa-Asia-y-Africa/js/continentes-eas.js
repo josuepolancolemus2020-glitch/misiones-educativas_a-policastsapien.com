@@ -883,7 +883,7 @@ const evalMCBank=[
   {q:'¿Cuál de estos monumentos está en Europa?',o:['a) la Gran Muralla','b) el Coliseo','c) el Taj Mahal','d) Angkor Wat'],a:1,k:'mc-coliseo'},
   {q:'¿Qué cordilleras están en Europa?',o:['a) los Andes','b) las Rocosas','c) los Alpes y los Pirineos','d) la sierra Madre'],a:2,k:'mc-alpes'},
   {q:'¿Qué ríos son de Europa?',o:['a) el Danubio y el Rin','b) el Congo y el Níger','c) el Amazonas','d) el Mississippi'],a:0,k:'mc-danubio'},
-  {q:'¿Qué vende Honduras a Europa?',o:['a) autos','b) petróleo','c) trenes','d) café, banano y textiles'],a:3,k:'mc-exporta'},
+  {q:'Además del café, ¿qué más vende Honduras a Europa?',o:['a) autos','b) petróleo','c) trenes','d) banano y textiles'],a:3,k:'mc-exporta'},
   {q:'¿Qué música tiene raíces africanas?',o:['a) la ópera','b) el jazz y el blues','c) el vals','d) el tango'],a:1,k:'mc-jazz'},
   {q:'¿Qué idiomas europeos se hablan hoy en muchos países africanos?',o:['a) chino y japonés','b) hindi','c) francés, inglés y portugués','d) náhuatl'],a:2,k:'mc-idiomas-europeos'},
   {q:'¿Qué montaña africana mide 5,895 m?',o:['a) Kilimanjaro','b) Everest','c) Mont Blanc','d) Aconcagua'],a:0,k:'mc-kilimanjaro'},
@@ -1287,7 +1287,7 @@ const critInterpBank = [
   { q:'¿Cuál de los tres continentes tiene MÁS países?', o:['Europa (44)','Asia (48)','África (54)'], a:2, why:'África tiene 54 países, la mayor cantidad de los tres.' },
   { q:'Europa recibe cerca del 50% del turismo mundial. ¿Qué actividad económica es clave para Europa?', o:['La minería','El turismo','La pesca'], a:1, why:'El turismo es una actividad económica clave de Europa.' },
   { q:'Asia es más de 4 veces mayor que Europa. ¿Qué dato lo confirma?', o:['44.6M km² frente a 10.5M km²','48 frente a 44 países','Everest frente a Alpes'], a:0, why:'44.6M km² es más de 4 veces los 10.5M km² de Europa.' },
-  { q:'Estos 3 continentes reúnen el 80% de la población mundial. ¿Por qué son clave para Honduras?', o:['Concentran sus principales socios comerciales y de cooperación','No tienen relación con Honduras','Solo le venden petróleo'], a:0, why:'En ellos están los principales socios comerciales y de cooperación de Honduras.' }
+  { q:'Honduras y los países de África comparten desafíos como el cambio climático. ¿Dónde los tratan juntos?', o:['En la ONU y en las cumbres del clima','En la OEA','En ninguna parte: no se relacionan'], a:0, why:'Honduras y África se relacionan en la ONU y van juntos a las cumbres del clima.' }
 ];
 // ── III. Causa y consecuencia (relaciones reales de la misión)
 const critCCBank = [
@@ -1306,7 +1306,7 @@ const critTradeBank = [
   { p:'Mariscos hacia Japón y Corea del Sur', t:'exporta' },
   { p:'Banano hacia la Unión Europea', t:'exporta' },
   { p:'Maquinaria fabricada en China', t:'importa' },
-  { p:'Café hacia Europa', t:'exporta' },
+  { p:'Textiles hacia Europa', t:'exporta' },
   { p:'Ropa fabricada en China', t:'importa' },
   { p:'Palma africana hacia la UE', t:'exporta' },
   { p:'Autos japoneses', t:'importa' }

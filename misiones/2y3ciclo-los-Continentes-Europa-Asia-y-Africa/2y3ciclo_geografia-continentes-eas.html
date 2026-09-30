@@ -25,6 +25,9 @@
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
 <link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La animación que explica el tema: el aparato es compartido y va DESPUÉS
+     del CSS de la misión, que es de donde saca sus colores. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- Estilos de la Prueba de Pensamiento Crítico (2ª evaluación de la misión) -->
 <style>
   .eval-mode-toggle{display:flex;gap:0.6rem;margin-bottom:1.2rem;flex-wrap:wrap;}
@@ -108,6 +111,24 @@
     son <strong>el mapa de a quién le vende Honduras, a quién le compra y con quién compite</strong>. Mientras
     los estudias, pregúntate una cosa: ¿qué de lo que hay hoy en tu casa vino de estos tres
     continentes?</div></div>
+  </div>
+  <!-- La animación que explica el tema, justo después de la historia: el
+       quintal de don Chele cruza el océano hasta Europa, en Asia también lo
+       compran, y en la mesa del precio se ve por qué el mismo quintal vale
+       más un año y menos otro: depende de cuánto café llega de otras
+       partes. La mueve el alumno, paso a paso. El aparato es compartido
+       (js/animacion-mision.js), los contornos del mundo también
+       (js/data/contornos-mundo.js) y la escena es de esta misión
+       (js/animacion-precio.js). La frase de dentro es de reserva: si el
+       aparato no llega a cargar, se lee eso en vez de un hueco. -->
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira dónde se pone el precio del café</h2>
+    <div id="amPrecio">
+      <p>El café de don Chele cruza el océano hasta Europa, y en Asia también compran café de
+      Honduras. Allá les llega café de muchas partes: el año que llega poco, no alcanza para todos
+      y a don Chele le pagan bien; el año que llega mucho, sobra, y por el mismo quintal le pagan
+      mucho menos. Él no cambió nada: cambió cuánto café llegó allá.</p>
+    </div>
   </div>
   <div class="card ac-teal">
     <h2>🌐 ¿Qué son los continentes?</h2>
@@ -603,6 +624,9 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+<script src="../../js/animacion-mision.js"></script>
+<script src="../../js/data/contornos-mundo.js"></script>
+<script src="js/animacion-precio.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>
