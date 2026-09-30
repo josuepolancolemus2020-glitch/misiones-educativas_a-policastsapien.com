@@ -10712,6 +10712,146 @@ medido en el navegador. Plantada con una tarjeta más angosta, sale roja.
 Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
 de 117 ms. Los Mayas, medida el mismo día, van a 60 y 50 ms.
 
+### La quincuagésima: Secuencias: el Robot Mensajero, y lo que enseñó
+
+La segunda de la Ruta del Código es **Secuencias: el Robot Mensajero**
+(`misiones/2y3ciclo-robot-mensajero/`, `js/animacion-mandado.js`). La historia
+es la de Marvin: lo mandaron a la pulpería con dos encargos, traer una libra de
+azúcar y de paso pagar el fiado. Hizo los dos en el orden al revés: pagó el
+fiado con todo el dinero, se vino sin azúcar y le tocó volver. La historia
+termina diciendo que un robot no tiene cómo darse cuenta de eso, y que se va a
+venir sin azúcar todas las veces. La animación es ese robot, el de la misión: a
+la izquierda su lista de cinco instrucciones, con el número de cada lugar; a la
+derecha la aldea en casillas, con la casa de Marvin, la del vecino y la
+pulpería. El robot lleva el recado:
+
+- el robot, su recado y su lista: ¿en qué casa lo va a dejar?;
+- la lista se hace de arriba abajo, una a una: el robot dobla antes de tiempo
+  y deja el recado en la casa del vecino, con su ✗;
+- otra vez, con la misma lista: el mismo camino y la misma casa, y el segundo
+  recado queda al lado del primero. El robot no tiene cómo saber que esa no
+  era;
+- con el camino a la pulpería al lado (raya cortada), la lista se hace otra
+  vez hasta donde se tuerce: en la 2 dobla y el camino todavía sigue derecho;
+- las mismas cinco, y la 2 y la 3 cambian de lugar;
+- la lista arreglada: el robot va por el camino y el recado llega a la
+  pulpería, con su ✓;
+- los dos resultados a la vista, y la pregunta es del alumno: escribir la
+  lista para que el robot vuelva a la casa de Marvin.
+
+Nueve cosas que valen para las que siguen:
+
+1. ⚠️ **Cada instrucción empieza donde la dejó la anterior.** Es lo que esta
+   misión enseña más allá de «el orden importa»: el mismo AVANZA lleva a otra
+   casilla según hacia dónde quedó mirando el robot. Por eso el robot se mueve
+   con una pieza por instrucción, una dentro de otra, y se voltea con otras
+   tantas, DENTRO de las que lo mueven: así cada vuelta es alrededor de su
+   centro y cada paso va hacia donde mira en ese momento.
+2. ⚠️ **A qué casilla llega no se escribe: sale de la lista.** La escena simula
+   la lista que está en el dibujo, y la sonda la vuelve a simular por su
+   cuenta, leyendo el orden de las tarjetas en el dibujo, desde la casa de
+   Marvin y mirando a la derecha, que es lo que se ve en el paso 0. Con eso
+   compara la casilla del robot, hacia dónde apunta su nariz, cuántos recados
+   hay en cada casa y cada tramo del rastro.
+3. ⚠️ **Lo que va debajo no se regala.** Justo debajo, la misión pregunta
+   hacia dónde mira el robot si mira al Norte y ejecuta GIRA DERECHA. Por eso la
+   animación no tiene rosa de los vientos, no nombra un punto cardinal (el Norte
+   arriba, el Sur abajo y el Oeste a la izquierda son preguntas de la prueba) y
+   solo usa GIRA IZQUIERDA: hacia dónde mira el robot lo dice su nariz. Tampoco
+   dice cuántos grados gira, ni «secuencia», «algoritmo», «bug», «depurar»,
+   «trazar» o «estado», y no hay árboles ni borde con que chocar.
+4. **La misma lista da la misma casa, todas las veces.** Es la promesa de la
+   historia, y se ve: la segunda vez el robot hace el mismo camino y el recado
+   queda al lado del primero.
+5. **El robot camina a paso parejo** (`.am-viaja`), porque su rastro se dibuja
+   mientras camina: con la curva de siempre, el robot llegaba antes que su raya.
+6. ⚠️ **El id de la escena tiene que ser único en todo el catálogo.** Se llamó
+   primero `#amRecado`, y ese ya era de Los Adverbios. La sonda del navegador
+   guarda lo que lee cada escena por su id, así que el lector nuevo pisó al
+   viejo y la revisión de Los Adverbios reventó con el lector que no era. Ahora
+   es `#amMandado`, y la sonda estática exige que ningún id se repita entre
+   misiones. Se comprobó al revés, devolviéndole el id viejo: sale roja con el
+   nombre de la otra misión.
+7. ⚠️ **La historia y la animación contestaban cuatro preguntas.** La historia,
+   qué hizo mal Marvin en la pulpería y a qué fue; la animación, qué puede
+   pasar si cambias dos instrucciones de lugar y qué cambia el orden. Ahora
+   preguntan de la primera a la última, qué dice el número de la casilla D2, cuántos GIRA
+   DERECHA hacen un GIRA IZQUIERDA y dónde queda el robot después de dos
+   AVANZA desde B4 mirando al Norte. Las cuatro las enseñan la misión y la
+   ficha, van con la respuesta en el mismo sitio y la ficha sigue en sus siete
+   hojas. La felicitación de la ficha nombraba la cuadrícula (una respuesta del
+   completar) y los bugs (un pareado): ahora solo pide revisar.
+8. ⚠️ **Que un nombre sea el de la casa más cercana no basta.** La primera
+   sonda lo pedía así, y el rótulo «vecino» puesto encima de una casilla vacía
+   pasaba. Ahora el nombre tiene que ir en la columna de su casa y pegado a
+   ella, encima o debajo.
+9. **Lo que se queda quieto no puede tapar lo que dice.** En el paso 3 la flecha
+   se queda en la instrucción 2, y el ✓ de esa instrucción quedaba escondido
+   debajo. Si la corrida se detiene, la última que hizo no lleva ✓: la señala
+   la flecha. Se vio en las fotos a medio viaje, con la sonda en verde.
+
+⚠️ **Y una sonda que ponía roja una misión sana.** `verifica-mision-navegador`
+exigía que la operativa dijera «N/100», y en las misiones de la Ruta del Código
+la operativa califica sola 70 puntos y deja 30 al maestro (la parte de
+escribir): dice «N/70» y «Falta calificar». `js/metas-registro.js` lee la base
+que venga, así que la nota llega bien. Ahora la sonda acepta la base menor solo
+cuando el panel dice qué falta calificar.
+
+La sonda de esta escena **no le cree nada a la escena**. Comprueba:
+
+- que los lugares vayan del 1 al 5 a la misma distancia, que estén las cinco
+  tarjetas y que cada una diga su instrucción y le quepa;
+- que hasta el paso 3 la lista esté en el orden del error, y desde el 4 que
+  solo dos vecinas hayan cambiado de lugar;
+- que la aldea sea de tres casillas por tres, partida en casillas iguales, que
+  cada casa quepa en su casilla y lleve su nombre en su columna, pegado a ella;
+- que el robot esté en la casilla y mire hacia donde lo dejan las instrucciones
+  hechas, que cada AVANZA hecho lo haya movido una casilla hacia donde miraba y
+  cada GIRA IZQUIERDA lo haya volteado sin moverlo;
+- que con la lista del error el recado quede en la casa del vecino y con la
+  arreglada en la pulpería, que haya justo los recados de cada paso, que el
+  robot no tape ninguno, y que la ✗ y el ✓ vayan encima de su casa;
+- que cada tramo del rastro vaya de casilla en casilla por donde pasa el robot
+  con esa lista, y que la lista arreglada vaya justo por el camino a la
+  pulpería;
+- que en el paso 3 el robot esté sobre el camino con la nariz hacia otro lado,
+  que el anillo lo rodee y que la tarjeta marcada sea la que lo volteó, y no
+  antes de que la flecha llegue a ella;
+- que en las corridas el robot haga cada instrucción mientras la flecha está en
+  su renglón, con el rastro saliendo con él;
+- que el marcador cuente lo que se ve;
+- y que no salga ninguna palabra de lo que pregunta la prueba.
+
+Se comprobó al revés con veintidós averías, plantadas una por una:
+
+- una tarjeta que dice otra instrucción;
+- la lista arreglada cambiando tres de lugar;
+- la corrida arreglada sin seguir a la lista;
+- GIRA IZQUIERDA volteando hacia el otro lado;
+- AVANZA moviendo dos casillas;
+- el robot saliendo de otra casilla;
+- el primer recado quedando en la pulpería;
+- el robot tapando un recado;
+- la ✗ encima de la pulpería;
+- el ✓ dibujado como una ✗;
+- el marcador del paso 2 diciendo 1;
+- «Norte» en una frase;
+- la flecha saltando dos renglones de una vez;
+- el robot moviéndose antes de que llegue la flecha;
+- el rastro sin salir con el robot;
+- el camino a la pulpería sin llegar a ella;
+- el anillo en otra casilla;
+- la tarjeta del paso 3 marcándose antes de tiempo;
+- el ✓ de la 2 escondido debajo de la flecha;
+- el recado quedándose en el robot después de entregarlo;
+- el rótulo «vecino» encima de otra casilla;
+- el camino a la pulpería desde el principio.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
+de 83 ms. La baleada, medida el mismo día, va a 59 y 100 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -10853,7 +10993,10 @@ que es de hoy (una persona) no se para sobre ella, va al lado, donde se acaba.
 Y una raya cortada son guiones cortos: la raya con que se dibuja un trazo
 (`A.trazar`) es un solo guion del largo del camino, y la sonda no las confunde.
 Dos rótulos no van uno debajo del otro a menos de un renglón: se leen como un
-solo rótulo de dos renglones.
+solo rótulo de dos renglones. El nombre de una casa va en la columna de su casa
+y pegado a ella: que sea el más cercano no basta. Y el id de la escena
+(`#amX`) es único en todo el catálogo: la sonda del navegador guarda lo que lee
+cada escena por su id, y la sonda estática no deja pasar uno repetido.
 
 Si la misión es **bilingüe** (carga su `-en.js` y trae el botón 🌐), la escena
 lleva `bilingue: true`, `describe: { es, en }` e `idioma(lang, A)`, y sus

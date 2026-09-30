@@ -104,8 +104,15 @@ const BASE = process.env.METAS_BASE || 'http://localhost:8080';
     await page.evaluate(() => gradeEvalOp());
     await page.waitForTimeout(300);
     const notaOp = await page.textContent('#evalOpAutoResult');
-    if (!/Resultado[^:]*:\s*\d+\s*\/\s*100/.test(notaOp || '')) mal('el panel operativo no anuncia «Resultado … N/100»');
-    else bien('operativa calificada');
+    /* La operativa puede tener una parte que califica el maestro (la de
+       escribir), y entonces lo automático es sobre menos de 100: «N/70», con
+       «Falta calificar» dicho en el mismo panel. js/metas-registro.js lee la
+       base que venga, así que eso es correcto; exigir «/100» ponía roja una
+       misión sana. Lo que no vale es otra base sin decir qué falta. */
+    const mOp = (notaOp || '').match(/Resultado[^:]*:\s*\d+\s*\/\s*(\d+)/);
+    const baseOp = mOp ? +mOp[1] : 0;
+    if (!mOp || !(baseOp === 100 || (baseOp < 100 && /Falta calificar/.test(notaOp)))) mal('el panel operativo no anuncia «Resultado … N/100», ni dice qué parte falta calificar');
+    else bien('operativa calificada' + (baseOp < 100 ? ` (lo automático, sobre ${baseOp}; lo demás lo califica el maestro)` : ''));
   }
 
   console.log('\n🔁 Determinismo de las formas');
