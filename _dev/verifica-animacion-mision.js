@@ -1712,6 +1712,55 @@ const LEER = `
       textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
     };
   };
+  window.__amExtra.amAtajo = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(m(el)); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function uno(sel) { return raiz.querySelector(sel); }
+    function todos(sel) { return [].slice.call(raiz.querySelectorAll(sel)); }
+    function recorrido(path, n) {
+      var L = path.getTotalLength(), out = [];
+      for (var i = 0; i <= n; i++) { var q = path.getPointAtLength(L * i / n); out.push(aVista(path, q.x, q.y)); }
+      return out;
+    }
+    /* Un camino de señal: sus tramos, si cada uno está dibujado (la raya
+       corrida a cero) y la punta de la flecha. El largo se mide en la vista. */
+    function senal(g) {
+      var punta = g.querySelector('[data-punta]'), pd = punta ? (punta.getAttribute('d').match(/[0-9.]+/g) || []).map(Number) : null;
+      return {
+        k: g.getAttribute('data-senal'),
+        tramos: [].slice.call(g.querySelectorAll('[data-tramo]')).map(function (t) {
+          var cs = getComputedStyle(t), pts = recorrido(t, 16), L = 0;
+          for (var i = 1; i < pts.length; i++) L += Math.sqrt((pts[i][0] - pts[i - 1][0]) * (pts[i][0] - pts[i - 1][0]) + (pts[i][1] - pts[i - 1][1]) * (pts[i][1] - pts[i - 1][1]));
+          return { pts: pts, largo: L, dibujado: vis(t) && Math.abs(parseFloat(cs.strokeDashoffset) || 0) < 1,
+                   demora: parseFloat(t.style.getPropertyValue('--d')) || 0 };
+        }),
+        punta: punta ? { ve: vis(punta), p: aVista(punta, pd[2], pd[3]) } : null
+      };
+    }
+    var ce = uno('[data-cerebro]'), co = uno('[data-comal]'), me = uno('[data-medula]');
+    return {
+      cerebro: { c: aVista(ce, +ce.getAttribute('cx'), +ce.getAttribute('cy')), caja: caja(ce) },
+      medula: [aVista(me, +me.getAttribute('x1'), +me.getAttribute('y1')), aVista(me, +me.getAttribute('x2'), +me.getAttribute('y2'))],
+      cabeza: caja(uno('[data-cabeza]')), cuerpo: caja(uno('[data-cuerpo]')),
+      comal: { c: aVista(co, +co.getAttribute('cx'), +co.getAttribute('cy')), arriba: aVista(co, +co.getAttribute('cx'), +co.getAttribute('cy') - +co.getAttribute('ry'))[1],
+               x0: aVista(co, +co.getAttribute('cx') - +co.getAttribute('rx'), +co.getAttribute('cy'))[0], x1: aVista(co, +co.getAttribute('cx') + +co.getAttribute('rx'), +co.getAttribute('cy'))[0] },
+      mano: caja(uno('[data-mano]')), musculo: caja(uno('[data-musculo]')),
+      senales: todos('[data-senal]').map(senal),
+      piensa: { ve: vis(uno('[data-piensa]')), caja: caja(uno('[data-piensa]')) },
+      ay: { ve: vis(uno('[data-ay]')), caja: caja(uno('[data-ay]')), dice: uno('[data-dice="ay"]').textContent },
+      nombres: vis(uno('[data-nombres]')),
+      rotulos: todos('[data-rotulo]').map(function (t) { return { k: t.getAttribute('data-rotulo'), ve: vis(t), dice: t.textContent, caja: caja(t) }; }),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   window.__amExtra.amCorte = function (raiz) {
     var vis = window.__amVisible;
     var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
@@ -2013,6 +2062,133 @@ function superficieEn(poly, x) {
 }
 
 const ESCENAS = {
+  /* El Sistema Nervioso. «El atajo de la médula».
+     ⚠️ Nada se le cree a la escena. Las señales se siguen en el dibujo:
+     el aviso nace en los dedos y llega a la médula, pasando por el codo y
+     el hombro sin despegarse aunque el brazo gire; la orden sale de la
+     médula y termina en el músculo del brazo; el camino al cerebro sale de
+     la médula, sube por ella y termina adentro del cerebro. Todas corren a
+     paso parejo: tramos del mismo largo. La mano se mide contra el comal:
+     cerca sin tocarlo, tocándolo, y bien lejos cuando la orden ya llegó;
+     el «¡Ay!» sale cuando la mano ya está afuera. El camino que pasaría por
+     el cerebro se mide contra el atajo, sumando sus tramos. ⚠️ Y la prueba
+     no se regala: ni el nombre del atajo, ni el tipo de neurona, ni
+     «estímulo», ni una velocidad, ni un número de más. */
+  amAtajo(e, n) {
+    const x = e.extra, r = [];
+    const nb = t => String(t == null ? '' : t).replace(/ /g, ' ').trim();
+    const cerca = (a, b, t) => Math.abs(a - b) <= t;
+    const cen = c => [(c.x0 + c.x1) / 2, (c.y0 + c.y1) / 2];
+    const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+    /* Lo que no depende del dibujo, primero. */
+    const dicho = [e.texto, e.cifra, e.palabras].concat(x.textos).map(nb).join(' | ').toLowerCase();
+    const EXACTAS = ['reflejo', 'reflejos', 'arco', 'sensorial', 'sensoriales', 'motora', 'motoras', 'motor', 'aferente', 'aferentes', 'eferente',
+      'eferentes', 'interneurona', 'estímulo', 'estimulo', 'receptor', 'efector', 'neurona', 'neuronas', 'sinapsis', 'axón', 'axon', 'dendrita',
+      'dendritas', 'mielina', 'simpático', 'parasimpático', 'autónomo', 'voluntario', 'involuntario', 'central', 'periférico', 'snc', 'snp',
+      'encéfalo', 'cerebelo', 'tronco', 'bulbo', 'cráneo', 'columna', 'vertebral', 'segundos', 'milisegundos', 'metros', 'velocidad', 'impulso',
+      'impulsos', 'dopamina', 'serotonina', 'acetilcolina', 'gaba', 'alzheimer', 'parkinson', 'epilepsia', 'demencia', 'ataxia', 'casco',
+      'hemisferios', 'taza', 'plancha', 'olla', 'vidrio', 'rodilla', 'meninges', 'corteza'];
+    const FRASES = ['sí mismo'];
+    const suelto = ' ' + dicho.split(/[^a-záéíóúñü]+/).filter(Boolean).join(' ') + ' ';
+    const malas = suelto.trim().split(' ').filter(w => EXACTAS.includes(w)).concat(FRASES.filter(f => suelto.includes(' ' + f + ' ')));
+    r.push([malas.length === 0, `paso ${n}: no sale ninguna palabra de la prueba (ni el nombre del atajo, ni el tipo de neurona, ni «estímulo»)`, malas]);
+    const nums = (dicho.match(/\d+/g) || []).map(Number);
+    r.push([nums.every(k => k === 1 || k === 2), `paso ${n}: ningún número de la prueba`, nums.filter(k => k !== 1 && k !== 2)]);
+    const frase = nb(e.texto);
+    const F = [['Marvin acerca la mano al comal caliente', '¿Quién da la orden de quitarla'],
+      ['La mano toca el comal', 'Un aviso sale de los dedos', 'hasta la médula espinal'],
+      ['En la médula salen dos caminos a la vez', 'orden baja por otro nervio al músculo', 'la mano se quita', 'el aviso sigue al cerebro'],
+      ['El cerebro necesita un momento para darse cuenta', 'llegan el susto y el dolor', 'la mano ya estaba afuera'],
+      ['Si la orden tuviera que salir del cerebro', 'el camino sería más largo', 'La mano seguiría en el comal'],
+      ['El atajo vive en la médula', 'más abajo que el cerebro', '¿Qué más hace tu cuerpo sin que lo decidas?']];
+    r.push([F[n].every(w => frase.includes(w)), `paso ${n}: la frase dice lo que se ve (${F[n].join(', ')})`, frase]);
+
+    /* ── El cerebro, la médula y el comal ── */
+    const M0 = x.medula[0], M1 = x.medula[1], mx = M0[0];
+    const enMedula = p => cerca(p[0], mx, 2) && p[1] >= M0[1] - 1 && p[1] <= M1[1] + 1;
+    const enCaja = (p, b, t) => p[0] >= b.x0 - t && p[0] <= b.x1 + t && p[1] >= b.y0 - t && p[1] <= b.y1 + t;
+    r.push([cerca(M0[0], M1[0], 0.3) && M1[1] - M0[1] > 80 && M0[1] - x.cerebro.caja.y1 < 20 && M0[1] > x.cerebro.c[1] &&
+      mx > x.cuerpo.x0 && mx < x.cuerpo.x1 && M1[1] > x.cuerpo.y0 + 60, `paso ${n}: la médula baja derecha desde el cerebro, por dentro de la espalda`]);
+    r.push([enCaja(x.cerebro.c, x.cabeza, 0) && x.cerebro.caja.y1 < x.cabeza.y1 && x.cerebro.caja.x0 > x.cabeza.x0 - 1, `paso ${n}: el cerebro está adentro de la cabeza`]);
+    const hueco = x.comal.arriba - x.mano.y1;
+    const sobreComal = cen(x.mano)[0] > x.comal.x0 && cen(x.mano)[0] < x.comal.x1;
+    const manoDebe = n === 0 ? hueco > 3 && hueco < 20 && sobreComal : n === 1 ? hueco > -2 && hueco < 2.5 && sobreComal : hueco > 40;
+    r.push([manoDebe, `paso ${n}: la mano ${n === 0 ? 'está cerca del comal sin tocarlo' : n === 1 ? 'toca el comal' : 'ya está lejos del comal'}`, Math.round(hueco * 10) / 10]);
+
+    /* ── Las señales, en el dibujo ── */
+    const S = k => x.senales.find(q => q.k === k);
+    const pts = q => [].concat(...q.tramos.map(t => t.pts));
+    const ini = q => q.tramos[0].pts[0], fin = q => { const t = q.tramos[q.tramos.length - 1].pts; return t[t.length - 1]; };
+    const dib = q => q.tramos.every(t => t.dibujado), nada = q => q.tramos.every(t => !t.dibujado);
+    const L = q => q.tramos.reduce((a, t) => a + t.largo, 0);
+    const AM = S('aviso-mano'), AB = S('aviso-brazo'), AC = S('aviso-cuerpo'), OC = S('orden-cuerpo'), OB = S('orden-brazo'), CE = S('cerebro'), LA = S('largo');
+    r.push([enCaja(ini(AM), x.mano, 3) && dist(fin(AM), ini(AB)) < 1.5 && dist(fin(AB), ini(AC)) < 1.5 && enMedula(fin(AC)),
+      `paso ${n}: el aviso nace en los dedos y llega a la médula sin despegarse en el codo ni en el hombro`, [ini(AM), fin(AC)].map(p => p.map(Math.round))]);
+    r.push([enMedula(ini(OC)) && dist(fin(OC), ini(OB)) < 1.5 && enCaja(fin(OB), x.musculo, 3), `paso ${n}: la orden sale de la médula y termina en el músculo del brazo`]);
+    r.push([enMedula(ini(CE)) && dist(ini(CE), fin(AC)) < 6 && pts(CE).slice(0, -2).every(p => cerca(p[0], mx, 3) || p[1] < M0[1] + 2) && enCaja(fin(CE), x.cerebro.caja, 0),
+      `paso ${n}: el camino al cerebro sale de donde llegó el aviso, sube por la médula y termina adentro del cerebro`]);
+    const puntaBien = q => q.punta && dist(q.punta.p, fin(q)) < 1;
+    r.push([puntaBien(AC) && puntaBien(OB) && puntaBien(CE) && puntaBien(LA), `paso ${n}: cada camino lleva su flecha en la punta, hacia donde va`]);
+    /* A paso parejo: todos los tramos miden casi lo mismo. */
+    const todos = [AM, AB, AC, OC, OB, CE, LA].flatMap(q => q.tramos.map(t => t.largo));
+    const med = todos.slice().sort((a, b) => a - b)[Math.floor(todos.length / 2)];
+    r.push([todos.every(v => v > med * 0.45 && v < med * 1.6), `paso ${n}: las señales corren a paso parejo: tramos de largos parecidos`, todos.map(Math.round)]);
+    /* ⚠️ Y en el paso 2 los dos caminos salen de la médula a la vez, y el
+       aviso NO llega al cerebro antes de que la orden llegue al músculo:
+       si llegara antes, el que mira concluye que el cerebro sí tuvo tiempo.
+       Cada tramo tarda lo mismo, así que se mira cuándo arranca cada uno. */
+    if (n === 2) {
+      const sale = q => Math.min(...q.tramos.map(t => t.demora)), llega = q => Math.max(...q.tramos.map(t => t.demora)) + 800;
+      r.push([sale(CE) === sale(OC) && llega(CE) >= llega(OB),
+        'paso 2: la orden y el aviso al cerebro salen a la vez, y el aviso no llega arriba antes de que la orden llegue al músculo',
+        { sale: [sale(OC), sale(CE)], llega: [llega(OB), llega(CE)] }]);
+    }
+    /* Qué está encendido en cada paso. */
+    const avisoVe = n >= 1, ordenVe = n >= 2;
+    r.push([[AM, AB, AC].every(q => avisoVe ? dib(q) && (!q.punta || q.punta.ve) : nada(q) && (!q.punta || !q.punta.ve)),
+      `paso ${n}: el aviso ${avisoVe ? 'se ve entero, hasta la médula' : 'todavía no sale'}`]);
+    r.push([[OC, OB, CE].every(q => ordenVe ? dib(q) && (!q.punta || q.punta.ve) : nada(q) && (!q.punta || !q.punta.ve)),
+      `paso ${n}: la orden y el camino al cerebro ${ordenVe ? 'se ven' : 'todavía no salen'}`]);
+    r.push([n === 4 ? dib(LA) && LA.punta.ve : nada(LA) && !LA.punta.ve, `paso ${n}: el camino que pasaría por el cerebro ${n === 4 ? 'se ve' : 'no está'}`]);
+    /* El camino largo sale de la médula, sube hasta el cerebro, vuelve a
+       bajar y va al brazo; se mide contra el atajo. */
+    const P = pts(LA);
+    r.push([cerca(ini(LA)[0], mx, 10) && dist(ini(LA), fin(AC)) < 12 && Math.min(...P.map(p => p[1])) < x.cerebro.caja.y1 && dist(fin(LA), ini(OB)) < 6,
+      `paso ${n}: el camino largo sale de la médula, sube al cerebro y vuelve a bajar hasta el brazo`]);
+    const atajo = L(AM) + L(AB) + L(AC) + L(OC) + L(OB), largo = L(AM) + L(AB) + L(AC) + L(LA) + L(OB);
+    r.push([largo > 1.3 * atajo, `paso ${n}: el camino por el cerebro es mucho más largo que el atajo`, [largo, atajo].map(Math.round)]);
+
+    /* ── El cerebro se da cuenta, con la mano ya afuera ── */
+    r.push([x.piensa.ve === (n === 3) && (n !== 3 || x.piensa.caja.y1 < x.cabeza.y0 + 4), `paso ${n}: ${n === 3 ? 'el cerebro se está dando cuenta' : 'no hay puntos de pensar'}`]);
+    r.push([x.ay.ve === (n >= 3) && nb(x.ay.dice) === '¡Ay!' && x.ay.caja.x0 > x.cabeza.x1 - 12 && x.ay.caja.x0 - x.cabeza.x1 < 30 && x.ay.caja.y1 < x.cabeza.y1 + 6 &&
+      (n < 3 || hueco > 40), `paso ${n}: el «¡Ay!» ${n >= 3 ? 'sale junto a la cabeza, con la mano ya lejos del comal' : 'todavía no sale'}`]);
+
+    /* ── Los rótulos ── */
+    const rot = k => x.rotulos.filter(q => q.k === k);
+    const r1 = k => rot(k)[0];
+    const rc = r1('cerebro'), rm = rot('medula').concat(rot('medula2'));
+    r.push([rc && rc.ve && nb(rc.dice) === 'el cerebro' && rc.caja.x0 > x.cabeza.x1 - 10 && rc.caja.y1 < x.cabeza.y1, `paso ${n}: «el cerebro» va junto a la cabeza`]);
+    r.push([rm.map(q => nb(q.dice)).join(' ') === 'la médula espinal' && rm.every(q => q.ve && q.caja.x1 < mx && q.caja.y0 > M0[1] && q.caja.y1 < M1[1]),
+      `paso ${n}: «la médula espinal» va a la izquierda de la médula, a su altura`]);
+    const lento = rot('lento');
+    r.push([lento.length === 2 && lento.every(q => q.ve) && lento.map(q => nb(q.dice)).join(' ') === 'Aquí va en cámara lenta: de verdad es un instante.',
+      `paso ${n}: el aviso de la cámara lenta`]);
+    const ra = r1('atajo'), rl = r1('largo');
+    r.push([x.nombres === (n === 4) && ra && rl && nb(ra.dice) === 'el atajo' && nb(rl.dice) === 'si esperara al cerebro', `paso ${n}: los nombres de los dos caminos ${n === 4 ? 'se ven' : 'no están'}`]);
+
+    /* ── El marcador cuenta en el dibujo ── */
+    const desdeMedula = [OC, CE].filter(q => dib(q)).length;
+    const mk = {
+      0: ['?', 'quién da la orden de quitar la mano'],
+      1: [String([AM].filter(dib).length), 'camino: de la mano a la médula'],
+      2: [String(desdeMedula), 'caminos salen de la médula: al músculo y al cerebro'],
+      3: ['¡Ay!', 'el dolor llega con la mano ya afuera'],
+      4: ['más largo', 'el camino si esperara al cerebro'],
+      5: ['?', 'qué más hace tu cuerpo sin que lo decidas']
+    };
+    r.push([nb(e.cifra) === mk[n][0] && nb(e.palabras) === mk[n][1], `paso ${n}: el marcador dice «${mk[n][0]}» · ${mk[n][1]}`, [e.cifra, e.palabras]]);
+    return r;
+  },
   /* Geografía de Honduras. «¿A qué mar baja el río?».
      ⚠️ Nada se le cree a la escena. El perfil se lee del dibujo: tiene que
      subir sin parar desde cada mar hasta lo más alto y bajar sin parar

@@ -363,8 +363,13 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 // (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
 // tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
 // Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
+//
+// ⚠️ Y ninguna repite la historia de Marvin ni lo que enseña su animación
+// (js/animacion-atajo.js): «Marvin quitó la mano del comal antes de sentir el
+// dolor» era la historia palabra por palabra. Ahora pregunta por el sueño,
+// que la misión enseña entre los hábitos, con la misma respuesta (verdadero).
 const evalTFBank=[
-  {q:'Marvin quitó la mano del comal antes de sentir el dolor.',a:true,k:'tf-comal'},
+  {q:'Dormir las horas necesarias ayuda a la memoria.',a:true,k:'tf-dormir'},
   {q:'El cerebro humano tiene unos 86,000 millones de neuronas.',a:true,k:'tf-86000'},
   {q:'El sistema nervioso voluntario controla el caminar y el escribir.',a:true,k:'tf-voluntario'},
   {q:'La dopamina se relaciona con el movimiento y el placer.',a:true,k:'tf-dopamina'},
@@ -504,13 +509,20 @@ function evalSwitchMode(mode){
   }
 }
 
+// ⚠️ La taza, la plancha y la olla eran la historia de Marvin con otra
+// ropa (una mano que toca algo caliente y se quita sola), y eso es justo lo
+// que enseña la animación (js/animacion-atajo.js). Ahora los casos piden
+// llevar el atajo a otra parte del cuerpo o a otro reflejo de la médula.
+// Y el del parpadeo se fue por otra razón: ese reflejo no lo resuelve la
+// médula sino el tronco del encéfalo, y la pauta de esta sección (y su
+// pregunta 4) hablan de la médula.
 const critCaseBank=[
-  {k:'ca-taza',txt:'Daniela toca accidentalmente una taza muy caliente y retira la mano de inmediato, antes de pensar conscientemente en lo ocurrido.'},
   {k:'ca-vidrio',txt:'Carlos pisa sin darse cuenta un vidrio roto y levanta el pie de inmediato, antes de sentir el dolor por completo.'},
-  {k:'ca-luz',txt:'A Sofía le llega de golpe una luz muy brillante a los ojos y parpadea rápidamente sin proponérselo.'},
-  {k:'ca-plancha',txt:'Luis toca por error una plancha caliente mientras dobla la ropa y retira la mano al instante, antes de darse cuenta del calor.'},
+  {k:'ca-tobillo',txt:'En la consulta, la doctora golpea suavemente el tendón del talón de Rosa con un martillo de reflejos y el pie se le estira hacia abajo, sin que ella lo decida.'},
+  {k:'ca-espina',txt:'Pedro camina descalzo y pisa una espina: levanta ese pie de golpe y, al mismo tiempo, la otra pierna se pone firme para no caerse.'},
+  {k:'ca-codo',txt:'El médico golpea con un martillo de reflejos el tendón de atrás del codo de Lucía y el brazo se le estira solo.'},
   {k:'ca-rodilla',txt:'El médico golpea suavemente la rodilla de Mario con un martillo de reflejos y su pierna se extiende sola, sin que él lo decida.'},
-  {k:'ca-olla',txt:'Ana se acerca demasiado a una olla con agua hirviendo y aparta la mano apenas siente el vapor caliente sobre su piel.'},
+  {k:'ca-talon-bebe',txt:'Al bebé Samuel le pinchan el talón para una prueba, y encoge la pierna al instante, sin que nadie se lo pida.'},
 ];
 const critCaseQuestions=[
   '1. Explica qué ocurrió en su sistema nervioso desde el estímulo hasta la respuesta.',
@@ -518,11 +530,15 @@ const critCaseQuestions=[
   '3. ¿Qué partes del sistema nervioso participaron en esta respuesta?',
   '4. ¿Qué habría pasado si la médula espinal no pudiera enviar la respuesta correctamente?',
 ];
+// La pauta vale para todos los casos: en los del martillo (rodilla, talón,
+// codo) la neurona sensorial pasa el impulso directo a la motora, sin
+// interneurona, y la parte del cuerpo no se aparta de nada: el músculo se
+// contrae y la pierna, el pie o el brazo se estiran.
 const critCaseGuides=[
-  'El estímulo activa un receptor sensorial → la neurona sensorial lleva el impulso a la médula espinal → una interneurona lo procesa y lo envía por una neurona motora → el músculo (efector) se contrae y aleja la parte del cuerpo.',
+  'El estímulo activa un receptor sensorial → la neurona sensorial lleva el impulso a la médula espinal → allí pasa a una neurona motora (a veces por medio de una interneurona) → el músculo (efector) se contrae y mueve esa parte del cuerpo.',
   'Porque es un reflejo: la respuesta se procesa directamente en la médula espinal sin esperar a que el cerebro interprete la sensación, lo que la hace mucho más rápida que una respuesta consciente.',
-  'Receptor sensorial, neurona sensorial, médula espinal (con interneurona), neurona motora y efector (músculo).',
-  'No habría reflejo: la señal tendría que viajar hasta el cerebro y regresar, lo cual es más lento, así que el cuerpo permanecería en contacto con el estímulo dañino más tiempo y la lesión sería mayor.',
+  'Receptor sensorial, neurona sensorial, médula espinal (a veces con una interneurona), neurona motora y efector (músculo).',
+  'No habría reflejo: la respuesta tendría que esperar al cerebro, que es más lento, y ante algo que lastima, el cuerpo se quedaría más tiempo en contacto con eso y la lesión sería mayor.',
 ];
 
 const critErrorBank=[

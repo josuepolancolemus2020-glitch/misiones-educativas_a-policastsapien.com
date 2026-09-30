@@ -481,3 +481,39 @@ body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* ── La animación que explica el tema: «El atajo de la médula»
+   (js/animacion-atajo.js, con el aparato de css/animacion-mision.css).
+   Marvin, el fogón y el comal son como son: se quedan iguales en la
+   pantalla clara y en la oscura. Lo que se lee encima de cualquier cosa va
+   con .am-rotulo, que lleva su halo del color de la tarjeta. El aviso y la
+   orden llevan su punta de flecha, y el camino largo, raya cortada: no se
+   dicen solo con color.
+   ⚠️ El botón que avanza: con el azul de la misión la letra blanca se
+   quedaba en 4,1:1 en su punta. Un azul más hondo la deja en 5:1. */
+:root { --am-boton: linear-gradient(135deg, #6c5ce7, #0a6cc0); }
+.am-raiz .sn-fogon    { fill: #a0694a; stroke: #6e4630; stroke-width: 1.2; }
+.am-raiz .sn-boca     { fill: #3b2a22; }
+.am-raiz .sn-fuego    { fill: #f39c12; stroke: #e74c3c; stroke-width: 0.8; }
+.am-raiz .sn-comal    { fill: #2d3436; stroke: #111; stroke-width: 1; }
+.am-raiz .sn-calor    { fill: none; stroke: #e67e22; stroke-width: 1.4; stroke-linecap: round; }
+.am-raiz .sn-piel     { fill: #d9a066; stroke: #9c6b3c; stroke-width: 0.9; }
+.am-raiz .sn-pelo     { fill: #2d2a26; }
+.am-raiz .sn-ojo      { fill: #2d2a26; }
+.am-raiz .sn-boca-m   { fill: none; stroke: #7a4a2a; stroke-width: 1.2; stroke-linecap: round; }
+.am-raiz .sn-camisa   { fill: #5b8def; stroke: #3b64b5; stroke-width: 1; }
+.am-raiz .sn-manga    { fill: #5b8def; stroke: #3b64b5; stroke-width: 1; }
+.am-raiz .sn-pantalon { fill: #34495e; }
+.am-raiz .sn-cerebro  { fill: #f5b7c5; stroke: #c96f86; stroke-width: 1; fill-opacity: 0.95; }
+.am-raiz .sn-pliegue  { fill: none; stroke: #c96f86; stroke-width: 1; }
+.am-raiz .sn-medula   { stroke: #f5b7c5; stroke-width: 4.5; stroke-linecap: round; }
+.am-raiz .sn-musculo  { fill: #e17055; fill-opacity: 0.85; stroke: #b0513a; stroke-width: 0.8; transform-box: fill-box; transform-origin: center; }
+.am-raiz .sn-nervio   { fill: none; stroke: #fdf1b8; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.am-raiz .sn-aviso    { fill: none; stroke: #f1c40f; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+.am-raiz .sn-orden    { fill: none; stroke: #e84393; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+.am-raiz .sn-largo    { fill: none; stroke: #2d3436; stroke-width: 2.2; stroke-dasharray: 4 3; stroke-linecap: round; stroke-linejoin: round; }
+.am-raiz .sn-punta    { fill: none; stroke: #2d3436; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.am-raiz .sn-hilo     { stroke: #636e72; stroke-width: 0.9; }
+.am-raiz .sn-punto    { fill: #6c5ce7; }
+.am-raiz .sn-globo    { fill: #ffffff; stroke: #2d3436; stroke-width: 1.2; }
+.am-raiz .sn-ay       { fill: #c0392b; font-family: 'Fredoka', sans-serif; font-weight: 600; }

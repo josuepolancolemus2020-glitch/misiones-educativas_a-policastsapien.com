@@ -9015,6 +9015,105 @@ Salió roja con cada una.
 Con la CPU frenada seis veces va a 60 cuadros por segundo, y el peor cuadro es
 de 67 ms.
 
+### La trigésima octava: El Sistema Nervioso, la primera de la Ruta del Cuerpo
+
+Con la Ruta del Planeta terminada, la siguiente es la del Cuerpo, y su primera
+etapa es **El Sistema Nervioso** (`misiones/2y3ciclo-sistema-nervioso/`,
+`js/animacion-atajo.js`). La historia es la de Marvin: se le fue la mano al
+comal caliente y la retiró antes de darse cuenta; primero la mano ya estaba
+afuera, y luego vinieron el susto y el dolor. La historia dice que esa orden no
+la dio el cerebro, porque no le dio tiempo: la dio un atajo que vive más abajo.
+La animación es Marvin de lado, con el cerebro en la cabeza, la médula espinal
+en la espalda y dos nervios por dentro del brazo:
+
+- la mano se acerca al comal: ¿quién da la orden de quitarla?;
+- la mano toca el comal, y un aviso sube de los dedos por el brazo hasta la
+  médula;
+- en la médula salen dos caminos a la vez: la orden baja al músculo y la mano
+  se quita, y el aviso sigue al cerebro;
+- el cerebro necesita un momento para darse cuenta, y cuando se da cuenta llega
+  el «¡Ay!»: la mano ya estaba afuera;
+- si la orden tuviera que salir del cerebro, el camino sería más largo: subir,
+  pensarlo y volver a bajar;
+- el atajo vive en la médula y cuida el cuerpo sin que uno lo piense. ¿Qué más
+  hace tu cuerpo sin que lo decidas?
+
+Seis cosas que valen para las que siguen:
+
+1. ⚠️ **El aviso no puede llegar al cerebro antes de que la mano se quite.** En
+   la primera versión subía por la médula en un solo tramo y llegaba a la cabeza
+   mientras la mano seguía en el comal: el que mira concluye que el cerebro sí
+   tuvo tiempo, que es lo contrario de la historia. Con la sonda en verde, se vio
+   en las fotos a medio viaje. Ahora los dos caminos salen de la médula a la vez
+   y llegan a la vez, en tramos del mismo largo, y la sonda lo mide con la
+   demora de cada tramo. Lo que tarda es darse cuenta, que es el paso siguiente.
+2. **El cerebro no llega tarde por la distancia.** Desde la médula, el camino al
+   cerebro y el camino al músculo miden casi lo mismo. No se dice que el aviso
+   llegue después por tener más camino, porque no es verdad.
+3. **Va en cámara lenta, y se dice**: «de verdad es un instante». No se escribe
+   cuánto, porque la prueba pregunta a qué velocidad viajan los impulsos.
+4. ⚠️ **La historia estaba en la prueba, dos veces.** El verdadero o falso
+   «Marvin quitó la mano del comal antes de sentir el dolor» era la historia
+   palabra por palabra: ahora pregunta si dormir las horas necesarias ayuda a la
+   memoria, que la misión enseña entre los hábitos, con la misma respuesta, en
+   la misión y en la ficha. En pensamiento crítico, tres casos eran la historia
+   con otra ropa (la mano que toca una taza, una plancha y una olla calientes).
+   Ahora son el tobillo y el codo con el martillo de reflejos, la espina que se
+   pisa descalzo y el talón del bebé. Y la pauta se generalizó, porque en los
+   del martillo no hay interneurona y nada se aparta: la pierna o el brazo se
+   estiran.
+5. ⚠️ **Un caso enseñaba el mecanismo equivocado.** El parpadeo ante una luz
+   fuerte no lo resuelve la médula: lo resuelve el tronco del encéfalo, y la
+   pauta del caso (y su pregunta 4) hablan de la médula. Se quitó. De paso, la
+   felicitación de la ficha, que va debajo de los pareados, resumía la misión
+   («el veloz arco reflejo», «el tronco que te mantiene vivo»): dice que revise
+   sus respuestas.
+6. **Nada se dice solo con color.** El aviso y la orden llevan su punta de
+   flecha, y el camino que pasaría por el cerebro va con raya cortada. Marvin, el
+   fogón y el comal son como son en las dos pantallas.
+
+La sonda de esta escena **mide el cuerpo y los caminos en el dibujo**:
+
+- la médula baja derecha desde el cerebro, por dentro de la espalda, y el
+  cerebro está adentro de la cabeza;
+- la mano está cerca del comal sin tocarlo en el paso 0, lo toca en el 1 y está
+  lejos desde el 2;
+- el aviso nace en los dedos y llega a la médula sin despegarse en el codo ni en
+  el hombro; la orden sale de la médula y termina en el músculo; el camino al
+  cerebro sale de donde llegó el aviso y termina adentro del cerebro;
+- cada camino lleva su flecha en la punta, y los tramos miden casi lo mismo;
+- en el paso 2 la orden y el aviso al cerebro salen a la vez, y el aviso no
+  llega antes;
+- el camino que pasaría por el cerebro es mucho más largo que el atajo;
+- los puntos de pensar salen solo en el paso 3, y el «¡Ay!» desde el 3, junto a
+  la cabeza y con la mano ya afuera;
+- y no sale el nombre del atajo, ni el tipo de neurona, ni «estímulo», ni una
+  medida, ni un caso de la prueba.
+
+Se comprobó al revés con dieciséis averías, plantadas una por una:
+
+- la orden naciendo en el cerebro;
+- el aviso llegando al cerebro antes que la orden al músculo;
+- la mano sin tocar el comal en el paso 1;
+- la mano quedándose en el comal en el paso 2;
+- la mano ya en el comal en el paso 0;
+- el «¡Ay!» antes de tiempo;
+- el cerebro fuera de la cabeza;
+- la médula sin salir del cerebro;
+- el marcador del paso 2 diciendo 3;
+- «reflejo» en una frase;
+- los puntos de pensar en el paso 2;
+- el camino largo desde el paso 3;
+- la orden terminando en el hombro;
+- la nota de la cámara lenta cambiada;
+- el aviso sin su flecha;
+- el camino largo sin subir al cerebro.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 60 cuadros por segundo, y el peor cuadro es
+de 67 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -9084,7 +9183,10 @@ el contorno: en el borde `isPointInFill` contesta que no, así que la sonda lo
 prueba con un margen alrededor. Volviendo con «Atrás», lo que dice el
 resultado de un paso (un precio, una cuenta) vuelve con lo que lo produce, no
 con la demora que tiene al llegar: si no, dice un momento lo contrario de lo
-que el paso enseña. Cuando dos cosas se comparan (dos cerros, dos casas), se
+que el paso enseña. Cuando dos señales salen a la vez y el orden en
+que llegan es la lección (la orden al músculo y el aviso al cerebro), van en
+tramos de largo parecido y la sonda mide cuándo llega cada una: la que llega
+primero es la que el que mira cree que mandó. Cuando dos cosas se comparan (dos cerros, dos casas), se
 dibujan con la misma curva y la sonda las compara punto por punto; si lo que
 cae sobre ellas tiene que ser lo mismo (la lluvia), el paso cabe entero en la
 distancia entre las dos; y si una cantidad tiene que ser la misma (lo que suelta

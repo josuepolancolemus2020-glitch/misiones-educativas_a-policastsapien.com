@@ -25,6 +25,9 @@
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
 <link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La animación que explica el tema: el aparato es compartido y va DESPUÉS
+     del CSS de la misión, que es de donde saca sus colores. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -70,6 +73,23 @@
     <div class="tip"><span class="ti">❓</span><div>Esa orden no la dio el cerebro: no le dio tiempo. La
     dio un atajo que vive más abajo, y por eso llegó antes que el pensamiento. Cómo funciona ese atajo
     (y qué más maneja) es de lo que trata esta misión.</div></div>
+  </div>
+  <!-- La animación que explica el tema, justo después de la historia:
+       Marvin de lado, con el cerebro, la médula espinal y los dos nervios
+       del brazo. El aviso sube de la mano a la médula, y de ahí la orden
+       baja al músculo antes de que el cerebro se dé cuenta. La mueve el
+       alumno, paso a paso. El aparato es compartido
+       (js/animacion-mision.js) y la escena es de esta misión
+       (js/animacion-atajo.js). La frase de dentro es de reserva: si el
+       aparato no llega a cargar, se lee eso en vez de un hueco. -->
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira el atajo que quitó la mano</h2>
+    <div id="amAtajo">
+      <p>La mano toca el comal y un aviso sube por un nervio del brazo hasta la médula espinal, en la espalda.
+      Ahí mismo sale la orden de vuelta por otro nervio, el músculo jala y la mano se quita. El aviso sigue
+      hasta el cerebro, que necesita un momento para darse cuenta: cuando llegan el susto y el dolor, la mano
+      ya estaba afuera. Si la orden tuviera que salir del cerebro, el camino sería más largo.</p>
+    </div>
   </div>
   <div class="card ac-teal">
     <h2>🧠 ¿Qué es el Sistema Nervioso?</h2>
@@ -642,6 +662,8 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-atajo.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>
