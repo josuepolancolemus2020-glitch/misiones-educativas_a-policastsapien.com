@@ -1178,6 +1178,168 @@ const LEER = `
       textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
     };
   };
+  /* Los Continentes: la casa de doña Nely, tres flechas y la noche. La
+     proyección (Equal Earth) la hace la sonda por su cuenta: el meridiano
+     del centro lo declara el mapa, y la escala y el centro salen del borde
+     del dibujo. Con eso se buscan en el dibujo los puntos de los contornos,
+     y se proyectan ciudades de verdad y puntos de prueba para preguntarle al
+     navegador dónde caen (isPointInFill): en qué continente iluminado, en
+     tierra o en el mar, de día o de noche. ⚠️ Aquí no van barras
+     invertidas: esto vive dentro de una plantilla de texto y se pierden. */
+  window.__amExtra.amLejos = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(base.multiply(el.getScreenCTM())); return [q.x, q.y]; }
+    function todos(sel) { return [].slice.call(raiz.querySelectorAll(sel)); }
+    function raya(el) { var d = getComputedStyle(el).strokeDasharray; if (!d || d === 'none') return 0; var v = d.split(',').join(' ').split(' ').map(parseFloat).filter(isFinite); return v.length ? Math.max.apply(null, v) : 0; }
+    function corrido(el) { return Math.abs(parseFloat(getComputedStyle(el).strokeDashoffset) || 0); }
+    var lienzo = document.createElement('canvas').getContext('2d');
+    function tinta(t) {
+      var cs = getComputedStyle(t), s = t.textContent, ancla = t.getAttribute('text-anchor') || cs.textAnchor || 'start';
+      lienzo.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+      lienzo.textAlign = ancla === 'end' ? 'right' : (ancla === 'middle' ? 'center' : 'left');
+      var m = lienzo.measureText(s), x0 = +t.getAttribute('x'), y0 = +t.getAttribute('y');
+      var p = aVista(t, x0 - m.actualBoundingBoxLeft, y0 - m.actualBoundingBoxAscent), q = aVista(t, x0 + m.actualBoundingBoxRight, y0 + m.actualBoundingBoxDescent);
+      return { x0: p[0], y0: p[1], x1: q[0], y1: q[1] };
+    }
+    function vertices(p) {
+      var t = p.getAttribute('d').split(' ').filter(function (v) { return v.length; }), out = [];
+      for (var i = 0; i < t.length; i++) if (t[i] === 'M' || t[i] === 'L') { out.push(aVista(p, +t[i + 1], +t[i + 2])); i += 2; }
+      return out;
+    }
+    function dentro(paths, p) {
+      var q = svg.createSVGPoint(); q.x = p[0]; q.y = p[1];
+      return paths.some(function (el) { return el.isPointInFill(q); });
+    }
+
+    /* ── Equal Earth, de la sonda (Šavrič, Patterson y Jenny, 2018) ── */
+    var A1 = 1.340264, A2 = -0.081106, A3 = 0.000893, A4 = 0.003796, R3 = Math.sqrt(3);
+    var mundo = raiz.querySelector('[data-mundo]'), mar = raiz.querySelector('[data-mar]');
+    var L0 = +mundo.getAttribute('data-l0'), bb = mar.getBBox();
+    var XMAX = 2 * R3 * Math.PI / (3 * A1);
+    var YMAX = (function () { var t = Math.PI / 3, t2 = t * t, t6 = t2 * t2 * t2; return t * (A1 + A2 * t2 + t6 * (A3 + A4 * t2)); })();
+    var S = bb.width / (2 * XMAX), CX = bb.x + bb.width / 2, CY = bb.y + bb.height / 2;
+    function ee(lon, lat) {
+      var d = lon - L0;
+      while (d > 180) d -= 360;
+      while (d <= -180) d += 360;
+      var l = d * Math.PI / 180, f = lat * Math.PI / 180, t = Math.asin(R3 / 2 * Math.sin(f)), t2 = t * t, t6 = t2 * t2 * t2;
+      var X = 2 * R3 * l * Math.cos(t) / (3 * (9 * A4 * t6 * t2 + 7 * A3 * t6 + 3 * A2 * t2 + A1));
+      var Y = t * (A1 + A2 * t2 + t6 * (A3 + A4 * t2));
+      return [CX + S * X, CY - S * Y];
+    }
+
+    /* Cada punto de los contornos, en el dibujo donde lo pone Equal Earth. */
+    var tierras = todos('[data-tierra]'), C = window.CONTORNOS_MUNDO, faltan = 0, total = 0, peor = 0;
+    C.tierra.forEach(function (c, i) {
+      var v = tierras[i] ? vertices(tierras[i]) : [];
+      for (var j = 0; j < c.length; j += 2) {
+        if (c[j + 1] <= -89.9) continue;
+        total++;
+        var p = ee(c[j], c[j + 1]), mejor = 1e9;
+        for (var k = 0; k < v.length; k++) { var dd = Math.hypot(v[k][0] - p[0], v[k][1] - p[1]); if (dd < mejor) mejor = dd; }
+        if (mejor > 0.06) faltan++;
+        if (mejor > peor) peor = mejor;
+      }
+    });
+
+    var luz = {};
+    todos('[data-luz]').forEach(function (g) { luz[g.getAttribute('data-luz')] = { g: g, p: [].slice.call(g.querySelectorAll('path')) }; });
+    var ks = ['america', 'oceania', 'antartida'];
+    function enLuces(p) { var o = {}; ks.forEach(function (k) { o[k] = !!luz[k] && dentro(luz[k].p, p); }); return o; }
+    /* Un lugar de la costa (Sídney) cae justo sobre el contorno, y en el
+       borde isPointInFill contesta que no: se mira también un punto
+       alrededor. */
+    function enLucesCosta(p) {
+      var o = {};
+      ks.forEach(function (k) {
+        o[k] = !!luz[k] && [[0, 0], [0.9, 0], [-0.9, 0], [0, 0.9], [0, -0.9]].some(function (d) { return dentro(luz[k].p, [p[0] + d[0], p[1] + d[1]]); });
+      });
+      return o;
+    }
+    var nocheG = raiz.querySelector('[data-noche]'), nocheP = nocheG ? [].slice.call(nocheG.querySelectorAll('path')) : [];
+
+    /* Ciudades de verdad, lejos de la costa (los contornos son simplificados),
+       con el continente al que pertenecen: la sonda lo sabe, no la escena. */
+    var CIUDADES = [
+      ['Tegucigalpa', -87.2, 14.1, 'america'], ['Ciudad de México', -99.1, 19.4, 'america'], ['Denver', -105, 39.7, 'america'],
+      ['Winnipeg', -97.1, 49.9, 'america'], ['Fairbanks', -147.7, 64.8, 'america'], ['Groenlandia', -42, 72, 'america'],
+      ['Bogotá', -74.1, 4.7, 'america'], ['Brasilia', -47.9, -15.8, 'america'], ['La Paz', -68.1, -16.5, 'america'],
+      ['Córdoba', -64.2, -31.4, 'america'],
+      ['Alice Springs', 133.9, -23.7, 'oceania'], ['Canberra', 149.1, -35.3, 'oceania'], ['Kalgoorlie', 121.5, -30.7, 'oceania'],
+      ['Mount Hagen', 144.2, -5.9, 'oceania'], ['Hamilton', 175.3, -37.8, 'oceania'], ['la isla Sur', 170.5, -44, 'oceania'],
+      ['Tasmania', 146.5, -42, 'oceania'], ['Nueva Caledonia', 165.8, -21.4, 'oceania'], ['Viti Levu', 178, -17.8, 'oceania'],
+      ['el interior de la Antártida', 0, -80, 'antartida'], ['la Antártida, a 100° E', 100, -75, 'antartida'],
+      ['la Antártida, a 100° O', -100, -78, 'antartida'], ['la Antártida, a 160° E', 160, -80, 'antartida'],
+      ['la Antártida, a 60° O', -60, -80, 'antartida'],
+      ['Madrid', -3.7, 40.4, ''], ['el Senegal', -15.5, 14, ''], ['Islandia', -19, 64.8, ''], ['Moscú', 37.6, 55.8, ''],
+      ['Pekín', 116.4, 39.9, ''], ['Tokio', 139.7, 35.7, ''], ['Luzón', 121, 16.5, ''], ['Borneo', 114, 1, ''],
+      ['Java', 107, -7, ''], ['Madagascar', 46.9, -18.9, ''], ['el sur de África', 22, -30, '']
+    ];
+    var ciudades = CIUDADES.map(function (c) {
+      var p = ee(c[1], c[2]), cuya = null;
+      tierras.forEach(function (t) { if (!cuya && dentro([t], p)) cuya = t; });
+      return { nombre: c[0], de: c[3], tierra: !!cuya, trozos: cuya ? (cuya.getAttribute('d').match(/M/g) || []).length : 0,
+               luz: enLuces(p), noche: dentro(nocheP, p) };
+    });
+
+    function punto(g) { return g ? aVista(g, 0, 0) : null; }
+    var casa = raiz.querySelector('[data-casa]'), sol = raiz.querySelector('[data-sol]'), sid = raiz.querySelector('[data-sidney]');
+    var solLon = nocheG ? +nocheG.getAttribute('data-sol-lon') : 0, solLat = nocheG ? +nocheG.getAttribute('data-sol-lat') : 0;
+    var pruebas = [];
+    [-60, -30, 0, 30, 60].forEach(function (la) {
+      [-95, -85, 0, 85, 95, 180].forEach(function (off) { pruebas.push({ lat: la, off: off, noche: dentro(nocheP, ee(solLon + off, la)) }); });
+    });
+    var amTotal = 0, amNoche = 0;
+    if (luz.america) for (var lo = -170; lo <= -10; lo += 4) for (var la = -56; la <= 84; la += 4) {
+      var pa = ee(lo, la);
+      if (dentro(luz.america.p, pa)) { amTotal++; if (dentro(nocheP, pa)) amNoche++; }
+    }
+    function cerca(t, k) {
+      if (!luz[k]) return false;
+      var b = tinta(t), cx = (b.x0 + b.x1) / 2, cy = (b.y0 + b.y1) / 2;
+      for (var dx = -14; dx <= 14; dx += 2) for (var dy = -14; dy <= 14; dy += 2) if (dentro(luz[k].p, [cx + dx, cy + dy])) return true;
+      return false;
+    }
+    return {
+      proy: { L0: L0, S: S, alto: bb.height, altoEE: 2 * YMAX * S, total: total, faltan: faltan, peor: Math.round(peor * 1000) / 1000,
+              dibujados: tierras.length, anillos: C.tierra.length },
+      ciudades: ciudades,
+      luces: ks.map(function (k) { return { k: k, ve: !!luz[k] && vis(luz[k].g) }; }),
+      casa: casa ? { ve: vis(casa), pos: punto(casa), lon: +casa.getAttribute('data-lon'), lat: +casa.getAttribute('data-lat'),
+                     proy: ee(+casa.getAttribute('data-lon'), +casa.getAttribute('data-lat')),
+                     luz: enLuces(ee(+casa.getAttribute('data-lon'), +casa.getAttribute('data-lat'))),
+                     noche: dentro(nocheP, ee(+casa.getAttribute('data-lon'), +casa.getAttribute('data-lat'))) } : null,
+      dudas: todos('[data-duda]').map(function (g) {
+        var lon = +g.getAttribute('data-lon'), lat = +g.getAttribute('data-lat'), p = ee(lon, lat);
+        return { k: g.getAttribute('data-duda'), ve: vis(g), pos: punto(g), proy: p, luz: enLucesCosta(p),
+                 raya: raya(g.querySelector('circle')), signo: g.querySelector('text').textContent };
+      }),
+      flechas: todos('[data-flecha]').map(function (g) {
+        var rr = g.querySelector('[data-raya]'), pu = g.querySelector('[data-punta]'), largo = rr.getTotalLength(), muestras = [];
+        for (var i = 0; i <= 20; i++) { var q = rr.getPointAtLength(largo * i / 20), pv = aVista(rr, q.x, q.y); muestras.push({ p: pv, tierra: dentro(tierras, pv) }); }
+        return { k: g.getAttribute('data-flecha'), ve: vis(rr), corrido: corrido(rr), largo: largo, muestras: muestras,
+                 punta: vertices(pu)[1], puntaVe: vis(pu) };
+      }),
+      nombres: todos('[data-nombre]').map(function (t) { return { k: t.getAttribute('data-nombre'), ve: vis(t), dice: t.textContent, cerca: cerca(t, t.getAttribute('data-nombre')) }; }),
+      noche: { ve: !!nocheG && vis(nocheG), solLon: solLon, solLat: solLat, pruebas: pruebas, america: { total: amTotal, noche: amNoche } },
+      sol: sol ? { ve: vis(sol), pos: punto(sol), lon: +sol.getAttribute('data-lon'), lat: +sol.getAttribute('data-lat'),
+                   proy: ee(+sol.getAttribute('data-lon'), +sol.getAttribute('data-lat')),
+                   noche: dentro(nocheP, ee(+sol.getAttribute('data-lon'), +sol.getAttribute('data-lat'))) } : null,
+      lunas: todos('[data-luna]').map(function (g) { var p = punto(g); return { ve: vis(g), pos: p, noche: dentro(nocheP, p) }; }),
+      sidney: sid ? { ve: vis(sid), pos: punto(sid), lon: +sid.getAttribute('data-lon'), lat: +sid.getAttribute('data-lat'),
+                      proy: ee(+sid.getAttribute('data-lon'), +sid.getAttribute('data-lat')),
+                      luz: enLucesCosta(ee(+sid.getAttribute('data-lon'), +sid.getAttribute('data-lat'))),
+                      noche: dentro(nocheP, ee(+sid.getAttribute('data-lon'), +sid.getAttribute('data-lat'))),
+                      dice: sid.querySelector('text').textContent, tinta: tinta(sid.querySelector('text')) } : null,
+      relojes: todos('[data-reloj]').map(function (g) {
+        var h = g.querySelector('[data-hora]'), d = g.querySelector('[data-dia]'), a = tinta(h), b = tinta(d);
+        return { k: g.getAttribute('data-reloj'), ve: vis(g), hora: h.textContent, dia: d.textContent,
+                 caja: { x0: Math.min(a.x0, b.x0), y0: Math.min(a.y0, b.y0), x1: Math.max(a.x1, b.x1), y1: Math.max(a.y1, b.y1) } };
+      }),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   /* El Adjetivo Avanzado: el acta de las dos comas. Se lee cada pedazo del
      acta con su tinta y su línea base; los subrayados, con su raya; las
      marquitas de las comas; cada alumno con su nota (la ✗ son dos rayas y la
@@ -1333,6 +1495,154 @@ let keniaAdverbios = null;
 let mensajePron = null;
 
 const ESCENAS = {
+  /* Los Continentes: América, Oceanía y Antártida. «¿Y eso queda lejos?»
+     ⚠️ Nada se le cree a la escena. La sonda proyecta por su cuenta
+     (Equal Earth, con el meridiano del centro que declara el mapa y la
+     escala que sale del borde del dibujo), y cada punto de los contornos
+     tiene que estar en el dibujo donde cae. Ciudades de verdad dicen qué se
+     iluminó: América lleva Tegucigalpa, Groenlandia, Bogotá y La Paz, y no
+     Madrid ni el Senegal; Oceanía, Alice Springs, Nueva Guinea, las dos
+     islas de Nueva Zelanda y Fiyi, y no Java, Borneo ni Tokio; la
+     Antártida, su interior, y no Tasmania. De ahí salen las flechas (de la
+     casa a su continente), el marcador (cuántos nombres se ven) y, a las 8
+     de la noche, la noche: del sol que está dibujado sale la hora del
+     mundo, y con ella lo que tienen que decir los dos relojes, la frontera
+     del día, dónde caen la casa, Sídney y las lunas, y que «casi toda
+     América» sea casi toda y no toda. ⚠️ Y la prueba no se regala: ni
+     «Pacífico», ni «polo», ni tamaños, ni países, ni un número de más. */
+  amLejos(e, n) {
+    const x = e.extra, r = [];
+    const nb = t => String(t == null ? '' : t).replace(/ /g, ' ').trim();
+    const cerca = (a, b, tol) => Math.abs(a - b) <= tol;
+    const d2 = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+    /* Lo que no depende del dibujo, primero: con una pieza mal puesta la
+       sonda deja de medir, y esto no puede quedarse sin mirar por eso. */
+    const dicho = [e.texto, e.cifra, e.palabras].concat(x.textos).map(nb).join(' | ').toLowerCase();
+    const EXACTAS = ['pacífico', 'atlántico', 'índico', 'polo', 'polos', 'sur', 'norte', 'hielo', 'helado', 'helada', 'nieve',
+      'permanente', 'población', 'científico', 'científicos', 'investigan', 'investigar', 'temporada', 'temporadas', 'remesa', 'remesas',
+      'dinero', 'mar', 'nivel', 'ventoso', 'seco', 'seca', 'argentina', 'méxico', 'canadá', 'perú', 'chile', 'belice', 'venezuela',
+      'brasil', 'australia', 'zelanda', 'país', 'países', 'pequeño', 'pequeña', 'grande', 'grandes', 'tamaño', 'región', 'regiones',
+      'central', 'centroamérica', 'norteamérica', 'sudamérica', 'suramérica', 'militar', 'militares', 'bases', 'dueño', 'pertenece',
+      'deshielo', 'costa', 'costas', 'pingüino', 'pingüinos', 'ballena', 'ballenas', 'oea', 'cafta', 'copán', 'vinson', 'aconcagua',
+      'andes', 'amazonas', 'maoríes', 'aborígenes', 'tratado', 'kosciuszko', 'bosque', 'selva', 'isla', 'islas', 'clima', 'climático',
+      'hemisferio', 'oeste', 'corazón', 'centro', 'medio'];
+    const FRASES = ['estados unidos', 'ee uu', 'cambio climático', 'en medio', 'alrededor del polo'];
+    const suelto = ' ' + dicho.split(/[^a-záéíóúñü]+/).filter(Boolean).join(' ') + ' ';
+    const malas = suelto.trim().split(' ').filter(w => EXACTAS.includes(w)).concat(FRASES.filter(f => suelto.includes(' ' + f + ' ')));
+    r.push([malas.length === 0, `paso ${n}: no sale ninguna palabra de las respuestas de la prueba (ni «Pacífico», ni «polo», ni tamaños ni países)`, malas]);
+    const nums = (dicho.match(/\d+/g) || []).map(Number);
+    const PERMITIDOS = [0, 1, 2, 3, 8, 12, 16];
+    r.push([nums.every(k => PERMITIDOS.includes(k)), `paso ${n}: ningún número de la prueba (ni kilómetros, ni años, ni cuántos países)`, nums.filter(k => !PERMITIDOS.includes(k))]);
+
+    const ORDEN = ['america', 'oceania', 'antartida'];
+    const NOMBRE = { america: 'América', oceania: 'Oceanía', antartida: 'Antártida' };
+    const nombrados = ORDEN.slice(0, Math.min(n, 3));
+
+    /* ── El mapa: una sola vez, porque no cambia ── */
+    if (n === 0) {
+      const p = x.proy;
+      r.push([p.dibujados === p.anillos && p.total > 1000 && p.faltan === 0,
+        'cada punto de los contornos está en el dibujo donde lo pone Equal Earth, proyectado por la sonda', p]);
+      r.push([cerca(p.alto, p.altoEE, 0.6), 'el mapa mide de alto lo que Equal Earth manda para su ancho: es un mapa de áreas verdaderas',
+        [Math.round(p.alto * 10) / 10, Math.round(p.altoEE * 10) / 10]]);
+      const fuera = x.ciudades.filter(c => !c.tierra).map(c => c.nombre);
+      r.push([fuera.length === 0, 'las ciudades de prueba caen en tierra (la sonda no mide sobre el mar)', fuera]);
+      const mal = x.ciudades.filter(c => ORDEN.some(k => c.luz[k] !== (c.de === k)))
+        .map(c => c.nombre + ' → ' + (ORDEN.filter(k => c.luz[k]).join(', ') || 'ninguno'));
+      r.push([mal.length === 0, 'cada continente iluminado lleva sus ciudades y ninguna de otro (Groenlandia es de América, Nueva Guinea de Oceanía, Java no)', mal]);
+      const partidas = x.ciudades.filter(c => c.de === 'america' && c.trozos !== 1).map(c => c.nombre);
+      r.push([partidas.length === 0, 'la costura va por el mar: ni América ni Groenlandia salen partidas', partidas]);
+      const syd = x.sidney;
+      r.push([!!syd && x.casa.pos[0] > syd.pos[0], 'con el océano en medio, América queda a la derecha de Oceanía', [x.casa.pos, syd && syd.pos].map(q => q && q.map(Math.round))]);
+    }
+
+    /* ── La casa de doña Nely ── */
+    const casa = x.casa;
+    r.push([!!casa && casa.ve && casa.lon >= -89.4 && casa.lon <= -83.1 && casa.lat >= 12.9 && casa.lat <= 16.5,
+      `paso ${n}: la casa de doña Nely está en Honduras`, casa && [casa.lon, casa.lat]]);
+    r.push([!!casa && d2(casa.pos, casa.proy) <= 0.6 && casa.luz.america, `paso ${n}: y en el dibujo, donde cae su punto, dentro de América`, casa && [casa.pos, casa.proy].map(q => q.map(v => Math.round(v * 10) / 10))]);
+
+    /* ── Los continentes con nombre ── */
+    const luces = x.luces.filter(l => l.ve).map(l => l.k);
+    r.push([JSON.stringify(luces) === JSON.stringify(nombrados), `paso ${n}: se ilumina${nombrados.length === 1 ? '' : 'n'} ${nombrados.length ? nombrados.map(k => NOMBRE[k]).join(', ') : 'ninguno'}, y nada más`, luces]);
+    const nombres = x.nombres.filter(t => t.ve);
+    r.push([JSON.stringify(nombres.map(t => t.k)) === JSON.stringify(nombrados) && nombres.every(t => nb(t.dice) === NOMBRE[t.k]),
+      `paso ${n}: cada continente iluminado lleva su nombre escrito`, nombres.map(t => t.dice)]);
+    r.push([nombres.every(t => t.cerca), `paso ${n}: y cada nombre está sobre su continente o junto a él`, nombres.filter(t => !t.cerca).map(t => t.dice)]);
+
+    /* ── Las tres flechas: de la casa a su continente ── */
+    const fl = k => x.flechas.find(f => f.k === k);
+    const faltaFlecha = ORDEN.filter(k => !fl(k) || !fl(k).ve || fl(k).corrido > 1 || !fl(k).puntaVe);
+    r.push([x.flechas.length === 3 && faltaFlecha.length === 0, `paso ${n}: las tres flechas salen de la casa, enteras y con su punta`, faltaFlecha]);
+    for (const k of ORDEN) {
+      const f = fl(k), du = x.dudas.find(d => d.k === k);
+      if (!f || !du) { r.push([false, `paso ${n}: la flecha y el lugar de ${NOMBRE[k]} existen`]); continue; }
+      const ini = f.muestras[0].p;
+      r.push([d2(ini, casa.pos) <= 12 && d2(f.punta, du.proy) <= 9 && d2(du.pos, du.proy) <= 0.6,
+        `paso ${n}: la flecha de ${NOMBRE[k]} va de la casa hasta su lugar`, [ini, f.punta, du.proy].map(q => q.map(Math.round))]);
+      r.push([ORDEN.every(o => du.luz[o] === (o === k)), `paso ${n}: y su lugar está en ${NOMBRE[k]}, y en ningún otro continente`, du.luz]);
+      const nombrado = nombrados.includes(k);
+      r.push([du.ve === !nombrado && (!du.ve || (du.raya > 0 && du.raya <= 3 && nb(du.signo) === '?')),
+        `paso ${n}: ${nombrado ? `el lugar de ${NOMBRE[k]} ya no lleva «?»` : `el lugar de ${NOMBRE[k]} todavía es un «?» con el aro de raya cortada`}`, [du.ve, du.raya]]);
+    }
+    const oc = fl('oceania');
+    if (oc) {
+      const medio = oc.muestras.slice(4, 17);
+      const xs = oc.muestras.map(m => m.p[0]);
+      r.push([medio.every(m => !m.tierra) && xs.every((v, i) => i === 0 || v <= xs[i - 1] + 0.01),
+        `paso ${n}: la flecha de Oceanía cruza el océano, y va siempre hacia la izquierda: hacia donde se pone el sol`, medio.filter(m => m.tierra).length]);
+    }
+
+    /* ── El marcador y la frase ── */
+    if (n === 4) {
+      /* se mide abajo, con los relojes */
+    } else {
+      const k = nombres.length;
+      r.push([nb(e.cifra) === String(k) && nb(e.palabras) === (k === 1 ? 'continente con nombre' : 'continentes con nombre'),
+        `paso ${n}: el marcador cuenta los continentes con nombre que se ven (${k})`, [e.cifra, e.palabras]]);
+    }
+    const frase = nb(e.texto);
+    if (n === 0) r.push([/\btres\b/.test(frase) && x.dudas.filter(d => d.ve).length === 3, 'paso 0: la frase dice tres lugares, y hay tres «?»', frase]);
+    if (n >= 1 && n <= 3) r.push([frase.includes(NOMBRE[ORDEN[n - 1]]), `paso ${n}: la frase nombra el continente que se acaba de iluminar`, frase]);
+
+    /* ── La noche, a las 8 de doña Nely ── */
+    const hora = n >= 4, noche = x.noche, sol = x.sol, sid = x.sidney;
+    const prendidos = [noche.ve, !!sol && sol.ve, !!sid && sid.ve].concat(x.lunas.map(l => l.ve), x.relojes.map(c => c.ve));
+    r.push([prendidos.every(v => v === hora), `paso ${n}: ${hora ? 'la noche, el sol, las lunas, Sídney y los relojes se ven' : 'todavía no hay noche, ni sol, ni relojes'}`, prendidos]);
+    if (hora && sol && sid) {
+      r.push([d2(sol.pos, sol.proy) <= 0.6 && !sol.noche, `paso ${n}: el sol está donde dice su punto, y de día`, [sol.lon, sol.lat]]);
+      const malas = noche.pruebas.filter(p => p.noche !== (Math.abs(p.off) > 90));
+      r.push([malas.length === 0, `paso ${n}: la frontera de la noche está a un cuarto de vuelta del sol, de polo a polo`, malas]);
+      r.push([casa.noche && !sid.noche && x.lunas.every(l => l.noche), `paso ${n}: la casa de doña Nely y las lunas quedan de noche; Sídney, de día`, [casa.noche, sid.noche, x.lunas.map(l => l.noche)]]);
+      r.push([cerca(sid.lon, 151.2, 0.3) && cerca(sid.lat, -33.9, 0.3) && d2(sid.pos, sid.proy) <= 0.6 && sid.luz.oceania && nb(sid.dice) === 'Sídney',
+        `paso ${n}: Sídney está donde está Sídney, en Oceanía, con su nombre`, [sid.lon, sid.lat, sid.dice]]);
+      const am = noche.america, f = am.total ? am.noche / am.total : 0;
+      r.push([am.total > 50 && f >= 0.7 && f < 1, `paso ${n}: «casi toda América» es casi toda y no toda (${Math.round(f * 100)} % de sus puntos, de noche)`, am]);
+      /* La hora del mundo sale del sol: está sobre el meridiano donde es
+         mediodía. Honduras va con UTC−6 todo el año, y Sídney con UTC+10
+         en septiembre (su horario de verano empieza en octubre). */
+      const utc = ((12 - sol.lon / 15) % 24 + 24) % 24;
+      const local = off => { const h = utc + off; return { h: ((h % 24) + 24) % 24, dia: Math.floor(h / 24) }; };
+      const escrita = h => h === 12 ? '12 m.' : h === 0 ? '12 a. m.' : h < 12 ? h + ' a. m.' : (h - 12) + ' p. m.';
+      const DIAS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+      const rc = x.relojes.find(c => c.k === 'casa'), rs = x.relojes.find(c => c.k === 'sidney');
+      const hn = local(-6), sy = local(10);
+      const dCasa = rc ? DIAS.indexOf(nb(rc.dia)) : -1, dSid = rs ? DIAS.indexOf(nb(rs.dia)) : -1;
+      r.push([!!rc && !!rs && nb(rc.hora) === escrita(hn.h) && nb(rs.hora) === escrita(sy.h),
+        `paso ${n}: los relojes dicen la hora que marca el sol: ${escrita(hn.h)} en la casa y ${escrita(sy.h)} en Sídney`, rc && rs && [rc.hora, rs.hora]]);
+      r.push([dCasa >= 0 && dSid === (dCasa + (sy.dia - hn.dia) + 7) % 7, `paso ${n}: y el día de Sídney es ${sy.dia - hn.dia === 1 ? 'el siguiente' : 'el que toca'}`, rc && rs && [rc.dia, rs.dia]]);
+      const lejos = (c, p) => Math.max(c.x0 - p[0], p[0] - c.x1, c.y0 - p[1], p[1] - c.y1, 0);
+      r.push([!!rc && !!rs && lejos(rc.caja, casa.pos) <= 12 && lejos(rs.caja, sid.pos) <= 12, `paso ${n}: cada reloj está junto a su lugar`,
+        rc && rs && [Math.round(lejos(rc.caja, casa.pos)), Math.round(lejos(rs.caja, sid.pos))]]);
+      const dif = (sy.h - hn.h) + 24 * (sy.dia - hn.dia);
+      if (n === 4) {
+        r.push([nb(e.cifra) === dif + ' h' && /Sídney/.test(nb(e.palabras)), `paso 4: el marcador dice la diferencia que marcan los relojes (${dif} h)`, [e.cifra, e.palabras]]);
+        r.push([frase.includes('8 de la noche') && hn.h === 20 && frase.includes('mediodía') && sy.h === 12 && frase.includes('día siguiente') && sy.dia - hn.dia === 1 && frase.includes('casi toda América'),
+          'paso 4: la frase dice lo mismo que los relojes y la noche del dibujo', frase]);
+      }
+    }
+    return r;
+  },
   /* Geografía y Coordenadas: la aldea de doña Nely y los dos números de un
      punto. ⚠️ Nada se le cree a la escena. En la aldea, la sonda saca del
      dibujo cuáles casas cumplen la seña («la de la mata de mango, pasando

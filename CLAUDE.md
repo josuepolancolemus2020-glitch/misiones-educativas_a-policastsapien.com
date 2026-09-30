@@ -8152,6 +8152,136 @@ Se comprobó al revés con diecisiete averías, plantadas una por una:
 Salió roja con cada una. Con la CPU frenada seis veces va a 59 cuadros por
 segundo, y el peor cuadro es de 83 ms.
 
+### La trigésima primera: Continentes: América, Oceanía y Antártida, y lo que enseñó
+
+La segunda de la Ruta del Planeta es **Los Continentes: América, Oceanía y
+Antártida** (`misiones/2y3ciclo-los-continentes-america-oceania-antartida/`,
+`js/animacion-lejos.js`). La historia es otra vez la de doña Nely. Cuando su
+hijo se fue a trabajar afuera, en la pulpería le dijeron que eso quedaba
+lejos, y eso fue todo lo que supo durante un año: no sabía en qué continente
+estaba, ni si allá era de día cuando lo llamaba a las ocho de la noche. La
+historia promete que un mapa convierte «lejos» en un sitio con nombre, con
+clima y con hora. La animación es un mapa del mundo con el océano en medio:
+
+- la casa de doña Nely, y tres flechas que salen de ella, cada una con un «?»
+  al final: «lejos» le queda a cualquiera de los tres lugares;
+- la primera no sale de América, el continente donde vive doña Nely: queda
+  lejos, pero es el mismo continente;
+- la segunda cruza el océano hacia donde se pone el sol y llega a otro
+  continente, Oceanía;
+- la tercera llega a la Antártida, el continente más frío;
+- a las 8 de la noche de doña Nely, en casi toda América también es de noche,
+  y en Sídney ya es mediodía del día siguiente: 16 horas más adelante;
+- «lejos» no decía dónde; con el nombre del continente, doña Nely lo
+  encuentra en el mapa, y en el mapa se ve si allá es de día.
+
+Siete cosas que valen para las que siguen:
+
+1. ⚠️ **Los contornos del mundo pasaron a un archivo compartido**,
+   `js/data/contornos-mundo.js`. Era la segunda misión que necesitaba el
+   mundo, y copiarlos habría dejado dos mapas que se separan con la primera
+   costa que alguien corrija. Coordenadas lee de ahí, y su sonda pasó igual.
+   De paso salieron dos cosas:
+   - la costa de la Antártida en el meridiano 180 estaba a 84° por un lado
+     y a 78,5° por el otro. En el mapa de cuadrícula no se notaba, porque los
+     dos lados quedan en las dos orillas del dibujo; con el océano en medio,
+     ese meridiano cae en el centro y la costa daba un salto;
+   - se le sumaron las islas de Oceanía que se ven a esta escala. Sin ellas,
+     el mapa diría que Oceanía es solo Australia, y la misión la describe
+     con «miles de islas».
+2. ⚠️ **El océano va en medio, y la costura va por el mar.** Los tres
+   continentes de la misión rodean el mismo océano. En el mapa de siempre,
+   la flecha que lo cruza se saldría por un lado del dibujo y entraría por el
+   otro. El meridiano del centro es el 166° E y la costura queda en el 14° O:
+   solo la cruzan Islandia, la punta de África y la Antártida, que da la
+   vuelta entera. Con el 150° E, Groenlandia salía partida, y un pedazo de
+   América se iluminaba en la otra orilla del mapa. La sonda comprueba que
+   ningún pedazo de América salga partido.
+3. ⚠️ **Es un mapa de áreas verdaderas (Equal Earth).** La prueba pregunta
+   si la Antártida es más grande que Oceanía, y el mapa de cuadrícula la
+   estira hasta parecer más grande que Asia. El precio es que la Antártida
+   sale como una franja delgada abajo, y por eso se ilumina entera y lleva su
+   nombre encima.
+4. ⚠️ **La hora sale del sol del dibujo, y es de verdad.** Una noche de
+   septiembre, las 8 de Honduras (UTC−6) son las 2:00 en Greenwich, y el sol
+   está sobre el meridiano 150° E, el de Sídney: allá es mediodía. En
+   septiembre Sídney va con UTC+10, porque su horario de verano empieza en
+   octubre. La frontera de la noche es la de fines de septiembre, de polo a
+   polo. Y «casi toda América» se mide: el 87 % de sus puntos quedan de
+   noche; Alaska y la costa de California todavía tienen sol.
+   La misión no enseñaba la hora en ningún sitio. La historia la prometía
+   («ni si allá era de día»), y la animación es la que cumple la promesa.
+5. ⚠️ **Lo que pregunta la prueba no se dice.** Ni «Pacífico», que es la
+   respuesta de un completar. Ni «polo sur», que es un verdadero o falso de
+   la ficha («la Antártida está alrededor del polo sur»). Ni tamaños, ni
+   países, ni hielo, ni quién vive allá. Las frases dicen «el océano», y el
+   mapa enseña dónde está cada cosa. Ni el emoji del botón se libra: el 🧊 de
+   «la tercera» decía «hielo», que es otra respuesta, y pasó a ser 🧭. No hizo
+   falta cambiar ninguna pregunta: el ejemplo de la animación (tres flechas y
+   una hora) no está en la conceptual, ni en la de pensamiento crítico, ni en
+   la ficha.
+6. ⚠️ **Una ciudad de la costa cae justo sobre el contorno, y en el borde
+   `isPointInFill` contesta que no.** La sonda decía que Sídney no estaba en
+   Oceanía, con el dibujo perfecto. Ahora mira el punto y cuatro más a 0,9
+   de él. Es la lección de «Cuadrado **Perfecto**» otra vez.
+7. **Hacia atrás, el «?» tardaba más de un segundo en volver.** La demora que
+   los hace volver uno detrás de otro al empezar otra vez se aplicaba también
+   al retroceder un solo paso. Se vio en las fotos a medio viaje yendo hacia
+   atrás, con la sonda en verde. Ahora vuelve en cuanto se apaga la luz de su
+   continente.
+
+La sonda de esta escena **no le cree nada a la escena**:
+
+- proyecta por su cuenta con Equal Earth. El meridiano del centro lo declara
+  el mapa, y la escala sale del borde del dibujo;
+- busca en el dibujo cada uno de los 1 498 puntos de los contornos (el peor
+  cae a 0,008);
+- le pregunta al navegador dónde caen 35 ciudades de verdad:
+  - América tiene que llevar Tegucigalpa, Groenlandia, Bogotá y La Paz, y no
+    Madrid ni el Senegal;
+  - Oceanía, Alice Springs, Nueva Guinea, las dos islas de Nueva Zelanda y
+    Fiyi, y no Java, Borneo ni Tokio;
+  - la Antártida, su interior;
+- del sol que está dibujado saca la hora del mundo, y con ella lo que tienen
+  que decir los dos relojes y dónde va la frontera de la noche.
+
+Comprueba además:
+
+- que la casa esté en Honduras;
+- que cada flecha vaya de la casa a su lugar, y que ese lugar esté en su
+  continente y en ningún otro;
+- que la de Oceanía cruce el océano hacia la izquierda;
+- que el marcador cuente los nombres que se ven;
+- que las lunas y la casa queden de noche y Sídney de día;
+- que la frase diga lo mismo que los relojes.
+
+Se comprobó al revés con diecinueve averías, plantadas una por una:
+
+- una constante de la proyección mal escrita;
+- el mapa declarando un meridiano del centro que no es el suyo;
+- Groenlandia puesta con Europa y Asia;
+- Java puesta con Oceanía;
+- la costura cortando Groenlandia;
+- la casa en Guatemala;
+- la casa dibujada fuera de su punto;
+- las flechas quedándose cortas;
+- el lugar de la Antártida en el mar;
+- la frontera de la noche corrida;
+- el reloj de Sídney a las 11;
+- Sídney todavía en martes;
+- el marcador del paso 4 diciendo 14 h;
+- la Antártida iluminada antes de nombrarla;
+- «Pacífico» en una frase;
+- el reloj de la casa lejos de la casa;
+- una luna de día;
+- el «?» sin su raya cortada;
+- el nombre de Oceanía sobre Asia.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 60 cuadros por segundo, y el peor cuadro
+es de 50 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -8213,6 +8343,10 @@ que se entra en él, también volviendo con «Atrás» (`entra(k)`), y eso se mi
 con fotos a medio viaje yendo hacia atrás. Y en una misión de lugares, el lugar
 de la escena tampoco puede ser el de la prueba: se elige otro, con números que
 no salgan en ninguna pregunta, y la sonda lo comprueba sobre el dibujo.
+Una escena que necesite el mundo lee los contornos de `js/data/contornos-mundo.js`,
+nunca los copia. Y un lugar de la costa (una ciudad, un puerto) cae justo sobre
+el contorno: en el borde `isPointInFill` contesta que no, así que la sonda lo
+prueba con un margen alrededor.
 
 Si el `--sec` de la misión es claro (un ámbar, un amarillo), la letra blanca
 del botón que avanza no se lee en su punta: la misión declara en su CSS

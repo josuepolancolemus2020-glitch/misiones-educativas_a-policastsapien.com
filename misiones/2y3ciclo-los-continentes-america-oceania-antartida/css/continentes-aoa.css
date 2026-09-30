@@ -450,3 +450,34 @@ body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* ── La animación de «lejos» (js/animacion-lejos.js) ──────────
+   El mapa, los relojes y los nombres son dibujo y papel: se quedan como
+   son en las dos pantallas, con tinta oscura fija y halo blanco en los
+   rótulos. Nada se dice solo con color: cada continente lleva su nombre
+   escrito, la noche lleva su luna y el sol está dibujado, y el lugar sin
+   nombre lleva un «?» con el aro de raya cortada. */
+.am-raiz .ln-mar { fill: #cfe8f5; stroke: #7fb3cc; stroke-width: 0.8; }
+.am-raiz .ln-tierra { fill: #e3e0d3; stroke: #9a9684; stroke-width: 0.35; stroke-linejoin: round; }
+.am-raiz .ln-agua { fill: #cfe8f5; stroke: #9a9684; stroke-width: 0.35; stroke-linejoin: round; }
+.am-raiz .ln-luz path { stroke-width: 0.7; stroke-linejoin: round; }
+.am-raiz .ln-luz-america path { fill: #4caf6d; stroke: #1f6b3a; }
+.am-raiz .ln-luz-oceania path { fill: #f0a13a; stroke: #95560b; }
+.am-raiz .ln-luz-antartida path { fill: #ffffff; stroke: #1f5f80; stroke-width: 1.3; }
+.am-raiz .ln-noche { fill: #0b1a3a; fill-opacity: 0.42; stroke: #0b1a3a; stroke-opacity: 0.6; stroke-width: 0.6; }
+.am-raiz .ln-luna { fill: #fdf5c9; stroke: #6b6440; stroke-width: 0.6; }
+.am-raiz .ln-sol { fill: #ffd23f; stroke: #b87900; stroke-width: 0.8; }
+.am-raiz .ln-rayo { fill: none; stroke: #d99a00; stroke-width: 1.2; stroke-linecap: round; }
+.am-raiz .ln-flecha { fill: none; stroke: #1b2838; stroke-width: 1.3; stroke-linecap: round; }
+.am-raiz .ln-punta { fill: #1b2838; }
+.am-raiz .ln-duda { fill: #ffffff; stroke: #1b2838; stroke-width: 1; stroke-dasharray: 2.2 1.6; }
+.am-raiz .ln-signo { fill: #1b2838; font-family: 'Fredoka', sans-serif; font-weight: 700; text-anchor: middle; }
+.am-raiz .ln-pared { fill: #f5e4c2; stroke: #7b4e2c; stroke-width: 0.6; }
+.am-raiz .ln-techo { fill: #c8553d; stroke: #7b4e2c; stroke-width: 0.6; stroke-linejoin: round; }
+.am-raiz .ln-puerta { fill: #7b4e2c; }
+.am-raiz .ln-nombre { fill: #1b2838; stroke: #ffffff; stroke-width: 3px; stroke-linejoin: round; paint-order: stroke; font-family: 'Fredoka', sans-serif; font-weight: 700; text-anchor: middle; }
+.am-raiz .ln-punto { fill: #d63031; stroke: #ffffff; stroke-width: 1; }
+.am-raiz .ln-lugar, .am-raiz .ln-dia, .am-raiz .ln-hora { fill: #1b2838; stroke: #ffffff; stroke-width: 2.6px; stroke-linejoin: round; paint-order: stroke; font-family: 'Fredoka', sans-serif; }
+.am-raiz .ln-lugar { font-weight: 600; }
+.am-raiz .ln-dia { font-weight: 500; }
+.am-raiz .ln-hora { font-weight: 700; }

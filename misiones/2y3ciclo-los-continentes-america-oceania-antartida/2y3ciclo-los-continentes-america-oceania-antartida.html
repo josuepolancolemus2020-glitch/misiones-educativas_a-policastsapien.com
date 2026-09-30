@@ -25,6 +25,9 @@
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
 <link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La animación que explica el tema: el aparato es compartido y va DESPUÉS
+     del CSS de la misión, que es de donde saca sus colores. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <style>
 /* ===== Prueba de Pensamiento Crítico (segunda evaluación) ===== */
 .eval-mode-toggle{display:flex;gap:0.6rem;margin-bottom:1.2rem;flex-wrap:wrap;}
@@ -118,6 +121,25 @@
     <div class="tip"><span class="ti">❓</span><div>Un mapa no es un dibujo del libro: es lo que
     convierte «lejos» en un sitio con nombre, con clima y con hora. Empieza por el continente donde
     estás parado.</div></div>
+  </div>
+  <!-- La animación que explica el tema, justo después de la historia: doña
+       Nely vive en Honduras, y «lejos» le queda a cualquiera de tres lugares.
+       La primera flecha no sale de América, la segunda cruza el océano hasta
+       Oceanía y la tercera llega a la Antártida; a las 8 de la noche de doña
+       Nely, en casi toda América también es de noche y en Sídney ya es
+       mediodía del día siguiente. La mueve el alumno, paso a paso. El
+       aparato es compartido (js/animacion-mision.js), los contornos del
+       mundo también (js/data/contornos-mundo.js) y la escena es de esta
+       misión (js/animacion-lejos.js). La frase de dentro es de reserva: si
+       el aparato no llega a cargar, se lee eso en vez de un hueco. -->
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira cómo «lejos» se vuelve un lugar</h2>
+    <div id="amLejos">
+      <p>«Lejos» le queda a muchos lugares, y esa palabra no dice cuál. Uno puede quedar lejos y
+      seguir en América, el continente donde vive doña Nely; otro puede estar del otro lado del
+      océano, en Oceanía, o en la Antártida. Con el nombre del continente se encuentra en el mapa, y
+      en el mapa se ve si allá es de día.</p>
+    </div>
   </div>
   <div class="card ac-teal">
     <h2>🌎 ¿Qué son estos tres continentes?</h2>
@@ -611,6 +633,9 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+<script src="../../js/animacion-mision.js"></script>
+<script src="../../js/data/contornos-mundo.js"></script>
+<script src="js/animacion-lejos.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>
