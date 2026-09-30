@@ -35,7 +35,7 @@ const AD_PERS_SIGNIF = { S: 'Sobresaliente', MB: 'Muy Bueno', B: 'Bueno',
 const AD_PERS_NUM = { S: 4, MB: 3, B: 2, NS: 1 };
 const AD_PERS_DE_NUM = { 4: 'S', 3: 'MB', 2: 'B', 1: 'NS' };
 
-let _adTab = 'lista';        /* lista | eco | asis | ctrl | sace | est | lec | com */
+let _adTab = 'lista';        /* lista | eco | asis | eq | ctrl | sace | est | lec | com */
 let _adColectaId = null;     /* colecta abierta en Economía */
 let _adGastosOn = 0;         /* dentro de «Gastos de mi bolsillo» */
 let _adInvOn = 0;            /* dentro de «Inventario del aula» */
@@ -609,6 +609,7 @@ function renderAdmin() {
       <button class="pa-otab ${_adTab === 'lista' ? 'pa-otab-active' : ''}" data-adtab="lista">👥 Alumnos</button>
       <button class="pa-otab ${_adTab === 'eco'   ? 'pa-otab-active' : ''}" data-adtab="eco">💰 Economía</button>
       <button class="pa-otab ${_adTab === 'asis'  ? 'pa-otab-active' : ''}" data-adtab="asis">📋 Asistencia</button>
+      <button class="pa-otab ${_adTab === 'eq'    ? 'pa-otab-active' : ''}" data-adtab="eq">🤝 Equipos</button>
       <button class="pa-otab ${_adTab === 'ctrl'  ? 'pa-otab-active' : ''}" data-adtab="ctrl">✅ Controles</button>
       <button class="pa-otab ${_adTab === 'sace'  ? 'pa-otab-active' : ''}" data-adtab="sace">🧮 Notas SACE</button>
       <button class="pa-otab ${_adTab === 'est'   ? 'pa-otab-active' : ''}" data-adtab="est">📈 Estadísticas</button>
@@ -659,6 +660,9 @@ function renderAdmin() {
   else if (_adTab === 'com') adRenderCom(body, d);
   else if (_adTab === 'est' && typeof adRenderEstadisticas === 'function') adRenderEstadisticas(body, d);
   else if (_adTab === 'lec' && typeof adRenderLectura === 'function') adRenderLectura(body, d);
+  /* 🤝 Equipos va al lado de Asistencia a propósito: se pasa lista y se
+     arman los equipos con los que vinieron (js/tools/equipos.js) */
+  else if (_adTab === 'eq' && typeof adRenderEquipos === 'function') adRenderEquipos(body, d);
   else adRenderSace(body, d);
 }
 
@@ -742,7 +746,7 @@ function adRenderLista(body, d) {
         y solo imprimes la del nuevo.</p>
       <p class="pa-optional-hint">🧪 ¿Tienes un alumno inventado para hacer pruebas? Búscalo en
         <strong>📈 Estadísticas</strong> y márcalo de prueba: queda fuera del <strong>informe del
-        grado</strong> y de los informes de todo el grupo, así deja de inflar la matrícula, el promedio y
+        grado</strong>, de los informes de todo el grupo y de los <strong>🤝 Equipos</strong>, así deja de inflar la matrícula, el promedio y
         las inasistencias que ve la Dirección. Para ti sigue igual — puedes ponerle notas, asistencia y
         tomas de lectura.${adCuentaPruebas(d)
           ? ' Hoy hay <strong>' + adCuentaPruebas(d) + '</strong> marcado(s) así, señalado(s) aquí abajo; toca su 🧪 para volverlo(s) a contar.'
@@ -1095,6 +1099,8 @@ async function adInsertarAlumno() {
   /* los controles se recorren igual: sus marcas son del niño, no del número
      (antes se quedaban con el número viejo y el control mentía) */
   (d.controles || []).forEach(c => { c.datos = adShiftNums(c.datos || {}, pos); });
+  /* y los equipos guardados, que también van por nº de lista */
+  if (typeof eqRecorrer === 'function') eqRecorrer(d, pos);
   /* 3) la lista misma */
   d.lista.forEach(a => { if (a.num >= pos) a.num++; });
   d.lista.push({ num: pos, nombre: String(nombre).trim() });

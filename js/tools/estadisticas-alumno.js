@@ -800,7 +800,7 @@ function adRenderEstadisticas(body, d) {
       </div>
       <p class="pa-optional-hint est-prueba-linea">
         ${esPrueba
-          ? '🧪 <strong>Alumno de prueba.</strong> No entra en el informe del grado ni en los informes de todo el grupo — no infla la matrícula ni las inasistencias que ve la Dirección. Aquí lo sigues viendo entero.'
+          ? '🧪 <strong>Alumno de prueba.</strong> No entra en el informe del grado, ni en los informes de todo el grupo, ni en los 🤝 Equipos: no infla la matrícula ni las inasistencias que ve la Dirección. Aquí lo sigues viendo entero.'
           : '¿Este es un alumno inventado que solo usas para probar?'}
         <button class="est-prueba-tog" id="est-prueba">${esPrueba ? '👥 Volverlo alumno del grado' : '🧪 Marcarlo como de prueba'}</button>
       </p>
