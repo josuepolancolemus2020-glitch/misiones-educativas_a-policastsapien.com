@@ -873,7 +873,7 @@ const evalTFBank=[
   {q:'Un país grande puede tener más de una hora: cambia de un lado al otro.',a:true,k:'tf-varios-husos'},
   {q:'Un lugar a 60° de latitud está más cerca de la línea del medio de la Tierra que uno a 20°.',a:false,k:'tf-60'},
   {q:'Si en Honduras son las 12 del día, en todo el mundo es la misma hora.',a:false,k:'tf-misma-hora'},
-  {q:'Dos ciudades distintas pueden tener exactamente la misma latitud y la misma longitud.',a:false,k:'tf-dos-ciudades'}
+  {q:'Un avión que vuela derecho hacia el norte va cambiando su longitud.',a:false,k:'tf-avion-norte'}
 ];
 const evalMCBank=[
   {q:'¿Cuál es la latitud más grande que puede tener un lugar?',o:['a) 45°','b) 90°','c) 180°','d) 360°'],a:1,k:'mc-lat-max'},

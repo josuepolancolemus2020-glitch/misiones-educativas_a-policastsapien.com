@@ -24,6 +24,9 @@
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
 <link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La animación que explica el tema, justo después de la historia. Va
+     DESPUÉS del CSS de la misión: de ahí saca sus colores. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- Estilos de la Prueba de Pensamiento Crítico (2ª evaluación de la misión) -->
 <style>
   .eval-mode-toggle{display:flex;gap:0.6rem;margin-bottom:1.2rem;flex-wrap:wrap;}
@@ -99,6 +102,26 @@
     <div class="tip"><span class="ti">❓</span><div>Cualquier punto de la Tierra (el patio de tu escuela
     incluido) tiene <strong>dos números</strong> que no se parecen a los de ningún otro punto del planeta y que
     no dependen de que haya una mata de mango. Eso es lo que vas a aprender a leer aquí.</div></div>
+  </div>
+  <!-- La animación que explica el tema, justo después de la historia:
+       pasando el puente hay tres casas con mata de mango, y la ambulancia
+       pregunta de casa en casa. Después, en el mapa del mundo, un punto
+       lejos de la aldea: su primer número se cuenta desde la línea del
+       medio y el segundo desde la línea de partida, cada uno con la letra
+       de su lado; un número solo es una línea entera, y los dos juntos se
+       cruzan en un solo punto. La mueve el alumno, paso a paso. El aparato
+       es compartido (js/animacion-mision.js) y la escena es de esta misión
+       (js/animacion-cruce.js). La frase de dentro es de reserva: si el
+       aparato no llega a cargar, se lee eso en vez de un hueco. -->
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira cómo se leen los dos números</h2>
+    <div id="amCruce">
+      <p>Pasando el puente hay tres casas con mata de mango, y la ambulancia tuvo que preguntar de casa
+      en casa. Cualquier punto de la Tierra tiene dos números. El primero se cuenta desde la línea del
+      medio, hacia arriba o hacia abajo; el segundo, desde la línea de partida, hacia la derecha o hacia
+      la izquierda. Cada uno lleva la letra de su lado, como 30° N y 105° O. Un número solo es una línea
+      entera; los dos juntos se cruzan en un solo punto.</p>
+    </div>
   </div>
   <div class="card ac-teal">
     <h2>🌐 ¿Qué son las Coordenadas Geográficas?</h2>
@@ -598,6 +621,8 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-cruce.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

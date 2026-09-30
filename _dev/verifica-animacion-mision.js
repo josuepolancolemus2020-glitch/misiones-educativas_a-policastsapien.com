@@ -1093,6 +1093,91 @@ const LEER = `
       textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
     };
   };
+  /* Geografía y Coordenadas: la aldea y el mapa. De la aldea, cada casa
+     con el centro de sus paredes, cada copa de mango, el puente, el río
+     (unos cuantos puntos, para ver que pasa por debajo del puente), las
+     marcas con su tipo y sus rayas, la ambulancia, las dos líneas de la
+     casa de doña Nely y su aro. Del mapa, el marco, la malla, las dos
+     líneas de referencia (con cuánto les falta por trazarse), la punta de
+     la chincheta y si cae en tierra, cada flecha de punta a punta con su
+     raya, los números y las letras con su tinta, las dos líneas enteras,
+     el aro y la lectura. ⚠️ Aquí no van barras invertidas: esto vive
+     dentro de una plantilla de texto y se pierden. */
+  window.__amExtra.amCruce = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(base.multiply(el.getScreenCTM())); return [q.x, q.y]; }
+    function caja(el) { var b = el.getBBox(), a = aVista(el, b.x, b.y), c = aVista(el, b.x + b.width, b.y + b.height); return { x0: Math.min(a[0], c[0]), y0: Math.min(a[1], c[1]), x1: Math.max(a[0], c[0]), y1: Math.max(a[1], c[1]) }; }
+    function centro(el) { var c = caja(el); return [(c.x0 + c.x1) / 2, (c.y0 + c.y1) / 2]; }
+    function raya(el) { var d = getComputedStyle(el).strokeDasharray; if (!d || d === 'none') return 0; var v = d.split(',').join(' ').split(' ').map(parseFloat).filter(isFinite); return v.length ? Math.max.apply(null, v) : 0; }
+    function corrido(el) { return Math.abs(parseFloat(getComputedStyle(el).strokeDashoffset) || 0); }
+    function punta(p, largo) { var q = p.getPointAtLength(largo); return aVista(p, q.x, q.y); }
+    function todos(sel) { return [].slice.call(raiz.querySelectorAll(sel)); }
+    var lienzo = document.createElement('canvas').getContext('2d');
+    function tinta(t) {
+      var cs = getComputedStyle(t), s = t.textContent, ancla = t.getAttribute('text-anchor') || cs.textAnchor || 'start';
+      lienzo.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+      lienzo.textAlign = ancla === 'end' ? 'right' : (ancla === 'middle' ? 'center' : 'left');
+      var m = lienzo.measureText(s), x0 = +t.getAttribute('x'), y0 = +t.getAttribute('y');
+      var p = aVista(t, x0 - m.actualBoundingBoxLeft, y0 - m.actualBoundingBoxAscent), q = aVista(t, x0 + m.actualBoundingBoxRight, y0 + m.actualBoundingBoxDescent);
+      return { x0: p[0], y0: p[1], x1: q[0], y1: q[1], base: aVista(t, x0, y0)[1] };
+    }
+    function vertices(p) {
+      var t = p.getAttribute('d').split(' ').filter(function (v) { return v.length; }), out = [], cx = 0, cy = 0;
+      for (var i = 0; i < t.length; i++) {
+        if (t[i] === 'M' || t[i] === 'L') { cx = +t[i + 1]; cy = +t[i + 2]; out.push(aVista(p, cx, cy)); i += 2; }
+        else if (t[i] === 'H') { cx = +t[i + 1]; out.push(aVista(p, cx, cy)); i += 1; }
+        else if (t[i] === 'V') { cy = +t[i + 1]; out.push(aVista(p, cx, cy)); i += 1; }
+      }
+      return out;
+    }
+    var aldea = raiz.querySelector('[data-aldea]'), mundo = raiz.querySelector('[data-mundo]');
+    var rio = raiz.querySelector('[data-rio]'), largoRio = rio.getTotalLength(), puntosRio = [];
+    for (var k = 0; k <= 60; k++) puntosRio.push(punta(rio, largoRio * k / 60));
+    var ambu = raiz.querySelector('[data-ambulancia]');
+    var pin = raiz.querySelector('[data-pin] g');
+    var puntaPin = aVista(pin, 0, 0);
+    var enTierra = todos('[data-tierra]').some(function (p) { var q = svg.createSVGPoint(); q.x = puntaPin[0]; q.y = puntaPin[1]; return p.isPointInFill(q); });
+    var enAgua = todos('[data-agua]').some(function (p) { var q = svg.createSVGPoint(); q.x = puntaPin[0]; q.y = puntaPin[1]; return p.isPointInFill(q); });
+    var mapa = raiz.querySelector('[data-mapa]');
+    return {
+      aldea: vis(aldea),
+      mundo: vis(mundo),
+      puente: centro(raiz.querySelector('[data-tablero]')),
+      rio: puntosRio,
+      casas: todos('[data-casa]').map(function (g) {
+        var c = caja(g.querySelector('[data-cuerpo]'));
+        return { n: +g.getAttribute('data-casa'), nely: g.hasAttribute('data-nely'), c: [(c.x0 + c.x1) / 2, (c.y0 + c.y1) / 2], cuerpo: c, caja: caja(g) };
+      }),
+      matas: todos('[data-copa]').map(function (c) { return centro(c); }),
+      marcas: todos('[data-marca]').filter(vis).map(function (g) {
+        var aro = g.querySelector('[data-marca-aro]'), tr = g.querySelector('[data-marca-trazo]');
+        return { tipo: g.getAttribute('data-marca'), c: centro(aro), raya: raya(aro), rayas: tr ? (tr.getAttribute('d').match(/M/g) || []).length : 0 };
+      }),
+      ambulancia: { c: aVista(ambu, 0, 0), ve: vis(ambu) },
+      lineasCasa: todos('[data-linea-casa]').filter(vis).map(function (p) {
+        return { de: p.getAttribute('data-linea-casa'), v: vertices(p), corrido: corrido(p) };
+      }),
+      rotulosCasa: todos('[data-rotulo-casa]').filter(vis).map(function (t) { return { de: t.getAttribute('data-rotulo-casa'), dice: t.textContent, tinta: tinta(t) }; }),
+      aroCasa: (function (c) { return vis(c) ? { c: aVista(c, +c.getAttribute('cx'), +c.getAttribute('cy')), r: +c.getAttribute('r') } : null; })(raiz.querySelector('[data-aro-casa]')),
+      mapa: caja(mapa),
+      mallaLat: todos('[data-malla-lat]').map(function (p) { var v = vertices(p); return { lat: +p.getAttribute('data-malla-lat'), y: v[0][1] }; }),
+      mallaLon: todos('[data-malla-lon]').map(function (p) { var v = vertices(p); return { lon: +p.getAttribute('data-malla-lon'), x: v[0][0] }; }),
+      refs: todos('[data-ref]').map(function (p) { return { de: p.getAttribute('data-ref'), v: vertices(p), corrido: corrido(p) }; }),
+      refRotulos: todos('[data-ref-rotulo]').filter(vis).map(function (t) { return { de: t.getAttribute('data-ref-rotulo'), dice: t.textContent }; }),
+      pin: { ve: vis(pin), punta: puntaPin, tierra: enTierra, agua: enAgua },
+      flechas: todos('[data-flecha]').filter(vis).map(function (g) {
+        var r = g.querySelector('[data-raya]'), largo = r.getTotalLength(), pv = vertices(g.querySelector('[data-punta]'));
+        return { de: g.getAttribute('data-flecha'), ini: punta(r, 0), fin: punta(r, largo), raya: raya(r), largo: largo, corrido: corrido(r), punta: pv[1] };
+      }),
+      numeros: todos('[data-num]').filter(vis).map(function (t) { return { de: t.getAttribute('data-num'), dice: t.textContent, tinta: tinta(t) }; }),
+      letras: todos('[data-letra]').filter(vis).map(function (t) { return { de: t.getAttribute('data-letra'), dice: t.textContent, tinta: tinta(t) }; }),
+      enteras: todos('[data-entera]').filter(vis).map(function (p) { return { de: p.getAttribute('data-entera'), v: vertices(p), corrido: corrido(p) }; }),
+      aro: (function (c) { return vis(c) ? { c: aVista(c, +c.getAttribute('cx'), +c.getAttribute('cy')), r: +c.getAttribute('r') } : null; })(raiz.querySelector('[data-aro]')),
+      lectura: (function (t) { return vis(t) ? t.textContent : null; })(raiz.querySelector('[data-lectura]')),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   /* El Adjetivo Avanzado: el acta de las dos comas. Se lee cada pedazo del
      acta con su tinta y su línea base; los subrayados, con su raya; las
      marquitas de las comas; cada alumno con su nota (la ✗ son dos rayas y la
@@ -1248,6 +1333,199 @@ let keniaAdverbios = null;
 let mensajePron = null;
 
 const ESCENAS = {
+  /* Geografía y Coordenadas: la aldea de doña Nely y los dos números de un
+     punto. ⚠️ Nada se le cree a la escena. En la aldea, la sonda saca del
+     dibujo cuáles casas cumplen la seña («la de la mata de mango, pasando
+     el puente»): las que tienen su mata al lado y quedan del otro lado del
+     río, del que no entra la ambulancia. Con eso compara las marcas, la
+     ambulancia y el marcador; y en el 6, las dos líneas de la casa de doña
+     Nely: pasan por su centro, cada una toca también otras casas y en las
+     dos solo está la suya. En el mapa, saca la escala del marco (lo mismo
+     por grado a lo ancho que a lo alto), las líneas de referencia de la
+     malla, y de ahí los dos números del punto, leyendo la punta de la
+     chincheta; con eso compara las flechas de punta a punta, los números,
+     las letras, lo que va con raya cortada, las líneas enteras, el aro, la
+     lectura y el marcador. Y comprueba que el punto caiga en tierra, en un
+     cruce de la malla y FUERA de Honduras. ⚠️ Y la prueba no se regala: ni
+     los nombres de los pareados, ni una palabra de las respuestas, ni un
+     número de las preguntas. */
+  amCruce(e, n) {
+    const x = e.extra, r = [];
+    const nb = t => String(t == null ? '' : t).replace(/ /g, ' ').trim();
+    const cerca = (a, b, tol) => Math.abs(a - b) <= tol;
+    /* Lo que no depende del dibujo, primero: con una pieza mal puesta la
+       sonda deja de medir, y esto no puede quedarse sin mirar por eso. */
+    const dicho = [e.texto, e.cifra, e.palabras].concat(x.textos).map(nb).join(' | ').toLowerCase();
+    const EXACTAS = ['ecuador', 'greenwich', 'paralelo', 'paralelos', 'meridiano', 'meridianos', 'polo', 'polos', 'grado', 'grados',
+      'imaginaria', 'imaginarias', 'ubicación', 'geográfica', 'geográficas', 'hemisferio', 'hemisferios', 'mitad', 'mitades', 'oeste',
+      'sur', 'trópico', 'trópicos', 'círculo', 'círculos', 'tórrida', 'templada', 'polar', 'antípoda', 'huso', 'husos', 'hora', 'horas',
+      'franja', 'franjas', 'honduras', 'tegucigalpa', 'ceiba', 'mar', 'océano', 'barco', 'isla', 'calle', 'calles', 'rótulo', 'rótulos',
+      'cero', 'reino', 'distancia', 'coordenadas'];
+    const FRASES = ['de un polo al otro', 'de polo a polo', 'parte la tierra', 'misma distancia', 'línea del medio de la tierra'];
+    const suelto = ' ' + dicho.split(/[^a-záéíóúñü]+/).filter(Boolean).join(' ') + ' ';
+    const malas = suelto.trim().split(' ').filter(w => EXACTAS.includes(w)).concat(FRASES.filter(f => suelto.includes(' ' + f + ' ')));
+    r.push([malas.length === 0, `paso ${n}: no sale ningún nombre de los pareados ni una palabra de las respuestas de la prueba`, malas]);
+    const nums = (dicho.match(/\d+/g) || []).map(Number);
+    const PERMITIDOS = [0, 1, 3, 30, 40, 105];
+    r.push([nums.every(k => PERMITIDOS.includes(k)) && !/(^|[^0-9])0°/.test(dicho), `paso ${n}: ningún número de las preguntas de la prueba (ni el 0°)`, nums.filter(k => !PERMITIDOS.includes(k))]);
+
+    const enAldea = n <= 1 || n === 6;
+    r.push([x.aldea === enAldea && x.mundo === !enAldea, `paso ${n}: se ve ${enAldea ? 'la aldea' : 'el mapa del mundo'}, y solo eso`, [x.aldea, x.mundo]]);
+
+    if (enAldea) {
+      /* ── La seña, sacada del dibujo: cada mata es de la casa que tiene más
+         cerca; «pasando el puente» es la orilla contraria a la entrada, que
+         es por donde espera la ambulancia al empezar. ── */
+      const [bx, by] = x.puente;
+      const bajo = x.rio.reduce((m, p) => Math.abs(p[1] - by) < Math.abs(m[1] - by) ? p : m);
+      r.push([cerca(bajo[0], bx, 3), `paso ${n}: el río pasa por debajo del puente`, [Math.round(bajo[0]), Math.round(bx)]]);
+      const d2 = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+      const dueno = x.matas.map(m => x.casas.reduce((q, c) => d2(c.c, m) < d2(q.c, m) ? c : q));
+      const conMata = new Set(dueno.map(c => c.n));
+      r.push([x.matas.length === conMata.size && x.matas.every((m, i) => d2(dueno[i].c, m) < 34), `paso ${n}: cada mata de mango está al lado de una casa, y ninguna casa tiene dos`, [x.matas.length, conMata.size]]);
+      const lado = c => c.c[0] > bx;
+      const candidatas = x.casas.filter(c => conMata.has(c.n) && lado(c)).sort((a, b) => a.c[0] - b.c[0]);
+      const nely = x.casas.find(c => c.nely);
+      r.push([candidatas.length === 3 && !!nely && candidatas.includes(nely), `paso ${n}: pasando el puente hay tres casas con mata de mango, y una es la de doña Nely`, candidatas.map(c => c.n)]);
+      r.push([x.casas.some(c => conMata.has(c.n) && !lado(c)), `paso ${n}: antes del puente también hay una casa con mata: la seña la deja fuera`, x.casas.filter(c => conMata.has(c.n) && !lado(c)).map(c => c.n)]);
+      const deCasa = mk => x.casas.reduce((q, c) => d2(c.c, mk.c) < d2(q.c, mk.c) ? c : q);
+      const marcas = t => x.marcas.filter(m => m.tipo === t);
+      const sobre = t => marcas(t).map(m => deCasa(m).n).sort((a, b) => a - b);
+      const ids = l => l.map(c => c.n).sort((a, b) => a - b);
+      const amb = x.ambulancia.c;
+      r.push([x.ambulancia.ve && cerca(amb[1], by, 3), `paso ${n}: la ambulancia va por el camino`, amb.map(Math.round)]);
+
+      if (n === 0) {
+        r.push([JSON.stringify(sobre('duda')) === JSON.stringify(ids(candidatas)) && marcas('no').length === 0 && marcas('si').length === 0,
+          'paso 0: un «?» sobre cada casa de la seña, y ninguna ✗ ni ✓', [sobre('duda'), ids(candidatas)]]);
+        r.push([marcas('duda').every(m => m.raya > 0 && m.raya <= 3), 'paso 0: la duda va con el aro de raya cortada', marcas('duda').map(m => m.raya)]);
+        r.push([amb[0] < bx, 'paso 0: la ambulancia espera a la entrada, antes del puente', Math.round(amb[0])]);
+        r.push([nb(e.cifra) === String(candidatas.length) && nb(e.palabras) === 'casas con esa seña' && /\btres\b/.test(nb(e.texto)),
+          `paso 0: el marcador y la frase cuentan las casas de la seña (${candidatas.length})`, [e.cifra, e.palabras]]);
+      } else {
+        const noEs = n === 1 ? ids(candidatas.filter(c => c !== nely)) : [];
+        r.push([JSON.stringify(sobre('no')) === JSON.stringify(noEs) && JSON.stringify(sobre('si')) === JSON.stringify([nely.n]) && marcas('duda').length === 0,
+          `paso ${n}: ${n === 1 ? 'una ✗ en las otras dos casas de la seña y la ✓ en la de doña Nely' : 'solo la ✓ en la casa de doña Nely'}`, [sobre('no'), sobre('si')]]);
+        r.push([marcas('no').every(m => m.rayas === 2) && marcas('si').every(m => m.rayas === 1), `paso ${n}: la ✗ son dos rayas y la ✓ una: no se distinguen solo por el color`,
+          x.marcas.map(m => [m.tipo, m.rayas])]);
+        r.push([cerca(amb[0], nely.c[0], 2), `paso ${n}: la ambulancia acaba frente a la casa de doña Nely`, [Math.round(amb[0]), Math.round(nely.c[0])]]);
+        if (n === 1) r.push([nely === candidatas[candidatas.length - 1], 'paso 1: la de doña Nely es la tercera que encuentra por el camino', ids(candidatas)]);
+        r.push([nb(e.cifra) === (n === 1 ? '40' : '0') && nb(e.palabras) === 'minutos preguntando' && (n !== 1 || /cuarenta minutos/.test(nb(e.texto))),
+          `paso ${n}: el marcador dice ${n === 1 ? 'los cuarenta minutos de la historia' : 'que no hubo que preguntar'}`, [e.cifra, e.palabras]]);
+      }
+
+      /* ── Las dos líneas de la casa de doña Nely, en el 6. ── */
+      if (n === 6) {
+        const lat = x.lineasCasa.find(l => l.de === 'lat'), lon = x.lineasCasa.find(l => l.de === 'lon');
+        const horiz = !!lat && cerca(lat.v[0][1], lat.v[1][1], 0.2) && cerca(lat.v[0][1], nely.c[1], 1) && Math.min(lat.v[0][0], lat.v[1][0]) <= 10 && Math.max(lat.v[0][0], lat.v[1][0]) >= 294;
+        const vert = !!lon && cerca(lon.v[0][0], lon.v[1][0], 0.2) && cerca(lon.v[0][0], nely.c[0], 1) && Math.min(lon.v[0][1], lon.v[1][1]) <= 10 && Math.max(lon.v[0][1], lon.v[1][1]) >= 180;
+        r.push([horiz && vert && lat.corrido <= 0.5 && lon.corrido <= 0.5, 'paso 6: por la casa de doña Nely pasa una línea acostada y otra de arriba abajo, de borde a borde', x.lineasCasa.map(l => [l.de, l.v.map(p => p.map(Math.round))])]);
+        if (horiz && vert) {
+          const yl = lat.v[0][1], xl = lon.v[0][0];
+          const enLat = x.casas.filter(c => c.cuerpo.y0 <= yl && c.cuerpo.y1 >= yl), enLon = x.casas.filter(c => c.cuerpo.x0 <= xl && c.cuerpo.x1 >= xl);
+          const enLasDos = enLat.filter(c => enLon.includes(c));
+          r.push([enLat.length >= 2 && enLon.length >= 2, 'paso 6: cada línea sola toca también otras casas: un número no alcanza', [ids(enLat), ids(enLon)]]);
+          r.push([enLasDos.length === 1 && enLasDos[0] === nely, 'paso 6: en las dos líneas solo está la casa de doña Nely', ids(enLasDos)]);
+          const rl = x.rotulosCasa.find(t => t.de === 'lat'), ro = x.rotulosCasa.find(t => t.de === 'lon');
+          r.push([!!rl && nb(rl.dice) === 'latitud' && rl.tinta.y1 <= yl && rl.tinta.y1 >= yl - 7 && !!ro && nb(ro.dice) === 'longitud' && ro.tinta.x1 <= xl && ro.tinta.x1 >= xl - 8,
+            'paso 6: la acostada dice «latitud» y la de arriba abajo «longitud», cada rótulo pegado a su línea', x.rotulosCasa.map(t => t.dice)]);
+        }
+        const aro = x.aroCasa;
+        r.push([!!aro && d2(aro.c, nely.c) <= aro.r - 8 && x.casas.every(c => c === nely || d2(aro.c, c.c) > aro.r),
+          'paso 6: el aro rodea la casa de doña Nely y ninguna otra', aro && [aro.c.map(Math.round), aro.r]]);
+      } else {
+        r.push([x.lineasCasa.length === 0 && x.rotulosCasa.length === 0 && !x.aroCasa, `paso ${n}: todavía sin las líneas de la casa`, x.lineasCasa.length]);
+      }
+      return r;
+    }
+
+    /* ════════ El mapa ════════ */
+    const m = x.mapa, K = (m.x1 - m.x0) / 360;
+    r.push([Math.abs((m.y1 - m.y0) / 180 - K) < 0.01, `paso ${n}: el mapa mide lo mismo por grado a lo ancho que a lo alto`, [Math.round(K * 1000) / 1000, Math.round((m.y1 - m.y0) / 180 * 1000) / 1000]]);
+    const yLat = lat => m.y0 + (90 - lat) * K, xLon = lon => m.x0 + (lon + 180) * K;
+    r.push([x.mallaLat.length === 11 && x.mallaLat.every(l => l.lat % 15 === 0 && cerca(l.y, yLat(l.lat), 0.3)) &&
+      x.mallaLon.length === 23 && x.mallaLon.every(l => l.lon % 15 === 0 && cerca(l.x, xLon(l.lon), 0.3)),
+      `paso ${n}: la malla va de 15° en 15°, cada línea en su sitio`, [x.mallaLat.length, x.mallaLon.length]]);
+    const medio = x.refs.find(q => q.de === 'medio'), partida = x.refs.find(q => q.de === 'partida');
+    const yM = medio.v[0][1], xP = partida.v[0][0];
+    r.push([cerca(yM, yLat(0), 0.3) && cerca(medio.v[1][1], yM, 0.1) && cerca(xP, xLon(0), 0.3) && cerca(partida.v[1][0], xP, 0.1),
+      `paso ${n}: la línea del medio parte el mapa a lo alto, y la de partida es la del 0 de la malla`, [Math.round(yM), Math.round(xP)]]);
+    const conPartida = n >= 3;
+    r.push([medio.corrido <= 0.5 && (conPartida ? partida.corrido <= 0.5 : partida.corrido > 1),
+      `paso ${n}: ${conPartida ? 'las dos líneas de referencia trazadas' : 'solo la línea del medio: la de partida todavía no'}`, [medio.corrido, partida.corrido]]);
+    const rr = x.refRotulos.map(q => q.de + ':' + nb(q.dice)).sort();
+    r.push([JSON.stringify(rr) === JSON.stringify(conPartida ? ['medio:línea del medio', 'partida:línea de partida'] : ['medio:línea del medio']),
+      `paso ${n}: cada línea de referencia con su nombre`, rr]);
+
+    /* ── El punto: sus dos números, leídos en la punta de la chincheta. ── */
+    const [px, py] = x.pin.punta;
+    const lat = Math.round((yM - py) / K * 10) / 10, lon = Math.round((px - xP) / K * 10) / 10;
+    const aLat = Math.abs(lat), aLon = Math.abs(lon), letLat = lat > 0 ? 'N' : 'S', letLon = lon < 0 ? 'O' : 'E';
+    const lectura = `${aLat}° ${letLat}, ${aLon}° ${letLon}`;
+    r.push([x.pin.ve && lat % 15 === 0 && lon % 15 === 0 && lat !== 0 && lon !== 0, `paso ${n}: el punto está en un cruce de la malla, y se puede contar`, [lat, lon]]);
+    r.push([x.pin.tierra && !x.pin.agua, `paso ${n}: el punto cae en tierra`, [lat, lon]]);
+    r.push([!(lat >= 12.9 && lat <= 16.6 && lon >= -89.5 && lon <= -83), `paso ${n}: el punto NO es Honduras (la prueba pregunta dónde está)`, [lat, lon]]);
+
+    /* ── Las flechas que cuentan: de la línea de referencia a la punta, con
+       la punta de la flecha en el punto. ── */
+    const fl = nombre => x.flechas.find(f => f.de === nombre);
+    const flecha = (f, ini, fin) => !!f && cerca(f.ini[0], ini[0], 0.6) && cerca(f.ini[1], ini[1], 0.6) && Math.hypot(f.fin[0] - fin[0], f.fin[1] - fin[1]) <= 4.5 &&
+      cerca(f.punta[0], fin[0], 0.6) && cerca(f.punta[1], fin[1], 0.6);
+    const entera = f => !!f && f.corrido <= 0.5 && (f.raya === 0 || f.raya >= f.largo - 0.5);
+    const cortada = f => !!f && f.raya > 0 && f.raya <= 4;
+    const num = nombre => x.numeros.find(q => q.de === nombre), letra = nombre => x.letras.find(q => q.de === nombre);
+    const conLat = n >= 2 && n <= 4, conLon = n >= 3 && n <= 4, espejo = n === 4;
+    if (conLat) {
+      r.push([flecha(fl('lat'), [px, yM], [px, py]) && entera(fl('lat')), `paso ${n}: la flecha del primer número va de la línea del medio al punto`, fl('lat') && [fl('lat').ini, fl('lat').fin].map(p => p.map(Math.round))]);
+      const t = num('lat');
+      r.push([!!t && nb(t.dice) === aLat + '°' && t.tinta.x1 < px - 2 && t.tinta.y0 >= py - 1 && t.tinta.y1 <= yM + 1, `paso ${n}: al lado de su flecha dice ${aLat}°`, t && t.dice]);
+    }
+    if (conLon) {
+      r.push([flecha(fl('lon'), [xP, py], [px, py]) && entera(fl('lon')), `paso ${n}: la flecha del segundo número va de la línea de partida al punto`, fl('lon') && [fl('lon').ini, fl('lon').fin].map(p => p.map(Math.round))]);
+      const t = num('lon');
+      r.push([!!t && nb(t.dice) === aLon + '°' && t.tinta.y1 <= py && t.tinta.x0 >= Math.min(px, xP) && t.tinta.x1 <= Math.max(px, xP), `paso ${n}: encima de su flecha dice ${aLon}°`, t && t.dice]);
+    }
+    const vivas = x.flechas.map(f => f.de).sort();
+    const esperadas = [].concat(conLat ? ['lat'] : [], conLon ? ['lon'] : [], espejo ? ['lat-espejo', 'lon-espejo'] : []).sort();
+    r.push([JSON.stringify(vivas) === JSON.stringify(esperadas), `paso ${n}: las flechas que tocan, y ninguna más`, vivas]);
+
+    /* ── El número sin letra: del otro lado, con raya cortada y sin letra. La
+       letra va pegada al número de verdad. ── */
+    if (espejo) {
+      const le = fl('lat-espejo'), lo = fl('lon-espejo');
+      r.push([flecha(le, [px, yM], [px, yM + (yM - py)]) && cortada(le), `paso 4: hacia el otro lado también hay ${aLat}°, con raya cortada`, le && le.fin.map(Math.round)]);
+      r.push([flecha(lo, [xP, py], [xP + (xP - px), py]) && cortada(lo), `paso 4: y del otro lado también hay ${aLon}°, con raya cortada`, lo && lo.fin.map(Math.round)]);
+      const te = num('lat-espejo'), toe = num('lon-espejo');
+      r.push([!!te && nb(te.dice) === aLat + '°' && !!toe && nb(toe.dice) === aLon + '°', 'paso 4: los números del otro lado dicen lo mismo, sin letra', [te && te.dice, toe && toe.dice]]);
+      const pegada = (l, t) => !!l && !!t && cerca(l.tinta.base, t.tinta.base, 0.3) && l.tinta.x0 - t.tinta.x1 >= 1 && l.tinta.x0 - t.tinta.x1 <= 4.5;
+      r.push([!!letra('lat') && nb(letra('lat').dice) === letLat && pegada(letra('lat'), num('lat')), `paso 4: el primer número lleva la ${letLat}, pegada a él`, letra('lat') && letra('lat').dice]);
+      r.push([!!letra('lon') && nb(letra('lon').dice) === letLon && pegada(letra('lon'), num('lon')), `paso 4: el segundo lleva la ${letLon}, pegada a él`, letra('lon') && letra('lon').dice]);
+      r.push([x.letras.length === 2, 'paso 4: los números del otro lado no llevan letra', x.letras.map(q => q.de)]);
+    } else {
+      r.push([x.letras.length === 0 && !x.numeros.some(q => /espejo/.test(q.de)), `paso ${n}: sin letras ni números del otro lado`, x.letras.map(q => q.de)]);
+    }
+
+    /* ── En el 5, cada número es su línea entera, y se cruzan en el punto. ── */
+    if (n === 5) {
+      const el = x.enteras.find(q => q.de === 'lat'), eo = x.enteras.find(q => q.de === 'lon');
+      r.push([!!el && cerca(el.v[0][1], py, 0.3) && cerca(el.v[1][1], py, 0.3) && cerca(Math.min(el.v[0][0], el.v[1][0]), m.x0, 1) && cerca(Math.max(el.v[0][0], el.v[1][0]), m.x1, 1) && el.corrido <= 0.5,
+        `paso 5: ${aLat}° ${letLat} solo es una línea acostada entera, de un borde al otro`, el && el.v.map(p => p.map(Math.round))]);
+      r.push([!!eo && cerca(eo.v[0][0], px, 0.3) && cerca(eo.v[1][0], px, 0.3) && cerca(Math.min(eo.v[0][1], eo.v[1][1]), m.y0, 1) && cerca(Math.max(eo.v[0][1], eo.v[1][1]), m.y1, 1) && eo.corrido <= 0.5,
+        `paso 5: ${aLon}° ${letLon} solo es una línea de arriba abajo entera`, eo && eo.v.map(p => p.map(Math.round))]);
+      r.push([!!x.aro && Math.hypot(x.aro.c[0] - px, x.aro.c[1] - py) <= 0.6 && x.aro.r >= 5, 'paso 5: el aro rodea el cruce de las dos, que es el punto', x.aro && x.aro.c.map(Math.round)]);
+      r.push([nb(x.lectura) === lectura, `paso 5: la lectura del punto dice ${lectura}`, x.lectura]);
+    } else {
+      r.push([x.enteras.length === 0 && !x.aro && x.lectura === null, `paso ${n}: todavía sin las líneas enteras`, x.enteras.map(q => q.de)]);
+    }
+
+    /* ── El marcador, y los números de la frase. ── */
+    const MARCA = { 2: [aLat + '°', 'la latitud'], 3: [aLon + '°', 'la longitud'], 4: [lectura, 'cada número con su letra'], 5: ['1', 'punto con esos dos números'] }[n];
+    r.push([nb(e.cifra) === MARCA[0] && nb(e.palabras) === MARCA[1], `paso ${n}: el marcador dice ${MARCA[0]} (${MARCA[1]})`, [e.cifra, e.palabras]]);
+    const enFrase = (nb(e.texto).match(/\d+/g) || []).map(Number);
+    r.push([enFrase.every(k => k === aLat || k === aLon), `paso ${n}: cada número de la frase es uno de los dos del punto`, enFrase]);
+    if (n === 4) r.push([nb(e.texto).includes(lectura), `paso 4: la frase lee el punto con sus letras: ${lectura}`, e.texto]);
+    return r;
+  },
   /* El Adjetivo Avanzado: el acta de las dos comas. Se lee el acta pedazo
      por pedazo, como se escribe, y se comprueba que sus palabras sean las
      mismas en los seis pasos: lo único que entra y sale son las dos comas.

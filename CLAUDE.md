@@ -8010,6 +8010,148 @@ paso 1, la leyenda del aro desde el paso 0, la frase diciendo 29 donde se ven 30
 y el hilo de la etiqueta bajando de «alumnos». Salió roja con cada una. Con la
 CPU frenada seis veces va a 60 cuadros por segundo.
 
+### La trigésima: Geografía y Coordenadas, la primera de la Ruta del Planeta
+
+Con las tres rutas de Matemáticas y de Español terminadas, el autor preguntó el
+30 de septiembre de 2026 cuál seguía y pidió seguir con ella: la primera de la
+Ruta del Planeta, **Geografía y Coordenadas**
+(`misiones/2y3ciclo-geografia-coordenadas/`, `js/animacion-cruce.js`). La
+historia es la de doña Nely. Su casa se dice así: «la de la mata de mango,
+pasando el puente», y la noche que necesitó la ambulancia, el chofer dio
+vueltas cuarenta minutos preguntando de casa en casa. La historia promete que
+cualquier punto de la Tierra tiene dos números que no dependen de ninguna mata
+de mango. La animación tiene siete pasos:
+
+- la aldea: pasando el puente hay tres casas con mata de mango, cada una con
+  su «?». Antes del puente hay otra, y la seña la deja fuera;
+- el chofer pregunta en una y en otra (✗, ✗), y la tercera es la de doña Nely
+  (✓): cuarenta minutos;
+- en un mapa del mundo, un punto lejos de la aldea. Su primer número se cuenta
+  desde la línea del medio: 30° hacia arriba;
+- el segundo se cuenta desde la línea de partida, la que va de arriba abajo:
+  105° hacia la izquierda;
+- pero hacia abajo también hay 30°, y hacia la derecha también hay 105°, con
+  raya cortada y sin letra. Por eso cada número lleva la letra de su lado:
+  30° N, 105° O;
+- un número sin el otro es una línea entera, de un borde al otro del mapa. Los
+  dos juntos se cruzan en un solo punto;
+- de vuelta en la aldea, por la casa de doña Nely pasan sus dos líneas, una
+  acostada («latitud») y otra de arriba abajo («longitud»). Cada una toca
+  también otras casas, y en las dos solo está la suya. Con sus dos números,
+  el chofer no habría tenido que preguntar.
+
+Siete cosas que valen para las que siguen:
+
+1. ⚠️ **El punto del mapa no es Honduras, y a propósito.** La prueba pregunta
+   qué coordenadas pueden ser de un lugar de Honduras y si Honduras queda al
+   sur de la línea que parte la Tierra en norte y sur, y la de pensamiento
+   crítico trae un barco frente a La Ceiba. Si la animación leyera los números
+   de la aldea, esas preguntas se contestarían de memoria. El punto es otro,
+   30° N, 105° O, con números que no salen en ninguna pregunta, y la aldea
+   nunca se ubica en el mapa. **En una misión de lugares, el lugar de la escena
+   tampoco puede ser el de la prueba**, igual que la cuenta en las de números.
+2. **Y sus letras son las de Honduras, la N y la O.** Justo debajo, la tarjeta
+   que sigue da el dato clave, «15° N y 87° O». Con un ejemplo del mismo lado
+   del mundo, el alumno lo lee a la primera.
+3. ⚠️ **Lo que la prueba pregunta no se nombra.** No se dice «ecuador» ni
+   «Greenwich», que son los pareados. Tampoco «paralelos», «meridianos»,
+   «polos», «grados» ni «oeste», que son respuestas del completar y de la
+   selección múltiple. Y no sale el 0°, ni el 90°, ni el 180°. Las dos líneas
+   de referencia se llaman como las llama la propia prueba cuando no quiere
+   nombrarlas: «la línea del medio», y la otra, «la línea de partida», que es
+   lo que es. La tarjeta de abajo les pone el nombre.
+4. ⚠️ **La letra se entiende viéndola faltar.** Un número sin letra señala dos
+   lugares: hacia abajo también hay 30°. Esos lados van con raya cortada y sin
+   letra. Lo que no se marca nunca es el punto con las dos letras cambiadas:
+   se parece al antípoda, que la prueba de pensamiento crítico pide calcular, y
+   el antípoda no se saca así.
+5. **Un número solo es una línea entera**, y esa es la seña de la historia con
+   otra cara: «la de la mata de mango» le queda a tres casas, y «30° N» le
+   queda a toda una línea. Se ve en el mapa y otra vez en la aldea.
+6. ⚠️ **El mapa es un mapa de verdad.** El repositorio no tenía ninguno, así
+   que los contornos se armaron simplificados, cada punto con sus coordenadas,
+   y se miraron en una captura grande antes de meterlos en la escena. La
+   rejilla mide lo mismo por grado a lo ancho que a lo alto y va de 15° en
+   15°, así que el punto cae en un cruce y se puede contar. La sonda comprueba
+   que caiga en tierra y fuera de Honduras. Lo mira con `isPointInFill` sobre
+   los contornos.
+7. ⚠️ **La tesis de la historia estaba en la prueba.** El verdadero o falso
+   «Dos ciudades distintas pueden tener exactamente la misma latitud y la misma
+   longitud» es el «no se parecen a los de ningún otro punto» de la historia,
+   con otra ropa. Ahora es «Un avión que vuela derecho hacia el norte va
+   cambiando su longitud» (falso: lo que cambia es la latitud), con otra clave
+   y en la misión y en la ficha, que sigue en sus siete hojas. El de «las
+   coordenadas sirven también en el mar» se queda: lo enseña la propia ficha,
+   y la animación no enseña el mar.
+
+Y dos que solo salieron mirando las capturas, con la sonda en verde: a
+tamaño 1 las casas se veían chicas, con aire de sobra arriba y abajo, y van a
+1,3. El rótulo «línea del medio», a la izquierda, se montaba sobre el «30°» de
+la flecha, y pasó a la derecha.
+
+⚠️ **Y una que solo salió yendo HACIA ATRÁS.** El paso 1 contaba su historia
+solo cuando se llegaba desde el 0: la ambulancia corría por el camino y las ✗
+y la ✓ salían al llegar a cada casa. Volviendo desde el mapa con «Atrás», la
+ambulancia llegaba de un tirón con las tres marcas ya puestas, y los cuarenta
+minutos no se veían pasar. Al final del paso todo estaba donde tenía que estar,
+así que ninguna sonda lo veía: se vio con fotos a medio viaje, yendo hacia
+atrás. Ahora el paso cuenta su historia cada vez que se ENTRA en él, venga de
+donde venga (`entra(1)`, que es `n === 1 && antes !== 1`).
+
+La sonda de esta escena **no le cree nada a la escena**. En la aldea saca del
+dibujo cuáles casas cumplen la seña: las que tienen su mata al lado (cada mata
+es de la casa más cercana) y quedan del otro lado del río, el que no es el de
+la entrada. En el mapa saca la escala del marco y los dos números de la punta
+de la chincheta. Comprueba:
+
+- que el río pase por debajo del puente, que las casas de la seña sean tres y
+  una sea la de doña Nely, y que antes del puente haya otra con mata;
+- que en el paso 0 haya un «?» con aro de raya cortada sobre cada casa de la
+  seña; que en el 1 la ✗ (dos rayas) esté en las otras dos y la ✓ (una) en la
+  suya, que sea la tercera por el camino y que la ambulancia acabe frente a
+  ella;
+- que el mapa mida lo mismo por grado a lo ancho que a lo alto, que la malla
+  vaya de 15° en 15°, que la línea del medio parta el mapa a lo alto y que la
+  de partida sea la del 0 de la malla;
+- que el punto esté en un cruce, en tierra y fuera de Honduras;
+- que cada flecha vaya de su línea de referencia a la punta de la chincheta, y
+  que su número sea el que se mide;
+- que del otro lado haya el mismo número con raya cortada y sin letra, y que
+  la letra vaya pegada al número de verdad y sea la de su lado;
+- que en el paso 5 cada número sea su línea entera, de un borde al otro, que
+  el aro rodee el cruce y que la lectura diga los dos números con sus letras;
+- que en el 6 por la casa de doña Nely pasen sus dos líneas, que cada una toque
+  también otras casas y que en las dos solo esté la suya;
+- y que el marcador y cada número de la frase digan lo que se mide, sin un
+  nombre de los pareados, sin una palabra de las respuestas y sin un número de
+  las preguntas.
+
+⚠️ **Y el lector de la sonda aprendió la H y la V.** La primera vez que corrió,
+reventó: las líneas de referencia se escriben «M x y H x2» y el lector solo
+sabía leer la M y la L. Ahora lee las cuatro.
+
+Se comprobó al revés con diecisiete averías, plantadas una por una:
+- el punto una línea más arriba con los números de antes;
+- la letra del primer número cambiada;
+- el número sin letra con raya entera;
+- el otro lado del segundo número más corto;
+- la flecha del segundo número sin salir de la línea de partida;
+- una casa de la seña sin su mata;
+- la duda sobre una casa que no es de la seña;
+- la ✗ de una sola raya;
+- el marcador del paso 1 diciendo 30;
+- la línea de arriba abajo de la casa, corrida;
+- «ecuador» en una frase;
+- el punto en Honduras;
+- la línea entera del primer número sin llegar al borde;
+- la lectura con la letra cambiada;
+- la línea de partida trazada desde el paso 2;
+- un número de la prueba en una frase;
+- la ambulancia del paso 6 sin llegar a la casa de doña Nely.
+
+Salió roja con cada una. Con la CPU frenada seis veces va a 59 cuadros por
+segundo, y el peor cuadro es de 83 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -8066,7 +8208,11 @@ letra se ve vacío entre una frase y otra. Lo que se esconde corriendo su trazo
 hilo con el trazo corrido sigue «encendido» para ella. Las piezas que caminan
 juntas arrancan por la de adelante: si arranca la de atrás, alcanza a las otras.
 Y un espacio duro en una expresión se escribe ` `: pegado tal cual, se ve
-igual que un espacio normal.
+igual que un espacio normal. Un paso que cuenta una historia la cuenta cada vez
+que se entra en él, también volviendo con «Atrás» (`entra(k)`), y eso se mira
+con fotos a medio viaje yendo hacia atrás. Y en una misión de lugares, el lugar
+de la escena tampoco puede ser el de la prueba: se elige otro, con números que
+no salgan en ninguna pregunta, y la sonda lo comprueba sobre el dibujo.
 
 Si el `--sec` de la misión es claro (un ámbar, un amarillo), la letra blanca
 del botón que avanza no se lee en su punta: la misión declara en su CSS

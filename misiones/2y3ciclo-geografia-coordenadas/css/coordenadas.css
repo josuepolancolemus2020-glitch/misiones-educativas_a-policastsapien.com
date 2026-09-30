@@ -570,3 +570,56 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* ── La animación de los dos números (js/animacion-cruce.js) ──────────
+   El botón que avanza va con letra blanca, y con el teal y el mostaza de
+   la misión se quedaba en 3,3:1 en el teal y en 2,9:1 en el mostaza. Es
+   el mismo degradado de Los Adjetivos, que tiene los mismos colores.
+
+   La aldea y el mapa son dibujos: se quedan como son en las dos
+   pantallas, con tinta oscura fija y halo blanco en los rótulos. Nada se
+   dice solo con color: la casa que no es lleva una ✗ (dos rayas) y la que
+   sí una ✓ (una); la duda, un «?» con el aro de raya cortada; y lo que un
+   número sin letra podría ser va con raya cortada. */
+:root { --am-boton: linear-gradient(135deg, #2a7566, #8f6000); }
+.am-raiz .co-grama { fill: #d6e8b8; stroke: #a8c48a; stroke-width: 1; }
+.am-raiz .co-rio { fill: none; stroke: #8fcbe8; stroke-width: 13; stroke-linecap: round; }
+.am-raiz .co-rio-brillo { fill: none; stroke: #c4e6f5; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 7 11; }
+.am-raiz .co-camino { fill: #e6d3a6; stroke: #c9ae78; stroke-width: 0.8; }
+.am-raiz .co-puente { fill: #b3804f; stroke: #6e4a2a; stroke-width: 0.8; }
+.am-raiz .co-tabla { fill: none; stroke: #8a5f38; stroke-width: 0.7; }
+.am-raiz .co-baranda { fill: none; stroke: #5d3d20; stroke-width: 1.8; stroke-linecap: round; }
+.am-raiz .co-pared { fill: #f5e4c2; stroke: #7b4e2c; stroke-width: 0.8; }
+.am-raiz .co-techo { fill: #c8553d; stroke: #7b4e2c; stroke-width: 0.8; stroke-linejoin: round; }
+.am-raiz .co-puerta { fill: #7b4e2c; }
+.am-raiz .co-copa { fill: #3e8e41; stroke: #2b6a2e; stroke-width: 0.8; }
+.am-raiz .co-tronco { fill: #7b4e2c; }
+.am-raiz .co-mango { fill: #f5a623; stroke: #b86e0a; stroke-width: 0.4; }
+.am-raiz .co-ambu { fill: #ffffff; stroke: #4a4f55; stroke-width: 0.8; stroke-linejoin: round; }
+.am-raiz .co-vidrio { fill: #9fd3ee; stroke: #4a4f55; stroke-width: 0.5; }
+.am-raiz .co-cruz { fill: #d63031; }
+.am-raiz .co-llanta { fill: #2d3436; }
+.am-raiz .co-marca-fondo { fill: #ffffff; stroke: #1b2838; stroke-width: 1.1; }
+.am-raiz .co-duda .co-marca-fondo { stroke-dasharray: 2.4 1.8; }
+.am-raiz .co-marca-trazo { fill: none; stroke: #1b2838; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.am-raiz .co-signo { fill: #1b2838; font-family: 'Fredoka', sans-serif; font-weight: 700; text-anchor: middle; }
+.am-raiz .co-mar { fill: #cde7f4; stroke: #7fb3cc; stroke-width: 0.8; }
+.am-raiz .co-malla { fill: none; stroke: #9cc3d6; stroke-width: 0.45; }
+.am-raiz .co-tierra { fill: #dcebc0; stroke: #7d9a62; stroke-width: 0.35; stroke-linejoin: round; }
+.am-raiz .co-agua { fill: #cde7f4; stroke: #7d9a62; stroke-width: 0.35; stroke-linejoin: round; }
+.am-raiz .co-ref { fill: none; stroke: #1b2838; stroke-width: 1.3; }
+.am-raiz .co-lat { fill: none; stroke: #1f6f5f; stroke-width: 1.6; stroke-linecap: round; }
+.am-raiz .co-lon { fill: none; stroke: #8a5a00; stroke-width: 1.6; stroke-linecap: round; }
+.am-raiz .co-espejo { stroke-dasharray: 3 2.4; stroke-linecap: butt; }
+.am-raiz .co-punta.co-lat { fill: #1f6f5f; stroke: none; }
+.am-raiz .co-punta.co-lon { fill: #8a5a00; stroke: none; }
+.am-raiz .co-pin { fill: #d63031; stroke: #7a1414; stroke-width: 0.8; }
+.am-raiz .co-pin-ojo { fill: #ffffff; }
+.am-raiz .co-aro { fill: none; stroke: #1b2838; stroke-width: 1.3; }
+.am-raiz .co-rotulo { fill: #1b2838; stroke: #ffffff; stroke-width: 2.6px; stroke-linejoin: round; paint-order: stroke; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+.am-raiz .co-letra { font-weight: 700; }
+/* La ambulancia va de casa en casa a paso de carro, no de salto: cada
+   tramo tarda un poco más que lo que tarda el resto del dibujo. */
+.am-raiz .am-escenario svg .co-tramo {
+  transition: transform 1.1s ease-in-out var(--d, 0s), opacity 0.5s ease var(--d, 0s);
+}
