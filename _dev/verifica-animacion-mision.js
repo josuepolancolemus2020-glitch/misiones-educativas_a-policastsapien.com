@@ -1869,6 +1869,103 @@ const LEER = `
       textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
     };
   };
+  /* Bucles: el aviso en las 43 libretas. Se lee la tarjeta (lo que dice y
+     cuánto mide cada cosa escrita, con la letra de la misión), cada libreta
+     (dónde está, qué copia se ve y sus renglones, punto por punto), el reloj
+     del recreo (cuánto se fue, cuándo empieza a irse y cuánto tarda),
+     «43 veces», los aros, y a quien escribe (el lápiz o el robot): de dónde
+     sale y cada tramo que camina, con su demora y lo que dura. */
+  window.__amExtra.amLibretas = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(m(el)); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function uno(sel, en) { return (en || raiz).querySelector(sel); }
+    function todos(sel, en) { return [].slice.call((en || raiz).querySelectorAll(sel)); }
+    function demora(el) { return parseFloat(el.style.getPropertyValue('--d')) || 0; }
+    function dura(el) { return parseFloat(el.style.getPropertyValue('--dur')) || 0; }
+    function matriz(el) {
+      var t = getComputedStyle(el).transform;
+      if (!t || t === 'none') return [1, 0, 0, 1, 0, 0];
+      return t.match(/-?[0-9.e]+/g).map(Number);
+    }
+    function corre(el) { var q = matriz(el); return [q[4], q[5]]; }
+    function escala(el) { var q = matriz(el); return Math.hypot(q[0], q[1]); }
+    /* Los puntos de un trazo: M, L, H y l (lo que usan las libretas). */
+    function puntosDe(p) {
+      var d = p.getAttribute('d'), re = /([MLHlh])([^MLHlh]*)/g, mm, pts = [], cx = 0, cy = 0, trazos = 0;
+      while ((mm = re.exec(d))) {
+        var nums = (mm[2].match(/-?[0-9.]+/g) || []).map(Number), i;
+        if (mm[1] === 'M') trazos++;
+        if (mm[1] === 'M' || mm[1] === 'L') for (i = 0; i + 1 < nums.length; i += 2) { cx = nums[i]; cy = nums[i + 1]; pts.push([cx, cy]); }
+        else if (mm[1] === 'l') for (i = 0; i + 1 < nums.length; i += 2) { cx += nums[i]; cy += nums[i + 1]; pts.push([cx, cy]); }
+        else if (mm[1] === 'H') nums.forEach(function (v) { cx = v; pts.push([cx, cy]); });
+        else if (mm[1] === 'h') nums.forEach(function (v) { cx += v; pts.push([cx, cy]); });
+      }
+      return { trazos: trazos, puntos: pts.map(function (q) { return aVista(p, q[0], q[1]); }) };
+    }
+    function escrito(t) { return { txt: t.textContent, w: t.getComputedTextLength(), caja: caja(t), ve: vis(t) }; }
+    function quien(sel, base, punta) {
+      var ts = todos('[data-quien' + sel + ']');
+      return {
+        base: aVista(uno(base), 0, 0), punta: aVista(punta, 0, 0),
+        tramos: ts.map(function (g) { return { corre: corre(g), d: demora(g), dur: dura(g) }; })
+      };
+    }
+    var grilla = uno('[data-libretas]'), lapizVe = uno('[data-lapiz-ve]'), robotVe = uno('[data-robot-ve]');
+    var uso = uno('[data-uso]');
+    var lapices = todos('[data-quien^="lapiz"]');
+    var lapiz = quien('^="lapiz"', '[data-lapiz-base]', lapices[lapices.length - 1]);
+    lapiz.ve = vis(uno('[data-lapiz] rect'));
+    lapiz.caja = caja(uno('[data-lapiz]'));
+    lapiz.encima = !!(grilla.compareDocumentPosition(lapizVe) & 4);
+    var esc = uno('[data-robot-esc]');
+    var robot = quien('="robot"', '[data-robot-base]', esc);
+    robot.ve = vis(uno('[data-robot] .bl-robot'));
+    robot.caja = caja(uno('[data-robot]'));
+    robot.esc = escala(esc);
+    robot.dEsc = demora(esc);
+    robot.encima = !!(grilla.compareDocumentPosition(robotVe) & 4);
+    return {
+      tarjeta: {
+        caja: caja(uno('[data-tarjeta] rect')), ve: vis(uno('[data-tarjeta] rect')),
+        titulo: escrito(uno('[data-escrito="titulo"]')), fecha: escrito(uno('[data-escrito="fecha"]')),
+        renglones: todos('[data-escrito="renglon"]').map(escrito)
+      },
+      filas: todos('[data-fila]').map(function (t) { return { n: +t.getAttribute('data-fila'), txt: t.textContent, caja: caja(t), ve: vis(t) }; }),
+      libretas: todos('[data-libreta]').map(function (g) {
+        var hoja = uno('.bl-hoja', g), copias = todos('[data-copia]', g).filter(vis), c = copias[0];
+        var falta = c ? uno('[data-falta]', c) : null;
+        return {
+          k: +g.getAttribute('data-libreta'), caja: caja(hoja), copias: copias.length,
+          copia: c ? c.getAttribute('data-copia') : null, d: c ? demora(c) : 0,
+          partes: c ? todos('[data-parte]', c).filter(vis).map(function (p) { var q = puntosDe(p); return { k: p.getAttribute('data-parte'), puntos: q.puntos }; }) : [],
+          falta: falta && vis(falta) ? (function () {
+            var cir = uno('circle', falta), eq = puntosDe(uno('[data-equis]', falta));
+            return { c: aVista(cir, +cir.getAttribute('cx'), +cir.getAttribute('cy')), caja: caja(cir), trazos: eq.trazos, puntos: eq.puntos };
+          })() : null
+        };
+      }),
+      reloj: {
+        caja: caja(uno('[data-reloj] .bl-reloj')),
+        largo: parseFloat(uso.style.strokeDasharray), offset: parseFloat(uso.style.strokeDashoffset),
+        d: demora(uso), dur: dura(uso), ve: vis(uso)
+      },
+      veces: { ve: vis(uno('[data-veces] rect')), txt: uno('[data-veces] text').textContent, caja: caja(uno('[data-veces] rect')),
+        union: puntosDe(uno('[data-veces] path')).puntos },
+      rotulos: todos('[data-rotulo]').map(function (t) { return { k: t.getAttribute('data-rotulo'), ve: vis(t), txt: t.textContent, caja: caja(t) }; }),
+      aros: todos('[data-aro]').map(function (a) { return { k: a.getAttribute('data-aro'), ve: vis(a), caja: caja(a) }; }),
+      lapiz: lapiz,
+      robot: robot,
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   window.__amExtra.amBaleada = function (raiz) {
     var vis = window.__amVisible;
     var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
@@ -3416,6 +3513,219 @@ const ESCENAS = {
      el doblez y si lleva una ✗ o un ✓. Y en las corridas, que la cocina
      haga cada cosa mientras la flecha está en el renglón de esa tarjeta.
      Es bilingüe: todo esto se comprueba en los dos idiomas. */
+  amLibretas(e, n) {
+    const x = e.extra, r = [];
+    const cerca = (a, b, t = 1.5) => Math.abs(a - b) <= t;
+    const cen = c => ({ x: (c.x0 + c.x1) / 2, y: (c.y0 + c.y1) / 2 });
+    const monta = (a, b) => a.x0 < b.x1 - 0.5 && b.x0 < a.x1 - 0.5 && a.y0 < b.y1 - 0.5 && b.y0 < a.y1 - 0.5;
+    const dentro = (p, c, m = 0) => p[0] >= c.x0 - m && p[0] <= c.x1 + m && p[1] >= c.y0 - m && p[1] <= c.y1 + m;
+    const contiene = (a, c, m = 0.5) => a.x0 <= c.x0 - m && a.x1 >= c.x1 + m && a.y0 <= c.y0 - m && a.y1 >= c.y1 + m;
+    /* Lo que dice la historia: 43 libretas; desde la 31 salió distinto, y
+       en tres se saltó la fecha. */
+    const TOTAL = 43, IGUALES = 30, SIN_FECHA = 3;
+    const AVISO = { titulo: 'Aviso', fecha: '30/9', renglones: ['Mañana hay reunión', 'de madres y padres', 'en la escuela.'] };
+
+    /* ── lo que no depende del dibujo va primero ── */
+    const PROHIBIDAS = /bucle|vuelta|cuerpo|corchete|repet|repite|patr[oó]n|rastro|anidad|expand|compact|equival|ahorr|instrucci|ejecut|aplaud|frijol|tortilla|comal|\bpasos?\b|dedo|\bmil\b|avanz|\bgira|norte|dobla|escalera|cuadrado|l[ií]nea|diploma|estribillo|\bdos\b|r[aá]pid|\babre\b|afuera|adentro|cu[aá]ntas veces|\bdiez\b|figura|casillas?\b|salida/i;
+    /* La N de la prueba, sola y en mayúscula: con \b y las tildes, la «n»
+       final de «reunión» contaba como una palabra suelta. */
+    const LA_N = /(^|[^\p{L}])N(?![\p{L}])/u;
+    const dicho = [e.texto, e.palabras].concat(x.textos).join(' · ');
+    r.push([!PROHIBIDAS.test(dicho) && !LA_N.test(dicho), `paso ${n}: no sale ninguna palabra de lo que pregunta la prueba`, (dicho.match(PROHIBIDAS) || dicho.match(LA_N) || [])[0]]);
+
+    const L = x.libretas;
+    const con = L.filter(l => l.copia);
+    const iguales = L.filter(l => l.copia === 'igual'), distintas = L.filter(l => l.copia === 'distinta');
+    const sinFecha = distintas.filter(l => l.falta);
+    const primeraDistinta = distintas.length ? Math.min(...distintas.map(l => l.k)) : null;
+    const permitidos = new Set([0, 1, L.length, iguales.length, distintas.length, sinFecha.length].concat(primeraDistinta ? [primeraDistinta] : []));
+    const numeros = ((e.texto + ' ' + e.palabras + ' ' + e.cifra).match(/\d+/g) || []).map(Number);
+    const deMas = numeros.filter(v => !permitidos.has(v));
+    r.push([deMas.length === 0, `paso ${n}: cada número que se dice se cuenta en el dibujo`, deMas]);
+
+    /* ── la tarjeta del aviso ── */
+    const T = x.tarjeta;
+    r.push([T.ve && T.titulo.txt === AVISO.titulo && T.fecha.txt === AVISO.fecha && T.renglones.map(q => q.txt).join('|') === AVISO.renglones.join('|'),
+      `paso ${n}: la tarjeta dice el aviso: el título, la fecha y sus tres renglones`, [T.titulo.txt, T.fecha.txt].concat(T.renglones.map(q => q.txt))]);
+    const escritos = [T.titulo, T.fecha].concat(T.renglones);
+    const fueraT = escritos.filter(q => !(q.caja.x0 >= T.caja.x0 && q.caja.x1 <= T.caja.x1 && q.caja.y0 >= T.caja.y0 && q.caja.y1 <= T.caja.y1));
+    r.push([fueraT.length === 0, `paso ${n}: lo escrito cabe en la tarjeta`, fueraT.map(q => q.txt)]);
+    const izq = [T.titulo].concat(T.renglones).map(q => q.caja.x0);
+    const ys = T.renglones.map(q => cen(q.caja).y);
+    r.push([izq.every(v => cerca(v, izq[0], 1.2)) && ys.every((v, i) => i === 0 || v > ys[i - 1] + 6) && cerca(cen(T.titulo.caja).y, cen(T.fecha.caja).y, 1.5)
+      && T.fecha.caja.x0 > T.titulo.caja.x1 + 4 && T.renglones.every(q => q.caja.y0 > T.titulo.caja.y1),
+      `paso ${n}: el título y los renglones empiezan en el mismo margen, la fecha va a la derecha del título y los renglones debajo`, [izq, ys]]);
+
+    /* ── las libretas: 43, de diez en diez ── */
+    const pasoX = L.length > 1 ? L[1].caja.x0 - L[0].caja.x0 : 0, pasoY = L.length > 10 ? L[10].caja.y0 - L[0].caja.y0 : 0;
+    const malPuestas = L.filter((l, i) => l.k !== i + 1 || !cerca(l.caja.x0, L[0].caja.x0 + (i % 10) * pasoX, 0.3) || !cerca(l.caja.y0, L[0].caja.y0 + Math.floor(i / 10) * pasoY, 0.3));
+    let encimadas = 0;
+    for (let i = 0; i < L.length; i++) for (let j = i + 1; j < L.length; j++) if (monta(L[i].caja, L[j].caja)) encimadas++;
+    r.push([L.length === TOTAL && pasoX > L[0].caja.x1 - L[0].caja.x0 && pasoY > L[0].caja.y1 - L[0].caja.y0 && malPuestas.length === 0 && encimadas === 0,
+      `paso ${n}: son las ${TOTAL} libretas, en filas de diez, a la misma distancia y sin encimarse`, { n: L.length, malPuestas: malPuestas.map(l => l.k), encimadas }]);
+    const filas = x.filas.slice().sort((a, b) => a.n - b.n);
+    const malFila = filas.filter(f => { const l = L[(f.n - 1) * 10]; return !l || !f.ve || f.txt !== String(l.k) || f.caja.x1 > l.caja.x0 - 1 || cen(f.caja).y < l.caja.y0 || cen(f.caja).y > l.caja.y1; });
+    r.push([filas.length === Math.ceil(TOTAL / 10) && malFila.length === 0, `paso ${n}: cada fila lleva a la izquierda el número de su primera libreta`, malFila.map(f => f.txt)]);
+
+    /* ── qué copia tiene cada una ── */
+    const esperado = k => (n === 1 ? (k <= IGUALES ? 'igual' : null) : n === 2 ? (k <= IGUALES ? 'igual' : 'distinta') : n >= 4 ? 'igual' : null);
+    const malEstado = L.filter(l => l.copias > 1 || l.copia !== esperado(l.k));
+    const DICE = [
+      'todas las libretas están en blanco',
+      `de la 1 a la ${IGUALES} tienen la copia del aviso, y las demás están en blanco`,
+      `de la 1 a la ${IGUALES} tienen la copia del aviso, y de la ${IGUALES + 1} a la ${TOTAL}, la apurada`,
+      'todas las libretas están en blanco otra vez: libretas nuevas',
+      `las ${TOTAL} tienen la copia del aviso`,
+      `las ${TOTAL} tienen la copia del aviso`
+    ][n];
+    r.push([malEstado.length === 0, `paso ${n}: ${DICE}, una sola copia en cada una`, malEstado.slice(0, 6).map(l => [l.k, l.copia])]);
+
+    /* Una copia del aviso es la tarjeta en chico: el título, la fecha y tres
+       renglones derechos, cada uno del largo del suyo en la tarjeta (la
+       misma escala para todo). La apurada: dos renglones torcidos, más
+       cortos que los del aviso, y la fecha o su falta. */
+    const ancho = { titulo: T.titulo.w, fecha: T.fecha.w, renglones: T.renglones.map(q => q.w) };
+    const largo = pts => Math.hypot(pts[pts.length - 1][0] - pts[0][0], pts[pts.length - 1][1] - pts[0][1]);
+    const recta = pts => pts.length === 2 && cerca(pts[0][1], pts[1][1], 0.01);
+    const onda = pts => pts.length >= 3 && (Math.max(...pts.map(p => p[1])) - Math.min(...pts.map(p => p[1]))) > 0.8;
+    const partes = (l, k) => l.partes.filter(p => p.k === k).sort((a, b) => a.puntos[0][1] - b.puntos[0][1]);
+    const xs = p => p.puntos.map(q => q[0]);
+    let escalaIgual = null, refIgual = null;
+    function revisaIgual(l) {
+      const tit = partes(l, 'titulo'), fe = partes(l, 'fecha'), ren = partes(l, 'renglon');
+      if (tit.length !== 1 || fe.length !== 1 || ren.length !== 3 || l.falta) return 'le faltan partes';
+      if (![tit[0], fe[0]].concat(ren).every(p => recta(p.puntos))) return 'no son renglones derechos';
+      const razones = [largo(tit[0].puntos) / ancho.titulo, largo(fe[0].puntos) / ancho.fecha].concat(ren.map((p, i) => largo(p.puntos) / ancho.renglones[i]));
+      const media = razones.reduce((a, b) => a + b, 0) / razones.length;
+      if (razones.some(q => Math.abs(q / media - 1) > 0.035)) return 'no miden lo que mide el aviso: ' + razones.map(q => q.toFixed(3)).join(' ');
+      const x0 = [tit[0]].concat(ren).map(p => Math.min(...xs(p)));
+      if (!x0.every(v => cerca(v, x0[0], 0.3))) return 'no empiezan en el mismo margen';
+      const finFecha = Math.max(...xs(fe[0]));
+      if (!cerca(fe[0].puntos[0][1], tit[0].puntos[0][1], 0.3) || Math.min(...xs(fe[0])) < Math.max(...xs(tit[0])) + 1 || [tit[0]].concat(ren).some(p => Math.max(...xs(p)) > finFecha + 0.3)) return 'la fecha no va a la derecha del título';
+      if (!ren.every(p => p.puntos[0][1] > tit[0].puntos[0][1] + 2)) return 'los renglones no van debajo del título';
+      if (![tit[0], fe[0]].concat(ren).every(p => p.puntos.every(q => dentro(q, l.caja, -1)))) return 'se sale de la libreta';
+      if (escalaIgual === null) { escalaIgual = media; refIgual = { l, fe: fe[0] }; }
+      return null;
+    }
+    const malIguales = iguales.map(l => [l.k, revisaIgual(l)]).filter(q => q[1]);
+    if (iguales.length) r.push([malIguales.length === 0,
+      `paso ${n}: cada copia del aviso es la tarjeta en chico: el título, la fecha y tres renglones derechos, cada uno del largo del suyo`, malIguales.slice(0, 4)]);
+    function revisaDistinta(l) {
+      const tit = partes(l, 'titulo'), fe = partes(l, 'fecha'), ren = partes(l, 'renglon');
+      if (tit.length !== 1 || ren.length !== 2) return 'le faltan partes';
+      if (!onda(tit[0].puntos) || !ren.every(p => onda(p.puntos))) return 'no es otra letra (torcida)';
+      const corto = ren.every((p, i) => Math.max(...xs(p)) - Math.min(...xs(p)) < 0.8 * ancho.renglones[i] * escalaIgual);
+      if (!corto) return 'no sale más corto que el aviso';
+      if (![tit[0]].concat(fe, ren).every(p => p.puntos.every(q => dentro(q, l.caja, -1)))) return 'se sale de la libreta';
+      if (l.falta) {
+        if (fe.length) return 'tiene la fecha y a la vez su falta';
+        const f = l.falta, p = f.puntos;
+        const cruza = f.trazos === 2 && p.length === 4 && cerca((p[0][0] + p[1][0]) / 2, f.c[0], 0.3) && cerca((p[2][0] + p[3][0]) / 2, f.c[0], 0.3)
+          && Math.sign(p[1][0] - p[0][0]) !== Math.sign(p[3][0] - p[2][0]) && p.every(q => Math.hypot(q[0] - f.c[0], q[1] - f.c[1]) < (f.caja.x1 - f.caja.x0) / 2);
+        if (!cruza) return 'la falta de la fecha no es una ✗ dentro de su círculo';
+        const rx = (Math.min(...xs(refIgual.fe)) + Math.max(...xs(refIgual.fe))) / 2 - refIgual.l.caja.x0;
+        if (!cerca(f.c[0] - l.caja.x0, rx, 1.2) || !cerca(f.c[1] - l.caja.y0, refIgual.fe.puntos[0][1] - refIgual.l.caja.y0, 0.8)) return 'la ✗ no está donde va la fecha';
+      } else if (fe.length !== 1 || !recta(fe[0].puntos)) return 'le falta la fecha y no lo dice';
+      return null;
+    }
+    if (distintas.length) {
+      const malDist = escalaIgual === null ? distintas.map(l => [l.k, 'no hay copia del aviso con qué comparar']) : distintas.map(l => [l.k, revisaDistinta(l)]).filter(q => q[1]);
+      r.push([malDist.length === 0, `paso ${n}: cada apurada tiene dos renglones torcidos y más cortos que los del aviso, con la fecha o una ✗ donde falta`, malDist.slice(0, 4)]);
+    }
+    if (n === 2) r.push([sinFecha.length === SIN_FECHA && sinFecha.every(l => l.k > IGUALES),
+      `paso 2: en ${SIN_FECHA} libretas falta la fecha, y las ${SIN_FECHA} son de las que salieron apuradas`, sinFecha.map(l => l.k)]);
+    else r.push([sinFecha.length === 0, `paso ${n}: ninguna libreta está sin fecha`, sinFecha.map(l => l.k)]);
+
+    /* ── el marcador cuenta lo que se ve ── */
+    const cifra = +e.cifra;
+    const MARCA = [
+      [cifra === con.length, 'no hay ninguna libreta con el aviso'],
+      [cifra === iguales.length && distintas.length === 0, 'cuenta las copias iguales al aviso'],
+      [cifra === distintas.length && +((e.palabras.match(/y (\d+) sin fecha/) || [])[1]) === sinFecha.length, 'cuenta las apuradas y las que no tienen fecha'],
+      [cifra === 1 && T.ve && con.length === 0, 'cuenta la tarjeta: el aviso escrito una vez'],
+      [cifra === iguales.length && iguales.length === L.length, 'cuenta las copias iguales al aviso: todas'],
+      [cifra === iguales.length && +((e.palabras.match(/de (\d+) iguales/) || [])[1]) === L.length, 'cuenta las copias iguales, de todas las libretas']
+    ][n];
+    r.push([MARCA[0], `paso ${n}: el marcador ${MARCA[1]}`, [e.cifra, e.palabras]]);
+
+    /* ── el reloj del recreo: se va una libreta a mano, un pedazo igual ── */
+    const R = x.reloj, frac = 1 - R.offset / R.largo;
+    const aMano = n <= 2 ? con.length : 0;
+    r.push([R.ve && cerca(frac, aMano / L.length, 0.004),
+      `paso ${n}: el reloj del recreo lleva lo de ${aMano} libreta(s) escrita(s) a mano, de ${L.length}`, [Math.round(frac * 1000) / 1000, aMano]]);
+
+    /* ── quien escribe: el lápiz (a mano) o el robot (la tarjeta) ── */
+    const posEn = (w, t) => {
+      let px = w.base[0], py = w.base[1];
+      w.tramos.forEach(q => { const f = q.dur > 0 ? Math.min(1, Math.max(0, (t - q.d) / q.dur)) : (t >= q.d ? 1 : 0); px += q.corre[0] * f; py += q.corre[1] * f; });
+      return [px, py];
+    };
+    const Lp = x.lapiz, Rb = x.robot;
+    const fin = w => posEn(w, 1e9);
+    r.push([cerca(fin(Lp)[0], Lp.punta[0], 0.3) && cerca(fin(Lp)[1], Lp.punta[1], 0.3) && cerca(fin(Rb)[0], Rb.punta[0], 0.3) && cerca(fin(Rb)[1], Rb.punta[1], 0.3),
+      `paso ${n}: los tramos del lápiz y del robot suman lo que caminan`, [fin(Lp), Lp.punta, fin(Rb), Rb.punta]]);
+    r.push([Lp.ve === (n === 1 || n === 2) && Rb.ve === (n >= 3),
+      `paso ${n}: ${n === 1 || n === 2 ? 'escribe el lápiz, y el robot no está' : n >= 3 ? 'está el robot, y el lápiz no' : 'no están ni el lápiz ni el robot'}`, [Lp.ve, Rb.ve]]);
+    r.push([Lp.encima && Rb.encima, `paso ${n}: el lápiz y el robot van por encima de las libretas`]);
+    const nuevas = n === 1 ? iguales : n === 2 ? distintas : n === 4 ? iguales : [];
+    const w = n <= 2 ? Lp : Rb;
+    if (nuevas.length) {
+      const orden = nuevas.slice().sort((a, b) => a.k - b.k);
+      const lejos = orden.filter(l => {
+        const p = posEn(w, l.d);
+        return n <= 2 ? !dentro(p, l.caja, 0.3) : !(p[0] >= l.caja.x0 && p[0] <= l.caja.x1 && p[1] >= l.caja.y1 - 3 && p[1] <= l.caja.y1 + 1);
+      });
+      r.push([lejos.length === 0, `paso ${n}: cada libreta se llena cuando ${n <= 2 ? 'la punta del lápiz' : 'el robot'} está sobre ella`,
+        lejos.slice(0, 4).map(l => [l.k, l.d, posEn(w, l.d).map(v => Math.round(v))])]);
+      r.push([orden.every((l, i) => i === 0 || l.d > orden[i - 1].d) && orden[0].d > 0,
+        `paso ${n}: se llenan una por una, de la ${orden[0].k} a la ${orden[orden.length - 1].k}`, orden.slice(0, 3).map(l => [l.k, l.d])]);
+      if (n <= 2) {
+        const d0 = orden[0].d, d1 = orden[orden.length - 1].d;
+        r.push([cerca(R.d, d0, 15) && R.d + R.dur >= d1 && R.d + R.dur <= d1 + 200,
+          `paso ${n}: el recreo se va mientras el lápiz escribe: empieza con la ${orden[0].k} y acaba con la ${orden[orden.length - 1].k}`, [R.d, R.dur, d0, d1]]);
+      }
+    }
+    if (n === 1 || n === 2) {
+      const tapadas = L.filter(l => l.copia && monta(Lp.caja, l.caja));
+      r.push([tapadas.length === 0, `paso ${n}: al acabar, el lápiz no tapa ninguna libreta escrita`, tapadas.map(l => l.k)]);
+      if (n === 1) r.push([dentro(Lp.punta, L[IGUALES].caja) && !L[IGUALES].copia, `paso 1: el lápiz espera sobre la ${IGUALES + 1}, que está en blanco`, Lp.punta]);
+      else r.push([L.every(l => !dentro(Lp.punta, l.caja, 0.5)) && Lp.punta[0] > L[TOTAL - 1].caja.x1 && Lp.punta[1] > L[TOTAL - 1].caja.y0,
+        `paso 2: al acabar, el lápiz se aparta a la derecha de la ${TOTAL}`, Lp.punta]);
+    }
+    if (n === 3) r.push([Rb.caja.y1 < L[0].caja.y0 && !monta(Rb.caja, T.caja) && !monta(Rb.caja, x.reloj.caja) && !monta(Rb.caja, x.veces.caja) && Rb.esc > 1,
+      'paso 3: el robot espera arriba, fuera de las libretas', [Rb.caja, Rb.esc]]);
+    if (n >= 4) {
+      const tapadas = L.filter(l => monta(Rb.caja, l.caja));
+      r.push([tapadas.length === 0 && Rb.esc < 1, `paso ${n}: al acabar, el robot se aparta y no tapa ninguna libreta`, tapadas.map(l => l.k)]);
+    }
+
+    /* ── «43 veces», al lado de la tarjeta ── */
+    const V = x.veces;
+    r.push([V.ve === (n >= 3), `paso ${n}: ${n >= 3 ? 'al lado de la tarjeta dice cuántas van' : 'todavía no dice cuántas van'}`, V.ve]);
+    if (n >= 3) r.push([V.txt === `${L.length} veces` && V.caja.x0 >= T.caja.x1 - 0.5 && cen(V.caja).y > T.caja.y0 && cen(V.caja).y < T.caja.y1
+      && cerca(V.union[0][0], T.caja.x1, 1) && cerca(V.union[V.union.length - 1][0], V.caja.x0, 1),
+      `paso ${n}: al lado de la tarjeta, unido a ella, dice «${L.length} veces»: tantas como libretas`, [V.txt, V.caja]]);
+
+    /* ── lo que se marca al final ── */
+    const aT = x.aros.find(a => a.k === 'tarjeta'), aV = x.aros.find(a => a.k === 'veces');
+    const una = x.rotulos.find(q => q.k === 'una vez');
+    r.push([aT.ve === (n === 5) && aV.ve === (n === 5) && una.ve === (n === 5)
+      && (n !== 5 || (contiene(aT.caja, T.caja, 1) && contiene(aV.caja, V.caja, 1) && una.txt === 'escrito una vez'
+        && una.caja.y0 >= aT.caja.y1 - 0.5 && cen(una.caja).x > T.caja.x0 && cen(una.caja).x < T.caja.x1)),
+      `paso ${n}: ${n === 5 ? 'un aro rodea la tarjeta y otro «' + L.length + ' veces», y debajo de la tarjeta dice «escrito una vez»' : 'no hay aros'}`, [aT.ve, aV.ve, una.ve]]);
+
+    /* ── el recreo, y que nada se encime ── */
+    const rec = x.rotulos.find(q => q.k === 'recreo');
+    r.push([rec.ve && rec.txt === 'recreo' && cerca(cen(rec.caja).x, cen(R.caja).x, 1) && rec.caja.y0 > R.caja.y1, `paso ${n}: debajo del reloj dice «recreo»`, rec.caja]);
+    const piezas = [{ k: 'tarjeta', c: T.caja }, { k: 'reloj', c: R.caja }, { k: 'recreo', c: rec.caja }]
+      .concat(V.ve ? [{ k: 'veces', c: V.caja }] : []).concat(una.ve ? [{ k: 'escrito una vez', c: una.caja }] : [])
+      .concat(Rb.ve ? [{ k: 'robot', c: Rb.caja }] : []).concat(filas.map(f => ({ k: 'fila ' + f.txt, c: f.caja })));
+    const encima = [];
+    for (let i = 0; i < piezas.length; i++) for (let j = i + 1; j < piezas.length; j++) if (monta(piezas[i].c, piezas[j].c)) encima.push([piezas[i].k, piezas[j].k]);
+    const sobreLibreta = piezas.filter(p => p.k !== 'robot' && L.some(l => monta(p.c, l.caja))).map(p => p.k);
+    r.push([encima.length === 0 && sobreLibreta.length === 0, `paso ${n}: ningún rótulo se monta en otra cosa ni en una libreta`, { encima, sobreLibreta }]);
+    return r;
+  },
   amBaleada(e, n) {
     const x = e.extra, r = [];
     const L = x.lang === 'en' ? 'en' : 'es';

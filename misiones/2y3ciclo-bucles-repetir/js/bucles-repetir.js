@@ -486,14 +486,14 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 // tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
 // Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'Escribir lo mismo muchas veces a mano sale siempre igual.',a:false,k:'tf-a-mano'},
+  {q:'GIRA DERECHA mueve al robot a la casilla de al lado.',a:false,k:'tf-gira-no-mueve'},
   {q:'REPETIR 3 VECES [AVANZA] mueve al robot una sola casilla.',a:false,k:'tf-una-casilla'},
   {q:'Dentro de un REPETIR también puede ir un giro.',a:true,k:'tf-giro-dentro'},
   {q:'REPETIR 4 VECES [GIRA DERECHA] deja al robot mirando hacia donde empezó.',a:true,k:'tf-cuatro-giros'},
   {q:'Aplaudir 3 veces es hacer lo mismo varias veces.',a:true,k:'tf-aplaudir'},
   {q:'Si falta el giro dentro de los corchetes, el robot igual dibuja un cuadrado.',a:false,k:'tf-sin-giro'},
   {q:'Encontrar lo que se repite es clave para un buen programa.',a:true,k:'tf-clave'},
-  {q:'Los programadores prefieren escribir mil veces lo mismo.',a:false,k:'tf-mil'},
+  {q:'Un bucle hace que el robot camine más rápido.',a:false,k:'tf-rapido'},
   {q:'Sembrar frijoles repite abrir el agujero, poner el frijol y tapar.',a:true,k:'tf-sembrar'},
   {q:'Palmear tortillas se puede escribir con REPETIR.',a:true,k:'tf-tortillas'}
 ];
@@ -510,15 +510,15 @@ const evalMCBank=[
   {q:'¿Qué instrucciones sirven para dibujar con el robot?',o:['a) AVANZA, GIRA DERECHA y GIRA IZQUIERDA','b) Solo AVANZA','c) Solo GIRA DERECHA','d) Ninguna'],a:0,k:'mc-tres-instrucciones'}
 ];
 const evalCPBank=[
-  {q:'El maestro tenía que escribir el aviso en ___ libretas.',a:'43',acc:['43','cuarenta y tres'],k:'cp-43'},
+  {q:'La escalera se dibuja con «sube y ___», una y otra vez.',a:'dobla',acc:['dobla','doblar','gira','girar'],k:'cp-dobla'},
   {q:'Los corchetes [ ] marcan lo que se ___.',a:'repite',acc:['repite','repite en cada vuelta'],k:'cp-repite'},
   {q:'REPETIR N VECES [AVANZA] pinta una línea de N + ___ casillas.',a:'1',acc:['1','uno'],k:'cp-n-mas-1'},
   {q:'En REPETIR 5 VECES, el 5 es la ___.',a:'N',acc:['N','n'],k:'cp-n'},
   {q:'Un cuadrado hecho con bucle se escribe con solo ___ instrucciones.',a:'3',acc:['3','tres'],k:'cp-tres'},
   {q:'Con REPETIR 10 VECES [AVANZA], el robot ejecuta ___ instrucciones.',a:'10',acc:['10','diez'],k:'cp-diez'},
   {q:'Para palmear tortillas se toma masa, se palmea y se pone en el ___.',a:'comal',acc:['comal'],k:'cp-comal'},
-  {q:'Escribir lo mismo muchas veces cansa, se tarda y sale ___.',a:'distinto',acc:['distinto','diferente'],k:'cp-distinto'},
-  {q:'En tres libretas, el aviso quedó sin la ___.',a:'fecha',acc:['fecha'],k:'cp-fecha'},
+  {q:'REPETIR N VECES es la instrucción que ___ el bucle.',a:'abre',acc:['abre','inicia','empieza','comienza'],k:'cp-abre'},
+  {q:'En el ejemplo del cuadrado, el robot empieza mirando al ___.',a:'Norte',acc:['Norte','norte'],k:'cp-norte'},
   {q:'Contar las repeticiones con los ___ ayuda a no equivocarse.',a:'dedos',acc:['dedos'],k:'cp-dedos'}
 ];
 const evalPRBank=[

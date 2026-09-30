@@ -541,3 +541,45 @@ body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* ── La animación del aviso en las 43 libretas (js/animacion-libretas.js) ──
+   La tarjeta, las libretas, el lápiz, el reloj y el robot son cosas, y
+   tienen su color en las dos pantallas: el papel es papel también de
+   noche. Lo que se escribe encima del escenario (el número de cada fila,
+   «recreo») lleva el halo de .am-rotulo, y el aro, el color de la misión.
+   ⚠️ Quien escribe (el lápiz o el robot) va de libreta en libreta a paso
+   PAREJO, tramo por tramo, cada uno con lo que dura (--dur): con la curva
+   de siempre, llegaría a cada libreta antes o después de que se llene. Y el
+   reloj del recreo se va a paso parejo mientras escribe. */
+#amLibretas .bl-tramo { transition: transform var(--dur, 800ms) linear var(--d, 0ms); }
+#amLibretas .bl-uso { transition: stroke-dashoffset var(--dur, 800ms) linear var(--d, 0ms); }
+#amLibretas .bl-aviso { fill: #fffdf5; stroke: #8a7f6a; stroke-width: 1.2; }
+#amLibretas .bl-aviso-tit { fill: #6d5d3f; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amLibretas .bl-aviso-fecha { fill: #6d5d3f; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amLibretas .bl-aviso-txt { fill: #1b2838; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amLibretas .bl-aviso-raya { fill: none; stroke: #d8cfbd; stroke-width: 1; }
+#amLibretas .bl-veces { fill: #fde68a; stroke: #b45309; stroke-width: 1.2; }
+#amLibretas .bl-veces-union { fill: none; stroke: #8a7f6a; stroke-width: 1.4; }
+#amLibretas .bl-veces-txt { fill: #1b2838; font-family: 'Fredoka', sans-serif; font-weight: 700; }
+#amLibretas .bl-reloj { fill: #ffffff; }
+#amLibretas .bl-uso { fill: none; stroke: #f59e0b; }
+#amLibretas .bl-reloj-marca { fill: none; stroke: #37474f; stroke-width: 1.2; stroke-linecap: round; }
+#amLibretas .bl-reloj-borde { fill: none; stroke: #37474f; stroke-width: 1.6; }
+#amLibretas .bl-hoja { fill: #fffdf5; stroke: #8a7f6a; stroke-width: 0.9; }
+#amLibretas .bl-lomo { fill: #0e7490; }
+#amLibretas .bl-tinta { fill: none; stroke: #1b2838; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+#amLibretas .bl-titulo { stroke-width: 2.2; }
+#amLibretas .bl-titulo-apurado { stroke-width: 1.6; }
+#amLibretas .bl-fecha { stroke-width: 1.3; }
+#amLibretas .bl-falta { fill: #ffffff; stroke: #c62828; stroke-width: 0.9; }
+#amLibretas .bl-falta-x { fill: none; stroke: #c62828; stroke-width: 1.2; stroke-linecap: round; }
+#amLibretas .bl-lapiz { fill: #f4c430; stroke: #8d6e63; stroke-width: 0.6; }
+#amLibretas .bl-lapiz-punta { fill: #e8c39e; stroke: #8d6e63; stroke-width: 0.6; stroke-linejoin: round; }
+#amLibretas .bl-lapiz-mina { fill: #37474f; }
+#amLibretas .bl-lapiz-goma { fill: #e57373; stroke: #8d6e63; stroke-width: 0.6; }
+#amLibretas .bl-rueda { fill: #37474f; }
+#amLibretas .bl-robot { fill: #0e7490; stroke: #ffffff; stroke-width: 1.2; }
+#amLibretas .bl-ojo { fill: #ffffff; }
+#amLibretas .bl-antena { fill: none; stroke: #37474f; stroke-width: 1.2; }
+#amLibretas .bl-antena-bola { fill: #f59e0b; }
+#amLibretas .bl-aro { fill: none; stroke: var(--am-pri); stroke-width: 2; }

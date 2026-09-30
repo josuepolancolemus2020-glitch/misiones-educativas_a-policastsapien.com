@@ -25,6 +25,9 @@
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
 <link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La animación que va después de la historia: el aparato es compartido y
+     se tiñe con el color de la misión, así que va DESPUÉS de su CSS. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -67,10 +70,18 @@
     <p>El maestro tiene que dejar el mismo aviso escrito en las <strong>43 libretas</strong> de su
     grado. Empezó en el recreo. Para la libreta 31 ya lo estaba escribiendo distinto (más corto, con
     otra letra) y en tres libretas se saltó la fecha. Se le fue el recreo y el aviso no quedó igual en
-    ninguna.</p>
+    todas.</p>
     <div class="tip"><span class="ti">❓</span><div>Escribir lo mismo muchas veces cansa, se tarda y sale
     distinto. Un <strong>bucle</strong> es escribirlo <strong>una vez</strong> y decir cuántas veces se
     repite: sale idéntico las 43 y no se salta ninguna.</div></div>
+  </div>
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira el aviso en las 43 libretas</h2>
+    <div id="amLibretas">
+      <p>A mano, las primeras 30 libretas salen iguales al aviso; desde la 31 sale más corto y con otra
+      letra, en tres falta la fecha, y el recreo se acaba. Con el aviso escrito una sola vez y al lado
+      «43 veces», el robot lo copia en las 43: todas iguales y todas con fecha.</p>
+    </div>
   </div>
   <div class="card ac-teal">
     <h2>🔁 ¿Qué es un bucle?</h2>
@@ -658,6 +669,8 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-libretas.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

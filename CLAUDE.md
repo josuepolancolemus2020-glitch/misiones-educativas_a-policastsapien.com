@@ -11026,6 +11026,112 @@ Con la CPU frenada seis veces va a 57 cuadros por segundo, y el peor cuadro
 sale entre 117 y 150 ms. El Robot Mensajero, medido el mismo día, va a 58 y
 117-133 ms.
 
+### La quincuagésima segunda: Bucles: Repetir sin Cansarse, y lo que enseñó
+
+La cuarta de la Ruta del Código es **Bucles: Repetir sin Cansarse**
+(`misiones/2y3ciclo-bucles-repetir/`, `js/animacion-libretas.js`). La historia
+es la del maestro que tenía que dejar el mismo aviso escrito en las 43 libretas
+de su grado. Empezó en el recreo; para la libreta 31 ya lo estaba escribiendo
+distinto (más corto y con otra letra), en tres libretas se saltó la fecha y se
+le fue el recreo. La historia dice que escribir lo mismo muchas veces cansa, se
+tarda y sale distinto, y que la otra forma es escribirlo una vez y decir cuántas
+veces va. La animación pone arriba el aviso en su tarjeta, el reloj del recreo y
+el lugar del robot, y abajo las 43 libretas, de diez en diez, con el número de
+la primera de cada fila:
+
+- las libretas en blanco y el recreo entero: ¿saldrá igual en todas?;
+- el lápiz lo copia a mano, libreta por libreta: las primeras 30 salen iguales
+  al aviso, y el recreo se va mientras escribe;
+- desde la 31 sale más corto y con otra letra, en tres falta la fecha (una ✗
+  donde iba) y se acaba el recreo;
+- otra forma, desde el principio: el aviso se queda escrito una sola vez, en su
+  tarjeta, y al lado dice «43 veces»;
+- el robot copia la tarjeta en cada libreta, de la 1 a la 43: todas iguales y
+  todas con fecha, y el recreo sigue entero;
+- y la pregunta es del alumno: algo que hace muchas veces igual, escrito una vez
+  y al lado el número de veces.
+
+Seis cosas que valen para las que siguen:
+
+1. ⚠️ **La historia decía una cosa que no era verdad, y se cambió la frase.**
+   Terminaba en «el aviso no quedó igual en ninguna», y en la misma historia las
+   primeras 30 salen bien: se le escribía distinto desde la 31. Ahora dice «no
+   quedó igual en todas». Nadie lo había visto porque se lee bien; salió al
+   contar las libretas para la animación. Cuando el cuento y la verdad se pelean,
+   se cambia el cuento.
+2. ⚠️ **Lo que se copia en chico se mide contra el original.** Cada libreta
+   lleva la tarjeta en miniatura: el título, la fecha y tres renglones derechos,
+   cada uno del largo de su renglón en la tarjeta. Esos largos salen de medir la
+   letra de la misión (Fredoka) en el navegador, y la sonda los vuelve a medir:
+   si alguien cambia una palabra del aviso y no la medida, la copia deja de ser
+   la tarjeta y sale roja. La apurada lleva dos renglones torcidos y más cortos;
+   la diferencia es de forma, no de color.
+3. **El reloj del recreo cuenta libretas escritas a mano, y se va mientras el
+   lápiz escribe**: con 30, lleva 30 de 43; con las 43, se acabó. Con la
+   tarjeta, el maestro no copia ninguna: el reloj se queda entero mientras copia
+   el robot. Es el tiempo del maestro, no el de la máquina.
+4. ⚠️ **El robot copia al mismo paso que el lápiz, a propósito.** Lo que cambia
+   es que sale igual todas las veces y que el maestro no gasta su recreo, no la
+   rapidez: un bucle no hace más rápido al robot, y eso mismo pasó a ser una
+   pregunta de la prueba («Un bucle hace que el robot camine más rápido»,
+   falsa). La sonda calcula dónde está el lápiz o el robot en el momento en que
+   se llena cada libreta, tramo por tramo, y tiene que estar sobre ella.
+5. ⚠️ **La historia contestaba cinco preguntas de la prueba.** «El maestro tenía
+   que escribir el aviso en ___ libretas», «en tres libretas el aviso quedó sin
+   la ___», «escribir lo mismo muchas veces cansa, se tarda y sale ___», que
+   escribir a mano sale siempre igual y que los programadores prefieren escribir
+   mil veces lo mismo. Ahora preguntan el «sube y dobla» de la escalera, que
+   REPETIR N VECES abre el bucle, hacia dónde mira el robot en el ejemplo del
+   cuadrado, si GIRA DERECHA mueve al robot de casilla y si un bucle lo hace más
+   rápido, con la respuesta en el mismo lugar, en la misión y en la ficha, que
+   sigue en sus siete hojas. La felicitación de la ficha, debajo de los
+   pareados, nombraba el cuerpo, las vueltas, compactar y el rastro: ahora solo
+   pide revisar.
+6. ⚠️ **`\b` no sabe de tildes.** La sonda buscaba la N de la prueba como una
+   letra sola con `\bN\b` y la bandera `i`, y cazó la «n» final de «reunión»:
+   para `\b`, la «ó» no es una letra, así que esa «n» es una palabra suelta. Para
+   buscar una letra sola se usan límites con `\p{L}` y la bandera `u`, en
+   mayúscula y sin `i`. Es la lección de «Cuadrado **Perfecto**» otra vez.
+
+La sonda de esta escena **no le cree nada a la escena**. Comprueba:
+
+- que la tarjeta diga el aviso, con el título y los renglones en el mismo margen
+  y la fecha a la derecha del título;
+- que sean 43 libretas en filas de diez, a la misma distancia y sin encimarse,
+  con el número de la primera de cada fila a la izquierda;
+- qué copia tiene cada libreta en cada paso, y que la copia del aviso sea la
+  tarjeta en chico, renglón por renglón;
+- que las apuradas tengan dos renglones torcidos y más cortos, y la fecha o una
+  ✗ de dos rayas, dentro de su círculo y donde va la fecha;
+- que falte la fecha en tres, y las tres sean de las apuradas;
+- que el marcador y cada número de la frase se cuenten en el dibujo;
+- que el reloj lleve lo de las libretas escritas a mano, y que empiece a irse
+  con la primera y acabe con la última;
+- que cada libreta se llene, una por una, cuando el lápiz o el robot están
+  sobre ella, y que al acabar ninguno tape una libreta escrita;
+- que «43 veces» esté unido a la tarjeta y diga tantas como libretas;
+- que al final un aro rodee la tarjeta y otro «43 veces», con «escrito una vez»
+  debajo de la tarjeta;
+- que ningún rótulo se monte en otra cosa;
+- y que no salga el bucle, la vuelta, el cuerpo, la N ni ninguna palabra de lo
+  que pregunta la prueba.
+
+Se comprobó al revés con veintidós averías, plantadas una por una: la copia que
+no mide lo del aviso, las apuradas desde la 30, una fecha que falta entre las
+primeras 30, el reloj que no arranca con el lápiz, el reloj que se va con el
+robot, las libretas que se llenan antes de que llegue el lápiz, el robot que no
+llega a la primera libreta, el marcador del paso 2 diciendo 12, «bucle» en una
+frase, «40 veces», los renglones de la apurada derechos, la apurada tan larga
+como el aviso, la ✗ de una sola raya, el lápiz que se queda sobre la 30, el
+robot que se queda sobre la 43, los aros desde el paso 4, «escrito una vez»
+lejos de la tarjeta, una libreta corrida, el robot que copia sin achicarse,
+«recreo» lejos del reloj, un 32 en la frase y la tarjeta diciendo otra cosa.
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
+de 117 ms, al empezar a copiar el robot, cuando las 43 libretas vuelven a quedar
+en blanco de golpe. El Robot Decide, medido el mismo día, va a 60 y 100 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -11177,7 +11283,10 @@ constante nueva de la escena no se llama como una que ya existe (`ANCHO`,
 `ALTO`): el dibujo sale recortado y las comprobaciones de la escena, que miden
 en coordenadas del dibujo, no lo ven; la sonda comprueba en todas que el dibujo
 se vea entero, con la proporción de su vista. Y muchas piezas iguales que no se
-mueven una por una (la lluvia) van en un solo `path`.
+mueven una por una (la lluvia) van en un solo `path`. Lo que se copia en chico
+(el aviso en cada libreta) se mide contra el original: los largos salen de medir
+la letra en el navegador, y la sonda los vuelve a medir. Y para buscar una letra
+sola, `\b` no sirve con tildes: se usan límites con `\p{L}` y la bandera `u`.
 
 Si la misión es **bilingüe** (carga su `-en.js` y trae el botón 🌐), la escena
 lleva `bilingue: true`, `describe: { es, en }` e `idioma(lang, A)`, y sus
