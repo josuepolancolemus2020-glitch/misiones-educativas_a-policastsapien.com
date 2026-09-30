@@ -1565,6 +1565,76 @@ const LEER = `
       textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
     };
   };
+  /* Desastres Naturales: la misma lluvia, dos casas. Se lee lo que se ve:
+     la pared de atrás, los muros, el tejado y el piso de cada casa; lo de
+     adentro, cada cosa con su caja; las ✗ y las ✓ con su centro; cada gota
+     de punta a punta; el agua por su borde de arriba y hasta dónde llega; el
+     cauce; la flecha del agua que baja, punto por punto, con el suelo que
+     tiene debajo; la marca del agua, la persona y su cintura; el techo que
+     gotea, la repisa y los rótulos. El suelo en una x se le pregunta al
+     navegador: el primer punto, de arriba abajo, que cae dentro de la
+     tierra. ⚠️ Aquí no van barras invertidas: esto vive dentro de una
+     plantilla de texto y se pierden. */
+  window.__amExtra.amAguacero = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(base.multiply(el.getScreenCTM())); return [q.x, q.y]; }
+    function caja(el) { var b = el.getBBox(), a = aVista(el, b.x, b.y), c = aVista(el, b.x + b.width, b.y + b.height); return { x0: Math.min(a[0], c[0]), y0: Math.min(a[1], c[1]), x1: Math.max(a[0], c[0]), y1: Math.max(a[1], c[1]) }; }
+    function uno(sel) { return raiz.querySelector(sel); }
+    function todos(sel) { return [].slice.call(raiz.querySelectorAll(sel)); }
+    var tierra = uno('[data-terreno]');
+    function enTierra(x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; return tierra.isPointInFill(p); }
+    function suelo(x) {
+      for (var y = 0; y <= 262; y += 0.25) { if (enTierra(x, y)) return y; }
+      return null;
+    }
+    function casa(k) {
+      var t = uno('[data-tejado="' + k + '"]'), a = t.getPointAtLength(0);
+      return { fondo: caja(uno('[data-fondo="' + k + '"]')), muros: caja(uno('[data-muros="' + k + '"]')),
+               tejado: caja(t), alero: aVista(t, a.x, a.y), piso: caja(uno('[data-piso="' + k + '"]')).y0 };
+    }
+    var ck = casa('kenia'), cv = casa('vecino');
+    var agua = uno('[data-agua-cuerpo]'), ac = caja(agua);
+    var raya = uno('[data-escurre] [data-raya]'), punta = uno('[data-escurre] [data-punta]');
+    var largo = raya.getTotalLength(), muestras = [];
+    for (var i = 0; i <= 40; i++) {
+      var q = raya.getPointAtLength(largo * i / 40), m = aVista(raya, q.x, q.y);
+      muestras.push({ p: m, suelo: suelo(m[0]) });
+    }
+    var pd = (punta.getAttribute('d').match(/[0-9.]+/g) || []).map(Number);
+    var persona = uno('[data-persona]');
+    return {
+      casas: { kenia: ck, vecino: cv },
+      suelos: { vecino: suelo((cv.muros.x0 + cv.muros.x1) / 2) },
+      cosas: todos('[data-cosa]').map(function (g) {
+        return { id: g.getAttribute('data-cosa'), casa: g.getAttribute('data-casa'), tipo: g.getAttribute('data-tipo'), caja: caja(g.querySelector('[data-cuerpo]')) };
+      }),
+      marcas: todos('[data-marca]').map(function (g) {
+        var c = caja(g);
+        return { tipo: g.getAttribute('data-marca'), de: g.getAttribute('data-de'), ve: vis(g), c: [(c.x0 + c.x1) / 2, (c.y0 + c.y1) / 2] };
+      }),
+      lluvia: { ve: vis(uno('[data-lluvia]')), gotas: todos('[data-gota]').map(function (l) {
+        var a = aVista(l, +l.getAttribute('x1'), +l.getAttribute('y1')), b = aVista(l, +l.getAttribute('x2'), +l.getAttribute('y2'));
+        return { a: a, b: b, sueloFin: suelo(b[0]) };
+      }) },
+      nube: { ve: vis(uno('[data-nube]')), caja: caja(uno('[data-nube]')) },
+      sol: vis(uno('[data-sol]')),
+      agua: { ve: vis(agua), top: ac.y0, x1: ac.x1, sueloBorde: suelo(ac.x1) },
+      cauce: caja(uno('[data-cauce]')),
+      flecha: { ve: vis(raya), corrido: Math.abs(parseFloat(getComputedStyle(raya).strokeDashoffset) || 0),
+                puntaVe: vis(punta), punta: aVista(punta, pd[2], pd[3]), muestras: muestras },
+      lodo: { raya: { ve: vis(uno('[data-marca-agua]')), caja: caja(uno('[data-marca-agua]')) },
+              mancha: { ve: vis(uno('[data-mancha]')), caja: caja(uno('[data-mancha]')) } },
+      persona: { ve: vis(persona), caja: caja(persona), cintura: caja(uno('[data-cintura]')) },
+      mojada: { ve: vis(uno('[data-mojada]')), gotas: todos('[data-gotita]').map(caja) },
+      repisa: { ve: vis(uno('[data-repisa]')), tabla: caja(uno('[data-tabla]')) },
+      rotulos: todos('[data-rotulo]').map(function (t) {
+        var c = caja(t);
+        return { k: t.getAttribute('data-rotulo'), ve: vis(t), dice: t.textContent, caja: c, enTierra: enTierra((c.x0 + c.x1) / 2, (c.y0 + c.y1) / 2) };
+      }),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -1650,8 +1720,224 @@ let raizVerbos = null;
 let keniaAdverbios = null;
 let mensajePron = null;
 let chelePrecio = null;
+let aguaDN = { normal: null, llena: null };
 
 const ESCENAS = {
+  /* Desastres Naturales y el Huracán Mitch. «Adónde se va el agua del
+     aguacero». ⚠️ Nada se le cree a la escena. Las dos casas se comparan
+     pieza por pieza: la misma casa, con lo mismo adentro y en el mismo
+     sitio, y lo único distinto es dónde está cada una. La lluvia se mide
+     gota por gota: el mismo paso en toda la escena, sobre las dos casas, y
+     cada gota termina justo encima de lo que tiene debajo (el techo, el
+     suelo o la quebrada), nunca adentro de una casa. La flecha del agua que
+     baja sale del alero del vecino, va siempre hacia abajo, corre pegada al
+     cerro y termina dentro del cauce. El agua se lee por su borde: en su
+     cauce, subiendo sin salirse, y cuando se sale, dentro de la casa de
+     Kenia y lejos del piso del vecino, hasta donde el cerro sube a su
+     altura; y en el último paso, a la misma altura. Lo que el agua alcanzó
+     lleva ✗, lo seco ✓, y el marcador cuenta las ✗. La marca del agua queda
+     donde llegó el agua, y la cintura de la persona, en la marca. ⚠️ Y la
+     prueba no se regala: ni amenaza, ni vulnerabilidad, ni riesgo, ni
+     prevención (los pareados), ni inundación, crecida, evacuar o alerta, ni
+     un número de más. */
+  amAguacero(e, n) {
+    const x = e.extra, r = [];
+    const nb = t => String(t == null ? '' : t).replace(/ /g, ' ').trim();
+    const d2 = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+    const cen = c => [(c.x0 + c.x1) / 2, (c.y0 + c.y1) / 2];
+    const cerca = (a, b, t) => Math.abs(a - b) <= t;
+    /* Lo que no depende del dibujo, primero: con una pieza mal puesta la
+       sonda deja de medir, y esto no puede quedarse sin mirar por eso. */
+    const dicho = [e.texto, e.cifra, e.palabras].concat(x.textos).map(nb).join(' | ').toLowerCase();
+    const EXACTAS = ['amenaza', 'amenazas', 'vulnerabilidad', 'vulnerable', 'vulnerables', 'riesgo', 'riesgos', 'prevención', 'prevenir',
+      'mitigación', 'mitigar', 'refugio', 'deslizamiento', 'deslizamientos', 'derrumbe', 'derrumbes', 'ladera', 'laderas', 'rocas', 'ojo',
+      'copeco', 'codel', 'saffir', 'simpson', 'mitch', 'sequía', 'tsunami', 'reforestar', 'reforestación', 'evacuación', 'evacuar',
+      'terremoto', 'sismo', 'sismos', 'temblor', 'temprana', 'centroamérica', 'crecido', 'crecida', 'crecidos', 'creció', 'crece', 'crecen',
+      'crecer', 'simulacro', 'simulacros', 'octubre', 'noviembre', 'categoría', 'inundación', 'inundaciones', 'inundó', 'inundada',
+      'huracán', 'huracanes', 'tormenta', 'tormentas', 'rayos', 'viento', 'vientos', 'volcán', 'erupción', 'lava', 'ceniza', 'mochila',
+      'alerta', 'alertas', 'roja', 'amarilla', 'deforestación', 'árboles', 'grietas', 'marejadas', 'mar', 'techo', 'lámina', 'amarrado',
+      'corriente', 'cruzar', 'honda', 'drenajes', 'basura', 'cauce', 'desastre', 'desastres', 'fenómeno', 'fenómenos', 'daño', 'daños',
+      'debilidad', 'probabilidad', 'impacto', 'evitar', 'seguro', 'segura', 'zona', 'zonas', 'peligro', 'salir', 'caliente', 'cálido',
+      'gira', 'tranquilo', 'clima', 'comunidad', 'radio', 'aviso'];
+    const FRASES = ['agua caliente', 'centro tranquilo', 'alerta temprana', 'zona segura', 'lugar seguro', 'evitar daños', 'reducir el impacto',
+      'sufrir daños', 'causar daño', 'junto a los ríos', 'lluvias intensas', 'hacer crecer', 'bajan por', 'que suelen estar secos',
+      'cubre de agua', 'fondo del mar', 'falta de lluvia', 'sembrar árboles', 'plan de emergencia', 'hay que irse'];
+    const suelto = ' ' + dicho.split(/[^a-záéíóúñü]+/).filter(Boolean).join(' ') + ' ';
+    const malas = suelto.trim().split(' ').filter(w => EXACTAS.includes(w)).concat(FRASES.filter(f => suelto.includes(' ' + f + ' ')));
+    r.push([malas.length === 0, `paso ${n}: no sale ninguna palabra de la prueba (ni amenaza, ni vulnerabilidad, ni riesgo, ni prevención, ni inundación, ni crecida, ni alerta)`, malas]);
+    const nums = (dicho.match(/\d+/g) || []).map(Number);
+    const PERMITIDOS = [0, 4];
+    r.push([nums.every(k => PERMITIDOS.includes(k)), `paso ${n}: ningún número de la prueba`, nums.filter(k => !PERMITIDOS.includes(k))]);
+    const frase = nb(e.texto);
+    const F = [['Kenia', 'quebrada', 'vecino', 'loma', '¿Cuál'], ['mismo aguacero', 'igual de juntas'], ['loma', 'quebrada', 'todo el cerro'],
+      ['se sale', 'cintura', 'colchones', 'cuadernos'], ['cintura', 'mojada y nada más', 'dónde estaba cada casa'],
+      ['no se muda', 'no los alcanza', 'antes de que llueva', '¿Qué subirías tú']];
+    r.push([F[n].every(w => frase.includes(w)), `paso ${n}: la frase dice lo que se ve (${F[n].join(', ')})`, frase]);
+
+    /* ── Las dos casas: la misma casa, en dos lugares ── */
+    const K = x.casas.kenia, V = x.casas.vecino, cau = x.cauce;
+    const ancho = c => c.x1 - c.x0, alto = c => c.y1 - c.y0;
+    if (n === 0) {
+      const partes = ['fondo', 'muros', 'tejado'];
+      r.push([partes.every(p => cerca(ancho(K[p]), ancho(V[p]), 0.3) && cerca(alto(K[p]), alto(V[p]), 0.3)),
+        'las dos casas son la misma casa: las mismas paredes, los mismos muros y el mismo tejado',
+        partes.map(p => [ancho(K[p]), alto(K[p]), ancho(V[p]), alto(V[p])].map(v => Math.round(v * 10) / 10))]);
+      r.push([K.muros.x1 <= cau.x0 + 0.5 && cau.x0 - K.muros.x1 <= 20 && cerca(K.piso, cau.y0, 1),
+        'la casa de Kenia está a la orilla de la quebrada, a la altura de la orilla', [K.muros.x1, cau.x0, K.piso, cau.y0]]);
+      r.push([cerca(V.piso, x.suelos.vecino, 1) && V.piso < K.piso - 40 && V.muros.x0 >= cau.x1,
+        'la del vecino está en la loma, del otro lado de la quebrada y mucho más arriba', [V.piso, x.suelos.vecino, K.piso]]);
+    }
+    const cosas = x.cosas, deK = cosas.filter(c => c.casa === 'kenia'), deV = cosas.filter(c => c.casa === 'vecino');
+    const tipos = l => l.map(c => c.tipo).sort().join(',');
+    r.push([deK.length === 4 && tipos(deK) === 'colchon,colchon,cuaderno,cuaderno' && tipos(deV) === tipos(deK),
+      `paso ${n}: en cada casa hay dos colchones y dos cuadernos`, [tipos(deK), tipos(deV)]]);
+    if (n < 5) {
+      const rel = (c, h) => [c.caja.x0 - h.fondo.x0, c.caja.y1 - h.piso, ancho(c.caja), alto(c.caja)];
+      const par = deK.every(c => {
+        const o = deV.find(v => v.id === c.id.replace('kenia', 'vecino'));
+        return !!o && rel(c, K).every((v, i) => cerca(v, rel(o, V)[i], 0.3));
+      });
+      r.push([par, `paso ${n}: y cada cosa está en el mismo sitio de su casa`]);
+    }
+
+    /* ── La lluvia: la misma en toda la escena ── */
+    const ll = x.lluvia, llueve = n >= 1 && n !== 4;
+    r.push([ll.ve === llueve, `paso ${n}: ${llueve ? 'llueve' : 'no llueve'}`, ll.ve]);
+    const nu = x.nube;
+    r.push([nu.ve === (n !== 4) && (!nu.ve || (nu.caja.x0 <= K.tejado.x0 + 2 && nu.caja.x1 >= V.tejado.x1 - 6 && nu.caja.y1 <= Math.min(...ll.gotas.map(q => q.a[1])) + 0.5)),
+      `paso ${n}: ${n !== 4 ? 'una sola nube, encima de las dos casas, y las gotas salen de ella' : 'amaneció: ya no hay nube'}`, nu.caja]);
+    const lb = x.rotulos.find(t => t.k === 'aguacero');
+    r.push([!!lb && lb.ve === llueve && (!lb.ve || (nb(lb.dice) === 'el mismo aguacero' && lb.caja.x0 >= nu.caja.x0 && lb.caja.x1 <= nu.caja.x1 && lb.caja.y1 <= nu.caja.y1 + 0.5)),
+      `paso ${n}: ${llueve ? '«el mismo aguacero», escrito en la nube' : 'la nube no dice nada'}`, lb && lb.dice]);
+    r.push([x.sol === (n === 4), `paso ${n}: ${n === 4 ? 'salió el sol' : 'no hay sol'}`]);
+
+    /* ── El agua de la quebrada, por su borde ── */
+    const ag = x.agua;
+    if (n === 0) {
+      aguaDN.normal = ag.top;
+      aguaDN.llena = null;
+      r.push([ag.top > cau.y0 + 2 && ag.top < cau.y1, 'paso 0: la quebrada va por su cauce, por debajo de la orilla', [ag.top, cau.y0, cau.y1]]);
+    } else if (n === 1 || n === 4) {
+      r.push([cerca(ag.top, aguaDN.normal, 0.3), `paso ${n}: la quebrada va por su cauce, como al principio`, [ag.top, aguaDN.normal]]);
+    } else if (n === 2) {
+      r.push([ag.top > cau.y0 && ag.top < aguaDN.normal - 2, 'paso 2: la quebrada sube, sin salirse todavía', [ag.top, cau.y0, aguaDN.normal]]);
+    } else {
+      if (n === 3) aguaDN.llena = ag.top;
+      r.push([ag.top < K.piso - 5 && ag.top > V.piso + 5, `paso ${n}: el agua se sale, entra en la casa de Kenia y no llega a la del vecino`, [ag.top, K.piso, V.piso]]);
+      r.push([ag.x1 > cau.x1 && ag.sueloBorde != null && cerca(ag.sueloBorde, ag.top, 1.5),
+        `paso ${n}: y llega hasta donde el cerro sube a su altura, ni un paso más`, [ag.x1, ag.sueloBorde, ag.top]]);
+      if (n === 5) r.push([cerca(ag.top, aguaDN.llena, 0.3), 'paso 5: con el mismo aguacero, el agua llega a la misma altura', [ag.top, aguaDN.llena]]);
+    }
+    if (n === 1) {
+      const g = ll.gotas.map(q => q.a[0] + (q.b[0] - q.a[0]) * (50 - q.a[1]) / (q.b[1] - q.a[1])).sort((a, b) => a - b);
+      const pasos = g.slice(1).map((v, i) => v - g[i]);
+      const sobre = h => g.filter(v => v >= h.tejado.x0 && v <= h.tejado.x1).length;
+      r.push([g.length >= 15 && pasos.every(p => cerca(p, pasos[0], 0.3)),
+        'las gotas caen al mismo paso en toda la escena: la misma lluvia en la loma y en la orilla', [g.length, Math.min(...pasos), Math.max(...pasos)]]);
+      r.push([sobre(K) >= 3 && sobre(V) >= 3, 'y caen sobre las dos casas', [sobre(K), sobre(V)]]);
+      /* Cada gota termina justo encima de lo que tiene debajo. */
+      const techo = (h, px) => {
+        const c = h.tejado, m = (c.x0 + c.x1) / 2;
+        if (px < c.x0 || px > c.x1) return null;
+        return c.y1 - (c.y1 - c.y0) * (1 - Math.abs(px - m) / (m - c.x0));
+      };
+      const mal = ll.gotas.filter(q => {
+        const px = q.b[0], py = q.b[1], t = techo(K, px) ?? techo(V, px);
+        const debajo = t != null ? t : (px > cau.x0 && px < cau.x1 ? aguaDN.normal : q.sueloFin);
+        return !(debajo != null && py < debajo && debajo - py <= 5);
+      }).map(q => q.b.map(v => Math.round(v)));
+      r.push([mal.length === 0, 'cada gota termina justo encima de lo que tiene debajo: el techo, el suelo o la quebrada', mal.slice(0, 3)]);
+      const adentro = ll.gotas.filter(q => [K, V].some(h => {
+        for (let i = 0; i <= 12; i++) {
+          const px = q.a[0] + (q.b[0] - q.a[0]) * i / 12, py = q.a[1] + (q.b[1] - q.a[1]) * i / 12;
+          if (px > h.fondo.x0 && px < h.fondo.x1 && py > h.fondo.y0 && py < h.fondo.y1) return true;
+        }
+        return false;
+      }));
+      r.push([adentro.length === 0, 'y ninguna cae adentro de una casa', adentro.length]);
+    }
+
+    /* ── La flecha del agua que baja ── */
+    const f = x.flecha, baja = n === 2 || n === 3 || n === 5;
+    if (!baja) r.push([!f.puntaVe && (f.corrido > 1 || !f.ve), `paso ${n}: no se ve el agua que baja`, [f.corrido, f.puntaVe]]);
+    else {
+      const m = f.muestras, ys = m.map(q => q.p[1]);
+      r.push([f.ve && f.corrido <= 1 && f.puntaVe, `paso ${n}: la flecha del agua que baja está entera, con su punta`, [f.corrido, f.puntaVe]]);
+      r.push([d2(m[0].p, V.alero) <= 4, `paso ${n}: sale del alero del vecino`, [m[0].p, V.alero].map(q => q.map(Math.round))]);
+      r.push([ys.every((v, i) => i === 0 || v >= ys[i - 1] - 0.01), `paso ${n}: y va siempre hacia abajo`]);
+      const cerro = m.filter(q => q.p[0] > cau.x1 + 1 && q.p[0] < V.muros.x0 - 6);
+      const lejos = cerro.filter(q => q.suelo == null || q.suelo - q.p[1] < -0.3 || q.suelo - q.p[1] > 7);
+      r.push([cerro.length >= 8 && lejos.length === 0, `paso ${n}: corre pegada al cerro, por encima del suelo`, [cerro.length, lejos.slice(0, 2).map(q => q.p.map(Math.round))]]);
+      r.push([f.punta[0] > cau.x0 && f.punta[0] < cau.x1 && f.punta[1] > cau.y0, `paso ${n}: y termina dentro de la quebrada`, f.punta.map(Math.round)]);
+    }
+
+    /* ── Lo de adentro: ✗ lo que el agua alcanzó, ✓ lo seco ── */
+    const marca = (id, t) => { const q = x.marcas.find(m => m.de === id && m.tipo === t); return !!q && q.ve; };
+    const bajoAgua = c => aguaDN.llena != null && c.caja.y0 > aguaDN.llena;
+    const seca = c => aguaDN.llena == null || c.caja.y1 < aguaDN.llena;
+    if (n <= 2) r.push([x.marcas.every(m => !m.ve), `paso ${n}: todavía no hay ✗ ni ✓`]);
+    else {
+      const toca = c => n === 3 ? (c.casa === 'kenia' ? 'x' : null) : n === 4 ? (c.casa === 'kenia' ? 'x' : 'v') : 'v';
+      const mal = cosas.filter(c => marca(c.id, 'x') !== (toca(c) === 'x') || marca(c.id, 'v') !== (toca(c) === 'v')).map(c => c.id);
+      r.push([mal.length === 0, `paso ${n}: ${n === 3 ? 'lo de Kenia lleva ✗' : n === 4 ? 'lo de Kenia lleva ✗ y lo del vecino ✓' : 'todo lleva ✓'}, y nada más`, mal]);
+      const falsas = cosas.filter(c => (marca(c.id, 'x') && !bajoAgua(c)) || (marca(c.id, 'v') && !seca(c))).map(c => c.id);
+      r.push([falsas.length === 0, `paso ${n}: cada ✗ está sobre algo que el agua alcanzó y cada ✓ sobre algo seco`, falsas]);
+      const fuera = x.marcas.filter(m => m.ve).filter(m => {
+        const c = cosas.find(q => q.id === m.de);
+        return !c || m.c[0] < c.caja.x0 - 1.5 || m.c[0] > c.caja.x1 + 1.5 || m.c[1] < c.caja.y0 - 1.5 || m.c[1] > c.caja.y1 + 1.5;
+      }).map(m => m.de);
+      r.push([fuera.length === 0, `paso ${n}: cada marca está encima de su cosa`, fuera]);
+    }
+    const rp = x.repisa;
+    if (n === 5) {
+      r.push([rp.ve && rp.tabla.x0 >= K.fondo.x0 - 1.5 && rp.tabla.x1 <= K.fondo.x1 + 1.5 && rp.tabla.y0 < aguaDN.llena - 6,
+        'paso 5: en la casa de Kenia hay una repisa alta, lejos del agua', rp.tabla]);
+      const sueltas = deK.filter(c => !cerca(c.caja.y1, rp.tabla.y0, 1) || c.caja.x0 < rp.tabla.x0 - 1 || c.caja.x1 > rp.tabla.x1 + 1).map(c => c.id);
+      r.push([sueltas.length === 0, 'paso 5: los colchones y los cuadernos de Kenia están sobre la repisa', sueltas]);
+    } else r.push([!rp.ve, `paso ${n}: todavía no hay repisa`]);
+    const cuentaX = h => cosas.filter(c => c.casa === h && marca(c.id, 'x')).length;
+    if (n === 3) r.push([nb(e.cifra) === String(cuentaX('kenia')) && cuentaX('kenia') === deK.filter(bajoAgua).length && cuentaX('kenia') === 4 &&
+      nb(e.palabras) === 'colchones y cuadernos bajo el agua', 'paso 3: el marcador cuenta lo que quedó debajo del agua: las 4 ✗', [e.cifra, cuentaX('kenia')]]);
+    if (n === 4) r.push([nb(e.cifra) === cuentaX('kenia') + ' y ' + cuentaX('vecino') && nb(e.palabras) === 'perdidos: abajo y en la loma',
+      'paso 4: el marcador cuenta las ✗ de cada casa: ' + cuentaX('kenia') + ' y ' + cuentaX('vecino'), e.cifra]);
+    if (n === 5) r.push([nb(e.cifra) === '0' && deK.filter(bajoAgua).length === 0 && cuentaX('kenia') === 0 && nb(e.palabras) === 'perdidos, con la misma agua',
+      'paso 5: el marcador dice 0: lo de Kenia está arriba del agua', e.cifra]);
+    const M = [['?', 'cuál casa se va a llenar de agua'], ['=', 'la misma lluvia en las dos casas'], ['↓', 'el agua de la loma baja a la quebrada']];
+    if (n <= 2) r.push([nb(e.cifra) === M[n][0] && nb(e.palabras) === M[n][1], `paso ${n}: el marcador dice «${M[n][0]}» y «${M[n][1]}»`, [e.cifra, e.palabras]]);
+
+    /* ── Al otro día: la marca del agua, la persona y el techo mojado ── */
+    const lr = x.lodo.raya, lm = x.lodo.mancha, pe = x.persona;
+    const rot = k => x.rotulos.find(t => t.k === k);
+    const rm = rot('marca'), rc = rot('cintura');
+    if (n === 4) {
+      const yl = cen(lr.caja)[1], cint = cen(pe.cintura)[1], alt = pe.caja.y1 - pe.caja.y0;
+      r.push([lr.ve && cerca(yl, aguaDN.llena, 0.6) && lr.caja.x0 <= K.fondo.x0 + 1 && lr.caja.x1 >= K.fondo.x1 - 1,
+        'paso 4: la marca del agua queda en la pared de Kenia, donde llegó el agua', [yl, aguaDN.llena]]);
+      r.push([lm.ve && cerca(lm.caja.y0, aguaDN.llena, 1) && cerca(lm.caja.y1, K.piso, 1), 'paso 4: y la pared queda sucia de la marca para abajo', lm.caja]);
+      r.push([!!rm && rm.ve && nb(rm.dice) === 'la marca del agua' && rm.caja.y1 <= lr.caja.y0 + 0.5 && rm.caja.x0 >= K.fondo.x0 && rm.caja.x1 <= K.fondo.x1,
+        'paso 4: con «la marca del agua» escrito encima de la raya', rm && rm.dice]);
+      r.push([pe.ve && cerca(pe.caja.y1, K.piso, 1) && pe.caja.x0 >= K.muros.x1 && pe.caja.x1 <= cau.x0,
+        'paso 4: una persona parada en el patio, entre la casa y la quebrada', pe.caja]);
+      r.push([cerca(cint, yl, 1.2) && (pe.caja.y1 - cint) / alt > 0.55 && (pe.caja.y1 - cint) / alt < 0.68,
+        'paso 4: su cintura está a la altura de la marca: el agua llegó hasta la cintura', [cint, yl, Math.round((pe.caja.y1 - cint) / alt * 100) / 100]]);
+      r.push([!!rc && rc.ve && nb(rc.dice) === 'cintura' && cerca(cen(rc.caja)[1], cint, 3.5) && rc.caja.x0 >= pe.caja.x1 && rc.caja.x0 - pe.caja.x1 <= 14,
+        'paso 4: con «cintura» escrito al lado', rc && rc.dice]);
+      const mo = x.mojada, t = V.tejado;
+      const lejos = mo.gotas.filter(g => { const c = cen(g); return c[0] < t.x0 - 8 || c[0] > t.x1 + 8 || c[1] < t.y0 - 8 || c[1] > t.y1 + 12; });
+      r.push([mo.ve && mo.gotas.length >= 3 && lejos.length === 0, 'paso 4: el techo del vecino gotea: mojada y nada más', [mo.gotas.length, lejos.length]]);
+    } else {
+      r.push([!lr.ve && !lm.ve && !pe.ve && !(rm && rm.ve) && !(rc && rc.ve) && !x.mojada.ve, `paso ${n}: ni marca del agua, ni persona, ni techo que gotea`]);
+    }
+
+    /* ── Los rótulos ── */
+    const enX = (t, a, b) => { const c = cen(t.caja)[0]; return c >= a && c <= b; };
+    const rk = rot('kenia'), rv = rot('vecino'), rq = rot('quebrada'), rl = rot('loma');
+    r.push([!!rk && rk.ve && nb(rk.dice) === 'Kenia' && enX(rk, K.muros.x0, K.muros.x1) && rk.caja.y0 >= K.piso, `paso ${n}: «Kenia», debajo de su casa`]);
+    r.push([!!rv && rv.ve && nb(rv.dice) === 'el vecino' && enX(rv, V.muros.x0, V.muros.x1) && rv.caja.y0 >= V.piso, `paso ${n}: «el vecino», debajo de la suya`]);
+    r.push([!!rq && rq.ve && nb(rq.dice) === 'la quebrada' && enX(rq, cau.x0, cau.x1) && rq.caja.y0 >= cau.y0, `paso ${n}: «la quebrada», debajo de su cauce`]);
+    r.push([!!rl && rl.ve && nb(rl.dice) === 'la loma' && enX(rl, cau.x1, V.muros.x0) && rl.enTierra, `paso ${n}: «la loma», escrita en el cerro`]);
+    return r;
+  },
   /* Los Continentes: Europa, Asia y África. «El precio que no se pone
      aquí». ⚠️ Nada se le cree a la escena. El mapa se mide como el de la
      misión anterior: la sonda proyecta por su cuenta, cada punto de los

@@ -356,15 +356,15 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 // tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
 // Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'En el huracán de 1998, las comunidades más dañadas eran las que vivían junto a los ríos.',a:true,k:'tf-junto-rios'},
+  {q:'Un sismo puede empezar de repente, casi sin aviso.',a:true,k:'tf-sismo-repente'},
   {q:'Una inundación cubre de agua terrenos que suelen estar secos.',a:true,k:'tf-inundacion'},
   {q:'Un huracán es una tormenta que gira.',a:true,k:'tf-gira'},
   {q:'En el huracán de 1998, lo que más destruyó fue el agua, más que el viento.',a:true,k:'tf-agua'},
-  {q:'Las lluvias intensas pueden hacer crecer los ríos.',a:true,k:'tf-rios-crecen'},
-  {q:'Construir la casa a la orilla de una quebrada es más seguro.',a:false,k:'tf-quebrada'},
+  {q:'La basura en los drenajes puede tapar el paso del agua de la lluvia.',a:true,k:'tf-basura-drenajes'},
+  {q:'Si el agua de una corriente no se ve honda, se puede cruzar a pie sin problema.',a:false,k:'tf-cruzar-corriente'},
   {q:'La deforestación hace que la tierra de los cerros se sostenga mejor.',a:false,k:'tf-deforestacion'},
   {q:'Una tormenta trae lluvias, rayos y vientos fuertes.',a:true,k:'tf-tormenta'},
-  {q:'Un aguacero siempre es un desastre, caiga donde caiga.',a:false,k:'tf-aguacero'},
+  {q:'Una casa de lámina suelta aguanta el viento mejor que una con el techo bien amarrado.',a:false,k:'tf-lamina'},
   {q:'Durante un temblor, lo mejor es usar el ascensor para salir rápido.',a:false,k:'tf-ascensor'}
 ];
 const evalMCBank=[
@@ -374,7 +374,7 @@ const evalMCBank=[
   {q:'¿Qué sale de un volcán en erupción?',o:['a) lava, ceniza y gases','b) agua dulce','c) nieve','d) arena de playa'],a:0,k:'mc-volcan'},
   {q:'¿Qué se debe hacer durante un sismo?',o:['a) correr sin mirar','b) agacharse, cubrirse y sujetarse','c) asomarse a la ventana','d) subir a la azotea'],a:1,k:'mc-agacharse'},
   {q:'¿Qué conviene tener listo en casa para una emergencia?',o:['a) un juego de mesa','b) la televisión encendida','c) una mochila de emergencia','d) nada'],a:2,k:'mc-mochila'},
-  {q:'Cayó el mismo aguacero en dos casas. ¿Por qué la del vecino de Kenia no se inundó?',o:['a) tenía techo nuevo','b) estaba en la loma','c) llovió menos ahí','d) tenía perro'],a:1,k:'mc-loma'},
+  {q:'¿Qué señal puede avisar que un cerro se está moviendo?',o:['a) que haga mucho sol','b) grietas nuevas en las paredes','c) que haya luna llena','d) que canten los pájaros'],a:1,k:'mc-grietas'},
   {q:'¿Qué significa la alerta roja?',o:['a) todo normal','b) ya pasó el peligro','c) prepararse con calma','d) peligro: hay que irse ya del lugar'],a:3,k:'mc-roja'},
   {q:'¿Qué le da fuerza a un huracán?',o:['a) el agua caliente del mar','b) la Luna','c) los volcanes','d) el frío de los polos'],a:0,k:'mc-energia'},
   {q:'¿Qué es un desastre?',o:['a) cualquier lluvia','b) los daños que deja un fenómeno en una comunidad que no puede enfrentarlos sola','c) un día nublado','d) un tipo de nube'],a:1,k:'mc-desastre'}
@@ -518,12 +518,12 @@ const critCaseGuides=[
 ];
 
 const critErrorBank=[
-  {k:'er-siempre-desastre',txt:'"Un fenómeno natural siempre es un desastre, aunque ocurra en un lugar deshabitado y no cause ningún daño".',
-   g1:'Un fenómeno natural solo se convierte en desastre cuando afecta a una comunidad vulnerable y causa daños.',
-   g2:'Si ocurre en un lugar deshabitado y no hay daños, es solo un fenómeno o una amenaza, no un desastre.'},
-  {k:'er-riesgo-suma',txt:'"El riesgo se calcula sumando la lluvia y el viento, y no tiene nada que ver con cómo vive la gente".',
-   g1:'El riesgo se calcula como Amenaza × Vulnerabilidad, no sumando lluvia y viento.',
-   g2:'Sí depende de cómo vive la gente: la vulnerabilidad (zonas peligrosas, casas frágiles) es parte del riesgo.'},
+  {k:'er-huracan-frio',txt:'"Los huracanes nacen sobre el agua fría de los polos, y se hacen más fuertes cuando entran a tierra".',
+   g1:'Nacen sobre el mar cálido, a más de 26 °C: el calor y la humedad del mar les dan fuerza.',
+   g2:'Al entrar a tierra se debilitan, porque ya no tienen debajo el mar caliente que los alimenta.'},
+  {k:'er-saffir',txt:'"La escala Saffir-Simpson mide cuánto llueve en un huracán, y la categoría 1 es la más destructiva".',
+   g1:'La escala clasifica los huracanes por la velocidad de sus vientos, no por la lluvia.',
+   g2:'La categoría 1 es la más débil; la más destructiva es la 5.'},
   {k:'er-terremoto-hidro',txt:'"El terremoto y la inundación son amenazas hidrometeorológicas, porque ambos se relacionan con la lluvia".',
    g1:'El terremoto es una amenaza geológica: se origina dentro de la Tierra, no en el clima.',
    g2:'La inundación sí es hidrometeorológica; el error es meter al terremoto en ese grupo.'},
@@ -539,27 +539,27 @@ const critErrorBank=[
 ];
 
 const critDecisionBank=[
-  'Una familia vive a la orilla de un río que se desborda cada invierno, en una casa frágil, y no sabe qué hacer cuando llueve mucho.',
+  'En una escuela donde a veces tiembla, los estantes altos y pesados de la biblioteca están sueltos, sin fijar a la pared.',
   'Un barrio está al pie de un cerro que fue deforestado; cada temporada de lluvias caen piedras y lodo hacia las casas.',
   'Una escuela cercana a una quebrada nunca ha hecho simulacros y no tiene señaladas rutas de evacuación ni zonas seguras.',
   'Una comunidad tira su basura en el cauce de la quebrada y los drenajes están tapados justo antes de la temporada de huracanes.',
   'Una familia escucha en la radio una alerta amarilla por un huracán que se acerca, pero decide no hacer nada porque "todavía no llueve".',
 ];
-const critDecisionGuide='Debe proponer 3 acciones concretas de gestión de riesgos (reforestar, no construir o reubicarse fuera de la zona de riesgo, elaborar un plan familiar y practicar simulacros, preparar la mochila de emergencia, identificar rutas y zonas seguras, limpiar cauces y drenajes, atender las alertas tempranas) y explicar por qué cada una reduce la vulnerabilidad y el riesgo de desastre.';
+const critDecisionGuide='Debe proponer 3 acciones concretas de gestión de riesgos (reforestar, no construir o reubicarse fuera de la zona de riesgo, fijar a la pared los muebles y estantes pesados, elaborar un plan familiar y practicar simulacros, preparar la mochila de emergencia, identificar rutas y zonas seguras, limpiar cauces y drenajes, atender las alertas tempranas) y explicar por qué cada una reduce la vulnerabilidad y el riesgo de desastre.';
 
 const critCompareBank=[
-  {k:'co-reforestada',a:'Una comunidad con cerros reforestados, casas seguras y un plan de emergencia recibe un huracán y sufre pocos daños.',b:'Una comunidad con cerros deforestados, casas frágiles y sin plan recibe el mismo huracán y sufre inundaciones y derrumbes graves.',
-   ga:'Baja vulnerabilidad: la prevención y el buen manejo del ambiente redujeron el riesgo.',
-   gb:'Alta vulnerabilidad: la deforestación y la falta de preparación aumentaron el riesgo.',
-   gr:'La amenaza (el huracán) fue la misma; la diferencia en los daños se debe a la distinta vulnerabilidad de cada comunidad.'},
+  {k:'co-sequia-inundacion',a:'Pasan meses sin llover: el pozo se seca y la milpa se pierde.',b:'Llueve sin parar toda una semana: el río se sale y tapa la milpa.',
+   ga:'Sequía: falta de lluvia durante mucho tiempo. Es una amenaza hidrometeorológica.',
+   gb:'Inundación: el agua cubre terrenos que suelen estar secos. También es hidrometeorológica.',
+   gr:'Las dos vienen del agua y del clima, y las dos se llevan la cosecha, pero una es por falta de agua y la otra por exceso.'},
   {k:'co-sismo-huracan',a:'Un terremoto sacude una ciudad y derrumba edificios en pocos segundos.',b:'Un huracán se acerca durante varios días y provoca lluvias, inundaciones y derrumbes.',
    ga:'Amenaza geológica: se origina dentro de la Tierra y actúa de forma rápida y repentina.',
    gb:'Amenaza hidrometeorológica: se relaciona con el clima y suele avisarse con días de anticipación.',
    gr:'No son el mismo tipo de amenaza: una es geológica y súbita, la otra es hidrometeorológica y permite avisar con tiempo.'},
-  {k:'co-bloque-lamina',a:'Una casa de bloque, con el techo amarrado, aguanta los vientos de una tormenta.',b:'Una casa de lámina suelta, en la misma calle, pierde el techo con los mismos vientos.',
-   ga:'Menor vulnerabilidad: la construcción reforzada resiste la amenaza.',
-   gb:'Mayor vulnerabilidad: los materiales frágiles y sin amarrar ceden ante el viento.',
-   gr:'El viento fue el mismo; lo que cambió fue qué tan preparada estaba cada casa.'},
+  {k:'co-volcan-tsunami',a:'Un volcán lanza lava, ceniza y gases sobre los cultivos de alrededor.',b:'Un sismo en el fondo del mar levanta olas gigantes que llegan a la costa.',
+   ga:'Erupción volcánica: amenaza geológica que sale por la boca del volcán.',
+   gb:'Tsunami: amenaza geológica; olas gigantes que llegan después de un sismo en el fondo del mar.',
+   gr:'Las dos nacen dentro de la Tierra, pero una sale por el volcán y la otra viaja por el mar hasta la costa.'},
   {k:'co-inundacion-derrumbe',a:'Una inundación cubre de agua los cultivos de una zona baja cercana a un río.',b:'Un derrumbe de lodo y rocas baja por una ladera deforestada tras las lluvias.',
    ga:'Inundación: el agua cubre terrenos secos por el desbordamiento del río.',
    gb:'Deslizamiento: la tierra llena de agua se desprende por la pendiente.',

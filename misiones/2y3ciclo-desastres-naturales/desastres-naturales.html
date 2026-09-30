@@ -25,6 +25,9 @@
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
 <link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La animación que explica el tema: el aparato es compartido y va DESPUÉS
+     del CSS de la misión, que es de donde saca sus colores. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -70,6 +73,24 @@
     <div class="tip"><span class="ti">❓</span><div>El fenómeno fue el mismo; lo que cambió fue
     <strong>dónde estaba cada casa</strong>. Por eso un aguacero no es un desastre en todas partes, y
     por eso hay cosas que sí se pueden decidir antes de que llueva.</div></div>
+  </div>
+  <!-- La animación que explica el tema, justo después de la historia: el
+       mismo aguacero cae sobre las dos casas, el agua de la loma baja a la
+       quebrada, la quebrada se sale y entra en la casa de Kenia, y al otro
+       día se ve que lo que cambió fue dónde estaba cada casa. Al final, los
+       colchones y los cuadernos se suben antes de que llueva. La mueve el
+       alumno, paso a paso. El aparato es compartido (js/animacion-mision.js)
+       y la escena es de esta misión (js/animacion-aguacero.js). La frase de
+       dentro es de reserva: si el aparato no llega a cargar, se lee eso en
+       vez de un hueco. -->
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira adónde se va el agua del aguacero</h2>
+    <div id="amAguacero">
+      <p>El mismo aguacero cae sobre la casa de Kenia, a la orilla de la quebrada, y sobre la del vecino,
+      en la loma. El agua que cae en la loma corre cerro abajo hasta la quebrada, la quebrada se sale y
+      el agua entra en la casa de Kenia hasta la cintura. La lluvia fue la misma: lo que cambió fue dónde
+      estaba cada casa. Y los colchones y los cuadernos sí se pueden subir antes de que llueva.</p>
+    </div>
   </div>
   <div class="card ac-teal">
     <h2>🌍 ¿Qué son los desastres naturales?</h2>
@@ -591,6 +612,8 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-aguacero.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

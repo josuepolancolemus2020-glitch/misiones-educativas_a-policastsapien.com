@@ -8394,6 +8394,124 @@ Salió roja con cada una.
 Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro
 es de 67 ms.
 
+### La trigésima tercera: Desastres Naturales y el Huracán Mitch, y lo que enseñó
+
+La cuarta de la Ruta del Planeta es **Desastres Naturales y el Huracán Mitch**
+(`misiones/2y3ciclo-desastres-naturales/`, `js/animacion-aguacero.js`). La
+historia es la de Kenia: sobre su casa y sobre la del vecino cayó exactamente
+el mismo aguacero. La de ellos, a la orilla de la quebrada, se llenó de agua
+hasta la cintura y perdieron los colchones y los cuadernos; la del vecino, en
+la loma, amaneció mojada y nada más. La historia termina diciendo que lo que
+cambió fue dónde estaba cada casa, y que hay cosas que sí se pueden decidir
+antes de que llueva. La animación es un corte del terreno visto de lado, con
+las dos casas abiertas por delante:
+
+- la casa de Kenia en lo bajo, la quebrada en medio y la del vecino en la loma,
+  con la nube encima: ¿cuál se va a llenar de agua?;
+- cae el mismo aguacero sobre las dos, con las gotas igual de juntas en la loma
+  y en la orilla;
+- el agua que cae en la loma no se queda arriba: una flecha sale del alero del
+  vecino, baja pegada al cerro y termina en la quebrada, que sube;
+- la quebrada se sale y el agua entra en la casa de Kenia hasta la cintura: los
+  colchones y los cuadernos quedan debajo, con su ✗;
+- al otro día la marca del agua queda en la pared, a la cintura de una persona
+  parada al lado, y la casa de la loma amaneció mojada, con sus cosas en ✓;
+- la casa no se muda en una noche, pero los colchones y los cuadernos sí: suben
+  a una repisa, vuelve el mismo aguacero y quedan secos. Y la pregunta es del
+  alumno: ¿qué subirías tú antes de que llueva?
+
+Seis cosas que valen para las que siguen:
+
+1. ⚠️ **Las dos casas son la MISMA casa, en dos lugares.** Si la de la loma
+   fuera más grande o de otro material, el alumno podría creer que se salvó por
+   eso. Tienen el mismo ancho, el mismo alto, el mismo tejado y lo mismo
+   adentro, en el mismo sitio, y la sonda lo mide pieza por pieza: lo único que
+   cambia es dónde está cada una, que es lo que dice la historia.
+2. ⚠️ **Lo que asombra es adónde se va el agua.** Con la misma lluvia, la casa
+   de abajo recibe el agua de todo el cerro. Eso no lo decía la misión en
+   ninguna parte, y es lo que el alumno no olvida: la lluvia que cae en la loma
+   no se queda en la loma. La flecha tiene que bajar siempre, pegada al cerro, y
+   la sonda la sigue punto por punto contra la altura del suelo.
+3. ⚠️ **La historia contestaba cinco preguntas de la prueba, y dos de
+   pensamiento crítico repetían su tesis.** «¿Por qué la del vecino de Kenia no
+   se inundó?» era la historia palabra por palabra; «un aguacero siempre es un
+   desastre», «construir a la orilla de una quebrada es más seguro», «las
+   lluvias intensas pueden hacer crecer los ríos» y «las comunidades junto a los
+   ríos fueron las más dañadas» se contestaban mirando la animación. Ahora
+   preguntan por el sismo que empieza sin aviso, la corriente que no se ve
+   honda, el techo de lámina suelta, la basura en los drenajes y las grietas
+   nuevas en las paredes, en la misión y en la ficha, con la misma respuesta
+   buena en la misma letra y los mismos verdaderos y falsos en el mismo sitio.
+   En pensamiento crítico, dos errores («siempre es un desastre», «el riesgo se
+   suma») y dos comparaciones («el mismo huracán, distinta comunidad») eran la
+   frase de la historia con otra ropa: pasaron al huracán que nace en el agua
+   fría, a la escala Saffir-Simpson, a la sequía contra la inundación y al
+   volcán contra el tsunami, que la misión enseña. Y la primera decisión, la
+   familia a la orilla del río, pasó a los estantes sueltos de una biblioteca
+   donde tiembla.
+4. ⚠️ **La sonda de pistas cazó un «suelo» en la respuesta nueva.** La primera
+   versión de las grietas decía «grietas nuevas en el suelo», y una comparación
+   de la misma prueba habla de los cerros que pierden el suelo: el alumno la
+   adivinaba por la palabra. Ahora dice «en las paredes». Y la felicitación de la
+   ficha, que cae en la hoja de los pareados, resumía la lección con las palabras
+   de uno («comunidad vulnerable»): ahora solo pide revisar.
+5. ⚠️ **Nadie se queda adentro con el agua, y lo que se decide no culpa a
+   nadie.** La historia no dice dónde estaba la familia, así que la animación no
+   pone a nadie en el agua: la persona sale al otro día, cuando ya bajó. Y el
+   último paso no dice que había que vivir en otro lado: dice lo que sí se puede
+   hacer esa misma tarde. Tampoco nombra ni la amenaza, ni la vulnerabilidad, ni
+   el riesgo, ni la prevención (son los pareados), ni «inundación», «crecida»,
+   «evacuar» o «alerta», que son respuestas de la prueba.
+6. ⚠️ **Una capa (`.am-capa`) se enciende SIN demora.** La lluvia iba en capa,
+   para que las veintidós rayas se encendieran juntas, y en el último paso caía
+   mientras todavía se subían los colchones: la regla de la capa trae su propia
+   transición, sin la `--d` que pone `A.ver`. Al final del paso todo estaba
+   donde tenía que estar, así que la sonda no lo veía: se vio en las fotos a
+   medio viaje. La lluvia ya no va en capa.
+
+La sonda de esta escena **no le cree nada a la escena**:
+
+- mide las dos casas, su tejado, su piso y lo que tienen adentro, y exige que
+  sean iguales y que lo de adentro esté en el mismo sitio en las dos;
+- saca la altura del suelo con `isPointInFill` sobre el terreno, y con ella
+  comprueba que la casa de Kenia esté en lo bajo, la del vecino en la loma y la
+  orilla del agua justo sobre el cerro;
+- mide la lluvia: el mismo paso entre gotas, sobre las dos casas, cada gota
+  acabando justo encima de lo que tiene debajo y ninguna dentro de una casa;
+- sigue la flecha: sale del alero del vecino, siempre hacia abajo, pegada al
+  cerro, y termina en la quebrada;
+- mide el agua en cada paso: normal, crecida, dentro de la casa de Kenia, y en
+  el último paso a la misma altura que la noche del aguacero;
+- pone cada ✗ sobre algo que el agua alcanzó y cada ✓ sobre algo seco, y el
+  marcador cuenta esas ✗;
+- y al otro día, la marca del agua a la altura del agua de esa noche, y la
+  cintura de la persona a la altura de la marca.
+
+Se comprobó al revés con dieciséis averías, plantadas una por una:
+
+- la casa del vecino más ancha;
+- un cuaderno del vecino corrido de su sitio;
+- una columna de lluvia fuera del paso;
+- una gota metida dentro de una casa;
+- la flecha acabando en el cerro;
+- el agua del último paso más alta que la de esa noche;
+- una ✗ sobre las cosas del vecino;
+- la marca del agua más alta que el agua;
+- la cintura más alta que la marca;
+- un colchón flotando sobre la repisa;
+- el marcador del paso 4 diciendo «3 y 0»;
+- «inundó» en una frase;
+- el agua del paso 2 ya saliéndose;
+- «la loma» escrito en el cielo;
+- el agua pasándose del cerro;
+- la flecha subiendo un tramo.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 58 cuadros por segundo. El peor cuadro, al
+empezar otra vez, sale entre 83 y 133 ms según la medida, lo mismo que se
+aceptó en Números Grandes.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
