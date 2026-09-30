@@ -7911,6 +7911,105 @@ carta a la prima con el saludo al director, dos niñas montadas al entrar, la
 llave de lo que pide abarcando también la razón, la frase citando otra cosa que
 la carta y el resaltador encendido. Salió roja con cada una.
 
+### La vigesimonovena: El Adjetivo Avanzado, y lo que enseñó
+
+La novena de la Ruta de la Palabra, y la última, es **El Adjetivo Avanzado**
+(`misiones/bach-uni-adjetivos/`, `js/animacion-acta.js`). La historia es la del
+acta de la reunión: «Los alumnos, que reprobaron Matemáticas, repetirán el año».
+Con esas dos comas la frase dice que reprobaron todos; sin ellas, que solo
+algunos. Se firmó así, y hubo que citar a treinta familias para desmentirlo. La
+animación pone el acta arriba y el aula abajo: 35 alumnos, cada uno con su nota
+de Matemáticas en el pecho, y 5 con la ✗.
+
+- antes de tocar, el acta con sus dos comas, cada una con su marquita debajo:
+  ¿quiénes repiten, según el acta?;
+- leída así, «que reprobaron Matemáticas» va entre comas y no escoge a nadie:
+  el acta encierra a los 35 en un aro, y dice que los 35 reprobaron y repiten;
+- pero 30 aprobaron: un sobre de citación para cada una de sus 30 familias;
+- sin las comas, la oración se corre lo que medía la coma y queda pegada a
+  «alumnos»: de los 35 aros quedan los 5 de la ✗;
+- sin comas es restrictiva: delimita el grupo, y la etiqueta cuelga de la
+  oración;
+- con las comas otra vez es explicativa: describe a todos, y eso solo sirve si
+  es verdad de todos. Aquí no lo era.
+
+Cinco cosas que valen para las siguientes:
+
+1. ⚠️ **Las comas no son el error.** El último paso las vuelve a poner y dice
+   cuándo sirven. Una lección donde las comas solo causan desastres enseña a
+   quitarlas siempre, que es otra forma de escribir mal. Es la regla de la prima
+   en Los Tipos de Textos y del mensaje sin señales de los peligros de la IA.
+2. ⚠️ **El precio se cuenta en el dibujo y cuadra con la historia.** De 35
+   alumnos reprobaron 5, y los treinta sobres caen justo en los treinta de la
+   ✓, que son las familias de la historia. La sonda saca del acta que ve si
+   lleva las comas, y de ahí a quiénes nombra: a los 35, o solo a los de la ✗.
+   Los sobres son para los nombrados que aprobaron. Y cada número de cada frase
+   es uno de los que se cuentan en el dibujo.
+3. ⚠️ **La marquita de la coma se probó en tres sitios, y solo uno sirve.**
+   Debajo del renglón y a la distancia de siempre, la de la primera coma se leía
+   como un acento en la «a» de «año», y la de la segunda como un trazo de la
+   firma. Encima de la coma se leía como una «v» pegada a la palabra
+   («alumnosᵛ»). Va pegada debajo de la coma, con el renglón de abajo más lejos
+   de lo normal, y solo en el primer paso, que es el que pide mirarlas: después
+   el subrayado ya se parte donde está cada coma, y marca y subrayado juntos
+   eran un enredo. Las tres cosas se vieron en las capturas, con la sonda en
+   verde.
+4. ⚠️ **La prueba traía el acta con otra ropa.** La selección múltiple
+   preguntaba «En «Los alumnos aplicados aprobaron», ¿qué dice el adjetivo?»,
+   con «que aprobaron solo los aplicados» de respuesta: los mismos alumnos, el
+   mismo aprobar y la misma respuesta que la animación. Ahora pregunta por «Los
+   mangos maduros se venden hoy», con la respuesta en la misma letra, en la
+   misión y en la ficha, que sigue en sus siete hojas. Y la animación nombra lo
+   que la historia ya nombra, restrictiva y explicativa, con las palabras de la
+   historia (delimita y describe). No nombra ninguna otra clase de adjetivo ni
+   función, ni dice el pareado tal cual («separa a unos de los demás»).
+5. **Nada se dice solo con color.** La ✗ son dos rayas que se cruzan y la ✓ una
+   sola, dibujadas y no escritas. Lo que nombra al grupo va subrayado con raya
+   entera y lo que va aparte, entre comas, con raya cortada, igual que su
+   etiqueta. El acta, las notas, los sobres y las etiquetas son papel; los aros
+   y la leyenda llevan la tinta de la pantalla. El botón lleva el `--am-boton`
+   de Los Adjetivos, que tiene los mismos colores.
+
+⚠️ **Y una de la sonda.** Su comprobación de tipografía aceptaba entre dos
+palabras huecos de hasta 7 puntos, que venía de la carta de Kenia, y el hueco
+que deja una coma que se va con su espacio mide 6,3: «alumnos  que» pasaba por
+bien escrito. Lo cazó la prueba al revés, pero por el subrayado y no por la
+tipografía. Ahora un espacio tiene que medir lo que un espacio.
+
+La sonda de esta escena **lee el acta que se ve y cuenta el aula**. Comprueba:
+
+- que las palabras del acta sean las mismas en los seis pasos, que solo entren
+  y salgan las dos comas, pegadas a su palabra, y que entre palabra y palabra
+  haya un espacio y no más;
+- que haya 35 alumnos, 5 con la ✗ de dos rayas y 30 con la ✓ de una;
+- que haya un aro alrededor de cada alumno que el acta nombra según sus comas,
+  y de ninguno más, y que el marcador los cuente;
+- que en el paso 2 haya un sobre en la esquina de cada alumno que el acta
+  nombra y que aprobó, y que el marcador los cuente;
+- que con las comas «Los alumnos» vaya subrayado con raya entera y la oración
+  con raya cortada, y sin ellas todo el grupo con raya entera, de una punta a
+  otra;
+- que en el paso 0 cada coma tenga su marquita pegada debajo, sin tocar las
+  letras;
+- que la etiqueta diga «restrictiva» sin comas y «explicativa» con ellas, con
+  la raya de su subrayado, y que su hilo baje de la oración;
+- que la leyenda diga qué es la ✗ y qué es la ✓, cada una junto a su dibujo, y
+  que la del aro y la del sobre estén solo cuando hay aros y sobres;
+- que cada número de la frase se cuente en el dibujo, y que la frase cite la
+  oración tal cual;
+- y que no salga ninguna otra clase ni función, ni una respuesta de la prueba,
+  ni el pareado tal cual.
+
+Se comprobó al revés con trece averías, plantadas una por una: los aros de los
+que reprobaron corridos al vecino, la oración que no se pega al quitar las
+comas, un sobre también para los que reprobaron, el marcador del paso 3
+diciendo 35, el pareado tal cual en una frase, la etiqueta del paso 5 diciendo
+restrictiva, la oración de entre comas subrayada con raya entera, una palabra
+del acta cambiada, la ✗ dibujada de una sola raya, las marquitas también en el
+paso 1, la leyenda del aro desde el paso 0, la frase diciendo 29 donde se ven 30
+y el hilo de la etiqueta bajando de «alumnos». Salió roja con cada una. Con la
+CPU frenada seis veces va a 60 cuadros por segundo.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -7958,7 +8057,8 @@ se parte a mano. Una flecha acaba en su punta, no donde acaba su trazo. Y el
 ancla de una comprobación no puede ser el mismo texto que se comprueba: si ese
 texto falla, la sonda deja de medir todo lo demás. Una marca alrededor de algo
 que va a medio espacio de otra cosa (una coma) se monta en las letras de al
-lado: se señala debajo del renglón. Y las averías de la prueba al revés se
+lado: se señala debajo del renglón, pegada a la coma y con el renglón de abajo
+lejos; a la distancia de siempre se lee como un acento de la palabra de abajo. Y las averías de la prueba al revés se
 plantan una por una: juntas, dos pueden taparse entre sí. Cuando cambia lo que
 dice alguien, cambia el globo entero: un globo que se queda y solo cambia la
 letra se ve vacío entre una frase y otra. Lo que se esconde corriendo su trazo

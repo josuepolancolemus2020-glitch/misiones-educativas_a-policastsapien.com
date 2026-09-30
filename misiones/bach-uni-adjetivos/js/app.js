@@ -826,7 +826,7 @@ const evalMCBank=[
   {q:'¿Qué palabra significa «muy malo» sin usar «muy» ni «-ísimo»?',o:['a) peorcito','b) pésimo','c) malito','d) maloso'],a:1,k:'mc-pesimo'},
   {q:'En «un gran rey», «gran» quiere decir…',o:['a) de mucho tamaño','b) que tiene muchos años','c) importante, grandioso','d) que es rey de verdad'],a:2,k:'mc-gran-rey'},
   {q:'¿Cuál completa bien «Las niñas y los niños están ___»?',o:['a) contentas','b) contento','c) contenta','d) contentos'],a:3,k:'mc-contentos'},
-  {q:'En «Los alumnos aplicados aprobaron», ¿qué dice el adjetivo?',o:['a) que aprobaron solo los aplicados','b) que todos eran aplicados','c) que nadie aprobó','d) que el examen fue fácil'],a:0,k:'mc-aplicados'},
+  {q:'En «Los mangos maduros se venden hoy», ¿qué dice el adjetivo?',o:['a) que hoy se venden solo los maduros','b) que todos los mangos están maduros','c) que hoy no se vende ningún mango','d) que los mangos están baratos'],a:0,k:'mc-maduros'},
   {q:'¿Cuál es el núcleo de «muy orgulloso de su hija»?',o:['a) muy','b) orgulloso','c) su','d) hija'],a:1,k:'mc-nucleo'},
   {q:'¿Cuál es el adjetivo en «Compré un machete nuevo»?',o:['a) compré','b) un','c) machete','d) nuevo'],a:3,k:'mc-nuevo'},
   {q:'«El más alto del grado» compara a uno con…',o:['a) una sola persona','b) nadie','c) todo el grupo','d) el profesor'],a:2,k:'mc-mas-alto'}

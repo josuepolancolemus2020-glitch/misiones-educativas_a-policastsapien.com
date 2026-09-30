@@ -433,3 +433,57 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* ── La animación de las dos comas del acta (js/animacion-acta.js) ──
+   El botón que avanza lleva el teal y el mostaza de la misión un tono más
+   oscuros: con los de siempre, la letra blanca se quedaba en 3,3:1 en el
+   teal y en 2,9:1 en el mostaza. Es el mismo degradado de Los Adjetivos,
+   que tiene los mismos colores.
+
+   El acta, las notas de Matemáticas, los sobres y las etiquetas son papel:
+   se quedan como son en las dos pantallas, con tinta oscura fija. Los aros
+   y la leyenda, que van sobre el escenario, llevan la tinta de la
+   pantalla. Lo que nombra al grupo va subrayado con raya entera y lo que
+   va aparte, entre comas, con raya cortada, igual que su etiqueta: se
+   distinguen sin distinguir colores. Y la ✗ y la ✓ son dos dibujos
+   distintos, no el mismo en rojo y en verde. */
+:root {
+  --am-boton: linear-gradient(135deg, #2a7566, #8f6000);
+  --aa-hilo: #2a7566;
+}
+[data-theme="dark"] { --aa-hilo: #6fd1bd; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --aa-hilo: #6fd1bd; }
+}
+.am-raiz .aa-papel { fill: #fffdf5; stroke: #cdbf9f; stroke-width: 1.2; }
+.am-raiz .aa-titulo { fill: #6b5d45; font-family: 'Fredoka', sans-serif; font-weight: 700; }
+.am-raiz .aa-regla { fill: none; stroke: #e6dcc4; stroke-width: 1; }
+.am-raiz .aa-tinta { fill: #2b2533; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+.am-raiz .aa-firma { fill: none; stroke: #3b3470; stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
+.am-raiz .aa-firma-raya { fill: none; stroke: #b9ad92; stroke-width: 0.9; }
+.am-raiz .aa-subraya { fill: none; stroke: #2a7566; stroke-width: 2; stroke-linecap: round; }
+.am-raiz .aa-aparte { stroke-dasharray: 4 3; stroke-linecap: butt; }
+.am-raiz .aa-marca-coma { fill: none; stroke: #2a7566; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.am-raiz .aa-etiqueta rect { fill: #e8f5f1; stroke: #2a7566; stroke-width: 1.4; }
+.am-raiz .aa-etiqueta-aparte rect { stroke-dasharray: 4 3; }
+.am-raiz .aa-etiqueta text { fill: #1f5a4f; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+.am-raiz .aa-hilo-etq { fill: none; stroke: #2a7566; stroke-width: 1.4; }
+/* El aula: la camisa del uniforme lleva su borde, que sobre el fondo claro
+   se perdería. */
+.am-raiz .aa-camisa { fill: #f7f7f2; stroke: #98a2ad; stroke-width: 0.8; stroke-linejoin: round; }
+.am-raiz .aa-cuello { fill: none; stroke: #98a2ad; stroke-width: 0.8; stroke-linejoin: round; }
+.am-raiz .aa-piel-1 { fill: #f1c9a5; }
+.am-raiz .aa-piel-2 { fill: #d8a076; }
+.am-raiz .aa-piel-3 { fill: #a86f47; }
+.am-raiz .aa-pelo { fill: #231710; }
+.am-raiz .aa-ojo { fill: #231710; }
+.am-raiz .aa-nota { fill: #ffffff; stroke-width: 1; }
+.am-raiz .aa-nota-no { stroke: #b3261e; }
+.am-raiz .aa-nota-si { stroke: #1e7a4f; }
+.am-raiz .aa-marca { fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.am-raiz .aa-marca-no { stroke: #b3261e; }
+.am-raiz .aa-marca-si { stroke: #1e7a4f; }
+.am-raiz .aa-aro { fill: none; stroke: var(--aa-hilo); stroke-width: 2; }
+.am-raiz .aa-sobre { fill: #fff8e8; stroke: #8a6a36; stroke-width: 0.9; stroke-linejoin: round; }
+.am-raiz .aa-sobre-solapa { fill: none; stroke: #8a6a36; stroke-width: 0.9; stroke-linejoin: round; }
+.am-raiz .aa-ley { fill: var(--dark); font-family: 'Fredoka', sans-serif; font-weight: 600; }

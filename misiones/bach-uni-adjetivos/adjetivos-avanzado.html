@@ -24,6 +24,9 @@
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
 <link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La animación que explica el tema, justo después de la historia. Va
+     DESPUÉS del CSS de la misión: de ahí saca sus colores. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <style>
   /* ── Prueba de Pensamiento Crítico (segunda evaluación imprimible) ── */
   .eval-mode-toggle{display:flex;gap:0.6rem;margin-bottom:1.2rem;flex-wrap:wrap;}
@@ -99,6 +102,25 @@
     <div class="tip"><span class="ti">❓</span><div>No cambió ninguna palabra: cambió si el adjetivo (aquí
     toda una oración que hace de adjetivo) <strong>delimita</strong> al grupo o solo lo
     <strong>describe</strong>. Restrictivo o explicativo: la diferencia entre los dos son dos comas.</div></div>
+  </div>
+  <!-- La animación que explica el tema, justo después de la historia: el
+       acta se lee con sus dos comas y encierra a los 35 alumnos del aula,
+       aunque solo 5 reprobaron; a las 30 familias de los que aprobaron hubo
+       que citarlas. Sin las comas, la oración escoge y encierra solo a los
+       5. Sin comas es restrictiva: delimita el grupo; entre comas es
+       explicativa: describe a todos. La mueve el alumno, paso a paso. El
+       aparato es compartido (js/animacion-mision.js) y la escena es de esta
+       misión (js/animacion-acta.js). La frase de dentro es de reserva: si
+       el aparato no llega a cargar, se lee eso en vez de un hueco. -->
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira de quiénes habla el acta</h2>
+    <div id="amActa">
+      <p>Con las dos comas, el acta habla de los 35 alumnos del aula: dice que los 35 reprobaron
+      Matemáticas y que los 35 repiten el año, aunque 30 la aprobaron. Sin las comas, «que reprobaron
+      Matemáticas» va pegado a «alumnos» y escoge: repiten solo los 5 que reprobaron. Sin comas, la
+      oración es restrictiva: delimita el grupo. Entre comas es explicativa: describe a todos, y eso
+      solo sirve si es verdad de todos.</p>
+    </div>
   </div>
   <div class="card ac-teal">
     <h2>🎨 Definición y Naturaleza</h2>
@@ -521,6 +543,8 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-acta.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

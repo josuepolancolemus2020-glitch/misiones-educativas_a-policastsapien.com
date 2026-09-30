@@ -1093,6 +1093,75 @@ const LEER = `
       textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
     };
   };
+  /* El Adjetivo Avanzado: el acta de las dos comas. Se lee cada pedazo del
+     acta con su tinta y su línea base; los subrayados, con su raya; las
+     marquitas de las comas; cada alumno con su nota (la ✗ son dos rayas y la
+     ✓ una) y el sitio de donde se mide; los aros y los sobres con su
+     centro; la etiqueta con su raya y su hilo de punta a punta, y la
+     leyenda. ⚠️ Aquí no van barras invertidas: esto vive dentro de una
+     plantilla de texto y se pierden. */
+  window.__amExtra.amActa = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(base.multiply(el.getScreenCTM())); return [q.x, q.y]; }
+    function caja(el) { var b = el.getBBox(), a = aVista(el, b.x, b.y), c = aVista(el, b.x + b.width, b.y + b.height); return { x0: Math.min(a[0], c[0]), y0: Math.min(a[1], c[1]), x1: Math.max(a[0], c[0]), y1: Math.max(a[1], c[1]) }; }
+    function raya(el) { var d = getComputedStyle(el).strokeDasharray; if (!d || d === 'none') return 0; var v = d.split(',').join(' ').split(' ').map(parseFloat).filter(isFinite); return v.length ? Math.max.apply(null, v) : 0; }
+    function todos(sel) { return [].slice.call(raiz.querySelectorAll(sel)); }
+    var lienzo = document.createElement('canvas').getContext('2d');
+    function medir(t) {
+      var cs = getComputedStyle(t), s = t.textContent;
+      lienzo.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+      lienzo.textAlign = 'left';
+      var m = lienzo.measureText(s), x0 = +t.getAttribute('x'), y0 = +t.getAttribute('y');
+      var p = aVista(t, x0 - m.actualBoundingBoxLeft, y0 - m.actualBoundingBoxAscent), q = aVista(t, x0 + m.actualBoundingBoxRight, y0 + m.actualBoundingBoxDescent);
+      var a = aVista(t, x0, y0), b = aVista(t, x0 + m.width, y0);
+      return { tinta: { x0: p[0], y0: p[1], x1: q[0], y1: q[1] }, x0: a[0], x1: b[0], base: a[1] };
+    }
+    function punta(p, largo) { var q = p.getPointAtLength(largo); return aVista(p, q.x, q.y); }
+    var ley = raiz.querySelector('[data-leyenda]');
+    return {
+      papel: caja(raiz.querySelector('[data-papel]')),
+      acta: todos('[data-acta]').filter(vis).map(function (t) {
+        var m = medir(t);
+        return { rol: t.getAttribute('data-acta'), dice: t.textContent, x0: m.x0, x1: m.x1, base: m.base, tinta: m.tinta };
+      }),
+      subrayas: todos('[data-subraya]').filter(vis).map(function (p) {
+        var largo = p.getTotalLength();
+        return { de: p.getAttribute('data-subraya'), caja: caja(p), raya: raya(p), corrido: Math.abs(parseFloat(getComputedStyle(p).strokeDashoffset) || 0), largo: largo };
+      }),
+      marcas: todos('[data-marca-coma]').filter(vis).map(function (p) { return { de: p.getAttribute('data-marca-coma'), caja: caja(p) }; }),
+      alumnos: todos('[data-alumno]').filter(vis).map(function (g) {
+        var nota = g.querySelector('[data-nota]'), marca = nota.querySelector('[data-marca]');
+        return { n: +g.getAttribute('data-alumno'), nota: nota.getAttribute('data-nota'),
+          rayas: (marca.getAttribute('d').match(/M/g) || []).length, sitio: aVista(g, 0, 0), caja: caja(g) };
+      }),
+      aros: todos('[data-aro]').filter(vis).map(function (c) {
+        return { centro: aVista(c, +c.getAttribute('cx'), +c.getAttribute('cy')), r: +c.getAttribute('r'), raya: raya(c) };
+      }),
+      sobres: todos('[data-sobre]').filter(vis).map(function (g) { return { caja: caja(g) }; }),
+      etiquetas: todos('[data-etiqueta]').filter(vis).map(function (g) {
+        var marco = g.querySelector('[data-etiqueta-marco]');
+        return { de: g.getAttribute('data-etiqueta'), dice: g.querySelector('[data-etiqueta-dice]').textContent, caja: caja(marco), raya: raya(marco) };
+      }),
+      hilos: todos('[data-hilo-etiqueta]').filter(vis).map(function (p) {
+        var largo = p.getTotalLength();
+        return { de: p.getAttribute('data-hilo-etiqueta'), ini: punta(p, 0), fin: punta(p, largo) };
+      }),
+      leyenda: {
+        dice: [].slice.call(ley.querySelectorAll('[data-ley]')).filter(vis).map(function (t) {
+          var cerca = null, mejor = Infinity, tx = medir(t);
+          [].slice.call(ley.querySelectorAll('[data-nota]')).forEach(function (g) {
+            var c = caja(g), d = Math.abs(c.x1 - tx.x0) + Math.abs((c.y0 + c.y1) / 2 - (tx.tinta.y0 + tx.tinta.y1) / 2);
+            if (d < mejor) { mejor = d; cerca = g.getAttribute('data-nota'); }
+          });
+          return { de: t.getAttribute('data-ley'), dice: t.textContent, nota: cerca, lejos: mejor };
+        }),
+        aro: vis(raiz.querySelector('[data-ley-aro]')),
+        sobre: vis(raiz.querySelector('[data-ley-sobre]'))
+      },
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -1179,6 +1248,168 @@ let keniaAdverbios = null;
 let mensajePron = null;
 
 const ESCENAS = {
+  /* El Adjetivo Avanzado: el acta de las dos comas. Se lee el acta pedazo
+     por pedazo, como se escribe, y se comprueba que sus palabras sean las
+     mismas en los seis pasos: lo único que entra y sale son las dos comas.
+     ⚠️ De quiénes habla el acta no se le cree a la escena: la sonda saca del
+     acta que ve si lleva las comas, y de ahí a quiénes nombra (a los 35, o
+     solo a los de la ✗, que cuenta ella leyendo las notas). Con eso compara
+     los aros, los sobres (a los que el acta nombra y aprobaron), el
+     subrayado (lo que nombra al grupo con raya entera; lo que va aparte
+     entre comas, con raya cortada), la etiqueta con su raya y su hilo, la
+     leyenda y el marcador. Y cada número de la frase es uno de los que se
+     cuentan en el dibujo. ⚠️ Y la prueba no se regala: ninguna otra clase de
+     adjetivo ni función, ni una palabra de las respuestas, ni la definición
+     del pareado tal cual. */
+  amActa(e, n) {
+    const x = e.extra, r = [];
+    const nb = t => String(t == null ? '' : t).replace(/\u00a0/g, ' ').trim();
+    /* Lo que no depende del dibujo, primero: con una pieza mal puesta la
+       sonda deja de medir, y esto no puede quedarse sin mirar por eso. */
+    const dicho = [e.texto, e.cifra, e.palabras].concat(x.textos).map(nb).join(' | ').toLowerCase();
+    const EXACTAS = ['calificativo', 'calificativa', 'calificativos', 'relacional', 'relacionales', 'adverbial', 'adverbiales',
+      'adyacente', 'atributo', 'predicativo', 'predicativa', 'elativo', 'elativos', 'apócope', 'epíteto', 'epítetos', 'supletiva',
+      'supletivo', 'determinativo', 'determinativos', 'cuantificador', 'cuantificadores', 'superlativo', 'superlativos',
+      'comparativo', 'sufijo', 'núcleo', 'concordancia', 'concuerda', 'buen', 'peor', 'hondureña', 'cansada', 'cansados',
+      'mínimo', 'economía', 'sol', 'número', 'edad', 'luna', 'tren', 'paupérrimo', 'pobre', 'presunto', 'óptimo', 'diminuto',
+      'grandérrimo', 'mayor', 'agua', 'electoral', 'libérrimo', 'sucios', 'abrigos', 'pésimo', 'gran', 'rey', 'contentos',
+      'orgulloso', 'machete', 'nuevo', 'mango', 'mangos', 'maduros', 'aplicados', 'muy', 'nieve', 'blanca', 'alto', 'algunos',
+      'varios', 'pocos'];
+    const FRASES = ['de los demás', 'separa a', 'sin separar', 'todo el grupo', 'el más'];
+    const suelto = ' ' + dicho.split(/[^a-záéíóúñü]+/).filter(Boolean).join(' ') + ' ';
+    const malas = suelto.trim().split(' ').filter(w => EXACTAS.includes(w)).concat(FRASES.filter(f => suelto.includes(' ' + f + ' ')));
+    r.push([malas.length === 0, `paso ${n}: no sale ninguna otra clase ni función, ni una respuesta de la prueba, ni el pareado tal cual`, malas]);
+
+    const dentroDe = (c, k, tol = 0.5) => c.x0 >= k.x0 - tol && c.x1 <= k.x1 + tol && c.y0 >= k.y0 - tol && c.y1 <= k.y1 + tol;
+    const cortada = v => v > 0 && v < 8, entera = v => v === 0 || v > 20;
+    const PALABRAS = ['Los alumnos', 'que reprobaron Matemáticas', 'repetirán el año.'];
+
+    /* ── El acta, renglón por renglón y como se escribe: la coma pegada a la
+       palabra de antes, un espacio entre palabras, y todo dentro de la hoja. ── */
+    const renglones = [];
+    x.acta.slice().sort((a, b) => a.base - b.base || a.x0 - b.x0).forEach(t => {
+      const q = renglones.find(z => Math.abs(z.base - t.base) < 0.6);
+      if (q) q.piezas.push(t); else renglones.push({ base: t.base, piezas: [t] });
+    });
+    let espacios = true;
+    renglones.forEach(z => {
+      z.piezas.sort((a, b) => a.x0 - b.x0);
+      z.texto = z.piezas.map((p, i) => {
+        if (!i) return nb(p.dice);
+        /* Un espacio mide 3,25: un hueco de 6,3 es el de una coma que se fue
+           y dejó su sitio, y así se lee «alumnos  que». */
+        const g = p.x0 - z.piezas[i - 1].x1, pegada = nb(p.dice) === ',';
+        if (pegada ? Math.abs(g) > 0.6 : (g < 2.5 || g > 4.5)) espacios = false;
+        return (pegada ? '' : ' ') + nb(p.dice);
+      }).join('');
+    });
+    const palabras = x.acta.filter(p => nb(p.dice) !== ',').sort((a, b) => a.base - b.base || a.x0 - b.x0).map(p => nb(p.dice));
+    r.push([JSON.stringify(palabras) === JSON.stringify(PALABRAS), `paso ${n}: las palabras del acta son las de siempre: solo entran y salen las comas`, palabras]);
+    const comas = x.acta.filter(p => nb(p.dice) === ',');
+    const conComas = comas.length === 2;
+    r.push([comas.length === 2 || comas.length === 0, `paso ${n}: el acta lleva las dos comas o ninguna`, comas.length]);
+    r.push([conComas === !(n === 3 || n === 4), `paso ${n}: ${n === 3 || n === 4 ? 'el acta va sin las comas' : 'el acta lleva sus dos comas'}`, comas.length]);
+    const ESPERA = [conComas ? 'Los alumnos, que reprobaron Matemáticas,' : 'Los alumnos que reprobaron Matemáticas', 'repetirán el año.'];
+    const leidos = renglones.map(z => z.texto);
+    r.push([JSON.stringify(leidos) === JSON.stringify(ESPERA) && espacios, `paso ${n}: el acta dice lo que dice, renglón por renglón y como se escribe`, leidos]);
+    r.push([x.acta.every(p => dentroDe(p.tinta, x.papel, 0)), `paso ${n}: todo lo escrito cabe en la hoja`, x.acta.filter(p => !dentroDe(p.tinta, x.papel, 0)).map(p => p.dice)]);
+    const sujeto = x.acta.find(p => nb(p.dice) === PALABRAS[0]), inciso = x.acta.find(p => nb(p.dice) === PALABRAS[1]);
+
+    /* ── El aula: 35 alumnos, cada uno con su nota. La ✗ son dos rayas que
+       se cruzan y la ✓ una sola: se distinguen sin distinguir colores. ── */
+    const reprobo = x.alumnos.filter(a => a.nota === 'reprobo'), aprobo = x.alumnos.filter(a => a.nota === 'aprobo');
+    r.push([x.alumnos.length === 35 && reprobo.length === 5 && aprobo.length === 30, `paso ${n}: en el aula hay 35 alumnos, 5 con la ✗ y 30 con la ✓`, [x.alumnos.length, reprobo.length, aprobo.length]]);
+    r.push([x.alumnos.every(a => a.rayas === (a.nota === 'reprobo' ? 2 : 1)), `paso ${n}: la ✗ son dos rayas y la ✓ una: no se distinguen solo por el color`, x.alumnos.filter(a => a.rayas !== (a.nota === 'reprobo' ? 2 : 1)).map(a => a.n)]);
+
+    /* ── De quiénes habla el acta, sacado de sus comas: con ellas, de los 35;
+       sin ellas, solo de los que reprobaron. En el paso 0 todavía no se ha
+       leído. ── */
+    const nombra = n === 0 ? [] : (conComas ? x.alumnos : reprobo).map(a => a.n).sort((a, b) => a - b);
+    const cerca = (a, c) => Math.hypot(c[0] - a.sitio[0], c[1] - (a.sitio[1] - 0.5)) <= 1.5;
+    const ringed = x.aros.map(c => { const a = x.alumnos.find(q => cerca(q, c.centro)); return a ? a.n : -1; });
+    const unicos = [...new Set(ringed)].sort((a, b) => a - b);
+    r.push([ringed.every(v => v > 0) && unicos.length === ringed.length && JSON.stringify(unicos) === JSON.stringify(nombra),
+      `paso ${n}: ${n === 0 ? 'todavía no hay aros: el acta no se ha leído' : 'un aro alrededor de cada alumno que nombra el acta ' + (conComas ? '(los 35)' : '(los de la ✗)') + ', y de ninguno más'}`,
+      [ringed.length, unicos.length, nombra.length]]);
+    r.push([x.aros.every(c => entera(c.raya)), `paso ${n}: los aros van con raya entera`, x.aros.map(c => c.raya).filter(v => !entera(v)).slice(0, 3)]);
+
+    /* ── Los sobres: solo en el 2, uno por cada alumno que el acta nombra y
+       que aprobó: a esas familias hubo que desmentirles el acta. ── */
+    const conSobre = x.sobres.map(sb => {
+      const cx = (sb.caja.x0 + sb.caja.x1) / 2, cy = (sb.caja.y0 + sb.caja.y1) / 2;
+      const a = x.alumnos.find(q => cx > q.sitio[0] + 5 && cx < q.sitio[0] + 19 && cy > q.sitio[1] - 18 && cy < q.sitio[1] - 8);
+      return a ? a.n : -1;
+    });
+    const citar = n === 2 ? aprobo.filter(a => nombra.includes(a.n)).map(a => a.n).sort((a, b) => a - b) : [];
+    r.push([conSobre.every(v => v > 0) && JSON.stringify([...new Set(conSobre)].sort((a, b) => a - b)) === JSON.stringify(citar) && conSobre.length === citar.length,
+      `paso ${n}: ${n === 2 ? 'un sobre por cada alumno que el acta nombra y que aprobó (' + citar.length + '), en su esquina' : 'sin sobres'}`, [conSobre.length, citar.length]]);
+
+    /* ── El marcador. ── */
+    if (n === 0) r.push([nb(e.cifra) === '¿?' && nb(e.palabras) === 'repiten el año, según el acta', 'paso 0: el marcador pregunta', [e.cifra, e.palabras]]);
+    else if (n === 2) r.push([nb(e.cifra) === String(x.sobres.length) && nb(e.palabras) === 'familias citadas', `paso 2: el marcador cuenta los sobres (${x.sobres.length})`, [e.cifra, e.palabras]]);
+    else r.push([nb(e.cifra) === String(x.aros.length) && nb(e.palabras) === 'repiten el año, según el acta', `paso ${n}: el marcador cuenta los aros: los que repiten según el acta (${x.aros.length})`, [e.cifra, e.palabras]]);
+
+    /* ── Cada número de la frase es uno de los que se cuentan en el dibujo, y
+       la oración se cita tal cual. ── */
+    const cuentas = [x.alumnos.length, reprobo.length, aprobo.length, x.aros.length, x.sobres.length];
+    const nums = (nb(e.texto).match(/\d+/g) || []).map(Number);
+    r.push([nums.every(k => cuentas.includes(k)), `paso ${n}: cada número de la frase se cuenta en el dibujo`, [nums, cuentas]]);
+    if (n === 1 || n === 3) r.push([nb(e.texto).includes('«' + PALABRAS[1] + '»'), `paso ${n}: la frase cita la oración del acta tal cual`, PALABRAS[1]]);
+
+    /* ── Los subrayados: en el 0 ninguno. Con las comas, «Los alumnos» con
+       raya entera y la oración de entre comas con raya cortada; sin ellas,
+       todo el grupo con raya entera, de una punta a otra. ── */
+    const cubre = (sb, desde, hasta) => !!desde && !!hasta && Math.abs(sb.caja.x0 - desde.x0) <= 1.6 && Math.abs(sb.caja.x1 - hasta.x1) <= 1.6 &&
+      sb.caja.y0 >= desde.base && sb.caja.y1 <= desde.base + 8;
+    const subs = x.subrayas;
+    if (n === 0) r.push([subs.length === 0, 'paso 0: todavía no hay subrayados', subs.map(q => q.de)]);
+    else if (conComas) {
+      const ent = subs.filter(q => entera(q.raya)), cor = subs.filter(q => cortada(q.raya));
+      r.push([subs.length === 2 && ent.length === 1 && cor.length === 1 && cubre(ent[0], sujeto, sujeto) && cubre(cor[0], inciso, inciso) && ent[0].corrido <= 0.5,
+        `paso ${n}: «Los alumnos» subrayado con raya entera y la oración de entre comas con raya cortada`, subs.map(q => [q.de, Math.round(q.caja.x0), Math.round(q.caja.x1), q.raya])]);
+    } else {
+      r.push([subs.length === 1 && entera(subs[0].raya) && cubre(subs[0], sujeto, inciso) && subs[0].corrido <= 0.5,
+        `paso ${n}: sin comas, todo el grupo subrayado de una punta a otra con raya entera`, subs.map(q => [q.de, Math.round(q.caja.x0), Math.round(q.caja.x1), q.raya])]);
+    }
+
+    /* ── Las marquitas de las comas: solo en el 0, una debajo de cada coma,
+       pegada a ella y sin tocar las letras de al lado. ── */
+    if (n === 0) {
+      const bien = comas.length === 2 && x.marcas.length === 2 && comas.every(c => x.marcas.some(m => {
+        const mx = (m.caja.x0 + m.caja.x1) / 2;
+        return mx >= c.tinta.x0 - 1 && mx <= c.tinta.x1 + 1 && m.caja.y0 >= c.tinta.y1 && m.caja.y0 <= c.tinta.y1 + 4 &&
+          x.acta.every(p => p === c || m.caja.x1 <= p.tinta.x0 || m.caja.x0 >= p.tinta.x1 || m.caja.y0 >= p.tinta.y1 || m.caja.y1 <= p.tinta.y0);
+      }));
+      r.push([bien, 'paso 0: una marquita debajo de cada coma, pegada a ella y sin tocar las letras', x.marcas.map(m => [Math.round(m.caja.x0), Math.round(m.caja.y0)])]);
+    } else r.push([x.marcas.length === 0, `paso ${n}: sin marquitas`, x.marcas.length]);
+
+    /* ── La etiqueta: restrictiva sin comas, explicativa con ellas, con la
+       misma raya que el subrayado de la oración, y un hilo que baja de ese
+       subrayado a la etiqueta. ── */
+    if (n === 4 || n === 5) {
+      const dice = conComas ? 'explicativa: describe' : 'restrictiva: delimita';
+      const t = x.etiquetas, h = x.hilos;
+      const sub = conComas ? subs.find(q => cortada(q.raya)) : subs.find(q => entera(q.raya));
+      const bienHilo = t.length === 1 && h.length === 1 && !!sub && !!inciso &&
+        Math.abs(h[0].ini[1] - (sub.caja.y0 + sub.caja.y1) / 2) <= 1.6 && h[0].ini[0] >= inciso.x0 && h[0].ini[0] <= inciso.x1 &&
+        Math.abs(h[0].fin[1] - t[0].caja.y0) <= 1 && h[0].fin[0] > t[0].caja.x0 && h[0].fin[0] < t[0].caja.x1;
+      r.push([t.length === 1 && nb(t[0].dice) === dice && (conComas ? cortada(t[0].raya) : entera(t[0].raya)) && dentroDe(t[0].caja, x.papel, 0),
+        `paso ${n}: la etiqueta dice «${dice}», con la raya del subrayado de la oración`, t.map(q => [q.dice, q.raya])]);
+      r.push([bienHilo, `paso ${n}: un hilo baja del subrayado de la oración a la etiqueta`, h.map(q => [q.ini.map(Math.round), q.fin.map(Math.round)])]);
+      r.push([t.length === 1 && x.acta.every(p => t[0].caja.x1 <= p.tinta.x0 || t[0].caja.x0 >= p.tinta.x1 || t[0].caja.y1 <= p.tinta.y0 || t[0].caja.y0 >= p.tinta.y1),
+        `paso ${n}: la etiqueta no tapa ninguna palabra del acta`, t.length]);
+    } else r.push([x.etiquetas.length === 0 && x.hilos.length === 0, `paso ${n}: sin etiqueta`, x.etiquetas.map(q => q.dice)]);
+
+    /* ── La leyenda: la ✗ y la ✓ siempre, cada una al lado de lo que quiere
+       decir; el aro, mientras haya aros, y el sobre, mientras haya sobres. ── */
+    const ley = x.leyenda.dice;
+    const lr = ley.find(q => q.de === 'reprobo'), la = ley.find(q => q.de === 'aprobo');
+    r.push([!!lr && !!la && nb(lr.dice) === 'reprobó Matemáticas' && lr.nota === 'reprobo' && nb(la.dice) === 'la aprobó' && la.nota === 'aprobo' && lr.lejos < 6 && la.lejos < 6,
+      `paso ${n}: la leyenda dice qué es la ✗ y qué es la ✓, cada una al lado de su dibujo`, ley.map(q => [q.dice, q.nota, Math.round(q.lejos)])]);
+    r.push([x.leyenda.aro === (x.aros.length > 0) && x.leyenda.sobre === (x.sobres.length > 0),
+      `paso ${n}: la leyenda del aro y la del sobre están solo si hay aros y sobres`, [x.leyenda.aro, x.leyenda.sobre]]);
+    return r;
+  },
   /* Los Tipos de Textos: la carta de Kenia. Se lee la carta renglón por
      renglón, como se escribe, y se comprueba que los cuatro renglones de
      Kenia sean los mismos en los seis pasos: lo que cambia es lo que se le
