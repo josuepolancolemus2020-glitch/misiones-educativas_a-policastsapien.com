@@ -9114,6 +9114,127 @@ Salió roja con cada una.
 Con la CPU frenada seis veces va a 60 cuadros por segundo, y el peor cuadro es
 de 67 ms.
 
+### La trigésima novena: El Sistema Endocrino, y lo que enseñó
+
+La segunda de la Ruta del Cuerpo es **El Sistema Endocrino**
+(`misiones/2y3ciclo-sistema-endocrino/`, `js/animacion-reloj.js`). La historia es
+la de doña Nely: tiene que tomar su medicina a la misma hora todos los días, y el
+día que se le pasa no le pasa nada en el momento, sino horas después. Su nieto no
+entiende tanto pleito con el reloj. La historia dice que el cuerpo da órdenes de
+dos maneras, por cable (llega al instante) y por la sangre (tarda), y que por
+tardar, las fallas de la segunda se sienten mucho después. La animación es doña
+Nely de frente, con un cable de la cabeza a una mano, y la sangre, que baja de la
+cabeza al corazón y de ahí sale a los brazos y a las piernas:
+
+- de la cabeza salen dos órdenes a la vez: ¿cuál llega primero?;
+- la del cable llega enseguida, y a un solo lugar: la mano se mueve. La de la
+  sangre tarda, pero llega a todo el cuerpo;
+- la cabeza deja de mandar: la del cable se acaba al instante, y la de la sangre
+  se queda un buen rato;
+- aparecen un reloj con su hora marcada y una barra con lo que le queda en la
+  sangre. La medicina también va por la sangre: se gasta durante el día, y la de
+  cada mañana llega antes de que se acabe;
+- el día que se le pasa, a su hora todavía le queda de ayer y no siente nada;
+  horas después ya no alcanza, y ahí lo siente;
+- por eso la hora importa. ¿Qué le dirías a su nieto?
+
+Siete cosas que valen para las que siguen:
+
+1. ⚠️ **Las dos órdenes salen a la vez, del mismo sitio, y llegan a la misma
+   mano.** Así lo único que cambia es el camino. La sonda saca de la demora de
+   cada tramo cuándo llega cada una: el cable, a los 0,8 s; la sangre, a esa
+   misma mano, a los 3,2 s. Y la mano se mueve justo cuando llega el cable.
+2. ⚠️ **La hora se ve pasar, y la barra baja con ella.** La aguja da un día en
+   2,4 s y la barra pierde un cuadro cada seis horas del reloj, así que lo que
+   la barra dice a las ocho de la noche es lo que se ve a las ocho de la noche.
+   La sonda lee cuánto tarda la aguja del CSS de la misión y lo compara con
+   cuándo se apaga cada cuadro. Es un esquema, y lo dice: «los tiempos no son
+   los de verdad».
+3. ⚠️ **«No siente nada» y «ahí lo siente» se miden en la barra.** La raya de lo
+   que hace falta está a tres cuadros. A la hora en que se le pasa la toma
+   todavía tiene cuatro, y la cara cambia justo cuando la barra baja de la raya,
+   doce horas después. La sonda cuenta los cuadros que quedan a cada hora.
+4. ⚠️ **La historia estaba en la prueba, cuatro veces, y la animación la
+   contestaba otras dos.** «Las hormonas viajan por la sangre», «las glándulas
+   endocrinas vierten sus hormonas directo a la sangre», «una hormona puede
+   hacer efecto lejos de la glándula» y «¿qué sistema es más lento, pero de
+   efecto más duradero?» los contestaba la historia; en pensamiento crítico, el
+   error de los «mensajes eléctricos, rápidos y breves» y la pregunta de por qué
+   el efecto es lento. Ahora preguntan si cada glándula fabrica una sola
+   hormona, si una glándula y una hormona son lo mismo, si tomar hormonas sin
+   que lo mande el médico ayuda, cuál de cuatro no es una glándula endocrina,
+   el error de las gónadas en la boca y cómo saben las células que la orden es
+   para ellas. Tres de los verdaderos o falsos nuevos son falsos: con nueve
+   verdaderos de diez, el que marcaba V en todo sacaba casi la nota entera. En
+   la ficha, lo mismo, y su felicitación, debajo de los pareados, dice que
+   revise sus respuestas.
+5. ⚠️ **La sonda de pistas cazó un repuesto malo.** El primero fue «El páncreas
+   es una hormona», y «Páncreas» es la respuesta de un pareado de la misma
+   prueba. Se cambió por «Una glándula y una hormona son lo mismo».
+6. **Lo que pasa dos veces en un paso son dos piezas.** Un cuadro que se vacía y
+   se vuelve a llenar en el mismo paso es una pieza que se apaga y otra encima
+   que se enciende; la toma que aparece y se va lleva dos envolturas, una
+   dentro de la otra; y la aguja que se para a las ocho y sigue son dos giros,
+   uno dentro del otro, cada uno con su duración. Una sola pieza tiene una sola
+   demora.
+7. ⚠️ **Al volver con «Atrás», la aguja salta.** La barra y la cara vuelven de
+   golpe, y una aguja girando dos segundos hacia atrás diría una hora que la
+   barra no tiene. Se vio en las fotos a medio viaje, con la sonda en verde.
+
+Y dos de dibujo, que solo salieron mirando: el cable cruzaba la cara, y va por
+el lado de la cabeza; y en los pasos 0 a 2 sobraba la mitad derecha, así que
+doña Nely va en el centro y se corre a la izquierda cuando aparecen el reloj y
+la barra.
+
+La sonda de esta escena **no le cree nada a la escena**:
+
+- sigue los caminos en el dibujo: el cable, de la cabeza a una mano; la sangre,
+  de la glándula al corazón, y del corazón a las dos manos y a los dos pies, una
+  de ellas la del cable;
+- en el paso 1, que las dos salgan a la vez, que la sangre pase por el corazón
+  antes de salir a las ramas, que el cable llegue mucho antes y que la mano se
+  mueva justo entonces;
+- el reloj: la marca de su hora afuera del borde, en las ocho, y la aguja con
+  sus horas (0, 24 y 60) y apuntando a esa marca;
+- la barra: ocho cuadros de abajo hacia arriba, sin huecos, con la raya cortada
+  entre el tercero y el cuarto;
+- en el paso 3, que la barra pierda un cuadro cada seis horas del reloj y que la
+  toma llegue a su hora y la vuelva a llenar después de tomarla;
+- en el paso 4, que a la hora de la toma todavía alcance y que la cara cambie
+  justo cuando la barra baja de la raya, horas después;
+- que la toma llegue a la boca y que la que se le pasó quede en su marca, con
+  su ✗;
+- y que no salga «hormona», ni qué es, ni una glándula con nombre, ni «lejos»,
+  ni un número.
+
+Se comprobó al revés con veinte averías, plantadas una por una:
+
+- el cable sin llegar a la mano;
+- la sangre sin pasar por el corazón;
+- la sangre sin llegar a una pierna;
+- las ramas saliendo antes de llegar al corazón;
+- la mano moviéndose antes de que llegue el cable;
+- la mano sin moverse;
+- la cara cambiando antes de tiempo;
+- la raya en el cuarto cuadro;
+- a la hora de la toma ya sin alcanzar;
+- el reloj sin llegar a su hora;
+- su hora en las nueve;
+- la toma sin volver a llenar la barra;
+- la toma sin llegar a la boca;
+- «hormona» en una frase;
+- el marcador del paso 3 diciendo que no alcanza;
+- el aviso del esquema cambiado;
+- la ✗ fuera de su marca;
+- doña Nely sin correrse, tapando el reloj;
+- la glándula fuera de la cabeza;
+- la orden de la sangre yéndose en el paso 2.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
+de 100 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -9186,7 +9307,9 @@ con la demora que tiene al llegar: si no, dice un momento lo contrario de lo
 que el paso enseña. Cuando dos señales salen a la vez y el orden en
 que llegan es la lección (la orden al músculo y el aviso al cerebro), van en
 tramos de largo parecido y la sonda mide cuándo llega cada una: la que llega
-primero es la que el que mira cree que mandó. Cuando dos cosas se comparan (dos cerros, dos casas), se
+primero es la que el que mira cree que mandó. Si la escena hace pasar horas, la barra que
+las mide baja con la aguja del mismo reloj, y la sonda lee cuánto tarda la aguja
+del CSS de la misión. Cuando dos cosas se comparan (dos cerros, dos casas), se
 dibujan con la misma curva y la sonda las compara punto por punto; si lo que
 cae sobre ellas tiene que ser lo mismo (la lluvia), el paso cabe entero en la
 distancia entre las dos; y si una cantidad tiene que ser la misma (lo que suelta

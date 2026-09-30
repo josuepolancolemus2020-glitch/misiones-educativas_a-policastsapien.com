@@ -1712,6 +1712,80 @@ const LEER = `
       textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
     };
   };
+  window.__amExtra.amReloj = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(m(el)); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function uno(sel) { return raiz.querySelector(sel); }
+    function todos(sel) { return [].slice.call(raiz.querySelectorAll(sel)); }
+    function demora(el) { return parseFloat(el.style.getPropertyValue('--d')) || 0; }
+    /* Sin expresiones regulares: esto vive en una plantilla de texto y ahí
+       las barras se pierden. */
+    function giro(el) { var t = el.style.transform || '', i = t.indexOf('rotate('); return i < 0 ? 0 : parseFloat(t.slice(i + 7)); }
+    function recorrido(path, n) {
+      var L = path.getTotalLength(), out = [];
+      for (var i = 0; i <= n; i++) { var q = path.getPointAtLength(L * i / n); out.push(aVista(path, q.x, q.y)); }
+      return out;
+    }
+    /* Un camino: sus tramos, si cada uno está dibujado (la raya corrida a
+       cero), cuándo arranca cada uno y si el camino entero se ve. */
+    function camino(g) {
+      return {
+        k: g.getAttribute('data-orden') || g.getAttribute('data-cable'), ve: vis(g),
+        tramos: [].slice.call(g.querySelectorAll('[data-tramo]')).map(function (t) {
+          var cs = getComputedStyle(t);
+          return { pts: recorrido(t, 12), dibujado: Math.abs(parseFloat(cs.strokeDashoffset) || 0) < 1, demora: demora(t),
+                   rapido: t.classList.contains('se-rapido') };
+        })
+      };
+    }
+    var esf = uno('[data-esfera]'), ce = aVista(esf, +esf.getAttribute('cx'), +esf.getAttribute('cy')),
+        rb = aVista(esf, +esf.getAttribute('cx') + +esf.getAttribute('r'), +esf.getAttribute('cy'));
+    var ag = uno('[data-punta-aguja]');
+    var raya = uno('[data-raya]');
+    var boca = todos('[data-cara] .se-boca').filter(vis)[0];
+    return {
+      cabeza: caja(uno('[data-cabeza]')), vestido: caja(uno('[data-cuerpo]')),
+      mano: caja(uno('[data-mano]')), mano2: caja(uno('[data-mano2]')),
+      hombro: recorrido(uno('[data-cable="brazo"] [data-tramo]'), 1)[0],
+      brazo: { d: demora(uno('[data-brazo]')) },
+      glandula: caja(uno('[data-glandula]')), brillo: vis(uno('[data-brillo]')),
+      corazon: caja(uno('[data-corazon]')),
+      cables: todos('[data-cable]').map(camino), ordenes: todos('[data-orden]').map(camino),
+      nombres: vis(uno('[data-nombres]')),
+      reloj: { ve: vis(uno('[data-reloj]')), c: ce, r: Math.hypot(rb[0] - ce[0], rb[1] - ce[1]),
+               marca: aVista(uno('[data-marca]'), 0, 0),
+               giro1: giro(uno('[data-aguja]')), giro2: giro(uno('[data-aguja2]')),
+               d1: demora(uno('[data-aguja]')), d2: demora(uno('[data-aguja2]')),
+               punta: aVista(ag, +ag.getAttribute('x2'), +ag.getAttribute('y2')) },
+      barra: { ve: vis(uno('[data-barra]')), tubo: caja(uno('[data-tubo]')),
+               raya: { y: aVista(raya, +raya.getAttribute('x1'), +raya.getAttribute('y1'))[1],
+                       x0: aVista(raya, +raya.getAttribute('x1'), +raya.getAttribute('y1'))[0], x1: aVista(raya, +raya.getAttribute('x2'), +raya.getAttribute('y2'))[0],
+                       corta: getComputedStyle(raya).strokeDasharray !== 'none' },
+               celdas: [1, 2, 3, 4, 5, 6, 7, 8].map(function (k) {
+                 var ps = todos('[data-celda="' + k + '"]');
+                 return { k: k, caja: caja(ps[0]), ve: ps.some(vis), piezas: ps.map(function (q) { return { ve: vis(q), d: demora(q) }; }) };
+               }) },
+      toma: { sale: vis(uno('[data-toma="sale"]')), dSale: demora(uno('[data-toma="sale"]')),
+              va: vis(uno('[data-toma-va]')), dVa: demora(uno('[data-toma-va]')),
+              dViaja: demora(uno('[data-toma-viaja]')), c: aVista(uno('[data-toma-viaja] > g'), 0, 0) },
+      olvido: { ve: vis(uno('[data-olvido]')), d: demora(uno('[data-olvido]')), c: aVista(uno('[data-olvido]'), 0, 0),
+                tache: !!uno('[data-olvido] .se-tache') },
+      cara: { bien: vis(uno('[data-cara="bien"]')), mal: vis(uno('[data-cara="mal"]')),
+              dBien: demora(uno('[data-cara="bien"]')), dMal: demora(uno('[data-cara="mal"]')),
+              gota: vis(uno('[data-cara="mal"] .se-gota')), boca: boca ? caja(boca) : null },
+      rotulos: todos('[data-rotulo]').map(function (t) { return { k: t.getAttribute('data-rotulo'), ve: vis(t), dice: t.textContent, caja: caja(t) }; }),
+      hilos: todos('[data-nombres] .se-hilo').map(function (l) { return aVista(l, +l.getAttribute('x2'), +l.getAttribute('y2')); }),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   window.__amExtra.amAtajo = function (raiz) {
     var vis = window.__amVisible;
     var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
@@ -2062,6 +2136,183 @@ function superficieEn(poly, x) {
 }
 
 const ESCENAS = {
+  /* El Sistema Endocrino. «Por qué la hora importa».
+     ⚠️ Nada se le cree a la escena. Los caminos se siguen en el dibujo: el
+     cable va de la cabeza a una mano; la sangre baja de la glándula al
+     corazón y de ahí sale a las dos manos y a los dos pies, y la mano del
+     cable es la misma a la que llega la sangre. Quién llega primero se
+     saca de la demora de cada tramo. El reloj se lee por su aguja (cuántas
+     horas pasaron, y adónde apunta) y la barra se cuenta cuadro por
+     cuadro; lo que la barra tiene a cada hora sale de cuándo se apaga cada
+     cuadro, y el paso del tiempo de la aguja, del CSS de la misión. Con
+     eso se comprueba lo que la historia dice: el día que se le pasa, a la
+     hora de la toma todavía alcanza, y la cara cambia justo cuando la
+     barra baja de la raya, horas después. ⚠️ Y la prueba no se regala: ni
+     «hormona», ni «mensajero», ni «químico» ni «eléctrico», ni una
+     glándula con nombre, ni «lejos», ni un número. */
+  amReloj(e, n) {
+    const x = e.extra, r = [];
+    const nb = t => String(t == null ? '' : t).replace(/ /g, ' ').trim();
+    const cerca = (a, b, t) => Math.abs(a - b) <= t;
+    const cen = c => [(c.x0 + c.x1) / 2, (c.y0 + c.y1) / 2];
+    const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+    const enCaja = (p, b, t) => p[0] >= b.x0 - t && p[0] <= b.x1 + t && p[1] >= b.y0 - t && p[1] <= b.y1 + t;
+    /* Lo que no depende del dibujo, primero. */
+    const dicho = [e.texto, e.cifra, e.palabras].concat(x.textos).map(nb).join(' | ').toLowerCase();
+    const EXACTAS = ['hormona', 'hormonas', 'mensajero', 'mensajeros', 'químico', 'química', 'químicos', 'eléctrico', 'eléctrica', 'eléctricos',
+      'impulso', 'impulsos', 'insulina', 'glucagón', 'glucosa', 'azúcar', 'adrenalina', 'cortisol', 'melatonina', 'tiroxina', 'yodo', 'yodada',
+      'diabetes', 'bocio', 'páncreas', 'tiroides', 'hipófisis', 'hipotálamo', 'pineal', 'suprarrenales', 'timo', 'gónadas', 'homeostasis',
+      'retroalimentación', 'receptor', 'receptores', 'cerradura', 'llave', 'lejos', 'lejano', 'lejana', 'conducto', 'conductos', 'exocrina',
+      'exocrinas', 'endocrina', 'endocrinas', 'endocrino', 'nervioso', 'neuronas', 'nervios', 'crecer', 'crecimiento', 'sueño', 'estrés',
+      'susto', 'peligro', 'corazón', 'receta', 'médico', 'metabolismo', 'energía', 'enanismo', 'gigantismo', 'ayuno', 'calcio', 'sudor',
+      'glucemia', 'hipoglucemia', 'islotes', 'langerhans', 'cushing', 'hipotiroidismo', 'hipertiroidismo', 'huye', 'lucha'];
+    const FRASES = ['poquita', 'glándula maestra', 'directo a la sangre', 'más lento', 'más rápido', 'duradero', 'duradera'];
+    const suelto = ' ' + dicho.split(/[^a-záéíóúñü]+/).filter(Boolean).join(' ') + ' ';
+    const malas = suelto.trim().split(' ').filter(w => EXACTAS.includes(w)).concat(FRASES.filter(f => suelto.includes(' ' + f + ' ')));
+    r.push([malas.length === 0, `paso ${n}: no sale ninguna palabra de la prueba (ni «hormona», ni qué es, ni una glándula con nombre, ni «lejos»)`, malas]);
+    const nums = dicho.match(/\d+/g) || [];
+    r.push([nums.length === 0, `paso ${n}: ningún número`, nums]);
+    const frase = nb(e.texto);
+    const F = [['salen dos órdenes a la vez', 'una por un cable y otra por la sangre', '¿Cuál llega primero?'],
+      ['La del cable llega enseguida', 'a un solo lugar: la mano', 'La de la sangre tarda', 'todo el cuerpo'],
+      ['la orden del cable se acaba al instante', 'La de la sangre se queda un buen rato'],
+      ['también va por la sangre', 'Se gasta durante el día', 'antes de que se acabe'],
+      ['El día que se le pasa', 'no siente nada', 'Horas después ya no alcanza', 'ahí lo siente'],
+      ['Por eso la hora importa', 'se nota tarde, también cuando falta', '¿Qué le dirías a su nieto?']];
+    r.push([F[n].every(w => frase.includes(w)), `paso ${n}: la frase dice lo que se ve (${F[n].join(', ')})`, frase]);
+
+    /* ── El paso del tiempo, del CSS de la misión: cuánto tarda la aguja en
+       dar un día, y el tramo del cable ── */
+    const css = fs.readFileSync(path.join(RAIZ, 'misiones/2y3ciclo-sistema-endocrino/css/sistema-endocrino.css'), 'utf8');
+    const seg = re => { const q = re.exec(css); return q ? +q[1] * 1000 : NaN; };
+    const msDia = seg(/\.se-dia\s*\{\s*transition:\s*transform\s+([\d.]+)s/), msMedio = seg(/\.se-medio\s*\{\s*transition:\s*transform\s+([\d.]+)s/);
+    const msRapido = seg(/\.se-rapido\s*\{\s*transition:\s*stroke-dashoffset\s+([\d.]+)s/);
+    const msHora = msDia / 24;
+
+    /* ── Doña Nely ── */
+    const radio = (x.cabeza.x1 - x.cabeza.x0) / 2, cCab = cen(x.cabeza);
+    r.push([dist(cen(x.glandula), cCab) < radio - 3, `paso ${n}: la glándula está adentro de la cabeza`]);
+    r.push([n <= 2 ? cerca(cen(x.vestido)[0], 160, 12) : x.vestido.x1 < x.reloj.c[0] - x.reloj.r - 8 && x.vestido.x1 < x.barra.tubo.x0,
+      `paso ${n}: doña Nely ${n <= 2 ? 'va en el centro' : 'se corrió a la izquierda, sin tocar el reloj ni la barra'}`, Math.round(cen(x.vestido)[0])]);
+
+    /* ── Los caminos, en el dibujo ── */
+    const C = k => x.cables.find(q => q.k === k), O = k => x.ordenes.find(q => q.k === k);
+    const ini = q => q.tramos[0].pts[0], fin = q => { const t = q.tramos[q.tramos.length - 1].pts; return t[t.length - 1]; };
+    const c1 = C('cuello'), c2 = C('brazo');
+    const o0 = O('cabeza-corazon'), oQ = O('brazo-quieto'), oH = O('al-hombro'), oC = O('brazo-cable'), oD = O('pierna-der'), oI = O('pierna-izq');
+    r.push([enCaja(ini(c1), x.cabeza, 0) && dist(fin(c1), ini(c2)) < 1.5 && enCaja(fin(c2), x.mano, 2),
+      `paso ${n}: el cable sale de la cabeza y llega a una mano, sin despegarse en el hombro`]);
+    r.push([enCaja(ini(o0), x.glandula, 1.5) && enCaja(fin(o0), x.corazon, 3), `paso ${n}: la sangre baja de la glándula al corazón`]);
+    r.push([[oQ, oH, oD, oI].every(q => enCaja(ini(q), x.corazon, 4)) && dist(fin(oH), ini(oC)) < 1.5 && enCaja(fin(oC), x.mano, 2) &&
+      enCaja(fin(oQ), x.mano2, 2) && fin(oD)[1] > x.vestido.y1 + 12 && fin(oI)[1] > x.vestido.y1 + 12 && Math.abs(fin(oD)[0] - fin(oI)[0]) > 12,
+      `paso ${n}: del corazón sale a las dos manos y a los dos pies, y una de esas manos es la del cable`]);
+    /* Qué está encendido en cada paso. */
+    const todo = q => q.tramos.every(t => t.dibujado), nada = q => q.tramos.every(t => !t.dibujado);
+    r.push([n === 1 ? [c1, c2].every(q => q.ve && todo(q)) : [c1, c2].every(q => !q.ve) && (n !== 0 || [c1, c2].every(nada)),
+      `paso ${n}: la orden del cable ${n === 1 ? 'se ve entera' : n === 0 ? 'todavía no sale' : 'ya se acabó'}`]);
+    const ords = [o0, oQ, oH, oC, oD, oI];
+    r.push([n === 1 || n === 2 ? ords.every(q => q.ve && todo(q)) : ords.every(q => !q.ve) && (n !== 0 || ords.every(nada)),
+      `paso ${n}: la orden de la sangre ${n === 1 || n === 2 ? 'está en toda la sangre' : n === 0 ? 'todavía no sale' : 'ya no está'}`]);
+    r.push([x.brillo === (n === 1), `paso ${n}: la glándula ${n === 1 ? 'manda' : 'no manda'}`]);
+    r.push([x.nombres === (n <= 2), `paso ${n}: los nombres del cable, la sangre y la glándula ${n <= 2 ? 'están' : 'ya no están'}`]);
+    if (n <= 2) {
+      const [hg, hc, hs] = x.hilos;
+      const cercaDe = (p, pts, t) => pts.some(q => dist(p, q) < t);
+      r.push([dist(hg, cen(x.glandula)) < 6 && cercaDe(hc, c1.tramos[0].pts.concat(c2.tramos[0].pts), 4) && cercaDe(hs, oQ.tramos.flatMap(t => t.pts), 5),
+        `paso ${n}: cada nombre apunta a lo suyo: la glándula, el cable y la sangre`]);
+    }
+    /* La mano se mueve cuando llega la orden del cable, y solo entonces. */
+    const mc = cen(x.mano), ang = Math.atan2(mc[0] - x.hombro[0], mc[1] - x.hombro[1]) * 180 / Math.PI;
+    r.push([n === 1 ? ang < -25 : ang > -18 && ang < -5, `paso ${n}: la mano ${n === 1 ? 'se movió' : 'está quieta'}`, Math.round(ang)]);
+    if (n === 1) {
+      const seguidos = (q, ms) => q.tramos.every((t, i) => i === 0 || cerca(t.demora, q.tramos[i - 1].demora + ms, 1));
+      const llega = (q, ms) => q.tramos[q.tramos.length - 1].demora + ms;
+      const cableLlega = llega(c2, msRapido), sangreLlega = llega(oC, 800), enCorazon = llega(o0, 800);
+      r.push([c1.tramos.every(t => t.rapido) && cerca(c1.tramos[0].demora, 0, 1) && cerca(c2.tramos[0].demora, llega(c1, msRapido), 1) &&
+        cerca(o0.tramos[0].demora, 0, 1) && ords.every(q => seguidos(q, 800)) && [oQ, oH, oD, oI].every(q => cerca(q.tramos[0].demora, enCorazon, 1)) &&
+        cerca(oC.tramos[0].demora, llega(oH, 800), 1),
+        'paso 1: las dos órdenes salen a la vez; la de la sangre pasa por el corazón y de ahí sale a todas partes']);
+      r.push([sangreLlega >= 3 * cableLlega && x.brazo.d === cableLlega,
+        'paso 1: a la misma mano, el cable llega mucho antes que la sangre, y la mano se mueve justo cuando llega el cable', [cableLlega, sangreLlega, x.brazo.d]]);
+    }
+
+    /* ── El reloj ── */
+    const R = x.reloj;
+    r.push([R.ve === (n >= 3) && x.barra.ve === (n >= 3), `paso ${n}: el reloj y la barra ${n >= 3 ? 'están' : 'todavía no'}`]);
+    const angulo = p => ((Math.atan2(p[0] - R.c[0], -(p[1] - R.c[1])) * 180 / Math.PI) + 360) % 360;
+    r.push([cerca(angulo(R.marca), 240, 3) && dist(R.marca, R.c) > R.r, `paso ${n}: su hora está marcada afuera del reloj, en las ocho`, Math.round(angulo(R.marca))]);
+    const horas = (R.giro1 + R.giro2 - 240) / 30;
+    const horasDebe = n <= 2 ? 0 : n === 3 ? 24 : 60;
+    r.push([cerca(horas, horasDebe, 0.01) && cerca(angulo(R.punta), angulo(R.marca), 3),
+      `paso ${n}: la aguja lleva ${horasDebe} horas y apunta a su hora`, [horas, Math.round(angulo(R.punta))]]);
+    if (n >= 3) {
+      const rh = x.rotulos.find(t => t.k === 'hora');
+      r.push([rh && rh.ve && rh.dice === 'su hora' && dist(cen(rh.caja), R.marca) < 18, `paso ${n}: «su hora» junto a la marca`]);
+    }
+
+    /* ── La barra: se cuenta cuadro por cuadro ── */
+    const B = x.barra, cel = B.celdas.slice().sort((a, b) => b.caja.y0 - a.caja.y0);
+    r.push([cel.every((c, i) => c.k === i + 1 && enCaja(cen(c.caja), B.tubo, 0)), `paso ${n}: ocho cuadros, uno sobre otro, adentro de la barra`]);
+    const falta = cel.filter(c => cen(c.caja)[1] > B.raya.y).length;
+    r.push([falta === 3 && B.raya.corta && B.raya.x0 >= B.tubo.x0 - 1 && B.raya.x1 <= B.tubo.x1 + 1 &&
+      cel[falta - 1].caja.y0 >= B.raya.y - 1.5 && cel[falta].caja.y1 <= B.raya.y + 1.5,
+      `paso ${n}: la raya de lo que hace falta va cortada, entre el tercer cuadro y el cuarto`, falta]);
+    const rf = x.rotulos.filter(t => t.k === 'falta'), rb = x.rotulos.find(t => t.k === 'barra');
+    if (n >= 3) r.push([rf.map(t => t.dice).join(' ') === 'lo que hace falta' && rf.every(t => t.caja.x1 < B.tubo.x0 && Math.abs(cen(t.caja)[1] - B.raya.y) < 14) &&
+      rb.dice === 'en su sangre' && rb.caja.y1 <= B.tubo.y0 && cerca(cen(rb.caja)[0], cen(B.tubo)[0], 2),
+      `paso ${n}: la barra dice «en su sangre», y su raya, «lo que hace falta»`]);
+    const lit = cel.filter(c => c.ve).length;
+    r.push([cel.every((c, i) => c.ve === (i < lit)), `paso ${n}: los cuadros encendidos van de abajo hacia arriba, sin huecos`, lit]);
+    if (n >= 3) r.push([n === 3 ? lit === 8 : lit < falta, `paso ${n}: en su sangre ${n === 3 ? 'la barra está llena' : 'ya no alcanza'}`, lit]);
+    /* La cara, y la toma que viaja a la boca. */
+    r.push([x.cara.bien === (n <= 3) && x.cara.mal === (n >= 4) && x.cara.gota === (n >= 4), `paso ${n}: doña Nely ${n <= 3 ? 'está bien' : 'lo siente'}`]);
+    r.push([!(x.toma.sale && x.toma.va), `paso ${n}: la cápsula de la toma no se queda a la vista`]);
+    if (n >= 3 && x.cara.boca) r.push([dist(x.toma.c, cen(x.cara.boca)) < 5, `paso ${n}: la toma llegó a la boca`, dist(x.toma.c, cen(x.cara.boca))]);
+    if (n <= 2) r.push([dist(x.toma.c, R.marca) < 1.5, `paso ${n}: la toma espera en su marca`]);
+    r.push([x.olvido.ve === (n >= 4) && dist(x.olvido.c, R.marca) < 1.5 && x.olvido.tache, `paso ${n}: la toma que se le pasó ${n >= 4 ? 'está en su marca, con su ✗' : 'todavía no'}`]);
+
+    /* ── Cuándo pasa cada cosa (se mide al llegar al paso) ── */
+    const A = k => cel[k - 1].piezas[0], S = k => cel[k - 1].piezas[1];
+    if (n === 3) {
+      const d1 = R.d1, dl = 6 * msHora;
+      r.push([[8, 7, 6, 5].every((k, i) => cerca(A(k).d, d1 + (i + 1) * dl, 1)) && cerca(msMedio, 12 * msHora, 1),
+        'paso 3: la barra pierde un cuadro cada seis horas del reloj', [8, 7, 6, 5].map(k => A(k).d)]);
+      const fin = d1 + 4 * dl;
+      r.push([cerca(x.toma.dSale, fin, 1) && x.toma.dViaja >= x.toma.dSale && x.toma.dVa >= x.toma.dViaja + 800 &&
+        [5, 6, 7, 8].every((k, i, a) => S(k).d > x.toma.dVa && (i === 0 || S(k).d > S(a[i - 1]).d)),
+        'paso 3: a las ocho del día siguiente llega la otra toma, y la barra se vuelve a llenar después de tomarla']);
+    }
+    if (n === 4) {
+      const d1 = R.d1, dl = 6 * msHora;
+      r.push([[8, 7, 6, 5].every((k, i) => cerca(S(k).d, d1 + (i + 1) * dl, 1)), 'paso 4: pasa otro día, un cuadro cada seis horas']);
+      const d2 = R.d2, olv = x.olvido.d;
+      r.push([olv >= d1 + 4 * dl && d2 >= olv && cerca(A(4).d, d2 + dl, 1) && cerca(A(3).d, d2 + 2 * dl, 1),
+        'paso 4: a las ocho se le pasa la toma; la barra sigue bajando con el reloj']);
+      /* Cuántos cuadros quedan a una hora: los que se apagan después. */
+      const quedan = t => cel.filter((c, i) => { const k = i + 1; const sale = k <= 2 ? Infinity : k <= 4 ? A(k).d : S(k).d; return sale > t; }).length;
+      const primera = [A(3).d, A(4).d].concat([5, 6, 7, 8].map(k => S(k).d)).sort((a, b) => a - b).find(t => quedan(t) < falta);
+      /* La hora del reloj a un momento del paso: la aguja da el día, se
+         para en las ocho mientras sale la ✗, y sigue. */
+      const horaDe = t => t <= d1 + msDia ? (t - d1) / msHora : t < d2 ? 24 : 24 + (t - d2) / msHora;
+      const tarde = horaDe(primera) - horaDe(olv);
+      r.push([quedan(olv) >= falta && cerca(x.cara.dMal, primera, 1) && cerca(x.cara.dBien, primera, 1) && tarde >= 6,
+        'paso 4: a la hora de la toma todavía le alcanza, y la cara cambia justo cuando la barra baja de la raya, horas después',
+        { alaHora: quedan(olv), cara: x.cara.dMal, baja: primera, horasDespues: tarde }]);
+    }
+
+    /* ── Lo que dice el marcador ── */
+    const cifra = nb(e.cifra), pal = nb(e.palabras);
+    const MARC = [['?', 'qué orden llega primero'], ['el cable', 'llega primero, y a un solo lugar'], ['la sangre', 'se queda un buen rato'],
+      ['alcanza', 'la de cada mañana llega a tiempo'], ['horas después', 'se siente la toma que se le pasó'], ['?', 'qué le dirías a su nieto']];
+    const cuadra = n === 3 ? lit >= falta && x.cara.bien : n === 4 ? x.cara.mal : true;
+    r.push([cifra === MARC[n][0] && pal === MARC[n][1] && cuadra, `paso ${n}: el marcador dice «${cifra}», y es lo que se ve`, [cifra, pal]]);
+
+    /* ── El aviso del esquema ── */
+    const re = x.rotulos.filter(t => t.k === 'esquema');
+    r.push([re.length === 2 && re.every(t => t.ve) && re.map(t => t.dice).join(' ') === 'Es un esquema: los tiempos no son los de verdad.',
+      `paso ${n}: el aviso de que los tiempos no son los de verdad`]);
+    return r;
+  },
   /* El Sistema Nervioso. «El atajo de la médula».
      ⚠️ Nada se le cree a la escena. Las señales se siguen en el dibujo:
      el aviso nace en los dedos y llega a la médula, pasando por el codo y

@@ -25,6 +25,9 @@
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
 <link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La animación que explica el tema: el aparato es compartido y va DESPUÉS
+     del CSS de la misión, que es de donde saca sus colores. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -70,6 +73,24 @@
     <div class="tip"><span class="ti">❓</span><div>El cuerpo tiene dos sistemas para dar órdenes: uno va
     por cable y llega al instante, y otro va <strong>por la sangre</strong> y tarda. El segundo es este,
     y como tarda, sus fallos no se sienten cuando ocurren, sino mucho después.</div></div>
+  </div>
+  <!-- La animación que explica el tema, justo después de la historia:
+       doña Nely de frente, con un cable de la cabeza a una mano y la
+       sangre, que baja al corazón y sale a todo el cuerpo. Las dos órdenes
+       salen a la vez; después, un reloj con la hora de su medicina y una
+       barra con lo que le queda en la sangre. La mueve el alumno, paso a
+       paso. El aparato es compartido (js/animacion-mision.js) y la escena
+       es de esta misión (js/animacion-reloj.js). La frase de dentro es de
+       reserva: si el aparato no llega a cargar, se lee eso en vez de un
+       hueco. -->
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira por qué la hora importa</h2>
+    <div id="amReloj">
+      <p>De la cabeza salen dos órdenes a la vez: la del cable llega enseguida a la mano, y la de la sangre
+      tarda, pero llega a todo el cuerpo y se queda un buen rato. La medicina de doña Nely también va por la
+      sangre y se gasta durante el día. El día que se le pasa, todavía le queda de ayer y no siente nada;
+      horas después ya no alcanza, y ahí lo siente. Por eso la hora importa.</p>
+    </div>
   </div>
   <div class="card ac-teal">
     <h2>⚗️ ¿Qué es el Sistema Endocrino?</h2>
@@ -601,6 +622,8 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-reloj.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

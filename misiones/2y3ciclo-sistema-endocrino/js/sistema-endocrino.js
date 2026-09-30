@@ -355,13 +355,23 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 // (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
 // tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
 // Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
+//
+// ⚠️ Y ninguna la contesta la historia de doña Nely ni su animación
+// (js/animacion-reloj.js), que enseñan que la orden de la sangre tarda,
+// llega a todo el cuerpo y dura. Por eso se fueron «Las hormonas viajan por
+// la sangre», «Las glándulas endocrinas vierten sus hormonas directo a la
+// sangre», «Una hormona puede hacer efecto en un órgano lejos de la glándula»
+// y «¿Qué sistema es más lento, pero de efecto más duradero?». Las que
+// entraron preguntan otra cosa de la misión, y tres de ellas son falsas: con
+// nueve verdaderas de diez, el que marcaba V en todo sacaba casi la nota
+// entera.
 const evalTFBank=[
-  {q:'Las hormonas viajan por la sangre.',a:true,k:'tf-sangre'},
+  {q:'Cada glándula fabrica una sola hormona.',a:false,k:'tf-una-sola'},
   {q:'Tener el azúcar de la sangre muy alto por mucho tiempo daña el cuerpo.',a:true,k:'tf-azucar-alto'},
   {q:'Una emoción fuerte puede hacer que se liberen hormonas.',a:true,k:'tf-emocion'},
   {q:'La adrenalina prepara el cuerpo ante un peligro.',a:true,k:'tf-adrenalina'},
-  {q:'Las glándulas endocrinas vierten sus hormonas directo a la sangre.',a:true,k:'tf-endocrinas'},
-  {q:'Una hormona puede hacer efecto en un órgano lejos de la glándula que la produjo.',a:true,k:'tf-lejos'},
+  {q:'Una glándula y una hormona son lo mismo.',a:false,k:'tf-glandula-hormona'},
+  {q:'Tomar hormonas sin que lo mande el médico ayuda a cuidar el cuerpo.',a:false,k:'tf-sin-medico'},
   {q:'Las hormonas actúan aunque haya muy poquita cantidad.',a:true,k:'tf-poquita'},
   {q:'Dormir mal no tiene nada que ver con las hormonas.',a:false,k:'tf-dormir'},
   {q:'Hacer ejercicio y comer bien ayudan a prevenir problemas con el azúcar.',a:true,k:'tf-ejercicio'},
@@ -373,7 +383,7 @@ const evalMCBank=[
   {q:'¿Qué le pasa al corazón con la adrenalina?',o:['a) se detiene','b) late más lento','c) late más rápido','d) no cambia'],a:2,k:'mc-corazon'},
   {q:'¿Qué enfermedad aparece por falta o mal uso de la insulina?',o:['a) gripe','b) diabetes','c) asma','d) caries'],a:1,k:'mc-diabetes'},
   {q:'¿Qué hormona hace que el cuerpo use más rápido la energía?',o:['a) tiroxina','b) melatonina','c) insulina','d) cortisol'],a:0,k:'mc-tiroxina'},
-  {q:'¿Qué sistema es más lento, pero de efecto más duradero?',o:['a) el nervioso','b) el óseo','c) el digestivo','d) el de las hormonas'],a:3,k:'mc-lento'},
+  {q:'¿Cuál de estos NO es una glándula endocrina?',o:['a) la tiroides','b) la pineal','c) la hipófisis','d) el pulmón'],a:3,k:'mc-no-glandula'},
   {q:'¿Qué hormona regula el sueño?',o:['a) glucagón','b) adrenalina','c) melatonina','d) tiroxina'],a:2,k:'mc-melatonina'},
   {q:'¿Qué hormona sube el azúcar cuando uno lleva horas sin comer?',o:['a) glucagón','b) melatonina','c) insulina','d) tiroxina'],a:0,k:'mc-glucagon'},
   {q:'¿Qué mineral necesita el cuerpo para fabricar tiroxina?',o:['a) hierro','b) sodio','c) calcio','d) yodo'],a:3,k:'mc-yodo'},
@@ -504,23 +514,31 @@ const critCaseBank=[
   {k:'ca-dulces',txt:'Una persona come varios dulces seguidos y su azúcar en sangre sube; poco después su cuerpo la equilibra de nuevo sin ayuda externa.'},
   {k:'ca-refresco',txt:'Tras merendar pan y refresco, a Carla le sube la glucosa, pero su cuerpo la vuelve a bajar hasta un nivel estable en un par de horas.'},
 ];
+// ⚠️ La pregunta 3 preguntaba por qué este efecto es más lento y duradero
+// que una reacción del sistema nervioso, y eso lo contestan la historia de
+// doña Nely y su animación (js/animacion-reloj.js). Ahora pregunta cómo saben
+// las células que la orden es para ellas: la llave y la cerradura, que la
+// misión enseña y la animación no.
 const critCaseQuestions=[
   '1. Explica qué ocurrió en su sistema endocrino desde que subió el azúcar hasta que volvió a la normalidad.',
   '2. ¿Qué glándula y qué hormona fueron las principales responsables de esta respuesta?',
-  '3. ¿Por qué este efecto es más lento y duradero que una reacción del sistema nervioso?',
+  '3. Si esa hormona viaja por todo el cuerpo, ¿cómo saben las células que la orden es para ellas?',
   '4. ¿Qué pasaría si esa glándula no produjera bien esa hormona?',
 ];
 const critCaseGuides=[
   'Al subir la glucosa tras comer, el páncreas lo detecta y libera insulina; la insulina ordena a las células captar y almacenar el azúcar, por lo que la glucemia baja hasta lo normal. Es un ejemplo de homeostasis por retroalimentación negativa.',
   'La glándula es el páncreas (islotes de Langerhans) y la hormona es la insulina, que baja el azúcar. En el ayuno actuaría la hormona contraria, el glucagón, que lo sube.',
-  'Porque es una respuesta hormonal: la insulina viaja por la sangre y actúa sobre muchas células del cuerpo, así que su efecto es más lento y prolongado que un impulso nervioso, que es rápido y breve.',
+  'Solo responden las células que tienen el receptor de esa hormona, como una llave que abre solo su cerradura; las demás la dejan pasar.',
   'Si el páncreas no produjera insulina o el cuerpo no la usara bien, la glucosa quedaría alta en la sangre. Eso es justamente lo que ocurre en la diabetes.',
 ];
 
+// ⚠️ El error de los «mensajes eléctricos, rápidos y breves» se corregía con
+// la historia de doña Nely: el segundo sistema va por la sangre y tarda. Lo
+// reemplaza el de las gónadas, que la misión enseña en su tabla de glándulas.
 const critErrorBank=[
-  {k:'er-electrico',txt:'"El sistema endocrino envía mensajes eléctricos por los nervios y produce respuestas muy rápidas y de corta duración".',
-   g1:'El sistema endocrino usa mensajeros químicos (hormonas) transportados por la sangre, no impulsos eléctricos por los nervios.',
-   g2:'Sus respuestas son lentas y duraderas; las rápidas y breves son las del sistema nervioso.'},
+  {k:'er-gonadas',txt:'"Las gónadas son glándulas de la boca, y lo que fabrican es la saliva".',
+   g1:'Las gónadas no están en la boca: son las glándulas del desarrollo sexual y de la reproducción.',
+   g2:'La saliva la hacen las glándulas salivales, que son exocrinas; las gónadas fabrican hormonas.'},
   {k:'er-insulina',txt:'"La insulina sube el nivel de azúcar en la sangre, y el glucagón lo baja".',
    g1:'La insulina baja la glucosa, ordenando a las células que la capten y guarden.',
    g2:'El glucagón sube la glucosa, liberándola a la sangre; las funciones están invertidas.'},
