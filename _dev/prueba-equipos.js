@@ -16,8 +16,9 @@
    · QUE «PAREJOS» SEA PAREJO: en cada equipo hay de los tres tercios de
      notas, y el promedio de los equipos queda mucho más junto que al azar.
    · QUE «POR NIVEL» JUNTE A LOS PARECIDOS, mucho más que al azar.
-   · QUE LAS PAREJAS QUE SE SEPARAN QUEDEN SEPARADAS, en todas las
-     semillas: eso lo pidió el maestro por algo.
+   · QUE LOS COORDINADORES QUEDEN CADA UNO EN UN EQUIPO, en todas las
+     semillas; con uno por equipo, a cada equipo le toca el suyo, y con
+     más o con menos que equipos se reparten parejo y se dice.
    · QUE «ARMAR OTROS» DÉ OTROS, igual de parejos.
    · QUE AL INSERTAR UN ALUMNO LOS EQUIPOS GUARDADOS SE RECORRAN con él.
 
@@ -175,49 +176,80 @@ console.log('\n── «por nivel»: juntos los que van parecido ──');
     new Set(primeros).size > 3, primeros);
 }
 
-console.log('\n── las parejas que se separan quedan separadas ──');
+console.log('\n── los coordinadores: cada uno en un equipo distinto ──');
 {
-  const SEP = [[1, 2], [3, 4], [5, 9], [10, 20], [11, 12], [30, 31]];
-  let juntas = 0;
+  const K = T4.length;
+  const C = [1, 3, 5, 8, 12, 15, 19, 23, 27, 33, 40].slice(0, K);
+  const cuantos = (gs, cs) => gs.map(g => g.filter(n => cs.includes(n)).length);
+  let mal = [];
   for (const nivel of ['azar', 'parejos', 'nivel']) {
     for (const s of SEMILLAS) {
-      const r = E.eqArmar(AL, { tamanos: T4, sexo: true, nivel, separar: SEP, semilla: s });
-      juntas += E.eqMedir(r.grupos, AL, { separar: SEP }).separar.juntas;
+      const r = E.eqArmar(AL, { tamanos: T4, sexo: true, nivel, coord: C, semilla: s });
+      const c = cuantos(r.grupos, C);
+      if (c.some(x => x !== 1)) mal.push([nivel, s, c]);
     }
   }
-  comprueba('seis parejas, tres modos y ocho semillas: ninguna quedó junta', juntas === 0, juntas);
-  const r = E.eqArmar(AL, { tamanos: T4, sexo: true, nivel: 'parejos', separar: SEP, semilla: 3 });
-  const m = E.eqMedir(r.grupos, AL, { separar: SEP });
-  comprueba('y separarlas no desarma lo parejo', m.nivel.promMax - m.nivel.promMin <= 4 && m.sexo.fMax - m.sexo.fMin <= 1, m);
-  /* de a más de dos: los cuatro que no paran de platicar, cada uno en un equipo */
-  const GR = [[3, 8, 14, 22], [1, 2, 40]];
-  let juntasGr = 0;
-  for (const nivel of ['azar', 'parejos', 'nivel']) {
-    for (const s of SEMILLAS) {
-      const rg = E.eqArmar(AL, { tamanos: T4, sexo: true, nivel, separar: GR, semilla: s });
-      const de = {}; rg.grupos.forEach((g, k) => g.forEach(n => { de[n] = k; }));
-      GR.forEach(g => { if (new Set(g.map(n => de[n])).size !== g.length) juntasGr++; });
-    }
+  comprueba(`${K} coordinadores para ${K} equipos, tres modos y ocho semillas: a cada equipo le toca exactamente uno`,
+    !mal.length, mal.slice(0, 3));
+  const r = E.eqArmar(AL, { tamanos: T4, sexo: true, nivel: 'parejos', coord: C, semilla: 3 });
+  const m = E.eqMedir(r.grupos, AL, { coord: C });
+  comprueba('y la medida lo cuenta: todos con el suyo, ninguno con dos',
+    m.coord.total === K && m.coord.conCoord === K && m.coord.sinCoord === 0 && m.coord.conDos === 0, m.coord);
+  comprueba('y tener coordinadores no desarma lo parejo',
+    m.nivel.promMax - m.nivel.promMin <= 4 && m.sexo.fMax - m.sexo.fMin <= 1, m);
+
+  const pocos = C.slice(0, K - 3);
+  let malPocos = [];
+  for (const s of SEMILLAS) {
+    const rr = E.eqArmar(AL, { tamanos: T4, sexo: true, nivel: 'parejos', coord: pocos, semilla: s });
+    const mm = E.eqMedir(rr.grupos, AL, { coord: pocos });
+    if (mm.coord.conDos || mm.coord.conCoord !== pocos.length || mm.coord.sinCoord !== 3) malPocos.push([s, mm.coord]);
   }
-  comprueba('un grupo de cuatro y uno de tres, tres modos y ocho semillas: cada uno en un equipo distinto', juntasGr === 0, juntasGr);
-  const rg = E.eqArmar(AL, { tamanos: T4, sexo: true, nivel: 'parejos', separar: GR, semilla: 3 });
-  const mg = E.eqMedir(rg.grupos, AL, { separar: GR });
-  comprueba('y la medida cuenta separaciones, no parejas: 2 y ninguna incumplida',
-    mg.separar.total === 2 && mg.separar.juntas === 0 && mg.separar.noCaben === 0, mg.separar);
+  comprueba(`con ${pocos.length} para ${K} equipos ninguno comparte equipo, y la medida dice que 3 se quedaron sin coordinador`,
+    !malPocos.length, malPocos.slice(0, 2));
+
+  const muchos = C.concat([2, 4, 6]);
+  let malMuchos = [];
+  for (const s of SEMILLAS) {
+    const c = cuantos(E.eqArmar(AL, { tamanos: T4, sexo: true, nivel: 'parejos', coord: muchos, semilla: s }).grupos, muchos);
+    if (Math.min(...c) < 1 || Math.max(...c) > 2 || c.filter(x => x === 2).length !== 3) malMuchos.push([s, c]);
+  }
+  comprueba(`con ${muchos.length} para ${K} equipos todos tienen el suyo y en 3 van dos: nunca tres en uno mientras otro no tiene`,
+    !malMuchos.length, malMuchos.slice(0, 2));
+
   const T3 = [15, 14, 14];
-  const cinco = [[1, 2, 3, 4, 5]];
-  const rc = E.eqArmar(AL, { tamanos: T3, separar: cinco, semilla: 2 });
-  const mc = E.eqMedir(rc.grupos, AL, { separar: cinco });
-  comprueba('cinco que no pueden estar juntos en tres equipos no caben, y se dice en vez de callarlo',
-    mc.separar.juntas === 1 && mc.separar.noCaben === 1, mc.separar);
-  const dec = {}; rc.grupos.forEach((g, k) => g.forEach(n => { dec[n] = k; }));
-  const porEq = [0, 1, 2].map(k => cinco[0].filter(n => dec[n] === k).length);
-  comprueba('y aun así se reparten lo mejor que se puede: a lo más dos por equipo', Math.max(...porEq) <= 2, porEq);
-  comprueba('las separaciones se limpian: ordenadas, sin repetidos, las de uno solo se caen y las parejas viejas siguen',
-    JSON.stringify(E.eqLimpiarSeparar([[9, 3, 3], [5], [2, 1], 'x', [7, 0]])) === '[[3,9],[1,2]]');
-  const uno = E.eqArmar(aula(5), { tamanos: [5], separar: [[1, 2]], semilla: 1 });
-  comprueba('con un solo equipo no se puede separar, y se cuenta como junta en vez de callarlo',
-    E.eqMedir(uno.grupos, aula(5), { separar: [[1, 2]] }).separar.juntas === 1);
+  const cinco = [1, 2, 3, 4, 5];
+  const mc = E.eqMedir(E.eqArmar(AL, { tamanos: T3, coord: cinco, semilla: 2 }).grupos, AL, { coord: cinco });
+  comprueba('cinco coordinadores en tres equipos: los tres tienen, y en dos van dos', mc.coord.conCoord === 3 && mc.coord.conDos === 2, mc.coord);
+  const uno = E.eqArmar(aula(5), { tamanos: [5], coord: [1, 2], semilla: 1 });
+  comprueba('con un solo equipo quedan juntos, y la medida no lo esconde',
+    E.eqMedir(uno.grupos, aula(5), { coord: [1, 2] }).coord.conDos === 1);
+  const tres = E.eqMedir([[1, 2, 3, 4], [5, 6, 7, 8]], aula(8), { coord: [1, 2, 3] }).coord;
+  comprueba('si a mano un equipo queda con tres, la medida lo sabe y no dice «dos»',
+    tres.max === 3 && tres.conDos === 1 && tres.sinCoord === 1, tres);
+  comprueba('sin coordinadores, o con uno que no está en ningún equipo, la medida no inventa nada',
+    !E.eqMedir(r.grupos, AL).coord && !E.eqMedir(r.grupos, AL, { coord: [99] }).coord);
+
+  comprueba('los coordinadores se guardan ordenados, sin repetidos ni basura',
+    JSON.stringify(E.eqLimpiarCoord([9, 3, '3', 0, -2, 'x', 7.5, 12])) === '[3,9,12]');
+  comprueba('lo que un maestro separó antes de los coordinadores se lee como sus coordinadores: no se pierde',
+    JSON.stringify(E.eqCoordDe({ separar: [[5, 9], [2, 3], [1, 6, 8], 'x'] })) === '[1,2,3,5,6,8,9]');
+  comprueba('y si ya hay coordinadores, mandan ellos', JSON.stringify(E.eqCoordDe({ coord: [4, 2], separar: [[5, 9]] })) === '[2,4]');
+  comprueba('un grupo sin nada guardado no tiene coordinadores', E.eqCoordDe({}).length === 0 && E.eqCoordDe(null).length === 0);
+}
+
+console.log('\n── lo que se avisa antes de armar ──');
+{
+  const T = E.eqCoordTxt;
+  const es = (m, got, want) => comprueba(m + ': «' + want + '»', got === want, got);
+  es('uno por equipo', T(9, 9, 0), '✅ 9 coordinadores para 9 equipos: uno en cada equipo');
+  es('falta uno', T(8, 9, 0), '⚠️ 8 coordinadores para 9 equipos: 1 equipo queda sin coordinador');
+  es('en singular, el coordinador', T(1, 9, 0), '⚠️ 1 coordinador para 9 equipos: 8 equipos quedan sin coordinador');
+  es('sobran', T(11, 9, 0), '⚠️ 11 coordinadores para 9 equipos: en 2 equipos van a quedar dos');
+  es('sobran muchos', T(20, 9, 0), '⚠️ 20 coordinadores para 9 equipos: en todos van a quedar dos o más');
+  es('dice los que hoy no entran', T(9, 10, 1), '⚠️ 9 coordinadores para 10 equipos: 1 equipo queda sin coordinador · 1 no entra hoy');
+  es('ninguno entra hoy', T(0, 9, 2), '⚠️ Ninguno de tus coordinadores entra hoy');
+  comprueba('sin coordinadores no dice nada', T(0, 9, 0) === '');
 }
 
 console.log('\n── «Armar otros» da otros, y el azar es de verdad azar ──');
@@ -248,7 +280,7 @@ console.log('\n── lo raro no revienta ──');
   comprueba('sin alumnos no hay equipos', E.eqArmar([], {}).grupos.length === 0);
   comprueba('un alumno solo queda en un equipo de uno', JSON.stringify(E.eqArmar(aula(1), { semilla: 1 }).grupos) === '[[1]]');
   const t0 = Date.now();
-  E.eqArmar(aula(60), { tamanos: E.eqTamanos(60, 'tam', 3), sexo: true, nivel: 'parejos', separar: [[1, 2], [3, 4]], semilla: 2 });
+  E.eqArmar(aula(60), { tamanos: E.eqTamanos(60, 'tam', 3), sexo: true, nivel: 'parejos', coord: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], semilla: 2 });
   const ms = Date.now() - t0;
   comprueba(`60 alumnos en equipos de 3 se arman en ${ms} ms (en un teléfono barato, unas cinco veces más)`, ms < 600, ms);
 }
@@ -258,11 +290,15 @@ console.log('\n── lo guardado ──');
   comprueba('el reparto se guarda como UNA cadena y se lee igual',
     JSON.stringify(E.eqLeerReparto(E.eqEscribirReparto([[1, 5, 9], [2, 6]]))) === '[[1,5,9],[2,6]]');
   comprueba('una cadena vacía o rota no revienta', E.eqLeerReparto('').length === 0 && E.eqLeerReparto('|,|x').length === 0);
-  const d = { equipos: { reparto: '1,5,9|2,6,10', antes: '1,2|5,6', separar: [[5, 9], [2, 3], [1, 6, 8]], fuera: { f: 'x', nums: [4, 7] } } };
+  const d = { equipos: { reparto: '1,5,9|2,6,10', antes: '1,2|5,6', coord: [2, 5, 9], fuera: { f: 'x', nums: [4, 7] } } };
   E.eqRecorrer(d, 5);
-  comprueba('al insertar un alumno como #5, los de detrás se recorren en los equipos, las parejas y los que se dejaron fuera',
+  comprueba('al insertar un alumno como #5, los de detrás se recorren en los equipos, los coordinadores y los que se dejaron fuera',
     d.equipos.reparto === '1,6,10|2,7,11' && d.equipos.antes === '1,2|6,7' &&
-    JSON.stringify(d.equipos.separar) === '[[6,10],[2,3],[1,7,9]]' && JSON.stringify(d.equipos.fuera.nums) === '[4,8]', d.equipos);
+    JSON.stringify(d.equipos.coord) === '[2,6,10]' && JSON.stringify(d.equipos.fuera.nums) === '[4,8]', d.equipos);
+  const viejo = { equipos: { separar: [[5, 9], [2, 3]] } };
+  E.eqRecorrer(viejo, 5);
+  comprueba('y las separaciones de antes, mientras sigan guardadas, también',
+    JSON.stringify(viejo.equipos.separar) === '[[6,10],[2,3]]', viejo.equipos);
   const vacio = {};
   E.eqRecorrer(vacio, 3);
   comprueba('un grupo sin equipos no se toca', JSON.stringify(vacio) === '{}');

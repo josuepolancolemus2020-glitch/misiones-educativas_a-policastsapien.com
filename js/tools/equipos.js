@@ -28,8 +28,8 @@
 
    · Parejos se mide, no se promete. Debajo de los equipos se dice
      cuántas niñas le tocaron a cada uno, entre qué notas va el promedio
-     de cada equipo y si las parejas que había que separar quedaron
-     separadas. Se cuenta, igual que la matrícula.
+     de cada equipo y si cada equipo quedó con su coordinador. Se cuenta,
+     igual que la matrícula.
 
    · Las notas no salen en los equipos. Los equipos se proyectan, se
      leen en voz alta y se pegan en la pizarra: al lado de un nombre no
@@ -41,12 +41,19 @@
      cambian de equipo. Y «Armar otros» no borra lo anterior sin salida:
      «Los de antes» lo devuelve.
 
+   Los COORDINADORES se eligen como se pasa lista: un toque por alumno.
+   Nunca comparten equipo, así que con uno por equipo a cada equipo le
+   toca el suyo, y va primero en su equipo, en la pantalla, en WhatsApp
+   y en el papel. Son también los que no pueden quedar juntos: el autor
+   lo pidió así, en una sola lista, en vez de parejas escritas aparte.
+
    El reparto es una BÚSQUEDA, no una fórmula: se prueban muchos
    repartos al azar y se van cambiando alumnos de a dos mientras el
    reparto mejore. Así se pueden pedir varias cosas a la vez —niñas y
-   varones, niveles, parejas separadas— y cada vez que se arma sale otro
-   distinto, igual de parejo. El núcleo no toca la pantalla a propósito:
-   se prueba sin navegador con  node _dev/prueba-equipos.js
+   varones, niveles, coordinadores en equipos distintos— y cada vez que
+   se arma sale otro distinto, igual de parejo. El núcleo no toca la
+   pantalla a propósito: se prueba sin navegador con
+   node _dev/prueba-equipos.js
 
    Dónde se guarda: en el grupo (d.equipos), así viaja con el espejo
    del maestro. El reparto va como UNA cadena («1,5,9|2,6,10|…») y no
@@ -133,8 +140,8 @@ function eqTercios(alumnos) {
   return t;   /* num → 0 (van mejor) · 1 · 2 (van más despacio) */
 }
 
-/* Cuánto pesa cada cosa que se le pide al reparto. Separar a dos que no
-   pueden estar juntos pesa tanto que nada lo compensa; repetir compañeros
+/* Cuánto pesa cada cosa que se le pide al reparto. Que dos coordinadores
+   compartan equipo pesa tanto que nada lo compensa; repetir compañeros
    de la vez pasada pesa poco: solo desempata entre repartos igual de
    parejos, para que «Armar otros» dé de verdad OTROS.
    «Por nivel» pesa 10 y no 1 porque es lo que el maestro pidió al
@@ -142,14 +149,16 @@ function eqTercios(alumnos) {
    las dos cosas tiran para lados distintos los equipos salían con notas
    separadas por 13 puntos; con 10, por 9, y la mezcla de niñas y varones
    sigue desempatando. Medido en _dev/prueba-equipos.js. */
-const EQ_PESO = { sexo: 1, tercio: 1, media: 0.5, nivel: 10, separar: 1000, repetir: 0.2 };
+const EQ_PESO = { sexo: 1, tercio: 1, media: 0.5, nivel: 10, coord: 1000, repetir: 0.2 };
 
 /* Arma los equipos.
    alumnos: [{ num, sexo: 'F'|'M'|'', nivel: número|null }]
    op: { tamanos, sexo: bool, nivel: 'azar'|'parejos'|'nivel',
-         separar: [[nums],…], antes: [[nums],…], semilla, intentos }
-   Cada lista de «separar» son alumnos que no pueden compartir equipo,
-   dos o más: por dentro se cuenta como todas sus parejas.
+         coord: [nums], antes: [[nums],…], semilla, intentos }
+   Los coordinadores no pueden compartir equipo: por dentro se cuenta
+   como todas sus parejas. Con más coordinadores que equipos, alguno
+   tiene que repetir, y el costo de las parejas los reparte parejo: dos
+   equipos con dos cuestan menos que uno con tres.
    Devuelve { grupos: [[nums],…], costo }. */
 function eqArmar(alumnos, op) {
   op = op || {};
@@ -182,14 +191,12 @@ function eqArmar(alumnos, op) {
   const eF = tam.map(s => F * s / N), eM = tam.map(s => M * s / N);
   const eT = tam.map(s => T.map(c => c * s / N));
 
-  /* los que no pueden quedar juntos, y compañeros de la vez pasada */
+  /* los coordinadores, que no pueden quedar juntos, y compañeros de la
+     vez pasada */
   const pos = new Map(alumnos.map((a, i) => [a.num, i]));
   const sep = alumnos.map(() => new Set()), rep = alumnos.map(() => new Set());
-  (op.separar || []).forEach(g => {
-    if (!Array.isArray(g)) return;
-    const ix = g.map(n => pos.get(+n)).filter(i => i != null);
-    ix.forEach(i => ix.forEach(j => { if (i !== j) sep[i].add(j); }));
-  });
+  const cix = (Array.isArray(op.coord) ? op.coord : []).map(n => pos.get(+n)).filter(i => i != null);
+  cix.forEach(i => cix.forEach(j => { if (i !== j) sep[i].add(j); }));
   (op.antes || []).forEach(g => {
     const ix = (g || []).map(n => pos.get(+n)).filter(i => i != null);
     ix.forEach(i => ix.forEach(j => { if (i !== j) rep[i].add(j); }));
@@ -218,7 +225,7 @@ function eqArmar(alumnos, op) {
     let c = 0;
     for (const y of miembros) {
       if (y === i || y === fuera) continue;
-      if (sep[i].has(y)) c += EQ_PESO.separar;
+      if (sep[i].has(y)) c += EQ_PESO.coord;
       if (rep[i].has(y)) c += EQ_PESO.repetir;
     }
     return c;
@@ -324,23 +331,20 @@ function eqMedir(grupos, alumnos, op) {
     };
   }
 
-  /* Una separación cuenta si entran por lo menos dos de los suyos. Queda
-     «incumplida» si dos de ellos comparten equipo, y «no se puede» si son
-     más que los equipos: cinco que no pueden estar juntos en cuatro
-     equipos no caben, y eso se dice en vez de callarlo. */
-  const seps = (op.separar || []).map(g => Array.isArray(g) ? g.map(Number).filter(n => por.has(n)) : [])
-    .filter(g => g.length >= 2);
-  if (seps.length) {
-    const eqDe = {};
-    (grupos || []).forEach((t, k) => t.forEach(n => { eqDe[n] = k; }));
-    const juntos = g => {
-      const vistos = new Set();
-      return g.some(n => { const k = eqDe[n]; if (k == null) return false; if (vistos.has(k)) return true; vistos.add(k); return false; });
-    };
-    res.separar = {
-      total: seps.length,
-      juntas: seps.filter(juntos).length,
-      noCaben: seps.filter(g => g.length > res.equipos).length,
+  /* Los coordinadores: cuántos equipos tienen el suyo, cuántos se quedaron
+     sin ninguno y en cuántos quedaron dos. Solo cuentan los que están en
+     un equipo hoy; con más coordinadores que equipos alguno tiene que
+     repetir, y con menos, alguno se queda sin: eso se dice, no se calla. */
+  const cs = new Set((Array.isArray(op.coord) ? op.coord : []).map(Number));
+  const porEq = g.map(t => t.filter(a => cs.has(+a.num)).length);
+  const total = porEq.reduce((s, c) => s + c, 0);
+  if (total) {
+    res.coord = {
+      total,
+      conCoord: porEq.filter(c => c >= 1).length,
+      sinCoord: porEq.filter(c => c === 0).length,
+      conDos: porEq.filter(c => c >= 2).length,
+      max: Math.max(...porEq),
     };
   }
   return res;
@@ -358,8 +362,50 @@ function eqRecorrer(d, pos) {
   const reparto = txt => eqEscribirReparto(eqLeerReparto(txt).map(g => g.map(mueve)));
   if (e.reparto) e.reparto = reparto(e.reparto);
   if (e.antes) e.antes = reparto(e.antes);
+  if (Array.isArray(e.coord)) e.coord = e.coord.map(mueve);
+  /* las separaciones de antes de los coordinadores, mientras sigan guardadas */
   if (Array.isArray(e.separar)) e.separar = e.separar.map(g => Array.isArray(g) ? g.map(mueve) : g);
   if (e.fuera && Array.isArray(e.fuera.nums)) e.fuera.nums = e.fuera.nums.map(mueve);
+}
+
+/* Los coordinadores, ordenados y sin repetidos. */
+function eqLimpiarCoord(v) {
+  if (!Array.isArray(v)) return [];
+  return Array.from(new Set(v.map(Number).filter(n => Number.isInteger(n) && n > 0))).sort((a, b) => a - b);
+}
+/* Los coordinadores guardados en el grupo. Antes de ellos había
+   «que no queden juntos» por parejas y grupos (d.equipos.separar), y el
+   autor lo convirtió en esto: los que no quedan juntos SON los
+   coordinadores. Así que lo que un maestro separó se lee como sus
+   coordinadores y se le enseña marcado, para que lo vea y lo cambie, en
+   vez de borrárselo callado. La primera vez que toca uno se guarda como
+   «coord» y lo de antes se va (eqGuardar). */
+function eqCoordDe(e) {
+  if (!e || typeof e !== 'object') return [];
+  if (Array.isArray(e.coord)) return eqLimpiarCoord(e.coord);
+  if (Array.isArray(e.separar)) return eqLimpiarCoord([].concat(...e.separar.filter(Array.isArray)));
+  return [];
+}
+/* Lo que se le dice al maestro ANTES de armar: cuántos coordinadores
+   entran hoy contra cuántos equipos van a salir. «fuera» son los que son
+   coordinadores y hoy no entran (faltaron, de prueba, fuera a mano). */
+function eqCoordTxt(n, k, fuera) {
+  fuera = fuera || 0;
+  if (!n && !fuera) return '';
+  const coords = x => x + (x === 1 ? ' coordinador' : ' coordinadores');
+  const equipos = x => x + (x === 1 ? ' equipo' : ' equipos');
+  let t;
+  if (!n) t = '⚠️ Ninguno de tus coordinadores entra hoy';
+  else if (n === k) t = '✅ ' + coords(n) + ' para ' + equipos(k) + (k > 1 ? ': uno en cada equipo' : '');
+  else if (k < 2) t = '⚠️ ' + coords(n) + ', y hoy sale un solo equipo: van a quedar juntos';
+  else if (n < k) t = '⚠️ ' + coords(n) + ' para ' + equipos(k) + ': ' +
+    (k - n === 1 ? '1 equipo queda' : (k - n) + ' equipos quedan') + ' sin coordinador';
+  else t = '⚠️ ' + coords(n) + ' para ' + equipos(k) + ': ' +
+    (n - k === 1 ? 'en 1 equipo van a quedar dos'
+      : n - k <= k ? 'en ' + (n - k) + ' equipos van a quedar dos'
+      : 'en todos van a quedar dos o más');
+  if (fuera && n) t += ' · ' + fuera + (fuera === 1 ? ' no entra hoy' : ' no entran hoy');
+  return t;
 }
 
 /* ¿El nombre dice que es un alumno inventado? Solo SUGIERE marcarlo: la
@@ -374,7 +420,7 @@ function eqPareceDePrueba(nombre) {
 
 if (typeof module === 'object' && module.exports) {
   module.exports = { eqRng, eqTamanos, eqTamanosTxt, eqLeerReparto, eqEscribirReparto,
-    eqTercios, eqArmar, eqMedir, eqRecorrer, eqPareceDePrueba, eqLimpiarSeparar, EQ_PESO };
+    eqTercios, eqArmar, eqMedir, eqRecorrer, eqPareceDePrueba, eqLimpiarCoord, eqCoordDe, eqCoordTxt, EQ_PESO };
 }
 
 /* ═════════════ LA PANTALLA ═════════════ */
@@ -389,15 +435,6 @@ const EQ_NIVELES = {
              s: 'Para darle a cada equipo un trabajo a su medida. El número del equipo no dice cuál es cuál.' },
 };
 
-/* Cada separación, ordenada y sin repetidos; las de uno solo se caen.
-   Las viejas eran parejas [a,b] y siguen valiendo tal cual. */
-function eqLimpiarSeparar(v) {
-  if (!Array.isArray(v)) return [];
-  return v.filter(Array.isArray)
-    .map(g => Array.from(new Set(g.map(Number).filter(n => n > 0))).sort((a, b) => a - b))
-    .filter(g => g.length >= 2);
-}
-
 function eqDatos(d) {
   const e = (d.equipos && typeof d.equipos === 'object') ? d.equipos : {};
   const conf = Object.assign({ modo: 'tam', valor: 4, sexo: true, nivel: 'parejos', sinPrueba: true, sinAus: true },
@@ -405,7 +442,7 @@ function eqDatos(d) {
   const hoy = adHoy();
   return {
     conf,
-    separar: eqLimpiarSeparar(e.separar),
+    coord: eqCoordDe(e),
     fuera: (e.fuera && e.fuera.f === hoy && Array.isArray(e.fuera.nums)) ? e.fuera.nums.map(Number) : [],
     reparto: String(e.reparto || ''), antes: String(e.antes || ''),
     t: String(e.t || ''), tAntes: String(e.tAntes || ''), mano: !!e.mano,
@@ -417,6 +454,9 @@ function eqGuardar(fn) {
   const dd = adLoad();
   const e = (dd.equipos && typeof dd.equipos === 'object') ? Object.assign({}, dd.equipos) : {};
   fn(e, dd);
+  /* ya guardados como coordinadores, las separaciones de antes sobran
+     (el porqué, en eqCoordDe) */
+  if (Array.isArray(e.coord)) delete e.separar;
   dd.equipos = e;
   adSave(dd);
   return dd;
@@ -483,8 +523,9 @@ function adRenderEquipos(body, d) {
    quedaba en el <body> después de cada casilla). */
 function eqRepintar(body, id) {
   const act = document.activeElement && document.activeElement.id;
-  /* y el cajón que el maestro abrió sigue abierto: quitar la última pareja
-     no puede cerrarle el cajón donde estaba trabajando */
+  /* y el cajón que el maestro abrió sigue abierto: tocar una casilla de
+     arriba repinta este pedazo, y eso no puede cerrarle el cajón donde
+     estaba eligiendo coordinadores */
   const abiertos = [...body.querySelectorAll('details[open][id]')].map(x => x.id);
   const d = adLoad();
   if (id === 'eq-quien') eqPintarQuien(body, d);
@@ -634,6 +675,9 @@ function eqPintarCuantos(body, d) {
   const poner = cambio => {
     eqGuardar(ee => { ee.conf = Object.assign({}, eqDatos(adLoad()).conf, cambio); });
     eqRepintar(body, 'eq-cuantos');
+    /* con otro tamaño salen otros equipos: la cuenta de los coordinadores
+       cambia, y se dice en el momento */
+    eqCoordEstado(body, adLoad());
   };
   cont.querySelectorAll('[data-eqmodo]').forEach(b => b.addEventListener('click', () => {
     const m = b.dataset.eqmodo;
@@ -657,16 +701,8 @@ function eqPintarComo(body, d) {
   const conNota = q.dentro.filter(a => eqNivelDe(d, a.num) != null).length;
   const hayNotas = conNota >= 2;
   const nivel = hayNotas ? (EQ_NIVELES[x.conf.nivel] ? x.conf.nivel : 'parejos') : 'azar';
-  const nomDe = n => { const a = (d.lista || []).find(z => +z.num === +n); return a ? eqNombre(a) : '#' + n; };
-  const enLista = n => (d.lista || []).some(a => +a.num === +n);
-  const seps = x.separar.map(g => g.filter(enLista)).filter(g => g.length >= 2);
-  /* cuántos equipos van a salir hoy: una separación de más alumnos que
-     equipos no se puede cumplir, y se avisa antes de armar */
-  const vv = eqValor(x.conf, q.dentro.length);
-  const kHoy = q.dentro.length >= 2 ? eqTamanos(q.dentro.length, vv.modo, vv.valor).length : 0;
-  const dentroSet = new Set(q.dentro.map(a => +a.num));
-  const nombres = g => g.map(n => adEsc(nomDe(n)));
-  const juntaY = xs => xs.length < 2 ? xs.join('') : xs.slice(0, -1).join(', ') + ' <span class="eq-sep-x">y</span> ' + xs[xs.length - 1];
+  const coordSet = new Set(x.coord);
+  const motivo = new Map(q.afuera.map(o => [+o.a.num, o.por]));
 
   cont.innerHTML = `
     <div class="ad-bit-lbl">¿Cómo los reparto?</div>
@@ -694,26 +730,18 @@ function eqPintarComo(body, d) {
     </div>
     ${hayNotas ? `<p class="eq-nota">🔒 Las notas no salen en los equipos: ni en la pantalla, ni en el
       papel, ni en WhatsApp.</p>` : ''}
-    <details class="eq-det" id="eq-det-sep" ${seps.length ? 'open' : ''}>
-      <summary>🚫 Que no queden juntos${seps.length ? ' (' + seps.length + ')' : ''}</summary>
-      <p class="eq-nota">Los dos que pelean, los tres que no paran de platicar, los hermanos. Cada
-        uno va en un equipo distinto. Se guarda para las próximas veces.</p>
-      ${seps.map((g, i) => {
-        const hoy = g.filter(n => dentroSet.has(n)).length;
-        return `
-      <div class="eq-sep-fila">
-        <span>${juntaY(nombres(g))}${hoy > kHoy && kHoy ? `
-          <small class="eq-sep-aviso">⚠️ Hoy salen ${kHoy} equipos para ${hoy}: dos de ellos van a quedar juntos</small>` : ''}</span>
-        <button class="eq-sep-quitar" data-eqsepq="${i}" aria-label="Ya pueden estar juntos: ${nombres(g).join(', ')}">✕</button>
-      </div>`; }).join('')}
-      ${(d.lista || []).length >= 2 ? `
-      <p class="eq-nota eq-nota-lead">Toca a los que no pueden quedar juntos, dos o más:</p>
-      <div class="eq-sep-elige" role="group" aria-label="Los que no pueden quedar juntos">
-        ${(d.lista || []).map(a => `<button class="eq-sep-al" aria-pressed="false" data-eqsepal="${a.num}">${adEsc(eqNombre(a))}</button>`).join('')}
+    <details class="eq-det eq-det-coord" id="eq-det-coord">
+      <summary><span class="eq-coord-sum">⭐ Coordinadores: cada uno en un equipo distinto<span id="eq-coord-n"></span></span>
+        <small class="eq-coord-estado" id="eq-coord-estado" aria-live="polite" hidden></small></summary>
+      <p class="eq-nota">Toca a los que van a coordinar, igual que al pasar lista. Nunca quedan juntos:
+        cada uno va en un equipo distinto y primero en el suyo. Se guarda para las próximas veces.
+        <strong id="eq-coord-pista"></strong></p>
+      <div class="ad-chips eq-coord-chips" role="group" aria-label="Coordinadores">
+        ${(d.lista || []).map(a => eqChipCoord(a, coordSet.has(+a.num), motivo.get(+a.num) || '')).join('')}
       </div>
-      <button class="pa-generate-btn ad-btn-sec eq-sep-guardar" id="eq-sep-add" disabled>🚫 Toca a dos o más</button>` : ''}
     </details>`;
 
+  eqCoordEstado(body, d);
   const sexo = cont.querySelector('#eq-sexo');
   sexo.addEventListener('change', () => {
     eqGuardar(ee => { ee.conf = Object.assign({}, eqDatos(adLoad()).conf, { sexo: sexo.checked }); });
@@ -724,46 +752,78 @@ function eqPintarComo(body, d) {
   }));
   const irF = cont.querySelector('#eq-ir-fichas');
   if (irF) irF.addEventListener('click', () => { _adTab = 'lista'; _adFichasOn = 1; renderAdmin(); });
-  /* Elegir no repinta nada: el chip cambia solo, y el botón dice cuántos
-     van. Repintar a cada toque le movería la lista de debajo del dedo. */
-  const add = cont.querySelector('#eq-sep-add');
-  const elegidos = () => Array.from(cont.querySelectorAll('.eq-sep-al[aria-pressed="true"]')).map(b => +b.dataset.eqsepal);
-  const ponBoton = () => {
-    const n = elegidos().length;
-    add.disabled = n < 2;
-    add.textContent = n < 2 ? (n ? '🚫 Toca a uno más' : '🚫 Toca a dos o más')
-      : '🚫 Que estos ' + n + ' no queden juntos';
-  };
-  cont.querySelectorAll('[data-eqsepal]').forEach(b => b.addEventListener('click', () => {
-    b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
-    ponBoton();
-  }));
-  const igual = (a, b) => a.length === b.length && a.every((n, i) => n === b[i]);
-  if (add) add.addEventListener('click', () => {
-    const g = eqLimpiarSeparar([elegidos()])[0];
-    if (!g) { toast('Toca a dos alumnos o más'); return; }
-    let nuevo = false;
+  /* Un toque marca y guarda, como al pasar lista. No se repinta la lista:
+     cambia solo el chip tocado, y así no se le mueve de debajo del dedo
+     el siguiente que va a tocar. */
+  cont.querySelectorAll('[data-eqcoord]').forEach(b => b.addEventListener('click', () => {
+    const num = +b.dataset.eqcoord;
+    let es = false;
     eqGuardar(ee => {
-      const ya = eqDatos(adLoad()).separar;
-      if (ya.some(p => igual(p, g))) return;
-      ee.separar = ya.concat([g]); nuevo = true;
+      const s = new Set(eqCoordDe(ee));
+      if (s.has(num)) s.delete(num); else { s.add(num); es = true; }
+      ee.coord = [...s].sort((p, q2) => p - q2);
     });
-    eqRepintar(body, 'eq-como');
-    eqRepintar(body, 'eq-res');
-    /* con muchos, los nombres no caben en el aviso: se dice cuántos */
-    toast(nuevo ? '🚫 Listo: ' + (g.length <= 3 ? g.map(nomDe).join(', ') : 'estos ' + g.length) + ' irán en equipos distintos'
-                : 'Esos ya estaban separados');
-  });
-  cont.querySelectorAll('[data-eqsepq]').forEach(b => b.addEventListener('click', () => {
-    const quita = seps[+b.dataset.eqsepq];
-    eqGuardar(ee => {
-      /* se quita la separación que se ve; los de la lista que ya no están
-         (dados de baja) no cuentan al compararla */
-      ee.separar = eqDatos(adLoad()).separar.filter(p => !igual(p.filter(enLista), quita));
-    });
-    eqRepintar(body, 'eq-como');
+    eqPintaChipCoord(b, es);
+    eqCoordEstado(body, adLoad());
+    /* los equipos ya armados dicen quién coordina: se ponen al día abajo,
+       lejos del dedo */
     eqRepintar(body, 'eq-res');
   }));
+}
+
+/* Un chip de los coordinadores: el mismo de pasar lista y de las
+   colectas, para que el maestro no tenga que aprender otra pantalla. El
+   que coordina va relleno y con ⭐, no solo de otro color; el que hoy no
+   entra, con la raya cortada y el porqué. */
+const EQ_POR_CORTO = { prueba: '🧪 prueba', falto: '🚫 faltó', excusa: '📝 excusa', mano: '✋ fuera' };
+function eqChipCoordRotulo(nombre, es, por) {
+  return nombre + ': ' + (es ? 'coordina. Tócalo para quitarlo' : 'tócalo para que coordine') +
+    (por ? '. Hoy no entra: ' + EQ_POR[por] : '');
+}
+function eqChipCoord(a, es, por) {
+  const nom = adPrimerNombre(a.nombre);
+  return `<button class="ad-chip eq-chip${es ? ' eq-chip-coord' : ''}${por ? ' eq-chip-hoyno' : ''}"
+    data-eqcoord="${a.num}" data-por="${por}" aria-pressed="${es ? 'true' : 'false'}"
+    title="${adEsc(eqNombre(a))}" aria-label="${adEsc(eqChipCoordRotulo(eqNombre(a), es, por))}">
+    <span class="ad-chip-num">#${a.num}${es ? ' ⭐' : ''}</span>
+    ${nom ? `<span class="ad-chip-nom">${adEsc(nom)}</span>` : ''}
+    ${por ? `<span class="eq-chip-tag eq-chip-tag-hoy">${EQ_POR_CORTO[por]}</span>` : ''}</button>`;
+}
+function eqPintaChipCoord(b, es) {
+  b.classList.toggle('eq-chip-coord', es);
+  b.setAttribute('aria-pressed', es ? 'true' : 'false');
+  b.setAttribute('aria-label', eqChipCoordRotulo(b.title, es, b.dataset.por || ''));
+  const n = b.querySelector('.ad-chip-num');
+  if (n) n.textContent = '#' + b.dataset.eqcoord + (es ? ' ⭐' : '');
+}
+
+/* Cuántos coordinadores entran hoy contra cuántos equipos van a salir.
+   Los equipos se cuentan con el mismo tamaño que usa el botón de armar
+   (eqValor): si cada uno contara a su manera, el aviso diría 10 y
+   saldrían 9. */
+function eqCoordCuenta(d, x) {
+  const q = eqQuien(d, x);
+  const enLista = new Set((d.lista || []).map(a => +a.num));
+  const dentro = new Set(q.dentro.map(a => +a.num));
+  const coord = x.coord.filter(n => enLista.has(n));
+  const n = coord.filter(c => dentro.has(c)).length;
+  const vv = eqValor(x.conf, q.dentro.length);
+  return { total: coord.length, n, fuera: coord.length - n, k: eqTamanos(q.dentro.length, vv.modo, vv.valor).length };
+}
+/* El renglón del cajón de coordinadores: va dentro del <summary>, así se
+   lee con el cajón cerrado, que es como está casi siempre. */
+function eqCoordEstado(body, d) {
+  const el = body.querySelector('#eq-coord-estado');
+  if (!el) return;
+  const c = eqCoordCuenta(d, eqDatos(d));
+  const t = eqCoordTxt(c.n, c.k, c.fuera);
+  el.textContent = t;
+  el.hidden = !t;
+  el.classList.toggle('eq-coord-ok', t.startsWith('✅'));
+  const num = body.querySelector('#eq-coord-n');
+  if (num) num.textContent = c.total ? ' (' + c.total + ')' : '';
+  const pista = body.querySelector('#eq-coord-pista');
+  if (pista) pista.textContent = c.k >= 2 ? 'Hoy salen ' + c.k + ' equipos: lo ideal es tocar a ' + c.k + '.' : '';
 }
 
 function eqPintarBoton(body, d) {
@@ -788,7 +848,7 @@ function eqArmarAhora(body) {
     tamanos: tams,
     sexo: x.conf.sexo,
     nivel: hayNotas ? x.conf.nivel : 'azar',
-    separar: x.separar,
+    coord: x.coord,
     antes: eqLeerReparto(x.reparto),
   });
   const ahora = new Date().toISOString();
@@ -823,8 +883,12 @@ function eqEquiposDeHoy(d, x) {
   const q = eqQuien(d, x);
   const porNum = new Map((d.lista || []).map(a => [+a.num, a]));
   const motivo = new Map(q.afuera.map(o => [+o.a.num, o.por]));
+  const cs = new Set(x.coord);
+  /* El coordinador va primero en su equipo: es a quien se le entrega el
+     trabajo y el que habla por el equipo. Los demás, por nº de lista. */
   const grupos = eqLeerReparto(x.reparto).map(g => g.filter(n => porNum.has(n)).map(n => ({
-    a: porNum.get(n), por: motivo.get(n) || '' })));
+    a: porNum.get(n), por: motivo.get(n) || '', coord: cs.has(n) }))
+    .sort((p, r) => (r.coord - p.coord) || (+p.a.num - +r.a.num)));
   const conEquipo = new Set(eqLeerReparto(x.reparto).flat());
   const sinEquipo = q.dentro.filter(a => !conEquipo.has(+a.num));
   return { grupos, sinEquipo, q };
@@ -843,11 +907,12 @@ function eqPintarRes(body, d) {
   const alumnoBtn = (o, k) => {
     const n = +o.a.num;
     const es = sel === n;
-    return `<button class="eq-al${es ? ' eq-al-sel' : ''}${o.por ? ' eq-al-fuera' : ''}" data-eqal="${n}" data-eqk="${k}"
+    return `<button class="eq-al${es ? ' eq-al-sel' : ''}${o.coord ? ' eq-al-coord' : ''}${o.por ? ' eq-al-fuera' : ''}" data-eqal="${n}" data-eqk="${k}"
       aria-pressed="${es ? 'true' : 'false'}"
-      aria-label="${adEsc(eqNombre(o.a))}${o.por ? ', ' + EQ_POR[o.por] : ''}. ${es ? 'Elegido: toca a otro para que cambien.' : 'Tócalo para cambiarlo de equipo.'}">
+      aria-label="${adEsc(eqNombre(o.a))}${o.coord ? ', coordina' : ''}${o.por ? ', ' + EQ_POR[o.por] : ''}. ${es ? 'Elegido: toca a otro para que cambien.' : 'Tócalo para cambiarlo de equipo.'}">
       ${es ? '<span class="eq-al-mano" aria-hidden="true">✋</span>' : ''}<span class="eq-al-num">#${n}</span>
       <span class="eq-al-nom">${adEsc(eqNombre(o.a))}</span>
+      ${o.coord ? '<span class="eq-tag eq-tag-coord">⭐ coordina</span>' : ''}
       ${o.por ? `<span class="eq-tag">${EQ_POR[o.por]}</span>` : ''}
     </button>`;
   };
@@ -856,7 +921,21 @@ function eqPintarRes(body, d) {
 
   const hoyCuenta = g => g.filter(o => !o.por).length;
   const medida = eqMedir(grupos.map(g => g.filter(o => !o.por).map(o => +o.a.num)),
-    eqAlumnosParaArmar(d, q.dentro), { separar: x.separar });
+    eqAlumnosParaArmar(d, q.dentro), { coord: x.coord });
+  /* Si hoy hay coordinadores, el equipo que se quedó sin ninguno, o con
+     dos, lo dice en su tarjeta: la medida de abajo cuenta cuántos, y aquí
+     se ve cuál, para cambiarlo a mano. */
+  const coordHoy = g => g.filter(o => o.coord && !o.por).length;
+  const totalCoord = grupos.reduce((t, g) => t + coordHoy(g), 0);
+  /* con más coordinadores que equipos, dos en uno es lo esperado y no se
+     alarma; con menos o con los mismos, dos juntos es un reparto que se
+     puede arreglar */
+  const avisoCoord = g => {
+    const c = coordHoy(g);
+    if (!totalCoord || c === 1) return '';
+    return `<p class="eq-eq-aviso">${!c ? '⭐ Sin coordinador'
+      : totalCoord > grupos.length ? '⭐ ' + c + ' coordinadores' : '⚠️ ' + c + ' coordinadores juntos'}</p>`;
+  };
 
   cont.innerHTML = `
     <div class="pa-card">
@@ -868,6 +947,7 @@ function eqPintarRes(body, d) {
         <section class="eq-eq eq-c${k % 10}" aria-label="Equipo ${k + 1}">
           <div class="eq-eq-h"><span class="eq-eq-t">Equipo ${k + 1}</span>
             <span class="eq-eq-n">${hoyCuenta(g) === g.length ? g.length : 'hoy ' + hoyCuenta(g) + ' de ' + g.length}</span></div>
+          ${avisoCoord(g)}
           <div class="eq-eq-al">${g.length ? g.map(o => alumnoBtn(o, k)).join('') : '<p class="eq-vacio">Sin nadie</p>'}</div>
           ${pasar(k)}
         </section>`).join('')}
@@ -875,7 +955,7 @@ function eqPintarRes(body, d) {
         <section class="eq-eq eq-eq-sin" aria-label="Sin equipo">
           <div class="eq-eq-h"><span class="eq-eq-t">🆕 Sin equipo</span><span class="eq-eq-n">${sinEquipo.length}</span></div>
           <p class="eq-nota">Entraron después de armarlos. Tócalos y pásalos a un equipo, o arma otros.</p>
-          <div class="eq-eq-al">${sinEquipo.map(a => alumnoBtn({ a, por: '' }, -1)).join('')}</div>
+          <div class="eq-eq-al">${sinEquipo.map(a => alumnoBtn({ a, por: '', coord: x.coord.includes(+a.num) }, -1)).join('')}</div>
         </section>` : ''}
       </div>
       ${eqMedidaHtml(medida, x)}
@@ -946,15 +1026,16 @@ function eqMedidaHtml(m, x) {
   } else if (m.nivel && x.conf.nivel === 'nivel') {
     L.push('🎯 Dentro de cada equipo, las notas se separan a lo más ' + m.nivel.rangoMax + ' puntos');
   }
-  if (m.separar) {
-    const j = m.separar.juntas;
-    L.push(j
-      ? '⚠️ ' + (m.separar.total === 1 ? 'Dos de los que separaste quedaron juntos'
-        : 'En ' + j + ' de tus ' + m.separar.total + ' separaciones quedaron dos juntos') +
-        (m.equipos < 2 ? ': con un solo equipo no se puede'
-          : m.separar.noCaben ? ': son más que los equipos, así que alguien tiene que repetir'
-          : ': arma otros o cámbialos a mano')
-      : '🚫 Los que separaste quedaron cada uno en un equipo distinto');
+  if (m.coord) {
+    const c = m.coord, E = m.equipos;
+    const en = k => (k === 1 ? '1 equipo' : k + ' equipos');
+    if (!c.sinCoord && !c.conDos) L.push('⭐ Cada equipo tiene su coordinador');
+    else if (E < 2) L.push('⚠️ Con un solo equipo, los coordinadores quedan juntos');
+    else if (!c.conDos) L.push('⭐ ' + c.conCoord + ' de ' + E + ' equipos tienen coordinador');
+    else if (!c.sinCoord && c.total > E) L.push('⭐ Todos los equipos tienen coordinador, y en ' + en(c.conDos) +
+      (c.max > 2 ? ' van dos o más' : ' van dos') + ': son más coordinadores que equipos');
+    else L.push('⚠️ En ' + en(c.conDos) + ' quedaron ' + (c.max > 2 ? 'dos o más' : 'dos') + ' coordinadores juntos' +
+      (c.sinCoord ? ' y ' + en(c.sinCoord) + ' sin ninguno' : '') + ': arma otros o cámbialos a mano');
   }
   return `<div class="eq-medida"><div class="eq-medida-t">📏 Cómo quedaron</div>
     <ul>${L.map(t => '<li>' + adEsc(t) + '</li>').join('')}</ul></div>`;
@@ -990,11 +1071,12 @@ function eqPasar(n, k) {
 }
 
 /* Lo que sale del teléfono (WhatsApp y papel) son los equipos de HOY:
-   sin el de prueba, sin el que faltó, sin el que se dejó fuera. */
+   sin el de prueba, sin el que faltó, sin el que se dejó fuera. Cada uno
+   con su marca de coordinador, que va primero. */
 function eqListaParaSacar(d) {
   const x = eqDatos(d);
   const { grupos } = eqEquiposDeHoy(d, x);
-  return grupos.map(g => g.filter(o => !o.por).map(o => o.a));
+  return grupos.map(g => g.filter(o => !o.por).map(o => ({ a: o.a, coord: o.coord })));
 }
 function eqFechaLarga() {
   const dt = new Date();
@@ -1004,8 +1086,9 @@ function eqFechaLarga() {
 function eqTexto(d) {
   const grupo = adGradoSeccion(d.grado, d.seccion);
   const gs = eqListaParaSacar(d);
+  const nom = o => (o.coord ? '⭐ ' : '') + eqNombre(o.a) + (o.coord ? ' (coordina)' : '');
   return '🤝 *Equipos de trabajo' + (grupo ? ' de ' + grupo : '') + '* · ' + eqFechaLarga() + '\n\n' +
-    gs.map((g, k) => '*Equipo ' + (k + 1) + ':* ' + (g.length ? g.map(eqNombre).join(', ') : 'nadie hoy')).join('\n');
+    gs.map((g, k) => '*Equipo ' + (k + 1) + ':* ' + (g.length ? g.map(nom).join(', ') : 'nadie hoy')).join('\n');
 }
 
 /* Una hoja carta: para pegar en la pizarra o recortar y darle a cada
@@ -1044,13 +1127,23 @@ body { font-family: Arial, Helvetica, sans-serif; color: #111; background: #fff;
 .eq h2 small { font-size: 9pt; color: #555; font-weight: normal; }
 .eq ol { padding-left: 1.5em; }
 .eq li { font-size: var(--fz); line-height: 1.25; }
+/* el coordinador: con la estrella de texto (★) y no el emoji, que la hoja
+   se fotocopia en blanco y negro. Va en el MARGEN, en lugar de su «1.»
+   (siempre es el primero): escrita delante del nombre, o con negrita y un
+   «(coordina)», empujaba nombres largos a un segundo renglón y la letra
+   de la hoja bajaba de 14,5 a 13 pt. Lo que quiere decir la ★ va una vez,
+   en el título de su equipo, para que la tira recortada se entienda sola. */
+.eq li.co { list-style-type: '★ '; }
+.eq h2 .co { white-space: nowrap; }
 .pie { margin-top: 3mm; font-size: 8.5pt; color: #666; }
 </style></head><body><div class="hoja">
 <div class="cab"><h1>🤝 Equipos de trabajo${grupo ? ' · ' + adEsc(grupo) : ''}</h1>
 <p>${adEsc(eqFechaLarga())}${esc ? ' · ' + adEsc(esc) : ''}</p></div>
 <div class="grid">
-${gs.map((g, k) => `<div class="eq"><h2>Equipo ${k + 1} <small>· ${g.length}</small></h2>
-<ol>${g.map(a => '<li>' + adEsc(eqNombre(a)) + '</li>').join('') || '<li>nadie hoy</li>'}</ol></div>`).join('\n')}
+${gs.map((g, k) => `<div class="eq"><h2>Equipo ${k + 1} <small>· ${g.length}${g.some(o => o.coord) ? ' · <span class="co">★ coordina</span>' : ''}</small></h2>
+<ol>${g.map(o => o.coord
+  ? '<li class="co">' + adEsc(eqNombre(o.a)) + '</li>'
+  : '<li>' + adEsc(eqNombre(o.a)) + '</li>').join('') || '<li>nadie hoy</li>'}</ol></div>`).join('\n')}
 </div>
 <p class="pie">Armados con M.E.T.A.S · Mi aula</p>
 </div>
