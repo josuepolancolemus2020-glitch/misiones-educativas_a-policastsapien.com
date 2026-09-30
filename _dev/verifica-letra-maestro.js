@@ -18,7 +18,7 @@
      tamaño en el atributo `style` y se quedaban chicos mientras el
      resto crecía.
    · QUE NADA SE SALGA NI SE RECORTE en los pasos que se ofrecen, en
-     las ocho pestañas de Mi aula y con el teléfono más estrecho.
+     todas las pestañas de Mi aula y con el teléfono más estrecho.
    · QUE EL ARRASTRE DE LA BARRA DE GRUPOS SIGA FUNCIONANDO con la
      letra grande. Es la razón por la que se descartó `zoom`: desalinea
      las coordenadas del puntero. Si un día alguien vuelve a intentarlo,
@@ -55,7 +55,11 @@ const sinComentarios = s => s.replace(/\/\*[\s\S]*?\*\//g, '').replace(/<!--[\s\
 const ALUMNOS = Array.from({ length: 43 }, (_, i) => ({
   num: i + 1, nombre: 'Alumno Apellido ' + (i + 1), sexo: i % 2 ? 'F' : 'M',
 }));
-const TABS = ['lista', 'eco', 'asis', 'ctrl', 'sace', 'est', 'lec', 'com'];
+/* Las pestañas se LEEN de la pantalla, no se escriben aquí: eran ocho y
+   el 30 de septiembre de 2026 entró 🤝 Equipos. Una lista escrita a mano
+   habría dejado la nueva sin medir, en silencio. */
+const TABS = [...new Set([...fs.readFileSync(path.join(__dirname, '..', 'js', 'tools', 'registros-admin.js'), 'utf8')
+  .matchAll(/data-adtab="(\w+)"/g)].map(m => m[1]))];
 /* Los grupos de la barra, para el arrastre con la letra grande. */
 const GRUPOS = [['6', '1'], ['2', '2'], ['3', '1'], ['5', '1'], ['1', '2'], ['4', '1']];
 
@@ -233,7 +237,7 @@ const GRUPOS = [['6', '1'], ['2', '2'], ['3', '1'], ['5', '1'], ['1', '2'], ['4'
       if (Math.abs(b[k].fz - a[k].fz * PRUEBA) > 0.6) quietos.push(t + ': ' + a[k].q + ' ' + a[k].fz + '→' + b[k].fz);
     }
   }
-  ok(`los ${medidos} textos de las ocho pestañas crecen todos lo mismo`, !quietos.length, quietos.slice(0, 6));
+  ok(`los ${medidos} textos de las ${TABS.length} pestañas crecen todos lo mismo`, !quietos.length, quietos.slice(0, 6));
 
   /* ── 5 · Que nada se salga ni se recorte en los pasos que se ofrecen ── */
   console.log('\n── con la letra grande no se sale ni se recorta nada ──');
@@ -275,7 +279,7 @@ const GRUPOS = [['6', '1'], ['2', '2'], ['3', '1'], ['5', '1'], ['1', '2'], ['4'
       if (r.recorta.length) mal.push(t + ': recorta ' + JSON.stringify(r.recorta[0]));
       if (r.altos.length) mal.push(t + ': corta por alto ' + JSON.stringify(r.altos[0]));
     }
-    ok('a ' + e + ' × no se sale ni se recorta nada en las ocho pestañas', !mal.length, mal.slice(0, 4));
+    ok('a ' + e + ' × no se sale ni se recorta nada en las ' + TABS.length + ' pestañas', !mal.length, mal.slice(0, 4));
   }
 
   /* ── 5-bis · Las pantallas del alumno no empeoran ──────────────

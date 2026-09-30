@@ -909,6 +909,122 @@ no `dragAndDrop`): que se mueva, que el orden aguante cerrar la
 aplicación, que un deslizamiento no revuelva la barra, que un toque corto
 siga cambiando de grupo y que moverlo NO cambie de grupo.
 
+## Normativa: los equipos de trabajo se arman parejos, y se dice cuánto
+
+Lo pidió el autor el 30 de septiembre de 2026 con estas palabras: «una
+herramienta para hacer diferentes grupos o equipos de trabajo lo mejor
+distribuidos con la opción de omitir los alumnos que son de prueba». Vive en
+**🤝 Equipos**, una pestaña de Mi aula **justo detrás de 📋 Asistencia** —se
+pasa lista y se arman los equipos con los que vinieron—, y en
+`js/tools/equipos.js`.
+
+El problema es de todos los días: «numérense del 1 al 8» junta a los cinco
+que se sientan atrás; «júntense como quieran» deja a las niñas en una
+esquina, a los varones en otra y a dos o tres que nadie escogió **de pie en
+medio del aula, delante de todos**. Y el equipo que se lleva a los que van
+mejor acaba en diez minutos mientras otro no sabe por dónde empezar.
+
+**Ocho reglas, y ninguna es de adorno:**
+
+1. **Los 🧪 de prueba se dejan fuera, y viene puesto.** Es la misma marca de
+   📈 Estadísticas (`adEsPrueba`), no una lista aparte. Y si un alumno SE
+   LLAMA «Test» o «Prueba» y no está marcado, la pantalla **sugiere**
+   marcarlo con un toque; nunca lo marca sola, porque esa marca lo saca
+   también del informe del grado.
+2. **Los que faltaron hoy quedan fuera solos** (lo que dice 📋 Asistencia
+   de HOY), y a mano se puede dejar fuera a alguien más **solo por hoy**
+   (`fuera.f` lleva la fecha): el que salió a una comisión mañana vuelve a
+   entrar sin que nadie se acuerde de devolverlo.
+3. ⚠️ **Tamaños parejos, nunca más grandes de lo pedido, y nadie solo.**
+   Entre el equipo más grande y el más chico hay a lo más uno, y la
+   pantalla lo dice ANTES de armar («11 equipos: 9 de 4 y 2 de 3»). La única
+   vez que un equipo pasa de lo pedido es «en parejas» con número impar: sale
+   un trío, porque un equipo de uno es un niño solo delante del grupo. La
+   primera versión lo dejaba solo; lo cazó la sonda.
+4. **Parejo se mide, no se promete.** Debajo de los equipos se cuenta
+   cuántas niñas y varones le tocaron a cada uno, entre qué notas queda el
+   promedio de los equipos y si los que había que separar quedaron
+   separados. Medido con un aula de 43: el promedio de los equipos queda a
+   **1 punto** de diferencia contra **17 al azar**; «por nivel», dentro de cada
+   equipo las notas se separan **5 puntos** contra **42**.
+5. ⚠️ **Las notas no salen en los equipos**, ni en la pantalla, ni en el
+   papel, ni en WhatsApp: los equipos se proyectan y se pegan en la pizarra.
+   Y **los equipos se numeran al azar**: en «por nivel» el equipo de tres —el
+   último hueco— caía siempre en una punta de las notas, y «el Equipo 11»
+   pasaba a ser el de los que van mejor. Lo cazó la sonda.
+6. **Se cambian a mano sin repintar la pantalla**: se toca a uno, se toca a
+   otro y cambian (o «Pasar aquí»). El elegido lleva ✋ y aro, no solo color.
+   Y «Armar otros» no tira lo anterior: **«Los de antes»** lo devuelve, también
+   lo arreglado a mano.
+7. ⚠️ **El reparto se guarda como UNA cadena** (`"1,5,9|2,6,10"`), no como una
+   lista de listas. La fusión de dos equipos empareja las listas por su
+   contenido, y dos repartos distintos fusionados así dejarían a un niño en
+   dos equipos. Una cadena se elige entera.
+8. **Al insertar un alumno a media lista, los equipos se recorren con él**
+   (`eqRecorrer`, llamado desde `adInsertarAlumno` igual que la asistencia y
+   las notas). Sin eso, el equipo 3 pasaría a tener a otro niño.
+
+**Cómo reparte.** No es una fórmula: prueba repartos al azar y va cambiando
+alumnos de a dos mientras mejore (`eqArmar`). Así se le piden varias cosas a
+la vez —niñas y varones, los tres tercios de notas en cada equipo, parejas
+separadas— y cada vez sale otro igual de parejo; «Armar otros» además evita
+repetir los compañeros de la vez anterior. El nivel es el promedio de Notas
+SACE (`estSace`); el que no tiene notas va donde toque. El núcleo no toca la
+pantalla y corre en Node.
+
+**El papel es una hoja carta, y la letra se busca** (`EQ_LETRAS`, de 18 a 10
+puntos, la más grande con la que la hoja mide 248 mm). Van de dos equipos de
+22 a 21 parejas: la letra que llena bien la hoja con diez equipos de cuatro
+(14,5 pt, para leerla pegada en la pizarra) parte la de las parejas en dos
+hojas. Es la regla de la lectura proyectada.
+
+```
+node _dev/prueba-equipos.js           → el reparto, sin navegador (está en npm test)
+node _dev/servidor-estatico.js        (en otra terminal)
+node _dev/verifica-equipos.js         → la pestaña, usada con el dedo
+```
+
+La primera vigila lo que se promete: que nadie se pierda ni se repita, los
+tamaños de 1 a 60 alumnos, la mezcla de niñas y varones, los tercios, que
+«parejos» y «por nivel» ganen al azar por mucho, las parejas separadas en
+todas las semillas, que «Armar otros» dé otros y el recorrido al insertar. La
+segunda abre un grupo de 43 con dos de prueba y tres que faltaron: que no
+entren, que el aviso de antes de armar sea lo que sale, que salgan parejos
+contado sobre lo pintado, que no salga una nota, los cambios a mano sin
+repintar, que aguante cerrar la aplicación, que WhatsApp y el papel no
+lleven a los que no entran, **las páginas del PDF en el peor caso** y los 44
+px. Se comprobó al revés: con los de prueba colándose y la letra fija sale
+roja con 15 fallos.
+
+### «Que no queden juntos» es de dos o más
+
+Empezó separando solo **parejas**, y el autor lo pidió el mismo día: «necesito
+la opción de que más alumnos no queden juntos». Los cuatro que no paran de
+platicar son cuatro, no seis parejas que el maestro tenga que escribir una por
+una. Ahora se tocan los nombres, dos o más, y cada uno cae en un equipo
+distinto (`separar: [[5,7,9], [1,2]]`).
+
+1. **Por dentro sigue siendo por parejas**: el grupo de cuatro pesa como sus
+   seis parejas en el costo de `eqArmar`. Las separaciones viejas, `[a,b]`,
+   siguen valiendo tal cual (`eqLimpiarSeparar`).
+2. ⚠️ **Cinco que no pueden estar juntos en cuatro equipos no caben**, y eso se
+   dice dos veces: debajo de la separación, antes de armar («Hoy salen 4
+   equipos para 5»), y en «Cómo quedaron». Se reparten igual lo mejor que se
+   puede, a lo más dos por equipo; callarlo haría creer que la herramienta
+   falló.
+3. **Elegir no repinta nada**: el chip se rellena y lleva ✓, y el botón dice
+   a cuántos va a separar; con uno solo no se enciende.
+
+### Lo que NO se hizo, y por qué
+
+- **Roles dentro del equipo** (coordinador, secretario, portavoz). Es otra
+  herramienta: se reparten por turno y cambian cada clase.
+- **Usar la lectura (palabras por minuto) como nivel.** El promedio de Notas
+  SACE es el dato oficial y el que el maestro reconoce; mezclar dos medidas
+  daría un «nivel» que no sabe explicar.
+- **Que nunca se repitan compañeros de semanas atrás.** Solo se recuerda el
+  reparto anterior, que es el que el grupo tiene fresco.
+
 ## Lo que NO se toca
 
 Estas cosas trabajan con los **dígitos pelados** del grado y de la sección.
@@ -4658,8 +4774,8 @@ exactamente lo de siempre.
 2. ⚠️ **El tope es 1,45 y está MEDIDO, no elegido.** A 1,6 los 43 chips de la
    lista de asistencia **recortan el nombre del alumno** (`.ad-chip-nom`,
    21 px de texto en 19 de hueco) y a 1,8 la tabla de Notas SACE **se sale
-   del teléfono**. A 1,45 no se sale ni se recorta nada, en las ocho
-   pestañas de Mi aula y a 360 px. El día que alguien quiera subirlo,
+   del teléfono**. A 1,45 no se sale ni se recorta nada, en ninguna
+   pestaña de Mi aula y a 360 px. El día que alguien quiera subirlo,
    primero se arregla el chip de asistencia. Los pasos son 100 · 115 · 130 ·
    145, y **la sonda los lee del aparato**, no los escribe.
 3. **No se baja de lo de siempre.** El problema es que la letra es pequeña;
@@ -4723,8 +4839,10 @@ node _dev/verifica-letra-maestro.js
 Vigila lo que cuesta caro: que la hoja entera pase por la variable (con las
 dos excepciones contadas, no escritas), que el aparato vaya en el `<head>` y
 en el armazón, que el botón se pueda tocar a 44 px y **no se cuele en la
-portada**, que cada paso agrande sin que nada se salga ni se recorte en las
-ocho pestañas, que **todos los textos crezcan lo mismo**, que las pantallas
+portada**, que cada paso agrande sin que nada se salga ni se recorte en
+todas las pestañas —que **se leen de `registros-admin.js`**: eran ocho, entró
+🤝 Equipos, y una lista escrita a mano la habría dejado sin medir—, que
+**todos los textos crezcan lo mismo**, que las pantallas
 del alumno **no empeoren** respecto a la escala 1, que **el arrastre de la
 barra de grupos siga funcionando con la letra en el tope** —que es lo que
 descarta volver a intentar `zoom`—, que el papel valga 1, y que el ajuste
