@@ -943,8 +943,8 @@ mejor acaba en diez minutos mientras otro no sabe por dónde empezar.
    primera versión lo dejaba solo; lo cazó la sonda.
 4. **Parejo se mide, no se promete.** Debajo de los equipos se cuenta
    cuántas niñas y varones le tocaron a cada uno, entre qué notas queda el
-   promedio de los equipos y si los que había que separar quedaron
-   separados. Medido con un aula de 43: el promedio de los equipos queda a
+   promedio de los equipos y si cada equipo quedó con su coordinador.
+   Medido con un aula de 43: el promedio de los equipos queda a
    **1 punto** de diferencia contra **17 al azar**; «por nivel», dentro de cada
    equipo las notas se separan **5 puntos** contra **42**.
 5. ⚠️ **Las notas no salen en los equipos**, ni en la pantalla, ni en el
@@ -966,11 +966,11 @@ mejor acaba en diez minutos mientras otro no sabe por dónde empezar.
 
 **Cómo reparte.** No es una fórmula: prueba repartos al azar y va cambiando
 alumnos de a dos mientras mejore (`eqArmar`). Así se le piden varias cosas a
-la vez —niñas y varones, los tres tercios de notas en cada equipo, parejas
-separadas— y cada vez sale otro igual de parejo; «Armar otros» además evita
-repetir los compañeros de la vez anterior. El nivel es el promedio de Notas
-SACE (`estSace`); el que no tiene notas va donde toque. El núcleo no toca la
-pantalla y corre en Node.
+la vez —niñas y varones, los tres tercios de notas en cada equipo, los
+coordinadores en equipos distintos— y cada vez sale otro igual de parejo;
+«Armar otros» además evita repetir los compañeros de la vez anterior. El nivel
+es el promedio de Notas SACE (`estSace`); el que no tiene notas va donde toque.
+El núcleo no toca la pantalla y corre en Node.
 
 **El papel es una hoja carta, y la letra se busca** (`EQ_LETRAS`, de 18 a 10
 puntos, la más grande con la que la hoja mide 248 mm). Van de dos equipos de
@@ -986,39 +986,71 @@ node _dev/verifica-equipos.js         → la pestaña, usada con el dedo
 
 La primera vigila lo que se promete: que nadie se pierda ni se repita, los
 tamaños de 1 a 60 alumnos, la mezcla de niñas y varones, los tercios, que
-«parejos» y «por nivel» ganen al azar por mucho, las parejas separadas en
+«parejos» y «por nivel» ganen al azar por mucho, un coordinador por equipo en
 todas las semillas, que «Armar otros» dé otros y el recorrido al insertar. La
 segunda abre un grupo de 43 con dos de prueba y tres que faltaron: que no
-entren, que el aviso de antes de armar sea lo que sale, que salgan parejos
-contado sobre lo pintado, que no salga una nota, los cambios a mano sin
-repintar, que aguante cerrar la aplicación, que WhatsApp y el papel no
-lleven a los que no entran, **las páginas del PDF en el peor caso** y los 44
-px. Se comprobó al revés: con los de prueba colándose y la letra fija sale
-roja con 15 fallos.
+entren, los coordinadores elegidos con el dedo como se pasa lista, que el
+aviso de antes de armar sea lo que sale, que salgan parejos contado sobre lo
+pintado, que no salga una nota, los cambios a mano sin repintar, que aguante
+cerrar la aplicación, que WhatsApp y el papel no lleven a los que no entran,
+**las páginas del PDF en el peor caso** y los 44 px. Se comprobó al revés: con
+los de prueba colándose y la letra fija sale roja con 15 fallos; sin el peso
+de los coordinadores y repintando su lista a cada toque, con 5.
 
-### «Que no queden juntos» es de dos o más
+### ⭐ Los coordinadores: los que no quedan juntos, elegidos como se pasa lista
 
-Empezó separando solo **parejas**, y el autor lo pidió el mismo día: «necesito
-la opción de que más alumnos no queden juntos». Los cuatro que no paran de
-platicar son cuatro, no seis parejas que el maestro tenga que escribir una por
-una. Ahora se tocan los nombres, dos o más, y cada uno cae en un equipo
-distinto (`separar: [[5,7,9], [1,2]]`).
+Empezó el mismo día como «que no queden juntos», primero por parejas y después
+de dos o más, y el autor lo cerró con estas palabras: «que la opción de no
+quedar juntos sea como se elige pasar lista y las colectas, y esos que no
+queden juntos son los coordinadores». Ahora es UNA lista, la de los
+coordinadores (`d.equipos.coord`), y dos coordinadores nunca comparten equipo.
 
-1. **Por dentro sigue siendo por parejas**: el grupo de cuatro pesa como sus
-   seis parejas en el costo de `eqArmar`. Las separaciones viejas, `[a,b]`,
-   siguen valiendo tal cual (`eqLimpiarSeparar`).
-2. ⚠️ **Cinco que no pueden estar juntos en cuatro equipos no caben**, y eso se
-   dice dos veces: debajo de la separación, antes de armar («Hoy salen 4
-   equipos para 5»), y en «Cómo quedaron». Se reparten igual lo mejor que se
-   puede, a lo más dos por equipo; callarlo haría creer que la herramienta
-   falló.
-3. **Elegir no repinta nada**: el chip se rellena y lleva ✓, y el botón dice
-   a cuántos va a separar; con uno solo no se enciende.
+1. **Se eligen con los chips de pasar lista**: el mismo `.ad-chip`, con su
+   número y su primer nombre, en `.ad-chips`. Un toque marca y guarda, otro
+   quita; no hay botón de guardar. El marcado va relleno de oro y con ⭐, no
+   solo de otro color, y el que hoy no entra lleva la raya cortada y el porqué
+   («🚫 faltó»). No se repinta la lista: cambia solo el chip tocado. Es una
+   pantalla que el maestro ya sabe usar.
+2. ⚠️ **El aviso dice cuántos van para cuántos equipos, ANTES de armar**
+   («✅ 10 coordinadores para 10 equipos: uno en cada equipo»; con menos,
+   cuántos equipos se quedan sin; con más, en cuántos van a quedar dos), y va
+   dentro del `<summary>`: se lee con el cajón cerrado, que es como viene,
+   porque 43 chips le alargan la pantalla a quien no los usa. Cambia en el
+   momento con «¿De cuántos?», que es lo que cambia cuántos equipos salen.
+3. **Por dentro son parejas**: cada par de coordinadores pesa 1000 en
+   `eqArmar`, así que con uno por equipo le toca exactamente uno a cada
+   equipo, y con más que equipos se reparten parejo: dos equipos con dos
+   cuestan menos que uno con tres mientras otro se queda sin.
+4. **El coordinador va primero en su equipo**, con «⭐ coordina», en la
+   pantalla, en WhatsApp («⭐ nombre (coordina)») y en el papel. ⚠️ En el papel
+   va con la estrella de texto (★) y no con el emoji, que la hoja se fotocopia
+   en blanco y negro, y va en el MARGEN, en lugar de su «1.». Escrita delante
+   del nombre, o con negrita y un «(coordina)» en cada renglón, empujaba
+   nombres largos a un segundo renglón: medido en doce repartos de 37
+   alumnos, la letra de la hoja bajaba de 14,5 a 13 pt en dos. Lo que
+   quiere decir la ★ va una vez, en el título de cada equipo, para que la
+   tira recortada se entienda sola.
+5. **El equipo que se quedó sin coordinador, o con dos, lo dice en su
+   tarjeta** («⭐ Sin coordinador», «⚠️ 2 coordinadores juntos»). «Cómo
+   quedaron» cuenta cuántos; la tarjeta dice cuál, para cambiarlo a mano.
+6. ⚠️ **Lo que un maestro separó antes no se borra callado**: se lee como sus
+   coordinadores (`eqCoordDe`) y se le enseña marcado, para que lo vea y lo
+   cambie. La primera vez que toca un chip se guarda como `coord` y lo de
+   antes (`separar`) se va (`eqGuardar`).
+
+⚠️ **Y un aviso para quien toque estos estilos: la aplicación del maestro NO
+tiene modo oscuro.** Lo tienen las misiones, cada una con su botón; en
+`index.html` nadie pone `data-theme`. Se escribieron reglas oscuras para los
+coordinadores y, al mirarlas en una captura con el atributo puesto a mano,
+salió la tarjeta blanca de siempre con letra dorada clara encima: ilegible.
+Las reglas `:root[data-theme="dark"]` que quedan en `app.css` no las lee nadie,
+y una más solo añade la posibilidad de ese estropicio.
 
 ### Lo que NO se hizo, y por qué
 
-- **Roles dentro del equipo** (coordinador, secretario, portavoz). Es otra
-  herramienta: se reparten por turno y cambian cada clase.
+- **Los demás roles del equipo** (secretario, portavoz). El coordinador sí,
+  porque lo pidió el autor y porque es el que separa; los otros se reparten
+  por turno y cambian cada clase, y eso es otra herramienta.
 - **Usar la lectura (palabras por minuto) como nivel.** El promedio de Notas
   SACE es el dato oficial y el que el maestro reconoce; mezclar dos medidas
   daría un «nivel» que no sabe explicar.

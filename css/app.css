@@ -5635,30 +5635,22 @@ body.ad-gr-moviendo { cursor: grabbing; user-select: none; -webkit-user-select: 
 .eq-paso-val small { font-size: calc(12px * var(--metas-fz, 1)); color: var(--muted); font-weight: 700; }
 .eq-prev { text-align: center; font-size: calc(14px * var(--metas-fz, 1)); font-weight: 800; color: var(--text); margin: 0 0 12px; }
 
-/* que no queden juntos */
-.eq-sep-fila {
-  display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px;
-  padding: 4px 4px 4px 10px; border: 1px solid var(--border); border-radius: 10px;
-  font-size: calc(13px * var(--metas-fz, 1)); font-weight: 700; color: var(--text);
+/* los coordinadores: los chips de pasar lista. El que coordina va relleno
+   de oro y con ⭐, no solo de otro color; el que hoy no entra, con la raya
+   cortada y el porqué (🚫 faltó, 🧪 prueba…) */
+.eq-det-coord > summary { flex-wrap: wrap; row-gap: 2px; padding: 6px 0; }
+.eq-coord-sum { flex: 1 1 auto; }
+.eq-coord-estado {
+  flex: 1 1 100%; font-size: calc(12.5px * var(--metas-fz, 1)); font-weight: 700; line-height: 1.35; color: #b45309;
 }
-.eq-sep-x { color: var(--muted); font-weight: 600; margin: 0 2px; }
-.eq-sep-quitar {
-  flex: 0 0 auto; width: 44px; height: 44px; border: none; background: none; cursor: pointer;
-  color: #b91c1c; font-size: calc(16px * var(--metas-fz, 1)); font-weight: 900;
+.eq-coord-estado.eq-coord-ok { color: #15803d; }
+.eq-chip-coord {
+  background: rgba(202,138,4,.17); border-color: #ca8a04; color: #854d0e;
+  box-shadow: 0 3px 10px rgba(202,138,4,.28); animation: adPop .28s cubic-bezier(.34,1.56,.64,1);
 }
-/* la separación que no cabe en los equipos de hoy lo dice debajo */
-.eq-sep-aviso { display: block; margin-top: 2px; font-size: calc(12px * var(--metas-fz, 1)); font-weight: 600; color: #b45309; }
-/* se eligen tocando: el elegido va relleno y con ✓, no solo de otro color */
-.eq-sep-elige { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 8px; }
-.eq-sep-al {
-  min-height: 44px; padding: 6px 12px; border: 2px solid var(--border); border-radius: 22px;
-  background: var(--surface); color: var(--text); cursor: pointer; font-family: inherit;
-  font-size: calc(13px * var(--metas-fz, 1)); font-weight: 700; touch-action: manipulation;
-}
-.eq-sep-al[aria-pressed="true"] { background: #b91c1c; border-color: #b91c1c; color: #fff; }
-.eq-sep-al[aria-pressed="true"]::before { content: '✓ '; }
-.eq-sep-guardar { width: 100%; margin: 0; min-height: 44px; }
-.eq-sep-guardar:disabled { opacity: .55; cursor: default; }
+.eq-chip-hoyno { border-style: dashed; }
+.eq-chip-hoyno:not(.eq-chip-coord) { opacity: .6; }
+.eq-chip-tag-hoy { color: var(--muted); }
 .eq-armar { width: 100%; min-height: 50px; margin-top: 6px; font-size: calc(15px * var(--metas-fz, 1)); }
 .eq-armar:disabled { opacity: .5; cursor: default; }
 
@@ -5692,6 +5684,10 @@ body.ad-gr-moviendo { cursor: grabbing; user-select: none; -webkit-user-select: 
 .eq-al-fuera { border-style: dashed; border-color: var(--border); opacity: .72; }
 .eq-al-fuera .eq-al-num, .eq-al-fuera .eq-al-nom { text-decoration: line-through; }
 .eq-tag { flex: 1 1 100%; font-size: calc(11px * var(--metas-fz, 1)); font-weight: 800; color: #b91c1c; }
+.eq-al-coord { border-color: #ca8a04; background: rgba(202,138,4,.1); }
+.eq-al-coord.eq-al-sel { border-color: var(--brand-mid); background: rgba(34,88,212,.1); }   /* elegido para cambiar: se ve elegido */
+.eq-tag-coord { color: #a16207; }
+.eq-eq-aviso { margin: -2px 4px 6px; font-size: calc(12px * var(--metas-fz, 1)); font-weight: 800; color: #a16207; }
 .eq-vacio { font-size: calc(12.5px * var(--metas-fz, 1)); color: var(--muted); padding: 6px 4px; }
 .eq-pasar {
   display: block; width: 100%; min-height: 44px; margin-top: 8px; cursor: pointer; font-family: inherit;
@@ -5705,8 +5701,6 @@ body.ad-gr-moviendo { cursor: grabbing; user-select: none; -webkit-user-select: 
 .eq-medida-t { font-size: calc(12px * var(--metas-fz, 1)); font-weight: 900; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 4px; }
 .eq-medida ul { margin: 0; padding-left: 0; list-style: none; }
 .eq-medida li { font-size: calc(13px * var(--metas-fz, 1)); line-height: 1.5; margin: 2px 0; }
-:root[data-theme="dark"] .eq-medida { background: rgba(34,88,212,.14); border-color: #2c4a7c; color: #c9dafc; }
-:root[data-theme="dark"] .eq-sug { background: rgba(234,88,12,.12); border-color: #7c2d12; color: #fed7aa; }
 
 /* ── El papel NO crece con A+ ─────────────────────────────────────────
    Los informes, las fichas y los boletos están medidos al píxel: 42
