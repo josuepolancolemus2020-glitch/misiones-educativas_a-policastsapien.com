@@ -174,14 +174,33 @@ async function paginasDe(nav, html, nombre) {
   /* ── 1-bis · que no queden juntos ── */
   console.log('\n── que no queden juntos ──');
   await pg.click('#eq-det-sep summary');
-  const separar = async (x, y) => {
-    await pg.selectOption('#eq-sep-a', String(x)); await pg.selectOption('#eq-sep-b', String(y));
+  /* se eligen tocando, dos o más, y el botón no se enciende con uno solo */
+  const separar = async (...nums) => {
+    for (const n of nums) await pg.click(`[data-eqsepal="${n}"]`);
     await pg.click('#eq-sep-add'); await pg.waitForTimeout(150);
   };
-  await separar(1, 2); await separar(5, 7); await separar(11, 12);
-  comprueba('se separan tres parejas y se guardan', JSON.stringify((await eq()).separar) === '[[1,2],[5,7],[11,12]]', (await eq()).separar);
-  await separar(2, 1);
-  comprueba('la misma pareja al revés no se guarda dos veces', (await eq()).separar.length === 3);
+  const chipAntes = await pg.$('[data-eqsepal="3"]');
+  await pg.click('[data-eqsepal="3"]');
+  comprueba('con uno elegido no se puede guardar, y el chip se marca con ✓ y relleno sin repintar',
+    await pg.$eval('#eq-sep-add', b => b.disabled) &&
+    await pg.$eval('[data-eqsepal="3"]', b => b.getAttribute('aria-pressed') === 'true' &&
+      getComputedStyle(b, '::before').content.includes('✓')) &&
+    await pg.evaluate(el => el.isConnected, chipAntes));
+  await pg.click('[data-eqsepal="3"]');
+  await separar(1, 2); await separar(5, 7, 9); await separar(11, 12);
+  comprueba('se separan una pareja, un grupo de tres y otra pareja, y se guardan',
+    JSON.stringify((await eq()).separar) === '[[1,2],[5,7,9],[11,12]]', (await eq()).separar);
+  comprueba('el botón dice a cuántos separa', await (async () => {
+    await pg.click('[data-eqsepal="20"]'); await pg.click('[data-eqsepal="21"]'); await pg.click('[data-eqsepal="22"]');
+    const t = await pg.textContent('#eq-sep-add');
+    for (const n of [20, 21, 22]) await pg.click(`[data-eqsepal="${n}"]`);
+    return /estos 3/.test(t);
+  })());
+  await separar(9, 7, 5);
+  comprueba('los mismos tocados en otro orden no se guardan dos veces', (await eq()).separar.length === 3);
+  comprueba('la fila del grupo de tres nombra a los tres', /,.*y/.test(await pg.$$eval('.eq-sep-fila', f => f[1].textContent)));
+  const chips = await pg.$$eval('.eq-sep-al', bs => bs.map(b => b.getBoundingClientRect().height));
+  comprueba('los chips para elegir miden 44 px o más', chips.length && Math.min(...chips) >= 43.5, Math.min(...chips));
   await pg.click('[data-eqsepq="2"]'); await pg.waitForTimeout(150);
   comprueba('se quita una, y el cajón se queda abierto', (await eq()).separar.length === 2 &&
     await pg.$eval('#eq-det-sep', x => x.open));
@@ -221,8 +240,9 @@ async function paginasDe(nav, html, nombre) {
     .match(/\b\d{2,3}\b/g)).filter(Boolean));
   comprueba('ninguna nota sale al lado de un nombre', !conNumeros.length, conNumeros);
   const eqDe = {}; gs.forEach((g, k) => g.forEach(o => { eqDe[o.n] = k; }));
-  comprueba('las parejas separadas quedaron en equipos distintos, y la pantalla lo dice',
-    eqDe[1] !== eqDe[2] && eqDe[5] !== eqDe[7] && /parejas que separaste quedaron en equipos distintos/.test(medida), medida);
+  comprueba('la pareja y el grupo de tres quedaron en equipos distintos, y la pantalla lo dice',
+    eqDe[1] !== eqDe[2] && new Set([eqDe[5], eqDe[7], eqDe[9]]).size === 3 &&
+    /quedaron cada uno en un equipo distinto/.test(medida), medida);
   comprueba('armar no repinta la pantalla entera (la parte de arriba es la misma)',
     await pg.evaluate(el => el.isConnected, confAntes));
   const reparto1 = (await eq()).reparto;

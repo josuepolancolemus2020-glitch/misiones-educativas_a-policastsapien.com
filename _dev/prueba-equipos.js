@@ -189,6 +189,32 @@ console.log('\n── las parejas que se separan quedan separadas ──');
   const r = E.eqArmar(AL, { tamanos: T4, sexo: true, nivel: 'parejos', separar: SEP, semilla: 3 });
   const m = E.eqMedir(r.grupos, AL, { separar: SEP });
   comprueba('y separarlas no desarma lo parejo', m.nivel.promMax - m.nivel.promMin <= 4 && m.sexo.fMax - m.sexo.fMin <= 1, m);
+  /* de a más de dos: los cuatro que no paran de platicar, cada uno en un equipo */
+  const GR = [[3, 8, 14, 22], [1, 2, 40]];
+  let juntasGr = 0;
+  for (const nivel of ['azar', 'parejos', 'nivel']) {
+    for (const s of SEMILLAS) {
+      const rg = E.eqArmar(AL, { tamanos: T4, sexo: true, nivel, separar: GR, semilla: s });
+      const de = {}; rg.grupos.forEach((g, k) => g.forEach(n => { de[n] = k; }));
+      GR.forEach(g => { if (new Set(g.map(n => de[n])).size !== g.length) juntasGr++; });
+    }
+  }
+  comprueba('un grupo de cuatro y uno de tres, tres modos y ocho semillas: cada uno en un equipo distinto', juntasGr === 0, juntasGr);
+  const rg = E.eqArmar(AL, { tamanos: T4, sexo: true, nivel: 'parejos', separar: GR, semilla: 3 });
+  const mg = E.eqMedir(rg.grupos, AL, { separar: GR });
+  comprueba('y la medida cuenta separaciones, no parejas: 2 y ninguna incumplida',
+    mg.separar.total === 2 && mg.separar.juntas === 0 && mg.separar.noCaben === 0, mg.separar);
+  const T3 = [15, 14, 14];
+  const cinco = [[1, 2, 3, 4, 5]];
+  const rc = E.eqArmar(AL, { tamanos: T3, separar: cinco, semilla: 2 });
+  const mc = E.eqMedir(rc.grupos, AL, { separar: cinco });
+  comprueba('cinco que no pueden estar juntos en tres equipos no caben, y se dice en vez de callarlo',
+    mc.separar.juntas === 1 && mc.separar.noCaben === 1, mc.separar);
+  const dec = {}; rc.grupos.forEach((g, k) => g.forEach(n => { dec[n] = k; }));
+  const porEq = [0, 1, 2].map(k => cinco[0].filter(n => dec[n] === k).length);
+  comprueba('y aun así se reparten lo mejor que se puede: a lo más dos por equipo', Math.max(...porEq) <= 2, porEq);
+  comprueba('las separaciones se limpian: ordenadas, sin repetidos, las de uno solo se caen y las parejas viejas siguen',
+    JSON.stringify(E.eqLimpiarSeparar([[9, 3, 3], [5], [2, 1], 'x', [7, 0]])) === '[[3,9],[1,2]]');
   const uno = E.eqArmar(aula(5), { tamanos: [5], separar: [[1, 2]], semilla: 1 });
   comprueba('con un solo equipo no se puede separar, y se cuenta como junta en vez de callarlo',
     E.eqMedir(uno.grupos, aula(5), { separar: [[1, 2]] }).separar.juntas === 1);
@@ -232,11 +258,11 @@ console.log('\n── lo guardado ──');
   comprueba('el reparto se guarda como UNA cadena y se lee igual',
     JSON.stringify(E.eqLeerReparto(E.eqEscribirReparto([[1, 5, 9], [2, 6]]))) === '[[1,5,9],[2,6]]');
   comprueba('una cadena vacía o rota no revienta', E.eqLeerReparto('').length === 0 && E.eqLeerReparto('|,|x').length === 0);
-  const d = { equipos: { reparto: '1,5,9|2,6,10', antes: '1,2|5,6', separar: [[5, 9], [2, 3]], fuera: { f: 'x', nums: [4, 7] } } };
+  const d = { equipos: { reparto: '1,5,9|2,6,10', antes: '1,2|5,6', separar: [[5, 9], [2, 3], [1, 6, 8]], fuera: { f: 'x', nums: [4, 7] } } };
   E.eqRecorrer(d, 5);
   comprueba('al insertar un alumno como #5, los de detrás se recorren en los equipos, las parejas y los que se dejaron fuera',
     d.equipos.reparto === '1,6,10|2,7,11' && d.equipos.antes === '1,2|6,7' &&
-    JSON.stringify(d.equipos.separar) === '[[6,10],[2,3]]' && JSON.stringify(d.equipos.fuera.nums) === '[4,8]', d.equipos);
+    JSON.stringify(d.equipos.separar) === '[[6,10],[2,3],[1,7,9]]' && JSON.stringify(d.equipos.fuera.nums) === '[4,8]', d.equipos);
   const vacio = {};
   E.eqRecorrer(vacio, 3);
   comprueba('un grupo sin equipos no se toca', JSON.stringify(vacio) === '{}');

@@ -943,8 +943,8 @@ mejor acaba en diez minutos mientras otro no sabe por dónde empezar.
    primera versión lo dejaba solo; lo cazó la sonda.
 4. **Parejo se mide, no se promete.** Debajo de los equipos se cuenta
    cuántas niñas y varones le tocaron a cada uno, entre qué notas queda el
-   promedio de los equipos y si las parejas que había que separar quedaron
-   separadas. Medido con un aula de 43: el promedio de los equipos queda a
+   promedio de los equipos y si los que había que separar quedaron
+   separados. Medido con un aula de 43: el promedio de los equipos queda a
    **1 punto** de diferencia contra **17 al azar**; «por nivel», dentro de cada
    equipo las notas se separan **5 puntos** contra **42**.
 5. ⚠️ **Las notas no salen en los equipos**, ni en la pantalla, ni en el
@@ -995,6 +995,25 @@ repintar, que aguante cerrar la aplicación, que WhatsApp y el papel no
 lleven a los que no entran, **las páginas del PDF en el peor caso** y los 44
 px. Se comprobó al revés: con los de prueba colándose y la letra fija sale
 roja con 15 fallos.
+
+### «Que no queden juntos» es de dos o más
+
+Empezó separando solo **parejas**, y el autor lo pidió el mismo día: «necesito
+la opción de que más alumnos no queden juntos». Los cuatro que no paran de
+platicar son cuatro, no seis parejas que el maestro tenga que escribir una por
+una. Ahora se tocan los nombres, dos o más, y cada uno cae en un equipo
+distinto (`separar: [[5,7,9], [1,2]]`).
+
+1. **Por dentro sigue siendo por parejas**: el grupo de cuatro pesa como sus
+   seis parejas en el costo de `eqArmar`. Las separaciones viejas, `[a,b]`,
+   siguen valiendo tal cual (`eqLimpiarSeparar`).
+2. ⚠️ **Cinco que no pueden estar juntos en cuatro equipos no caben**, y eso se
+   dice dos veces: debajo de la separación, antes de armar («Hoy salen 4
+   equipos para 5»), y en «Cómo quedaron». Se reparten igual lo mejor que se
+   puede, a lo más dos por equipo; callarlo haría creer que la herramienta
+   falló.
+3. **Elegir no repinta nada**: el chip se rellena y lleva ✓, y el botón dice
+   a cuántos va a separar; con uno solo no se enciende.
 
 ### Lo que NO se hizo, y por qué
 

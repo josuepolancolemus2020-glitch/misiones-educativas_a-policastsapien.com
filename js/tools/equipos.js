@@ -147,7 +147,9 @@ const EQ_PESO = { sexo: 1, tercio: 1, media: 0.5, nivel: 10, separar: 1000, repe
 /* Arma los equipos.
    alumnos: [{ num, sexo: 'F'|'M'|'', nivel: número|null }]
    op: { tamanos, sexo: bool, nivel: 'azar'|'parejos'|'nivel',
-         separar: [[a,b],…], antes: [[nums],…], semilla, intentos }
+         separar: [[nums],…], antes: [[nums],…], semilla, intentos }
+   Cada lista de «separar» son alumnos que no pueden compartir equipo,
+   dos o más: por dentro se cuenta como todas sus parejas.
    Devuelve { grupos: [[nums],…], costo }. */
 function eqArmar(alumnos, op) {
   op = op || {};
@@ -180,13 +182,13 @@ function eqArmar(alumnos, op) {
   const eF = tam.map(s => F * s / N), eM = tam.map(s => M * s / N);
   const eT = tam.map(s => T.map(c => c * s / N));
 
-  /* parejas que no pueden quedar juntas, y compañeros de la vez pasada */
+  /* los que no pueden quedar juntos, y compañeros de la vez pasada */
   const pos = new Map(alumnos.map((a, i) => [a.num, i]));
   const sep = alumnos.map(() => new Set()), rep = alumnos.map(() => new Set());
-  (op.separar || []).forEach(p => {
-    if (!Array.isArray(p)) return;
-    const i = pos.get(+p[0]), j = pos.get(+p[1]);
-    if (i != null && j != null && i !== j) { sep[i].add(j); sep[j].add(i); }
+  (op.separar || []).forEach(g => {
+    if (!Array.isArray(g)) return;
+    const ix = g.map(n => pos.get(+n)).filter(i => i != null);
+    ix.forEach(i => ix.forEach(j => { if (i !== j) sep[i].add(j); }));
   });
   (op.antes || []).forEach(g => {
     const ix = (g || []).map(n => pos.get(+n)).filter(i => i != null);
@@ -322,13 +324,23 @@ function eqMedir(grupos, alumnos, op) {
     };
   }
 
-  const pares = (op.separar || []).filter(p => Array.isArray(p) && por.has(+p[0]) && por.has(+p[1]));
-  if (pares.length) {
+  /* Una separación cuenta si entran por lo menos dos de los suyos. Queda
+     «incumplida» si dos de ellos comparten equipo, y «no se puede» si son
+     más que los equipos: cinco que no pueden estar juntos en cuatro
+     equipos no caben, y eso se dice en vez de callarlo. */
+  const seps = (op.separar || []).map(g => Array.isArray(g) ? g.map(Number).filter(n => por.has(n)) : [])
+    .filter(g => g.length >= 2);
+  if (seps.length) {
     const eqDe = {};
     (grupos || []).forEach((t, k) => t.forEach(n => { eqDe[n] = k; }));
+    const juntos = g => {
+      const vistos = new Set();
+      return g.some(n => { const k = eqDe[n]; if (k == null) return false; if (vistos.has(k)) return true; vistos.add(k); return false; });
+    };
     res.separar = {
-      total: pares.length,
-      juntas: pares.filter(p => eqDe[+p[0]] != null && eqDe[+p[0]] === eqDe[+p[1]]).length,
+      total: seps.length,
+      juntas: seps.filter(juntos).length,
+      noCaben: seps.filter(g => g.length > res.equipos).length,
     };
   }
   return res;
@@ -346,7 +358,7 @@ function eqRecorrer(d, pos) {
   const reparto = txt => eqEscribirReparto(eqLeerReparto(txt).map(g => g.map(mueve)));
   if (e.reparto) e.reparto = reparto(e.reparto);
   if (e.antes) e.antes = reparto(e.antes);
-  if (Array.isArray(e.separar)) e.separar = e.separar.map(p => [mueve(p[0]), mueve(p[1])]);
+  if (Array.isArray(e.separar)) e.separar = e.separar.map(g => Array.isArray(g) ? g.map(mueve) : g);
   if (e.fuera && Array.isArray(e.fuera.nums)) e.fuera.nums = e.fuera.nums.map(mueve);
 }
 
@@ -362,7 +374,7 @@ function eqPareceDePrueba(nombre) {
 
 if (typeof module === 'object' && module.exports) {
   module.exports = { eqRng, eqTamanos, eqTamanosTxt, eqLeerReparto, eqEscribirReparto,
-    eqTercios, eqArmar, eqMedir, eqRecorrer, eqPareceDePrueba, EQ_PESO };
+    eqTercios, eqArmar, eqMedir, eqRecorrer, eqPareceDePrueba, eqLimpiarSeparar, EQ_PESO };
 }
 
 /* ═════════════ LA PANTALLA ═════════════ */
@@ -377,6 +389,15 @@ const EQ_NIVELES = {
              s: 'Para darle a cada equipo un trabajo a su medida. El número del equipo no dice cuál es cuál.' },
 };
 
+/* Cada separación, ordenada y sin repetidos; las de uno solo se caen.
+   Las viejas eran parejas [a,b] y siguen valiendo tal cual. */
+function eqLimpiarSeparar(v) {
+  if (!Array.isArray(v)) return [];
+  return v.filter(Array.isArray)
+    .map(g => Array.from(new Set(g.map(Number).filter(n => n > 0))).sort((a, b) => a - b))
+    .filter(g => g.length >= 2);
+}
+
 function eqDatos(d) {
   const e = (d.equipos && typeof d.equipos === 'object') ? d.equipos : {};
   const conf = Object.assign({ modo: 'tam', valor: 4, sexo: true, nivel: 'parejos', sinPrueba: true, sinAus: true },
@@ -384,7 +405,7 @@ function eqDatos(d) {
   const hoy = adHoy();
   return {
     conf,
-    separar: Array.isArray(e.separar) ? e.separar.filter(p => Array.isArray(p) && p.length === 2) : [],
+    separar: eqLimpiarSeparar(e.separar),
     fuera: (e.fuera && e.fuera.f === hoy && Array.isArray(e.fuera.nums)) ? e.fuera.nums.map(Number) : [],
     reparto: String(e.reparto || ''), antes: String(e.antes || ''),
     t: String(e.t || ''), tAntes: String(e.tAntes || ''), mano: !!e.mano,
@@ -638,8 +659,14 @@ function eqPintarComo(body, d) {
   const nivel = hayNotas ? (EQ_NIVELES[x.conf.nivel] ? x.conf.nivel : 'parejos') : 'azar';
   const nomDe = n => { const a = (d.lista || []).find(z => +z.num === +n); return a ? eqNombre(a) : '#' + n; };
   const enLista = n => (d.lista || []).some(a => +a.num === +n);
-  const pares = x.separar.filter(p => enLista(p[0]) && enLista(p[1]));
-  const opcs = (d.lista || []).map(a => `<option value="${a.num}">#${a.num} ${adEsc(eqNombre(a))}</option>`).join('');
+  const seps = x.separar.map(g => g.filter(enLista)).filter(g => g.length >= 2);
+  /* cuántos equipos van a salir hoy: una separación de más alumnos que
+     equipos no se puede cumplir, y se avisa antes de armar */
+  const vv = eqValor(x.conf, q.dentro.length);
+  const kHoy = q.dentro.length >= 2 ? eqTamanos(q.dentro.length, vv.modo, vv.valor).length : 0;
+  const dentroSet = new Set(q.dentro.map(a => +a.num));
+  const nombres = g => g.map(n => adEsc(nomDe(n)));
+  const juntaY = xs => xs.length < 2 ? xs.join('') : xs.slice(0, -1).join(', ') + ' <span class="eq-sep-x">y</span> ' + xs[xs.length - 1];
 
   cont.innerHTML = `
     <div class="ad-bit-lbl">¿Cómo los reparto?</div>
@@ -667,21 +694,24 @@ function eqPintarComo(body, d) {
     </div>
     ${hayNotas ? `<p class="eq-nota">🔒 Las notas no salen en los equipos: ni en la pantalla, ni en el
       papel, ni en WhatsApp.</p>` : ''}
-    <details class="eq-det" id="eq-det-sep" ${pares.length ? 'open' : ''}>
-      <summary>🚫 Que no queden juntos${pares.length ? ' (' + pares.length + (pares.length === 1 ? ' pareja)' : ' parejas)') : ''}</summary>
-      <p class="eq-nota">Los dos que pelean, los que no paran de platicar, los hermanos. Se guarda para
-        las próximas veces.</p>
-      ${pares.map((p, i) => `
+    <details class="eq-det" id="eq-det-sep" ${seps.length ? 'open' : ''}>
+      <summary>🚫 Que no queden juntos${seps.length ? ' (' + seps.length + ')' : ''}</summary>
+      <p class="eq-nota">Los dos que pelean, los tres que no paran de platicar, los hermanos. Cada
+        uno va en un equipo distinto. Se guarda para las próximas veces.</p>
+      ${seps.map((g, i) => {
+        const hoy = g.filter(n => dentroSet.has(n)).length;
+        return `
       <div class="eq-sep-fila">
-        <span>${adEsc(nomDe(p[0]))} <span class="eq-sep-x">y</span> ${adEsc(nomDe(p[1]))}</span>
-        <button class="eq-sep-quitar" data-eqsepq="${i}" aria-label="Ya pueden estar juntos: ${adEsc(nomDe(p[0]))} y ${adEsc(nomDe(p[1]))}">✕</button>
-      </div>`).join('')}
+        <span>${juntaY(nombres(g))}${hoy > kHoy && kHoy ? `
+          <small class="eq-sep-aviso">⚠️ Hoy salen ${kHoy} equipos para ${hoy}: dos de ellos van a quedar juntos</small>` : ''}</span>
+        <button class="eq-sep-quitar" data-eqsepq="${i}" aria-label="Ya pueden estar juntos: ${nombres(g).join(', ')}">✕</button>
+      </div>`; }).join('')}
       ${(d.lista || []).length >= 2 ? `
-      <div class="eq-sep-add">
-        <select class="pa-inp-field" id="eq-sep-a" aria-label="Primer alumno">${opcs}</select>
-        <select class="pa-inp-field" id="eq-sep-b" aria-label="Segundo alumno">${opcs}</select>
-        <button class="pa-generate-btn ad-btn-sec" id="eq-sep-add">➕ Separarlos</button>
-      </div>` : ''}
+      <p class="eq-nota eq-nota-lead">Toca a los que no pueden quedar juntos, dos o más:</p>
+      <div class="eq-sep-elige" role="group" aria-label="Los que no pueden quedar juntos">
+        ${(d.lista || []).map(a => `<button class="eq-sep-al" aria-pressed="false" data-eqsepal="${a.num}">${adEsc(eqNombre(a))}</button>`).join('')}
+      </div>
+      <button class="pa-generate-btn ad-btn-sec eq-sep-guardar" id="eq-sep-add" disabled>🚫 Toca a dos o más</button>` : ''}
     </details>`;
 
   const sexo = cont.querySelector('#eq-sexo');
@@ -694,28 +724,42 @@ function eqPintarComo(body, d) {
   }));
   const irF = cont.querySelector('#eq-ir-fichas');
   if (irF) irF.addEventListener('click', () => { _adTab = 'lista'; _adFichasOn = 1; renderAdmin(); });
-  const selB = cont.querySelector('#eq-sep-b');
-  if (selB && selB.options.length > 1) selB.selectedIndex = 1;
+  /* Elegir no repinta nada: el chip cambia solo, y el botón dice cuántos
+     van. Repintar a cada toque le movería la lista de debajo del dedo. */
   const add = cont.querySelector('#eq-sep-add');
+  const elegidos = () => Array.from(cont.querySelectorAll('.eq-sep-al[aria-pressed="true"]')).map(b => +b.dataset.eqsepal);
+  const ponBoton = () => {
+    const n = elegidos().length;
+    add.disabled = n < 2;
+    add.textContent = n < 2 ? (n ? '🚫 Toca a uno más' : '🚫 Toca a dos o más')
+      : '🚫 Que estos ' + n + ' no queden juntos';
+  };
+  cont.querySelectorAll('[data-eqsepal]').forEach(b => b.addEventListener('click', () => {
+    b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+    ponBoton();
+  }));
+  const igual = (a, b) => a.length === b.length && a.every((n, i) => n === b[i]);
   if (add) add.addEventListener('click', () => {
-    const a = +cont.querySelector('#eq-sep-a').value, b = +cont.querySelector('#eq-sep-b').value;
-    if (!a || !b || a === b) { toast('Elige a dos alumnos distintos'); return; }
-    const par = [Math.min(a, b), Math.max(a, b)];
+    const g = eqLimpiarSeparar([elegidos()])[0];
+    if (!g) { toast('Toca a dos alumnos o más'); return; }
     let nuevo = false;
     eqGuardar(ee => {
       const ya = eqDatos(adLoad()).separar;
-      if (ya.some(p => +p[0] === par[0] && +p[1] === par[1])) return;
-      ee.separar = ya.concat([par]); nuevo = true;
+      if (ya.some(p => igual(p, g))) return;
+      ee.separar = ya.concat([g]); nuevo = true;
     });
     eqRepintar(body, 'eq-como');
     eqRepintar(body, 'eq-res');
-    toast(nuevo ? '🚫 Listo: ' + nomDe(par[0]) + ' y ' + nomDe(par[1]) + ' irán en equipos distintos'
-                : 'Esa pareja ya estaba');
+    /* con muchos, los nombres no caben en el aviso: se dice cuántos */
+    toast(nuevo ? '🚫 Listo: ' + (g.length <= 3 ? g.map(nomDe).join(', ') : 'estos ' + g.length) + ' irán en equipos distintos'
+                : 'Esos ya estaban separados');
   });
   cont.querySelectorAll('[data-eqsepq]').forEach(b => b.addEventListener('click', () => {
-    const quita = pares[+b.dataset.eqsepq];
+    const quita = seps[+b.dataset.eqsepq];
     eqGuardar(ee => {
-      ee.separar = eqDatos(adLoad()).separar.filter(p => !(+p[0] === +quita[0] && +p[1] === +quita[1]));
+      /* se quita la separación que se ve; los de la lista que ya no están
+         (dados de baja) no cuentan al compararla */
+      ee.separar = eqDatos(adLoad()).separar.filter(p => !igual(p.filter(enLista), quita));
     });
     eqRepintar(body, 'eq-como');
     eqRepintar(body, 'eq-res');
@@ -903,12 +947,14 @@ function eqMedidaHtml(m, x) {
     L.push('🎯 Dentro de cada equipo, las notas se separan a lo más ' + m.nivel.rangoMax + ' puntos');
   }
   if (m.separar) {
-    L.push(m.separar.juntas
-      ? '⚠️ ' + m.separar.juntas + (m.separar.juntas === 1 ? ' pareja de las que separaste quedó junta'
-        : ' parejas de las que separaste quedaron juntas') +
-        (m.equipos < 2 ? ': con un solo equipo no se puede' : ': arma otros o cámbialos a mano')
-      : '🚫 ' + (m.separar.total === 1 ? 'La pareja que separaste quedó' : 'Las ' + m.separar.total + ' parejas que separaste quedaron') +
-        ' en equipos distintos');
+    const j = m.separar.juntas;
+    L.push(j
+      ? '⚠️ ' + (m.separar.total === 1 ? 'Dos de los que separaste quedaron juntos'
+        : 'En ' + j + ' de tus ' + m.separar.total + ' separaciones quedaron dos juntos') +
+        (m.equipos < 2 ? ': con un solo equipo no se puede'
+          : m.separar.noCaben ? ': son más que los equipos, así que alguien tiene que repetir'
+          : ': arma otros o cámbialos a mano')
+      : '🚫 Los que separaste quedaron cada uno en un equipo distinto');
   }
   return `<div class="eq-medida"><div class="eq-medida-t">📏 Cómo quedaron</div>
     <ul>${L.map(t => '<li>' + adEsc(t) + '</li>').join('')}</ul></div>`;
