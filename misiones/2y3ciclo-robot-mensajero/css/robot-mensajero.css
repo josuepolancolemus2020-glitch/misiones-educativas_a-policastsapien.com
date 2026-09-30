@@ -541,3 +541,51 @@ body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* ── La animación del recado (js/animacion-mandado.js) ──────────────────
+   La lista va con los colores de la misión. La aldea es un mapa, y se
+   tiñe con la tarjeta: en la pantalla oscura, un suelo claro deslumbra.
+   Las casas, los recados y el robot son cosas, y tienen su color en las
+   dos pantallas. El robot lleva borde blanco para que se vea sobre el
+   suelo claro y sobre el oscuro. */
+#amMandado .rb-tarjeta { fill: var(--card, #fff); stroke: var(--border, #bce8f1); stroke-width: 1.4; }
+#amMandado .rb-resalte { fill: none; stroke: var(--am-sec); stroke-width: 2.4; }
+#amMandado .rb-hecho { fill: none; stroke: var(--am-sec); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+#amMandado .rb-flecha { fill: var(--am-pri); }
+#amMandado .rb-llave { fill: none; stroke: var(--am-sec); stroke-width: 2; stroke-linejoin: round; }
+
+#amMandado .rb-suelo { fill: var(--pri-gl, rgba(14,116,144,0.12)); stroke: var(--am-pri); stroke-width: 1.6; }
+#amMandado .rb-raya { fill: none; stroke: var(--am-pri); stroke-width: 0.9; stroke-opacity: 0.45; }
+#amMandado .rb-ruta { fill: none; stroke: var(--am-pri); stroke-width: 2.4; stroke-dasharray: 5 4; stroke-linecap: round; stroke-linejoin: round; }
+#amMandado .rb-ruta-punta { fill: none; stroke: var(--am-pri); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+#amMandado .rb-rastro { fill: none; stroke-width: 3.2; stroke-linecap: round; }
+#amMandado .rb-rastro-error { stroke: var(--am-sec); }
+#amMandado .rb-rastro-bien { stroke: var(--am-pri); }
+#amMandado .rb-anillo { fill: none; stroke: var(--am-sec); stroke-width: 2.2; stroke-dasharray: 3 3; }
+
+#amMandado .rb-pared { stroke: #5d4037; stroke-width: 1; }
+#amMandado .rb-pared-marvin { fill: #9cc7e4; }
+#amMandado .rb-pared-vecino { fill: #f6c9a6; }
+#amMandado .rb-pared-pulperia { fill: #f7e39a; }
+#amMandado .rb-techo { fill: #b03a2e; stroke: #7b241c; stroke-width: 1; stroke-linejoin: round; }
+#amMandado .rb-ventana { fill: #fdfefe; stroke: #5d4037; stroke-width: 0.8; }
+#amMandado .rb-puerta { fill: #7b4a24; }
+#amMandado .rb-rotulo-tienda { fill: #fffdf2; stroke: #5d4037; stroke-width: 0.9; }
+#amMandado .rb-toldo-a { fill: #d63031; }
+#amMandado .rb-toldo-b { fill: #ffffff; }
+#amMandado .rb-mostrador { fill: #a0522d; }
+
+#amMandado .rb-sobre { fill: #fffdf5; stroke: #8a7f6a; stroke-width: 0.9; }
+#amMandado .rb-sobre-v { fill: none; stroke: #8a7f6a; stroke-width: 0.9; stroke-linejoin: round; }
+#amMandado .rb-cuerpo { fill: #0e7490; stroke: #ffffff; stroke-width: 1.6; }
+#amMandado .rb-ojo { fill: #ffffff; }
+#amMandado .rb-nariz { fill: #f59e0b; stroke: #9a3412; stroke-width: 1; stroke-linejoin: round; }
+
+#amMandado .rb-mal { fill: none; stroke: #c62828; stroke-width: 2.8; stroke-linecap: round; }
+#amMandado .rb-bien { fill: none; stroke: #2e7d32; stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; }
+[data-theme="dark"] #amMandado .rb-mal { stroke: #ef5350; }
+[data-theme="dark"] #amMandado .rb-bien { stroke: #66bb6a; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) #amMandado .rb-mal { stroke: #ef5350; }
+  :root:not([data-theme="light"]) #amMandado .rb-bien { stroke: #66bb6a; }
+}

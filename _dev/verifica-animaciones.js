@@ -98,6 +98,7 @@ const hoja = fs.readFileSync(path.join(RAIZ, 'css/animacion-mision.css'), 'utf8'
 ok(/@media\s*\(prefers-reduced-motion:\s*reduce\)/.test(hoja), 'la hoja apaga el movimiento con «reducir movimiento»');
 ok(/min-height:\s*44px/.test(hoja), 'los botones tienen 44 px de blanco de toque');
 
+const idsVistos = {};
 for (const m of misiones) {
   console.log(`\n${m.dir}/${m.archivo}`);
   const html = sinComentariosHtml(m.html);
@@ -121,6 +122,16 @@ for (const m of misiones) {
   const tarjeta = finAni > 0 ? html.slice(iAni, finAni) : '';
   const idCont = ((tarjeta.match(/<div\b[^>]*\bid="([^"]+)"/) || [])[1]) || '';
   ok(!!idCont, 'la tarjeta tiene el bloque que el aparato llena (un <div id=…>)', idCont);
+  /* ⚠️ Y ese id es de ESTA misión y de ninguna otra. La sonda del navegador
+     guarda lo que mide cada escena por su id: dos misiones con el mismo id
+     se pisan, y la segunda revisa la primera con el lector que no es. Pasó
+     con #amRecado, que ya era de Los Adverbios cuando lo tomó la del Robot
+     Mensajero. */
+  if (idCont) {
+    const otra = idsVistos[idCont];
+    ok(!otra, `el id #${idCont} no lo usa ninguna otra misión`, otra);
+    if (!otra) idsVistos[idCont] = m.dir;
+  }
   const reserva = tarjeta.replace(/<h2[\s\S]*?<\/h2>/, '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
   ok(reserva.length >= 40, 'y trae su frase de reserva por si el aparato no llega', reserva.slice(0, 50));
 

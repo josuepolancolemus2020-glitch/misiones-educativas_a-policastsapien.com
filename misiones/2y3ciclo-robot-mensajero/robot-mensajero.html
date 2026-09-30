@@ -25,6 +25,9 @@
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
 <link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La animación que va después de la historia: el aparato es compartido y
+     se tiñe con el color de la misión, así que va DESPUÉS de su CSS. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -72,6 +75,22 @@
     cosas que hay que hacer: es una lista <strong>en orden</strong>, y el orden es parte de la
     instrucción. Un robot no tiene cómo darse cuenta de eso, y se va a venir sin azúcar todas las
     veces.</div></div>
+  </div>
+  <!-- La animación va JUSTO después de la historia: el robot de la misión
+       hace el mandado con una lista de cinco instrucciones. Con la lista
+       como está, dobla antes de tiempo y deja el recado en la casa del
+       vecino, y con la misma lista lo hace igual todas las veces; con las
+       mismas cinco, cambiando dos de lugar, el recado llega a la pulpería.
+       La mueve el alumno, paso a paso. El aparato es compartido
+       (js/animacion-mision.js) y la escena es de esta misión
+       (js/animacion-mandado.js). -->
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira al robot seguir su lista</h2>
+    <div id="amMandado">
+      <p>El robot lleva el recado a la pulpería con una lista de cinco instrucciones. Como está la lista,
+      dobla antes de tiempo y deja el recado en la casa del vecino, y con la misma lista lo hace igual
+      todas las veces. Con las mismas cinco, cambiando dos de lugar, el recado llega a la pulpería.</p>
+    </div>
   </div>
   <div class="card ac-teal">
     <h2>🗣️ ¿Qué es una instrucción y una secuencia?</h2>
@@ -660,6 +679,8 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-mandado.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

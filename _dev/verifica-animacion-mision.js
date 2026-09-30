@@ -1715,6 +1715,74 @@ const LEER = `
   /* La Energía: el panel de la escuela. Se lee el techo y el panel, cada
      rayo (de dónde sale y a dónde llega, y si ya se dibujó), la nube y si
      tapa el sol, el cable con sus dos bandas y la pantalla. */
+  window.__amExtra.amMandado = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(m(el)); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function centro(c) { return { x: (c.x0 + c.x1) / 2, y: (c.y0 + c.y1) / 2 }; }
+    function uno(sel, en) { return (en || raiz).querySelector(sel); }
+    function todos(sel, en) { return [].slice.call((en || raiz).querySelectorAll(sel)); }
+    function demora(el) { return parseFloat(el.style.getPropertyValue('--d')) || 0; }
+    /* Lo que corre y lo que gira una pieza con su propio transform, sin el
+       de sus padres: la sonda suma los pasos del robot por su cuenta. */
+    function matriz(el) {
+      var t = getComputedStyle(el).transform;
+      if (!t || t === 'none') return [1, 0, 0, 1, 0, 0];
+      return t.match(/-?[0-9.e]+/g).map(Number);
+    }
+    function corre(el) { var q = matriz(el); return [q[4], q[5]]; }
+    function gira(el) { var q = matriz(el); return Math.round(Math.atan2(q[1], q[0]) * 180 / Math.PI); }
+    function puntosDe(p) {
+      var nums = (p.getAttribute('d').match(/-?[0-9.]+/g) || []).map(Number), r = [];
+      for (var i = 0; i + 1 < nums.length; i += 2) r.push(aVista(p, nums[i], nums[i + 1]));
+      return r;
+    }
+    var flecha = uno('[data-flecha]');
+    var cuerpo = uno('[data-cuerpo]'), nariz = uno('[data-nariz]');
+    var rc = aVista(cuerpo, 0, 0), punta = aVista(nariz, 20, 0);
+    return {
+      numeros: todos('[data-numero]').map(function (t) { return { n: +t.textContent, c: centro(caja(t)) }; }),
+      tarjetas: todos('[data-instruccion]').map(function (g) {
+        var marco = uno('.rb-tarjeta', g), txt = uno('.rb-orden', g), res = uno('.rb-resalte', g);
+        return { k: g.getAttribute('data-instruccion'), ve: vis(marco), caja: caja(marco), txt: txt.textContent, cajaTxt: caja(txt), resalte: vis(res), dResalte: demora(res) };
+      }),
+      hechos: todos('[data-hecho]').map(function (p) { return { n: +p.getAttribute('data-hecho'), ve: vis(p), c: centro(caja(p)), d: demora(p) }; }),
+      flecha: {
+        ve: vis(uno('path', flecha)), dVe: demora(flecha), dFin: demora(uno('[data-flecha-fin]')),
+        c: centro(caja(uno('path', flecha))),
+        bajadas: todos('[data-flecha-baja]').map(function (g) { return { corre: corre(g), d: demora(g) }; })
+      },
+      llave: { ve: vis(uno('[data-llave] path')), caja: caja(uno('[data-llave] path')) },
+      aldea: caja(uno('[data-aldea]')),
+      rayas: todos('[data-raya]').map(function (p) { return { k: p.getAttribute('data-raya'), caja: caja(p) }; }),
+      casas: todos('[data-casa]').map(function (g) { return { k: g.getAttribute('data-casa'), caja: caja(g), ve: vis(g) }; }),
+      rotulos: todos('[data-rotulo]').map(function (t) { return { k: t.getAttribute('data-rotulo'), ve: vis(t), txt: t.textContent, caja: caja(t) }; }),
+      sobres: todos('[data-sobre]').map(function (g) { return { k: g.getAttribute('data-sobre'), ve: vis(g), caja: caja(g), d: demora(g) }; }),
+      mal: { ve: vis(uno('[data-marca="mal"]')), caja: caja(uno('[data-marca="mal"]')), puntos: puntosDe(uno('[data-marca="mal"]')).length, d: demora(uno('[data-marca="mal"]')) },
+      bien: { ve: vis(uno('[data-marca="bien"]')), caja: caja(uno('[data-marca="bien"]')), puntos: puntosDe(uno('[data-marca="bien"]')).length, d: demora(uno('[data-marca="bien"]')) },
+      ruta: { ve: vis(uno('[data-ruta-linea]')), puntos: puntosDe(uno('[data-ruta-linea]')) },
+      rastros: todos('[data-rastro]').map(function (p) {
+        return { k: p.getAttribute('data-rastro'), n: +p.getAttribute('data-tramo-rastro'), ve: vis(p) && p.style.strokeDashoffset === '0',
+          puntos: puntosDe(p), d: demora(p) };
+      }),
+      anillo: (function () { var a = uno('[data-anillo]'); var c = aVista(a, +a.getAttribute('cx'), +a.getAttribute('cy')); return { ve: vis(a), c: c, r: +a.getAttribute('r'), d: demora(a) }; })(),
+      robot: {
+        c: rc, nariz: [punta[0] - rc[0], punta[1] - rc[1]], r: caja(cuerpo),
+        base: corre(uno('[data-robot-base]')),
+        mueve: todos('[data-mueve]').map(function (g) { return { corre: corre(g), d: demora(g) }; }),
+        voltea: todos('[data-voltea]').map(function (g) { return { gira: gira(g), d: demora(g) }; }),
+        carga: vis(uno('[data-carga] rect')), dCarga: demora(uno('[data-carga]'))
+      },
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   window.__amExtra.amBaleada = function (raiz) {
     var vis = window.__amVisible;
     var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
@@ -2813,6 +2881,254 @@ function superficieEn(poly, x) {
 }
 
 const ESCENAS = {
+  /* Secuencias: el Robot Mensajero. «El mandado de Marvin».
+     ⚠️ Nada se le cree a la escena. La sonda lee en qué renglón quedó cada
+     tarjeta, saca de la aldea el tamaño de la casilla y en qué casilla está
+     cada casa, y con ESE orden hace la lista por su cuenta, desde la casa
+     de Marvin y mirando a la derecha (lo que se ve en el paso 0): AVANZA
+     una casilla hacia donde mira, GIRA IZQUIERDA lo voltea sin moverlo,
+     ENTREGA deja el recado donde está. Después mira dónde quedó el robot,
+     hacia dónde apunta su nariz, cuántos recados hay en cada casa, qué
+     marca lleva cada una y que cada tramo del rastro sea un paso de esa
+     lista. En las corridas, que el robot haga cada instrucción mientras la
+     flecha está en su renglón. */
+  amMandado(e, n) {
+    const x = e.extra, r = [];
+    const TEXTO = { a1: 'AVANZA', gi: 'GIRA IZQUIERDA', a2: 'AVANZA', a3: 'AVANZA', en: 'ENTREGA' };
+    const HACE = { a1: 'av', gi: 'gi', a2: 'av', a3: 'av', en: 'en' };
+    const ERROR = ['a1', 'gi', 'a2', 'a3', 'en'];
+    const HASTA = [0, 5, 5, 2, 0, 5, 5][n];
+    const cerca = (a, b, t = 1.5) => Math.abs(a - b) <= t;
+    const cen = c => ({ x: (c.x0 + c.x1) / 2, y: (c.y0 + c.y1) / 2 });
+    const monta = (a, b) => a.x0 < b.x1 - 0.5 && b.x0 < a.x1 - 0.5 && a.y0 < b.y1 - 0.5 && b.y0 < a.y1 - 0.5;
+
+    /* ── lo que no depende del dibujo va primero ── */
+    const PROHIBIDAS = /secuencia|algoritm|\bbugs?\b|depur|trazar|traz[oó]|\bestado\b|orientaci|simulador|posici[oó]n|cuadr[ií]cula|predec|paso a paso|\bgrados?\b|\b90\b|norte|\bsur\b|oeste|[áa]rbol|borde|exact|adivin|resultado|az[uú]car|fiado|[uú]ltima|tierra|\btres\b|colar|mensaje|ambig|parado|quieto/i;
+    const dicho = [e.texto, e.palabras].concat(x.textos).join(' · ');
+    r.push([!PROHIBIDAS.test(dicho) && !/\bEste\b/.test(dicho), `paso ${n}: no sale ninguna palabra de lo que pregunta la prueba`,
+      (dicho.match(PROHIBIDAS) || dicho.match(/\bEste\b/) || [])[0]]);
+
+    /* ── la lista ── */
+    const nums = x.numeros.slice().sort((a, b) => a.c.y - b.c.y);
+    const fila = nums.length > 1 ? nums[1].c.y - nums[0].c.y : 0;
+    r.push([nums.length === 5 && nums.every((q, i) => q.n === i + 1 && (i === 0 || cerca(q.c.y - nums[i - 1].c.y, fila, 0.2))),
+      `paso ${n}: los lugares van numerados del 1 al 5, de arriba abajo y a la misma distancia`, nums.map(q => q.n)]);
+    const tarj = x.tarjetas.filter(t => t.ve);
+    const claves = tarj.map(t => t.k).sort().join();
+    r.push([tarj.length === 5 && claves === 'a1,a2,a3,en,gi', `paso ${n}: están las cinco tarjetas, sin que falte ni se repita ninguna`, claves]);
+    const malTxt = tarj.filter(t => t.txt !== TEXTO[t.k]);
+    r.push([malTxt.length === 0, `paso ${n}: cada tarjeta dice su instrucción`, malTxt.map(t => t.txt)]);
+    const salidos = tarj.filter(t => t.cajaTxt.x1 > t.caja.x1 - 2 || t.cajaTxt.x0 < t.caja.x0 + 2);
+    r.push([salidos.length === 0, `paso ${n}: el nombre de cada instrucción cabe en su tarjeta`, salidos.map(t => t.txt)]);
+    const lugarDe = t => { const c = cen(t.caja); const q = nums.find(q => cerca(q.c.y, c.y)); return q ? q.n : null; };
+    const orden = [];
+    tarj.forEach(t => { const l = lugarDe(t); if (l) orden[l - 1] = t.k; });
+    const movidas = ERROR.filter((k, i) => orden[i] !== k);
+    if (n <= 3) r.push([orden.join() === ERROR.join(), `paso ${n}: las tarjetas están en el orden de la lista con el error, cada una en el renglón de su número`, orden]);
+    else {
+      const vecinas = movidas.length === 2 && Math.abs(ERROR.indexOf(movidas[0]) - ERROR.indexOf(movidas[1])) === 1;
+      r.push([vecinas && orden.filter(Boolean).length === 5, `paso ${n}: son las mismas cinco, y solo dos vecinas cambiaron de lugar`, { orden, movidas }]);
+    }
+
+    /* ── la aldea: tres casillas por tres, y en qué casilla está cada cosa ── */
+    const al = x.aldea, lado = (al.x1 - al.x0) / 3;
+    r.push([cerca(al.x1 - al.x0, al.y1 - al.y0, 1) && lado > 40, `paso ${n}: la aldea es un cuadrado de tres casillas por lado`, [al, lado]]);
+    const rv = x.rayas.filter(q => q.k === 'v').map(q => cen(q.caja).x).sort((a, b) => a - b);
+    const rh = x.rayas.filter(q => q.k === 'h').map(q => cen(q.caja).y).sort((a, b) => a - b);
+    r.push([rv.length === 2 && rh.length === 2 && rv.every((v, i) => cerca(v, al.x0 + (i + 1) * lado, 0.6)) && rh.every((v, i) => cerca(v, al.y0 + (i + 1) * lado, 0.6)),
+      `paso ${n}: las rayas parten la aldea en casillas iguales`, [rv, rh]]);
+    const casilla = p => ({ c: Math.floor((p.x - al.x0) / lado), r: Math.floor((p.y - al.y0) / lado) });
+    const centroDe = cs => ({ x: al.x0 + (cs.c + 0.5) * lado, y: al.y0 + (cs.r + 0.5) * lado });
+    const igual = (a, b) => !!a && !!b && a.c === b.c && a.r === b.r;
+    const casas = {};
+    x.casas.forEach(h => {
+      const a = casilla({ x: h.caja.x0 + 0.5, y: h.caja.y0 + 0.5 }), b = casilla({ x: h.caja.x1 - 0.5, y: h.caja.y1 - 0.5 });
+      casas[h.k] = igual(a, b) && h.ve ? a : null;
+    });
+    r.push([['marvin', 'vecino', 'pulperia'].every(k => casas[k]) && new Set(['marvin', 'vecino', 'pulperia'].map(k => casas[k] && casas[k].c + ',' + casas[k].r)).size === 3,
+      `paso ${n}: cada casa cabe en su casilla, y son tres casillas distintas`, casas]);
+    if (!casas.marvin || !casas.vecino || !casas.pulperia) return r;
+    const cajaCasa = k => x.casas.find(h => h.k === k).caja;
+    const ROT = { marvin: 'Marvin', vecino: 'vecino', pulperia: 'pulpería' };
+    /* El nombre va en la columna de SU casa y pegado a ella (encima o
+       debajo). Que sea la casa más cercana no basta: puesto encima de una
+       casilla vacía, el nombre se lee como el de esa casilla. */
+    const malRot = x.rotulos.filter(q => {
+      const c = cen(q.caja), h = cajaCasa(q.k), cs = casas[q.k];
+      const x0 = al.x0 + cs.c * lado, x1 = x0 + lado;
+      const dv = Math.max(h.y0 - q.caja.y1, q.caja.y0 - h.y1, 0);
+      return !q.ve || q.txt !== ROT[q.k] || c.x < x0 || c.x > x1 || dv > 20 || q.caja.x0 < 0 || q.caja.x1 > 320;
+    });
+    r.push([x.rotulos.length === 3 && malRot.length === 0, `paso ${n}: cada casa lleva su nombre en su columna, pegado a ella`, malRot.map(q => q.k)]);
+    const piezas = x.rotulos.filter(q => q.ve).map(q => ({ k: q.k, c: q.caja }))
+      .concat(x.casas.map(h => ({ k: 'casa ' + h.k, c: h.caja })))
+      .concat(x.mal.ve ? [{ k: '✗', c: x.mal.caja }] : []).concat(x.bien.ve ? [{ k: '✓', c: x.bien.caja }] : []);
+    const encima = [];
+    for (let i = 0; i < piezas.length; i++) for (let j = i + 1; j < piezas.length; j++) {
+      if (piezas[i].k.startsWith('casa') && piezas[j].k.startsWith('casa')) continue;
+      if (monta(piezas[i].c, piezas[j].c)) encima.push([piezas[i].k, piezas[j].k]);
+    }
+    r.push([encima.length === 0, `paso ${n}: ningún rótulo ni marca se monta en otro ni en una casa`, encima]);
+
+    /* ── la lista, hecha por la sonda con el orden que se ve ── */
+    const PASO_DIR = [[1, 0], [0, -1], [-1, 0], [0, 1]];
+    const dirDe = v => (Math.abs(v[0]) > Math.abs(v[1]) ? (v[0] > 0 ? 0 : 2) : (v[1] < 0 ? 1 : 3));
+    function simular(ord, hasta) {
+      const s = { c: casas.marvin.c, r: casas.marvin.r, d: 0 }, pasos = [], celdas = [{ c: s.c, r: s.r }];
+      let entrega = null;
+      ord.forEach((k, i) => {
+        const antes = { c: s.c, r: s.r, d: s.d };
+        if (i < hasta) {
+          if (HACE[k] === 'av') { s.c += PASO_DIR[s.d][0]; s.r += PASO_DIR[s.d][1]; celdas.push({ c: s.c, r: s.r }); }
+          else if (HACE[k] === 'gi') s.d = (s.d + 1) % 4;
+          else if (HACE[k] === 'en') entrega = { c: s.c, r: s.r };
+        }
+        pasos.push({ k, hace: HACE[k], antes, despues: { c: s.c, r: s.r, d: s.d } });
+      });
+      return { pasos, celdas, fin: { c: s.c, r: s.r, d: s.d }, entrega };
+    }
+    const rob = x.robot;
+    if (n === 0) r.push([dirDe(rob.nariz) === 0 && igual(casilla({ x: rob.c[0], y: rob.c[1] }), casas.marvin),
+      'paso 0: el robot sale de la casa de Marvin, mirando a la derecha', [rob.c, rob.nariz]]);
+    const sim = simular(orden, HASTA);
+    r.push([igual(casilla({ x: rob.c[0], y: rob.c[1] }), sim.fin) && cerca(rob.c[0], centroDe(sim.fin).x, 0.6) && cerca(rob.c[1], centroDe(sim.fin).y, 0.6),
+      `paso ${n}: el robot está en la casilla donde lo dejan las ${HASTA} instrucción(es) hechas de la lista que se ve`, [rob.c, sim.fin]]);
+    r.push([dirDe(rob.nariz) === sim.fin.d, `paso ${n}: y su nariz apunta hacia donde lo deja la lista`, [rob.nariz, sim.fin.d]]);
+    r.push([rob.carga === !sim.entrega, `paso ${n}: ${sim.entrega ? 'ya no lleva el recado' : 'todavía lleva el recado'}`, rob.carga]);
+    const piezasMal = [];
+    for (let i = 0; i < 5; i++) {
+      const p = sim.pasos[i], hecha = i < HASTA;
+      const esp = hecha && p.hace === 'av' ? [PASO_DIR[p.antes.d][0] * lado, PASO_DIR[p.antes.d][1] * lado] : [0, 0];
+      const mv = rob.mueve[i].corre;
+      if (!cerca(mv[0], esp[0], 0.6) || !cerca(mv[1], esp[1], 0.6)) piezasMal.push({ i: i + 1, mueve: mv, esp });
+      const gEsp = hecha && p.hace === 'gi' ? -90 : 0;
+      if (rob.voltea[i].gira !== gEsp) piezasMal.push({ i: i + 1, gira: rob.voltea[i].gira, gEsp });
+    }
+    r.push([piezasMal.length === 0, `paso ${n}: cada instrucción hecha movió al robot una casilla hacia donde miraba, o lo volteó sin moverlo`, piezasMal]);
+
+    /* ── dónde quedan los recados ── */
+    const entregaError = simular(ERROR, 5).entrega;
+    r.push([igual(entregaError, casas.vecino), `paso ${n}: con la lista del error, el recado queda en la casa del vecino`, entregaError]);
+    const entregaBien = n >= 4 ? simular(orden, 5).entrega : null;
+    if (n >= 4) r.push([igual(entregaBien, casas.pulperia), `paso ${n}: con la lista arreglada, el recado llega a la pulpería`, entregaBien]);
+    const vistos = x.sobres.filter(s => s.ve);
+    const enCelda = cs => vistos.filter(s => igual(casilla(cen(s.caja)), cs)).length;
+    const nErr = [0, 1, 2, 2, 2, 2, 2][n], nBien = n >= 5 ? 1 : 0;
+    r.push([enCelda(entregaError) === nErr && (nBien === 0 || enCelda(entregaBien) === nBien) && vistos.length === nErr + nBien,
+      `paso ${n}: hay ${nErr} recado(s) en la casa del vecino y ${nBien} en la pulpería, y ninguno en otra parte`, vistos.map(s => s.k)]);
+    const radio = (rob.r.x1 - rob.r.x0) / 2;
+    const tapados = vistos.filter(s => { const c = s.caja; const dx = Math.max(c.x0 - rob.c[0], 0, rob.c[0] - c.x1), dy = Math.max(c.y0 - rob.c[1], 0, rob.c[1] - c.y1); return Math.hypot(dx, dy) < radio; });
+    r.push([tapados.length === 0, `paso ${n}: el robot no tapa ningún recado`, tapados.map(s => s.k)]);
+
+    /* ── lo que dice cada casa ── */
+    const conMal = n >= 1, conBien = n >= 5;
+    const mc = cen(x.mal.caja), cv = centroDe(casas.vecino);
+    r.push([x.mal.ve === conMal && (!conMal || (Math.abs(mc.x - cv.x) < lado * 0.75 && x.mal.caja.y1 < cajaCasa('vecino').y0 && x.mal.puntos === 4)),
+      `paso ${n}: ${conMal ? 'la casa del vecino lleva una ✗ de dos rayas, encima' : 'todavía no hay ninguna ✗'}`, [x.mal.ve, mc]]);
+    const bc = cen(x.bien.caja), cp = centroDe(casas.pulperia);
+    r.push([x.bien.ve === conBien && (!conBien || (Math.abs(bc.x - cp.x) < lado * 0.75 && x.bien.caja.y1 < cajaCasa('pulperia').y0 && x.bien.puntos === 3)),
+      `paso ${n}: ${conBien ? 'la pulpería lleva un ✓ de una raya quebrada, encima' : 'todavía no hay ningún ✓'}`, [x.bien.ve, bc]]);
+
+    /* ── el rastro: de casilla en casilla, por donde pasó el robot ── */
+    function revisaRastro(k, ord, debe, nombre) {
+      const tr = x.rastros.filter(t => t.k === k).sort((a, b) => a.n - b.n);
+      if (!debe) { r.push([tr.every(t => !t.ve), `paso ${n}: el rastro ${nombre} no está`, tr.filter(t => t.ve).length]); return; }
+      const cel = simular(ord, 5).celdas;
+      const ok = tr.length === cel.length - 1 && tr.every((t, i) => t.ve && t.puntos.length === 2
+        && cerca(t.puntos[0][0], centroDe(cel[i]).x, 0.6) && cerca(t.puntos[0][1], centroDe(cel[i]).y, 0.6)
+        && cerca(t.puntos[1][0], centroDe(cel[i + 1]).x, 0.6) && cerca(t.puntos[1][1], centroDe(cel[i + 1]).y, 0.6));
+      r.push([ok, `paso ${n}: el rastro ${nombre} va de casilla en casilla, por donde pasa el robot con esa lista`, tr.map(t => [t.ve, t.puntos])]);
+    }
+    revisaRastro('error', ERROR, n >= 1, 'de la lista con el error');
+    revisaRastro('arreglada', orden, n >= 5, 'de la lista arreglada');
+
+    /* ── el camino a la pulpería (con raya cortada) ── */
+    const ru = x.ruta.puntos;
+    if (n >= 3) {
+      const rect = ru.every((p, i) => i === 0 || cerca(p[0], ru[i - 1][0], 0.3) || cerca(p[1], ru[i - 1][1], 0.3));
+      const esquinas = ru.slice(0, -1).every(p => { const c = casilla({ x: p[0], y: p[1] }); return cerca(p[0], centroDe(c).x, 0.6) && cerca(p[1], centroDe(c).y, 0.6); });
+      const fin = ru[ru.length - 1];
+      r.push([x.ruta.ve && rect && esquinas && igual(casilla({ x: ru[0][0], y: ru[0][1] }), casas.marvin) && igual(casilla({ x: fin[0], y: fin[1] }), casas.pulperia),
+        `paso ${n}: el camino a la pulpería sale de la casa de Marvin, va de casilla en casilla y entra a la pulpería`, ru]);
+      if (n >= 5) {
+        const cel = simular(orden, 5).celdas.map(c => c.c + ',' + c.r).join(' ');
+        const deRuta = [];
+        for (let i = 0; i + 1 < ru.length; i++) {
+          const a = casilla({ x: ru[i][0], y: ru[i][1] }), b = casilla({ x: ru[i + 1][0], y: ru[i + 1][1] });
+          const dc = Math.sign(b.c - a.c), dr = Math.sign(b.r - a.r);
+          for (let q = { c: a.c, r: a.r }; ; q = { c: q.c + dc, r: q.r + dr }) { if (!deRuta.length || deRuta[deRuta.length - 1] !== q.c + ',' + q.r) deRuta.push(q.c + ',' + q.r); if (q.c === b.c && q.r === b.r) break; }
+        }
+        r.push([deRuta.join(' ') === cel, `paso ${n}: con la lista arreglada, el robot va justo por el camino a la pulpería`, [deRuta, cel]]);
+      }
+    } else r.push([!x.ruta.ve, `paso ${n}: el camino a la pulpería todavía no está`, x.ruta.ve]);
+
+    /* ── el paso 3: dónde se tuerce ── */
+    if (n === 3) {
+      const aqui = sim.fin;
+      let sale = null;
+      for (let i = 0; i + 1 < ru.length; i++) {
+        const a = ru[i], b = ru[i + 1], p = centroDe(aqui);
+        const enTramo = (cerca(a[0], b[0], 0.3) && cerca(p.x, a[0], 0.6) && p.y <= Math.max(a[1], b[1]) + 0.6 && p.y >= Math.min(a[1], b[1]) - 0.6)
+          || (cerca(a[1], b[1], 0.3) && cerca(p.y, a[1], 0.6) && p.x <= Math.max(a[0], b[0]) + 0.6 && p.x >= Math.min(a[0], b[0]) - 0.6);
+        if (enTramo && !(cerca(p.x, b[0], 0.6) && cerca(p.y, b[1], 0.6))) { sale = dirDe([b[0] - a[0], b[1] - a[1]]); break; }
+      }
+      r.push([sale !== null && sale !== sim.fin.d, 'paso 3: el robot está sobre el camino, y su nariz ya no apunta hacia donde el camino sigue', { sale, mira: sim.fin.d }]);
+      r.push([x.anillo.ve && cerca(x.anillo.c[0], rob.c[0], 0.6) && cerca(x.anillo.c[1], rob.c[1], 0.6), 'paso 3: el anillo rodea al robot, donde se tuerce', x.anillo]);
+      const marcadas = tarj.filter(t => t.resalte);
+      r.push([marcadas.length === 1 && lugarDe(marcadas[0]) === HASTA && HACE[marcadas[0].k] === 'gi',
+        'paso 3: va marcada solo la tarjeta donde se detuvo la flecha, y es la que volteó al robot', marcadas.map(t => [t.k, lugarDe(t)])]);
+      r.push([x.flecha.ve && cerca(x.flecha.c.y, nums[HASTA - 1].c.y, 1), 'paso 3: la flecha se queda en el renglón de la 2', x.flecha.c]);
+    } else r.push([!x.anillo.ve, `paso ${n}: no hay anillo`, x.anillo.ve]);
+    if (n === 4) {
+      const marcadas = tarj.filter(t => t.resalte).map(t => t.k).sort().join();
+      r.push([marcadas === movidas.slice().sort().join(), 'paso 4: van marcadas justo las dos tarjetas que cambiaron de lugar', marcadas]);
+      const filasMov = tarj.filter(t => movidas.includes(t.k)).map(t => t.caja), ll = x.llave.caja;
+      r.push([x.llave.ve && filasMov.length === 2 && cerca(ll.y0, Math.min(...filasMov.map(c => c.y0)), 3) && cerca(ll.y1, Math.max(...filasMov.map(c => c.y1)), 3),
+        'paso 4: la llave abraza las dos tarjetas que cambiaron de lugar', [ll, filasMov]]);
+    } else if (n !== 3) r.push([!x.llave.ve && tarj.every(t => !t.resalte), `paso ${n}: ni llave ni tarjetas marcadas`, x.llave.ve]);
+
+    /* ── lo hecho: un ✓ en el lugar de cada instrucción que ya se hizo ── */
+    const hechos = x.hechos.filter(h => h.ve);
+    const hechosEspera = [0, 5, 5, 1, 0, 5, 5][n];
+    r.push([hechos.length === hechosEspera && hechos.every(h => h.n <= hechosEspera && nums.some(q => q.n === h.n && cerca(q.c.y, h.c.y))),
+      `paso ${n}: ${hechosEspera} instrucción(es) con su ✓, cada uno en el renglón de su número`, hechos.map(h => h.n)]);
+    if (n !== 3) r.push([!x.flecha.ve, `paso ${n}: al terminar el paso, la flecha que va haciendo la lista ya no está`, x.flecha.ve]);
+
+    /* ── las corridas: cada instrucción, mientras la flecha está en su renglón ── */
+    if ([1, 2, 3, 5].includes(n)) {
+      const b = x.flecha.bajadas;
+      const llega = [x.flecha.dVe + 200].concat(b.map(q => q.d)).concat([x.flecha.dFin]);
+      r.push([b.length === 4 && llega.slice(0, HASTA + 1).every((t, i) => i === 0 || t > llega[i - 1])
+        && b.every((q, i) => cerca(q.corre[0], 0, 0.01) && cerca(q.corre[1], i + 1 < HASTA ? fila : 0, 0.2)),
+        `paso ${n}: la flecha baja de renglón en renglón, uno a la vez, y se queda en el último que hizo`, llega]);
+      const enVentana = (d, i) => d >= llega[i] && d < llega[i + 1];
+      const nuevo = { 1: 'vecino1', 2: 'vecino2', 5: 'pulperia' }[n];
+      const tramos = x.rastros.filter(t => t.k === (n === 5 ? 'arreglada' : 'error')).sort((a, c) => a.n - c.n);
+      let av = 0;
+      const fuera = [];
+      sim.pasos.slice(0, HASTA).forEach((p, i) => {
+        let ds = [];
+        if (p.hace === 'av') { ds = [rob.mueve[i].d]; if (n !== 3) ds.push(tramos[av].d); av++; }
+        else if (p.hace === 'gi') ds = [rob.voltea[i].d];
+        else ds = [rob.dCarga, x.sobres.find(s => s.k === nuevo).d];
+        if (!ds.every(d => enVentana(d, i)) || (p.hace === 'av' && n !== 3 && ds[0] !== ds[1])) fuera.push({ i: i + 1, k: p.k, ds, ventana: [llega[i], llega[i + 1]] });
+      });
+      r.push([fuera.length === 0, `paso ${n}: el robot hace cada instrucción mientras la flecha está en su renglón, y el rastro sale con él`, fuera]);
+      const tick = x.hechos.filter(h => h.n <= hechosEspera).map(h => h.d);
+      r.push([tick.every((d, i) => d === llega[i + 1]), `paso ${n}: cada ✓ aparece cuando la flecha deja su renglón`, tick]);
+      if (n === 1) r.push([x.mal.d > x.sobres.find(s => s.k === 'vecino1').d, 'paso 1: la ✗ sale después de que el recado quedó en la casa del vecino', x.mal.d]);
+      if (n === 5) r.push([x.bien.d > x.sobres.find(s => s.k === 'pulperia').d, 'paso 5: el ✓ sale después de que el recado llegó a la pulpería', x.bien.d]);
+      if (n === 3) r.push([tarj.find(t => t.k === 'gi').dResalte >= llega[1], 'paso 3: la tarjeta se marca cuando la flecha ya llegó a ella, no antes', tarj.find(t => t.k === 'gi').dResalte]);
+    }
+
+    /* ── lo que cuenta el marcador ── */
+    const cifraEspera = n === 0 || n === 6 ? tarj.length : n === 1 || n === 5 ? enCelda(casas.pulperia) : n === 2 ? enCelda(casas.vecino)
+      : n === 3 ? (tarj.filter(t => t.resalte).map(lugarDe)[0] || 0) : movidas.length;
+    r.push([+e.cifra === cifraEspera, `paso ${n}: el marcador dice ${e.cifra} y en el dibujo se cuentan ${cifraEspera}`, [e.cifra, cifraEspera]]);
+    if (n === 1) r.push([/vecino/.test(e.texto), 'paso 1: la frase dice dónde quedó el recado: en la casa del vecino', e.texto]);
+    if (n === 5) r.push([/pulper[ií]a/.test(e.texto), 'paso 5: la frase dice dónde llegó el recado: a la pulpería', e.texto]);
+    return r;
+  },
   /* El Pensamiento Computacional: las baleadas de Kenia.
      ⚠️ Nada se le cree a la escena. La sonda lee de qué paso es cada
      tarjeta y en qué renglón quedó (el de su número), y con ESE orden hace

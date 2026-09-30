@@ -504,6 +504,13 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 // (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
 // tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
 // Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
+// ⚠️ Cuatro preguntas se contestaban con la historia de Marvin o con la
+// animación que va después de ella (el robot que dobla antes de tiempo y deja
+// el recado en la casa del vecino): qué hizo mal Marvin, a qué fue a la
+// pulpería, qué pasa si cambias dos instrucciones de lugar y qué cambia el
+// orden. Se cambiaron el 30 de septiembre de 2026 por otras que la misión y
+// la ficha enseñan (de la primera a la última, la fila de una casilla, los
+// tres GIRA DERECHA y dos AVANZA desde B4), con la respuesta en el mismo sitio.
 const evalTFBank=[
   {q:'Cualquiera que lea una instrucción exacta hace lo mismo.',a:true,k:'tf-exacta'},
   {q:'GIRA DERECHA cambia al robot de casilla.',a:false,k:'tf-giro-casilla'},
@@ -521,15 +528,15 @@ const evalMCBank=[
   {q:'El robot mira al Oeste y ejecuta GIRA DERECHA. ¿Hacia dónde mira ahora?',o:['a) Sur','b) Norte','c) Este','d) Oeste'],a:1,k:'mc-oeste-derecha'},
   {q:'¿Cuál de estas es una instrucción EXACTA?',o:['a) «Ve por allá»','b) «Haz algo útil»','c) «Camina 3 pasos hacia adelante»','d) «Pon bastante harina»'],a:2,k:'mc-exacta'},
   {q:'¿Qué pasa si una instrucción saca al robot del mapa?',o:['a) El robot vuela','b) El robot llega igual','c) El robot choca con el borde','d) Aparece otro mapa'],a:2,k:'mc-borde'},
-  {q:'¿Qué hizo mal Marvin en la pulpería?',o:['a) Perdió el dinero','b) Hizo los encargos en el orden que no era','c) No quiso ir','d) Compró otra cosa'],a:1,k:'mc-marvin'},
+  {q:'El robot está en B4 mirando al Norte y ejecuta dos veces AVANZA. ¿En qué casilla queda?',o:['a) B6','b) B2','c) D4','d) B1'],a:1,k:'mc-b4'},
   {q:'¿Qué hace un robot, un celular o una computadora con lo que se le escribe?',o:['a) Hace exactamente lo que dice','b) Hace lo que le parece mejor','c) Lo cambia si está mal','d) Lo adivina'],a:0,k:'mc-exactamente'},
-  {q:'¿Qué puede pasar si cambias dos instrucciones de lugar?',o:['a) Nada','b) Puede mandar al robot contra un árbol','c) El robot se apaga','d) Se borra todo'],a:1,k:'mc-cambiar-orden'},
+  {q:'¿Cuántos GIRA DERECHA seguidos hacen lo mismo que un GIRA IZQUIERDA?',o:['a) Dos','b) Tres','c) Uno','d) Cuatro'],a:1,k:'mc-tres-derechas'},
   {q:'¿En qué parte del mapa queda el Oeste?',o:['a) Arriba','b) En el centro','c) A la derecha','d) A la izquierda'],a:3,k:'mc-oeste'},
   {q:'El robot mira al Norte y ejecuta dos veces GIRA DERECHA. ¿Hacia dónde mira?',o:['a) Este','b) Oeste','c) Sur','d) Norte'],a:2,k:'mc-media-vuelta'},
   {q:'¿Cuál de estas tareas de la casa es una lista de pasos en orden?',o:['a) Lavarse las manos','b) Tener sueño','c) Estar alegre','d) Ser alto'],a:0,k:'mc-lavarse'}
 ];
 const evalCPBank=[
-  {q:'Marvin fue a la pulpería por una libra de ___.',a:'azúcar',acc:['azúcar','azucar'],k:'cp-azucar'},
+  {q:'Las instrucciones se cumplen una por una, de la primera a la ___.',a:'última',acc:['última','ultima'],k:'cp-ultima'},
   {q:'En el mapa, el Sur queda ___.',a:'abajo',acc:['abajo'],k:'cp-abajo'},
   {q:'La casilla donde está el robot, como B3, es su ___.',a:'posición',acc:['posición','posicion'],k:'cp-posicion'},
   {q:'Cada giro del robot es de ___ grados.',a:'90',acc:['90','noventa'],k:'cp-90'},
@@ -537,7 +544,7 @@ const evalCPBank=[
   {q:'Si el robot no llega, conviene probar las instrucciones paso a ___.',a:'paso',acc:['paso'],k:'cp-paso'},
   {q:'Cuatro giros a la derecha dan una vuelta ___.',a:'completa',acc:['completa','entera'],k:'cp-completa'},
   {q:'El robot mensajero vive en una ___ que es su aldea.',a:'cuadrícula',acc:['cuadrícula','cuadricula'],k:'cp-cuadricula'},
-  {q:'Cambiar el orden de las instrucciones cambia el ___.',a:'resultado',acc:['resultado'],k:'cp-resultado'},
+  {q:'En la casilla D2, el número 2 dice la ___.',a:'fila',acc:['fila','renglón','renglon'],k:'cp-fila'},
   {q:'Sin la instrucción que deja el mensaje, el robot se queda ___ en la casa.',a:'parado',acc:['parado','quieto'],k:'cp-parado'}
 ];
 const evalPRBank=[
