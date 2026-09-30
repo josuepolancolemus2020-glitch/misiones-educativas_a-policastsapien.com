@@ -8462,12 +8462,20 @@ Seis cosas que valen para las que siguen:
    hacer esa misma tarde. Tampoco nombra ni la amenaza, ni la vulnerabilidad, ni
    el riesgo, ni la prevención (son los pareados), ni «inundación», «crecida»,
    «evacuar» o «alerta», que son respuestas de la prueba.
-6. ⚠️ **Una capa (`.am-capa`) se enciende SIN demora.** La lluvia iba en capa,
-   para que las veintidós rayas se encendieran juntas, y en el último paso caía
-   mientras todavía se subían los colchones: la regla de la capa trae su propia
-   transición, sin la `--d` que pone `A.ver`. Al final del paso todo estaba
-   donde tenía que estar, así que la sonda no lo veía: se vio en las fotos a
-   medio viaje. La lluvia ya no va en capa.
+6. ⚠️ **Una capa (`.am-capa`) se encendía SIN demora, y se arregló en el
+   aparato.** La lluvia iba en capa, para que las veintidós rayas se
+   encendieran juntas, y en el último paso caía mientras todavía se subían los
+   colchones: la regla de la capa traía su propia transición, sin la `--d` que
+   pone `A.ver`. Al final del paso todo estaba donde tenía que estar, así que la
+   sonda no lo veía: se vio en las fotos a medio viaje. Y no era solo de esta
+   escena. Midiendo la opacidad de cada capa a lo largo del viaje, salieron
+   cuatro publicadas que pedían esperar y no esperaban: las nueve filas de
+   galones de División de Decimales, que la escena enciende una por una entre
+   los 450 y los 1 330 ms, salían todas juntas en medio segundo; la recta de
+   Recta Numérica aparecía mientras la vara todavía se acostaba; y la regla de
+   Multiplicación de Decimales y el mapa de Coordenadas no esperaban lo suyo.
+   Ahora la capa espera su demora como cualquier otra pieza, y las cuatro hacen
+   lo que su escena pedía.
 
 La sonda de esta escena **no le cree nada a la escena**:
 
@@ -8581,7 +8589,11 @@ el contorno: en el borde `isPointInFill` contesta que no, así que la sonda lo
 prueba con un margen alrededor. Volviendo con «Atrás», lo que dice el
 resultado de un paso (un precio, una cuenta) vuelve con lo que lo produce, no
 con la demora que tiene al llegar: si no, dice un momento lo contrario de lo
-que el paso enseña.
+que el paso enseña. Una capa (`.am-capa`) espera su demora como cualquier otra
+pieza; hasta el 30 de septiembre de 2026 no la esperaba, y lo que se encendía en
+cascada salía de golpe. Una demora se comprueba midiendo la opacidad a lo largo
+del viaje: al final del paso, lo que se adelantó y lo que llegó a tiempo se ven
+igual.
 
 Si el `--sec` de la misión es claro (un ámbar, un amarillo), la letra blanca
 del botón que avanza no se lee en su punta: la misión declara en su CSS

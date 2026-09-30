@@ -176,21 +176,31 @@
 
 /* Una CAPA entera que se apaga (.am-capa) además se ESCONDE al terminar
    de apagarse. Lo transparente se sigue pintando en cada cuadro de las
-   transiciones; lo escondido, no. Se esconde con medio segundo de
-   retraso, que es lo que dura el apagado, y aparece al instante. */
+   transiciones; lo escondido, no. Aparece cuando empieza a encenderse y
+   se esconde cuando acabó de apagarse, medio segundo después, que es lo
+   que dura el apagado.
+
+   ⚠️ Y espera su demora (--d) como todo lo demás. Hasta el 30 de
+   septiembre de 2026 la capa traía su propia transición SIN la demora y
+   se encendía al instante aunque la escena le pidiera esperar: las nueve
+   filas de galones de División de Decimales, que la escena enciende una
+   por una, salían todas juntas, y la lluvia de Desastres Naturales caía
+   mientras todavía se subían los colchones. Al final de cada paso todo
+   estaba en su sitio, así que ninguna sonda lo veía: se vio en las fotos
+   a medio viaje. */
 .am-raiz .am-escenario svg .am-capa {
   visibility: visible;
   transition:
-    transform 0.8s cubic-bezier(0.2, 0.75, 0.25, 1),
-    opacity 0.5s ease,
-    visibility 0s linear 0s;
+    transform 0.8s cubic-bezier(0.2, 0.75, 0.25, 1) var(--d, 0s),
+    opacity 0.5s ease var(--d, 0s),
+    visibility 0s linear var(--d, 0s);
 }
 .am-raiz .am-escenario svg .am-capa.am-fuera {
   visibility: hidden;
   transition:
-    transform 0.8s cubic-bezier(0.2, 0.75, 0.25, 1),
-    opacity 0.5s ease,
-    visibility 0s linear 0.5s;
+    transform 0.8s cubic-bezier(0.2, 0.75, 0.25, 1) var(--d, 0s),
+    opacity 0.5s ease var(--d, 0s),
+    visibility 0s linear calc(var(--d, 0s) + 0.5s);
 }
 
 /* Sin movimiento: el primer pintado (que no tiene de dónde venir) y

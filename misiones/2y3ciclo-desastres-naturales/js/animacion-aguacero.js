@@ -281,10 +281,12 @@
 
     /* ── La lluvia: las mismas gotas, a la misma distancia, en toda la
        escena. Cada columna termina justo encima de lo que tiene debajo. */
-    /* ⚠️ Sin .am-capa, a propósito: la capa se enciende sin demora, y en el
-       último paso la lluvia tiene que empezar DESPUÉS de que subieron los
-       colchones y los cuadernos. Con la capa, llovía mientras los subían,
-       que es contar al revés «antes de que llueva». */
+    /* ⚠️ La lluvia es un grupo que se enciende entero, y no una capa
+       (.am-capa). Cuando se escribió, la capa se encendía sin esperar su
+       demora, y en el último paso llovía mientras todavía se subían los
+       colchones y los cuadernos, que es contar al revés «antes de que
+       llueva». El aparato ya la hace esperar; la lluvia se quedó así,
+       medida a 58 cuadros por segundo con la CPU frenada seis veces. */
     lluvia = el('g', { class: 'am-fuera', 'data-lluvia': '' }, svg);
     for (var x = 9; x <= ANCHO; x += 14) {
       /* La gota cae un poco inclinada, así que termina más a la izquierda de
