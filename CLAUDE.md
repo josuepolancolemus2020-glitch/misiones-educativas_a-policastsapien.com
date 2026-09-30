@@ -8520,6 +8520,137 @@ Con la CPU frenada seis veces va a 58 cuadros por segundo. El peor cuadro, al
 empezar otra vez, sale entre 83 y 133 ms según la medida, lo mismo que se
 aceptó en Números Grandes.
 
+### La trigésima cuarta: Las Eras Geológicas, y lo que enseñó
+
+La quinta de la Ruta del Planeta es **Las Eras Geológicas**
+(`misiones/2y3ciclo-eras-geologicas/`, `js/animacion-caracol.js`). La historia
+es la de don Tulio: arando en lo alto del cerro, lejísimos de la costa, sacó una
+piedra con la forma exacta de un caracol de mar y la tiró al montón: «Es una
+piedra rara». No era rara: era la prueba de que ese cerro estuvo debajo del
+agua. La historia lo dice y la animación enseña cómo. Es un corte del cerro,
+visto de lado, con sus capas de roca y el mar a la derecha:
+
+- hoy: la milpa, don Tulio y la piedra: ¿cómo llegó hasta aquí arriba?;
+- detrás de un telón que dice «hace muchísimo tiempo», el mismo lugar es el
+  fondo del mar, y el caracol vive sobre el lodo;
+- el caracol muere y el lodo lo tapa: caen tres capas, una después de otra, de
+  abajo hacia arriba;
+- con muchísimo tiempo el lodo se vuelve roca, con sus vetas, y la concha,
+  piedra;
+- el fondo del mar se levanta con todas sus capas hasta quedar muy por encima
+  del agua, y el mar no se mueve;
+- pasa una lluvia, gasta las dos capas de arriba y se va; crece la milpa, llega
+  don Tulio con su arado y el caracol sale al final del surco;
+- una flecha baja por el corte: las capas de abajo son las más viejas. ¿Qué
+  guardarán las de más abajo?
+
+Seis cosas que valen para las que siguen:
+
+1. ⚠️ **La animación enseña lo que el DCNB pide y la misión no enseñaba.** En
+   noveno grado: «Observan un fósil y describen su formación. Deducen en qué
+   tipo de roca se forma y proponen un criterio para su datación» (confirmado
+   en el PDF, `dcneb-basica-iii-ciclo.pdf`, Bloque 3, página 573 del archivo,
+   «Secretaría de Educación 584» en el pie impreso). La misión contaba las
+   eras una por una, pero no cómo se sabe nada de ellas. La historia lo
+   prometía («esa historia se cuenta por eras») y la animación lo cumple. El
+   criterio para fechar es el que se ve caer: las capas se ponen de abajo
+   hacia arriba.
+2. ⚠️ **Lo que sube es el suelo, no el agua.** El nivel del mar es el mismo en
+   los siete pasos, y el caracol no se mueve de su sitio en su capa hasta que
+   lo saca el arado: sube con el cerro. Si bajara el agua, el alumno entendería
+   que el mar se secó. La sonda lo mide paso por paso, y comprueba que al subir
+   todas las capas suban lo mismo.
+3. ⚠️ **La historia contestaba una pregunta, y otra marcaba mal una respuesta
+   buena.** La selección «¿Qué prueba un caracol de mar convertido en piedra en
+   lo alto de una montaña?» era la historia palabra por palabra. Ahora pregunta
+   qué aprendieron a usar los primeros seres humanos para cocinar y
+   calentarse, con la respuesta en la misma letra. Y el completar decía «Los
+   ___ eran animales de mar que hoy se encuentran convertidos en piedra en
+   rocas muy antiguas»: con la historia al lado, el alumno escribía
+   «caracoles», que también es verdad, y se le marcaba mal. Ahora pide el
+   pequeño artrópodo de mar con caparazón que dominó los mares, que es el
+   trilobite y nada más. De paso, el verdadero o falso de los anfibios dejaba
+   escrita la palabra «trilobites», la respuesta de ese completar. La sonda de
+   pistas no la ve, porque va en minúscula y sin la pregunta de al lado: se vio
+   leyendo. Ahora dice que los anfibios aparecieron antes que los dinosaurios.
+   Todo en la misión y en la ficha, que sigue en sus siete hojas.
+4. ⚠️ **La felicitación de la ficha también contestaba.** Iba al final de la
+   prueba, en la hoja de los pareados, y nombraba las cinco eras en orden y con
+   sus seres: la respuesta de «¿en cuántas eras…?» y la de «ordena de más
+   antiguo a más reciente», que van en la hoja de al lado y el alumno tiene las
+   dos en la mano. Ahora solo pide revisar. Y en pensamiento crítico, la pregunta de
+   argumentar «¿qué evidencia usan los científicos?» tenía por respuesta lo que
+   enseña la animación. Ahora es un caso nuevo, un pozo con una olla a dos
+   metros y unos huesos a seis, que es aplicar la idea.
+5. ⚠️ **Cruzar el tiempo se hace detrás de un telón.** Del paso 0 (hoy) al 1
+   (hace muchísimo tiempo) cambia todo a la vez: visto moviéndose, parecía que
+   el cerro se hundía. El telón es una animación con fotogramas propios, como el
+   brinco de la rana, y la lluvia del paso 5 también: pasa y se va, así que el
+   paso termina en hoy, con sol. Las dos se le preguntan al aparato
+   (`A.quieto()`): sin movimiento no hay telón ni lluvia, y el paso llega de
+   golpe.
+6. **Lo que salió mirando.** A medio viaje, la nube tapaba el letrero del
+   tiempo mientras se apagaba: se corrió a la derecha. En la pantalla oscura,
+   la llave de las capas nuevas era negra sobre el agua oscura: ahora va con la
+   tinta de la pantalla. Y la sonda medía el caracol girado por su caja, que
+   crece por las esquinas y «se hundía» en el suelo con el dibujo perfecto:
+   ahora mide su círculo.
+
+**Lo que queda, y no es de la animación.** La prueba de pensamiento crítico de
+esta misión tiene otra forma (causa y efecto, cronología, detective de fósiles,
+error y argumenta). La sonda de pistas no la lee, y sus secciones se regalan
+respuestas entre sí. La pregunta de argumentar sobre el Cretácico dice lo que
+une la de causa y efecto. Y la cronología escribe «meteorito» al lado del error
+que pide corregir «un volcán». Hay que revisarla leyendo, como se revisaron las
+demás.
+
+La sonda de esta escena **no le cree nada a la escena**:
+
+- lee cada capa de su roca: apiladas en su orden, pegadas, con el mismo borde a
+  la izquierda y el lado del mar en una sola recta, y en cada paso las que
+  tiene que haber;
+- el lodo liso y la roca con vetas, y el orden en que caen las capas y en que el
+  lodo se vuelve roca;
+- el caracol: en su sitio sobre el fondo del paso 1 al 4, vivo solo en el 1,
+  tapado entero por su capa, y hoy encima del suelo, al final del surco;
+- el mar, siempre a la misma altura: en el pasado todo debajo del agua, y hoy
+  el cerro y el caracol muy por encima, con la costa donde el cerro cruza el
+  agua;
+- la milpa plantada en el suelo, don Tulio parado en él y el arado entrando en
+  la tierra;
+- el marcador cuenta las capas que hay encima del caracol, contándolas en el
+  dibujo;
+- y no sale ni fósil, ni estratos, ni una era, ni un animal de la prueba, ni un
+  número de más.
+
+Se comprobó al revés con veinte averías, plantadas una por una:
+
+- el caracol corrido tres puntos en el paso 3;
+- el mar subiendo en el paso 4;
+- una capa despegada de la de arriba;
+- el lado del mar de una capa, torcido;
+- una capa que sube más que las otras;
+- el caracol más arriba de su fondo;
+- el marcador del paso 2 diciendo 2;
+- una capa que sigue siendo lodo en el paso 3;
+- las capas cayendo al revés;
+- «fósil» en una frase;
+- una mata de la milpa flotando;
+- el caracol lejos del surco;
+- el letrero diciendo «hoy» en el paso 4;
+- la pregunta saliendo de otra parte;
+- «el mar» escrito en la roca;
+- la llave sin la capa de arriba;
+- las puntas de la flecha al revés;
+- el caracol vivo en el paso 2;
+- el cerro sin subir lo bastante;
+- la nube de lluvia que no se va.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro, de
+100 ms, es al caer el telón.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -8593,7 +8724,11 @@ que el paso enseña. Una capa (`.am-capa`) espera su demora como cualquier otra
 pieza; hasta el 30 de septiembre de 2026 no la esperaba, y lo que se encendía en
 cascada salía de golpe. Una demora se comprueba midiendo la opacidad a lo largo
 del viaje: al final del paso, lo que se adelantó y lo que llegó a tiempo se ven
-igual.
+igual. Un cambio que moviéndose se lee al revés (cruzar el
+tiempo, en Las Eras) va detrás de un telón, y lo que tenga fotogramas propios
+(un telón, una lluvia que pasa, un brinco) se le pregunta al aparato con
+`A.quieto()`. Y una palabra corriente de una respuesta, escrita en otra
+pregunta («trilobites»), la sonda de pistas no la ve: se busca leyendo.
 
 Si el `--sec` de la misión es claro (un ámbar, un amarillo), la letra blanca
 del botón que avanza no se lee en su punta: la misión declara en su CSS

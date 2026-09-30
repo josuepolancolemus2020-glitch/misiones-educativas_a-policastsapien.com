@@ -25,6 +25,9 @@
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
 <link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La animación que explica el tema: el aparato es compartido y va DESPUÉS
+     del CSS de la misión, que es de donde saca sus colores. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
   <!-- Estilos de la Prueba de Pensamiento Crítico (2ª evaluación de la misión) -->
   <style>
     .eval-mode-toggle{display:flex;gap:0.6rem;margin-bottom:1.2rem;flex-wrap:wrap;}
@@ -101,6 +104,26 @@
         <strong>estuvo debajo del agua</strong>, y de que el suelo que él ara tiene una historia mucho más
         larga que la de su familia. Esa historia se cuenta por eras, y aquí la vas a recorrer
         entera.</div></div>
+      </div>
+      <!-- La animación que explica el tema, justo después de la historia: el
+           caracol de la milpa de don Tulio vivía en el fondo del mar; el lodo
+           lo tapó capa por capa, el lodo se volvió roca y la concha piedra, el
+           fondo del mar se levantó hasta quedar muy por encima del agua, y la
+           lluvia gastó las capas de arriba hasta que el arado lo sacó. Al
+           final, las capas de abajo son las más viejas. La mueve el alumno,
+           paso a paso. El aparato es compartido (js/animacion-mision.js) y la
+           escena es de esta misión (js/animacion-caracol.js). La frase de
+           dentro es de reserva: si el aparato no llega a cargar, se lee eso
+           en vez de un hueco. -->
+      <div class="card ac-teal" data-animacion>
+        <h2>👀 Mira cómo llegó el caracol hasta el cerro</h2>
+        <div id="amCaracol">
+          <p>Hace muchísimo tiempo, el cerro de don Tulio era el fondo del mar, y ahí vivía el caracol. Cuando
+          murió, el lodo lo fue tapando, capa tras capa; con muchísimo tiempo, el lodo se volvió roca y
+          la concha se volvió piedra. Después, el fondo del mar se fue levantando hasta quedar muy por encima del
+          agua, y la lluvia gastó las capas de arriba hasta que el arado sacó al caracol. Las capas de abajo son
+          las más viejas.</p>
+        </div>
       </div>
       <div class="card ac-teal">
         <h2>🧭 Explorador de Eras Geológicas</h2>
@@ -728,6 +751,8 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-caracol.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

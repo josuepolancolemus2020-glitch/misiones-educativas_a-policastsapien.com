@@ -983,12 +983,19 @@ window.addEventListener('resize', () => { clearTimeout(_sopaResizeTimer); _sopaR
 // (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
 // tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
 // Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
+// ⚠️ Y ninguna repite la historia de don Tulio ni lo que enseña su animación
+// (js/animacion-caracol.js). «¿Qué prueba un caracol de mar convertido en
+// piedra en lo alto de una montaña?» era la historia palabra por palabra. La
+// de los trilobites decía «animales de mar que hoy se encuentran convertidos
+// en piedra», y con la historia al lado el alumno escribía «caracoles», que
+// también es verdad: la pantalla le marcaba mal una respuesta buena. Y el
+// verdadero o falso de los anfibios dejaba escrita la palabra «trilobites».
 const evalTFBank=[
   {q:'La primera etapa de la Tierra duró la mayor parte de su historia.',a:true,k:'tf-primera-larga'},
   {q:'Durante la primera etapa, la Tierra era una gran bola de volcanes y lava.',a:true,k:'tf-volcanes'},
   {q:'Los seres humanos convivieron con los mamuts.',a:true,k:'tf-mamuts'},
   {q:'Los dinosaurios y los seres humanos vivieron al mismo tiempo.',a:false,k:'tf-dinos-humanos'},
-  {q:'Los anfibios aparecieron en la misma era que los trilobites.',a:true,k:'tf-anfibios'},
+  {q:'Los anfibios aparecieron antes que los dinosaurios.',a:true,k:'tf-anfibios'},
   {q:'Hubo seres vivos en el mar mucho antes que en tierra firme.',a:true,k:'tf-mar-antes'},
   {q:'Hace 540 millones de años, los mares se llenaron de animales.',a:true,k:'tf-540'},
   {q:'Las primeras aves aparecieron cuando todavía había dinosaurios.',a:true,k:'tf-aves'},
@@ -999,7 +1006,7 @@ const evalMCBank=[
   {q:'¿En cuántas eras grandes se cuenta la historia de la Tierra en esta misión?',o:['a) 3','b) 4','c) 5','d) 6'],a:2,k:'mc-cinco'},
   {q:'El nombre del supercontinente viene del griego. ¿Qué significa?',o:['a) tierra del sur','b) toda la Tierra','c) mar grande','d) montaña de fuego'],a:1,k:'mc-significa'},
   {q:'En la primera etapa de la Tierra, ¿qué se formaba entre erupciones de lava?',o:['a) la Luna','b) el Sol','c) la corteza','d) los polos'],a:2,k:'mc-corteza'},
-  {q:'¿Qué prueba un caracol de mar convertido en piedra en lo alto de una montaña?',o:['a) que ese cerro estuvo bajo el agua','b) que alguien lo tiró ahí','c) que llovió mucho','d) que era de plástico'],a:0,k:'mc-caracol'},
+  {q:'¿Qué aprendieron a usar los primeros seres humanos para cocinar y calentarse?',o:['a) el fuego','b) la rueda','c) el hierro','d) la escritura'],a:0,k:'mc-fuego'},
   {q:'¿Qué seres vivían en los primeros océanos?',o:['a) ballenas','b) dinosaurios','c) cangrejos','d) bacterias simples'],a:3,k:'mc-bacterias'},
   {q:'¿Qué animales ocuparon el lugar de los dinosaurios cuando estos desaparecieron?',o:['a) los insectos','b) las algas','c) los mamíferos','d) las bacterias'],a:2,k:'mc-mamiferos'},
   {q:'¿Cómo se llamaba la parte sur del supercontinente?',o:['a) Atlántida','b) Gondwana','c) Eurasia','d) Mesoamérica'],a:1,k:'mc-gondwana'},
@@ -1011,7 +1018,7 @@ const evalCPBank=[
   {q:'La Tierra tiene unos ___ millones de años.',a:'4,600',acc:['4,600','4600','4.600'],k:'cp-4600'},
   {q:'La parte norte del supercontinente se llamaba ___.',a:'Laurasia',acc:['Laurasia'],k:'cp-laurasia'},
   {q:'Los primeros animales con columna vertebral fueron ___ primitivos.',a:'peces',acc:['peces'],k:'cp-peces'},
-  {q:'Los ___ eran animales de mar que hoy se encuentran convertidos en piedra en rocas muy antiguas.',a:'trilobites',acc:['trilobites'],k:'cp-trilobites'},
+  {q:'El ___ era un pequeño artrópodo de mar, con caparazón, que dominó los mares hace muchísimo tiempo.',a:'trilobite',acc:['trilobite','trilobites'],k:'cp-trilobites'},
   {q:'El único supercontinente se partió poco a poco en los ___ de hoy.',a:'continentes',acc:['continentes'],k:'cp-continentes'},
   {q:'La época de mucho frío de la última era se llama la Edad de ___.',a:'Hielo',acc:['Hielo'],k:'cp-hielo'},
   {q:'El ser humano apareció hace unos ___ millones de años.',a:'2.6',acc:['2.6','2,6'],k:'cp-26'},
@@ -1392,7 +1399,10 @@ const critErrBank = [
 // ── V. Argumenta y aplica (desarrollo, con respuesta modelo para la pauta)
 const critArgBank = [
     { q: '¿Por qué la extinción del Cretácico abrió paso al dominio de los mamíferos?', model: 'Al extinguirse los dinosaurios por el meteorito, quedaron libres muchos espacios y recursos; los mamíferos, que antes eran pequeños, crecieron, se diversificaron y llegaron a dominar la era Cenozoica.' },
-    { q: '¿Qué evidencia usan los científicos (fósiles, estratos) para reconstruir las eras aunque no existieran humanos que las observaran?', model: 'Estudian los fósiles conservados en las rocas y el orden de las capas o estratos: las capas más profundas son más antiguas. Comparando fósiles y estratos deducen qué seres vivos existieron y en qué orden.' },
+    // ⚠️ Esta preguntaba qué evidencia usan los científicos, y su respuesta
+    // (las capas de más abajo son las más antiguas) es lo que enseña la
+    // animación de la historia. Ahora es un caso nuevo: aplicar la idea.
+    { q: 'Al cavar un pozo, a dos metros aparece una olla de barro, y a seis metros, los huesos de un animal grande. ¿Qué es más antiguo: la olla o los huesos? Explica cómo lo sabes.', model: 'Los huesos son más antiguos, si nadie removió esa tierra. La tierra y las rocas se van poniendo en capas, cada una encima de la anterior: lo que está más abajo quedó enterrado primero.' },
     { q: 'Explica por qué la vida tardó tanto en salir de los océanos hacia la tierra firme.', model: 'En la era Precámbrica la atmósfera no tenía oxígeno y la tierra era hostil; por eso la vida solo podía sobrevivir en el agua. Solo cuando se formó oxígeno y una atmósfera protectora la vida pudo colonizar la tierra firme.' },
     { q: '¿Por qué decimos que la era Precámbrica es la más larga, aunque parezca que "no pasó nada"?', model: 'Duró desde hace 4,600 hasta hace 540 millones de años: más de cuatro mil millones de años. En ella se formó la Tierra, los océanos, la atmósfera y surgió la primera vida: fueron cambios enormes, pero muy lentos.' },
     { q: 'La Tierra tiene 4,600 M.a. y el ser humano apareció hace unos 2.6 M.a. ¿Qué te dice esta comparación de magnitudes sobre nuestra historia?', model: 'El ser humano existe hace muy poco comparado con la edad de la Tierra: si los 4,600 M.a. fueran un solo día, el humano aparecería en los últimos segundos. Nuestra historia es diminuta frente a la del planeta.' },

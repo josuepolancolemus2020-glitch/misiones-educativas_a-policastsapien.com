@@ -1635,6 +1635,76 @@ const LEER = `
       textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
     };
   };
+  window.__amExtra.amCaracol = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(m(el)); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function uno(sel) { return raiz.querySelector(sel); }
+    function todos(sel) { return [].slice.call(raiz.querySelectorAll(sel)); }
+    function puntos(poly) {
+      return poly.getAttribute('points').split(' ').filter(Boolean).map(function (t) { var p = t.split(','); return aVista(poly, +p[0], +p[1]); });
+    }
+    /* ¿En qué capa cae un punto de la vista? Se pregunta a la roca de cada
+       capa encendida, en SUS coordenadas: están dentro del bloque que sube. */
+    function capaEn(px, py) {
+      var gs = todos('[data-capa]').filter(vis);
+      for (var i = 0; i < gs.length; i++) {
+        var roca = gs[i].querySelector('[data-roca]'), q = svg.createSVGPoint();
+        q.x = px; q.y = py;
+        if (roca.isPointInFill(q.matrixTransform(m(roca).inverse()))) return gs[i].getAttribute('data-capa');
+      }
+      return null;
+    }
+    function dD(el) { return parseFloat(el.style.getPropertyValue('--d')) || 0; }
+    var capas = todos('[data-capa]').map(function (g) {
+      var roca = g.querySelector('[data-roca]'), lodo = g.querySelector('[data-lodo]');
+      return { k: g.getAttribute('data-capa'), ve: vis(g), pts: puntos(roca), lodo: !!lodo && vis(lodo), dLodo: lodo ? dD(lodo) : null,
+               vetas: g.querySelectorAll('.er-veta').length, d: dD(g),
+               lodoOpaco: lodo ? parseFloat(getComputedStyle(lodo).fillOpacity) : null };
+    });
+    var ola = uno('[data-ola]'), marY = aVista(ola, 0, +ola.getAttribute('data-y'))[1];
+    /* La costa: donde el lado del cerro que da al mar cruza el agua. */
+    var c1 = capas.filter(function (c) { return c.k === 'c1'; })[0];
+    var der = c1.pts.slice().sort(function (a, b) { return b[0] - a[0]; }).slice(0, 2).sort(function (a, b) { return a[1] - b[1]; });
+    var yc = marY + 8, xc = der[0][0] + (der[1][0] - der[0][0]) * (yc - der[0][1]) / (der[1][1] - der[0][1]);
+    var cg = uno('[data-caracol]'), piedra = uno('[data-piedra]'), concha = uno('[data-concha]');
+    var fl = uno('[data-flecha]'), raya = fl.querySelector('[data-raya]');
+    var gb = uno('[data-punta-globo]');
+    return {
+      capas: capas,
+      mar: { y: marY, costa: { x: xc, y: yc, izq: capaEn(xc - 8, yc), der: capaEn(xc + 8, yc) } },
+      /* La concha es un círculo: se mide el círculo, no su caja, que al
+         girar el caracol crece por las esquinas y «se hunde» en el suelo. */
+      caracol: (function () {
+        var sh = vis(piedra) ? piedra : concha, ci = sh.querySelector('circle');
+        return { base: aVista(cg, 0, 0), cuerpo: vis(uno('[data-cuerpo]')), concha: vis(concha), piedra: vis(piedra), caja: caja(sh),
+                 centro: aVista(ci, +ci.getAttribute('cx'), +ci.getAttribute('cy')), radio: +ci.getAttribute('r') };
+      })(),
+      matas: todos('[data-mata]').map(function (g) { return { ve: vis(g), base: aVista(g, 0, 0), caja: caja(g) }; }),
+      tulio: { ve: vis(uno('[data-tulio]')), caja: caja(uno('[data-tulio]')) },
+      arado: { ve: vis(uno('[data-arado]')), reja: caja(uno('[data-reja]')) },
+      surco: { ve: vis(uno('[data-surco]')), caja: caja(uno('[data-surco]')) },
+      suelo: { ve: vis(uno('[data-suelo]')), caja: caja(uno('[data-suelo]')) },
+      globo: { ve: vis(uno('[data-globo]')), punta: aVista(gb, +gb.getAttribute('cx'), +gb.getAttribute('cy')) },
+      flecha: { ve: vis(fl), a: aVista(raya, +raya.getAttribute('x1'), +raya.getAttribute('y1')), b: aVista(raya, +raya.getAttribute('x2'), +raya.getAttribute('y2')),
+                punta: caja(fl.querySelector('[data-punta]')) },
+      llave: { ve: vis(uno('[data-llave]')), caja: caja(uno('[data-llave]')) },
+      rotulos: todos('[data-rotulo]').map(function (t) {
+        var c = caja(t), cx = (c.x0 + c.x1) / 2, cy = (c.y0 + c.y1) / 2;
+        return { k: t.getAttribute('data-rotulo'), ve: vis(t), dice: t.textContent, caja: c, capa: capaEn(cx, cy) };
+      }),
+      reloj: todos('[data-reloj]').filter(vis).map(function (t) { return t.getAttribute('data-reloj'); }),
+      telon: vis(uno('[data-telon]')), nube: vis(uno('[data-nube]')),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -1721,8 +1791,175 @@ let keniaAdverbios = null;
 let mensajePron = null;
 let chelePrecio = null;
 let aguaDN = { normal: null, llena: null };
+let caracolER = { x: null, mar: null, tops: null };
+const FIN_ER = 6;
 
 const ESCENAS = {
+  /* Las Eras Geológicas. «El caracol que apareció en la milpa».
+     ⚠️ Nada se le cree a la escena. Las capas se leen de su roca: tienen que
+     estar apiladas en su orden (la más nueva arriba), pegadas una a otra,
+     con el mismo borde a la izquierda y el lado que da al mar en una sola
+     recta. En cada paso se ven las que tienen que verse: el fondo solo, las
+     tres de lodo que caen encima, y hoy, sin las dos que se llevó la lluvia.
+     Lodo es liso y la roca lleva vetas. El caracol está sobre el fondo, en
+     el mismo sitio, del paso 1 al 4; vivo solo en el 1; tapado por su capa
+     del 2 al 4; y hoy, encima del suelo, al final del surco. El mar no se
+     mueve nunca: en el pasado todo está debajo del agua, y hoy el cerro y
+     el caracol quedan muy por encima, con la costa donde el cerro cruza el
+     agua. Al subir, todas las capas suben lo mismo. El marcador cuenta las
+     capas que hay encima del caracol, contándolas en el dibujo. ⚠️ Y la
+     prueba no se regala: ni fósil, ni estratos, ni el nombre de una era, ni
+     un animal, ni un número de más. */
+  amCaracol(e, n) {
+    const x = e.extra, r = [];
+    const nb = t => String(t == null ? '' : t).replace(/ /g, ' ').trim();
+    const cerca = (a, b, t) => Math.abs(a - b) <= t;
+    const hoy = n === 0 || n >= 5, arriba = n === 0 || n >= 4;
+    /* Lo que no depende del dibujo, primero: con una pieza mal puesta la
+       sonda deja de medir, y esto no puede quedarse sin mirar por eso. */
+    const dicho = [e.texto, e.cifra, e.palabras].concat(x.textos).map(nb).join(' | ').toLowerCase();
+    const EXACTAS = ['fósil', 'fósiles', 'fosil', 'fosiles', 'estrato', 'estratos', 'geólogo', 'geólogos', 'geología', 'eras', 'precámbrica',
+      'precámbrico', 'paleozoica', 'paleozoico', 'mesozoica', 'mesozoico', 'cenozoica', 'cenozoico', 'cuaternaria', 'cuaternario', 'trilobite',
+      'trilobites', 'pangea', 'laurasia', 'gondwana', 'continente', 'continentes', 'supercontinente', 'extinción', 'extinciones', 'extinguió',
+      'desapareció', 'desaparecieron', 'dinosaurio', 'dinosaurios', 'mamut', 'mamuts', 'mamífero', 'mamíferos', 'bacteria', 'bacterias',
+      'oxígeno', 'atmósfera', 'hielo', 'glaciación', 'meteorito', 'millones', 'sapiens', 'humano', 'humanos', 'vida', 'vivos', 'peces',
+      'anfibios', 'reptiles', 'aves', 'flores', 'volcán', 'volcanes', 'lava', 'corteza', 'cretácico', 'pérmico', 'fuego', 'placas', 'tectónica',
+      'artrópodo', 'caparazón', 'rueda', 'hierro'];
+    const FRASES = ['tierra firme', 'seres vivos', 'guardado en la roca', 'una encima de otra', 'bajo el agua', 'toda la tierra',
+      'edad de hielo', 'era geológica'];
+    const suelto = ' ' + dicho.split(/[^a-záéíóúñü]+/).filter(Boolean).join(' ') + ' ';
+    const malas = suelto.trim().split(' ').filter(w => EXACTAS.includes(w)).concat(FRASES.filter(f => suelto.includes(' ' + f + ' ')));
+    r.push([malas.length === 0, `paso ${n}: no sale ninguna palabra de la prueba (ni fósil, ni estratos, ni una era, ni un animal)`, malas]);
+    const nums = (dicho.match(/\d+/g) || []).map(Number);
+    r.push([nums.every(k => k === 0 || k === 3), `paso ${n}: ningún número de la prueba`, nums.filter(k => k !== 0 && k !== 3)]);
+    const frase = nb(e.texto);
+    const F = [['Don Tulio', 'caracol de mar', 'cerro', '¿Cómo llegó'], ['Hace muchísimo tiempo', 'fondo del mar', 'vivía el caracol'],
+      ['murió', 'lodo', 'una capa, encima otra, y otra más'], ['el lodo se volvió roca', 'la concha se volvió piedra'],
+      ['el fondo del mar se fue levantando', 'todas sus capas', 'muy por encima del agua'], ['La lluvia', 'capas de arriba', 'el arado de don Tulio', 'lo sacó'],
+      ['de abajo hacia arriba', 'las de abajo son las más viejas', '¿Qué guardarán']];
+    r.push([F[n].every(w => frase.includes(w)), `paso ${n}: la frase dice lo que se ve (${F[n].join(', ')})`, frase]);
+    const reloj = hoy ? 'hoy' : n === 4 ? 'despues' : 'antes';
+    r.push([x.reloj.length === 1 && x.reloj[0] === reloj, `paso ${n}: el letrero del tiempo dice «${reloj}»`, x.reloj]);
+    r.push([!x.telon && !x.nube, `paso ${n}: al terminar el paso no queda telón ni nube tapando nada`, [x.telon, x.nube]]);
+
+    /* ── Las capas, leídas de su roca ── */
+    const C = {}; x.capas.forEach(c => { C[c.k] = c; });
+    const ORDEN = ['c4', 'c3', 'c2', 'c1', 'v1', 'v2', 'v3', 'v4'];
+    const top = c => Math.min(...c.pts.map(p => p[1])), bot = c => Math.max(...c.pts.map(p => p[1]));
+    const izq = c => Math.min(...c.pts.map(p => p[0]));
+    const ven = n === 1 ? ['c1', 'v1', 'v2', 'v3', 'v4'] : hoy ? ['c2', 'c1', 'v1', 'v2', 'v3', 'v4'] : ORDEN;
+    const vistas = ORDEN.filter(k => C[k] && C[k].ve);
+    r.push([JSON.stringify(vistas) === JSON.stringify(ven), `paso ${n}: se ven las capas que tiene que haber (${ven.join(', ')})`, vistas]);
+    const pila = vistas.map(k => C[k]);
+    const pegadas = pila.slice(1).every((c, i) => cerca(top(c), bot(pila[i]), 0.3));
+    const tops = pila.map(top);
+    r.push([pegadas && tops.every((t, i) => i === 0 || t > tops[i - 1]),
+      `paso ${n}: apiladas en su orden, la más nueva arriba, y pegadas una a otra`, tops.map(v => Math.round(v))]);
+    r.push([pila.every(c => cerca(izq(c), izq(pila[0]), 0.3)), `paso ${n}: todas con el mismo borde a la izquierda`]);
+    const derechos = pila.flatMap(c => c.pts.filter(p => p[0] > izq(c) + 1));
+    const a0 = derechos.reduce((a, p) => p[1] < a[1] ? p : a), a1 = derechos.reduce((a, p) => p[1] > a[1] ? p : a);
+    const enRecta = p => Math.abs((a1[0] - a0[0]) * (p[1] - a0[1]) - (a1[1] - a0[1]) * (p[0] - a0[0])) / Math.hypot(a1[0] - a0[0], a1[1] - a0[1]) <= 0.3;
+    r.push([derechos.every(enRecta), `paso ${n}: el lado que da al mar es una sola recta para todas`]);
+    const lodo = n === 1 || n === 2;
+    const conLodo = ['c1', 'c2', 'c3', 'c4'].filter(k => C[k].ve && C[k].lodo);
+    const deberian = ['c1', 'c2', 'c3', 'c4'].filter(k => C[k].ve && lodo);
+    r.push([JSON.stringify(conLodo) === JSON.stringify(deberian),
+      `paso ${n}: ${lodo ? 'lo del fondo todavía es lodo' : 'el lodo ya es roca'}`, conLodo]);
+    r.push([pila.every(c => c.vetas >= 1) && ['c1', 'c2', 'c3', 'c4'].every(k => C[k].lodoOpaco === 1),
+      `paso ${n}: la roca lleva vetas y el lodo es liso: las tapa (no se distinguen solo por el color)`]);
+    if (n === 2) r.push([C.c2.d < C.c3.d && C.c3.d < C.c4.d, 'paso 2: las capas de lodo caen de abajo hacia arriba, una después de otra', [C.c2.d, C.c3.d, C.c4.d]]);
+    if (n === 3) r.push([C.c1.dLodo < C.c2.dLodo && C.c2.dLodo < C.c3.dLodo && C.c3.dLodo < C.c4.dLodo,
+      'paso 3: el lodo se vuelve roca de abajo hacia arriba', ['c1', 'c2', 'c3', 'c4'].map(k => C[k].dLodo)]);
+
+    /* ── El mar: no se mueve nunca ── */
+    if (n === 0) caracolER.mar = x.mar.y;
+    r.push([cerca(x.mar.y, caracolER.mar, 0.3), `paso ${n}: el nivel del mar es el mismo que al principio`, [x.mar.y, caracolER.mar]]);
+    const cima = tops[0], ca = x.caracol;
+    if (arriba) {
+      r.push([cima < x.mar.y - 40 && ca.base[1] < x.mar.y - 40, `paso ${n}: el cerro y el caracol quedan muy por encima del agua`, [cima, ca.base[1], x.mar.y].map(Math.round)]);
+      r.push([x.mar.costa.izq !== null && x.mar.costa.der === null, `paso ${n}: la costa: a la izquierda el cerro, a la derecha el agua`, x.mar.costa]);
+    } else {
+      r.push([cima > x.mar.y + 10 && ca.caja.y0 > x.mar.y + 10, `paso ${n}: todo está debajo del agua, el fondo y el caracol`, [cima, ca.caja.y0, x.mar.y].map(Math.round)]);
+    }
+    if (n === 3) caracolER.tops = Object.fromEntries(vistas.map(k => [k, top(C[k])]));
+    if (n === 4 && caracolER.tops) {
+      const subidas = vistas.map(k => caracolER.tops[k] - top(C[k]));
+      r.push([subidas.every(v => cerca(v, subidas[0], 0.3)) && subidas[0] > 100,
+        'paso 4: todas las capas suben lo mismo, con el caracol adentro', subidas.map(v => Math.round(v))]);
+    }
+
+    /* ── El caracol ── */
+    const encima = pila.filter(c => bot(c) <= ca.base[1] + 0.5 && top(c) < ca.caja.y0).map(c => c.k);
+    if (!hoy) {
+      if (n === 1) caracolER.x = ca.base[0];
+      r.push([cerca(ca.base[1], top(C.c1), 0.6) && cerca(ca.base[0], caracolER.x, 0.3),
+        `paso ${n}: el caracol está sobre el fondo donde vivía, en el mismo sitio`, [ca.base.map(Math.round), Math.round(top(C.c1))]]);
+      if (n >= 2) r.push([ca.caja.y0 > top(C.c2) + 1 && ca.caja.y1 <= bot(C.c2) + 0.6,
+        `paso ${n}: y lo tapa su capa, entera`, [ca.caja.y0, top(C.c2), ca.caja.y1, bot(C.c2)].map(Math.round)]);
+    } else {
+      const fondoConcha = ca.centro[1] + ca.radio;
+      r.push([cerca(ca.base[1], top(C.c2), 0.6) && cerca(fondoConcha, top(C.c2), 1) && encima.length === 0,
+        `paso ${n}: hoy el caracol está encima del suelo, sin nada encima`, [ca.base.map(Math.round), fondoConcha, Math.round(top(C.c2)), encima]]);
+    }
+    const vivo = n === 1, dePiedra = !(n === 1 || n === 2);
+    r.push([ca.cuerpo === vivo && ca.concha === !dePiedra && ca.piedra === dePiedra,
+      `paso ${n}: ${vivo ? 'el caracol está vivo, con su cuerpo' : dePiedra ? 'la concha es de piedra' : 'murió: la concha, sin cuerpo'}`, [ca.cuerpo, ca.concha, ca.piedra]]);
+    const cuenta = { 1: 0, 2: 3, 3: 3, 5: 0 };
+    if (n in cuenta) {
+      const pal = { 1: 'capas encima del caracol', 2: 'capas de lodo encima del caracol', 3: 'capas de roca encima del caracol', 5: 'capas encima: lo sacó el arado' };
+      r.push([nb(e.cifra) === String(encima.length) && encima.length === cuenta[n] && nb(e.palabras) === pal[n],
+        `paso ${n}: el marcador cuenta las capas que hay encima del caracol: ${cuenta[n]}`, [e.cifra, encima, e.palabras]]);
+    } else {
+      const mk = { 0: ['?', 'un caracol de mar en lo alto del cerro'], 4: ['↑', 'el fondo del mar, arriba del agua'], 6: ['↓', 'más abajo, más viejo'] };
+      r.push([nb(e.cifra) === mk[n][0] && nb(e.palabras) === mk[n][1], `paso ${n}: el marcador dice «${mk[n][0]}» · ${mk[n][1]}`, [e.cifra, e.palabras]]);
+    }
+
+    /* ── Lo de hoy: el suelo, la milpa, don Tulio, su arado y el surco ── */
+    const sup = top(C.c2), borde = Math.max(...C.c2.pts.filter(p => cerca(p[1], sup, 0.5)).map(p => p[0]));
+    const matas = x.matas.filter(q => q.ve);
+    if (hoy) {
+      r.push([matas.length === 4 && matas.every(q => cerca(q.base[1], sup, 0.6) && q.base[0] > izq(C.c2) && q.base[0] < borde),
+        `paso ${n}: la milpa: cuatro matas plantadas en el suelo de arriba`, matas.map(q => q.base.map(Math.round))]);
+      const t = x.tulio, rj = x.arado.reja, su = x.surco.caja;
+      r.push([t.ve && cerca(t.caja.y1, sup, 1), `paso ${n}: don Tulio está parado en el suelo`, [t.caja.y1, sup].map(Math.round)]);
+      r.push([x.arado.ve && x.surco.ve && cerca(rj.y1, sup, 2.5) && su.y0 >= sup - 1.5 && su.y1 <= sup + 3.5 && t.caja.x1 < rj.x0 + 1 && rj.x0 < ca.base[0],
+        `paso ${n}: el arado entra en el suelo, delante de don Tulio, y el caracol va después`, [rj, su].map(c => [c.x0, c.y0, c.x1, c.y1].map(Math.round))]);
+      r.push([Math.abs(ca.base[0] - su.x1) <= 6, `paso ${n}: el caracol quedó al final del surco que abrió el arado`, [ca.base[0], su.x1].map(Math.round)]);
+      r.push([x.suelo.ve && cerca(x.suelo.caja.y0, sup, 0.6), `paso ${n}: la tierra de la milpa está sobre la capa de arriba`]);
+    } else {
+      r.push([matas.length === 0 && !x.tulio.ve && !x.arado.ve && !x.surco.ve && !x.suelo.ve, `paso ${n}: todavía no hay milpa, ni don Tulio, ni arado`]);
+    }
+    if (n === 0) {
+      const g = x.globo, c = ca.caja;
+      r.push([g.ve && g.punta[0] >= c.x0 - 10 && g.punta[0] <= c.x1 + 10 && g.punta[1] >= c.y0 - 10 && g.punta[1] <= c.y1 + 2,
+        'paso 0: la pregunta sale del caracol', g.punta.map(Math.round)]);
+    } else r.push([!x.globo.ve, `paso ${n}: sin la pregunta del principio`]);
+
+    /* ── Los rótulos ── */
+    const rot = k => x.rotulos.find(q => q.k === k);
+    const enAgua = q => q.capa === null && q.caja.y0 > x.mar.y;
+    const debe = { 'mar-antes': n >= 1 && n <= 3, 'mar-hoy': arriba, fondo: n === 1, lodo: n === 2, roca: n === 3, nuevas: n === FIN_ER, viejas: n === FIN_ER };
+    const malos = Object.keys(debe).filter(k => !rot(k) || rot(k).ve !== debe[k]);
+    r.push([malos.length === 0, `paso ${n}: cada rótulo sale cuando toca`, malos]);
+    ['mar-antes', 'mar-hoy'].forEach(k => { const q = rot(k); if (q && q.ve) r.push([nb(q.dice) === 'el mar' && enAgua(q), `paso ${n}: «el mar» está escrito en el agua`, q.caja]); });
+    if (n === 1) { const q = rot('fondo'); r.push([nb(q.dice) === 'el fondo del mar' && enAgua(q) && q.caja.y1 <= top(C.c1) && top(C.c1) - q.caja.y1 <= 12,
+      'paso 1: «el fondo del mar», justo encima del fondo', q.caja]); }
+    if (n === 2 || n === 3) {
+      const ll = x.llave.caja, q = rot(n === 2 ? 'lodo' : 'roca');
+      r.push([x.llave.ve && cerca(ll.y0, top(C.c4), 1) && cerca(ll.y1, bot(C.c2), 1) && enAgua({ capa: q.capa, caja: ll }),
+        `paso ${n}: la llave abarca justo las tres capas nuevas, en el agua`, [ll.y0, top(C.c4), ll.y1, bot(C.c2)].map(Math.round)]);
+      r.push([nb(q.dice) === (n === 2 ? 'lodo' : 'roca') && q.caja.x0 >= ll.x1 && q.caja.y0 >= ll.y0 && q.caja.y1 <= ll.y1,
+        `paso ${n}: y dice «${n === 2 ? 'lodo' : 'roca'}»`, q.dice]);
+    } else r.push([!x.llave.ve, `paso ${n}: sin la llave de las capas nuevas`]);
+    if (n === FIN_ER) {
+      const f = x.flecha, qn = rot('nuevas'), qv = rot('viejas');
+      r.push([f.ve && f.a[1] >= sup && f.a[1] <= sup + 20 && f.b[1] > f.a[1] + 150 && f.punta.y1 > f.b[1] && f.a[0] > izq(C.c2),
+        'paso 6: la flecha baja por el corte, de la capa de arriba a las de más abajo', [f.a, f.b].map(p => p.map(Math.round))]);
+      r.push([nb(qn.dice) === 'más nuevas' && nb(qv.dice) === 'más viejas' && Math.abs(qn.caja.y1 - f.a[1]) <= 10 && Math.abs(qv.caja.y1 - f.punta.y1) <= 10,
+        'paso 6: «más nuevas» arriba y «más viejas» abajo, cada una en su punta', [qn.caja.y1, f.a[1], qv.caja.y1, f.punta.y1].map(Math.round)]);
+    } else r.push([!x.flecha.ve, `paso ${n}: sin la flecha del final`]);
+    return r;
+  },
   /* Desastres Naturales y el Huracán Mitch. «Adónde se va el agua del
      aguacero». ⚠️ Nada se le cree a la escena. Las dos casas se comparan
      pieza por pieza: la misma casa, con lo mismo adentro y en el mismo

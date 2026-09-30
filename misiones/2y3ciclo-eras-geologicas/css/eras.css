@@ -2678,3 +2678,82 @@ body.letra-grande .sopa-cell {
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* ── La animación que explica el tema: «El caracol que apareció en la milpa»
+   (js/animacion-caracol.js, con el aparato de css/animacion-mision.css).
+   El cerro, sus capas, el agua, la milpa y el caracol son como son: se
+   quedan iguales en la pantalla clara y en la oscura. Lo que se lee encima
+   de cualquier cosa va con .am-rotulo, que lleva su halo del color de la
+   tarjeta.
+   ⚠️ El botón que avanza: con el azul y el verde de la misión, la letra
+   blanca se quedaba en 3,2:1 y 2,4:1. Un azul y un verde más hondos la
+   dejan en 5,4:1. Y en la pantalla oscura, el --pri-lt de la misión se
+   leía a 4,1:1 sobre la tarjeta: el azul claro de aquí llega a 7:1. */
+:root {
+    --am-boton: linear-gradient(135deg, #1a6fa8, #177a45);
+    --am-pri-oscuro: #6fb1ec;
+}
+.am-raiz .er-sol         { fill: #f6b93b; }
+.am-raiz .er-agua        { fill: #4f88bb; fill-opacity: 0.6; }
+.am-raiz .er-ola         { fill: none; stroke: #d5e9f7; stroke-width: 1.3; }
+/* La roca de cada capa, con su borde; las de abajo, más oscuras. */
+.am-raiz .er-roca        { stroke: #4e463c; stroke-width: 0.7; stroke-opacity: 0.7; }
+.am-raiz .er-roca-c4     { fill: #d8c9a3; }
+.am-raiz .er-roca-c3     { fill: #c9b48b; }
+.am-raiz .er-roca-c2     { fill: #b8a58a; }
+.am-raiz .er-roca-c1     { fill: #a39683; }
+.am-raiz .er-roca-v1     { fill: #b0876a; }
+.am-raiz .er-roca-v2     { fill: #8f8574; }
+.am-raiz .er-roca-v3     { fill: #7c705f; }
+.am-raiz .er-roca-v4     { fill: #665d52; }
+/* Las vetas de la roca. El lodo es liso: tapa las vetas mientras es lodo. */
+.am-raiz .er-veta        { stroke: #3f382f; stroke-opacity: 0.45; stroke-width: 0.8; stroke-dasharray: 6 8; }
+.am-raiz .er-lodo        { stroke: #4e463c; stroke-width: 0.7; stroke-opacity: 0.7; }
+.am-raiz .er-lodo-c4     { fill: #8a7a5c; }
+.am-raiz .er-lodo-c3     { fill: #7e6e52; }
+.am-raiz .er-lodo-c2     { fill: #735f45; }
+.am-raiz .er-lodo-c1     { fill: #66553d; }
+/* El caracol: vivo, con su cuerpo; su concha; y la misma concha, de piedra. */
+.am-raiz .er-cuerpo      { fill: #d7a98a; stroke: #7a4a2a; stroke-width: 0.7; }
+.am-raiz .er-antena      { fill: none; stroke: #7a4a2a; stroke-width: 1; stroke-linecap: round; }
+.am-raiz .er-concha      { fill: #f5cf95; stroke: #8a5a2b; stroke-width: 1; }
+.am-raiz .er-espiral     { fill: none; stroke: #8a5a2b; stroke-width: 1.1; stroke-linecap: round; }
+.am-raiz .er-piedra      { fill: #9ba1a6; stroke: #3f4549; stroke-width: 1; }
+.am-raiz .er-espiral-piedra { fill: none; stroke: #3f4549; stroke-width: 1.1; stroke-linecap: round; }
+/* Lo de hoy: la tierra de la milpa, el surco, la milpa y don Tulio. */
+.am-raiz .er-suelo       { stroke: #5a3f26; stroke-width: 2.4; stroke-linecap: round; }
+.am-raiz .er-surco       { fill: none; stroke: #3d2a18; stroke-width: 2; stroke-linecap: round; }
+.am-raiz .er-tallo       { stroke: #4f8a2f; stroke-width: 2; stroke-linecap: round; }
+.am-raiz .er-hoja        { fill: none; stroke: #5f9e45; stroke-width: 1.8; stroke-linecap: round; }
+.am-raiz .er-mazorca     { fill: #e8c34a; stroke: #9a7b1c; stroke-width: 0.6; }
+.am-raiz .er-persona     { fill: #34495e; stroke: #ffffff; stroke-width: 0.8; paint-order: stroke; }
+.am-raiz .er-sombrero    { fill: #d8b46a; stroke: #7a5a20; stroke-width: 0.8; stroke-linejoin: round; }
+.am-raiz .er-brazo       { fill: none; stroke: #34495e; stroke-width: 2; stroke-linecap: round; }
+.am-raiz .er-madera      { fill: none; stroke: #7a5a20; stroke-width: 2.2; stroke-linecap: round; }
+.am-raiz .er-reja        { fill: #6f7a82; stroke: #3f4549; stroke-width: 0.6; stroke-linejoin: round; }
+/* La pregunta del paso 0. */
+.am-raiz .er-globo       { fill: #ffffff; stroke: #1b2838; stroke-width: 1.1; stroke-linejoin: round; }
+.am-raiz .er-globo-letra { fill: #1b2838; font-family: 'Fredoka', sans-serif; font-weight: 700; }
+/* La llave de las capas nuevas va en el agua: con la tinta de la pantalla,
+   que en la oscura es clara. Con el negro de siempre, sobre el agua oscura
+   no se veía. */
+.am-raiz .er-llave       { fill: none; stroke: var(--dark, #1b2838); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+/* La flecha del último paso va sobre la roca, con su halo. */
+.am-raiz .er-flecha-halo { stroke: #ffffff; stroke-width: 4.4; stroke-linecap: round; }
+.am-raiz .er-flecha      { stroke: #1b2838; stroke-width: 2.2; stroke-linecap: round; }
+.am-raiz .er-flecha-punta { fill: #1b2838; stroke: #ffffff; stroke-width: 1.2; paint-order: stroke; stroke-linejoin: round; }
+/* La lluvia del paso 5 pasa y se va: fotogramas propios, sin demora. */
+.am-raiz .er-nube        { fill: #bcc6d2; }
+.am-raiz .er-gota        { fill: none; stroke: #2f73b0; stroke-width: 1.4; stroke-dasharray: 4 6; stroke-linecap: round; }
+.am-raiz .er-nube-g      { opacity: 0; pointer-events: none; }
+.am-raiz .er-nube-g.er-pasa { animation: erPasa 2.6s ease both; }
+@keyframes erPasa { 0% { opacity: 0; } 12% { opacity: 1; } 72% { opacity: 1; } 100% { opacity: 0; } }
+/* El telón para cruzar el tiempo, entre hoy y hace muchísimo tiempo. */
+.am-raiz .er-telon       { fill: var(--card, #ffffff); }
+.am-raiz .er-telon-letra { fill: var(--dark, #1b2838); font-family: 'Fredoka', sans-serif; font-weight: 700; }
+.am-raiz .er-telon-g     { opacity: 0; pointer-events: none; }
+.am-raiz .er-telon-g.er-cae { animation: erTelon 1.3s ease both; }
+@keyframes erTelon { 0% { opacity: 0; } 20% { opacity: 1; } 78% { opacity: 1; } 100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+    .am-raiz .er-nube-g.er-pasa, .am-raiz .er-telon-g.er-cae { animation: none; }
+}
