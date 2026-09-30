@@ -25,6 +25,9 @@
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
 <link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La animación que explica el tema: el aparato es compartido y va DESPUÉS
+     del CSS de la misión, que es de donde saca sus colores. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -71,6 +74,23 @@
     <div class="tip"><span class="ti">❓</span><div>Un hongo no es una planta ni un animal: es
     <strong>otro reino</strong>, con su propia manera de vivir y de defenderse. Saber en cuál de los
     cinco cae lo que uno tiene delante no es un dato de examen: decide qué se hace con ello.</div></div>
+  </div>
+  <!-- La animación que explica el tema, justo después de la historia: dos
+       hojas de milpa, las dos comidas. A la de arriba se la come un chapulín
+       a mordidas; a la de abajo, la de don Tulio, una mancha sin boca ni
+       patas que le mete hilitos y le saca la comida. Con el veneno para
+       insectos el chapulín se cae y la mancha sigue creciendo. La mueve el
+       alumno, paso a paso. El aparato es compartido (js/animacion-mision.js)
+       y la escena es de esta misión (js/animacion-veneno.js). La frase de
+       dentro es de reserva: si el aparato no llega a cargar, se lee eso en
+       vez de un hueco. -->
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira qué se comía la hoja</h2>
+    <div id="amVeneno">
+      <p>Dos hojas de milpa, las dos comidas. A la de arriba se la come un chapulín a mordidas: es un animal.
+      A la de abajo, la de don Tulio, la mancha no tiene boca ni patas: le mete hilitos y le saca la comida por
+      dentro. Es un hongo. El veneno para insectos le hace al chapulín, pero al hongo no le hace nada.</p>
+    </div>
   </div>
   <div class="card ac-teal">
     <h2>🌳 ¿Por qué clasificamos a los seres vivos?</h2>
@@ -650,6 +670,8 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-veneno.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

@@ -352,12 +352,22 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 // (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
 // tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
 // Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
+/* ⚠️ La historia de don Tulio y la animación que va después contestaban
+   preguntas de esta prueba: «¿qué necesitaba don Tulio para salvar su
+   milpa?» era la historia palabra por palabra, y «los hongos hacen
+   fotosíntesis», el pareado de las plantas («fabrican su alimento con la luz
+   del Sol»), el error de las plantas heterótrofas y el efecto de la planta
+   verde en el jardín soleado los contesta la animación (la hoja hace su
+   comida con la luz; el hongo se la saca). Ahora preguntan otras cosas de la
+   misión, del Laboratorio: cómo se reproducen las bacterias, de dónde salió
+   la penicilina, de los musgos a los árboles, las algas de una sola célula y
+   el yogur. Cada una conserva su respuesta en el mismo lugar. */
 const evalTFBank=[
   {q:'Los seres vivos se ordenan del grupo más grande al más pequeño.',a:true,k:'tf-orden'},
   {q:'Carlos Linneo creó el sistema moderno de clasificación.',a:true,k:'tf-linneo'},
   {q:'Las bacterias fueron los primeros seres vivos de la Tierra.',a:true,k:'tf-primeros'},
   {q:'Todas las bacterias son dañinas.',a:false,k:'tf-daninas'},
-  {q:'Los hongos hacen fotosíntesis, igual que las plantas.',a:false,k:'tf-hongo-fotosintesis'},
+  {q:'La penicilina, el primer antibiótico, se sacó de una planta.',a:false,k:'tf-penicilina'},
   {q:'El ser humano pertenece al mismo reino que los hongos.',a:false,k:'tf-humano-hongo'},
   {q:'Los hongos pueden ser de una sola célula o de muchas.',a:true,k:'tf-hongo-celulas'},
   {q:'Algunas algas producen gran parte del oxígeno del planeta.',a:true,k:'tf-algas'},
@@ -372,7 +382,7 @@ const evalMCBank=[
   {q:'¿Cuál es el nombre científico del ser humano?',o:['a) Humano común','b) Persona sapiens','c) Humano racional','d) Homo sapiens'],a:3,k:'mc-homo-sapiens'},
   {q:'¿Qué pregunta NO sirve para saber a qué reino pertenece un ser vivo?',o:['a) ¿Cuántas células tiene?','b) ¿Cómo se alimenta?','c) ¿De qué color es?','d) ¿Qué tipo de célula tiene?'],a:2,k:'mc-color'},
   {q:'¿Qué se hace con las levaduras?',o:['a) Vidrio','b) Queso y otros alimentos','c) Papel','d) Jabón'],a:1,k:'mc-levaduras'},
-  {q:'¿Qué necesitaba don Tulio para salvar su milpa?',o:['a) Más veneno para insectos','b) Regar más','c) Sembrar otra vez','d) Un remedio contra hongos'],a:3,k:'mc-tulio'},
+  {q:'¿Cómo se reproducen muchas bacterias?',o:['a) Con semillas','b) Poniendo huevos','c) Con flores','d) Partiéndose en dos'],a:3,k:'mc-biparticion'},
   {q:'¿Qué tienen en común las plantas y los animales?',o:['a) Los dos son pluricelulares','b) Los dos fabrican su alimento','c) Los dos tienen pared celular','d) Los dos se desplazan'],a:0,k:'mc-pluricelulares'},
   {q:'¿Cuál de estos animales NO tiene columna?',o:['a) El pez','b) La rana','c) El caracol','d) El perro'],a:2,k:'mc-caracol'}
 ];
@@ -392,7 +402,7 @@ const evalPRBank=[
   {term:'Monera',def:'Los seres más pequeños y sencillos, sin núcleo',k:'pr-monera'},
   {term:'Protista',def:'El reino más variado; casi todos viven en el agua',k:'pr-protista'},
   {term:'Fungi',def:'Durante mucho tiempo se creyó que eran plantas',k:'pr-fungi'},
-  {term:'Plantae',def:'Fabrican su alimento con la luz del Sol',k:'pr-plantae'},
+  {term:'Plantae',def:'De los musgos a los árboles más grandes',k:'pr-plantae'},
   {term:'Animalia',def:'Se desplazan y buscan su alimento',k:'pr-animalia'},
   {term:'Taxonomía',def:'Ciencia que ordena y nombra a los seres vivos',k:'pr-taxonomia'},
   {term:'Especie',def:'Seres tan parecidos que tienen hijos fértiles entre sí',k:'pr-especie'},
@@ -507,9 +517,9 @@ const critErrorBank=[
   {k:'er-bacterias-fungi',txt:'"Las bacterias pertenecen al reino Fungi porque son muy pequeñas y se ven con el microscopio".',
    g1:'Las bacterias pertenecen al reino MONERA, no al reino Fungi.',
    g2:'El tamaño no define el reino: lo definen el tipo de célula (procariota) y la forma de nutrición.'},
-  {k:'er-plantas-heterotrofas',txt:'"Las plantas son heterótrofas porque toman agua y sales minerales del suelo para vivir".',
-   g1:'Las plantas son AUTÓTROFAS: fabrican su propio alimento mediante la fotosíntesis.',
-   g2:'Tomar agua y sales no es alimentarse; su alimento (glucosa) lo fabrican ellas mismas con la luz.'},
+  {k:'er-algas-plantas',txt:'"Las algas de una sola célula son plantas porque hacen fotosíntesis".',
+   g1:'Las algas de una sola célula son del reino PROTISTA, no del reino Plantae.',
+   g2:'Hacer fotosíntesis no basta: las plantas tienen muchas células, y estas algas tienen una sola.'},
   {k:'er-humano-plantae',txt:'"El ser humano pertenece al reino Plantae porque es un ser vivo grande y complejo".',
    g1:'El ser humano pertenece al reino ANIMALIA.',
    g2:'Es pluricelular, heterótrofo y se desplaza; las plantas, en cambio, son autótrofas y viven fijas.'},
@@ -534,7 +544,7 @@ const critCauseBank=[
   {k:'cau-animal',cause:'Un animal deja de encontrar de qué alimentarse.',guide:'Como no fabrica su alimento, se debilita y puede morir.'},
 ];
 const critEffectBank=[
-  {k:'ef-planta-verde',effect:'Una planta crece sana y bien verde en un jardín soleado.',guide:'Fabrica su propio alimento con la luz: es autótrofa.'},
+  {k:'ef-yogur',effect:'Un poco de yogur echado en leche tibia la vuelve yogur.',guide:'Lo hacen bacterias (reino Monera): se multiplican en la leche y la vuelven yogur.'},
   {k:'ef-ameba',effect:'Una ameba se desplaza en una gota de agua y captura su alimento.',guide:'Es un protista: vive en el agua y es de una sola célula.'},
   {k:'ef-masa-pan',effect:'La masa del pan crece y se esponja.',guide:'Lo hacen las levaduras, que son hongos.'},
 ];

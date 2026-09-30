@@ -9767,6 +9767,133 @@ Salió roja con cada una.
 Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
 de 67 ms.
 
+### La cuadragésima cuarta: Los Cinco Reinos, y lo que enseñó
+
+La segunda de la Ruta de la Vida es **Los Cinco Reinos**
+(`misiones/2y3ciclo-cinco-reinos/`, `js/animacion-veneno.js`). La historia es
+la de don Tulio: a su milpa le cayeron unas manchas que se comían la hoja,
+compró veneno para insectos, que es lo que se compra siempre, y no le hizo
+nada, porque no era un insecto: era un hongo. Perdió el dinero del veneno y
+media milpa. La historia dice que un hongo no es una planta ni un animal, que
+es otro reino con su propia manera de vivir, y que saber en cuál cae lo que uno
+tiene delante decide qué se hace con ello. La animación son dos hojas de milpa,
+las dos comidas, y abajo una etiqueta por cada reino que se va descubriendo:
+
+- a la de arriba le faltan pedazos de la orilla y la de abajo, la de don
+  Tulio, tiene manchas: ¿se las come lo mismo?;
+- lo que tienen igual: son de una planta, y con la luz del sol hacen su propia
+  comida (los granitos). Sale la etiqueta «planta»;
+- en la de arriba llega un chapulín y se come la hoja a mordidas, con granitos
+  y todo: es un animal;
+- en la de abajo nadie muerde: la mancha no tiene boca ni patas, mete hilitos
+  en la hoja y por ahí le saca la comida (los granitos de cerca se van al
+  centro de la mancha): es un hongo;
+- llega el veneno para insectos: el chapulín deja de comer y se cae, y al
+  hongo no le hace nada: la mancha sigue creciendo hasta tapar media hoja;
+- son tres reinos, y cada uno consigue su comida a su manera; la bomba del
+  veneno se va a la etiqueta del animal, que es para quien sirve;
+- y la pregunta es del alumno: preguntarle a alguien que siembre qué plagas ha
+  tenido su milpa o su huerto, y anotar cuáles eran animales.
+
+Ocho cosas que valen para las que siguen:
+
+1. ⚠️ **Las dos hojas son la MISMA hoja**, y la luz les da a las dos igual. Lo
+   único que cambia es quién se las come y cómo, así que lo que se compara es
+   la manera de comer, que es lo que separa estos tres reinos. La sonda compara
+   las dos hojas punto por punto.
+2. ⚠️ **El hongo no se reconoce por el color.** La prueba pregunta cuál de las
+   tres preguntas NO sirve para clasificar, y la respuesta es «¿de qué color
+   es?». Aquí se reconoce por cómo come: sin boca y sin patas, con hilitos
+   metidos en la hoja. Ni «verde» ni «color» salen en ninguna frase.
+3. ⚠️ **No se enseña a adivinar una plaga por la forma del daño.** «Mordida es
+   insecto y mancha es hongo» sería una regla falsa: hay manchas que no son de
+   un hongo, e insectos que chupan en vez de morder. La escena cuenta ESTE caso,
+   que es el de la historia, y termina en algo que el alumno averigua en su
+   casa.
+4. ⚠️ **La historia estaba en la prueba, palabra por palabra.** «¿Qué necesitaba
+   don Tulio para salvar su milpa?», con «un remedio contra hongos» de
+   respuesta, estaba en la misión y en la ficha. Y la animación contestaba
+   cuatro más: que los hongos no hacen fotosíntesis, el pareado de las plantas
+   («fabrican su alimento con la luz del Sol»), el error de pensamiento crítico
+   que dice que las plantas son heterótrofas y el efecto de la planta verde en
+   un jardín soleado. Ahora preguntan otras cosas de la misión, sacadas de su
+   Laboratorio: cómo se reproducen muchas bacterias (partiéndose en dos), que la
+   penicilina salió de un hongo y no de una planta, que las plantas van de los
+   musgos a los árboles más grandes, que las algas de una sola célula son
+   protistas y que el yogur lo hacen bacterias. Cada una conserva su respuesta
+   en el mismo lugar.
+5. ⚠️ **La felicitación de la ficha, en la hoja de los pareados, daba
+   respuestas**: nombraba las tres preguntas para clasificar y los cinco
+   reinos. Ahora solo pide revisar.
+6. ⚠️ **Lo que se ve y lo que se mueve de una misma pieza van en dos
+   envolturas, y volvió a morder.** Con el veneno, el chapulín desaparecía al
+   tocar el botón, antes de que cayera una sola gota: la pieza que se apagaba
+   era la misma que llegaba, `A.ver` y `A.mover` comparten `--d`, y la demora
+   de llegar (0) le ganaba a la de apagarse (1300). Al final del paso todo
+   estaba bien, así que la sonda no lo veía: se vio en las fotos a medio viaje.
+   Ahora el chapulín lleva una envoltura solo para verse, y la sonda lee las
+   demoras: que siga a la vista mientras caen las gotas y se apague cuando se
+   cae.
+7. **Una mordida es un hueco de verdad, hecho con una máscara.** Pintar encima
+   un círculo del color del fondo no sirve: el fondo es un degradado y cambia
+   con la pantalla oscura. La sonda lee los círculos de la máscara y le pregunta
+   a la hoja (`isPointInFill`) si cada mordida muerde la orilla: una parte
+   dentro y otra fuera.
+8. **La media hoja se cuenta, no se dice.** La sonda recorre la hoja de don
+   Tulio punto por punto y cuenta cuántos caen dentro de una mancha: 51,8 % con
+   el veneno, y menos del 12 % antes.
+
+La sonda de esta escena **no le cree nada a la escena**. Comprueba:
+
+- que las dos hojas sean la misma, corrida hacia abajo, y que no se muevan;
+- que cada mordida muerda la orilla de la hoja de arriba, que las viejas estén
+  siempre y las del chapulín desde el paso 2;
+- que las tres patas del chapulín pisen esa orilla y que su boca esté en la
+  última mordida, y que el chapulín solo esté en los pasos 2 y 3;
+- que cada granito esté dentro de su hoja, fuera de las mordidas y de las
+  manchas, que se vean los que tienen que verse (12 y 12, después 9, después
+  6), y que los que faltan se hayan ido a la boca del chapulín o al centro de
+  una mancha;
+- que las manchas estén en la hoja de don Tulio, chicas al principio, un poco
+  más grandes con los hilitos y tapando media hoja con el veneno;
+- que cada hilito salga del centro de una mancha y vaya por dentro de la hoja;
+- que cada rayo salga del sol y llegue a una hoja, fuera de las manchas;
+- que las gotas caigan sobre las dos hojas, también sobre las manchas, y que
+  el chapulín siga ahí mientras caen;
+- que las etiquetas salgan una por paso, en su orden, y que la bomba acabe en
+  la del animal;
+- que ningún rótulo se monte en otro y que el marcador cuente lo que se ve;
+- y que no salga ninguna palabra de la prueba ni un número.
+
+Se comprobó al revés con dieciocho averías, plantadas una por una:
+
+- una mordida metida en la hoja, lejos de la orilla;
+- el chapulín flotando sobre la orilla;
+- los granitos comidos quedándose donde empezó a comer;
+- la mancha tapando más de media hoja;
+- el marcador del paso 2 contando una mordida de menos;
+- los hilitos saliéndose de la hoja;
+- un granito de abajo yéndose a un lado de la mancha;
+- el chapulín desapareciendo antes de que caigan las gotas;
+- «fabrica» en una frase;
+- las etiquetas del animal y del hongo cambiadas de lugar;
+- la bomba sin llegar a la etiqueta del animal;
+- una gota cayendo entre las dos hojas;
+- un granito naciendo dentro de una mancha;
+- la hoja de don Tulio distinta de la otra;
+- un rayo de sol sin llegar a la hoja;
+- la etiqueta de la planta desde el paso 0;
+- el rótulo del veneno quedándose en el paso 5;
+- el chapulín sin llegar a la última mordida.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 57 cuadros por segundo. El peor cuadro, al
+empezar otra vez, sale entre 133 y 150 ms; La Célula, medida el mismo día en la
+misma máquina, da 83. Es lo que ya se aceptó en Reproducción: al volver al
+principio regresa todo a la vez, y ahí están la máscara de las mordidas y las
+manchas recortadas por la hoja.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -9882,7 +10009,12 @@ llama como el parámetro de `construir` (`ayuda`): la declaración lo tapa, y la
 escena revienta al montar. Lo que se cae y se va (una célula que se llevó el
 machete) sigue teniendo su lugar: la sonda mide el hueco con el sitio que tenía
 antes de caerse, no con donde quedó. Y si una pieza nueva ocupa el lugar de una
-que se fue, llevan el mismo nombre: la sonda busca la que se ve.
+que se fue, llevan el mismo nombre: la sonda busca la que se ve. Lo que se ve y
+lo que se mueve de una misma pieza van en dos envolturas: `A.ver` y `A.mover`
+comparten `--d`, y la última que se escribe gana; cuando importa cuándo se
+apaga algo, la sonda lee su demora. Y un hueco en el dibujo (una mordida) se
+hace con una máscara, no pintando encima el color del fondo, que es un
+degradado y cambia con la pantalla oscura.
 
 Si el `--sec` de la misión es claro (un ámbar, un amarillo), la letra blanca
 del botón que avanza no se lee en su punta: la misión declara en su CSS

@@ -481,3 +481,38 @@ body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* ── La animación que explica el tema: «El veneno que no servía»
+   (js/animacion-veneno.js, con el aparato de css/animacion-mision.css).
+   Las hojas, el chapulín, las manchas y la bomba son como son: se quedan
+   iguales en la pantalla clara y en la oscura. Lo que se lee sobre la
+   tarjeta va con .am-rotulo, que lleva su halo del color de la tarjeta, y
+   las etiquetas de los reinos van del color de la tarjeta con la tinta de la
+   pantalla. Nada se dice solo con color: las mordidas y las manchas se
+   cuentan, y lo perdido se mide. */
+/* ⚠️ El botón que avanza: con el verde y el teal de la misión, la letra
+   blanca se quedaba en 3,3:1 y 3,7:1. Un tono más hondo de los dos la deja
+   por encima de 5:1. */
+:root { --am-boton: linear-gradient(135deg, #15803d, #0f766e); }
+.am-raiz .vn-hoja          { fill: #4d9e3a; stroke: #2f6b23; stroke-width: 1.2; }
+.am-raiz .vn-vena          { fill: none; stroke: #9fd58a; stroke-width: 1; }
+.am-raiz .vn-sol           { fill: #fbbf24; stroke: #d97706; stroke-width: 1.2; }
+.am-raiz .vn-sol-punta     { stroke: #f59e0b; stroke-width: 1.8; stroke-linecap: round; }
+.am-raiz .vn-rayo          { fill: none; stroke: #f59e0b; stroke-width: 1.5; stroke-dasharray: 3 3; }
+.am-raiz .vn-granito       { fill: #fde68a; stroke: #b45309; stroke-width: 0.8; }
+.am-raiz .vn-ch-cuerpo     { fill: #b7892c; stroke: #5c3d0c; stroke-width: 1; }
+.am-raiz .vn-ch-muslo      { fill: #9a6f1c; stroke: #5c3d0c; stroke-width: 1; }
+.am-raiz .vn-ch-pata       { fill: none; stroke: #5c3d0c; stroke-width: 1.4; stroke-linecap: round; }
+.am-raiz .vn-ch-antena     { fill: none; stroke: #5c3d0c; stroke-width: 0.9; stroke-linecap: round; }
+.am-raiz .vn-ch-ojo        { fill: #1f1305; }
+.am-raiz .vn-punto         { fill: none; stroke: none; }
+.am-raiz .vn-mancha-halo   { fill: #facc15; fill-opacity: 0.6; }
+.am-raiz .vn-mancha        { fill: #a16207; stroke: #713f12; stroke-width: 0.8; vector-effect: non-scaling-stroke; }
+.am-raiz .vn-mancha-anillo { fill: none; stroke: #fcd34d; stroke-width: 0.8; vector-effect: non-scaling-stroke; }
+.am-raiz .vn-mancha-centro { fill: #57300c; }
+.am-raiz .vn-hilo          { fill: none; stroke: #3f1d05; stroke-width: 0.95; stroke-linecap: round; }
+.am-raiz .vn-gota          { fill: #60a5fa; stroke: #1d4ed8; stroke-width: 0.8; }
+.am-raiz .vn-bomba         { fill: #e5e7eb; stroke: #374151; stroke-width: 1; }
+.am-raiz .vn-bomba-gatillo { fill: none; stroke: #374151; stroke-width: 1.4; stroke-linecap: round; }
+.am-raiz .vn-bomba-banda   { fill: #dc2626; }
+.am-raiz .vn-etiqueta      { fill: var(--card, #fff); stroke: var(--am-pri); stroke-width: 1.4; }

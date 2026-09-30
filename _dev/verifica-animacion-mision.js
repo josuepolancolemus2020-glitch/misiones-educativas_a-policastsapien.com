@@ -1712,6 +1712,98 @@ const LEER = `
       textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
     };
   };
+  window.__amExtra.amVeneno = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(m(el)); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function uno(sel, en) { return (en || raiz).querySelector(sel); }
+    function todos(sel, en) { return [].slice.call((en || raiz).querySelectorAll(sel)); }
+    /* Las hojas no llevan movimiento: sus coordenadas son las de la vista
+       (se comprueba), y así un punto de la vista se le pregunta tal cual. */
+    var hojaA = uno('[data-hoja="a"]'), hojaB = uno('[data-hoja="b"]');
+    function quieta(h) { var q = m(h); return Math.abs(q.a - 1) < 1e-6 && Math.abs(q.d - 1) < 1e-6 && Math.abs(q.e) < 1e-6 && Math.abs(q.f) < 1e-6; }
+    function dentro(h, p) { var q = svg.createSVGPoint(); q.x = p[0]; q.y = p[1]; return h.isPointInFill(q); }
+    /* Las mordidas viven en una máscara (no se pintan): se leen de sus
+       atributos, y se ven si su opacidad es 1. */
+    var mascara = uno('mask');
+    var mordidas = todos('[data-mordida]').map(function (c) {
+      var cx = +c.getAttribute('cx'), cy = +c.getAttribute('cy'), r = +c.getAttribute('r');
+      return { tipo: c.getAttribute('data-mordida'), ve: parseFloat(getComputedStyle(c).opacity) > 0.99, c: [cx, cy], r: r,
+               abajoDentro: dentro(hojaA, [cx, cy + r * 0.6]), arribaFuera: !dentro(hojaA, [cx, cy - r * 0.6]), tocaB: dentro(hojaB, [cx, cy]) };
+    });
+    var manchas = todos('[data-mancha]').map(function (g) {
+      var c = uno('[data-mancha-cuerpo]', g), cx = +c.getAttribute('cx'), cy = +c.getAttribute('cy'), r = +c.getAttribute('r');
+      var p = aVista(c, cx, cy), q = aVista(c, cx + r, cy);
+      return { ve: vis(c), c: p, r: Math.hypot(q[0] - p[0], q[1] - p[1]), dentro: dentro(hojaB, p) };
+    });
+    /* Cuánto de la hoja de don Tulio tapan las manchas: se cuenta punto
+       por punto, cada medio punto de la vista. */
+    var bb = hojaB.getBBox(), tot = 0, cub = 0;
+    for (var x = bb.x; x <= bb.x + bb.width; x += 0.5) {
+      for (var y = bb.y; y <= bb.y + bb.height; y += 0.5) {
+        if (!dentro(hojaB, [x, y])) continue;
+        tot++;
+        for (var k = 0; k < manchas.length; k++) { var mm = manchas[k]; if (mm.ve && Math.hypot(x - mm.c[0], y - mm.c[1]) <= mm.r) { cub++; break; } }
+      }
+    }
+    var ch = uno('[data-chapulin]');
+    var bocaEl = uno('[data-boca]', ch);
+    var sol = uno('.vn-sol');
+    return {
+      quietas: quieta(hojaA) && quieta(hojaB),
+      dA: hojaA.getAttribute('d'), dB: hojaB.getAttribute('d'),
+      usaMascara: !!mascara && hojaA.parentNode.getAttribute('mask') === 'url(#' + mascara.id + ')',
+      mordidas: mordidas,
+      granos: todos('[data-granito]').map(function (g) {
+        var p = aVista(g, +g.getAttribute('cx'), +g.getAttribute('cy'));
+        return { hoja: g.getAttribute('data-granito'), ve: vis(g), p: p, dentroA: dentro(hojaA, p), dentroB: dentro(hojaB, p) };
+      }),
+      manchas: manchas,
+      cubre: tot ? cub / tot : 0,
+      hilos: todos('[data-hilo]').map(function (h) {
+        var L = h.getTotalLength(), pts = [];
+        for (var i = 0; i <= 12; i++) { var q = h.getPointAtLength(L * i / 12); pts.push(aVista(h, q.x, q.y)); }
+        var off = parseFloat(h.style.strokeDashoffset); if (isNaN(off)) off = 0;
+        return { ve: vis(h) && off < 1, pts: pts, fuera: pts.filter(function (p) { return !dentro(hojaB, p); }).length };
+      }),
+      chapulin: {
+        ve: vis(ch),
+        patas: todos('[data-pata]', ch).map(function (c) {
+          var p = aVista(c, +c.getAttribute('cx'), +c.getAttribute('cy'));
+          return { p: p, bajo: dentro(hojaA, [p[0], p[1] + 1.5]), sobre: !dentro(hojaA, [p[0], p[1] - 1.5]) };
+        }),
+        boca: aVista(bocaEl, +bocaEl.getAttribute('cx'), +bocaEl.getAttribute('cy')),
+        caja: caja(ch),
+        /* Cuándo se apaga y cuándo se cae: con el veneno, las dos cosas a la
+           vez y después de que caen las gotas. */
+        dVer: parseFloat(ch.style.getPropertyValue('--d')) || 0,
+        dCae: parseFloat(uno('[data-cae]', ch).style.getPropertyValue('--d')) || 0
+      },
+      dGotas: todos('[data-gota]').map(function (g) { return parseFloat(g.style.getPropertyValue('--d')) || 0; }),
+      sol: { c: aVista(sol, +sol.getAttribute('cx'), +sol.getAttribute('cy')), r: +sol.getAttribute('r') },
+      rayos: todos('[data-rayo]').map(function (l) {
+        var a = aVista(l, +l.getAttribute('x1'), +l.getAttribute('y1')), b = aVista(l, +l.getAttribute('x2'), +l.getAttribute('y2'));
+        return { ve: vis(l), a: a, b: b, enA: dentro(hojaA, b), enB: dentro(hojaB, b) };
+      }),
+      gotas: todos('[data-gota]').map(function (g) {
+        var p = aVista(g, +g.getAttribute('cx'), +g.getAttribute('cy'));
+        return { ve: vis(g), p: p, enA: dentro(hojaA, p), enB: dentro(hojaB, p) };
+      }),
+      bomba: { ve: vis(uno('[data-bomba]')), caja: caja(uno('[data-bomba]')) },
+      etiquetas: todos('[data-etiqueta]').map(function (g) {
+        return { k: g.getAttribute('data-etiqueta'), ve: vis(g), caja: caja(uno('[data-caja]', g)), dice: [].map.call(g.querySelectorAll('text'), function (t) { return t.textContent; }) };
+      }),
+      rotulos: todos('[data-rotulo]').map(function (t) { return { k: t.getAttribute('data-rotulo'), ve: vis(t), dice: t.textContent, caja: caja(t) }; }),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   window.__amExtra.amHerida = function (raiz) {
     var vis = window.__amVisible;
     var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
@@ -2332,6 +2424,9 @@ const FIN_ER = 6;
 /* Áreas Protegidas: lo que se mide en un paso y se usa en los siguientes
    (el agua que guardó cada cerro y lo que se lleva la toma en un mes). */
 let tomaAP = { a0: null, mes: null };
+/* Los Cinco Reinos: dónde quedó la boca del chapulín (paso 2) y cuánto
+   tapaban las manchas antes del veneno (paso 3). */
+let bocaVeneno = null, cubreVeneno = null;
 /* El área de un polígono (en la vista) que queda por debajo de un nivel:
    se recorta con la recta y se cuenta con la fórmula del cordón. */
 function areaDebajo(poly, nivel) {
@@ -2369,6 +2464,166 @@ function superficieEn(poly, x) {
 }
 
 const ESCENAS = {
+  /* Los Cinco Reinos. «El veneno que no servía».
+     ⚠️ Nada se le cree a la escena. Las mordidas se leen de la máscara y se
+     comprueba que cada una muerda la orilla de la hoja de arriba; las patas
+     del chapulín, que pisen esa orilla; lo que tapan las manchas se cuenta
+     punto por punto sobre la hoja de don Tulio (media hoja con el veneno),
+     y cada granito que se va, que se vaya a la boca del chapulín o al centro
+     de una mancha. */
+  amVeneno(e, n) {
+    const x = e.extra, r = [];
+    const nb = t => String(t == null ? '' : t).replace(/\u00a0/g, ' ').trim();
+    const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+    const monta = (a, b) => a.x0 < b.x1 - 0.5 && b.x0 < a.x1 - 0.5 && a.y0 < b.y1 - 0.5 && b.y0 < a.y1 - 0.5;
+    const dentroCaja = (c, d) => c.x0 >= d.x0 - 0.5 && c.x1 <= d.x1 + 0.5 && c.y0 >= d.y0 - 0.5 && c.y1 <= d.y1 + 0.5;
+    /* Lo que no depende del dibujo, primero. */
+    const dicho = [e.texto, e.cifra, e.palabras].concat(x.textos).map(nb).join(' | ').toLowerCase();
+    const EXACTAS = ['fotosíntesis', 'clorofila', 'cloroplasto', 'cloroplastos', 'autótrofo', 'autótrofos', 'autótrofa', 'autótrofas',
+      'heterótrofo', 'heterótrofos', 'heterótrofa', 'heterótrofas', 'eucariota', 'eucariotas', 'procariota', 'procariotas', 'célula', 'células',
+      'unicelular', 'unicelulares', 'pluricelular', 'pluricelulares', 'quitina', 'celulosa', 'pared', 'fungi', 'plantae', 'animalia', 'monera',
+      'protista', 'protistas', 'taxonomía', 'taxón', 'especie', 'especies', 'linneo', 'whittaker', 'descomponedor', 'descomponedores', 'moho',
+      'mohos', 'levadura', 'levaduras', 'champiñón', 'champiñones', 'bacteria', 'bacterias', 'ameba', 'amebas', 'alga', 'algas', 'vertebrado',
+      'vertebrados', 'invertebrado', 'invertebrados', 'columna', 'oxígeno', 'color', 'verde', 'verdes', 'absorbe', 'absorben', 'fabrica',
+      'fabrican', 'alimento', 'alimentos', 'desplaza', 'desplazan', 'penicilina', 'antibiótico', 'semillas', 'parásito', 'parásitos', 'hifa',
+      'hifas', 'latín', 'núcleo', 'espora', 'esporas', 'remedio', 'musgos', 'yogur', 'queso', 'caracol', 'filo', 'sapiens', 'glucosa'];
+    const suelto = ' ' + dicho.split(/[^a-záéíóúñü]+/).filter(Boolean).join(' ') + ' ';
+    const malas = EXACTAS.filter(w => suelto.includes(' ' + w + ' '));
+    r.push([malas.length === 0, `paso ${n}: no sale ninguna palabra de la prueba (ni cómo se llama la manera de comer, ni la pared, ni los reinos en latín, ni el color)`, malas]);
+    const nums = [e.texto].concat(x.textos).map(nb).join(' ').match(/\d+/g) || [];
+    r.push([nums.length === 0, `paso ${n}: ningún número en la frase ni en el dibujo`, nums]);
+    const frase = nb(e.texto);
+    const FR = [['Estas dos hojas de milpa están comidas', 'le pasó lo de don Tulio', '¿Se las come lo mismo?'],
+      ['son de una planta', 'con la luz del sol hacen su propia comida', 'esa comida son los granitos'],
+      ['un chapulín llega y se come la hoja a mordidas', 'con granitos y todo', 'El chapulín es un animal'],
+      ['nadie muerde', 'no tiene boca ni patas', 'Mete hilitos en la hoja', 'le saca la comida', 'Es un hongo'],
+      ['Llega el veneno para insectos', 'Al chapulín sí le hace', 'deja de comer y se cae', 'Al hongo no le hace nada', 'la mancha sigue creciendo'],
+      ['Son tres reinos distintos', 'cada uno consigue su comida a su manera', 'El veneno para insectos es para un animal', 'el hongo es de otro reino'],
+      ['¿Y tú?', 'qué plagas ha tenido su milpa o su huerto', 'cuáles eran animales']];
+    r.push([FR[n].every(w => frase.includes(w)), `paso ${n}: la frase dice lo que se ve (${FR[n].join(', ')})`, frase]);
+
+    /* ── Las dos hojas: la misma, corrida hacia abajo, y quietas ── */
+    const numsD = d => (d.match(/-?\d+(\.\d+)?/g) || []).map(Number);
+    const a = numsD(x.dA), b = numsD(x.dB);
+    let dy = null, igual = a.length === b.length && a.length > 20;
+    for (let i = 0; igual && i < a.length; i += 2) {
+      if (Math.abs(a[i] - b[i]) > 0.01) igual = false;
+      const d = b[i + 1] - a[i + 1];
+      if (dy === null) dy = d; else if (Math.abs(d - dy) > 0.02) igual = false;
+    }
+    r.push([igual && dy > 40 && x.quietas, `paso ${n}: las dos hojas son la misma, la de don Tulio debajo, y no se mueven`, { dy }]);
+    r.push([x.usaMascara, `paso ${n}: las mordidas son huecos de la hoja de arriba (su máscara)`]);
+
+    /* ── Las mordidas: muerden la orilla de arriba de la hoja de arriba ── */
+    const mord = x.mordidas.filter(m => m.ve);
+    const malMord = mord.filter(m => !m.abajoDentro || !m.arribaFuera || m.tocaB);
+    r.push([malMord.length === 0, `paso ${n}: cada mordida muerde la orilla de la hoja de arriba (una parte dentro y otra fuera)`, malMord.map(m => m.c)]);
+    r.push([mord.length === (n >= 2 ? 5 : 2), `paso ${n}: se ven ${n >= 2 ? 'las dos mordidas viejas y las tres del chapulín' : 'solo las dos mordidas viejas'}`, mord.length]);
+    r.push([x.mordidas.filter(m => m.tipo === 'vieja').every(m => m.ve), `paso ${n}: las mordidas viejas están siempre`]);
+
+    /* ── Las manchas: en la hoja de don Tulio, y lo que tapan, contado ── */
+    const man = x.manchas.filter(m => m.ve);
+    r.push([man.length === 3 && man.every(m => m.dentro), `paso ${n}: hay tres manchas, todas en la hoja de don Tulio`, man.length]);
+    const rad = man.map(m => Math.round(m.r * 10) / 10);
+    if (n <= 2) r.push([rad.every(v => Math.abs(v - 5) < 0.3) && x.cubre < 0.05, `paso ${n}: las manchas todavía son chicas`, { rad, cubre: x.cubre }]);
+    if (n === 3) r.push([rad.every(v => Math.abs(v - 8) < 0.3) && x.cubre < 0.12, 'paso 3: las manchas crecen un poco al meter los hilitos', { rad, cubre: x.cubre }]);
+    if (n >= 4) r.push([x.cubre > 0.45 && x.cubre < 0.58 && rad.every(v => v > 18), `paso ${n}: las manchas tapan media hoja (contado punto por punto)`, { rad, cubre: Math.round(x.cubre * 1000) / 1000 }]);
+
+    /* ── Los hilitos: salen de una mancha y no se salen de la hoja ── */
+    const hil = x.hilos.filter(h => h.ve);
+    r.push([hil.length === (n >= 4 ? 24 : n === 3 ? 12 : 0), `paso ${n}: ${n >= 3 ? 'se ven los hilitos del hongo' : 'todavía no se ven hilitos'}`, hil.length]);
+    const sueltos = hil.filter(h => !man.some(m => dist(h.pts[0], m.c) < 1));
+    r.push([sueltos.length === 0, `paso ${n}: cada hilito sale del centro de una mancha`, sueltos.length]);
+    const fuera = hil.filter(h => h.fuera > 0);
+    r.push([fuera.length === 0, `paso ${n}: los hilitos van por dentro de la hoja`, fuera.length]);
+
+    /* ── Los granitos: dentro de su hoja, nunca en una mordida ni en una
+       mancha; los que se van, a la boca o a una mancha ── */
+    const gA = x.granos.filter(g => g.hoja === 'a'), gB = x.granos.filter(g => g.hoja === 'b');
+    const vA = gA.filter(g => g.ve), vB = gB.filter(g => g.ve);
+    const esperaA = n === 0 ? 0 : n === 1 ? 12 : 9, esperaB = n === 0 ? 0 : n <= 2 ? 12 : n === 3 ? 9 : 6;
+    r.push([vA.length === esperaA && vB.length === esperaB, `paso ${n}: granitos que se ven: ${esperaA} arriba y ${esperaB} abajo`, [vA.length, vB.length]]);
+    const malG = vA.filter(g => !g.dentroA || mord.some(m => dist(g.p, m.c) <= m.r)).length + vB.filter(g => !g.dentroB || man.some(m => dist(g.p, m.c) <= m.r)).length;
+    r.push([malG === 0, `paso ${n}: cada granito está dentro de su hoja, fuera de las mordidas y de las manchas`, malG]);
+    if (n === 1) r.push([+e.cifra === vA.length && +e.cifra === vB.length, 'paso 1: el marcador dice cuántos granitos hizo cada hoja', e.cifra]);
+    if (n === 2) bocaVeneno = x.chapulin.boca;
+    if (n >= 2 && bocaVeneno) {
+      const idos = gA.filter(g => !g.ve);
+      r.push([idos.length === 3 && idos.every(g => dist(g.p, bocaVeneno) < 2.5), `paso ${n}: los granitos que faltan arriba se fueron a la boca del chapulín`, idos.map(g => g.p.map(v => Math.round(v)))]);
+    }
+    if (n >= 3) {
+      const idos = gB.filter(g => !g.ve);
+      r.push([idos.every(g => man.some(m => dist(g.p, m.c) < 1.5)), `paso ${n}: los granitos que faltan abajo se fueron al centro de una mancha`, idos.length]);
+    }
+
+    /* ── El chapulín: solo en el 2 y el 3, pisando la orilla y mordiendo ── */
+    const ch = x.chapulin;
+    r.push([ch.ve === (n === 2 || n === 3), `paso ${n}: el chapulín ${n === 2 || n === 3 ? 'está en la hoja de arriba' : 'no está'}`]);
+    if (n === 2 || n === 3) {
+      r.push([ch.patas.length === 3 && ch.patas.every(p => p.bajo && p.sobre), `paso ${n}: las tres patas del chapulín pisan la orilla de la hoja`, ch.patas.map(p => [p.bajo, p.sobre])]);
+      const nuevas = x.mordidas.filter(m => m.tipo === 'nueva' && m.ve).sort((p, q) => p.c[0] - q.c[0]);
+      const ult = nuevas[0];
+      r.push([!!ult && dist(ch.boca, ult.c) <= ult.r + 3 && ch.boca[0] > ult.c[0], `paso ${n}: la boca del chapulín está en la última mordida`, ult ? Math.round(dist(ch.boca, ult.c) * 10) / 10 : null]);
+    }
+
+    /* ── La luz: del sol a las dos hojas, desde el paso 1 ── */
+    const ray = x.rayos.filter(q => q.ve);
+    r.push([ray.length === (n >= 1 ? 2 : 0), `paso ${n}: ${n >= 1 ? 'la luz les llega a las dos hojas' : 'todavía no se dibuja la luz'}`, ray.length]);
+    if (n >= 1) {
+      const d0 = ray.map(q => dist(q.a, x.sol.c));
+      r.push([d0.every(v => v > x.sol.r && v < x.sol.r + 4) && ray.some(q => q.enA) && ray.some(q => q.enB) && ray.every(q => !man.some(m => dist(q.b, m.c) <= m.r)),
+        `paso ${n}: cada rayo sale del sol y llega a una hoja, fuera de las manchas`, d0.map(v => Math.round(v))]);
+    }
+
+    /* ── El veneno: las gotas caen en las dos hojas, y en las manchas ── */
+    const got = x.gotas.filter(g => g.ve);
+    r.push([got.length === (n === 4 ? 12 : 0), `paso ${n}: ${n === 4 ? 'caen las gotas del veneno' : 'no hay gotas'}`, got.length]);
+    if (n === 4) {
+      r.push([got.every(g => g.enA || g.enB) && got.filter(g => g.enA).length >= 5 && got.filter(g => g.enB).length >= 5, 'paso 4: las gotas caen sobre las dos hojas', [got.filter(g => g.enA).length, got.filter(g => g.enB).length]]);
+      r.push([got.filter(g => man.some(m => dist(g.p, m.c) <= m.r)).length >= 2, 'paso 4: el veneno también le cae al hongo', got.filter(g => man.some(m => dist(g.p, m.c) <= m.r)).length]);
+      r.push([cubreVeneno !== null && x.cubre > cubreVeneno + 0.3, 'paso 4: la mancha sigue creciendo después del veneno', [cubreVeneno, x.cubre]]);
+      /* ⚠️ Se escapó una vez: la pieza que se apagaba era la misma que
+         llegaba, y la demora de llegar (0) le ganaba a la de apagarse. El
+         chapulín desaparecía al tocar el botón, antes de que cayera una sola
+         gota. */
+      const d = x.chapulin;
+      r.push([d.dVer >= 1000 && Math.abs(d.dVer - d.dCae) < 1 && d.dVer > Math.min(...x.dGotas) + 500,
+        'paso 4: el chapulín sigue en la hoja mientras caen las gotas, y se apaga cuando se cae', { ver: d.dVer, cae: d.dCae }]);
+    }
+    if (n === 3) cubreVeneno = x.cubre;
+    r.push([x.bomba.ve === (n >= 4), `paso ${n}: la bomba ${n >= 4 ? 'está' : 'no está'}`]);
+    const rotV = x.rotulos.find(t => t.k === 'veneno');
+    r.push([!!rotV && rotV.ve === (n === 4) && (!rotV.ve || nb(rotV.dice) === 'veneno para insectos'), `paso ${n}: el rótulo «veneno para insectos» solo va con las gotas`]);
+
+    /* ── Las etiquetas de los reinos: una por paso, en su orden ── */
+    const et = x.etiquetas.filter(t => t.ve);
+    const deben = ['planta', 'animal', 'hongo'].slice(0, Math.min(n, 3));
+    r.push([et.map(t => t.k).join() === deben.join(), `paso ${n}: las etiquetas que se ven son ${deben.join(', ') || 'ninguna'}`, et.map(t => t.k)]);
+    r.push([et.every(t => nb(t.dice[0]) === t.k) && et.every((t, i) => i === 0 || t.caja.x0 > et[i - 1].caja.x1), `paso ${n}: cada etiqueta dice su reino, de izquierda a derecha`, et.map(t => t.dice.join(' / '))]);
+    if (n >= 5) {
+      const ani = x.etiquetas.find(t => t.k === 'animal');
+      r.push([dentroCaja(x.bomba.caja, ani.caja), `paso ${n}: la bomba del veneno para insectos se fue a la etiqueta del animal`, x.bomba.caja]);
+    }
+    if (n === 4) r.push([!x.etiquetas.some(t => dentroCaja(x.bomba.caja, t.caja)), 'paso 4: la bomba todavía está arriba, echando el veneno']);
+
+    /* ── Nada se monta ── */
+    const cajas = x.rotulos.filter(t => t.ve).map(t => ({ k: t.k, c: t.caja })).concat(et.map(t => ({ k: t.k, c: t.caja })));
+    const montados = [];
+    cajas.forEach((p, i) => cajas.slice(i + 1).forEach(q => { if (monta(p.c, q.c)) montados.push(p.k + '/' + q.k); }));
+    r.push([montados.length === 0, `paso ${n}: ningún rótulo se monta en otro`, montados]);
+
+    /* ── El marcador cuenta en el dibujo ── */
+    const MC = [
+      [e.cifra === '2' && /hojas comidas/.test(e.palabras), '2 hojas comidas'],
+      [+e.cifra === vA.length, 'los granitos de cada hoja'],
+      [+e.cifra === mord.length && /mordidas/.test(e.palabras), 'las mordidas que se ven'],
+      [+e.cifra === man.length && /manchas/.test(e.palabras), 'las manchas que se ven'],
+      [e.cifra === '½' && x.cubre > 0.45 && x.cubre < 0.58 && /de la hoja/.test(e.palabras), 'media hoja, contada'],
+      [+e.cifra === et.length && /reinos/.test(e.palabras), 'las etiquetas de los reinos'],
+      [e.cifra === '?', 'la pregunta del alumno']][n];
+    r.push([MC[0], `paso ${n}: el marcador dice lo que se ve (${MC[1]})`, [e.cifra, e.palabras]]);
+    return r;
+  },
   /* La Célula. «El brazo de don Tulio».
      ⚠️ Nada se le cree a la escena. El hueco se lee en el dibujo (qué
      células ya no se ven), cada célula nueva se busca en el lugar que
