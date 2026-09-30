@@ -1712,6 +1712,80 @@ const LEER = `
       textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
     };
   };
+  window.__amExtra.amAmarra = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(m(el)); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function uno(sel, en) { return (en || raiz).querySelector(sel); }
+    function todos(sel, en) { return [].slice.call((en || raiz).querySelectorAll(sel)); }
+    function punto(c) { return aVista(c, +c.getAttribute('cx'), +c.getAttribute('cy')); }
+    /* Cuánto se movió una pieza y con qué demora: se lee del estilo que le
+       puso el aparato (translate en px, que en el dibujo son unidades). */
+    function tras(el) {
+      var t = el.style.transform || '', i = t.indexOf('translate(');
+      if (i < 0) return [0, 0];
+      var par = t.slice(i + 10, t.indexOf(')', i)).split(',');
+      return [parseFloat(par[0]) || 0, parseFloat(par[1]) || 0];
+    }
+    function demora(el) { return parseFloat(el.style.getPropertyValue('--d')) || 0; }
+    function soga(el) {
+      var d = (el.getAttribute('d') || '').split(' ');
+      return [aVista(el, +d[1], +d[2]), aVista(el, +d[4], +d[5])];
+    }
+    function animal(g) {
+      var mueve = g.firstElementChild;
+      var lomo = uno('[data-lomo]', g), boca = uno('[data-boca]', g);
+      return { donde: g.getAttribute('data-rata'), ve: vis(g), pisa: punto(uno('[data-pisa]', g)),
+               lomo: lomo ? punto(lomo) : null, boca: boca ? punto(boca) : null,
+               caja: caja(mueve), mueve: tras(mueve), dMueve: demora(mueve), dVer: demora(g) };
+    }
+    var gav = uno('[data-gavilan]'), va = gav.firstElementChild;
+    var per = uno('[data-persona]'), con = uno('[data-con]');
+    /* El gavilán tiene las alas abiertas y su caja es casi toda aire: si un
+       rótulo lo toca se le pregunta a su dibujo, punto por punto. */
+    var formasGav = todos('path, ellipse, circle', gav).filter(function (f) { return !f.classList.contains('ec-punto'); });
+    function tocaGavilan(c) {
+      if (!vis(gav)) return false;
+      for (var xx = c.x0; xx <= c.x1; xx += 1) {
+        for (var yy = c.y0; yy <= c.y1; yy += 1) {
+          for (var i = 0; i < formasGav.length; i++) {
+            var f = formasGav[i], p = svg.createSVGPoint(); p.x = xx; p.y = yy;
+            var q = p.matrixTransform(m(f).inverse());
+            if (f.isPointInFill(q) || f.isPointInStroke(q)) return true;
+          }
+        }
+      }
+      return false;
+    }
+    return {
+      patio: caja(uno('[data-patio]')),
+      troja: caja(uno('[data-troja]')),
+      postes: todos('[data-poste]').map(caja),
+      mazorcas: todos('[data-mazorca]').map(function (g) { return { ve: vis(g), c: punto(uno('ellipse', g)), caja: caja(g) }; }),
+      huecosMaz: todos('[data-mazorca-hueco]').map(function (e) { return { ve: vis(e), c: punto(e) }; }),
+      ratas: todos('[data-rata]').map(animal),
+      pollos: todos('[data-pollo]').map(animal),
+      huecoPollo: todos('[data-pollo-hueco]').map(function (g) { return { ve: vis(g), pisa: punto(uno('[data-pisa]', g)), caja: caja(g), d: demora(g) }; }),
+      gavilan: { ve: vis(gav), patas: punto(uno('[data-patas]')), caja: caja(gav), va: tras(va), dVa: demora(va), dVer: demora(gav),
+                 vuelos: todos('[data-vuelo]').map(function (v) { return { k: v.getAttribute('data-vuelo'), t: tras(v), d: demora(v) }; }) },
+      amarras: todos('[data-amarra]').map(function (g) {
+        var s = soga(uno('[data-soga]', g));
+        return { k: g.getAttribute('data-amarra'), ve: vis(g), a: s[0], b: s[1], d: demora(g),
+                 nudos: todos('.ec-nudo', g).map(punto) };
+      }),
+      persona: { ve: vis(per), pisa: punto(uno('[data-pisa]', per)), vara: punto(uno('[data-punta-vara]', per)), caja: caja(per) },
+      guia: { ve: vis(con), ab: soga(uno('[data-guia]', con)) },
+      rotulos: todos('[data-rotulo]').map(function (t) { var c = caja(t); return { k: t.getAttribute('data-rotulo'), ve: vis(t), dice: t.textContent, caja: c, tocaGav: vis(t) && tocaGavilan(c) }; }),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   window.__amExtra.amVeneno = function (raiz) {
     var vis = window.__amVisible;
     var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
@@ -2427,6 +2501,9 @@ let tomaAP = { a0: null, mes: null };
 /* Los Cinco Reinos: dónde quedó la boca del chapulín (paso 2) y cuánto
    tapaban las manchas antes del veneno (paso 3). */
 let bocaVeneno = null, cubreVeneno = null;
+/* Los Ecosistemas: dónde estaban el pollo y la rata que se lleva el gavilán
+   antes de que se los llevara, para ver que baja justo a su lomo. */
+let amarraAntes = null;
 /* El área de un polígono (en la vista) que queda por debajo de un nivel:
    se recorta con la recta y se cuenta con la fórmula del cordón. */
 function areaDebajo(poly, nivel) {
@@ -2471,6 +2548,187 @@ const ESCENAS = {
      punto por punto sobre la hoja de don Tulio (media hoja con el veneno),
      y cada granito que se va, que se vaya a la boca del chapulín o al centro
      de una mancha. */
+  amAmarra(e, n) {
+    const x = e.extra, r = [];
+    const nb = t => String(t == null ? '' : t).replace(/ /g, ' ').replace(/\s+/g, ' ').trim();
+    const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+    const monta = (a, b) => a.x0 < b.x1 - 0.5 && b.x0 < a.x1 - 0.5 && a.y0 < b.y1 - 0.5 && b.y0 < a.y1 - 0.5;
+    const area = c => Math.max(0, c.x1 - c.x0) * Math.max(0, c.y1 - c.y0);
+    const cruce = (a, b) => ({ x0: Math.max(a.x0, b.x0), y0: Math.max(a.y0, b.y0), x1: Math.min(a.x1, b.x1), y1: Math.min(a.y1, b.y1) });
+    const enCaja = (p, c, m = 0) => p[0] >= c.x0 - m && p[0] <= c.x1 + m && p[1] >= c.y0 - m && p[1] <= c.y1 + m;
+    const aCaja = (p, c) => Math.hypot(Math.max(c.x0 - p[0], 0, p[0] - c.x1), Math.max(c.y0 - p[1], 0, p[1] - c.y1));
+    /* ¿La raya de a a b pasa por dentro de la caja? Se mira punto por punto. */
+    const corta = (a, b, c) => { for (let i = 0; i <= 40; i++) { const t = i / 40; if (enCaja([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t], c, -0.5)) return true; } return false; };
+    /* Lo que no depende del dibujo, primero. */
+    const dicho = [e.texto, e.cifra, e.palabras].concat(x.textos).map(nb).join(' | ').toLowerCase();
+    const EXACTAS = ['ecosistema', 'ecosistemas', 'cadena', 'cadenas', 'red', 'redes', 'depredador', 'depredadores', 'presa', 'presas', 'cazador',
+      'cazadores', 'consumidor', 'consumidores', 'productor', 'productores', 'descomponedor', 'descomponedores', 'herbívoro', 'herbívoros',
+      'carnívoro', 'carnívoros', 'omnívoro', 'omnívoros', 'energía', 'sol', 'nivel', 'niveles', 'eslabón', 'eslabones', 'ecología', 'biotopo',
+      'biocenosis', 'nicho', 'población', 'poblaciones', 'comunidad', 'mutualismo', 'parasitismo', 'competencia', 'hábitat', 'biosfera', 'bioma',
+      'individuo', 'abiótico', 'abióticos', 'biótico', 'bióticos', 'fotosíntesis', 'casa', 'disminuye', 'baja', 'primario', 'secundario',
+      'terciario', 'equilibrio', 'especie', 'especies', 'quetzal', 'manglar', 'manglares', 'garza', 'garzas', 'puma', 'venado', 'venados', 'rana',
+      'halcón', 'conejo', 'conejos', 'coyote', 'coyotes', 'cabra', 'cabras', 'laguna', 'plaga', 'relación', 'relaciones'];
+    const suelto = ' ' + dicho.split(/[^a-záéíóúñü]+/).filter(Boolean).join(' ') + ' ';
+    const malas = EXACTAS.filter(w => suelto.includes(' ' + w + ' '));
+    r.push([malas.length === 0, `paso ${n}: no sale ninguna palabra de la prueba (ni los papeles en la cadena, ni cómo se llama el que caza, ni la red)`, malas]);
+    const nums = [e.texto].concat(x.textos).map(nb).join(' ').match(/\d+/g) || [];
+    r.push([nums.length === 0, `paso ${n}: ningún número en la frase ni en el dibujo`, nums]);
+    const frase = nb(e.texto);
+    const FR = [['hay pollos, ratas y maíz en la troja', 'Arriba anda un gavilán', '¿Qué tendrá que ver el gavilán con el maíz?'],
+      ['El gavilán se lanza y se lleva un pollo', 'lo ve todo el mundo'],
+      ['Lo que nadie ve', 'también se come a las ratas', 'las ratas se comen el maíz', 'Están amarrados'],
+      ['espanta al gavilán', 'se va la amarra que tenía con las ratas'],
+      ['Al año siguiente', 'nadie se come a las ratas', 'Se multiplican', 'se meten en la troja'],
+      ['Con el gavilán se perdían pollos', 'sin él, tres cuartos de la troja', 'se cortó una amarra'],
+      ['¿Y tú?', 'un animal que donde vives quieren espantar', 'a quién se come', 'dibuja sus amarras']];
+    r.push([FR[n].every(w => frase.includes(w)), `paso ${n}: la frase dice lo que se ve (${FR[n].join(', ')})`, frase]);
+
+    /* ── El patio y la troja ── */
+    const patio = x.patio, troja = x.troja;
+    r.push([x.postes.length === 3 && x.postes.every(c => Math.abs(c.y0 - troja.y1) < 0.6 && c.y1 > patio.y0 + 4 && c.y1 < patio.y1 && c.x0 >= troja.x0 - 0.5 && c.x1 <= troja.x1 + 0.5),
+      `paso ${n}: la troja está sobre sus tres postes, y los postes pisan el patio`, x.postes.map(c => [Math.round(c.x0), Math.round(c.y1)])]);
+    const pisaPatio = p => p[1] > patio.y0 + 4 && p[1] < patio.y1 - 4 && p[0] > patio.x0 + 2 && p[0] < patio.x1 - 2;
+
+    /* ── Las mazorcas: ocho en la troja; al año siguiente, seis comidas ── */
+    const maz = x.mazorcas.filter(q => q.ve), hue = x.huecosMaz.filter(q => q.ve);
+    r.push([x.mazorcas.length === 8 && x.mazorcas.every(q => enCaja(q.c, troja)) && x.mazorcas.every(q => q.caja.x0 >= troja.x0 - 0.5 && q.caja.x1 <= troja.x1 + 0.5),
+      `paso ${n}: las ocho mazorcas caben en la troja`, x.mazorcas.map(q => q.caja.x1)]);
+    const comidas = n >= 4 ? 6 : 0;
+    r.push([maz.length === 8 - comidas && hue.length === comidas, `paso ${n}: mazorcas enteras ${8 - comidas} y comidas ${comidas}`, [maz.length, hue.length]]);
+    r.push([hue.every(h => x.mazorcas.some(q => dist(q.c, h.c) < 0.6)) && maz.every(q => !hue.some(h => dist(q.c, h.c) < 0.6)),
+      `paso ${n}: cada mazorca comida deja su hueco de raya cortada justo donde estaba`]);
+    if (n >= 4) {
+      const yEnteras = maz.map(q => q.c[1]), yComidas = hue.map(h => h.c[1]);
+      r.push([Math.min(...yEnteras) > Math.max(...yComidas), `paso ${n}: las que quedan son las de abajo (las ratas entran por arriba)`, { yEnteras, yComidas }]);
+    }
+
+    /* ── Las ratas ── */
+    const ratas = x.ratas.filter(q => q.ve);
+    const esperaR = n <= 1 ? 3 : n <= 3 ? 2 : 10;
+    r.push([ratas.length === esperaR, `paso ${n}: se ven ${esperaR} ratas`, ratas.length]);
+    const dentroR = ratas.filter(q => q.donde === 'dentro'), fueraR = ratas.filter(q => q.donde === 'fuera');
+    r.push([dentroR.every(q => q.caja.x0 >= troja.x0 - 0.5 && q.caja.x1 <= troja.x1 + 0.5 && q.caja.y0 >= troja.y0 - 0.5 && q.caja.y1 <= troja.y1 + 0.5),
+      `paso ${n}: las ratas de adentro están dentro de la troja`, dentroR.map(q => [Math.round(q.caja.x0), Math.round(q.caja.x1), Math.round(q.caja.y0), Math.round(q.caja.y1)])]);
+    r.push([fueraR.every(q => pisaPatio(q.pisa)), `paso ${n}: las ratas de afuera pisan el patio`, fueraR.map(q => q.pisa.map(v => Math.round(v)))]);
+    if (n >= 4) r.push([dentroR.length === 5 && fueraR.length === 5, 'al año siguiente, cinco ratas dentro de la troja y cinco afuera', [dentroR.length, fueraR.length]]);
+    if (n === 4) {
+      const nuevas = x.ratas.filter(q => q.ve && (q.donde === 'dentro' || q.dVer > 0)).map(q => q.dVer).filter(d => d > 0);
+      r.push([nuevas.length === 8 && new Set(nuevas).size === 8 && Math.min(...nuevas) >= 300, 'paso 4: las ocho ratas nuevas llegan una por una, no todas de golpe', nuevas]);
+    }
+
+    /* ── Los pollos ── */
+    const pollos = x.pollos.filter(q => q.ve);
+    const esperaP = n === 0 ? 4 : 3;
+    r.push([pollos.length === esperaP, `paso ${n}: se ven ${esperaP} pollos`, pollos.length]);
+    r.push([pollos.every(q => pisaPatio(q.pisa)), `paso ${n}: los pollos pisan el patio`, pollos.map(q => q.pisa.map(v => Math.round(v)))]);
+    const hp = x.huecoPollo;
+    r.push([hp.length === 1 && hp[0].ve === (n >= 1), `paso ${n}: ${n >= 1 ? 'donde estaba el pollo que se llevó queda su silueta de raya cortada' : 'todavía no falta ningún pollo'}`]);
+
+    /* ── Nadie se monta en nadie: se mide cuánto se tapan dos animales ── */
+    const cuerpos = ratas.filter(q => q.donde === 'fuera').map((q, i) => ({ k: 'rata' + i, c: q.caja })).concat(pollos.map((q, i) => ({ k: 'pollo' + i, c: q.caja })))
+      .concat(x.persona.ve ? [{ k: 'persona', c: x.persona.caja }] : []);
+    const tapados = [];
+    cuerpos.forEach((p, i) => cuerpos.slice(i + 1).forEach(q => {
+      const t = area(cruce(p.c, q.c)) / Math.min(area(p.c), area(q.c));
+      if (monta(p.c, q.c) && t > 0.12) tapados.push(p.k + '/' + q.k + ' ' + Math.round(t * 100) + '%');
+    }));
+    r.push([tapados.length === 0, `paso ${n}: ningún animal del patio tapa a otro`, tapados]);
+
+    /* ── El gavilán: arriba, y baja justo al lomo de lo que se lleva ── */
+    const g = x.gavilan;
+    r.push([g.ve === (n <= 2), `paso ${n}: el gavilán ${n <= 2 ? 'está' : 'ya no está'}`]);
+    if (n <= 2) r.push([g.caja.y1 < patio.y0 - 60 && g.caja.x0 > 0 && g.caja.x1 < patio.x1, `paso ${n}: el gavilán vuela arriba, dentro del dibujo`, g.caja]);
+    if (n === 0) amarraAntes = { pollo: x.pollos.map(q => q.lomo), rata: x.ratas.map(q => q.lomo), patas: g.patas };
+    const vuelo = k => g.vuelos.find(v => v.k === k) || { t: [0, 0], d: 0 };
+    const presa = (lista, antes, i) => ({ q: lista[i], antes: antes[i] });
+    if ((n === 1 || n === 2) && amarraAntes) {
+      const cual = n === 1 ? 'pollo' : 'rata';
+      const lista = n === 1 ? x.pollos : x.ratas;
+      const idx = lista.findIndex(q => !q.ve && Math.hypot(q.mueve[0], q.mueve[1]) > 1);
+      const pr = idx >= 0 ? presa(lista, amarraAntes[cual], idx) : null;
+      const baja = vuelo(cual + '-baja'), sube = vuelo(cual + '-sube');
+      r.push([!!pr, `paso ${n}: hay un${n === 1 ? ' pollo' : 'a rata'} que se llevó`]);
+      if (pr) {
+        const abajo = [amarraAntes.patas[0] + baja.t[0], amarraAntes.patas[1] + baja.t[1]];
+        r.push([dist(abajo, pr.antes) < 1, `paso ${n}: el gavilán baja con las patas justo al lomo de${n === 1 ? 'l pollo' : ' la rata'}`, { patas: abajo.map(v => Math.round(v)), lomo: pr.antes.map(v => Math.round(v)) }]);
+        r.push([Math.abs(pr.q.mueve[0] - sube.t[0]) < 0.6 && Math.abs(pr.q.mueve[1] - sube.t[1]) < 0.6 && Math.abs(pr.q.dMueve - sube.d) < 1 && sube.d >= 600,
+          `paso ${n}: lo que se lleva sube con él, por el mismo camino y al mismo tiempo`, { presa: pr.q.mueve, sube: sube.t, dPresa: pr.q.dMueve, dSube: sube.d }]);
+        r.push([pr.q.dVer >= sube.d + 800, `paso ${n}: se apaga cuando ya llegó arriba, no en el camino`, [pr.q.dVer, sube.d]]);
+        r.push([dist(pr.q.lomo, g.patas) < 1, `paso ${n}: al final del paso está en las patas del gavilán`, dist(pr.q.lomo, g.patas)]);
+        if (n === 1) r.push([hp[0] && dist(hp[0].pisa, x.pollos[idx].pisa.map((v, j) => v - x.pollos[idx].mueve[j])) < 0.6 && Math.abs(hp[0].d - sube.d) < 1,
+          'paso 1: la silueta queda donde estaba el pollo, cuando el gavilán lo levanta', hp[0] && hp[0].d]);
+      }
+    }
+    if (n === 3) r.push([g.va[0] > 100 && g.va[1] < -60 && g.dVer > g.dVa, 'paso 3: el gavilán se va volando hacia arriba, y se apaga ya en el camino', { va: g.va, dVa: g.dVa, dVer: g.dVer }]);
+
+    /* ── Las amarras ── */
+    const am = k => x.amarras.find(q => q.k === k);
+    const aP = am('pollos'), aR = am('ratas'), aM = am('maiz');
+    r.push([aP.ve === (n === 2) && aR.ve === (n === 2) && aM.ve === (n >= 2), `paso ${n}: ${n === 2 ? 'se ven las tres amarras' : n >= 3 ? 'solo queda la amarra de las ratas con el maíz' : 'todavía no se ve ninguna amarra'}`, [aP.ve, aR.ve, aM.ve]]);
+    const nudos = q => q.nudos.length === 2 && dist(q.nudos[0], q.a) < 0.6 && dist(q.nudos[1], q.b) < 0.6;
+    r.push([[aP, aR, aM].every(nudos), `paso ${n}: cada amarra lleva un nudo en cada punta`]);
+    if (n === 2) {
+      const pollosAm = pollos.filter(q => dist(aP.b, q.lomo) < 4.5), ratasAm = fueraR.filter(q => dist(aR.b, q.lomo) < 4.5);
+      r.push([dist(aP.a, g.patas) < 8 && pollosAm.length === 1, 'paso 2: una amarra va de las patas del gavilán al lomo de un pollo de los que quedan', { a: dist(aP.a, g.patas), b: pollosAm.length }]);
+      r.push([dist(aR.a, g.patas) < 8 && ratasAm.length === 1, 'paso 2: otra va de las patas del gavilán al lomo de una rata', { a: dist(aR.a, g.patas), b: ratasAm.length }]);
+      r.push([aR.a[0] < aP.a[0], 'paso 2: la de las ratas sale del lado de las ratas y la de los pollos, del lado de los pollos', [aR.a, aP.a]]);
+      const dRata = Math.max(...x.ratas.map(q => q.dVer)), dArriba = vuelo('rata-sube').d + 800;
+      r.push([aP.d === aR.d && aR.d === aM.d && aM.d >= dArriba, 'paso 2: las amarras aparecen cuando el gavilán ya volvió arriba con la rata', { d: aM.d, arriba: dArriba, rata: dRata }]);
+    }
+    if (n === 3) r.push([Math.abs(aP.d - g.dVa) < 1 && Math.abs(aR.d - g.dVa) < 1, 'paso 3: las dos amarras del gavilán se van cuando él se va', { amarras: [aP.d, aR.d], va: g.dVa }]);
+    if (n >= 2) {
+      const bocas = ratas.filter(q => q.boca && dist(aM.a, q.boca) < 1);
+      r.push([bocas.length === 1 && bocas[0].donde === 'fuera', `paso ${n}: la amarra del maíz sale de la boca de una rata del patio`, bocas.length]);
+      r.push([Math.abs(aM.b[0] - troja.x1) < 2 && aM.b[1] > troja.y0 + 5 && aM.b[1] < troja.y1 - 5, `paso ${n}: y llega a la troja, por su lado`, aM.b]);
+    }
+
+    /* ── La persona que espanta al gavilán ── */
+    r.push([x.persona.ve === (n === 3), `paso ${n}: ${n === 3 ? 'la persona espanta al gavilán' : 'no hay nadie espantando'}`]);
+    if (n === 3) r.push([pisaPatio(x.persona.pisa) && x.persona.caja.x1 <= patio.x1 + 0.5, 'paso 3: la persona pisa el patio, dentro del dibujo', x.persona.pisa]);
+
+    /* ── Los rótulos ── */
+    const rot = k => x.rotulos.find(q => q.k === k) || {};
+    const DEBEN = { 'amarra-pollos': [n === 2, 'se lleva pollos'], 'amarra-ratas': [n === 2, 'se come ratas'], 'amarra-maiz': [n >= 2, 'se comen el maíz'],
+      fuera: [n === 3, '¡Fuera!'], anio: [n >= 4, 'al año siguiente'], sin: [n >= 5, 'sin el gavilán'], con: [n >= 5, 'con el gavilán'] };
+    Object.keys(DEBEN).forEach(k => {
+      const q = rot(k), [debe, dice] = DEBEN[k];
+      r.push([q.ve === debe && (!q.ve || nb(q.dice) === dice), `paso ${n}: el rótulo «${dice}» ${debe ? 'se ve' : 'no se ve'}`, [q.ve, q.dice]]);
+    });
+    const vis = x.rotulos.filter(q => q.ve);
+    r.push([vis.every(q => q.caja.x0 >= 0 && q.caja.x1 <= patio.x1 && q.caja.y0 >= 0 && q.caja.y1 <= patio.y1), `paso ${n}: todos los rótulos caben en el dibujo`, vis.map(q => [q.k, Math.round(q.caja.x0), Math.round(q.caja.x1)])]);
+    if (n === 2) {
+      const cx = (g.caja.x0 + g.caja.x1) / 2, rp = rot('amarra-pollos'), rr = rot('amarra-ratas'), rm = rot('amarra-maiz');
+      r.push([rr.caja.x1 < cx && rp.caja.x0 > cx && rr.caja.y1 > g.caja.y0 && rp.caja.y1 > g.caja.y0 && rr.caja.y0 < g.caja.y1 + 4 && rp.caja.y0 < g.caja.y1 + 4,
+        'paso 2: «se come ratas» y «se lleva pollos» van a los lados del gavilán, cada uno del lado de su amarra', { r: rr.caja, p: rp.caja }]);
+      const dSoga = Math.min(...[0, 0.25, 0.5, 0.75, 1].map(t => aCaja([aM.a[0] + (aM.b[0] - aM.a[0]) * t, aM.a[1] + (aM.b[1] - aM.a[1]) * t], rm.caja)));
+      r.push([dSoga < 16 && !corta(aM.a, aM.b, rm.caja), 'paso 2: «se comen el maíz» va junto a su amarra, sin taparla', Math.round(dSoga * 10) / 10]);
+    }
+    if (n === 3) {
+      const rf = rot('fuera');
+      r.push([rf.caja.x1 < x.persona.pisa[0] && aCaja(x.persona.vara, rf.caja) < 12, 'paso 3: «¡Fuera!» lo grita la persona: va junto a su vara', aCaja(x.persona.vara, rf.caja)]);
+    }
+    if (n >= 5) {
+      const rs = rot('sin'), rc = rot('con'), cxs = (rs.caja.x0 + rs.caja.x1) / 2;
+      r.push([Math.abs(cxs - (troja.x0 + troja.x1) / 2) < 8 && rs.caja.y1 < troja.y0 - 20, `paso ${n}: «sin el gavilán» va encima de la troja`, { cx: cxs, y1: rs.caja.y1 }]);
+      const [ga, gb] = x.guia.ab;
+      r.push([x.guia.ve && aCaja(ga, rc.caja) < 6 && hp[0] && aCaja(gb, hp[0].caja) < 1.5 && !pollos.some(q => corta(ga, gb, q.caja)),
+        `paso ${n}: «con el gavilán» señala con su raya la silueta del pollo que se llevó, sin pasar por otro pollo`, { a: aCaja(ga, rc.caja), b: hp[0] && aCaja(gb, hp[0].caja) }]);
+    } else r.push([!x.guia.ve, `paso ${n}: todavía no se señala lo que se perdió`]);
+    /* Ningún rótulo se monta en otro, ni en un animal, ni lo cruza una amarra. */
+    const montados = [];
+    vis.forEach((p, i) => vis.slice(i + 1).forEach(q => { if (monta(p.caja, q.caja)) montados.push(p.k + '/' + q.k); }));
+    const animales = cuerpos.map(c => c.c).concat(ratas.filter(q => q.donde === 'dentro').map(q => q.caja));
+    vis.forEach(p => { if (animales.some(c => monta(p.caja, c))) montados.push(p.k + '/animal'); if (p.tocaGav) montados.push(p.k + '/gavilán'); });
+    x.amarras.filter(q => q.ve).forEach(q => vis.forEach(p => { if (corta(q.a, q.b, p.caja)) montados.push(p.k + '/amarra-' + q.k); }));
+    r.push([montados.length === 0, `paso ${n}: ningún rótulo se monta en otro, en un animal ni en una amarra`, montados]);
+
+    /* ── El marcador dice lo que se ve ── */
+    const cifra = nb(e.cifra);
+    const MAR = [String(pollos.length), String(pollos.length), String(ratas.length), String(x.gavilan.ve ? 1 : 0), String(ratas.length),
+      hue.length * 4 === 3 * x.mazorcas.length ? '¾' : '·', '?'];
+    r.push([cifra === MAR[n], `paso ${n}: el marcador dice lo que se ve (${MAR[n]})`, cifra]);
+    return r;
+  },
   amVeneno(e, n) {
     const x = e.extra, r = [];
     const nb = t => String(t == null ? '' : t).replace(/\u00a0/g, ' ').trim();

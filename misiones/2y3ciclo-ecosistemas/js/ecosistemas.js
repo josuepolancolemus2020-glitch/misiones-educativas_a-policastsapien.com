@@ -352,15 +352,23 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 // (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
 // tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
 // Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
+// ⚠️ Y tampoco pregunta lo que ya contestan la historia o la animación que va
+// debajo de ella. «¿Qué perdió la aldea cuando espantó a los gavilanes?» era la
+// historia palabra por palabra; «si se quita un eslabón, otros sufren» es la
+// frase de su recuadro, y «un mismo animal puede comer varias cosas» se ve en la
+// animación, donde el gavilán se lleva un pollo y una rata. Ahora preguntan por
+// el quetzal, por las otras formas de relacionarse y por los manglares, que
+// están en el Laboratorio, con la respuesta buena en el mismo lugar (el V/F de
+// las «varias cosas» pasó a falso: eran seis verdaderos de diez).
 const evalTFBank=[
   {q:'Un ecosistema está formado solo por seres vivos.',a:false,k:'tf-solo-vivos'},
-  {q:'Si se quita un eslabón de un ecosistema, otros seres vivos sufren.',a:true,k:'tf-eslabon'},
+  {q:'El quetzal vive en el bosque nublado.',a:true,k:'tf-quetzal'},
   {q:'Si deja de llover, los animales del ecosistema no se ven afectados.',a:false,k:'tf-lluvia'},
   {q:'Los hongos cazan animales para comer.',a:false,k:'tf-hongos'},
   {q:'La energía pasa de un ser vivo al siguiente en la cadena.',a:true,k:'tf-pasa'},
   {q:'Una maceta con su planta y su tierra puede ser un ecosistema.',a:true,k:'tf-maceta'},
   {q:'La rana puede ser comida por el halcón.',a:true,k:'tf-rana-halcon'},
-  {q:'Un mismo animal puede comer varias cosas.',a:true,k:'tf-varias'},
+  {q:'En un ecosistema, los seres vivos solo se relacionan comiéndose unos a otros.',a:false,k:'tf-relaciones'},
   {q:'El desierto y la sabana son ecosistemas terrestres.',a:true,k:'tf-desierto'},
   {q:'El aire es un ser vivo del ecosistema.',a:false,k:'tf-aire'}
 ];
@@ -370,7 +378,7 @@ const evalMCBank=[
   {q:'¿Cuál de estos es un ecosistema marino?',o:['a) El arrecife de coral','b) El río','c) La laguna','d) El bosque'],a:0,k:'mc-marino'},
   {q:'¿Qué nivel es más grande que el ecosistema?',o:['a) Un venado','b) Una manada de venados','c) Un nido','d) El bioma'],a:3,k:'mc-bioma'},
   {q:'¿En qué tipo de ecosistema están los ríos y los lagos?',o:['a) Acuático de agua dulce','b) Terrestre','c) Marino','d) De desierto'],a:0,k:'mc-agua-dulce'},
-  {q:'¿Qué perdió la aldea cuando espantó a los gavilanes?',o:['a) Sus pollos','b) Maíz, porque las ratas se multiplicaron','c) El agua del pozo','d) Nada'],a:1,k:'mc-gavilanes'},
+  {q:'¿Por qué a los manglares les dicen las «guarderías» del mar?',o:['a) Porque ahí duermen las tortugas','b) Porque muchos peces nacen y crecen entre sus raíces','c) Porque ahí los pescadores guardan sus lanchas','d) Porque ahí no llega ningún animal'],a:1,k:'mc-guarderias'},
   {q:'En la cadena pasto → saltamontes → rana → halcón, ¿qué consumidor es el halcón?',o:['a) Primario','b) Secundario','c) Terciario','d) Ninguno'],a:2,k:'mc-halcon'},
   {q:'¿Qué forma el medio físico de un ecosistema?',o:['a) Los animales','b) Los hongos','c) El agua, el aire y el suelo','d) Las plantas'],a:2,k:'mc-medio'},
   {q:'¿Qué animal come solo plantas?',o:['a) El puma','b) El halcón','c) La rana','d) El venado'],a:3,k:'mc-venado'},
@@ -484,10 +492,15 @@ function evalSwitchMode(mode){
     cBtn.classList.add('active');cBtn.setAttribute('aria-selected','true');
   }
 }
+// ⚠️ Ningún caso es la historia con otra ropa. Tres lo eran (quitan al que caza,
+// se multiplican los que comían y se acaban las plantas), y la animación que va
+// después de la historia enseña justo eso con el gavilán, las ratas y la troja:
+// se contestaban acordándose, no pensando. Ahora cambia la presa, llega una
+// especie nueva que come plantas o se mueren las plantas del fondo de una laguna.
 const critCaseBank=[
-  {k:'ca-pumas',txt:'En un bosque cazan a todos los pumas (depredadores). Al poco tiempo, los venados se multiplican tanto que acaban con casi todo el pasto.'},
-  {k:'ca-ranas',txt:'En una laguna desaparecen todas las ranas. Los insectos que ellas comían aumentan sin control y dañan las plantas de la orilla.'},
-  {k:'ca-aves',txt:'En un pastizal se eliminan todas las aves. Las orugas y los saltamontes se multiplican y devoran los cultivos.'},
+  {k:'ca-conejos',txt:'En un monte cazan a casi todos los conejos. Los coyotes que se los comían empiezan a bajar a las aldeas a buscar comida.'},
+  {k:'ca-cabras',txt:'A un bosque llegan cabras que se comen los arbolitos recién nacidos. Con los años ya casi no hay árboles jóvenes, y los animales que vivían entre ellos se van.'},
+  {k:'ca-plantas-laguna',txt:'En una laguna se mueren las plantas del fondo por el lodo que baja de un cerro pelado. Los peces que comían esas plantas empiezan a escasear.'},
   {k:'ca-peces',txt:'En un río contaminan el agua y mueren los peces pequeños. Las garzas que se alimentaban de ellos se quedan sin comida.'},
   {k:'ca-arboles',txt:'En un bosque talan todos los árboles (productores). Los herbívoros que comían sus hojas y frutos empiezan a pasar hambre.'},
   {k:'ca-huevos',txt:'A una isla llega una especie nueva que se come todos los huevos de las aves; las poblaciones de aves bajan muchísimo.'},
@@ -499,10 +512,10 @@ const critCaseQuestions=[
   '4. ¿Qué se podría hacer para proteger este ecosistema?',
 ];
 const critCaseGuides=[
-  'Depende del caso: puede ser un depredador (puma, ave, rana) que controlaba a otros, o un productor (los árboles) del que dependían los herbívoros.',
+  'Depende del caso: puede ser un productor del que dependían otros (los árboles, las plantas de la laguna), un consumidor que servía de comida a otro (los conejos, los peces pequeños) o una especie nueva que llegó a comerse lo que había (las cabras, la que se come los huevos).',
   'Porque en un ecosistema todos los seres vivos están conectados por cadenas y redes alimenticias: si una especie cambia, las que dependían de ella (o a las que ella controlaba) también cambian.',
   'Se rompe: el ecosistema pierde su equilibrio. Unas poblaciones crecen sin control y otras se quedan sin alimento, hasta que con el tiempo se degrada o encuentra un nuevo balance.',
-  'Proteger a todas las especies y su hábitat, evitar la caza y la contaminación, y no eliminar a los depredadores ni a los productores, porque cada uno cumple un papel.',
+  'Proteger a todas las especies y su hábitat, evitar la caza, la tala y la contaminación, no soltar especies que no son del lugar y no eliminar a los depredadores ni a los productores, porque cada uno cumple un papel.',
 ];
 const critErrorBank=[
   {k:'er-energia',txt:'"En una cadena alimenticia la energía viene del suelo y aumenta en cada nivel".',
@@ -643,7 +656,7 @@ const parteData={
   },
   pinar:{
     nombre:'Bosque de pino',icon:'🌲',
-    estructura:{title:'¿Qué es?',info:'• Bosque <strong>terrestre</strong> dominado por <strong>pinos y ocotes</strong><br>• El bosque <strong>más extenso</strong> de Honduras<br>• Suelos secos y clima templado'},
+    estructura:{title:'¿Qué es?',info:'• Bosque <strong>terrestre</strong> dominado por <strong>pinos y ocotes</strong><br>• Uno de los bosques <strong>más extensos</strong> de Honduras<br>• Suelos secos y clima templado'},
     funcion:{title:'¿Dónde está?',info:'• En las <strong>montañas</strong> de casi todo el país<br>• Grandes pinares en <strong>Olancho</strong>, El Paraíso y Francisco Morazán<br>• En tierras altas y medias'},
     ubicacion:{title:'Seres vivos',info:'• El <strong>pino</strong> y el ocote<br>• El <strong>venado cola blanca</strong> y el coyote<br>• Ardillas, conejos y armadillos<br>• Pájaros <strong>carpinteros</strong> y muchas aves'},
     dato:{title:'Dato curioso',info:'• El <strong>pino</strong> es uno de los símbolos de los bosques de Honduras<br>• Dos grandes amenazas: los <strong>incendios</strong> y el <strong>gorgojo descortezador</strong> del pino<br>• De los pinos se obtiene madera y resina'}

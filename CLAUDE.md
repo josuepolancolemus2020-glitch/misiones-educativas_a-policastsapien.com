@@ -9894,6 +9894,144 @@ misma máquina, da 83. Es lo que ya se aceptó en Reproducción: al volver al
 principio regresa todo a la vez, y ahí están la máscara de las mordidas y las
 manchas recortadas por la hoja.
 
+### La cuadragésima quinta: Los Ecosistemas, y lo que enseñó
+
+La tercera de la Ruta de la Vida es **Los Ecosistemas**
+(`misiones/2y3ciclo-ecosistemas/`, `js/animacion-amarra.js`). La historia es la
+de la aldea que espantó a los gavilanes porque se llevaban pollos: al año
+siguiente ya no había quien se comiera a las ratas, las ratas se metieron en las
+trojas y lo que se perdió de maíz fue bastante más que los pollos. La historia
+dice que no se quitó un animal, sino una amarra que no se ve hasta que se corta.
+La animación es el patio de la aldea, visto un poco desde arriba: la troja con
+su maíz, las ratas, los pollos y el gavilán arriba.
+
+- pollos, ratas y ocho mazorcas en la troja: ¿qué tendrá que ver el gavilán con
+  el maíz?;
+- el gavilán se lanza y se lleva un pollo: eso lo ve todo el mundo, y donde
+  estaba queda su silueta de raya cortada;
+- lo que nadie ve: se lanza otra vez y se lleva una rata. Aparecen las tres
+  amarras: del gavilán a los pollos («se lleva pollos»), del gavilán a las
+  ratas («se come ratas») y de la boca de una rata a la troja («se comen el
+  maíz»);
+- la gente lo espanta con una vara («¡Fuera!»): se va volando, y con él sus dos
+  amarras; la de las ratas con el maíz se queda;
+- al año siguiente, de dos ratas pasan a diez, cinco de ellas dentro de la
+  troja, y seis de las ocho mazorcas quedan de raya cortada;
+- «con el gavilán», con su raya hasta la silueta del pollo, y «sin el gavilán»,
+  encima de la troja: tres cuartos perdidos;
+- y la pregunta es del alumno: un animal que donde vive quieren espantar, a
+  quién se come, y sus amarras dibujadas en el cuaderno.
+
+Nueve cosas que valen para las que siguen:
+
+1. ⚠️ **La amarra se ve cortarse.** Las sogas atan a los animales de verdad,
+   cada una de punta a punta con su nudo: de las patas del gavilán al lomo de un
+   pollo y al de una rata, y de la boca de una rata a la troja. Cuando lo
+   espantan, las dos suyas se van con él, con su misma demora, y la del maíz se
+   queda. Eso es «se cortó una amarra», visto.
+2. ⚠️ **Lo perdido no se cuenta en plata, porque no se puede.** Un precio del
+   pollo o del quintal escrito aquí sería inventado. Se dibuja lo que se perdió
+   donde estaba, con raya cortada: un pollo, y seis mazorcas de ocho. El
+   marcador dice «¾ de la troja», y la sonda lo cuenta.
+3. ⚠️ **El gavilán lleva lo que se lleva.** Baja justo al lomo del pollo y de la
+   rata, y lo que se lleva sube con él por el mismo camino y al mismo tiempo; se
+   apaga cuando ya llegó arriba. La sonda lo lee de los desplazamientos y de las
+   demoras que puso el aparato, no de una foto.
+4. ⚠️ **Muchos animales no caben en una sola raya de suelo.** Con todos pisando
+   la misma línea, una rata medía 16 px en un teléfono y la de adentro de la
+   troja no se leía. El patio se ve un poco desde arriba y cada animal pisa a su
+   propia altura, dibujado de atrás hacia adelante: así caben un 30 % más
+   grandes sin encimarse. La sonda mide cuánto se tapan dos animales.
+5. ⚠️ **La historia y la animación contestaban tres preguntas de la prueba.**
+   «¿Qué perdió la aldea cuando espantó a los gavilanes?» era la historia
+   palabra por palabra; «si se quita un eslabón, otros seres vivos sufren» es la
+   frase del recuadro de la historia; y «un mismo animal puede comer varias
+   cosas» se ve, con el gavilán llevándose un pollo y una rata. Ahora preguntan
+   por el quetzal del bosque nublado, por las otras formas de relacionarse (no
+   todo es comerse) y por qué a los manglares les dicen las guarderías del mar,
+   todo del Laboratorio, en la misión y en la ficha. Los verdaderos o falsos
+   pasaron de seis verdaderos a cinco y cinco.
+6. ⚠️ **Y tres casos de pensamiento crítico eran la historia con otra ropa**:
+   quitan al que caza, se multiplican los que comía y se acaban las plantas
+   (los pumas, las ranas, las aves). Ahora cambia la presa (los conejos que
+   buscaban los coyotes), llega una especie nueva que come plantas (las cabras)
+   y se mueren las plantas del fondo de una laguna, y la pauta del docente se
+   corrigió con ellos, que nombraba a los que se fueron. La felicitación de la
+   ficha, en la hoja de los pareados, nombraba a los productores, los
+   consumidores, los descomponedores y las redes: ahora solo pide revisar.
+7. ⚠️ **La sonda del examen cazó una pista en un repuesto mío.** Una opción
+   equivocada decía «ahí nace el agua de los ríos», y eso le soplaba a la de al
+   lado que los ríos son de agua dulce. Ahora dice «ahí los pescadores guardan
+   sus lanchas». **Cuando se cambia una pregunta, la sonda de pistas se vuelve a
+   correr.**
+8. ⚠️ **Al buscar repuestos salió un dato sin fuente.** El Laboratorio decía que
+   el bosque de pino es «el bosque más extenso de Honduras». Ninguna fuente del
+   repositorio lo acredita, y lo que suele publicarse es que el bosque
+   latifoliado ocupa más. Se dejó en «uno de los bosques más extensos», que es
+   verdad lo midan como lo midan, y ninguna pregunta lo pregunta.
+9. ⚠️ **En la pantalla oscura, la soga café no se veía sobre el cielo de
+   noche.** Las sogas y el borde del gavilán llevan su color en una variable
+   que cambia con la pantalla, y cada soga va sobre un halo del color de la
+   tarjeta, para que se lea igual sobre el cielo y sobre el patio. Se vio en
+   las capturas oscuras, con la sonda en verde.
+
+La sonda de esta escena **no le cree nada a la escena**. Comprueba:
+
+- que la troja esté sobre sus tres postes y los postes pisen el patio;
+- que las ocho mazorcas quepan en la troja, que al año siguiente queden dos
+  enteras (las de abajo) y seis de raya cortada, cada hueco donde estaba su
+  mazorca;
+- que se vean tres ratas, después dos, después diez: cinco dentro de la troja y
+  cinco pisando el patio, y que las nuevas lleguen una por una;
+- que se vean cuatro pollos y después tres, pisando el patio, con la silueta del
+  que se llevó donde estaba;
+- que ningún animal del patio tape a otro (se mide cuánto se tapan);
+- que el gavilán vuele arriba, baje con las patas justo al lomo de lo que se
+  lleva, que eso suba con él por el mismo camino y al mismo tiempo, se apague
+  arriba y acabe en sus patas, y que al espantarlo se vaya volando;
+- que cada amarra lleve un nudo en cada punta, que las del gavilán vayan de sus
+  patas al lomo de un pollo de los que quedan y al de una rata, que aparezcan
+  cuando él ya volvió y se vayan con él, y que la del maíz vaya de la boca de
+  una rata a la troja;
+- que la persona solo esté cuando espanta, pisando el patio, y que «¡Fuera!»
+  vaya junto a su vara;
+- que cada rótulo diga lo suyo y salga cuando tiene que salir, a los lados del
+  gavilán los suyos, junto a su soga el del maíz, encima de la troja «sin el
+  gavilán» y con su raya hasta la silueta del pollo «con el gavilán»;
+- que ningún rótulo se monte en otro, en un animal ni en una soga, y que al
+  gavilán, que tiene las alas abiertas y la caja llena de aire, se le pregunte
+  a su dibujo punto por punto;
+- que el marcador cuente lo que se ve;
+- y que no salga ninguna palabra de la prueba ni un número.
+
+Se comprobó al revés con veinte averías, plantadas una por una:
+
+- el gavilán bajando a un lado del pollo;
+- el pollo subiendo por otro camino;
+- el pollo apagándose en el camino, antes de llegar arriba;
+- la rata subiendo antes que el gavilán;
+- la amarra del maíz apareciendo antes de que el gavilán vuelva;
+- la amarra de las ratas quedándose cuando el gavilán se va;
+- la amarra del maíz saliendo del lomo de la rata y no de su boca;
+- la amarra de los pollos yendo al pollo que ya se llevó;
+- el marcador del paso 4 diciendo 9 ratas;
+- «red» en una frase;
+- las ratas comiéndose cinco mazorcas y no seis;
+- una rata de adentro saliéndose de la troja;
+- una rata nueva flotando en el cielo;
+- un pollo encima de otro;
+- «sin el gavilán» lejos de la troja;
+- la raya de «con el gavilán» sin llegar a la silueta del pollo;
+- «¡Fuera!» lejos de la persona;
+- «se come ratas» encima del ala del gavilán;
+- el gavilán sin irse al espantarlo;
+- las ratas nuevas llegando todas de golpe.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
+de 100 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -10014,7 +10152,13 @@ lo que se mueve de una misma pieza van en dos envolturas: `A.ver` y `A.mover`
 comparten `--d`, y la última que se escribe gana; cuando importa cuándo se
 apaga algo, la sonda lee su demora. Y un hueco en el dibujo (una mordida) se
 hace con una máscara, no pintando encima el color del fondo, que es un
-degradado y cambia con la pantalla oscura.
+degradado y cambia con la pantalla oscura. Si hay muchos animales, no se ponen
+todos en una raya de suelo: el patio se ve un poco desde arriba, cada uno pisa a
+su propia altura y se dibujan de atrás hacia adelante. Una raya que es una cosa
+(una soga café) lleva su color en una variable que cambia con la pantalla, y
+sobre un halo del color de la tarjeta si pasa por el cielo y por el suelo. Y a
+un animal con las alas abiertas no se le mide la caja, que es casi toda aire:
+si un rótulo lo toca, se le pregunta a su dibujo punto por punto.
 
 Si el `--sec` de la misión es claro (un ámbar, un amarillo), la letra blanca
 del botón que avanza no se lee en su punta: la misión declara en su CSS

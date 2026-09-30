@@ -25,6 +25,9 @@
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
 <link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La animación que explica el tema: el aparato es compartido y va DESPUÉS
+     del CSS de la misión, que es de donde saca sus colores. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -70,6 +73,24 @@
     <div class="tip"><span class="ti">❓</span><div>No se quitó un animal: se quitó un
     <strong>eslabón</strong>. En un ecosistema los seres vivos están amarrados unos a otros, y esa
     amarra no se ve hasta que se corta. Aprender a verla antes es de lo que trata esta misión.</div></div>
+  </div>
+  <!-- La animación que explica el tema, justo después de la historia: el
+       patio de la aldea, con la troja, las ratas, los pollos y un gavilán
+       arriba. El gavilán se lleva un pollo, y también una rata, que es lo que
+       nadie ve: aparecen las amarras. La gente lo espanta, y al año siguiente
+       las ratas se multiplican y se comen tres cuartos de la troja. La mueve
+       el alumno, paso a paso. El aparato es compartido
+       (js/animacion-mision.js) y la escena es de esta misión
+       (js/animacion-amarra.js). La frase de dentro es de reserva: si el
+       aparato no llega a cargar, se lee eso en vez de un hueco. -->
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira la amarra que no se ve</h2>
+    <div id="amAmarra">
+      <p>El gavilán se lleva pollos, y eso lo ve todo el mundo. Lo que nadie ve es que también se come a las
+      ratas, y que las ratas se comen el maíz: están amarrados. La gente lo espanta, y al año siguiente las
+      ratas se multiplican, se meten en la troja y se comen tres cuartos del maíz. No se quitó un animal: se
+      cortó una amarra.</p>
+    </div>
   </div>
   <div class="card ac-teal">
     <h2>🌍 ¿Qué es un ecosistema?</h2>
@@ -633,6 +654,8 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-amarra.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>
