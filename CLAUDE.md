@@ -9235,6 +9235,132 @@ Salió roja con cada una.
 Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
 de 100 ms.
 
+### La cuadragésima: El Sistema Digestivo, y lo que enseñó
+
+La tercera de la Ruta del Cuerpo es **El Sistema Digestivo**
+(`misiones/2y3ciclo-sistema-digestivo/`, `js/animacion-frascos.js`). La historia
+es la de Kenia: llega a la escuela con la panza llena y a media mañana ya no
+puede con los ojos. En su casa se come todos los días, pero en el plato casi
+siempre hay tortilla, arroz y un fresco, y de lo que el cuerpo usa para crecer y
+repararse (el frijol, el huevo, la leche) no le entra casi nada. La historia dice
+que Kenia se está alimentando, pero no se está nutriendo. La animación pone el
+plato arriba, a Kenia con su panza dibujada por dentro, y a la derecha cuatro
+frascos, cada uno con sus alimentos escritos debajo:
+
+- el plato de Kenia: tortilla, arroz, un fresco y un poquito de frijol. ¿Le llegó
+  de todo lo que su cuerpo usa?;
+- todo baja a la panza, y la panza se llena: no se queda con hambre;
+- cada bocado va a su frasco: casi todo al mismo, uno solo al del frijol, y dos
+  frascos quedan vacíos;
+- otro plato, con los mismos ocho bocados: la panza se llena igual;
+- pero ahora le llega de los cuatro frascos: lo que cambió no fue cuánto comió,
+  sino qué comió;
+- llenarse no es lo mismo que nutrirse. ¿Qué frasco te quedó vacío hoy?
+
+Siete cosas que valen para las que siguen:
+
+1. ⚠️ **Los dos platos dan los mismos ocho bocados.** Así la panza se llena
+   igual con los dos, hasta la misma raya, y lo único que cambia es a qué frasco
+   va cada uno. La sonda cuenta los bocados en la panza y en cada frasco.
+2. ⚠️ **Qué alimento va a qué frasco no se le cree a la escena.** La sonda lleva
+   su propia tabla, y cada entrada la justifica lo escrito debajo del frasco: el
+   fresco va al primero por su azúcar, y la etiqueta dice «azúcar». Los frascos
+   llevan alimentos escritos, no el nombre del nutriente ni para qué sirve, que
+   es lo que pregunta el examen.
+3. ⚠️ **«Casi nada», y no «nada».** La historia dice que del frijol no le entra
+   casi nada, y por eso en el plato de Kenia hay un poquito: un bocado, en su
+   frasco. Dibujarlo vacío habría dicho más que la historia.
+4. ⚠️ **Cada bocado sale de su alimento, en SU plato.** Con una sola tabla de
+   dónde sale cada bocado, el frijol del otro plato salía del aguacate, porque
+   los dos platos no ponen las cosas en el mismo sitio. Lo cazó la sonda, que
+   mira que cada bocado salga de un alimento de su clase y que en cada plato
+   haya justo lo que da bocados.
+5. ⚠️ **La panza no es una caja.** Su lado derecho baja, y el bocado de arriba a
+   la derecha se salía del dibujo. Lo cazó la sonda, que le pregunta al
+   navegador si cada bocado queda dentro de lo pintado de la panza
+   (`isPointInFill`, en el centro y en sus cuatro bordes). Las dos columnas van
+   ahora corridas a la izquierda, donde la panza es más alta.
+6. ⚠️ **Del plato a la panza se pasa por la boca.** En línea recta, la bolita
+   cruzaba la cara de Kenia a la altura de los ojos; se vio en las fotos a medio
+   viaje, con la sonda en verde. Cada bocado va en dos envolturas: la de fuera
+   lo sube a la boca y la de dentro, cuando llega, lo baja a la panza. A los
+   frascos, o de vuelta, las dos se mueven a la vez y el bocado va derecho. La
+   sonda lo comprueba: el primer tramo termina en la boca, y el segundo arranca
+   cuando el primero acabó.
+7. ⚠️ **La historia estaba en la prueba, y la animación contestaba otras.**
+   «Tener la panza llena no siempre quiere decir estar bien nutrido» y
+   «alimentarse es comer; ___ es lo que el cuerpo hace por dentro» eran la
+   historia; «el huevo y la leche ayudan a crecer», «¿por qué Kenia se dormía a
+   media mañana?» y «¿cuál de estas comidas es más completa?» (tortilla, frijol,
+   huevo y aguacate) los contestaban la historia o el segundo plato; y «¿cuántos
+   grupos de nutrientes hay?», la historia, que dice «los cinco nutrientes». En
+   pensamiento crítico, el caso del refresco del desayuno que no deja
+   concentrarse, la decisión de qué desayunar para rendir en clase, la
+   comparación de alimentarse y nutrirse «como Kenia» y el efecto de crecer y
+   sanar con frijol, huevo y leche. Ahora preguntan otras cosas de la misión:
+   las caries, el agua potable, las vellosidades, la fibra, la bilis, los dientes
+   y la lengua. Y los verdaderos o falsos eran diez verdaderos de diez: el que
+   marcaba V en todo sacaba la nota entera. Dos de los nuevos son falsos, en la
+   misión y en la ficha.
+
+Y la sonda de pistas cazó tres repuestos malos. «¿Cuál de estos NO es parte del
+tubo por donde pasa el alimento?» juntaba «esófago» con «tubo», que es el
+pareado del esófago; «las vellosidades del intestino» nombraba el intestino en
+las formas donde solo sale uno de los dos pareados del intestino; y en la ficha,
+«el alimento pasa por dentro del hígado» nombraba el hígado, que es la respuesta
+de otro pareado. La felicitación de la ficha, en la hoja de los pareados,
+nombraba el esófago, el estómago y el hígado, y ahora pide revisar las
+respuestas. Y la selección múltiple de la ficha traía tres «b» seguidas: ahora
+va 2, 3, 3 y 2 por letra.
+
+La sonda de esta escena **no le cree nada a la escena**:
+
+- la tabla de qué alimento va a qué frasco es suya, y cada entrada la justifica
+  lo escrito debajo del frasco;
+- cada bocado sale de un alimento de su clase, en su plato, y en cada plato hay
+  justo lo que da bocados;
+- dónde está cada bocado lo mide en el dibujo, dentro de lo pintado de la panza
+  (se le pregunta al navegador) o dentro de un frasco, y lo compara con la tabla;
+- en los pasos 1 y 3, que estén los ocho en la panza sin montarse, que lleguen
+  justo a la raya de «llena», que pasen por la boca antes de bajar y que la raya
+  aparezca cuando el último ya va bajando;
+- en el paso 2, que casi todo vaya al mismo frasco, que del frijol llegue uno y
+  que dos queden vacíos, con «vacío» escrito adentro; en el 4, que llegue de los
+  cuatro, que el de las frutas y verduras sea el que más lleva y el del
+  aguacate, uno;
+- que el marcador cuente los frascos vacíos que se ven;
+- y que no salga el nombre de un nutriente, ni para qué sirve, ni un órgano, ni
+  una etapa, ni un número fuera del marcador.
+
+Se comprobó al revés con veintiuna averías, plantadas una por una:
+
+- el fresco yendo al frasco del frijol;
+- la etiqueta del primer frasco sin decir «azúcar»;
+- sin nada de frijol, en vez de casi nada;
+- un bocado del otro plato saliendo del aguacate;
+- el otro plato dando siete bocados;
+- un bocado saliéndose de la panza;
+- los bocados sin pasar por la boca;
+- bajando antes de llegar a la boca;
+- a los frascos sin ir derecho;
+- la raya de «llena» antes de que bajen;
+- la raya más arriba de lo que llegan;
+- la raya sin cruzar la panza;
+- «vacío» también en un frasco con un bocado;
+- el marcador del paso 2 diciendo 3;
+- «proteínas» en una frase;
+- el plato de Kenia quedándose servido;
+- el otro plato quedándose servido;
+- dos bocados montados en un frasco;
+- la naranja yendo al frasco del aguacate;
+- la frase del otro plato sin la ensalada;
+- el rótulo «su panza» a la derecha.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
+de 117 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -9335,7 +9461,12 @@ la cuenta. Y nada se va del dibujo sin que la frase diga por qué. Lo que se
 enciende y se apaga en el mismo paso (una gota que cae y se vuelve agua) va en
 dos piezas, una para cada cosa: cada pieza tiene una sola demora. Y un camino
 de agua se parte en tramos del mismo largo que se dibujan uno detrás de otro:
-así corre a paso parejo, y el más largo tarda más.
+así corre a paso parejo, y el más largo tarda más. Lo que viaja por dentro de alguien (un
+bocado) pasa por donde entra de verdad (la boca): va en dos envolturas, una por
+tramo, y la de dentro espera a que acabe la de fuera. Y si tiene que quedar
+dentro de un dibujo de forma libre (una panza), la sonda se lo pregunta al
+navegador con `isPointInFill`, en el centro y en los bordes: la caja de la forma
+deja pasar lo que se sale.
 
 Si el `--sec` de la misión es claro (un ámbar, un amarillo), la letra blanca
 del botón que avanza no se lee en su punta: la misión declara en su CSS

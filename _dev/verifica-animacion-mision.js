@@ -1712,6 +1712,59 @@ const LEER = `
       textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
     };
   };
+  window.__amExtra.amFrascos = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(m(el)); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function uno(sel) { return raiz.querySelector(sel); }
+    function todos(sel) { return [].slice.call(raiz.querySelectorAll(sel)); }
+    function demora(el) { return parseFloat(el.style.getPropertyValue('--d')) || 0; }
+    /* ¿Cae el punto (de la vista) dentro de lo pintado de la panza? Se le
+       pregunta al navegador, en las coordenadas de la panza. */
+    var panza = uno('[data-panza]');
+    function dentro(p) {
+      var q = svg.createSVGPoint(); q.x = p[0]; q.y = p[1];
+      return panza.isPointInFill(q.matrixTransform(m(panza).inverse()));
+    }
+    /* Lo dibujado en un plato: cada pieza con su clase (qué alimento es) y
+       su caja. */
+    function comida(sel) {
+      return todos(sel + ' *').filter(function (e) { return e.tagName.toLowerCase() !== 'g' && e.getAttribute('class'); })
+        .map(function (e) { return { clase: e.getAttribute('class').split(' ')[0], caja: caja(e) }; });
+    }
+    var raya = uno('[data-raya-llena]'), llena = uno('[data-llena]');
+    return {
+      kenia: caja(uno('[data-kenia]')), cabeza: caja(uno('[data-cabeza]')), panza: caja(panza), plato: caja(uno('[data-plato]')),
+      comidaA: { ve: vis(uno('[data-comida="kenia"]')), d: demora(uno('[data-comida="kenia"]')), cosas: comida('[data-comida="kenia"]') },
+      comidaB: { ve: vis(uno('[data-comida-va]')), sale: vis(uno('[data-comida="otro"]')), d: demora(uno('[data-comida-va]')), cosas: comida('[data-comida-va]') },
+      boca: caja(uno('[data-boca]')),
+      bocados: todos('[data-bocado]').map(function (g) {
+        var c = g.querySelector('circle'), h = g.querySelector('[data-baja]'), cx = +c.getAttribute('cx'), cy = +c.getAttribute('cy'), r = +c.getAttribute('r');
+        var p = aVista(c, cx, cy), q = aVista(c, cx + r, cy), rr = Math.hypot(q[0] - p[0], q[1] - p[1]);
+        /* pasa: adónde lo lleva solo la envoltura de fuera (el primer tramo). */
+        return { cual: g.getAttribute('data-bocado'), de: g.getAttribute('data-de'), ve: vis(g), c: p, r: rr, d: demora(g), d2: demora(h),
+                 pasa: aVista(g, cx, cy), clase: c.getAttribute('class'), sale: aVista(g.parentNode, cx, cy),
+                 enPanza: [p, [p[0] + rr, p[1]], [p[0] - rr, p[1]], [p[0], p[1] + rr], [p[0], p[1] - rr]].every(dentro) };
+      }),
+      llena: { ve: vis(llena), d: demora(llena), y: aVista(raya, +raya.getAttribute('x1'), +raya.getAttribute('y1'))[1],
+               x0: aVista(raya, +raya.getAttribute('x1'), +raya.getAttribute('y1'))[0], x1: aVista(raya, +raya.getAttribute('x2'), +raya.getAttribute('y2'))[0] },
+      frascos: [0, 1, 2, 3].map(function (f) {
+        var v = uno('[data-vacio="' + f + '"]');
+        return { f: f, caja: caja(uno('[data-frasco="' + f + '"]')),
+                 etiqueta: todos('[data-etiqueta="' + f + '"]').map(function (t) { return { dice: t.textContent, caja: caja(t), ve: vis(t) }; }),
+                 vacio: { ve: vis(v), caja: caja(v), dice: v.textContent, d: demora(v) } };
+      }),
+      rotulos: todos('[data-rotulo]').map(function (t) { return { k: t.getAttribute('data-rotulo'), ve: vis(t), dice: t.textContent, caja: caja(t) }; }),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   window.__amExtra.amReloj = function (raiz) {
     var vis = window.__amVisible;
     var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
@@ -2136,6 +2189,149 @@ function superficieEn(poly, x) {
 }
 
 const ESCENAS = {
+  /* El Sistema Digestivo. «Llena no es lo mismo que nutrida».
+     ⚠️ Nada se le cree a la escena. Qué alimento va a qué frasco lo dice una
+     tabla de la sonda, y cada entrada se justifica con lo que está escrito
+     debajo del frasco. Dónde está cada bocado se mide en el dibujo: dentro
+     de lo pintado de la panza (se le pregunta al navegador) o dentro de un
+     frasco. Con eso se comprueba lo que la historia dice: los dos platos dan
+     los mismos ocho bocados y la panza se llena igual; con el de Kenia casi
+     todo va al mismo frasco, del frijol llega uno (casi nada, no nada) y dos
+     frascos quedan vacíos; con el otro, llega de los cuatro. Y cada bocado
+     sale de su alimento, en SU plato. ⚠️ Y la prueba no se regala: ni el
+     nombre de un nutriente, ni para qué sirve, ni un órgano, ni una etapa,
+     ni un número fuera del marcador. */
+  amFrascos(e, n) {
+    const x = e.extra, r = [];
+    const nb = t => String(t == null ? '' : t).replace(/ /g, ' ').trim();
+    const cen = c => [(c.x0 + c.x1) / 2, (c.y0 + c.y1) / 2];
+    const enCaja = (p, b, t) => p[0] >= b.x0 - t && p[0] <= b.x1 + t && p[1] >= b.y0 - t && p[1] <= b.y1 + t;
+    /* Lo que no depende del dibujo, primero. */
+    const dicho = [e.texto, e.cifra, e.palabras].concat(x.textos).map(nb).join(' | ').toLowerCase();
+    const EXACTAS = ['carbohidrato', 'carbohidratos', 'proteína', 'proteínas', 'grasa', 'grasas', 'vitamina', 'vitaminas', 'mineral', 'minerales',
+      'nutriente', 'nutrientes', 'nutrición', 'energía', 'construye', 'construyen', 'construir', 'regulan', 'protegen', 'reserva',
+      'ingestión', 'digestión', 'absorción', 'egestión', 'sangre', 'heces', 'saliva', 'jugo', 'jugos', 'bilis', 'esófago', 'estómago',
+      'intestino', 'intestinos', 'hígado', 'páncreas', 'quimo', 'bolo', 'dientes', 'ano', 'vellosidades', 'cancha', 'fibra', 'estreñimiento',
+      'caries', 'chatarra', 'equilibrado', 'equilibrada', 'variado', 'cinco', 'nueve', 'metros', 'grupos', 'digestivo', 'digestiva', 'aparato'];
+    const malas = dicho.split(/[^a-záéíóúñü]+/).filter(w => EXACTAS.includes(w));
+    r.push([malas.length === 0, `paso ${n}: no sale ninguna palabra de la prueba (ni un nutriente, ni para qué sirve, ni un órgano, ni una etapa)`, malas]);
+    const nums = [e.texto, e.palabras].concat(x.textos).map(nb).join(' ').match(/\d+/g) || [];
+    r.push([nums.length === 0, `paso ${n}: ningún número fuera del marcador`, nums]);
+    const frase = nb(e.texto);
+    const F = [['tortilla, arroz, un fresco y un poquito de frijol', '¿Le llegó de todo lo que su cuerpo usa?'],
+      ['Todo baja a la panza', 'la panza se llena', 'no se queda con hambre'],
+      ['casi todo va al mismo frasco', 'Del frijol, el huevo y la leche', 'crecer y repararse', 'casi nada'],
+      ['Otro plato', 'tortilla, frijol, huevo, aguacate, ensalada y una naranja', 'La panza se llena igual'],
+      ['le llega de los cuatro frascos', 'no fue cuánto comió, sino qué comió'],
+      ['Llenarse no es lo mismo que nutrirse', '¿qué frasco te quedó vacío?']];
+    r.push([F[n].every(w => frase.includes(w)), `paso ${n}: la frase dice lo que se ve (${F[n].join(', ')})`, frase]);
+
+    /* ── Qué alimento va a qué frasco. La tabla es de la sonda; lo que la
+       justifica tiene que estar escrito debajo de ese frasco. El fresco va
+       al primero por su azúcar. ── */
+    const VA = { tortilla: [0, 'tortilla'], arroz: [0, 'arroz'], fresco: [0, 'azúcar'], frijol: [1, 'frijol'], huevo: [1, 'huevo'],
+                 aguacate: [2, 'aguacate'], naranja: [3, 'frutas'], tomate: [3, 'verduras'], repollo: [3, 'verduras'] };
+    const CLASE = { 'sd-tortilla': 'tortilla', 'sd-arroz': 'arroz', 'sd-fresco': 'fresco', 'sd-frijol': 'frijol', 'sd-clara': 'huevo', 'sd-yema': 'huevo',
+                    'sd-aguacate': 'aguacate', 'sd-naranja': 'naranja', 'sd-hoja': 'naranja', 'sd-tomate': 'tomate', 'sd-repollo': 'repollo' };
+    const etiqueta = f => x.frascos[f].etiqueta.map(t => nb(t.dice)).join(' ').toLowerCase();
+    if (n === 0) {
+      Object.entries(VA).forEach(([de, [f, palabra]]) =>
+        r.push([etiqueta(f).includes(palabra), `debajo del frasco ${f + 1} dice «${palabra}», que es por lo que va ahí el bocado de ${de}`, etiqueta(f)]));
+      x.frascos.forEach(q => r.push([q.etiqueta.length > 0 && q.etiqueta.every(t => t.ve && t.caja.y0 > q.caja.y1 && cen(t.caja)[0] > q.caja.x0 && cen(t.caja)[0] < q.caja.x1),
+        `lo escrito del frasco ${q.f + 1} va debajo de él`]));
+      const kB = x.bocados.filter(b => b.cual === 'kenia'), oB = x.bocados.filter(b => b.cual === 'otro');
+      r.push([kB.length === 8 && oB.length === 8, 'los dos platos dan los mismos ocho bocados', [kB.length, oB.length]]);
+      r.push([x.bocados.every(b => VA[b.de] && b.clase.includes('sd-b-' + b.de)), 'cada bocado es de un alimento que la tabla conoce, y del color de ese alimento']);
+      /* Cada bocado sale de su alimento, en SU plato; y lo que hay en cada
+         plato es justo de lo que salen sus bocados. */
+      [['kenia', x.comidaA, 'el plato de Kenia'], ['otro', x.comidaB, 'el otro plato']].forEach(([cual, plato, nom]) => {
+        const bs = x.bocados.filter(b => b.cual === cual);
+        bs.forEach(b => r.push([plato.cosas.some(c => CLASE[c.clase] === b.de && enCaja(b.sale, c.caja, 1)),
+          `el bocado de ${b.de} sale de su ${b.de}, en ${nom}`, b.sale.map(Math.round)]));
+        const hay = [...new Set(plato.cosas.map(c => CLASE[c.clase]).filter(Boolean))].sort().join(',');
+        const van = [...new Set(bs.map(b => b.de))].sort().join(',');
+        r.push([hay === van, `en ${nom} hay justo lo que da bocados`, { hay, van }]);
+      });
+      r.push([enCaja(cen(x.panza), x.kenia, 0) && x.panza.x0 >= x.kenia.x0 - 2 && x.panza.x1 <= x.kenia.x1 + 2 && x.cabeza.y1 <= x.kenia.y0 + 4,
+        'la panza está dentro de Kenia, debajo de su cabeza']);
+      const su = x.rotulos.filter(t => t.k === 'panza');
+      r.push([su.length === 2 && su.every(t => t.ve && t.caja.x1 < x.panza.x0 && cen(t.caja)[1] > x.panza.y0 && cen(t.caja)[1] < x.panza.y1),
+        'el rótulo «su panza» va a la izquierda de la panza, a su altura']);
+      const fr = x.rotulos.find(t => t.k === 'frascos');
+      r.push([fr && fr.ve && fr.caja.y1 < Math.min(...x.frascos.map(q => q.caja.y0)) && cen(fr.caja)[0] > x.frascos[0].caja.x0 && cen(fr.caja)[0] < x.frascos[3].caja.x1,
+        'el rótulo de los frascos va encima de ellos']);
+    }
+
+    /* ── El plato ── */
+    r.push([x.comidaA.ve === (n === 0), `paso ${n}: el plato de Kenia ${n === 0 ? 'está servido' : 'ya no está'}`]);
+    r.push([!x.comidaB.ve, `paso ${n}: el otro plato no se queda servido al terminar el paso`]);
+    r.push([x.comidaB.sale === (n >= 3), `paso ${n}: el otro plato ${n >= 3 ? 'ya salió' : 'todavía no sale'}`]);
+
+    /* ── Dónde está cada bocado, medido ── */
+    const donde = b => {
+      if (!b.ve) return 'no';
+      if (b.enPanza) return 'panza';
+      const f = x.frascos.findIndex(q => b.c[0] - b.r >= q.caja.x0 - 0.5 && b.c[0] + b.r <= q.caja.x1 + 0.5 && b.c[1] - b.r >= q.caja.y0 - 0.5 && b.c[1] + b.r <= q.caja.y1 + 0.5);
+      return f >= 0 ? 'frasco' + f : 'afuera';
+    };
+    const espera = b => {
+      if (b.cual === 'kenia' ? n === 1 : n === 3) return 'panza';
+      if (b.cual === 'kenia' ? n === 2 : n >= 4) return 'frasco' + VA[b.de][0];
+      return 'no';
+    };
+    const malos = x.bocados.filter(b => VA[b.de] && donde(b) !== espera(b));
+    r.push([malos.length === 0, `paso ${n}: cada bocado está donde le toca (en el plato sin verse, en la panza o en SU frasco)`,
+      malos.map(b => b.cual + ':' + b.de + ' ' + donde(b) + ' ≠ ' + espera(b))]);
+    const visibles = x.bocados.filter(b => b.ve);
+    const pegados = [];
+    visibles.forEach((a, i) => visibles.slice(i + 1).forEach(b => { if (Math.hypot(a.c[0] - b.c[0], a.c[1] - b.c[1]) < a.r + b.r - 0.5) pegados.push(a.de + '/' + b.de); }));
+    r.push([pegados.length === 0, `paso ${n}: ningún bocado se monta encima de otro, así se pueden contar`, pegados]);
+
+    /* ── La panza llena, las dos veces a la misma raya ── */
+    const enPanza = visibles.filter(b => b.enPanza);
+    r.push([x.llena.ve === (n === 1 || n === 3), `paso ${n}: la raya de «llena» ${n === 1 || n === 3 ? 'está' : 'no está'}`]);
+    if (n === 1 || n === 3) {
+      r.push([enPanza.length === 8, `paso ${n}: los ocho bocados están en la panza`, enPanza.length]);
+      const tope = Math.min(...enPanza.map(b => b.c[1] - b.r));
+      r.push([tope - x.llena.y >= 0 && tope - x.llena.y <= 4, `paso ${n}: la panza llega justo a la raya de «llena»`, Math.round((tope - x.llena.y) * 10) / 10]);
+      r.push([x.llena.x0 >= x.panza.x0 - 1 && x.llena.x1 <= x.panza.x1 + 1 && x.llena.x1 - x.llena.x0 >= 0.6 * (x.panza.x1 - x.panza.x0) && x.llena.y >= x.panza.y0,
+        `paso ${n}: la raya cruza la panza por dentro`]);
+      /* Del plato a la panza se pasa por la boca: el primer tramo termina en
+         la boca y el segundo arranca cuando el primero acabó. */
+      const boca = cen(x.boca), lejos = enPanza.filter(b => Math.hypot(b.pasa[0] - boca[0], b.pasa[1] - boca[1]) > 4);
+      r.push([lejos.length === 0, `paso ${n}: cada bocado pasa por la boca de Kenia antes de bajar a la panza`, lejos.map(b => b.de + ' ' + b.pasa.map(Math.round))]);
+      r.push([enPanza.every(b => b.d2 - b.d >= 800), `paso ${n}: baja cuando ya llegó a la boca, no antes`, enPanza.map(b => b.d2 - b.d)]);
+      const dm = Math.max(...enPanza.map(b => b.d2));
+      r.push([x.llena.d >= dm + 400, `paso ${n}: la raya aparece cuando el último bocado ya va bajando`, [x.llena.d, dm]]);
+    } else r.push([enPanza.length === 0, `paso ${n}: la panza no tiene bocados que contar`, enPanza.length]);
+    if (n === 2 || n === 4) r.push([visibles.every(b => b.d2 === b.d && Math.hypot(b.pasa[0] - b.c[0], b.pasa[1] - b.c[1]) < 0.5),
+      `paso ${n}: de la panza a su frasco, cada bocado va derecho`]);
+
+    /* ── Los frascos ── */
+    const cuenta = [0, 1, 2, 3].map(f => visibles.filter(b => donde(b) === 'frasco' + f).length);
+    const llegan = n === 2 || n >= 4;
+    x.frascos.forEach(q => {
+      const vacio = llegan && cuenta[q.f] === 0;
+      r.push([q.vacio.ve === vacio && (!vacio || (nb(q.vacio.dice) === 'vacío' && enCaja(cen(q.vacio.caja), q.caja, 0))),
+        `paso ${n}: el frasco ${q.f + 1} ${vacio ? 'dice «vacío», adentro' : 'no dice «vacío»'}`, [q.vacio.ve, cuenta[q.f]]]);
+    });
+    const vacios = x.frascos.filter(q => q.vacio.ve);
+    if (n === 2) {
+      r.push([cuenta[0] >= 6 && cuenta[1] === 1 && cuenta[2] === 0 && cuenta[3] === 0,
+        'paso 2: casi todo va al mismo frasco, del frijol llega uno (casi nada, no nada) y dos quedan vacíos', cuenta]);
+      const dm = Math.max(...visibles.map(b => b.d));
+      r.push([dm === 0 || vacios.every(q => q.vacio.d >= dm), 'paso 2: «vacío» aparece cuando ya llegaron los bocados']);
+    }
+    if (n >= 4) r.push([cuenta.every(c => c >= 1) && cuenta[3] === Math.max(...cuenta) && cuenta[2] === 1,
+      `paso ${n}: llega de los cuatro frascos; el de las frutas y verduras es el que más lleva, y el del aguacate uno`, cuenta]);
+
+    /* ── El marcador ── */
+    const cifra = nb(e.cifra), pal = nb(e.palabras);
+    const M = [['?', 'si le llegó de todo'], ['llena', 'la panza de Kenia'], [String(vacios.length), 'frascos vacíos'],
+      ['llena', 'igual que con el plato de Kenia'], [String(vacios.length), 'frascos vacíos'], ['?', 'qué frasco te quedó vacío']];
+    r.push([cifra === M[n][0] && pal === M[n][1], `paso ${n}: el marcador dice lo que se ve («${M[n][0]}», ${M[n][1]})`, [cifra, pal]]);
+    return r;
+  },
   /* El Sistema Endocrino. «Por qué la hora importa».
      ⚠️ Nada se le cree a la escena. Los caminos se siguen en el dibujo: el
      cable va de la cabeza a una mano; la sangre baja de la glándula al

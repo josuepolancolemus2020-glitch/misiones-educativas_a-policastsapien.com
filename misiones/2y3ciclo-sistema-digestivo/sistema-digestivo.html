@@ -25,6 +25,9 @@
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
 <link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La animación que explica el tema: el aparato es compartido y va DESPUÉS
+     del CSS de la misión, que es de donde saca sus colores. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -72,6 +75,23 @@
     <strong>nutriendo</strong>. No son la misma cosa, y confundirlas se paga en el pupitre a las diez de la
     mañana. Al terminar esta misión, mira tu propia comida de hoy y busca cuál de los cinco nutrientes te
     faltó.</div></div>
+  </div>
+  <!-- La animación que explica el tema, justo después de la historia: el
+       plato de Kenia, su panza y cuatro frascos, cada uno con sus alimentos
+       escritos. Cada bocado va a su frasco; después, otro plato con los
+       mismos bocados llena la panza igual y llega a los cuatro. La mueve el
+       alumno, paso a paso. El aparato es compartido (js/animacion-mision.js)
+       y la escena es de esta misión (js/animacion-frascos.js). La frase de
+       dentro es de reserva: si el aparato no llega a cargar, se lee eso en
+       vez de un hueco. -->
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira adónde va lo que come Kenia</h2>
+    <div id="amFrascos">
+      <p>Con tortilla, arroz, un fresco y un poquito de frijol, la panza de Kenia se llena. Pero casi todo va
+      al mismo frasco, el de la tortilla, el arroz y el azúcar; del frijol, el huevo y la leche, casi nada, y
+      dos frascos se quedan vacíos. Con otro plato de los mismos bocados (tortilla, frijol, huevo, aguacate,
+      ensalada y una naranja), la panza se llena igual, pero le llega de los cuatro frascos.</p>
+    </div>
   </div>
   <div class="card ac-teal">
     <h2>🍎 ¿Qué es la nutrición?</h2>
@@ -634,6 +654,8 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-frascos.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

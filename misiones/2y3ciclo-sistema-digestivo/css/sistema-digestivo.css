@@ -481,3 +481,54 @@ body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* ── La animación que explica el tema: «Llena no es lo mismo que nutrida»
+   (js/animacion-frascos.js, con el aparato de css/animacion-mision.css).
+   El plato, la comida, la panza y los frascos son como son: se quedan
+   iguales en la pantalla clara y en la oscura. Lo que se lee encima de
+   cualquier cosa va con .am-rotulo, que lleva su halo del color de la
+   tarjeta. Cada frasco lleva sus alimentos escritos y el vacío dice
+   «vacío»: nada se dice solo con color. */
+/* ⚠️ El botón que avanza: con el verde y el teal de la misión, la letra
+   blanca se quedaba en 3,3:1 y 3,7:1. Un tono más hondo de los dos la deja
+   por encima de 5:1. */
+:root { --am-boton: linear-gradient(135deg, #15803d, #0f766e); }
+.am-raiz .sd-plato     { fill: #ffffff; stroke: #8d99ae; stroke-width: 1.4; }
+.am-raiz .sd-plato-in  { fill: none; stroke: #d5dbe3; stroke-width: 1; }
+.am-raiz .sd-tortilla  { fill: #eac27a; stroke: #b98b3e; stroke-width: 0.9; }
+.am-raiz .sd-arroz     { fill: #fbfbf7; stroke: #b9b9ad; stroke-width: 0.8; }
+.am-raiz .sd-frijol    { fill: #6d3b23; stroke: #4a2616; stroke-width: 0.8; }
+.am-raiz .sd-vaso      { fill: #eef6fb; stroke: #7f8c8d; stroke-width: 1.1; }
+.am-raiz .sd-fresco    { fill: #ff8fb1; }
+.am-raiz .sd-clara     { fill: #ffffff; stroke: #c9c9c9; stroke-width: 0.8; }
+.am-raiz .sd-yema      { fill: #f9c21a; stroke: #d69e00; stroke-width: 0.7; }
+.am-raiz .sd-aguacate  { fill: #9ccc65; stroke: #558b2f; stroke-width: 1; }
+.am-raiz .sd-tomate    { fill: #e53935; stroke: #b71c1c; stroke-width: 0.7; }
+.am-raiz .sd-repollo   { fill: #aed581; stroke: #689f38; stroke-width: 0.8; }
+.am-raiz .sd-naranja   { fill: #ffa726; stroke: #e65100; stroke-width: 1; }
+.am-raiz .sd-hoja      { fill: #43a047; }
+.am-raiz .sd-panza     { fill: #ffe3e3; stroke: #c0707a; stroke-width: 1.6; }
+.am-raiz .sd-raya      { stroke: #2d3436; stroke-width: 1.4; stroke-dasharray: 4 3; }
+.am-raiz .sd-frasco    { fill: #f4fbff; fill-opacity: 0.9; stroke: #6c8aa3; stroke-width: 1.6; }
+.am-raiz .sd-tapa      { fill: #90a4ae; stroke: #607d8b; stroke-width: 1; }
+.am-raiz .sd-vacio     { fill: #7f8c8d; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+.am-raiz .sd-bocado    { stroke: #2d3436; stroke-width: 0.9; }
+.am-raiz .sd-b-tortilla { fill: #eac27a; }
+.am-raiz .sd-b-arroz    { fill: #fbfbf7; }
+.am-raiz .sd-b-fresco   { fill: #ff8fb1; }
+.am-raiz .sd-b-frijol   { fill: #6d3b23; }
+.am-raiz .sd-b-huevo    { fill: #f9c21a; }
+.am-raiz .sd-b-aguacate { fill: #9ccc65; }
+.am-raiz .sd-b-naranja  { fill: #ffa726; }
+.am-raiz .sd-b-tomate   { fill: #e53935; }
+.am-raiz .sd-b-repollo  { fill: #aed581; }
+.am-raiz .sd-piel      { fill: #c98b5b; stroke: #8d5a33; stroke-width: 0.9; }
+.am-raiz .sd-pelo      { fill: #2d2a26; }
+.am-raiz .sd-ojo       { fill: #2d2a26; }
+.am-raiz .sd-boca      { fill: none; stroke: #6d3b23; stroke-width: 1.2; stroke-linecap: round; }
+.am-raiz .sd-camisa    { fill: #f7f9fc; stroke: #9aa7b8; stroke-width: 1.1; }
+.am-raiz .sd-falda     { fill: #34568b; stroke: #243f69; stroke-width: 1; }
+.am-raiz .sd-brazo     { fill: none; stroke: #c98b5b; stroke-width: 8; stroke-linecap: round; }
+.am-raiz .sd-pierna    { fill: #c98b5b; stroke: #8d5a33; stroke-width: 0.8; }
+.am-raiz .sd-zapato    { fill: #2d2a26; }
+.am-raiz .sd-hilo      { stroke: #636e72; stroke-width: 0.9; }

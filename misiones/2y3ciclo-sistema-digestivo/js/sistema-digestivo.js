@@ -352,13 +352,24 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 // (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
 // tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
 // Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
+//
+// ⚠️ Y ninguna la contesta la historia de Kenia ni su animación
+// (js/animacion-frascos.js). La historia es la panza llena que no nutre, el
+// plato de tortilla, arroz y fresco, el frijol, el huevo y la leche que
+// sirven para crecer, y «los cinco nutrientes»: por eso se fueron «tener la
+// panza llena no siempre es estar bien nutrido», «el huevo y la leche ayudan
+// a crecer», «¿por qué Kenia se dormía?», «¿cuál comida es más completa?»,
+// «¿cuántos grupos de nutrientes hay?» y «alimentarse es comer; ___ es…».
+// Las que entraron preguntan otra cosa de la misión, y las dos de verdadero
+// o falso son falsas: el banco tenía diez verdaderas de diez, y el que
+// marcaba V en todo sacaba la nota entera.
 const evalTFBank=[
-  {q:'Tener la panza llena no siempre quiere decir estar bien nutrido.',a:true,k:'tf-panza'},
+  {q:'Comer a horas regulares y sin prisa daña la digestión.',a:false,k:'tf-horas'},
   {q:'Las grasas son energía de reserva.',a:true,k:'tf-grasas'},
   {q:'La digestión empieza en la boca.',a:true,k:'tf-boca'},
   {q:'Masticar es parte de la digestión.',a:true,k:'tf-masticar'},
   {q:'Lavarse las manos antes de comer ayuda a evitar enfermedades.',a:true,k:'tf-manos'},
-  {q:'El huevo y la leche ayudan a crecer.',a:true,k:'tf-huevo'},
+  {q:'Cualquier agua es buena para beber, aunque no sea potable.',a:false,k:'tf-potable'},
   {q:'Las verduras deben lavarse antes de comerlas.',a:true,k:'tf-lavar-verduras'},
   {q:'Las verduras regulan y protegen el cuerpo.',a:true,k:'tf-verduras'},
   {q:'El agua que bebemos también es parte de una buena nutrición.',a:true,k:'tf-agua'},
@@ -367,17 +378,17 @@ const evalTFBank=[
 const evalMCBank=[
   {q:'¿Qué nutriente da energía rápida?',o:['a) las proteínas','b) las grasas','c) los carbohidratos','d) el agua'],a:2,k:'mc-carbohidratos'},
   {q:'¿Qué nutriente construye y repara el cuerpo?',o:['a) los carbohidratos','b) las proteínas','c) las grasas','d) el azúcar'],a:1,k:'mc-proteinas'},
-  {q:'¿Cuántos grupos principales de nutrientes hay?',o:['a) dos','b) cinco','c) diez','d) uno'],a:1,k:'mc-cinco'},
+  {q:'Si se estiraran todas las vellosidades, ¿qué área cubrirían?',o:['a) una uña','b) una cancha','c) un cuaderno','d) una moneda'],a:1,k:'mc-vellosidades'},
   {q:'¿Cuál es la primera etapa de la digestión?',o:['a) la egestión','b) la ingestión','c) la respiración','d) el sueño'],a:1,k:'mc-ingestion'},
   {q:'¿En qué etapa pasan los nutrientes a la sangre?',o:['a) la absorción','b) el sueño','c) la masticación','d) la respiración'],a:0,k:'mc-absorcion'},
   {q:'¿Qué pasa en la etapa llamada digestión?',o:['a) entra el alimento','b) sale lo que sobra','c) el alimento se deshace en partes muy pequeñas','d) se duerme'],a:2,k:'mc-digestion'},
-  {q:'¿Cuál de estas comidas es más completa?',o:['a) tortilla, frijol, huevo y aguacate','b) solo tortilla con fresco','c) solo dulces','d) solo arroz'],a:0,k:'mc-completa'},
+  {q:'¿Qué ayuda a ir bien al baño y a evitar el estreñimiento?',o:['a) la fibra','b) el azúcar','c) la sal','d) el refresco'],a:0,k:'mc-fibra'},
   {q:'¿Qué parte de la boca corta y muele el alimento?',o:['a) las uñas','b) el pelo','c) los dientes','d) los ojos'],a:2,k:'mc-dientes'},
   {q:'¿Qué alimento tiene grasas buenas?',o:['a) arroz','b) aguacate','c) naranja','d) agua'],a:1,k:'mc-aguacate'},
-  {q:'¿Por qué Kenia se dormía a media mañana, si comía todos los días?',o:['a) le faltaban nutrientes','b) no comía nada','c) comía demasiado frijol','d) dormía mucho de noche'],a:0,k:'mc-kenia'}
+  {q:'¿Cuándo conviene cepillarse?',o:['a) después de comer','b) solo los domingos','c) nunca','d) solo cuando duele algo'],a:0,k:'mc-cepillar'}
 ];
 const evalCPBank=[
-  {q:'Alimentarse es comer; ___ es lo que el cuerpo hace por dentro con la comida.',a:'nutrirse',acc:['nutrirse'],k:'cp-nutrirse'},
+  {q:'El exceso de dulces causa ___.',a:'caries',acc:['caries'],k:'cp-caries'},
   {q:'Lo que el cuerpo no aprovecha sale como ___.',a:'heces',acc:['heces'],k:'cp-heces'},
   {q:'El líquido de la boca que empieza la digestión es la ___.',a:'saliva',acc:['saliva'],k:'cp-saliva'},
   {q:'Las sustancias de los alimentos que el cuerpo aprovecha se llaman ___.',a:'nutrientes',acc:['nutrientes'],k:'cp-nutrientes'},
@@ -484,12 +495,18 @@ function evalSwitchMode(mode){
     cBtn.classList.add('active');cBtn.setAttribute('aria-selected','true');
   }
 }
+// ⚠️ En pensamiento crítico, lo mismo: el caso del refresco del desayuno que
+// no deja concentrarse en clase, la decisión de qué desayunar para rendir en
+// clase, la comparación de alimentarse y nutrirse («como Kenia») y el efecto
+// de crecer y sanar con frijol, huevo y leche eran la historia de Kenia con
+// otra ropa. Los que entraron salen de lo que la misión enseña de la higiene,
+// la boca y los hábitos.
 const critCaseBank=[
   {k:'ca-chatarra',txt:'Un niño solo come dulces, frituras y refrescos, y casi nunca frutas ni verduras. Se cansa rápido y se enferma seguido.'},
   {k:'ca-rapido',txt:'Una niña come muy rápido y sin masticar bien; después casi siempre le duele el estómago.'},
   {k:'ca-manos',txt:'Un joven no se lava las manos antes de comer y a menudo tiene diarrea y parásitos.'},
   {k:'ca-fibra',txt:'En una familia casi no comen frutas, verduras ni frijol; varios sufren de estreñimiento.'},
-  {k:'ca-refresco',txt:'Un niño solo desayuna un refresco antes de ir a la escuela y no logra concentrarse en clase.'},
+  {k:'ca-agua',txt:'En una comunidad beben el agua del río sin hervirla ni clorarla, y muchos niños se enferman de diarrea.'},
   {k:'ca-grasa',txt:'Una persona come muchísima grasa y comida frita todos los días, y ha subido mucho de peso.'},
 ];
 const critCaseQuestions=[
@@ -526,14 +543,14 @@ const critDecisionBank=[
   'Una mamá prepara la lonchera de su hijo: puede ponerle frijoles con tortilla y una fruta, o galletas dulces y soda.',
   'Después de jugar, un joven tiene mucha sed: puede tomar agua, o un refresco azucarado grande.',
   'Una familia decide qué cenar: verduras con pollo, o comida frita como casi todos los días.',
-  'Un estudiante quiere rendir en clase y piensa qué desayunar antes de la escuela.',
+  'En una fiesta hay de todo, y un niño piensa si comer hasta sentirse muy lleno.',
 ];
 const critDecisionGuide='Para nutrirnos bien conviene elegir alimentos VARIADOS y NATURALES: frutas, verduras, frijol, tortilla, huevo y agua, y evitar el exceso de azúcar, grasa y comida chatarra. Una buena alimentación, con higiene, nos da energía, nos ayuda a crecer y previene enfermedades. La mejor decisión casi siempre es la opción más natural y equilibrada.';
 const critCompareBank=[
-  {k:'co-alimentarse',a:'Comer un plato de comida.',b:'Lo que el cuerpo hace por dentro con esa comida.',
-   ga:'Alimentarse: un acto voluntario.',
-   gb:'Nutrirse: un proceso involuntario.',
-   gr:'No son lo mismo: se puede comer mucho y no nutrirse bien, como Kenia.'},
+  {k:'co-dientes-lengua',a:'Cortan y muelen el alimento en la boca.',b:'Mueve el bocado dentro de la boca y ayuda a tragarlo.',
+   ga:'Los dientes.',
+   gb:'La lengua.',
+   gr:'Los dos trabajan en la boca, pero unos trituran y la otra mueve el bocado para tragarlo.'},
   {k:'co-ingestion',a:'El alimento entra por la boca.',b:'Lo que sobra sale del cuerpo.',
    ga:'La ingestión, la primera etapa.',
    gb:'La egestión, la última etapa.',
@@ -550,7 +567,7 @@ const critCauseBank=[
   {k:'cau-sangre',cause:'Los nutrientes llegan a la sangre.',guide:'La sangre los lleva a todas las células del cuerpo.'},
 ];
 const critEffectBank=[
-  {k:'ef-crece',effect:'Un niño crece y sus heridas sanan pronto.',guide:'Come suficientes proteínas: frijol, huevo y leche.'},
+  {k:'ef-caries',effect:'Un niño come dulces todo el día y casi nunca se cepilla.',guide:'Le pueden salir caries: el exceso de dulces las causa.'},
   {k:'ef-fuerzas',effect:'Una niña tiene fuerzas para jugar toda la tarde.',guide:'Comió carbohidratos, como la tortilla y el arroz.'},
   {k:'ef-protege',effect:'Una familia que come fruta todos los días se enferma menos.',guide:'Las frutas tienen vitaminas que regulan y protegen el cuerpo.'},
   {k:'ef-horas',effect:'El cuerpo aguanta varias horas sin comer.',guide:'Usa la reserva que guardan las grasas.'},
