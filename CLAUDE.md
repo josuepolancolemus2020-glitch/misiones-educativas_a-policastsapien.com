@@ -8651,6 +8651,131 @@ Salió roja con cada una.
 Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro, de
 100 ms, es al caer el telón.
 
+### La trigésima quinta: Áreas Protegidas de Honduras, y lo que enseñó
+
+La sexta de la Ruta del Planeta es **Áreas Protegidas de Honduras**
+(`misiones/2y3ciclo-areas-protegidas-de-honduras/`, `js/animacion-toma.js`). La
+historia es la de don Tulio: en su aldea el agua bajaba por tubo desde la
+montaña y nunca faltó, hasta el año en que la toma se secó en marzo y hubo que
+acarrearla en bidones hasta que volvieron las lluvias. La historia termina
+diciendo que el agua no salía de la tubería: salía del monte que está arriba. La
+animación son dos cerros iguales, cortados para ver lo de adentro: uno con monte
+y otro pelado, con los tocones de los árboles que tuvo. Al pie de cada uno, la
+toma de una aldea con su pila; abajo, en dos tiras, los meses sin lluvia:
+
+- los dos cerros y sus tomas: ¿cuál aguanta más sin lluvia?;
+- la misma lluvia en los dos, de mayo a octubre: en el monte el agua se mete en
+  la tierra; en el pelado corre cuesta abajo y se va por el borde;
+- adentro: el monte guardó mucha agua, el pelado, poca. Las hojas frenan la
+  lluvia y las raíces le abren camino;
+- en noviembre se acaban las lluvias: cada toma vive de lo que su cerro guardó;
+- pasan diciembre, enero y febrero: en marzo el cerro pelado se queda sin agua
+  adentro y su toma se seca, con bidones al lado. La del monte sigue;
+- en mayo vuelven las lluvias: la aldea del cerro pelado pasó dos meses con
+  bidones, y la toma del monte nunca se secó;
+- el monte guarda la lluvia y la suelta cuando ya no llueve. ¿Qué le pasó al
+  monte de arriba de la toma de don Tulio?
+
+Seis cosas que valen para las que siguen:
+
+1. ⚠️ **Lo que se compara tiene que ser justo, y se mide.** Los dos cerros son
+   la misma curva, con la toma en el mismo sitio, y la lluvia cae en los mismos
+   puntos de cada uno: por eso las gotas van cada 16, que cabe entero en la
+   distancia entre los dos cerros. Y las dos tomas sueltan **la misma agua cada
+   mes** mientras tienen: el agua guardada es un área adentro del cerro, y el
+   nivel de cada mes se calcula con esa cuenta, no se escribe. Si la toma del
+   monte diera más, el alumno podría pensar que aguantó por eso. Lo único que
+   cambia es cuánto guardó cada cerro: el monte, el doble. La sonda vuelve a
+   medir las áreas: 3758 y 1879, y cada mes 470 y 469.
+2. ⚠️ **Lo único que se cuenta son los meses.** Ni litros ni porcentajes: esos
+   números no se pueden acreditar para un cerro que no existe. Lo que sí es de
+   verdad es el calendario: las lluvias de mayo a octubre y los meses sin lluvia
+   de noviembre a abril, como enseña la misión de Geografía de Honduras. Por eso
+   las tiras son el reloj de la escena: un mes que pasa es una celda que se
+   llena, con una gota si la toma dio agua y una ✗ si no, y el marcador cuenta
+   en ellas.
+3. ⚠️ **La historia y la animación contestaban cuatro preguntas.** El completar
+   «El agua de la toma de don Tulio no salía de la tubería: salía del ___ de
+   arriba» era la historia palabra por palabra, y el verdadero o falso de «un
+   bosque en la montaña no tiene nada que ver con el agua de la aldea de abajo»,
+   la historia al revés. «¿Qué pasa con las quebradas donde se tala el bosque?»
+   (se secan en verano) y el de las inundaciones los contesta la animación.
+   Ahora preguntan dónde queda el refugio de Cuero y Salado, si en un pinar hay
+   más especies que en la selva, si los bosques limpian el aire y qué le hace la
+   deforestación al clima, con la misma respuesta en el mismo sitio. En la misión
+   y en la ficha, que sigue en sus siete hojas; y la ficha dice ahora que la
+   selva es la de más especies, que la prueba pregunta. La felicitación de la
+   ficha iba en la hoja de los pareados y nombraba Río Plátano como Patrimonio de
+   la Humanidad: con la selección de al lado, el alumno sabía qué pareado era.
+   Ahora solo pide revisar.
+4. ⚠️ **En pensamiento crítico la respuesta correcta estaba SIEMPRE en la
+   segunda opción.** En las dos secciones que se califican solas: marcando la
+   «b» sin leer se sacaban 35 de 100 puntos. Se repartió entre las cuatro sin
+   tocar el contenido de ninguna, igual que el reparto de respuestas de las
+   evaluaciones, que esta sección no vigila. De paso se cambiaron las dos causas
+   que contesta la animación (la tala sobre La Tigra que le baja el agua a la
+   capital y las laderas que dejan los ríos secos), el único distractor creíble
+   de la ganadería («el suelo retiene más agua», que la animación descarta), la
+   ficha «Ríos que se secan» del Clasifica, y el argumento de que el bosque
+   asegura el agua del país: ahora pide por qué un área protegida necesita que
+   la cuide la gente que vive cerca, y no solo una ley.
+5. ⚠️ **La misión se contradecía en su propio mapa.** Su teoría decía que el
+   Corredor Biológico Mesoamericano va «desde el sur de México hasta Panamá»,
+   con México y los siete países de Centroamérica, y once sitios más (la tarjeta,
+   el quiz, el completar, el pareado, la ficha y el Campeonísimo) decían «hasta
+   Colombia». El corredor es el de Mesoamérica: se dejó en Panamá en todos.
+6. **Nadie tiene la culpa en el dibujo.** El cerro pelado no lleva a nadie
+   cortando: la historia no dice quién cortó el monte de don Tulio, y la
+   animación tampoco. Termina en una pregunta, y la respuesta la saca el alumno.
+
+La sonda de esta escena **no le cree nada a la escena**:
+
+- compara los dos cerros punto por punto, con lo de adentro dentro de su tierra
+  y la toma, el tubo y la pila en el mismo sitio de cada uno;
+- mide la lluvia gota por gota: el mismo paso, los mismos puntos sobre cada
+  cerro y cada gota terminando en el suelo que tiene debajo;
+- las flechas: tres que entran en el monte; en el pelado, una corta que entra y
+  otra que corre pegada al cerro, siempre hacia abajo, hasta el borde;
+- el agua guardada por su borde de arriba, y su área adentro del cerro: el doble
+  en el monte, lo mismo cada mes, y lo que le queda a cada uno en cada paso;
+- de esas áreas saca lo que tiene que decir cada celda de las tiras, si hay
+  chorro y agua en la pila, la ✗ de la toma seca y los bidones;
+- el marcador cuenta en las tiras;
+- y no sale ni erosión, ni inundación, ni neblina, ni especies, ni aire, ni
+  clima, ni un área protegida, ni un número de más.
+
+Se comprobó al revés con veinte averías, plantadas una por una:
+
+- el pelado con otra curva;
+- el pelado guardando cinco meses;
+- el monte guardando el triple;
+- la toma del pelado llevándose menos en noviembre;
+- el chorro del pelado siguiendo en marzo;
+- la pila del pelado con agua estando seca;
+- los bidones saliendo en noviembre;
+- el marcador del paso 5 diciendo 3 meses;
+- el marcador del paso 4 diciendo abril;
+- la frase del paso 4 diciendo febrero;
+- «neblina» en una frase;
+- la lluvia con otro paso;
+- las gotas quedándose en el aire;
+- el agua corriendo también en el monte;
+- en el pelado entrando tanta agua como en el monte;
+- un árbol flotando;
+- un tocón que falta;
+- la tira del pelado con una gota en marzo;
+- «agua guardada» escrito fuera del agua;
+- la toma lejos de lo de adentro.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 54 cuadros por segundo, y el peor cuadro
+llega al empezar otra vez, cuando todo vuelve a la vez. ⚠️ **El rendimiento se
+compara con una escena ya publicada, medida el mismo día y en la misma
+máquina.** La de las Eras, que se publicó a 59 cuadros y con el peor de 100 ms,
+midió ese día 53 cuadros y 217 ms: la máquina de las pruebas no siempre va igual,
+y un número suelto no dice si la escena es pesada.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -8720,7 +8845,14 @@ el contorno: en el borde `isPointInFill` contesta que no, así que la sonda lo
 prueba con un margen alrededor. Volviendo con «Atrás», lo que dice el
 resultado de un paso (un precio, una cuenta) vuelve con lo que lo produce, no
 con la demora que tiene al llegar: si no, dice un momento lo contrario de lo
-que el paso enseña. Una capa (`.am-capa`) espera su demora como cualquier otra
+que el paso enseña. Cuando dos cosas se comparan (dos cerros, dos casas), se
+dibujan con la misma curva y la sonda las compara punto por punto; si lo que
+cae sobre ellas tiene que ser lo mismo (la lluvia), el paso cabe entero en la
+distancia entre las dos; y si una cantidad tiene que ser la misma (lo que suelta
+cada toma en un mes), se calcula como área y no se escribe. Un nivel que baja
+por etapas va en una capa por etapa, una dentro de otra, cada una con su demora.
+Y lo que vive dentro de un recorte (`clipPath`) no se pinta: la sonda pasa sus
+puntos a la vista con el grupo que lo usa, no con el recorte. Una capa (`.am-capa`) espera su demora como cualquier otra
 pieza; hasta el 30 de septiembre de 2026 no la esperaba, y lo que se encendía en
 cascada salía de golpe. Una demora se comprueba midiendo la opacidad a lo largo
 del viaje: al final del paso, lo que se adelantó y lo que llegó a tiempo se ven
@@ -9857,7 +9989,10 @@ Y dos cosas que salieron por el camino:
   entre la fuente: se corrige la teoría de la que esté mal, en la pantalla y
   en la ficha.
 - **La prueba de pensamiento crítico de Áreas Protegidas tiene otra forma**
-  (datos, clasifica, argumenta) y la sonda no la lee; no se tocó.
+  (datos, clasifica, argumenta) y la sonda no la lee. Con su animación se le
+  cambió lo que la animación contestaba y se repartió la respuesta correcta,
+  que estaba siempre en la segunda opción (contado en «La trigésima quinta»);
+  lo demás se revisa leyéndola.
 
 **La Ruta del Cuerpo quedó completa también**, sus cinco sistemas con sus
 fichas. En el cuerpo lo que delata es el ÓRGANO: «¿qué órgano bombea la

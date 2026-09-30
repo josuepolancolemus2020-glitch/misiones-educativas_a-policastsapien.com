@@ -458,3 +458,47 @@ body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* ── La animación que explica el tema: «El agua que el monte guarda»
+   (js/animacion-toma.js, con el aparato de css/animacion-mision.css).
+   Los cerros, el monte, el agua y la toma son como son: se quedan iguales
+   en la pantalla clara y en la oscura. Lo que se lee encima de cualquier
+   cosa va con .am-rotulo, que lleva su halo del color de la tarjeta.
+   ⚠️ El botón que avanza: con el verde claro de la misión en la punta, la
+   letra blanca se quedaba en 3,9:1. Un verde más hondo la deja en 6:1. */
+:root { --am-boton: linear-gradient(135deg, #2d7a4f, #3d6b2a); }
+.am-raiz .ap-sol          { fill: #f6b93b; }
+.am-raiz .ap-rayo         { stroke: #f6b93b; stroke-width: 1.6; stroke-linecap: round; }
+.am-raiz .ap-nube         { fill: #bcc6d2; }
+.am-raiz .ap-gota         { fill: none; stroke: #2f73b0; stroke-width: 1.4; stroke-dasharray: 4 6; stroke-linecap: round; }
+.am-raiz .ap-tierra       { fill: #b8895a; }
+.am-raiz .ap-suelo-borde  { stroke: #7d5a39; stroke-width: 1.4; }
+/* La superficie: el monte, con su hojarasca; el pelado, tierra suelta. */
+.am-raiz .ap-hojarasca    { fill: none; stroke: #4f7d2a; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.am-raiz .ap-pelada       { fill: none; stroke: #d9b98a; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.am-raiz .ap-raiz         { fill: none; stroke: #6b4a2e; stroke-width: 1.1; stroke-linecap: round; }
+.am-raiz .ap-tronco       { fill: #6d4c41; }
+.am-raiz .ap-copa         { fill: #3f8f3a; stroke: #2a6627; stroke-width: 1; }
+.am-raiz .ap-tocon        { fill: #a1826a; stroke: #5d4030; stroke-width: 0.8; }
+.am-raiz .ap-corte        { fill: #e6d3b3; stroke: #5d4030; stroke-width: 0.8; }
+/* El agua guardada adentro del cerro. */
+.am-raiz .ap-agua         { fill: #4f88bb; fill-opacity: 0.78; }
+.am-raiz .ap-agua-borde   { stroke: #d5e9f7; stroke-width: 1.3; }
+/* La toma: la caja de cemento, su tubo, el chorro y la pila. */
+.am-raiz .ap-cemento      { fill: #a9b1b8; stroke: #5f6a73; stroke-width: 0.9; }
+.am-raiz .ap-chorro       { stroke: #2f73b0; stroke-width: 2.6; stroke-linecap: round; }
+.am-raiz .ap-pila         { fill: none; stroke: #5f6a73; stroke-width: 1.8; stroke-linejoin: round; }
+.am-raiz .ap-bidon        { fill: #f1c40f; stroke: #8a6d05; stroke-width: 0.8; }
+.am-raiz .ap-bidon-tapa   { fill: #8a6d05; }
+.am-raiz .ap-bidon-asa    { fill: none; stroke: #8a6d05; stroke-width: 1.1; stroke-linecap: round; }
+/* Adónde se va la lluvia: la flecha va sobre la tierra, con su halo. */
+.am-raiz .ap-flecha-halo  { fill: none; stroke: #ffffff; stroke-width: 4.4; stroke-linecap: round; stroke-linejoin: round; }
+.am-raiz .ap-flecha       { fill: none; stroke: #1f6fb2; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.am-raiz .ap-punta        { fill: #1f6fb2; stroke: #ffffff; stroke-width: 1; paint-order: stroke; stroke-linejoin: round; }
+/* Las tiras de los meses: la celda va con los colores de la tarjeta; la
+   gota y la ✗ se distinguen por su forma, no solo por el color. */
+.am-raiz .ap-celda        { fill: var(--card, #ffffff); stroke: var(--gray, #636e72); stroke-width: 1; }
+.am-raiz .ap-gota-mes     { fill: #2f73b0; stroke: #ffffff; stroke-width: 0.6; }
+.am-raiz .ap-halo         { fill: none; stroke: #ffffff; stroke-width: 3.9; stroke-linecap: round; }
+.am-raiz .ap-mal          { fill: none; stroke: #c0392b; stroke-width: 2; stroke-linecap: round; }
+.am-raiz .ap-pila-agua    { fill: #4f88bb; }

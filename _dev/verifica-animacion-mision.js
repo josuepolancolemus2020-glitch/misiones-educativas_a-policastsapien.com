@@ -1635,6 +1635,83 @@ const LEER = `
       textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
     };
   };
+  /* Áreas Protegidas: «El agua que el monte guarda». Se lee lo que se ve:
+     cada cerro por su curva y lo de adentro por su recorte, punto por
+     punto; el agua guardada por su borde de arriba, con todas las capas de
+     los meses que la bajan; los árboles, los tocones y las raíces; la toma,
+     su tubo, el chorro, la pila con su agua, la ✗ de la toma seca y los
+     bidones; cada gota de punta a punta; las flechas punto por punto; y las
+     tiras de los meses, celda por celda, con lo que lleva cada una. ⚠️ Aquí
+     no van barras invertidas: esto vive dentro de una plantilla de texto. */
+  window.__amExtra.amToma = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(m(el)); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function uno(sel) { return raiz.querySelector(sel); }
+    function todos(sel) { return [].slice.call(raiz.querySelectorAll(sel)); }
+    /* Los puntos de un trazo, en la vista. Lo de adentro vive en un
+       recorte, que no se pinta: sus puntos se pasan con el grupo del cerro. */
+    function recorrido(path, ref, n) {
+      var L = path.getTotalLength(), out = [];
+      for (var i = 0; i <= n; i++) { var q = path.getPointAtLength(L * i / n); out.push(aVista(ref || path, q.x, q.y)); }
+      return out;
+    }
+    function flecha(g) {
+      var raya = g.querySelector('[data-raya]'), punta = g.querySelector('[data-punta]');
+      var pd = (punta.getAttribute('d').match(/[0-9.]+/g) || []).map(Number);
+      return { ve: vis(g), pts: recorrido(raya, null, 30), punta: aVista(punta, pd[2], pd[3]), puntaCaja: caja(punta) };
+    }
+    function cerro(k) {
+      var g = uno('[data-cerro="' + k + '"]');
+      var agua = uno('[data-agua="' + k + '"]'), res = uno('[data-reserva="' + k + '"]');
+      var chorro = uno('[data-chorro="' + k + '"]');
+      return {
+        forma: recorrido(uno('[data-forma="' + k + '"]'), null, 240),
+        dentro: recorrido(uno('[data-dentro="' + k + '"]'), g, 240),
+        reserva: vis(res), nivel: caja(agua).y0, capas: res.querySelectorAll('[data-mes-nivel]').length,
+        arboles: todos('[data-frente="' + k + '"] [data-arbol]').map(function (a) {
+          var t = a.querySelector('.ap-tronco'), c = a.querySelector('.ap-copa');
+          return { tronco: caja(t), copa: aVista(c, +c.getAttribute('cx'), +c.getAttribute('cy')), r: +c.getAttribute('r') };
+        }),
+        tocones: todos('[data-frente="' + k + '"] [data-tocon]').map(function (a) { return caja(a); }),
+        raices: todos('[data-cerro="' + k + '"] [data-raiz]').map(function (r) { return recorrido(r, null, 12); }),
+        toma: caja(uno('[data-toma="' + k + '"]')), tubo: caja(uno('[data-tubo="' + k + '"]')),
+        chorro: { ve: vis(chorro), a: aVista(chorro, +chorro.getAttribute('x1'), +chorro.getAttribute('y1')), b: aVista(chorro, +chorro.getAttribute('x2'), +chorro.getAttribute('y2')) },
+        pila: caja(uno('[data-pila="' + k + '"]')),
+        pilaAgua: { ve: vis(uno('[data-pila-agua="' + k + '"]')), caja: caja(uno('[data-pila-agua="' + k + '"]')) },
+        seca: { ve: vis(uno('[data-seca="' + k + '"]')), caja: caja(uno('[data-seca="' + k + '"]')), rayas: uno('[data-seca="' + k + '"]').querySelectorAll('path').length },
+        celdas: todos('[data-celda^="' + k + '-"]').map(function (c) {
+          var i = c.getAttribute('data-celda').split('-')[1], cont = uno('[data-contenido="' + k + '-' + i + '"]'), letra = uno('[data-mes="' + k + '-' + i + '"]');
+          return { i: +i, caja: caja(c), letra: letra.textContent, letraCaja: caja(letra),
+                   cont: { ve: vis(cont), forma: cont.tagName.toLowerCase() === 'g' ? 'x' + cont.querySelectorAll('path').length : cont.classList.contains('ap-gota-mes') ? 'gota' : 'otra',
+                           caja: caja(cont) } };
+        })
+      };
+    }
+    return {
+      cerros: { monte: cerro('monte'), pelado: cerro('pelado') },
+      suelo: caja(uno('[data-suelo]')).y0,
+      entran: todos('[data-entra]').map(function (g) { var f = flecha(g); f.k = g.getAttribute('data-entra'); return f; }),
+      corren: todos('[data-corre]').map(function (g) { var f = flecha(g); f.k = g.getAttribute('data-corre'); return f; }),
+      flechas: vis(uno('[data-flechas]')),
+      lluvia: { ve: vis(uno('[data-lluvia]')), gotas: todos('[data-gota]').map(function (l) {
+        return { a: aVista(l, +l.getAttribute('x1'), +l.getAttribute('y1')), b: aVista(l, +l.getAttribute('x2'), +l.getAttribute('y2')) };
+      }) },
+      nube: { ve: vis(uno('[data-nube]')), caja: caja(uno('[data-nube]')) },
+      sol: vis(uno('[data-sol]')),
+      bidones: { ve: vis(uno('[data-bidones]')), cajas: todos('[data-bidon]').map(caja) },
+      tiras: vis(uno('[data-tiras]')),
+      rotulos: todos('[data-rotulo]').map(function (t) { return { k: t.getAttribute('data-rotulo'), ve: vis(t), dice: t.textContent, caja: caja(t) }; }),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   window.__amExtra.amCaracol = function (raiz) {
     var vis = window.__amVisible;
     var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
@@ -1793,8 +1870,252 @@ let chelePrecio = null;
 let aguaDN = { normal: null, llena: null };
 let caracolER = { x: null, mar: null, tops: null };
 const FIN_ER = 6;
+/* Áreas Protegidas: lo que se mide en un paso y se usa en los siguientes
+   (el agua que guardó cada cerro y lo que se lleva la toma en un mes). */
+let tomaAP = { a0: null, mes: null };
+/* El área de un polígono (en la vista) que queda por debajo de un nivel:
+   se recorta con la recta y se cuenta con la fórmula del cordón. */
+function areaDebajo(poly, nivel) {
+  const out = [];
+  for (let i = 0; i < poly.length; i++) {
+    const p = poly[i], q = poly[(i + 1) % poly.length];
+    const pin = p[1] >= nivel, qin = q[1] >= nivel;
+    if (pin) out.push(p);
+    if (pin !== qin) { const t = (nivel - p[1]) / (q[1] - p[1]); out.push([p[0] + (q[0] - p[0]) * t, nivel]); }
+  }
+  let a = 0;
+  for (let i = 0; i < out.length; i++) { const p = out[i], q = out[(i + 1) % out.length]; a += p[0] * q[1] - q[0] * p[1]; }
+  return Math.abs(a) / 2;
+}
+function enPoligono(poly, pt) {
+  let dentro = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const a = poly[i], b = poly[j];
+    if ((a[1] > pt[1]) !== (b[1] > pt[1]) && pt[0] < (b[0] - a[0]) * (pt[1] - a[1]) / (b[1] - a[1]) + a[0]) dentro = !dentro;
+  }
+  return dentro;
+}
+/* La altura de la superficie de un contorno en una x: la más alta de las
+   veces que el contorno pasa por esa x. */
+function superficieEn(poly, x) {
+  let mejor = null;
+  for (let i = 0; i < poly.length - 1; i++) {
+    const p = poly[i], q = poly[i + 1];
+    if ((p[0] - x) * (q[0] - x) <= 0 && p[0] !== q[0]) {
+      const y = p[1] + (q[1] - p[1]) * (x - p[0]) / (q[0] - p[0]);
+      if (mejor === null || y < mejor) mejor = y;
+    }
+  }
+  return mejor;
+}
 
 const ESCENAS = {
+  /* Áreas Protegidas de Honduras. «El agua que el monte guarda».
+     ⚠️ Nada se le cree a la escena. Los dos cerros se comparan punto por
+     punto: la misma curva, con lo de adentro dentro de su tierra y la toma,
+     el tubo y la pila en el mismo sitio. La lluvia se mide gota por gota:
+     el mismo paso, las gotas en los mismos puntos de cada cerro, y cada una
+     termina en el suelo que tiene debajo. Las flechas: en el monte, tres
+     que entran en la tierra; en el pelado, una corta que entra y otra que
+     corre pegada al cerro, siempre hacia abajo, hasta el borde. El agua
+     guardada se lee por su borde de arriba y se mide su ÁREA adentro de lo
+     de adentro: el monte guarda el doble, y cada mes las dos tomas se
+     llevan lo mismo. De esas áreas sale lo que cada tira tiene que decir
+     (gota si al empezar el mes quedaba agua, ✗ si no), si hay chorro y agua
+     en la pila, la ✗ de la toma seca y los bidones; y el marcador cuenta en
+     las tiras. ⚠️ Y la prueba no se regala: ni erosión, ni inundación, ni
+     neblina, ni especies, ni aire, ni clima, ni un área protegida, ni un
+     número de más. */
+  amToma(e, n) {
+    const x = e.extra, r = [];
+    const nb = t => String(t == null ? '' : t).replace(/\u00a0/g, ' ').trim();
+    const cerca = (a, b, t) => Math.abs(a - b) <= t;
+    const cen = c => [(c.x0 + c.x1) / 2, (c.y0 + c.y1) / 2];
+    const enCaja = (p, k) => p[0] >= k.x0 - 0.5 && p[0] <= k.x1 + 0.5 && p[1] >= k.y0 - 0.5 && p[1] <= k.y1 + 0.5;
+    /* Lo que no depende del dibujo, primero. */
+    const dicho = [e.texto, e.cifra, e.palabras].concat(x.textos).map(nb).join(' | ').toLowerCase();
+    const EXACTAS = ['erosión', 'erosion', 'inundación', 'inundacion', 'inundaciones', 'neblina', 'niebla', 'especies', 'especie', 'aire',
+      'clima', 'climático', 'climatico', 'selva', 'pinar', 'ceiba', 'cuero', 'salado', 'manglar', 'manglares', 'quetzal', 'manatí',
+      'lancetilla', 'tigra', 'sinaph', 'icf', 'corredor', 'biodiversidad', 'variedad', 'tala', 'talaron', 'talar', 'potrero', 'potreros',
+      'ganado', 'ganadería', 'deforestación', 'deforestacion', 'incendio', 'incendios', 'quema', 'camaronera', 'gorgojo', 'roble', 'pino',
+      'celaque', 'mosquitia', 'plátano', 'unesco', 'reserva', 'protegida', 'protegidas', 'protegido', 'ley', 'jaguar', 'tapir', 'orquídeas',
+      'bromelias', 'caimán', 'garífuna', 'hectáreas', 'tegucigalpa', 'conectados', 'extensiva', 'verano', 'nublado', 'latifoliado', 'madera',
+      'resina', 'aves'];
+    const FRASES = ['se secan en verano', 'área protegida', 'áreas protegidas', 'cambio climático', 'río plátano', 'la tigra', 'las minas',
+      'pico bonito', 'la muralla', 'gracias a dios'];
+    const suelto = ' ' + dicho.split(/[^a-záéíóúñü]+/).filter(Boolean).join(' ') + ' ';
+    const malas = suelto.trim().split(' ').filter(w => EXACTAS.includes(w)).concat(FRASES.filter(f => suelto.includes(' ' + f + ' ')));
+    r.push([malas.length === 0, `paso ${n}: no sale ninguna palabra de la prueba (ni erosión, ni neblina, ni un área protegida)`, malas]);
+    const nums = (dicho.match(/\d+/g) || []).map(Number);
+    r.push([nums.every(k => [2, 4, 6].includes(k)), `paso ${n}: ningún número de la prueba`, nums.filter(k => ![2, 4, 6].includes(k))]);
+    const frase = nb(e.texto);
+    const F = [['Dos cerros iguales', 'toma de agua', 'monte', 'pelado', '¿Cuál toma aguanta más sin lluvia?'],
+      ['Llueve lo mismo', 'de mayo a octubre', 'se mete en la tierra', 'corre cuesta abajo y se va'],
+      ['Las hojas frenan la lluvia', 'las raíces le abren camino', 'mucha agua adentro', 'poca'],
+      ['En noviembre se acaban las lluvias', 'el agua que su cerro guardó', 'despacio'],
+      ['diciembre, enero y febrero', 'En marzo', 'su toma se seca', 'La del monte sigue'],
+      ['Hasta mayo', 'volvieron las lluvias', 'bidones', 'nunca se secó'],
+      ['El monte guarda la lluvia', 'la suelta cuando ya no llueve', 'don Tulio']];
+    r.push([F[n].every(w => frase.includes(w)), `paso ${n}: la frase dice lo que se ve (${F[n].join(', ')})`, frase]);
+
+    /* ── Los dos cerros, iguales ── */
+    const M = x.cerros.monte, P = x.cerros.pelado, C = { monte: M, pelado: P };
+    const pie = f => { const ys = Math.max(...f.map(p => p[1])); const b = f.filter(p => cerca(p[1], ys, 0.5)); return [Math.min(...b.map(p => p[0])), Math.max(...b.map(p => p[0])), ys]; };
+    const centro = f => { const b = pie(f); return (b[0] + b[1]) / 2; };
+    const cx = { monte: centro(M.forma), pelado: centro(P.forma) };
+    const dx = cx.pelado - cx.monte;
+    const igualForma = M.forma.every((p, i) => cerca(P.forma[i][0] - dx, p[0], 0.3) && cerca(P.forma[i][1], p[1], 0.3));
+    r.push([igualForma && dx > 100, `paso ${n}: los dos cerros son la misma curva, uno al lado del otro`, [cx.monte, cx.pelado].map(Math.round)]);
+    const base = pie(M.forma)[2];
+    r.push([cerca(base, x.suelo, 0.5) && cerca(pie(P.forma)[2], x.suelo, 0.5), `paso ${n}: los dos se paran en el suelo`, [base, x.suelo]]);
+    ['monte', 'pelado'].forEach(k => {
+      const c = C[k], sup = xx => superficieEn(c.forma, xx);
+      const arriba = c.dentro.filter(p => p[1] < base - 1);
+      r.push([arriba.length > 50 && arriba.every(p => enPoligono(c.forma, p) && sup(p[0]) !== null && p[1] - sup(p[0]) >= 9),
+        `paso ${n}: lo de adentro del ${k} está dentro de su cerro, con tierra encima`]);
+      r.push([c.capas === 6, `paso ${n}: el agua del ${k} baja en seis capas, una por mes`, c.capas]);
+    });
+    const rel = (c, k) => [c.x0 - cx[k], c.y0, c.x1 - cx[k], c.y1];
+    const mismo = (a, b) => a.every((v, i) => cerca(v, b[i], 0.3));
+    r.push([['toma', 'tubo', 'pila'].every(q => mismo(rel(M[q], 'monte'), rel(P[q], 'pelado'))),
+      `paso ${n}: la toma, el tubo y la pila, en el mismo sitio de cada cerro`]);
+
+    /* ── Árboles, tocones y raíces ── */
+    const supM = xx => superficieEn(M.forma, xx), supP = xx => superficieEn(P.forma, xx);
+    const baseArbol = a => [(a.tronco.x0 + a.tronco.x1) / 2, a.tronco.y1];
+    r.push([M.arboles.length === 6 && M.tocones.length === 0 && P.arboles.length === 0 && P.tocones.length === 6,
+      `paso ${n}: seis árboles en el monte y sus seis tocones en el pelado`, [M.arboles.length, M.tocones.length, P.arboles.length, P.tocones.length]]);
+    r.push([M.arboles.every(a => { const b = baseArbol(a); return Math.abs(b[1] - supM(b[0])) <= 1.2 && a.copa[1] < a.tronco.y0 + 1; }),
+      `paso ${n}: cada árbol está parado en el cerro, con la copa encima del tronco`]);
+    const xsArb = M.arboles.map(a => baseArbol(a)[0] - cx.monte).sort((a, b) => a - b);
+    const xsToc = P.tocones.map(t => (t.x0 + t.x1) / 2 - cx.pelado).sort((a, b) => a - b);
+    r.push([xsArb.every((v, i) => cerca(v, xsToc[i], 0.3)) && P.tocones.every(t => Math.abs(t.y1 - supP((t.x0 + t.x1) / 2)) <= 1.2),
+      `paso ${n}: cada tocón está donde el monte tiene su árbol, sobre la tierra`, [xsArb, xsToc].map(a => a.map(Math.round))]);
+    r.push([M.raices.length >= 6 && P.raices.length === 0 && M.raices.every(rz => {
+      const b = rz[0]; return M.arboles.some(a => cerca(baseArbol(a)[0], b[0], 0.6) && cerca(baseArbol(a)[1], b[1], 1.2)) && Math.max(...rz.map(p => p[1])) > b[1] + 5;
+    }), `paso ${n}: las raíces salen del pie de cada árbol y bajan a la tierra; en el pelado no hay`]);
+
+    /* ── La lluvia, el sol y la nube ── */
+    const llueve = n === 1 || n >= 5, hayFlechas = n === 1 || n === 2 || n === 6;
+    r.push([x.lluvia.ve === llueve && x.nube.ve === llueve && x.sol === (n === 3 || n === 4),
+      `paso ${n}: ${llueve ? 'llueve' : n === 3 || n === 4 ? 'hace sol: no llueve' : 'ni lluvia ni sol'}`, [x.lluvia.ve, x.nube.ve, x.sol]]);
+    const G = x.lluvia.gotas.slice().sort((a, b) => a.a[0] - b.a[0]);
+    const pasos = G.slice(1).map((g, i) => g.a[0] - G[i].a[0]);
+    r.push([G.length >= 16 && pasos.every(v => cerca(v, pasos[0], 0.05)) && G.every(g => cerca(g.a[0], g.b[0], 0.05) && cerca(g.a[1], G[0].a[1], 0.05)),
+      `paso ${n}: las gotas caen derechas, a la misma distancia y desde la misma altura`]);
+    const sobre = k => G.filter(g => g.a[0] > cx[k] - 64 && g.a[0] < cx[k] + 64).map(g => Math.round((g.a[0] - cx[k]) * 100) / 100);
+    r.push([sobre('monte').length >= 6 && JSON.stringify(sobre('monte')) === JSON.stringify(sobre('pelado')),
+      `paso ${n}: sobre los dos cerros caen las gotas en los mismos puntos`, [sobre('monte').length, sobre('pelado').length]]);
+    r.push([G.every(g => { const s1 = supM(g.b[0]), s2 = supP(g.b[0]); const s = s1 !== null && s1 < base ? s1 : s2 !== null && s2 < base ? s2 : base; return g.b[1] < s && s - g.b[1] <= 3; }),
+      `paso ${n}: cada gota termina en el suelo que tiene debajo`]);
+
+    /* ── Adónde se va la lluvia ── */
+    r.push([x.flechas === hayFlechas, `paso ${n}: las flechas de adónde se va la lluvia ${hayFlechas ? 'se ven' : 'no están'}`]);
+    const entM = x.entran.filter(f => f.k === 'monte'), entP = x.entran.filter(f => f.k === 'pelado');
+    const baja = (f, c) => { const a = f.pts[0], b = f.pts[f.pts.length - 1], s = superficieEn(c.forma, a[0]);
+      return cerca(a[0], b[0], 0.3) && a[1] - s >= 1 && a[1] - s <= 5 && f.punta[1] > a[1] && cerca(f.punta[0], a[0], 0.3); };
+    const largo = f => f.punta[1] - f.pts[0][1];
+    r.push([entM.length === 3 && entM.every(f => baja(f, M) && largo(f) >= 16),
+      `paso ${n}: en el monte, tres flechas que se meten en la tierra`, entM.map(largo).map(Math.round)]);
+    r.push([entP.length === 1 && baja(entP[0], P) && largo(entP[0]) < Math.min(...entM.map(largo)) / 2,
+      `paso ${n}: en el pelado, una sola que entra, y corta: entra poca`, entP.map(largo).map(Math.round)]);
+    const co = x.corren;
+    const pegada = co.length === 1 && co[0].k === 'pelado' && co[0].pts.every(p => { const s = supP(p[0]); const suelo = s !== null && s < base ? s : base; return suelo - p[1] >= 0 && suelo - p[1] <= 4; });
+    const siempreBaja = co.length === 1 && co[0].pts.slice(1).every((p, i) => p[1] >= co[0].pts[i][1] - 0.05 && p[0] >= co[0].pts[i][0] - 0.05);
+    r.push([pegada && siempreBaja && co[0].pts[0][0] > cx.pelado && co[0].punta[0] > pie(P.forma)[1] + 6 && co[0].punta[0] > 300,
+      `paso ${n}: en el pelado, el agua corre pegada al cerro, siempre hacia abajo, y se va por el borde`]);
+
+    /* ── El agua guardada: se mide su área adentro ── */
+    const area = k => C[k].nivel >= base - 0.05 ? 0 : areaDebajo(C[k].dentro, C[k].nivel);
+    const verRes = n >= 2;
+    r.push([M.reserva === verRes && P.reserva === verRes, `paso ${n}: el agua de adentro ${verRes ? 'se ve' : 'todavía no se ve'}`]);
+    if (n === 2) {
+      tomaAP.a0 = { monte: area('monte'), pelado: area('pelado') };
+      r.push([tomaAP.a0.pelado > 0 && cerca(tomaAP.a0.monte / tomaAP.a0.pelado, 2, 0.04),
+        'paso 2: el cerro con monte guardó el doble de agua que el pelado', [tomaAP.a0.monte, tomaAP.a0.pelado].map(Math.round)]);
+    }
+    if (n === 3 && tomaAP.a0) {
+      const dm = tomaAP.a0.monte - area('monte'), dp = tomaAP.a0.pelado - area('pelado');
+      tomaAP.mes = dm;
+      r.push([dm > 0 && cerca(dm, dp, dm * 0.02), 'paso 3: en noviembre las dos tomas se llevan lo mismo', [dm, dp].map(Math.round)]);
+    }
+    /* Cuántos meses se han llevado ya: los que salen en la tira. */
+    const meses = n <= 2 ? 0 : n === 3 ? 1 : n === 4 ? 5 : 6;
+    const queda = (k, i) => tomaAP.a0 && tomaAP.mes ? tomaAP.a0[k] - i * tomaAP.mes : null;
+    if (n >= 4 && tomaAP.mes) {
+      ['monte', 'pelado'].forEach(k => {
+        const debe = Math.max(0, queda(k, meses));
+        r.push([cerca(area(k), debe, tomaAP.mes * 0.1), `paso ${n}: al ${k} le queda el agua de ${Math.round(debe / tomaAP.mes * 10) / 10} meses`, [area(k), debe].map(Math.round)]);
+      });
+    }
+
+    /* ── La toma: chorro y agua en la pila si hay agua adentro ── */
+    ['monte', 'pelado'].forEach(k => {
+      const c = C[k];
+      const hay = n <= 2 ? true : area(k) > 0;
+      r.push([c.chorro.ve === hay && c.pilaAgua.ve === hay && c.seca.ve === !hay,
+        `paso ${n}: la toma del ${k} ${hay ? 'da agua: chorro y agua en la pila' : 'está seca: sin chorro, con su ✗'}`, [c.chorro.ve, c.pilaAgua.ve, c.seca.ve]]);
+      r.push([cerca(c.chorro.a[1], c.tubo.y1, 1) && c.chorro.a[0] > c.pila.x0 && c.chorro.a[0] < c.pila.x1 && c.chorro.a[0] > c.tubo.x0 && c.chorro.a[0] < c.tubo.x1 &&
+        c.chorro.b[1] > c.pila.y0 && c.chorro.b[1] < c.pila.y1 && cerca(c.pila.y1, base, 1.2) && c.pilaAgua.caja.y1 <= c.pila.y1 + 0.5 &&
+        c.pilaAgua.caja.x0 >= c.pila.x0 - 0.5 && c.pilaAgua.caja.x1 <= c.pila.x1 + 0.5 && c.seca.rayas === 2 && enCaja(cen(c.seca.caja), c.pila),
+        `paso ${n}: el chorro sale del tubo y cae en la pila, que está en el suelo`]);
+      const t = c.toma, pts = [];
+      for (let i = 0; i <= 4; i++) for (let j = 0; j <= 4; j++) pts.push([t.x0 + (t.x1 - t.x0) * i / 4, t.y0 + (t.y1 - t.y0) * j / 4]);
+      r.push([pts.some(p => enPoligono(c.dentro, p)) && c.tubo.x1 <= t.x0 + 0.6, `paso ${n}: la toma del ${k} toca lo de adentro, donde se guarda el agua`]);
+    });
+    const bid = x.bidones, secoP = n >= 4;
+    r.push([bid.ve === secoP, `paso ${n}: ${secoP ? 'con la toma seca, bidones' : 'sin bidones'}`]);
+    r.push([bid.cajas.length === 2 && bid.cajas.every(b => cerca(b.y1, base, 1.2) && b.x0 > pie(M.forma)[1] && b.x1 < P.pila.x0),
+      `paso ${n}: los bidones, en el suelo, junto a la pila del pelado`]);
+
+    /* ── Las tiras de los meses ── */
+    const NOMBRES = { N: 'noviembre', D: 'diciembre', E: 'enero', F: 'febrero', M: 'marzo', A: 'abril' };
+    r.push([x.tiras === (n >= 3), `paso ${n}: las tiras de los meses ${n >= 3 ? 'se ven' : 'todavía no'}`]);
+    const vistos = {};
+    ['monte', 'pelado'].forEach(k => {
+      const cs = C[k].celdas.slice().sort((a, b) => a.i - b.i);
+      const xs = cs.map(c => c.caja.x0), w = cs.map(c => c.caja.x1 - c.caja.x0);
+      const pasoC = xs.slice(1).map((v, i) => v - xs[i]);
+      r.push([cs.length === 6 && w.every(v => cerca(v, w[0], 0.05)) && pasoC.every(v => cerca(v, pasoC[0], 0.05)) && cs.every(c => cerca(c.caja.y0, cs[0].caja.y0, 0.05)) &&
+        cerca((cs[0].caja.x0 + cs[5].caja.x1) / 2, cx[k], 0.6) && cs[0].caja.y0 > base,
+        `paso ${n}: la tira del ${k}: seis celdas iguales, en fila, debajo de su cerro`]);
+      r.push([cs.map(c => c.letra).join('') === 'NDEFMA' && cs.every(c => cerca(cen(c.letraCaja)[0], cen(c.caja)[0], 0.8) && c.letraCaja.y0 > c.caja.y1),
+        `paso ${n}: debajo de cada celda, la letra de su mes, de noviembre a abril`, cs.map(c => c.letra).join('')]);
+      const ve = cs.filter(c => c.cont.ve);
+      vistos[k] = ve;
+      r.push([ve.length === meses && ve.every(c => c.i < meses) && ve.every(c => enCaja(cen(c.cont.caja), c.caja)),
+        `paso ${n}: en la tira del ${k} salen los meses que ya pasaron (${meses})`, ve.map(c => c.i)]);
+      if (tomaAP.mes) {
+        const malas = ve.filter(c => { const conAgua = queda(k, c.i) > tomaAP.mes * 0.01; return c.cont.forma !== (conAgua ? 'gota' : 'x2'); });
+        r.push([malas.length === 0, `paso ${n}: gota en el mes que la toma del ${k} dio agua; ✗ en el que no`, malas.map(c => c.i)]);
+      }
+    });
+    /* ── El marcador cuenta en las tiras ── */
+    const mk = { 0: ['?', 'cuál toma aguanta más sin lluvia'], 1: ['=', 'la misma lluvia en los dos cerros'], 2: ['↓', 'el agua que cada cerro guardó'] };
+    if (n in mk) r.push([nb(e.cifra) === mk[n][0] && nb(e.palabras) === mk[n][1], `paso ${n}: el marcador dice «${mk[n][0]}» · ${mk[n][1]}`, [e.cifra, e.palabras]]);
+    const ultimo = vistos.monte && vistos.monte.length ? NOMBRES[vistos.monte[vistos.monte.length - 1].letra] : null;
+    if (n === 3) r.push([nb(e.cifra) === ultimo && nb(e.palabras) === 'se acabaron las lluvias', 'paso 3: el marcador dice el mes que acaba de pasar', [e.cifra, ultimo]]);
+    if (n === 4) {
+      const primeraX = vistos.pelado.find(c => c.cont.forma === 'x2');
+      r.push([nb(e.cifra) === ultimo && primeraX && NOMBRES[primeraX.letra] === ultimo && nb(e.palabras) === 'se secó la toma del cerro pelado',
+        'paso 4: el marcador dice el mes en que se secó la toma del pelado, y es su primera ✗', [e.cifra, primeraX && primeraX.letra]]);
+    }
+    const cuenta = (k, f) => vistos[k].filter(c => c.cont.forma === f).length;
+    if (n === 5) r.push([nb(e.cifra) === cuenta('pelado', 'x2') + ' meses' && nb(e.palabras) === 'sin agua en la toma del cerro pelado',
+      'paso 5: el marcador cuenta las ✗ de la tira del pelado', [e.cifra, cuenta('pelado', 'x2')]]);
+    if (n === 6) r.push([nb(e.cifra) === cuenta('monte', 'gota') + ' y ' + cuenta('pelado', 'gota') && nb(e.palabras) === 'meses con agua sin lluvia: monte y pelado',
+      'paso 6: el marcador cuenta las gotas de las dos tiras', [e.cifra, cuenta('monte', 'gota'), cuenta('pelado', 'gota')]]);
+
+    /* ── Los rótulos ── */
+    const rot = k => x.rotulos.find(q => q.k === k);
+    const rm = rot('monte'), rp = rot('pelado'), rg = rot('guardada'), rme = rot('meses');
+    r.push([rm && rp && rm.ve && rp.ve && nb(rm.dice) === 'con monte' && nb(rp.dice) === 'pelado' && cerca(cen(rm.caja)[0], cx.monte, 1.5) &&
+      cerca(cen(rp.caja)[0], cx.pelado, 1.5) && rm.caja.y0 > base && rp.caja.y0 > base, `paso ${n}: cada cerro lleva su nombre debajo`]);
+    r.push([rg && rg.ve === (n === 2) && nb(rg.dice) === 'agua guardada', `paso ${n}: «agua guardada» ${n === 2 ? 'se ve' : 'no está'}`]);
+    if (n === 2) { const c = cen(rg.caja); r.push([enPoligono(M.dentro, c) && c[1] > M.nivel, 'paso 2: «agua guardada» está escrito en el agua del monte', c.map(Math.round)]); }
+    r.push([rme && rme.ve === (n >= 3) && nb(rme.dice) === 'de noviembre a abril, sin lluvia', `paso ${n}: el rótulo de las tiras dice de qué meses son`]);
+    return r;
+  },
   /* Las Eras Geológicas. «El caracol que apareció en la milpa».
      ⚠️ Nada se le cree a la escena. Las capas se leen de su roca: tienen que
      estar apiladas en su orden (la más nueva arriba), pegadas una a otra,

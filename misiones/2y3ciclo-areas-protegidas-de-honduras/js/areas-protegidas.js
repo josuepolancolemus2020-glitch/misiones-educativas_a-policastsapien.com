@@ -183,7 +183,7 @@ const fcData=[
   {w:'Parque Nacional Celaque',a:'⛰️ Alberga el <strong>bosque nublado más grande de Honduras</strong>. El <strong>cerro Las Minas (2,849 m)</strong> es el punto más alto del país. Nacimiento de 8 ríos importantes. Hábitat del puma y el quetzal.'},
   {w:'Parque Nacional La Tigra',a:'💧 <strong>Primera área protegida declarada de Honduras</strong> (1952). Ubicada en los alrededores de Tegucigalpa. Abastece el <strong>40% del agua potable</strong> de la capital. Bosque nublado muy bien conservado.'},
   {w:'SINAPH',a:'🗺️ <strong>Sistema Nacional de Áreas Protegidas de Honduras</strong>. Administra más de <strong>90 áreas protegidas</strong> en todo el país. Creado por la Ley General del Ambiente. Coordinado por el ICF (Instituto de Conservación Forestal).'},
-  {w:'Corredor Biológico Mesoamericano',a:'🔗 Red de ecosistemas que <strong>conecta desde México hasta Colombia</strong>. Permite la migración de especies animales. Honduras aporta sus áreas protegidas y bosques como <strong>corredores de conectividad</strong>.'},
+  {w:'Corredor Biológico Mesoamericano',a:'🔗 Red de ecosistemas que <strong>conecta desde México hasta Panamá</strong>. Permite la migración de especies animales. Honduras aporta sus áreas protegidas y bosques como <strong>corredores de conectividad</strong>.'},
   {w:'Deforestación en Honduras',a:'🪓 Honduras pierde miles de hectáreas de bosque por año. Principales causas: <strong>ganadería extensiva, agricultura de subsistencia, tala ilegal e incendios forestales</strong>. Genera erosión, pérdida de agua y biodiversidad.'},
   {w:'Biodiversidad de Honduras',a:'🦜 Honduras es un <strong>punto caliente mundial de biodiversidad</strong>. Tiene más de <strong>700 especies de aves</strong>, 200+ reptiles, 100+ anfibios y miles de plantas. Su posición en Mesoamérica la convierte en puente biológico.'},
   {w:'Quetzal',a:'🦜 Ave emblemática de los <strong>bosques nublados mesoamericanos</strong>. En Honduras habita principalmente en el Parque Nacional Celaque y La Muralla. Cola larga iridiscente verde. Símbolo cultural y espiritual ancestral.'},
@@ -216,7 +216,7 @@ const qzData=[
   {q:'¿Qué siglas identifican al sistema de áreas protegidas de Honduras?',o:['a) SINAPH','b) SERNA','c) COHDEFOR','d) ICF'],c:0},
   {q:'¿Cuáles son las principales causas de la deforestación en Honduras?',o:['a) Turismo y minería','b) Urbanización y pesca','c) Industria textil y tecnología','d) Ganadería extensiva y tala ilegal'],c:3},
   {q:'¿Dónde se ubica principalmente el Bosque Tropical Latifoliado de Honduras?',o:['a) Sur del país','b) Valle del Aguán','c) La Mosquitia','d) Valle de Comayagua'],c:2},
-  {q:'¿Qué corredor une las áreas protegidas desde México hasta Colombia?',o:['a) Corredor Biológico Mesoamericano','b) Corredor Verde del Caribe','c) Corredor Andino','d) Reserva Maya'],c:0},
+  {q:'¿Qué corredor une las áreas protegidas desde México hasta Panamá?',o:['a) Corredor Biológico Mesoamericano','b) Corredor Verde del Caribe','c) Corredor Andino','d) Reserva Maya'],c:0},
   {q:'¿Cuántas hectáreas protege aproximadamente la Reserva Río Plátano?',o:['a) 100,000 ha','b) 832,000 ha','c) 300,000 ha','d) 500,000 ha'],c:1},
   {q:'¿Qué ecosistema costero sirve de criadero para peces y protege costas de huracanes?',o:['a) Bosque nublado','b) Bosque de pino','c) Manglar','d) Páramo'],c:2},
   {q:'¿Cuál fue la primera área protegida declarada en Honduras?',o:['a) Parque Nacional Celaque','b) Reserva Río Plátano','c) Parque Nacional La Tigra','d) Lancetilla'],c:2},
@@ -365,7 +365,7 @@ const idData=[
   {s:['El','SINAPH','protege','más','de','90','áreas','en','Honduras.'],c:1,art:'Sistema nacional de áreas protegidas'},
   {s:['El','quetzal','vive','en','los','bosques','nublados','de','Honduras.'],c:1,art:'Ave emblemática de los bosques nublados'},
   {s:['La','deforestación','provoca','erosión','y','pérdida','de','agua.'],c:1,art:'Principal amenaza al bosque hondureño'},
-  {s:['El','Corredor','Biológico','Mesoamericano','conecta','México','con','Colombia.'],c:2,art:'Nombre del corredor de ecosistemas'},
+  {s:['El','Corredor','Biológico','Mesoamericano','conecta','México','con','Panamá.'],c:2,art:'Nombre del corredor de ecosistemas'},
   {s:['La','Tigra','abastece','el','40%','del','agua','de','Tegucigalpa.'],c:1,art:'Parque nacional que provee agua a la capital'},
   {s:['El','manatí','habita','en','Cuero','y','Salado','en','Honduras.'],c:1,art:'Mamífero acuático en peligro'},
 ];
@@ -407,7 +407,7 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 const cmpData=[
   {s:'La Reserva de Biosfera Río Plátano fue declarada Patrimonio de la Humanidad en ___ .',opts:['1972','1982','2001'],c:1},
   {s:'El bosque ___ es el más extenso de Honduras.',opts:['nublado','de pino-roble','de manglar'],c:1},
-  {s:'El Corredor Biológico ___ conecta ecosistemas desde México hasta Colombia.',opts:['Andino','Amazónico','Mesoamericano'],c:2},
+  {s:'El Corredor Biológico ___ conecta ecosistemas desde México hasta Panamá.',opts:['Andino','Amazónico','Mesoamericano'],c:2},
   {s:'El Parque Nacional ___ fue la primera área protegida de Honduras.',opts:['La Tigra','Celaque','Río Plátano'],c:0},
   {s:'El ___ es el punto más alto de Honduras con 2,849 metros.',opts:['Pico Bonito','Cerro Las Minas','Monte Celaque'],c:1},
   {s:'Los manglares protegen las costas principalmente de los ___.',opts:['terremotos','tsunamis','huracanes'],c:2},
@@ -553,7 +553,7 @@ const identifyTaskDB=[
   {s:'La Reserva de Biosfera Río Plátano fue declarada Patrimonio de la Humanidad por la UNESCO en 1982.',type:'Patrimonio Natural de la Humanidad (1982)'},
   {s:'El SINAPH administra más de 90 áreas protegidas en todo el territorio hondureño.',type:'Sistema Nacional de Áreas Protegidas'},
   {s:'El cerro Las Minas, en el Parque Nacional Celaque, es el punto más alto de Honduras con 2,849 metros.',type:'Punto más alto de Honduras (2,849 m)'},
-  {s:'El Corredor Biológico Mesoamericano conecta ecosistemas y permite la migración de especies desde México hasta Colombia.',type:'Red de corredores ecológicos de Mesoamérica'},
+  {s:'El Corredor Biológico Mesoamericano conecta ecosistemas y permite la migración de especies desde México hasta Panamá.',type:'Red de corredores ecológicos de Mesoamérica'},
   {s:'Los manglares son ecosistemas costeros que sirven de criadero para peces y protegen las costas de los huracanes.',type:'Importancia ecológica de los manglares'},
   {s:'La deforestación en Honduras tiene como causas principales la ganadería extensiva, la tala ilegal y los incendios forestales.',type:'Causas de la deforestación hondureña'},
   {s:'El quetzal es el ave emblemática de los bosques nublados de Centroamérica y habita en Honduras.',type:'Especie emblema del bosque nublado'},
@@ -568,7 +568,7 @@ const classifyTaskDB=[
   {w:'Parque Nacional Celaque',gen:'Área protegida',n:'2,849 m (Cerro Las Minas)',g:'Ocotepeque y Copán',t:'Bosque nublado más alto; puma, quetzal'},
   {w:'Reserva Río Plátano',gen:'Área protegida',n:'832,000 ha',g:'La Mosquitia, Gracias a Dios',t:'Patrimonio UNESCO 1982; pueblos indígenas'},
   {w:'Parque Nacional La Tigra',gen:'Área protegida',n:'7,571 ha',g:'Tegucigalpa, Francisco Morazán',t:'Primera área protegida; 40% agua potable capital'},
-  {w:'Corredor Biológico Mesoamericano',gen:'Red de ecosistemas',n:'México a Colombia',g:'Mesoamérica',t:'Conecta áreas protegidas; permite migración animal'},
+  {w:'Corredor Biológico Mesoamericano',gen:'Red de ecosistemas',n:'México a Panamá',g:'Mesoamérica',t:'Conecta áreas protegidas; permite migración animal'},
 ];
 const completeTaskDB=[
   {s:'El bosque ___ es el más extenso de Honduras.',opts:['nublado','de pino-roble','latifoliado'],ans:'de pino-roble'},
@@ -578,12 +578,12 @@ const completeTaskDB=[
   {s:'Los manglares protegen las costas principalmente de los ___.',opts:['terremotos','incendios','huracanes'],ans:'huracanes'},
   {s:'La principal causa de deforestación en Honduras es la ___ extensiva.',opts:['ganadería','pesca','minería'],ans:'ganadería'},
   {s:'El bosque nublado ___ el agua de la neblina.',opts:['drena','contamina','captura'],ans:'captura'},
-  {s:'El Corredor Biológico Mesoamericano conecta ecosistemas desde México hasta ___.',opts:['Honduras','Ecuador','Colombia'],ans:'Colombia'},
+  {s:'El Corredor Biológico Mesoamericano conecta ecosistemas desde México hasta ___.',opts:['Honduras','Ecuador','Panamá'],ans:'Panamá'},
 ];
 const explainQuestions=[
   {q:'¿Cuáles son los cuatro principales tipos de bosque de Honduras? Describe brevemente cada uno.',ans:'Bosque nublado (montañas, neblina, quetzal); bosque de pino-roble (más extenso, interior); bosque latifoliado tropical (Mosquitia, jaguar); manglares (costas, criadero de peces).'},
   {q:'¿Por qué es importante la Reserva de Biosfera Río Plátano para Honduras y el mundo? Menciona al menos tres razones.',ans:'Es Patrimonio UNESCO (1982); protege 832,000 ha; hogar de 4 pueblos indígenas; mayor biodiversidad de Centroamérica; conecta el Corredor Biológico Mesoamericano.'},
-  {q:'¿Qué es el Corredor Biológico Mesoamericano y cuál es su importancia para Honduras?',ans:'Es una red de ecosistemas que va de México a Colombia. Permite la migración de animales. Honduras aporta sus bosques y áreas protegidas como zonas de conectividad entre el norte y sur del continente.'},
+  {q:'¿Qué es el Corredor Biológico Mesoamericano y cuál es su importancia para Honduras?',ans:'Es una red de ecosistemas que va del sur de México a Panamá. Permite la migración de animales. Honduras aporta sus bosques y áreas protegidas como zonas de conectividad entre el norte y sur del continente.'},
   {q:'¿Cuáles son las principales causas y consecuencias de la deforestación en Honduras?',ans:'Causas: ganadería extensiva, tala ilegal, agricultura migratoria, incendios forestales. Consecuencias: erosión del suelo, ríos que se secan, pérdida de biodiversidad, cambio climático local, inundaciones.'},
   {q:'¿Por qué el bosque nublado es tan importante para el suministro de agua en Honduras?',ans:'El bosque nublado captura el agua de la neblina a través de hojas y musgo. La libera gradualmente a los ríos durante todo el año. El Parque La Tigra, por ejemplo, provee el 40% del agua potable de Tegucigalpa.'},
 ];
@@ -826,17 +826,24 @@ window.addEventListener('resize',()=>{
 // (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
 // tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
 // Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
+// ⚠️ Y ninguna repite la historia de don Tulio ni lo que enseña su animación
+// (js/animacion-toma.js). «El agua de la toma de don Tulio no salía de la
+// tubería: salía del ___ de arriba» era la historia palabra por palabra, y el
+// verdadero o falso del bosque que «no tiene nada que ver» con el agua de la
+// aldea, la historia al revés. Las quebradas que se secan donde se tala y las
+// inundaciones las contesta la animación: dos cerros con la misma lluvia. Ahora
+// preguntan otra cosa de la misión, con la misma respuesta en el mismo sitio.
 const evalTFBank=[
   {q:'Los bosques de pino dan madera y resina.',a:true,k:'tf-pino-madera'},
   {q:'El bosque latifoliado está sobre todo en La Mosquitia.',a:true,k:'tf-latifoliado'},
   {q:'La agricultura migratoria también destruye bosques.',a:true,k:'tf-migratoria'},
-  {q:'Con la deforestación aumentan las inundaciones cuando llueve.',a:true,k:'tf-inundaciones'},
+  {q:'Los bosques limpian el aire que respiramos.',a:true,k:'tf-aire'},
   {q:'Honduras tiene más de 700 especies de aves.',a:true,k:'tf-700-aves'},
   {q:'Pico Bonito y La Muralla son zonas protegidas de Honduras.',a:true,k:'tf-pico-bonito'},
   {q:'La tala ilegal busca maderas preciosas.',a:true,k:'tf-tala'},
   {q:'Los incendios provocados no dañan los bosques.',a:false,k:'tf-incendios'},
   {q:'La industria camaronera no le hace ningún daño a la costa.',a:false,k:'tf-camaronera'},
-  {q:'Un bosque en la montaña no tiene nada que ver con el agua de la aldea de abajo.',a:false,k:'tf-agua-aldea'}
+  {q:'En un pinar viven más especies que en la selva tropical.',a:false,k:'tf-especies-selva'}
 ];
 const evalMCBank=[
   {q:'¿En qué departamento está la reserva más grande del país?',o:['a) Choluteca','b) Gracias a Dios','c) Valle','d) Ocotepeque'],a:1,k:'mc-gracias-a-dios'},
@@ -846,7 +853,7 @@ const evalMCBank=[
   {q:'¿Qué instituto administra las áreas protegidas de Honduras?',o:['a) la UNAH','b) COPECO','c) el ICF','d) el SANAA'],a:2,k:'mc-icf'},
   {q:'¿Qué animales viven en el bosque lluvioso de La Mosquitia?',o:['a) el jaguar y el tapir','b) el pingüino','c) el camello','d) el oso polar'],a:0,k:'mc-jaguar'},
   {q:'¿Qué plantas crecen en los bosques de neblina?',o:['a) cactus','b) trigo','c) orquídeas y bromelias','d) algodón'],a:2,k:'mc-orquideas'},
-  {q:'¿Qué pasa con las quebradas donde se tala el bosque?',o:['a) crecen más en verano','b) se vuelven saladas','c) no cambian','d) se secan en verano'],a:3,k:'mc-rios-secan'},
+  {q:'¿Qué le hace la deforestación al clima del planeta?',o:['a) nada: el clima no depende de los árboles','b) lo vuelve más frío','c) solo cambia el clima de la costa','d) contribuye al cambio climático'],a:3,k:'mc-clima'},
   {q:'¿Con qué país se une la selva de La Mosquitia para formar la más grande de Centroamérica?',o:['a) Nicaragua','b) Guatemala','c) México','d) Panamá'],a:0,k:'mc-nicaragua'},
   {q:'¿Qué hace especial el lugar donde está Honduras, para los animales?',o:['a) que está entre Norteamérica y Sudamérica, y por aquí pasan','b) que tiene muchos puentes','c) que tiene dos mares','d) que es pequeña'],a:0,k:'mc-puente'}
 ];
@@ -860,7 +867,7 @@ const evalCPBank=[
   {q:'En la reserva más grande viven los pueblos pech, miskitu, tawahka y ___.',a:'garífuna',acc:['garífuna','garifuna'],k:'cp-garifuna'},
   {q:'Los animales pueden pasar de un bosque a otro si los ecosistemas están ___.',a:'conectados',acc:['conectados'],k:'cp-conectados'},
   {q:'Abrir potreros en el bosque para el ganado se llama ganadería ___.',a:'extensiva',acc:['extensiva'],k:'cp-extensiva'},
-  {q:'El agua de la toma de don Tulio no salía de la tubería: salía del ___ de arriba.',a:'monte',acc:['monte'],k:'cp-monte'}
+  {q:'El refugio de Cuero y Salado está cerca de la ciudad de La ___.',a:'Ceiba',acc:['Ceiba'],k:'cp-la-ceiba'}
 ];
 const evalPRBank=[
   {term:'Bosque nublado',def:'Siempre cubierto de neblina, en lo alto de la montaña',k:'pr-nublado'},
@@ -872,7 +879,7 @@ const evalPRBank=[
   {term:'La Tigra',def:'La primera área protegida del país',k:'pr-la-tigra'},
   {term:'Manatí',def:'Mamífero acuático de Cuero y Salado',k:'pr-manati'},
   {term:'Lancetilla',def:'Jardín botánico de Tela',k:'pr-lancetilla'},
-  {term:'Corredor Biológico Mesoamericano',def:'Une ecosistemas desde México hasta Colombia',k:'pr-corredor'}
+  {term:'Corredor Biológico Mesoamericano',def:'Une ecosistemas desde México hasta Panamá',k:'pr-corredor'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -1213,17 +1220,23 @@ function evalSwitchMode(mode){
 }
 
 // ── I. Causa y consecuencia ecológica (5 × 4 = 20) — hechos reales de la misión
+// ⚠️ La respuesta correcta de las secciones I y III estaba SIEMPRE en la
+// segunda opción: marcando la «b» sin leer se sacaban 35 de 100 puntos. Se
+// repartió entre las cuatro, sin tocar el contenido de ninguna. Y dos causas
+// se cambiaron porque las contesta la animación de la historia
+// (js/animacion-toma.js): la tala sobre La Tigra que baja el agua de la
+// capital y las laderas que dejan los ríos secos en verano.
 const critCauseEffectBank=[
-  {c:'Se tala el bosque nublado en la cuenca del Parque Nacional La Tigra, sobre Tegucigalpa.',o:['El agua potable de la capital aumenta','Baja el suministro del 40% del agua potable de Tegucigalpa','El nivel del mar sube en la costa','El bosque de pino crece más rápido'],a:1},
-  {c:'La industria camaronera drena un manglar para construir piscinas de camarón.',o:['Se crea un nuevo bosque nublado','Se pierde el criadero natural de peces y mariscos','El quetzal migra a la zona','Aumentan las orquídeas del manglar'],a:1},
-  {c:'Un incendio forestal avanza sobre un bosque de pino-roble ya debilitado por el gorgojo descortezador.',o:['Se regenera el bosque latifoliado','Mueren grandes extensiones de pino y se pierde fauna y madera','Se protege la costa de huracanes','Aumenta el agua de los manglares'],a:1},
-  {c:'Se deforestan las laderas del bosque nublado que captura la neblina.',o:['Los ríos llevan más agua en verano','Los ríos se secan en verano al perder la captura de niebla','El cerro Las Minas crece en altura','Aparecen más manglares'],a:1},
-  {c:'La ganadería extensiva reemplaza el bosque en las montañas del interior.',o:['Mejora la biodiversidad del suelo','Se produce erosión del suelo y pérdida de cobertura forestal','Se forma un nuevo corredor biológico','El suelo retiene más agua'],a:1},
-  {c:'El narcotráfico abre pistas clandestinas y coloniza tierras dentro de la Reserva Río Plátano.',o:['La UNESCO amplía el reconocimiento','Se destruye el bosque y la Reserva entra en la Lista de Patrimonio en Peligro','Aumenta la población de jaguares','Se recupera el manglar costero'],a:1},
-  {c:'La caza furtiva persigue al quetzal en los bosques nublados de Celaque.',o:['Sube la población del ave emblema','Disminuye la población del quetzal, ave emblema del bosque nublado','Se protege mejor la orquídea','Se enfría el clima local'],a:1},
+  {c:'Se tala un bosque grande y se quema toda su madera.',o:['El aire queda más limpio que antes','Crece un bosque nublado en su lugar','Sube al aire el carbono de los árboles y aumenta el cambio climático','Baja la temperatura del planeta'],a:2},
+  {c:'La industria camaronera drena un manglar para construir piscinas de camarón.',o:['Se pierde el criadero natural de peces y mariscos','Se crea un nuevo bosque nublado','El quetzal migra a la zona','Aumentan las orquídeas del manglar'],a:0},
+  {c:'Un incendio forestal avanza sobre un bosque de pino-roble ya debilitado por el gorgojo descortezador.',o:['Se regenera el bosque latifoliado','Se protege la costa de huracanes','Aumenta el agua de los manglares','Mueren grandes extensiones de pino y se pierde fauna y madera'],a:3},
+  {c:'Se tala el bosque nublado para sembrar en las laderas de la montaña.',o:['Aparecen más especies en la montaña','Se pierden plantas y animales que no viven en ningún otro lugar','El bosque nublado se convierte en manglar','Las orquídeas crecen más que antes'],a:1},
+  {c:'La ganadería extensiva reemplaza el bosque en las montañas del interior.',o:['Se produce erosión del suelo y pérdida de cobertura forestal','Mejora la biodiversidad del suelo','Se forma un nuevo corredor biológico','Aumentan los jaguares en la montaña'],a:0},
+  {c:'El narcotráfico abre pistas clandestinas y coloniza tierras dentro de la Reserva Río Plátano.',o:['La UNESCO amplía el reconocimiento','Aumenta la población de jaguares','Se recupera el manglar costero','Se destruye el bosque y la Reserva entra en la Lista de Patrimonio en Peligro'],a:3},
+  {c:'La caza furtiva persigue al quetzal en los bosques nublados de Celaque.',o:['Sube la población del ave emblema','Se protege mejor la orquídea','Disminuye la población del quetzal, ave emblema del bosque nublado','Se enfría el clima local'],a:2},
   {c:'Se realiza tala ilegal de caoba y cedro en el bosque latifoliado de La Mosquitia.',o:['Aumenta el dosel del bosque','Se pierden maderas preciosas y el hábitat del jaguar y el tapir','El manglar gana territorio','Crece el bosque de pino'],a:1},
-  {c:'Honduras pierde más del 50% de la cobertura de sus manglares costeros.',o:['La costa queda mejor protegida','Se pierde la barrera contra huracanes y el criadero de peces','Sube la captura de niebla en la montaña','El cerro Las Minas se erosiona'],a:1},
-  {c:'La agricultura migratoria quema y abandona parcelas dentro de un área protegida.',o:['El suelo se vuelve más fértil de forma permanente','Se degrada el suelo, se fragmenta el hábitat y se pierde biodiversidad','Se forma un bosque nublado nuevo','Aumenta el caudal de los ríos'],a:1},
+  {c:'Honduras pierde más del 50% de la cobertura de sus manglares costeros.',o:['Se pierde la barrera contra huracanes y el criadero de peces','La costa queda mejor protegida','Sube la captura de niebla en la montaña','El cerro Las Minas se erosiona'],a:0},
+  {c:'La agricultura migratoria quema y abandona parcelas dentro de un área protegida.',o:['El suelo se vuelve más fértil de forma permanente','Se forma un bosque nublado nuevo','Se degrada el suelo, se fragmenta el hábitat y se pierde biodiversidad','Aumenta el caudal de los ríos'],a:2},
 ];
 
 // ── II. Analiza el caso y decide (2 × 10 = 20) — minicasos abiertos
@@ -1248,12 +1261,12 @@ const critCaseBank=[
 
 // ── III. Interpreta datos y mapa (3 × 5 = 15) — lectura de la barra de datos
 const critDataBank=[
-  {q:'La Reserva Río Plátano cubre 832,000 ha y el Parque La Tigra unas 7,571 ha. ¿Cuál área protegida es mayor?',o:['El Parque La Tigra','La Reserva Río Plátano','Ambas son iguales','No se puede saber'],a:1},
-  {q:'Honduras tiene una cobertura forestal de aprox. 45%. Si cayera al 30%, ¿qué se puede inferir?',o:['Habría más agua y menos erosión','Menos agua disponible, más erosión y menos biodiversidad','El nivel del mar bajaría','No cambiaría nada'],a:1},
-  {q:'El cerro Las Minas mide 2,849 m y es el punto más alto del país. ¿Qué tipo de bosque predomina en sus zonas altas?',o:['Manglar','Bosque nublado','Bosque seco','Bosque de playa'],a:1},
+  {q:'La Reserva Río Plátano cubre 832,000 ha y el Parque La Tigra unas 7,571 ha. ¿Cuál área protegida es mayor?',o:['La Reserva Río Plátano','El Parque La Tigra','Ambas son iguales','No se puede saber'],a:0},
+  {q:'Honduras tiene una cobertura forestal de aprox. 45%. Si cayera al 30%, ¿qué se puede inferir?',o:['Habría más agua y menos erosión','El nivel del mar bajaría','Menos agua disponible, más erosión y menos biodiversidad','No cambiaría nada'],a:2},
+  {q:'El cerro Las Minas mide 2,849 m y es el punto más alto del país. ¿Qué tipo de bosque predomina en sus zonas altas?',o:['Manglar','Bosque seco','Bosque de playa','Bosque nublado'],a:3},
   {q:'La Tigra provee el 40% del agua potable de Tegucigalpa. Si se deforesta el parque, ¿qué proporción del agua de la capital queda en riesgo?',o:['Casi nada','Cerca de la mitad del agua potable','Solo el 5%','El agua aumentaría'],a:1},
-  {q:'El bosque de pino-roble cubre ~3.5 millones de ha y es el más extenso; el bosque nublado ocupa las cumbres. ¿Cuál es más extenso en Honduras?',o:['El bosque nublado','El bosque de pino-roble','El manglar','Todos por igual'],a:1},
-  {q:'Río Plátano protege 832,000 ha en La Mosquitia y alberga 4 pueblos indígenas. ¿Qué se infiere de este dato?',o:['Es un área pequeña sin importancia','Es la mayor área protegida del país y de gran valor cultural','Solo protege un tipo de árbol','No tiene biodiversidad'],a:1},
+  {q:'El bosque de pino-roble cubre ~3.5 millones de ha y es el más extenso; el bosque nublado ocupa las cumbres. ¿Cuál es más extenso en Honduras?',o:['El bosque de pino-roble','El bosque nublado','El manglar','Todos por igual'],a:0},
+  {q:'Río Plátano protege 832,000 ha en La Mosquitia y alberga 4 pueblos indígenas. ¿Qué se infiere de este dato?',o:['Es un área pequeña sin importancia','Solo protege un tipo de árbol','Es la mayor área protegida del país y de gran valor cultural','No tiene biodiversidad'],a:2},
 ];
 
 // ── IV. Clasifica y justifica (5 × 3 = 15) — clasificar + escribir una razón
@@ -1263,9 +1276,9 @@ const critClassifyBank=[
    reason:'Escribe UNA razón que explique la diferencia entre un tipo de bosque y un área protegida.',
    g:'Un tipo de bosque es un ecosistema definido por su vegetación y clima (nublado, manglar, pino-roble); un área protegida es un territorio con límites legales que el Estado conserva (Celaque, Río Plátano). Un área protegida puede contener varios tipos de bosque.'},
   {catA:'Causa de deforestación',catB:'Consecuencia',
-   items:[{el:'Ganadería extensiva',cat:'A'},{el:'Erosión del suelo',cat:'B'},{el:'Tala ilegal',cat:'A'},{el:'Ríos que se secan',cat:'B'},{el:'Incendios forestales',cat:'A'}],
+   items:[{el:'Ganadería extensiva',cat:'A'},{el:'Erosión del suelo',cat:'B'},{el:'Tala ilegal',cat:'A'},{el:'Pérdida de biodiversidad',cat:'B'},{el:'Incendios forestales',cat:'A'}],
    reason:'Escribe UNA razón que explique por qué las causas y las consecuencias no son lo mismo.',
-   g:'Las causas (ganadería, tala, incendios) son las acciones que provocan la pérdida del bosque; las consecuencias (erosión, ríos secos) son los efectos que resultan de esa pérdida. La causa ocurre primero y produce la consecuencia.'},
+   g:'Las causas (ganadería, tala, incendios) son las acciones que provocan la pérdida del bosque; las consecuencias (erosión, pérdida de biodiversidad) son los efectos que resultan de esa pérdida. La causa ocurre primero y produce la consecuencia.'},
   {catA:'Fauna',catB:'Flora',
    items:[{el:'Quetzal',cat:'A'},{el:'Jaguar',cat:'A'},{el:'Orquídea',cat:'B'},{el:'Ceiba',cat:'B'},{el:'Manatí',cat:'A'}],
    reason:'Escribe UNA razón que explique la diferencia entre la fauna y la flora de un bosque.',
@@ -1275,9 +1288,13 @@ const critClassifyBank=[
 // ── V. Argumenta tu postura (30 = rúbrica 3 criterios × 10)
 const critArgueBank=[
   {q:'¿Por qué el Corredor Biológico Mesoamericano es vital para la supervivencia del jaguar frente al cambio climático?',
-   model:'El Corredor Biológico Mesoamericano conecta ecosistemas desde México hasta Colombia y permite que los animales migren. El jaguar necesita grandes territorios; si los bosques se fragmentan, no puede desplazarse ni encontrar pareja o alimento. Frente al cambio climático, el corredor le permite moverse hacia zonas con mejores condiciones. Honduras aporta sus áreas protegidas (Río Plátano, bosque latifoliado) como conexión. Acción: conservar y reconectar los bosques que forman el corredor.'},
-  {q:'Defiende por qué el bosque nublado captura-niebla debe protegerse para asegurar el agua del país.',
-   model:'El bosque nublado captura el agua de la neblina con sus hojas y musgos y la libera poco a poco a los ríos durante todo el año. Por eso el Parque La Tigra provee el 40% del agua de Tegucigalpa. Si se deforesta, los ríos se secan en verano y las ciudades pierden su fuente de agua. Causa-efecto: menos bosque → menos captura de niebla → menos agua. Acción: proteger y reforestar las cumbres como Celaque y La Tigra.'},
+   model:'El Corredor Biológico Mesoamericano conecta ecosistemas desde México hasta Panamá y permite que los animales migren. El jaguar necesita grandes territorios; si los bosques se fragmentan, no puede desplazarse ni encontrar pareja o alimento. Frente al cambio climático, el corredor le permite moverse hacia zonas con mejores condiciones. Honduras aporta sus áreas protegidas (Río Plátano, bosque latifoliado) como conexión. Acción: conservar y reconectar los bosques que forman el corredor.'},
+  // ⚠️ Aquí se pedía defender que el bosque asegura el agua del país, y
+  // ese argumento, entero, es la animación de la historia (js/animacion-toma.js):
+  // el monte guarda la lluvia y la suelta cuando ya no llueve. Ahora pide
+  // otra cosa de la misión: por qué la ley sola no cuida un área protegida.
+  {q:'¿Por qué un área protegida necesita que la cuide la gente que vive cerca, y no solo una ley?',
+   model:'Un área protegida es un territorio que la ley manda cuidar, y la administra el ICF dentro del SINAPH. Pero la ley no está en el monte: un incendio, una tala ilegal o un potrero nuevo los ve primero la gente que vive cerca. Causa-efecto: si nadie vigila, la tala y los incendios avanzan aunque la ley los prohíba, y el bosque se pierde igual. Acción: brigadas de la comunidad contra incendios, avisar al ICF cuando se tala, y vivir del bosque sin destruirlo.'},
   {q:'Argumenta por qué proteger los manglares es clave para las comunidades pesqueras y la defensa ante huracanes.',
    model:'El manglar es el criadero natural de peces y mariscos (cerca del 80% de las especies comerciales del litoral), por lo que sostiene la pesca de las comunidades costeras. Además, sus raíces frenan las olas y protegen la costa de huracanes y erosión. Si se drena para camaroneras, se pierde el alimento y la barrera natural. Causa-efecto: sin manglar → menos peces y costas desprotegidas. Acción: prohibir el drenaje y restaurar los manglares dañados.'},
 ];

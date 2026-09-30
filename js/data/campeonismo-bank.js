@@ -133,7 +133,7 @@ const CAMP_BANK = {
     { q: '¿Qué porcentaje del agua potable de Tegucigalpa proviene del Parque La Tigra?', o: ['20%', '30%', '40%', '60%'], c: 2, mision: 'Áreas Protegidas de Honduras' },
     { q: '¿Cuál es el punto más alto de Honduras?', o: ['Cerro El Picacho', 'Pico Bonito', 'Cerro Las Minas', 'Montaña El Boquerón'], c: 2, mision: 'Áreas Protegidas de Honduras' },
     { q: '¿Qué siglas identifican al sistema de áreas protegidas de Honduras?', o: ['SERNA', 'SINAPH', 'COHDEFOR', 'ICF'], c: 1, mision: 'Áreas Protegidas de Honduras' },
-    { q: '¿Qué corredor une las áreas protegidas desde México hasta Colombia?', o: ['Corredor Verde del Caribe', 'Corredor Andino', 'Corredor Biológico Mesoamericano', 'Reserva Maya'], c: 2, mision: 'Áreas Protegidas de Honduras' },
+    { q: '¿Qué corredor une las áreas protegidas desde México hasta Panamá?', o: ['Corredor Verde del Caribe', 'Corredor Andino', 'Corredor Biológico Mesoamericano', 'Reserva Maya'], c: 2, mision: 'Áreas Protegidas de Honduras' },
     { q: '¿Qué ecosistema costero sirve de criadero para peces y protege costas?', o: ['Bosque nublado', 'Manglar', 'Bosque de pino', 'Páramo'], c: 1, mision: 'Áreas Protegidas de Honduras' },
     { q: '¿Cuál fue la primera área protegida declarada en Honduras?', o: ['Parque Nacional Celaque', 'Reserva Río Plátano', 'Parque Nacional La Tigra', 'Lancetilla'], c: 2, mision: 'Áreas Protegidas de Honduras' },
     { q: '¿Qué especie emblemática de los bosques nublados mesoamericanos habita en Honduras?', o: ['Jaguar', 'Manatí', 'Tapir', 'Quetzal'], c: 3, mision: 'Áreas Protegidas de Honduras' },
