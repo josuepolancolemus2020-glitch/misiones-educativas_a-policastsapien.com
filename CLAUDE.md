@@ -10161,6 +10161,149 @@ detrás y la sonda, con razón, no dijo nada.
 Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
 de 50 ms.
 
+### La cuadragésima séptima: La Energía, y lo que enseñó
+
+La segunda de la Ruta de la Materia es **La Energía**
+(`misiones/2y3ciclo-la-energia/`, `js/animacion-panel.js`). La historia es la
+del panel solar que pusieron en la escuela para la computadora: funcionó una
+semana y el primer día bien nublado no encendió nada. «Salió malo», dijeron, y
+estuvieron a punto de mandarlo a cambiar. No estaba malo: la energía no se crea,
+se toma de un lado y se convierte en otra cosa, y ese día casi no había de dónde
+tomarla. La animación es la escuela abierta por delante, con el panel en el
+techo, la computadora adentro y el sol arriba a la izquierda:
+
+- el panel y la computadora apagada: ¿de dónde saca el panel lo que la
+  enciende?;
+- sale el sol, y seis rayos de luz llegan al panel, uno por uno;
+- el panel convierte esa luz en electricidad, que baja por el cable, y la
+  computadora enciende;
+- en la pantalla, la electricidad se convierte en luz: un aro en el panel y
+  otro en la pantalla, y la luz de la pantalla empezó siendo luz del sol;
+- otro día, bien nublado: la nube tapa el sol entero, al panel le llega un
+  rayo débil que sale del borde de la nube, por el cable baja poca
+  electricidad y la computadora no enciende;
+- «salió malo», dijeron: con raya cortada, la luz que no llegó; el panel
+  convierte la que le llega, y la que falta no la puede fabricar;
+- al día siguiente la nube se va, vuelven los seis rayos y el mismo panel la
+  enciende;
+- y la pregunta es del alumno: algo que se encienda en su casa, y de dónde le
+  llega la energía, hacia atrás, hasta donde pueda.
+
+Ocho cosas que valen para las que siguen:
+
+1. ⚠️ **La historia decía una cosa que no es verdad, y se cambió la frase.**
+   Decía que ese día «no había de dónde sacar la energía», y un día bien
+   nublado el panel algo recibe: por la nube pasa luz, poca. Ahora dice «casi
+   no había», y el dibujo lo enseña con un rayo débil que sale de la nube.
+   Cuando el cuento y la verdad se pelean, se cambia el cuento.
+2. ⚠️ **Lo que baja por el cable va con lo que llega al panel.** Por el cable
+   baja una banda de un ancho por cada rayo que llega: seis rayos dan la banda
+   gruesa y uno, la fina. La sonda cuenta los rayos que tocan el panel y mide
+   la banda. No se dice cuánta luz se vuelve electricidad, que no es toda:
+   solo que con poca luz sale poca.
+3. ⚠️ **Lo que falta se ve, y no se fabrica.** En el paso 5, la luz que no
+   llegó va con raya cortada, del borde de la nube al panel. La sonda
+   comprueba que cada raya cortada salga del borde de la nube, en el camino de
+   un rayo del sol, y que con el rayo débil sumen justo los seis: ni uno de
+   más ni uno de menos.
+4. **La luz de la pantalla empezó siendo luz del sol.** Es lo que asombra, y
+   es verdad: la energía se convirtió dos veces, en el panel y en la pantalla,
+   y el marcador cuenta los dos aros.
+5. ⚠️ **La historia y la animación contestaban siete preguntas de la prueba, y
+   una octava no la enseñaba la misión.**
+   - «¿Por qué no encendió el panel de la escuela el día nublado?» y «el panel
+     daba electricidad a la ___» eran la historia palabra por palabra;
+   - «la energía se puede fabricar de la nada», «no se crea ni se destruye:
+     solo se ___» y «¿qué hace un panel solar?» son la frase de su recuadro;
+   - y la animación enseña un panel en el techo que le da luz a una escuela
+     sin cables de afuera: contestaba «los paneles se ponen en el ___» y «una
+     aldea sin tendido de cables no puede tener luz nunca».
+   - «De noche no vemos el Sol porque la Tierra ___» no lo enseña esta misión
+     (es de El Universo), y tampoco «techo» ni el «tendido de cables»: una
+     pregunta solo puede preguntar lo que la misión enseña.
+
+   Ahora preguntan por el molino sin viento, la silla, la radio, lo que hace
+   el cuerpo con la energía de los alimentos, los recursos, la luz que se
+   apaga al salir, la turbina de la represa y los enchufes, todo de lo que la
+   misión enseña (sus tarjetas, el Laboratorio, la secuencia de la
+   hidroeléctrica y el Clasifica), en la misión y en la ficha, con la
+   respuesta buena en el mismo lugar. En
+   pensamiento crítico, el error de «la energía se crea de la nada» (la frase
+   del recuadro) pasó a ser el del carbón que «no contamina». La felicitación
+   de la ficha, en la hoja de los pareados, nombraba las cinco formas de
+   energía: ahora solo pide revisar.
+6. ⚠️ **La nube entraba a medio aparecer.** Se encendía mientras entraba, y a
+   través de ella se veía el sol que tenía que tapar. Ahora ya está puesta en
+   el paso 3, entera pero fuera del dibujo, y entra opaca. Y volviendo con
+   «Atrás» al paso 3, los aros de dónde se convierte salían antes de que
+   volviera la luz: ahora esperan a que pase por ahí. Las dos cosas se vieron
+   con fotos a medio viaje, con la sonda en verde.
+7. **En la pantalla oscura, lo que va sobre la pared lleva la tinta de la
+   pared.** «No alcanza» y «de electricidad a luz» van sobre la pared crema del
+   cuarto, que es una cosa: con la tinta de la pantalla salían con letra clara
+   y borde oscuro. Van con tinta oscura fija, como el resto del dibujo.
+8. ⚠️ **La sonda se equivocó dos veces antes de servir.** Medía el borde de la
+   nube también en los pasos de sol, con la nube fuera del dibujo, y acusaba
+   al rayo débil de no salir de ella: una relación que solo existe con la nube
+   en su sitio se mide solo en esos pasos. Y para decir si la nube tapa el sol
+   miraba trece puntos: con la nube rota a propósito, el hueco cabía entre
+   punto y punto y la sonda seguía en verde. Mira cuarenta y nueve.
+
+La sonda de esta escena **no le cree nada a la escena**. Comprueba:
+
+- que el panel esté sobre el agua izquierda del techo, con su cara de arriba
+  hacia el sol, y que la computadora esté sobre la mesa;
+- que el cable salga del panel y llegue a la computadora, y que las dos bandas
+  vayan por él de punta a punta;
+- que el sol mande seis rayos, cada uno del borde del sol derecho a su punto
+  de la cara del panel, en puntos distintos;
+- que lleguen al panel cero, seis o un rayo según el paso, y que la banda que
+  baja tenga un ancho por cada rayo que llega;
+- que la nube esté solo el día nublado, tapando el sol entero, sin que asomen
+  sus rayitos;
+- que el rayo débil salga del borde de la nube, en el camino de un rayo del
+  sol, y llegue a su punto del panel;
+- que la luz que falta vaya con raya cortada, del borde de la nube al panel,
+  y que con el rayo débil sean los seis;
+- que la computadora esté encendida, con su luz, solo cuando baja la banda
+  gruesa;
+- que los aros rodeen el panel y la pantalla, y cada rótulo vaya junto a lo
+  suyo, sin montarse en otro, en el sol, en la nube, en el panel ni en la
+  pantalla, y sin que lo cruce un rayo;
+- que el marcador cuente lo que se ve;
+- que cada cosa llegue cuando le toca: los rayos uno por uno, la
+  computadora cuando la electricidad ya bajó, primero la nube y después el
+  rayo débil;
+- y que no salga ninguna palabra de la prueba ni un número.
+
+Se comprobó al revés con veinte averías, plantadas una por una:
+
+- un rayo llegando fuera del panel;
+- la banda fina del ancho de dos rayos;
+- la nube con un hueco que deja ver el sol;
+- el rayo débil saliendo de adentro de la nube;
+- la luz que falta incluyendo el rayo que sí pasó;
+- la computadora encendida el día nublado;
+- los rayitos del sol asomando detrás de la nube;
+- el marcador del paso 4 diciendo 2;
+- «renovable» en una frase;
+- el cable sin llegar a la computadora;
+- los rayos llegando todos juntos;
+- la computadora encendiendo antes de que baje la electricidad;
+- «la que falta» encima de la luz que falta;
+- el panel flotando sobre el techo;
+- los rayos visibles el día nublado;
+- el marcador del paso 5 diciendo 6;
+- el aro de la pantalla sin rodearla;
+- «de luz a electricidad» lejos del panel;
+- el rayo débil saliendo antes que la nube;
+- la electricidad bajando antes de que lleguen los rayos al día siguiente.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 60 cuadros por segundo, y el peor cuadro es
+de 67 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -10291,7 +10434,13 @@ si un rótulo lo toca, se le pregunta a su dibujo punto por punto. Lo que tiene
 que verse solo entre otras piezas (el agua entre los granos) se dibuja antes que
 ellas. Y lo que aparece y se va en el mismo paso, en dos envolturas: al volver
 con «Atrás», la que se vuelve a encender espera a que la otra se apague, o a
-medio camino se cruzan y queda un fantasma que no está en ningún paso.
+medio camino se cruzan y queda un fantasma que no está en ningún paso. Lo que
+entra desde fuera del dibujo (una nube) ya está puesto y entero en el paso de
+antes, fuera del dibujo: si se enciende mientras entra, se ve a través de él lo
+que viene a tapar. Para decir si algo tapa otra cosa, la sonda mira muchos
+puntos, que con pocos un hueco cabe entre punto y punto; y una relación que
+solo existe con una pieza en su sitio (el borde de la nube) se mide solo en los
+pasos donde la pieza está.
 
 Si el `--sec` de la misión es claro (un ámbar, un amarillo), la letra blanca
 del botón que avanza no se lee en su punta: la misión declara en su CSS

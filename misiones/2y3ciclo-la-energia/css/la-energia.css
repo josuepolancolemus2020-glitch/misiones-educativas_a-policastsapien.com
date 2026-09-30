@@ -481,3 +481,35 @@ body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* ===================== LA ANIMACIÓN: EL PANEL NO ESTABA MALO =====================
+   El sol, la nube, la escuela, el panel, el cable y la computadora son
+   cosas: se quedan como son en la pantalla clara y en la oscura. Lo que va
+   sobre la tarjeta (la luz que falta, los aros) lleva la tinta de la
+   pantalla. El botón que avanza lleva su propio degradado: con el verde y
+   el teal de la misión, la letra blanca no llegaba a 4,5:1 en su punta. */
+:root { --am-boton: linear-gradient(135deg, #15803d, #0f766e); }
+.am-raiz .en-sol          { fill: #facc15; stroke: #ca8a04; stroke-width: 1.2; }
+.am-raiz .en-halo         { fill: none; stroke: #eab308; stroke-width: 2.2; stroke-linecap: round; }
+.am-raiz .en-rayo         { fill: none; stroke: #eab308; stroke-width: 2; stroke-linecap: round; }
+.am-raiz .en-debil        { stroke-width: 1.2; stroke-opacity: 0.85; }
+.am-raiz .en-falta        { fill: none; stroke: var(--dark, #14342b); stroke-width: 1.2; stroke-dasharray: 4 3; }
+.am-raiz .en-nube         { fill: #e5e7eb; stroke: #6b7280; stroke-width: 2.4; }
+.am-raiz .en-nube-dentro  { fill: #e5e7eb; stroke: none; }
+.am-raiz .en-suelo        { fill: #65a30d; }
+.am-raiz .en-cuarto       { fill: #fef3c7; }
+.am-raiz .en-pared        { fill: #d6d3d1; stroke: #78716c; stroke-width: 1; }
+.am-raiz .en-teja         { fill: #b45309; stroke: #78350f; stroke-width: 1.2; stroke-linejoin: round; }
+.am-raiz .en-panel        { fill: #1e3a8a; stroke: #93c5fd; stroke-width: 1; stroke-linejoin: round; }
+.am-raiz .en-celda        { fill: none; stroke: #93c5fd; stroke-width: 0.8; }
+.am-raiz .en-cable        { fill: none; stroke: #374151; stroke-width: 8; stroke-linecap: round; }
+.am-raiz .en-banda        { fill: none; stroke: #fbbf24; stroke-linecap: round; }
+.am-raiz .en-marco        { fill: #111827; }
+.am-raiz .en-apagada      { fill: #374151; }
+.am-raiz .en-encendida    { fill: #e0f2fe; }
+.am-raiz .en-brillo       { fill: none; stroke: #f59e0b; stroke-width: 1.8; stroke-linecap: round; }
+.am-raiz .en-mesa         { fill: #a16207; }
+.am-raiz .en-pata         { fill: #854d0e; }
+.am-raiz .en-aro          { fill: none; stroke: var(--am-pri); stroke-width: 1.6; }
+.am-raiz .en-rotulo-dentro { fill: #1f2937; stroke: #fef3c7; stroke-width: 3.2px; stroke-linejoin: round; paint-order: stroke;
+                             font-family: 'Fredoka', sans-serif; font-weight: 600; }

@@ -352,15 +352,26 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 // (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
 // tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
 // Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
+// ⚠️ Y tampoco pregunta lo que ya contestan la historia o la animación que va
+// debajo de ella. «¿Por qué no encendió el panel el día nublado?» y «el panel
+// daba electricidad a la ___» eran la historia palabra por palabra; «la energía
+// se puede fabricar de la nada», «solo se ___» y «¿qué hace un panel solar?»
+// son la frase de su recuadro; y la animación enseña un panel en el techo que
+// le da luz a una escuela sin cables de afuera, que contestaba «los paneles se
+// ponen en el ___» y «una aldea sin tendido de cables no puede tener luz».
+// «De noche la Tierra ___» no lo enseña esta misión. Ahora preguntan por el
+// molino, la silla, la radio, el cuerpo, los recursos, la luz que se apaga, la
+// turbina de la represa y los enchufes, con la respuesta buena en el mismo
+// lugar.
 const evalTFBank=[
   {q:'La energía se puede ver a simple vista.',a:false,k:'tf-se-ve'},
   {q:'El Sol produce el viento y la lluvia al calentar el aire y el agua.',a:true,k:'tf-clima'},
-  {q:'La energía se puede fabricar de la nada.',a:false,k:'tf-nada'},
+  {q:'Un molino de viento produce electricidad aunque no haya viento.',a:false,k:'tf-molino'},
   {q:'El carbón nunca se acaba.',a:false,k:'tf-carbon-acaba'},
   {q:'Ahorrar energía cuida la economía de la familia.',a:true,k:'tf-economia'},
   {q:'Todo lo que ocurre a tu alrededor necesita energía.',a:true,k:'tf-todo'},
   {q:'Los aparatos conectados siguen gastando aunque no se usen.',a:true,k:'tf-conectados'},
-  {q:'Una aldea sin tendido de cables no puede tener luz nunca.',a:false,k:'tf-aldea'},
+  {q:'Una silla es una forma de energía.',a:false,k:'tf-silla'},
   {q:'La energía pasa de las plantas a los animales y a las personas.',a:true,k:'tf-pasa'},
   {q:'Sin el Sol no habría vida en la Tierra.',a:true,k:'tf-sin-sol'}
 ];
@@ -369,24 +380,24 @@ const evalMCBank=[
   {q:'¿En qué se transforma la electricidad en una plancha?',o:['a) Luz','b) Calor','c) Sonido','d) Movimiento'],a:1,k:'mc-plancha'},
   {q:'¿Cuál es la principal fuente de energía de la Tierra?',o:['a) El viento','b) El Sol','c) El carbón','d) El gas'],a:1,k:'mc-sol'},
   {q:'¿Cuál de estas fuentes se agota?',o:['a) El Sol','b) El agua','c) El viento','d) El gas natural'],a:3,k:'mc-agota'},
-  {q:'¿Por qué no encendió el panel de la escuela el día nublado?',o:['a) Estaba malo','b) No había sol de dónde sacar la energía','c) Se robaron la pila','d) Estaba desconectado'],a:1,k:'mc-nublado'},
+  {q:'¿Qué forma de energía entrega una radio?',o:['a) Luminosa','b) Sonora','c) Calorífica','d) Mecánica'],a:1,k:'mc-radio'},
   {q:'¿Qué pasa con la electricidad en una linterna?',o:['a) Se vuelve sonido','b) Se vuelve luz','c) Se vuelve frío','d) Se vuelve movimiento'],a:1,k:'mc-linterna'},
   {q:'¿Qué hábito ahorra energía?',o:['a) Dejar las luces encendidas','b) Abrir el refri a cada rato','c) Aprovechar la luz del día','d) Dejar la tele prendida'],a:2,k:'mc-habito'},
   {q:'¿Por qué conviene ahorrar energía?',o:['a) Porque muchas fuentes se agotan y contaminan','b) Porque nunca se acaba','c) Porque es gratis','d) Porque no sirve'],a:0,k:'mc-por-que-ahorrar'},
-  {q:'¿Qué hace un panel solar?',o:['a) Convierte la luz del Sol en electricidad','b) Convierte el agua en viento','c) Fabrica energía de la nada','d) Guarda el calor de la noche'],a:0,k:'mc-panel'},
+  {q:'¿Qué hace tu cuerpo con la energía de los alimentos?',o:['a) La transforma en movimiento','b) La guarda sin usarla nunca','c) La convierte en luz','d) La vuelve agua'],a:0,k:'mc-cuerpo'},
   {q:'¿Qué aparato transforma la electricidad en movimiento?',o:['a) La bombilla','b) El parlante','c) El ventilador','d) La plancha'],a:2,k:'mc-ventilador'}
 ];
 const evalCPBank=[
   {q:'Las fuentes que no se agotan se llaman ___.',a:'renovables',acc:['renovables','renovable'],k:'cp-renovables'},
-  {q:'La energía no se crea ni se destruye: solo se ___.',a:'transforma',acc:['transforma'],k:'cp-transforma'},
+  {q:'Las fuentes de energía son los ___ de donde obtenemos la energía.',a:'recursos',acc:['recursos','recurso'],k:'cp-recursos'},
   {q:'La gran represa hondureña que produce electricidad es El ___.',a:'Cajón',acc:['Cajón','Cajon'],k:'cp-cajon'},
-  {q:'De noche no vemos el Sol porque la Tierra ___.',a:'gira',acc:['gira'],k:'cp-gira'},
+  {q:'Al salir de un cuarto, para ahorrar energía hay que ___ la luz.',a:'apagar',acc:['apagar','apagarla'],k:'cp-apagar'},
   {q:'La electricidad es muy útil, pero también ___.',a:'peligrosa',acc:['peligrosa'],k:'cp-peligrosa'},
   {q:'Para gastar menos, conviene usar focos ___.',a:'ahorradores',acc:['ahorradores'],k:'cp-ahorradores'},
   {q:'La pila de una linterna se ___ con el uso.',a:'gasta',acc:['gasta','agota','acaba'],k:'cp-gasta'},
   {q:'Nunca toques un aparato con las manos ___.',a:'mojadas',acc:['mojadas'],k:'cp-mojadas'},
-  {q:'En la escuela, el panel solar daba electricidad a la ___.',a:'computadora',acc:['computadora'],k:'cp-computadora'},
-  {q:'Los paneles solares se ponen en el ___ de la casa.',a:'techo',acc:['techo'],k:'cp-techo'}
+  {q:'En una represa, el agua que cae con fuerza mueve una ___.',a:'turbina',acc:['turbina'],k:'cp-turbina'},
+  {q:'Nunca metas los dedos ni objetos en los ___.',a:'enchufes',acc:['enchufes','enchufe','tomacorrientes','tomacorriente'],k:'cp-enchufes'}
 ];
 const evalPRBank=[
   {term:'Energía luminosa',def:'La de una lámpara encendida',k:'pr-luminosa'},
@@ -504,9 +515,9 @@ const critCaseGuides=[
   'Apagar luces y aparatos que no se usan, aprovechar la luz del día, usar fuentes renovables y focos ahorradores.',
 ];
 const critErrorBank=[
-  {k:'er-nada',txt:'"La energía se crea de la nada cuando enciendes una lámpara".',
-   g1:'La energía NO se crea ni se destruye.',
-   g2:'Solo se TRANSFORMA: la eléctrica se vuelve luminosa.'},
+  {k:'er-carbon',txt:'"El carbón es una fuente de energía limpia que no contamina".',
+   g1:'El carbón CONTAMINA el aire y SE AGOTA.',
+   g2:'Las fuentes más LIMPIAS son el Sol, el viento y el agua.'},
   {k:'er-sonora',txt:'"La energía del calor es la energía sonora".',
    g1:'La energía del calor es la CALORÍFICA.',
    g2:'La energía SONORA es la del sonido.'},

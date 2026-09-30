@@ -25,6 +25,9 @@
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
 <link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La animación que explica el tema: el aparato es compartido y va DESPUÉS
+     del CSS de la misión, que es de donde saca sus colores. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -66,10 +69,28 @@
     <h2>🔌 «Es que el panel salió malo»</h2>
     <p>En la escuela pusieron un panel solar para la computadora. Funcionó una semana y el primer día
     bien nublado no encendió nada. «Salió malo», dijeron, y estuvieron a punto de mandarlo a cambiar. No
-    estaba malo: <strong>ese día no había de dónde sacar la energía</strong>.</p>
+    estaba malo: <strong>ese día casi no había de dónde sacar la energía</strong>.</p>
     <div class="tip"><span class="ti">❓</span><div>La energía <strong>no se crea</strong>: se toma de un
     lado y se transforma en otra cosa: sol en electricidad, electricidad en luz. El panel no la fabrica,
     la convierte. Entender eso es lo que evita botar algo que sirve.</div></div>
+  </div>
+  <!-- La animación que explica el tema, justo después de la historia: la
+       escuela con su panel en el techo y la computadora adentro. Con sol,
+       la luz llega al panel, baja como electricidad y la computadora
+       enciende; el día nublado la nube tapa el sol, llega poca luz y no
+       alcanza. El panel no la fabrica: la convierte. La mueve el alumno,
+       paso a paso. El aparato es compartido (js/animacion-mision.js) y la
+       escena es de esta misión (js/animacion-panel.js). La frase de dentro
+       es de reserva: si el aparato no llega a cargar, se lee eso en vez de
+       un hueco. -->
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira de dónde sale la energía</h2>
+    <div id="amPanel">
+      <p>Con sol, la luz llega al panel del techo, el panel la convierte en electricidad, baja por el cable
+      y la computadora enciende. Un día bien nublado, la nube tapa el sol: al panel le llega muy poca luz,
+      da poca electricidad y la computadora no enciende. El panel no estaba malo: la luz que falta no la
+      puede fabricar.</p>
+    </div>
   </div>
   <div class="card ac-teal">
     <h2>⚡ ¿Qué es la energía?</h2>
@@ -612,6 +633,8 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-panel.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

@@ -1712,6 +1712,81 @@ const LEER = `
       textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
     };
   };
+  /* La Energía: el panel de la escuela. Se lee el techo y el panel, cada
+     rayo (de dónde sale y a dónde llega, y si ya se dibujó), la nube y si
+     tapa el sol, el cable con sus dos bandas y la pantalla. */
+  window.__amExtra.amPanel = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(m(el)); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function uno(sel, en) { return (en || raiz).querySelector(sel); }
+    function todos(sel, en) { return [].slice.call((en || raiz).querySelectorAll(sel)); }
+    function demora(el) { return parseFloat(el.style.getPropertyValue('--d')) || 0; }
+    function linea(l) { return [aVista(l, +l.getAttribute('x1'), +l.getAttribute('y1')), aVista(l, +l.getAttribute('x2'), +l.getAttribute('y2'))]; }
+    function camino(p) { var d = p.getAttribute('d').split(' '); return [aVista(p, +d[1], +d[2]), aVista(p, +d[4], +d[5])]; }
+    /* Dibujada: su trazo ya corrió entero. */
+    function trazada(l) { return (parseFloat(getComputedStyle(l).strokeDashoffset) || 0) < 0.5; }
+    function puntos(el) { return el.getAttribute('points').split(' ').map(function (p) { var q = p.split(','); return aVista(el, +q[0], +q[1]); }); }
+    /* Lo que dice un rótulo, con sus renglones separados por un espacio. */
+    function leer(t) {
+      var ts = t.querySelectorAll('tspan');
+      return ts.length ? [].map.call(ts, function (s) { return s.textContent; }).join(' ') : t.textContent;
+    }
+    var partes = todos('[data-parte]');
+    function enNube(x, y) {
+      return partes.some(function (el) { var p = svg.createSVGPoint(); p.x = x; p.y = y; return el.isPointInFill(p.matrixTransform(m(el).inverse())); });
+    }
+    /* Un rayo sale del BORDE de la nube: su punta de salida está dentro (o
+       a un paso de ella) y tres pasos más adelante ya está fuera. */
+    function borde(ab) {
+      var dx = ab[1][0] - ab[0][0], dy = ab[1][1] - ab[0][1], L = Math.hypot(dx, dy) || 1, a = ab[0];
+      dx /= L; dy /= L;
+      return (enNube(a[0], a[1]) || enNube(a[0] - dx * 1.5, a[1] - dy * 1.5)) && !enNube(a[0] + dx * 3, a[1] + dy * 3);
+    }
+    var sol = uno('[data-sol]'), sc = aVista(sol, +sol.getAttribute('cx'), +sol.getAttribute('cy')), sr = +sol.getAttribute('r');
+    /* El sol entero: el centro y tres vueltas de dieciséis puntos. Con
+       menos, un hueco de la nube cabía entre punto y punto. */
+    var solPts = [sc];
+    [0.35, 0.7, 0.97].forEach(function (k) { for (var i = 0; i < 16; i++) { var a = i * Math.PI / 8; solPts.push([sc[0] + Math.cos(a) * sr * k, sc[1] + Math.sin(a) * sr * k]); } });
+    var nube = uno('[data-nube]'), debil = uno('[data-debil]'), dl = debil.querySelector('line');
+    var encendida = uno('[data-pantalla="encendida"]');
+    return {
+      techo: puntos(uno('[data-techo]')),
+      panel: puntos(uno('[data-panel]')),
+      suelo: caja(uno('[data-suelo]')).y0,
+      sol: { c: sc, r: sr },
+      halo: vis(uno('[data-halo]')),
+      nube: { ve: vis(nube), tapa: solPts.every(function (p) { return enNube(p[0], p[1]); }), caja: caja(nube), d: demora(nube), dMov: demora(nube.firstChild) },
+      rayos: todos('[data-rayo]').map(function (g) {
+        var l = g.querySelector('line'), ab = linea(l);
+        return { k: +g.getAttribute('data-rayo'), ve: vis(g), traz: trazada(l), a: ab[0], b: ab[1], dVer: demora(g), dTraza: demora(l) };
+      }),
+      debil: { ve: vis(debil), traz: trazada(dl), a: linea(dl)[0], b: linea(dl)[1], borde: borde(linea(dl)), d: demora(debil) },
+      faltan: { ve: vis(uno('[data-faltan]')), lineas: todos('[data-falta]').map(function (l) {
+        var ab = linea(l);
+        return { k: +l.getAttribute('data-falta'), a: ab[0], b: ab[1], borde: borde(ab), cortada: getComputedStyle(l).strokeDasharray !== 'none' };
+      }) },
+      cable: camino(uno('[data-cable]')),
+      bandas: todos('[data-banda]').map(function (g) {
+        var p = g.querySelector('path'), ab = camino(p);
+        return { k: g.getAttribute('data-banda'), ve: vis(g), traz: trazada(p), ancho: +p.getAttribute('stroke-width'), a: ab[0], b: ab[1], dVer: demora(g), dTraza: demora(p) };
+      }),
+      marco: caja(uno('[data-marco]')),
+      mesa: caja(uno('[data-mesa]')),
+      pantalla: { ve: vis(encendida), d: demora(encendida) },
+      brillo: vis(uno('[data-brillo]')),
+      aros: todos('[data-aro]').map(function (e) { return { k: e.getAttribute('data-aro'), ve: vis(e), caja: caja(e), d: demora(e) }; }),
+      rotulos: todos('[data-rotulo]').map(function (t) { return { k: t.getAttribute('data-rotulo'), ve: vis(t), dice: leer(t), caja: caja(t), d: demora(t) }; }),
+      textos: todos('text').filter(vis).map(leer)
+    };
+  };
   window.__amExtra.amMedida = function (raiz) {
     var vis = window.__amVisible;
     var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
@@ -2596,6 +2671,190 @@ const ESCENAS = {
      punto por punto sobre la hoja de don Tulio (media hoja con el veneno),
      y cada granito que se va, que se vaya a la boca del chapulín o al centro
      de una mancha. */
+  /* La Energía: el panel no estaba malo. Se cuentan los rayos que llegan al
+     panel, se mide la banda que baja por el cable (se compara con la fina,
+     que es la de un rayo) y se mira la pantalla. El día nublado, la nube tiene que tapar el sol entero, el
+     rayo débil tiene que salir de su borde, y la luz que falta tiene que
+     ser justo la de los rayos que no pasaron. */
+  amPanel(e, n) {
+    const x = e.extra, r = [];
+    const nb = t => String(t == null ? '' : t).replace(/ /g, ' ').replace(/\s+/g, ' ').trim();
+    const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+    const monta = (a, b) => a.x0 < b.x1 - 0.5 && b.x0 < a.x1 - 0.5 && a.y0 < b.y1 - 0.5 && b.y0 < a.y1 - 0.5;
+    const dentro = (p, c, m = 0) => p[0] >= c.x0 - m && p[0] <= c.x1 + m && p[1] >= c.y0 - m && p[1] <= c.y1 + m;
+    const aTramo = (p, a, b) => {
+      const dx = b[0] - a[0], dy = b[1] - a[1], L2 = dx * dx + dy * dy;
+      const t = Math.max(0, Math.min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / L2));
+      return dist(p, [a[0] + t * dx, a[1] + t * dy]);
+    };
+    const aRecta = (p, a, b) => Math.abs((p[0] - a[0]) * (b[1] - a[1]) - (p[1] - a[1]) * (b[0] - a[0])) / dist(a, b);
+    const lado = (p, a, b) => Math.sign((b[0] - a[0]) * (p[1] - a[1]) - (b[1] - a[1]) * (p[0] - a[0]));
+    const nublado = n === 4 || n === 5;
+    const luz = n === 2 || n === 3 || n >= 6;
+
+    /* Lo que no depende del dibujo, primero. */
+    const dicho = [e.texto, e.cifra, e.palabras].concat(x.textos).map(nb).join(' | ').toLowerCase();
+    const EXACTAS = ['renovable', 'renovables', 'luminosa', 'calorífica', 'sonora', 'mecánica', 'química', 'eólica', 'hidroeléctrica',
+      'fotosíntesis', 'petróleo', 'carbón', 'gas', 'gasolina', 'cajón', 'represa', 'molino', 'molinos', 'turbina', 'recurso', 'recursos',
+      'enchufe', 'enchufes', 'apagar', 'apaga', 'peligrosa', 'peligro', 'mojadas', 'ahorradores', 'ahorrar', 'ahorro', 'ahorra', 'gasta',
+      'agota', 'agotan', 'acaba', 'contamina', 'contaminan', 'limpia', 'limpias', 'cuerpo', 'alimentos', 'comida', 'radio', 'silla',
+      'viento', 'lluvia', 'plantas', 'vida', 'principal', 'capacidad', 'cambios', 'trabajo', 'linterna', 'plancha', 'ventilador',
+      'bombilla', 'foco', 'focos', 'parlante', 'lámpara', 'fogata', 'música', 'carro', 'conectados', 'conectado', 'desconectar', 'pila',
+      'pilas', 'vela', 'crea', 'destruye', 'transforma', 'transforman', 'noche', 'gira', 'aldea', 'forma', 'formas', 'fuente', 'fuentes'];
+    const suelto = ' ' + dicho.split(/[^a-záéíóúñü]+/).filter(Boolean).join(' ') + ' ';
+    const malas = EXACTAS.filter(w => suelto.includes(' ' + w + ' '));
+    ['luz del día', 'simple vista', 'no se ve'].forEach(w => { if (dicho.includes(w)) malas.push(w); });
+    r.push([malas.length === 0, `paso ${n}: no sale ninguna palabra de la prueba (ni una forma de energía, ni una fuente, ni un aparato de la casa, ni cómo se ahorra)`, malas]);
+    const nums = [e.texto].concat(x.textos).map(nb).join(' ').match(/\d+/g) || [];
+    r.push([nums.length === 0, `paso ${n}: ningún número en la frase ni en el dibujo`, nums]);
+    const frase = nb(e.texto);
+    const FR = [['En la escuela hay un panel en el techo', 'una computadora', '¿De dónde saca el panel lo que la enciende?'],
+      ['Sale el sol', 'su luz llega al panel'],
+      ['El panel convierte esa luz en electricidad', 'baja por el cable', 'la computadora enciende'],
+      ['En la pantalla, la electricidad se convierte en luz', 'empezó siendo luz del sol'],
+      ['bien nublado', 'le llega muy poca luz', 'da poca electricidad', 'no enciende'],
+      ['«Salió malo», dijeron', 'convierte la luz que le llega', 'la que falta no la puede fabricar'],
+      ['Al día siguiente salió el sol', 'El mismo panel volvió a encender la computadora', 'no estaba malo'],
+      ['¿Y tú?', 'algo que se encienda en tu casa', 'de dónde le llega la energía']];
+    r.push([FR[n].every(w => frase.includes(w)), `paso ${n}: la frase dice lo que se ve (${FR[n].join(', ')})`, frase]);
+
+    /* ── El techo y el panel: el panel sobre el agua que mira al sol ── */
+    const [alero, cumbre] = x.techo;
+    const [b0, b1, t1, t0] = x.panel;
+    const sobreTecho = p => aRecta(p, alero, cumbre) < 3 && p[0] > alero[0] && p[0] < cumbre[0];
+    r.push([sobreTecho(b0) && sobreTecho(b1), `paso ${n}: el panel está sobre el techo, en el agua de la izquierda`, [aRecta(b0, alero, cumbre), aRecta(b1, alero, cumbre)]]);
+    const paralelo = Math.abs((b1[0] - b0[0]) * (t1[1] - t0[1]) - (b1[1] - b0[1]) * (t1[0] - t0[0])) / dist(b0, b1) / dist(t0, t1) < 0.01;
+    const alto = aRecta(t0, b0, b1);
+    r.push([paralelo && alto > 6 && alto < 12 && lado(t0, alero, cumbre) === lado(x.sol.c, alero, cumbre),
+      `paso ${n}: el panel es una placa con su cara de arriba hacia el sol`, [alto, paralelo]]);
+
+    /* ── La computadora, en la mesa; el cable sale del panel y le llega ── */
+    r.push([x.marco.y1 <= x.mesa.y0 + 0.6 && x.marco.x0 >= x.mesa.x0 && x.marco.x1 <= x.mesa.x1 && x.mesa.y1 < x.suelo,
+      `paso ${n}: la computadora está sobre la mesa, y la mesa dentro de la escuela`]);
+    const [ca, cb] = x.cable;
+    r.push([aTramo(ca, b0, b1) < 2.5 && Math.abs(cb[1] - (x.marco.y0 + 2)) < 2.5 && cb[0] > x.marco.x0 && cb[0] < x.marco.x1,
+      `paso ${n}: el cable sale del panel y llega a la computadora`, [aTramo(ca, b0, b1), cb[1] - x.marco.y0]]);
+    r.push([x.bandas.length === 2 && x.bandas.every(b => dist(b.a, ca) < 0.5 && dist(b.b, cb) < 0.5), `paso ${n}: lo que baja va por el cable, de punta a punta`]);
+
+    /* ── Los seis rayos: del borde del sol a su punto del panel ── */
+    const R = x.rayos;
+    r.push([R.length === 6, `paso ${n}: el sol manda seis rayos`, R.length]);
+    const ds = R.map(q => dist(q.a, x.sol.c));
+    r.push([ds.every(d => d > x.sol.r + 2 && d < x.sol.r + 8), `paso ${n}: cada rayo sale del borde del sol`, ds]);
+    r.push([R.every(q => aTramo(q.b, t0, t1) < 1 && aRecta(x.sol.c, q.a, q.b) < 0.8), `paso ${n}: cada rayo va derecho del sol a la cara del panel`]);
+    const pos = R.map(q => dist(q.b, t0)).sort((a, b) => a - b);
+    r.push([pos.every((p, i) => i === 0 || p - pos[i - 1] > 4), `paso ${n}: los rayos llegan a puntos distintos del panel`, pos]);
+    const llegan = R.filter(q => q.ve && q.traz).length + (x.debil.ve && x.debil.traz ? 1 : 0);
+    const esperan = n === 0 ? 0 : (nublado ? 1 : 6);
+    r.push([llegan === esperan, `paso ${n}: llegan al panel ${esperan} rayos`, llegan]);
+    r.push([R.every(q => q.ve === (n >= 1 && !nublado)), `paso ${n}: ${n >= 1 && !nublado ? 'los seis rayos se ven' : 'no se ve ningún rayo del sol'}`, R.map(q => q.ve)]);
+
+    /* ── La nube y el sol ── */
+    /* La nube puede estar puesta FUERA del dibujo (en el paso 3, lista para
+       entrar): lo que cuenta es si se ve dentro. */
+    const enDibujo = x.nube.ve && x.nube.caja.x1 > 0 && x.nube.caja.x0 < 320;
+    r.push([enDibujo === nublado, `paso ${n}: la nube ${nublado ? 'está' : 'no está'}`, [x.nube.ve, x.nube.caja.x0, x.nube.caja.x1]]);
+    if (nublado) r.push([x.nube.tapa, `paso ${n}: la nube tapa el sol entero`]);
+    r.push([x.halo === !nublado, `paso ${n}: los rayitos del sol ${nublado ? 'no asoman detrás de la nube' : 'se ven'}`]);
+    r.push([x.debil.ve === nublado, `paso ${n}: el rayo débil ${nublado ? 'pasa por la nube' : 'no está'}`]);
+    /* El borde de la nube solo se puede medir con la nube en su sitio. */
+    if (nublado) r.push([x.debil.borde && aRecta(x.sol.c, x.debil.a, x.debil.b) < 0.8 && R.some(q => dist(q.b, x.debil.b) < 1),
+      `paso ${n}: el rayo débil sale del borde de la nube, en el camino de un rayo del sol, y llega a su punto del panel`]);
+
+    /* ── La luz que falta (5): justo la de los rayos que no pasaron ── */
+    const F = x.faltan.lineas;
+    r.push([x.faltan.ve === (n === 5), `paso ${n}: la luz que falta ${n === 5 ? 'se ve' : 'no se ve'}`]);
+    if (nublado) r.push([F.length === 5 && F.every(q => q.cortada && q.borde && aTramo(q.b, t0, t1) < 1 && aRecta(x.sol.c, q.a, q.b) < 0.8),
+      `paso ${n}: la luz que falta va con raya cortada, del borde de la nube al panel, cada una en el camino de un rayo del sol`]);
+    const puntas = F.map(q => q.b).concat([x.debil.b]);
+    r.push([R.every(q => puntas.filter(p => dist(p, q.b) < 1).length === 1), `paso ${n}: lo que falta y el rayo débil son, entre los dos, los seis rayos: ni uno de más ni uno de menos`]);
+
+    /* ── Lo que baja por el cable va con la luz que llega ── */
+    const gruesa = x.bandas.find(b => b.k === 'gruesa'), fina = x.bandas.find(b => b.k === 'fina');
+    r.push([gruesa.ve === luz && gruesa.traz === luz && fina.ve === nublado && fina.traz === nublado,
+      `paso ${n}: ${luz ? 'baja la banda gruesa' : nublado ? 'baja la banda fina' : 'por el cable todavía no baja nada'}`, [gruesa.ve, gruesa.traz, fina.ve, fina.traz]]);
+    r.push([Math.abs(gruesa.ancho - 6 * fina.ancho) < 0.05 && fina.ancho > 0.5, `paso ${n}: la banda de seis rayos es seis veces la de uno`, [gruesa.ancho, fina.ancho]]);
+    const baja = x.bandas.find(b => b.ve);
+    if (baja) r.push([Math.abs(baja.ancho - llegan * fina.ancho) < 0.05, `paso ${n}: lo que baja por el cable va con los rayos que llegan al panel`, [baja.ancho, llegan]]);
+
+    /* ── La pantalla ── */
+    r.push([x.pantalla.ve === luz && x.brillo === luz, `paso ${n}: la computadora ${luz ? 'está encendida, y su pantalla da luz' : 'está apagada'}`, [x.pantalla.ve, x.brillo]]);
+
+    /* ── Los aros y los rótulos ── */
+    const aro = k => x.aros.find(a => a.k === k), rot = k => x.rotulos.find(t => t.k === k);
+    const cajaPanel = { x0: Math.min(...x.panel.map(p => p[0])), x1: Math.max(...x.panel.map(p => p[0])), y0: Math.min(...x.panel.map(p => p[1])), y1: Math.max(...x.panel.map(p => p[1])) };
+    r.push([aro('panel').ve === (n === 3) && aro('pantalla').ve === (n === 3), `paso ${n}: los aros de dónde se convierte ${n === 3 ? 'están' : 'no están'}`]);
+    if (n === 3) {
+      const ap = aro('panel').caja, am = aro('pantalla').caja;
+      r.push([x.panel.every(p => dentro(p, ap, 1)) && ap.x1 - ap.x0 < cajaPanel.x1 - cajaPanel.x0 + 30, `paso ${n}: un aro rodea el panel`]);
+      r.push([am.x0 <= x.marco.x0 && am.x1 >= x.marco.x1 && am.y0 <= x.marco.y0 && am.y1 >= x.marco.y1 && am.x1 - am.x0 < x.marco.x1 - x.marco.x0 + 30, `paso ${n}: el otro rodea la pantalla`]);
+    }
+    const RT = { panel: 'de luz a electricidad', pantalla: 'de electricidad a luz', 'no alcanza': 'no alcanza', falta: 'la que falta' };
+    const cuando = { panel: n === 3, pantalla: n === 3, 'no alcanza': nublado, falta: n === 5 };
+    Object.keys(RT).forEach(k => r.push([rot(k).ve === cuando[k] && nb(rot(k).dice) === RT[k], `paso ${n}: «${RT[k]}» ${cuando[k] ? 'se ve' : 'no se ve'}`, [rot(k).ve, rot(k).dice]]));
+    const cerca = (a, b) => Math.max(a.x0 - b.x1, b.x0 - a.x1, a.y0 - b.y1, b.y0 - a.y1);
+    if (n === 3) {
+      r.push([cerca(rot('panel').caja, aro('panel').caja) < 12 && rot('panel').caja.x1 < cajaPanel.x0, `paso ${n}: «de luz a electricidad» va junto al aro del panel`, cerca(rot('panel').caja, aro('panel').caja)]);
+      const t = rot('pantalla').caja;
+      r.push([t.x0 >= x.marco.x1 && t.x0 - x.marco.x1 < 20 && t.y0 < x.marco.y1 && t.y1 > x.marco.y0, `paso ${n}: «de electricidad a luz» va al lado de la pantalla`]);
+    }
+    if (nublado) {
+      const t = rot('no alcanza').caja;
+      r.push([t.x0 >= x.marco.x1 && t.x0 - x.marco.x1 < 20 && t.y0 < x.marco.y1 && t.y1 > x.marco.y0, `paso ${n}: «no alcanza» va al lado de la computadora`]);
+    }
+    if (n === 5) {
+      const t = rot('falta').caja;
+      /* Debajo de la luz que falta: en su ancho, cada raya cortada pasa por
+         encima, y alguna pasa cerca. */
+      const yEn = (q, xx) => q.a[1] + (q.b[1] - q.a[1]) * (xx - q.a[0]) / (q.b[0] - q.a[0]);
+      const encima = F.every(q => [t.x0, (t.x0 + t.x1) / 2, t.x1].every(xx => xx < q.a[0] || xx > q.b[0] || yEn(q, xx) < t.y0 - 1));
+      const junto = F.some(q => [t.x0, (t.x0 + t.x1) / 2, t.x1].some(xx => xx >= q.a[0] && xx <= q.b[0] && t.y0 - yEn(q, xx) < 25));
+      r.push([encima && junto, `paso ${n}: «la que falta» va justo debajo de la luz que falta`]);
+    }
+    /* Ningún rótulo se monta en otro, en el sol, en la nube, en el panel, en
+       la pantalla, ni lo cruza un rayo. */
+    const rv = x.rotulos.filter(t => t.ve);
+    const choques = [];
+    rv.forEach((t, i) => rv.forEach((u, j) => { if (j > i && monta(t.caja, u.caja)) choques.push(t.k + '/' + u.k); }));
+    const cosas = [['panel', cajaPanel], ['pantalla', x.marco], ['sol', { x0: x.sol.c[0] - x.sol.r, x1: x.sol.c[0] + x.sol.r, y0: x.sol.c[1] - x.sol.r, y1: x.sol.c[1] + x.sol.r }]];
+    if (enDibujo) cosas.push(['nube', x.nube.caja]);
+    rv.forEach(t => cosas.forEach(([k, c]) => { if (monta(t.caja, c)) choques.push(t.k + '/' + k); }));
+    const lineas = R.filter(q => q.ve).concat(x.debil.ve ? [x.debil] : [], x.faltan.ve ? F : []);
+    rv.forEach(t => lineas.forEach(q => {
+      for (let i = 0; i <= 40; i++) {
+        const p = [q.a[0] + (q.b[0] - q.a[0]) * i / 40, q.a[1] + (q.b[1] - q.a[1]) * i / 40];
+        if (p[0] > t.caja.x0 + 1 && p[0] < t.caja.x1 - 1 && p[1] > t.caja.y0 + 1 && p[1] < t.caja.y1 - 1) { choques.push(t.k + '/rayo'); break; }
+      }
+    }));
+    r.push([choques.length === 0, `paso ${n}: ningún rótulo se monta en otro, en el sol, en la nube, en el panel ni en la pantalla, y ningún rayo lo cruza`, choques]);
+
+    /* ── El marcador dice lo que se ve ── */
+    const cifra = nb(e.cifra), pal = nb(e.palabras);
+    const M = [cifra === '?',
+      cifra === String(llegan) && pal.includes('rayos'),
+      cifra === '✓' && x.pantalla.ve && pal.includes('enciende'),
+      cifra === String(x.aros.filter(a => a.ve).length),
+      cifra === String(llegan) && pal.includes('de ' + R.length),
+      cifra === String(x.faltan.ve ? F.length : 0) && pal.includes('faltan'),
+      cifra === String(llegan) && x.pantalla.ve && pal.includes('enciende'),
+      cifra === '?'][n];
+    r.push([M, `paso ${n}: el marcador dice lo que se ve`, [cifra, pal]]);
+
+    /* ── Cuándo pasa cada cosa (entrando hacia adelante) ── */
+    if (n === 1) r.push([R.every((q, i) => i === 0 || q.dTraza > R[i - 1].dTraza), `paso ${n}: los rayos llegan uno por uno`, R.map(q => q.dTraza)]);
+    if (n === 2) r.push([x.pantalla.d >= gruesa.dTraza + 750, `paso ${n}: la computadora enciende cuando la electricidad ya bajó`, [gruesa.dTraza, x.pantalla.d]]);
+    if (n === 4) {
+      r.push([x.nube.dMov === 0 && R.every(q => q.dVer >= 300) && x.debil.d >= 800 && fina.dVer >= 800,
+        `paso ${n}: primero llega la nube; los rayos se apagan mientras tapa el sol, y después sale el rayo débil`, [x.nube.dMov, R.map(q => q.dVer), x.debil.d, fina.dVer]]);
+      r.push([x.pantalla.d >= fina.dTraza + 500 && rot('no alcanza').d >= x.pantalla.d, `paso ${n}: la computadora se apaga cuando la poca electricidad ya bajó, y después dice que no alcanza`, [fina.dTraza, x.pantalla.d, rot('no alcanza').d]]);
+    }
+    if (n === 6) {
+      const ultimo = Math.max(...R.map(q => q.dTraza));
+      r.push([x.nube.d >= 300 && R.every(q => q.dVer >= 500 && q.dTraza >= 600), `paso ${n}: los rayos vuelven cuando la nube ya se está yendo`, [x.nube.d, R.map(q => q.dTraza)]]);
+      r.push([gruesa.dTraza >= ultimo - 200 && x.pantalla.d >= gruesa.dTraza + 750, `paso ${n}: la electricidad baja cuando llegan los rayos, y la computadora enciende cuando ya bajó`, [ultimo, gruesa.dTraza, x.pantalla.d]]);
+    }
+    return r;
+  },
   amMedida(e, n) {
     const x = e.extra, r = [];
     const nb = t => String(t == null ? '' : t).replace(/ /g, ' ').replace(/\s+/g, ' ').trim();
