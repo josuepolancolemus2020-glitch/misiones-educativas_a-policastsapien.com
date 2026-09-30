@@ -481,3 +481,33 @@ body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* ── La animación que explica el tema: «La vuelta que trae las lluvias»
+   (js/animacion-vuelta.js, con el aparato de css/animacion-mision.css).
+   El Sol, la Tierra y la parcela son como son: se quedan iguales en la
+   pantalla clara y en la oscura. El camino y sus rayas van con la tinta de
+   la pantalla. Lo que se lee encima de cualquier cosa va con .am-rotulo,
+   que lleva su halo del color de la tarjeta.
+   ⚠️ El botón que avanza: con el verde y el teal de la misión, la letra
+   blanca se quedaba en 3,3:1 y 3,7:1. Un verde y un teal más hondos la
+   dejan en 5:1 y 5,5:1. */
+:root { --am-boton: linear-gradient(135deg, #15803d, #0f766e); }
+.am-raiz .uv-camino        { fill: none; stroke: var(--gray, #636e72); stroke-width: 1.2; stroke-dasharray: 3 4; }
+.am-raiz .uv-raya-mes      { stroke: var(--gray, #636e72); stroke-width: 1.4; stroke-linecap: round; }
+.am-raiz .uv-sol           { fill: #f6b93b; stroke: #d68910; stroke-width: 1; }
+.am-raiz .uv-rayo          { stroke: #f6b93b; stroke-width: 2; stroke-linecap: round; }
+.am-raiz .uv-tierra        { fill: #2f73b0; stroke: #ffffff; stroke-width: 1.2; }
+.am-raiz .uv-tierra-verde  { fill: #5f9e45; }
+/* Las marcas de los meses: la gota del mes con lluvia y el sol del seco. */
+.am-raiz .uv-gota          { fill: #2f73b0; stroke: #ffffff; stroke-width: 0.6; }
+.am-raiz .uv-solito        { fill: #f6b93b; stroke: #b9770e; stroke-width: 0.7; }
+.am-raiz .uv-rayito        { stroke: #d68910; stroke-width: 1.1; stroke-linecap: round; }
+/* La parcela de don Tulio. */
+.am-raiz .uv-marco         { fill: #e8f3fb; stroke: var(--gray, #636e72); stroke-width: 1.2; }
+.am-raiz .uv-tierra-parcela { fill: #b8895a; }
+.am-raiz .uv-surco         { stroke: #7d5a39; stroke-width: 1.4; stroke-linecap: round; }
+.am-raiz .uv-nube          { fill: #9eabbb; }
+.am-raiz .uv-lluvia        { stroke: #2f73b0; stroke-width: 1.4; stroke-dasharray: 4 4; stroke-linecap: round; }
+.am-raiz .uv-tallo         { fill: none; stroke: #4f8a2f; stroke-width: 2; stroke-linecap: round; }
+.am-raiz .uv-hoja          { fill: none; stroke: #5f9e45; stroke-width: 1.8; stroke-linecap: round; }
+.am-raiz .uv-mazorca       { fill: #e8c34a; stroke: #9a7b1c; stroke-width: 0.6; }

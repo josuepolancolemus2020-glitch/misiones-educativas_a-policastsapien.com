@@ -25,6 +25,9 @@
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
 <link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La animación que explica el tema: el aparato es compartido y va DESPUÉS
+     del CSS de la misión, que es de donde saca sus colores. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -71,6 +74,23 @@
     más o menos por las mismas fechas, año con año) no está en su parcela ni en el calendario de la pared:
     está <strong>allá arriba</strong>, y es un movimiento que puedes nombrar. En esta misión vas a ver cuál
     es.</div></div>
+  </div>
+  <!-- La animación que explica el tema, justo después de la historia: el Sol
+       visto desde arriba, la Tierra dándole la vuelta mes por mes y la
+       parcela de don Tulio al lado. Las lluvias entran cuando la Tierra llega
+       a un tramo de su camino, y al año siguiente, cuando vuelve a pasar por
+       el mismo lugar, vuelven a entrar. La mueve el alumno, paso a paso. El
+       aparato es compartido (js/animacion-mision.js) y la escena es de esta
+       misión (js/animacion-vuelta.js). La frase de dentro es de reserva: si
+       el aparato no llega a cargar, se lee eso en vez de un hueco. -->
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira cuándo le llegan las lluvias a la parcela</h2>
+    <div id="amVuelta">
+      <p>Mes a mes, la Tierra le da la vuelta al Sol. En mayo llega a una parte de su camino y entran las
+      lluvias en la parcela de don Tulio; en noviembre sale de ese tramo y se acaban. Tarda doce meses en dar
+      la vuelta entera, y al año siguiente, cuando vuelve a pasar por el mismo lugar, las lluvias vuelven a
+      entrar en mayo.</p>
+    </div>
   </div>
   <div class="card ac-teal">
     <h2>🌌 ¿Qué es el universo?</h2>
@@ -614,6 +634,8 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-vuelta.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

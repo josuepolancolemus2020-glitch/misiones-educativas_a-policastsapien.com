@@ -1712,6 +1712,53 @@ const LEER = `
       textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
     };
   };
+  window.__amExtra.amVuelta = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(m(el)); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function uno(sel) { return raiz.querySelector(sel); }
+    function todos(sel) { return [].slice.call(raiz.querySelectorAll(sel)); }
+    /* Un círculo en la vista: su centro, y el radio medido hasta un punto
+       del borde (la Tierra va dentro de dieciséis capas que giran). */
+    function circulo(c) {
+      var cx = +c.getAttribute('cx'), cy = +c.getAttribute('cy'), r = +c.getAttribute('r');
+      var p = aVista(c, cx, cy), q = aVista(c, cx + r, cy);
+      return { c: p, r: Math.sqrt((q[0] - p[0]) * (q[0] - p[0]) + (q[1] - p[1]) * (q[1] - p[1])) };
+    }
+    function linea(l) {
+      return { a: aVista(l, +l.getAttribute('x1'), +l.getAttribute('y1')), b: aVista(l, +l.getAttribute('x2'), +l.getAttribute('y2')) };
+    }
+    var tierra = uno('[data-tierra-bola]');
+    return {
+      sol: circulo(uno('[data-sol-bola]')), rayosSol: todos('[data-sol] line').map(linea),
+      camino: circulo(uno('[data-camino]')),
+      rayas: todos('[data-raya-mes]').map(function (l) { var q = linea(l); q.i = +l.getAttribute('data-raya-mes'); return q; }),
+      meses: todos('[data-mes]').map(function (t) { return { i: +t.getAttribute('data-mes'), dice: t.textContent, ve: vis(t), caja: caja(t) }; }),
+      /* La forma de cada marca se lee del dibujo, no de su nombre: una gota
+         es un trazo solo; un sol, un círculo con sus ocho rayitos. */
+      marcas: todos('[data-marca]').map(function (g) {
+        var tag = g.tagName.toLowerCase();
+        var forma = tag === 'path' ? 'gota' : tag === 'g' && g.querySelectorAll('circle').length === 1 && g.querySelectorAll('line').length === 8 ? 'sol' : 'otra';
+        return { i: +g.getAttribute('data-marca'), ve: vis(g), forma: forma, caja: caja(g) };
+      }),
+      tierra: circulo(tierra), tierraVe: vis(tierra),
+      marco: caja(uno('[data-marco]')), suelo: caja(uno('[data-suelo-parcela]')),
+      nube: { ve: vis(uno('[data-nube]')), caja: caja(uno('[data-nube]')) },
+      lluvia: { ve: vis(uno('[data-gotas]')), lineas: todos('[data-gota]').map(linea) },
+      brotes: { ve: vis(uno('[data-brotes]')), caja: caja(uno('[data-brotes]')) },
+      milpa: { ve: vis(uno('[data-milpa]')), caja: caja(uno('[data-milpa]')), mazorcas: uno('[data-milpa]').querySelectorAll('ellipse').length,
+               tallos: uno('[data-milpa]').querySelectorAll('.uv-tallo').length },
+      rotulos: todos('[data-rotulo]').map(function (t) { return { k: t.getAttribute('data-rotulo'), ve: vis(t), dice: t.textContent, caja: caja(t) }; }),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   window.__amExtra.amCaracol = function (raiz) {
     var vis = window.__amVisible;
     var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
@@ -1910,6 +1957,144 @@ function superficieEn(poly, x) {
 }
 
 const ESCENAS = {
+  /* El Universo y el Sistema Solar. «Cuándo le llueve a la parcela».
+     ⚠️ Nada se le cree a la escena. El camino tiene que ser un círculo con
+     el Sol en el centro (la Tierra no se acerca ni se aleja en ningún mes),
+     con doce rayas a 30° una de otra, enero abajo y los meses contra las
+     agujas del reloj, y el nombre de cada mes afuera, en la línea de su
+     raya. La Tierra se busca en el camino y de su ángulo sale en qué mes
+     está; ningún nombre de mes puede quedar debajo de ella. De ahí sale lo
+     demás: qué marcas se ven (una por cada mes por el que ya pasó), que la
+     de cada mes sea gota si su nombre va de mayo a octubre y sol si no, si
+     le llueve a la parcela, los brotes cuando la lluvia entra y la milpa
+     crecida cuando se va, y lo que cuenta el marcador. ⚠️ Y la prueba no se
+     regala: ni traslación, ni rotación, ni estaciones, ni planeta, ni
+     estrella, ni luz, ni un número de más. */
+  amVuelta(e, n) {
+    const x = e.extra, r = [];
+    const nb = t => String(t == null ? '' : t).replace(/ /g, ' ').trim();
+    const cerca = (a, b, t) => Math.abs(a - b) <= t;
+    const cen = c => [(c.x0 + c.x1) / 2, (c.y0 + c.y1) / 2];
+    const MESES = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
+    const LARGOS = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+    /* Lo que dice la historia: a la parcela le llueve de mayo a octubre. Y lo
+       que dice cada frase: dónde está la Tierra y cuántos meses lleva
+       caminando desde el enero del principio. */
+    const LLUVIOSOS = ['MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT'];
+    const DONDE = [0, 4, 10, 0, 4, 4], CAMINADO = [0, 4, 10, 12, 16, 16];
+    /* Lo que no depende del dibujo, primero. */
+    const dicho = [e.texto, e.cifra, e.palabras].concat(x.textos).map(nb).join(' | ').toLowerCase();
+    const EXACTAS = ['traslación', 'traslacion', 'rotación', 'rotacion', 'estación', 'estacion', 'estaciones', 'verano', 'invierno', 'primavera',
+      'otoño', 'órbita', 'orbita', 'eje', 'inclinada', 'inclinado', 'inclinación', 'día', 'dia', 'días', 'dias', 'noche', 'noches', 'hora', 'horas',
+      'minutos', 'planeta', 'planetas', 'estrella', 'estrellas', 'satélite', 'satelite', 'luna', 'centro', 'galaxia', 'universo', 'astro', 'astros',
+      'cometa', 'cometas', 'asteroide', 'asteroides', 'eclipse', 'telescopio', 'sonda', 'sondas', 'naves', 'cohete', 'cohetes', 'luz', 'calor',
+      'gira', 'giran', 'girar', 'alrededor', 'júpiter', 'jupiter', 'marte', 'mercurio', 'venus', 'saturno', 'urano', 'neptuno', 'rojo', 'anillos',
+      'mareas', 'marea', 'tercer', 'tercero', 'cercana', 'cercano', 'lejos', 'lejano', 'lejanos', 'millón', 'millon', 'mediano', 'mediana', 'gas',
+      'aire', 'vida', 'sistema', 'solar', 'cabrían', 'cabrian', 'fases', 'fase', 'creciente', 'menguante', 'llena', 'nueva'];
+    const FRASES = ['sí misma', 'si misma', 'vía láctea', 'luz propia', 'más cercana', 'una vuelta completa'];
+    const suelto = ' ' + dicho.split(/[^a-záéíóúñü]+/).filter(Boolean).join(' ') + ' ';
+    const malas = suelto.trim().split(' ').filter(w => EXACTAS.includes(w)).concat(FRASES.filter(f => suelto.includes(' ' + f + ' ')));
+    r.push([malas.length === 0, `paso ${n}: no sale ninguna palabra de la prueba (ni traslación, ni estaciones, ni planeta, ni estrella, ni luz)`, malas]);
+    const nums = (dicho.match(/\d+/g) || []).map(Number);
+    r.push([nums.every(k => [6, 12].includes(k)), `paso ${n}: ningún número de la prueba`, nums.filter(k => ![6, 12].includes(k))]);
+    const frase = nb(e.texto);
+    const F = [['El Sol', 'la Tierra en enero', 'le da la vuelta al Sol', 'la parcela de don Tulio', '¿cuándo le llueve?'],
+      ['febrero, marzo y abril', 'sin lluvia', 'En mayo', 'entran las lluvias', 'don Tulio siembra'],
+      ['De mayo a octubre llueve', 'la milpa crece', 'En noviembre', 'se acaban las lluvias'],
+      ['Don Tulio cosechó', 'en diciembre y en enero no llueve', 'la vuelta entera al Sol', 'doce meses, un año'],
+      ['Al año siguiente', 'el mismo camino', 'En mayo', 'al mismo lugar', 'las lluvias vuelven a entrar'],
+      ['más o menos por las mismas fechas', 'la Tierra vuelve a pasar por el mismo lugar', '¿En qué mes llueve donde vives?']];
+    r.push([F[n].every(w => frase.includes(w)), `paso ${n}: la frase dice lo que se ve (${F[n].join(', ')})`, frase]);
+
+    /* ── El Sol y el camino ── */
+    const S = x.sol.c, Ro = x.camino.r;
+    const ang = p => Math.atan2(p[1] - S[1], p[0] - S[0]) * 180 / Math.PI;
+    const dif = (a, b) => Math.abs(((a - b) % 360 + 540) % 360 - 180);
+    const dist = p => Math.hypot(p[0] - S[0], p[1] - S[1]);
+    const angMes = i => 90 - 30 * i;
+    const distCaja = (p, b) => Math.hypot(Math.max(b.x0 - p[0], 0, p[0] - b.x1), Math.max(b.y0 - p[1], 0, p[1] - b.y1));
+    const choca = (a, b) => a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1;
+    r.push([cerca(x.camino.c[0], S[0], 0.5) && cerca(x.camino.c[1], S[1], 0.5) && Ro > x.sol.r + 30,
+      `paso ${n}: el camino es un círculo con el Sol en el centro`, [x.camino.c, S].map(p => p.map(Math.round))]);
+    r.push([x.rayosSol.length === 12 && x.rayosSol.every(l => dist(l.a) > x.sol.r && dist(l.b) > dist(l.a) + 3 && dist(l.b) < Ro - 30 && dif(ang(l.a), ang(l.b)) < 1),
+      `paso ${n}: el Sol lleva sus rayos alrededor`]);
+    const rayas = x.rayas.slice().sort((a, b) => a.i - b.i);
+    r.push([rayas.length === 12 && rayas.every((q, i) => { const mid = [(q.a[0] + q.b[0]) / 2, (q.a[1] + q.b[1]) / 2];
+      return q.i === i && cerca(dist(mid), Ro, 0.6) && dif(ang(q.a), ang(q.b)) < 0.5 && dif(ang(mid), angMes(i)) < 0.5 && Math.abs(dist(q.a) - dist(q.b)) > 5; }),
+      `paso ${n}: doce rayas que cruzan el camino, a 30° una de otra: enero abajo y los meses contra las agujas del reloj`]);
+    const meses = x.meses.slice().sort((a, b) => a.i - b.i);
+    r.push([meses.length === 12 && meses.every((t, i) => t.i === i && nb(t.dice) === MESES[i] && t.ve),
+      `paso ${n}: los doce meses, de enero a diciembre`, meses.map(t => t.dice).join(' ')]);
+    r.push([meses.every(t => { const c = cen(t.caja); return dif(ang(c), angMes(t.i)) < 4 && distCaja(S, t.caja) > Ro + 3; }),
+      `paso ${n}: el nombre de cada mes va afuera del camino, en la línea de su raya`]);
+    r.push([meses.every((t, i) => meses.every((u, j) => i === j || !choca(t.caja, u.caja))) &&
+      meses.every(t => t.caja.x0 >= 0 && t.caja.x1 <= 320 && t.caja.y0 >= 0 && t.caja.y1 <= 240 && !choca(t.caja, x.marco)),
+      `paso ${n}: los nombres no se tapan entre sí ni con la parcela, y caben en el dibujo`]);
+
+    /* ── La Tierra: en el camino, y de su ángulo sale el mes ── */
+    const T = x.tierra;
+    r.push([x.tierraVe && cerca(dist(T.c), Ro, 0.8), `paso ${n}: la Tierra va sobre el camino, a la misma distancia del Sol que siempre`,
+      [dist(T.c), Ro].map(v => Math.round(v * 10) / 10)]);
+    const mes = ((Math.round((90 - ang(T.c)) / 30) % 12) + 12) % 12;
+    r.push([dif(ang(T.c), angMes(mes)) < 1 && mes === DONDE[n], `paso ${n}: la Tierra está en ${LARGOS[DONDE[n]]}`, [MESES[mes], Math.round(ang(T.c))]]);
+    r.push([meses.every(t => distCaja(T.c, t.caja) >= T.r + 0.5), `paso ${n}: la Tierra no tapa el nombre de ningún mes`,
+      meses.map(t => Math.round(distCaja(T.c, t.caja) * 10) / 10).filter(v => v < T.r + 0.5)]);
+
+    /* ── Las marcas: una por cada mes por el que ya pasó ── */
+    const deben = new Set(MESES.map((_, i) => i).filter(i => i === 0 ? CAMINADO[n] > 0 : i <= Math.min(CAMINADO[n], 11)));
+    const marcas = x.marcas.slice().sort((a, b) => a.i - b.i);
+    r.push([marcas.length === 12 && marcas.every(q => q.ve === deben.has(q.i)),
+      `paso ${n}: se ven las marcas de los meses por los que ya pasó la Tierra (${deben.size})`, marcas.filter(q => q.ve).map(q => MESES[q.i]).join(' ')]);
+    r.push([marcas.every(q => { const c = cen(q.caja); return dif(ang(c), angMes(q.i)) < 3 && dist(c) < Ro && distCaja(T.c, q.caja) >= T.r && distCaja(S, q.caja) > x.sol.r + 12; }),
+      `paso ${n}: cada marca va adentro del camino, en la línea de su mes, sin tocar a la Tierra ni al Sol`]);
+    const malasM = marcas.filter(q => q.forma !== (LLUVIOSOS.includes(nb(meses[q.i].dice)) ? 'gota' : 'sol'));
+    r.push([malasM.length === 0, `paso ${n}: gota en los meses de lluvia (de mayo a octubre) y sol en los demás`, malasM.map(q => MESES[q.i])]);
+
+    /* ── La parcela: le llueve si la Tierra está en un mes de lluvia ── */
+    const llueveEn = i => LLUVIOSOS.includes(MESES[(i + 12) % 12]);
+    const moja = llueveEn(mes), entra = moja && !llueveEn(mes - 1), sale = !moja && llueveEn(mes - 1);
+    r.push([x.nube.ve === moja && x.lluvia.ve === moja, `paso ${n}: ${moja ? 'le llueve a la parcela' : 'a la parcela no le llueve'} (la Tierra está en ${LARGOS[mes]})`,
+      [x.nube.ve, x.lluvia.ve]]);
+    const M = x.marco, Su = x.suelo, N = x.nube.caja;
+    r.push([N.x0 > M.x0 && N.x1 < M.x1 && N.y0 > M.y0 && x.lluvia.lineas.length >= 4 &&
+      x.lluvia.lineas.every(l => l.a[1] >= N.y1 - 1.5 && l.a[1] <= N.y1 + 6 && l.b[1] <= Su.y0 && Su.y0 - l.b[1] < 6 && l.a[0] > N.x0 && l.a[0] < N.x1),
+      `paso ${n}: la lluvia cae de la nube hasta el suelo, adentro de la parcela`]);
+    r.push([x.brotes.ve === entra && x.milpa.ve === sale,
+      `paso ${n}: ${entra ? 'con la lluvia que entra, don Tulio siembra: brotes' : sale ? 'la lluvia se fue y la milpa ya creció' : 'la parcela, sin nada sembrado'}`, [x.brotes.ve, x.milpa.ve]]);
+    r.push([[x.brotes.caja, x.milpa.caja].every(b => cerca(b.y1, Su.y0, 1.2) && b.x0 > M.x0 && b.x1 < M.x1 && b.y0 > M.y0) &&
+      x.milpa.caja.y1 - x.milpa.caja.y0 > 3 * (x.brotes.caja.y1 - x.brotes.caja.y0) && x.milpa.mazorcas === 3 && x.milpa.tallos === 3,
+      `paso ${n}: los brotes y la milpa salen del suelo de la parcela, y la milpa es mucho más alta, con sus tres mazorcas`]);
+
+    /* ── Los rótulos ── */
+    const rot = k => x.rotulos.filter(q => q.k === k);
+    const rs = rot('sol')[0], rt = rot('tierra')[0];
+    r.push([rs && rs.ve && nb(rs.dice) === 'el Sol' && cerca(cen(rs.caja)[0], S[0], 1) && rs.caja.y0 > S[1] + x.sol.r && rs.caja.y0 - (S[1] + x.sol.r) < 20,
+      `paso ${n}: «el Sol» va debajo del Sol`]);
+    r.push([rt && rt.ve === (n === 0) && nb(rt.dice) === 'la Tierra' &&
+      (n !== 0 || (cerca(cen(rt.caja)[0], T.c[0], 1) && rt.caja.y1 < T.c[1] - T.r && T.c[1] - T.r - rt.caja.y1 < 8 && !choca(rt.caja, rs.caja))),
+      `paso ${n}: «la Tierra» ${n === 0 ? 'va justo encima de la Tierra' : 'ya no está'}`]);
+    const esc = rot('escala');
+    r.push([esc.length === 3 && esc.every(q => q.ve && q.caja.y1 < M.y0) && esc.map(q => nb(q.dice)).join(' ') === 'Los tamaños y las distancias no son los de verdad.',
+      `paso ${n}: el aviso de que los tamaños y las distancias no son los de verdad`, esc.map(q => q.dice).join(' ')]);
+    const par = rot('parcela').concat(rot('parcela2'));
+    r.push([par.length === 2 && par.map(q => nb(q.dice)).join(' ') === 'la parcela de don Tulio' && par.every(q => q.ve && q.caja.y0 > M.y1 && cerca(cen(q.caja)[0], (M.x0 + M.x1) / 2, 1)),
+      `paso ${n}: la parcela lleva su nombre debajo`]);
+
+    /* ── El marcador cuenta en el dibujo ── */
+    const vistas = marcas.filter(q => q.ve), gotas = vistas.filter(q => q.forma === 'gota');
+    const mk = {
+      0: ['?', 'cuándo le llueve a la parcela'],
+      1: [LARGOS[mes], 'entran las lluvias'],
+      2: [String(gotas.length), gotas.length ? 'meses de lluvia: de ' + LARGOS[gotas[0].i] + ' a ' + LARGOS[gotas[gotas.length - 1].i] : '—'],
+      3: [String(vistas.length), 'meses: una vuelta entera al Sol'],
+      4: [LARGOS[mes], 'otra vez entran las lluvias'],
+      5: ['↻', 'cada vuelta, las mismas lluvias']
+    };
+    r.push([nb(e.cifra) === mk[n][0] && nb(e.palabras) === mk[n][1], `paso ${n}: el marcador dice «${mk[n][0]}» · ${mk[n][1]}`, [e.cifra, e.palabras]]);
+    if (n === 1 || n === 4) r.push([entra, `paso ${n}: en ${LARGOS[mes]} entran las lluvias: el mes anterior no llovía`]);
+    if (n === 3) r.push([vistas.length === 12 && mes === 0, 'paso 3: la Tierra volvió a enero y los doce meses tienen su marca']);
+    return r;
+  },
   /* Áreas Protegidas de Honduras. «El agua que el monte guarda».
      ⚠️ Nada se le cree a la escena. Los dos cerros se comparan punto por
      punto: la misma curva, con lo de adentro dentro de su tierra y la toma,

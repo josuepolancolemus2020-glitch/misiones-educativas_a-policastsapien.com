@@ -8776,6 +8776,127 @@ máquina.** La de las Eras, que se publicó a 59 cuadros y con el peor de 100 ms
 midió ese día 53 cuadros y 217 ms: la máquina de las pruebas no siempre va igual,
 y un número suelto no dice si la escena es pesada.
 
+### La trigésima sexta: El Universo y el Sistema Solar, y lo que enseñó
+
+La séptima de la Ruta del Planeta es **El Universo y el Sistema Solar**
+(`misiones/2y3ciclo-universo-sistema-solar/`, `js/animacion-vuelta.js`). La
+historia es la de don Tulio, que no siembra por el calendario: siembra cuando
+entran las lluvias. Si se adelanta, la semilla se le queda en la tierra seca; si
+se atrasa, la mata no alcanza a crecer, y en los dos casos pierde la milpa del
+año. La historia termina diciendo que lo que hace que el año se repita está allá
+arriba, y que es un movimiento que se puede nombrar. La animación es el Sol visto
+desde arriba, con el camino de la Tierra alrededor y los doce meses marcados en
+él; a la derecha, la parcela de don Tulio:
+
+- el Sol, y la Tierra en enero: ¿cuándo le llueve a la parcela?;
+- pasan febrero, marzo y abril sin lluvia, y cada mes deja un sol pequeño. En
+  mayo la Tierra llega a esta parte de su camino, entran las lluvias y don Tulio
+  siembra;
+- de mayo a octubre llueve (una gota por mes) y la milpa crece; en noviembre la
+  Tierra sale de ese tramo y se acaban las lluvias;
+- don Tulio cosechó, y en diciembre y en enero no llueve. En enero la Tierra ya
+  dio la vuelta entera: doce meses, un año;
+- al año siguiente pasa otra vez por el mismo camino, y en mayo, en el mismo
+  lugar, las lluvias vuelven a entrar;
+- por eso entran cada año más o menos por las mismas fechas. ¿En qué mes llueve
+  donde vives?
+
+Seis cosas que valen para las que siguen:
+
+1. ⚠️ **El movimiento se ve, y no se nombra.** Lo que la historia promete es
+   poder nombrarlo, y el nombre lo da la misión justo debajo, en Aprende; el
+   examen lo pregunta en sus pareados. La animación enseña lo que se ve: la
+   Tierra dándole la vuelta al Sol mes a mes, y las lluvias volviendo cuando pasa
+   por el mismo lugar. Ni traslación, ni rotación, ni estaciones, ni planeta, ni
+   estrella, ni luz: la sonda los busca en cada paso.
+2. ⚠️ **El camino es un círculo, y a propósito.** No se dice que en mayo la
+   Tierra esté más cerca del Sol: es el error de siempre, y no es por eso que
+   llueve. La sonda comprueba que la Tierra esté a la misma distancia del Sol en
+   todos los pasos. Tampoco se dibuja su lado de noche: el día y la noche son
+   otro movimiento, y otra pregunta del examen.
+3. ⚠️ **El dibujo no va a su tamaño, y se dice.** En el dibujo el Sol mide menos
+   del doble que la Tierra, y de verdad cabrían más de un millón de Tierras
+   dentro de él, que es justo una pregunta del examen. Sin avisar, el alumno se
+   lleva la medida del dibujo. Arriba dice «Los tamaños y las distancias no son
+   los de verdad», sin dar la cuenta.
+4. ⚠️ **Nada se va del dibujo sin que la frase lo diga.** La milpa estaba crecida
+   en noviembre y en enero ya no: la frase dice «Don Tulio cosechó». Una milpa
+   que desaparece sin explicación deja al alumno buscando adónde se fue. Y la
+   última frase dice «más o menos por las mismas fechas», como la historia: las
+   lluvias no entran el mismo día cada año.
+5. ⚠️ **Los nombres de los meses se acomodan a la Tierra, no a un círculo
+   parejo.** A la misma distancia todos, la Tierra tapaba «ENE» y «NOV» justo en
+   los pasos en que se para ahí. Un nombre es más ancho que alto, así que a los
+   lados necesita más espacio que arriba y abajo: la escena busca, mes por mes,
+   la distancia más corta con la que la caja del nombre queda a 1,5 de la
+   Tierra. La caja se midió en el navegador, y es la que mide la sonda: 22 de
+   ancho y 12,3 de alto la más grande, no los 7 de la tinta de las mayúsculas.
+   Van con tres letras, porque con una sola marzo y mayo serían las dos «M». Y el
+   nombre de la Tierra va adentro del camino, encima de ella: a los lados están
+   diciembre y febrero.
+6. ⚠️ **La historia y la animación contestaban seis preguntas.** En la
+   conceptual, «¿qué le pasa a la milpa de don Tulio si siembra antes de que
+   entren las lluvias?» era la historia palabra por palabra, y «¿qué hace que las
+   lluvias entren más o menos por las mismas fechas?», lo que la animación enseña
+   de frente. «Los planetas giran alrededor del Sol» y «¿qué hay en el centro del
+   sistema solar?» se ven dibujados. Ahora preguntan si Júpiter es el planeta más
+   grande, a cuál le dicen el planeta rojo, en qué influye la Luna aquí y qué se
+   manda para estudiar de cerca otros planetas, que están en el Laboratorio, con
+   la misma respuesta en el mismo sitio. En la misión y en la ficha, que sigue en
+   sus seis hojas. En pensamiento crítico, el caso de la época seca y la lluviosa
+   pasó a ser un cometa, y el error de «la rotación produce las estaciones», el
+   de «ya se sabe dónde termina el universo».
+
+La sonda de esta escena **no le cree nada a la escena**:
+
+- el camino tiene que ser un círculo con el Sol en el centro, con doce rayas que
+  lo cruzan a 30° una de otra, enero abajo y los meses contra las agujas del
+  reloj, y el nombre de cada mes afuera, en la línea de su raya;
+- busca a la Tierra en el camino y de su ángulo saca en qué mes está: tiene que
+  ser el de la frase, a la misma distancia del Sol y sin tapar ningún nombre;
+- las marcas: una por cada mes por el que ya pasó, en la línea de su mes y
+  adentro del camino; su forma se lee en el dibujo (una gota es un trazo solo; un
+  sol, un círculo con ocho rayitos): gota si el nombre del mes va de mayo a
+  octubre, sol si no;
+- la parcela: le llueve si la Tierra está en un mes de lluvia, brota cuando la
+  lluvia entra y tiene la milpa crecida cuando la lluvia se va; la lluvia cae de
+  la nube hasta el suelo;
+- el marcador cuenta en el dibujo: las gotas en el paso 2, y en el paso 3 las
+  doce marcas, con la Tierra de vuelta en enero;
+- y no sale ninguna palabra de la prueba ni un número de más.
+
+Se comprobó al revés con diecinueve averías, plantadas una por una:
+
+- la Tierra llegando a abril en el paso 1;
+- junio sin lluvia;
+- lluvia en noviembre;
+- el marcador del paso 2 diciendo 5;
+- «traslación» en una frase;
+- marzo y mayo cambiados de sitio;
+- el camino corrido del Sol;
+- «la Tierra» todavía escrito en el paso 1;
+- la milpa todavía en enero;
+- la raya de julio torcida;
+- el aviso diciendo que los tamaños sí son los de verdad;
+- el nombre de noviembre debajo de la Tierra;
+- una marca afuera del camino;
+- la Tierra fuera del camino;
+- brotes en noviembre;
+- la lluvia saliendo de debajo de la nube;
+- la marca de enero desde el paso 0;
+- el marcador del paso 3 diciendo 11;
+- los meses en el sentido de las agujas del reloj.
+
+Salió roja con cada una.
+
+⚠️ **Y una que solo salió yendo HACIA ATRÁS.** Volviendo al paso 0, el nombre
+«la Tierra» aparecía de inmediato en enero mientras la Tierra todavía venía
+desde mayo: quedaba escrito sobre un lugar donde no había nadie. Ahora espera a
+que llegue.
+
+Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
+de 83 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -8861,6 +8982,13 @@ tiempo, en Las Eras) va detrás de un telón, y lo que tenga fotogramas propios
 (un telón, una lluvia que pasa, un brinco) se le pregunta al aparato con
 `A.quieto()`. Y una palabra corriente de una respuesta, escrita en otra
 pregunta («trilobites»), la sonda de pistas no la ve: se busca leyendo.
+Lo que da vueltas alrededor de un centro (la Tierra alrededor del Sol) va en
+una capa por tramo, una dentro de otra y cada una girando su pedazo con su
+demora, con el `transformOrigin` puesto a mano en el centro. Los nombres
+alrededor de un círculo no van a la misma distancia: cada uno a la más corta
+con la que su caja, medida en el navegador, queda libre de lo que se para ahí.
+Un dibujo que no va a su tamaño lo dice si la prueba pregunta tamaños, sin dar
+la cuenta. Y nada se va del dibujo sin que la frase diga por qué.
 
 Si el `--sec` de la misión es claro (un ámbar, un amarillo), la letra blanca
 del botón que avanza no se lee en su punta: la misión declara en su CSS

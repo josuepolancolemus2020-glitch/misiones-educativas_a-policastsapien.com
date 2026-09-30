@@ -352,9 +352,19 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 // (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
 // tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
 // Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
+//
+// ⚠️ Y ninguna repite la historia de don Tulio ni lo que enseña su animación
+// (js/animacion-vuelta.js). «¿Qué le pasa a la milpa si siembra antes de que
+// entren las lluvias?» era la historia palabra por palabra, y «¿qué hace que
+// las lluvias entren más o menos por las mismas fechas?», lo que la animación
+// enseña de frente. Que los planetas giran alrededor del Sol y que el Sol está
+// en el centro se ven dibujados: el Sol en medio y la Tierra dándole la vuelta.
+// Ahora preguntan otra cosa de la misión (Júpiter, el planeta rojo, las mareas
+// y las sondas, que están en el Laboratorio), con la misma respuesta en el
+// mismo sitio.
 const evalTFBank=[
   {q:'La Luna cambia de aspecto según cómo la ilumina el Sol.',a:true,k:'tf-luna-aspecto'},
-  {q:'Los planetas giran alrededor del Sol.',a:true,k:'tf-giran-sol'},
+  {q:'Júpiter es el planeta más grande del sistema solar.',a:true,k:'tf-jupiter'},
   {q:'Sin el Sol no habría vida en la Tierra.',a:true,k:'tf-sin-sol'},
   {q:'La Luna gira alrededor de la Tierra.',a:true,k:'tf-luna-gira'},
   {q:'Urano y Neptuno son los planetas más lejanos y fríos.',a:true,k:'tf-lejanos'},
@@ -365,11 +375,11 @@ const evalTFBank=[
   {q:'El Sol es la estrella más cercana a nosotros.',a:true,k:'tf-mas-cercana'}
 ];
 const evalMCBank=[
-  {q:'¿Qué le pasa a la milpa de don Tulio si siembra antes de que entren las lluvias?',o:['a) la semilla se queda en la tierra seca','b) crece el doble','c) da frutos de noche','d) nada'],a:0,k:'mc-siembra-antes'},
+  {q:'¿A qué planeta le dicen «el planeta rojo»?',o:['a) Marte','b) Venus','c) Urano','d) Neptuno'],a:0,k:'mc-rojo'},
   {q:'¿Qué es un astro?',o:['a) un tipo de nube','b) un animal','c) un cuerpo que hay en el espacio','d) una montaña'],a:2,k:'mc-astro'},
-  {q:'¿Qué hay en el centro del sistema solar?',o:['a) la Tierra','b) la Luna','c) Júpiter','d) el Sol'],a:3,k:'mc-centro'},
+  {q:'¿En qué influye la Luna aquí en la Tierra?',o:['a) en el color del cielo','b) en la altura de las montañas','c) en la hora del reloj','d) en las mareas del mar'],a:3,k:'mc-mareas'},
   {q:'¿En qué fase se ve la Luna completa?',o:['a) luna nueva','b) luna llena','c) el Sol','d) estrella fugaz'],a:1,k:'mc-llena'},
-  {q:'¿Qué hace que las lluvias entren más o menos por las mismas fechas cada año?',o:['a) que la Tierra da la vuelta al Sol','b) que la Luna se esconde','c) que el Sol se apaga','d) que cambia el calendario de la pared'],a:0,k:'mc-lluvias'},
+  {q:'¿Qué se manda desde la Tierra para estudiar de cerca otros planetas?',o:['a) sondas espaciales','b) globos de papel','c) aviones de pasajeros','d) barcos de vela'],a:0,k:'mc-sondas'},
   {q:'¿Qué nos da el Sol?',o:['a) agua','b) nieve','c) luz y calor','d) lluvia'],a:2,k:'mc-luz-calor'},
   {q:'¿Cuántas Tierras cabrían dentro del Sol?',o:['a) dos','b) más de un millón','c) diez','d) ninguna'],a:1,k:'mc-cabrian'},
   {q:'¿Qué frase ayuda a recordar el orden de los planetas?',o:['a) Me-Ve-Te-Ma-Ju-Sa-U-Ne','b) A-E-I-O-U','c) Do-Re-Mi-Fa','d) Uno-Dos-Tres'],a:0,k:'mc-truco'},
@@ -495,11 +505,16 @@ const critCaseBank=[
       'La Tierra es redonda y gira sobre sí misma; el Sol solo ilumina la mitad que da hacia él, así que una mitad tiene día y la otra, noche.',
       'La rotación de la Tierra (junto con la luz del Sol).',
       'Nos ayuda a comprender por qué no amanece a la misma hora en todo el mundo y a medir el tiempo.']},
-  {k:'ca-estaciones',txt:'A lo largo del año, en Honduras hay una época seca y una época lluviosa.',
-   g:['Se observa el cambio de estaciones (época seca y época lluviosa) a lo largo del año.',
-      'La traslación de la Tierra alrededor del Sol hace que a lo largo del año cambie el clima en cada región.',
-      'La traslación de la Tierra alrededor del Sol.',
-      'Nos ayuda a planificar la siembra y la cosecha, prepararnos para las lluvias y entender el clima de Honduras.']},
+  // Aquí iba la época seca y la lluviosa de Honduras, y ese caso entero es la
+  // animación de la historia (js/animacion-vuelta.js): la Tierra le da la
+  // vuelta al Sol y las lluvias entran cuando pasa por el mismo lugar. Ahora
+  // es un cometa, que la misión enseña en sus tarjetas: hielo y polvo que
+  // forma una cola al acercarse al Sol.
+  {k:'ca-cometa',txt:'Algunos años aparece en el cielo, durante unas semanas, un astro con una cola larga; después ya no se ve.',
+   g:['Se observa el paso de un cometa, un astro con cola.',
+      'El cometa es un astro de hielo y polvo que gira alrededor del Sol: al acercarse al Sol se le forma la cola y se ve; al alejarse, deja de verse.',
+      'El cometa (su camino alrededor del Sol).',
+      'Nos ayuda a reconocer lo que vemos en el cielo sin asustarnos, y a saber que, además de los planetas, otros astros giran alrededor del Sol.']},
   {k:'ca-fases',txt:'Cada cierto tiempo la Luna se ve completa (llena) y otras veces no se ve (nueva).',
    g:['Se observan las fases de la Luna.',
       'La Luna gira alrededor de la Tierra y el Sol la ilumina desde distintas posiciones; según dónde esté, vemos más o menos parte iluminada.',
@@ -529,9 +544,13 @@ const critErrorBank=[
   {k:'er-luna-planeta',txt:'"La Luna es un planeta que gira alrededor del Sol".',
    g1:'La Luna es un SATÉLITE, no un planeta.',
    g2:'La Luna gira alrededor de la TIERRA, no del Sol.'},
-  {k:'er-rotacion-estaciones',txt:'"La rotación de la Tierra produce las estaciones del año".',
-   g1:'La rotación produce el DÍA Y LA NOCHE.',
-   g2:'Las estaciones las produce la TRASLACIÓN.'},
+  // Aquí iba «la rotación produce las estaciones», y lo que la corrige (que
+  // las épocas del año vienen de la vuelta alrededor del Sol) es lo que
+  // enseña la animación de la historia. Ahora es el de los límites del
+  // universo, que la misión enseña en «¿Qué es el universo?».
+  {k:'er-limites',txt:'"Ya se sabe dónde termina el universo".',
+   g1:'El universo es tan grande que NO CONOCEMOS sus límites.',
+   g2:'El universo es TODO LO QUE EXISTE.'},
   {k:'er-nueve',txt:'"En el sistema solar hay nueve planetas".',
    g1:'El sistema solar tiene OCHO planetas.',
    g2:'Se pueden recordar en orden con «Me-Ve-Te-Ma-Ju-Sa-U-Ne».'},
