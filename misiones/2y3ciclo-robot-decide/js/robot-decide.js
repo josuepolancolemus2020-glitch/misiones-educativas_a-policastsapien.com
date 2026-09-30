@@ -590,40 +590,40 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 // tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
 // Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 let evalTFBank=[
-  {q:'El lunes nublado llovió.',a:false,k:'tf-lunes'},
-  {q:'Todo el grado entendió el aviso del maestro igual.',a:false,k:'tf-grado'},
-  {q:'La lluvia es un ejemplo de condición de la vida diaria.',a:true,k:'tf-lluvia'},
-  {q:'Una misma pregunta puede tener respuestas distintas en días distintos.',a:true,k:'tf-dias'},
-  {q:'Las decisiones de todos los días también dependen de preguntas de sí o no.',a:true,k:'tf-decisiones'},
-  {q:'Un condicional puede no tener rama para el «no».',a:true,k:'tf-sin-sino'},
-  {q:'El robot adivina qué rama le conviene.',a:false,k:'tf-adivina'},
-  {q:'En la vida diaria no usamos condicionales.',a:false,k:'tf-vida'},
+  {q:'GIRA DERECHA cambia al robot de casilla.',a:false,k:'tf-gira-casilla'},
+  {q:'Una lista de órdenes como «AVANZA, AVANZA, GIRA» ya es un condicional.',a:false,k:'tf-lista'},
+  {q:'«¿La puerta está abierta?» puede ser la condición de un condicional.',a:true,k:'tf-puerta'},
+  {q:'Si el programa no tiene la instrucción ENTREGA, el robot no entrega el mensaje.',a:true,k:'tf-sin-entrega'},
+  {q:'En el Laboratorio, si el robot se sale del mapa, el programa se detiene.',a:true,k:'tf-borde'},
+  {q:'Con «SI tengo tarea → la hago primero, SINO → salgo a jugar», un día con tarea la hago primero.',a:true,k:'tf-tarea'},
+  {q:'Con «SI hace calor → abro la ventana, SINO → la cierro», en un día frío abro la ventana.',a:false,k:'tf-calor'},
+  {q:'En «SI la olla está caliente → la bajo del fuego», la condición es «la bajo del fuego».',a:false,k:'tf-cual-cond'},
   {q:'El orden de varias preguntas seguidas puede cambiar la decisión.',a:true,k:'tf-orden'},
-  {q:'Cuarenta y tres personas interpretan; un robot obedece.',a:true,k:'tf-interpretan'}
+  {q:'El robot cumple las instrucciones de su programa una después de otra.',a:true,k:'tf-una-tras-otra'}
 ];
 let evalMCBank=[
   {q:'SI hay pared adelante ENTONCES gira derecha, SINO avanza. El robot NO tiene pared adelante. ¿Qué hace?',o:['Gira derecha','Avanza','Se detiene','Gira izquierda'],a:1,k:'mc-diag'},
   {q:'¿Qué es un condicional?',o:['a) Una lista de pasos siempre iguales','b) Un giro de 90°','c) Una instrucción que hace decidir según una condición','d) Un mapa de la aldea'],a:2,k:'mc-condicional'},
-  {q:'¿Qué le faltó al aviso del maestro?',o:['a) Una hora exacta','b) Un lugar','c) Más alumnos','d) Decir qué hacer si solo estaba nublado'],a:3,k:'mc-aviso'},
-  {q:'¿Qué lee el robot para saber qué rama tomar?',o:['a) El color del robot','b) La casilla final','c) La respuesta a la pregunta','d) El nombre del programa'],a:2,k:'mc-lee'},
+  {q:'¿Cuál de estas preguntas se contesta solo con sí o no?',o:['a) ¿Qué hora es?','b) ¿Cuántos años tienes?','c) ¿De qué color es tu casa?','d) ¿Hay agua en la pila?'],a:3,k:'mc-si-o-no'},
+  {q:'Con «SI es de noche → enciendo la luz, SINO → la dejo apagada», ya oscureció. ¿Qué hago?',o:['a) La dejo apagada','b) Salgo a ver','c) Enciendo la luz','d) Hago las dos cosas'],a:2,k:'mc-noche'},
   {q:'«SI verde → pasa, SINO → se queda quieto». Con luz roja, el robot…',o:['a) Pasa igual','b) Se queda quieto','c) Gira','d) Entrega'],a:1,k:'mc-roja'},
-  {q:'¿Cuál de estas es una pregunta de sí o no?',o:['a) «Gira a la derecha»','b) «¿Está lloviendo?»','c) «Entrega el mensaje»','d) «Camina tres pasos»'],a:1,k:'mc-pregunta'},
-  {q:'¿Qué clase se perdió el lunes?',o:['a) Matemáticas','b) Educación Física','c) Español','d) Ciencias'],a:1,k:'mc-clase'},
+  {q:'¿Qué palabra va delante de lo que se hace cuando la respuesta es NO?',o:['a) ENTONCES','b) SINO','c) SI','d) AVANZA'],a:1,k:'mc-sino'},
+  {q:'Con «SI la tienda está abierta → compro el pan, SINO → vuelvo mañana», la tienda está cerrada. ¿Qué hago?',o:['a) Compro el pan','b) Vuelvo mañana','c) Las dos cosas','d) Me llevo el pan igual'],a:1,k:'mc-tienda'},
   {q:'«SI llegó a la casa → ENTREGA, SINO → …». ¿Qué hace si todavía no llegó?',o:['a) Sigue caminando','b) Entrega igual','c) Se apaga','d) Vuelve al inicio'],a:0,k:'mc-casa'},
-  {q:'En el robot, ¿quién responde la pregunta de la condición?',o:['a) El programador, en voz alta','b) La batería','c) El mapa','d) Una pieza que mide lo que hay alrededor'],a:3,k:'mc-quien'},
-  {q:'¿Qué hace el robot con la rama que no corresponde?',o:['a) No la corre','b) La corre después','c) La corre primero','d) La borra'],a:0,k:'mc-otra-rama'}
+  {q:'En un condicional, ¿qué se escribe justo después de la palabra SI?',o:['a) Lo que se hace si la respuesta es no','b) La palabra SINO','c) El nombre del robot','d) La condición'],a:3,k:'mc-despues-si'},
+  {q:'Con «SI suena el timbre → salgo al recreo, SINO → sigo en clase», ¿cuántas de las dos cosas hago?',o:['a) Solo una','b) Las dos, una tras otra','c) Ninguna','d) Las dos a la vez'],a:0,k:'mc-una-rama'}
 ];
 let evalCPBank=[
-  {q:'El maestro dijo: si llueve, la clase se hace ___.',a:'adentro',acc:['adentro','dentro'],k:'cp-adentro'},
-  {q:'«Nublado» no es «___».',a:'llueve',acc:['llueve','lluvia'],k:'cp-llueve'},
+  {q:'Con «SI hay pared adelante → AVANZA», el robot ___ contra la pared.',a:'choca',acc:['choca','se choca','chocará','chocara','chocaría','chocaria'],k:'cp-choca'},
+  {q:'En un condicional sin SINO, cuando la respuesta es no, el robot no hace ___.',a:'nada',acc:['nada'],k:'cp-nada'},
   {q:'Con luz verde, el robot ___ la calle.',a:'cruza',acc:['cruza'],k:'cp-cruza'},
   {q:'SI está lloviendo → llevo paraguas, SINO → llevo ___.',a:'gorra',acc:['gorra'],k:'cp-gorra'},
-  {q:'El lunes amaneció nublado y con ___.',a:'viento',acc:['viento'],k:'cp-viento'},
-  {q:'Una condición es cierta o ___, sin término medio.',a:'falsa',acc:['falsa'],k:'cp-falsa'},
-  {q:'La mitad del grado salió al ___.',a:'patio',acc:['patio'],k:'cp-patio'},
-  {q:'Se perdió la clase entera ___ quién había entendido bien.',a:'discutiendo',acc:['discutiendo'],k:'cp-discutiendo'},
+  {q:'Un condicional SI… ENTONCES… SINO tiene ___ partes.',a:'tres',acc:['tres','3'],k:'cp-tres'},
+  {q:'Un condicional puede ir al principio, en medio o al ___ de un programa.',a:'final',acc:['final','fin'],k:'cp-final'},
+  {q:'Si hay que rodear una pared y la condición pregunta si la luz está en verde, la condición está ___.',a:'equivocada',acc:['equivocada','equivocado','mal','mala','errada','incorrecta'],k:'cp-equivocada'},
+  {q:'En el Laboratorio, el programa corre al tocar el botón ▶ ___.',a:'Ejecutar',acc:['ejecutar'],k:'cp-ejecutar'},
   {q:'La pregunta del condicional nunca mueve al robot: solo ___.',a:'decide',acc:['decide'],k:'cp-decide'},
-  {q:'Un robot no interpreta: ___.',a:'obedece',acc:['obedece'],k:'cp-obedece'}
+  {q:'Un error en un programa se llama ___.',a:'bug',acc:['bug','bugs'],k:'cp-bug'}
 ];
 let evalPRBank=[
   {term:'Tal vez',def:'Respuesta que una condición no puede tener',k:'pr-tal-vez'},

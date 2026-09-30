@@ -1783,6 +1783,92 @@ const LEER = `
       textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
     };
   };
+  /* Condicionales: el aviso del lunes. Se lee lo que dice el aviso y la
+     pregunta del cruce, si llueve (las gotas que se ven), el vasito y las
+     gotas que tiene dentro, los dos caminos y hasta dónde llegan, y a cada
+     persona: de dónde salió, cada tramo que caminó, dónde quedaron sus pies
+     y lo que contestó. */
+  window.__amExtra.amAviso = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(m(el)); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function union(cs) {
+      return cs.reduce(function (a, c) { return a ? { x0: Math.min(a.x0, c.x0), y0: Math.min(a.y0, c.y0), x1: Math.max(a.x1, c.x1), y1: Math.max(a.y1, c.y1) } : c; }, null);
+    }
+    function centro(c) { return { x: (c.x0 + c.x1) / 2, y: (c.y0 + c.y1) / 2 }; }
+    function uno(sel, en) { return (en || raiz).querySelector(sel); }
+    function todos(sel, en) { return [].slice.call((en || raiz).querySelectorAll(sel)); }
+    function demora(el) { return parseFloat(el.style.getPropertyValue('--d')) || 0; }
+    function corre(el) {
+      var t = getComputedStyle(el).transform;
+      if (!t || t === 'none') return [0, 0];
+      var q = t.match(/-?[0-9.e]+/g).map(Number);
+      return [q[4], q[5]];
+    }
+    function puntosDe(p) {
+      var nums = (p.getAttribute('d').match(/-?[0-9.]+/g) || []).map(Number), r = [];
+      for (var i = 0; i + 1 < nums.length; i += 2) r.push(aVista(p, nums[i], nums[i + 1]));
+      return r;
+    }
+    function texto(t) { return { k: t.getAttribute('data-rotulo') || t.getAttribute('data-rotulo-camino') || t.getAttribute('data-dia') || t.getAttribute('data-cuenta') || t.getAttribute('data-pregunta'),
+      ve: vis(t), txt: t.textContent, caja: caja(t), d: demora(t) }; }
+    return {
+      lang: (window.MetasI18N && window.MetasI18N.idioma && window.MetasI18N.idioma()) === 'en' ? 'en' : 'es',
+      aviso: {
+        caja: caja(uno('[data-aviso] rect')),
+        tit: texto(uno('[data-aviso] .dc-aviso-tit')),
+        dice: todos('[data-aviso-dice]').map(function (g) {
+          var ts = todos('text', g);
+          return { k: g.getAttribute('data-aviso-dice'), ve: ts.every(vis), txt: ts.map(function (t) { return t.textContent; }).join(' '), cajas: ts.map(caja) };
+        })
+      },
+      rombo: { caja: caja(uno('[data-rombo]')), puntos: puntosDe(uno('[data-rombo]')) },
+      preguntas: todos('[data-pregunta]').map(texto),
+      /* las gotas van en un solo trazo: se cuentan sus pedacitos */
+      lluvia: { ve: vis(uno('[data-lluvia]')), gotas: todos('[data-gotas]').filter(vis).reduce(function (s, g) {
+        return s + (g.getAttribute('d').match(/M/g) || []).length; }, 0) },
+      nubes: { claras: vis(uno('[data-nubes="claras"] ellipse')), oscuras: vis(uno('[data-nubes="oscuras"] ellipse')) },
+      viento: vis(uno('[data-viento] path')),
+      dias: todos('[data-dia]').map(texto),
+      patio: caja(uno('[data-sitio="patio"]')),
+      aula: caja(uno('[data-sitio="aula"] rect')),
+      techo: caja(uno('[data-sitio="aula"] .dc-techo')),
+      caminos: todos('[data-camino]').map(function (p) { return { k: p.getAttribute('data-camino'), puntos: puntosDe(p) }; }),
+      guias: todos('[data-guia]').map(function (p) { return { k: p.getAttribute('data-guia'), ve: vis(p) }; }),
+      activos: todos('[data-activo]').map(function (g) {
+        var ps = todos('path', g);
+        return { k: g.getAttribute('data-activo'), ve: vis(ps[0]), d: demora(g), linea: puntosDe(ps[0]), punta: puntosDe(ps[1]) };
+      }),
+      rotCaminos: todos('[data-rotulo-camino]').map(texto),
+      rotulos: todos('[data-rotulo]').map(texto),
+      vasito: {
+        ve: vis(uno('[data-vaso]')), d: demora(uno('[data-vasito]')), caja: caja(uno('[data-vaso]')),
+        gotas: todos('[data-gota-vaso]').map(function (g) { return { ve: vis(g), c: centro(caja(g)), d: demora(g) }; }),
+        cuentas: todos('[data-cuenta]').map(texto)
+      },
+      personas: todos('[data-caminante]').map(function (g) {
+        var t = todos('[data-tramo]', g), fig = uno('[data-alumno], [data-robot]', g), tag = uno('[data-respuesta]', g);
+        var partes = [].filter.call(fig.children, function (c) { return !c.hasAttribute('data-respuesta'); });
+        var alto = uno('[data-alto]', g);
+        return {
+          k: g.getAttribute('data-caminante'), ve: vis(partes[0]),
+          sale: aVista(g, 0, 0), pies: aVista(t[2], 0, 0),
+          alto: alto ? { corre: corre(alto), d: demora(alto) } : null,
+          tramos: t.map(function (q) { return { corre: corre(q), d: demora(q) }; }),
+          fig: union(partes.map(caja)),
+          resp: { ve: vis(uno('rect', tag)), txt: uno('text', tag).textContent, caja: caja(uno('rect', tag)), d: demora(tag) }
+        };
+      }),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   window.__amExtra.amBaleada = function (raiz) {
     var vis = window.__amVisible;
     var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
@@ -3127,6 +3213,198 @@ const ESCENAS = {
     r.push([+e.cifra === cifraEspera, `paso ${n}: el marcador dice ${e.cifra} y en el dibujo se cuentan ${cifraEspera}`, [e.cifra, cifraEspera]]);
     if (n === 1) r.push([/vecino/.test(e.texto), 'paso 1: la frase dice dónde quedó el recado: en la casa del vecino', e.texto]);
     if (n === 5) r.push([/pulper[ií]a/.test(e.texto), 'paso 5: la frase dice dónde llegó el recado: a la pulpería', e.texto]);
+    return r;
+  },
+  /* Condicionales: el aviso del lunes.
+     ⚠️ Nada se le cree a la escena. La sonda lee la etiqueta de cada
+     persona («sí» o «no») y dónde quedaron sus pies, y exige que el que
+     dijo «sí» esté dentro del aula y el que dijo «no» dentro del patio,
+     habiendo pasado por el cruce y por el camino de su respuesta. Si
+     llueve lo dicen las gotas que se ven; lo que tiene el vasito, las
+     gotas que tiene dentro; y los caminos llenos, quién los caminó. Es
+     bilingüe: todo esto se comprueba en los dos idiomas. */
+  amAviso(e, n) {
+    const x = e.extra, r = [];
+    const L = x.lang === 'en' ? 'en' : 'es';
+    const RS = {
+      es: { a: 'Si llueve, Educación Física va adentro.', b: 'Si caen gotas, Educación Física va adentro.', pa: '¿Llueve?', pb: '¿Caen gotas?',
+        si: 'sí', no: 'no', tit: 'Aviso del maestro', dia: 'Lunes', otro: 'Otro día', patio: 'patio', aula: 'aula', gotas: 'gotas', cuatro: 'cuatro' },
+      en: { a: 'If it rains, P.E. is held indoors.', b: 'If drops fall, P.E. is held indoors.', pa: 'Is it raining?', pb: 'Do drops fall?',
+        si: 'yes', no: 'no', tit: 'Teacher’s notice', dia: 'Monday', otro: 'Another day', patio: 'yard', aula: 'classroom', gotas: 'drops', cuatro: 'four' }
+    }[L];
+    const cerca = (a, b, t = 1.5) => Math.abs(a - b) <= t;
+    const cen = c => ({ x: (c.x0 + c.x1) / 2, y: (c.y0 + c.y1) / 2 });
+    const monta = (a, b) => a.x0 < b.x1 - 0.5 && b.x0 < a.x1 - 0.5 && a.y0 < b.y1 - 0.5 && b.y0 < a.y1 - 0.5;
+    const dentro = (p, c, m = 0) => p[0] >= c.x0 - m && p[0] <= c.x1 + m && p[1] >= c.y0 - m && p[1] <= c.y1 + m;
+    const cajaDentro = (a, c, m = 0.5) => a.x0 >= c.x0 - m && a.x1 <= c.x1 + m && a.y0 >= c.y0 - m && a.y1 <= c.y1 + m;
+
+    /* ── lo que no depende del dibujo va primero ── */
+    const PROHIBIDAS = L === 'en'
+      ? /condition|decide|decision|sensor|maybe|chain|action|\bwait|traffic|stove|sweater|\btrees?\b|swap|branch|\bELSE\b|\bTHEN\b|crash|\beast\b|\bthree\b|\bend\b|wrong|\brun\b|\bbugs?\b|forward|\bstill\b|cross|\bcap\b|umbrella|squares?\b|\bmap\b|instruction|program/i
+      : /condici|decid|decisi|sensor|tal vez|encadenad|acci[oó]n|espera|sem[aá]foro|fog[oó]n|su[eé]ter|[aá]rbol|invert|\bramas?\b|\bSINO\b|\bENTONCES\b|choca|\btres\b|\bfinal\b|equivocad|ejecut|\bbugs?\b|avanz|quieto|sigue caminando|cruza|gorra|paraguas|casillas?\b|\bmapa\b|instrucci|programa/i;
+    const dicho = [e.texto, e.palabras].concat(x.textos).join(' · ');
+    r.push([!PROHIBIDAS.test(dicho) && !(L === 'es' && /\bEste\b|\beste\b/.test(dicho)), `paso ${n}: no sale ninguna palabra de lo que pregunta la prueba`,
+      (dicho.match(PROHIBIDAS) || (L === 'es' && dicho.match(/\b[Ee]ste\b/)) || [])[0]]);
+
+    /* ── el aviso y la pregunta del cruce ── */
+    const dice = x.aviso.dice.filter(q => q.ve);
+    const avisoB = n >= 3;
+    r.push([x.aviso.tit.ve && x.aviso.tit.txt === RS.tit && dice.length === 1 && dice[0].txt === (avisoB ? RS.b : RS.a),
+      `paso ${n}: el aviso dice lo que tiene que decir, y una sola vez`, dice.map(q => q.txt)]);
+    const fuera = dice.length ? dice[0].cajas.concat([x.aviso.tit.caja]).filter(c => !cajaDentro(c, x.aviso.caja, 0)) : [];
+    r.push([fuera.length === 0, `paso ${n}: la letra del aviso cabe en el papel`, fuera]);
+    const preg = x.preguntas.filter(q => q.ve);
+    const rb = x.rombo, rc = cen(rb.caja);
+    r.push([preg.length === 1 && preg[0].txt === (avisoB ? RS.pb : RS.pa), `paso ${n}: en el cruce está la pregunta del aviso, y una sola`, preg.map(q => q.txt)]);
+    /* el rombo: sus cuatro puntas alrededor del cruce, y la pregunta dentro */
+    const pr = rb.puntos.slice(0, 4);
+    const rombo = pr.length === 4 && cerca(pr[0][1], rc.y) && cerca(pr[2][1], rc.y) && cerca(pr[1][0], rc.x) && cerca(pr[3][0], rc.x);
+    r.push([rombo, `paso ${n}: el cruce es un rombo con la pregunta en medio`, pr]);
+    if (preg.length === 1) {
+      const c = preg[0].caja, ax = (rb.caja.x1 - rb.caja.x0) / 2, ay = (rb.caja.y1 - rb.caja.y0) / 2;
+      const esquinas = [[c.x0, c.y0], [c.x1, c.y0], [c.x0, c.y1], [c.x1, c.y1]];
+      const sale = esquinas.filter(p => Math.abs(p[0] - rc.x) / ax + Math.abs(p[1] - rc.y) / ay > 1.02);
+      r.push([sale.length === 0, `paso ${n}: la pregunta cabe dentro del rombo`, sale]);
+    }
+
+    /* ── el cielo: si llueve lo dicen las gotas que se ven ── */
+    const llueve = x.lluvia.gotas > 0;
+    r.push([llueve === (n >= 4), `paso ${n}: ${n >= 4 ? 'llueve: se ven las gotas' : 'no cae ni una gota'}`, x.lluvia.gotas]);
+    if (llueve) r.push([x.lluvia.gotas >= 60, `paso ${n}: la lluvia cae en todo el dibujo, no en un rincón`, x.lluvia.gotas]);
+    r.push([x.nubes.oscuras === llueve && x.nubes.claras === !llueve && x.viento === !llueve,
+      `paso ${n}: ${llueve ? 'las nubes de lluvia, sin viento' : 'nublado y con viento'}`, x.nubes]);
+    const dias = x.dias.filter(q => q.ve);
+    r.push([dias.length === 1 && dias[0].txt === (llueve ? RS.otro : RS.dia), `paso ${n}: el día que dice arriba es el que se ve`, dias.map(q => q.txt)]);
+
+    /* ── los sitios y los caminos ── */
+    const pa = x.patio, au = x.aula;
+    r.push([!monta(pa, au) && pa.x1 <= 320 && au.x1 <= 320 && au.y1 <= 256, `paso ${n}: el patio y el aula no se montan y caben en el dibujo`, [pa, au]]);
+    const camino = k => x.caminos.find(c => c.k === k);
+    const ent = camino('entrada'), cNo = camino('no'), cSi = camino('si');
+    const cruce = cNo && cNo.puntos[0];
+    r.push([!!(cNo && cSi && ent) && cerca(cruce[0], rc.x) && cerca(cruce[1], rc.y) && cerca(cSi.puntos[0][0], rc.x) && cerca(cSi.puntos[0][1], rc.y)
+      && cerca(ent.puntos[ent.puntos.length - 1][0], rc.x) && cerca(ent.puntos[ent.puntos.length - 1][1], rc.y),
+      `paso ${n}: la fila llega al cruce, y los dos caminos salen del cruce`, [cruce, rc]]);
+    if (!cNo || !cSi) return r;
+    const finNo = cNo.puntos[cNo.puntos.length - 1], finSi = cSi.puntos[cSi.puntos.length - 1];
+    r.push([dentro(finNo, pa, 2.5) && !dentro(finNo, au, 2), `paso ${n}: el camino del «no» llega al patio`, finNo]);
+    r.push([dentro(finSi, au, 2.5) && !dentro(finSi, pa, 2), `paso ${n}: el camino del «sí» llega al aula`, finSi]);
+    /* el rótulo de cada camino, junto a SU camino */
+    const aSeg = (p, a, b) => { const dx = b[0] - a[0], dy = b[1] - a[1], t = Math.max(0, Math.min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / (dx * dx + dy * dy)));
+      return Math.hypot(p[0] - a[0] - t * dx, p[1] - a[1] - t * dy); };
+    x.rotCaminos.forEach(q => {
+      const c = cen(q.caja), p = [c.x, c.y];
+      const suyo = q.k === 'no' ? cNo : cSi, otro = q.k === 'no' ? cSi : cNo;
+      const d = aSeg(p, suyo.puntos[0], suyo.puntos[1]), d2 = aSeg(p, otro.puntos[0], otro.puntos[1]);
+      r.push([q.ve && q.txt === RS[q.k] && d < 18 && d > 7 && d2 > d + 8, `paso ${n}: el rótulo «${RS[q.k]}» va junto a su camino, sin pisarlo`, [q.txt, Math.round(d), Math.round(d2)]]);
+    });
+    /* los caminos llenos: los que alguien toma en este paso */
+    const ACT = { no: [false, true, true, true, false, false][n], si: [false, true, false, false, true, true][n] };
+    ['no', 'si'].forEach(k => {
+      const a = x.activos.find(q => q.k === k), g = x.guias.find(q => q.k === k), fin = k === 'no' ? finNo : finSi;
+      r.push([a.ve === ACT[k] && g.ve === !ACT[k], `paso ${n}: el camino del «${RS[k]}» va ${ACT[k] ? 'lleno, porque alguien lo toma' : 'con raya cortada: nadie lo toma'}`, [a.ve, g.ve]]);
+      if (a.ve) r.push([a.punta.length === 3 && cerca(a.punta[1][0], fin[0]) && cerca(a.punta[1][1], fin[1]), `paso ${n}: la punta del camino del «${RS[k]}» está a la entrada de su sitio`, a.punta[1]]);
+    });
+
+    /* ── las personas: lo que contestaron y dónde quedaron ── */
+    const al = x.personas.filter(p => /^alumno/.test(p.k)), rob = x.personas.find(p => p.k === 'robot');
+    r.push([al.length === 8 && al.every(p => p.ve), `paso ${n}: la clase son ocho, y se ven todos`, al.length]);
+    r.push([rob && rob.ve === (n >= 2), `paso ${n}: el robot ${n >= 2 ? 'está' : 'todavía no llega'}`, rob && rob.ve]);
+    const visibles = al.concat(rob && rob.ve ? [rob] : []);
+    if (n === 0) {
+      const enFila = al.filter(p => p.tramos.every(t => cerca(t.corre[0], 0, 0.3) && cerca(t.corre[1], 0, 0.3)) && !p.resp.ve && p.pies[0] < rb.caja.x0);
+      r.push([enFila.length === 8, 'paso 0: la clase espera en fila, antes del cruce, sin contestar todavía', enFila.length]);
+    } else {
+      const ok = [];
+      visibles.forEach(p => {
+        const resp = p.resp.txt === RS.si ? 'si' : p.resp.txt === RS.no ? 'no' : null;
+        const sitio = resp === 'si' ? au : pa;
+        const ini = p.alto ? [p.sale[0] + p.alto.corre[0], p.sale[1] + p.alto.corre[1]] : p.sale;
+        const t1 = [ini[0] + p.tramos[0].corre[0], ini[1] + p.tramos[0].corre[1]];
+        const t2 = [t1[0] + p.tramos[1].corre[0], t1[1] + p.tramos[1].corre[1]];
+        const fin = resp === 'si' ? finSi : finNo;
+        const piesDentro = p.pies[0] >= sitio.x0 + 3 && p.pies[0] <= sitio.x1 - 3 && p.pies[1] > sitio.y0 && p.pies[1] <= sitio.y1 + 0.5;
+        const bien = p.resp.ve && !!resp && piesDentro && cerca(t1[0], rc.x) && cerca(t1[1], rc.y) && cerca(t2[0], fin[0], 2.5) && cerca(t2[1], fin[1], 2.5)
+          && cajaDentro(p.resp.caja, sitio) && cajaDentro(p.fig, sitio, 1);
+        if (!bien) ok.push({ k: p.k, resp: p.resp.txt, ve: p.resp.ve, pies: p.pies.map(Math.round), t1: t1.map(Math.round), t2: t2.map(Math.round) });
+      });
+      r.push([ok.length === 0, `paso ${n}: cada uno pasó por el cruce, tomó el camino de lo que contestó y quedó dentro de ese sitio`, ok.slice(0, 3)]);
+      /* El robot se para a mirar el vasito ANTES del cruce, sobre el camino
+         de entrada: parado en el cruce taparía la pregunta que contesta.
+         Su figura, puesta donde se para, no toca el rombo. */
+      if (rob && rob.ve) {
+        const alto = rob.alto && [rob.sale[0] + rob.alto.corre[0], rob.sale[1] + rob.alto.corre[1]];
+        const figAlto = alto && { x0: rob.fig.x0 + alto[0] - rob.pies[0], x1: rob.fig.x1 + alto[0] - rob.pies[0], y0: rob.fig.y0 + alto[1] - rob.pies[1], y1: rob.fig.y1 + alto[1] - rob.pies[1] };
+        r.push([!!alto && cerca(alto[1], rc.y, 0.5) && alto[0] > rob.sale[0] + 20 && figAlto.x1 < rb.caja.x0 - 1 && figAlto.x0 >= 0 && !monta(figAlto, rb.caja),
+          `paso ${n}: el robot se para antes del cruce, sobre su camino y sin tapar la pregunta`, alto && [alto.map(Math.round), Math.round(figAlto.x1), Math.round(rb.caja.x0)]]);
+      }
+      const si = al.filter(p => p.resp.txt === RS.si).length, no = al.filter(p => p.resp.txt === RS.no).length;
+      const ESPERA = [null, [4, 4], [4, 4], [0, 8], [8, 0], [8, 0]][n];
+      r.push([si === ESPERA[0] && no === ESPERA[1], `paso ${n}: en la clase contestaron ${ESPERA[0]} que sí y ${ESPERA[1]} que no`, [si, no]]);
+      if (rob && rob.ve) r.push([rob.resp.txt === (n >= 4 ? RS.si : RS.no), `paso ${n}: el robot contesta lo que dicen las gotas`, rob.resp.txt]);
+      /* nadie encima de nadie */
+      const cajas = [];
+      visibles.forEach(p => { cajas.push({ k: p.k, c: p.fig }); cajas.push({ k: p.k + '·respuesta', c: p.resp.caja }); });
+      const choques = [];
+      for (let i = 0; i < cajas.length; i++) for (let j = i + 1; j < cajas.length; j++) {
+        if (cajas[i].k.split('·')[0] !== cajas[j].k.split('·')[0] && monta(cajas[i].c, cajas[j].c)) choques.push([cajas[i].k, cajas[j].k]);
+      }
+      r.push([choques.length === 0, `paso ${n}: nadie queda encima de nadie, ni una respuesta encima de otra persona`, choques.slice(0, 3)]);
+      /* y los tiempos, cuando se entra caminando */
+      const caminan = { 1: al, 2: [rob], 3: al, 4: al.concat([rob]), 5: [] }[n] || [];
+      /* los de la clase contestan al llegar al cruce; el robot, al llegar
+         a donde se para, y solo después sigue */
+      const malT = caminan.filter(p => !(p.alto
+        ? p.tramos[0].d >= p.alto.d + 795 && p.resp.d >= p.alto.d + 795 && p.resp.d <= p.tramos[0].d + 5 && cerca(p.tramos[1].d - p.tramos[0].d, 800, 5) && cerca(p.tramos[2].d - p.tramos[1].d, 800, 5)
+        : cerca(p.tramos[2].d - p.tramos[1].d, 800, 5) && p.tramos[1].d >= p.tramos[0].d + 795 && p.resp.d >= p.tramos[0].d + 795 && p.resp.d <= p.tramos[1].d + 5));
+      r.push([malT.length === 0, `paso ${n}: cada uno contesta al llegar al cruce, y después sigue por su camino, tramo por tramo`, malT.map(p => [p.k, p.tramos.map(t => t.d), p.resp.d])]);
+      if (n === 1 || n === 3 || n === 4) {
+        const salidas = al.map(p => p.tramos[0].d);
+        const juntas = salidas.some((d, i) => i > 0 && d - salidas[i - 1] < 250);
+        r.push([!juntas, `paso ${n}: salen de la fila uno por uno, los de adelante primero`, salidas]);
+      }
+    }
+
+    /* ── el vasito: las gotas que tiene dentro son las que dice ── */
+    const v = x.vasito;
+    r.push([v.ve === (n >= 2), `paso ${n}: el vasito ${n >= 2 ? 'está' : 'todavía no está'}`, v.ve]);
+    if (v.ve) {
+      const adentro = v.gotas.filter(g => g.ve && dentro([g.c.x, g.c.y], v.caja, -0.5)).length;
+      const cuentas = v.cuentas.filter(q => q.ve);
+      r.push([adentro === (llueve ? 3 : 0), `paso ${n}: el vasito tiene ${llueve ? 'gotas: llueve' : 'cero gotas: no llueve'}`, adentro]);
+      r.push([cuentas.length === 1 && cuentas[0].txt === `${adentro} ${RS.gotas}`, `paso ${n}: su rótulo dice las gotas que tiene dentro`, cuentas.map(q => q.txt)]);
+      if (n === 2) {
+        const llega = rob && rob.alto ? rob.alto.d + 800 : -1;
+        r.push([cerca(v.d, llega, 5) && cuentas.length === 1 && cuentas[0].d > v.d && rob.resp.d > cuentas[0].d, 'paso 2: el vasito sale cuando el robot llega a mirarlo, y el robot contesta después de contarlas', [v.d, llega, cuentas[0] && cuentas[0].d, rob && rob.resp.d]]);
+      }
+      const choca = [x.patio, x.aula, x.aviso.caja, x.rombo.caja].concat(visibles.filter(p => n >= 1).map(p => p.fig)).filter(c => monta(c, v.caja));
+      r.push([choca.length === 0, `paso ${n}: el vasito no queda encima de nada`, choca.length]);
+    }
+
+    /* ── los rótulos: ninguno encima de otro ── */
+    const rot = x.rotulos.filter(q => q.ve).concat(x.rotCaminos.filter(q => q.ve), dias, v.cuentas.filter(q => q.ve));
+    const malRot = rot.filter(q => q.caja.x0 < 0 || q.caja.x1 > 320 || q.caja.y0 < 0 || q.caja.y1 > 256);
+    r.push([malRot.length === 0, `paso ${n}: todos los rótulos caben en el dibujo`, malRot.map(q => q.txt)]);
+    const encima = [];
+    for (let i = 0; i < rot.length; i++) for (let j = i + 1; j < rot.length; j++) if (monta(rot[i].caja, rot[j].caja)) encima.push([rot[i].txt, rot[j].txt]);
+    r.push([encima.length === 0, `paso ${n}: ningún rótulo se monta en otro`, encima]);
+    const rp = x.rotulos.find(q => q.k === 'patio'), ra = x.rotulos.find(q => q.k === 'aula');
+    r.push([rp.ve && rp.txt === RS.patio && ra.ve && ra.txt === RS.aula && Math.hypot(cen(rp.caja).x - pa.x0, cen(rp.caja).y - pa.y0) < 30 && cajaDentro(ra.caja, x.techo, 0.5),
+      `paso ${n}: el patio y el aula llevan su nombre, junto a ellos`, [rp.txt, ra.txt]]);
+
+    /* ── lo que cuenta el marcador ── */
+    const sitios = new Set(al.filter(p => p.resp.ve).map(p => dentro(p.pies, au, 0) ? 'aula' : dentro(p.pies, pa, 0) ? 'patio' : 'otro'));
+    const cifraEspera = n === 0 ? x.lluvia.gotas : n === 2 ? v.gotas.filter(g => g.ve).length : sitios.size;
+    r.push([+e.cifra === cifraEspera, `paso ${n}: el marcador dice ${e.cifra} y en el dibujo se cuentan ${cifraEspera}`, [e.cifra, cifraEspera]]);
+    if (n === 1) {
+      const veces = (e.texto.match(new RegExp('\\b' + RS.cuatro + '\\b', 'gi')) || []).length;
+      r.push([veces === 2, 'paso 1: la frase cuenta los que dijeron que sí y los que dijeron que no, como el dibujo', veces]);
+    }
+    const FRASE = L === 'en'
+      ? [null, null, /answers no/, /answers no/, /answers yes/, null]
+      : [null, null, /contesta que no/, /contestan que no/, /contestan que s[ií]/, null];
+    if (FRASE[n]) r.push([FRASE[n].test(e.texto), `paso ${n}: la frase dice lo que contestan en el dibujo`, e.texto]);
+    if (n === 3) r.push([new RegExp(RS.patio).test(e.texto), 'paso 3: la frase dice a dónde va la clase: al patio', e.texto]);
     return r;
   },
   /* El Pensamiento Computacional: las baleadas de Kenia.
@@ -10012,10 +10290,24 @@ function frases(t) {
         tras: !!sit && sit.nextElementSibling === raiz.closest('[data-animacion]'),
         img: svg && svg.getAttribute('role') === 'img' && (svg.getAttribute('aria-label') || '').length > 10,
         vivo: raiz.querySelector('.am-texto').getAttribute('aria-live') === 'polite',
-        pasos: raiz.amControl.pasos
+        pasos: raiz.amControl.pasos,
+        /* el viewBox y lo que de verdad se pinta */
+        vista: (function () {
+          const vb = (svg.getAttribute('viewBox') || '').trim().split(/[\s,]+/).map(Number);
+          const r = svg.getBoundingClientRect(), esc = raiz.querySelector('.am-escenario').getBoundingClientRect();
+          return { vb: svg.getAttribute('viewBox'), bien: vb.length === 4 && vb.every(isFinite) && vb[2] > 0 && vb[3] > 0,
+            prop: vb[2] > 0 && vb[3] > 0 ? (r.width / r.height) / (vb[2] / vb[3]) : 0,
+            dentro: r.left >= esc.left - 1 && r.right <= esc.right + 1 && r.top >= esc.top - 1 && r.bottom <= esc.bottom + 1 };
+        })()
       };
     }, m.id);
     ok(base.montada, 'el aparato se montó (la frase de reserva ya no está)');
+    /* ⚠️ El dibujo se ve entero. En Condicionales se le puso a una constante
+       nueva el mismo nombre que al alto del dibujo, y el viewBox quedó en
+       «0 0 320 [object Object]»: el dibujo salió recortado a 150 px, y las
+       comprobaciones de la escena, que miden en coordenadas del dibujo,
+       pasaban todas. */
+    ok(base.vista.bien && Math.abs(base.vista.prop - 1) < 0.02 && base.vista.dentro, 'el dibujo se ve entero, con la proporción de su vista', base.vista);
     ok(base.tras, 'la tarjeta va justo después de la historia');
     ok(base.img && base.vivo, 'el dibujo tiene su descripción y la frase se anuncia');
 

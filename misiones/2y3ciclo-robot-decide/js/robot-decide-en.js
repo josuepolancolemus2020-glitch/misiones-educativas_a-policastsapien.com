@@ -101,6 +101,13 @@
         'false</strong>, with no middle ground, and that is the difference between a robot that obeys and forty-three ' +
         'people who interpret.</div></div>',
 
+      an: '👀 Watch what each one does with the notice',
+      anr:
+        'The notice said «if it rains, P.E. is held indoors». On Monday it was cloudy and not a single drop fell: ' +
+        'four students said yes and stayed in the classroom, and four said no and went out to the yard. The robot ' +
+        'counts the drops in a cup: since none falls, it answers no. When the question can only be answered yes or ' +
+        'no, everyone takes the same path.',
+
       a1:
         '<h2>🔀 Deciding according to the situation</h2>' +
         '<p>Every day we <strong>make decisions</strong> according to what is happening: <strong>IF</strong> it rains ' +
@@ -485,42 +492,42 @@
       ],
 
       evalTFBank: [
-        { q: 'It rained on the cloudy Monday.', a: false },
-        { q: 'The whole class understood the teacher’s notice the same way.', a: false },
-        { q: 'Rain is an example of an everyday condition.', a: true },
-        { q: 'The same question can have different answers on different days.', a: true },
-        { q: 'Everyday decisions also depend on yes-or-no questions.', a: true },
-        { q: 'A conditional may have no branch for the «no».', a: true },
-        { q: 'The robot guesses which branch suits it.', a: false },
-        { q: 'In daily life we do not use conditionals.', a: false },
+        { q: 'TURN RIGHT moves the robot to another square.', a: false },
+        { q: 'A list of orders like «FORWARD, FORWARD, TURN» is already a conditional.', a: false },
+        { q: '«Is the door open?» can be the condition of a conditional.', a: true },
+        { q: 'If the program does not have the DELIVER instruction, the robot does not deliver the message.', a: true },
+        { q: 'In the Lab, if the robot goes off the map, the program stops.', a: true },
+        { q: 'With «IF I have homework → I do it first, ELSE → I go out to play», on a day with homework I do it first.', a: true },
+        { q: 'With «IF it is hot → I open the window, ELSE → I close it», on a cold day I open the window.', a: false },
+        { q: 'In «IF the pot is hot → I take it off the fire», the condition is «I take it off the fire».', a: false },
         { q: 'The order of several questions in a row can change the decision.', a: true },
-        { q: 'Forty-three people interpret; a robot obeys.', a: true }
+        { q: 'The robot carries out the instructions of its program one after another.', a: true }
       ],
 
       evalMCBank: [
         { q: 'IF there is a wall ahead THEN turn right, ELSE go forward. The robot has NO wall ahead. What does it do?', o: ['It turns right', 'It goes forward', 'It stops', 'It turns left'], a: 1 },
         { q: 'What is a conditional?', o: ['a) A list of steps that are always the same', 'b) A 90° turn', 'c) An instruction that makes it decide according to a condition', 'd) A map of the village'], a: 2 },
-        { q: 'What was missing from the teacher’s notice?', o: ['a) An exact time', 'b) A place', 'c) More students', 'd) Saying what to do if it was only cloudy'], a: 3 },
-        { q: 'What does the robot read to know which branch to take?', o: ['a) The robot’s color', 'b) The final square', 'c) The answer to the question', 'd) The name of the program'], a: 2 },
+        { q: 'Which of these questions is answered only with yes or no?', o: ['a) What time is it?', 'b) How old are you?', 'c) What color is your house?', 'd) Is there water in the tank?'], a: 3 },
+        { q: 'With «IF it is night → I turn on the light, ELSE → I leave it off», it just got dark. What do I do?', o: ['a) I leave it off', 'b) I go out to look', 'c) I turn on the light', 'd) I do both things'], a: 2 },
         { q: '«IF green → go, ELSE → stay still». On a red light, the robot…', o: ['a) Goes anyway', 'b) Stays still', 'c) Turns', 'd) Delivers'], a: 1 },
-        { q: 'Which one of these is a yes-or-no question?', o: ['a) «Turn right»', 'b) «Is it raining?»', 'c) «Deliver the message»', 'd) «Walk three steps»'], a: 1 },
-        { q: 'Which class was lost on Monday?', o: ['a) Math', 'b) Physical Education', 'c) Spanish', 'd) Science'], a: 1 },
+        { q: 'Which word goes before what is done when the answer is NO?', o: ['a) THEN', 'b) ELSE', 'c) IF', 'd) FORWARD'], a: 1 },
+        { q: 'With «IF the store is open → I buy the bread, ELSE → I come back tomorrow», the store is closed. What do I do?', o: ['a) I buy the bread', 'b) I come back tomorrow', 'c) Both things', 'd) I take the bread anyway'], a: 1 },
         { q: '«IF it reached the house → DELIVER, ELSE → …». What does it do if it has not arrived yet?', o: ['a) It keeps walking', 'b) It delivers anyway', 'c) It switches off', 'd) It goes back to the start'], a: 0 },
-        { q: 'In the robot, who answers the question of the condition?', o: ['a) The programmer, out loud', 'b) The battery', 'c) The map', 'd) A part that measures what is around it'], a: 3 },
-        { q: 'What does the robot do with the branch that does not apply?', o: ['a) It does not run it', 'b) It runs it later', 'c) It runs it first', 'd) It deletes it'], a: 0 }
+        { q: 'In a conditional, what is written right after the word IF?', o: ['a) What is done if the answer is no', 'b) The word ELSE', 'c) The robot’s name', 'd) The condition'], a: 3 },
+        { q: 'With «IF the bell rings → I go out to recess, ELSE → I stay in class», how many of the two things do I do?', o: ['a) Only one', 'b) Both, one after the other', 'c) Neither', 'd) Both at the same time'], a: 0 }
       ],
 
       evalCPBank: [
-        { q: 'The teacher said: if it rains, the class is held ___.', a: 'inside', acc: ['inside', 'indoors'] },
-        { q: '«Cloudy» is not «___».', a: 'raining', acc: ['raining', 'rain'] },
+        { q: 'With «IF there is a wall ahead → FORWARD», the robot ___ into the wall.', a: 'crashes', acc: ['crashes', 'crash', 'bumps', 'bump', 'runs', 'smashes'] },
+        { q: 'In a conditional with no ELSE, when the answer is no, the robot does ___.', a: 'nothing', acc: ['nothing'] },
         { q: 'On a green light, the robot ___ the street.', a: 'crosses', acc: ['crosses'] },
         { q: 'IF it is raining → I take an umbrella, ELSE → I take a ___.', a: 'cap', acc: ['cap', 'hat'] },
-        { q: 'On Monday it dawned cloudy and ___.', a: 'windy', acc: ['windy'] },
-        { q: 'A condition is true or ___, with no middle ground.', a: 'false', acc: ['false'] },
-        { q: 'Half of the class went out to the ___.', a: 'yard', acc: ['yard', 'playground', 'patio'] },
-        { q: 'The whole class was lost ___ about who had understood.', a: 'arguing', acc: ['arguing'] },
+        { q: 'An IF… THEN… ELSE conditional has ___ parts.', a: 'three', acc: ['three', '3'] },
+        { q: 'A conditional can go at the beginning, in the middle or at the ___ of a program.', a: 'end', acc: ['end'] },
+        { q: 'If the robot must go around a wall and the condition asks whether the light is green, the condition is ___.', a: 'wrong', acc: ['wrong', 'incorrect', 'mistaken'] },
+        { q: 'In the Lab, the program runs when you tap the ▶ ___ button.', a: 'Run', acc: ['run'] },
         { q: 'The question of the conditional never moves the robot: it only ___.', a: 'decides', acc: ['decides'] },
-        { q: 'A robot does not interpret: it ___.', a: 'obeys', acc: ['obeys'] }
+        { q: 'A mistake in a program is called a ___.', a: 'bug', acc: ['bug', 'bugs'] }
       ],
 
       evalPRBank: [

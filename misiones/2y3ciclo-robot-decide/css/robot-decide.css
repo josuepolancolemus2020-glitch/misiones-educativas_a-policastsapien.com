@@ -541,3 +541,47 @@ body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* ── La animación del aviso (js/animacion-aviso.js) ─────────────────────
+   Los caminos, el cruce y lo que se escribe encima llevan los colores de la
+   misión y se tiñen con la tarjeta. Las nubes, el pasto, el aula, el aviso,
+   el vasito, la gente y el robot son cosas, y tienen su color en las dos
+   pantallas. Las respuestas van en papel blanco con letra oscura: se leen
+   igual sobre el pasto, dentro del aula y en la pantalla oscura. */
+#amAviso .dc-nube { fill: #eef2f5; stroke: #aab6bf; stroke-width: 1; }
+#amAviso .dc-nube-oscura { fill: #7d8a96; stroke: #56616a; stroke-width: 1; }
+#amAviso .dc-viento { fill: none; stroke: var(--gray, #636e72); stroke-width: 1.4; stroke-linecap: round; }
+#amAviso .dc-patio { fill: #a5d17a; stroke: #6a9f3a; stroke-width: 1.4; }
+#amAviso .dc-patio-raya { fill: none; stroke: #f1f8e9; stroke-width: 1.4; }
+#amAviso .dc-gota { fill: none; stroke: #3d85c6; stroke-width: 1.6; stroke-linecap: round; }
+#amAviso .dc-aula-fondo { fill: #fbeee0; }
+#amAviso .dc-aula-pared { fill: none; stroke: #8d6e63; stroke-width: 2; stroke-linecap: round; }
+#amAviso .dc-techo { fill: #b03a2e; stroke: #7b241c; stroke-width: 1; stroke-linejoin: round; }
+#amAviso .dc-techo-txt { fill: #ffffff; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amAviso .dc-camino { fill: none; stroke: var(--border, #bce8f1); stroke-width: 12; stroke-linecap: round; }
+#amAviso .dc-guia { fill: none; stroke: var(--gray, #636e72); stroke-width: 1.6; stroke-dasharray: 4 4; }
+#amAviso .dc-activo, #amAviso .dc-activo-punta { fill: none; stroke: var(--am-pri); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+#amAviso .dc-rombo { fill: var(--card, #fff); stroke: var(--am-pri); stroke-width: 2; stroke-linejoin: round; }
+#amAviso .dc-pregunta { fill: var(--dark, #113a44); font-family: 'Fredoka', sans-serif; font-weight: 700; }
+#amAviso .dc-poste { fill: none; stroke: #8d6e63; stroke-width: 2; }
+#amAviso .dc-vaso { fill: #e3f2fd; stroke: #546e7a; stroke-width: 1.4; stroke-linejoin: round; }
+#amAviso .dc-gota-vaso { fill: #1e6fd0; }
+#amAviso .dc-aviso { fill: #fffdf5; stroke: #8a7f6a; stroke-width: 1.2; }
+#amAviso .dc-chincheta { fill: #c62828; }
+#amAviso .dc-aviso-tit { fill: #6d5d3f; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amAviso .dc-aviso-txt { fill: #1b2838; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amAviso .dc-pantalon { fill: #34495e; }
+#amAviso .dc-camisa { stroke: rgba(0, 0, 0, 0.28); stroke-width: 0.6; }
+#amAviso .dc-cara { stroke: rgba(0, 0, 0, 0.22); stroke-width: 0.5; }
+#amAviso .dc-pelo { fill: #2b1d14; }
+#amAviso .dc-etiqueta { fill: #ffffff; stroke: #1b2838; stroke-width: 0.9; }
+#amAviso .dc-etiqueta-txt { fill: #1b2838; font-family: 'Fredoka', sans-serif; font-weight: 700; }
+#amAviso .dc-rueda { fill: #37474f; }
+#amAviso .dc-robot { fill: #0e7490; stroke: #ffffff; stroke-width: 1.2; }
+#amAviso .dc-ojo { fill: #ffffff; }
+#amAviso .dc-antena { fill: none; stroke: #37474f; stroke-width: 1.2; }
+#amAviso .dc-antena-bola { fill: #f59e0b; }
+[data-theme="dark"] #amAviso .dc-gota { stroke: #8cc4f0; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) #amAviso .dc-gota { stroke: #8cc4f0; }
+}

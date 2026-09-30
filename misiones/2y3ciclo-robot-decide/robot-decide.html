@@ -27,6 +27,9 @@
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
 <link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La animación que va después de la historia: el aparato es compartido y
+     se tiñe con el color de la misión, así que va DESPUÉS de su CSS. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -72,6 +75,15 @@
     <div class="tip"><span class="ti">❓</span><div>«Nublado» no es «llueve». Una <strong>condición</strong>
     solo sirve si lo que dice es <strong>cierto o falso</strong>, sin término medio, y ahí está la
     diferencia entre un robot que obedece y cuarenta y tres personas que interpretan.</div></div>
+  </div>
+  <div class="card ac-teal" data-animacion>
+    <h2 data-i18n="an">👀 Mira qué hace cada uno con el aviso</h2>
+    <div id="amAviso">
+      <p data-i18n="anr">El aviso decía «si llueve, Educación Física va adentro». El lunes estaba nublado y no
+      cayó ni una gota: cuatro alumnos dijeron que sí y se quedaron en el aula, y cuatro dijeron que no y
+      salieron al patio. El robot cuenta las gotas en un vasito: como no cae ninguna, contesta que no. Cuando
+      la pregunta se contesta solo con sí o con no, todos toman el mismo camino.</p>
+    </div>
   </div>
   <div class="card ac-teal" data-i18n="a1">
     <h2>🔀 Decidir según la situación</h2>
@@ -669,6 +681,8 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-aviso.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

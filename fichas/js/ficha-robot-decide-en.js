@@ -145,35 +145,35 @@
 
         '<h3>I. Fill in the blanks <span class="val">(Value: 10 points each)</span></h3>' +
         '<ol>' +
-        '<li>The teacher said: if it rains, the class is held <span class="linea-resp"></span>.</li>' +
-        '<li>«Cloudy» is not «<span class="linea-resp"></span>».</li>' +
+        '<li>With «IF there is a wall ahead → FORWARD», the robot <span class="linea-resp"></span> into the wall.</li>' +
+        '<li>In a conditional with no ELSE, when the answer is no, the robot does <span class="linea-resp"></span>.</li>' +
         '<li>On a green light, the robot <span class="linea-resp"></span> the street.</li>' +
         '<li>IF it is raining → I take an umbrella, ELSE → I take a <span class="linea-resp"></span>.</li>' +
-        '<li>On Monday it dawned cloudy and <span class="linea-resp"></span>.</li>' +
-        '<li>A condition is true or <span class="linea-resp"></span>, with no middle ground.</li>' +
-        '<li>Half of the class went out to the <span class="linea-resp"></span>.</li>' +
-        '<li>The whole class was lost <span class="linea-resp"></span> about who had understood.</li>' +
+        '<li>An IF… THEN… ELSE conditional has <span class="linea-resp"></span> parts.</li>' +
+        '<li>A conditional can go at the beginning, in the middle or at the <span class="linea-resp"></span> of a program.</li>' +
+        '<li>If the robot must go around a wall and the condition asks whether the light is green, the condition is <span class="linea-resp"></span>.</li>' +
+        '<li>In the Lab, the program runs when you tap the ▶ <span class="linea-resp"></span> button.</li>' +
         '<li>The question of the conditional never moves the robot: it only <span class="linea-resp"></span>.</li>' +
-        '<li>A robot does not interpret: it <span class="linea-resp"></span>.</li>' +
+        '<li>A mistake in a program is called a <span class="linea-resp"></span>.</li>' +
         '</ol>' +
 
         '<h3>II. True or False <span class="val">(Value: 10 points each)</span></h3>' +
         '<ol>' +
-        '<li>____ Rain is an example of an everyday condition.</li>' +
-        '<li>____ It rained on the cloudy Monday.</li>' +
-        '<li>____ The same question can have different answers on different days.</li>' +
-        '<li>____ The whole class understood the teacher’s notice the same way.</li>' +
-        '<li>____ Everyday decisions also depend on yes-or-no questions.</li>' +
-        '<li>____ The robot guesses which branch suits it.</li>' +
-        '<li>____ A conditional may have no branch for the «no».</li>' +
-        '<li>____ In daily life we do not use conditionals.</li>' +
+        '<li>____ «Is the door open?» can be the condition of a conditional.</li>' +
+        '<li>____ TURN RIGHT moves the robot to another square.</li>' +
+        '<li>____ If the program does not have the DELIVER instruction, the robot does not deliver the message.</li>' +
+        '<li>____ A list of orders like «FORWARD, FORWARD, TURN» is already a conditional.</li>' +
+        '<li>____ In the Lab, if the robot goes off the map, the program stops.</li>' +
+        '<li>____ With «IF it is hot → I open the window, ELSE → I close it», on a cold day I open the window.</li>' +
+        '<li>____ With «IF I have homework → I do it first, ELSE → I go out to play», on a day with homework I do it first.</li>' +
+        '<li>____ In «IF the pot is hot → I take it off the fire», the condition is «I take it off the fire».</li>' +
         '<li>____ The order of several questions in a row can change the decision.</li>' +
-        '<li>____ Forty-three people interpret; a robot obeys.</li>' +
+        '<li>____ The robot carries out the instructions of its program one after another.</li>' +
         '</ol>',
 
       /* ═══════════ PÁGINA 5 ═══════════ */
       p5:
-        '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span>. Circle the correct letter.</h3>' +
+        '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span>. Fill in the circle of the letter of the correct answer.</h3>' +
 
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">1</span>IF there is a wall ahead THEN turn right, ELSE go forward. The robot has NO wall ahead. What does it do?</div>' +
@@ -194,21 +194,21 @@
         '</div>' +
         '</div>' +
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">3</span>What was missing from the teacher’s notice?</div>' +
+        '<div class="preg-q"><span class="preg-n">3</span>Which of these questions is answered only with yes or no?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> An exact time</span>' +
-        '<span class="op"><i>b</i> A place</span>' +
-        '<span class="op"><i>c</i> More students</span>' +
-        '<span class="op"><i>d</i> Saying what to do if it was only cloudy</span>' +
+        '<span class="op"><i>a</i> What time is it?</span>' +
+        '<span class="op"><i>b</i> How old are you?</span>' +
+        '<span class="op"><i>c</i> What color is your house?</span>' +
+        '<span class="op"><i>d</i> Is there water in the tank?</span>' +
         '</div>' +
         '</div>' +
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">4</span>What does the robot read to know which branch to take?</div>' +
+        '<div class="preg-q"><span class="preg-n">4</span>With «IF it is night → I turn on the light, ELSE → I leave it off», it just got dark. What do I do?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> The robot’s color</span>' +
-        '<span class="op"><i>b</i> The final square</span>' +
-        '<span class="op"><i>c</i> The answer to the question</span>' +
-        '<span class="op"><i>d</i> The name of the program</span>' +
+        '<span class="op"><i>a</i> I leave it off</span>' +
+        '<span class="op"><i>b</i> I go out to look</span>' +
+        '<span class="op"><i>c</i> I turn on the light</span>' +
+        '<span class="op"><i>d</i> I do both things</span>' +
         '</div>' +
         '</div>' +
         '<div class="preg">' +
@@ -221,21 +221,21 @@
         '</div>' +
         '</div>' +
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">6</span>Which one of these is a yes-or-no question?</div>' +
+        '<div class="preg-q"><span class="preg-n">6</span>Which word goes before what is done when the answer is NO?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> «Turn right»</span>' +
-        '<span class="op"><i>b</i> «Is it raining?»</span>' +
-        '<span class="op"><i>c</i> «Deliver the message»</span>' +
-        '<span class="op"><i>d</i> «Walk three steps»</span>' +
+        '<span class="op"><i>a</i> THEN</span>' +
+        '<span class="op"><i>b</i> ELSE</span>' +
+        '<span class="op"><i>c</i> IF</span>' +
+        '<span class="op"><i>d</i> FORWARD</span>' +
         '</div>' +
         '</div>' +
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">7</span>Which class was lost on Monday?</div>' +
+        '<div class="preg-q"><span class="preg-n">7</span>With «IF the store is open → I buy the bread, ELSE → I come back tomorrow», the store is closed. What do I do?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> Math</span>' +
-        '<span class="op"><i>b</i> Physical Education</span>' +
-        '<span class="op"><i>c</i> Spanish</span>' +
-        '<span class="op"><i>d</i> Science</span>' +
+        '<span class="op"><i>a</i> I buy the bread</span>' +
+        '<span class="op"><i>b</i> I come back tomorrow</span>' +
+        '<span class="op"><i>c</i> Both things</span>' +
+        '<span class="op"><i>d</i> I take the bread anyway</span>' +
         '</div>' +
         '</div>' +
         '<div class="preg">' +
@@ -248,21 +248,21 @@
         '</div>' +
         '</div>' +
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">9</span>In the robot, who answers the question of the condition?</div>' +
+        '<div class="preg-q"><span class="preg-n">9</span>In a conditional, what is written right after the word IF?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> The programmer, out loud</span>' +
-        '<span class="op"><i>b</i> The battery</span>' +
-        '<span class="op"><i>c</i> The map</span>' +
-        '<span class="op"><i>d</i> A part that measures what is around it</span>' +
+        '<span class="op"><i>a</i> What is done if the answer is no</span>' +
+        '<span class="op"><i>b</i> The word ELSE</span>' +
+        '<span class="op"><i>c</i> The robot’s name</span>' +
+        '<span class="op"><i>d</i> The condition</span>' +
         '</div>' +
         '</div>' +
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">10</span>What does the robot do with the branch that does not apply?</div>' +
+        '<div class="preg-q"><span class="preg-n">10</span>With «IF the bell rings → I go out to recess, ELSE → I stay in class», how many of the two things do I do?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> It does not run it</span>' +
-        '<span class="op"><i>b</i> It runs it later</span>' +
-        '<span class="op"><i>c</i> It runs it first</span>' +
-        '<span class="op"><i>d</i> It deletes it</span>' +
+        '<span class="op"><i>a</i> Only one</span>' +
+        '<span class="op"><i>b</i> Both, one after the other</span>' +
+        '<span class="op"><i>c</i> Neither</span>' +
+        '<span class="op"><i>d</i> Both at the same time</span>' +
         '</div>' +
         '</div>',
 
@@ -284,9 +284,8 @@
         '</table>' +
 
         '<div class="felic">' +
-        '🏅 <b>Congratulations! You have completed the Mission Conditionals: the Robot Decides.</b> Now you know that a conditional ' +
-        'makes the robot decide with a yes-or-no question, that only one branch runs (THEN or ELSE), that the sensors ' +
-        'answer the condition, and how to hunt down conditional bugs. Keep going along the Code Path! 🚦🤖' +
+        '🏅 <b>Congratulations! You finished the test of the Mission Conditionals: the Robot Decides.</b> Before you hand it in, ' +
+        'check your answers one by one. Keep going along the Code Path! 🤖💻' +
         '</div>' +
 
         '<h2>📏 Assessment Rubric</h2>' +
@@ -307,7 +306,7 @@
         '<p style="font-size:10pt;color:var(--gris);">This sheet is printed <strong>separately</strong>: it is only for the teacher or for guided self-assessment.</p>' +
 
         '<div class="pauta">' +
-        '<div><span class="pt">I. Fill in:</span> 1. inside &nbsp; 2. raining &nbsp; 3. crosses &nbsp; 4. cap &nbsp; 5. windy &nbsp; 6. false &nbsp; 7. yard &nbsp; 8. arguing &nbsp; 9. decides &nbsp; 10. obeys</div>' +
+        '<div><span class="pt">I. Fill in:</span> 1. crashes &nbsp; 2. nothing &nbsp; 3. crosses &nbsp; 4. cap &nbsp; 5. three &nbsp; 6. end &nbsp; 7. wrong &nbsp; 8. Run &nbsp; 9. decides &nbsp; 10. bug</div>' +
         '<div><span class="pt">II. True or False:</span> 1T, 2F, 3T, 4F, 5T, 6F, 7T, 8F, 9T, 10T</div>' +
         '<div><span class="pt">III. Multiple choice:</span> 1b, 2c, 3d, 4c, 5b, 6b, 7b, 8a, 9d, 10a</div>' +
         '<div><span class="pt">IV. Matching:</span> 1C, 2H, 3E, 4I, 5A, 6G, 7J, 8B, 9F, 10D</div>' +

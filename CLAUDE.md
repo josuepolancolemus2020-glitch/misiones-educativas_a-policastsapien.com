@@ -10852,6 +10852,148 @@ Salió roja con cada una.
 Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
 de 83 ms. La baleada, medida el mismo día, va a 59 y 100 ms.
 
+### La quincuagésima primera: Condicionales: el Robot Decide, y lo que enseñó
+
+La tercera de la Ruta del Código es **Condicionales: el Robot Decide**
+(`misiones/2y3ciclo-robot-decide/`, `js/animacion-aviso.js`), y es bilingüe. La
+historia es la del aviso del maestro: «si llueve, Educación Física se hace
+adentro». El lunes amaneció nublado y con viento, pero no llovió; la mitad del
+grado se quedó en el aula y la otra mitad salió al patio, y se perdió la clase
+entera discutiendo quién había entendido bien. La historia dice que «nublado»
+no es «llueve»: una condición solo sirve si se contesta con sí o con no. La
+animación pone a la izquierda la fila de la clase y el aviso; en medio, el
+cruce, un rombo con la pregunta, del que salen dos caminos: el del «no» sube al
+patio y el del «sí» baja al aula. Arriba, el cielo:
+
+- el lunes, nublado y con viento, sin una gota: ¿por cuál camino se va la
+  clase?;
+- cada uno contesta a su manera al llegar al cruce: cuatro miran las nubes y
+  dicen que sí, cuatro ven que no cae agua y dicen que no. La clase queda
+  partida en dos;
+- llega el robot, se para antes del cruce y cuenta las gotas en un vasito:
+  cero. Contesta que no y va al patio, como siempre;
+- el maestro cambia la pregunta por una que no se presta a dudas, «si caen
+  gotas»: todos miran el vasito, contestan que no y la clase va junta;
+- otro día sí caen gotas, tres en el vasito: todos contestan que sí y van
+  adentro, y el camino del «no» queda con raya cortada;
+- y la pregunta es del alumno: un aviso de su escuela que se lea de dos
+  maneras, escrito con una pregunta de sí o no.
+
+Ocho cosas que valen para las que siguen:
+
+1. ⚠️ **La historia no dice que el maestro se equivocó de palabra.** «¿Llueve?»
+   ya es una pregunta de sí o no, y ese lunes la respuesta era no: lo que partió
+   la clase es que cada uno la contestó mirando otra cosa, las nubes o el agua
+   que no caía. Por eso el robot no cambia la pregunta, la contesta contando
+   gotas, y el arreglo del paso 3 es escribirla como el robot la contesta.
+2. ⚠️ **Lo que contesta cada uno dice a dónde va, y la sonda lo cruza.** Cada
+   uno lleva escrita su respuesta encima de la cabeza; la sonda la lee, sigue
+   su camino y comprueba que pasó por el cruce, tomó el camino de lo que
+   contestó y quedó DENTRO de ese sitio. Y el vasito cuenta de verdad: tiene
+   dentro las gotas que dice su rótulo.
+3. ⚠️ **Lo que contesta una pregunta se para ANTES de ella.** El robot se
+   paraba en el cruce, encima del rombo, y tapaba «¿Llueve?» justo mientras la
+   contestaba. Además pasaba por encima de los niños que ya estaban en el
+   patio. Ahora se para antes del cruce, mira el vasito y después sigue, y se
+   dibuja debajo de la clase: lo que cruza entre la gente pasa por detrás. Las
+   dos cosas se vieron con fotos a medio viaje, con la sonda en verde; ahora la
+   sonda mide que se pare antes del cruce sin tapar la pregunta, y que conteste
+   y siga después.
+4. ⚠️ **Una constante nueva no se llama como una que ya está.** La parada se
+   llamó primero `ALTO`, que ya era el alto del dibujo: el `viewBox` quedó en
+   «0 0 320 [object Object]» y el dibujo salió recortado a 150 px. Las
+   comprobaciones de la escena miden en coordenadas del dibujo, así que pasaban
+   todas. Ahora se llama `PARADA`, y la sonda comprueba en TODAS las escenas
+   que el dibujo se vea entero, con la proporción de su vista. Se comprobó al
+   revés devolviéndole el nombre: sale roja.
+5. **Muchas piezas iguales y quietas van en un solo trazo.** La lluvia eran
+   unas ciento setenta rayitas, cada una con su trazo, y mientras la clase
+   camina el teléfono repinta el dibujo en cada cuadro: era el cuadro más lento
+   de la escena. Ahora es un solo `path` con un pedacito por gota, y la sonda
+   cuenta los pedacitos.
+6. **Volviendo con «Atrás», el vasito ya estaba puesto.** El paso 2 cuenta su
+   historia cada vez que se entra en él, y el vasito tiene que salir cuando el
+   robot llega a mirarlo: al entrar desde el paso 3 se quita de golpe. Se vio
+   con fotos a medio viaje yendo hacia atrás.
+7. ⚠️ **La historia y la animación contestaban veintidós de las treinta
+   preguntas de la conceptual.** La historia, si el lunes llovió, si todo el
+   grado entendió igual, qué clase se perdió, qué le faltó al aviso, el viento,
+   el patio, adentro, discutiendo, que «nublado» no es «llueve» y que una
+   condición es cierta o falsa. La animación, qué lee el robot para elegir su
+   camino, quién contesta la pregunta (una pieza que mide lo que hay
+   alrededor, que es el vasito), qué hace con el camino que no le toca, si
+   adivina y que obedece. Ahora preguntan lo que la misión enseña, con casos
+   nuevos: la ventana, la tarea, la luz, la tienda, el timbre, las tres partes,
+   el SINO, el Laboratorio y el bug. Van en la misión, en su `-en.js` y en las
+   dos fichas, con la respuesta en el mismo lugar, y las fichas siguen en siete
+   hojas en los dos idiomas. De paso, la instrucción de la selección múltiple
+   de la ficha en inglés quedó como la española: «Fill in the circle of the
+   letter of the correct answer.»
+8. **Nada se dice solo con color.** Cada respuesta va escrita, cada camino
+   lleva su «sí» o su «no», y el que nadie toma queda con raya cortada. Y la
+   animación no nombra la condición, ni las ramas, ni el sensor, ni ninguna
+   palabra del pseudocódigo (SI, ENTONCES, SINO): el aviso está escrito como lo
+   escribe un maestro.
+
+La sonda de esta escena **no le cree nada a la escena**. Comprueba, en español
+y en inglés:
+
+- que la clase sean ocho y en el paso 0 esperen en fila, antes del cruce, sin
+  contestar;
+- que la fila llegue al cruce y los dos caminos salgan de él, el del «no» al
+  patio y el del «sí» al aula, cada uno con su rótulo al lado;
+- que salgan de la fila uno por uno, los de adelante primero, contesten al
+  llegar al cruce y sigan tramo por tramo por el camino de lo que contestaron,
+  hasta quedar dentro de ese sitio;
+- que el lunes contesten cuatro que sí y cuatro que no, y que el marcador y la
+  frase digan lo que se ve;
+- que el vasito tenga dentro las gotas que dice su rótulo, salga cuando el
+  robot llega a mirarlo, y que el robot conteste lo que dicen las gotas;
+- que el robot se pare antes del cruce, sobre su camino y sin tapar la
+  pregunta;
+- que el aviso y la pregunta del cruce digan lo que tienen que decir, una sola
+  vez, y quepan en su papel y en su rombo;
+- que la lluvia caiga en todo el dibujo, y solo el día de lluvia;
+- que el camino que nadie toma vaya con raya cortada, y que nadie quede encima
+  de nadie;
+- y que no salga ninguna palabra de lo que pregunta la prueba.
+
+Se comprobó al revés con veintinueve averías, plantadas una por una:
+
+- un alumno que dijo «sí» quedando en el patio;
+- el lunes contestando cinco que sí;
+- uno sin pasar por el cruce;
+- el camino del «sí» llegando al patio;
+- la respuesta saliendo antes de llegar al cruce;
+- los tramos moviéndose todos a la vez;
+- dos saliendo de la fila al mismo tiempo;
+- lloviendo el lunes, y lloviendo también en el paso 0;
+- el vasito diciendo 0 con gotas dentro, y con gotas el lunes;
+- el robot contestando que sí el lunes;
+- el robot contestando antes de que salga el vasito;
+- el aviso diciendo otra cosa;
+- la pregunta del cruce sin cambiar con el aviso;
+- el camino del «no» lleno cuando nadie lo toma;
+- el marcador del paso 1 diciendo 1;
+- «condición» en una frase;
+- el rótulo «no» junto al camino del «sí»;
+- un alumno encima de otro;
+- la respuesta saliéndose del aula;
+- el robot llegando en el paso 1;
+- el día diciendo «Lunes» cuando llueve;
+- la pregunta saliéndose del rombo;
+- la lluvia cayendo solo en un rincón;
+- el robot parándose encima del cruce;
+- el robot siguiendo sin esperar su respuesta;
+- el robot yendo de un tirón, sin pararse;
+- la parada llamándose como el alto del dibujo.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 57 cuadros por segundo, y el peor cuadro
+sale entre 117 y 150 ms. El Robot Mensajero, medido el mismo día, va a 58 y
+117-133 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -10996,7 +11138,14 @@ Dos rótulos no van uno debajo del otro a menos de un renglón: se leen como un
 solo rótulo de dos renglones. El nombre de una casa va en la columna de su casa
 y pegado a ella: que sea el más cercano no basta. Y el id de la escena
 (`#amX`) es único en todo el catálogo: la sonda del navegador guarda lo que lee
-cada escena por su id, y la sonda estática no deja pasar uno repetido.
+cada escena por su id, y la sonda estática no deja pasar uno repetido. Lo que
+contesta una pregunta (una figura en un cruce) se para antes de ella, no
+encima, y lo que cruza entre otras figuras se dibuja debajo de ellas. Una
+constante nueva de la escena no se llama como una que ya existe (`ANCHO`,
+`ALTO`): el dibujo sale recortado y las comprobaciones de la escena, que miden
+en coordenadas del dibujo, no lo ven; la sonda comprueba en todas que el dibujo
+se vea entero, con la proporción de su vista. Y muchas piezas iguales que no se
+mueven una por una (la lluvia) van en un solo `path`.
 
 Si la misión es **bilingüe** (carga su `-en.js` y trae el botón 🌐), la escena
 lleva `bilingue: true`, `describe: { es, en }` e `idioma(lang, A)`, y sus
