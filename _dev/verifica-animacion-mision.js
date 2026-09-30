@@ -1712,6 +1712,77 @@ const LEER = `
       textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
     };
   };
+  window.__amExtra.amCuesta = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(m(el)); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function uno(sel) { return raiz.querySelector(sel); }
+    function todos(sel) { return [].slice.call(raiz.querySelectorAll(sel)); }
+    function demora(el) { return parseFloat(el.style.getPropertyValue('--d')) || 0; }
+    /* ¿Cae el punto (de la vista) dentro de lo pintado de la pieza? Se le
+       pregunta al navegador, en las coordenadas de la pieza. */
+    function dentro(el, p) {
+      var q = svg.createSVGPoint(); q.x = p[0]; q.y = p[1];
+      return el.isPointInFill(q.matrixTransform(m(el).inverse()));
+    }
+    var pulmones = todos('[data-pulmon]'), piernas = todos('[data-pierna]'), aire = uno('[data-aire]');
+    function cual(lista, atr, p) {
+      for (var i = 0; i < lista.length; i++) if (dentro(lista[i], p)) return lista[i].getAttribute(atr);
+      return '';
+    }
+    /* La punta de una flecha: el primer punto de su trazo es la punta y
+       los otros dos, la base. Sin expresiones regulares: esto vive en una
+       plantilla de texto. */
+    function punta(el) {
+      var t = el.getAttribute('d').split(' ');
+      var a = aVista(el, parseFloat(t[1]), parseFloat(t[2])), b = aVista(el, parseFloat(t[4]), parseFloat(t[5])), c = aVista(el, parseFloat(t[7]), parseFloat(t[8]));
+      return { punta: a, base: [(b[0] + c[0]) / 2, (b[1] + c[1]) / 2] };
+    }
+    return {
+      cabeza: caja(uno('[data-cabeza]')), marvin: caja(uno('[data-marvin]')), boca: caja(uno('[data-boca]')),
+      corazon: caja(uno('[data-corazon]')), aire: caja(aire),
+      pulmones: pulmones.map(function (p) { return { k: p.getAttribute('data-pulmon'), caja: caja(p) }; }),
+      piernas: piernas.map(function (p) { return { k: p.getAttribute('data-pierna'), caja: caja(p) }; }),
+      vasos: todos('[data-vaso]').map(function (g) {
+        var raya = g.querySelector('[data-raya]'), L = raya.getTotalLength(), a = raya.getPointAtLength(0), b = raya.getPointAtLength(L);
+        var pa = aVista(raya, a.x, a.y), pb = aVista(raya, b.x, b.y);
+        var f = punta(g.querySelector('path:not([data-raya])'));
+        return { k: g.getAttribute('data-vaso'), a: pa, b: pb, pulmonA: cual(pulmones, 'data-pulmon', pa), pulmonB: cual(pulmones, 'data-pulmon', pb),
+                 piernaA: cual(piernas, 'data-pierna', pa), piernaB: cual(piernas, 'data-pierna', pb), punta: f.punta, base: f.base };
+      }),
+      bolitas: todos('[data-oxigeno]').map(function (g0) {
+        var c = g0.querySelector('circle'), cx = +c.getAttribute('cx'), cy = +c.getAttribute('cy'), r = +c.getAttribute('r');
+        var fin = aVista(c, cx, cy), q = aVista(c, cx + r, cy);
+        return { cual: g0.getAttribute('data-oxigeno'), lado: g0.getAttribute('data-lado'), ve: vis(g0), dVer: demora(g0),
+                 sale: aVista(g0, cx, cy), enAire: dentro(aire, aVista(g0, cx, cy)), fin: fin, r: Math.hypot(q[0] - fin[0], q[1] - fin[1]),
+                 pulmon: cual(pulmones, 'data-pulmon', fin), pierna: cual(piernas, 'data-pierna', fin),
+                 tramos: [1, 2, 3, 4].map(function (t) {
+                   var g = g0.querySelector('[data-tramo="' + t + '"]'), p = aVista(g, cx, cy);
+                   return { p: p, d: demora(g), pulmon: cual(pulmones, 'data-pulmon', p), pierna: cual(piernas, 'data-pierna', p) };
+                 }) };
+      }),
+      relojes: { ve: vis(uno('[data-relojes]')) },
+      agujas: todos('[data-aguja]').map(function (a) {
+        return { k: a.getAttribute('data-aguja'), c: aVista(a, +a.getAttribute('x1'), +a.getAttribute('y1')),
+                 p: aVista(a, +a.getAttribute('x2'), +a.getAttribute('y2')), d: demora(a) };
+      }),
+      hilos: todos('[data-hilo]').map(function (l) {
+        return { k: l.getAttribute('data-hilo'), a: aVista(l, +l.getAttribute('x1'), +l.getAttribute('y1')), b: aVista(l, +l.getAttribute('x2'), +l.getAttribute('y2')) };
+      }),
+      rotulos: todos('[data-rotulo]').map(function (t) {
+        var g = t.closest('[data-reloj]');
+        return { k: t.getAttribute('data-rotulo'), ve: vis(t), dice: t.textContent, caja: caja(t), reloj: g ? g.getAttribute('data-reloj') : '' };
+      }),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   window.__amExtra.amFrascos = function (raiz) {
     var vis = window.__amVisible;
     var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
@@ -2189,6 +2260,156 @@ function superficieEn(poly, x) {
 }
 
 const ESCENAS = {
+  /* El Sistema Respiratorio y Circulatorio. «La cuesta de la pila».
+     ⚠️ Nada se le cree a la escena. Cada bolita de oxígeno se sigue tramo
+     por tramo en el dibujo: del aire a la boca, de la boca a un pulmón
+     (dentro de lo pintado: se le pregunta al navegador), del pulmón al
+     corazón y del corazón a una pierna; y cada tramo arranca cuando acabó
+     el anterior. Los caminos de la sangre se leen de punta a punta: la ida,
+     de cada pulmón al corazón y del corazón a cada pierna; la vuelta, de
+     cada pierna al corazón y del corazón a cada pulmón, con la flecha
+     hacia donde va. Las agujas se leen por su ángulo. Con eso se comprueba
+     lo que la historia dice: el oxígeno llega a los pulmones, pero a las
+     piernas lo lleva la sangre, y cuesta arriba llega más y las agujas se
+     van a «rápido». ⚠️ Y la prueba no se regala: ni un tramo del camino del
+     aire, ni un vaso, ni una parte de la sangre, ni lo que sale al soltar
+     el aire, ni «pecho», ni «pulso», ni un número. */
+  amCuesta(e, n) {
+    const x = e.extra, r = [];
+    const nb = t => String(t == null ? '' : t).replace(/ /g, ' ').trim();
+    const cen = c => [(c.x0 + c.x1) / 2, (c.y0 + c.y1) / 2];
+    const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+    const enCaja = (p, b, t) => p[0] >= b.x0 - t && p[0] <= b.x1 + t && p[1] >= b.y0 - t && p[1] <= b.y1 + t;
+    /* Lo que no depende del dibujo, primero. */
+    const dicho = [e.texto, e.cifra, e.palabras].concat(x.textos).map(nb).join(' | ').toLowerCase();
+    const EXACTAS = ['dióxido', 'carbono', 'cuatro', 'ventrículos', 'aurículas', 'circulatorio', 'respiratorio', 'puño', 'nariz', 'desechos',
+      'dos', 'pulso', 'pecho', 'hemoglobina', 'humo', 'esponjosos', 'laringe', 'faringe', 'tráquea', 'bronquios', 'alvéolos', 'arteria',
+      'arterias', 'vena', 'venas', 'capilares', 'diafragma', 'glóbulos', 'plaquetas', 'plasma', 'músculo', 'saquitos', 'nunca', 'ejercicio',
+      'fortalece', 'puro', 'fumar', 'digestivo', 'estómago', 'inspiración', 'espiración', 'intercambio', 'energía', 'células', 'hierro',
+      'frijol', 'verduras', 'pañuelo', 'tres', 'millones', 'gota', 'alcohol', 'grasa', 'montaña', 'dormir', 'bombea', 'cavidades',
+      'nutrientes', 'sale', 'salir', 'suelta', 'expulsa', 'expulsamos', 'expulsar', 'todo el cuerpo'];
+    const suelto = ' ' + dicho.split(/[^a-záéíóúñü]+/).filter(Boolean).join(' ') + ' ';
+    const malas = EXACTAS.filter(w => suelto.includes(' ' + w + ' '));
+    r.push([malas.length === 0, `paso ${n}: no sale ninguna palabra de la prueba (ni un tramo del camino del aire, ni un vaso, ni una parte de la sangre, ni lo que sale al soltar el aire)`, malas]);
+    const nums = dicho.match(/\d+/g) || [];
+    r.push([nums.length === 0, `paso ${n}: ningún número`, nums]);
+    const frase = nb(e.texto);
+    const F = [['las piernas de Marvin gastan oxígeno', 'el oxígeno está afuera, en el aire', '¿Cómo les llega hasta allá?'],
+      ['el oxígeno entra por la boca y llega a los pulmones', 'las piernas están lejos de los pulmones'],
+      ['La sangre pasa por los pulmones y se lo lleva', 'El corazón la empuja hasta las piernas'],
+      ['Allá se gasta', 'la sangre vuelve por más', 'respirar despacio', 'corazón tranquilo'],
+      ['Cuesta arriba, las piernas gastan más', 'se respira más rápido', 'el corazón late más rápido'],
+      ['llegó sin aire y con el corazón golpeando', 'Cuenta tus respiraciones sentado', 'después de subir unas gradas']];
+    r.push([F[n].every(w => frase.includes(w)), `paso ${n}: la frase dice lo que se ve (${F[n].join(', ')})`, frase]);
+
+    /* ── Marvin por dentro ── */
+    const L = k => x.pulmones.find(q => q.k === k), P = k => x.piernas.find(q => q.k === k);
+    if (n === 0) {
+      r.push([x.aire.x1 < x.cabeza.x0, 'el aire está afuera, a un lado de la cara']);
+      r.push([enCaja(cen(x.boca), x.cabeza, 0), 'la boca está en la cara']);
+      r.push([x.pulmones.length === 2 && x.pulmones.every(q => enCaja(cen(q.caja), x.marvin, 0) && q.caja.y0 >= x.marvin.y0 - 2), 'los dos pulmones están dentro de Marvin']);
+      r.push([enCaja(cen(x.corazon), x.marvin, 0) && x.corazon.y0 > Math.max(...x.pulmones.map(q => cen(q.caja)[1])), 'el corazón está dentro de Marvin, debajo del medio de los pulmones']);
+      r.push([x.piernas.length === 2 && x.piernas.every(q => q.caja.y0 >= x.marvin.y1 - 2), 'las piernas salen de debajo de la camisa']);
+      /* Los caminos de la sangre, de punta a punta, y la flecha hacia donde va. */
+      const cerca = (p, c) => enCaja(p, c, 4);
+      const V = k => x.vasos.find(v => v.k === k);
+      const esperado = {
+        'ida-pulmon-izq': v => v.pulmonA === 'izq' && cerca(v.b, x.corazon), 'ida-pulmon-der': v => v.pulmonA === 'der' && cerca(v.b, x.corazon),
+        'ida-pierna-izq': v => cerca(v.a, x.corazon) && v.piernaB === 'izq', 'ida-pierna-der': v => cerca(v.a, x.corazon) && v.piernaB === 'der',
+        'vuelta-pierna-izq': v => v.piernaA === 'izq' && cerca(v.b, x.corazon), 'vuelta-pierna-der': v => v.piernaA === 'der' && cerca(v.b, x.corazon),
+        'vuelta-pulmon-izq': v => cerca(v.a, x.corazon) && v.pulmonB === 'izq', 'vuelta-pulmon-der': v => cerca(v.a, x.corazon) && v.pulmonB === 'der' };
+      Object.entries(esperado).forEach(([k, ok]) => {
+        const v = V(k);
+        r.push([!!v && ok(v), `el camino ${k} va de donde dice a donde dice (la vuelta también pasa por el corazón)`, v && { a: v.a.map(Math.round), b: v.b.map(Math.round) }]);
+        if (v) {
+          const d = [v.b[0] - v.a[0], v.b[1] - v.a[1]], f = [v.punta[0] - v.base[0], v.punta[1] - v.base[1]];
+          r.push([d[0] * f[0] + d[1] * f[1] > 0, `la flecha del camino ${k} apunta hacia donde va`]);
+        }
+      });
+      /* Los rótulos de los órganos, con su hilo hasta el órgano. */
+      [['pulmones', h => x.pulmones.some(q => enCaja(h.b, q.caja, 0))], ['corazon', h => enCaja(h.b, x.corazon, 1)],
+        ['piernas', h => x.piernas.some(q => enCaja(h.b, q.caja, 0))]].forEach(([k, ok]) => {
+        const h = x.hilos.find(q => q.k === k), t = x.rotulos.find(q => q.k === k);
+        r.push([!!h && !!t && ok(h) && Math.abs(h.a[0] - t.caja.x0) <= 5 && h.a[1] >= t.caja.y0 - 2 && h.a[1] <= t.caja.y1 + 2,
+          `el rótulo «${t ? nb(t.dice) : k}» tiene su hilo hasta el órgano`]);
+      });
+      const sentado = x.bolitas.filter(b => b.cual === 'sentado'), cuesta = x.bolitas.filter(b => b.cual === 'cuesta');
+      r.push([sentado.length === 2 && cuesta.length === 4, 'sentado son dos bolitas, y cuesta arriba, cuatro: llega más', [sentado.length, cuesta.length]]);
+      r.push([x.bolitas.every(b => b.enAire), 'todas las bolitas salen del aire']);
+      r.push([['izq', 'der'].every(l => x.bolitas.filter(b => b.lado === l).length === 3), 'van a los dos pulmones y a las dos piernas por igual']);
+    }
+
+    /* ── Dónde está cada bolita, medido ── */
+    const dondeFin = b => !b.ve ? 'no' : b.pulmon ? 'pulmon-' + b.pulmon : b.pierna ? 'pierna-' + b.pierna : b.enAire && b.tramos.every(t => dist(t.p, b.sale) < 0.5) ? 'aire' : 'afuera';
+    const espera = b => {
+      if (b.cual === 'sentado') return n === 0 ? 'aire' : n === 1 ? 'pulmon-' + b.lado : n === 2 ? 'pierna-' + b.lado : 'no';
+      return n >= 4 ? 'pierna-' + b.lado : 'no';
+    };
+    const malos = x.bolitas.filter(b => dondeFin(b) !== espera(b));
+    r.push([malos.length === 0, `paso ${n}: cada bolita está donde le toca (en el aire, en SU pulmón o en SU pierna, o ya gastada)`,
+      malos.map(b => b.cual + ':' + b.lado + ' ' + dondeFin(b) + ' ≠ ' + espera(b))]);
+    /* El camino, tramo por tramo, de las que viajan en este paso. */
+    const viajan = x.bolitas.filter(b => b.ve && ((b.cual === 'sentado' && (n === 1 || n === 2)) || (b.cual === 'cuesta' && n === 4)));
+    viajan.forEach(b => {
+      const hasta = b.cual === 'sentado' && n === 1 ? 2 : 4;
+      const bien = [dist(b.tramos[0].p, cen(x.boca)) <= 3, b.tramos[1].pulmon === b.lado];
+      if (hasta === 4) bien.push(dist(b.tramos[2].p, cen(x.corazon)) <= 4, b.tramos[3].pierna === b.lado);
+      r.push([bien.every(Boolean), `paso ${n}: la bolita ${b.cual}-${b.lado} pasa por la boca y su pulmón${hasta === 4 ? ', el corazón y llega a su pierna' : ''}`,
+        b.tramos.slice(0, hasta).map(t => t.p.map(Math.round))]);
+      const desde = b.cual === 'sentado' && n === 2 ? 2 : 0;
+      const pasos = [];
+      for (let t = desde + 1; t < hasta; t++) pasos.push(b.tramos[t].d - b.tramos[t - 1].d);
+      r.push([pasos.every(p => p >= 800), `paso ${n}: cada tramo de la bolita ${b.cual}-${b.lado} arranca cuando acabó el anterior`, pasos]);
+      if (b.cual === 'cuesta') r.push([b.dVer === b.tramos[0].d, `paso ${n}: la bolita ${b.cual}-${b.lado} aparece cuando empieza a viajar`, [b.dVer, b.tramos[0].d]]);
+    });
+    /* La ida de la sangre es por donde van: la bolita sale de su pulmón por
+       donde empieza su camino, y su camino a la pierna pasa junto a ella. */
+    if (n === 2 || n === 4) {
+      const seg = (p, a, b) => { const dx = b[0] - a[0], dy = b[1] - a[1], t = Math.max(0, Math.min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / (dx * dx + dy * dy))); return dist(p, [a[0] + t * dx, a[1] + t * dy]); };
+      const lejos = viajan.filter(b => {
+        const arriba = x.vasos.find(v => v.k === 'ida-pulmon-' + b.lado), abajo = x.vasos.find(v => v.k === 'ida-pierna-' + b.lado);
+        return !arriba || !abajo || dist(b.tramos[1].p, arriba.a) > 2 || seg(b.fin, abajo.a, abajo.b) > 4;
+      });
+      r.push([lejos.length === 0, `paso ${n}: las bolitas van por la ida de la sangre`, lejos.map(b => b.cual + '-' + b.lado)]);
+    }
+    const enPiernas = x.bolitas.filter(b => b.ve && b.pierna);
+    const quiere = n === 2 ? 2 : n >= 4 ? 4 : 0;
+    r.push([enPiernas.length === quiere, `paso ${n}: en las piernas hay ${quiere} bolitas`, enPiernas.length]);
+    const vis = x.bolitas.filter(b => b.ve), pegadas = [];
+    vis.forEach((a, i) => vis.slice(i + 1).forEach(b => { if (dist(a.fin, b.fin) < a.r + b.r - 0.5) pegadas.push(a.cual + a.lado + '/' + b.cual + b.lado); }));
+    r.push([pegadas.length === 0, `paso ${n}: ninguna bolita se monta encima de otra, así se cuentan`, pegadas]);
+
+    /* ── Los relojes ── */
+    r.push([x.relojes.ve === (n >= 3), `paso ${n}: los relojes ${n >= 3 ? 'están' : 'todavía no están'}`]);
+    const titulo = k => { const t = x.rotulos.find(q => q.k === k); return t && t.ve; };
+    r.push([titulo('sentado') === (n === 3) && titulo('cuesta') === (n >= 4), `paso ${n}: arriba de los relojes dice ${n === 3 ? '«sentado»' : n >= 4 ? '«cuesta arriba»' : 'nada'}`]);
+    if (n >= 3) {
+      x.agujas.forEach(a => {
+        const ang = Math.atan2(-(a.p[1] - a.c[1]), a.p[0] - a.c[0]) * 180 / Math.PI;
+        const lado = x.rotulos.filter(t => t.reloj === a.k && (t.k === 'despacio' || t.k === 'rapido'));
+        const hacia = lado.slice().sort((p, q) => dist(a.p, cen(p.caja)) - dist(a.p, cen(q.caja)))[0];
+        r.push([(n === 3 ? ang > 100 : ang < 80) && hacia && hacia.k === (n === 3 ? 'despacio' : 'rapido'),
+          `paso ${n}: la aguja de «${a.k}» apunta a «${n === 3 ? 'despacio' : 'rápido'}»`, Math.round(ang)]);
+        const d = x.rotulos.find(t => t.reloj === a.k && t.k === 'despacio'), q = x.rotulos.find(t => t.reloj === a.k && t.k === 'rapido');
+        const nom = x.rotulos.find(t => t.reloj === a.k && t.k === 'nombre-' + a.k);
+        r.push([d && q && nb(d.dice) === 'despacio' && nb(q.dice) === 'rápido' && d.caja.x1 < a.c[0] && q.caja.x0 > a.c[0],
+          `paso ${n}: en el reloj de «${a.k}», «despacio» a la izquierda y «rápido» a la derecha`]);
+        r.push([nom && nb(nom.dice) === (a.k === 'respira' ? 'respira' : 'el corazón') && nom.caja.y0 > a.c[1], `paso ${n}: el reloj de «${a.k}» dice qué mide, debajo`]);
+      });
+    }
+    /* Ningún rótulo se monta en otro. */
+    const vistos = x.rotulos.filter(t => t.ve), montados = [];
+    vistos.forEach((a, i) => vistos.slice(i + 1).forEach(b => {
+      if (a.caja.x0 < b.caja.x1 - 0.5 && b.caja.x0 < a.caja.x1 - 0.5 && a.caja.y0 < b.caja.y1 - 0.5 && b.caja.y0 < a.caja.y1 - 0.5) montados.push(nb(a.dice) + '/' + nb(b.dice));
+    }));
+    r.push([montados.length === 0, `paso ${n}: ningún rótulo se monta en otro`, montados]);
+
+    /* ── El marcador ── */
+    const M = [['?', 'cómo llega el oxígeno a las piernas'], ['pulmones', 'hasta ahí llega el aire'], ['sangre', 'lo lleva a las piernas'],
+      ['despacio', 'sentado'], ['rápido', 'cuesta arriba'], ['?', 'cuántas veces respiras']];
+    r.push([nb(e.cifra) === M[n][0] && nb(e.palabras) === M[n][1], `paso ${n}: el marcador dice lo que se ve («${M[n][0]}», ${M[n][1]})`, [e.cifra, e.palabras]]);
+    return r;
+  },
   /* El Sistema Digestivo. «Llena no es lo mismo que nutrida».
      ⚠️ Nada se le cree a la escena. Qué alimento va a qué frasco lo dice una
      tabla de la sonda, y cada entrada se justifica con lo que está escrito

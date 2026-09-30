@@ -481,3 +481,41 @@ body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* ── La animación que explica el tema: «La cuesta de la pila»
+   (js/animacion-cuesta.js, con el aparato de css/animacion-mision.css).
+   Marvin, sus baldes, sus pulmones, su corazón y el aire son como son: se
+   quedan iguales en la pantalla clara y en la oscura. Lo que se lee encima
+   de cualquier cosa va con .am-rotulo, que lleva su halo del color de la
+   tarjeta. El oxígeno son bolitas que se cuentan, cada camino de la sangre
+   lleva sus flechas y las agujas dicen «despacio» o «rápido» con su
+   posición: nada se dice solo con color. */
+/* ⚠️ El botón que avanza: con el verde y el teal de la misión, la letra
+   blanca se quedaba en 3,3:1 y 3,7:1. Un tono más hondo de los dos la deja
+   por encima de 5:1. */
+:root { --am-boton: linear-gradient(135deg, #15803d, #0f766e); }
+.am-raiz .rc-aire      { fill: #e0f2fe; stroke: #7dd3fc; stroke-width: 1.2; stroke-dasharray: 3 2.5; }
+.am-raiz .rc-oxi       { fill: #2563eb; stroke: #ffffff; stroke-width: 1.1; }
+.am-raiz .rc-piel      { fill: #b9794b; stroke: #7c4f2c; stroke-width: 0.9; }
+.am-raiz .rc-pelo      { fill: #2d2a26; }
+.am-raiz .rc-ojo       { fill: #2d2a26; }
+.am-raiz .rc-boca      { fill: #6d2e2e; stroke: #4a1e1e; stroke-width: 0.8; }
+.am-raiz .rc-camisa    { fill: #fdf6e3; stroke: #b8a98a; stroke-width: 1.1; }
+.am-raiz .rc-brazo     { fill: none; stroke: #b9794b; stroke-width: 8; stroke-linecap: round; }
+.am-raiz .rc-pierna    { fill: #e4d9c3; stroke: #9c8a68; stroke-width: 1; }
+.am-raiz .rc-zapato    { fill: #2d2a26; }
+.am-raiz .rc-balde     { fill: #9aa5b1; stroke: #5f6b77; stroke-width: 1; }
+.am-raiz .rc-asa       { fill: none; stroke: #5f6b77; stroke-width: 1.2; }
+.am-raiz .rc-agua      { fill: #bfe3f7; }
+.am-raiz .rc-via       { fill: none; stroke: #d4a5a5; stroke-width: 3; stroke-linecap: round; }
+.am-raiz .rc-pulmon    { fill: #ffc9d2; stroke: #c26d7c; stroke-width: 1.4; }
+.am-raiz .rc-corazon   { fill: #d62839; stroke: #8f1523; stroke-width: 1.1; }
+.am-raiz .rc-ida       { fill: none; stroke: #e11d48; stroke-width: 2.8; stroke-linecap: round; }
+.am-raiz .rc-vuelta    { fill: none; stroke: #6d28d9; stroke-width: 2.2; stroke-linecap: round; }
+.am-raiz .rc-punta-ida    { fill: #9f1239; }
+.am-raiz .rc-punta-vuelta { fill: #4c1d95; }
+.am-raiz .rc-hilo      { stroke: var(--gray, #636e72); stroke-width: 0.9; }
+.am-raiz .rc-esfera    { fill: none; stroke: #7f8c8d; stroke-width: 2.4; }
+.am-raiz .rc-marca     { stroke: #7f8c8d; stroke-width: 1.4; }
+.am-raiz .rc-aguja     { stroke: var(--dark, #2d3436); stroke-width: 2.6; stroke-linecap: round; }
+.am-raiz .rc-eje       { fill: var(--dark, #2d3436); }

@@ -25,6 +25,9 @@
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
 <link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La animación que explica el tema: el aparato es compartido y va DESPUÉS
+     del CSS de la misión, que es de donde saca sus colores. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -71,6 +74,23 @@
     oxígeno no se lo llevan hasta allá los pulmones: se lo lleva la <strong>sangre</strong>. Por eso estos dos
     sistemas se estudian juntos y no por separado. Pruébalo tú mismo: cuenta cuántas veces respiras en un
     minuto sentado, y vuelve a contar después de subir unas gradas corriendo.</div></div>
+  </div>
+  <!-- La animación que explica el tema, justo después de la historia: el
+       aire con el oxígeno, Marvin por dentro (sus pulmones, su corazón y el
+       camino de la sangre) y dos relojes de aguja, «respira» y «el
+       corazón». El oxígeno entra al respirar, la sangre se lo lleva a las
+       piernas, y cuesta arriba, como las piernas gastan más, las dos agujas
+       se van a «rápido». La mueve el alumno, paso a paso. El aparato es
+       compartido (js/animacion-mision.js) y la escena es de esta misión
+       (js/animacion-cuesta.js). La frase de dentro es de reserva: si el
+       aparato no llega a cargar, se lee eso en vez de un hueco. -->
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira cómo le llega el oxígeno a las piernas</h2>
+    <div id="amCuesta">
+      <p>Al respirar, el oxígeno entra con el aire y llega a los pulmones, pero las piernas están lejos de ahí.
+      La sangre pasa por los pulmones, se lo lleva, y el corazón la empuja hasta las piernas. Cuesta arriba
+      las piernas gastan más, y para que les llegue se respira más rápido y el corazón late más rápido.</p>
+    </div>
   </div>
   <div class="card ac-teal">
     <h2>🫁 ¿Qué es la respiración?</h2>
@@ -615,6 +635,8 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-cuesta.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

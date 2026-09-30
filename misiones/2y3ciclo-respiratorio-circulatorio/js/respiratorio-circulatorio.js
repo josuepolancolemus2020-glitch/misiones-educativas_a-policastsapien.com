@@ -352,6 +352,18 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 // (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
 // tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
 // Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
+//
+// ⚠️ Y ninguna la contesta la historia de Marvin ni su animación
+// (js/animacion-cuesta.js). La historia es la cuesta con los baldes, el
+// corazón que golpea y las piernas a las que les falta el oxígeno que lleva
+// la sangre; la animación enseña el oxígeno entrando a los pulmones, la
+// sangre llevándolo a las piernas empujada por el corazón, y que cuesta
+// arriba se respira y se late más rápido. Por eso se fueron «¿por qué a
+// Marvin se le cansaron las piernas?», «al subir una cuesta uno respira más
+// rápido», «¿qué le pasa al corazón cuando corremos?», «¿qué órgano bombea
+// la sangre?», «¿qué transportan las células rojas?» y «el oxígeno pasa a
+// la sangre en el estómago». Las que entraron preguntan otra cosa de la
+// misión, sacada de su Laboratorio.
 const evalTFBank=[
   {q:'Hay que respirar aire puro para cuidar los pulmones.',a:true,k:'tf-aire-puro'},
   {q:'Los pulmones son parte del sistema digestivo.',a:false,k:'tf-pulmones'},
@@ -360,19 +372,19 @@ const evalTFBank=[
   {q:'Hacer ejercicio fortalece el corazón.',a:true,k:'tf-ejercicio-corazon'},
   {q:'Fumar es bueno para los pulmones.',a:false,k:'tf-fumar'},
   {q:'La sangre llega a todas las partes del cuerpo.',a:true,k:'tf-todas-partes'},
-  {q:'El oxígeno pasa a la sangre en el estómago.',a:false,k:'tf-estomago'},
-  {q:'Al subir una cuesta corriendo, uno respira más rápido.',a:true,k:'tf-cuesta'},
+  {q:'Tomar alcohol es bueno para el corazón.',a:false,k:'tf-alcohol'},
+  {q:'Una sola gota de sangre tiene millones de células.',a:true,k:'tf-gota'},
   {q:'El corazón es un músculo.',a:true,k:'tf-musculo'}
 ];
 const evalMCBank=[
-  {q:'¿Qué le pasa al corazón cuando corremos?',o:['a) se detiene','b) late más lento','c) se enfría','d) late más rápido'],a:3,k:'mc-late-rapido'},
-  {q:'¿Qué órgano bombea la sangre?',o:['a) los pulmones','b) el estómago','c) el corazón','d) el hígado'],a:2,k:'mc-corazon'},
-  {q:'¿Qué transportan las células rojas de la sangre?',o:['a) oxígeno','b) grasa','c) agua sola','d) aire'],a:0,k:'mc-rojos'},
+  {q:'¿Cuántas veces respiramos en un día, más o menos?',o:['a) unas 20','b) unas 200','c) unas 2 000','d) unas 20 000'],a:3,k:'mc-respiraciones'},
+  {q:'¿Cuántas partes tiene el pulmón derecho?',o:['a) una','b) cinco','c) tres','d) seis'],a:2,k:'mc-lobulos'},
+  {q:'¿Qué comida ayuda a tener la sangre sana?',o:['a) el frijol y las verduras verdes','b) los dulces','c) los refrescos','d) las frituras'],a:0,k:'mc-hierro'},
   {q:'¿Qué sustancia le da su color a la sangre?',o:['a) la sal','b) el azúcar','c) el agua','d) la hemoglobina'],a:3,k:'mc-hemoglobina'},
   {q:'¿Cuáles son las cavidades de arriba del corazón?',o:['a) los riñones','b) las costillas','c) las aurículas','d) los huesos'],a:2,k:'mc-auriculas'},
   {q:'¿Qué daña más a los pulmones?',o:['a) caminar','b) el humo del cigarro','c) dormir bien','d) tomar agua'],a:1,k:'mc-humo'},
   {q:'¿Cómo son los pulmones por dentro?',o:['a) duros como hueso','b) esponjosos','c) huecos y vacíos','d) de metal'],a:1,k:'mc-esponjosos'},
-  {q:'¿Por qué a Marvin se le cansaron las piernas al subir con los baldes?',o:['a) tenía hambre','b) hacía frío','c) no durmió','d) les faltaba oxígeno'],a:3,k:'mc-marvin'},
+  {q:'¿Con qué conviene sonarse?',o:['a) con la mano','b) con la manga','c) con el cuaderno','d) con un pañuelo limpio'],a:3,k:'mc-panuelo'},
   {q:'¿En qué consisten los dos movimientos de respirar?',o:['a) subir y bajar','b) entrar y salir el aire','c) comer y beber','d) dormir y despertar'],a:1,k:'mc-movimientos'},
   {q:'¿Qué parte del camino del aire viene después de la faringe?',o:['a) la laringe','b) la nariz','c) el estómago','d) el corazón'],a:0,k:'mc-laringe'}
 ];
@@ -484,6 +496,13 @@ function evalSwitchMode(mode){
     cBtn.classList.add('active');cBtn.setAttribute('aria-selected','true');
   }
 }
+// ⚠️ En pensamiento crítico, lo mismo: «los pulmones bombean la sangre», «al
+// respirar tomamos dióxido de carbono», «el intercambio de gases ocurre en
+// el estómago», «el corazón se contrae», «al dormir respiramos más
+// despacio» y las piernas de Marvin los contestaba la historia o la
+// animación. Los que entraron salen del Laboratorio: el tamaño del corazón,
+// cómo son los pulmones y los capilares por dentro, la grasa que tapa los
+// vasos, la nariz tapada y el color de la sangre.
 const critCaseBank=[
   {k:'ca-fuma',txt:'Un joven fuma cigarrillos todos los días y le cuesta respirar cuando corre.'},
   {k:'ca-sedentario',txt:'Una persona nunca hace ejercicio, come mucha grasa y se cansa al subir las gradas.'},
@@ -505,21 +524,21 @@ const critCaseGuides=[
   'Porque llevan oxígeno a todas las células; sin ellos el cuerpo no podría vivir. Cuidarlos evita enfermedades graves.',
 ];
 const critErrorBank=[
-  {k:'er-pulmones-bombean',txt:'"Los pulmones bombean la sangre a todo el cuerpo".',
-   g1:'Quien bombea la sangre es el CORAZÓN.',
-   g2:'Los pulmones sirven para el intercambio de gases, no para bombear.'},
-  {k:'er-gases-reves',txt:'"Al respirar tomamos dióxido de carbono y expulsamos oxígeno".',
-   g1:'Es al revés: tomamos OXÍGENO del aire.',
-   g2:'Lo que expulsamos es DIÓXIDO DE CARBONO.'},
+  {k:'er-puno',txt:'"El corazón es tan grande como un balón de fútbol".',
+   g1:'Es del tamaño de un PUÑO.',
+   g2:'Es un MÚSCULO que cabe en la mano cerrada.'},
+  {k:'er-esponjosos',txt:'"Los pulmones son dos bolsas vacías".',
+   g1:'Son ESPONJOSOS.',
+   g2:'Por dentro tienen millones de SAQUITOS.'},
   {k:'er-venas',txt:'"Las venas llevan la sangre del corazón hacia el cuerpo".',
    g1:'Las que salen del corazón son las ARTERIAS.',
    g2:'Las venas REGRESAN la sangre al corazón.'},
   {k:'er-solo-oxigeno',txt:'"La sangre solo lleva oxígeno; nada más".',
    g1:'La sangre también lleva NUTRIENTES y DESECHOS.',
    g2:'Reparte lo que las células necesitan y recoge lo que les sobra.'},
-  {k:'er-estomago',txt:'"El intercambio de gases ocurre en el estómago".',
-   g1:'Ocurre en los ALVÉOLOS de los pulmones.',
-   g2:'El estómago pertenece al sistema digestivo, no al respiratorio.'},
+  {k:'er-capilares',txt:'"Los capilares son tan gruesos como una manguera".',
+   g1:'Son más FINOS que un cabello.',
+   g2:'Por ellos la sangre llega a las CÉLULAS.'},
 ];
 const critDecisionBank=[
   'Un joven puede pasar la tarde fumando con amigos, o jugando fútbol al aire libre.',
@@ -543,12 +562,12 @@ const critCauseBank=[
   {k:'cau-diafragma',cause:'El diafragma baja.',guide:'Entra el aire a los pulmones: es la inspiración.'},
   {k:'cau-corte',cause:'Una persona se corta un dedo.',guide:'Las plaquetas ayudan a que la herida se tape y deje de sangrar.'},
   {k:'cau-microbio',cause:'Entra un microbio al cuerpo.',guide:'Los glóbulos blancos lo atacan para defender al cuerpo.'},
-  {k:'cau-contrae',cause:'El corazón se contrae.',guide:'Empuja la sangre por todo el cuerpo: es un latido.'},
+  {k:'cau-grasa',cause:'Los vasos de la sangre se tapan con grasa.',guide:'La sangre no puede pasar bien por ellos.'},
 ];
 const critEffectBank=[
-  {k:'ef-dormir',effect:'Al dormir respiramos más despacio.',guide:'En reposo el cuerpo gasta menos oxígeno.'},
+  {k:'ef-nariz',effect:'Con la nariz tapada, el aire entra frío y con polvo.',guide:'La nariz es la que filtra y calienta el aire.'},
   {k:'ef-montana',effect:'En una montaña muy alta cuesta más respirar.',guide:'Allá arriba el aire trae menos oxígeno.'},
-  {k:'ef-baldes',effect:'A Marvin se le cansaron las piernas subiendo la cuesta con los baldes.',guide:'Les faltaba oxígeno, y el oxígeno se lo lleva la sangre.'},
+  {k:'ef-rojo',effect:'La sangre es de color rojo.',guide:'Tiene hemoglobina, que le da ese color.'},
 ];
 
 function genEvalCrit(){

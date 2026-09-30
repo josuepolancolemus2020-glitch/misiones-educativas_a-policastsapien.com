@@ -9361,6 +9361,132 @@ Salió roja con cada una.
 Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
 de 117 ms.
 
+### La cuadragésima primera: El Sistema Respiratorio y Circulatorio, y lo que enseñó
+
+La cuarta de la Ruta del Cuerpo es **El Sistema Respiratorio y Circulatorio**
+(`misiones/2y3ciclo-respiratorio-circulatorio/`, `js/animacion-cuesta.js`). La
+historia es la de Marvin: lo mandaron por agua cuesta arriba con dos baldes y
+llegó sin poder hablar, con el corazón golpeándole en el pecho. No eran las
+piernas las que se habían cansado primero: a sus piernas les faltaba oxígeno, y
+el oxígeno no se lo llevan hasta allá los pulmones, se lo lleva la sangre. La
+animación pone el aire a un lado, a Marvin dibujado por dentro (sus pulmones,
+su corazón y los caminos de la sangre) y a la derecha dos relojes de aguja,
+«respira» y «el corazón», que van de «despacio» a «rápido»:
+
+- las piernas de Marvin gastan oxígeno, y el oxígeno está afuera, en el aire:
+  ¿cómo les llega hasta allá?;
+- al respirar, el oxígeno entra por la boca y llega a los pulmones, pero las
+  piernas están lejos de los pulmones;
+- la sangre pasa por los pulmones y se lo lleva, y el corazón la empuja hasta
+  las piernas;
+- allá se gasta y la sangre vuelve por más. Sentado, las dos agujas marcan
+  «despacio»;
+- cuesta arriba las piernas gastan más: llegan cuatro bolitas donde antes
+  llegaban dos, y las dos agujas pasan a «rápido»;
+- por eso Marvin llegó sin aire y con el corazón golpeando. Y queda la
+  actividad de la historia: contar las respiraciones sentado, y otra vez
+  después de subir unas gradas.
+
+Seis cosas que valen para las que siguen:
+
+1. ⚠️ **Cada bolita hace el camino entero, tramo por tramo.** Del aire a la
+   boca, de la boca a SU pulmón, del pulmón al corazón y del corazón a SU
+   pierna: cuatro envolturas, y cada tramo arranca cuando acabó el anterior. En
+   línea recta, la bolita habría ido del aire a la pierna sin pasar por nada, y
+   eso es justo lo que la historia dice que no pasa. La sonda sigue cada tramo
+   con su demora.
+2. ⚠️ **La vuelta también pasa por el corazón.** La sangre que vuelve de la
+   pierna llega al corazón, y de ahí va a los pulmones: dibujada derecho de la
+   pierna al pulmón, se saltaba el corazón. Y sube por la orilla de afuera de la
+   pierna, para no montarse en el camino de ida. Nada va solo por el color: cada
+   camino lleva su flecha hacia donde va la sangre.
+3. ⚠️ **Los relojes no tienen números, a propósito.** Cuántas veces se respira
+   en un minuto es lo que la historia le pide contar al alumno, y un número en
+   la aguja se lo daría hecho. Las agujas dicen «despacio» y «rápido», y lo que
+   las mueve se ve: cuesta arriba las piernas gastan más, y les tiene que llegar
+   más.
+4. ⚠️ **Lo que ya se gastó se apaga y vuelve al aire sin que se vea.** Cada
+   bolita lleva una envoltura aparte para encenderse y apagarse, y así vuelve a
+   su sitio invisible: con una sola, el viaje de vuelta y el apagado compartían
+   la demora. Y al volver con «Atrás», el viaje se deshace en el orden
+   contrario, de la pierna al corazón, al pulmón y a la boca: de un solo tirón,
+   las bolitas cruzaban el cuerpo de Marvin por donde no hay ningún camino. Se
+   vio con fotos a medio viaje yendo hacia atrás, con la sonda en verde.
+5. **Tres cosas más se vieron solo en las capturas, con la sonda en verde.** El
+   primer dibujo era chico para un teléfono de 360 px, y el rótulo «piernas» se
+   montaba en «despacio»; en la pantalla oscura las agujas no se veían (van con
+   la tinta de la pantalla); y el camino morado de la vuelta, sobre un pantalón
+   azul oscuro, casi no se leía: el pantalón es claro.
+6. ⚠️ **La historia y la animación contestaban doce preguntas de la misión.**
+   En la conceptual: «al subir una cuesta corriendo, uno respira más rápido»,
+   «¿qué le pasa al corazón cuando corremos?», «¿qué órgano bombea la sangre?»,
+   «¿qué transportan las células rojas?», «el oxígeno pasa a la sangre en el
+   estómago» y «¿por qué a Marvin se le cansaron las piernas?». En pensamiento
+   crítico: que los pulmones bombean la sangre, que al respirar tomamos dióxido
+   de carbono, que el intercambio de gases ocurre en el estómago, que el corazón
+   se contrae, que al dormir se respira más despacio y el cansancio de Marvin
+   con los baldes. Ahora preguntan otras cosas de la misión, sacadas de su
+   Laboratorio: cuántas veces se respira en un día, las partes del pulmón
+   derecho, lo que se come para tener la sangre sana, con qué conviene sonarse,
+   el alcohol, la gota de sangre, el tamaño del corazón, los pulmones
+   esponjosos, los capilares, la grasa que tapa los vasos, la nariz tapada y el
+   color de la sangre. En la ficha, lo mismo con otras seis, y dos cosas más:
+   el completar pedía «nariz» dos veces (la 2 y la 6), y el pareado «Oxígeno ·
+   El gas del aire que la sangre reparte» era la historia. Ahora la 2 pide para
+   qué sirve el oxígeno, y el pareado es «Alvéolos · Saquitos donde la sangre
+   toma el oxígeno». La felicitación, en la hoja de los pareados, contaba los
+   alvéolos, las cuatro cavidades, las arterias y las venas: ahora pide revisar
+   las respuestas.
+
+La sonda de esta escena **no le cree nada a la escena**:
+
+- los caminos de la sangre son suyos: la ida va del pulmón al corazón y del
+  corazón a la pierna; la vuelta, de la pierna al corazón y del corazón al
+  pulmón. Mide en el dibujo que cada camino vaya de donde dice a donde dice y
+  que su flecha apunte hacia donde va;
+- cada órgano está donde lo pone su rótulo, con su hilo hasta él, y los
+  pulmones y el corazón, dentro de Marvin;
+- dónde está cada bolita lo mide en el dibujo (en el aire, en SU pulmón, en SU
+  pierna, o ya gastada) y lo compara con lo que toca en cada paso;
+- que cada bolita pase por la boca, por su pulmón, por el corazón y llegue a su
+  pierna, cada tramo cuando acabó el anterior; que aparezca cuando empieza a
+  viajar, y que vaya por la ida de la sangre;
+- que sentado lleguen dos y cuesta arriba cuatro, sin montarse, así se cuentan;
+- que cada aguja apunte a lo que dice el paso, con «despacio» a la izquierda y
+  «rápido» a la derecha, y que arriba diga «sentado» o «cuesta arriba»;
+- que ningún rótulo se monte en otro y que el marcador diga lo que se ve;
+- y que no salga ningún número, ni un tramo del camino del aire, ni un vaso, ni
+  una parte de la sangre, ni lo que sale al soltar el aire.
+
+Se comprobó al revés con veintiuna averías, plantadas una por una:
+
+- una bolita yendo al pulmón del otro lado;
+- sin pasar por la boca;
+- saltándose el corazón;
+- quedándose en el pulmón en el paso 2;
+- bajando antes de llegar;
+- cuesta arriba llegando las mismas que sentado;
+- la aguja sin moverse cuesta arriba;
+- los rótulos del reloj cambiados;
+- la vuelta subiendo derecho a los pulmones;
+- la ida a la pierna dibujada al revés;
+- una bolita saliéndose de la pierna;
+- «pecho» en una frase;
+- el marcador del paso 3 diciendo «rápido»;
+- las gastadas sin irse;
+- los relojes desde el principio;
+- arriba diciendo «sentado» cuesta arriba;
+- dos bolitas encimadas en la pierna;
+- apareciendo antes de viajar;
+- el hilo de las piernas sin llegar;
+- el rótulo del corazón montado en otro;
+- la ida del pulmón izquierdo arrancando en el derecho.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
+de 83 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -9466,7 +9592,11 @@ bocado) pasa por donde entra de verdad (la boca): va en dos envolturas, una por
 tramo, y la de dentro espera a que acabe la de fuera. Y si tiene que quedar
 dentro de un dibujo de forma libre (una panza), la sonda se lo pregunta al
 navegador con `isPointInFill`, en el centro y en los bordes: la caja de la forma
-deja pasar lo que se sale.
+deja pasar lo que se sale. Lo que se apaga en un sitio y vuelve a empezar en
+otro (una bolita que ya se gastó) lleva una envoltura aparte para encenderse y
+apagarse, y así vuelve invisible. Y al volver con «Atrás», un viaje de varios
+tramos se deshace en el orden contrario, tramo por tramo: de un solo tirón
+cruza por donde no hay camino.
 
 Si el `--sec` de la misión es claro (un ámbar, un amarillo), la letra blanca
 del botón que avanza no se lee en su punta: la misión declara en su CSS
