@@ -352,16 +352,28 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 // (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
 // tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
 // Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
+//
+// ⚠️ Y ninguna la contesta la historia de Kenia ni su animación
+// (js/animacion-su-tiempo.js). La historia es la de su primera menstruación
+// en la escuela, sin que nadie le hubiera explicado nada; la animación
+// enseña que los cambios les llegan a todos, pero a cada uno a su tiempo,
+// y que lo que quita el miedo es saber cómo se llama lo que pasa y a quién
+// preguntar. Por eso se fueron «Kenia estaba enferma», «todas las personas
+// empiezan a cambiar a la misma edad», «los cambios del cuerpo son
+// normales», «¿qué hizo daño en la historia de Kenia?», «¿qué es lo mejor
+// si algo de tu cuerpo te preocupa?» y «comienza el ciclo ___», que la
+// historia nombra con su palabra exacta. Las que entraron preguntan otra
+// cosa de la misión, sacada de su Aprende y de su Laboratorio.
 const evalTFBank=[
   {q:'La reproducción humana es sexual.',a:true,k:'tf-sexual'},
   {q:'El espermatozoide es la célula reproductora del varón.',a:true,k:'tf-espermatozoide'},
   {q:'El embarazo dura unos 9 meses.',a:true,k:'tf-9-meses'},
   {q:'A los varones les cambia la voz al crecer.',a:true,k:'tf-voz'},
-  {q:'Los cambios del cuerpo al crecer son normales.',a:true,k:'tf-normales'},
-  {q:'Todas las personas empiezan a cambiar exactamente a la misma edad.',a:false,k:'tf-misma-edad'},
+  {q:'Durante el embarazo, el bebé crece muy rápido.',a:true,k:'tf-rapido'},
+  {q:'Una persona deja de cambiar cuando llega a adulta.',a:false,k:'tf-toda-la-vida'},
   {q:'La madre embarazada debe ir a sus controles médicos.',a:true,k:'tf-controles'},
   {q:'El bebé crece dentro del estómago de la madre.',a:false,k:'tf-estomago'},
-  {q:'Kenia estaba enferma el día de su primera menstruación.',a:false,k:'tf-kenia'},
+  {q:'El espermatozoide es más grande que el óvulo.',a:false,k:'tf-tamano'},
   {q:'Al crecer hay que cuidar más la higiene del cuerpo.',a:true,k:'tf-higiene'}
 ];
 const evalMCBank=[
@@ -372,12 +384,12 @@ const evalMCBank=[
   {q:'¿Qué cambio es propio de las mujeres al crecer?',o:['a) les cambia la barba','b) se desarrollan las mamas','c) se hacen más bajas','d) no cambia nada'],a:1,k:'mc-mamas'},
   {q:'¿Cuál es la primera etapa de la vida?',o:['a) la adultez','b) la juventud','c) la adolescencia','d) la infancia'],a:3,k:'mc-infancia'},
   {q:'¿Cuál es la última etapa de la vida?',o:['a) la juventud','b) la adultez','c) la vejez','d) la adolescencia'],a:2,k:'mc-vejez'},
-  {q:'¿Qué hizo daño en la historia de Kenia?',o:['a) que le enseñaran demasiado','b) que nadie le hubiera explicado nada','c) que la llevaran al médico','d) que tuviera amigas'],a:1,k:'mc-nadie'},
-  {q:'¿Qué es lo mejor si algo de tu cuerpo te preocupa?',o:['a) preguntar a un adulto de confianza o al médico','b) callarlo','c) esconderlo','d) no hacer nada'],a:0,k:'mc-preguntar'},
+  {q:'¿Qué debe evitar una mujer durante el embarazo?',o:['a) comer frutas y verduras','b) el alcohol y el tabaco','c) tomar agua limpia','d) caminar un poco'],a:1,k:'mc-evitar'},
+  {q:'¿Qué necesita un bebé recién nacido?',o:['a) el cuidado de su familia','b) quedarse solo todo el día','c) trabajar para comer','d) nada, ya se cuida solo'],a:0,k:'mc-recien-nacido'},
   {q:'¿Qué etapa sigue a la niñez?',o:['a) la vejez','b) la adultez','c) la adolescencia','d) ninguna'],a:2,k:'mc-adolescencia'}
 ];
 const evalCPBank=[
-  {q:'En la mujer, al crecer comienza el ciclo ___.',a:'menstrual',acc:['menstrual'],k:'cp-menstrual'},
+  {q:'Ser madre o padre es una gran ___.',a:'responsabilidad',acc:['responsabilidad'],k:'cp-responsabilidad'},
   {q:'Al crecer, los hombros de los varones se ___.',a:'ensanchan',acc:['ensanchan'],k:'cp-ensanchan'},
   {q:'Los cambios del cuerpo los dirigen las hormonas ___.',a:'sexuales',acc:['sexuales'],k:'cp-sexuales'},
   {q:'En la reproducción humana intervienen un hombre y una ___.',a:'mujer',acc:['mujer'],k:'cp-mujer'},
@@ -484,13 +496,22 @@ function evalSwitchMode(mode){
     cBtn.classList.add('active');cBtn.setAttribute('aria-selected','true');
   }
 }
+// ⚠️ En pensamiento crítico, lo mismo. Los casos de quien se confunde con
+// sus cambios o no se atreve a preguntar, el error de que todos cambian a la
+// misma edad, la familia que habla con confianza «y no pasa el miedo que
+// pasó Kenia» y las decisiones de informarse con un adulto o preguntar con
+// respeto los contestaba la historia o la animación. Los que entraron salen
+// de otra parte de la misión: por qué uno se parece a sus dos padres, cómo
+// respira un bebé que acaba de nacer, el tabaco en el embarazo, qué produce
+// el útero, el cigoto que se divide, la ropa limpia y la responsabilidad de
+// ser madre o padre.
 const critCaseBank=[
-  {k:'ca-voz',txt:'Un niño de 12 años nota que su voz empieza a cambiar y le crece vello en el cuerpo, y se siente confundido.'},
-  {k:'ca-nina-cambios',txt:'Una niña comienza a tener cambios en su cuerpo durante la pubertad y no sabe si es normal.'},
+  {k:'ca-parecido',txt:'Una niña pregunta por qué se parece un poco a su papá y un poco a su mamá.'},
+  {k:'ca-recien-nacido',txt:'A la tía le acaba de nacer su bebé, y los primos preguntan cómo respira ahora que ya nació.'},
   {k:'ca-embarazada',txt:'Una madre embarazada quiere que su bebé nazca sano y pregunta qué debe hacer.'},
   {k:'ca-burla',txt:'Un grupo de estudiantes se burla de un compañero por los cambios de su cuerpo en la pubertad.'},
   {k:'ca-hermanos',txt:'Una familia espera un bebé y los hermanos preguntan cómo se alimenta el bebé dentro de la madre.'},
-  {k:'ca-verguenza',txt:'Una niña tiene vergüenza de preguntarle a su mamá sobre los cambios de su cuerpo.'},
+  {k:'ca-fuma',txt:'Una señora embarazada sigue fumando porque cree que al bebé no le pasa nada.'},
 ];
 const critCaseQuestions=[
   '1. ¿Qué etapa o situación del desarrollo se observa en este caso?',
@@ -499,7 +520,7 @@ const critCaseQuestions=[
   '4. ¿Por qué es importante conocer y respetar estos cambios?',
 ];
 const critCaseGuides=[
-  'Se observan cambios propios de la pubertad, el embarazo o el desarrollo humano.',
+  'Se observa algo propio de la reproducción, el embarazo, el nacimiento o la pubertad.',
   'Son cambios normales dirigidos por las hormonas o por el proceso natural de la reproducción y el crecimiento.',
   'Actuar con respeto e higiene, informarse bien y, si hay dudas de salud, consultar a un adulto de confianza o a un médico.',
   'Porque son parte natural de la vida; conocerlos y respetarlos ayuda a cuidar la salud y a tratar bien a los demás.',
@@ -514,21 +535,21 @@ const critErrorBank=[
   {k:'er-fecundacion',txt:'"La fecundación es el momento en que nace el bebé".',
    g1:'La fecundación es la UNIÓN del espermatozoide con el óvulo.',
    g2:'El nacimiento ocurre al final del embarazo, en el PARTO.'},
-  {k:'er-misma-edad',txt:'"Todos los niños y niñas cambian a la misma edad en la pubertad".',
-   g1:'La pubertad ocurre a EDADES DISTINTAS en cada persona.',
-   g2:'Cada cuerpo tiene su propio ritmo; todo es normal.'},
+  {k:'er-utero',txt:'"El útero produce los óvulos".',
+   g1:'Los óvulos los producen los OVARIOS.',
+   g2:'El útero ALOJA al bebé durante el embarazo.'},
   {k:'er-misma-celula',txt:'"El espermatozoide y el óvulo son la misma célula".',
    g1:'El espermatozoide es la célula MASCULINA.',
    g2:'El óvulo es la célula FEMENINA; son distintas.'},
 ];
 const critDecisionBank=[
-  'Un adolescente con cambios en la pubertad puede informarse bien con un adulto de confianza, o creer todo lo que escucha en la calle.',
+  'Una persona puede usar ropa limpia y cómoda cada día, o ponerse la misma ropa sucia varios días.',
   'Ante los cambios del cuerpo, una persona puede cuidar su higiene diaria, o descuidarla.',
   'Al ver a un compañero con cambios distintos, uno puede respetarlo o burlarse de él.',
   'Una futura madre puede acudir a sus controles médicos, o no ir nunca al médico.',
-  'Frente a una duda sobre el cuerpo, un estudiante puede preguntar con respeto a un adulto, o quedarse con información falsa.',
+  'Un joven puede entender que ser papá es una gran responsabilidad, o pensar que un bebé se cuida solo.',
 ];
-const critDecisionGuide='Lo más saludable y responsable es informarse bien con adultos de confianza o personal de salud, cuidar la higiene, respetar el cuerpo propio y el de los demás, y acudir al médico cuando hace falta. Los cambios de la pubertad y el embarazo son naturales; conocerlos con información correcta evita miedos y burlas y ayuda a tomar buenas decisiones.';
+const critDecisionGuide='Lo más saludable y responsable es informarse bien con adultos de confianza o personal de salud, cuidar la higiene, respetar el cuerpo propio y el de los demás, acudir al médico cuando hace falta y entender que ser madre o padre es una gran responsabilidad. Los cambios de la pubertad y el embarazo son naturales; conocerlos con información correcta evita miedos y burlas y ayuda a tomar buenas decisiones.';
 const critCompareBank=[
   {k:'co-varones-mujeres',a:'Cambia la voz y se ensanchan los hombros.',b:'Se desarrollan las mamas y se ensanchan las caderas.',
    ga:'Cambios de los varones.',
@@ -542,7 +563,7 @@ const critCompareBank=[
 const critCauseBank=[
   {k:'cau-habitos',cause:'Un adolescente duerme bien, come variado y hace ejercicio.',guide:'Crece sano y con energía.'},
   {k:'cau-hormonas',cause:'Las hormonas sexuales empiezan a trabajar.',guide:'Comienzan los cambios del cuerpo de la adolescencia.'},
-  {k:'cau-confianza',cause:'Una familia habla con confianza de los cambios del cuerpo.',guide:'Los hijos preguntan a tiempo y no pasan el miedo que pasó Kenia.'},
+  {k:'cau-cigoto',cause:'El cigoto se divide muchas veces.',guide:'Se va formando todo el cuerpo del bebé.'},
 ];
 const critEffectBank=[
   {k:'ef-caderas',effect:'A una niña de 11 años se le ensanchan las caderas.',guide:'Su cuerpo empieza a madurar: es la pubertad.'},

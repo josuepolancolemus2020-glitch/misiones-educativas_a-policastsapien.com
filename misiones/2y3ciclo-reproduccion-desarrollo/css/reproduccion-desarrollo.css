@@ -481,3 +481,49 @@ body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* ── La animación que explica el tema: «A cada uno, a su tiempo»
+   (js/animacion-su-tiempo.js, con el aparato de css/animacion-mision.css).
+   Las caras, el uniforme, la escuela, la casa y los globos son como son:
+   se quedan iguales en la pantalla clara y en la oscura, y lo que dice un
+   globo es de papel, con tinta oscura. Lo que se lee sobre la tarjeta va
+   con .am-rotulo, que lleva su halo del color de la tarjeta. Nada se dice
+   solo con color: el brote se cuenta, y lo que Kenia piensa o dice, lo
+   dice su globo con palabras. */
+/* ⚠️ El botón que avanza: con el verde y el teal de la misión, la letra
+   blanca se quedaba en 3,3:1 y 3,7:1. Un tono más hondo de los dos la deja
+   por encima de 5:1. */
+:root { --am-boton: linear-gradient(135deg, #15803d, #0f766e); }
+.am-raiz .rd-piel      { stroke: #7c4f2c; stroke-width: 0.8; }
+.am-raiz .rd-pelo      { fill: #2d2a26; }
+.am-raiz .rd-ojo       { fill: #2d2a26; }
+.am-raiz .rd-boca      { fill: none; stroke: #4a1e1e; stroke-width: 1; stroke-linecap: round; }
+.am-raiz .rd-lagrima   { fill: #7cc4fa; stroke: #1d4ed8; stroke-width: 0.5; }
+.am-raiz .rd-camisa    { fill: #f8fafc; stroke: #64748b; stroke-width: 0.9; }
+.am-raiz .rd-falda     { fill: #1d4ed8; stroke: #1e3a8a; stroke-width: 0.8; }
+.am-raiz .rd-vestido   { fill: #7c3aed; stroke: #4c1d95; stroke-width: 0.9; }
+.am-raiz .rd-pista     { stroke: var(--gray, #636e72); stroke-width: 1; stroke-dasharray: 2 3; stroke-opacity: 0.7; }
+.am-raiz .rd-eje       { stroke: var(--dark, #2d3436); stroke-width: 1.3; }
+.am-raiz .rd-eje-punta { fill: var(--dark, #2d3436); }
+.am-raiz .rd-ahora     { stroke: var(--dark, #2d3436); stroke-width: 1.6; stroke-dasharray: 4 3; }
+.am-raiz .rd-ahora-punta { fill: var(--dark, #2d3436); }
+.am-raiz .rd-tallo     { fill: none; stroke: #15803d; stroke-width: 1.6; stroke-linecap: round; }
+.am-raiz .rd-hoja      { fill: #22c55e; stroke: #15803d; stroke-width: 0.8; }
+.am-raiz .rd-base      { fill: #15803d; }
+.am-raiz .rd-titulo    { font-weight: 700; }
+.am-raiz .rd-camino    { stroke: var(--dark, #2d3436); stroke-width: 1.8; stroke-linecap: round; }
+.am-raiz .rd-escuela   { fill: #fde68a; stroke: #92400e; stroke-width: 0.9; }
+.am-raiz .rd-techo     { fill: #b45309; stroke: #78350f; stroke-width: 0.8; }
+.am-raiz .rd-casa      { fill: #fed7aa; stroke: #9a3412; stroke-width: 0.9; }
+.am-raiz .rd-techo-casa { fill: #b91c1c; stroke: #7f1d1d; stroke-width: 0.8; }
+.am-raiz .rd-puerta    { fill: #78350f; }
+.am-raiz .rd-ventana   { fill: #bae6fd; stroke: #0369a1; stroke-width: 0.5; }
+.am-raiz .rd-estrella  { fill: #db2777; stroke: #ffffff; stroke-width: 0.9; }
+.am-raiz .rd-globo     { fill: #ffffff; stroke: #475569; stroke-width: 1; }
+.am-raiz .rd-globo-texto { fill: #1f2937; font-family: 'Fredoka', 'Nunito', sans-serif; }
+.am-raiz .rd-visto     { fill: #15803d; }
+.am-raiz .rd-visto-marca { fill: none; stroke: #ffffff; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.am-raiz .rd-union     { stroke: var(--dark, #2d3436); stroke-width: 1.3; stroke-dasharray: 3 3; }
+.am-raiz .rd-anillo    { fill: none; stroke: var(--dark, #2d3436); stroke-width: 1.4; }
+.am-raiz .rd-tarjeta   { fill: #fffdf5; stroke: #475569; stroke-width: 1.2; }
+.am-raiz .rd-raya-escribir { stroke: #475569; stroke-width: 1.2; }

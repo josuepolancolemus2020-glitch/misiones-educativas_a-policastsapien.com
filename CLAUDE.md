@@ -9487,6 +9487,152 @@ Salió roja con cada una.
 Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
 de 83 ms.
 
+### La cuadragésima segunda: La Reproducción y el Desarrollo Humano, y lo que enseñó
+
+La quinta de la Ruta del Cuerpo es **La Reproducción y el Desarrollo Humano**
+(`misiones/2y3ciclo-reproduccion-desarrollo/`, `js/animacion-su-tiempo.js`). La
+historia es la de Kenia: le llegó su primera menstruación en la escuela, creyó
+que estaba enferma, no le dijo a nadie en todo el día y se aguantó las ganas de
+llorar hasta llegar a su casa. No le faltaba valentía: nadie le había explicado
+nada, ni en la escuela ni en su casa, porque «de eso no se habla». La historia
+dice que los cambios le pasan a todo el mundo, que se nombran con palabras
+exactas, y que saber qué le está pasando a uno es lo que quita el miedo y deja
+pedir ayuda a tiempo. La animación tiene dos partes:
+
+- seis compañeros de grado de Kenia, cada uno con su línea del tiempo, y una
+  raya que avanza: a los seis les sale su brote («le llegaron sus cambios»),
+  pero cada brote sale en otro punto de la línea. A cada uno, a su tiempo;
+- el día de Kenia como fue: le llega en la escuela y piensa «¿Estoy enferma?»;
+  ese pensamiento se va con ella, pasa junto a la maestra sin decir nada y
+  llora al llegar a su casa;
+- el mismo día, sabiéndolo: piensa «Ya sé qué es», va donde la maestra y le
+  dice «Es mi menstruación. ¿Me ayuda?», y la ayudan ahí mismo;
+- una raya une los dos momentos: su cuerpo hizo lo mismo los dos días. Lo que
+  cambió fue saber cómo se llama y a quién preguntar;
+- y la pregunta es del alumno: a qué adulto de confianza le puede preguntar
+  él, y escribir su nombre en el cuaderno.
+
+Seis cosas que valen para las que siguen:
+
+1. ⚠️ **Nada del cuerpo se dibuja.** Los cambios son un brote en una línea del
+   tiempo, y la menstruación, una palabra en un globo. La historia pide
+   nombrar con palabras exactas, y eso se hace nombrando, no dibujando: el
+   dibujo tiene que poder proyectarse delante de cuarenta y tres alumnos.
+2. ⚠️ **Nadie va primero por ser niña o niño.** Los brotes salen mezclados. La
+   misión enseña que cada persona cambia a su propio ritmo, y una regla de
+   quién va antes no la enseña ni la acredita. La sonda comprueba que en el
+   orden de los brotes niñas y niños se alternen.
+3. ⚠️ **El pensamiento viaja con ella.** «¿Estoy enferma?» va dentro de la
+   Kenia que camina, así que llega a su casa con ella: «se lo guardó todo el
+   día» se ve, no se cuenta. En la otra fila, «Ya sé qué es» se apaga al
+   llegar donde la maestra, y medio segundo después aparece lo que dice: son
+   dos globos, no uno que cambia de letra, y no se enciman mientras uno se va.
+   El pensamiento se enciende y se apaga en el mismo paso, así que va en dos
+   envolturas, una para cada cosa.
+4. ⚠️ **La historia se cuenta cada vez que se entra en el paso.** Kenia está
+   dos veces en cada fila: la que camina, solo en su paso, y la que ya llegó,
+   en los pasos de después; lo mismo sus globos. Volviendo con «Atrás», la que
+   camina aparece donde le llega y vuelve a caminar, y la raya del tiempo
+   vuelve a pasar y los brotes vuelven a salir uno por uno. Se vio con fotos a
+   medio viaje yendo hacia atrás.
+5. **Tres cosas se vieron solo en las capturas, con la sonda en verde.** La
+   primera versión quedaba chica: la letra de 9,5 unidades salía de 8,6 px en
+   un teléfono. Los globos se quedaban donde Kenia ya no estaba, apuntando a
+   nadie: ahora Kenia empieza donde le llega, el pensamiento se va con ella y
+   en la segunda fila se queda con la maestra. Y el pensamiento y lo que dice
+   se encimaban medio segundo en el cambio, que solo se ve a medio viaje.
+6. ⚠️ **La historia y la animación contestaban trece preguntas de la
+   misión.** En la conceptual: «Kenia estaba enferma el día de su primera
+   menstruación», «todas las personas empiezan a cambiar a la misma edad»,
+   «los cambios del cuerpo al crecer son normales», «¿qué hizo daño en la
+   historia de Kenia?», «¿qué es lo mejor si algo de tu cuerpo te preocupa?»
+   y «en la mujer comienza el ciclo ___», que la historia nombra con su
+   palabra. En pensamiento crítico: el niño confundido por su voz, la niña
+   que no sabe si su cambio es normal, la que tiene vergüenza de preguntarle a
+   su mamá (las tres son la historia de Kenia con otra ropa, y el consejo que
+   piden es el que la historia da), el error de que todos cambian a la misma
+   edad, la familia que habla con confianza «y no pasa el miedo que pasó
+   Kenia», y las dos decisiones de informarse con un adulto o preguntar con
+   respeto. Ahora preguntan otras cosas de la misión, sacadas de su Aprende y
+   de su Laboratorio: el bebé que crece muy rápido, que uno cambia toda la
+   vida, el tamaño del óvulo y del espermatozoide, la responsabilidad de ser
+   madre o padre, el alcohol y el tabaco en el embarazo, lo que necesita un
+   recién nacido, por qué uno se parece a sus dos padres, cómo respira un
+   bebé que acaba de nacer, qué produce el útero, el cigoto que se divide y
+   la ropa limpia. En la ficha, lo mismo con otras seis, y la felicitación de
+   la hoja de los pareados, que daba dos respuestas («cómo se transmite la
+   vida», «respetar a los demás»), ahora solo pide revisar.
+
+Y una del código, que costó un error al abrirla: una función de la escena se
+llamaba `ayuda`, igual que el parámetro de `construir`. La declaración se sube
+al principio y tapa el parámetro, así que el aparato llegaba sin su `el` y la
+escena reventaba al montar («el is not a function»). Se llama `visto`.
+
+La sonda de esta escena **no le cree nada a la escena**:
+
+- que sean seis compañeros con su nombre escrito, cada uno en su fila, con su
+  cara, su nombre y su línea del tiempo, y que las seis líneas empiecen y
+  acaben en el mismo punto;
+- que en el paso 0 la raya esté al principio y no haya un solo brote;
+- que en el paso 1 la raya llegue al final en cinco tramos iguales, a paso
+  parejo;
+- que a los seis les salga su brote, parado en SU línea, cada uno en otro punto
+  (a 12 unidades o más, y más de 100 entre el primero y el último), y justo
+  cuando la raya pasa por ahí;
+- que niñas y niños salgan mezclados;
+- en el día, que la escuela, el momento, la maestra y la casa vayan en ese
+  orden, parados en el camino, con cada rótulo debajo de lo que nombra; y que
+  en las dos filas el momento y la maestra estén en el mismo sitio;
+- que Kenia salga de donde le llega, en tramos iguales, cada uno cuando acabó
+  el anterior; que en la primera fila pase de largo junto a la maestra y
+  llegue a su casa, con el pensamiento sobre su cabeza desde que le llega y la
+  lágrima al llegar; que en la segunda se pare junto a la maestra, que el
+  pensamiento se apague al llegar y lo dicho aparezca medio segundo después
+  con la palabra exacta, saliendo de su cabeza sin tapar a la maestra, y que
+  la ayuden después de pedirlo;
+- que la Kenia que camina acabe justo donde está la que ya llegó;
+- en el paso 4, que una raya una los dos momentos, cada uno con su anillo y
+  «el mismo momento» al lado, sin atravesar ningún rótulo;
+- en el 5, que la tarjeta diga «Le puedo preguntar a:» y traiga su raya para
+  escribir;
+- que ningún globo ni rótulo se monte en otro;
+- y que no salga una palabra de la prueba ni un número fuera del marcador.
+
+Se comprobó al revés con veintisiete averías, plantadas una por una:
+
+- un brote en la línea de otro compañero;
+- dos brotes el mismo día;
+- los brotes saliendo antes de que pase la raya;
+- a uno sin salirle el brote;
+- las niñas primero;
+- la raya sin llegar al final;
+- la raya corriendo a saltos;
+- la raya empezando corrida;
+- Kenia sin salir de donde le llega;
+- quedándose antes de llegar a su casa;
+- llorando antes de llegar;
+- pensando después de caminar;
+- el pensamiento sin irse con ella;
+- la palabra que no es la exacta;
+- diciéndolo mientras todavía piensa;
+- ayudándola antes de pedirlo;
+- parándose lejos de la maestra;
+- el ✓ lejos de la maestra;
+- el momento corrido en la segunda fila;
+- la raya del mismo momento sin llegar;
+- «pubertad» en una frase;
+- el marcador del paso 1 diciendo 5;
+- la tarjeta sin raya para escribir;
+- la Kenia que camina sin acabar donde la que llegó;
+- el título de la segunda fila cambiado;
+- la leyenda sin decir qué es un brote;
+- un rótulo montado en otro.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
+de 133 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -9596,7 +9742,10 @@ deja pasar lo que se sale. Lo que se apaga en un sitio y vuelve a empezar en
 otro (una bolita que ya se gastó) lleva una envoltura aparte para encenderse y
 apagarse, y así vuelve invisible. Y al volver con «Atrás», un viaje de varios
 tramos se deshace en el orden contrario, tramo por tramo: de un solo tirón
-cruza por donde no hay camino.
+cruza por donde no hay camino. Lo que alguien piensa mientras camina va dentro
+de la envoltura que camina: así llega con él. Y ninguna función de la escena se
+llama como el parámetro de `construir` (`ayuda`): la declaración lo tapa, y la
+escena revienta al montar.
 
 Si el `--sec` de la misión es claro (un ámbar, un amarillo), la letra blanca
 del botón que avanza no se lee en su punta: la misión declara en su CSS

@@ -1712,6 +1712,82 @@ const LEER = `
       textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
     };
   };
+  window.__amExtra.amSuTiempo = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(m(el)); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function uno(sel, en) { return (en || raiz).querySelector(sel); }
+    function todos(sel, en) { return [].slice.call((en || raiz).querySelectorAll(sel)); }
+    function demora(el) { return parseFloat(el.style.getPropertyValue('--d')) || 0; }
+    function linea(l) { return { a: aVista(l, +l.getAttribute('x1'), +l.getAttribute('y1')), b: aVista(l, +l.getAttribute('x2'), +l.getAttribute('y2')) }; }
+    /* Los tramos de algo que viaja: cuánto corre cada envoltura y cuándo
+       arranca. Se mide en el dibujo: la diferencia entre dónde queda el
+       origen de una envoltura y el de la de fuera. */
+    function tramos(g0) {
+      var gs = todos('[data-tramo]', g0), antes = aVista(g0, 0, 0);
+      return gs.map(function (g) { var p = aVista(g, 0, 0), t = { dx: p[0] - antes[0], dy: p[1] - antes[1], d: demora(g) }; antes = p; return t; });
+    }
+    function globo(g) {
+      var pt = g.getAttribute('data-punta').split(' ').map(Number), env = g.parentNode.getAttribute('data-envoltura') ? g.parentNode : null;
+      return { clave: g.getAttribute('data-globo'), cuando: g.getAttribute('data-cuando'), ve: vis(g), d: demora(g), caja: caja(uno('[data-caja]', g)),
+               dice: todos('[data-dice]', g).map(function (t) { return t.textContent; }), letras: todos('[data-dice]', g).map(caja),
+               punta: aVista(g, pt[0], pt[1]), fila: g.closest('[data-fila]').getAttribute('data-fila'),
+               envoltura: env ? { ve: vis(env), d: demora(env), fuera: env.classList.contains('am-fuera') } : null,
+               dentroFuera: g.classList.contains('am-fuera') };
+    }
+    return {
+      clase: vis(uno('[data-clase]')), dia: vis(uno('[data-dia]')), tarjetaVe: vis(uno('[data-tarjeta]')),
+      alumnos: todos('[data-alumno]').map(function (g) {
+        var n = g.getAttribute('data-alumno'), pista = linea(uno('[data-pista="' + n + '"]'));
+        return { nombre: n, es: g.getAttribute('data-es'), cara: caja(uno('[data-cara]', g)), rotulo: caja(uno('text', g)), dice: uno('text', g).textContent, pista: pista };
+      }),
+      brotes: todos('[data-brote]').map(function (g) {
+        var c = uno('.rd-base', g);
+        return { nombre: g.getAttribute('data-brote'), ve: vis(g), d: demora(g), base: aVista(c, +c.getAttribute('cx'), +c.getAttribute('cy')), caja: caja(g) };
+      }),
+      raya: (function () {
+        var g0 = uno('[data-raya-tiempo]'), l = uno('[data-ahora]');
+        var L = linea(l);
+        return { x: L.a[0], y0: Math.min(L.a[1], L.b[1]), y1: Math.max(L.a[1], L.b[1]), tramos: tramos(g0) };
+      })(),
+      eje: linea(uno('[data-eje]')),
+      leyenda: { ve: vis(uno('[data-leyenda]')), brote: uno('[data-leyenda] .rd-hoja') ? caja(uno('[data-leyenda]')) : null },
+      filas: todos('[data-fila]').map(function (g) {
+        var k = g.getAttribute('data-fila'), cam = linea(uno('[data-camino]', g)), est = caja(uno('[data-llega]', g));
+        return { k: k, ve: vis(g), camino: cam, escuela: caja(uno('[data-lugar="escuela"]', g)), casa: caja(uno('[data-lugar="casa"]', g)),
+                 maestra: caja(uno('[data-maestra]', g)), cabezaMaestra: caja(uno('[data-cabeza-maestra]', g)),
+                 estrella: { caja: est, c: [(est.x0 + est.x1) / 2, (est.y0 + est.y1) / 2] } };
+      }),
+      kenias: todos('[data-kenia]').map(function (g) {
+        var cuerpo = uno('[data-pisa]', g), camina = g.getAttribute('data-cual') === 'camina';
+        var boca = function (k) { var b = uno('[data-boca="' + k + '"]', g); return { ve: vis(b), d: demora(b) }; };
+        var lag = uno('[data-lagrima]', g);
+        return { fila: g.getAttribute('data-kenia'), cual: g.getAttribute('data-cual'), ve: vis(g), dVer: demora(g),
+                 pisa: aVista(cuerpo, 0, 0), cabeza: caja(uno('[data-cabeza]', g)), tramos: camina ? tramos(g) : [],
+                 tranquila: boca('tranquila'), triste: boca('triste'), contenta: boca('contenta'), lagrima: { ve: vis(lag), d: demora(lag) } };
+      }),
+      globos: todos('[data-globo]').map(globo),
+      ayuda: todos('[data-ayuda]').map(function (g) { var c = uno('[data-visto]', g); return { cuando: g.getAttribute('data-cuando'), ve: vis(g), d: demora(g), caja: caja(c) }; }),
+      comparar: (function () {
+        var g = uno('[data-comparar]');
+        return { ve: vis(g), d: demora(g), union: linea(uno('[data-union]', g)),
+                 anillos: todos('[data-anillo]', g).map(function (c) { return { k: c.getAttribute('data-anillo'), c: aVista(c, +c.getAttribute('cx'), +c.getAttribute('cy')), caja: caja(c) }; }) };
+      })(),
+      tarjeta: { hoja: caja(uno('[data-hoja]')), escribir: linea(uno('[data-escribir]')) },
+      rotulos: todos('[data-rotulo]').map(function (t) {
+        var f = t.closest('[data-fila]');
+        return { k: t.getAttribute('data-rotulo'), ve: vis(t), dice: t.textContent, caja: caja(t), fila: f ? f.getAttribute('data-fila') : '' };
+      }),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   window.__amExtra.amCuesta = function (raiz) {
     var vis = window.__amVisible;
     var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
@@ -2260,6 +2336,196 @@ function superficieEn(poly, x) {
 }
 
 const ESCENAS = {
+  /* La Reproducción y el Desarrollo Humano. «A cada uno, a su tiempo».
+     ⚠️ Nada se le cree a la escena. Cuándo le llegan los cambios a cada
+     compañero se lee en el dibujo: el brote sale en SU línea y aparece
+     justo cuando la raya del tiempo pasa por ahí. El día de Kenia se mide
+     igual: dónde pisa, por dónde camina y cuándo piensa, dice o la ayudan,
+     con lo que tiene escrito cada globo. Y lo que la prueba pregunta no se
+     dice en ningún paso. */
+  amSuTiempo(e, n) {
+    const x = e.extra, r = [];
+    const nb = t => String(t == null ? '' : t).replace(/ /g, ' ').trim();
+    const cen = c => [(c.x0 + c.x1) / 2, (c.y0 + c.y1) / 2];
+    const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+    const monta = (a, b) => a.x0 < b.x1 - 0.5 && b.x0 < a.x1 - 0.5 && a.y0 < b.y1 - 0.5 && b.y0 < a.y1 - 0.5;
+    /* Lo que no depende del dibujo, primero. */
+    const dicho = [e.texto, e.cifra, e.palabras].concat(x.textos).map(nb).join(' | ').toLowerCase();
+    const EXACTAS = ['pubertad', 'madura', 'maduran', 'madurar', 'maduro', 'hormona', 'hormonas', 'sexual', 'sexuales', 'normal', 'normales',
+      'estatura', 'voz', 'vello', 'hombros', 'ensanchan', 'mamas', 'caderas', 'higiene', 'respetar', 'respeto', 'respeta', 'médico', 'médica',
+      'controles', 'embarazo', 'embarazada', 'bebé', 'útero', 'estómago', 'óvulo', 'óvulos', 'espermatozoide', 'espermatozoides', 'fecundación',
+      'cigoto', 'trompas', 'placenta', 'cordón', 'umbilical', 'parto', 'gestación', 'meses', 'infancia', 'niñez', 'adolescencia', 'adolescente',
+      'adultez', 'vejez', 'etapa', 'etapas', 'edad', 'edades', 'varón', 'varones', 'mujer', 'mujeres', 'hombre', 'hombres', 'reproducción',
+      'reproductor', 'reproductora', 'reproductores', 'responsabilidad', 'moverse', 'alcohol', 'tabaco', 'fumar', 'cuidado', 'rápido', 'crece',
+      'crecer', 'crecen', 'menstrual', 'ciclo', 'vida'];
+    const suelto = ' ' + dicho.split(/[^a-záéíóúñü]+/).filter(Boolean).join(' ') + ' ';
+    const malas = EXACTAS.filter(w => suelto.includes(' ' + w + ' '));
+    r.push([malas.length === 0, `paso ${n}: no sale ninguna palabra de la prueba (ni un cambio del cuerpo, ni quién los dirige, ni una etapa de la vida, ni lo que se preguntó en su lugar)`, malas]);
+    const nums = [e.texto].concat(x.textos).map(nb).join(' ').match(/\d+/g) || [];
+    r.push([nums.length === 0, `paso ${n}: ningún número en la frase ni en el dibujo`, nums]);
+    const frase = nb(e.texto);
+    const FR = [['compañeros de grado de Kenia', '¿Les llegan a todos los cambios del cuerpo el mismo día?'],
+      ['Les llegan a todos', 'no el mismo día', 'a cada uno, a su tiempo'],
+      ['primera menstruación en la escuela', 'nadie le había explicado nada', 'creyó que estaba enferma', 'se lo guardó todo el día'],
+      ['el mismo día', 'alguien que se lo explicó antes', 'Kenia sabe qué es', 'le pide ayuda a la maestra'],
+      ['Su cuerpo hizo lo mismo los dos días', 'saber cómo se llama y a quién preguntar'],
+      ['adulto de confianza', 'escribe su nombre en tu cuaderno']];
+    r.push([FR[n].every(w => frase.includes(w)), `paso ${n}: la frase dice lo que se ve (${FR[n].join(', ')})`, frase]);
+
+    /* ── Qué se ve en cada paso ── */
+    r.push([x.clase === (n <= 1), `paso ${n}: los compañeros de grado ${n <= 1 ? 'están' : 'ya no están'}`]);
+    r.push([x.dia === (n >= 2 && n <= 4), `paso ${n}: el día de Kenia ${n >= 2 && n <= 4 ? 'está' : 'no está'}`]);
+    r.push([x.tarjetaVe === (n === 5), `paso ${n}: la tarjeta de la pregunta ${n === 5 ? 'está' : 'no está'}`]);
+    const vistos = x.rotulos.filter(t => t.ve);
+    const montados = [];
+    vistos.forEach((a, i) => vistos.slice(i + 1).forEach(b => { if (monta(a.caja, b.caja)) montados.push(nb(a.dice) + '/' + nb(b.dice)); }));
+    r.push([montados.length === 0, `paso ${n}: ningún rótulo se monta en otro`, montados]);
+
+    /* ── La clase ── */
+    if (n <= 1) {
+      const al = x.alumnos, ys = al.map(a => a.pista.a[1]);
+      r.push([al.length === 6 && new Set(al.map(a => a.nombre)).size === 6 && al.every(a => nb(a.dice) === a.nombre), 'son seis compañeros, cada uno con su nombre escrito', al.map(a => a.dice)]);
+      r.push([ys.every((y, i) => i === 0 || y > ys[i - 1] + 10), 'cada uno en su fila, una debajo de otra', ys.map(Math.round)]);
+      r.push([al.every(a => Math.abs(a.pista.a[1] - a.pista.b[1]) < 0.3 && Math.abs(cen(a.cara)[1] - a.pista.a[1]) <= 0.6 && a.cara.x1 < a.rotulo.x0 && a.rotulo.x1 < a.pista.a[0] - 4),
+        'cada uno tiene su cara, su nombre y su línea del tiempo, en ese orden y a la misma altura']);
+      const x0 = al[0].pista.a[0], x1 = al[0].pista.b[0];
+      r.push([al.every(a => Math.abs(a.pista.a[0] - x0) < 0.5 && Math.abs(a.pista.b[0] - x1) < 0.5), 'las seis líneas empiezan y acaban en el mismo punto']);
+      r.push([x.eje.a[1] > ys[5] + 8 && Math.abs(x.eje.a[0] - x0) < 0.5 && x.eje.b[0] >= x1, 'debajo de todos va el eje del tiempo, del mismo largo']);
+      const ti = x.rotulos.find(t => t.k === 'tiempo');
+      r.push([!!ti && ti.ve && nb(ti.dice) === 'el tiempo' && Math.abs(ti.caja.x1 - x.eje.b[0]) <= 12 && ti.caja.y0 > x.eje.a[1], 'el eje dice «el tiempo», debajo de su punta']);
+      const le = x.rotulos.find(t => t.k === 'leyenda');
+      r.push([x.leyenda.ve && !!x.leyenda.brote && !!le && nb(le.dice) === 'le llegaron sus cambios', 'lo que es un brote está escrito: «le llegaron sus cambios»']);
+      const ry = x.raya;
+      r.push([ry.y0 < ys[0] - 5 && ry.y1 >= x.eje.a[1] - 3, 'la raya del tiempo cruza las seis líneas hasta el eje']);
+      const vivos = x.brotes.filter(b => b.ve);
+      if (n === 0) {
+        r.push([Math.abs(ry.x - x0) <= 0.6, 'paso 0: la raya del tiempo está al principio', ry.x]);
+        r.push([vivos.length === 0, 'paso 0: todavía no le ha salido el brote a nadie', vivos.length]);
+      } else {
+        r.push([Math.abs(ry.x - x1) <= 0.6, 'paso 1: la raya del tiempo llegó al final', ry.x]);
+        const tr = ry.tramos, L = tr.length ? tr[0].dx : 0;
+        r.push([tr.length === 5 && tr.every(t => Math.abs(t.dx - L) < 0.3 && Math.abs(t.dy) < 0.3) && Math.abs(L * 5 - (x1 - x0)) < 0.6,
+          'paso 1: la raya avanza en cinco tramos iguales', tr.map(t => +t.dx.toFixed(2))]);
+        r.push([tr.every((t, i) => i === 0 || Math.abs(t.d - tr[i - 1].d - 800) <= 5), 'paso 1: cada tramo arranca cuando acabó el anterior, a paso parejo', tr.map(t => t.d)]);
+        r.push([vivos.length === 6 && al.every(a => vivos.some(b => b.nombre === a.nombre)), 'paso 1: a los seis les salió su brote: les llega a todos', vivos.length]);
+        const fuera = vivos.filter(b => { const a = al.find(q => q.nombre === b.nombre); return !a || Math.abs(b.base[1] - a.pista.a[1]) > 0.6 || b.base[0] < x0 || b.base[0] > x1; });
+        r.push([fuera.length === 0, 'paso 1: cada brote está parado en la línea de su compañero', fuera.map(b => b.nombre)]);
+        const xs = vivos.map(b => b.base[0]).sort((p, q) => p - q);
+        r.push([xs.every((v, i) => i === 0 || v - xs[i - 1] >= 12) && xs[xs.length - 1] - xs[0] >= 100, 'paso 1: cada brote sale en otro punto de la línea: no el mismo día', xs.map(Math.round)]);
+        const cuando = b => tr[0].d + (b.base[0] - x0) / L * 800;
+        const tarde = vivos.filter(b => Math.abs(b.d - cuando(b)) > 40);
+        r.push([tarde.length === 0, 'paso 1: cada brote sale justo cuando la raya pasa por su punto', tarde.map(b => [b.nombre, b.d, Math.round(cuando(b))])]);
+        const orden = vivos.slice().sort((p, q) => p.base[0] - q.base[0]).map(b => al.find(a => a.nombre === b.nombre).es);
+        let saltos = 0; orden.forEach((s, i) => { if (i && s !== orden[i - 1]) saltos++; });
+        r.push([saltos >= 2 && new Set(orden).size === 2, 'paso 1: niñas y niños salen mezclados, nadie va primero por ser niña o niño', orden]);
+      }
+    } else if (x.brotes.some(b => b.ve)) r.push([false, `paso ${n}: los brotes ya no se ven`]);
+
+    /* ── El día de Kenia ── */
+    const F = k => x.filas.find(q => q.k === k), K = (f, c) => x.kenias.find(k => k.fila === f && k.cual === c);
+    const G = (clave, cuando) => x.globos.find(g => g.clave === clave && g.cuando === cuando);
+    const globosVe = x.globos.filter(g => g.ve), ayudaVe = x.ayuda.filter(a => a.ve);
+    if (n >= 2 && n <= 4) {
+      r.push([F('a').ve && F('b').ve === (n >= 3), `paso ${n}: ${n >= 3 ? 'las dos filas' : 'solo la primera fila'}, «sin saber» ${n >= 3 ? 'y «sabiendo»' : ''}`]);
+      ['a', 'b'].filter(k => F(k).ve).forEach(k => {
+        const f = F(k), y = f.camino.a[1], ex = cen(f.escuela)[0], cx = cen(f.casa)[0], mx = cen(f.maestra)[0], sx = f.estrella.c[0];
+        r.push([Math.abs(f.camino.b[1] - y) < 0.3 && ex < sx && sx < mx && mx < cx, `fila ${k}: la escuela, el momento en que le llega, la maestra y la casa, en ese orden`]);
+        r.push([[f.escuela, f.casa, f.maestra].every(c => Math.abs(c.y1 - y) <= 1.5) && f.estrella.caja.y0 > y && f.estrella.caja.y0 - y < 6, `fila ${k}: todo está parado en el camino, y el momento, debajo`]);
+        const tit = x.rotulos.find(t => t.k === 'fila-' + k);
+        r.push([!!tit && tit.ve && nb(tit.dice) === (k === 'a' ? 'Sin saber qué era' : 'Sabiendo qué era'), `fila ${k}: dice ${k === 'a' ? '«Sin saber qué era»' : '«Sabiendo qué era»'}`]);
+        const rot = kk => x.rotulos.find(t => t.k === kk && t.fila === k);
+        const bajo = (t, c) => !!t && t.ve && Math.abs(cen(t.caja)[0] - cen(c)[0]) <= 3 && t.caja.y0 > y;
+        r.push([bajo(rot('escuela'), f.escuela) && bajo(rot('casa'), f.casa) && bajo(rot('maestra'), f.maestra) && nb(rot('escuela').dice) === 'escuela' && nb(rot('casa').dice) === 'casa' && nb(rot('maestra').dice) === 'maestra',
+          `fila ${k}: «escuela», «maestra» y «casa» van debajo de lo que nombran`]);
+        const ll = rot('llega');
+        r.push([!!ll && ll.ve && nb(ll.dice) === 'le llega' && ll.caja.x0 > f.estrella.caja.x1 && ll.caja.y1 > f.estrella.caja.y0 && ll.caja.y0 < f.estrella.caja.y1, `fila ${k}: «le llega» va al lado del momento`]);
+      });
+      if (n >= 3) r.push([Math.abs(F('a').estrella.c[0] - F('b').estrella.c[0]) < 0.5 && Math.abs(cen(F('a').maestra)[0] - cen(F('b').maestra)[0]) < 0.5, `paso ${n}: en las dos filas le llega en el mismo momento del día, y la maestra está en el mismo sitio`]);
+      /* Ningún globo se monta en otro ni en un rótulo, y todos caben. */
+      const choques = [];
+      globosVe.forEach((g, i) => {
+        globosVe.slice(i + 1).forEach(h => { if (monta(g.caja, h.caja)) choques.push(g.clave + '/' + h.clave); });
+        vistos.forEach(t => { if (monta(g.caja, t.caja)) choques.push(g.clave + '/' + nb(t.dice)); });
+        if (g.caja.x0 < 0 || g.caja.x1 > 320 || g.caja.y0 < 0) choques.push(g.clave + ' se sale');
+        const letras = g.letras.every(l => l.x0 >= g.caja.x0 && l.x1 <= g.caja.x1 && l.y0 >= g.caja.y0 - 0.5 && l.y1 <= g.caja.y1 + 0.5);
+        if (!letras) choques.push(g.clave + ': la letra no cabe');
+      });
+      r.push([choques.length === 0, `paso ${n}: los globos caben, con su letra adentro, sin montarse en nada`, choques]);
+    } else if (globosVe.length || ayudaVe.length) r.push([false, `paso ${n}: no queda ningún globo del día`]);
+
+    /* Primera fila: «¿Estoy enferma?» se va con ella a su casa. */
+    const aC = K('a', 'camina'), aQ = K('a', 'quieta'), fa = F('a');
+    r.push([aC.ve === (n === 2) && aQ.ve === (n === 3 || n === 4), `paso ${n}: en la primera fila, Kenia ${n === 2 ? 'camina' : n === 3 || n === 4 ? 'ya está en su casa' : 'no está'}`]);
+    if (n === 2) {
+      const tr = aC.tramos, L = tr.length ? tr[0].dx : 0, sale = aC.pisa[0] - tr.reduce((s, t) => s + t.dx, 0);
+      r.push([tr.length === 4 && tr.every(t => Math.abs(t.dx - L) < 0.3 && Math.abs(t.dy) < 0.3) && Math.abs(sale - fa.estrella.c[0]) <= 0.6 && Math.abs(aC.pisa[1] - fa.camino.a[1]) <= 0.6,
+        'paso 2: Kenia sale de donde le llega y camina por el camino, en tramos iguales', { sale: Math.round(sale), tramos: tr.map(t => +t.dx.toFixed(1)) }]);
+      r.push([tr.every((t, i) => i === 0 || Math.abs(t.d - tr[i - 1].d - 800) <= 5), 'paso 2: cada tramo arranca cuando acabó el anterior', tr.map(t => t.d)]);
+      r.push([aC.pisa[0] > fa.maestra.x1 && aC.cabeza.x1 < fa.casa.x0, 'paso 2: pasa de largo junto a la maestra y llega a su casa', aC.pisa.map(Math.round)]);
+      r.push([Math.abs(aC.pisa[0] - aQ.pisa[0]) <= 0.6 && Math.abs(aC.pisa[1] - aQ.pisa[1]) <= 0.6, 'la Kenia que camina acaba justo donde está la que ya llegó']);
+      const g = G('enferma', 'camina');
+      r.push([!!g && g.ve && g.dice.join(' ') === '¿Estoy enferma?' && g.caja.y1 < aC.cabeza.y0 && Math.abs(cen(g.caja)[0] - aC.pisa[0]) <= 1 && g.d < tr[0].d,
+        'paso 2: piensa «¿Estoy enferma?» apenas le llega, y el pensamiento se va con ella', g && [g.d, tr[0].d]]);
+      r.push([!!g && g.punta[1] > g.caja.y1 && g.punta[1] < aC.cabeza.y0 + 2 && Math.abs(g.punta[0] - aC.pisa[0]) <= 7, 'paso 2: el globo de pensar apunta a su cabeza']);
+      r.push([aC.triste.ve && !aC.tranquila.ve && !aC.contenta.ve && aC.triste.d === (g ? g.d : -1), 'paso 2: se pone triste en el momento en que le llega', aC.triste.d]);
+      r.push([aC.lagrima.ve && Math.abs(aC.lagrima.d - (tr[3].d + 800)) <= 5, 'paso 2: llora al llegar a su casa, no antes', [aC.lagrima.d, tr[3].d + 800]]);
+      r.push([!globosVe.some(q => q.fila === 'a' && q.clave !== 'enferma') && ayudaVe.length === 0, 'paso 2: no le dice nada a nadie y nadie la ayuda']);
+    }
+    if (n === 3 || n === 4) {
+      const g = G('enferma', 'quieta');
+      r.push([aQ.lagrima.ve && aQ.triste.ve && !!g && g.ve && g.caja.y1 < aQ.cabeza.y0 && Math.abs(cen(g.caja)[0] - aQ.pisa[0]) <= 1, `paso ${n}: en su casa, Kenia sigue con «¿Estoy enferma?» y llorando`]);
+    }
+
+    /* Segunda fila: «Ya sé qué es», y donde la maestra lo dice con la
+       palabra exacta y pide ayuda. */
+    const bC = K('b', 'camina'), bQ = K('b', 'quieta'), fb = F('b');
+    r.push([bC.ve === (n === 3) && bQ.ve === (n === 4), `paso ${n}: en la segunda fila, Kenia ${n === 3 ? 'camina' : n === 4 ? 'ya está con la maestra' : 'no está'}`]);
+    if (n === 3) {
+      const tr = bC.tramos, L = tr.length ? tr[0].dx : 0, sale = bC.pisa[0] - tr.reduce((s, t) => s + t.dx, 0);
+      r.push([tr.length === 3 && tr.every(t => Math.abs(t.dx - L) < 0.3 && Math.abs(t.dy) < 0.3) && Math.abs(sale - fb.estrella.c[0]) <= 0.6 && Math.abs(bC.pisa[1] - fb.camino.a[1]) <= 0.6,
+        'paso 3: Kenia sale de donde le llega y camina por el camino, en tramos iguales', { sale: Math.round(sale), tramos: tr.map(t => +t.dx.toFixed(1)) }]);
+      r.push([tr.every((t, i) => i === 0 || Math.abs(t.d - tr[i - 1].d - 800) <= 5), 'paso 3: cada tramo arranca cuando acabó el anterior', tr.map(t => t.d)]);
+      const llega = tr[2].d + 800;
+      r.push([bC.cabeza.x1 < fb.cabezaMaestra.x0 && fb.cabezaMaestra.x0 - bC.cabeza.x1 <= 14, 'paso 3: se para junto a la maestra', [Math.round(bC.cabeza.x1), Math.round(fb.cabezaMaestra.x0)]]);
+      r.push([Math.abs(bC.pisa[0] - bQ.pisa[0]) <= 0.6 && Math.abs(bC.pisa[1] - bQ.pisa[1]) <= 0.6, 'la Kenia que camina acaba justo donde está la que ya llegó']);
+      const s = G('sabe', 'camina');
+      r.push([!!s && s.envoltura && s.envoltura.ve && s.envoltura.d < tr[0].d && s.dice.join(' ') === 'Ya sé qué es.', 'paso 3: piensa «Ya sé qué es.» apenas le llega', s && s.envoltura]);
+      r.push([!!s && !s.ve && s.dentroFuera && Math.abs(s.d - llega) <= 5, 'paso 3: lo que piensa se apaga al llegar donde la maestra', s && [s.d, llega]]);
+      const d = G('dice', 'camina');
+      r.push([!!d && d.ve && d.dice.join(' ') === 'Es mi menstruación. ¿Me ayuda?' && d.d >= llega + 500, 'paso 3: donde la maestra dice la palabra exacta y pide ayuda, cuando el pensamiento ya se fue', d && [d.dice, d.d]]);
+      const cab = bC.cabeza, dPunta = d ? Math.max(cab.x0 - d.punta[0], 0, d.punta[0] - cab.x1) + Math.max(cab.y0 - d.punta[1], 0, d.punta[1] - cab.y1) : 99;
+      r.push([!!d && dPunta <= 4 && !monta(d.caja, fb.cabezaMaestra), 'paso 3: el globo sale de su cabeza y no tapa a la maestra', dPunta]);
+      const a = x.ayuda.find(q => q.cuando === 'camina');
+      r.push([!!a && a.ve && a.d >= (d ? d.d : 0) + 500 && a.caja.x0 >= fb.cabezaMaestra.x1 - 1 && a.caja.x0 - fb.cabezaMaestra.x1 <= 10 && a.caja.y0 < fb.cabezaMaestra.y1 + 8 && a.caja.y1 > fb.cabezaMaestra.y0 - 8,
+        'paso 3: después de pedirla, la maestra la ayuda (✓ junto a la maestra)', a && [a.d, d && d.d]]);
+      r.push([bC.contenta.ve && !bC.tranquila.ve && !bC.triste.ve && !bC.lagrima.ve && !!a && bC.contenta.d === a.d, 'paso 3: se pone contenta cuando la ayudan, y no llora', bC.contenta.d]);
+      r.push([!globosVe.some(q => q.fila === 'b' && q.clave === 'sabe'), 'paso 3: al final ya no piensa: lo dijo']);
+    }
+    if (n === 4) {
+      const d = G('dice', 'quieta'), a = x.ayuda.find(q => q.cuando === 'quieta');
+      r.push([!!d && d.ve && d.dice.join(' ') === 'Es mi menstruación. ¿Me ayuda?' && !!a && a.ve && bQ.contenta.ve && !bQ.lagrima.ve, 'paso 4: en la segunda fila, Kenia sigue con la maestra: lo dijo, pidió ayuda y la ayudaron']);
+      const c = x.comparar, u = c.union, sa = fa.estrella.c, sb = fb.estrella.c;
+      r.push([c.ve && Math.abs(u.a[0] - u.b[0]) < 0.3 && dist(u.a, sa) <= 1 && dist(u.b, sb) <= 1, 'paso 4: una raya une los dos momentos: le llegó en el mismo momento del día']);
+      r.push([c.anillos.length === 2 && c.anillos.every(q => { const s = F(q.k).estrella; return dist(q.c, s.c) <= 0.6 && q.caja.x0 < s.caja.x0 && q.caja.x1 > s.caja.x1; }), 'paso 4: cada momento lleva su anillo']);
+      const mi = x.rotulos.find(t => t.k === 'mismo');
+      r.push([!!mi && mi.ve && nb(mi.dice) === 'el mismo momento' && mi.caja.x0 > u.a[0] && mi.caja.y0 > sa[1] && mi.caja.y1 < sb[1], 'paso 4: dice «el mismo momento», al lado de la raya']);
+      const cruza = vistos.filter(t => t.k !== 'mismo' && t.caja.x0 < u.a[0] && t.caja.x1 > u.a[0] && t.caja.y0 < Math.max(u.a[1], u.b[1]) && t.caja.y1 > Math.min(u.a[1], u.b[1]));
+      r.push([cruza.length === 0, 'paso 4: la raya no atraviesa ningún rótulo', cruza.map(t => t.dice)]);
+    } else r.push([!x.comparar.ve, `paso ${n}: la raya del mismo momento solo está en el paso 4`]);
+
+    /* ── La pregunta del final ── */
+    if (n === 5) {
+      const t = x.rotulos.find(q => q.k === 'tarjeta'), h = x.tarjeta.hoja, w = x.tarjeta.escribir;
+      r.push([!!t && t.ve && nb(t.dice) === 'Le puedo preguntar a:' && t.caja.x0 > h.x0 && t.caja.x1 < h.x1 && t.caja.y0 > h.y0, 'paso 5: la tarjeta dice «Le puedo preguntar a:»']);
+      r.push([w.a[0] > h.x0 && w.b[0] < h.x1 && w.a[1] > t.caja.y1 && w.a[1] < h.y1 && Math.abs(w.a[1] - w.b[1]) < 0.3, 'paso 5: y trae su raya para escribir, debajo']);
+    }
+
+    /* ── El marcador ── */
+    const tot = x.alumnos.length, van = x.brotes.filter(b => b.ve).length;
+    const M = [['?', '¿el mismo día?'], [van + ' de ' + tot, 'cada uno a su tiempo'], ['sola', 'todo el día'], ['ayuda', 'ahí mismo'], ['saber', 'lo que cambió'], ['?', '¿a quién le preguntas?']];
+    r.push([nb(e.cifra) === M[n][0] && nb(e.palabras) === M[n][1], `paso ${n}: el marcador dice lo que se ve («${M[n][0]}», ${M[n][1]})`, [e.cifra, e.palabras]]);
+    return r;
+  },
   /* El Sistema Respiratorio y Circulatorio. «La cuesta de la pila».
      ⚠️ Nada se le cree a la escena. Cada bolita de oxígeno se sigue tramo
      por tramo en el dibujo: del aire a la boca, de la boca a un pulmón
