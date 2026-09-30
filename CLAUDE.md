@@ -9633,6 +9633,140 @@ Salió roja con cada una.
 Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
 de 133 ms.
 
+### La cuadragésima tercera: La Célula, la primera de la Ruta de la Vida
+
+Con la Ruta del Cuerpo terminada sigue la Ruta de la Vida, y su primera misión
+es **La Célula** (`misiones/2y3ciclo-la-celula/`, `js/animacion-herida.js`). La
+historia es la de don Tulio: chapeando, se le fue el machete y se abrió el
+brazo. Estuvo dos semanas sin poder trabajar, y de esas dos semanas nadie le
+pagó ninguna. A la tercera, la herida estaba cerrada y la piel completa otra
+vez, y nadie le puso carne nueva: la puso su propio cuerpo. La historia
+pregunta de dónde salió esa carne, y contesta que cada pedacito salió de algo
+que ya estaba vivo ahí. La animación:
+
+- arriba, el brazo de don Tulio, con su manga y su mano, y un recuadro sobre la
+  herida; abajo, su piel vista de muy cerca: cinco filas de nueve células
+  pegadas unas con otras;
+- el machete se lleva nueve, y queda un hueco en forma de V desde la
+  superficie;
+- una célula de la orilla se divide: de una salen dos, iguales, y la nueva se
+  corre a un lugar del hueco;
+- las de la orilla se siguen dividiendo, y la nueva también: el hueco se llena
+  de abajo hacia arriba;
+- a la tercera semana la herida está cerrada, con nueve células nuevas, y cada
+  una lleva su flecha desde la que la hizo. Ninguna apareció de la nada;
+- y la pregunta es del alumno: buscar en su piel un raspón que ya sanó, y
+  dibujar en su cuaderno cómo se fue cerrando.
+
+Seis cosas que valen para las que siguen:
+
+1. ⚠️ **Cada célula nueva sale de una que ya estaba, y se ve salir.** La nueva
+   nace encima de su madre, igual a ella, y de ahí se corre a su lugar. «Ninguna
+   apareció de la nada» es lo que la historia promete, y el dibujo lo tiene que
+   cumplir célula por célula.
+2. ⚠️ **Las nuevas también se dividen, y lo obliga la forma del hueco.** En una
+   V, las células del centro no tienen ninguna vecina vieja: la que tapa el
+   centro de la segunda fila solo puede salir de la nueva de abajo. No hace
+   falta decírselo al alumno, porque sale del dibujo. Por eso el hueco se
+   llena de abajo hacia arriba, y la frase lo dice.
+3. ⚠️ **Lo que la prueba pregunta no se dice ni se dibuja.** Cada célula lleva su
+   centro, pero no se nombra ninguna parte: ni el núcleo ni la membrana son
+   palabras de la animación. Tampoco se dice cuánto mide, ni con qué se ve, ni
+   quién escribió que toda célula sale de otra. El recuadro que agranda la
+   herida es un marco de raya cortada con dos rayas, no un instrumento: una
+   lupa o un microscopio dibujados contestarían «¿qué instrumento hace falta
+   para ver casi todas las células?». Por eso tampoco hay 🔬 en ningún botón.
+4. **El brazo no parecía un brazo.** La primera versión era una forma alargada
+   que se leía como un palo o un dedo. Con la manga de la camisa y la mano
+   con su pulgar se lee como un brazo. Se vio agrandando la captura, con la
+   sonda en verde.
+5. ⚠️ **La sonda se equivocó dos veces antes de servir, y las dos fueron
+   suyas.** Medía el hueco con la posición de ahora de las células que se llevó
+   el machete, que se caen hacia afuera: la V le salía [5, 3, 0, 1, 0]. Ahora
+   lo mide con el lugar que tenía cada una antes de caerse. Y buscaba a la
+   madre por su nombre, que es el del lugar: una célula que se fue y la nueva
+   que ocupa su sitio se llaman igual, así que encontraba la vieja, invisible,
+   y daba a cuatro nuevas por huérfanas. Ahora busca la que se ve. Es la
+   lección de «Cuadrado **Perfecto**» otra vez.
+6. ⚠️ **La historia y la animación contestaban siete preguntas de la misión.**
+   - En la conceptual:
+     - «la célula es la porción más pequeña que tiene vida propia» (la historia
+       dice «la cosa más pequeña que puede estar viva»);
+     - «toda célula nueva sale de otra que ya existía»;
+     - «para formar piel nueva en la herida de don Tulio, sus células se ___»,
+       que es la animación palabra por palabra;
+     - y «la célula nace, se nutre, crece, se ___ y muere»: ahí la animación
+       deja escrito «se divide», y como solo se aceptaba «reproduce», el
+       alumno que lo copiaba salía marcado mal habiendo entendido.
+   - En pensamiento crítico:
+     - «las células no están vivas»;
+     - «la célula aparece de la nada»;
+     - y «nadie ve las células de su piel a simple vista», con la piel vista
+       de muy cerca en la animación.
+
+   Ahora preguntan otras cosas de la misión, sacadas de su Aprende y de su
+   Laboratorio:
+   - en la conceptual: que la teoría celular la construyeron varios
+     científicos, que una ameba es una sola célula, el azúcar que fabrica la
+     planta (la glucosa) y que la célula, al final, muere;
+   - en pensamiento crítico: la membrana y la mitocondria, que están en la
+     célula animal y en la vegetal, y la piedra, que no está hecha de células.
+
+   Ninguna de las nuevas nombra la pared ni los cloroplastos, que son lo que el
+   caso I pide reconocer. En la ficha, lo mismo con las cuatro de la
+   conceptual. La felicitación de la hoja de los pareados daba cinco
+   respuestas: el núcleo que dirige, la mitocondria que da energía, el
+   cloroplasto, la fotosíntesis y los billones de células. Ahora solo pide
+   revisar.
+
+La sonda de esta escena **no le cree nada a la escena**:
+
+- que el recuadro esté sobre el brazo, justo donde está el corte, y que las dos
+  rayas vayan de sus esquinas a las de la piel de cerca;
+- que el corte esté abierto del paso 1 al 3, y no antes ni después;
+- que la piel sean cinco filas de nueve células, todas dentro del recuadro;
+- que el machete se lleve nueve, seguidas en cada fila, en una V centrada que
+  empieza en la superficie;
+- que haya 0, 1, 4 y 9 nuevas, cada una en un lugar del hueco y ninguna en el
+  de otra;
+- que cada nueva salga de encima de una vecina que ya estaba ahí, y que, si su
+  madre es nueva, haya llegado a su lugar antes de dividirse;
+- que desde el paso 3 alguna madre sea nueva;
+- que el hueco se llene de abajo hacia arriba, y que al final la piel esté
+  completa;
+- que ninguna célula se monte en otra;
+- que en los pasos 4 y 5 cada nueva lleve su flecha desde la que la hizo, y
+  antes no;
+- que ningún rótulo se monte en otro, y que el marcador diga lo que se ve;
+- y que no salga una palabra de la prueba ni un número.
+
+Se comprobó al revés con diecinueve averías, plantadas una por una:
+
+- la nueva naciendo lejos de su madre;
+- una madre que no es vecina;
+- una nueva dividiéndose antes de llegar a su lugar;
+- el machete llevándose diez;
+- una nueva quedándose fuera de su lugar;
+- dos nuevas en el mismo lugar;
+- el hueco llenándose de arriba hacia abajo;
+- el corte abierto hasta el final;
+- el recuadro lejos de la herida;
+- las flechas al revés;
+- las flechas desde el paso 3;
+- «núcleo» en una frase;
+- el marcador del paso 3 diciendo que faltan 4;
+- la piel saliéndose del recuadro;
+- las del hueco sin irse;
+- un número en la frase;
+- dos rótulos montados;
+- una raya de la lupa sin llegar a la piel;
+- las células montadas.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
+de 67 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -9745,7 +9879,10 @@ tramos se deshace en el orden contrario, tramo por tramo: de un solo tirón
 cruza por donde no hay camino. Lo que alguien piensa mientras camina va dentro
 de la envoltura que camina: así llega con él. Y ninguna función de la escena se
 llama como el parámetro de `construir` (`ayuda`): la declaración lo tapa, y la
-escena revienta al montar.
+escena revienta al montar. Lo que se cae y se va (una célula que se llevó el
+machete) sigue teniendo su lugar: la sonda mide el hueco con el sitio que tenía
+antes de caerse, no con donde quedó. Y si una pieza nueva ocupa el lugar de una
+que se fue, llevan el mismo nombre: la sonda busca la que se ve.
 
 Si el `--sec` de la misión es claro (un ámbar, un amarillo), la letra blanca
 del botón que avanza no se lee en su punta: la misión declara en su CSS

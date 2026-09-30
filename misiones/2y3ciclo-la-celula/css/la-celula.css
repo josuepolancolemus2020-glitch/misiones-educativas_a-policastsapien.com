@@ -481,3 +481,29 @@ body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* ── La animación que explica el tema: «El brazo de don Tulio»
+   (js/animacion-herida.js, con el aparato de css/animacion-mision.css).
+   El brazo, la piel de cerca y sus células son como son: se quedan iguales
+   en la pantalla clara y en la oscura, y las flechas que van encima de las
+   células llevan tinta oscura fija. Lo que se lee sobre la tarjeta va con
+   .am-rotulo, que lleva su halo del color de la tarjeta. Nada se dice solo
+   con color: las células se cuentan, y cada nueva lleva su flecha desde la
+   que la hizo. */
+/* ⚠️ El botón que avanza: con el verde y el teal de la misión, la letra
+   blanca se quedaba en 3,3:1 y 3,7:1. Un tono más hondo de los dos la deja
+   por encima de 5:1. */
+:root { --am-boton: linear-gradient(135deg, #15803d, #0f766e); }
+.am-raiz .ce-brazo      { fill: #c68642; stroke: #7c4f2c; stroke-width: 1; }
+.am-raiz .ce-mano       { fill: #c68642; stroke: #7c4f2c; stroke-width: 1; }
+.am-raiz .ce-dedos      { fill: none; stroke: #7c4f2c; stroke-width: 0.9; stroke-linecap: round; }
+.am-raiz .ce-manga      { fill: #3b6fb6; stroke: #1e3a5f; stroke-width: 1; }
+.am-raiz .ce-puno       { fill: none; stroke: #1e3a5f; stroke-width: 1; }
+.am-raiz .ce-corte      { fill: none; stroke: #b91c1c; stroke-width: 2.6; stroke-linecap: round; }
+.am-raiz .ce-lupa       { fill: none; stroke: var(--dark, #2d3436); stroke-width: 1.3; stroke-dasharray: 3 2; }
+.am-raiz .ce-lupa-raya  { stroke: var(--gray, #636e72); stroke-width: 1; stroke-dasharray: 3 3; }
+.am-raiz .ce-piel       { fill: #fff4ee; stroke: #fdba74; stroke-width: 1.2; }
+.am-raiz .ce-celula     { fill: #fcd9c4; stroke: #c2410c; stroke-width: 1.2; }
+.am-raiz .ce-centro     { fill: #7c2d12; }
+.am-raiz .ce-flecha     { stroke: #1f2937; stroke-width: 1.8; stroke-linecap: round; }
+.am-raiz .ce-flecha-punta { fill: #1f2937; }

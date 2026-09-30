@@ -355,16 +355,28 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 // (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
 // tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
 // Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
+//
+// ⚠️ Y ninguna la contesta la historia de don Tulio ni su animación
+// (js/animacion-herida.js). La historia dice que la carne nueva salió de
+// «algo que ya estaba vivo ahí», que es «la cosa más pequeña que puede estar
+// viva»; la animación enseña la piel de cerca y cómo las células se dividen,
+// de una salen dos, hasta cerrar la herida. Por eso se fueron «la célula es
+// la porción más pequeña que tiene vida propia», «toda célula nueva sale de
+// otra», «para formar piel nueva en la herida de don Tulio, sus células se
+// ___» y «la célula nace, se nutre, crece, se ___ y muere»: ahí la animación
+// deja escrito «se divide», y el alumno que lo copiaba salía marcado mal
+// habiendo entendido. Las que entraron preguntan otra cosa de la misión,
+// sacada de su Aprende y de su Laboratorio.
 const evalTFBank=[
   {q:'Robert Hooke llamó «celdas» a los cuartitos que vio.',a:true,k:'tf-hooke'},
   {q:'Todos los organismos, desde el más pequeño hasta un árbol, están formados por células.',a:true,k:'tf-todos'},
   {q:'Las células no necesitan alimento.',a:false,k:'tf-alimento'},
-  {q:'La célula es la porción más pequeña que tiene vida propia.',a:true,k:'tf-porcion'},
+  {q:'La teoría celular la construyeron varios científicos.',a:true,k:'tf-varios'},
   {q:'La célula animal y la vegetal tienen la misma forma.',a:false,k:'tf-misma-forma'},
   {q:'La célula se descubrió hace muy poco, cuando ya había computadoras.',a:false,k:'tf-reciente'},
   {q:'Solo algunas células tienen una capa que las separa de lo de afuera.',a:false,k:'tf-capa'},
   {q:'Las primeras formas de vida en la Tierra fueron células sencillas.',a:true,k:'tf-primeras'},
-  {q:'Toda célula nueva sale de otra célula que ya existía.',a:true,k:'tf-otra'},
+  {q:'Una ameba está formada por una sola célula.',a:true,k:'tf-ameba'},
   {q:'Dentro de la célula ocurren reacciones químicas.',a:true,k:'tf-reacciones'}
 ];
 const evalMCBank=[
@@ -387,8 +399,8 @@ const evalCPBank=[
   {q:'La energía que usa la célula se guarda en una molécula llamada ___.',a:'ATP',acc:['ATP'],k:'cp-atp'},
   {q:'La cubierta de la célula vegetal está hecha de ___.',a:'celulosa',acc:['celulosa'],k:'cp-celulosa'},
   {q:'Robert Hooke vio las primeras células en un trozo de ___.',a:'corcho',acc:['corcho'],k:'cp-corcho'},
-  {q:'Para formar piel nueva en la herida de don Tulio, sus células se ___.',a:'dividen',acc:['dividen','dividieron','multiplican','multiplicaron'],k:'cp-dividen'},
-  {q:'La célula nace, se nutre, crece, se ___ y muere.',a:'reproduce',acc:['reproduce'],k:'cp-reproduce'},
+  {q:'El alimento que fabrica la planta con la luz es un azúcar llamado ___.',a:'glucosa',acc:['glucosa'],k:'cp-glucosa'},
+  {q:'Como cualquier ser vivo, la célula nace, crece y al final ___.',a:'muere',acc:['muere'],k:'cp-muere'},
   {q:'Los organelos son pequeñas ___ con funciones específicas.',a:'máquinas',acc:['máquinas','maquinas'],k:'cp-maquinas'}
 ];
 const evalPRBank=[
@@ -487,6 +499,13 @@ function evalSwitchMode(mode){
     cBtn.classList.add('active');cBtn.setAttribute('aria-selected','true');
   }
 }
+// ⚠️ Pensamiento crítico, con la misma regla: «las células no están vivas»,
+// «la célula aparece de la nada» y «nadie ve las células de su piel a simple
+// vista» los contestaba la historia de don Tulio o su animación, que enseña
+// la piel de muy cerca. Los que entraron salen de otra parte de la misión: la
+// membrana y la mitocondria, que están en la célula animal y en la vegetal, y
+// la piedra, que no está hecha de células. Ninguno nombra la pared ni los
+// cloroplastos, que son lo que el caso I pide reconocer.
 const critCaseBank=[
   {k:'ca-ana',txt:'Ana observa al microscopio una célula que tiene pared celular, varios cloroplastos verdes y una gran vacuola central que ocupa casi todo su interior.'},
   {k:'ca-dibujo',txt:'Un estudiante dibuja una célula que presenta una cubierta rígida por fuera, cloroplastos con clorofila y una vacuola central muy grande.'},
@@ -511,12 +530,12 @@ const critErrorBank=[
   {k:'er-nucleo-mitocondria',txt:'"El núcleo produce la energía de la célula, mientras que la mitocondria guarda el ADN y dirige todas sus funciones".',
    g1:'la mitocondria es la que produce la energía (ATP) por respiración celular, no el núcleo.',
    g2:'el núcleo es el que guarda el ADN y dirige la célula, no la mitocondria.'},
-  {k:'er-no-vivas',txt:'"Las células no están vivas: lo que está vivo es la persona entera".',
-   g1:'la célula es la porción más pequeña que tiene vida propia.',
-   g2:'como cualquier ser vivo, nace, se nutre, respira, crece, se reproduce y muere.'},
-  {k:'er-de-la-nada',txt:'"Cuando el cuerpo necesita una célula nueva, la célula aparece de la nada".',
-   g1:'toda célula viene de otra célula que ya existía.',
-   g2:'es el tercer postulado de la teoría celular: «omnis cellula e cellula».'},
+  {k:'er-membrana',txt:'"La membrana solo la tiene la célula animal: la de la planta no la necesita".',
+   g1:'la membrana está en todas las células, también en la de la planta.',
+   g2:'la necesita: es la que controla lo que entra y sale de la célula.'},
+  {k:'er-mitocondria',txt:'"Las mitocondrias solo están en las células de los animales: las plantas no las necesitan".',
+   g1:'la célula de la planta también tiene mitocondrias.',
+   g2:'las necesita: en las dos, la mitocondria produce la energía de la célula.'},
   {k:'er-todas-iguales',txt:'"En un perro todas las células son iguales y hacen el mismo trabajo".',
    g1:'en un ser de muchas células, las células están especializadas.',
    g2:'cada tipo hace un trabajo distinto y todas trabajan juntas.'},
@@ -540,7 +559,7 @@ const critCauseBank=[
   {k:'cau-ameba',cause:'La única célula de una ameba muere.',guide:'Muere la ameba entera, porque era un ser unicelular.'},
 ];
 const critEffectBank=[
-  {k:'ef-simple-vista',effect:'Nadie puede ver las células de su piel a simple vista.',guide:'Son microscópicas: su tamaño se mide en micrómetros.'},
+  {k:'ef-piedra',effect:'Una piedra no crece ni se reproduce.',guide:'No está formada por células: no es un ser vivo.'},
   {k:'ef-proteinas',effect:'Una célula deja de producir proteínas.',guide:'Fallan sus ribosomas, que son los que las fabrican.'},
   {k:'ef-corcho',effect:'Un trozo de corcho, visto con aumento, parece un panal de cuartitos.',guide:'Son las cubiertas de células que ya murieron; así se descubrió la célula.'},
 ];

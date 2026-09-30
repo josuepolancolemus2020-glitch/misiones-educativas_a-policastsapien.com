@@ -1712,6 +1712,39 @@ const LEER = `
       textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
     };
   };
+  window.__amExtra.amHerida = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(m(el)); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function uno(sel, en) { return (en || raiz).querySelector(sel); }
+    function todos(sel, en) { return [].slice.call((en || raiz).querySelectorAll(sel)); }
+    function demora(el) { return parseFloat(el.style.getPropertyValue('--d')) || 0; }
+    function linea(l) { return { a: aVista(l, +l.getAttribute('x1'), +l.getAttribute('y1')), b: aVista(l, +l.getAttribute('x2'), +l.getAttribute('y2')) }; }
+    /* El centro de una célula: el de su cuerpo, donde está ahora. Y donde
+       estaba antes de correrse: el mismo punto, sin el movimiento de la
+       envoltura (se mide en las coordenadas de su padre). */
+    function centro(g) { var r = uno('[data-cuerpo]', g), x = +r.getAttribute('x') + (+r.getAttribute('width')) / 2, y = +r.getAttribute('y') + (+r.getAttribute('height')) / 2; return { ahora: aVista(r, x, y), antes: aVista(g.parentNode, x, y), lado: +r.getAttribute('width') }; }
+    return {
+      viejas: todos('[data-vieja]').map(function (g) { var c = centro(g); return { id: g.getAttribute('data-celula'), ve: vis(g), d: demora(g), c: c.ahora, casa: c.antes, lado: c.lado }; }),
+      nuevas: todos('[data-nueva]').map(function (g) { var c = centro(g); return { id: g.getAttribute('data-nueva'), madre: g.getAttribute('data-madre'), ve: vis(g), d: demora(g), c: c.ahora, inicio: c.antes }; }),
+      flechas: { ve: vis(uno('[data-flechas]')), d: demora(uno('[data-flechas]')), lista: todos('[data-flecha]').map(function (g) {
+        var l = linea(uno('line', g)), pd = uno('path', g).getAttribute('d').split(' ');
+        return { id: g.getAttribute('data-flecha'), a: l.a, b: l.b, punta: aVista(g, parseFloat(pd[1]), parseFloat(pd[2])) };
+      }) },
+      corte: (function () { var c = uno('[data-corte]'), pd = c.getAttribute('d').split(' '); return { ve: vis(c), d: demora(c), a: aVista(c, parseFloat(pd[1]), parseFloat(pd[2])), b: aVista(c, parseFloat(pd[4]), parseFloat(pd[5])) }; })(),
+      lupa: caja(uno('[data-lupa]')), brazo: caja(uno('[data-brazo]')), piel: caja(uno('[data-piel]')),
+      rayas: todos('[data-lupa-raya]').map(function (l) { return linea(l); }),
+      rotulos: todos('[data-rotulo]').map(function (t) { return { k: t.getAttribute('data-rotulo'), ve: vis(t), dice: t.textContent, caja: caja(t) }; }),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   window.__amExtra.amSuTiempo = function (raiz) {
     var vis = window.__amVisible;
     var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
@@ -2336,6 +2369,123 @@ function superficieEn(poly, x) {
 }
 
 const ESCENAS = {
+  /* La Célula. «El brazo de don Tulio».
+     ⚠️ Nada se le cree a la escena. El hueco se lee en el dibujo (qué
+     células ya no se ven), cada célula nueva se busca en el lugar que
+     ocupa, y su madre en el lugar de donde arrancó: tiene que ser una
+     vecina que ya estaba ahí. Así se comprueba lo que la animación dice,
+     que ninguna aparece de la nada. */
+  amHerida(e, n) {
+    const x = e.extra, r = [];
+    const nb = t => String(t == null ? '' : t).replace(/ /g, ' ').trim();
+    const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+    const monta = (a, b) => a.x0 < b.x1 - 0.5 && b.x0 < a.x1 - 0.5 && a.y0 < b.y1 - 0.5 && b.y0 < a.y1 - 0.5;
+    const dentro = (p, c, t) => p[0] >= c.x0 - (t || 0) && p[0] <= c.x1 + (t || 0) && p[1] >= c.y0 - (t || 0) && p[1] <= c.y1 + (t || 0);
+    /* Lo que no depende del dibujo, primero. */
+    const dicho = [e.texto, e.cifra, e.palabras].concat(x.textos).map(nb).join(' | ').toLowerCase();
+    const EXACTAS = ['microscopio', 'microscópica', 'microscópicas', 'micrómetro', 'micrómetros', 'núcleo', 'núcleos', 'membrana', 'citoplasma', 'adn',
+      'organelo', 'organelos', 'mitocondria', 'ribosoma', 'vacuola', 'cloroplasto', 'pared', 'centriolo', 'teoría', 'postulado', 'postulados',
+      'virchow', 'omnis', 'hooke', 'corcho', 'celdas', 'billones', 'millones', 'procariota', 'eucariota', 'unicelular', 'pluricelular',
+      'especializadas', 'energía', 'alimento', 'muere', 'mueren', 'reproduce', 'reproducen', 'fotosíntesis', 'clorofila', 'oxígeno', 'atp',
+      'celulosa', 'ameba', 'bacteria', 'científicos', 'firmeza', 'lechuga', 'máquinas', 'porción', 'propia', 'reacciones'];
+    const suelto = ' ' + dicho.split(/[^a-záéíóúñü]+/).filter(Boolean).join(' ') + ' ';
+    const malas = EXACTAS.filter(w => suelto.includes(' ' + w + ' '));
+    r.push([malas.length === 0, `paso ${n}: no sale ninguna palabra de la prueba (ni una parte de la célula, ni con qué se ve, ni cuánto mide, ni la teoría)`, malas]);
+    const nums = [e.texto].concat(x.textos).map(nb).join(' ').match(/\d+/g) || [];
+    r.push([nums.length === 0, `paso ${n}: ningún número en la frase ni en el dibujo`, nums]);
+    const frase = nb(e.texto);
+    const FR = [['la piel del brazo de don Tulio', 'células pegadas unas con otras', '¿De dónde saldrá la piel nueva?'],
+      ['El machete se llevó estas nueve', 'la tiene que hacer su propio cuerpo'],
+      ['Una célula de la orilla se divide', 'de una salen dos, iguales', 'un lugar del hueco'],
+      ['se siguen dividiendo', 'y la nueva también', 'de abajo hacia arriba'],
+      ['la herida está cerrada', 'salió de otra que ya estaba viva ahí', 'ninguna apareció de la nada'],
+      ['un raspón que ya sanó', 'dibuja en tu cuaderno']];
+    r.push([FR[n].every(w => frase.includes(w)), `paso ${n}: la frase dice lo que se ve (${FR[n].join(', ')})`, frase]);
+    const vistos = x.rotulos.filter(t => t.ve), montados = [];
+    vistos.forEach((a, i) => vistos.slice(i + 1).forEach(b => { if (monta(a.caja, b.caja)) montados.push(nb(a.dice) + '/' + nb(b.dice)); }));
+    r.push([montados.length === 0, `paso ${n}: ningún rótulo se monta en otro`, montados]);
+
+    /* ── El brazo y la piel de cerca ── */
+    if (n === 0) {
+      r.push([dentro(x.corte.a, x.lupa) && dentro(x.corte.b, x.lupa) && x.lupa.x0 >= x.brazo.x0 && x.lupa.x1 <= x.brazo.x1, 'el recuadro está sobre el brazo, justo donde va la herida']);
+      const [ra, rb] = x.rayas;
+      r.push([!!ra && !!rb && dist(ra.a, [x.lupa.x0, x.lupa.y1]) <= 1 && dist(rb.a, [x.lupa.x1, x.lupa.y1]) <= 1 && dist(ra.b, [x.piel.x0, x.piel.y0]) <= 1.5 && dist(rb.b, [x.piel.x1, x.piel.y0]) <= 1.5,
+        'dos rayas van del recuadro a la piel de cerca: es la misma herida, agrandada']);
+    }
+    r.push([x.corte.ve === (n >= 1 && n <= 3), `paso ${n}: el corte en el brazo ${n >= 1 && n <= 3 ? 'está abierto' : n === 0 ? 'todavía no está' : 'ya se cerró'}`]);
+
+    /* La piel: cinco filas de nueve, todas dentro. */
+    const V = x.viejas, lado = V[0].lado;
+    /* Dónde está el lugar de cada una: el de antes de caerse, si se cayó. */
+    const ys = [...new Set(V.map(c => Math.round(c.casa[1])))].sort((a, b) => a - b), xs = [...new Set(V.map(c => Math.round(c.casa[0])))].sort((a, b) => a - b);
+    const quieta = V.filter(c => c.ve);
+    if (n === 0) {
+      r.push([V.length === 45 && ys.length === 5 && xs.length === 9 && V.every(c => dist(c.c, c.casa) < 0.3 && dentro(c.c, x.piel, -lado / 2 + 0.5)), 'paso 0: la piel son cinco filas de nueve células, todas dentro del recuadro', [V.length, ys.length, xs.length]]);
+      r.push([quieta.length === 45 && x.nuevas.every(q => !q.ve), 'paso 0: la piel está entera y no hay ninguna nueva']);
+    }
+    /* El hueco: las que ya no se ven. */
+    const fuera = V.filter(c => !c.ve), filaDe = c => ys.findIndex(y => Math.abs(y - c.casa[1]) < 1), colDe = c => xs.findIndex(v => Math.abs(v - c.casa[0]) < 1);
+    if (n >= 1) {
+      const porFila = [0, 1, 2, 3, 4].map(f => fuera.filter(c => filaDe(c) === f).map(colDe).sort((a, b) => a - b));
+      const seguidas = porFila.every(cs => cs.every((c, i) => i === 0 || c === cs[i - 1] + 1));
+      const largos = porFila.map(cs => cs.length), hasta = largos.findIndex(l => l === 0);
+      const v = largos[0] > 0 && largos.slice(0, hasta < 0 ? 5 : hasta).every((l, i, a) => i === 0 || l < a[i - 1]) && (hasta < 0 || largos.slice(hasta).every(l => l === 0));
+      const centrada = porFila.filter(cs => cs.length).every(cs => Math.abs((cs[0] + cs[cs.length - 1]) / 2 - (porFila[0][0] + porFila[0][porFila[0].length - 1]) / 2) < 0.6);
+      r.push([fuera.length === 9 && seguidas && v && centrada, `paso ${n}: el machete se llevó nueve, en forma de V desde la superficie`, largos]);
+    }
+    /* Las nuevas: dónde están, de quién salieron y cuándo. */
+    const N = x.nuevas, vivas = N.filter(q => q.ve), todas = quieta.concat(vivas.map(q => ({ id: q.id, c: q.c })));
+    const quiere = [0, 0, 1, 4, 9, 9][n];
+    r.push([vivas.length === quiere, `paso ${n}: hay ${quiere} células nuevas`, vivas.length]);
+    const enHueco = q => fuera.some(c => dist(c.casa, q.c) <= 0.6);
+    r.push([vivas.every(enHueco) && new Set(vivas.map(q => Math.round(q.c[0]) + ',' + Math.round(q.c[1]))).size === vivas.length, `paso ${n}: cada nueva ocupa un lugar del hueco, y ninguna el de otra`]);
+    /* La madre: la que se ve con ese lugar. Si la de antes se fue con el
+       corte, es la nueva que ocupa su lugar. */
+    const buscar = id => { const v = V.find(c => c.id === id), q = N.find(o => o.id === id); return v && v.ve ? v : q || v; };
+    const huerfanas = vivas.filter(q => {
+      const madre = buscar(q.madre);
+      if (!madre || !madre.ve) return true;
+      const vecina = Math.abs(dist(madre.c, q.c) - (xs[1] - xs[0])) <= 1;
+      const arranca = dist(q.inicio, madre.c) <= 0.6;
+      /* Una madre nueva de este mismo paso tiene que haber llegado a su
+         lugar antes de dividirse; una de un paso anterior ya estaba. */
+      const yaEstaba = !N.includes(madre) || madre.d === 0 || madre.d + 800 <= q.d;
+      return !(vecina && arranca && yaEstaba);
+    });
+    r.push([huerfanas.length === 0, `paso ${n}: cada nueva salió de encima de una vecina que ya estaba ahí: ninguna aparece de la nada`, huerfanas.map(q => q.id + '←' + q.madre)]);
+    const desdeNueva = vivas.filter(q => N.some(o => o.id === q.madre));
+    if (n >= 3) r.push([desdeNueva.length >= 1, `paso ${n}: las nuevas también se dividen`, desdeNueva.map(q => q.id)]);
+    /* Se llena de abajo hacia arriba: una nueva de una fila más arriba
+       nunca está antes que las de la fila de abajo del hueco. */
+    if (n >= 2) {
+      const filasLlenas = [0, 1, 2, 3, 4].map(f => { const h = fuera.filter(c => filaDe(c) === f); return h.length && h.every(c => vivas.some(q => dist(q.c, c.casa) <= 0.6)); });
+      const filasCon = [0, 1, 2, 3, 4].map(f => fuera.filter(c => filaDe(c) === f).some(c => vivas.some(q => dist(q.c, c.casa) <= 0.6)));
+      const bien = filasCon.every((con, f) => !con || fuera.filter(c => filaDe(c) > f).every(c => vivas.some(q => dist(q.c, c.casa) <= 0.6)));
+      r.push([bien, `paso ${n}: el hueco se llena de abajo hacia arriba`, filasLlenas]);
+    }
+    const encimadas = [];
+    todas.forEach((a, i) => todas.slice(i + 1).forEach(b => { if (dist(a.c, b.c) < lado - 0.5) encimadas.push(a.id + '/' + b.id); }));
+    r.push([encimadas.length === 0, `paso ${n}: ninguna célula se monta en otra`, encimadas]);
+    if (n >= 4) {
+      const huecos = V.filter(c => !todas.some(o => dist(o.c, c.casa) <= 0.6));
+      r.push([huecos.length === 0, `paso ${n}: la piel está completa otra vez`, huecos.map(c => c.id)]);
+    }
+    /* Las flechas: de cada madre a su hija, en el paso 4 y el 5. */
+    r.push([x.flechas.ve === (n >= 4), `paso ${n}: las flechas de cada madre a su hija ${n >= 4 ? 'están' : 'no están'}`]);
+    if (n >= 4) {
+      const malas2 = N.filter(q => {
+        const f = x.flechas.lista.find(o => o.id === q.id), madre = buscar(q.madre);
+        return !f || !madre || dist(f.a, madre.c) > 7 || dist(f.punta, q.c) > 12 || dist(f.punta, q.c) >= dist(f.a, q.c);
+      });
+      r.push([x.flechas.lista.length === 9 && malas2.length === 0, `paso ${n}: cada nueva lleva su flecha desde la que la hizo`, malas2.map(q => q.id)]);
+    }
+
+    /* ── El marcador ── */
+    const M = [['?', '¿de dónde sale la piel nueva?'], [String(fuera.length), 'se fueron con el corte'], [String(vivas.length), 'nueva, salida de otra'],
+      [String(vivas.length), 'nuevas, faltan ' + (fuera.length - vivas.length)], [String(vivas.length), 'nuevas: la herida se cerró'], ['?', '¿cómo se cerró la tuya?']];
+    r.push([nb(e.cifra) === M[n][0] && nb(e.palabras) === M[n][1], `paso ${n}: el marcador dice lo que se ve («${M[n][0]}», ${M[n][1]})`, [e.cifra, e.palabras]]);
+    return r;
+  },
   /* La Reproducción y el Desarrollo Humano. «A cada uno, a su tiempo».
      ⚠️ Nada se le cree a la escena. Cuándo le llegan los cambios a cada
      compañero se lee en el dibujo: el brote sale en SU línea y aparece

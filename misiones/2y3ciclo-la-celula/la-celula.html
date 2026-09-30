@@ -25,6 +25,9 @@
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
 <link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La animación que explica el tema: el aparato es compartido y va DESPUÉS
+     del CSS de la misión, que es de donde saca sus colores. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -70,6 +73,22 @@
     <div class="tip"><span class="ti">❓</span><div>¿De dónde salió esa carne? No apareció de la nada: cada
     pedacito salió de <strong>algo que ya estaba vivo ahí</strong>, y ese algo es la cosa más pequeña que
     puede estar viva. Es lo que vas a ver en esta misión.</div></div>
+  </div>
+  <!-- La animación que explica el tema, justo después de la historia: el
+       brazo de don Tulio y su piel vista de muy cerca, hecha de células. El
+       machete se lleva nueve, y las de la orilla se dividen (y después las
+       nuevas también) hasta cerrar el hueco: cada célula nueva sale de una
+       que ya estaba. La mueve el alumno, paso a paso. El aparato es
+       compartido (js/animacion-mision.js) y la escena es de esta misión
+       (js/animacion-herida.js). La frase de dentro es de reserva: si el
+       aparato no llega a cargar, se lee eso en vez de un hueco. -->
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira de dónde salió la piel nueva</h2>
+    <div id="amHerida">
+      <p>De muy cerca, la piel de don Tulio está hecha de células pegadas unas con otras. El machete se llevó
+      unas cuantas, y las de la orilla se dividieron: de una salieron dos, y las nuevas también se dividieron,
+      hasta cerrar la herida. Cada célula nueva salió de otra que ya estaba viva ahí.</p>
+    </div>
   </div>
   <div class="card ac-teal">
     <h2>🔬 ¿Qué es la Célula?</h2>
@@ -629,6 +648,8 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-herida.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>
