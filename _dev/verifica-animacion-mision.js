@@ -1715,6 +1715,75 @@ const LEER = `
   /* La Energía: el panel de la escuela. Se lee el techo y el panel, cada
      rayo (de dónde sale y a dónde llega, y si ya se dibujó), la nube y si
      tapa el sol, el cable con sus dos bandas y la pantalla. */
+  window.__amExtra.amMonte = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(m(el)); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function uno(sel, en) { return (en || raiz).querySelector(sel); }
+    function todos(sel, en) { return [].slice.call((en || raiz).querySelectorAll(sel)); }
+    function demora(el) { return parseFloat(el.style.getPropertyValue('--d')) || 0; }
+    function linea(l) { return [aVista(l, +l.getAttribute('x1'), +l.getAttribute('y1')), aVista(l, +l.getAttribute('x2'), +l.getAttribute('y2'))]; }
+    function trazada(l) { return (parseFloat(getComputedStyle(l).strokeDashoffset) || 0) < 0.5; }
+    /* Raya cortada de verdad: guiones cortos. La raya con que se DIBUJA un
+       trazo (A.trazar) también lleva dasharray, pero de un solo guion del
+       largo del camino, y esa no es cortada. */
+    function cortada(el) {
+      var d = getComputedStyle(el).strokeDasharray;
+      if (!d || d === 'none') return false;
+      var v = d.split(/[ ,]+/).map(parseFloat).filter(function (q) { return q > 0; });
+      return v.length > 0 && Math.max.apply(null, v) < 20;
+    }
+    /* Los puntos de un camino: cada par de números, pasado a la vista. */
+    function puntosDe(p) {
+      var nums = (p.getAttribute('d').match(/-?[0-9.]+/g) || []).map(Number), r = [];
+      for (var i = 0; i + 1 < nums.length; i += 2) r.push(aVista(p, nums[i], nums[i + 1]));
+      return r;
+    }
+    function leer(t) {
+      var ts = t.querySelectorAll('tspan');
+      return ts.length ? [].map.call(ts, function (s) { return s.textContent; }).join(' ') : t.textContent;
+    }
+    function persona(g) { return { caja: caja(g), cara: caja(g.querySelector('.mp-cara')) }; }
+    var barra = uno('[data-barra]');
+    return {
+      eje: puntosDe(uno('[data-eje]')),
+      antes: puntosDe(uno('[data-antes]')),
+      siglos: todos('[data-siglo]').map(function (l) { var ab = linea(l); return { anio: +l.getAttribute('data-siglo'), a: ab[0], b: ab[1] }; }),
+      hoy: (function () { var l = uno('[data-hoy]'), ab = linea(l); return { anio: +l.getAttribute('data-hoy'), a: ab[0], b: ab[1] }; })(),
+      colon: puntosDe(uno('[data-colon]')),
+      barco: caja(uno('[data-barco]')),
+      monte: todos('[data-monte]').map(function (g) {
+        return { desde: +g.getAttribute('data-desde'), hasta: +g.getAttribute('data-hasta'), ve: vis(g), caja: caja(g.querySelector('rect')) };
+      }),
+      ciudad: { ve: vis(uno('[data-cosa="ciudad"]')), caja: caja(uno('[data-cosa="ciudad"]')) },
+      escritura: { ve: vis(uno('[data-cosa="escritura"]')), caja: caja(uno('[data-cosa="escritura"]')) },
+      calendario: { ve: vis(uno('[data-cosa="calendario"]')), caja: caja(uno('[data-cosa="calendario"]')), rayas: todos('[data-cosa="calendario"] line').length },
+      barra: { ve: vis(barra), p: puntosDe(barra), ancho: parseFloat(getComputedStyle(barra).strokeWidth) },
+      ramas: { ve: vis(uno('[data-abandonada]')), caja: caja(uno('[data-abandonada]')) },
+      cajaA: { ve: vis(uno('[data-caja="abandonada"]')), caja: caja(uno('[data-caja="abandonada"] rect')), cortada: cortada(uno('[data-caja="abandonada"] rect')) },
+      cajaB: { ve: vis(uno('[data-caja="colon-hoy"]')), caja: caja(uno('[data-barra-hoy]')) },
+      lengua: {
+        ve: vis(uno('[data-lengua]')),
+        antes: puntosDe(uno('[data-lengua-antes]')), antesCortada: cortada(uno('[data-lengua-antes]')),
+        linea: puntosDe(uno('[data-lengua-linea]')), lineaCortada: cortada(uno('[data-lengua-linea]')),
+        trazada: trazada(uno('[data-lengua-linea]'))
+      },
+      abuela: persona(uno('[data-bisabuela]')),
+      kenia: persona(uno('[data-kenia]')),
+      globo: puntosDe(uno('[data-globo] path')),
+      tachado: { ve: vis(uno('[data-tachado]')), p: puntosDe(uno('[data-tachado]')) },
+      pre: { ve: vis(uno('[data-precolombino]')), llave: puntosDe(uno('[data-llave]')) },
+      rotulos: todos('[data-rotulo]').map(function (t) { return { k: t.getAttribute('data-rotulo'), ve: vis(t), dice: leer(t), caja: caja(t) }; }),
+      textos: todos('text').filter(vis).map(leer)
+    };
+  };
   window.__amExtra.amPanel = function (raiz) {
     var vis = window.__amVisible;
     var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
@@ -2676,6 +2745,155 @@ const ESCENAS = {
      que es la de un rayo) y se mira la pantalla. El día nublado, la nube tiene que tapar el sol entero, el
      rayo débil tiene que salir de su borde, y la luz que falta tiene que
      ser justo la de los rayos que no pasaron. */
+  amMonte(e, n) {
+    const x = e.extra, r = [];
+    const nb = t => String(t == null ? '' : t).replace(/ /g, ' ').replace(/\s+/g, ' ').trim();
+    const monta = (a, b) => a.x0 < b.x1 - 0.5 && b.x0 < a.x1 - 0.5 && a.y0 < b.y1 - 0.5 && b.y0 < a.y1 - 0.5;
+    const cerca = (a, b, t = 0.3) => Math.abs(a - b) <= t;
+    const rot = k => x.rotulos.find(q => q.k === k) || { ve: false, dice: '', caja: { x0: 0, y0: 0, x1: 0, y1: 0 } };
+    const medio = c => (c.x0 + c.x1) / 2;
+
+    /* Lo que no depende del dibujo, primero. */
+    const dicho = [e.texto, e.cifra, e.palabras].concat(x.textos).map(nb).join(' | ').toLowerCase();
+    const EXACTAS = ['copán', 'tikal', 'palenque', 'pirámide', 'pirámides', 'templo', 'templos', 'rey', 'reyes', 'nobles', 'sacerdotes',
+      'campesinos', 'dinastía', 'estela', 'estelas', 'altar', 'escalinata', 'jeroglífica', 'glifos', 'yax', 'conejo', 'unesco',
+      'patrimonio', 'humanidad', 'parque', 'ruinas', 'mesoamérica', 'occidente', 'mosquitia', 'lenca', 'lencas', 'chortí', 'chortís',
+      'pech', 'tawahka', 'tawahkas', 'tolupán', 'tolupanes', 'xicaques', 'garífuna', 'garífunas', 'azteca', 'aztecas', 'inca', 'incas',
+      'andes', 'cusco', 'tenochtitlan', 'machu', 'maíz', 'milpa', 'frijol', 'calabaza', 'cacao', 'chocolate', 'cero', 'barra',
+      'barras', 'punto', 'puntos', 'veinte', 'venus', 'eclipse', 'eclipses', 'caballo', 'caballos', 'hierro', 'pelota', 'popol', 'vuh',
+      'quichés', 'comercio', 'siglo', 'ix', 'v', 'estado', 'estados', 'españoles', 'españa', 'pre'];
+    const suelto = ' ' + dicho.split(/[^a-záéíóúñü]+/).filter(Boolean).join(' ') + ' ';
+    const malas = EXACTAS.filter(w => suelto.includes(' ' + w + ' '));
+    r.push([malas.length === 0, `paso ${n}: no sale ninguna palabra de la prueba (ni la ciudad por su nombre, ni sus siglos, ni qué construían, ni qué pueblos, ni cómo contaban, ni qué comían)`, malas]);
+    const nums = [e.texto].concat(x.textos).map(nb).join(' ').match(/\d+/g) || [];
+    r.push([nums.every(v => v === '1492'), `paso ${n}: el único número de la frase y del dibujo es 1492`, nums]);
+    const frase = nb(e.texto);
+    const FR = [['Le preguntaron a Kenia', 'antes de que llegara Colón, en 1492', '«nada, monte»', '¿Tendrá razón?'],
+      ['La lengua de su bisabuela', 'mucho antes de 1492', 'cruza esa fecha sin cortarse'],
+      ['siglos antes de 1492', 'una gran ciudad maya', 'con escritura y calendario'],
+      ['Esa ciudad ya estaba abandonada cuando llegó Colón', 'de Colón a hoy cabe entre ella y Colón, y sobra'],
+      ['«Precolombino» no quiere decir «antes de la historia»', 'antes de que llegaran otros', 'Aquí ya había mucha historia'],
+      ['¿Y tú?', 'de dónde venía tu familia', 'su línea del tiempo']];
+    r.push([FR[n].every(w => frase.includes(w)), `paso ${n}: la frase dice lo que se ve (${FR[n].join(', ')})`, frase]);
+    const MARC = [['?', '¿qué había aquí antes de 1492?'], ['1', 'lengua que cruza 1492 sin cortarse'],
+      ['3', 'cosas que ya había: una ciudad, escritura y calendario'], ['más', 'tiempo abandonada que de Colón a hoy'],
+      ['✗', '«nada, monte»: antes de 1492 ya había historia'], ['?', '¿hasta dónde llega la línea de tu familia?']];
+    r.push([nb(e.cifra) === MARC[n][0] && nb(e.palabras) === MARC[n][1], `paso ${n}: el marcador dice «${MARC[n].join(' ')}»`, [e.cifra, e.palabras]]);
+
+    /* ── La escala: una raya por siglo, a paso parejo; de ella sale todo ── */
+    const S = x.siglos.slice().sort((a, b) => a.anio - b.anio);
+    const ejeY = x.eje[0][1];
+    r.push([S.length >= 16 && S.every((s, i) => i === 0 || s.anio - S[i - 1].anio === 100) && S[0].anio === 400 && S[S.length - 1].anio + 100 >= x.hoy.anio,
+      `paso ${n}: hay una raya en cada siglo, del 400 hasta hoy`, S.map(s => s.anio)]);
+    const k = (S[S.length - 1].a[0] - S[0].a[0]) / (S[S.length - 1].anio - S[0].anio), x0 = S[0].a[0] - k * S[0].anio;
+    const xa = anio => x0 + k * anio;
+    r.push([S.every(s => cerca(s.a[0], xa(s.anio)) && cerca(s.b[0], s.a[0]) && cerca((s.a[1] + s.b[1]) / 2, ejeY)),
+      `paso ${n}: todas las rayas están a la misma distancia, sobre la línea: un siglo mide lo mismo en toda ella`]);
+    const anioHoy = Math.max(2026, new Date().getFullYear());
+    r.push([x.hoy.anio === anioHoy && cerca(x.hoy.a[0], xa(anioHoy)) && cerca(x.eje[1][0], x.hoy.a[0]) && x.eje.every(p => cerca(p[1], ejeY)),
+      `paso ${n}: la línea se acaba en hoy (${anioHoy}), puesto con la misma escala`, [x.hoy.anio, x.hoy.a[0], xa(anioHoy)]]);
+    r.push([cerca(x.antes[1][0], x.eje[0][0]) && x.antes[0][0] < x.eje[0][0] - 5 && x.eje[0][0] < xa(400),
+      `paso ${n}: antes de la primera raya la línea sigue, cortada: más atrás`]);
+    const xc = xa(1492);
+    r.push([cerca(x.colon[0][0], xc) && cerca(x.colon[1][0], xc), `paso ${n}: la raya de 1492 está donde cae 1492 en la escala`, [x.colon[0][0], xc]]);
+    r.push([cerca(medio(x.barco), xc, 2) && x.barco.y1 <= x.colon[0][1] + 0.5, `paso ${n}: el barco está encima de la raya de 1492`]);
+    const r1492 = rot('1492'), rCol = rot('colón');
+    r.push([r1492.dice === '1492' && rCol.dice === 'llega Colón' && [r1492, rCol].every(q => q.ve && q.caja.x0 > xc && q.caja.x0 < xc + 25 && q.caja.y0 < x.barco.y1),
+      `paso ${n}: al lado del barco dice «1492» y «llega Colón»`]);
+    const rHoy = rot('hoy');
+    r.push([rHoy.ve && rHoy.dice === 'hoy' && cerca(medio(rHoy.caja), x.hoy.a[0], 1) && rHoy.caja.y1 < ejeY, `paso ${n}: «hoy» va encima del final de la línea`]);
+
+    /* ── El monte: de más atrás a 1492, en tramos pegados ── */
+    const M = x.monte.slice().sort((a, b) => a.caja.x0 - b.caja.x0);
+    r.push([M[0].caja.x0 <= 8 && cerca(M[M.length - 1].caja.x1, xc) && M.every((q, i) => i === 0 || q.caja.x0 <= M[i - 1].caja.x1 + 0.1) && M.every(q => q.caja.y1 <= ejeY),
+      `paso ${n}: el monte cubre, sin huecos, todo lo de antes de 1492 y nada de después`, [M[0].caja.x0, M[M.length - 1].caja.x1, xc]]);
+    r.push([M.every(q => q.desde < 0 || (cerca(q.caja.x0, xa(q.desde)) && q.caja.x1 >= xa(q.hasta) - 0.3 && q.caja.x1 <= xa(q.hasta) + 0.8)),
+      `paso ${n}: cada tramo del monte va de su siglo al siguiente`]);
+    const enCiudad = q => q.desde >= 400 && q.hasta <= 900;
+    const monteBien = M.every(q => q.ve === (n <= 1 || (n <= 3 && !enCiudad(q))));
+    r.push([monteBien, `paso ${n}: ${n <= 1 ? 'todo lo de antes de 1492 es monte' : n <= 3 ? 'el monte se abrió solo donde estuvo la ciudad' : 'ya no queda monte'}`, M.map(q => q.ve ? 1 : 0).join('')]);
+    const abiertos = M.filter(q => enCiudad(q));
+    r.push([cerca(Math.min(...abiertos.map(q => q.caja.x0)), xa(400)) && cerca(Math.max(...abiertos.map(q => q.caja.x1)), xa(900), 0.8),
+      `paso ${n}: lo que se abre para la ciudad va del siglo V al IX, lo que dice la misión`]);
+
+    /* ── La ciudad (2 en adelante): sobre la línea, en sus siglos ── */
+    const ciudadSe = n >= 2;
+    r.push([[x.ciudad, x.barra, x.escritura, x.calendario].every(q => q.ve === ciudadSe) && rot('ciudad').ve === ciudadSe,
+      `paso ${n}: la ciudad, su escritura y su calendario ${ciudadSe ? 'se ven' : 'todavía no se ven'}`]);
+    r.push([cerca(x.barra.p[0][0], xa(400)) && cerca(x.barra.p[1][0], xa(900)) && x.barra.p.every(p => cerca(p[1], ejeY)) && x.barra.ancho >= 4,
+      `paso ${n}: el tiempo de la ciudad va sobre la línea, del siglo V al IX`, [x.barra.p[0][0], x.barra.p[1][0], xa(400), xa(900)]]);
+    const C = x.ciudad.caja;
+    r.push([C.x0 >= xa(400) - 0.3 && C.x1 <= xa(900) + 0.3 && cerca(C.y1, ejeY - 2, 0.8),
+      `paso ${n}: la pirámide está parada sobre la línea, dentro de sus siglos`, C]);
+    r.push([[x.escritura.caja, x.calendario.caja].every(c => c.x0 >= xa(400) - 0.3 && c.x1 <= xa(900) + 0.3 && c.y1 <= C.y0 + 1) && !monta(x.escritura.caja, x.calendario.caja),
+      `paso ${n}: la escritura y el calendario van encima de la ciudad, cada uno en su sitio`]);
+    r.push([x.calendario.rayas === 20, `paso ${n}: el calendario lleva sus veinte días`, x.calendario.rayas]);
+    const rCiu = rot('ciudad');
+    r.push([rCiu.dice === 'ciudad maya' && cerca(medio(rCiu.caja), (xa(400) + xa(900)) / 2, 2) && rCiu.caja.y1 <= Math.min(x.escritura.caja.y0, x.calendario.caja.y0) + 0.5,
+      `paso ${n}: «ciudad maya» va encima de la ciudad`]);
+    r.push([x.ramas.ve === (n >= 3) && monta(x.ramas.caja, C), `paso ${n}: ${n >= 3 ? 'la ciudad está abandonada: la cubren las ramas' : 'la ciudad todavía no está abandonada'}`]);
+
+    /* ── Paso 3: lo de Colón a hoy cabe entre la ciudad y Colón, y sobra ── */
+    r.push([x.cajaA.ve === (n === 3) && x.cajaB.ve === (n === 3) && rot('abandonada').ve === (n === 3) && rot('colon-hoy').ve === (n === 3),
+      `paso ${n}: las dos cajas ${n === 3 ? 'se ven' : 'no se ven'}`]);
+    if (n === 3) {
+      const a = x.cajaA.caja, b = x.cajaB.caja;
+      r.push([cerca(a.x0, xa(900)) && cerca(a.x1, xc) && x.cajaA.cortada, `paso ${n}: la caja de raya cortada va del final de la ciudad a 1492`, [a.x0, a.x1]]);
+      r.push([cerca(b.x1 - b.x0, x.hoy.a[0] - xc) && cerca(b.x0, xa(900)), `paso ${n}: la barra mide lo de Colón a hoy, y ya está detrás de la ciudad`, [b.x0, b.x1 - b.x0, x.hoy.a[0] - xc]]);
+      r.push([b.x1 < a.x1 - 3 && (1492 - 900) > (anioHoy - 1492) && cerca(b.y0, a.y0, 0.6) && cerca(b.y1, a.y1, 0.6),
+        `paso ${n}: la barra no llena la caja: sobra`, [a.x1 - b.x1]]);
+      const ra = rot('abandonada'), rb = rot('colon-hoy');
+      r.push([ra.dice === 'ya abandonada' && ra.caja.y1 <= a.y0 + 0.5 && cerca(medio(ra.caja), medio(a), 2), `paso ${n}: «ya abandonada» va encima de su caja`]);
+      r.push([rb.dice === 'de Colón a hoy' && rb.caja.y0 >= b.y1 - 0.5 && cerca(medio(rb.caja), medio(b), 2), `paso ${n}: «de Colón a hoy» va debajo de su barra`]);
+    }
+
+    /* ── La lengua (1 en adelante): cruza 1492 sin cortarse ── */
+    const L = x.lengua, rDes = rot('desde'), rLen = rot('lengua');
+    r.push([L.ve === (n >= 1) && rDes.ve === (n >= 1) && rLen.ve === (n >= 1) && (n < 1 || L.trazada),
+      `paso ${n}: la lengua de la bisabuela ${n >= 1 ? 'se ve entera' : 'todavía no se ve'}`]);
+    const ly = L.linea[0][1], ini = L.linea[0], fin = L.linea[L.linea.length - 1];
+    const anioIni = (ini[0] - x0) / k;
+    r.push([L.antesCortada && !L.lineaCortada && L.antes[0][0] <= 10 && cerca(L.antes[1][0], ini[0]) && cerca(L.antes[0][1], ly) && cerca(L.antes[1][1], ly),
+      `paso ${n}: más atrás va cortada (no se sabe desde cuándo) y sigue entera sin saltos`]);
+    r.push([anioIni <= 1492 - 200 && anioIni > 900 + 50, `paso ${n}: la lengua va entera desde siglos antes de 1492 y no toca a la ciudad`, Math.round(anioIni)]);
+    const pasa = L.linea.filter(p => cerca(p[1], ly, 0.3));
+    r.push([Math.min(...pasa.map(p => p[0])) < xc - 20 && Math.max(...pasa.map(p => p[0])) > x.hoy.a[0] && ly > ejeY + 8,
+      `paso ${n}: por debajo de la línea, la lengua pasa 1492 y llega más allá de hoy sin cortarse`]);
+    r.push([x.colon[1][1] > ly + 2 && x.colon[0][1] < ly, `paso ${n}: la raya de 1492 cruza la lengua`]);
+    const ab = x.abuela, ke = x.kenia;
+    r.push([cerca(fin[0], medio(ab.cara), 1.5) && fin[1] > ab.caja.y1 && fin[1] < ab.caja.y1 + 5, `paso ${n}: la lengua llega a los pies de la bisabuela`, [fin, medio(ab.cara), ab.caja.y1]]);
+    r.push([rDes.dice === '¿desde cuándo?' && rDes.caja.y0 > ly && rDes.caja.x1 < ini[0], `paso ${n}: debajo de lo cortado dice «¿desde cuándo?»`]);
+    r.push([rLen.dice === 'la lengua de su bisabuela' && rLen.caja.y0 > ly && medio(rLen.caja) > ini[0] && medio(rLen.caja) < fin[0], `paso ${n}: debajo de lo entero dice «la lengua de su bisabuela»`]);
+
+    /* ── Kenia y su bisabuela, fuera de la línea, en hoy ── */
+    r.push([[ab, ke].every(q => q.caja.x0 > x.hoy.a[0] + 3 && cerca(q.caja.y1, ejeY - 2, 0.8)) && !monta(ab.caja, ke.caja),
+      `paso ${n}: Kenia y su bisabuela están paradas donde la línea llega a hoy, fuera de ella`]);
+    const G = x.globo, gx0 = Math.min(...G.map(p => p[0])), gx1 = Math.max(...G.map(p => p[0]));
+    const punta = G.reduce((a, b) => (b[1] > a[1] ? b : a));
+    const rG = rot('globo');
+    r.push([cerca(punta[0], medio(ke.cara), 3) && punta[1] <= ke.cara.y0 + 1 && punta[1] >= ke.cara.y0 - 6, `paso ${n}: el globo sale de la cabeza de Kenia`, [punta, ke.cara]]);
+    r.push([rG.dice === '«nada, monte»' && rG.caja.x0 > gx0 && rG.caja.x1 < gx1, `paso ${n}: en el globo dice «nada, monte»`, rG.dice]);
+    r.push([x.tachado.ve === (n >= 4), `paso ${n}: el globo ${n >= 4 ? 'está tachado' : 'no está tachado'}`]);
+    if (x.tachado.ve) {
+      const [t0, t1] = x.tachado.p, tm = [(t0[0] + t1[0]) / 2, (t0[1] + t1[1]) / 2], c = rG.caja;
+      r.push([tm[0] > c.x0 && tm[0] < c.x1 && tm[1] > c.y0 && tm[1] < c.y1 && Math.abs(t1[0] - t0[0]) >= 0.8 * (c.x1 - c.x0), `paso ${n}: la raya tacha lo que dice el globo`]);
+    }
+
+    /* ── Precolombino (4 en adelante): todo lo de antes de 1492 ── */
+    const rPre = rot('precolombino');
+    r.push([x.pre.ve === (n >= 4) && rPre.ve === (n >= 4), `paso ${n}: «precolombino» ${n >= 4 ? 'se ve' : 'todavía no se ve'}`]);
+    const ll = x.pre.llave;
+    r.push([ll[0][0] <= 8 && cerca(ll[ll.length - 1][0], xc) && rPre.dice === 'precolombino: antes de que llegaran otros' && rPre.caja.y0 >= Math.max(...ll.map(p => p[1])) - 0.5,
+      `paso ${n}: la llave de «precolombino» abarca todo lo de antes de 1492`]);
+
+    /* ── Nada encima de nada ── */
+    const vistos = x.rotulos.filter(q => q.ve && q.k !== 'globo');
+    const choques = [];
+    vistos.forEach((a, i) => vistos.slice(i + 1).forEach(b => { if (monta(a.caja, b.caja)) choques.push(a.k + '/' + b.k); }));
+    r.push([choques.length === 0, `paso ${n}: ningún rótulo se monta en otro`, choques]);
+    r.push([!monta(rG.caja, x.barco) && [ab.caja, ke.caja].every(c => !monta(c, rHoy.caja)), `paso ${n}: el globo, el barco, las personas y «hoy» no se tapan`]);
+    return r;
+  },
   amPanel(e, n) {
     const x = e.extra, r = [];
     const nb = t => String(t == null ? '' : t).replace(/ /g, ' ').replace(/\s+/g, ' ').trim();

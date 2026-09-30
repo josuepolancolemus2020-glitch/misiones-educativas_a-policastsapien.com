@@ -481,3 +481,47 @@ body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* ===================== LA ANIMACIÓN: «NADA, MONTE» =====================
+   El monte, la ciudad, el barco, las personas y el globo de Kenia son
+   cosas: se quedan como son en la pantalla clara y en la oscura. Lo que va
+   sobre la tarjeta (la línea del tiempo, la lengua, las cajas del paso 3)
+   lleva la tinta de la pantalla. Lo que no se sabe va con raya cortada. */
+.am-raiz .mp-monte        { fill: #a7d98f; }
+.am-raiz .mp-mata         { fill: #65a30d; stroke: #3f6212; stroke-width: 0.8; }
+.am-raiz .mp-zacate       { fill: none; stroke: #3f6212; stroke-width: 1.2; stroke-linecap: round; }
+.am-raiz .mp-piedra       { fill: #d6c7a1; stroke: #8b7355; stroke-width: 0.8; }
+.am-raiz .mp-templo       { fill: #c9b78a; stroke: #8b7355; stroke-width: 0.8; }
+.am-raiz .mp-puerta       { fill: #5b4636; }
+.am-raiz .mp-escalera     { fill: none; stroke: #8b7355; stroke-width: 0.8; }
+.am-raiz .mp-rama         { fill: none; stroke: #3f6212; stroke-width: 1.6; stroke-linecap: round; }
+.am-raiz .mp-hoja         { fill: #65a30d; }
+.am-raiz .mp-tabla        { fill: #d6c7a1; stroke: #8b7355; stroke-width: 1; }
+.am-raiz .mp-glifo        { fill: none; stroke: #6b4f2a; stroke-width: 0.8; }
+.am-raiz .mp-glifo-ojo    { fill: #6b4f2a; }
+.am-raiz .mp-rueda        { fill: #d6c7a1; stroke: #8b7355; stroke-width: 1; }
+.am-raiz .mp-rueda-dentro { fill: none; stroke: #8b7355; stroke-width: 0.8; }
+.am-raiz .mp-rueda-raya   { stroke: #6b4f2a; stroke-width: 0.8; }
+.am-raiz .mp-rueda-centro { fill: #6b4f2a; }
+.am-raiz .mp-caja-a       { fill: var(--am-sec); fill-opacity: 0.2; stroke: var(--am-sec); stroke-width: 1.4; stroke-dasharray: 3 2; }
+.am-raiz .mp-caja-b       { fill: var(--am-pri); }
+.am-raiz .mp-eje          { fill: none; stroke: var(--dark, #143631); stroke-width: 1.6; stroke-linecap: round; }
+.am-raiz .mp-eje-antes    { fill: none; stroke: var(--dark, #143631); stroke-width: 1.6; stroke-dasharray: 2 2.5; }
+.am-raiz .mp-siglo        { stroke: var(--dark, #143631); stroke-width: 1.1; }
+.am-raiz .mp-barra        { fill: none; stroke: #8b7355; stroke-width: 6; }
+.am-raiz .mp-colon        { fill: none; stroke: var(--dark, #143631); stroke-width: 1.4; }
+.am-raiz .mp-casco        { fill: #92400e; stroke: #78350f; stroke-width: 1; stroke-linejoin: round; }
+.am-raiz .mp-mastil       { fill: none; stroke: #78350f; stroke-width: 1.2; }
+.am-raiz .mp-vela         { fill: #f5f5f4; stroke: #78716c; stroke-width: 0.8; }
+.am-raiz .mp-lengua       { fill: none; stroke: var(--am-pri); stroke-width: 4.5; stroke-linecap: round; }
+.am-raiz .mp-lengua-antes { fill: none; stroke: var(--am-pri); stroke-width: 2; stroke-dasharray: 4 3; }
+.am-raiz .mp-cara         { fill: #d6a77a; stroke: #8b5e3c; stroke-width: 0.8; }
+.am-raiz .mp-pelo         { fill: #3f2a1e; }
+.am-raiz .mp-ropa         { fill: #2563eb; }
+.am-raiz .mp-ropa-abuela  { fill: #9333ea; }
+.am-raiz .mp-pierna       { fill: none; stroke: #3f2a1e; stroke-width: 1.6; }
+.am-raiz .mp-baston       { fill: none; stroke: #78350f; stroke-width: 1.4; stroke-linecap: round; }
+.am-raiz .mp-globo        { fill: #ffffff; stroke: #334155; stroke-width: 1.2; stroke-linejoin: round; }
+.am-raiz .mp-globo-letra  { fill: #1f2937; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+.am-raiz .mp-tachado      { fill: none; stroke: #b91c1c; stroke-width: 2.2; stroke-linecap: round; }
+.am-raiz .mp-llave        { fill: none; stroke: var(--dark, #143631); stroke-width: 1.4; }

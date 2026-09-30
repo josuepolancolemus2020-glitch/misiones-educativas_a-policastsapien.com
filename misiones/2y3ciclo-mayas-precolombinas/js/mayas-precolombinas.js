@@ -352,8 +352,14 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 // (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
 // tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
 // Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
+//
+// Y ninguna la contesta la historia de Kenia ni su animación. El 30 de
+// septiembre de 2026 se cambiaron cinco que sí: «antes de 1492 ya había
+// ciudades y escritura», qué quiere decir «pre», qué construían los mayas (la
+// pirámide se ve en la animación), qué contestó Kenia y qué habla su
+// bisabuela. Las nuevas salen de lo que enseñan la misión y la ficha.
 const evalTFBank=[
-  {q:'Antes de 1492 América ya tenía ciudades y escritura.',a:true,k:'tf-ciudades'},
+  {q:'La escritura de los mayas fue la más desarrollada de la América antigua.',a:true,k:'tf-escritura'},
   {q:'Los mayas vivían en el norte de Sudamérica.',a:false,k:'tf-sudamerica'},
   {q:'Los mayas conocieron el caballo antes de 1492.',a:false,k:'tf-caballo'},
   {q:'La numeración maya contaba de 20 en 20.',a:true,k:'tf-veinte'},
@@ -371,9 +377,9 @@ const evalMCBank=[
   {q:'¿Qué se sembraba junto con el maíz?',o:['a) Trigo y arroz','b) Café y caña','c) Cebada y papa','d) Frijol y calabaza'],a:3,k:'mc-frijol'},
   {q:'¿Dónde florecieron los aztecas?',o:['a) En Guatemala','b) En el centro de México','c) En Honduras','d) En el Caribe'],a:1,k:'mc-aztecas'},
   {q:'¿En qué año la UNESCO protegió las ruinas mayas de Honduras?',o:['a) 1492','b) 1502','c) 1980','d) 1821'],a:2,k:'mc-1980'},
-  {q:'¿Qué quiere decir «pre» en la palabra precolombino?',o:['a) Antes','b) Después','c) Durante','d) Nunca'],a:0,k:'mc-pre'},
+  {q:'¿Qué hay debajo de algunos templos mayas?',o:['a) Templos más antiguos','b) Iglesias de los españoles','c) Minas de oro','d) Cuevas con agua'],a:0,k:'mc-debajo'},
   {q:'¿Qué guiaba el calendario maya?',o:['a) Los viajes en barco','b) Las guerras con España','c) Las carreras de caballos','d) Las siembras y las ceremonias'],a:3,k:'mc-calendario'},
-  {q:'¿Qué construían los mayas?',o:['a) Puentes de hierro','b) Iglesias','c) Pirámides, templos y canchas de pelota','d) Fábricas'],a:2,k:'mc-piramides'},
+  {q:'¿Con qué golpeaban la pelota los mayas en su juego?',o:['a) Con un bate de madera','b) Con una raqueta','c) Con las caderas y los codos','d) Con los pies, como en el fútbol'],a:2,k:'mc-pelota'},
   {q:'¿En qué parte de Honduras vivían los mayas?',o:['a) En La Mosquitia','b) En el occidente','c) En las Islas de la Bahía','d) En el sur'],a:1,k:'mc-occidente'}
 ];
 const evalCPBank=[
@@ -384,8 +390,8 @@ const evalCPBank=[
   {q:'Los mayas no eran un solo reino: eran muchas ciudades-___.',a:'estado',acc:['estado','estados'],k:'cp-estado'},
   {q:'La gran ciudad maya de Honduras decayó y fue abandonada hacia el siglo ___.',a:'IX',acc:['IX','9','nueve'],k:'cp-ix'},
   {q:'Las ruinas mayas de Honduras son Patrimonio de la ___.',a:'Humanidad',acc:['Humanidad'],k:'cp-humanidad'},
-  {q:'Kenia contestó que antes de Colón solo había ___.',a:'monte',acc:['monte'],k:'cp-monte'},
-  {q:'La bisabuela de Kenia habla una ___ muy antigua.',a:'lengua',acc:['lengua','idioma'],k:'cp-lengua'},
+  {q:'Los mayas preparaban su chocolate con el ___.',a:'cacao',acc:['cacao'],k:'cp-cacao'},
+  {q:'En la numeración maya, un punto vale ___.',a:'uno',acc:['uno','1'],k:'cp-punto'},
   {q:'Los tolupanes, pech y tawahkas vivían de la caza, la pesca y la ___.',a:'agricultura',acc:['agricultura'],k:'cp-agricultura'}
 ];
 const evalPRBank=[
@@ -515,9 +521,9 @@ const critErrorBank=[
 ];
 const critDecisionBank=[
   'Si encuentras una pieza antigua de barro en el campo, conviene avisar a las autoridades y no moverla, o llevártela de recuerdo.',
-  'Para saber qué lengua hablaba tu familia antes, conviene preguntarle a la abuela, o suponer que no hablaban ninguna.',
+  'Si en un cartel de la escuela dibujan a los mayas a caballo, conviene corregir el dibujo, o dejarlo porque se ve bonito.',
 ];
-const critDecisionGuide='La mejor decisión valora y protege la herencia precolombina: Copán es el lugar para conocer a los mayas de Honduras; las piezas antiguas son patrimonio y se reportan, no se toman; el Popol Vuh explica las creencias mayas; la cultura lenca sigue viva en su alfarería; y la numeración maya usaba puntos, barras y el cero.';
+const critDecisionGuide='La mejor decisión respeta la herencia precolombina y la verdad: una pieza antigua es patrimonio, así que se deja donde está y se avisa a las autoridades; y un dibujo de los mayas a caballo se corrige, porque el caballo llegó con los españoles.';
 const critCompareBank=[
   {k:'co-estela-escalinata',a:'Monumento de piedra tallada con el retrato de un gobernante.',b:'Escalera de Copán con el texto maya tallado más largo.',
    ga:'La estela.',
@@ -525,13 +531,13 @@ const critCompareBank=[
    gr:'Los dos son monumentos tallados de Copán, pero la estela retrata a un rey y la escalinata cuenta la historia completa de la dinastía.'},
 ];
 const critCauseBank=[
-  {k:'cau-astronomia',cause:'Los mayas observaban el Sol, la Luna y las estrellas.',guide:'Crearon un calendario muy preciso que guiaba las siembras y ceremonias.'},
+  {k:'cau-lago',cause:'Tenochtitlan se construyó sobre un lago.',guide:'Para sembrar, hacían islas flotantes: las chinampas.'},
   {k:'cau-patrimonio',cause:'La UNESCO declaró Patrimonio de la Humanidad las ruinas mayas de Honduras.',guide:'Llegan visitantes de todo el mundo y las ruinas se protegen para el futuro.'},
 ];
 const critEffectBank=[
   {k:'ef-arquitectura',effect:'En las ruinas de la ciudad maya hay pirámides, templos y una cancha de pelota.',guide:'Porque los mayas fueron grandes arquitectos.'},
   {k:'ef-numeros',effect:'Los mayas podían escribir números muy grandes.',guide:'Porque contaban de 20 en 20 y conocían el cero.'},
-  {k:'ef-herencia',effect:'Muchas palabras y comidas de hoy vienen de los pueblos precolombinos.',guide:'Porque su cultura sigue viva en nosotros.'},
+  {k:'ef-templos',effect:'Bajo algunos templos mayas hay templos todavía más antiguos.',guide:'Porque construían un templo nuevo encima del anterior, como Rosalila.'},
 ];
 
 function genEvalCrit(){

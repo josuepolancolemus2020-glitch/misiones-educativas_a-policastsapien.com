@@ -25,6 +25,9 @@
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
 <link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La animación que explica el tema: el aparato es compartido y va DESPUÉS
+     del CSS de la misión, que es de donde saca sus colores. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -71,6 +74,23 @@
     <div class="tip"><span class="ti">❓</span><div>Aquí había ciudades, escritura, calendarios y
     comercio siglos antes de esa fecha. «Precolombino» no quiere decir «antes de la historia»: quiere
     decir antes de que llegaran <strong>otros</strong>.</div></div>
+  </div>
+  <!-- La animación va JUSTO después de la historia: es la línea del tiempo
+       de Kenia, con todo lo de antes de 1492 cubierto de monte, que es lo
+       que ella dijo. La lengua de su bisabuela cruza 1492 sin cortarse;
+       siglos antes hubo una gran ciudad maya, con escritura y calendario,
+       que ya estaba abandonada cuando llegó Colón. La mueve el alumno,
+       paso a paso. El aparato es compartido (js/animacion-mision.js) y la
+       escena es de esta misión (js/animacion-monte.js). La frase de dentro
+       es de reserva: si el aparato no llega a cargar, se lee eso en vez de
+       un hueco. -->
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira lo que había antes de 1492</h2>
+    <div id="amMonte">
+      <p>Kenia dijo que antes de 1492 había «nada, monte». Pero la lengua de su bisabuela ya se hablaba
+      aquí mucho antes de 1492, y siglos antes hubo una gran ciudad maya, con escritura y calendario, que
+      ya estaba abandonada cuando llegó Colón. «Precolombino» quiere decir antes de que llegaran otros.</p>
+    </div>
   </div>
   <div class="card ac-teal">
     <h2>🕰️ ¿Qué significa «precolombino»?</h2>
@@ -616,6 +636,8 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-monte.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

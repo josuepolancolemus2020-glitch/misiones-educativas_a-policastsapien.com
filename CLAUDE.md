@@ -10304,6 +10304,132 @@ Salió roja con cada una.
 Con la CPU frenada seis veces va a 60 cuadros por segundo, y el peor cuadro es
 de 67 ms.
 
+### La cuadragésima octava: Los Mayas y las Culturas Precolombinas, la primera de la Ruta del Tiempo
+
+La siguiente del pedido es la primera de la Ruta del Tiempo: **Los Mayas y las
+Culturas Precolombinas** (`misiones/2y3ciclo-mayas-precolombinas/`,
+`js/animacion-monte.js`). La historia es la de Kenia: en clase le preguntaron
+qué había en América antes de que llegara Colón y contestó «nada, monte». En
+su casa, su bisabuela habla una lengua que ya se hablaba aquí mucho antes de
+1492: sin saberlo, Kenia dijo que su propia familia no estaba. La animación es
+una línea del tiempo con una raya por siglo, de más atrás a hoy, y 1492
+marcado con el barco:
+
+- todo lo de antes de 1492 está cubierto de monte, que es lo que dijo Kenia, y
+  su globo lo dice: «nada, monte». ¿Tendrá razón?;
+- la lengua de su bisabuela va cortada más atrás, con su «¿desde cuándo?», y
+  entera desde siglos antes de 1492; cruza esa fecha sin cortarse y llega a
+  los pies de la bisabuela;
+- el monte se abre donde estuvo una gran ciudad maya, del siglo V al IX, con
+  su escritura y su calendario;
+- la ciudad ya estaba abandonada cuando llegó Colón: la barra «de Colón a hoy»
+  sale de su sitio, se pone detrás de la ciudad y no llena el hueco: sobra;
+- se abre todo el monte y el globo de Kenia se tacha: «precolombino» quiere
+  decir antes de que llegaran otros;
+- y la pregunta es del alumno: de dónde venía su familia, y su línea del
+  tiempo hasta donde le sepan contar.
+
+Siete cosas que valen para las que siguen:
+
+1. ⚠️ **Lo que asombra se mide, y sale de la escala.** Cuando llegó Colón, esa
+   ciudad llevaba abandonada más tiempo del que ha pasado de Colón a hoy. Es
+   verdad con cualquier año del siglo IX: del 900 a 1492 van 592 años, y de
+   1492 a hoy, 534. Solo se puede enseñar si un siglo mide lo mismo en toda la
+   línea. La sonda saca la escala de las rayas de los siglos, mide la barra y
+   la caja, y comprueba que sobre.
+2. ⚠️ **Hoy es el año de hoy.** La línea se acaba en el año del teléfono, no en
+   uno escrito a mano. Lo del paso 3 seguirá siendo verdad hasta 2084, y ese
+   año la sonda se pone roja sola.
+3. ⚠️ **La lengua no se le pega a la ciudad.** La historia dice que ya se
+   hablaba «mucho antes de 1492», y no dice cuál es. Por eso va entera desde
+   tres siglos antes, y más atrás con raya cortada: decir que era la lengua de
+   la ciudad sería afirmar lo que nadie ha dicho.
+4. ⚠️ **En una línea del tiempo, cada punto es una fecha.** La primera versión
+   paraba a Kenia y a su bisabuela sobre la línea, y quedaban en 1700 y en
+   1900. Ahora la línea se acaba en «hoy» y ellas están paradas al lado. Y un
+   rótulo de esa versión decía «siglos sin nadie» entre la ciudad y Colón:
+   falso, y contrario a lo que la animación enseña. Salió leyendo la escena,
+   antes de publicarla.
+5. ⚠️ **La historia y la animación contestaban siete preguntas.**
+   - En la conceptual, la historia contestaba «antes de 1492 América ya tenía
+     ciudades y escritura», qué quiere decir «pre», qué contestó Kenia y qué
+     habla su bisabuela; y la pirámide del dibujo contestaba «¿qué construían
+     los mayas?».
+   - En pensamiento crítico, la decisión de «qué lengua hablaba tu familia»
+     era la historia; el efecto «muchas palabras y comidas vienen de los
+     pueblos precolombinos» lo contesta la lengua que sigue viva; y la causa
+     de los mayas que observaban el cielo pedía «un calendario», que la
+     historia y la animación nombran.
+
+   Ahora preguntan por la escritura más desarrollada de la América antigua,
+   los templos que hay debajo de otros templos, cómo se golpeaba la pelota,
+   con qué se hacía el chocolate y cuánto vale un punto. Salen de lo que
+   enseñan la misión y la ficha (el Laboratorio y las tablas de Copán y de los
+   logros), van en las dos y con la respuesta buena en el mismo lugar. En
+   pensamiento crítico: el dibujo de los mayas a caballo, Tenochtitlan sobre
+   un lago y los templos bajo templos. La felicitación de la ficha nombraba
+   Copán y los logros: ahora solo pide revisar.
+6. ⚠️ **La sonda de pistas cazó un repuesto mío.** La primera causa decía «los
+   aztecas construyeron su capital sobre un lago», y «aztecas» es la
+   corrección de uno de los errores de la misma prueba. Ahora dice
+   «Tenochtitlan».
+7. ⚠️ **La sonda confundía dibujar con cortar.** Para saber si una raya es
+   cortada miraba si tenía `stroke-dasharray`, y la raya que dibuja
+   `A.trazar` también lo tiene: un solo guion del largo del camino. Ahora
+   solo cuenta como cortada una raya de guiones cortos.
+
+La sonda de esta escena **no le cree nada a la escena**. Comprueba:
+
+- que haya una raya en cada siglo, del 400 hasta hoy, todas a la misma
+  distancia, y que la línea se acabe en el año de hoy;
+- que el monte cubra, sin huecos, todo lo de antes de 1492, en tramos de un
+  siglo, y se abra solo donde estuvo la ciudad y después entero;
+- que la ciudad vaya sobre la línea, del siglo V al IX, con la pirámide parada
+  en ella y su escritura y su calendario de veinte días encima, y que las
+  ramas lleguen en el paso 3;
+- que en el paso 3 la caja de raya cortada vaya del final de la ciudad a 1492,
+  y que la barra mida lo de Colón a hoy, esté detrás de la ciudad y sobre;
+- que la lengua vaya cortada más atrás y entera desde siglos antes de 1492,
+  sin tocar la ciudad, que cruce la raya de 1492 y llegue a los pies de la
+  bisabuela;
+- que Kenia y su bisabuela estén fuera de la línea, que el globo salga de la
+  cabeza de Kenia y que la raya tache lo que dice;
+- que la llave de «precolombino» abarque todo lo de antes de 1492;
+- que ningún rótulo se monte en otro y que el marcador diga lo que se ve;
+- y que no salga el nombre de la ciudad, ni un siglo, ni un pueblo, ni una
+  palabra de la prueba, ni otro número que 1492.
+
+Se comprobó al revés con veintitrés averías, plantadas una por una:
+
+- la ciudad durando hasta el siglo X;
+- una raya de siglo corrida;
+- hoy escrito a mano en otro año;
+- la raya de 1492 puesta en 1500;
+- la lengua entera solo después de 1492;
+- la lengua entera desde la ciudad;
+- lo de más atrás sin raya cortada;
+- el monte con huecos entre tramos;
+- el monte sin abrirse para la ciudad;
+- la barra de Colón a hoy sin correrse;
+- la barra más corta;
+- la barra corrida de más, sin que sobre;
+- la caja de lo abandonado sin raya cortada;
+- la bisabuela parada sobre la línea;
+- la lengua llegando a Kenia;
+- el globo saliendo de la bisabuela;
+- el globo tachado desde el principio;
+- «precolombino» sin llegar a 1492;
+- «Copán» en una frase;
+- «534 años» en una frase;
+- el marcador del paso 3 diciendo «menos»;
+- el calendario con doce días;
+- la ciudad abandonada desde que aparece.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
+de 83 ms, lo mismo que La Energía medida el mismo día.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -10440,7 +10566,10 @@ antes, fuera del dibujo: si se enciende mientras entra, se ve a través de él l
 que viene a tapar. Para decir si algo tapa otra cosa, la sonda mira muchos
 puntos, que con pocos un hueco cabe entre punto y punto; y una relación que
 solo existe con una pieza en su sitio (el borde de la nube) se mide solo en los
-pasos donde la pieza está.
+pasos donde la pieza está. En una línea del tiempo cada punto es una fecha: lo
+que es de hoy (una persona) no se para sobre ella, va al lado, donde se acaba.
+Y una raya cortada son guiones cortos: la raya con que se dibuja un trazo
+(`A.trazar`) es un solo guion del largo del camino, y la sonda no las confunde.
 
 Si el `--sec` de la misión es claro (un ámbar, un amarillo), la letra blanca
 del botón que avanza no se lee en su punta: la misión declara en su CSS
