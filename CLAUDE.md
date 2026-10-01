@@ -12647,6 +12647,127 @@ Salió roja con cada una.
 Con la CPU frenada seis veces va a 60 cuadros por segundo, y el peor cuadro es
 de 50 ms. Hello! Saludos, medida el mismo día, va a 59 y 67 ms.
 
+### La sexagésima cuarta: El Himno Nacional de Honduras, y lo que enseñó
+
+La segunda de la Ruta de la Patria es **El Himno Nacional de Honduras**
+(`misiones/2y3ciclo-himno-nacional/`, `js/animacion-coro.js`). La historia es
+la de Kenia: en el examen le pidieron escribir el coro, y lo escribió tal como lo
+canta desde primer grado, «Tu bandera, tu bandera es un lampo de cielo». Se lo
+marcaron mal. Tenía razón en lo que oyó: esa repetición la pide la música, no el
+poema. La animación pone arriba una banda con «lo que pide la música», con Kenia
+cantando, y abajo su examen, en papel de cuaderno:
+
+- el primer verso, copiado como lo canta, con una ✗ en el margen: ¿qué le sobra?;
+- la repetición lleva su línea de recorte (raya cortada), y una flecha la une con
+  el arranque: «otra vez». Al cantar suena dos veces, y la segunda la pide la
+  música;
+- la repetición se recorta y sube a la música, su coma se va con ella y el verso
+  se cierra donde estaba: queda escrito una sola vez, con su ✓. Cantarlo así
+  sigue estando bien;
+- otros tres versos del coro también repiten su arranque al cantarse, y Kenia
+  los copió igual: aparecen solo hasta la repetición, con «…», y entre el
+  segundo y el siguiente van «· · ·», porque ahí hay otros versos;
+- sus repeticiones suben a la música, en orden, y cada verso se cierra;
+- cada recorte dice cuántas palabras son: copiado como se canta, a Kenia le
+  sobraban 11. Y la pregunta es del alumno: cantar el coro bajito y levantar un
+  dedo en cada arranque que se repite.
+
+Siete cosas que valen para las que siguen:
+
+1. ⚠️ **La letra no se escribe en la escena: se saca de `js/data/himno.js`.** Es
+   la normativa del Himno, un solo original, y aquí muerde más que en ningún
+   sitio, porque la pantalla enseña justo a no copiar de más. La repetición
+   tampoco se escribe: es lo que el verso cantado (`HIMNO_CORO_CANTADO`) dice dos
+   veces al empezar. Y `verifica-himno` lo comprueba ahora también en la
+   animación: si en sus cadenas aparece una tirada de cuatro palabras del Himno,
+   se pone roja. Se comprobó al revés, metiendo el primer verso en una frase.
+2. ⚠️ **Solo el primer verso va entero, que es el de la historia.** Los otros
+   tres, enteros, darían la respuesta del completar de la prueba («Por un bloque
+   de ___ cruzado», «De un volcán tras la cima ___»): van hasta su repetición. Y
+   no se nombra ninguna estrofa, ni cuántos versos tiene el coro, ni la medida
+   del verso (la prueba pregunta por «enseñastes»), ni quién hizo la letra o la
+   música.
+3. ⚠️ **Cuatro versos seguidos en el papel dirían que van seguidos, y no van.**
+   Entre el segundo y el que sigue hay otros versos del coro, y por eso van
+   «· · ·». No dicen cuántos: eso lo pregunta la prueba.
+4. ⚠️ **El ancho de cada pedazo se sabe antes de que llegue la letra.** El verso
+   se cierra moviendo su resto lo que medía la repetición, y eso hay que saberlo
+   al construir, cuando la Fredoka a veces todavía no llegó. Sale de una tabla
+   de avances de la Fredoka, medida en el navegador, y se le impone al texto con
+   `textLength`: con la letra del sistema el texto se estira o se encoge hasta
+   ese ancho, y con la nuestra casi no se nota el ajuste. Así la sonda puede
+   medir el hueco: un espacio en el primero, nada antes de los «…».
+5. ⚠️ **El recorte tapaba la raya del cuaderno, y no lo vio ninguna sonda.** Su
+   rectángulo blanco bajaba hasta el renglón, y desde el paso 0 la raya se cortaba
+   debajo de la repetición. Se vio en la primera captura: el recorte termina
+   ahora antes del renglón, y la sonda lo mide. Y la repetición copiada lleva un
+   poco más de aire a los lados que un espacio: con un espacio solo, su línea de
+   recorte se comía la coma de antes y los puntos de después.
+6. ⚠️ **La historia contestaba una pregunta.** El verdadero o falso «Al escribir
+   el coro se ponen las repeticiones que se oyen al cantarlo» era la tesis de la
+   historia palabra por palabra. Ahora pregunta si «bravías» quiere decir mansas
+   y tranquilas, que la misión enseña entre las palabras del coro, con la misma
+   respuesta en el mismo sitio, en la misión y en la ficha, que sigue en sus
+   nueve hojas. Se queda el caso de pensamiento crítico de la alumna que copia la
+   séptima estrofa con su primer verso repetido: ahí lo que se pide es llevar la
+   regla a otra estrofa.
+7. **Cantarlo con la repetición está bien, y la animación lo dice.** Kenia sigue
+   cantando en la banda en todos los pasos, y la frase del paso 2 dice que
+   cantarlo así sigue estando bien. Una lección que hiciera parecer que cantar
+   así está mal enseñaría otra cosa.
+
+La sonda de esta escena **saca el coro de `himno.js` por otro camino que la
+escena**: la repetición son las palabras que el cantado tiene de más al empezar,
+y tienen que decir lo mismo que las primeras del escrito. Si las dos la sacaran
+igual, un error de las dos pasaría por bueno. Comprueba:
+
+- que cada verso del papel se lea, pieza por pieza y por dónde quedó, como se
+  canta mientras tiene la repetición, y una sola vez cuando ya no la tiene;
+- que escrito se cierre bien: un espacio en el primero, los «…» pegados en los
+  otros, y sin coma;
+- que de los otros tres versos no se vea nada después de la repetición;
+- que cada repetición sea la de su verso, que lleve su línea de recorte cuando
+  toca, que no se coma la coma ni lo que sigue, ni tape la raya del cuaderno;
+- que la ✗ (dos rayas) y el ✓ (una) vayan en el margen, a la altura de su verso;
+- que en la música estén las repeticiones de los versos ya escritos, en su orden,
+  sin montarse ni tapar a Kenia;
+- que la flecha salga de debajo del arranque y llegue, con su punta, debajo de la
+  repetición, con «otra vez» debajo;
+- que los «· · ·» vayan entre el segundo verso y el siguiente;
+- que cada recorte diga cuántas palabras son, y que el marcador cuente lo que se
+  ve: las veces que dice «tu bandera» el primer verso, los versos, las
+  repeticiones en la música y sus palabras, que son las que cuenta `himno.js`;
+- que cada cosa pase cuando le toca: el recorte antes que la flecha; la
+  repetición sube, se va la coma, el verso se cierra y la ✗ pasa a ✓;
+- y que no salga ninguna estrofa, ni un número de versos, ni la medida, ni los
+  autores, ni el resto de los versos.
+
+Se comprobó al revés con veinticinco averías, plantadas una por una:
+
+- la repetición que no sube a la música;
+- el verso que no se cierra, que se cierra sin espacio y la coma que se queda;
+- el recorte tapando la raya del cuaderno, y comiéndose la coma;
+- los otros versos enteros;
+- la ✗ que se queda, el ✓ de dos rayas y la marca fuera del margen;
+- el marcador del paso 2 diciendo 2, y el del paso 5 diciendo una palabra más;
+- «estrofa» en una frase;
+- una cuenta de palabras que dice otro número, y las palabras contadas desde el
+  paso 4;
+- la flecha al revés, y la flecha antes de la línea de recorte;
+- el verso cerrándose antes de que suba la repetición;
+- los «· · ·» en otro sitio;
+- los recortes en otro orden en la música, y uno encima de Kenia;
+- la repetición de otro verso;
+- los versos apareciendo todos juntos;
+- la flecha desde el paso 0;
+- y Kenia fuera de la música.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 57 cuadros por segundo, y el peor cuadro sale
+entre 100 y 150 ms según la medida; Aspectos Cívicos, medida el mismo día, va a
+59 y 100 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -12834,7 +12955,11 @@ la otra punta, así ninguna pasa por encima de las que esperan; y la sonda sigue
 el camino recto de cada vuelo contra lo que está quieto cuando sale. Un símbolo
 patrio en una escena es el emoji o la imagen real, nunca un dibujo; y si la
 imagen real lo enseña de una forma que contradice la prueba (la Bandera colgada,
-con las franjas de arriba abajo), va el emoji.
+con las franjas de arriba abajo), va el emoji. Un texto que viene de un archivo
+de datos (la letra del Himno) y que la escena tiene que mover pedazo por pedazo
+se mide con una tabla de avances de la Fredoka y se le impone el ancho con
+`textLength`: así el dibujo no depende de cuándo llegue la letra. Y un recorte
+de papel encima de un cuaderno termina antes de su renglón, o la raya se corta.
 
 Si la misión es **bilingüe** (carga su `-en.js` y trae el botón 🌐), la escena
 lleva `bilingue: true`, `describe: { es, en }` e `idioma(lang, A)`, y sus

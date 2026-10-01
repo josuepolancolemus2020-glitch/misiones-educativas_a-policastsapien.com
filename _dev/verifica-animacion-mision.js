@@ -3790,6 +3790,59 @@ const LEER = `
       textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
     };
   };
+  window.__amExtra.amCoro = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(m(el)); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function uno(sel, en) { return (en || raiz).querySelector(sel); }
+    function todos(sel, en) { return [].slice.call((en || raiz).querySelectorAll(sel)); }
+    function demora(el) { return el ? (parseFloat(el.style.getPropertyValue('--d')) || 0) : 0; }
+    function trazos(p) { return ((p.getAttribute('d') || '').match(/M/g) || []).length; }
+    function numeros(d) { return ((d || '').match(/-?[0-9.]+/g) || []).map(Number); }
+    function texto(t) { return t ? { txt: t.textContent, caja: caja(t), ve: vis(t), y: aVista(t, +t.getAttribute('x'), +t.getAttribute('y'))[1] } : null; }
+    var arco = uno('[data-arco]'), tr = uno('[data-arco-trazo]');
+    var p0 = tr.getPointAtLength(0), p1 = tr.getPointAtLength(tr.getTotalLength());
+    var margen = numeros(uno('.hc-margen').getAttribute('d'));
+    return {
+      vista: [svg.viewBox.baseVal.width, svg.viewBox.baseVal.height],
+      banda: caja(uno('[data-banda]')),
+      papel: caja(uno('[data-papel]')),
+      kenia: caja(uno('[data-kenia]')),
+      margen: margen[0],
+      renglones: todos('.hc-renglon').map(function (r) { return numeros(r.getAttribute('d'))[1]; }),
+      filas: todos('[data-fila]').map(function (g) {
+        var k = +g.getAttribute('data-fila');
+        var rec = uno('[data-recorte="' + k + '"]'), ins = uno('[data-insignia="' + k + '"]');
+        var mal = uno('[data-marca="mal"]', g), bien = uno('[data-marca="bien"]', g);
+        var coma = uno('[data-pieza="coma"]', g), corte = uno('[data-corte]', rec), rep = uno('[data-pieza="repeticion"]', rec);
+        var circulo = ins.querySelector('circle'), num = ins.querySelector('[data-palabras]');
+        var o = {
+          k: k, verso: +g.getAttribute('data-verso'), ve: vis(g), d: demora(g),
+          arranque: texto(uno('[data-pieza="arranque"]', g)),
+          coma: texto(coma), resto: texto(uno('[data-pieza="resto"]', g)),
+          dComa: demora(coma), dCorre: demora(uno('[data-corre]', g)),
+          mal: { ve: vis(mal), caja: caja(mal), trazos: trazos(mal), d: demora(mal) },
+          bien: { ve: vis(bien), caja: caja(bien), trazos: trazos(bien), d: demora(bien) },
+          recorte: { rep: texto(rep), d: demora(rec), dVe: demora(rec.firstElementChild), corte: { ve: vis(corte), caja: caja(corte), d: demora(corte) } },
+          insignia: { ve: vis(circulo), caja: caja(circulo), n: +num.getAttribute('data-palabras'), txt: num.textContent, d: demora(ins) }
+        };
+        return o;
+      }),
+      sep: texto(uno('[data-sep]')), dSep: demora(uno('[data-sep]')),
+      arco: { ve: vis(arco), d: demora(arco), dTrazo: demora(tr), ini: aVista(tr, p0.x, p0.y), fin: aVista(tr, p1.x, p1.y),
+              punta: caja(uno('[data-arco-punta]')), txt: texto(uno('[data-arco-txt]')) },
+      rotulos: todos('[data-rotulo]').map(function (t) { return { k: t.getAttribute('data-rotulo'), t: texto(t) }; }),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; }),
+      cajasTexto: todos('text').filter(vis).map(caja)
+    };
+  };
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -3934,6 +3987,42 @@ const MEMO_PARED = {};
 const MEMO_JURADO = {};
 const MEMO_CHARLA = {};
 const MEMO_ESTRELLAS = {};
+/* El coro del Himno, leído de js/data/himno.js aquí mismo y por OTRO camino
+   que la escena: la repetición es lo que el verso cantado tiene de palabras
+   de más al empezar, y tiene que decir lo mismo que esas primeras palabras
+   del escrito. Si la escena y la sonda la sacaran igual, un error de las dos
+   pasaría por bueno. */
+let coroHimno = null;
+function himnoCoro() {
+  if (coroHimno) return coroHimno;
+  const vm = require('vm');
+  const ctx = {};
+  vm.createContext(ctx);
+  vm.runInContext(fs.readFileSync(path.join(RAIZ, 'js', 'data', 'himno.js'), 'utf8') + '\n;this.H = HIMNO; this.C = HIMNO_CORO_CANTADO;', ctx);
+  const coro = ctx.H.find(p => p.clave === 'coro');
+  const llano = t => t.toLowerCase().replace(/[,;.]/g, '');
+  const versos = [];
+  coro.versos.forEach((escrito, i) => {
+    const cantado = ctx.C[i];
+    const sw = cantado.split(' '), ww = escrito.split(' ');
+    const e = sw.length - ww.length;
+    if (e <= 0) return;
+    const uno = sw.slice(0, e).join(' '), dos = sw.slice(e, 2 * e).join(' ');
+    const sigue = sw.slice(e).join(' ');
+    if (llano(uno) !== llano(dos) || sigue !== escrito.charAt(0).toLowerCase() + escrito.slice(1)) return;
+    versos.push({ i, escrito, cantado, a: uno.replace(/,$/, ''), b: dos });
+  });
+  coroHimno = { versos, palabras: versos.reduce((t, v) => t + v.b.split(' ').length, 0) };
+  return coroHimno;
+}
+const ESTADOS_CORO = [
+  { filas: 1, bien: 0, corte: 0, arco: false, cuenta: false },
+  { filas: 1, bien: 0, corte: 1, arco: true, cuenta: false },
+  { filas: 1, bien: 1, corte: 1, arco: false, cuenta: false },
+  { filas: 4, bien: 1, corte: 4, arco: false, cuenta: false },
+  { filas: 4, bien: 4, corte: 4, arco: false, cuenta: false },
+  { filas: 4, bien: 4, corte: 4, arco: false, cuenta: true }
+];
 const ESCENAS = {
   /* Secuencias: el Robot Mensajero. «El mandado de Marvin».
      ⚠️ Nada se le cree a la escena. La sonda lee en qué renglón quedó cada
@@ -5330,6 +5419,157 @@ const ESCENAS = {
     r.push([choques.length === 0, `paso ${n}: ningún rótulo se monta en otro`, choques]);
     r.push([cajas.every(c => dentro(c, vista)) && dentro(M.caja, vista) && CT.every(c => dentro(c.llena.caja, vista)) && dentro(LT.caja, vista),
       `paso ${n}: todo cabe en el dibujo`, null]);
+    return r;
+  },
+  amCoro(e, n) {
+    const x = e.extra, r = [];
+    const cerca = (a, b, t = 0.6) => Math.abs(a - b) <= t;
+    const cen = c => ({ x: (c.x0 + c.x1) / 2, y: (c.y0 + c.y1) / 2 });
+    const dentro = (a, b, m = 0) => a.x0 >= b.x0 - m && a.x1 <= b.x1 + m && a.y0 >= b.y0 - m && a.y1 <= b.y1 + m;
+    const monta = (a, b) => a.x0 < b.x1 - 0.5 && b.x0 < a.x1 - 0.5 && a.y0 < b.y1 - 0.5 && b.y0 < a.y1 - 0.5;
+    const H = himnoCoro(), V = H.versos;
+
+    /* ── lo que no depende del dibujo va primero ── */
+    /* Ni una estrofa, ni cuántos versos tiene el coro, ni la medida del verso,
+       ni quién hizo la letra o la música, ni el resto de los versos que el
+       completar de la prueba pregunta (la nieve, la cima desnuda). */
+    const PROHIBIDAS = /estrofa|s[eé]ptim|\bsiete\b|\bocho\b|\b8\b|\b64\b|s[ií]laba|decas[ií]l|\bmedir\b|\bmedida|\bcalce|coello|hartling|alem[aá]n|\b190[34]\b|\b1915\b|canto a honduras|nieve|desnud|sagrad|estrellas|escudo|resplandor|destello|\bsol\b|naciones|federaci|lempira|col[oó]n|francia|atlante|\bacto\b|oficial|estren|enseñaste|bandera,? tu bandera,? es/i;
+    const dicho = [e.texto, e.palabras, e.boton].concat(x.textos).join(' · ');
+    r.push([!PROHIBIDAS.test(dicho), `paso ${n}: no sale nada que pregunte la prueba (estrofas, versos, autores, el resto de los versos)`, (dicho.match(PROHIBIDAS) || [])[0]]);
+    r.push([V.length === 4 && V[0].i === 0 && H.palabras > 0, `paso ${n}: en himno.js, el coro cantado repite el arranque de cuatro versos, y el primero es el de la historia`, V.map(v => v.i)]);
+    const E = ESTADOS_CORO[n];
+
+    /* ── la música y el examen ── */
+    const B = x.banda, PA = x.papel, K = x.kenia;
+    r.push([B.y1 < PA.y0 && dentro(K, B, -1) && dentro(B, { x0: 0, y0: 0, x1: x.vista[0], y1: x.vista[1] }) && dentro(PA, { x0: 0, y0: 0, x1: x.vista[0], y1: x.vista[1] }),
+      `paso ${n}: arriba la música, con Kenia dentro; abajo, el examen`, [B, PA, K]]);
+    const rot = k => (x.rotulos.find(o => o.k === k) || {}).t;
+    r.push([rot('musica') && rot('musica').ve && /música/.test(rot('musica').txt) && dentro(rot('musica').caja, B, -1)
+      && rot('papel') && rot('papel').ve && /Kenia/.test(rot('papel').txt) && dentro(rot('papel').caja, PA, -1),
+      `paso ${n}: la banda dice que es lo que pide la música, y el papel, que es el examen de Kenia`, null]);
+
+    /* ── cada verso del papel: se lee pieza por pieza, por dónde quedó ── */
+    const F = x.filas.slice().sort((a, b) => a.k - b.k);
+    const visibles = F.filter(f => f.ve);
+    r.push([visibles.length === E.filas && F.every((f, k) => f.ve === (k < E.filas)), `paso ${n}: en el examen se ven ${E.filas} verso(s)`, visibles.length]);
+    const enPapel = c => dentro(c, PA, -0.5);
+    const enBanda = c => dentro(c, B, -0.5);
+    const leer = f => {
+      const piezas = [f.arranque, f.coma, f.recorte.rep, f.resto].filter(p => p && p.ve && enPapel(p.caja) && Math.abs(p.y - f.arranque.y) < 1)
+        .sort((p, q) => p.caja.x0 - q.caja.x0);
+      let t = '', antes = null;
+      piezas.forEach(p => { if (antes) t += (p.caja.x0 - antes.caja.x1 > 1.2 ? ' ' : ''); t += p.txt; antes = p; });
+      return t.replace(/\s+…/g, '…');
+    };
+    const lecturas = [];
+    visibles.forEach(f => {
+      const v = V[f.k], bien = f.k < E.bien;
+      const cantado = f.k === 0 ? v.cantado : v.a + ', ' + v.b + '…';
+      const escrito = f.k === 0 ? v.escrito : v.a + '…';
+      const lee = leer(f);
+      lecturas[f.k] = lee;
+      r.push([f.verso === v.i && lee === (bien ? escrito : cantado),
+        `paso ${n}: el verso ${f.k + 1} del papel dice «${bien ? escrito : cantado}»${bien ? ', una sola vez' : ', como se canta'}`, lee]);
+      /* lo que sigue a la repetición no se enseña: es lo que pregunta el completar */
+      if (f.k > 0) {
+        const despues = v.escrito.slice(v.a.length).replace(/[,;.]/g, ' ').split(' ').filter(w => w.length > 3);
+        r.push([despues.every(w => !x.textos.join(' ').includes(w)), `paso ${n}: del verso ${f.k + 1} solo se ve hasta la repetición`, despues]);
+      }
+      /* la marca del maestro, en el margen y a la altura de su verso */
+      const M = bien ? f.bien : f.mal, otra = bien ? f.mal : f.bien;
+      r.push([M.ve && !otra.ve && M.caja.x1 < x.margen && Math.abs(cen(M.caja).y - (f.arranque.y - 4)) < 3 && M.trazos === (bien ? 1 : 2),
+        `paso ${n}: el verso ${f.k + 1} lleva ${bien ? 'un ✓ (una raya)' : 'una ✗ (dos rayas)'} en el margen`, [M.ve, otra.ve, M.trazos]]);
+      const C = f.recorte, rep = C.rep;
+      r.push([rep.ve && rep.txt === v.b, `paso ${n}: la repetición del verso ${f.k + 1} es «${v.b}»`, rep.txt]);
+      if (bien) {
+        /* escrito: el resto se pegó donde estaba la repetición */
+        const gap = f.resto.caja.x0 - f.arranque.caja.x1;
+        r.push([!f.coma.ve && (f.k === 0 ? gap > 1.5 && gap < 4.5 : gap > -0.8 && gap < 0.8),
+          `paso ${n}: escrito, el verso ${f.k + 1} se cierra: ${f.k === 0 ? 'un espacio' : 'los puntos pegados'} y sin coma`, [f.coma.ve, Math.round(gap * 100) / 100]]);
+        r.push([enBanda(C.corte.caja) && enBanda(rep.caja), `paso ${n}: la repetición del verso ${f.k + 1} está en la música`, C.corte.caja]);
+      } else {
+        r.push([enPapel(C.corte.caja) && Math.abs(rep.y - f.arranque.y) < 0.6, `paso ${n}: la repetición del verso ${f.k + 1} sigue copiada en el examen`, C.corte.caja]);
+        r.push([C.corte.ve === (f.k < E.corte), `paso ${n}: ${f.k < E.corte ? 'la repetición lleva su línea de recorte (raya cortada)' : 'todavía no se marca nada'}`, C.corte.ve]);
+        const reng = x.renglones.find(y => y > f.arranque.y && y < f.arranque.y + 8);
+        r.push([C.corte.caja.x0 > f.coma.caja.x1 && C.corte.caja.x1 < f.resto.caja.x0 && reng && C.corte.caja.y1 < reng - 0.4,
+          `paso ${n}: el recorte no se come la coma, ni lo que sigue, ni la raya del cuaderno`, [C.corte.caja, f.coma.caja.x1, f.resto.caja.x0, reng]]);
+      }
+      r.push([dentro(f.arranque.caja, PA, -1) && f.arranque.caja.x0 > x.margen && dentro(f.resto.caja, PA, -1), `paso ${n}: el verso ${f.k + 1} cabe en el examen, a la derecha del margen`, null]);
+    });
+    /* los que todavía no se ven tampoco tienen su repetición a la vista */
+    F.filter(f => !f.ve).forEach(f => r.push([!f.recorte.rep.ve && !f.recorte.corte.ve, `paso ${n}: el verso ${f.k + 1} y su repetición todavía no están`, null]));
+
+    /* ── la música: los recortes, en el orden de los versos ── */
+    const enLaMusica = F.filter(f => f.recorte.rep.ve && enBanda(f.recorte.corte.caja));
+    r.push([enLaMusica.length === E.bien, `paso ${n}: en la música hay ${E.bien} repetición(es)`, enLaMusica.length]);
+    const orden = enLaMusica.slice().sort((a, b) => (Math.abs(a.recorte.corte.caja.y0 - b.recorte.corte.caja.y0) > 4 ? a.recorte.corte.caja.y0 - b.recorte.corte.caja.y0 : a.recorte.corte.caja.x0 - b.recorte.corte.caja.x0)).map(f => f.k);
+    r.push([orden.every((k, i) => i === 0 || k > orden[i - 1]), `paso ${n}: en la música se leen en el orden de los versos`, orden]);
+    const choques = [];
+    enLaMusica.forEach((a, i) => { if (monta(a.recorte.corte.caja, K)) choques.push('Kenia'); enLaMusica.forEach((b, j) => { if (j > i && monta(a.recorte.corte.caja, b.recorte.corte.caja)) choques.push([a.k, b.k]); }); });
+    r.push([choques.length === 0, `paso ${n}: los recortes de la música no se montan, ni sobre Kenia`, choques]);
+
+    /* ── «otra vez», del arranque a su repetición ── */
+    r.push([x.arco.ve === E.arco, `paso ${n}: ${E.arco ? 'una flecha une el arranque con su repetición: «otra vez»' : 'no hay flecha'}`, x.arco.ve]);
+    if (E.arco) {
+      const f0 = F[0], A0 = f0.arranque.caja, R0 = f0.recorte.rep.caja, a = x.arco;
+      r.push([a.ini[0] > A0.x0 && a.ini[0] < A0.x1 && a.ini[1] > A0.y1 && a.fin[0] > R0.x0 && a.fin[0] < R0.x1 && a.fin[1] > f0.recorte.corte.caja.y1
+        && dentro({ x0: a.fin[0] - 1, y0: a.fin[1] - 1, x1: a.fin[0] + 1, y1: a.fin[1] + 1 }, a.punta, 1)
+        && a.txt.ve && a.txt.txt === 'otra vez' && a.txt.caja.y0 > Math.max(a.ini[1], a.fin[1]) && cen(a.txt.caja).x > a.ini[0] && cen(a.txt.caja).x < a.fin[0],
+        `paso ${n}: la flecha sale de debajo del arranque y llega, con su punta, debajo de la repetición; «otra vez» va debajo`, [a.ini, a.fin]]);
+    }
+
+    /* ── «· · ·»: entre el segundo verso y el resto hay más versos ── */
+    r.push([x.sep.ve === (E.filas > 2), `paso ${n}: ${E.filas > 2 ? 'entre el segundo verso y el siguiente van «· · ·»' : 'todavía no hay «· · ·»'}`, x.sep.ve]);
+    if (E.filas > 2) r.push([x.sep.y > F[1].arranque.y + 6 && x.sep.y < F[2].arranque.y - 6 && x.sep.txt.replace(/\s/g, '') === '···', `paso ${n}: los «· · ·» van entre el segundo verso y el siguiente`, x.sep.y]);
+
+    /* ── las palabras que se cantan y no se escriben ── */
+    const palabras = f => f.recorte.rep.txt.split(' ').length;
+    F.forEach(f => {
+      const I = f.insignia;
+      r.push([I.ve === E.cuenta, `paso ${n}: ${E.cuenta ? 'cada repetición dice cuántas palabras son' : 'todavía no se cuentan las palabras'}`, I.ve]);
+      if (E.cuenta) {
+        const C = f.recorte.corte.caja;
+        r.push([I.n === palabras(f) && I.txt === String(palabras(f)) && Math.abs(cen(I.caja).y - cen(C).y) < 2 && I.caja.x0 > C.x1 && I.caja.x0 - C.x1 < 8 && enBanda(I.caja),
+          `paso ${n}: «${f.recorte.rep.txt}» son ${palabras(f)} palabras, y lo dice a su lado`, [I.txt, palabras(f)]]);
+      }
+    });
+
+    /* ── el marcador cuenta lo que se ve ── */
+    const veces = t => (t.toLowerCase().match(new RegExp(V[0].b.toLowerCase(), 'g')) || []).length;
+    const cuenta = n <= 2 ? veces(lecturas[0] || '') : n === 3 ? visibles.length : n === 4 ? enLaMusica.length : enLaMusica.reduce((t, f) => t + palabras(f), 0);
+    r.push([e.cifra === String(cuenta), `paso ${n}: el marcador cuenta lo que se ve`, [e.cifra, cuenta]]);
+    if (n === 5) r.push([cuenta === H.palabras && e.texto.includes(String(H.palabras)), `paso 5: son ${H.palabras} palabras, contadas en himno.js, y la frase dice ese número`, [cuenta, H.palabras]]);
+    if (n === 1) r.push([e.texto.includes('«' + V[0].b + '»') && /música/.test(e.texto), 'paso 1: la frase nombra la repetición y dice que la pide la música', e.texto]);
+    if (n === 0) r.push([/Kenia/.test(e.texto) && /\?$/.test(e.texto.trim()), 'paso 0: la frase cuenta lo que hizo Kenia y termina en una pregunta', e.texto]);
+
+    /* ── en qué orden pasa cada cosa ── */
+    if (n === 1) r.push([F[0].recorte.corte.d > 0 && x.arco.d > F[0].recorte.corte.d && x.arco.dTrazo === x.arco.d,
+      'paso 1: primero se marca la línea de recorte, y después sale la flecha', [F[0].recorte.corte.d, x.arco.d]]);
+    const escribe = f => f.recorte.d > 0 && f.recorte.d < f.dComa && f.dComa < f.dCorre && f.dCorre < f.mal.d && f.mal.d <= f.bien.d;
+    if (n === 2) r.push([escribe(F[0]), 'paso 2: la repetición sube a la música, se va la coma, el verso se cierra y la ✗ pasa a ✓', [F[0].recorte.d, F[0].dComa, F[0].dCorre, F[0].mal.d, F[0].bien.d]]);
+    if (n === 3) {
+      const ds = F.slice(1).map(f => f.d);
+      r.push([ds.every((d, i) => d > 0 && (i === 0 || d > ds[i - 1])) && F.slice(1).every(f => f.recorte.dVe === f.d && f.recorte.corte.d === f.d && f.mal.d === f.d) && x.dSep > F[1].d,
+        'paso 3: los otros versos aparecen uno por uno, cada uno con su repetición y su ✗, y después los «· · ·»', [ds, x.dSep]]);
+    }
+    if (n === 4) {
+      const ds = F.slice(1).map(f => f.recorte.d);
+      r.push([F.slice(1).every(escribe) && ds.every((d, i) => i === 0 || d > ds[i - 1]), 'paso 4: cada repetición sube, en orden, y su verso se cierra antes de pasar al ✓', ds]);
+    }
+    if (n === 5) {
+      const ds = F.map(f => f.insignia.d);
+      r.push([ds.every((d, i) => d > 0 && (i === 0 || d > ds[i - 1])), 'paso 5: las palabras se cuentan una repetición detrás de otra', ds]);
+    }
+
+    /* ── los rótulos ── */
+    /* Dos pedazos del mismo renglón que van pegados («bloque» y su coma, o
+       sus «…») se tocan por el hueco de la última letra: eso no es montarse.
+       Se pide que no se metan uno en el otro más de un píxel. */
+    const cajas = x.cajasTexto, choqT = [];
+    const pegados = (a, b) => cerca(a.y0, b.y0, 0.6) && cerca(a.y1, b.y1, 0.6) && Math.min(a.x1, b.x1) - Math.max(a.x0, b.x0) < 1.2;
+    cajas.forEach((a, i) => cajas.forEach((b, j) => { if (j > i && monta(a, b) && !pegados(a, b)) choqT.push([x.textos[i], x.textos[j]]); }));
+    r.push([choqT.length === 0, `paso ${n}: ningún texto se monta en otro`, choqT]);
+    r.push([cajas.every(c => dentro(c, { x0: 0, y0: 0, x1: x.vista[0], y1: x.vista[1] })), `paso ${n}: todo cabe en el dibujo`, null]);
     return r;
   },
   amJurado(e, n) {

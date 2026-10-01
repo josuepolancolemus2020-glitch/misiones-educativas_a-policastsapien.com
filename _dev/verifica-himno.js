@@ -190,6 +190,25 @@ if (!fs.existsSync(MISION)) {
     mal(inventadas.length + ' cita(s) del JS no coinciden con el Himno:');
     inventadas.slice(0, 6).forEach(c => console.log('       «' + c + '»'));
   }
+
+  /* La animación que va tras la historia (el coro escrito y el cantado) usa
+     versos del coro, y por eso NO lleva ninguno escrito: los saca de
+     himno.js, y la repetición la calcula (lo que el cantado tiene de más).
+     Un pedazo de letra escrito en ella sería un segundo original, justo en la
+     pantalla que enseña a no copiar de más. Se busca en sus cadenas, sin los
+     comentarios, cualquier tirada de cuatro palabras del Himno. */
+  const ANIM = path.join(RAIZ, 'misiones', '2y3ciclo-himno-nacional', 'js', 'animacion-coro.js');
+  if (fs.existsSync(ANIM)) {
+    const a = fs.readFileSync(ANIM, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+    const cadenas = (a.match(/'(?:[^'\\\n]|\\.)*'/g) || []).map(t => t.slice(1, -1));
+    const conLetra = cadenas.filter(t => {
+      const p = limpia(t).split(' ');
+      for (let i = 0; i + 4 <= p.length; i++) if (letraPlana.includes(p.slice(i, i + 4).join(' '))) return true;
+      return false;
+    });
+    if (!conLetra.length && /HIMNO_CORO_CANTADO/.test(a) && /\bHIMNO\b/.test(a)) ok('la animación del coro no escribe la letra: la saca de js/data/himno.js');
+    else mal('la animación del coro escribe letra a mano: «' + (conLetra[0] || 'no usa HIMNO ni HIMNO_CORO_CANTADO') + '»');
+  }
 }
 
 /* ⚠️ El Himno no se enseña solo en su misión. Aspectos Cívicos —la etapa 1 de

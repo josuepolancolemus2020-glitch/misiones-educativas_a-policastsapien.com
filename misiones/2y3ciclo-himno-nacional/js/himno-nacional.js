@@ -385,7 +385,7 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
    Lo vigila _dev/verifica-examen-sin-pistas.js. */
 const evalTFBank=[
   {q:'El Himno Nacional se declaró oficial en 1915.',a:true,k:'oficial'},
-  {q:'Al escribir el coro se ponen las repeticiones que se oyen al cantarlo.',a:false,k:'escrito-sin-repeticiones'},
+  {q:'«Bravías» quiere decir mansas y tranquilas.',a:false,k:'coro-bravias'},
   {q:'«Atlante» es el nombre poético del océano Pacífico.',a:false,k:'atlante'},
   {q:'«Un país donde el sol se levanta» es España, que queda al oriente.',a:true,k:'e2-pais-sol'},
   {q:'El Himno escribe con todas sus letras el nombre de Colón.',a:false,k:'e1-colon-sin-nombre'},
