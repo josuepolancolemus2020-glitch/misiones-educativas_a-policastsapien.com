@@ -179,8 +179,8 @@
         '<h3>I. Fill in the blanks <span class="val">(Value: 10 points each)</span></h3>' +
 
         '<ol>' +
-        '<li>At the fair, the robot from Kenia’s group <span class="linea-resp"></span> very well.</li>' +
-        '<li>The box that warns when the tank fills up was made in one <span class="linea-resp"></span>.</li>' +
+        '<li>The waterer’s sensor tells whether the soil is dry or <span class="linea-resp"></span>.</li>' +
+        '<li>Plastic and paper mixed in the yard can no longer be <span class="linea-resp"></span>.</li>' +
         '<li>The design cycle is a <span class="linea-resp"></span>, not a straight line.</li>' +
         '<li>In the coffee yard, the <span class="linea-resp"></span> sensor warns that the roof has to close.</li>' +
         '<li>The coffee yard roof is closed by a motor with a <span class="linea-resp"></span>.</li>' +
@@ -194,19 +194,19 @@
         '<h3>II. True or False <span class="val">(Value: 10 points each)</span></h3>' +
 
         '<ol>' +
-        '<li>____ At the fair, the judges asked both groups the same question.</li>' +
-        '<li>____ The tank group used more parts than Kenia’s group.</li>' +
+        '<li>____ A robot can be safe even if it has bare wires.</li>' +
+        '<li>____ The engineering design cycle has seven stages.</li>' +
         '<li>____ After a failure, it is best to change one single thing before trying again.</li>' +
         '<li>____ A good prototype works the first time.</li>' +
-        '<li>____ Robots help people; they do not just replace them.</li>' +
         '<li>____ If the robot does not meet the goal, you can ask for less so it looks like it worked.</li>' +
+        '<li>____ Robots help people; they do not just replace them.</li>' +
         '<li>____ Sometimes, while trying it out, you find the real problem was a different one.</li>' +
         '<li>____ The model has to look pretty to be tested.</li>' +
+        '<li>____ The trash sorter tells plastic from paper by the noise they make when they fall.</li>' +
         '<li>____ In the team, everybody checks and gives an opinion, not only the one who draws.</li>' +
-        '<li>____ To solve a problem in your community you need an expensive laboratory.</li>' +
         '</ol>' +
 
-        '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span>. Circle the correct letter.</h3>' +
+        '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span>. Fill in the circle of the letter of the correct answer.</h3>' +
 
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">1</span>The ford alert goes where there is no socket. What power source is best?</div>' +
@@ -330,9 +330,7 @@
 
         '<div class="felic">' +
         '🏅 <b>Congratulations! You have completed the Mission Robots that Solve Problems… and with it the whole Robot ' +
-        'Path.</b> Now you know how to identify a problem, brainstorm solutions, design while justifying every part, build a ' +
-        'prototype, test it with data, improve it when it fails and communicate the result to your community. You are thinking like ' +
-        'an engineer now! 🏆🤖' +
+        'Path.</b> Before you hand it in, check your answers one by one. 🏆🤖' +
         '</div>' +
 
         '<h2>📏 Assessment Rubric</h2>' +
@@ -357,8 +355,8 @@
         '<p style="font-size:10pt;color:var(--gris);">This sheet is printed <strong>separately</strong>: it is only for the teacher or for guided self-assessment.</p>' +
 
         '<div class="pauta">' +
-        '<div><span class="pt">I. Fill in:</span> 1. danced &nbsp; 2. week &nbsp; 3. wheel &nbsp; 4. rain &nbsp; 5. pulley &nbsp; 6. level &nbsp; 7. 19 &nbsp; 8. 200 &nbsp; 9. minutes &nbsp; 10. voltage</div>' +
-        '<div><span class="pt">II. True or False:</span> 1T, 2F, 3T, 4F, 5T, 6F, 7T, 8F, 9T, 10F</div>' +
+        '<div><span class="pt">I. Fill in:</span> 1. moist &nbsp; 2. recycled &nbsp; 3. wheel &nbsp; 4. rain &nbsp; 5. pulley &nbsp; 6. level &nbsp; 7. 19 &nbsp; 8. 200 &nbsp; 9. minutes &nbsp; 10. voltage</div>' +
+        '<div><span class="pt">II. True or False:</span> 1F, 2T, 3T, 4F, 5F, 6T, 7T, 8F, 9F, 10T</div>' +
         '<div><span class="pt">III. Multiple choice:</span> 1c, 2b, 3a, 4b, 5c, 6b, 7d, 8d, 9a, 10c</div>' +
         '<div><span class="pt">IV. Matching:</span> 1. C &nbsp; 2. H &nbsp; 3. E &nbsp; 4. I &nbsp; 5. A &nbsp; 6. G &nbsp; 7. J &nbsp; 8. B &nbsp; 9. F &nbsp; 10. D</div>' +
         '</div>' +

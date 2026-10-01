@@ -542,3 +542,85 @@ body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* ── La animación del jurado de la feria (#amJurado) ───────────────────
+   La tarjeta del jurado, los globos y las etiquetas del orden son papel,
+   y las mesas, el robot, el tanque y la caja son COSAS: se quedan como
+   son en las dos pantallas, así que lo que va escrito sobre papel lleva
+   tinta oscura fija. Lo que va sobre la tarjeta de la misión (los
+   rótulos de las filas, «lleno») lleva la tinta de la pantalla. Nada se
+   dice solo con color: lo que nadie supo nombrar va de raya cortada, la
+   caja que avisa enciende su luz y hace ondas, y el que gana lleva el
+   listón con su estrella. */
+#amJurado .rp-tarjeta { fill: #fffbeb; stroke: #b45309; stroke-width: 1.2; }
+#amJurado .rp-falta { stroke-dasharray: 3 2; }
+#amJurado .rp-letra { fill: #1e293b; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amJurado .rp-pregunta { font-weight: 700; }
+#amJurado .rp-globo { fill: #ffffff; stroke: #64748b; stroke-width: 1.2; stroke-linejoin: round; }
+#amJurado .rp-suelo { fill: none; stroke: var(--border); stroke-width: 1.2; }
+#amJurado .rp-tabla { fill: #b7834f; stroke: #7c5a35; stroke-width: 1; }
+#amJurado .rp-pata { fill: #9a6a3c; }
+#amJurado .rp-cuerpo { fill: #94a3b8; stroke: #334155; stroke-width: 1.2; }
+#amJurado .rp-pierna { fill: #64748b; stroke: #334155; stroke-width: 0.8; }
+#amJurado .rp-panel { fill: #e2e8f0; stroke: #475569; stroke-width: 0.8; }
+#amJurado .rp-foco { fill: #0e7490; }
+#amJurado .rp-ojo { fill: #1e293b; }
+/* Las rayas que son cosas (la antena, los brazos, el cable y el borde del
+   tanque) van de un gris medio, que se ve en las dos pantallas: el oscuro
+   se perdía en la pantalla oscura */
+#amJurado .rp-antena { fill: none; stroke: #64748b; stroke-width: 2; stroke-linecap: round; }
+#amJurado .rp-antena-bola { fill: #c2410c; stroke: #7c2d12; stroke-width: 0.8; }
+#amJurado .rp-brazo { fill: none; stroke: #64748b; stroke-width: 3.4; stroke-linecap: round; }
+#amJurado .rp-cano { fill: #94a3b8; stroke: #475569; stroke-width: 0.8; }
+#amJurado .rp-chorro { fill: #38bdf8; }
+#amJurado .rp-vidrio { fill: #e0f2fe; fill-opacity: 0.55; }
+#amJurado .rp-agua { fill: #38bdf8; fill-opacity: 0.85; }
+#amJurado .rp-tanque { fill: none; stroke: #64748b; stroke-width: 1.8; stroke-linejoin: round; }
+#amJurado .rp-marca { fill: none; stroke: #0e7490; stroke-width: 1.3; stroke-dasharray: 3 2; }
+#amJurado .rp-cable { fill: none; stroke: #64748b; stroke-width: 1.4; }
+#amJurado .rp-punto { fill: #0e7490; stroke: #164e63; stroke-width: 0.8; }
+#amJurado .rp-caja { fill: #f8fafc; stroke: #334155; stroke-width: 1.2; }
+#amJurado .rp-rejilla { fill: none; stroke: #64748b; stroke-width: 1.2; stroke-linecap: round; }
+#amJurado .rp-luz-off { fill: #94a3b8; stroke: #475569; stroke-width: 0.8; }
+#amJurado .rp-luz-on { fill: #facc15; stroke: #a16207; stroke-width: 0.8; }
+#amJurado .rp-halo { fill: none; stroke: #f59e0b; stroke-width: 1.4; stroke-dasharray: 2 1.6; }
+#amJurado .rp-onda { fill: none; stroke: #b45309; stroke-width: 1.6; stroke-linecap: round; }
+#amJurado .rp-hoja { fill: #ffffff; stroke: #475569; stroke-width: 1; }
+#amJurado .rp-hoja-tira { fill: #c2410c; }
+#amJurado .rp-hoja-raya { fill: none; stroke: #94a3b8; stroke-width: 1; }
+#amJurado .rp-pieza { fill: #cbd5e1; stroke: #475569; stroke-width: 0.9; stroke-linejoin: round; }
+#amJurado .rp-pieza-eje { fill: #475569; }
+#amJurado .rp-nadie { fill: none; stroke: var(--dark); stroke-width: 1.3; stroke-dasharray: 2.4 1.8; }
+#amJurado .rp-ella { fill: var(--am-pri); stroke: none; }
+#amJurado .rp-visto { fill: none; stroke: var(--am-pri); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+#amJurado .rp-liston { fill: #f59e0b; stroke: #92400e; stroke-width: 1.2; }
+#amJurado .rp-liston-cola { fill: #c2410c; stroke: #7c2d12; stroke-width: 0.8; stroke-linejoin: round; }
+#amJurado .rp-estrella { fill: #7c2d12; font-family: 'Fredoka', sans-serif; font-weight: 700; }
+/* El baile es rápido: cada vaivén termina antes de que empiece el siguiente */
+.am-raiz .am-escenario svg .rp-baila {
+  transition: transform 0.35s ease-in-out var(--d, 0s), opacity 0.5s ease var(--d, 0s);
+}
+/* El agua sube despacio y parejo: lo que dura lo cuenta también la
+   escena (SUBE), para encender la luz cuando llega a la marca y cortar el
+   chorro cuando deja de subir */
+.am-raiz .am-escenario svg .rp-agua-sube {
+  transition: transform 2.6s linear var(--d, 0s), opacity 0.5s ease var(--d, 0s);
+}
+/* La llave se cierra de una vez: el chorro no se desvanece despacio
+   mientras el agua ya está quieta */
+.am-raiz .am-escenario svg .rp-llave {
+  transition: opacity 0.15s ease var(--d, 0s);
+}
+/* Lo que ya no es lo que se mide se queda, pero tenue. Tenue con
+   fill-opacity y stroke-opacity, NUNCA con opacity: lo que tiene opacidad
+   por debajo de 1 es lo que ya no está (.am-fuera), y así lo cuenta la
+   sonda. Va en el GRUPO de las filas y los hijos lo heredan: así lo tenue
+   espera la demora del grupo, y no la de cada hoja y cada pieza. */
+.am-raiz .am-escenario svg .rp-atenua {
+  transition:
+    transform 0.8s cubic-bezier(0.2, 0.75, 0.25, 1) var(--d, 0s),
+    opacity 0.5s ease var(--d, 0s),
+    fill-opacity 0.5s ease var(--d, 0s),
+    stroke-opacity 0.5s ease var(--d, 0s);
+}
+#amJurado .rp-tenue { fill-opacity: 0.35; stroke-opacity: 0.35; }

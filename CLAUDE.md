@@ -12276,6 +12276,128 @@ roja con cada una.
 Con la CPU frenada seis veces va a 60 cuadros por segundo, y el peor cuadro es
 de 67 ms. Electricidad para Robots, medida el mismo día, va a 59 y 100 ms.
 
+### La sexagésima primera: Robots que Resuelven Problemas, y lo que enseñó
+
+La sexta y última de la Ruta de los Robots es **Robots que Resuelven Problemas**
+(`misiones/2y3ciclo-robots-problemas/`, `js/animacion-jurado.js`), bilingüe. La
+historia es la de la feria: el grupo de Kenia presentó un robot que bailaba, y
+bailaba muy bien; les llevó tres semanas. Al lado, otro grupo presentó una caja
+que avisa cuando el tanque del agua se llena, con la mitad de las piezas y en una
+semana. El jurado les hizo a los dos la misma pregunta, y solo uno la pudo
+contestar. La animación pone las dos mesas de la feria, el robot en una y el
+tanque con su caja en la otra; abajo, lo que costó cada proyecto:
+
+- antes de tocar: ¿cuál es mejor, y con qué lo medirías?;
+- medido por lo difícil: tres hojas de calendario contra una y ocho piezas
+  contra cuatro, y el listón va a la mesa del robot;
+- el jurado les hace a los dos la misma pregunta, «¿y esto qué problema
+  resuelve?». El robot baila (cuatro vaivenes, con los brazos arriba) y su grupo
+  contesta «…»;
+- el otro grupo lo muestra: el agua sube, llega a la marca y la caja enciende su
+  luz y suena; quien llena el tanque cierra la llave y el agua se queda debajo
+  del borde. Su globo dice «Avisa cuando se llena»;
+- medido por a quién le sirve: lo difícil se queda, pero tenue; debajo del robot
+  sale una persona de raya cortada con «¿a quién?», y debajo de la caja una
+  entera, con su ✓ y «a quien llena el tanque». El listón se pasa a la otra mesa;
+- qué fue primero: la caja, «1.º el problema, 2.º la caja»; el robot, «1.º el
+  robot» y, de raya cortada, «2.º ¿el problema?». Y la pregunta es del alumno:
+  qué problema hay en su escuela y a quién le pasa, escrito antes de pensar en
+  el robot.
+
+Siete cosas que valen para las que siguen:
+
+1. ⚠️ **El mismo par de proyectos, dos reglas y dos ganadores.** El listón no se
+   lo da la escena a nadie: la sonda saca de las hojas de calendario y de las
+   piezas quién costó más, y de la fila de abajo a quién le sirve cada uno, y
+   comprueba que el listón cuelgue de esa mesa. Lo difícil no se borra cuando
+   cambia la regla: se queda tenue, para que se vea que el robot sigue siendo el
+   más difícil y aun así pierde.
+2. ⚠️ **El chorro y el agua se paran juntos.** La primera versión subía el agua
+   hasta la marca, encendía la luz y dejaba el chorro cayendo medio segundo más
+   en un tanque que ya no subía. Ahora el agua sigue subiendo mientras cierran la
+   llave, pasa un poco de la marca y se queda debajo del borde: a tiempo. La luz
+   se enciende cuando el agua cruza la marca, y la sonda calcula ese momento con
+   lo que dura la subida, leído de la hoja de estilo: con «reducir movimiento» la
+   duración que se calcula vale 0, y la sonda la leía en cero. Se vio pensando
+   qué pasaba en el dibujo, con la sonda en verde.
+3. **La caja avisa, no cierra.** Así lo dice la historia, y por eso la llave la
+   cierra una persona después del aviso: esa persona es a quien le sirve.
+4. ⚠️ **Los hilos de la tarjeta del jurado sobraban.** Iban de la tarjeta a cada
+   globo, y como la tarjeta y los globos quedan casi pegados, a 360 px se leían
+   como dos rayitas sueltas debajo de la pregunta. La tarjeta ya va encima de los
+   dos proyectos y los dos contestan: se quitaron. Se vio en la captura, con la
+   sonda en verde.
+5. ⚠️ **En la pantalla oscura, las rayas que son cosas van en gris medio.** Los
+   brazos del robot, el cable de la caja y el borde del tanque iban en gris
+   oscuro y no se veían. Es la lección de la antena de la etapa anterior, otra
+   vez.
+6. ⚠️ **La historia y la animación contestaban seis preguntas de la conceptual y
+   dos de pensamiento crítico.** La historia: «el robot del grupo de Kenia ___
+   muy bien», «la caja se hizo en una ___», «el jurado les hizo a los dos la
+   misma pregunta», «el grupo del tanque usó más piezas» y «¿qué tenía la caja
+   que no tenía el robot?». Y «para resolver un problema de la comunidad hace
+   falta un laboratorio caro», que contestaban la animación (gana el proyecto más
+   sencillo) y, en la ficha, el recuadro «Ingeniería con lo que hay» de la misma
+   hoja del examen. En pensamiento crítico, el error de «primero se construye el
+   robot y el problema se busca después», que es el último paso de la animación,
+   y el de «no importa a quién afecte el robot», que es el cuarto. Ahora
+   preguntan lo que la misión enseña: las siete etapas del ciclo, los cables
+   pelados, el clasificador de basura, el sensor del espantapájaros, el del
+   regador y el plástico mezclado que ya no se recicla; en pensamiento crítico,
+   el prototipo que falla a la primera y el boceto que no justifica sus partes.
+   Con la respuesta en el mismo lugar, en la misión, en su inglés y en las dos
+   fichas, que siguen en siete hojas.
+7. ⚠️ **La felicitación también contestaba.** Iba debajo del examen y nombraba
+   las siete etapas una por una, que son la respuesta de un verdadero o falso y
+   de los pareados: ahora pide revisar. Y los diez verdadero o falso de la ficha
+   iban alternados (V, F, V, F… hasta el final): ahora van mezclados. La ficha en
+   inglés pedía «Circle the correct letter»: ahora pide rellenar el círculo.
+
+La sonda de esta escena **no le cree nada a la escena**. Comprueba, en español y
+en inglés:
+
+- que las dos mesas estén una al lado de la otra y a la misma altura, el robot
+  de pie y derecho en la primera, y el tanque y la caja en la segunda;
+- que el robot baile solo en el paso 2: cuatro vaivenes, de un lado al otro,
+  cada uno cuando terminó el anterior, con los brazos arriba al empezar y abajo
+  al terminar, y que acabe derecho;
+- que las hojas de calendario y las piezas sean iguales, en sus filas y debajo
+  de su mesa, y que cada rótulo diga lo que se ve;
+- que el listón cuelgue de la mesa del que gana por la regla de ese paso, sin
+  tapar ninguna cuenta, y que se pase cuando ya se vio a quién le sirve;
+- que el agua esté baja hasta el paso 3; que en el 3 la luz se encienda cuando
+  cruza la marca y las ondas salgan con la luz, que la llave se cierre después
+  del aviso y el agua se pare con el chorro, encima de la marca y debajo del
+  borde;
+- que la tarjeta del jurado vaya encima de los dos proyectos, y que cada globo
+  salga de encima del suyo sin tocarlo: el del robot cuando ya terminó de
+  bailar, el de la caja cuando ya la mostraron;
+- que lo difícil se quede tenue y no se vaya, y que la persona de la caja lleve
+  su ✓ y la del robot vaya de raya cortada con «¿a quién?»;
+- que las etiquetas del orden digan lo suyo, una debajo de la otra y sin tocar
+  la antena ni el caño, y que en cada proyecto salga primero lo que se hizo
+  primero;
+- que el marcador y la frase digan lo que se ve (tres semanas contra una, el
+  doble de piezas, la mitad y una semana);
+- que ningún rótulo se monte en otro y que todo quepa en el dibujo;
+- y que no salga ninguna palabra de lo que pregunta la prueba.
+
+Se comprobó al revés con veintinueve averías, plantadas una por una, entre
+ellas: el listón en la caja por lo difícil, un rótulo de dos semanas, la luz
+antes de que el agua llegue, el agua que se derrama o que no llega a la marca,
+el chorro que sigue cuando el agua ya paró, el robot que no baila o que acaba
+torcido, un brazo que no sube, el globo del robot mientras baila, la persona
+del robot entera, el orden de la caja al revés, lo que nadie hizo de raya
+entera, el marcador diciendo 8, «criterio» en una frase, lo difícil que se apaga
+tarde, el listón que se pasa antes del ✓, el ✓ encima de su rótulo, el robot y
+la caja flotando, el globo de la caja diciendo otra cosa en inglés, la frase
+contando cuatro semanas, la tarjeta del jurado encima de un solo proyecto, la
+pregunta después del baile y la etiqueta del orden montada en la antena. Salió
+roja con cada una.
+
+Con la CPU frenada seis veces va a 58 cuadros por segundo, y el peor cuadro es
+de 100 ms. Programando un Robot, medida el mismo día, va a 60 y 67 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -12449,7 +12571,10 @@ lección cuenta (cuántas veces mira el robot) se dibuja cada vez, con algo que
 aparece y se va (un haz del sensor), y la sonda cuenta esas veces en el dibujo.
 Y una pregunta nueva del examen no pide una regla que la animación desmiente: si
 la escena enseña un «si hay pared, parate» sin SINO que funciona, el examen no
-pregunta que todo condicional necesita su SINO.
+pregunta que todo condicional necesita su SINO. Lo que llena algo (un chorro)
+se para cuando eso deja de subir: un chorro que sigue cayendo en un tanque quieto
+es mentira. Y una duración que la sonda necesita se lee de la hoja de estilo, no
+del estilo calculado: con «reducir movimiento» vale 0.
 
 Si la misión es **bilingüe** (carga su `-en.js` y trae el botón 🌐), la escena
 lleva `bilingue: true`, `describe: { es, en }` e `idioma(lang, A)`, y sus

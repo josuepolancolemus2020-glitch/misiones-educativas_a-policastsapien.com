@@ -93,6 +93,11 @@
         '<div>A robot is not judged by how hard it was to build: it is judged by <strong>who it is useful to</strong>. ' +
         'This last stage is exactly that: find the problem first, then build.</div></div>',
 
+      an: '⚖️ Measure them with two rulers',
+
+      anr: 'Measured by how hard they were, the dancing robot wins: three weeks against one and twice as many parts. '+
+        'Measured by who they are useful to, the box that warns when the tank is full wins. That is what the judges measured.',
+
       a1:
         '<h2>🏆 A robot is there to solve problems</h2>' +
         '<p>You already know what a robot is, what its <strong>sensors</strong> measure, how it moves with <strong>motors and mechanisms</strong>, ' +
@@ -469,14 +474,14 @@
       ],
 
       evalTFBank: [
-        { q: 'At the fair, the judges asked both groups the same question.', a: true },
-        { q: 'The tank group used more parts than Kenia’s group.', a: false },
+        { q: 'The engineering design cycle has seven stages.', a: true },
+        { q: 'A robot can be safe even if it has bare wires.', a: false },
         { q: 'A good prototype works the first time.', a: false },
         { q: 'After a failure, it is best to change one single thing before trying again.', a: true },
         { q: 'If the robot does not meet the goal, you can ask for less so it looks like it worked.', a: false },
         { q: 'The model has to look pretty to be tested.', a: false },
         { q: 'Robots help people; they do not just replace them.', a: true },
-        { q: 'To solve a problem in your community you need an expensive laboratory.', a: false },
+        { q: 'The trash sorter tells plastic from paper by the noise they make when they fall.', a: false },
         { q: 'Sometimes, while trying it out, you find the real problem was a different one.', a: true },
         { q: 'In the team, everybody checks and gives an opinion, not only the one who draws.', a: true }
       ],
@@ -487,7 +492,7 @@
         { q: 'What wakes the families when water gets into the houses at night?', o: ['a) A siren and a flashing light', 'b) A poster on the wall', 'c) A clock', 'd) A fan'], a: 0 },
         { q: 'What actuator does the school garden sprinkler need?', o: ['a) A camera', 'b) A water pump or valve', 'c) A horn', 'd) A mirror'], a: 1 },
         { q: 'Which team role writes the robot’s instructions?', o: ['a) The designer', 'b) The builder', 'c) The programmer', 'd) The audience'], a: 2 },
-        { q: 'At the fair, what did the other group’s box have that Kenia’s robot did not?', o: ['a) More parts', 'b) A problem to solve', 'c) Music', 'd) More hours of work'], a: 1 },
+        { q: 'Which sensor does the cornfield scarecrow need so it spins only when the birds arrive?', o: ['a) Moisture', 'b) Motion', 'c) Temperature', 'd) Sound'], a: 1 },
         { q: 'Next to each drawn part of the robot you write…', o: ['a) its price', 'b) its color', 'c) its weight', 'd) what it is for'], a: 3 },
         { q: 'What happens to the coffee spread out in the yard?', o: ['a) Birds eat it', 'b) It gets mixed with plastic', 'c) It burns in the sun', 'd) A sudden downpour soaks it'], a: 3 },
         { q: 'In the garden sprinkler trial, what failed?', o: ['a) The water opened but did not close', 'b) The battery exploded', 'c) No water came out', 'd) The soil turned to stone'], a: 0 },
@@ -495,8 +500,8 @@
       ],
 
       evalCPBank: [
-        { q: 'At the fair, the robot from Kenia’s group ___ very well.', a: 'danced', acc: ['danced', 'dances'] },
-        { q: 'The box that warns when the tank fills up was made in one ___.', a: 'week', acc: ['week'] },
+        { q: 'The waterer’s sensor tells whether the soil is dry or ___.', a: 'moist', acc: ['moist', 'wet', 'damp'] },
+        { q: 'Plastic and paper mixed in the yard can no longer be ___.', a: 'recycled', acc: ['recycled'] },
         { q: 'The design cycle is a ___, not a straight line.', a: 'wheel', acc: ['wheel', 'circle'] },
         { q: 'In the coffee yard, the ___ sensor warns that the roof has to close.', a: 'rain', acc: ['rain'] },
         { q: 'The coffee yard roof is closed by a motor with a ___.', a: 'pulley', acc: ['pulley'] },
@@ -526,8 +531,8 @@
       ],
 
       critErrorBank: [
-        {k:'er-construir',txt:'"The first thing a good team does is build the robot; the problem gets looked for afterwards."',g1:'That is backwards: the FIRST stage is to IDENTIFY the problem. Say what is going wrong, who it affects and why it matters.',g2:'Building with no problem defined wastes time and materials: there would be nothing to compare the test against.'},
-        {k:'er-etica',txt:'"It does not matter who the robot affects: if it works, it is well made."',g1:'Design ETHICS is missing: you have to ask who it benefits and who it might harm.',g2:'The SAFETY of whoever uses it is missing too: low voltage, insulated wires and no sharp parts are part of the design.'}
+        {k:'er-fallo',txt:'"If the prototype fails its first test, the project has already failed: better to start another one."',g1:'No prototype works the FIRST time: making mistakes is part of designing.',g2:'You WRITE DOWN the failure, change one single thing and try AGAIN.'},
+        {k:'er-boceto',txt:'"In the sketch it is enough to draw the robot’s parts; what each one is for does not matter."',g1:'Next to each part you write WHAT IT IS FOR: the sensor, the mechanism, the energy and the program.',g2:'A part you cannot JUSTIFY is NOT NEEDED.'}
       ],
 
       critProcesoQuestions: [

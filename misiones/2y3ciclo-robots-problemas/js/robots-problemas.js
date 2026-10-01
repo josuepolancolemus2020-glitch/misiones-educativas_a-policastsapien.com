@@ -419,14 +419,14 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 // tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
 // Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 let evalTFBank=[
-  {q:'En la feria, el jurado les hizo a los dos grupos la misma pregunta.',a:true,k:'tf-jurado'},
-  {q:'El grupo del tanque usó más piezas que el grupo de Kenia.',a:false,k:'tf-piezas'},
+  {q:'El ciclo de diseño de ingeniería tiene siete etapas.',a:true,k:'tf-siete'},
+  {q:'Un robot puede ser seguro aunque tenga cables pelados.',a:false,k:'tf-cables'},
   {q:'Un buen prototipo sale bien la primera vez.',a:false,k:'tf-primera'},
   {q:'Después de un fallo, conviene cambiar una sola cosa antes de volver a ensayar.',a:true,k:'tf-una-cosa'},
   {q:'Si el robot no cumple, se puede pedir menos para que parezca que funcionó.',a:false,k:'tf-pedir-menos'},
   {q:'La maqueta tiene que verse bonita para poder probarse.',a:false,k:'tf-bonita'},
   {q:'Los robots ayudan a las personas, no las reemplazan sin más.',a:true,k:'tf-reemplazan'},
-  {q:'Para resolver un problema de la comunidad hace falta un laboratorio caro.',a:false,k:'tf-laboratorio'},
+  {q:'El clasificador de basura distingue el plástico del papel por el ruido que hacen al caer.',a:false,k:'tf-ruido'},
   {q:'A veces, al ensayar, se descubre que el problema verdadero era otro.',a:true,k:'tf-otro'},
   {q:'En el equipo, todos revisan y opinan, no solo el que dibuja.',a:true,k:'tf-opinan'}
 ];
@@ -436,15 +436,15 @@ let evalMCBank=[
   {q:'¿Qué despierta a las familias cuando el agua entra a las casas de noche?',o:['a) Una sirena y una luz intermitente','b) Un cartel en la pared','c) Un reloj','d) Un ventilador'],a:0,k:'mc-sirena'},
   {q:'¿Qué actuador necesita el regador del huerto escolar?',o:['a) Una cámara','b) Una bomba o válvula de agua','c) Una bocina','d) Un espejo'],a:1,k:'mc-bomba'},
   {q:'¿Qué rol del equipo escribe las instrucciones del robot?',o:['a) El diseñador','b) El constructor','c) El programador','d) El público'],a:2,k:'mc-programador'},
-  {q:'En la feria, ¿qué tenía la caja del otro grupo que no tenía el robot de Kenia?',o:['a) Más piezas','b) Un problema que resolver','c) Música','d) Más horas de trabajo'],a:1,k:'mc-kenia'},
+  {q:'¿Qué sensor necesita el espantapájaros de la milpa para girar solo cuando llegan los pájaros?',o:['a) De humedad','b) De movimiento','c) De temperatura','d) De sonido'],a:1,k:'mc-milpa'},
   {q:'Al lado de cada parte dibujada del robot se escribe…',o:['a) su precio','b) su color','c) su peso','d) para qué sirve'],a:3,k:'mc-justifica'},
   {q:'¿Qué le pasa al café tendido en el patio?',o:['a) Se lo comen los pájaros','b) Se mezcla con plástico','c) Se quema al sol','d) Un aguacero de repente lo moja'],a:3,k:'mc-cafe'},
   {q:'En el ensayo del regador del huerto, ¿qué falló?',o:['a) El agua se abrió pero no se cerró','b) La batería explotó','c) No salió agua','d) La tierra se volvió piedra'],a:0,k:'mc-cierre'},
   {q:'Para el vado, ¿cuál de estas ideas es una alarma automática?',o:['a) Una regla pintada','b) Un vigilante','c) Una boya que hace sonar un timbre','d) Preguntarle al vecino'],a:2,k:'mc-boya'}
 ];
 let evalCPBank=[
-  {q:'En la feria, el robot del grupo de Kenia ___ muy bien.',a:'bailaba',acc:['bailaba','baila'],k:'cp-bailaba'},
-  {q:'La caja que avisa cuando se llena el tanque se hizo en una ___.',a:'semana',acc:['semana'],k:'cp-semana'},
+  {q:'El sensor del regador avisa si la tierra está seca o ___.',a:'húmeda',acc:['húmeda','humeda','mojada'],k:'cp-humeda'},
+  {q:'El plástico y el papel mezclados en el patio ya no se pueden ___.',a:'reciclar',acc:['reciclar'],k:'cp-reciclar'},
   {q:'El ciclo de diseño es una ___, no una línea recta.',a:'rueda',acc:['rueda','circulo','círculo'],k:'cp-rueda'},
   {q:'En el patio de café, el sensor de ___ avisa que hay que cerrar el techo.',a:'lluvia',acc:['lluvia'],k:'cp-lluvia'},
   {q:'El techo del patio de café lo cierra un motor con ___.',a:'polea',acc:['polea'],k:'cp-polea'},
@@ -555,8 +555,8 @@ let critCasoBank=[
   {k:'ca-milpa',txt:'Los pájaros se comen el maíz recién sembrado de la milpa cuando nadie está cuidando.',ans:'Problema: se pierde la siembra por falta de vigilancia. Sensor: de movimiento. Actuador: brazo giratorio con cintas y bocina. Programa: si detecta movimiento en la milpa, entonces gira el brazo y suena.'},
 ];
 let critErrorBank=[
-  {k:'er-construir',txt:'"Lo primero que hace un buen equipo es construir el robot; el problema se busca después".',g1:'Está al revés: la PRIMERA etapa es IDENTIFICAR el problema, decir qué falla, a quién afecta y por qué importa.',g2:'Construir sin problema definido desperdicia tiempo y materiales: no habría con qué comparar la prueba.'},
-  {k:'er-etica',txt:'"No importa a quién afecte el robot: si funciona, ya está bien hecho".',g1:'Falta la ÉTICA del diseño: hay que preguntarse a quién beneficia y a quién podría perjudicar.',g2:'También falta la SEGURIDAD de quien lo usa: voltaje bajo, cables aislados y partes sin filo son parte del diseño.'},
+  {k:'er-fallo',txt:'"Si el prototipo falla en la primera prueba, el proyecto ya fracasó: mejor empezar otro".',g1:'Ningún prototipo sale bien a la PRIMERA: equivocarse es parte de diseñar.',g2:'Se ANOTA el fallo, se cambia una sola cosa y se ensaya OTRA VEZ.'},
+  {k:'er-boceto',txt:'"En el boceto basta con dibujar las partes del robot; para qué sirve cada una no importa".',g1:'Al lado de cada parte se escribe PARA QUÉ SIRVE: el sensor, el mecanismo, la energía y el programa.',g2:'Una parte que no se sabe JUSTIFICAR, SOBRA.'},
 ];
 let critProcesoQuestions=[
   '1. ¿Qué falló en la prueba y cómo se dieron cuenta?',
