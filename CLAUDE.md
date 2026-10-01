@@ -11421,6 +11421,149 @@ Salió roja con cada una.
 Con la CPU frenada seis veces va a 60 cuadros por segundo, y el peor cuadro es
 de 67 ms.
 
+### La quincuagésima quinta: Mi Primer Programa Completo, y lo que enseñó
+
+La séptima y última de la Ruta del Código es **Mi Primer Programa Completo**
+(`misiones/2y3ciclo-mi-primer-programa/`, `js/animacion-urna.js`). La historia
+es la de Kenia: se sabía las piezas (dar instrucciones en orden, hacer que el
+robot decida, repetir y guardar datos), le pidieron un programa que contara los
+votos del Gobierno Escolar y se quedó mirando la hoja en blanco. Sabía todas las
+partes y no sabía por dónde empezar la cosa entera. La animación pone arriba la
+urna con siete papeletas, la mesa donde se mira cada una y la tabla de las
+rayas; abajo, la hoja de Kenia, en blanco:
+
+- la urna y la hoja en blanco: ¿por dónde se empieza?;
+- primero los cuenta a mano: saca una papeleta, mira dónde está la X y hace una
+  raya en su columna. Siete veces, y queda Sol 4, Luna 3;
+- lo que hizo siete veces se escribe una vez: REPETIR 7 VECES [, SACA UNA
+  PAPELETA y ]. Se marcan la fila de papeletas y «saca»;
+- las rayas eran para no olvidar cuántos llevaba cada planilla: en la hoja son
+  dos cajitas que empiezan en 0;
+- antes de cada raya miró dónde estaba la X: eso es el SI DICE SOL… SINO…, y
+  se marcan las X de las siete papeletas;
+- arriba, cuándo se cuenta (CUANDO SE CIERRE LA URNA); abajo, MUESTRA SOL Y LUNA
+  y TERMINA;
+- corre el programa: una flecha baja renglón por renglón, cada papeleta recibe
+  su aro cuando la flecha llega a SACA UNA PAPELETA por ella, y la cajita suma 1
+  cuando la flecha llega a su SUMA. Da lo mismo que a mano;
+- y la pregunta es del alumno: contar a mano los lápices de su mesa por color, y
+  decir qué hizo una y otra vez, qué miró y qué anotó.
+
+Siete cosas que valen para las que siguen:
+
+1. ⚠️ **El programa sale de lo que se hizo a mano, renglón por renglón.** Cada
+   parte de la hoja se escribe al lado de lo que la mano hizo: lo que hizo siete
+   veces, las rayas que llevaba y lo que miraba antes de cada raya. Es lo que la
+   historia llama «la costura», y la animación no lo nombra: no dice evento, ni
+   bucle, ni condicional, ni variable, ni algoritmo, ni depurar, que es lo que
+   la prueba pregunta. El programa va escrito como lo escribe la misión
+   (REPETIR, SI… SINO, GUARDA) y las variables se llaman «cajitas», como en la
+   etapa 5.
+2. ⚠️ **La sonda corre el programa de la hoja con las papeletas que se ven.** Lee
+   el voto de cada papeleta por la casilla donde está su X, lee lo que dice cada
+   renglón escrito, hace las vueltas del REPETIR y las sumas del SI… SINO, y
+   compara con las cajitas y con las rayas. La flecha la rehace igual: con los
+   votos que se ven, la flecha pasa por la SINO solo con los de la luna.
+3. ⚠️ **Cada número de una cajita lleva dos piezas**: una para llegar y otra para
+   irse. Cuando la flecha llega a la SUMA, el número de antes se va y el nuevo
+   llega cuando ya se fue; con una sola pieza, llegar e irse compartirían la
+   demora. Es la regla de las cajitas de la etapa 5, y la sonda mide las dos
+   demoras de cada suma.
+4. **Lo que solo se vio mirando las capturas, con la sonda en verde.** La luna de
+   cada papeleta se leía como un paréntesis, y ahora es una media luna gruesa. El
+   recuadro de la tabla, en el paso 3, se montaba sobre «hace la raya», y los
+   rótulos de la mano bajaron. La letra del programa era chica para un teléfono,
+   y subió a 10,5. Dos botones se partían en dos renglones a 360 px. Los aros de
+   las papeletas se tocaban, y las papeletas de la fila se achicaron.
+5. ⚠️ **La historia y la animación contestaban ocho preguntas de la prueba.**
+   «¿Por qué Kenia se quedó mirando la hoja en blanco?», «¿qué le pidieron
+   programar a Kenia?», «la última etapa no trae piezas nuevas: trae la ___» y
+   «en la última etapa se aprenden piezas nuevas» eran la historia; «la cajita
+   CUENTA empieza valiendo ___», «¿qué pregunta te dice dónde va un bucle?», «el
+   disparador va siempre arriba de todo» y «se puede practicar en el cuaderno,
+   sin computadora» los enseña la animación, que escribe un programa en una
+   hoja. Ahora preguntan otras cosas de la misión (las vueltas que faltan en un
+   REPETIR, la tabla de traza, el orden de las líneas, seguir el programa con el
+   dedo, los corchetes que faltan, la variable del recolector, los dos minutos de
+   la presentación y las manzanas), con la respuesta en el mismo lugar, en la
+   misión y en la ficha. La felicitación, debajo de los pareados, solo pide
+   revisar.
+6. ⚠️ **Al quitar preguntas, la sonda de pistas vio lo que eso tapaba, y la de
+   determinismo pidió una palabra.** «¿Qué es un programa completo?» tenía de
+   respuesta «un proyecto que junta evento, secuencia, bucle, condicional y
+   variable»; con dos preguntas menos, «bucle, condicional» dejó de ser el tema
+   de la prueba y pasó a ser la pista de la pregunta del recolector. La
+   respuesta nueva tampoco podía ser cualquiera: la sonda de determinismo de la
+   misión exige que diga «evento», porque es la pregunta del diagnóstico de la
+   ruta. Ahora dice «un proyecto que junta el evento y las demás piezas, de
+   principio a fin». Dos repuestos salieron malos antes: uno decía
+   «descomponer», que es un pareado, y otro «un evento no mueve al robot», que
+   repetía el pareado del evento.
+7. ⚠️ **La ficha tenía que enseñar lo que su prueba pregunta, y no lo
+   enseñaba.** La prueba preguntaba por las seis etapas anteriores, los pasos que
+   salen del problema, el algoritmo, el programa sin comprobar, depurar, el
+   programador y la bandera verde de Scratch, y las hojas de estudio no traían
+   nada de eso. Se le añadieron, con lo de seguir el programa con el dedo, que el
+   orden cambia el resultado y el error de las pocas vueltas. La hoja 2 llegó a
+   254,8 mm, más que los 248 del colchón, y la sección de probar y mejorar pasó
+   arriba de la hoja 3. La ficha sigue en sus siete hojas.
+
+La sonda de esta escena **no le cree nada a la escena**. Comprueba:
+
+- que sean siete papeletas con dos casillas y su X en una, y lee el voto de cada
+  una;
+- que la tabla tenga una columna para el sol y otra para la luna, y una raya por
+  papeleta en la columna de su voto, parejas y dentro de la tabla;
+- que las papeletas salgan de la boca de la urna, pasen por la misma mesa y
+  queden en fila, en el orden en que salieron, chicas y sin montarse;
+- que en el paso 1 vayan una a la vez y a ritmo parejo, con su raya hecha
+  mientras está en la mesa, y cada rótulo de la mano cuando la primera hace eso;
+- que en la hoja estén escritos los renglones de cada paso, cada uno sobre su
+  raya, con lo de adentro del REPETIR corrido a la derecha, y escritos de arriba
+  abajo;
+- que en cada paso se marque solo lo suyo: lo de la mano y los renglones nuevos,
+  cada uno en su recuadro, antes de escribirlos;
+- que las cajitas se llamen como las columnas de la tabla, y digan lo que les
+  guardó la hoja;
+- que corriendo la hoja con las papeletas que se ven, las cajitas queden como
+  dicen y como las rayas;
+- que en el paso 6 la flecha pase por los renglones en el orden del programa, a
+  ritmo parejo, y termine en TERMINA, con el aro de cada papeleta y la suma de
+  cada cajita cuando la flecha llega a su renglón;
+- que el marcador cuente lo que se ve, y la frase diga lo que cuentan las
+  cajitas;
+- y que no salga ninguna palabra de lo que pregunta la prueba.
+
+Se comprobó al revés con veintidós averías, plantadas una por una:
+
+- una papeleta que cambia de voto y la frase diciendo lo mismo;
+- las rayas de la luna en la columna del sol;
+- el número nuevo de una cajita llegando antes de que se vaya el de antes;
+- la flecha saltándose la SINO con los votos de la luna;
+- la hoja diciendo REPETIR 6 VECES;
+- SACA UNA PAPELETA sin sangría;
+- GUARDA 0 EN SOL apareciendo en el paso 2;
+- el marcador del paso 3 diciendo 2;
+- «bucle» en una frase;
+- la siguiente papeleta llegando a la mesa antes de que se vaya la anterior;
+- la raya hecha antes de que la papeleta llegue a la mesa;
+- «mira la X» lejos de la mesa;
+- el aro de leída llegando un renglón tarde;
+- la flecha cambiando de renglón a saltos;
+- el círculo del paso 4 sin rodear la X;
+- las cajitas con los nombres cambiados;
+- los renglones escritos debajo de su raya;
+- las papeletas de la fila montadas;
+- la flecha sin llegar a TERMINA;
+- «mira la X» saliendo antes de que llegue la papeleta;
+- las cajitas ya puestas en el paso 2;
+- y la frase del programa diciendo Luna 2.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
+de 100 ms. Detective de Bugs, medida el mismo día, va a 60 y 83 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:

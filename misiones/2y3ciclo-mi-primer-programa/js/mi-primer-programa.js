@@ -621,29 +621,29 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 const evalTFBank=[
   {q:'Antes de escribir código conviene tener un plan.',a:true,k:'tf-plan'},
   {q:'Un programa completo es solo una pieza más grande.',a:false,k:'tf-pieza-grande'},
-  {q:'El disparador del programa va siempre arriba de todo.',a:true,k:'tf-arriba'},
+  {q:'Si el REPETIR da menos vueltas de las que hacen falta, el programa queda a medias.',a:true,k:'tf-vueltas'},
   {q:'Probar el programa una sola vez siempre es suficiente.',a:false,k:'tf-una-vez'},
   {q:'Si el programa está casi bien, conviene borrarlo todo.',a:false,k:'tf-borrar'},
-  {q:'Se puede practicar la programación en el cuaderno, sin computadora.',a:true,k:'tf-cuaderno'},
+  {q:'En la tabla de traza se anota el valor de la variable después de cada línea.',a:true,k:'tf-traza'},
   {q:'Todos los programas salen bien a la primera.',a:false,k:'tf-primera'},
   {q:'Cada vuelta de corregir deja un programa mejor.',a:true,k:'tf-mejor'},
-  {q:'En la última etapa de la ruta se aprenden piezas nuevas.',a:false,k:'tf-piezas-nuevas'},
+  {q:'Si cambias el orden de las líneas, el resultado sigue igual.',a:false,k:'tf-orden'},
   {q:'Con el cuerpo también se puede practicar la programación.',a:true,k:'tf-cuerpo'}
 ];
 const evalMCBank=[
-  {q:'¿Qué es un programa completo?',o:['a) Una sola instrucción suelta','b) Un dibujo del robot','c) Un error del código','d) Un proyecto que junta evento, secuencia, bucle, condicional y variable'],a:3,k:'mc-completo'},
+  {q:'¿Qué es un programa completo?',o:['a) Una sola instrucción suelta','b) Un dibujo del robot','c) Un error del código','d) Un proyecto que junta el evento y las demás piezas, de principio a fin'],a:3,k:'mc-completo'},
   {q:'En «REPETIR 6 VECES [ SI HAY OBJETO AQUÍ → RECOGE, SINO → AVANZA ]» ¿qué piezas se usan?',o:['a) Solo un bucle','b) Solo un condicional','c) Un bucle y un condicional juntos','d) Ninguna'],a:2,k:'mc-bucle-condicional'},
   {q:'¿Para qué sirve la variable CUENTA en el proyecto del recolector?',o:['a) Para guardar cuántos objetos lleva el robot','b) Para girar','c) Para borrar el mapa','d) Para apagar el programa'],a:0,k:'mc-cuenta'},
-  {q:'¿Por qué Kenia se quedó mirando la hoja en blanco?',o:['a) Nadie le había pedido nunca juntar las piezas','b) No sabía qué era un bucle','c) No tenía computadora','d) El robot se dañó'],a:0,k:'mc-hoja-blanco'},
-  {q:'¿Qué pregunta te dice dónde va un bucle?',o:['a) ¿Qué se decide?','b) ¿Qué hay que recordar?','c) ¿Qué se repite?','d) ¿Qué se borra?'],a:2,k:'mc-repite'},
+  {q:'Para ver por dónde va el robot, ¿con qué se sigue el programa sobre el mapa?',o:['a) Con el dedo','b) Con la goma de borrar','c) Con un dado','d) Con los ojos cerrados'],a:0,k:'mc-dedo'},
+  {q:'¿Qué error tiene «REPETIR 5 VECES AVANZA, RECOGE»?',o:['a) Le falta el evento','b) Repite demasiadas veces','c) Le faltan los corchetes','d) No tiene ningún error'],a:2,k:'mc-corchetes'},
   {q:'Tu programa falla. ¿Qué haces primero?',o:['a) Borro todo y empiezo de cero','b) Busco la línea culpable y corrijo esa','c) Dejo el proyecto sin terminar','d) Le echo la culpa al robot'],a:1,k:'mc-falla'},
-  {q:'¿Qué le pidieron programar a Kenia?',o:['a) Que contara los votos del Gobierno Escolar','b) Que dibujara la bandera','c) Que sumara las notas','d) Que moviera un carro'],a:0,k:'mc-votos'},
+  {q:'¿Qué parte del recolector usa una variable?',o:['a) Preparar el contador','b) Arrancar','c) Decidir qué hacer','d) Avanzar una casilla'],a:0,k:'mc-preparar'},
   {q:'En un robot, ¿qué puede disparar el programa?',o:['a) AVANZA','b) Cuando se presione el botón','c) RECOGE','d) GIRA DERECHA'],a:1,k:'mc-boton'},
   {q:'¿Qué debe hacer el robot recolector con una pared adelante?',o:['a) Chocar','b) Detenerse para siempre','c) Borrar el programa','d) Esquivarla girando'],a:3,k:'mc-pared'},
   {q:'Al presentar tu proyecto ante la clase conviene explicar…',o:['a) Solo el color del robot','b) Nada, se explica solo','c) Qué hace, qué piezas usaste y cómo lo mejoraste','d) Únicamente lo que salió mal'],a:2,k:'mc-presentar'}
 ];
 const evalCPBank=[
-  {q:'En el recolector, la cajita CUENTA empieza valiendo ___.',a:'0',acc:['0','cero'],k:'cp-0'},
+  {q:'Al presentar tu proyecto ante la clase tienes ___ minutos.',a:'2',acc:['2','dos'],k:'cp-minutos'},
   {q:'El proyecto del recolector se hace en el ___ de la escuela.',a:'patio',acc:['patio'],k:'cp-patio'},
   {q:'Del problema salen los ___, y de ellos sale el programa.',a:'pasos',acc:['pasos'],k:'cp-pasos'},
   {q:'Arma y prueba una parte a la ___.',a:'vez',acc:['vez'],k:'cp-vez'},
@@ -651,7 +651,7 @@ const evalCPBank=[
   {q:'Cada orden del robot, como AVANZA o RECOGE, es una ___.',a:'acción',acc:['acción','accion','instrucción'],k:'cp-accion'},
   {q:'Un programa que nunca se ejecuta está sin ___.',a:'comprobar',acc:['comprobar','probar'],k:'cp-comprobar'},
   {q:'Ningún programa sale ___ de una sola vez.',a:'perfecto',acc:['perfecto'],k:'cp-perfecto'},
-  {q:'La última etapa no trae piezas nuevas: trae la ___.',a:'costura',acc:['costura'],k:'cp-costura'},
+  {q:'El robot del recolector recoge las ___.',a:'manzanas',acc:['manzanas','manzana'],k:'cp-manzanas'},
   {q:'Las piezas sueltas se aprendieron en las ___ etapas anteriores.',a:'seis',acc:['seis','6'],k:'cp-seis'}
 ];
 const evalPRBank=[

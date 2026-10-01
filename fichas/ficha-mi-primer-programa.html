@@ -183,8 +183,8 @@
     <h2>🚀 1. ¿Qué es un programa completo?</h2>
 
     <p>Un <strong>programa completo</strong> no es una instrucción más grande: es un <strong>proyecto</strong> donde
-    varias piezas pequeñas trabajan juntas de principio a fin. En la Ruta del Código aprendiste esas piezas por
-    separado; ahora las juntamos todas: la <strong>secuencia</strong> ordena, el <strong>condicional</strong> decide,
+    varias piezas pequeñas trabajan juntas de principio a fin. En las seis etapas anteriores de la Ruta del Código
+    aprendiste esas piezas por separado; ahora las juntamos todas: la <strong>secuencia</strong> ordena, el <strong>condicional</strong> decide,
     el <strong>bucle</strong> repite y la <strong>variable</strong> recuerda.</p>
 
     <div class="caja truco">💡 <b>Truco:</b> igual que una casa necesita ladrillo, cemento, madera y techo, un
@@ -214,9 +214,11 @@
     <h2 style="margin-top:0;">⚡ 2. El evento y el pseudocódigo</h2>
 
     <p>Todo programa necesita un <strong>disparador</strong>: eso es el <strong>evento</strong>. «Cuando empiece el
-    programa», «cuando se presione el botón» o «cuando suene el timbre». El evento no mueve al robot: solo
-    <strong>avisa que ya se puede empezar</strong>. Antes de escribir el programa, el programador escribe el
-    <strong>pseudocódigo</strong>: el plan en español sencillo, paso a paso, que se puede hacer en el cuaderno.</p>
+    programa», «cuando se presione el botón» o «cuando suene el timbre»; en Scratch, es la bandera verde. El evento no
+    mueve al robot: solo <strong>avisa que ya se puede empezar</strong>. Antes de escribir el programa, el programador
+    escribe el <strong>pseudocódigo</strong>: el plan en español sencillo, paso a paso, que se puede hacer en el
+    cuaderno. Del problema salen los pasos, y de los pasos sale el programa. Esos pasos ordenados son el
+    <strong>algoritmo</strong>: la receta ordenada que resuelve el problema.</p>
 
     <div class="tri">
       <div class="tnuc"><b>⚡ Un evento AVISA</b>«Cuando empiece el programa». Es la chispa que enciende el proyecto: va siempre en la primera línea.</div>
@@ -228,7 +230,7 @@
     <table>
       <tr><th>Pieza</th><th>¿Para qué sirve?</th><th>Ejemplo</th></tr>
       <tr><td class="k">⚡ Evento</td><td>Dispara el programa</td><td>CUANDO EMPIECE EL PROGRAMA</td></tr>
-      <tr><td class="k">👣 Secuencia</td><td>Ordena las instrucciones</td><td>AVANZA, AVANZA, GIRA DERECHA</td></tr>
+      <tr><td class="k">👣 Secuencia</td><td>Ordena las instrucciones: si cambia el orden, cambia el resultado</td><td>AVANZA, AVANZA, GIRA DERECHA</td></tr>
       <tr><td class="k">🔀 Condicional</td><td>Decide entre dos caminos</td><td>SI HAY OBJETO AQUÍ → RECOGE, SINO → AVANZA</td></tr>
       <tr><td class="k">🔁 Bucle</td><td>Repite sin escribir de más</td><td>REPETIR 6 VECES [ … ]</td></tr>
       <tr><td class="k">🔢 Variable</td><td>Guarda un dato que cambia</td><td>GUARDA 0 EN CUENTA · SUMA 1 A CUENTA</td></tr>
@@ -251,12 +253,6 @@
     <div class="caja idea">🧠 <b>Ojo:</b> el bucle repite <strong>el mismo bloque</strong>, pero el condicional puede
     dar un resultado <strong>distinto en cada vuelta</strong>. ¡Por eso hay que trazar vuelta por vuelta!</div>
 
-    <h2 style="margin-top:0;">🔁 3. Probar y mejorar · errores comunes</h2>
-
-    <p>Ningún programa sale perfecto la primera vez. El programador <strong>ejecuta</strong>, observa dónde falla,
-    <strong>corrige UNA sola cosa</strong> y <strong>vuelve a probar</strong>. Cada vuelta deja una
-    <strong>versión</strong> mejor que la anterior.</p>
-
   </div>
   <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Mi Primer Programa Completo</span><span>Página 2</span></div>
 </section>
@@ -264,6 +260,13 @@
 <!-- ═══════════ PÁGINA 3 ═══════════ -->
 <section class="pagina">
   <div class="contenido">
+
+    <h2 style="margin-top:0;">🔁 3. Probar y mejorar · errores comunes</h2>
+
+    <p>Ningún programa sale perfecto la primera vez. El programador <strong>ejecuta</strong>, observa dónde falla,
+    sigue el programa con el dedo hasta la línea culpable, <strong>corrige UNA sola cosa</strong> y <strong>vuelve a
+    probar</strong>. Buscar y corregir los errores se llama <strong>depurar</strong>, y un programa que nunca se
+    ejecuta está sin comprobar. Cada vuelta deja una <strong>versión</strong> mejor que la anterior.</p>
 
     <h3>⚠️ Errores comunes: ¡no caigas en ellos!</h3>
 
@@ -274,6 +277,7 @@
       <tr><td class="k" style="white-space:normal;">Bucle sin corchetes [ ]</td><td>No se sabe qué instrucciones forman el cuerpo.</td><td>REPETIR 5 VECES [ AVANZA, RECOGE ] ✔</td></tr>
       <tr><td class="k" style="white-space:normal;">Invertir las ramas</td><td>«SI hay pared → AVANZA» hace chocar al robot.</td><td>SI hay pared → GIRA DERECHA, SINO → AVANZA ✔</td></tr>
       <tr><td class="k" style="white-space:normal;">Olvidar TERMINA</td><td>El proyecto nunca se cierra al llegar a la meta.</td><td>TERMINA como última línea ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Pocas vueltas en el REPETIR</td><td>El programa queda a medias.</td><td>REPETIR con las vueltas que hacen falta ✔</td></tr>
       <tr><td class="k" style="white-space:normal;">Borrar todo al fallar</td><td>Se pierde el trabajo que ya estaba bien.</td><td>Corregir una línea y volver a probar ✔</td></tr>
     </table>
 
@@ -296,7 +300,8 @@
 
     <div class="caja hn">🎤 <b>Presenta tu proyecto en 2 minutos:</b> párate frente a la clase y explica
     <strong>qué hace</strong> tu programa, <strong>qué piezas usaste</strong> (evento, bucle, condicional, variable)
-    y <strong>qué bug tuviste que corregir</strong>. Así presentan su trabajo los programadores de verdad. 💚🇭🇳</div>
+    y <strong>qué bug tuviste que corregir</strong>. Así presentan su trabajo los programadores de verdad: un programador es
+    quien piensa el plan, lo escribe, lo prueba y lo mejora. 💚🇭🇳</div>
 
   </div>
   <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Mi Primer Programa Completo</span><span>Página 3</span></div>
@@ -311,7 +316,7 @@
     <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
 
     <ol>
-      <li>En el recolector, la cajita CUENTA empieza valiendo <span class="linea-resp"></span>.</li>
+      <li>Al presentar tu proyecto ante la clase tienes <span class="linea-resp"></span> minutos.</li>
       <li>El proyecto del recolector se hace en el <span class="linea-resp"></span> de la escuela.</li>
       <li>Del problema salen los <span class="linea-resp"></span>, y de ellos sale el programa.</li>
       <li>Arma y prueba una parte a la <span class="linea-resp"></span>.</li>
@@ -319,7 +324,7 @@
       <li>Cada orden del robot, como AVANZA o RECOGE, es una <span class="linea-resp"></span>.</li>
       <li>Un programa que nunca se ejecuta está sin <span class="linea-resp"></span>.</li>
       <li>Ningún programa sale <span class="linea-resp"></span> de una sola vez.</li>
-      <li>La última etapa no trae piezas nuevas: trae la <span class="linea-resp"></span>.</li>
+      <li>El robot del recolector recoge las <span class="linea-resp"></span>.</li>
       <li>Las piezas sueltas se aprendieron en las <span class="linea-resp"></span> etapas anteriores.</li>
     </ol>
 
@@ -328,14 +333,14 @@
     <ol>
       <li>____ Antes de escribir código conviene tener un plan.</li>
       <li>____ Un programa completo es solo una pieza más grande.</li>
-      <li>____ El disparador del programa va siempre arriba de todo.</li>
+      <li>____ Si el REPETIR da menos vueltas de las que hacen falta, el programa queda a medias.</li>
       <li>____ Probar el programa una sola vez siempre es suficiente.</li>
-      <li>____ Se puede practicar la programación en el cuaderno, sin computadora.</li>
+      <li>____ En la tabla de traza se anota el valor de la variable después de cada línea.</li>
       <li>____ Si el programa está casi bien, conviene borrarlo todo.</li>
       <li>____ Cada vuelta de corregir deja un programa mejor.</li>
       <li>____ Todos los programas salen bien a la primera.</li>
       <li>____ Con el cuerpo también se puede practicar la programación.</li>
-      <li>____ En la última etapa de la ruta se aprenden piezas nuevas.</li>
+      <li>____ Si cambias el orden de las líneas, el resultado sigue igual.</li>
     </ol>
 
     <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span>. Rellena el círculo de la letra de la respuesta correcta.</h3>
@@ -346,7 +351,7 @@
         <span class="op"><i>a</i> Una sola instrucción suelta</span>
         <span class="op"><i>b</i> Un dibujo del robot</span>
         <span class="op"><i>c</i> Un error del código</span>
-        <span class="op"><i>d</i> Un proyecto que junta evento, secuencia, bucle, condicional y variable</span>
+        <span class="op"><i>d</i> Un proyecto que junta el evento y las demás piezas, de principio a fin</span>
       </div>
     </div>
 
@@ -379,22 +384,22 @@
     </div>
 
     <div class="preg">
-      <div class="preg-q"><span class="preg-n">4</span>¿Por qué Kenia se quedó mirando la hoja en blanco?</div>
+      <div class="preg-q"><span class="preg-n">4</span>Para ver por dónde va el robot, ¿con qué se sigue el programa sobre el mapa?</div>
       <div class="preg-ops">
-        <span class="op"><i>a</i> Nadie le había pedido nunca juntar las piezas</span>
-        <span class="op"><i>b</i> No sabía qué era un bucle</span>
-        <span class="op"><i>c</i> No tenía computadora</span>
-        <span class="op"><i>d</i> El robot se dañó</span>
+        <span class="op"><i>a</i> Con el dedo</span>
+        <span class="op"><i>b</i> Con la goma de borrar</span>
+        <span class="op"><i>c</i> Con un dado</span>
+        <span class="op"><i>d</i> Con los ojos cerrados</span>
       </div>
     </div>
 
     <div class="preg">
-      <div class="preg-q"><span class="preg-n">5</span>¿Qué pregunta te dice dónde va un bucle?</div>
+      <div class="preg-q"><span class="preg-n">5</span>¿Qué error tiene «REPETIR 5 VECES AVANZA, RECOGE»?</div>
       <div class="preg-ops">
-        <span class="op"><i>a</i> ¿Qué se decide?</span>
-        <span class="op"><i>b</i> ¿Qué hay que recordar?</span>
-        <span class="op"><i>c</i> ¿Qué se repite?</span>
-        <span class="op"><i>d</i> ¿Qué se borra?</span>
+        <span class="op"><i>a</i> Le falta el evento</span>
+        <span class="op"><i>b</i> Repite demasiadas veces</span>
+        <span class="op"><i>c</i> Le faltan los corchetes</span>
+        <span class="op"><i>d</i> No tiene ningún error</span>
       </div>
     </div>
 
@@ -409,12 +414,12 @@
     </div>
 
     <div class="preg">
-      <div class="preg-q"><span class="preg-n">7</span>¿Qué le pidieron programar a Kenia?</div>
+      <div class="preg-q"><span class="preg-n">7</span>¿Qué parte del recolector usa una variable?</div>
       <div class="preg-ops">
-        <span class="op"><i>a</i> Que contara los votos del Gobierno Escolar</span>
-        <span class="op"><i>b</i> Que dibujara la bandera</span>
-        <span class="op"><i>c</i> Que sumara las notas</span>
-        <span class="op"><i>d</i> Que moviera un carro</span>
+        <span class="op"><i>a</i> Preparar el contador</span>
+        <span class="op"><i>b</i> Arrancar</span>
+        <span class="op"><i>c</i> Decidir qué hacer</span>
+        <span class="op"><i>d</i> Avanzar una casilla</span>
       </div>
     </div>
 
@@ -473,10 +478,8 @@
     </table>
 
     <div class="felic">
-      🏅 <b>¡Felicidades! Has completado la Misión Mi Primer Programa Completo… y con ella toda la 💻 Ruta del Código.</b>
-      Ahora sabes arrancar un proyecto con un evento, planificarlo en pseudocódigo, descomponerlo en partes, armar un
-      programa que usa a la vez bucle, condicional y variable, y mejorarlo probando y corrigiendo. ¡Ya eres
-      programador: solo falta que presentes tu proyecto! 🚀🤖
+      🏅 <b>¡Felicidades! Llegaste al final de la Misión Mi Primer Programa Completo… y con ella de toda la 💻 Ruta del Código.</b>
+      Antes de entregar, revisa tus respuestas una por una. 🚀🤖
     </div>
 
     <h2>📏 Rúbrica de Evaluación</h2>
@@ -506,7 +509,7 @@
     <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
 
     <div class="pauta">
-      <div><span class="pt">I. Completar:</span> 1. 0 &nbsp; 2. patio &nbsp; 3. pasos &nbsp; 4. vez &nbsp; 5. casa &nbsp; 6. acción &nbsp; 7. comprobar &nbsp; 8. perfecto &nbsp; 9. costura &nbsp; 10. seis</div>
+      <div><span class="pt">I. Completar:</span> 1. 2 &nbsp; 2. patio &nbsp; 3. pasos &nbsp; 4. vez &nbsp; 5. casa &nbsp; 6. acción &nbsp; 7. comprobar &nbsp; 8. perfecto &nbsp; 9. manzanas &nbsp; 10. seis</div>
       <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4F, 5V, 6F, 7V, 8F, 9V, 10F</div>
       <div><span class="pt">III. Selección múltiple:</span> 1d, 2c, 3a, 4a, 5c, 6b, 7a, 8b, 9d, 10c</div>
       <div><span class="pt">IV. Pareados:</span> 1C, 2H, 3E, 4I, 5A, 6G, 7J, 8B, 9F, 10D</div>

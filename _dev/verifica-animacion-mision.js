@@ -2048,6 +2048,97 @@ const LEER = `
      esquinas y sus cuadras), cada robot (dónde está, hacia dónde mira y
      cada pieza que lo movió), la bandera, las ✗ con su tarde, el ✓, el
      camino bueno, los rastros y el anillo. */
+  window.__amExtra.amUrna = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(m(el)); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function uno(sel, en) { return (en || raiz).querySelector(sel); }
+    function todos(sel, en) { return [].slice.call((en || raiz).querySelectorAll(sel)); }
+    function demora(el) { return parseFloat(el.style.getPropertyValue('--d')) || 0; }
+    function matriz(el) {
+      var t = getComputedStyle(el).transform;
+      if (!t || t === 'none') return [1, 0, 0, 1, 0, 0];
+      return t.match(/-?[0-9.e]+/g).map(Number);
+    }
+    function corre(el) { var q = matriz(el); return [q[4], q[5]]; }
+    function escala(el) { var q = matriz(el); return Math.sqrt(q[0] * q[0] + q[1] * q[1]); }
+    function puntosDe(p) {
+      var nums = (p.getAttribute('d').match(/-?[0-9.]+/g) || []).map(Number), r = [];
+      for (var i = 0; i + 1 < nums.length; i += 2) r.push(aVista(p, nums[i], nums[i + 1]));
+      return r;
+    }
+    /* Cuánto dura una transición de la escena, leído de su hoja de estilo
+       (con «reducir movimiento» la que se calcula vale 0). */
+    function dura(sel) {
+      for (var i = 0; i < document.styleSheets.length; i++) {
+        var reglas;
+        try { reglas = document.styleSheets[i].cssRules; } catch (e) { continue; }
+        for (var j = 0; reglas && j < reglas.length; j++) {
+          /* la regla lleva var() en el atajo, y entonces las propiedades
+             sueltas quedan vacías: se lee la duración del atajo */
+          if (reglas[j].selectorText === sel) { var mm = String(reglas[j].style.transition).match(/([0-9.]+)s/); return mm ? parseFloat(mm[1]) * 1000 : null; }
+        }
+      }
+      return null;
+    }
+    var flecha = uno('.mp-flecha');
+    return {
+      dura: { mueve: dura('#amUrna .mp-mueve'), flecha: dura('#amUrna .mp-flecha-paso') },
+      papeletas: todos('[data-papeleta]').map(function (g) {
+        var papel = uno('.mp-papel', g), x = uno('[data-x]', g);
+        return {
+          n: +g.getAttribute('data-papeleta'), ve: vis(papel), caja: caja(papel), x: caja(x), dVe: demora(g),
+          casillas: todos('[data-casilla]', g).map(function (c) { return { v: c.getAttribute('data-casilla'), caja: caja(c) }; }),
+          iconos: todos('[data-icono]', g).map(function (i) { return { v: i.getAttribute('data-icono'), caja: caja(i) }; }),
+          base: corre(uno('[data-base]', g)),
+          ida: { corre: corre(uno('[data-ida]', g)), d: demora(uno('[data-ida]', g)) },
+          fila: { corre: corre(uno('[data-a-fila]', g)), d: demora(uno('[data-a-fila]', g)) },
+          crece: { esc: escala(uno('[data-crece]', g)), d: demora(uno('[data-crece]', g)) },
+          achica: { esc: escala(uno('[data-achica]', g)), d: demora(uno('[data-achica]', g)) }
+        };
+      }),
+      urna: caja(uno('.mp-urna')), boca: caja(uno('.mp-boca')),
+      tabla: {
+        ve: vis(uno('.mp-tabla')), caja: caja(uno('.mp-tabla')), d: demora(uno('[data-tabla]')), reja: puntosDe(uno('.mp-reja')),
+        cabezas: todos('[data-cabeza]').map(function (c) { return { v: c.getAttribute('data-cabeza'), caja: caja(c) }; }),
+        columnas: todos('[data-columna]').map(function (t) { return { v: t.getAttribute('data-columna'), txt: t.textContent, caja: caja(t) }; })
+      },
+      rayas: todos('[data-raya]').map(function (p) { return { de: +p.getAttribute('data-de'), ve: vis(p), puntos: puntosDe(p), d: demora(p) }; }),
+      verbos: todos('[data-verbo]').map(function (t) { return { k: t.getAttribute('data-verbo'), txt: t.textContent, ve: vis(t), caja: caja(t), d: demora(t) }; }),
+      titulos: todos('[data-titulo]').map(function (t) { return { k: t.getAttribute('data-titulo'), txt: t.textContent, ve: vis(t), caja: caja(t), d: demora(t) }; }),
+      hoja: caja(uno('[data-hoja]')),
+      renglones: todos('[data-renglon]').map(function (p) { return { k: +p.getAttribute('data-renglon'), puntos: puntosDe(p) }; }),
+      lineas: todos('[data-linea]').map(function (t) { return { k: +t.getAttribute('data-linea'), txt: t.textContent, ve: vis(t), caja: caja(t), d: demora(t) }; }),
+      cajitas: {
+        ve: vis(uno('[data-cajitas]')), d: demora(uno('[data-cajitas]')),
+        cajas: todos('[data-cajita]').map(function (g) {
+          return {
+            v: g.getAttribute('data-cajita'), caja: caja(uno('.mp-cajita', g)), nombre: uno('[data-nombre]', g).textContent,
+            valores: todos('[data-valor]', g).map(function (t) {
+              return { n: +t.getAttribute('data-valor'), txt: t.textContent, ve: vis(t), caja: caja(t), dLlega: demora(t.parentNode), dVa: demora(t) };
+            })
+          };
+        })
+      },
+      marcas: todos('[data-paso-marca]').map(function (g) {
+        return { paso: +g.getAttribute('data-paso-marca'), ve: !g.classList.contains('am-fuera'), d: demora(g),
+          piezas: todos('[data-marca]', g).map(function (q) { return { que: q.getAttribute('data-marca'), caja: caja(q) }; }) };
+      }),
+      leidas: todos('[data-leida]').map(function (a) { return { n: +a.getAttribute('data-leida'), ve: vis(a), caja: caja(a), d: demora(a) }; }),
+      flecha: {
+        ve: vis(flecha), dVe: demora(uno('[data-flecha]')), punta: puntosDe(flecha)[1],
+        pasos: todos('[data-flecha-paso]').map(function (g) { return { corre: corre(g), d: demora(g) }; })
+      },
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   window.__amExtra.amEsquina = function (raiz) {
     var vis = window.__amVisible;
     var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
@@ -4121,6 +4212,247 @@ const ESCENAS = {
      esquina llega el programa de Kenia (y que NO es la de la bandera), y
      que sin la línea que se quitó llega justo a la bandera. La línea que se
      quita la busca también ella: la primera que saca al robot del camino. */
+  amUrna(e, n) {
+    const x = e.extra, r = [];
+    const cerca = (a, b, t = 1.5) => Math.abs(a - b) <= t;
+    const cen = c => ({ x: (c.x0 + c.x1) / 2, y: (c.y0 + c.y1) / 2 });
+    const dentro = (a, b, m = 0) => a.x0 >= b.x0 - m && a.x1 <= b.x1 + m && a.y0 >= b.y0 - m && a.y1 <= b.y1 + m;
+    const monta = (a, b) => a.x0 < b.x1 - 0.5 && b.x0 < a.x1 - 0.5 && a.y0 < b.y1 - 0.5 && b.y0 < a.y1 - 0.5;
+    const ancho = c => c.x1 - c.x0, alto = c => c.y1 - c.y0;
+    /* El programa que tiene que quedar escrito en la hoja, renglón por
+       renglón, y en qué paso aparece cada renglón. */
+    const PROGRAMA = ['CUANDO SE CIERRE LA URNA', 'GUARDA 0 EN SOL', 'GUARDA 0 EN LUNA', 'REPETIR 7 VECES [', 'SACA UNA PAPELETA',
+      'SI DICE SOL → SUMA 1 A SOL', 'SINO → SUMA 1 A LUNA', ']', 'MUESTRA SOL Y LUNA', 'TERMINA'];
+    const APARECE = [5, 3, 3, 2, 2, 4, 4, 2, 5, 5];
+
+    /* ── lo que no depende del dibujo va primero ── */
+    const PROHIBIDAS = /evento|disparad|chispa|bucle|condicional|variable|contador|pseudoc|descompon|algoritmo|depur|versi[óo]n|programador|scratch|bandera|\bplan\b|\bpasos?\b|costura|\bpiezas?\b|\bseis\b|\b6\b|patio|manzana|recolector|\bcasa\b|ladrillo|acci[óo]n|instrucci|comprob|probar|perfect|minutos|corchete|traza|\bdedo\b|\borden\b|bot[óo]n|pared|esquiv|culpable|presentar|cuaderno|espa[ñn]ol sencillo|mejor|corregir|a la primera|cuerpo|junta|prepar|arranc|ejecut|robot|\bvalor\b|gobierno escolar/i;
+    const dicho = [e.texto, e.palabras, e.boton].concat(x.textos).join(' · ');
+    r.push([!PROHIBIDAS.test(dicho), `paso ${n}: no sale ninguna palabra de lo que pregunta la prueba`, (dicho.match(PROHIBIDAS) || [])[0]]);
+
+    /* ── las papeletas: el voto de cada una es la casilla donde está la X ── */
+    const pap = x.papeletas.slice().sort((a, b) => a.n - b.n);
+    const votos = pap.map(p => {
+      const cx = cen(p.x);
+      const c = p.casillas.find(q => cx.x > q.caja.x0 && cx.x < q.caja.x1 && cx.y > q.caja.y0 && cx.y < q.caja.y1);
+      if (!c) return null;
+      const icono = p.iconos.find(i => dentro(i.caja, c.caja, 1.2));
+      return icono ? icono.v : null;
+    });
+    r.push([pap.length === 7 && votos.every(v => v === 'S' || v === 'L'),
+      `paso ${n}: son siete papeletas, y cada una tiene su X en una casilla, sobre el sol o sobre la luna`, votos]);
+    if (votos.some(v => !v)) return r;
+    const otraCasilla = pap.filter(p => p.casillas.length !== 2 || p.iconos.length !== 2
+      || p.casillas.some(c => p.iconos.filter(i => dentro(i.caja, c.caja, 1.2)).length !== 1));
+    r.push([otraCasilla.length === 0, `paso ${n}: cada papeleta tiene dos casillas, con un dibujo en cada una`, otraCasilla.map(p => p.n)]);
+    const cuenta = { S: votos.filter(v => v === 'S').length, L: votos.filter(v => v === 'L').length };
+
+    /* ── la tabla de las rayas ── */
+    const mano = n >= 1;
+    const tb = x.tabla;
+    r.push([tb.ve === mano, `paso ${n}: la tabla de las rayas ${mano ? 'está' : 'todavía no está'}`, tb.ve]);
+    const divisor = tb.reja.length >= 2 ? tb.reja[0][0] : null;
+    const colDe = px => (divisor == null ? null : px < divisor ? 0 : 1);
+    const cabezaDe = v => tb.cabezas.find(c => c.v === v);
+    const colVoto = { S: cabezaDe('S') ? colDe(cen(cabezaDe('S').caja).x) : null, L: cabezaDe('L') ? colDe(cen(cabezaDe('L').caja).x) : null };
+    const nombreCol = v => (tb.columnas.find(c => c.v === v) || {}).txt;
+    r.push([colVoto.S === 0 && colVoto.L === 1 && tb.columnas.every(c => colDe(cen(c.caja).x) === colVoto[c.v]) && nombreCol('S') === 'Sol' && nombreCol('L') === 'Luna',
+      'paso ' + n + ': la tabla tiene una columna para el sol y otra para la luna, cada una con su nombre', colVoto]);
+    const rayas = x.rayas.filter(q => q.ve);
+    r.push([rayas.length === (mano ? 7 : 0), `paso ${n}: ${mano ? 'hay una raya por papeleta' : 'todavía no hay rayas'}`, rayas.length]);
+    if (mano) {
+      const malCol = rayas.filter(q => colDe(q.puntos[0][0]) !== colVoto[votos[q.de - 1]]);
+      r.push([malCol.length === 0, `paso ${n}: la raya de cada papeleta está en la columna de su voto`, malCol.map(q => q.de)]);
+      const enTabla = rayas.filter(q => q.puntos.every(pt => pt[0] > tb.caja.x0 + 2 && pt[0] < tb.caja.x1 - 2 && pt[1] > tb.reja[2][1] + 2 && pt[1] < tb.caja.y1 - 2));
+      r.push([enTabla.length === rayas.length, `paso ${n}: las rayas están dentro de la tabla, debajo de los nombres`, rayas.length - enTabla.length]);
+      const porCol = [0, 1].map(c => rayas.filter(q => colDe(q.puntos[0][0]) === c).map(q => q.puntos[0][0]).sort((a, b) => a - b));
+      const parejas = porCol.every(xs => xs.every((v, i) => i === 0 || (v - xs[i - 1] > 4 && cerca(v - xs[i - 1], xs[1] - xs[0], 0.3))));
+      r.push([parejas && porCol[0].length === cuenta.S && porCol[1].length === cuenta.L,
+        `paso ${n}: en la tabla quedan ${cuenta.S} rayas para el sol y ${cuenta.L} para la luna, separadas y parejas`, porCol.map(c => c.length)]);
+    }
+
+    /* ── dónde están las papeletas ── */
+    const boca = cen(x.boca);
+    if (!mano) r.push([pap.every(p => !p.ve), 'paso 0: las papeletas están dentro de la urna, sin verse', pap.filter(p => p.ve).map(p => p.n)]);
+    else {
+      const enFila = pap.map(p => cen(p.caja));
+      const yFila = enFila[0].y, paso = enFila[1].x - enFila[0].x;
+      r.push([pap.every(p => p.ve) && enFila.every((c, i) => cerca(c.y, yFila, 0.4) && (i === 0 || cerca(c.x - enFila[i - 1].x, paso, 0.4))) && paso > 0,
+        `paso ${n}: las siete papeletas quedan en fila, en el orden en que salieron y a la misma distancia`, enFila.map(c => Math.round(c.x))]);
+      const chocan = pap.filter((p, i) => i > 0 && monta(p.caja, pap[i - 1].caja));
+      r.push([chocan.length === 0 && pap.every(p => p.caja.y1 < tb.caja.y0 && p.caja.y0 > 0), `paso ${n}: las papeletas de la fila no se montan, ni sobre la tabla`, chocan.map(p => p.n)]);
+      /* el camino de cada una: de la boca de la urna a la mesa, y de la mesa a la fila */
+      const mesa = pap.map(p => [p.base[0] + p.ida.corre[0], p.base[1] + p.ida.corre[1]]);
+      r.push([pap.every((p, i) => cerca(p.base[0], boca.x, 0.6) && cerca(p.base[1], boca.y, 2) && cerca(mesa[i][0], mesa[0][0], 0.3) && cerca(mesa[i][1], mesa[0][1], 0.3)),
+        `paso ${n}: cada papeleta sale de la boca de la urna y pasa por la misma mesa`, mesa[0]]);
+      r.push([pap.every((p, i) => cerca(mesa[i][0] + p.fila.corre[0], enFila[i].x, 0.8) && cerca(mesa[i][1] + p.fila.corre[1], enFila[i].y, 0.8)),
+        `paso ${n}: y de la mesa va a su sitio en la fila`, pap.map(p => p.fila.corre)]);
+      const chica = pap[0].crece.esc * pap[0].achica.esc;
+      r.push([pap.every(p => cerca(p.crece.esc, 1, 0.01) && cerca(p.crece.esc * p.achica.esc, chica, 0.01)) && chica < 0.6,
+        `paso ${n}: en la mesa se mira grande, y en la fila queda chica`, chica]);
+      const verbo = k => x.verbos.find(v => v.k === k);
+      const urnaC = cen(x.urna), tablaC = cen(tb.caja);
+      const bajo = (v, xc, abajoDe) => v && v.ve && cerca(cen(v.caja).x, xc, 2) && v.caja.y0 > abajoDe && v.caja.y1 < x.hoja.y0;
+      r.push([bajo(verbo('saca'), urnaC.x, x.urna.y1) && bajo(verbo('mira'), mesa[0][0], mesa[0][1] + 19) && bajo(verbo('raya'), tablaC.x, tb.caja.y1)
+        && verbo('saca').txt === 'saca' && verbo('mira').txt === 'mira la X' && verbo('raya').txt === 'hace la raya',
+        `paso ${n}: debajo de la urna dice «saca», debajo de la mesa «mira la X» y debajo de la tabla «hace la raya»`, x.verbos.map(v => v.txt)]);
+      const titulo = x.titulos.find(t => t.k === 'mano');
+      r.push([titulo && titulo.ve && titulo.caja.x1 < pap[0].caja.x0, `paso ${n}: arriba, a la izquierda de la fila, dice «A mano:»`, titulo && titulo.txt]);
+      if (n === 1) {
+        /* a mano, una papeleta a la vez: sale, llega a la mesa, se hace la
+           raya, y se va a la fila antes de que llegue la siguiente */
+        const DUR = x.dura.mueve;
+        const malas = [];
+        pap.forEach((p, i) => {
+          const sale = p.dVe, llega = p.ida.d + DUR, raya = x.rayas.find(q => q.de === i + 1).d, vase = p.fila.d;
+          if (p.ida.d !== sale || p.crece.d !== sale || p.achica.d !== vase) malas.push({ n: p.n, que: 'piezas fuera de tiempo' });
+          if (!(raya >= llega && raya < vase)) malas.push({ n: p.n, que: 'la raya no se hace con la papeleta en la mesa', llega, raya, vase });
+          const sig = pap[i + 1];
+          if (sig && !(sig.ida.d + DUR > vase + DUR * 0.5 && sig.dVe > sale)) malas.push({ n: p.n, que: 'la siguiente llega a la mesa antes de que esta se vaya' });
+        });
+        const ritmo = pap.map((p, i) => i === 0 ? 0 : p.dVe - pap[i - 1].dVe);
+        r.push([DUR > 0 && malas.length === 0 && ritmo.slice(1).every(v => v === ritmo[1]),
+          'paso 1: a mano, una papeleta a la vez y a ritmo parejo: sale, llega a la mesa, se hace su raya y se va a la fila', malas]);
+        r.push([verbo('saca').d === pap[0].dVe && verbo('mira').d === pap[0].ida.d + DUR && verbo('raya').d === x.rayas.find(q => q.de === 1).d,
+          'paso 1: cada rótulo de la mano sale cuando la primera papeleta hace eso', x.verbos.map(v => v.d)]);
+      }
+    }
+
+    /* ── la hoja: qué renglones están escritos y qué dicen ── */
+    const escritos = x.lineas.filter(l => l.ve).map(l => l.k).sort((a, b) => a - b);
+    const debian = APARECE.map((p, k) => (p <= n ? k : -1)).filter(k => k >= 0);
+    r.push([escritos.join() === debian.join(), `paso ${n}: en la hoja están escritos los renglones que tocan`, { escritos, debian }]);
+    const mal = x.lineas.filter(l => l.ve && l.txt !== PROGRAMA[l.k]);
+    r.push([mal.length === 0, `paso ${n}: cada renglón dice lo que tiene que decir`, mal.map(l => [l.k, l.txt])]);
+    const ren = x.renglones.slice().sort((a, b) => a.k - b.k).map(q => q.puntos[0][1]);
+    const pitch = ren[1] - ren[0];
+    const linPorK = k => x.lineas.find(l => l.k === k);
+    const fueraDeRenglon = x.lineas.filter(l => !(l.caja.y1 < ren[l.k] + 1.5 && cen(l.caja).y < ren[l.k] && cen(l.caja).y > ren[l.k] - pitch));
+    r.push([ren.every((v, i) => i === 0 || cerca(v - ren[i - 1], pitch, 0.2)) && fueraDeRenglon.length === 0,
+      `paso ${n}: cada renglón va escrito sobre su raya, y las rayas a la misma distancia`, fueraDeRenglon.map(l => l.k)]);
+    const sangria = [4, 5, 6].every(k => linPorK(k).caja.x0 > linPorK(3).caja.x0 + 6) && cerca(linPorK(3).caja.x0, linPorK(7).caja.x0, 0.6);
+    r.push([sangria, `paso ${n}: lo de adentro del REPETIR va corrido a la derecha, entre su corchete que abre y el que cierra`, [3, 4, 7].map(k => Math.round(linPorK(k).caja.x0))]);
+    const cajas = x.cajitas.cajas;
+    const sobreCajita = x.lineas.filter(l => cajas.some(c => monta(l.caja, c.caja)) || !dentro(l.caja, x.hoja));
+    r.push([sobreCajita.length === 0 && cajas.every(c => dentro(c.caja, x.hoja)), `paso ${n}: los renglones y las cajitas caben en la hoja sin montarse`, sobreCajita.map(l => l.k)]);
+    if (n >= 2 && n <= 5) {
+      const nuevos = x.lineas.filter(l => APARECE[l.k] === n).sort((a, b) => a.k - b.k);
+      r.push([nuevos.every((l, i) => i === 0 || l.d > nuevos[i - 1].d), `paso ${n}: los renglones nuevos se escriben de arriba abajo, uno detrás de otro`, nuevos.map(l => l.d)]);
+    }
+
+    /* ── lo que se marca en cada paso ── */
+    const vistas = x.marcas.filter(q => q.ve).map(q => q.paso);
+    r.push([vistas.join() === (n >= 2 && n <= 5 ? String(n) : ''), `paso ${n}: se marca ${n >= 2 && n <= 5 ? 'solo lo de este paso' : 'nada'}`, vistas]);
+    if (n >= 2 && n <= 5) {
+      const mk = x.marcas.find(q => q.paso === n);
+      const pieza = q => mk.piezas.find(z => z.que === q);
+      const lin = mk.piezas.filter(z => /^linea-/.test(z.que)).map(z => +z.que.slice(6)).sort((a, b) => a - b);
+      const nuevos = APARECE.map((p, k) => (p === n ? k : -1)).filter(k => k >= 0);
+      const rodea = lin.every(k => dentro(linPorK(k).caja, mk.piezas.find(z => z.que === 'linea-' + k).caja, 0.5));
+      r.push([lin.join() === nuevos.join() && rodea, `paso ${n}: en la hoja se marcan justo los renglones nuevos, cada uno dentro de su recuadro`, lin]);
+      const nuevosMarcados = nuevos.every(k => linPorK(k).d > mk.d);
+      r.push([nuevosMarcados, `paso ${n}: primero se marca lo de la mano y después se escriben los renglones`, mk.d]);
+      if (n === 2) r.push([!!pieza('fila') && pap.every(p => dentro(p.caja, pieza('fila').caja)) && dentro(x.verbos.find(v => v.k === 'saca').caja, pieza('saca').caja),
+        'paso 2: se marcan las siete papeletas de la fila y lo que hizo con cada una: sacarla', pieza('fila')]);
+      if (n === 3) r.push([!!pieza('tabla') && dentro(tb.caja, pieza('tabla').caja) && cajas.every(c => dentro(c.caja, pieza('cajitas').caja)) && !monta(pieza('tabla').caja, x.verbos.find(v => v.k === 'raya').caja),
+        'paso 3: se marcan la tabla de las rayas y las dos cajitas', pieza('tabla')]);
+      if (n === 4) {
+        const rodeaX = pap.every(p => { const q = pieza('x-' + p.n); return q && dentro(p.x, q.caja, 0.3); });
+        r.push([rodeaX && dentro(x.verbos.find(v => v.k === 'mira').caja, pieza('mira').caja), 'paso 4: se marca la X de cada papeleta, y «mira la X»', pap.map(p => !!pieza('x-' + p.n))]);
+      }
+      if (n === 5) r.push([!!pieza('urna') && dentro(x.urna, pieza('urna').caja), 'paso 5: se marca la urna, que es la de «cuando se cierre la urna»', pieza('urna')]);
+    }
+
+    /* ── el programa, corrido por la sonda con lo que dice la hoja ── */
+    const nombres = cajas.map(c => c.nombre).sort();
+    const deVoto = { S: (nombreCol('S') || '').toUpperCase(), L: (nombreCol('L') || '').toUpperCase() };
+    r.push([nombres.join() === [deVoto.S, deVoto.L].sort().join() && cajas.every(c => c.nombre === deVoto[c.v]),
+      `paso ${n}: las dos cajitas se llaman como las dos columnas de la tabla`, nombres]);
+    const cajitasVen = n >= 3;
+    r.push([x.cajitas.ve === cajitasVen, `paso ${n}: las cajitas ${cajitasVen ? 'están' : 'todavía no están'}`, x.cajitas.ve]);
+    const leeValor = c => { const vs = c.valores.filter(v => v.ve); return vs.length === 1 ? +vs[0].txt : null; };
+    if (n === 7 || (n >= 3 && n <= 5)) {
+      /* la hoja entera (o lo que hay de ella) leída como programa */
+      const lineas = PROGRAMA.map((t, k) => (escritos.includes(k) ? x.lineas.find(l => l.k === k).txt : null));
+      const guarda = lineas.map(t => t && t.match(/^GUARDA (\d+) EN (\w+)$/)).filter(Boolean);
+      const inicio = {}; guarda.forEach(g => { inicio[g[2]] = +g[1]; });
+      if (n < 6) r.push([cajas.every(c => leeValor(c) === inicio[c.nombre]), `paso ${n}: cada cajita dice lo que le guardó la hoja`, cajas.map(leeValor)]);
+      if (n === 7) {
+        const rep = lineas.map(t => t && t.match(/^REPETIR (\d+) VECES \[$/)).filter(Boolean)[0];
+        const si = lineas.map(t => t && t.match(/^SI DICE (\w+) → SUMA 1 A (\w+)$/)).filter(Boolean)[0];
+        const sino = lineas.map(t => t && t.match(/^SINO → SUMA 1 A (\w+)$/)).filter(Boolean)[0];
+        const val = Object.assign({}, inicio);
+        const veces = rep ? +rep[1] : 0;
+        for (let i = 0; i < veces && i < votos.length; i++) {
+          const dice = deVoto[votos[i]];
+          if (si && dice === si[1]) val[si[2]] = (val[si[2]] || 0) + 1; else if (sino) val[sino[1]] = (val[sino[1]] || 0) + 1;
+        }
+        r.push([veces === pap.length, 'paso 7: el REPETIR de la hoja repite tantas veces como papeletas hay', veces]);
+        r.push([cajas.every(c => leeValor(c) === val[c.nombre]) && val[deVoto.S] === cuenta.S && val[deVoto.L] === cuenta.L,
+          'paso 7: corriendo la hoja con las papeletas que se ven, las cajitas quedan como dicen, y como la tabla de las rayas', { val, cuenta }]);
+        r.push([x.leidas.every(a => a.ve) && !x.flecha.ve, 'paso 7: las siete papeletas llevan su aro de leídas, y la flecha ya terminó', x.leidas.filter(a => a.ve).length]);
+      }
+    }
+    if (n === 6) {
+      /* la flecha: la sonda rehace el recorrido con lo que dice la hoja y
+         con los votos que se ven */
+      const espera = [0, 1, 2, 3];
+      const lecturas = [], sumas = [];
+      votos.forEach((v, i) => {
+        lecturas.push(espera.length); espera.push(4);
+        espera.push(5);
+        if (v === 'S') sumas.push({ v, j: espera.length - 1 });
+        else { espera.push(6); sumas.push({ v, j: espera.length - 1 }); }
+      });
+      espera.push(7, 8, 9);
+      const pasos = x.flecha.pasos;
+      const visto = [0];
+      pasos.forEach(q => visto.push(visto[visto.length - 1] + Math.round(q.corre[1] / pitch)));
+      r.push([visto.join() === espera.join(), 'paso 6: la flecha pasa por los renglones en el orden en que el programa los hace, con las papeletas que se ven', visto]);
+      const ritmo = pasos.map((q, j) => j === 0 ? null : q.d - pasos[j - 1].d).slice(1);
+      r.push([pasos.every((q, j) => j === 0 || q.d > pasos[j - 1].d) && ritmo.every(v => v === ritmo[0]), 'paso 6: la flecha cambia de renglón a ritmo parejo', ritmo[0]]);
+      const tVisita = j => (j === 0 ? x.flecha.dVe : pasos[j - 1].d);
+      const malLeida = x.leidas.filter(a => a.d !== tVisita(lecturas[a.n - 1]));
+      r.push([malLeida.length === 0 && x.leidas.every(a => a.ve), 'paso 6: cada papeleta recibe su aro cuando la flecha llega a «SACA UNA PAPELETA» por ella', malLeida.map(a => a.n)]);
+      const aroMonta = x.leidas.filter((a, i) => i > 0 && monta(a.caja, x.leidas[i - 1].caja));
+      r.push([aroMonta.length === 0 && x.leidas.every(a => dentro(pap[a.n - 1].caja, a.caja)), 'paso 6: cada aro rodea su papeleta sin tocar el de al lado', aroMonta.map(a => a.n)]);
+      /* las cajitas suben cuando la flecha llega a su SUMA: el número de antes
+         se va y el nuevo llega cuando ya se fue */
+      const malSuma = [];
+      const cuantos = { S: 0, L: 0 };
+      sumas.forEach(s => {
+        const c = cajas.find(q => q.v === s.v), k = ++cuantos[s.v];
+        const nuevo = c.valores.find(v => v.n === k), viejo = c.valores.find(v => v.n === k - 1);
+        const t = tVisita(s.j);
+        if (!nuevo || !viejo || viejo.dVa !== t || !(nuevo.dLlega > t && nuevo.dLlega <= t + 300)) malSuma.push({ v: s.v, k, t, va: viejo && viejo.dVa, llega: nuevo && nuevo.dLlega });
+      });
+      r.push([malSuma.length === 0, 'paso 6: cada cajita suma 1 cuando la flecha llega a su SUMA, y el número de antes se va antes de que llegue el nuevo', malSuma]);
+      r.push([cajas.every(c => leeValor(c) === cuenta[c.v]), `paso 6: al terminar, las cajitas dicen ${cuenta.S} y ${cuenta.L}, lo mismo que las rayas`, cajas.map(leeValor)]);
+      const fin = x.flecha.punta, r9 = linPorK(9).caja;
+      r.push([x.flecha.ve && fin[0] < r9.x0 && fin[0] > r9.x0 - 12 && cerca(fin[1], cen(r9).y, 2.5), 'paso 6: la flecha termina en TERMINA', fin]);
+    } else if (n !== 7) {
+      r.push([!x.flecha.ve && x.leidas.every(a => !a.ve), `paso ${n}: todavía no corre el programa: ni flecha, ni aros`, x.flecha.ve]);
+    }
+
+    /* ── lo que se dice ── */
+    const lineasVistas = escritos.length;
+    const palabras = e.palabras.replace(/ /g, ' ');
+    const cifra = e.cifra.replace(/ /g, ' ');
+    if (/líneas en la hoja/.test(palabras)) r.push([+cifra === lineasVistas, `paso ${n}: el marcador cuenta los renglones escritos en la hoja`, [cifra, lineasVistas]]);
+    else if (n === 1) r.push([cifra === `${cuenta.S} a ${cuenta.L}` && /a mano/.test(palabras), 'paso 1: el marcador dice lo que dicen las rayas', cifra]);
+    else if (n === 6) r.push([cifra === `${cuenta.S} a ${cuenta.L}` && /programa/.test(palabras), 'paso 6: el marcador dice lo que dicen las cajitas', cifra]);
+    else if (n === 7) {
+      /* \b no sirve con la tilde de «qué»: se cuentan con límites de letra */
+      const preguntas = (e.texto.split('¿').slice(1).join(' ').match(/(^|[^\p{L}])qu[ée](?=[^\p{L}]|$)/giu) || []).length;
+      r.push([+cifra === preguntas && preguntas === 3, 'paso 7: el marcador cuenta las preguntas de la frase', [cifra, preguntas]]);
+    } else r.push([false, `paso ${n}: el marcador dice algo que la sonda no sabe contar`, palabras]);
+    const texto = e.texto.replace(/ /g, ' ');
+    if (/siete/.test(texto)) r.push([pap.length === 7, `paso ${n}: «siete» son las papeletas que se ven`, pap.length]);
+    const sl = texto.match(/Sol (\d+), Luna (\d+)/);
+    if (sl) r.push([+sl[1] === cuenta.S && +sl[2] === cuenta.L, `paso ${n}: la frase dice lo que cuentan las cajitas`, sl.slice(1)]);
+    if (/dos cajitas/.test(texto)) r.push([cajas.length === 2, `paso ${n}: «dos cajitas» son las que se ven`, cajas.length]);
+    return r;
+  },
   amEsquina(e, n) {
     const x = e.extra, r = [];
     const TEXTO = { a1: 'AVANZA', a2: 'AVANZA', a3: 'AVANZA', gi: 'GIRA IZQUIERDA', a4: 'AVANZA', a5: 'AVANZA' };

@@ -26,6 +26,9 @@
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
 <link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La animación que va después de la historia: el aparato es compartido y
+     se tiñe con el color de la misión, así que va DESPUÉS de su CSS. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -72,6 +75,14 @@
     <div class="tip"><span class="ti">❓</span><div>Es lo normal, y es justo lo que falta: nadie le había
     pedido nunca <strong>juntarlas</strong>. Esta etapa no trae piezas nuevas: trae la costura, que es
     lo que separa saber programar de haber estudiado programación.</div></div>
+  </div>
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira por dónde se empieza</h2>
+    <div id="amUrna">
+      <p>Kenia cuenta los votos primero a mano: saca una papeleta, mira dónde está la X y hace una raya, siete veces.
+      Lo que hizo siete veces se escribe una vez dentro de REPETIR; las rayas son dos cajitas que empiezan en 0; la X
+      decide en qué cajita va el voto. Con eso el programa cuenta las mismas papeletas y da lo mismo: Sol 4, Luna 3.</p>
+    </div>
   </div>
   <div class="card ac-teal">
     <h2>🚀 ¡Llegaste a la meta de la Ruta del Código!</h2>
@@ -700,6 +711,8 @@ TERMINA
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-urna.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

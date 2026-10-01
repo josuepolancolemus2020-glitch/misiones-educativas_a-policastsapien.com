@@ -613,3 +613,34 @@ body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* ── La animación de los votos (js/animacion-urna.js) ──────────────────
+   La hoja, la tabla y las cajitas se tiñen con la tarjeta: en la pantalla
+   oscura no deslumbran. La urna y las papeletas son cosas, y tienen su
+   color en las dos pantallas. */
+#amUrna .mp-hoja { fill: var(--card, #fff); stroke: var(--border, #bce8f1); stroke-width: 1.4; }
+#amUrna .mp-renglon { fill: none; stroke: var(--border, #bce8f1); stroke-width: 0.8; }
+#amUrna .mp-codigo { fill: var(--dark, #1b2838); font-family: 'Fira Code', monospace; font-weight: 600; }
+#amUrna .mp-tabla { fill: var(--card, #fff); stroke: var(--am-pri); stroke-width: 1.4; }
+#amUrna .mp-reja { fill: none; stroke: var(--am-pri); stroke-width: 1; stroke-opacity: 0.6; }
+#amUrna .mp-raya { fill: none; stroke: var(--dark, #1b2838); stroke-width: 2.4; stroke-linecap: round; }
+#amUrna .mp-cajita { fill: var(--card, #fff); stroke: var(--am-pri); stroke-width: 1.6; }
+#amUrna .mp-resalte { fill: none; stroke: var(--am-sec); stroke-width: 1.8; stroke-dasharray: 4 3; }
+#amUrna .mp-aro { fill: none; stroke: var(--am-pri); stroke-width: 1.8; }
+#amUrna .mp-flecha { fill: var(--am-sec); }
+#amUrna .mp-urna { fill: #cbd5e1; stroke: #475569; stroke-width: 1.4; }
+#amUrna .mp-boca { fill: #1e293b; }
+#amUrna .mp-urna-letra { fill: #1e293b; font-family: 'Fredoka', sans-serif; font-weight: 700; letter-spacing: 0.5px; }
+#amUrna .mp-papel { fill: #fffdf7; stroke: #94a3b8; stroke-width: 1; }
+#amUrna .mp-casilla { fill: none; stroke: #94a3b8; stroke-width: 1; }
+#amUrna .mp-disco { fill: #f59e0b; stroke: #b45309; stroke-width: 0.8; }
+#amUrna .mp-rayo { fill: none; stroke: #b45309; stroke-width: 1.1; stroke-linecap: round; }
+#amUrna .mp-medialuna { fill: #64748b; stroke: #334155; stroke-width: 0.8; }
+#amUrna .mp-x { fill: none; stroke: #1f2937; stroke-width: 2.6; stroke-linecap: round; }
+/* Las papeletas viajan más ligero que el paso de siempre: son siete, una
+   por segundo. La flecha cambia de renglón rápido, y el número de una
+   cajita también: el de antes se va antes de que llegue el nuevo. Pisan la
+   transición del aparato por el id. */
+#amUrna .mp-mueve { transition: transform 0.6s cubic-bezier(0.2, 0.75, 0.25, 1) var(--d, 0s), opacity 0.4s ease var(--d, 0s); }
+#amUrna .mp-flecha-paso { transition: transform 0.25s ease var(--d, 0s); }
+#amUrna .mp-cifra { transition: opacity 0.2s ease var(--d, 0s); }
