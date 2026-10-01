@@ -27,6 +27,9 @@
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
 <link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La animación que explica el tema, justo después de la historia. Va DESPUÉS del
+     CSS de la misión: de ahí saca su color. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -72,6 +75,14 @@
     <div class="tip"><span class="ti">❓</span><div>Ese muñeco <strong>actúa</strong>, y hasta ahí llega.
     No se entera de nada y no decide nada: haga lo que haga el mundo, él saluda igual. Con las tres
     partes del ciclo en la cabeza, Marvin lo habría explicado en una frase.</div></div>
+  </div>
+  <div class="card ac-teal" data-animacion>
+    <h2 data-i18n="an">👀 Mira qué le falta al muñeco</h2>
+    <div id="amFeria">
+      <p data-i18n="anr">El muñeco de la feria saluda igual de día y de noche, con niños enfrente o sin nadie: solo actúa.
+      Un robot percibe lo que pasa, decide qué hacer y actúa. Con algo para percibir si hay alguien enfrente y una regla
+      para decidir, el mismo muñeco saluda solo cuando hay alguien: ahora sí es un robot.</p>
+    </div>
   </div>
   <div class="card ac-teal" data-i18n="a1">
     <h2>🤖 ¿Qué es un robot?</h2>
@@ -671,6 +682,8 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-feria.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

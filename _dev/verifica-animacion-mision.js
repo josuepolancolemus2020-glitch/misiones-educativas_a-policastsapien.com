@@ -2048,6 +2048,81 @@ const LEER = `
      esquinas y sus cuadras), cada robot (dónde está, hacia dónde mira y
      cada pieza que lo movió), la bandera, las ✗ con su tarde, el ✓, el
      camino bueno, los rastros y el anillo. */
+  window.__amExtra.amFeria = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(m(el)); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function uno(sel, en) { return (en || raiz).querySelector(sel); }
+    function todos(sel, en) { return [].slice.call((en || raiz).querySelectorAll(sel)); }
+    function demora(el) { return parseFloat(el.style.getPropertyValue('--d')) || 0; }
+    function numeros(d) { return (d.match(/-?[0-9.]+/g) || []).map(Number); }
+    function puntosDe(p) {
+      var nums = numeros(p.getAttribute('d')), r = [];
+      for (var i = 0; i + 1 < nums.length; i += 2) r.push(aVista(p, nums[i], nums[i + 1]));
+      return r;
+    }
+    /* los tramos de un dibujo hecho con varias M: cada uno con sus puntos */
+    function tramosDe(p) {
+      return p.getAttribute('d').split('M').filter(function (s) { return s.trim(); }).map(function (s) {
+        var nums = numeros(s), r = [];
+        for (var i = 0; i + 1 < nums.length; i += 2) r.push(aVista(p, nums[i], nums[i + 1]));
+        return r;
+      });
+    }
+    function lum(c) {
+      var v = (c.match(/[0-9.]+/g) || []).slice(0, 3).map(Number).map(function (x) { x /= 255; return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4); });
+      return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2];
+    }
+    function enZona(zona, pt) { var p = svg.createSVGPoint(); p.x = pt[0]; p.y = pt[1]; return zona.isPointInFill(p); }
+    return {
+      lang: (window.MetasI18N && window.MetasI18N.idioma && window.MetasI18N.idioma()) === 'en' ? 'en' : 'es',
+      vista: [svg.viewBox.baseVal.width, svg.viewBox.baseVal.height],
+      celdas: todos('[data-celda]').map(function (g) {
+        var cielo = uno('[data-cielo]', g), sol = uno('[data-sol]', g), luna = uno('[data-luna]', g);
+        var brazo = uno('[data-brazo]', g), brazoG = uno('[data-brazo-g]', g), arcos = uno('[data-arcos]', g);
+        var zona = uno('[data-zona]', g), lente = uno('[data-lente]', g);
+        var pb = puntosDe(brazo);
+        return {
+          col: g.getAttribute('data-col'), fila: +g.getAttribute('data-fila'),
+          ve: vis(cielo), dVe: demora(g),
+          marco: caja(uno('[data-marco]', g)), cielo: caja(cielo), cieloLum: lum(getComputedStyle(cielo).fill),
+          sol: sol ? { ve: vis(sol), rayos: todos('[data-rayo]', sol).length, disco: !!uno('circle', sol), caja: caja(sol) } : null,
+          luna: luna ? { ve: vis(luna), caja: caja(luna) } : null,
+          ninos: todos('[data-nino]', g).map(function (nn) {
+            var c = caja(uno('rect', nn));
+            return { caja: caja(nn), cuerpo: c, ve: vis(uno('rect', nn)), enZona: zona ? enZona(zona, [(c.x0 + c.x1) / 2, (c.y0 + c.y1) / 2]) : false };
+          }),
+          pedestal: caja(uno('[data-pedestal]', g)), cuerpo: caja(uno('[data-cuerpo]', g)), cabeza: caja(uno('[data-cabeza]', g)),
+          brazo: { hombro: pb[0], mano: pb[pb.length - 1], d: demora(brazoG) },
+          arcos: { ve: vis(arcos), caja: caja(arcos), d: demora(arcos) },
+          lente: lente ? { ve: vis(lente), caja: caja(lente) } : null,
+          zona: zona ? { ve: vis(zona), puntos: puntosDe(zona), d: demora(zona), raya: getComputedStyle(zona).strokeDasharray } : null
+        };
+      }),
+      encabezados: todos('[data-encabezado]').map(function (t) { return { col: t.getAttribute('data-encabezado'), ve: vis(t), txt: t.textContent, caja: caja(t), d: demora(t) }; }),
+      barras: ['A', 'B'].map(function (col) {
+        var g = uno('[data-barra="' + col + '"]'), t = uno('[data-tarjeta="' + col + '"]');
+        return {
+          col: col, ve: vis(uno('rect', g)), d: demora(g),
+          cajas: todos('[data-caja]', g).map(function (c) { return caja(c); }),
+          hace: todos('[data-hace]', g).map(function (h) { return { txt: h.textContent, caja: caja(h) }; }),
+          flechas: todos('[data-flecha]', g).map(function (f) { return tramosDe(f); }),
+          marcas: todos('[data-marca]').filter(function (mg) { return mg.getAttribute('data-marca').charAt(0) === col; }).map(function (mg) {
+            return { ve: vis(uno('circle', mg)), d: demora(mg), circulo: caja(uno('circle', mg)), tramos: tramosDe(uno('path', mg)) };
+          }),
+          tarjeta: { ve: vis(uno('text', t)), d: demora(t), lineas: todos('[data-linea]', t).map(function (l) { return { txt: l.textContent, caja: caja(l) }; }) }
+        };
+      }),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   window.__amExtra.amUrna = function (raiz) {
     var vis = window.__amVisible;
     var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
@@ -4205,13 +4280,210 @@ const ESCENAS = {
     r.push([encima.length === 0, `paso ${n}: nada se monta en nada`, encima]);
     return r;
   },
-  /* Detective de Bugs: las tres tardes de Kenia.
-     ⚠️ Nada se le cree a la escena. La sonda lee el orden de las tarjetas en
-     el dibujo y hace ella misma el programa sobre las esquinas que se ven:
-     de ahí sale dónde tiene que estar el robot y hacia dónde mira, a qué
-     esquina llega el programa de Kenia (y que NO es la de la bandera), y
-     que sin la línea que se quitó llega justo a la bandera. La línea que se
-     quita la busca también ella: la primera que saca al robot del camino. */
+  /* ¿Qué es un Robot?: el muñeco de la feria. La sonda no le cree nada a
+     la escena: lee de cada momento el cielo (sol con rayos o luna) y los
+     niños que se ven; de cada muñeco, si tiene el brazo arriba; y debajo
+     de cada columna, la regla escrita. Con eso comprueba que cada muñeco
+     haga lo que dice su regla, que las dos columnas tengan el mismo día,
+     y que el ✓ o la ✗ de cada cosa salga de lo que el dibujo tiene: un
+     lente para percibir, una regla que dependa de lo que pasa para
+     decidir, y un brazo para actuar. Es bilingüe: todo esto se comprueba
+     en los dos idiomas. */
+  amFeria(e, n) {
+    const x = e.extra, r = [];
+    const L = x.lang === 'en' ? 'en' : 'es';
+    const idioma = L === 'en' ? 'inglés' : 'español';
+    const cerca = (a, b, t = 1.5) => Math.abs(a - b) <= t;
+    const cen = c => ({ x: (c.x0 + c.x1) / 2, y: (c.y0 + c.y1) / 2 });
+    const dentro = (a, b, m = 0) => a.x0 >= b.x0 - m && a.x1 <= b.x1 + m && a.y0 >= b.y0 - m && a.y1 <= b.y1 + m;
+    const monta = (a, b) => a.x0 < b.x1 - 0.5 && b.x0 < a.x1 - 0.5 && a.y0 < b.y1 - 0.5 && b.y0 < a.y1 - 0.5;
+
+    /* ── lo que no depende del dibujo va primero ── */
+    const PROHIBIDAS = L === 'en'
+      ? /sensor|controller|actuator|battery|drone|humanoid|simple machine|appliance|industrial|unplugged|muscle|brain|effector|receptor|\bsecond|wheel|\bgames?\b|precision|surg|garment|factory|vacuum|blender|\biron\b|hammer|lever|\bfan\b|microphone|speaker|exact|\bteam\b|explorer|solar|\bsun\b|energy|power|program|instruction|people|person|\bdoor|\bcart\b|movie|\bthink|\bfeel|hospital|coffee|shape|\beyes?\b|light/i
+      : /sensor|controlador|actuador|bater|dron|humanoide|m[áa]quina simple|electrodom|industrial|desconectad|m[úu]sculo|cerebro|efector|receptor|segundo|rueda|juego|precisi|cirug|maquila|aspirador|licuadora|plancha|martillo|palanca|ventilador|micr[óo]fono|bocina|\bluz\b|luces|exact|equipo|\bgira|explorador|solar|\bsol\b|energ|programa|instrucci|persona|puerta|carrito|pel[íi]cula|piensa|sienten|hospital|caf[ée]|forma|\bojos?\b/i;
+    const dicho = [e.texto, e.palabras, e.boton].concat(x.textos).join(' · ');
+    r.push([!PROHIBIDAS.test(dicho), `paso ${n}: no sale ninguna palabra de lo que pregunta la prueba`, (dicho.match(PROHIBIDAS) || [])[0]]);
+
+    /* lo que se ve en cada paso: momentos de cada columna y sus barras */
+    const VE = [[1, 0, false, false], [4, 0, false, false], [4, 0, true, false], [4, 1, true, true], [4, 4, true, true], [4, 4, true, true]][n];
+
+    /* ── los momentos ── */
+    const porCol = col => x.celdas.filter(c => c.col === col).sort((a, b) => a.fila - b.fila);
+    const A = porCol('A'), B = porCol('B');
+    r.push([A.length === 4 && B.length === 4, `paso ${n}: son cuatro momentos en cada columna`, [A.length, B.length]]);
+    if (A.length !== 4 || B.length !== 4) return r;
+    const w0 = A[0].marco.x1 - A[0].marco.x0, h0 = A[0].marco.y1 - A[0].marco.y0;
+    const grilla = x.celdas.every(c => cerca(c.marco.x1 - c.marco.x0, w0, 0.3) && cerca(c.marco.y1 - c.marco.y0, h0, 0.3))
+      && [0, 1, 2, 3].every(k => cerca(A[k].marco.y0, B[k].marco.y0, 0.3))
+      && A.every(c => cerca(c.marco.x0, A[0].marco.x0, 0.3)) && B.every(c => cerca(c.marco.x0, B[0].marco.x0, 0.3))
+      && [1, 2, 3].every(k => A[k].marco.y0 > A[k - 1].marco.y1) && B[0].marco.x0 > A[0].marco.x1
+      && x.celdas.every(c => c.marco.x0 >= 0 && c.marco.x1 <= x.vista[0]);
+    r.push([grilla, `paso ${n}: los momentos van en dos columnas iguales, fila con fila`, null]);
+    const mundo = c => ({
+      dia: !!(c.sol && c.sol.rayos >= 8 && c.sol.disco && !c.luna), noche: !!(c.luna && !c.sol), ninos: c.ninos.length
+    });
+    const malCielo = x.celdas.filter(c => {
+      const w = mundo(c);
+      const astro = w.dia ? c.sol.caja : w.noche ? c.luna.caja : null;
+      return !(w.dia !== w.noche && (w.dia ? c.cieloLum > 0.5 : c.cieloLum < 0.15) && astro && dentro(astro, c.cielo, 0.5));
+    });
+    r.push([malCielo.length === 0, `paso ${n}: de día el cielo es claro y lleva sol con rayos; de noche es oscuro y lleva luna`, malCielo.map(c => c.col + c.fila)]);
+    const mismo = [0, 1, 2, 3].every(k => { const a = mundo(A[k]), b = mundo(B[k]); return a.dia === b.dia && a.ninos === b.ninos; });
+    r.push([mismo, `paso ${n}: en cada fila, las dos columnas tienen el mismo momento: el mismo cielo y los mismos niños`, null]);
+    const combos = [...new Set(A.map(c => { const w = mundo(c); return (w.dia ? 'dia' : 'noche') + (w.ninos > 0 ? '+niños' : '+nadie'); }))];
+    r.push([combos.length === 4, `paso ${n}: los cuatro momentos son de día y de noche, con niños y sin nadie, una vez cada uno`, combos]);
+    const malNino = x.celdas.filter(c => c.ninos.some((k, i) => !(cerca(k.cuerpo.y1, c.cielo.y1, 0.6) && dentro(k.caja, c.marco) && k.caja.x0 > c.pedestal.x1 + 10
+      && (i === 0 || !monta(k.caja, c.ninos[i - 1].caja)))));
+    r.push([malNino.length === 0, `paso ${n}: los niños están parados en el suelo, enfrente del muñeco y sin encimarse`, malNino.map(c => c.col + c.fila)]);
+    const malMuneco = x.celdas.filter(c => !(cerca(c.pedestal.y1, c.cielo.y1, 0.6) && cerca(c.cuerpo.y1, c.pedestal.y0, 0.6) && c.cabeza.y1 <= c.cuerpo.y0 + 1.5
+      && cerca(c.brazo.hombro[0], c.cuerpo.x1, 0.6) && c.brazo.hombro[1] > c.cuerpo.y0 && c.brazo.hombro[1] < c.cuerpo.y1));
+    r.push([malMuneco.length === 0, `paso ${n}: cada muñeco está parado en su pedestal, con el brazo saliendo del hombro`, malMuneco.map(c => c.col + c.fila)]);
+
+    /* ── la regla de cada columna, leída de lo que está escrito ── */
+    const regla = col => {
+      const t = x.barras.find(b => b.col === col).tarjeta.lineas.map(l => l.txt);
+      const [siempre, que, si, sino] = L === 'en'
+        ? ['always does:', 'wave', 'if someone is there: wave', 'if not: stay still']
+        : ['hace siempre:', 'saluda', 'si hay alguien: saluda', 'si no: se queda quieto'];
+      if (t[0] === siempre && t[1] === que) return () => true;
+      if (t[0] === si && t[1] === sino) return w => w.ninos > 0;
+      return null;
+    };
+    const RA = regla('A'), RB = regla('B');
+    r.push([!!RA && !!RB, `paso ${n}: debajo de cada columna está escrita su regla, en ${idioma}`, x.barras.map(b => b.tarjeta.lineas.map(l => l.txt))]);
+    if (!RA || !RB) return r;
+    const R = { A: RA, B: RB };
+
+    /* ── lo que se ve, y lo que hace cada muñeco ── */
+    const vistos = cs => cs.filter(c => c.ve).map(c => c.fila).join();
+    r.push([vistos(A) === [0, 1, 2, 3].slice(0, VE[0]).join() && vistos(B) === [0, 1, 2, 3].slice(0, VE[1]).join(),
+      `paso ${n}: se ven los momentos que tocan, de arriba abajo`, { A: vistos(A), B: vistos(B) }]);
+    const arriba = c => c.brazo.mano[1] < c.brazo.hombro[1] - 3;
+    const abajo = c => c.brazo.mano[1] > c.brazo.hombro[1] + 3;
+    const malHace = x.celdas.filter(c => c.ve && !(R[c.col](mundo(c)) ? arriba(c) : abajo(c)));
+    r.push([malHace.length === 0, `paso ${n}: cada muñeco hace lo que dice su regla: el brazo arriba cuando saluda, abajo cuando no`, malHace.map(c => c.col + c.fila)]);
+    const malArcos = x.celdas.filter(c => c.ve && (c.arcos.ve !== arriba(c)
+      || (arriba(c) && !(Math.abs(cen(c.arcos.caja).x - c.brazo.mano[0]) < 14 && Math.abs(cen(c.arcos.caja).y - c.brazo.mano[1]) < 9 && c.arcos.caja.x0 > c.brazo.mano[0]))));
+    r.push([malArcos.length === 0, `paso ${n}: las rayitas del saludo van junto a la mano levantada, y solo cuando saluda`, malArcos.map(c => c.col + c.fila)]);
+    const malLente = A.filter(c => c.lente || c.zona).concat(B.filter(c => !(c.lente && c.zona && dentro(c.lente.caja, c.pedestal, 0.5))));
+    r.push([malLente.length === 0, `paso ${n}: el de la izquierda no tiene con qué percibir; el de la derecha lleva su lente en el pedestal`, malLente.map(c => c.col + c.fila)]);
+    const malZona = B.filter(c => c.ve && !(c.zona.ve && /[1-9]/.test(c.zona.raya)
+      && Math.hypot(c.zona.puntos[0][0] - cen(c.lente.caja).x, c.zona.puntos[0][1] - cen(c.lente.caja).y) < 4.5
+      && c.zona.puntos.slice(1).every(p => p[0] > Math.max(c.pedestal.x1 + 60, ...c.ninos.map(k => k.cuerpo.x1)) && p[0] <= c.marco.x1)
+      && c.ninos.every(k => k.enZona)));
+    r.push([malZona.length === 0, `paso ${n}: la zona del lente sale del lente, va más allá de los niños y los alcanza, con raya cortada`, malZona.map(c => c.col + c.fila)]);
+
+    /* ── los encabezados ── */
+    const ENC = L === 'en' ? { A: 'The doll at the fair', B: 'With what it was missing' } : { A: 'El muñeco de la feria', B: 'Con lo que le faltaba' };
+    const malEnc = x.encabezados.filter(t => {
+      const col = t.col === 'A' ? A : B;
+      const debe = t.col === 'A' ? true : VE[1] > 0;
+      return t.ve !== debe || t.txt !== ENC[t.col] || !cerca(cen(t.caja).x, cen(col[0].marco).x, 1) || t.caja.y1 > col[0].marco.y0 || t.caja.x0 < col[0].marco.x0 - 2 || t.caja.x1 > col[0].marco.x1 + 2;
+    });
+    r.push([x.encabezados.length === 2 && malEnc.length === 0, `paso ${n}: cada columna lleva su nombre encima, en ${idioma}`, malEnc.map(t => t.txt)]);
+
+    /* ── debajo: percibe → decide → actúa, con lo que tiene cada uno ── */
+    const HACE = L === 'en' ? ['senses', 'decides', 'acts'] : ['percibe', 'decide', 'actúa'];
+    const tipo = mk => {
+      if (mk.tramos.length === 1 && mk.tramos[0].length === 3) return 'si';
+      if (mk.tramos.length === 2 && mk.tramos.every(t => t.length === 2)) {
+        const [[a, b], [c, d]] = mk.tramos;
+        const cruza = (b[0] - a[0]) * (d[1] - c[1]) - (b[1] - a[1]) * (d[0] - c[0]) !== 0;
+        return cruza ? 'no' : '?';
+      }
+      return '?';
+    };
+    const barraDe = col => x.barras.find(b => b.col === col);
+    const ultimoA = A[3].marco.y1;
+    let marcasVistas = { A: 0, B: 0 };
+    for (const col of ['A', 'B']) {
+      const b = barraDe(col), cs = col === 'A' ? A : B, debe = col === 'A' ? VE[2] : VE[3];
+      r.push([b.ve === debe && b.marcas.every(mk => mk.ve === debe) && b.tarjeta.ve === debe,
+        `paso ${n}: debajo de la columna ${col} ${debe ? 'están' : 'todavía no están'} sus tres cosas y su regla`, [b.ve, b.tarjeta.ve]]);
+      const cajas = b.cajas.slice().sort((p, q) => p.x0 - q.x0);
+      const etiquetas = cajas.map(c => (b.hace.find(h => dentro(h.caja, c, 0.5)) || {}).txt);
+      r.push([cajas.length === 3 && etiquetas.join() === HACE.join() && cajas.every(c => c.y0 > ultimoA && dentro(c, cs[0].marco, 0) === false && c.x0 >= cs[0].marco.x0 - 0.5 && c.x1 <= cs[0].marco.x1 + 0.5),
+        `paso ${n}: debajo de la columna ${col}, tres cajas en orden: ${HACE.join(' → ')}, en ${idioma}`, etiquetas]);
+      const flechasBien = b.flechas.length === 2 && b.flechas.every(f => {
+        const ini = f[0][0], fin = f[0][f[0].length - 1];
+        const i = cajas.findIndex(c => cerca(ini[0], c.x1, 2.5));
+        return i >= 0 && i < 2 && cerca(fin[0], cajas[i + 1].x0, 2.5) && fin[0] > ini[0] && cerca(ini[1], cen(cajas[i]).y, 1) && cerca(fin[1], ini[1], 0.5);
+      });
+      r.push([flechasBien, `paso ${n}: las flechas van de una caja a la siguiente, hacia la derecha`, null]);
+      /* lo que tiene: un lente que se ve, una regla que cambia según lo que
+         pasa, y un brazo que se mueve */
+      const espera = [cs.some(c => c.lente), R[col]({ ninos: 0 }) !== R[col]({ ninos: 2 }), cs.every(c => c.brazo.hombro && c.brazo.mano)];
+      const marcas = b.marcas.slice().sort((p, q) => p.circulo.x0 - q.circulo.x0);
+      const malMarca = marcas.map((mk, i) => {
+        const caja = cajas[i];
+        const bien = caja && cerca(cen(mk.circulo).x, caja.x1, 2.5) && cerca(cen(mk.circulo).y, caja.y0, 2.5);
+        return bien && tipo(mk) === (espera[i] ? 'si' : 'no') ? null : i;
+      }).filter(v => v !== null);
+      r.push([marcas.length === 3 && malMarca.length === 0, `paso ${n}: la columna ${col} lleva ✓ o ✗ según lo que tiene: ${espera.map(v => (v ? '✓' : '✗')).join(' ')}`, malMarca]);
+      marcasVistas[col] = b.ve ? marcas.filter(mk => tipo(mk) === 'si').length : 0;
+      const lineas = b.tarjeta.lineas;
+      r.push([lineas.length === 2 && lineas.every(l => l.caja.x0 >= cs[0].marco.x0 - 0.5 && l.caja.x1 <= cs[0].marco.x1 + 0.5 && l.caja.y0 > cajas[0].y1 && l.caja.y1 <= x.vista[1])
+        && lineas[1].caja.y0 >= lineas[0].caja.y1 - 1,
+        `paso ${n}: la regla de la columna ${col} va debajo de sus cajas, sin salirse de su columna ni del dibujo`, lineas.map(l => l.txt)]);
+    }
+
+    /* ── cuándo pasa cada cosa, al entrar en el paso ── */
+    const nuevos = (cs, desde) => cs.slice(desde);
+    if (n === 1 || n === 4) {
+      const cs = nuevos(n === 1 ? A : B, 1);
+      const pasos = cs.map(c => c.dVe);
+      const parejo = pasos.every((d, i) => i === 0 || (d > pasos[i - 1] && cerca(d - pasos[i - 1], pasos[1] - pasos[0], 1)));
+      r.push([parejo && pasos[0] > 0, `paso ${n}: los momentos nuevos salen uno detrás de otro, a ritmo parejo`, pasos]);
+      const malOrden = cs.filter(c => {
+        if (!R[c.col](mundo(c))) return c.zona ? !(c.zona.d > c.dVe) : false;
+        const mira = c.zona ? c.zona.d : c.dVe;
+        return !(mira >= c.dVe && c.brazo.d > mira + 300 && c.arcos.d >= c.brazo.d + 700);
+      });
+      r.push([malOrden.length === 0, `paso ${n}: en cada momento, primero aparece${n === 4 ? ' y el lente mira' : ''}, y después sube el brazo, si toca`, malOrden.map(c => c.col + c.fila)]);
+    }
+    if (n === 3) {
+      const c = B[0], t = barraDe('B').tarjeta, mk = barraDe('B').marcas.map(m => m.d);
+      r.push([c.dVe > 0 && c.zona.d > c.dVe && t.d > c.zona.d && c.brazo.d > t.d && c.arcos.d >= c.brazo.d + 700,
+        'paso 3: el muñeco nuevo primero mira (la zona), después tiene su regla, y entonces actúa (el brazo)', [c.dVe, c.zona.d, t.d, c.brazo.d]]);
+      r.push([mk.every((d, i) => i === 0 || d > mk[i - 1]) && mk[0] > c.brazo.d, 'paso 3: las tres marcas salen una por una, después de que actúa', mk]);
+    }
+    if (n === 2) {
+      const mk = barraDe('A').marcas.map(m => m.d), t = barraDe('A').tarjeta;
+      r.push([mk.every((d, i) => i === 0 || d > mk[i - 1]) && t.d > mk[2], 'paso 2: las tres marcas salen una por una, y después la regla', mk]);
+    }
+
+    /* ── lo que se dice ── */
+    const cifra = e.cifra.replace(/ /g, ' '), palabras = e.palabras;
+    const de = L === 'en' ? 'of' : 'de';
+    const saludan = cs => cs.filter(c => c.ve && arriba(c)).length, ven = cs => cs.filter(c => c.ve).length;
+    if (n === 0) r.push([+cifra === ven(A) + ven(B), 'paso 0: el marcador cuenta los momentos que se ven', cifra]);
+    if (n === 1) r.push([cifra === `${saludan(A)} ${de} ${ven(A)}`, 'paso 1: el marcador cuenta en cuántos momentos saluda el de la feria', cifra]);
+    if (n === 2) r.push([cifra === `${marcasVistas.A} ${de} 3`, 'paso 2: el marcador cuenta las ✓ del de la feria', cifra]);
+    if (n === 3) r.push([cifra === `${marcasVistas.B} ${de} 3`, 'paso 3: el marcador cuenta las ✓ del muñeco con lo que le faltaba', cifra]);
+    if (n === 4) r.push([cifra === `${saludan(B)} ${de} ${ven(B)}`, 'paso 4: el marcador cuenta en cuántos momentos saluda el de la derecha', cifra]);
+    if (n === 5) {
+      const preguntas = (e.texto.match(L === 'en' ? /\?/g : /¿/g) || []).length;
+      r.push([+cifra === preguntas && preguntas === 3, 'paso 5: el marcador cuenta las preguntas de la frase', [cifra, preguntas]]);
+    }
+    if (L === 'es' ? /solo actúa/.test(e.texto) : /only acts/.test(e.texto)) {
+      const m = barraDe('A').marcas.slice().sort((p, q) => p.circulo.x0 - q.circulo.x0).map(tipo);
+      r.push([m.join() === 'no,no,si', `paso ${n}: la frase dice que el muñeco solo actúa, y eso dicen sus marcas`, m]);
+    }
+    if (L === 'es' ? /solo cuando hay alguien/.test(e.texto) : /only when someone is there/.test(e.texto)) {
+      r.push([RB({ ninos: 0 }) === false && RB({ ninos: 2 }) === true && B.filter(c => c.ve).every(c => arriba(c) === (mundo(c).ninos > 0)),
+        `paso ${n}: la frase dice que saluda solo cuando hay alguien, y eso hace`, null]);
+    }
+    if (L === 'es' ? /de día o de noche/i.test(e.texto) : /by day or by night/i.test(e.texto)) {
+      const vis = (n === 4 ? B : A).filter(c => c.ve).map(mundo);
+      r.push([vis.some(w => w.dia) && vis.some(w => w.noche), `paso ${n}: la frase dice de día o de noche, y se ven los dos`, null]);
+    }
+    return r;
+  },
+  /* Mi Primer Programa: los votos del Gobierno Escolar en la urna. La sonda
+     lee el programa de la hoja renglón por renglón y cuenta ella misma las
+     papeletas de la urna: lo que dicen las rayas, las dos cajitas, la frase
+     y el marcador tiene que ser lo que da contarlas. */
   amUrna(e, n) {
     const x = e.extra, r = [];
     const cerca = (a, b, t = 1.5) => Math.abs(a - b) <= t;
@@ -4453,6 +4725,13 @@ const ESCENAS = {
     if (/dos cajitas/.test(texto)) r.push([cajas.length === 2, `paso ${n}: «dos cajitas» son las que se ven`, cajas.length]);
     return r;
   },
+  /* Detective de Bugs: las tres tardes de Kenia.
+     ⚠️ Nada se le cree a la escena. La sonda lee el orden de las tarjetas en
+     el dibujo y hace ella misma el programa sobre las esquinas que se ven:
+     de ahí sale dónde tiene que estar el robot y hacia dónde mira, a qué
+     esquina llega el programa de Kenia (y que NO es la de la bandera), y
+     que sin la línea que se quitó llega justo a la bandera. La línea que se
+     quita la busca también ella: la primera que saca al robot del camino. */
   amEsquina(e, n) {
     const x = e.extra, r = [];
     const TEXTO = { a1: 'AVANZA', a2: 'AVANZA', a3: 'AVANZA', gi: 'GIRA IZQUIERDA', a4: 'AVANZA', a5: 'AVANZA' };

@@ -518,3 +518,46 @@ body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* ── La animación del muñeco de la feria (#amFeria) ───────────────────
+   El cielo, el suelo, el muñeco y los niños son COSAS: se quedan como son
+   en las dos pantallas. Lo que va sobre la tarjeta (los nombres, las cajas
+   de abajo y la regla de cada uno) lleva la tinta de la pantalla. Nada se
+   dice solo con color: el día lleva sol con rayos y la noche, luna; el que
+   saluda tiene el brazo arriba con sus rayitas; y lo que hace o no hace
+   cada uno va con ✓ o con ✗, que son dibujos distintos. */
+#amFeria { --fr-bien: #15803d; --fr-mal: #b91c1c; }
+[data-theme="dark"] #amFeria { --fr-bien: #4ade80; --fr-mal: #f87171; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) #amFeria { --fr-bien: #4ade80; --fr-mal: #f87171; }
+}
+#amFeria .fr-cielo-dia { fill: #bae6fd; }
+#amFeria .fr-cielo-noche { fill: #1e293b; }
+#amFeria .fr-suelo-dia { fill: #e7d7b0; }
+#amFeria .fr-suelo-noche { fill: #44403c; }
+#amFeria .fr-marco { fill: none; stroke: var(--border, #cbd5e1); stroke-width: 1.2; }
+#amFeria .fr-sol { fill: #fbbf24; stroke: #b45309; stroke-width: 0.8; }
+#amFeria .fr-rayo { fill: none; stroke: #d97706; stroke-width: 1.2; stroke-linecap: round; }
+#amFeria .fr-luna { fill: #f1f5f9; stroke: #94a3b8; stroke-width: 0.6; }
+#amFeria .fr-estrella { fill: #fde68a; }
+#amFeria .fr-pedestal { fill: #a16207; stroke: #713f12; stroke-width: 0.8; }
+#amFeria .fr-cuerpo { fill: #f97316; stroke: #7c2d12; stroke-width: 0.8; }
+#amFeria .fr-cabeza { fill: #fde68a; stroke: #92400e; stroke-width: 0.8; }
+#amFeria .fr-boca { fill: none; stroke: #92400e; stroke-width: 0.9; stroke-linecap: round; }
+#amFeria .fr-brazo-borde { fill: none; stroke: #7c2d12; stroke-width: 4; stroke-linecap: round; }
+#amFeria .fr-brazo { fill: none; stroke: #f97316; stroke-width: 2.2; stroke-linecap: round; }
+#amFeria .fr-arco { fill: none; stroke-width: 1.6; stroke-linecap: round; }
+#amFeria .fr-arco-dia { stroke: #c2410c; }
+#amFeria .fr-arco-noche { stroke: #fb923c; }
+#amFeria .fr-nino-1 { fill: #16a34a; stroke: #14532d; stroke-width: 0.6; }
+#amFeria .fr-nino-2 { fill: #db2777; stroke: #831843; stroke-width: 0.6; }
+#amFeria .fr-nino-cara { fill: #c08457; stroke: #7c2d12; stroke-width: 0.6; }
+#amFeria .fr-lente { fill: #0f172a; stroke: #22d3ee; stroke-width: 1.2; }
+#amFeria .fr-zona { stroke-width: 1; stroke-dasharray: 3 2; }
+#amFeria .fr-zona-dia { fill: rgba(14, 116, 144, 0.16); stroke: #0e7490; }
+#amFeria .fr-zona-noche { fill: rgba(34, 211, 238, 0.2); stroke: #22d3ee; }
+#amFeria .fr-caja { fill: var(--card, #fff); stroke: var(--am-pri); stroke-width: 1.4; }
+#amFeria .fr-flecha { fill: none; stroke: var(--am-pri); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+#amFeria .fr-insignia { fill: var(--card, #fff); stroke: var(--am-pri); stroke-width: 1.2; }
+#amFeria .fr-bien { fill: none; stroke: var(--fr-bien); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+#amFeria .fr-mal { fill: none; stroke: var(--fr-mal); stroke-width: 1.8; stroke-linecap: round; }

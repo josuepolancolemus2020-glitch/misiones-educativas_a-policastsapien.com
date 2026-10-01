@@ -11564,6 +11564,158 @@ Salió roja con cada una.
 Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
 de 100 ms. Detective de Bugs, medida el mismo día, va a 60 y 83 ms.
 
+### La quincuagésima sexta: ¿Qué es un Robot?, la primera de la Ruta de los Robots
+
+Con la Ruta del Código terminada sigue la de los Robots, y su primera misión es
+**¿Qué es un Robot?** (`misiones/2y3ciclo-que-es-un-robot/`,
+`js/animacion-feria.js`), bilingüe como las demás de la ruta. La historia es la
+de Marvin: en la feria pusieron un muñeco que mueve el brazo saludando, igual
+con gente delante que sin nadie, de día y de noche. Los niños decían «es un
+robot»; Marvin dijo que no, y se quedó callado cuando le preguntaron por qué. La
+animación pone el mismo día dos veces, en dos columnas iguales: cuatro momentos
+(de día y de noche, con niños enfrente y sin nadie), a la izquierda el muñeco de
+la feria y a la derecha el mismo muñeco con lo que le faltaba. Debajo de cada
+columna, sus tres cajas (percibe → decide → actúa) con su ✓ o su ✗, y su regla
+escrita:
+
+- el muñeco saluda en la feria, y la pregunta es la de la historia: ¿quién
+  tiene razón?;
+- pasa el día entero: en los cuatro momentos levanta el brazo igual. Pase lo
+  que pase enfrente, le da lo mismo;
+- un robot percibe, decide y actúa, y el muñeco solo actúa: ✗, ✗, ✓, y debajo
+  su regla, «hace siempre: saluda». Eso quería decir Marvin;
+- se le pone lo que le faltaba: un lente en el pedestal, con la zona que mira, y
+  una regla, «si hay alguien: saluda; si no: se queda quieto». Primero mira,
+  después tiene su regla y entonces actúa, y le salen tres ✓;
+- el mismo día otra vez, a la derecha: saluda solo en los dos momentos con
+  niños, de día y de noche. Ahora sí es un robot;
+- y la pregunta es del alumno: buscar una máquina en su casa y hacerle las tres
+  preguntas.
+
+Siete cosas que valen para las que siguen:
+
+1. ⚠️ **Lo que se compara tiene el mismo día.** Las dos columnas tienen los
+   mismos cuatro momentos, fila con fila: el mismo cielo y los mismos niños. Si
+   la de la derecha tuviera otro día, el alumno podría creer que saluda distinto
+   por eso. Y los cuatro momentos son de día y de noche, con niños y sin nadie,
+   una vez cada uno: lo que el muñeco de la feria ignora es justo eso.
+2. ⚠️ **Lo que hace cada muñeco sale de su regla escrita, y la sonda la lee.**
+   Lee las dos líneas de debajo de cada columna, en el idioma de la página, y de
+   ahí saca cuándo tiene que estar el brazo arriba; y saca el ✓ o la ✗ de cada
+   caja de lo que el dibujo tiene: un lente para percibir, una regla que cambia
+   con lo que pasa para decidir, un brazo para actuar. No le cree a las marcas.
+3. **En la noche, el brazo levantado no se veía.** Queda sobre el cielo azul
+   marino, y un brazo anaranjado delgado se perdía: cada brazo lleva un borde
+   oscuro debajo, y las rayitas del saludo y la zona del lente tienen su color de
+   día y su color de noche. Y a 360 px el primer dibujo quedaba chico: las
+   celdas y las figuras crecieron, y un botón que se partía en dos renglones pasó
+   a «🔧 Completarlo». Las tres cosas se vieron mirando las capturas, con la
+   sonda en verde.
+4. ⚠️ **La historia y la animación contestaban once preguntas de la prueba y
+   dos de pensamiento crítico.** La historia: «Marvin supo explicar por qué el
+   muñeco no era un robot», «a Marvin le preguntaron por ___», «el muñeco
+   saludaba igual de día y de ___», «¿por qué el muñeco de la feria no es un
+   robot?» y «¿qué movía el muñeco?». La animación: «una máquina que solo actúa
+   ya es un robot», «solo es robot la que cumple las ___ partes del ciclo», «¿qué
+   es un robot?», «¿cuál es el orden del ciclo?», «¿qué hace en el primer paso?»
+   y la puerta que se abre sola cuando te acercas, que es el muñeco de la derecha
+   con otra ropa. En pensamiento crítico, «la licuadora es un robot porque se
+   mueve» era el muñeco de la feria con otra ropa, y la puerta del supermercado,
+   otra vez el de la derecha. Ahora preguntan lo que la misión enseña en su
+   Aprende, sus tarjetas y su Laboratorio (el micrófono, lo que pasa si deja de percibir, las luces y las
+   bocinas, lo que pasa sin energía, la palanca, el robot explorador y el sol, lo
+   que se percibe del calor y de la humedad, las partes que trabajan en equipo y
+   las instrucciones exactas), con la respuesta en el mismo lugar, en la misión,
+   en su edición en inglés y en las dos fichas; en pensamiento crítico, el robot
+   de cirugía que ayuda al médico y una empacadora de banano.
+5. ⚠️ **Tres repuestos se cayeron antes de escribirlos, y valen como regla.** Un
+   ventilador que se enciende solo con el calor era un buen caso de robot
+   sencillo, y el Clasifica de la misma misión pone el ventilador entre los
+   electrodomésticos: el alumno habría aprendido las dos cosas. «Si hay un
+   obstáculo, entonces ___» tiene dos respuestas buenas, «gira» y «frena», y un
+   completar que solo acepta una marca mal al que pensó. Y «si no tiene forma de
+   persona, no es un robot» se contesta con la comparación de la sección IV de
+   la misma prueba, que trae un robot con ruedas. Y la sonda de pistas cazó
+   cuatro más: nombraban en el enunciado un término de los pareados («sensor»,
+   «batería», «máquina simple»), y con decir «máquinas» ya bastaba.
+6. ⚠️ **La ficha alternaba el verdadero o falso y regalaba en la felicitación.**
+   La pauta era V, F, V, F… de punta a punta; ahora va V F V V F F V V F V. La
+   felicitación, debajo de los pareados, decía que los sensores son como los
+   sentidos, el controlador como el cerebro y los actuadores como los músculos,
+   que son tres respuestas de la prueba: ahora solo pide revisar. La edición en
+   inglés pedía «circle the correct letter», y ahora pide rellenar el círculo. Y
+   la hoja 2 enseña lo que las preguntas nuevas piden: creció de 153 a 168 mm, y
+   la ficha sigue en sus siete hojas en los dos idiomas.
+7. ⚠️ **Una avería plantada en el estado de entrada de un paso no la ve la
+   sonda.** La primera vez que se plantó «las cosas de la derecha desde el paso
+   2», se plantó en el estado con que empieza el paso 3, y salió verde: lo que ya
+   se ve al entrar en el paso sigue viéndose aunque después se le escriba otra
+   demora, y al final del paso todo está donde tiene que estar. Plantada en el
+   paso 2, sale roja. Lo que aparece antes de tiempo al entrar en un paso se ve
+   en las fotos a medio viaje, no en la sonda.
+
+La sonda de esta escena **no le cree nada a la escena**. Comprueba, en español y
+en inglés:
+
+- que sean cuatro momentos en cada columna, en dos columnas iguales, fila con
+  fila;
+- que de día el cielo sea claro con su sol de rayos y de noche oscuro con su
+  luna, y que cada fila tenga el mismo momento en las dos columnas;
+- que los niños estén parados en el suelo, enfrente y sin encimarse, y cada
+  muñeco en su pedestal, con el brazo saliendo del hombro;
+- que debajo de cada columna esté su regla, y que cada muñeco haga lo que ella
+  dice: el brazo arriba cuando saluda, con sus rayitas junto a la mano, y abajo
+  cuando no;
+- que el de la izquierda no tenga con qué percibir y el de la derecha lleve el
+  lente en el pedestal, con su zona de raya cortada que sale del lente y alcanza
+  a los niños;
+- que cada columna lleve su nombre encima solo cuando tiene momentos;
+- que las tres cajas vayan en orden, con sus flechas de una a la siguiente, y
+  que el ✓ o la ✗ de cada una salga de lo que el dibujo tiene;
+- que los momentos salgan uno detrás de otro a ritmo parejo, y en cada uno
+  primero aparezca (y mire el lente) y después suba el brazo;
+- que en el paso 3 el muñeco nuevo primero mire, después tenga su regla y
+  entonces actúe, y que las marcas salgan una por una;
+- que el marcador cuente lo que se ve, y la frase diga lo que hace cada uno;
+- y que no salga ninguna palabra de lo que pregunta la prueba.
+
+Se comprobó al revés con veintiséis averías, plantadas una por una:
+
+- el de la feria sin saludar de noche cuando no hay nadie;
+- el de la derecha saludando siempre;
+- un momento de la derecha con otro cielo que el de su fila;
+- el de la feria con ✓ en decide;
+- la ✗ dibujada de una sola raya;
+- el lente fuera del pedestal;
+- la zona sin llegar a los niños, y la zona sin raya cortada;
+- un niño flotando, y los niños encimados;
+- las rayitas del saludo lejos de la mano, y saliendo antes de que suba el
+  brazo;
+- el brazo subiendo antes de que el lente mire;
+- la regla de la derecha apareciendo después del brazo;
+- la regla de la izquierda saliendo antes que sus marcas;
+- la regla de la derecha escrita debajo de la izquierda;
+- las cajas en otro orden en inglés;
+- la regla de la derecha diciendo otra cosa en inglés;
+- el nombre de la derecha desde el paso 0;
+- el marcador del paso 4 diciendo 3 de 4;
+- «sensor» en una frase;
+- las cosas de la derecha desde el paso 2;
+- los momentos de la derecha saliendo todos juntos;
+- el sol sin sus rayos;
+- el muñeco flotando sobre su pedestal;
+- y la flecha al revés.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 60 cuadros por segundo, y el peor cuadro es
+de 67 ms. Mi Primer Programa, medida el mismo día, va a 60 y 83 ms.
+
+⚠️ **Y de paso, un comentario fuera de su sitio en la sonda.** Al añadir la
+escena de Mi Primer Programa, su función quedó debajo del comentario que explica
+la de Detective de Bugs, y la de Bugs se quedó sin el suyo. Cada una tiene ahora
+el suyo: un comentario que explica otra cosa es peor que ninguno.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:

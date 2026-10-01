@@ -418,36 +418,36 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 // tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
 // Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 let evalTFBank=[
-  {q:'Una máquina que solo actúa ya es un robot.',a:false,k:'tf-solo-actua'},
-  {q:'Marvin supo explicar por qué el muñeco no era un robot.',a:false,k:'tf-marvin'},
+  {q:'Un robot que percibe y decide, pero no tiene con qué actuar, igual puede hacer su trabajo.',a:false,k:'tf-sin-actuar'},
+  {q:'Hay robots exploradores que toman su energía del sol.',a:true,k:'tf-explorador'},
   {q:'Un robot puede tener forma de animal o de carrito.',a:true,k:'tf-formas'},
   {q:'Los robots piensan y sienten igual que las personas.',a:false,k:'tf-piensan'},
   {q:'Sin instrucciones escritas, un robot no sabe qué hacer.',a:true,k:'tf-sin-programa'},
   {q:'En los hospitales hay cirugía asistida por robots.',a:true,k:'tf-cirugia'},
   {q:'La plancha que calienta al enchufarla es un robot.',a:false,k:'tf-plancha'},
-  {q:'Una puerta que se abre sola cuando te acercas es un robot sencillo.',a:true,k:'tf-puerta'},
+  {q:'Un robot puede percibir si algo está caliente.',a:true,k:'tf-caliente'},
   {q:'Todos los robots se parecen a los de las películas.',a:false,k:'tf-peliculas'},
   {q:'El carrito que sigue una línea en el piso es un robot.',a:true,k:'tf-carrito'}
 ];
 let evalMCBank=[
-  {q:'¿Qué es un robot?',o:['a) Cualquier máquina de metal','b) Un juguete con luces','c) Una máquina que percibe, decide y actúa','d) Una computadora con pantalla'],a:2,k:'mc-robot'},
-  {q:'¿Cuál es el orden del ciclo del robot?',o:['a) Actuar → percibir → decidir','b) Percibir → decidir → actuar','c) Decidir → actuar → percibir','d) Percibir → actuar → decidir'],a:1,k:'mc-ciclo'},
-  {q:'¿Por qué el muñeco de la feria no es un robot?',o:['a) Porque no se entera de nada ni decide nada','b) Porque es pequeño','c) Porque es de plástico','d) Porque no tiene luces'],a:0,k:'mc-muneco'},
+  {q:'¿Para qué le sirve un micrófono a un robot?',o:['a) Para ver','b) Para moverse','c) Para oír','d) Para cargarse'],a:2,k:'mc-microfono'},
+  {q:'Un robot recorre la casa. Si deja de percibir lo que tiene enfrente, ¿qué le puede pasar?',o:['a) Recorre la casa más rápido','b) Choca contra las sillas','c) Se carga solo','d) Gana más energía'],a:1,k:'mc-sillas'},
+  {q:'¿Qué puede usar un robot para avisar que terminó su trabajo?',o:['a) Una luz o una bocina','b) Una piedra','c) Un cuaderno','d) Un lápiz'],a:0,k:'mc-luces'},
   {q:'¿Qué parte de tu cuerpo se parece a la cámara del robot?',o:['a) El estómago','b) Los huesos','c) Los ojos','d) Las uñas'],a:2,k:'mc-ojos'},
   {q:'¿Qué hacen los brazos robóticos en la maquila?',o:['a) Piensan por los obreros','b) Venden la ropa','c) Diseñan la moda','d) Cosen y cortan tela'],a:3,k:'mc-maquila'},
   {q:'¿Qué robot limpia la casa y elige por dónde ir?',o:['a) La licuadora','b) La aspiradora robot','c) El martillo','d) La plancha'],a:1,k:'mc-aspiradora'},
-  {q:'¿Qué movía el muñeco de la feria?',o:['a) La cabeza','b) El brazo','c) Las ruedas','d) Los ojos'],a:1,k:'mc-brazo'},
+  {q:'Si a un robot se le acaba la energía, ¿qué le pasa?',o:['a) Sigue funcionando igual','b) Todo el robot se apaga','c) Solo se le apaga la pantalla','d) Se mueve más rápido'],a:1,k:'mc-sin-bateria'},
   {q:'¿Dónde aprendiste antes la comparación con el cuerpo?',o:['a) En la Ruta del Cuerpo','b) En la Ruta de la Patria','c) En la de los Números','d) En ninguna'],a:0,k:'mc-ruta-cuerpo'},
   {q:'¿Cuál NO es un tipo de robot?',o:['a) Móvil','b) Industrial','c) Humanoide','d) Licuadora'],a:3,k:'mc-tipos'},
-  {q:'¿Qué hace el robot en el primer paso de su ciclo?',o:['a) Se entera de lo que pasa a su alrededor','b) Mueve las ruedas','c) Se apaga','d) Guarda la batería'],a:0,k:'mc-percibir'}
+  {q:'¿Cuál de estas cosas trabaja solo cuando tú la mueves?',o:['a) La palanca','b) La puerta automática','c) El dron','d) La lámpara que se enciende sola de noche'],a:0,k:'mc-palanca'}
 ];
 let evalCPBank=[
-  {q:'A Marvin le preguntaron por ___ no era un robot, y se quedó callado.',a:'qué',acc:['qué','que'],k:'cp-que'},
-  {q:'El muñeco saludaba igual de día y de ___.',a:'noche',acc:['noche'],k:'cp-noche'},
+  {q:'Las partes del robot trabajan en ___, como tu cuerpo cuando esquivas una pelota.',a:'equipo',acc:['equipo'],k:'cp-equipo'},
+  {q:'El programa es la lista de instrucciones ___ que el robot obedece paso a paso.',a:'exactas',acc:['exactas','exacta'],k:'cp-exactas'},
   {q:'Los motores del robot funcionan como los ___ de tu cuerpo.',a:'músculos',acc:['músculos','musculos'],k:'cp-musculos'},
   {q:'El ciclo del robot se repite muchas veces por ___.',a:'segundo',acc:['segundo'],k:'cp-segundo'},
   {q:'Los robots siguen instrucciones escritas por ___.',a:'personas',acc:['personas','la gente'],k:'cp-personas'},
-  {q:'Solo es robot la máquina que cumple las ___ partes del ciclo.',a:'tres',acc:['tres','3'],k:'cp-tres'},
+  {q:'Para saber si el huerto necesita agua, un robot regador percibe la ___ de la tierra.',a:'humedad',acc:['humedad'],k:'cp-humedad'},
   {q:'Un robot móvil se desplaza con ___.',a:'ruedas',acc:['ruedas'],k:'cp-ruedas'},
   {q:'En esta misión se aprende con lógica, papel y ___.',a:'juegos',acc:['juegos'],k:'cp-juegos'},
   {q:'El robot que ayuda en las cirugías trabaja con gran ___.',a:'precisión',acc:['precisión','precision'],k:'cp-precision'},
@@ -558,7 +558,7 @@ let critSensorBank=[
   {k:'se-linea',txt:'Un carrito robótico sigue una línea negra pintada en el piso del aula.',ans:'Sensor de luz: distingue lo negro de lo claro en el piso; el controlador decide corregir el rumbo para no salirse.'},
 ];
 let critErrorBank=[
-  {k:'er-licuadora',txt:'"La licuadora es un robot porque se mueve".',g1:'Moverse (actuar) no basta para ser robot: la licuadora NO PERCIBE su entorno con sensores.',g2:'Tampoco DECIDE sola: una persona la enciende y la apaga. El robot cumple el ciclo completo percibir → decidir → actuar.'},
+  {k:'er-cirugia',txt:'"El robot de cirugía opera solo, sin ningún médico".',g1:'El robot de cirugía no opera solo: AYUDA al médico con movimientos de gran precisión.',g2:'Por eso se llama cirugía ASISTIDA: el robot actúa con precisión, y quien dirige la operación es el médico.'},
   {k:'er-piensan',txt:'"Los robots piensan y sienten igual que las personas".',g1:'Los robots NO piensan como personas: siguen las instrucciones de su PROGRAMA.',g2:'Tampoco sienten emociones: sus sensores solo miden datos (luz, distancia, calor) y el controlador decide según lo programado.'},
   {k:'er-martillo',txt:'"El martillo es un robot porque es una máquina y trabaja mucho".',g1:'El martillo es una MÁQUINA SIMPLE: no tiene sensores ni programa, no percibe nada.',g2:'No decide ni actúa solo: toda la fuerza y la decisión las pone la persona que lo usa.'},
   {k:'er-programa',txt:'"Un robot no necesita programa: él solo sabe qué hacer".',g1:'Sin PROGRAMA el controlador no sabe qué decidir: el programa es su lista de instrucciones exactas.',g2:'Lo que parece «saber» del robot es trabajo de las personas que lo programaron paso a paso.'},
@@ -570,7 +570,7 @@ let critCicloQuestions=[
 ];
 let critCicloBank=[
   {k:'ci-aspiradora',txt:'La aspiradora robot limpia la casa: cuando encuentra una silla la esquiva, y cuando su batería está baja regresa sola a cargarse.',p:'Percibe los obstáculos (sensor de distancia o de tacto) y el nivel de su propia batería.',d:'Decide esquivar la silla y, si la batería está baja, decide regresar al cargador.',a:'Actúa con sus motores y ruedas: gira, cambia de ruta y viaja hasta el cargador.'},
-  {k:'ci-puerta',txt:'La puerta automática del supermercado se abre cuando una persona se acerca y se cierra cuando ya nadie pasa.',p:'Percibe a la persona con un sensor de movimiento o de distancia.',d:'Decide abrir cuando detecta a alguien cerca y cerrar cuando ya no hay nadie.',a:'Actúa con un motor (actuador) que desliza la puerta.'},
+  {k:'ci-banano',txt:'Imagina una empacadora de banano: un brazo robótico revisa cada racimo que pasa por la banda; si trae una mancha, lo aparta, y si viene sano, lo deja seguir.',p:'Percibe cada racimo con su cámara (sensor).',d:'Decide si el racimo trae una mancha o viene sano, según su programa.',a:'Actúa moviendo el brazo (actuador) para apartar el racimo manchado.'},
   {k:'ci-dron',txt:'Un dron vuela sobre el cafetal: toma fotos de las plantas y, si detecta una zona enferma, avisa al agricultor.',p:'Percibe el cultivo con su cámara (sensor) y su posición con el GPS.',d:'Decide qué zona revisar y reconoce cuándo una zona se ve enferma.',a:'Actúa con sus hélices (motores) para volar y envía el aviso al teléfono del agricultor.'},
   {k:'ci-maquila',txt:'En la maquila, un brazo robótico cose bolsillos: toma la tela, la coloca en su lugar exacto y cose la costura completa.',p:'Percibe la posición de la tela con sus sensores.',d:'Decide dónde colocar la tela y cuándo empezar y terminar la costura, según su programa.',a:'Actúa moviendo el brazo y la aguja (actuadores) para coser.'},
 ];

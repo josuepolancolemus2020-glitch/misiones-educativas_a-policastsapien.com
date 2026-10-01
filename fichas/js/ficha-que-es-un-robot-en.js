@@ -74,10 +74,10 @@
         'and your <strong>muscles</strong> get you out of the way (effector). A robot does exactly the same with its parts:</p>' +
         '<table>' +
         '<tr><th>Robot part</th><th>In your body</th><th>What does it do?</th></tr>' +
-        '<tr><td class="k">📡 Sensors</td><td>Eyes, ears, skin</td><td>They SENSE: light, sound, distance, touch, temperature</td></tr>' +
+        '<tr><td class="k">📡 Sensors</td><td>Eyes, ears, skin</td><td>They SENSE: light, sound, distance, touch, temperature, moisture (the camera sees; the microphone hears). Without them, a moving robot crashes into whatever is in front of it</td></tr>' +
         '<tr><td class="k">🧠 Controller</td><td>The brain</td><td>It DECIDES according to the instructions in its program</td></tr>' +
-        '<tr><td class="k">💪 Actuators</td><td>The muscles</td><td>They ACT: motors, wheels, arms, lights, speakers</td></tr>' +
-        '<tr><td class="k">🔋 Power</td><td>Food</td><td>It gives strength to every part (battery or electricity)</td></tr>' +
+        '<tr><td class="k">💪 Actuators</td><td>The muscles</td><td>They ACT: motors, wheels, arms, lights, speakers. Without them, the decision stays an idea</td></tr>' +
+        '<tr><td class="k">🔋 Power</td><td>Food</td><td>It gives strength to every part: a battery, electricity or the sun, with solar panels, like an explorer robot. Without it, the whole robot shuts down</td></tr>' +
         '</table>' +
         '<div class="tri">' +
         '<div class="tnuc"><b>📋 The program</b>It is the list of <strong>exact instructions</strong> the robot obeys step by step. With no program, the controller does not know what to decide.</div>' +
@@ -88,7 +88,7 @@
         '<h2>⚖️ 3. Robot, simple machine or home appliance?</h2>' +
         '<table>' +
         '<tr><th>Machine</th><th>Senses?</th><th>Decides?</th><th>Acts?</th><th>Verdict</th></tr>' +
-        '<tr><td class="k">🔨 Hammer</td><td>No</td><td>No</td><td>No (you move it)</td><td>Simple machine</td></tr>' +
+        '<tr><td class="k">🔨 Hammer or lever</td><td>No</td><td>No</td><td>No (you move it)</td><td>Simple machine</td></tr>' +
         '<tr><td class="k">🥤 Blender</td><td>No</td><td>No (you switch it on)</td><td>Yes</td><td>Home appliance</td></tr>' +
         '<tr><td class="k">🤖 Robot vacuum</td><td>Yes: obstacles</td><td>Yes: it picks its route</td><td>Yes: wheels and brushes</td><td>A ROBOT!</td></tr>' +
         '</table>' +
@@ -130,12 +130,12 @@
 
         '<h3>I. Fill in the blanks <span class="val">(Value: 10 points each)</span></h3>' +
         '<ol>' +
-        '<li>They asked Marvin <span class="linea-resp"></span> it was not a robot, and he said nothing.</li>' +
-        '<li>The puppet waved the same way by day and by <span class="linea-resp"></span>.</li>' +
+        '<li>The parts of the robot work as a <span class="linea-resp"></span>, like your body when you dodge a ball.</li>' +
+        '<li>The program is the list of <span class="linea-resp"></span> instructions that the robot obeys step by step.</li>' +
         '<li>The robot’s motors work like the <span class="linea-resp"></span> of your body.</li>' +
         '<li>The robot cycle repeats many times per <span class="linea-resp"></span>.</li>' +
         '<li>Robots follow instructions written by <span class="linea-resp"></span>.</li>' +
-        '<li>Only a machine that completes the <span class="linea-resp"></span> parts of the cycle is a robot.</li>' +
+        '<li>To know whether the garden needs water, a watering robot senses the <span class="linea-resp"></span> of the soil.</li>' +
         '<li>A mobile robot moves around on <span class="linea-resp"></span>.</li>' +
         '<li>In this mission you learn with logic, paper and <span class="linea-resp"></span>.</li>' +
         '<li>The robot that helps in surgery works with great <span class="linea-resp"></span>.</li>' +
@@ -145,43 +145,43 @@
         '<h3>II. True or False <span class="val">(Value: 10 points each)</span></h3>' +
         '<ol>' +
         '<li>____ A robot can be shaped like an animal or a little cart.</li>' +
-        '<li>____ A machine that only acts is already a robot.</li>' +
-        '<li>____ Without written instructions, a robot does not know what to do.</li>' +
-        '<li>____ Marvin was able to explain why the puppet was not a robot.</li>' +
-        '<li>____ In hospitals there is surgery assisted by robots.</li>' +
+        '<li>____ A robot that senses and decides, but has nothing to act with, can still do its job.</li>' +
+        '<li>____ There are explorer robots that take their energy from the sun.</li>' +
+        '<li>____ A robot can sense whether something is hot.</li>' +
         '<li>____ Robots think and feel just like people.</li>' +
-        '<li>____ A door that opens on its own when you come near is a simple robot.</li>' +
         '<li>____ The iron that heats up when you plug it in is a robot.</li>' +
-        '<li>____ The little cart that follows a line on the floor is a robot.</li>' +
+        '<li>____ Without written instructions, a robot does not know what to do.</li>' +
+        '<li>____ In hospitals there is surgery assisted by robots.</li>' +
         '<li>____ All robots look like the ones in the movies.</li>' +
+        '<li>____ The little cart that follows a line on the floor is a robot.</li>' +
         '</ol>',
 
       /* ═══════════ PÁGINA 5 ═══════════ */
       p5:
-        '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span>. Circle the correct letter.</h3>' +
+        '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span>. Fill in the circle of the letter of the correct answer.</h3>' +
 
-        '<div class="preg"><div class="preg-q"><span class="preg-n">1</span>What is a robot?</div>' +
+        '<div class="preg"><div class="preg-q"><span class="preg-n">1</span>What is a microphone for in a robot?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> Any metal machine</span>' +
-        '<span class="op"><i>b</i> A toy with lights</span>' +
-        '<span class="op"><i>c</i> A machine that senses, decides and acts</span>' +
-        '<span class="op"><i>d</i> A computer with a screen</span>' +
+        '<span class="op"><i>a</i> To see</span>' +
+        '<span class="op"><i>b</i> To move</span>' +
+        '<span class="op"><i>c</i> To hear</span>' +
+        '<span class="op"><i>d</i> To charge itself</span>' +
         '</div></div>' +
 
-        '<div class="preg"><div class="preg-q"><span class="preg-n">2</span>What is the order of the robot cycle?</div>' +
+        '<div class="preg"><div class="preg-q"><span class="preg-n">2</span>A robot goes around the house. If it stops sensing what is in front of it, what can happen to it?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> Act → sense → decide</span>' +
-        '<span class="op"><i>b</i> Sense → decide → act</span>' +
-        '<span class="op"><i>c</i> Decide → act → sense</span>' +
-        '<span class="op"><i>d</i> Sense → act → decide</span>' +
+        '<span class="op"><i>a</i> It goes around the house faster</span>' +
+        '<span class="op"><i>b</i> It crashes into the chairs</span>' +
+        '<span class="op"><i>c</i> It charges itself</span>' +
+        '<span class="op"><i>d</i> It gains more energy</span>' +
         '</div></div>' +
 
-        '<div class="preg"><div class="preg-q"><span class="preg-n">3</span>Why is the puppet at the fair not a robot?</div>' +
+        '<div class="preg"><div class="preg-q"><span class="preg-n">3</span>What can a robot use to let you know it finished its job?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> Because it does not notice anything or decide anything</span>' +
-        '<span class="op"><i>b</i> Because it is small</span>' +
-        '<span class="op"><i>c</i> Because it is made of plastic</span>' +
-        '<span class="op"><i>d</i> Because it has no lights</span>' +
+        '<span class="op"><i>a</i> A light or a speaker</span>' +
+        '<span class="op"><i>b</i> A stone</span>' +
+        '<span class="op"><i>c</i> A notebook</span>' +
+        '<span class="op"><i>d</i> A pencil</span>' +
         '</div></div>' +
 
         '<div class="preg"><div class="preg-q"><span class="preg-n">4</span>Which part of your body is like the robot’s camera?</div>' +
@@ -208,12 +208,12 @@
         '<span class="op"><i>d</i> The iron</span>' +
         '</div></div>' +
 
-        '<div class="preg"><div class="preg-q"><span class="preg-n">7</span>What did the puppet at the fair move?</div>' +
+        '<div class="preg"><div class="preg-q"><span class="preg-n">7</span>If a robot runs out of power, what happens to it?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> Its head</span>' +
-        '<span class="op"><i>b</i> Its arm</span>' +
-        '<span class="op"><i>c</i> Its wheels</span>' +
-        '<span class="op"><i>d</i> Its eyes</span>' +
+        '<span class="op"><i>a</i> It keeps working the same</span>' +
+        '<span class="op"><i>b</i> The whole robot shuts down</span>' +
+        '<span class="op"><i>c</i> Only its screen switches off</span>' +
+        '<span class="op"><i>d</i> It moves faster</span>' +
         '</div></div>' +
 
         '<div class="preg"><div class="preg-q"><span class="preg-n">8</span>Where did you learn the comparison with the body before?</div>' +
@@ -232,12 +232,12 @@
         '<span class="op"><i>d</i> Blender</span>' +
         '</div></div>' +
 
-        '<div class="preg"><div class="preg-q"><span class="preg-n">10</span>What does the robot do in the first step of its cycle?</div>' +
+        '<div class="preg"><div class="preg-q"><span class="preg-n">10</span>Which of these things works only when you move it?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> It finds out what is happening around it</span>' +
-        '<span class="op"><i>b</i> It moves the wheels</span>' +
-        '<span class="op"><i>c</i> It switches off</span>' +
-        '<span class="op"><i>d</i> It saves the battery</span>' +
+        '<span class="op"><i>a</i> The lever</span>' +
+        '<span class="op"><i>b</i> The automatic door</span>' +
+        '<span class="op"><i>c</i> The drone</span>' +
+        '<span class="op"><i>d</i> The lamp that switches on by itself at night</span>' +
         '</div></div>',
 
       /* ═══════════ PÁGINA 6 ═══════════
@@ -258,7 +258,7 @@
         '<tr><td>10. ____ Unplugged robotics</td><td>J. It does not sense, does not decide and you move it</td></tr>' +
         '</table>' +
 
-        '<div class="felic">🏅 <b>Congratulations! You have completed the Mission «What Is a Robot?»</b> Now you know that a robot senses, thinks and acts; that its sensors are like your senses, its controller like your brain and its actuators like your muscles; and that robots already work in the garment factory, the coffee field and the hospital. Keep moving along the Robot Path! 🤖📡</div>' +
+        '<div class="felic">🏅 <b>Congratulations! You finished the test of the Mission «What Is a Robot?»</b> Before you hand it in, check your answers one by one. Keep moving along the Robot Path! 🤖📡</div>' +
 
         '<h2>📏 Assessment Rubric</h2>' +
         '<table class="rubrica">' +
@@ -277,8 +277,8 @@
         '<p style="font-size:10pt;color:var(--gris);">This sheet is printed <strong>separately</strong>: it is only for the teacher or for guided self-assessment.</p>' +
 
         '<div class="pauta">' +
-        '<div><span class="pt">I. Fill in the blanks:</span> 1. why &nbsp; 2. night &nbsp; 3. muscles &nbsp; 4. second &nbsp; 5. people &nbsp; 6. three &nbsp; 7. wheels &nbsp; 8. games &nbsp; 9. precision &nbsp; 10. effector</div>' +
-        '<div><span class="pt">II. True or False:</span> 1T, 2F, 3T, 4F, 5T, 6F, 7T, 8F, 9T, 10F</div>' +
+        '<div><span class="pt">I. Fill in the blanks:</span> 1. team &nbsp; 2. exact &nbsp; 3. muscles &nbsp; 4. second &nbsp; 5. people &nbsp; 6. moisture &nbsp; 7. wheels &nbsp; 8. games &nbsp; 9. precision &nbsp; 10. effector</div>' +
+        '<div><span class="pt">II. True or False:</span> 1T, 2F, 3T, 4T, 5F, 6F, 7T, 8T, 9F, 10T</div>' +
         '<div><span class="pt">III. Multiple choice:</span> 1c, 2b, 3a, 4c, 5d, 6b, 7b, 8a, 9d, 10a</div>' +
         '<div><span class="pt">IV. Matching:</span> 1C, 2H, 3E, 4I, 5A, 6G, 7J, 8B, 9F, 10D</div>' +
         '</div>' +
