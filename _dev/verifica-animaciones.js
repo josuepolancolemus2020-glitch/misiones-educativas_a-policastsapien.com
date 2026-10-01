@@ -144,6 +144,22 @@ for (const m of misiones) {
   /* 3 · el aparato antes que la escena, y la escena monta ESE bloque */
   const iAparato = m.html.indexOf('src="../../js/animacion-mision.js"');
   const escenas = [...m.html.matchAll(/src="(js\/animacion-[^"?]+\.js)(?:\?[^"]*)?"/g)].map(x => ({ src: x[1], i: x.index }));
+  /* ⚠️ Una escena que comparten varias misiones (la del año de Kenia, en las
+     cuatro Pruebas de Fin de Grado) vive en ../../js/escena-*.js, para no
+     copiarla cuatro veces. Se le pide lo mismo que a cualquier escena: que
+     cargue después del aparato y antes de la de la misión, y que no gaste,
+     no salga del sitio ni dé XP. */
+  const comunes = [...m.html.matchAll(/src="\.\.\/\.\.\/(js\/escena-[^"?]+\.js)(?:\?[^"]*)?"/g)].map(x => ({ src: x[1], i: x.index }));
+  for (const c of comunes) {
+    ok(c.i > m.html.indexOf('src="../../js/animacion-mision.js"') && escenas.every(e => e.i > c.i), `la escena común ${c.src} se carga después del aparato y antes de la de la misión`);
+    const ruta = path.join(RAIZ, c.src);
+    if (!fs.existsSync(ruta)) { ok(false, `existe ${c.src}`); continue; }
+    const js = sinComentariosJs(fs.readFileSync(ruta, 'utf8'));
+    ok(!/\bsetInterval\s*\(|\brequestAnimationFrame\s*\(/.test(js), `${c.src}: sin bucle de dibujo (ni setInterval ni requestAnimationFrame)`);
+    ok(!/https?:\/\//.test(js), `${c.src}: no pide nada fuera del sitio`);
+    const premios = js.match(/\b(fin|pts|unlockAchievement|saveProgress|launchConfetti)\s*\(/g);
+    ok(!premios, `${c.src}: mirarla no da XP, ni estrella, ni logro`, premios || undefined);
+  }
   ok(iAparato > 0, 'carga el aparato (js/animacion-mision.js)');
   ok(escenas.length > 0, 'carga su escena (js/animacion-<tema>.js)');
   let montaEse = false;

@@ -116,11 +116,18 @@ const BASE = process.env.METAS_BASE || 'http://localhost:8080';
   }
 
   console.log('\n🔁 Determinismo de las formas');
-  const f1 = await page.evaluate(() => { evalFormNum = 7; genEval(); return document.getElementById('evalOut').textContent; });
-  const f2 = await page.evaluate(() => { evalFormNum = 7; genEval(); return document.getElementById('evalOut').textContent; });
+  /* Las Pruebas de Fin de Grado no usan evalFormNum: cada materia lleva su
+     propio contador (evalFormNumMat, evalFormNumEsp) y genEval(N) rearma la
+     Forma N sin avanzarlo. Con evalFormNum la sonda pedía la 7, le salía la
+     siguiente, y daba por averiadas cuatro misiones sanas (su determinismo
+     lo vigila test-determinismo-fin-de-grado-<grado>.js). */
+  const porMateria = await page.evaluate(() => typeof evalFormNumMat !== 'undefined');
+  const forma = n => page.evaluate(([n, pm]) => { if (pm) genEval(n); else { evalFormNum = n; genEval(); } return document.getElementById('evalOut').textContent; }, [n, porMateria]);
+  const f1 = await forma(7);
+  const f2 = await forma(7);
   if (f1 !== f2) mal('la Forma 7 salió distinta dos veces: la pauta que el maestro guardó no serviría');
   else bien('la Forma 7 sale igual las dos veces');
-  const f3 = await page.evaluate(() => { evalFormNum = 8; genEval(); return document.getElementById('evalOut').textContent; });
+  const f3 = await forma(8);
   if (f1 === f3) mal('la Forma 8 salió idéntica a la 7');
   else bien('formas distintas dan exámenes distintos');
 

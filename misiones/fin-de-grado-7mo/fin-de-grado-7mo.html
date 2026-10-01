@@ -12,6 +12,9 @@
 <meta property="og:url" content="https://metas.policastsapien.com/misiones/fin-de-grado-7mo/fin-de-grado-7mo.html">
 <link rel="stylesheet" href="../../css/vendor/fuentes/fuentes.css">
 <link rel="stylesheet" href="css/fin-de-grado-7mo.css">
+<!-- La animación que explica el tema, justo después de la historia. Va
+     DESPUÉS del CSS de la misión: de ahí saca sus colores. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La barra de secciones, arriba y siempre a la vista. Va DESPUÉS del CSS
      de la misión a propósito: de ahí saca su color, y así sobrescribe su
      position:static sin un solo !important. -->
@@ -73,6 +76,10 @@
     estudiar la misma prueba dos veces tampoco: se aprende el examen, no el tema. Aquí hay
     <strong>20 formas distintas</strong>: cada vez sale otra, con las mismas cosas preguntadas de otra
     manera.</div></div>
+  </div>
+  <div class="card ac-teal" data-animacion>
+    <h2>📅 El año de Kenia, mes a mes</h2>
+    <div id="amAnio7"><p>Lo que Kenia aprendió en marzo y no volvió a tocar se le fue borrando hasta noviembre; lo de octubre lo tenía fresco. Dos días de repaso, al lado de nueve meses de clases, son una rayita. Una forma distinta de la prueba cada mes la hace volver a lo de antes.</p></div>
   </div>
   <div class="card ac-purple">
     <h2>🔮 Predice antes de resolver</h2>
@@ -758,6 +765,11 @@
   <!-- Accesibilidad de aula compartida + registro local de evidencia (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+  <!-- La animación que explica el tema: el aparato, la escena común de las
+       cuatro Pruebas de Fin de Grado y la que la monta en esta misión. -->
+  <script src="../../js/animacion-mision.js"></script>
+  <script src="../../js/escena-anio.js"></script>
+  <script src="js/animacion-anio.js"></script>
 
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>

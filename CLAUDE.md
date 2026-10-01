@@ -13207,6 +13207,149 @@ Con la CPU frenada seis veces va a 57 cuadros por segundo, y el peor cuadro es d
 167 ms la primera vez que se entra al paso 1; Los Tres Poderes, medida el mismo
 día, va a 58 y 150 ms.
 
+### La sexagésima octava: Las Pruebas de Fin de Grado, y lo que enseñó
+
+Las siguientes del pedido son las cuatro de la Ruta de la Meta: **las Pruebas de Fin
+de Grado de 4º, 5º, 6º y 7º** (`misiones/fin-de-grado-<grado>/`). Es la primera vez
+que **una escena sirve para cuatro misiones**: `js/escena-anio.js`. La historia es la
+misma en los cuatro grados: la prueba llega en un solo día y pregunta lo de todo el
+año. Kenia repasó la semana antes, lo de octubre le salió bien y lo de marzo, mal: lo
+vio una vez, hace ocho meses, y no lo volvió a tocar. La animación pone el año de
+clases en una fila, de febrero a octubre, con una hoja por mes, y en noviembre la
+hoja de la prueba con su grado:
+
+- antes de tocar: ¿qué le quedará de marzo?;
+- Kenia camina el año mes a mes, y lo que no vuelve a tocar se va borrando: cada hoja
+  según los meses que lleva sin tocarse, todas al mismo paso. Abajo, la leyenda: «lo
+  tiene fresco» y «se le está borrando»;
+- en la prueba, la ✗ (dos rayas) cae en la hoja borrada de marzo y la ✓ en la fresca
+  de octubre, y una llave cuenta «8 meses sin volver a tocarlo»;
+- ¿y si repasa dos días antes? Arriba, la barra de los 9 meses de clases, y a esa
+  escala los dos días son una rayita; abajo, un mes de cerca, día por día, con sus
+  dos últimos días pintados;
+- otro año, desde marzo, hace cada mes una forma distinta de la prueba (de F1 a F8),
+  y cada forma vuelve a lo de antes: un puntito en cada hoja anterior. Marzo junta
+  siete, y en noviembre le sale bien. Abajo, las 20 formas de la misión, con las 8
+  que usó encendidas;
+- y la pregunta es del alumno: qué vio en marzo y no ha vuelto a tocar, y qué día
+  lo va a repasar.
+
+Siete cosas que valen para las que siguen:
+
+1. ⚠️ **Una escena para cuatro misiones vive en un solo archivo.** Cada misión trae
+   un archivo de dos líneas (`js/animacion-anio.js`) que la monta en su bloque, con
+   su grado y su propio id (de `#amAnio4` a `#amAnio7`). Copiarla en cuatro
+   carpetas era tener cuatro copias que un día dejan de decir lo mismo, que es la
+   lección de los juegos 3D. Los ids son distintos porque la sonda del navegador
+   guarda lo que mide cada escena por su id. Y la sonda estática aprendió los
+   archivos compartidos: van después del aparato y antes de la escena de la misión,
+   sin bucle de dibujo, sin nada de fuera, sin `fin()` ni `pts()`.
+2. ⚠️ **Cuántas formas tiene la misión no se escribe: se lee** (`EVAL_FORMAS`). Si
+   una misión tuviera menos formas que meses, la escena no se monta y queda la frase
+   de reserva: el paso de «una forma distinta cada mes» sería mentira.
+3. ⚠️ **Lo que se afirma, y de dónde sale.** El año de clases va de febrero a
+   noviembre, porque en Honduras las aulas están cerradas de noviembre a febrero. Lo
+   que no se vuelve a tocar se va borrando: lo dice la historia, y se dibuja como un
+   esquema, sin una cifra de memoria (todas las hojas al mismo paso, nada más). Los
+   dos días se dibujan a la escala de la raya del año, con el mes de cerca de unos
+   treinta días: es una cuenta. Y que cada forma pregunta de todo el año lo dice la
+   propia misión.
+4. ⚠️ **Ni un tema de Matemáticas ni de Español.** Eso lo pregunta la prueba de la
+   misión, y el «Predice» que va debajo pregunta fracciones, perímetros, de qué
+   trata un texto y cuándo coinciden dos equipos. La escena enseña cuándo se
+   estudia, no qué, y la sonda lo vigila. No hizo falta cambiar ninguna pregunta:
+   ninguna de las cuatro misiones preguntaba la historia, ni en la conceptual, ni
+   en pensamiento crítico, ni en la ficha.
+5. ⚠️ **Volviendo con «Atrás», lo que se va no se asoma.** El paso 2 empezaba desde
+   el estado del 1 y el 3 desde el del 2. Viniendo hacia atrás, la leyenda del paso 1
+   y la llave del paso 2 se encendían un instante y se apagaban. Ahora cada paso
+   empieza desde lo que de verdad había (`con()`, un estado de la lista con algo
+   cambiado). Y hacia adelante, la leyenda se montaba sobre la llave en el paso 2:
+   se vio en la captura oscura, con la sonda en verde, y ahora la sonda pide que en
+   el paso 2 no haya leyenda.
+6. **Dos de dibujo que salieron mirando.** Las piernas de Kenia eran oscuras y en la
+   pantalla oscura no se veían; ahora son del color de su piel. Y al caminar, el lazo
+   rozaba los meses: Kenia bajó dos puntos.
+7. ⚠️ **Y una sonda que acusaba a las cuatro misiones desde antes.**
+   `verifica-mision-navegador` pedía la Forma 7 con `evalFormNum = 7` y la generaba
+   dos veces. Las Pruebas de Fin de Grado no usan esa variable: cada materia lleva su
+   contador y `genEval(N)` rearma la Forma N. Le salía la siguiente, y decía que la
+   forma «salió distinta dos veces». Ahora usa `genEval(7)` donde la misión lleva un
+   contador por materia. Se comprobó al revés metiéndole azar a la forma de 4º, y
+   sale roja.
+
+La sonda de esta escena **no le cree nada a la escena**, y es la misma para los
+cuatro grados. Saca la escala de las rayitas de la raya del año y lee los meses
+escritos debajo: de ahí sabe en qué mes cae cada hoja, la prueba, Kenia y cada forma.
+Comprueba:
+
+- que la raya esté partida en tramos iguales, con un mes por tramo y en orden, de
+  febrero a noviembre;
+- que haya una hoja por mes, iguales, y la de la prueba en el último, con el grado
+  de la misión;
+- que la prueba pregunte de dos meses, marzo y octubre;
+- que cada hoja se borre según los meses que lleva sin tocarse hasta la prueba,
+  todas al mismo paso, y que lo que la borra sea del color del papel y tape todo lo
+  escrito;
+- que Kenia esté en el mes que toca, debajo de los meses, y que cada salto sea de un
+  mes, a paso parejo, con lo de cada mes escrito cuando ella llega;
+- que la ✗ vaya en la hoja borrada y la ✓ en una fresca, las dos de los meses que
+  pregunta la prueba;
+- que la llave vaya de la hoja de marzo a la de la prueba y diga los meses que
+  abarca;
+- que la barra de las clases mida lo mismo que las hojas, y que los días de repaso,
+  a la escala de la raya (con los días que tiene el mes de cerca), midan lo que
+  dice su rótulo;
+- que haya una forma por mes, de marzo a octubre, encima de su hoja, y que cada hoja
+  tenga un puntito por cada forma que vino después;
+- que la tira tenga todas las formas de la misión, leídas de `EVAL_FORMAS`, y
+  encendidas las que usó;
+- que cada cosa pase cuando le toca: la forma cuando Kenia llega a su mes, el
+  puntito después de su forma, las marcas después de contestar;
+- que la tarjeta del cuaderno tenga sus dos rayas y que el aro rodee solo la hoja
+  de marzo;
+- que la leyenda diga qué es cada hoja chiquita, con la tinta oscura para lo fresco
+  y la clara para lo que se borra;
+- que el marcador y la frase digan lo que se ve, que ningún texto se monte en otro y
+  que todo quepa en el dibujo;
+- y que no salga ningún tema de la prueba ni nada del «Predice».
+
+Se comprobó al revés con veintiocho averías, plantadas una por una:
+
+- una hoja que se borra a otro paso;
+- la ✗ en octubre y la ✓ en marzo;
+- la llave empezando en abril, y diciendo otra cuenta;
+- la rayita de tres días;
+- la barra de ocho meses;
+- los días de repaso al principio del mes, y el mes de cerca con veinte días;
+- un puntito de más en cada hoja;
+- la F3 encima de otro mes;
+- lo escrito saliendo antes de que llegue Kenia;
+- las hojas dejando de borrarse antes de la prueba;
+- el marcador del paso 4 diciendo 8;
+- «fracciones» en una frase;
+- la tira encendiendo nueve formas;
+- Kenia sin dar el último salto;
+- la leyenda quedándose en el paso 2;
+- la hoja de la prueba con otro grado;
+- contestando la prueba antes de llegar, el otro año;
+- la marca de octubre antes que la de marzo;
+- el aro en la hoja de abril;
+- lo que borra en gris y no del color del papel;
+- la leyenda de lo que se borra con tinta oscura;
+- septiembre y octubre cambiados;
+- Kenia encima de los meses;
+- el puntito saliendo antes que su forma, y la forma antes de que llegue Kenia;
+- y la segunda raya del cuaderno, cortita.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 51 o 53 cuadros por segundo; la Constitución,
+medida el mismo día, va a 58. El peor cuadro, de 150 a 183 ms, es el primero de cada
+paso y sale de la página entera: la de Fin de Grado tiene 2 059 elementos, el doble
+que la de la Constitución, y quitarle cien piezas a la escena casi no lo cambió. Se
+dejaron solo los puntitos que una hoja puede llegar a tener: 36 en vez de 72.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -13415,6 +13558,12 @@ tenue (un aro sobre un libro) va antes de lo tenue en el documento, y lo que sig
 vivo, después. Y si lo que asombra en una escena es un dato (que otro libro tenga
 su propio artículo 128), sale del archivo de datos, su fuente está en `_dev/` y la
 sonda de la misión comprueba las dos cosas.
+
+Si la misma escena sirve para varias misiones (las cuatro Pruebas de Fin de
+Grado), vive en `js/escena-<tema>.js` y cada misión trae un archivo de dos líneas
+que la monta en su bloque, con su propio id: la sonda del navegador guarda lo que
+mide cada escena por su id. El `<script>` compartido va después del aparato y antes
+del de la misión, y la sonda estática lo comprueba.
 
 Si la misión es **bilingüe** (carga su `-en.js` y trae el botón 🌐), la escena
 lleva `bilingue: true`, `describe: { es, en }` e `idioma(lang, A)`, y sus

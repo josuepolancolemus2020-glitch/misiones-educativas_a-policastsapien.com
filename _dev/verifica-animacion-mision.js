@@ -4147,6 +4147,108 @@ const LEER = `
       cajasTexto: todos('text').filter(vis).map(caja)
     };
   };
+  /* Las Pruebas de Fin de Grado: una escena para los cuatro grados, cada
+     una con su id (#amAnio4 … #amAnio7). Se lee igual en las cuatro. */
+  window.__amExtra.amAnio4 = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(m(el)); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function union(cs) {
+      return { x0: Math.min.apply(null, cs.map(function (c) { return c.x0; })), y0: Math.min.apply(null, cs.map(function (c) { return c.y0; })),
+               x1: Math.max.apply(null, cs.map(function (c) { return c.x1; })), y1: Math.max.apply(null, cs.map(function (c) { return c.y1; })) };
+    }
+    function uno(sel, en) { return (en || raiz).querySelector(sel); }
+    function todos(sel, en) { return [].slice.call((en || raiz).querySelectorAll(sel)); }
+    function demora(el) { return el ? (parseFloat(el.style.getPropertyValue('--d')) || 0) : 0; }
+    function numeros(d) { return ((d || '').match(/-?[0-9.]+/g) || []).map(Number); }
+    function puntos(el) { var nn = numeros(el.getAttribute('d')), ps = []; for (var i = 0; i + 1 < nn.length; i += 2) ps.push(aVista(el, nn[i], nn[i + 1])); return ps; }
+    function ms(v) { var f = parseFloat(v) || 0; return /ms$/.test(v || '') ? f : (/s$/.test(v || '') ? f * 1000 : f); }
+    function texto(t) { return t ? { txt: t.textContent, caja: caja(t), ve: vis(t), d: demora(t) } : null; }
+    function circulo(c) { return { c: aVista(c, +c.getAttribute('cx'), +c.getAttribute('cy')), r: +c.getAttribute('r'), ve: vis(c), d: demora(c) }; }
+    var K = uno('[data-kenia]'), cb = uno('[data-cabeza]', K);
+    return {
+      vista: [svg.viewBox.baseVal.width, svg.viewBox.baseVal.height],
+      formas: typeof EVAL_FORMAS === 'number' ? EVAL_FORMAS : null,
+      raya: puntos(uno('[data-raya]')),
+      tics: todos('[data-tic]').map(function (t) { return { t: +t.getAttribute('data-tic'), ps: puntos(t) }; }),
+      meses: todos('[data-mes]').map(texto),
+      hojas: todos('[data-hoja]').map(function (g) {
+        var ti = uno('[data-tinta]', g), ve = uno('[data-velo]', g), pa = uno('[data-papel]', g);
+        return {
+          c: +g.getAttribute('data-hoja'), papel: caja(pa), colorPapel: pa.getAttribute('fill'),
+          tinta: { ve: vis(ti), d: demora(ti), renglones: todos('[data-renglon]', ti).map(function (r) { return { ps: puntos(r), color: r.getAttribute('stroke') }; }) },
+          velo: { caja: caja(ve), color: ve.getAttribute('fill'), op: parseFloat(getComputedStyle(ve).fillOpacity),
+                  prop: ve.style.transitionProperty, dura: ms(ve.style.transitionDuration), espera: ms(ve.style.transitionDelay), curva: ve.style.transitionTimingFunction },
+          puntos: todos('[data-punto]', g).map(circulo)
+        };
+      }),
+      prueba: (function () {
+        var g = uno('[data-prueba]');
+        return { caja: caja(uno('[data-prueba-caja]', g)), grado: texto(uno('[data-grado]', g)),
+                 burbujas: todos('[data-burbuja]', g).map(circulo), filas: todos('[data-fila]', g).map(texto) };
+      })(),
+      marcas: todos('[data-marca]').map(function (p) {
+        return { k: p.getAttribute('data-marca'), trazos: (p.getAttribute('d').match(/M/g) || []).length, caja: caja(p), ve: vis(p), d: demora(p) };
+      }),
+      saltos: todos('[data-salto]').map(function (g) {
+        var o = aVista(g, 0, 0);
+        return { s: +g.getAttribute('data-salto'), x: o[0], y: o[1], d: demora(g), dura: ms(g.style.transitionDuration), curva: g.style.transitionTimingFunction };
+      }),
+      kenia: {
+        cabeza: { c: aVista(cb, +cb.getAttribute('cx'), +cb.getAttribute('cy')), r: +cb.getAttribute('r') },
+        cuerpo: union([].slice.call(K.children).filter(function (h) { return h.tagName.toLowerCase() !== 'text'; }).map(caja)),
+        nombre: texto(uno('[data-nombre]', K))
+      },
+      barra: (function () { var g = uno('[data-barra]'); return { ve: vis(g), d: demora(g), clases: caja(uno('[data-clases]', g)), txt: texto(uno('[data-barra-txt]', g)) }; })(),
+      dosDias: (function () {
+        var g = uno('[data-dos-dias]');
+        return { ve: vis(g), d: demora(g), rayita: caja(uno('[data-rayita]', g)), aro: circulo(uno('[data-aro-dias]', g)), txt: texto(uno('[data-dias-txt]', g)) };
+      })(),
+      fichas: todos('[data-ficha]').map(function (g) { return { f: +g.getAttribute('data-ficha'), ve: vis(g), d: demora(g), caja: caja(uno('[data-ficha-caja]', g)), txt: texto(uno('text', g)) }; }),
+      llave: (function () { var g = uno('[data-llave]'); return { ve: vis(g), d: demora(g), ps: puntos(uno('[data-llave-raya]', g)), txt: texto(uno('[data-llave-txt]', g)) }; })(),
+      zoom: (function () {
+        var g = uno('[data-zoom]');
+        return { ve: vis(g), d: demora(g), txt: texto(uno('[data-zoom-txt]', g)), celdas: todos('[data-celda]', g).map(function (c) { return { i: +c.getAttribute('data-celda'), caja: caja(c) }; }) };
+      })(),
+      dosCeldas: (function () {
+        var g = uno('[data-dos-celdas]');
+        return { ve: vis(g), d: demora(g), repaso: todos('[data-repaso]', g).map(function (c) { return { i: +c.getAttribute('data-repaso'), caja: caja(c) }; }), txt: texto(uno('[data-zoom-dias]', g)) };
+      })(),
+      tira: (function () {
+        var g = uno('[data-tira]');
+        return { ve: vis(g), d: demora(g), txt: texto(uno('[data-tira-txt]', g)), pie: texto(uno('[data-tira-pie]', g)),
+          formas: todos('[data-forma]', g).map(function (f) {
+            var u = uno('[data-usada]', f);
+            return { n: +f.getAttribute('data-forma'), caja: caja(uno('[data-forma-caja]', f)), num: texto(uno('text', f)), usada: { ve: vis(u), d: demora(u) } };
+          }) };
+      })(),
+      nota: (function () {
+        var g = uno('[data-nota]');
+        return { ve: vis(g), d: demora(g), caja: caja(uno('[data-nota-caja]', g)), textos: todos('text', g).map(texto), rayas: todos('[data-nota-raya]', g).map(puntos) };
+      })(),
+      aro: (function () { var a = uno('[data-aro-marzo]'); return { ve: vis(a), d: demora(a), caja: caja(a) }; })(),
+      leyendas: todos('[data-leyenda]').map(function (g) {
+        return { k: +g.getAttribute('data-leyenda'), ve: vis(g), d: demora(g),
+          minis: todos('[data-mini]', g).map(function (r) { return { tipo: r.getAttribute('data-mini'), caja: caja(r), color: r.getAttribute('fill') }; }),
+          rayas: todos('path', g).map(function (p) { return { ps: puntos(p), color: p.getAttribute('stroke') }; }),
+          textos: todos('text', g).map(texto) };
+      }),
+      /* El número de cada forma encendida va encima del de la forma: no
+         cuentan como dos textos montados */
+      textos: todos('text').filter(function (t) { return vis(t) && !t.closest('[data-usada]'); }).map(function (t) { return t.textContent; }),
+      cajasTexto: todos('text').filter(function (t) { return vis(t) && !t.closest('[data-usada]'); }).map(caja)
+    };
+  };
+  window.__amExtra.amAnio5 = window.__amExtra.amAnio4;
+  window.__amExtra.amAnio6 = window.__amExtra.amAnio4;
+  window.__amExtra.amAnio7 = window.__amExtra.amAnio4;
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -4363,7 +4465,273 @@ const ESTADOS_CITA = [
   { dia: 1, flechas: false, etq: 1, A: 1, B: 2, vacio: false, libros: true, cual: false, cita: true, cerrado: true, aros: false },
   { dia: 1, flechas: false, etq: 1, A: 1, B: 2, vacio: false, libros: true, cual: false, cita: true, cerrado: true, aros: true }
 ];
+/* Las Pruebas de Fin de Grado: lo que tiene que verse al terminar cada
+   paso. kenia: 'inicio' (el primer mes) o 'prueba' (el mes de la prueba);
+   anio: 0 nada escrito, 'A' el año en que lo ve una sola vez, 'B' el de
+   una forma cada mes; leyenda: cuál se ve (−1, ninguna). */
+const ESTADOS_ANIO = [
+  { kenia: 'inicio', tinta: false, anio: 0, resp: false, marcas: '', llave: false, barra: false, tira: false, nota: false, leyenda: 0 },
+  { kenia: 'prueba', tinta: true, anio: 'A', resp: false, marcas: '', llave: false, barra: false, tira: false, nota: false, leyenda: 1 },
+  { kenia: 'prueba', tinta: true, anio: 'A', resp: true, marcas: 'A', llave: true, barra: false, tira: false, nota: false, leyenda: -1 },
+  { kenia: 'prueba', tinta: true, anio: 'A', resp: true, marcas: 'A', llave: false, barra: true, tira: false, nota: false, leyenda: -1 },
+  { kenia: 'prueba', tinta: true, anio: 'B', resp: true, marcas: 'B', llave: false, barra: false, tira: true, nota: false, leyenda: -1 },
+  { kenia: 'prueba', tinta: true, anio: 'B', resp: true, marcas: 'B', llave: false, barra: false, tira: false, nota: true, leyenda: -1 }
+];
+/* Las Pruebas de Fin de Grado (4º, 5º, 6º y 7º): «El año de Kenia, mes a
+   mes». Una escena para las cuatro, y esta sonda para las cuatro.
+   ⚠️ Nada se le cree a la escena. La sonda saca la escala de las rayitas
+   de la raya del año (un mes por tramo) y lee los meses escritos debajo:
+   de ahí sabe en qué mes cae cada hoja, la prueba, Kenia y cada forma.
+   Con eso mide que cada hoja se borre según los meses que lleva sin
+   tocarse hasta la prueba, todas al mismo paso; que la equis caiga en la
+   hoja borrada y la paloma en la fresca, y que sean las dos de las que
+   pregunta la prueba; cuántos meses abarca la llave; cuántos días mide la
+   rayita a la escala de la raya (con los días que tiene el mes de cerca);
+   y cuántos puntitos tiene cada hoja: uno por cada forma que vino después.
+   Cuántas formas tiene la misión no se escribe aquí: se lee de la misión
+   (EVAL_FORMAS). */
+function verAnio(e, n, GRADO) {
+  const x = e.extra, r = [];
+  if (!x) return [[false, `paso ${n}: la sonda pudo leer la escena`, null]];
+  const cerca = (a, b, t = 0.6) => Math.abs(a - b) <= t;
+  const cen = c => ({ x: (c.x0 + c.x1) / 2, y: (c.y0 + c.y1) / 2 });
+  const dentro = (a, b, m = 0) => a.x0 >= b.x0 - m && a.x1 <= b.x1 + m && a.y0 >= b.y0 - m && a.y1 <= b.y1 + m;
+  const monta = (a, b) => a.x0 < b.x1 - 0.5 && b.x0 < a.x1 - 0.5 && a.y0 < b.y1 - 0.5 && b.y0 < a.y1 - 0.5;
+  const punto = p => ({ x0: p[0], x1: p[0], y0: p[1], y1: p[1] });
+  const lum = h => { const v = (String(h).match(/^#([0-9a-f]{6})$/i) || [])[1]; if (!v) return -1; const f = i => { const c = parseInt(v.substr(i, 2), 16) / 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }; return 0.2126 * f(0) + 0.7152 * f(2) + 0.0722 * f(4); };
+  const E = ESTADOS_ANIO[n];
+  const PAL = ['cero', 'una', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez', 'once', 'doce'];
+  const ABR = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
+  const NOMBRE = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+  const nombre = ab => NOMBRE[ABR.indexOf(ab)];
+
+  /* ── lo que no depende del dibujo va primero ── */
+  /* Ni un tema de Matemáticas ni de Español: la prueba de la misión pregunta
+     eso, y la escena enseña CUÁNDO se estudia, no qué. Ni lo que pregunta el
+     «Predice» que va debajo (la tortilla, la cancha, los equipos que
+     coinciden, los pintores, de qué trata un texto). Los números de la tira
+     de las formas no cuentan: son las formas, del 1 al último. */
+  const PROHIBIDAS = /fracci|decimal|mitad|n[úu]mero|\bsum(a|as|ar)\b|\brest(a|as|ar)\b|multiplic|divi(d|s)|per[ií]metro|[áa]rea\b|volumen|circunfer|di[áa]metro|[áa]ngulo|tri[áa]ngul|cuadrad|rect[áa]ngul|ecuaci|porcentaj|proporci|verbo|sustantiv|adjetiv|adverbi|pronombre|s[ií]laba|tilde|acentu|ortograf|oraci[óo]n|p[áa]rrafo|sujeto|predicado|sin[óo]nim|ant[óo]nim|texto|\btema\b|cuento|noticia|poema|lectura|matem|espa[ñn]ol|coincid|equipo|pintor|cancha|tortilla|\b(14|24|48|90|45|450|12)\b/i;
+  const dicho = [e.texto, e.palabras, e.boton].concat(x.textos.filter(t => !/^[0-9]+$/.test(t))).join(' · ');
+  r.push([!PROHIBIDAS.test(dicho), `paso ${n}: no sale ningún tema de la prueba ni nada del «Predice»`, (dicho.match(PROHIBIDAS) || [])[0]]);
+
+  /* ── la raya del año: un mes por tramo, todos iguales ── */
+  const TIC = x.tics.slice().sort((a, b) => a.t - b.t), tx = TIC.map(t => t.ps[0][0]);
+  const W = (tx[tx.length - 1] - tx[0]) / (tx.length - 1), RY = x.raya[0][1];
+  r.push([TIC.length >= 3 && TIC.every((t, i) => cerca(t.ps[0][0], t.ps[1][0], 0.01) && cerca(tx[i] - tx[0], i * W, 0.05) && Math.min(t.ps[0][1], t.ps[1][1]) < RY && Math.max(t.ps[0][1], t.ps[1][1]) > RY)
+    && cerca(x.raya[0][1], x.raya[1][1], 0.01) && cerca(x.raya[0][0], tx[0], 0.05) && cerca(x.raya[1][0], tx[tx.length - 1], 0.05),
+    `paso ${n}: la raya del año está partida en tramos iguales`, tx]);
+  const MES = x.meses.slice().sort((a, b) => cen(a.caja).x - cen(b.caja).x), i0 = ABR.indexOf(MES[0] && MES[0].txt);
+  r.push([MES.length === TIC.length - 1 && i0 >= 0 && MES.every((mm, i) => mm.txt === ABR[i0 + i] && cerca(cen(mm.caja).x, (tx[i] + tx[i + 1]) / 2, 0.8) && mm.caja.y0 > RY),
+    `paso ${n}: debajo de la raya, un mes por tramo y en su orden`, MES.map(mm => mm.txt)]);
+  /* En Honduras las aulas están cerradas de noviembre a febrero */
+  r.push([MES.length > 0 && MES[0].txt === 'FEB' && MES[MES.length - 1].txt === 'NOV', `paso ${n}: el año va de febrero a noviembre`, MES.map(mm => mm.txt)]);
+  if (MES.length !== TIC.length - 1 || i0 < 0) return r;
+  const col = xx => Math.round((xx - tx[0]) / W - 0.5);
+  const mesDe = xx => (MES[col(xx)] || {}).txt;
+  const iMar = MES.findIndex(mm => mm.txt === 'MAR'), iOct = MES.findIndex(mm => mm.txt === 'OCT');
+
+  /* ── las hojas del año y la de la prueba ── */
+  const H = x.hojas.slice().sort((a, b) => cen(a.papel).x - cen(b.papel).x), PR = x.prueba, PCOL = col(cen(PR.caja).x);
+  const H0 = H[0].papel;
+  r.push([H.length === MES.length - 1 && H.every((h, i) => col(cen(h.papel).x) === i && cerca(cen(h.papel).x, (tx[i] + tx[i + 1]) / 2, 0.6)
+    && cerca(h.papel.x1 - h.papel.x0, H0.x1 - H0.x0, 0.01) && cerca(h.papel.y0, H0.y0, 0.01) && cerca(h.papel.y1, H0.y1, 0.01) && h.papel.y1 < RY - 2)
+    && PCOL === MES.length - 1 && cerca(cen(PR.caja).x, (tx[PCOL] + tx[PCOL + 1]) / 2, 0.6) && cerca(PR.caja.y0, H0.y0, 0.01) && cerca(PR.caja.y1, H0.y1, 0.01),
+    `paso ${n}: una hoja por mes, iguales y encima de su mes; la de la prueba, en el último`, H.map(h => mesDe(cen(h.papel).x))]);
+  r.push([PR.grado.txt === GRADO && dentro(PR.grado.caja, PR.caja, 0.5), `paso ${n}: la hoja de la prueba dice ${GRADO}, el grado de esta misión`, PR.grado.txt]);
+  const filas = PR.filas.map(f => f.txt);
+  r.push([filas.length === 2 && filas.every(f => ABR.map(a => a.toLowerCase()).includes(f)) && filas.includes('mar') && filas.includes('oct')
+    && PR.filas.every(f => dentro(f.caja, PR.caja, 0.5)),
+    `paso ${n}: la prueba pregunta de dos meses: lo de marzo y lo de octubre`, filas]);
+  const hojaDe = ab => H.find(h => mesDe(cen(h.papel).x) === ab);
+  const HM = hojaDe('MAR'), HO = hojaDe('OCT');
+
+  /* ── lo escrito, y lo que se borra ── */
+  r.push([H.every(h => h.tinta.ve === E.tinta && h.tinta.renglones.length >= 3 && h.tinta.renglones.every(rr => rr.ps.every(p => p[0] > h.papel.x0 && p[0] < h.papel.x1 && p[1] > h.papel.y0 && p[1] < h.papel.y1))),
+    `paso ${n}: ${E.tinta ? 'cada hoja tiene escrito lo de su mes' : 'las hojas están en blanco'}`, H.map(h => h.tinta.ve)]);
+  r.push([H.every(h => h.velo.color === h.colorPapel && h.tinta.renglones.every(rr => rr.ps.every(p => dentro(punto(p), h.velo.caja, 0.01)))),
+    `paso ${n}: lo que borra cada hoja es del color del papel y tapa todo lo escrito`, H.map(h => h.velo.color)]);
+  const op = H.map(h => h.velo.op), faltan = H.map(h => PCOL - col(cen(h.papel).x));
+  if (E.anio === 'A') {
+    const k = op[0] / faltan[0];
+    r.push([k > 0 && op.every((o, i) => cerca(o, k * faltan[i], 0.011)),
+      `paso ${n}: cada hoja se borra según los meses que lleva sin tocarse hasta la prueba, todas al mismo paso`, op]);
+    r.push([op[H.indexOf(HM)] >= 0.75 && op[H.indexOf(HO)] <= 0.15, `paso ${n}: lo de marzo está casi borrado y lo de octubre, fresco`, [op[H.indexOf(HM)], op[H.indexOf(HO)]]]);
+  } else r.push([op.every(o => o < 0.01), `paso ${n}: ninguna hoja está borrada`, op]);
+
+  /* ── Kenia ── */
+  const K = x.kenia, kc = col(K.cabeza.c[0]);
+  r.push([kc === (E.kenia === 'prueba' ? PCOL : 0) && cerca(K.cabeza.c[0], (tx[kc] + tx[kc + 1]) / 2, 0.6),
+    `paso ${n}: Kenia está en ${E.kenia === 'prueba' ? 'el mes de la prueba' : 'el primer mes'}`, mesDe(K.cabeza.c[0])]);
+  r.push([K.cuerpo.y0 > Math.max(...MES.map(mm => mm.caja.y1)) && K.nombre.txt === 'Kenia' && cerca(cen(K.nombre.caja).x, K.cabeza.c[0], 0.8) && K.nombre.caja.y0 >= K.cuerpo.y1 - 0.5,
+    `paso ${n}: Kenia camina debajo de los meses, con su nombre debajo`, K.cuerpo]);
+  const S = x.saltos.slice().sort((a, b) => a.s - b.s);
+  r.push([S.length === PCOL && S.every((s, i) => cerca(s.x - (i ? S[i - 1].x : 0), E.kenia === 'prueba' ? W : 0, 0.05) && cerca(s.y - (i ? S[i - 1].y : 0), 0, 0.01)),
+    `paso ${n}: cada salto de Kenia es de un mes`, S.map(s => Math.round(s.x))]);
+  const llegaA = c => c === 0 ? S[0].d : S[c - 1].d + S[c - 1].dura;   // cuándo está Kenia en el mes c
+  if (n === 1 || n === 4) {
+    r.push([S.every((s, i) => s.dura > 0 && cerca(s.dura, S[0].dura, 0.01) && s.curva === 'linear' && (i === 0 || cerca(s.d, S[i - 1].d + S[i - 1].dura, 1))),
+      `paso ${n}: Kenia camina mes a mes, a paso parejo: cada salto empieza cuando acabó el anterior`, S.map(s => [s.d, s.dura])]);
+    r.push([H.every(h => cerca(h.tinta.d, llegaA(col(cen(h.papel).x)), 1)), `paso ${n}: lo de cada mes se escribe cuando Kenia llega a ese mes`, H.map(h => h.tinta.d)]);
+  }
+  if (n === 1) r.push([H.every(h => h.velo.prop === 'fill-opacity' && h.velo.curva === 'linear' && cerca(h.velo.espera, h.tinta.d, 1) && cerca(h.velo.espera + h.velo.dura, llegaA(PCOL), 1)),
+    'paso 1: cada hoja se empieza a borrar cuando se escribe, y se sigue borrando hasta que llega la prueba', H.map(h => [h.velo.espera, h.velo.dura])]);
+
+  /* ── la prueba: sus respuestas y sus marcas ── */
+  const BU = PR.burbujas;
+  r.push([BU.length === 2 && BU.every(b => b.ve === E.resp) && BU.every(b => { const f = PR.filas.find(ff => cerca(cen(ff.caja).y, b.c[1], 3)); return !!f && b.c[0] + b.r < f.caja.x0 && dentro(punto(b.c), PR.caja); }),
+    `paso ${n}: ${E.resp ? 'la prueba está contestada: un círculo relleno en cada fila' : 'la prueba todavía no se contesta'}`, BU.map(b => b.ve)]);
+  const vivas = x.marcas.filter(mm => mm.ve);
+  r.push([vivas.length === (E.marcas ? 2 : 0) && vivas.every(mm => mm.k.charAt(0) === E.marcas), `paso ${n}: ${E.marcas ? 'hay una marca por cada pregunta de la prueba' : 'no hay marcas'}`, vivas.map(mm => mm.k)]);
+  vivas.forEach(mm => {
+    const h = H.find(hh => dentro(punto([cen(mm.caja).x, cen(mm.caja).y]), hh.papel));
+    const borrada = !!h && h.velo.op >= 0.5, fresca = !!h && h.velo.op <= 0.15;
+    r.push([!!h && filas.includes((mesDe(cen(h.papel).x) || '').toLowerCase()) && dentro(mm.caja, h.papel, 2) && (mm.trazos === 2 ? borrada : mm.trazos === 1 && fresca),
+      `paso ${n}: ${mm.trazos === 2 ? 'la ✗ (dos rayas) va en la hoja borrada' : 'la ✓ (una raya) va en una hoja fresca'}, la de un mes que pregunta la prueba`, [mm.k, h && h.velo.op]]);
+  });
+  r.push([new Set(vivas.map(mm => mesDe(cen(mm.caja).x))).size === vivas.length, `paso ${n}: cada marca en su propia hoja`, vivas.map(mm => mesDe(cen(mm.caja).x))]);
+  const palomas = vivas.filter(mm => mm.trazos === 1);
+
+  /* ── los ocho meses sin tocarlo ── */
+  const LL = x.llave, LP = LL.ps, desde = LP[0][0], hasta = LP[LP.length - 1][0], mesesLlave = Math.round((hasta - desde) / W);
+  r.push([LL.ve === E.llave, `paso ${n}: ${E.llave ? 'la llave cuenta los meses que lo de marzo pasó sin tocarse' : 'no está la llave'}`, LL.ve]);
+  r.push([LP.length === 4 && cerca(LP[0][0], LP[1][0], 0.01) && cerca(LP[2][0], LP[3][0], 0.01) && cerca(LP[1][1], LP[2][1], 0.01) && LP[0][1] < LP[1][1] && cerca(LP[0][1], LP[3][1], 0.01)
+    && cerca(desde, cen(HM.papel).x, 0.6) && cerca(hasta, cen(PR.caja).x, 0.6) && LP[0][1] > K.nombre.caja.y1,
+    `paso ${n}: la llave va de la hoja de marzo a la de la prueba, debajo de Kenia`, [desde, hasta]]);
+  r.push([LL.txt.txt === mesesLlave + ' meses sin volver a tocarlo' && cerca(cen(LL.txt.caja).x, (desde + hasta) / 2, 0.8) && LL.txt.caja.y0 > LP[1][1],
+    `paso ${n}: debajo de la llave dice los ${mesesLlave} meses que abarca`, LL.txt.txt]);
+
+  /* ── dos días, a la escala del año ── */
+  const B = x.barra, D2 = x.dosDias, Z = x.zoom, DC = x.dosCeldas;
+  r.push([B.ve === E.barra && D2.ve === E.barra && Z.ve === E.barra && DC.ve === E.barra, `paso ${n}: ${E.barra ? 'la barra del año, sus dos días y un mes de cerca' : 'no está la barra del año'}`, [B.ve, D2.ve, Z.ve, DC.ve]]);
+  const mesesBarra = Math.round((B.clases.x1 - B.clases.x0) / W);
+  r.push([cerca(B.clases.x0, tx[0], 0.05) && cerca(B.clases.x1, tx[PCOL], 0.05) && mesesBarra === H.length && B.clases.y1 < H0.y0,
+    `paso ${n}: la barra de las clases va de febrero hasta la prueba, encima de las hojas: ${mesesBarra} meses`, [B.clases.x0, B.clases.x1]]);
+  /* la caja de un renglón es más alta que la letra: se mide que vaya de
+     ancho dentro de la barra y centrada de alto */
+  r.push([B.txt.txt === mesesBarra + ' meses de clases' && B.txt.caja.x0 >= B.clases.x0 && B.txt.caja.x1 <= B.clases.x1 && cerca(cen(B.txt.caja).y, cen(B.clases).y, 2),
+    `paso ${n}: la barra dice sus ${mesesBarra} meses de clases`, B.txt.txt]);
+  const CE = Z.celdas.slice().sort((a, b) => a.caja.x0 - b.caja.x0), celdas = CE.length, cw = CE.length ? CE[0].caja.x1 - CE[0].caja.x0 : 0;
+  r.push([celdas >= 28 && celdas <= 31 && CE.every((c, i) => cerca(c.caja.x1 - c.caja.x0, cw, 0.05) && cerca(c.caja.y0, CE[0].caja.y0, 0.01) && (i === 0 || cerca(c.caja.x0, CE[i - 1].caja.x1, 0.05))),
+    `paso ${n}: un mes de cerca, día por día: ${celdas} días seguidos`, celdas]);
+  r.push([Z.txt.txt === 'un mes de clases: unos ' + celdas + ' días' && Z.txt.caja.y1 < CE[0].caja.y0, `paso ${n}: encima dice cuántos días tiene un mes`, Z.txt.txt]);
+  const diasRayita = (D2.rayita.x1 - D2.rayita.x0) / (W / celdas);
+  const RP = DC.repaso.slice().sort((a, b) => a.caja.x0 - b.caja.x0);
+  r.push([cerca(D2.rayita.x0, B.clases.x1, 0.05) && cerca(diasRayita, RP.length, 0.05) && D2.rayita.y0 <= B.clases.y0 && D2.rayita.y1 >= B.clases.y1,
+    `paso ${n}: los días de repaso, a la escala de la raya, son una rayita justo después de las clases`, Math.round(diasRayita * 100) / 100]);
+  r.push([D2.aro.c[0] >= D2.rayita.x0 && D2.aro.c[0] <= D2.rayita.x1 && cerca(D2.aro.c[1], cen(D2.rayita).y, 0.6) && D2.aro.r >= 5
+    && D2.txt.txt === RP.length + ' días' && D2.txt.caja.x0 > D2.aro.c[0] + D2.aro.r && cerca(cen(D2.txt.caja).y, cen(D2.rayita).y, 3),
+    `paso ${n}: un aro marca la rayita, y al lado dice «${RP.length} días»`, D2.txt.txt]);
+  r.push([RP.length === 2 && RP.every((c, i) => { const ce = CE[celdas - RP.length + i]; return !!ce && cerca(c.caja.x0, ce.caja.x0, 0.05) && cerca(c.caja.x1, ce.caja.x1, 0.05) && cerca(c.caja.y0, ce.caja.y0, 0.05); }),
+    `paso ${n}: en el mes de cerca, los días de repaso son los dos últimos`, RP.map(c => c.i)]);
+  r.push([DC.txt.txt === RP.length + ' días' && cerca(cen(DC.txt.caja).x, (RP[0].caja.x0 + RP[RP.length - 1].caja.x1) / 2, 0.8) && DC.txt.caja.y0 > CE[0].caja.y1,
+    `paso ${n}: debajo de los días de repaso dice «${RP.length} días»`, DC.txt.txt]);
+
+  /* ── el otro año: una forma cada mes, y lo de antes vuelve ── */
+  const FI = x.fichas.slice().sort((a, b) => cen(a.caja).x - cen(b.caja).x);
+  r.push([FI.every(f => f.ve === (E.anio === 'B')), `paso ${n}: ${E.anio === 'B' ? 'arriba, la forma de cada mes' : 'no hay formas arriba'}`, FI.map(f => f.ve)]);
+  r.push([FI.length === iOct - iMar + 1 && FI.every((f, i) => f.txt.txt === 'F' + (i + 1) && col(cen(f.caja).x) === iMar + i && cerca(cen(f.caja).x, cen(H[iMar + i].papel).x, 0.6)
+    && f.caja.y1 < H0.y0 && dentro(f.txt.caja, f.caja, 0.5)),
+    `paso ${n}: una forma por mes, de marzo a octubre (F1, F2…), encima de su hoja`, FI.map(f => [f.txt.txt, mesDe(cen(f.caja).x)])]);
+  const vivosDe = h => h.puntos.filter(p => p.ve);
+  if (E.anio === 'B') {
+    H.forEach(h => {
+      const despues = FI.filter(f => cen(f.caja).x > h.papel.x1).length, vv = vivosDe(h);
+      const bajo = Math.max(...h.tinta.renglones.map(rr => rr.ps[0][1]));
+      r.push([vv.length === despues && vv.every(p => p.c[0] - p.r > h.papel.x0 && p.c[0] + p.r < h.papel.x1 && p.c[1] + p.r < h.papel.y1 && p.c[1] - p.r > bajo)
+        && vv.every((p, i) => vv.every((q, j) => j <= i || Math.hypot(p.c[0] - q.c[0], p.c[1] - q.c[1]) >= p.r + q.r)),
+        `paso ${n}: la hoja de ${nombre(mesDe(cen(h.papel).x))} tiene un puntito por cada forma que vino después (${despues})`, vv.length]);
+    });
+  } else r.push([H.every(h => vivosDe(h).length === 0), `paso ${n}: ninguna hoja tiene puntitos: cada cosa se vio una sola vez`, H.map(h => vivosDe(h).length)]);
+  const T = x.tira, TF = T.formas.slice().sort((a, b) => a.n - b.n);
+  r.push([T.ve === E.tira, `paso ${n}: ${E.tira ? 'abajo, la tira de las formas de la misión' : 'no está la tira de las formas'}`, T.ve]);
+  r.push([x.formas >= FI.length && TF.length === x.formas && TF.every((f, i) => f.n === i + 1 && f.num.txt === String(i + 1) && dentro(f.num.caja, f.caja, 0.5) && TF.every((g, j) => j <= i || !monta(f.caja, g.caja))),
+    `paso ${n}: la tira tiene las ${x.formas} formas de la misión, del 1 al ${x.formas}, sin montarse`, [x.formas, TF.length]]);
+  const usadas = TF.filter(f => f.usada.ve).map(f => f.n);
+  r.push([usadas.join() === (E.tira ? FI.map((f, i) => i + 1).join() : ''), `paso ${n}: ${E.tira ? 'se encienden las ' + FI.length + ' formas que hizo' : 'no hay formas encendidas'}`, usadas]);
+  r.push([T.txt.txt === 'las ' + x.formas + ' formas de esta misión' && T.pie.txt === 'una distinta cada mes: ' + FI.length + ' de ' + x.formas
+    && T.txt.caja.y1 < Math.min(...TF.map(f => f.caja.y0)) && T.pie.caja.y0 > Math.max(...TF.map(f => f.caja.y1)),
+    `paso ${n}: la tira dice cuántas formas hay y cuántas usó, una distinta cada mes`, [T.txt.txt, T.pie.txt]]);
+  if (n === 4) {
+    r.push([FI.every(f => f.d >= llegaA(col(cen(f.caja).x)) - 1), 'paso 4: cada forma sale cuando Kenia llega a su mes', FI.map(f => f.d)]);
+    r.push([FI.every((f, i) => cerca(TF[i].usada.d, f.d, 1)), 'paso 4: en la tira se enciende cada forma cuando la hace', FI.map((f, i) => [f.d, TF[i].usada.d])]);
+    r.push([H.every(h => {
+      const dd = vivosDe(h).map(p => p.d).sort((a, b) => a - b), fd = FI.filter(f => cen(f.caja).x > h.papel.x1).map(f => f.d).sort((a, b) => a - b);
+      return dd.every((d, i) => d >= fd[i]);
+    }), 'paso 4: cada puntito sale cuando la forma que vuelve a esa hoja ya salió', H.map(h => vivosDe(h).map(p => p.d))]);
+    const bm = vivas.find(mm => mesDe(cen(mm.caja).x) === 'MAR'), bo = vivas.find(mm => mesDe(cen(mm.caja).x) === 'OCT');
+    r.push([BU.every(b => b.d >= llegaA(PCOL)) && !!bm && !!bo && bm.d > Math.max(...BU.map(b => b.d)) && bo.d > bm.d,
+      'paso 4: al llegar a la prueba la contesta, y después salen las marcas: primero la de marzo', [BU.map(b => b.d), bm && bm.d, bo && bo.d]]);
+  }
+  if (n === 2) {
+    const am = vivas.find(mm => mesDe(cen(mm.caja).x) === 'MAR'), ao = vivas.find(mm => mesDe(cen(mm.caja).x) === 'OCT');
+    r.push([!!am && !!ao && Math.max(...BU.map(b => b.d)) < am.d && am.d < ao.d && ao.d < LL.d,
+      'paso 2: contesta la prueba, sale la marca de marzo, después la de octubre y al final la llave', [BU.map(b => b.d), am && am.d, ao && ao.d, LL.d]]);
+  }
+  if (n === 3) r.push([B.d < D2.d && D2.d < Z.d && Z.d < DC.d, 'paso 3: primero la barra del año, después la rayita, el mes de cerca y sus dos días', [B.d, D2.d, Z.d, DC.d]]);
+
+  /* ── lo que escribe el alumno ── */
+  const NO = x.nota, A = x.aro;
+  r.push([NO.ve === E.nota && A.ve === E.nota, `paso ${n}: ${E.nota ? 'la tarjeta del cuaderno, y un aro en la hoja de marzo' : 'no está la tarjeta del cuaderno'}`, [NO.ve, A.ve]]);
+  r.push([NO.textos.every(t => dentro(t.caja, NO.caja, -1)) && NO.textos.some(t => t.txt === 'En tu cuaderno:') && NO.textos.some(t => t.txt.includes(nombre('MAR')))
+    && NO.rayas.length === 2 && NO.rayas.every(p => dentro(punto(p[0]), NO.caja, -1) && dentro(punto(p[1]), NO.caja, -1) && cerca(p[0][1], p[1][1], 0.01) && p[1][0] - p[0][0] > 60),
+    `paso ${n}: en la tarjeta dice qué escribir, con dos rayas para hacerlo`, NO.textos.map(t => t.txt)]);
+  r.push([dentro(HM.papel, A.caja, -1) && H.every(h => h === HM || !monta(h.papel, A.caja)), `paso ${n}: el aro rodea la hoja de marzo, y solo esa`, A.caja]);
+
+  /* ── qué quiere decir el dibujo ── */
+  const LY = x.leyendas.slice().sort((a, b) => a.k - b.k);
+  r.push([LY.length === 2 && LY.every(l => l.ve === (E.leyenda === l.k)), `paso ${n}: ${E.leyenda < 0 ? 'no hay leyenda' : 'abajo, qué quiere decir el dibujo'}`, LY.map(l => l.ve)]);
+  const tinta = H[0].tinta.renglones[0].color;
+  LY.forEach(l => {
+    const ok = l.minis.every(mi => {
+      const rr = l.rayas.filter(p => p.ps.every(q => dentro(punto(q), mi.caja, 0.01)));
+      const t = l.textos.find(tt => tt.caja.x0 > mi.caja.x1 && cerca(cen(tt.caja).y, cen(mi.caja).y, 3) && tt.caja.x0 - mi.caja.x1 < 12);
+      const color = mi.tipo === 'blanca' ? rr.length === 0 : mi.tipo === 'fresca' ? rr.length >= 3 && rr.every(p => p.color === tinta) : rr.length >= 3 && rr.every(p => lum(p.color) > lum(tinta) + 0.3);
+      return mi.color === H[0].colorPapel && !!t && color && l.minis.every(o => o === mi || !monta(o.caja, t.caja));
+    });
+    r.push([ok && l.minis.length === (l.k === 0 ? 1 : 2), `paso ${n}: la leyenda ${l.k + 1} pone al lado de cada hoja chiquita lo que quiere decir`, l.textos.map(t => t.txt)]);
+  });
+  r.push([LY[0].textos.map(t => t.txt).join() === 'una hoja por mes: lo que ve en clase' && LY[1].textos.map(t => t.txt).join() === 'lo tiene fresco,se le está borrando'
+    && LY[1].minis.map(mi => mi.tipo).join() === 'fresca,clara',
+    `paso ${n}: la hoja en blanco es un mes; la de tinta oscura, lo fresco; la de tinta clara, lo que se borra`, LY.map(l => l.textos.map(t => t.txt))]);
+  if (n === 1) r.push([LY[1].d > llegaA(1) && LY[1].d < llegaA(PCOL) && LY[0].d === 0, 'paso 1: la leyenda de lo que se borra sale cuando ya pasaron unos meses', LY[1].d]);
+
+  /* ── el marcador y la frase dicen lo que se ve ── */
+  const conTinta = H.filter(h => h.tinta.ve).length, puntosMarzo = vivosDe(HM).length;
+  const valor = [String(H.length), String(conTinta), String(palomas.length), String(RP.length), String(puntosMarzo), '?'][n];
+  r.push([e.cifra === valor, `paso ${n}: el marcador dice lo que se ve`, [e.cifra, valor]]);
+  const mesPaloma = palomas.length === 1 ? nombre(mesDe(cen(palomas[0].caja).x)) : '';
+  const PALABRAS = ['meses de clases, y después la prueba', 'cosas aprendidas, una vez cada una', 'de ' + filas.length + ' preguntas bien: la de ' + mesPaloma,
+    'días de repaso, contra ' + mesesBarra + ' meses de clases', 'veces volvió a lo de ' + nombre('MAR'), 'el día en que vuelves a lo de ' + nombre('MAR')];
+  r.push([e.palabras === PALABRAS[n], `paso ${n}: las palabras del marcador dicen lo que se ve`, [e.palabras, PALABRAS[n]]]);
+  const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+  const FRASE = [
+    ['de ' + nombre(MES[0].txt) + ' a ' + nombre(MES[H.length - 1].txt), 'en ' + nombre(MES[PCOL].txt) + ' viene la prueba', 'de ' + nombre('MAR') + '?'],
+    ['se va borrando'],
+    ['lo de ' + nombre('OCT') + ' le sale bien', 'Lo de ' + nombre('MAR') + ', mal', 'hace ' + PAL[mesesLlave] + ' meses'],
+    [PAL[RP.length] + ' días antes', cap(PAL[mesesBarra]) + ' meses de clases'],
+    ['desde ' + nombre('MAR'), 'vuelve ' + PAL[puntosMarzo] + ' veces a lo de ' + nombre('MAR')],
+    ['en ' + nombre('MAR'), 'cuaderno']
+  ];
+  r.push([FRASE[n].every(f => e.texto.includes(f)), `paso ${n}: la frase dice lo que se ve`, [e.texto, FRASE[n]]]);
+
+  /* ── los rótulos ── */
+  const cajas = x.cajasTexto, choques = [];
+  cajas.forEach((a, i) => cajas.forEach((b, j) => { if (j > i && monta(a, b)) choques.push([x.textos[i], x.textos[j]]); }));
+  r.push([choques.length === 0, `paso ${n}: ningún texto se monta en otro`, choques]);
+  r.push([cajas.every((c, i) => x.textos[i] === 'Kenia' || !monta(c, K.cuerpo)), `paso ${n}: Kenia no tapa ningún rótulo`, null]);
+  const vista = { x0: 0, y0: 0, x1: x.vista[0], y1: x.vista[1] };
+  r.push([cajas.every(c => dentro(c, vista)) && dentro(K.cuerpo, vista) && H.every(h => dentro(h.papel, vista)) && dentro(PR.caja, vista)
+    && (!NO.ve || dentro(NO.caja, vista)) && (!T.ve || TF.every(f => dentro(f.caja, vista))) && (!A.ve || dentro(A.caja, vista)), `paso ${n}: todo cabe en el dibujo`, null]);
+  return r;
+}
 const ESCENAS = {
+  /* Las Pruebas de Fin de Grado: una escena y una sonda para los cuatro
+     grados (verAnio, arriba). Cada misión con su id y su grado. */
+  amAnio4(e, n) { return verAnio(e, n, '4º'); },
+  amAnio5(e, n) { return verAnio(e, n, '5º'); },
+  amAnio6(e, n) { return verAnio(e, n, '6º'); },
+  amAnio7(e, n) { return verAnio(e, n, '7º'); },
   /* Secuencias: el Robot Mensajero. «El mandado de Marvin».
      ⚠️ Nada se le cree a la escena. La sonda lee en qué renglón quedó cada
      tarjeta, saca de la aldea el tamaño de la casilla y en qué casilla está
