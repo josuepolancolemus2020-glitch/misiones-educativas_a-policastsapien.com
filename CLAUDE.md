@@ -12398,6 +12398,124 @@ roja con cada una.
 Con la CPU frenada seis veces va a 58 cuadros por segundo, y el peor cuadro es
 de 100 ms. Programando un Robot, medida el mismo día, va a 60 y 67 ms.
 
+### La sexagésima segunda: Hello! Saludos y Presentarme, y lo que enseñó
+
+La primera de la Ruta de las Primeras Palabras es **Hello! Saludos y
+Presentarme** (`misiones/2y3ciclo-ingles-saludos/`, `js/animacion-charla.js`), y
+es la primera animación de una misión que enseña inglés. La historia es la de
+Marvin: llegó a la escuela una señora de fuera preguntando por la dirección, él
+fue el único que se animó y le dijo «hello»; ella le contestó algo, y él se
+quedó parado, sin poder decirle su nombre ni preguntarle el de ella. La señora
+siguió de largo a buscar a alguien más. La historia dice que con cuatro frases
+esa conversación sigue: saludar según la hora, decir cómo te llamas, preguntar
+el nombre y preguntar cómo está. La animación pone la entrada de la escuela, con
+un reloj en las 10 y la puerta de la dirección; abajo, las cuatro tarjetas de la
+misión, vacías:
+
+- antes de tocar: ¿qué le falta decir para que ella no se vaya?;
+- así pasó: Marvin dice «Hello.», ella le contesta «Hello! What’s your name?», él
+  se queda callado (un globo con «…») y ella sale del dibujo;
+- otra vez, con las cuatro: vuelve la señora, se marca el reloj y Marvin dice
+  «Good morning.» con el número 1 delante; la tarjeta 1 se llena con esa frase y
+  ella contesta;
+- «My name is Marvin. What’s your name?», con el 2 y el 3: las dos tarjetas se
+  llenan una tras otra, y ella contesta «I’m Rosa.»;
+- «How are you?», con el 4, y ella contesta «Fine, thank you.»: ya van las
+  cuatro, y la señora no se ha ido;
+- Marvin señala la puerta y la señora llega a la dirección. Y la pregunta es del
+  alumno: a quién va a saludar hoy en inglés con las cuatro.
+
+Siete cosas que valen para las que siguen:
+
+1. ⚠️ **«Hello» no se tacha.** La misión enseña que sirve a cualquier hora (su
+   tarjeta de Aprende lo pone entre las frases que siempre están bien), así que
+   la animación no le pone ✗: Marvin saluda bien y ella le contesta. Lo que se
+   ve fallar es el silencio después de la pregunta, que es lo que cuenta la
+   historia. Y si el marcador dice «0 de las cuatro frases» es porque la primera
+   tarjeta es la de saludar SEGÚN LA HORA, y eso «Hello» no lo hace.
+2. ⚠️ **En una misión de vocabulario, la frase es el contenido.** No se puede
+   enseñar a saludar sin escribir el saludo, y la tarjeta de Aprende que va justo
+   debajo trae las cuatro frases palabra por palabra. Lo que la animación no
+   puede dar es lo demás:
+   - lo que cuenta la historia, que ninguna pregunta pregunta (ni Marvin, ni la
+     señora, ni la dirección);
+   - las horas de la prueba: las preguntas usan las 2, 4, 5, 6, 7, 8, 9, 11 y
+     12, y por eso el reloj marca las 10, que no sale en ninguna;
+   - y las frases que la prueba pregunta y la historia no necesita (afternoon,
+     evening, night, goodbye, nice to meet you, please, thanks), con los lugares
+     de sus casos (la reunión, la pulpería, la fiesta, la cancha).
+
+   La sonda prohíbe todo eso en cada paso. Por eso no hizo falta cambiar la
+   prueba: los casos del turista a las 2 de la tarde o de la reunión a las 8 de
+   la noche piden aplicar la regla a otra hora, como en Volumen se quedó lo que
+   aplica la equivalencia a otra cantidad. Lo mismo la tarea del Generador del
+   turista a las 4 de la tarde, que pide el saludo de la tarde y la cortesía: lo
+   que la animación no da.
+3. **Cada frase lleva el número de su tarjeta, y la tarjeta se llena con lo que
+   Marvin dijo.** Las cuatro frases del aviso de la historia pasan a ser cosas
+   que el alumno ve usar, en orden y en una conversación de verdad. La sonda
+   compara cada tarjeta con el renglón que lleva su número.
+4. **El saludo sale de la hora, y la hora se lee en el reloj.** La sonda no le
+   cree al rótulo «10:00»: saca la hora del ángulo de la aguja y de ahí el saludo
+   que toca, y comprueba que digan lo mismo el rótulo, la frase y la primera
+   tarjeta.
+5. ⚠️ **Un número delante de un renglón centrado se monta en la letra.** Con los
+   renglones de los globos centrados, el número del más corto caía encima de su
+   texto: los renglones con número van alineados a la izquierda, con el número en
+   su margen. Y la tarjeta con dos renglones (para qué sirve y la frase) no
+   cabía: el rótulo se montaba en la frase hasta que creció de alto. Las dos
+   cosas se vieron midiendo las cajas de la letra en el navegador, no a ojo.
+6. ⚠️ **La sonda comparaba un ángulo con `%` y se equivocó.** La aguja de la hora
+   medía 299,99°, y `299,99 % 30` no es 0: la sonda decía que la aguja no estaba
+   en una hora con el reloj perfecto. Ahora redondea a la marca más cercana y mide
+   la distancia. Es la lección de «Cuadrado **Perfecto**» con otra cara.
+7. **De paso, el aviso de la historia hablaba de vos** («cómo te llamás») en una
+   misión que habla de tú en todas partes. Ahora dice «cómo te llamas».
+
+La sonda de esta escena **no le cree nada a la escena**. Comprueba:
+
+- que el reloj marque una hora en punto, leída de sus agujas, con esa hora
+  escrita al lado, y que el aro lo marque solo en el paso del saludo;
+- que la puerta lleve su letrero de la dirección, y que la señora esté donde toca
+  en cada paso: delante de Marvin, fuera del dibujo en el paso 1 y dentro de la
+  puerta en el 5;
+- que Marvin señale la puerta solo al final;
+- que se vean justo los globos de cada paso, cada uno con la punta en la cabeza
+  de quien habla, sin tapar el reloj ni el letrero, y que el silencio vaya de raya
+  cortada;
+- que las cuatro tarjetas sean iguales, de dos en dos y en su orden, cada una con
+  su para qué; que se llenen las que tocan, y que las vacías vayan de raya
+  cortada y con «?»;
+- que cada tarjeta diga la frase que Marvin dijo con su número, y que la primera
+  sea el saludo de la hora del reloj;
+- que cada cosa pase cuando le toca: ella se va cuando él ya se quedó callado,
+  la tarjeta se llena cuando él dice la frase y ella contesta después;
+- que el marcador cuente las tarjetas llenas, que ningún texto se monte en otro y
+  que todo quepa en el dibujo;
+- y que no salga ninguna otra frase ni ningún número de la prueba.
+
+Se comprobó al revés con veinte averías, plantadas una por una:
+
+- la señora que no se va, o que se va antes de que Marvin calle;
+- Marvin sin quedarse callado, y el silencio de raya entera;
+- el reloj en las 3, y la frase diciendo las 11;
+- la tarjeta 1 diciendo «Good evening»;
+- el número 3 en el renglón equivocado;
+- la tarjeta 3 llenándose antes que la 2;
+- Marvin saludando antes de que vuelva la señora, y la señora volviendo después
+  del saludo;
+- la punta del globo de ella corrida;
+- Marvin sin señalar, y la señora sin llegar a la puerta;
+- el marcador del paso 3 diciendo 2;
+- «goodbye» en una frase;
+- la tarjeta vacía sin raya cortada, y una tarjeta llena desde el principio;
+- los globos montados, y el reloj marcado en el paso 3.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 60 cuadros por segundo, y el peor cuadro es
+de 50 ms. Robots que Resuelven Problemas, medida el mismo día, va a 58 y 83 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -12574,7 +12692,12 @@ la escena enseña un «si hay pared, parate» sin SINO que funciona, el examen n
 pregunta que todo condicional necesita su SINO. Lo que llena algo (un chorro)
 se para cuando eso deja de subir: un chorro que sigue cayendo en un tanque quieto
 es mentira. Y una duración que la sonda necesita se lee de la hoja de estilo, no
-del estilo calculado: con «reducir movimiento» vale 0.
+del estilo calculado: con «reducir movimiento» vale 0. En una misión de
+vocabulario la frase es el contenido y la animación la escribe; lo que no da es
+la historia, las horas o los números de las preguntas, ni las frases que la
+prueba pregunta y la historia no necesita. Lo que se lee de un dibujo (la hora,
+de la aguja) la sonda lo lee del dibujo, y un ángulo se compara redondeándolo a
+la marca más cercana, no con `%`: 299,99° no da resto 0.
 
 Si la misión es **bilingüe** (carga su `-en.js` y trae el botón 🌐), la escena
 lleva `bilingue: true`, `describe: { es, en }` e `idioma(lang, A)`, y sus

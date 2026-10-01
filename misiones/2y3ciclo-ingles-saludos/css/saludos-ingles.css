@@ -551,3 +551,47 @@ body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* ── La animación de la conversación (#amCharla) ─────────────────────
+   Los globos, el letrero y las tarjetas son papel, y Marvin, la señora,
+   el reloj y la puerta son COSAS: se quedan como son en las dos
+   pantallas, así que lo que va escrito sobre papel lleva tinta oscura
+   fija. Lo que va sobre la tarjeta de la misión (la hora) lleva la tinta
+   de la pantalla. Nada se dice solo con color: el silencio de Marvin va
+   en un globo de raya cortada, la tarjeta que falta también, y cada una
+   de las cuatro frases lleva su número. */
+#amCharla .ch-suelo { fill: none; stroke: var(--border); stroke-width: 1.2; }
+#amCharla .ch-globo { fill: #ffffff; stroke: #64748b; stroke-width: 1.2; stroke-linejoin: round; }
+#amCharla .ch-calla { stroke-dasharray: 3 2; }
+#amCharla .ch-letra { fill: #1e293b; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amCharla .ch-num { fill: #be185d; }
+#amCharla .ch-num-t { fill: #ffffff; font-family: 'Fredoka', sans-serif; font-weight: 700; }
+#amCharla .ch-carta { fill: #fff7fb; stroke: #be185d; stroke-width: 1.3; }
+#amCharla .ch-carta-vacia { fill: #f8fafc; stroke: #64748b; stroke-dasharray: 3 2; }
+#amCharla .ch-para { fill: #475569; font-family: 'Fredoka', sans-serif; font-weight: 500; }
+#amCharla .ch-falta { fill: #64748b; font-family: 'Fredoka', sans-serif; font-weight: 700; }
+#amCharla .ch-reloj { fill: #ffffff; stroke: #64748b; stroke-width: 1.6; }
+#amCharla .ch-raya { fill: none; stroke: #64748b; stroke-width: 1.2; stroke-linecap: round; }
+#amCharla .ch-aguja-h { fill: none; stroke: #1e293b; stroke-width: 2.4; stroke-linecap: round; }
+#amCharla .ch-aguja-m { fill: none; stroke: #1e293b; stroke-width: 1.5; stroke-linecap: round; }
+#amCharla .ch-eje { fill: #1e293b; }
+#amCharla .ch-aro { fill: none; stroke: var(--am-pri); stroke-width: 2.2; }
+#amCharla .ch-puerta { fill: #b7834f; stroke: #7c5a35; stroke-width: 1.2; }
+#amCharla .ch-perilla { fill: #fbbf24; stroke: #92400e; stroke-width: 0.6; }
+#amCharla .ch-letrero { fill: #fffbeb; stroke: #b45309; stroke-width: 1; }
+#amCharla .ch-pantalon { fill: #1e3a8a; stroke: #172554; stroke-width: 0.6; }
+#amCharla .ch-camisa { fill: #f8fafc; stroke: #64748b; stroke-width: 1; }
+#amCharla .ch-brazo { fill: none; stroke: #b07a4f; stroke-width: 3; stroke-linecap: round; }
+#amCharla .ch-brazo-l { fill: none; stroke: #8d5a35; stroke-width: 2.8; stroke-linecap: round; }
+#amCharla .ch-piel-m { fill: #b07a4f; stroke: #7c4f2c; stroke-width: 0.8; }
+#amCharla .ch-piel-l { fill: #8d5a35; stroke: #5c3a1e; stroke-width: 0.8; }
+#amCharla .ch-pelo { fill: #2b1a10; }
+#amCharla .ch-pelo-l { fill: #3f2a1a; }
+#amCharla .ch-ojo { fill: #1e293b; }
+#amCharla .ch-vestido { fill: #0f766e; stroke: #134e4a; stroke-width: 1; stroke-linejoin: round; }
+#amCharla .ch-cartera { fill: #92400e; stroke: #5c2d0b; stroke-width: 0.8; }
+/* La señora camina a paso parejo, y más despacio que lo demás: cruza
+   media escuela */
+.am-raiz .am-escenario svg .ch-camina {
+  transition: transform 1.6s linear var(--d, 0s), opacity 0.5s ease var(--d, 0s);
+}

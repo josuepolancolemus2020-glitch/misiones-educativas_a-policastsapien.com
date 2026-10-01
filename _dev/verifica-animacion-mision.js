@@ -2129,6 +2129,85 @@ const LEER = `
      charco, la raya de lleno con su sensor, los dos cables, la cajita con
      lo que anota y su regla, cada aviso con sus cuatro piezas, las
      pestañas, el charco del martes, don Chico y los nombres. */
+  window.__amExtra.amCharla = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(m(el)); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function uno(sel, en) { return (en || raiz).querySelector(sel); }
+    function todos(sel, en) { return [].slice.call((en || raiz).querySelectorAll(sel)); }
+    function demora(el) { return el ? (parseFloat(el.style.getPropertyValue('--d')) || 0) : 0; }
+    function numeros(d) { return ((d || '').match(/-?[0-9.]+/g) || []).map(Number); }
+    function puntosDe(p) {
+      var nums = numeros(p.getAttribute('d')), r = [];
+      for (var i = 0; i + 1 < nums.length; i += 2) r.push(aVista(p, nums[i], nums[i + 1]));
+      return r;
+    }
+    function mueve(el) { var q = numeros(el.style.transform); return { x: q[0] || 0, y: q[1] || 0, giro: q[2] || 0, d: demora(el) }; }
+    function texto(t) { return t ? { txt: t.textContent, caja: caja(t), ve: vis(t) } : null; }
+    function centro(c) { return aVista(c, +c.getAttribute('cx'), +c.getAttribute('cy')); }
+    function cortada(el) { var s = getComputedStyle(el).strokeDasharray || 'none'; return s !== 'none' && (s.match(/[0-9.]+/g) || []).some(function (v) { return +v > 0 && +v < 12; }); }
+    function dura(sel) {
+      for (var i = 0; i < document.styleSheets.length; i++) {
+        var reglas;
+        try { reglas = document.styleSheets[i].cssRules; } catch (e) { continue; }
+        for (var j = 0; reglas && j < reglas.length; j++) {
+          if (reglas[j].selectorText === sel) { var mm = String(reglas[j].style.transition).match(/([0-9.]+)s/); return mm ? Math.round(parseFloat(mm[1]) * 1000) : 0; }
+        }
+      }
+      return 0;
+    }
+    function persona(k) {
+      var g = uno('[data-persona="' + k + '"]'), cab = uno('[data-cabeza]', g);
+      return { caja: caja(g), torso: caja(uno('[data-torso]', g)), cabeza: { c: centro(cab), r: +cab.getAttribute('r') * (m(cab).a || 1) } };
+    }
+    var reloj = uno('[data-reloj-cara]'), aro = uno('[data-aro]');
+    var camina = uno('[data-camina]'), brazo = uno('[data-brazo]');
+    return {
+      vista: [svg.viewBox.baseVal.width, svg.viewBox.baseVal.height],
+      suelo: puntosDe(uno('[data-suelo]')),
+      reloj: {
+        c: centro(reloj), r: +reloj.getAttribute('r'),
+        hora: puntosDe(uno('[data-aguja="hora"]')), minuto: puntosDe(uno('[data-aguja="minuto"]')),
+        txt: texto(uno('[data-hora]')),
+        aro: { ve: vis(aro), c: centro(aro), r: +aro.getAttribute('r'), d: demora(aro) }
+      },
+      puerta: caja(uno('[data-puerta-caja]')),
+      letrero: texto(uno('[data-letrero]')),
+      marvin: persona('M'),
+      senora: persona('L'),
+      camina: mueve(camina), duraCamina: dura('.am-raiz .am-escenario svg .ch-camina'),
+      brazo: { puntos: puntosDe(uno('[data-brazo-linea]')), giro: mueve(brazo).giro, d: demora(brazo) },
+      dichos: todos('[data-dicho]').map(function (va) {
+        var k = va.getAttribute('data-dicho'), sale = uno('[data-dicho-sale]', va), g = uno('[data-globo-caja]', va);
+        var pts = puntosDe(g);
+        var punta = pts.reduce(function (a, b) { return b[1] > a[1] ? b : a; }, pts[0]);
+        return {
+          k: k, quien: va.getAttribute('data-quien'), ve: vis(g), caja: caja(g), punta: punta, cortada: cortada(g),
+          lineas: todos('[data-linea]', va).map(texto),
+          nums: todos('[data-num]', va).map(function (n) { return { n: +n.getAttribute('data-num'), c: centro(uno('circle', n)), t: uno('[data-num-t]', n).textContent }; }),
+          dSale: demora(sale), dVa: demora(va)
+        };
+      }),
+      cartas: todos('[data-carta]').map(function (g) {
+        var n = +g.getAttribute('data-carta'), ll = uno('[data-carta-llena]', g), va = uno('[data-carta-vacia]', g);
+        var cl = uno('[data-carta-caja="llena"]', ll), cv = uno('[data-carta-caja="vacia"]', va);
+        return {
+          n: n,
+          llena: { ve: vis(cl), caja: caja(cl), cortada: cortada(cl), para: uno('[data-para]', ll).textContent, frase: texto(uno('[data-frase]', ll)), num: uno('[data-num-t]', ll).textContent, d: demora(ll) },
+          vacia: { ve: vis(cv), caja: caja(cv), cortada: cortada(cv), para: uno('[data-para]', va).textContent, falta: uno('[data-falta]', va).textContent, num: uno('[data-num-t]', va).textContent, d: demora(va) }
+        };
+      }),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; }),
+      cajasTexto: todos('text').filter(vis).map(caja)
+    };
+  };
   window.__amExtra.amJurado = function (raiz) {
     var vis = window.__amVisible;
     var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
@@ -3798,6 +3877,7 @@ const MEMO_CARRITO = {};
 const MEMO_CABLE = {};
 const MEMO_PARED = {};
 const MEMO_JURADO = {};
+const MEMO_CHARLA = {};
 const ESCENAS = {
   /* Secuencias: el Robot Mensajero. «El mandado de Marvin».
      ⚠️ Nada se le cree a la escena. La sonda lee en qué renglón quedó cada
@@ -4893,6 +4973,135 @@ const ESCENAS = {
      si la bomba se para cuando le llega el «apaga». Lo de un paso que
      hace falta en otro (el agua al empezar el día, el charco del martes)
      se guarda en MEMO_BOMBA, por idioma. */
+  amCharla(e, n) {
+    const x = e.extra, r = [];
+    const cerca = (a, b, t = 1.5) => Math.abs(a - b) <= t;
+    const cen = c => ({ x: (c.x0 + c.x1) / 2, y: (c.y0 + c.y1) / 2 });
+    const dentro = (a, b, m = 0) => a.x0 >= b.x0 - m && a.x1 <= b.x1 + m && a.y0 >= b.y0 - m && a.y1 <= b.y1 + m;
+    const monta = (a, b) => a.x0 < b.x1 - 0.5 && b.x0 < a.x1 - 0.5 && a.y0 < b.y1 - 0.5 && b.y0 < a.y1 - 0.5;
+    const memo = MEMO_CHARLA;
+
+    /* ── lo que no depende del dibujo va primero ── */
+    const PROHIBIDAS = /evening|night|afternoon|\bbye\b|goodbye|later|tomorrow|welcome|please|\bhey\b|\bhi\b|nice to meet|how old|and you|thanks|formal|registro|dientes|sopl|j suave|\bojo\b|\bedad\b|amig|compañer|directora|maestr|turista|\b12\b|doce|\b6\b|\bseis\b|\b8\b|\bocho\b|\b9\b|nueve|\b5\b|cinco|\b7\b|siete|\b11\b|\bonce\b|reuni|pulper|fiesta|iglesia|cancha|feria|hotel|bloque|cualquier|despedi|\btarde|noche/i;
+    const dicho = [e.texto, e.palabras, e.boton].concat(x.textos).join(' · ');
+    r.push([!PROHIBIDAS.test(dicho), `paso ${n}: no sale ninguna otra frase de la prueba ni un número de sus preguntas`, (dicho.match(PROHIBIDAS) || [])[0]]);
+    const CARTAS = [['saludar según la hora'], ['decir tu nombre'], ['preguntar su nombre'], ['preguntar cómo está']];
+    const E = [
+      { ella: 'aqui', globos: [], llenas: 0, aro: false, senala: false },
+      { ella: 'fuera', globos: ['calla'], llenas: 0, aro: false, senala: false },
+      { ella: 'aqui', globos: ['saludo', 'saludo-ella'], llenas: 1, aro: true, senala: false },
+      { ella: 'aqui', globos: ['nombres', 'nombre-ella'], llenas: 3, aro: false, senala: false },
+      { ella: 'aqui', globos: ['como', 'como-ella'], llenas: 4, aro: false, senala: false },
+      { ella: 'puerta', globos: [], llenas: 4, aro: false, senala: true }
+    ][n];
+
+    /* ── el reloj, y el saludo que toca a esa hora ── */
+    const RJ = x.reloj;
+    const ang = p => { const dx = p[p.length - 1][0] - RJ.c[0], dy = p[p.length - 1][1] - RJ.c[1]; return (Math.atan2(dx, -dy) * 180 / Math.PI + 360) % 360; };
+    const hora = Math.round(ang(RJ.hora) / 30) % 12 || 12, minuto = Math.round(ang(RJ.minuto) / 6) % 60;
+    const saludo = hora < 12 ? 'Good morning' : hora < 18 ? 'Good afternoon' : 'Good evening';
+    r.push([minuto === 0 && Math.abs(ang(RJ.hora) - Math.round(ang(RJ.hora) / 30) * 30) < 1 && RJ.txt.ve && RJ.txt.txt === `${hora}:00` && RJ.txt.caja.x0 > RJ.c[0] + RJ.r + 4,
+      `paso ${n}: el reloj marca las ${hora} en punto, y la hora va escrita al lado`, [hora, minuto, RJ.txt.txt]]);
+    r.push([RJ.aro.ve === E.aro && (!E.aro || (cerca(RJ.aro.c[0], RJ.c[0], 0.01) && cerca(RJ.aro.c[1], RJ.c[1], 0.01) && RJ.aro.r > RJ.r + 2 && !monta({ x0: RJ.c[0] - RJ.aro.r, y0: RJ.c[1] - RJ.aro.r, x1: RJ.c[0] + RJ.aro.r, y1: RJ.c[1] + RJ.aro.r }, RJ.txt.caja))),
+      `paso ${n}: ${E.aro ? 'el reloj va marcado: la primera frase sale de la hora' : 'el reloj no va marcado'}`, RJ.aro.ve]);
+
+    /* ── la entrada de la escuela ── */
+    const SUELO = x.suelo[0][1], PU = x.puerta, LT = x.letrero;
+    r.push([cerca(x.suelo[0][1], x.suelo[1][1], 0.01) && cerca(PU.y1, SUELO, 0.6) && LT.ve && LT.txt === 'Dirección' && LT.caja.y1 < PU.y0 + 0.5 && cen(LT.caja).x > PU.x0 && cen(LT.caja).x < PU.x1,
+      `paso ${n}: la puerta de la dirección está en la entrada, con su letrero encima`, [PU, LT.caja]]);
+    const M = x.marvin, L = x.senora;
+    r.push([cerca(M.caja.y1, SUELO, 0.6) && M.caja.x0 > PU.x1 + 2, `paso ${n}: Marvin está parado en la entrada, al lado de la puerta`, M.caja]);
+    if (n === 0) memo.ella = cen(L.caja).x;
+    const vista = { x0: 0, y0: 0, x1: x.vista[0], y1: x.vista[1] };
+    if (E.ella === 'aqui') r.push([cerca(L.caja.y1, SUELO, 0.6) && dentro(L.caja, vista) && L.caja.x0 > M.caja.x1 + 10 && (memo.ella == null || cerca(cen(L.caja).x, memo.ella, 0.6)),
+      `paso ${n}: la señora está frente a Marvin`, L.caja]);
+    if (E.ella === 'fuera') r.push([L.caja.x0 >= x.vista[0], 'paso 1: la señora se fue: salió del dibujo', L.caja]);
+    if (E.ella === 'puerta') r.push([cerca(L.caja.y1, SUELO, 0.6) && cen(L.caja).x > PU.x0 && cen(L.caja).x < PU.x1 && L.caja.x1 < M.caja.x0,
+      'paso 5: la señora llegó a la puerta de la dirección', [L.caja, PU]]);
+
+    /* ── el brazo de Marvin ── */
+    const BZ = x.brazo.puntos, hombro = BZ[0], mano = BZ[BZ.length - 1];
+    r.push([E.senala ? (mano[0] < hombro[0] - 8 && Math.abs(mano[1] - hombro[1]) < 4) : (mano[1] > hombro[1] + 8),
+      `paso ${n}: ${E.senala ? 'Marvin señala la puerta' : 'Marvin tiene los brazos abajo'}`, [hombro, mano]]);
+
+    /* ── lo que dice cada uno ── */
+    const D = k => x.dichos.find(d => d.k === k);
+    const VE = x.dichos.filter(d => d.ve).map(d => d.k).sort();
+    r.push([JSON.stringify(VE) === JSON.stringify(E.globos.slice().sort()), `paso ${n}: se ven los globos que tocan`, VE]);
+    const cabeza = q => (q === 'M' ? M : L).cabeza;
+    x.dichos.filter(d => d.ve).forEach(d => {
+      const H = cabeza(d.quien);
+      r.push([cerca(d.punta[0], H.c[0], 2) && d.punta[1] < H.c[1] - H.r && d.punta[1] > H.c[1] - H.r - 10 && d.lineas.every(l => dentro(l.caja, d.caja, -1)),
+        `paso ${n}: el globo «${d.lineas.map(l => l.txt).join(' ')}» sale de la cabeza de ${d.quien === 'M' ? 'Marvin' : 'la señora'}, y le cabe`, [d.punta, H.c]]);
+      r.push([d.cortada === (d.k === 'calla'), `paso ${n}: ${d.k === 'calla' ? 'el silencio de Marvin va de raya cortada' : 'el globo va de raya entera'}`, d.cortada]);
+      r.push([!monta(d.caja, LT.caja) && !monta(d.caja, RJ.txt.caja) && d.caja.y0 > RJ.c[1] + RJ.r, `paso ${n}: el globo no tapa el reloj ni el letrero`, d.caja]);
+    });
+    const vis2 = x.dichos.filter(d => d.ve);
+    r.push([vis2.every((a, i) => vis2.every((b, j) => j <= i || !monta(a.caja, b.caja))), `paso ${n}: los globos no se montan`, null]);
+
+    /* ── las cuatro frases: cada número de un globo es una tarjeta ── */
+    const CT = x.cartas.slice().sort((a, b) => a.n - b.n);
+    const W0 = CT[0].llena.caja.x1 - CT[0].llena.caja.x0, H0 = CT[0].llena.caja.y1 - CT[0].llena.caja.y0;
+    r.push([CT.length === 4 && CT.every((c, i) => c.n === i + 1 && c.llena.num === String(c.n) && c.vacia.num === String(c.n) && c.llena.para === CARTAS[i][0] && c.vacia.para === CARTAS[i][0]
+      && cerca(c.llena.caja.x1 - c.llena.caja.x0, W0, 0.01) && cerca(c.llena.caja.y1 - c.llena.caja.y0, H0, 0.01) && cerca(c.llena.caja.x0, c.vacia.caja.x0, 0.01) && cerca(c.llena.caja.y0, c.vacia.caja.y0, 0.01)
+      && c.llena.caja.y0 > SUELO)
+      && cerca(CT[0].llena.caja.y0, CT[1].llena.caja.y0, 0.01) && CT[0].llena.caja.x1 < CT[1].llena.caja.x0 && CT[2].llena.caja.y0 > CT[0].llena.caja.y1 && cerca(CT[2].llena.caja.x0, CT[0].llena.caja.x0, 0.01)
+      && cerca(CT[3].llena.caja.x0, CT[1].llena.caja.x0, 0.01) && cerca(CT[3].llena.caja.y0, CT[2].llena.caja.y0, 0.01),
+      `paso ${n}: son cuatro tarjetas iguales, de dos en dos y en su orden, cada una con su número y para qué es`, CT.map(c => c.llena.para)]);
+    const llenas = CT.filter(c => c.llena.ve).length;
+    r.push([CT.every(c => c.llena.ve === (c.n <= E.llenas) && c.vacia.ve === (c.n > E.llenas)) && CT.every(c => !c.llena.cortada && c.vacia.cortada && c.vacia.falta === '?'),
+      `paso ${n}: ${E.llenas} de las cuatro tarjetas llenas; las que faltan, de raya cortada y con «?»`, llenas]);
+    /* la frase de cada tarjeta es la que se dijo con su número */
+    const sin = s => s.replace(/[…?.!]+$/, '').trim();
+    const usadas = {};
+    x.dichos.filter(d => d.quien === 'M').forEach(d => d.nums.forEach(u => {
+      const linea = d.lineas.find(l => Math.abs(cen(l.caja).y - u.c[1]) < 4);
+      if (linea) usadas[u.n] = { linea, d, u };
+    }));
+    r.push([Object.keys(usadas).length === 4 && CT.every(c => usadas[c.n] && usadas[c.n].linea.txt.startsWith(sin(c.llena.frase.txt)) && usadas[c.n].u.t === String(c.n)
+      && usadas[c.n].u.c[0] < usadas[c.n].linea.caja.x0),
+      `paso ${n}: cada tarjeta dice la frase que Marvin dijo con ese número, y el número va delante de su renglón`, CT.map(c => [c.n, c.llena.frase.txt, usadas[c.n] && usadas[c.n].linea.txt])]);
+    r.push([sin(CT[0].llena.frase.txt) === saludo, `paso ${n}: la primera frase es el saludo que toca a las ${hora}: «${saludo}»`, CT[0].llena.frase.txt]);
+    r.push([CT.every(c => !c.llena.ve || dentro(c.llena.frase.caja, c.llena.caja, -1)), `paso ${n}: cada frase cabe en su tarjeta`, null]);
+
+    /* ── en qué orden pasa cada cosa ── */
+    if (n === 1) {
+      const h = D('hola'), p = D('pregunta'), c = D('calla');
+      r.push([h.dSale < p.dSale && p.dSale < h.dVa && h.dVa + 300 <= c.dSale && c.dSale < p.dVa && p.dVa < x.camina.d,
+        'paso 1: Marvin saluda, ella contesta y le pregunta, él se queda callado, y entonces ella se va', [h.dSale, p.dSale, h.dVa, c.dSale, p.dVa, x.camina.d]]);
+    }
+    if (n === 2) {
+      const s = D('saludo'), s2 = D('saludo-ella');
+      r.push([x.camina.d + x.duraCamina <= RJ.aro.d && RJ.aro.d <= s.dSale && CT[0].llena.d === s.dSale && s2.dSale > s.dSale && x.duraCamina > 0,
+        'paso 2: la señora vuelve, se marca el reloj, Marvin saluda y la primera tarjeta se llena con lo que dijo; después ella contesta', [x.camina.d, x.duraCamina, RJ.aro.d, s.dSale, CT[0].llena.d, s2.dSale]]);
+    }
+    if (n === 3) {
+      const s = D('nombres'), s2 = D('nombre-ella');
+      r.push([CT[1].llena.d === s.dSale && CT[2].llena.d > CT[1].llena.d && s2.dSale > CT[2].llena.d && D('saludo').dVa + 300 <= s.dSale,
+        'paso 3: se van los globos de antes, Marvin dice su nombre y pregunta el de ella, las tarjetas 2 y 3 se llenan una tras otra, y ella contesta', [s.dSale, CT[1].llena.d, CT[2].llena.d, s2.dSale]]);
+    }
+    if (n === 4) {
+      const s = D('como'), s2 = D('como-ella');
+      r.push([CT[3].llena.d === s.dSale && s2.dSale > s.dSale && D('nombres').dVa + 300 <= s.dSale,
+        'paso 4: Marvin pregunta cómo está, la cuarta tarjeta se llena, y ella contesta', [s.dSale, CT[3].llena.d, s2.dSale]]);
+    }
+    if (n === 5) r.push([x.brazo.d < x.camina.d && x.camina.d > 0, 'paso 5: Marvin señala la puerta, y entonces ella camina hasta la dirección', [x.brazo.d, x.camina.d]]);
+
+    /* ── el marcador y la frase ── */
+    r.push([e.cifra === String(llenas), `paso ${n}: el marcador cuenta las tarjetas llenas`, [e.cifra, llenas]]);
+    if (n === 1) r.push([/se va/.test(e.palabras), 'paso 1: el marcador dice que la señora se va', e.palabras]);
+    if (n === 5) r.push([/dirección/.test(e.palabras) && /\?/.test(e.texto), 'paso 5: el marcador dice que llegó a la dirección, y la frase le pregunta al alumno', e.palabras]);
+    if (n === 0) r.push([(e.texto.match(/\?/g) || []).length === 1 && /«hello»/.test(e.texto), 'paso 0: la frase pregunta, y Marvin solo sabe «hello»', e.texto]);
+    if (n === 2) r.push([e.texto.includes(`las ${hora} de la mañana`) === (hora < 12) && e.texto.includes(`«${saludo}»`), `paso 2: la frase dice la hora del reloj y el saludo que toca`, e.texto]);
+
+    /* ── los rótulos ── */
+    const cajas = x.cajasTexto, choques = [];
+    cajas.forEach((a, i) => cajas.forEach((b, j) => { if (j > i && monta(a, b)) choques.push([x.textos[i], x.textos[j]]); }));
+    r.push([choques.length === 0, `paso ${n}: ningún rótulo se monta en otro`, choques]);
+    r.push([cajas.every(c => dentro(c, vista)) && dentro(M.caja, vista) && CT.every(c => dentro(c.llena.caja, vista)) && dentro(LT.caja, vista),
+      `paso ${n}: todo cabe en el dibujo`, null]);
+    return r;
+  },
   amJurado(e, n) {
     const x = e.extra, r = [];
     const L = x.lang === 'en' ? 'en' : 'es';
