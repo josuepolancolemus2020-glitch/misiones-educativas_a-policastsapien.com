@@ -390,7 +390,7 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 // tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
 // Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'Selvin copió en su tarea lo que le dijo el teléfono.',a:true,k:'tf-copio'},
+  {q:'Para traducir un letrero, la máquina vio el mismo texto en dos idiomas.',a:true,k:'tf-traducir'},
   {q:'La máquina piensa como tú.',a:false,k:'tf-piensa'},
   {q:'La máquina se cansa y se enoja.',a:false,k:'tf-cansa'},
   {q:'La máquina sabe todo lo que le preguntes.',a:false,k:'tf-sabe-todo'},
@@ -402,21 +402,21 @@ const evalTFBank=[
   {q:'Una foto de otros niños se puede mandar sin preguntarles.',a:false,k:'tf-foto-otros'}
 ];
 const evalMCBank=[
-  {q:'¿Por qué el teléfono se equivocó con el animal de Selvin?',o:['Porque tenía hambre','Le puso el nombre de lo que más se le parecía','Porque Selvin le mintió','Porque es mágico'],a:1,k:'mc-parecia'},
+  {q:'En el adivinador de animales, ¿qué dice la máquina si le describes un delfín?',o:['Un perro','Un pez','Una tortuga','Un delfín'],a:1,k:'mc-delfin'},
   {q:'¿Cuál de estos está VIVO?',o:['Un teléfono','Un robot','Un zanate','Una calculadora'],a:2,k:'mc-zanate'},
   {q:'Le decimos a la máquina paso por paso qué hacer. ¿Qué pasa?',o:['Obedece y no aprende nada','Aprende sola','Se enoja','Se inventa otro paso'],a:0,k:'mc-pasos'},
   {q:'Una máquina aprendió solo con nances chiquitos. Le llega un nance grande. ¿Qué pasa?',o:['Lo reconoce seguro','Se apaga','Pide más batería','Se puede equivocar: nunca vio uno así'],a:3,k:'mc-nance-grande'},
   {q:'¿Qué NO se le cuenta a una máquina?',o:['Mi color favorito','Qué es un triángulo','Cómo se escribe una palabra','El teléfono de mi mamá'],a:3,k:'mc-telefono-mama'},
   {q:'Una foto rara te asusta en la pantalla. ¿Qué haces?',o:['La comparto','Le aviso a una persona grande','Le contesto','Apago y no digo nada'],a:1,k:'mc-asusta'},
-  {q:'¿Quién elige las fotos con que aprende una máquina?',o:['Nadie','La batería','Personas','El sol'],a:2,k:'mc-quien-elige'},
+  {q:'Le enseñas la foto de un mango con el nombre «naranja». ¿Qué aprende la máquina?',o:['Que eso es un mango','Nada, porque se da cuenta','Que eso es una naranja','Que las frutas no tienen nombre'],a:2,k:'mc-nombre-cambiado'},
   {q:'¿Cómo aprendió la cámara qué forma tiene una cara?',o:['Con muchísimas fotos','Con una regla','Porque tiene ojos','Nació sabiendo'],a:0,k:'mc-camara'},
   {q:'Hace años, la gente le contaba su vida a un programa. ¿Qué le pasaba al programa?',o:['Se ponía triste','No entendía nada','Se cansaba','Lloraba'],a:1,k:'mc-programa'},
   {q:'Alguien dibujó la cruz movida un poquito. ¿Qué dice la máquina de los puntitos?',o:['Que es una cruz','Que es un aro','Que es una raya','Que no sabe'],a:2,k:'mc-raya'}
 ];
 const evalCPBank=[
-  {q:'Selvin le tomó la foto al ___ de su abuelo.',a:'chivo',acc:['chivo'],k:'cp-chivo'},
-  {q:'El teléfono le contestó que era un ___.',a:'perro',acc:['perro'],k:'cp-perro'},
-  {q:'La tarea le salió mala y la repitió de ___.',a:'noche',acc:['noche'],k:'cp-noche'},
+  {q:'La máquina de los puntitos tiene tres ___.',a:'recuerdos',acc:['recuerdos'],k:'cp-recuerdos'},
+  {q:'Un teléfono se enciende y se ___.',a:'apaga',acc:['apaga'],k:'cp-apaga'},
+  {q:'El adivinador de animales dice que el murciélago es una ___.',a:'culebra',acc:['culebra'],k:'cp-culebra'},
   {q:'Moverse no es estar vivo: un ___ también se mueve.',a:'ventilador',acc:['ventilador'],k:'cp-ventilador'},
   {q:'Hace ___ años ya había un programa que conversaba.',a:'sesenta',acc:['sesenta','60'],k:'cp-sesenta'},
   {q:'En la actividad, la máquina aprende a separar nances de ___.',a:'anonas',acc:['anonas','anona'],k:'cp-anonas'},
@@ -543,11 +543,11 @@ const critErrorBank=[
 ];
 const critDecisionBank=[
   'Un compañero está asustado por un mensaje raro. ¿No haces caso o lo acompañas donde la maestra?',
-  '¿Copias el dato que te dio la máquina o lo buscas en tu libro?',
+  'Tu hermanito dice que su robot de juguete está vivo porque camina. ¿Le das la razón o le explicas cómo se sabe?',
 ];
 /* Va con <br> a propósito: en un teléfono, cinco salidas seguidas en un solo
    párrafo son un muro de texto que el alumno se salta entero. */
-const critDecisionGuide='Vale si cuida a las personas y comprueba el dato.<br>Los datos de la casa no se dan. Un dato se busca en el libro. Un susto se cuenta a una persona grande.';
+const critDecisionGuide='Vale si cuida a las personas y explica con respeto.<br>Un susto se cuenta a una persona grande. Un juguete que camina no está vivo: no nace, no crece, no come y no muere.';
 const critCompareBank=[
   {k:'co-instruccion',a:'Una instrucción.',b:'Un ejemplo.',ga:'Es una orden clara que la máquina obedece.',gb:'Es una cosa que le mostramos para que aprenda sola.',gr:'Con instrucciones le decimos QUÉ hacer, paso por paso. Con ejemplos busca sola lo que se repite.'},
 ];

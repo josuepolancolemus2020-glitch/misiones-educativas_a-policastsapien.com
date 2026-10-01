@@ -4249,6 +4249,116 @@ const LEER = `
   window.__amExtra.amAnio5 = window.__amExtra.amAnio4;
   window.__amExtra.amAnio6 = window.__amExtra.amAnio4;
   window.__amExtra.amAnio7 = window.__amExtra.amAnio4;
+  /* ¿Qué es la Inteligencia Artificial?: el teléfono que pone el chivo de
+     Selvin encima de cada foto que vio. Cuánto coinciden se lo pregunta la
+     sonda al navegador, punto por punto, con la silueta de cada foto y el
+     recorte del chivo puesto en esa misma foto: no se le cree a la barra. */
+  window.__amExtra.amChivo = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(m(el)); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function uno(sel, en) { return (en || raiz).querySelector(sel); }
+    function todos(sel, en) { return [].slice.call((en || raiz).querySelectorAll(sel)); }
+    function demora(el) { return el ? (parseFloat(el.style.getPropertyValue('--d')) || 0) : 0; }
+    function numeros(t) { return ((t || '').match(/-?[0-9.]+/g) || []).map(Number); }
+    function pares(nn) { var ps = []; for (var i = 0; i + 1 < nn.length; i += 2) ps.push([nn[i], nn[i + 1]]); return ps; }
+    function puntos(el) { return pares(numeros(el.getAttribute('d') || el.getAttribute('points'))).map(function (p) { return aVista(el, p[0], p[1]); }); }
+    function texto(t) { return t ? { txt: t.textContent, caja: caja(t), ve: vis(t), d: demora(t) } : null; }
+    function trazado(p) { return Math.abs(parseFloat(getComputedStyle(p).strokeDashoffset) || 0) < 0.5; }
+    var P = svg.createSVGPoint();
+    function adentro(el, x, y) { P.x = x; P.y = y; return el.isPointInFill(P); }
+    /* lo que cae en el mismo sitio, entre todo lo que ocupan las dos */
+    function cuanto(sil, rec, cj) {
+      var a = 0, u = 0;
+      for (var y = cj.y0 + 0.35; y < cj.y1; y += 0.7) {
+        for (var x = cj.x0 + 0.35; x < cj.x1; x += 0.7) {
+          var s = adentro(sil, x, y), r = adentro(rec, x, y);
+          if (s && r) a++;
+          if (s || r) u++;
+        }
+      }
+      return u ? a / u : 0;
+    }
+    function foto(g) {
+      var sil = uno('[data-silueta]', g), ojo = uno('circle', g), fc = uno('[data-foto-caja]', g);
+      var cx = +ojo.getAttribute('cx'), cy = +ojo.getAttribute('cy');
+      return { caja: caja(fc), sil: puntos(sil), ojoDentro: adentro(sil, cx, cy) };
+    }
+    return {
+      vista: [svg.viewBox.baseVal.width, svg.viewBox.baseVal.height],
+      titulo: texto(uno('[data-titulo]')),
+      marcos: todos('[data-marco]').map(function (g) {
+        var i = +g.getAttribute('data-marco'), f = foto(g), co = uno('[data-coincide]', g);
+        var rec = svg.querySelector('[data-recorte="' + i + '"]');
+        return { i: i, animal: g.getAttribute('data-animal'), ve: vis(g), d: demora(g), caja: f.caja, sil: f.sil, ojoDentro: f.ojoDentro,
+          cuanto: cuanto(uno('[data-silueta]', g), rec, f.caja),
+          recorte: pares(numeros(rec.getAttribute('d'))), recorteDe: rec.parentNode.id,
+          coincide: { ve: vis(co), d: demora(co), clip: co.getAttribute('clip-path') } };
+      }),
+      nombres: todos('[data-nombre]').map(function (t) { var o = texto(t); o.i = +t.getAttribute('data-nombre'); return o; }),
+      copias: todos('[data-copia]').map(function (g) {
+        var v = uno('[data-copia-ver]', g);
+        return { i: +g.getAttribute('data-copia'), ve: vis(v), dVer: demora(v), dVuela: demora(g), ps: puntos(uno('[data-copia-silueta]', g)) };
+      }),
+      rieles: todos('[data-riel]').map(function (p) { return { i: +p.getAttribute('data-riel'), ve: vis(p), d: demora(p), ps: puntos(p) }; }),
+      barras: todos('[data-barra]').map(function (p) {
+        return { i: +p.getAttribute('data-barra'), ve: vis(p) && trazado(p), d: demora(p), ps: puntos(p), dice: +p.getAttribute('data-cuanto') };
+      }),
+      aros: todos('[data-aro]').map(function (r) { return { i: +r.getAttribute('data-aro'), ve: vis(r), d: demora(r), caja: caja(r) }; }),
+      flechas: todos('[data-flecha]').map(function (g) {
+        var l = uno('[data-flecha-linea]', g), c = uno('[data-flecha-punta]', g);
+        return { i: +g.getAttribute('data-flecha'), ve: vis(g) && vis(l) && trazado(l), d: demora(l), ps: puntos(l),
+                 punta: { ve: vis(c), d: demora(c), ps: puntos(c) } };
+      }),
+      globos: todos('[data-globo]').map(function (g) {
+        var c = uno('[data-globo-caja]', g);
+        return { k: g.getAttribute('data-globo'), ve: vis(g), d: demora(g), caja: caja(c), raya: getComputedStyle(c).strokeDasharray,
+                 punta: numeros(c.getAttribute('data-punta-globo')), dice: texto(uno('[data-dice]', g)), bien: !!uno('[data-bien]', g) };
+      }),
+      vacio: (function () { var g = uno('[data-vacio]'); return { ve: vis(g), d: demora(g), caja: caja(uno('[data-vacio-caja]', g)), dice: texto(uno('[data-vacio-dice]', g)) }; })(),
+      selvin: (function () { var g = uno('[data-selvin]'), f = foto(g); f.dice = texto(uno('[data-selvin-dice]')); return f; })(),
+      telefono: caja(uno('[data-telefono-caja]')),
+      decir: (function () {
+        var g = uno('[data-decir]');
+        return { ve: vis(g), d: demora(g), titulo: texto(uno('[data-decir-titulo]', g)),
+          fichas: todos('[data-ficha]', g).map(function (f) {
+            return { i: +f.getAttribute('data-ficha'), ve: vis(f), d: demora(f), caja: caja(uno('[data-ficha-caja]', f)), dice: texto(uno('[data-ficha-dice]', f)) };
+          }) };
+      })(),
+      noDecir: (function () {
+        var g = uno('[data-no-decir]');
+        return { ve: vis(g), d: demora(g), titulo: texto(uno('[data-no-decir-titulo]', g)),
+          fichas: todos('[data-no-ficha]', g).map(function (f) {
+            var r = uno('[data-ficha-caja]', f);
+            return { caja: caja(r), raya: getComputedStyle(r).strokeDasharray, dice: texto(uno('[data-ficha-dice]', f)) };
+          }) };
+      })(),
+      tarea: (function () {
+        var g = uno('[data-tarea="1"]'), e = uno('[data-equis]'), no = uno('[data-noche]'), h2 = uno('[data-tarea="2"]'), l = uno('[data-lapiz]');
+        var lu = uno('[data-luna]', no), lp = uno('[data-lapiz-punta]', l);
+        return { ve: vis(g), d: demora(g), caja: caja(uno('[data-hoja-caja]', g)), escribio: texto(uno('[data-escribio]', g)),
+          mini: foto(uno('[data-foto-caja]', g).parentNode),
+          equis: { ve: vis(e), d: demora(e), caja: caja(e), trazos: (uno('path', e).getAttribute('d').match(/M/g) || []).length },
+          noche: { ve: vis(no), d: demora(no), caja: caja(uno('[data-noche-caja]', no)), luna: aVista(lu, +lu.getAttribute('cx'), +lu.getAttribute('cy')) },
+          hoja2: caja(uno('[data-hoja-caja]', h2)),
+          lapiz: { ve: vis(l), d: demora(l), punta: puntos(lp)[0] } };
+      })(),
+      cuaderno: (function () {
+        var g = uno('[data-cuaderno]');
+        return { ve: vis(g), d: demora(g), caja: caja(uno('[data-cuaderno-caja]', g)), textos: todos('text', g).map(texto),
+                 rayas: todos('[data-raya-escribir]', g).map(puntos) };
+      })(),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; }),
+      cajasTexto: todos('text').filter(vis).map(caja)
+    };
+  };
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -4469,6 +4579,18 @@ const ESTADOS_CITA = [
    paso. kenia: 'inicio' (el primer mes) o 'prueba' (el mes de la prueba);
    anio: 0 nada escrito, 'A' el año en que lo ve una sola vez, 'B' el de
    una forma cada mes; leyenda: cuál se ve (−1, ninguna). */
+/* ¿Qué es la Inteligencia Artificial?: lo que se ve al TERMINAR cada paso.
+   vistos: cuántas fotos vio el teléfono; comp: cuántas ya comparó; gana:
+   qué señala a la que gana (el aro, o el aro y la flecha). */
+const ESTADOS_CHIVO = [
+  { vistos: 3, comp: 0, gana: null, globo: 'duda', vacio: false, decir: true, noDecir: false, tarea: false, cuaderno: false },
+  { vistos: 3, comp: 3, gana: 'aro', globo: 'duda', vacio: false, decir: true, noDecir: false, tarea: false, cuaderno: false },
+  { vistos: 3, comp: 3, gana: 'flecha', globo: 'nombre', dice: true, vacio: true, decir: true, noDecir: true, tarea: false, cuaderno: false },
+  { vistos: 3, comp: 3, gana: 'flecha', globo: 'nombre', vacio: true, decir: false, noDecir: false, tarea: true, cuaderno: false },
+  { vistos: 4, comp: 3, gana: null, globo: 'duda', vacio: false, decir: true, noDecir: false, tarea: false, cuaderno: false },
+  { vistos: 4, comp: 4, gana: 'flecha', globo: 'nombre', dice: true, vacio: false, decir: true, noDecir: false, tarea: false, cuaderno: false },
+  { vistos: 4, comp: 4, gana: 'flecha', globo: 'nombre', vacio: false, decir: false, noDecir: false, tarea: false, cuaderno: true }
+];
 const ESTADOS_ANIO = [
   { kenia: 'inicio', tinta: false, anio: 0, resp: false, marcas: '', llave: false, barra: false, tira: false, nota: false, leyenda: 0 },
   { kenia: 'prueba', tinta: true, anio: 'A', resp: false, marcas: '', llave: false, barra: false, tira: false, nota: false, leyenda: 1 },
@@ -4728,6 +4850,203 @@ function verAnio(e, n, GRADO) {
 const ESCENAS = {
   /* Las Pruebas de Fin de Grado: una escena y una sonda para los cuatro
      grados (verAnio, arriba). Cada misión con su id y su grado. */
+  /* ¿Qué es la Inteligencia Artificial?: el chivo de Selvin, el perro y el
+     otro chivo. Lo que se mide se cuenta en el dibujo, con el navegador: qué
+     foto coincide más con el chivo, y si la barra, el aro, la flecha y el
+     globo dicen eso mismo. */
+  amChivo(e, n) {
+    const x = e.extra, r = [];
+    if (!x) return [[false, `paso ${n}: la sonda pudo leer la escena`, null]];
+    const E = ESTADOS_CHIVO[n];
+    const cerca = (a, b, t = 0.6) => Math.abs(a - b) <= t;
+    const dentro = (a, b, m = 0) => a.x0 >= b.x0 - m && a.x1 <= b.x1 + m && a.y0 >= b.y0 - m && a.y1 <= b.y1 + m;
+    const monta = (a, b) => a.x0 < b.x1 - 0.5 && b.x0 < a.x1 - 0.5 && a.y0 < b.y1 - 0.5 && b.y0 < a.y1 - 0.5;
+    const ptoEn = (p, c, m = 0) => p[0] >= c.x0 - m && p[0] <= c.x1 + m && p[1] >= c.y0 - m && p[1] <= c.y1 + m;
+    const ANIMALES = ['perro', 'gato', 'gallina', 'chivo'];
+
+    /* ── lo que no depende del dibujo va primero ── */
+    /* Ni los pareados de la prueba (ejemplo, etiqueta, dato, predecir,
+       comprobar, instrucción, privado, ser vivo), ni una respuesta suya (el
+       ventilador, los sesenta años, las anonas, las casillas, las voces, la
+       plaga, el lenguaje, los recuerdos, «se apaga», la culebra, el pez, la
+       raya, «personas», «con muchísimas fotos», el mango y la naranja, el
+       letrero), ni que la máquina piensa, sabe, siente o entiende. */
+    const PROHIBIDAS = /ejempl|etiquet|\bdatos?\b|predec|adivin|comprob|instrucci|privad|\bvivo|ventilador|sesenta|\b60\b|anona|nance|casilla|cuadrit|puntit|\bvoces\b|plaga|lenguaje|recuerd|\bapag|culebra|\bpez\b|delf[ií]n|murci[eé]lag|zanate|\braya|persona|much[ií]sim|entend|obedec|naranja|mango|letrero|idioma|piens|\bsabe|\bsient|equivoc|m[aá]gic|inteligencia artificial|\bbota\b|internet|m[uú]sica|\bruta\b/i;
+    const dicho = [e.texto, e.palabras, e.boton].concat(x.textos).join(' · ');
+    r.push([!PROHIBIDAS.test(dicho), `paso ${n}: no sale nada que pregunte la prueba, ni que la máquina piensa o sabe`, (dicho.match(PROHIBIDAS) || [])[0]]);
+
+    /* ── lo que vio el teléfono: las fotos, iguales y en fila ── */
+    const M = x.marcos.slice().sort((a, b) => a.i - b.i), F0 = M[0].caja, W = F0.x1 - F0.x0, H = F0.y1 - F0.y0, PASO = M[1].caja.x0 - F0.x0;
+    r.push([M.length === 4 && M.every((mm, i) => mm.animal === (i === 3 ? 'otro' : ANIMALES[i]) && cerca(mm.caja.x0 - F0.x0, i * PASO, 0.05)
+      && cerca(mm.caja.x1 - mm.caja.x0, W, 0.05) && cerca(mm.caja.y0, F0.y0, 0.05) && cerca(mm.caja.y1, F0.y1, 0.05) && PASO > W),
+      `paso ${n}: las fotos de lo que vio son del mismo tamaño, en fila y en su orden`, M.map(mm => mm.animal)]);
+    r.push([M.every(mm => mm.ve === (mm.i < E.vistos)), `paso ${n}: el teléfono vio ${E.vistos} fotos`, M.map(mm => mm.ve)]);
+    r.push([M.every(mm => mm.sil.every(p => ptoEn(p, mm.caja, 0.01)) && mm.ojoDentro) && x.selvin.sil.every(p => ptoEn(p, x.selvin.caja, 0.01)) && x.selvin.ojoDentro,
+      `paso ${n}: cada animal cabe en su foto, y su ojo cae dentro de su silueta`, null]);
+    const NOM = x.nombres.slice().sort((a, b) => a.i - b.i);
+    /* el nombre, entre su foto y su barra (la caja de un texto trae el aire
+       de encima de la letra, así que se mide su centro) */
+    const RI0 = x.rieles.slice().sort((a, b) => a.i - b.i);
+    r.push([NOM.every((t, i) => t.txt === ANIMALES[i] && t.ve === (i < E.vistos) && cerca((t.caja.x0 + t.caja.x1) / 2, (M[i].caja.x0 + M[i].caja.x1) / 2, 0.8)
+      && (t.caja.y0 + t.caja.y1) / 2 > M[i].caja.y1 && (t.caja.y0 + t.caja.y1) / 2 < RI0[i].ps[0][1]),
+      `paso ${n}: debajo de cada foto, su nombre`, NOM.map(t => [t.txt, Math.round((t.caja.y0 + t.caja.y1) / 2)])]);
+    /* la foto de Selvin, más grande y abajo, con su rótulo debajo */
+    const SB = x.selvin.caja, SW = SB.x1 - SB.x0;
+    r.push([SB.y0 > F0.y1 + 20 && cerca(W / SW, 0.7, 0.01) && cerca((SB.y1 - SB.y0) / SW, H / W, 0.01) && x.selvin.dice.txt === 'la foto de Selvin'
+      && x.selvin.dice.caja.y0 > SB.y1 && x.selvin.dice.caja.y0 - SB.y1 < 6,
+      `paso ${n}: abajo, la foto de Selvin, del mismo tamaño que las otras a 0,7`, [W / SW]]);
+
+    /* ── lo que se compara es SU chivo, puesto en cada foto ── */
+    const mapa = (p, B) => [B.x0 + (p[0] - SB.x0) * (W / SW), B.y0 + (p[1] - SB.y0) * (W / SW)];
+    r.push([M.every(mm => mm.recorte.length === x.selvin.sil.length && mm.recorte.every((p, k) => { const q = mapa(x.selvin.sil[k], mm.caja); return cerca(p[0], q[0], 0.05) && cerca(p[1], q[1], 0.05); })
+      && mm.recorteDe === `amChivo-recorte-${mm.i}` && mm.coincide.clip === `url(#amChivo-recorte-${mm.i})`),
+      `paso ${n}: lo que se marca en cada foto es lo que coincide con el chivo de Selvin, puesto en esa foto`, null]);
+    const C = x.copias.slice().sort((a, b) => a.i - b.i);
+    r.push([C.length === 4 && C.every(c => {
+      const dest = c.i < E.comp ? M[c.i].recorte : x.selvin.sil;
+      return c.ps.length === dest.length && c.ps.every((p, k) => cerca(p[0], dest[k][0], 0.3) && cerca(p[1], dest[k][1], 0.3)) && c.ve === (c.i < E.comp);
+    }), `paso ${n}: cada copia del chivo está encima de la foto que ya comparó (${E.comp}), y las demás esperan sobre la foto de Selvin`,
+      C.map(c => c.ve)]);
+    r.push([M.every(mm => mm.coincide.ve === (mm.i < E.comp)), `paso ${n}: lo que coincide se marca en las ${E.comp} fotos comparadas`, M.map(mm => mm.coincide.ve)]);
+
+    /* ── cuánto coinciden: la barra dice lo que mide el navegador ── */
+    const B = x.barras.slice().sort((a, b) => a.i - b.i), RI = x.rieles.slice().sort((a, b) => a.i - b.i);
+    r.push([B.every((b, i) => b.ve === (i < E.comp) && RI[i].ve === (i < E.comp)),
+      `paso ${n}: ${E.comp} barras, una por foto comparada`, B.map(b => b.ve)]);
+    r.push([B.every((b, i) => cerca(b.ps[0][0], M[i].caja.x0, 0.05) && cerca(b.ps[0][1], b.ps[1][1], 0.01) && b.ps[0][1] > NOM[i].caja.y1
+      && cerca(RI[i].ps[0][0], M[i].caja.x0, 0.05) && cerca(RI[i].ps[1][0], M[i].caja.x1, 0.05) && cerca(RI[i].ps[0][1], b.ps[0][1], 0.01)
+      && cerca((b.ps[1][0] - b.ps[0][0]) / W, M[i].cuanto, 0.02) && cerca(b.dice, M[i].cuanto, 0.02)),
+      `paso ${n}: el largo de cada barra es lo que coinciden las dos siluetas, medido en el navegador`, M.map(mm => Math.round(mm.cuanto * 100) / 100)]);
+    /* Las siluetas están hechas para que la historia sea verdad: el perro le
+       gana al gato y a la gallina, y el otro chivo le gana al perro. */
+    const gana = k => { let g = 0; for (let i = 1; i < k; i++) if (M[i].cuanto > M[g].cuanto) g = i; return g; };
+    r.push([gana(3) === 0 && gana(4) === 3 && M[3].cuanto < 0.99 && M[3].cuanto - M[0].cuanto > 0.1 && M[0].cuanto - Math.max(M[1].cuanto, M[2].cuanto) > 0.05,
+      `paso ${n}: de lo que vio, el que más coincide con el chivo es el perro; y el otro chivo le gana al perro (sin ser el mismo chivo)`, M.map(mm => mm.cuanto)]);
+    const G = E.comp ? gana(E.comp) : -1;
+    const A = x.aros.filter(a => a.ve);
+    r.push([E.gana ? (A.length === 1 && A[0].i === G && dentro({ x0: B[G].ps[0][0], x1: B[G].ps[1][0], y0: B[G].ps[0][1], y1: B[G].ps[0][1] }, A[0].caja, 0)
+      && cerca(A[0].caja.x0, M[G].caja.x0 - 3, 0.6) && cerca(A[0].caja.x1, M[G].caja.x1 + 3, 0.6) && A[0].caja.y0 > NOM[G].caja.y1 - 0.5) : A.length === 0,
+      `paso ${n}: ${E.gana ? 'el aro rodea la barra más larga, sin tocar su nombre' : 'no hay ningún aro'}`, A.map(a => a.i)]);
+
+    /* ── lo que contesta: el nombre de la barra más larga ── */
+    const GL = x.globos.filter(g => g.ve);
+    r.push([GL.length === 1, `paso ${n}: hay un solo globo`, GL.map(g => g.k)]);
+    const globo = GL[0], tel = x.telefono;
+    if (globo) {
+      r.push([cerca(globo.punta[0], tel.x1, 1.5) && globo.punta[1] > tel.y0 && globo.punta[1] < tel.y1 && !monta(globo.caja, tel),
+        `paso ${n}: la cola del globo llega al teléfono`, globo.punta]);
+      if (E.globo === 'duda') r.push([globo.k === 'duda' && globo.dice.txt === '?' && globo.raya !== 'none', `paso ${n}: todavía no contesta (el globo va de raya cortada)`, globo.dice.txt]);
+      else {
+        const dice = `¡Es un ${ANIMALES[G]}!`;
+        /* la frase lo dice en el paso en que contesta */
+        r.push([globo.dice.txt === dice && globo.raya === 'none' && globo.bien === (G === 3) && (!E.dice || e.texto.includes(`«${ANIMALES[G]}»`)),
+          `paso ${n}: contesta el nombre de la foto que más coincide (${dice})${E.dice ? ', y la frase dice lo mismo' : ''}`, globo.dice.txt]);
+      }
+    }
+    const FL = x.flechas.filter(f => f.ve);
+    if (E.gana === 'flecha' && globo) {
+      const f = FL[0], fin = f && f.punta.ps[0];
+      r.push([FL.length === 1 && !!A[0] && f.i === G && f.punta.ve && cerca(f.ps[0][0], (M[G].caja.x0 + M[G].caja.x1) / 2, 0.6) && f.ps[0][1] > A[0].caja.y1 && f.ps[0][1] - A[0].caja.y1 < 3
+        && ptoEn(fin, { x0: globo.caja.x0 + 4, x1: globo.caja.x1 - 4, y0: globo.caja.y0 - 0.6, y1: globo.caja.y0 + 0.6 }),
+        `paso ${n}: la flecha sale de la barra que gana y llega al globo`, f && [f.i, f.ps[0], fin]]);
+      /* y no pasa por encima de la foto de Selvin ni de otra barra */
+      r.push([f && f.ps.every(p => p[1] < SB.y0) && B.every((b, i) => i === G || !b.ve || f.ps.every(p => p[1] > b.ps[0][1] + 3)),
+        `paso ${n}: la flecha va por el hueco, sin cruzar otra barra ni la foto de Selvin`, null]);
+    } else r.push([FL.length === 0, `paso ${n}: no hay flecha`, FL.map(f => f.i)]);
+
+    /* ── lo que puede decir, y lo que no ── */
+    const FI = x.decir.fichas.slice().sort((a, b) => a.i - b.i), visFi = FI.filter(f => f.ve);
+    r.push([x.decir.ve === E.decir, `paso ${n}: ${E.decir ? 'se ve lo que puede decir' : 'no se ve lo que puede decir'}`, x.decir.ve]);
+    if (E.decir) {
+      r.push([x.decir.titulo.txt === 'Puede decir:' && visFi.map(f => f.dice.txt).join(',') === NOM.filter(t => t.ve).map(t => t.txt).join(',')
+        && visFi.every((f, k) => dentro(f.dice.caja, f.caja, 0.5) && f.caja.y0 > x.decir.titulo.caja.y1 - 0.5 && (k === 0 || f.caja.x0 > visFi[k - 1].caja.x1)),
+        `paso ${n}: puede decir justo los nombres de las fotos que vio, uno en cada ficha`, visFi.map(f => f.dice.txt)]);
+      if (globo && globo.k !== 'duda') r.push([visFi.some(f => globo.dice.txt === `¡Es un ${f.dice.txt}!`), `paso ${n}: lo que contesta es uno de los nombres que puede decir`, globo.dice.txt]);
+    }
+    r.push([x.noDecir.ve === E.noDecir, `paso ${n}: ${E.noDecir ? 'se ve lo que no puede decir' : 'no se ve lo que no puede decir'}`, x.noDecir.ve]);
+    if (E.noDecir) {
+      const ND = x.noDecir.fichas;
+      r.push([x.noDecir.titulo.txt === 'No puede decir:' && ND.map(f => f.dice.txt).join(',') === 'chivo,no sé' && ND.every(f => f.raya !== 'none' && dentro(f.dice.caja, f.caja, 0.5))
+        && ND.every(f => !visFi.some(v => v.dice.txt === f.dice.txt)) && ND.every(f => f.caja.x0 > x.noDecir.titulo.caja.x1),
+        `paso ${n}: no puede decir «chivo» ni «no sé», con su borde de raya cortada`, ND.map(f => f.dice.txt)]);
+    }
+
+    /* ── el hueco de lo que nunca vio ── */
+    const H3 = { x0: F0.x0 + 3 * PASO, x1: F0.x0 + 3 * PASO + W, y0: F0.y0, y1: F0.y1 };
+    r.push([x.vacio.ve === E.vacio && (!E.vacio || (cerca(x.vacio.caja.x0, H3.x0, 0.8) && cerca(x.vacio.caja.x1, H3.x1, 0.8) && cerca(x.vacio.caja.y0, H3.y0, 0.8)
+      && cerca(x.vacio.caja.y1, H3.y1, 0.8) && x.vacio.dice.txt === 'ningún chivo' && cerca(x.vacio.dice.caja.y0, NOM[0].caja.y0, 1.5))),
+      `paso ${n}: ${E.vacio ? 'en el hueco de la cuarta foto, «ningún chivo»' : 'no hay hueco vacío'}`, x.vacio.ve]);
+
+    /* ── la tarea: la mala y la de la noche ── */
+    const T = x.tarea;
+    r.push([T.ve === E.tarea && T.equis.ve === E.tarea && T.noche.ve === E.tarea && T.lapiz.ve === E.tarea,
+      `paso ${n}: ${E.tarea ? 'se ve la tarea' : 'no se ve la tarea'}`, [T.ve, T.equis.ve, T.noche.ve, T.lapiz.ve]]);
+    if (E.tarea) {
+      const ec = T.escribio.caja;
+      r.push([T.escribio.txt === `Es un ${ANIMALES[gana(3)]}` && dentro(ec, T.caja, 0) && dentro(T.mini.caja, T.caja, 0) && T.mini.sil.length === x.selvin.sil.length,
+        `paso ${n}: en la tarea, la foto del chivo y lo que contestó el teléfono`, T.escribio.txt]);
+      r.push([T.equis.trazos === 2 && T.equis.caja.x0 > ec.x1 && T.equis.caja.y0 < ec.y1 && T.equis.caja.y1 > ec.y0 && dentro(T.equis.caja, T.caja, 0),
+        `paso ${n}: la ✗ (dos rayas) va al lado de lo que copió`, T.equis.trazos]);
+      r.push([ptoEn(T.noche.luna, T.noche.caja) && dentro(T.hoja2, T.noche.caja, 0) && ptoEn(T.lapiz.punta, T.hoja2) && !monta(T.caja, T.noche.caja),
+        `paso ${n}: la otra hoja, de noche, con la luna y el lápiz encima`, null]);
+    }
+    r.push([x.cuaderno.ve === E.cuaderno, `paso ${n}: ${E.cuaderno ? 'se ve lo que se escribe en el cuaderno' : 'no se ve el cuaderno'}`, x.cuaderno.ve]);
+    if (E.cuaderno) {
+      const CU = x.cuaderno;
+      r.push([CU.textos.map(t => t.txt).join('|') === 'En tu cuaderno:|Un animal de tu casa:|Lo que diría el teléfono:' && CU.rayas.length === 2
+        && CU.rayas.every(rr => rr.every(p => ptoEn(p, CU.caja))) && CU.textos.every(t => dentro(t.caja, CU.caja, 0)),
+        `paso ${n}: en el cuaderno, un animal de su casa y lo que diría el teléfono, con su raya para escribir`, CU.textos.map(t => t.txt)]);
+    }
+
+    /* ── el marcador cuenta lo que se ve ── */
+    const cuenta = [visFi.length, C.filter(c => c.ve).length, M.filter(mm => mm.ve && mm.animal === 'otro').length + 0, (T.ve ? 1 : 0) + (T.noche.ve ? 1 : 0),
+      visFi.length, C.filter(c => c.ve).length, NOM.filter(t => t.ve).length][n];
+    r.push([e.cifra === String(cuenta), `paso ${n}: el marcador dice lo que se ve`, [e.cifra, cuenta]]);
+
+    /* ── todo en el dibujo, y nada encima de nada ── */
+    const VB = { x0: 0, y0: 0, x1: x.vista[0], y1: x.vista[1] };
+    r.push([x.cajasTexto.every(c => dentro(c, VB, 0.5)) && M.every(mm => !mm.ve || dentro(mm.caja, VB, 0)) && dentro(SB, VB, 0)
+      && (!globo || dentro(globo.caja, VB, 0)) && (!x.decir.ve || FI.every(f => dentro(f.caja, VB, 0))),
+      `paso ${n}: todo cabe en el dibujo`, null]);
+    const CJ = x.cajasTexto;
+    let pegados = 0;
+    for (let a = 0; a < CJ.length; a++) for (let b = a + 1; b < CJ.length; b++) if (monta(CJ[a], CJ[b])) pegados++;
+    r.push([pegados === 0, `paso ${n}: ningún texto se monta en otro`, pegados]);
+    const bloques = [SB, tel].concat(globo ? [globo.caja] : [], x.decir.ve ? FI.filter(f => f.ve).map(f => f.caja) : [], T.ve ? [T.caja, T.noche.caja] : [], x.cuaderno.ve ? [x.cuaderno.caja] : []);
+    let chocan = 0;
+    for (let a = 0; a < bloques.length; a++) for (let b = a + 1; b < bloques.length; b++) if (monta(bloques[a], bloques[b])) chocan++;
+    r.push([chocan === 0, `paso ${n}: la foto de Selvin, el teléfono, el globo, las fichas y las hojas no se enciman`, chocan]);
+
+    /* ── el orden de las cosas, en los pasos que cuentan algo ── */
+    const ANDA = 800, APAGA = 500;
+    const vuelo = i => [C[i].dVer, C[i].dVuela, M[i].coincide.d, B[i].d];
+    const vueloBien = i => { const v = vuelo(i); return v[1] >= v[0] && v[2] >= v[1] + ANDA && v[3] >= v[2]; };
+    if (n === 1) {
+      r.push([[0, 1, 2].every(vueloBien) && C[1].dVuela >= C[0].dVuela + ANDA && C[2].dVuela >= C[1].dVuela + ANDA,
+        `paso 1: cada copia aparece, vuela a su foto, se marca lo que coincide y crece su barra; la siguiente vuela cuando la anterior ya llegó`, [0, 1, 2].map(vuelo)]);
+      r.push([A[0] && A[0].d >= Math.max(B[0].d, B[1].d, B[2].d) + ANDA, `paso 1: el aro llega cuando ya crecieron las tres barras`, A[0] && A[0].d]);
+    }
+    if (n === 2) {
+      const f = FL[0], gd = x.globos.find(g => g.k === 'duda'), gp = x.globos.find(g => g.k === 'perro');
+      r.push([f && gp.d >= f.d + ANDA && gd.d + APAGA <= gp.d && x.vacio.d >= gp.d && x.noDecir.d >= x.vacio.d,
+        `paso 2: primero la flecha, después contesta (cuando ya se fue el «?»), y al final lo que no vio y lo que no puede decir`, [f && f.d, gd.d, gp.d, x.vacio.d, x.noDecir.d]]);
+    }
+    if (n === 3) {
+      r.push([T.d >= x.decir.d + APAGA && T.equis.d > T.d && T.noche.d > T.equis.d && T.lapiz.d > T.noche.d,
+        `paso 3: la tarea sale cuando ya se fue lo que puede decir; después la ✗, la noche y el lápiz`, [x.decir.d, T.d, T.equis.d, T.noche.d, T.lapiz.d]]);
+    }
+    if (n === 4) {
+      const gp = x.globos.find(g => g.k === 'perro'), gd = x.globos.find(g => g.k === 'duda');
+      r.push([M[3].d > 0 && NOM[3].d >= M[3].d && FI[3].d >= M[3].d && gd.d >= gp.d + APAGA,
+        `paso 4: llega la foto del otro chivo, después su nombre y su ficha; el «?» vuelve cuando ya se fue el «perro»`, [M[3].d, NOM[3].d, FI[3].d, gp.d, gd.d]]);
+    }
+    if (n === 5) {
+      const f = FL[0], gc = x.globos.find(g => g.k === 'chivo'), gd = x.globos.find(g => g.k === 'duda');
+      r.push([vueloBien(3) && A[0] && A[0].d >= B[3].d + ANDA && f && f.d >= A[0].d && gc.d >= f.d + ANDA && gd.d + APAGA <= gc.d,
+        `paso 5: la copia vuela a la foto nueva, crece su barra, el aro, la flecha y al final contesta`, [vuelo(3), A[0] && A[0].d, f && f.d, gc.d]]);
+    }
+    return r;
+  },
   amAnio4(e, n) { return verAnio(e, n, '4º'); },
   amAnio5(e, n) { return verAnio(e, n, '5º'); },
   amAnio6(e, n) { return verAnio(e, n, '6º'); },

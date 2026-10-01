@@ -13350,6 +13350,138 @@ paso y sale de la página entera: la de Fin de Grado tiene 2 059 elementos, el d
 que la de la Constitución, y quitarle cien piezas a la escena casi no lo cambió. Se
 dejaron solo los puntitos que una hoja puede llegar a tener: 36 en vez de 72.
 
+### La sexagésima novena: ¿Qué es la Inteligencia Artificial?, y lo que enseñó
+
+Con la Ruta de la Patria y la de la Meta terminadas sigue la Ruta de la Máquina que
+Aprende, y su primera misión es **¿Qué es la Inteligencia Artificial?**
+(`misiones/1ciclo-que-es-la-ia/`, `js/animacion-chivo.js`). La historia es la de
+Selvin: le pidieron de tarea la foto de un animal y su nombre, le tomó la foto al
+chivo de su abuelo, el teléfono contestó «perro» y él lo copió tal cual. La tarea le
+salió mala y la repitió de noche. La animación pone arriba lo que vio el teléfono,
+tres fotos con su nombre (un perro, un gato y una gallina), y abajo la foto del chivo
+de Selvin y el teléfono:
+
+- antes de tocar: ¿qué nombre le pondrá al chivo?;
+- el teléfono pone el chivo encima de cada foto, una por una: lo que coincide queda
+  marcado con rayitas, y una barra dice cuánto. La más larga es la del perro;
+- contesta «¡Es un perro!», sin dudar. Al lado, lo que puede decir (perro, gato,
+  gallina) y, con raya cortada, lo que no: «chivo» y «no sé»;
+- Selvin lo copia tal cual, la tarea sale con su ✗ y la repite de noche;
+- se le enseña la foto de otro chivo, con su nombre: ya puede decir cuatro;
+- compara otra vez, y ahora la barra más larga es la del chivo: contesta «chivo»;
+- y la pregunta es del alumno: qué animal de su casa no ha visto ese teléfono, y
+  qué nombre le pondría.
+
+Siete cosas que valen para las que siguen:
+
+1. ⚠️ **Cuánto coincide no se escribe: se mide.** Las siluetas son polígonos, y la
+   escena cuenta, punto por punto, qué parte de los dos dibujos cae en el mismo
+   sitio entre todo lo que ocupan los dos juntos. La sonda lo vuelve a medir aparte,
+   con el navegador (`isPointInFill`) sobre las siluetas ya dibujadas, y cada barra
+   tiene que medir eso. Es la idea de la máquina de los puntitos de esta misma
+   misión: compara dibujo contra dibujo, sin saber qué es un chivo. Hoy da 0,67 el
+   perro, 0,53 el gato, 0,46 la gallina y 0,92 el otro chivo.
+2. ⚠️ **Las siluetas se hicieron para que la historia sea verdad, y el archivo lo
+   dice.** El chivo se parece más al perro (cuatro patas, el mismo cuerpo) que al
+   gato y a la gallina, y mucho más a otro chivo. Quien las cambie tiene que volver
+   a medir: la sonda se pone roja si el perro deja de ganar, si el otro chivo no le
+   gana al perro o si el otro chivo es el mismo dibujo.
+3. ⚠️ **Una silueta que se mide no puede cruzarse sobre sí misma.** La escena decide
+   «dentro» con la regla de par-impar y el navegador rellena con la de nonzero: con
+   un cruce, los dos contestan distinto en el mismo punto, y la barra deja de medir
+   lo que se ve. Las colas del perro y del gato se cruzaban; se volvieron a dibujar,
+   y se comprobó que ningún contorno se cruza.
+4. **Lo que coincide va con rayitas, encima del animal.** Pintado entero de
+   amarillo, el perro dejaba de verse perro. Con rayitas se sigue viendo, se
+   distingue sin distinguir colores y se ve sobre la gallina blanca y sobre el chivo
+   oscuro. Los adornos (el ojo, la oreja, la cresta) van encima de las rayitas.
+5. ⚠️ **Contestar tan seguro se explica con lo que puede decir.** La historia dice
+   que no sabe decir «no sé». Abajo, a la derecha, van las fichas de lo que puede
+   decir (los nombres de las fotos que vio) y, con raya cortada, lo que no puede
+   decir. Ese rincón del dibujo estaba vacío, y es donde mejor se ve por qué contestó
+   «perro» sin dudar.
+6. ⚠️ **La historia y la animación contestaban siete preguntas de la prueba.** La
+   historia: «Selvin copió en su tarea lo que le dijo el teléfono», «¿por qué el
+   teléfono se equivocó con el animal de Selvin?» y los tres completar del chivo, el
+   perro y la noche. La animación: «¿quién elige las fotos con que aprende una
+   máquina?», que se ve cuando se le enseña la foto del otro chivo, y en pensamiento
+   crítico la decisión de copiar el dato o buscarlo en el libro, que es la tarea de
+   Selvin. Ahora preguntan lo que la misión enseña en el Laboratorio, en el
+   adivinador de animales y en la máquina de los puntitos (el traductor que vio el
+   mismo texto en dos idiomas, el delfín, la foto de un mango con el nombre
+   «naranja», los tres recuerdos, el teléfono que se apaga, la culebra y el robot de
+   juguete que camina), con la respuesta en el mismo lugar. La ficha no preguntaba
+   la historia.
+7. **Dos de dibujo que salieron mirando.** El teléfono negro no se veía sobre la
+   tarjeta oscura: lleva un borde claro. Y el aro de la barra cortaba el nombre
+   «perro»: los nombres subieron y las barras bajaron.
+
+⚠️ **Y de paso, CSS calcado de otras misiones.** La hoja de la misión traía dos
+bloques de la misión de los próceres y de la de los tres poderes (la ficha de cada
+prócer y la jerarquía de las normas), con sus comentarios explicando cosas que aquí
+no pasan. No los usaba nada y se quitaron: un comentario que explica algo que aquí
+no pasa es peor que ninguno. Están también en las otras seis misiones de la ruta y
+en la de la Constitución; se quitan al pasar por cada una.
+
+La sonda de esta escena **no le cree nada a la escena**. Comprueba:
+
+- que las fotos de lo que vio sean del mismo tamaño, en fila y en su orden, y la de
+  Selvin, abajo, a la misma escala;
+- que cada animal quepa en su foto, con el ojo dentro de su silueta, y su nombre
+  entre la foto y su barra;
+- que lo marcado en cada foto sea la silueta del chivo de Selvin puesta en esa foto,
+  y que cada copia vuele a la foto que compara;
+- que cada barra empiece en su foto y mida lo que coinciden las dos siluetas, medido
+  con el navegador;
+- que de las tres primeras gane el perro, y que el otro chivo le gane al perro sin
+  ser el mismo dibujo;
+- que el aro rodee la barra más larga sin tocar su nombre, que la flecha vaya de ahí
+  al globo por el hueco, sin cruzar otra barra ni la foto de Selvin, y que el globo
+  diga el nombre de la ganadora, con su cola en el teléfono;
+- que lo que puede decir sean los nombres de las fotos que vio, uno por ficha, y lo
+  que no puede decir vaya con raya cortada;
+- que la tarea diga lo que contestó el teléfono, con su ✗ de dos rayas, y la otra
+  hoja de noche, con su luna y el lápiz encima;
+- que cada cosa pase cuando le toca: la copia aparece, vuela, se marca lo que
+  coincide y crece su barra; la siguiente vuela cuando la anterior llegó; después el
+  aro, la flecha y al final la respuesta;
+- que el marcador cuente lo que se ve, que ningún texto se monte en otro y que todo
+  quepa en el dibujo;
+- y que no salga nada de lo que pregunta la prueba, ni que la máquina piensa, sabe o
+  entiende.
+
+Se comprobó al revés con treinta averías, plantadas una por una:
+
+- una copia corrida de su foto;
+- la barra del gato más larga de lo que coincide, y una barra empezando fuera de su
+  foto;
+- ganando el gato, y dos aros en el paso 5;
+- la flecha antes del aro, y la respuesta antes de que llegue la flecha;
+- la copia volando antes de aparecer, la siguiente antes de que llegue la anterior,
+  y lo que coincide marcado antes de que llegue la copia;
+- pudiendo decir «chivo» antes de verlo;
+- lo que no puede decir sin raya cortada;
+- la tarea diciendo otro nombre, y saliendo antes de que se vaya lo que puede decir;
+- la ✗ de una sola raya;
+- el lápiz fuera de la hoja de la noche, y la luna fuera de la noche;
+- el marcador del paso 3 diciendo 1;
+- «ejemplo» en una frase;
+- lo marcado sin ser el chivo de Selvin;
+- la foto de Selvin a otro tamaño, y la de la gallina más grande;
+- la cola del globo lejos del teléfono;
+- el hueco de la cuarta foto corrido;
+- el otro chivo igual al de Selvin;
+- el ojo del perro fuera de su cabeza;
+- la flecha bajando por encima de la foto de Selvin;
+- dos globos en el paso 2;
+- el cuaderno con una sola raya;
+- y el nombre del perro debajo de su barra.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 58 o 59 cuadros por segundo, y el peor cuadro es
+de 150 ms. La de Fin de Grado, medida el mismo día, va a 53 y 167 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -13557,7 +13689,11 @@ duración que la sonda necesita se lee del texto de la regla de estilo: con un
 tenue (un aro sobre un libro) va antes de lo tenue en el documento, y lo que sigue
 vivo, después. Y si lo que asombra en una escena es un dato (que otro libro tenga
 su propio artículo 128), sale del archivo de datos, su fuente está en `_dev/` y la
-sonda de la misión comprueba las dos cosas.
+sonda de la misión comprueba las dos cosas. Una silueta que se mide
+punto por punto (dentro o fuera) es un solo contorno sin cruces: la escena cuenta
+con la regla de par-impar y el navegador rellena con la de nonzero, y con un cruce
+contestan distinto. Y lo que la sonda necesita de un dibujo (la punta de un lápiz)
+lo lee de su forma, no de un atributo que escribió la escena.
 
 Si la misma escena sirve para varias misiones (las cuatro Pruebas de Fin de
 Grado), vive en `js/escena-<tema>.js` y cada misión trae un archivo de dos líneas
