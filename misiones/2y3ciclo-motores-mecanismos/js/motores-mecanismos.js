@@ -419,38 +419,38 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 // tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
 // Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 let evalTFBank=[
-  {q:'El carrito de Marvin no arrancó en el suelo.',a:true,k:'tf-no-arranco'},
-  {q:'El motor de Marvin estaba dañado.',a:false,k:'tf-danado'},
+  {q:'Un mecanismo puede cambiar un giro en un movimiento de ida y vuelta.',a:true,k:'tf-transforma'},
+  {q:'Para entender cómo se mueve un robot hace falta una computadora.',a:false,k:'tf-computadora'},
   {q:'El motor convierte la energía eléctrica en giro.',a:true,k:'tf-giro'},
-  {q:'Con el motor solo, sin nada más, se gana mucha fuerza.',a:false,k:'tf-motor-solo'},
+  {q:'Dos ruedas unidas por una cinta solo giran si se tocan entre sí.',a:false,k:'tf-cinta'},
   {q:'Los mecanismos están también en la casa y en el patio.',a:true,k:'tf-casa'},
   {q:'El molino de maíz está hecho para dar mucha fuerza.',a:true,k:'tf-molino'},
   {q:'Un robot puede tener varios motores.',a:true,k:'tf-varios'},
-  {q:'El carrito de Marvin giraba rapidísimo en el aire.',a:true,k:'tf-aire'},
+  {q:'Los motores de un robot solo sirven para mover ruedas.',a:false,k:'tf-ruedas'},
   {q:'El motor es el actuador más importante del robot.',a:true,k:'tf-actuador'},
   {q:'Un mecanismo le regala energía nueva al robot.',a:false,k:'tf-regala'}
 ];
 let evalMCBank=[
   {q:'Un engranaje de 10 dientes mueve a uno de 30. ¿Qué le pasa al de 30?',o:['a) Gira más rápido y con más fuerza','b) Gira más rápido y con menos fuerza','c) Gira más lento y con más fuerza','d) No gira'],a:2,k:'mc-10-30'},
-  {q:'¿Qué le faltaba al carrito de Marvin para arrancar con peso encima?',o:['a) Una pila más grande','b) Algo que cambiara velocidad por fuerza','c) Más luces','d) Pintura'],a:1,k:'mc-marvin'},
+  {q:'¿Cuál de estos se mueve de ida y vuelta, en vaivén?',o:['a) El engranaje del reloj','b) El limpiaparabrisas','c) La rueda de una carreta','d) El trompo que baila'],a:1,k:'mc-vaiven'},
   {q:'En un tren de tres engranajes, ¿cómo giran el primero y el tercero?',o:['a) En sentidos contrarios','b) No giran','c) En el mismo sentido','d) Al doble de velocidad'],a:2,k:'mc-tres'},
   {q:'¿Qué conviene usar para subir una cuesta en bicicleta?',o:['a) El piñón más grande','b) El piñón más pequeño','c) Quitarle el asiento','d) Soltar los frenos'],a:0,k:'mc-cuesta'},
-  {q:'¿Qué sale de un motor, tal como sale?',o:['a) Giro lento y con fuerza','b) Giro rápido y flojo','c) Luz','d) Calor'],a:1,k:'mc-sale'},
+  {q:'Si dos engranajes que encajan tienen los mismos dientes, ¿qué se gana?',o:['a) Más fuerza','b) Ni fuerza ni velocidad','c) Más velocidad','d) Más dientes'],a:1,k:'mc-mismos'},
   {q:'¿Qué pregunta hay que hacerse antes de escoger un mecanismo?',o:['a) ¿De qué color es?','b) ¿Cuánto cuesta?','c) ¿Necesito fuerza o velocidad?','d) ¿Quién lo hizo?'],a:2,k:'mc-pregunta'},
-  {q:'Si el primero de dos engranajes en contacto gira a la derecha, ¿hacia dónde gira el segundo?',o:['a) A la izquierda','b) A la derecha','c) No gira','d) Hacia arriba'],a:0,k:'mc-izquierda'},
+  {q:'¿Cuál de estos objetos tiene una barra que gira sobre un punto de apoyo, como el balancín del parque?',o:['a) Las tijeras','b) El balde del pozo','c) La rueda de una carreta','d) La bandera que sube por el asta'],a:0,k:'mc-tijeras'},
   {q:'¿Qué necesitan los mecanismos de un robot para funcionar?',o:['a) Un motor que los mueva','b) Agua','c) Una pantalla','d) Un sensor de sonido'],a:0,k:'mc-motor'},
-  {q:'¿Qué se pierde siempre que un mecanismo da más fuerza?',o:['a) Nada','b) El color','c) Velocidad','d) Peso'],a:2,k:'mc-pierde'},
+  {q:'En el molino de maíz, ¿qué aplasta el grano?',o:['a) El motor','b) El agua','c) La piedra de moler','d) El pedal'],a:2,k:'mc-piedra'},
   {q:'¿Cómo se llaman las piezas que llevan el movimiento del motor hasta donde se necesita?',o:['a) Sensores','b) Baterías','c) Programas','d) Mecanismos'],a:3,k:'mc-mecanismos'}
 ];
 let evalCPBank=[
-  {q:'Marvin le pegó el motor ___ a las ruedas.',a:'directo',acc:['directo'],k:'cp-directo'},
-  {q:'El motor estaba bueno y la ___ estaba llena.',a:'pila',acc:['pila','batería','bateria'],k:'cp-pila'},
+  {q:'La comparación entre los dientes del primer engranaje y los del último se llama relación de ___.',a:'transmisión',acc:['transmisión','transmision'],k:'cp-transmision'},
+  {q:'En un tren de tres engranajes, el del medio se llama engranaje ___.',a:'loco',acc:['loco'],k:'cp-loco'},
   {q:'Los mecanismos se pueden construir con cartón y materiales del ___.',a:'entorno',acc:['entorno'],k:'cp-entorno'},
   {q:'Un engranaje de 10 dientes que mueve a uno de 40 da ___ veces más fuerza.',a:'cuatro',acc:['cuatro','4'],k:'cp-4'},
   {q:'La despulpadora le quita la ___ al café.',a:'cáscara',acc:['cáscara','cascara','pulpa'],k:'cp-cascara'},
   {q:'El molinete ayuda a abrir un portón muy ___.',a:'pesado',acc:['pesado'],k:'cp-pesado'},
   {q:'Dos engranajes se arrastran sin ___.',a:'resbalar',acc:['resbalar'],k:'cp-resbalar'},
-  {q:'Para la feria, Marvin puso encima del carrito un ___.',a:'librito',acc:['librito','libro'],k:'cp-librito'},
+  {q:'La rueda gira junto con el ___ y lo arrastra.',a:'eje',acc:['eje'],k:'cp-eje'},
   {q:'El motor es el músculo; los mecanismos son los huesos y las ___.',a:'articulaciones',acc:['articulaciones'],k:'cp-articulaciones'},
   {q:'La despulpadora se hace girar a ___.',a:'mano',acc:['mano'],k:'cp-mano'}
 ];
@@ -558,7 +558,7 @@ let critMecBank=[
   {k:'me-piedra',txt:'En el patio hay que levantar una piedra grande y solo se cuenta con una barra de hierro y un bloque.',ans:'Una PALANCA: la barra apoyada en el bloque (punto de apoyo) cerca de la piedra multiplica la fuerza; a cambio, el extremo donde se empuja recorre más distancia.'},
 ];
 let critErrorBank=[
-  {k:'er-todo',txt:'"Con los engranajes se gana fuerza y velocidad al mismo tiempo".',g1:'Falso: el mecanismo no crea energía, solo la reparte. Lo que se gana en fuerza se pierde en velocidad.',g2:'Si la rueda grande gira más lento es justamente porque está entregando más fuerza: nunca se gana todo.'},
+  {k:'er-despulpadora',txt:'"La despulpadora de café solo funciona si se conecta a la electricidad".',g1:'Falso: la despulpadora se puede hacer girar a mano, con una manivela que mueve sus engranajes.',g2:'Un mecanismo no necesita electricidad: necesita que algo lo mueva, sea una mano, un pedal o un motor.'},
   {k:'er-bici',txt:'"En la bicicleta, el piñón más grande sirve para ir más rápido".',g1:'Es al contrario: con el piñón grande la rueda gira más lento, pero con más fuerza (sirve para subir cuestas).',g2:'Para ir más rápido en terreno plano se usa el piñón pequeño: más velocidad, menos fuerza.'},
   {k:'er-servo',txt:'"El servomotor gira sin parar, igual que el de un ventilador".',g1:'El servomotor gira hasta un ángulo exacto y se queda ahí.',g2:'El que gira sin parar mientras haya corriente es el motor DC.'},
 ];

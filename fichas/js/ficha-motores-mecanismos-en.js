@@ -188,14 +188,14 @@
         '<h3>I. Fill in the blanks <span class="val">(Value: 10 points each)</span></h3>' +
 
         '<ol>' +
-        '<li>Marvin attached the motor <span class="linea-resp"></span> to the wheels.</li>' +
-        '<li>The motor was fine and the <span class="linea-resp"></span> was full.</li>' +
+        '<li>Comparing the teeth of the first gear with those of the last one is called the gear <span class="linea-resp"></span>.</li>' +
+        '<li>In a train of three gears, the one in the middle is called the <span class="linea-resp"></span> gear.</li>' +
         '<li>Mechanisms can be built with cardboard and materials from your <span class="linea-resp"></span>.</li>' +
         '<li>A 10-tooth gear driving a 40-tooth gear gives <span class="linea-resp"></span> times more force.</li>' +
         '<li>The pulper takes the <span class="linea-resp"></span> off the coffee.</li>' +
         '<li>The winch helps open a very <span class="linea-resp"></span> gate.</li>' +
         '<li>Two gears drag each other without <span class="linea-resp"></span>.</li>' +
-        '<li>For the fair, Marvin put a small <span class="linea-resp"></span> on top of the car.</li>' +
+        '<li>The wheel turns together with the <span class="linea-resp"></span> and drags it along.</li>' +
         '<li>The motor is the muscle; the mechanisms are the bones and the <span class="linea-resp"></span>.</li>' +
         '<li>The pulper is turned by <span class="linea-resp"></span>.</li>' +
         '</ol>' +
@@ -203,19 +203,19 @@
         '<h3>II. True or False <span class="val">(Value: 10 points each)</span></h3>' +
 
         '<ol>' +
-        '<li>____ Marvin’s little car did not start on the floor.</li>' +
-        '<li>____ Marvin’s motor was broken.</li>' +
+        '<li>____ A mechanism can change spinning into back-and-forth motion.</li>' +
+        '<li>____ To understand how a robot moves, you need a computer.</li>' +
         '<li>____ The motor turns electrical energy into spin.</li>' +
-        '<li>____ With the motor alone, with nothing else, you gain a lot of force.</li>' +
+        '<li>____ Two wheels joined by a band only turn if they touch each other.</li>' +
         '<li>____ Mechanisms are also found at home and in the yard.</li>' +
         '<li>____ A mechanism gives the robot brand-new energy.</li>' +
         '<li>____ The corn mill is made to give a lot of force.</li>' +
         '<li>____ A robot can have several motors.</li>' +
-        '<li>____ Marvin’s little car spun super fast in the air.</li>' +
+        '<li>____ A robot’s motors are only used to turn wheels.</li>' +
         '<li>____ The motor is the robot’s most important actuator.</li>' +
         '</ol>' +
 
-        '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span>. Circle the correct letter.</h3>' +
+        '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span>. Fill in the circle of the letter of the correct answer.</h3>' +
 
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">1</span>A 10-tooth gear drives a 30-tooth gear. What happens to the 30-tooth gear?</div>' +
@@ -230,12 +230,12 @@
       /* ═══════════ PÁGINA 5 ═══════════ */
       p5:
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">2</span>What was Marvin’s little car missing to start with weight on top?</div>' +
+        '<div class="preg-q"><span class="preg-n">2</span>Which of these moves back and forth?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> A bigger battery</span>' +
-        '<span class="op"><i>b</i> Something that traded speed for force</span>' +
-        '<span class="op"><i>c</i> More lights</span>' +
-        '<span class="op"><i>d</i> Paint</span>' +
+        '<span class="op"><i>a</i> The gear inside the clock</span>' +
+        '<span class="op"><i>b</i> The windshield wiper</span>' +
+        '<span class="op"><i>c</i> The wheel of a cart</span>' +
+        '<span class="op"><i>d</i> A spinning top</span>' +
         '</div>' +
         '</div>' +
 
@@ -260,12 +260,12 @@
         '</div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">5</span>What comes out of a motor, just as it comes out?</div>' +
+        '<div class="preg-q"><span class="preg-n">5</span>If two meshed gears have the same number of teeth, what do you gain?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> Slow, strong spin</span>' +
-        '<span class="op"><i>b</i> Fast, weak spin</span>' +
-        '<span class="op"><i>c</i> Light</span>' +
-        '<span class="op"><i>d</i> Heat</span>' +
+        '<span class="op"><i>a</i> More force</span>' +
+        '<span class="op"><i>b</i> Neither force nor speed</span>' +
+        '<span class="op"><i>c</i> More speed</span>' +
+        '<span class="op"><i>d</i> More teeth</span>' +
         '</div>' +
         '</div>' +
 
@@ -280,12 +280,12 @@
         '</div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">7</span>If the first of two meshed gears turns to the right, which way does the second turn?</div>' +
+        '<div class="preg-q"><span class="preg-n">7</span>Which of these objects has a bar that turns on a fulcrum, like the seesaw in the park?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> To the left</span>' +
-        '<span class="op"><i>b</i> To the right</span>' +
-        '<span class="op"><i>c</i> It does not turn</span>' +
-        '<span class="op"><i>d</i> Upward</span>' +
+        '<span class="op"><i>a</i> Scissors</span>' +
+        '<span class="op"><i>b</i> The bucket in the well</span>' +
+        '<span class="op"><i>c</i> The wheel of a cart</span>' +
+        '<span class="op"><i>d</i> The flag going up the pole</span>' +
         '</div>' +
         '</div>' +
 
@@ -300,12 +300,12 @@
         '</div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">9</span>What is always lost when a mechanism gives more force?</div>' +
+        '<div class="preg-q"><span class="preg-n">9</span>In the corn mill, what crushes the grain?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> Nothing</span>' +
-        '<span class="op"><i>b</i> Color</span>' +
-        '<span class="op"><i>c</i> Speed</span>' +
-        '<span class="op"><i>d</i> Weight</span>' +
+        '<span class="op"><i>a</i> The motor</span>' +
+        '<span class="op"><i>b</i> The water</span>' +
+        '<span class="op"><i>c</i> The grinding stone</span>' +
+        '<span class="op"><i>d</i> The pedal</span>' +
         '</div>' +
         '</div>' +
 
@@ -338,11 +338,8 @@
         '</table>' +
 
         '<div class="felic">' +
-        '🏅 <b>Congratulations! You have completed the Mission Motors and Mechanisms.</b> Now you know that the motor turns ' +
-        'electricity into rotation; that two gears in contact turn opposite ways and that with three the first and the third turn ' +
-        'alike; that a small gear driving a big one gives force and a big one driving a small one gives speed; and that ' +
-        'every mechanism makes the same deal: <b>whatever you gain in force you lose in speed</b>. Keep going along the ' +
-        'Robot Path! ⚙️🤖' +
+        '🏅 <b>Congratulations! You have completed the Mission Motors and Mechanisms.</b> Before you hand it in, check your ' +
+        'answers one by one. Keep going along the Robot Path! ⚙️🤖' +
         '</div>' +
 
         '<h2>📏 Assessment Rubric</h2>' +
@@ -366,8 +363,8 @@
         '<p style="font-size:10pt;color:var(--gris);">This sheet is printed <strong>separately</strong>: it is only for the teacher or for guided self-assessment.</p>' +
 
         '<div class="pauta">' +
-        '<div><span class="pt">I. Fill in:</span> 1. directly &nbsp; 2. battery &nbsp; 3. surroundings &nbsp; 4. four &nbsp; 5. husk &nbsp; 6. heavy &nbsp; 7. slipping &nbsp; 8. book &nbsp; 9. joints &nbsp; 10. hand</div>' +
-        '<div><span class="pt">II. True or False:</span> 1T, 2F, 3T, 4F, 5T, 6F, 7T, 8T, 9T, 10T</div>' +
+        '<div><span class="pt">I. Fill in:</span> 1. ratio &nbsp; 2. idler &nbsp; 3. surroundings &nbsp; 4. four &nbsp; 5. husk &nbsp; 6. heavy &nbsp; 7. slipping &nbsp; 8. axle &nbsp; 9. joints &nbsp; 10. hand</div>' +
+        '<div><span class="pt">II. True or False:</span> 1T, 2F, 3T, 4F, 5T, 6F, 7T, 8T, 9F, 10T</div>' +
         '<div><span class="pt">III. Multiple choice:</span> 1c, 2b, 3c, 4a, 5b, 6c, 7a, 8a, 9c, 10d</div>' +
         '<div><span class="pt">IV. Matching:</span> 1C &nbsp; 2H &nbsp; 3E &nbsp; 4I &nbsp; 5A &nbsp; 6G &nbsp; 7J &nbsp; 8B &nbsp; 9F &nbsp; 10D</div>' +
         '</div>' +

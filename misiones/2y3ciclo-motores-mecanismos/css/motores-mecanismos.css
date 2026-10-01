@@ -540,3 +540,55 @@ body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* ── La animación del carrito de Marvin (#amCarrito) ─────────────────
+   El carrito, sus ruedas, el motor, la pila, el librito y el suelo son
+   COSAS: se quedan como son en las dos pantallas. Las rayitas
+   que cuentan las vueltas van sobre la tarjeta y llevan la tinta de la
+   pantalla. Nada se dice solo con color: lo que hace falta va con raya
+   cortada y lo que empuja la rueda, con raya entera y su punta llena. */
+/* El canto de lo que es oscuro (las llantas, la pila): en la pantalla
+   oscura se aclara, que si no se pierden en el fondo. */
+#amCarrito { --mo-canto: #0f172a; }
+[data-theme="dark"] #amCarrito { --mo-canto: #cbd5e1; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) #amCarrito { --mo-canto: #cbd5e1; }
+}
+#amCarrito .mo-suelo { fill: #d6c19b; }
+#amCarrito .mo-canto { fill: none; stroke: var(--mo-canto); stroke-width: 1; }
+#amCarrito .mo-llanta { fill: none; stroke: #1f2937; stroke-width: 7; }
+#amCarrito .mo-llanta-icono { fill: none; stroke: var(--mo-canto); stroke-width: 2.6; }
+#amCarrito .mo-rayo { fill: none; stroke: #9ca3af; stroke-width: 2.2; stroke-linecap: round; }
+#amCarrito .mo-cubo { fill: #e5e7eb; stroke: #374151; stroke-width: 1.2; }
+#amCarrito .mo-punto { fill: #facc15; stroke: #713f12; stroke-width: 0.8; }
+#amCarrito .mo-engranaje-g { fill: #fde68a; stroke: #b45309; stroke-width: 1; stroke-linejoin: round; }
+#amCarrito .mo-engranaje-p { fill: #a5f3fc; stroke: #0e7490; stroke-width: 1; stroke-linejoin: round; }
+#amCarrito .mo-motor { fill: #64748b; stroke: #1e293b; stroke-width: 1.2; }
+#amCarrito .mo-motor-tapa { fill: #94a3b8; stroke: #334155; stroke-width: 0.8; }
+#amCarrito .mo-hilo { fill: none; stroke: #1e293b; stroke-width: 1; }
+#amCarrito .mo-zumbido { fill: none; stroke: #ea580c; stroke-width: 1.6; stroke-linecap: round; }
+#amCarrito .mo-plataforma { fill: #ea580c; stroke: #9a3412; stroke-width: 1.2; }
+#amCarrito .mo-pila { fill: #1f2937; stroke: var(--mo-canto); stroke-width: 0.8; }
+#amCarrito .mo-carga { fill: #22c55e; }
+#amCarrito .mo-libro { fill: #2563eb; stroke: #1e3a8a; stroke-width: 1.2; }
+#amCarrito .mo-hojas { fill: #f8fafc; }
+#amCarrito .mo-libro-letra { fill: #ffffff; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amCarrito .mo-sombra { fill: rgba(15, 23, 42, 0.22); }
+#amCarrito .mo-salida { fill: none; stroke: var(--mo-canto); stroke-width: 1.4; stroke-dasharray: 4 3; }
+#amCarrito .mo-guia { fill: none; stroke: #334155; stroke-width: 1; stroke-dasharray: 2 2; }
+#amCarrito .mo-falta { fill: none; stroke: #334155; stroke-width: 2.2; stroke-dasharray: 5 3; }
+#amCarrito .mo-falta-punta { fill: none; stroke: #334155; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+#amCarrito .mo-empuje { fill: none; stroke: #9a3412; stroke-width: 3.6; }
+#amCarrito .mo-empuje-punta { fill: #9a3412; }
+#amCarrito .mo-raya { fill: none; stroke: var(--dark, #164e63); stroke-width: 2.4; stroke-linecap: round; }
+/* Lo que gira o avanza a paso parejo dice cuánto tarda (--mo-t): seis
+   vueltas del motor en tres segundos, y el carrito que avanza con sus
+   ruedas en dos y medio. */
+.am-raiz .am-escenario svg .mo-gira,
+.am-raiz .am-escenario svg .mo-anda {
+  transition: transform var(--mo-t, 0.8s) linear var(--d, 0s), opacity 0.5s ease var(--d, 0s);
+}
+/* Cada rayita sale de golpe, en la vuelta que cuenta. */
+.am-raiz .am-escenario svg .mo-rapido {
+  transition: opacity 0.12s ease var(--d, 0s);
+}

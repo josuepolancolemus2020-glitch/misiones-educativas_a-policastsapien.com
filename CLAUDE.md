@@ -11864,6 +11864,146 @@ Salió roja con cada una.
 Con la CPU frenada seis veces va a 60 cuadros por segundo, y el peor cuadro es
 de 50 ms. ¿Qué es un Robot?, medida el mismo día, va a 60 y 67 ms.
 
+### La quincuagésima octava: Motores y Mecanismos, y lo que enseñó
+
+La tercera de la Ruta de los Robots es **Motores y Mecanismos**
+(`misiones/2y3ciclo-motores-mecanismos/`, `js/animacion-carrito.js`), bilingüe.
+La historia es la de Marvin: le pegó el motor directo a la rueda de su carrito,
+en el aire giraba rapidísimo, y en el suelo, con un librito encima para la
+feria, no se movió ni un centímetro. El motor estaba bueno y la pila llena. La
+animación es el carrito visto de lado, con su pila y su motor, y dos flechas
+debajo del suelo: la de rayitas es lo que hace falta para moverlo con el
+librito, y la entera, lo que empuja la rueda:
+
+- el motor pegado directo a la rueda: ¿cómo gira en el aire? ¿Y en el suelo, con
+  un librito encima?;
+- en el aire, cada vuelta del motor es una vuelta de la rueda: arriba se cuentan
+  seis rayitas de cada una, y la rueda gira rapidísimo;
+- en el suelo le cae el librito, el motor zumba y la flecha de lo que empuja la
+  rueda se queda corta: no avanza ni un centímetro;
+- el motor se corre a un lado y aparecen dos engranajes: uno de 12 dientes en
+  el motor y uno de 24 pegado a la rueda. En el aire, seis vueltas del motor
+  son tres de la rueda, y los dos giran para lados contrarios;
+- con el mismo librito, la flecha de lo que empuja ahora pasa de la que hace
+  falta, y el carrito avanza despacio: la rueda de raya cortada se queda donde
+  arrancó;
+- y la pregunta es del alumno: dos ruedas de cartón con dientes, una de 8 y otra
+  de 16, y cuántas vueltas da la pequeña mientras la grande da una.
+
+Siete cosas que valen para las que siguen:
+
+1. ⚠️ **Lo que empuja la rueda se dibuja con la misma cuenta que las vueltas.**
+   Las dos flechas salen de donde la rueda toca el suelo, y la del engranaje
+   mide justo el doble que la de antes: tantas veces como dientes de más tiene
+   el grande. La sonda cuenta los dientes en el dibujo (las puntas de cada
+   diente), saca de ahí cuántas vueltas tiene que dar cada uno, y compara las
+   rayitas, el giro de cada pieza y el largo de las flechas. No se escribe
+   cuánta fuerza es: se dibuja más larga o más corta.
+2. ⚠️ **El carrito avanza lo que la rueda gira por su orilla, sin resbalar.**
+   Con un giro de más o de menos el carrito patina en el dibujo, y eso enseña
+   otra cosa. La sonda mide el avance y el giro, y comprueba que el motor gire
+   el doble, para el otro lado.
+3. ⚠️ **El motor es un tarro DETRÁS de la rueda, como va de verdad.** Delante
+   solo se ve lo que lleva en el eje: su engranaje y su nombre. La primera
+   versión lo dibujaba encima, y tapaba el engranaje pequeño; la sonda pedía
+   además que el tarro no montara sobre el engranaje grande, y eso acusaba al
+   dibujo bueno: lo que cuenta es que el eje del motor quede fuera del grande y
+   que el tarro vaya detrás en el documento. Es la lección de «Cuadrado
+   **Perfecto**» otra vez.
+4. ⚠️ **Los dientes de uno entran en los huecos del otro**, y se mide: la punta
+   del grande toca el fondo del pequeño, y donde se tocan, un diente del grande
+   cae en un hueco del pequeño. Con los dos engranajes en fase, chocaban punta
+   con punta, y en una captura de un paso terminado se ve igual de bien.
+5. ⚠️ **La historia y la animación contestaban doce preguntas de la prueba y
+   una de pensamiento crítico.** La historia: «el carrito no arrancó en el
+   suelo», «el motor estaba dañado», «giraba rapidísimo en el aire», «le pegó el
+   motor ___», «la ___ estaba llena», «puso encima un ___», «¿qué le faltaba al
+   carrito?», «¿qué sale de un motor, tal como sale?» (el recuadro dice «rápido y
+   flojo»), «¿qué se pierde siempre que un mecanismo da más fuerza?» y «con el
+   motor solo se gana mucha fuerza». La animación: hacia dónde gira el segundo de
+   dos engranajes, que se ve girar al revés. En pensamiento crítico, el error de
+   «se gana fuerza y velocidad al mismo tiempo» lo corrige el carrito que avanza
+   despacio. Ahora preguntan lo que la misión enseña en su Aprende, sus tablas,
+   sus actividades y su Laboratorio: la relación de transmisión, el engranaje
+   loco, la rueda que gira con su eje, que un mecanismo cambia un giro en vaivén,
+   que no hace falta una computadora, la cinta que lleva el giro lejos, los
+   motores que no solo mueven ruedas, el limpiaparabrisas, los engranajes
+   iguales, las tijeras y la piedra del molino; en pensamiento crítico, la
+   despulpadora que no necesita electricidad. Van con la respuesta en el mismo
+   lugar, en la misión, en su inglés y en las dos fichas, que siguen en siete
+   hojas.
+6. ⚠️ **Una pregunta nueva no puede nombrar el término de un pareado.** La
+   primera tanda decía «la palanca necesita un punto de apoyo», «el tornillo sin
+   fin da velocidad», «el servomotor mueve las aspas de un ventilador» y «las
+   poleas con correa»: cada una repetía la respuesta de un pareado, y la sonda
+   las cazó todas. En esta misión casi todo mecanismo tiene su pareado, así que
+   las preguntas nuevas dicen lo que hace la cosa sin nombrarla («una barra que
+   gira sobre un punto de apoyo», «dos ruedas unidas por una cinta»). Y una
+   palabra no se vuelve «tema» por salir en muchas preguntas a propósito: la
+   pregunta de la polea fija pasaba la sonda porque «polea» ya salía en cuatro,
+   y se quitó igual, porque le describía al alumno el pareado de la polea.
+7. **El verdadero o falso de la ficha llevaba cuatro verdaderos seguidos al
+   final.** Al cambiar las preguntas, el noveno pasó a ser falso: la ficha queda
+   V F V F V F V V F V.
+
+La sonda de esta escena **no le cree nada a la escena**. Comprueba, en español y
+en inglés:
+
+- que las dos ruedas sean iguales y vayan a la misma altura, debajo de la
+  plataforma; en el aire, que no toquen el suelo y que debajo de cada una esté
+  su sombra; en el suelo, que lo toquen;
+- que la pila, con sus tres rayas de carga, y el librito descansen sobre la
+  plataforma, y que el librito sea el mismo de un paso a otro;
+- que el motor sea el mismo, que vaya detrás de la rueda, y que lo que lleva
+  delante se mueva con él;
+- que sin engranajes el eje del motor sea el de la rueda, y con ellos, que los
+  dientes de uno entren en los huecos del otro, sin montarse ni separarse;
+- que los dientes de los dos sean del mismo tamaño y que el grande quepa en la
+  llanta;
+- que en el aire haya una rayita por vuelta, cada una cuando se completa la
+  vuelta, y que el marcador diga lo que se cuenta;
+- que con engranajes el motor y la rueda giren al mismo tiempo, para lados
+  contrarios, en la proporción de sus dientes, y que la frase diga esos dientes;
+- que la flecha de lo que hace falta y las de lo que empuja la rueda salgan de
+  donde la rueda toca el suelo, y que sin engranaje empuje menos de lo que hace
+  falta y con él, más: en la proporción de los dientes;
+- que el carrito no se mueva en el paso 2 y que avance en el 4 lo que la rueda
+  gira por su orilla, con las flechas avanzando con él y la rueda de raya
+  cortada donde arrancó;
+- que el carrito arranque cuando la flecha de empuje ya salió entera, y que en
+  el paso 3 primero suba el carrito, después se corra el motor, aparezcan los
+  engranajes y entonces gire;
+- que ningún rótulo se monte en otro y todo quepa en el dibujo;
+- y que no salga ninguna palabra de lo que pregunta la prueba.
+
+Se comprobó al revés con veinticinco averías, plantadas una por una:
+
+- los engranajes separados, sin encajar, y los dientes chocando punta con punta;
+- el engranaje pequeño dibujado con 14 dientes;
+- con engranajes la rueda dando cuatro vueltas, y el pequeño girando para el
+  mismo lado que el grande;
+- las rayitas del motor saliendo de golpe, y la rueda contando cinco en el aire;
+- el carrito sin bajar hasta el suelo en el paso 2;
+- la rueda resbalando, y las flechas quedándose atrás cuando avanza;
+- con engranaje la rueda sin empujar el doble, y sin engranaje empujando ya más
+  de lo que hace falta;
+- el carrito arrancando antes de que salga la flecha de empuje;
+- la rueda de raya cortada fuera de donde arrancó;
+- el librito flotando sobre la plataforma;
+- el marcador del paso 3 diciendo 6 y 2;
+- «velocidad» en una frase;
+- el tarro del motor delante de la rueda, y sin correrse con su engranaje;
+- las sombras y las rayitas quedándose en el suelo;
+- el librito diciendo «librito» en inglés;
+- el nombre del motor lejos de su hilo;
+- los engranajes apareciendo antes de que se corra el motor;
+- y el motor zumbando cuando ya avanza.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 60 cuadros por segundo, y el peor cuadro es
+de 83 ms. Sensores, medida el mismo día, va a 60 y 50 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:

@@ -2129,6 +2129,75 @@ const LEER = `
      charco, la raya de lleno con su sensor, los dos cables, la cajita con
      lo que anota y su regla, cada aviso con sus cuatro piezas, las
      pestañas, el charco del martes, don Chico y los nombres. */
+  window.__amExtra.amCarrito = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(m(el)); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function uno(sel, en) { return (en || raiz).querySelector(sel); }
+    function todos(sel, en) { return [].slice.call((en || raiz).querySelectorAll(sel)); }
+    function demora(el) { return parseFloat(el.style.getPropertyValue('--d')) || 0; }
+    function dura(el) { return parseFloat(el.style.getPropertyValue('--mo-t')) || 0; }
+    function numeros(d) { return ((d || '').match(/-?[0-9.]+/g) || []).map(Number); }
+    function puntosDe(p) {
+      var nums = numeros(p.getAttribute('d')), r = [];
+      for (var i = 0; i + 1 < nums.length; i += 2) r.push(aVista(p, nums[i], nums[i + 1]));
+      return r;
+    }
+    function circulo(c) {
+      var cx = +c.getAttribute('cx'), cy = +c.getAttribute('cy'), rr = +c.getAttribute('r');
+      var o = aVista(c, cx, cy), b = aVista(c, cx + rr, cy);
+      return { x: o[0], y: o[1], r: Math.sqrt((b[0] - o[0]) * (b[0] - o[0]) + (b[1] - o[1]) * (b[1] - o[1])) };
+    }
+    /* una raya que se traza está dibujada cuando su guion ya no se corre */
+    function trazado(p) { var o = p.style.strokeDashoffset; return o === '' || parseFloat(o) === 0; }
+    function mueve(el) { var q = numeros(el.style.transform); return { x: q[0] || 0, y: q[1] || 0, giro: q[2] || 0, d: demora(el), t: dura(el) }; }
+    function texto(t) { return t ? { txt: t.textContent, caja: caja(t), ve: vis(t), d: demora(t) } : null; }
+    var libroG = uno('[data-libro]'), falta = uno('[data-falta-g]');
+    return {
+      lang: (window.MetasI18N && window.MetasI18N.idioma && window.MetasI18N.idioma()) === 'en' ? 'en' : 'es',
+      vista: [svg.viewBox.baseVal.width, svg.viewBox.baseVal.height],
+      suelo: caja(uno('[data-suelo]')),
+      carX: mueve(uno('[data-carrito-x]')), carY: mueve(uno('[data-carrito-y]')),
+      plataforma: caja(uno('[data-plataforma]')),
+      pila: caja(uno('[data-pila]')), cargas: todos('[data-carga]').map(caja), pilaNombre: texto(uno('[data-nombre="pila"]')),
+      libro: { ve: vis(uno('[data-libro-caja]')), caja: caja(uno('[data-libro-caja]')), d: demora(libroG), mueve: mueve(libroG), nombre: texto(uno('[data-nombre="libro"]')) },
+      ruedas: ['1', '2'].map(function (k) {
+        var g = uno('[data-gira="rueda' + k + '"]');
+        return { k: k, borde: circulo(uno('[data-borde="' + k + '"]')), gira: mueve(g) };
+      }),
+      punto: circulo(uno('[data-punto]')),
+      grande: { ve: vis(uno('[data-engranaje="grande"]')), d: demora(uno('[data-engranaje-g="grande"]')), puntos: puntosDe(uno('[data-engranaje="grande"]')) },
+      pequeno: { ve: vis(uno('[data-engranaje="pequeno"]')), d: demora(uno('[data-engranaje-g="pequeno"]')), puntos: puntosDe(uno('[data-engranaje="pequeno"]')),
+        eje: circulo(uno('[data-eje="pequeno"]')), gira: mueve(uno('[data-gira="pequeno"]')) },
+      motor: { tarro: circulo(uno('[data-motor-caja]')), ve: vis(uno('[data-motor-caja]')), fondo: mueve(uno('[data-motor-fondo]')), frente: mueve(uno('[data-motor]')),
+        nombre: texto(uno('[data-nombre="motor"]')), hilo: puntosDe(uno('[data-hilo="motor"]')),
+        detras: !!(uno('[data-motor-fondo]').compareDocumentPosition(uno('[data-gira="rueda1"]')) & 4) },
+      zumba: { ve: vis(uno('path', uno('[data-zumba]'))), d: demora(uno('[data-zumba]')), arcos: todos('path', uno('[data-zumba]')).map(caja) },
+      sombras: todos('[data-sombra]').map(function (s) { return { ve: vis(s), caja: caja(s) }; }),
+      aire: texto(uno('[data-aire]')),
+      salida: { ve: vis(uno('[data-salida]')), c: circulo(uno('[data-salida]')), raya: getComputedStyle(uno('[data-salida]')).strokeDasharray, d: demora(uno('[data-salida]')) },
+      flechas: mueve(uno('[data-flechas]')),
+      falta: { ve: vis(uno('[data-falta]')), d: demora(falta), puntos: puntosDe(uno('[data-falta]')), raya: getComputedStyle(uno('[data-falta]')).strokeDasharray,
+        guia: puntosDe(uno('[data-guia]')), nombre: texto(uno('[data-nombre="falta"]')) },
+      empuje: todos('[data-empuje-g]').map(function (g) {
+        var raya = uno('[data-empuje]', g), punta = uno('[data-punta]', g);
+        return { k: g.getAttribute('data-empuje-g'), ve: vis(raya), trazado: trazado(raya), dRaya: demora(raya), puntos: puntosDe(raya),
+          punta: puntosDe(punta), puntaVe: vis(punta), dPunta: demora(punta) };
+      }),
+      empujaNombre: texto(uno('[data-nombre="empuja"]')),
+      panel: { ve: vis(uno('[data-fila="motor"]')), filas: todos('[data-fila]').map(texto) },
+      rayas: todos('[data-cuenta]').map(function (r) { return { fila: r.getAttribute('data-cuenta'), k: +r.getAttribute('data-k'), ve: vis(r), d: demora(r), caja: caja(r) }; }),
+      nota: texto(uno('[data-nota]')),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   window.__amExtra.amBomba = function (raiz) {
     var vis = window.__amVisible;
     var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
@@ -3489,6 +3558,7 @@ function superficieEn(poly, x) {
 /* Lo que la escena del tanque necesita de un paso a otro (el agua al
    empezar el día, el charco del martes), por idioma. */
 const MEMO_BOMBA = {};
+const MEMO_CARRITO = {};
 const ESCENAS = {
   /* Secuencias: el Robot Mensajero. «El mandado de Marvin».
      ⚠️ Nada se le cree a la escena. La sonda lee en qué renglón quedó cada
@@ -4584,6 +4654,221 @@ const ESCENAS = {
      si la bomba se para cuando le llega el «apaga». Lo de un paso que
      hace falta en otro (el agua al empezar el día, el charco del martes)
      se guarda en MEMO_BOMBA, por idioma. */
+  amCarrito(e, n) {
+    const x = e.extra, r = [];
+    const L = x.lang === 'en' ? 'en' : 'es';
+    const idioma = L === 'en' ? 'inglés' : 'español';
+    const cerca = (a, b, t = 1.5) => Math.abs(a - b) <= t;
+    const cen = c => ({ x: (c.x0 + c.x1) / 2, y: (c.y0 + c.y1) / 2 });
+    const dentro = (a, b, m = 0) => a.x0 >= b.x0 - m && a.x1 <= b.x1 + m && a.y0 >= b.y0 - m && a.y1 <= b.y1 + m;
+    const monta = (a, b) => a.x0 < b.x1 - 0.5 && b.x0 < a.x1 - 0.5 && a.y0 < b.y1 - 0.5 && b.y0 < a.y1 - 0.5;
+    const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+    const memo = MEMO_CARRITO[L] = MEMO_CARRITO[L] || {};
+
+    /* ── lo que no depende del dibujo va primero ── */
+    const PROHIBIDAS = L === 'en'
+      ? /actuator|energy|electric|mechanism|gear ?motor|servo|\bDC\b|pulley|lever|\bworm|crank|chain|belt|\bfan\b|sprocket|slip|husk|\bmill\b|\bgate\b|idler|fulcrum|axle|direction|\bleft\b|\bright\b|opposite|distance|\btimes\b|\bspeed\b|\bforce\b|\b10\b|\b20\b|\b30\b|\b40\b/i
+      : /actuador|energ[ií]a|el[ée]ctric|mecanismo|motorreductor|servo|\bDC\b|polea|palanca|tornillo|biela|manivela|cadena|correa|ventilador|pi[ñn][óo]n|resbal|c[áa]scara|molino|port[óo]n|\bloco\b|apoyo|\beje\b|sentido|izquierda|derecha|contrari|al rev[ée]s|distancia|\bveces\b|velocidad|fuerza|\b10\b|\b20\b|\b30\b|\b40\b/i;
+    const dicho = [e.texto, e.palabras, e.boton].concat(x.textos).join(' · ');
+    r.push([!PROHIBIDAS.test(dicho), `paso ${n}: no sale ninguna palabra de lo que pregunta la prueba`, (dicho.match(PROHIBIDAS) || [])[0]]);
+    const W = L === 'en'
+      ? { motor: 'motor', pila: 'battery', libro: 'book', aire: 'in the air', fm: 'motor turns', fr: 'wheel turns', nota: 'The turns are in slow motion.',
+          falta: 'what it takes with the book', empuja: 'what the wheel pushes', avanza: 'moves', numero: { 2: 'two', 3: 'three', 4: 'four' } }
+      : { motor: 'motor', pila: 'pila', libro: 'librito', aire: 'en el aire', fm: 'vueltas del motor', fr: 'vueltas de la rueda', nota: 'Las vueltas van en cámara lenta.',
+          falta: 'lo que hace falta con el librito', empuja: 'lo que empuja la rueda', avanza: 'avanza', numero: { 2: 'dos', 3: 'tres', 4: 'cuatro' } };
+
+    /* ── el carrito: sus ruedas, su plataforma, la pila y el librito ── */
+    const SUELO = x.suelo.y0;
+    const [R1, R2] = x.ruedas.map(w => w.borde);
+    r.push([cerca(R1.r, R2.r, 0.3) && cerca(R1.y, R2.y, 0.3) && R2.x > R1.x + 2 * R1.r, `paso ${n}: las dos ruedas son iguales y van a la misma altura`, [R1, R2]]);
+    const R = R1.r;
+    const AIRE = [true, true, false, true, false, false][n];
+    if (AIRE) {
+      r.push([R1.y + R < SUELO - 15, `paso ${n}: el carrito está en el aire: las ruedas no tocan el suelo`, SUELO - (R1.y + R)]);
+      const sombras = x.sombras.filter(s => s.ve);
+      r.push([sombras.length === 2 && [R1, R2].every(w => sombras.some(s => cerca(cen(s.caja).x, w.x, 1) && cerca(cen(s.caja).y, SUELO, 1))),
+        `paso ${n}: debajo de cada rueda, su sombra en el suelo`, sombras.length]);
+      r.push([x.aire.ve && x.aire.txt === W.aire && x.aire.caja.y0 > R1.y + R && x.aire.caja.y1 < SUELO && x.aire.caja.x0 > R1.x && x.aire.caja.x1 < R2.x,
+        `paso ${n}: «${W.aire}» va entre las ruedas y el suelo, en ${idioma}`, x.aire.txt]);
+    } else {
+      r.push([cerca(R1.y + R, SUELO, 0.6) && cerca(R2.y + R, SUELO, 0.6), `paso ${n}: las dos ruedas tocan el suelo`, [R1.y + R, R2.y + R, SUELO]]);
+      r.push([x.sombras.every(s => !s.ve) && !x.aire.ve, `paso ${n}: en el suelo no hay sombra de aire ni rótulo de aire`, null]);
+    }
+    const P = x.plataforma;
+    r.push([P.y1 <= R1.y - R + 0.5 && P.y1 > R1.y - R - 15 && P.x0 < R1.x - R && P.x1 > R2.x + R,
+      `paso ${n}: las ruedas van debajo de la plataforma, que va de punta a punta`, P]);
+    r.push([cerca(x.pila.y1, P.y0, 0.6) && x.pila.x0 >= P.x0 && x.pila.x1 <= P.x1, `paso ${n}: la pila va sobre la plataforma`, x.pila]);
+    r.push([x.cargas.length === 3 && x.cargas.every(c => dentro(c, x.pila)), `paso ${n}: la pila está llena: lleva sus tres rayas de carga`, x.cargas.length]);
+    r.push([x.pilaNombre.ve && x.pilaNombre.txt === W.pila && x.pilaNombre.caja.y1 <= x.pila.y0 && cerca(cen(x.pilaNombre.caja).x, cen(x.pila).x, 1.5),
+      `paso ${n}: «${W.pila}» va encima de la pila, en ${idioma}`, x.pilaNombre.txt]);
+    if (n === 0) memo.pila = [x.pila.x1 - x.pila.x0, x.pila.y1 - x.pila.y0];
+    if (memo.pila) r.push([cerca(x.pila.x1 - x.pila.x0, memo.pila[0], 0.2) && cerca(x.pila.y1 - x.pila.y0, memo.pila[1], 0.2), `paso ${n}: es la misma pila`, null]);
+    const LIBRO = [false, false, true, false, true, true][n];
+    r.push([x.libro.ve === LIBRO, `paso ${n}: el librito ${LIBRO ? 'está encima' : 'no está'}`, x.libro.ve]);
+    if (LIBRO) {
+      const B = x.libro.caja;
+      r.push([cerca(B.y1, P.y0, 0.6) && B.x0 >= P.x0 && B.x1 <= P.x1 && !monta(B, x.pila), `paso ${n}: el librito descansa sobre la plataforma`, B]);
+      r.push([x.libro.nombre.ve && x.libro.nombre.txt === W.libro && dentro(x.libro.nombre.caja, B, 0.5), `paso ${n}: «${W.libro}» va escrito en el librito, en ${idioma}`, x.libro.nombre.txt]);
+      if (n === 2) memo.libro = [B.x1 - B.x0, B.y1 - B.y0];
+      if (n >= 4 && memo.libro) r.push([cerca(B.x1 - B.x0, memo.libro[0], 0.3) && cerca(B.y1 - B.y0, memo.libro[1], 0.3), `paso ${n}: es el mismo librito de antes`, [B, memo.libro]]);
+    }
+
+    /* ── el motor y los engranajes ── */
+    const M = x.motor.tarro, ENG = n >= 3;
+    r.push([x.motor.ve, `paso ${n}: el motor se ve`, null]);
+    if (n === 0) memo.motorR = M.r;
+    if (memo.motorR) r.push([cerca(M.r, memo.motorR, 0.2), `paso ${n}: es el mismo motor`, [M.r, memo.motorR]]);
+    r.push([cerca(x.motor.fondo.x, x.motor.frente.x, 0.01) && cerca(x.motor.fondo.y, x.motor.frente.y, 0.01) && x.motor.fondo.d === x.motor.frente.d,
+      `paso ${n}: el motor y lo que lleva delante se mueven juntos`, [x.motor.fondo, x.motor.frente]]);
+    const centro = pts => [pts.reduce((a, p) => a + p[0], 0) / pts.length, pts.reduce((a, p) => a + p[1], 0) / pts.length];
+    const cG = centro(x.grande.puntos), cP = centro(x.pequeno.puntos);
+    r.push([dist(cG, [R1.x, R1.y]) < 0.3, `paso ${n}: el engranaje grande va en el eje de la rueda`, [cG, [R1.x, R1.y]]]);
+    r.push([dist(cP, [M.x, M.y]) < 0.3 && dist(cP, [x.pequeno.eje.x, x.pequeno.eje.y]) < 0.3, `paso ${n}: el engranaje pequeño va en el eje del motor`, [cP, [M.x, M.y]]]);
+    /* los dientes se cuentan en el dibujo: las puntas de cada diente son
+       las de más afuera, dos por diente */
+    const mide = (pts, c) => {
+      const d = pts.map(p => dist(p, c)), max = Math.max(...d), min = Math.min(...d);
+      const puntas = pts.filter((p, i) => d[i] > max - 0.3);
+      const dientes = [];
+      for (let i = 0; i + 1 < puntas.length; i += 2) {
+        const a1 = Math.atan2(puntas[i][1] - c[1], puntas[i][0] - c[0]), a2 = Math.atan2(puntas[i + 1][1] - c[1], puntas[i + 1][0] - c[0]);
+        dientes.push(Math.atan2(Math.sin(a1) + Math.sin(a2), Math.cos(a1) + Math.cos(a2)));
+      }
+      return { n: puntas.length / 2, max, min, dientes };
+    };
+    const G = mide(x.grande.puntos, cG), Pq = mide(x.pequeno.puntos, cP);
+    const NG = G.n, NP = Pq.n;
+    r.push([Number.isInteger(NG) && Number.isInteger(NP) && NG > NP && NG % NP === 0, `paso ${n}: se cuentan los dientes: ${NG} el grande y ${NP} el pequeño`, [NG, NP]]);
+    const pasoG = Math.PI * (G.max + G.min) / NG, pasoP = Math.PI * (Pq.max + Pq.min) / NP;
+    r.push([Math.abs(pasoG - pasoP) / pasoP < 0.03, `paso ${n}: los dientes de los dos son del mismo tamaño, así que pueden encajar`, [pasoG, pasoP]]);
+    r.push([G.max < R - 6.5, `paso ${n}: el engranaje grande cabe dentro de la llanta`, [G.max, R]]);
+    if (!ENG) {
+      r.push([cerca(M.x, R1.x, 0.5) && cerca(M.y, R1.y, 0.5) && M.r < R - 8, `paso ${n}: el motor está pegado directo a la rueda: su eje es el de la rueda`, [M.x, M.y, R1.x, R1.y]]);
+      r.push([!x.grande.ve && !x.pequeno.ve, `paso ${n}: todavía no hay engranajes`, [x.grande.ve, x.pequeno.ve]]);
+    } else {
+      r.push([x.grande.ve && x.pequeno.ve, `paso ${n}: están los dos engranajes`, [x.grande.ve, x.pequeno.ve]]);
+      const d = dist(cG, cP);
+      r.push([cerca(G.max + Pq.min, d, 0.6) && cerca(Pq.max + G.min, d, 0.6), `paso ${n}: los dientes de uno entran en los huecos del otro, sin montarse ni separarse`,
+        [G.max + Pq.min, Pq.max + G.min, d]]);
+      const haciaP = Math.atan2(cP[1] - cG[1], cP[0] - cG[0]), haciaG = haciaP + Math.PI;
+      const difAng = (a, b) => { let t = Math.abs(a - b) % (2 * Math.PI); return t > Math.PI ? 2 * Math.PI - t : t; };
+      const dG = Math.min(...G.dientes.map(a => difAng(a, haciaP))), dP = Math.min(...Pq.dientes.map(a => difAng(a, haciaG)));
+      r.push([dG < 0.12 * 2 * Math.PI / NG && dP > 0.38 * 2 * Math.PI / NP, `paso ${n}: donde se tocan, un diente del grande entra en un hueco del pequeño`, [dG, dP]]);
+      r.push([d > G.max + 5, `paso ${n}: el eje del motor queda fuera del engranaje grande`, [d, G.max]]);
+    }
+    /* el nombre del motor, con su hilo hasta el tarro */
+    const MN = x.motor.nombre, H = x.motor.hilo;
+    r.push([MN.ve && MN.txt === W.motor && H.length === 2 && cerca(dist(H[0], [M.x, M.y]), M.r + 2, 0.6) && cerca(H[1][0], MN.caja.x0 - 2, 1.5) && cerca(H[1][1], cen(MN.caja).y, 3),
+      `paso ${n}: «${W.motor}» va junto al motor, con su hilo hasta él`, [MN.txt, H]]);
+    r.push([MN.caja.x0 > R1.x + R - 0.5 && MN.caja.x1 < R2.x - R, `paso ${n}: el nombre del motor va entre las ruedas`, MN.caja]);
+    r.push([x.motor.detras, `paso ${n}: el tarro del motor va detrás de la rueda: delante solo se ve lo que lleva en el eje`, x.motor.detras]);
+    r.push([x.zumba.ve === (n === 2) && x.zumba.arcos.every(c => dist([cen(c).x, cen(c).y], [M.x, M.y]) < M.r + 10), `paso ${n}: el motor ${n === 2 ? 'zumba' : 'no zumba'}`, x.zumba.ve]);
+
+    /* ── las flechas: lo que hace falta y lo que empuja la rueda ── */
+    const largo = pts => Math.max(...pts.map(p => p[0])) - pts[0][0];
+    const F = x.falta, corto = x.empuje.find(q => q.k === 'corto'), largoE = x.empuje.find(q => q.k === 'largo');
+    const FALTA = n === 2 || n >= 4;
+    const EMP = n === 2 ? corto : n >= 4 ? largoE : null;
+    r.push([F.ve === FALTA, `paso ${n}: la flecha de lo que hace falta ${FALTA ? 'está' : 'no está'}`, F.ve]);
+    r.push([x.empuje.every(q => q.ve === (q === EMP) && q.puntaVe === (q === EMP) && (q !== EMP || q.trazado)) && x.empujaNombre.ve === !!EMP,
+      `paso ${n}: ${EMP ? 'se ve la flecha de lo que empuja la rueda, entera' : 'no hay flecha de empuje'}`, x.empuje.map(q => [q.k, q.ve])]);
+    const contacto = R1.x;
+    r.push([cerca(F.puntos[0][0], contacto, 0.6) && F.puntos[0][1] > SUELO && cerca(F.puntos[1][1], F.puntos[0][1], 0.3) && /\d/.test(F.raya),
+      `paso ${n}: la flecha de rayitas sale de donde la rueda toca el suelo`, [F.puntos[0], contacto]]);
+    r.push([cerca(F.guia[0][0], contacto, 0.6) && cerca(F.guia[0][1], SUELO, 0.6) && cerca(F.guia[1][0], contacto, 0.6) && F.guia[1][1] > SUELO + 20,
+      `paso ${n}: la raya de guía baja de donde la rueda toca el suelo`, F.guia]);
+    x.empuje.forEach(q => r.push([cerca(q.puntos[0][0], contacto, 0.6) && q.puntos[0][1] > F.puntos[0][1] && cerca(q.puntos[1][1], q.puntos[0][1], 0.3)
+      && cerca(Math.max(...q.punta.map(p => p[0])), Math.max(...q.puntos.map(p => p[0])) + 5, 0.6),
+      `paso ${n}: la flecha de empuje (${q.k}) sale de la rueda, derecha, con su punta al final`, q.puntos[0]]));
+    const lF = largo(F.puntos), lC = Math.max(...corto.punta.map(p => p[0])) - corto.puntos[0][0], lL = Math.max(...largoE.punta.map(p => p[0])) - largoE.puntos[0][0];
+    r.push([lC < lF - 5 && lL > lF + 5, `paso ${n}: sin engranajes la rueda empuja menos de lo que hace falta; con ellos, más`, [lC, lF, lL]]);
+    r.push([cerca(lL / lC, NG / NP, 0.02), `paso ${n}: con el engranaje, la rueda empuja tantas veces más como dientes de más tiene el grande`, [lL / lC, NG / NP]]);
+    if (FALTA) {
+      r.push([F.nombre.ve && F.nombre.txt === W.falta && F.nombre.caja.y1 <= F.puntos[0][1] - 2 && F.nombre.caja.y0 >= SUELO && cerca(F.nombre.caja.x0, contacto, 1.5),
+        `paso ${n}: «${W.falta}» va encima de su flecha, en ${idioma}`, F.nombre.txt]);
+    }
+    if (EMP) {
+      const yE = EMP.puntos[0][1];
+      r.push([x.empujaNombre.txt === W.empuja && x.empujaNombre.caja.y0 >= yE + 3 && cerca(x.empujaNombre.caja.x0, contacto, 1.5),
+        `paso ${n}: «${W.empuja}» va debajo de su flecha, en ${idioma}`, x.empujaNombre.txt]);
+      if (n <= 4) r.push([EMP.dRaya >= F.d && EMP.dPunta >= EMP.dRaya + 800 && EMP.dRaya >= x.libro.d + 800,
+        `paso ${n}: la flecha de empuje sale con el librito ya encima, y su punta cuando la raya terminó`, [F.d, EMP.dRaya, EMP.dPunta, x.libro.d]]);
+    }
+
+    /* ── las vueltas: en el aire se cuentan ── */
+    const g1 = x.ruedas[0].gira, g2 = x.ruedas[1].gira, gp = x.pequeno.gira;
+    const visibles = fila => x.rayas.filter(q => q.fila === fila && q.ve).length;
+    const PANEL = n === 1 || n === 3;
+    r.push([x.panel.ve === PANEL && x.nota.ve === PANEL, `paso ${n}: las rayitas que cuentan las vueltas ${PANEL ? 'están' : 'no están'}`, x.panel.ve]);
+    if (PANEL) {
+      const fm = x.panel.filas.find(f => f.caja.y0 < x.panel.filas[1].caja.y0) || x.panel.filas[0];
+      r.push([x.panel.filas.map(f => f.txt).join('|') === W.fm + '|' + W.fr && x.nota.txt === W.nota, `paso ${n}: el panel y la nota están en ${idioma}`, x.panel.filas.map(f => f.txt)]);
+      x.rayas.filter(q => q.ve).forEach(q => {
+        const fila = x.panel.filas[q.fila === 'motor' ? 0 : 1];
+        if (!(q.caja.x0 > fila.caja.x1 && cerca(cen(q.caja).y, cen(fila.caja).y, 4))) r.push([false, `paso ${n}: la rayita ${q.k} de ${q.fila} va en su fila`, q.caja]);
+      });
+      const vR = g1.giro / 360;
+      const vM = n === 1 ? vR : -gp.giro / 360;
+      const tM = n === 1 ? g1 : gp;
+      r.push([Number.isInteger(Math.round(vR * 1e6) / 1e6) && vR > 0 && Number.isInteger(Math.round(vM * 1e6) / 1e6) && vM > 0,
+        `paso ${n}: la rueda y el motor dan vueltas enteras`, [vR, vM]]);
+      r.push([visibles('motor') === vM && visibles('rueda') === vR, `paso ${n}: hay una rayita por cada vuelta: ${vM} del motor y ${vR} de la rueda`, [visibles('motor'), visibles('rueda')]]);
+      const tiempos = (fila, v, g) => x.rayas.filter(q => q.fila === fila && q.ve).sort((a, b) => a.k - b.k).every((q, k) => cerca(q.d, g.d + (k + 1) * g.t / v, 2));
+      r.push([tiempos('motor', vM, tM) && tiempos('rueda', vR, g1), `paso ${n}: cada rayita sale cuando se completa su vuelta`, null]);
+      const cif = (e.cifra.match(/\d+/g) || []).map(Number);
+      r.push([cif.length === 2 && cif[0] === vM && cif[1] === vR, `paso ${n}: el marcador dice ${e.cifra} y se cuentan ${vM} y ${vR}`, cif]);
+      r.push([g2.giro === 0, `paso ${n}: en el aire, la rueda de adelante no gira: nadie la mueve`, g2.giro]);
+      if (n === 1) {
+        r.push([!ENG && g1.t > 0, 'paso 1: pegado directo, cada vuelta del motor es una vuelta de la rueda', [vM, vR]]);
+      } else {
+        r.push([gp.giro < 0 && g1.giro > 0, 'paso 3: el engranaje pequeño gira para un lado y el grande para el otro', [gp.giro, g1.giro]]);
+        r.push([gp.d === g1.d && gp.t === g1.t, 'paso 3: el motor y la rueda giran al mismo tiempo', [gp.d, g1.d, gp.t, g1.t]]);
+        r.push([cerca(vM / vR, NG / NP, 1e-6), `paso 3: por cada vuelta de la rueda el motor da ${NG / NP}: los dientes del grande entre los del pequeño`, [vM, vR, NG, NP]]);
+        r.push([e.texto.includes(String(NP)) && e.texto.includes(String(NG)) && e.texto.toLowerCase().includes(W.numero[NG / NP]),
+          'paso 3: la frase dice los dientes que se cuentan y cuántas vueltas', e.texto]);
+        r.push([x.grande.d >= x.motor.frente.d + 800 && x.pequeno.d >= x.grande.d && gp.d >= x.pequeno.d + 500 && x.motor.frente.d >= x.carY.d + 800,
+          'paso 3: primero sube el carrito, después se corre el motor, aparecen los engranajes y entonces gira', [x.carY.d, x.motor.frente.d, x.grande.d, x.pequeno.d, gp.d]]);
+      }
+    } else {
+      r.push([visibles('motor') === 0 && visibles('rueda') === 0, `paso ${n}: no quedan rayitas a la vista`, null]);
+    }
+
+    /* ── en el suelo: no avanza, y después avanza ── */
+    if (n === 0) memo.r1x = R1.x;
+    if (n === 2) {
+      r.push([x.carX.x === 0 && g1.giro === 0 && !x.salida.ve && e.cifra === '0', 'paso 2: el carrito no avanza nada y la rueda no gira, y el marcador dice 0', [x.carX.x, g1.giro, e.cifra]]);
+      memo.r1xSuelo = R1.x;
+    }
+    if (n >= 4) {
+      const AV = x.carX.x;
+      r.push([AV > 0 && (n > 4 || e.cifra === W.avanza), `paso ${n}: el carrito avanza${n === 4 ? ', y el marcador lo dice' : ''}`, [AV, e.cifra]]);
+      r.push([cerca(x.flechas.x, AV, 0.01), `paso ${n}: las flechas avanzan con la rueda`, [x.flechas.x, AV]]);
+      r.push([cerca(AV, g1.giro * Math.PI / 180 * R, 0.5) && cerca(g2.giro, g1.giro, 0.01), `paso ${n}: el carrito avanza justo lo que la rueda gira por su orilla, sin resbalar`, [AV, g1.giro, R]]);
+      r.push([cerca(gp.giro, -g1.giro * NG / NP, 0.05), `paso ${n}: el motor gira ${NG / NP} veces lo que la rueda, para el otro lado`, [gp.giro, g1.giro]]);
+      if (n === 4) {
+        const juntos = [x.flechas, g1, g2, gp].every(q => q.d === x.carX.d && q.t === x.carX.t);
+        r.push([juntos && x.carX.t > 0, 'paso 4: el carrito, sus ruedas, el motor y las flechas se mueven al mismo tiempo', [x.carX.d, x.carX.t]]);
+        r.push([x.carX.d >= largoE.dRaya + 800 && x.carX.d >= largoE.dPunta, 'paso 4: el carrito arranca cuando la flecha de empuje ya terminó de salir', [x.carX.d, largoE.dRaya, largoE.dPunta]]);
+        r.push([x.salida.d === x.carX.d, 'paso 4: la silueta de donde arrancó aparece cuando arranca', [x.salida.d, x.carX.d]]);
+      }
+      r.push([x.salida.ve && cerca(x.salida.c.x, R1.x - AV, 0.6) && cerca(x.salida.c.y, R1.y, 0.6) && cerca(x.salida.c.r, R, 1) && /\d/.test(x.salida.raya)
+        && (memo.r1xSuelo == null || cerca(x.salida.c.x, memo.r1xSuelo, 0.6)),
+        `paso ${n}: con raya cortada, la rueda donde arrancó: en el mismo sitio donde no se movió`, [x.salida.c, memo.r1xSuelo]]);
+    } else {
+      r.push([x.carX.x === 0 && !x.salida.ve, `paso ${n}: el carrito está donde arranca`, x.carX.x]);
+    }
+    if (n === 0) r.push([e.cifra === '1', 'paso 0: el marcador cuenta un motor', e.cifra]);
+    if (n === 5) r.push([e.cifra === '2' && (e.texto.match(/\?/g) || []).length === 2, 'paso 5: el marcador dice 2 y la frase hace dos preguntas', [e.cifra, e.texto]]);
+
+    /* ── ningún rótulo se monta en otro, y todo cabe en el dibujo ── */
+    const rotulos = [x.motor.nombre, x.pilaNombre, x.libro.nombre, x.aire, F.nombre, x.empujaNombre, x.nota].concat(x.panel.filas).filter(t => t && t.ve).map(t => t.caja);
+    const enc = [];
+    rotulos.forEach((a, i) => rotulos.forEach((b, j) => { if (j > i && monta(a, b)) enc.push([i, j]); }));
+    r.push([enc.length === 0, `paso ${n}: ningún rótulo se monta en otro`, enc]);
+    const vista = { x0: 0, y0: 0, x1: x.vista[0], y1: x.vista[1] };
+    r.push([rotulos.every(c => dentro(c, vista)) && dentro(P, vista) && R2.x + R <= x.vista[0], `paso ${n}: todo cabe en el dibujo`, null]);
+    return r;
+  },
   amBomba(e, n) {
     const x = e.extra, r = [];
     const L = x.lang === 'en' ? 'en' : 'es';
