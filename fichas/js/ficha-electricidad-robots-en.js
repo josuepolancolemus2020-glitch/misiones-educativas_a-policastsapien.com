@@ -204,14 +204,14 @@
         '<h3>I. Fill in the blanks <span class="val">(Value: 10 points each)</span></h3>' +
 
         '<ol>' +
-        '<li>The robot stopped turning on the <span class="linea-resp"></span> before the fair.</li>' +
-        '<li>The fault was a loose wire the size of a <span class="linea-resp"></span>.</li>' +
+        '<li>Two LEDs placed one after the other shine more <span class="linea-resp"></span> than a single one.</li>' +
+        '<li>A <span class="linea-resp"></span> eraser does not let current through.</li>' +
         '<li>The phone charger is unplugged by pulling on the <span class="linea-resp"></span>.</li>' +
         '<li>The battery has a positive pole and a <span class="linea-resp"></span> one.</li>' +
         '<li>The old Christmas <span class="linea-resp"></span> lights all went out together.</li>' +
         '<li>When a bulb burns out in the living room, the one in the <span class="linea-resp"></span> stays on.</li>' +
         '<li>Each order the circuit carries out, like lighting up or turning, is an <span class="linea-resp"></span>.</li>' +
-        '<li>The group spent the money of <span class="linea-resp"></span> good batteries.</li>' +
+        '<li>Tap water, river water and even <span class="linea-resp"></span> carry salts.</li>' +
         '<li>In the flashlight, what opens and closes the path is the <span class="linea-resp"></span> you slide.</li>' +
         '<li>Energy is neither created nor destroyed: it is <span class="linea-resp"></span>.</li>' +
         '</ol>' +
@@ -219,29 +219,29 @@
         '<h3>II. True or False <span class="val">(Value: 10 points each)</span></h3>' +
 
         '<ol>' +
-        '<li>____ The group’s robot stopped turning on before the fair.</li>' +
-        '<li>____ The robot’s fault was in the battery.</li>' +
-        '<li>____ From the outside, a broken circuit looks just like a dead battery.</li>' +
+        '<li>____ A circuit can carry an LED and a motor at the same time.</li>' +
+        '<li>____ A bare wire is just as safe as a well-covered one.</li>' +
+        '<li>____ Current is the amount of electricity that flows through the wire.</li>' +
         '<li>____ A charger’s cable never gets damaged.</li>' +
         '<li>____ Electricity is a form of energy.</li>' +
-        '<li>____ In hamlets with no power lines there is no way to have light.</li>' +
+        '<li>____ An LED can take all the current that reaches it without burning out.</li>' +
         '<li>____ You experiment with dry hands.</li>' +
-        '<li>____ A circuit works even if a wire is loose.</li>' +
+        '<li>____ With more voltage, less current flows.</li>' +
         '<li>____ Salty water lets electricity through.</li>' +
         '<li>____ Electricity can cause harm.</li>' +
         '</ol>',
 
       /* ═══════════ PÁGINA 5 ═══════════ */
       p5:
-        '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span>. Circle the correct letter.</h3>' +
+        '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span>. Fill in the circle of the letter of the correct answer.</h3>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">1</span>What did they replace first when the robot would not turn on?</div>' +
+        '<div class="preg-q"><span class="preg-n">1</span>Which of these materials lets current through?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> The motor</span>' +
-        '<span class="op"><i>b</i> The battery</span>' +
-        '<span class="op"><i>c</i> A wire</span>' +
-        '<span class="op"><i>d</i> A bulb</span>' +
+        '<span class="op"><i>a</i> Dry wood</span>' +
+        '<span class="op"><i>b</i> Aluminum</span>' +
+        '<span class="op"><i>c</i> Dry cloth</span>' +
+        '<span class="op"><i>d</i> Glass</span>' +
         '</div></div>' +
 
         '<div class="preg">' +
@@ -263,12 +263,12 @@
         '</div></div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">4</span>In a motor, what does electrical energy turn into?</div>' +
+        '<div class="preg-q"><span class="preg-n">4</span>How many parts does a basic circuit have?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> Sound</span>' +
-        '<span class="op"><i>b</i> Motion</span>' +
-        '<span class="op"><i>c</i> Cold</span>' +
-        '<span class="op"><i>d</i> Paper</span>' +
+        '<span class="op"><i>a</i> Two</span>' +
+        '<span class="op"><i>b</i> Four</span>' +
+        '<span class="op"><i>c</i> Six</span>' +
+        '<span class="op"><i>d</i> Ten</span>' +
         '</div></div>' +
 
         '<div class="preg">' +
@@ -346,10 +346,8 @@
         '</table>' +
 
         '<div class="felic">' +
-        '🏅 <b>Congratulations! You have completed the Mission Electricity for Robots.</b> You now know that current needs a ' +
-        'closed path; that the switch opens and closes that path; that in series they all go dark while in parallel each load ' +
-        'keeps going on its own; that copper conducts and plastic insulates; and that electrical safety is always respected. ' +
-        'Keep moving along the Robot Path! ⚡🤖' +
+        '🏅 <b>Congratulations! You have completed the Mission Electricity for Robots.</b> Check your answers before you ' +
+        'hand in the test. Keep moving along the Robot Path! ⚡🤖' +
         '</div>' +
 
         '<h2>📏 Assessment Rubric</h2>' +
@@ -373,7 +371,7 @@
         '<p style="font-size:10pt;color:var(--gris);">This page prints on a <strong>separate sheet</strong>: it is only for the teacher or for guided self-assessment.</p>' +
 
         '<div class="pauta">' +
-        '<div><span class="pt">I. Fill in the blanks:</span> 1. day &nbsp; 2. fingernail &nbsp; 3. plug &nbsp; 4. negative &nbsp; 5. tree &nbsp; 6. kitchen &nbsp; 7. action &nbsp; 8. two &nbsp; 9. button &nbsp; 10. transformed</div>' +
+        '<div><span class="pt">I. Fill in the blanks:</span> 1. dimly &nbsp; 2. rubber &nbsp; 3. plug &nbsp; 4. negative &nbsp; 5. tree &nbsp; 6. kitchen &nbsp; 7. action &nbsp; 8. sweat &nbsp; 9. button &nbsp; 10. transformed</div>' +
         '<div><span class="pt">II. True or False:</span> 1T, 2F, 3T, 4F, 5T, 6F, 7T, 8F, 9T, 10T</div>' +
         '<div><span class="pt">III. Multiple choice:</span> 1b, 2c, 3a, 4b, 5d, 6a, 7a, 8b, 9c, 10a</div>' +
         '<div><span class="pt">IV. Matching:</span> 1C, 2H, 3E, 4I, 5A, 6G, 7J, 8B, 9F, 10D</div>' +

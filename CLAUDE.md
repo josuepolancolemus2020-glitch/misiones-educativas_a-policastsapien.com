@@ -12004,6 +12004,139 @@ Salió roja con cada una.
 Con la CPU frenada seis veces va a 60 cuadros por segundo, y el peor cuadro es
 de 83 ms. Sensores, medida el mismo día, va a 60 y 50 ms.
 
+### La quincuagésima novena: Electricidad para Robots, y lo que enseñó
+
+La cuarta de la Ruta de los Robots es **Electricidad para Robots**
+(`misiones/2y3ciclo-electricidad-robots/`, `js/animacion-cable.js`), bilingüe.
+La historia es la del robot del grupo, que dejó de encender la víspera de la
+feria: cambiaron la pila, después el motor y otra vez la pila, y era un cable
+suelto del tamaño de una uña, en un punto donde nadie miró. Se les fue la tarde
+y el dinero de dos pilas buenas. La animación es el robot por dentro: la pila,
+el motor y el camino de cables que sale de la pila y vuelve a ella, con seis
+uniones, y la corriente como puntitos que van por el camino:
+
+- el robot no enciende y por fuera no se ve nada roto: ¿dónde buscarías?;
+- cambian la pila, el motor y dos veces más la pila; lo viejo va al montón,
+  debajo del robot, y no se mueve ningún puntito;
+- se sigue el camino desde la pila, unión por unión: las cuatro primeras llevan
+  su ✓, y la quinta, su ✗ y el cable suelto encerrado;
+- unen el cable, y en ese mismo instante arrancan todos los puntitos, también
+  los de junto a la pila, y el motor gira;
+- si el camino se corta en otro punto, todo se para en el mismo instante,
+  también lo que está lejos del corte: dos aros encierran puntitos quietos del
+  otro lado;
+- y la pregunta es del alumno: dibujar el camino de un aparato de pilas de su
+  casa, numerar sus uniones y decir cuál revisaría primero.
+
+Ocho cosas que valen para las que siguen:
+
+1. ⚠️ **Los puntitos son UNA sola raya punteada que se corre entera.** Lo que
+   asombra es que la corriente no llega hasta el corte y espera ahí: con el
+   camino cortado no circula en ninguna parte. Con un puntito por pieza, el
+   dibujo podría mover unos y otros no; con una sola raya no puede. Los
+   puntitos van a la misma distancia y caben justos en el camino, así que se
+   cierra sin costura.
+2. ⚠️ **Arrancan cuando el cable termina de unirse, y se paran cuando empieza
+   el corte.** La sonda lo lee de las demoras: la corriente y el motor salen
+   cuando el pedacito ya llegó a su lugar, y en el paso 4 su demora más lo que
+   duran es justo la demora del corte. Y van igual de rápido en los dos pasos.
+3. ⚠️ **Donde no hay cable, no hay puntitos.** En las fotos a medio viaje, al
+   cambiar la pila quedaban puntitos flotando en el hueco donde estaba; en el
+   lugar de la pila y del motor la corriente lleva una máscara, y la sonda
+   comprueba que tape justo eso. Y ningún puntito queda quieto en el hueco del
+   cable suelto: la sonda calcula dónde cae cada uno.
+4. ⚠️ **Una opacidad del CSS de la misión le gana al aparato.** El rastro del
+   dedo llevaba `opacity: 0.8`, y `#amCable .el-sigue` le gana a
+   `.am-raiz .am-fuera`: el rastro del paso 2 seguía a la vista en el paso 3.
+   Va con `stroke-opacity`.
+5. ⚠️ **La historia y la animación contestaban nueve preguntas de la prueba, y
+   el recuadro de la historia define el circuito con esas palabras.** «¿Qué es
+   un circuito eléctrico?» (el camino cerrado, que dice el recuadro), «el robot
+   dejó de encender antes de la feria», «la falla estaba en la pila», «desde
+   afuera se ve igual que una pila mala», «funciona aunque haya un cable
+   suelto», «la ___ de la feria», «del tamaño de una ___», «el dinero de ___
+   pilas» y el motor que se convierte en movimiento, que se ve girar. En la
+   ficha, además, «¿qué cambiaron primero?». En pensamiento crítico, el caso
+   del contacto flojo era la historia con otra ropa, el error de «pasa igual con
+   el interruptor abierto, solo que más despacio» es justo lo que enseña la
+   animación, y el carrito de juguete con pila y motor es el robot del dibujo.
+   La segunda pregunta del análisis («¿qué pasaría si se suelta un cable?») se
+   contestaba igual para todos los aparatos. Ahora preguntan lo que la misión
+   enseña: el motor que gira al otro lado con la pila al revés, la corriente en
+   amperios, el LED que gasta poca energía, los dos LED que alumbran más débil,
+   el hule, el cable pelado, la corriente como cantidad, el LED que se quema; y
+   en pensamiento crítico, el LED conectado al revés, el voltaje confundido con
+   la corriente, una regla de seguridad para cada aparato y el foco del baño de
+   la escuela. Con la respuesta en el mismo lugar, en la misión, en su inglés y
+   en las dos fichas, que siguen en siete hojas.
+6. ⚠️ **En la ficha, una pregunta la contestaba su propia hoja**, desde antes:
+   «en los caseríos sin tendido eléctrico no hay forma de tener luz» iba debajo
+   del recuadro que dice que ahí el panel solar carga una batería que de noche
+   enciende los LED. Se cambió. Y la felicitación, debajo de los pareados,
+   decía que en serie se apagan todos, que el cobre conduce, que el plástico
+   aísla y que el interruptor abre el camino: ahora pide revisar.
+7. ⚠️ **Al quitar preguntas, la sonda vio lo que eso tapaba.** Sin la pregunta
+   del motor, «energía» dejó de ser palabra del tema en la ficha y la sonda vio
+   que «En un LED, ¿en qué se transforma la energía…?» dejaba escrita la
+   respuesta de «La energía no se crea ni se destruye: se ___». Era una pista
+   de verdad y estaba en la misión también. Con «se convierte», chocaba con la
+   respuesta del cargador («Convierte la corriente…»), y una opción que empieza
+   con «Luz» la sonda la toma por nombre propio. Quedó «¿Qué produce un LED
+   encendido? La luz…».
+8. ⚠️ **La pauta impresa decía «Percibe / Decide / Actúa»**, calcada de ¿Qué es
+   un robot?: el maestro leía «Percibe: la corriente sale del polo +». El
+   inglés ya lo traducía como «Path / If it opens / Transformation», así que el
+   error solo se veía en español. Ahora son «Camino / Seguridad / Se
+   transforma», y el inglés las sigue. De paso, la ficha en inglés pedía
+   «Circle the correct letter»: ahora pide rellenar el círculo.
+
+La sonda de esta escena **no le cree nada a la escena**. Comprueba, en español y
+en inglés:
+
+- que los cuatro cables vayan por el camino de la corriente, que el camino se
+  cierre de la pila a la pila y que las seis uniones vayan en el orden en que las
+  encuentra la corriente;
+- que el camino sean los cables, los dos pedacitos, la pila y el motor, sin
+  tramos de más, y que cada pedacito cuelgue de su punta y sea del largo del
+  hueco;
+- qué unión está suelta en cada paso, mirando dónde quedó la otra punta del
+  pedacito;
+- que haya una pila y un motor en su lugar, los últimos que pusieron, con el
+  cable saliendo de arriba de la pila y volviendo por abajo, y llegando al motor
+  por sus dos puntas;
+- que lo cambiado quede debajo del robot sin encimarse, en el orden de la
+  historia, y que cada pila o motor nuevo aparezca cuando el viejo ya salió;
+- que los puntitos y su borde vayan juntos, a la misma distancia y sin costura,
+  con su máscara justo donde va la pila y donde va el motor, y ninguno en el
+  hueco de una unión suelta;
+- que con el camino cortado no se mueva ningún puntito ni gire el motor, que
+  arranquen cuando el cable queda unido y se paren cuando empieza el corte,
+  igual de rápido, con el motor girando lo que avanza la corriente;
+- que las flechas y el zumbido estén solo con el camino completo, y que cada
+  flecha vaya sobre el cable, en el sentido de la corriente y lejos de las
+  uniones;
+- que en el paso 2 se revise unión por unión hasta la suelta, en orden, con su
+  número, su ✓ o su ✗ y el rastro del dedo de una a la siguiente;
+- que el corte sea en otra unión, y que los aros del paso 4 encierren puntitos
+  de verdad, lejos del corte;
+- que ningún rótulo se monte en otro y que el marcador diga lo que se ve;
+- y que no salga ninguna palabra de lo que pregunta la prueba, ni los signos de
+  la pila.
+
+Se comprobó al revés con treinta y cuatro averías, plantadas una por una, entre
+ellas: los puntitos moviéndose al cambiar la pila, el motor girando con el cable
+suelto, la corriente arrancando antes de unir el cable y parándose antes del
+corte, el paso 4 más lento, un puntito en el hueco, el camino con costura, la
+máscara tapando de más o faltando, la unión suelta en otro lugar, la ✗ en otra
+unión, los aros fuera de orden, el corte en la unión que se arregló, los aros de
+lejos junto al corte o sin puntito, la pila nueva antes de que salga la vieja,
+los cambios en otro orden, el motor viejo girando, una flecha al revés o sobre
+una unión, «circuito» en una frase, la pila con su signo y el pedacito más corto
+que el hueco. Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 60 cuadros por segundo, y el peor cuadro es
+de 83 ms. Motores y Mecanismos, medida el mismo día, va a 60 y 83 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -12166,7 +12299,13 @@ le quita la transición a todos los hijos) y después las demoras: al revés, lo
 que tenía que esperar aparece de golpe. El primer pintado es `pintar(0, 0)`: un
 paso que se salta cuando `antes === n` (para no volver a contar su historia) no
 puede ser el 0, o la escena abre vacía. Y dos corridas en un mismo paso son dos
-robots: el que ya llegó no puede volver a salir.
+robots: el que ya llegó no puede volver a salir. Una pieza que el aparato esconde no lleva
+`opacity` en el CSS de la misión: `#amX .clase` le gana a `.am-raiz .am-fuera`
+y la pieza no se esconde nunca; el tono va con `stroke-opacity` o `fill-opacity`.
+Lo que no puede verse donde no hay nada (la corriente en el hueco de la pila
+que se sacó) se tapa con una máscara, no pieza por pieza. Y lo que se mueve
+todo junto, porque esa es la lección (la corriente en todo el camino), va en
+UNA sola pieza: así el dibujo no puede mover unas partes y otras no.
 
 Si la misión es **bilingüe** (carga su `-en.js` y trae el botón 🌐), la escena
 lleva `bilingue: true`, `describe: { es, en }` e `idioma(lang, A)`, y sus

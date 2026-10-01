@@ -15,6 +15,7 @@
 <link rel="canonical" href="https://metas.policastsapien.com/misiones/2y3ciclo-electricidad-robots/electricidad-robots.html">
 <link rel="stylesheet" href="../../css/vendor/fuentes/fuentes.css">
 <link rel="stylesheet" href="css/electricidad-robots.css">
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La barra de secciones, arriba y siempre a la vista. Va DESPUÉS del CSS
      de la misión a propósito: de ahí saca su color, y así sobrescribe su
      position:static sin un solo !important. -->
@@ -74,6 +75,10 @@
     <div class="tip"><span class="ti">❓</span><div>Un circuito es un <strong>camino cerrado</strong>:
     basta que se corte en un solo punto para que nada funcione, y desde afuera se ve igual que una pila
     mala. Saber cómo va el camino es lo que dice dónde buscar.</div></div>
+  </div>
+  <div class="card ac-teal" data-animacion>
+    <h2 data-i18n="an">🔌 Mira dónde se cortaba el camino</h2>
+    <div id="amCable"><p data-i18n="anr">Con un cable suelto no se mueve nada, aunque se cambien la pila y el motor. Siguiendo el camino desde la pila, unión por unión, el cable suelto aparece en la quinta. Al unirlo, la corriente arranca en todo el camino en el mismo instante; y si se corta en cualquier otro punto, se para en todo el camino en el mismo instante.</p></div>
   </div>
   <div class="card ac-teal" data-i18n="a1">
     <h2>🔌 El circuito básico</h2>
@@ -663,6 +668,8 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+  <script src="../../js/animacion-mision.js"></script>
+  <script src="js/animacion-cable.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

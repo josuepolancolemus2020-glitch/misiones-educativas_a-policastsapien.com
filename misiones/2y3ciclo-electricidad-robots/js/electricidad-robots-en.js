@@ -94,6 +94,9 @@
         '<div>A circuit is a <strong>closed path</strong>: one single break anywhere and nothing works, and from the ' +
         'outside it looks exactly like a dead battery. Knowing how the path runs is what tells you where to look.</div></div>',
 
+      an: '🔌 See where the path was cut',
+      anr: 'With a loose wire nothing moves, even after changing the battery and the motor. Following the path from the battery, joint by joint, the loose wire turns up at the fifth one. Once it is joined, the current starts along the whole path at the same moment; and if it is cut at any other point, it stops along the whole path at the same moment.',
+
       a1:
         '<h2>🔌 The basic circuit</h2>' +
         '<p>An <strong>electric circuit</strong> is a <strong>closed path</strong> that current travels along. ' +
@@ -474,23 +477,23 @@
       ],
 
       evalTFBank: [
-        { q: 'The group’s robot stopped turning on before the fair.', a: true },
-        { q: 'The robot’s fault was in the battery.', a: false },
-        { q: 'From the outside, a broken circuit looks just like a dead battery.', a: true },
+        { q: 'A circuit can carry an LED and a motor at the same time.', a: true },
+        { q: 'A bare wire is just as safe as a well-covered one.', a: false },
+        { q: 'Current is the amount of electricity that flows through the wire.', a: true },
         { q: 'Electricity is a form of energy.', a: true },
         { q: 'You experiment with dry hands.', a: true },
         { q: 'Salty water lets electricity through.', a: true },
         { q: 'Electricity can cause harm.', a: true },
         { q: 'A charger’s cable never gets damaged.', a: false },
         { q: 'In hamlets with no power lines there is no way to have light.', a: false },
-        { q: 'A circuit works even if a wire is loose.', a: false }
+        { q: 'An LED can take all the current that reaches it without burning out.', a: false }
       ],
 
       evalMCBank: [
-        { q: 'What is an electric circuit?', o: ['a) A coiled wire', 'b) The closed path the current flows along', 'c) A dead battery', 'd) A painted bulb'], a: 1 },
+        { q: 'What happens to a motor if the battery is connected backwards?', o: ['a) It burns out', 'b) It turns the other way', 'c) It never turns again', 'd) It turns faster'], a: 1 },
         { q: 'Which part of the circuit makes use of the electricity?', o: ['a) The source', 'b) The wire', 'c) The load', 'd) The pole'], a: 2 },
-        { q: 'In an LED, what does electrical energy turn into?', o: ['a) Light', 'b) Sound', 'c) Water', 'd) Wind'], a: 0 },
-        { q: 'In a motor, what does electrical energy turn into?', o: ['a) Sound', 'b) Motion', 'c) Cold', 'd) Paper'], a: 1 },
+        { q: 'What does a lit LED give off?', o: ['a) Light', 'b) Sound', 'c) Water', 'd) Wind'], a: 0 },
+        { q: 'What unit is current measured in?', o: ['a) Liters', 'b) Amperes', 'c) Meters', 'd) Degrees'], a: 1 },
         { q: 'Which of these practices is SAFE?', o: ['a) Putting wires into the wall outlet', 'b) Touching appliances with wet hands', 'c) Joining the two poles of the battery', 'd) Experimenting only with batteries'], a: 3 },
         { q: 'What does the battery do in the circuit?', o: ['a) It pushes the current', 'b) It encloses it', 'c) It slows it down', 'd) It switches it off'], a: 0 },
         { q: 'How many volts do the batteries used in class have?', o: ['a) 1.5 V or 9 V', 'b) 110 V', 'c) 220 V', 'd) 1000 V'], a: 0 },
@@ -500,14 +503,14 @@
       ],
 
       evalCPBank: [
-        { q: 'The robot stopped turning on the ___ before the fair.', a: 'day', acc: ['day', 'eve'] },
-        { q: 'The fault was a loose wire the size of a ___.', a: 'fingernail', acc: ['fingernail', 'nail'] },
+        { q: 'An LED uses very ___ energy.', a: 'little', acc: ['little'] },
+        { q: 'Two LEDs placed one after the other shine more ___ than a single one.', a: 'dimly', acc: ['dimly', 'weakly', 'faintly'] },
         { q: 'The solar panel charges a ___ during the day.', a: 'battery', acc: ['battery'] },
         { q: 'The battery has a positive pole and a ___ one.', a: 'negative', acc: ['negative'] },
         { q: 'The old Christmas ___ lights all went out together.', a: 'tree', acc: ['tree'] },
         { q: 'When a bulb burns out in the living room, the one in the ___ stays on.', a: 'kitchen', acc: ['kitchen'] },
         { q: 'Each order the circuit carries out, like lighting up or turning, is an ___.', a: 'action', acc: ['action'] },
-        { q: 'The group spent the money of ___ good batteries.', a: 'two', acc: ['two', '2'] },
+        { q: 'A ___ eraser does not let current through.', a: 'rubber', acc: ['rubber'] },
         { q: 'The solar lamp’s LED turns on at ___.', a: 'night', acc: ['night'] },
         { q: 'Energy is neither created nor destroyed: it is ___.', a: 'transformed', acc: ['transformed'] }
       ],
@@ -526,28 +529,28 @@
       ],
 
       critSensorBank: [
-        {txt:'The bulb lights up only while you press the wires together with your hand; as soon as you let go it goes out.',ans:'There is a loose contact: the circuit opens when you let go. The joint must be secured (twist the wire tightly, use electrical tape or a battery holder) so the path stays closed on its own.'},
+        {txt:'The LED in your team’s circuit does not light up. You checked every joint and they are all firm, and the battery is new. Your classmate says the LED is broken.',ans:'Before replacing the LED, I would check whether it is connected BACKWARDS: it has POLARITY and only lights up one way (the long leg goes to +). Turn it around. If it still does not light up, then try another LED.'},
         {txt:'You have two bulbs wired in series and neither lights up; on checking, one has a broken filament.',ans:'In SERIES there is a single path: the burned-out bulb opens the circuit and that is why both go dark. Replace the burned-out bulb, or wire them in PARALLEL so each one has its own path.'}
       ],
 
       critErrorBank: [
-        {txt:'"Current gets through even with the switch open, just more slowly."',g1:'False: with the switch OPEN the path is cut and NO current gets through at all; it is not a matter of speed.',g2:'Current needs a CLOSED, complete path: it leaves one terminal of the battery, goes through the load and returns to the other terminal.'},
+        {txt:'"Voltage is the amount of current that flows through the wire, and it is measured in amperes."',g1:'False: voltage is the PUSH the battery gives the current; what flows through the wire is the current.',g2:'Voltage is measured in VOLTS; current is what is measured in amperes.'},
         {txt:'"Water never conducts electricity, so it makes no difference if your hands are wet."',g1:'Tap water, river water and sweat carry SALTS and they do conduct electricity.',g2:'That is why you never touch appliances, plugs or wires with wet hands: a wet body becomes part of the circuit.'},
         {txt:'"To make the LED shine brighter, take off the resistor and connect it straight to the 9 V battery."',g1:'With no resistor too much current gets through and it BURNS OUT in an instant: it does not shine brighter, it is destroyed.',g2:'On top of that it has POLARITY: connected backwards it does not light up. The resistor always goes in series with it.'},
         {txt:'"If you join the two terminals of the battery with a wire, the battery recharges itself."',g1:'It does not recharge: you create a SHORT CIRCUIT, the current flows with no load to limit it and the battery HEATS UP.',g2:'It is dangerous: the battery can burn your hand, leak or burst. The current must always go through a load, such as a motor or a buzzer.'}
       ],
 
       critCicloQuestions: [
-        '1. What path does the current travel? Describe it from the battery until it comes back to it.',
-        '2. What would happen if the switch were opened or a wire came loose? Why?',
+        '1. What path does the current travel? Describe it from the source until it comes back to it.',
+        '2. What safety rule would you follow with this device? Why?',
         '3. What does electrical energy turn into in this circuit?'
       ],
 
       critCicloBank: [
-        {txt:'The battery flashlight your family uses during power outages: when you slide the button, the bulb lights up.',p:'The current leaves the + terminal of the batteries, goes through the spring and the metal strip, reaches the switch and from there the bulb, and comes back to the − terminal.',d:'The circuit would be left OPEN and the bulb would go out, because the current needs a closed, complete path.',a:'The electrical energy of the batteries turns into light energy (and a little heat) in the bulb.'},
-        {txt:'A toy car with a battery, a switch and a motor that makes the wheels turn.',p:'The current leaves the + of the battery, runs along the wire to the closed switch, goes through the motor and returns to the − of the battery.',d:'With the switch open or a wire loose the motor stops: with no closed path no current flows.',a:'Electrical energy turns into energy of movement (mechanical) in the motor.'},
-        {txt:'The classroom bell: when you press a button, a buzzer connected to a battery sounds.',p:'The current leaves the battery, goes through the button (which works as a switch) and through the buzzer, and returns to the battery.',d:'When you let go of the button the circuit opens and the sound stops immediately, because the path is interrupted.',a:'Electrical energy turns into sound energy in the buzzer.'},
-        {txt:'The cell phone charger: you plug it into the wall outlet and the phone battery fills up.',p:'The current comes in from the wall outlet to the charger, which turns it into low-voltage current, and travels along the cord to the phone battery.',d:'If the cord is damaged or badly connected, the path opens and the phone does not charge.',a:'Electrical energy turns into chemical energy stored in the battery, and later into light, sound and movement in the phone.'}
+        {txt:'The battery flashlight your family uses during power outages: when you slide the button, the bulb lights up.',p:'The current leaves the + terminal of the batteries, goes through the spring and the metal strip, reaches the switch and from there the bulb, and comes back to the − terminal.',d:'Used batteries do not go in the regular trash or into the river: they are kept and taken to a collection center, because they pollute the soil.',a:'The electrical energy of the batteries turns into light energy (and a little heat) in the bulb.'},
+        {txt:'The light bulb in the school bathroom: when you flip the light switch up, the bulb lights up.',p:'The current comes along the school’s wires, goes through the light switch, which completes the path, passes through the bulb and returns along the other wire.',d:'The bulb and the light switch are connected to the school’s 110 V, which can kill: nobody experiments with them. To change the bulb, it is switched off first, with dry hands and with an adult’s help.',a:'Electrical energy turns into light (and a little heat) in the bulb.'},
+        {txt:'The classroom bell: when you press a button, a buzzer connected to a battery sounds.',p:'The current leaves the battery, goes through the button (which works as a switch) and through the buzzer, and returns to the battery.',d:'Nobody takes it apart with the battery in, and the used battery goes to a collection center, not into the regular trash.',a:'Electrical energy turns into sound energy in the buzzer.'},
+        {txt:'The cell phone charger: you plug it into the wall outlet and the phone battery fills up.',p:'The current comes in from the wall outlet to the charger, which turns it into low-voltage current, and travels along the cord to the phone battery.',d:'You unplug it by pulling the plug, never the cord, and you do not use it if the cord is bare or damaged.',a:'Electrical energy turns into chemical energy stored in the battery, and later into light, sound and movement in the phone.'}
       ],
 
       critCompareBank: [
@@ -727,8 +730,8 @@
         'Invent a circuit that solves this problem: write its name, which SOURCE it uses, how the WIRES and the SWITCH are arranged, which LOAD it carries (LED, motor or buzzer) and what the energy turns into. Explain as well how you will do it safely.',
       'Inventa un circuito que resuelva este problema: escribe su nombre, qué FUENTE usa, cómo van los CABLES y el INTERRUPTOR, qué CARGA lleva y en qué se transforma la energía. Dibújalo con sus símbolos al reverso de la hoja.':
         'Invent a circuit that solves this problem: write its name, which SOURCE it uses, how the WIRES and the SWITCH are arranged, which LOAD it carries and what the energy turns into. Draw it with its symbols on the back of the sheet.',
-      /* la pauta reusa los rótulos del ciclo percibir-decidir-actuar */
-      'Percibe:': 'Path:', 'Decide:': 'If it opens:', 'Actúa:': 'Transformation:',
+      /* los rótulos de la pauta impresa de «Analiza el circuito» */
+      'Camino:': 'Path:', 'Seguridad:': 'Safety:', 'Se transforma:': 'Transformation:',
       /* impresión: encabezados, pauta y pie */
       'Evaluación Electricidad para Robots': 'Test · Electricity for Robots',
       'Pensamiento Crítico Electricidad para Robots': 'Critical Thinking · Electricity for Robots',

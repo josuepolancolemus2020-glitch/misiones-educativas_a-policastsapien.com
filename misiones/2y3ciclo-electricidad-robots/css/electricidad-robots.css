@@ -552,3 +552,56 @@ body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* ── La animación del cable suelto (#amCable) ────────────────────────
+   El robot por dentro es una tabla de cartón con sus piezas: la tabla,
+   los cables, la pila y el motor son COSAS y se quedan como son en las
+   dos pantallas, así que lo que va escrito encima lleva tinta oscura
+   fija. Lo que va sobre la tarjeta (el título, la leyenda, el montón)
+   lleva la tinta de la pantalla. Nada se dice solo con color: la unión
+   buena lleva ✓ y la suelta ✗, y el hueco va con su anillo de raya
+   cortada. */
+#amCable .el-tabla { fill: #fdecd2; stroke: #c49a6c; stroke-width: 1.2; }
+/* Lo que se va siguiendo con el dedo va tenue con stroke-opacity, nunca con
+   opacity: con el id delante, esta regla le ganaba a .am-fuera y el camino
+   seguido se quedaba pintado en el paso siguiente. */
+#amCable .el-sigue { fill: none; stroke: #facc15; stroke-width: 12; stroke-linecap: round; stroke-linejoin: round; stroke-opacity: 0.8; }
+#amCable .el-cable { fill: none; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+#amCable .el-rojo { stroke: #dc2626; }
+#amCable .el-negro { stroke: #1f2937; }
+#amCable .el-punta { fill: none; stroke: #d97706; stroke-width: 5; stroke-linecap: round; }
+#amCable .el-corre { fill: none; stroke-linecap: round; }
+#amCable .el-punto-borde { stroke: #78350f; stroke-width: 7.4; }
+#amCable .el-punto { stroke: #fbbf24; stroke-width: 5; }
+#amCable .el-punto-ley { fill: #fbbf24; stroke: #78350f; stroke-width: 1.2; }
+#amCable .el-flecha { fill: none; stroke: #0f172a; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+/* El canto de la pila: en la pantalla oscura se aclara, que si no las del
+   montón se pierden en el fondo. */
+#amCable { --el-canto: #0f172a; }
+[data-theme="dark"] #amCable { --el-canto: #cbd5e1; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) #amCable { --el-canto: #cbd5e1; }
+}
+#amCable .el-pila { fill: #1f2937; stroke: var(--el-canto); stroke-width: 1.2; }
+#amCable .el-franja { fill: #b45309; }
+#amCable .el-boton { fill: #9ca3af; stroke: #4b5563; stroke-width: 0.8; }
+#amCable .el-motor { fill: #64748b; stroke: #1e293b; stroke-width: 1.2; }
+#amCable .el-rotor { fill: #e2e8f0; stroke: #334155; stroke-width: 1; }
+#amCable .el-aspa { fill: none; stroke: #334155; stroke-width: 2.4; stroke-linecap: round; }
+#amCable .el-marca { fill: #dc2626; }
+#amCable .el-zumbido { fill: none; stroke: #c2410c; stroke-width: 1.6; stroke-linecap: round; }
+#amCable .el-letra { fill: #1e293b; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amCable .el-aro { fill: none; stroke: #0e7490; stroke-width: 1.6; stroke-dasharray: 3 2; }
+#amCable .el-bien { fill: #15803d; stroke: #ffffff; stroke-width: 1; }
+#amCable .el-mal { fill: #b91c1c; stroke: #ffffff; stroke-width: 1; }
+#amCable .el-signo { fill: none; stroke: #ffffff; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+#amCable .el-anillo { fill: none; stroke: #b91c1c; stroke-width: 1.8; stroke-dasharray: 4 2.5; }
+#amCable .el-lejos { fill: none; stroke: #0e7490; stroke-width: 1.6; stroke-dasharray: 3 2; }
+/* La corriente corre a paso parejo lo que dura (--el-t), y el rotor del
+   motor gira con ella, una vuelta por segundo. */
+.am-raiz .am-escenario svg .el-corre {
+  transition: stroke-dashoffset var(--el-t, 0.8s) linear var(--d, 0s), opacity 0.5s ease var(--d, 0s);
+}
+.am-raiz .am-escenario svg .el-gira {
+  transition: transform var(--el-t, 0.8s) linear var(--d, 0s), opacity 0.5s ease var(--d, 0s);
+}
