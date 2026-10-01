@@ -25,6 +25,9 @@
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
 <link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La animación que va después de la historia: el aparato es compartido y
+     se tiñe con el color de la misión, así que va DESPUÉS de su CSS. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -71,6 +74,14 @@
     <div class="tip"><span class="ti">❓</span><div>Volver a escribirlo todo no arregla un error: lo
     copia. Depurar es lo contrario: <strong>buscar la línea</strong>, con un método, hasta dar con
     ella. Y se aprende, como se aprende a leer un mapa.</div></div>
+  </div>
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira dónde se sale del camino</h2>
+    <div id="amEsquina">
+      <p>El robot de Kenia llega a la esquina de al lado. Borrar el programa y escribirlo otra vez copia la misma
+      línea, y el robot vuelve a la misma esquina. Con el camino bueno al lado, la tercera línea es la que lo saca
+      del camino: se quita esa sola, y el robot llega a la esquina de la bandera.</p>
+    </div>
   </div>
   <div class="card ac-teal">
     <h2>🐛 ¿Qué es un bug?</h2>
@@ -660,6 +671,8 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-esquina.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

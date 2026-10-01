@@ -11282,6 +11282,145 @@ avería.
 Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
 de 67 ms. Bucles, medida el mismo día, va a 60 y 83 ms.
 
+### La quincuagésima cuarta: Detective de Bugs: la Depuración, y lo que enseñó
+
+La sexta de la Ruta del Código es **Detective de Bugs: la Depuración**
+(`misiones/2y3ciclo-detective-bugs/`, `js/animacion-esquina.js`). La historia
+es la de Kenia: su robot llegaba siempre a la esquina equivocada; ella borró el
+programa entero y lo escribió otra vez, y pasó lo mismo. Tres tardes, y el error
+estaba en una sola línea que venía copiando cada vez. La historia termina
+diciendo que volver a escribirlo todo no arregla un error: lo copia. La
+animación pone a la izquierda el programa de Kenia, seis líneas con el número de
+su lugar, y a la derecha un mapa de calles visto desde arriba, con la bandera en
+una esquina:
+
+- el robot, la bandera y el programa: ¿a qué esquina va a llegar?;
+- el programa se hace de arriba abajo, una línea a la vez, y el robot llega a la
+  esquina de al lado, con su ✗ y «tarde 1»;
+- Kenia lo borra y lo escribe otra vez, dos tardes más: las palabras se borran y
+  vuelven a salir iguales, también la línea mala, y el robot vuelve a la misma
+  esquina («tarde 2», «tarde 3»);
+- con el camino bueno al lado, en raya cortada, se hace otra vez mirando cada
+  línea: la 1 y la 2 van por el camino; en la 3 el robot sigue derecho y el
+  camino dobla, y un anillo lo marca;
+- se tacha solo la 3, se va, y las otras cinco suben un lugar, tal como estaban;
+- sin la 3, el robot llega a la esquina de la bandera, con su ✓. Y la pregunta es
+  del alumno: escribir los pasos para ir de su pupitre a la puerta, y que un
+  compañero los siga.
+
+Siete cosas que valen para las que siguen:
+
+1. ⚠️ **El error es una línea DE MÁS, y se eligió contando lo que ya estaba
+   tomado.** GIRA IZQUIERDA donde iba GIRA DERECHA es una pregunta de la prueba,
+   dos líneas cambiadas de lugar son la animación del Robot Mensajero, y un
+   REPITE que cuenta mal es otra pregunta. La animación tampoco nombra el tipo de
+   error: eso lo enseña la tabla de abajo y lo pregunta la prueba.
+2. ⚠️ **Volver a escribirlo todo lo copia, y se ve copiarse.** Las palabras de
+   cada tarjeta se borran y vuelven a salir de arriba abajo, iguales, también la
+   3; por eso el robot llega a la misma esquina las tres veces. Y **dos tardes
+   más son dos robots más y dos copias más de cada palabra**: una pieza tiene una
+   sola demora, y el robot que ya llegó no puede volver a la salida y salir otra
+   vez en el mismo paso. El que se va lleva su propia envoltura para irse,
+   separada de la que lo hace aparecer.
+3. ⚠️ **La frase no dice que la 3 sea el error.** Los tres AVANZA de arriba son
+   iguales, y cualquiera de ellos sobra igual; lo que sí es verdad es que la 3 es
+   la primera que saca al robot del camino. Por eso el marcador dice «es la que
+   lo saca del camino». La sonda lo comprueba simulando: la primera línea después
+   de la cual el robot ya no está en el camino es la 3, y la que se quita es esa.
+4. ⚠️ **El primer pintado llama a `pintar(0, 0)`, con `antes === n`.** La regla
+   de contar la historia solo al entrar en un paso (`entra(n)`), puesta para
+   todos los pasos, dejaba la escena sin pintar al abrir. Solo las corridas
+   (los pasos 1, 2, 3 y 5) se saltan el repintado; los demás pintan siempre.
+5. **Lo que solo se vio mirando las capturas, con la sonda en verde.** «▶ Que
+   siga el programa» se partía en dos renglones a 360 px: ahora es «▶ Que
+   arranque». En la pantalla oscura, el asta café de la bandera se perdía sobre
+   la tarjeta: lleva un café claro. La nariz del robot se salía por la derecha del
+   dibujo, y las ✗ bajaban hasta ella: el mapa se corrió y las ✗ subieron.
+6. ⚠️ **La historia y la animación contestaban once preguntas de la prueba, y los
+   primeros repuestos también.** «¿Por qué no le sirvió a Kenia volver a
+   escribir todo el programa?», «Kenia pasó tres ___ buscando el error», «el
+   robot de Kenia llegaba siempre a la ___ equivocada» y «borrar todo de golpe es
+   buena idea» eran la historia; «el primer paso es cambiar todo el programa»,
+   «para cazar un error se sigue un método» (la frase de su recuadro), «el robot
+   ejecuta el programa tal como está», «¿de quién es la culpa cuando el robot
+   choca?», «¿cuántas cosas cambia un buen detective antes de volver a probar?»,
+   «después de corregir, el detective vuelve a ___» y «casi nunca es culpa de la
+   computadora», la animación. Ahora preguntan otras cosas de la misión (el
+   árbol, la palabra «bug» antes de 1947, la nota del equipo de Grace Hopper, los
+   cuatro pasos, para qué sirve reconocer el tipo, trazar con el dedo), con la
+   respuesta en el mismo lugar, en la misión y en la ficha. Y dos de los
+   primeros repuestos salieron malos: «si el robot no choca, el programa ya no
+   tiene ningún error» lo contesta la historia (el de Kenia no choca y llega mal),
+   y «¿cuál de estas NO es una instrucción?» se sacaba por descarte, porque las
+   otras preguntas escriben GIRA DERECHA, ENTREGA y AVANZA. **Un repuesto se lee
+   contra la historia y contra las otras preguntas antes de darlo por bueno.**
+7. ⚠️ **La ficha tiene que enseñar lo que su prueba pregunta.** Los repuestos
+   salen de la misión (el árbol, la nota que pegó el equipo de Grace Hopper, las
+   cuatro instrucciones del robot), y las hojas de estudio de la ficha no los
+   traían: el alumno que solo tiene el papel no habría tenido de dónde sacarlos.
+   Se le añadieron. Y al mirarla salió una que ya estaba publicada: su prueba
+   preguntaba por la «condición al revés», y su tabla de tipos de error no la
+   tenía. Ahora la tiene, con un ejemplo que no es el de la prueba («SI HAY sol:
+   abre el paraguas»), y la ficha sigue en sus siete hojas. La felicitación,
+   debajo de los pareados, solo pide revisar.
+
+La sonda de esta escena **no le cree nada a la escena**. Comprueba:
+
+- que el programa diga lo que tiene que decir, lugar por lugar, con las seis
+  tarjetas de Kenia o las cinco sin la 3, y cada lugar con su número;
+- que el mapa sean cuatro esquinas por tres, con sus seis cuadras dentro de las
+  calles, y la bandera junto a su esquina;
+- que se vea un solo robot, y que esté donde lo deja el programa que se ve:
+  la sonda lo vuelve a simular leyendo el orden de las tarjetas en el dibujo;
+- que con el programa de Kenia el robot termine en la esquina de al lado de la
+  bandera, y sin la 3, en la de la bandera;
+- que el camino bueno vaya por las esquinas por donde pasa el programa sin la 3,
+  y su última esquina sea la de la bandera;
+- que la primera línea que saca al robot del camino sea la 3, y que la que se
+  quita sea esa;
+- que en el paso 3 el anillo rodee al robot fuera del camino, con la tarjeta de
+  la 3 resaltada y la flecha en ella;
+- que haya una ✗ por cada tarde, con su rótulo, y el ✓ junto a la bandera, sin
+  que el robot ni su nariz tapen ninguna;
+- que el rastro vaya de esquina en esquina por donde pasó el robot;
+- que los ✓ de lo hecho y la flecha estén donde va la corrida, en los pasos 1, 3
+  y 5;
+- que en el paso 2 se borre, se escriba otra vez de arriba abajo y el robot
+  siguiente salga cuando ya está escrito, un robot a la vez;
+- que en el paso 4 se tache antes de quitar, se quite antes de subir, y el lugar
+  6 se apague;
+- que el marcador cuente lo que se ve y la frase nombre la línea 3;
+- y que no salga ninguna palabra de lo que pregunta la prueba: ni bug, ni
+  depurar, ni los pasos del método, ni el tipo de error, ni nada del examen.
+
+Se comprobó al revés con veinte averías, plantadas una por una:
+
+- GIRA IZQUIERDA volteando hacia el otro lado;
+- una tarjeta que dice otra instrucción;
+- la bandera en la esquina adonde llega Kenia;
+- quitando otra línea;
+- la tercera tarde sin su ✗;
+- el marcador del paso 2 diciendo 2;
+- «bug» en una frase;
+- el robot de la tercera tarde saliendo antes de escribir;
+- las líneas escribiéndose de abajo arriba;
+- tachando cuando la línea ya se fue;
+- las ✗ bajando hasta la nariz del robot;
+- el anillo donde el robot todavía va por el camino;
+- el paso 3 parándose en la 2;
+- un tramo del rastro corrido;
+- dos robots a la vez en el paso 2;
+- una cuadra metida en la calle;
+- el paso 3 poniéndole ✓ también a la 3;
+- la bandera lejos de su esquina;
+- el camino bueno sin llegar a la bandera;
+- y la segunda ✗ antes de que llegue el robot.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 60 cuadros por segundo, y el peor cuadro es
+de 67 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -11441,7 +11580,10 @@ Dos cosas que cambian en el mismo sitio (un número, un letrero) no se cruzan:
 el nuevo empuja al viejo dentro de un recorte, o el viejo se va antes de que
 llegue el nuevo. Y en cada paso va primero lo que se deja de golpe (`am-quieto`
 le quita la transición a todos los hijos) y después las demoras: al revés, lo
-que tenía que esperar aparece de golpe.
+que tenía que esperar aparece de golpe. El primer pintado es `pintar(0, 0)`: un
+paso que se salta cuando `antes === n` (para no volver a contar su historia) no
+puede ser el 0, o la escena abre vacía. Y dos corridas en un mismo paso son dos
+robots: el que ya llegó no puede volver a salir.
 
 Si la misión es **bilingüe** (carga su `-en.js` y trae el botón 🌐), la escena
 lleva `bilingue: true`, `describe: { es, en }` e `idioma(lang, A)`, y sus

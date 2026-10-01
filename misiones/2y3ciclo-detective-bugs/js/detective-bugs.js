@@ -569,12 +569,12 @@ const evalTFBank=[
   {q:'Un bug no es un insecto de verdad.',a:true,k:'tf-insecto'},
   {q:'Equivocarse al programar significa que no sirves para programar.',a:false,k:'tf-no-sirves'},
   {q:'Todos los programadores, hasta los expertos, corrigen errores.',a:true,k:'tf-expertos'},
-  {q:'El primer paso es cambiar todo el programa de una vez.',a:false,k:'tf-primer-paso'},
-  {q:'Cuando el robot falla, casi nunca es culpa de la computadora.',a:true,k:'tf-computadora'},
-  {q:'El robot ejecuta el programa tal como está, sin adivinar.',a:true,k:'tf-sin-adivinar'},
+  {q:'El robot puede pasar por encima de un árbol sin chocar.',a:false,k:'tf-arbol'},
+  {q:'La palabra «bug» ya se usaba para los fallos de las máquinas antes de 1947.',a:true,k:'tf-palabra'},
+  {q:'Si la casa está dos casillas delante del robot, basta con AVANZA, AVANZA y ENTREGA.',a:true,k:'tf-dos-casillas'},
   {q:'Encontrar y corregir errores es una habilidad que sirve para todo.',a:true,k:'tf-sirve-todo'},
-  {q:'Borrar todo de golpe es buena idea cuando el robot falla.',a:false,k:'tf-borrar'},
-  {q:'Para cazar un error no se adivina: se sigue un método.',a:true,k:'tf-metodo'},
+  {q:'El equipo de Grace Hopper tiró a la basura lo que encontró.',a:false,k:'tf-nota'},
+  {q:'Para cazar un bug se siguen cuatro pasos.',a:true,k:'tf-cuatro'},
   {q:'Solo las computadoras tienen errores; las tareas de la casa no.',a:false,k:'tf-casa'}
 ];
 const evalMCBank=[
@@ -585,15 +585,15 @@ const evalMCBank=[
   {q:'El robot llega a la meta, pero pasando por la casilla prohibida. ¿Qué tipo de bug es?',o:['Instrucción de más','Orden cambiado','Condición al revés','Bug de lógica'],a:3,k:'mc-logica'},
   {q:'Al programa le falta la instrucción ENTREGA al final. ¿Qué tipo de bug es?',o:['Instrucción de menos (falta una)','Instrucción de más (sobra una)','Orden cambiado','Condición al revés'],a:0,k:'mc-menos'},
   {q:'El programa dice «SI HAY PARED: AVANZA» en vez de «SI NO HAY PARED: AVANZA». ¿Qué tipo de bug es?',o:['N del bucle errada','Instrucción de más','Condición al revés','Orden cambiado'],a:2,k:'mc-condicion'},
-  {q:'¿Por qué no le sirvió a Kenia volver a escribir todo el programa?',o:['Copiaba otra vez la misma falla','El robot estaba roto','La computadora no la dejaba','Escribía muy despacio'],a:0,k:'mc-kenia'},
-  {q:'Cuando el robot choca, ¿de quién es la culpa?',o:['De la computadora','Del robot','De una línea del programa','De la cuadrícula'],a:2,k:'mc-culpa'},
-  {q:'¿Cuántas cosas cambia un buen detective antes de volver a probar?',o:['Todas','Una','Cinco','Ninguna'],a:1,k:'mc-una'}
+  {q:'Si cambias muchas líneas juntas y el robot ya llega, ¿qué no vas a saber?',o:['Cuál era el verdadero error','Hacia dónde mira el robot','Cuántas líneas tiene el programa','En qué casilla está la casa'],a:0,k:'mc-muchas'},
+  {q:'¿Para qué le sirve al detective reconocer el tipo de bug?',o:['Para escribir un programa más largo','Para no tener que volver a probar','Para saber cómo corregirlo','Para borrar todo más rápido'],a:2,k:'mc-tipo'},
+  {q:'¿Qué pasó con la palabra «bug» desde aquel día de 1947?',o:['Se dejó de usar','Se hizo famosa','Se cambió por otra palabra','Solo se usó en esa oficina'],a:1,k:'mc-famosa'}
 ];
 const evalCPBank=[
   {q:'Grace Hopper era ___.',a:'programadora',acc:['programadora'],k:'cp-programadora'},
-  {q:'Kenia pasó tres ___ buscando el error.',a:'tardes',acc:['tardes'],k:'cp-tardes'},
-  {q:'El robot de Kenia llegaba siempre a la ___ equivocada.',a:'esquina',acc:['esquina'],k:'cp-esquina'},
-  {q:'Después de corregir, el detective vuelve a ___.',a:'probar',acc:['probar','ejecutar'],k:'cp-probar'},
+  {q:'Corregir sin volver a probar es como cerrar el ___ sin revisar.',a:'caso',acc:['caso'],k:'cp-caso'},
+  {q:'Para ver en qué línea se desvía el robot, se traza el programa con el ___ sobre el mapa.',a:'dedo',acc:['dedo'],k:'cp-dedo'},
+  {q:'Quien encuentra y corrige errores con ___ ya piensa como programador.',a:'calma',acc:['calma'],k:'cp-calma'},
   {q:'Un buen detective corrige una sola cosa a la ___.',a:'vez',acc:['vez'],k:'cp-vez'},
   {q:'El robot solo ___: si chocó, una línea se lo mandó.',a:'obedece',acc:['obedece'],k:'cp-obedece'},
   {q:'Al lavarse las manos, saltarse el ___ es olvidar un paso.',a:'jabón',acc:['jabón','jabon'],k:'cp-jabon'},

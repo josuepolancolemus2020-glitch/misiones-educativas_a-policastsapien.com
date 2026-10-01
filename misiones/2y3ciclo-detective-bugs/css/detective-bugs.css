@@ -541,3 +541,50 @@ body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* ── La animación de las tres tardes (js/animacion-esquina.js) ──────────
+   El programa va con los colores de la misión. El mapa se tiñe con la
+   tarjeta: las calles son el borde y las cuadras, la tarjeta, así que en
+   la pantalla oscura no deslumbra. La bandera y el robot son cosas, y
+   tienen su color en las dos pantallas. El robot lleva borde blanco para
+   que se vea sobre la calle clara y sobre la oscura. */
+#amEsquina .db-tarjeta { fill: var(--card, #fff); stroke: var(--border, #bce8f1); stroke-width: 1.4; }
+#amEsquina .db-resalte { fill: none; stroke: var(--am-sec); stroke-width: 2.4; }
+#amEsquina .db-hecho { fill: none; stroke: var(--am-sec); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+#amEsquina .db-flecha { fill: var(--am-pri); }
+#amEsquina .db-tacha { fill: none; stroke: #c62828; stroke-width: 2.2; stroke-linecap: round; }
+
+#amEsquina .db-calles { fill: var(--border, #bce8f1); }
+#amEsquina .db-manzana { fill: var(--card, #fff); stroke: var(--am-pri); stroke-width: 0.8; stroke-opacity: 0.35; }
+#amEsquina .db-esquina { fill: var(--am-pri); fill-opacity: 0.55; }
+#amEsquina .db-ruta { fill: none; stroke: var(--am-pri); stroke-width: 2.4; stroke-dasharray: 5 4; stroke-linecap: round; stroke-linejoin: round; }
+#amEsquina .db-ruta-punta { fill: none; stroke: var(--am-pri); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+#amEsquina .db-rastro { fill: none; stroke-width: 3.2; stroke-linecap: round; }
+#amEsquina .db-rastro-kenia { stroke: var(--am-sec); }
+#amEsquina .db-rastro-bien { stroke: var(--am-pri); }
+#amEsquina .db-anillo { fill: none; stroke: var(--am-sec); stroke-width: 2.2; stroke-dasharray: 3 3; }
+
+#amEsquina .db-asta { fill: none; stroke: #5d4037; stroke-width: 1.8; stroke-linecap: round; }
+#amEsquina .db-tela { fill: #f59e0b; stroke: #9a3412; stroke-width: 0.9; stroke-linejoin: round; }
+#amEsquina .db-cuerpo { fill: #0e7490; stroke: #ffffff; stroke-width: 1.6; }
+#amEsquina .db-ojo { fill: #ffffff; }
+#amEsquina .db-nariz { fill: #f59e0b; stroke: #9a3412; stroke-width: 1; stroke-linejoin: round; }
+
+/* Las dos tardes de más corren más rápido: ya se vio el camino, lo que
+   importa es que es el mismo. Pisa la transición del aparato por el id. */
+#amEsquina .db-rapido { transition: transform 0.33s linear var(--d, 0s), opacity 0.5s ease var(--d, 0s); }
+#amEsquina .db-rapido-gira { transition: transform 0.33s ease var(--d, 0s); }
+
+#amEsquina .db-mal { fill: none; stroke: #c62828; stroke-width: 2.6; stroke-linecap: round; }
+#amEsquina .db-bien { fill: none; stroke: #2e7d32; stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; }
+[data-theme="dark"] #amEsquina .db-mal,
+[data-theme="dark"] #amEsquina .db-tacha { stroke: #ef5350; }
+[data-theme="dark"] #amEsquina .db-bien { stroke: #66bb6a; }
+/* El asta café oscuro se pierde sobre la tarjeta oscura: se aclara. */
+[data-theme="dark"] #amEsquina .db-asta { stroke: #bcaaa4; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) #amEsquina .db-mal,
+  :root:not([data-theme="light"]) #amEsquina .db-tacha { stroke: #ef5350; }
+  :root:not([data-theme="light"]) #amEsquina .db-bien { stroke: #66bb6a; }
+  :root:not([data-theme="light"]) #amEsquina .db-asta { stroke: #bcaaa4; }
+}

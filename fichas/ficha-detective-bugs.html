@@ -170,14 +170,14 @@
       <li>Explicar qué es un <strong>bug</strong> y qué significa <strong>depurar</strong> un programa.</li>
       <li>Conocer la anécdota de la programadora <strong>Grace Hopper</strong> y la polilla de 1947.</li>
       <li>Aplicar el <strong>método del detective</strong> en 4 pasos para cazar un error.</li>
-      <li>Reconocer los <strong>tipos de bug</strong>: instrucción equivocada, de más o de menos, orden cambiado, N del bucle errada y bug de lógica.</li>
+      <li>Reconocer los <strong>tipos de bug</strong>: instrucción equivocada, de más o de menos, orden cambiado, N del bucle errada, condición al revés y bug de lógica.</li>
       <li>Comprender que equivocarse es <strong>normal</strong>: todos los programadores depuran.</li>
       <li>Corregir <strong>UNA sola cosa a la vez</strong> y <strong>volver a probar</strong>.</li>
     </ol>
 
     <h2>🐛 1. ¿Qué es un bug?</h2>
     <p>Un <strong>bug</strong> es un <strong>error escondido</strong> en un programa: hace que el robot no logre su
-    misión (choca, se desvía o entrega en la casilla equivocada). ¡No es un insecto de verdad!
+    misión (choca contra un árbol, se desvía o entrega en la casilla equivocada). ¡No es un insecto de verdad!
     <strong>Depurar</strong> es <strong>encontrar y corregir</strong> esos errores, línea por línea. Equivocarse es
     parte de programar: hasta los mejores programadores del mundo depuran sus programas todos los días.</p>
     <div class="caja truco">💡 <b>Truco:</b> si un programa falla, casi nunca es culpa de la computadora: ella solo
@@ -187,7 +187,7 @@
     <div class="ilus">
       <div class="ilus-t">Así se hizo famosa la palabra «bug» (y así se caza)</div>
       <div class="celula">
-        <div class="cm"><span class="c-emoji">🦋</span><b>Grace Hopper, 1947</b>Su equipo halló una polilla dentro de una computadora: el primer «bug» real.</div>
+        <div class="cm"><span class="c-emoji">🦋</span><b>Grace Hopper, 1947</b>Su equipo halló una polilla dentro de una computadora y la pegó en su cuaderno con una nota. La palabra ya se usaba para los fallos de las máquinas; desde ese día se hizo famosa.</div>
         <div class="cc"><span class="c-emoji">🐛</span><b>Un bug hoy</b>Un error en el programa: el robot choca o entrega donde no debe.</div>
         <div class="cn"><span class="c-emoji">🕵️</span><b>Depurar</b>Buscar el bug, corregir UNA cosa y volver a probar.</div>
       </div>
@@ -213,12 +213,14 @@
     probar</strong>. Si cambias todo de golpe, nunca sabrás cuál era el verdadero bug.</div>
 
     <h3>🐞 Los tipos de bug</h3>
+    <p>No todos los bugs son iguales: reconocer el <strong>tipo</strong> ayuda a saber cómo corregirlo.</p>
     <table>
       <tr><th>Tipo de bug</th><th>¿Qué pasó?</th><th>Ejemplo hondureño o del robot</th></tr>
       <tr><td class="k">Instrucción equivocada</td><td>Una orden dice lo contrario de lo que debía</td><td>GIRA IZQUIERDA donde iba GIRA DERECHA</td></tr>
       <tr><td class="k">De más o de menos</td><td>Sobra un paso o falta uno</td><td>Falta la ENTREGA final; o falta el jabón al lavarse</td></tr>
       <tr><td class="k">Orden cambiado</td><td>Dos pasos están intercambiados</td><td>Doblar la baleada antes de untar los frijoles</td></tr>
       <tr><td class="k">N del bucle errada</td><td>El REPITE cuenta de más o de menos</td><td>REPITE 4 cuando debía ser REPITE 3</td></tr>
+      <tr><td class="k">Condición al revés</td><td>El SI está volteado</td><td>«SI HAY sol: abre el paraguas»</td></tr>
       <tr><td class="k">Bug de lógica</td><td>Corre sin chocar… ¡pero hace otra cosa!</td><td>Entrega en la casilla equivocada por buen camino</td></tr>
     </table>
     <div class="caja idea">🎭 <b>El más tramposo:</b> el <strong>bug de lógica</strong> no hace chocar al robot, así que
@@ -226,7 +228,7 @@
     el robot llegó a la casa correcta.</div>
 
     <h3>💾 Ejemplo de depuración (léelo y cázalo con la mente)</h3>
-    <div class="prog-ej">El robot mira al Norte y debe llegar a la casa 🏠 que está a su derecha.<br>
+    <div class="prog-ej">El robot entiende cuatro instrucciones: AVANZA (una casilla hacia donde mira), GIRA DERECHA, GIRA IZQUIERDA y ENTREGA (deja el mensaje en la casilla donde está). Aquí mira al Norte y debe llegar a la casa 🏠 que está a su derecha.<br>
     1. AVANZA &nbsp; 2. GIRA IZQUIERDA &nbsp; 3. AVANZA &nbsp; 4. ENTREGA<br>
     → El robot se aleja de la casa. 🐛 El bug está en la <strong>línea 2</strong>: debía decir <strong>GIRA
     DERECHA</strong>. Se corrige esa línea y se vuelve a probar. ✅</div>
@@ -264,7 +266,7 @@
     equivoca, la tarjeta vuelve al montón. ¡El aula entera se convierte en una brigada de detectives de bugs!</div>
     <div class="caja hn">🇭🇳 <b>Depurar en tu vida:</b> cuando notás que la baleada salió mal porque cambiaste un paso,
     que quedaron cuadernos sin repartir por dar una vuelta de menos, o que faltó el jabón al lavarte las manos, ya estás
-    <strong>depurando</strong>: encontrás el error, lo corregís y volvés a intentar. ¡Esa es la mente de un programador! 💚</div>
+    <strong>depurando</strong>: encontrás el error, lo corregís y volvés a intentar. Quien encuentra y corrige errores con calma ya piensa como programador. 💚</div>
 
   </div>
   <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Detective de Bugs: la Depuración</span><span>Página 3</span></div>
@@ -279,9 +281,9 @@
     <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
     <ol>
       <li>Grace Hopper era <span class="linea-resp"></span>.</li>
-      <li>Kenia pasó tres <span class="linea-resp"></span> buscando el error.</li>
-      <li>El robot de Kenia llegaba siempre a la <span class="linea-resp"></span> equivocada.</li>
-      <li>Después de corregir, el detective vuelve a <span class="linea-resp"></span>.</li>
+      <li>Corregir sin volver a probar es como cerrar el <span class="linea-resp"></span> sin revisar.</li>
+      <li>Para ver en qué línea se desvía el robot, se traza el programa con el <span class="linea-resp"></span> sobre el mapa.</li>
+      <li>Quien encuentra y corrige errores con <span class="linea-resp"></span> ya piensa como programador.</li>
       <li>Un buen detective corrige una sola cosa a la <span class="linea-resp"></span>.</li>
       <li>El robot solo <span class="linea-resp"></span>: si chocó, una línea se lo mandó.</li>
       <li>Al lavarse las manos, saltarse el <span class="linea-resp"></span> es olvidar un paso.</li>
@@ -295,13 +297,13 @@
       <li>____ Un bug no es un insecto de verdad.</li>
       <li>____ Equivocarse al programar significa que no sirves para programar.</li>
       <li>____ Todos los programadores, hasta los expertos, corrigen errores.</li>
-      <li>____ El primer paso es cambiar todo el programa de una vez.</li>
-      <li>____ Cuando el robot falla, casi nunca es culpa de la computadora.</li>
-      <li>____ Borrar todo de golpe es buena idea cuando el robot falla.</li>
-      <li>____ El robot ejecuta el programa tal como está, sin adivinar.</li>
+      <li>____ El robot puede pasar por encima de un árbol sin chocar.</li>
+      <li>____ La palabra «bug» ya se usaba para los fallos de las máquinas antes de 1947.</li>
+      <li>____ El equipo de Grace Hopper tiró a la basura lo que encontró.</li>
+      <li>____ Si la casa está dos casillas delante del robot, basta con AVANZA, AVANZA y ENTREGA.</li>
       <li>____ Solo las computadoras tienen errores; las tareas de la casa no.</li>
       <li>____ Encontrar y corregir errores es una habilidad que sirve para todo.</li>
-      <li>____ Para cazar un error no se adivina: se sigue un método.</li>
+      <li>____ Para cazar un bug se siguen cuatro pasos.</li>
     </ol>
 
   </div>
@@ -378,30 +380,30 @@
       </div>
     </div>
     <div class="preg">
-      <div class="preg-q"><span class="preg-n">8</span>¿Por qué no le sirvió a Kenia volver a escribir todo el programa?</div>
+      <div class="preg-q"><span class="preg-n">8</span>Si cambias muchas líneas juntas y el robot ya llega, ¿qué no vas a saber?</div>
       <div class="preg-ops">
-        <span class="op"><i>a</i> Copiaba otra vez la misma falla</span>
-        <span class="op"><i>b</i> El robot estaba roto</span>
-        <span class="op"><i>c</i> La computadora no la dejaba</span>
-        <span class="op"><i>d</i> Escribía muy despacio</span>
+        <span class="op"><i>a</i> Cuál era el verdadero error</span>
+        <span class="op"><i>b</i> Hacia dónde mira el robot</span>
+        <span class="op"><i>c</i> Cuántas líneas tiene el programa</span>
+        <span class="op"><i>d</i> En qué casilla está la casa</span>
       </div>
     </div>
     <div class="preg">
-      <div class="preg-q"><span class="preg-n">9</span>Cuando el robot choca, ¿de quién es la culpa?</div>
+      <div class="preg-q"><span class="preg-n">9</span>¿Para qué le sirve al detective reconocer el tipo de bug?</div>
       <div class="preg-ops">
-        <span class="op"><i>a</i> De la computadora</span>
-        <span class="op"><i>b</i> Del robot</span>
-        <span class="op"><i>c</i> De una línea del programa</span>
-        <span class="op"><i>d</i> De la cuadrícula</span>
+        <span class="op"><i>a</i> Para escribir un programa más largo</span>
+        <span class="op"><i>b</i> Para no tener que volver a probar</span>
+        <span class="op"><i>c</i> Para saber cómo corregirlo</span>
+        <span class="op"><i>d</i> Para borrar todo más rápido</span>
       </div>
     </div>
     <div class="preg">
-      <div class="preg-q"><span class="preg-n">10</span>¿Cuántas cosas cambia un buen detective antes de volver a probar?</div>
+      <div class="preg-q"><span class="preg-n">10</span>¿Qué pasó con la palabra «bug» desde aquel día de 1947?</div>
       <div class="preg-ops">
-        <span class="op"><i>a</i> Todas</span>
-        <span class="op"><i>b</i> Una</span>
-        <span class="op"><i>c</i> Cinco</span>
-        <span class="op"><i>d</i> Ninguna</span>
+        <span class="op"><i>a</i> Se dejó de usar</span>
+        <span class="op"><i>b</i> Se hizo famosa</span>
+        <span class="op"><i>c</i> Se cambió por otra palabra</span>
+        <span class="op"><i>d</i> Solo se usó en esa oficina</span>
       </div>
     </div>
 
@@ -429,9 +431,8 @@
     </table>
 
     <div class="felic">
-      🏅 <b>¡Felicidades! Has completado la Misión Detective de Bugs: la Depuración.</b> Ahora sabes qué es un bug,
-      conoces la historia de Grace Hopper, aplicas el método del detective en 4 pasos, reconoces los tipos de bug y
-      depuras corrigiendo UNA cosa a la vez y volviendo a probar. ¡Ya cazas bugs como un verdadero detective del código! 🕵️💻
+      🏅 <b>¡Felicidades! Has completado la Misión Detective de Bugs: la Depuración.</b> Antes de entregar,
+      revisa tus respuestas una por una. 🕵️💻
     </div>
 
     <h2>📏 Rúbrica de Evaluación</h2>
@@ -458,7 +459,7 @@
     <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
 
     <div class="pauta">
-      <div><span class="pt">I. Completar:</span> 1. programadora &nbsp; 2. tardes &nbsp; 3. esquina &nbsp; 4. probar &nbsp; 5. vez &nbsp; 6. obedece &nbsp; 7. jabón &nbsp; 8. regar &nbsp; 9. cuadernos &nbsp; 10. debe</div>
+      <div><span class="pt">I. Completar:</span> 1. programadora &nbsp; 2. caso &nbsp; 3. dedo &nbsp; 4. calma &nbsp; 5. vez &nbsp; 6. obedece &nbsp; 7. jabón &nbsp; 8. regar &nbsp; 9. cuadernos &nbsp; 10. debe</div>
       <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4F, 5V, 6F, 7V, 8F, 9V, 10V</div>
       <div><span class="pt">III. Selección múltiple:</span> 1d, 2a, 3b, 4c, 5d, 6a, 7c, 8a, 9c, 10b</div>
       <div><span class="pt">IV. Pareados:</span> 1C, 2H, 3E, 4I, 5A, 6G, 7J, 8B, 9F, 10D</div>
@@ -469,7 +470,7 @@
       «Misión Detective de Bugs: la Depuración» (Educación Básica), etapa 6 de la Ruta del Código (Programación). Trabaja la
       <strong>depuración</strong>: qué es un bug, la anécdota de la programadora Grace Hopper y la polilla de 1947, el
       método del detective en 4 pasos (observar, leer con lupa, señalar la línea sospechosa, corregir y volver a probar) y
-      los tipos de bug (instrucción equivocada, de más o de menos, orden cambiado, N del bucle errada y bug de lógica). La
+      los tipos de bug (instrucción equivocada, de más o de menos, orden cambiado, N del bucle errada, condición al revés y bug de lógica). La
       misión interactiva (código QR de la portada) incluye el laboratorio «la escena del crimen», donde el estudiante arma
       programas del robot y depura los que chocan o entregan mal, además de la prueba operativa (el robot falló, predice el
       fallo, señala al culpable, corrige algoritmos hondureños y retos de olimpiada). Las actividades desconectadas de la

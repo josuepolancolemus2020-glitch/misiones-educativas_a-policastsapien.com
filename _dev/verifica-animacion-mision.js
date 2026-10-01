@@ -2043,6 +2043,92 @@ const LEER = `
       textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
     };
   };
+  /* Detective de Bugs: las tres tardes de Kenia. Se lee el programa (los
+     lugares, las tarjetas y qué copia de sus palabras se ve), el mapa (sus
+     esquinas y sus cuadras), cada robot (dónde está, hacia dónde mira y
+     cada pieza que lo movió), la bandera, las ✗ con su tarde, el ✓, el
+     camino bueno, los rastros y el anillo. */
+  window.__amExtra.amEsquina = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(m(el)); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function centro(c) { return { x: (c.x0 + c.x1) / 2, y: (c.y0 + c.y1) / 2 }; }
+    function uno(sel, en) { return (en || raiz).querySelector(sel); }
+    function todos(sel, en) { return [].slice.call((en || raiz).querySelectorAll(sel)); }
+    function demora(el) { return parseFloat(el.style.getPropertyValue('--d')) || 0; }
+    function matriz(el) {
+      var t = getComputedStyle(el).transform;
+      if (!t || t === 'none') return [1, 0, 0, 1, 0, 0];
+      return t.match(/-?[0-9.e]+/g).map(Number);
+    }
+    function corre(el) { var q = matriz(el); return [q[4], q[5]]; }
+    function gira(el) { var q = matriz(el); return Math.round(Math.atan2(q[1], q[0]) * 180 / Math.PI); }
+    function puntosDe(p) {
+      var nums = (p.getAttribute('d').match(/-?[0-9.]+/g) || []).map(Number), r = [];
+      for (var i = 0; i + 1 < nums.length; i += 2) r.push(aVista(p, nums[i], nums[i + 1]));
+      return r;
+    }
+    var flecha = uno('[data-flecha]');
+    return {
+      numeros: todos('[data-numero]').map(function (t) { return { n: +t.textContent, c: centro(caja(t)), ve: vis(t), d: demora(t.parentNode) }; }),
+      tarjetas: todos('[data-instruccion]').map(function (g) {
+        var marco = uno('.db-tarjeta', g), res = uno('.db-resalte', g), tacha = uno('[data-tacha]', g), quita = uno('[data-quita]', g);
+        var cop = todos('[data-copia]', g);
+        var vistas = cop.filter(vis);
+        return {
+          k: g.getAttribute('data-instruccion'), ve: vis(marco), caja: caja(marco),
+          copias: cop.map(function (t) { return { n: +t.getAttribute('data-copia'), ve: vis(t), txt: t.textContent, d: demora(t), dFuera: demora(t.parentNode) }; }),
+          txt: vistas.map(function (t) { return t.textContent; }).join('|'),
+          cajaTxt: vistas.length ? caja(vistas[0]) : null,
+          resalte: vis(res), dResalte: demora(res),
+          tacha: tacha.style.strokeDashoffset === '0' && !tacha.classList.contains('am-fuera'), dTacha: demora(tacha),
+          dQuita: demora(quita), dLugar: demora(g)
+        };
+      }),
+      hechos: todos('[data-hecho]').map(function (p) { return { n: +p.getAttribute('data-hecho'), ve: vis(p), c: centro(caja(p)), d: demora(p) }; }),
+      flecha: {
+        ve: vis(uno('path', flecha)), dVe: demora(flecha), dFin: demora(uno('[data-flecha-fin]')),
+        c: centro(caja(uno('path', flecha))),
+        bajadas: todos('[data-flecha-baja]').map(function (g) { return { corre: corre(g), d: demora(g) }; })
+      },
+      mapa: caja(uno('[data-mapa]')),
+      esquinas: todos('[data-esquina]').map(function (c) { return aVista(c, +c.getAttribute('cx'), +c.getAttribute('cy')); }),
+      manzanas: todos('[data-manzana]').map(caja),
+      ruta: { ve: vis(uno('[data-ruta-linea]')), puntos: puntosDe(uno('[data-ruta-linea]')), punta: puntosDe(uno('.db-ruta-punta')) },
+      rastros: todos('[data-rastro]').map(function (p) {
+        return { k: p.getAttribute('data-rastro'), n: +p.getAttribute('data-tramo-rastro'), ve: vis(p) && p.style.strokeDashoffset === '0',
+          puntos: puntosDe(p), d: demora(p) };
+      }),
+      bandera: { ve: vis(uno('[data-asta]')), asta: puntosDe(uno('[data-asta]')), caja: caja(uno('[data-bandera]')) },
+      males: todos('[data-mal]').map(function (g) {
+        var cruz = uno('[data-cruz]', g), t = uno('[data-tarde]', g);
+        return { k: +g.getAttribute('data-mal'), ve: vis(cruz), caja: caja(cruz), puntos: puntosDe(cruz).length, d: demora(g),
+          tarde: { ve: vis(t), txt: t.textContent, caja: caja(t) } };
+      }),
+      bien: { ve: vis(uno('[data-marca="bien"]')), caja: caja(uno('[data-marca="bien"]')), puntos: puntosDe(uno('[data-marca="bien"]')).length, d: demora(uno('[data-marca="bien"]')) },
+      anillo: (function () { var a = uno('[data-anillo]'); var c = aVista(a, +a.getAttribute('cx'), +a.getAttribute('cy')); return { ve: vis(a), c: c, r: +a.getAttribute('r'), d: demora(a) }; })(),
+      robots: todos('[data-robot]').map(function (g) {
+        var cuerpo = uno('[data-cuerpo]', g), nariz = uno('[data-nariz]', g);
+        var rc = aVista(cuerpo, 0, 0), punta = aVista(nariz, 17, 0);
+        return {
+          k: g.getAttribute('data-robot'), ve: vis(cuerpo), c: rc, punta: punta, nariz: [punta[0] - rc[0], punta[1] - rc[1]], caja: caja(cuerpo),
+          dVe: demora(g), dSale: demora(uno('[data-robot-sale]', g)), sale: !uno('[data-robot-sale]', g).classList.contains('am-fuera'),
+          aparece: !g.classList.contains('am-fuera'),
+          base: corre(uno('[data-robot-base]', g)),
+          mueve: todos('[data-mueve]', g).map(function (q) { return { corre: corre(q), d: demora(q) }; }),
+          voltea: todos('[data-voltea]', g).map(function (q) { return { gira: gira(q), d: demora(q) }; })
+        };
+      }),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   window.__amExtra.amBaleada = function (raiz) {
     var vis = window.__amVisible;
     var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
@@ -4026,6 +4112,296 @@ const ESCENAS = {
     const encima = [];
     for (let i = 0; i < piezas.length; i++) for (let j = i + 1; j < piezas.length; j++) if (monta(piezas[i].c, piezas[j].c)) encima.push([piezas[i].k, piezas[j].k]);
     r.push([encima.length === 0, `paso ${n}: nada se monta en nada`, encima]);
+    return r;
+  },
+  /* Detective de Bugs: las tres tardes de Kenia.
+     ⚠️ Nada se le cree a la escena. La sonda lee el orden de las tarjetas en
+     el dibujo y hace ella misma el programa sobre las esquinas que se ven:
+     de ahí sale dónde tiene que estar el robot y hacia dónde mira, a qué
+     esquina llega el programa de Kenia (y que NO es la de la bandera), y
+     que sin la línea que se quitó llega justo a la bandera. La línea que se
+     quita la busca también ella: la primera que saca al robot del camino. */
+  amEsquina(e, n) {
+    const x = e.extra, r = [];
+    const TEXTO = { a1: 'AVANZA', a2: 'AVANZA', a3: 'AVANZA', gi: 'GIRA IZQUIERDA', a4: 'AVANZA', a5: 'AVANZA' };
+    const HACE = { a1: 'av', a2: 'av', a3: 'av', gi: 'gi', a4: 'av', a5: 'av' };
+    const KENIA = ['a1', 'a2', 'a3', 'gi', 'a4', 'a5'];
+    const HASTA = [0, 6, 6, 3, 0, 5, 5][n];
+    const cerca = (a, b, t = 1.5) => Math.abs(a - b) <= t;
+    const cen = c => ({ x: (c.x0 + c.x1) / 2, y: (c.y0 + c.y1) / 2 });
+    const monta = (a, b) => a.x0 < b.x1 - 0.5 && b.x0 < a.x1 - 0.5 && a.y0 < b.y1 - 0.5 && b.y0 < a.y1 - 0.5;
+
+    /* ── lo que no depende del dibujo va primero ── */
+    const PROHIBIDAS = /\bbugs?\b|depur|detective|observ|se[ñn]al|lupa|comprob|ejecut|\bpistas?\b|m[ée]todo|cuadr[ií]cula|obedec|\bdedo|cuatro|[áa]rbol|calma|\bnota\b|\bcaso\b|famos|hopper|polilla|1947|\btipos?\b|sobra|de m[áa]s|\bfalta|corrig|salta|\bmapa\b|borde|adivin|a la vez|probar|norte|\bsur\b|oeste|instrucci/i;
+    const dicho = [e.texto, e.palabras].concat(x.textos).join(' · ');
+    r.push([!PROHIBIDAS.test(dicho) && !/\bEste\b/.test(dicho), `paso ${n}: no sale ninguna palabra de lo que pregunta la prueba`,
+      (dicho.match(PROHIBIDAS) || dicho.match(/\bEste\b/) || [])[0]]);
+
+    /* ── el programa ── */
+    const cuantas = n >= 4 ? 5 : 6;
+    const nums = x.numeros.filter(q => q.ve).sort((a, b) => a.c.y - b.c.y);
+    const fila = nums.length > 1 ? nums[1].c.y - nums[0].c.y : 0;
+    r.push([nums.length === cuantas && nums.every((q, i) => q.n === i + 1 && (i === 0 || cerca(q.c.y - nums[i - 1].c.y, fila, 0.2))),
+      `paso ${n}: los lugares van numerados del 1 al ${cuantas}, de arriba abajo y a la misma distancia`, nums.map(q => q.n)]);
+    const tarj = x.tarjetas.filter(t => t.ve);
+    r.push([tarj.length === cuantas, `paso ${n}: se ven ${cuantas} tarjetas`, tarj.map(t => t.k)]);
+    const malTxt = tarj.filter(t => t.txt !== TEXTO[t.k]);
+    r.push([malTxt.length === 0, `paso ${n}: cada tarjeta dice su instrucción, una sola vez`, malTxt.map(t => [t.k, t.txt])]);
+    const copia = n <= 1 ? 1 : 3;
+    const otraCopia = tarj.filter(t => t.copias.filter(q => q.ve).map(q => q.n).join() !== String(copia));
+    r.push([otraCopia.length === 0, `paso ${n}: se ven las palabras de la ${copia === 1 ? 'primera' : 'tercera'} tarde`, otraCopia.map(t => t.k)]);
+    const salidos = tarj.filter(t => !t.cajaTxt || t.cajaTxt.x1 > t.caja.x1 - 2 || t.cajaTxt.x0 < t.caja.x0 + 2);
+    r.push([salidos.length === 0, `paso ${n}: el nombre de cada instrucción cabe en su tarjeta`, salidos.map(t => t.k)]);
+    const lugarDe = t => { const c = cen(t.caja); const q = nums.find(q => cerca(q.c.y, c.y)); return q ? q.n : null; };
+    const orden = [];
+    tarj.forEach(t => { const l = lugarDe(t); if (l) orden[l - 1] = t.k; });
+    let quitada = null;
+    if (n <= 3) r.push([orden.join() === KENIA.join(), `paso ${n}: las tarjetas están en el orden del programa de Kenia, cada una en el renglón de su número`, orden]);
+    else {
+      const faltan = KENIA.filter(k => !orden.includes(k));
+      quitada = faltan[0];
+      r.push([faltan.length === 1 && orden.join() === KENIA.filter(k => k !== quitada).join(),
+        `paso ${n}: son las mismas tarjetas menos una, y las demás en el mismo orden`, { orden, faltan }]);
+    }
+
+    /* ── el mapa: cuatro esquinas por tres, a una cuadra ── */
+    const xs = [...new Set(x.esquinas.map(p => Math.round(p[0] * 10) / 10))].sort((a, b) => a - b);
+    const ys = [...new Set(x.esquinas.map(p => Math.round(p[1] * 10) / 10))].sort((a, b) => a - b);
+    const cuadra = xs.length > 1 ? xs[1] - xs[0] : 0;
+    r.push([x.esquinas.length === 12 && xs.length === 4 && ys.length === 3 && cuadra > 40
+      && xs.every((v, i) => i === 0 || cerca(v - xs[i - 1], cuadra, 0.3)) && ys.every((v, i) => i === 0 || cerca(v - ys[i - 1], cuadra, 0.3)),
+      `paso ${n}: el mapa tiene cuatro esquinas por tres, todas a una cuadra`, [xs, ys]]);
+    if (xs.length !== 4 || ys.length !== 3) return r;
+    const mp = x.mapa;
+    r.push([mp.x0 < xs[0] - 6 && mp.x1 > xs[3] + 6 && mp.y0 < ys[0] - 6 && mp.y1 > ys[2] + 6, `paso ${n}: las calles llegan a todas las esquinas`, mp]);
+    const malCuadra = [];
+    for (let i = 0; i < 3; i++) for (let j = 0; j < 2; j++) {
+      const ok = x.manzanas.some(b => cerca(cen(b).x, xs[i] + cuadra / 2, 0.6) && cerca(cen(b).y, ys[j] + cuadra / 2, 0.6) && b.x0 > xs[i] + 3 && b.x1 < xs[i + 1] - 3 && b.y0 > ys[j] + 3 && b.y1 < ys[j + 1] - 3);
+      if (!ok) malCuadra.push([i, j]);
+    }
+    r.push([x.manzanas.length === 6 && malCuadra.length === 0, `paso ${n}: entre cada cuatro esquinas hay una cuadra, y no se mete en la calle`, malCuadra]);
+    const esquinaDe = p => {
+      const c = Math.round((p[0] - xs[0]) / cuadra), q = Math.round((p[1] - ys[0]) / cuadra);
+      return c >= 0 && c < 4 && q >= 0 && q < 3 && cerca(xs[0] + c * cuadra, p[0], 0.8) && cerca(ys[0] + q * cuadra, p[1], 0.8) ? { c, r: q } : null;
+    };
+    const centroDe = cs => ({ x: xs[0] + cs.c * cuadra, y: ys[0] + cs.r * cuadra });
+    const igual = (a, b) => !!a && !!b && a.c === b.c && a.r === b.r;
+
+    /* ── la bandera: plantada en la acera de una esquina ── */
+    const asta = x.bandera.asta, pie = asta[0], tope = asta[1];
+    const cercanas = [0, 1, 2, 3].flatMap(c => [0, 1, 2].map(q => ({ c, r: q }))).map(cs => ({ cs, d: Math.hypot(centroDe(cs).x - pie[0], centroDe(cs).y - pie[1]) })).sort((a, b) => a.d - b.d);
+    const banderaEn = cercanas[0].cs;
+    r.push([x.bandera.ve && cerca(pie[0], tope[0], 0.3) && tope[1] < pie[1] - 20 && cercanas[0].d < cuadra * 0.4 && pie[1] < mp.y0 + 0.5,
+      `paso ${n}: la bandera está parada junto a su esquina, en la acera de arriba`, { pie, banderaEn, d: cercanas[0].d }]);
+
+    /* ── el robot que se ve, hecho por la sonda con el orden que se ve ── */
+    const vistos = x.robots.filter(q => q.ve);
+    r.push([vistos.length === 1, `paso ${n}: se ve un solo robot`, vistos.map(q => q.k)]);
+    if (vistos.length !== 1) return r;
+    const rob = vistos[0];
+    const salida = esquinaDe(rob.base);
+    r.push([!!salida && !igual(salida, banderaEn), `paso ${n}: el robot sale de una esquina, que no es la de la bandera`, rob.base]);
+    if (!salida) return r;
+    const PASO_DIR = [[1, 0], [0, -1], [-1, 0], [0, 1]];
+    const dirDe = v => (Math.abs(v[0]) > Math.abs(v[1]) ? (v[0] > 0 ? 0 : 2) : (v[1] < 0 ? 1 : 3));
+    function simular(ord, hasta) {
+      const s = { c: salida.c, r: salida.r, d: 0 }, pasos = [], esq = [{ c: s.c, r: s.r }];
+      ord.forEach((k, i) => {
+        const antes = { c: s.c, r: s.r, d: s.d };
+        if (i < hasta) {
+          if (HACE[k] === 'av') { s.c += PASO_DIR[s.d][0]; s.r += PASO_DIR[s.d][1]; esq.push({ c: s.c, r: s.r }); }
+          else if (HACE[k] === 'gi') s.d = (s.d + 1) % 4;
+        }
+        pasos.push({ k, hace: HACE[k], antes, despues: { c: s.c, r: s.r, d: s.d } });
+      });
+      return { pasos, esq, fin: { c: s.c, r: s.r, d: s.d } };
+    }
+    if (n === 0) r.push([dirDe(rob.nariz) === 0, 'paso 0: el robot sale mirando a la derecha', rob.nariz]);
+    const sim = simular(orden, HASTA);
+    const finVisto = esquinaDe(rob.c);
+    r.push([igual(finVisto, sim.fin), `paso ${n}: el robot está en la esquina donde lo dejan las ${HASTA} línea(s) hechas del programa que se ve`, [rob.c, sim.fin]]);
+    r.push([dirDe(rob.nariz) === sim.fin.d, `paso ${n}: y su nariz apunta hacia donde lo deja el programa`, [rob.nariz, sim.fin.d]]);
+    const piezasMal = [];
+    for (let i = 0; i < 6; i++) {
+      const p = sim.pasos[i], hecha = !!p && i < HASTA;
+      const esp = hecha && p.hace === 'av' ? [PASO_DIR[p.antes.d][0] * cuadra, PASO_DIR[p.antes.d][1] * cuadra] : [0, 0];
+      const mv = rob.mueve[i].corre;
+      if (!cerca(mv[0], esp[0], 0.6) || !cerca(mv[1], esp[1], 0.6)) piezasMal.push({ i: i + 1, mueve: mv, esp });
+      const gEsp = hecha && p.hace === 'gi' ? -90 : 0;
+      if (rob.voltea[i].gira !== gEsp) piezasMal.push({ i: i + 1, gira: rob.voltea[i].gira, gEsp });
+    }
+    r.push([piezasMal.length === 0, `paso ${n}: cada línea hecha movió al robot una cuadra hacia donde miraba, o lo volteó sin moverlo`, piezasMal]);
+    const fuera = simular(KENIA, 6).esq.filter(q => q.c < 0 || q.c > 3 || q.r < 0 || q.r > 2);
+    r.push([fuera.length === 0, `paso ${n}: el programa de Kenia no saca al robot del mapa`, fuera]);
+
+    /* ── a qué esquina llega cada programa ── */
+    const finKenia = simular(KENIA, 6).fin;
+    r.push([!igual(finKenia, banderaEn) && Math.abs(finKenia.c - banderaEn.c) + Math.abs(finKenia.r - banderaEn.r) === 1,
+      `paso ${n}: el programa de Kenia llega a la esquina de al lado de la bandera, no a la bandera`, { finKenia, banderaEn }]);
+    if (n >= 4) r.push([igual(simular(orden, 5).fin, banderaEn), `paso ${n}: sin la línea que se quitó, el programa llega justo a la esquina de la bandera`, simular(orden, 5).fin]);
+
+    /* ── el camino bueno (con raya cortada) ── */
+    const ru = x.ruta.puntos;
+    const sobreRuta = (cs) => {
+      const p = centroDe(cs);
+      for (let i = 0; i + 1 < ru.length; i++) {
+        const a = ru[i], b = ru[i + 1];
+        if ((cerca(a[0], b[0], 0.3) && cerca(p.x, a[0], 0.6) && p.y <= Math.max(a[1], b[1]) + 0.6 && p.y >= Math.min(a[1], b[1]) - 0.6)
+          || (cerca(a[1], b[1], 0.3) && cerca(p.y, a[1], 0.6) && p.x <= Math.max(a[0], b[0]) + 0.6 && p.x >= Math.min(a[0], b[0]) - 0.6)) return true;
+      }
+      return false;
+    };
+    if (n >= 3) {
+      const rect = ru.every((p, i) => i === 0 || cerca(p[0], ru[i - 1][0], 0.3) || cerca(p[1], ru[i - 1][1], 0.3));
+      const vueltas = ru.slice(0, -1).every(p => !!esquinaDe(p));
+      const fin = ru[ru.length - 1], cb = centroDe(banderaEn);
+      const punta = x.ruta.punta;
+      r.push([x.ruta.ve && rect && vueltas && igual(esquinaDe(ru[0]), salida) && cerca(fin[0], cb.x, 0.6) && fin[1] > cb.y && fin[1] - cb.y < cuadra * 0.4
+        && punta.length === 3 && punta[1][1] < punta[0][1] && cerca(punta[1][0], cb.x, 0.6),
+        `paso ${n}: el camino bueno sale de la esquina del robot, dobla en esquinas y llega con su punta a la de la bandera`, ru]);
+      if (n >= 5) {
+        /* La raya del camino se para un poco antes de la esquina de la
+           bandera, donde va su punta: esa esquina se mira aparte. */
+        const esq = simular(orden, 5).esq;
+        const malos = esq.slice(0, -1).filter(q => !sobreRuta(q));
+        r.push([malos.length === 0 && igual(esq[esq.length - 1], banderaEn), `paso ${n}: sin la línea que se quitó, el robot va justo por el camino bueno`, malos]);
+      }
+    } else r.push([!x.ruta.ve, `paso ${n}: el camino bueno todavía no está`, x.ruta.ve]);
+
+    /* ── la línea que se quita: la primera que saca al robot del camino ── */
+    const simK = simular(KENIA, 6);
+    let sale = 0;
+    for (let i = 0; i < 6 && !sale; i++) if (simK.pasos[i].hace === 'av' && !sobreRuta(simK.pasos[i].despues)) sale = i + 1;
+    if (n >= 3) r.push([sale === 3, `paso ${n}: con el camino al lado, la primera línea que saca al robot del camino es la 3`, sale]);
+    if (n >= 4) r.push([quitada === KENIA[sale - 1], `paso ${n}: la tarjeta que se quitó es la que saca al robot del camino`, [quitada, KENIA[sale - 1]]]);
+    if (n === 3) {
+      r.push([sobreRuta(sim.pasos[1].despues) && !sobreRuta(sim.fin), 'paso 3: la flecha se detiene donde el robot se sale: la línea de antes lo dejó en el camino, esta lo sacó', [sim.pasos[1].despues, sim.fin]]);
+      r.push([x.anillo.ve && cerca(x.anillo.c[0], rob.c[0], 0.6) && cerca(x.anillo.c[1], rob.c[1], 0.6), 'paso 3: el anillo rodea al robot, donde se sale del camino', x.anillo]);
+      const marcadas = tarj.filter(t => t.resalte);
+      r.push([marcadas.length === 1 && lugarDe(marcadas[0]) === HASTA, 'paso 3: va marcada solo la tarjeta donde se detuvo la flecha', marcadas.map(t => [t.k, lugarDe(t)])]);
+      r.push([x.flecha.ve && cerca(x.flecha.c.y, nums[HASTA - 1].c.y, 1), 'paso 3: la flecha se queda en el renglón de la 3', x.flecha.c]);
+    } else r.push([!x.anillo.ve && tarj.every(t => !t.resalte), `paso ${n}: ni anillo ni tarjetas marcadas`, x.anillo.ve]);
+
+    /* ── lo que dice cada esquina: una ✗ por tarde, con su tarde, y el ✓ ── */
+    const nMal = [0, 1, 3, 3, 3, 3, 3][n];
+    const males = x.males.filter(q => q.ve).sort((a, b) => b.caja.y1 - a.caja.y1);
+    const cK = centroDe(finKenia);
+    r.push([males.length === nMal && males.every((q, i) => q.puntos === 4 && cerca(cen(q.caja).x, cK.x, cuadra * 0.3) && q.caja.y1 < mp.y0
+      && (i === 0 || q.caja.y1 < males[i - 1].caja.y0) && q.tarde.ve && q.tarde.txt === 'tarde ' + (i + 1)
+      && q.tarde.caja.x1 < q.caja.x0 && cerca(cen(q.tarde.caja).y, cen(q.caja).y, 2)),
+      `paso ${n}: sobre la esquina adonde llega el programa de Kenia hay ${nMal} ✗ de dos rayas, una encima de otra, cada una con su tarde al lado`, males.map(q => [q.tarde.txt, cen(q.caja)])]);
+    const conBien = n >= 5, cb = centroDe(banderaEn), bc = cen(x.bien.caja);
+    r.push([x.bien.ve === conBien && (!conBien || (x.bien.puntos === 3 && Math.abs(bc.x - cb.x) < cuadra * 0.8 && x.bien.caja.y1 < mp.y0)),
+      `paso ${n}: ${conBien ? 'junto a la bandera hay un ✓ de una raya quebrada' : 'todavía no hay ningún ✓'}`, [x.bien.ve, bc]]);
+    const marcas = males.map(q => ({ k: q.tarde.txt, c: q.caja })).concat(males.map(q => ({ k: 'rótulo ' + q.tarde.txt, c: q.tarde.caja })))
+      .concat(x.bien.ve ? [{ k: '✓', c: x.bien.caja }] : []).concat([{ k: 'bandera', c: x.bandera.caja }]);
+    const encima = [];
+    for (let i = 0; i < marcas.length; i++) for (let j = i + 1; j < marcas.length; j++) if (monta(marcas[i].c, marcas[j].c)) encima.push([marcas[i].k, marcas[j].k]);
+    r.push([encima.length === 0, `paso ${n}: ninguna marca ni rótulo se monta en otro ni en la bandera`, encima]);
+    const radio = (rob.caja.x1 - rob.caja.x0) / 2;
+    const tapa = marcas.filter(q => {
+      const c = q.c, dx = Math.max(c.x0 - rob.c[0], 0, rob.c[0] - c.x1), dy = Math.max(c.y0 - rob.c[1], 0, rob.c[1] - c.y1);
+      const enPunta = rob.punta[0] > c.x0 - 1 && rob.punta[0] < c.x1 + 1 && rob.punta[1] > c.y0 - 1 && rob.punta[1] < c.y1 + 1;
+      return Math.hypot(dx, dy) < radio + 1 || enPunta;
+    });
+    r.push([tapa.length === 0, `paso ${n}: el robot, ni con la nariz, tapa ninguna marca ni la bandera`, tapa.map(q => q.k)]);
+
+    /* ── el rastro: de esquina en esquina, por donde pasó el robot ── */
+    function revisaRastro(k, ord, debe, nombre) {
+      const tr = x.rastros.filter(t => t.k === k).sort((a, b) => a.n - b.n);
+      if (!debe) { r.push([tr.every(t => !t.ve), `paso ${n}: el rastro ${nombre} no está`, tr.filter(t => t.ve).length]); return; }
+      const esq = simular(ord, ord.length).esq;
+      const ok = tr.length === esq.length - 1 && tr.every((t, i) => t.ve && t.puntos.length === 2
+        && cerca(t.puntos[0][0], centroDe(esq[i]).x, 0.6) && cerca(t.puntos[0][1], centroDe(esq[i]).y, 0.6)
+        && cerca(t.puntos[1][0], centroDe(esq[i + 1]).x, 0.6) && cerca(t.puntos[1][1], centroDe(esq[i + 1]).y, 0.6));
+      r.push([ok, `paso ${n}: el rastro ${nombre} va de esquina en esquina, por donde pasa el robot con ese programa`, tr.map(t => [t.ve, t.puntos])]);
+    }
+    revisaRastro('kenia', KENIA, [1, 2, 6].includes(n), 'del programa de Kenia');
+    revisaRastro('bien', KENIA.filter(k => k !== (quitada || 'a3')), n >= 5, 'del programa sin la línea');
+
+    /* ── lo hecho: un ✓ en el lugar de cada línea que ya se hizo ── */
+    const hechos = x.hechos.filter(h => h.ve);
+    const hechosEspera = [0, 6, 0, 2, 0, 5, 5][n];
+    r.push([hechos.length === hechosEspera && hechos.every(h => h.n <= hechosEspera && nums.some(q => q.n === h.n && cerca(q.c.y, h.c.y))),
+      `paso ${n}: ${hechosEspera} línea(s) con su ✓, cada uno en el renglón de su número`, hechos.map(h => h.n)]);
+    if (n !== 3) r.push([!x.flecha.ve, `paso ${n}: al terminar el paso, la flecha que va haciendo el programa ya no está`, x.flecha.ve]);
+
+    /* ── las corridas con flecha: cada línea, mientras la flecha está en su renglón ── */
+    if ([1, 3, 5].includes(n)) {
+      const b = x.flecha.bajadas, total = orden.length;
+      const llega = [x.flecha.dVe + 200].concat(b.slice(0, total - 1).map(q => q.d)).concat([x.flecha.dFin]);
+      r.push([b.length === 5 && llega.slice(0, HASTA + 1).every((t, i) => i === 0 || t > llega[i - 1])
+        && b.every((q, i) => cerca(q.corre[0], 0, 0.01) && cerca(q.corre[1], i + 1 < HASTA ? fila : 0, 0.2)),
+        `paso ${n}: la flecha baja de renglón en renglón, uno a la vez, y se queda en el último que hizo`, llega]);
+      const enVentana = (d, i) => d >= llega[i] && d < llega[i + 1];
+      const tramos = x.rastros.filter(t => t.k === (n === 5 ? 'bien' : 'kenia')).sort((a, c) => a.n - c.n);
+      let av = 0;
+      const fueraV = [];
+      sim.pasos.slice(0, HASTA).forEach((p, i) => {
+        let ds = [];
+        if (p.hace === 'av') { ds = [rob.mueve[i].d]; if (n !== 3) ds.push(tramos[av].d); av++; }
+        else if (p.hace === 'gi') ds = [rob.voltea[i].d];
+        if (!ds.every(d => enVentana(d, i)) || (p.hace === 'av' && n !== 3 && ds[0] !== ds[1])) fueraV.push({ i: i + 1, k: p.k, ds, ventana: [llega[i], llega[i + 1]] });
+      });
+      r.push([fueraV.length === 0, `paso ${n}: el robot hace cada línea mientras la flecha está en su renglón, y el rastro sale con él`, fueraV]);
+      const tick = x.hechos.filter(h => h.n <= hechosEspera).map(h => h.d);
+      r.push([tick.every((d, i) => d === llega[i + 1]), `paso ${n}: cada ✓ aparece cuando la flecha deja su renglón`, tick]);
+      if (n === 1) r.push([x.males.find(q => q.k === 1).d >= llega[6], 'paso 1: la ✗ sale cuando el robot ya llegó', x.males.find(q => q.k === 1).d]);
+      if (n === 5) r.push([x.bien.d >= llega[5], 'paso 5: el ✓ sale cuando el robot ya llegó', x.bien.d]);
+      if (n === 3) r.push([tarj.find(t => lugarDe(t) === 3).dResalte >= llega[2], 'paso 3: la tarjeta se marca cuando la flecha ya llegó a ella, no antes', tarj.find(t => lugarDe(t) === 3).dResalte]);
+    }
+
+    /* ── el paso 2: se borra, se escribe igual, y otra vez; un robot por tarde ── */
+    if (n === 2) {
+      const R = k => x.robots.find(q => q.k === k);
+      const r1 = R('1'), r2 = R('2'), r3 = R('3');
+      const enLugar = k => KENIA.indexOf(k);
+      const cop = (t, c) => t.copias.find(q => q.n === c);
+      const t1Fuera = Math.max(...x.tarjetas.map(t => cop(t, 1).d));
+      const t2En = x.tarjetas.slice().sort((a, b) => enLugar(a.k) - enLugar(b.k)).map(t => cop(t, 2).d);
+      const t2Fuera = Math.min(...x.tarjetas.map(t => cop(t, 2).dFuera));
+      const t3En = x.tarjetas.slice().sort((a, b) => enLugar(a.k) - enLugar(b.k)).map(t => cop(t, 3).d);
+      const ultimo = rr => Math.max(...rr.mueve.concat(rr.voltea).map(q => q.d));
+      const primero = rr => Math.min(...rr.mueve.concat(rr.voltea).filter(q => q.d > 0).map(q => q.d));
+      const m2 = x.males.find(q => q.k === 2).d, m3 = x.males.find(q => q.k === 3).d;
+      const orden2 = [
+        ['el robot de la primera tarde se va antes de borrar', !r1.aparece && r1.dVe <= t1Fuera],
+        ['se borra antes de escribir', t2En.every(d => d > t1Fuera)],
+        ['se escribe de arriba abajo, una línea a la vez', t2En.every((d, i) => i === 0 || d > t2En[i - 1]) && t3En.every((d, i) => i === 0 || d > t3En[i - 1])],
+        ['el robot de la segunda tarde sale cuando ya está escrito', r2.aparece && r2.dVe >= t2En[5]],
+        ['y corre después de aparecer', primero(r2) > r2.dVe],
+        ['la segunda ✗ sale cuando ya llegó', m2 >= ultimo(r2) + 300],
+        ['se va cuando se borra otra vez, después de su ✗', !r2.sale && r2.dSale >= m2 && t2Fuera >= m2],
+        ['la tercera tarde se escribe después de borrar', t3En.every(d => d > t2Fuera)],
+        ['el robot de la tercera tarde sale cuando ya está escrito, y cuando el otro ya se fue', r3.aparece && r3.dVe >= t3En[5] && r3.dVe >= r2.dSale + 500],
+        ['y corre después de aparecer', primero(r3) > r3.dVe],
+        ['la tercera ✗ sale cuando ya llegó', m3 >= ultimo(r3) + 300]
+      ];
+      const malOrden = orden2.filter(q => !q[1]).map(q => q[0]);
+      r.push([malOrden.length === 0, 'paso 2: se borra, se escribe igual, corre y queda su ✗; y otra vez, con un robot por tarde', malOrden]);
+      const p2 = simular(KENIA, 6).pasos;
+      const malR2 = [];
+      [r2, r3].forEach(rr => p2.forEach((p, i) => {
+        const esp = p.hace === 'av' ? [PASO_DIR[p.antes.d][0] * cuadra, PASO_DIR[p.antes.d][1] * cuadra] : [0, 0];
+        if (!cerca(rr.mueve[i].corre[0], esp[0], 0.6) || !cerca(rr.mueve[i].corre[1], esp[1], 0.6) || rr.voltea[i].gira !== (p.hace === 'gi' ? -90 : 0)) malR2.push([rr.k, i + 1]);
+      }));
+      r.push([malR2.length === 0 && igual(esquinaDe(r2.base), salida) && igual(esquinaDe(r3.base), salida),
+        'paso 2: los robots de las otras dos tardes salen de la misma esquina y hacen el mismo programa', malR2]);
+    }
+
+    /* ── el paso 4: se tacha, se va, y las de abajo suben ── */
+    if (n === 4) {
+      const q = x.tarjetas.find(t => t.k === quitada);
+      const suben = x.tarjetas.filter(t => KENIA.indexOf(t.k) > KENIA.indexOf(quitada)).map(t => t.dLugar);
+      const seis = x.numeros.find(z => z.n === 6);
+      r.push([!!q && q.tacha && q.dTacha < q.dQuita && suben.every(d => d > q.dQuita) && seis.d >= q.dQuita,
+        'paso 4: la línea se tacha, después se va, y entonces suben las de abajo y se apaga el lugar 6', q && { tacha: q.dTacha, quita: q.dQuita, suben, seis: seis.d }]);
+    }
+
+    /* ── lo que cuenta el marcador ── */
+    const cifraEspera = [tarj.length, males.length, males.length, (tarj.filter(t => t.resalte).map(lugarDe)[0] || 0), tarj.length, x.bien.ve ? 1 : 0, males.length][n];
+    r.push([+e.cifra === cifraEspera, `paso ${n}: el marcador dice ${e.cifra} y en el dibujo se cuentan ${cifraEspera}`, [e.cifra, cifraEspera]]);
+    if (n === 3 || n === 4) r.push([new RegExp('la ' + sale + '\\b').test(e.texto), `paso ${n}: la frase nombra la línea ${sale}`, e.texto]);
     return r;
   },
   amBaleada(e, n) {
