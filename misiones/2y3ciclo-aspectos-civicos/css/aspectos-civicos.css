@@ -481,3 +481,29 @@ body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* ── La animación de las cinco estrellas (#amEstrellas) ─────────────────
+   La Bandera es el emoji, que la trae completa: aquí no se pinta ninguna
+   bandera. El globo y las tarjetas de los países son papel, y el asta, las
+   estrellas y Marvin son COSAS: se quedan como son en las dos pantallas,
+   así que lo que va escrito sobre papel lleva tinta oscura fija. Lo que va
+   sobre la tarjeta de la misión (los rótulos, el marco y el aro) lleva la
+   tinta de la pantalla. Nada se dice solo con color: la palabra que estaba
+   mal va tachada, y los países juntos van dentro de un marco. */
+#amEstrellas .et-suelo { fill: none; stroke: var(--border); stroke-width: 1.2; }
+#amEstrellas .et-asta { fill: #94a3b8; stroke: #64748b; stroke-width: 0.8; }
+#amEstrellas .et-perilla { fill: #fbbf24; stroke: #92400e; stroke-width: 0.6; }
+#amEstrellas .et-bandera { font-family: 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif; }
+#amEstrellas .et-globo { fill: #ffffff; stroke: #64748b; stroke-width: 1.2; stroke-linejoin: round; }
+#amEstrellas .et-letra { fill: #1e293b; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amEstrellas .et-tachada { text-decoration: line-through; }
+#amEstrellas .et-marco { fill: var(--am-pri); fill-opacity: 0.08; stroke: var(--am-pri); stroke-width: 2; }
+#amEstrellas .et-carta { fill: #ffffff; stroke: #64748b; stroke-width: 1.2; }
+#amEstrellas .et-aro { fill: none; stroke: var(--am-pri); stroke-width: 2.2; }
+#amEstrellas .et-estrella { fill: #0ea5e9; stroke: #075985; stroke-width: 0.8; stroke-linejoin: round; }
+#amEstrellas .et-pantalon { fill: #1e3a8a; stroke: #172554; stroke-width: 0.6; }
+#amEstrellas .et-camisa { fill: #f8fafc; stroke: #64748b; stroke-width: 1; }
+#amEstrellas .et-brazo { fill: none; stroke: #b07a4f; stroke-width: 3; stroke-linecap: round; }
+#amEstrellas .et-piel { fill: #b07a4f; stroke: #7c4f2c; stroke-width: 0.8; }
+#amEstrellas .et-pelo { fill: #2b1a10; }
+#amEstrellas .et-ojo { fill: #1e293b; }

@@ -2129,6 +2129,61 @@ const LEER = `
      charco, la raya de lleno con su sensor, los dos cables, la cajita con
      lo que anota y su regla, cada aviso con sus cuatro piezas, las
      pestañas, el charco del martes, don Chico y los nombres. */
+  window.__amExtra.amEstrellas = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(m(el)); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function uno(sel, en) { return (en || raiz).querySelector(sel); }
+    function todos(sel, en) { return [].slice.call((en || raiz).querySelectorAll(sel)); }
+    function demora(el) { return el ? (parseFloat(el.style.getPropertyValue('--d')) || 0) : 0; }
+    function numeros(d) { return ((d || '').match(/-?[0-9.]+/g) || []).map(Number); }
+    function puntosDe(p) {
+      var nums = numeros(p.getAttribute('d')), r = [];
+      for (var i = 0; i + 1 < nums.length; i += 2) r.push(aVista(p, nums[i], nums[i + 1]));
+      return r;
+    }
+    function tachado(t) { var cs = getComputedStyle(t); return /line-through/.test((cs.textDecorationLine || '') + ' ' + (cs.textDecoration || '')); }
+    function texto(t) { return t ? { txt: t.textContent, caja: caja(t), ve: vis(t), tachado: tachado(t) } : null; }
+    function centro(c) { return aVista(c, +c.getAttribute('cx'), +c.getAttribute('cy')); }
+    var cab = uno('[data-persona="M"] [data-cabeza]');
+    var fila = uno('[data-fila-txt]');
+    return {
+      vista: [svg.viewBox.baseVal.width, svg.viewBox.baseVal.height],
+      suelo: puntosDe(uno('[data-suelo]')),
+      asta: caja(uno('[data-asta-palo]')),
+      bandera: texto(uno('[data-bandera]')),
+      marvin: { caja: caja(uno('[data-persona="M"]')), cabeza: { c: centro(cab), r: +cab.getAttribute('r') } },
+      dichos: todos('[data-dicho]').map(function (g) {
+        var gc = uno('[data-globo-caja]', g), pts = puntosDe(gc), tch = uno('[data-tachada]', g);
+        return {
+          k: g.getAttribute('data-dicho'), ve: vis(gc), caja: caja(gc), d: demora(g),
+          punta: pts.reduce(function (a, b) { return b[1] > a[1] ? b : a; }, pts[0]),
+          lineas: todos('[data-linea]', g).map(function (t) { var o = texto(t); o.d = demora(t); return o; }),
+          tachada: tch ? (function () { var o = texto(tch); o.d = demora(tch); return o; })() : null
+        };
+      }),
+      estrellas: todos('[data-estrella]').map(function (g) {
+        var f = uno('[data-estrella-forma]', g);
+        return { i: +g.getAttribute('data-estrella'), ve: vis(f), pts: puntosDe(f), d: demora(g) };
+      }),
+      rotulo: texto(fila), dRotulo: demora(fila),
+      cartas: todos('[data-pais]').map(function (va) {
+        var cj = uno('[data-pais-caja]', va);
+        return { nombre: va.getAttribute('data-pais'), ve: vis(cj), caja: caja(cj), txt: texto(uno('[data-pais-nombre]', va)), dVa: demora(va), dMueve: demora(uno('[data-pais-mueve]', va)) };
+      }),
+      marco: { ve: vis(uno('[data-marco-caja]')), caja: caja(uno('[data-marco-caja]')), d: demora(uno('[data-marco]')), lineas: todos('[data-marco-txt]').map(texto) },
+      aro: { ve: vis(uno('[data-aro]')), caja: caja(uno('[data-aro]')), d: demora(uno('[data-aro]')) },
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; }),
+      cajasTexto: todos('text').filter(vis).map(caja)
+    };
+  };
   window.__amExtra.amCharla = function (raiz) {
     var vis = window.__amVisible;
     var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
@@ -3878,6 +3933,7 @@ const MEMO_CABLE = {};
 const MEMO_PARED = {};
 const MEMO_JURADO = {};
 const MEMO_CHARLA = {};
+const MEMO_ESTRELLAS = {};
 const ESCENAS = {
   /* Secuencias: el Robot Mensajero. «El mandado de Marvin».
      ⚠️ Nada se le cree a la escena. La sonda lee en qué renglón quedó cada
@@ -4973,6 +5029,180 @@ const ESCENAS = {
      si la bomba se para cuando le llega el «apaga». Lo de un paso que
      hace falta en otro (el agua al empezar el día, el charco del martes)
      se guarda en MEMO_BOMBA, por idioma. */
+  amEstrellas(e, n) {
+    const x = e.extra, r = [];
+    const cerca = (a, b, t) => Math.abs(a - b) <= t;
+    const cen = c => ({ x: (c.x0 + c.x1) / 2, y: (c.y0 + c.y1) / 2 });
+    const dentro = (a, b, m = 0) => a.x0 >= b.x0 - m && a.x1 <= b.x1 + m && a.y0 >= b.y0 - m && a.y1 <= b.y1 + m;
+    const monta = (a, b) => a.x0 < b.x1 - 0.5 && b.x0 < a.x1 - 0.5 && a.y0 < b.y1 - 0.5 && b.y0 < a.y1 - 0.5;
+    const memo = MEMO_ESTRELLAS;
+
+    /* ── lo que no depende del dibujo va primero ── */
+    const PROHIBIDAS = /\b18\b|dieciocho|uni[oó]n|\bunir|unid[oa]s?\b|moraz|palad|independ|\bacta\b|1821|septiembre|decreto|1866|1825|1904|1915|franja|horizontal|vertical|azul|turquesa|blanc|\bmares?\b|cielo|\bpaz\b|pureza|escudo|himno|estrofa|\bcoro\b|mayor|menor|silencio|firme|\bizar|\biza\b|adorno|guard|tegucigalpa|provincias|del centro|moneda|documento|sello|\btres\b|siete|rep[uú]blica|soberan|libre|niñ[oa]|maestr|estudiante|lempira|valle|herrera|caba[nñ]as|reyes|pino|orqu[ií]dea|guara|venado|mapa/i;
+    const dicho = [e.texto, e.palabras, e.boton].concat(x.textos).join(' · ');
+    r.push([!PROHIBIDAS.test(dicho), `paso ${n}: no sale ninguna otra cosa que pregunte la prueba`, (dicho.match(PROHIBIDAS) || [])[0]]);
+    const PAISES = ['Guatemala', 'El Salvador', 'Honduras', 'Nicaragua', 'Costa Rica'];
+    const E = [
+      { cartas: false, juntas: false, estrellas: 'casa', marco: false, aro: false, globo: 'mal', tacha: false },
+      { cartas: true, juntas: false, estrellas: 'cartas', marco: false, aro: true, globo: 'mal', tacha: true },
+      { cartas: true, juntas: true, estrellas: 'cartas', marco: true, aro: false, globo: null, tacha: false },
+      { cartas: true, juntas: false, estrellas: 'cartas', marco: false, aro: false, globo: null, tacha: false },
+      { cartas: true, juntas: false, estrellas: 'casa', marco: false, aro: false, globo: null, tacha: false },
+      { cartas: true, juntas: false, estrellas: 'casa', marco: false, aro: false, globo: 'bien', tacha: false }
+    ][n];
+    if (n === 0) r.push([/«los cinco departamentos»/.test(e.texto) && /países/.test(e.texto) && /\?$/.test(e.texto.trim()), 'paso 0: la frase cuenta lo que dijo Marvin, dice que son países y pregunta cuáles', e.texto]);
+
+    /* ── el asta y la Bandera ── */
+    const AS = x.asta, B = x.bandera, SUELO = x.suelo[0][1];
+    r.push([B.ve && B.txt === '🇭🇳' && cerca(B.caja.x0, AS.x1, 3) && B.caja.y0 < AS.y0 + 12 && cerca(AS.y1, SUELO, 0.6) && cerca(x.suelo[0][1], x.suelo[1][1], 0.01),
+      `paso ${n}: la Bandera, entera, está en lo alto del asta, y el asta llega al suelo`, [B.caja, AS]]);
+
+    /* ── Marvin, y lo que dice ── */
+    const M = x.marvin, C = x.cartas;
+    const izqCartas = Math.min(...C.map(c => c.caja.x0));
+    r.push([cerca(M.caja.y1, SUELO, 0.6) && M.caja.x0 > AS.x1 + 10 && M.caja.x1 < izqCartas - 10, `paso ${n}: Marvin está parado en el suelo, entre el asta y los países`, M.caja]);
+    const D = k => x.dichos.find(d => d.k === k);
+    const mal = D('mal'), bien = D('bien');
+    r.push([mal.ve === (E.globo === 'mal') && bien.ve === (E.globo === 'bien'),
+      `paso ${n}: ${E.globo === 'mal' ? 'Marvin dice lo que dijo en el acto' : E.globo === 'bien' ? 'Marvin lo dice bien' : 'Marvin no dice nada: está mirando'}`, [mal.ve, bien.ve]]);
+    [mal, bien].filter(d => d.ve).forEach(d => {
+      const H = M.cabeza, vis = d.lineas.filter(l => l.ve).concat(d.tachada && d.tachada.ve ? [d.tachada] : []);
+      r.push([cerca(d.punta[0], H.c[0], 2) && d.punta[1] < H.c[1] - H.r && d.punta[1] > H.c[1] - H.r - 10 && vis.every(l => dentro(l.caja, d.caja, -1)),
+        `paso ${n}: el globo sale de la cabeza de Marvin, y le cabe lo que dice`, [d.punta, H.c]]);
+      r.push([!monta(d.caja, B.caja) && !monta(d.caja, AS) && d.caja.x1 < izqCartas - 4 && (x.rotulo.ve ? !monta(d.caja, x.rotulo.caja) : true),
+        `paso ${n}: el globo no tapa la Bandera, ni el asta, ni los países`, d.caja]);
+    });
+    if (mal.ve) {
+      const t = mal.tachada, l1 = mal.lineas[1];
+      r.push([mal.lineas[0].txt === 'Por los cinco' && l1.txt === 'departamentos' && t.txt === 'departamentos' && cerca(t.caja.x0, l1.caja.x0, 0.5) && cerca(t.caja.y0, l1.caja.y0, 0.5),
+        `paso ${n}: el globo dice lo que dijo Marvin en el acto: «Por los cinco departamentos»`, mal.lineas.map(l => l.txt)]);
+      r.push([E.tacha ? (t.ve && t.tachado && !l1.ve) : (!t.ve && l1.ve && !l1.tachado),
+        `paso ${n}: ${E.tacha ? '«departamentos» va tachada' : '«departamentos» todavía no va tachada'}`, [t.ve, t.tachado, l1.ve]]);
+    }
+    if (bien.ve) {
+      const dice = bien.lineas.map(l => l.txt).join(' ');
+      r.push([/\bnaciones\b/.test(dice) && /Federación/.test(dice) && !/departamento/.test(dice) && bien.lineas.every(l => !l.tachado),
+        `paso ${n}: ahora dice «naciones» y «Federación», y ya no «departamentos»`, dice]);
+    }
+
+    /* ── las cinco estrellas ── */
+    const ES = x.estrellas.slice().sort((a, b) => a.i - b.i);
+    const geo = ES.map(s => {
+      const cx = s.pts.reduce((a, p) => a + p[0], 0) / s.pts.length, cy = s.pts.reduce((a, p) => a + p[1], 0) / s.pts.length;
+      const rs = s.pts.map(p => Math.hypot(p[0] - cx, p[1] - cy));
+      return { c: [cx, cy], rMax: Math.max(...rs), rMin: Math.min(...rs), puntas: s.pts.length };
+    });
+    r.push([ES.length === 5 && ES.every(s => s.ve) && geo.every(g => g.puntas === 10 && cerca(g.rMax, geo[0].rMax, 0.05) && g.rMin < g.rMax * 0.6),
+      `paso ${n}: son cinco estrellas de cinco puntas, iguales, y se ven todas`, geo.map(g => g.puntas)]);
+    const BX = B.caja;
+    if (E.estrellas === 'casa') {
+      const xs = geo.map(g => g.c[0]), ys = geo.map(g => g.c[1]);
+      const pasos = xs.slice(1).map((v, i) => v - xs[i]);
+      r.push([ys.every(y => cerca(y, ys[0], 0.3)) && pasos.every(p => cerca(p, pasos[0], 0.3) && p > 0 && p < geo[0].rMax * 2.6) && xs[0] - geo[0].rMax > BX.x1 - 2 && ys[0] > BX.y0 && ys[0] < BX.y1,
+        `paso ${n}: las cinco estrellas están juntas, en fila al lado de la Bandera`, xs]);
+      if (n === 0) memo.casa = geo.map(g => g.c);
+      else if (memo.casa) r.push([geo.every((g, i) => cerca(g.c[0], memo.casa[i][0], 0.3) && cerca(g.c[1], memo.casa[i][1], 0.3)), `paso ${n}: las estrellas volvieron a su lugar de la fila`, geo.map(g => g.c)]);
+      r.push([x.rotulo.ve && x.rotulo.txt === 'las cinco estrellas' && x.rotulo.caja.y0 > ys[0] + geo[0].rMax && cen(x.rotulo.caja).x > xs[0] && cen(x.rotulo.caja).x < xs[4],
+        `paso ${n}: debajo de la fila dice «las cinco estrellas»`, x.rotulo.caja]);
+    } else {
+      r.push([!x.rotulo.ve, `paso ${n}: las estrellas no están en la fila, y su rótulo tampoco`, x.rotulo.ve]);
+      /* una estrella sobre cada país, delante de su nombre */
+      const porCarta = C.map(c => geo.filter(g => dentro({ x0: g.c[0] - g.rMax, y0: g.c[1] - g.rMax, x1: g.c[0] + g.rMax, y1: g.c[1] + g.rMax }, c.caja, 0.5) && g.c[0] + g.rMax < c.txt.caja.x0).length);
+      r.push([porCarta.every(k => k === 1), `paso ${n}: una estrella sobre cada país, delante de su nombre`, porCarta]);
+    }
+
+    /* ── los cinco países ── */
+    r.push([C.length === 5 && C.every(c => c.ve === E.cartas), `paso ${n}: ${E.cartas ? 'se ven los cinco países' : 'todavía no se ven los países'}`, C.filter(c => c.ve).length]);
+    const ord = C.slice().sort((a, b) => a.caja.y0 - b.caja.y0);
+    if (E.cartas) {
+      r.push([JSON.stringify(ord.map(c => c.txt.txt)) === JSON.stringify(PAISES) && C.every(c => c.nombre === c.txt.txt),
+        `paso ${n}: los cinco países, de arriba abajo: ${PAISES.join(', ')}`, ord.map(c => c.txt.txt)]);
+      const W = C[0].caja.x1 - C[0].caja.x0, H = C[0].caja.y1 - C[0].caja.y0;
+      r.push([C.every(c => cerca(c.caja.x1 - c.caja.x0, W, 0.01) && cerca(c.caja.y1 - c.caja.y0, H, 0.01) && cerca(c.caja.x0, C[0].caja.x0, 0.01) && dentro(c.txt.caja, c.caja, -1)),
+        `paso ${n}: las tarjetas son iguales, una debajo de la otra, y cada nombre cabe en la suya`, null]);
+      const huecos = ord.slice(1).map((c, i) => c.caja.y0 - ord[i].caja.y1);
+      r.push([E.juntas ? huecos.every(h => cerca(h, 0, 0.6)) : huecos.every(h => h >= 6),
+        `paso ${n}: ${E.juntas ? 'los cinco están pegados, sin hueco entre ellos' : 'los cinco están separados, cada uno por su lado'}`, huecos]);
+    }
+    if (n === 1) {
+      const fr = e.texto, pos = PAISES.map(p => fr.indexOf(p));
+      r.push([pos.every((v, i) => v >= 0 && (i === 0 || v > pos[i - 1])) && /una de las cinco es Honduras/.test(fr), 'paso 1: la frase nombra a los cinco en el orden de las tarjetas, y que uno es Honduras', pos]);
+    }
+
+    /* ── el marco de la Federación, y el aro de Honduras ── */
+    const MC = x.marco;
+    r.push([MC.ve === E.marco, `paso ${n}: ${E.marco ? 'el marco de la Federación encierra a los cinco' : 'no hay marco: no están juntos'}`, MC.ve]);
+    if (E.marco) {
+      r.push([C.every(c => dentro(c.caja, MC.caja, -2)) && MC.lineas.every(l => l.ve && l.caja.y1 <= MC.caja.y0 + 0.5 && cen(l.caja).x > MC.caja.x0 && cen(l.caja).x < MC.caja.x1)
+        && MC.lineas.map(l => l.txt).join(' ') === 'la antigua Federación de Centroamérica',
+        `paso ${n}: el marco encierra a los cinco, y encima dice «la antigua Federación de Centroamérica»`, MC.lineas.map(l => l.txt)]);
+      r.push([e.texto.includes('antigua Federación de Centroamérica') && /un solo país/.test(e.texto), `paso ${n}: la frase nombra lo que dice el marco: eran un solo país`, e.texto]);
+    }
+    r.push([x.aro.ve === E.aro, `paso ${n}: ${E.aro ? 'Honduras va marcada' : 'ningún país va marcado'}`, x.aro.ve]);
+    if (E.aro) {
+      const h = C.find(c => c.nombre === 'Honduras'), A = x.aro.caja;
+      r.push([dentro(h.caja, A, -2) && C.filter(c => c !== h).every(c => { const k = cen(c.caja); return !(k.x > A.x0 && k.x < A.x1 && k.y > A.y0 && k.y < A.y1); }),
+        'paso 1: el aro rodea a Honduras, y a ningún otro país', A]);
+    }
+
+    /* ── en qué orden pasa cada cosa ── */
+    /* qué estrella quedó sobre cada país: se mira dónde está, no se supone */
+    const sobre = E.estrellas === 'cartas' ? C.map(c => geo.findIndex(g => g.c[0] > c.caja.x0 && g.c[0] < c.caja.x1 && g.c[1] > c.caja.y0 && g.c[1] < c.caja.y1)) : null;
+    if (n === 3) memo.cartas = geo.map(g => g.c);
+    /* Un vuelo no puede pasar por encima de otra estrella quieta ni del
+       globo: se mira el camino recto de cada una, contra lo que está
+       quieto cuando ella sale. */
+    const R = geo[0].rMax;
+    const tramo = (a, b, f) => { for (let t = 0; t <= 1.0001; t += 0.02) { if (!f([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t])) return false; } return true; };
+    const lejos = (p, q, d) => Math.hypot(p[0] - q[0], p[1] - q[1]) >= d;
+    const fuera = (p, c, d) => p[0] < c.x0 - d || p[0] > c.x1 + d || p[1] < c.y0 - d || p[1] > c.y1 + d;
+    if (n === 1) {
+      const dc = C.map(c => c.dVa), ds = ES.map(s => s.d), dt = mal.tachada.d;
+      const suya = sobre.map(k => k >= 0 ? ES[k].d : -1);
+      r.push([dt > 0 && dt < dc[0] && dc.every((d, i) => i === 0 || d > dc[i - 1]) && sobre.every(k => k >= 0) && suya.every((d, i) => d > dc[i] && (i === 4 || d < dc[i + 1] + 300))
+        && x.aro.d > Math.max(...ds) && cerca(x.dRotulo, Math.min(...ds), 1),
+        'paso 1: se tacha la palabra; cada país aparece y su estrella llega después, uno por uno; al final se marca Honduras', [dt, dc, suya, x.aro.d, x.dRotulo]]);
+      if (memo.casa) {
+        const malos = [];
+        ES.forEach((s, k) => {
+          const quietas = ES.map((o, j) => j).filter(j => j !== k && ES[j].d > s.d);
+          if (!tramo(memo.casa[k], geo[k].c, p => quietas.every(j => lejos(p, memo.casa[j], 2 * R - 0.5)) && fuera(p, mal.caja, R - 0.5))) malos.push(k);
+        });
+        r.push([malos.length === 0, 'paso 1: al irse, ninguna estrella pasa por encima de las que esperan en la fila ni del globo de Marvin', malos]);
+      }
+    }
+    if (n === 2) r.push([mal.d === 0 && sobre.every(k => k >= 0) && C.every((c, i) => c.dMueve === ES[sobre[i]].d && c.dMueve > 0) && MC.d > Math.max(...C.map(c => c.dMueve)),
+      'paso 2: Marvin deja de hablar, los cinco se juntan, cada uno con su estrella, y después aparece el marco', [C.map(c => c.dMueve), sobre, MC.d]]);
+    if (n === 3) r.push([sobre.every(k => k >= 0) && C.every((c, i) => c.dMueve === ES[sobre[i]].d && c.dMueve > 0) && MC.d < C[0].dMueve,
+      'paso 3: primero se va el marco, y después cada país se separa con su estrella', [MC.d, C.map(c => c.dMueve), sobre]]);
+    if (n === 4) {
+      const ds = ES.map(s => s.d);
+      r.push([Math.min(...ds) > 0 && new Set(ds).size === 5 && x.dRotulo >= Math.max(...ds), 'paso 4: las estrellas vuelven una por una a la Bandera, y después sale su rótulo', [ds, x.dRotulo]]);
+      if (memo.cartas) {
+        const malos = [];
+        ES.forEach((s, k) => {
+          const llegaron = ES.map((o, j) => j).filter(j => j !== k && ES[j].d < s.d);
+          const esperan = ES.map((o, j) => j).filter(j => j !== k && ES[j].d > s.d);
+          if (!tramo(memo.cartas[k], geo[k].c, p => llegaron.every(j => lejos(p, geo[j].c, 2 * R - 0.5)) && esperan.every(j => lejos(p, memo.cartas[j], 2 * R - 0.5)))) malos.push(k);
+        });
+        r.push([malos.length === 0, 'paso 4: al volver, ninguna estrella pasa por encima de las que ya llegaron ni de las que esperan', malos]);
+      }
+    }
+    if (n === 5) r.push([bien.d > 0 && /\?/.test(e.texto) && /«departamentos»/.test(e.texto), 'paso 5: Marvin lo dice bien cuando las estrellas ya están juntas, y la frase le pregunta al alumno', [bien.d, e.texto]]);
+
+    /* ── el marcador ── */
+    const valor = E.estrellas === 'casa' ? geo.length : n === 1 ? C.filter(c => c.ve).length : n === 2 ? (MC.ve ? 1 : 0) : C.filter(c => c.ve).length;
+    r.push([e.cifra === String(valor), `paso ${n}: el marcador cuenta lo que se ve`, [e.cifra, valor]]);
+
+    /* ── los rótulos ── */
+    const cajas = x.cajasTexto, choques = [];
+    cajas.forEach((a, i) => cajas.forEach((b, j) => { if (j > i && monta(a, b)) choques.push([x.textos[i], x.textos[j]]); }));
+    r.push([choques.length === 0, `paso ${n}: ningún rótulo se monta en otro`, choques]);
+    const vista = { x0: 0, y0: 0, x1: x.vista[0], y1: x.vista[1] };
+    r.push([cajas.every(c => dentro(c, vista)) && dentro(M.caja, vista) && C.every(c => dentro(c.caja, vista)) && dentro(MC.caja, vista) && x.dichos.every(d => !d.ve || dentro(d.caja, vista)),
+      `paso ${n}: todo cabe en el dibujo`, null]);
+    return r;
+  },
   amCharla(e, n) {
     const x = e.extra, r = [];
     const cerca = (a, b, t = 1.5) => Math.abs(a - b) <= t;

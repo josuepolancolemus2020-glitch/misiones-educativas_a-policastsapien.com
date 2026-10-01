@@ -12516,6 +12516,137 @@ Salió roja con cada una.
 Con la CPU frenada seis veces va a 60 cuadros por segundo, y el peor cuadro es
 de 50 ms. Robots que Resuelven Problemas, medida el mismo día, va a 58 y 83 ms.
 
+### La sexagésima tercera: Aspectos Cívicos de Honduras, y lo que enseñó
+
+La primera de la Ruta de la Patria es **Aspectos Cívicos de Honduras**
+(`misiones/2y3ciclo-aspectos-civicos/`, `js/animacion-estrellas.js`). La
+historia es la de Marvin: en el acto del lunes le tocó decir qué son las cinco
+estrellas de la Bandera, y dijo «los cinco departamentos», con toda seguridad y
+delante de la escuela. Nadie lo corrigió, y el grado entero se lo repitió así
+hasta el examen de septiembre. Las estrellas no cuentan departamentos: cuentan
+países. La animación pone la Bandera en su asta, a Marvin al lado y las cinco
+estrellas en fila; a la derecha, los cinco países:
+
+- antes de tocar: Marvin dijo «departamentos», y son países. ¿Cuáles cinco?;
+- «departamentos» se tacha en su globo, y van apareciendo Guatemala, El
+  Salvador, Honduras, Nicaragua y Costa Rica: una estrella por cada país. Y una
+  de las cinco es Honduras, que lleva su aro;
+- los cinco se juntan, cada uno con su estrella, y un marco los encierra: «la
+  antigua Federación de Centroamérica». Eran un solo país;
+- el marco se va y cada uno queda por su lado: hoy son cinco países;
+- las estrellas vuelven juntas a la Bandera, que las lleva así: el deseo de que
+  vuelvan a ser un solo país;
+- así lo puede decir Marvin el próximo lunes: «Por las cinco naciones de la
+  antigua Federación». Y la pregunta es del alumno: qué le diría él a quien
+  diga «departamentos», sin hacerlo quedar mal.
+
+Siete cosas que valen para las que siguen:
+
+1. ⚠️ **La Bandera no se dibuja: es el emoji 🇭🇳.** Es la normativa de los
+   símbolos patrios, y aquí había dos tentaciones. Dibujarla en el SVG habría
+   sido una versión parecida, con las estrellas a ojo. Y la imagen real del
+   repositorio (`img/honduras_img/simbolos/bandera.webp`) es la Bandera colgada
+   de su asta, con las franjas cayendo de arriba abajo: puesta en la escena, le
+   habría enseñado al alumno franjas verticales, y la prueba le pregunta si son
+   horizontales. El emoji la trae entera y extendida.
+2. ⚠️ **Las estrellas van en fila, y no en X como en la Bandera.** La misión dice
+   que las cinco son los cinco países; no dice cuál estrella es de cuál. En X,
+   la del centro habría caído en Honduras, y eso no lo acredita nada de lo que
+   hay en el repositorio. En fila son lo que la frase dice: una por cada país,
+   contadas.
+3. ⚠️ **El orden de los vuelos se vio a medio viaje.** La primera versión mandaba
+   primero la estrella de la punta izquierda: cruzaba por encima de las otras
+   cuatro de la fila, y las que bajaban a los últimos países pasaban por encima
+   del globo de Marvin. Con las capturas del final de cada paso, todo estaba
+   donde tenía que estar. Ahora sale primero la de la punta que da a su país,
+   ninguna cruza a las que esperan, y al volver llega primero la de la
+   izquierda. Y desde entonces la sonda lo mide: sigue el camino recto de cada
+   vuelo contra lo que está quieto cuando sale (las estrellas que esperan, las
+   que ya llegaron, el globo).
+4. ⚠️ **La historia contestaba tres preguntas de la prueba.** El verdadero o
+   falso «Las estrellas de la Bandera recuerdan a los departamentos más grandes
+   del país» era el error de Marvin palabra por palabra; el completar «En el
+   centro de la Bandera Nacional van ___ estrellas» lo contesta la historia; y
+   en pensamiento crítico, el error de «tiene tres estrellas» también. Ahora el
+   verdadero o falso pregunta si el Escudo es el símbolo patrio más reciente del
+   país (es el más antiguo), en la misión y en la ficha. El completar pide en la
+   misión el año en que se compuso el Himno (1903), y en la ficha dónde va el
+   Escudo (en la moneda), que la ficha enseña y su prueba no preguntaba; en la
+   misión eso ya lo pregunta la selección múltiple. Y el error de pensamiento
+   crítico es ahora el de las franjas verticales. Cada pregunta nueva va en el
+   sitio de la vieja, y la pauta de la ficha, con su respuesta.
+5. ⚠️ **Y el reemplazo tuvo sus propias pistas, que solo vio la sonda.** El
+   primer completar preguntaba dónde nació Morazán, y la selección de la cuarta
+   estrofa ofrece «De la fundación de Tegucigalpa». Y al quitar el verdadero o
+   falso de los departamentos, «país» dejó de salir en las preguntas suficientes
+   para ser palabra del tema, y la sonda señaló dos «pistas» que no delatan nada
+   (la palabra «país» en dos opciones). El verdadero o falso nuevo la vuelve a
+   nombrar, porque habla de los símbolos del país. **Cuando se cambia una
+   pregunta, la sonda de pistas se vuelve a correr**, también por lo que la
+   pregunta vieja tapaba.
+6. **Lo que no se dice:** cuántos departamentos tiene Honduras (lo pregunta la
+   selección múltiple), la palabra «unión» (la prueba pide completar «Paladín de
+   la ___ Centroamericana»), los colores, las franjas, el Escudo, el Himno, las
+   fechas, ni «guarda» (la prueba pregunta cómo se guarda la Bandera). La sonda
+   lo prohíbe en cada paso.
+7. **El final no inventa lo que la historia no cuenta.** La historia no dice que
+   Marvin se corrigiera, así que la frase no lo afirma: «Así lo puede decir el
+   próximo lunes». Y nada se dice solo con color: la palabra que estaba mal va
+   tachada, los países juntos van dentro de un marco y Honduras lleva su aro.
+
+La sonda de esta escena **no le cree nada a la escena**. Comprueba:
+
+- que la Bandera sea el emoji 🇭🇳, en lo alto del asta, y que el asta llegue al
+  suelo;
+- que Marvin esté parado en el suelo, entre el asta y los países, y que su
+  globo salga de su cabeza sin tapar la Bandera, el asta ni los países;
+- que el globo diga «Por los cinco departamentos», con la palabra tachada solo
+  desde el paso 1, y que al final diga «naciones» y «Federación»;
+- que sean cinco estrellas de cinco puntas, iguales; que en la fila estén
+  juntas, al lado de la Bandera, con su rótulo debajo, y que vuelvan a su mismo
+  lugar;
+- que, fuera de la fila, haya una estrella sobre cada país, delante de su
+  nombre (cuál, lo mira en el dibujo);
+- que los países sean los cinco, de arriba abajo y en el orden de la frase, en
+  tarjetas iguales; pegados dentro del marco y separados fuera de él;
+- que el marco los encierre a los cinco, con su rótulo encima, y que el aro
+  rodee a Honduras y a ningún otro;
+- que cada cosa pase cuando le toca (el país aparece y después llega su
+  estrella; los países y sus estrellas se mueven juntos; el marco, después de
+  juntarse y antes de separarse) y que ningún vuelo cruce sobre otra estrella ni
+  sobre el globo;
+- que el marcador cuente lo que se ve, que ningún rótulo se monte en otro y que
+  todo quepa en el dibujo;
+- y que no salga nada de lo que pregunta la prueba.
+
+Se comprobó al revés con veintitrés averías, plantadas una por una:
+
+- dos estrellas en el mismo país;
+- la primera en salir, la de la punta izquierda, que cruza la fila;
+- el globo de Marvin más ancho, montado en el asta;
+- la palabra sin tachar, y tachada desde el paso 0;
+- los países en otro orden;
+- el marco dejando fuera a Costa Rica;
+- los países juntos, pero con hueco entre ellos;
+- el aro en Nicaragua;
+- el marcador del paso 2 diciendo 5;
+- «unión» y «18» en una frase;
+- una bandera blanca en vez de la de Honduras, y la Bandera despegada del asta;
+- el marco antes de que se junten;
+- la estrella llegando antes que su país;
+- las estrellas sin volver a su lugar, y el rótulo de la fila quedándose;
+- al final, «departamentos» otra vez;
+- Marvin flotando;
+- estrellas de seis puntas;
+- los países desde el paso 0;
+- y el globo de Marvin en el camino de la última estrella, que solo lo caza la
+  comprobación de los vuelos.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 60 cuadros por segundo, y el peor cuadro es
+de 50 ms. Hello! Saludos, medida el mismo día, va a 59 y 67 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -12697,7 +12828,13 @@ vocabulario la frase es el contenido y la animación la escribe; lo que no da es
 la historia, las horas o los números de las preguntas, ni las frases que la
 prueba pregunta y la historia no necesita. Lo que se lee de un dibujo (la hora,
 de la aguja) la sonda lo lee del dibujo, y un ángulo se compara redondeándolo a
-la marca más cercana, no con `%`: 299,99° no da resto 0.
+la marca más cercana, no con `%`: 299,99° no da resto 0. Lo que vuela desde
+una fila sale primero por la punta que da a su destino y vuelve llenando desde
+la otra punta, así ninguna pasa por encima de las que esperan; y la sonda sigue
+el camino recto de cada vuelo contra lo que está quieto cuando sale. Un símbolo
+patrio en una escena es el emoji o la imagen real, nunca un dibujo; y si la
+imagen real lo enseña de una forma que contradice la prueba (la Bandera colgada,
+con las franjas de arriba abajo), va el emoji.
 
 Si la misión es **bilingüe** (carga su `-en.js` y trae el botón 🌐), la escena
 lleva `bilingue: true`, `describe: { es, en }` e `idioma(lang, A)`, y sus

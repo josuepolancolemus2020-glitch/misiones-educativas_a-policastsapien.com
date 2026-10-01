@@ -377,7 +377,7 @@ const evalTFBank=[
   {q:'Los símbolos patrios mayores son tres: la Bandera, el Escudo y el Himno Nacional.',a:true,k:'mayores'},
   {q:'Los símbolos patrios mayores representan al Estado en los actos oficiales y fuera del país.',a:true,k:'mayores-estado'},
   {q:'Los símbolos patrios menores se declararon antes que los mayores.',a:false,k:'menores-cuando'},
-  {q:'Las estrellas de la Bandera recuerdan a los departamentos más grandes del país.',a:false,k:'bandera-estrellas-significado'},
+  {q:'El Escudo es el símbolo patrio más reciente del país.',a:false,k:'escudo-antiguo'},
   {q:'La franja del centro de la Bandera Nacional es azul turquesa.',a:false,k:'bandera-franja-centro'},
   {q:'Las franjas de la Bandera Nacional son horizontales y del mismo ancho.',a:true,k:'bandera-franjas'},
   {q:'La Bandera Nacional se iza al empezar el día.',a:true,k:'bandera-izar'},
@@ -407,11 +407,11 @@ const evalMCBank=[
   {q:'¿Cómo se le llama al mes de septiembre en Honduras?',o:['a) El Mes de la Lectura','b) El Mes del Árbol','c) El Mes del Deporte','d) El Mes de la Patria'],a:3,k:'mes-patria'},
   {q:'¿Cómo se llamaba el Himno Nacional cuando se compuso?',o:['a) Marcha de la Libertad','b) Canción de la Montaña','c) Himno del Pueblo','d) Canto a Honduras'],a:3,k:'himno-nombre'},
 ];
-/* «cinco (5)» y no «cinco»: la calificación quita los paréntesis y acepta
+/* «siete (7)» y no «siete»: la calificación quita los paréntesis y acepta
    cada palabra de la respuesta, así que vale igual el que escribe la
    palabra y el que escribe el número. */
 const evalCPBank=[
-  {q:'En el centro de la Bandera Nacional van ___ estrellas.',a:'cinco (5)',k:'bandera-estrellas'},
+  {q:'El Himno Nacional se compuso en el año ___.',a:'1903',k:'himno-compuesto'},
   {q:'La Bandera Nacional nació por decreto del 16 de febrero de ___.',a:'1866',k:'bandera-decreto'},
   {q:'El Escudo Nacional se creó el 3 de octubre de ___.',a:'1825',k:'escudo-fecha'},
   {q:'En el Escudo, entre las dos torres, se levanta un ___.',a:'volcán',k:'escudo-volcan'},
@@ -560,10 +560,10 @@ const critCaseGuides=[
   'Respuesta abierta. Se valora que el alumno proponga corregir con respeto y explicar el porqué, no burlarse ni acusar.',
 ];
 const critErrorBank=[
-  {txt:'"La Bandera de Honduras tiene tres estrellas y la franja del centro es azul".',
-   g1:'La Bandera lleva CINCO estrellas, no tres.',
+  {txt:'"La Bandera de Honduras tiene las franjas verticales y la del centro es azul".',
+   g1:'Las franjas son HORIZONTALES, no verticales: van de un lado al otro.',
    g2:'La franja del centro es BLANCA; las de arriba y abajo son azul turquesa.',
-   k:['bandera-estrellas','bandera-franja-centro']},
+   k:['bandera-franjas','bandera-franja-centro']},
   {txt:'"La letra del Himno Nacional la escribió Carlos Hartling y la música es de Augusto C. Coello".',
    g1:'Es al revés: la letra es de AUGUSTO C. COELLO.',
    g2:'La música es de CARLOS HARTLING, músico alemán.',
