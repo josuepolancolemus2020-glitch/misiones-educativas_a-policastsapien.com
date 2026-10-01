@@ -64,7 +64,24 @@ const CONST_COMO_SE_LEE = {
     { parte: 'numeral 7', que: 'Dentro de un artículo largo, los NUMERALES son sus puntos numerados. El 7 es uno de los puntos del artículo 128.' },
     { parte: 'de la Constitución de la República', que: 'Dice de QUÉ norma se habla. El artículo 128 de la Constitución no es el artículo 128 de otra ley: el número solo no basta nunca.' }
   ],
-  aviso: 'Cuando copies una cita, cópiala entera. «El artículo 128» a secas no lleva a ninguna parte: hay un artículo 128 en casi todas las leyes del país.'
+  /* ⚠️ Decía «hay un artículo 128 en casi todas las leyes del país», y eso no
+     lo acredita nada de lo que hay aquí: de las tres normas de `_dev/leyes/`,
+     el Estatuto del Docente no llega al 128. Lo que sí está, leído en el PDF el
+     1 de octubre de 2026, es mejor ejemplo: el MISMO Código de la Niñez que cita
+     el «artículo 128 numeral 7 de la Constitución» tiene su propio artículo 128,
+     y también habla de niños que trabajan (página 37 del PDF). Es el que dibuja
+     la animación de la historia, y el que se lee en `otro`. */
+  aviso: 'Cuando copies una cita, cópiala entera. «El artículo 128» a secas no lleva a ninguna parte: el Código de la Niñez, por ejemplo, tiene su propio artículo 128, y no es el de la Constitución.',
+  /* El otro artículo 128, el del Código. Lo que se escribe de él es lo que
+     hace: la Secretaría de Trabajo «inspeccionará… los lugares de trabajo…
+     para verificar si tienen a su servicio niños y niñas». Se dice sin nombrar
+     a la Secretaría, a propósito: cuál es la Secretaría del permiso es una
+     pregunta del examen. */
+  otro: {
+    ley: 'Código de la Niñez',
+    trata: 'revisar los lugares donde trabajan niños',
+    donde: 'Código de la Niñez y la Adolescencia, Decreto 73-96, artículo 128.'
+  }
 };
 
 /* Los artículos que las leyes de `_dev/leyes/` citan por número. De cada uno,
@@ -104,9 +121,16 @@ const CONST_ARTICULOS = [
   {
     art: 'Artículo 128 numeral 7', clave: 'a128', emoji: '🧒',
     tema: 'El trabajo de los niños',
-    paraQue: 'El Código de la Niñez sujeta a este artículo el empleo de un niño en cualquier actividad retribuida, y además exige el permiso previo de la Secretaría de Trabajo, pedido por los padres o el representante legal.',
+    /* ⚠️ «pedido por los padres o el representante legal» se dejaba fuera a
+       los hermanos, que el artículo 119 nombra con las mismas letras («a
+       solicitud de los padres, de los hermanos o del representante legal»).
+       Y callaba el artículo 120 del mismo Código: «En ningún caso se
+       autorizará para trabajar a un niño menor de catorce (14) años». Sin
+       esa línea, la misión enseñaba que con el permiso cualquier niño puede
+       trabajar. Las dos, leídas en la página 33 del PDF. */
+    paraQue: 'El Código de la Niñez sujeta a este artículo el empleo de un niño en cualquier actividad retribuida, y además exige el permiso previo de la Secretaría de Trabajo, pedido por los padres, los hermanos o el representante legal. Y en su artículo 120 dice que a un niño menor de catorce años ese permiso no se le da nunca.',
     donde: 'Código de la Niñez y la Adolescencia, Decreto 73-96, artículo 119.',
-    porQueImporta: 'Es el artículo de esta lista que más cerca te toca, y el que más se incumple. Dos leyes lo protegen a la vez (la Constitución y el Código) y aun así hay niños trabajando sin ningún permiso.'
+    porQueImporta: 'Es el artículo de esta lista que más cerca te toca. Dos leyes lo protegen a la vez (la Constitución y el Código) y aun así hay niños trabajando sin ningún permiso.'
   },
   {
     art: 'Las libertades, todas juntas', clave: 'libertades', emoji: '🕊️',
@@ -135,7 +159,7 @@ const CONST_CASOS = {
   titulo: 'Cuando un artículo no se cumple',
   intro: 'Que algo esté escrito en la Constitución no significa que pase. Estos cinco casos son para analizarlos, no para contestarlos rápido: en cada uno, di qué artículo de los que viste no se está cumpliendo y qué se podría hacer.',
   casos: [
-    { clave: 'trabajo-nino', caso: 'Un niño de diez años vende en el mercado todo el día y no va a la escuela. Nadie pidió permiso a ninguna Secretaría.', pista: 'Mira el artículo 128 numeral 7 y el artículo 119 del Código de la Niñez: el permiso previo no es un trámite, es la condición.' },
+    { clave: 'trabajo-nino', caso: 'Un niño de diez años vende en el mercado todo el día y no va a la escuela. Nadie pidió permiso a ninguna Secretaría.', pista: 'Mira el artículo 128 numeral 7 y los artículos 119 y 120 del Código de la Niñez: sin permiso previo no se puede trabajar, y a un niño menor de catorce años ese permiso no se le da nunca.' },
     { clave: 'nombramiento', caso: 'En una escuela nombran de maestro a alguien sin título docente, saltándose el concurso.', pista: 'El Estatuto del Docente existe por mandato del artículo 165. Saltárselo no es un descuido administrativo: es incumplir lo que la Constitución mandó ordenar.' },
     { clave: 'permiso-autoridad', caso: 'Una autoridad dicta una regla nueva y, cuando le preguntan de dónde saca el permiso, no contesta.', pista: 'El Reglamento del Estatuto empieza diciendo en qué artículos se apoya. El que no puede decirlo no tiene el permiso.' },
     { clave: 'gobierno-escolar', caso: 'A un grupo de alumnos no se les deja opinar en la elección del Gobierno Escolar porque «son muy chicos».', pista: 'El Código dice que los niños gozan de las libertades de la Constitución. La edad regula CÓMO se ejerce un derecho, no si existe.' },

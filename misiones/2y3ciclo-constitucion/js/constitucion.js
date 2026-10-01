@@ -81,8 +81,8 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 const qzData=[
   {q:'En «artículo 128 numeral 7 de la Constitución», ¿qué es el numeral 7?',o:['El año en que se escribió','La página donde está','El número de veces que se ha reformado','Uno de los puntos numerados DENTRO del artículo 128'],c:3,
    e:'Un artículo largo se divide en numerales. El 7 es uno de los puntos del artículo 128.'},
-  {q:'¿Por qué no basta con citar «el artículo 128» a secas?',o:['Porque hay un artículo 128 en casi todas las leyes del país','Porque suena incompleto','Porque los artículos no llevan número','Porque hay que citar el año también'],c:0,
-   e:'El número solo no basta nunca: hay que decir de qué norma es.'},
+  {q:'¿Por qué no basta con citar «el artículo 128» a secas?',o:['Porque otras leyes también tienen un artículo 128','Porque suena incompleto','Porque los artículos no llevan número','Porque hay que citar el año también'],c:0,
+   e:'El número solo no basta nunca: el Código de la Niñez, por ejemplo, tiene su propio artículo 128.'},
   {q:'El Estatuto del Docente dice que existe por «un mandato impostergable» de la Constitución. ¿Qué significa eso?',o:['Que la Constitución la prohíbe','Que la Constitución ORDENÓ que esa ley se escribiera','Que se puede cambiar cuando se quiera','Que la escribió un juez'],c:1,
    e:'Artículo 165. Una Constitución no solo prohíbe: también encarga leyes.'},
   {q:'Según el artículo 162, que el Estatuto cita palabra por palabra, ¿ante quién tiene responsabilidades el educador PRIMERO?',o:['Ante sus discípulos','Ante la Secretaría de Educación','Ante el director del centro','Ante el Congreso Nacional'],c:0,
@@ -91,8 +91,8 @@ const qzData=[
    e:'Un derecho que viene de la Constitución no se lo puede quitar una ley menor.'},
   {q:'Antes de firmar un reglamento, ¿qué tiene que decir una Secretaría de Estado?',o:['Cuánto cuesta','Quién lo pidió','De qué artículos saca el permiso para dictarlo','Cuándo se vence'],c:2,
    e:'El Reglamento del Estatuto empieza «en uso de las facultades establecidas en los artículos 245 numeral 11, 157 y 163 de la Constitución».'},
-  {q:'¿Qué hace falta, según el Código de la Niñez, para que un niño trabaje en una actividad retribuida?',o:['Solo que él quiera','Nada, si es en su casa','El permiso previo de la Secretaría de Trabajo, pedido por sus padres o representante','Un papel firmado por el patrono'],c:2,
-   e:'Y además queda sujeto al artículo 128 numeral 7 de la Constitución.'},
+  {q:'¿Qué hace falta, según el Código de la Niñez, para que un niño trabaje en una actividad retribuida?',o:['Solo que él quiera','Nada, si es en su casa','El permiso previo de la Secretaría de Trabajo, pedido por sus padres, sus hermanos o su representante','Un papel firmado por el patrono'],c:2,
+   e:'Y además queda sujeto al artículo 128 numeral 7 de la Constitución. A un niño menor de catorce años ese permiso no se le da nunca (artículo 120 del Código).'},
   {q:'¿Qué significa que la Constitución, una ley y un convenio internacional digan lo mismo?',o:['Que sobra uno de los tres','Que ese derecho está sostenido por tres textos y es más difícil saltárselo','Que se contradicen','Que manda el más nuevo'],c:1,
    e:'El currículo lo dice así: «la presencia de uno fortalece al otro».'},
   {q:'¿Qué es la democracia PARTICIPATIVA?',o:['Votar cada cuatro años y esperar','Que la gente también decide, pregunta y reclama entre elección y elección','Que vota solo quien paga impuestos','Que deciden los tres poderes juntos'],c:1,
@@ -269,7 +269,7 @@ const classifyTaskDB=[
   {w:'Artículo 128 numeral 7',gen:'El trabajo de los menores',n:'Lo cita el Código de la Niñez',g:'Exige permiso previo',t:'Es el que más cerca te toca'},
   {w:'Artículos 245, 157 y 163',gen:'Las facultades para reglamentar',n:'Los cita el Reglamento del Estatuto',g:'Nadie manda «porque sí»',t:'Sin permiso, lo firmado no vale'},
   {w:'Artículos 34 y 168',gen:'Los docentes de otra nacionalidad',n:'Los cita el artículo 8 del Estatuto',g:'Reciprocidad entre países',t:'Una ley escribe sobre un piso ya puesto'},
-  {w:'Artículo',gen:'La unidad numerada de una ley',n:'Tiene un tema propio',g:'Se cita primero',t:'Hay uno con el mismo número en casi toda ley'},
+  {w:'Artículo',gen:'La unidad numerada de una ley',n:'Tiene un tema propio',g:'Se cita primero',t:'Otras leyes tienen uno con el mismo número'},
   {w:'Numeral',gen:'Un punto numerado dentro de un artículo',n:'Precisa dentro del anterior',g:'El 7 de «128 numeral 7»',t:'Sin él, la cita queda a medias'}
 ];
 /* ⚠️ Cada fila lleva sus `opts`, y no es adorno: `genCompleteTask` pinta
@@ -290,7 +290,7 @@ const completeTaskDB=[
   {s:'La democracia en que la gente decide entre elecciones es la ___.',opts:['participativa','representativa','municipal'],ans:'participativa'}
 ];
 const explainQuestions=[
-  {q:'Explica cómo se lee la cita «artículo 128 numeral 7 de la Constitución de la República».',ans:'Son tres piezas. El ARTÍCULO 128 es la unidad de la norma, con su tema propio. El NUMERAL 7 es uno de los puntos numerados dentro de ese artículo. Y «de la Constitución de la República» dice de qué norma se habla, que es imprescindible: hay un artículo 128 en casi todas las leyes del país.'},
+  {q:'Explica cómo se lee la cita «artículo 128 numeral 7 de la Constitución de la República».',ans:'Son tres piezas. El ARTÍCULO 128 es la unidad de la norma, con su tema propio. El NUMERAL 7 es uno de los puntos numerados dentro de ese artículo. Y «de la Constitución de la República» dice de qué norma se habla, que es imprescindible: otras leyes también tienen su artículo 128, como el Código de la Niñez.'},
   {q:'¿Por qué se dice que la Constitución no solo prohíbe, sino que también manda?',ans:'Porque hay leyes que existen porque ella lo ordenó. El Estatuto del Docente es una: el Congreso lo llama «un mandato impostergable instituido en el artículo 165 de la Constitución de la República». Mientras una ley así no se escribe, ese mandato está sin cumplir.'},
   {q:'El artículo 162 dice que el educador responde ante tres. ¿Ante quiénes, y en qué orden?',ans:'Frente a sus discípulos, frente a la institución en que labora y ante la sociedad. En ese orden, y el primero es el alumno. Lo cita palabra por palabra el Estatuto del Docente en sus considerandos.'},
   {q:'¿Por qué una autoridad tiene que decir de qué artículos saca sus facultades?',ans:'Porque nadie en el Estado manda «porque sí». El Reglamento del Estatuto empieza diciendo que se dicta «en uso de las facultades establecidas en los artículos 245 numeral 11, 157 y 163 de la Constitución». Quien no puede decir de dónde saca el permiso no lo tiene, y lo que firmó no vale.'},
@@ -385,14 +385,25 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
      los preguntan las otras tres secciones, y un pareado de artículos
      repetiría cada una.
 
+   ⚠️ Y la historia de la misión y la animación que va debajo no pueden
+   contestar nada de aquí. El 1 de octubre de 2026 se cambiaron cuatro que se
+   contestaban de memoria, con la respuesta en el mismo lugar: «citar el 128
+   sin decir de qué norma es» y el numeral del 128 (la animación los hace
+   delante del alumno: dos leyes con su artículo 128 y la cita entera que
+   señala uno), «para reclamar no hace falta saber qué dice la norma» (es la
+   frase de la historia) y dónde se lee el texto de un artículo (la animación
+   termina con los dos mirando ese texto). Y el permiso lo pueden pedir los
+   padres, los HERMANOS o el representante legal, como dice el artículo 119:
+   el completar pedía «padres» y le marcaba mal al que escribía «hermanos».
+
    ⚠️ Son DIEZ por banco y no quince, a propósito: con quince, la única forma
    de llenar el banco era volver a preguntar lo mismo.
    Lo vigila _dev/verifica-examen-sin-pistas.js. */
 const evalTFBank=[
-  {q:'Citar «el artículo 128» sin decir de qué norma es, basta para saber de qué artículo se habla.',a:false,k:'cita-completa'},
+  {q:'Las tres normas que citan la Constitución dicen en qué año se aprobó.',a:false,k:'anio-constitucion'},
   {q:'El Estatuto del Docente copia palabra por palabra un artículo de la Constitución.',a:true,k:'162-literal'},
   {q:'Los artículos 34 y 168 de la Constitución se citan para los maestros que vienen de otro país.',a:true,k:'a34-168'},
-  {q:'Para reclamar un derecho no hace falta saber qué dice la norma.',a:false,k:'saber-norma'},
+  {q:'El artículo 162 dice que la docencia tiene un carácter solo informativo.',a:false,k:'162-formativo'},
   {q:'Cuando tres normas distintas protegen el mismo derecho, ese derecho es más difícil de saltar.',a:true,k:'se-apoyan'},
   {q:'Un caso concreto en que no se cumple un artículo lo resuelve el Congreso Nacional.',a:false,k:'reclamar-judicial'},
   {q:'Nombrar de maestro a alguien saltándose el concurso incumple una ley que la Constitución mandó escribir.',a:true,k:'caso-nombramiento'},
@@ -403,7 +414,7 @@ const evalTFBank=[
 const evalMCBank=[
   {q:'Según el artículo 162, ¿ante quién responde PRIMERO el educador?',o:['Ante la Secretaría','Ante sus discípulos','Ante el director','Ante el Congreso'],a:1,k:'162-discipulos'},
   {q:'¿Qué Secretaría da el permiso para que un menor tenga un empleo pagado?',o:['La de Salud','La de Finanzas','La de Trabajo','Ninguna: no hace falta permiso'],a:2,k:'permiso-secretaria'},
-  {q:'Para leer el texto completo de un artículo de la Constitución, ¿dónde hay que buscarlo?',o:['En la Constitución misma','En el Código de la Niñez','En el Reglamento del Estatuto','En lo que recuerda un compañero'],a:0,k:'buscar-texto'},
+  {q:'Cuando una ley cita un artículo de la Constitución, ¿para qué lo hace?',o:['Para decir de dónde saca lo que manda','Para llenar la página','Para que la ley suene importante','Para cambiar lo que dice la Constitución'],a:0,k:'para-que-cita'},
   {q:'Al analizar un caso en que un artículo no se cumple, ¿qué es lo PRIMERO que hay que decir?',o:['Quién tenía que cumplirlo','A quién le cuesta','Qué artículo no se está cumpliendo','Qué harías tú'],a:2,k:'paso-uno'},
   {q:'¿Para qué sirven los casos de artículos que no se cumplen?',o:['Para acusar a alguien de la comunidad','Para memorizarlos','Para copiarlos en el cuaderno','Para pensarlos en clase, con respeto y sin nombres'],a:3,k:'casos-para-pensar'},
   {q:'¿Qué pide el currículo que hagas con los artículos de la Constitución?',o:['Memorizarlos todos','Seleccionarlos y analizarlos','Copiarlos sin leerlos','Nada, porque ya se cumplen'],a:1,k:'seleccionar-analizar'},
@@ -414,12 +425,12 @@ const evalMCBank=[
 ];
 const evalCPBank=[
   {q:'El artículo ___ de la Constitución ordenó que se escribiera el Estatuto del Docente.',a:'165',k:'a165'},
-  {q:'El artículo 128 de la Constitución, en su numeral ___, trata del empleo de los menores.',a:'7',k:'a128-numeral'},
+  {q:'Según el Código de la Niñez, a un niño menor de ___ años no se le da nunca permiso para trabajar.',a:'catorce (14)',k:'edad-minima'},
   {q:'Los niños gozan de las ___ que consigna la Constitución.',a:'libertades',k:'libertades'},
   {q:'El Estatuto del Docente es el Decreto ___.',a:'136-97',k:'estatuto-decreto'},
   {q:'El Reglamento del Estatuto del Docente es el Acuerdo ___.',a:'0760-SE-99',k:'reglamento-acuerdo'},
   {q:'El Código de la Niñez y la Adolescencia es el Decreto ___.',a:'73-96',k:'codigo-decreto'},
-  {q:'El permiso para que un niño trabaje lo tienen que pedir sus ___ o su representante legal.',a:'padres',k:'permiso-padres'},
+  {q:'El permiso para que un niño trabaje lo pueden pedir sus padres, sus hermanos o su ___ legal.',a:'representante',k:'permiso-quien'},
   {q:'El Reglamento del Estatuto se apoya en el artículo 245 numeral ___ de la Constitución.',a:'11',k:'a245-numeral'},
   {q:'El artículo 162 dice que la docencia le da al educador responsabilidades científicas y ___.',a:'morales',k:'162-morales'},
   {q:'El Reglamento del Estatuto del Docente lo dictó la Secretaría de ___.',a:'Educación',k:'reglamento-quien'}
@@ -530,17 +541,24 @@ function evalSwitchMode(mode){
    30 formas repetían algún dato, 69 veces.
 
    Ahora cada sección tiene su terreno y no pisa el de las otras:
-   - los CASOS son tres de los cinco de la misión —el niño que trabaja, la
-     autoridad que no dice de dónde saca el permiso y los alumnos que no
-     pueden opinar—, y ninguna otra sección nombra su artículo;
+   - los CASOS son dos de los cinco de la misión —la autoridad que no dice de
+     dónde saca el permiso y los alumnos que no pueden opinar—, y ninguna
+     otra sección nombra su artículo;
+   - ⚠️ el del niño que trabaja se quitó el 1 de octubre de 2026: es la
+     historia con que abre la misión con otra ropa, y la animación que va
+     debajo señala su artículo entero. Se contestaba de memoria. Por lo mismo
+     se fueron la causa de que «para reclamar hace falta saber qué dice la
+     norma», que es la frase de la historia, y la comparación de lo que un
+     compañero recuerda contra el texto abierto, que es lo que la animación
+     hace pasar delante del alumno;
    - ⚠️ los otros dos —el nombramiento sin concurso y el Estatuto que «no
      aplica aquí»— se analizan en la misión y en la ficha, y aquí NO salen,
      porque su respuesta es el Estatuto del Docente, que es de lo que tratan
      los errores y los efectos;
-   - la comparación es de ideas —lo escrito y lo que pasa, votar y participar,
-     la memoria y la fuente—, y las decisiones, de respeto y de participación. */
+   - la comparación es de ideas —lo escrito y lo que pasa, votar y
+     participar—, y las decisiones, de respeto y de participación. */
 const critCaseBank=CONST_CASOS.casos
-  .filter(c => ['trabajo-nino','permiso-autoridad','gobierno-escolar'].includes(c.clave))
+  .filter(c => ['permiso-autoridad','gobierno-escolar'].includes(c.clave))
   .map(c => ({txt: c.caso, k: 'caso-' + c.clave}));
 const critCaseQuestions=[
   '1. ¿Qué artículo NO se está cumpliendo? Nómbralo entero.',
@@ -549,7 +567,7 @@ const critCaseQuestions=[
   '4. ¿A dónde se reclama, y qué harías tú?'
 ];
 const critCaseGuides=[
-  'Se valora que lo NOMBRE ENTERO («artículo 128 numeral 7 de la Constitución») y no solo el número: el número solo no identifica nada.',
+  'Se valora que lo NOMBRE ENTERO (el número, el numeral si lo tiene y de qué norma es) y no solo el número: el número solo no identifica nada.',
   'Puede ser una persona, una autoridad o una institución. Lo que no vale es «el sistema»: eso no se le puede reclamar a nadie.',
   'Aquí se califica que le ponga nombre al daño concreto (perder la escuela, perder el salario, quedarse sin voz), no la indignación.',
   'Un caso concreto lo resuelve el Poder Judicial; una regla nueva, el Congreso. Y lo que haga el alumno tiene que estar a su alcance, no ser un deseo.'
@@ -584,15 +602,10 @@ const critCompareBank=[
   {a:'Votar cada cuatro años y esperar a la próxima elección.',b:'Decidir, preguntar y reclamar también entre una elección y otra.',
    ga:'Una democracia que solo vota.',
    gb:'La democracia participativa.',
-   gr:'En las dos se vota, pero en la primera la gente se queda callada cuatro años y en la segunda sigue decidiendo, preguntando y reclamando. Y para reclamar hace falta saber qué dice la norma.',k:['solo-votar','participativa']},
-  {a:'Lo que un compañero recuerda que dice un artículo.',b:'Lo que dice el texto de la Constitución, abierto sobre la mesa.',
-   ga:'Una memoria: puede estar equivocada, y no se puede comprobar.',
-   gb:'La fuente: se puede leer y comprobar.',
-   gr:'Las dos dicen qué pone un artículo, pero solo una se puede comprobar. Por eso la misión no escribe de memoria el texto de la Constitución: manda a buscarlo.',k:['memoria','fuente']}
+   gr:'En las dos se vota, pero en la primera la gente se queda callada cuatro años y en la segunda sigue decidiendo, preguntando y reclamando. Y para reclamar hace falta saber qué dice la norma.',k:['solo-votar','participativa']}
 ];
 const critCauseBank=[
   {cause:'El currículo pide seleccionar artículos de la Constitución y analizarlos.',guide:'Por eso la misión no pide memorizar artículos: pide saber leerlos, buscarlos y notar cuándo no se cumplen.',k:'seleccionar'},
-  {cause:'Para reclamar un derecho hace falta saber qué dice la norma.',guide:'Por eso quien no sabe qué le toca no lo puede pedir: conocer la norma es la primera forma de participar.',k:'saber-norma'},
   {cause:'Un mismo derecho está escrito en la Constitución, en una ley y en un convenio internacional.',guide:'Por eso queda más difícil de saltar: quien quiera saltárselo tiene que saltarse los tres.',k:'se-apoyan'}
 ];
 const critEffectBank=[

@@ -12,6 +12,7 @@
 <meta property="og:url" content="https://metas.policastsapien.com/misiones/2y3ciclo-constitucion/constitucion.html">
 <link rel="stylesheet" href="../../css/vendor/fuentes/fuentes.css">
 <link rel="stylesheet" href="css/constitucion.css">
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La barra de secciones, arriba y siempre a la vista. Va DESPUÉS del CSS
      de la misión a propósito: de ahí saca su color, y así sobrescribe su
      position:static sin un solo !important. -->
@@ -73,6 +74,12 @@
         <div class="tip"><span class="ti">❓</span><div>Sí está escrito, con número y con ley. Un derecho que
         no se puede nombrar no se puede reclamar: se queda en opinión contra opinión. Aquí vas a aprender a
         señalar el artículo, que es lo único que cambia esa conversación.</div></div>
+      </div>
+      <div class="card ac-teal" data-animacion>
+        <h2>📌 ¿Cuál artículo 128?</h2>
+        <div id="amCita"><p>«El artículo 128» a secas no dice cuál: el Código de la Niñez también tiene su artículo 128.
+        La cita entera, «artículo 128 numeral 7 de la Constitución de la República», señala uno solo, y con ella las
+        dos personas del mercado pueden leer lo mismo.</p></div>
       </div>
       <div class="card ac-teal" id="con-comolee"></div>
 
@@ -545,15 +552,18 @@
 </footer>
 
   <script src="js/html2canvas.min.js"></script>
-  <!-- Los tres poderes viven en UN solo sitio (js/data/constitucion-honduras.js):
+  <!-- Los artículos viven en UN solo sitio (js/data/constitucion-honduras.js):
        esta pantalla y la ficha que se fotocopia los sacan de ahí, y por eso
-       no pueden decir fechas distintas. Va ANTES del JS de la misión, que lo
-       usa para armar el Laboratorio y las actividades. -->
+       no pueden decir números distintos. Va ANTES del JS de la misión, que lo
+       usa para armar el Laboratorio y las actividades, y antes de la
+       animación, que dibuja la cita con las piezas de ese mismo archivo. -->
   <script src="../../js/data/constitucion-honduras.js"></script>
   <script src="js/constitucion.js"></script>
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+  <script src="../../js/animacion-mision.js"></script>
+  <script src="js/animacion-cita.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

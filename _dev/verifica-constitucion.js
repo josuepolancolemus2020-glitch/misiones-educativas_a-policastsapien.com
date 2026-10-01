@@ -244,6 +244,49 @@ console.log('\n📕 La Constitución: la pantalla y el papel\n');
   else ok('el archivo de datos sigue diciendo por qué no se escribe lo que no hay');
 }
 
+/* ── 9) la animación saca la cita y el otro libro del archivo de datos ──
+   Lo que asombra en ella, que el Código de la Niñez tiene su propio artículo
+   128, tiene que ser verdad y estar acreditado: ese libro tiene que estar en
+   _dev/leyes/. Y la escena no escribe la cita a mano: si lo hiciera, el día
+   que se corrija el dato la tarjeta diría una cosa y el dibujo otra. */
+{
+  const ESCENA = path.join(RAIZ, 'misiones', '2y3ciclo-constitucion', 'js', 'animacion-cita.js');
+  const C = D.CONST_COMO_SE_LEE, O = C.otro;
+  if (!O || !O.ley || !O.trata || !O.donde) {
+    mal('CONST_COMO_SE_LEE.otro tiene que decir qué libro es, de qué trata su artículo y dónde se lee');
+  } else {
+    const pdfs = fs.existsSync(LEYES)
+      ? fs.readdirSync(LEYES).filter(f => /\.pdf$/i.test(f)).map(f => f.toLowerCase().replace(/[^a-z0-9]+/g, '-')) : [];
+    const m = String(O.donde).match(/(?:decreto|acuerdo)\s+([0-9]+[0-9a-z\-]*)/i);
+    if (!m || !pdfs.some(c => c.includes(m[1].toLowerCase().replace(/[^a-z0-9]+/g, '-'))))
+      mal(`el otro libro de la animación («${O.ley}») dice salir de «${O.donde}», y ese PDF no está en _dev/leyes/`);
+    else ok(`el otro libro con su artículo 128 («${O.ley}») está en _dev/leyes/ (${m[0]})`);
+    if (!limpia(C.aviso).includes(limpia(O.ley))) mal('el aviso de cómo se lee una cita ya no nombra el libro que la animación enseña');
+    else ok('el aviso de la tarjeta nombra el mismo libro que la animación');
+  }
+  const juntas = C.piezas.map(p => p.parte).join(' ');
+  if (juntas !== C.ejemplo) mal(`las piezas de la cita, juntas, no dan el ejemplo: «${juntas}» contra «${C.ejemplo}»`);
+  else ok('las piezas de la cita, juntas, son la cita del ejemplo');
+  if (!fs.existsSync(ESCENA)) {
+    mal('falta la escena de la animación (animacion-cita.js)');
+  } else {
+    /* sin los comentarios: el que cuenta por qué no se escribe algo a mano
+       es justo donde ese algo sigue escrito */
+    const codigo = fs.readFileSync(ESCENA, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|\s)\/\/.*$/gm, '$1');
+    const aMano = [C.ejemplo, O && O.ley, O && O.trata].concat(C.piezas.map(p => p.parte)).filter(Boolean).filter(t => codigo.includes(t));
+    if (!/CONST_COMO_SE_LEE\.piezas/.test(codigo) || !/CONST_COMO_SE_LEE\.otro/.test(codigo))
+      mal('la animación ya no lee la cita y el otro libro de CONST_COMO_SE_LEE');
+    else if (aMano.length) mal(`la animación lleva escrito a mano lo que dice el archivo de datos: ${aMano.join(' · ')}`);
+    else ok('la animación lee la cita y el otro libro del archivo de datos, sin escribirlos a mano');
+  }
+  /* la frase de reserva, por si el aparato no llega, dice lo mismo */
+  const tarjeta = (mision.match(/<div id="amCita">([\s\S]*?)<\/div>/) || [])[1] || '';
+  if (!tarjeta) mal('la misión ya no lleva la tarjeta de la animación (#amCita)');
+  else if (!limpia(tarjeta).includes(limpia(C.ejemplo)) || !(O && limpia(tarjeta).includes(limpia(O.ley))))
+    mal('la frase de reserva de la animación ya no dice la misma cita o el mismo libro que el archivo de datos');
+  else ok('la frase de reserva de la animación dice la misma cita y el mismo libro');
+}
+
 console.log('\n' + (fallos
   ? '❌ ' + fallos + ' fallo(s)' + (avisos ? ', ' + avisos + ' aviso(s)' : '')
   : '✅ la pantalla y el papel dicen lo mismo de la Constitución' + (avisos ? ` (${avisos} aviso)` : '')) + '\n');

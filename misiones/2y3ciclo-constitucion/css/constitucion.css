@@ -561,3 +561,43 @@ body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
    y se usan uno por uno, así que van con aire entre ellos. */
 .con-pasos{margin:0.7rem 0 0.4rem;padding-left:1.35rem;}
 .con-pasos li{margin-bottom:0.38rem;line-height:1.45;}
+
+/* ── La animación de las dos personas y el artículo 128 (#amCita) ──────
+   El globo, el calendario, los libros y las personas son COSAS: se quedan
+   como son en las dos pantallas, así que lo que va escrito sobre papel lleva
+   tinta oscura fija y lo que va en la banda de un libro, letra blanca sobre
+   un color fijo. Lo que va sobre la tarjeta de la misión (la cita, lo que se
+   dice entre las dos personas) lleva la tinta de la pantalla. Nada se dice
+   solo con color: el libro que la cita deja fuera va tenue Y con raya
+   cortada, y lo que señala cada pieza lleva un aro. */
+#amCita .ct-letra { fill: #1e293b; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amCita .ct-suave { fill: #475569; }
+#amCita .ct-blanca { fill: #ffffff; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amCita .ct-globo { fill: #ffffff; stroke: #64748b; stroke-width: 1.2; stroke-linejoin: round; }
+#amCita .ct-suelo { fill: none; stroke: var(--border); stroke-width: 1.2; }
+#amCita .ct-pantalon { fill: #1e3a8a; }
+#amCita .ct-camisa-a { fill: #f59e0b; }
+#amCita .ct-camisa-b { fill: #0d9488; }
+#amCita .ct-camisa-n { fill: #dc2626; }
+#amCita .ct-brazo { fill: none; stroke: #8d5a3b; stroke-width: 3.4; stroke-linecap: round; }
+#amCita .ct-brazo-n { stroke-width: 2.8; }
+#amCita .ct-piel { fill: #b07a4f; }
+#amCita .ct-pelo { fill: #2b1a10; }
+#amCita .ct-saco { fill: #c08a3e; stroke: #713f12; stroke-width: 1; }
+#amCita .ct-amarre { fill: none; stroke: #713f12; stroke-width: 1.6; stroke-linecap: round; }
+#amCita .ct-cal { fill: #ffffff; stroke: #64748b; stroke-width: 1.1; }
+#amCita .ct-cal-banda { fill: #b91c1c; }
+#amCita .ct-flecha { fill: none; stroke: var(--am-pri); stroke-width: 2; stroke-linecap: round; }
+#amCita .ct-punta { fill: var(--am-pri); }
+#amCita .ct-libro { fill: #ffffff; stroke: #64748b; stroke-width: 1.2; }
+#amCita .ct-banda-otro { fill: #3f6212; }
+#amCita .ct-banda-ley { fill: #0d6ea8; }
+#amCita .ct-gris { fill: none; stroke: #cbd5e1; stroke-width: 2; stroke-linecap: round; }
+#amCita .ct-chip { fill: #f1f5f9; stroke: #94a3b8; stroke-width: 1; }
+/* El tenue va con fill-opacity, no con opacity: para la sonda, una pieza con
+   la opacidad por debajo de 1 es una pieza que no está. */
+#amCita .ct-tenue { fill: #ffffff; fill-opacity: 0.62; stroke: #64748b; stroke-width: 1.4; stroke-dasharray: 4 3; }
+#amCita .ct-aro-papel { fill: none; stroke: #b45309; stroke-width: 2.2; }
+#amCita .ct-subraya { fill: none; stroke: var(--am-pri); stroke-width: 1.8; stroke-linecap: round; }
+#amCita .ct-aro-cita { fill: none; stroke: var(--am-pri); stroke-width: 2; }
+#amCita .ct-vacio { fill: none; stroke: var(--gray, #636e72); stroke-width: 1.4; stroke-dasharray: 5 4; }

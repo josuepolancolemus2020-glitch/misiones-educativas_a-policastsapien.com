@@ -13048,6 +13048,165 @@ Salió roja con cada una.
 Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es de
 67 ms; Héroes y Próceres, medido el mismo día, va a 59 y 117 ms.
 
+### La sexagésima séptima: La Constitución, y lo que enseñó
+
+La quinta de la Ruta de la Patria es **La Constitución: mi Ley Fundamental**
+(`misiones/2y3ciclo-constitucion/`, `js/animacion-cita.js`). La historia es la del
+muchacho de doce años que carga bultos en el mercado desde antes de que abran. Uno
+dice «es que en su casa lo necesitan»; otro dice «eso no se puede». Ahí se acaba la
+conversación, porque ninguno puede decir dónde está escrito, y todo sigue igual
+mañana. La historia dice que un derecho que no se puede nombrar se queda en opinión
+contra opinión, y promete enseñar a señalar el artículo. La animación pone arriba
+el mercado: las dos personas con sus globos, el muchacho en medio con su saco y un
+calendario entre los globos. Abajo va lo escrito:
+
+- antes de tocar: ¿qué haría falta para saber cuál tiene razón?;
+- dos flechas que se miran, «opinión contra opinión», y donde iría lo escrito, un
+  papel vacío de raya cortada con «¿dónde está escrito?»; el calendario pasa del
+  Día 1 al Día 2 y todo sigue igual;
+- una dice «¡Lo dice el artículo 128!», y llegan dos libros abiertos en su
+  «Artículo 128»: el Código de la Niñez y la Constitución de la República. «¿Cuál
+  de los dos?»;
+- la cita entera, en tres piezas, y cada una señala lo suyo: «artículo 128» les
+  sirve a los dos (un aro en cada uno); «de la Constitución de la República» deja
+  uno (el Código se pone tenue, con raya cortada); «numeral 7» dice qué punto (un
+  aro en el 7 de sus siete puntos, con «el 7: el trabajo de los niños» debajo);
+- las dos personas preguntan lo mismo, «¿Qué dice el numeral 7?»: «la misma
+  pregunta»;
+- y cada pieza de la cita lleva su aro: el alumno escribe en su cuaderno cómo se lo
+  diría él a esas dos personas.
+
+Siete cosas que valen para las que siguen:
+
+1. ⚠️ **Lo que asombra se leyó en el PDF, y desmintió lo que ya estaba escrito.**
+   El aviso «cópiala entera» decía que «hay un artículo 128 en casi todas las
+   leyes del país», en la tarjeta de la misión, en la ficha, en el quiz, en el
+   Generador de Tareas y en el diagnóstico de la ruta. Nada del repositorio lo
+   acredita. Leyendo el PDF del Código de la Niñez salió algo mejor y verdadero:
+   el mismo Código que cita el «artículo 128 numeral 7 de la Constitución» tiene
+   su propio artículo 128, y también trata de niños que trabajan (se revisan los
+   lugares donde trabajan niños). Dos artículos 128 sobre lo mismo: el número solo
+   no dice cuál. Ese es ahora el ejemplo en los cinco sitios, y vive en el archivo
+   de datos (`CONST_COMO_SE_LEE.otro`, con su `donde`): la escena lo lee de ahí y
+   no lo escribe.
+2. ⚠️ **Y el mismo PDF dijo dos cosas que la misión decía a medias.** El permiso
+   para que un niño trabaje lo pueden pedir los padres, los HERMANOS o el
+   representante legal (artículo 119), y el completar pedía «padres»: le marcaba
+   mal al que escribía «hermanos». Y a un niño menor de catorce años ese permiso no
+   se le da nunca (artículo 120), que la misión no decía y es lo primero que hace
+   falta saber del muchacho de doce años de la historia. De paso se quitó que el
+   128 numeral 7 sea «el que más se incumple», que no lo acredita nada.
+3. ⚠️ **La animación no dice quién tenía razón.** El texto del 128 numeral 7 no
+   está en el repositorio, y quién da el permiso, quién lo pide y desde qué edad
+   lo pregunta la prueba. La escena termina con las dos personas preguntando lo
+   mismo delante de un papel que las dos pueden leer: lo que promete la historia
+   es cambiar la conversación, no ganarla.
+4. **Cada pieza se subraya en el orden en que estrecha la búsqueda**, no en el que
+   se escribe: primero el número (sirve para los dos libros), después la ley
+   (deja uno) y al final el numeral (dice qué punto DEL que quedó), aunque en la
+   cita el numeral vaya en medio. El libro del Código no tiene puntos dibujados, y
+   el numeral solo tiene sentido cuando ya se sabe de qué libro es.
+5. ⚠️ **Lo que se apaga con un libro va ANTES de lo tenue en el documento.** El
+   aro del «Artículo 128» del Código se dibujaba encima de lo tenue y quedaba vivo
+   sobre un libro apagado, que no se sabe qué quiere decir. Ahora va debajo y se
+   apaga con su libro; el de la Constitución va encima. La sonda mira el orden del
+   documento.
+6. **Dos cosas que solo salieron mirando, con la sonda en verde.** El saco del
+   muchacho parecía un escudo o un tambor: ahora tiene su cuello amarrado y va
+   detrás de la camisa. Y en los dos primeros pasos medio dibujo quedaba vacío: en
+   el paso 1 va el papel vacío con «¿dónde está escrito?», que es la frase de la
+   historia, justo donde después llegan los libros. En el paso 0 no, porque
+   contestaría su pregunta.
+7. ⚠️ **La historia y la animación contestaban siete preguntas.** En la
+   conceptual: «citar «el artículo 128» sin decir de qué norma es basta» y el
+   numeral del 128 (la animación los hace delante del alumno), «para reclamar un
+   derecho no hace falta saber qué dice la norma» (la frase de la historia) y
+   dónde se lee el texto de un artículo (la animación termina mirándolo). Ahora
+   preguntan si las tres normas dicen en qué año se aprobó la Constitución, si el
+   162 dice que la docencia es solo informativa, para qué cita una ley un artículo
+   de la Constitución y desde qué edad no se da nunca el permiso; y el completar
+   del permiso pide el representante, con los hermanos en la pregunta. En
+   pensamiento crítico se fueron el caso del niño que trabaja (la historia con otra
+   ropa), la causa de que para reclamar hace falta saber qué dice la norma y la
+   comparación de lo que recuerda un compañero contra el texto abierto. En la
+   ficha, los dos verdaderos o falsos que eran la historia pasaron a los convenios
+   (el Estatuto no nombra ninguno) y al niño de diez años, y la ficha sigue en sus
+   siete hojas. Cada pregunta nueva tiene su respuesta en el mismo lugar.
+
+La sonda de esta escena **no le cree nada a la escena**. Comprueba:
+
+- que la escena lea la cita, el otro libro y su tema del archivo de datos, y que
+  las tres piezas juntas sean la cita del ejemplo;
+- que las dos personas y el muchacho, más bajito, pisen el suelo, él en medio y
+  con el saco a la espalda, detrás de la camisa;
+- que cada persona tenga un solo globo, el de su paso, con lo que dice dentro, la
+  punta encima de su cabeza y el calendario entre los dos;
+- que el calendario diga el día de cada paso, y que en los pasos 4 y 5 las dos
+  pregunten lo mismo, por el numeral de la cita;
+- que las flechas salgan de cada persona y se miren por encima del muchacho, con
+  su etiqueta entre ellas;
+- que el papel vacío sea de raya cortada, con su «?» y «¿dónde está escrito?»;
+- que los dos libros sean iguales, uno al lado del otro, con el nombre del archivo
+  de datos en su banda, abiertos en su «Artículo 128»; que el del Código diga de
+  qué trata y el de la Constitución tenga sus siete puntos en fila;
+- que la cita vaya en tres piezas, en su orden, en un renglón y centrada, cada una
+  con su raya justo debajo y, al final, con su aro;
+- que el «Artículo 128» de los dos libros lleve su aro; que lo tenue tape entero el
+  Código, con raya cortada; que «de la Constitución de la República» señale la
+  banda de la Constitución, y solo esa; que «numeral 7» señale el punto 7, y solo
+  ese, con su tema debajo;
+- que el aro del Código vaya debajo de lo tenue y el de la Constitución encima;
+- que en cada paso cada cosa pase cuando le toca: el papel vacío se va antes de
+  que lleguen los libros, la cita llega cuando ya se fue «¿Cuál de los dos?», y
+  cada pieza señala lo suyo después de subrayarse;
+- que el marcador cuente lo que se ve (las personas, los libros, los que no quedan
+  tapados, las preguntas distintas y los aros), que ningún texto se monte en otro
+  y que todo quepa en el dibujo;
+- y que no salga quién da el permiso, quién lo pide, la edad, otro artículo,
+  numeral o decreto, ni nada de las libertades, los poderes, los convenios o el
+  Gobierno Escolar.
+
+Y `verifica-constitucion` mira lo que no se ve en el navegador: que el otro libro
+tenga su PDF en `_dev/leyes/`, que el aviso de la tarjeta lo nombre, que la escena
+no lleve escrito a mano lo que dice el archivo de datos y que la frase de reserva
+diga la misma cita. ⚠️ Su primera versión solo quitaba los comentarios `/* */`, y
+acusó a la escena por sus comentarios `//`: la lección de «Cuadrado
+**Perfecto**» otra vez. Se comprobó al revés escribiendo el libro a mano en la
+escena y quitándole su PDF al dato, y salió roja con las dos.
+
+Se comprobó al revés con veintiséis averías, plantadas una por una:
+
+- el aro del Código encima de lo tenue;
+- lo tenue sobre la Constitución;
+- el aro del numeral en el punto 6;
+- el numeral subrayado antes que la ley;
+- la cita llegando antes de que se vaya la pregunta;
+- el otro libro escrito a mano, y la Constitución con otro nombre;
+- el globo diciendo el artículo con su numeral, y las dos preguntando cosas
+  distintas;
+- el marcador del paso 3 diciendo 2;
+- «permiso» en una frase;
+- el Día 2 llegando antes de que se vaya el Día 1, y el día sin pasar;
+- los libros llegando antes de que se vaya el papel vacío;
+- la punta del globo lejos de quien habla;
+- la flecha apuntando hacia atrás;
+- la cita corrida del centro, y la raya de una pieza más corta;
+- seis puntos en el artículo;
+- el rótulo del numeral escrito a mano;
+- lo tenue sin raya cortada;
+- el papel vacío sin irse, y sin su «?»;
+- «la misma pregunta» en el paso 3;
+- las piezas al revés;
+- y los aros de la cita en el paso 4.
+
+Salió roja con cada una. La última salió verde la primera vez, y no era la sonda:
+se plantó en el estado con que empieza el paso 5, que es la lección de ¿Qué es un
+Robot? Plantada en el paso 4, sale roja.
+
+Con la CPU frenada seis veces va a 57 cuadros por segundo, y el peor cuadro es de
+167 ms la primera vez que se entra al paso 1; Los Tres Poderes, medida el mismo
+día, va a 58 y 150 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -13251,7 +13410,11 @@ hoja) va después de ella en el documento. Un trazo que alguien dibuja (un
 renglón) lleva en el CSS de la misión la duración de la mano que lo hace, y la
 mano lo sigue con esa misma duración, en una envoltura por movimiento. Y una
 duración que la sonda necesita se lee del texto de la regla de estilo: con un
-`var()` dentro del atajo `transition`, el navegador no lo reparte en sus partes.
+`var()` dentro del atajo `transition`, el navegador no lo reparte en sus partes. Lo que tiene que apagarse con una pieza que se pone
+tenue (un aro sobre un libro) va antes de lo tenue en el documento, y lo que sigue
+vivo, después. Y si lo que asombra en una escena es un dato (que otro libro tenga
+su propio artículo 128), sale del archivo de datos, su fuente está en `_dev/` y la
+sonda de la misión comprueba las dos cosas.
 
 Si la misión es **bilingüe** (carga su `-en.js` y trae el botón 🌐), la escena
 lleva `bilingue: true`, `describe: { es, en }` e `idioma(lang, A)`, y sus
