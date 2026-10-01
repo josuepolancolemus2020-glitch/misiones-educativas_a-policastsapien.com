@@ -3928,6 +3928,137 @@ const LEER = `
       cajasTexto: todos('text').filter(vis).map(caja)
     };
   };
+  window.__amExtra.amRegla = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(m(el)); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function uno(sel, en) { return (en || raiz).querySelector(sel); }
+    function todos(sel, en) { return [].slice.call((en || raiz).querySelectorAll(sel)); }
+    function demora(el) { return el ? (parseFloat(el.style.getPropertyValue('--d')) || 0) : 0; }
+    function numeros(d) { return ((d || '').match(/-?[0-9.]+/g) || []).map(Number); }
+    function texto(t) { return t ? { txt: t.textContent, caja: caja(t), ve: vis(t), d: demora(t) } : null; }
+    /* Cuánto dura la transición de una propiedad, en ms. Se lee de la hoja
+       de estilo y no del estilo calculado: cuando la sonda mira, el dibujo
+       ya está quieto (.am-quieto, o «reducir movimiento») y ahí todo dura
+       cero. Manda la regla que el elemento cumple con más peso (las de la
+       escena empiezan por su id), y no se mira lo que va dentro de @media. */
+    function dura(el, prop) {
+      var mejor = null, peso = -1;
+      for (var i = 0; i < document.styleSheets.length; i++) {
+        var reglas;
+        try { reglas = document.styleSheets[i].cssRules; } catch (e) { continue; }
+        for (var j = 0; reglas && j < reglas.length; j++) {
+          var rg = reglas[j], sel = rg.selectorText, ok = false;
+          if (!sel || sel.indexOf('am-quieto') >= 0 || !rg.style || !rg.style.transition) continue;
+          try { ok = el.matches(sel); } catch (e) { ok = false; }
+          if (!ok) continue;
+          var p = (sel.match(/#/g) || []).length * 100 + (sel.match(/[.]/g) || []).length;
+          if (p >= peso) { mejor = rg; peso = p; }
+        }
+      }
+      if (!mejor) return 0;
+      /* La transición lleva var(--d, 0s), y con un var() dentro el navegador
+         no reparte el atajo en sus partes: se lee el texto, cortado por las
+         comas que no van dentro de un paréntesis. */
+      var t = String(mejor.style.transition), trozos = [], prof = 0, cur = '';
+      for (var c = 0; c < t.length; c++) {
+        var ch = t.charAt(c);
+        if (ch === '(') prof++;
+        if (ch === ')') prof--;
+        if (ch === ',' && prof === 0) { trozos.push(cur.trim()); cur = ''; } else cur += ch;
+      }
+      if (cur.trim()) trozos.push(cur.trim());
+      for (var k = 0; k < trozos.length; k++) {
+        var toks = trozos[k].split(' ');
+        if (toks[0] !== prop && toks[0] !== 'all') continue;
+        for (var q = 1; q < toks.length; q++) {
+          var v = toks[q];
+          if (/^[0-9.]+ms$/.test(v)) return parseFloat(v);
+          if (/^[0-9.]+s$/.test(v)) return parseFloat(v) * 1000;
+        }
+      }
+      return 0;
+    }
+    /* cuánto se corrió una envoltura, sacado de su transformación ya calculada */
+    function corrido(el) {
+      var t = getComputedStyle(el).transform;
+      if (!t || t === 'none') return [0, 0];
+      var mt = new DOMMatrix(t);
+      return [mt.e, mt.f];
+    }
+    function giro(el) { var t = el.style.transform || '', i = t.indexOf('rotate('); return i < 0 ? 0 : parseFloat(t.slice(i + 7)); }
+    function raya(el) { var a = getComputedStyle(el).strokeDasharray; return a && a !== 'none' ? a : ''; }
+    function dibujado(el) { return (parseFloat(getComputedStyle(el).strokeDashoffset) || 0) < 0.5; }
+    function paloma(g) {
+      var p = uno('[data-paloma]', g), nums = numeros(p.getAttribute('d')), pts = [];
+      for (var i = 0; i + 1 < nums.length; i += 2) pts.push(aVista(p, nums[i], nums[i + 1]));
+      var c = uno('circle', g);
+      return { ve: vis(p), d: demora(g), caja: caja(c), centro: aVista(c, +c.getAttribute('cx'), +c.getAttribute('cy')), pts: pts,
+               segmentos: ((p.getAttribute('d') || '').match(/[ML]/g) || []).length };
+    }
+    function segmento(el) { var nn = numeros(el.getAttribute('d')); return { a: aVista(el, nn[0], nn[1]), b: aVista(el, nn[2], nn[3]) }; }
+    var papelG = uno('[data-papel]'), primerRenglon = uno('[data-renglon]'), marca = uno('[data-marca]');
+    var duda = uno('[data-duda]'), dudaC = uno('[data-duda-caja]'), gira = uno('[data-gira]');
+    return {
+      vista: [svg.viewBox.baseVal.width, svg.viewBox.baseVal.height],
+      datos: typeof PODERES !== 'undefined' ? PODERES.map(function (p) { return p.emoji; }) : null,
+      puestos: todos('[data-puesto]').map(function (g) {
+        var c = uno('[data-puesto-caja]', g), t = uno('[data-puesto-txt]', g), q = uno('[data-puesto-duda]', g);
+        return { k: +g.getAttribute('data-puesto'), caja: caja(c), color: getComputedStyle(c).stroke, emoji: texto(uno('[data-puesto-emoji]', g)),
+                 lineas: todos('[data-linea]', t).map(texto), dTxt: demora(t), duda: texto(q) };
+      }),
+      aros: todos('[data-aro]').map(function (a) { return { k: +a.getAttribute('data-aro'), caja: caja(a), ve: vis(a), d: demora(a), color: getComputedStyle(a).stroke }; }),
+      papel: { caja: caja(uno('[data-papel-caja]')), d: demora(papelG), dura: dura(papelG, 'transform') },
+      renglones: todos('[data-renglon]').map(function (l) {
+        var sg = segmento(l);
+        return { i: +l.getAttribute('data-renglon'), a: sg.a, b: sg.b, grueso: parseFloat(getComputedStyle(l).strokeWidth) || 0,
+                 dibujado: dibujado(l), d: demora(l), dura: dura(l, 'stroke-dashoffset') };
+      }),
+      marca: { caja: caja(marca), ve: vis(marca), d: demora(marca),
+               detras: !!(marca.compareDocumentPosition(primerRenglon) & Node.DOCUMENT_POSITION_FOLLOWING) },
+      pluma: (function () {
+        var g = uno('[data-mano="escribe"]'), t = uno('[data-pluma]');
+        return { ve: vis(t), d: demora(g), caja: caja(t), sobreLaHoja: !!(papelG.compareDocumentPosition(g) & Node.DOCUMENT_POSITION_FOLLOWING),
+                 pasos: todos('[data-paso-pluma]', g).map(function (w) { return { tipo: w.getAttribute('data-paso-pluma'), corrido: corrido(w), d: demora(w), dura: dura(w, 'transform') }; }) };
+      })(),
+      engrane: (function () {
+        var g = uno('[data-mano="funciona"]'), dt = uno('[data-engrane-dientes]', g), h = uno('circle', g);
+        return { ve: vis(dt), d: demora(g), caja: caja(dt), centro: aVista(h, +h.getAttribute('cx'), +h.getAttribute('cy')),
+                 giro: giro(gira), dGiro: demora(gira), duraGiro: dura(gira, 'transform') };
+      })(),
+      gente: (function () {
+        var g = uno('[data-gente]');
+        return { ve: vis(g), d: demora(g), suelo: segmento(uno('[data-suelo]')),
+                 personas: todos('[data-persona]').map(function (p) { var cb = uno('[data-cabeza]', p); return { caja: caja(p), cabeza: { c: aVista(cb, +cb.getAttribute('cx'), +cb.getAttribute('cy')), r: +cb.getAttribute('r') } }; }) };
+      })(),
+      duda: { ve: vis(dudaC), dAparece: demora(duda), dSeVa: demora(uno('[data-duda-se-va]')),
+              centro: aVista(dudaC, +dudaC.getAttribute('cx'), +dudaC.getAttribute('cy')), r: +dudaC.getAttribute('r'), raya: raya(dudaC) },
+      bien: paloma(uno('[data-bien]')),
+      flecha: (function () { var f = uno('[data-flecha]'), sg = segmento(f); return { ve: vis(f), d: demora(f), dura: dura(f, 'stroke-dashoffset'), a: sg.a, b: sg.b, dibujada: dibujado(f) }; })(),
+      punta: (function () { var p = uno('[data-punta]'); return { ve: vis(p), d: demora(p), caja: caja(p) }; })(),
+      dedo: texto(uno('[data-mano="decide"]')),
+      escuela: texto(uno('[data-escuela]')),
+      globo: (function () {
+        var g = uno('[data-globo]'), gc = uno('[data-globo-caja]', g), pts = numeros(gc.getAttribute('d')), ps = [];
+        for (var i = 0; i + 1 < pts.length; i += 2) ps.push(aVista(gc, pts[i], pts[i + 1]));
+        return { ve: vis(gc), d: demora(g), caja: caja(gc), contorno: ps, dice: todos('[data-dice]', g).map(texto) };
+      })(),
+      vacia: (function () {
+        var g = uno('[data-vacia]'), c = uno('[data-vacia-caja]', g);
+        return { ve: vis(c), d: demora(g), caja: caja(c), raya: raya(c), duda: texto(uno('[data-vacia-duda]', g)) };
+      })(),
+      dedo2: texto(uno('[data-mano="marvin"]')),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; }),
+      cajasTexto: todos('text').filter(vis).map(caja)
+    };
+  };
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -4118,6 +4249,20 @@ const ESTADOS_RECREO = [
   { tarjeta: 'medio', circulos: true, hecho: { heroe: true, procer: true }, lente: true, globos: true, otra: true, pregunta: false }
 ];
 const MEMO_RECREO = {};
+/* Los Tres Poderes: lo que tiene que verse al terminar cada paso. col: en
+   qué columna está la hoja; puestos: cuántas tarjetas ya dicen lo que hace
+   su mano (de izquierda a derecha). */
+const ESTADOS_REGLA = [
+  { col: 0, escrita: false, puestos: 0, pluma: false, engrane: false, pleito: false, decidido: false, marvin: false, aros: false },
+  { col: 0, escrita: true, puestos: 1, pluma: true, engrane: false, pleito: false, decidido: false, marvin: false, aros: false },
+  { col: 1, escrita: true, puestos: 2, pluma: true, engrane: true, pleito: false, decidido: false, marvin: false, aros: false },
+  { col: 2, escrita: true, puestos: 3, pluma: true, engrane: true, pleito: true, decidido: true, marvin: false, aros: false },
+  { col: 2, escrita: true, puestos: 3, pluma: true, engrane: true, pleito: true, decidido: true, marvin: true, aros: false },
+  { col: 2, escrita: true, puestos: 3, pluma: true, engrane: true, pleito: true, decidido: true, marvin: true, aros: true }
+];
+/* Lo que hace cada mano, tal como lo dice su tarjeta. Que salga de lo que
+   el archivo de datos dice de ese poder lo comprueba verifica-poderes. */
+const PUESTOS_REGLA = [['la escribe'], ['la pone a', 'funcionar'], ['decide cuando', 'hay pleito']];
 const ESCENAS = {
   /* Secuencias: el Robot Mensajero. «El mandado de Marvin».
      ⚠️ Nada se le cree a la escena. La sonda lee en qué renglón quedó cada
@@ -5866,6 +6011,188 @@ const ESCENAS = {
     const vista = { x0: 0, y0: 0, x1: x.vista[0], y1: x.vista[1] };
     r.push([cajas.every(c => dentro(c, vista)) && x.ninos.every(o => dentro(o.caja, vista)) && x.globos.every(g => dentro(g.caja, vista)) && dentro(T.caja, vista)
       && x.circulos.every(c => c.centro[0] - c.r >= 0 && c.centro[0] + c.r <= vista.x1 && c.centro[1] - c.r >= 0 && c.centro[1] + c.r <= vista.y1),
+      `paso ${n}: todo cabe en el dibujo`, null]);
+    return r;
+  },
+  /* Los Tres Poderes: «La misma regla, en tres manos».
+     ⚠️ Nada se le cree a la escena. En qué mesa está la hoja se mide por
+     su centro contra el de cada tarjeta; qué renglón se señala sale del
+     único renglón que queda dentro de lo resaltado, y el dedo tiene que
+     apuntar a ESE; la punta de la pluma se sigue renglón por renglón con
+     las demoras, las duraciones y lo que de verdad se corrió cada
+     envoltura; y el dibujo de cada tarjeta tiene que ser el del poder del
+     archivo de datos, en su orden. */
+  amRegla(e, n) {
+    const x = e.extra, r = [];
+    const cerca = (a, b, t = 0.6) => Math.abs(a - b) <= t;
+    const cen = c => ({ x: (c.x0 + c.x1) / 2, y: (c.y0 + c.y1) / 2 });
+    const dentro = (a, b, m = 0) => a.x0 >= b.x0 - m && a.x1 <= b.x1 + m && a.y0 >= b.y0 - m && a.y1 <= b.y1 + m;
+    const monta = (a, b) => a.x0 < b.x1 - 0.5 && b.x0 < a.x1 - 0.5 && a.y0 < b.y1 - 0.5 && b.y0 < a.y1 - 0.5;
+    const E = ESTADOS_REGLA[n];
+
+    /* ── lo que no depende del dibujo va primero ── */
+    /* Ni el nombre de ningún poder ni de quien lo ejerce (la prueba pregunta
+       qué poder hace qué y quién lo ejerce), ni «ley» ni «cumplir» (pregunta
+       qué es una ley y si es un consejo), ni nada del recorrido del
+       Estatuto, de la jerarquía, de la separación o de la rendición de
+       cuentas, ni un número de dos cifras. */
+    const PROHIBIDAS = /legislativ|ejecutiv|judicial|congreso|presidente|corte|secretar|juzgad|tribunal|\bjuez|diputad|magistrad|decreto|acuerdo|reglament|sentencia|jurisprudencia|gaceta|public|vigencia|ejec[uú]tese|constituci|jerarq|escal[oó]n|rango|estatuto|docente|sal[oó]n|tegucigalpa|[0-9]{2}|separad|r[aá]pid|pararles|rendic|cuentas|asamblea|merienda|dinero|estado de derecho|deber|derech|consejo|oblig|cumpl|todo el pa[ií]s|vale para|vecin|cerco|\bley\b|\bleyes\b|fundamental|reparti/i;
+    const dicho = [e.texto, e.palabras, e.boton].concat(x.textos).join(' · ');
+    r.push([!PROHIBIDAS.test(dicho), `paso ${n}: no sale nada que pregunte la prueba (el nombre de un poder, «ley», «cumplir», el recorrido, la jerarquía)`, (dicho.match(PROHIBIDAS) || [])[0]]);
+
+    /* ── las tres tarjetas ── */
+    const P = x.puestos.slice().sort((a, b) => a.k - b.k), C0 = P[0].caja;
+    r.push([P.length === 3 && P.every(p => cerca(p.caja.y0, C0.y0) && cerca(p.caja.y1, C0.y1) && cerca(p.caja.x1 - p.caja.x0, C0.x1 - C0.x0))
+      && P.every((p, i) => i === 0 || p.caja.x0 > P[i - 1].caja.x1),
+      `paso ${n}: son tres tarjetas iguales, en fila, de izquierda a derecha`, P.map(p => p.caja)]);
+    r.push([Array.isArray(x.datos) && x.datos.length === 3 && P.every((p, i) => p.emoji.txt === x.datos[i]),
+      `paso ${n}: el dibujo de cada tarjeta es el de su poder en el archivo de datos, en su orden`, [P.map(p => p.emoji.txt), x.datos]]);
+    P.forEach(p => {
+      const lleno = p.k < E.puestos, esp = PUESTOS_REGLA[p.k];
+      r.push([p.emoji.ve && dentro(p.emoji.caja, p.caja, -1) && cerca(cen(p.emoji.caja).x, cen(p.caja).x, 1) && p.emoji.caja.y0 - p.caja.y0 < 12,
+        `paso ${n}: el dibujo de la tarjeta ${p.k + 1} va arriba y al centro`, p.emoji.caja]);
+      r.push([p.lineas.every(l => l.ve === lleno) && p.duda.ve === !lleno,
+        `paso ${n}: la tarjeta ${p.k + 1} ${lleno ? 'ya dice lo que hace su mano' : 'todavía tiene su «?»'}`, [p.lineas.map(l => l.ve), p.duda.ve]]);
+      r.push([p.lineas.map(l => l.txt).join('|') === esp.join('|') && p.lineas.every((l, i) => dentro(l.caja, p.caja, -2) && cerca(cen(l.caja).x, cen(p.caja).x, 1)
+        && l.caja.y0 >= p.emoji.caja.y1 - 1 && (i === 0 || l.caja.y0 >= p.lineas[i - 1].caja.y1 - 1)),
+        `paso ${n}: la tarjeta ${p.k + 1} dice «${esp.join(' ')}», centrado y debajo de su dibujo`, p.lineas.map(l => l.txt)]);
+      r.push([p.duda.txt === '?' && dentro(p.duda.caja, p.caja, -2) && cerca(cen(p.duda.caja).x, cen(p.caja).x, 1) && p.duda.caja.y0 >= p.emoji.caja.y1 - 1,
+        `paso ${n}: el «?» de la tarjeta ${p.k + 1} va donde va lo que hace su mano`, p.duda.caja]);
+    });
+
+    /* ── la hoja: en qué mesa está se mide ── */
+    const H = x.papel.caja, aCol = P.map(p => Math.abs(cen(p.caja).x - cen(H).x));
+    const enCol = aCol.indexOf(Math.min(...aCol));
+    r.push([enCol === E.col && cerca(cen(H).x, cen(P[enCol].caja).x, 0.6) && dentro(H, P[enCol].caja, -2)
+      && P[enCol].lineas.concat([P[enCol].duda]).every(l => H.y0 > l.caja.y1 + 2),
+      `paso ${n}: la hoja está en la mesa de la mano ${E.col + 1}, debajo de lo que dice su tarjeta`, [enCol, H]]);
+    const R = x.renglones.slice().sort((a, b) => a.i - b.i);
+    r.push([R.length === 5 && R.every(l => cerca(l.a[1], l.b[1], 0.01) && l.b[0] > l.a[0] && l.a[0] > H.x0 + 2 && l.b[0] < H.x1 - 2 && l.a[1] > H.y0 + 2 && l.a[1] < H.y1 - 2)
+      && R.every((l, i) => i === 0 || (l.a[1] > R[i - 1].a[1] + 5 && cerca(l.a[0], R[0].a[0], 0.01)))
+      && R[0].grueso > R[1].grueso && R.slice(1).every(l => cerca(l.grueso, R[1].grueso, 0.01)),
+      `paso ${n}: la hoja tiene un renglón grueso arriba y cuatro debajo, derechos y dentro de ella`, R.map(l => [l.a, l.b])]);
+    r.push([R.every(l => l.dibujado === E.escrita), `paso ${n}: ${E.escrita ? 'la regla está escrita' : 'la hoja todavía está en blanco'}`, R.map(l => l.dibujado)]);
+
+    /* ── lo que señala la tercera mano: el único renglón dentro de lo resaltado ── */
+    const M = x.marca, senalados = R.filter(l => l.a[1] > M.caja.y0 && l.a[1] < M.caja.y1), S = senalados[0];
+    r.push([senalados.length === 1 && M.caja.x0 <= S.a[0] && M.caja.x1 >= S.b[0] && cerca(cen(M.caja).y, S.a[1], 0.6) && M.detras,
+      `paso ${n}: lo resaltado cubre un solo renglón entero, por detrás de la letra`, [M.caja, senalados.map(l => l.i)]]);
+    r.push([M.ve === E.decidido, `paso ${n}: ${E.decidido ? 'el renglón que se señala está resaltado' : 'todavía no se resalta ningún renglón'}`, M.ve]);
+
+    /* ── la mano que escribe ── */
+    const PL = x.pluma, punta = c => [c.x0 + 1, c.y1 - 3];
+    r.push([PL.ve === E.pluma && PL.sobreLaHoja, `paso ${n}: ${E.pluma ? 'está la mano que escribe, encima de la hoja' : 'todavía no está la mano que escribe'}`, [PL.ve, PL.sobreLaHoja]]);
+    if (E.pluma) {
+      r.push([dentro(PL.caja, P[0].caja, -1) && !P[0].lineas.some(l => monta(l.caja, PL.caja)) && (enCol !== 0 || PL.caja.x0 >= H.x1 - 0.5),
+        `paso ${n}: la mano que escribe se queda en su mesa, al lado de la hoja y sin taparla`, [PL.caja, H]]);
+    }
+    if (n === 1) {
+      /* Dónde está la punta en el instante t: a donde terminó se le resta lo
+         que todavía no se corrió; lo que empezó antes de t ya terminó. */
+      const fin = punta(PL.caja);
+      const en = t => {
+        let px = fin[0], py = fin[1];
+        PL.pasos.forEach(w => { if (w.d >= t - 0.5) { px -= w.corrido[0]; py -= w.corrido[1]; } });
+        return [px, py];
+      };
+      const enVuelo = t => PL.pasos.filter(w => w.d < t - 0.5 && w.d + w.dura > t + 1);
+      R.forEach(l => {
+        const des = PL.pasos.filter(w => w.tipo === 'desliza' && cerca(w.d, l.d, 1));
+        const ini = en(l.d), fn = en(l.d + l.dura);
+        r.push([l.dura > 0 && des.length === 1 && cerca(des[0].dura, l.dura, 1) && cerca(des[0].corrido[0], l.b[0] - l.a[0], 0.6) && cerca(des[0].corrido[1], 0, 0.01)
+          && enVuelo(l.d).length === 0 && Math.hypot(ini[0] - l.a[0], ini[1] - l.a[1]) < 1.5 && Math.hypot(fn[0] - l.b[0], fn[1] - l.b[1]) < 1.5,
+          `paso 1: la punta de la pluma recorre el renglón ${l.i + 1} mientras se dibuja, de su principio a su final`, [ini, l.a, fn, l.b]]);
+      });
+      r.push([R.every((l, i) => i === 0 || l.d >= R[i - 1].d + R[i - 1].dura), 'paso 1: los renglones se escriben uno detrás de otro, de arriba abajo', R.map(l => l.d)]);
+      const ult = PL.pasos[PL.pasos.length - 1];
+      r.push([ult.tipo === 'levanta' && ult.d >= R[R.length - 1].d + R[R.length - 1].dura && P[0].dTxt >= ult.d + ult.dura && P[0].duda.d === P[0].dTxt,
+        'paso 1: al terminar, la mano se aparta y la tarjeta dice lo que hace', [ult.tipo, ult.d, P[0].dTxt]]);
+    }
+
+    /* ── la mano que pone a funcionar ── */
+    const G = x.engrane;
+    r.push([G.ve === E.engrane && cerca(G.giro, E.engrane ? 360 : 0, 0.01),
+      `paso ${n}: ${E.engrane ? 'el engrane de la segunda mano ya dio su vuelta' : 'todavía no está el engrane'}`, [G.ve, G.giro]]);
+    if (G.ve) r.push([dentro(G.caja, P[1].caja, -1) && !P[1].lineas.some(l => monta(l.caja, G.caja))
+      && (enCol !== 1 || (G.caja.x0 >= H.x1 + 1 && G.caja.x0 - H.x1 < 6 && cerca(G.centro[1], cen(H).y, 4))),
+      `paso ${n}: el engrane está en la mesa de la segunda mano${enCol === 1 ? ', pegado a la hoja' : ''}`, [G.caja, H]]);
+    if (n === 2) r.push([x.papel.d === 0 && G.d >= x.papel.d + x.papel.dura && G.dGiro >= G.d && G.duraGiro > 0 && P[1].dTxt >= G.dGiro + G.duraGiro && P[1].duda.d === P[1].dTxt,
+      'paso 2: la hoja llega, aparece el engrane, da su vuelta y después la tarjeta dice lo que hace', [x.papel.dura, G.d, G.dGiro, G.duraGiro, P[1].dTxt]]);
+
+    /* ── la tercera mano y el pleito ── */
+    const D = x.dedo, GE = x.gente, suelo = GE.suelo.a[1];
+    r.push([D.ve === E.decidido, `paso ${n}: ${E.decidido ? 'el dedo de la tercera mano señala la hoja' : 'todavía no señala nadie'}`, D.ve]);
+    if (D.ve) r.push([D.txt === '👈' && enCol === 2 && D.caja.x0 >= H.x1 - 0.5 && D.caja.x0 - H.x1 < 4 && cerca(cen(D.caja).y, S.a[1], 1.5) && dentro(D.caja, P[2].caja, -1),
+      `paso ${n}: el dedo apunta al renglón resaltado, desde la mesa de la tercera mano`, [D.caja, S.a]]);
+    r.push([GE.ve === E.pleito, `paso ${n}: ${E.pleito ? 'están las dos personas del pleito' : 'todavía no hay pleito'}`, GE.ve]);
+    const cabezas = GE.personas.map(p => p.cabeza.c), medio = (cabezas[0][0] + cabezas[1][0]) / 2;
+    r.push([GE.personas.length === 2 && GE.personas.every(p => cerca(p.caja.y1, suelo, 0.8) && p.caja.x0 >= GE.suelo.a[0] - 0.5 && p.caja.x1 <= GE.suelo.b[0] + 0.5 && p.caja.y0 > P[2].caja.y1)
+      && GE.personas[0].caja.x1 < GE.personas[1].caja.x0 && cerca(medio, cen(P[2].caja).x, 1),
+      `paso ${n}: las dos personas están paradas en el suelo, debajo de la tercera tarjeta`, GE.personas.map(p => p.caja)]);
+    const DU = x.duda, B = x.bien, arriba = Math.min(...GE.personas.map(p => p.caja.y0));
+    r.push([DU.ve === (E.pleito && !E.decidido) && B.ve === E.decidido,
+      `paso ${n}: ${E.decidido ? 'el pleito ya está decidido' : E.pleito ? 'hay una duda entre los dos' : 'todavía no hay duda'}`, [DU.ve, B.ve]]);
+    r.push([cerca(DU.centro[0], medio, 0.6) && DU.centro[1] + DU.r < arriba - 1 && DU.raya !== '' && cerca(B.centro[0], DU.centro[0], 0.3) && cerca(B.centro[1], DU.centro[1], 0.3),
+      `paso ${n}: la duda va entre los dos, encima de sus cabezas, y lo decidido sale en su mismo lugar`, [DU.centro, medio]]);
+    if (B.ve) {
+      const [p0, p1, p2] = B.pts;
+      r.push([B.segmentos === 3 && p1[1] > p0[1] && p1[1] > p2[1] && p2[0] > p1[0] && p1[0] > p0[0] && p2[1] < p0[1], `paso ${n}: lo decidido es una paloma, una raya quebrada`, B.pts]);
+    }
+    const F = x.flecha, PU = x.punta;
+    r.push([F.ve === E.decidido && F.dibujada === E.decidido && PU.ve === E.decidido,
+      `paso ${n}: ${E.decidido ? 'de la hoja baja la flecha hasta el pleito' : 'todavía no baja la flecha'}`, [F.ve, F.dibujada, PU.ve]]);
+    if (F.ve) r.push([cerca(F.a[0], F.b[0], 0.01) && cerca(F.a[0], cen(H).x, 0.6) && F.a[1] >= H.y1 && F.a[1] - H.y1 < 5 && F.b[1] > F.a[1]
+      && cerca(cen(PU.caja).x, F.b[0], 0.3) && PU.caja.y1 > F.b[1] && PU.caja.y1 <= DU.centro[1] - DU.r && DU.centro[1] - DU.r - PU.caja.y1 < 6,
+      `paso ${n}: la flecha sale de abajo de la hoja y llega, con su punta, a la duda`, [F.a, F.b, PU.caja]]);
+    if (n === 3) {
+      const llega = x.papel.d + x.papel.dura;
+      r.push([x.papel.d === 0 && DU.dAparece === GE.d && GE.d < D.d && D.d >= llega && M.d >= D.d && F.d >= M.d && PU.d >= F.d + F.dura && B.d >= PU.d && DU.dSeVa === B.d
+        && P[2].dTxt >= B.d && P[2].duda.d === P[2].dTxt,
+        'paso 3: llega la hoja y el pleito, el dedo señala, se resalta el renglón, baja la flecha y se decide; después la tarjeta dice lo que hace',
+        [llega, GE.d, D.d, M.d, F.d, PU.d, B.d, DU.dSeVa, P[2].dTxt]]);
+    }
+
+    /* ── la regla de la escuela de Marvin ── */
+    const ES = x.escuela, GL = x.globo, V = x.vacia, D2 = x.dedo2;
+    r.push([ES.ve === E.marvin && GL.ve === E.marvin && V.ve === E.marvin && V.duda.ve === E.marvin && D2.ve === E.marvin,
+      `paso ${n}: ${E.marvin ? 'está la regla de la escuela de Marvin' : 'todavía no está la escuela de Marvin'}`, [ES.ve, GL.ve, V.ve, D2.ve]]);
+    if (E.marvin) {
+      const dice = GL.dice.map(t => t.txt).join(' '), tip = GL.contorno.reduce((a, b) => b[1] > a[1] ? b : a);
+      /* el cuerpo del globo, sin su punta: la caja con la punta abarca de lado a lado */
+      const cuerpo = { x0: GL.caja.x0, x1: GL.caja.x1, y0: GL.caja.y0, y1: Math.max(...GL.contorno.filter(q => q !== tip).map(q => q[1])) };
+      r.push([dice === '«Así se ha hecho siempre»' && GL.dice.every(t => dentro(t.caja, GL.caja, -2)) && (n !== 4 || e.texto.toLowerCase().includes('así se ha hecho siempre')),
+        `paso ${n}: el globo dice «Así se ha hecho siempre», lo mismo que cuenta la historia`, dice]);
+      r.push([tip[0] >= ES.caja.x0 && tip[0] <= ES.caja.x1 && Math.abs(tip[1] - ES.caja.y0) < 1.5 && GL.caja.y0 > P[0].caja.y1 + 1,
+        `paso ${n}: la punta del globo llega a la escuela, debajo de las tarjetas`, [tip, ES.caja]]);
+      r.push([V.raya !== '' && cerca(V.caja.x1 - V.caja.x0, H.x1 - H.x0, 0.6) && cerca(V.caja.y1 - V.caja.y0, H.y1 - H.y0, 0.6) && V.duda.txt === '?'
+        && dentro(V.duda.caja, V.caja, -2) && cerca(cen(V.duda.caja).x, cen(V.caja).x, 0.6) && !monta(V.caja, ES.caja) && !monta(V.caja, cuerpo),
+        `paso ${n}: el papel de Marvin es una hoja como la otra, de raya cortada, vacía y con su «?»`, V.caja]);
+      r.push([D2.txt === '👈' && D2.caja.x0 >= V.caja.x1 - 0.5 && D2.caja.x0 - V.caja.x1 < 4 && cerca(cen(D2.caja).y, cen(V.caja).y, 1.5),
+        `paso ${n}: otro dedo apunta al papel vacío`, D2.caja]);
+      if (n === 4) r.push([ES.d === 0 && GL.d === ES.d && V.d > GL.d && V.duda.d > V.d && D2.d > V.duda.d,
+        'paso 4: primero lo que le dijeron, después el papel, su «?» y el dedo que no tiene dónde señalar', [GL.d, V.d, V.duda.d, D2.d]]);
+    }
+
+    /* ── los aros del final ── */
+    const AR = x.aros.slice().sort((a, b) => a.k - b.k);
+    r.push([AR.every(a => a.ve === E.aros), `paso ${n}: ${E.aros ? 'las tres manos llevan su aro' : 'todavía no hay aros'}`, AR.map(a => a.ve)]);
+    r.push([AR.length === 3 && AR.every(a => dentro(P[a.k].caja, a.caja, -1) && P.every(p => p.k === a.k || !monta(p.caja, a.caja)) && a.color === P[a.k].color),
+      `paso ${n}: cada aro rodea su tarjeta, y solo la suya, con su color`, AR.map(a => a.caja)]);
+    if (n === 5) r.push([AR.every((a, i) => i === 0 || a.d > AR[i - 1].d), 'paso 5: los aros salen uno detrás de otro', AR.map(a => a.d)]);
+
+    /* ── el marcador y la frase dicen lo que se ve ── */
+    const llenas = P.filter(p => p.lineas.every(l => l.ve)).length, conAro = AR.filter(a => a.ve).length;
+    const valor = n === 0 ? String(P.length) : n <= 3 ? String(llenas) : n === 4 ? '?' : String(conAro);
+    r.push([e.cifra === valor, `paso ${n}: el marcador dice lo que se ve`, [e.cifra, valor]]);
+    const FRASE = [/tres manos/, /escribe/, /pone a funcionar/, /señala.*decide/, /así se ha hecho siempre.*nadie/, /dibujo.*cuaderno/];
+    r.push([FRASE[n].test(e.texto.toLowerCase()), `paso ${n}: la frase dice lo que pasa en el dibujo`, e.texto]);
+
+    /* ── los rótulos ── */
+    const cajas = x.cajasTexto, choques = [];
+    cajas.forEach((a, i) => cajas.forEach((b, j) => { if (j > i && monta(a, b)) choques.push([x.textos[i], x.textos[j]]); }));
+    r.push([choques.length === 0, `paso ${n}: ningún texto se monta en otro`, choques]);
+    const vista = { x0: 0, y0: 0, x1: x.vista[0], y1: x.vista[1] };
+    r.push([cajas.every(c => dentro(c, vista)) && P.every(p => dentro(p.caja, vista)) && AR.every(a => dentro(a.caja, vista)) && GE.personas.every(p => dentro(p.caja, vista)),
       `paso ${n}: todo cabe en el dibujo`, null]);
     return r;
   },

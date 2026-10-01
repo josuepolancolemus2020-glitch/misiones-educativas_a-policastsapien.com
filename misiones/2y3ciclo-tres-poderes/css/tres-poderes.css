@@ -532,3 +532,50 @@ body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
    recorrer la ley sin perder de vista quién la está tocando en cada momento. */
 .pod-paso-quien{display:inline-block;margin-top:0.4rem;font-size:0.78rem;
   font-weight:700;color:var(--sec);letter-spacing:0.02em;}
+
+/* ── La animación de las tres manos (#amRegla) ────────────────────────
+   La hoja, el globo, el papel vacío y las personas son COSAS: se quedan
+   como son en las dos pantallas, así que lo que va escrito sobre papel
+   lleva tinta oscura fija. Lo que va sobre la tarjeta de la misión (lo que
+   hace cada mano) lleva la tinta de la pantalla. Cada tarjeta lleva el
+   color de su poder en la tarjeta de los tres poderes, pero nada se dice
+   solo con color: cada una lleva su dibujo, el que el alumno busca abajo. */
+#amRegla .rg-puesto { stroke-width: 2; fill-opacity: 0.1; }
+#amRegla .rg-puesto-0 { fill: var(--am-pri); stroke: var(--am-pri); }
+#amRegla .rg-puesto-1 { fill: var(--am-sec); stroke: var(--am-sec); }
+#amRegla .rg-puesto-2 { fill: var(--jade); stroke: var(--jade); }
+#amRegla .rg-aro { fill: none; stroke-width: 2.4; }
+#amRegla .rg-aro-0 { stroke: var(--am-pri); }
+#amRegla .rg-aro-1 { stroke: var(--am-sec); }
+#amRegla .rg-aro-2 { stroke: var(--jade); }
+#amRegla .rg-emoji { font-family: 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif; }
+#amRegla .rg-letra { fill: #1e293b; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amRegla .rg-papel { fill: #ffffff; stroke: #64748b; stroke-width: 1.2; }
+#amRegla .rg-renglon { fill: none; stroke: #334155; stroke-width: 1.5; stroke-linecap: round; }
+#amRegla .rg-titulo { stroke-width: 2.6; }
+/* La mano escribe al ritmo de su renglón: cada renglón se dibuja en un
+   cuarto de segundo y la punta de la pluma lo sigue con la misma
+   duración, a paso parejo; al acabar, salta al principio del siguiente.
+   Con los 0,8 s de siempre, los renglones se dibujaban de tres en tres y
+   la pluma llegaba tarde a todos. */
+#amRegla .rg-renglon { transition: stroke-dashoffset 0.25s linear var(--d, 0s); }
+#amRegla .rg-desliza { transition: transform 0.25s linear var(--d, 0s); }
+#amRegla .rg-salta { transition: transform 0.1s ease var(--d, 0s); }
+#amRegla .rg-levanta { transition: transform 0.3s ease var(--d, 0s); }
+#amRegla .rg-marca { fill: #fde047; }
+#amRegla .rg-engrane { fill: var(--am-sec); stroke: #1e293b; stroke-width: 0.8; stroke-linejoin: round; }
+#amRegla .rg-hueco { fill: #ffffff; stroke: #1e293b; stroke-width: 0.8; }
+#amRegla .rg-suelo { fill: none; stroke: var(--border); stroke-width: 1.2; }
+#amRegla .rg-pantalon { fill: #1e3a8a; }
+#amRegla .rg-camisa-a { fill: #f59e0b; }
+#amRegla .rg-camisa-b { fill: #0d9488; }
+#amRegla .rg-brazo { fill: none; stroke: #8d5a3b; stroke-width: 3.4; stroke-linecap: round; }
+#amRegla .rg-piel { fill: #b07a4f; }
+#amRegla .rg-pelo { fill: #2b1a10; }
+#amRegla .rg-duda { fill: #ffffff; stroke: #64748b; stroke-width: 1.2; stroke-dasharray: 3 2; }
+#amRegla .rg-ficha-bien { fill: #ffffff; stroke: #15803d; stroke-width: 1.2; }
+#amRegla .rg-bien { fill: none; stroke: #15803d; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+#amRegla .rg-flecha { fill: none; stroke: var(--am-pri); stroke-width: 2; stroke-linecap: round; }
+#amRegla .rg-punta { fill: var(--am-pri); }
+#amRegla .rg-globo { fill: #ffffff; stroke: #64748b; stroke-width: 1.2; stroke-linejoin: round; }
+#amRegla .rg-vacia { fill: #ffffff; fill-opacity: 0.55; stroke: #64748b; stroke-width: 1.4; stroke-dasharray: 4 3; }

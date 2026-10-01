@@ -176,6 +176,81 @@ console.log('\n⚖️  Los tres poderes: la pantalla y el papel\n');
   else ok('el archivo de datos sigue diciendo por qué no se escriben los números que faltan');
 }
 
+/* ── 8) la animación: cada mano hace lo que el archivo dice de su poder ── */
+console.log('\n✋ La animación de las tres manos');
+const ESCENA = path.join(RAIZ, 'misiones', '2y3ciclo-tres-poderes', 'js', 'animacion-regla.js');
+if (!fs.existsSync(ESCENA)) {
+  avisa('no está la animación de la misión: no se pudo comparar');
+} else {
+  /* La animación no nombra los poderes, a propósito: la prueba pregunta qué
+     poder hace cada cosa. Pone en cada tarjeta el DIBUJO del poder y lo que
+     hace su mano, y el alumno busca el nombre por el dibujo en la tarjeta de
+     los tres poderes de más abajo. Para que eso no enseñe una cosa arriba y
+     otra abajo, los dibujos tienen que ser los del archivo, en su orden, y
+     lo que dice cada tarjeta tiene que salir de lo que el archivo dice de
+     ESE poder y de ningún otro.
+
+     Se lee la constante de la escena tal como corre, sin los comentarios. */
+  const src = fs.readFileSync(ESCENA, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+  const constante = (nombre) => {
+    const i = src.indexOf('var ' + nombre + ' = [');
+    if (i < 0) return null;
+    let j = src.indexOf('[', i), nivel = 0, k = j;
+    for (; k < src.length; k++) {
+      if (src[k] === '[') nivel++;
+      else if (src[k] === ']' && --nivel === 0) break;
+    }
+    try { return vm.runInNewContext('(' + src.slice(j, k + 1) + ')', {}); } catch (e) { return null; }
+  };
+  const PUESTOS = constante('PUESTOS');
+  if (!Array.isArray(PUESTOS) || PUESTOS.length !== D.PODERES.length) {
+    mal('no se pudieron leer las tarjetas (PUESTOS) de la escena: esta comprobación no miró nada');
+  } else {
+    const dib = PUESTOS.map(q => q.emoji), datos = D.PODERES.map(x => x.emoji);
+    if (dib.join('|') === datos.join('|')) ok('las tarjetas llevan los dibujos de los tres poderes, en el orden del archivo: ' + dib.join(' '));
+    else mal('las tarjetas llevan ' + dib.join(' ') + ' y el archivo pone ' + datos.join(' ') + ': el alumno buscaría el nombre de otra mano');
+
+    /* Lo que el archivo dice de cada poder, cortado en trozos por la
+       puntuación. Un trozo que nombra a otro poder es de ese otro: la pista
+       del Judicial dice «El Legislativo la escribe, el Ejecutivo la aplica
+       a todos, y el Judicial la aplica a TU caso», y cada pedazo es de quien
+       nombra. Se comparan palabras enteras: «escribe» no es «escribir». */
+    const VACIAS = new Set(['la', 'las', 'el', 'los', 'lo', 'a', 'al', 'de', 'del', 'y', 'e', 'o', 'u', 'en', 'que', 'si', 'se',
+      'su', 'sus', 'un', 'una', 'por', 'con', 'le', 'les', 'es', 'no', 'ya']);
+    const palabras = t => limpia(t).split(' ').filter(w => w && !VACIAS.has(w)).map(w => w.length > 4 ? w.replace(/s$/, '') : w);
+    const claves = D.PODERES.map(x => x.clave), bolsa = {};
+    claves.forEach(c => { bolsa[c] = new Set(); });
+    const reparte = (t, dueno) => String(t || '').split(/[.,;:«»]/).forEach(trozo => {
+      const lt = limpia(trozo);
+      if (!lt) return;
+      const nombra = claves.filter(c => lt.split(' ').includes(c));
+      const de = nombra.length === 1 ? nombra[0] : nombra.length === 0 ? dueno : null;
+      if (de) palabras(lt).forEach(w => bolsa[de].add(w));
+    });
+    D.PODERES.forEach(x => [x.verbo, x.queHace, x.ejemplo, x.pista].forEach(t => reparte(t, x.clave)));
+    D.PODERES_RECORRIDO.pasos.forEach(x => [x.titulo, x.texto].forEach(t => reparte(t, x.poder)));
+    D.PODERES_SEPARACION.casos.forEach(c => reparte(c.quePasa, c.quien));
+    [D.PODERES_JERARQUIA.fijate, D.PODERES_JERARQUIA.remate, D.PODERES_SEPARACION.texto].forEach(t => reparte(t, null));
+
+    PUESTOS.forEach((q, k) => {
+      const x = D.PODERES[k], dice = (q.lineas || []).join(' '), ws = palabras(dice);
+      const sueltas = ws.filter(w => !bolsa[x.clave].has(w));
+      const tambien = D.PODERES.filter(o => o !== x && ws.every(w => bolsa[o.clave].has(w))).map(o => o.nombre);
+      if (!ws.length) mal('la tarjeta de ' + x.emoji + ' no dice qué hace su mano');
+      else if (sueltas.length) mal('la tarjeta de ' + x.emoji + ' dice «' + dice + '», y el archivo no dice eso del ' + x.nombre + ' («' + sueltas.join(', ') + '»)');
+      else if (tambien.length) mal('la tarjeta de ' + x.emoji + ' («' + dice + '») le cuadra también al ' + tambien.join(' y ') + ': no distingue su mano');
+      else ok('la tarjeta de ' + x.emoji + ' dice «' + dice + '»: el archivo lo dice del ' + x.nombre + ', y de ningún otro');
+    });
+
+    /* Y la escena no nombra a ningún poder ni a quien lo ejerce. */
+    const NOMBRES = /legislativ|ejecutiv|judicial|congreso|presidente|corte suprema|secretar|juzgad|tribunal/i;
+    const cadenas = (src.match(/'(?:[^'\\]|\\.)*'/g) || []).join(' | ');
+    const nombrado = cadenas.match(NOMBRES);
+    if (nombrado) mal('la animación escribe «' + nombrado[0] + '»: la prueba pregunta qué poder hace cada cosa, y el nombre lo busca el alumno por su dibujo');
+    else ok('la animación no nombra ningún poder ni a quien lo ejerce: el nombre lo busca el alumno por su dibujo');
+  }
+}
+
 console.log('\n' + (fallos
   ? '❌ ' + fallos + ' fallo(s)' + (avisos ? ', ' + avisos + ' aviso(s)' : '')
   : '✅ la pantalla y el papel dicen lo mismo de los tres poderes' + (avisos ? ` (${avisos} aviso)` : '')) + '\n');

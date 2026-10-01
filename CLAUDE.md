@@ -2781,6 +2781,15 @@ la consola — la misma familia que el Escudo marcado en rojo y que el
 va una vez más:** lo que se multiplica al copiar una misión no son solo los
 aciertos.
 
+⚠️ **Y la animación de la misión (`js/animacion-regla.js`) no nombra ningún
+poder**, porque la prueba pregunta qué poder hace cada cosa. Cada tarjeta lleva
+el DIBUJO de su poder y lo que hace su mano, y el nombre lo busca el alumno por
+el dibujo en la tarjeta de los tres poderes de más abajo. `verifica-poderes` lo
+comprueba leyendo las constantes de la escena: que los dibujos sean los del
+archivo de datos, en su orden; que lo que dice cada tarjeta salga de lo que el
+archivo dice de ESE poder y de ningún otro; y que en la escena no salga el
+nombre de un poder ni de quien lo ejerce.
+
 **Antes de publicar un cambio de esta misión o de los datos:**
 
 ```
@@ -12901,6 +12910,144 @@ Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro sale
 entre 100 y 167 ms según la medida; el Himno, medido el mismo día, va a 59 y
 83 ms.
 
+### La sexagésima sexta: Los Tres Poderes del Estado, y lo que enseñó
+
+La cuarta de la Ruta de la Patria es **Los Tres Poderes del Estado**
+(`misiones/2y3ciclo-tres-poderes/`, `js/animacion-regla.js`). La historia es la de
+la mamá de Marvin: en la escuela le dijeron que sin cierto papel no podían
+matricularlo. Preguntó dónde estaba escrito eso, le contestaron «así se ha hecho
+siempre», nadie pudo enseñarle el papel y Marvin perdió dos semanas de clase. La
+historia dice que una regla de verdad está escrita, y que quién la escribe, quién
+la hace cumplir y quién decide cuando hay pleito son tres poderes distintos. La
+animación pone arriba tres tarjetas, cada una con el dibujo de un poder (📜, 🏛️ y
+⚖️) y un «?», y una sola hoja que pasa de una mesa a otra:
+
+- antes de tocar: ¿qué hace cada mano?;
+- la primera mano escribe la hoja renglón por renglón, con la punta de la pluma
+  siguiendo cada renglón mientras se dibuja, y su tarjeta dice «la escribe»;
+- la hoja pasa a la segunda mesa, donde un engrane da su vuelta: «la pone a
+  funcionar»;
+- pasa a la tercera: dos personas discuten con un «?» entre ellas, un dedo señala
+  un renglón resaltado, baja una flecha y la duda se vuelve una ✓: «decide cuando
+  hay pleito»;
+- la regla de la escuela de Marvin: «Así se ha hecho siempre», y un papel vacío
+  de raya cortada con otro dedo que no tiene dónde señalar;
+- y cada mano lleva su aro: el alumno busca su nombre por el dibujo más abajo y lo
+  escribe en su cuaderno.
+
+Siete cosas que valen para las que siguen:
+
+1. ⚠️ **Las manos no llevan el nombre de su poder.** La prueba pregunta qué poder
+   hace cada cosa y quién lo ejerce, así que la animación enseña el trabajo y el
+   DIBUJO, y el nombre lo busca el alumno en la tarjeta de los tres poderes de
+   más abajo, que lleva los mismos dibujos. Es lo que hizo La Materia con «cuánto
+   pesa» y «cuánto ocupa». `verifica-poderes` lo ata al archivo de datos: que los
+   dibujos sean los del archivo, en su orden; que lo que dice cada tarjeta salga
+   de lo que el archivo dice de ESE poder y de ningún otro (cada trozo de texto
+   es de quien nombra: en «el Legislativo la escribe, el Ejecutivo la aplica a
+   todos», cada pedazo es del suyo); y que la escena no nombre a ningún poder. Se
+   comprobó al revés con seis averías, y salió roja con las seis.
+2. ⚠️ **La historia contestaba tres preguntas de la prueba, y de dos maneras.**
+   El verdadero o falso «Una regla que «siempre se ha hecho así» vale como ley,
+   aunque nadie la haya escrito» era la historia palabra por palabra, en la misión
+   y en la ficha. Y dos casos de pensamiento crítico eran la historia con otra
+   ropa: el encargado de la cancha que contesta «así ha sido siempre» y el vecino
+   al que le cobran un permiso que ninguna ley pide. Ahora la misión pregunta si
+   una ley es solo un consejo, la ficha si con leer el encabezado de una hoja se
+   sabe de qué poder salió (lo enseña su hoja 2), y los casos son el compañero
+   que dice que las leyes son cosa de abogados y el que dice que una ley aprobada
+   ya no hay que ver si se cumple. Todo con la misma respuesta en el mismo sitio.
+   ⚠️ Los casos nuevos no dicen «juzgado» ni «Constitución», y a propósito: el
+   primero le sopla «Judicial» a la comparación de la misma prueba, y el segundo
+   es la corrección de uno de sus errores.
+3. ⚠️ **La pluma escribe al ritmo de su renglón.** Cada renglón se dibuja en un
+   cuarto de segundo (el CSS de la misión le pone su transición) y la punta de la
+   pluma lo sigue con la misma duración, a paso parejo; al acabar salta al
+   principio del siguiente y, al final, se aparta a la orilla de la hoja para no
+   taparla. Con los 0,8 s de siempre, los renglones se dibujaban de tres en tres y
+   la pluma llegaba tarde a todos. Cada movimiento va en su propia envoltura, y la
+   sonda sigue la punta renglón por renglón con las demoras, las duraciones y lo
+   que de verdad se corrió cada envoltura.
+4. ⚠️ **La mano que escribe quedaba DEBAJO de la hoja.** En la primera versión la
+   pluma esperaba al lado de la hoja y se dibujaba antes que ella; cuando pasó a
+   escribir encima, la hoja la tapaba y solo asomaba la punta. Se vio en las fotos
+   a medio viaje. Ahora va después de la hoja en el documento, y la sonda lo mira.
+5. ⚠️ **La duda del pleito no salía nunca.** Aparece con el pleito y se va cuando
+   se decide, en el mismo paso, y era una sola pieza: el segundo `A.ver` pisaba al
+   primero y las dos personas discutían sin el «?» entre ellas. Al final del paso
+   todo estaba en su sitio, así que solo se vio en las fotos a medio viaje. Son
+   dos envolturas, y la sonda lee las dos demoras.
+6. **Tres frases se cambiaron leyéndolas.** «Decide si hay pleito» se leía como
+   «decide si hay o no hay pleito»: dice «decide cuando hay pleito», como la
+   historia. «Si dos no se ponen de acuerdo» dejaba escrito «acuerdo», que es el
+   nombre de la norma del Ejecutivo y la respuesta de un pareado: dice «si dos
+   discuten por la regla». Y «desde ese momento la regla está en un papel que
+   cualquiera puede leer» contradecía lo que enseña la misión, que una ley obliga
+   desde que se publica y no desde que se escribe: dice «lo que dice se puede leer
+   y señalar con el dedo».
+7. ⚠️ **La sonda no podía leer cuánto dura una transición.** Cuando mira, el
+   dibujo ya está quieto y todo dura cero, así que se lee de la hoja de estilo,
+   que ya estaba escrito. Pero con un `var()` dentro del atajo `transition`, el
+   navegador no lo reparte en sus partes y `transitionProperty` sale vacío: se lee
+   el texto de la regla, cortado por las comas que no van dentro de un paréntesis.
+
+La sonda de esta escena **no le cree nada a la escena**. Comprueba:
+
+- que sean tres tarjetas iguales, en fila, con los dibujos del archivo de datos
+  en su orden, y que cada una diga lo suyo, centrado y debajo de su dibujo, o su
+  «?» donde va eso;
+- en qué mesa está la hoja, midiendo su centro contra el de cada tarjeta;
+- que la hoja tenga un renglón grueso arriba y cuatro debajo, escritos o en blanco
+  según el paso, y que lo resaltado cubra un solo renglón entero, por detrás de la
+  letra;
+- que la punta de la pluma recorra cada renglón mientras se dibuja, de su
+  principio a su final, que los renglones se escriban uno detrás de otro, y que al
+  final la mano se aparte sin tapar la hoja;
+- que el engrane esté en la mesa de la segunda mano, pegado a la hoja, y dé su
+  vuelta cuando la hoja ya llegó;
+- que el dedo apunte al renglón resaltado, que las dos personas pisen el suelo, que
+  la duda vaya entre las dos y la ✓ en su mismo lugar, y que la flecha salga de
+  abajo de la hoja y llegue con su punta a la duda;
+- que en cada paso cada cosa pase cuando le toca: la tarjeta dice lo que hace su
+  mano después de que la mano trabajó;
+- que el globo diga «Así se ha hecho siempre» con la punta en la escuela, que el
+  papel de Marvin sea una hoja como la otra, de raya cortada, y que el otro dedo le
+  apunte;
+- que cada aro rodee su tarjeta, y solo la suya, con su color;
+- que el marcador cuente lo que se ve, que ningún texto se monte en otro y que todo
+  quepa en el dibujo;
+- y que no salga el nombre de un poder, «ley», «cumplir», ni nada del recorrido del
+  Estatuto, de la jerarquía, de la separación o de la rendición de cuentas.
+
+Se comprobó al revés con veintidós averías, plantadas una por una:
+
+- la duda en una sola envoltura;
+- la mano que escribe debajo de la hoja;
+- la pluma saltando antes de acabar el renglón;
+- dos renglones escritos en otro orden;
+- el engrane sin dar la vuelta, y fuera de su tarjeta;
+- la hoja yendo a la tercera mesa en el paso 2;
+- el dedo señalando otro renglón;
+- lo resaltado encima de la letra;
+- la flecha sin llegar a la duda;
+- el «?» de la tercera tarjeta sin irse;
+- la tercera tarjeta diciendo lo suyo antes de decidir;
+- el globo diciendo otra cosa;
+- el papel de Marvin sin raya cortada;
+- el segundo dedo sin apuntar al papel vacío;
+- el marcador del paso 2 diciendo 3;
+- el nombre de un poder en una frase;
+- los dibujos de la primera y la segunda tarjeta cambiados;
+- las personas flotando;
+- la mano en reposo tapando la hoja;
+- los aros con el color de otra tarjeta;
+- y la duda quedándose después de decidir.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es de
+67 ms; Héroes y Próceres, medido el mismo día, va a 59 y 117 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -13097,6 +13244,14 @@ Si la escena afirma algo que sale de un archivo de datos (una definición, lo qu
 hizo alguien), la sonda de esa misión lee las constantes de la escena y las
 compara con el archivo: una corrección hecha en un solo sitio sale roja. Y si lo
 que baja a su sitio cruza un texto que se lee, se saca el texto del camino.
+Cuando la prueba pregunta el NOMBRE de lo que la escena enseña (qué poder hace
+qué), la escena enseña el trabajo y el dibujo, y el nombre se busca abajo por el
+dibujo. Lo que se dibuja encima de otra pieza (la pluma que escribe sobre la
+hoja) va después de ella en el documento. Un trazo que alguien dibuja (un
+renglón) lleva en el CSS de la misión la duración de la mano que lo hace, y la
+mano lo sigue con esa misma duración, en una envoltura por movimiento. Y una
+duración que la sonda necesita se lee del texto de la regla de estilo: con un
+`var()` dentro del atajo `transition`, el navegador no lo reparte en sus partes.
 
 Si la misión es **bilingüe** (carga su `-en.js` y trae el botón 🌐), la escena
 lleva `bilingue: true`, `describe: { es, en }` e `idioma(lang, A)`, y sus

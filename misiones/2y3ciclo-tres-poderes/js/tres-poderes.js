@@ -409,7 +409,7 @@ const evalTFBank=[
   {q:'El artículo 101 del Estatuto del Docente dice desde cuándo empieza a valer.',a:true,k:'articulo-101'},
   {q:'Una ley obliga a todos desde el día en que se aprueba, aunque todavía no se haya publicado.',a:false,k:'vigencia'},
   {q:'El Estatuto del Docente dice cómo entra un maestro a su plaza y qué le deben pagar.',a:true,k:'estatuto-rige'},
-  {q:'Una regla que «siempre se ha hecho así» vale como ley, aunque nadie la haya escrito.',a:false,k:'regla-escrita'}
+  {q:'Una ley es solo un consejo: cada quien decide si la sigue.',a:false,k:'ley-consejo'}
 ];
 const evalMCBank=[
   {q:'¿Qué poder del Estado HACE las leyes?',o:['El Judicial','El Legislativo','El Ejecutivo','Los tres a la vez'],a:1,k:'legislativo-hace'},
@@ -544,15 +544,18 @@ function evalSwitchMode(mode){
      comparación, y ninguna otra sección nombra al Congreso, al Presidente o
      a la Corte haciendo su trabajo;
    - la JERARQUÍA, el reglamento y La Gaceta viven en los errores;
-   - los CASOS cuentan conductas —una regla que nadie enseña escrita, una
-     autoridad que se cree por encima de la ley, un dato inventado—;
+   - los CASOS cuentan conductas —una autoridad que se cree por encima de
+     la ley, un dato inventado, uno que cree que las leyes no son con él—.
+     ⚠️ La regla que nadie enseña escrita ya no va aquí: es la historia de
+     Marvin con la que abre la misión y lo que enseña su animación, así
+     que un caso así se contestaba acordándose de ella;
    - las DECISIONES son de rendición de cuentas y de respeto;
    - las CAUSAS y los EFECTOS salen del Estatuto del Docente y de lo que es
      una ley. */
 const critCaseBank=[
-  {txt:'En la cancha del barrio, el encargado dice que los de otra colonia no pueden jugar, y cuando le preguntan dónde está escrito eso, contesta que «así ha sido siempre».',k:'caso-cancha'},
+  {txt:'Un compañero dice que las leyes son cosa de abogados, y que a un niño de su edad no le sirve conocer ninguna.',k:'caso-leyes-ninos'},
   {txt:'Un funcionario deja el carro donde está prohibido y dice que a él no lo pueden multar, porque es autoridad.',k:'caso-autoridad-multa'},
-  {txt:'A un vecino le cobran un permiso que ninguna ley pide, y él cree que no puede reclamar porque el que se lo cobra es una autoridad.',k:'caso-permiso'},
+  {txt:'Un compañero dice que, si una ley ya está aprobada, no hace falta ver si de verdad se cumple en su comunidad.',k:'caso-ver-si-se-cumple'},
   {txt:'Para el periódico mural, un grupo escribe cuántos diputados tiene el Congreso Nacional poniendo el número que recordó uno de ellos, sin buscarlo.',k:'caso-numero'},
   {txt:'Un compañero dice que sería mejor que una sola persona hiciera las leyes, las mandara cumplir y juzgara los pleitos, porque así todo saldría más rápido.',k:'caso-uno-solo'},
   {txt:'Un compañero asegura lo que dice una ley sin haberla leído nunca, y cuando le preguntan de dónde lo sacó, contesta que «eso dice la gente».',k:'caso-sin-leer'}
@@ -565,8 +568,8 @@ const critCaseQuestions=[
 ];
 const critCaseGuides=[
   'Se valora que cuente la situación con sus palabras: quién dice o hace qué, y de qué regla o de qué autoridad se habla.',
-  'Se valora que diga si está bien o mal y lo sostenga: una regla de verdad está escrita y se puede señalar con el dedo; la ley vale igual para el que gobierna que para cualquiera; nadie hace la ley, la cumple y juzga él solo; y un dato que no se sabe se busca en la fuente: no se inventa.',
-  'Se valora que use un dato de verdad de la misión: qué es una ley, qué es un Estado de Derecho, por qué los poderes están separados o dónde se busca lo que la misión no dice.',
+  'Se valora que diga si está bien o mal y lo sostenga: hay leyes hechas para los niños, como el Código de la Niñez y la Adolescencia; la ley vale igual para el que gobierna que para cualquiera; nadie hace la ley, la cumple y juzga él solo; lo que una ley dice se compara con lo que de verdad pasa; y un dato que no se sabe se busca en la fuente: no se inventa.',
+  'Se valora que use un dato de verdad de la misión: qué es una ley, qué es un Estado de Derecho, por qué los poderes están separados, qué ley rige la vida de los niños o la de su maestro, o dónde se busca lo que la misión no dice.',
   'Respuesta abierta. Se valora que explique con respeto y con un dato concreto, no que se burle de la persona.'
 ];
 const critErrorBank=[
