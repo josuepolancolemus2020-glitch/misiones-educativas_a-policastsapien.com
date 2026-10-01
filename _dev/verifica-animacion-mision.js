@@ -2123,6 +2123,100 @@ const LEER = `
       textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
     };
   };
+  /* Sensores: el tanque de la escuela. Se lee el tanque y el agua (hasta
+     dónde llega, y desde cuándo y por cuánto sube), la bomba con su
+     temblor y su chorro, el reloj con sus dos agujas, el derrame y el
+     charco, la raya de lleno con su sensor, los dos cables, la cajita con
+     lo que anota y su regla, cada aviso con sus cuatro piezas, las
+     pestañas, el charco del martes, don Chico y los nombres. */
+  window.__amExtra.amBomba = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(m(el)); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function uno(sel, en) { return (en || raiz).querySelector(sel); }
+    function todos(sel, en) { return [].slice.call((en || raiz).querySelectorAll(sel)); }
+    function demora(el) { return parseFloat(el.style.getPropertyValue('--d')) || 0; }
+    function dura(el) { return parseFloat(el.style.getPropertyValue('--bo-t')) || 0; }
+    function fuera(el) { return el.classList.contains('am-fuera'); }
+    function numeros(d) { return ((d || '').match(/-?[0-9.]+/g) || []).map(Number); }
+    function puntosDe(p) {
+      var nums = numeros(p.getAttribute('d')), r = [];
+      for (var i = 0; i + 1 < nums.length; i += 2) r.push(aVista(p, nums[i], nums[i + 1]));
+      return r;
+    }
+    function tramosDe(p) {
+      return p.getAttribute('d').split('M').filter(function (s) { return s.trim(); }).map(function (s) {
+        var nums = numeros(s), r = [];
+        for (var i = 0; i + 1 < nums.length; i += 2) r.push(aVista(p, nums[i], nums[i + 1]));
+        return r;
+      });
+    }
+    /* una raya que se traza está dibujada cuando su guion ya no se corre */
+    function trazado(p) { var o = p.style.strokeDashoffset; return o === '' || parseFloat(o) === 0; }
+    function texto(t) { return t ? { txt: t.textContent, caja: caja(t), ve: vis(t), d: demora(t) } : null; }
+    var aguaG = uno('[data-agua-g]'), horas = uno('[data-horas]'), minutos = uno('[data-minutos]');
+    var chorroG = uno('[data-chorro-g]'), chorroC = uno('[data-chorro-corta]');
+    var tiemblaG = uno('[data-tiembla-g]'), tiemblaP = uno('[data-tiembla]');
+    var derrame = uno('[data-derrame]'), charcoG = uno('[data-charco-g]'), crece = uno('[data-charco-crece]');
+    var fantasma = uno('[data-fantasma]'), raya = uno('[data-raya]'), sensorG = uno('[data-sensor-g]');
+    var cajaG = uno('[data-caja-g]'), chico = uno('[data-chico]');
+    return {
+      lang: (window.MetasI18N && window.MetasI18N.idioma && window.MetasI18N.idioma()) === 'en' ? 'en' : 'es',
+      vista: [svg.viewBox.baseVal.width, svg.viewBox.baseVal.height],
+      suelo: caja(uno('[data-suelo]')),
+      tanque: puntosDe(uno('[data-tanque]')),
+      patas: tramosDe(uno('[data-patas]')),
+      agua: { caja: caja(uno('[data-agua]')), d: demora(aguaG), t: dura(aguaG) },
+      chorro: { ve: vis(uno('[data-chorro]')), caja: caja(uno('[data-chorro]')), dOn: demora(chorroG), onFuera: fuera(chorroG), dOff: demora(chorroC), offFuera: fuera(chorroC) },
+      tiembla: { ve: vis(uno('path', tiemblaP)), dOn: demora(tiemblaG), onFuera: fuera(tiemblaG), dOff: demora(tiemblaP), offFuera: fuera(tiemblaP),
+        arcos: todos('path', tiemblaP).map(caja) },
+      bomba: caja(uno('[data-bomba]')),
+      tubo: puntosDe(uno('[data-tubo]')),
+      reloj: { ve: vis(uno('[data-esfera]')), esfera: caja(uno('[data-esfera]')),
+        hora: puntosDe(uno('[data-aguja="hora"]')), min: puntosDe(uno('[data-aguja="min"]')),
+        giroHora: numeros(horas.style.transform)[2] || 0, giroMin: numeros(minutos.style.transform)[2] || 0,
+        dHora: demora(horas), tHora: dura(horas), dMin: demora(minutos), tMin: dura(minutos) },
+      derrame: { ve: vis(derrame), trazado: trazado(derrame), puntos: puntosDe(derrame), d: demora(derrame) },
+      charco: { ve: vis(uno('[data-charco]')), caja: caja(uno('[data-charco]')), dVe: demora(charcoG), dCrece: demora(crece), tCrece: dura(crece),
+        esc: numeros(crece.style.transform)[3] },
+      fantasma: { ve: vis(uno('[data-charco-ya]')), caja: caja(uno('[data-charco-ya]')), raya: getComputedStyle(uno('[data-charco-ya]')).strokeDasharray,
+        d: demora(fantasma), martes: texto(uno('[data-martes]')) },
+      raya: { ve: vis(raya), puntos: puntosDe(raya), raya: getComputedStyle(raya).strokeDasharray, d: demora(uno('[data-raya-g]')) },
+      lleno: texto(uno('[data-lleno]')),
+      sensor: { ve: vis(uno('[data-sensor]')), caja: caja(uno('[data-sensor]')), d: demora(sensorG) },
+      sensorNombre: texto(uno('[data-nombre="sensor"]')),
+      cables: todos('[data-cable]').map(function (c) { return { k: c.getAttribute('data-cable'), ve: vis(c), trazado: trazado(c), puntos: puntosDe(c), d: demora(c) }; }),
+      caja: { ve: vis(uno('[data-caja]')), caja: caja(uno('[data-caja]')), d: demora(cajaG) },
+      anota: todos('[data-anota]').map(function (t) { var o = texto(t); o.k = +t.getAttribute('data-anota'); o.dice = t.getAttribute('data-dice'); return o; }),
+      regla: todos('[data-regla]').map(texto),
+      cumple: todos('[data-cumple]').map(function (c) { return { ve: vis(c), tramos: tramosDe(c), d: demora(c), caja: caja(c) }; }),
+      avisos: todos('[data-aviso]').map(function (g) {
+        var lado = uno('[data-lado]', g), vert = uno('[data-vert]', g), llega = uno('[data-llega]', g), rr = uno('[data-pastilla]', g), t = uno('text', g);
+        var x0 = +rr.getAttribute('x'), y0 = +rr.getAttribute('y'), w = +rr.getAttribute('width'), h = +rr.getAttribute('height');
+        return {
+          dice: g.getAttribute('data-aviso'), txt: t.textContent,
+          saleFuera: fuera(g), dSale: demora(g),
+          lado: numeros(lado.style.transform).slice(0, 2), dLado: demora(lado),
+          vert: numeros(vert.style.transform).slice(0, 2), dVert: demora(vert),
+          llegaFuera: fuera(llega), dLlega: demora(llega),
+          inicio: aVista(g, x0 + w / 2, y0 + h / 2), fin: caja(rr), w: w, h: h
+        };
+      }),
+      pestanas: todos('[data-pestana]').map(function (g) {
+        return { k: g.getAttribute('data-pestana'), ve: vis(uno('rect', g)), caja: caja(uno('rect', g)), txt: uno('text', g).textContent, letra: caja(uno('text', g)), d: demora(g) };
+      }),
+      chico: { ve: vis(uno('[data-cuerpo-chico]')), cuerpo: caja(uno('[data-cuerpo-chico]')), d: demora(chico), nombre: texto(uno('text', chico)) },
+      bombaNombre: texto(uno('[data-nombre="bomba"]')),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   window.__amExtra.amUrna = function (raiz) {
     var vis = window.__amVisible;
     var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
@@ -3392,6 +3486,9 @@ function superficieEn(poly, x) {
   return mejor;
 }
 
+/* Lo que la escena del tanque necesita de un paso a otro (el agua al
+   empezar el día, el charco del martes), por idioma. */
+const MEMO_BOMBA = {};
 const ESCENAS = {
   /* Secuencias: el Robot Mensajero. «El mandado de Marvin».
      ⚠️ Nada se le cree a la escena. La sonda lee en qué renglón quedó cada
@@ -4477,6 +4574,259 @@ const ESCENAS = {
     if (L === 'es' ? /de día o de noche/i.test(e.texto) : /by day or by night/i.test(e.texto)) {
       const vis = (n === 4 ? B : A).filter(c => c.ve).map(mundo);
       r.push([vis.some(w => w.dia) && vis.some(w => w.noche), `paso ${n}: la frase dice de día o de noche, y se ven los dos`, null]);
+    }
+    return r;
+  },
+  /* Sensores: el tanque de la escuela. La sonda lee el tanque, el agua y
+     los avisos, y saca ella misma lo que tiene que decir cada uno: a qué
+     altura estaba el agua cuando el sensor midió (con la subida que se
+     dibuja), si el martes el derrame sale cuando el agua llega al borde, y
+     si la bomba se para cuando le llega el «apaga». Lo de un paso que
+     hace falta en otro (el agua al empezar el día, el charco del martes)
+     se guarda en MEMO_BOMBA, por idioma. */
+  amBomba(e, n) {
+    const x = e.extra, r = [];
+    const L = x.lang === 'en' ? 'en' : 'es';
+    const idioma = L === 'en' ? 'inglés' : 'español';
+    const cerca = (a, b, t = 1.5) => Math.abs(a - b) <= t;
+    const cen = c => ({ x: (c.x0 + c.x1) / 2, y: (c.y0 + c.y1) / 2 });
+    const dentro = (a, b, m = 0) => a.x0 >= b.x0 - m && a.x1 <= b.x1 + m && a.y0 >= b.y0 - m && a.y1 <= b.y1 + m;
+    const monta = (a, b) => a.x0 < b.x1 - 0.5 && b.x0 < a.x1 - 0.5 && a.y0 < b.y1 - 0.5 && b.y0 < a.y1 - 0.5;
+    const memo = MEMO_BOMBA[L] = MEMO_BOMBA[L] || {};
+
+    /* ── lo que no depende del dibujo va primero ── */
+    const PROHIBIDAS = L === 'en'
+      ? /controller|actuator|receptor|effector|brain|signal|\binput|\boutput|reporter|\blight\b|distance|touch|temperature|sound|humidity|proximity|photoresist|ultrasonic|\bbats?\b|microphone|speaker|thermometer|bumper|voices|fever|notices|\bnear\b|\bdeaf|\bblind|\benters?\b|streetlight|drone|incubator|\bLED\b|coffee|phone|push button|wheel/i
+      : /controlador|actuador|receptor|efector|cerebro|se[ñn]al|\bentrada|\bsalida|reportero|\bluz\b|distancia|tacto|temperatura|sonido|humedad|proximidad|fotorresist|ultras[óo]nic|murci[ée]lag|micr[óo]fono|bocina|term[óo]metro|parachoques|\bvoces\b|fiebre|\bcuenta\b|\bacerca\b|sordo|ciego|\bentra\b|faroles|\bdron|incubadora|\bLED\b|cafetal|celular|pulsador|rueda/i;
+    const dicho = [e.texto, e.palabras, e.boton].concat(x.textos).join(' · ');
+    r.push([!PROHIBIDAS.test(dicho), `paso ${n}: no sale ninguna palabra de lo que pregunta la prueba`, (dicho.match(PROHIBIDAS) || [])[0]]);
+    const W = L === 'en'
+      ? { seco: 'dry', agua: 'water', apaga: 'off', regla: ['if it says «water»:', 'switch the pump off'], lleno: 'full', sensor: 'sensor', bomba: 'pump',
+          chico: 'Mr. Chico', martes: 'on Tuesday', percibe: 'senses and tells', decide: 'decides', actua: 'acts' }
+      : { seco: 'seco', agua: 'agua', apaga: 'apaga', regla: ['si avisa «agua»:', 'apaga la bomba'], lleno: 'lleno', sensor: 'sensor', bomba: 'bomba',
+          chico: 'don Chico', martes: 'el martes', percibe: 'percibe y avisa', decide: 'decide', actua: 'actúa' };
+
+    /* ── el tanque, sus patas y el suelo ── */
+    r.push([x.tanque.length === 4, `paso ${n}: el tanque tiene sus dos paredes y su fondo`, x.tanque.length]);
+    if (x.tanque.length !== 4) return r;
+    const [tl, bl, br, tr] = x.tanque;
+    const TQ = { x0: tl[0], x1: tr[0], y0: tl[1], y1: bl[1] };
+    r.push([cerca(tl[0], bl[0], 0.3) && cerca(tr[0], br[0], 0.3) && cerca(bl[1], br[1], 0.3) && cerca(tl[1], tr[1], 0.3) && TQ.x1 > TQ.x0 + 40 && TQ.y1 > TQ.y0 + 40,
+      `paso ${n}: las paredes del tanque son derechas y su fondo es plano`, TQ]);
+    const SUELO = x.suelo.y0;
+    const patas = x.patas.filter(t => cerca(t[0][1], TQ.y1, 0.5) && cerca(t[t.length - 1][1], SUELO, 0.5) && t[0][0] >= TQ.x0 && t[0][0] <= TQ.x1);
+    r.push([patas.length === 2, `paso ${n}: el tanque está sobre dos patas que llegan al suelo`, patas.length]);
+    const BORDE = TQ.y0;
+
+    /* ── la raya de lleno y el sensor: se miden aunque todavía no se vean ── */
+    const LLENO = x.raya.puntos[0][1];
+    const S = x.sensor.caja;
+    r.push([x.raya.puntos.length === 2 && cerca(x.raya.puntos[1][1], LLENO, 0.3) && LLENO > BORDE + 8 && LLENO < TQ.y1 - 30
+      && x.raya.puntos[0][0] >= S.x1 - 0.5 && cerca(x.raya.puntos[1][0], TQ.x1, 4),
+      `paso ${n}: la raya de lleno cruza el tanque por dentro, más abajo que el borde`, LLENO]);
+    r.push([S.x0 >= TQ.x0 && S.x0 <= TQ.x0 + 3.5 && S.x1 < TQ.x0 + 16 && cerca(cen(S).y, LLENO, 0.5),
+      `paso ${n}: el sensor está pegado a la pared del tanque, en la raya de lleno`, S]);
+
+    /* ── el agua: dentro del tanque, y a qué altura ── */
+    const A = x.agua.caja, NIVEL = A.y0;
+    r.push([A.x0 >= TQ.x0 && A.x1 <= TQ.x1 && NIVEL >= BORDE - 0.3 && NIVEL < TQ.y1, `paso ${n}: el agua está dentro del tanque`, [A.x0, A.x1, NIVEL]]);
+
+    /* ── la bomba, su tubo y lo que sale del tubo ── */
+    const B = x.bomba, tubo = x.tubo, salida = tubo[tubo.length - 1];
+    r.push([cerca(B.y1, SUELO, 0.6) && cerca(tubo[0][1], B.y0, 0.6) && tubo[0][0] > B.x0 && tubo[0][0] < B.x1
+      && salida[0] > TQ.x0 + 4 && salida[0] < TQ.x1 - 4 && salida[1] < BORDE,
+      `paso ${n}: la bomba está en el suelo y su tubo sube y llega por encima del tanque`, [tubo[0], salida]]);
+    const C = x.chorro.caja;
+    r.push([cerca(cen(C).x, salida[0], 0.6) && cerca(C.y0, salida[1], 0.6) && C.y1 >= TQ.y1 - 3,
+      `paso ${n}: el chorro cae de la salida del tubo al tanque`, C]);
+
+    /* lo que se ve en cada paso */
+    const VE = [
+      { chico: true, reloj: true, bomba: true, derrame: false, cajita: false, anota: 0, cumple: 0, pestanas: false },
+      { chico: false, reloj: true, bomba: true, derrame: true, cajita: false, anota: 0, cumple: 0, pestanas: false },
+      { chico: false, reloj: false, bomba: false, derrame: false, cajita: true, anota: 0, cumple: 0, pestanas: false },
+      { chico: false, reloj: false, bomba: false, derrame: false, cajita: true, anota: 6, cumple: 2, pestanas: false },
+      { chico: false, reloj: false, bomba: false, derrame: false, cajita: true, anota: 6, cumple: 2, pestanas: true },
+      { chico: false, reloj: false, bomba: false, derrame: false, cajita: true, anota: 6, cumple: 2, pestanas: true }
+    ][n];
+    r.push([x.chico.ve === VE.chico, `paso ${n}: don Chico ${VE.chico ? 'está junto a la bomba' : 'no está'}`, x.chico.ve]);
+    r.push([x.reloj.ve === VE.reloj, `paso ${n}: el reloj ${VE.reloj ? 'se ve' : 'no se ve'}`, x.reloj.ve]);
+    r.push([x.tiembla.ve === VE.bomba && x.chorro.ve === VE.bomba, `paso ${n}: la bomba está ${VE.bomba ? 'encendida: tiembla y echa su chorro' : 'apagada: ni tiembla ni echa agua'}`, [x.tiembla.ve, x.chorro.ve]]);
+    r.push([x.derrame.ve === VE.derrame && x.charco.ve === VE.derrame && (!VE.derrame || x.derrame.trazado),
+      `paso ${n}: el derrame y el charco ${VE.derrame ? 'están' : 'no están'}`, [x.derrame.ve, x.charco.ve]]);
+    const cables = ['1', '2'].map(k => x.cables.find(c => c.k === k));
+    const cajita = [x.raya.ve, x.sensor.ve, x.sensorNombre.ve, x.caja.ve, cables[0].ve && cables[0].trazado, cables[1].ve && cables[1].trazado].concat(x.regla.map(t => t.ve));
+    r.push([cajita.every(v => v === VE.cajita), `paso ${n}: la raya, el sensor, los cables y la cajita con su regla ${VE.cajita ? 'están' : 'todavía no están'}`, cajita]);
+    const anotadas = x.anota.filter(t => t.ve);
+    r.push([anotadas.length === VE.anota, `paso ${n}: la cajita tiene anotados ${VE.anota} avisos`, anotadas.length]);
+    r.push([x.cumple.filter(c => c.ve).length === VE.cumple, `paso ${n}: la regla lleva ${VE.cumple} ✓`, x.cumple.map(c => c.ve)]);
+    r.push([x.pestanas.every(p => p.ve === VE.pestanas) && x.fantasma.ve === VE.pestanas, `paso ${n}: las pestañas y el charco del martes ${VE.pestanas ? 'están' : 'no están'}`, null]);
+    r.push([x.avisos.every(a => a.saleFuera || a.llegaFuera), `paso ${n}: al final del paso no queda ningún aviso viajando`, null]);
+
+    /* el temblor va junto a la bomba */
+    r.push([x.tiembla.arcos.every(c => c.x0 >= B.x1 - 1 && c.x1 <= B.x1 + 16 && c.y0 >= B.y0 - 12 && c.y1 <= B.y1),
+      `paso ${n}: el temblor va al lado de la bomba`, null]);
+
+    /* ── los nombres, en su sitio ── */
+    const BN = x.bombaNombre;
+    r.push([BN.txt === W.bomba && BN.ve && BN.caja.y0 >= SUELO && cerca(cen(BN.caja).x, cen(B).x, 1.5), `paso ${n}: «${W.bomba}» va en el suelo, debajo de la bomba, en ${idioma}`, BN.txt]);
+    r.push([x.sensorNombre.txt === W.sensor && x.sensorNombre.caja.x1 <= TQ.x0 && x.sensorNombre.caja.y1 < LLENO - 2 && x.sensorNombre.caja.x1 > TQ.x0 - 12,
+      `paso ${n}: «${W.sensor}» va junto al sensor, por fuera del tanque`, x.sensorNombre.caja]);
+    r.push([x.lleno.txt === W.lleno && x.lleno.caja.x0 > TQ.x1 && cerca(cen(x.lleno.caja).y, LLENO, 3), `paso ${n}: «${W.lleno}» va a la altura de la raya, al lado del tanque`, x.lleno.txt]);
+    r.push([x.chico.nombre.txt === W.chico && x.chico.nombre.caja.y1 < x.chico.cuerpo.y0 - 6 && cerca(cen(x.chico.nombre.caja).x, cen(x.chico.cuerpo).x, 1),
+      `paso ${n}: «${W.chico}» va encima de don Chico`, x.chico.nombre.txt]);
+    const rotulos = [BN, x.sensorNombre, x.lleno, x.fantasma.martes, x.chico.nombre].filter(t => t.ve).map(t => t.caja)
+      .concat(x.pestanas.filter(p => p.ve).map(p => p.caja)).concat(x.anota.filter(t => t.ve).map(t => t.caja)).concat(x.regla.filter(t => t.ve).map(t => t.caja));
+    const enc = [];
+    rotulos.forEach((a, i) => rotulos.forEach((b, j) => { if (j > i && monta(a, b)) enc.push([i, j]); }));
+    r.push([enc.length === 0, `paso ${n}: ningún rótulo se monta en otro`, enc]);
+
+    /* ── el reloj: la tarde del martes ── */
+    const angulo = p => { const a = Math.atan2(p[1][0] - p[0][0], -(p[1][1] - p[0][1])) * 180 / Math.PI; return (a + 360) % 360; };
+    if (n <= 1) {
+      const ah = angulo(x.reloj.hora), am = angulo(x.reloj.min);
+      const [hh, mm] = n === 0 ? [30, 0] : [180, 0];
+      r.push([cerca(ah, hh, 1) && (cerca(am, mm, 1) || cerca(am, 360, 1)), `paso ${n}: el reloj marca ${n === 0 ? 'la una' : 'las seis'}`, [Math.round(ah), Math.round(am)]]);
+      r.push([cerca(x.reloj.giroMin, (x.reloj.giroHora - 30) * 12, 1), `paso ${n}: la aguja larga da doce vueltas por cada vuelta de la corta`, [x.reloj.giroHora, x.reloj.giroMin]]);
+      r.push([x.reloj.hora.every(p => dentro({ x0: p[0], x1: p[0], y0: p[1], y1: p[1] }, x.reloj.esfera)) && x.reloj.min.every(p => dentro({ x0: p[0], x1: p[0], y0: p[1], y1: p[1] }, x.reloj.esfera)),
+        `paso ${n}: las agujas van dentro del reloj`, null]);
+    }
+
+    /* ── el agua al empezar el día ── */
+    if (n === 0) {
+      memo.nivel0 = NIVEL;
+      memo.bomba = B;
+      r.push([NIVEL > LLENO + 20 && NIVEL < TQ.y1 - 8, 'paso 0: el agua empieza más abajo de la raya de lleno', NIVEL]);
+      r.push([x.chico.cuerpo.x0 >= B.x1 + 8 && x.chico.cuerpo.x0 < B.x1 + 30 && cerca(x.chico.cuerpo.y1, SUELO, 0.6), 'paso 0: don Chico está parado junto a la bomba', x.chico.cuerpo]);
+    }
+    if (n === 1) {
+      r.push([cerca(NIVEL, BORDE, 0.5), 'paso 1: el martes el agua llega hasta el borde', NIVEL]);
+      /* el derrame: del agua, por encima de la pared, por fuera y hasta el suelo */
+      const d = x.derrame.puntos, ult = d[d.length - 1];
+      r.push([d[0][0] > TQ.x1 - 10 && d[0][0] < TQ.x1 && cerca(d[0][1], BORDE, 2) && d.some(p => p[1] < BORDE - 2)
+        && d.slice(2).every(p => p[0] > TQ.x1 + 1) && cerca(ult[1], SUELO, 1.5),
+        'paso 1: el derrame sale del agua, pasa por encima de la pared y cae por fuera hasta el suelo', d]);
+      const ch = x.charco.caja;
+      r.push([ult[0] > ch.x0 && ult[0] < ch.x1 && cerca(cen(ch).y, SUELO + 1.5, 2) && cerca(x.charco.esc, 1, 0.01),
+        'paso 1: el charco se abre en el suelo, donde cae el derrame', ch]);
+      memo.charco = ch;
+      memo.cae = ult;
+      /* cuándo: el agua llega al borde y entonces se derrama; el charco se
+         abre cuando el derrame toca el suelo y crece hasta las seis */
+      const alBorde = x.agua.d + x.agua.t, seis = x.reloj.dHora + x.reloj.tHora;
+      r.push([x.agua.t > 0 && cerca(x.derrame.d, alBorde, 30), 'paso 1: el derrame empieza cuando el agua llega al borde', [alBorde, x.derrame.d]]);
+      r.push([x.charco.dVe >= x.derrame.d + 750 && cerca(x.charco.dCrece, x.charco.dVe, 1) && cerca(x.charco.dCrece + x.charco.tCrece, seis, 30),
+        'paso 1: el charco se abre cuando el derrame llega al suelo y crece hasta las seis', [x.charco.dVe, x.charco.dCrece + x.charco.tCrece, seis]]);
+      const hBorde = 30 + (x.reloj.giroHora - 30) * (alBorde - x.reloj.dHora) / x.reloj.tHora;
+      r.push([x.reloj.tHora > 0 && cerca(x.reloj.dHora, x.reloj.dMin, 1) && cerca(x.reloj.tHora, x.reloj.tMin, 1) && hBorde > 30 + 15 && hBorde < x.reloj.giroHora - 15,
+        'paso 1: el reloj corre la tarde entera: el agua llega al borde a media tarde, y se derrama hasta las seis', Math.round(hBorde)]);
+      r.push([x.chico.d < x.agua.d, 'paso 1: don Chico se va antes de que la tarde empiece a correr', [x.chico.d, x.agua.d]]);
+    }
+    if (n === 2) {
+      r.push([cerca(NIVEL, memo.nivel0, 0.5), 'paso 2: el otro día, el agua empieza donde empezaba', [NIVEL, memo.nivel0]]);
+      /* los cables: del sensor a la cajita, y de la cajita a la bomba */
+      const c1 = cables[0].puntos, c2 = cables[1].puntos, K = x.caja.caja;
+      r.push([cerca(c1[0][0], TQ.x0, 0.6) && cerca(c1[0][1], LLENO, 0.5) && cerca(c1[c1.length - 1][1], K.y0, 0.6) && c1[c1.length - 1][0] > K.x0 + 10 && c1[c1.length - 1][0] < K.x1 - 10,
+        'paso 2: el primer cable sale de la pared, donde está el sensor, y llega a la cajita', [c1[0], c1[c1.length - 1]]]);
+      r.push([cerca(c2[0][1], K.y1, 0.6) && c2[0][0] > K.x0 + 10 && c2[0][0] < K.x1 - 10 && cerca(c2[c2.length - 1][0], B.x1, 0.6) && c2[c2.length - 1][1] > B.y0 && c2[c2.length - 1][1] < B.y1,
+        'paso 2: el segundo cable sale de la cajita y llega a la bomba', [c2[0], c2[c2.length - 1]]]);
+      r.push([x.regla.map(t => t.txt).join('|') === W.regla.join('|') && x.regla.every(t => dentro(t.caja, K, -1)),
+        `paso 2: la cajita lleva escrita su regla, en ${idioma}`, x.regla.map(t => t.txt)]);
+      const orden = [x.raya.d, x.sensor.d, cables[0].d, x.caja.d, x.regla[0].d, x.regla[1].d, cables[1].d];
+      r.push([orden.every((d, i) => i === 0 || d > orden[i - 1]) && orden[0] > 0,
+        'paso 2: se pone primero la raya, después el sensor, su cable, la cajita con su regla y el cable a la bomba', orden]);
+    }
+    if (n >= 3) {
+      r.push([NIVEL <= S.y0 + 0.3 && NIVEL >= BORDE + 3, `paso ${n}: el agua cubre el sensor y no llega al borde`, [NIVEL, S.y0, BORDE]]);
+      const K = x.caja.caja, c1 = cables[0].puntos, c2 = cables[1].puntos;
+      /* lo que anotó la cajita: seis palabras, en dos renglones, dentro */
+      const an = x.anota.slice().sort((a, b) => a.k - b.k);
+      r.push([an.every(t => dentro(t.caja, K, -1) && t.caja.y1 < x.regla[0].caja.y0) && an.every(t => t.txt === W[t.dice]),
+        `paso ${n}: lo que la cajita anotó va dentro de ella, encima de la regla, en ${idioma}`, an.map(t => t.txt)]);
+      r.push([an.slice(0, 5).every(t => t.dice === 'seco') && an[5].dice === 'agua', `paso ${n}: anotó cinco «${W.seco}» y, al final, un «${W.agua}»`, an.map(t => t.dice)]);
+      const ok1 = x.cumple.every((c, i) => c.caja.x1 < x.regla[i].caja.x0 && cerca(cen(c.caja).y, cen(x.regla[i].caja).y, 3) && c.tramos.length === 1 && c.tramos[0].length === 3);
+      r.push([ok1, `paso ${n}: cada renglón de la regla lleva su ✓ delante`, null]);
+      if (n === 3) {
+        /* la bomba: se enciende al empezar y se para cuando le llega «apaga» */
+        const PARA = x.agua.d + x.agua.t;
+        r.push([!x.tiembla.onFuera && x.tiembla.dOn <= 50 && x.tiembla.offFuera && cerca(x.tiembla.dOff, PARA, 20)
+          && !x.chorro.onFuera && x.chorro.dOn <= 50 && x.chorro.offFuera && cerca(x.chorro.dOff, PARA, 20),
+          'paso 3: la bomba se enciende al empezar y se para cuando el agua deja de subir', [x.tiembla.dOff, x.chorro.dOff, PARA]]);
+        const nivelEn = t => memo.nivel0 - (memo.nivel0 - NIVEL) * (t - x.agua.d) / x.agua.t;
+        const sensado = x.avisos.filter(a => a.dice !== 'apaga').sort((a, b) => a.dSale - b.dSale);
+        const apaga = x.avisos.find(a => a.dice === 'apaga');
+        r.push([sensado.length === 6 && !!apaga, 'paso 3: el sensor manda seis avisos y la cajita uno', sensado.length]);
+        if (sensado.length !== 6 || !apaga) return r;
+        /* lo que dice cada aviso sale de la altura del agua cuando se midió */
+        const malDice = sensado.filter(a => {
+          const nv = nivelEn(a.dSale), debe = nv > S.y1 ? 'seco' : 'agua';
+          return a.dice !== debe || a.txt !== W[debe];
+        });
+        r.push([malDice.length === 0, `paso 3: cada aviso dice lo que había: «${W.seco}» con el agua por debajo del sensor, «${W.agua}» cuando lo toca`,
+          sensado.map(a => [Math.round(a.dSale), Math.round(nivelEn(a.dSale) * 10) / 10, a.txt])]);
+        const toca = sensado[5];
+        r.push([cerca(nivelEn(toca.dSale), S.y1, 0.5), 'paso 3: el aviso de «agua» sale justo cuando el agua llega al sensor', Math.round(nivelEn(toca.dSale) * 10) / 10]);
+        /* cómo viaja cada aviso: de lado y después baja, por el cable */
+        const V = sensado[0].dVert - sensado[0].dLado;
+        const esquina = c1[1], llegada = c1[c1.length - 1];
+        const malViaje = sensado.filter(a => {
+          const fin = cen(a.fin);
+          return a.saleFuera || !a.llegaFuera || !cerca(a.dLado, a.dSale, 1) || !cerca(a.dVert, a.dSale + V, 1) || !cerca(a.dLlega, a.dSale + 2 * V, 1)
+            || !cerca(a.inicio[1], LLENO, 0.5) || !(a.inicio[0] > esquina[0] && a.inicio[0] + a.w / 2 < TQ.x0)
+            || !cerca(a.inicio[0] + a.lado[0], esquina[0], 0.5) || !cerca(fin.x, llegada[0], 0.5) || !(a.fin.y1 < K.y0 && a.fin.y1 > K.y0 - 10);
+        });
+        r.push([V > 0 && malViaje.length === 0, 'paso 3: cada aviso sale junto al tanque, va por el cable hasta la esquina, baja y se apaga al llegar a la cajita', malViaje.map(a => a.txt)]);
+        const separados = sensado.every((a, i) => i === 0 || a.dSale >= sensado[i - 1].dLlega);
+        r.push([separados, 'paso 3: un aviso sale cuando el anterior ya llegó', sensado.map(a => a.dSale)]);
+        /* la cajita anota cada uno cuando le llega */
+        const malAnota = an.filter((t, i) => !cerca(t.d, sensado[i].dLlega, 25) || t.dice !== sensado[i].dice);
+        r.push([malAnota.length === 0, 'paso 3: la cajita anota cada aviso cuando le llega, en el orden en que llegan', malAnota.map(t => t.k)]);
+        /* llega «agua»: se cumple el «si», después la orden, y sale «apaga» */
+        r.push([cerca(x.cumple[0].d, toca.dLlega, 30) && x.cumple[1].d > x.cumple[0].d && apaga.dSale > x.cumple[1].d,
+          'paso 3: al llegar «agua» se cumple la regla, y después sale el «apaga»', [toca.dLlega, x.cumple[0].d, x.cumple[1].d, apaga.dSale]]);
+        const finA = cen(apaga.fin), esq2 = c2[1];
+        r.push([apaga.txt === W.apaga && !apaga.saleFuera && apaga.llegaFuera && cerca(apaga.dVert, apaga.dSale, 1) && cerca(apaga.dLado, apaga.dSale + V, 1)
+          && cerca(apaga.dLlega, apaga.dSale + 2 * V, 1) && apaga.inicio[1] > K.y1 && apaga.inicio[1] < K.y1 + 15 && cerca(apaga.inicio[0], c2[0][0], 0.5)
+          && cerca(apaga.inicio[1] + apaga.vert[1], esq2[1], 0.5) && cerca(finA.y, esq2[1], 0.5) && apaga.fin.x0 < B.x1 && finA.x > B.x1,
+          'paso 3: el «apaga» baja de la cajita por el cable y llega hasta la bomba', [apaga.inicio, finA]]);
+        r.push([cerca(apaga.dLlega, PARA, 20), 'paso 3: la bomba se para justo cuando le llega el «apaga»', [apaga.dLlega, PARA]]);
+      }
+      if (n === 4) {
+        const [pp, pd, pa] = ['percibe', 'decide', 'actua'].map(k => x.pestanas.find(p => p.k === k));
+        r.push([pp.txt === W.percibe && pd.txt === W.decide && pa.txt === W.actua, `paso 4: las pestañas dicen ${W.percibe}, ${W.decide} y ${W.actua}, en ${idioma}`, [pp.txt, pd.txt, pa.txt]]);
+        r.push([x.pestanas.every(p => dentro(p.letra, p.caja, 0.5)), 'paso 4: cada palabra cabe en su pestaña', null]);
+        r.push([pp.caja.y0 > LLENO && pp.caja.y0 < LLENO + 12 && pp.caja.x0 > c1[1][0] && pp.caja.x1 < TQ.x0,
+          'paso 4: la del sensor va debajo de su cable, junto al tanque', pp.caja]);
+        r.push([pd.caja.y0 < K.y0 && pd.caja.y1 > K.y0 && pd.caja.x0 > c1[c1.length - 1][0] + 2 && pd.caja.x1 < K.x1,
+          'paso 4: la de la cajita va en su borde de arriba, sin tapar el cable', pd.caja]);
+        r.push([pa.caja.x0 >= B.x1 - 0.5 && pa.caja.x0 < B.x1 + 6 && pa.caja.y0 > c2[c2.length - 1][1] && pa.caja.y0 < B.y1,
+          'paso 4: la de la bomba va a su lado, debajo del cable', pa.caja]);
+        r.push([pp.d < pd.d && pd.d < pa.d && x.fantasma.d > pa.d, 'paso 4: las pestañas salen una por una, y después el charco del martes', [pp.d, pd.d, pa.d, x.fantasma.d]]);
+        const f = x.fantasma, m = f.martes;
+        r.push([/[1-9]/.test(f.raya) && memo.charco && cerca(f.caja.x0, memo.charco.x0, 0.6) && cerca(f.caja.x1, memo.charco.x1, 0.6) && cerca(f.caja.y0, memo.charco.y0, 0.6),
+          'paso 4: el charco del martes va donde estaba, con raya cortada', f.caja]);
+        r.push([m.txt === W.martes && m.caja.y0 >= SUELO && cerca(cen(m.caja).x, cen(f.caja).x, 1.5), `paso 4: debajo dice «${W.martes}»`, m.txt]);
+        r.push([memo.bomba && cerca(B.x0, memo.bomba.x0, 0.3) && cerca(B.y0, memo.bomba.y0, 0.3) && cerca(B.x1, memo.bomba.x1, 0.3),
+          'paso 4: la bomba es la misma del martes, en el mismo sitio', B]);
+      }
+    }
+
+    /* ── lo que se dice ── */
+    const cifra = e.cifra.replace(/\u00a0/g, ' ');
+    if (n <= 1) r.push([+cifra === 0 && anotadas.length === 0, `paso ${n}: el marcador cuenta los avisos que le llegan: ninguno`, cifra]);
+    if (n === 2) r.push([+cifra === [x.sensor].filter(s => s.ve).length, 'paso 2: el marcador cuenta el sensor que se ve', cifra]);
+    if (n === 3) {
+      const nSeco = anotadas.filter(t => t.dice === 'seco').length, nAgua = anotadas.filter(t => t.dice === 'agua').length;
+      const dice = L === 'en' ? `${nSeco} «${W.seco}» and ${nAgua} «${W.agua}»` : `${nSeco} «${W.seco}» y ${nAgua} «${W.agua}»`;
+      r.push([+cifra === anotadas.length && e.palabras.replace(/\u00a0/g, ' ').includes(dice), 'paso 3: el marcador cuenta lo que anotó la cajita', [cifra, e.palabras]]);
+    }
+    if (n === 4) r.push([+cifra === x.pestanas.filter(p => p.ve).length, 'paso 4: el marcador cuenta las pestañas', cifra]);
+    if (n === 5) {
+      const preguntas = (e.texto.match(L === 'en' ? /\?/g : /¿/g) || []).length;
+      r.push([+cifra === preguntas && preguntas === 2, 'paso 5: el marcador cuenta las preguntas de la frase', [cifra, preguntas]]);
+    }
+    if (L === 'es' ? /toda la tarde/.test(e.texto) : /all afternoon/.test(e.texto)) {
+      r.push([n === 1 && cerca(angulo(x.reloj.hora), 180, 1) && x.derrame.ve, `paso ${n}: la frase dice toda la tarde, y el reloj llega a las seis con el agua derramándose`, null]);
     }
     return r;
   },

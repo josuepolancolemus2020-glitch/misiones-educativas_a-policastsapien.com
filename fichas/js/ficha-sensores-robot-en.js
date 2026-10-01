@@ -113,8 +113,9 @@
 
         '<div class="caja idea">📖 <b>Key fact:</b> a sensor <strong>can give a wrong reading</strong> if it is ' +
         '<strong>dirty, wet, blocked or badly placed</strong>, or if there is very little light. The controller believes that false ' +
-        'information and <strong>decides wrong</strong>: that is why the line-following car drifts off the track when its sensor is ' +
-        'covered in mud. Before you blame the program, <strong>check the sensors</strong>.</div>',
+        'information and <strong>decides wrong</strong>: the line-following car drifts off the track when its sensor is covered in ' +
+        'mud; if something blocks the ultrasonic sensor, the echo does not come back and the robot crashes; and a thermometer in ' +
+        'the sun shows more heat than there is in the shade. Before you blame the program, <strong>check the sensors</strong>.</div>',
 
       /* ═══════════ PÁGINA 3 ═══════════ */
       p3:
@@ -122,8 +123,8 @@
 
         '<table>' +
         '<tr><th>Sensor</th><th>What does it sense?</th><th>Human sense</th><th>Example</th></tr>' +
-        '<tr><td class="k">☀️ Light</td><td>How much light there is: bright or dark</td><td>👁️ Sight</td><td>Line-following car; hallway lamp</td></tr>' +
-        '<tr><td class="k">📏 Distance</td><td>How far away an object is (with the echo)</td><td>🦇 The bat’s echo</td><td>Robot that dodges obstacles; automatic door</td></tr>' +
+        '<tr><td class="k">☀️ Light</td><td>How much light there is: bright or dark</td><td>👁️ Sight</td><td>Line-following car; solar streetlights in the park</td></tr>' +
+        '<tr><td class="k">📏 Distance</td><td>How far away an object is (with the echo)</td><td>🦇 The bat’s echo</td><td>Drone that dodges the trees; automatic door</td></tr>' +
         '<tr><td class="k">🤲 Touch</td><td>Whether something touches it or presses it</td><td>🖐️ The touch of your skin</td><td>Bumper pushbutton; power button</td></tr>' +
         '<tr><td class="k">🌡️ Temperature</td><td>How hot or cold it is</td><td>🖐️ The skin</td><td>Digital thermometer at the health center</td></tr>' +
         '<tr><td class="k">🔊 Sound</td><td>Noises, voices and claps</td><td>👂 Hearing</td><td>Cell phone microphone; robot that starts when you clap</td></tr>' +
@@ -173,14 +174,14 @@
         '<h3>I. Fill in the blanks <span class="val">(Value: 10 points each)</span></h3>' +
 
         '<ol>' +
-        '<li>The pump was turned on and off by Mr. <span class="linea-resp"></span>.</li>' +
+        '<li>A robot’s microphone picks up noises, claps and <span class="linea-resp"></span>.</li>' +
         '<li>The sensor sends an electrical <span class="linea-resp"></span>.</li>' +
         '<li>In the body, the sensor is called the <span class="linea-resp"></span>.</li>' +
         '<li>The ultrasonic sensor works like the <span class="linea-resp"></span>.</li>' +
         '<li>Information always <span class="linea-resp"></span> the robot through the sensor.</li>' +
         '<li>Without sensors, the robot would be blind and <span class="linea-resp"></span>.</li>' +
         '<li>The gate stays open because nobody <span class="linea-resp"></span> when someone comes in.</li>' +
-        '<li>On Wednesday there was no water in the school <span class="linea-resp"></span>.</li>' +
+        '<li>The crash push button usually goes on the robot car’s <span class="linea-resp"></span>.</li>' +
         '<li>The digital thermometer at the health center measures <span class="linea-resp"></span> in seconds.</li>' +
         '<li>The supermarket door opens on its own when someone comes <span class="linea-resp"></span>.</li>' +
         '</ol>' +
@@ -188,47 +189,47 @@
         '<h3>II. True or False <span class="val">(Value: 10 points each)</span></h3>' +
 
         '<ol>' +
-        '<li>____ The school’s water is pumped up with a pump.</li>' +
+        '<li>____ All sensors give a warning before something crashes into the robot.</li>' +
         '<li>____ Sensors are never wrong.</li>' +
-        '<li>____ The tank overflowed for lack of a warning.</li>' +
+        '<li>____ A sensor can measure how much water there is in the air.</li>' +
         '<li>____ The sensor moves the robot’s wheels.</li>' +
-        '<li>____ Without sensors the robot would know nothing about what happens around it.</li>' +
+        '<li>____ A drone can dodge the trees on the coffee farm thanks to a sensor.</li>' +
         '<li>____ A sensor cannot fail even when it is very dark.</li>' +
-        '<li>____ A sensor measures many times per second without getting tired.</li>' +
+        '<li>____ A thermometer in direct sunlight shows the same heat as there is in the shade.</li>' +
         '<li>____ A robot can carry several sensors at once.</li>' +
-        '<li>____ A wet sensor may report wrongly.</li>' +
+        '<li>____ The solar streetlights in the park need someone to switch them on every night.</li>' +
         '<li>____ The body also has its own three-part chain.</li>' +
         '</ol>' +
 
-        '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span>. Circle the correct letter.</h3>' +
+        '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span>. Fill in the circle of the letter of the correct answer.</h3>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">1</span>What was the tank pump missing?</div>' +
+        '<div class="preg-q"><span class="preg-n">1</span>If something blocks the ultrasonic sensor, what can happen to the robot?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> Strength</span>' +
-        '<span class="op"><i>b</i> Finding out that the tank was already full</span>' +
-        '<span class="op"><i>c</i> Water</span>' +
-        '<span class="op"><i>d</i> Paint</span>' +
+        '<span class="op"><i>a</i> It goes faster</span>' +
+        '<span class="op"><i>b</i> It crashes, because the echo does not come back</span>' +
+        '<span class="op"><i>c</i> It charges itself</span>' +
+        '<span class="op"><i>d</i> It changes color</span>' +
         '</div></div>',
 
       /* ═══════════ PÁGINA 5 ═══════════ */
       p5:
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">2</span>What does the sensor do with what it picks up?</div>' +
+        '<div class="preg-q"><span class="preg-n">2</span>Before blaming a robot’s program, what should you check?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> It turns it into data for whoever decides</span>' +
-        '<span class="op"><i>b</i> It erases it</span>' +
-        '<span class="op"><i>c</i> It keeps it forever</span>' +
-        '<span class="op"><i>d</i> It switches it off</span>' +
+        '<span class="op"><i>a</i> Its sensors</span>' +
+        '<span class="op"><i>b</i> Its paint</span>' +
+        '<span class="op"><i>c</i> Its name</span>' +
+        '<span class="op"><i>d</i> Its box</span>' +
         '</div></div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">3</span>Why is the sensor called the robot’s «reporter»?</div>' +
+        '<div class="preg-q"><span class="preg-n">3</span>Which of these parts measures nothing?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> Because it talks a lot</span>' +
-        '<span class="op"><i>b</i> Because it writes news</span>' +
-        '<span class="op"><i>c</i> Because it only reports: it does not decide or act</span>' +
-        '<span class="op"><i>d</i> Because it works at night</span>' +
+        '<span class="op"><i>a</i> The thermometer</span>' +
+        '<span class="op"><i>b</i> The microphone</span>' +
+        '<span class="op"><i>c</i> The LED light</span>' +
+        '<span class="op"><i>d</i> The push button</span>' +
         '</div></div>' +
 
         '<div class="preg">' +
@@ -296,7 +297,7 @@
 
       /* ═══════════ PÁGINA 6 ═══════════
          La Columna B conserva el orden del español: la pauta
-         1E · 2G · 3J · 4B · 5I · 6A · 7D · 8F · 9C · 10H vale igual. */
+         1C · 2H · 3E · 4I · 5A · 6G · 7J · 8B · 9F · 10D vale igual. */
       p6:
         '<h3>IV. Matching <span class="val">(Value: 10 points each)</span>. Write on the line the letter from Column B that matches.</h3>' +
 
@@ -315,10 +316,8 @@
         '</table>' +
 
         '<div class="felic">' +
-        '🏅 <b>Congratulations! You have completed the Mission Sensors: The Robot’s Senses.</b> You now know that the sensor ' +
-        'senses the world and turns it into a signal; that each sensor is like one of your own senses; that a sensor is not ' +
-        'the same as an actuator; and that a dirty or blocked sensor can make the robot decide wrong. Keep moving along the ' +
-        'Robot Path! 🤖📡' +
+        '🏅 <b>Congratulations! You have completed the Mission Sensors: The Robot’s Senses.</b> Before you hand it in, check your ' +
+        'answers one by one. Keep moving along the Robot Path! 🤖📡' +
         '</div>' +
 
         '<h2>📏 Assessment Rubric</h2>' +
@@ -342,8 +341,8 @@
         '<p style="font-size:10pt;color:var(--gris);">This page prints on a <strong>separate sheet</strong>: it is only for the teacher or for guided self-assessment.</p>' +
 
         '<div class="pauta">' +
-        '<div><span class="pt">I. Fill in the blanks:</span> 1. Chico &nbsp; 2. signal &nbsp; 3. receptor &nbsp; 4. bat &nbsp; 5. enters &nbsp; 6. deaf &nbsp; 7. notices &nbsp; 8. bathrooms &nbsp; 9. fever &nbsp; 10. near</div>' +
-        '<div><span class="pt">II. True or False:</span> 1T, 2F, 3T, 4F, 5T, 6F, 7T, 8T, 9T, 10T</div>' +
+        '<div><span class="pt">I. Fill in the blanks:</span> 1. voices &nbsp; 2. signal &nbsp; 3. receptor &nbsp; 4. bat &nbsp; 5. enters &nbsp; 6. deaf &nbsp; 7. notices &nbsp; 8. bumper &nbsp; 9. fever &nbsp; 10. near</div>' +
+        '<div><span class="pt">II. True or False:</span> 1F, 2F, 3T, 4F, 5T, 6F, 7F, 8T, 9F, 10T</div>' +
         '<div><span class="pt">III. Multiple choice:</span> 1b, 2a, 3c, 4b, 5c, 6b, 7b, 8a, 9d, 10a</div>' +
         '<div><span class="pt">IV. Matching:</span> 1C, 2H, 3E, 4I, 5A, 6G, 7J, 8B, 9F, 10D</div>' +
         '</div>' +

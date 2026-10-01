@@ -11716,6 +11716,154 @@ escena de Mi Primer Programa, su función quedó debajo del comentario que expli
 la de Detective de Bugs, y la de Bugs se quedó sin el suyo. Cada una tiene ahora
 el suyo: un comentario que explica otra cosa es peor que ninguno.
 
+### La quincuagésima séptima: Sensores: los Sentidos del Robot, y lo que enseñó
+
+La segunda de la Ruta de los Robots es **Sensores: los Sentidos del Robot**
+(`misiones/2y3ciclo-sensores-robot/`, `js/animacion-bomba.js`), bilingüe. La
+historia es la de don Chico: en la escuela, la bomba llena el tanque del agua y
+él la apaga cuando se acuerda. El martes se le olvidó, la bomba echó agua toda
+la tarde, el tanque se derramó y el miércoles no hubo agua en los baños. A la
+bomba no le faltaba fuerza: le faltaba enterarse. La animación es el tanque
+visto de lado y abierto por delante, con la bomba en el suelo, su tubo y un
+reloj:
+
+- la bomba llena el tanque y don Chico está a su lado: ¿quién le avisa que ya se
+  llenó?;
+- el martes don Chico se va, el reloj corre de la una a las seis, el agua llega
+  al borde a media tarde y se derrama por fuera hasta el suelo, donde crece un
+  charco;
+- otro día se le pone un sensor en la raya de lleno, un cable a una cajita con
+  su regla («si avisa «agua»: apaga la bomba») y otro cable de la cajita a la
+  bomba;
+- se enciende la bomba y el agua sube: cada aviso del sensor viaja por el cable
+  y la cajita lo anota. Cinco veces «seco» y, cuando el agua lo toca, «agua»; la
+  regla se cumple, baja un «apaga» por el otro cable y la bomba se para sola;
+- la bomba es la misma del martes: tres pestañas dicen qué hace cada parte
+  (percibe y avisa, decide, actúa), y el charco del martes queda con raya
+  cortada;
+- y la pregunta es del alumno: algo de su escuela que se queda encendido hasta
+  que alguien se acuerda, qué tendría que percibir su sensor y qué diría su
+  regla.
+
+Siete cosas que valen para las que siguen:
+
+1. ⚠️ **El agua se para a tiempo, pero no en el instante, y se dibuja así.**
+   Entre que el agua toca el sensor y que la bomba se para, el aviso viaja y la
+   regla decide, así que el agua sube un poco más y cubre el sensor: es lo que
+   pasa con uno de verdad. Lo que nunca hace es llegar al borde, y la sonda lo
+   mide. Por eso el reloj corre solo el martes: el día del sensor los avisos van
+   en cámara lenta, y un reloj marcaría en horas lo que de verdad dura un
+   instante.
+2. ⚠️ **Lo que dice cada aviso sale de la altura del agua cuando el sensor
+   midió**, con la misma subida que se dibuja, y la sonda la vuelve a calcular
+   aparte con las demoras que leyó. Así salió una avería que ninguna captura de
+   un paso terminado enseñaba bien: el momento en que el agua toca el sensor se
+   redondeaba, la medida caía una milésima antes, y el aviso que tenía que decir
+   «agua» decía «seco». La cajita anotó seis «seco» y la bomba se apagó igual.
+   Ahora se redondea hacia arriba.
+3. **Lo que viaja aparece y se apaga de golpe.** Los avisos se encendían con el
+   apagado de siempre, de medio segundo, y hacían medio camino transparentes,
+   como fantasmas. Se vio en las fotos a medio viaje; ahora llevan su transición
+   rápida (`.bo-rapido`).
+4. ⚠️ **La historia y la animación contestaban nueve preguntas de la prueba y
+   tres de pensamiento crítico.** La historia: «el agua de la escuela se sube con
+   una bomba», «el tanque se derramó por falta de un aviso», «¿qué le faltaba a
+   la bomba?», «la apagaba don ___» y «no hubo agua en los ___», y «sin sensores
+   el robot no sabría nada de lo que pasa», que es su moraleja con otra ropa. La
+   animación: «mide muchas veces sin cansarse», «¿qué hace el sensor con lo que
+   capta?» (lo convierte en un dato para quien decide) y «¿por qué es el
+   reportero?» (solo informa: no decide ni actúa), que son sus frases casi tal
+   cual; y «un sensor mojado puede informar mal», que la animación contradice,
+   porque su sensor trabaja mojándose. En pensamiento crítico, «el sensor mueve
+   al robot» y «los sensores deciden» los corrige la animación, y el robot de la
+   huerta que riega era el tanque con otra ropa. Ahora preguntan lo que la misión
+   enseña en su Laboratorio y sus tablas (los faroles solares, el dron del
+   cafetal, el tacto que avisa tarde, el termómetro al sol, el agua del aire, el
+   ultrasónico tapado, revisar los sensores, la luz LED que no mide, las voces
+   del micrófono y el pulsador del parachoques), con la respuesta en el mismo
+   lugar, en la misión, en su inglés y en las dos fichas; en pensamiento
+   crítico, la bocina que no es sensor, el sensor mal colocado y la pantalla del
+   celular.
+5. ⚠️ **La ficha preguntaba por una historia que no cuenta.** Don Chico, la bomba
+   y los baños salían en su examen, y la historia no está en ninguna de sus
+   hojas: el alumno que solo tiene el papel no podía contestarlas. Y la
+   felicitación, debajo de los pareados, decía que el sensor convierte el mundo
+   en una señal y que el sensor no es el actuador: dos respuestas. Ahora solo
+   pide revisar, y la hoja 2 y la tabla de la hoja 3 enseñan lo que piden las
+   preguntas nuevas, sin pasar de sus siete hojas en los dos idiomas. De paso, la
+   edición en inglés pedía «circle the correct letter» (ahora pide rellenar el
+   círculo) y su comentario de la Columna B daba una pauta que ya no era.
+6. ⚠️ **En una bilingüe, la palabra prohibida se busca en los dos idiomas.**
+   «Cuando el agua lo toca» no choca con nada en español: el pareado dice
+   «tacto». En inglés, «when the water touches it» repetía la palabra del
+   pareado «Touch sensor». La frase en inglés dice ahora «reaches».
+7. **La sonda guarda lo que necesita de un paso a otro** (`MEMO_BOMBA`, por
+   idioma): el agua con que empieza el día, para comprobar que el otro día
+   empieza igual, y el charco del martes, para comprobar que el del paso 4 queda
+   donde estaba. Y dos renglones de la regla, a doce unidades, se montaban como
+   cajas de texto: van a trece.
+
+La sonda de esta escena **no le cree nada a la escena**. Comprueba, en español y
+en inglés:
+
+- que el tanque tenga sus paredes derechas y su fondo, sobre dos patas que
+  llegan al suelo, y que el agua quede dentro;
+- que la raya de lleno cruce el tanque por dentro, más abajo que el borde, y el
+  sensor esté pegado a la pared, en la raya;
+- que la bomba esté en el suelo, que su tubo llegue por encima del tanque y que
+  el chorro caiga de la salida;
+- que en cada paso se vea lo que toca: don Chico, el reloj, la bomba encendida,
+  el derrame, la cajita, lo anotado, los ✓ y las pestañas;
+- que el reloj marque la una y después las seis, con la aguja larga dando doce
+  vueltas por cada vuelta de la corta;
+- que el martes el agua llegue al borde y el derrame empiece entonces, salga por
+  encima de la pared y caiga por fuera hasta el suelo, y que el charco se abra
+  donde cae, cuando cae, y crezca hasta las seis;
+- que los cables vayan de la pared del sensor a la cajita y de la cajita a la
+  bomba, y que la regla esté escrita en el idioma de la página;
+- que cada aviso diga lo que había según la altura del agua cuando salió, que el
+  de «agua» salga justo cuando el agua llega al sensor, y que cada uno salga
+  junto al tanque, vaya por el cable hasta la esquina, baje y se apague al
+  llegar, sin salir antes de que llegue el anterior;
+- que la cajita anote cada aviso cuando le llega, que la regla se cumpla al
+  llegar «agua», que el «apaga» salga después, baje por el otro cable y llegue a
+  la bomba, y que la bomba se pare y el agua deje de subir justo entonces;
+- que al final el agua cubra el sensor sin llegar al borde;
+- que las pestañas vayan pegadas a lo suyo, una por una, y el charco del martes
+  quede donde estaba, con raya cortada;
+- que el marcador cuente lo que se ve y ningún rótulo se monte en otro;
+- y que no salga ninguna palabra de lo que pregunta la prueba.
+
+Se comprobó al revés con veinticinco averías, plantadas una por una:
+
+- un aviso diciendo «agua» con el agua todavía abajo;
+- la bomba parando antes de que le llegue el «apaga»;
+- el agua siguiendo después de que la bomba se paró;
+- el agua llegando al borde con el sensor puesto;
+- el sensor fuera de la raya de lleno;
+- el primer cable sin llegar a la cajita, y el segundo sin llegar a la bomba;
+- la cajita anotando antes de que le llegue el aviso;
+- la regla cumpliéndose antes de que llegue «agua»;
+- el «apaga» saliendo antes de tiempo;
+- el derrame empezando antes de que el agua llegue al borde;
+- el charco lejos de donde cae el derrame;
+- el reloj sin llegar a las seis, y la aguja larga sin dar sus doce vueltas;
+- el marcador del paso 3 diciendo 5;
+- «controlador» en una frase;
+- la pestaña de la cajita tapando el cable, y la del sensor diciendo otra cosa;
+- don Chico quedándose el martes;
+- el otro día empezando con otra agua;
+- los avisos bajando antes de ir de lado;
+- el charco del martes en otro sitio;
+- la regla en inglés diciendo otra cosa;
+- la cajita anotando siempre «seco»;
+- y el nombre de la bomba lejos de ella.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 60 cuadros por segundo, y el peor cuadro es
+de 50 ms. ¿Qué es un Robot?, medida el mismo día, va a 60 y 67 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:

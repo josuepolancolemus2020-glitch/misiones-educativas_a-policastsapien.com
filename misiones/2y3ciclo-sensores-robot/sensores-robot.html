@@ -28,6 +28,9 @@
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
 <link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La animación que explica el tema, justo después de la historia. Va DESPUÉS del
+     CSS de la misión: de ahí saca su color. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -73,6 +76,14 @@
     <div class="tip"><span class="ti">❓</span><div>A esa bomba no le falta fuerza: le falta
     <strong>enterarse</strong>. Nadie le está diciendo cuándo el tanque ya se llenó. Eso es exactamente lo que
     hace un sensor, y de eso trata esta misión.</div></div>
+  </div>
+  <div class="card ac-teal" data-animacion>
+    <h2 data-i18n="an">💧 Mira quién le avisa a la bomba</h2>
+    <div id="amBomba">
+      <p data-i18n="anr">El martes nadie le avisó a la bomba, y el tanque se derramó toda la tarde. Después le ponen un
+      sensor en la raya de lleno y una cajita con su regla: el sensor avisa «seco» una y otra vez, y cuando el agua lo
+      toca avisa «agua». La regla decide y la bomba se apaga sola, antes de que el agua llegue al borde.</p>
+    </div>
   </div>
   <div class="card ac-teal" data-i18n="a1">
     <h2>📡 ¿Qué es un sensor?</h2>
@@ -721,6 +732,8 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-bomba.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

@@ -424,21 +424,21 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 // tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
 // Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 let evalTFBank=[
-  {q:'El agua de la escuela se sube con una bomba.',a:true,k:'tf-bomba'},
-  {q:'El tanque se derramó por falta de un aviso.',a:true,k:'tf-aviso'},
-  {q:'Sin sensores el robot no sabría nada de lo que pasa a su alrededor.',a:true,k:'tf-sin-sensores'},
-  {q:'Un sensor mide muchas veces por segundo sin cansarse.',a:true,k:'tf-sin-cansarse'},
+  {q:'Los faroles solares del parque necesitan que alguien los encienda cada noche.',a:false,k:'tf-faroles'},
+  {q:'Un dron puede esquivar los árboles del cafetal gracias a un sensor.',a:true,k:'tf-dron'},
+  {q:'Todos los sensores avisan antes de que algo choque con el robot.',a:false,k:'tf-tarde'},
+  {q:'Un termómetro puesto al sol directo marca el mismo calor que hay en la sombra.',a:false,k:'tf-sol'},
   {q:'Un robot puede llevar varios sensores a la vez.',a:true,k:'tf-varios'},
   {q:'Los sensores nunca se equivocan.',a:false,k:'tf-nunca'},
-  {q:'Un sensor mojado puede informar mal.',a:true,k:'tf-mojado'},
+  {q:'Un sensor puede medir cuánta agua hay en el aire.',a:true,k:'tf-aire'},
   {q:'El sensor mueve las ruedas del robot.',a:false,k:'tf-mueve'},
   {q:'El cuerpo también tiene su cadena de tres partes.',a:true,k:'tf-cadena-cuerpo'},
   {q:'Un sensor no puede fallar aunque haya muy poca claridad.',a:false,k:'tf-claridad'}
 ];
 let evalMCBank=[
-  {q:'¿Qué le faltaba a la bomba del tanque?',o:['a) Fuerza','b) Enterarse de que el tanque ya se llenó','c) Agua','d) Pintura'],a:1,k:'mc-bomba'},
-  {q:'¿Qué hace el sensor con lo que capta?',o:['a) Lo convierte en un dato para quien decide','b) Lo borra','c) Lo guarda para siempre','d) Lo apaga'],a:0,k:'mc-convierte'},
-  {q:'¿Por qué se dice que el sensor es el «reportero» del robot?',o:['a) Porque habla mucho','b) Porque escribe noticias','c) Porque solo informa: no decide ni actúa','d) Porque trabaja de noche'],a:2,k:'mc-reportero'},
+  {q:'Si algo tapa el ultrasónico, ¿qué le puede pasar al robot?',o:['a) Va más rápido','b) Choca, porque el eco no regresa','c) Se carga solo','d) Cambia de color'],a:1,k:'mc-tapado'},
+  {q:'Antes de culpar al programa de un robot, ¿qué conviene revisar?',o:['a) Sus sensores','b) Su pintura','c) Su nombre','d) Su caja'],a:0,k:'mc-revisar'},
+  {q:'¿Cuál de estas partes NO mide nada?',o:['a) El termómetro','b) El micrófono','c) La luz LED','d) El pulsador'],a:2,k:'mc-led'},
   {q:'¿Qué pasa si el sensor da una lectura equivocada?',o:['a) Nada','b) El robot se equivoca también','c) El robot se arregla solo','d) El robot se apaga'],a:1,k:'mc-lectura'},
   {q:'¿Cuál es la entrada de información del robot?',o:['a) El motor','b) La rueda','c) El sensor','d) La bocina'],a:2,k:'mc-entrada'},
   {q:'En la cadena del cuerpo, ¿qué va en medio?',o:['a) El pie','b) El cerebro','c) La mano','d) La piel'],a:1,k:'mc-cerebro'},
@@ -448,14 +448,14 @@ let evalMCBank=[
   {q:'Si una parte te informa algo del mundo, es…',o:['a) Un sensor','b) Un motor','c) Una rueda','d) Una bocina'],a:0,k:'mc-regla'}
 ];
 let evalCPBank=[
-  {q:'La bomba la encendía y la apagaba don ___.',a:'Chico',acc:['Chico'],k:'cp-chico'},
+  {q:'El micrófono de un robot capta ruidos, aplausos y ___.',a:'voces',acc:['voces','voz'],k:'cp-voces'},
   {q:'El sensor manda una ___ eléctrica.',a:'señal',acc:['señal','senal'],k:'cp-senal'},
   {q:'Al sensor, en el cuerpo, se le llama ___.',a:'receptor',acc:['receptor'],k:'cp-receptor'},
   {q:'El sensor ultrasónico trabaja como el ___.',a:'murciélago',acc:['murciélago','murcielago'],k:'cp-murcielago'},
   {q:'La información siempre ___ al robot por el sensor.',a:'entra',acc:['entra'],k:'cp-entra'},
   {q:'Sin sensores, el robot estaría ciego y ___.',a:'sordo',acc:['sordo'],k:'cp-sordo'},
   {q:'El portón queda abierto porque nadie se da ___ cuando alguien entra.',a:'cuenta',acc:['cuenta'],k:'cp-cuenta'},
-  {q:'El miércoles no hubo agua en los ___ de la escuela.',a:'baños',acc:['baños','banos'],k:'cp-banos'},
+  {q:'El pulsador de choque suele ir en el ___ del carrito.',a:'parachoques',acc:['parachoques','parachoque','para choques'],k:'cp-parachoques'},
   {q:'El termómetro digital del centro de salud mide la ___ en segundos.',a:'fiebre',acc:['fiebre'],k:'cp-fiebre'},
   {q:'La puerta del supermercado se abre sola cuando alguien se ___.',a:'acerca',acc:['acerca'],k:'cp-acerca'}
 ];
@@ -561,10 +561,10 @@ let critSensorBank=[
   {k:'se-boton',txt:'Al presionar su botón de emergencia, el robot se para en seco.',ans:'Sensor de tacto (pulsador): se activa por contacto; el controlador decide detener todo. Es un sensor que necesita tocar, no funciona a distancia.'},
 ];
 let critErrorBank=[
-  {k:'er-mueve',txt:'"El sensor mueve al robot: por eso el carrito avanza".',g1:'El sensor NO mueve nada: solo percibe y envía una señal al controlador.',g2:'Quien mueve el carrito es el ACTUADOR (el motor), después de que el controlador decidió. La cadena es sensor → controlador → actuador.'},
+  {k:'er-bocina',txt:'"La bocina del robot es un sensor, porque suena cuando hay peligro".',g1:'La bocina es un ACTUADOR: suena cuando el controlador lo decide. No percibe nada.',g2:'El peligro lo percibe un SENSOR; el controlador decide y la bocina solo actúa. Uno percibe y la otra suena: no son la misma parte.'},
   {k:'er-nunca',txt:'"Un sensor nunca se equivoca: siempre dice la verdad".',g1:'Un sensor SÍ puede dar una lectura equivocada si está sucio, mojado, tapado o mal colocado.',g2:'Y si el sensor informa mal, el controlador decide mal: por eso el siguelíneas se sale de la línea cuando el sensor está lodoso.'},
   {k:'er-uno-solo',txt:'"Con un solo sensor de luz el robot ya puede medir la distancia y la temperatura".',g1:'Cada sensor percibe UNA sola cosa: el de luz solo mide cuánta luz hay.',g2:'Para medir distancia se necesita un sensor de distancia (ultrasónico) y para el calor uno de temperatura. Por eso los robots llevan varios sensores.'},
-  {k:'er-piensan',txt:'"Los sensores piensan y deciden qué debe hacer el robot".',g1:'Los sensores NO piensan ni deciden: solo miden y convierten lo medido en una señal.',g2:'Quien decide es el CONTROLADOR, siguiendo su programa: «si el sensor marca X, entonces hacer Y».'},
+  {k:'er-lugar',txt:'"Un sensor mide igual de bien, lo pongan donde lo pongan".',g1:'NO: un sensor tiene que estar cerca de lo que mide y bien colocado. Si está lejos o mal apuntado, la lectura no sirve.',g2:'Por ejemplo, un termómetro al sol directo marca más calor del que hay en la sombra.'},
 ];
 let critCicloQuestions=[
   '1. ¿Qué SENSOR usa y qué percibe exactamente?',
@@ -573,7 +573,7 @@ let critCicloQuestions=[
 ];
 let critCicloBank=[
   {k:'ci-puerta',txt:'La puerta automática del supermercado se abre cuando una persona se acerca y se cierra cuando ya nadie pasa.',p:'Un sensor de distancia o de movimiento percibe que hay alguien cerca de la puerta.',d:'El controlador decide abrir cuando detecta a alguien y cerrar cuando ya no hay nadie.',a:'Un motor (actuador) desliza la puerta hacia un lado y luego la regresa.'},
-  {k:'ci-huerta',txt:'El robot de la huerta escolar mide la tierra cada mañana; si está seca abre el agua y, cuando ya está húmeda, la cierra.',p:'El sensor de humedad percibe cuánta agua tiene la tierra.',d:'El controlador decide abrir el riego si la tierra está seca y cerrarlo cuando ya está húmeda.',a:'Una válvula o bomba (actuador) deja pasar el agua y luego la corta.'},
+  {k:'ci-celular',txt:'Mientras hablas por teléfono, la pantalla del celular se apaga sola al acercarla a la oreja, y se vuelve a encender cuando la alejas.',p:'Un sensor de proximidad percibe que algo está muy cerca de la pantalla.',d:'El controlador decide apagar la pantalla cuando la oreja está cerca y encenderla cuando se aleja.',a:'La pantalla (actuador) se apaga y se vuelve a encender.'},
   {k:'ci-lampara',txt:'La lámpara del corredor de la escuela se enciende sola al anochecer y se apaga al amanecer.',p:'El sensor de luz percibe cuánta luz hay en el corredor.',d:'El controlador decide encender cuando hay poca luz y apagar cuando vuelve la luz del día.',a:'La lámpara o foco (actuador) se enciende y se apaga.'},
   {k:'ci-carrito',txt:'El carrito siguelíneas del aula recorre una pista negra pintada en el piso sin salirse.',p:'El sensor de luz percibe si debajo del carrito el piso está oscuro (la línea) o claro (fuera de la línea).',d:'El controlador decide corregir el rumbo hacia el lado donde vuelve a encontrar la línea.',a:'Los motores de las ruedas (actuadores) giran más de un lado que del otro para girar.'},
   {k:'ci-incubadora',txt:'El robot de la incubadora de pollitos vigila el calor toda la noche.',p:'El sensor de temperatura percibe cuántos grados hay dentro de la incubadora.',d:'El controlador decide encender el foco si hace frío y apagarlo cuando ya hay suficiente calor.',a:'El foco de calor (actuador) se enciende; una alarma puede sonar si el problema sigue.'},
