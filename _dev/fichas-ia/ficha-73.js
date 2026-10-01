@@ -6,7 +6,7 @@ const D = require('../../js/data/ia-descubre.js');
 const { esc, arma, portada, preguntas, clave, fichaConcepto, tablaReglas, IA_CONCEPTOS } = A;
 
 const EVAL = [
-  { q: '¿Qué diferencia a un programa que APRENDE de uno de siempre?', o: ['Que es más caro', 'Que saca la regla de los ejemplos', 'Que no usa computadora', 'Que nunca se equivoca'], a: 1 },
+  { q: '¿Qué es un dato?', o: ['Un premio que gana la máquina', 'Un pedacito de información que se guarda', 'Un tipo de computadora', 'Un botón de la pantalla'], a: 1 },
   { q: '¿Qué es una etiqueta?', o: ['El precio del programa', 'Un adorno de la pantalla', 'La respuesta correcta que le pone una persona', 'El nombre de la máquina'], a: 2 },
   { q: '¿Para qué sirve PROBAR con ejemplos nuevos?', o: ['Para saber si aprendió o solo se lo memorizó', 'Para gastar menos batería', 'Para que se entretenga', 'Para hacerla más rápida'], a: 0 },
   { q: 'Se entrenó con maíz, frijol y café. Ve una hoja de plátano.', o: ['La reconoce igual', 'Se apaga', 'La ignora', 'Se puede equivocar: nunca vio una'], a: 3 },

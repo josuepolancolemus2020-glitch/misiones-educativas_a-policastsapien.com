@@ -4359,6 +4359,89 @@ const LEER = `
       cajasTexto: todos('text').filter(vis).map(caja)
     };
   };
+  /* Cómo Aprende una Máquina: el 71 de Wilmer, leído de dos maneras. La
+     sonda lee cada número casilla por casilla (en qué casilla de su cuadro
+     cae el centro de cada cuadrito de tinta) y lo oscuro de cada montón por
+     la opacidad que de verdad se pinta: con eso vuelve a hacer la regla y
+     los montones por su cuenta. Lo que se lee de la escena es dónde está
+     cada cosa y qué dice, nunca qué quiere decir. */
+  window.__amExtra.amNota = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(m(el)); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function uno(sel, en) { return (en || raiz).querySelector(sel); }
+    function todos(sel, en) { return [].slice.call((en || raiz).querySelectorAll(sel)); }
+    function demora(el) { return el ? (parseFloat(el.style.getPropertyValue('--d')) || 0) : 0; }
+    function numeros(t) { return ((t || '').match(/-?[0-9.]+/g) || []).map(Number); }
+    function pares(nn) { var ps = []; for (var i = 0; i + 1 < nn.length; i += 2) ps.push([nn[i], nn[i + 1]]); return ps; }
+    function puntos(el) { return pares(numeros(el.getAttribute('d') || el.getAttribute('points'))).map(function (p) { return aVista(el, p[0], p[1]); }); }
+    function texto(t) { return t ? { txt: t.textContent, caja: caja(t), ve: vis(t), d: demora(t) } : null; }
+    function trazado(p) { return Math.abs(parseFloat(getComputedStyle(p).strokeDashoffset) || 0) < 0.5; }
+    function trazos(p) { return (p.getAttribute('d').match(/M/g) || []).length; }
+    /* Un número: su cuadro de 5 x 7, y en qué casilla cae cada cuadrito */
+    function cuadro(g) {
+      var c = caja(uno('[data-cuadro-caja]', g)), an = (c.x1 - c.x0) / 5, al = (c.y1 - c.y0) / 7;
+      function celda(q) {
+        var b = caja(q), cx = (b.x0 + b.x1) / 2, cy = (b.y0 + b.y1) / 2;
+        return { c: Math.floor((cx - c.x0) / an), r: Math.floor((cy - c.y0) / al),
+          dentro: b.x0 >= c.x0 - 0.01 && b.x1 <= c.x1 + 0.01 && b.y0 >= c.y0 - 0.01 && b.y1 <= c.y1 + 0.01 };
+      }
+      return { ve: vis(g), d: demora(g), caja: c, an: an, al: al,
+        tinta: todos('[data-tinta]', g).map(function (q) { var o = celda(q); o.color = getComputedStyle(q).fill; return o; }),
+        oscuro: todos('[data-oscuro]', g).map(function (q) { var o = celda(q); o.op = parseFloat(getComputedStyle(q).fillOpacity); return o; }) };
+    }
+    function numero(k) { return cuadro(uno('[data-numero="' + k + '"]')); }
+    var lla = uno('[data-llave]'), reg = uno('[data-regla]'), tar = uno('[data-tarjeta]'), fl = uno('[data-flecha]');
+    return {
+      vista: [svg.viewBox.baseVal.width, svg.viewBox.baseVal.height],
+      cuaderno: { caja: caja(uno('[data-cuaderno-caja]')), titulo: texto(uno('[data-cuaderno-titulo]')), siete: numero('cuaderno-7'), uno: numero('cuaderno-1') },
+      sistema: { caja: caja(uno('[data-sistema]')), titulo: texto(uno('[data-sistema-titulo]')), nombre: texto(uno('[data-sistema-nombre]')),
+        notas: todos('[data-nota]').map(texto) },
+      maquina: texto(uno('[data-maquina]')),
+      flecha: { ve: vis(fl), linea: puntos(uno('[data-flecha-linea]')), punta: puntos(uno('[data-flecha-punta]')) },
+      regla: { ve: vis(reg), d: demora(reg), caja: caja(uno('[data-regla-caja]')), lineas: todos('text', reg).map(texto) },
+      llave: { ve: vis(lla), d: demora(lla), raya: puntos(uno('[data-llave-raya]')), dice: texto(uno('[data-llave-dice]')),
+        falta: todos('[data-falta]').map(function (q) { return { caja: caja(q), raya: getComputedStyle(q).strokeDasharray }; }) },
+      grande: { maestro: numero('grande-maestro'), orilla: numero('grande-orilla') },
+      rotGrande: todos('[data-grande-dice]').map(texto),
+      resp: todos('[data-respuesta]').map(function (g) {
+        var mk = uno('[data-bien]', g) || uno('[data-mal]', g);
+        return { k: g.getAttribute('data-respuesta'), ve: vis(g), d: demora(g), caja: caja(uno('[data-respuesta-caja]', g)),
+          dice: texto(uno('[data-respuesta-dice]', g)), marca: { caja: caja(mk), trazos: trazos(mk) } };
+      }),
+      ejRotulo: texto(uno('[data-ej-rotulo]')),
+      ejemplos: todos('[data-ej]').map(function (g) {
+        var v = uno('[data-ej-ver]', g), q = cuadro(uno('[data-numero]', g));
+        q.ve = vis(v); q.dVer = demora(v); q.dMueve = demora(g);
+        return q;
+      }),
+      nombres: todos('[data-nombre-num]').map(function (g) {
+        return { ve: vis(g), d: demora(g), caja: caja(uno('[data-nombre-caja]', g)), dice: texto(uno('text', g)) };
+      }),
+      montones: [numero('monton-uno'), numero('monton-siete')],
+      rotMonton: todos('[data-monton-dice]').map(texto),
+      rotBarras: texto(uno('[data-barras-dice]')),
+      rieles: todos('[data-riel]').map(function (p) { return { ve: vis(p), d: demora(p), ps: puntos(p) }; }),
+      barras: todos('[data-barra]').map(function (p) { return { ve: vis(p) && trazado(p), d: demora(p), ps: puntos(p), dice: +p.getAttribute('data-cae') }; }),
+      aros: todos('[data-aro]').map(function (q) { return { k: q.getAttribute('data-aro'), ve: vis(q), d: demora(q), caja: caja(q) }; }),
+      copias: todos('[data-copia]').map(function (g) {
+        var v = uno('[data-copia-ver]', g), q = cuadro(uno('[data-numero]', g));
+        q.ve = vis(v); q.dVer = demora(v); q.dVuela = demora(g);
+        return q;
+      }),
+      tarjeta: { ve: vis(tar), d: demora(tar), caja: caja(uno('[data-tarjeta-caja]')), textos: todos('text', tar).map(texto),
+        rayas: todos('[data-raya-escribir]', tar).map(puntos), cuadros: todos('[data-numero]', tar).map(cuadro) },
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; }),
+      cajasTexto: todos('text').filter(vis).map(caja)
+    };
+  };
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -4591,6 +4674,24 @@ const ESTADOS_CHIVO = [
   { vistos: 4, comp: 4, gana: 'flecha', globo: 'nombre', dice: true, vacio: false, decir: true, noDecir: false, tarea: false, cuaderno: false },
   { vistos: 4, comp: 4, gana: 'flecha', globo: 'nombre', vacio: false, decir: false, noDecir: false, tarea: false, cuaderno: true }
 ];
+/* Cómo Aprende una Máquina: lo que se ve al TERMINAR cada paso. nota: lo
+   que tiene que decir la pantalla del sistema ('regla' y 'montones' los
+   calcula la sonda con lo que se ve); grande: qué número se lee; rot: si
+   lleva su rótulo encima; resp: con qué contesta y si acierta (lo que dice
+   y la marca los calcula la sonda; aquí va solo lo que cuenta la historia). */
+const ESTADOS_NOTA = [
+  { nota: '?', grande: 'maestro', rot: true, regla: false, resp: null, ej: false, montones: false, copias: false, tarjeta: false },
+  { nota: 'regla', grande: 'maestro', rot: false, regla: true, resp: { con: 'regla', acierta: false }, ej: false, montones: false, copias: false, tarjeta: false },
+  { nota: '?', grande: '', rot: false, regla: false, resp: null, ej: true, montones: false, copias: false, tarjeta: false },
+  { nota: '?', grande: '', rot: false, regla: false, resp: null, ej: false, montones: true, copias: false, tarjeta: false },
+  { nota: 'montones', grande: 'maestro', rot: true, regla: false, resp: { con: 'montones', acierta: true }, ej: false, montones: true, copias: true, tarjeta: false },
+  { nota: 'montones', grande: 'orilla', rot: true, regla: false, resp: { con: 'montones', acierta: false }, ej: false, montones: true, copias: true, tarjeta: false },
+  { nota: 'montones', grande: '', rot: false, regla: false, resp: null, ej: false, montones: true, copias: false, tarjeta: true }
+];
+/* Qué cifra dice el papelito de cada número, y dónde vive cada uno: se leen
+   cuando los números están en su sitio, y el paso 3 (cuando están encima
+   de los montones) los usa de memoria. */
+const MEMO_NOTA = {};
 const ESTADOS_ANIO = [
   { kenia: 'inicio', tinta: false, anio: 0, resp: false, marcas: '', llave: false, barra: false, tira: false, nota: false, leyenda: 0 },
   { kenia: 'prueba', tinta: true, anio: 'A', resp: false, marcas: '', llave: false, barra: false, tira: false, nota: false, leyenda: 1 },
@@ -5044,6 +5145,278 @@ const ESCENAS = {
       const f = FL[0], gc = x.globos.find(g => g.k === 'chivo'), gd = x.globos.find(g => g.k === 'duda');
       r.push([vueloBien(3) && A[0] && A[0].d >= B[3].d + ANDA && f && f.d >= A[0].d && gc.d >= f.d + ANDA && gd.d + APAGA <= gc.d,
         `paso 5: la copia vuela a la foto nueva, crece su barra, el aro, la flecha y al final contesta`, [vuelo(3), A[0] && A[0].d, f && f.d, gc.d]]);
+    }
+    return r;
+  },
+  /* Cómo Aprende una Máquina: el 71 de Wilmer, leído de dos maneras.
+     ⚠️ Nada se le cree a la escena. La sonda lee cada número casilla por
+     casilla y le pone a cada uno la cifra del papelito que lleva justo
+     debajo. Con eso arma ella los dos montones y los compara con lo oscuro
+     que se ve; aplica ella la regla escrita en la tarjeta; calcula cuánto
+     cae cada número en lo oscuro de cada montón, y de ahí qué contesta,
+     qué entra al sistema y qué marca lleva la respuesta. */
+  amNota(e, n) {
+    const x = e.extra, r = [];
+    if (!x) return [[false, `paso ${n}: la sonda pudo leer la escena`, null]];
+    const E = ESTADOS_NOTA[n], NOTA = '71', ANDA = 800, APAGA = 500;
+    const cerca = (a, b, t = 0.6) => Math.abs(a - b) <= t;
+    const dentro = (a, b, m = 0) => a.x0 >= b.x0 - m && a.x1 <= b.x1 + m && a.y0 >= b.y0 - m && a.y1 <= b.y1 + m;
+    const monta = (a, b) => a.x0 < b.x1 - 0.5 && b.x0 < a.x1 - 0.5 && a.y0 < b.y1 - 0.5 && b.y0 < a.y1 - 0.5;
+    const ptoEn = (p, c, m = 0) => p[0] >= c.x0 - m && p[0] <= c.x1 + m && p[1] >= c.y0 - m && p[1] <= c.y1 + m;
+    const misma = (a, b, t = 0.3) => cerca(a.x0, b.x0, t) && cerca(a.x1, b.x1, t) && cerca(a.y0, b.y0, t) && cerca(a.y1, b.y1, t);
+    const cx = c => (c.x0 + c.x1) / 2, cy = c => (c.y0 + c.y1) / 2;
+    const rango = k => [...Array(k).keys()];
+
+    /* ── lo que no depende del dibujo va primero ── */
+    /* Ni los pareados de la prueba (memorizar, etiqueta, entrenar, patrón,
+       probar, sesgo, supervisado, por refuerzo, modelo), ni lo que los
+       define («lo que se repite», «reconocer lo nuevo», «una y otra vez»),
+       ni una respuesta suya (grande, ocho, la moneda, el 60, la comida, el
+       solucionario, el ajedrez, el frijol negro, el quinto, el campo, el
+       pedacito de información, la hoja enferma, el libro, el cien por
+       ciento), ni que la máquina piensa, sabe, siente o entiende. */
+    const PROHIBIDAS = /ejempl|etiquet|entren|patr[oó]n|\bprob|prueb|sesgo|supervis|refuerz|modelo|memoriz|repit|repet|reconoc|una y otra|marcad|\bjunt|\bdatos?\b|pedacit|informaci|\bgrande|\bocho\b|\b8\b|\b5\b|quint|\b60\b|sesenta|comida|alimento|solucionario|ajedrez|moneda|\bnegr|\bcampo|plaga|diez mil|\b10\b|cien|enferm|\blibro|piens|\bsabe|\bsient|entiend|inteligencia artificial/i;
+    const dicho = [e.texto, e.palabras, e.boton].concat(x.textos).join(' · ');
+    r.push([!PROHIBIDAS.test(dicho), `paso ${n}: no sale nada que pregunte la prueba, ni que la máquina piensa, sabe o entiende`, (dicho.match(PROHIBIDAS) || [])[0]]);
+
+    /* ── cada número, en su cuadro de casillas ── */
+    const matriz = q => { const mm = rango(7).map(() => [0, 0, 0, 0, 0]); q.tinta.forEach(t => { if (t.r >= 0 && t.r < 7 && t.c >= 0 && t.c < 5) mm[t.r][t.c] = 1; }); return mm; };
+    const igual = (a, b) => a.every((f, i) => f.every((v, j) => v === b[i][j]));
+    const TODOS = [x.cuaderno.siete, x.cuaderno.uno, x.grande.maestro, x.grande.orilla].concat(x.montones, x.ejemplos, x.copias, x.tarjeta.cuadros);
+    r.push([TODOS.every(q => cerca(q.an, q.al, 0.02) && q.tinta.concat(q.oscuro).every(t => t.dentro)
+      && new Set(q.tinta.map(t => t.r * 5 + t.c)).size === q.tinta.length && new Set(q.oscuro.map(t => t.r * 5 + t.c)).size === q.oscuro.length),
+      `paso ${n}: cada número va en su cuadro de 5 × 7 casillas cuadradas, con un cuadrito por casilla`, null]);
+
+    /* ── el cuaderno de Wilmer: su nota, el 7 y después el 1 ── */
+    const CU = x.cuaderno, M7 = matriz(CU.siete), M1 = matriz(CU.uno);
+    r.push([CU.siete.ve && CU.uno.ve && dentro(CU.siete.caja, CU.caja) && dentro(CU.uno.caja, CU.caja) && CU.siete.caja.x1 < CU.uno.caja.x0
+      && cerca(CU.siete.caja.y0, CU.uno.caja.y0, 0.05) && CU.titulo.txt === 'el cuaderno de Wilmer' && CU.titulo.caja.y1 <= CU.caja.y0 + 0.5,
+      `paso ${n}: en el cuaderno de Wilmer, su nota escrita a mano: el 7 y después el 1`, null]);
+    r.push([igual(matriz(x.grande.maestro), M7), `paso ${n}: el 7 que se lee en grande es el del cuaderno, casilla por casilla`, null]);
+
+    /* ── la máquina lo pasa al sistema de notas ── */
+    const SI = x.sistema, FL = x.flecha;
+    const punta = FL.punta.length ? Math.max(...FL.punta.map(p => p[0])) : -1, yF = FL.linea.length ? FL.linea[0][1] : -1;
+    r.push([FL.ve && FL.linea.length === 2 && cerca(FL.linea[1][1], yF, 0.01) && FL.linea[0][0] >= CU.caja.x1 && FL.linea[0][0] - CU.caja.x1 < 6
+      && punta <= SI.caja.x0 && SI.caja.x0 - punta < 8 && yF > SI.caja.y0 && yF < SI.caja.y1 && yF > CU.caja.y0 && yF < CU.caja.y1
+      && x.maquina.txt === 'la máquina' && cerca(cx(x.maquina.caja), (FL.linea[0][0] + punta) / 2, 1) && x.maquina.caja.y1 < yF,
+      `paso ${n}: la flecha de «la máquina» va del cuaderno al sistema de notas`, [FL.linea, punta]]);
+    const NV = SI.notas.filter(t => t.ve), nota = NV.length === 1 ? NV[0].txt : null;
+    r.push([NV.length === 1 && dentro(NV[0].caja, SI.caja) && SI.nombre.txt === 'Wilmer' && dentro(SI.nombre.caja, SI.caja) && SI.nombre.caja.y1 <= NV[0].caja.y0 + 1
+      && SI.titulo.txt === 'el sistema de notas' && SI.titulo.caja.y1 <= SI.caja.y0 + 0.5,
+      `paso ${n}: en la pantalla del sistema, el nombre de Wilmer y una sola nota debajo`, NV.map(t => t.txt)]);
+
+    /* ── la regla que escribió una persona: la aplica la sonda ── */
+    const conRegla = mm => mm[0].every(v => v === 1) ? '7' : '1';
+    const REGLA = 'La regla que escribió una persona:|Si la raya de arriba va de lado a lado, es un 7.|Si no, es un 1.';
+    r.push([x.regla.lineas.map(t => t.txt).join('|') === REGLA && x.regla.lineas.every(t => dentro(t.caja, x.regla.caja)),
+      `paso ${n}: la regla dice lo que la sonda aplica: con la raya de arriba de lado a lado, 7; si no, 1`, x.regla.lineas.map(t => t.txt)]);
+    r.push([x.regla.ve === E.regla && x.llave.ve === E.regla, `paso ${n}: ${E.regla ? 'se ve la regla, con su llave' : 'no se ve la regla'}`, [x.regla.ve, x.llave.ve]]);
+    if (E.regla) {
+      const G = x.grande.maestro, LL = x.llave.raya, faltan = matriz(G)[0].map((v, c) => v ? -1 : c).filter(c => c >= 0);
+      const col = f => Math.floor((cx(f.caja) - G.caja.x0) / G.an), fila = f => Math.floor((cy(f.caja) - G.caja.y0) / G.al);
+      r.push([LL.length === 4 && cerca(LL[0][0], G.caja.x0, 0.3) && cerca(LL[1][0], G.caja.x0, 0.3) && cerca(LL[2][0], G.caja.x1, 0.3) && cerca(LL[3][0], G.caja.x1, 0.3)
+        && cerca(LL[1][1], LL[2][1], 0.01) && LL.every(p => p[1] < G.caja.y0) && x.llave.dice.txt === 'de lado a lado'
+        && x.llave.dice.caja.y1 <= LL[1][1] + 0.5 && cerca(cx(x.llave.dice.caja), cx(G.caja), 1),
+        `paso ${n}: la llave de «de lado a lado» va de una orilla del cuadro a la otra, encima de la raya de arriba`, LL]);
+      r.push([faltan.length > 0 && x.llave.falta.length === faltan.length && new Set(x.llave.falta.map(col)).size === faltan.length
+        && x.llave.falta.every(f => fila(f) === 0 && faltan.includes(col(f)) && f.raya !== 'none'),
+        `paso ${n}: las casillas de arriba sin tinta van marcadas de raya cortada: lo que le falta a esta raya`, faltan]);
+    }
+
+    /* ── el número que se lee, en grande, con su rótulo encima ── */
+    const GV = ['maestro', 'orilla'].filter(k => x.grande[k].ve), cual = GV.length === 1 ? x.grande[GV[0]] : null;
+    r.push([GV.join() === E.grande, `paso ${n}: ${E.grande === 'maestro' ? 'se lee en grande el 7 del maestro' : E.grande === 'orilla' ? 'se lee en grande el 1 de la orilla' : 'no se lee ningún número en grande'}`, GV]);
+    const RG = x.rotGrande.filter(t => t.ve);
+    r.push([E.rot ? (RG.length === 1 && !!cual && RG[0].txt === (GV[0] === 'maestro' ? 'el 7 del maestro' : 'un 1 en la orilla')
+      && cerca(cx(RG[0].caja), cx(cual.caja), 1) && RG[0].caja.y1 <= cual.caja.y0 + 0.5 && cual.caja.y0 - RG[0].caja.y1 < 8) : RG.length === 0,
+      `paso ${n}: ${E.rot ? 'encima del número grande, lo que es' : 'no hay rótulo encima del número grande'}`, RG.map(t => t.txt)]);
+    /* lo que de verdad es: el 7 del cuaderno (la nota dice 71), o lo que
+       dice su rótulo */
+    const verdad = !cual ? null : GV[0] === 'maestro' ? NOTA[0] : ((RG[0] || { txt: '' }).txt.match(/\b[17]\b/) || [])[0];
+
+    /* ── lo que escribieron las cuatro personas, con su papelito ── */
+    const EJ = x.ejemplos, NB = x.nombres;
+    const papelDe = c => NB.filter(t => cerca(cx(t.caja), cx(c), 0.6) && t.caja.y0 >= c.y1 && t.caja.y0 - c.y1 < 6);
+    if (n !== 3) {
+      MEMO_NOTA.casa = EJ.map(q => q.caja);
+      MEMO_NOTA.cifra = EJ.map(q => { const t = papelDe(q.caja); return t.length === 1 ? t[0].dice.txt : null; });
+    }
+    const CASA = MEMO_NOTA.casa || [], CIF = MEMO_NOTA.cifra || [];
+    r.push([EJ.length === 8 && CIF.length === 8 && CIF.filter(c => c === '1').length === 4 && CIF.filter(c => c === '7').length === 4
+      && NB.length === 8 && NB.every(t => ptoEn([cx(t.dice.caja), cy(t.dice.caja)], t.caja)),
+      `paso ${n}: debajo de cada número, su papelito: cuatro dicen 1 y cuatro dicen 7`, CIF]);
+    const columnas = [...new Set(CASA.map(c => Math.round(c.x0 * 10) / 10))].sort((a, b) => a - b);
+    const persona = i => columnas.indexOf(Math.round(CASA[i].x0 * 10) / 10);
+    const deLa = k => rango(CASA.length).filter(i => persona(i) === k);
+    const colorDe = i => (EJ[i].tinta[0] || {}).color;
+    r.push([columnas.length === 4 && columnas.every((_, k) => deLa(k).length === 2 && deLa(k).map(i => CIF[i]).sort().join() === '1,7')
+      && CASA.every((a, i) => CASA.every((b, j) => i >= j || !monta(a, b))) && EJ.every(q => cerca(q.an, EJ[0].an, 0.01)),
+      `paso ${n}: son cuatro personas, cada una con un 1 y un 7 uno debajo del otro, del mismo tamaño y sin encimarse`, columnas]);
+    r.push([columnas.every((_, k) => deLa(k).every(i => EJ[i].tinta.every(t => t.color === colorDe(deLa(k)[0]))))
+      && new Set(columnas.map((_, k) => colorDe(deLa(k)[0]))).size === 4,
+      `paso ${n}: cada persona escribe con lo suyo: su 1 y su 7 con la misma tinta, y las cuatro distintas`, columnas.map((_, k) => colorDe(deLa(k)[0]))]);
+    r.push([EJ.every(q => q.ve === E.ej) && NB.every(t => t.ve === E.ej) && x.ejRotulo.ve === E.ej,
+      `paso ${n}: ${E.ej ? 'se ven los números de las cuatro personas, con sus papelitos' : 'no se ven los números de las personas'}`,
+      [EJ.filter(q => q.ve).length, NB.filter(t => t.ve).length, x.ejRotulo.ve]]);
+    if (E.ej) r.push([x.ejRotulo.txt === 'escrito por cuatro personas' && EJ.every(q => q.caja.y0 > x.ejRotulo.caja.y1),
+      `paso ${n}: encima de los números, quién los escribió`, x.ejRotulo.txt]);
+
+    /* ── los dos montones: los arma la sonda con los números de cada papelito ── */
+    const MT = x.montones.map(q => {
+      const t = x.rotMonton.find(t => cerca(cx(t.caja), cx(q.caja), 1) && t.caja.y1 <= q.caja.y0 + 0.5 && q.caja.y0 - t.caja.y1 < 6);
+      return { q, rot: t, cifra: t ? (t.txt.match(/^los ([17])$/) || [])[1] : null };
+    });
+    r.push([MT.length === 2 && MT.map(m => m.cifra).sort().join() === '1,7', `paso ${n}: encima de cada montón, de qué cifra es: «los 1» y «los 7»`, MT.map(m => m.cifra)]);
+    const montonDe = c => MT.find(m => m.cifra === c);
+    const oscuro = (m, rr, cc) => { const o = m.q.oscuro.find(t => t.r === rr && t.c === cc); return o ? o.op : 0; };
+    const debe = c => { const mm = rango(8).filter(i => CIF[i] === c).map(i => matriz(EJ[i])); return rango(7).map(rr => rango(5).map(cc => mm.reduce((s, q) => s + q[rr][cc], 0) / (mm.length || 1))); };
+    r.push([MT.every(m => m.cifra && m.q.tinta.length === 0 && m.q.oscuro.every(t => t.op > 0)
+      && rango(7).every(rr => rango(5).every(cc => cerca(oscuro(m, rr, cc), debe(m.cifra)[rr][cc], 0.01)))),
+      `paso ${n}: lo oscuro de cada casilla de un montón es la parte de sus cuatro números que tiene tinta ahí`, MT.map(m => m.q.oscuro.length)]);
+    r.push([MT.every(m => m.q.ve === E.montones && !!m.rot && m.rot.ve === E.montones),
+      `paso ${n}: ${E.montones ? 'se ven los dos montones' : 'no se ven los montones'}`, MT.map(m => m.q.ve)]);
+    /* cuánto cae un número en lo oscuro de un montón: lo oscuro que tiene
+       debajo cada cuadrito de su tinta, en promedio */
+    const cae = (mm, m) => { let s = 0, k = 0; mm.forEach((f, rr) => f.forEach((v, cc) => { if (v) { s += oscuro(m, rr, cc); k++; } })); return k ? s / k : 0; };
+    const listos = !!montonDe('1') && !!montonDe('7');
+    const conMontones = mm => cae(mm, montonDe('7')) > cae(mm, montonDe('1')) ? '7' : '1';
+
+    /* ── lo que entra al sistema ── */
+    const esperada = E.nota === 'regla' ? conRegla(M7) + conRegla(M1) : E.nota === 'montones' ? (listos ? conMontones(M7) + conMontones(M1) : null) : '?';
+    r.push([nota === esperada, `paso ${n}: en el sistema entra ${E.nota === 'regla' ? 'lo que dice la regla, aplicada por la sonda' : E.nota === 'montones' ? 'lo que dicen los montones, contados por la sonda' : '«?»'}`, [nota, esperada]]);
+    if (E.nota === 'regla') r.push([esperada !== NOTA && e.texto.includes(`entra como ${esperada}`), `paso ${n}: con la regla la nota entra mal, y la frase dice cómo entró`, esperada]);
+    if (n === 4) r.push([esperada === NOTA && e.texto.includes(`el ${NOTA} entra bien`), `paso ${n}: con los montones la nota entra como la escribió el maestro (${NOTA}), y la frase lo dice`, esperada]);
+
+    /* ── lo que contesta, y si acierta ── */
+    const RV = x.resp.filter(g => g.ve);
+    r.push([RV.length === (E.resp ? 1 : 0), `paso ${n}: ${E.resp ? 'contesta una sola vez' : 'no contesta nada'}`, RV.map(g => g.k)]);
+    let lee = null;
+    if (E.resp && RV.length === 1 && cual && listos) {
+      const g = RV[0], mm = matriz(cual);
+      lee = E.resp.con === 'regla' ? conRegla(mm) : conMontones(mm);
+      const bien = lee === verdad;
+      r.push([g.dice.txt === `contesta «${lee}»` && dentro(g.dice.caja, g.caja, 0.5) && dentro(g.marca.caja, g.caja) && g.marca.caja.x0 > g.dice.caja.x1 - 0.5
+        && g.marca.trazos === (bien ? 1 : 2) && e.texto.includes(`«${lee}»`) && g.caja.y0 > cual.caja.y1,
+        `paso ${n}: contesta lo que da ${E.resp.con === 'regla' ? 'la regla' : 'lo oscuro'} (${lee}), con ${bien ? 'su ✓ (una raya)' : 'su ✗ (dos rayas)'}, debajo del número y en la frase`, [g.dice.txt, g.marca.trazos, lee, verdad]]);
+      r.push([bien === E.resp.acierta, `paso ${n}: ${E.resp.acierta ? 'acierta' : 'se equivoca'}, como cuenta la historia`, [lee, verdad]]);
+    }
+
+    /* ── leer con los montones: la copia del número, encima de cada uno ── */
+    const CV = x.copias.filter(q => q.ve), BV = x.barras.filter(b => b.ve), RIV = x.rieles.filter(q => q.ve), AV = x.aros.filter(a => a.ve);
+    r.push([CV.length === (E.copias ? 2 : 0) && BV.length === (E.copias ? 2 : 0) && RIV.length === (E.copias ? 2 : 0) && AV.length === (E.copias ? 1 : 0) && x.rotBarras.ve === E.copias,
+      `paso ${n}: ${E.copias ? 'una copia del número encima de cada montón, una barra por montón y un aro' : 'no hay copias, ni barras, ni aro'}`, [CV.length, BV.length, RIV.length, AV.length]]);
+    const rielDe = m => x.rieles.find(q => q.ps[0][1] > m.q.caja.y0 && q.ps[0][1] < m.q.caja.y1 && q.ps[0][0] > m.q.caja.x1);
+    const barraDe = m => { const ri = rielDe(m); return ri ? BV.find(b => cerca(b.ps[0][1], ri.ps[0][1], 0.01)) : null; };
+    const largo = q => q.ps[1][0] - q.ps[0][0];
+    if (E.copias && cual && listos && CV.length === 2 && BV.length === 2) {
+      const mm = matriz(cual);
+      r.push([CV.every(q => igual(matriz(q), mm) && q.tinta.every(t => t.color === 'none')) && MT.every(m => CV.filter(q => misma(q.caja, m.q.caja)).length === 1),
+        `paso ${n}: cada copia es el número que se lee, puesta justo encima de un montón, y solo con su borde para que se vea lo oscuro de debajo`, null]);
+      r.push([MT.every(m => { const ri = rielDe(m), b = barraDe(m); return ri && b && cerca(b.ps[0][0], ri.ps[0][0], 0.05) && b.ps[1][0] <= ri.ps[1][0] + 0.05
+        && cerca(largo(b) / largo(ri), cae(mm, m), 0.02) && cerca(b.dice, cae(mm, m), 0.002); }),
+        `paso ${n}: cada barra va al lado de su montón, y su largo es lo que cae el número en lo oscuro de ese montón, contado por la sonda`,
+        MT.map(m => [m.cifra, Math.round(cae(mm, m) * 1000) / 1000])]);
+      const [gana, pierde] = MT.slice().sort((a, b) => cae(mm, b) - cae(mm, a)), bg = barraDe(gana), bp = barraDe(pierde);
+      r.push([cae(mm, gana) > cae(mm, pierde) && AV.length === 1 && !!bg && !!bp && ptoEn(bg.ps[0], AV[0].caja) && ptoEn(bg.ps[1], AV[0].caja) && !ptoEn(bp.ps[0], AV[0].caja)
+        && MT.every(m => !monta(AV[0].caja, m.q.caja)),
+        `paso ${n}: el aro rodea la barra más larga, la de «los ${gana.cifra}»`, null]);
+      r.push([x.rotBarras.txt === 'cae en lo oscuro:' && x.rotBarras.caja.y1 < Math.min(...RIV.map(q => q.ps[0][1])) && cerca(x.rotBarras.caja.x0, RIV[0].ps[0][0], 1.5),
+        `paso ${n}: encima de las barras, lo que miden`, x.rotBarras.txt]);
+      if (n === 4) r.push([rango(8).filter(i => CIF[i] === '7').every(i => !igual(matriz(EJ[i]), M7)),
+        `paso ${n}: el 7 del maestro no es igual a ninguno de los cuatro sietes, y aun así cae más en lo oscuro del 7`, null]);
+    }
+    /* el 1 de la orilla: una raya pegada a la orilla del cuadro, donde
+       ninguno de los unos de las personas tenía tinta */
+    if (E.grande === 'orilla' && listos) {
+      const O = matriz(x.grande.orilla), cols = rango(5).filter(c => O.every(f => f[c] === 1)), tinta = O.reduce((s, f) => s + f.reduce((a, v) => a + v, 0), 0);
+      r.push([cols.length === 1 && (cols[0] === 0 || cols[0] === 4) && tinta === 7 && rango(8).filter(i => CIF[i] === '1').every(i => matriz(EJ[i]).every(f => f[cols[0]] === 0))
+        && cae(O, montonDe('1')) === 0,
+        `paso ${n}: el 1 de la orilla es una raya pegada a la orilla del cuadro, donde ninguno de los unos de las personas tenía tinta`, cols]);
+    }
+
+    /* ── lo que escribe el alumno ── */
+    const T = x.tarjeta;
+    r.push([T.ve === E.tarjeta, `paso ${n}: ${E.tarjeta ? 'se ve la tarjeta para el cuaderno' : 'no se ve la tarjeta'}`, T.ve]);
+    if (E.tarjeta) {
+      const bajo = q => T.textos.filter(t => cerca(cx(t.caja), cx(q.caja), 1) && t.caja.y0 >= q.caja.y1 && t.caja.y0 - q.caja.y1 < 8);
+      r.push([T.textos.map(t => t.txt).join('|') === 'En tu cuaderno:|Escribe tu 1 y tu 7:|tu 1|tu 7|¿A cuál se parece tu 7?' && T.textos.every(t => dentro(t.caja, T.caja))
+        && T.cuadros.length === 2 && T.cuadros.every(q => q.tinta.length === 0 && q.oscuro.length === 0 && dentro(q.caja, T.caja))
+        && T.cuadros.map(q => bajo(q).map(t => t.txt).join()).sort().join() === 'tu 1,tu 7' && T.rayas.length === 1 && T.rayas[0].every(p => ptoEn(p, T.caja)),
+        `paso ${n}: en la tarjeta, dos cuadros en blanco con «tu 1» y «tu 7» debajo, y su raya para escribir`, T.textos.map(t => t.txt)]);
+    }
+
+    /* ── el marcador cuenta lo que se ve ── */
+    const personas = columnas.filter((_, k) => deLa(k).every(i => EJ[i].ve)).length;
+    const cuenta = [NOTA, nota, String(personas), String(MT.filter(m => m.q.ve).length), nota, lee, String(T.ve ? T.cuadros.length : 0)][n];
+    r.push([e.cifra === cuenta, `paso ${n}: el marcador dice lo que se ve`, [e.cifra, cuenta]]);
+
+    /* ── todo en el dibujo, y nada encima de nada ── */
+    const VB = { x0: 0, y0: 0, x1: x.vista[0], y1: x.vista[1] };
+    r.push([x.cajasTexto.every(c => dentro(c, VB, 0.5)), `paso ${n}: todo cabe en el dibujo`, null]);
+    const CJ = x.cajasTexto;
+    let pegados = 0;
+    for (let a = 0; a < CJ.length; a++) for (let b = a + 1; b < CJ.length; b++) if (monta(CJ[a], CJ[b])) pegados++;
+    r.push([pegados === 0, `paso ${n}: ningún texto se monta en otro`, pegados]);
+    const bloques = [CU.caja, SI.caja].concat(x.regla.ve ? [x.regla.caja] : [], cual ? [cual.caja] : [], RV.map(g => g.caja), EJ.filter(q => q.ve).map(q => q.caja),
+      NB.filter(t => t.ve).map(t => t.caja), MT.filter(m => m.q.ve).map(m => m.q.caja), AV.map(a => a.caja), T.ve ? [T.caja] : []);
+    let chocan = 0;
+    for (let a = 0; a < bloques.length; a++) for (let b = a + 1; b < bloques.length; b++) if (monta(bloques[a], bloques[b])) chocan++;
+    r.push([chocan === 0, `paso ${n}: el cuaderno, el sistema, la regla, los números, los montones, el aro, la respuesta y la tarjeta no se enciman`, chocan]);
+
+    /* ── el orden de las cosas, en los pasos que cuentan algo ── */
+    const dNota = k => (SI.notas.find(t => t.txt === k) || { d: NaN }).d;
+    const respDe = k => x.resp.find(g => g.k === k) || { d: NaN };
+    if (n === 1) {
+      const rg = x.rotGrande.find(t => t.txt === 'el 7 del maestro'), g = respDe('r1');
+      r.push([x.regla.d >= rg.d && x.llave.d >= x.regla.d && x.llave.d >= rg.d + APAGA && g.d >= x.llave.d && dNota('?') >= g.d && dNota(nota) >= dNota('?') + APAGA,
+        `paso 1: sale la regla, después la llave (cuando ya se fue el rótulo), contesta, y al final cambia la nota (la nueva, cuando ya se apagó el «?»)`,
+        [rg.d, x.regla.d, x.llave.d, g.d, dNota('?'), dNota(nota)]]);
+    }
+    if (n === 2) {
+      const sale = Math.max(x.regla.d, x.llave.d, respDe('r1').d, x.grande.maestro.d);
+      const yaSalio = dNota(conRegla(M7) + conRegla(M1));
+      const papel = i => papelDe(EJ[i].caja)[0];
+      r.push([dNota('?') >= yaSalio + APAGA && x.ejRotulo.d >= sale + APAGA && EJ.every(q => q.dVer >= sale + APAGA)
+        && rango(8).every(i => papel(i) && papel(i).d > EJ[i].dVer),
+        `paso 2: lo de la regla se va; el «?» vuelve cuando ya se apagó la nota, y los números y su rótulo salen cuando ya no está la regla, cada uno antes que su papelito`,
+        [sale, yaSalio, dNota('?'), x.ejRotulo.d]]);
+      r.push([columnas.every((_, k) => deLa(k).every(i => EJ[i].dVer === EJ[deLa(k)[0]].dVer) && (k === 0 || EJ[deLa(k)[0]].dVer > EJ[deLa(k - 1)[0]].dVer)),
+        `paso 2: las personas aparecen una por una, de izquierda a derecha, cada una con su 1 y su 7`, columnas.map((_, k) => EJ[deLa(k)[0]].dVer)]);
+    }
+    if (n === 3 && listos) {
+      r.push([EJ.every((q, i) => { const m = montonDe(CIF[i]); return m && misma(q.caja, m.q.caja) && !q.ve; }),
+        `paso 3: cada número vuela al montón de la cifra de su papelito, y se apaga al llegar`, EJ.map(q => [Math.round(q.caja.x0), Math.round(q.caja.y0)])]);
+      /* sale primero el de la punta que da al montón: así ninguno pasa por
+         encima de los que esperan */
+      const fila = c => rango(8).filter(i => CIF[i] === c).sort((a, b) => CASA[b].x0 - CASA[a].x0);
+      const pap = i => NB.find(t => cerca(cx(t.caja), cx(CASA[i]), 0.6) && t.caja.y0 >= CASA[i].y1 && t.caja.y0 - CASA[i].y1 < 6);
+      const llega = c => Math.max(...fila(c).map(i => EJ[i].dMueve)) + ANDA;
+      const [primera, segunda] = ['1', '7'].sort((a, b) => Math.min(...fila(a).map(i => EJ[i].dMueve)) - Math.min(...fila(b).map(i => EJ[i].dMueve)));
+      r.push([['1', '7'].every(c => fila(c).every((i, k, a) => (k === 0 || EJ[i].dMueve > EJ[a[k - 1]].dMueve) && EJ[i].dVer >= EJ[i].dMueve + ANDA && !!pap(i) && pap(i).d <= EJ[i].dMueve)
+        && montonDe(c).q.d >= llega(c) && montonDe(c).rot.d >= llega(c)) && Math.min(...fila(segunda).map(i => EJ[i].dMueve)) >= llega(primera),
+        `paso 3: salen de la punta que da al montón, uno por uno, y su papelito se queda; el montón aparece cuando llegó el último, y la otra fila sale cuando la primera ya llegó`,
+        ['1', '7'].map(c => fila(c).map(i => EJ[i].dMueve))]);
+    }
+    if ((n === 4 || n === 5) && cual && listos && CV.length === 2) {
+      const CVs = CV.slice().sort((a, b) => a.dVuela - b.dVuela);
+      const suBarra = q => barraDe(MT.find(m => misma(q.caja, m.q.caja)) || MT[0]) || { d: NaN };
+      const tarde = Math.max(...CVs.map(q => suBarra(q).d));
+      const g = respDe(n === 4 ? 'r4' : 'r5');
+      r.push([CVs[0].dVer >= cual.d && CVs.every(q => q.dVuela >= q.dVer && suBarra(q).d >= q.dVuela + ANDA) && CVs[1].dVuela >= CVs[0].dVuela + ANDA
+        && AV[0].d >= tarde + ANDA && g.d >= AV[0].d,
+        `paso ${n}: cada copia vuela a su montón y, al llegar, crece su barra; la segunda vuela cuando la primera ya llegó; después el aro y al final contesta`,
+        [CVs.map(q => [q.dVer, q.dVuela, suBarra(q).d]), AV[0].d, g.d]]);
+      if (n === 4) r.push([dNota('?') >= g.d && dNota(nota) >= dNota('?') + APAGA, `paso 4: cambia la nota cuando ya contestó, y la nueva llega cuando ya se apagó el «?»`, [g.d, dNota('?'), dNota(nota)]]);
+      if (n === 5) {
+        const aroM = x.aros.find(a => !a.ve) || { d: NaN };
+        r.push([cual.d >= x.grande.maestro.d + APAGA && g.d >= respDe('r4').d + APAGA && AV[0].d >= aroM.d + APAGA && CVs[0].dVer >= Math.max(...x.copias.filter(q => !q.ve).map(q => q.dVer)) + APAGA,
+          `paso 5: lo del 7 del maestro se va, y lo del 1 de la orilla llega cuando ya se apagó`, [x.grande.maestro.d, cual.d, respDe('r4').d, g.d]]);
+      }
+    }
+    if (n === 6) {
+      const sale = Math.max(x.grande.orilla.d, respDe('r5').d);
+      r.push([T.d >= sale + APAGA, `paso 6: la tarjeta sale cuando ya se fue lo que estaba en su sitio`, [sale, T.d]]);
     }
     return r;
   },

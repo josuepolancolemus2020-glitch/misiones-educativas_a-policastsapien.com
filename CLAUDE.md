@@ -13482,6 +13482,157 @@ Salió roja con cada una.
 Con la CPU frenada seis veces va a 58 o 59 cuadros por segundo, y el peor cuadro es
 de 150 ms. La de Fin de Grado, medida el mismo día, va a 53 y 167 ms.
 
+### La septuagésima: Cómo Aprende una Máquina, y lo que enseñó
+
+La segunda de la Ruta de la Máquina que Aprende es **Cómo Aprende una Máquina**
+(`misiones/2ciclo-como-aprende-una-maquina/`, `js/animacion-nota.js`). La historia es
+la de Wilmer: lo cambiaron de escuela a mitad de año y el sistema de notas no lo
+aceptó, porque «no está en la lista». El sistema no estaba malo: quien escribió esa
+regla no pensó en él. Su maestro lo llevó en un cuaderno aparte, y su nota nunca
+entró al sistema. Y termina con las dos maneras de fallar: un programa de siempre
+falla con el caso que nadie escribió; uno que aprende de ejemplos, con los que no
+vio. La animación pone arriba el cuaderno con el 71 de Wilmer, escrito a mano en
+casillas, y una máquina que lo pasa a la pantalla del sistema:
+
+- antes de tocar: ¿cómo lee el 7?;
+- con una regla que escribió una persona («si la raya de arriba va de lado a lado,
+  es un 7; si no, es un 1»): una llave marca de lado a lado, y las dos casillas que
+  le faltan a la raya del maestro van de raya cortada. Contesta «1», con su ✗, y el
+  71 entra como 11;
+- de la otra manera, nadie le escribe la regla: cuatro personas escribieron un 1 y
+  un 7, cada una con su tinta, y cada número lleva un papelito con su cifra;
+- pone los unos uno encima de otro, y los sietes también: donde casi todos tienen
+  tinta, queda más oscuro;
+- pone el 7 del maestro encima de los dos montones, y una barra dice cuánto cae en lo
+  oscuro de cada uno. Cae más en el del 7: contesta «7», con su ✓, y el 71 entra bien;
+- llega un 1 pegado a la orilla del cuadro: su tinta no cae en nada oscuro del 1, y
+  contesta «7», con su ✗. Ninguno de los unos que le dieron estaba en la orilla;
+- y la pregunta es del alumno: escribir su 1 y su 7, y ver a cuál de los dos de la
+  pantalla se parece su 7.
+
+Siete cosas que valen para las que siguen:
+
+1. ⚠️ **Las dos maneras de fallar de la historia se ven con el mismo 71.** La regla
+   falla con el caso que nadie escribió (un 7 de raya corta), y los montones, con lo
+   que no vieron (un 1 en la orilla). Sin el tercer caso la animación enseñaría que
+   aprender de ejemplos no falla, que es lo contrario de la historia y de la ruta.
+2. ⚠️ **Lo oscuro no se escribe: se cuenta.** Cada casilla de un montón es la parte de
+   sus cuatro números que tiene tinta ahí, y cada barra es lo oscuro que tiene debajo,
+   en promedio, la tinta del número que se lee. La sonda arma ella los montones con los
+   números que se ven, cada uno al de la cifra de su papelito, y los compara con la
+   opacidad que de verdad se pinta. Hoy el 7 del maestro cae 0,75 en lo oscuro del 7 y
+   0,53 en el del 1; el 1 de la orilla, 0,29 y 0.
+3. ⚠️ **Los números se hicieron para que la historia sea verdad, y el archivo lo dice.**
+   La raya de arriba del 7 del maestro es corta, así que la regla lo lee 1; es un 7 que
+   no es igual a ninguno de los cuatro, y aun así cae más en lo oscuro del 7; y todos
+   los unos están en medio del cuadro, así que un 1 en la orilla no cae en nada del 1.
+   Quien los cambie tiene que volver a contar: la sonda se pone roja si alguna de las
+   tres deja de pasar.
+4. **Sigue a la etapa 1 sin repetirla.** En ¿Qué es la IA? el teléfono guarda las
+   fotos que vio y le pone a la nueva el nombre de la que más se le parece. Aquí la
+   máquina no guarda los números: guarda lo que tienen en común, lo oscuro de cada
+   montón, y compara con eso. Son dos maneras de verdad de aprender de ejemplos, y la
+   segunda se equivoca de otra forma: con lo que ninguno de sus ejemplos tenía.
+5. ⚠️ **La historia y la animación contestaban once preguntas de la prueba.** La
+   historia: los completar de Wilmer, la lista y el cuaderno, «el sistema de notas
+   estaba malo» y «¿qué hace un programa de siempre con un caso que su regla no
+   dice?». La animación: «detrás de un programa que aprende también hay una persona»,
+   «para aprender, alguien tiene que explicarle con palabras qué es cada cosa» y, en la
+   ficha, «¿qué diferencia a un programa que aprende de uno de siempre?». En
+   pensamiento crítico, el programa que corrige exámenes escritos a mano (estos números
+   con otra ropa), el error de «ya no hacen falta personas» y la comparación del
+   programa de reglas con el que aprende de ejemplos. Ahora preguntan lo que la misión
+   enseña en sus tarjetas, el ciclo, el Entrenador, la curva y el Laboratorio: qué es
+   un dato, la regla de oro de los datos de la familia, de quién es la culpa cuando una
+   máquina falla con un grupo, cuál es el primer paso del ciclo, a quién se avisa, las ocho hojas del Entrenador, la moneda de un solo
+   ejemplo, el programa que pasa la voz a letras, los ejemplos iguales que dejan de
+   enseñar y el dato contra la etiqueta. Van con la respuesta en el mismo lugar, en la
+   misión y en la ficha, que sigue en sus siete hojas. Y uno de los repuestos («primero
+   se prueba y después se juntan los datos») dejaba escrito «después», que es la
+   respuesta de otra pregunta: lo cazó la sonda de pistas, y ahora dice que el primer
+   paso es la prueba.
+6. ⚠️ **Lo que sale en el sitio de otra cosa espera a que se haya ido.** La nota del
+   sistema se apagaba y la nueva se encendía a la vez, y a medio camino se leía un «?»
+   encima de un «71»: se vio en las fotos a medio viaje. El rótulo «escrito por cuatro
+   personas» salía encima de la tarjeta de la regla cuando esta todavía se apagaba, y
+   eso salió al escribirle a la sonda los tiempos: ahora lo exige. Y volviendo con
+   «Atrás» al paso de la regla, el rótulo «el 7 del maestro» aparecía un instante y se
+   iba: el paso arranca sin él.
+7. **Las rayas de cada cuadro van en un solo trazo.** Son diez por número y veinte
+   números: doscientas piezas iguales y quietas que el teléfono repinta en cada cuadro
+   de lo que se mueve. Es la regla de la lluvia de Condicionales.
+
+⚠️ **Y dos de paso.** La hoja de la misión traía, como la de la etapa 1, los bloques
+de CSS calcados de los próceres y de los tres poderes, con sus comentarios: se
+quitaron. Y el armador de las fichas de IA (`_dev/arma-fichas-ia.js`) las rehace
+todas con su propio corte, sin repartir: al rearmar la de esta misión dejó otras tres
+partiéndose al imprimir. Se devolvieron con `git checkout`, y la de esta misión se
+volvió a repartir. Al usar el armador, se queda solo la ficha que se tocó.
+
+La sonda de esta escena **no le cree nada a la escena**. Comprueba:
+
+- que cada número vaya en su cuadro de 5 × 7 casillas cuadradas, con un cuadrito por
+  casilla, y que el 7 que se lee en grande sea el del cuaderno, casilla por casilla;
+- que la flecha de «la máquina» vaya del cuaderno al sistema, y que en la pantalla
+  del sistema haya una sola nota;
+- que la regla diga lo que la sonda aplica, que la llave vaya de una orilla del cuadro
+  a la otra y que las casillas marcadas sean justo las de arriba sin tinta;
+- que debajo de cada número de las personas esté su papelito, cuatro con 1 y cuatro
+  con 7; que sean cuatro personas, cada una con su 1 y su 7, de una sola tinta, y las
+  cuatro distintas;
+- que lo oscuro de cada casilla de cada montón sea la parte de los números de esa
+  cifra que tiene tinta ahí, contada por la sonda;
+- que lo que entra al sistema sea lo que da la regla, o lo que dan los montones, y que
+  la frase lo diga;
+- que cada copia sea el número que se lee, solo con su borde y justo encima de un
+  montón; que cada barra mida lo que cae en lo oscuro de su montón, y que el aro rodee
+  la más larga;
+- que lo que contesta sea lo que da la regla o lo oscuro, con su ✓ de una raya o su ✗
+  de dos, y que acierte o se equivoque como cuenta la historia;
+- que el 1 de la orilla sea una raya pegada a la orilla, donde ninguno de los unos de
+  las personas tenía tinta;
+- que cada cosa pase cuando le toca: las personas una por una; los números vuelan al
+  montón de la cifra de su papelito, de la punta que da al montón; el montón aparece
+  cuando llegó el último; cada copia vuela cuando la anterior ya llegó, y después
+  crecen las barras, el aro y la respuesta;
+- que el marcador cuente lo que se ve, que ningún texto se monte en otro y que todo
+  quepa en el dibujo;
+- y que no salga ningún pareado de la prueba, ni una respuesta suya, ni que la máquina
+  piensa, sabe o entiende.
+
+Se comprobó al revés con treinta y dos averías, plantadas una por una:
+
+- una casilla del montón de los 1 más oscura de lo que da contar;
+- el papelito de un 1 diciendo 7;
+- una barra más corta de lo que cae, y el aro en la que pierde;
+- con la regla entrando 71, y la regla contestando 7;
+- la ✓ en el 1 de la orilla, y el 1 de la orilla en medio del cuadro;
+- un 1 de las personas con tinta en la orilla;
+- una copia corrida de su montón, y una copia rellena que tapa lo oscuro;
+- la segunda copia volando antes de que llegue la primera;
+- el montón apareciendo antes de que lleguen todos, y los números volando al de la
+  otra cifra;
+- la nota nueva llegando sin esperar a que se apague el «?»;
+- el marcador del paso 2 diciendo 3, y el del paso 5 diciendo 1;
+- «ejemplos» en una frase;
+- la llave más corta, y lo que falta marcando las casillas con tinta;
+- las personas apareciendo todas juntas, y el papelito antes que su número;
+- una persona con dos tintas;
+- el rótulo de las personas saliendo encima de la regla que se va;
+- el 7 grande sin ser el del cuaderno;
+- la flecha sin llegar al sistema;
+- contestando antes del aro, y la tarjeta saliendo antes de que se vaya la respuesta;
+- los dos montones diciendo «los 1»;
+- lo de la orilla llegando antes de que se vaya lo del maestro;
+- la regla de la tarjeta diciendo otra cosa;
+- y la tarjeta sin raya para escribir.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 58 cuadros por segundo. El peor cuadro es el
+primero del paso de los montones, cuando empiezan a volar los ocho números: entre 117
+y 200 ms según la vuelta. La del chivo, medida el mismo día, va a 59 y 117 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -13693,7 +13844,14 @@ sonda de la misión comprueba las dos cosas. Una silueta que se mide
 punto por punto (dentro o fuera) es un solo contorno sin cruces: la escena cuenta
 con la regla de par-impar y el navegador rellena con la de nonzero, y con un cruce
 contestan distinto. Y lo que la sonda necesita de un dibujo (la punta de un lápiz)
-lo lee de su forma, no de un atributo que escribió la escena.
+lo lee de su forma, no de un atributo que escribió la escena. Un dibujo hecho de
+casillas (un número escrito a mano en una cuadrícula) se lee casilla por casilla: la
+sonda mira en qué casilla de su cuadro cae el centro de cada cuadrito, y con eso
+rehace las cuentas; y las rayas de la cuadrícula, como la lluvia, van en un solo
+trazo. Lo que se agrupa por un rótulo (un número y su papelito) se agrupa por dónde
+está el rótulo en el dibujo, y si después el número se mueve, la sonda recuerda de
+qué papelito era. Y lo que sale encima de una tarjeta que se apaga, también un
+rótulo, espera a que se haya ido.
 
 Si la misma escena sirve para varias misiones (las cuatro Pruebas de Fin de
 Grado), vive en `js/escena-<tema>.js` y cada misión trae un archivo de dos líneas

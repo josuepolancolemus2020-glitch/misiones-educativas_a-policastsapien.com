@@ -394,19 +394,19 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 // tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
 // Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'En la historia del alumno cambiado de escuela, el sistema de notas estaba malo.',a:false,k:'tf-sistema-malo'},
+  {q:'Cuando una máquina falla con un grupo, la culpa es de la máquina, que está mala.',a:false,k:'tf-culpa'},
   {q:'Un programa de siempre nunca mejora solo.',a:true,k:'tf-nunca-mejora'},
   {q:'Hay máquinas que aciertan el cien por ciento.',a:false,k:'tf-cien'},
   {q:'Una máquina entiende lo que ve, como una persona.',a:false,k:'tf-entiende'},
   {q:'Enseñarle a una máquina se hace una vez y cuesta tiempo.',a:true,k:'tf-una-vez'},
-  {q:'Detrás de un programa que aprende también hay una persona.',a:true,k:'tf-persona'},
+  {q:'Una regla de oro: no le doy a la máquina mis datos ni los de mi familia.',a:true,k:'tf-regla-datos'},
   {q:'Si las fotos vienen marcadas mal, la máquina aprende mal.',a:true,k:'tf-marcadas'},
   {q:'Juntar y marcar los datos es lo más rápido del trabajo.',a:false,k:'tf-rapido'},
   {q:'El detector de plagas aprendió con diez mil fotos de hojas marcadas.',a:true,k:'tf-diez-mil'},
-  {q:'Para aprender, alguien tiene que explicarle a la máquina con palabras qué es cada cosa.',a:false,k:'tf-palabras'}
+  {q:'En el ciclo del aprendizaje, el primer paso es la prueba.',a:false,k:'tf-orden-ciclo'}
 ];
 const evalMCBank=[
-  {q:'¿Qué hace un programa de siempre con un caso que su regla no dice?',o:['Falla','Aprende solo','Pregunta a la maestra','Lo adivina bien'],a:0,k:'mc-regla'},
+  {q:'¿Qué es un dato?',o:['Un pedacito de información que se guarda','Un premio que gana la máquina','Un tipo de computadora','Un botón de la pantalla'],a:0,k:'mc-dato'},
   {q:'¿Qué le sirve a la máquina para reconocer un nance?',o:['Que son caros','Que crecen en árboles','Que casi siempre son pequeños y amarillos','Que saben dulce'],a:2,k:'mc-nance'},
   {q:'Entrenada solo con manzanas y peras, ¿qué pasa con un nance?',o:['Lo reconoce','Lo pela','Lo cuenta dos veces','Para ella no existe'],a:3,k:'mc-manzanas'},
   {q:'Ante un sistema que decide algo importante, ¿qué se pregunta?',o:['De qué color es','Cuánto pesa','Con qué ejemplos lo entrenaron','Si tiene sonido'],a:2,k:'mc-tres-preguntas'},
@@ -418,9 +418,9 @@ const evalMCBank=[
   {q:'La máquina acierta 9 de cada 10. ¿Qué hay que preguntarse?',o:['Nada, está muy bien','Si se puede apagar','Cuánto cuesta','A quién le toca ese error'],a:3,k:'mc-quien-cae'}
 ];
 const evalCPBank=[
-  {q:'A ___ lo cambiaron de escuela a mitad de año.',a:'Wilmer',acc:['Wilmer','wilmer'],k:'cp-wilmer'},
-  {q:'El sistema de notas dijo que no estaba en la ___.',a:'lista',acc:['lista'],k:'cp-lista'},
-  {q:'Su maestro lo llevó en un ___ aparte.',a:'cuaderno',acc:['cuaderno'],k:'cp-cuaderno'},
+  {q:'Si algo me asusta o me confunde, le aviso a una persona ___.',a:'grande',acc:['grande','mayor','adulta'],k:'cp-persona-grande'},
+  {q:'En el Entrenador, a la máquina le dan ___ hojas nuevas: dos de cada cultivo.',a:'ocho',acc:['ocho','8'],k:'cp-ocho'},
+  {q:'Con un solo ejemplo, la máquina de las semillas acierta la mitad, como una ___.',a:'moneda',acc:['moneda'],k:'cp-moneda'},
   {q:'Regla de un programa de siempre: si la nota es menor que ___, escribe reprobado.',a:'60',acc:['60','sesenta'],k:'cp-sesenta'},
   {q:'Los datos son la ___ de la Inteligencia Artificial.',a:'comida',acc:['comida','alimento'],k:'cp-comida'},
   {q:'Aprender con ejemplos que ya dicen lo que son es como estudiar con el ___ al lado.',a:'solucionario',acc:['solucionario'],k:'cp-solucionario'},
@@ -526,7 +526,7 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {k:'ca-letra',txt:'Un programa corrige exámenes. Se entrenó con letra de computadora y los alumnos escriben a mano.'},
+  {k:'ca-voces',txt:'Un programa pasa la voz a letras. Aprendió solo con voces de adultos, y con los niños se equivoca casi siempre.'},
   {k:'ca-recibos',txt:'Una máquina clasifica recibos y acierta 95 de cada 100. El dueño ya no revisa.'},
 ];
 const critCaseQuestions=[
@@ -543,14 +543,14 @@ const critCaseGuides=[
 ];
 const critErrorBank=[
   {k:'er-etiquetas',txt:'"Las etiquetas se pueden poner rápido, al azar, para no perder tiempo".',g1:'La etiqueta es la respuesta correcta. Si está mal, aprende mal.',g2:'Entrenar con etiquetas malas sale más caro que ponerlas bien.'},
-  {k:'er-personas',txt:'"Si la máquina aprende sola, ya no hacen falta personas".',g1:'Hacen falta más que antes: juntan datos, etiquetan, eligen la prueba y revisan.',g2:'Sola busca el patrón. Todo lo demás lo deciden personas.'},
+  {k:'er-iguales',txt:'"Con más ejemplos iguales, la máquina siempre aprende más".',g1:'Los ejemplos parecidos dejan de enseñar: la curva sube y después se queda.',g2:'Enseña más un ejemplo DISTINTO que diez iguales.'},
 ];
 const critDecisionBank=[
   'Vas a probarlo. ¿Usas ejemplos que ya vio, o nuevos aunque saque menos?',
 ];
 const critDecisionGuide='La mejor decisión cuida el DATO y dice la verdad sobre el alcance. Se juntan los ejemplos que faltan. Se etiqueta bien aunque sean menos. Se prueba con ejemplos nuevos aunque el número baje. No se promete lo que no se probó.';
 const critCompareBank=[
-  {k:'co-reglas',a:'Un programa que sigue reglas escritas.',b:'Un programa que aprende de ejemplos.',ga:'Hace lo que una persona escribió, paso por paso.',gb:'Saca la regla de lo que se repite en los ejemplos.',gr:'El primero nunca mejora solo. El segundo reconoce lo nuevo, pero falla con lo que no vio.'},
+  {k:'co-dato',a:'La foto de una hoja de café.',b:'La palabra «sana», que escribió el técnico debajo de esa foto.',ga:'Es un dato: lo que se guarda y la máquina mira.',gb:'Es una etiqueta: la respuesta correcta que puso una persona.',gr:'El dato es lo que se mira. La etiqueta dice qué es.'},
 ];
 const critCauseBank=[
   {k:'ca-zona',cause:'Los ejemplos de entrenar venían de una sola zona.',guide:'Por eso falla en el resto del país, aunque en su zona acierte.'},
