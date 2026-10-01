@@ -25,6 +25,9 @@
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
 <link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La animación que va después de la historia: el aparato es compartido y
+     se tiñe con el color de la misión, así que va DESPUÉS de su CSS. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -69,7 +72,16 @@
     caído cada gol, no quedaba nada que mirar: el último número se había comido a todos los anteriores.</p>
     <div class="tip"><span class="ti">❓</span><div>Esa hoja se portó exactamente como una
     <strong>variable</strong>: guarda <strong>un solo valor a la vez</strong>, y el que entra borra al que
-    estaba. Por eso hay que saber cuándo conviene <em>guardar</em> y cuándo conviene <em>sumar</em>.</div></div>
+    estaba. Si después te van a preguntar por lo de antes, hay que <strong>anotar cada valor</strong>, uno
+    debajo del otro.</div></div>
+  </div>
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira lo que queda en la hoja</h2>
+    <div id="amGoles">
+      <p>Cada gol, el número nuevo se come al que estaba: al final, en la hoja de Marvin solo queda el 3 a 2,
+      y del minuto de cada gol no queda nada. Con una lista, cada gol se escribe en una línea nueva, debajo de
+      la otra, con su minuto: la hoja dice cómo van ahora, y la lista, gol por gol.</p>
+    </div>
   </div>
   <div class="card ac-teal">
     <h2>📦 ¿Qué es una variable?</h2>
@@ -641,6 +653,8 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-goles.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

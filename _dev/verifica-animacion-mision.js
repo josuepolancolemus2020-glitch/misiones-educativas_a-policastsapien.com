@@ -1966,6 +1966,83 @@ const LEER = `
       textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
     };
   };
+  /* Variables: la hoja que se comió los goles. Se lee la hoja (sus dos
+     recuadros, sus nombres y qué número se ve en cada uno, con cuándo
+     llega y cuándo se va cada uno), el reloj del partido (cuánto lleva,
+     cuándo empieza y cuánto tarda), el letrero de cada gol, la lista fila
+     por fila (con sus celdas y cuál va en negrita), los cinco balones con
+     su «?» o su minuto, el maestro y su globo, y los aros y rótulos. */
+  window.__amExtra.amGoles = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(m(el)); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function uno(sel, en) { return (en || raiz).querySelector(sel); }
+    function todos(sel, en) { return [].slice.call((en || raiz).querySelectorAll(sel)); }
+    function demora(el) { return parseFloat(el.style.getPropertyValue('--d')) || 0; }
+    function dura(el) { return parseFloat(el.style.getPropertyValue('--dur')) || 0; }
+    function encendido(el) { return !el.classList.contains('am-fuera'); }
+    function puntosDe(p) {
+      var nums = (p.getAttribute('d').match(/-?[0-9.]+/g) || []).map(Number), r = [];
+      for (var i = 0; i + 1 < nums.length; i += 2) r.push(aVista(p, nums[i], nums[i + 1]));
+      return r;
+    }
+    function escrito(t) { return { txt: t.textContent, caja: caja(t), ve: vis(t) }; }
+    var hoja = uno('[data-hoja] rect');
+    var uso = uno('[data-uso]');
+    var cab = uno('[data-cabeza]');
+    return {
+      hoja: { caja: caja(hoja), w: +hoja.getAttribute('width'), ve: vis(hoja), titulo: escrito(uno('[data-titulo="hoja"]')) },
+      cajas: todos('[data-caja]').map(function (c) { return { e: c.getAttribute('data-caja'), caja: caja(c) }; }),
+      nombres: todos('[data-nombre]').map(function (t) { var q = escrito(t); q.e = t.getAttribute('data-nombre'); return q; }),
+      numeros: todos('[data-num]').map(function (g) {
+        var va = uno('[data-va]', g), t = uno('text', g);
+        return { e: g.getAttribute('data-num'), v: +g.getAttribute('data-vale'), txt: t.textContent, ve: vis(t), caja: caja(t),
+          llega: { si: encendido(g), d: demora(g) }, queda: { si: encendido(va), d: demora(va) } };
+      }),
+      reloj: {
+        caja: caja(uno('[data-reloj] .vg-reloj')), marcas: todos('[data-reloj] .vg-reloj-marca').length,
+        largo: parseFloat(uso.style.strokeDasharray), offset: parseFloat(uso.style.strokeDashoffset),
+        d: demora(uso), dur: dura(uso), ve: vis(uso)
+      },
+      letreros: todos('[data-etiqueta]').map(function (g) {
+        var va = uno('[data-va]', g), t = uno('[data-minuto]', g), rc = uno('rect', g);
+        return { i: +g.getAttribute('data-etiqueta'), txt: t.textContent, minuto: +t.getAttribute('data-minuto'), ve: vis(rc), caja: caja(rc),
+          texto: caja(t), balon: caja(uno('[data-dibujo="balon"] circle', g)),
+          sale: { si: encendido(g), d: demora(g) }, queda: { si: encendido(va), d: demora(va) } };
+      }),
+      lista: {
+        caja: caja(uno('[data-lista] rect')), ve: vis(uno('[data-lista] rect')), titulo: escrito(uno('[data-titulo="lista"]')),
+        enc: todos('[data-enc]').map(function (t) { var q = escrito(t); q.k = t.getAttribute('data-enc'); return q; }),
+        filas: todos('[data-fila]').map(function (f) {
+          return { i: +f.getAttribute('data-fila'), ve: vis(f), d: demora(f), si: encendido(f),
+            celdas: todos('[data-col]', f).map(function (t) { var q = escrito(t); q.k = t.getAttribute('data-col'); q.gol = t.classList.contains('vg-celda-gol'); return q; }) };
+        })
+      },
+      balones: todos('[data-balon]').map(function (g) {
+        var b = uno('[data-dibujo="balon"] circle', g), o = uno('[data-ordinal]', g), du = uno('[data-duda]', g), mi = uno('[data-min]', g);
+        return { i: +g.getAttribute('data-balon'), ve: vis(b), caja: caja(b), ordinal: escrito(o), duda: escrito(du),
+          min: (function () { var q = escrito(mi); q.d = demora(mi); return q; })() };
+      }),
+      maestro: { ve: vis(cab), c: aVista(cab, +cab.getAttribute('cx'), +cab.getAttribute('cy')), r: +cab.getAttribute('r'), caja: caja(uno('[data-maestro]')) },
+      globo: {
+        ve: vis(uno('[data-globo] rect')), caja: caja(uno('[data-globo] rect')),
+        cola: puntosDe(uno('[data-cola]')), dice: todos('[data-dice]').map(escrito)
+      },
+      aros: todos('[data-aro]').map(function (a) { return { k: a.getAttribute('data-aro'), ve: vis(a), caja: caja(a) }; }),
+      rotulos: todos('[data-rotulo]').map(function (t) {
+        var g = t.parentNode, u = g.getAttribute && g.getAttribute('data-rotulo-g') ? uno('.vg-union', g) : null;
+        return { k: t.getAttribute('data-rotulo'), ve: vis(t), txt: t.textContent, caja: caja(t), union: u ? puntosDe(u) : null };
+      }),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   window.__amExtra.amBaleada = function (raiz) {
     var vis = window.__amVisible;
     var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
@@ -3724,6 +3801,231 @@ const ESCENAS = {
     for (let i = 0; i < piezas.length; i++) for (let j = i + 1; j < piezas.length; j++) if (monta(piezas[i].c, piezas[j].c)) encima.push([piezas[i].k, piezas[j].k]);
     const sobreLibreta = piezas.filter(p => p.k !== 'robot' && L.some(l => monta(p.c, l.caja))).map(p => p.k);
     r.push([encima.length === 0 && sobreLibreta.length === 0, `paso ${n}: ningún rótulo se monta en otra cosa ni en una libreta`, { encima, sobreLibreta }]);
+    return r;
+  },
+  /* Variables: la hoja que se comió los goles.
+     ⚠️ Nada se le cree a la escena. De la lista (lo que dice cada línea,
+     aunque todavía no se vea) sale el partido: el minuto de cada gol y
+     cómo iban. La sonda comprueba que cada línea sea la de antes con un
+     gol más, de un solo equipo, y que termine 3 a 2 como en la historia.
+     Con eso mira qué número se ve en cada recuadro de la hoja; y en los
+     pasos del partido, que el reloj corra parejo, que cada letrero salga
+     cuando el reloj pasa por su minuto, y que cada número llegue cuando
+     cae el gol que lo hace y se vaya cuando cae el siguiente de su
+     equipo. */
+  amGoles(e, n) {
+    const x = e.extra, r = [];
+    const cerca = (a, b, t = 1.5) => Math.abs(a - b) <= t;
+    const cen = c => ({ x: (c.x0 + c.x1) / 2, y: (c.y0 + c.y1) / 2 });
+    const monta = (a, b) => a.x0 < b.x1 - 0.5 && b.x0 < a.x1 - 0.5 && a.y0 < b.y1 - 0.5 && b.y0 < a.y1 - 0.5;
+    const contiene = (a, c, m = 0.5) => a.x0 <= c.x0 - m && a.x1 >= c.x1 + m && a.y0 <= c.y0 - m && a.y1 >= c.y1 + m;
+    const ancho = c => c.x1 - c.x0, alto = c => c.y1 - c.y0;
+    const nb = s => String(s).replace(/ /g, ' ');
+    const EQ = ['escuela', 'rival'];
+    /* Lo que dice la historia: ganaron 3 a 2. */
+    const HISTORIA = { escuela: 3, rival: 2 };
+
+    /* ── lo que no depende del dibujo va primero ── */
+    const PROHIBIDAS = /variable|cajit|valor|guarda|\bsuma|resta|muestra|contador|acumulador|traza|instrucci|programa|\borden\b|igual|obedece|cosecha|pulper|alcanc|asistencia|estanter|r[oó]tulo|\bbug|predec|computadora|m[aá]quina|faltas|basura|monedero|mango|silla|mesas|panes|vidas|puntos|dinero|frijol|\bnombre|inicial|tabla/i;
+    const dicho = [e.texto, e.palabras].concat(x.textos).join(' · ');
+    r.push([!PROHIBIDAS.test(dicho), `paso ${n}: no sale ninguna palabra de lo que pregunta la prueba`, (dicho.match(PROHIBIDAS) || [])[0]]);
+
+    /* ── el partido, sacado de la lista ── */
+    const L = x.lista;
+    const filas = L.filas.slice().sort((a, b) => a.i - b.i);
+    const celda = (f, k) => f.celdas.find(c => c.k === k);
+    const goles = filas.map(f => ({ m: +celda(f, 'minuto').txt, escuela: +celda(f, 'escuela').txt, rival: +celda(f, 'rival').txt }));
+    let ant = { m: 0, escuela: 0, rival: 0 };
+    const malPartido = [];
+    goles.forEach((g, i) => {
+      const dE = g.escuela - ant.escuela, dR = g.rival - ant.rival;
+      const quien = dE === 1 && dR === 0 ? 'escuela' : dE === 0 && dR === 1 ? 'rival' : null;
+      const negrita = filas[i].celdas.filter(c => c.gol).map(c => c.k);
+      if (!quien) malPartido.push([i + 1, 'no es la línea de antes con un gol más de un solo equipo']);
+      else if (negrita.length !== 1 || negrita[0] !== quien) malPartido.push([i + 1, 'la negrita no va en el equipo que anotó']);
+      if (!(g.m > ant.m)) malPartido.push([i + 1, 'los minutos no van creciendo']);
+      g.e = quien; ant = g;
+    });
+    const FIN = { escuela: ant.escuela, rival: ant.rival };
+    r.push([malPartido.length === 0 && FIN.escuela === HISTORIA.escuela && FIN.rival === HISTORIA.rival && goles.length === HISTORIA.escuela + HISTORIA.rival,
+      `paso ${n}: en la lista, cada línea es la de antes con un gol más de un solo equipo (en negrita), los minutos van creciendo y termina 3 a 2`, { malPartido, FIN }]);
+
+    const permitidos = new Set([0, FIN.escuela, FIN.rival, goles.length]);
+    const numeros = ((e.texto + ' ' + e.palabras + ' ' + e.cifra).match(/\d+/g) || []).map(Number);
+    const deMas = numeros.filter(v => !permitidos.has(v));
+    r.push([deMas.length === 0, `paso ${n}: cada número que se dice se cuenta en el dibujo`, deMas]);
+
+    /* ── la hoja de Marvin ── */
+    const H = x.hoja;
+    const C = EQ.map(k => x.cajas.find(c => c.e === k));
+    const N = EQ.map(k => x.nombres.find(t => t.e === k));
+    r.push([H.ve && H.titulo.ve && H.titulo.txt === 'la hoja de Marvin' && contiene(H.caja, H.titulo.caja) && H.titulo.caja.y1 < Math.min(C[0].caja.y0, C[1].caja.y0),
+      `paso ${n}: la hoja dice arriba «la hoja de Marvin»`, H.titulo.txt]);
+    r.push([C.every(c => contiene(H.caja, c.caja)) && cerca(ancho(C[0].caja), ancho(C[1].caja), 0.5) && cerca(alto(C[0].caja), alto(C[1].caja), 0.5)
+      && cerca(C[0].caja.y0, C[1].caja.y0, 0.5) && C[0].caja.x1 < C[1].caja.x0,
+      `paso ${n}: en la hoja hay dos recuadros iguales, uno al lado del otro`, C.map(c => c.caja)]);
+    r.push([N.every((t, i) => t.ve && t.txt === EQ[i] && cerca(cen(t.caja).x, cen(C[i].caja).x, 1) && t.caja.y0 > C[i].caja.y1 && contiene(H.caja, t.caja)),
+      `paso ${n}: debajo de cada recuadro va su equipo: escuela y rival`, N.map(t => t.txt)]);
+    const escala = ancho(H.caja) / H.w;
+    r.push([n <= 2 ? escala > 1.3 : cerca(escala, 1, 0.02), `paso ${n}: la hoja va ${n <= 2 ? 'grande, porque todavía no hay lista' : 'a su tamaño, para dejarle sitio a la lista'}`, Math.round(escala * 100) / 100]);
+
+    /* ── qué número se ve en cada recuadro ── */
+    const esperado = n === 0 ? { escuela: 0, rival: 0 } : FIN;
+    const malNum = EQ.map((k, i) => {
+      const ves = x.numeros.filter(q => q.e === k && q.ve);
+      if (ves.length !== 1) return [k, 'se ven ' + ves.length];
+      const q = ves[0];
+      if (+q.txt !== esperado[k] || q.v !== esperado[k]) return [k, 'dice ' + q.txt];
+      if (!contiene(C[i].caja, q.caja, 1) || !cerca(cen(q.caja).x, cen(C[i].caja).x, 2)) return [k, 'no está dentro de su recuadro'];
+      return null;
+    }).filter(Boolean);
+    r.push([malNum.length === 0, `paso ${n}: en la hoja se ve un solo número por equipo, dentro de su recuadro: ${esperado.escuela} y ${esperado.rival}`, malNum]);
+
+    /* ── el reloj del partido ── */
+    const R = x.reloj, frac = 1 - R.offset / R.largo;
+    r.push([R.ve && cerca(frac, n === 0 ? 0 : 1, 0.004), `paso ${n}: el reloj ${n === 0 ? 'no ha empezado' : 'marca el partido entero'}`, Math.round(frac * 1000) / 1000]);
+    const rp = x.rotulos.find(q => q.k === 'partido');
+    r.push([rp.ve && rp.txt === 'el partido' && cerca(cen(rp.caja).x, cen(R.caja).x, 1) && rp.caja.y0 > R.caja.y1, `paso ${n}: debajo del reloj dice «el partido»`, rp.caja]);
+
+    /* ── el partido corriendo: los pasos 1 y 3 ── */
+    const LT = x.letreros.slice().sort((a, b) => a.i - b.i);
+    r.push([LT.length === goles.length && LT.every((t, i) => t.minuto === goles[i].m && nb(t.txt) === 'minuto ' + goles[i].m
+      && contiene(t.caja, t.texto) && contiene(t.caja, t.balon) && t.balon.x1 < t.texto.x0),
+      `paso ${n}: cada letrero lleva su balón y el minuto de su línea`, LT.map(t => t.txt)]);
+    r.push([LT.every(t => !t.ve), `paso ${n}: al terminar el paso no queda ningún letrero`, LT.filter(t => t.ve).map(t => t.i)]);
+    if (n === 1 || n === 3) {
+      const d0 = R.d, dur = R.dur;
+      /* El reloj corre parejo: cada letrero sale cuando el reloj pasa por
+         su minuto, así que (demora − arranque) / minuto da lo mismo para
+         todos: lo que tarda un minuto. */
+      const porMin = LT.map((t, i) => (t.sale.d - d0) / goles[i].m);
+      const msMin = porMin[0], total = dur / msMin;
+      r.push([LT.every(t => t.sale.si) && porMin.every(v => cerca(v, msMin, 0.5)) && cerca(total, Math.round(total), 0.02) && Math.round(total) > goles[goles.length - 1].m,
+        `paso ${n}: cada letrero sale cuando el reloj, corriendo parejo, pasa por su minuto`, { porMin, total }]);
+      const T = i => d0 + goles[i].m * msMin, FINP = d0 + dur;
+      const malLet = LT.filter((t, i) => {
+        if (t.queda.si) return true;
+        if (i + 1 === LT.length) return t.queda.d < FINP;
+        return !(t.queda.d < T(i + 1) && t.queda.d >= T(i) + 400);
+      }).map(t => t.i);
+      r.push([malLet.length === 0, `paso ${n}: cada letrero se va antes de que salga el del gol siguiente, y el último, cuando ya terminó el partido`, malLet]);
+      const malHoja = [];
+      EQ.forEach(k => {
+        const hechos = goles.map((g, i) => ({ g, i })).filter(q => q.g.e === k);
+        x.numeros.filter(q => q.e === k).forEach(q => {
+          const hace = hechos.find(h => h.g[k] === q.v), sigue = hechos.find(h => h.g[k] === q.v + 1);
+          const llegaBien = q.v === 0 ? q.llega.si && q.llega.d === 0 : !!hace && q.llega.si && cerca(q.llega.d, T(hace.i), 1);
+          const quedaBien = sigue ? !q.queda.si && cerca(q.queda.d, T(sigue.i), 1) : q.queda.si;
+          if (!llegaBien || !quedaBien) malHoja.push([k, q.v, q.llega, q.queda]);
+        });
+      });
+      r.push([malHoja.length === 0, `paso ${n}: en la hoja, cada número llega cuando cae el gol que lo hace y se va cuando cae el gol siguiente de su equipo`, malHoja.slice(0, 3)]);
+      if (n === 3) {
+        const malFila = filas.filter((f, i) => !f.si || !cerca(f.d, T(i), 1)).map(f => f.i);
+        r.push([malFila.length === 0, 'paso 3: cada línea de la lista se escribe cuando cae su gol', malFila]);
+      }
+      const lt = LT[0].caja;
+      if (n === 1) r.push([lt.y0 > H.caja.y1 && lt.x0 >= H.caja.x0 - 1 && lt.x1 <= H.caja.x1 + 1 && !monta(lt, R.caja),
+        'paso 1: el letrero del gol sale debajo de la hoja', lt]);
+      else r.push([!monta(lt, L.caja) && !monta(lt, H.caja) && !monta(lt, R.caja) && lt.x1 <= 320 && lt.y1 <= 272,
+        'paso 3: el letrero del gol sale al lado de la lista, sin taparla', lt]);
+    }
+
+    /* ── la lista ── */
+    r.push([L.ve === (n >= 3) && filas.every(f => f.ve === (n >= 3)), `paso ${n}: ${n >= 3 ? 'la lista está, con sus cinco líneas' : 'todavía no hay lista'}`, [L.ve, filas.filter(f => f.ve).length]]);
+    if (n >= 3) {
+      const COLS = ['minuto', 'escuela', 'rival'];
+      const enc = COLS.map(k => L.enc.find(q => q.k === k));
+      const malCol = [];
+      filas.forEach(f => enc.forEach(h => { const c = celda(f, h.k); if (!cerca(cen(c.caja).x, cen(h.caja).x, 0.6) || c.caja.y0 <= h.caja.y1) malCol.push([f.i, h.k]); }));
+      const ys = filas.map(f => cen(celda(f, 'minuto').caja).y), pasoY = ys[1] - ys[0];
+      r.push([L.titulo.txt === 'la lista de Marvin' && enc.every((h, i) => h.txt === COLS[i]) && malCol.length === 0 && pasoY > 0
+        && ys.every((y, i) => i === 0 || cerca(y - ys[i - 1], pasoY, 0.3)) && filas.every(f => f.celdas.every(c => contiene(L.caja, c.caja))),
+        `paso ${n}: la lista dice arriba «minuto», «escuela» y «rival», y cada línea va debajo de la otra, en su columna`, { malCol, ys }]);
+      r.push([!monta(L.caja, H.caja), `paso ${n}: la lista no se monta en la hoja`, [L.caja, H.caja]]);
+    }
+
+    /* ── el maestro y su pregunta ── */
+    const M = x.maestro, G = x.globo;
+    const conMaestro = n === 2 || n === 4;
+    r.push([M.ve === conMaestro && G.ve === conMaestro, `paso ${n}: ${conMaestro ? 'está el maestro con su pregunta' : 'el maestro no está'}`, [M.ve, G.ve]]);
+    if (conMaestro) {
+      const punta = G.cola[1];
+      r.push([G.dice.map(t => t.txt).join(' ') === '¿En qué minuto cayó cada gol?' && G.dice.every(t => contiene(G.caja, t.caja))
+        && Math.abs(Math.hypot(punta[0] - M.c[0], punta[1] - M.c[1]) - M.r) < 2.5 && cerca(G.cola[0][0], G.caja.x1, 1) && cerca(G.cola[2][0], G.caja.x1, 1),
+        `paso ${n}: el globo dice «¿En qué minuto cayó cada gol?» y su cola llega a la cabeza del maestro`, G.dice.map(t => t.txt)]);
+    }
+
+    /* ── los cinco goles, con su «?» o su minuto ── */
+    const B = x.balones.slice().sort((a, b) => a.i - b.i);
+    const conBalones = n === 2 || n >= 4;
+    r.push([B.length === goles.length && B.every(b => b.ve === conBalones), `paso ${n}: ${conBalones ? 'están los cinco goles' : 'no están los goles'}`, B.map(b => b.ve)]);
+    if (conBalones) {
+      const bx = B.map(b => cen(b.caja).x), by = B.map(b => cen(b.caja).y), pasoB = bx[1] - bx[0];
+      const malB = B.filter((b, i) => b.ordinal.txt !== (i + 1) + '.º' || !b.ordinal.ve || !cerca(cen(b.ordinal.caja).x, bx[i], 1) || b.ordinal.caja.y1 > b.caja.y0).map(b => b.i);
+      r.push([by.every(y => cerca(y, by[0], 0.3)) && pasoB > 0 && bx.every((v, i) => i === 0 || cerca(v - bx[i - 1], pasoB, 0.3)) && malB.length === 0,
+        `paso ${n}: los ${goles.length} goles van en fila, cada uno con su número de orden encima`, malB]);
+      if (n === 2) r.push([B.every((b, i) => b.duda.ve && b.duda.txt === '?' && !b.min.ve && cerca(cen(b.duda.caja).x, bx[i], 1) && b.duda.caja.y0 > b.caja.y1),
+        'paso 2: debajo de cada gol hay un «?», y ningún minuto', B.map(b => [b.duda.ve, b.min.ve])]);
+      else r.push([B.every((b, i) => !b.duda.ve && b.min.ve && +b.min.txt === goles[i].m && cerca(cen(b.min.caja).x, bx[i], 1) && b.min.caja.y0 > b.caja.y1),
+        `paso ${n}: debajo de cada gol está su minuto, el de su línea en la lista`, B.map(b => b.min.txt)]);
+      const zona = B.reduce((z, b) => {
+        const bajo = b.duda.ve ? b.duda.caja : b.min.caja;
+        return { x0: Math.min(z.x0, b.caja.x0, b.ordinal.caja.x0, bajo.x0), y0: Math.min(z.y0, b.ordinal.caja.y0), x1: Math.max(z.x1, b.caja.x1, b.ordinal.caja.x1, bajo.x1), y1: Math.max(z.y1, bajo.y1) };
+      }, { x0: 1e9, y0: 1e9, x1: -1e9, y1: -1e9 });
+      const choca = [['la hoja', H.caja], ['el reloj', R.caja], ['el partido', rp.caja]].concat(L.ve ? [['la lista', L.caja]] : [])
+        .concat(G.ve ? [['el globo', G.caja]] : []).concat(M.ve ? [['el maestro', M.caja]] : []).filter(q => monta(zona, q[1])).map(q => q[0]);
+      r.push([choca.length === 0, `paso ${n}: los goles no se montan en nada`, choca]);
+    }
+
+    /* ── los aros y los rótulos ── */
+    const aro = k => x.aros.find(a => a.k === k);
+    const aMin = aro('minutos'), aH = aro('hoja'), aL = aro('lista');
+    r.push([aMin.ve === (n === 4) && aH.ve === (n === 5) && aL.ve === (n === 5), `paso ${n}: los aros que tocan en este paso, y ningún otro`, [aMin.ve, aH.ve, aL.ve]]);
+    if (n === 4) {
+      const cMin = filas.map(f => celda(f, 'minuto').caja).concat([L.enc.find(q => q.k === 'minuto').caja]);
+      const cOtras = filas.map(f => celda(f, 'escuela').caja).concat([L.enc.find(q => q.k === 'escuela').caja]);
+      r.push([cMin.every(c => contiene(aMin.caja, c)) && cOtras.every(c => !monta(aMin.caja, c)),
+        'paso 4: un aro rodea la columna de los minutos, y solo esa', aMin.caja]);
+    }
+    const rA = x.rotulos.find(q => q.k === 'ahora'), rG = x.rotulos.find(q => q.k === 'gol');
+    r.push([rA.ve === (n === 5) && rG.ve === (n === 5), `paso ${n}: ${n === 5 ? 'dice qué lleva la hoja y qué la lista' : 'todavía no hay rótulos al lado'}`, [rA.ve, rG.ve]]);
+    if (n === 5) {
+      r.push([C.every(c => contiene(aH.caja, c.caja)) && N.every(t => contiene(aH.caja, t.caja)) && filas.every(f => f.celdas.every(c => contiene(aL.caja, c.caja))),
+        'paso 5: un aro rodea los dos números de la hoja y otro las líneas de la lista', [aH.caja, aL.caja]]);
+      const une = (q, a) => q.union && cerca(q.union[0][0], a.caja.x1, 1.2) && cerca(q.union[q.union.length - 1][0], q.caja.x0, 4)
+        && q.union[0][1] > a.caja.y0 && q.union[0][1] < a.caja.y1 && cerca(q.union[0][1], cen(q.caja).y, 4);
+      r.push([rA.txt === 'solo lo de ahora' && rG.txt === 'gol por gol' && une(rA, aH) && une(rG, aL),
+        'paso 5: al lado de la hoja dice «solo lo de ahora», y al lado de la lista, «gol por gol», cada uno unido a su aro', [rA.txt, rG.txt]]);
+    }
+
+    /* ── el marcador y la frase ── */
+    const visto = EQ.map(k => { const q = x.numeros.find(u => u.e === k && u.ve); return q ? +q.txt : null; });
+    const conMin = B.filter(b => b.ve && b.min.ve).length, lineas = filas.filter(f => f.ve).length;
+    const deCuantos = +((e.palabras.match(/de (\d+) goles/) || [])[1]);
+    const MARCA = [
+      [nb(e.cifra) === `${visto[0]} a ${visto[1]}`, 'dice lo que hay en la hoja'],
+      [nb(e.cifra) === `${visto[0]} a ${visto[1]}`, 'dice lo que queda en la hoja'],
+      [+e.cifra === conMin && deCuantos === B.length, 'cuenta los goles que tienen su minuto, de todos'],
+      [+e.cifra === lineas, 'cuenta las líneas de la lista'],
+      [+e.cifra === conMin && deCuantos === B.length, 'cuenta los goles que tienen su minuto, de todos'],
+      [+e.cifra === conMin && conMin === lineas, 'cuenta los goles con su minuto, que son las líneas de la lista']
+    ][n];
+    r.push([MARCA[0], `paso ${n}: el marcador ${MARCA[1]}`, [e.cifra, e.palabras]]);
+    if (n === 1 || n === 2) r.push([nb(e.texto).includes(`${visto[0]} a ${visto[1]}`), `paso ${n}: la frase dice lo que queda en la hoja`, e.texto]);
+    /* «3 a 2» no es una cuenta con signo, así que la revisión de las cuentas
+       partidas no lo ve: escrito con espacios normales, se partía entre
+       «Terminan 3» y «a 2». Va con espacios que no se parten. */
+    const marcas = (e.texto + ' ' + e.palabras + ' ' + e.cifra).match(/\d[\s\u00a0]+a[\s\u00a0]+\d/g) || [];
+    r.push([marcas.every(q => !/\s/.test(q.replace(/\u00a0/g, ''))), `paso ${n}: «3 a 2» va con espacios que no se parten`, marcas]);
+
+    /* ── que nada se encime ── */
+    const piezas = [{ k: 'hoja', c: H.caja }, { k: 'reloj', c: R.caja }, { k: 'el partido', c: rp.caja }]
+      .concat(L.ve ? [{ k: 'lista', c: L.caja }] : []).concat(G.ve ? [{ k: 'globo', c: G.caja }] : []).concat(M.ve ? [{ k: 'maestro', c: M.caja }] : [])
+      .concat(rA.ve ? [{ k: 'solo lo de ahora', c: rA.caja }] : []).concat(rG.ve ? [{ k: 'gol por gol', c: rG.caja }] : []);
+    const encima = [];
+    for (let i = 0; i < piezas.length; i++) for (let j = i + 1; j < piezas.length; j++) if (monta(piezas[i].c, piezas[j].c)) encima.push([piezas[i].k, piezas[j].k]);
+    r.push([encima.length === 0, `paso ${n}: nada se monta en nada`, encima]);
     return r;
   },
   amBaleada(e, n) {

@@ -541,3 +541,47 @@ body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* ── La animación de la hoja que se comió los goles (js/animacion-goles.js) ──
+   La hoja, la lista, el reloj, los balones y el maestro son cosas, y tienen
+   su color en las dos pantallas: el papel es papel también de noche. Lo que
+   se escribe sobre el escenario (los «?», los minutos, «el partido») lleva
+   el halo de .am-rotulo, y los aros, el color de la misión.
+   ⚠️ El reloj del partido corre a paso PAREJO (--dur): cada gol cae cuando
+   el reloj llega a su minuto, y con la curva de siempre llegaría antes. */
+#amGoles .vg-uso { transition: stroke-dashoffset var(--dur, 800ms) linear var(--d, 0ms); }
+#amGoles .vg-papel { fill: #fffdf5; stroke: #8a7f6a; stroke-width: 1.2; }
+#amGoles .vg-papel-tit { fill: #6d5d3f; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amGoles .vg-caja { fill: #ecfeff; stroke: #0e7490; stroke-width: 2; }
+#amGoles .vg-num { fill: #0e7490; font-family: 'Fredoka', sans-serif; font-weight: 700; }
+#amGoles .vg-nombre-barra { fill: #0e7490; }
+#amGoles .vg-nombre { fill: #ffffff; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amGoles .vg-reloj { fill: #ffffff; }
+#amGoles .vg-uso { fill: none; stroke: #43a047; }
+#amGoles .vg-reloj-marca { fill: none; stroke: #37474f; stroke-width: 1.2; stroke-linecap: round; }
+#amGoles .vg-reloj-borde { fill: none; stroke: #37474f; stroke-width: 1.6; }
+#amGoles .vg-etiqueta { fill: #fde68a; stroke: #b45309; stroke-width: 1.2; }
+#amGoles .vg-etiqueta-txt { fill: #1b2838; font-family: 'Fredoka', sans-serif; font-weight: 700; }
+/* El letrero del gol entra y sale RÁPIDO: entre gol y gol hay menos de un
+   segundo, y con el medio segundo de siempre casi no se alcanzaba a leer. */
+#amGoles [data-etiqueta],
+#amGoles [data-etiqueta] > [data-va] { transition: opacity 0.25s ease var(--d, 0ms); }
+#amGoles .vg-balon { fill: #ffffff; stroke: #37474f; stroke-width: 1.1; }
+#amGoles .vg-balon-parche { fill: #37474f; }
+#amGoles .vg-enc { fill: #6d5d3f; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amGoles .vg-celda { fill: #1b2838; font-family: 'Fredoka', sans-serif; font-weight: 500; }
+#amGoles .vg-celda-gol { fill: #0e7490; font-weight: 700; }
+#amGoles .vg-raya { fill: none; stroke: #d8cfbd; stroke-width: 1; }
+#amGoles .vg-duda,
+#amGoles .vg-minuto { font-weight: 700; }
+#amGoles .vg-globo { fill: #ffffff; stroke: #37474f; stroke-width: 1.2; }
+#amGoles .vg-globo-relleno { fill: #ffffff; }
+#amGoles .vg-globo-borde { fill: none; stroke: #37474f; stroke-width: 1.2; stroke-linejoin: round; }
+#amGoles .vg-globo-txt { fill: #1b2838; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amGoles .vg-piel { fill: #c68642; }
+#amGoles .vg-pelo { fill: #3e2723; }
+#amGoles .vg-camisa { fill: #b45309; }
+#amGoles .vg-pantalon { fill: #607d8b; }
+#amGoles .vg-brazo { fill: none; stroke: #c68642; stroke-width: 3.6; stroke-linecap: round; }
+#amGoles .vg-aro { fill: none; stroke: var(--am-pri); stroke-width: 2; }
+#amGoles .vg-union { fill: none; stroke: var(--am-pri); stroke-width: 1.4; }

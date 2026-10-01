@@ -469,11 +469,11 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 // tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
 // Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'En el partido de la escuela ganaron 3 a 2.',a:true,k:'tf-3a2'},
-  {q:'Una cajita de nombre x7 dice claramente qué guarda.',a:false,k:'tf-x7'},
+  {q:'Programar es ir cambiando, con cuidado, lo que hay dentro de las cajitas.',a:true,k:'tf-programar'},
+  {q:'Una cajita llamada x7 dice claramente qué guarda.',a:false,k:'tf-x7'},
   {q:'SUMA usa el valor que hay en ese momento.',a:true,k:'tf-suma-actual'},
   {q:'Con 4 instrucciones se lleva la cuenta de cualquier cosa.',a:true,k:'tf-cuatro'},
-  {q:'El maestro pudo saber en qué minuto cayó cada gol.',a:false,k:'tf-minuto'},
+  {q:'El número 100, que nunca cambia, sirve como cajita para llevar una cuenta.',a:false,k:'tf-cien'},
   {q:'La computadora guarda los datos en cajitas así.',a:true,k:'tf-computadora'},
   {q:'En la Máquina de Cajitas el programa corre instrucción por instrucción.',a:true,k:'tf-maquina'},
   {q:'RESTA 3 A dinero deja el dinero igual.',a:false,k:'tf-resta'},
@@ -486,14 +486,14 @@ const evalMCBank=[
   {q:'Ejecuta: GUARDA 4 EN goles · SUMA 1 A goles · SUMA 1 A goles. ¿Cuánto vale goles?',o:['3','4','6','8'],a:2,k:'mc-goles'},
   {q:'Ejecuta: GUARDA 10 EN dinero · RESTA 4 A dinero. ¿Cuánto queda?',o:['14','10','6','4'],a:2,k:'mc-dinero'},
   {q:'GUARDA 6 EN puntos · ___ deja puntos en 9. ¿Qué instrucción falta?',o:['RESTA 3 A puntos','GUARDA 15 EN puntos','MUESTRA puntos','SUMA 3 A puntos'],a:3,k:'mc-falta'},
-  {q:'¿Cuántos valores guarda una cajita a la vez?',o:['Dos','Uno','Diez','Todos los que quiera'],a:1,k:'mc-uno'},
-  {q:'¿Qué le pasaba a cada gol que anotaba Marvin cuando caía el siguiente?',o:['Lo borraba al escribir el nuevo','Lo sumaba al siguiente','Lo guardaba en otra cajita','Nada, quedaban todos'],a:0,k:'mc-marvin'},
+  {q:'Ejecuta: GUARDA 4 EN sillas · GUARDA 9 EN mesas. ¿Qué cajita cambió con la última instrucción?',o:['sillas','mesas','Las dos','Ninguna'],a:1,k:'mc-ultima'},
+  {q:'Tienes L 20 en tu monedero. Te regalan L 15 y gastas L 8. ¿Cuánto te queda?',o:['L 27','L 43','L 13','L 12'],a:0,k:'mc-monedero'},
   {q:'¿Qué hace RESTA 2 A vidas?',o:['Aumenta 2 al valor','Quita 2 usando el valor actual','Borra la cajita','Enseña el valor'],a:1,k:'mc-resta'},
   {q:'¿Cuál de estas cuentas sube de 1 en 1?',o:['La venta de la pulpería','La asistencia del aula','El dinero de la alcancía','El precio del maíz'],a:1,k:'mc-asistencia'},
-  {q:'¿Qué conviene anotar en la tabla de valores?',o:['El nombre del alumno','Solo el resultado final','Un dibujo de la cajita','El valor de la cajita después de cada línea'],a:3,k:'mc-trazar'}
+  {q:'Este programa debía dejar panes en 4: GUARDA 2 EN panes · SUMA 1 A panes · RESTA 1 A panes. Terminó en 2. ¿Qué debía decir la última línea?',o:['GUARDA 1 EN panes','MUESTRA panes','RESTA 2 A panes','SUMA 1 A panes'],a:3,k:'mc-bug'}
 ];
 const evalCPBank=[
-  {q:'Marvin llevaba la cuenta del partido en una ___.',a:'hoja',acc:['hoja'],k:'cp-hoja'},
+  {q:'Ejecuta: GUARDA 8 EN mangos · SUMA 4 A mangos · RESTA 2 A mangos. Al final mangos vale ___.',a:'10',acc:['10','diez'],k:'cp-mangos'},
   {q:'La venta de la pulpería fue L 12, luego L 8 y luego L ___.',a:'5',acc:['5','cinco'],k:'cp-5'},
   {q:'Para contar desde el principio, la cajita empieza con GUARDA ___.',a:'0',acc:['0','cero'],k:'cp-0'},
   {q:'Ejecuta: GUARDA 5 EN puntos · SUMA 2 A puntos. Al final puntos vale ___.',a:'7',acc:['7','siete'],k:'cp-7'},
@@ -513,7 +513,7 @@ const evalPRBank=[
   {term:'Estantería',def:'Todas las cajitas rotuladas juntas',k:'pr-estanteria'},
   {term:'Nombre',def:'El rótulo de la cajita',k:'pr-nombre'},
   {term:'Bug',def:'Error que deja mal el valor final',k:'pr-bug'},
-  {term:'Marcador',def:'Los goles del partido en una cajita',k:'pr-marcador'},
+  {term:'Basura',def:'Lo que tiene una cajita que nadie llenó',k:'pr-basura'},
   {term:'Alcancía',def:'Dinero que entra y sale',k:'pr-alcancia'}
 ];
 

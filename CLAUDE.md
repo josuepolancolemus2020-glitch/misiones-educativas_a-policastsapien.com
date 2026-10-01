@@ -11132,6 +11132,156 @@ Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
 de 117 ms, al empezar a copiar el robot, cuando las 43 libretas vuelven a quedar
 en blanco de golpe. El Robot Decide, medido el mismo día, va a 60 y 100 ms.
 
+### La quincuagésima tercera: Variables: las Cajitas de Memoria, y lo que enseñó
+
+La quinta de la Ruta del Código es **Variables: las Cajitas de Memoria**
+(`misiones/2y3ciclo-variables-cajitas/`, `js/animacion-goles.js`). La historia
+es la de Marvin, al que pusieron a llevar el marcador del partido de la escuela
+en una hoja: cada gol, borraba el número y escribía el nuevo. Ganaron 3 a 2, y
+cuando el maestro preguntó en qué minuto había caído cada gol, no quedaba nada
+que mirar: el último número se había comido a todos los anteriores. La animación
+pone arriba la hoja de Marvin, con un recuadro para la escuela y otro para el
+rival, y el reloj del partido:
+
+- la hoja en 0 a 0: ¿qué quedará escrito al final?;
+- el partido corre en el reloj; cada gol sale en un letrero con su minuto, y en
+  la hoja el número nuevo baja y empuja al de antes hasta sacarlo. Terminan
+  3 a 2;
+- el maestro pregunta en qué minuto cayó cada gol: en la hoja solo queda el
+  3 a 2, y los cinco goles se quedan con su «?»;
+- otra forma, desde el principio: la hoja se achica y al lado aparece una lista;
+  el mismo partido, y cada gol escribe una línea nueva, debajo de la otra, con
+  el minuto y cómo van;
+- la hoja se sigue comiendo lo de antes, pero la lista no borra nada: un aro
+  rodea la columna de los minutos y cada gol recibe el suyo;
+- la hoja dice solo cómo van ahora, y la lista, gol por gol. Y la pregunta es
+  del alumno: algo que cambie hoy en su casa, anotado cada vez, con la hora.
+
+Siete cosas que valen para las que siguen:
+
+1. ⚠️ **La historia terminaba en una conclusión que no salía de ella, y se
+   cambió la frase.** Decía «por eso hay que saber cuándo conviene guardar y
+   cuándo conviene sumar», y con ninguna de las dos se habría salvado el minuto
+   de cada gol: los dos números se comen al de antes. Lo que faltó fue anotar
+   cada valor. Ahora dice «si después te van a preguntar por lo de antes, hay
+   que anotar cada valor, uno debajo del otro», que es la tabla de valores que
+   la misión enseña a llenar. Cuando el cuento y la verdad se pelean, se cambia
+   el cuento.
+2. ⚠️ **Dos números que se cambian en el mismo sitio no se cruzan: uno empuja al
+   otro.** La primera versión encogía el viejo mientras crecía el nuevo, y a
+   medio cambio se leía un «1» encima de un «0». Ahora el nuevo baja desde
+   arriba del recuadro y saca al viejo por abajo, los dos juntos y dentro de un
+   recorte (`clipPath`), como en un marcador de los de antes. Al final de cada
+   paso todo estaba bien: se vio en las fotos a medio viaje.
+3. ⚠️ **Lo que sale en el mismo sitio, uno detrás de otro, se va ANTES de que
+   llegue el siguiente.** Los letreros de los goles se cruzaban y se leían
+   encimados («minuto 13» sobre «minuto 6»). Ahora cada uno se va 250 ms antes
+   del gol siguiente, con su propia transición de un cuarto de segundo, y el
+   reloj corre a 130 ms por minuto para que entre gol y gol dé tiempo de leerlo.
+   El letrero dice solo el minuto: el equipo lo dice el número que cambia en la
+   hoja.
+4. ⚠️ **Lo que se deja de golpe no puede llevarse por delante la demora de lo que
+   tiene que esperar.** Volviendo con «Atrás» del paso 3 al 2, los goles del
+   maestro aparecían al instante: se les había puesto su demora de 700 ms, y
+   DESPUÉS se mudaba de golpe su contenedor, con `am-quieto`, que les quita la
+   transición a todos sus hijos. Ahora cada paso hace primero lo que va de golpe
+   y después pone las demoras. Solo se vio a medio viaje, yendo hacia atrás.
+5. **La hoja va grande mientras no hay lista, y se achica cuando llega.** Con la
+   hoja siempre chica, medio dibujo se quedaba vacío en los tres primeros pasos.
+   La hoja se dibuja desde su esquina, dentro de un grupo que la pone en su
+   sitio, así se agranda desde esa esquina; y los goles del maestro y el letrero
+   se mudan escondidos, de debajo de la hoja grande a su lugar junto a la lista.
+6. ⚠️ **La historia y la animación contestaban siete preguntas de la prueba.**
+   «Marvin llevaba la cuenta del partido en una ___», «en el partido ganaron
+   3 a 2», «el maestro pudo saber en qué minuto cayó cada gol» y «¿qué le pasaba
+   a cada gol que anotaba Marvin?» eran la historia; «¿cuántos valores guarda
+   una cajita a la vez?», «¿qué conviene anotar en la tabla de valores?» y el
+   pareado «Marcador · los goles del partido en una cajita», la animación.
+   Ahora preguntan otras cosas de la misión: que programar es cambiar lo que hay
+   en las cajitas, que el número 100 no sirve de cajita, qué cajita cambió con
+   la última instrucción, el monedero de L 20, el programa de los panes que
+   terminó mal, la cuenta de los mangos y el pareado «Basura · lo que tiene una
+   cajita que nadie llenó», con la respuesta en el mismo lugar, en la misión y
+   en la ficha, que sigue en sus siete hojas. La felicitación de la ficha,
+   debajo de los pareados, resumía la misión con cinco respuestas: ahora solo
+   pide revisar.
+7. ⚠️ **Al quitar una pregunta, otra que pasaba salió roja.** La opción «El
+   nombre del alumno» de la pregunta que se fue hacía que «nombre» saliera en
+   cuatro preguntas, y la sonda de pistas la tomaba por el tema de la prueba.
+   Sin ella, vio lo que eso tapaba: «Una cajita de nombre x7…» dejaba escrito el
+   término del pareado «Nombre». Ahora dice «llamada x7». Y «variable» tampoco
+   puede ir en un verdadero o falso mientras sea un pareado: «La letra A… es una
+   variable» salió roja al primer intento. **Cuando se cambia una pregunta, la
+   sonda de pistas se vuelve a correr.**
+
+Y una del aparato, que ya estaba escrita y volvió a morder: **el espacio duro
+se escribe ` `**. Pegado tal cual en el editor quedó un espacio normal, y
+«Terminan 3 a 2» se partía entre «3» y «a 2». La revisión de las cuentas
+partidas no lo veía, porque «3 a 2» no lleva un signo; ahora la sonda de esta
+escena lo pide.
+
+La sonda de esta escena **no le cree nada a la escena**. Del texto de la lista
+(aunque todavía no se vea) saca el partido, y comprueba:
+
+- que cada línea sea la de antes con un gol más de un solo equipo, en negrita,
+  con los minutos creciendo, y que termine 3 a 2 como en la historia;
+- que la hoja diga «la hoja de Marvin», con sus dos recuadros iguales y su
+  equipo debajo de cada uno, grande sin lista y a su tamaño con ella;
+- que en cada recuadro se vea un solo número, dentro de él: 0 y 0 antes de
+  empezar, y lo último de la lista después;
+- que el reloj no haya empezado en el paso 0 y marque el partido entero después;
+- que en los pasos del partido cada letrero diga el minuto de su línea y salga
+  cuando el reloj, corriendo parejo, pasa por ese minuto (la demora de cada uno,
+  menos el arranque, dividida entre su minuto, da lo mismo para los cinco), que
+  se vaya antes del gol siguiente y que al final no quede ninguno;
+- que cada número de la hoja llegue cuando cae el gol que lo hace y se vaya
+  cuando cae el gol siguiente de su equipo, y que cada línea de la lista se
+  escriba cuando cae su gol;
+- que el letrero salga debajo de la hoja grande, o al lado de la lista sin
+  taparla;
+- que la lista diga arriba «minuto», «escuela» y «rival», con cada línea en su
+  columna y debajo de la otra, sin montarse en la hoja;
+- que el globo del maestro diga la pregunta y su cola llegue a su cabeza;
+- que los cinco goles vayan en fila, con su número de orden encima y su «?»
+  debajo, o el minuto de su línea, sin montarse en nada;
+- que el aro del paso 4 rodee la columna de los minutos y ninguna otra, y los
+  del paso 5, la hoja y la lista, cada uno con su rótulo unido;
+- que el marcador y cada número de la frase se cuenten en el dibujo, y que
+  «3 a 2» vaya con espacios que no se parten;
+- y que no salga ninguna palabra de lo que pregunta la prueba: ni variable, ni
+  cajita, ni valor, ni ninguna instrucción, ni tabla, ni nombre.
+
+Se comprobó al revés con veintidós averías, plantadas una por una:
+
+- un número que llega tarde a la hoja;
+- el número de antes que no se va;
+- un letrero que dice otro minuto;
+- el letrero que se queda después del gol siguiente;
+- el reloj que arranca tarde, y el que dura de más;
+- una línea de la lista con otro marcador;
+- la negrita en el equipo que no anotó;
+- una línea que se escribe tarde;
+- un gol con otro minuto debajo;
+- el «?» que se queda en la respuesta;
+- la cola del globo que no llega al maestro;
+- la hoja que no se achica con la lista;
+- el aro en la columna de la escuela;
+- el marcador del paso 2 diciendo 1;
+- «valor» en una frase;
+- el letrero montado en la hoja grande;
+- el último gol del rival;
+- los rótulos de las columnas trocados, y una línea fuera de su columna;
+- la raya de «gol por gol» que no llega a su aro;
+- y «3 a 2» con espacios normales.
+
+Salió roja con cada una. Otra más, cambiar el orden en que se escriben los
+encabezados, salió verde, y no era la sonda: cada encabezado seguía en su
+columna y el dibujo quedaba idéntico. Una avería que no cambia nada no es
+avería.
+
+Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
+de 67 ms. Bucles, medida el mismo día, va a 60 y 83 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -11287,6 +11437,11 @@ mueven una por una (la lluvia) van en un solo `path`. Lo que se copia en chico
 (el aviso en cada libreta) se mide contra el original: los largos salen de medir
 la letra en el navegador, y la sonda los vuelve a medir. Y para buscar una letra
 sola, `\b` no sirve con tildes: se usan límites con `\p{L}` y la bandera `u`.
+Dos cosas que cambian en el mismo sitio (un número, un letrero) no se cruzan:
+el nuevo empuja al viejo dentro de un recorte, o el viejo se va antes de que
+llegue el nuevo. Y en cada paso va primero lo que se deja de golpe (`am-quieto`
+le quita la transición a todos los hijos) y después las demoras: al revés, lo
+que tenía que esperar aparece de golpe.
 
 Si la misión es **bilingüe** (carga su `-en.js` y trae el botón 🌐), la escena
 lleva `bilingue: true`, `describe: { es, en }` e `idioma(lang, A)`, y sus
