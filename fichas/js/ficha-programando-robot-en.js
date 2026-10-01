@@ -190,8 +190,8 @@
         '<h3>I. Fill in the blanks <span class="val">(Value: 10 points each)</span></h3>' +
 
         '<ol>' +
-        '<li>In the story, the robot crashed on the <span class="linea-resp"></span> step.</li>' +
-        '<li>The robot was useless for the <span class="linea-resp"></span> the next day.</li>' +
+        '<li>The robot’s cycle starts again many times per <span class="linea-resp"></span>.</li>' +
+        '<li>The wall sensor also answers yes when the <span class="linea-resp"></span> of the yard is ahead.</li>' +
         '<li>To go from A5 to A1 in a straight line, the robot needs <span class="linea-resp"></span> FORWARD instructions.</li>' +
         '<li>The watering robot reads the <span class="linea-resp"></span> sensor to know whether the soil is dry.</li>' +
         '<li>If the soil is dry, the watering robot opens the <span class="linea-resp"></span>.</li>' +
@@ -205,49 +205,49 @@
         '<h3>II. True or False <span class="val">(Value: 10 points each)</span></h3>' +
 
         '<ol>' +
-        '<li>____ When the robot crashes, the mistake is almost always in the program and not in the machine.</li>' +
-        '<li>____ The robot guesses what the programmer meant to say.</li>' +
-        '<li>____ A program with sensors still works if the obstacles are moved around.</li>' +
+        '<li>____ The simulator has two sensors: the wall one and the line one.</li>' +
+        '<li>____ The REPEAT WHILE block is used to repeat something an exact number of times.</li>' +
         '<li>____ Written steps are fine even if another person has to ask you what you meant.</li>' +
+        '<li>____ If the robot turns right four times in a row, it ends up facing the way it faced at the start.</li>' +
         '<li>____ In the watering robot’s written steps, the plant count starts at zero.</li>' +
         '<li>____ The motors and wheels are the ones that read the sensors.</li>' +
-        '<li>____ The robot moves toward the way it is facing.</li>' +
+        '<li>____ When you compare what the robot did with its written steps, the first difference shows where the mistake is.</li>' +
         '<li>____ The simulator robot can move diagonally.</li>' +
+        '<li>____ A robot that already has sensors and motors does not need a program.</li>' +
         '<li>____ In the simulator, the robot shows ✔ when the sensor answers yes.</li>' +
-        '<li>____ A robot with a full battery no longer needs a program.</li>' +
         '</ol>' +
 
-        '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span>. Circle the correct letter.</h3>' +
+        '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span>. Fill in the circle of the letter of the correct answer.</h3>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">1</span>The robot has to move forward seven times in a row. What is best to write?</div>' +
+        '<div class="preg-q"><span class="preg-n">1</span>In the robot that picks up the trash in the schoolyard, which part puts the bottle in the box?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> Seven sensors</span>' +
-        '<span class="op"><i>b</i> FORWARD just once</span>' +
-        '<span class="op"><i>c</i> REPEAT 7 TIMES: FORWARD</span>' +
-        '<span class="op"><i>d</i> TURN seven times</span>' +
+        '<span class="op"><i>a</i> The distance sensor</span>' +
+        '<span class="op"><i>b</i> The antenna</span>' +
+        '<span class="op"><i>c</i> The arm</span>' +
+        '<span class="op"><i>d</i> The wheel</span>' +
         '</div>' +
         '</div>',
 
       /* ═══════════ PÁGINA 5 ═══════════ */
       p5:
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">2</span>What is the first step of a robot’s cycle?</div>' +
+        '<div class="preg-q"><span class="preg-n">2</span>In the line-following robot in the hallway, which part decides whether it goes straight or turns?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> Reading its sensors</span>' +
-        '<span class="op"><i>b</i> Moving the wheels</span>' +
-        '<span class="op"><i>c</i> Switching off</span>' +
-        '<span class="op"><i>d</i> Erasing the program</span>' +
+        '<span class="op"><i>a</i> The controller</span>' +
+        '<span class="op"><i>b</i> The wheel</span>' +
+        '<span class="op"><i>c</i> The floor</span>' +
+        '<span class="op"><i>d</i> The paint</span>' +
         '</div>' +
         '</div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">3</span>There is a crate right ahead. With «IF there is a wall ahead THEN TURN RIGHT, ELSE FORWARD», what does the robot do?</div>' +
+        '<div class="preg-q"><span class="preg-n">3</span>A guard robot has to make a noise when someone opens the classroom door. Which part makes the noise?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> It moves forward and crashes</span>' +
-        '<span class="op"><i>b</i> It jumps over the crate</span>' +
-        '<span class="op"><i>c</i> It stops forever</span>' +
-        '<span class="op"><i>d</i> It turns without touching the crate</span>' +
+        '<span class="op"><i>a</i> The door sensor</span>' +
+        '<span class="op"><i>b</i> The wheel</span>' +
+        '<span class="op"><i>c</i> The antenna</span>' +
+        '<span class="op"><i>d</i> The horn</span>' +
         '</div>' +
         '</div>' +
 
@@ -282,22 +282,22 @@
         '</div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">7</span>In the story of the robot that crashed, what was the mistake?</div>' +
+        '<div class="preg-q"><span class="preg-n">7</span>The robot has to move forward up to the board, but nobody knows how many squares are left. What is best to write?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> The order was badly written</span>' +
-        '<span class="op"><i>b</i> It looked just once and went on blindly</span>' +
-        '<span class="op"><i>c</i> The battery was flat</span>' +
-        '<span class="op"><i>d</i> The sensor was backwards</span>' +
+        '<span class="op"><i>a</i> REPEAT 6 TIMES: FORWARD</span>' +
+        '<span class="op"><i>b</i> REPEAT UNTIL you reach the board: FORWARD</span>' +
+        '<span class="op"><i>c</i> FORWARD once</span>' +
+        '<span class="op"><i>d</i> TURN RIGHT</span>' +
         '</div>' +
         '</div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">8</span>With «REPEAT WHILE there is no obstacle: FORWARD», when does the robot stop moving forward?</div>' +
+        '<div class="preg-q"><span class="preg-n">8</span>Which of these blocks does NOT repeat anything?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> Never</span>' +
-        '<span class="op"><i>b</i> On the second step</span>' +
-        '<span class="op"><i>c</i> When it runs out of paper</span>' +
-        '<span class="op"><i>d</i> When something appears ahead</span>' +
+        '<span class="op"><i>a</i> REPEAT 3 TIMES: FORWARD</span>' +
+        '<span class="op"><i>b</i> REPEAT WHILE there is a line: FORWARD</span>' +
+        '<span class="op"><i>c</i> REPEAT 2 TIMES: TURN LEFT</span>' +
+        '<span class="op"><i>d</i> IF there is a crate THEN dodge it</span>' +
         '</div>' +
         '</div>' +
 
@@ -328,22 +328,20 @@
         '<table>' +
         '<tr><th style="width:40%;">Column A</th><th>Column B</th></tr>' +
         '<tr><td>1. ____ Program</td><td>A. The steps in plain language, before loading them into the robot</td></tr>' +
-        '<tr><td>2. ____ Loop</td><td>B. Motor or wheel that carries out the order</td></tr>' +
+        '<tr><td>2. ____ Coordinate</td><td>B. Motor or wheel that carries out the order</td></tr>' +
         '<tr><td>3. ____ Branch</td><td>C. List of exact instructions the robot carries out step by step</td></tr>' +
         '<tr><td>4. ____ Variable</td><td>D. A number that goes up every time the robot picks something up</td></tr>' +
         '<tr><td>5. ____ Pseudocode</td><td>E. Each of the two paths of an IF… ELSE</td></tr>' +
         '<tr><td>6. ____ Debug</td><td>F. Final instruction: the robot stays still on the goal</td></tr>' +
         '<tr><td>7. ____ Bug</td><td>G. Find and fix the mistakes in the program</td></tr>' +
-        '<tr><td>8. ____ Actuator</td><td>H. Repeats a block of instructions several times</td></tr>' +
+        '<tr><td>8. ____ Actuator</td><td>H. A letter and a number that say where the robot is, like B3</td></tr>' +
         '<tr><td>9. ____ STOP</td><td>I. A labeled little box where a number is kept</td></tr>' +
         '<tr><td>10. ____ Counter</td><td>J. A wrong or out-of-order instruction that makes the robot fail</td></tr>' +
         '</table>' +
 
         '<div class="felic">' +
-        '🏅 <b>Congratulations! You have completed the Mission Programming a Robot.</b> Now you know that a robot repeats the cycle ' +
-        'read the sensors → decide → move the actuators → repeat; that conditionals let it decide on its own, that loops ' +
-        'save it instructions and that variables are what it counts with; and that when something goes wrong, the mistake is almost always ' +
-        'in the program: it has to be debugged. Keep going along the Robot Path! 🤖🕹️' +
+        '🏅 <b>Congratulations! You have completed the Mission Programming a Robot.</b> Before you hand it in, check your answers ' +
+        'one by one. Keep going along the Robot Path! 🤖🕹️' +
         '</div>' +
 
         '<h2>📏 Assessment Rubric</h2>' +
@@ -367,8 +365,8 @@
         '<p style="font-size:10pt;color:var(--gris);">This sheet is printed <strong>separately</strong>: it is only for the teacher or for guided self-assessment.</p>' +
 
         '<div class="pauta">' +
-        '<div><span class="pt">I. Fill in:</span> 1. third &nbsp; 2. fair &nbsp; 3. four &nbsp; 4. moisture &nbsp; 5. valve &nbsp; 6. black &nbsp; 7. numbered &nbsp; 8. battery &nbsp; 9. square &nbsp; 10. 1</div>' +
-        '<div><span class="pt">II. True or False:</span> 1T, 2F, 3T, 4F, 5T, 6F, 7T, 8F, 9T, 10F</div>' +
+        '<div><span class="pt">I. Fill in:</span> 1. second &nbsp; 2. edge &nbsp; 3. four &nbsp; 4. moisture &nbsp; 5. valve &nbsp; 6. black &nbsp; 7. numbered &nbsp; 8. battery &nbsp; 9. square &nbsp; 10. 1</div>' +
+        '<div><span class="pt">II. True or False:</span> 1T, 2F, 3F, 4T, 5T, 6F, 7T, 8F, 9F, 10T</div>' +
         '<div><span class="pt">III. Multiple choice:</span> 1c, 2a, 3d, 4b, 5c, 6a, 7b, 8d, 9b, 10c</div>' +
         '<div><span class="pt">IV. Matching:</span> 1C, 2H, 3E, 4I, 5A, 6G, 7J, 8B, 9F, 10D</div>' +
         '<div><span class="pt">Grid on page 3 (one valid solution):</span> from A5 facing North: ' +

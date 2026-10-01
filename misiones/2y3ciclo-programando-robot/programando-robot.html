@@ -15,6 +15,7 @@
 <link rel="canonical" href="https://metas.policastsapien.com/misiones/2y3ciclo-programando-robot/programando-robot.html">
 <link rel="stylesheet" href="../../css/vendor/fuentes/fuentes.css">
 <link rel="stylesheet" href="css/programando-robot.css">
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La barra de secciones, arriba y siempre a la vista. Va DESPUÉS del CSS
      de la misión a propósito: de ahí saca su color, y así sobrescribe su
      position:static sin un solo !important. -->
@@ -75,6 +76,10 @@
     <strong>cuántas veces</strong> se da. Un robot encendido tiene que mirar, decidir y moverse
     <strong>otra vez y otra vez</strong>, sin parar. Eso es un bucle, y es el corazón de su
     programa.</div></div>
+  </div>
+  <div class="card ac-teal" data-animacion>
+    <h2 data-i18n="an">🧱 Mira cuántas veces mira</h2>
+    <div id="amPared"><p data-i18n="anr">Con «si hay pared, parate» escrito una sola vez, al principio, el robot mira una vez, avanza sin volver a mirar y choca en el tercer paso. Con las mismas dos órdenes, pero la de mirar dentro de «diez veces», mira antes de cada paso y se para frente a la pared sin tocarla.</p></div>
   </div>
   <div class="card ac-teal" data-i18n="a1">
     <h2>🔁 El ciclo del robot: un bucle que nunca para</h2>
@@ -661,6 +666,8 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+  <script src="../../js/animacion-mision.js"></script>
+  <script src="js/animacion-pared.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

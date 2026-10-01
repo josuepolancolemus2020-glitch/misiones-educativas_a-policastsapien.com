@@ -101,6 +101,9 @@
         'is switched on has to look, decide and move <strong>again and again</strong>, without stopping. That is a loop, ' +
         'and it is the heart of its program.</div></div>',
 
+      an: '🧱 See how many times it looks',
+      anr: 'With «if there is a wall, stop» written only once, at the start, the robot looks once, moves forward without looking again and crashes on the third step. With the same two orders, but the one to look inside «ten times», it looks before every step and stops in front of the wall without touching it.',
+
       a1:
         '<h2>🔁 The robot cycle: a loop that never stops</h2>' +
         '<p>A robot that is switched on does <strong>the same thing over and over</strong>: it <strong>reads its sensors</strong>, ' +
@@ -493,34 +496,34 @@
       ],
 
       evalTFBank: [
-        { q: 'The robot guesses what the programmer meant to say.', a: false },
-        { q: 'When the robot crashes, the mistake is almost always in the program and not in the machine.', a: true },
-        { q: 'A program with sensors still works if the obstacles are moved around.', a: true },
+        { q: 'The REPEAT WHILE block is used to repeat something an exact number of times.', a: false },
+        { q: 'If the robot turns right four times in a row, it ends up facing the way it faced at the start.', a: true },
+        { q: 'The simulator has two sensors: the wall one and the line one.', a: true },
         { q: 'Written steps are fine even if another person has to ask you what you meant.', a: false },
         { q: 'In the watering robot’s written steps, the plant count starts at zero.', a: true },
-        { q: 'The robot moves toward the way it is facing.', a: true },
+        { q: 'When you compare what the robot did with its written steps, the first difference shows where the mistake is.', a: true },
         { q: 'The motors and wheels are the ones that read the sensors.', a: false },
         { q: 'The simulator robot can move diagonally.', a: false },
         { q: 'In the simulator, the robot shows ✔ when the sensor answers yes.', a: true },
-        { q: 'A robot with a full battery no longer needs a program.', a: false }
+        { q: 'A robot that already has sensors and motors does not need a program.', a: false }
       ],
 
       evalMCBank: [
-        { q: 'The robot has to move forward seven times in a row. What is best to write?', o: ['a) Seven sensors', 'b) FORWARD just once', 'c) REPEAT 7 TIMES: FORWARD', 'd) TURN seven times'], a: 2 },
-        { q: 'What is the first step of a robot’s cycle?', o: ['a) Reading its sensors', 'b) Moving the wheels', 'c) Switching off', 'd) Erasing the program'], a: 0 },
-        { q: 'There is a crate right ahead. With «IF there is a wall ahead THEN TURN RIGHT, ELSE FORWARD», what does the robot do?', o: ['a) It moves forward and crashes', 'b) It jumps over the crate', 'c) It stops forever', 'd) It turns without touching the crate'], a: 3 },
+        { q: 'On the robot that picks up the rubbish in the yard, which part puts the bottle in the box?', o: ['a) The distance sensor', 'b) The antenna', 'c) The arm', 'd) The wheel'], a: 2 },
+        { q: 'On the line-following robot in the hallway, which part decides whether it goes straight or turns?', o: ['a) The controller', 'b) The wheel', 'c) The floor', 'd) The paint'], a: 0 },
+        { q: 'A guard robot has to make a noise when someone opens the classroom door. Which part makes the noise?', o: ['a) The door sensor', 'b) The wheel', 'c) The antenna', 'd) The horn'], a: 3 },
         { q: 'When you look for the mistake, how much should you change in each test?', o: ['a) The whole program', 'b) One single instruction', 'c) Nothing', 'd) The robot'], a: 1 },
         { q: 'In the watering robot’s steps, what does the robot do if the soil is NOT dry?', o: ['a) It waters the plant', 'b) It switches off', 'c) It keeps going', 'd) It goes back to the start'], a: 2 },
         { q: 'A line follower with «REPEAT FOREVER» reaches the goal. What happens?', o: ['a) It goes straight past and off the table', 'b) It stops by itself', 'c) It goes back to the start', 'd) It switches off'], a: 0 },
-        { q: 'In the story of the robot that crashed, what was the mistake?', o: ['a) The order was badly written', 'b) It looked just once and went on blindly', 'c) The battery was flat', 'd) The sensor was backwards'], a: 1 },
-        { q: 'With «REPEAT WHILE there is no obstacle: FORWARD», when does the robot stop moving forward?', o: ['a) Never', 'b) On the second step', 'c) When it runs out of paper', 'd) When something appears ahead'], a: 3 },
+        { q: 'The robot has to move forward up to the board, but nobody knows how many squares are left. What is best to write?', o: ['a) REPEAT 6 TIMES: FORWARD', 'b) REPEAT UNTIL you reach the board: FORWARD', 'c) FORWARD once', 'd) TURN RIGHT'], a: 1 },
+        { q: 'Which of these blocks does NOT repeat anything?', o: ['a) REPEAT 3 TIMES: FORWARD', 'b) REPEAT WHILE there is a line: FORWARD', 'c) REPEAT 2 TIMES: TURN LEFT', 'd) IF there is a crate THEN dodge it'], a: 3 },
         { q: 'The robot has to wait for the teacher’s signal before leaving. Which instruction goes first?', o: ['a) FORWARD', 'b) WAIT', 'c) STOP', 'd) TURN LEFT'], a: 1 },
         { q: 'The robot is facing North and gets TURN RIGHT. Which way is it facing now?', o: ['a) South', 'b) West', 'c) East', 'd) North'], a: 2 }
       ],
 
       evalCPBank: [
-        { q: 'In the story, the robot crashed on the ___ step.', a: 'third', acc: ['third', '3rd', '3'] },
-        { q: 'The robot was useless for the ___ the next day.', a: 'fair', acc: ['fair'] },
+        { q: 'The robot’s cycle starts again many times per ___.', a: 'second', acc: ['second', 'seconds'] },
+        { q: 'The wall sensor also answers yes when the ___ of the yard is ahead.', a: 'edge', acc: ['edge', 'end', 'border', 'limit'] },
         { q: 'To go from A5 to A1 in a straight line, the robot needs ___ FORWARD instructions.', a: 'four', acc: ['four', '4'] },
         { q: 'The watering robot reads the ___ sensor to know whether the soil is dry.', a: 'moisture', acc: ['moisture', 'humidity'] },
         { q: 'If the soil is dry, the watering robot opens the ___.', a: 'valve', acc: ['valve'] },
@@ -533,7 +536,7 @@
 
       evalPRBank: [
         { term: 'Program', def: 'List of exact instructions the robot carries out step by step' },
-        { term: 'Loop', def: 'Repeats a block of instructions several times' },
+        { term: 'ELSE', def: 'What the robot does when the sensor answers no' },
         { term: 'Conditional', def: 'Chooses one branch or another depending on what the sensor reads' },
         { term: 'Variable', def: 'A labeled little box where a number is kept' },
         { term: 'Pseudocode', def: 'The steps in plain language, before loading them into the robot' },
@@ -550,7 +553,7 @@
       ],
 
       critErrorBank: [
-        {k:'er-descompuesto',txt:'«The robot got it wrong, so the robot is broken: it has to be replaced.»',g1:'Almost always the one that got it wrong was the PROGRAM, not the machine: the robot runs literally whatever was written for it.',g2:'The right thing to do is DEBUG: test the program step by step, find the wrong instruction and fix it.'},
+        {k:'er-gira',txt:'«To get to the next square, the robot turns right four times: turning also makes it move forward.»',g1:'Turning only changes which way the robot is facing: when it turns it DOES NOT MOVE from its square.',g2:'Four turns to the right make a FULL CIRCLE: the robot ends up facing the same way as before and on the same square; to get to the next one it has to move forward.'},
         {k:'er-azar',txt:'«Thinking the steps through in the notebook is a waste of time: I would rather try orders at random until the robot arrives.»',g1:'Pseudocode is written BEFORE, so you can think the route through in plain language; trying things at random wastes time and teaches you nothing about where the mistake is.',g2:'Besides, without pseudocode you cannot debug: there is nothing to compare what the robot did against what it was supposed to do.'}
       ],
 
@@ -586,8 +589,8 @@
       ],
 
       critCompareBank: [
-        {k:'co-salida',a:'PROGRAM A: REPEAT UNTIL YOU REACH THE GOAL: IF there is a line ahead THEN FORWARD, ELSE TURN RIGHT. Then STOP.',b:'PROGRAM B: REPEAT FOREVER: IF there is a line ahead THEN FORWARD, ELSE TURN RIGHT.',ga:'Program A is the correct one: its loop has an exit condition («until you reach the goal») and it ends with STOP.',gb:'Program B «almost» works: it follows the line just as well, but its loop never ends and the robot goes straight past the goal.',gr:'Similarity: both follow the line with the same conditional. Difference: only A can stop. Every loop needs a way to finish.'},
-        {k:'co-pared',a:'PROGRAM A: IF THERE IS A WALL AHEAD THEN TURN RIGHT, ELSE FORWARD.',b:'PROGRAM B: FORWARD (without ever reading the wall sensor).',ga:'Program A is the correct one: it reads the sensor before moving and then decides; it still works even if the obstacles move around.',gb:'Program B «almost» works: it goes forward fine while the way is clear, but it crashes the moment an obstacle turns up.',gr:'Similarity: both make the robot move forward. Difference: only A completes the full cycle read the sensors → decide → act; B acts blindly.'}
+        {k:'co-salida',a:'PROGRAM A: REPEAT UNTIL YOU REACH THE GOAL: FOLLOW THE LINE. Then STOP.',b:'PROGRAM B: REPEAT FOREVER: FOLLOW THE LINE.',ga:'Program A is the correct one: its loop has an exit condition («until you reach the goal») and it ends with STOP.',gb:'Program B «almost» works: it follows the line just as well, but its loop never ends and the robot goes straight past the goal.',gr:'Similarity: both follow the line in the same way. Difference: only A can stop. Every loop needs a way to finish.'},
+        {k:'co-espera',a:'PROGRAM A (robot race: you leave when the teacher gives the signal): WAIT FOR THE SIGNAL. Then REPEAT 4 TIMES: FORWARD. Then STOP.',b:'PROGRAM B (the same race): REPEAT 4 TIMES: FORWARD. Then STOP.',ga:'Program A is the correct one: it waits for the signal before leaving and then moves forward just like B.',gb:'Program B «almost» works: it reaches the goal just the same, but it leaves before the signal and the race does not count for it.',gr:'Similarity: both move forward four squares and end with STOP. Difference: only A waits for the signal; knowing WHEN to act is part of the program too.'}
       ],
 
       critDesignBank: [

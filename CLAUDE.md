@@ -12137,6 +12137,145 @@ que el hueco. Salió roja con cada una.
 Con la CPU frenada seis veces va a 60 cuadros por segundo, y el peor cuadro es
 de 83 ms. Motores y Mecanismos, medida el mismo día, va a 60 y 83 ms.
 
+### La sexagésima: Programando un Robot, y lo que enseñó
+
+La quinta de la Ruta de los Robots es **Programando un Robot**
+(`misiones/2y3ciclo-programando-robot/`, `js/animacion-pared.js`), bilingüe. La
+historia es la del robot al que le escribieron «si hay pared, parate; avanzá
+diez pasos», una sola vez y al principio: miró, no había pared, avanzó los diez
+pasos seguidos y chocó en el tercero, con el sensor por delante. Quedó
+inservible para la feria del día siguiente. No estaba mal la orden: estaba mal
+cuántas veces se da. La animación pone arriba las dos órdenes, cada una en su
+tarjeta, con el recuadro de «diez veces» alrededor de la de avanzar; abajo, el
+pasillo en siete baldosas, el robot de lado con su sensor y la pared:
+
+- antes de tocar: ¿cuántas veces va a mirar si hay pared?;
+- mira una sola vez (el haz del sensor sale y se apaga): enfrente no hay pared,
+  y esa orden ya se cumplió;
+- avanza un paso, y otro, y otro, sin volver a mirar: el tercero no termina,
+  choca con la pared, el robot se ladea y el sensor se quiebra. La cuenta de la
+  derecha dice que miró una vez y dio tres pasos;
+- la misma orden de mirar entra al recuadro, que crece hacia arriba: las mismas
+  dos órdenes, ninguna nueva;
+- lo intenta otra vez: mira y avanza, mira y avanza, y a la tercera vez que
+  mira ve la pared y se para sin tocarla;
+- la pared se corre tres baldosas, y la pregunta es del alumno: ¿cuántas veces
+  miraría antes de pararse? La respuesta no se escribe.
+
+Ocho cosas que valen para las que siguen:
+
+1. ⚠️ **Lo que se cuenta es cuántas veces mira, y cada vez se ve.** Mirar es un
+   haz que sale del sensor y se apaga. La sonda cuenta los haces de cada paso y
+   los compara con las rayitas de la cuenta y con el marcador, y los pasos, con
+   las baldosas que avanzó el robot.
+2. ⚠️ **Mirar va antes de cada paso, y eso se lee de las demoras.** En el
+   arreglo, cada haz se enciende y se apaga antes de que el robot salga hacia la
+   baldosa siguiente, y cada paso empieza cuando acabó el anterior. Un robot que
+   avanzara mientras mira enseñaría justo lo que la historia dice que falló.
+3. **El arreglo no trae ninguna orden nueva.** La tarjeta de mirar entra al
+   recuadro y el recuadro crece solo hacia arriba, así la de avanzar no se mueve
+   de su sitio. Son siempre dos tarjetas, y la sonda las cuenta en cada paso.
+4. **El tercer paso no termina.** La sonda suma lo que avanzó el robot y lo que
+   mide hasta la punta del sensor, y le pide que llegue a la cara de la pared sin
+   meterse en ella, con el golpe justo en el punto donde se tocan. En el arreglo,
+   el último haz llega hasta la pared y el robot se queda a una baldosa.
+5. ⚠️ **El final es una pregunta, y su respuesta no sale en ninguna parte.** Con
+   la pared tres baldosas más lejos, el robot miraría seis veces: la sonda no
+   deja escribir «6» ni «seis» en las frases, en los botones ni en el marcador,
+   que dice «?».
+6. ⚠️ **Dos rótulos que se cruzan a medio viaje son dos piezas.** El rótulo de
+   «diez veces» subía con el recuadro mientras la tarjeta de mirar bajaba a
+   meterse, y a medio camino se leían encimados. Ahora hay un rótulo para cada
+   tamaño del recuadro: uno se apaga mientras el otro se enciende. Se vio en las
+   fotos a medio viaje, con la sonda en verde. Y en la pantalla oscura la antena
+   del robot no se veía: va en gris medio y más gruesa.
+7. ⚠️ **La historia y la animación contestaban doce preguntas de la conceptual
+   y dos de pensamiento crítico.** La historia: «chocó en el ___ paso», «la ___
+   del día siguiente», «¿cuál fue el error?», el primer paso del ciclo (la
+   historia dice «mirar, decidir y moverse») y el pareado del bucle, que la
+   historia nombra y define («otra vez y otra vez… Eso es un bucle»). La
+   animación: el robot que hace exactamente lo que se le escribió («el robot
+   adivina…», «el error casi siempre está en el programa»), la pared que se
+   corre («sirve aunque cambien de lugar los obstáculos»), el que avanza hacia
+   donde mira, el «REPITE 7 VECES» al lado de «diez veces», el cajón que se
+   esquiva sin tocarlo y el «REPITE MIENTRAS no haya obstáculo», que es el robot
+   del arreglo. En pensamiento crítico, el error de «el robot está descompuesto,
+   hay que cambiarlo» y la comparación del programa que mira contra el que nunca
+   mira. Ahora preguntan lo que la misión enseña: el ciclo que vuelve a empezar
+   muchas veces por segundo, el borde del patio que el sensor de pared también
+   ve, el REPITE MIENTRAS que no es para un número exacto, los cuatro giros, los
+   dos sensores del simulador, la primera diferencia al depurar, el brazo, el
+   controlador, la bocina, el REPITE HASTA cuando nadie sabe cuántas casillas
+   faltan y el bloque que no repite; en pensamiento crítico, que girar no mueve
+   de casilla y el programa que espera la señal. Con la respuesta en el mismo
+   lugar, en la misión, en su inglés y en las dos fichas, que siguen en siete
+   hojas.
+8. ⚠️ **Lo que se cambió también se lee, porque la sonda no lo ve todo.** Tres
+   cosas salieron leyendo, con la sonda en verde:
+   - «Un robot con la batería llena ya no necesita programa» dejaba escrita la
+     respuesta de «El ciclo del robot se repite mientras tenga ___». La sonda
+     no lo cuenta: una sola palabra común, sin otra al lado, no le basta. Ahora
+     dice «Un robot que ya tiene sensores y motores no necesita programa».
+   - «¿Cuántas instrucciones de movimiento trae el simulador?» se contestaba
+     contando: la misma hoja escribe AVANZA, ESPERA, DETENTE y GIRA IZQUIERDA en
+     una selección y GIRA DERECHA en la siguiente. Es la lección de «un número
+     escrito entero enseña sus ceros». Se cambió por la del REPITE HASTA.
+   - Una pregunta de la regla de oro («todo condicional dice qué hacer cuando la
+     respuesta es NO») se descartó antes de escribirla: la animación enseña
+     «si hay pared, parate» sin SINO, y funciona. El examen no pregunta una
+     regla que la animación desmiente.
+
+   Y la sonda cazó otro repuesto: el seguidor de línea con su SINO escribía
+   ENTONCES y SINO, que son la respuesta de la selección del bloque que no
+   repite y del pareado del SINO. Al quitar la comparación de la pared vio lo
+   que eso tapaba: la del seguidor de línea escribía ENTONCES y SINO junto a la
+   respuesta del caso del regador, y sus dos programas ya no los escriben. En la ficha, además, los diez verdadero o falso
+   iban alternados (V, F, V, F… hasta el final): quien lo notara contestaba sin
+   leer. Ahora van mezclados. El pareado del bucle pasó a ser la coordenada,
+   que la ficha enseña en su cuadrícula; la felicitación, debajo de los
+   pareados, resumía la misión y ahora pide revisar; y la ficha en inglés pedía
+   «Circle the correct letter»: ahora pide rellenar el círculo.
+
+La sonda de esta escena **no le cree nada a la escena**. Comprueba, en español y
+en inglés:
+
+- que sean siempre dos tarjetas, y cuántas caben dentro del recuadro en cada
+  paso; que el recuadro crezca solo hacia arriba y que su rótulo vaya arriba,
+  con la flecha de volver;
+- que la flecha de la lista señale la tarjeta que se cumple en cada paso, y
+  ninguna cuando no se cumple ninguna;
+- que el pasillo sean siete baldosas iguales y la pared esté en la cuarta (en
+  la séptima al final), con un solo robot a la vista;
+- dónde está el robot en cada paso, contando baldosas, derecho y con las dos
+  ruedas en el piso, salvo en el choque;
+- que el choque sea en el tercer paso, que ese paso no termine, que el robot se
+  ladee, que el golpe caiga donde el sensor toca la pared y que el sensor quede
+  quebrado;
+- que cada haz salga del sensor, mida lo que tiene que medir, se encienda y se
+  apague antes del paso que le sigue, y que el último del arreglo llegue a la
+  pared;
+- que la cuenta diga lo que se vio: tantas rayitas de mirar como haces y tantas
+  de pasos como baldosas avanzó;
+- que la pregunta del final vaya encima del robot y el marcador diga «?»;
+- que ningún rótulo se monte en otro y que todo quepa en el dibujo;
+- y que no salga ninguna palabra de lo que pregunta la prueba, ni la respuesta
+  del final.
+
+Se comprobó al revés con veintiocho averías, plantadas una por una, entre
+ellas: mirar dos veces en la historia, el haz que ve la pared desde el
+principio, el choque en el segundo paso, el tercer paso metido en la pared, la
+tarjeta de mirar que no entra al recuadro, el recuadro que no crece o que crece
+hacia abajo, la flecha en la otra tarjeta, avanzar antes de mirar, mirar antes
+de llegar, un paso de más en la cuenta, el marcador diciendo 2, la respuesta del
+final en el marcador, «bucle» en una frase, la pared que no se corre, el robot
+que no vuelve al principio, el choque sin golpe, el sensor sin quebrarse, el
+último haz sin llegar a la pared, dos robots a la vez, las tarjetas en inglés
+sin traducir, la flecha de volver al revés y las rayitas fuera de orden. Salió
+roja con cada una.
+
+Con la CPU frenada seis veces va a 60 cuadros por segundo, y el peor cuadro es
+de 67 ms. Electricidad para Robots, medida el mismo día, va a 59 y 100 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -12305,7 +12444,12 @@ y la pieza no se esconde nunca; el tono va con `stroke-opacity` o `fill-opacity`
 Lo que no puede verse donde no hay nada (la corriente en el hueco de la pila
 que se sacó) se tapa con una máscara, no pieza por pieza. Y lo que se mueve
 todo junto, porque esa es la lección (la corriente en todo el camino), va en
-UNA sola pieza: así el dibujo no puede mover unas partes y otras no.
+UNA sola pieza: así el dibujo no puede mover unas partes y otras no. Lo que la
+lección cuenta (cuántas veces mira el robot) se dibuja cada vez, con algo que
+aparece y se va (un haz del sensor), y la sonda cuenta esas veces en el dibujo.
+Y una pregunta nueva del examen no pide una regla que la animación desmiente: si
+la escena enseña un «si hay pared, parate» sin SINO que funciona, el examen no
+pregunta que todo condicional necesita su SINO.
 
 Si la misión es **bilingüe** (carga su `-en.js` y trae el botón 🌐), la escena
 lleva `bilingue: true`, `describe: { es, en }` e `idioma(lang, A)`, y sus

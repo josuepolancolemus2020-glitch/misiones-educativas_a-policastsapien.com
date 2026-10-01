@@ -551,32 +551,32 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 // tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
 // Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 let evalTFBank=[
-  {q:'El robot adivina lo que el programador quiso decir.',a:false,k:'tf-adivina'},
-  {q:'Cuando el robot choca, casi siempre el error está en el programa y no en la máquina.',a:true,k:'tf-choque'},
-  {q:'Un programa con sensores sirve aunque cambien de lugar los obstáculos.',a:true,k:'tf-obstaculos'},
+  {q:'El bloque REPITE MIENTRAS sirve para repetir algo un número exacto de veces.',a:false,k:'tf-mientras-exacto'},
+  {q:'Si el robot gira cuatro veces seguidas hacia la derecha, vuelve a mirar hacia donde miraba al empezar.',a:true,k:'tf-cuatro-giros'},
+  {q:'Los sensores del simulador son dos: el de pared y el de línea.',a:true,k:'tf-dos-sensores'},
   {q:'Unos pasos escritos están bien aunque otra persona tenga que preguntarte qué quisiste decir.',a:false,k:'tf-seguir'},
   {q:'En los pasos escritos del regador, la cuenta de plantas empieza en cero.',a:true,k:'tf-cero'},
-  {q:'El robot avanza hacia donde está mirando.',a:true,k:'tf-mirando'},
+  {q:'Al comparar lo que hizo el robot con sus pasos escritos, la primera diferencia muestra dónde está el error.',a:true,k:'tf-diferencia'},
   {q:'Los motores y las ruedas son los que leen los sensores.',a:false,k:'tf-motores'},
   {q:'El robot del simulador puede avanzar en diagonal.',a:false,k:'tf-diagonal'},
   {q:'En el simulador, el robot marca ✔ cuando el sensor responde que sí.',a:true,k:'tf-marca'},
-  {q:'Un robot con la batería llena ya no necesita programa.',a:false,k:'tf-bateria-llena'}
+  {q:'Un robot que ya tiene sensores y motores no necesita programa.',a:false,k:'tf-sin-programa'}
 ];
 let evalMCBank=[
-  {q:'El robot debe avanzar siete veces seguidas. ¿Qué conviene escribir?',o:['a) Siete sensores','b) Una sola vez AVANZA','c) REPITE 7 VECES: AVANZA','d) GIRA siete veces'],a:2,k:'mc-siete'},
-  {q:'¿Cuál es el primer paso del ciclo de un robot?',o:['a) Leer sus sensores','b) Mover las ruedas','c) Apagarse','d) Borrar el programa'],a:0,k:'mc-primero'},
-  {q:'Hay un cajón justo adelante. Con «SI hay pared adelante ENTONCES GIRA DERECHA, SINO AVANZA», ¿qué hace el robot?',o:['a) Avanza y choca','b) Salta el cajón','c) Se detiene para siempre','d) Gira sin tocar el cajón'],a:3,k:'mc-cajon'},
+  {q:'En el robot que recoge la basura del patio, ¿qué parte mete la botella en la caja?',o:['a) El sensor de distancia','b) La antena','c) El brazo','d) La rueda'],a:2,k:'mc-brazo'},
+  {q:'En el robot seguidor de línea del pasillo, ¿qué parte decide si va de frente o gira?',o:['a) El controlador','b) La rueda','c) El piso','d) La pintura'],a:0,k:'mc-controlador'},
+  {q:'Un robot guardián debe hacer ruido cuando alguien abre la puerta del aula. ¿Qué parte hace el ruido?',o:['a) El sensor de la puerta','b) La rueda','c) La antena','d) La bocina'],a:3,k:'mc-bocina'},
   {q:'Al buscar el error, ¿cuánto conviene cambiar en cada prueba?',o:['a) El programa entero','b) Una sola instrucción','c) Nada','d) El robot'],a:1,k:'mc-prueba'},
   {q:'En los pasos del robot regador, ¿qué hace el robot si la tierra NO está seca?',o:['a) Riega la planta','b) Se apaga','c) Sigue adelante','d) Vuelve al inicio'],a:2,k:'mc-regador'},
   {q:'Un seguidor de línea con «REPITE PARA SIEMPRE» llega a la meta. ¿Qué pasa?',o:['a) Pasa de largo y se sale de la mesa','b) Se para solo','c) Vuelve al inicio','d) Se apaga'],a:0,k:'mc-salida'},
-  {q:'En la historia del robot que chocó, ¿cuál fue el error?',o:['a) La orden estaba mal escrita','b) Miró una sola vez y siguió a ciegas','c) La pila estaba descargada','d) El sensor estaba al revés'],a:1,k:'mc-historia'},
-  {q:'Con «REPITE MIENTRAS no haya obstáculo: AVANZA», ¿cuándo deja de avanzar el robot?',o:['a) Nunca','b) Al segundo paso','c) Cuando se le acaba el papel','d) Cuando aparece algo adelante'],a:3,k:'mc-mientras'},
+  {q:'El robot tiene que avanzar hasta la pizarra, pero nadie sabe cuántas casillas faltan. ¿Qué conviene escribir?',o:['a) REPITE 6 VECES: AVANZA','b) REPITE HASTA llegar a la pizarra: AVANZA','c) AVANZA una vez','d) GIRA DERECHA'],a:1,k:'mc-hasta'},
+  {q:'¿Cuál de estos bloques NO sirve para repetir?',o:['a) REPITE 3 VECES: AVANZA','b) REPITE MIENTRAS haya línea: AVANZA','c) REPITE 2 VECES: GIRA IZQUIERDA','d) SI hay un cajón ENTONCES lo esquiva'],a:3,k:'mc-no-repite'},
   {q:'El robot debe esperar la señal del maestro antes de salir. ¿Qué instrucción va primero?',o:['a) AVANZA','b) ESPERA','c) DETENTE','d) GIRA IZQUIERDA'],a:1,k:'mc-senal'},
   {q:'El robot mira al Norte y recibe GIRA DERECHA. ¿Hacia dónde mira ahora?',o:['a) Al Sur','b) Al Oeste','c) Al Este','d) Al Norte'],a:2,k:'mc-este'}
 ];
 let evalCPBank=[
-  {q:'En la historia, el robot chocó en el ___ paso.',a:'tercer',acc:['tercer','tercero','3'],k:'cp-tercer'},
-  {q:'El robot quedó inservible para la ___ del día siguiente.',a:'feria',acc:['feria'],k:'cp-feria'},
+  {q:'El ciclo del robot vuelve a empezar muchas veces por ___.',a:'segundo',acc:['segundo','segundos'],k:'cp-segundo'},
+  {q:'El sensor de pared también responde que sí si adelante está el ___ del patio.',a:'borde',acc:['borde','orilla','límite','limite','final'],k:'cp-borde'},
   {q:'Para ir de A5 a A1 en línea recta, el robot necesita ___ instrucciones AVANZA.',a:'cuatro',acc:['cuatro','4'],k:'cp-cuatro'},
   {q:'El robot regador lee el sensor de ___ para saber si la tierra está seca.',a:'humedad',acc:['humedad'],k:'cp-humedad'},
   {q:'Si la tierra está seca, el robot regador abre la ___.',a:'válvula',acc:['válvula','valvula'],k:'cp-valvula'},
@@ -588,7 +588,7 @@ let evalCPBank=[
 ];
 let evalPRBank=[
   {term:'Programa',def:'Lista de instrucciones exactas que el robot cumple paso a paso',k:'pr-programa'},
-  {term:'Bucle',def:'Repite un bloque de instrucciones varias veces',k:'pr-bucle'},
+  {term:'SINO',def:'Lo que hace el robot cuando el sensor responde que no',k:'pr-sino'},
   {term:'Condicional',def:'Elige una rama u otra según lo que lee el sensor',k:'pr-condicional'},
   {term:'Variable',def:'Cajita con nombre donde se guarda un número',k:'pr-variable'},
   {term:'Pseudocódigo',def:'Los pasos en español claro, antes de cargarlos al robot',k:'pr-pseudo'},
@@ -687,7 +687,7 @@ let critFaltaBank=[
   {k:'cr-regador',txt:'El robot regador abre el agua y ya nunca la cierra: el huerto se inunda. Programa: SI la tierra está seca ENTONCES ABRE LA VÁLVULA.',ans:'Falta la rama SINO: SI la tierra está seca ENTONCES ABRE LA VÁLVULA, SINO CIERRA LA VÁLVULA. Todo condicional debe decir también qué hacer cuando la respuesta es NO.'},
 ];
 let critErrorBank=[
-  {k:'er-descompuesto',txt:'«El robot se equivocó, entonces el robot está descompuesto: hay que cambiarlo».',g1:'Casi siempre el que se equivocó fue el PROGRAMA, no la máquina: el robot ejecuta literalmente lo que se le escribió.',g2:'Lo correcto es DEPURAR: probar el programa paso a paso, encontrar la instrucción equivocada y corregirla.'},
+  {k:'er-gira',txt:'«Para llegar a la casilla de al lado, el robot gira cuatro veces a la derecha: girar también lo hace avanzar».',g1:'Girar solo cambia hacia dónde mira el robot: al girar NO SE MUEVE de su casilla.',g2:'Cuatro giros a la derecha son una VUELTA ENTERA: el robot queda mirando igual que antes y en la misma casilla; para pasar a la de al lado tiene que avanzar.'},
   {k:'er-azar',txt:'«Pensar los pasos en el cuaderno es perder el tiempo: mejor pruebo órdenes al azar hasta que el robot llegue».',g1:'El pseudocódigo se escribe ANTES, para pensar el camino en lenguaje claro; probar al azar hace perder tiempo y no enseña dónde está el error.',g2:'Además, sin pseudocódigo no se puede depurar: no hay con qué comparar lo que hizo el robot contra lo que debía hacer.'},
 ];
 let critTraceQuestions=[
@@ -710,8 +710,8 @@ let critTraceBank=[
    prog:[C_LINEAI,C_LINEAI,C_LINEAI,C_LINEAI,C_LINEAI]},
 ];
 let critCompareBank=[
-  {k:'co-salida',a:'PROGRAMA A: REPITE HASTA LLEGAR A LA META: SI hay línea adelante ENTONCES AVANZA, SINO GIRA DERECHA. Luego DETENTE.',b:'PROGRAMA B: REPITE PARA SIEMPRE: SI hay línea adelante ENTONCES AVANZA, SINO GIRA DERECHA.',ga:'El programa A es el correcto: su bucle tiene condición de salida («hasta llegar a la meta») y termina con DETENTE.',gb:'El programa B «casi» funciona: sigue la línea igual de bien, pero su bucle nunca termina y el robot pasa de largo la meta.',gr:'Semejanza: los dos siguen la línea con el mismo condicional. Diferencia: solo A puede detenerse. Todo bucle necesita una forma de terminar.'},
-  {k:'co-pared',a:'PROGRAMA A: SI HAY PARED ADELANTE ENTONCES GIRA DERECHA, SINO AVANZA.',b:'PROGRAMA B: AVANZA (sin leer nunca el sensor de pared).',ga:'El programa A es el correcto: lee el sensor antes de moverse y decide; sirve aunque cambien los obstáculos de lugar.',gb:'El programa B «casi» funciona: avanza bien mientras el camino esté libre, pero choca en cuanto aparece un obstáculo.',gr:'Semejanza: los dos hacen avanzar al robot. Diferencia: solo A cumple el ciclo completo leer sensores → decidir → actuar; B actúa a ciegas.'},
+  {k:'co-salida',a:'PROGRAMA A: REPITE HASTA LLEGAR A LA META: SIGUE LA LÍNEA. Luego DETENTE.',b:'PROGRAMA B: REPITE PARA SIEMPRE: SIGUE LA LÍNEA.',ga:'El programa A es el correcto: su bucle tiene condición de salida («hasta llegar a la meta») y termina con DETENTE.',gb:'El programa B «casi» funciona: sigue la línea igual de bien, pero su bucle nunca termina y el robot pasa de largo la meta.',gr:'Semejanza: los dos siguen la línea de la misma manera. Diferencia: solo A puede detenerse. Todo bucle necesita una forma de terminar.'},
+  {k:'co-espera',a:'PROGRAMA A (carrera de robots: se sale cuando el maestro da la señal): ESPERA LA SEÑAL. Luego REPITE 4 VECES: AVANZA. Luego DETENTE.',b:'PROGRAMA B (la misma carrera): REPITE 4 VECES: AVANZA. Luego DETENTE.',ga:'El programa A es el correcto: espera la señal antes de salir y después avanza lo mismo que B.',gb:'El programa B «casi» funciona: llega igual a la meta, pero sale antes de la señal y la carrera no le cuenta.',gr:'Semejanza: los dos avanzan cuatro casillas y terminan con DETENTE. Diferencia: solo A espera la señal; saber CUÁNDO actuar también es parte del programa.'},
 ];
 let critDesignBank=[
   'En tu escuela, el pasillo que va del portón a la dirección tiene una línea negra pintada en el piso y todos los días hay que llevar la lista de asistencia.',
