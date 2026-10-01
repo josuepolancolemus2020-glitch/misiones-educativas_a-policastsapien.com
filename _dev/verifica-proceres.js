@@ -262,6 +262,87 @@ if (!fs.existsSync(CIVICOS)) {
   }
 }
 
+/* ---------- la animación de la misión ---------- */
+console.log('\n⭕ La animación pregunta lo que dicen los datos');
+const ESCENA = path.join(RAIZ, 'misiones', '2y3ciclo-proceres-heroes', 'js', 'animacion-recreo.js');
+if (!fs.existsSync(ESCENA)) {
+  avisa('no está la animación de la misión: no se pudo comparar');
+} else {
+  /* La animación hace dos preguntas —una por palabra— y pone en cada círculo
+     una cosa que hizo Morazán. Las cuatro van escritas en la escena, y lo que
+     afirman tiene que salir de este archivo de datos: si mañana alguien
+     cambia la definición de héroe aquí y no allá, el alumno aprende una cosa
+     arriba de la pantalla y otra en el «Aprende» de abajo.
+
+     Se leen las constantes de la escena tal como corren, sin los comentarios:
+     el que explica por qué no se escribe la primera frase de la definición la
+     escribe entera. */
+  const src = fs.readFileSync(ESCENA, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+  /* El objeto se toma contando llaves, que unos van en un renglón y otros
+     en varios; las constantes de la escena no llevan llaves dentro de sus
+     cadenas. */
+  const constante = (nombre) => {
+    const i = src.indexOf('var ' + nombre + ' = {');
+    if (i < 0) return null;
+    let j = src.indexOf('{', i), nivel = 0, k = j;
+    for (; k < src.length; k++) {
+      if (src[k] === '{') nivel++;
+      else if (src[k] === '}' && --nivel === 0) break;
+    }
+    try { return vm.runInNewContext('(' + src.slice(j, k + 1) + ')', { CY: 0, MEDIO: 0, R: 0 }); } catch (e) { return null; }
+  };
+  const PRUEBA = constante('PRUEBA'), HECHO = constante('HECHO'), TARJETA = constante('TARJETA');
+  if (!PRUEBA || !HECHO || !TARJETA) {
+    mal('no se pudieron leer PRUEBA, HECHO y TARJETA de la escena: esta comprobación no miró nada');
+  } else {
+    /* Raíces de las palabras con contenido: «arriesgó» y «arriesga» son la
+       misma pregunta, y «lo», «que» y «no» no dicen nada. */
+    const VACIAS = new Set(['la', 'el', 'lo', 'los', 'las', 'que', 'no', 'un', 'una', 'por', 'su', 'sus', 'de', 'del', 'a',
+      'y', 'se', 'le', 'con', 'en', 'ya']);
+    const raices = (s) => limpia(s).split(' ').filter(w => w.length >= 3 && !VACIAS.has(w)).map(w => w.slice(0, 5));
+    const frases = (s) => String(s).split(/\.\s+/).map(f => f.trim()).filter(Boolean);
+    for (const [k, que] of [['heroe', 'héroe'], ['procer', 'prócer']]) {
+      const def = frases(PROCERES_DIFERENCIA[k]);
+      const pregunta = PRUEBA[k].lineas.join(' ');
+      /* La pregunta sale de la SEGUNDA frase de la definición. */
+      const segunda = new Set(raices(def[1] || ''));
+      const sueltas = raices(pregunta).filter(r => !segunda.has(r));
+      if (!sueltas.length) ok('la pregunta del ' + que + ' («' + pregunta + '») sale de la definición: «' + def[1] + '»');
+      else mal('la pregunta del ' + que + ' («' + pregunta + '») dice algo que la definición no dice («' + sueltas.join(', ')
+        + '»): la animación y el «Aprende» enseñarían dos cosas distintas');
+      /* …y la PRIMERA no se escribe: es la respuesta del pareado de la prueba. */
+      const primera = limpia(def[0]).replace(/^un (heroe|procer) /, '');
+      const cadenas = limpia((src.match(/'(?:[^'\\]|\\.)*'/g) || []).join(' | '));
+      if (!cadenas.includes(primera)) ok('la animación no escribe la definición del pareado del ' + que + ' («' + primera + '»)');
+      else mal('la animación escribe «' + primera + '», que es la respuesta del pareado del ' + que + ' en la prueba');
+    }
+
+    /* La tarjeta es la de un personaje del archivo, y las dos cosas que hizo
+       salen de lo que el archivo dice de él. */
+    const nombre = (TARJETA.nombre || []).join(' ');
+    const p = PROCERES.find(x => x.nombre === nombre);
+    if (!p) mal('la tarjeta dice «' + nombre + '» y ningún personaje del archivo se llama así');
+    else {
+      ok('la tarjeta es la de ' + p.nombre + ', del archivo de datos');
+      const heroe = HECHO.heroe.lineas.join(' '), procer = HECHO.procer.lineas.join(' ');
+      /* Lo que lo pone en el círculo del héroe se dice, palabra por palabra,
+         en su `nota`: la que explica por qué se le llama de las dos formas. */
+      if (p.nota && limpia(p.nota).includes(limpia(heroe))) ok('lo que hizo de héroe («' + heroe + '») lo dice su nota, palabra por palabra');
+      else mal('lo que hizo de héroe («' + heroe + '») no está en la nota de ' + p.nombre);
+      /* Lo que lo pone en el del prócer es su `papel`: presidió una república. */
+      const papel = new Set(raices(p.papel));
+      const faltan = ['presid', 'republ'].filter(r => !raices(procer).some(x => r.startsWith(x)) || !papel.has(r.slice(0, 5)));
+      if (!faltan.length) ok('lo que hizo de prócer («' + procer + '») sale de su papel: «' + p.papel + '»');
+      else mal('lo que hizo de prócer («' + procer + '») no sale de su papel («' + p.papel + '»)');
+      /* Y que pase las dos preguntas lo dice el propio archivo: se le llama
+         de las dos formas, con su nota. Si un día deja de decirlo, la
+         animación enseñaría algo que la ficha corrige en rojo. */
+      if (p.nota && /\bheroe\b/.test(limpia(p.nota)) && limpia(p.clase) === 'procer') ok('el archivo dice que a ' + p.nombre + ' se le llama de las dos formas');
+      else mal('el archivo ya no dice que a ' + p.nombre + ' se le llama de las dos formas, y la animación lo pone en los dos círculos');
+    }
+  }
+}
+
 console.log('\n' + (fallos
   ? '❌ ' + fallos + ' fallo(s)' + (avisos ? ', ' + avisos + ' aviso(s)' : '')
   : '✅ la pantalla y el papel dicen los mismos próceres' + (avisos ? ' (' + avisos + ' aviso)' : '')) + '\n');

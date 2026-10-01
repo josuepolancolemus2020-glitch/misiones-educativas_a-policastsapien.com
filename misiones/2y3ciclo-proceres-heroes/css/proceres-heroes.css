@@ -503,3 +503,36 @@ body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
 @media (max-width: 430px){
   .pr-ficha{padding:0.85rem 0.75rem;}
 }
+
+/* ── La animación de los dos círculos (#amRecreo) ─────────────────────
+   La tarjeta de Morazán, lo que hizo y los globos son papel, y los niños
+   son COSAS: se quedan como son en las dos pantallas, así que lo que va
+   escrito sobre papel lleva tinta oscura fija. Lo que va sobre la tarjeta
+   de la misión (los círculos, sus palabras y sus preguntas) lleva la
+   tinta de la pantalla. Nada se dice solo con color: cada círculo lleva
+   su palabra escrita, y el «sí» es una paloma dibujada. */
+#amRecreo .rc-suelo { fill: none; stroke: var(--border); stroke-width: 1.2; }
+#amRecreo .rc-zona-heroe { fill: var(--am-pri); fill-opacity: 0.08; }
+#amRecreo .rc-zona-procer { fill: var(--am-sec); fill-opacity: 0.08; }
+#amRecreo .rc-circulo { fill: none; stroke-width: 2.2; }
+#amRecreo .rc-circulo-heroe { stroke: var(--am-pri); }
+#amRecreo .rc-circulo-procer { stroke: var(--am-sec); }
+#amRecreo .rc-lente { fill: #facc15; fill-opacity: 0.4; }
+#amRecreo .rc-rot-heroe { fill: var(--am-pri); }
+#amRecreo .rc-rot-procer { fill: var(--am-sec); }
+#amRecreo .rc-papel { fill: #ffffff; stroke: #64748b; stroke-width: 1.2; }
+#amRecreo .rc-tarjeta { stroke: #475569; stroke-width: 1.6; }
+#amRecreo .rc-otra { fill: none; stroke: var(--gray, #636e72); stroke-width: 1.4; stroke-dasharray: 4 3; }
+#amRecreo .rc-letra { fill: #1e293b; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amRecreo .rc-emoji { font-family: 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif; }
+#amRecreo .rc-globo { fill: #ffffff; stroke: #64748b; stroke-width: 1.2; stroke-linejoin: round; }
+#amRecreo .rc-ficha-bien { fill: #ffffff; stroke: #15803d; stroke-width: 1.2; }
+#amRecreo .rc-bien { fill: none; stroke: #15803d; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+#amRecreo .rc-azul { fill: #1e3a8a; stroke: #172554; stroke-width: 0.6; }
+#amRecreo .rc-blanco { fill: #f8fafc; stroke: #64748b; stroke-width: 1; }
+#amRecreo .rc-brazo-m { fill: none; stroke: #b07a4f; stroke-width: 3; stroke-linecap: round; }
+#amRecreo .rc-piel-m { fill: #b07a4f; stroke: #7c4f2c; stroke-width: 0.8; }
+#amRecreo .rc-brazo-f { fill: none; stroke: #8d5a3b; stroke-width: 3; stroke-linecap: round; }
+#amRecreo .rc-piel-f { fill: #8d5a3b; stroke: #5e3a24; stroke-width: 0.8; }
+#amRecreo .rc-pelo { fill: #2b1a10; }
+#amRecreo .rc-ojo { fill: #1e293b; }

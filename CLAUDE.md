@@ -2660,6 +2660,11 @@ línea—: se busca la tirada de palabras más larga que las dos comparten, y si
 alguien cambia «defiende a su pueblo» en un solo sitio, se cae y la sonda se
 pone roja. Es la misma técnica con la que la sonda del Himno juzga una cita.
 
+⚠️ **Y la animación de la misión (`js/animacion-recreo.js`) pregunta con la
+SEGUNDA frase de esa definición**, nunca con la primera, que es la respuesta del
+pareado de la prueba. `verifica-proceres` lo comprueba leyendo las constantes de
+la escena, y también que lo que hizo Morazán salga de su `nota` y de su `papel`.
+
 ⚠️ **Lo que NO se escribe, y a propósito.** La fecha de nacimiento de José
 Trinidad Reyes: el DCNB lo nombra pero no la trae, y un dato sacado de un
 extracto de buscador no acredita nada. Es la misma lección de los números de
@@ -12768,6 +12773,134 @@ Con la CPU frenada seis veces va a 57 cuadros por segundo, y el peor cuadro sale
 entre 100 y 150 ms según la medida; Aspectos Cívicos, medida el mismo día, va a
 59 y 100 ms.
 
+### La sexagésima quinta: Héroes y Próceres de Honduras, y lo que enseñó
+
+La tercera de la Ruta de la Patria es **Héroes y Próceres de Honduras**
+(`misiones/2y3ciclo-proceres-heroes/`, `js/animacion-recreo.js`). La historia es
+la de Marvin: antes del desfile del 15 le preguntaron quién fue Francisco Morazán
+y contestó «un héroe». Su compañera dijo «un prócer», y se pasaron el recreo
+discutiendo. Ninguno de los dos se equivocó, y eso era justo lo que ninguno de los
+dos sabía. La animación pone abajo a los dos, cada uno con lo que dijo en su
+globo, y en medio la tarjeta de Morazán:
+
+- antes de tocar: ¿quién tiene razón?;
+- la tarjeta sube, se dibujan dos círculos iguales que se cruzan, y cada palabra
+  sube de su globo a la esquina de su círculo, por fuera, con su pregunta: héroe,
+  «¿Arriesgó la vida?»; prócer, «¿Construyó lo que no existía?»;
+- de la tarjeta baja «Presidió una república nueva» al círculo del prócer, y su
+  pregunta recibe su ✓;
+- baja «Peleó por su idea hasta morir» al del héroe, y la suya también;
+- la tarjeta baja a donde los dos círculos se cruzan, ese pedazo se enciende y
+  cada globo recibe su ✓: Marvin y su compañera tenían razón;
+- y donde estuvo la tarjeta queda otra de raya cortada con un «?»: el alumno
+  elige a otro de los ocho, le hace las dos preguntas y dice en qué círculo cae.
+
+Seis cosas que valen para las que siguen:
+
+1. ⚠️ **Las preguntas salen de la SEGUNDA frase de la definición, y la primera no
+   se escribe.** «Un héroe defiende a su pueblo» y «un prócer ayuda a fundar la
+   nación» son las respuestas de los pareados de la prueba; «arriesga la vida» y
+   «construye lo que todavía no existe» vienen detrás, en el mismo archivo de
+   datos, y son lo que la animación pregunta. `verifica-proceres` lo comprueba
+   ahora leyendo las constantes de la escena: que las dos preguntas salgan de esa
+   segunda frase, que la primera no aparezca en ninguna cadena, que la tarjeta
+   sea la de un personaje del archivo, que lo que hizo de héroe esté palabra por
+   palabra en su `nota` y lo de prócer en su `papel`, y que el archivo siga
+   diciendo que a Morazán se le llama de las dos formas. Se comprobó al revés con
+   siete averías, una por cada cosa, y salió roja con las siete.
+2. ⚠️ **Se juzga lo que hizo, no el nombre, y nadie lleva una ✗.** Cada palabra es
+   una pregunta sobre lo que alguien hizo, y la respuesta sale de su obra. Los dos
+   niños reciben su ✓ al final, porque la historia dice que ninguno se equivocó.
+3. ⚠️ **Lo que NO se dice:** qué países unía la república que presidió (la prueba
+   lo pregunta), si lo consiguió, sus fechas, dónde nació, ni nada de los otros
+   siete; tampoco se nombra a Lempira, porque la prueba pregunta quién es el
+   Héroe Nacional. La sonda lo busca en cada paso.
+4. ⚠️ **Lo que bajaba de la tarjeta cruzaba las preguntas en diagonal.** En la
+   primera versión las palabras y sus preguntas iban dentro de los círculos, y lo
+   que hizo Morazán pasaba por encima de ellas camino de su sitio. Al final de
+   cada paso todo estaba donde tenía que estar: se vio en las fotos a medio
+   viaje. Las palabras y las preguntas pasaron a las esquinas de arriba, fuera de
+   los círculos, y adentro solo cae lo que hizo.
+5. **Dos renglones de 9 van a 12 de distancia.** La caja de la Fredoka de 9 mide
+   11,4 de alto, y a 10 la sonda encontró los renglones de la tarjeta y de las
+   preguntas montados unos en otros. Por eso la tarjeta mide 48 de alto y su
+   emoji, 12.
+6. ⚠️ **La historia y la animación contestaban seis preguntas, y dos de los
+   repuestos se colaron.** El verdadero o falso «A Francisco Morazán solo se le
+   puede llamar prócer: decirle héroe es un error» era la tesis de la historia;
+   «Francisco Morazán abandonó su idea en cuanto las cosas se pusieron difíciles»
+   lo contesta la animación, que lo hace pelear hasta morir; la selección «¿Qué
+   es lo que más vale saber?» tenía de respuesta «Qué cambió gracias a su obra»,
+   que es lo que la animación enseña a mirar; en pensamiento crítico, el caso de
+   los dos compañeros que discuten si fue héroe o prócer era la historia misma, el
+   de los carteles sin una palabra de lo que hizo lo contesta la animación, y el
+   efecto «Morazán es el hondureño más conocido fuera de Honduras» tenía de pauta
+   que presidió la república y peleó por ella; y en el Generador de Tareas había
+   que explicar por qué a Morazán se le llama de las dos formas. Ahora preguntan
+   si nació en Comayagua (nació en Tegucigalpa), si estuvo en contra de la
+   educación pública (la impulsó), a quién le abrió José Trinidad Reyes las
+   puertas del estudio, el grupo que quiere presentar solo al prócer más famoso,
+   el compañero que dice que los próceres fueron perfectos, por qué Cabañas
+   también se recuerda en la historia de la unión centroamericana y por qué se
+   dice que la Independencia «se escribió». En la ficha, que sigue en sus siete
+   hojas, la selección pregunta qué lleva el nombre de Lempira además de la
+   moneda. Todo con la misma respuesta en el mismo sitio. Y la sonda de pistas
+   cazó dos de esos repuestos: la pauta de Cabañas nombraba a Morazán, que
+   escriben otros dos ítems de la misma prueba, y «Un departamento entero»
+   repetía una palabra de la teoría impresa en la hoja donde empieza el examen.
+   Ahora dicen «él también peleó por esa unión» y «Un departamento del país».
+
+La sonda de esta escena **no le cree nada a la escena**. Comprueba:
+
+- que sean dos círculos del mismo tamaño, a la misma altura, que se cruzan, y que
+  lo que se enciende sea justo donde se cruzan, punto por punto;
+- que cada palabra y su pregunta vayan fuera de los círculos, encima de su lado y
+  del color de su círculo, y que cada pregunta diga lo que tiene que decir;
+- que lo que hizo Morazán quepa entero dentro de su círculo y fuera del otro, con
+  su texto, y que espere escondido debajo de la tarjeta hasta que baja;
+- que cada ✓ sea una paloma (una raya quebrada), junto a su pregunta, y solo
+  cuando lo que hizo ya cayó en su círculo;
+- que la tarjeta esté arriba, fuera de los dos círculos, o dentro de los dos, y
+  que diga «Francisco Morazán»;
+- que los niños pisen el suelo, cada uno con su globo del lado de su círculo y
+  la punta del globo hacia su cabeza, y que en el paso 0 cada palabra espere
+  escondida encima de la suya en el globo;
+- que los ✓ de los globos lleguen después de que baje Morazán;
+- que al final el lugar de otro sea de raya cortada, con su «?», donde estuvo la
+  tarjeta;
+- que el marcador cuente lo que se ve, que cada cosa pase cuando le toca, que
+  ningún texto se monte en otro y que todo quepa en el dibujo;
+- y que no salga nada de lo que pregunta la prueba.
+
+Se comprobó al revés con veintidós averías, plantadas una por una:
+
+- lo que hizo como prócer cayendo en el círculo del héroe;
+- lo que hizo como héroe montado donde se cruzan;
+- los círculos de distinto tamaño;
+- Morazán sin bajar hasta donde se cruzan;
+- lo encendido corrido de donde se cruzan;
+- el «sí» del prócer antes de que caiga lo que hizo, y ya en el paso 1;
+- la pregunta del héroe diciendo otra cosa, y la del prócer dentro de su círculo;
+- los globos cambiados de lado, y el de Marvin sin apuntar a su cabeza;
+- la palabra sin salir del globo, y subiendo antes de que haya círculos;
+- lo que hizo Morazán sin esperar debajo de su tarjeta;
+- el marcador del paso 2 diciendo 2;
+- «pueblo» en una frase;
+- los «sí» de los globos antes de que baje Morazán;
+- el «sí» de una pregunta dibujado como una ✗;
+- la tarjeta con otro nombre;
+- la pregunta del principio quedándose;
+- el lugar de otro sin raya cortada;
+- y el círculo del héroe con el color del otro.
+
+Salió roja con cada una. La del «sí» ya en el paso 1 salió verde la primera vez,
+y no era la sonda: se había plantado en el estado con que empieza el paso 2, que
+es la lección de ¿Qué es un Robot?. Plantada dentro del paso 1, sale roja.
+
+Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro sale
+entre 100 y 167 ms según la medida; el Himno, medido el mismo día, va a 59 y
+83 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -12960,6 +13093,10 @@ de datos (la letra del Himno) y que la escena tiene que mover pedazo por pedazo
 se mide con una tabla de avances de la Fredoka y se le impone el ancho con
 `textLength`: así el dibujo no depende de cuándo llegue la letra. Y un recorte
 de papel encima de un cuaderno termina antes de su renglón, o la raya se corta.
+Si la escena afirma algo que sale de un archivo de datos (una definición, lo que
+hizo alguien), la sonda de esa misión lee las constantes de la escena y las
+compara con el archivo: una corrección hecha en un solo sitio sale roja. Y si lo
+que baja a su sitio cruza un texto que se lee, se saca el texto del camino.
 
 Si la misión es **bilingüe** (carga su `-en.js` y trae el botón 🌐), la escena
 lleva `bilingue: true`, `describe: { es, en }` e `idioma(lang, A)`, y sus

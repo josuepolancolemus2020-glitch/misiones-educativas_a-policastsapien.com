@@ -3843,6 +3843,91 @@ const LEER = `
       cajasTexto: todos('text').filter(vis).map(caja)
     };
   };
+  window.__amExtra.amRecreo = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(m(el)); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function uno(sel, en) { return (en || raiz).querySelector(sel); }
+    function todos(sel, en) { return [].slice.call((en || raiz).querySelectorAll(sel)); }
+    function demora(el) { return el ? (parseFloat(el.style.getPropertyValue('--d')) || 0) : 0; }
+    function numeros(d) { return ((d || '').match(/-?[0-9.]+/g) || []).map(Number); }
+    function texto(t) { return t ? { txt: t.textContent, caja: caja(t), ve: vis(t), y: aVista(t, +t.getAttribute('x'), +t.getAttribute('y'))[1] } : null; }
+    /* Una paloma: los puntos de su trazo, ya en la vista */
+    function paloma(g) {
+      var p = uno('[data-paloma]', g), nums = numeros(p.getAttribute('d')), pts = [];
+      for (var i = 0; i + 1 < nums.length; i += 2) pts.push(aVista(p, nums[i], nums[i + 1]));
+      return { ve: vis(p), d: demora(g), caja: caja(uno('circle', g)), pts: pts, segmentos: ((p.getAttribute('d') || '').match(/[ML]/g) || []).length };
+    }
+    var lados = ['heroe', 'procer'];
+    var circulos = lados.map(function (k) {
+      var c = uno('[data-circulo="' + k + '"]'), nums = numeros(c.getAttribute('d'));
+      /* M x0 y A r r 0 1 1 x1 y A …: el centro y el radio salen del camino */
+      var a = aVista(c, nums[0], nums[1]), b = aVista(c, nums[7], nums[8]);
+      var z = uno('[data-zona="' + k + '"]');
+      return { k: k, ve: vis(c), d: demora(c), centro: [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2], r: Math.hypot(b[0] - a[0], b[1] - a[1]) / 2,
+               rArco: [nums[2], nums[3], nums[9], nums[10]], cierra: Math.hypot(nums[14] - nums[0], nums[15] - nums[1]),
+               dash: parseFloat(getComputedStyle(c).strokeDashoffset) || 0, trazo: getComputedStyle(c).stroke,
+               zona: { ve: vis(z), d: demora(z) } };
+    });
+    var lente = uno('[data-lente]');
+    var ln = numeros(lente.getAttribute('d'));
+    /* Una muestra de puntos alrededor de la lente: si cada uno está o no
+       dentro de lo pintado. La sonda decide aparte si ahí se cruzan los dos. */
+    var muestra = [], bl = caja(lente);
+    for (var yy = bl.y0 - 6; yy <= bl.y1 + 6; yy += 4) {
+      for (var xx = bl.x0 - 12; xx <= bl.x1 + 12; xx += 4) {
+        var pt = svg.createSVGPoint(); pt.x = xx; pt.y = yy;
+        var loc = pt.matrixTransform(m(lente).inverse());
+        muestra.push([xx, yy, lente.isPointInFill(loc)]);
+      }
+    }
+    return {
+      vista: [svg.viewBox.baseVal.width, svg.viewBox.baseVal.height],
+      suelo: (function () { var s = uno('[data-suelo]'), nn = numeros(s.getAttribute('d')); return [aVista(s, nn[0], nn[1]), aVista(s, nn[2], nn[3])]; })(),
+      circulos: circulos,
+      lente: { ve: vis(lente), d: demora(lente), ini: aVista(lente, ln[0], ln[1]), fin: aVista(lente, ln[7], ln[8]), r: [ln[2], ln[3], ln[9], ln[10]], muestra: muestra },
+      rotulos: lados.map(function (k) {
+        var w = uno('[data-rotulo="' + k + '"]'), v = uno('[data-vuela="' + k + '"]'), em = uno('[data-emoji="' + k + '"]');
+        return { k: k, palabra: texto(w), dPalabra: demora(w), dVuela: demora(v), emoji: texto(em), dEmoji: demora(em), color: getComputedStyle(w).fill };
+      }),
+      pruebas: lados.map(function (k) {
+        var g = uno('[data-prueba="' + k + '"]');
+        return { k: k, ve: vis(g), d: demora(g), lineas: todos('[data-prueba-linea]', g).map(texto), bien: paloma(uno('[data-bien-prueba="' + k + '"]')) };
+      }),
+      hechos: lados.map(function (k) {
+        var g = uno('[data-hecho="' + k + '"]');
+        return { k: k, ve: vis(uno('[data-hecho-caja]', g)), d: demora(g), caja: caja(uno('[data-hecho-caja]', g)), lineas: todos('[data-hecho-linea]', g).map(texto) };
+      }),
+      tarjeta: (function () {
+        var g = uno('[data-tarjeta]');
+        return { d: demora(g), caja: caja(uno('[data-tarjeta-caja]', g)), nombre: todos('[data-nombre]', g).map(texto),
+                 emoji: [].slice.call(g.querySelectorAll('text')).map(function (t) { return t.textContent; }).filter(function (t) { return /⚔/.test(t); }).length };
+      })(),
+      otra: (function () {
+        var g = uno('[data-otra]'), c = uno('[data-otra-caja]', g);
+        return { ve: vis(c), d: demora(g), caja: caja(c), raya: getComputedStyle(c).strokeDasharray, txt: texto(uno('[data-otra-txt]', g)) };
+      })(),
+      ninos: lados.map(function (k) {
+        var g = uno('[data-nino="' + k + '"]'), cab = uno('[data-cabeza]', g);
+        return { k: k, caja: caja(g), cabeza: { c: aVista(cab, +cab.getAttribute('cx'), +cab.getAttribute('cy')), r: +cab.getAttribute('r') } };
+      }),
+      globos: lados.map(function (k) {
+        var g = uno('[data-globo="' + k + '"]'), gc = uno('[data-globo-caja]', g), pts = numeros(gc.getAttribute('d')), ps = [];
+        for (var i = 0; i + 1 < pts.length; i += 2) ps.push(aVista(gc, pts[i], pts[i + 1]));
+        return { k: k, caja: caja(gc), contorno: ps, dice: texto(uno('[data-dice]', g)), bien: paloma(uno('[data-bien-globo="' + k + '"]')) };
+      }),
+      pregunta: (function () { var t = uno('[data-pregunta]'); var o = texto(t); o.d = demora(t); return o; })(),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; }),
+      cajasTexto: todos('text').filter(vis).map(caja)
+    };
+  };
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -4023,6 +4108,16 @@ const ESTADOS_CORO = [
   { filas: 4, bien: 4, corte: 4, arco: false, cuenta: false },
   { filas: 4, bien: 4, corte: 4, arco: false, cuenta: true }
 ];
+/* Héroes y Próceres: lo que tiene que verse al terminar cada paso. */
+const ESTADOS_RECREO = [
+  { tarjeta: 'medio', circulos: false, hecho: { heroe: false, procer: false }, lente: false, globos: false, otra: false, pregunta: true },
+  { tarjeta: 'arriba', circulos: true, hecho: { heroe: false, procer: false }, lente: false, globos: false, otra: false, pregunta: false },
+  { tarjeta: 'arriba', circulos: true, hecho: { heroe: false, procer: true }, lente: false, globos: false, otra: false, pregunta: false },
+  { tarjeta: 'arriba', circulos: true, hecho: { heroe: true, procer: true }, lente: false, globos: false, otra: false, pregunta: false },
+  { tarjeta: 'medio', circulos: true, hecho: { heroe: true, procer: true }, lente: true, globos: true, otra: false, pregunta: false },
+  { tarjeta: 'medio', circulos: true, hecho: { heroe: true, procer: true }, lente: true, globos: true, otra: true, pregunta: false }
+];
+const MEMO_RECREO = {};
 const ESCENAS = {
   /* Secuencias: el Robot Mensajero. «El mandado de Marvin».
      ⚠️ Nada se le cree a la escena. La sonda lee en qué renglón quedó cada
@@ -5570,6 +5665,208 @@ const ESCENAS = {
     cajas.forEach((a, i) => cajas.forEach((b, j) => { if (j > i && monta(a, b) && !pegados(a, b)) choqT.push([x.textos[i], x.textos[j]]); }));
     r.push([choqT.length === 0, `paso ${n}: ningún texto se monta en otro`, choqT]);
     r.push([cajas.every(c => dentro(c, { x0: 0, y0: 0, x1: x.vista[0], y1: x.vista[1] })), `paso ${n}: todo cabe en el dibujo`, null]);
+    return r;
+  },
+  /* Héroes y Próceres: «La pelea del recreo».
+     ⚠️ Nada se le cree a la escena. El centro y el radio de cada círculo
+     salen del camino que lo dibuja; si algo está dentro o fuera de un
+     círculo se mide con la distancia a su centro, esquina por esquina; la
+     lente se comprueba punto por punto contra los DOS círculos; y la
+     palabra de cada globo tiene que ser la del círculo de su lado. */
+  amRecreo(e, n) {
+    const x = e.extra, r = [];
+    const cerca = (a, b, t = 0.6) => Math.abs(a - b) <= t;
+    const cen = c => ({ x: (c.x0 + c.x1) / 2, y: (c.y0 + c.y1) / 2 });
+    const dentro = (a, b, m = 0) => a.x0 >= b.x0 - m && a.x1 <= b.x1 + m && a.y0 >= b.y0 - m && a.y1 <= b.y1 + m;
+    const monta = (a, b) => a.x0 < b.x1 - 0.5 && b.x0 < a.x1 - 0.5 && a.y0 < b.y1 - 0.5 && b.y0 < a.y1 - 0.5;
+    const E = ESTADOS_RECREO[n], memo = MEMO_RECREO;
+
+    /* ── lo que no depende del dibujo va primero ── */
+    /* Ni la definición del pareado (defiende a su pueblo, ayuda a fundar la
+       nación), ni qué unía la república ni si se deshizo, ni fechas, lugares
+       u otros personajes, ni lo que preguntan las demás preguntas. */
+    const PROHIBIDAS = /pueblo|\bfund|naci[oó]n\b|privilegi|cinco|guatemala|salvador|nicaragua|costa rica|centroam|federa|uni[oó]n|\bunid|1[0-9]{3}|octubre|septiembre|julio|noviembre|\b15\b|tegucigalpa|choluteca|comayagua|lempira|valle|herrera|caba[ñn]as|reyes|\bsoto\b|\brosa\b|palad|conquist|independ|reforma|escudo|\bacta\b|universidad|lenca|cerqu|tacha|miedo|gar[ií]f|mujer|ind[ií]gen|afro|consigui|deshizo|logr|fracas|rindi|rend[ií]|educaci|escuela|conocido|estatua|moneda|departamento|nacional|sabio|le[ií]d|honrad|pobre|ministro|jefe|defend|todav[ií]a no existe|discuti/i;
+    const dicho = [e.texto, e.palabras, e.boton].concat(x.textos).join(' · ');
+    r.push([!PROHIBIDAS.test(dicho), `paso ${n}: no sale nada que pregunte la prueba (la definición del pareado, la república, fechas, lugares u otros personajes)`, (dicho.match(PROHIBIDAS) || [])[0]]);
+
+    /* ── los dos círculos ── */
+    const C = k => x.circulos.find(c => c.k === k);
+    const CH = C('heroe'), CP = C('procer'), R = CH.r;
+    const dist = (p, c) => Math.hypot(p[0] - c.centro[0], p[1] - c.centro[1]);
+    const esquinas = b => [[b.x0, b.y0], [b.x1, b.y0], [b.x0, b.y1], [b.x1, b.y1], [(b.x0 + b.x1) / 2, b.y0], [(b.x0 + b.x1) / 2, b.y1], [b.x0, (b.y0 + b.y1) / 2], [b.x1, (b.y0 + b.y1) / 2]];
+    const adentro = (b, c, m = 1) => esquinas(b).every(p => dist(p, c) <= c.r - m);
+    const afuera = (b, c, m = 1) => esquinas(b).every(p => dist(p, c) >= c.r + m);
+    const dCentros = Math.hypot(CP.centro[0] - CH.centro[0], CP.centro[1] - CH.centro[1]);
+    r.push([cerca(CH.r, CP.r, 0.3) && cerca(CH.centro[1], CP.centro[1], 0.3) && CH.centro[0] < CP.centro[0] && dCentros > R * 0.8 && dCentros < R * 1.6
+      && [CH, CP].every(c => c.rArco.every(v => cerca(v, c.rArco[0], 0.01)) && c.cierra < 0.01),
+      `paso ${n}: son dos círculos del mismo tamaño, a la misma altura, que se cruzan`, [CH.centro, CP.centro, CH.r, CP.r]]);
+    r.push([x.circulos.every(c => c.ve === E.circulos && c.zona.ve === E.circulos && (!E.circulos || c.dash < 0.5)),
+      `paso ${n}: ${E.circulos ? 'los dos círculos están dibujados enteros' : 'todavía no hay círculos'}`, x.circulos.map(c => [c.ve, c.dash])]);
+
+    /* ── la palabra y la pregunta de cada círculo ── */
+    const RO = k => x.rotulos.find(o => o.k === k), PR = k => x.pruebas.find(o => o.k === k);
+    const PALABRA = { heroe: 'héroe', procer: 'prócer' };
+    const PREGUNTA = { heroe: '¿Arriesgó la vida?', procer: '¿Construyó lo que no existía?' };
+    const arribaDe = Math.min(CH.centro[1], CP.centro[1]) - R;
+    ['heroe', 'procer'].forEach(k => {
+      const o = RO(k), p = PR(k), suyo = C(k), otro = C(k === 'heroe' ? 'procer' : 'heroe');
+      r.push([o.palabra.txt === PALABRA[k] && o.palabra.ve === E.circulos && o.emoji.ve === E.circulos && p.ve === E.circulos,
+        `paso ${n}: el círculo de ${PALABRA[k]} ${E.circulos ? 'lleva su palabra y su pregunta' : 'todavía no tiene palabra'}`, [o.palabra.txt, o.palabra.ve, p.ve]]);
+      if (!E.circulos) return;
+      const pc = cen(o.palabra.caja), lado = Math.abs(pc.x - suyo.centro[0]) < Math.abs(pc.x - otro.centro[0]);
+      const pregunta = p.lineas.map(l => l.txt).join(' ');
+      const bloque = p.lineas.map(l => l.caja).concat([o.palabra.caja]);
+      r.push([lado && bloque.every(b => b.y1 < arribaDe + 0.5 && afuera(b, CH) && afuera(b, CP))
+        && (k === 'heroe' ? pc.x < suyo.centro[0] : pc.x > suyo.centro[0]),
+        `paso ${n}: «${PALABRA[k]}» y su pregunta van afuera, arriba de su círculo y del lado de afuera`, [pc, suyo.centro]]);
+      r.push([pregunta === PREGUNTA[k] && p.lineas.every(l => l.ve) && p.lineas.every((l, i) => i === 0 || (l.y > p.lineas[i - 1].y && cerca(cen(l.caja).x, cen(p.lineas[0].caja).x, 0.6)))
+        && p.lineas[0].caja.y0 > o.palabra.caja.y1 - 1 && Math.abs(cen(p.lineas[0].caja).x - (o.emoji.caja.x0 + o.palabra.caja.x1) / 2) < 3,
+        `paso ${n}: debajo de «${PALABRA[k]}» va su pregunta, «${PREGUNTA[k]}», centrada y renglón por renglón`, pregunta]);
+      r.push([o.emoji.caja.x1 <= o.palabra.caja.x0 + 0.5 && o.palabra.caja.x0 - o.emoji.caja.x1 < 5 && cerca(o.emoji.y, o.palabra.y, 0.6),
+        `paso ${n}: el dibujo de «${PALABRA[k]}» va pegado a su palabra, en el mismo renglón`, [o.emoji.caja, o.palabra.caja]]);
+      r.push([o.color === suyo.trazo, `paso ${n}: «${PALABRA[k]}» lleva el color de la raya de su círculo`, [o.color, suyo.trazo]]);
+    });
+
+    /* ── lo que hizo Morazán ── */
+    const OBRA = { heroe: 'Peleó por su idea hasta morir', procer: 'Presidió una república nueva' };
+    ['heroe', 'procer'].forEach(k => {
+      const h = x.hechos.find(o => o.k === k), suyo = C(k), otro = C(k === 'heroe' ? 'procer' : 'heroe');
+      r.push([h.ve === E.hecho[k], `paso ${n}: lo que hizo como ${PALABRA[k]} ${E.hecho[k] ? 'ya cayó en su círculo' : 'todavía no se ve'}`, h.ve]);
+      if (!h.ve) return;
+      r.push([adentro(h.caja, suyo, 1) && afuera(h.caja, otro, 1),
+        `paso ${n}: «${OBRA[k]}» está entera dentro del círculo de ${PALABRA[k]} y fuera del otro`, h.caja]);
+      r.push([h.lineas.map(l => l.txt).join(' ') === OBRA[k] && h.lineas.every(l => dentro(l.caja, h.caja, -1)),
+        `paso ${n}: la tarjeta dice «${OBRA[k]}», y le cabe`, h.lineas.map(l => l.txt)]);
+    });
+    /* el «sí» de cada pregunta: solo cuando lo que hizo ya cayó en su círculo */
+    ['heroe', 'procer'].forEach(k => {
+      const b = PR(k).bien, ultima = PR(k).lineas[PR(k).lineas.length - 1];
+      const si = E.circulos && E.hecho[k];
+      r.push([b.ve === si, `paso ${n}: a la pregunta de ${PALABRA[k]} ${si ? 'le sale su «sí»' : 'todavía no le sale «sí»'}`, b.ve]);
+      if (!b.ve) return;
+      const [p0, p1, p2] = b.pts;
+      r.push([b.segmentos === 3 && b.pts.length === 3 && p1[1] > p0[1] && p1[1] > p2[1] && p2[0] > p1[0] && p1[0] > p0[0] && p2[1] < p0[1],
+        `paso ${n}: el «sí» de ${PALABRA[k]} es una paloma, una raya quebrada`, b.pts]);
+      r.push([b.caja.x0 > ultima.caja.x1 && b.caja.x0 - ultima.caja.x1 < 6 && b.caja.y0 < ultima.caja.y1 && b.caja.y1 > ultima.caja.y0 && afuera(b.caja, CH) && afuera(b.caja, CP),
+        `paso ${n}: el «sí» de ${PALABRA[k]} va al final de su pregunta`, [b.caja, ultima.caja]]);
+    });
+
+    /* ── la tarjeta de Morazán ── */
+    const T = x.tarjeta;
+    r.push([T.nombre.map(t => t.txt).join(' ') === 'Francisco Morazán' && T.nombre.every(t => dentro(t.caja, T.caja, -1)) && T.emoji === 1,
+      `paso ${n}: la tarjeta es la de Francisco Morazán, y le cabe su nombre`, T.nombre.map(t => t.txt)]);
+    if (E.tarjeta === 'medio' && E.circulos) {
+      r.push([adentro(T.caja, CH, 1) && adentro(T.caja, CP, 1), `paso ${n}: Morazán está donde se cruzan los dos círculos: dentro de los dos`, T.caja]);
+    } else if (E.tarjeta === 'medio') {
+      r.push([cerca(cen(T.caja).x, (CH.centro[0] + CP.centro[0]) / 2, 0.6) && cerca(cen(T.caja).y, CH.centro[1], 0.6),
+        `paso ${n}: Morazán está en medio, entre los dos que discuten`, T.caja]);
+    } else {
+      r.push([afuera(T.caja, CH, 1) && afuera(T.caja, CP, 1) && T.caja.y1 < arribaDe + 2, `paso ${n}: Morazán está arriba, fuera de los dos círculos`, T.caja]);
+      if (n === 1) memo.arriba = T.caja;
+    }
+    x.hechos.filter(h => h.ve).forEach(h => r.push([!monta(h.caja, T.caja), `paso ${n}: lo que hizo como ${PALABRA[h.k]} no tapa su tarjeta`, [h.caja, T.caja]]));
+
+    /* ── donde se cruzan ── */
+    r.push([x.lente.ve === E.lente, `paso ${n}: ${E.lente ? 'se encendió donde se cruzan los dos círculos' : 'todavía no se enciende donde se cruzan'}`, x.lente.ve]);
+    {
+      /* los dos puntos donde se cortan los dos círculos, calculados aquí */
+      const a = dCentros / 2, h = Math.sqrt(R * R - a * a), mx = (CH.centro[0] + CP.centro[0]) / 2, my = CH.centro[1];
+      const L = x.lente, puntas = [[mx, my - h], [mx, my + h]];
+      const enLasDos = p => dist(p, CH) < R && dist(p, CP) < R;
+      const malos = L.muestra.filter(([px, py, f]) => {
+        const p = [px, py], bordes = [Math.abs(dist(p, CH) - R), Math.abs(dist(p, CP) - R)];
+        if (Math.min(...bordes) < 1.5) return false;
+        return f !== enLasDos(p);
+      });
+      r.push([Math.hypot(L.ini[0] - puntas[0][0], L.ini[1] - puntas[0][1]) < 0.5 && Math.hypot(L.fin[0] - puntas[1][0], L.fin[1] - puntas[1][1]) < 0.5
+        && L.r.every(v => cerca(v, R, 0.3)) && malos.length === 0,
+        `paso ${n}: lo que se enciende es justo donde los dos círculos se cruzan`, [L.ini, L.fin, puntas, malos.length]]);
+    }
+
+    /* ── los dos niños y lo que dijo cada uno ── */
+    const SUELO = x.suelo[0][1];
+    const NI = k => x.ninos.find(o => o.k === k), GL = k => x.globos.find(o => o.k === k);
+    const DICE = { heroe: '¡Un héroe!', procer: '¡Un prócer!' };
+    r.push([NI('heroe').caja.x1 < NI('procer').caja.x0 && x.ninos.every(o => cerca(o.caja.y1, SUELO, 0.8) && o.caja.y0 > Math.max(CH.centro[1], CP.centro[1]) + R),
+      `paso ${n}: Marvin y su compañera están parados en el suelo, abajo de los círculos`, x.ninos.map(o => o.caja)]);
+    ['heroe', 'procer'].forEach(k => {
+      const g = GL(k), ni = NI(k), H = ni.cabeza, otro = k === 'heroe' ? 'procer' : 'heroe';
+      /* la palabra del globo es la del círculo de su lado */
+      const deSuLado = C(k).centro[0] === (k === 'heroe' ? Math.min(CH.centro[0], CP.centro[0]) : Math.max(CH.centro[0], CP.centro[0]));
+      r.push([g.dice.txt === DICE[k] && g.dice.ve && dentro(g.dice.caja, g.caja, -1) && deSuLado
+        && (k === 'heroe' ? cen(g.caja).x < (CH.centro[0] + CP.centro[0]) / 2 : cen(g.caja).x > (CH.centro[0] + CP.centro[0]) / 2),
+        `paso ${n}: ${k === 'heroe' ? 'Marvin' : 'su compañera'} dice «${DICE[k]}», del lado del círculo de ${PALABRA[k]}`, g.dice.txt]);
+      /* la punta: el punto del contorno más cerca de su cabeza, que tiene
+         que ser también el extremo del globo de ese lado */
+      const aCab = p => Math.hypot(p[0] - H.c[0], p[1] - H.c[1]);
+      const punta = g.contorno.reduce((a, b) => aCab(b) < aCab(a) ? b : a);
+      const extremo = k === 'heroe' ? punta[0] <= g.caja.x0 + 0.5 : punta[0] >= g.caja.x1 - 0.5;
+      r.push([aCab(punta) - H.r > 0.5 && aCab(punta) - H.r < 3.5 && extremo && afuera(g.caja, CH, 2) && afuera(g.caja, CP, 2) && !monta(g.caja, ni.caja),
+        `paso ${n}: el globo de ${k === 'heroe' ? 'Marvin' : 'su compañera'} apunta a su cabeza, y no toca ningún círculo`, [punta, H.c]]);
+      /* el «tenían razón», debajo de cada globo */
+      const b = g.bien;
+      r.push([b.ve === E.globos, `paso ${n}: ${E.globos ? 'debajo de lo que dijo va su «sí»' : 'todavía no hay «sí» debajo de lo que dijo'}`, b.ve]);
+      if (b.ve) r.push([b.caja.y0 > g.caja.y1 && cen(b.caja).x > g.caja.x0 && cen(b.caja).x < g.caja.x1 && b.caja.y1 < SUELO && b.segmentos === 3,
+        `paso ${n}: el «sí» va debajo del globo, y es una paloma`, b.caja]);
+      /* en el paso 0, la palabra que va a subir está escondida encima de lo que dijo */
+      if (n === 0) {
+        const o = RO(k);
+        r.push([!o.palabra.ve && dentro(o.palabra.caja, g.caja, 1) && Math.abs(o.palabra.y - g.dice.y) < 1 && o.palabra.caja.x0 > g.dice.caja.x0 + 4,
+          `paso 0: «${PALABRA[k]}» espera escondida encima de esa palabra de su globo: de ahí sube`, [o.palabra.caja, g.dice.caja]]);
+      }
+    });
+
+    /* ── lo del principio y lo del final ── */
+    const PG = x.pregunta;
+    r.push([PG.ve === E.pregunta, `paso ${n}: ${E.pregunta ? 'debajo de Morazán se pregunta «¿héroe o prócer?»' : 'ya no está la pregunta del principio'}`, PG.ve]);
+    if (PG.ve) r.push([PG.txt === '¿héroe o prócer?' && PG.caja.y0 > T.caja.y1 && cerca(cen(PG.caja).x, cen(T.caja).x, 1), `paso ${n}: la pregunta va debajo de la tarjeta`, PG.caja]);
+    const O = x.otra;
+    r.push([O.ve === E.otra, `paso ${n}: ${E.otra ? 'arriba queda el lugar para otro de los ocho' : 'todavía no está el lugar para otro'}`, O.ve]);
+    if (O.ve) {
+      r.push([O.raya !== 'none' && O.txt.txt === '?' && afuera(O.caja, CH, 1) && afuera(O.caja, CP, 1)
+        && (!memo.arriba || (cerca(O.caja.x0, memo.arriba.x0, 0.6) && cerca(O.caja.y0, memo.arriba.y0, 0.6) && cerca(O.caja.x1, memo.arriba.x1, 0.6) && cerca(O.caja.y1, memo.arriba.y1, 0.6))),
+        `paso ${n}: el lugar de otro es de raya cortada, con su «?», donde estuvo Morazán`, [O.caja, memo.arriba]]);
+    }
+
+    /* ── el marcador y la frase dicen lo que se ve ── */
+    const sies = x.pruebas.filter(p => p.bien.ve).length, razon = x.globos.filter(g => g.bien.ve).length;
+    const valor = n === 0 ? String(x.globos.filter(g => g.dice.ve).length) : n === 1 ? String(x.pruebas.filter(p => p.ve).length)
+      : n === 2 || n === 3 ? String(sies) : n === 4 ? String(razon) : '?';
+    r.push([e.cifra === valor, `paso ${n}: el marcador cuenta lo que se ve`, [e.cifra, valor]]);
+    const fr = e.texto.toLowerCase();
+    if (n === 0) r.push([/héroe/.test(fr) && /prócer/.test(fr) && /\?$/.test(e.texto.trim()), 'paso 0: la frase cuenta lo que dijo cada uno, y pregunta quién tiene razón', e.texto]);
+    if (n === 1) r.push([fr.includes(PREGUNTA.heroe.toLowerCase()) && fr.includes(PREGUNTA.procer.toLowerCase()), 'paso 1: la frase dice las dos preguntas, tal como van en los círculos', e.texto]);
+    if (n === 2) r.push([fr.includes(OBRA.procer.toLowerCase()) && /prócer/.test(fr), 'paso 2: la frase dice lo que hizo y que eso contesta la pregunta del prócer', e.texto]);
+    if (n === 3) r.push([fr.includes(OBRA.heroe.toLowerCase()) && /héroe/.test(fr), 'paso 3: la frase dice lo que hizo y que eso contesta la pregunta del héroe', e.texto]);
+    if (n === 4) r.push([/dos círculos/.test(fr) && /tenían razón/.test(fr), 'paso 4: la frase dice que cae en los dos círculos y que los dos tenían razón', e.texto]);
+    if (n === 5) r.push([/\?/.test(e.texto) && /cuaderno/.test(fr), 'paso 5: la frase le pregunta al alumno y lo manda a su cuaderno', e.texto]);
+
+    /* ── en qué orden pasa cada cosa ── */
+    if (n === 1) {
+      const dC = Math.min(...x.circulos.map(c => c.d)), oh = RO('heroe'), op = RO('procer');
+      r.push([T.d <= dC && x.rotulos.every(o => o.dVuela === o.dPalabra && o.dVuela > dC && o.dEmoji > o.dVuela && PR(o.k).d > o.dVuela) && op.dVuela > oh.dVuela,
+        'paso 1: Morazán sube, se dibujan los círculos, y cada palabra sube de su globo; después, su dibujo y su pregunta', [T.d, dC, oh.dVuela, op.dVuela]]);
+      /* lo que hizo, escondido, espera debajo de la tarjeta: de ahí sale */
+      r.push([x.hechos.every(h => !h.ve && cerca(cen(h.caja).x, cen(T.caja).x, 0.6) && cerca(cen(h.caja).y, cen(T.caja).y, 0.6)),
+        'paso 1: lo que hizo Morazán espera escondido debajo de su tarjeta', x.hechos.map(h => cen(h.caja))]);
+    }
+    if (n === 2 || n === 3) {
+      const k = n === 2 ? 'procer' : 'heroe', h = x.hechos.find(o => o.k === k);
+      r.push([h.d > 0 && PR(k).bien.d >= h.d + 700, `paso ${n}: primero cae lo que hizo, y después su pregunta dice «sí»`, [h.d, PR(k).bien.d]]);
+    }
+    if (n === 4) {
+      const [bm, bf] = ['heroe', 'procer'].map(k => GL(k).bien.d);
+      r.push([T.d > 0 && x.lente.d >= T.d + 500 && bm > x.lente.d && bf > bm, 'paso 4: Morazán baja, se enciende donde se cruzan, y después cada uno recibe su «sí»', [T.d, x.lente.d, bm, bf]]);
+    }
+
+    /* ── los rótulos ── */
+    const cajas = x.cajasTexto, choques = [];
+    cajas.forEach((a, i) => cajas.forEach((b, j) => { if (j > i && monta(a, b)) choques.push([x.textos[i], x.textos[j]]); }));
+    r.push([choques.length === 0, `paso ${n}: ningún rótulo se monta en otro`, choques]);
+    const vista = { x0: 0, y0: 0, x1: x.vista[0], y1: x.vista[1] };
+    r.push([cajas.every(c => dentro(c, vista)) && x.ninos.every(o => dentro(o.caja, vista)) && x.globos.every(g => dentro(g.caja, vista)) && dentro(T.caja, vista)
+      && x.circulos.every(c => c.centro[0] - c.r >= 0 && c.centro[0] + c.r <= vista.x1 && c.centro[1] - c.r >= 0 && c.centro[1] + c.r <= vista.y1),
+      `paso ${n}: todo cabe en el dibujo`, null]);
     return r;
   },
   amJurado(e, n) {

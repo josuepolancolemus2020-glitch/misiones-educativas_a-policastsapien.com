@@ -298,7 +298,7 @@ const completeTaskDB=[
 const explainQuestions=[
   {q:'¿Qué diferencia hay entre un héroe y un prócer? Pon un ejemplo de cada uno.',ans:'Un héroe defiende a su pueblo: arriesga la vida por la gente que ya está aquí, como Lempira contra la conquista. Un prócer ayuda a fundar la nación: construye lo que todavía no existe (leyes, escuelas, un Estado), como José Cecilio del Valle al redactar el Acta de Independencia.'},
   {q:'¿Por qué Lempira es el Héroe Nacional y no un prócer?',ans:'Porque defendió a su pueblo cuando Honduras todavía no existía como país. No fundó un Estado ni firmó documentos: peleó por la gente que ya vivía aquí, y murió haciéndolo, hacia 1537, en el Peñol de Cerquín.'},
-  {q:'A Francisco Morazán se le llama héroe y prócer. Explica por qué las dos cosas son correctas.',ans:'Como prócer, construyó: presidió la República Federal de Centro América e impulsó la educación pública. Como héroe, defendió su idea hasta el final y murió por ella el 15 de septiembre de 1842. Ninguna de las dos palabras le queda grande.'},
+  {q:'¿Por qué se dice que la Independencia de Centroamérica «se escribió»?',ans:'Porque no se ganó en una batalla: José Cecilio del Valle redactó el Acta de Independencia que se firmó el 15 de septiembre de 1821, y defendió que se hiciera con leyes y no con sangre.'},
   {q:'Explica qué hicieron juntos Marco Aurelio Soto y Ramón Rosa, y por qué te toca a ti.',ans:'Encabezaron la Reforma Liberal: Soto en la presidencia y Rosa de ministro. De ahí sale el Código de Instrucción Pública de 1882, que hizo de la educación una obligación del Estado. La escuela pública y gratuita a la que vas hoy empieza a construirse ahí.'},
   {q:'¿Por qué el Día del Maestro Hondureño se celebra por José Trinidad Reyes?',ans:'Porque fundó la primera universidad del país, de donde salió la UNAH. Casi todos los próceres hicieron país con leyes o con armas; él lo hizo con una escuela, y esa escuela sigue abierta.'},
   {q:'Escribe qué hizo Dionisio de Herrera y por qué importa.',ans:'Fue el primer jefe de Estado de Honduras, en 1824. Le tocó gobernar el primer día, cuando no había nada hecho: de su gobierno salen las primeras leyes del país y el Escudo Nacional, que se creó en 1825.'},
@@ -396,7 +396,7 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 const evalTFBank=[
   {q:'Se sabe con exactitud dónde quedó enterrado Lempira.',a:false,k:'lempira-tumba'},
   {q:'En el Himno Nacional se nombra a muchos hondureños, y Lempira es uno de ellos.',a:false,k:'lempira-himno'},
-  {q:'A Francisco Morazán solo se le puede llamar prócer: decirle héroe es un error.',a:false,k:'morazan-ambos'},
+  {q:'Francisco Morazán nació en Comayagua.',a:false,k:'morazan-lugar'},
   {q:'Francisco Morazán murió un 15 de septiembre, el día de la Independencia.',a:true,k:'morazan-muere-dia'},
   {q:'Dionisio de Herrera organizó las primeras leyes y las primeras cuentas del país.',a:true,k:'herrera-leyes'},
   {q:'José Trinidad Cabañas nunca llegó a gobernar Honduras.',a:false,k:'cabanas-presidente'},
@@ -404,7 +404,7 @@ const evalTFBank=[
   {q:'José Trinidad Reyes fue sacerdote, músico y poeta.',a:true,k:'reyes-oficios'},
   {q:'Francisco Morazán quiso quitarles privilegios a unos pocos.',a:true,k:'morazan-privilegios'},
   {q:'Ramón Rosa fue ministro de Marco Aurelio Soto.',a:true,k:'rosa-ministro'},
-  {q:'Francisco Morazán abandonó su idea en cuanto las cosas se pusieron difíciles.',a:false,k:'morazan-no-se-rindio'},
+  {q:'Francisco Morazán estuvo en contra de la educación pública.',a:false,k:'morazan-educacion'},
   {q:'En el gobierno de Marco Aurelio Soto empezaron a construirse las escuelas públicas de verdad.',a:true,k:'soto-escuelas'}
 ];
 const evalMCBank=[
@@ -417,7 +417,7 @@ const evalMCBank=[
   {q:'¿Cómo quería José Cecilio del Valle que se hiciera la Independencia?',o:['Con leyes y no con sangre','Con un ejército','Pidiendo ayuda a otro rey','Esperando a que España se fuera sola'],a:0,k:'valle-leyes'},
   {q:'¿Dónde nació José Trinidad Cabañas?',o:['En Comayagua','En Gracias','En Trujillo','En Tegucigalpa'],a:3,k:'cabanas-lugar'},
   {q:'¿Qué quería Ramón Rosa que fuera la educación?',o:['Un favor de los que mandan','Una obligación, y no un favor de nadie','Un lujo para unos pocos','Un negocio para quien pudiera pagar'],a:1,k:'rosa-obligacion'},
-  {q:'De cada personaje se pregunta quién fue, qué hizo y por qué se le recuerda. ¿Qué es lo que más vale saber?',o:['Su fecha de nacimiento','Su nombre completo','Qué cambió gracias a su obra','Dónde está su estatua'],a:2,k:'que-vale-mas'},
+  {q:'¿A quién le abrió José Trinidad Reyes las puertas del estudio?',o:['Solo a los ricos','Solo a los soldados','A quien no las tenía','Solo a los extranjeros'],a:2,k:'reyes-puertas'},
   {q:'Según el DCNB, ¿de quiénes más hay que explicar su contribución a la historia del país?',o:['Solo de los presidentes','Solo de los militares','De los que tienen estatua','De las mujeres, los indígenas y los afrocaribeños'],a:3,k:'los-que-faltan'},
   {q:'¿En qué año llegaron los garífunas a Honduras?',o:['1797','1837','1897','1947'],a:0,k:'garifunas-1797'}
 ];
@@ -552,10 +552,10 @@ function evalSwitchMode(mode){
    - las causas y los efectos preguntan por qué se le recuerda a alguien, y
      ninguna deja a la vista el porqué de otra. */
 const critCaseBank=[
-  {txt:'Antes del desfile, dos compañeros discuten: uno dice que Francisco Morazán fue un héroe y el otro, que fue un prócer. Ninguno quiere ceder.',k:'caso-morazan-ambos'},
+  {txt:'Para la feria de la Patria, un grupo quiere presentar solo al prócer más famoso, porque dice que los demás no hicieron nada importante.',k:'caso-uno-solo'},
   {txt:'Al terminar el mural de los próceres, el grupo se da cuenta de que las nueve figuras que dibujaron son hombres.',k:'caso-mural'},
   {txt:'Para el cartel de la exposición falta la fecha de nacimiento de José Trinidad Reyes, y alguien propone inventarla porque total nadie la va a revisar.',k:'caso-inventar'},
-  {txt:'Para el concurso de carteles, un grupo pone el nombre y el retrato de cada prócer, pero ni una palabra de lo que hizo.',k:'caso-sin-obra'},
+  {txt:'Un compañero dice que los próceres fueron personas perfectas, que lograron todo lo que se propusieron.',k:'caso-perfectos'},
   {txt:'Un compañero dice que estudiar a los próceres no sirve de nada, porque todos murieron hace mucho.',k:'caso-ya-no-importan'},
   {txt:'Para ganar tiempo, un grupo copia la biografía de un prócer de un cuaderno viejo, sin revisar si los datos están bien.',k:'caso-copiar'}
 ];
@@ -622,7 +622,7 @@ const critEffectBank=[
   {effect:'A José Trinidad Cabañas se le recuerda por algo que no se ve en un monumento.',guide:'Porque fue honrado: salió del gobierno tan pobre como entró, y por eso le llamaron el caballero «sin tacha».',k:'cabanas-honradez'},
   {effect:'El Escudo Nacional es el símbolo patrio más antiguo del país.',guide:'Porque nació en 1825, cuatro años después de la Independencia: los demás símbolos llegaron más tarde.',k:'escudo-antiguo'},
   {effect:'La moneda de Honduras se llama lempira.',guide:'Porque así honra el país a su Héroe Nacional.',k:'lempira-moneda'},
-  {effect:'Francisco Morazán es el hondureño más conocido fuera de Honduras.',guide:'Porque presidió la República Federal, que unía a cinco países, y peleó por esa unión hasta el final sin rendirse.',k:'morazan-conocido'}
+  {effect:'José Trinidad Cabañas también se recuerda en la historia de la unión centroamericana.',guide:'Porque él también peleó por esa unión, con las armas.',k:'cabanas-union'}
 ];
 function genEvalCrit(){
   sfx('click');
