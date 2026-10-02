@@ -13633,6 +13633,144 @@ Con la CPU frenada seis veces va a 58 cuadros por segundo. El peor cuadro es el
 primero del paso de los montones, cuando empiezan a volar los ocho números: entre 117
 y 200 ms según la vuelta. La del chivo, medida el mismo día, va a 59 y 117 ms.
 
+### La septuagésima primera: La Historia de la Inteligencia Artificial, y lo que enseñó
+
+La tercera de la Ruta de la Máquina que Aprende es **La Historia de la Inteligencia
+Artificial** (`misiones/2y3ciclo-historia-ia/`, `js/animacion-pelicula.js`). La
+historia es la de Kenia: su primo dice que la Inteligencia Artificial se inventó en
+2022, el año del chat, y su tío, que estudió computación en los noventa, dice «eso ya
+se probó y no sirvió». Los dos ven media película, y Kenia tiene que decidir a quién
+creerle. La animación pone la línea del tiempo como una cinta de película, tapada, con
+los tres encima:
+
+- antes de tocar: cada uno vio un pedazo de esta película. ¿Cuál vio cada uno?;
+- el primo vio desde 2022 hasta hoy: su pedazo se destapa (un cono de su cabeza a su
+  pedazo y una barra encima) y salen sus dos hitos. Para él, ahí empieza la película;
+- el tío vio desde el principio hasta los noventa: nueve hitos, y dos son los
+  inviernos, dos franjas frías sin borde;
+- entre los dos queda un hueco que no vio ninguno: cuatro hitos, con su llave de raya
+  cortada;
+- los inviernos no fueron el final: después vinieron seis hitos, y el tío no vio
+  ninguno;
+- lo de arriba sube y el final de la cinta se mira de cerca: la idea del chat está en
+  el hueco, cinco años antes del día en que llegó a todos, con un arco de una a otra;
+- cada uno vio un pedazo y creyó que era la película entera. Kenia dice «Mejor veo la
+  película entera», y la pregunta es del alumno: qué pedazo vio un adulto de su casa.
+
+Siete cosas que valen para las que siguen:
+
+1. ⚠️ **Ni un año escrito a mano.** Los hitos salen de `js/data/ia-historia.js`, que es
+   el único sitio del proyecto donde vive una fecha de la IA: cada punto de la cinta es
+   un hito con su año, los dos inviernos van como franjas sin borde (son períodos y
+   nadie se pone de acuerdo en el día; el segundo, «a finales» de su década, como dice
+   su edad) y lo de 2023 a hoy, como una franja hasta hoy. **El chat y la idea se buscan
+   por su `clave`**, que se les puso a los quince hitos: si mañana entra un hito en
+   medio, el orden se corre y la clave no. Lo único que pone la escena es dónde termina
+   el pedazo del tío, a mitad de los noventa, que es cuando estudió. Y «hoy» es el año
+   del teléfono.
+2. ⚠️ **Lo que las frases afirman tiene que ser verdad con los datos de hoy.** «El tío
+   no vio ninguno», «un hueco que no vio ninguno», «la idea estaba en el hueco»: si un
+   hito nuevo hiciera falsa una de esas frases, la escena no se monta y queda la frase
+   de reserva. Y la sonda tenía que decirlo: se caía esperando quince segundos un botón
+   que no iba a llegar, sin decir qué escena ni por qué. Ahora dice «el aparato se
+   montó» en rojo, con su nombre, y sigue con la siguiente.
+3. ⚠️ **Un corte en el año exacto tapaba medio punto.** Lo que tapa el hueco terminaba
+   en 2022, y el punto del chat está centrado en 2022: en los pasos del primo y del tío,
+   el hueco se comía la mitad del punto que el primo acababa de destapar. Se vio en la
+   captura, con la sonda en verde. Ahora el corte va justo antes del punto, y la sonda
+   comprueba que ningún hito a la vista quede tapado, ni a medias.
+4. ⚠️ **Un tercio del dibujo vacío en cinco de siete pasos.** Lo de cerca necesita la
+   parte de abajo, y en los demás pasos esa parte se quedaba en blanco. Lo de arriba
+   (la gente, la cinta y sus llaves) va en un grupo bajado al centro, y sube solo para
+   mirar de cerca; al terminar, lo de cerca se va y el grupo baja cuando ya se fue.
+5. **Los puntos van sin nombre, a propósito.** Lo que se enseña es qué pedazo vio cada
+   uno, no qué hay en cada punto; los nombres los pregunta la prueba. Por eso la sonda
+   saca el año de cada punto de la regla que se ve, y no de un rótulo. Y «hoy» lleva
+   halo: el cono del primo pasa por encima. Se vio en la captura.
+6. ⚠️ **La historia y la animación contestaban cinco preguntas.** «El primo de Kenia
+   dice que la IA se inventó con el chat. ¿Qué confunde?» era la historia palabra por
+   palabra; el pareado «2017 · El motor de los chats de hoy» y la pregunta de la ficha
+   «¿De qué año es la manera nueva de armar redes de texto?» los contesta la animación,
+   que pone «la idea» cinco años antes del chat de 2022; en pensamiento crítico, el
+   adulto que dice que esto «ya se murió otras veces» era el tío con otra ropa, y el
+   efecto «mucha gente cree que la IA se inventó en 2022», el primo. Ahora preguntan qué
+   hace falta para escribir la fecha de un hito, el año en que una máquina le ganó a
+   uno de los mejores jugadores de go, qué hacía el perceptrón, el compañero que cree
+   que las máquinas empezaron a aprender solas con el go y por qué hoy cuesta saber si
+   una voz o un video son de verdad. Van con la respuesta en el mismo lugar, en la
+   misión y en la ficha, que sigue en sus diez hojas; y la pauta de los casos nombra
+   ahora 1958 y «ni una promesa se cree sin preguntar».
+7. ⚠️ **Lo que va debajo no se calcula.** La sección Descubre pide adivinar cuánto
+   tardó cada par de hitos («¿Cuánto tardó?»). La sonda carga esos pares de
+   `js/data/ia-descubre.js` y no deja que la animación diga ninguno de esos años; la
+   única cuenta que hace, los cinco años de la idea al chat, no está entre ellos.
+
+Y una de paso, que ya iba por la tercera: la hoja de la misión traía los dos bloques de
+CSS calcados de los próceres y de los tres poderes, con sus comentarios. Se quitaron.
+
+La sonda de esta escena **no le cree nada a la escena**. Carga por su cuenta los hitos
+de `ia-historia.js` y comprueba:
+
+- que la regla tenga una rayita cada diez años desde el principio de la cinta y la
+  última, «hoy», al final, y que sus años escritos caigan en la misma escala;
+- que estén los quince hitos, una vez cada uno: cada punto en su año, leído de la
+  regla; el período, hasta hoy; cada invierno, dentro de su década, y el de «finales»,
+  en la segunda mitad; y que ningún punto se monte en otro;
+- que la barra del tío vaya del principio hasta los noventa y la del primo, del chat
+  hasta hoy, pegadas encima de la cinta, y que el cono de cada uno vaya de su cabeza a
+  su barra;
+- que se vean justo los hitos de los pedazos destapados, que lo que tapa cubra justo lo
+  que falta destapar y que ningún hito a la vista quede tapado, ni a medias;
+- que cada llave mida lo que dice (el hueco, de los noventa al chat; después de los
+  inviernos, del último hasta hoy; la película entera, de punta a punta) y que solo la
+  del hueco vaya de raya cortada;
+- que la frase y el marcador cuenten lo que se ve: los hitos de cada pedazo, los dos
+  inviernos, los seis de después y que el tío no vio ninguno;
+- de cerca: la regla grande, con una rayita por año; los hitos de esos años, cada uno
+  en su año; «la idea» y «llega a todos» encima de su punto; el arco de uno a otro, y
+  que el arco, la frase y el marcador digan los años que hay entre los dos, contados en
+  la regla grande;
+- que el marco y las rayas vayan de la cinta a lo de cerca, y que lo de arriba suba
+  para mirar de cerca y se quede centrado en los demás pasos;
+- que cada cosa pase cuando le toca: cada pedazo se destapa después de su cono y sus
+  hitos salen uno por uno, por orden de año; de cerca, primero sube lo de arriba y
+  después el marco, las rayas y la cinta grande; Kenia cambia de globo sin que se
+  crucen;
+- que cada globo diga lo suyo con la punta encima de la cabeza de quien habla, y que
+  ningún rótulo se monte en otro;
+- y que no salga ni un nombre ni un hito de la línea del tiempo, ni por qué hubo
+  inviernos, ni las tres patas, ni que la máquina piensa, ni ninguno de los años de
+  «¿Cuánto tardó?».
+
+Se comprobó al revés con veintinueve averías, plantadas una por una:
+
+- un punto corrido dos años, el segundo invierno al principio de su década y el período
+  sin llegar a hoy;
+- la barra del primo empezando un año antes;
+- el corte del hueco en el año del chat;
+- el hueco destapado en el paso del tío, y un hito del hueco saliendo con el tío;
+- el cono del tío saliendo de Kenia;
+- la llave del hueco hasta hoy, la de después desde antes de los inviernos y la del
+  hueco sin raya cortada;
+- el marcador del paso 3 diciendo 3, y la frase del paso 4 contando uno de menos;
+- «Turing» en una frase;
+- el globo del primo con otro año, y la punta del globo de Kenia lejos de su cabeza;
+- lo de arriba sin subir para mirar de cerca, el marco antes de que suba, y lo de
+  arriba en otro sitio en el paso 3;
+- «la idea» corrida de su punto, el arco diciendo un año menos, un hito de cerca corrido
+  y el chat del tamaño de los otros;
+- una raya de la lupa sin llegar a la cinta grande;
+- la llave de después sin esperar a que se vaya la otra, los hitos del primo antes de
+  destaparlo y Kenia cambiando de globo sin esperar;
+- un año de la regla mal escrito;
+- y el pedazo del tío hasta 2005, que hace falsa la frase de que no vio nada de después:
+  la escena no se monta, y la sonda lo dice.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 60 cuadros por segundo, y el peor cuadro es de 50 ms.
+Cómo Aprende una Máquina, medida el mismo día, va a 59 y 83 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -13852,6 +13990,12 @@ trazo. Lo que se agrupa por un rótulo (un número y su papelito) se agrupa por 
 está el rótulo en el dibujo, y si después el número se mueve, la sonda recuerda de
 qué papelito era. Y lo que sale encima de una tarjeta que se apaga, también un
 rótulo, espera a que se haya ido.
+Un corte entre dos pedazos que se tapan por separado no va en el año de un punto: va
+justo antes, o tapa medio punto. Si un paso necesita sitio que los demás no usan (lo de
+cerca), lo demás va en un grupo bajado al centro que sube solo para ese paso. Y una
+escena cuyas frases dependen de lo que digan los datos (que el tío no vio nada de
+después) comprueba esas frases al montarse y, si ya no son verdad, no se monta: la
+sonda lo dice con su nombre.
 
 Si la misma escena sirve para varias misiones (las cuatro Pruebas de Fin de
 Grado), vive en `js/escena-<tema>.js` y cada misión trae un archivo de dos líneas

@@ -13,7 +13,7 @@ const EVAL = [
   { q: '¿Cómo le ganaba Deep Blue al campeón de ajedrez?', o: ['Aprendiendo de sus partidas', 'Preguntándole a un experto', 'Calculando muchísimas jugadas por segundo', 'Copiando a los campeones'], a: 2 },
   { q: '¿Qué pasó el año en que las máquinas aprendieron a ver?', o: ['Una red profunda ganó el concurso de reconocer imágenes', 'Se inventó la cámara', 'Nació el primer robot', 'Se inventó internet'], a: 0 },
   { q: '¿Cómo aprendió AlphaGo?', o: ['Con un libro de aperturas', 'Jugando millones de partidas contra sí mismo', 'Con fotos etiquetadas', 'Leyendo reglas escritas'], a: 1 },
-  { q: '¿De qué año es la manera nueva de armar redes de texto?', o: ['De 1936', 'De 1966', 'De 2012', 'De 2017'], a: 3 },
+  { q: '¿Qué hacía el perceptrón?', o: ['Conversaba', 'Jugaba ajedrez', 'Traducía letreros', 'Separaba dos clases de figuras'], a: 3 },
   { q: '¿Cuáles son las tres patas?', o: ['Robots, sensores y motores', 'Luz, papel y suerte', 'Datos, cómputo y algoritmos', 'Internet, teléfonos y satélites'], a: 2 },
   { q: '¿Qué pasó cuando un chat de IA generativa se abrió al público?', o: ['Se apagaron las computadoras', 'Se prohibió', 'Nada cambió', 'Salió de los laboratorios y entró en las tareas escolares'], a: 3 },
 ];

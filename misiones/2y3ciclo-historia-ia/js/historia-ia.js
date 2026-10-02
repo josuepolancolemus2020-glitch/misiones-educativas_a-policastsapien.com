@@ -401,7 +401,7 @@ const evalMCBank=[
   {q:'¿Quién preguntó si las máquinas pueden pensar?',o:['Warren McCulloch','Frank Rosenblatt','Alan Turing','Joseph Weizenbaum'],a:2,k:'mc-turing'},
   {q:'¿Por qué hubo dos inviernos de la Inteligencia Artificial?',o:['Se prohibió investigar','Se prometió de más y se cortó el dinero','Se perdieron los programas','Se acabó la luz'],a:1,k:'mc-inviernos'},
   {q:'¿Por qué cayeron los sistemas expertos?',o:['Porque nadie los usaba','Porque eran ilegales','Porque no había computadoras','Porque mantener miles de reglas a mano salía carísimo'],a:3,k:'mc-expertos'},
-  {q:'El primo de Kenia dice que la Inteligencia Artificial se inventó con el chat. ¿Qué confunde?',o:['Cuándo nació la idea con cuándo llegó al público','El ajedrez con el go','Un robot con una persona','Las fotos con los textos'],a:0,k:'mc-kenia'},
+  {q:'¿Qué hace falta para escribir la fecha de un hito?',o:['Un documento o un hecho público que la acredite','Que la repita mucha gente','Que suene bien','Que la diga un chat'],a:0,k:'mc-acredita'},
   {q:'¿Por qué AlphaGo no podía ganar calculando todas las jugadas?',o:['Porque no tenía luz','Porque el go tiene demasiadas jugadas','Porque estaba prohibido','Porque jugaba sin tablero'],a:1,k:'mc-go'},
   {q:'¿Qué hacía el perceptrón?',o:['Conversaba','Jugaba ajedrez','Separaba dos clases de figuras','Traducía letreros'],a:2,k:'mc-perceptron'},
   {q:'¿Qué hizo Joseph Weizenbaum?',o:['Ganó al ajedrez','Construyó la primera computadora','Inventó internet','Hizo un programa que conversaba'],a:3,k:'mc-weizenbaum'},
@@ -431,7 +431,7 @@ const evalPRBank=[
   {term:'1966',def:'Un programa conversa y no entiende nada',k:'pr-1966'},
   {term:'1997',def:'Una máquina le gana al campeón mundial de ajedrez',k:'pr-1997'},
   {term:'2012',def:'Las máquinas aprenden a reconocer imágenes',k:'pr-2012'},
-  {term:'2017',def:'El motor de los chats de hoy',k:'pr-2017'}
+  {term:'2016',def:'Una máquina le gana a uno de los mejores jugadores de go',k:'pr-2016'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -519,7 +519,7 @@ function evalSwitchMode(mode){
 }
 const critCaseBank=[
   {k:'ca-promesa',txt:'Una noticia promete que en dos años las máquinas harán todo el trabajo.'},
-  {k:'ca-murio',txt:'Un adulto dice que no hay que estudiar esto porque «ya se murió otras veces».'},
+  {k:'ca-sola',txt:'Un compañero dice que las máquinas empezaron a aprender solas el día que una le ganó al go.'},
 ];
 const critCaseQuestions=[
   '1. ¿Qué afirma este caso y en qué año lo sitúa?',
@@ -528,10 +528,10 @@ const critCaseQuestions=[
   '4. ¿Qué le explicarías a esa persona, y con qué ejemplo?'
 ];
 const critCaseGuides=[
-  'Se valora que ubique la afirmación en la línea del tiempo: 1936, 1950, 1956, 1966, los inviernos, 1997, 2012, 2016, 2017, 2022.',
+  'Se valora que ubique la afirmación en la línea del tiempo: 1936, 1950, 1956, 1958, 1966, los inviernos, 1997, 2012, 2016, 2017, 2022.',
   'Se corrige con la fecha correcta y con lo que pasó ese año.',
   'Casi toda confusión es la misma: se confunde CUÁNDO fue la idea con CUÁNDO llegó al público.',
-  'Respuesta abierta. Se valora que explique con respeto y con un hito concreto. Ni la IA nació ayer, ni los inviernos prueban que no sirve.'
+  'Respuesta abierta. Se valora que explique con respeto y con un hito concreto. Ni la IA nació ayer, ni una promesa se cree sin preguntar.'
 ];
 const critErrorBank=[
   {k:'er-deep-blue',txt:'"Deep Blue pensó mejor que el campeón mundial".',g1:'Deep Blue no pensaba: calculaba muchísimas jugadas por segundo.',g2:'Se puede ganar sin entender nada. Eso enseñó ese enfrentamiento.'},
@@ -551,7 +551,7 @@ const critCauseBank=[
   {k:'ca-tarjetas',cause:'Las tarjetas gráficas de los videojuegos servían para entrenar redes.',guide:'Por eso en 2012 se entrenó con un millón de fotos.'},
 ];
 const critEffectBank=[
-  {k:'ef-2022',effect:'Mucha gente cree que la IA se inventó en 2022.',guide:'Porque ese año llegó a su teléfono. La idea es de 1950.'},
+  {k:'ef-voz',effect:'Hoy cuesta saber si una voz o un video son de verdad.',guide:'Porque desde 2023 los modelos también trabajan con imagen, voz y video, e imitan una voz con pocos segundos.'},
   {k:'ef-alphago',effect:'AlphaGo hizo una jugada que sorprendió a los expertos.',guide:'Porque aprendió jugando millones de partidas contra sí mismo, no copiando a nadie.'},
   {k:'ef-tareas',effect:'Un maestro corrige textos que no sabe de dónde salen.',guide:'Porque, desde que el chat llegó al público, entró en las tareas escolares.'},
 ];

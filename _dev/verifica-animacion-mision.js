@@ -4442,6 +4442,78 @@ const LEER = `
       cajasTexto: todos('text').filter(vis).map(caja)
     };
   };
+  window.__amExtra.amPelicula = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(m(el)); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function uno(sel, en) { return (en || raiz).querySelector(sel); }
+    function todos(sel, en) { return [].slice.call((en || raiz).querySelectorAll(sel)); }
+    function demora(el) { return el ? (parseFloat(el.style.getPropertyValue('--d')) || 0) : 0; }
+    function numeros(t) { return ((t || '').match(/-?[0-9.]+/g) || []).map(Number); }
+    function pares(nn) { var ps = []; for (var i = 0; i + 1 < nn.length; i += 2) ps.push([nn[i], nn[i + 1]]); return ps; }
+    function puntos(el) { return pares(numeros(el.getAttribute('d') || el.getAttribute('points'))).map(function (p) { return aVista(el, p[0], p[1]); }); }
+    function texto(t) { return t ? { txt: t.textContent, caja: caja(t), ve: vis(t), d: demora(t) } : null; }
+    function raya(el) { var r = getComputedStyle(el).strokeDasharray; return r && r !== 'none' && r !== '0px' ? r : ''; }
+    function circulo(c) {
+      var cx = +c.getAttribute('cx'), cy = +c.getAttribute('cy'), r = +c.getAttribute('r');
+      var p = aVista(c, cx, cy), q = aVista(c, cx + r, cy);
+      return { x: p[0], y: p[1], r: Math.abs(q[0] - p[0]) };
+    }
+    function hito(el) {
+      var o = { k: el.getAttribute('data-hito') || el.getAttribute('data-hito-cerca'), tipo: el.getAttribute('data-tipo'), ve: vis(el), d: demora(el),
+        circulo: el.tagName.toLowerCase() === 'circle' };
+      if (o.circulo) o.c = circulo(el); else o.caja = caja(el);
+      return o;
+    }
+    function regla(k, en) {
+      var p = uno('[data-regla="' + k + '"]', en);
+      return p ? puntos(p) : [];
+    }
+    var arr = uno('[data-arriba]'), ma = m(arr), arco = uno('[data-arco]'), gg = uno('[data-grande]');
+    return {
+      vista: [svg.viewBox.baseVal.width, svg.viewBox.baseVal.height],
+      arriba: { dy: ma.f, dx: ma.e, d: demora(arr) },
+      gente: todos('[data-persona]').map(function (g) {
+        return { k: g.getAttribute('data-persona'), ve: vis(g), caja: caja(g), cabeza: circulo(uno('[data-cabeza]', g)) };
+      }),
+      globos: todos('[data-globo]').map(function (g) {
+        var p = uno('[data-globo-caja]', g), pt = numeros(p.getAttribute('data-punta-globo'));
+        return { k: g.getAttribute('data-globo'), ve: vis(g), d: demora(g), caja: caja(p), punta: aVista(p, pt[0], pt[1]),
+          dice: todos('[data-dice]', g).map(texto) };
+      }),
+      regla: regla('cinta'), anios: todos('[data-anio="cinta"]').map(texto), hoy: texto(uno('[data-hoy="cinta"]')),
+      cinta: caja(uno('[data-cinta] [data-cinta-caja]')), adentro: caja(uno('[data-cinta] [data-cinta-adentro]')),
+      hitos: todos('[data-hito]').map(hito),
+      copos: todos('[data-copo]').map(function (t) { return { k: t.getAttribute('data-copo'), ve: vis(t), d: demora(t), caja: caja(t) }; }),
+      velos: todos('[data-velo]').map(function (g) {
+        return { k: g.getAttribute('data-velo'), ve: vis(g), d: demora(g), caja: caja(uno('[data-velo-caja]', g)) };
+      }),
+      conos: todos('[data-cono]').map(function (p) { return { k: p.getAttribute('data-cono'), ve: vis(p), d: demora(p), ps: puntos(p) }; }),
+      barras: todos('[data-barra]').map(function (q) { return { k: q.getAttribute('data-barra'), ve: vis(q), d: demora(q), caja: caja(q) }; }),
+      llaves: todos('[data-llave]').map(function (g) {
+        var p = uno('[data-llave-raya]', g);
+        return { k: g.getAttribute('data-llave'), ve: vis(g), d: demora(g), raya: puntos(p), cortada: raya(p), dice: texto(uno('[data-llave-dice]', g)) };
+      }),
+      lupa: (function () { var q = uno('[data-lupa-marco]'); return { ve: vis(q), d: demora(q), caja: caja(q) }; })(),
+      rayas: todos('[data-lupa-raya]').map(function (p) { return { ve: vis(p), d: demora(p), ps: puntos(p) }; }),
+      grande: { ve: vis(gg), d: demora(gg), marco: caja(uno('[data-grande-marco]')), cinta: caja(uno('[data-cinta-caja]', gg)),
+        adentro: caja(uno('[data-cinta-adentro]', gg)), mayor: regla('grande', gg), menor: regla('grande-menor', gg),
+        anios: todos('[data-anio="grande"]', gg).map(texto), hoy: texto(uno('[data-hoy="grande"]', gg)) },
+      cerca: todos('[data-hito-cerca]').map(hito),
+      dicen: todos('[data-cerca-dice]').map(function (t) { var o = texto(t); o.k = t.getAttribute('data-cerca-dice'); return o; }),
+      arco: { ve: vis(arco), d: demora(arco), ps: puntos(arco), trazado: Math.abs(parseFloat(getComputedStyle(arco).strokeDashoffset) || 0) < 0.5 },
+      arcoDice: texto(uno('[data-arco-dice]')),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; }),
+      cajasTexto: todos('text').filter(vis).map(function (t) { return { txt: t.textContent, caja: caja(t) }; })
+    };
+  };
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -4700,6 +4772,45 @@ const ESTADOS_ANIO = [
   { kenia: 'prueba', tinta: true, anio: 'B', resp: true, marcas: 'B', llave: false, barra: false, tira: true, nota: false, leyenda: -1 },
   { kenia: 'prueba', tinta: true, anio: 'B', resp: true, marcas: 'B', llave: false, barra: false, tira: false, nota: true, leyenda: -1 }
 ];
+/* La Historia de la Inteligencia Artificial: lo que se ve al TERMINAR cada
+   paso. ve: qué pedazos de la cinta están destapados; llave: cuál se ve
+   debajo; cerca: si se mira de cerca; kenia: qué globo tiene; dice: lo que
+   dice el marcador (su número lo cuenta la sonda en el dibujo). */
+const ESTADOS_PELICULA = [
+  { ve: [], llave: null, cerca: false, kenia: 'duda', dice: 'hitos en la película, todos tapados' },
+  { ve: ['primo'], llave: null, cerca: false, kenia: 'duda', dice: 'hitos que vio el primo' },
+  { ve: ['primo', 'tio'], llave: null, cerca: false, kenia: 'duda', dice: 'hitos que vio el tío' },
+  { ve: ['primo', 'tio', 'hueco'], llave: 'hueco', cerca: false, kenia: 'duda', dice: 'hitos que no vio ninguno' },
+  { ve: ['primo', 'tio', 'hueco'], llave: 'despues', cerca: false, kenia: 'duda', dice: 'hitos después de los inviernos' },
+  { ve: ['primo', 'tio', 'hueco'], llave: null, cerca: true, kenia: 'duda', dice: 'años entre la idea y el chat' },
+  { ve: ['primo', 'tio', 'hueco'], llave: 'entera', cerca: false, kenia: 'entera', dice: 'hitos en la película entera' }
+];
+/* Lo que la escena tiene que enseñar, sacado por la sonda de los archivos de
+   datos y no de la escena: los hitos con su año (o su década, o «hasta
+   hoy»), y los pares de «¿Cuánto tardó?», que la animación no puede
+   resolver. El chat y la idea se buscan por su clave. */
+let historiaIA = null;
+function datosHistoriaIA() {
+  if (historiaIA) return historiaIA;
+  const H = require(path.join(RAIZ, 'js', 'data', 'ia-historia.js'));
+  const D = require(path.join(RAIZ, 'js', 'data', 'ia-descubre.js'));
+  const DEC = { setenta: 1970, ochenta: 1980, noventa: 1990 };
+  const inv = H.IA_EPOCAS.find(ep => ep.clave === 'invierno');
+  const fin = ((/finales de los ([a-z]+)/.exec(inv.rango)) || [])[1];
+  const hoy = new Date().getFullYear();
+  const hitos = H.IA_HITOS.map(h => {
+    const a = String(h.anio);
+    let mm;
+    if (/^[0-9]{4}$/.test(a)) return { k: h.clave, tipo: 'punto', desde: +a, hasta: +a };
+    if ((mm = /^de ([0-9]{4}) a hoy$/.exec(a))) return { k: h.clave, tipo: 'periodo', desde: +mm[1], hasta: hoy };
+    if ((mm = /^años ([a-z]+)$/.exec(a)) && DEC[mm[1]]) return { k: h.clave, tipo: 'invierno', decada: DEC[mm[1]], finales: mm[1] === fin, desde: DEC[mm[1]], hasta: DEC[mm[1]] + 10 };
+    return { k: h.clave, tipo: '?', desde: NaN, hasta: NaN };
+  });
+  const chat = H.IA_HITOS.find(h => h.clave === 'chat'), idea = H.IA_HITOS.find(h => h.clave === 'motor');
+  historiaIA = { hitos, hoy, chat: +chat.anio, idea: +idea.anio, chatK: 'chat', ideaK: 'motor', pares: D.IA_TIEMPO_PARES.map(p => +p.b - +p.a) };
+  return historiaIA;
+}
+const MEMO_PELICULA = {};
 /* Las Pruebas de Fin de Grado (4º, 5º, 6º y 7º): «El año de Kenia, mes a
    mes». Una escena para las cuatro, y esta sonda para las cuatro.
    ⚠️ Nada se le cree a la escena. La sonda saca la escala de las rayitas
@@ -5418,6 +5529,269 @@ const ESCENAS = {
       const sale = Math.max(x.grande.orilla.d, respDe('r5').d);
       r.push([T.d >= sale + APAGA, `paso 6: la tarjeta sale cuando ya se fue lo que estaba en su sitio`, [sale, T.d]]);
     }
+    return r;
+  },
+  /* La Historia de la Inteligencia Artificial: «Media película cada uno».
+     ⚠️ Nada se le cree a la escena. La sonda saca la escala de los años de
+     la regla que se ve encima de la cinta, y con ella lee el año de cada
+     punto, de cada franja y de cada barra; los compara con el archivo de
+     datos, que carga por su cuenta. De ahí sabe qué hitos caen en el pedazo
+     de cada uno, cuántos hay en el hueco y cuántos después de los inviernos,
+     y los cuenta contra la frase y el marcador. De cerca, lo mismo con la
+     regla grande: los años de la idea y del chat salen del dibujo, y el arco
+     tiene que decir lo que hay de uno a otro. */
+  amPelicula(e, n) {
+    const x = e.extra, r = [];
+    if (!x) return [[false, `paso ${n}: la sonda pudo leer la escena`, null]];
+    const E = ESTADOS_PELICULA[n], DA = datosHistoriaIA(), APAGA = 500, ANDA = 800;
+    const cerca = (a, b, t = 0.6) => Math.abs(a - b) <= t;
+    const dentro = (a, b, m = 0) => a.x0 >= b.x0 - m && a.x1 <= b.x1 + m && a.y0 >= b.y0 - m && a.y1 <= b.y1 + m;
+    const monta = (a, b) => a.x0 < b.x1 - 0.5 && b.x0 < a.x1 - 0.5 && a.y0 < b.y1 - 0.5 && b.y0 < a.y1 - 0.5;
+    const cx = c => (c.x0 + c.x1) / 2;
+    const crece = l => l.every((q, i) => i === 0 || q.d > l[i - 1].d);
+    const PALABRA = { cero: 0, uno: 1, una: 1, dos: 2, tres: 3, cuatro: 4, cinco: 5, seis: 6, siete: 7, ocho: 8, nueve: 9, diez: 10,
+      once: 11, doce: 12, trece: 13, catorce: 14, quince: 15, 'dieciséis': 16 };
+    const valor = w => /^[0-9]+$/.test(w) ? +w : (w.toLowerCase() in PALABRA ? PALABRA[w.toLowerCase()] : NaN);
+    const ante = (texto, w) => [...texto.matchAll(new RegExp('([0-9]+|[a-záéíóúñ]+)[\\s\\u00a0]+' + w, 'gi'))].map(q => valor(q[1]));
+
+    /* ── lo que no depende del dibujo va primero ── */
+    /* Ni un nombre ni un hito de la línea del tiempo (personas, programas,
+       juegos, el taller), ni lo que la prueba pregunta (por qué hubo
+       inviernos, las tres patas, el mes del chat), ni que la máquina piensa,
+       sabe o entiende. Y ninguno de los años de «¿Cuánto tardó?», que el
+       alumno adivina más abajo. */
+    const PROHIBIDAS = /turing|mcculloch|pitts|rosenblatt|samuel|weizenbaum|eliza|deep blue|kasp|alphago|sedol|dartmouth|mccarthy|perceptr|transformador|neurona|ajedrez|\bdamas\b|\bgo\b|tarjeta|c[oó]mputo|algoritm|\bpatas?\b|promet|dinero|laborator|videojueg|imitaci|noviembre|imagen|im[aá]genes|\bvoz\b|video|piens|\bsabe\b|entiend|\bsient/i;
+    const dicho = [e.texto, e.palabras, e.boton].concat(x.textos).join(' · ');
+    r.push([!PROHIBIDAS.test(dicho), `paso ${n}: no sale ni un nombre ni un hito de la línea del tiempo, ni lo que pregunta la prueba, ni que la máquina piensa`, (dicho.match(PROHIBIDAS) || [])[0]]);
+    const duran = ante(dicho, 'años').concat([...dicho.matchAll(/([0-9]+)[\s ]*años/g)].map(q => +q[1]));
+    r.push([duran.every(d => !DA.pares.includes(d)), `paso ${n}: no se calcula ninguno de los años de «¿Cuánto tardó?»`, duran]);
+    r.push([e.palabras === E.dice, `paso ${n}: el marcador dice «${E.dice}»`, e.palabras]);
+
+    /* ── la regla de los años: de ella sale el año de cada cosa ── */
+    const unicos = l => l.filter((v, i) => i === 0 || Math.abs(v - l[i - 1]) > 0.05);
+    const marcas = unicos(x.regla.filter((p, i) => i % 2 === 0).map(p => p[0]).sort((p, q) => p - q));
+    const ET = x.anios.map(t => ({ a: +t.txt, x: cx(t.caja) })).sort((p, q) => p.x - q.x);
+    const hay = ET.length >= 2;
+    const b = hay ? (ET[ET.length - 1].a - ET[0].a) / (ET[ET.length - 1].x - ET[0].x) : NaN, a0 = hay ? ET[0].a - b * ET[0].x : NaN;
+    const anio = v => a0 + b * v;
+    r.push([hay && ET.every(t => t.a % 10 === 0 && cerca(anio(t.x), t.a, 0.2)) && x.anios.every(t => t.caja.y1 <= x.cinta.y0),
+      `paso ${n}: los años de la regla van encima de la cinta, cada uno en su sitio de la misma escala`, ET]);
+    const ultima = marcas[marcas.length - 1], primero = Math.floor(Math.min(...DA.hitos.filter(h => h.tipo === 'punto').map(h => h.desde)) / 10) * 10;
+    r.push([marcas.length >= 3 && cerca(marcas[0], x.cinta.x0, 0.3) && cerca(ultima, x.cinta.x1, 0.3) && cerca(anio(ultima), DA.hoy, 0.25)
+      && marcas.slice(0, -1).every((m, i) => cerca(anio(m), primero + 10 * i, 0.25)) && x.hoy && x.hoy.txt === 'hoy' && cerca(x.hoy.caja.x1, ultima, 1.2),
+      `paso ${n}: la regla tiene una rayita cada diez años desde ${primero}, en el principio de la cinta, y la última, «hoy» (${DA.hoy}), al final`, marcas.map(m => +anio(m).toFixed(2))]);
+
+    /* ── cada hito, en su año ── */
+    const DH = new Map(DA.hitos.map(h => [h.k, h]));
+    const L = x.hitos.map(h => h.circulo
+      ? Object.assign({}, h, { desde: anio(h.c.x), hasta: anio(h.c.x), x0: h.c.x - h.c.r, x1: h.c.x + h.c.r })
+      : Object.assign({}, h, { desde: anio(h.caja.x0), hasta: anio(h.caja.x1), x0: h.caja.x0, x1: h.caja.x1 }));
+    r.push([L.length === DA.hitos.length && new Set(L.map(h => h.k)).size === L.length && L.every(h => DH.has(h.k) && DH.get(h.k).tipo === h.tipo),
+      `paso ${n}: en la cinta están los ${DA.hitos.length} hitos del archivo de datos, una vez cada uno`, L.map(h => [h.k, h.tipo])]);
+    const caja = h => h.circulo ? { x0: h.c.x - h.c.r, x1: h.c.x + h.c.r, y0: h.c.y - h.c.r, y1: h.c.y + h.c.r } : h.caja;
+    const malPuestos = L.filter(h => {
+      const d = DH.get(h.k);
+      if (!d || !dentro(caja(h), x.adentro, 0.1)) return true;
+      if (h.tipo === 'punto') return !cerca(h.desde, d.desde, 0.3);
+      if (h.tipo === 'periodo') return !cerca(h.desde, d.desde, 0.3) || !cerca(h.hasta, DA.hoy, 0.3);
+      return h.desde < d.decada - 0.3 || h.hasta > d.decada + 10.3 || (d.finales && h.desde < d.decada + 4.7) || h.hasta - h.desde < 4;
+    }).map(h => [h.k, +h.desde.toFixed(2)]);
+    r.push([!malPuestos.length, `paso ${n}: cada punto cae en su año, el período va hasta hoy y cada invierno dentro de su década (el de «finales», en la segunda mitad)`, malPuestos]);
+    const PT = L.filter(h => h.circulo), encimados = [];
+    PT.forEach((p, i) => PT.slice(i + 1).forEach(q => { if (Math.hypot(p.c.x - q.c.x, p.c.y - q.c.y) < p.c.r + q.c.r - 0.05) encimados.push([p.k, q.k]); }));
+    r.push([!encimados.length, `paso ${n}: ningún punto se monta en otro (el que caería encima va en la otra fila)`, encimados]);
+
+    /* ── el pedazo de cada uno: la barra encima de la cinta ── */
+    const BAR = k => x.barras.find(q => q.k === k), BT = BAR('tio'), BP = BAR('primo');
+    const finTio = anio(BT.caja.x1), iniPrimo = anio(BP.caja.x0);
+    r.push([cerca(BT.caja.x0, x.cinta.x0, 0.3) && finTio > 1990 && finTio < 2000 && cerca(iniPrimo, DA.chat, 0.25) && cerca(BP.caja.x1, x.cinta.x1, 0.3)
+      && [BT, BP].every(q => q.caja.y1 <= x.cinta.y0 + 0.1 && x.cinta.y0 - q.caja.y1 < 2),
+      `paso ${n}: la barra del tío va del principio hasta los noventa, y la del primo, del chat (${DA.chat}) hasta hoy, pegadas encima de la cinta`, [+finTio.toFixed(1), +iniPrimo.toFixed(1)]]);
+    const deQuien = h => h.desde >= iniPrimo - 0.1 ? 'primo' : h.hasta <= finTio + 0.1 ? 'tio' : 'hueco';
+    const malVis = L.filter(h => h.ve !== E.ve.includes(deQuien(h))).map(h => h.k);
+    r.push([!malVis.length, `paso ${n}: ${E.ve.length ? 'se ven los hitos de los pedazos destapados (' + E.ve.join(', ') + '), y ninguno más' : 'todos los hitos están tapados'}`, malVis]);
+    const malCopo = x.copos.filter(c => { const w = L.find(h => h.k === c.k); return !w || w.tipo !== 'invierno' || c.ve !== w.ve || !dentro(c.caja, w.caja, 0.5); }).map(c => c.k);
+    r.push([x.copos.length === L.filter(h => h.tipo === 'invierno').length && !malCopo.length, `paso ${n}: cada invierno lleva su copo encima de su franja, y se ve con él`, malCopo]);
+
+    /* ── lo que tapa ── */
+    const VV = x.velos.filter(v => v.ve);
+    r.push([x.velos.length === 3 && x.velos.every(v => v.ve === !E.ve.includes(v.k)) && VV.every(v => v.caja.y0 <= x.cinta.y0 + 0.1 && v.caja.y1 >= x.cinta.y1 - 0.1),
+      `paso ${n}: está tapado, de arriba abajo, justo lo que no se ha destapado`, x.velos.map(v => [v.k, v.ve])]);
+    const aMedias = L.filter(h => h.ve && VV.some(v => h.x1 > v.caja.x0 + 0.05 && h.x0 < v.caja.x1 - 0.05)).map(h => h.k);
+    const sinTapar = L.filter(h => !h.ve && !VV.some(v => (h.x0 + h.x1) / 2 >= v.caja.x0 && (h.x0 + h.x1) / 2 <= v.caja.x1)).map(h => h.k);
+    r.push([!aMedias.length && !sinTapar.length, `paso ${n}: ningún hito a la vista queda tapado, ni a medias, y los que no se ven están debajo de lo que tapa`, [aMedias, sinTapar]]);
+    if (n === 0) {
+      const tr = VV.map(v => [v.caja.x0, v.caja.x1]).sort((p, q) => p[0] - q[0]);
+      r.push([tr.length === 3 && cerca(tr[0][0], x.cinta.x0, 0.3) && cerca(tr[2][1], x.cinta.x1, 0.3) && tr.every((t, i) => i === 0 || t[0] <= tr[i - 1][1] + 0.05),
+        'paso 0: la cinta entera está tapada, sin un hueco entre los tres pedazos', tr]);
+    }
+
+    /* ── lo que vio cada uno: de su cabeza a su pedazo ── */
+    const GE = k => x.gente.find(g => g.k === k);
+    const malCono = x.conos.filter(c => {
+      const bq = BAR(c.k), G = GE(c.k);
+      if (!bq || !G || c.ve !== E.ve.includes(c.k) || bq.ve !== c.ve || c.ps.length !== 3) return true;
+      const [p0, p1, p2] = c.ps, cab = G.cabeza, xs = [p1[0], p2[0]].sort((p, q) => p - q);
+      return Math.hypot(p0[0] - cab.x, p0[1] - cab.y) > cab.r || !cerca(xs[0], bq.caja.x0, 0.4) || !cerca(xs[1], bq.caja.x1, 0.4) || !cerca(p1[1], bq.caja.y0, 0.4) || !cerca(p2[1], bq.caja.y0, 0.4);
+    }).map(c => c.k);
+    r.push([x.conos.length === 2 && !malCono.length, `paso ${n}: lo que vio cada uno va de su cabeza a su pedazo, y se ve con su barra cuando se destapa`, malCono]);
+
+    /* ── la gente y lo que dice ── */
+    const T = GE('tio'), K = GE('kenia'), PR = GE('primo');
+    r.push([T && K && PR && [T, K, PR].every(g => g.ve) && cerca(T.caja.y1, K.caja.y1, 0.6) && cerca(K.caja.y1, PR.caja.y1, 0.6)
+      && T.cabeza.x < K.cabeza.x && K.cabeza.x < PR.cabeza.x && [T, K, PR].every(g => g.caja.y1 <= Math.min(...x.anios.map(t => t.caja.y0), x.hoy.caja.y0) + 0.5),
+      `paso ${n}: el tío, Kenia y el primo, con los pies en la misma raya, encima de la regla`, [T && T.caja.y1, K && K.caja.y1, PR && PR.caja.y1]]);
+    const DICE = { tio: 'Eso ya se probó y no sirvió.', primo: `Se inventó en ${DA.chat}.`, duda: '¿A quién le creo?', entera: 'Mejor veo la película entera.' };
+    const DUENO = { tio: 'tio', primo: 'primo', duda: 'kenia', entera: 'kenia' };
+    const GV = x.globos.filter(g => g.ve);
+    r.push([GV.length === 3 && ['tio', 'primo', E.kenia].every(k => GV.some(g => g.k === k)),
+      `paso ${n}: el tío y el primo dicen lo suyo, y Kenia ${E.kenia === 'duda' ? 'no sabe a quién creerle' : 'quiere ver la película entera'}`, GV.map(g => g.k)]);
+    const malGlobo = GV.filter(g => {
+      const cab = GE(DUENO[g.k]).cabeza;
+      return g.dice.map(t => t.txt).join(' ') !== DICE[g.k] || !g.dice.every(t => dentro(t.caja, g.caja)) || g.punta[1] < g.caja.y1 - 0.5
+        || g.punta[1] >= cab.y - cab.r || Math.abs(g.punta[0] - cab.x) > cab.r;
+    }).map(g => g.k);
+    const globosMontados = GV.some((g, i) => GV.slice(i + 1).some(h => monta(g.caja, h.caja)));
+    r.push([!malGlobo.length && !globosMontados, `paso ${n}: cada globo dice lo suyo, con la punta encima de la cabeza de quien habla, y no se montan`, malGlobo]);
+
+    /* ── las llaves de debajo: cada una mide lo que dice ── */
+    const LV = x.llaves.filter(l => l.ve);
+    r.push([LV.length === (E.llave ? 1 : 0) && (!E.llave || LV[0].k === E.llave), `paso ${n}: ${E.llave ? 'debajo de la cinta, la llave «' + E.llave + '»' : 'no hay llave debajo de la cinta'}`, LV.map(l => l.k)]);
+    const finInv = Math.max(...L.filter(h => h.tipo === 'invierno').map(h => h.hasta));
+    const RANGO = { hueco: [finTio, DA.chat], despues: [finInv, DA.hoy], entera: [anio(x.cinta.x0), DA.hoy] };
+    const LDICE = { hueco: 'no lo vio ninguno', despues: 'después de los inviernos', entera: 'la película entera' };
+    const malLlave = x.llaves.filter(l => {
+      const R = l.raya, rg = RANGO[l.k];
+      if (!rg || R.length !== 4) return true;
+      const y = R[1][1];
+      return !cerca(anio(R[0][0]), rg[0], 0.3) || !cerca(anio(R[2][0]), rg[1], 0.3) || !cerca(R[0][0], R[1][0], 0.05) || !cerca(R[2][0], R[3][0], 0.05)
+        || !cerca(R[2][1], y, 0.05) || R[0][1] >= y || R[3][1] >= y || y <= x.cinta.y1 || y - x.cinta.y1 > 10
+        || !l.dice || l.dice.txt !== LDICE[l.k] || l.dice.caja.y0 <= y || l.dice.caja.x0 < R[0][0] - 3 || l.dice.caja.x1 > R[2][0] + 3;
+    }).map(l => l.k);
+    r.push([x.llaves.length === 3 && !malLlave.length,
+      `paso ${n}: cada llave mide lo que dice: el hueco, de los noventa al chat; después de los inviernos, del último hasta hoy; la película entera, de punta a punta`, malLlave]);
+    r.push([x.llaves.every(l => (l.k === 'hueco') === !!l.cortada), `paso ${n}: lo que no vio ninguno va con raya cortada, y solo eso`, x.llaves.map(l => [l.k, l.cortada])]);
+
+    /* ── lo que se cuenta: la frase y el marcador, contra el dibujo ── */
+    const ves = L.filter(h => h.ve);
+    if (n === 0) r.push([e.cifra === String(L.length) && !ves.length, `paso 0: el marcador cuenta los ${L.length} hitos de la cinta, todos tapados`, e.cifra]);
+    if (n === 1) {
+      const c = ves.filter(h => deQuien(h) === 'primo').length;
+      r.push([c > 0 && e.cifra === String(c) && ante(e.texto, 'hitos')[0] === c && e.texto.includes(`desde ${DA.chat} hasta hoy`),
+        `paso 1: el primo vio desde ${DA.chat} hasta hoy, y la frase y el marcador cuentan los hitos de su pedazo: ${c}`, [e.cifra, ante(e.texto, 'hitos')]]);
+    }
+    if (n === 2) {
+      const c = ves.filter(h => deQuien(h) === 'tio').length, w = ves.filter(h => h.tipo === 'invierno' && deQuien(h) === 'tio').length;
+      r.push([e.cifra === String(c) && ante(e.texto, 'hitos')[0] === c && w === 2 && /Dos son inviernos/.test(e.texto),
+        `paso 2: la frase y el marcador cuentan los hitos del tío (${c}), y dos de ellos son los inviernos`, [e.cifra, ante(e.texto, 'hitos'), w]]);
+    }
+    if (n === 3) {
+      const c = ves.filter(h => deQuien(h) === 'hueco').length;
+      r.push([c > 0 && e.cifra === String(c) && ante(e.texto, 'hitos')[0] === c, `paso 3: la frase y el marcador cuentan los hitos del hueco: ${c}`, [e.cifra, ante(e.texto, 'hitos')]]);
+    }
+    if (n === 4) {
+      const des = ves.filter(h => h.desde >= finInv - 0.1), deTio = des.filter(h => deQuien(h) === 'tio').length;
+      r.push([e.cifra === String(des.length) && ante(e.texto, 'hitos')[0] === des.length && deTio === 0 && /El tío no vio ninguno/.test(e.texto),
+        `paso 4: después de los inviernos vienen ${des.length} hitos, y el tío no vio ninguno: se cuentan en el dibujo`, [e.cifra, ante(e.texto, 'hitos'), deTio]]);
+    }
+    if (n === 6) r.push([e.cifra === String(ves.length) && ves.length === L.length, `paso 6: se ve la película entera, y el marcador cuenta sus ${L.length} hitos`, e.cifra]);
+
+    /* ── de cerca ── */
+    const G = x.grande;
+    const deCerca = [x.lupa.ve, G.ve, x.arco.ve && x.arco.trazado, x.arcoDice.ve].concat(x.rayas.map(q => q.ve), x.cerca.map(h => h.ve), x.dicen.map(t => t.ve));
+    r.push([deCerca.every(v => v === E.cerca), `paso ${n}: ${E.cerca ? 'se mira de cerca: el marco, las rayas, la cinta grande con sus hitos, la idea, el chat y el arco' : 'no se mira de cerca'}`, deCerca]);
+    if (E.cerca) {
+      const todas = unicos(G.mayor.concat(G.menor).filter((p, i) => i % 2 === 0).map(p => p[0]).sort((p, q) => p - q));
+      const mayores = unicos(G.mayor.filter((p, i) => i % 2 === 0).map(p => p[0]).sort((p, q) => p - q));
+      const EG = G.anios.map(t => ({ a: +t.txt, x: cx(t.caja) })).sort((p, q) => p.x - q.x);
+      const bg = EG.length >= 2 ? (EG[EG.length - 1].a - EG[0].a) / (EG[EG.length - 1].x - EG[0].x) : NaN, ag = EG.length >= 2 ? EG[0].a - bg * EG[0].x : NaN;
+      const anioG = v => ag + bg * v;
+      r.push([EG.length >= 2 && EG.every(t => t.a % 5 === 0 && cerca(anioG(t.x), t.a, 0.2)) && cerca(todas[0], G.cinta.x0, 0.3) && cerca(todas[todas.length - 1], G.cinta.x1, 0.3)
+        && todas.every((m, i) => cerca(anioG(m), EG[0].a + i, 0.2)) && cerca(anioG(todas[todas.length - 1]), DA.hoy, 0.2)
+        && mayores.every(m => { const y = anioG(m); return cerca(y, Math.round(y / 5) * 5, 0.2) || cerca(y, DA.hoy, 0.2); })
+        && G.hoy && G.hoy.txt === 'hoy' && G.anios.concat([G.hoy]).every(t => t.caja.y0 >= G.cinta.y1),
+        `paso ${n}: la regla de cerca tiene una rayita por año, la larga cada cinco con su año, hasta hoy`, todas.map(m => +anioG(m).toFixed(2))]);
+      const inicio = anioG(G.cinta.x0);
+      const LC = x.cerca.map(h => h.circulo
+        ? Object.assign({}, h, { desde: anioG(h.c.x), hasta: anioG(h.c.x) }) : Object.assign({}, h, { desde: anioG(h.caja.x0), hasta: anioG(h.caja.x1) }));
+      const quieren = DA.hitos.filter(h => h.desde >= inicio - 0.1).map(h => h.k).sort();
+      r.push([JSON.stringify(LC.map(h => h.k).sort()) === JSON.stringify(quieren)
+        && LC.every(h => { const d = DH.get(h.k); return cerca(h.desde, d.desde, 0.25) && (h.tipo !== 'periodo' || cerca(h.hasta, DA.hoy, 0.25)) && dentro(caja(h), G.adentro, 0.1); }),
+        `paso ${n}: de cerca están los hitos de esos años, cada uno en su año`, LC.map(h => [h.k, +h.desde.toFixed(2)])]);
+      const LU = x.lupa.caja;
+      r.push([LU.y0 <= x.cinta.y0 + 0.1 && LU.y1 >= x.cinta.y1 - 0.1 && LU.x1 >= x.cinta.x1 && anio(LU.x0) <= inicio + 0.05 && anio(LU.x0) > inicio - 1.5,
+        `paso ${n}: el marco sobre la cinta encierra los mismos años que se ven de cerca`, [+anio(LU.x0).toFixed(2), +inicio.toFixed(2)]]);
+      const esq = [[LU.x0, LU.y1], [LU.x1, LU.y1]], esqG = [[G.marco.x0, G.marco.y0], [G.marco.x1, G.marco.y0]];
+      r.push([x.rayas.length === 2 && x.rayas.every((q, i) => q.ps.length === 2 && Math.hypot(q.ps[0][0] - esq[i][0], q.ps[0][1] - esq[i][1]) < 0.8
+        && Math.hypot(q.ps[1][0] - esqG[i][0], q.ps[1][1] - esqG[i][1]) < 0.8),
+        `paso ${n}: las dos rayas bajan de las esquinas del marco a las de la cinta grande`, x.rayas.map(q => q.ps)]);
+      r.push([Math.max(x.cinta.y1, LU.y1) < G.marco.y0 && dentro(G.cinta, G.marco) && dentro(G.adentro, G.cinta), `paso ${n}: lo de arriba subió y no se monta en lo de cerca`, [LU.y1, G.marco.y0]]);
+      const DI = LC.find(h => h.k === DA.ideaK), DC = LC.find(h => h.k === DA.chatK);
+      const tI = x.dicen.find(t => t.k === 'idea'), tC = x.dicen.find(t => t.k === 'todos');
+      const otros = LC.filter(h => h.circulo && h !== DI && h !== DC);
+      r.push([DI && DC && DI.circulo && DC.circulo && tI && tC && tI.txt === 'la idea' && tC.txt === 'llega a todos'
+        && cerca(cx(tI.caja), DI.c.x, 0.6) && cerca(cx(tC.caja), DC.c.x, 0.6) && tI.caja.y1 <= G.cinta.y0 + 0.1 && tC.caja.y1 <= G.cinta.y0 + 0.1
+        && tI.caja.y0 >= G.marco.y0 && tC.caja.y0 >= G.marco.y0 && otros.every(h => h.c.r < DI.c.r - 0.2 && h.c.r < DC.c.r - 0.2),
+        `paso ${n}: «la idea» va encima del punto de la idea y «llega a todos», encima del chat; esos dos puntos, más grandes`, [tI && tI.txt, tC && tC.txt]]);
+      if (DI && DC && tI && tC) {
+        const A3 = x.arco.ps, xs = A3.length === 3 ? [A3[0][0], A3[2][0]].sort((p, q) => p - q) : [];
+        const apice = A3.length === 3 ? 0.25 * A3[0][1] + 0.5 * A3[1][1] + 0.25 * A3[2][1] : NaN;
+        r.push([A3.length === 3 && cerca(xs[0], Math.min(DI.c.x, DC.c.x), 0.6) && cerca(xs[1], Math.max(DI.c.x, DC.c.x), 0.6)
+          && [A3[0], A3[2]].every(p => p[1] <= Math.min(tI.caja.y0, tC.caja.y0) + 0.5) && A3[1][1] < Math.min(A3[0][1], A3[2][1]) && apice >= G.marco.y0,
+          `paso ${n}: el arco va de la idea al chat, por encima de los dos rótulos`, A3]);
+        const dif = Math.round(anioG(DC.c.x) - anioG(DI.c.x));
+        r.push([dif > 0 && x.arcoDice.txt === `${dif} años` && cerca(cx(x.arcoDice.caja), (xs[0] + xs[1]) / 2, 0.6) && x.arcoDice.caja.y1 <= apice + 0.5
+          && e.cifra === String(dif) && ante(e.texto, 'años')[0] === dif,
+          `paso ${n}: el arco, la frase y el marcador dicen los años que hay de la idea al chat, contados en la regla de cerca: ${dif}`, [x.arcoDice.txt, e.cifra, ante(e.texto, 'años')]]);
+      }
+    }
+
+    /* ── lo de arriba: bajado al centro, y sube solo para mirar de cerca ── */
+    if (!E.cerca) {
+      if (MEMO_PELICULA.dy === undefined) MEMO_PELICULA.dy = x.arriba.dy;
+      r.push([x.arriba.dy > 0 && cerca(x.arriba.dy, MEMO_PELICULA.dy, 0.05), `paso ${n}: lo de arriba está en su sitio de siempre, bajado hacia el centro del dibujo`, x.arriba.dy]);
+    } else r.push([cerca(x.arriba.dy, 0, 0.05), `paso ${n}: para mirar de cerca, lo de arriba subió`, x.arriba.dy]);
+    if (E.llave && LV.length && GV.length) {
+      const arriba = Math.min(...GV.map(g => g.caja.y0)), abajo = x.vista[1] - Math.max(...LV.map(l => l.dice.caja.y1));
+      r.push([Math.abs(arriba - abajo) <= 12, `paso ${n}: el dibujo va centrado: el mismo aire arriba que abajo`, [+arriba.toFixed(1), +abajo.toFixed(1)]]);
+    }
+
+    /* ── el orden en que pasa cada cosa ── */
+    const porAnio = l => l.slice().sort((p, q) => p.desde - q.desde);
+    if (n === 1 || n === 2) {
+      const k = n === 1 ? 'primo' : 'tio', vq = x.velos.find(v => v.k === k), bq = BAR(k), co = x.conos.find(c => c.k === k);
+      const suyos = porAnio(L.filter(h => deQuien(h) === k)), copos = x.copos.filter(c => suyos.some(h => h.k === c.k));
+      r.push([vq.d >= co.d && vq.d >= bq.d && suyos.every(h => h.d >= vq.d + 300) && crece(suyos) && copos.every(c => c.d === suyos.find(h => h.k === c.k).d),
+        `paso ${n}: primero se ve qué vio ${n === 1 ? 'el primo' : 'el tío'}, después se destapa su pedazo y sus hitos aparecen uno por uno, por orden de año`, suyos.map(h => [h.k, h.d])]);
+    }
+    if (n === 3) {
+      const vq = x.velos.find(v => v.k === 'hueco'), ll = x.llaves.find(l => l.k === 'hueco'), suyos = porAnio(L.filter(h => deQuien(h) === 'hueco'));
+      r.push([vq.d >= ll.d && suyos.every(h => h.d >= vq.d + 300) && crece(suyos), 'paso 3: primero la llave, después se destapa el hueco y sus hitos aparecen uno por uno, por orden de año', suyos.map(h => [h.k, h.d])]);
+    }
+    if (n === 4) {
+      const hu = x.llaves.find(l => l.k === 'hueco'), de = x.llaves.find(l => l.k === 'despues');
+      r.push([de.d >= hu.d + APAGA, 'paso 4: la llave de después llega cuando ya se fue la del hueco', [hu.d, de.d]]);
+    }
+    if (n === 5) {
+      const de = x.llaves.find(l => l.k === 'despues'), cs = porAnio(x.cerca.map(h => Object.assign({}, h, { desde: h.circulo ? h.c.x : h.caja.x0 })));
+      const tI = x.dicen.find(t => t.k === 'idea'), tC = x.dicen.find(t => t.k === 'todos');
+      r.push([x.arriba.d >= de.d && x.lupa.d >= x.arriba.d + ANDA && x.rayas.every(q => q.d >= x.lupa.d) && G.d >= Math.max(...x.rayas.map(q => q.d))
+        && cs.every(h => h.d >= G.d) && crece(cs) && tI.d >= Math.max(...cs.map(h => h.d)) && tC.d > tI.d && x.arco.d >= tC.d && x.arcoDice.d >= x.arco.d + 600,
+        'paso 5: primero sube lo de arriba; después el marco, las rayas y la cinta grande; sus hitos uno por uno, y al final la idea, el chat, el arco y lo que dice',
+        [x.arriba.d, x.lupa.d, G.d, cs.map(h => h.d), tI.d, tC.d, x.arco.d, x.arcoDice.d]]);
+    }
+    if (n === 6) {
+      const sale = Math.max(...[x.lupa, G, x.arco, x.arcoDice].concat(x.rayas, x.cerca, x.dicen).map(q => q.d));
+      const le = x.llaves.find(l => l.k === 'entera'), gd = x.globos.find(g => g.k === 'duda'), ge = x.globos.find(g => g.k === 'entera');
+      r.push([x.arriba.d >= sale + APAGA && le.d >= x.arriba.d + ANDA && ge.d >= gd.d + APAGA && ge.d >= x.arriba.d + ANDA,
+        'paso 6: lo de cerca se va, lo de arriba baja cuando ya se fue, y después la película entera; Kenia cambia de globo sin que se crucen',
+        [sale, x.arriba.d, le.d, gd.d, ge.d]]);
+    }
+
+    /* ── ningún rótulo se monta en otro ── */
+    const CT = x.cajasTexto.filter(t => t.txt.trim()), choques = [];
+    CT.forEach((p, i) => CT.slice(i + 1).forEach(q => { if (monta(p.caja, q.caja)) choques.push([p.txt, q.txt]); }));
+    r.push([!choques.length, `paso ${n}: ningún rótulo se monta en otro`, choques]);
     return r;
   },
   amAnio4(e, n) { return verAnio(e, n, '4º'); },
@@ -16055,7 +16429,18 @@ function frases(t) {
     const errores = [];
     pag.on('pageerror', e => errores.push(e.message));
     await pag.goto(`${BASE}/${m.url}`, { waitUntil: 'load' });
-    await pag.waitForSelector(`#${m.id} .am-sigue`, { timeout: 15000 });
+    /* ⚠️ Una escena que no se monta se dice con su nombre, y la sonda sigue
+       con la siguiente. Hay escenas que se rinden a propósito cuando sus
+       datos dejan de decir lo que sus frases afirman (la de la Historia de
+       la IA, si un hito nuevo hiciera falsa una frase): ahí se queda la frase
+       de reserva, y la sonda se caía esperando quince segundos un botón que
+       no iba a llegar, sin decir qué escena ni por qué. */
+    const montada = await pag.waitForSelector(`#${m.id} .am-sigue`, { timeout: 15000 }).then(() => true, () => false);
+    if (!montada) {
+      ok(false, 'el aparato se montó (la frase de reserva ya no está)', errores.slice(0, 3));
+      await ctx.close();
+      continue;
+    }
     await pag.evaluate(LEER);
     await pag.evaluate(() => {
       window.__premios = [];
