@@ -401,27 +401,27 @@ const evalTFBank=[
   {q:'Una promesa sin fecha no se puede incumplir.',a:true,k:'tf-sin-fecha'},
   {q:'Si una afirmación no dice quién la hace, se le puede preguntar igual.',a:false,k:'tf-sin-dueno'},
   {q:'Esta misión afirma que ya estamos en los albores.',a:false,k:'tf-afirma'},
-  {q:'Una frase del grupo del colegio se vuelve cierta de tanto circular.',a:false,k:'tf-circular'},
+  {q:'Desconfiar de todo es más seguro que creerlo todo.',a:false,k:'tf-desconfiar'},
   {q:'La IA de hoy entiende lo que lee.',a:false,k:'tf-entiende'},
   {q:'Un titular que asusta trae más pruebas que uno aburrido.',a:false,k:'tf-asusta'}
 ];
 const evalMCBank=[
   {q:'¿Qué hace comprobable a una afirmación?',o:['Que la compartan mucho','Que suene segura','Que traiga quién, cuándo y un documento','Que esté bien escrita'],a:2,k:'mc-comprobable'},
-  {q:'Un compañero va a dejar de inscribirse por una frase del grupo. ¿Qué hacés?',o:['No me meto','Paso la frase con él por las cuatro preguntas','La reenvío','Le digo que tiene razón'],a:1,k:'mc-companero'},
+  {q:'Lo que sí se sabe de los errores de una máquina es que…',o:['No tiene ninguno','Falla siempre a los mismos','Se arreglan solos','Caen al azar'],a:1,k:'mc-errores'},
   {q:'¿Cómo se reconoce un cambio grande de verdad?',o:['Por el ruido del día','En la televisión','Mirando para atrás','Cuando lo dice una empresa'],a:2,k:'mc-atras'},
   {q:'¿Qué gana un medio con un titular que asusta?',o:['Lectores','Nada','Pruebas','Premios'],a:0,k:'mc-titular'},
   {q:'Un anuncio de becas viene marcado como pagado. ¿Qué hacés?',o:['Lo descarto','Lo reenvío','Busco los requisitos','Lo creo todo'],a:2,k:'mc-becas'},
-  {q:'¿Qué pasa si decidís tu futuro por algo que nadie puede comprobar?',o:['Nada','Ganás tiempo','Te hacés experto','Si no pasa, lo que perdiste es tuyo'],a:3,k:'mc-futuro'},
+  {q:'¿Quién tiene razones para exagerar una promesa sobre la IA?',o:['Nadie','Solo quien la vende','Solo quien la teme','Quien la vende, y también quien la teme'],a:3,k:'mc-exagerar'},
   {q:'¿Por qué es honesto fechar lo que se promete?',o:['Porque así se puede juzgar después','Porque es bonito','Porque lo pide la ley','Porque asusta'],a:0,k:'mc-fechar'},
   {q:'Encontraste una afirmación con institución, fecha y documento. ¿Qué hacés?',o:['Le creo porque suena seria','Abro el documento','La comparto','La descarto'],a:1,k:'mc-institucion'},
   {q:'Un titular dice que los modelos «matan». ¿Qué suele haber debajo?',o:['Un juego inventado','Una guerra','Un robot armado','Nada'],a:0,k:'mc-matan'},
   {q:'¿Cuál de estas frases del futuro se puede abrir hoy?',o:['«En dos años lo hará todo»','«Pronto nadie trabajará»','«Todo cambiará»','«Desde agosto, esta ley obliga a etiquetar lo generado»'],a:3,k:'mc-ley'}
 ];
 const evalCPBank=[
-  {q:'Marvin quería estudiar ___.',a:'computación',acc:['computación','computacion'],k:'cp-computacion'},
-  {q:'Marvin se gradúa en ___.',a:'noviembre',acc:['noviembre'],k:'cp-noviembre'},
-  {q:'Marvin leyó la misma frase en ___ páginas.',a:'tres',acc:['tres','3'],k:'cp-tres'},
-  {q:'La frase del grupo no decía quién la dijo: solo traía el ___.',a:'plazo',acc:['plazo'],k:'cp-plazo'},
+  {q:'A toda máquina la entrena ___: así están hechas todas.',a:'gente',acc:['gente','la gente','personas'],k:'cp-gente'},
+  {q:'Las tres patas de la IA son los datos, el cómputo y los ___.',a:'algoritmos',acc:['algoritmos'],k:'cp-patas'},
+  {q:'Las cuatro preguntas sirven para una noticia, una oferta de trabajo y un remedio ___.',a:'milagroso',acc:['milagroso','milagro'],k:'cp-milagroso'},
+  {q:'La palabra «singularidad» mueve decisiones y ___.',a:'dinero',acc:['dinero'],k:'cp-dinero'},
   {q:'La segunda pregunta es qué ___ el que lo afirma.',a:'gana',acc:['gana'],k:'cp-gana'},
   {q:'La cuarta pregunta es con qué se ___.',a:'comprueba',acc:['comprueba'],k:'cp-comprueba'},
   {q:'Esta misión no pudo ___ ninguna de las páginas que encontró.',a:'abrir',acc:['abrir'],k:'cp-abrir'},
@@ -542,7 +542,7 @@ const critCaseGuides=[
   'Respuesta abierta, pero tiene que traer una FECHA concreta. Sin fecha no hay examen posible.'
 ];
 const critErrorBank=[
-  {k:'er-eco',txt:'"Lo leí en cinco páginas distintas, así que es verdad".',g1:'Sin decir de dónde, son un eco: no cinco fuentes.',g2:'Una fuente que se pueda abrir vale más que cincuenta copias.'},
+  {k:'er-predice',txt:'"La IA de hoy entiende lo que lee, y por eso nunca inventa un dato".',g1:'No entiende: PREDICE. Elige lo más probable.',g2:'Por eso SÍ puede inventar: lo más probable no siempre es verdad.'},
   {k:'er-fecha',txt:'"Esta noticia es de septiembre, así que el hecho es de septiembre".',g1:'La fecha del artículo no es la del hecho.',g2:'Muchas listas traen como nuevo algo de hace años.'},
 ];
 const critDecisionBank=[
@@ -559,7 +559,7 @@ const critCauseBank=[
 const critEffectBank=[
   {k:'ef-contrarias',effect:'Dos noticias contrarias resultan ser las dos ciertas.',guide:'Porque una medía anuncios y la otra infraestructura.'},
   {k:'ef-becas',effect:'Una familia se entera tarde de unas becas que sí existían.',guide:'Porque el anuncio venía marcado como patrocinado y se descartó entero.'},
-  {k:'ef-inscribirse',effect:'Un alumno deja de inscribirse por un mensaje reenviado.',guide:'Porque la frase traía un plazo y sonaba segura, y nadie preguntó quién la decía.'},
+  {k:'ef-promedio',effect:'Un sistema que acierta casi siempre le falla siempre al mismo grupo.',guide:'Porque un promedio alto esconde a quién le falla: el error no cae al azar.'},
 ];
 function genEvalCrit(){
   sfx('click');
@@ -572,7 +572,7 @@ function genEvalCrit(){
   const out=document.getElementById('evalCritOut');out.innerHTML='';
   const kase=_pickF(critCaseBank,1,rngC)[0];
   const s1=document.createElement('div');
-  s1.innerHTML=`<div class="eval-section-title">I. Caso de análisis: el civismo de todos los días <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q,i)=>`<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${critCaseGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s1.innerHTML=`<div class="eval-section-title">I. Caso de análisis: una afirmación de este mes <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q,i)=>`<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${critCaseGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s1);
   const err=_pickF(critErrorBank,1,rngC)[0];
   const s2=document.createElement('div');
@@ -614,7 +614,7 @@ function printEvalCrit(){
   sfx('click');
   const forma=window._currentEvalCritForm||1;const d=window._evalCritData;
   const lines=(n)=>Array(n).fill('<div class="ln"></div>').join('');
-  let s1=`<div class="sec-title"><span>I. Caso de análisis: el civismo de todos los días</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
+  let s1=`<div class="sec-title"><span>I. Caso de análisis: una afirmación de este mes</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
   critCaseQuestions.forEach(q=>{s1+=`<p class="crit-print-q">${q}</p>${lines(1)}`;});
   let s2=`<div class="sec-title"><span>II. Corrige el error</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.err.txt}</p><p class="crit-print-q">Identifica dos errores y corrígelos con tus propias palabras:</p><p class="crit-print-q"><strong>Error 1:</strong></p>${lines(1)}<p class="crit-print-q"><strong>Error 2:</strong></p>${lines(1)}`;
   let s3=`<div class="sec-title"><span>III. Toma de decisiones</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué opción recomendarías? Explicá por qué.</p>${lines(2)}`;

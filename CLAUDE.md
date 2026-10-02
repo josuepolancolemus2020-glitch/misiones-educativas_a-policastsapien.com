@@ -14035,6 +14035,145 @@ Salió roja con cada una.
 Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es de 83 ms.
 IA Generativa, medida el mismo día, va a 59 y 83 ms.
 
+### La septuagésima cuarta: Los Albores de la Singularidad, y lo que enseñó
+
+La sexta de la Ruta de la Máquina que Aprende es **En los Albores de la Singularidad**
+(`misiones/3ciclo-albores-singularidad/`, `js/animacion-paginas.js`). La historia es la de
+Marvin: se gradúa en noviembre y quería estudiar computación. En el grupo del colegio le
+reenviaron «no vale la pena, en dos años la Inteligencia Artificial lo va a hacer todo». Lo
+leyó en tres páginas, todas decían lo mismo y ninguna decía quién lo había dicho. Solo
+traía el plazo, y con eso dejó la inscripción para después. La animación pone arriba el
+mensaje reenviado y debajo las tres páginas, cerradas:
+
+- antes de tocar: a Marvin le reenviaron esta frase y la leyó en tres páginas. ¿Cuántas
+  personas la dijeron?;
+- las páginas se abren una por una: las tres traen la frase entera, y en la firma de las
+  tres hay una raya en blanco;
+- las de los lados se vuelven papel de calcar y se ponen encima de la del medio:
+  coinciden letra por letra. Quedan las tres pestañas, 1, 2 y 3, sobre un solo papel:
+  pueden ser tres páginas y una sola voz;
+- un recuadro encierra lo único que trae, «en dos años», y un aro, la firma que nadie
+  puso;
+- con eso, Marvin dejó la inscripción para después: salen los doce meses, uno por uno,
+  «el año que dejó para después»;
+- y la pregunta es del alumno: una frase que le reenviaron, en cuántos lugares la vio y
+  en cuántos tenía firma.
+
+Siete cosas que valen para las que siguen:
+
+1. ⚠️ **Lo que asombra es que tres no son tres, y se ve encimándolas.** Ver una frase en
+   tres sitios parece tres confirmaciones; puestas una encima de otra, como papel de
+   calcar, no se distinguen. La sonda lee lo que dice cada página renglón por renglón, lo
+   compara con la frase de la tarjeta de la historia y exige que, encimadas, cada renglón
+   caiga justo encima del mismo renglón de las otras. La frase dice «pueden ser», no
+   «son»: la historia no dice que una copiara a la otra.
+2. ⚠️ **Lo que la escena enseña es un pareado de la prueba y la primera frase del
+   termómetro**: «Eco · Muchas páginas copiando lo mismo sin fuente», y la frase de Marvin
+   es la que el alumno juzga primero, más abajo, con las cuatro preguntas. Así que la
+   escena no nombra el eco, ni copiar, ni la fuente, ni las cuatro preguntas, y no dice
+   que la frase sea falsa: nadie sabe si el mundo va a cambiar en dos años. Dice lo que la
+   historia ya dice: que nadie la firma y que solo trae el plazo.
+3. ⚠️ **Un atributo de la escena no se llama como uno que la misión rellena.** Los meses
+   se marcaron con `data-mes`, y la misión escribe el mes del dosier en todo lo que lleva
+   `data-mes`: les borraba el cuadro y la letra, y los doce salían en blanco sin un solo
+   error. Se vio en la primera captura. Ahora es `data-pg-mes`.
+4. **El mensaje reenviado va sin cola.** Un globo apunta a quien habla, y este mensaje no
+   dice quién lo dijo.
+5. **Las pestañas salen por arriba del papel**, como en una carpeta: encimadas, el papel
+   de calcar de una no tapa la pestaña de otra, y se siguen contando tres. Y el recuadro
+   del plazo se mide contra la TINTA de los renglones de al lado (`measureText`), no
+   contra su caja, que lleva el aire de encima de las mayúsculas y acusaba a un recuadro
+   bien puesto.
+6. ⚠️ **La historia y la animación contestaban nueve preguntas.** La historia: los cuatro
+   completar de Marvin (qué quería estudiar, cuándo se gradúa, en cuántas páginas leyó la
+   frase y que solo traía el plazo), la selección del compañero que va a dejar de
+   inscribirse por una frase del grupo y el efecto del alumno que deja de inscribirse por
+   un mensaje reenviado. La animación: el verdadero o falso «una frase del grupo del
+   colegio se vuelve cierta de tanto circular», la selección de qué pasa si decidís tu
+   futuro por algo que nadie puede comprobar, el error de «lo leí en cinco páginas
+   distintas, así que es verdad» y, en la ficha, «Cinco páginas dicen lo mismo y ninguna
+   dice de dónde. ¿Qué tenés?». Ahora preguntan lo que la misión enseña en «Lo que SÍ se
+   sabe hoy», en las reglas del punto de inflexión, en las cuatro preguntas y en el
+   termómetro: que a toda máquina la entrena gente, las tres patas de la IA, para qué
+   sirven las cuatro preguntas, que la palabra mueve decisiones y dinero, que desconfiar
+   de todo no es más seguro que creerlo todo, a quiénes les falla una máquina, quién tiene
+   razones para exagerar una promesa, que la IA predice y no entiende, el promedio que
+   esconde a quién le falla y, en la ficha, qué quiere decir que una afirmación traiga las
+   cuatro cosas. Con la respuesta en el mismo lugar, en la misión y en la ficha, que sigue
+   en sus siete hojas.
+7. ⚠️ **Un repuesto no nombra el término de un pareado, y no afirma lo que la misión no
+   acredita.** El primero del completar era «En los dos inviernos de la IA lo que se rompió
+   fue la ___»: lo enseña la misión, y deja escrito «inviernos», que es la columna A de un
+   pareado. Se cambió por el de las cuatro preguntas. Y el efecto del reglamento europeo se
+   descartó antes de escribirlo: la misión lo presenta como una afirmación que se puede
+   comprobar, no como un hecho que ella haya leído.
+
+De paso, la prueba de pensamiento crítico titulaba su caso «el civismo de todos los
+días», calcado de Aspectos Cívicos: ahora dice «una afirmación de este mes». Y la hoja de
+la misión traía, como las anteriores de la ruta, los dos bloques de CSS de los próceres y
+de los tres poderes: se quitaron.
+
+La sonda de esta escena **no le cree nada a la escena**. Lee la frase de la tarjeta de la
+historia, cuenta las páginas y lee lo que dice cada una, y comprueba:
+
+- que el mensaje diga la frase de la historia, con su «↪ Reenviado», dentro de su globo;
+- que sean las páginas de la historia, iguales y a la misma altura, debajo del mensaje,
+  cada una con su pestaña numerada por arriba del papel y sin taparse entre ellas;
+- que cada página traiga la frase palabra por palabra, dentro de su papel, y la firma en
+  blanco: su raya, y nada escrito encima;
+- que en el paso 0 las tres estén tapadas, cada tapa sobre todo lo que dice su página, y
+  que se abran una por una, de izquierda a derecha y a paso parejo;
+- que separadas vayan en fila, a la misma distancia y de papel entero;
+- que encimadas queden papel con papel y coincidan renglón por renglón; que la que no se
+  movió sea la del medio y vaya debajo, de papel entero, y las otras de calcar; y que
+  primero se vuelvan de calcar y después se muevan;
+- que el recuadro encierre el plazo de la historia sin tocar la tinta de los otros
+  renglones, con «el plazo» a su izquierda; que el aro rodee la raya de la firma sin
+  tocar «Firma:», con «nadie la firma» a su derecha, y que salgan en ese orden;
+- que los doce meses vayan en fila, en su orden, iguales y a paso parejo, debajo de las
+  páginas; que salgan uno por uno, y «el año que dejó para después» al final, centrado;
+- que el cuaderno traiga qué escribir, con sus rayas en blanco;
+- que el marcador cuente lo que se ve: las páginas, las firmas, las frases distintas, el
+  plazo y los meses;
+- y que no salga nada de lo que pregunta la prueba, y que nada se monte ni se salga.
+
+⚠️ **Y una lección de la propia prueba al revés: una sonda que revienta no dice ✘.** De las
+primeras treinta averías, dos salieron «verdes», y no porque pasaran: la sonda se caía
+antes de mirar. Una escena que revienta a medio montar deja el botón puesto y no su
+control, y la sonda se caía leyendo sus pasos; y con once meses, la comprobación del
+centrado leía el duodécimo, que no estaba. Las dos daban salida 1, pero ni una línea con
+✘, y la herramienta de la prueba al revés solo contaba esas líneas. Ahora la sonda dice
+con su nombre que la escena no se montó entera, la comprobación de los meses no lee lo que
+no hay, y la herramienta llama ROTA a la corrida que no terminó.
+
+Se comprobó al revés con treinta y una averías, plantadas una por una:
+
+- una página que dice otra cosa, y el mensaje que dice otra cosa;
+- una página con firma;
+- las encimadas corridas tres puntos, y las de encima sin papel de calcar;
+- la que no se mueve, la de la izquierda (la escena revienta), y la del medio encima de
+  las otras;
+- moviéndose antes de volverse de calcar;
+- las páginas abriéndose todas juntas, y de derecha a izquierda;
+- la tapa sin cubrir la firma, y una página que sigue tapada;
+- el recuadro en otro renglón, y más chico que el plazo;
+- «el plazo» encima del papel;
+- el aro lejos de la firma, y encima de «Firma:»;
+- las marcas al revés;
+- un mes repetido, once meses, los meses saliendo todos juntos, y los meses desde el
+  paso 3;
+- el marcador del paso 1 diciendo 1, «eco» en una frase, la frase contando cuatro páginas
+  y la del paso 3 sin el plazo;
+- el cuaderno desde el paso 4, y con una raya cortita;
+- las pestañas encimadas tapándose, y la pestaña dentro del papel;
+- «el año que dejó para después» sin centrar.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 59 o 60 cuadros por segundo, y el peor cuadro es de
+50 ms (en una de tres mediciones salió uno de 150, al volver a entrar al paso 3). Los
+Peligros de la IA, medida el mismo día, va a 59 y 83 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -14270,6 +14409,12 @@ nombra el término ni escribe su definición, tampoco con otras palabras que se 
 parezcan («no dice a quién le falla»). Y un repuesto del examen se mide contra todo lo
 demás: contra los pareados, contra los verdaderos o falsos y contra lo que dice el
 dibujo, no solo contra la historia.
+
+Un atributo de la escena (`data-…`) no se llama como uno que la misión ya busca
+para rellenarlo: antes de elegirlo se busca `[data-` en el JS de la misión y en
+el compartido (`data-mes` y `data-hoy` los rellena la ruta de IA, y le borraban a
+la escena lo que tenía dentro). Y la prueba al revés cuenta como roja la corrida
+en que la sonda revienta: una sonda que se cae no escribe ✘.
 
 Si la misma escena sirve para varias misiones (las cuatro Pruebas de Fin de
 Grado), vive en `js/escena-<tema>.js` y cada misión trae un archivo de dos líneas

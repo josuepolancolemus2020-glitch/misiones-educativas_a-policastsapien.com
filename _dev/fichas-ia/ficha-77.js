@@ -17,7 +17,7 @@ const { esc, arma, portada, preguntas, clave,
 const EVAL = [
   { q: '¿Qué afirma la palabra «singularidad»?', o: ['Que una máquina mejore máquinas más rápido de lo que podemos seguir', 'Que la IA ya piensa como una persona', 'Que las computadoras se apagarán', 'Que la IA es peligrosa'], a: 0 },
   { q: 'Una promesa sin fecha…', o: ['Es más seria', 'Se cumple sola', 'Vale más', 'No se puede incumplir nunca'], a: 3 },
-  { q: 'Cinco páginas dicen lo mismo y ninguna dice de dónde. ¿Qué tenés?', o: ['Cinco fuentes', 'Una prueba', 'Un eco', 'Un estudio'], a: 2 },
+  { q: 'Una afirmación trae las cuatro cosas. Eso quiere decir que…', o: ['Ya es verdad', 'Hay que compartirla', 'Se puede comprobar en el documento', 'Es falsa'], a: 2 },
   { q: '¿Cuándo se reconoce un punto de inflexión?', o: ['El mismo día, por el ruido', 'Cuando lo dice un experto', 'Cuando sale en televisión', 'Casi siempre mirando para atrás'], a: 3 },
   { q: '¿Qué se rompió en los dos inviernos?', o: ['La confianza', 'Las computadoras', 'Los cables', 'Las leyes'], a: 0 },
   { q: 'Lo que SÍ se sabe hoy es que la máquina…', o: ['Quiere cosas', 'Se mejora sola', 'Aprende de ejemplos que alguien eligió', 'Entiende lo que lee'], a: 2 },

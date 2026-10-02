@@ -4641,6 +4641,60 @@ const LEER = `
       cajasTexto: todos('text').filter(vis).map(function (t) { return { txt: t.textContent, caja: caja(t) }; })
     };
   };
+  window.__amExtra.amPaginas = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVistaCon(mt, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(mt); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox(), mt = m(el);
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVistaCon(mt, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function uno(sel, en) { return (en || raiz).querySelector(sel); }
+    function todos(sel, en) { return [].slice.call((en || raiz).querySelectorAll(sel)); }
+    function demora(el) { return el ? (parseFloat(el.style.getPropertyValue('--d')) || 0) : 0; }
+    function numeros(t) { return ((t || '').match(/-?[0-9.]+/g) || []).map(Number); }
+    function puntos(el) { var nn = numeros(el.getAttribute('d')), ps = []; for (var i = 0; i + 1 < nn.length; i += 2) ps.push(aVistaCon(m(el), nn[i], nn[i + 1])); return ps; }
+    /* La caja de un texto lleva el renglón entero, con el aire de encima de
+       las mayúsculas; para decir si un recuadro toca la letra de al lado
+       hace falta la TINTA: se mide con la misma letra (measureText). */
+    var lienzo = document.createElement('canvas').getContext('2d');
+    function tinta(t) {
+      var cs = getComputedStyle(t);
+      lienzo.font = cs.fontStyle + ' ' + cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+      var me = lienzo.measureText(t.textContent), y = parseFloat(t.getAttribute('y')) || 0;
+      var arriba = aVistaCon(m(t), 0, y - me.actualBoundingBoxAscent), abajo = aVistaCon(m(t), 0, y + me.actualBoundingBoxDescent);
+      return { y0: arriba[1], y1: abajo[1] };
+    }
+    function texto(t) { if (!t) return null; var k = tinta(t); return { txt: t.textContent, caja: caja(t), ve: vis(t), d: demora(t), ty0: k.y0, ty1: k.y1 }; }
+    function marca(q) { return { ve: vis(q), d: demora(q), caja: caja(q) }; }
+    return {
+      vista: [svg.viewBox.baseVal.width, svg.viewBox.baseVal.height],
+      globo: { caja: caja(uno('[data-globo-caja]')), cab: texto(uno('[data-reenviado]')), lineas: todos('[data-globo-linea]').map(texto) },
+      /* En el orden del documento: el que va primero queda debajo. */
+      paginas: todos('[data-pagina]').map(function (g) {
+        var p = uno('[data-papel]', g), tp = uno('[data-tapa]', g);
+        return { papel: caja(p), relleno: parseFloat(getComputedStyle(p).fillOpacity), dPapel: demora(p), dG: demora(g),
+          pesta: caja(uno('[data-pesta]', g)), num: texto(uno('[data-pesta-n]', g)),
+          lineas: todos('[data-pag-linea]', g).map(texto), firma: texto(uno('[data-firma-dice]', g)), raya: puntos(uno('[data-firma-raya]', g)),
+          tapa: { ve: vis(tp), d: demora(tp), caja: caja(uno('[data-tapa-caja]', g)), q: texto(uno('[data-tapa-q]', g)) } };
+      }),
+      caja: marca(uno('[data-plazo-caja]')),
+      plazo: texto(uno('[data-plazo-dice]')),
+      aro: marca(uno('[data-firma-aro]')),
+      nadie: texto(uno('[data-firma-nadie]')),
+      meses: todos('[data-pg-mes]').map(function (g) { return { ve: vis(g), d: demora(g), caja: caja(uno('[data-pg-mes-caja]', g)), dice: texto(uno('[data-pg-mes-dice]', g)) }; }),
+      anio: texto(uno('[data-anio-dice]')),
+      cuaderno: (function () {
+        var g = uno('[data-cuaderno]');
+        return { ve: vis(g), d: demora(g), caja: caja(uno('[data-cuaderno-caja]', g)), textos: todos('text', g).map(texto), rayas: todos('[data-raya-escribir]', g).map(puntos) };
+      })(),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; }),
+      cajasTexto: todos('text').filter(vis).map(function (t) { return { txt: t.textContent, caja: caja(t) }; })
+    };
+  };
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -5003,6 +5057,39 @@ function historiaBeca() {
   historiaBecaMemo = { acierta: +((t.match(/acierta el ([0-9]+) %/) || [])[1] || NaN),
     aldea: /escuelas de aldea/.test(t), chiquitas: /Cae siempre sobre las escuelas chiquitas/.test(t) };
   return historiaBecaMemo;
+}
+/* Los Albores de la Singularidad: lo que se ve al TERMINAR cada paso.
+   abiertas: si ya se ve lo que dicen las páginas; encimadas: si ya están una
+   encima de otra; plazo: si se marcó lo que trae y la firma que falta;
+   meses: si se ve el año; cuaderno: si sale el cuaderno del final; dice: lo
+   que dice el marcador. Qué dice cada página, dónde quedó y qué se marca lo
+   saca la sonda del dibujo. */
+const ESTADOS_PAGINAS = [
+  { abiertas: false, encimadas: false, plazo: false, meses: false, cuaderno: false, dice: 'páginas con la frase' },
+  { abiertas: true, encimadas: false, plazo: false, meses: false, cuaderno: false, dice: 'firmas en las 3 páginas' },
+  { abiertas: true, encimadas: true, plazo: false, meses: false, cuaderno: false, dice: 'frase, aunque sean 3 páginas' },
+  { abiertas: true, encimadas: true, plazo: true, meses: false, cuaderno: false, dice: 'plazo: lo único que trae' },
+  { abiertas: true, encimadas: true, plazo: true, meses: true, cuaderno: false, dice: 'meses en juego' },
+  { abiertas: true, encimadas: true, plazo: true, meses: true, cuaderno: true, dice: 'en tu cuaderno' }
+];
+/* Lo que guarda la sonda del paso 0, para comprobar después que la página
+   que no se mueve es la del medio y que las otras dos vinieron hasta ella. */
+const MEMO_PAGINAS = {};
+/* Lo que dice la historia, sacado de su tarjeta y no de la escena: la frase
+   que le reenviaron a Marvin, en cuántas páginas la leyó y que solo traía el
+   plazo. Si la historia cambia, la sonda se pone roja hasta que el dibujo
+   diga lo mismo. */
+let historiaPaginasMemo = null;
+function historiaPaginas() {
+  if (historiaPaginasMemo) return historiaPaginasMemo;
+  const html = fs.readFileSync(path.join(RAIZ, 'misiones', '3ciclo-albores-singularidad', 'albores-singularidad.html'), 'utf8');
+  const sit = (html.match(/<div class="card[^"]*" data-situacion>([\s\S]*?)<div class="tip">/) || [])[1] || '';
+  const t = sit.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ');
+  const NUM = { dos: 2, tres: 3, cuatro: 4, cinco: 5 };
+  const frase = (t.match(/«([^»]+)»/) || [])[1] || '';
+  historiaPaginasMemo = { frase, paginas: NUM[(t.match(/Lo leyó en ([a-z]+) páginas/) || [])[1]] || NaN,
+    plazo: (frase.match(/en [a-z]+ años/) || [])[0] || '', soloPlazo: /Solo traía el plazo/.test(t), nadie: /Ninguna decía quién lo había dicho/.test(t) };
+  return historiaPaginasMemo;
 }
 /* Las Pruebas de Fin de Grado (4º, 5º, 6º y 7º): «El año de Kenia, mes a
    mes». Una escena para las cuatro, y esta sonda para las cuatro.
@@ -6416,6 +6503,175 @@ const ESCENAS = {
     x.cajasTexto.forEach((t, i) => x.cajasTexto.forEach((u, j) => { if (j > i && monta(t.caja, u.caja)) mont.push(t.txt + ' / ' + u.txt); }));
     const sobre = x.cajasTexto.filter(t => C.some(c => monta(t.caja, c.ahora.caja))).map(t => t.txt);
     r.push([!mont.length && !sobre.length, `paso ${n}: ningún rótulo se monta en otro ni en una solicitud`, mont.concat(sobre)]);
+    return r;
+  },
+  /* Los Albores de la Singularidad: «Tres páginas y una sola frase».
+     ⚠️ Nada se le cree a la escena. La sonda lee lo que dice cada página
+     renglón por renglón y lo compara con la frase de la historia; mira
+     dónde quedó cada papel, si las encimadas coinciden letra por letra y
+     cuál es la que no se movió, y cuenta las firmas, el plazo y los meses
+     en el dibujo. */
+  amPaginas(e, n) {
+    const x = e.extra, r = [];
+    if (!x) return [[false, `paso ${n}: la sonda pudo leer la escena`, null]];
+    const E = ESTADOS_PAGINAS[n], H = historiaPaginas();
+    const cerca = (a, b, t = 0.3) => Math.abs(a - b) <= t;
+    const dentro = (a, b, m = 0) => a.x0 >= b.x0 - m && a.x1 <= b.x1 + m && a.y0 >= b.y0 - m && a.y1 <= b.y1 + m;
+    const monta = (a, b) => a.x0 < b.x1 - 0.5 && b.x0 < a.x1 - 0.5 && a.y0 < b.y1 - 0.5 && b.y0 < a.y1 - 0.5;
+    const misma = (a, b, t = 0.3) => cerca(a.x0, b.x0, t) && cerca(a.y0, b.y0, t) && cerca(a.x1, b.x1, t) && cerca(a.y1, b.y1, t);
+    const nb = t => (t || '').replace(/ /g, ' ');
+    const plano = t => nb(t).toLowerCase().replace(/[.«»]/g, '').replace(/\s+/g, ' ').trim();
+
+    /* ── lo que no depende del dibujo va primero ── */
+    /* Ni el nombre de lo que pasa ni lo que dicen sus definiciones (son
+       pareados de la prueba), ni las cuatro preguntas que la misión enseña
+       debajo, ni nada de lo que pregunta la prueba de la misión o la ficha.
+       Con límites de \p{L} y no con \b, que no sabe de tildes. */
+    const PROHIBIDAS = /(?<!\p{L})eco(?!\p{L})|copi|fuente|lo mismo|patrocin|pag[oó]|caducid|cápsula|dos+ier|inflexi|singularid|invierno|(?<!\p{L})gan[aó]|comprob|comprueb|abrir|(?<!\p{L})leer|medio|ejemplo|document|juzg|atrás|requisit|perdi|lector|albor|(?<!\p{L})mide|miden|contradic|método|entiend|asust|titular|mata|beca|(?<!\p{L})ley(?!\p{L})|gente|algoritmo|milagr|dinero|confianza|exager|desconf|creer|cre[eí]|error|falla|predic|termómetro|(?<!\p{L})fecha|verdad|falso|mentira|cierta|cierto|(?<!\p{L})dueñ|nombre/iu;
+    const dicho = [e.texto, e.palabras, e.boton].concat(x.textos).join(' · ');
+    r.push([!PROHIBIDAS.test(dicho), `paso ${n}: no sale el nombre de lo que pasa ni lo que dicen sus definiciones, ni lo que pregunta la prueba`, (dicho.match(PROHIBIDAS) || [])[0]]);
+    r.push([e.palabras === E.dice, `paso ${n}: el marcador dice «${E.dice}»`, e.palabras]);
+    r.push([!!H.frase && H.paginas === 3 && !!H.plazo && H.soloPlazo && H.nadie, 'la historia dice la frase, en cuántas páginas la leyó Marvin, que solo traía el plazo y que ninguna decía quién lo había dicho', H]);
+
+    /* ── el mensaje reenviado ── */
+    const G = x.globo;
+    const dGlobo = G.lineas.map(l => l.txt).join(' ');
+    r.push([plano(dGlobo) === plano(H.frase) && /^[A-ZÁÉÍÓÚÑ]/.test(dGlobo) && /\.$/.test(dGlobo), `paso ${n}: el mensaje dice la frase de la historia, palabra por palabra`, dGlobo]);
+    r.push([!!G.cab && /^↪ Reenviado/.test(G.cab.txt) && [G.cab].concat(G.lineas).every(t => t.ve && dentro(t.caja, G.caja, -2)), `paso ${n}: el mensaje dice que es reenviado y todo cabe dentro de su globo`, G.cab && G.cab.txt]);
+
+    /* ── las páginas ── */
+    const P = x.paginas;
+    r.push([P.length === H.paginas, `paso ${n}: son las ${H.paginas} páginas de la historia`, P.length]);
+    const W = P.length ? P[0].papel.x1 - P[0].papel.x0 : 0, Hh = P.length ? P[0].papel.y1 - P[0].papel.y0 : 0;
+    r.push([P.every(p => cerca(p.papel.x1 - p.papel.x0, W, 0.05) && cerca(p.papel.y1 - p.papel.y0, Hh, 0.05) && cerca(p.papel.y0, P[0].papel.y0, 0.05)), `paso ${n}: las páginas son del mismo tamaño y están a la misma altura`, P.map(p => +p.papel.y0.toFixed(1))]);
+    r.push([P.every(p => p.papel.y0 > G.caja.y1 && p.pesta.y0 > G.caja.y1 + 2), `paso ${n}: las páginas, con su pestaña, quedan debajo del mensaje`, null]);
+    /* Lo que dice cada una, renglón por renglón: la frase entera. */
+    const dice = p => p.lineas.map(l => l.txt).join(' ');
+    r.push([P.every(p => plano(dice(p)) === plano(H.frase)), `paso ${n}: cada página trae la frase de la historia, palabra por palabra`, P.map(dice).filter(d => plano(d) !== plano(H.frase))]);
+    r.push([P.every(p => p.lineas.every(l => dentro(l.caja, p.papel, -3)) && dentro(p.firma.caja, p.papel, -3) && p.firma.txt === 'Firma:'), `paso ${n}: lo de cada página cabe dentro de su papel, con su «Firma:»`, null]);
+    r.push([P.every(p => p.lineas.every((l, j) => j === 0 || l.caja.y0 >= p.lineas[j - 1].caja.y1 - 3)), `paso ${n}: los renglones van uno debajo del otro`, null]);
+    /* La firma, vacía: una raya derecha a la derecha de «Firma:», y ningún
+       texto encima de ella. */
+    const sinFirma = P.filter(p => {
+      const rr = p.raya; if (rr.length !== 2 || !cerca(rr[0][1], rr[1][1], 0.05)) return false;
+      const zona = { x0: rr[0][0], x1: rr[1][0], y0: rr[0][1] - 9, y1: rr[0][1] + 1 };
+      return rr[0][0] > p.firma.caja.x1 + 2 && rr[1][0] - rr[0][0] > 30 && rr[1][0] < p.papel.x1 - 2 && cerca(rr[0][1], p.firma.caja.y1, 3)
+        && !x.cajasTexto.some(t => t.txt !== 'Firma:' && monta(t.caja, zona));
+    }).length;
+    r.push([sinFirma === P.length, `paso ${n}: la firma de cada página está en blanco: su raya, y nada escrito encima`, sinFirma]);
+    /* Las pestañas: salen por arriba del papel, con su número, y no se tapan
+       entre ellas, ni encimadas. */
+    const nums = P.map(p => p.num && p.num.txt).sort();
+    const pe = P.map(p => p.pesta);
+    const pestaBien = P.every(p => p.pesta.y0 < p.papel.y0 - 5 && p.pesta.y1 > p.papel.y0 && p.pesta.x0 >= p.papel.x0 && p.pesta.x1 <= p.papel.x1 && dentro(p.num.caja, p.pesta, 0.5) && p.num.ve);
+    const noSeTapan = pe.every((a, i) => pe.every((b, j) => j <= i || !monta(a, b)));
+    r.push([pestaBien && noSeTapan && nums.join() === '1,2,3', `paso ${n}: cada página lleva su pestaña con su número (1, 2 y 3), por arriba del papel, y no se tapan entre ellas`, nums]);
+
+    /* ── la tapa del paso 0, y cómo se abren ── */
+    const tapadas = P.filter(p => p.tapa.ve).length;
+    r.push([tapadas === (E.abiertas ? 0 : P.length), `paso ${n}: ${E.abiertas ? 'ya no hay ninguna página tapada' : 'las tres páginas están tapadas'}`, tapadas]);
+    r.push([P.every(p => dentro(p.tapa.caja, p.papel) && p.lineas.concat([p.firma]).every(l => dentro(l.caja, p.tapa.caja)) && p.tapa.q.txt === '?' && dentro(p.tapa.q.caja, p.tapa.caja)), `paso ${n}: cada tapa cubre todo lo que dice su página, con su «?»`, null]);
+    if (n === 1) {
+      const orden = P.slice().sort((a, b) => a.papel.x0 - b.papel.x0).map(p => p.tapa.d);
+      const paso = orden[1] - orden[0];
+      r.push([paso > 0 && orden.every((d, i) => i === 0 || cerca(d - orden[i - 1], paso, 1)), 'paso 1: las páginas se abren una por una, de izquierda a derecha y a paso parejo', orden]);
+    }
+
+    /* ── separadas o encimadas ── */
+    if (n === 0) MEMO_PAGINAS.antes = P.map(p => ({ num: p.num.txt, papel: p.papel }));
+    const antes = MEMO_PAGINAS.antes;
+    if (!E.encimadas) {
+      const xs = P.map(p => p.papel.x0).sort((a, b) => a - b);
+      r.push([P.every((a, i) => P.every((b, j) => j <= i || !monta(a.papel, b.papel))) && xs[1] - xs[0] > W && cerca(xs[1] - xs[0], xs[2] - xs[1], 0.3), `paso ${n}: las páginas están separadas, en fila y a la misma distancia`, xs.map(v => +v.toFixed(1))]);
+      r.push([P.every(p => p.relleno >= 0.99), `paso ${n}: cada página es de papel entero, sin dejar ver nada debajo`, P.map(p => p.relleno)]);
+      if (n === 0) {
+        const orden = P.slice().sort((a, b) => a.papel.x0 - b.papel.x0).map(p => p.num.txt);
+        r.push([orden.join() === '1,2,3', 'paso 0: las páginas van numeradas de izquierda a derecha', orden]);
+      }
+    } else {
+      r.push([P.every(p => misma(p.papel, P[0].papel)), `paso ${n}: las tres páginas quedan una encima de otra, papel con papel`, P.map(p => +p.papel.x0.toFixed(1))]);
+      /* Encimadas, coinciden letra por letra: cada renglón de una cae justo
+         encima del mismo renglón de las otras. */
+      const coinciden = P.every(p => p.lineas.length === P[0].lineas.length && p.lineas.every((l, j) => misma(l.caja, P[0].lineas[j].caja, 0.25)) && misma(p.firma.caja, P[0].firma.caja, 0.25));
+      r.push([coinciden, `paso ${n}: encimadas, coinciden renglón por renglón y letra por letra`, null]);
+      /* La que no se movió es la del medio, va debajo de las otras dos y es
+         de papel entero; las otras se volvieron papel de calcar. */
+      const quieta = antes ? P.find(p => { const a = antes.find(q => q.num === p.num.txt); return a && misma(a.papel, p.papel); }) : null;
+      const medio = antes ? antes.slice().sort((a, b) => a.papel.x0 - b.papel.x0)[1].num : null;
+      r.push([!!quieta && quieta.num.txt === medio && P.indexOf(quieta) === 0, `paso ${n}: la que no se movió es la del medio, y va debajo de las otras dos`, quieta && quieta.num.txt]);
+      r.push([!!quieta && quieta.relleno >= 0.99 && P.filter(p => p !== quieta).every(p => p.relleno > 0.1 && p.relleno < 0.6), `paso ${n}: la de abajo es de papel entero y las de encima son de calcar: se ve lo que tienen debajo`, P.map(p => p.relleno)]);
+      if (n === 2) {
+        const mueven = P.filter(p => p !== quieta);
+        r.push([mueven.every(p => p.dPapel < p.dG && p.dG >= 400), 'paso 2: primero se vuelven de calcar y después se mueven', mueven.map(p => [p.dPapel, p.dG])]);
+      }
+    }
+
+    /* ── el plazo y la firma que nadie puso ── */
+    const marcas = [x.caja, x.plazo, x.aro, x.nadie];
+    r.push([marcas.every(q => q.ve === E.plazo), `paso ${n}: ${E.plazo ? 'se marca el plazo y la firma que falta' : 'todavía no se marca nada'}`, marcas.map(q => q.ve)]);
+    if (E.plazo) {
+      const C = P[0];
+      const plazoL = C.lineas.filter(l => plano(l.txt) === plano(H.plazo));
+      const tintaDe = l => ({ x0: l.caja.x0, x1: l.caja.x1, y0: l.ty0, y1: l.ty1 });
+      r.push([plazoL.length === 1 && dentro(tintaDe(plazoL[0]), x.caja.caja, -0.5) && C.lineas.filter(l => l !== plazoL[0]).every(l => !monta(tintaDe(l), x.caja.caja)), `paso ${n}: el recuadro encierra «${H.plazo}», y no toca la letra de los otros renglones`, plazoL.map(l => l.txt)]);
+      r.push([x.plazo.txt === 'el plazo' && x.plazo.caja.x1 <= x.caja.caja.x0 && cerca((x.plazo.caja.y0 + x.plazo.caja.y1) / 2, (x.caja.caja.y0 + x.caja.caja.y1) / 2, 2) && !monta(x.plazo.caja, C.papel), `paso ${n}: «el plazo» va a la izquierda del recuadro, a su altura y fuera del papel`, x.plazo.txt]);
+      const rr = C.raya;
+      r.push([rr.length === 2 && rr[0][0] >= x.aro.caja.x0 + 1 && rr[1][0] <= x.aro.caja.x1 - 1 && rr[0][1] > x.aro.caja.y0 && rr[0][1] < x.aro.caja.y1 && !monta(C.firma.caja, x.aro.caja) && dentro(x.aro.caja, C.papel), `paso ${n}: el aro rodea la raya de la firma, sin tocar «Firma:»`, x.aro.caja]);
+      r.push([x.nadie.txt === 'nadie la firma' && x.nadie.caja.x0 >= x.aro.caja.x1 + 2 && !monta(x.nadie.caja, C.papel) && cerca((x.nadie.caja.y0 + x.nadie.caja.y1) / 2, (x.aro.caja.y0 + x.aro.caja.y1) / 2, 2.5), `paso ${n}: «nadie la firma» va a la derecha del aro, a su altura y fuera del papel`, x.nadie.txt]);
+      if (n === 3) {
+        const ds = marcas.map(q => q.d);
+        r.push([ds.every((d, i) => i === 0 || d > ds[i - 1]), 'paso 3: primero el recuadro, después «el plazo», el aro y «nadie la firma»', ds]);
+      }
+    }
+
+    /* ── el año que dejó para después ── */
+    const M = x.meses, MV = M.filter(m => m.ve);
+    r.push([MV.length === (E.meses ? 12 : 0) && (E.meses ? x.anio.ve : !x.anio.ve), `paso ${n}: ${E.meses ? 'se ven los doce meses y lo que son' : 'todavía no se ve el año'}`, [MV.length, x.anio.ve]]);
+    const NOMBRES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+    const porX = M.slice().sort((a, b) => a.caja.x0 - b.caja.x0);
+    const ancho = M.length ? M[0].caja.x1 - M[0].caja.x0 : 0, pasoM = M.length > 1 ? porX[1].caja.x0 - porX[0].caja.x0 : 0;
+    r.push([M.length === 12 && porX.map(m => m.dice.txt).join() === NOMBRES.join() && porX.every((m, i) => cerca(m.caja.y0, porX[0].caja.y0, 0.05) && cerca(m.caja.x1 - m.caja.x0, ancho, 0.05) && dentro(m.dice.caja, m.caja, -1) && (i === 0 || cerca(m.caja.x0 - porX[i - 1].caja.x0, pasoM, 0.1))) && pasoM > ancho,
+      `paso ${n}: los doce meses van en fila, en su orden, iguales y a paso parejo`, porX.map(m => m.dice.txt)]);
+    const fondoP = Math.max(...P.map(p => p.papel.y1));
+    const ultimo = porX[porX.length - 1];
+    r.push([porX.length > 0 && porX[0].caja.y0 > fondoP + 3 && x.anio.caja.y0 > porX[0].caja.y1 && cerca((x.anio.caja.x0 + x.anio.caja.x1) / 2, (porX[0].caja.x0 + ultimo.caja.x1) / 2, 2) && x.anio.txt === 'el año que dejó para después', `paso ${n}: los meses quedan debajo de las páginas, y «el año que dejó para después» debajo de ellos, centrado`, x.anio.txt]);
+    if (n === 4 && porX.length === 12) {
+      const ds = porX.map(m => m.d), pd = ds[1] - ds[0];
+      r.push([pd > 0 && ds.every((d, i) => i === 0 || cerca(d - ds[i - 1], pd, 1)) && x.anio.d >= ds[11], 'paso 4: los meses salen uno por uno, de enero a diciembre, y lo que son al final', [ds[0], ds[11], x.anio.d]]);
+    }
+
+    /* ── el cuaderno del final ── */
+    const Q = x.cuaderno;
+    r.push([Q.ve === E.cuaderno, `paso ${n}: ${E.cuaderno ? 'sale el cuaderno' : 'todavía no sale el cuaderno'}`, Q.ve]);
+    if (E.cuaderno) {
+      const T = Q.textos, R = Q.rayas;
+      const bienQ = T.length === 3 && R.length === 3 && T.every(t => dentro(t.caja, Q.caja)) && R.every(ps => ps.length === 2 && cerca(ps[0][1], ps[1][1], 0.05) && ps[0][0] >= Q.caja.x0 && ps[1][0] <= Q.caja.x1 && ps[1][0] - ps[0][0] >= 20)
+        && R.every(ps => !T.some(t => t.caja.x0 < ps[1][0] && t.caja.x1 > ps[0][0] && t.caja.y1 > ps[0][1] - 9 && t.caja.y0 < ps[0][1]));
+      r.push([bienQ, `paso ${n}: el cuaderno trae qué escribir, con sus rayas en blanco`, T.map(t => t.txt)]);
+      r.push([Q.caja.y0 > x.anio.caja.y1, `paso ${n}: el cuaderno no tapa nada`, [Q.caja.y0, x.anio.caja.y1]]);
+    }
+
+    /* ── el marcador y la frase, contra lo que se cuenta ── */
+    const distintas = new Set(P.map(p => plano(dice(p)))).size;
+    const CIFRA = [String(P.length), String(P.length - sinFirma), String(distintas), String(E.plazo ? (x.caja.ve ? 1 : 0) : 0), String(MV.length), '?'][n];
+    r.push([nb(e.cifra) === CIFRA, `paso ${n}: el marcador dice «${CIFRA}», contado en el dibujo`, nb(e.cifra)]);
+    const PAL = { 2: 'dos', 3: 'tres', 4: 'cuatro' };
+    const FR = [[`en ${PAL[P.length]} páginas`], [`Las ${PAL[P.length]} páginas`], [], [`«${H.plazo}»`], ['un año entero'], []][n];
+    const faltan = FR.filter(f => !nb(e.texto).includes(f));
+    r.push([!faltan.length, `paso ${n}: lo que la frase cuenta es lo que se cuenta en el dibujo`, faltan]);
+
+    /* ── que nada se monte ni se salga ── */
+    const V = { x0: 0, y0: 0, x1: x.vista[0], y1: x.vista[1] };
+    const fuera = x.cajasTexto.filter(t => !dentro(t.caja, V)).map(t => t.txt);
+    r.push([!fuera.length && P.every(p => dentro(p.papel, V) && dentro(p.pesta, V)) && dentro(G.caja, V), `paso ${n}: todo queda dentro del dibujo`, fuera]);
+    /* Lo que tapa una tapa no se ve, y los renglones encimados coinciden a
+       propósito: se cuentan una vez. */
+    const tapas = P.filter(p => p.tapa.ve).map(p => p.tapa.caja);
+    const unicos = [];
+    x.cajasTexto.filter(t => t.txt === '?' || !tapas.some(tc => dentro(t.caja, tc))).forEach(t => { if (!unicos.some(u => u.txt === t.txt && misma(u.caja, t.caja, 0.3))) unicos.push(t); });
+    const mont = [];
+    unicos.forEach((t, i) => unicos.forEach((u, j) => { if (j > i && monta(t.caja, u.caja)) mont.push(t.txt + ' / ' + u.txt); }));
+    r.push([!mont.length, `paso ${n}: ningún texto se monta en otro`, mont]);
     return r;
   },
   amAnio4(e, n) { return verAnio(e, n, '4º'); },
@@ -17059,9 +17315,13 @@ function frases(t) {
        la IA, si un hito nuevo hiciera falsa una frase): ahí se queda la frase
        de reserva, y la sonda se caía esperando quince segundos un botón que
        no iba a llegar, sin decir qué escena ni por qué. */
-    const montada = await pag.waitForSelector(`#${m.id} .am-sigue`, { timeout: 15000 }).then(() => true, () => false);
+    /* Y una que revienta a medio montar deja el botón puesto y no su
+       control (`amControl`): la sonda se caía leyendo sus pasos, sin decir
+       cuál. Lo cazó la prueba al revés de Los Albores de la Singularidad. */
+    const montada = (await pag.waitForSelector(`#${m.id} .am-sigue`, { timeout: 15000 }).then(() => true, () => false))
+      && (await pag.evaluate(id => !!document.getElementById(id).amControl, m.id));
     if (!montada) {
-      ok(false, 'el aparato se montó (la frase de reserva ya no está)', errores.slice(0, 3));
+      ok(false, 'el aparato se montó entero (la frase de reserva ya no está y la escena pintó su primer paso)', errores.slice(0, 3));
       await ctx.close();
       continue;
     }
