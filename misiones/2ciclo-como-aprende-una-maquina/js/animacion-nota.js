@@ -511,7 +511,7 @@
     'Llega un 1 pegado a la orilla. Su tinta no cae en lo oscuro del 1, y contesta «7». Ninguno de los unos estaba en la orilla.',
     '¿Cómo escribes tú el 1 y el 7? Escríbelos en tu cuaderno. ¿A cuál de los dos de la pantalla se parece tu 7?'
   ];
-  var BOTONES = ['📏 Con una regla', '🗂️ De otra manera', '📚 Uno encima de otro', '🔍 Que lea el 7', '➡️ Un 1 en la orilla', '✍️ ¿Y tú?', '↺ Empezar otra vez'];
+  var BOTONES = ['📏 Con una regla', '🗂️ De otra manera', '📚 Uno sobre otro', '🔍 Que lea el 7', '➡️ Un 1 en la orilla', '✍️ ¿Y tú?', '↺ Empezar otra vez'];
   var MARCADOR = [['71', 'la nota de Wilmer, escrita a mano'], ['11', 'lo que entró al sistema'], ['4', 'personas: cada una escribió un 1 y un 7'],
     ['2', 'montones: el de los 1 y el de los 7'], ['71', 'lo que entró al sistema'], ['7', 'lo que contestó por un 1 en la orilla'],
     ['2', 'números para tu cuaderno: tu 1 y tu 7']];

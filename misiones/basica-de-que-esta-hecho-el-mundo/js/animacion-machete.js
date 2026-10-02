@@ -349,7 +349,7 @@
     'Los dos tienen media razón. Ella compara el primero con el de hoy; él, cada cambio. Nadie dijo su regla antes de discutir.',
     'Ahora vos: escribí tu regla en el cuaderno. Después contestá con ella: ¿sigue siendo el mismo machete?'
   ];
-  var BOTONES = ['⏳ Hace años', '⏳ El verano pasado', '👧 ¿Qué dice ella?', '👦 ¿Y Elvin?', '📅 ¿Quién tiene razón?', '✍️ ¿Y vos?', '↺ Empezar otra vez'];
+  var BOTONES = ['⏳ Hace años', '⏳ El verano pasado', '👧 ¿Qué dice ella?', '👦 ¿Y Elvin?', '📅 Tres semanas', '✍️ ¿Y vos?', '↺ Empezar otra vez'];
   var MARCADOR = [
     ['2', 'pedazos, los dos del abuelo'],
     ['1', 'pedazo nuevo: el mango'],

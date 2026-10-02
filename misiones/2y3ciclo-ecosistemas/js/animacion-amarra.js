@@ -353,7 +353,7 @@
     pintar: pintar,
     texto: function (n) { return TEXTOS[n]; },
     boton: function (n) {
-      return ['🦅 ¿Qué hace el gavilán?', '🔍 ¿Y lo que no se ve?', '👋 Espantar al gavilán', '📅 Al año siguiente', '⚖️ ¿Qué se perdió?', '💡 ¿Y tú?', '↺ Empezar otra vez'][n];
+      return ['🦅 Mirar al gavilán', '🔍 ¿Y lo que no se ve?', '👋 Espantarlo', '📅 Al año siguiente', '⚖️ ¿Qué se perdió?', '💡 ¿Y tú?', '↺ Empezar otra vez'][n];
     },
     atajo: function () { return null; },
     marcador: marcador

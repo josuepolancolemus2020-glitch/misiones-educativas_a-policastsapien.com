@@ -359,7 +359,7 @@
     'Otra vez, desde el mensaje. Faltaba una pregunta de cinco palabras: «¿En cuál de los dos?». Y la respuesta deja un solo lugar.',
     'Se encuentran a las tres. Nadie escribió mal: la frase decía dos cosas. Ahora vos: escribí una frase así y la pregunta que la arregla.'
   ];
-  var BOTONES = ['🔍 Mirar la palabra', '🚶 ¿Adónde fue cada uno?', '🕓 ¿Y a las cuatro?', '💬 La pregunta que faltó', '🚶 ¿Y ahora?', '↺ Empezar otra vez'];
+  var BOTONES = ['🔍 Mirar la palabra', '🚶 ¿Adónde van?', '🕓 ¿Y a las cuatro?', '💬 Preguntarle', '🚶 ¿Y ahora?', '↺ Empezar otra vez'];
   var MARCADOR = [
     ['8', 'palabras tiene el mensaje'],
     ['2', 'lugares para «banco»'],

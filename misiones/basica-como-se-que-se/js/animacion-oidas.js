@@ -295,7 +295,7 @@
     'Nadie mintió a propósito. Cada uno lo dijo un poco más seguro, y se cayeron el «¿y si…?» y el «parece que».',
     'Preguntar «¿cómo lo sabés?» no es desconfiar de nadie. Ahora vos: escribí algo que te dijeron hoy y a quién se lo preguntarías.'
   ];
-  var BOTONES = ['📅 ¿Y el martes?', '❓ La pregunta que faltó', '❓ ¿Y Josué?', '🔍 ¿Qué cambió?', '✍️ ¿Y vos?', '↺ Empezar otra vez'];
+  var BOTONES = ['📅 ¿Y el martes?', '❓ ¿Cómo lo sabés?', '❓ ¿Y Josué?', '🔍 ¿Qué cambió?', '✍️ ¿Y vos?', '↺ Empezar otra vez'];
   var MARCADOR = [
     ['1', 'frase le llegó a Yeimy'],
     ['40', 'su nota del martes'],

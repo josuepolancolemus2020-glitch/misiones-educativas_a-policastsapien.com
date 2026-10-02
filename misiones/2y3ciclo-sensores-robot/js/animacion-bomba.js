@@ -478,7 +478,7 @@
      la letra grande. */
   var BOTONES = {
     es: ['💧 Llega el martes', '📡 Ponerle un sensor', '▶️ Encender la bomba', '🔍 ¿Qué cambió?', '📝 Tu turno', '↺ Empezar otra vez'],
-    en: ['💧 Tuesday comes', '📡 Give it a sensor', '▶️ Switch the pump on', '🔍 What changed?', '📝 Your turn', '↺ Start over']
+    en: ['💧 Tuesday comes', '📡 Give it a sensor', '▶️ Turn the pump on', '🔍 What changed?', '📝 Your turn', '↺ Start over']
   };
   var MARCADOR = {
     es: [['0', 'avisos a la bomba'], ['0', 'avisos en toda la tarde'], ['1', 'sensor, en la raya de lleno'],

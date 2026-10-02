@@ -14991,7 +14991,16 @@ porque una transformación no cambia el tamaño.
   de cada una con el `go()` de la misión antes de mirar;
 - pide que el rótulo del botón que avanza quepa en un renglón **en todos los
   pasos** (cazó «⛵ La primera y la segunda» partido en dos: ahora es «⛵ Las dos
-  primeras»);
+  primeras»). ⚠️ Y al pasarla por las demás salieron **30 rótulos de 16
+  animaciones** que llevaban publicados partidos en dos renglones en un
+  teléfono de 360 px con la letra grande: «🔢 Ponerlos en la tabla», «🌽
+  ¿Cuánto vale el 5 del maíz?», «▶️ Switch the pump on»… La regla de los 44 px
+  solo miraba el botón del último paso, y ahí casi siempre dice «↺ Empezar
+  otra vez», que cabe. La pista no se puede ensanchar —«Atrás» ya es solo
+  «◀»— ni la letra encoger, así que lo que se acortó es el rótulo, midiendo
+  cada uno en el botón de verdad antes de escribirlo («🔢 A la tabla», «🌽 ¿Y
+  el 5 del maíz?», «▶️ Turn the pump on»). Caben unos 18 caracteres, y no
+  es una cuenta fija: depende de las letras y del emoji;
 - lo que las tres miden en común (las coordenadas, las demoras, la tinta de una
   letra) vive en `__amHerr`, y no copiado tres veces;
 - y se puede correr para una sola: `node _dev/verifica-animacion-mision.js himno`
@@ -16807,6 +16816,18 @@ salen dos reglas:
   Trayendo…» en el paso 3, y sola, en el paso 5: según cuándo tomara el
   control el service worker. Con `SIN_SW`, verde tres de tres. Una sonda
   nueva que finja la nube lo lleva desde el principio.
+- ⚠️ **Las sondas abren el Chromium COMPLETO, no el «headless shell».**
+  Playwright abre el shell por defecto, y el shell coloca la letra en píxeles
+  enteros: la misma frase en Fredoka mide 144 px donde el Chromium completo
+  —y el teléfono— mide 142,2. Con eso, todo lo que mide letra (la tinta de un
+  rótulo, el hueco entre dos pedazos de una frase, un botón que se parte)
+  sale rojo con el dibujo bien. Estuvo tapado por un accidente: mientras la
+  versión de Playwright instalada no casaba con la del contenedor, el
+  arranque fallaba y la reserva abría el completo. El 2 de octubre de 2026
+  casaron y `verifica-animacion-mision` dio **95 fallos que no eran del
+  producto**. Ahora `abrir()` (`_dev/lib-navegador.js`) pide primero
+  `channel: 'chromium'`, que `npx playwright install chromium` trae también
+  en GitHub, y solo si no está cae a lo de antes.
 - **El desfase de `www/` avisa, no falla.** Esa copia va atrasada *a propósito*
   hasta que se compila la app de Android, así que darlo por fallo pintaba de
   rojo el estado normal del repositorio. Lo que sí hace falta saber es cuánto le

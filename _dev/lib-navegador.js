@@ -43,6 +43,22 @@ function deReserva() {
 
 async function abrir(opciones) {
   const op = Object.assign({}, opciones);
+  /* ⚠️ Primero el Chromium COMPLETO (`channel: 'chromium'`), no el
+     «headless shell» que Playwright abre por defecto. El shell coloca la
+     letra en píxeles enteros: la misma frase en Fredoka mide 144 px donde
+     el Chromium completo —y el del teléfono— mide 142,2. Con eso, todas
+     las sondas que miden letra (la tinta de un rótulo, el hueco entre dos
+     pedazos de una frase, si un botón se parte en dos renglones) salían
+     rojas con el dibujo bien. Estuvo tapado por un accidente: mientras la
+     versión de Playwright instalada no casaba con la del contenedor, el
+     arranque fallaba y la reserva de abajo abría el completo. El 2 de
+     octubre de 2026 casaron, se abrió el shell y la sonda de las
+     animaciones dio 95 fallos que no eran del producto. `npx playwright
+     install chromium` trae los dos, así que en GitHub está igual. */
+  if (!op.executablePath && !op.channel) {
+    try { return await chromium.launch(Object.assign({}, op, { channel: 'chromium' })); }
+    catch (_) { /* sin el completo, lo de siempre */ }
+  }
   /* Sin executablePath: que Playwright use el suyo. Es el caso normal en
      GitHub y en cualquier máquina con `npx playwright install` hecho. */
   try { return await chromium.launch(op); }

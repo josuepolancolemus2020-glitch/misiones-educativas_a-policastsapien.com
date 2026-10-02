@@ -502,8 +502,8 @@
     ]
   };
   var BOTONES = {
-    es: ['📏 Medir lo difícil', '❓ La pregunta del jurado', '💧 Que muestren la caja', '⚖️ Medir a quién le sirve', '🔍 ¿Qué fue primero?', '↺ Empezar otra vez'],
-    en: ['📏 Measure how hard', '❓ The judges’ question', '💧 Let them show the box', '⚖️ Measure who it serves', '🔍 What came first?', '↺ Start over']
+    es: ['📏 Medir lo difícil', '❓ El jurado pregunta', '💧 Mostrar la caja', '⚖️ ¿A quién le sirve?', '🔍 ¿Qué fue primero?', '↺ Empezar otra vez'],
+    en: ['📏 Measure how hard', '❓ The judges ask', '💧 Show the box', '⚖️ Who does it serve?', '🔍 What came first?', '↺ Start over']
   };
   var MARCADOR = {
     es: [['2', 'proyectos en la feria'], ['3', 'semanas contra 1'], ['1', 'pregunta para los dos'],

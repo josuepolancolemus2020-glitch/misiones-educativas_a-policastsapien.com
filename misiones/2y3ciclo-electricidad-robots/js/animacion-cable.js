@@ -477,7 +477,7 @@
     ]
   };
   var BOTONES = {
-    es: ['🔋 Cambiar la pila', '🔍 Seguir el camino', '🔗 Unir el cable', '✂️ Cortar en otro punto', '📝 Tu turno', '↺ Empezar otra vez'],
+    es: ['🔋 Cambiar la pila', '🔍 Seguir el camino', '🔗 Unir el cable', '✂️ Otro corte', '📝 Tu turno', '↺ Empezar otra vez'],
     en: ['🔋 Change the battery', '🔍 Follow the path', '🔗 Join the wire', '✂️ Cut it elsewhere', '📝 Your turn', '↺ Start over']
   };
   var MARCADOR = {

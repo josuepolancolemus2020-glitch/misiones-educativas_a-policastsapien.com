@@ -268,7 +268,7 @@
     'La de Yoselin era una de esas ' + DE_ALDEA.total + '. Con escuelas como la suya, el programa se equivoca en ' + (DE_ALDEA.total - DE_ALDEA.bien) + ' de cada ' + DE_ALDEA.total + '.',
     'Ahora vos: pensá en algo que decide sobre personas. Escribí con quiénes se podría equivocar más.'
   ];
-  var BOTONES = ['📄 Que decida', '🏠 Separar las de aldea', '📊 ¿Y con cada una?', '🔍 ¿Y Yoselin?', '✍️ ¿Y vos?', '↺ Empezar otra vez'];
+  var BOTONES = ['📄 Que decida', '🏠 Las de aldea', '📊 ¿Y con cada una?', '🔍 ¿Y Yoselin?', '✍️ ¿Y vos?', '↺ Empezar otra vez'];
   var MARCADOR = [
     [String(TODAS.total), 'solicitudes de beca'],
     [TODAS.bien + ' %', 'decididas bien'],

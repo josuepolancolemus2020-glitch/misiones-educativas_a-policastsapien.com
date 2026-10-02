@@ -312,8 +312,8 @@
     pintar: pintar,
     texto: function (n) { return TEXTOS[n]; },
     boton: function (n) {
-      return ['📋 Ponerlos en la tabla', '🌽 ¿Cuánto vale el 5 del maíz?', '🔍 ¿Y el 5 del frijol?',
-        '✏️ Apuntarlo como Marvin', '🌽 ¿Y el 0 del maíz?', '⚖️ ¿Cuál vale más?', '↺ Empezar otra vez'][n];
+      return ['📋 A la tabla', '🌽 ¿Y el 5 del maíz?', '🔍 ¿Y el 5 del frijol?',
+        '✏️ Como Marvin', '🌽 ¿Y el 0 del maíz?', '⚖️ ¿Cuál vale más?', '↺ Empezar otra vez'][n];
     },
     atajo: function () { return null; },
     marcador: function (n) { return MARCADOR[n]; }

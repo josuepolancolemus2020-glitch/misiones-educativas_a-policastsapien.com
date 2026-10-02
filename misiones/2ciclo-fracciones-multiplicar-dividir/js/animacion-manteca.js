@@ -94,9 +94,9 @@
     'Para comprobar, se juntan las dos mitades: tres octavos y tres octavos son seis octavos, o sea tres cuartos. Con tres octavos, los tamales de media receta salen bien.'
   ];
   var BOTONES = [
-    '👐 Repartir los cuartos',
+    '👐 Repartirlos en dos',
     '🥄 Partir cada cuarto',
-    '⚖️ Dos montones iguales',
+    '⚖️ Mitad y mitad',
     '✏️ ¿Cuál es la regla?',
     '🤔 ¿Es más o menos?',
     '✅ Comprobar',

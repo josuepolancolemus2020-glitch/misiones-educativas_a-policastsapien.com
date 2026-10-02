@@ -274,8 +274,8 @@
     pintar: pintar,
     texto: function (n) { return TEXTOS[n]; },
     boton: function (n) {
-      return ['🔍 ¿Cuánto vale cada cifra?', '✏️ Copiarlo como Marvin', '📏 Comparar los dos',
-        '↩️ Devolverle el cero', '🪜 ¿Por qué diez veces?', '⬆️ ¿Qué lugar sigue?', '↺ Empezar otra vez'][n];
+      return ['🔍 ¿Cuánto vale?', '✏️ Como Marvin', '📏 Comparar los dos',
+        '↩️ Devolverle el cero', '🪜 ¿Por qué diez?', '⬆️ ¿Qué lugar sigue?', '↺ Empezar otra vez'][n];
     },
     atajo: function () { return null; },
     marcador: marcador

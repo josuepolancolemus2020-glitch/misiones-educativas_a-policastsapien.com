@@ -327,7 +327,7 @@
     pintar: pintar,
     texto: function (n) { return TEXTOS[n]; },
     boton: function (n) {
-      return ['☀️ Que salga el sol', '🔌 ¿Qué hace el panel?', '🖥️ ¿Y en la pantalla?', '☁️ Un día nublado', '🤔 ¿Salió malo?', '☀️ Al día siguiente', '💡 ¿Y tú?', '↺ Empezar otra vez'][n];
+      return ['☀️ Que salga el sol', '🔌 ¿Y el panel?', '🖥️ ¿Y en la pantalla?', '☁️ Un día nublado', '🤔 ¿Salió malo?', '☀️ Al día siguiente', '💡 ¿Y tú?', '↺ Empezar otra vez'][n];
     },
     atajo: function () { return null; },
     marcador: marcador

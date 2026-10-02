@@ -429,9 +429,9 @@
     boton: function (n) {
       if (n <= 12) return '➕ Juntar 10 huevos';
       if (n === 13) return '📦 Juntar 10 decenas';
-      if (n === 14) return '🔢 Ponerlos en la tabla';
+      if (n === 14) return '🔢 A la tabla';
       if (n === 15) return '🤔 ¿Y «ciento tres»?';
-      if (n === 16) return '⬆️ Seguir de diez en diez';
+      if (n === 16) return '⬆️ De diez en diez';
       if (n < FIN) return '⬆️ Juntar 10 de estos';
       return '↺ Empezar otra vez';
     },

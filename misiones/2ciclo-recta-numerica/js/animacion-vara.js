@@ -270,7 +270,7 @@
     pintar: pintar,
     texto: function (n) { return TEXTOS[n]; },
     boton: function (n) {
-      return ['💧 Ver el viernes', '📏 ¿Cuánto bajó?', '➖ Escribirlo con una resta', '📐 Acostar la vara',
+      return ['💧 Ver el viernes', '📏 ¿Cuánto bajó?', '➖ Escribir la resta', '📐 Acostar la vara',
         '🐸 Retroceder 14', '🐸 ¿Y la otra semana?', '🐸 ¿Y si llueve?', '↺ Empezar otra vez'][n];
     },
     atajo: function () { return null; },
