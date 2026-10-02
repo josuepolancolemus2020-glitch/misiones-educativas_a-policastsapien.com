@@ -14304,6 +14304,122 @@ Con la CPU frenada seis veces va a 59 o 60 cuadros por segundo, y el peor cuadro
 33 y 83 ms (en una de cuatro mediciones salió uno de 167). Los Albores de la Singularidad,
 medida el mismo día, va a 60 y 67 u 83 ms.
 
+### La septuagésima sexta: El Asombro, la primera de la Ruta de la Raíz
+
+Con la Ruta de la Máquina que Aprende terminada sigue la de la Raíz, y su primera unidad es
+**El Asombro: por qué preguntamos** (`misiones/basica-el-asombro/`, `js/animacion-tardes.js`).
+La historia es la de Yensi: el viernes la maestra dejó una pregunta para el lunes, «¿Está bien
+copiar en un examen?», y Yensi la buscó tres tardes, en el libro de Español, en el diccionario
+de su hermano y en el teléfono prestado de su tía. No la encontró, y el lunes entregó la hoja
+en blanco. A Denis le tocó «¿cuántos departamentos tiene Honduras?» y tardó dos minutos.
+Ninguno se portó mal: las dos preguntas no eran de la misma clase. La animación pone arriba los
+tres lugares donde buscó Yensi y a la izquierda las dos preguntas, cada una en su fila, con un
+hueco debajo de cada lugar:
+
+- antes de tocar: Denis tardó dos minutos, y Yensi, tres tardes. ¿Por qué?;
+- la lupa de Denis va al libro y al teléfono, y en los dos deja lo mismo: 18, con su ✓. El
+  lunes lo entrega en su hoja;
+- la de Yensi pasa por los tres lugares, una tarde en cada uno: el libro no la trae, el
+  diccionario dice qué es copiar y no si está bien, y en el teléfono cada uno opina otra cosa.
+  Su hoja del lunes, en blanco;
+- encima de cada pregunta, cómo se responde: «🔎 se busca» la de Denis y «💭 se piensa» la de
+  Yensi, y lo que encontró ella queda debajo de un velo;
+- su hoja no tenía que traer algo encontrado: «Pienso que ___» y «porque ___», con un aro en
+  «porque»;
+- y la pregunta es del alumno: dos preguntas suyas en el cuaderno, y antes de buscar, decidir
+  si se responde buscando o pensando.
+
+Siete cosas que valen para las que siguen:
+
+1. ⚠️ **No se nombra ninguna de las tres clases de pregunta.** «De hechos», «de significado» y
+   «de valor» son las respuestas de la selección múltiple, y las enseña la tarjeta de abajo. La
+   escena dice lo que dice la historia: una se responde buscando y la otra, pensando. Y la
+   tercera clase no sale: la historia cuenta dos preguntas, y la animación no le inventa una.
+2. ⚠️ **El 18 no se escribe de memoria: es el que trae `js/data/paises.js`** («Honduras está
+   dividida en 18 departamentos»), y la sonda lo compara con ese archivo. Del diccionario no se
+   cita ninguna definición: se dibujan sus renglones y se dice lo único seguro, que dice qué es
+   copiar.
+3. ⚠️ **Una pieza que aparece y se va en el mismo paso son dos piezas, y volvió a morder.** La
+   lupa se encendía al salir y se apagaba al terminar con la misma pieza: la segunda orden
+   pisaba a la primera y la lupa no salía nunca. Al final del paso todo estaba donde tenía que
+   estar; se vio en las fotos a medio viaje. Ahora aparece en una envoltura y se va en otra.
+4. ⚠️ **Lo que se encuentra aparece cuando la lupa se va, no debajo de ella.** La primera
+   versión dejaba el «18» debajo de la lupa mientras miraba, y se leía «1🔎8». Ahora la lupa se
+   queda mirando un momento y lo encontrado aparece al irse; en el último lugar no tiene adónde
+   seguir, así que se apaga y después aparece. La sonda suma lo que se corrió cada tramo para
+   saber dónde estaba la lupa, y lo compara con cuándo aparece cada cosa.
+5. **Abajo, en los dos primeros pasos, sobraba medio dibujo**, y ahí va la hoja que Denis
+   entrega el lunes, con su 18 sobre la raya. Junto a ella sale después la de Yensi, en blanco:
+   las dos hojas lado a lado son el precio de la historia. Se vio en la primera captura.
+6. ⚠️ **La animación contestaba dos preguntas de la conceptual, dos casos de pensamiento
+   crítico y una de la ficha.** «Una pregunta de hechos se contesta buscando, por ejemplo en un
+   libro o en un mapa» y «en una pregunta de valor, ¿qué se califica?» (la razón que se da: el
+   aro de «porque») se contestaban mirando; el caso del alumno que copia del diccionario la
+   definición de «mentira» y el del muchacho que pasa dos tardes buscando en internet qué es la
+   amistad eran la historia con otra ropa; y la ficha preguntaba dónde se busca la respuesta de
+   una pregunta de hechos. Ahora preguntan si nace una ciencia cuando funciona una forma de
+   comprobar, cuántas raíces tiene la filosofía en el árbol del saber, los vecinos que discuten
+   toda la tarde a qué hora pasa el último bus sin preguntar en la parada, la clase que vota qué
+   es ser valiente y, en la ficha, qué juntaba Hipatia de Alejandría. Con la respuesta en el
+   mismo lugar, en la misión y en la ficha, que sigue en sus ocho hojas. La pauta del caso se
+   generalizó (lo que le falta a la respuesta depende de la clase de pregunta), y de paso la
+   opción d) de la pregunta que se fue no cerraba su `<span>`.
+7. **Lo que es papel se queda papel**: las tarjetas, lo encontrado, las insignias, las hojas y
+   el cuaderno, con tinta oscura fija. Lo que va sobre la tarjeta de la misión (los lugares y
+   los nombres) lleva la tinta de la pantalla. El velo es del color de la tarjeta, tenue y de
+   raya cortada: oscurece lo de Yensi en la pantalla oscura y lo aclara en la clara, y no lo
+   dice solo con color.
+
+La sonda de esta escena **no le cree nada a la escena**. Saca de la historia quién tiene cada
+pregunta y dónde buscó Yensi, en su orden, y de `js/data/paises.js` cuántos departamentos
+tiene Honduras. Del dibujo saca en qué hueco cayó cada cosa (el lugar, por la columna; la
+persona, por la fila) y por dónde pasó cada lupa, sumando lo que se corrió cada tramo.
+Comprueba:
+
+- que arriba vayan los lugares de la historia, en su orden, cada uno con su dibujo y su nombre;
+- que cada tarjeta diga la pregunta que le tocó a cada uno en la historia, con su nombre a la
+  izquierda;
+- que en cada fila haya un hueco de raya cortada debajo de cada lugar, y que cada cosa
+  encontrada caiga justo en uno;
+- que Denis encuentre el número del archivo del país en más de un lugar, con su ✓, y que Yensi
+  busque en los tres, una tarde por lugar y en su orden, sin ningún ✓: el libro no la trae, el
+  diccionario dice qué es una palabra de su pregunta y en el teléfono opinan varios;
+- que cada lupa salga de su tarjeta y vaya hacia la derecha a paso parejo, pasando justo por
+  donde dejó algo, y que al terminar ya no esté;
+- que lo encontrado aparezca cuando la lupa se va de ahí, y la hoja del lunes cuando ya buscó;
+- que la hoja de Denis lleve lo que encontró sobre su raya, y la de Yensi, «en blanco» y sus
+  renglones de raya cortada, y después «Pienso que» y «porque» en esos mismos renglones, cada
+  uno cuando ya se fue su raya en blanco, con el aro en «porque»;
+- que encima de cada tarjeta diga «se busca» la que tiene su respuesta y «se piensa» la que no,
+  y que el velo cubra justo lo de Yensi, encima, tenue y con raya cortada;
+- que el cuaderno salga cuando ya se fueron las hojas, con dos preguntas y su «¿🔎 o 💭?»;
+- que el marcador y la frase cuenten lo que se ve, que la frase del paso 1 no nombre donde
+  Denis no buscó y que la del 2 nombre los lugares en su orden;
+- y que no salga ninguna clase de pregunta, ni un pareado, ni lo que pregunta la prueba, ni una
+  fecha, y que nada se monte ni se salga.
+
+Se comprobó al revés con veinticinco averías, plantadas una por una:
+
+- Denis encontrando 17, su hoja sin el número, y Yensi encontrando algo con ✓;
+- la lupa de Yensi saltándose el diccionario, los tramos saliendo todos juntos, y la lupa
+  quedándose al final;
+- lo encontrado apareciendo antes de que se vaya la lupa, y lo del último lugar con la lupa
+  encima;
+- las tardes al revés, el diccionario definiendo otra palabra y el teléfono con un solo globo;
+- las insignias cambiadas, la de Yensi antes que la de Denis, el velo dejando fuera el teléfono
+  y el velo sin raya cortada;
+- el aro lejos de «porque», el porqué escribiéndose antes de que se vaya su raya en blanco, y
+  «en blanco» quedándose con lo que piensa;
+- la hoja de Yensi antes de que busque, y el cuaderno saliendo con las hojas todavía;
+- el marcador del paso 2 diciendo 2, «de hechos» en una frase y la frase del paso 1 nombrando
+  el diccionario;
+- la pregunta de Yensi diciendo otra cosa, y el lugar del medio con otro nombre.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 60 cuadros por segundo, y el peor cuadro es de 83 ms.
+Escenarios del Porvenir, medida el mismo día, va a 60 y 50 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -14550,7 +14666,11 @@ Una pieza hecha de dos (la pestaña y el cuerpo de una carpeta) se dibuja con la
 abajo primero, y la de encima no cierra su trazo donde se tocan: si no, queda una
 raya que las parte. Y lo que la escena agrupa por lo que dice un archivo de datos
 (de quién es cada tarea), la sonda lo vuelve a agrupar por su cuenta: empareja cada
-pieza con su dato por lo que dice, no por un atributo que escribió la escena.
+pieza con su dato por lo que dice, no por un atributo que escribió la escena. Lo que
+busca (una lupa) no tapa lo que encuentra: lo encontrado aparece cuando la lupa se va
+de ese lugar, y en el último, cuando ya se apagó. Y por dónde pasó una pieza que viaja
+por tramos, la sonda lo saca sumando lo que de verdad se corrió cada tramo, leído de su
+transform, y no de una lista que escribió la escena.
 
 Si la misma escena sirve para varias misiones (las cuatro Pruebas de Fin de
 Grado), vive en `js/escena-<tema>.js` y cada misión trae un archivo de dos líneas

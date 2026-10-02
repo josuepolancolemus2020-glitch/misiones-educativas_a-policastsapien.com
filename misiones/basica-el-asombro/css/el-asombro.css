@@ -598,3 +598,33 @@ body.letra-grande .fi-raiz h4    { font-size: 1.1rem; }
    largo el texto necesita dos renglones y sin esto se sale por el ancho. */
 .lab-sentence{flex-wrap:wrap;}
 .lab-sentence > div{width:100%;}
+
+/* ── La animación de las dos preguntas (#amTardes) ──────────────
+   Las tarjetas de las preguntas, lo que encuentra cada uno, las insignias,
+   la hoja del lunes y el cuaderno son PAPEL: se quedan como son en las dos
+   pantallas, con tinta oscura fija. Lo que va sobre la tarjeta de la misión
+   (el nombre de cada lugar, quién tiene cada pregunta y el «en blanco») lleva
+   la tinta de la pantalla. Nada se dice solo con color: Denis lleva su ✓, lo
+   de Yensi queda debajo de un velo de raya cortada, y la hoja en blanco va con
+   sus renglones de raya cortada. */
+#amTardes .as-teja { fill: #fdf3f9; stroke: #b9789f; stroke-width: 1; }
+#amTardes .as-icono { font-family: 'Fredoka', sans-serif; }
+#amTardes .as-carta { fill: #ffffff; stroke: #784a6d; stroke-width: 1.4; }
+#amTardes .as-letra { fill: #2b1f28; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amTardes .as-celda { fill: none; stroke: var(--am-pri); stroke-width: 1; stroke-dasharray: 3 2; }
+#amTardes .as-papel { fill: #ffffff; stroke: #b9789f; stroke-width: 1; }
+#amTardes .as-tarde { fill: #6b4f63; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amTardes .as-dato { fill: #784a6d; font-family: 'Fredoka', sans-serif; font-weight: 700; }
+#amTardes .as-bien { fill: none; stroke: #1d7a52; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+#amTardes .as-nada { fill: none; stroke: #94a3b8; stroke-width: 1.6; stroke-linecap: round; }
+#amTardes .as-entrada { fill: #2b1f28; font-family: 'Fredoka', sans-serif; font-weight: 700; }
+#amTardes .as-gris { fill: none; stroke: #cbd5e1; stroke-width: 1.6; stroke-linecap: round; }
+#amTardes .as-globo { fill: #f1f5f9; stroke: #94a3b8; stroke-width: 0.8; }
+#amTardes .as-velo { fill: var(--card, #ffffff); fill-opacity: 0.72; stroke: var(--am-pri); stroke-width: 1.2; stroke-dasharray: 3 2; }
+#amTardes .as-insignia { fill: #fdf3f9; stroke: #784a6d; stroke-width: 1; }
+#amTardes .as-insignia-letra { fill: #3a2233; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amTardes .as-hoja { fill: #ffffff; stroke: #94a3b8; stroke-width: 1; }
+#amTardes .as-blanco { fill: none; stroke: #cbd5e1; stroke-width: 1; stroke-dasharray: 3 2; }
+#amTardes .as-renglon { fill: none; stroke: #94a3b8; stroke-width: 1; }
+#amTardes .as-aro { fill: none; stroke: #784a6d; stroke-width: 1.8; }
+#amTardes .as-cuaderno { fill: #fffdf5; stroke: #cbd5e1; stroke-width: 1; }

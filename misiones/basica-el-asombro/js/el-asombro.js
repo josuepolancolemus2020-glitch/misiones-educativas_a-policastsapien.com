@@ -386,7 +386,7 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 // tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
 // Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'Una pregunta de hechos se contesta buscando, por ejemplo en un libro o en un mapa.',a:true,k:'tf-hechos'},
+  {q:'Cuando funciona una forma de comprobar la respuesta, nace una ciencia.',a:true,k:'tf-ciencia'},
   {q:'Una buena pregunta se contesta con un sí o con un no.',a:false,k:'tf-buena'},
   {q:'Tales de Mileto se equivocó en su respuesta, y aun así lo cambió todo.',a:true,k:'tf-tales-error'},
   {q:'Sócrates no escribió libros: lo que sabemos de él lo contaron otros.',a:true,k:'tf-socrates-libros'},
@@ -406,7 +406,7 @@ const evalMCBank=[
   {q:'¿Cómo trabajaba Sócrates?',o:['Daba la respuesta correcta','Dictaba sus clases','Cobraba por enseñar','Preguntaba hasta que el otro veía solo que se contradecía'],a:3,k:'mc-socrates'},
   {q:'¿Con qué pregunta nació el Español como asignatura?',o:['¿Qué es un río?','¿Qué es una estrella?','¿Qué es una palabra?','¿Cuántos años tiene el mundo?'],a:2,k:'mc-espanol'},
   {q:'¿Qué juntaba Hipatia de Alejandría en su trabajo?',o:['Pensar y medir','Leer y copiar','Mandar y obedecer','Rezar y cantar'],a:0,k:'mc-hipatia'},
-  {q:'En una pregunta de valor, ¿qué se califica?',o:['La letra','La razón que se da','El sí o el no','La rapidez'],a:1,k:'mc-valor'},
+  {q:'¿Cuántas raíces tiene la filosofía en el árbol del saber?',o:['Tres','Ocho','Seis','Diez'],a:1,k:'mc-raices'},
   {q:'¿Cómo se trabaja una pregunta de significado?',o:['Buscando la cifra en un libro','Votando','Preguntándole al más grande','Pensando con otros y poniendo ejemplos'],a:3,k:'mc-signif'}
 ];
 const evalCPBank=[
@@ -519,9 +519,9 @@ function evalSwitchMode(mode){
 }
 const critCaseBank=[
   {k:'cs-yolodigo',txt:'En la casa, una niña pregunta por qué hay que levantarse tan temprano. Le contestan «porque yo lo digo». A la semana ya no pregunta nada.'},
-  {k:'cs-mentir',txt:'Un maestro deja de tarea «¿está bien mentir?». Un alumno copia del diccionario la definición de «mentira» y la entrega. Le ponen mala nota y él no entiende por qué.'},
+  {k:'cs-bus',txt:'Dos vecinos discuten toda la tarde a qué hora pasa el último bus del sábado. Ninguno pregunta en la parada. El sábado, los dos se quedan sin bus.'},
   {k:'cs-quebrada',txt:'En el grupo del barrio dicen que la quebrada se secó porque «así es la vida». Nadie pregunta cuándo empezó a bajar ni quién saca el agua arriba. Tres meses después el pozo de la escuela tampoco da.'},
-  {k:'cs-amistad',txt:'Un muchacho pasa dos tardes buscando en internet «¿qué es la amistad?». Copia cinco respuestas distintas, las entrega todas y dice que no sabe cuál es la buena.'},
+  {k:'cs-valiente',txt:'En la clase votan qué es ser valiente, y gana «no tener nunca miedo». Desde ese día, Kevin no dice que le da miedo cruzar el río crecido, y lo cruza solo.'},
   {k:'cs-numero',txt:'Una alumna pregunta en clase de Matemáticas qué es un número. La clase se ríe y le dicen que eso no viene en el examen.'},
 ];
 const critCaseQuestions=[
@@ -532,8 +532,8 @@ const critCaseQuestions=[
 ];
 const critCaseGuides=[
   'Se valora que NOMBRE la clase y dé la señal. Si se comprueba, es de hechos. Si pide una definición, de significado. Si pregunta si algo está bien, de valor.',
-  'Lo que suele faltar es una RAZÓN. «Porque yo lo digo» no es una razón: no se puede discutir ni comprobar. Y una definición copiada no contesta una pregunta de valor.',
-  'Se califica que le ponga nombre al daño concreto: dejar de preguntar, dos tardes perdidas, un pozo seco, una mala nota. No la indignación.',
+  'Lo que falta depende de la clase. A una de hechos le falta buscarla. A una de significado, ejemplos y casos que no valen. A una de valor, una RAZÓN: «porque yo lo digo» no lo es.',
+  'Se califica que le ponga nombre al daño concreto: dejar de preguntar, quedarse sin bus, un pozo seco, cruzar solo un río crecido. No la indignación.',
   'La pregunta buena abre y se puede trabajar. Vale «¿quién saca el agua arriba?» y no vale «¿por qué el mundo es injusto?»: esa segunda no se puede empezar por ningún lado.'
 ];
 const critErrorBank=[
