@@ -13771,6 +13771,144 @@ Salió roja con cada una.
 Con la CPU frenada seis veces va a 60 cuadros por segundo, y el peor cuadro es de 50 ms.
 Cómo Aprende una Máquina, medida el mismo día, va a 59 y 83 ms.
 
+### La septuagésima segunda: IA Generativa, y lo que enseñó
+
+La cuarta de la Ruta de la Máquina que Aprende es **IA Generativa: úsala bien y no le
+creas todo** (`misiones/3ciclo-ia-generativa/`, `js/animacion-palitos.js`). La
+historia es la de Kenia: le preguntó a un chat cuántas estrofas tiene el Himno, le
+contestó «cinco», sin dudar, y lo copió en su tarea. Son siete, y perdió esos puntos. La
+historia dice que la máquina no mintió: eligió la palabra que más veces vio venir
+detrás. La animación es una máquina de juguete que hace eso mismo, a la vista:
+
+- arriba, tres frases que leyó, cada una con su ✓ porque las tres son verdad: la mano
+  tiene cinco dedos, la Bandera tiene cinco estrellas y el Himno tiene siete estrofas.
+  Kenia le pregunta cuántas estrofas tiene el Himno: ¿cómo elegirá la palabra?;
+- en cada frase mira la palabra que vino después de «tiene» y le pone un palito en su
+  columna: «cinco» junta dos y «siete», uno;
+- para escribir no mira las frases, que quedan detrás, apagadas: mira los palitos. Un
+  aro y una flecha van de la columna de «cinco» a la caja, y escribe «cinco»;
+- debajo salen las siete estrofas del Himno, una por una, y la ✗. Un aro marca la
+  frase del Himno: lo decía, pero le dio un solo palito;
+- lee dos frases más, también verdad, que no hablan del Himno: la semana tiene siete
+  días y Centroamérica, siete países. Ahora «siete» tiene más palitos, escribe «siete»
+  y lleva su ✓;
+- una llave junta esas dos frases: acertó por ellas, no por el Himno. Las máquinas de
+  verdad leen muchísimo más, pero eligen de la misma manera;
+- y la pregunta es del alumno: tres frases verdaderas con «tiene» que hagan
+  equivocarse a esta máquina con otra pregunta.
+
+Siete cosas que valen para las que siguen:
+
+1. ⚠️ **Leyó solo cosas verdaderas y escribió una falsa.** Es lo que asombra, y es
+   verdad: la frase del Himno estaba entre lo que leyó. Cada frase lleva su ✓, y la
+   sonda tiene su propia tabla de frases verdaderas, cada una con su fuente: las
+   estrofas, contadas en `js/data/himno.js`; las cinco estrellas, en
+   `js/data/paises.js`; los siete países de Centroamérica, en la misión de las áreas
+   protegidas. Si una fuente deja de decirlo, su frase sale de la tabla y la sonda se
+   pone roja.
+2. ⚠️ **Acierta por la razón equivocada, y se dice.** Con las dos frases nuevas
+   escribe «siete», y no aprendió nada del Himno: ganó la columna de «siete» por la
+   semana y Centroamérica. Sin ese paso, el alumno saldría creyendo que con más frases
+   la máquina «aprende la verdad». La llave junta justo las dos frases nuevas, y la
+   sonda cuenta que ninguna hable del Himno: el marcador dice 0.
+3. ⚠️ **Es de juguete, y se dice.** Solo mira la palabra «tiene»; la frase del paso 5
+   dice que las de verdad leen muchísimo más. No se escribe «probable» ni un
+   porcentaje: eso es lo que el alumno toca en el predictor de abajo, con los
+   porcentajes declarados como inventados. Y no sale el nombre de lo que pasa ni el de
+   la máquina, que son los pareados de la prueba.
+4. **Lo que se apaga mientras escribe es un velo, no la opacidad de la frase.** Cada
+   frase tiene su propia demora (dos aparecen en el paso 4), y una pieza tiene una
+   sola; además, para la sonda una pieza por debajo de la opacidad 1 es una pieza que
+   no está. Así que cada frase lleva su velo, del color de la tarjeta y con
+   `fill-opacity`, que la apaga sin taparla.
+5. ⚠️ **«tiene», en su recuadro, necesita aire.** Con un espacio solo, el recuadro de
+   raya cortada quedaba pegado a la palabra de antes y a la de después, y se leía
+   «mano[tiene]cinco». Va con dos puntos y medio de aire a cada lado, y la sonda pide
+   al menos uno y medio entre el recuadro y cada palabra. Se vio en la captura.
+6. ⚠️ **La historia y la animación contestaban seis preguntas de la conceptual, dos de
+   pensamiento crítico y una de la ficha.** La historia: «Kenia copió que el Himno
+   tiene cinco estrofas, y son ___», «Su maestra se lo marcó en ___», «¿Por qué la
+   máquina le dijo a Kenia «cinco estrofas»?» y «Si el chat contesta muy seguro, el
+   dato es correcto». La animación: «Un chat puede escribir un párrafo redondo sobre
+   algo que no sabe» (escribe del Himno una frase falsa) y «¿Qué guarda la máquina
+   después de entrenar?» (guarda palitos, no frases). En pensamiento crítico, la causa
+   «fue entrenado para predecir la palabra siguiente, no para comprobar» y el dato
+   inventado que acaba en el examen eran la historia; en la ficha, «¿Qué hace un modelo
+   de lenguaje cuando te contesta?». Ahora preguntan lo que la misión enseña en su
+   Descubre y en sus reglas de oro: «de las mejores» no dice quién lo midió, un texto
+   bien escrito no siempre dice la verdad, a quién se le avisa si algo de un chat te
+   asusta, dónde se comprueba que Honduras tiene 18 departamentos, el segundo paso
+   para verificar y el remedio que se pregunta en el centro de salud; en pensamiento
+   crítico, el programa que califica redacciones y le marca mal a quien escribe
+   «cipote» o «pisto», y el aviso que nadie puede comprobar porque dice «dicen que…».
+   Van con la respuesta en el mismo lugar, en la misión y en la ficha, que sigue en sus
+   nueve hojas.
+7. ⚠️ **En la ruta de IA, la vara de cuarto grado mide también la escena.**
+   `verifica-legibilidad-ia` lee las cadenas largas de cada archivo JS de la misión, y
+   entre ellas está la descripción para el lector de pantalla: con una frase de 24
+   palabras, el bloque daba 11,2 palabras por frase, y la vara es 11. Se partió en
+   dos y quedó en 10,6.
+
+Y tres de paso. El título del cuaderno y su primer renglón se montaban por sus cajas de
+letra (los trazos no se tocaban, pero la caja de la letra sí): los renglones bajaron
+dos puntos. La lista de palabras prohibidas de la sonda va con límites de `\p{L}`: con
+`\b`, «ley» habría cazado el «leyó» de «lo que leyó la máquina». Y la hoja de la misión
+traía, como las anteriores de la ruta, los dos bloques de CSS calcados de los próceres
+y de los tres poderes: se quitaron.
+
+La sonda de esta escena **no le cree nada a la escena**. Lee cada frase pedazo por
+pedazo, por dónde está y no por su nombre, y comprueba:
+
+- que se vean las frases que leyó hasta ese paso, en tiras iguales, y que cada una sea
+  verdad según su tabla, con su ✓ (una raya quebrada) a la derecha;
+- que cada frase se lea de corrido, con «tiene» en su recuadro de raya cortada, con
+  aire a los dos lados, y la palabra de después subrayada con el color de su columna;
+- que haya una columna por cada palabra que vino después de «tiene», y que cada frase
+  contada haya puesto un palito en la columna de su palabra, y ninguno más: los
+  palitos se cuentan por la columna donde caen;
+- que la palabra que escribe sea la de más palitos, con su aro alrededor de esa
+  columna y la flecha de esa columna a la caja, sin cruzar ningún rótulo;
+- que la marca de debajo sea la ✗ (dos rayas) o el ✓ (una), según si esa palabra son
+  las estrofas del Himno, contadas en `himno.js`;
+- que las siete estrofas salgan numeradas, iguales y en fila, y que el aro del paso 3
+  rodee la frase del Himno;
+- que mientras escribe cada frase quede detrás de su velo, que la apaga sin taparla;
+- que la llave abarque justo las dos frases nuevas, que diga «estas dos» y que ninguna
+  hable del Himno;
+- que el globo salga del teléfono, que Kenia pregunte lo que pregunta y que el
+  cuaderno tenga sus tres renglones con «tiene» entre dos rayas;
+- que el marcador y la frase digan lo que se cuenta en el dibujo;
+- que cada cosa pase cuando le toca: en cada frase, «tiene», el subrayado y el palito,
+  y la siguiente cuando el palito ya salió; el «?» se va antes de que llegue la
+  palabra; las estrofas, una por una, antes que la ✗; las frases nuevas aparecen antes
+  de contarse, y la palabra nueva llega cuando la vieja ya se fue;
+- y que no salga ninguna palabra de lo que pregunta la prueba, ni que la máquina
+  piensa o sabe, y que ningún rótulo se monte en otro ni se salga del dibujo.
+
+Se comprobó al revés con veintisiete averías, plantadas una por una:
+
+- una frase falsa entre lo que leyó, y el Himno con cinco estrofas;
+- el palito del Himno en la columna de «cinco»;
+- escribiendo la de menos palitos, el aro en la otra columna y la flecha saliendo de
+  la que no gana;
+- el ✓ donde va la ✗, y seis estrofas;
+- la palabra llegando sin esperar que se vaya el «?», y la palabra nueva sin esperar
+  que se vaya la vieja;
+- el subrayado debajo de «tiene», el recuadro de «tiene» sin aire y sin raya cortada;
+- las estrofas saliendo todas juntas, y la ✗ antes que ellas;
+- la llave abarcando tres frases, y sin decir cuántas;
+- el marcador del paso 1 diciendo 2 a 2, y «con toda seguridad» en una frase;
+- las frases nuevas sin velo, y contándose antes de aparecer;
+- el aro del Himno en otra frase, y el globo sin salir del teléfono;
+- el cuaderno con dos renglones, y llegando sin esperar que se vayan las estrofas;
+- el palito saliendo antes que el subrayado, y la frase siguiente antes de que salga
+  el palito.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es de
+100 ms. La Historia de la IA, medida el mismo día, va a 60 y 50 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -13996,6 +14134,11 @@ cerca), lo demás va en un grupo bajado al centro que sube solo para ese paso. Y
 escena cuyas frases dependen de lo que digan los datos (que el tío no vio nada de
 después) comprueba esas frases al montarse y, si ya no son verdad, no se monta: la
 sonda lo dice con su nombre.
+Lo que se apaga un rato sin irse (las frases mientras la máquina escribe) lleva un velo
+propio del color de la tarjeta, con `fill-opacity`: la opacidad de la pieza no sirve,
+porque la pieza ya tiene su demora y porque para la sonda lo que baja de 1 ya no está.
+Y en la ruta de IA las cadenas largas de la escena, también la descripción para el
+lector de pantalla, cuentan para la vara de cuarto grado.
 
 Si la misma escena sirve para varias misiones (las cuatro Pruebas de Fin de
 Grado), vive en `js/escena-<tema>.js` y cada misión trae un archivo de dos líneas

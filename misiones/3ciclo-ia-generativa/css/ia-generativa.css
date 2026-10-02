@@ -482,54 +482,65 @@ body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
 
-/* ===================== LA FICHA DE CADA PRÓCER =====================
-   Las pinta pintarProceresLista() desde js/data/proceres-honduras.js. Cada
-   uno va en su tarjeta y con su etiqueta de HÉROE o PRÓCER a la vista: es la
-   distinción que se pregunta en el examen, y tenerla al lado del nombre la
-   enseña sin que haya que leer un párrafo. */
-.pr-ficha{border:2px solid var(--border);border-radius:14px;padding:1rem 1.1rem;margin-bottom:1.1rem;background:var(--card);}
-.pr-tit{font-family:'Fredoka',sans-serif;font-size:1.08rem;color:var(--pri);margin-bottom:0.25rem;display:flex;flex-wrap:wrap;align-items:center;gap:0.5rem;}
-.pr-clase{font-family:'Nunito',sans-serif;font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.04em;border-radius:999px;padding:0.12rem 0.6rem;}
-.pr-h{background:#fde8e8;color:#9b1c1c;}
-.pr-p{background:var(--sec-gl);color:var(--sec);}
-.pr-apodo{font-size:0.85rem;color:var(--gray);font-style:italic;margin-bottom:0.4rem;}
-.pr-nace{font-size:0.83rem;color:var(--gray);margin-bottom:0.3rem;}
-.pr-papel{font-size:0.95rem;margin-bottom:0.5rem;}
-.pr-sub{font-family:'Fredoka',sans-serif;font-size:0.88rem;color:var(--sec);margin:0.5rem 0 0.2rem;}
-.pr-hizo{margin:0 0 0.5rem 1.1rem;padding:0;font-size:0.9rem;line-height:1.5;}
-.pr-hizo li{margin-bottom:0.25rem;}
-.pr-porque{font-size:0.9rem;line-height:1.55;padding:0.6rem 0.8rem;border-left:4px solid var(--sec);background:var(--sec-gl);border-radius:0 10px 10px 0;margin-bottom:0.5rem;}
-.pr-fecha{font-size:0.88rem;font-weight:700;color:var(--sec);margin-bottom:0.4rem;}
-@media (max-width: 430px){
-  .pr-ficha{padding:0.85rem 0.75rem;}
+/* ── La animación de los palitos (#amPalitos) ────────────────────────
+   Las tiras de lo que leyó, las columnas de la cuenta, la pregunta, el
+   globo, las estrofas y el cuaderno son PAPEL: se quedan como son en las
+   dos pantallas, con tinta oscura fija, y cada palabra lleva el color fijo
+   de su columna. Lo que va sobre la tarjeta (los aros, las flechas, la
+   llave, la ✗ o el ✓) lleva los colores de la misión, que el aparato aclara
+   en la pantalla oscura. Nada se dice solo con color: cada columna dice su
+   palabra, lo que mira va con raya cortada, y la marca es una ✗ de dos
+   rayas o un ✓ de una.
+
+   Aquí iban dos bloques calcados de otras misiones (la ficha de cada
+   prócer y la jerarquía de los tres poderes), con sus comentarios
+   explicando cosas que en esta misión no pasan. No los usaba nada y se
+   quitaron: un comentario que explica algo que aquí no pasa es peor que
+   ninguno. */
+#amPalitos .pa-papel { fill: #fffdf5; stroke: #cbd5e1; stroke-width: 1; }
+#amPalitos .pa-letra { fill: #1e293b; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amPalitos .pa-fuerte { font-weight: 700; }
+#amPalitos .pa-duda { fill: #64748b; font-family: 'Fredoka', sans-serif; font-weight: 700; }
+#amPalitos .pa-mira { fill: none; stroke: #64748b; stroke-width: 1; stroke-dasharray: 3 2; }
+#amPalitos .pa-sub { fill: none; stroke-width: 2.2; stroke-linecap: round; }
+#amPalitos .pa-palo { fill: none; stroke-width: 3; stroke-linecap: round; }
+#amPalitos .pa-cinco { stroke: #86198f; }
+#amPalitos .pa-siete { stroke: #4338ca; }
+#amPalitos .pa-cuenta { font-family: 'Fredoka', sans-serif; font-weight: 700; }
+#amPalitos .pa-letra-cinco { fill: #86198f; }
+#amPalitos .pa-letra-siete { fill: #4338ca; }
+#amPalitos .pa-columna { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1; }
+#amPalitos .pa-bien-papel { fill: none; stroke: #15803d; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+/* El velo con que se apagan las frases mientras escribe: del color de la
+   tarjeta, así en la pantalla oscura las apaga hacia lo oscuro. El tenue
+   va con fill-opacity: para la sonda, una pieza con la opacidad por
+   debajo de 1 es una pieza que no está. */
+#amPalitos .pa-velo { fill: var(--card, #fff); fill-opacity: 0.66; }
+#amPalitos .pa-tel { fill: #1e293b; stroke: #94a3b8; stroke-width: 1.2; }
+#amPalitos .pa-pantalla { fill: #e0f2fe; }
+#amPalitos .pa-globo { fill: #ffffff; stroke: #94a3b8; stroke-width: 1.2; stroke-linejoin: round; }
+#amPalitos .pa-hueco { fill: #fffdf5; stroke: #64748b; stroke-width: 1; stroke-dasharray: 3 2; }
+#amPalitos .pa-flechita { fill: none; stroke: var(--gray); stroke-width: 1.4; }
+#amPalitos .pa-flechita-punta { fill: var(--gray); }
+#amPalitos .pa-aro { fill: none; stroke-width: 2; }
+#amPalitos .pa-aro-cinco { stroke: var(--am-pri); }
+#amPalitos .pa-aro-siete { stroke: var(--am-sec); }
+#amPalitos .pa-flecha { fill: none; stroke-width: 1.8; stroke-linecap: round; }
+#amPalitos .pa-flecha-cinco { stroke: var(--am-pri); }
+#amPalitos .pa-flecha-siete { stroke: var(--am-sec); }
+#amPalitos .pa-flecha-punta-cinco { fill: var(--am-pri); }
+#amPalitos .pa-flecha-punta-siete { fill: var(--am-sec); }
+#amPalitos .pa-estrofa { fill: #fef9c3; stroke: #a8a29e; stroke-width: 1; }
+#amPalitos .pa-llave { fill: none; stroke: var(--am-sec); stroke-width: 1.6; stroke-linejoin: round; }
+#amPalitos .pa-renglon { fill: none; stroke: #94a3b8; stroke-width: 1; }
+/* La marca de lo que escribió va sobre la tarjeta: más clara en la
+   pantalla oscura, que el rojo y el verde de siempre ahí no se leen. */
+#amPalitos .pa-mal { fill: none; stroke: #b91c1c; stroke-width: 2.6; stroke-linecap: round; }
+#amPalitos .pa-bien { fill: none; stroke: #15803d; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+[data-theme="dark"] #amPalitos .pa-mal { stroke: #f87171; }
+[data-theme="dark"] #amPalitos .pa-bien { stroke: #4ade80; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) #amPalitos .pa-mal { stroke: #f87171; }
+  :root:not([data-theme="light"]) #amPalitos .pa-bien { stroke: #4ade80; }
 }
-
-/* ════════ Lo propio de los tres poderes ════════
-   La jerarquía de las normas y el recorrido de una ley. Son los dos bloques
-   que esta misión no heredó de la plantilla, porque enseñan algo que las
-   otras no enseñan: que las normas tienen ALTURA y que una ley pasa por los
-   tres poderes en orden. Los dos se pintan desde js/data/poderes-honduras.js. */
-
-/* Los ocho escalones van numerados y con sangría creciente: la altura de la
-   norma tiene que VERSE, que es justo lo que el alumno confunde —cree que
-   manda la más nueva y no la que está más arriba—. */
-.pod-escalones{margin:0.8rem 0 0.9rem;padding-left:1.4rem;}
-.pod-escalones li{margin-bottom:0.32rem;line-height:1.45;}
-.pod-escalones li:first-child{font-weight:700;color:var(--pri);}
-
-/* El recorrido: un paso por tarjeta, con su número grande. En un teléfono
-   van uno debajo de otro; el número es lo que mantiene el orden a la vista
-   cuando la tarjeta se parte en dos renglones. */
-.pod-pasos{display:flex;flex-direction:column;gap:0.6rem;margin-top:0.9rem;}
-.pod-paso{display:flex;gap:0.7rem;align-items:flex-start;
-  background:var(--card-alt,rgba(0,0,0,0.03));border-radius:10px;padding:0.7rem 0.85rem;}
-.pod-paso-n{flex:0 0 auto;width:30px;height:30px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  background:var(--pri);color:#fff;font-weight:800;font-size:0.95rem;}
-.pod-paso h4{margin:0 0 0.25rem;font-size:1rem;line-height:1.3;}
-.pod-paso p{margin:0;font-size:0.9rem;line-height:1.45;}
-/* De qué poder es cada paso, en pequeño y al final: el alumno tiene que poder
-   recorrer la ley sin perder de vista quién la está tocando en cada momento. */
-.pod-paso-quien{display:inline-block;margin-top:0.4rem;font-size:0.78rem;
-  font-weight:700;color:var(--sec);letter-spacing:0.02em;}
 

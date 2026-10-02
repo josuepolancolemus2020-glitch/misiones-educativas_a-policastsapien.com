@@ -4514,6 +4514,76 @@ const LEER = `
       cajasTexto: todos('text').filter(vis).map(function (t) { return { txt: t.textContent, caja: caja(t) }; })
     };
   };
+  /* IA Generativa: la máquina de juguete que cuenta palitos. La sonda lee
+     cada frase pedazo por pedazo, por su sitio (no por su nombre), y de ahí
+     saca qué palabra vino después de «tiene»; los palitos se leen por la
+     columna donde caen, y la palabra de cada columna, por lo que dice.
+     Lo que se lee de la escena es dónde está cada cosa y qué dice, nunca
+     qué quiere decir. */
+  window.__amExtra.amPalitos = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(m(el)); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function uno(sel, en) { return (en || raiz).querySelector(sel); }
+    function todos(sel, en) { return [].slice.call((en || raiz).querySelectorAll(sel)); }
+    function demora(el) { return el ? (parseFloat(el.style.getPropertyValue('--d')) || 0) : 0; }
+    function numeros(t) { return ((t || '').match(/-?[0-9.]+/g) || []).map(Number); }
+    function pares(nn) { var ps = []; for (var i = 0; i + 1 < nn.length; i += 2) ps.push([nn[i], nn[i + 1]]); return ps; }
+    function puntos(el) { return pares(numeros(el.getAttribute('d') || el.getAttribute('points'))).map(function (p) { return aVista(el, p[0], p[1]); }); }
+    function texto(t) { return t ? { txt: t.textContent, caja: caja(t), ve: vis(t), d: demora(t) } : null; }
+    function trazado(p) { return Math.abs(parseFloat(getComputedStyle(p).strokeDashoffset) || 0) < 0.5; }
+    function raya(el) { var r = getComputedStyle(el).strokeDasharray; return r && r !== 'none' && r !== '0px' ? r : ''; }
+    function trazos(el) { return ((el.getAttribute('d') || '').match(/M/g) || []).length; }
+    return {
+      vista: [svg.viewBox.baseVal.width, svg.viewBox.baseVal.height],
+      tiras: todos('[data-tira]').map(function (g) {
+        var mira = uno('[data-tiene-caja]', g), sub = uno('[data-sub]', g), bien = uno('[data-tira-bien]', g), velo = uno('[data-velo]', g);
+        return { ve: vis(g), d: demora(g), caja: caja(uno('[data-tira-caja]', g)), piezas: todos('text', g).map(texto),
+          mira: { ve: vis(mira), d: demora(mira), caja: caja(mira), raya: raya(mira) },
+          sub: { ve: vis(sub) && trazado(sub), d: demora(sub), ps: puntos(sub), color: getComputedStyle(sub).stroke },
+          bien: { ve: vis(bien), caja: caja(bien), trazos: trazos(bien), ps: puntos(bien) },
+          velo: { ve: vis(velo), d: demora(velo), caja: caja(velo), tono: parseFloat(getComputedStyle(velo).fillOpacity) } };
+      }),
+      tablaTitulo: texto(uno('[data-tabla-titulo]')),
+      columnas: todos('[data-columna]').map(function (g) {
+        var t = uno('[data-columna-dice]', g);
+        return { caja: caja(uno('[data-columna-caja]', g)), dice: texto(t), color: getComputedStyle(t).fill };
+      }),
+      palos: todos('[data-palo]').map(function (p) { return { ve: vis(p) && trazado(p), d: demora(p), ps: puntos(p), color: getComputedStyle(p).stroke }; }),
+      aros: todos('[data-aro]').map(function (q) { return { ve: vis(q), d: demora(q), caja: caja(q) }; }),
+      pregunta: { rotulo: texto(uno('[data-pregunta-rotulo]')), caja: caja(uno('[data-pregunta-caja]')), dice: todos('[data-pregunta-dice]').map(texto),
+        flecha: puntos(uno('[data-pregunta-flecha]')), punta: puntos(uno('[data-pregunta-punta]')) },
+      telefono: caja(uno('[data-telefono-caja]')),
+      globo: (function () {
+        var p = uno('[data-globo-caja]'), pt = numeros(p.getAttribute('data-punta-globo'));
+        return { caja: caja(p), punta: aVista(p, pt[0], pt[1]), escribe: texto(uno('[data-escribe]')) };
+      })(),
+      cajaPalabra: (function () { var q = uno('[data-caja]'); return { caja: caja(q), raya: raya(q) }; })(),
+      dice: todos('[data-dice]').map(texto),
+      flechas: todos('[data-flecha]').map(function (g) {
+        var l = uno('[data-flecha-linea]', g), c = uno('[data-flecha-punta]', g);
+        return { ve: vis(g) && vis(l) && trazado(l), d: demora(l), dG: demora(g), ps: puntos(l), punta: { ve: vis(c), d: demora(c), ps: puntos(c) } };
+      }),
+      marcas: todos('[data-marca]').map(function (p) { return { ve: vis(p), d: demora(p), caja: caja(p), trazos: trazos(p), ps: puntos(p) }; }),
+      aroHimno: (function () { var q = uno('[data-aro-himno]'); return { ve: vis(q), d: demora(q), caja: caja(q) }; })(),
+      estrofas: { rotulo: texto(uno('[data-estrofas-rotulo]')),
+        lista: todos('[data-estrofa]').map(function (g) { return { ve: vis(g), d: demora(g), caja: caja(uno('[data-estrofa-caja]', g)), dice: texto(uno('[data-estrofa-dice]', g)) }; }) },
+      llave: (function () { var g = uno('[data-llave]'); return { ve: vis(g), d: demora(g), ps: puntos(uno('[data-llave-trazo]', g)), dice: todos('[data-llave-dice]', g).map(texto) }; })(),
+      cuaderno: (function () {
+        var g = uno('[data-cuaderno]');
+        return { ve: vis(g), d: demora(g), caja: caja(uno('[data-cuaderno-caja]', g)), textos: todos('text', g).map(texto), rayas: todos('[data-raya-escribir]', g).map(puntos) };
+      })(),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; }),
+      cajasTexto: todos('text').filter(vis).map(function (t) { return { txt: t.textContent, caja: caja(t) }; })
+    };
+  };
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -4811,6 +4881,46 @@ function datosHistoriaIA() {
   return historiaIA;
 }
 const MEMO_PELICULA = {};
+/* IA Generativa: lo que se ve al TERMINAR cada paso. tiras: cuántas frases
+   leyó (las primeras); contadas: cuántas ya contó; tenue: si las frases se
+   apagan mientras escribe; escribe: si ya escribió (QUÉ escribe lo saca la
+   sonda de los palitos); marca: si ya se sabe si acertó (si es ✗ o ✓ lo saca
+   la sonda de las estrofas del Himno); dice: lo que dice el marcador. */
+const ESTADOS_PALITOS = [
+  { tiras: 3, contadas: 0, tenue: false, escribe: false, marca: false, estrofas: false, aroHimno: false, llave: false, cuaderno: false, dice: 'frases que leyó, todas verdad' },
+  { tiras: 3, contadas: 3, tenue: false, escribe: false, marca: false, estrofas: false, aroHimno: false, llave: false, cuaderno: false, dice: 'palitos de «cinco» y de «siete»' },
+  { tiras: 3, contadas: 3, tenue: true, escribe: true, marca: false, estrofas: false, aroHimno: false, llave: false, cuaderno: false, dice: 'la que tiene más palitos' },
+  { tiras: 3, contadas: 3, tenue: false, escribe: true, marca: true, estrofas: true, aroHimno: true, llave: false, cuaderno: false, dice: 'estrofas tiene el Himno' },
+  { tiras: 5, contadas: 5, tenue: true, escribe: true, marca: true, estrofas: true, aroHimno: false, llave: false, cuaderno: false, dice: 'palitos de «siete» y de «cinco»' },
+  { tiras: 5, contadas: 5, tenue: false, escribe: true, marca: true, estrofas: true, aroHimno: false, llave: true, cuaderno: false, dice: 'frases nuevas que hablan del Himno' },
+  { tiras: 5, contadas: 5, tenue: false, escribe: true, marca: true, estrofas: false, aroHimno: false, llave: false, cuaderno: true, dice: 'frases tuyas, todas verdad' }
+];
+/* Lo que es verdad, cada cosa con su fuente, sacado de los archivos y no de
+   la escena: lo que la máquina lee tiene que estar aquí, entero. Cuántas
+   estrofas tiene el Himno se cuenta en js/data/himno.js (sin el coro); que
+   la Bandera tiene cinco estrellas lo dice js/data/paises.js, y que
+   Centroamérica tiene siete países, la misión de las áreas protegidas. La
+   mano y la semana no necesitan archivo. Si una fuente deja de decirlo, su
+   frase sale de la tabla y la sonda se pone roja. */
+let verdadesPal = null;
+function verdadesPalitos() {
+  if (verdadesPal) return verdadesPal;
+  const vm = require('vm');
+  const ctx = {};
+  vm.createContext(ctx);
+  vm.runInContext(fs.readFileSync(path.join(RAIZ, 'js', 'data', 'himno.js'), 'utf8') + '\n;this.H = HIMNO;', ctx);
+  const estrofas = ctx.H.filter(p => /^e[0-9]+$/.test(p.clave)).length;
+  const paises = fs.readFileSync(path.join(RAIZ, 'js', 'data', 'paises.js'), 'utf8');
+  const areas = fs.readFileSync(path.join(RAIZ, 'misiones', '2y3ciclo-areas-protegidas-de-honduras', '2y3ciclo-areas-protegidas-de-honduras.html'), 'utf8');
+  const PAL = ['cero', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez'];
+  const V = new Set(['la mano tiene cinco dedos.', 'la semana tiene siete días.']);
+  if (/Las cinco estrellas azules del centro/.test(paises)) V.add('la bandera tiene cinco estrellas.');
+  if (PAL[estrofas]) V.add(`el himno tiene ${PAL[estrofas]} estrofas.`);
+  if (/los siete países de Centroamérica/.test(areas)) V.add('centroamérica tiene siete países.');
+  verdadesPal = { estrofas, verdades: V, PAL };
+  return verdadesPal;
+}
+const MEMO_PALITOS = {};
 /* Las Pruebas de Fin de Grado (4º, 5º, 6º y 7º): «El año de Kenia, mes a
    mes». Una escena para las cuatro, y esta sonda para las cuatro.
    ⚠️ Nada se le cree a la escena. La sonda saca la escala de las rayitas
@@ -5792,6 +5902,243 @@ const ESCENAS = {
     const CT = x.cajasTexto.filter(t => t.txt.trim()), choques = [];
     CT.forEach((p, i) => CT.slice(i + 1).forEach(q => { if (monta(p.caja, q.caja)) choques.push([p.txt, q.txt]); }));
     r.push([!choques.length, `paso ${n}: ningún rótulo se monta en otro`, choques]);
+    return r;
+  },
+  /* IA Generativa: «Contó palabras, no estrofas».
+     ⚠️ Nada se le cree a la escena. La sonda lee cada frase pedazo por
+     pedazo y comprueba que sea verdad contra su propia tabla, con su fuente
+     (y las estrofas del Himno, contadas en js/data/himno.js). De cada frase
+     contada saca qué palabra vino después de «tiene», y con eso cuenta
+     cuántos palitos tiene que haber en cada columna; los palitos del
+     dibujo se cuentan por la columna donde caen. La palabra que escribe
+     tiene que ser la de más palitos, y la marca de debajo (✗ o ✓) la saca
+     la sonda comparando esa palabra con las estrofas del Himno. */
+  amPalitos(e, n) {
+    const x = e.extra, r = [];
+    if (!x) return [[false, `paso ${n}: la sonda pudo leer la escena`, null]];
+    const E = ESTADOS_PALITOS[n], DV = verdadesPalitos(), PAL = DV.PAL, APAGA = 500;
+    const cerca = (a, b, t = 0.6) => Math.abs(a - b) <= t;
+    const dentro = (a, b, m = 0) => a.x0 >= b.x0 - m && a.x1 <= b.x1 + m && a.y0 >= b.y0 - m && a.y1 <= b.y1 + m;
+    const monta = (a, b) => a.x0 < b.x1 - 0.5 && b.x0 < a.x1 - 0.5 && a.y0 < b.y1 - 0.5 && b.y0 < a.y1 - 0.5;
+    const rodea = (a, b, m = 5) => a.x0 < b.x0 && a.x1 > b.x1 && a.y0 < b.y0 && a.y1 > b.y1 && b.x0 - a.x0 < m && a.x1 - b.x1 < m && b.y0 - a.y0 < m && a.y1 - b.y1 < m;
+    const cx = c => (c.x0 + c.x1) / 2, cy = c => (c.y0 + c.y1) / 2;
+    const nb = t => (t || '').replace(/ /g, ' ');
+    const may = w => w.charAt(0).toUpperCase() + w.slice(1);
+    const VAL = { cinco: 5, siete: 7 };
+
+    /* ── lo que no depende del dibujo va primero ── */
+    /* Ni el nombre de lo que pasa ni el de la máquina (son los pareados),
+       ni nada de lo que pregunta la prueba, ni que la máquina piensa, sabe,
+       entiende o siente. Ni «probable»: el porcentaje es lo que el alumno
+       toca en el predictor de abajo. */
+    /* ⚠️ Con límites de \p{L} y no con \b, que no sabe de tildes: con \b,
+       «ley» cazaba el «leyó» de «lo que leyó la máquina». */
+    const PROHIBIDAS = /modelo|alucin|fuente|origin|instituci|(?<!\p{L})ley(?!\p{L})|libro|examen|ment[ií]|mint|sabiendas|generativ|produc|falsific|privacid|desinform|algoritm|neuronal|(?<!\p{L})capas(?!\p{L})|petici|encargo|contexto|formato|verific|comprob|probab|predic|siguiente|invent|segur|patr[oó]n|ejemplo|compart|propag|t[ií]tulo|autor|audio|(?<!\p{L})voz(?!\p{L})|video|foto|dinero|camino|declar|gu[ií]a|humill|separ|explicaci|salud|guardad|computadora|p[aá]gina|may[uú]scul|fabric|mejores|midi[oó]|bien escrit|persona grande|avis|mapa|departamento|posible|suena|remedio|rojo|recreo|f[uú]tbol|cipote|pisto|sesgo|(?<!\p{L})dicen(?!\p{L})|buscador|noticia|piezas|(?<!\p{L})cuatro(?!\p{L})|piens|(?<!\p{L})sabe(?!\p{L})|entiend|(?<!\p{L})sient/iu;
+    const dicho = [e.texto, e.palabras, e.boton].concat(x.textos).join(' · ');
+    r.push([!PROHIBIDAS.test(dicho), `paso ${n}: no sale el nombre de lo que pasa ni el de la máquina, ni lo que pregunta la prueba, ni que la máquina piensa o sabe`, (dicho.match(PROHIBIDAS) || [])[0]]);
+    r.push([e.palabras === E.dice, `paso ${n}: el marcador dice «${E.dice}»`, e.palabras]);
+
+    /* ── lo que leyó: cada frase, pedazo por pedazo ── */
+    const T = x.tiras.map((t, i) => {
+      const pz = t.piezas.slice().sort((p, q) => p.caja.x0 - q.caja.x0), k = pz.findIndex(p => p.txt === 'tiene');
+      return Object.assign({}, t, { i, pz, frase: pz.map(p => p.txt).join(' '), k, tieneP: pz[k], palabra: k >= 0 ? pz[k + 1] : null });
+    });
+    const TV = T.filter(t => t.ve);
+    r.push([T.length === 5 && T.every((t, i) => t.ve === (i < E.tiras)), `paso ${n}: se ven las ${E.tiras} primeras frases que leyó, y ninguna más`, T.map(t => t.ve)]);
+    const alto = T[0].caja.y1 - T[0].caja.y0, pasoT = T.length > 1 ? T[1].caja.y0 - T[0].caja.y0 : 0;
+    r.push([T.every((t, i) => cerca(t.caja.x0, T[0].caja.x0, 0.1) && cerca(t.caja.x1, T[0].caja.x1, 0.1) && cerca(t.caja.y1 - t.caja.y0, alto, 0.1)
+      && (i === 0 || cerca(t.caja.y0 - T[i - 1].caja.y0, pasoT, 0.1))) && pasoT > alto,
+      `paso ${n}: las frases van en tiras iguales, una debajo de otra y sin tocarse`, T.map(t => +t.caja.y0.toFixed(1))]);
+    const falsas = TV.filter(t => !DV.verdades.has(t.frase.toLowerCase())).map(t => t.frase);
+    r.push([!falsas.length, `paso ${n}: todo lo que leyó es verdad: cada frase está en la tabla de la sonda, con su fuente`, falsas]);
+    const malArmada = TV.filter(t => {
+      if (t.pz.length !== 4 || t.k !== 1 || !t.palabra || !t.pz.every(p => dentro(p.caja, t.caja, 0.1))) return true;
+      const ys = t.pz.map(p => cy(p.caja));
+      if (Math.max(...ys) - Math.min(...ys) > 0.5) return true;
+      return t.pz.some((p, j) => j > 0 && (p.caja.x0 - t.pz[j - 1].caja.x1 < 1.5 || p.caja.x0 - t.pz[j - 1].caja.x1 > 8));
+    }).map(t => t.frase);
+    r.push([!malArmada.length, `paso ${n}: cada frase se lee de corrido en su tira: lo de antes, «tiene», la palabra y lo de después`, malArmada]);
+    const malMira = TV.filter(t => {
+      if (!t.mira.ve) return false;
+      const mi = t.mira.caja, ti = t.tieneP.caja, an = t.pz[0].caja, pa = t.palabra.caja;
+      const cubre = Math.min(mi.y1, ti.y1) - Math.max(mi.y0, ti.y0);
+      return !t.mira.raya || !(mi.x0 < ti.x0 && mi.x1 > ti.x1) || cubre < 0.7 * (ti.y1 - ti.y0) || mi.x0 <= an.x1 + 1.5 || mi.x1 >= pa.x0 - 1.5 || !dentro(mi, t.caja);
+    }).map(t => t.frase);
+    r.push([!malMira.length, `paso ${n}: lo que mira, «tiene», va en su recuadro de raya cortada, con aire a los dos lados: sin tocar la palabra de antes ni la de después`, malMira]);
+    const malSub = TV.filter(t => {
+      if (!t.sub.ve) return false;
+      const ps = t.sub.ps, pa = t.palabra.caja;
+      return ps.length !== 2 || !cerca(ps[0][1], ps[1][1], 0.05) || !cerca(Math.min(ps[0][0], ps[1][0]), pa.x0, 0.6) || !cerca(Math.max(ps[0][0], ps[1][0]), pa.x1, 0.6)
+        || ps[0][1] < pa.y1 - 2 || ps[0][1] > t.caja.y1;
+    }).map(t => t.frase);
+    r.push([!malSub.length, `paso ${n}: el subrayado va justo debajo de la palabra que vino después de «tiene»`, malSub]);
+    const contada = T.map(t => t.ve && t.mira.ve && t.sub.ve);
+    r.push([contada.every((c, i) => c === (i < E.contadas)) && T.every((t, i) => contada[i] || (!t.mira.ve && !t.sub.ve) || !t.ve),
+      `paso ${n}: ${E.contadas ? 'contó las ' + E.contadas + ' primeras frases' : 'todavía no contó ninguna frase'}, y en las que no contó no hay nada marcado`, contada]);
+    const malBien = TV.filter(t => !t.bien.ve || t.bien.trazos !== 1 || t.bien.ps.length !== 3 || !dentro(t.bien.caja, t.caja)
+      || t.bien.caja.x0 <= Math.max(...t.pz.map(p => p.caja.x1))).map(t => t.frase);
+    r.push([!malBien.length, `paso ${n}: cada frase que leyó lleva su ✓ (una raya quebrada), a la derecha del texto`, malBien]);
+
+    /* ── la cuenta: una columna por palabra, y sus palitos ── */
+    const COLS = x.columnas.map(c => ({ w: c.dice.txt, caja: c.caja, dice: c.dice, color: c.color })).sort((p, q) => p.caja.x0 - q.caja.x0);
+    const palabras = [...new Set(T.map(t => t.palabra && t.palabra.txt))].sort().join();
+    r.push([COLS.length === 2 && COLS.map(c => c.w).sort().join() === palabras && COLS.every(c => dentro(c.dice.caja, c.caja))
+      && cerca(COLS[0].caja.y0, COLS[1].caja.y0, 0.1) && cerca(COLS[0].caja.y1, COLS[1].caja.y1, 0.1) && COLS[0].caja.x1 < COLS[1].caja.x0 && COLS[0].caja.x0 > T[0].caja.x1,
+      `paso ${n}: la cuenta tiene una columna por cada palabra que vino después de «tiene» (${palabras}), iguales y a la derecha de las frases`, COLS.map(c => c.w)]);
+    r.push([x.tablaTitulo.txt === `Después de «${T[0].tieneP.txt}»` && x.tablaTitulo.caja.y1 <= COLS[0].caja.y0 + 0.5 && x.tablaTitulo.caja.x0 >= COLS[0].caja.x0 - 1 && x.tablaTitulo.caja.x1 <= COLS[1].caja.x1 + 1,
+      `paso ${n}: encima de las columnas dice lo que cuentan: lo que vino después de «tiene»`, x.tablaTitulo.txt]);
+    const colDe = p => COLS.find(c => p.ps.every(q => q[0] > c.caja.x0 && q[0] < c.caja.x1 && q[1] > c.dice.caja.y1 && q[1] < c.caja.y1));
+    const PV = x.palos.filter(p => p.ve);
+    const cuenta = {}, espera = {};
+    COLS.forEach(c => { cuenta[c.w] = 0; espera[c.w] = 0; });
+    PV.forEach(p => { const c = colDe(p); if (c) cuenta[c.w]++; });
+    T.forEach((t, i) => { if (contada[i]) espera[t.palabra.txt]++; });
+    r.push([PV.every(p => colDe(p)) && COLS.every(c => cuenta[c.w] === espera[c.w]),
+      `paso ${n}: cada frase contada puso un palito en la columna de su palabra, y ninguno más (${COLS.map(c => c.w + ': ' + espera[c.w]).join(', ')})`, cuenta]);
+    const malPalo = PV.filter(p => { const c = colDe(p); return !c || p.ps.length !== 2 || !cerca(p.ps[0][0], p.ps[1][0], 0.05) || p.color !== c.color; });
+    const filas = COLS.map(c => PV.filter(p => colDe(p) === c));
+    const parejos = filas.every(f => {
+      const xs = f.map(p => p.ps[0][0]).sort((a, b) => a - b);
+      return f.every(p => cerca(Math.min(p.ps[0][1], p.ps[1][1]), Math.min(f[0].ps[0][1], f[0].ps[1][1]), 0.1) && cerca(Math.abs(p.ps[1][1] - p.ps[0][1]), Math.abs(f[0].ps[1][1] - f[0].ps[0][1]), 0.1))
+        && xs.every((v, i) => i === 0 || (v - xs[i - 1] > 3 && cerca(v - xs[i - 1], xs[1] - xs[0], 0.1)));
+    });
+    r.push([!malPalo.length && parejos, `paso ${n}: los palitos son rayas de pie, iguales, del color de su columna y a la misma distancia`, malPalo.map(p => p.ps)]);
+    const malColor = T.filter((t, i) => contada[i] && t.sub.color !== (COLS.find(c => c.w === t.palabra.txt) || {}).color).map(t => t.frase);
+    r.push([!malColor.length, `paso ${n}: cada subrayado lleva el color de la columna de su palabra`, malColor]);
+
+    /* ── lo que escribe: la palabra con más palitos ── */
+    const orden = COLS.slice().sort((p, q) => cuenta[q.w] - cuenta[p.w]);
+    const gana = E.escribe && cuenta[orden[0].w] > cuenta[orden[1].w] ? orden[0] : null;
+    if (E.escribe) r.push([!!gana, `paso ${n}: una de las dos palabras tiene más palitos que la otra`, cuenta]);
+    const AV = x.aros.filter(q => q.ve), FV = x.flechas.filter(f => f.ve), CJ = x.cajaPalabra.caja;
+    r.push([gana ? AV.length === 1 && rodea(AV[0].caja, gana.caja) : !AV.length,
+      `paso ${n}: ${gana ? 'un aro rodea la columna con más palitos, «' + gana.w + '»' : 'no hay aro en las columnas'}`, AV.map(q => COLS.filter(c => rodea(q.caja, c.caja)).map(c => c.w))]);
+    const flechaDe = f => COLS.find(c => cerca(f.ps[0][0], cx(c.caja), 0.6) && f.ps[0][1] > c.caja.y1 && f.ps[0][1] - c.caja.y1 < 8);
+    r.push([gana ? FV.length === 1 && flechaDe(FV[0]) === gana : !FV.length, `paso ${n}: ${gana ? 'la flecha sale de debajo de esa columna' : 'no hay flecha'}`, FV.map(f => f.ps[0])]);
+    if (gana && FV.length === 1) {
+      const f = FV[0], fin = f.ps[f.ps.length - 1], tip = f.punta.ps[0];
+      r.push([f.punta.ve && tip[0] > CJ.x0 + 2 && tip[0] < CJ.x1 - 2 && tip[1] <= CJ.y0 + 0.5 && CJ.y0 - tip[1] < 4 && Math.hypot(fin[0] - tip[0], fin[1] - tip[1]) < 6,
+        `paso ${n}: la flecha llega con su punta a la caja de la palabra`, [fin, tip]]);
+      const choca = x.cajasTexto.filter(t => { for (let s = 0; s <= 20; s++) { const px = f.ps[0][0] + (fin[0] - f.ps[0][0]) * s / 20, py = f.ps[0][1] + (fin[1] - f.ps[0][1]) * s / 20; if (px > t.caja.x0 && px < t.caja.x1 && py > t.caja.y0 && py < t.caja.y1) return true; } return false; });
+      r.push([!choca.length, `paso ${n}: la flecha no cruza ningún rótulo`, choca.map(t => t.txt)]);
+    }
+    const DI = x.dice.filter(d => d.ve), quiere = gana ? gana.w : '?';
+    r.push([DI.length === 1 && DI[0].txt === quiere && dentro(DI[0].caja, CJ, 0.1) && x.cajaPalabra.raya, `paso ${n}: en la caja de raya cortada dice «${quiere}»`, DI.map(d => d.txt)]);
+    const G = x.globo, TEL = x.telefono, PQ = x.pregunta;
+    r.push([G.escribe.txt === 'El Himno tiene' && dentro(G.escribe.caja, G.caja) && dentro(CJ, G.caja) && G.escribe.caja.x1 < CJ.x0 && cerca(cy(G.escribe.caja), cy(CJ), 3)
+      && G.punta[0] >= TEL.x1 - 0.5 && G.punta[0] - TEL.x1 < 3 && G.punta[1] > TEL.y0 && G.punta[1] < TEL.y1,
+      `paso ${n}: el teléfono escribe «El Himno tiene» y la caja de la palabra, en un globo que sale del teléfono`, [G.punta, [TEL.x1, TEL.y0, TEL.y1]]]);
+    r.push([PQ.dice.map(t => t.txt).join(' ') === '¿Cuántas estrofas tiene el Himno?' && PQ.dice.every(t => dentro(t.caja, PQ.caja)) && PQ.rotulo.txt === 'Kenia pregunta:'
+      && PQ.rotulo.caja.y1 <= PQ.caja.y0 + 0.5 && cerca(PQ.flecha[0][0], PQ.caja.x1, 3) && PQ.punta[0][0] <= TEL.x0 + 0.1 && TEL.x0 - PQ.punta[0][0] < 3,
+      `paso ${n}: Kenia pregunta cuántas estrofas tiene el Himno, y la flechita va de su pregunta al teléfono`, PQ.dice.map(t => t.txt)]);
+
+    /* ── la marca: ✗ o ✓, contra las estrofas del Himno ── */
+    const MV = x.marcas.filter(q => q.ve);
+    const acierta = !!gana && VAL[gana.w] === DV.estrofas;
+    if (E.marca) {
+      r.push([MV.length === 1 && MV[0].trazos === (acierta ? 1 : 2) && MV[0].ps.length === (acierta ? 3 : 4) && MV[0].caja.y0 >= G.caja.y1 - 0.5 && cx(MV[0].caja) > CJ.x0 && cx(MV[0].caja) < CJ.x1,
+        `paso ${n}: debajo de la caja, ${acierta ? 'un ✓ (una raya quebrada): «' + gana.w + '» son las estrofas del Himno' : 'una ✗ (dos rayas): «' + (gana && gana.w) + '» no son las ' + DV.estrofas + ' estrofas del Himno'}`, MV.map(q => q.trazos)]);
+    } else r.push([!MV.length, `paso ${n}: todavía no hay marca debajo de la caja`, MV.length]);
+
+    /* ── las estrofas del Himno, contadas en js/data/himno.js ── */
+    const EV = x.estrofas.lista.filter(s => s.ve).sort((p, q) => p.caja.x0 - q.caja.x0);
+    if (E.estrofas) {
+      const pasoE = EV.length > 1 ? EV[1].caja.x0 - EV[0].caja.x0 : 0, ancho = EV.length ? EV[0].caja.x1 - EV[0].caja.x0 : 0;
+      r.push([EV.length === DV.estrofas && EV.every((s, i) => s.dice.txt === String(i + 1) && dentro(s.dice.caja, s.caja) && cerca(s.caja.y0, EV[0].caja.y0, 0.1)
+        && cerca(s.caja.x1 - s.caja.x0, ancho, 0.1) && (i === 0 || (cerca(s.caja.x0 - EV[i - 1].caja.x0, pasoE, 0.1) && s.caja.x0 > EV[i - 1].caja.x1)))
+        && x.estrofas.rotulo.ve && x.estrofas.rotulo.caja.y1 <= EV[0].caja.y0 + 0.5 && x.estrofas.rotulo.caja.y0 >= G.caja.y1 - 0.5,
+        `paso ${n}: debajo, las ${DV.estrofas} estrofas del Himno (contadas en js/data/himno.js), numeradas del 1 al ${DV.estrofas}, iguales y en fila`, EV.map(s => s.dice.txt)]);
+    } else r.push([!EV.length && !x.estrofas.rotulo.ve, `paso ${n}: no se ven las estrofas`, EV.length]);
+    const himno = T.find(t => t.pz[0].txt === 'El Himno'), AH = x.aroHimno;
+    r.push([!!himno && AH.ve === E.aroHimno && (!E.aroHimno || rodea(AH.caja, himno.caja)),
+      `paso ${n}: ${E.aroHimno ? 'un aro rodea la frase del Himno: lo decía' : 'no hay aro en la frase del Himno'}`, AH.ve]);
+    if (n === 3) r.push([!!himno && VAL[himno.palabra.txt] === DV.estrofas, `paso 3: la frase del Himno decía las estrofas que son: ${DV.estrofas}`, himno && himno.palabra.txt]);
+
+    /* ── el velo: mientras escribe, las frases quedan detrás ── */
+    const malVelo = TV.filter(t => t.velo.ve !== E.tenue || (t.velo.ve && (!(t.velo.caja.x0 <= t.caja.x0 && t.velo.caja.x1 >= t.caja.x1 && t.velo.caja.y0 <= t.caja.y0 && t.velo.caja.y1 >= t.caja.y1)
+      || !(t.velo.tono > 0.3 && t.velo.tono < 0.9)))).map(t => t.frase);
+    r.push([!malVelo.length, `paso ${n}: ${E.tenue ? 'mientras escribe, cada frase queda detrás de un velo que la apaga sin taparla' : 'las frases se ven claras'}`, malVelo]);
+
+    /* ── la llave: acertó por las frases nuevas ── */
+    const NUEVAS = T.slice(ESTADOS_PALITOS[3].tiras, ESTADOS_PALITOS[4].tiras), LL = x.llave;
+    if (E.llave) {
+      const ys = LL.ps.map(p => p[1]), xs = LL.ps.map(p => p[0]);
+      const y0 = Math.min(...ys), y1 = Math.max(...ys), x0 = Math.min(...xs), xp = Math.max(...xs);
+      const abarca = TV.filter(t => t.caja.y0 >= y0 - 0.6 && t.caja.y1 <= y1 + 0.6);
+      const dice = LL.dice.map(t => t.txt).join(' '), deHimno = abarca.filter(t => /Himno/.test(t.frase)).length;
+      r.push([abarca.length === NUEVAS.length && abarca.every((t, i) => t === NUEVAS[i] || t.i === NUEVAS[i].i) && cerca(y0, NUEVAS[0].caja.y0, 0.6) && cerca(y1, NUEVAS[NUEVAS.length - 1].caja.y1, 0.6)
+        && x0 >= T[0].caja.x1 && x0 - T[0].caja.x1 < 5 && dice === `acertó por estas ${PAL[abarca.length]}` && LL.dice.every(t => t.caja.x0 > xp && t.caja.y0 < cy({ y0, y1 }) + 12 && t.caja.y1 > cy({ y0, y1 }) - 12),
+        `paso ${n}: la llave abarca justo las ${PAL[NUEVAS.length]} frases nuevas, y al lado dice «acertó por estas ${PAL[NUEVAS.length]}»`, [abarca.map(t => t.frase), dice]]);
+      r.push([deHimno === 0 && e.cifra === String(deHimno) && abarca.every(t => e.texto.toLowerCase().includes(t.pz[0].txt.toLowerCase())),
+        `paso ${n}: ninguna de esas frases habla del Himno, el marcador lo cuenta (${deHimno}) y la frase las nombra`, [e.cifra, abarca.map(t => t.pz[0].txt)]]);
+    } else r.push([!LL.ve, `paso ${n}: no hay llave`, LL.ve]);
+
+    /* ── el cuaderno del final ── */
+    const CU = x.cuaderno;
+    if (E.cuaderno) {
+      const nums = CU.textos.filter(t => /^[0-9]+\.$/.test(t.txt)).sort((p, q) => p.caja.y0 - q.caja.y0);
+      const tit = CU.textos.find(t => /:$/.test(t.txt));
+      const bien = nums.every((t, i) => {
+        if (t.txt !== `${i + 1}.`) return false;
+        const rs = CU.rayas.filter(ps => ps.length === 2 && cerca(ps[0][1], ps[1][1], 0.05) && ps[0][1] > t.caja.y1 - 1 && ps[0][1] - t.caja.y1 < 6);
+        const ti = CU.textos.find(q => q.txt === 'tiene' && cerca(cy(q.caja), cy(t.caja), 1));
+        if (rs.length !== 2 || !ti) return false;
+        const [a, b] = rs.map(ps => [Math.min(ps[0][0], ps[1][0]), Math.max(ps[0][0], ps[1][0])]).sort((p, q) => p[0] - q[0]);
+        return a[0] > t.caja.x1 && ti.caja.x0 > a[1] && ti.caja.x1 < b[0] && b[1] - b[0] > 60 && a[1] - a[0] > 60;
+      });
+      r.push([CU.ve && nums.length === 3 && bien && tit && tit.txt === `Mis ${PAL[nums.length]} frases verdaderas:` && CU.textos.every(t => dentro(t.caja, CU.caja)) && e.cifra === String(nums.length)
+        && e.texto.includes(`${PAL[nums.length]} frases verdaderas con «tiene»`),
+        `paso ${n}: el cuaderno tiene sus renglones numerados, cada uno con su raya, «tiene» y otra raya, y el marcador los cuenta`, nums.map(t => t.txt)]);
+      r.push([!monta(CU.caja, G.caja) && (!MV.length || !monta(CU.caja, MV[0].caja)), `paso ${n}: el cuaderno no tapa el globo ni la marca`, CU.caja]);
+    } else r.push([!CU.ve, `paso ${n}: no hay cuaderno`, CU.ve]);
+
+    /* ── lo que se cuenta: la frase y el marcador, contra el dibujo ── */
+    if (n === 0) r.push([e.cifra === String(TV.length) && e.texto.includes(`${PAL[TV.length]} frases, todas verdad`), `paso 0: el marcador y la frase cuentan las frases que leyó: ${TV.length}`, e.cifra]);
+    if (n === 1 || n === 4) {
+      const ww = [...e.palabras.matchAll(/«([a-z]+)»/g)].map(q => q[1]);
+      const ok1 = ww.length === 2 && ww.every(w => w in cuenta) && nb(e.cifra) === `${cuenta[ww[0]]} a ${cuenta[ww[1]]}`;
+      const ok2 = n === 1 ? e.texto.includes(`«${may(ww[0])}» junta ${PAL[cuenta[ww[0]]]}; «${ww[1]}», ${PAL[cuenta[ww[1]]]}`)
+        : e.texto.includes(`lee ${PAL[NUEVAS.length]} frases más`) && !!gana && e.texto.includes(`«${may(gana.w)}» ya tiene más palitos, y escribe «${gana.w}»`);
+      r.push([ok1 && ok2, `paso ${n}: el marcador y la frase dicen los palitos que se cuentan en el dibujo`, [nb(e.cifra), cuenta]]);
+    }
+    if (n === 2) r.push([!!gana && e.cifra === `«${gana.w}»` && e.texto.includes(`«${gana.w}»`), `paso 2: el marcador y la frase dicen la palabra con más palitos`, e.cifra]);
+    if (n === 3) r.push([e.cifra === String(DV.estrofas) && EV.length === DV.estrofas && e.texto.startsWith(`Son ${PAL[DV.estrofas]}`) && !!gana && e.texto.includes(`«${gana.w}» tenía ${PAL[cuenta[gana.w]]}`),
+      `paso 3: el marcador y la frase dicen las estrofas que son y los palitos que tenía «${gana && gana.w}»`, [e.cifra, EV.length]]);
+    if (n === 3 && gana) MEMO_PALITOS.antes = gana.w;
+
+    /* ── el orden en que pasa cada cosa (se recorre hacia adelante) ── */
+    const conteo = (desde, hasta) => {
+      const ts = T.slice(desde, hasta), ps = x.palos.filter(p => p.ve).filter(p => ts.length).sort((p, q) => p.d - q.d).slice(-ts.length);
+      return ts.every((t, k) => t.mira.d < t.sub.d && ps[k] && t.sub.d < ps[k].d && colDe(ps[k]) && colDe(ps[k]).w === t.palabra.txt && (k === 0 || t.mira.d >= ps[k - 1].d))
+        ? ps : null;
+    };
+    if (n === 1) r.push([!!conteo(0, 3), 'paso 1: en cada frase se marca «tiene», después se subraya la palabra y sale su palito en su columna; la siguiente, cuando ya salió', T.slice(0, 3).map(t => [t.mira.d, t.sub.d])]);
+    if (n === 2) {
+      const f = FV[0], qm = x.dice.find(d => d.txt === '?'), nueva = DI[0];
+      r.push([!!f && !!AV.length && TV.every(t => t.velo.d <= AV[0].d) && f.d >= AV[0].d && f.punta.d >= f.d + APAGA && qm.d >= f.punta.d && nueva.d >= qm.d + APAGA,
+        'paso 2: primero se apagan las frases, después el aro, la flecha y su punta; el «?» se va y la palabra llega cuando ya se fue', [AV.length && AV[0].d, f && f.d, f && f.punta.d, qm.d, nueva && nueva.d]]);
+    }
+    if (n === 3) {
+      const ds = EV.map(s => s.d), rot = x.estrofas.rotulo.d;
+      r.push([ds.every((d, i) => d >= rot && (i === 0 || d > ds[i - 1])) && MV.length === 1 && MV[0].d >= ds[ds.length - 1] && AH.d >= MV[0].d,
+        'paso 3: las estrofas salen una por una, de la 1 a la última; después la marca, y después el aro de la frase del Himno', [rot, ds, MV.length && MV[0].d, AH.d]]);
+    }
+    if (n === 4) {
+      const ps = conteo(3, 5), viejo = x.dice.find(d => d.txt === MEMO_PALITOS.antes), mal = x.marcas.find(q => q.trazos === 2), ultimo = ps ? Math.max(...ps.map(p => p.d)) : Infinity;
+      r.push([!!ps && NUEVAS.every((t, k) => t.mira.d >= t.d + 300 && (k === 0 || t.d > NUEVAS[k - 1].d)) && TV.every(t => t.velo.d >= ultimo) && !!viejo && viejo.d >= ultimo && mal.d >= ultimo
+        && AV.length === 1 && AV[0].d >= ultimo && DI.length === 1 && DI[0].d >= viejo.d + APAGA && MV.length === 1 && MV[0].d >= DI[0].d && MV[0].d >= mal.d + APAGA,
+        'paso 4: las frases nuevas aparecen y se cuentan; después se apaga todo, lo de antes se va, y la palabra nueva y su ✓ llegan cuando ya se fue', [NUEVAS.map(t => t.d), ultimo, viejo && viejo.d, DI.length && DI[0].d, MV.length && MV[0].d]]);
+    }
+    if (n === 5) r.push([TV.every(t => t.velo.d <= LL.d), 'paso 5: las frases se aclaran y después llega la llave', LL.d]);
+    if (n === 6) r.push([CU.d >= LL.d + APAGA && x.estrofas.lista.every(s => CU.d >= s.d + APAGA), 'paso 6: la llave y las estrofas se van, y el cuaderno llega cuando ya se fueron', [LL.d, CU.d]]);
+
+    /* ── nada se monta ni se sale ── */
+    const CT = x.cajasTexto.filter(t => t.txt.trim()), choques = [];
+    CT.forEach((p, i) => CT.slice(i + 1).forEach(q => { if (monta(p.caja, q.caja)) choques.push([p.txt, q.txt]); }));
+    MV.forEach(q => CT.forEach(t => { if (monta(q.caja, t.caja)) choques.push(['marca', t.txt]); }));
+    r.push([!choques.length, `paso ${n}: ningún rótulo se monta en otro ni en la marca`, choques]);
+    const fuera = CT.filter(t => t.caja.x0 < -0.5 || t.caja.y0 < -0.5 || t.caja.x1 > x.vista[0] + 0.5 || t.caja.y1 > x.vista[1] + 0.5).map(t => t.txt);
+    r.push([!fuera.length, `paso ${n}: todo cabe en el dibujo`, fuera]);
     return r;
   },
   amAnio4(e, n) { return verAnio(e, n, '4º'); },

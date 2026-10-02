@@ -7,7 +7,7 @@ const { esc, arma, portada, preguntas, clave, fichaConcepto, tablaReglas,
         IA_CONCEPTOS, IA_VERIFICA, IA_PIEZAS_PETICION } = A;
 
 const EVAL = [
-  { q: '¿Qué hace un modelo de lenguaje cuando te contesta?', o: ['Consulta una enciclopedia', 'Le pregunta a una persona', 'Copia una página', 'Predice la palabra siguiente más probable'], a: 3 },
+  { q: 'Algo de un chat te asusta o te confunde. ¿Qué haces?', o: ['Le sigo preguntando', 'Lo borro y me callo', 'Le contesto enojado', 'Le aviso a una persona grande'], a: 3 },
   { q: '¿Qué es una alucinación?', o: ['Un virus', 'Un dato inventado dicho con toda seguridad', 'Un error de la pantalla', 'Una falla de la conexión'], a: 1 },
   { q: 'La IA te cita un libro perfecto para tu tema. ¿Qué haces?', o: ['Compruebo que exista', 'Lo cito así', 'Le cambio el título', 'Lo copio en el cuaderno'], a: 0 },
   { q: '¿Cuáles son las cuatro piezas de una petición?', o: ['Quién, cómo, cuándo y dónde', 'Título, cuerpo, firma y fecha', 'Contexto, tarea, formato y ejemplo', 'Saludo, pregunta, gracias y adiós'], a: 2 },

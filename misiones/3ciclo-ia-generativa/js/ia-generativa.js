@@ -397,8 +397,8 @@ const evalTFBank=[
   {q:'El primer paso para verificar es separar el dato de la explicación.',a:true,k:'tf-paso1'},
   {q:'Saludar y dar las gracias no le dicen al chat qué quieres.',a:true,k:'tf-saludar'},
   {q:'Lo que subes puede quedar guardado en otra computadora.',a:true,k:'tf-guardado'},
-  {q:'Un chat puede escribir un párrafo redondo sobre algo que no sabe.',a:true,k:'tf-parrafo'},
-  {q:'Si el chat contesta muy seguro, el dato es correcto.',a:false,k:'tf-seguro'},
+  {q:'Decir que una escuela es «de las mejores» no dice quién lo midió.',a:true,k:'tf-mejores'},
+  {q:'Un texto muy bien escrito siempre dice la verdad.',a:false,k:'tf-bien-escrito'},
   {q:'Otra página que repite lo mismo sirve para comprobar un dato.',a:false,k:'tf-otra-pagina'},
   {q:'Escribir la pregunta en mayúsculas mejora la respuesta.',a:false,k:'tf-mayusculas'},
   {q:'Cada vez es más fácil notar una foto fabricada.',a:false,k:'tf-notar'},
@@ -410,15 +410,15 @@ const evalMCBank=[
   {q:'Una foto de un desastre te indigna. ¿Qué haces antes de reenviarla?',o:['La reenvío ya','Averiguo de dónde salió','Le pongo un texto','La guardo sin mirar'],a:1,k:'mc-foto'},
   {q:'«Explicame qué es la fotosíntesis»: ¿qué pieza de la petición es?',o:['La tarea','El saludo','La firma','El título'],a:0,k:'mc-tarea'},
   {q:'¿Qué es lo que más inventa un chat?',o:['Saludos','Títulos de libros y nombres de autores','Signos de puntuación','Colores'],a:1,k:'mc-inventa'},
-  {q:'¿Por qué la máquina le dijo a Kenia «cinco estrofas»?',o:['Porque lo leyó en el Himno','Porque se equivocó el teclado','Porque era lo más probable, no lo verdadero','Porque alguien la engañó'],a:2,k:'mc-probable'},
+  {q:'Algo de un chat te asusta o te confunde. ¿Qué haces?',o:['Le sigo preguntando','Lo borro y me callo','Le aviso a una persona grande','Le contesto enojado'],a:2,k:'mc-avisar'},
   {q:'¿Qué diferencia hay entre usar IA para aprender y para entregar?',o:['Ninguna','Las dos están prohibidas','Una enseña y la otra te deja sin aprender','La segunda es más rápida'],a:2,k:'mc-aprender'},
   {q:'¿Qué de esto NO es verificar?',o:['Buscar la ley','Leer el libro','Preguntarle otra vez a la misma IA','Ir a la institución'],a:2,k:'mc-no-verificar'},
-  {q:'¿Qué guarda la máquina después de entrenar?',o:['Todas las fotos','Todos los ejemplos','Las contraseñas','Los números que ajustó'],a:3,k:'mc-modelo'},
+  {q:'¿Dónde se comprueba que Honduras tiene 18 departamentos?',o:['En una canción','Con lo que dicen los vecinos','En un grupo de mensajes','En el mapa del aula'],a:3,k:'mc-mapa'},
   {q:'¿Cuántas piezas tiene una buena petición?',o:['Dos','Tres','Cinco','Cuatro'],a:3,k:'mc-piezas'}
 ];
 const evalCPBank=[
-  {q:'Kenia copió que el Himno tiene cinco estrofas, y son ___.',a:'siete',acc:['siete','7'],k:'cp-siete'},
-  {q:'Su maestra se lo marcó en ___.',a:'rojo',acc:['rojo'],k:'cp-rojo'},
+  {q:'El segundo paso para verificar es preguntarte si te suena ___.',a:'posible',acc:['posible'],k:'cp-posible'},
+  {q:'Un remedio que dice curar no se prueba en casa: se pregunta en el centro de ___.',a:'salud',acc:['salud'],k:'cp-salud'},
   {q:'En «En el recreo los niños juegan…», lo más probable que sigue es «al ___».',a:'fútbol',acc:['fútbol','futbol'],k:'cp-futbol'},
   {q:'La pieza de la petición que dice quién eres y para qué es el ___.',a:'contexto',acc:['contexto'],k:'cp-contexto'},
   {q:'La pieza que dice cómo lo quieres es el ___.',a:'formato',acc:['formato'],k:'cp-formato'},
@@ -552,11 +552,11 @@ const critCompareBank=[
   {k:'co-buscador',a:'Un buscador de internet.',b:'Un modelo de lenguaje.',ga:'Te devuelve páginas que existen, con su dirección.',gb:'Te arma un texto prediciendo palabra por palabra.',gr:'El buscador te enseña DÓNDE está el dato. El modelo te lo da masticado. Falta un paso: buscar la fuente.'},
 ];
 const critCauseBank=[
-  {k:'ca-predecir',cause:'El modelo fue entrenado para predecir la palabra siguiente, no para comprobar.',guide:'Por eso inventa con la misma seguridad con que acierta: alucina.'},
+  {k:'ca-califica',cause:'Un programa que califica redacciones aprendió solo con textos de otros países.',guide:'Por eso marca mal al que escribe como se habla aquí, con «cipote» o «pisto». Es un sesgo, y una persona revisa la nota.'},
   {k:'ca-guardado',cause:'Lo que se escribe en internet puede quedar guardado.',guide:'Por eso no se dan datos de la familia ni fotos de otras personas.'},
 ];
 const critEffectBank=[
-  {k:'ef-examen',effect:'Un dato inventado acaba en el examen de todo un grado.',guide:'Porque alguien lo copió sin verificar y pasó a la guía de estudio.'},
+  {k:'ef-dicen',effect:'Nadie puede comprobar un aviso que circula por el grupo de la comunidad.',guide:'Porque dice «dicen que…» y no dice quién lo dijo: no hay a quién preguntarle.'},
   {k:'ef-piezas',effect:'Una petición con sus cuatro piezas da un resultado mucho mejor.',guide:'Porque el modelo deja de adivinar para quién es y qué se quiere.'},
   {k:'ef-noticia',effect:'Una noticia falsa llega a cien grupos en una tarde.',guide:'Porque cada quien la reenvió sin comprobar de dónde salió.'},
 ];
