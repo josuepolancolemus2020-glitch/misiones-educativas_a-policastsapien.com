@@ -4842,6 +4842,77 @@ const LEER = `
       cajasTexto: todos('text').filter(vis).map(function (t) { return { txt: t.textContent, caja: caja(t) }; })
     };
   };
+  window.__amExtra.amPulperia = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVistaCon(mt, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(mt); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox(), mt = m(el);
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVistaCon(mt, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function uno(sel, en) { return (en || raiz).querySelector(sel); }
+    function todos(sel, en) { return [].slice.call((en || raiz).querySelectorAll(sel)); }
+    function demora(el) { return el ? (parseFloat(el.style.getPropertyValue('--d')) || 0) : 0; }
+    function numeros(t) { return ((t || '').match(/-?[0-9.]+/g) || []).map(Number); }
+    function puntos(el) { var nn = numeros(el.getAttribute('d')), ps = []; for (var i = 0; i + 1 < nn.length; i += 2) ps.push(aVistaCon(m(el), nn[i], nn[i + 1])); return ps; }
+    function raya(el) { var r = getComputedStyle(el).strokeDasharray; return r && r !== 'none' && r !== '0px' ? r : ''; }
+    /* Lo que se corrió una pieza: lo que dice su transform, ya puesto. */
+    function corrida(el) { var t = getComputedStyle(el).transform; if (!t || t === 'none') return [0, 0]; var nn = numeros(t.replace('matrix', '')); return [nn[4] || 0, nn[5] || 0]; }
+    /* La tinta de un texto, medida con su letra y con su ancla. Si el texto
+       lleva su ancho impuesto (textLength), la tinta se estira o se encoge
+       con él: el lienzo mide el ancho que tendría suelto. */
+    var lienzo = document.createElement('canvas').getContext('2d');
+    function tinta(t) {
+      var cs = getComputedStyle(t), an = t.getAttribute('text-anchor') || 'start';
+      lienzo.font = cs.fontStyle + ' ' + cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+      lienzo.textAlign = an === 'middle' ? 'center' : an === 'end' ? 'right' : 'left';
+      var me = lienzo.measureText(t.textContent), x = parseFloat(t.getAttribute('x')) || 0, y = parseFloat(t.getAttribute('y')) || 0, mt = m(t);
+      var tl = parseFloat(t.getAttribute('textLength')), k = tl && me.width ? tl / me.width : 1;
+      var a = aVistaCon(mt, x - me.actualBoundingBoxLeft * k, y - me.actualBoundingBoxAscent), b = aVistaCon(mt, x + me.actualBoundingBoxRight * k, y + me.actualBoundingBoxDescent);
+      return { x0: Math.min(a[0], b[0]), y0: Math.min(a[1], b[1]), x1: Math.max(a[0], b[0]), y1: Math.max(a[1], b[1]) };
+    }
+    function texto(t) { return t ? { txt: t.textContent, caja: caja(t), tinta: tinta(t), ve: vis(t), d: demora(t) } : null; }
+    function saco(g) { var mt = uno('[data-saco-manta]', g); return { caja: caja(uno('[data-saco-cuerpo]', g)), manta: caja(mt), relleno: getComputedStyle(mt).fill, ve: vis(g), d: demora(g) }; }
+    var globo = uno('[data-globo]'), mos = uno('[data-mostrador]'), wil = uno('[data-wilmer]'), din = uno('[data-dinero]'), mios = uno('[data-mios]');
+    var milpa = uno('[data-milpa]'), brotan = uno('[data-brotan]'), rec = uno('[data-recorte]'), igual = uno('[data-igual]'), velo = uno('[data-velo]');
+    var preg = uno('[data-pregunta]'), flecha = uno('[data-flecha]'), cua = uno('[data-cuaderno]');
+    return {
+      vista: [svg.viewBox.baseVal.width, svg.viewBox.baseVal.height],
+      globo: { ve: vis(globo), d: demora(globo), ps: puntos(globo) },
+      pedazos: todos('[data-pedazo]').map(function (g) {
+        var ma = uno('[data-marco]', g);
+        return { d: demora(g), dxy: corrida(g), txt: texto(uno('[data-pedazo-dice]', g)), papel: caja(uno('[data-papel]', g)), marco: { ve: vis(ma), d: demora(ma) } };
+      }),
+      coma: texto(uno('[data-coma]')),
+      vende: texto(uno('[data-vende]')),
+      mostrador: { frente: caja(uno('[data-mostrador-frente]', mos)), tabla: caja(uno('[data-mostrador-tabla]', mos)) },
+      suelo: puntos(uno('[data-suelo]')),
+      sacos: todos('[data-saco]').map(function (g) { var s = saco(g); s.dice = texto(uno('[data-saco-dice]', g)); return s; }),
+      wilmer: { cara: texto(uno('[data-wilmer-cara]', wil)), nombre: texto(uno('[data-wilmer-nombre]', wil)) },
+      cola: todos('[data-fila]').map(function (g) { return { ve: vis(g), d: demora(g), cara: texto(uno('[data-fila-cara]', g)) }; }),
+      dinero: { ve: vis(din), d: demora(din), dice: texto(uno('[data-dinero-dice]', din)),
+        monedas: todos('[data-moneda]').map(function (g) { var se = uno('[data-moneda-ve]', g); return { d: demora(g), dxy: corrida(g), ve: vis(se), dVe: demora(se), caja: caja(uno('circle', se)) }; }),
+        fantasmas: todos('[data-fantasma]').map(function (c) { return { ve: vis(c), d: demora(c), caja: caja(c), raya: raya(c) }; }) },
+      mios: { ve: vis(mios), d: demora(mios), uno: todos('[data-mio]').map(saco), dice: texto(uno('[data-mios-dice]', mios)) },
+      milpa: { ve: vis(milpa), d: demora(milpa),
+        parcelas: todos('[data-parcela]').map(function (g) { return { ve: vis(g), d: demora(g), tierra: caja(uno('[data-tierra]', g)), dice: texto(uno('[data-parcela-dice]', g)) }; }),
+        brotan: { ve: vis(brotan), d: demora(brotan), recorte: brotan.getAttribute('clip-path') || '' },
+        recorte: { y0: +rec.getAttribute('y'), y1: +rec.getAttribute('y') + +rec.getAttribute('height') },
+        matas: todos('[data-matas]').map(function (g) { return { d: demora(g), dy: corrida(g)[1], plantas: todos('[data-mata]', g).map(caja) }; }),
+        igual: { ve: vis(igual), d: demora(igual), raya: puntos(uno('[data-igual-raya]', igual)), cortada: raya(uno('[data-igual-raya]', igual)), dice: texto(uno('[data-igual-dice]', igual)) } },
+      velo: { ve: vis(velo), d: demora(velo), caja: caja(velo), raya: raya(velo), tenue: parseFloat(getComputedStyle(velo).fillOpacity),
+        orden: todos('[data-fila], [data-velo], [data-pedazo]').map(function (el) { return el.hasAttribute('data-velo') ? 'v' : el.hasAttribute('data-fila') ? 'f' : 'p'; }).join('') },
+      veloDice: texto(uno('[data-velo-dice]')),
+      pregunta: { ve: vis(preg), d: demora(preg), caja: caja(uno('[data-pregunta-caja]', preg)), dice: todos('[data-pregunta-dice]', preg).map(texto) },
+      flecha: { ve: vis(flecha), d: demora(flecha), ps: puntos(flecha) },
+      cuaderno: { ve: vis(cua), d: demora(cua), caja: caja(uno('[data-cuaderno-caja]', cua)), textos: todos('text', cua).map(texto), rayas: todos('[data-raya-escribir]', cua).map(puntos) },
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; }),
+      tintas: todos('text').filter(vis).map(function (t) { return { txt: t.textContent, caja: caja(t), tinta: tinta(t) }; })
+    };
+  };
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -5314,6 +5385,42 @@ function departamentosHonduras() {
   const t = fs.readFileSync(path.join(RAIZ, 'js', 'data', 'paises.js'), 'utf8');
   departamentosMemo = (t.match(/Honduras está dividida en (\d+) departamentos/) || [])[1] || '';
   return departamentosMemo;
+}
+/* Pensar con Orden: «¿De qué habla cada parte?». Lo que se ve al TERMINAR
+   cada paso. cola: si está la fila de los que compran; partida: si lo que le
+   dicen ya se partió y cada pedazo cayó encima de lo suyo; dinero: sus
+   monedas enteras, pagadas o ya fuera del dibujo; mios: si se ven sus sacos;
+   milpa: si se ven las dos milpas; velo: si ya va el velo sobre lo de la
+   gente, con la pregunta que le faltó; cuaderno: si sale el cuaderno. */
+const ESTADOS_PULPERIA = [
+  { cola: true, partida: false, dinero: 'entero', mios: false, milpa: false, velo: false, cuaderno: false },
+  { cola: true, partida: true, dinero: 'entero', mios: false, milpa: false, velo: false, cuaderno: false },
+  { cola: true, partida: true, dinero: 'pagado', mios: true, milpa: false, velo: false, cuaderno: false },
+  { cola: true, partida: true, dinero: 'fuera', mios: false, milpa: true, velo: false, cuaderno: false },
+  { cola: true, partida: true, dinero: 'fuera', mios: false, milpa: true, velo: true, cuaderno: false },
+  { cola: true, partida: true, dinero: 'fuera', mios: false, milpa: false, velo: true, cuaderno: true }
+];
+/* Lo que dice la historia, sacado de su tarjeta y no de la escena: a quién
+   se lo dijeron, qué le dijeron y con qué porqué, cuántos sacos compró, cuánto
+   del dinero se fue, de quién es la otra milpa y qué abono compró, y qué es
+   lo que no dice cuánta gente lo compra. */
+let historiaPulperiaMemo = null;
+function historiaPulperia() {
+  if (historiaPulperiaMemo) return historiaPulperiaMemo;
+  const html = fs.readFileSync(path.join(RAIZ, 'misiones', 'basica-pensar-con-orden', 'pensar-con-orden.html'), 'utf8');
+  const sit = (html.match(/<div class="card[^"]*" data-situacion>([\s\S]*?)<div class="tip">/) || [])[1] || '';
+  const t = sit.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ');
+  const NUM = { dos: 2, tres: 3, cuatro: 4, cinco: 5, seis: 6, siete: 7, ocho: 8, nueve: 9, diez: 10 };
+  const dicho = t.match(/le dijeron a ([A-ZÁÉÍÓÚÑ][a-záéíóúñ]+) que (el abono ([a-záéíóúñ]+) es el bueno), «(porque [^»]+)»/) || [];
+  const compra = t.match(/Compró ([a-z]+) sacos y ahí se fue (la mitad del dinero de la siembra)/) || [];
+  const otra = t.match(/igual que la del ([a-záéíóúñ]+), que compró el ([a-záéíóúñ]+)/) || [];
+  historiaPulperiaMemo = {
+    quien: dicho[1] || '', dice: dicho[2] || '', caro: dicho[3] || '', porque: dicho[4] || '',
+    sacos: NUM[compra[1]] || NaN, mitad: compra[2] || '',
+    vecino: otra[1] || '', barato: otra[2] || '',
+    nada: (t.match(/gente lo compra (no dice nada del abono)/) || [])[1] || ''
+  };
+  return historiaPulperiaMemo;
 }
 /* Las Pruebas de Fin de Grado (4º, 5º, 6º y 7º): «El año de Kenia, mes a
    mes». Una escena para las cuatro, y esta sonda para las cuatro.
@@ -7346,6 +7453,228 @@ const ESCENAS = {
       && dentro(HD.caja, VB) && dentro(HY.caja, VB) && dentro(Q.caja, VB), `paso ${n}: todo queda dentro del dibujo`, fueraV]);
     const mont = [];
     x.cajasTexto.forEach((t, i) => x.cajasTexto.forEach((u, j) => { if (j > i && monta(t.caja, u.caja)) mont.push(t.txt + ' / ' + u.txt); }));
+    r.push([!mont.length, `paso ${n}: ningún texto se monta en otro`, mont]);
+    return r;
+  },
+  /* Pensar con Orden: «¿De qué habla cada parte?».
+     ⚠️ Nada se le cree a la escena. La sonda saca de la historia a quién se
+     lo dijeron, qué le dijeron y con qué porqué, cuántos sacos compró, cuánto
+     del dinero se fue y de quién es la otra milpa. Del dibujo saca cuál saco
+     es cuál por lo que dice debajo de cada uno, sobre qué cae cada pedazo de
+     lo que le dicen (encima de los sacos o encima de la fila), cuántas
+     monedas se fueron y adónde, cuántos sacos llevó y de qué abono, y si las
+     matas de las dos milpas llegan a la misma altura. */
+  amPulperia(e, n) {
+    const x = e.extra, r = [];
+    if (!x) return [[false, `paso ${n}: la sonda pudo leer la escena`, null]];
+    const E = ESTADOS_PULPERIA[n], H = historiaPulperia();
+    /* Lo que tarda el aparato en mover una pieza y en apagarla. */
+    const VIAJE = 800, APAGA = 500;
+    const cerca = (a, b, t = 0.3) => Math.abs(a - b) <= t;
+    const dentro = (a, b, mg = 0) => a.x0 >= b.x0 - mg && a.x1 <= b.x1 + mg && a.y0 >= b.y0 - mg && a.y1 <= b.y1 + mg;
+    const monta = (a, b) => a.x0 < b.x1 - 0.5 && b.x0 < a.x1 - 0.5 && a.y0 < b.y1 - 0.5 && b.y0 < a.y1 - 0.5;
+    const nb = t => (t || '').replace(/ /g, ' ');
+    const plano = t => nb(t).toLowerCase().replace(/[.,¿?¡!«»:;]/g, '').replace(/\s+/g, ' ').trim();
+    const cx = c => (c.x0 + c.x1) / 2, cy = c => (c.y0 + c.y1) / 2;
+    const PAL = ['ninguna', 'una', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez'];
+
+    /* ── lo que no depende del dibujo va primero ── */
+    /* Ni el nombre de la falacia (es la respuesta de la selección múltiple),
+       ni un color del semáforo (el Clasifica y la evaluación), ni las piezas
+       de un argumento ni ningún pareado, ni lo que piden los completar, ni
+       los casos nuevos de la prueba, ni un número escrito. Con límites de
+       \p{L} y no con \b, que no sabe de tildes. */
+    const PROHIBIDAS = /falaci|mayor[ií]a|apelaci|gent[ií]o|sem[aá]foro|verde|amarill|(?<!\p{L})roj[oa]s?(?!\p{L})|sosten|sostien|conclusi|(?<!\p{L})nexo|argument|validez|inferenc|contradic|demostraci|examin|comprob|grecia|arist[oó]teles|s[oó]crates|plat[oó]n|carroll|inglaterra|matem[aá]tic|construcci|avanzar|(?<!\p{L})escrito|aprend|tilapia|cancha|(?<!\p{L})personas?(?!\p{L})|balanza|quintal|(?<!\p{L})raz[oó]n|razones|siempre|zapatos|despu[eé]s del? «?porque|[0-9]/iu;
+    const dicho = [e.texto, e.palabras, e.boton].concat(x.textos).join(' · ');
+    r.push([!PROHIBIDAS.test(dicho), `paso ${n}: no sale la falacia, ni un color, ni un pareado, ni lo que pregunta la prueba, ni un número`, (dicho.match(PROHIBIDAS) || [])[0]]);
+    r.push([!!H.quien && !!H.dice && !!H.caro && !!H.porque && H.sacos > 0 && !!H.mitad && !!H.vecino && !!H.barato && !!H.nada,
+      'la historia dice a quién se lo dijeron, qué y con qué porqué, cuántos sacos compró, cuánto dinero se fue, de quién es la otra milpa y qué no dice', H]);
+
+    /* ── la pulpería ── */
+    const F = x.mostrador.frente, TB = x.mostrador.tabla, SU = x.suelo;
+    r.push([TB.y1 >= F.y0 - 0.5 && TB.y0 < F.y0 && TB.x0 <= F.x0 && TB.x1 >= F.x1 && SU.length === 2 && cerca(SU[0][1], SU[1][1], 0.05) && cerca(SU[0][1], F.y1, 0.5) && cerca(SU[0][0], F.x1, 0.5),
+      `paso ${n}: el mostrador, con su tabla encima, y el suelo que lo sigue a la misma altura`, null]);
+    const S = x.sacos, nom = s => (s.dice ? s.dice.txt : '');
+    const caro = S.find(s => nom(s) === H.caro), barato = S.find(s => nom(s) === H.barato);
+    r.push([S.length === 2 && !!caro && !!barato && caro !== barato, `paso ${n}: sobre el mostrador, el ${H.barato} y el ${H.caro}`, S.map(nom)]);
+    if (!caro || !barato) return r;
+    r.push([S.every(s => cerca(s.caja.y1, TB.y0, 0.6) && s.caja.x0 >= TB.x0 && s.caja.x1 <= TB.x1) && !monta(caro.caja, barato.caja),
+      `paso ${n}: los dos sacos están parados sobre la tabla del mostrador`, S.map(s => s.caja)]);
+    r.push([S.every(s => dentro(s.dice.tinta, F, 0) && cerca(cx(s.dice.tinta), cx(s.manta), 1.5)), `paso ${n}: debajo de cada saco, en el frente del mostrador, dice cuál es`, null]);
+    r.push([caro.relleno !== barato.relleno, `paso ${n}: los dos sacos no son iguales`, [caro.relleno, barato.relleno]]);
+    const V = x.vende, sacosX0 = Math.min(...S.map(s => s.caja.x0)), sacosX1 = Math.max(...S.map(s => s.caja.x1)), sacosY0 = Math.min(...S.map(s => s.caja.y0));
+    r.push([!!V && V.ve && cx(V.tinta) > F.x0 && cx(V.tinta) < F.x1 && V.tinta.y1 >= TB.y0 && V.tinta.y0 < TB.y0 && V.tinta.x1 < sacosX0,
+      `paso ${n}: el que vende, detrás del mostrador y al lado de los sacos`, V && V.tinta]);
+    const W = x.wilmer;
+    r.push([!!W.cara && !!W.nombre && W.nombre.txt === H.quien && cerca(cx(W.nombre.tinta), cx(W.cara.tinta), 2) && W.nombre.tinta.y0 > W.cara.tinta.y1 - 0.5 && W.cara.tinta.x0 > F.x1,
+      `paso ${n}: ${H.quien}, con su nombre debajo, del lado de afuera del mostrador`, W.nombre && W.nombre.txt]);
+    const C = x.cola, cs = C.map(c => c.cara);
+    r.push([C.length >= 4 && C.every(c => c.ve === E.cola) && cs.every((c, i) => cerca(c.caja.y1, cs[0].caja.y1, 0.05) && (!i || c.tinta.x0 > cs[i - 1].tinta.x1))
+      && cs[0].tinta.x0 > W.cara.tinta.x1 && cerca(cs[0].caja.y1, W.cara.caja.y1, 3),
+      `paso ${n}: la fila de los que compran, uno detrás de otro y detrás de ${H.quien}`, C.length]);
+    const colaX0 = Math.min(...cs.map(c => c.tinta.x0)), colaX1 = Math.max(...cs.map(c => c.tinta.x1)), colaY0 = Math.min(...cs.map(c => c.tinta.y0));
+
+    /* ── lo que le dicen, y adónde cae cada pedazo ── */
+    const PD = x.pedazos.find(p => !!p.txt && plano(p.txt.txt) === plano(H.dice)), PP = x.pedazos.find(p => !!p.txt && plano(p.txt.txt) === plano(H.porque));
+    r.push([x.pedazos.length === 2 && !!PD && !!PP, `paso ${n}: lo que le dicen va en dos pedazos, y son los de la historia, palabra por palabra`, x.pedazos.map(p => p.txt && p.txt.txt)]);
+    if (!PD || !PP) return r;
+    const G = x.globo, pt = G.ps.reduce((a, b) => (b[1] > a[1] ? b : a)), resto = G.ps.filter(p => p !== pt);
+    const GB = { x0: Math.min(...resto.map(p => p[0])), x1: Math.max(...resto.map(p => p[0])), y0: Math.min(...resto.map(p => p[1])), y1: Math.max(...resto.map(p => p[1])) };
+    r.push([G.ve === !E.partida, `paso ${n}: ${E.partida ? 'el globo ya se fue' : 'lo dice el que vende, en su globo'}`, G.ve]);
+    r.push([pt[1] > GB.y1 + 20 && pt[0] >= V.tinta.x0 - 2 && pt[0] <= V.tinta.x1 + 2 && pt[1] <= V.tinta.y0 + 2 && pt[1] >= V.tinta.y0 - 8,
+      `paso ${n}: la punta del globo llega a la cabeza del que vende`, [pt, V.tinta]]);
+    r.push([PD.txt.ve && PP.txt.ve, `paso ${n}: los dos pedazos se ven`, null]);
+    const CO = x.coma;
+    r.push([!!CO && CO.txt === ',' && CO.ve === !E.partida, `paso ${n}: ${E.partida ? 'la coma ya se fue' : 'la coma va entre los dos pedazos'}`, CO && CO.ve]);
+    if (!E.partida) {
+      r.push([dentro(PD.txt.caja, GB, 0) && dentro(PP.txt.caja, GB, 0) && PD.txt.caja.y1 <= PP.txt.caja.y0 + 3 && cerca(PD.txt.caja.x0, PP.txt.caja.x0, 0.5)
+        && cerca(CO.caja.x0, PD.txt.caja.x1, 1) && cerca(CO.caja.y1, PD.txt.caja.y1, 0.5) && !PD.marco.ve && !PP.marco.ve,
+        `paso ${n}: en el globo, un renglón por pedazo, sin marco, y la coma pegada al primero`, [PD.txt.caja, PP.txt.caja, CO.caja]]);
+    } else {
+      const pd = PD.papel, pp = PP.papel;
+      r.push([pd.y1 <= sacosY0 && pd.y1 >= sacosY0 - 8 && cerca(cx(pd), (sacosX0 + sacosX1) / 2, 2) && pd.x1 < colaX0,
+        `paso ${n}: el primer pedazo cae justo encima de los sacos: habla del abono`, [pd, sacosY0]]);
+      r.push([pp.y1 <= colaY0 && pp.y1 >= colaY0 - 16 && cerca(cx(pp), (colaX0 + colaX1) / 2, 2) && pp.x0 > sacosX1,
+        `paso ${n}: el segundo pedazo cae justo encima de la fila: habla de la gente`, [pp, colaY0]]);
+      r.push([dentro(PD.txt.caja, pd, 0) && dentro(PP.txt.caja, pp, 0) && PD.marco.ve && PP.marco.ve && !monta(pd, pp),
+        `paso ${n}: cada pedazo cae con su papel y su marco, y no se tocan`, null]);
+      /* Por dónde pasaron: lo que se corrió cada uno, al revés, con la misma
+         curva para los dos (salen juntos y tardan lo mismo). */
+      const en = (p, t) => ({ x0: p.papel.x0 - p.dxy[0] * (1 - t), x1: p.papel.x1 - p.dxy[0] * (1 - t), y0: p.papel.y0 - p.dxy[1] * (1 - t), y1: p.papel.y1 - p.dxy[1] * (1 - t) });
+      let cruza = -1;
+      for (let k = 1; k <= 20; k++) if (cruza < 0 && monta(en(PD, k / 20), en(PP, k / 20))) cruza = k / 20;
+      r.push([cruza < 0 && dentro(en(PD, 0), GB, 0.5) && dentro(en(PP, 0), GB, 0.5), `paso ${n}: los dos salen del globo y al caer no se cruzan`, cruza]);
+      if (n === 1) r.push([CO.d <= PD.d - APAGA + 1 && cerca(PD.d, PP.d, 1) && cerca(G.d, PD.d, 1) && PD.marco.d >= PD.d + VIAJE - 1 && PP.marco.d >= PP.d + VIAJE - 1,
+        'paso 1: primero se va la coma; cuando ya se fue, los dos pedazos salen juntos con el globo, y su marco sale al llegar', [CO.d, PD.d, PP.d, G.d, PD.marco.d, PP.marco.d]]);
+    }
+
+    /* ── lo que le cuesta: sus monedas ── */
+    const D = x.dinero, M = D.monedas, FA = D.fantasmas;
+    const origen = mo => ({ x: cx(mo.caja) - mo.dxy[0], y: cy(mo.caja) - mo.dxy[1] });
+    r.push([D.ve === (E.dinero !== 'fuera'), `paso ${n}: ${E.dinero === 'fuera' ? 'ya no se ve el dinero' : 'se ve su dinero'}`, D.ve]);
+    const os = M.map(origen), paso = os.length > 1 ? os[1].x - os[0].x : 0;
+    r.push([M.length >= 4 && M.length % 2 === 0 && FA.length === M.length && os.every((o, i) => cerca(o.y, os[0].y, 0.05) && (!i || cerca(o.x - os[i - 1].x, paso, 0.05))) && paso > 2 * (cx(M[0].caja) - M[0].caja.x0),
+      `paso ${n}: sus monedas, en fila, a la misma distancia y sin tocarse`, M.length]);
+    r.push([!!D.dice && plano(D.dice.txt) === plano(H.mitad.replace(/^la mitad del /, 'el ')) && D.dice.tinta.y0 > Math.max(...os.map(o => o.y)) && cerca(cx(D.dice.tinta), (os[0].x + os[os.length - 1].x) / 2, 1.5),
+      `paso ${n}: debajo de las monedas dice de qué es ese dinero`, D.dice && D.dice.txt]);
+    const idas = M.filter(mo => Math.hypot(mo.dxy[0], mo.dxy[1]) > 1);
+    if (E.dinero === 'entero') r.push([!idas.length && M.every(mo => mo.ve) && FA.every(f => !f.ve), `paso ${n}: las monedas están todas, en su fila`, idas.length]);
+    if (E.dinero === 'pagado') {
+      r.push([idas.length * 2 === M.length, `paso ${n}: se fue la mitad del dinero: ${idas.length} de ${M.length} monedas`, idas.length]);
+      r.push([idas.every(mo => !mo.ve && dentro(mo.caja, F, 0)) && M.filter(mo => !idas.includes(mo)).every(mo => mo.ve),
+        `paso ${n}: las que se fueron llegaron al mostrador y ya no están; las otras siguen`, idas.map(mo => mo.caja)]);
+      const huecoDe = f => idas.find(mo => cerca(cx(f.caja), origen(mo).x, 0.3) && cerca(cy(f.caja), origen(mo).y, 0.3));
+      r.push([FA.every(f => f.ve === !!huecoDe(f) && (!f.ve || !!f.raya)) && FA.filter(f => f.ve).length === idas.length,
+        `paso ${n}: donde estaba cada moneda que se fue queda su hueco, de raya cortada, y donde sigue una, no`, FA.map(f => f.ve)]);
+      if (n === 2) {
+        const ds = idas.map(mo => mo.d);
+        r.push([idas.every(mo => { const f = FA.find(g => cerca(cx(g.caja), origen(mo).x, 0.3)); return !!f && cerca(f.d, mo.d, 1) && mo.dVe >= mo.d + VIAJE - 1; }) && ds.every((d, k) => !k || d > ds[k - 1]),
+          'paso 2: las monedas se van una por una; al salir cada una queda su hueco, y se apaga al llegar', [ds, idas.map(mo => mo.dVe)]]);
+      }
+    }
+
+    /* ── sus sacos ── */
+    const MI = x.mios, vistos = MI.uno.filter(s => s.ve && MI.ve);
+    r.push([MI.ve === E.mios && MI.uno.length === H.sacos, `paso ${n}: ${E.mios ? `se ven sus ${H.sacos} sacos` : 'todavía no se ven sus sacos'}`, [MI.ve, MI.uno.length]]);
+    if (E.mios) {
+      const maxMoneda = Math.max(...os.map(o => o.x)) + (cx(M[0].caja) - M[0].caja.x0);
+      r.push([vistos.length === H.sacos && MI.uno.every((s, i) => MI.uno.every((t, j) => j <= i || !monta(s.caja, t.caja))) && MI.uno.every(s => s.caja.y0 > SU[0][1] && s.caja.x0 > maxMoneda),
+        `paso ${n}: los ${H.sacos} sacos, sin encimarse, abajo y al lado del dinero`, vistos.length]);
+      r.push([MI.uno.every(s => s.relleno === caro.relleno), `paso ${n}: sus sacos son del ${H.caro}`, MI.uno.map(s => s.relleno)]);
+      const mx0 = Math.min(...MI.uno.map(s => s.caja.x0)), mx1 = Math.max(...MI.uno.map(s => s.caja.x1));
+      r.push([!!MI.dice && MI.dice.ve && MI.dice.txt === `sus ${PAL[H.sacos]} sacos` && MI.dice.tinta.y0 > Math.max(...MI.uno.map(s => s.caja.y1)) && cerca(cx(MI.dice.tinta), (mx0 + mx1) / 2, 2),
+        `paso ${n}: debajo de los sacos dice cuántos son`, MI.dice && MI.dice.txt]);
+      if (n === 2) {
+        const llega = Math.max(...idas.map(mo => mo.dVe)), ds = MI.uno.map(s => s.d);
+        r.push([ds.every(d => d >= llega - 1) && ds.every((d, k) => !k || d > ds[k - 1]) && cerca(MI.dice.d, ds[0], 1),
+          'paso 2: cuando ya pagó salen sus sacos, uno por uno, con su rótulo', [llega, ds, MI.dice.d]]);
+      }
+    }
+
+    /* ── las dos milpas ── */
+    const MP = x.milpa, PA = MP.parcelas;
+    r.push([MP.ve === E.milpa, `paso ${n}: ${E.milpa ? 'se ven las dos milpas' : 'no se ven las milpas'}`, MP.ve]);
+    const pw = PA.find(p => !!p.dice && plano(p.dice.txt) === plano(`la de ${H.quien}: el ${H.caro}`)), pv = PA.find(p => !!p.dice && plano(p.dice.txt) === plano(`la del ${H.vecino}: el ${H.barato}`));
+    r.push([PA.length === 2 && !!pw && !!pv && pw.tierra.x1 < pv.tierra.x0, `paso ${n}: una milpa de ${H.quien}, con el ${H.caro}, y otra del ${H.vecino}, con el ${H.barato}`, PA.map(p => p.dice && p.dice.txt)]);
+    if (!pw || !pv) return r;
+    r.push([cerca(pw.tierra.y0, pv.tierra.y0, 0.05) && cerca(pw.tierra.y1, pv.tierra.y1, 0.05) && cerca(pw.tierra.x1 - pw.tierra.x0, pv.tierra.x1 - pv.tierra.x0, 0.05)
+      && PA.every(p => cerca(cx(p.dice.tinta), cx(p.tierra), 1.5) && p.dice.tinta.y0 > p.tierra.y1) && pw.tierra.y0 > W.nombre.tinta.y1,
+      `paso ${n}: las dos tierras son iguales, cada una con su nombre debajo`, null]);
+    const deP = p => MP.matas.find(g => g.plantas.length && g.plantas.every(c => c.x0 >= p.tierra.x0 && c.x1 <= p.tierra.x1));
+    const mw = deP(pw), mv = deP(pv);
+    r.push([!!mw && !!mv && mw !== mv && mw.plantas.length >= 3 && mw.plantas.length === mv.plantas.length, `paso ${n}: cada milpa tiene sus matas, las mismas en las dos`, [mw && mw.plantas.length, mv && mv.plantas.length]]);
+    if (E.milpa && mw && mv) {
+      const todas = mw.plantas.concat(mv.plantas);
+      r.push([todas.every(c => cerca(c.y1, pw.tierra.y0, 0.6)) && /url\(#/.test(MP.brotan.recorte) && cerca(MP.recorte.y1, pw.tierra.y0, 0.3) && MP.recorte.y0 < todas[0].y0,
+        `paso ${n}: cada mata sale de la tierra, y debajo de la tierra no se ve`, [todas.map(c => c.y1), MP.recorte]]);
+      r.push([todas.every(c => cerca(c.y0, todas[0].y0, 0.3) && cerca(c.x1 - c.x0, todas[0].x1 - todas[0].x0, 0.3)),
+        `paso ${n}: las matas de las dos milpas llegan a la misma altura: salen iguales`, todas.map(c => c.y0)]);
+      const IG = MP.igual;
+      r.push([IG.ve && IG.raya.length === 2 && cerca(IG.raya[0][1], IG.raya[1][1], 0.05) && IG.raya[0][1] <= todas[0].y0 && IG.raya[0][1] >= todas[0].y0 - 4
+        && IG.raya[0][0] <= pw.tierra.x0 + 0.5 && IG.raya[1][0] >= pv.tierra.x1 - 0.5 && !!IG.cortada,
+        `paso ${n}: una raya cortada, de punta a punta, pasa justo encima de las matas de las dos`, IG.raya]);
+      r.push([!!IG.dice && IG.dice.txt === 'igual' && IG.dice.tinta.x0 > pw.tierra.x1 && IG.dice.tinta.x1 < pv.tierra.x0 && IG.dice.tinta.y0 > IG.raya[0][1],
+        `paso ${n}: «igual», entre las dos milpas y debajo de su raya`, IG.dice && IG.dice.tinta]);
+      if (n === 3) {
+        const dt = Math.min(...PA.map(p => p.d));
+        r.push([cerca(D.d, 0, 1) && cerca(MI.d, 0, 1) && dt >= APAGA - 1 && PA.every(p => cerca(p.d, dt, 1)) && MP.brotan.d >= dt && mw.d === MP.brotan.d && mv.d === MP.brotan.d && IG.d >= mw.d + VIAJE - 1,
+          'paso 3: se va lo del dinero; cuando ya se fue sale la tierra, de ella salen las matas, y cuando crecieron, la raya de lo igual', [D.d, MI.d, dt, MP.brotan.d, mw.d, IG.d]]);
+      }
+    }
+
+    /* ── lo que le faltó: el velo sobre lo de la gente y la pregunta ── */
+    const VE = x.velo, VD = x.veloDice, Q = x.pregunta, FL = x.flecha;
+    r.push([VE.ve === E.velo && VD.ve === E.velo && Q.ve === E.velo && FL.ve === E.velo, `paso ${n}: ${E.velo ? 'el velo y la pregunta que le faltó' : 'todavía no hay velo ni pregunta'}`, [VE.ve, VD.ve, Q.ve, FL.ve]]);
+    if (E.velo) {
+    r.push([cs.every(c => dentro(c.tinta, VE.caja, 0)) && dentro(PP.papel, VE.caja, 0) && !monta(VE.caja, W.cara.tinta) && !!VE.raya && VE.tenue > 0.3 && VE.tenue < 1 && /^f+vp+$/.test(VE.orden),
+      `paso ${n}: el velo de raya cortada cubre a la gente y deja leer lo que habla de ella, sin tocar a ${H.quien}`, [VE.tenue, VE.orden]]);
+    r.push([plano(VD.txt) === plano(H.nada) && VD.tinta.y1 <= VE.caja.y0 + 0.5 && VD.tinta.y1 >= VE.caja.y0 - 6 && cerca(cx(VD.tinta), cx(VE.caja), 2),
+      `paso ${n}: encima del velo dice lo de la historia: «${H.nada}»`, VD.txt]);
+    r.push([Q.dice.length === 2 && Q.dice[0].txt === 'le faltó preguntar:' && plano(Q.dice[1].txt) === plano('¿Y en qué es mejor?') && Q.dice.every(t => dentro(t.tinta, Q.caja, 0)) && Q.dice[0].tinta.y1 < Q.dice[1].tinta.y0,
+      `paso ${n}: la tarjeta dice la pregunta que le faltó`, Q.dice.map(t => t.txt)]);
+    const pd = PD.papel, F5 = FL.ps;
+    r.push([Q.caja.y1 < pd.y0 && Q.caja.x1 < VE.caja.x0 && cerca(cx(Q.caja), cx(pd), 1.5), `paso ${n}: la tarjeta va arriba del pedazo que habla del abono, lejos de la gente`, [Q.caja, pd]]);
+    r.push([F5.length === 5 && cerca(F5[0][0], F5[1][0], 0.05) && cerca(F5[0][1], Q.caja.y1, 0.6) && F5[1][1] < pd.y0 && F5[1][1] >= pd.y0 - 4 && F5[1][0] > pd.x0 && F5[1][0] < pd.x1
+      && cerca(F5[3][0], F5[1][0], 0.05) && cerca(F5[3][1], F5[1][1], 0.05) && F5[2][1] < F5[1][1] && F5[4][1] < F5[1][1] && F5[2][0] < F5[1][0] && F5[4][0] > F5[1][0],
+      `paso ${n}: la flecha baja de la pregunta al pedazo que habla del abono`, F5]);
+    if (n === 4) r.push([VE.d <= Q.d - APAGA + 1 && cerca(VD.d, VE.d, 1) && FL.d >= Q.d + APAGA - 1, 'paso 4: primero el velo, después la pregunta y al final su flecha', [VE.d, VD.d, Q.d, FL.d]]);
+    }
+
+    /* ── el cuaderno del final ── */
+    const QQ = x.cuaderno, tx = t => QQ.textos.find(u => u.txt === t);
+    const md = tx('Me dijeron:'), hb = tx('¿Habla de la cosa?'), sn = tx('sí · no'), mp = tx('Mi pregunta:');
+    r.push([QQ.ve === E.cuaderno, `paso ${n}: ${E.cuaderno ? 'sale el cuaderno' : 'todavía no sale el cuaderno'}`, QQ.ve]);
+    const sobre = (R, t) => R.length === 2 && cerca(R[0][1], R[1][1], 0.05) && R[0][0] > t.tinta.x1 + 2 && R[1][0] <= QQ.caja.x1 && R[0][1] >= t.tinta.y1 - 1 && R[0][1] <= t.tinta.y1 + 3;
+    r.push([!!md && !!hb && !!sn && !!mp && QQ.rayas.length === 2 && sobre(QQ.rayas[0], md) && sobre(QQ.rayas[1], mp) && md.tinta.y1 < hb.tinta.y0 && hb.tinta.y1 < mp.tinta.y0
+      && cerca(sn.caja.y1, hb.caja.y1, 0.05) && sn.tinta.x0 > hb.tinta.x1 + 2 && QQ.textos.every(t => dentro(t.caja, QQ.caja, 0.5)) && QQ.caja.y0 > W.nombre.tinta.y1,
+      `paso ${n}: el cuaderno pide lo que te dijeron, si habla de la cosa, y tu pregunta, cada una en su renglón`, QQ.textos.map(t => t.txt)]);
+    if (n === 5) r.push([QQ.d >= APAGA - 1 && MP.d <= QQ.d - APAGA + 1, 'paso 5: primero se van las milpas y después sale el cuaderno', [MP.d, QQ.d]]);
+
+    /* ── el marcador y la frase, contra lo que se cuenta ── */
+    const enGlobo = x.pedazos.filter(p => p.txt.ve && dentro(p.txt.caja, GB, 0)).length;
+    const delAbono = x.pedazos.filter(p => p.papel.y1 <= sacosY0 && p.papel.x1 < colaX0).length;
+    const filas = [md, hb, mp].filter(Boolean).length;
+    const CIFRA = [String(enGlobo), String(delAbono), String(vistos.length), String(PA.filter(p => p.ve && MP.ve).length), String(Q.ve ? 1 : 0), String(QQ.ve ? filas : 0)][n];
+    r.push([nb(e.cifra) === CIFRA, `paso ${n}: el marcador dice «${CIFRA}», contado en el dibujo`, nb(e.cifra)]);
+    const DICE = ['partes en lo que le dicen', 'parte habla del abono; la otra, de la gente', 'sacos, y se fue la mitad del dinero', 'milpas, y salen iguales',
+      'pregunta que va al abono', 'renglones en tu cuaderno'][n];
+    r.push([nb(e.palabras) === DICE, `paso ${n}: el marcador dice «${DICE}»`, e.palabras]);
+    const bajo = nb(e.texto).toLowerCase();
+    const FR = [[H.quien, 'pulpería', 'el bueno', 'cada parte'],
+      ['primera parte', 'abono', 'segunda', 'gente', 'cuánta lo compra'],
+      [H.quien, `${PAL[H.sacos]} sacos`, `del ${H.caro}`, H.mitad],
+      ['cosecha', `igual que la del ${H.vecino}`, `compró el ${H.barato}`],
+      ['nadie le mintió', H.nada, '¿y en qué es mejor?'],
+      ['te dijeron esta semana', 'porqué', '¿habla de la cosa?', 'tu pregunta']][n];
+    const faltan = FR.filter(f => !bajo.includes(f.toLowerCase()));
+    r.push([!faltan.length, `paso ${n}: lo que la frase cuenta es lo que se cuenta en el dibujo`, faltan]);
+
+    /* ── que nada se monte ni se salga ── */
+    const VB = { x0: 0, y0: 0, x1: x.vista[0], y1: x.vista[1] };
+    const fueraV = x.tintas.filter(t => !dentro(t.caja, VB)).map(t => t.txt);
+    r.push([!fueraV.length && dentro(GB, VB) && dentro(F, VB) && dentro(VE.caja, VB) && dentro(QQ.caja, VB) && MI.uno.every(s => dentro(s.caja, VB)), `paso ${n}: todo queda dentro del dibujo`, fueraV]);
+    const mont = [];
+    x.tintas.forEach((t, i) => x.tintas.forEach((u, j) => { if (j > i && monta(t.tinta, u.tinta)) mont.push(t.txt + ' / ' + u.txt); }));
     r.push([!mont.length, `paso ${n}: ningún texto se monta en otro`, mont]);
     return r;
   },

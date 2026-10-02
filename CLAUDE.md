@@ -14420,6 +14420,128 @@ Salió roja con cada una.
 Con la CPU frenada seis veces va a 60 cuadros por segundo, y el peor cuadro es de 83 ms.
 Escenarios del Porvenir, medida el mismo día, va a 60 y 50 ms.
 
+### La septuagésima séptima: Pensar con Orden, y lo que enseñó
+
+La segunda de la Ruta de la Raíz es **Pensar con Orden: cuándo una razón es buena**
+(`misiones/basica-pensar-con-orden/`, `js/animacion-pulperia.js`). La historia es la de
+Wilmer: en la pulpería le dijeron que el abono caro es el bueno, «porque todo el mundo lo
+compra». Compró ocho sacos y ahí se fue la mitad del dinero de la siembra, y su milpa salió
+igual que la del vecino, que compró el barato. Nadie le mintió: le dieron una razón que no era
+una razón. La animación pone la pulpería: el que vende detrás del mostrador, con los dos sacos
+encima (el barato y el caro); Wilmer de este lado, y detrás de él, la fila de los que compran:
+
+- antes de tocar: el que vende lo dice en su globo. ¿De qué habla cada parte?;
+- se va la coma y la frase se parte en dos pedazos, y cada uno cae encima de lo que habla:
+  «El abono caro es el bueno», sobre los sacos; «porque todo el mundo lo compra.», sobre la
+  fila;
+- con eso Wilmer paga: cuatro de sus ocho monedas se van al mostrador, una por una, y donde
+  estaba cada una queda su hueco de raya cortada. Le salen sus ocho sacos del caro;
+- llega la cosecha: la milpa de Wilmer y la del vecino, en la misma tierra. Las matas salen de
+  la tierra, crecen hasta la misma altura y una raya cortada pasa justo encima de las dos:
+  «igual»;
+- nadie le mintió: un velo tenue cubre a la gente y deja leer lo que se dice de ella, con «no
+  dice nada del abono» encima. Arriba del pedazo del abono, la tarjeta «le faltó preguntar: ¿Y
+  en qué es mejor?», con su flecha;
+- y la pregunta es del alumno: en su cuaderno, «Me dijeron:», «¿Habla de la cosa? sí · no» y
+  «Mi pregunta:».
+
+Siete cosas que valen para las que siguen:
+
+1. ⚠️ **Cada pedazo cae encima de lo que habla, y con eso no hace falta nombrar nada.** Justo
+   debajo, la misión enseña el semáforo de las razones, y su prueba pregunta cómo se llama la
+   falacia, de qué color es cada razón y qué son la razón, la conclusión y el nexo. La escena no
+   dice nada de eso: dice lo de la historia, que una parte habla del abono y la otra, de la
+   gente. Ni «razón» sale, que es un pareado. La sonda lo prohíbe en cada paso.
+2. ⚠️ **El precio se cuenta en el dibujo.** La mitad del dinero son cuatro monedas de ocho,
+   y cada una deja su hueco de raya cortada donde estaba; los sacos son los ocho de la historia
+   y salen cuando ya pagó. La sonda saca de la historia cuántos sacos y cuánto dinero, y cuenta
+   el dibujo.
+3. ⚠️ **Las dos milpas salen iguales, y se mide.** La misma tierra, las mismas matas saliendo
+   de ella y la misma altura; la raya de «igual» pasa justo encima de las dos. Si la del
+   vecino creciera un poco más, la escena diría que el barato es mejor, que la historia no dice.
+4. **Los sacos parecían tinajas.** Lisos y con la boca recta, se leían como ollas: llevan la
+   forma de los sacos de Los Adjetivos, con su trama y la boca amarrada. Ahí ya estaba escrito:
+   lo que dice «esto es tela» es la trama.
+5. ⚠️ **Lo que solo se vio a medio viaje, con la sonda en verde.** La coma se quedaba
+   flotando sola mientras los pedazos caían: ahora se va primero. El rótulo «sus ocho sacos»
+   salía antes que los sacos: sale con el primero. Y la tierra de las milpas se encendía
+   mientras el dinero todavía se apagaba, y se leían revueltos: sale cuando el dinero ya se fue.
+   En la primera captura, además, sobraba media pantalla a la derecha: la fila está desde el
+   paso 0, porque es de quien habla la segunda parte.
+6. ⚠️ **La «o» de la Fredoka se sale de su avance.** El texto de cada pedazo va forzado a su
+   ancho con `textLength`, y la coma, pegada detrás de «bueno», se montaba casi un punto en la
+   «o»: va 0,8 más allá. Y la sonda, para medir la tinta de un texto con `textLength`, la
+   escala por lo mismo; sin eso daba por montado lo que no lo estaba.
+7. ⚠️ **La historia contestaba dos preguntas de la conceptual y un caso de pensamiento
+   crítico, y la animación, una tarea del Generador.** «Wilmer compró ___ sacos del abono
+   caro» y «la milpa de Wilmer salió igual que la del ___» eran la historia; el caso de análisis
+   la contaba palabra por palabra; y la tarea de «compre lo caro porque todo el mundo lo
+   compra», con su pauta («a Wilmer le costó media siembra»), era la animación. Ahora preguntan
+   de dónde era Aristóteles y qué no se puede hacer con lo que no es una razón (examinarlo),
+   las dos cosas que la misión enseña; el caso es la balanza vieja de la cooperativa, que se
+   sigue usando «porque siempre se ha hecho así» y le paga a cada productor dos libras de menos
+   por quintal; y la tarea, los zapatos que son los buenos «porque todos en el grado los
+   usan». Las pautas se cambiaron con ellos, y una llegó a 26 palabras al cambiar «media
+   siembra» por «dos libras por quintal»: se acortó. Se queda la que pide el NOMBRE de la falacia
+   de «Compralo, si todo el mundo lo compra»: es la frase de ejemplo de la tarjeta de las
+   falacias, y la animación no dice el nombre. La ficha no preguntaba la historia.
+
+La sonda de esta escena **no le cree nada a la escena**. De la historia saca a quién se lo
+dijeron, qué le dijeron y con qué porqué, cuántos sacos compró, cuánto dinero se le fue, de
+quién es la otra milpa y qué es lo que no dice cuánta gente lo compra. Comprueba:
+
+- que el mostrador tenga su tabla y el suelo lo siga a la misma altura; que sobre la tabla
+  estén los dos sacos, distintos y con su nombre debajo; que el que vende esté detrás del
+  mostrador y Wilmer del otro lado, con su nombre, y la fila detrás de él;
+- que lo que le dicen vaya en dos pedazos, los de la historia palabra por palabra, en el globo
+  del que vende, con la punta en su cabeza y la coma entre los dos;
+- que, partida la frase, el pedazo del abono caiga justo encima de los sacos y el del porqué
+  justo encima de la fila, cada uno en su papel y con su marco, sin cruzarse al caer; y que
+  primero se vaya la coma, después salgan los pedazos y el marco, al llegar;
+- que se vaya la mitad de las monedas, una por una, que se apaguen al llegar al mostrador, y
+  que donde estaba cada una quede su hueco de raya cortada, y solo ahí;
+- que sus sacos sean los de la historia, del caro, sin montarse, abajo y a la derecha de las
+  monedas, y que salgan cuando ya pagó, uno por uno, con «sus ocho sacos» debajo;
+- que las dos milpas tengan la misma tierra, que las matas salgan de ella con un recorte que
+  llega justo a la tierra, que lleguen a la misma altura, y que la raya de lo igual pase justo
+  encima de las dos cuando ya crecieron, con «igual» entre ellas;
+- que el velo cubra a toda la fila y al papel del porqué sin tocar a Wilmer, tenue y de raya
+  cortada, con la gente debajo y el pedazo encima, y que encima del velo diga lo de la
+  historia;
+- que la tarjeta diga la pregunta que le faltó, arriba del pedazo del abono y lejos de la
+  gente, que su flecha llegue a él, y que primero salga el velo, después la tarjeta y al final
+  la flecha;
+- que el cuaderno salga cuando ya se fueron las milpas, con su raya para escribir después de
+  «Me dijeron:» y de «Mi pregunta:»;
+- que el marcador cuente lo que se ve;
+- y que no salga la falacia, ni un color del semáforo, ni un pareado, ni lo que pregunta la
+  prueba, ni un número, y que ningún texto se monte en otro.
+
+Se comprobó al revés con treinta y cuatro averías, plantadas una por una:
+
+- el primer pedazo cayendo encima de Wilmer, los pedazos cambiados de lugar y el segundo
+  diciendo otra cosa;
+- la coma quedándose, los pedazos saliendo antes de que se vaya, el globo quedándose y el marco
+  saliendo antes de llegar;
+- tres monedas de ocho, las monedas sin llegar al mostrador, el hueco donde sigue la moneda, el
+  hueco sin raya cortada, la moneda apagándose antes de llegar y las monedas yéndose juntas;
+- los sacos saliendo antes de pagar, seis sacos y sus sacos del barato;
+- las matas del vecino más altas, el recorte sin llegar a la tierra, la raya de lo igual lejos
+  de las matas, la tierra saliendo antes de que se vaya el dinero y lo igual antes de que
+  crezcan;
+- el velo dejando fuera a uno de la fila, el velo encima del pedazo, la tarjeta encima de la
+  fila, la tarjeta antes del velo, la tarjeta preguntando otra cosa y el rótulo del velo
+  diciendo otra cosa;
+- el cuaderno saliendo con las milpas todavía;
+- el marcador del paso 2 diciendo 7, «mayoría» en una frase, Wilmer con otro nombre, la punta
+  del globo lejos del que vende, los dos sacos diciendo «caro» y el que vende por encima del
+  mostrador.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 60 cuadros por segundo, y el peor cuadro es de 50 ms. El
+Asombro, medida el mismo día, va a 60 y 83 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -14671,6 +14793,13 @@ busca (una lupa) no tapa lo que encuentra: lo encontrado aparece cuando la lupa 
 de ese lugar, y en el último, cuando ya se apagó. Y por dónde pasó una pieza que viaja
 por tramos, la sonda lo saca sumando lo que de verdad se corrió cada tramo, leído de su
 transform, y no de una lista que escribió la escena.
+
+Una frase que se parte en pedazos lleva cada pedazo en su papel, y lo que los unía (una
+coma) se va antes de que salgan: si se queda, flota sola. Un texto forzado a su ancho con
+`textLength` se mide con su tinta escalada por lo mismo, y lo que va pegado detrás de una
+«o» de la Fredoka va casi un punto más allá, porque su tinta se sale de su avance. Y un velo
+que tapa a unos y deja leer lo que se dice de ellos va entre los dos en el documento: debajo,
+lo tapado; encima, lo que se lee.
 
 Si la misma escena sirve para varias misiones (las cuatro Pruebas de Fin de
 Grado), vive en `js/escena-<tema>.js` y cada misión trae un archivo de dos líneas

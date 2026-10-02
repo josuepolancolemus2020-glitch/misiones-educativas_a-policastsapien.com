@@ -344,7 +344,7 @@ const explainQuestions=[
   {q:'¿Por qué se dice que la lógica es la gramática del pensamiento?',ans:'Porque no dice QUÉ pensar: dice cómo se arman las ideas para que se sostengan. La gramática no elige las palabras y aun así decide si la oración se entiende. Aristóteles vio que hay armados que funcionan siempre, sin importar de qué se hable.'},
   {q:'Trae una razón que te hayan dado esta semana y clasifícala.',ans:'Respuesta abierta. Se valora que copie la razón tal como se la dieron, que le ponga color y que diga POR QUÉ. Si es roja, que diga qué pregunta haría para pedir una razón de verdad.'},
   {q:'¿Qué les da la lógica a las Matemáticas, al Español y a las Ciencias Naturales?',ans:'A Matemáticas, la demostración: un resultado vale porque se sigue de lo anterior. A Español, el texto argumentativo con sus conectores. A Ciencias Naturales, la inferencia: sacar una conclusión de lo observado, y saber qué NO se sigue.'},
-  {q:'Le dicen a alguien que compre lo caro «porque todo el mundo lo compra». ¿Qué le responderías?',ans:'Respuesta abierta. Se valora que nombre la falacia: apelación a la mayoría. Y que pida una razón de la cosa, no del gentío: en qué es mejor, cómo se comprueba. El precio cuenta: a Wilmer le costó media siembra.'}
+  {q:'Te dicen que los zapatos de esa marca son los buenos «porque todos en el grado los usan». ¿Qué le responderías?',ans:'Respuesta abierta. Se valora que nombre la falacia: apelación a la mayoría. Y que pida una razón de la cosa, no del gentío: si duran, si son cómodos, cómo se comprueba. Que todos los usen no dice nada de los zapatos.'}
 ];
 let ansVisible=false;
 function genTask(){sfx('click');const type=document.getElementById('tgType').value;const count=parseInt(document.getElementById('tgCount').value);ansVisible=false;const out=document.getElementById('tgOut');out.innerHTML='';if(type==='identify')genIdentifyTask(out,count);else if(type==='classify')genClassifyTask(out,count);else if(type==='complete')genCompleteTask(out,count);else if(type==='explain')genExplainTask(out,count);fin('s-tareas');}
@@ -443,8 +443,8 @@ const evalMCBank=[
 const evalCPBank=[
   {q:'Que el armado de un argumento esté bien se llama ___.',a:'validez',acc:['validez'],k:'cp-validez'},
   {q:'Platón fue alumno de ___, el de la unidad anterior.',a:'Sócrates',acc:['Sócrates','Socrates'],k:'cp-socrates'},
-  {q:'Wilmer compró ___ sacos del abono caro.',a:'ocho',acc:['ocho','8'],k:'cp-ocho'},
-  {q:'La milpa de Wilmer salió igual que la del ___, que compró el abono barato.',a:'vecino',acc:['vecino'],k:'cp-vecino'},
+  {q:'Aristóteles, el primero que puso en orden las formas del razonamiento, era de ___.',a:'Grecia',acc:['Grecia'],k:'cp-grecia'},
+  {q:'Lo que no dice nada que se pueda ___ no es una razón.',a:'examinar',acc:['examinar','comprobar'],k:'cp-examinar'},
   {q:'¿Por qué 7 × 8 da 56? No vale «porque me lo ___».',a:'aprendí',acc:['aprendí','aprendi'],k:'cp-aprendi'},
   {q:'«Por lo tanto» presenta la conclusión en el texto ___.',a:'escrito',acc:['escrito'],k:'cp-escrito'},
   {q:'Aristóteles vio que hay armados que funcionan ___, sin importar de qué se hable.',a:'siempre',acc:['siempre'],k:'cp-siempre'},
@@ -549,7 +549,7 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {k:'cs-wilmer',txt:'En la pulpería le dicen a Wilmer que el abono caro es el bueno «porque todo el mundo lo compra». Compra ocho sacos y ahí se va la mitad del dinero de la siembra. La milpa sale igual que la del vecino.'},
+  {k:'cs-balanza',txt:'En la cooperativa siguen pesando el café en la balanza vieja «porque siempre se ha hecho así». Nadie la revisa, y a cada productor le pagan dos libras de menos por quintal.'},
   {k:'cs-chele',txt:'En el grupo del barrio dicen que no hay que hacerle caso a don Chele sobre el agua «porque ni terminó la escuela». Don Chele había contado los tubos y sabía dónde estaba la fuga. Tres meses después el pozo de la escuela se secó.'},
   {k:'cs-ciudad',txt:'A una muchacha le dicen que o se va a la ciudad o se queda sin futuro. Se va sin plan, no le sale trabajo y vuelve a los cuatro meses debiendo el pasaje. Nadie le nombró una tercera salida.'},
   {k:'cs-aldea',txt:'Un muchacho dice que en la aldea de al lado son tramposos porque le tocaron dos que lo fueron. Deja de venderles y pierde la mitad de sus clientes en una temporada.'},
@@ -564,8 +564,8 @@ const critCaseQuestions=[
 const critCaseGuides=[
   'Se valora que SEPARE las dos. La conclusión es lo que quieren que crea. La razón es con qué se lo sostienen. Buscar primero la conclusión es lo que enseña la unidad.',
   'Verde: se puede comprobar y de verdad sostiene. Amarilla: puede ser verdad, pero no sostiene lo que se quiere probar. Roja: no hay nada que examinar. Se califica la señal, no la palabra.',
-  'Se califica que le ponga nombre al daño concreto: media siembra, un pozo seco, cuatro meses y el pasaje, la mitad de los clientes. No la indignación.',
-  'La pregunta buena va a la COSA, no a la persona ni al gentío. ¿En qué es mejor? ¿Cuántos casos, de cuántos? ¿Solo hay dos salidas? ¿Y qué tiene que ver quién lo dice?'
+  'Se califica que nombre el daño concreto: dos libras por quintal, un pozo seco, cuatro meses y el pasaje, la mitad de los clientes. No la indignación.',
+  'La pregunta buena va a la COSA, no a la persona ni a la costumbre. ¿Pesa bien la balanza? ¿Cuántos casos, de cuántos? ¿Solo hay dos salidas? ¿Y qué tiene que ver quién lo dice?'
 ];
 const critErrorBank=[
   {k:'er-cancha',txt:'"La cancha está mojada, así que llovió".',g1:'La regla es «si llueve, la cancha se moja», y va en un solo sentido. No dice que SOLO la lluvia la moje.',g2:'La pudo mojar la pila o un tubo reventado. Leer la regla al revés es el error más común del examen, y el que hay que saberse.'},

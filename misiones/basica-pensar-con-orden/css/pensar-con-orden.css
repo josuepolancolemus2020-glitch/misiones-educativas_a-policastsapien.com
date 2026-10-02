@@ -601,3 +601,41 @@ body.letra-grande .lg-sem-et    { font-size: 0.875rem !important; }
 body.letra-grande .lg-val-et span { font-size: 0.9rem !important; }
 .lab-sentence{flex-wrap:wrap;}
 .lab-sentence > div{width:100%;}
+
+/* ── La animación de la pulpería (#amPulperia) ──────────────────
+   El globo, los dos pedazos de lo que le dicen, la tarjeta de la pregunta,
+   los sacos, el mostrador, las monedas y el cuaderno son COSAS: se quedan
+   como son en las dos pantallas, con tinta oscura fija. Lo que va sobre la
+   tarjeta de la misión (el nombre de Wilmer, lo que se cuenta debajo de cada
+   cosa, «igual» y lo que dice el velo) lleva la tinta de la pantalla. Nada se
+   dice solo con color: las monedas que se fueron quedan como un hueco de raya
+   cortada, lo igual es una raya de punta a punta y lo de la gente queda
+   debajo de un velo de raya cortada. */
+#amPulperia .pu-emoji { font-family: 'Fredoka', sans-serif; }
+#amPulperia .pu-tinta { fill: #2b1f28; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amPulperia .pu-suave { fill: #6b4f63; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amPulperia .pu-fuerte { fill: #3a2233; font-family: 'Fredoka', sans-serif; font-weight: 700; }
+#amPulperia .pu-globo { fill: #ffffff; stroke: #94a3b8; stroke-width: 1; stroke-linejoin: round; }
+#amPulperia .pu-papel { fill: #ffffff; }
+#amPulperia .pu-marco { fill: none; stroke: #b9789f; stroke-width: 1; }
+#amPulperia .pu-suelo { fill: none; stroke: var(--gray, #636e72); stroke-width: 1; stroke-opacity: 0.6; }
+#amPulperia .pu-madera { fill: #d9b38c; stroke: #8b5e34; stroke-width: 1; }
+#amPulperia .pu-tabla { fill: #b07b4f; stroke: #8b5e34; stroke-width: 1; }
+#amPulperia .pu-saco { fill: #e8dcc2; stroke: #8b7355; stroke-width: 1; stroke-linejoin: round; }
+#amPulperia .pu-saco-caro { fill: #f0c987; stroke: #8b5e34; stroke-width: 1; stroke-linejoin: round; }
+#amPulperia .pu-amarra { fill: none; stroke: #6b4f3a; stroke-width: 1.4; stroke-linecap: round; }
+#amPulperia .pu-moneda { fill: #f2c94c; stroke: #a0781a; stroke-width: 1; }
+#amPulperia .pu-moneda-borde { fill: none; stroke: #a0781a; stroke-width: 0.8; }
+#amPulperia .pu-fantasma { fill: none; stroke: var(--gray, #636e72); stroke-width: 1.2; stroke-dasharray: 3 2; }
+#amPulperia .pu-tierra { fill: #8b5e3c; }
+#amPulperia .pu-tallo { fill: none; stroke: #3f8a3a; stroke-width: 1.8; stroke-linecap: round; }
+#amPulperia .pu-hoja { fill: none; stroke: #3f8a3a; stroke-width: 1.6; stroke-linecap: round; }
+#amPulperia .pu-elote { fill: #f2d45c; stroke: #a08a1a; stroke-width: 0.6; }
+#amPulperia .pu-espiga { fill: none; stroke: #c9a24a; stroke-width: 1.2; stroke-linecap: round; }
+#amPulperia .pu-igual { fill: none; stroke: var(--am-pri); stroke-width: 1.2; stroke-dasharray: 4 3; }
+#amPulperia .pu-velo { fill: var(--card, #ffffff); fill-opacity: 0.72; stroke: var(--am-pri); stroke-width: 1.2; stroke-dasharray: 3 2; }
+#amPulperia .pu-tarjeta { fill: #fdf3f9; stroke: #784a6d; stroke-width: 1.4; }
+#amPulperia .pu-flecha { fill: none; stroke: var(--am-pri); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+#amPulperia .pu-cuaderno { fill: #fffdf5; stroke: #cbd5e1; stroke-width: 1; }
+#amPulperia .pu-renglon { fill: none; stroke: #94a3b8; stroke-width: 1; }
+#amPulperia .pu-trama { fill: none; stroke: #8b7355; stroke-width: 0.5; stroke-opacity: 0.55; }
