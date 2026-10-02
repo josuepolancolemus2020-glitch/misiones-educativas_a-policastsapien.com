@@ -634,3 +634,47 @@ body.letra-grande .ln-pens-n { font-size: 1.33rem; }
 body.letra-grande .ln-arb-m { font-size: 1.25rem; }
 .lab-sentence{flex-wrap:wrap;}
 .lab-sentence > div{width:100%;}
+
+/* ── La animación de «Te espero en el banco» (#amBanco) ───────────────
+   El chat, las etiquetas, la banca y el reloj son cosas: llevan su color en
+   las dos pantallas, con tinta oscura fija. Lo que va sobre el escenario
+   (los nombres, la hora) lleva la tinta de la pantalla con su halo. */
+#amBanco .bb-emoji { font-family: 'Fredoka', sans-serif; }
+#amBanco .bb-tinta { fill: #2b1f28; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amBanco .bb-globo { fill: #ffffff; stroke: #94a3b8; stroke-width: 1; stroke-linejoin: round; }
+#amBanco .bb-globo-yo { fill: #eaf6ef; stroke: #86b39b; }
+#amBanco .bb-subraya { fill: none; stroke: var(--am-pri); stroke-width: 1.6; stroke-linecap: round; }
+/* El borde de la etiqueta dice si «banco» todavía sirve para los dos lugares
+   (raya cortada) o ya es uno solo (entera). En la pantalla oscura va claro:
+   oscuro sobre el fondo oscuro, la raya cortada y la entera se veían igual. */
+#amBanco { --bb-borde: #784a6d; }
+[data-theme="dark"] #amBanco { --bb-borde: #e6c3da; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) #amBanco { --bb-borde: #e6c3da; } }
+#amBanco .bb-etiqueta rect { fill: #fffaf0; stroke: var(--bb-borde); stroke-width: 1.6; }
+#amBanco .bb-etiqueta .bb-cortada { stroke-dasharray: 3.5 2.5; }
+#amBanco .bb-etiqueta-txt { fill: #2b1f28; font-family: 'Fredoka', sans-serif; font-weight: 700; }
+/* La «banco» que ya no es se queda, pero tenue. Tenue con fill-opacity y
+   stroke-opacity, NUNCA con opacity: lo que tiene opacidad por debajo de 1
+   es lo que ya no está (.am-fuera), y así lo cuenta la sonda. Por eso esta
+   transición lleva también la de stroke-opacity, que la del aparato no trae. */
+.am-raiz .am-escenario svg .bb-atenua,
+.am-raiz .am-escenario svg .bb-atenua * {
+  transition:
+    transform 0.8s cubic-bezier(0.2, 0.75, 0.25, 1) var(--d, 0s),
+    opacity 0.5s ease var(--d, 0s),
+    fill-opacity 0.5s ease var(--d, 0s),
+    stroke-opacity 0.5s ease var(--d, 0s);
+}
+#amBanco .bb-tenue rect { fill-opacity: 0.5; stroke-opacity: 0.45; }
+#amBanco .bb-tenue text { fill-opacity: 0.55; }
+#amBanco .bb-madera { fill: #a8703f; }
+#amBanco .bb-madera-2 { fill: #7c4f27; }
+#amBanco .bb-reloj { fill: #ffffff; stroke: #2b1f28; stroke-width: 1.4; }
+#amBanco .bb-marca { fill: none; stroke: #2b1f28; stroke-width: 1.2; }
+#amBanco .bb-aguja { fill: none; stroke: #2b1f28; stroke-width: 1.8; stroke-linecap: round; }
+#amBanco .bb-centro { fill: #2b1f28; }
+/* Las agujas dan su vuelta a paso parejo, en lo que dura la espera. */
+.am-raiz .am-escenario svg .bb-gira { transition: transform 1.6s linear var(--d, 0s); }
+#amBanco .bb-nube { fill: #ffffff; stroke: #94a3b8; stroke-width: 1; }
+#amBanco .bb-papel { fill: #fffdf5; stroke: #cbd5e1; stroke-width: 1; }
+#amBanco .bb-renglon { fill: none; stroke: #94a3b8; stroke-width: 1; }

@@ -189,11 +189,11 @@ function checkCmp(){if(cmpSel<0)return fb('fbCmp','Selecciona una opción.',fals
    en algo que el alumno HACE, no en una moraleja. */
 const routeSets = [
   { label: 'Ordena: cómo se aclara una frase de doble sentido',
-    steps: ['1. Te llega la frase: «Te espero en el banco».',
+    steps: ['1. Te llega el recado: «Traeme la lima».',
             '2. Te das cuenta de que dice dos cosas.',
             '3. Preguntás cuál de las dos es.',
-            '4. Te contestan: en la banca del parque.',
-            '5. Ya sabés a dónde ir.'] },
+            '4. Te contestan: la de afilar el machete.',
+            '5. Ya sabés qué llevar.'] },
   { label: 'Ordena: cómo se prueba una definición',
     steps: ['1. Escribís tu definición.',
             '2. Buscás algo que entre y no debería.',
@@ -474,11 +474,11 @@ const evalTFBank=[
   {q:'«Ya son las seis», en una visita que se alargó, solo cuenta la hora.',a:false,k:'tf-seis'},
   {q:'«¡Ay, me quemé!» dice cómo se siente el que habla.',a:true,k:'tf-quemar'},
   {q:'«¿Cuántos departamentos tiene Honduras?» no espera ninguna respuesta.',a:false,k:'tf-departamentos'},
-  {q:'«Te espero en el banco» está mal escrita.',a:false,k:'tf-banco'},
+  {q:'«Pasame el lápiz» pide una acción, no un dato.',a:true,k:'tf-lapiz'},
   {q:'«Un ave es un animal que vuela» deja fuera a la gallina.',a:true,k:'tf-ave'},
   {q:'«De segunda mano» y «usada» nombran bolsas distintas.',a:false,k:'tf-bolsa'},
   {q:'Una frase que exclama dice más de la cosa que de quien habla.',a:false,k:'tf-exclama'},
-  {q:'Marlon y el otro se fueron a las cuatro sin haberse visto.',a:true,k:'tf-marlon'},
+  {q:'Definir es adornar una palabra con otras más bonitas.',a:false,k:'tf-definir'},
   {q:'«Qué calor hace aquí», junto a la ventana cerrada, pide que la abran.',a:true,k:'tf-calor'}
 ];
 const evalMCBank=[
@@ -601,7 +601,7 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {k:'cs-marlon',txt:'A Marlon le mandaron un mensaje: «Te espero en el banco a las tres». Él fue al banco de la plaza. El otro lo esperó en la banca del parque.<br>\nLos dos se fueron a las cuatro sin verse. El trámite se pasó para otro día.'},
+  {k:'cs-marta',txt:'A doña Marta le avisaron: «La reunión de padres es el jueves a las siete». Ella llegó a las siete de la noche, y la reunión había sido en la mañana.<br>\nSe perdió la entrega de notas de su hija, y tuvo que pedir otro permiso en el trabajo.'},
   {k:'cs-chepa',txt:'En la pulpería le dijeron a doña Chepa que ese jabón «es de mejor calidad». Pagó el doble. Lava igual que el otro. Nadie le mintió: nadie le dijo mejor en qué.'},
   {k:'cs-wilmer',txt:'A Wilmer le preguntaron: «¿Por qué el abono caro rinde más?». Él contestó que por los minerales. Compró ocho sacos. La milpa salió igual que la del vecino, que usó el de siempre.'},
   {k:'cs-selvin',txt:'En el papel decía «regalo de la cooperativa». La mamá de Selvin firmó tranquila. A los seis meses le pidieron el dinero: era un préstamo, y el nombre no lo decía.'},
@@ -616,15 +616,15 @@ const critCaseQuestions=[
 const critCaseGuides=[
   'Se valora que NOMBRE lo que hace la frase y dé la señal. Si espera un dato, pregunta. Si quiere una acción, pide. Si se contesta «es verdad» o «es mentira», afirma.',
   'Las tres averías de esta unidad son el doble sentido, la palabra que no se puede comprobar y la definición mal hecha. Se califica que nombre UNA y diga por qué esa.',
-  'Se califica que le ponga nombre al daño concreto. Una tarde perdida, el doble del precio, ocho sacos, un préstamo firmado como regalo. No la indignación.',
-  'Tiene que ser una pregunta que se pueda hacer en voz alta. «¿En cuál de los dos bancos?», «¿mejor en qué, y cuánto?», «¿rinde más?», «¿esto se devuelve?». «Investigar más» no vale: no dice qué hacer.'
+  'Se califica que le ponga nombre al daño concreto. Una reunión perdida, el doble del precio, ocho sacos, un préstamo firmado como regalo. No la indignación.',
+  'Tiene que ser una pregunta que se pueda hacer en voz alta. «¿De la mañana o de la noche?», «¿mejor en qué, y cuánto?», «¿rinde más?», «¿esto se devuelve?». «Investigar más» no vale: no dice qué hacer.'
 ];
 const critErrorBank=[
   {k:'er-suave',txt:'"Elegir una palabra suave en vez de una fuerte es mentir".',g1:'No: las dos nombran la misma cosa. «De segunda mano» y «usada» son la misma bolsa.',g2:'Lo que hace es apuntar. El trabajo es darse cuenta hacia dónde, y decidir uno mismo.'},
   {k:'er-fuerte',txt:'"Toda palabra fuerte es una trampa, así que hay que desconfiar de todas".',g1:'De las cuatro de la unidad, una NO es trampa: «se cayó el puente» cuando el puente se cayó.',g2:'Desconfiar de todas las palabras cuesta lo mismo que creerlas todas. Es la misma lección que el mensaje sin señales.'},
 ];
 const critDecisionBank=[
-  {k:'de-aviso',txt:'Leés un aviso de la alcaldía. ¿Te fijás solo en lo que dice, o también en qué quiere lograr el que lo escribió?'},
+  'Leés un aviso de la alcaldía. ¿Te fijás solo en lo que dice, o también en qué quiere lograr el que lo escribió?'
 ];
 const critDecisionGuide='Se valora que mire las dos cosas: lo que la frase dice y lo que quiere lograr quien la escribió. Leer solo lo literal deja fuera la mitad del mensaje.';
 const critCompareBank=[
@@ -637,7 +637,7 @@ const critCauseBank=[
 const critEffectBank=[
   {k:'ef-ironia',effect:'Alguien lee «¡Qué buena idea!» en un mensaje y no sabe si lo están felicitando.',guide:'Porque por escrito no se ve la cara, y la ironía suena a elogio y dice lo contrario.'},
   {k:'ef-seis',effect:'Una visita se queda hasta tarde aunque le dijeron «ya son las seis».',guide:'Porque tomó la frase como un dato y no vio que le estaban pidiendo que se fuera.'},
-  {k:'ef-pronto',effect:'Dos personas quedan en verse «pronto»: una espera una hora y la otra una semana.',guide:'Porque la misma palabra no le dice lo mismo a cada uno. Se arregla preguntando cuándo es eso.'},
+  {k:'ef-nombre',effect:'Dos libros cuentan el mismo hecho con nombres distintos, y los que leen cada uno salen pensando cosas distintas.',guide:'Porque quien le pone el nombre a un hecho ya contó la historia. Se arregla mirando el hecho con los dos nombres.'},
 ];
 function genEvalCrit(){
   sfx('click');
@@ -650,7 +650,7 @@ function genEvalCrit(){
   const out=document.getElementById('evalCritOut');out.innerHTML='';
   const kase=_pickF(critCaseBank,1,rngC)[0];
   const s1=document.createElement('div');
-  s1.innerHTML=`<div class="eval-section-title">I. Caso de análisis: un dato de todos los días <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q,i)=>`<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${critCaseGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s1.innerHTML=`<div class="eval-section-title">I. Caso de análisis: una frase de todos los días <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q,i)=>`<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${critCaseGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s1);
   const err=_pickF(critErrorBank,1,rngC)[0];
   const s2=document.createElement('div');
@@ -658,11 +658,11 @@ function genEvalCrit(){
   out.appendChild(s2);
   const dec=_pickF(critDecisionBank,1,rngC)[0];
   const s3=document.createElement('div');
-  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: preguntar de dónde salió <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué harías? Explica por qué, diciendo de qué fuente venía el dato y con qué lo comprobarías.</div><textarea class="crit-textarea" rows="4" aria-label="Recomendaciones y su justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: leer lo que la frase busca <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué harías? Explicá por qué, con un ejemplo de un aviso que hayas leído.</div><textarea class="crit-textarea" rows="4" aria-label="Recomendaciones y su justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s3);
   const cmp=_pickF(critCompareBank,1,rngC)[0];
   const s4=document.createElement('div');
-  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué es cada caso: un saber, una creencia o una opinión? 2. ¿En qué se reconoce cada uno? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué HACE cada frase: afirma, pregunta, pide o exclama? 2. ¿En qué se reconoce cada una? 3. ¿Por qué no hacen lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s4);
   const causes=_pickF(critCauseBank,2,rngC),effects=_pickF(critEffectBank,3,rngC);
   let ceRows='';
@@ -692,11 +692,11 @@ function printEvalCrit(){
   sfx('click');
   const forma=window._currentEvalCritForm||1;const d=window._evalCritData;
   const lines=(n)=>Array(n).fill('<div class="ln"></div>').join('');
-  let s1=`<div class="sec-title"><span>I. Caso de análisis: un dato de todos los días</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
+  let s1=`<div class="sec-title"><span>I. Caso de análisis: una frase de todos los días</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
   critCaseQuestions.forEach(q=>{s1+=`<p class="crit-print-q">${q}</p>${lines(1)}`;});
   let s2=`<div class="sec-title"><span>II. Corrige el error</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.err.txt}</p><p class="crit-print-q">Identifica dos errores y corrígelos con tus propias palabras:</p><p class="crit-print-q"><strong>Error 1:</strong></p>${lines(1)}<p class="crit-print-q"><strong>Error 2:</strong></p>${lines(1)}`;
-  let s3=`<div class="sec-title"><span>III. Toma de decisiones: preguntar de dónde salió</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué harías? Explica por qué, diciendo de qué fuente venía el dato y con qué lo comprobarías.</p>${lines(2)}`;
-  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué es cada caso: un saber, una creencia o una opinión? 2. ¿En qué se reconoce cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
+  let s3=`<div class="sec-title"><span>III. Toma de decisiones: leer lo que la frase busca</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué harías? Explicá por qué, con un ejemplo de un aviso que hayas leído.</p>${lines(2)}`;
+  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué HACE cada frase: afirma, pregunta, pide o exclama? 2. ¿En qué se reconoce cada una? 3. ¿Por qué no hacen lo mismo?</p>${lines(2)}`;
   let ceTbl='<table class="crit-print-tbl"><tr><th>Causa</th><th>Efecto</th></tr>';
   d.causes.forEach(it=>{ceTbl+=`<tr><td>${it.cause}</td><td></td></tr>`;});
   d.effects.forEach(it=>{ceTbl+=`<tr><td></td><td>${it.effect}</td></tr>`;});

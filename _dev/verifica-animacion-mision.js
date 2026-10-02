@@ -5034,6 +5034,127 @@ const LEER = `
       tintas: todos('text').filter(vis).map(function (t) { return { txt: t.textContent, caja: caja(t), tinta: tinta(t) }; })
     };
   };
+  /* «Palabras que piensan»: el mensaje del banco. Se lee el chat pedazo por
+     pedazo (por su LUGAR, que es su ancho impuesto), los dos lugares, el
+     reloj por el ángulo de sus agujas, dónde está cada persona y cuánto se
+     corrió, lo que piensa, las dos «banco» con su borde, y el cuaderno. */
+  window.__amExtra.amBanco = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVistaCon(mt, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(mt); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox(), mt = m(el);
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVistaCon(mt, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function uno(sel, en) { return (en || raiz).querySelector(sel); }
+    function todos(sel, en) { return [].slice.call((en || raiz).querySelectorAll(sel)); }
+    function demora(el) { return el ? (parseFloat(el.style.getPropertyValue('--d')) || 0) : 0; }
+    function numeros(t) { return ((t || '').match(/-?[0-9.]+/g) || []).map(Number); }
+    function puntos(el) { var nn = numeros(el.getAttribute('d')), ps = []; for (var i = 0; i + 1 < nn.length; i += 2) ps.push(aVistaCon(m(el), nn[i], nn[i + 1])); return ps; }
+    function raya(el) { var r = getComputedStyle(el).strokeDasharray; return r && r !== 'none' && r !== '0px' ? r : ''; }
+    var lienzo = document.createElement('canvas').getContext('2d');
+    function tinta(t) {
+      var cs = getComputedStyle(t), an = t.getAttribute('text-anchor') || 'start';
+      lienzo.font = cs.fontStyle + ' ' + cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+      lienzo.textAlign = an === 'middle' ? 'center' : an === 'end' ? 'right' : 'left';
+      var me = lienzo.measureText(t.textContent), x = parseFloat(t.getAttribute('x')) || 0, y = parseFloat(t.getAttribute('y')) || 0, mt = m(t);
+      var tl = parseFloat(t.getAttribute('textLength')), k = tl && me.width ? tl / me.width : 1;
+      var a = aVistaCon(mt, x - me.actualBoundingBoxLeft * k, y - me.actualBoundingBoxAscent), b = aVistaCon(mt, x + me.actualBoundingBoxRight * k, y + me.actualBoundingBoxDescent);
+      return { x0: Math.min(a[0], b[0]), y0: Math.min(a[1], b[1]), x1: Math.max(a[0], b[0]), y1: Math.max(a[1], b[1]) };
+    }
+    function texto(t) { return t ? { txt: t.textContent, caja: caja(t), tinta: tinta(t), ve: vis(t), d: demora(t) } : null; }
+    /* Cuánto dura la transición de una propiedad, leída de la hoja de estilo:
+       cuando la sonda mira, todo dura cero (reducir movimiento). */
+    function dura(el, prop) {
+      var mejor = null, peso = -1;
+      for (var i = 0; i < document.styleSheets.length; i++) {
+        var reglas;
+        try { reglas = document.styleSheets[i].cssRules; } catch (e) { continue; }
+        for (var j = 0; reglas && j < reglas.length; j++) {
+          var rg = reglas[j], sel = rg.selectorText, ok = false;
+          if (!sel || sel.indexOf('am-quieto') >= 0 || !rg.style || !rg.style.transition) continue;
+          try { ok = el.matches(sel); } catch (e) { ok = false; }
+          if (!ok) continue;
+          var p = (sel.match(/#/g) || []).length * 100 + (sel.match(/[.]/g) || []).length;
+          if (p >= peso) { mejor = rg; peso = p; }
+        }
+      }
+      if (!mejor) return 0;
+      var t = String(mejor.style.transition), trozos = [], prof = 0, cur = '';
+      for (var c = 0; c < t.length; c++) {
+        var ch = t.charAt(c);
+        if (ch === '(') prof++;
+        if (ch === ')') prof--;
+        if (ch === ',' && prof === 0) { trozos.push(cur.trim()); cur = ''; } else cur += ch;
+      }
+      if (cur.trim()) trozos.push(cur.trim());
+      for (var k = 0; k < trozos.length; k++) {
+        var toks = trozos[k].split(' ');
+        if (toks[0] !== prop && toks[0] !== 'all') continue;
+        for (var q = 1; q < toks.length; q++) {
+          var v = toks[q];
+          if (/^[0-9.]+ms$/.test(v)) return parseFloat(v);
+          if (/^[0-9.]+s$/.test(v)) return parseFloat(v) * 1000;
+        }
+      }
+      return 0;
+    }
+    function corrido(el) { var t = getComputedStyle(el).transform; if (!t || t === 'none') return [0, 0]; var mt = new DOMMatrix(t); return [mt.e, mt.f]; }
+    /* El ángulo de una aguja, de su centro a su punta: 0 arriba, 90 a la derecha. */
+    function aguja(el) {
+      var ps = puntos(el), a = ps[0], b = ps[1];
+      return { k: el.getAttribute('data-aguja'), centro: a, punta: b, largo: Math.hypot(b[0] - a[0], b[1] - a[1]),
+        giro: (Math.atan2(b[0] - a[0], -(b[1] - a[1])) * 180 / Math.PI + 360) % 360, d: demora(el), dura: dura(el, 'transform') };
+    }
+    function pedazos(g) {
+      return todos('[data-pedazo]', g).map(function (t) {
+        var o = texto(t), x = parseFloat(t.getAttribute('x')), y = parseFloat(t.getAttribute('y')), tl = parseFloat(t.getAttribute('textLength'));
+        var a = aVistaCon(m(t), x, y), b = aVistaCon(m(t), x + tl, y);
+        o.k = t.getAttribute('data-pedazo'); o.lugar = { x0: a[0], x1: b[0], y: a[1] };
+        return o;
+      });
+    }
+    function dibujo(el) { return el.tagName.toLowerCase() === 'text' ? { emoji: el.textContent, tablas: 0, caja: tinta(el) } : { emoji: '', tablas: todos('rect', el).length, caja: caja(el) }; }
+    var subr = uno('[data-subraya]'), cua = uno('[data-cuaderno]'), rel = uno('[data-reloj]'), cara = uno('[data-reloj-cara]');
+    return {
+      vista: [svg.viewBox.baseVal.width, svg.viewBox.baseVal.height],
+      apaga: dura(subr, 'opacity'),
+      mensajes: todos('[data-mensaje]').map(function (g) {
+        var nom = uno('[data-avatar-nombre]', g);
+        return { k: g.getAttribute('data-mensaje'), de: g.getAttribute('data-de'), ve: vis(g), d: demora(g),
+          globo: puntos(uno('[data-globo]', g)), pedazos: pedazos(g), avatar: texto(uno('[data-avatar]', g)), nombre: nom ? texto(nom) : null };
+      }),
+      subraya: { ve: vis(subr), d: demora(subr), puntos: puntos(subr), raya: raya(subr), grueso: parseFloat(getComputedStyle(subr).strokeWidth) || 0 },
+      lugares: todos('[data-lugar]').map(function (g) {
+        var arb = uno('[data-arbol]', g);
+        return { k: g.getAttribute('data-lugar'), ve: vis(g), dibujo: dibujo(uno('[data-lugar-dibujo]', g)),
+          arbol: arb ? texto(arb) : null, nombre: texto(uno('[data-lugar-nombre]', g)) };
+      }),
+      reloj: { ve: vis(rel), cara: caja(cara), cx: aVistaCon(m(cara), +cara.getAttribute('cx'), +cara.getAttribute('cy')), r: +cara.getAttribute('r') * (m(cara).a || 1),
+        agujas: todos('[data-aguja]').map(aguja),
+        horas: todos('[data-hora]').map(function (t) { var o = texto(t); o.h = +t.getAttribute('data-hora'); return o; }) },
+      personas: todos('[data-persona]').map(function (g) {
+        var al = uno('[data-alto]', g), nu = uno('[data-nube]', g), pi = uno('[data-piensa]', nu), ca = corrido(g), cb = corrido(al);
+        return { k: g.getAttribute('data-persona'), dAncho: demora(g), dAlto: demora(al), viaje: dura(g, 'transform'),
+          corrido: [ca[0] + cb[0], ca[1] + cb[1]], cara: texto(uno('[data-cara]', g)), nombre: texto(uno('[data-nombre]', g)),
+          nube: { ve: vis(nu), d: demora(nu), caja: caja(uno('ellipse', nu)), piensa: pi.getAttribute('data-piensa'), dibujo: dibujo(pi) } };
+      }),
+      etiquetas: todos('[data-etiqueta]').map(function (g) {
+        var ve = uno('[data-etiqueta-ve]', g), dib = uno('[data-etiqueta-dibujo]', g), ab = uno('[data-borde="cortada"]', g), ce = uno('[data-borde="entera"]', g), tx = uno('text', dib);
+        var cs = getComputedStyle(ab), ct = getComputedStyle(tx);
+        return { k: g.getAttribute('data-etiqueta'), d: demora(g), ve: vis(ve), dVe: demora(ve), caja: caja(ab),
+          cortada: { ve: vis(ab), raya: raya(ab), d: demora(ab) }, entera: { ve: vis(ce), raya: raya(ce), d: demora(ce) },
+          tenue: { relleno: parseFloat(cs.fillOpacity), borde: parseFloat(cs.strokeOpacity), letra: parseFloat(ct.fillOpacity), d: demora(dib) },
+          texto: texto(tx) };
+      }),
+      cuaderno: { ve: vis(cua), d: demora(cua), caja: caja(uno('[data-cuaderno-caja]', cua)), textos: todos('text', cua).map(texto), rayas: todos('[data-raya-escribir]', cua).map(puntos) },
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; }),
+      tintas: todos('text').filter(vis).map(function (t) { return { txt: t.textContent, caja: caja(t), tinta: tinta(t) }; })
+    };
+  };
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -5607,6 +5728,46 @@ function historiaOidas() {
     pregunta: (t.match(/¿(y vos cómo lo sabés)\?/) || [])[1] || ''
   };
   return historiaOidasMemo;
+}
+/* «Palabras que piensan»: el mensaje del banco. Los estados al TERMINAR cada
+   paso. Dónde está cada uno no se escribe con el nombre del lugar: «suyo» es
+   el lugar al que fue según la historia, y «respuesta», el que nombra la
+   respuesta del chat, leída del dibujo. */
+const ESTADOS_BANCO = [
+  { tags: false, nubes: false, marlon: 'casa', otro: 'casa', hora: 'cita', pregunta: false, contesta: false, queda: false, cuaderno: false },
+  { tags: true, nubes: false, marlon: 'casa', otro: 'casa', hora: 'cita', pregunta: false, contesta: false, queda: false, cuaderno: false },
+  { tags: true, nubes: true, marlon: 'suyo', otro: 'suyo', hora: 'fueron', pregunta: false, contesta: false, queda: false, cuaderno: false },
+  { tags: true, nubes: true, marlon: 'casa', otro: 'casa', hora: 'fueron', pregunta: false, contesta: false, queda: false, cuaderno: false },
+  { tags: true, nubes: false, marlon: 'casa', otro: 'casa', hora: 'cita', pregunta: true, contesta: true, queda: true, cuaderno: false },
+  { tags: true, nubes: false, marlon: 'respuesta', otro: 'respuesta', hora: 'cita', pregunta: true, contesta: true, queda: true, cuaderno: true }
+];
+/* Lo que dice la historia de Marlon, sacado de su tarjeta y no de la escena:
+   a quién le llegó el mensaje, qué decía, adónde fue cada uno, a qué hora se
+   fueron, qué se perdió, que nadie escribió mal, que la frase decía dos
+   cosas, la pregunta que faltó y CUÁNTAS palabras dice que tiene. Esa cuenta
+   la sonda la vuelve a hacer: así salió que la historia decía «cuatro». */
+let historiaBancoMemo = null;
+function historiaBanco() {
+  if (historiaBancoMemo) return historiaBancoMemo;
+  const html = fs.readFileSync(path.join(RAIZ, 'misiones', 'basica-palabras-que-piensan', 'palabras-que-piensan.html'), 'utf8');
+  const sit = (html.match(/<div class="card[^"]*" data-situacion>([\s\S]*?)<div class="tip">/) || [])[1] || '';
+  const t = sit.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ');
+  const NUM = { una: 1, uno: 1, dos: 2, tres: 3, cuatro: 4, cinco: 5, seis: 6, siete: 7, ocho: 8, nueve: 9, diez: 10 };
+  const mensaje = (t.match(/le llegó un mensaje: «([^»]+)»/) || [])[1] || '';
+  historiaBancoMemo = {
+    quien: (t.match(/A ([A-ZÁÉÍÓÚÑ][a-záéíóúñ]+) le llegó un mensaje/) || [])[1] || '',
+    mensaje,
+    cita: NUM[(mensaje.match(/a las ([a-z]+)$/) || [])[1]] || NaN,
+    va: (t.match(/Él fue al ([a-záéíóúñ ]+?),/) || [])[1] || '',
+    espera: (t.match(/lo esperaba en la ([a-záéíóúñ ]+?)\./) || [])[1] || '',
+    fueron: NUM[(t.match(/se fueron a las ([a-z]+) sin verse/) || [])[1]] || NaN,
+    tramite: (t.match(/(El trámite se pasó para otro día)/) || [])[1] || '',
+    nadie: (t.match(/(Nadie escribió mal)/) || [])[1] || '',
+    dos: (t.match(/decía (dos cosas)/) || [])[1] || '',
+    cuantas: NUM[(t.match(/pregunta de ([a-z]+) palabras/) || [])[1]] || NaN,
+    pregunta: (t.match(/¿([^?]+)\?/) || [])[1] || ''
+  };
+  return historiaBancoMemo;
 }
 /* Las Pruebas de Fin de Grado (4º, 5º, 6º y 7º): «El año de Kenia, mes a
    mes». Una escena para las cuatro, y esta sonda para las cuatro.
@@ -8301,6 +8462,304 @@ const ESCENAS = {
     const cuerpos = [DA, JO, KE].filter(f => f.ve).map(f => cuerpo(f.dijo.globo)).concat(PR.ve ? [cuerpo(PR.globo)] : []);
     const pisa = x.tintas.filter(tt => !cuerpos.some(c => dentro(tt.tinta, c, 0.5)) && cuerpos.some(c => monta(tt.tinta, c))).map(tt => tt.txt);
     r.push([!pisa.length, `paso ${n}: ningún rótulo se monta en un globo`, pisa]);
+    return r;
+  },
+  amBanco(e, n) {
+    const x = e.extra, r = [];
+    if (!x) return [[false, `paso ${n}: la sonda pudo leer la escena`, null]];
+    const E = ESTADOS_BANCO[n], H = historiaBanco();
+    const APAGA = x.apaga || 500;
+    const cerca = (a, b, t = 0.3) => Math.abs(a - b) <= t;
+    const dentro = (a, b, mg = 0) => a.x0 >= b.x0 - mg && a.x1 <= b.x1 + mg && a.y0 >= b.y0 - mg && a.y1 <= b.y1 + mg;
+    const monta = (a, b) => a.x0 < b.x1 - 0.5 && b.x0 < a.x1 - 0.5 && a.y0 < b.y1 - 0.5 && b.y0 < a.y1 - 0.5;
+    const nb = t => (t || '').replace(/ /g, ' ');
+    const plano = t => nb(t).toLowerCase().replace(/[.,¿?¡!«»:;…]/g, '').replace(/\s+/g, ' ').trim();
+    const palabras = t => plano(t).split(' ').filter(Boolean);
+    const cx = c => (c.x0 + c.x1) / 2, cy = c => (c.y0 + c.y1) / 2;
+    const caja2 = ps => ({ x0: Math.min(...ps.map(p => p[0])), y0: Math.min(...ps.map(p => p[1])), x1: Math.max(...ps.map(p => p[0])), y1: Math.max(...ps.map(p => p[1])) });
+    const mueve = (c, dx, dy) => ({ x0: c.x0 + dx, y0: c.y0 + dy, x1: c.x1 + dx, y1: c.y1 + dy });
+    const NUMTXT = ['cero', 'una', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez'];
+
+    /* ── lo que no depende del dibujo va primero ── */
+    /* No se nombra lo que hace una frase (las cuatro clases, ni con los
+       nombres del DCNB), ni la palabra para una frase de dos sentidos, ni un
+       pareado de la prueba, ni otro de sus ejemplos (la vaca, la bolsa, el
+       pan, la sal, el portón, las seis, la silla, el ave…), ni lo que
+       contesta otra pregunta (pidiendo, quite, apretada, respaldo…). */
+    const PROHIBIDAS = /ambig|doble sentido|(?<!\p{L})afirm|declarativ|exclam|interrogativ|imperativ|(?<!\p{L})pide(?!\p{L})|(?<!\p{L})pedid|intenci|ret[oó]ric|literal|herm[eé]neut|russell|ortega|iron[ií]a|significad|filosof|(?<!\p{L})vaca|(?<!\p{L})bolsa|(?<!\p{L})pan(?!\p{L})|(?<!\p{L})sal(?!\p{L})|port[oó]n|calor|ventana|puerta|(?<!\p{L})seis(?!\p{L})|(?<!\p{L})tarde(?!\p{L})|abono|regalo|calidad|silla|(?<!\p{L})aves?(?!\p{L})|gallina|pidiendo|(?<!\p{L})quite|apretad|respaldo|comprueb|(?<!\p{L})pruebas?(?!\p{L})|definici/iu;
+    const dicho = [e.texto, e.palabras, e.boton].concat(x.textos).join(' · ');
+    r.push([!PROHIBIDAS.test(dicho), `paso ${n}: no se nombra lo que hace una frase, ni cómo se llama una frase así, ni un pareado, ni otro ejemplo ni otra respuesta de la prueba`, (dicho.match(PROHIBIDAS) || [])[0]]);
+    const digitos = nb([e.texto, e.palabras, e.boton].join(' ')).match(/[0-9]/g) || [];
+    r.push([!digitos.length, `paso ${n}: la frase, el botón y el marcador dicen las horas y las cuentas con palabras`, digitos]);
+    const conNum = x.textos.filter(t => /[0-9]/.test(t));
+    r.push([conNum.every(t => /^[0-9]{1,2}:00$/.test(t)), `paso ${n}: el único número del dibujo es la hora del reloj`, conNum]);
+    r.push([!/[✓✗✔✘]/.test(x.textos.join('')), `paso ${n}: nadie lleva ✓ ni ✗: nadie escribió mal`, null]);
+    r.push([!!H.quien && !!H.mensaje && H.cita > 0 && !!H.va && !!H.espera && H.fueron > H.cita && !!H.tramite && !!H.nadie && !!H.dos && H.cuantas > 0 && !!H.pregunta,
+      'la historia dice a quién le llegó el mensaje, qué decía, adónde fue cada uno, a qué hora se fueron, qué se perdió, que nadie escribió mal y la pregunta que faltó', H]);
+    r.push([H.cuantas === palabras(H.pregunta).length, `la historia cuenta bien las palabras de la pregunta: «¿${H.pregunta}?» tiene ${palabras(H.pregunta).length}`, H.cuantas]);
+
+    /* ── el chat, leído pedazo por pedazo ── */
+    const M = k => x.mensajes.find(mm => mm.k === k);
+    const A = M('a'), B = M('b'), C = M('c');
+    r.push([!!A && !!B && !!C && x.mensajes.length === 3, `paso ${n}: el chat tiene tres mensajes`, x.mensajes.map(mm => mm.k)]);
+    if (!A || !B || !C) return r;
+    /* Cada mensaje se lee por el LUGAR de sus pedazos (su ancho impuesto): la
+       tinta del lienzo se redondea hacia afuera. Entre dos pedazos, un espacio. */
+    const orden = mm => mm.pedazos.slice().sort((a, b) => a.lugar.x0 - b.lugar.x0);
+    const hueco = (a, b) => b.lugar.x0 - a.lugar.x1;
+    const lee = mm => orden(mm).map(p => p.txt).join(' ');
+    const malPegados = [A, B, C].map(mm => orden(mm).filter((p, i, ps) => i && !(hueco(ps[i - 1], p) >= 2.4 && hueco(ps[i - 1], p) <= 3.4)).map(p => p.txt)).flat();
+    r.push([!malPegados.length && [A, B, C].every(mm => mm.pedazos.every(p => cerca(p.lugar.y, mm.pedazos[0].lugar.y, 0.01))),
+      `paso ${n}: los pedazos de cada mensaje van seguidos en su renglón, con un espacio entre palabras`, malPegados]);
+    const dichoA = lee(A), dichoB = lee(B), dichoC = lee(C);
+    r.push([plano(dichoA) === plano(H.mensaje), `paso ${n}: el mensaje dice lo de la historia: «${H.mensaje}»`, dichoA]);
+    r.push([plano(dichoB) === plano(H.pregunta) && /^¿/.test(dichoB) && /\?$/.test(dichoB), `paso ${n}: la pregunta es la de la historia, «¿${H.pregunta}?», de punta a punta`, dichoB]);
+    r.push([/\.$/.test(dichoC) && plano(dichoC).includes(plano(H.espera)), `paso ${n}: la respuesta nombra el lugar donde esperaba el otro: ${H.espera}`, dichoC]);
+
+    const PER = k => x.personas.find(p => p.k === k);
+    const MA = PER('marlon'), OT = PER('otro');
+    r.push([!!MA && !!OT && x.personas.length === 2, `paso ${n}: en el pueblo están ${H.quien} y el otro`, x.personas.map(p => p.k)]);
+    if (!MA || !OT) return r;
+    r.push([MA.nombre.txt === H.quien && OT.nombre.txt === 'el otro', `paso ${n}: en el pueblo, cada uno con su nombre`, [MA.nombre.txt, OT.nombre.txt]]);
+    r.push([[MA, OT].every(p => cerca(cx(p.nombre.tinta), cx(p.cara.tinta), 2) && p.nombre.tinta.y0 > p.cara.tinta.y1 - 1.5), `paso ${n}: cada nombre va debajo de su cara`, null]);
+    const quienEs = mm => (mm.de === 'marlon' ? MA : OT);
+    r.push([A.de === 'otro' && B.de === 'marlon' && C.de === 'otro' && [A, B, C].every(mm => mm.avatar.txt === quienEs(mm).cara.txt),
+      `paso ${n}: el mensaje y la respuesta son del otro y la pregunta es de ${H.quien}, cada uno con su cara`, [A, B, C].map(mm => mm.de + ':' + mm.avatar.txt)]);
+    r.push([!!A.nombre && A.nombre.txt === OT.nombre.txt && !!B.nombre && B.nombre.txt === MA.nombre.txt && !C.nombre,
+      `paso ${n}: en el chat, cada nombre va una vez, debajo de su primer mensaje`, [A.nombre && A.nombre.txt, B.nombre && B.nombre.txt, C.nombre && C.nombre.txt]]);
+    r.push([A.ve && B.ve === E.pregunta && C.ve === E.contesta, `paso ${n}: se ven los mensajes que tocan`, [A.ve, B.ve, C.ve]]);
+    /* La cola del globo apunta a quien lo escribió: a la izquierda los del
+       otro y a la derecha los de Marlon, como en un chat. */
+    const izqDe = mm => mm.de === 'otro';
+    const punta = (ps, izq) => ps.reduce((a, b) => ((izq ? b[0] < a[0] : b[0] > a[0]) ? b : a));
+    const cuerpo = mm => { const pt = punta(mm.globo, izqDe(mm)); return caja2(mm.globo.filter(p => p !== pt)); };
+    [A, B, C].forEach(mm => {
+      const izq = izqDe(mm), pt = punta(mm.globo, izq), Cu = cuerpo(mm), av = mm.avatar.tinta;
+      const cola = izq ? pt[0] < Cu.x0 && pt[0] >= av.x1 + 0.5 && pt[0] <= av.x1 + 6 : pt[0] > Cu.x1 && pt[0] <= av.x0 - 0.5 && pt[0] >= av.x0 - 6;
+      r.push([mm.pedazos.every(p => dentro(p.tinta, Cu, 0)) && cola && pt[1] > av.y0 && pt[1] < av.y1,
+        `paso ${n}: «${lee(mm)}» va dentro de su globo, con la cola hacia quien lo escribió`, [pt, av, Cu]]);
+    });
+    r.push([cy(cuerpo(A)) < cy(cuerpo(B)) && cy(cuerpo(B)) < cy(cuerpo(C)) && !monta(cuerpo(A), cuerpo(B)) && !monta(cuerpo(B), cuerpo(C)),
+      `paso ${n}: los tres mensajes van uno debajo del otro, en el orden en que se escribieron`, null]);
+
+    /* ── «banco», subrayada ── */
+    const bancos = A.pedazos.filter(p => plano(p.txt) === 'banco'), banco = bancos[0];
+    r.push([bancos.length === 1, `paso ${n}: en el mensaje, «banco» va sola en su pedazo`, A.pedazos.map(p => p.txt)]);
+    if (!banco) return r;
+    const SB = x.subraya;
+    r.push([SB.ve === E.tags, `paso ${n}: ${E.tags ? '«banco» va subrayada' : 'todavía no se subraya nada'}`, SB.ve]);
+    if (SB.ve) {
+      const [a, b] = SB.puntos, Cu = cuerpo(A);
+      r.push([SB.puntos.length === 2 && !SB.raya && cerca(a[1], b[1], 0.05) && cerca(Math.min(a[0], b[0]), banco.lugar.x0, 0.6) && cerca(Math.max(a[0], b[0]), banco.lugar.x1, 0.6)
+        && a[1] - SB.grueso / 2 >= banco.tinta.y1 + 0.4 && a[1] + SB.grueso / 2 <= Cu.y1 - 0.8,
+        `paso ${n}: la raya va entera debajo de «banco», de punta a punta, debajo de sus letras y dentro del globo`, SB.puntos]);
+    }
+
+    /* ── los dos lugares ── */
+    const LU = k => x.lugares.find(l => l.k === k);
+    const PZ = LU('plaza'), PQ = LU('parque');
+    r.push([!!PZ && !!PQ && x.lugares.length === 2, `paso ${n}: el pueblo tiene dos lugares`, x.lugares.map(l => l.k)]);
+    if (!PZ || !PQ) return r;
+    r.push([PZ.dibujo.emoji === '🏦' && plano(PZ.nombre.txt) === 'la plaza' && PQ.dibujo.tablas >= 5 && !!PQ.arbol && PQ.arbol.txt === '🌳' && plano(PQ.nombre.txt) === 'el parque',
+      `paso ${n}: el banco en la plaza, y la banca (dibujada) en el parque, con su árbol`, [PZ.dibujo.emoji, PZ.nombre.txt, PQ.dibujo.tablas, PQ.nombre.txt]]);
+    r.push([cx(PZ.dibujo.caja) < cx(PQ.dibujo.caja) && Math.abs(cy(PZ.dibujo.caja) - cy(PQ.dibujo.caja)) < 15 && !monta(PQ.arbol.tinta, PQ.dibujo.caja) && PQ.arbol.tinta.x0 > PQ.dibujo.caja.x1,
+      `paso ${n}: la plaza a la izquierda y el parque a la derecha, a la misma altura, con el árbol al lado de la banca`, null]);
+    [PZ, PQ].forEach(l => r.push([cerca(cx(l.nombre.tinta), cx(l.dibujo.caja), 2) && l.nombre.tinta.y0 > l.dibujo.caja.y1 - 0.5 && l.nombre.tinta.y0 - l.dibujo.caja.y1 < 12,
+      `paso ${n}: «${l.nombre.txt}» va debajo de su dibujo`, [l.nombre.tinta, l.dibujo.caja]]));
+    /* De qué lugar habla un texto: el que nombra la última palabra de su rótulo. */
+    const lugarDe = t => [PZ, PQ].find(l => palabras(t).includes(palabras(l.nombre.txt).slice(-1)[0]));
+    const SUYO = { marlon: lugarDe(H.va), otro: lugarDe(H.espera) }, RESP = lugarDe(dichoC);
+    r.push([!!SUYO.marlon && !!SUYO.otro && SUYO.marlon !== SUYO.otro && RESP === SUYO.otro,
+      `paso ${n}: según la historia, cada uno fue a un lugar distinto, y la respuesta nombra el del otro`, [SUYO.marlon && SUYO.marlon.k, SUYO.otro && SUYO.otro.k, RESP && RESP.k]]);
+    if (!SUYO.marlon || !SUYO.otro || !RESP) return r;
+    const OTRO_L = l => (l === PZ ? PQ : PZ);
+
+    /* ── el reloj, leído por sus agujas ── */
+    const RJ = x.reloj, hor = RJ.agujas.find(g => g.k === 'hora'), mn = RJ.agujas.find(g => g.k === 'minuto');
+    r.push([!!hor && !!mn && RJ.agujas.length === 2 && hor.largo < mn.largo && mn.largo < RJ.r, `paso ${n}: el reloj tiene su aguja corta y su aguja larga, dentro de la cara`, [hor && hor.largo, mn && mn.largo, RJ.r]]);
+    if (!hor || !mn) return r;
+    r.push([[hor, mn].every(g => cerca(g.centro[0], RJ.cx[0], 0.3) && cerca(g.centro[1], RJ.cx[1], 0.3)), `paso ${n}: las agujas salen del centro del reloj`, null]);
+    const hLeida = Math.round(hor.giro / 30) % 12 || 12, mLeido = Math.round(mn.giro / 6) % 60;
+    r.push([Math.abs(hor.giro - Math.round(hor.giro / 30) * 30) < 0.5 && mLeido === 0, `paso ${n}: el reloj marca una hora en punto`, [hor.giro, mn.giro]]);
+    const hToca = E.hora === 'cita' ? H.cita : H.fueron;
+    r.push([hLeida === hToca, `paso ${n}: el reloj marca las ${NUMTXT[hToca]}`, hLeida]);
+    const hv = RJ.horas.filter(h => h.ve);
+    r.push([hv.length === 1 && nb(hv[0].txt) === hLeida + ':00' && cerca(cx(hv[0].tinta), RJ.cx[0], 1.5) && hv[0].tinta.y0 > RJ.cara.y1 && hv[0].tinta.y0 - RJ.cara.y1 < 10,
+      `paso ${n}: debajo del reloj dice la hora que marcan las agujas`, hv.map(h => h.txt)]);
+
+    /* ── las dos «banco» ── */
+    const TG = k => x.etiquetas.find(t => t.k === k);
+    const TZ = TG('plaza'), TQ = TG('parque');
+    r.push([!!TZ && !!TQ && x.etiquetas.length === 2, `paso ${n}: hay dos «banco», una por lugar`, x.etiquetas.map(t => t.k)]);
+    if (!TZ || !TQ) return r;
+    const TDE = l => (l === PZ ? TZ : TQ);
+    r.push([[TZ, TQ].every(t => t.ve === E.tags), `paso ${n}: ${E.tags ? 'se ven las dos «banco»' : 'todavía no salió ninguna «banco»'}`, [TZ.ve, TQ.ve]]);
+    r.push([[TZ, TQ].every(t => t.texto.txt === banco.txt && dentro(t.texto.tinta, t.caja, 0)) && cerca(TZ.caja.x1 - TZ.caja.x0, TQ.caja.x1 - TQ.caja.x0, 0.2) && cerca(TZ.caja.y1 - TZ.caja.y0, TQ.caja.y1 - TQ.caja.y0, 0.2),
+      `paso ${n}: las dos dicen la misma palabra del mensaje y son iguales`, [TZ.texto.txt, TQ.texto.txt]]);
+    if (E.tags) {
+      [PZ, PQ].forEach(l => {
+        const t = TDE(l);
+        r.push([cerca(cx(t.caja), cx(l.dibujo.caja), 2.5) && t.caja.y1 < l.dibujo.caja.y0 + 0.5 && l.dibujo.caja.y0 - t.caja.y1 < 14,
+          `paso ${n}: una «banco» se posa encima de ${l === PZ ? 'el banco de la plaza' : 'la banca del parque'}`, [t.caja, l.dibujo.caja]]);
+      });
+    } else {
+      /* Escondidas, esperan encima de la palabra del mensaje: de ahí salen. */
+      [TZ, TQ].forEach(t => r.push([cerca(cx(t.caja), (banco.lugar.x0 + banco.lugar.x1) / 2, 1) && cerca(cy(t.caja), cy(banco.tinta), 3),
+        `paso ${n}: la «banco» de ${t.k} espera escondida sobre la palabra del mensaje, de donde va a salir`, [cx(t.caja), cy(t.caja)]]));
+    }
+    /* Mientras la frase dice dos cosas, las dos van de raya cortada. Con la
+       respuesta, la del lugar nombrado queda entera y la otra, tenue y
+       cortada: no se borra, pero ya no es. */
+    const abierta = t => t.cortada.ve && !!t.cortada.raya && !t.entera.ve;
+    const cerrada = t => t.entera.ve && !t.entera.raya && !t.cortada.ve;
+    const tenue = t => t.tenue.relleno <= 0.6 && t.tenue.borde <= 0.6 && t.tenue.letra <= 0.6;
+    const firme = t => t.tenue.relleno >= 0.99 && t.tenue.borde >= 0.99 && t.tenue.letra >= 0.99;
+    if (E.tags) {
+      if (!E.queda) r.push([[TZ, TQ].every(t => abierta(t) && firme(t)), `paso ${n}: las dos «banco» van de raya cortada: todavía no se sabe cuál es`, [TZ, TQ].map(t => [t.cortada.ve, t.entera.ve, t.tenue.relleno])]);
+      else {
+        const tR = TDE(RESP), tO = TDE(OTRO_L(RESP));
+        r.push([cerrada(tR) && firme(tR), `paso ${n}: la «banco» del lugar que nombra la respuesta queda entera`, [tR.cortada.ve, tR.entera.ve, tR.tenue]]);
+        r.push([abierta(tO) && tenue(tO) && tO.ve, `paso ${n}: la otra se queda, pero tenue y de raya cortada`, [tO.cortada.ve, tO.entera.ve, tO.tenue]]);
+      }
+    }
+
+    /* ── las dos personas ── */
+    const enCasa = p => cerca(p.corrido[0], 0, 0.3) && cerca(p.corrido[1], 0, 0.3);
+    const abajo = Math.max(PZ.nombre.tinta.y1, PQ.nombre.tinta.y1);
+    const junto = (p, l) => {
+      const f = p.cara.tinta, d = l.dibujo.caja, o = OTRO_L(l).dibujo.caja;
+      return Math.hypot(cx(f) - cx(d), cy(f) - cy(d)) < Math.hypot(cx(f) - cx(o), cy(f) - cy(o)) && cy(f) > d.y0 && cy(f) < d.y1 && !monta(f, d);
+    };
+    const pegado = (p, l) => { const f = p.cara.tinta, d = l.dibujo.caja; return l === PZ ? f.x0 - d.x1 >= 2 && f.x0 - d.x1 <= 25 : d.x0 - f.x1 >= 2 && d.x0 - f.x1 <= 25; };
+    [MA, OT].forEach(p => {
+      const toca = E[p.k];
+      if (toca === 'casa') {
+        r.push([enCasa(p) && p.cara.tinta.y0 > abajo, `paso ${n}: ${p.nombre.txt} está en su casa, abajo del pueblo`, [p.corrido, p.cara.tinta.y0, abajo]]);
+      } else if (toca === 'suyo') {
+        const l = SUYO[p.k];
+        r.push([junto(p, l) && pegado(p, l), `paso ${n}: ${p.nombre.txt} está junto a ${l === PZ ? 'el banco de la plaza' : 'la banca del parque'}, como en la historia`, [p.cara.tinta, l.dibujo.caja]]);
+      } else {
+        r.push([junto(p, RESP) && !enCasa(p), `paso ${n}: ${p.nombre.txt} está en el lugar que nombra la respuesta`, [p.cara.tinta, RESP.dibujo.caja]]);
+      }
+    });
+    if (E.marlon === 'respuesta') {
+      /* Los dos juntos: uno pegado al lugar y el otro a su lado, sin que sus
+         nombres se lean como uno solo («Marlon el otro»). */
+      const [p1, p2] = [MA, OT].slice().sort((a, b) => Math.abs(cx(a.cara.tinta) - cx(RESP.dibujo.caja)) - Math.abs(cx(b.cara.tinta) - cx(RESP.dibujo.caja)));
+      const f1 = p1.cara.tinta, f2 = p2.cara.tinta, n1 = p1.nombre.tinta, n2 = p2.nombre.tinta;
+      const separa = Math.max(n1.x0, n2.x0) - Math.min(n1.x1, n2.x1);
+      r.push([pegado(p1, RESP) && Math.max(f1.x0, f2.x0) - Math.min(f1.x1, f2.x1) >= 2 && Math.max(f1.x0, f2.x0) - Math.min(f1.x1, f2.x1) <= 30 && cerca(cy(f1), cy(f2), 1) && separa >= 6,
+        `paso ${n}: se encuentran: uno junto al lugar y el otro a su lado, con sus nombres bien separados`, [f1, f2, separa]]);
+    }
+    /* Lo que piensa cada uno: el dibujo de un lugar, en una nube encima de su cabeza. */
+    [MA, OT].forEach(p => {
+      r.push([p.nube.ve === E.nubes, `paso ${n}: ${E.nubes ? `se ve lo que piensa ${p.nombre.txt}` : `${p.nombre.txt} no está pensando en ningún lugar`}`, p.nube.ve]);
+      if (!p.nube.ve) return;
+      const f = p.cara.tinta, nu = p.nube;
+      r.push([cerca(cx(nu.caja), cx(f), 1.5) && nu.caja.y1 < f.y0 + 0.5 && f.y0 - nu.caja.y1 < 10 && dentro(nu.dibujo.caja, nu.caja, 0.5),
+        `paso ${n}: lo que piensa ${p.nombre.txt} va en su nube, encima de su cabeza`, [nu.caja, f]]);
+      const piensa = [PZ, PQ].find(l => (l.dibujo.emoji ? l.dibujo.emoji === nu.dibujo.emoji : !nu.dibujo.emoji && l.dibujo.tablas === nu.dibujo.tablas));
+      r.push([piensa === SUYO[p.k], `paso ${n}: ${p.nombre.txt} piensa en el lugar de la historia`, piensa && piensa.k]);
+    });
+
+    /* ── el camino: primero a lo ancho y después hacia arriba (o al revés al
+          volver), y por ahí no hay nada. Se barre la cara, el nombre y lo
+          que piensa, desde su casa. ── */
+    const obst = [['el banco', PZ.dibujo.caja], ['la plaza', PZ.nombre.tinta], ['la banca', PQ.dibujo.caja], ['el árbol', PQ.arbol.tinta], ['el parque', PQ.nombre.tinta], ['el reloj', RJ.cara]]
+      .concat(RJ.horas.filter(h => h.ve).map(h => ['la hora', h.tinta]))
+      .concat([TZ, TQ].filter(t => t.ve).map(t => ['«banco» de ' + t.k, t.caja]));
+    const barre = p => {
+      const [dx, dy] = p.corrido, out = [];
+      [p.cara.tinta, p.nombre.tinta].concat(p.nube.ve ? [p.nube.caja] : []).map(c => mueve(c, -dx, -dy)).forEach(c => {
+        out.push({ x0: Math.min(c.x0, c.x0 + dx), x1: Math.max(c.x1, c.x1 + dx), y0: c.y0, y1: c.y1 });
+        out.push({ x0: c.x0 + dx, x1: c.x1 + dx, y0: Math.min(c.y0, c.y0 + dy), y1: Math.max(c.y1, c.y1 + dy) });
+      });
+      return out;
+    };
+    if (n === 2 || n === 5) {
+      [MA, OT].forEach(p => {
+        const b = barre(p), choca = obst.filter(([, o]) => b.some(c => monta(c, o))).map(([q]) => q);
+        r.push([!choca.length, `paso ${n}: en el camino de ${p.nombre.txt} no hay nada encima`, choca]);
+        const ancho = Math.abs(p.corrido[0]) > 0.3;
+        r.push([p.viaje > 0 && (ancho ? cerca(p.dAlto, p.dAncho + p.viaje, 1) : cerca(p.dAlto, p.dAncho, 1)),
+          `paso ${n}: ${p.nombre.txt} va ${ancho ? 'primero a lo ancho y después hacia arriba' : 'derecho hacia arriba'}, sin pausas`, [p.dAncho, p.dAlto, p.viaje]]);
+      });
+      r.push([!barre(MA).some(c => barre(OT).some(o => monta(c, o))), `paso ${n}: los caminos de los dos no se cruzan`, null]);
+    }
+    if (n === 3) r.push([[MA, OT].every(p => p.dAncho >= p.dAlto - 1), 'paso 3: de vuelta, cada uno baja primero y después va a lo ancho: el mismo camino al revés', [MA.dAlto, MA.dAncho, OT.dAlto, OT.dAncho]]);
+
+    /* ── el cuaderno del final ── */
+    const Q = x.cuaderno;
+    r.push([Q.ve === E.cuaderno, `paso ${n}: ${E.cuaderno ? 'sale el cuaderno' : 'todavía no sale el cuaderno'}`, Q.ve]);
+    if (E.cuaderno) {
+      const tx = s => Q.textos.find(q => plano(q.txt) === plano(s));
+      const a = tx('Una frase que dice ' + H.dos + ':'), b = tx('La pregunta que la arregla:');
+      const ry = Q.rayas.map(ps => ({ x0: Math.min(ps[0][0], ps[1][0]), x1: Math.max(ps[0][0], ps[1][0]), y: ps[0][1] }));
+      r.push([!!a && !!b && ry.length === 2 && [a, b].every(tt => ry.some(l => l.x0 > tt.tinta.x1 && l.x0 < tt.tinta.x1 + 12 && Math.abs(l.y - tt.tinta.y1) <= 3 && l.x1 <= Q.caja.x1))
+        && [a, b].every(tt => dentro(tt.tinta, Q.caja, 0)) && b.tinta.y0 > a.tinta.y1,
+        `paso ${n}: el cuaderno trae la frase que dice ${H.dos} y la pregunta que la arregla, cada una con su raya para escribir`, Q.textos.map(q => q.txt)]);
+    }
+
+    /* ── cada cosa cuando le toca ── */
+    if (n === 1) r.push([[TZ, TQ].every(t => t.dVe >= SB.d + 200 && t.d >= t.dVe + APAGA - 1),
+      'paso 1: primero se subraya la palabra; de ella salen las dos «banco», y cuando ya se ven, vuelan a su lugar', [SB.d, TZ.dVe, TZ.d, TQ.dVe, TQ.d]]);
+    if (n === 2) {
+      const sale = p => Math.min(p.dAncho, p.dAlto), llega = Math.max(...[MA, OT].map(p => p.dAlto + p.viaje));
+      r.push([[MA, OT].every(p => sale(p) >= p.nube.d + APAGA - 1), 'paso 2: cada uno piensa primero, y después camina', [MA.nube.d, sale(MA), OT.nube.d, sale(OT)]]);
+      r.push([hor.d >= llega - 1 && cerca(hor.d, mn.d, 1), 'paso 2: el reloj corre cuando los dos ya llegaron', [hor.d, llega]]);
+      const h3 = RJ.horas.find(h => nb(h.txt) === H.cita + ':00'), h4 = RJ.horas.find(h => nb(h.txt) === H.fueron + ':00');
+      r.push([!!h3 && !!h4 && hor.dura > 0 && h3.d >= hor.d + hor.dura - 1 && h4.d >= h3.d + APAGA - 1, 'paso 2: la hora de abajo cambia cuando las agujas ya dieron la vuelta', [hor.d, hor.dura, h3 && h3.d, h4 && h4.d]]);
+    }
+    if (n === 4) {
+      const tR = TDE(RESP), tO = TDE(OTRO_L(RESP));
+      r.push([B.d < C.d && C.d >= B.d + APAGA - 1 && [tR.entera.d, tR.cortada.d, tO.tenue.d].every(d => d >= C.d + APAGA - 1),
+        'paso 4: primero la pregunta, después la respuesta, y cuando ya se leyó, «banco» se queda en un solo lugar', [B.d, C.d, tR.entera.d, tO.tenue.d]]);
+    }
+    if (n === 5) {
+      const llega = Math.max(...[MA, OT].map(p => p.dAlto + p.viaje));
+      r.push([Q.d >= llega - 1, 'paso 5: el cuaderno sale cuando los dos ya se encontraron', [Q.d, llega]]);
+    }
+
+    /* ── el marcador cuenta lo que se ve ── */
+    const CIFRA = [palabras(dichoA).length, [TZ, TQ].filter(t => t.ve).length, [MA, OT].filter(p => !enCasa(p)).length, hLeida - H.cita, palabras(dichoB).length, Q.rayas.length][n];
+    r.push([e.cifra === String(CIFRA), `paso ${n}: el marcador dice «${CIFRA}», contado en el dibujo`, e.cifra]);
+    if (n === 3) r.push([CIFRA === H.fueron - H.cita, 'paso 3: la hora que esperaron es la de la historia: de la cita a cuando se fueron', CIFRA]);
+    if (n === 4) r.push([CIFRA === H.cuantas, `paso 4: la pregunta tiene las palabras que cuenta la historia (${H.cuantas})`, CIFRA]);
+    const PAL = ['palabras tiene el mensaje', 'lugares para «banco»', 'personas, cada una en su lugar', 'hora esperó cada uno', 'palabras tiene la pregunta', 'renglones en tu cuaderno'];
+    r.push([nb(e.palabras) === PAL[n], `paso ${n}: el marcador dice «${PAL[n]}»`, e.palabras]);
+
+    /* ── la frase dice lo que se ve ── */
+    const fr = plano(e.texto);
+    const pide = [
+      [plano(H.mensaje), 'adónde tiene que ir'],
+      ['bien escrita', 'dos lugares', plano(H.va), plano(H.espera)],
+      [plano(H.quien + ' pensó en el ' + H.va), 'el otro en la ' + palabras(H.espera)[0], 'sin darse cuenta'],
+      ['a las ' + NUMTXT[H.fueron], 'sin verse', 'una hora', plano(H.tramite)],
+      [NUMTXT[H.cuantas] + ' palabras', plano(H.pregunta), 'un solo lugar'],
+      ['a las ' + NUMTXT[H.cita], plano(H.nadie), plano(H.dos), 'escribí']
+    ][n];
+    r.push([pide.every(p => fr.includes(p)), `paso ${n}: la frase dice lo que pasa en este paso`, pide.filter(p => !fr.includes(p))]);
+
+    /* ── que nada se monte ni se salga ── */
+    const VB = { x0: 0, y0: 0, x1: x.vista[0], y1: x.vista[1] };
+    const fueraV = x.tintas.filter(tt => !dentro(tt.caja, VB)).map(tt => tt.txt);
+    r.push([!fueraV.length, `paso ${n}: todo queda dentro del dibujo`, fueraV]);
+    const mont = [];
+    x.tintas.forEach((tt, i) => x.tintas.forEach((u, j) => { if (j > i && monta(tt.tinta, u.tinta)) mont.push(tt.txt + ' / ' + u.txt); }));
+    r.push([!mont.length, `paso ${n}: ningún texto se monta en otro`, mont]);
+    const cuerpos = [A, B, C].filter(mm => mm.ve).map(cuerpo);
+    const pisa = x.tintas.filter(tt => !cuerpos.some(c => dentro(tt.tinta, c, 0.5)) && cuerpos.some(c => monta(tt.tinta, c))).map(tt => tt.txt);
+    r.push([!pisa.length, `paso ${n}: ningún rótulo se monta en un globo`, pisa]);
+    /* Las personas (cara, nombre y lo que piensan) no tapan nada del pueblo,
+       ni el chat, ni el cuaderno, ni a la otra persona. */
+    const cosas = obst.concat(cuerpos.map((c, i) => ['un globo', c])).concat(Q.ve ? [['el cuaderno', Q.caja]] : []);
+    const gente = [MA, OT].map(p => [[p.nombre.txt, p.cara.tinta], ['el nombre de ' + p.nombre.txt, p.nombre.tinta]].concat(p.nube.ve ? [['lo que piensa ' + p.nombre.txt, p.nube.caja]] : []));
+    const choques = [];
+    gente.flat().forEach(([a, ca]) => cosas.forEach(([b, cb]) => { if (monta(ca, cb)) choques.push(a + ' / ' + b); }));
+    gente[0].forEach(([a, ca]) => gente[1].forEach(([b, cb]) => { if (monta(ca, cb)) choques.push(a + ' / ' + b); }));
+    [TZ, TQ].filter(t => t.ve).forEach(t => [['el banco', PZ.dibujo.caja], ['la banca', PQ.dibujo.caja], ['el reloj', RJ.cara], ['el árbol', PQ.arbol.tinta]].concat(cuerpos.map(c => ['un globo', c]))
+      .forEach(([b, cb]) => { if (monta(t.caja, cb)) choques.push('«banco» de ' + t.k + ' / ' + b); }));
+    r.push([!choques.length, `paso ${n}: nadie ni nada tapa otra cosa del dibujo`, choques]);
     return r;
   },
   amAnio4(e, n) { return verAnio(e, n, '4º'); },

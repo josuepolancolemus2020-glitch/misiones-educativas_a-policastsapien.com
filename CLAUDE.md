@@ -4309,7 +4309,7 @@ antes de que se mire la cosa y la palabra que no se puede comprobar.
 **El arranque le pasa a alguien y le cuesta algo:** a Marlon le llegó «Te espero
 en el banco a las tres». Él fue al banco de la plaza; el otro lo esperaba en la
 banca del parque. Los dos se fueron a las cuatro sin verse y **el trámite se
-pasó para otro día**. Nadie escribió mal: faltaba una pregunta de cuatro
+pasó para otro día**. Nadie escribió mal: faltaba una pregunta de cinco
 palabras, «¿en cuál de los dos?». Y termina en algo que el alumno PRODUCE:
 anotar una frase que oiga hoy en su casa y decir qué hace.
 
@@ -14776,6 +14776,135 @@ Salió roja con cada una.
 Con la CPU frenada seis veces va a 60 cuadros por segundo, y el peor cuadro es de 67 ms.
 ¿De qué está hecho el mundo?, medida el mismo día, va a 59 y 100 ms.
 
+### La octogésima: Palabras que piensan, y lo que enseñó
+
+La quinta y última de la Ruta de la Raíz es **Palabras que piensan**
+(`misiones/basica-palabras-que-piensan/`, `js/animacion-banco.js`). La historia es la de Marlon:
+le llegó «Te espero en el banco a las tres». Él fue al banco de la plaza, a hacer el trámite; el
+otro lo esperaba en la banca del parque. Los dos se fueron a las cuatro sin verse y el trámite se
+pasó para otro día. Nadie escribió mal: la frase decía dos cosas, y faltaba una pregunta. La
+animación pone arriba el chat y abajo el pueblo, con el banco de la plaza a la izquierda, la
+banca del parque a la derecha y un reloj en medio:
+
+- antes de tocar, el mensaje: ¿adónde tiene que ir?;
+- «banco» se subraya, y de ella salen dos etiquetas iguales que se posan una en cada lugar, de
+  raya cortada: la frase está bien escrita y la palabra sirve para los dos;
+- cada uno piensa en un lugar (en una nube, encima de la cabeza) y sube derecho a él. Cuando los
+  dos ya llegaron, el reloj da la vuelta de las tres a las cuatro;
+- se van a su casa sin verse: una hora cada uno, y el trámite para otro día;
+- la misma tarde otra vez: Marlon pregunta «¿En cuál de los dos?», el otro contesta «En la banca
+  del parque.», y la etiqueta de ese lugar queda entera; la otra se queda, tenue y de raya
+  cortada;
+- se encuentran a las tres junto a la banca, y la pregunta es del alumno: en su cuaderno, una
+  frase que dice dos cosas y la pregunta que la arregla.
+
+Siete cosas que valen para las que siguen:
+
+1. ⚠️ **La historia contaba mal sus propias palabras, y se cambió el cuento.** Decía «faltaba una
+   pregunta de cuatro palabras», y «¿en cuál de los dos?» son cinco: en, cuál, de, los, dos. Se
+   leía bien y nadie lo había contado. Se cambió en la pantalla, en la ficha (en su armador,
+   `_dev/arma-ficha-lenguaje.js`) y en esta normativa. Y la sonda lo cuenta: saca de la historia el
+   número que dice y lo compara con las palabras de la pregunta y con el marcador.
+2. ⚠️ **La palabra se posa en los dos lugares, y nadie la tacha.** Las dos etiquetas salen de la
+   misma palabra del mensaje (esperan escondidas encima de ella) y son iguales. Mientras la frase
+   dice dos cosas, las dos van de raya cortada; con la respuesta, la del lugar nombrado queda
+   entera y la otra se queda tenue, sin borrarse: el banco de la plaza sigue siendo un banco. Ni
+   un ✓ ni una ✗, porque nadie escribió mal.
+3. ⚠️ **Lo que alguien piensa viaja con él, y su camino se barre entero.** La primera versión
+   ponía las casas en las esquinas de abajo, y al caminar a lo ancho la nube de cada uno pasaba
+   por encima de «la plaza» y de «el parque». Al final de cada paso todo estaba en su sitio; se
+   vio al escribir la comprobación que barre el camino (la cara, el nombre y la nube, desde la
+   casa, primero a lo ancho y después hacia arriba). Ahora cada casa queda debajo del lugar al que
+   va ese día y sube derecho; y si no hay tramo a lo ancho no se espera nada: un tramo quieto
+   sería una pausa sin motivo.
+4. ⚠️ **Dos nombres uno al lado del otro se leen como uno.** Junto a la banca, «Marlon» y «el otro»
+   quedaban a un espacio y se leía «Marlon el otro». Se vio en la captura. Marlon se para más
+   lejos, y la sonda pide entre los dos nombres un hueco de seis puntos o más.
+5. **El reloj se lee por sus agujas.** La sonda saca la hora del ángulo de la aguja corta y la
+   compara con lo que dice debajo y con las horas de la historia, «a las tres» del mensaje y «a las
+   cuatro» de cuando se fueron. Las agujas corren cuando los dos ya llegaron, y la hora de abajo
+   cambia cuando terminaron su vuelta.
+6. ⚠️ **La historia contestaba dos verdaderos o falsos, un caso, un efecto y una actividad.**
+   «“Te espero en el banco” está mal escrita» y «Marlon y el otro se fueron a las cuatro sin
+   haberse visto» eran la historia; el caso de pensamiento crítico la contaba palabra por palabra;
+   el efecto de las dos personas que quedan en verse «pronto» y una espera una hora era la historia
+   con otra ropa; y la secuencia de ordenar del Laboratorio era el mismo recado. Ahora preguntan si
+   «Pasame el lápiz» pide una acción y no un dato, y si definir es adornar una palabra con otras
+   más bonitas (es falso: es decir qué entra y qué no); el caso es el de doña Marta, a quien le
+   avisaron de la reunión «el jueves a las siete» y llegó de noche, cuando había sido en la mañana;
+   el efecto, dos libros que le ponen nombres distintos al mismo hecho; y la secuencia, el recado
+   «Traeme la lima», que puede ser la fruta o la de afilar el machete. El primer repuesto («a
+   Español, la filosofía le dio la pregunta por lo que hace la frase») repetía el pareado
+   «Filosofía del lenguaje · Mira qué hacen las palabras con las ideas», y la sonda de pistas lo
+   cazó.
+7. ⚠️ **Y salió una avería que llevaba publicada.** La toma de decisiones de pensamiento crítico
+   imprimía «[object Object]» en la pantalla y en el papel: su banco era un objeto y el código
+   pinta el texto entero. Las otras cuatro unidades lo tienen de cadenas, y volvió a serlo. De
+   paso, los títulos y las preguntas de esa prueba venían calcados de la unidad 4: «un dato de
+   todos los días», «preguntar de dónde salió» y «¿es un saber, una creencia o una opinión?».
+   Ahora son «una frase de todos los días», «leer lo que la frase busca» y «¿qué HACE cada frase:
+   afirma, pregunta, pide o exclama?».
+
+La sonda de esta escena **no le cree nada a la escena**. De la historia saca a quién le llegó el
+mensaje, qué decía, adónde fue cada uno, a qué hora se fueron, qué se perdió, que nadie escribió
+mal, que la frase decía dos cosas, la pregunta que faltó y cuántas palabras dice que tiene.
+Comprueba:
+
+- que cada mensaje se lea pedazo por pedazo, por su lugar, con un espacio entre palabras: el
+  mensaje es el de la historia, la pregunta es la de la historia de punta a punta y la respuesta
+  nombra el lugar donde esperaba el otro;
+- que el mensaje y la respuesta sean del otro y la pregunta de Marlon, cada uno con su cara y su
+  nombre, con la cola del globo hacia quien lo escribió, y los tres uno debajo del otro;
+- que «banco» vaya en su pedazo, subrayada con raya entera de punta a punta, debajo de sus letras
+  y dentro del globo;
+- que el banco esté en la plaza y la banca, dibujada, en el parque, con su árbol, cada lugar con su
+  nombre debajo;
+- que el reloj tenga su aguja corta y su aguja larga saliendo del centro, marque una hora en punto
+  y sea la de la historia en cada paso, con la misma hora escrita debajo;
+- que las dos etiquetas digan la palabra del mensaje y sean iguales; que antes de salir esperen
+  escondidas encima de la palabra, y después vayan encima de su lugar; que vayan de raya cortada
+  hasta la respuesta, y después la del lugar nombrado entera y la otra tenue y cortada;
+- que cada uno esté en su casa, abajo del pueblo, o junto al lugar de la historia, o los dos en el
+  lugar que nombra la respuesta, uno junto a la banca y el otro a su lado, con los nombres
+  separados;
+- que lo que piensa cada uno vaya en su nube, encima de su cabeza, y sea el dibujo del lugar al que
+  fue según la historia;
+- que en el camino de cada uno no haya nada encima, que vaya a lo ancho antes que hacia arriba sin
+  pausas, y que los dos caminos no se crucen;
+- que el cuaderno traiga la frase que dice dos cosas y la pregunta que la arregla, cada una con su
+  raya, sin tapar a nadie;
+- que cada cosa pase cuando le toca: el subrayado, las etiquetas que salen y después vuelan;
+  primero piensan y después caminan; el reloj cuando ya llegaron; la pregunta, la respuesta y
+  después la etiqueta que queda; el cuaderno cuando ya se encontraron;
+- que el marcador cuente lo que se ve: las palabras del mensaje, las etiquetas, los que están en
+  un lugar, la hora que esperaron, las palabras de la pregunta y los renglones;
+- y que no salga lo que hace una frase, ni cómo se llama una frase así, ni un pareado, ni otro
+  ejemplo ni otra respuesta de la prueba, ni un número que no sea la hora del reloj.
+
+Se comprobó al revés con treinta y nueve averías, plantadas una por una:
+
+- el mensaje con otra hora, la pregunta con cuatro palabras, un espacio de más entre pedazos y la
+  respuesta nombrando la plaza;
+- la cola del globo de Marlon hacia el otro lado y la pregunta escrita por el otro;
+- el subrayado corto, pisando las letras y de raya cortada;
+- una etiqueta sobre el árbol, las dos sin salir de la palabra, volando antes de verse y saliendo
+  antes del subrayado;
+- la de la plaza sin ponerse tenue, la del parque sin quedar entera, la que queda en el lugar
+  equivocado, quedándose antes de la respuesta y la respuesta antes que la pregunta;
+- Marlon yendo a la banca y el otro pensando en el banco;
+- el reloj marcando las cinco, la aguja larga sin dar la vuelta, corriendo antes de que lleguen, la
+  hora de abajo cambiando antes de la vuelta y el «4:00» saliendo antes de irse el «3:00»;
+- caminando antes de pensar, Marlon subiendo antes de ir a lo ancho, pegado al otro, quedándose en
+  su casa al final y con su casa debajo del banco;
+- el cuaderno antes de que lleguen, tapando a los dos y sin su segunda raya;
+- el marcador contando mal las palabras, «ambigua» en una frase y «cuatro palabras» en otra;
+- el nombre de la plaza lejos del banco, la nube lejos de la cabeza y el nombre encima de la cara.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es de 83 ms.
+¿Cómo sé que sé?, medida el mismo día, va a 60 y 67 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -15044,6 +15173,12 @@ Una marca que tendría que ir entre dos letras casi pegadas (un «?» pegado a s
 encierra en una caja: la raya no cabe y pisa la letra de al lado. Se subraya, debajo de lo que
 bajan las letras. Y un texto partido en pedazos con su ancho impuesto (`textLength`) se lee por el
 lugar de cada pedazo, no por la tinta del lienzo, que se redondea hacia afuera.
+
+Lo que una persona piensa (una nube encima de su cabeza) viaja con ella: su camino se barre entero
+(la cara, el nombre y la nube, desde donde sale), y por ahí no puede quedar ningún rótulo; la
+salida más simple es que salga justo debajo de adonde va. Dos nombres puestos uno al lado del otro
+se leen como uno si los separa poco más que un espacio: la sonda pide un hueco. Y un reloj se lee
+por el ángulo de sus agujas, no por la hora que dice debajo.
 
 Si la misma escena sirve para varias misiones (las cuatro Pruebas de Fin de
 Grado), vive en `js/escena-<tema>.js` y cada misión trae un archivo de dos líneas

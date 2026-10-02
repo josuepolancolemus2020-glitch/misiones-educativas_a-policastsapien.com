@@ -177,7 +177,7 @@ p.push('<h2>Le pasó a alguien</h2>');
    pregunta cuál de las dos fue. La ficha lleva lo mismo en papel. */
 p.push('<p>A Marlon le llegó un mensaje: «Te espero en el banco a las tres». Él fue al <b>banco de la\n       plaza</b>, a hacer el trámite. El otro lo esperaba en la <b>banca del parque</b>.</p>');
 p.push('<p>Los dos se fueron a las cuatro sin verse. <b>El trámite se pasó para otro día.</b></p>');
-p.push('<div class="caja regla"><b>Nadie escribió mal.</b> La frase estaba perfecta, y decía dos cosas.\n      Faltaba una pregunta de cuatro palabras: <b>¿en cuál de los dos?</b></div>');
+p.push('<div class="caja regla"><b>Nadie escribió mal.</b> La frase estaba perfecta, y decía dos cosas.\n      Faltaba una pregunta de cinco palabras: <b>¿en cuál de los dos?</b></div>');
 pags.push(p);
 
 // ── 2 ──
