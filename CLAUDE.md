@@ -15235,6 +15235,21 @@ pida nada fuera, que no reviente, y lo de su escena. Las dos se comprobaron
 al revés: con la tarjeta movida debajo del «Predice» sale roja la primera, y
 con las filas del millón apagadas, la segunda.
 
+### Lo que NO se hizo, y por qué
+
+- ⚠️ **La animación de las 8 misiones del maestro.** Las del alumno la llevan
+  todas: contadas el 2 de octubre de 2026, cuando se puso la última, son 83
+  páginas con `data-animacion`. Las del maestro no, y no es un olvido: lo
+  decidió el autor ese mismo día, con estas palabras: «Déjalas así, sin
+  animación las del maestro». Es el mismo motivo por el que no llevan la
+  tarjeta de la historia: su `<header>` ya es la situación, con su precio
+  dentro, y es lo primero que el maestro lee. Cuando se les escribió esa
+  tarjeta cayó a 764 px, debajo del pliegue, repitiendo lo que el
+  encabezado ya decía (está contado en la normativa del relato); una
+  animación puesta en ese mismo sitio empezaría a esa misma altura.
+  `verifica-animaciones` solo mira las misiones que la montan, así que
+  ninguna sonda pide ponérsela.
+
 ## Normativa: las Sugerencias de una misión salen del teléfono
 
 El botón **💬 Sugerencias** de cada misión lleva años ahí y durante todo
