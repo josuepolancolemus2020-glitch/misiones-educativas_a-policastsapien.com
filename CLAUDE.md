@@ -2538,6 +2538,13 @@ pensamiento crítico donde una alumna copia la séptima estrofa MAL, con el
 primer verso repetido. Ese error está escrito a propósito y es lo que se le
 pide detectar.
 
+Y desde el 2 de octubre de 2026 mira también las **cuatro animaciones** de la
+misión: que ninguna escriba letra a mano, que los años del campo `cuando` (la
+película de las estrofas) sigan escritos en la explicación o el dato de su
+estrofa, y que el mapa de los viajes de Colón diga lo mismo que la primera
+estrofa y no cruce tierra. Está contado en «Y la del Himno lleva tres más», en
+la normativa de las animaciones.
+
 ### Se escribe de un modo y se canta de otro
 
 Cantando se repite: «Tu bandera, **tu bandera** es un lampo de cielo». Esas
@@ -14905,6 +14912,117 @@ Salió roja con cada una.
 Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es de 83 ms.
 ¿Cómo sé que sé?, medida el mismo día, va a 60 y 67 ms.
 
+### Y la del Himno lleva tres más: las que explican lo que enseña
+
+Lo pidió el autor el 2 de octubre de 2026, con estas palabras: «animaciones bien
+profesionales que cautiven al niño de sexto grado respecto a los viajes de Colón,
+que se vea claramente esas explicaciones en mapa viajes de Colón y otras
+animaciones que representen la temática de la misión». Son tres, y van en la
+sección «Estrofas» (`s-estructura`), entre «El Himno de un vistazo» y «El Himno
+completo, parte por parte»:
+
+| tarjeta | qué enseña | de dónde sale lo que dice |
+|---|---|---|
+| 🛡️ El coro pinta el Escudo (`animacion-escudo.js`) | los cuatro últimos versos del coro, buscados con una lupa en el Escudo de verdad: el mar, el volcán y el sol | los versos y sus palabras difíciles, de `himno.js`; el Escudo es `img/honduras_img/simbolos/escudo.webp` |
+| 🎬 La película del Himno (`animacion-siglos.js`) | las siete estrofas como siete cuadros, y de cada uno un hilo al año que cuenta | el campo nuevo `cuando` de `himno.js` |
+| ⛵ La primera y la segunda estrofa, en el mapa (`animacion-viajes.js`) | los cuatro viajes de Colón cruzando el Atlántico; la cámara baja al Caribe para el cuarto, que llega a las Islas de la Bahía y a la costa de Honduras, y sobre la costa sube «un extraño pendón» | `js/data/viajes-colon.js` y `js/data/contornos-mundo.js` |
+
+**Ocho cosas, y ninguna es de adorno:**
+
+1. ⚠️ **Solo la primera tarjeta va tras la historia.** Es el gancho, y su regla no
+   cambia. Las de contenido van dentro de la sección que explican, y ahí sí citan
+   versos enteros: es la sección que enseña la letra, y la tarjeta de debajo la
+   trae completa. `verifica-animaciones` ahora admite varias tarjetas por página y
+   le pide la historia solo a la primera; a las demás, que vayan dentro de una
+   sección y que cada una tenga su escena.
+2. **El mapa lo pide el currículo con estas palabras**: «Investigan acerca de los
+   viajes de Cristóbal Colón y los representa en un mapa» (DCNB, II Ciclo,
+   Ciencias Sociales de Cuarto Grado; confirmado en el PDF,
+   `_dev/dcnb-pdf/dcneb-basica-ii-ciclo.pdf`, página 283 del archivo,
+   «Secretaría de Educación 289» en el pie impreso).
+3. ⚠️ **Los viajes viven en `js/data/viajes-colon.js`**, con lo que se afirma y lo
+   que no, escrito en su cabecera: los cuatro años, y adónde llegó cada uno con la
+   palabra más gruesa que es verdad («unas islas del Caribe», «la costa de
+   Sudamérica»). Ni el día exacto de un desembarco, ni que Honduras sea «el único
+   país donde pisó tierra firme» (el mismo mapa enseña que el tercer viaje tocó
+   Sudamérica cuatro años antes), ni la frase de las honduras, que es leyenda. Y el
+   archivo tiene que decir lo mismo que la explicación de la primera estrofa (a
+   Honduras, en 1502, en el cuarto viaje), o la escena no se monta.
+4. ⚠️ **De cerca se pinta OTRA costa.** A cinco aumentos, la del mapa del mundo deja
+   a Honduras hecha un polígono de cinco lados. La fina vive en `contornos-mundo.js`
+   (`detalle.centroamerica`), con su propio mar y un recorte, y se enciende cuando
+   la cámara YA bajó y se apaga antes de que suba: si se viera a medio viaje, se
+   vería la orilla de su recorte. Las rutas se adelgazan mientras la cámara baja,
+   con su misma demora.
+5. ⚠️ **La ruta del cuarto viaje cruzaba tres islas, y ninguna se veía.** Guanaja,
+   de cerca (el tramo de las islas a la costa pasaba por encima), y Lanzarote y
+   Martinica, de lejos, donde una isla mide un punto. Ahora llega a Guanaja por el
+   oriente, pasa entre Gran Canaria y Fuerteventura y deja Martinica al norte, y lo
+   comprueban dos: `verifica-himno`, sin navegador, contra la costa fina y todas
+   las islas, y la sonda de las animaciones, sobre lo que se pinta de cerca.
+6. ⚠️ **Los años de la película son el campo `cuando` de `himno.js`**, y cada uno
+   tiene que seguir escrito en la explicación o en el dato de su estrofa (lo mira
+   `verifica-himno`): la segunda cae con la primera (`comoLa`), la colonia va de la
+   llegada a la Independencia (`hasta`), Lempira es «hacia 1537» y su punto va
+   hueco, y la séptima no tiene año: promete. Lo que asombra se ve sin decirlo:
+   siete cuadros a la misma distancia, y sus hilos no; tres se amontonan al
+   principio y trescientos años caben en una sola estrofa.
+7. ⚠️ **El Escudo es la imagen real, entera**, y la sonda lee sus píxeles: lo que
+   encierra cada aro tiene que ser, en el Escudo de verdad, azul el mar, verde el
+   volcán y rojo el sol, y la lupa tiene que tener en su centro justo lo que
+   encierra el aro. Los colores no se dicen: el Himno no los dice.
+8. **Ninguna de las tres escribe letra a mano.** Las citas salen de `himno.js` por
+   estrofa, verso y palabra, y `verifica-himno` busca en las cadenas de cada
+   `animacion-*.js` de la misión cualquier tirada de cuatro palabras del Himno. Y
+   la sonda del navegador comprueba que cada cita sea una tirada de palabras
+   seguidas de su estrofa: por eso el rótulo del mapa dice «Atlante» y no «el
+   Atlante», que el verso no dice.
+
+⚠️ **Y salió una avería del aparato que no era de esta misión.** Una tarjeta que no
+está en la sección por la que se entra se mide al abrir la suya, y la sección
+entra con una animación que la encoge (`scale(0.98)`): las alturas salían un 2 %
+cortas y el botón que avanza se movía 2 px entre un paso y otro. El aparato
+divide ahora por esa escala. Y el `ResizeObserver` no volvía a avisar al acabar,
+porque una transformación no cambia el tamaño.
+
+**Lo que aprendió la sonda del navegador**, que vale para la siguiente:
+
+- recorre **todas** las tarjetas de una página, no la primera, y abre la sección
+  de cada una con el `go()` de la misión antes de mirar;
+- pide que el rótulo del botón que avanza quepa en un renglón **en todos los
+  pasos** (cazó «⛵ La primera y la segunda» partido en dos: ahora es «⛵ Las dos
+  primeras»);
+- lo que las tres miden en común (las coordenadas, las demoras, la tinta de una
+  letra) vive en `__amHerr`, y no copiado tres veces;
+- y se puede correr para una sola: `node _dev/verifica-animacion-mision.js himno`
+  o con el id de la escena. Sin argumentos, todas, que es como la corre
+  `npm run test:navegador`.
+
+⚠️ **Y `verifica-nombres-propios` daba once falsos positivos con el mapa**: el viaje
+que llega a Honduras se marca con una propiedad (`v.honduras`) y la costa fina se
+lee de `detalle.honduras`, y la sonda los tomaba por el país escrito en
+minúscula. Ahora tapa lo que va pegado a un nombre por un punto, sin espacio, que
+es código; se comprobó al revés con «llegó a honduras» escrito en una cadena, y
+sigue saliendo roja.
+
+⚠️ **Y lo que solo cazó la sonda:** el pájaro negro de la película terminaba en el
+filo de los montes, a tres décimas de unidad, y no detrás. Se vio al pedirle a la
+sonda que termine DENTRO de ellos.
+
+Se comprobaron al revés con cuarenta y cinco averías en el navegador, plantadas una por
+una (dieciocho en el mapa, quince en la película y doce en el Escudo), y con ocho
+en `verifica-himno` (un año que la explicación no dice, la segunda sin su
+`comoLa`, Lempira sin «hacia», la colonia hasta 1820, el cuarto viaje por
+Martinica, por Lanzarote y en otro año, y letra escrita en la animación). Salieron
+rojas con cada una. Dos salieron verdes la primera vez, y las dos eran de la
+sonda: un año escrito fuera de su ficha (miraba la ficha y no la letra) y una
+cadena que se quedaba corta antes del eslabón que se rompe (no miraba ese hueco).
+Ahora los mira.
+
+Con la CPU frenada seis veces, el Escudo va a 59 cuadros por segundo (el peor
+cuadro, 83 ms), la película a 58 (117 ms) y el mapa a 57 (117 ms, mientras la
+cámara baja al Caribe). La del coro, medida el mismo día, va a 60 y 83 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -15180,6 +15298,12 @@ salida más simple es que salga justo debajo de adonde va. Dos nombres puestos u
 se leen como uno si los separa poco más que un espacio: la sonda pide un hueco. Y un reloj se lee
 por el ángulo de sus agujas, no por la hora que dice debajo.
 
+Una misión puede llevar **más de una** animación: la primera va justo después de
+la historia, y es el gancho; las demás, dentro de la sección cuyo contenido
+explican, cada una en su tarjeta con `data-animacion` y su propio id. La sonda
+del navegador abre esa sección antes de mirar, como lo haría el alumno, y la
+estática le pide la historia solo a la primera.
+
 Si la misma escena sirve para varias misiones (las cuatro Pruebas de Fin de
 Grado), vive en `js/escena-<tema>.js` y cada misión trae un archivo de dos líneas
 que la monta en su bloque, con su propio id: la sonda del navegador guarda lo que
@@ -15218,6 +15342,7 @@ no dice nada de la 14.
 node _dev/verifica-animaciones.js          → leída del archivo (está en npm test)
 node _dev/servidor-estatico.js             (en otra terminal)
 node _dev/verifica-animacion-mision.js     → abierta y recorrida entera con el dedo
+node _dev/verifica-animacion-mision.js himno amViajes   → solo las que nombren eso (carpeta o id)
 ```
 
 La primera mira lo que se rompe al copiar el bloque: que vaya justo después

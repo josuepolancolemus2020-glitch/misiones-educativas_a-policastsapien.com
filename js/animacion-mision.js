@@ -431,15 +431,24 @@
       if (!ancho) { anchoMedido = -1; return; }
       if (!forzar && ancho === anchoMedido) return;
       anchoMedido = ancho;
+      /* ⚠️ Lo que se mide se pasa a la medida SIN transformar. La sección
+         entra con una animación que la encoge un poco (scale(0.98), en el
+         CSS de cada misión), y una tarjeta que no está en la sección por la
+         que se entra se mide justo al abrir la suya: las alturas salían un
+         2 % cortas y la frase más larga empujaba el botón 2 px. El
+         ResizeObserver no vuelve a avisar al acabar, porque una
+         transformación no cambia el tamaño. Lo cazó la misión del Himno,
+         que lleva tres animaciones más dentro de su sección. */
+      var escala = raiz.getBoundingClientRect().width / ancho || 1;
       var altoT = 0, altoP = 0, altoC = 0;
       for (var m = 0; m < escena.pasos; m++) {
         mTexto.textContent = sinPartir(escena.texto(m));
         var dato = escena.marcador ? escena.marcador(m, m) : null;
         mPalabras.textContent = sinPartir(dato && dato.palabras);
         ponCifra(mCifra, dato && dato.cifra ? dato.cifra : '');
-        altoT = Math.max(altoT, mTexto.getBoundingClientRect().height);
-        altoP = Math.max(altoP, mPalabras.getBoundingClientRect().height);
-        altoC = Math.max(altoC, mCifra.getBoundingClientRect().height);
+        altoT = Math.max(altoT, mTexto.getBoundingClientRect().height / escala);
+        altoP = Math.max(altoP, mPalabras.getBoundingClientRect().height / escala);
+        altoC = Math.max(altoC, mCifra.getBoundingClientRect().height / escala);
       }
       texto.style.minHeight = Math.ceil(altoT) + 'px';
       palabras.style.minHeight = Math.ceil(altoP) + 'px';

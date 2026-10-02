@@ -54,9 +54,23 @@ for (const dir of fs.readdirSync(path.join(RAIZ, 'misiones'))) {
   for (const f of fs.readdirSync(carpeta)) {
     if (!f.endsWith('.html')) continue;
     const html = fs.readFileSync(path.join(carpeta, f), 'utf8');
-    const m = html.match(/<div\b[^>]*\bdata-animacion\b[^>]*>[\s\S]*?<div\b[^>]*\bid="([^"]+)"/);
-    if (m) misiones.push({ url: `misiones/${dir}/${encodeURI(f)}`, id: m[1] });
+    /* ⚠️ TODAS las tarjetas de la página, no solo la primera: la misión del
+       Himno lleva además tres animaciones que explican su contenido, dentro
+       de sus secciones. Solo la primera tiene que ir justo después de la
+       historia; las demás, dentro de una sección. */
+    const tarjetas = [...html.matchAll(/<div\b[^>]*\bdata-animacion\b[^>]*>[\s\S]*?<div\b[^>]*\bid="([^"]+)"/g)];
+    tarjetas.forEach((m, i) => misiones.push({ url: `misiones/${dir}/${encodeURI(f)}`, id: m[1], primera: i === 0 }));
   }
+}
+
+/* Para trabajar en una escena sin abrir las ochenta: `node … himno amViajes`
+   corre solo las que nombren algo de eso, por su carpeta o por su id. Sin
+   argumentos, todas, que es como la corre `npm run test:navegador`. */
+const SOLO = process.argv.slice(2);
+if (SOLO.length) {
+  const quedan = misiones.filter(m => SOLO.some(x => m.url.includes(x) || m.id === x));
+  misiones.length = 0;
+  misiones.push(...quedan);
 }
 
 /* ── lo que se mide dentro de la página ─────────────────────── */
@@ -5155,6 +5169,343 @@ const LEER = `
       tintas: todos('text').filter(vis).map(function (t) { return { txt: t.textContent, caja: caja(t), tinta: tinta(t) }; })
     };
   };
+  /* ── Las tres del Himno que explican su contenido (viajes, película y
+     Escudo). Comparten las herramientas de medir: van en __amHerr. ── */
+  window.__amHerr = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    var H = { vis: vis, svg: svg };
+    H.m = function (el) { return base.multiply(el.getScreenCTM()); };
+    H.aVista = function (el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(H.m(el)); return [q.x, q.y]; };
+    /* de la vista a las coordenadas propias de un elemento */
+    H.aLocal = function (el, q) { var p = svg.createSVGPoint(); p.x = q[0]; p.y = q[1]; var r = p.matrixTransform(H.m(el).inverse()); return [r.x, r.y]; };
+    H.dentro = function (el, q) { var l = H.aLocal(el, q); var p = svg.createSVGPoint(); p.x = l[0]; p.y = l[1]; return el.isPointInFill(p); };
+    H.caja = function (el) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return H.aVista(el, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    };
+    H.uno = function (sel, en) { return (en || raiz).querySelector(sel); };
+    H.todos = function (sel, en) { return [].slice.call((en || raiz).querySelectorAll(sel)); };
+    H.demora = function (el) { return el ? (parseFloat(el.style.getPropertyValue('--d')) || 0) : 0; };
+    H.numeros = function (d) { return ((d || '').match(/-?[0-9.]+/g) || []).map(Number); };
+    H.pares = function (d) { var n = H.numeros(d), o = []; for (var i = 0; i + 1 < n.length; i += 2) o.push([n[i], n[i + 1]]); return o; };
+    H.corrido = function (el) { return Math.abs(parseFloat(getComputedStyle(el).strokeDashoffset) || 0); };
+    H.trazado = function (el) { return vis(el) && H.corrido(el) < 0.5; };
+    /* Cuánto dura la transición de una propiedad, leída de la hoja de estilo
+       (cuando la sonda mira, el dibujo ya está quieto y todo dura cero). */
+    H.dura = function (el, prop) {
+      var mejor = null, peso = -1;
+      for (var i = 0; i < document.styleSheets.length; i++) {
+        var reglas;
+        try { reglas = document.styleSheets[i].cssRules; } catch (e) { continue; }
+        for (var j = 0; reglas && j < reglas.length; j++) {
+          var rg = reglas[j], sel = rg.selectorText, ok = false;
+          if (!sel || sel.indexOf('am-quieto') >= 0 || !rg.style || !rg.style.transition) continue;
+          try { ok = el.matches(sel); } catch (e) { ok = false; }
+          if (!ok) continue;
+          var p = (sel.match(/#/g) || []).length * 100 + (sel.match(/[.]/g) || []).length;
+          if (p >= peso) { mejor = rg; peso = p; }
+        }
+      }
+      if (!mejor) return 0;
+      var t = String(mejor.style.transition), trozos = [], prof = 0, cur = '';
+      for (var c = 0; c < t.length; c++) {
+        var ch = t.charAt(c);
+        if (ch === '(') prof++;
+        if (ch === ')') prof--;
+        if (ch === ',' && prof === 0) { trozos.push(cur.trim()); cur = ''; } else cur += ch;
+      }
+      if (cur.trim()) trozos.push(cur.trim());
+      for (var k = 0; k < trozos.length; k++) {
+        var toks = trozos[k].split(' ');
+        if (toks[0] !== prop && toks[0] !== 'all') continue;
+        for (var q = 1; q < toks.length; q++) {
+          var v = toks[q];
+          if (/^[0-9.]+ms$/.test(v)) return parseFloat(v);
+          if (/^[0-9.]+s$/.test(v)) return parseFloat(v) * 1000;
+        }
+      }
+      return 0;
+    };
+    /* Los textos que se ven, con su caja en la vista: para que ninguno se
+       monte en otro. */
+    /* Se mide la TINTA de cada letra con el lienzo, con la misma letra y el
+       mismo ancla: la caja de getBBox lleva el aire de encima de las
+       mayúsculas, y dos renglones de una cita, bien separados a la vista,
+       se montaban por sus cajas. */
+    var lienzo = document.createElement('canvas').getContext('2d');
+    H.tinta = function (t) {
+      var cs = getComputedStyle(t), s = t.textContent, ancla = t.getAttribute('text-anchor') || 'start';
+      lienzo.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+      lienzo.textAlign = ancla === 'middle' ? 'center' : ancla === 'end' ? 'right' : 'left';
+      var mm = lienzo.measureText(s), x = +t.getAttribute('x') || 0, y = +t.getAttribute('y') || 0;
+      var ps = [[x - mm.actualBoundingBoxLeft, y - mm.actualBoundingBoxAscent], [x + mm.actualBoundingBoxRight, y - mm.actualBoundingBoxAscent],
+                [x - mm.actualBoundingBoxLeft, y + mm.actualBoundingBoxDescent], [x + mm.actualBoundingBoxRight, y + mm.actualBoundingBoxDescent]]
+        .map(function (p) { return H.aVista(t, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    };
+    H.letras = function () {
+      return H.todos('text').filter(vis).map(function (t) { return { txt: t.textContent, caja: H.tinta(t) }; });
+    };
+    /* Visible sin contar lo que está por encima de «tope» (una ruta tenue
+       sigue estando dibujada). */
+    H.visHasta = function (el, tope) {
+      for (var e = el; e && e !== tope; e = e.parentNode) {
+        var cs = getComputedStyle(e);
+        if (cs.visibility === 'hidden' || cs.display === 'none' || parseFloat(cs.opacity) < 0.99) return false;
+      }
+      return true;
+    };
+    return H;
+  };
+
+  /* Los viajes de Colón: el mapa, las rutas, los barcos, la cámara. */
+  window.__amExtra.amViajes = function (raiz) {
+    var H = window.__amHerr(raiz), vis = H.vis, uno = H.uno, todos = H.todos;
+    var cam = uno('[data-cam]');
+    function enCam(el, x, y) { return H.aLocal(cam, H.aVista(el, x, y)); }
+    var reja = [];
+    todos('.vj-reja', cam).forEach(function (p) {
+      if (p.classList.contains('vj-reja-cerca')) return;
+      var ps = H.pares(p.getAttribute('d'));
+      for (var i = 0; i + 1 < ps.length; i += 2) reja.push([ps[i], ps[i + 1]]);
+    });
+    var tierraC = uno('[data-tierra-cerca]'), hnC = uno('[data-honduras-cerca]'), hnL = uno('[data-honduras]');
+    var islasC = todos('[data-isla-cerca]');
+    /* ¿hay tierra en este punto del mapa (en coordenadas de la cámara)? */
+    function tierra(q) {
+      var p = H.svg.createSVGPoint(); p.x = q[0]; p.y = q[1];
+      if (tierraC.isPointInFill(p) || hnC.isPointInFill(p)) return 'costa';
+      for (var i = 0; i < islasC.length; i++) if (islasC[i].isPointInFill(p)) return islasC[i].getAttribute('data-isla-cerca');
+      return null;
+    }
+    /* lo más cerca que está la tierra de un punto (el anillo más chico, de
+       un cuarto de unidad en cuarto de unidad, que la toca) */
+    function cercania(q, el) {
+      for (var r = 0.25; r <= 3; r += 0.25) {
+        for (var a = 0; a < 24; a++) {
+          var p = H.svg.createSVGPoint(); p.x = q[0] + r * Math.cos(a * Math.PI / 12); p.y = q[1] + r * Math.sin(a * Math.PI / 12);
+          if (el.isPointInFill(p)) return r;
+        }
+      }
+      return 99;
+    }
+    var viajes = todos('[data-viaje]').map(function (g) {
+      var n = +g.getAttribute('data-viaje');
+      var num = uno('[data-numero]', g), sig = uno('[data-sigue]', g);
+      var tramos = todos('[data-tramo]', g).map(function (p) {
+        var ps = H.pares(p.getAttribute('d'));
+        return { i: +p.getAttribute('data-tramo'), pts: ps, hecho: H.visHasta(p, g) && H.corrido(p) < 0.5, ve: vis(p), d: H.demora(p) };
+      });
+      var o = {
+        n: n, tenue: g.classList.contains('vj-tenue'), opacidad: parseFloat(getComputedStyle(g).opacity), estelaVe: vis(g.parentNode) && getComputedStyle(g).display !== 'none', tramos: tramos,
+        numero: { ve: H.visHasta(num, g), c: enCam(num, 0, 0), v: H.aVista(num, 0, 0), caja: H.caja(num.querySelector('circle')), txt: num.textContent, d: H.demora(num) },
+        sigue: sig ? { ve: H.visHasta(sig, g) && H.corrido(sig.querySelector('path')) < 0.5, pts: H.pares(sig.querySelector('path').getAttribute('d')),
+                       punta: H.pares(uno('[data-punta]', sig).getAttribute('d')) } : null
+      };
+      /* la ruta del cuarto, contra la costa fina: se le pregunta a la
+         tierra en cuarenta puntos de cada tramo, sin las puntas */
+      if (sig) {
+        var choques = [];
+        var segs = tramos.map(function (t) { return t.pts; }).concat([o.sigue.pts]);
+        segs.forEach(function (s, k) {
+          for (var j = 1; j < 40; j++) {
+            var f = j / 40, q = [s[0][0] + (s[1][0] - s[0][0]) * f, s[0][1] + (s[1][1] - s[0][1]) * f];
+            var t = tierra(q);
+            if (t) choques.push([k + 1, Math.round(f * 100) / 100, t]);
+          }
+        });
+        o.choques = choques;
+        var fin = tramos[tramos.length - 1].pts[1];
+        o.fin = { tierra: tierra(fin), honduras: cercania(fin, hnC) };
+        o.vertices = tramos.map(function (t) { return t.pts[1]; }).map(function (q) {
+          var d = {};
+          islasC.forEach(function (isla) { d[isla.getAttribute('data-isla-cerca')] = cercania(q, isla); });
+          return { q: q, islas: d, honduras: cercania(q, hnC) };
+        });
+      }
+      return o;
+    });
+    var barcos = todos('[data-barco]').map(function (b) {
+      var dib = uno('.vj-barco', b), contra = dib.parentNode, voltea = contra.parentNode;
+      var piernas = todos('.am-viaja', b);
+      return { n: +b.getAttribute('data-barco'), ve: vis(dib), pos: enCam(contra, 0, 0), v: H.aVista(contra, 0, 0),
+               alOriente: H.m(voltea).a < 0, caja: H.caja(dib),
+               piernas: piernas.map(function (p) { return { d: H.demora(p) }; }),
+               dPierna: piernas.length ? H.dura(piernas[0], 'transform') : 0,
+               dAparece: H.demora(b.firstElementChild), dSeVa: H.demora(b.firstElementChild.firstElementChild) };
+    });
+    var leyenda = todos('[data-leyenda]').map(function (g) {
+      return { n: +g.getAttribute('data-leyenda'), ve: vis(g), anio: uno('[data-anio]', g).textContent, caja: H.caja(g.querySelector('rect')), d: H.demora(g) };
+    });
+    var rot = {};
+    todos('[data-rotulo]').forEach(function (t) { rot[t.getAttribute('data-rotulo')] = { txt: t.textContent, ve: vis(t), caja: H.caja(t), d: H.demora(t) }; });
+    var mc = H.m(cam), mapaC = uno('[data-mapa-cerca]');
+    var oriente = uno('[data-oriente]'), sol = uno('[data-sol]'), rosa = uno('[data-rosa]'), pendon = uno('[data-pendon]');
+    var lejos = uno('[data-vista="lejos"]'), deCerca = uno('[data-vista="cerca"]');
+    var aro = uno('[data-aro-islas]');
+    var hiloHn = lejos.querySelector('.vj-hilo');
+    var hiloFin = H.pares(hiloHn.getAttribute('d'))[1];
+    var ori = H.pares(oriente.querySelector('path').getAttribute('d'));
+    var asta = uno('[data-asta]'), tela = uno('[data-tela]');
+    var cita = uno('[data-cita-pais]');
+    return {
+      vista: [H.svg.viewBox.baseVal.width, H.svg.viewBox.baseVal.height],
+      reja: reja,
+      camara: { esc: mc.a, d: H.demora(cam), dz: cam.style.getPropertyValue('--dz'), clase: cam.classList.contains('vj-de-cerca'),
+                dura: H.dura(cam, 'transform') },
+      mapaCerca: { ve: vis(mapaC), d: H.demora(mapaC), dura: H.dura(mapaC, 'opacity') },
+      lejos: { ve: vis(lejos), d: H.demora(lejos) },
+      cerca: { ve: vis(deCerca), d: H.demora(deCerca) },
+      viajes: viajes, barcos: barcos, leyenda: leyenda, rotulos: rot,
+      hondurasCajaLejos: H.caja(hnL), hondurasCajaCerca: H.caja(hnC),
+      islasCerca: islasC.map(function (i) { return { nombre: i.getAttribute('data-isla-cerca'), caja: H.caja(i), enAro: H.dentro(aro, (function (c) { return [(c.x0 + c.x1) / 2, (c.y0 + c.y1) / 2]; })(H.caja(i))) }; }),
+      aro: { ve: vis(aro), d: H.demora(aro) },
+      hiloHonduras: { fin: hiloFin, cerca: (function () {
+        for (var r = 0; r <= 6; r += 0.5) for (var a = 0; a < 24; a++) {
+          var q = [hiloFin[0] + r * Math.cos(a * Math.PI / 12), hiloFin[1] + r * Math.sin(a * Math.PI / 12)];
+          if (H.dentro(hnL, q)) return r;
+        }
+        return 99;
+      })() },
+      rotuloHnCerca: rot['honduras-cerca'] ? H.dentro(hnC, [(rot['honduras-cerca'].caja.x0 + rot['honduras-cerca'].caja.x1) / 2, (rot['honduras-cerca'].caja.y0 + rot['honduras-cerca'].caja.y1) / 2]) : false,
+      zzz: { ve: vis(uno('[data-zzz=""]')) }, zzzCerca: { ve: vis(uno('[data-zzz="cerca"]')), d: H.demora(uno('[data-zzz="cerca"]')) },
+      oriente: { ve: vis(oriente), a: ori[0], b: ori[1], hecho: H.trazado(oriente.querySelector('path')), punta: H.pares(uno('[data-punta]', oriente).getAttribute('d')) },
+      sol: { ve: vis(sol), c: H.aVista(sol, 0, 0) },
+      rosa: { c: H.aVista(rosa, 0, 0), letras: todos('text', rosa).map(function (t) { return { txt: t.textContent, caja: H.caja(t) }; }) },
+      citaPais: { ve: vis(cita), txt: todos('text', cita).map(function (t) { return t.textContent; }) },
+      atlante: { ve: vis(uno('[data-rotulo="atlante"]')) },
+      navegante: { ve: vis(uno('[data-navegante]')), fin: H.aVista(uno('[data-navegante] .vj-hilo'), H.pares(uno('[data-navegante] .vj-hilo').getAttribute('d'))[1][0], H.pares(uno('[data-navegante] .vj-hilo').getAttribute('d'))[1][1]) },
+      pendon: { ve: vis(pendon), base: H.aVista(pendon, 0, 0), punta: H.aVista(asta, 0, -26), sobreTierra: H.dentro(hnC, H.aVista(pendon, 0, 0)),
+                mar: (function () { var b = H.aVista(pendon, 0, 0); for (var r = 1; r <= 8; r += 1) if (!H.dentro(hnC, [b[0], b[1] - r])) return r; return 99; })(),
+                tela: H.caja(tela), dTela: H.demora(tela), d: H.demora(pendon) },
+      letras: H.letras()
+    };
+  };
+
+  /* La película del Himno: los cuadros, la línea de los años, la cadena. */
+  window.__amExtra.amSiglos = function (raiz) {
+    var H = window.__amHerr(raiz), vis = H.vis, uno = H.uno, todos = H.todos;
+    /* la línea es un tramo y una rayita por siglo («M x y v5»): se parte por
+       cada M, porque el «5» de la rayita también es un número */
+    var eje = uno('[data-eje]').getAttribute('d').split('M').filter(function (t) { return t.trim(); }).map(H.numeros);
+    var ave = uno('[data-ave] path'), montes = uno('[data-montes]');
+    return {
+      vista: [H.svg.viewBox.baseVal.width, H.svg.viewBox.baseVal.height],
+      cuadros: todos('[data-cuadro]').map(function (g) {
+        var ic = uno('[data-icono]', g);
+        return { k: +g.getAttribute('data-cuadro'), caja: H.caja(g.querySelector('rect')), num: uno('.vs-num', g).textContent,
+                 icono: ic.textContent, roto: todos('.vs-roto', ic).length, eslabones: ic.children.length };
+      }),
+      aros: todos('[data-aro]').map(function (a) { return { k: +a.getAttribute('data-aro'), ve: vis(a), caja: H.caja(a), d: H.demora(a) }; }),
+      eje: { linea: [[eje[0][0], eje[0][1]], [eje[0][2], eje[0][3]]], marcas: eje.slice(1).map(function (q) { return q[0]; }), y: eje[0][1] },
+      puntos: todos('[data-punto]').map(function (c) {
+        var cs = getComputedStyle(c);
+        return { anio: +c.getAttribute('data-punto'), c: H.aVista(c, +c.getAttribute('cx'), +c.getAttribute('cy')), ve: vis(c), d: H.demora(c),
+                 hueco: c.classList.contains('vs-punto-hueco'), raya: cs.strokeDasharray };
+      }),
+      fichas: todos('[data-ficha-anio]').map(function (g) {
+        return { anio: +g.getAttribute('data-ficha-anio'), txt: g.textContent, ve: vis(g), caja: H.caja(g.querySelector('rect')), letra: H.tinta(g.querySelector('text')), d: H.demora(g) };
+      }),
+      hilos: todos('[data-hilo]').map(function (p) {
+        var ps = H.pares(p.getAttribute('d'));
+        return { k: +p.getAttribute('data-hilo'), anio: p.getAttribute('data-anio'), a: ps[0], b: ps[1], ve: vis(p), hecho: H.trazado(p), d: H.demora(p) };
+      }),
+      eslabones: todos('[data-cadena] > *').map(function (e) { return { caja: H.caja(e), ve: vis(e), d: H.demora(e) }; }),
+      rotos: todos('[data-roto]').map(function (e) { return { k: e.getAttribute('data-roto'), caja: H.caja(e), ve: vis(e), d: H.demora(e), m: getComputedStyle(e).transform }; }),
+      llaves: todos('[data-llave]').map(function (g) {
+        var ps = H.pares(g.querySelector('path').getAttribute('d'));
+        return { k: g.getAttribute('data-llave'), desde: +g.getAttribute('data-desde'), hasta: +g.getAttribute('data-hasta'), x0: ps[0][0], caja: H.caja(g.querySelector('path')),
+                 txt: g.querySelector('text').textContent, ve: vis(g), d: H.demora(g) };
+      }),
+      rugido: { ve: vis(uno('[data-rugido]')), d: H.demora(uno('[data-rugido]')),
+                ondas: todos('[data-onda]').map(function (o) { return { ve: vis(o), caja: H.caja(o), d: H.demora(o) }; }) },
+      ave: { ve: vis(ave), c: (function () { var c = H.caja(ave); return [(c.x0 + c.x1) / 2, (c.y0 + c.y1) / 2]; })(),
+             trasMontes: H.dentro(montes, (function () { var c = H.caja(ave); return [(c.x0 + c.x1) / 2, (c.y0 + c.y1) / 2]; })()),
+             antes: !!(ave.compareDocumentPosition(montes) & Node.DOCUMENT_POSITION_FOLLOWING),
+             d: H.demora(uno('[data-ave]')), dSube: H.demora(uno('[data-ave]').firstElementChild),
+             dVuela: H.demora(uno('[data-ave]').firstElementChild.firstElementChild),
+             dSeVa: H.demora(uno('[data-ave]').firstElementChild.firstElementChild.firstElementChild) },
+      montes: { ve: vis(montes), caja: H.caja(montes), d: H.demora(montes) },
+      promete: { ve: vis(uno('[data-promete]')), caja: H.caja(uno('[data-promete] text')), txt: uno('[data-promete]').textContent, d: H.demora(uno('[data-promete]')) },
+      letras: H.letras()
+    };
+  };
+
+  /* El coro pinta el Escudo: la imagen de verdad, los aros, la lupa. El
+     color de lo que encierra cada aro se lee de los píxeles de la imagen
+     (la misma que se ve), con un lienzo; la imagen se pide una vez. */
+  window.__amEscudoPx = window.__amEscudoPx || {};
+  window.__amExtra.amEscudo = function (raiz) {
+    var H = window.__amHerr(raiz), vis = H.vis, uno = H.uno, todos = H.todos;
+    var esc = uno('[data-escudo]'), href = esc.getAttribute('href');
+    var px = window.__amEscudoPx[href];
+    if (!px) {
+      px = window.__amEscudoPx[href] = { img: new Image() };
+      px.img.onload = function () {
+        var c = document.createElement('canvas'); c.width = px.img.naturalWidth; c.height = px.img.naturalHeight;
+        var x = c.getContext('2d'); x.drawImage(px.img, 0, 0);
+        px.w = c.width; px.h = c.height; px.datos = x.getImageData(0, 0, c.width, c.height).data;
+      };
+      px.img.src = href;
+    }
+    var ex = +esc.getAttribute('x'), ey = +esc.getAttribute('y'), ew = +esc.getAttribute('width'), eh = +esc.getAttribute('height');
+    /* qué parte de lo que encierra un aro es de cada color */
+    function colores(aro) {
+      if (!px.datos) return null;
+      var e = aro.querySelector('.ve-aro'), cx = +e.getAttribute('cx'), cy = +e.getAttribute('cy'), rx = +e.getAttribute('rx'), ry = +e.getAttribute('ry');
+      var ix = (cx - ex) / ew * px.w, iy = (cy - ey) / eh * px.h, irx = rx / ew * px.w, iry = ry / eh * px.h;
+      var f = { azul: 0, verde: 0, rojo: 0, n: 0 };
+      for (var yy = Math.floor(iy - iry); yy <= iy + iry; yy++) for (var xx = Math.floor(ix - irx); xx <= ix + irx; xx++) {
+        if (Math.pow((xx - ix) / irx, 2) + Math.pow((yy - iy) / iry, 2) > 1) continue;
+        var i = (yy * px.w + xx) * 4, R = px.datos[i], G = px.datos[i + 1], B = px.datos[i + 2];
+        f.n++;
+        if (B > R + 30 && B > G) f.azul++;
+        if (G > R && G > B + 15) f.verde++;
+        if (R > G + 60 && R > B + 60) f.rojo++;
+      }
+      return { azul: f.azul / f.n, verde: f.verde / f.n, rojo: f.rojo / f.n };
+    }
+    var lupa = uno('[data-lupa]'), lupaImg = uno('[data-lupa-img]'), vidrio = uno('.ve-vidrio', lupa);
+    var cL = H.aVista(vidrio, +vidrio.getAttribute('cx'), +vidrio.getAttribute('cy')), rL = H.caja(vidrio);
+    return {
+      vista: [H.svg.viewBox.baseVal.width, H.svg.viewBox.baseVal.height],
+      escudo: { href: href, caja: H.caja(esc), ve: vis(esc), natural: px.w ? [px.w, px.h] : null },
+      aros: todos('[data-aro]').map(function (g) {
+        var e = g.querySelector('.ve-aro'), cx = +e.getAttribute('cx'), cy = +e.getAttribute('cy');
+        return { k: g.getAttribute('data-aro'), ve: vis(g), d: H.demora(g), caja: H.caja(e), c: H.aVista(e, cx, cy),
+                 img: [(cx - ex) / ew, (cy - ey) / eh], colores: colores(g) };
+      }),
+      lupa: { ve: vis(lupa), d: H.demora(lupa), c: cL, r: (rL.x1 - rL.x0) / 2, href: uno('image', lupaImg).getAttribute('href'),
+              ancho: +uno('image', lupaImg).getAttribute('width'), alto: +uno('image', lupaImg).getAttribute('height'),
+              /* la matriz que lleva la imagen de la lupa a la vista */
+              m: (function () { var m = H.m(lupaImg); return [m.a, m.b, m.c, m.d, m.e, m.f]; })(),
+              dImg: H.demora(lupaImg) },
+      conos: todos('[data-cono]').map(function (g) {
+        return { k: g.getAttribute('data-cono'), ve: vis(g), d: H.demora(g), pts: H.pares(g.querySelector('path').getAttribute('d')) };
+      }),
+      textos: todos('[data-texto]').map(function (g) {
+        return { k: g.getAttribute('data-texto'), ve: vis(g), d: H.demora(g), lineas: todos('text', g).map(function (t) { return t.textContent; }), caja: H.caja(g) };
+      }),
+      fichas: todos('[data-ficha]').map(function (g) {
+        return { k: g.getAttribute('data-ficha'), ve: vis(g), d: H.demora(g), caja: H.caja(g.querySelector('rect')), txt: todos('text', g).map(function (t) { return t.textContent; }) };
+      }),
+      vacias: todos('[data-vacia]').map(function (g) {
+        var r = g.querySelector('rect');
+        return { k: g.getAttribute('data-vacia'), ve: vis(g), d: H.demora(g), caja: H.caja(r), txt: g.textContent, raya: getComputedStyle(r).strokeDasharray };
+      }),
+      hilos: todos('[data-hilo]').map(function (p) {
+        var L = p.getTotalLength(), pts = [];
+        for (var i = 0; i <= 30; i++) { var q = p.getPointAtLength(L * i / 30); pts.push(H.aVista(p, q.x, q.y)); }
+        return { k: p.getAttribute('data-hilo'), ve: vis(p), hecho: H.trazado(p), d: H.demora(p), pts: pts };
+      }),
+      letras: H.letras()
+    };
+  };
+
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -5197,6 +5548,7 @@ const LEER = `
     var tarjeta = raiz.closest('[data-animacion]').getBoundingClientRect().top;
     return {
       yBoton: raiz.querySelector('.am-sigue').getBoundingClientRect().top - tarjeta,
+      altoBoton: raiz.querySelector('.am-sigue').getBoundingClientRect().height,
       yDibujo: raiz.querySelector('.am-escenario').getBoundingClientRect().top - tarjeta,
       paso: raiz.amControl.paso(),
       /* Una fracción del marcador se escribe apilada (js/metas-fracciones.js):
@@ -6017,6 +6369,80 @@ function verAnio(e, n, GRADO) {
     && (!NO.ve || dentro(NO.caja, vista)) && (!T.ve || TF.every(f => dentro(f.caja, vista))) && (!A.ve || dentro(A.caja, vista)), `paso ${n}: todo cabe en el dibujo`, null]);
   return r;
 }
+/* Las tres del Himno que explican su contenido leen sus datos de los mismos
+   archivos que la misión: la letra y los años de himno.js, los viajes de
+   viajes-colon.js y las islas de contornos-mundo.js. Se cargan aquí, por su
+   cuenta, para no creerle a la escena. */
+let datosHimnoNacional = null;
+function himnoNacional() {
+  if (datosHimnoNacional) return datosHimnoNacional;
+  const vm = require('vm');
+  const leer = (archivo, fin) => {
+    const ctx = {};
+    vm.createContext(ctx);
+    vm.runInContext(fs.readFileSync(path.join(RAIZ, 'js', 'data', archivo), 'utf8') + (fin || ''), ctx);
+    return ctx;
+  };
+  const H = leer('himno.js', '\n;this.H = HIMNO;').H;
+  const V = leer('viajes-colon.js').VIAJES_COLON;
+  const M = leer('contornos-mundo.js').CONTORNOS_MUNDO;
+  const por = c => H.find(e => e.clave === c);
+  /* las palabras de un verso, sin signos, para buscar en ellas una cita */
+  const palabras = t => t.toLowerCase().replace(/[¡¿«»()!?.,;:]/g, ' ').split(/\s+/).filter(Boolean);
+  /* ¿Es esta cita una tirada de palabras SEGUIDAS de estas estrofas? Se
+     buscan en los versos puestos uno detrás de otro: una cita puede cruzar
+     de un verso al siguiente («en tu emblema… escuda»). */
+  const esCita = (cita, claves) => {
+    const c = palabras(cita);
+    if (!c.length) return false;
+    return claves.some(k => {
+      const w = palabras(por(k).versos.join(' '));
+      for (let i = 0; i + c.length <= w.length; i++) if (c.every((p, j) => w[i + j] === p)) return true;
+      return false;
+    });
+  };
+  const citas = t => (String(t).match(/«[^»]*»/g) || []).map(s => s.slice(1, -1));
+  datosHimnoNacional = {
+    H, V, M, por, palabras, esCita, citas,
+    bahia: M.detalle.islas.filter(i => i.grupo === 'bahia').map(i => i.nombre)
+  };
+  return datosHimnoNacional;
+}
+/* Lo que tiene que verse al terminar cada paso. */
+const ESTADOS_VIAJES = [
+  { hechos: 0, cerca: false, oriente: false, atlante: false, pendon: false, navegante: false },
+  { hechos: 0, cerca: false, oriente: true, atlante: false, pendon: false, navegante: false },
+  { hechos: 1, cerca: false, oriente: false, atlante: true, pendon: false, navegante: false },
+  { hechos: 3, cerca: false, oriente: false, atlante: true, pendon: false, navegante: false },
+  { hechos: 4, cerca: true, oriente: false, atlante: false, pendon: false, navegante: false },
+  { hechos: 4, cerca: true, oriente: false, atlante: false, pendon: true, navegante: false },
+  { hechos: 4, cerca: false, oriente: false, atlante: true, pendon: false, navegante: true }
+];
+/* La película: qué estrofas tienen su hilo, y qué más se ve. */
+const ESTADOS_SIGLOS = [
+  { hilos: [], cadena: false, rugido: false, rota: false, aro: [], promete: false },
+  { hilos: ['e1', 'e2'], cadena: false, rugido: false, rota: false, aro: [1, 2], promete: false },
+  { hilos: ['e1', 'e2', 'e3'], cadena: false, rugido: false, rota: false, aro: [3], promete: false },
+  { hilos: ['e1', 'e2', 'e3', 'e4'], cadena: true, rugido: false, rota: false, aro: [4], promete: false },
+  { hilos: ['e1', 'e2', 'e3', 'e4', 'e5'], cadena: true, rugido: true, rota: false, aro: [5], promete: false },
+  { hilos: ['e1', 'e2', 'e3', 'e4', 'e5', 'e6'], cadena: true, rugido: false, rota: true, aro: [6], promete: false },
+  { hilos: ['e1', 'e2', 'e3', 'e4', 'e5', 'e6'], cadena: true, rugido: false, rota: true, aro: [7], promete: true }
+];
+/* El Escudo: qué mira la lupa, cuántas cosas ya se encontraron. Las cosas,
+   en el orden en que el coro las nombra, con el verso donde está cada una y
+   el color que tiene en el Escudo de verdad. */
+const COSAS_ESCUDO = [
+  { k: 'mar', palabra: 'mar', versos: [4, 5], color: 'azul', nombre: 'mar' },
+  { k: 'volcan', palabra: 'volcán', versos: [6], color: 'verde', nombre: 'volcán' },
+  { k: 'astro', palabra: 'astro', versos: [7], color: 'rojo', nombre: 'sol' }
+];
+const ESTADOS_ESCUDO = [
+  { parte: -1, halladas: 0, todas: false },
+  { parte: 0, halladas: 1, todas: false },
+  { parte: 1, halladas: 2, todas: false },
+  { parte: 2, halladas: 3, todas: false },
+  { parte: -1, halladas: 3, todas: true }
+];
 const ESCENAS = {
   /* Las Pruebas de Fin de Grado: una escena y una sonda para los cuatro
      grados (verAnio, arriba). Cada misión con su id y su grado. */
@@ -19368,6 +19794,484 @@ const ESCENAS = {
     }
     const total = e.vale + vivos.length;
     return [[total === num, `paso ${n}: lo que se ve suma ${total.toLocaleString('en-US')} y el marcador dice ${e.cifra}`, [total, e.cifra]]];
+  },
+  /* ── Los viajes de Colón, en el mapa (la misión del Himno) ──
+     La proyección no se le cree a la escena: se saca de la reja que se ve,
+     que va cada diez grados (de 40° a 10° de latitud norte y de 90° de
+     longitud oeste a 0°). Con ella se rehace cada ruta de viajes-colon.js, y
+     se comprueba dónde está cada barco, qué se ve en cada paso y que la ruta
+     del cuarto viaje, vista de cerca, no cruce la tierra. */
+  amViajes(e, n) {
+    const x = e.extra, r = [], E = ESTADOS_VIAJES[n], D = himnoNacional(), V = D.V;
+    const cen = c => [(c.x0 + c.x1) / 2, (c.y0 + c.y1) / 2];
+    const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+    const monta = (a, b) => a.x0 < b.x1 - 0.3 && b.x0 < a.x1 - 0.3 && a.y0 < b.y1 - 0.3 && b.y0 < a.y1 - 0.3;
+
+    /* ── lo que no depende del dibujo va primero ── */
+    const todo = [e.texto, e.palabras, e.cifra].join(' ');
+    const PROHIBIDAS = /tierra firme|[uú]nico pa[ií]s|gracias a dios|hemos salido|\b\d{1,2} de (enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)\b/i;
+    r.push([!PROHIBIDAS.test(todo), `paso ${n}: no se escribe lo que no se puede acreditar (el día exacto, la «tierra firme», la frase de las honduras)`, (todo.match(PROHIBIDAS) || [])[0]]);
+    const anios = (todo.match(/\b1[0-9]{3}\b/g) || []).map(Number);
+    r.push([anios.every(a => V.some(v => v.anio === a)), `paso ${n}: todo año que se dice es el de un viaje`, anios]);
+    const citas = D.citas(e.texto).concat(Object.values(x.rotulos).filter(t => t.ve).flatMap(t => D.citas(t.txt)));
+    if (x.citaPais.ve) citas.push(...D.citas(x.citaPais.txt.join(' ')));
+    r.push([citas.every(c => D.esCita(c, ['e1', 'e2'])), `paso ${n}: lo que va entre comillas está tal cual en la primera o la segunda estrofa`, citas.filter(c => !D.esCita(c, ['e1', 'e2']))]);
+    const PIDE = [
+      () => /Honduras/.test(e.texto) && /\?/.test(e.texto),
+      () => /oriente/.test(e.texto) && /España/.test(e.texto) && D.citas(e.texto).some(c => /sol se levanta/.test(c)),
+      () => e.texto.includes(String(V[0].anio)) && e.texto.includes(V[0].llega) && /Atlántico/.test(e.texto),
+      () => e.texto.includes(String(V[1].anio)) && e.texto.includes(String(V[2].anio)) && e.texto.includes(V[1].llega) && e.texto.includes(V[2].llega) && /todavía no/.test(e.texto),
+      () => e.texto.includes(String(V[3].anio)) && /cuarto viaje/.test(e.texto) && e.texto.includes(V[3].llega),
+      () => D.citas(e.texto).some(c => /pendón/.test(c)),
+      () => D.citas(e.texto).some(c => /navegante/.test(c)) && /cuatro viajes/.test(e.texto)
+    ];
+    r.push([PIDE[n](), `paso ${n}: la frase dice lo de este paso, con los datos de viajes-colon.js`, e.texto]);
+    if (n === 0) {
+      const ex = D.por('e1').explicacion;
+      r.push([ex.includes(String(V[3].anio)) && /cuarto viaje/.test(ex) && V.every(v => !!v.honduras === (v.n === 4)),
+        'viajes-colon.js y la explicación de la primera estrofa dicen lo mismo: Colón llegó a Honduras en su cuarto viaje', V[3].anio]);
+    }
+    const hechos = V.filter(v => v.n <= E.hechos);
+    if (n >= 2 && n <= 5) r.push([e.cifra === String(Math.max(...hechos.map(v => v.anio))), `paso ${n}: el marcador dice el año del último viaje que se ve`, e.cifra]);
+    if (n === 6) r.push([e.cifra === String(x.leyenda.filter(l => l.ve).length), 'paso 6: el marcador cuenta los viajes de la leyenda', e.cifra]);
+    if (n === 1) r.push([e.cifra.toLowerCase() === (x.rotulos.oriente || {}).txt, 'paso 1: el marcador dice el lado que señala la flecha', e.cifra]);
+
+    /* ── la proyección, de la reja ── */
+    const horiz = x.reja.filter(s => Math.abs(s[0][1] - s[1][1]) < 0.01).map(s => s[0][1]).sort((a, b) => a - b);
+    const vert = x.reja.filter(s => Math.abs(s[0][0] - s[1][0]) < 0.01).map(s => s[0][0]).sort((a, b) => a - b);
+    const parejo = l => l.every((v, i) => i < 2 || Math.abs((v - l[i - 1]) - (l[1] - l[0])) < 0.05);
+    if (n === 0) {
+      r.push([horiz.length === 4 && vert.length === 10 && parejo(horiz) && parejo(vert), 'la reja del mapa va cada diez grados, a paso parejo', [horiz.length, vert.length]]);
+      r.push([Math.abs((vert[1] - vert[0]) / (horiz[1] - horiz[0]) - Math.cos(25 * Math.PI / 180)) < 0.005,
+        'un grado de longitud mide lo que mide a 25° de latitud norte (el mapa de siempre, con su paralelo en 25°)', (vert[1] - vert[0]) / (horiz[1] - horiz[0])]);
+    }
+    const P = q => [vert[0] + (q[0] + 90) / 10 * (vert[1] - vert[0]), horiz[0] + (40 - q[1]) / 10 * (horiz[1] - horiz[0])];
+
+    /* ── las rutas: las de viajes-colon.js, tramo por tramo ── */
+    if (n === 0) {
+      V.forEach((v, k) => {
+        const g = x.viajes.find(w => w.n === v.n);
+        const bien = g && g.tramos.length === v.ruta.length - 1 && g.tramos.every(t =>
+          dist(t.pts[0], P(v.ruta[t.i - 1])) < 0.03 && dist(t.pts[1], P(v.ruta[t.i])) < 0.03);
+        r.push([bien, `el viaje ${v.n} va por la ruta de viajes-colon.js, tramo por tramo`, g && g.tramos.length]);
+        const fin = P(v.ruta[v.ruta.length - 1]), antes = P(v.ruta[v.ruta.length - 2]);
+        const d = dist(g.numero.c, fin), lado = Math.abs((fin[0] - antes[0]) * (g.numero.c[1] - antes[1]) - (fin[1] - antes[1]) * (g.numero.c[0] - antes[0])) / dist(fin, antes);
+        r.push([Math.abs(d - 4.5) < 0.05 && lado < 0.05 && g.numero.txt === String(v.n),
+          `el número ${v.n} va sobre su ruta, un poco antes de la llegada`, [d, lado, g.numero.txt]]);
+        if (v.sigue) {
+          r.push([g.sigue && dist(g.sigue.pts[0], fin) < 0.03 && dist(g.sigue.pts[1], P(v.sigue)) < 0.03 && dist(g.sigue.punta[1], P(v.sigue)) < 0.03,
+            `lo que hizo después el cuarto viaje es una flecha de la llegada a «sigue»`, g.sigue && g.sigue.pts]);
+        }
+      });
+    }
+
+    /* ── lo que se ve hecho en este paso ── */
+    V.forEach(v => {
+      const g = x.viajes.find(w => w.n === v.n), hecho = v.n <= E.hechos;
+      r.push([g.tramos.every(t => t.hecho === hecho) && g.numero.ve === hecho && (!g.sigue || g.sigue.ve === hecho),
+        `paso ${n}: el viaje ${v.n} ${hecho ? 'se ve entero, con su número' : 'todavía no se ve'}`, g.tramos.map(t => t.hecho)]);
+      const tenue = E.cerca && !v.honduras;
+      r.push([g.tenue === tenue && (tenue ? g.opacidad > 0.1 && g.opacidad < 0.6 : g.opacidad > 0.99), `paso ${n}: el viaje ${v.n} ${tenue ? 'queda tenue de cerca (se ve, pero no tapa)' : 'no va tenue'}`, [g.tenue, g.opacidad]]);
+      const l = x.leyenda.find(w => w.n === v.n);
+      r.push([l.ve === hecho && l.anio === String(v.anio), `paso ${n}: la leyenda del viaje ${v.n} ${hecho ? 'dice ' + v.anio : 'todavía no sale'}`, [l.ve, l.anio]]);
+      const b = x.barcos.find(w => w.n === v.n), fin = P(v.ruta[v.ruta.length - 1]), antes = P(v.ruta[v.ruta.length - 2]);
+      if (!v.honduras) r.push([!b.ve, `paso ${n}: el barco del viaje ${v.n} ya no está (se va al llegar)`, b.ve]);
+      else {
+        r.push([b.ve === hecho, `paso ${n}: el barco del cuarto viaje ${hecho ? 'se queda en la costa' : 'todavía no sale'}`, b.ve]);
+        if (hecho) r.push([dist(b.pos, fin) < 0.1 && b.alOriente === (fin[0] > antes[0]),
+          `paso ${n}: el barco está al final de la ruta y mira hacia donde navegaba`, [dist(b.pos, fin), b.alOriente]]);
+      }
+    });
+    const nums = x.viajes.filter(v => v.numero.ve);
+    const pegados = [];
+    nums.forEach((a, i) => nums.slice(i + 1).forEach(b => {
+      const ra = (a.numero.caja.x1 - a.numero.caja.x0) / 2, rb = (b.numero.caja.x1 - b.numero.caja.x0) / 2;
+      if (dist(a.numero.v, b.numero.v) < ra + rb) pegados.push([a.n, b.n]);
+    }));
+    r.push([pegados.length === 0, `paso ${n}: los números de los viajes no se montan`, pegados]);
+    const chips = x.leyenda.filter(l => l.ve);
+    r.push([chips.every((c, i) => i === 0 || c.caja.x0 >= chips[i - 1].caja.x1), `paso ${n}: la leyenda va en fila y en orden, sin montarse`, chips.map(c => c.n)]);
+
+    /* ── la cámara, y lo que se lee de lejos o de cerca ── */
+    r.push([E.cerca ? x.camara.esc > 3 : Math.abs(x.camara.esc - 1) < 0.001, `paso ${n}: la cámara ${E.cerca ? 'bajó al Caribe' : 'está de lejos'}`, x.camara.esc]);
+    r.push([x.camara.clase === E.cerca && x.mapaCerca.ve === E.cerca && x.cerca.ve === E.cerca && x.lejos.ve === !E.cerca,
+      `paso ${n}: ${E.cerca ? 'de cerca se ve la costa fina y lo que se lee de cerca' : 'de lejos se ve lo que se lee de lejos, y la costa fina no'}`,
+      [x.camara.clase, x.mapaCerca.ve, x.cerca.ve, x.lejos.ve]]);
+    r.push([x.zzz.ve === (n < 4) && !x.zzzCerca.ve, `paso ${n}: Honduras ${n < 4 ? 'duerme (z z z)' : 'ya despertó'}`, [x.zzz.ve, x.zzzCerca.ve]]);
+    if (!E.cerca) {
+      r.push([x.hiloHonduras.cerca <= 2.5, `paso ${n}: el hilo de «Honduras» llega a Honduras`, x.hiloHonduras.cerca]);
+      const esp = x.rotulos.espana, oc = x.rotulos.oceano;
+      r.push([esp.ve && dist(cen(esp.caja), P([-4, 40])) < 25 && oc.ve, `paso ${n}: «España» está junto a España, y el océano lleva su nombre`, cen(esp.caja)]);
+      r.push([x.atlante.ve === E.atlante, `paso ${n}: el nombre que el Himno le da al Atlántico ${E.atlante ? 'se lee' : 'no está'}`, x.atlante.ve]);
+      const rN = x.rosa.letras.find(t => t.txt === 'N'), rE = x.rosa.letras.find(t => t.txt === 'E');
+      r.push([rN && rE && cen(rN.caja)[1] < x.rosa.c[1] - 5 && cen(rE.caja)[0] > x.rosa.c[0] + 5, `paso ${n}: la rosa de los vientos pone el norte arriba y el oriente a la derecha`, null]);
+    } else {
+      const v4 = x.barcos.find(b => b.n === 4);
+      r.push([v4.v[0] > 0 && v4.v[0] < x.vista[0] && v4.v[1] > 0 && v4.v[1] < x.vista[1], `paso ${n}: de cerca, el barco del cuarto viaje se ve`, v4.v]);
+      r.push([x.hondurasCajaCerca.x1 - x.hondurasCajaCerca.x0 > x.vista[0] / 4, `paso ${n}: de cerca, Honduras ocupa más de un cuarto del ancho`, x.hondurasCajaCerca.x1 - x.hondurasCajaCerca.x0]);
+      r.push([x.rotuloHnCerca && x.rotulos['honduras-cerca'].ve, `paso ${n}: «Honduras» va dentro de Honduras`, null]);
+      const bahia = x.islasCerca.filter(i => D.bahia.includes(i.nombre)), otras = x.islasCerca.filter(i => !D.bahia.includes(i.nombre));
+      r.push([bahia.length === D.bahia.length && bahia.every(i => i.enAro) && otras.every(i => !i.enAro) && x.aro.ve,
+        `paso ${n}: el aro encierra las Islas de la Bahía, y ninguna otra`, bahia.map(i => [i.nombre, i.enAro])]);
+      const rb = x.rotulos.bahia, oeste = Math.min(...bahia.map(i => i.caja.x0)), yb = bahia.reduce((t, i) => t + cen(i.caja)[1], 0) / bahia.length;
+      r.push([rb.ve && rb.caja.x1 < oeste && oeste - rb.caja.x1 < 14 && Math.abs(cen(rb.caja)[1] - yb) < 10, `paso ${n}: «Islas de la Bahía» va junto a las islas, a su izquierda`, [rb.caja.x1, oeste]]);
+      const ja = x.islasCerca.find(i => i.nombre === 'Jamaica');
+      r.push([ja && dist(cen(x.rotulos.jamaica.caja), cen(ja.caja)) < 12, `paso ${n}: «Jamaica» va sobre Jamaica`, ja && dist(cen(x.rotulos.jamaica.caja), cen(ja.caja))]);
+      const c4 = x.viajes.find(v => v.n === 4);
+      r.push([c4.choques.length === 0, `paso ${n}: la ruta del cuarto viaje no cruza la tierra (contra la costa fina)`, c4.choques.slice(0, 4)]);
+      r.push([!c4.fin.tierra && c4.fin.honduras <= 1.5, `paso ${n}: el cuarto viaje termina en el mar, pegado a la costa de Honduras`, c4.fin]);
+      const porIslas = c4.vertices.some(q => D.bahia.some(b => q.islas[b] <= 1));
+      r.push([porIslas, `paso ${n}: el cuarto viaje pasa por las Islas de la Bahía`, c4.vertices.map(q => Math.min(...D.bahia.map(b => q.islas[b])))]);
+    }
+
+    /* ── el oriente, el pendón y el navegante ── */
+    r.push([x.oriente.ve === E.oriente && x.sol.ve === E.oriente && x.citaPais.ve === E.oriente, `paso ${n}: la flecha del oriente y el sol ${E.oriente ? 'están' : 'no están'}`, [x.oriente.ve, x.sol.ve]]);
+    if (E.oriente) {
+      r.push([x.oriente.hecho && x.oriente.b[0] > x.oriente.a[0] + 100 && dist(x.oriente.punta[1], x.oriente.b) < 0.05, 'paso 1: la flecha va de Honduras hacia el oriente (la derecha), con su punta al final', [x.oriente.a, x.oriente.b]]);
+      r.push([x.sol.c[0] > x.vista[0] * 0.8, 'paso 1: el sol sale del lado del oriente', x.sol.c]);
+    }
+    r.push([x.pendon.ve === E.pendon, `paso ${n}: el pendón ${E.pendon ? 'flota en la costa' : 'no está'}`, x.pendon.ve]);
+    if (E.pendon) {
+      r.push([x.pendon.sobreTierra && x.pendon.mar <= 6, 'paso 5: el asta está en tierra, pegada a la costa', [x.pendon.sobreTierra, x.pendon.mar]]);
+      const t = x.pendon.tela;
+      r.push([t.x0 >= x.pendon.base[0] - 0.5 && t.y0 >= x.pendon.punta[1] - 0.5 && t.y1 < (x.pendon.base[1] + x.pendon.punta[1]) / 2,
+        'paso 5: la bandera subió hasta arriba del asta', t]);
+      r.push([x.pendon.dTela > x.pendon.d && x.rotulos.pendon.d > x.pendon.dTela, 'paso 5: primero el asta, después sube la bandera y al final su nombre', [x.pendon.d, x.pendon.dTela, x.rotulos.pendon.d]]);
+    }
+    r.push([x.navegante.ve === E.navegante, `paso ${n}: el nombre que el Himno le da a Colón ${E.navegante ? 'se lee' : 'no está'}`, x.navegante.ve]);
+    if (E.navegante) {
+      const b4 = x.barcos.find(b => b.n === 4);
+      r.push([dist(x.navegante.fin, b4.v) < 9, 'paso 6: su hilo llega al barco del cuarto viaje', dist(x.navegante.fin, b4.v)]);
+    }
+
+    /* ── cuándo pasa cada cosa ── */
+    const leg = (b, i) => b.piernas[i].d;
+    const seguidas = b => b.piernas.every((p, i) => i === 0 || Math.abs(p.d - (b.piernas[i - 1].d + b.dPierna)) < 5);
+    const llega = b => b.piernas[b.piernas.length - 1].d + b.dPierna;
+    if (n === 2) {
+      const b = x.barcos.find(w => w.n === 1), g = x.viajes.find(w => w.n === 1);
+      r.push([b.dPierna > 0 && seguidas(b) && g.tramos.every((t, i) => Math.abs(t.d - leg(b, i)) < 5),
+        'paso 2: el barco va tramo por tramo, a paso parejo, y la estela de cada tramo se dibuja con él', b.piernas.map(p => p.d)]);
+      r.push([b.dSeVa >= llega(b) - 5 && g.numero.d >= llega(b) - 5 && x.leyenda[0].d >= llega(b) - 5, 'paso 2: el barco se va, y salen su número y su año, cuando ya llegó', [llega(b), b.dSeVa, g.numero.d]]);
+    }
+    if (n === 3) {
+      const b2 = x.barcos.find(w => w.n === 2), b3 = x.barcos.find(w => w.n === 3);
+      r.push([leg(b3, 0) >= llega(b2), 'paso 3: el tercer viaje zarpa cuando el segundo ya llegó', [llega(b2), leg(b3, 0)]]);
+    }
+    if (n === 4) {
+      const b = x.barcos.find(w => w.n === 4), c = x.camara, g = x.viajes.find(w => w.n === 4);
+      const huecos = b.piernas.map((p, i) => i ? p.d - (b.piernas[i - 1].d + b.dPierna) : 0);
+      const p = huecos.findIndex(h => h > 50);
+      r.push([p > 0 && huecos.filter(h => h > 50).length === 1, 'paso 4: el barco se detiene una sola vez, a esperar a la cámara', huecos]);
+      if (p > 0) {
+        r.push([Math.abs(c.d - (b.piernas[p - 1].d + b.dPierna)) < 5 && leg(b, p) >= c.d + c.dura && c.dura > 0,
+          'paso 4: la cámara baja cuando el barco llega a la espera, y el barco sigue cuando ya bajó', [b.piernas[p - 1].d + b.dPierna, c.d, leg(b, p)]]);
+        const t = [b.v[0] - b.pos[0] * c.esc, b.v[1] - b.pos[1] * c.esc];
+        const espera = P(V[3].ruta[p]), ev = [espera[0] * c.esc + t[0], espera[1] * c.esc + t[1]];
+        r.push([ev[0] > 0 && ev[0] < x.vista[0] && ev[1] > 0 && ev[1] < x.vista[1], 'paso 4: donde espera el barco, ya se ve de cerca', ev]);
+        r.push([x.mapaCerca.d >= c.d + c.dura && x.cerca.d >= x.mapaCerca.d, 'paso 4: la costa fina sale cuando la cámara YA bajó (no se ve la orilla de su recorte)', [c.d + c.dura, x.mapaCerca.d]]);
+        r.push([String(c.dz) === Math.round(c.d) + 'ms', 'paso 4: las rutas se adelgazan mientras baja la cámara, con su misma demora', [c.dz, c.d]]);
+      }
+      const costa = g.vertices.findIndex(q => q.honduras <= 1.5);
+      r.push([costa >= 0 && Math.abs(x.zzzCerca.d - (leg(b, costa) + b.dPierna)) < 5, 'paso 4: Honduras despierta cuando el barco llega a su costa', [costa, x.zzzCerca.d]]);
+      r.push([g.tramos.every((tr, i) => Math.abs(tr.d - leg(b, i)) < 5) && x.leyenda[3].d >= llega(b) - 5, 'paso 4: la estela sigue al barco, y el año sale cuando llega', x.leyenda[3].d]);
+    }
+    if (n === 6) {
+      r.push([x.camara.d >= x.mapaCerca.d + x.mapaCerca.dura && x.mapaCerca.dura > 0, 'paso 6: la costa fina se apaga antes de que suba la cámara', [x.mapaCerca.d, x.camara.d]]);
+    }
+
+    /* ── lo que se lee ── */
+    const ml = [];
+    x.letras.forEach((a, i) => x.letras.slice(i + 1).forEach(b => { if (monta(a.caja, b.caja)) ml.push([a.txt, b.txt]); }));
+    r.push([ml.length === 0, `paso ${n}: ningún texto se monta en otro`, ml.slice(0, 4)]);
+    const fuera = x.letras.filter(t => t.caja.x0 < -0.5 || t.caja.y0 < -0.5 || t.caja.x1 > x.vista[0] + 0.5 || t.caja.y1 > x.vista[1] + 0.5);
+    r.push([fuera.length === 0, `paso ${n}: todo lo escrito cabe en el dibujo`, fuera.map(t => t.txt)]);
+    return r;
+  },
+
+  /* ── La película del Himno: cada estrofa, en su año ──
+     La escala no se le cree a la escena: se saca de los años que se ven
+     (cada ficha dice su año y está en su sitio de la línea), y con ella se
+     comprueba que cada rayita sea un siglo, que cada hilo caiga en el año de
+     su estrofa según himno.js y que las llaves midan cien años. */
+  amSiglos(e, n) {
+    const x = e.extra, r = [], E = ESTADOS_SIGLOS[n], D = himnoNacional();
+    const EST = ['e1', 'e2', 'e3', 'e4', 'e5', 'e6', 'e7'].map(D.por), C = {};
+    EST.forEach(s => { C[s.clave] = s.cuando; });
+    const cen = c => [(c.x0 + c.x1) / 2, (c.y0 + c.y1) / 2];
+    const monta = (a, b) => a.x0 < b.x1 - 0.3 && b.x0 < a.x1 - 0.3 && a.y0 < b.y1 - 0.3 && b.y0 < a.y1 - 0.3;
+
+    /* ── lo que no depende del dibujo ── */
+    const todo = [e.texto, e.palabras].join(' ');
+    const anios = (todo.match(/\b1[0-9]{3}\b/g) || []).map(Number);
+    const conocidos = EST.filter(s => s.cuando).flatMap(s => [s.cuando.anio].concat(s.cuando.hasta ? [s.cuando.hasta] : []));
+    r.push([anios.every(a => conocidos.includes(a)), `paso ${n}: todo año que se dice es el de una estrofa (campo «cuando» de himno.js)`, anios]);
+    r.push([D.citas(todo).length === 0, `paso ${n}: la frase no cita versos (lo dice con palabras de la explicación)`, D.citas(todo)]);
+    const PIDE = [
+      () => /siete/.test(e.texto) && /\?/.test(e.texto),
+      () => e.texto.includes(String(C.e1.anio)) && C.e2.comoLa === 'e1' && C.e2.anio === C.e1.anio && /mismo año/.test(e.texto),
+      () => e.texto.includes(String(C.e3.anio)) && /hacia/.test(e.texto) && C.e3.hacia,
+      () => e.texto.includes(String(C.e4.anio)) && e.texto.includes(String(C.e4.hasta)) && new RegExp('sobran ' + (C.e4.hasta - C.e4.anio - Math.floor((C.e4.hasta - C.e4.anio) / 100) * 100) + '\\b').test(e.texto),
+      () => e.texto.includes(String(C.e5.anio)) && /Atlante/.test(e.texto) && C.e5.lejos,
+      () => e.texto.includes(String(C.e6.anio)) && C.e6.anio === C.e4.hasta && /cadena se rompe/.test(e.texto),
+      () => /promete/.test(e.texto) && C.e7 === null && anios.length === 0
+    ];
+    r.push([PIDE[n](), `paso ${n}: la frase dice lo de este paso, con los años de himno.js`, e.texto]);
+    const CIFRA = [String(x.cuadros.length), String(C.e1.anio), String(C.e3.anio), String(x.llaves.filter(l => l.k !== 'sobran').length),
+      String(C.e5.anio), String(C.e6.anio), String(x.hilos.filter(h => h.ve).length)];
+    r.push([e.cifra === CIFRA[n], `paso ${n}: el marcador dice lo que se ve`, [e.cifra, CIFRA[n]]]);
+
+    /* ── los cuadros ── */
+    const cu = x.cuadros.slice().sort((a, b) => a.caja.x0 - b.caja.x0);
+    if (n === 0) {
+      const pasos = cu.map((c, i) => i ? c.caja.x0 - cu[i - 1].caja.x0 : 0).slice(1);
+      r.push([cu.length === 7 && cu.every((c, i) => c.k === i + 1 && c.num === String(i + 1)) && pasos.every(p => Math.abs(p - pasos[0]) < 0.05) &&
+        cu.every(c => Math.abs((c.caja.x1 - c.caja.x0) - (cu[0].caja.x1 - cu[0].caja.x0)) < 0.05),
+        'los siete cuadros, numerados en orden, del mismo tamaño y a la misma distancia', pasos]);
+      r.push([cu[3].eslabones >= 3 && cu[3].roto === 0 && cu[5].roto === 2, 'la cuarta es una cadena, y la sexta, la cadena rota', [cu[3].roto, cu[5].roto]]);
+    }
+    const aros = x.aros.filter(a => a.ve).map(a => a.k).sort();
+    r.push([JSON.stringify(aros) === JSON.stringify(E.aro), `paso ${n}: se marca el cuadro de lo que se cuenta (${E.aro.join(', ') || 'ninguno'})`, aros]);
+    x.aros.filter(a => a.ve).forEach(a => {
+      const c = cu.find(q => q.k === a.k);
+      r.push([a.caja.x0 < c.caja.x0 && a.caja.x1 > c.caja.x1 && a.caja.y0 < c.caja.y0 && a.caja.y1 > c.caja.y1, `paso ${n}: el aro rodea el cuadro ${a.k}`, null]);
+    });
+
+    /* ── la escala, de los años que se ven ── */
+    const fichas = x.fichas.filter(f => f.ve);
+    const todas = x.fichas;
+    const xs = todas.map(f => cen(f.caja)[0]), ys = todas.map(f => f.anio);
+    const mx = xs.reduce((t, v) => t + v, 0) / xs.length, my = ys.reduce((t, v) => t + v, 0) / ys.length;
+    const b1 = xs.reduce((t, v, i) => t + (v - mx) * (ys[i] - my), 0) / ys.reduce((t, v) => t + (v - my) * (v - my), 0);
+    const X = a => mx + (a - my) * b1;
+    if (n === 0) {
+      const resto = Math.max(...todas.map(f => Math.abs(cen(f.caja)[0] - X(f.anio))));
+      r.push([todas.length >= 4 && resto < 0.1 && todas.every(f => f.txt === String(f.anio)), 'cada ficha dice su año y está en su sitio de la línea (una sola escala)', resto]);
+      const fueraF = todas.filter(f => f.letra.x0 < f.caja.x0 || f.letra.x1 > f.caja.x1 || f.letra.y0 < f.caja.y0 || f.letra.y1 > f.caja.y1);
+      r.push([fueraF.length === 0, 'cada año va escrito dentro de su ficha', fueraF.map(f => f.anio)]);
+      const siglos = x.eje.marcas.map(m => my + (m - mx) / b1);
+      r.push([siglos.length >= 3 && siglos.every(s => Math.abs(s - Math.round(s / 100) * 100) < 0.6), 'cada rayita de la línea es un siglo justo', siglos.map(Math.round)]);
+      r.push([x.eje.linea[0][0] < X(C.e1.anio) && x.eje.linea[1][0] > X(C.e6.anio), 'la línea va de antes de la primera estrofa a después de la sexta', null]);
+    }
+    /* qué años se ven: el de cada hilo que cae en un año, y los extremos de la cadena */
+    const ven = new Set();
+    E.hilos.forEach(c => { if (!C[c].hasta) ven.add(C[c].anio); });
+    if (E.cadena) { ven.add(C.e4.anio); ven.add(C.e4.hasta); }
+    r.push([fichas.length === ven.size && fichas.every(f => ven.has(f.anio)), `paso ${n}: se ven los años de lo que ya se contó`, fichas.map(f => f.anio)]);
+    const malPuestos = x.puntos.filter(p => p.ve !== ven.has(p.anio) || Math.abs(p.c[0] - X(p.anio)) > 0.1 || Math.abs(p.c[1] - x.eje.y) > 0.1);
+    r.push([malPuestos.length === 0, `paso ${n}: cada punto está sobre la línea, en su año, y solo cuando su año se ve`, malPuestos.map(p => p.anio)]);
+    const hueco = x.puntos.find(p => p.anio === C.e3.anio);
+    if (n === 0) r.push([hueco && hueco.hueco && hueco.raya !== 'none' && x.puntos.filter(p => p.hueco).length === 1, 'solo el año de Lempira va hueco, con raya cortada (es «hacia»)', hueco && hueco.raya]);
+
+    /* ── los hilos: de cada cuadro a su año ── */
+    r.push([!x.hilos.some(h => h.k === 7), `paso ${n}: la séptima no tiene hilo`, null]);
+    x.hilos.forEach(h => {
+      const c = EST[h.k - 1], ve = E.hilos.includes(c.clave), q = cu.find(w => w.k === h.k);
+      r.push([h.ve === ve && h.hecho === ve, `paso ${n}: el hilo de la estrofa ${h.k} ${ve ? 'baja' : 'todavía no'}`, [h.ve, h.hecho]]);
+      if (n === 0) {
+        const sale = Math.abs(h.a[0] - cen(q.caja)[0]) < 0.1 && h.a[1] >= q.caja.y1 - 0.1 && h.a[1] <= q.caja.y1 + 2;
+        const fin = c.cuando.hasta ? (X(c.cuando.anio) + X(c.cuando.hasta)) / 2 : X(c.cuando.anio);
+        const y = c.cuando.hasta ? Math.min(...x.eslabones.map(s => s.caja.y0)) : x.eje.y;
+        r.push([sale && Math.abs(h.b[0] - fin) < 0.15 && Math.abs(h.b[1] - y) < 1,
+          `el hilo de la estrofa ${h.k} sale de su cuadro y cae ${c.cuando.hasta ? 'en medio de la cadena' : 'en ' + c.cuando.anio}`, [h.b, fin]]);
+      }
+    });
+
+    /* ── la cadena y sus siglos ── */
+    const esl = x.eslabones.slice().sort((a, b) => a.caja.x0 - b.caja.x0);
+    r.push([esl.every(s => s.ve === E.cadena) && x.rotos.every(s => s.ve === E.cadena), `paso ${n}: la cadena ${E.cadena ? 'está' : 'todavía no está'}`, null]);
+    if (n === 0) {
+      /* los eslabones Y el que se rompe, en fila: sin hueco entre ninguno, del
+         primer año de la colonia al último */
+      const piezas = esl.concat(x.rotos.slice(0, 1)).sort((a, b) => a.caja.x0 - b.caja.x0);
+      const huecosC = piezas.map((s, i) => i ? s.caja.x0 - piezas[i - 1].caja.x1 : 0);
+      const ultimo = Math.max(...x.rotos.map(s => s.caja.x1));
+      r.push([Math.abs(piezas[0].caja.x0 - X(C.e4.anio)) < 1.5 && Math.abs(ultimo - X(C.e4.hasta)) < 0.6 && Math.max(...huecosC) < 3,
+        'la cadena va de ' + C.e4.anio + ' a ' + C.e4.hasta + ', sin huecos', [piezas[0].caja.x0, X(C.e4.anio), ultimo, X(C.e4.hasta), Math.max(...huecosC)]]);
+    }
+    const sep = Math.hypot(...[0, 1].map(i => cen(x.rotos[0].caja)[i] - cen(x.rotos[1].caja)[i]));
+    const gira = m => { const v = (String(m).match(/-?[0-9.]+(e-?[0-9]+)?/g) || []).map(Number); return v.length >= 4 && Math.abs(v[1]) > 0.1; };
+    r.push([E.rota ? sep > 5 && x.rotos.every(s => gira(s.m)) : sep < 3 && x.rotos.every(s => !gira(s.m)), `paso ${n}: el último eslabón ${E.rota ? 'se rompió: sus dos mitades se separan y giran' : 'está entero'}`, sep]);
+    const llaves = x.llaves.filter(l => l.k !== 'sobran').sort((a, b) => a.desde - b.desde), sobra = x.llaves.find(l => l.k === 'sobran');
+    if (n === 0) {
+      const SIGLOS = Math.floor((C.e4.hasta - C.e4.anio) / 100);
+      r.push([llaves.length === SIGLOS && llaves.every((l, i) => l.hasta - l.desde === 100 && l.desde === C.e4.anio + i * 100 && l.txt === '100 años' &&
+        Math.abs(l.caja.x0 - X(l.desde)) < 1 && Math.abs(l.caja.x1 - X(l.hasta)) < 1),
+        `la cadena se cuenta en ${SIGLOS} llaves de cien años, seguidas y del largo de cien años`, llaves.map(l => [l.desde, l.hasta])]);
+      r.push([sobra && sobra.desde === C.e4.anio + SIGLOS * 100 && sobra.hasta === C.e4.hasta && sobra.txt === '+' + (sobra.hasta - sobra.desde) &&
+        Math.abs(sobra.caja.x1 - X(sobra.hasta)) < 1, 'y lo que sobra lleva su llave y su cuenta', sobra && sobra.txt]);
+    }
+    r.push([x.llaves.every(l => l.ve === E.cadena), `paso ${n}: las llaves de los siglos ${E.cadena ? 'están' : 'no están'}`, null]);
+
+    /* ── el rugido, el pájaro y la promesa ── */
+    r.push([x.rugido.ve === E.rugido, `paso ${n}: el rugido del León ${E.rugido ? 'se oye' : 'no está'}`, x.rugido.ve]);
+    if (E.rugido) r.push([x.rugido.ondas.every(o => o.ve && o.caja.x1 < X(C.e5.anio)), 'paso 4: sus ondas salen hacia acá (a la izquierda de su año)', x.rugido.ondas.map(o => o.caja.x1)]);
+    r.push([x.montes.ve === E.rota && !x.ave.ve, `paso ${n}: ${E.rota ? 'los montes están, y el pájaro ya se fue' : 'ni montes ni pájaro'}`, [x.montes.ve, x.ave.ve]]);
+    if (n === 5) {
+      r.push([x.ave.trasMontes && x.ave.antes, 'paso 5: el pájaro termina detrás de los montes (va antes en el documento)', [x.ave.trasMontes, x.ave.antes]]);
+      const rompe = Math.max(...x.rotos.map(s => s.d));
+      r.push([x.ave.d >= rompe && x.ave.dSube > x.ave.d && x.ave.dVuela > x.ave.dSube && x.ave.dSeVa > x.ave.dVuela,
+        'paso 5: la cadena se rompe, sale el pájaro, sube, vuela y se va, en ese orden', [rompe, x.ave.d, x.ave.dSube, x.ave.dVuela, x.ave.dSeVa]]);
+    }
+    r.push([x.promete.ve === E.promete, `paso ${n}: «promete» ${E.promete ? 'se lee' : 'no está'}`, x.promete.ve]);
+    if (E.promete) r.push([Math.abs(cen(x.promete.caja)[0] - cen(cu[6].caja)[0]) < 0.5 && x.promete.caja.y0 > cu[6].caja.y1, 'paso 6: «promete» va debajo de la séptima', null]);
+
+    /* ── cuándo pasa cada cosa ── */
+    if (n >= 1 && n <= 5) {
+      const nuevos = E.hilos.filter(c => !ESTADOS_SIGLOS[n - 1].hilos.includes(c));
+      nuevos.forEach(c => {
+        const h = x.hilos.find(w => w.k === +c.slice(1));
+        const f = x.fichas.find(w => w.anio === C[c].anio && !C[c].hasta);
+        const ar = x.aros.find(a => a.k === h.k);
+        r.push([ar.d < h.d && (!f || ESTADOS_SIGLOS[n - 1].hilos.some(o => !C[o].hasta && C[o].anio === C[c].anio) || f.d > h.d),
+          `paso ${n}: se marca el cuadro ${h.k}, baja su hilo y después sale su año`, [ar.d, h.d, f && f.d]]);
+      });
+    }
+    if (n === 3) {
+      const ds = esl.map(s => s.d);
+      const hilo4 = x.hilos.find(h => h.k === 4);
+      r.push([ds.every((d, i) => i === 0 || d > ds[i - 1]) && hilo4.d > ds[ds.length - 1] && llaves.every((l, i) => l.d >= hilo4.d && (i === 0 || l.d > llaves[i - 1].d)) && sobra.d > llaves[llaves.length - 1].d,
+        'paso 3: la cadena crece de su primer año al último, baja el hilo, y salen los siglos uno por uno', [ds[0], ds[ds.length - 1], hilo4.d, llaves.map(l => l.d), sobra.d]]);
+    }
+
+    /* ── lo que se lee ── */
+    const ml = [];
+    x.letras.forEach((a, i) => x.letras.slice(i + 1).forEach(b => { if (monta(a.caja, b.caja)) ml.push([a.txt, b.txt]); }));
+    r.push([ml.length === 0, `paso ${n}: ningún texto se monta en otro`, ml.slice(0, 4)]);
+    const fuera = x.letras.filter(t => t.caja.x0 < -0.5 || t.caja.y0 < -0.5 || t.caja.x1 > x.vista[0] + 0.5 || t.caja.y1 > x.vista[1] + 0.5);
+    r.push([fuera.length === 0, `paso ${n}: todo lo escrito cabe en el dibujo`, fuera.map(t => t.txt)]);
+    return r;
+  },
+
+  /* ── El coro pinta el Escudo ──
+     El Escudo es la imagen de verdad: lo que encierra cada aro se mide en
+     sus píxeles (el mar es azul, el volcán verde y el sol rojo), la lupa
+     tiene que tener en su centro justo lo que encierra el aro, y lo que se
+     cita y lo que se explica sale del coro de himno.js. */
+  amEscudo(e, n) {
+    const x = e.extra, r = [], E = ESTADOS_ESCUDO[n], D = himnoNacional();
+    const coro = D.por('coro');
+    const cen = c => [(c.x0 + c.x1) / 2, (c.y0 + c.y1) / 2];
+    const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+    const monta = (a, b) => a.x0 < b.x1 - 0.3 && b.x0 < a.x1 - 0.3 && a.y0 < b.y1 - 0.3 && b.y0 < a.y1 - 0.3;
+
+    /* ── lo que no depende del dibujo ── */
+    const citas = D.citas(e.texto);
+    r.push([citas.every(c => D.esCita(c, ['coro'])), `paso ${n}: lo que va entre comillas está tal cual en el coro`, citas.filter(c => !D.esCita(c, ['coro']))]);
+    const quiere = n >= 1 && n <= 3 ? COSAS_ESCUDO[n - 1].versos.map(v => coro.versos[v].replace(/[.,;:]+$/, '')).join(' ') : null;
+    if (quiere) r.push([citas.includes(quiere), `paso ${n}: la frase cita entero ${COSAS_ESCUDO[n - 1].versos.length > 1 ? 'los versos' : 'el verso'} donde está ${COSAS_ESCUDO[n - 1].palabra}`, citas]);
+    r.push([!/\b(rojo|azul|verde|amarill|dorad|color)/i.test(e.texto + ' ' + e.palabras), `paso ${n}: no se dicen colores del Escudo (el Himno no los dice)`, null]);
+    r.push([e.cifra === (n === 0 ? '?' : String(x.fichas.filter(f => f.ve).length)), `paso ${n}: el marcador cuenta lo que ya se encontró`, e.cifra]);
+
+    /* ── el Escudo, y lo que hay en cada aro ── */
+    if (n === 0) {
+      const c = x.escudo.caja, nat = x.escudo.natural;
+      r.push([/simbolos\/escudo\.webp$/.test(x.escudo.href) && x.escudo.ve, 'el Escudo es la imagen real del repositorio, entera', x.escudo.href]);
+      r.push([c.x0 >= 0 && c.y0 >= 0 && c.x1 <= x.vista[0] && c.y1 <= x.vista[1], 'el Escudo cabe en el dibujo', c]);
+      const ordenY = x.aros.map(a => a.c[1]);
+      const sol = x.aros.find(a => a.k === 'astro'), vol = x.aros.find(a => a.k === 'volcan');
+      r.push([ordenY[0] > ordenY[1] && ordenY[1] > ordenY[2] && Math.abs(sol.c[0] - vol.c[0]) < 2, 'el mar va abajo, el volcán en medio y el sol justo encima de la cima', ordenY]);
+      x.aros.forEach(a => r.push([a.img[0] > 0 && a.img[0] < 1 && a.img[1] > 0 && a.img[1] < 1, `el aro de ${a.k} cae dentro del Escudo`, a.img]));
+    }
+    if (n === 4) {
+      const c = x.escudo.caja, nat = x.escudo.natural;
+      r.push([!!nat && Math.abs((c.x1 - c.x0) / (c.y1 - c.y0) - nat[0] / nat[1]) < 0.01, 'el Escudo va con su proporción, sin estirar (la de sus píxeles)', nat]);
+    }
+    if (x.aros.some(a => a.ve)) {
+      x.aros.filter(a => a.ve).forEach(a => {
+        const cosa = COSAS_ESCUDO.find(c => c.k === a.k), col = a.colores;
+        /* el color de la cosa es el que más hay dentro del aro, y por mucho */
+        const bien = col && col[cosa.color] >= 0.35 && ['azul', 'verde', 'rojo'].every(k => k === cosa.color || col[k] * 3 < col[cosa.color]);
+        r.push([bien, `paso ${n}: lo que encierra el aro de ${cosa.nombre} es ${cosa.color} en el Escudo de verdad`, col]);
+      });
+    }
+    x.aros.forEach((a, k) => {
+      const ve = E.todas || E.parte === k;
+      r.push([a.ve === ve, `paso ${n}: el aro de ${COSAS_ESCUDO[k].nombre} ${ve ? 'está' : 'no está'}`, a.ve]);
+    });
+
+    /* ── la lupa ── */
+    r.push([x.lupa.ve === (E.parte >= 0), `paso ${n}: la lupa ${E.parte >= 0 ? 'mira una cosa' : 'no está'}`, x.lupa.ve]);
+    if (n === 0) r.push([x.lupa.href === x.escudo.href, 'la lupa agranda el mismo Escudo, no otro dibujo', x.lupa.href]);
+    if (E.parte >= 0) {
+      const a = x.aros[E.parte], m = x.lupa.m;
+      const q = [a.img[0] * x.lupa.ancho, a.img[1] * x.lupa.alto];
+      const v = [m[0] * q[0] + m[2] * q[1] + m[4], m[1] * q[0] + m[3] * q[1] + m[5]];
+      r.push([dist(v, x.lupa.c) < 0.3, `paso ${n}: en el centro de la lupa está lo que encierra el aro`, [v, x.lupa.c]]);
+      const escEscudo = (x.escudo.caja.x1 - x.escudo.caja.x0) / x.lupa.ancho;
+      r.push([m[0] > 2 * escEscudo && Math.abs(m[0] - m[3]) < 0.001 && Math.abs(m[1]) < 1e-6 && Math.abs(m[2]) < 1e-6, `paso ${n}: la lupa agranda, sin estirar ni girar`, m[0]]);
+      const cono = x.conos[E.parte], ae = x.aros[E.parte].caja;
+      const lejosDe = cono.pts.map(p => dist(p, x.lupa.c));
+      r.push([cono.ve && x.conos.filter(c => c.ve).length === 1 && Math.abs(lejosDe[1] - x.lupa.r * 1.018) < 1.5 && Math.abs(lejosDe[3] - x.lupa.r * 1.018) < 1.5 &&
+        [cono.pts[0], cono.pts[2]].every(p => p[0] >= ae.x0 && p[0] <= ae.x1 && p[1] >= ae.y0 && p[1] <= ae.y1),
+        `paso ${n}: el cono va del aro a la orilla de la lupa`, lejosDe]);
+    }
+    r.push([x.conos.filter(c => c.ve).length === (E.parte >= 0 ? 1 : 0), `paso ${n}: un cono solo cuando mira la lupa`, null]);
+
+    /* ── lo que dice cada cosa, de himno.js ── */
+    x.textos.forEach((t, k) => {
+      r.push([t.ve === (E.parte === k), `paso ${n}: lo que dice ${COSAS_ESCUDO[k].nombre} ${E.parte === k ? 'se lee' : 'no está'}`, t.ve]);
+    });
+    if (n === 0) {
+      const glosa = p => ((coro.palabras || []).find(w => w.p === p) || {}).s || '';
+      const mar = x.textos.find(t => t.k === 'mar');
+      r.push([mar.lineas.length === 3 && mar.lineas.every(l => {
+        const [p, s] = [l.slice(0, l.indexOf(':')), l.slice(l.indexOf(':') + 2)];
+        return glosa(p) && glosa(p).toLowerCase() === s.toLowerCase() && [4, 5].some(v => D.palabras(coro.versos[v]).includes(p));
+      }), 'las palabras difíciles del mar dicen lo que dice himno.js, y están en sus versos', mar.lineas]);
+      const astro = x.textos.find(t => t.k === 'astro');
+      const ga = glosa('astro').toLowerCase().replace(/;/g, '');
+      r.push([astro.lineas.length >= 1 && /^astro: /.test(astro.lineas[0]) && ga.replace(/\s+/g, ' ') === astro.lineas.join(' ').replace(/^astro: /, '').toLowerCase().replace(/\s+/g, ' '),
+        'lo que es el astro lo dice himno.js', astro.lineas]);
+      const vol = x.textos.find(t => t.k === 'volcan');
+      const ex = (coro.explicacion + ' ' + (coro.dato || '')).toLowerCase();
+      r.push([/volcán/.test(vol.lineas[0]) && /torres/.test(vol.lineas[0]) && /volcán/.test(ex) && /torres/.test(ex), 'que el volcán está entre las torres lo dice la explicación del coro', vol.lineas]);
+    }
+
+    /* ── lo encontrado, y los hilos del final ── */
+    x.fichas.forEach((f, k) => {
+      const v = x.vacias[k], bien = f.ve === (k < E.halladas) && v.ve === (k >= E.halladas);
+      r.push([bien && f.txt.join(' ').includes(COSAS_ESCUDO[k].nombre), `paso ${n}: ${k < E.halladas ? COSAS_ESCUDO[k].nombre + ' ya está en su renglón' : 'su renglón sigue vacío, con «?»'}`, [f.ve, v.ve]]);
+      if (n === 0) r.push([v.raya !== 'none' && /\?/.test(v.txt) && Math.abs(v.caja.y0 - f.caja.y0) < 0.01, `el renglón vacío de ${COSAS_ESCUDO[k].nombre} va de raya cortada, en su mismo sitio`, v.raya]);
+    });
+    if (n === 0) {
+      const ys = x.fichas.map(f => f.caja.y0);
+      r.push([ys[0] > ys[1] && ys[1] > ys[2], 'los renglones se llenan de abajo hacia arriba, como están las cosas en el Escudo', ys]);
+    }
+    x.hilos.forEach((h, k) => r.push([h.ve === E.todas && h.hecho === E.todas, `paso ${n}: el hilo de ${COSAS_ESCUDO[k].nombre} ${E.todas ? 'está' : 'no está'}`, [h.ve, h.hecho]]));
+    if (E.todas) {
+      x.hilos.forEach((h, k) => {
+        const a = x.aros[k].caja, f = x.fichas[k].caja, p0 = h.pts[0], p1 = h.pts[h.pts.length - 1];
+        r.push([Math.abs(p0[0] - a.x1) < 2.5 && p0[1] > a.y0 && p0[1] < a.y1 && Math.abs(p1[0] - f.x0) < 0.5 && p1[1] > f.y0 && p1[1] < f.y1,
+          `paso 4: el hilo de ${COSAS_ESCUDO[k].nombre} va de su aro a su renglón`, [p0, p1]]);
+      });
+      const cruza = [];
+      const corta = (a, b, c, d) => { const o = (p, q, s) => (q[0] - p[0]) * (s[1] - p[1]) - (q[1] - p[1]) * (s[0] - p[0]); return o(a, b, c) * o(a, b, d) < 0 && o(c, d, a) * o(c, d, b) < 0; };
+      x.hilos.forEach((h, i) => x.hilos.slice(i + 1).forEach((g, j) => {
+        for (let s = 1; s < h.pts.length; s++) for (let t = 1; t < g.pts.length; t++) if (corta(h.pts[s - 1], h.pts[s], g.pts[t - 1], g.pts[t])) { cruza.push([h.k, g.k]); return; }
+      }));
+      r.push([cruza.length === 0, 'paso 4: los hilos no se cruzan', cruza]);
+    }
+
+    /* ── cuándo pasa cada cosa ── */
+    if (E.parte >= 0) {
+      const k = E.parte, a = x.aros[k], c = x.conos[k], t = x.textos[k], f = x.fichas[k], v = x.vacias[k];
+      const lupaD = ESTADOS_ESCUDO[n - 1].parte >= 0 ? x.lupa.dImg : x.lupa.d;
+      r.push([a.d < lupaD && lupaD < c.d && c.d < t.d && t.d < f.d && v.d < f.d,
+        `paso ${n}: el aro, la lupa, el cono, lo que dice y su renglón salen en ese orden`, [a.d, lupaD, c.d, t.d, v.d, f.d]]);
+    }
+    if (E.todas) {
+      const ds = x.aros.map(a => a.d), hs = x.hilos.map(h => h.d);
+      r.push([ds.every((d, i) => i === 0 || d > ds[i - 1]) && hs.every((d, i) => d >= ds[i]), 'paso 4: los tres aros salen uno por uno, cada uno con su hilo', [ds, hs]]);
+    }
+
+    /* ── lo que se lee ── */
+    const ml = [];
+    x.letras.forEach((a, i) => x.letras.slice(i + 1).forEach(b => { if (monta(a.caja, b.caja)) ml.push([a.txt, b.txt]); }));
+    r.push([ml.length === 0, `paso ${n}: ningún texto se monta en otro`, ml.slice(0, 4)]);
+    const fuera = x.letras.filter(t => t.caja.x0 < -0.5 || t.caja.y0 < -0.5 || t.caja.x1 > x.vista[0] + 0.5 || t.caja.y1 > x.vista[1] + 0.5);
+    r.push([fuera.length === 0, `paso ${n}: todo lo escrito cabe en el dibujo`, fuera.map(t => t.txt)]);
+    return r;
   }
 };
 
@@ -19375,8 +20279,16 @@ function frases(t) {
   return t.split(/(?<=[.!?…])\s+/).map(f => f.split(/\s+/).filter(p => /[\p{L}\p{N}]/u.test(p)).length);
 }
 
+/* Una tarjeta que no está en la sección por la que se entra no se ve hasta
+   que se abre la suya: se abre como lo haría el alumno, con el go() de la
+   misión. */
+function abrirSeccion(id) {
+  const s = document.getElementById(id).closest('.sec');
+  if (s && !s.classList.contains('active') && typeof go === 'function') go(s.id);
+}
+
 (async () => {
-  console.log(`\nLa animación que explica el tema, abierta: ${misiones.length} misión(es)`);
+  console.log(`\nLa animación que explica el tema, abierta: ${misiones.length} animación(es) en ${new Set(misiones.map(m => m.url)).size} misión(es)`);
   if (!misiones.length) { console.log('  (ninguna la monta todavía)'); process.exit(0); }
   const nav = await abrir({ args: ['--no-sandbox'] });
 
@@ -19397,6 +20309,7 @@ function frases(t) {
     const errores = [];
     pag.on('pageerror', e => errores.push(e.message));
     await pag.goto(`${BASE}/${m.url}`, { waitUntil: 'load' });
+    await pag.evaluate(abrirSeccion, m.id);
     /* ⚠️ Una escena que no se monta se dice con su nombre, y la sonda sigue
        con la siguiente. Hay escenas que se rinden a propósito cuando sus
        datos dejan de decir lo que sus frases afirman (la de la Historia de
@@ -19438,6 +20351,7 @@ function frases(t) {
       return {
         montada: raiz.classList.contains('am-raiz'),
         tras: !!sit && sit.nextElementSibling === raiz.closest('[data-animacion]'),
+        enSeccion: !!raiz.closest('.sec'),
         img: svg && svg.getAttribute('role') === 'img' && (svg.getAttribute('aria-label') || '').length > 10,
         vivo: raiz.querySelector('.am-texto').getAttribute('aria-live') === 'polite',
         pasos: raiz.amControl.pasos,
@@ -19458,7 +20372,8 @@ function frases(t) {
        comprobaciones de la escena, que miden en coordenadas del dibujo,
        pasaban todas. */
     ok(base.vista.bien && Math.abs(base.vista.prop - 1) < 0.02 && base.vista.dentro, 'el dibujo se ve entero, con la proporción de su vista', base.vista);
-    ok(base.tras, 'la tarjeta va justo después de la historia');
+    if (m.primera) ok(base.tras, 'la tarjeta va justo después de la historia');
+    else ok(base.enSeccion, 'la tarjeta va dentro de una sección de la misión');
     ok(base.img && base.vivo, 'el dibujo tiene su descripción y la frase se anuncia');
 
     /* 1 · el recorrido entero, con el dedo */
@@ -19491,6 +20406,11 @@ function frases(t) {
     const rango = k => Math.max(...vistos.map(e => e[k])) - Math.min(...vistos.map(e => e[k]));
     ok(rango('yBoton') <= 1 && rango('yDibujo') <= 1, 'el botón que avanza y el dibujo no se mueven de un paso a otro',
       { boton: Math.round(rango('yBoton')), dibujo: Math.round(rango('yDibujo')) });
+    /* ⚠️ Y su rótulo cabe en un renglón en todos los pasos: «⛵ La primera y
+       la segunda» se partía en dos en un teléfono de 360 px, y la regla de
+       los 44 px solo miraba el botón del último paso. */
+    const altos = vistos.map(e => Math.round(e.altoBoton));
+    ok(rango('altoBoton') <= 1, 'el rótulo del botón que avanza cabe en un renglón en todos los pasos', altos);
 
     /* 2 · atrás, y el teclado */
     await pag.click(`#${m.id} .am-sigue`);
@@ -19580,6 +20500,7 @@ function frases(t) {
       const rangoEn = k => Math.max(...vistosEn.map(e => e[k])) - Math.min(...vistosEn.map(e => e[k]));
       ok(rangoEn('yBoton') <= 1 && rangoEn('yDibujo') <= 1, 'en inglés, el botón que avanza y el dibujo tampoco se mueven de un paso a otro',
         { boton: Math.round(rangoEn('yBoton')), dibujo: Math.round(rangoEn('yDibujo')) });
+      ok(rangoEn('altoBoton') <= 1, 'en inglés, el rótulo del botón que avanza cabe en un renglón en todos los pasos', vistosEn.map(e => Math.round(e.altoBoton)));
       await pag.evaluate(() => window.MetasI18N.set('es'));
       await pag.waitForTimeout(300);
       const deVuelta = await pag.evaluate(id => window.__amLeer(id), m.id);
@@ -19604,6 +20525,7 @@ function frases(t) {
     await ctx2.route(url => !url.href.startsWith(BASE), r => r.abort());
     const pag2 = await ctx2.newPage();
     await pag2.goto(`${BASE}/${m.url}`, { waitUntil: 'load' });
+    await pag2.evaluate(abrirSeccion, m.id);
     await pag2.waitForSelector(`#${m.id} .am-sigue`, { timeout: 15000 });
     await pag2.click(`#${m.id} .am-sigue`);
     const mov = await pag2.evaluate(id => {

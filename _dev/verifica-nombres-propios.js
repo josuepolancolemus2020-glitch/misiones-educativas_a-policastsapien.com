@@ -242,6 +242,13 @@ function tapaCodigo(linea) {
        entrar. El \b del final evita tapar prosa: «.com» sí, «.como» no. */
     .replace(/[\w./-]*[/.][\w./-]*/g, m => (/[/]|\.(html|js|css|png|jpg|webp|svg|json|hn|com|org|net|edu)\b/.test(m) ? ' '.repeat(m.length) : m))
     .replace(/[\wáéíóúñü]+\s*:\s*[{[]/g, m => ' '.repeat(m.length))
+    /* Y la propiedad de un objeto: «v.honduras», «detalle.honduras». Lo
+       destapó el mapa de los viajes de Colón (misión del Himno), que marca
+       con una propiedad el viaje que llegó a Honduras y lee la costa del país
+       de contornos-mundo.js: once falsos positivos, todos código. Se tapa solo
+       lo que va pegado a un nombre por un punto, sin espacio: en la prosa
+       siempre hay un espacio después del punto. */
+    .replace(/(?<=[\w$\])])\.[a-záéíóúñü_$][\wáéíóúñü$]*/g, m => ' '.repeat(m.length))
     /* Y una llave de objeto seguida de TEXTO entre comillas: «sace: '…'». Lo
        destapó la misión de M.E.T.A.S y SACE, donde cada parada guarda su lado
        oficial en una clave; sin esto, el comprobador leía la clave como la

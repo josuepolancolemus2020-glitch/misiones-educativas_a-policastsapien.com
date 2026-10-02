@@ -261,6 +261,112 @@
     return { europa: europa, asia: asia };
   }
 
+  /* ── El detalle: lo que solo se ve de cerca ──────────────────────
+     Islas y un país que al tamaño del mundo entero son medio píxel, y que
+     un mapa que se ACERCA necesita: el de los viajes de Colón (la misión
+     del Himno) se queda en el Atlántico y baja hasta la costa de Honduras.
+     No entran en TIERRA a propósito: los mapas del mundo de Coordenadas, de
+     los continentes y del precio del café siguen dibujando exactamente lo
+     mismo que antes, y sus sondas no se enteran.
+
+     ⚠️ HONDURAS SE ARMA CON LA COSTA DE TIERRA, no con una costa propia.
+     Su orilla del Caribe son los vértices del anillo de América (del 16° N
+     de la boca del Motagua al cabo Gracias a Dios) y su orilla del golfo de
+     Fonseca cae sobre los tramos de ese mismo anillo. Con una costa más fina
+     que la del continente, el país se saldría al mar o dejaría una franja
+     de tierra sin país al acercarse. Las fronteras con Guatemala, El
+     Salvador y Nicaragua van por tierra, puestas con sus coordenadas.
+
+     Las islas son las que tocan los cuatro viajes: las Bahamas, las
+     Antillas menores, Jamaica y Puerto Rico; las Canarias, Madeira y Cabo
+     Verde, por donde salían al océano; Trinidad, y las tres de la Bahía.
+     Son contornos simplificados, como todo lo de este archivo: para que
+     cada isla caiga donde dicen sus números, no para medirla. */
+  var DETALLE = {
+    honduras: [-88.21,15.98, -87.5,15.8, -86.2,16, -85,16, -84,15.8, -83.2,15,
+      -83.8,14.78, -84.4,14.72, -84.95,14.45, -85.4,14.2, -85.8,13.95, -86.2,13.95, -86.55,13.75, -86.75,13.3, -86.95,13.05,
+      -87.3,12.7, -87.5,12.9, -87.8,13.08,
+      -87.75,13.5, -87.8,13.85, -88.2,13.95, -88.55,14, -88.85,14.15, -89.15,14.32, -89.35,14.42,
+      -89.22,14.85, -88.95,15.1, -88.6,15.4, -88.35,15.65],
+    islas: [
+      { nombre: 'Utila', grupo: 'bahia', anillo: [-86.98,16.12, -86.86,16.13, -86.85,16.08, -86.97,16.07] },
+      { nombre: 'Roatán', grupo: 'bahia', anillo: [-86.6,16.3, -86.45,16.36, -86.24,16.44, -86.25,16.48, -86.45,16.42, -86.6,16.35] },
+      { nombre: 'Guanaja', grupo: 'bahia', anillo: [-85.95,16.47, -85.84,16.5, -85.82,16.43, -85.92,16.41] },
+      { nombre: 'Jamaica', grupo: 'antillas', anillo: [-78.35,18.45, -77.9,18.52, -77,18.45, -76.35,18.15, -76.2,17.9, -76.9,17.85, -77.4,17.85, -77.9,18.05, -78.35,18.25] },
+      { nombre: 'Puerto Rico', grupo: 'antillas', anillo: [-67.25,18.5, -66.6,18.5, -65.6,18.4, -65.6,18.05, -66.4,17.95, -67.2,17.95] },
+      { nombre: 'Guadalupe', grupo: 'antillas', anillo: [-61.8,16.5, -61.5,16.45, -61.2,16.3, -61.5,16.15, -61.75,15.95] },
+      { nombre: 'Dominica', grupo: 'antillas', anillo: [-61.45,15.62, -61.25,15.55, -61.25,15.25, -61.38,15.2] },
+      { nombre: 'Martinica', grupo: 'antillas', anillo: [-61.2,14.88, -60.85,14.75, -60.82,14.45, -61.08,14.4, -61.22,14.6] },
+      { nombre: 'Santa Lucía', grupo: 'antillas', anillo: [-61,14.1, -60.88,13.95, -60.95,13.72, -61.07,13.85] },
+      { nombre: 'Trinidad', grupo: 'antillas', anillo: [-61.7,10.75, -60.95,10.85, -60.9,10.15, -61.15,10.05, -61.7,10.15] },
+      { nombre: 'Gran Bahama', grupo: 'bahamas', anillo: [-79,26.72, -78.5,26.75, -77.95,26.65, -78.2,26.55, -78.7,26.52, -79,26.6] },
+      { nombre: 'Ábaco', grupo: 'bahamas', anillo: [-77.55,26.95, -77.15,26.75, -77,26.4, -77.2,26.05, -77.35,26.3, -77.4,26.65] },
+      { nombre: 'Andros', grupo: 'bahamas', anillo: [-78.2,25.2, -77.75,25.1, -77.65,24.5, -77.75,24.1, -78.05,24.15, -78.35,24.6] },
+      { nombre: 'Eleuthera', grupo: 'bahamas', anillo: [-76.75,25.55, -76.45,25.3, -76.15,24.8, -76.25,24.75, -76.55,25.2, -76.8,25.45] },
+      { nombre: 'Cat Island', grupo: 'bahamas', anillo: [-75.75,24.65, -75.45,24.45, -75.3,24.15, -75.42,24.17, -75.65,24.45] },
+      { nombre: 'San Salvador', grupo: 'bahamas', anillo: [-74.55,24.15, -74.44,24.12, -74.42,23.98, -74.52,23.96] },
+      { nombre: 'Long Island', grupo: 'bahamas', anillo: [-75.3,23.65, -75.05,23.3, -74.85,22.9, -74.95,22.85, -75.15,23.2, -75.35,23.55] },
+      { nombre: 'Gran Inagua', grupo: 'bahamas', anillo: [-73.7,21.2, -73.1,21.15, -73,20.95, -73.6,20.95] },
+      { nombre: 'La Palma', grupo: 'canarias', anillo: [-17.95,28.85, -17.75,28.8, -17.8,28.5, -17.9,28.6] },
+      { nombre: 'Tenerife', grupo: 'canarias', anillo: [-16.9,28.55, -16.15,28.58, -16.4,28.2, -16.75,28.05, -16.9,28.35] },
+      { nombre: 'La Gomera', grupo: 'canarias', anillo: [-17.35,28.2, -17.1,28.15, -17.2,28, -17.35,28.05] },
+      { nombre: 'El Hierro', grupo: 'canarias', anillo: [-18.15,27.8, -17.9,27.82, -17.95,27.65, -18.1,27.68] },
+      { nombre: 'Gran Canaria', grupo: 'canarias', anillo: [-15.8,28.15, -15.4,28.18, -15.38,27.8, -15.6,27.75, -15.82,27.95] },
+      { nombre: 'Fuerteventura', grupo: 'canarias', anillo: [-14.45,28.75, -13.85,28.65, -14,28.2, -14.5,28.05, -14.25,28.4] },
+      { nombre: 'Lanzarote', grupo: 'canarias', anillo: [-13.85,29.2, -13.45,29.25, -13.45,28.85, -13.85,28.9] },
+      { nombre: 'Madeira', grupo: 'madeira', anillo: [-17.25,32.85, -16.65,32.78, -16.75,32.65, -17.2,32.72] },
+      { nombre: 'Santo Antão', grupo: 'caboverde', anillo: [-25.35,17.15, -25,17.15, -24.98,16.95, -25.3,16.95] },
+      { nombre: 'São Vicente', grupo: 'caboverde', anillo: [-25.05,16.92, -24.85,16.9, -24.9,16.8, -25.05,16.83] },
+      { nombre: 'Sal', grupo: 'caboverde', anillo: [-22.95,16.85, -22.9,16.8, -22.92,16.6, -22.98,16.65] },
+      { nombre: 'Boa Vista', grupo: 'caboverde', anillo: [-22.95,16.2, -22.7,16.15, -22.75,15.98, -22.95,15.97] },
+      { nombre: 'Santiago', grupo: 'caboverde', anillo: [-23.75,15.3, -23.5,15.25, -23.45,14.95, -23.7,14.95] }
+    ],
+
+    /* ⚠️ CENTROAMÉRICA DE CERCA. Lo de arriba sirve para mirar el Atlántico
+       entero, donde un grado mide tres píxeles; cuando la cámara baja al
+       Caribe un grado mide quince, y el anillo de América, con un vértice
+       por grado, deja a Honduras hecha un polígono de cinco lados. Por eso
+       hay una segunda costa, más fina, que SOLO se pinta de cerca y que
+       tapa a la gruesa con su propio mar: las dos no se mezclan nunca,
+       porque una costa fina encima de una gruesa deja tierra en el mar.
+
+       `tierra` es el continente desde el golfo de México hasta Costa Rica;
+       sus puntas del oeste y del sur se cierran por tierra, fuera de lo que
+       se ve. `honduras` va encima con los MISMOS vértices de costa que
+       `tierra` (del Motagua al cabo Gracias a Dios y en el golfo de
+       Fonseca), así no hay franja de tierra sin país ni país en el mar. Las
+       islas de la Bahía y Jamaica se toman de `islas`. Son contornos
+       simplificados, con un vértice cada pocas leguas: para que cada costa
+       caiga donde dicen sus números, no para medirla. */
+    centroamerica: {
+      tierra: [
+        -96.8,19.6, -96.1,19.15, -95.75,18.77, -95.2,18.68, -94.8,18.4, -94.42,18.15, -93.85,18.3, -93.2,18.45,
+        -92.65,18.6, -91.83,18.65, -91.5,18.78, -91.18,18.97, -90.72,19.35, -90.53,19.85, -90.45,20.7,
+        -87.05,20.7, -87.43,20.2, -87.47,19.8, -87.65,19.6, -87.45,19.3, -87.57,19.0, -87.71,18.71, -87.84,18.27,
+        -87.95,17.9, -88.15,17.75, -88.19,17.5, -88.27,17.15, -88.22,16.97, -88.33,16.6, -88.37,16.5,
+        -88.55,16.3, -88.8,16.1, -88.9,15.92, -88.75,15.83, -88.62,15.72, -88.45,15.92, -88.22,15.73,
+        -88.04,15.78, -87.95,15.85, -87.73,15.92, -87.62,15.92, -87.47,15.77, -87.2,15.8, -86.79,15.78,
+        -86.45,15.8, -86.3,15.82, -86.0,15.9, -86.02,16.02, -85.85,15.98, -85.71,15.95, -85.05,15.98,
+        -84.6,15.85, -84.3,15.84, -84.0,15.72, -83.75,15.45, -83.4,15.25, -83.15,15.0,
+        -83.25,14.6, -83.4,14.25, -83.38,14.03, -83.5,13.6, -83.55,13.2, -83.6,12.8, -83.65,12.4,
+        -83.72,12.0, -83.7,11.6, -83.85,11.2, -83.7,10.93, -83.6,10.5,
+        -85.8,10.5, -85.75,10.9, -85.88,11.25, -86.1,11.45, -86.52,11.78, -86.78,12.18, -87.18,12.48,
+        -87.45,12.75, -87.68,12.95, -87.45,13.0, -87.35,13.05, -87.38,13.32, -87.47,13.42, -87.62,13.4,
+        -87.75,13.36, -87.84,13.3, -87.92,13.16, -88.2,13.15, -88.5,13.18, -88.9,13.3, -89.32,13.48,
+        -89.83,13.57, -90.1,13.73, -90.5,13.85, -90.82,13.92, -91.3,14.05, -91.92,14.3, -92.2,14.52,
+        -92.4,14.7, -92.8,15.05, -93.2,15.4, -93.6,15.75, -94.1,16.15, -94.6,16.2, -95.2,16.17,
+        -96.0,15.7, -96.8,15.7],
+      honduras: [
+        -88.22,15.73, -88.04,15.78, -87.95,15.85, -87.73,15.92, -87.62,15.92, -87.47,15.77, -87.2,15.8,
+        -86.79,15.78, -86.45,15.8, -86.3,15.82, -86.0,15.9, -86.02,16.02, -85.85,15.98, -85.71,15.95,
+        -85.05,15.98, -84.6,15.85, -84.3,15.84, -84.0,15.72, -83.75,15.45, -83.4,15.25, -83.15,15.0,
+        -83.6,14.9, -84.0,14.76, -84.45,14.65, -84.95,14.35, -85.4,14.15, -85.75,13.95, -86.1,13.95,
+        -86.45,13.8, -86.75,13.35, -86.97,13.08, -87.35,13.05, -87.38,13.32, -87.47,13.42, -87.62,13.4,
+        -87.75,13.36, -87.82,13.6, -87.8,13.85, -88.2,13.95, -88.55,14.0, -88.85,14.15, -89.15,14.3,
+        -89.35,14.42, -89.22,14.85, -88.95,15.1, -88.6,15.4, -88.35,15.6]
+    }
+  };
+
   if (CONTINENTE.length !== TIERRA.length) throw new Error('contornos-mundo: cada anillo necesita su continente');
-  raiz.CONTORNOS_MUNDO = { tierra: TIERRA, continente: CONTINENTE, agua: AGUA, eurasia: partirEurasia() };
+  raiz.CONTORNOS_MUNDO = { tierra: TIERRA, continente: CONTINENTE, agua: AGUA, eurasia: partirEurasia(), detalle: DETALLE };
 })(this);

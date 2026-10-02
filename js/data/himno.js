@@ -59,6 +59,17 @@ const HIMNO_CORO_CANTADO = [
   'hay un astro, hay un astro de nítida luz.'
 ];
 
+/* `cuando`: en qué año pasa lo que cuenta cada estrofa, para la película
+   del Himno (misiones/2y3ciclo-himno-nacional/js/animacion-siglos.js). No es
+   un dato nuevo: cada año está escrito en la explicación o en el dato de su
+   estrofa, y `_dev/verifica-himno.js` comprueba que siga ahí. Si alguien
+   corrige un año en la explicación y no aquí, la sonda se pone roja.
+   · `comoLa`: la segunda no trae año propio porque cuenta la MISMA llegada
+     que la primera; el año se busca en esa.
+   · `hacia`: el año no es exacto, y la pantalla lo dice («hacia 1537»).
+   · `hasta`: la estrofa no cuenta un momento, cuenta un tramo (la colonia).
+   · `lejos`: lo que cuenta pasa del otro lado del Atlántico.
+   · `null`: la séptima no cuenta el pasado, promete. No tiene año. */
 const HIMNO = [
   {
     n: 0, clave: 'coro', titulo: 'Coro',
@@ -98,6 +109,7 @@ const HIMNO = [
     ],
     tema: 'La llegada de Cristóbal Colón',
     resumen: 'Honduras antes de 1502, y el día en que Colón llegó a sus costas.',
+    cuando: { anio: 1502 },
     explicacion: 'Le habla a Honduras como a una mujer indígena dormida junto al mar. «El audaz navegante» es Cristóbal Colón, que llegó a estas costas en 1502, en su cuarto viaje. Quedó tan admirado de lo que vio que besó la orilla del mar, «la orla azul de tu espléndido manto», como quien saluda con respeto.',
     /* El dato que iba aquí —«Honduras es el único país de América donde Colón
        puso pie en tierra firme»— no lo acredita ninguna fuente del repositorio,
@@ -127,6 +139,7 @@ const HIMNO = [
     ],
     tema: 'De dónde vino Colón, y la bandera extranjera',
     resumen: 'Colón salió de España soñando con estas tierras; cuando Honduras despertó, ya ondeaba una bandera ajena.',
+    cuando: { anio: 1502, comoLa: 'e1' },
     explicacion: 'Cuenta de dónde venía: de España, que queda al oriente, «donde el sol se levanta», cruzando el Atlántico. Él ya había soñado con estas tierras y se lanzó al mar a buscarlas. El final es el momento amargo: cuando Honduras levanta la cabeza para ver qué pasa, sobre su cielo ya ondea «un extraño pendón», la bandera de otro país. Ahí empieza la conquista.',
     dato: '«Atlante» es el nombre poético del océano Atlántico, y aparece dos veces en el Himno: aquí y en la cuarta estrofa.',
     palabras: [
@@ -152,6 +165,7 @@ const HIMNO = [
     ],
     tema: 'La resistencia y la muerte de Lempira',
     resumen: 'Los indígenas pelearon, pero Lempira cayó; de aquella gesta solo quedan la leyenda y un peñón.',
+    cuando: { anio: 1537, hacia: true },
     explicacion: 'Es la estrofa de Lempira, el cacique lenca que dirigió la resistencia contra la conquista, hacia 1537. El poema dice que la lucha fue inútil porque él cayó cubierto de su propia sangre. Y termina con algo muy cierto: de aquella hazaña no quedó ni la tumba. Nadie sabe dónde está enterrado; solo quedan la leyenda y la silueta de un cerro, el Peñol de Cerquín.',
     dato: 'Es la única estrofa que nombra a una persona de Honduras, y es un héroe indígena.',
     palabras: [
@@ -177,6 +191,7 @@ const HIMNO = [
     ],
     tema: 'Los tres siglos de colonia',
     resumen: 'Trescientos años obedeciendo, hasta que del otro lado del mar llegó un rugido de libertad.',
+    cuando: { anio: 1502, hasta: 1821 },
     explicacion: 'Resume la época colonial: trescientos años oyendo órdenes y reclamando sin que nadie escuchara. Pero un día llega un ruido de esperanza desde muy lejos, del otro lado del Atlántico: un León que ruge indignado. Ese León es Francia, y la estrofa siguiente lo dice con su nombre.',
     dato: 'La colonia duró de 1502 a 1821: son los «tres siglos» de los que habla dos veces.',
     palabras: [
@@ -202,6 +217,7 @@ const HIMNO = [
     ],
     tema: 'La Revolución Francesa',
     resumen: 'Explica quién era el León: Francia, que se levantó contra su rey y encendió el ejemplo de libertad.',
+    cuando: { anio: 1789, lejos: true },
     explicacion: 'Aquí el poema contesta la pregunta que dejó la estrofa anterior: el León era Francia. Cuenta la Revolución Francesa de 1789, cuando el pueblo despertó furioso llamado por Dantón, uno de sus oradores; mandó a la muerte al rey y puso en su lugar el culto a la Razón. De ahí salieron las ideas de libertad e igualdad que llegaron a América y empujaron la Independencia.',
     /* Decía «la única que habla de un país que no es Honduras ni España», y la
        cuarta también habla de Francia: es el León. Lo que solo hace esta es
@@ -230,6 +246,7 @@ const HIMNO = [
     ],
     tema: 'La Independencia de Centroamérica',
     resumen: 'Honduras también se levantó, rompió la cadena y vio marcharse a la colonia.',
+    cuando: { anio: 1821 },
     explicacion: 'Es la estrofa de la Independencia. Honduras despierta de su «sueño servil», el sueño de quien vive sometido, y le enseña al mundo la cadena rota: ese es el «infame eslabón». Y la colonia se va, escondiéndose detrás de las montañas boscosas, como un pájaro negro que se pierde de vista. Ocurrió el 15 de septiembre de 1821.',
     dato: '«Enseñastes» con -s no es una falta: los versos son de diez sílabas y sin la -s le faltaría una.',
     palabras: [
@@ -255,6 +272,7 @@ const HIMNO = [
     ],
     tema: 'El juramento de defender la patria',
     resumen: 'La promesa de defender la Bandera hasta el final, con honor.',
+    cuando: null,
     explicacion: 'Es la única estrofa que no cuenta el pasado: promete. Dice que por guardar la Bandera («ese emblema divino») los hondureños marcharían hasta la muerte, y que esa muerte sería honrada. Por eso es la que se canta en los actos: las otras seis cuentan de dónde venimos, y esta dice qué estamos dispuestos a hacer.',
     dato: 'Es la estrofa que se canta en las escuelas y en los partidos, junto con el coro.',
     palabras: [

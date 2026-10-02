@@ -191,24 +191,115 @@ if (!fs.existsSync(MISION)) {
     inventadas.slice(0, 6).forEach(c => console.log('       «' + c + '»'));
   }
 
-  /* La animación que va tras la historia (el coro escrito y el cantado) usa
-     versos del coro, y por eso NO lleva ninguno escrito: los saca de
-     himno.js, y la repetición la calcula (lo que el cantado tiene de más).
-     Un pedazo de letra escrito en ella sería un segundo original, justo en la
-     pantalla que enseña a no copiar de más. Se busca en sus cadenas, sin los
-     comentarios, cualquier tirada de cuatro palabras del Himno. */
-  const ANIM = path.join(RAIZ, 'misiones', '2y3ciclo-himno-nacional', 'js', 'animacion-coro.js');
-  if (fs.existsSync(ANIM)) {
-    const a = fs.readFileSync(ANIM, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+  /* Las animaciones de la misión tampoco llevan letra escrita a mano. La que
+     va tras la historia (el coro escrito y el cantado) saca los versos de
+     himno.js y CALCULA la repetición; las tres que explican el contenido (el
+     mapa de los viajes, la película de las estrofas y el Escudo) citan los
+     versos sacándolos de himno.js por estrofa, verso y palabra. Un pedazo de
+     letra escrito en una de ellas sería un segundo original. Se busca en sus
+     cadenas, sin los comentarios, cualquier tirada de cuatro palabras del
+     Himno; y se cuentan leyendo la carpeta, no escritas aquí. */
+  const DIRJS = path.join(RAIZ, 'misiones', '2y3ciclo-himno-nacional', 'js');
+  const anims = fs.readdirSync(DIRJS).filter(f => /^animacion-.*\.js$/.test(f)).sort();
+  anims.forEach(f => {
+    const a = fs.readFileSync(path.join(DIRJS, f), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
     const cadenas = (a.match(/'(?:[^'\\\n]|\\.)*'/g) || []).map(t => t.slice(1, -1));
     const conLetra = cadenas.filter(t => {
       const p = limpia(t).split(' ');
       for (let i = 0; i + 4 <= p.length; i++) if (letraPlana.includes(p.slice(i, i + 4).join(' '))) return true;
       return false;
     });
-    if (!conLetra.length && /HIMNO_CORO_CANTADO/.test(a) && /\bHIMNO\b/.test(a)) ok('la animación del coro no escribe la letra: la saca de js/data/himno.js');
-    else mal('la animación del coro escribe letra a mano: «' + (conLetra[0] || 'no usa HIMNO ni HIMNO_CORO_CANTADO') + '»');
+    const usa = /\bHIMNO\b/.test(a) && (f !== 'animacion-coro.js' || /HIMNO_CORO_CANTADO/.test(a));
+    if (!conLetra.length && usa) ok(f + ' no escribe la letra: la saca de js/data/himno.js');
+    else mal(f + ' escribe letra a mano: «' + (conLetra[0] || 'no usa HIMNO') + '»');
+  });
+  if (anims.length < 4) mal('la misión lleva ' + anims.length + ' animaciones y se esperaban al menos 4 (el coro, el Escudo, la película y los viajes)');
+}
+
+/* ── Los años de cada estrofa (el campo «cuando») ─────────────────────────
+   La película del Himno pone cada estrofa en su año, y esos años no se
+   escriben en la animación: salen de aquí. Así que cada año tiene que seguir
+   escrito en la explicación o en el dato de su estrofa, que es lo que lo
+   acredita en la pantalla; y entre sí tienen que cuadrar, porque la película
+   enseña que la segunda cae con la primera y que la colonia termina el año
+   de la Independencia. Si dejan de cuadrar, la animación no se monta: se
+   prefiere a que enseñe una línea de años que contradice la explicación. */
+console.log('\n🎬 Los años de cada estrofa (campo «cuando» de himno.js)');
+{
+  const C = {};
+  HIMNO.forEach(e => { C[e.clave] = e; });
+  const escrito = (e, anio) => (e.explicacion + ' ' + (e.dato || '')).includes(String(anio));
+  const faltan = [];
+  ['e1', 'e2', 'e3', 'e4', 'e5', 'e6'].forEach(k => {
+    const c = C[k].cuando;
+    if (!c || typeof c.anio !== 'number') return faltan.push(k + ': no trae su año');
+    const fuente = c.comoLa ? C[c.comoLa] : C[k];
+    if (!escrito(fuente, c.anio)) faltan.push(k + ': ' + c.anio + ' no está escrito en su explicación ni en su dato');
+    if (c.hasta && !escrito(C[k], c.hasta)) faltan.push(k + ': ' + c.hasta + ' no está escrito en su explicación ni en su dato');
+  });
+  if (faltan.length) faltan.forEach(t => mal(t));
+  else ok('cada año de las seis primeras está escrito en su explicación o en su dato');
+  const cu = k => C[k].cuando || {};
+  if (C.e7.cuando === null && /promete/.test(C.e7.explicacion)) ok('la séptima no tiene año: su explicación dice que promete');
+  else mal('la séptima no puede tener año (no cuenta el pasado), y su explicación tiene que decirlo');
+  if (cu('e2').comoLa === 'e1' && cu('e2').anio === cu('e1').anio) ok('la segunda cuenta la misma llegada que la primera, y cae en su mismo año');
+  else mal('la segunda tiene que caer en el año de la primera (cuentan la misma llegada)');
+  if (cu('e4').anio === cu('e1').anio && cu('e4').hasta === cu('e6').anio) ok('la colonia empieza con la llegada y termina el año de la Independencia (' + cu('e4').anio + ' a ' + cu('e4').hasta + ')');
+  else mal('la colonia tiene que ir del año de la primera estrofa al de la sexta');
+  if (cu('e3').hacia === true && /hacia/.test(C.e3.explicacion)) ok('el año de Lempira va como «hacia», igual que en su explicación');
+  else mal('el año de Lempira no es exacto: tiene que ir con «hacia», en el dato y en la explicación');
+  const orden = ['e1', 'e3', 'e5', 'e6'].map(k => cu(k).anio);
+  if (orden.every((a, i) => i === 0 || a > orden[i - 1])) ok('los años van en el orden de las estrofas');
+  else mal('los años no van en el orden de las estrofas: ' + orden.join(', '));
+}
+
+/* ── Los viajes de Colón (js/data/viajes-colon.js) ───────────────────────
+   El mapa de la primera y la segunda estrofa sale de ese archivo, y dos cosas
+   se comprueban aquí, sin abrir el navegador:
+   · que diga lo mismo que la explicación de la primera estrofa (Colón llegó a
+     Honduras en su cuarto viaje, en el año que ella dice), y
+   · ⚠️ que el cuarto viaje NO cruce tierra: la cámara baja al Caribe para
+     verlo de cerca, y ahí se dibuja la costa fina de contornos-mundo.js. Una
+     ruta que pasa por encima de una isla o de la costa enseña un viaje que no
+     se pudo hacer. Pasó al escribirla: el tramo que bajaba de las islas a la
+     costa atravesaba Guanaja, y en la captura no se notaba. */
+console.log('\n⛵ Los viajes de Colón');
+{
+  const cx = {};
+  vm.createContext(cx);
+  vm.runInContext(fs.readFileSync(path.join(RAIZ, 'js', 'data', 'viajes-colon.js'), 'utf8'), cx);
+  vm.runInContext(fs.readFileSync(path.join(RAIZ, 'js', 'data', 'contornos-mundo.js'), 'utf8'), cx);
+  const V = cx.VIAJES_COLON, M = cx.CONTORNOS_MUNDO;
+  const e1 = HIMNO.find(e => e.clave === 'e1');
+  const cuarto = V.find(v => v.honduras);
+  if (V.length === 4 && V.every((v, i) => v.n === i + 1 && (i === 0 || v.anio > V[i - 1].anio)) && V.filter(v => v.honduras).length === 1 && cuarto.n === 4)
+    ok('cuatro viajes en orden, y solo el cuarto llega a Honduras');
+  else mal('los viajes tienen que ser cuatro, en orden, y llegar a Honduras solo el cuarto');
+  if (cuarto && e1.explicacion.includes(String(cuarto.anio)) && /cuarto viaje/.test(e1.explicacion) && e1.cuando && e1.cuando.anio === cuarto.anio)
+    ok('el mapa y la primera estrofa dicen lo mismo: Honduras, en ' + cuarto.anio + ', en el cuarto viaje');
+  else mal('viajes-colon.js y la explicación de la primera estrofa no dicen lo mismo del viaje que llegó a Honduras');
+  /* un punto está en tierra si cae dentro de un anillo (regla par-impar) */
+  const dentro = (q, a) => {
+    let si = false;
+    for (let i = 0, j = a.length - 2; i < a.length; j = i, i += 2) {
+      const xi = a[i], yi = a[i + 1], xj = a[j], yj = a[j + 1];
+      if ((yi > q[1]) !== (yj > q[1]) && q[0] < (xj - xi) * (q[1] - yi) / (yj - yi) + xi) si = !si;
+    }
+    return si;
+  };
+  const tierra = [M.detalle.centroamerica.tierra, M.detalle.centroamerica.honduras].concat(M.detalle.islas.map(i => i.anillo));
+  const nombre = k => k === 0 ? 'la costa' : k === 1 ? 'Honduras' : M.detalle.islas[k - 2].nombre;
+  const ruta = cuarto.ruta.concat(cuarto.sigue ? [cuarto.sigue] : []);
+  const choques = [];
+  for (let t = 1; t < ruta.length; t++) {
+    for (let j = 1; j < 50; j++) {
+      const f = j / 50, q = [ruta[t - 1][0] + (ruta[t][0] - ruta[t - 1][0]) * f, ruta[t - 1][1] + (ruta[t][1] - ruta[t - 1][1]) * f];
+      const k = tierra.findIndex(a => dentro(q, a));
+      if (k >= 0) { choques.push('tramo ' + t + ' (' + nombre(k) + ')'); break; }
+    }
   }
+  if (!choques.length) ok('el cuarto viaje no cruza tierra: ni la costa fina de Centroamérica, ni Honduras, ni una isla');
+  else mal('el cuarto viaje cruza tierra: ' + choques.join(', '));
 }
 
 /* ⚠️ El Himno no se enseña solo en su misión. Aspectos Cívicos —la etapa 1 de

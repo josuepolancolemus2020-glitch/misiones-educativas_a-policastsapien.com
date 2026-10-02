@@ -103,9 +103,15 @@ for (const m of misiones) {
   console.log(`\n${m.dir}/${m.archivo}`);
   const html = sinComentariosHtml(m.html);
 
-  /* 1 · justo después de la historia, en la sección por la que se entra */
+  /* 1 · justo después de la historia, en la sección por la que se entra.
+     ⚠️ Una misión puede tener MÁS de una animación (la del Himno lleva cuatro:
+     la de la entrada y tres en la sección de las estrofas). La regla de la
+     historia es de la PRIMERA, la que abre la misión; las demás van donde
+     enseñan, y de cada una se pide lo mismo que de la primera: su bloque, un
+     id que no se repite, su frase de reserva y una escena que la monte. */
   const iSit = html.search(/<div\b[^>]*\bdata-situacion\b[^>]*>/);
-  const iAni = html.search(/<div\b[^>]*\bdata-animacion\b[^>]*>/);
+  const inicios = [...html.matchAll(/<div\b[^>]*\bdata-animacion\b[^>]*>/g)].map(x => x.index);
+  const iAni = inicios.length ? inicios[0] : -1;
   ok(iSit >= 0, 'la misión tiene su historia de arranque (data-situacion)');
   if (iSit >= 0 && iAni >= 0) {
     const finSit = finDelDiv(html, iSit);
@@ -116,24 +122,34 @@ for (const m of misiones) {
     const cab = sec >= 0 ? html.slice(sec, html.indexOf('>', sec) + 1) : '';
     ok(/\bactive\b/.test(cab), 'y las dos están en la sección por la que el alumno entra (la marcada active)', cab);
   }
+  if (inicios.length > 1) ok(true, `y lleva ${inicios.length - 1} ${inicios.length > 2 ? 'animaciones' : 'animación'} más, dentro de sus secciones`);
 
-  /* 4 · la frase de reserva, y 3 · el id que monta la escena */
-  const finAni = iAni >= 0 ? finDelDiv(html, iAni) : -1;
-  const tarjeta = finAni > 0 ? html.slice(iAni, finAni) : '';
-  const idCont = ((tarjeta.match(/<div\b[^>]*\bid="([^"]+)"/) || [])[1]) || '';
-  ok(!!idCont, 'la tarjeta tiene el bloque que el aparato llena (un <div id=…>)', idCont);
-  /* ⚠️ Y ese id es de ESTA misión y de ninguna otra. La sonda del navegador
-     guarda lo que mide cada escena por su id: dos misiones con el mismo id
-     se pisan, y la segunda revisa la primera con el lector que no es. Pasó
-     con #amRecado, que ya era de Los Adverbios cuando lo tomó la del Robot
-     Mensajero. */
-  if (idCont) {
-    const otra = idsVistos[idCont];
-    ok(!otra, `el id #${idCont} no lo usa ninguna otra misión`, otra);
-    if (!otra) idsVistos[idCont] = m.dir;
+  /* 4 · la frase de reserva, y 3 · el id que monta la escena, en cada tarjeta */
+  const tarjetas = inicios.map(i0 => {
+    const fin = finDelDiv(html, i0);
+    const tarjeta = fin > 0 ? html.slice(i0, fin) : '';
+    const idCont = ((tarjeta.match(/<div\b[^>]*\bid="([^"]+)"/) || [])[1]) || '';
+    return { i0, tarjeta, idCont };
+  });
+  const sec0 = i => { const k = html.slice(0, i).lastIndexOf('<div class="sec'); return k; };
+  for (const t of tarjetas) {
+    ok(!!t.idCont, 'la tarjeta tiene el bloque que el aparato llena (un <div id=…>)', t.idCont);
+    if (t !== tarjetas[0]) ok(sec0(t.i0) >= 0, `la tarjeta de #${t.idCont} va dentro de una sección de la misión`);
+    /* ⚠️ Y ese id es de ESTA tarjeta y de ninguna otra. La sonda del
+       navegador guarda lo que mide cada escena por su id: dos con el mismo
+       id se pisan, y la segunda revisa la primera con el lector que no es.
+       Pasó con #amRecado, que ya era de Los Adverbios cuando lo tomó la del
+       Robot Mensajero. */
+    if (t.idCont) {
+      const otra = idsVistos[t.idCont];
+      ok(!otra, `el id #${t.idCont} no lo usa ninguna otra animación`, otra);
+      if (!otra) idsVistos[t.idCont] = m.dir;
+    }
+    const reserva = t.tarjeta.replace(/<h2[\s\S]*?<\/h2>/, '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    ok(reserva.length >= 40, `#${t.idCont} trae su frase de reserva por si el aparato no llega`, reserva.slice(0, 50));
   }
-  const reserva = tarjeta.replace(/<h2[\s\S]*?<\/h2>/, '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-  ok(reserva.length >= 40, 'y trae su frase de reserva por si el aparato no llega', reserva.slice(0, 50));
+  const idCont = tarjetas.length ? tarjetas[0].idCont : '';
+  const tarjeta = tarjetas.length ? tarjetas[0].tarjeta : '';
 
   /* 2 · la hoja, después del CSS de la misión */
   const iCssMision = m.html.search(/<link[^>]*href="css\/[^"]+\.css"/);
@@ -162,7 +178,7 @@ for (const m of misiones) {
   }
   ok(iAparato > 0, 'carga el aparato (js/animacion-mision.js)');
   ok(escenas.length > 0, 'carga su escena (js/animacion-<tema>.js)');
-  let montaEse = false;
+  const montadas = {};
   const fuentes = [];
   for (const e of escenas) {
     ok(e.i > iAparato, `la escena ${e.src} se carga DESPUÉS del aparato`);
@@ -171,7 +187,9 @@ for (const m of misiones) {
     const fuente = fs.readFileSync(ruta, 'utf8');
     const js = sinComentariosJs(fuente);
     fuentes.push(js);
-    if (js.includes(`AnimacionMision.montar('#${idCont}'`) || js.includes(`AnimacionMision.montar("#${idCont}"`)) montaEse = true;
+    for (const t of tarjetas) {
+      if (js.includes(`AnimacionMision.montar('#${t.idCont}'`) || js.includes(`AnimacionMision.montar("#${t.idCont}"`)) montadas[t.idCont] = (montadas[t.idCont] || 0) + 1;
+    }
 
     /* 5 · no gasta de más ni sale del sitio */
     ok(!/\bsetInterval\s*\(|\brequestAnimationFrame\s*\(/.test(js), `${e.src}: sin bucle de dibujo (ni setInterval ni requestAnimationFrame)`);
@@ -180,7 +198,10 @@ for (const m of misiones) {
     const premios = js.match(/\b(fin|pts|unlockAchievement|saveProgress|launchConfetti)\s*\(/g);
     ok(!premios, `${e.src}: mirarla no da XP, ni estrella, ni logro`, premios || undefined);
   }
-  ok(montaEse, `la escena monta el bloque que está en la tarjeta (#${idCont})`);
+  for (const t of tarjetas) ok(montadas[t.idCont] === 1, `una escena, y solo una, monta el bloque que está en la tarjeta (#${t.idCont})`, montadas[t.idCont] || 0);
+  /* y cada escena monta una tarjeta que existe: una escena huérfana es un
+     archivo que se baja y no se ve */
+  ok(escenas.length <= tarjetas.length + comunes.length, 'no se carga ninguna escena de más (una por tarjeta)', { escenas: escenas.length, tarjetas: tarjetas.length });
 
   /* 8 · ⚠️ En una misión BILINGÜE (trae su -en.js y el botón 🌐), la
      animación habla los dos idiomas. El motor de idioma traduce buscando
@@ -193,13 +214,15 @@ for (const m of misiones) {
   const enSrc = (m.html.match(/src="(js\/[^"?]+-en\.js)/) || [])[1];
   if (enSrc) {
     ok(fuentes.some(js => /\bbilingue\s*:\s*true\b/.test(js)), 'la misión es bilingüe y su escena también (bilingue: true, con su inglés escrito)');
-    const abre = (html.slice(iAni).match(/<div\b[^>]*>/) || [''])[0];
-    ok(!/\bdata-i18n=/.test(abre), 'la tarjeta de la animación NO lleva data-i18n (el motor se llevaría la animación montada)', abre);
-    const h2 = (tarjeta.match(/<h2\b[^>]*>/) || [''])[0];
-    const clave = (h2.match(/data-i18n="([^"]+)"/) || [])[1];
-    ok(!!clave, 'su título lleva data-i18n, para que también se lea en inglés', h2);
     const en = fs.readFileSync(path.join(m.carpeta, enSrc), 'utf8');
-    ok(!!clave && new RegExp('(^|[\\s,{])' + clave + '\\s*:').test(en), `y la clave «${clave}» tiene su inglés en ${enSrc}`);
+    for (const t of tarjetas) {
+      const abre = (html.slice(t.i0).match(/<div\b[^>]*>/) || [''])[0];
+      ok(!/\bdata-i18n=/.test(abre), `la tarjeta de #${t.idCont} NO lleva data-i18n (el motor se llevaría la animación montada)`, abre);
+      const h2 = (t.tarjeta.match(/<h2\b[^>]*>/) || [''])[0];
+      const clave = (h2.match(/data-i18n="([^"]+)"/) || [])[1];
+      ok(!!clave, 'su título lleva data-i18n, para que también se lea en inglés', h2);
+      ok(!!clave && new RegExp('(^|[\\s,{])' + clave + '\\s*:').test(en), `y la clave «${clave}» tiene su inglés en ${enSrc}`);
+    }
   }
 }
 
