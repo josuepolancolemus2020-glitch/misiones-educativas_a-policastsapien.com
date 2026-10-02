@@ -81,9 +81,14 @@ function dado(semilla) {
       doce sin leer una. Nunca tres seguidas iguales, que es lo que se ve desde
       el pupitre. ── */
 const LETRA = { se: 'S', creo: 'C', opino: 'O' };
+/* ⚠️ Sin la frase de la historia. «El examen se pasó para el jueves» es lo que
+   le dijeron a Yeimy en la hoja 1, y la animación de la pantalla sigue esa
+   misma frase hasta donde empezó: clasificarla aquí era un punto regalado. */
+const DE_LA_HISTORIA = 'El examen se pasó para el jueves';
 let ACT1 = [];
+const deSin = q => de(q).filter(a => a !== DE_LA_HISTORIA);
 for (let i = 0; i < 4; i++) {
-  ACT1.push([de('se')[i], 'S'], [de('creo')[i], 'C'], [de('opino')[i], 'O']);
+  ACT1.push([deSin('se')[i], 'S'], [deSin('creo')[i], 'C'], [deSin('opino')[i], 'O']);
 }
 (function barajar() {
   const rng = dado(20260918);

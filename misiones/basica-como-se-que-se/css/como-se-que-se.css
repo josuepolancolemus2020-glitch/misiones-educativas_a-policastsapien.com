@@ -598,3 +598,20 @@ body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
 body.letra-grande .sb-estado-et { font-size: 0.875rem !important; }
 .lab-sentence{flex-wrap:wrap;}
 .lab-sentence > div{width:100%;}
+
+/* ── La animación de la frase que le llegó a Yeimy (#amOidas) ──────────
+   Los globos, el examen y el cuaderno son COSAS: se quedan como son en las
+   dos pantallas, con tinta oscura fija. Lo que va sobre la tarjeta de la
+   misión (los nombres, lo que contesta cada uno, «se cayó») lleva la tinta
+   de la pantalla. Nada se dice solo con color: quien todavía no se sabe es
+   un hueco de raya cortada, lo que contesta cada uno lleva su flecha hacia
+   quien se lo dijo y lo que se cayó va encerrado con raya cortada. */
+#amOidas .od-emoji { font-family: 'Fredoka', sans-serif; }
+#amOidas .od-tinta { fill: #2b1f28; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amOidas .od-globo { fill: #ffffff; stroke: #94a3b8; stroke-width: 1; stroke-linejoin: round; }
+#amOidas .od-flecha { fill: none; stroke: var(--am-pri); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+#amOidas .od-marca { fill: none; stroke: var(--am-pri); stroke-width: 1.4; stroke-dasharray: 2 1.8; }
+#amOidas .od-papel { fill: #fffdf5; stroke: #cbd5e1; stroke-width: 1; }
+#amOidas .od-renglon { fill: none; stroke: #94a3b8; stroke-width: 1; }
+#amOidas .od-nota { fill: #b42318; font-family: 'Fredoka', sans-serif; font-weight: 700; }
+#amOidas .od-circulo { fill: none; stroke: #b42318; stroke-width: 1.4; }

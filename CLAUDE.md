@@ -14662,6 +14662,120 @@ Salió roja con cada una.
 Con la CPU frenada seis veces va a 60 cuadros por segundo, y el peor cuadro es de 83 ms.
 Pensar con Orden, medida el mismo día, va a 59 y 100 ms.
 
+### La septuagésima novena: ¿Cómo sé que sé?, y lo que enseñó
+
+La cuarta de la Ruta de la Raíz es **¿Cómo sé que sé?**
+(`misiones/basica-como-se-que-se/`, `js/animacion-oidas.js`). La historia es la de Yeimy: en el
+recreo le dijeron que el examen se había pasado para el jueves. Esa noche no estudió; el martes el
+examen estaba ahí, sacó 40 y se quedó fuera del cuadro de honor. Nadie le mintió a propósito: se lo
+dijeron de oídas, y le faltó una pregunta, «¿y vos cómo lo sabés?». La animación pone una fila por
+persona, de arriba abajo en el orden en que se fueron diciendo la frase, cada una con lo que dijo
+en su globo; al principio solo se ven Kevin y Yeimy:
+
+- antes de tocar: Kevin le dice a Yeimy «El examen se pasó para el jueves». ¿Y Kevin cómo lo
+  sabía?;
+- el martes: al lado de Yeimy, su examen con el 40 encerrado;
+- Yeimy hace la pregunta que le faltó. Kevin contesta «Me lo dijo Josué.», con su flecha hacia
+  arriba, y en el hueco de raya cortada aparece Josué, que dijo otra cosa: «Parece que lo pasan
+  para el jueves.»;
+- Josué contesta «Me lo dijo Dania.», y aparece Dania: «¿Y si lo pasan para el jueves?». Ella
+  contesta «Yo solo pregunté.», sin flecha: el camino no llega a nadie que lo viera;
+- se subrayan las dudas que se cayeron por el camino, el «¿y si…?» de Dania y el «parece que» de
+  Josué, cada una con su «se cayó»: cada uno lo dijo un poco más seguro;
+- y la pregunta es del alumno: en su cuaderno, «Me dijeron:» y «Le pregunto a:», con sus rayas.
+
+Siete cosas que valen para las que siguen:
+
+1. ⚠️ **Lo que asombra es que la noticia empezó siendo una PREGUNTA.** Detrás de la frase de
+   Kevin no hay nadie que lo viera: hay una pregunta que, de boca en boca, se volvió noticia. Por
+   eso las tres frases van alineadas por lo que no cambió («lo pasan», «para el jueves») y se ve lo
+   que sí cambió: delante de cada una se cayó una duda. Los pedazos llevan su ancho medido con la
+   Fredoka (`textLength`), y la columna se sostiene aunque la letra tarde en llegar.
+2. ⚠️ **Nadie mintió a propósito, y el dibujo no culpa a nadie**: ni un ✓ ni una ✗, y la última
+   frase dice que preguntar «¿cómo lo sabés?» no es desconfiar de nadie. Una unidad donde todo
+   engaña fabrica un alumno que no le cree a nada, que es la regla del mensaje sin señales de los
+   peligros de la IA.
+3. ⚠️ **No se nombra ninguna de las tres maneras de estar con una idea**, ni la palabra con que la
+   prueba llama a «de dónde salió», ni un paso de comprobar, ni al maestro: el Clasifica, la prueba
+   y la actividad de ordenar los preguntan. Tampoco sale un «dicen que»: la prueba pregunta si
+   «Dicen que el puente está cerrado» ya se sabe, y esa se queda, porque pide llevar la idea a otro
+   caso.
+4. ⚠️ **La duda que se cayó va subrayada, no encerrada.** La primera versión la encerraba en una
+   caja de raya cortada, y la sonda dijo que tocaba las letras de al lado. Tenía razón, y se vio
+   ampliando la captura: el «?» va pegado a «jueves» y entre los dos no cabe la raya de una caja,
+   que pisaba la «s»; la de «Parece que» pisaba la «l» de «lo». El subrayado va debajo de lo que
+   bajan la «q» y el «¿», y encima del borde del globo. En la misma captura salió que la cola de los
+   globos tocaba el pelo de las caras: las caras se corrieron dos puntos y la cola es más corta.
+5. ⚠️ **Un texto en pedazos se lee por el LUGAR de cada pedazo, no por su tinta.** La tinta que da
+   el lienzo (`measureText`) se redondea hacia afuera y empieza siempre en la x del texto: pegaba
+   el «?» a «jueves» aunque no se tocaran. La sonda lee cada frase por el ancho impuesto de cada
+   pedazo, y entre dos pedazos pide un espacio, o nada si lo que sigue es un signo.
+6. ⚠️ **La historia contestaba un caso de pensamiento crítico, y la animación, dos preguntas de la
+   conceptual y la toma de decisiones.** El caso de análisis era la historia palabra por palabra;
+   «¿Qué se le pregunta a una creencia para pasarla a saber?» tenía por respuesta «¿Cómo lo sé…?»,
+   que es la pregunta de la animación; «Lo que otro cuenta cambia más cuanto más… lejos está del
+   que estuvo ahí» es lo que se ve pasar; y la decisión del partido que no viste («¿lo contás como
+   si lo hubieras visto, o decís quién te lo contó?») era su lección. Ahora el caso es Mauro, que
+   da por hecho que el bus pasa a las seis y pierde el día de trabajo; las preguntas son qué es
+   comprobar algo y qué se hace con lo que ves, lo que medís y lo que te dicen (cruzarlo); y la
+   decisión, el dato de una hoja suelta que no dice de dónde salió. Las pautas cambiaron con ellos.
+   La primera respuesta de «comprobar» empezaba por «Hacer», y la sonda de pistas la cazó: la
+   pregunta de al lado escribe «¿qué hay que hacer primero?».
+7. ⚠️ **La ficha regalaba la frase de la historia.** Su actividad 1 manda clasificar doce
+   afirmaciones, y una era «El examen se pasó para el jueves», la que la animación sigue hasta donde
+   empezó. Se quita en el armador (`DE_LA_HISTORIA`, en `_dev/arma-ficha-saber.js`), no en el HTML,
+   y la ficha, rearmada y repartida, sigue en sus diez hojas.
+
+La sonda de esta escena **no le cree nada a la escena**. De la historia saca a quién le llegó la
+frase, para cuándo, qué día estaba el examen, la nota, de qué se quedó fuera, que nadie le mintió
+a propósito y la pregunta que le faltó. Comprueba:
+
+- que sean cuatro filas, una por persona y de arriba abajo, la última de quien recibió la frase,
+  cada una con su nombre debajo de su cara;
+- que se vean las filas que tocan, y que donde todavía no se sabe quién va quede un hueco de raya
+  cortada con su «?», que se va justo cuando llega esa persona;
+- que cada frase se lea pedazo por pedazo, en su renglón: la de Kevin dice lo de la historia, la de
+  Dania es una pregunta de punta a punta y la de Josué empieza con «Parece que»; que «para el
+  jueves» y «lo pasan» vayan en la misma columna, y que cada frase vaya dentro de su globo, con la
+  cola hacia su cara y sin tocarla;
+- que la pregunta de Yeimy sea la de la historia, en su globo;
+- que cada uno conteste quién se lo dijo y sea quien está arriba, con una flecha cuya punta es lo
+  más alto de la flecha; y que Dania conteste que solo preguntó, sin flecha;
+- que el examen traiga la nota de la historia, encerrada, con «el martes» encima, a la altura de
+  Yeimy y a la derecha de los globos;
+- que se subrayen el «¿y si…?» y el «parece que», y nada más: cada subrayado de raya cortada, de
+  punta a punta de su pedazo, debajo de sus letras y encima del borde del globo, con su «se cayó»
+  al lado; y que a Kevin ya no le quede ninguna duda;
+- que el cuaderno traiga «Me dijeron:» y «Le pregunto a:», cada uno con su raya, debajo de Yeimy;
+- que cada cosa pase cuando le toca: la pregunta, lo que contesta, el hueco que se va y quien llega;
+  primero lo de Dania y después lo de Josué; primero se va el examen y después sale el cuaderno;
+- que el marcador cuente lo que se ve;
+- y que no salga ninguna manera de estar con una idea, ni la fuente, ni un paso de comprobar, ni
+  el maestro, ni un «dicen», ni otro número que el 40, ni un ✓ ni una ✗, y que ningún texto se monte
+  en otro.
+
+Se comprobó al revés con treinta y cinco averías, plantadas una por una:
+
+- «para el jueves» y «lo pasan» de Josué en otra columna, Dania diciendo una afirmación y Kevin
+  diciendo otra cosa;
+- Kevin contestando que se lo dijo Dania, Dania con flecha, la flecha apuntando hacia abajo y Kevin
+  contestando en la fila de Dania;
+- el hueco de Josué sin irse, Josué saliendo antes de que se vaya, Kevin contestando antes de la
+  pregunta, Dania contestando antes de aparecer, el hueco de raya entera y Dania desde el paso 0;
+- el examen con otra nota, lejos de Yeimy, saliendo sin esperar y sin irse con el cuaderno;
+- el cuaderno saliendo con el examen todavía, sin su segunda raya y encima de Yeimy;
+- el subrayado de «Parece que» corto, pisando las letras, sin raya cortada, y marcando «lo pasan»
+  en vez de «Parece que»;
+- «se cayó» lejos de su globo y las marcas saliendo juntas;
+- el marcador del paso 3 diciendo 2, «creyó» en una frase y un número de más;
+- Yeimy preguntando otra cosa, su globo sin apuntarle, los nombres encima de las caras, la cola del
+  globo tocando la cara y Dania con otro nombre.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 60 cuadros por segundo, y el peor cuadro es de 67 ms.
+¿De qué está hecho el mundo?, medida el mismo día, va a 59 y 100 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -14925,6 +15039,11 @@ Cuando la lección es que dos tienen media razón, el dibujo enseña lo que mira
 ✓ ni ✗, y la sonda lo prohíbe. Lo que es de antes y lo que es nuevo se distinguen con una marca
 que se ve sin colores (un sello), y la sonda la pide solo en lo de antes. Y lo que pasa a un
 momento nuevo baja desde el anterior: espera escondido encima, a la altura del momento de antes.
+
+Una marca que tendría que ir entre dos letras casi pegadas (un «?» pegado a su palabra) no se
+encierra en una caja: la raya no cabe y pisa la letra de al lado. Se subraya, debajo de lo que
+bajan las letras. Y un texto partido en pedazos con su ancho impuesto (`textLength`) se lee por el
+lugar de cada pedazo, no por la tinta del lienzo, que se redondea hacia afuera.
 
 Si la misma escena sirve para varias misiones (las cuatro Pruebas de Fin de
 Grado), vive en `js/escena-<tema>.js` y cada misión trae un archivo de dos líneas

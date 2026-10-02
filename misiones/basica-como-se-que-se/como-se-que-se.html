@@ -12,6 +12,7 @@
 <meta property="og:url" content="https://metas.policastsapien.com/misiones/basica-como-se-que-se/como-se-que-se.html">
 <link rel="stylesheet" href="../../css/vendor/fuentes/fuentes.css">
 <link rel="stylesheet" href="css/como-se-que-se.css">
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La barra de secciones, arriba y siempre a la vista. Va DESPUÉS del CSS
      de la misión a propósito: de ahí saca su color, y así sobrescribe su
      position:static sin un solo !important. -->
@@ -80,6 +81,17 @@
         <strong>opinás</strong>. <strong>Antes de seguir, escribí en tu cuaderno algo que
         «sabés» porque alguien te lo contó</strong>, y al lado, cómo podrías comprobarlo. En
         🗂️ Clasifica vas a decidir de qué clase es.</div></div>
+      </div>
+
+      <!-- La animación que explica el tema, justo después de la historia:
+           la frase que le llegó a Yeimy, seguida hacia atrás con la pregunta
+           que le faltó. La pinta js/animacion-oidas.js. -->
+      <div class="card ac-teal" data-animacion>
+        <h2>🗣️ La frase que le llegó a Yeimy</h2>
+        <div id="amOidas"><p>En el recreo le dijeron a Yeimy que el examen se pasó para el jueves, y
+        sacó 40. Le faltó preguntar «¿y vos cómo lo sabés?». Kevin lo oyó de Josué, Josué de Dania, y
+        Dania solo había preguntado. Nadie mintió a propósito: cada uno lo dijo un poco más
+        seguro.</p></div>
       </div>
 
       <!-- Los tres estados. Lo pinta el JS desde el archivo de datos, como
@@ -572,6 +584,8 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+  <script src="../../js/animacion-mision.js"></script>
+  <script src="js/animacion-oidas.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

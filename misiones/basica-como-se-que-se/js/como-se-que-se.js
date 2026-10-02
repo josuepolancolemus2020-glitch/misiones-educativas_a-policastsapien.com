@@ -450,10 +450,10 @@ const evalTFBank=[
   {q:'Lo que se cuenta o se mide lo puede revisar cualquiera.',a:true,k:'tf-revisar'}
 ];
 const evalMCBank=[
-  {q:'¿Qué se le pregunta a una creencia para pasarla a saber?',o:['¿A quién le gusta?','¿Cuántos lo dicen?','¿Cómo lo sé y con qué lo compruebo?','¿Suena bien?'],a:2,k:'mc-pasar'},
+  {q:'¿Qué es comprobar algo?',o:['Repetirlo hasta que suene bien','Preguntarles a muchos si están de acuerdo','Ponerlo a una prueba que saldría distinta si fuera falso','Escribirlo en el cuaderno'],a:2,k:'mc-comprobar'},
   {q:'La moneda que aparece al echar agua en la taza enseña que…',o:['la luz se dobla al salir del agua','la moneda se mueve','el agua la empuja','la taza cambia'],a:0,k:'mc-moneda'},
   {q:'¿Por qué el cuadrito rodeado de negro se ve más claro?',o:['porque es de otro color','porque el ojo compara con lo que tiene al lado','porque brilla','porque está más cerca'],a:1,k:'mc-cuadrito'},
-  {q:'Lo que otro cuenta cambia más cuanto más…',o:['rápido lo cuenta','viejo es','largo es el cuento','lejos está del que estuvo ahí'],a:3,k:'mc-otros'},
+  {q:'¿Qué se hace con lo que ves, lo que medís y lo que te dicen?',o:['Quedarse con lo que más te guste','Creerle solo a lo que se mide','No creerle a nada','Cruzarlo, porque nada de eso basta solo'],a:3,k:'mc-cruzar'},
   {q:'¿Para qué sirve la medida, sobre todo?',o:['Para adornar el cuaderno','Para ganar la discusión','Para no preguntar','Para que dos que no se ponen de acuerdo miren lo mismo'],a:3,k:'mc-medida'},
   {q:'Antes de comprobar algo, ¿qué hay que hacer primero?',o:['Buscar quién lo dijo','Aclarar exactamente qué se afirma','Escribirlo bonito','Votar'],a:1,k:'mc-primero'},
   {q:'¿Por qué hay que buscar a quien diga lo contrario?',o:['Para discutir','Para ganar tiempo','Porque si solo buscás lo que te da la razón, siempre lo encontrás','Porque lo pide el maestro'],a:2,k:'mc-contrario'},
@@ -570,7 +570,7 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {k:'cs-yeimy',txt:'En el recreo alguien le dijo a Yeimy que el examen de Matemáticas se había pasado para el jueves. Ella no estudió esa noche. El martes el examen estaba ahí. Sacó 40. Con esa nota se quedó fuera del cuadro de honor.'},
+  {k:'cs-bus',txt:'Mauro piensa: «El bus siempre ha pasado a las seis, así que hoy pasa a las seis». Llega a las seis y el bus ya se fue: este mes lo cambiaron a las cinco y media. Pierde el día de trabajo.'},
   {k:'cs-semilla',txt:'En el grupo de la aldea circula que la semilla nueva rinde el doble. Nadie dice quién la sembró ni cuántas mazorcas contó. Tres vecinos compran, y en la cosecha rinde igual que la de siempre.'},
   {k:'cs-puerta',txt:'Dos hermanos discuten una hora si la puerta del cuarto es más ancha que la de la cocina. Cada uno está seguro. La cinta métrica está en el mismo cuarto, colgada de un clavo.'},
   {k:'cs-nadie',txt:'Un muchacho dice que no le cree a nadie. Ni a los libros, ni a los maestros, ni a lo que ve. Deja de preguntar y deja de comprobar. Y cuando el aviso del maestro es de verdad, tampoco lo lee.'},
@@ -585,16 +585,16 @@ const critCaseQuestions=[
 const critCaseGuides=[
   'Se valora que NOMBRE el estado y dé la señal. Si no puede decir cómo lo sabe, lo cree. Si otro puede pensar lo contrario sin equivocarse, es opinión. Si puede decir con qué se comprueba, lo sabe.',
   'Las cinco fuentes son los sentidos, la memoria, lo que otro cuenta, el razonamiento y la medida. Se califica que nombre una y diga en qué falló ESA. No que diga «se equivocaron».',
-  'Se califica que le ponga nombre al daño concreto. Una nota de 40, tres compras, una hora perdida, media tarde de pelea. No la indignación.',
-  'Tiene que ser algo que se pueda hacer. Preguntarle al maestro, contar las mazorcas, descolgar la cinta. O meter la mano los dos a la misma agua. «Investigar más» no vale: no dice qué hacer.'
+  'Se califica que le ponga nombre al daño concreto. Un día de trabajo, tres compras, una hora perdida, media tarde de pelea. No la indignación.',
+  'Tiene que ser algo que se pueda hacer. Preguntar el horario en la parada, contar las mazorcas, descolgar la cinta. O meter la mano los dos a la misma agua. «Investigar más» no vale: no dice qué hacer.'
 ];
 const critErrorBank=[
   {k:'er-cancion',txt:'"«Esta canción es fea» está mal dicho, porque no se puede comprobar".',g1:'Es una opinión. Y una opinión no se comprueba. No es verdad ni mentira para todos.',g2:'Pedirle pruebas a un gusto es el error contrario, y cuesta igual. Lo que sí se le puede pedir es una razón. Qué de la canción no le gusta.'},
 ];
 const critDecisionBank=[
-  'Te toca contar en clase qué pasó en el partido del domingo, y no fuiste. ¿Lo contás como si lo hubieras visto, o decís quién te lo contó?'
+  'Para tu trabajo de Ciencias encontrás un dato en una hoja suelta. No dice quién lo escribió ni de dónde lo sacó. ¿Lo copiás tal cual, o primero buscás de dónde salió?'
 ]
-const critDecisionGuide='Se valora que diga de dónde salió lo que cuenta: si lo vio, si lo midió o si se lo contaron. Contarlo como visto cuando fue oído es pasar una creencia por un saber.';
+const critDecisionGuide='Se valora que no lo copie sin más. Que busque quién lo vio, quién lo midió o quién lo escribió. Un dato que no dice de dónde salió no se puede revisar, y copiarlo es pasar una creencia por un saber.';
 const critCompareBank=[
   {k:'cm-lapiz',a:'El lápiz que se ve quebrado en el vaso.',b:'El lápiz que se toca con la mano dentro del vaso.',ga:'El ojo ve lo que la luz le entrega, y la luz se dobla.',gb:'El tacto no se dobla: ahí el lápiz está entero.',gr:'No es que un sentido mienta y el otro no. Es que cada uno falla en cosas distintas, y por eso se cruzan.'},
   {k:'cm-escuelas',a:'«2 + 2 son 4».',b:'«El techo de mi escuela es de lámina».',ga:'Se saca pensando con orden: es el racionalismo.',gb:'Hay que ir a mirarlo: es el empirismo.',gr:'Las dos son cosas que se saben, y por caminos distintos. Por eso la ciencia de hoy usa las dos y no elige una.'},
