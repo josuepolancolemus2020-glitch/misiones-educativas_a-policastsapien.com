@@ -14174,6 +14174,136 @@ Con la CPU frenada seis veces va a 59 o 60 cuadros por segundo, y el peor cuadro
 50 ms (en una de tres mediciones salió uno de 150, al volver a entrar al paso 3). Los
 Peligros de la IA, medida el mismo día, va a 59 y 83 ms.
 
+### La septuagésima quinta: Escenarios del Porvenir, y lo que enseñó
+
+La séptima de la Ruta de la Máquina que Aprende es **Escenarios del Porvenir**
+(`misiones/3ciclo-escenarios-porvenir/`, `js/animacion-oficio.js`). La historia es la de
+Katy: termina noveno en noviembre, y en el grupo del colegio le dicen dos cosas al mismo
+tiempo, «estudiá computación, que es el futuro» y «no estudiés eso, la máquina lo va a
+hacer todo». Las dos suenan seguras y ninguna le dice qué hacer, y lo que se decide son tres
+años de su vida y la matrícula que su familia junta vendiendo pan. Nadie le hizo la pregunta
+que sirve: de qué tareas está hecho ese oficio. La animación pone arriba los dos mensajes y a
+Katy con su teléfono, y debajo la carpeta de un oficio de verdad, cerrada:
+
+- antes de tocar: las dos cosas hablan del oficio como si fuera una sola cosa. ¿Qué hay
+  adentro?;
+- se abre la carpeta de don Beto, que lleva las cuentas de la cooperativa, y salen sus siete
+  tareas, una por una;
+- la máquina se lleva cuatro, una por una, cada una con su 🤖 y su color: sumar las
+  facturas, pasar los números, avisar quién debe y sacar el impuesto. El informe se corre a
+  un lado a esperar, con un «?»; las cuatro se juntan arriba y les sale su llave;
+- el informe vuelve a su renglón: va a medias, media tarjeta de cada color y 🤝, porque lo
+  escribe la máquina pero los números y la revisión son de don Beto. Y le quedan dos, con su
+  🧑;
+- «todo» se subraya con raya cortada y se le contesta «hoy, no», y un aro rodea la de fiar:
+  los números dicen que no, y don Beto sabe que ese hombre paga siempre;
+- y la pregunta es del alumno: un oficio que le guste, tres de sus tareas y cuáles se lleva
+  la máquina, en su cuaderno.
+
+Siete cosas que valen para las que siguen:
+
+1. ⚠️ **Las tareas no se escriben en la escena: se leen de `js/data/ia-futuros.js`**, con
+   quién se las queda, que es el mismo archivo que pinta la misión y arma la ficha. Las
+   cuentas de las frases y del marcador también salen de ahí. Y la sonda lo hace por su
+   lado: lee el nombre del oficio en la pestaña, lo busca en el archivo y empareja cada
+   tarjeta con su tarea por lo que dice.
+2. ⚠️ **A «lo va a hacer todo» no se le pone una ✗: se le contesta «hoy, no».** La misión no
+   predice; mira lo que la máquina ya hace. Tachar una profecía sería contestarla con otra, y
+   por eso la escena no dice ni un año ni un plazo.
+3. ⚠️ **Lo que la escena enseña está en los pareados, y no se nombra.** Las cuatro clases de
+   tarea, las capacidades y «la cuenta de siempre» son pareados de la prueba, y «con qué se
+   lleva la máquina una tarea» lo pregunta la ficha. De quién es cada tarea lo dicen un signo
+   (🤖, 🤝, 🧑) y un color, nunca el color solo, y la sonda no deja salir ninguno de esos
+   nombres.
+4. **Lo que va a medias espera aparte.** Mientras la máquina se lleva lo suyo, el informe se
+   corre a la derecha con un «?»: todavía no es de nadie. Cuando vuelve, lleva media tarjeta
+   de cada color.
+5. ⚠️ **Lo que se corre por encima de otras piezas se dibuja el último.** El informe, al
+   apartarse, cruza dos tarjetas: dibujado en su orden pasaba por DEBAJO de ellas y parecía
+   meterse en la carpeta. Al final de cada paso no se notaba; se vio en las fotos a medio
+   viaje. Ahora va al final del documento, y la sonda lo exige.
+6. **Una carpeta hecha de dos piezas no se parte.** El cuerpo va antes que la pestaña, y la
+   pestaña no cierra su trazo por abajo: si no, entre las dos queda una raya que las separa.
+   Se vio en la primera captura.
+7. ⚠️ **La historia y la animación contestaban once preguntas.** La historia: el verdadero o
+   falso «en el grupo del colegio le dijeron a Katy una sola cosa, clara», los completar de
+   la matrícula («vendiendo ___»), de los «tres ___ de vida» y de «de qué tareas está ___ ese
+   oficio», y el efecto «tres años de estudio en un oficio que nadie miró por dentro». La
+   animación: «Katy elige carrera el lunes, ¿qué le conviene?» (partir el oficio en tareas),
+   «te ofrecen un programa para las cuentas del negocio, ¿qué mirás antes?» (qué tareas te
+   quita), «ningún oficio desaparece ___» y, en la ficha, qué pasa con los ocho oficios
+   (ninguno se va entero y ninguno se salva entero); y en pensamiento crítico, la decisión
+   del tío al que le ofrecen un programa para sus cuentas y la comparación de un oficio con
+   una tarea. Ahora preguntan lo que la misión enseña en sus escudos, en la mitad del
+   estudio, en las piezas de un escenario y en las capacidades: por qué la máquina no le
+   puede tomar la lectura a tu hermano menor, qué revisar en la línea del tiempo que te hizo
+   la máquina, si «es grave» ya trae un precio que se pueda contar, con qué compara una cara
+   la máquina, a qué patio no puede ir, en qué termina un escenario, qué va a valer más, la
+   exposición que se prepara para las preguntas, un resumen que se copia contra un patio
+   que se mide, el alumno con buenas notas en las tareas y mala nota en el examen y, en la
+   ficha, cómo falla la máquina que predice. Con la respuesta en el mismo lugar, en la misión
+   y en la ficha, que sigue en sus diez hojas.
+
+De paso, la pauta de la decisión nueva salió con una frase de treinta palabras, y la ruta se
+lee en cuarto grado: la cazó `verifica-legibilidad-ia`, y va en dos. Y la hoja de la misión
+traía, como las anteriores de la ruta, los dos bloques de CSS de los próceres y de los tres
+poderes: se quitaron.
+
+La sonda de esta escena **no le cree nada a la escena**. Lee el nombre del oficio en la
+pestaña, lo busca en el archivo de datos y empareja cada tarjeta con su tarea por lo que
+dice, y comprueba:
+
+- que los dos mensajes digan lo que cuenta la historia, palabra por palabra, cada uno en su
+  globo, con «todo.» en el mismo renglón y un espacio antes;
+- que haya una tarjeta por tarea, todas del mismo tamaño, con lo que dice su tarea antes de
+  su signo, y que la tapa del paso 0 tape el sitio de todas, con su «?» y de quién es el
+  oficio;
+- que cada tarjeta lleve el signo de quién se la queda según el archivo, y que se vea solo
+  cuando le toca: lo de la máquina en el paso 2, lo demás desde el 3;
+- que lo de la máquina y lo de la persona vayan de dos colores, la tarjeta entera, y lo que
+  va a medias, media de cada uno;
+- que antes de repartir vayan en el orden del archivo, a paso parejo, y después por grupos,
+  cada grupo en su orden y con más aire entre un grupo y otro;
+- que lo que va a medias espere corrido a la derecha con su «?» en el lugar del signo, y que
+  se dibuje el último;
+- que cada llave abarque justo su grupo, con lo que dice a su lado y a su altura;
+- que el aro rodee una sola tarjeta, la primera que se queda con la persona, y que la frase
+  pregunte por ella y diga su porqué tal cual el archivo;
+- que la raya cortada vaya debajo de «todo», sin el punto, y «hoy, no» a la derecha del
+  segundo mensaje, sin tocar a Katy;
+- que cada cosa salga cuando le toca: las tareas una por una; lo de la máquina una por una y
+  a paso parejo, la que va a medias corrida después y las de la máquina juntas después; lo
+  de la persona después de lo que va a medias; el aro, la raya y «hoy, no» en ese orden, y
+  el cuaderno cuando ya se fueron los mensajes;
+- que el marcador y la frase cuenten lo que se ve, y que la frase del paso 2 nombre lo que
+  se lleva la máquina, en su orden, y nada más;
+- y que no salga nada de lo que pregunta la prueba, y que nada se monte ni se salga.
+
+Se comprobó al revés con veinticinco averías, plantadas una por una:
+
+- un signo cambiado, lo de la máquina teñido del color de la persona, y lo que va a medias
+  de un solo color;
+- las tarjetas sin repartirse, el informe apenas corrido, y corrido después de que suben las
+  de la máquina;
+- el aro en la tarea de firmar;
+- la raya lejos de «todo», «todo.» pegado a lo de antes, y «hoy, no» encima de Katy;
+- el marcador del paso 2 diciendo 3, «computadora» en una frase y la frase del paso 1
+  contando seis;
+- un mensaje distinto del de la historia, Katy con otro nombre, la tapa con otro nombre y la
+  pestaña con otro oficio;
+- una tarjeta que dice otra cosa;
+- las tarjetas saliendo todas juntas, y lo de don Beto marcándose todo junto;
+- la llave abarcando una tarjeta de más, y la de lo que va a medias saliendo antes que su
+  tinte;
+- lo que va a medias dibujado en su orden, y su «?» que se queda;
+- el cuaderno saliendo antes de que se vayan los mensajes.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 59 o 60 cuadros por segundo, y el peor cuadro está entre
+33 y 83 ms (en una de cuatro mediciones salió uno de 167). Los Albores de la Singularidad,
+medida el mismo día, va a 60 y 67 u 83 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -14415,6 +14545,12 @@ para rellenarlo: antes de elegirlo se busca `[data-` en el JS de la misión y en
 el compartido (`data-mes` y `data-hoy` los rellena la ruta de IA, y le borraban a
 la escena lo que tenía dentro). Y la prueba al revés cuenta como roja la corrida
 en que la sonda revienta: una sonda que se cae no escribe ✘.
+
+Una pieza hecha de dos (la pestaña y el cuerpo de una carpeta) se dibuja con la de
+abajo primero, y la de encima no cierra su trazo donde se tocan: si no, queda una
+raya que las parte. Y lo que la escena agrupa por lo que dice un archivo de datos
+(de quién es cada tarea), la sonda lo vuelve a agrupar por su cuenta: empareja cada
+pieza con su dato por lo que dice, no por un atributo que escribió la escena.
 
 Si la misma escena sirve para varias misiones (las cuatro Pruebas de Fin de
 Grado), vive en `js/escena-<tema>.js` y cada misión trae un archivo de dos líneas

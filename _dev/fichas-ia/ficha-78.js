@@ -98,7 +98,7 @@ ${o.tareas.map(t => `        <tr><td>${esc(t.t)}</td><td>${tipoDe(t.tipo).e} ${e
     </div>`;
 
 const EVAL = [
-  { q: '¿Qué pasa con los ocho oficios de esta ficha?', o: ['Se van casi todos', 'Ninguno se va entero y ninguno se salva entero', 'Solo se salvan los de papel', 'Se salva solo el de la maestra'], a: 1 },
+  { q: 'La máquina que predice con datos que alguien midió, ¿cómo falla?', o: ['Confunde a dos personas parecidas', 'No tiene con qué acertar donde nadie midió', 'Inventa con la misma seguridad con que acierta', 'Aprende a ganar el juego que le pusiste'], a: 1 },
   { q: 'Ponerle la vía a un niño de tres años es una tarea…', o: ['De papel', 'De mirar', 'De manos', 'De estar con alguien'], a: 2 },
   { q: 'La ficha cuenta tareas y no horas. ¿Por qué importa eso?', o: ['Porque una tarea puede llevarse el día entero y otra, cinco minutos', 'Porque las horas no se pueden contar', 'Porque la máquina trabaja de noche', 'Porque así lo pide el examen'], a: 0 },
   { q: 'Una computadora suma los gastos del mes. ¿Eso es Inteligencia Artificial?', o: ['Sí, es la más nueva', 'Sí, porque la computadora piensa', 'Depende del precio', 'No: una computadora normal ya lo hacía antes'], a: 3 },

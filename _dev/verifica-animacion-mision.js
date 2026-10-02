@@ -4695,6 +4695,77 @@ const LEER = `
       cajasTexto: todos('text').filter(vis).map(function (t) { return { txt: t.textContent, caja: caja(t) }; })
     };
   };
+  /* Escenarios por venir: la carpeta del oficio de don Beto. La sonda lee
+     cada tarjeta (dónde está, qué dice, su tinte y sus signos), las llaves
+     de los grupos, los dos mensajes del grupo con «todo.» aparte, la raya de
+     debajo, «hoy, no», la tapa, el aro y el cuaderno. Qué tarea es cada
+     tarjeta y de quién es NO se lee de la escena: lo saca la sonda del
+     archivo de datos, por lo que dice la tarjeta. */
+  window.__amExtra.amOficio = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVistaCon(mt, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(mt); return [q.x, q.y]; }
+    function caja(el) {
+      var b = el.getBBox(), mt = m(el);
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVistaCon(mt, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function union(cs) {
+      return { x0: Math.min.apply(null, cs.map(function (c) { return c.x0; })), y0: Math.min.apply(null, cs.map(function (c) { return c.y0; })),
+               x1: Math.max.apply(null, cs.map(function (c) { return c.x1; })), y1: Math.max.apply(null, cs.map(function (c) { return c.y1; })) };
+    }
+    function uno(sel, en) { return (en || raiz).querySelector(sel); }
+    function todos(sel, en) { return [].slice.call((en || raiz).querySelectorAll(sel)); }
+    function demora(el) { return el ? (parseFloat(el.style.getPropertyValue('--d')) || 0) : 0; }
+    function numeros(t) { return ((t || '').match(/-?[0-9.]+/g) || []).map(Number); }
+    function puntos(el) { var nn = numeros(el.getAttribute('d')), ps = []; for (var i = 0; i + 1 < nn.length; i += 2) ps.push(aVistaCon(m(el), nn[i], nn[i + 1])); return ps; }
+    function raya(el) { var r = getComputedStyle(el).strokeDasharray; return r && r !== 'none' && r !== '0px' ? r : ''; }
+    /* La tinta de arriba y de abajo de un texto, medida con su letra: la
+       raya de «todo» va debajo de la letra, no debajo de su renglón. */
+    var lienzo = document.createElement('canvas').getContext('2d');
+    function tinta(t) {
+      var cs = getComputedStyle(t);
+      lienzo.font = cs.fontStyle + ' ' + cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+      var me = lienzo.measureText(t.textContent), y = parseFloat(t.getAttribute('y')) || 0;
+      var arriba = aVistaCon(m(t), 0, y - me.actualBoundingBoxAscent), abajo = aVistaCon(m(t), 0, y + me.actualBoundingBoxDescent);
+      return { y0: arriba[1], y1: abajo[1] };
+    }
+    function texto(t) { if (!t) return null; var k = tinta(t); return { txt: t.textContent, caja: caja(t), ve: vis(t), d: demora(t), ty0: k.y0, ty1: k.y1 }; }
+    var voces = uno('[data-voces]'), katy = uno('[data-katy]'), nombre = uno('[data-oficio-nombre]');
+    return {
+      vista: [svg.viewBox.baseVal.width, svg.viewBox.baseVal.height],
+      voces: { ve: vis(voces), d: demora(voces), cab: texto(uno('[data-voces-cab]')),
+        globos: todos('[data-globo]').map(caja), voz: todos('[data-voz]').map(texto), todo: texto(uno('[data-voz-todo]')) },
+      raya: (function () { var q = uno('[data-todo-raya]'); return { ve: vis(q), d: demora(q), ps: puntos(q), raya: raya(q) }; })(),
+      hoy: texto(uno('[data-todo-hoy]')),
+      katy: { figura: union(todos('ellipse, circle, path, rect', katy).map(caja)), dice: texto(uno('[data-katy-dice]', katy)) },
+      pestana: caja(uno('[data-pestana]')),
+      nombre: texto(nombre),
+      emoji: texto(nombre.previousElementSibling),
+      carpeta: caja(uno('[data-carpeta]')),
+      tapa: (function () { var g = uno('[data-tapa]'); return { ve: vis(g), d: demora(g), caja: caja(uno('[data-tapa-caja]', g)), q: texto(uno('[data-tapa-q]', g)), quien: texto(uno('[data-tapa-quien]', g)) }; })(),
+      /* En el orden del documento: la que se dibuja la última queda encima. */
+      cartas: todos('[data-tarea]').map(function (g) {
+        var rc = uno('[data-carta]', g), ap = g.firstElementChild, ver = ap.firstElementChild, ti = uno('[data-tinte]', g);
+        return { caja: caja(rc), ve: vis(rc), dFila: demora(g), dAparte: demora(ap), dVer: demora(ver), fondo: getComputedStyle(rc).fill,
+          dice: texto(uno('[data-carta-dice]', g)),
+          tinte: { ve: vis(ti), d: demora(ti), partes: todos('rect', ti).map(function (q) { return { caja: caja(q), fill: getComputedStyle(q).fill }; }) },
+          signos: todos('[data-signo]', g).map(function (s) { return { txt: s.textContent, ve: vis(s), d: demora(s), caja: caja(s) }; }) };
+      }),
+      guias: todos('[data-guia]').map(function (g) {
+        return { ve: vis(g), d: demora(g), llave: puntos(uno('[data-llave]', g)), dice: todos('[data-guia-dice]', g).map(texto) };
+      }),
+      aro: (function () { var q = uno('[data-aro]'); return { ve: vis(q), d: demora(q), caja: caja(q) }; })(),
+      cuaderno: (function () {
+        var g = uno('[data-cuaderno]');
+        return { ve: vis(g), d: demora(g), caja: caja(uno('[data-cuaderno-caja]', g)), textos: todos('text', g).map(texto), rayas: todos('[data-raya-escribir]', g).map(puntos) };
+      })(),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; }),
+      cajasTexto: todos('text').filter(vis).map(function (t) { return { txt: t.textContent, caja: caja(t) }; })
+    };
+  };
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -5091,6 +5162,37 @@ function historiaPaginas() {
     plazo: (frase.match(/en [a-z]+ años/) || [])[0] || '', soloPlazo: /Solo traía el plazo/.test(t), nadie: /Ninguna decía quién lo había dicho/.test(t) };
   return historiaPaginasMemo;
 }
+/* Escenarios por venir: lo que se ve al TERMINAR cada paso. abierta: si ya
+   se abrió la carpeta; maq: si ya se ve lo que se lleva la máquina (y las
+   tarjetas ya están juntas por grupos); aparte: si la que va a medias espera
+   corrida; medias y beto: si ya se ve lo que va a medias y lo que se queda
+   con la persona; aro: si se rodea una tarea y se le contesta a «todo»;
+   cuaderno: si sale el cuaderno del final. Qué tarea es cada tarjeta y de
+   quién es lo saca la sonda del archivo de datos. */
+const ESTADOS_OFICIO = [
+  { abierta: false, maq: false, aparte: false, medias: false, beto: false, aro: false, cuaderno: false },
+  { abierta: true, maq: false, aparte: false, medias: false, beto: false, aro: false, cuaderno: false },
+  { abierta: true, maq: true, aparte: true, medias: false, beto: false, aro: false, cuaderno: false },
+  { abierta: true, maq: true, aparte: false, medias: true, beto: true, aro: false, cuaderno: false },
+  { abierta: true, maq: true, aparte: false, medias: true, beto: true, aro: true, cuaderno: false },
+  { abierta: true, maq: true, aparte: false, medias: true, beto: true, aro: true, cuaderno: true }
+];
+/* Lo que dice la historia, sacado de su tarjeta y no de la escena: quién es
+   y las dos cosas que le dicen en el grupo del colegio. */
+let historiaOficioMemo = null;
+function historiaOficio() {
+  if (historiaOficioMemo) return historiaOficioMemo;
+  const html = fs.readFileSync(path.join(RAIZ, 'misiones', '3ciclo-escenarios-porvenir', 'escenarios-porvenir.html'), 'utf8');
+  const sit = (html.match(/<div class="card[^"]*" data-situacion>([\s\S]*?)<div class="tip">/) || [])[1] || '';
+  const t = sit.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ');
+  historiaOficioMemo = { nombre: ((sit.match(/<strong>([^<]+)<\/strong>/) || [])[1] || '').trim(),
+    voces: [...sit.matchAll(/<em>«([^»]+)»<\/em>/g)].map(v => v[1]), grupo: /En el grupo del colegio/.test(t) };
+  return historiaOficioMemo;
+}
+/* Las tareas de cada oficio, con quién se las queda: del mismo archivo que
+   pinta la misión y arma la ficha. */
+let datosOficioMemo = null;
+function datosOficio() { return datosOficioMemo || (datosOficioMemo = require(path.join(RAIZ, 'js', 'data', 'ia-futuros.js'))); }
 /* Las Pruebas de Fin de Grado (4º, 5º, 6º y 7º): «El año de Kenia, mes a
    mes». Una escena para las cuatro, y esta sonda para las cuatro.
    ⚠️ Nada se le cree a la escena. La sonda saca la escala de las rayitas
@@ -6672,6 +6774,246 @@ const ESCENAS = {
     const mont = [];
     unicos.forEach((t, i) => unicos.forEach((u, j) => { if (j > i && monta(t.caja, u.caja)) mont.push(t.txt + ' / ' + u.txt); }));
     r.push([!mont.length, `paso ${n}: ningún texto se monta en otro`, mont]);
+    return r;
+  },
+  /* Escenarios por venir: «Adentro de un oficio».
+     ⚠️ Nada se le cree a la escena. La sonda lee el nombre del oficio en la
+     pestaña y lo busca en js/data/ia-futuros.js; de ahí saca qué tarea dice
+     cada tarjeta y de quién es (la máquina, a medias o la persona). Con eso
+     mide el orden de las tarjetas y sus grupos, el tinte y el signo de cada
+     una, las llaves, el aro y lo que cuentan el marcador y la frase. Los dos
+     mensajes del grupo los compara con la tarjeta de la historia. */
+  amOficio(e, n) {
+    const x = e.extra, r = [];
+    if (!x) return [[false, `paso ${n}: la sonda pudo leer la escena`, null]];
+    const E = ESTADOS_OFICIO[n], H = historiaOficio();
+    const cerca = (a, b, t = 0.3) => Math.abs(a - b) <= t;
+    const dentro = (a, b, mg = 0) => a.x0 >= b.x0 - mg && a.x1 <= b.x1 + mg && a.y0 >= b.y0 - mg && a.y1 <= b.y1 + mg;
+    const monta = (a, b) => a.x0 < b.x1 - 0.5 && b.x0 < a.x1 - 0.5 && a.y0 < b.y1 - 0.5 && b.y0 < a.y1 - 0.5;
+    const nb = t => (t || '').replace(/ /g, ' ');
+    const plano = t => nb(t).toLowerCase().replace(/[.,¿?¡!«»:]/g, '').replace(/\s+/g, ' ').trim();
+    const cx = c => (c.x0 + c.x1) / 2, cy = c => (c.y0 + c.y1) / 2;
+
+    /* ── el oficio, buscado en el archivo por el nombre de su pestaña ── */
+    const O = datosOficio().IA_OFICIOS.find(o => !!x.nombre && o.nombre === x.nombre.txt);
+    r.push([!!O, `paso ${n}: la carpeta es la de un oficio del archivo de datos`, x.nombre && x.nombre.txt]);
+    if (!O) return r;
+    const T = O.tareas, quien = O.quien;
+    /* Lo que quiere decir cada signo: se la lleva la máquina, va a medias o
+       se queda con la persona. */
+    const SIGNO = { si: '🤖', medias: '🤝', no: '🧑' };
+    const C = x.cartas, V = x.voces, K = x.katy, Pe = x.pestana, Ca = x.carpeta, Ta = x.tapa, Q = x.cuaderno;
+    const visibles = C.filter(c => c.ve);
+    const signoDe = c => c.signos.find(s => s.txt !== '?');
+    const conSigno = s => visibles.filter(c => { const g = signoDe(c); return !!g && g.ve && g.txt === s; }).length;
+
+    /* ── lo que no depende del dibujo va primero ── */
+    /* Ni las cuatro clases de tarea ni las capacidades ni lo que ya hacía
+       una computadora normal (son pareados de la prueba), ni con qué se
+       lleva la máquina una tarea (lo pregunta la ficha), ni nada de lo que
+       pregunta la prueba de la misión. Las tarjetas, los dos mensajes y el
+       nombre del oficio no cuentan: son del archivo y de la historia.
+       Con límites de \p{L} y no con \b, que no sabe de tildes. */
+    const PROHIBIDAS = /papel|(?<!\p{L})mir[aeo]|manos|con alguien|parecid|predic|predec|(?<!\p{L})voz(?!\p{L})|refuerzo|de siempre|computadora|escudo|enter[oa]|complet|(?<!\p{L})horas?(?!\p{L})|minuto|guardad|patio|sosten|decisi|decid|grave|precio|lectura|hermano|reloj|invent|fecha|prócer|delante|barrio|comprob|desayun|cansa|copi|madre|padre|plaga|planilla|promedio|oficina|(?<!\p{L})ocho(?!\p{L})|profec|escenario|anuncio|cinta|(?<!\p{L})cara(?!\p{L})|compara|respond|firm|con qué|capacidad|inteligencia|artificial|(?<!\p{L})nota(?!\p{L})|memoria|segur|falso|explica/iu;
+    const deArchivo = new Set(T.map(t => t.t).concat([O.nombre]).concat(V.voz.map(v => v.txt)).concat(V.todo ? [V.todo.txt] : []));
+    const dicho = [e.texto, e.palabras, e.boton].concat(x.textos.filter(t => !deArchivo.has(t))).join(' · ');
+    r.push([!PROHIBIDAS.test(dicho), `paso ${n}: no sale ninguna clase de tarea ni capacidad, ni lo que pregunta la prueba`, (dicho.match(PROHIBIDAS) || [])[0]]);
+    const DICE = ['tareas adentro', `tareas en el oficio de ${quien}`, 'se las lleva la máquina', `le quedan a ${quien}, y ${conSigno(SIGNO.medias)} a medias`,
+      'tareas que hoy no hace la máquina', 'tareas de tu oficio, en tu cuaderno'][n];
+    r.push([nb(e.palabras) === DICE, `paso ${n}: el marcador dice «${DICE}»`, e.palabras]);
+    r.push([!!H.nombre && H.voces.length === 2 && H.grupo, 'la historia dice quién es y las dos cosas que le dicen en el grupo del colegio', H]);
+
+    /* ── los dos mensajes del grupo ── */
+    r.push([V.ve === !E.cuaderno, `paso ${n}: ${E.cuaderno ? 'los mensajes se van y le dejan su lugar al cuaderno' : 'se ven los dos mensajes del grupo'}`, V.ve]);
+    const G = V.globos;
+    const d1 = V.voz[0] ? V.voz[0].txt : '', d2 = V.voz[1] && V.todo ? V.voz[1].txt + ' ' + V.todo.txt : '';
+    const frase = t => /^[A-ZÁÉÍÓÚÑ]/.test(t) && /\.$/.test(t);
+    r.push([V.voz.length === 2 && plano(d1) === plano(H.voces[0]) && plano(d2) === plano(H.voces[1]) && frase(d1) && frase(d2),
+      `paso ${n}: los dos mensajes dicen lo que cuenta la historia, palabra por palabra`, [d1, d2]]);
+    r.push([!!V.cab && /En el grupo del colegio/.test(V.cab.txt) && G.length === 2 && cerca(G[0].x0, G[1].x0, 0.05) && G[1].y0 > G[0].y1 + 1 && G[0].y0 >= V.cab.caja.y1 - 0.5,
+      `paso ${n}: un globo por mensaje, uno debajo del otro, debajo de «En el grupo del colegio»`, V.cab && V.cab.txt]);
+    r.push([G.length === 2 && V.voz.length === 2 && !!V.todo && dentro(V.voz[0].caja, G[0], -1) && dentro(V.voz[1].caja, G[1], -1) && dentro(V.todo.caja, G[1], -1),
+      `paso ${n}: cada mensaje cabe dentro de su globo`, G]);
+    const hueco = V.todo && V.voz[1] ? V.todo.caja.x0 - V.voz[1].caja.x1 : -1;
+    r.push([hueco >= 1 && hueco <= 4 && cerca(V.todo.caja.y0, V.voz[1].caja.y0, 0.3), `paso ${n}: «todo.» sigue a lo de antes en el mismo renglón, con un espacio`, +hueco.toFixed(2)]);
+
+    /* ── la raya de «todo» y lo que se le contesta ── */
+    const conRaya = E.aro && !E.cuaderno;
+    r.push([x.raya.ve === conRaya && x.hoy.ve === conRaya, `paso ${n}: ${conRaya ? '«todo» va subrayado y se le contesta «hoy, no»' : 'todavía no se subraya «todo»'}`, [x.raya.ve, x.hoy.ve]]);
+    if (conRaya) {
+      const R = x.raya.ps, t = V.todo, w = t.caja.x1 - t.caja.x0;
+      r.push([R.length === 2 && cerca(R[0][1], R[1][1], 0.05) && !!x.raya.raya && cerca(R[0][0], t.caja.x0, 0.6) && R[1][0] <= t.caja.x1 - 1 && R[1][0] - R[0][0] >= 0.75 * w
+        && R[0][1] > t.ty1 + 0.5 && R[0][1] < G[1].y1 - 0.5, `paso ${n}: la raya cortada va debajo de «todo», sin el punto y sin salirse del globo`, R]);
+      r.push([x.hoy.txt === 'hoy, no' && x.hoy.caja.x0 >= G[1].x1 + 2 && cerca(cy(x.hoy.caja), cy(G[1]), 3) && x.hoy.caja.x1 <= K.figura.x0 - 1,
+        `paso ${n}: «hoy, no» va a la derecha del segundo mensaje, a su altura y sin tocar a ${H.nombre}`, x.hoy.txt]);
+      if (n === 4) r.push([x.aro.d < x.raya.d && x.raya.d < x.hoy.d, 'paso 4: primero el aro, después la raya y al final «hoy, no»', [x.aro.d, x.raya.d, x.hoy.d]]);
+    }
+
+    /* ── quién es, y la carpeta ── */
+    r.push([!!K.dice && K.dice.txt === H.nombre && K.dice.caja.y0 >= K.figura.y1 - 1 && cerca(cx(K.dice.caja), cx(K.figura), 2.5) && K.figura.x0 > Math.max(...G.map(g => g.x1)) + 2,
+      `paso ${n}: ${H.nombre}, con su nombre debajo, a la derecha de los mensajes`, K.dice && K.dice.txt]);
+    r.push([Pe.y1 >= Ca.y0 && Pe.y1 <= Ca.y0 + 2 && Pe.x0 >= Ca.x0 && Pe.x1 <= Ca.x1 && Pe.y0 > Math.max(...G.map(g => g.y1)) + 2 && Pe.y0 > K.figura.y1,
+      `paso ${n}: la pestaña sale del borde de arriba de la carpeta, debajo de los mensajes`, [Pe, Ca]]);
+    r.push([dentro(x.nombre.caja, Pe, 0.5) && !!x.emoji && x.emoji.txt === O.e && dentro(x.emoji.caja, Pe, 0.5) && x.emoji.caja.x1 <= x.nombre.caja.x0 + 0.5,
+      `paso ${n}: la pestaña lleva el nombre del oficio, con su dibujo delante`, [x.emoji && x.emoji.txt, x.nombre.txt]]);
+
+    /* ── la tapa, y las tareas de adentro ── */
+    r.push([Ta.ve === !E.abierta, `paso ${n}: ${E.abierta ? 'la carpeta está abierta' : 'la carpeta está cerrada, con su «?»'}`, Ta.ve]);
+    r.push([dentro(Ta.caja, Ca) && !!Ta.q && Ta.q.txt === '?' && dentro(Ta.q.caja, Ta.caja) && !!Ta.quien && Ta.quien.txt === quien && dentro(Ta.quien.caja, Ta.caja),
+      `paso ${n}: la tapa cubre la carpeta por dentro, con su «?» y de quién es el oficio`, Ta.quien && Ta.quien.txt]);
+    r.push([visibles.length === (E.abierta ? T.length : 0), `paso ${n}: ${E.abierta ? `se ven las ${T.length} tareas del oficio` : 'no se ve ninguna tarea'}`, visibles.length]);
+    if (n === 0) r.push([C.every(c => dentro(c.caja, Ta.caja)), 'paso 0: la tapa tapa el sitio de todas las tareas', null]);
+    const deCarta = C.map(c => T.findIndex(t => !!c.dice && t.t === c.dice.txt));
+    const todas = C.length === T.length && deCarta.every(j => j >= 0) && new Set(deCarta).size === T.length;
+    r.push([todas, `paso ${n}: hay una tarjeta por tarea del archivo, cada una con lo que dice su tarea`, C.map((c, i) => deCarta[i] < 0 ? c.dice && c.dice.txt : null).filter(Boolean)]);
+    if (!todas) return r;
+    const tarea = i => T[deCarta[i]];
+    const deV = v => C.map((c, i) => [c, i]).filter(p => tarea(p[1]).maquina === v);
+    const W = C[0].caja.x1 - C[0].caja.x0, Hc = C[0].caja.y1 - C[0].caja.y0;
+    r.push([C.every(c => cerca(c.caja.x1 - c.caja.x0, W, 0.05) && cerca(c.caja.y1 - c.caja.y0, Hc, 0.05)), `paso ${n}: las tarjetas son todas del mismo tamaño`, null]);
+    r.push([C.every(c => dentro(c.dice.caja, c.caja, -0.5) && c.signos.every(s => dentro(s.caja, c.caja, 0.5) && c.dice.caja.x1 < s.caja.x0 - 2)),
+      `paso ${n}: lo que dice cada tarjeta cabe en ella, antes de su signo`, C.filter(c => !c.signos.every(s => c.dice.caja.x1 < s.caja.x0 - 2)).map(c => c.dice.txt)]);
+
+    /* ── de quién es cada una ── */
+    r.push([C.every((c, i) => { const g = signoDe(c); return !!g && g.txt === SIGNO[tarea(i).maquina] && g.caja.x0 > c.caja.x0 + 0.85 * W; }),
+      `paso ${n}: cada tarjeta lleva al final el signo de quién se la queda, según el archivo: 🤖 la máquina, 🤝 a medias, 🧑 la persona`, null]);
+    const hecho = v => v === 'si' ? E.maq : (v === 'medias' ? E.medias : E.beto);
+    const malV = C.filter((c, i) => c.tinte.ve !== (c.ve && hecho(tarea(i).maquina)) || signoDe(c).ve !== (c.ve && hecho(tarea(i).maquina))).map(c => c.dice.txt);
+    r.push([!malV.length, `paso ${n}: ${E.beto ? 'se ve de quién es cada tarea' : (E.maq ? 'se ve lo que se lleva la máquina, y nada más' : 'todavía no se dice de quién es ninguna')}`, malV]);
+    const esperas = C.map((c, i) => ({ c, t: tarea(i), q: c.signos.find(s => s.txt === '?') }));
+    r.push([esperas.every(o => !!o.q === (o.t.maquina === 'medias')) && esperas.every(o => !o.q || (o.q.ve === (E.aparte && o.c.ve) && cerca(cx(o.q.caja), cx(signoDe(o.c).caja), 1.5))),
+      `paso ${n}: ${E.aparte ? 'la que va a medias espera con su «?», en el lugar del signo' : 'nada espera con «?»'}`, esperas.filter(o => o.q).map(o => o.q.ve)]);
+    const llena = c => { const p = c.tinte.partes; return p.length === 1 && cerca(p[0].caja.x0, c.caja.x0, 0.1) && cerca(p[0].caja.x1, c.caja.x1, 0.1) && cerca(p[0].caja.y0, c.caja.y0, 0.1) && cerca(p[0].caja.y1, c.caja.y1, 0.1); };
+    const pM = deV('si')[0], pB = deV('no')[0];
+    const colorM = pM && pM[0].tinte.partes[0] ? pM[0].tinte.partes[0].fill : '', colorB = pB && pB[0].tinte.partes[0] ? pB[0].tinte.partes[0].fill : '';
+    r.push([!!colorM && !!colorB && colorM !== colorB && colorM !== C[0].fondo && colorB !== C[0].fondo
+      && deV('si').every(p => llena(p[0]) && p[0].tinte.partes[0].fill === colorM) && deV('no').every(p => llena(p[0]) && p[0].tinte.partes[0].fill === colorB),
+      `paso ${n}: lo de la máquina se tiñe de un color y lo de la persona de otro, la tarjeta entera`, [colorM, colorB]]);
+    const med = deV('medias').map(p => p[0]);
+    r.push([med.every(c => {
+      const p = c.tinte.partes.slice().sort((a, b) => a.caja.x0 - b.caja.x0), mitad = cx(c.caja);
+      return p.length === 2 && cerca(p[0].caja.x0, c.caja.x0, 0.1) && cerca(p[0].caja.x1, mitad, 0.1) && cerca(p[1].caja.x0, mitad, 0.1) && cerca(p[1].caja.x1, c.caja.x1, 0.1)
+        && [p[0].fill, p[1].fill].sort().join() === [colorM, colorB].sort().join();
+    }), `paso ${n}: la que va a medias lleva media tarjeta de cada color: el de la máquina y el de la persona`, null]);
+    const iMed = C.map((c, i) => i).filter(i => tarea(i).maquina === 'medias'), iOtras = C.map((c, i) => i).filter(i => tarea(i).maquina !== 'medias');
+    r.push([iMed.every(i => iOtras.every(j => i > j)), `paso ${n}: la que va a medias se dibuja la última: al correrse pasa por encima de las otras`, iMed]);
+
+    /* ── dónde está cada una ── */
+    const orden = C.map((c, i) => ({ c, t: tarea(i), j: deCarta[i] })).sort((a, b) => a.c.caja.y0 - b.c.caja.y0);
+    const fijas = orden.filter(o => o.t.maquina !== 'medias'), x0 = fijas[0].c.caja.x0;
+    if (!E.maq) {
+      const dif = orden.slice(1).map((o, k) => o.c.caja.y0 - orden[k].c.caja.y0);
+      r.push([orden.every((o, k) => o.j === k) && orden.every(o => cerca(o.c.caja.x0, x0, 0.05)) && dif.every(d => cerca(d, dif[0], 0.05)) && dif[0] > Hc,
+        `paso ${n}: las tarjetas van en el orden del archivo, una debajo de otra y a paso parejo`, orden.map(o => o.j)]);
+    } else {
+      const RANGO = { si: 0, medias: 1, no: 2 };
+      r.push([orden.every((o, k) => !k || RANGO[o.t.maquina] > RANGO[orden[k - 1].t.maquina] || (o.t.maquina === orden[k - 1].t.maquina && o.j > orden[k - 1].j)),
+        `paso ${n}: las tarjetas se juntan por grupos: lo que se lleva la máquina, lo que va a medias y lo de ${quien}, cada grupo en el orden del archivo`, orden.map(o => o.t.maquina)]);
+      const dentroG = [], entreG = [];
+      orden.forEach((o, k) => { if (!k) return; const d = o.c.caja.y0 - orden[k - 1].c.caja.y0; (o.t.maquina === orden[k - 1].t.maquina ? dentroG : entreG).push(d); });
+      r.push([dentroG.length > 0 && dentroG.every(d => cerca(d, dentroG[0], 0.05)) && dentroG[0] > Hc && entreG.every(d => d > dentroG[0] + 2),
+        `paso ${n}: dentro de cada grupo las tarjetas van a paso parejo, y entre un grupo y otro queda más aire`, { dentroG, entreG }]);
+      r.push([fijas.every(o => cerca(o.c.caja.x0, x0, 0.05)) && med.every(c => E.aparte ? c.caja.x0 - x0 > W / 3 : cerca(c.caja.x0, x0, 0.05)),
+        `paso ${n}: ${E.aparte ? 'la que va a medias espera corrida a la derecha, fuera del renglón de las demás' : 'todas las tarjetas van en el mismo renglón'}`, med.map(c => +(c.caja.x0 - x0).toFixed(1))]);
+    }
+    r.push([visibles.every(c => dentro(c.caja, Ca, -1)), `paso ${n}: las tarjetas quedan dentro de la carpeta`, null]);
+    const encima = [];
+    visibles.forEach((a, i) => visibles.forEach((b, j) => { if (j > i && monta(a.caja, b.caja)) encima.push(a.dice.txt + ' / ' + b.dice.txt); }));
+    r.push([!encima.length, `paso ${n}: ninguna tarjeta se monta en otra`, encima]);
+
+    /* ── la llave de cada grupo ── */
+    const LINEAS = { si: [SIGNO.si + ' se las lleva', 'la máquina'], medias: [SIGNO.medias + ' a medias'], no: [SIGNO.no + ' le quedan', 'a ' + quien] };
+    const guiaDe = v => x.guias.find(g => g.dice.map(d => d.txt).join('|') === LINEAS[v].join('|'));
+    ['si', 'medias', 'no'].forEach(v => {
+      const grupo = deV(v).map(p => p[0]);
+      if (!grupo.length) return;
+      const g = guiaDe(v);
+      r.push([!!g && g.ve === hecho(v), `paso ${n}: la llave de «${LINEAS[v].join(' ')}» ${hecho(v) ? 'se ve' : 'todavía no se ve'}`, g ? g.ve : x.guias.map(gg => gg.dice.map(d => d.txt).join(' '))]);
+      if (!g || !g.ve) return;
+      const top = Math.min(...grupo.map(c => c.caja.y0)), bot = Math.max(...grupo.map(c => c.caja.y1)), der = Math.max(...grupo.map(c => c.caja.x1));
+      const ys = g.llave.map(p => p[1]), xs = g.llave.map(p => p[0]);
+      r.push([cerca(Math.min(...ys), top + 1.5, 1) && cerca(Math.max(...ys), bot - 1.5, 1) && Math.min(...xs) >= der + 0.5 && g.dice.every(d => d.caja.x0 > Math.max(...xs) + 1 && dentro(d.caja, Ca, -1))
+        && cerca(g.dice.reduce((s, d) => s + cy(d.caja), 0) / g.dice.length, (top + bot) / 2, 3),
+        `paso ${n}: la llave de «${LINEAS[v].join(' ')}» abarca justo su grupo, y lo que dice va a su lado, a la altura del grupo`, [top, bot, Math.min(...ys), Math.max(...ys)]]);
+    });
+
+    /* ── el aro: la que la máquina no tiene cómo hacer ── */
+    r.push([x.aro.ve === E.aro, `paso ${n}: ${E.aro ? 'se rodea una tarea' : 'todavía no se rodea ninguna tarea'}`, x.aro.ve]);
+    if (E.aro) {
+      const rodeadas = C.map((c, i) => [c, i]).filter(p => dentro(p[0].caja, x.aro.caja, 0));
+      const tocadas = C.filter(c => !dentro(c.caja, x.aro.caja, 0) && monta(c.caja, x.aro.caja));
+      const fiar = T.find(t => t.maquina === 'no');
+      r.push([rodeadas.length === 1 && !tocadas.length && tarea(rodeadas[0][1]) === fiar, `paso ${n}: el aro rodea una sola tarjeta, la primera que se queda con ${quien}, y no toca las otras`, rodeadas.map(p => p[0].dice.txt)]);
+      if (n === 4 && rodeadas.length === 1) {
+        const t = tarea(rodeadas[0][1]), resto = t.t.split(' ').slice(2).join(' ').toLowerCase();
+        r.push([nb(e.texto).includes(t.porque) && nb(e.texto).toLowerCase().includes(resto), 'paso 4: la frase pregunta por la tarea del aro y dice su porqué, tal cual el archivo', [resto, t.porque]]);
+      }
+    }
+
+    /* ── el cuaderno del final ── */
+    r.push([Q.ve === E.cuaderno, `paso ${n}: ${E.cuaderno ? 'sale el cuaderno' : 'todavía no sale el cuaderno'}`, Q.ve]);
+    const LQ = ['Un oficio que te guste:', 'Tres de sus tareas:', '¿Cuáles se lleva la máquina?'];
+    if (E.cuaderno) {
+      const TT = Q.textos, R = Q.rayas;
+      const bienQ = TT.length === 3 && TT.map(t => t.txt).join('|') === LQ.join('|') && R.length === 3 && TT.every(t => dentro(t.caja, Q.caja))
+        && R.every((ps, k) => ps.length === 2 && cerca(ps[0][1], ps[1][1], 0.05) && ps[0][0] > TT[k].caja.x1 + 1 && ps[1][0] <= Q.caja.x1 && ps[1][0] - ps[0][0] >= 20 && cerca(ps[0][1], TT[k].caja.y1, 4))
+        && R.every(ps => !x.cajasTexto.some(t => t.caja.x0 < ps[1][0] && t.caja.x1 > ps[0][0] && t.caja.y1 > ps[0][1] - 9 && t.caja.y0 < ps[0][1]));
+      r.push([bienQ, `paso ${n}: el cuaderno pide un oficio, tres de sus tareas y cuáles se lleva la máquina, con sus rayas en blanco`, TT.map(t => t.txt)]);
+      r.push([Q.caja.y1 < Pe.y0 && !monta(Q.caja, K.figura) && !monta(Q.caja, K.dice.caja), `paso ${n}: el cuaderno va en el lugar de los mensajes, sin tapar la carpeta ni a ${H.nombre}`, Q.caja]);
+      if (n === 5) r.push([Q.d > V.d, 'paso 5: primero se van los mensajes y después sale el cuaderno', [V.d, Q.d]]);
+    }
+
+    /* ── cuándo pasa cada cosa ── */
+    const porArchivo = v => deV(v).sort((a, b) => deCarta[a[1]] - deCarta[b[1]]).map(p => p[0]);
+    const parejo = ds => ds.length < 2 || (ds[1] - ds[0] > 0 && ds.every((d, k) => !k || cerca(d - ds[k - 1], ds[1] - ds[0], 1)));
+    if (n === 1) {
+      const ds = C.map((c, i) => [deCarta[i], c.dVer]).sort((a, b) => a[0] - b[0]).map(p => p[1]);
+      r.push([Ta.d <= ds[0] && ds.length > 1 && parejo(ds), 'paso 1: se abre la carpeta y salen las tareas una por una, en su orden y a paso parejo', ds]);
+    }
+    if (n === 2) {
+      const si = porArchivo('si'), ds = si.map(c => c.tinte.d), ultima = Math.max(...ds), gSi = guiaDe('si');
+      r.push([parejo(ds) && si.every(c => cerca(signoDe(c).d, c.tinte.d, 1)), 'paso 2: lo que se lleva la máquina se marca una por una, en su orden y a paso parejo', ds]);
+      r.push([med.every(c => c.dAparte > ultima && cerca(c.signos.find(s => s.txt === '?').d, c.dAparte, 1)) && si.every(c => med.every(mc => c.dFila > mc.dAparte))
+        && porArchivo('no').every(c => c.dFila > ultima) && !!gSi && gSi.d > Math.max(...si.map(c => c.dFila)),
+        'paso 2: cuando ya se marcaron, la que va a medias se corre a esperar con su «?», las de la máquina se juntan arriba y al final sale su llave', [ultima, med.map(c => c.dAparte), gSi && gSi.d]]);
+    }
+    if (n === 3) {
+      const gM = guiaDe('medias'), gN = guiaDe('no'), no = porArchivo('no'), ds = no.map(c => c.tinte.d);
+      r.push([med.every(c => c.dAparte < c.tinte.d && cerca(signoDe(c).d, c.tinte.d, 1)) && !!gM && med.every(c => gM.d > c.tinte.d),
+        'paso 3: la que va a medias vuelve a su renglón, después se marca y después sale su llave', [med.map(c => [c.dAparte, c.tinte.d]), gM && gM.d]]);
+      r.push([!!gM && ds.every(d => d > gM.d) && parejo(ds) && no.every(c => cerca(signoDe(c).d, c.tinte.d, 1)) && !!gN && gN.d > Math.max(...ds),
+        `paso 3: lo que le queda a ${quien} se marca después, una por una, y al final su llave`, ds]);
+    }
+
+    /* ── el marcador y la frase, contra lo que se cuenta ── */
+    const NUM = { una: 1, dos: 2, tres: 3, cuatro: 4, cinco: 5 };
+    const enCuaderno = Q.ve ? NUM[(Q.textos.map(t => t.txt).find(t => / tareas/.test(t)) || '').split(' ')[0].toLowerCase()] : 0;
+    const CIFRA = [Ta.ve && !!Ta.q && Ta.q.txt === '?' ? '?' : '(la carpeta abierta)', String(visibles.length), String(conSigno(SIGNO.si)), String(conSigno(SIGNO.no)),
+      String(conSigno(SIGNO.no)), String(enCuaderno)][n];
+    r.push([nb(e.cifra) === CIFRA, `paso ${n}: el marcador dice «${CIFRA}», contado en el dibujo`, nb(e.cifra)]);
+    const PAL = ['ninguna', 'una', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez'];
+    const txt = nb(e.texto), bajo = txt.toLowerCase();
+    const palabrasMedias = med.length ? T.filter(t => t.maquina === 'medias')[0].t.split(' ').slice(1).filter(w => w.length >= 6).map(w => w.toLowerCase()) : [];
+    const FR = [[H.nombre, `${PAL[G.length]} cosas`], [quien, `${PAL[visibles.length]} tareas`], [`se lleva ${PAL[conSigno(SIGNO.si)]}`],
+      [quien, `le quedan ${PAL[conSigno(SIGNO.no)]}`, 'medias'], ['Hoy, no'], [`${PAL[enCuaderno]} de sus tareas`]][n];
+    const faltan = FR.filter(f => !txt.includes(f));
+    r.push([!faltan.length, `paso ${n}: lo que la frase cuenta es lo que se cuenta en el dibujo`, faltan]);
+    if (n === 2) {
+      const verbo = t => t.t.split(' ')[0].toLowerCase();
+      const delSi = T.filter(t => t.maquina === 'si').map(verbo), otros = T.filter(t => t.maquina !== 'si').map(verbo);
+      const pos = delSi.map(v => bajo.indexOf(v));
+      r.push([pos.every((p, k) => p >= 0 && (!k || p > pos[k - 1])) && otros.every(v => !bajo.includes(v)), 'paso 2: la frase nombra lo que se lleva la máquina, en su orden, y nada más', [delSi, otros]]);
+    }
+    if (n === 2 || n === 3) r.push([palabrasMedias.some(w => bajo.includes(w)), `paso ${n}: la frase nombra la tarea que va a medias`, palabrasMedias]);
+
+    /* ── que nada se monte ni se salga ── */
+    const VB = { x0: 0, y0: 0, x1: x.vista[0], y1: x.vista[1] };
+    const fueraV = x.cajasTexto.filter(t => !dentro(t.caja, VB)).map(t => t.txt);
+    r.push([!fueraV.length && dentro(Ca, VB) && dentro(Pe, VB) && dentro(K.figura, VB) && G.every(g => dentro(g, VB)), `paso ${n}: todo queda dentro del dibujo`, fueraV]);
+    const mont = [];
+    x.cajasTexto.forEach((t, i) => x.cajasTexto.forEach((u, j) => { if (j > i && monta(t.caja, u.caja)) mont.push(t.txt + ' / ' + u.txt); }));
+    const sobreKaty = x.cajasTexto.filter(t => t.txt !== H.nombre && monta(t.caja, K.figura)).map(t => t.txt);
+    r.push([!mont.length && !sobreKaty.length, `paso ${n}: ningún texto se monta en otro ni en ${H.nombre}`, mont.concat(sobreKaty)]);
     return r;
   },
   amAnio4(e, n) { return verAnio(e, n, '4º'); },
