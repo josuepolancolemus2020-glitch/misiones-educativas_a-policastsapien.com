@@ -595,3 +595,29 @@ body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
 body.letra-grande .mu-tipo-et { font-size: 0.875rem !important; }
 .lab-sentence{flex-wrap:wrap;}
 .lab-sentence > div{width:100%;}
+
+/* ── La animación del machete del abuelo (#amMachete) ──────────────
+   El machete, sus sellos 👴, los globos, el calendario y el cuaderno son
+   COSAS: se quedan como son en las dos pantallas, con tinta oscura fija. Lo
+   que va sobre la tarjeta de la misión (cuándo es cada fila, los nombres, lo
+   que dice cada lazo) lleva la tinta de la pantalla. Nada se dice solo con
+   color: lo que viene del abuelo lleva su sello, lo que todavía no llega es
+   un hueco de raya cortada y cada semana va tachada. */
+#amMachete .mh-emoji { font-family: 'Fredoka', sans-serif; }
+#amMachete .mh-tinta { fill: #2b1f28; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amMachete .mh-hoja-abuelo { fill: #6f767d; stroke: #3c4247; stroke-width: 0.9; stroke-linejoin: round; }
+#amMachete .mh-hoja-nueva { fill: #cbd3da; stroke: #6f7a84; stroke-width: 0.9; stroke-linejoin: round; }
+#amMachete .mh-filo { fill: none; stroke: #f1f4f6; stroke-width: 1.1; stroke-linecap: round; }
+#amMachete .mh-rayon { fill: none; stroke: #3c4247; stroke-width: 0.8; stroke-linecap: round; }
+#amMachete .mh-mango-abuelo { fill: #6b4226; stroke: #3d2414; stroke-width: 0.9; }
+#amMachete .mh-mango-nuevo { fill: #d6a066; stroke: #8a5a2b; stroke-width: 0.9; }
+#amMachete .mh-remache { fill: #e4ddd2; stroke: #5c5148; stroke-width: 0.5; }
+#amMachete .mh-sello { fill: #fff7e8; stroke: #8a6a3a; stroke-width: 0.8; }
+#amMachete .mh-globo { fill: #ffffff; stroke: #94a3b8; stroke-width: 1; stroke-linejoin: round; }
+#amMachete .mh-aro { fill: none; stroke: var(--am-pri); stroke-width: 1.8; }
+#amMachete .mh-lazo { fill: none; stroke: var(--am-pri); stroke-width: 1.6; stroke-linecap: round; }
+#amMachete .mh-papel { fill: #fffdf5; stroke: #cbd5e1; stroke-width: 1; }
+#amMachete .mh-tira { fill: #b9789f; }
+#amMachete .mh-dia { fill: #ffffff; stroke: #94a3b8; stroke-width: 0.7; }
+#amMachete .mh-tacha { fill: none; stroke: #5b3a52; stroke-width: 1.4; stroke-linecap: round; }
+#amMachete .mh-renglon { fill: none; stroke: #94a3b8; stroke-width: 1; }

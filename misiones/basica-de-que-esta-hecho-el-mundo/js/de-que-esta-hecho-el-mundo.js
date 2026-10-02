@@ -318,7 +318,7 @@ const completeTaskDB=[
 const explainQuestions=[
   {q:'¿Cuáles son las tres clases de cambio y cómo se reconoce cada una?',ans:'Cambió la forma: la materia es la misma, solo acomodada de otro modo. Cambió la materia: quedó otra sustancia, con otro color u otro sabor. Cambió lo que decimos: a la cosa no le pasó nada. Cambió su nombre o su dueño.'},
   {q:'Explica con un ejemplo de tu casa cada clase de cambio.',ans:'Respuesta abierta. Los tres ejemplos tienen que ser suyos. Se valora la prueba de cada uno. ¿Sigue siendo la misma sustancia? ¿Quedó algo distinto? ¿O solo cambió lo que decimos?'},
-  {q:'Al machete del abuelo le cambiaron el mango y después la hoja. ¿Sigue siendo el mismo? Explica.',ans:'Respuesta abierta: no tiene una sola respuesta buena. Se valora que diga su REGLA antes. ¿Qué hace a una cosa? ¿De qué está hecha, o para qué sirve? Y que la aplique igual a los otros casos.'},
+  {q:'A la casa de la abuela le fueron cambiando el techo, las puertas y por último las paredes. ¿Es la misma casa? Explica con tu regla.',ans:'Respuesta abierta: no tiene una sola respuesta buena. Se valora que diga su REGLA antes. ¿Qué cuenta? ¿De qué está hecha, o que nunca dejó de ser la casa de la familia? Y que la aplique igual a otros casos.'},
   {q:'La palabra «átomo» dice algo que hoy se sabe que no es así. ¿Por qué?',ans:'Porque quiere decir «lo que no se parte», y se puso pensando, sin medir. Después se vio que el átomo sí se parte. El nombre falló y la idea de las piezas acertó. Por eso la idea sirvió igual.'},
   {q:'¿Qué es una cosmovisión y por qué todos tenemos una?',ans:'Es la forma entera en que un pueblo explica el mundo y su lugar en él. Todos tenemos una aunque nunca la hayamos escrito: se aprende oyendo en la casa. Contesta tres cosas: de dónde salió todo, qué somos y qué se respeta.'},
   {q:'Un tronco grande se quema y queda un puño de ceniza. ¿Se perdió materia? Explica.',ans:'No. Parecía que sí, y por eso la pregunta duró mucho. Hoy se pesa lo que entra y lo que sale. Da lo mismo. Lo que se fue en humo también pesa. Lo que faltaba no era pensar más: era una balanza.'},
@@ -448,9 +448,9 @@ const evalMCBank=[
   {q:'¿Qué hay que preguntarse para saber si solo cambió lo que decimos?',o:['¿Le pasó algo a la cosa?','¿Cuánto pesa?','¿Es más grande?','¿Se puede tocar?'],a:0,k:'mc-prueba-cosa'},
   {q:'Antes, ¿con qué se contestaba «de qué está hecho todo»?',o:['Con un microscopio','Con cuatro cosas: agua, aire, fuego y tierra','Con los números','Con un reloj'],a:1,k:'mc-cuatro'},
   {q:'Dos pensadores de esta unidad nunca se pusieron de acuerdo sobre el cambio. ¿Qué enseña eso?',o:['Que uno de los dos mentía','Que la filosofía no sirve','Que hay discusiones que siguen abiertas','Que nadie pensaba bien'],a:2,k:'mc-discusion'},
-  {q:'El agua de la quebrada ya bajó toda. ¿Es la misma quebrada?',o:['Depende de tu regla: si lo que la hace es el agua o su camino','Sí, siempre','No, nunca','No se puede opinar'],a:0,k:'mc-quebrada'},
+  {q:'¿Cuál de estos cambios es solo de la forma?',o:['La camisa se arruga en la mochila','El guineo se pone negro','La manzana partida se pone café','El aguacate olvidado se pudre'],a:0,k:'mc-camisa'},
   {q:'¿Por qué la misión no escribe lo que cree ningún pueblo de Honduras?',o:['Porque no importa','Porque no se puede acreditar: se averigua donde vivís','Porque es secreto','Porque no hay ninguno'],a:1,k:'mc-investiga'},
-  {q:'¿Cuál de estas preguntas NO tiene forma de medirse todavía?',o:['Cuánto pesa el aire','De qué está hecha el agua','Si el hierro se oxida','Por qué hay algo y no más bien nada'],a:3,k:'mc-algo'},
+  {q:'¿Cuál de estas preguntas NO tiene forma de medirse todavía?',o:['Cuánto pesa una piedra','De qué está hecho el barro','Cuánto dura un día','Por qué hay algo y no más bien nada'],a:3,k:'mc-algo'},
   {q:'La sal disuelta en agua vuelve a salir. ¿Qué enseña eso?',o:['Que la sal desaparece','Que el agua pesa','Que el atajo de «si se puede deshacer» no siempre acierta','Que la sal se quemó'],a:2,k:'mc-sal'},
   {q:'El reflejo del cerro en la laguna, ¿es un cerro?',o:['Sí, uno más','Sí, si se ve claro','Solo de día','No: es lo que parece, no lo que está ahí'],a:3,k:'mc-reflejo'},
   {q:'Toda manera de explicar el mundo contesta tres preguntas. ¿Cuál es una?',o:['¿Qué se debe respetar, y por qué?','¿Cuánto cuesta el maíz?','¿Qué día es hoy?','¿Cuántos somos?'],a:0,k:'mc-cosmo'}
@@ -564,7 +564,7 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {k:'cs-machete',txt:'A Elvin le dejaron el machete del abuelo. Le cambiaron el mango hace años y la hoja el verano pasado. Su hermana dice que ese ya no es el del abuelo. Y que le toca la mitad. Llevan tres semanas sin hablarse.'},
+  {k:'cs-leche',txt:'A doña Lidia se le cortó la leche camino al mercado. Quiere cobrarla igual: «es la misma leche, solo se puso así». La clienta no la quiere. Doña Lidia se queda con cuatro litros sin vender.'},
   {k:'cs-sal',txt:'En la pulpería le venden a doña Nely un saco de sal mojada. Ella reclama que ya no es sal. El pulpero dice que sí, que la seca y queda igual. Se pasan la mañana discutiendo.'},
   {k:'cs-rastrojo',txt:'Un muchacho quema el rastrojo. Dice que la tierra «se comió» la milpa vieja: de un montón grande quedó un puño de ceniza. Al año siguiente vuelve a quemar y la cosecha baja otra vez.'},
   {k:'cs-escuela',txt:'En la escuela le cambian el nombre y le ponen el de otra persona. Un alumno dice que ya no es la misma escuela. Otro dice que es la misma, que solo le cambiaron el rótulo.'},
@@ -578,8 +578,8 @@ const critCaseQuestions=[
 const critCaseGuides=[
   'Se valora que NOMBRE la clase y dé la señal. Si la materia es la misma, cambió la forma. Si quedó otra sustancia, la materia. Si a la cosa no le pasó nada, solo lo que decimos.',
   'La prueba es siempre la misma. ¿Le pasó algo A LA COSA? ¿O solo a lo que decimos de ella? Y después: ¿sigue siendo la misma sustancia?',
-  'Se califica que le ponga nombre al daño concreto. Tres semanas sin hablarse. Una mañana perdida. Una cosecha que baja. No la indignación.',
-  'El machete y la escuela NO tienen una sola respuesta buena, y decirlo vale puntos. La sal y la ceniza sí se deciden con la prueba.'
+  'Se califica que le ponga nombre al daño concreto. Cuatro litros sin vender. Una mañana perdida. Una cosecha que baja. No la indignación.',
+  'La escuela NO tiene una sola respuesta buena, y decirlo vale puntos. La sal, la leche y la ceniza sí se deciden con la prueba.'
 ];
 const critErrorBank=[
   {k:'er-atomo',txt:'"La palabra átomo quiere decir que ya se comprobó que esa pieza no se parte".',g1:'La palabra se puso PENSANDO, sin medir nada. Quiere decir «lo que no se parte» porque así se imaginó.',g2:'Después se midió y el átomo sí se parte. El nombre falló y la idea de las piezas acertó. Una idea puede servir aunque su nombre quede mal.'},
@@ -599,7 +599,7 @@ const critCauseBank=[
 const critEffectBank=[
   {k:'ef-reflejo',effect:'Una niña cree que hay dos cerros porque ve uno en la laguna.',guide:'Porque confundió lo que parece con lo que está ahí. El reflejo se ve, pero no es un cerro.'},
   {k:'ef-globo',effect:'Un globo inflado pesa un poquito más que el mismo globo vacío.',guide:'Porque el aire es materia: pesa y ocupa lugar, aunque no se vea.'},
-  {k:'ef-kinder',effect:'Una muchacha no sabe si es la misma persona que era en el kínder.',guide:'Porque depende de su regla: si lo que la hace ser ella es su cuerpo, que ha cambiado casi entero, o lo que recuerda.'},
+  {k:'ef-alambre',effect:'El alambre doblado en gancho pesa lo mismo que cuando estaba derecho.',guide:'Porque solo cambió la forma: es el mismo alambre, acomodado de otro modo. No se le quitó ni se le puso nada.'},
 ];
 function genEvalCrit(){
   sfx('click');

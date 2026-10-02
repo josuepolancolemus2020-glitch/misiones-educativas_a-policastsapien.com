@@ -14542,6 +14542,126 @@ Salió roja con cada una.
 Con la CPU frenada seis veces va a 60 cuadros por segundo, y el peor cuadro es de 50 ms. El
 Asombro, medida el mismo día, va a 60 y 83 ms.
 
+### La septuagésima octava: ¿De qué está hecho el mundo?, y lo que enseñó
+
+La tercera de la Ruta de la Raíz es **¿De qué está hecho el mundo?**
+(`misiones/basica-de-que-esta-hecho-el-mundo/`, `js/animacion-machete.js`). La historia es la de
+Elvin: el abuelo le dejó su machete; hace años le cambiaron el mango y el verano pasado, la hoja.
+Ahora su hermana dice que ese ya no es el machete del abuelo, que de él no queda nada, y que
+entonces le toca la mitad de lo que valga. Llevan tres semanas sin hablarse por una pregunta que
+ninguno de los dos sabe contestar: ¿sigue siendo el mismo machete? La historia dice que los dos
+tienen media razón, y que les falta una regla dicha antes de discutir. La animación pone el mismo
+machete en tres momentos, uno debajo del otro, con lo que tiene del abuelo marcado con un sello
+👴; abajo, Elvin a la izquierda y su hermana a la derecha:
+
+- antes de tocar: el machete del abuelo, con sus dos pedazos sellados. ¿Qué le pasa con los años?;
+- hace años: el machete baja al segundo momento, se le cae el mango del abuelo y llega uno nuevo,
+  sin sello. La hoja sigue siendo la del abuelo;
+- el verano pasado: baja al tercero, se le cae la hoja y llega una nueva. Ya no le queda ningún
+  pedazo con sello;
+- habla la hermana («Ya no es el del abuelo. Me toca la mitad.»), y un aro rodea el machete de
+  hoy, con «hoy» en su borde: cero pedazos del abuelo;
+- habla Elvin («Es el del abuelo: nunca hubo otro.»), y entre cada momento y el siguiente sale un
+  lazo, uno detrás de otro: «la misma hoja» entre el primero y el segundo, «el mismo mango» entre
+  el segundo y el de hoy. En cada cambio se quedó un pedazo;
+- entre los dos, un calendario con sus tres semanas tachadas una por una: «sin hablarse». Los dos
+  tienen media razón: ella compara el primero con el de hoy; él, cada cambio;
+- y la pregunta es del alumno: en su cuaderno, «Mi regla: es el mismo mientras», con sus dos
+  renglones, y con ella, «¿Sigue siendo el mismo machete? sí · no».
+
+Siete cosas que valen para las que siguen:
+
+1. ⚠️ **Lo que asombra se ve en el mismo dibujo, y por eso nadie gana.** Cada cambio dejó un
+   pedazo del momento de antes (se ve en los lazos), y aun así del primero al de hoy no queda
+   ninguno (se ve en el aro). Las dos cosas son verdad a la vez, que es la «media razón» de la
+   historia. Por eso no hay ni un ✓ ni una ✗, cada uno dice lo que él mira y la frase no le da la
+   razón a ninguno: la sonda lo prohíbe. Es la decisión de héroe y prócer de la Ruta de la Patria.
+2. ⚠️ **Lo que es del abuelo lleva un sello 👴, no solo otro color.** Un pedazo del abuelo y uno
+   nuevo se distinguen sin distinguir colores y fotocopiados, y contar los sellos del machete de
+   hoy da el cero del marcador. La sonda exige el sello en los pedazos del abuelo y en ningún
+   otro, que el pedazo del abuelo no se vea igual que el nuevo y que el mismo pedazo se vea igual
+   en cada momento.
+3. ⚠️ **Cada momento baja desde el anterior.** El machete de «hace años» espera escondido justo
+   encima, a la altura del primero, y baja a su fila; cuando llega, se le cae el pedazo viejo, y
+   cuando ya se fue, llega el nuevo. Así se ve el camino de un momento al otro, que es lo que mira
+   Elvin; y el aro del de hoy, lo que mira la hermana.
+4. ⚠️ **No se nombra ninguna clase de cambio.** Justo debajo, la misión enseña las tres (de forma,
+   de materia y de lo que decimos), y su prueba las pregunta: la escena no dice «forma», ni
+   «materia», ni «identidad», ni sale la quebrada, que es otro de los casos de 🔁 ¿Sigue siendo el
+   mismo?: ahí el alumno aplica su regla. El precio que se cuenta es el de la historia, las tres
+   semanas sin hablarse; «la mitad» la dice ella, sin un número.
+5. **Lo que salió mirando las capturas, con la sonda en verde.** Los sellos eran chicos y
+   pálidos y a 360 px no se leían; el calendario quedaba pegado a los globos; y el aro del machete
+   de hoy no decía qué era, con lo que parecía otro lazo: lleva «hoy» en su borde de arriba.
+6. ⚠️ **La historia contestaba un caso de pensamiento crítico y una tarea del Generador, y la
+   animación, una pregunta de la conceptual y un efecto.** El caso de análisis era la historia
+   palabra por palabra, y la tarea de explicar si el machete sigue siendo el mismo, también. La
+   selección de la quebrada («depende de tu regla») y el efecto de la muchacha que no sabe si es la
+   misma que en el kínder tenían por respuesta lo que la animación deja dicho. Ahora el caso es la
+   leche que se le cortó a doña Lidia camino al mercado (cuatro litros sin vender); la tarea, la
+   casa de la abuela a la que le cambiaron el techo, las puertas y las paredes; la selección
+   pregunta cuál cambio es solo de la forma (la camisa arrugada); y el efecto, por qué el alambre
+   doblado pesa lo mismo. Las pautas cambiaron con ellos. Se queda el caso de la escuela, que pide
+   llevar la regla a otro caso, y la ficha no preguntaba la historia.
+7. ⚠️ **Al quitar la quebrada, la sonda de pistas vio lo que eso tapaba.** La selección de lo que
+   no se puede medir todavía ofrecía «cuánto pesa el aire» y «de qué está hecha el agua», que le
+   soplaban a la de los cuatro elementos de antes; y «si el hierro se oxida» le soplaba al
+   completar de la herrumbre, que acepta «óxido». Las opciones son otras, con la respuesta en el
+   mismo lugar.
+
+La sonda de esta escena **no le cree nada a la escena**. De la historia saca a quién le dejó el
+abuelo el machete, los dos momentos y qué pedazo cambió en cada uno, lo que dice la hermana,
+cuántas semanas llevan sin hablarse y la pregunta. Comprueba:
+
+- que los momentos sean los de la historia, en su orden y cada uno con su rótulo a su altura;
+- que en cada paso se vean los momentos que tocan, y en cada uno sus dos pedazos: el que cambió
+  en ese momento, nuevo; los demás, como estaban;
+- que el mango y la hoja de cada machete vayan pegados, y que el sello vaya en los pedazos del
+  abuelo y en ningún otro;
+- que el momento que todavía no llega espere escondido encima del anterior, y que en su paso baje,
+  se le caiga el pedazo viejo y llegue el nuevo, en ese orden; y que su hueco de raya cortada se
+  vaya justo cuando llega;
+- que Elvin esté a la izquierda y su hermana a la derecha, con su nombre debajo, y que cada globo
+  salga de la cabeza de quien habla y diga lo suyo: ella, lo de la historia y la mitad; él, que es
+  el del abuelo y que nunca hubo otro;
+- que el aro rodee el machete de hoy y nada más, con «hoy» en su borde, y que ese machete no
+  comparta ningún pedazo con el del abuelo;
+- que entre cada momento y el siguiente haya un lazo, que una justo el pedazo que comparten, con
+  lo que dice al lado y sin tocar los machetes;
+- que el calendario traiga las semanas de la historia, de siete días, cada una tachada de punta a
+  punta y una por una, entre los dos y debajo de sus globos, con «sin hablarse»;
+- que el cuaderno traiga «Mi regla» con sus dos renglones y la pregunta de la historia con su «sí
+  · no», y que salga cuando ya se fueron los dos;
+- que cada cosa pase cuando le toca: primero habla cada uno y después sale lo que mira;
+- que el marcador cuente lo que se ve;
+- y que no salga una clase de cambio, ni un pareado, ni lo que pregunta la prueba, ni un número,
+  ni un ✓ ni una ✗, y que ningún texto se monte en otro.
+
+Se comprobó al revés con treinta y seis averías, plantadas una por una:
+
+- el mango nuevo con el sello del abuelo, el sello de la hoja fuera de ella y la hoja nueva igual
+  a la del abuelo;
+- hace años cayéndose la hoja y no el mango, el pedazo caído quedándose a la vista, el nuevo
+  llegando antes de que se vaya el viejo, el viejo cayéndose antes de que llegue el machete y el
+  machete apareciendo en su sitio sin bajar;
+- el hueco quedándose cuando llega el machete, y yéndose antes; y el machete de hace años corrido
+  a la derecha;
+- el lazo de la hoja en los mangos, el del mango saliendo del primer momento, los lazos saliendo
+  juntos o antes de que hable Elvin, y «la misma hoja» encima del machete;
+- el aro rodeando el de hace años, «hoy» lejos del aro y el aro antes de que hable la hermana;
+- la hermana diciendo que es el del abuelo, Elvin hablando en el paso de ella, su globo apuntando a
+  la hermana, Elvin con otro nombre, la hermana a la izquierda y los nombres encima de las caras;
+- el calendario de dos semanas, una semana sin tachar, la tachadura corta, las semanas tachándose
+  antes de que salga el calendario y el calendario encima de los globos;
+- el marcador del paso 3 diciendo 1, «materia» en una frase y la frase dándole la razón a la
+  hermana;
+- el cuaderno sin su segunda raya, con la pregunta cambiada y saliendo con la gente todavía.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 60 cuadros por segundo, y el peor cuadro es de 83 ms.
+Pensar con Orden, medida el mismo día, va a 59 y 100 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -14800,6 +14920,11 @@ coma) se va antes de que salgan: si se queda, flota sola. Un texto forzado a su 
 «o» de la Fredoka va casi un punto más allá, porque su tinta se sale de su avance. Y un velo
 que tapa a unos y deja leer lo que se dice de ellos va entre los dos en el documento: debajo,
 lo tapado; encima, lo que se lee.
+
+Cuando la lección es que dos tienen media razón, el dibujo enseña lo que mira cada uno y no pone
+✓ ni ✗, y la sonda lo prohíbe. Lo que es de antes y lo que es nuevo se distinguen con una marca
+que se ve sin colores (un sello), y la sonda la pide solo en lo de antes. Y lo que pasa a un
+momento nuevo baja desde el anterior: espera escondido encima, a la altura del momento de antes.
 
 Si la misma escena sirve para varias misiones (las cuatro Pruebas de Fin de
 Grado), vive en `js/escena-<tema>.js` y cada misión trae un archivo de dos líneas
