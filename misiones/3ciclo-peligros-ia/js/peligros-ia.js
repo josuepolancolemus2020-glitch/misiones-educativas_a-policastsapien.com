@@ -410,9 +410,9 @@ const evalMCBank=[
   {q:'Un mensaje raro te pide que no le contés a nadie. ¿Qué hacés?',o:['Lo mando rápido','Lo cuento igual y espero','Lo borro sin leer','Contesto por otro número'],a:1,k:'mc-no-contes'}
 ];
 const evalCPBank=[
-  {q:'A Yoselin un programa le rechazó la beca en unos pocos ___.',a:'segundos',acc:['segundos'],k:'cp-segundos'},
-  {q:'El programa de becas acertaba el ___ %.',a:'92',acc:['92','noventa y dos'],k:'cp-92'},
-  {q:'A Yoselin el error del programa le costó el ___.',a:'año',acc:['año'],k:'cp-ano'},
+  {q:'Un peligro no es «la máquina es mala»: es un ___ que se puede nombrar.',a:'mecanismo',acc:['mecanismo'],k:'cp-mecanismo'},
+  {q:'Si un video solo está en un grupo y no en la cuenta ___ de quien aparece, lo fabricaron.',a:'oficial',acc:['oficial'],k:'cp-oficial'},
+  {q:'Desconfiar de todo cuesta lo mismo que ___ todo.',a:'creerlo',acc:['creerlo','creer'],k:'cp-creerlo'},
   {q:'Ante un mensaje raro, se vuelve a preguntar por el número de ___.',a:'siempre',acc:['siempre'],k:'cp-siempre'},
   {q:'Una voz se fabrica con muy poca ___.',a:'grabación',acc:['grabación','grabacion'],k:'cp-grabacion'},
   {q:'Lo que se publica queda, y lo puede leer ___.',a:'cualquiera',acc:['cualquiera'],k:'cp-cualquiera'},
@@ -537,9 +537,9 @@ const critErrorBank=[
   {k:'er-desconfiar',txt:'"Como puede haber estafas, mejor no le creo a ningún mensaje".',g1:'Desconfiar de todo cuesta lo mismo que creerlo todo.',g2:'Por eso se miran las tres señales: separan lo raro de lo normal.'},
 ];
 const critDecisionBank=[
-  'Un programa rechazó la beca de tu prima en segundos. ¿Lo aceptás, o pedís que una persona la revise?',
+  'Tu compañero va a entregar un ensayo que le hizo un chat, y no lo puede explicar. ¿Le decís algo, o te callás?',
 ];
-const critDecisionGuide='Comprobar por otro camino antes de actuar. Pedir que revise una persona. Preguntar antes de publicar lo de otros. Avisarle a un compañero.';
+const critDecisionGuide='Decirle algo, a solas y sin burlarse. Un trabajo que no puede explicar no es suyo, y le puede costar la nota y la confianza de la maestra. Que use el chat para entender y que escriba él. Si lo usó, que lo diga.';
 const critCompareBank=[
   {k:'co-alucinacion',a:'Una alucinación.',b:'Una estafa con voz fabricada.',ga:'El modelo se inventa un dato sin que nadie se lo pida.',gb:'Alguien fabrica la voz a propósito para quitarte dinero.',gr:'La primera es cómo funciona la máquina. La segunda es una decisión de alguien: hay intención, y eso cambia quién responde.'},
 ];

@@ -482,54 +482,31 @@ body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
 
-/* ===================== LA FICHA DE CADA PRÓCER =====================
-   Las pinta pintarProceresLista() desde js/data/proceres-honduras.js. Cada
-   uno va en su tarjeta y con su etiqueta de HÉROE o PRÓCER a la vista: es la
-   distinción que se pregunta en el examen, y tenerla al lado del nombre la
-   enseña sin que haya que leer un párrafo. */
-.pr-ficha{border:2px solid var(--border);border-radius:14px;padding:1rem 1.1rem;margin-bottom:1.1rem;background:var(--card);}
-.pr-tit{font-family:'Fredoka',sans-serif;font-size:1.08rem;color:var(--pri);margin-bottom:0.25rem;display:flex;flex-wrap:wrap;align-items:center;gap:0.5rem;}
-.pr-clase{font-family:'Nunito',sans-serif;font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.04em;border-radius:999px;padding:0.12rem 0.6rem;}
-.pr-h{background:#fde8e8;color:#9b1c1c;}
-.pr-p{background:var(--sec-gl);color:var(--sec);}
-.pr-apodo{font-size:0.85rem;color:var(--gray);font-style:italic;margin-bottom:0.4rem;}
-.pr-nace{font-size:0.83rem;color:var(--gray);margin-bottom:0.3rem;}
-.pr-papel{font-size:0.95rem;margin-bottom:0.5rem;}
-.pr-sub{font-family:'Fredoka',sans-serif;font-size:0.88rem;color:var(--sec);margin:0.5rem 0 0.2rem;}
-.pr-hizo{margin:0 0 0.5rem 1.1rem;padding:0;font-size:0.9rem;line-height:1.5;}
-.pr-hizo li{margin-bottom:0.25rem;}
-.pr-porque{font-size:0.9rem;line-height:1.55;padding:0.6rem 0.8rem;border-left:4px solid var(--sec);background:var(--sec-gl);border-radius:0 10px 10px 0;margin-bottom:0.5rem;}
-.pr-fecha{font-size:0.88rem;font-weight:700;color:var(--sec);margin-bottom:0.4rem;}
-@media (max-width: 430px){
-  .pr-ficha{padding:0.85rem 0.75rem;}
-}
+/* ── La animación de las solicitudes (#amBeca) ───────────────────────
+   Las solicitudes y el cuaderno son PAPEL: se quedan como son en las dos
+   pantallas, con tinta oscura fija, y por eso la marca de cada una (el ✓
+   verde y la ✗ roja de siempre) se lee igual en la clara y en la oscura. Lo
+   que va sobre la tarjeta (los rótulos, las barras, el aro y el nombre)
+   lleva los colores de la misión, que el aparato aclara en la pantalla
+   oscura. Nada se dice solo con color: la solicitud de escuela de aldea
+   tiene techo de casa y la de escuela grande es cuadrada, el acierto es un
+   ✓ de una raya y el error una ✗ de dos, y el hueco que deja la que se va
+   es de raya cortada.
 
-/* ════════ Lo propio de los tres poderes ════════
-   La jerarquía de las normas y el recorrido de una ley. Son los dos bloques
-   que esta misión no heredó de la plantilla, porque enseñan algo que las
-   otras no enseñan: que las normas tienen ALTURA y que una ley pasa por los
-   tres poderes en orden. Los dos se pintan desde js/data/poderes-honduras.js. */
-
-/* Los ocho escalones van numerados y con sangría creciente: la altura de la
-   norma tiene que VERSE, que es justo lo que el alumno confunde —cree que
-   manda la más nueva y no la que está más arriba—. */
-.pod-escalones{margin:0.8rem 0 0.9rem;padding-left:1.4rem;}
-.pod-escalones li{margin-bottom:0.32rem;line-height:1.45;}
-.pod-escalones li:first-child{font-weight:700;color:var(--pri);}
-
-/* El recorrido: un paso por tarjeta, con su número grande. En un teléfono
-   van uno debajo de otro; el número es lo que mantiene el orden a la vista
-   cuando la tarjeta se parte en dos renglones. */
-.pod-pasos{display:flex;flex-direction:column;gap:0.6rem;margin-top:0.9rem;}
-.pod-paso{display:flex;gap:0.7rem;align-items:flex-start;
-  background:var(--card-alt,rgba(0,0,0,0.03));border-radius:10px;padding:0.7rem 0.85rem;}
-.pod-paso-n{flex:0 0 auto;width:30px;height:30px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  background:var(--pri);color:#fff;font-weight:800;font-size:0.95rem;}
-.pod-paso h4{margin:0 0 0.25rem;font-size:1rem;line-height:1.3;}
-.pod-paso p{margin:0;font-size:0.9rem;line-height:1.45;}
-/* De qué poder es cada paso, en pequeño y al final: el alumno tiene que poder
-   recorrer la ley sin perder de vista quién la está tocando en cada momento. */
-.pod-paso-quien{display:inline-block;margin-top:0.4rem;font-size:0.78rem;
-  font-weight:700;color:var(--sec);letter-spacing:0.02em;}
-
+   Aquí iban dos bloques calcados de otras misiones (la ficha de cada
+   prócer y la jerarquía de los tres poderes), con sus comentarios
+   explicando cosas que en esta misión no pasan. No los usaba nada y se
+   quitaron: un comentario que explica algo que aquí no pasa es peor que
+   ninguno. */
+#amBeca .be-carta { fill: #fffdf5; stroke: #94a3b8; stroke-width: 1; stroke-linejoin: round; }
+#amBeca .be-hueco { fill: none; stroke: var(--gray); stroke-width: 1; stroke-dasharray: 2.5 2; stroke-linejoin: round; }
+#amBeca .be-bien { fill: none; stroke: #15803d; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+#amBeca .be-mal { fill: none; stroke: #b91c1c; stroke-width: 1.8; stroke-linecap: round; }
+#amBeca .be-nota { fill: var(--gray); font-family: 'Fredoka', sans-serif; font-weight: 500; }
+#amBeca .be-pista { fill: var(--border); }
+#amBeca .be-lleno { fill: var(--am-pri); }
+#amBeca .be-aro { fill: none; stroke: var(--am-sec); stroke-width: 2; }
+#amBeca .be-nombre { fill: var(--am-sec); font-family: 'Fredoka', sans-serif; font-weight: 700; }
+#amBeca .be-papel { fill: #fffdf5; stroke: #cbd5e1; stroke-width: 1; }
+#amBeca .be-letra { fill: #1e293b; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amBeca .be-renglon { fill: none; stroke: #94a3b8; stroke-width: 1; }

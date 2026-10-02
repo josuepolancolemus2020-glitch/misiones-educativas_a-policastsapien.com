@@ -4584,6 +4584,63 @@ const LEER = `
       cajasTexto: todos('text').filter(vis).map(function (t) { return { txt: t.textContent, caja: caja(t) }; })
     };
   };
+  /* Los Peligros de la IA: las solicitudes de beca. La sonda lee la FORMA
+     de cada solicitud (un rect es cuadrada; un polígono de cinco puntas,
+     la del techo de casa), dónde está ahora y dónde se dibujó (su lugar en
+     la cuadrícula), y la marca de cada una por sus trazos: una raya es un
+     ✓ y dos son una ✗. Lo que quiere decir cada cosa lo saca la sonda. */
+  window.__amExtra.amBeca = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function m(el) { return base.multiply(el.getScreenCTM()); }
+    function aVistaCon(mt, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(mt); return [q.x, q.y]; }
+    function cajaCon(el, mt) {
+      var b = el.getBBox();
+      var ps = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(function (p) { return aVistaCon(mt, p[0], p[1]); });
+      var xs = ps.map(function (p) { return p[0]; }), ys = ps.map(function (p) { return p[1]; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function caja(el) { return cajaCon(el, m(el)); }
+    function uno(sel, en) { return (en || raiz).querySelector(sel); }
+    function todos(sel, en) { return [].slice.call((en || raiz).querySelectorAll(sel)); }
+    function demora(el) { return el ? (parseFloat(el.style.getPropertyValue('--d')) || 0) : 0; }
+    function numeros(t) { return ((t || '').match(/-?[0-9.]+/g) || []).map(Number); }
+    function pares(nn) { var ps = []; for (var i = 0; i + 1 < nn.length; i += 2) ps.push([nn[i], nn[i + 1]]); return ps; }
+    function puntosCon(el, mt) { return pares(numeros(el.getAttribute('d') || el.getAttribute('points'))).map(function (p) { return aVistaCon(mt, p[0], p[1]); }); }
+    function puntos(el) { return puntosCon(el, m(el)); }
+    function texto(t) { return t ? { txt: t.textContent, caja: caja(t), ve: vis(t), d: demora(t) } : null; }
+    function raya(el) { var r = getComputedStyle(el).strokeDasharray; return r && r !== 'none' && r !== '0px' ? r : ''; }
+    function trazos(el) { return ((el.getAttribute('d') || '').match(/M/g) || []).length; }
+    function forma(f, mt) {
+      return f.tagName.toLowerCase() === 'rect' ? { tipo: 'rect', caja: cajaCon(f, mt) } : { tipo: 'poly', caja: cajaCon(f, mt), ps: puntosCon(f, mt) };
+    }
+    return {
+      vista: [svg.viewBox.baseVal.width, svg.viewBox.baseVal.height],
+      titulo: texto(uno('[data-titulo]')),
+      /* «ahora», con todo lo que la mueve; «casa», con lo que la pone en su
+         lugar de la cuadrícula y sin lo que la hace volar. */
+      cartas: todos('[data-solicitud]').map(function (g) {
+        var f = g.querySelector('rect, polygon'), mk = uno('[data-marca]', g);
+        return { ahora: forma(f, m(f)), casa: forma(f, m(g.parentNode)), dG: demora(g),
+          marca: { ve: vis(mk), d: demora(mk), trazos: trazos(mk), caja: caja(mk) } };
+      }),
+      huecos: todos('[data-hueco]').map(function (h) { return { ve: vis(h), d: demora(h), forma: forma(h, m(h)), raya: raya(h) }; }),
+      leyenda: { formas: todos('[data-leyenda-forma]').map(function (f) { return forma(f, m(f)); }), dice: todos('[data-leyenda-dice]').map(texto) },
+      nota: texto(uno('[data-nota]')),
+      bloque: texto(uno('[data-bloque-rotulo]')),
+      barras: todos('[data-barra]').map(function (g) {
+        return { ve: vis(g), d: demora(g), dice: texto(uno('[data-barra-dice]', g)), pista: caja(uno('[data-barra-pista]', g)), lleno: caja(uno('[data-barra-lleno]', g)) };
+      }),
+      aro: (function () { var q = uno('[data-aro]'); return { ve: vis(q), d: demora(q), caja: caja(q) }; })(),
+      nombre: texto(uno('[data-nombre]')),
+      cuaderno: (function () {
+        var g = uno('[data-cuaderno]');
+        return { ve: vis(g), d: demora(g), caja: caja(uno('[data-cuaderno-caja]', g)), textos: todos('text', g).map(texto), rayas: todos('[data-raya-escribir]', g).map(puntos) };
+      })(),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; }),
+      cajasTexto: todos('text').filter(vis).map(function (t) { return { txt: t.textContent, caja: caja(t) }; })
+    };
+  };
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -4921,6 +4978,32 @@ function verdadesPalitos() {
   return verdadesPal;
 }
 const MEMO_PALITOS = {};
+/* Los Peligros de la IA: lo que se ve al TERMINAR cada paso. marcas: si el
+   programa ya decidió; separadas: si las de escuela de aldea ya están
+   aparte; barras: cuántas barras se ven; yoselin: si se marca la suya;
+   cuaderno: si sale el cuaderno del final; dice: lo que dice el marcador.
+   Cuántas acierta, con cuáles y dónde lo saca la sonda del dibujo. */
+const ESTADOS_BECA = [
+  { marcas: false, separadas: false, barras: 0, yoselin: false, cuaderno: false, dice: 'solicitudes de beca' },
+  { marcas: true, separadas: false, barras: 0, yoselin: false, cuaderno: false, dice: 'decididas bien' },
+  { marcas: true, separadas: true, barras: 0, yoselin: false, cuaderno: false, dice: 'errores, en las de aldea' },
+  { marcas: true, separadas: true, barras: 3, yoselin: false, cuaderno: false, dice: 'las de aldea, decididas bien' },
+  { marcas: true, separadas: true, barras: 3, yoselin: true, cuaderno: false, dice: 'solicitudes como la de Yoselin' },
+  { marcas: true, separadas: true, barras: 3, yoselin: true, cuaderno: true, dice: 'en tu cuaderno' }
+];
+/* Lo que dice la historia, sacado de su tarjeta y no de la escena: cuánto
+   acierta el programa y sobre quién cae el error. Si la historia cambia, la
+   sonda se pone roja hasta que el dibujo diga lo mismo. */
+let historiaBecaMemo = null;
+function historiaBeca() {
+  if (historiaBecaMemo) return historiaBecaMemo;
+  const html = fs.readFileSync(path.join(RAIZ, 'misiones', '3ciclo-peligros-ia', 'peligros-ia.html'), 'utf8');
+  const sit = (html.match(/<div class="card[^"]*" data-situacion>([\s\S]*?)<div class="tip">/) || [])[1] || '';
+  const t = sit.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ');
+  historiaBecaMemo = { acierta: +((t.match(/acierta el ([0-9]+) %/) || [])[1] || NaN),
+    aldea: /escuelas de aldea/.test(t), chiquitas: /Cae siempre sobre las escuelas chiquitas/.test(t) };
+  return historiaBecaMemo;
+}
 /* Las Pruebas de Fin de Grado (4º, 5º, 6º y 7º): «El año de Kenia, mes a
    mes». Una escena para las cuatro, y esta sonda para las cuatro.
    ⚠️ Nada se le cree a la escena. La sonda saca la escala de las rayitas
@@ -6139,6 +6222,200 @@ const ESCENAS = {
     r.push([!choques.length, `paso ${n}: ningún rótulo se monta en otro ni en la marca`, choques]);
     const fuera = CT.filter(t => t.caja.x0 < -0.5 || t.caja.y0 < -0.5 || t.caja.x1 > x.vista[0] + 0.5 || t.caja.y1 > x.vista[1] + 0.5).map(t => t.txt);
     r.push([!fuera.length, `paso ${n}: todo cabe en el dibujo`, fuera]);
+    return r;
+  },
+  /* Los Peligros de la IA: «El 92 % y la solicitud de Yoselin».
+     ⚠️ Nada se le cree a la escena. La forma de cada solicitud sale de su
+     dibujo, su lugar de la cuadrícula de dónde se dibujó, y su marca de
+     cuántos trazos tiene. Con eso la sonda cuenta cuántas acierta, con
+     cuáles se equivoca y cuántas de cada escuela hay, y lo compara con lo
+     que dice la historia (el 92 % y que el error cae sobre las chiquitas),
+     con las barras, con el marcador y con cada número de la frase. */
+  amBeca(e, n) {
+    const x = e.extra, r = [];
+    if (!x) return [[false, `paso ${n}: la sonda pudo leer la escena`, null]];
+    const E = ESTADOS_BECA[n], H = historiaBeca(), VIAJE = 800;
+    const cerca = (a, b, t = 0.3) => Math.abs(a - b) <= t;
+    const dentro = (a, b, m = 0) => a.x0 >= b.x0 - m && a.x1 <= b.x1 + m && a.y0 >= b.y0 - m && a.y1 <= b.y1 + m;
+    const monta = (a, b) => a.x0 < b.x1 - 0.5 && b.x0 < a.x1 - 0.5 && a.y0 < b.y1 - 0.5 && b.y0 < a.y1 - 0.5;
+    const nb = t => (t || '').replace(/ /g, ' ');
+
+    /* ── lo que no depende del dibujo va primero ── */
+    /* Ni el nombre de lo que pasa ni lo que dicen sus definiciones (son
+       pareados de la prueba), ni con qué se entrenó el programa, ni que una
+       persona revise la decisión, ni nada de lo que pregunta la prueba de
+       la misión o la ficha. Con límites de \p{L} y no con \b, que no sabe
+       de tildes. */
+    const PROHIBIDAS = /sesgo|promedio|escond|revis|ejemplo|entren|moneda|segundo|(?<!\p{L})años?(?!\p{L})|familia|señal|urgen|secret|canal|minuto|oficial|mecanismo|creer|estudio|explic|treinta|normal|cualquier|grabaci|(?<!\p{L})siempre(?!\p{L})|(?<!\p{L})cuatro(?!\p{L})|(?<!\p{L})seis(?!\p{L})|privacid|suplant|juguete|(?<!\p{L})cae(?!\p{L})|(?<!\p{L})caer(?!\p{L})|falla|estafa|engañ|criterio|chat|ensayo|predic|piens|(?<!\p{L})sabe(?!\p{L})|entiend|(?<!\p{L})sient/iu;
+    const dicho = [e.texto, e.palabras, e.boton].concat(x.textos).join(' · ');
+    r.push([!PROHIBIDAS.test(dicho), `paso ${n}: no sale el nombre de lo que pasa ni lo que dicen sus definiciones, ni lo que pregunta la prueba`, (dicho.match(PROHIBIDAS) || [])[0]]);
+    r.push([e.palabras === E.dice, `paso ${n}: el marcador dice «${E.dice}»`, e.palabras]);
+    r.push([Number.isFinite(H.acierta) && H.aldea && H.chiquitas, 'la historia dice cuánto acierta el programa y sobre quién cae el error', H]);
+
+    /* ── las solicitudes: la forma, de su dibujo ── */
+    const esCasa = f => {
+      if (!f || f.tipo !== 'poly' || f.ps.length !== 5) return false;
+      const ys = f.ps.map(p => p[1]), arriba = Math.min(...ys), pico = f.ps.filter(p => cerca(p[1], arriba, 0.05));
+      return pico.length === 1 && cerca(pico[0][0], (f.caja.x0 + f.caja.x1) / 2, 0.1);
+    };
+    const esCuadro = f => !!f && f.tipo === 'rect' && cerca(f.caja.x1 - f.caja.x0, f.caja.y1 - f.caja.y0, 0.05);
+    const alero = f => [...new Set(f.ps.map(p => +p[1].toFixed(2)))].sort((a, b) => a - b)[1];
+    const C = x.cartas.map(c => Object.assign({}, c, { casita: esCasa(c.ahora), cuadro: esCuadro(c.ahora) }));
+    const L = C.length ? C[0].ahora.caja.x1 - C[0].ahora.caja.x0 : 0;
+    const tit = +((x.titulo && x.titulo.txt.match(/^([0-9]+) solicitudes de beca$/)) || [])[1];
+    r.push([C.length > 0 && C.length === tit && x.titulo.ve, `paso ${n}: el título cuenta las solicitudes que hay: ${C.length}`, x.titulo && x.titulo.txt]);
+    r.push([C.every(c => c.casita !== c.cuadro), `paso ${n}: cada solicitud es cuadrada o lleva techo de casa, y ninguna es las dos cosas`, C.filter(c => c.casita === c.cuadro).length]);
+    r.push([C.every(c => cerca(c.ahora.caja.x1 - c.ahora.caja.x0, L, 0.05) && cerca(c.ahora.caja.y1 - c.ahora.caja.y0, L, 0.05)), `paso ${n}: todas las solicitudes son del mismo tamaño`, +L.toFixed(2)]);
+    const casitas = C.filter(c => c.casita), grandes = C.filter(c => c.cuadro);
+
+    /* La leyenda: cada rótulo con la forma que tiene justo a su izquierda. */
+    const LF = x.leyenda.formas, malLey = x.leyenda.dice.filter(d => {
+      const izq = LF.filter(f => f.caja.x1 <= d.caja.x0).sort((a, b) => b.caja.x1 - a.caja.x1)[0];
+      if (!d.ve || !izq || d.caja.x0 - izq.caja.x1 > 6 || !cerca((d.caja.y0 + d.caja.y1) / 2, (izq.caja.y0 + izq.caja.y1) / 2, 2.5)) return true;
+      if (!cerca(izq.caja.x1 - izq.caja.x0, L, 0.05)) return true;
+      return d.txt === 'escuela grande' ? !esCuadro(izq) : d.txt === 'escuela de aldea' ? !esCasa(izq) : true;
+    }).map(d => d.txt);
+    r.push([LF.length === 2 && x.leyenda.dice.length === 2 && !malLey.length && new Set(x.leyenda.dice.map(d => d.txt)).size === 2,
+      `paso ${n}: la leyenda dice qué forma es cada escuela: la cuadrada, «escuela grande»; la del techo, «escuela de aldea»`, malLey]);
+    r.push([!!x.nota && x.nota.ve && x.nota.txt === 'Números inventados', `paso ${n}: el dibujo dice que los números son inventados`, x.nota && x.nota.txt]);
+
+    /* ── la cuadrícula, de dónde se dibujó cada una ── */
+    const fx = v => +v.toFixed(1);
+    const xs = [...new Set(C.map(c => fx(c.casa.caja.x0)))].sort((a, b) => a - b), ys = [...new Set(C.map(c => fx(c.casa.caja.y0)))].sort((a, b) => a - b);
+    const pasoDe = a => a.length > 1 ? a[1] - a[0] : 0;
+    const parejo = a => a.every((v, i) => i === 0 || cerca(v - a[i - 1], pasoDe(a), 0.15));
+    const orden = (q, X, Y) => Y.indexOf(fx(q.y0)) * 1000 + X.indexOf(fx(q.x0));
+    const ocupadas = new Set(C.map(c => orden(c.casa.caja, xs, ys)));
+    r.push([xs.length * ys.length === C.length && ocupadas.size === C.length && parejo(xs) && parejo(ys) && pasoDe(xs) > L && cerca(pasoDe(xs), pasoDe(ys), 0.15),
+      `paso ${n}: cada solicitud tiene su lugar en la cuadrícula, a paso parejo y sin repetirse`, [xs.length, ys.length, ocupadas.size]]);
+    const G = { x0: xs[0], x1: xs[xs.length - 1] + L, y0: ys[0], y1: ys[ys.length - 1] + L };
+    const enCasa = c => cerca(c.ahora.caja.x0, c.casa.caja.x0, 0.05) && cerca(c.ahora.caja.y0, c.casa.caja.y0, 0.05);
+    r.push([grandes.every(enCasa), `paso ${n}: las de escuela grande no se mueven de su lugar`, grandes.filter(c => !enCasa(c)).length]);
+
+    /* ── las marcas ── */
+    const tipo = c => c.marca.trazos === 1 ? 'bien' : c.marca.trazos === 2 ? 'mal' : '?';
+    r.push([C.filter(c => c.marca.ve).length === (E.marcas ? C.length : 0), `paso ${n}: ${E.marcas ? 'cada solicitud lleva su marca' : 'todavía ninguna lleva marca'}`, C.filter(c => c.marca.ve).length]);
+    const bien = C.filter(c => tipo(c) === 'bien').length, mal = C.filter(c => tipo(c) === 'mal').length;
+    const bienG = grandes.filter(c => tipo(c) === 'bien').length, bienA = casitas.filter(c => tipo(c) === 'bien').length, malA = casitas.filter(c => tipo(c) === 'mal').length;
+    const pct = Math.round(100 * bien / C.length);
+    if (E.marcas) {
+      r.push([bien + mal === C.length, `paso ${n}: cada marca es un ✓ de una raya o una ✗ de dos`, C.length - bien - mal]);
+      const malPuesta = C.filter(c => !dentro(c.marca.caja, c.ahora.caja, -1.2) || (c.casita && c.marca.caja.y0 < alero(c.ahora) + 1));
+      r.push([!malPuesta.length, `paso ${n}: cada marca va dentro de su solicitud, y en las de techo, debajo del techo`, malPuesta.length]);
+      r.push([pct === H.acierta && 100 * bien / C.length === pct, `paso ${n}: acierta el ${H.acierta} % que dice la historia: ${bien} de ${C.length}, contadas en el dibujo`, [bien, C.length]]);
+      r.push([mal > 0 && malA === mal, `paso ${n}: todos los errores caen en solicitudes de escuela de aldea, como dice la historia`, [malA, mal]]);
+      r.push([bienA > 0 && 2 * bienA !== casitas.length, `paso ${n}: con las de aldea acierta algunas, y no la mitad: eso lo descubre el alumno al final de la misión`, [bienA, casitas.length]]);
+    }
+    if (n === 1) {
+      const porFila = {};
+      C.forEach(c => { const f = ys.indexOf(fx(c.casa.caja.y0)); (porFila[f] = porFila[f] || []).push(c.marca.d); });
+      const filas = Object.keys(porFila).map(Number).sort((a, b) => a - b), d0 = filas.map(f => porFila[f][0]);
+      const iguales = filas.every(f => porFila[f].every(d => cerca(d, porFila[f][0], 1)));
+      const pasoF = d0[1] - d0[0];
+      r.push([iguales && pasoF > 0 && d0.every((d, i) => i === 0 || cerca(d - d0[i - 1], pasoF, 1)), 'paso 1: las decide fila por fila, de arriba abajo y a paso parejo', d0]);
+    }
+
+    /* ── las de escuela de aldea, aparte ── */
+    const huecosV = x.huecos.filter(h => h.ve);
+    if (!E.separadas) {
+      r.push([casitas.every(enCasa), `paso ${n}: las de escuela de aldea están en su lugar, entre las demás`, casitas.filter(c => !enCasa(c)).length]);
+      r.push([!huecosV.length && !x.bloque.ve, `paso ${n}: todavía no hay huecos ni bloque aparte`, [huecosV.length, x.bloque.ve]]);
+    } else {
+      const bx = [...new Set(casitas.map(c => fx(c.ahora.caja.x0)))].sort((a, b) => a - b), by = [...new Set(casitas.map(c => fx(c.ahora.caja.y0)))].sort((a, b) => a - b);
+      const bset = new Set(casitas.map(c => orden(c.ahora.caja, bx, by)));
+      const B = { x0: bx[0], x1: bx[bx.length - 1] + L, y0: by[0], y1: by[by.length - 1] + L };
+      r.push([bx.length * by.length === casitas.length && bset.size === casitas.length && parejo(bx) && parejo(by) && cerca(pasoDe(bx), pasoDe(xs), 0.15) && cerca(pasoDe(by), pasoDe(ys), 0.15),
+        `paso ${n}: las de escuela de aldea quedan aparte, en su propio bloque, al mismo paso que la cuadrícula`, [bx.length, by.length]]);
+      r.push([B.x0 > G.x1 + L / 2, `paso ${n}: el bloque queda a la derecha de la cuadrícula, sin tocarla`, [B.x0, G.x1]]);
+      const porCasa = casitas.slice().sort((a, b) => orden(a.casa.caja, xs, ys) - orden(b.casa.caja, xs, ys));
+      const porBloque = casitas.slice().sort((a, b) => orden(a.ahora.caja, bx, by) - orden(b.ahora.caja, bx, by));
+      r.push([porCasa.every((c, k) => c === porBloque[k]), `paso ${n}: en el bloque van en el orden en que llegaron`, null]);
+      const suHueco = c => x.huecos.find(h => cerca(h.forma.caja.x0, c.casa.caja.x0, 0.05) && cerca(h.forma.caja.y0, c.casa.caja.y0, 0.05));
+      const sinHueco = casitas.filter(c => { const h = suHueco(c); return !h || !h.ve || !esCasa(h.forma) || !h.raya || !cerca(h.forma.caja.x1 - h.forma.caja.x0, L, 0.05); });
+      r.push([huecosV.length === casitas.length && !sinHueco.length, `paso ${n}: donde estaba cada una queda su hueco, con su forma y de raya cortada`, [huecosV.length, sinHueco.length]]);
+      const nB = +((x.bloque.txt.match(/^las ([0-9]+) de aldea$/) || [])[1]);
+      r.push([x.bloque.ve && nB === casitas.length && cerca(x.bloque.caja.x0, B.x0, 1.5) && x.bloque.caja.y1 <= B.y0 + 0.5 && B.y0 - x.bloque.caja.y1 < 6,
+        `paso ${n}: encima del bloque dice cuántas son: ${casitas.length}`, x.bloque.txt]);
+      if (n === 2) {
+        const dd = porCasa.map(c => c.dG), pasoD = dd[1] - dd[0];
+        r.push([pasoD > 0 && dd.every((d, i) => i === 0 || cerca(d - dd[i - 1], pasoD, 1)), 'paso 2: salen una por una, en el orden en que llegaron, a paso parejo', dd.slice(0, 4)]);
+        const hd = porCasa.map(c => { const h = suHueco(c); return h ? h.d - c.dG : NaN; });
+        r.push([hd.every(v => cerca(v, 0, 1)), 'paso 2: el hueco aparece cuando sale la suya', hd.slice(0, 4)]);
+        r.push([x.bloque.d >= dd[0] + VIAJE - 1 && x.bloque.d <= dd[dd.length - 1] + VIAJE, 'paso 2: el rótulo llega cuando ya llegó la primera', [x.bloque.d, dd[0]]]);
+      }
+      const tapa = x.cajasTexto.filter(t => t.txt !== x.bloque.txt && monta(t.caja, B)).map(t => t.txt);
+      r.push([!tapa.length, `paso ${n}: el bloque no tapa ningún rótulo`, tapa]);
+    }
+
+    /* ── las barras ── */
+    const BV = x.barras.filter(b => b.ve);
+    r.push([x.barras.length === 3 && BV.length === E.barras, `paso ${n}: se ven ${E.barras} barras`, BV.length]);
+    if (E.barras) {
+      const grupos = { 'todas': C, 'grandes': grandes, 'de aldea': casitas };
+      const malB = x.barras.map(b => {
+        const mm = b.dice.txt.match(/^(.+) · ([0-9]+) de ([0-9]+)$/);
+        if (!mm || !grupos[mm[1]]) return b.dice.txt;
+        const g = grupos[mm[1]], ok1 = g.filter(c => tipo(c) === 'bien').length;
+        if (+mm[2] !== ok1 || +mm[3] !== g.length) return `${b.dice.txt} (son ${ok1} de ${g.length})`;
+        const ancho = b.pista.x1 - b.pista.x0, lleno = b.lleno.x1 - b.lleno.x0;
+        if (!cerca(lleno / ancho, ok1 / g.length, 0.005) || !cerca(b.lleno.x0, b.pista.x0, 0.05) || !cerca(b.lleno.y0, b.pista.y0, 0.05)) return `${b.dice.txt} (la barra no mide eso)`;
+        if (!(b.dice.caja.y1 <= b.pista.y0 + 0.5 && b.pista.y0 - b.dice.caja.y1 < 4 && cerca(b.dice.caja.x0, b.pista.x0, 1.5))) return `${b.dice.txt} (el rótulo no va encima de su barra)`;
+        return null;
+      }).filter(Boolean);
+      r.push([!malB.length && new Set(x.barras.map(b => b.dice.txt.split(' · ')[0])).size === 3, `paso ${n}: cada barra mide lo que acierta con su grupo, contado en el dibujo`, malB]);
+      const pis = x.barras.map(b => b.pista).sort((a, b) => a.y0 - b.y0);
+      r.push([pis.every(q => cerca(q.x0, pis[0].x0, 0.05) && cerca(q.x1 - q.x0, pis[0].x1 - pis[0].x0, 0.05)) && pis.every((q, i) => i === 0 || q.y0 > pis[i - 1].y1 + 8) && pis[0].x0 > G.x1,
+        `paso ${n}: las tres barras son del mismo largo, una debajo de otra y a la derecha de la cuadrícula`, pis.map(q => +q.y0.toFixed(1))]);
+      if (n === 3) {
+        const dB = x.barras.slice().sort((a, b) => a.pista.y0 - b.pista.y0).map(b => b.d);
+        r.push([dB.every((d, i) => i === 0 || d > dB[i - 1]), 'paso 3: las barras salen una por una, de arriba abajo', dB]);
+      }
+    }
+
+    /* ── la de Yoselin ── */
+    r.push([x.aro.ve === E.yoselin && x.nombre.ve === E.yoselin, `paso ${n}: ${E.yoselin ? 'se marca la solicitud de Yoselin, con su nombre' : 'todavía no se marca ninguna'}`, [x.aro.ve, x.nombre.ve]]);
+    if (E.yoselin) {
+      const a = x.aro.caja, rodeadas = C.filter(c => { const k = c.ahora.caja; return a.x0 < k.x0 && a.x1 > k.x1 && a.y0 < k.y0 && a.y1 > k.y1 && k.x0 - a.x0 < 5 && a.x1 - k.x1 < 5 && k.y0 - a.y0 < 5 && a.y1 - k.y1 < 5; });
+      r.push([rodeadas.length === 1 && rodeadas[0].casita && tipo(rodeadas[0]) === 'mal', `paso ${n}: el aro rodea una sola solicitud: de escuela de aldea y rechazada, como la de Yoselin`, rodeadas.length]);
+      r.push([x.nombre.txt === 'Yoselin' && cerca((x.nombre.caja.x0 + x.nombre.caja.x1) / 2, (a.x0 + a.x1) / 2, 1) && x.nombre.caja.y0 >= a.y1 - 0.5 && x.nombre.caja.y0 - a.y1 < 5,
+        `paso ${n}: el nombre va justo debajo del aro`, x.nombre.txt]);
+      if (n === 4) r.push([x.nombre.d > x.aro.d, 'paso 4: primero el aro y después el nombre', [x.aro.d, x.nombre.d]]);
+    }
+
+    /* ── el cuaderno ── */
+    const Q = x.cuaderno;
+    r.push([Q.ve === E.cuaderno, `paso ${n}: ${E.cuaderno ? 'sale el cuaderno' : 'todavía no sale el cuaderno'}`, Q.ve]);
+    if (E.cuaderno) {
+      const T = Q.textos, R = Q.rayas;
+      const bienQ = T.length === 2 && R.length === 2 && /:$/.test(T[0].txt) && /^¿.+\?$/.test(T[1].txt) && T.every(t => dentro(t.caja, Q.caja))
+        && R.every((ps, j) => ps.length === 2 && cerca(ps[0][1], ps[1][1], 0.05) && ps[0][0] > T[j].caja.x1 + 4 && cerca(ps[0][1], T[j].caja.y1, 3) && ps[1][0] <= Q.caja.x1 - 4 && ps[1][0] - ps[0][0] > 60);
+      r.push([bienQ, `paso ${n}: el cuaderno trae en qué pensar y qué escribir, cada renglón con su raya`, T.map(t => t.txt)]);
+      const ley = Math.max(...LF.map(f => f.caja.y1), ...x.leyenda.dice.map(d => d.caja.y1));
+      r.push([Q.caja.y0 > Math.max(G.y1, ley), `paso ${n}: el cuaderno no tapa nada`, [Q.caja.y0, ley]]);
+    }
+
+    /* ── el marcador y la frase, contra lo que se cuenta ── */
+    const CIFRA = [String(C.length), `${pct} %`, `${malA} de ${mal}`, `${bienA} de ${casitas.length}`, String(casitas.length), '?'][n];
+    r.push([nb(e.cifra) === CIFRA, `paso ${n}: el marcador dice «${CIFRA}», contado en el dibujo`, nb(e.cifra)]);
+    const FR = [
+      [`${C.length} solicitudes`],
+      [`Acierta ${bien} y se equivoca en ${mal}`, `${pct} %`],
+      [`las ${casitas.length} de aldea`, `los ${mal} errores`],
+      [`acierta ${bienG} de ${grandes.length}`, `${bienA} de ${casitas.length}`, `${pct} %`],
+      [`una de esas ${casitas.length}`, `en ${malA} de cada ${casitas.length}`],
+      []
+    ][n];
+    const faltan = FR.filter(f => !nb(e.texto).includes(f));
+    r.push([!faltan.length, `paso ${n}: cada número de la frase es lo que se cuenta en el dibujo`, faltan]);
+
+    /* ── que nada se monte ni se salga ── */
+    const V = { x0: 0, y0: 0, x1: x.vista[0], y1: x.vista[1] };
+    const fuera = x.cajasTexto.filter(t => !dentro(t.caja, V)).map(t => t.txt);
+    r.push([!fuera.length && C.every(c => dentro(c.ahora.caja, V)), `paso ${n}: todo queda dentro del dibujo`, fuera]);
+    const mont = [];
+    x.cajasTexto.forEach((t, i) => x.cajasTexto.forEach((u, j) => { if (j > i && monta(t.caja, u.caja)) mont.push(t.txt + ' / ' + u.txt); }));
+    const sobre = x.cajasTexto.filter(t => C.some(c => monta(t.caja, c.ahora.caja))).map(t => t.txt);
+    r.push([!mont.length && !sobre.length, `paso ${n}: ningún rótulo se monta en otro ni en una solicitud`, mont.concat(sobre)]);
     return r;
   },
   amAnio4(e, n) { return verAnio(e, n, '4º'); },

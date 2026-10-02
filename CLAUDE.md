@@ -13909,6 +13909,132 @@ Salió roja con cada una.
 Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es de
 100 ms. La Historia de la IA, medida el mismo día, va a 60 y 50 ms.
 
+### La septuagésima tercera: Los Peligros de la IA, y lo que enseñó
+
+La quinta de la Ruta de la Máquina que Aprende es **Los Peligros de la Inteligencia
+Artificial** (`misiones/3ciclo-peligros-ia/`, `js/animacion-beca.js`). La historia es la
+de Yoselin: llenó con su mamá la solicitud de la beca y se la rechazaron en cuatro
+segundos. La leyó un programa que «acierta el 92 %», y por eso lo compraron. Nadie
+preguntó a quién le cae el 8 % que falla: cae siempre sobre las escuelas chiquitas, y a
+Yoselin le costó el año. La animación son 100 solicitudes de beca en una cuadrícula:
+las de escuela grande son cuadradas y las de escuela de aldea llevan techo de casa.
+
+- antes de tocar: un programa decide las 100. ¿Cuántas decide bien?;
+- las decide fila por fila: acierta 92 (✓) y se equivoca en 8 (✗). Ese es el 92 % por
+  el que lo compraron;
+- se separan las 20 de aldea, una por una, a un bloque aparte, y donde estaba cada una
+  queda su hueco de raya cortada. Los 8 errores se van con ellas: en las escuelas
+  grandes no queda ninguno;
+- tres barras: todas, 92 de 100; las grandes, 80 de 80; las de aldea, 12 de 20. Las dos
+  cosas caben en el mismo 92 %;
+- un aro marca una de las 20, rechazada, y debajo dice «Yoselin». Con escuelas como la
+  suya, el programa se equivoca en 8 de cada 20;
+- y la pregunta es del alumno: algo que decide sobre personas, y con quiénes se
+  equivocaría más.
+
+Siete cosas que valen para las que siguen:
+
+1. ⚠️ **El 92 % es verdad, y el dibujo lo cumple.** No se le resta nada al número de la
+   historia: las 100 están ahí y se cuentan. Lo que asombra es que el mismo 92 % sale
+   de acertar todas las grandes y fallar con las de aldea. La sonda saca el 92 de la
+   tarjeta de la historia, cuenta los ✓ en el dibujo y exige que todos los errores caigan
+   en solicitudes de aldea, que es lo que la historia dice («cae siempre sobre las
+   escuelas chiquitas»). Si la historia cambia, la sonda se pone roja.
+2. ⚠️ **Lo que la escena enseña es justo lo que preguntan dos pareados**, «Sesgo que
+   decide · El error cae siempre sobre los mismos» y «Promedio que esconde · No dice a
+   quién le falla». Así que no nombra ninguno de los dos, y no escribe sus definiciones.
+   La primera versión decía «El 92 % es verdad, y no lo dice», y el cuaderno preguntaba
+   «¿A quién le podría caer el error?»: ahora dicen «Las dos cosas caben en el mismo
+   92 %» y «¿Con quiénes se equivocaría más?».
+3. ⚠️ **La nota del dibujo decía «Números de ejemplo», y «ejemplos» es la respuesta de
+   una pregunta** («¿Qué se le pregunta a un programa que elige entre personas?»: con qué
+   ejemplos se entrenó y quién los eligió). Ahora dice «Números inventados». La escena
+   tampoco dice con qué se entrenó el programa (es la actividad de repartir los ejemplos,
+   al final de la misión) ni que una persona revise la decisión (es la defensa).
+4. ⚠️ **De las de aldea acierta 12 de 20, y no la mitad, a propósito.** Que para el grupo
+   chico el programa es echar una moneda al aire lo descubre el alumno al final, en «El
+   promedio que esconde». La sonda comprueba que no sea la mitad.
+5. **Nada se dice solo con color.** La escuela se distingue por la forma de la solicitud,
+   el acierto es un ✓ de una raya y el error una ✗ de dos, y el hueco que deja la que se
+   va es de raya cortada. La sonda saca la forma de cada solicitud de su dibujo (un rect
+   o un polígono de cinco puntas con su pico en medio) y la marca de cuántos trazos
+   tiene.
+6. **Dos cosas que solo se vieron en las capturas, con la sonda en verde.** En las
+   solicitudes con techo la marca quedaba pegada al techo: baja y es un poco más chica,
+   y desde entonces la sonda pide que vaya debajo del alero. Y en el bloque, las ✗ caían
+   todas en las mismas dos columnas, que parecía a propósito: se repartieron.
+7. ⚠️ **La historia y la animación contestaban cuatro preguntas, y los repuestos se
+   midieron también contra los pareados y contra el dibujo.** La historia: los
+   completar de los segundos, del 92 % y del año, y la toma de decisiones de la beca de
+   tu prima rechazada en segundos. La animación: la pregunta 3 de la ficha, «Un
+   programa acierta el 95 %. ¿Qué NO dice ese número?». Ahora el completar pregunta que
+   un peligro es un mecanismo que se puede nombrar, la cuenta oficial del video
+   fabricado y que desconfiar de todo cuesta lo mismo que creerlo todo; la decisión es
+   la del compañero que va a entregar un ensayo que le hizo un chat y no lo puede
+   explicar; y la ficha pregunta qué se le pregunta a un remedio que «cura todo». Tres
+   repuestos se cayeron antes de escribirlos: «esperá diez minutos» le soplaba al
+   pareado «Urgencia · Te quita el tiempo de pensar»; «lo que subís queda en una
+   computadora ajena» contestaba el verdadero o falso de la foto borrada del grupo; y
+   «cuando se lo inventa» salía en el dibujo, en la nota de los números inventados. Y
+   el repuesto de la ficha llevaba una opción tan larga que ocupaba su renglón entero:
+   la hoja del examen, que ya estaba al filo, pasaba de 249,4 a 255,2 mm. Se acortó y
+   volvió a 249,4.
+
+Y de paso, la hoja de la misión traía, como las anteriores de la ruta, los dos bloques de
+CSS calcados de los próceres y de los tres poderes: se quitaron.
+
+La sonda de esta escena **no le cree nada a la escena**. Saca la forma de cada solicitud
+de su dibujo, su lugar en la cuadrícula de dónde se dibujó y su marca de cuántos trazos
+tiene, y comprueba:
+
+- que el título cuente las solicitudes que hay, que todas sean del mismo tamaño y que
+  cada una sea cuadrada o lleve techo, y ninguna las dos cosas;
+- que la leyenda ponga cada rótulo junto a su forma, y que el dibujo diga que los
+  números son inventados;
+- que cada solicitud tenga su lugar en la cuadrícula, a paso parejo y sin repetirse, y
+  que las de escuela grande no se muevan nunca;
+- que cada marca vaya dentro de su solicitud, en las de techo debajo del alero, y que
+  sea un ✓ de una raya o una ✗ de dos;
+- que acierte el porcentaje de la historia, contado en el dibujo, que todos los errores
+  caigan en las de aldea y que con ellas no acierte la mitad;
+- que decida fila por fila, de arriba abajo y a paso parejo;
+- que las de aldea queden en su propio bloque, al mismo paso que la cuadrícula, a la
+  derecha y sin tocarla, en el orden en que llegaron; que salgan una por una, que el
+  hueco de cada una aparezca cuando sale, con su forma y de raya cortada, y que el
+  rótulo del bloque llegue cuando ya llegó la primera;
+- que cada barra mida lo que acierta con su grupo, contado en el dibujo, con su rótulo
+  encima, y que salgan una por una;
+- que el aro rodee una sola solicitud, de aldea y rechazada, con el nombre de Yoselin
+  justo debajo, después del aro;
+- que el cuaderno traiga en qué pensar y qué escribir, cada renglón con su raya, sin
+  tapar nada;
+- que el marcador y cada número de la frase sean lo que se cuenta;
+- y que no salga el nombre de lo que pasa, ni lo que dicen sus definiciones, ni lo que
+  pregunta la prueba, y que ningún rótulo se monte en otro ni en una solicitud.
+
+Se comprobó al revés con veintiocho averías, plantadas una por una:
+
+- un error en una de escuela grande, y acertando 91 y no 92;
+- la ✗ de una sola raya, y la marca de la casita sobre el techo;
+- una de escuela grande que se mueve, las casitas sin techo y la leyenda cambiada;
+- el bloque al revés, el bloque encima de la cuadrícula y las de aldea saliendo todas
+  juntas;
+- el hueco apareciendo antes de que salga la suya, y el hueco sin raya cortada;
+- el rótulo del bloque llegando antes que la primera, y contando 19;
+- la barra midiendo de más, la barra diciendo otra cuenta y las barras todas juntas;
+- el aro en una de escuela grande, el aro en una de aldea que acertó, y el nombre antes
+  que el aro;
+- el marcador del paso 2 diciendo 7 de 8, la frase con otro número y el título contando
+  99;
+- «sesgo» en una frase, y la nota sin decir que los números son inventados;
+- las marcas saliendo todas juntas;
+- el cuaderno con la raya cortita, y el cuaderno desde el paso 4.
+
+Salió roja con cada una.
+
+Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es de 83 ms.
+IA Generativa, medida el mismo día, va a 59 y 83 ms.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -14139,6 +14265,11 @@ propio del color de la tarjeta, con `fill-opacity`: la opacidad de la pieza no s
 porque la pieza ya tiene su demora y porque para la sonda lo que baja de 1 ya no está.
 Y en la ruta de IA las cadenas largas de la escena, también la descripción para el
 lector de pantalla, cuentan para la vara de cuarto grado.
+Cuando lo que la escena enseña es lo que dicen los pareados de la prueba, la escena no
+nombra el término ni escribe su definición, tampoco con otras palabras que se le
+parezcan («no dice a quién le falla»). Y un repuesto del examen se mide contra todo lo
+demás: contra los pareados, contra los verdaderos o falsos y contra lo que dice el
+dibujo, no solo contra la historia.
 
 Si la misma escena sirve para varias misiones (las cuatro Pruebas de Fin de
 Grado), vive en `js/escena-<tema>.js` y cada misión trae un archivo de dos líneas

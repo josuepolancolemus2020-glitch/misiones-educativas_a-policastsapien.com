@@ -18,7 +18,7 @@ const cita = s => { const p = /[^.]\.$/.test(s); return `«${esc(p ? s.slice(0, 
 const EVAL = [
   { q: '¿Cuáles son las tres señales de casi toda estafa?', o: ['Faltas de ortografía y emojis', 'Un número largo y un enlace', 'Urgencia, secreto y canal nuevo', 'Que llegue de noche y por audio'], a: 2 },
   { q: 'Un audio con la voz de tu mamá pide dinero desde un número nuevo. ¿Qué hacés?', o: ['Le contesto por audio', 'Reconozco su voz y lo mando', 'Le pregunto algo que solo ella sabe', 'Cuelgo y la llamo al número de siempre'], a: 3 },
-  { q: 'Un programa acierta el 95 %. ¿Qué NO dice ese número?', o: ['A quién le cae el error', 'Cuántas veces acertó', 'Cuántos casos revisó', 'Que a veces se equivoca'], a: 0 },
+  { q: 'Un texto dice que un remedio «cura todo». ¿Qué preguntás?', o: ['¿Qué estudio y quién lo hizo?', '¿Cuánto cuesta el frasco?', '¿Lo vende alguien conocido?', '¿Cuántas veces lo compartieron?'], a: 0 },
   { q: '¿Por qué una palabra escrita en un grupo deja de servir?', o: ['Porque se olvida', 'Porque la lee cualquiera del grupo', 'Porque caduca al mes', 'Porque cambia sola'], a: 1 },
   { q: '¿De qué está hecha casi toda estafa creíble?', o: ['De lo que la familia publicó', 'De tecnología muy cara', 'De suerte', 'De un día festivo'], a: 0 },
   { q: 'Subir al grupo la foto del salón con los nombres es…', o: ['Una foto normal', 'Un problema de espacio', 'Publicar datos de treinta personas', 'Cosa de la aplicación'], a: 2 },
