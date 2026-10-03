@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════════
-   Misión del maestro · Derechos de la niñez en la escuela
+   Misión del maestro · CNB, DCNB y programación: quién manda sobre qué
 
    COLOR: violeta. La normativa de colores por materia (roja para
    Sociales, azul para Matemáticas…) existe para que el maestro sepa
@@ -409,3 +409,58 @@ body {
 }
 .ach-fila:last-of-type { border-bottom: none; }
 .ach-fila.no { opacity: .45; font-weight: 600; }
+
+/* ── La animación del destino y el camino (#amDestino) ───────────────
+   Va dentro de la sección de los ocho peldaños, después de la lista: lo
+   que el maestro decide y lo que no. Lo que va sobre la tarjeta (la
+   escalera, los caminos, las llaves) lleva la tinta de la pantalla y el
+   violeta y el ámbar de la misión, que se aclaran solos en la oscura; la
+   nota, la boleta y el cuaderno son papel, y son papel en las dos
+   pantallas, con tinta oscura fija. Brayan es Brayan en las dos. Nada se
+   dice solo con color: el sitio de donde le bajaron el destino va con raya
+   cortada, cada camino lleva su nombre y cada tramo de la llave el suyo. */
+#amDestino .dc-bloque { fill: var(--pri-soft); stroke: var(--am-pri); stroke-width: 1.4; }
+#amDestino .dc-cara { fill: var(--dark); font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amDestino .dc-caja { fill: none; stroke: var(--am-pri); stroke-width: 1.3; stroke-dasharray: 4 3; }
+#amDestino .dc-asta { fill: none; stroke: var(--dark); stroke-width: 1.8; stroke-linecap: round; }
+#amDestino .dc-tela { fill: var(--card); stroke: var(--am-sec); stroke-width: 1.4; }
+#amDestino .dc-tela-txt { fill: var(--am-sec); font-family: 'Fredoka', sans-serif; font-weight: 700; }
+#amDestino .dc-doc { fill: var(--card); stroke: var(--am-pri); stroke-width: 1.4; }
+#amDestino .dc-doc-txt { fill: var(--dark); font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amDestino .dc-hilo { fill: none; stroke: var(--am-pri); stroke-width: 1.3; }
+#amDestino .dc-camino { fill: none; stroke: var(--am-pri); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+#amDestino .dc-camino-txt { fill: var(--am-pri); stroke: var(--card); stroke-width: 3px; stroke-linejoin: round; paint-order: stroke;
+  font-family: 'Fredoka', sans-serif; font-weight: 700; }
+#amDestino .dc-flecha { fill: none; stroke: var(--am-pri); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+/* Los caminos, otra vez, pero ya no son la noticia: tenues. Con
+   stroke-opacity y fill-opacity, no con opacity, que para la sonda quiere
+   decir que ya no están. */
+#amDestino .dc-tenue .dc-camino, #amDestino .dc-tenue .dc-flecha { stroke-opacity: .3; }
+#amDestino .dc-tenue .dc-camino-txt { fill-opacity: .5; stroke-opacity: .5; }
+#amDestino .dc-llave { fill: none; stroke: var(--am-sec); stroke-width: 1.8; stroke-linejoin: round; }
+#amDestino .dc-papel { fill: #fffdf5; stroke: #cbd5e1; stroke-width: 1.2; }
+#amDestino .dc-tinta { fill: #1a2331; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amDestino .dc-negrita { font-weight: 700; }
+#amDestino .dc-raya { stroke: #94a3b8; stroke-width: 1.2; }
+#amDestino .dc-pantalon { fill: #1e3a8a; }
+#amDestino .dc-camisa { fill: #f8fafc; stroke: #94a3b8; stroke-width: 1; }
+#amDestino .dc-brazo { fill: none; stroke: #8d5a3b; stroke-width: 2.8; stroke-linecap: round; }
+#amDestino .dc-piel { fill: #b07a4f; }
+#amDestino .dc-pelo { fill: #2b1a10; }
+/* Cada tramo de Brayan dura medio segundo (PASO, en la escena): caminar a la
+   pared, subir y pasar encima son tres, y con los 0,8 s de siempre el
+   escalón se le hacía eterno. */
+#amDestino .dc-paso { transition: transform .5s ease-in-out var(--d, 0s); }
+/* ⚠️ En el paso 5 Brayan vuelve a empezar el año: se apaga, vuelve al año
+   pasado sin que se le vea y se enciende otra vez. Es un apagón con sus
+   propios fotogramas porque se apaga y se enciende en el MISMO paso, y una
+   transición tiene un solo final. La duración la pone la escena
+   (--otra-vez); la vuelta cabe entera dentro de lo apagado. */
+#amDestino .dc-otra-vez { animation: dcOtraVez var(--otra-vez, 2.2s) linear var(--d, 0s) both; }
+@keyframes dcOtraVez {
+  0% { opacity: 1; }
+  30% { opacity: 0; }
+  70% { opacity: 0; }
+  100% { opacity: 1; }
+}
+

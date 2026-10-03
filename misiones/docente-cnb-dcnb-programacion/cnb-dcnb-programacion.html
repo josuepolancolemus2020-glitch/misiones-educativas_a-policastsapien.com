@@ -8,6 +8,9 @@
 <meta name="robots" content="noindex">
 <link rel="stylesheet" href="../../css/vendor/fuentes/fuentes.css">
 <link rel="stylesheet" href="css/cnb-dcnb-programacion.css">
+<!-- La animación del destino y el camino: va DESPUÉS del CSS de la misión,
+     que es de donde saca sus colores. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La barra de secciones, arriba y siempre a la vista. Va DESPUÉS del CSS
      de la misión a propósito: de ahí saca su color, y así sobrescribe su
      position:static sin un solo !important. -->
@@ -66,6 +69,16 @@
       <div class="si-nav">
         <button class="btn btn-g" onclick="pelMover(-1)">← Anterior</button>
         <button class="btn" onclick="pelMover(1)">Siguiente →</button>
+      </div>
+    </div>
+
+    <div class="card" data-animacion>
+      <h2>🧭 Lo que usted decide, y lo que no</h2>
+      <div id="amDestino">
+        <p>A dónde tiene que llegar cada año lo fija el documento; el camino es suyo: otra
+          actividad, más tiempo, otro material, un apoyo. Si a un alumno le bajan el destino para
+          que no repruebe, aprueba, pero el año que viene le toca subir lo que le faltó y, además,
+          lo nuevo.</p>
       </div>
     </div>
   </section>
@@ -414,6 +427,8 @@
 </footer>
 
 <script src="js/cnb-dcnb-programacion.js"></script>
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-destino.js"></script>
 <!-- Accesibilidad de aula compartida: añade al pie «🔎 Letra» y
      «📽️ Presentación» (con modo libro). Se engancha sola en .cred-tools,
      .sec.active y go(). -->

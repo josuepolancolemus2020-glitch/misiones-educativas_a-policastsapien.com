@@ -15671,6 +15671,101 @@ una.
 Con la CPU frenada seis veces va a 58 cuadros por segundo, y el peor cuadro es
 de 67 a 83 ms; la de Derechos de la niñez, medida el mismo día, va a 58 y 67 ms.
 
+#### La cuarta: CNB y DCNB, el destino y el camino
+
+En **CNB, DCNB y programación: quién manda sobre qué**
+(`misiones/docente-cnb-dcnb-programacion/`, `js/animacion-destino.js`), dentro de
+la sección de los ocho peldaños, detrás de su tarjeta. El octavo peldaño dice que
+lo que se ajusta es el camino y no el destino, y el tercer caso de la misión
+cuenta lo que pasa cuando se confunden: «para que no repruebe». La animación es
+una escalera de tres años (el año pasado, este año y el año que viene), con un
+destino plantado en cada uno:
+
+- Brayan está en el año pasado; este año tiene que llegar hasta allá, y el que
+  viene, más arriba: ¿qué parte de ese viaje decide usted?;
+- del documento sale un hilo a cada destino: a dónde se llega cada año no lo
+  decide el maestro, ni el del año que viene;
+- el camino sí: otra actividad, más tiempo, otro material o un apoyo, cada uno
+  por su carril, y los cuatro llegan al mismo destino;
+- le sugieren bajarle la exigencia, «para que no repruebe»: el hilo se suelta, su
+  destino baja medio año, Brayan llega y la boleta dice que aprobó;
+- el año que viene su destino está donde siempre, y una llave mide lo que le toca
+  subir: lo que le faltó y lo nuevo, año y medio en uno solo;
+- otra vez el mismo año, sin bajarle nada: el destino vuelve a su sitio, Brayan
+  vuelve a empezar, los caminos quedan tenues detrás y él sube el año entero; el
+  año que viene le toca lo nuevo, como a los demás;
+- y el maestro anota en su cuaderno un alumno al que le cuesta y el camino que
+  le cambiaría.
+
+**Siete cosas que valen para las siguientes:**
+
+1. ⚠️ **Lo que dice la escena sale del octavo peldaño, y lo comprueba antes de
+   montarse.** Los cuatro caminos son los de su lista («Lo que se ajusta es el
+   camino: la actividad, el tiempo, el material, el apoyo»), en su orden; la
+   regla es la de su «no hacer» («adecuar es cambiar el camino, no el destino»),
+   y lo que es del maestro, la de su recuadro del aula («el cómo es suyo»). Si la
+   misión dejara de decirlo, la escena no se monta y queda la frase de reserva.
+2. ⚠️ **Lo que no se nombra**: cómo se llaman el destino de un grado y la meta
+   del sistema (los preguntan el quiz, el completar y el memorama), que el
+   documento es normativo y nacional, sus niveles, ciclos, áreas, ejes, columnas,
+   bloques y semanas, el proyecto del centro, la adecuación y sus componentes, ni
+   la evaluación. Por eso la escalera es de AÑOS y no de grados ni de escalones:
+   el memorama define el destino de un grado como «el escalón que le toca a su
+   grado». Y Brayan es cualquier alumno al que le cuesta, no uno con
+   necesidades educativas especiales: lo que se le adecúa a ese alumno lo decide
+   el centro por escrito, y ese es el tercer caso, para pensarlo.
+3. ⚠️ **El precio se mide en el dibujo, en años.** La sonda saca lo que se sube
+   en un año del año pasado y del que viene, que no se mueven nunca: lo que le
+   bajan es medio año de subida, y la llave del año que viene mide año y medio en
+   uno solo. Ni una nota ni un porcentaje: lo que se cuenta es camino.
+4. ⚠️ **Lo que se apaga y se vuelve a encender en el mismo paso lleva
+   fotogramas, y lo que vuelve cabe en lo apagado.** En el paso 5 Brayan tiene
+   que volver al año pasado sin que se le vea. Una pieza tiene una sola demora,
+   así que se apaga y se enciende con una animación de CSS (`dcOtraVez`, apagado
+   del 30 al 70 %), y sus pasos van en dos juegos de envolturas: uno vuelve de
+   golpe a oscuras y el otro sube después. La sonda lee de la hoja de estilo
+   cuándo está apagado, comprueba que la vuelta quepa ahí y que la subida empiece
+   cuando ya se encendió.
+5. ⚠️ **Se sube como se sube un escalón.** Subiendo en el aire, lejos de la
+   pared, parecía que flotaba. Brayan camina hasta la pared, sube y pasa encima:
+   tres tramos de medio segundo, uno detrás del otro. La sonda rehace su camino
+   con lo que se corrió cada tramo y comprueba que cada uno vaya solo, de lado o
+   hacia arriba pegado a la pared, sin meterse nunca en la escalera.
+6. ⚠️ **Lo que sale donde estaban los caminos espera a que se vayan.** La nota
+   del paso 3 y el cuaderno del 6 salen en ese sitio, y salían a los 300 y 400 ms,
+   con los caminos todavía apagándose: ahora esperan el medio segundo que tardan.
+   Lo cazó escribir la sonda, que ahora lo comprueba. Y el nombre de un camino se
+   pasaba de su carril y se metía en la bajada: el carril es más largo.
+7. **Dos cosas que solo salieron mirando.** El 📅 se pinta con «JULY 17»
+   impreso, una fecha en inglés en una misión de Honduras: el botón lleva 🗓️. Y la
+   cabecera del CSS de la misión decía «Derechos de la niñez en la escuela»,
+   calcada de otra: un comentario que explica otra misión es peor que ninguno.
+
+⚠️ **Y la sonda tropezó con lo que ya estaba escrito.** Su lector vive dentro de
+una plantilla de texto, donde las barras de una expresión regular se pierden: el
+nombre de la animación se partía con `/\s+/`, que llegaba como `/s+/`, y salía
+«dcOtraVez var(--otra-vez, 2.2», cortado por la «s» de «2.2s». Ahora se parte por
+el espacio.
+
+La sonda **no le cree nada a la escena**. Lee de la misión los cuatro caminos,
+la regla y el tercer caso, y del dibujo saca lo que se sube en un año. Con eso
+comprueba que cada año suba lo mismo, o medio año menos cuando se lo bajan; que
+cada bandera esté plantada sobre su año y cada hilo vaya del documento a la
+punta de su asta; que los caminos sean los de la misión, en su orden, salgan de
+donde está Brayan, vayan cada uno por su carril y lleguen al mismo punto al pie
+de la bandera, sin meterse en la escalera ni pasar por encima de un nombre o de
+Brayan; que se queden tenues con `stroke-opacity`; que el hueco de raya cortada
+sea justo lo que bajó; que cada llave mida lo que dice el marcador; que Brayan
+esté parado donde toca; y que la nota, la boleta y el cuaderno no tapen nada. Se
+comprobó al revés con treinta y seis averías, plantadas una por una (el destino
+bajando un año entero, Brayan subiendo antes de que termine de bajar, en
+diagonal o lejos de la pared, la vuelta del paso 5 a la vista, los caminos
+tenues con `opacity`, la llave que no llega al destino bajado, «nivel» en una
+frase, la misión con tres caminos…), y salió roja con cada una.
+
+Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
+de 50 ms; la de Historia de las leyes, medida el mismo día, va a 58 y 83 ms.
+
 ## Normativa: las Sugerencias de una misión salen del teléfono
 
 El botón **💬 Sugerencias** de cada misión lleva años ahí y durante todo

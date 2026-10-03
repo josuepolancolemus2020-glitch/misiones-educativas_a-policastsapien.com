@@ -5697,6 +5697,100 @@ const LEER = `
     };
   };
 
+  /* CNB y DCNB: la escalera de tres años, los cuatro caminos y lo que
+     cuesta bajarle el destino a Brayan. El bloque de este año, su bandera y
+     Brayan se mueven con transform: su lugar se mide con
+     getBoundingClientRect, y lo que se corrió cada tramo de Brayan se lee
+     de su transform. */
+  window.__amExtra.amDestino = function (raiz) {
+    var H = window.__amHerr(raiz), vis = H.vis, uno = H.uno, todos = H.todos;
+    var sb = H.svg.getBoundingClientRect(), k = sb.width / H.svg.viewBox.baseVal.width;
+    function rect(el) { var b = el.getBoundingClientRect(); return { x0: (b.left - sb.left) / k, y0: (b.top - sb.top) / k, x1: (b.right - sb.left) / k, y1: (b.bottom - sb.top) / k }; }
+    function union(ls) { return { x0: Math.min.apply(null, ls.map(function (c) { return c.x0; })), y0: Math.min.apply(null, ls.map(function (c) { return c.y0; })),
+      x1: Math.max.apply(null, ls.map(function (c) { return c.x1; })), y1: Math.max.apply(null, ls.map(function (c) { return c.y1; })) }; }
+    function texto(t) { return t ? { txt: t.textContent, ve: vis(t), d: H.demora(t), tinta: H.tinta(t), op: +getComputedStyle(t).fillOpacity } : null; }
+    function camino(el) {
+      return el ? { pts: H.pares(el.getAttribute('d')), ve: vis(el), hecho: H.trazado(el), d: H.demora(el), raya: getComputedStyle(el).strokeDasharray,
+        op: +getComputedStyle(el).strokeOpacity, dura: H.dura(el, 'stroke-dashoffset'), apaga: H.dura(el, 'opacity') } : null;
+    }
+    function mueve(el) { var m = new DOMMatrix(getComputedStyle(el).transform); return { dx: m.e, dy: m.f, d: H.demora(el), dura: H.dura(el, 'transform') }; }
+    /* La animación que apaga a Brayan para que vuelva a empezar el año: su
+       nombre sale de la regla de la clase, y en qué tramo queda apagado, de
+       sus fotogramas. Cuánto dura lo pone la pieza en su estilo. */
+    function oscuro(ve) {
+      var nombre = null, fot = [];
+      for (var i = 0; i < document.styleSheets.length; i++) {
+        var reglas;
+        try { reglas = document.styleSheets[i].cssRules; } catch (e) { continue; }
+        for (var j = 0; reglas && j < reglas.length; j++) {
+          var rg = reglas[j];
+          if (rg.selectorText && /dc-otra-vez/.test(rg.selectorText) && rg.style) {
+            var a = rg.style.getPropertyValue('animation') || rg.style.animationName || '';
+            /* ⚠️ sin barras invertidas: este lector vive en una plantilla de texto */
+            if (a) nombre = a.trim().split(' ')[0];
+          }
+        }
+      }
+      for (var i2 = 0; nombre && i2 < document.styleSheets.length; i2++) {
+        var rr;
+        try { rr = document.styleSheets[i2].cssRules; } catch (e) { continue; }
+        for (var j2 = 0; rr && j2 < rr.length; j2++) {
+          if (typeof CSSKeyframesRule !== 'undefined' && rr[j2] instanceof CSSKeyframesRule && rr[j2].name === nombre) {
+            for (var q = 0; q < rr[j2].cssRules.length; q++) {
+              var kf = rr[j2].cssRules[q];
+              kf.keyText.split(',').forEach(function (s) {
+                s = s.trim();
+                var p = s === 'from' ? 0 : s === 'to' ? 100 : parseFloat(s);
+                fot.push({ p: p, op: parseFloat(kf.style.opacity) });
+              });
+            }
+          }
+        }
+      }
+      fot.sort(function (a, b) { return a.p - b.p; });
+      var dur = ve.style.getPropertyValue('--otra-vez').trim();
+      return { nombre: nombre, fot: fot, dura: /ms$/.test(dur) ? parseFloat(dur) : /s$/.test(dur) ? parseFloat(dur) * 1000 : NaN };
+    }
+    function bandera(cual) {
+      var g = uno('[data-bandera="' + cual + '"]');
+      return { ve: vis(g), d: H.demora(g), asta: rect(uno('[data-asta]', g)), tela: rect(uno('[data-tela]', g)), txt: texto(uno('[data-tela-txt]', g)) };
+    }
+    var ve = uno('[data-brayan-ve]'), br = uno('[data-brayan]'), cuad = uno('[data-cuaderno]'), nota = uno('[data-nota]'), bol = uno('[data-boleta]');
+    var grupo = uno('[data-caminos]');
+    /* el cuerpo de Brayan, sin su nombre */
+    var cuerpo = union([].slice.call(br.children).filter(function (c) { return c.tagName !== 'text'; }).map(rect));
+    return {
+      vista: [H.svg.viewBox.baseVal.width, H.svg.viewBox.baseVal.height],
+      doc: { ve: vis(uno('[data-doc]')), d: H.demora(uno('[data-doc]')), caja: rect(uno('rect', uno('[data-doc]'))), txt: texto(uno('[data-doc-txt]')) },
+      hilos: { B: camino(uno('[data-hilo="B"]')), C: camino(uno('[data-hilo="C"]')) },
+      bloques: { A: rect(uno('[data-bloque="A"]')), B: rect(uno('[data-bloque="B"]')), C: rect(uno('[data-bloque="C"]')) },
+      baja: mueve(uno('[data-baja]')),
+      caja: (function () { var c = uno('[data-caja]'); return { ve: vis(c), d: H.demora(c), caja: rect(c), raya: getComputedStyle(c).strokeDasharray }; })(),
+      banderas: { B: bandera('B'), C: bandera('C') },
+      caras: { A: texto(uno('[data-cara="A"]')), B: texto(uno('[data-cara="B"]')), C: texto(uno('[data-cara="C"]')) },
+      caminos: { ve: vis(grupo), d: H.demora(grupo), tenue: grupo.classList.contains('dc-tenue'),
+        lista: todos('[data-camino]').map(function (g) {
+          var l = uno('[data-linea]', g), o = camino(l);
+          return { nombre: g.getAttribute('data-camino'), ve: vis(g), d: H.demora(g), apaga: H.dura(g, 'opacity'), linea: o, carril: +l.getAttribute('data-carril'), txt: texto(uno('[data-camino-txt]', g)) };
+        }),
+        flecha: camino(uno('[data-flecha]')) },
+      nota: { ve: vis(nota), d: H.demora(nota), apaga: H.dura(nota, 'opacity'), papel: rect(uno('rect', nota)), lineas: todos('text', nota).map(texto) },
+      boleta: { ve: vis(bol), d: H.demora(bol), papel: rect(uno('rect', bol)), txt: texto(uno('text', bol)) },
+      llaves: ['2', '1'].map(function (q) {
+        var g = uno('[data-llave="' + q + '"]');
+        return { k: q, ve: vis(g), d: H.demora(g), trazo: H.pares(uno('[data-llave-trazo]', g).getAttribute('d')),
+          tramos: todos('[data-tramo]', g).map(function (t) { var o = texto(t); o.k = t.getAttribute('data-tramo'); return o; }) };
+      }),
+      brayan: { ve: vis(br), cuerpo: cuerpo, cabeza: rect(uno('[data-cabeza]', br)), nombre: texto(uno('[data-nombre]', br)),
+        sale: { ve: vis(ve), d: H.demora(ve), otraVez: ve.classList.contains('dc-otra-vez'), oscuro: oscuro(ve) },
+        tramos: todos('[data-brayan-tramo]').map(function (g) { var o = mueve(g); o.k = g.getAttribute('data-brayan-tramo'); return o; }) },
+      cuaderno: { ve: vis(cuad), d: H.demora(cuad), papel: rect(uno('rect', cuad)), pide: todos('[data-pide]', cuad).map(texto),
+        rayas: todos('[data-raya]', cuad).map(function (p) { return H.pares(p.getAttribute('d')); }) },
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; }),
+      letras: H.letras()
+    };
+  };
+
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -6412,6 +6506,42 @@ const ESTADOS_ESCALA = [
   { regla: true, lista: false, hueco: false, monton: false, cerca: false, hoy: false, copias: true, acta: true }
 ];
 const MEMO_ESCALA = { lista: null };
+/* CNB y DCNB: los cuatro caminos, leídos del octavo peldaño de la propia
+   misión («Lo que se ajusta es el camino: …»), con la regla de su «no
+   hacer» y el «el cómo es suyo» de su recuadro del aula; y «para que no
+   repruebe», de su tercer caso. La sonda los lee de ahí, no de la escena. */
+let leyDestinoMemo = null;
+function leyDestino() {
+  if (leyDestinoMemo) return leyDestinoMemo;
+  const dir = path.join(RAIZ, 'misiones', 'docente-cnb-dcnb-programacion');
+  const js = fs.readFileSync(path.join(dir, 'js', 'cnb-dcnb-programacion.js'), 'utf8').replace(/'\s*\+\s*'/g, '');
+  const html = fs.readFileSync(path.join(dir, 'cnb-dcnb-programacion.html'), 'utf8').replace(/\s+/g, ' ');
+  const m = /'Lo que se ajusta es el camino: ([^']+?)\.'/.exec(js);
+  leyDestinoMemo = {
+    caminos: m ? m[1].split(/\s*,\s*/).map(s => s.replace(/^(la|el|los|las) /, '')) : [],
+    regla: /adecuar es cambiar el camino, no el destino/.test(js),
+    suyo: /el cómo es suyo/.test(js),
+    exigencia: /le baje la exigencia/.test(html),
+    repruebe: /«para que no repruebe»/.test(html)
+  };
+  return leyDestinoMemo;
+}
+/* Lo que se ve al TERMINAR cada paso, sin decir dónde: dónde está Brayan
+   (en el año pasado, en su destino bajado o en el de verdad), si el destino
+   de este año está bajado y qué llave se ve. Dónde va cada cosa lo mide la
+   sonda en el dibujo. */
+const ESTADOS_DESTINO = [
+  { doc: false, hiloB: false, caminos: 'no', nota: false, bajo: false, banderaB: true, caja: false, brayan: 'A', boleta: false, llave: null, cuaderno: false },
+  { doc: true, hiloB: true, caminos: 'no', nota: false, bajo: false, banderaB: true, caja: false, brayan: 'A', boleta: false, llave: null, cuaderno: false },
+  { doc: true, hiloB: true, caminos: 'si', nota: false, bajo: false, banderaB: true, caja: false, brayan: 'A', boleta: false, llave: null, cuaderno: false },
+  { doc: true, hiloB: false, caminos: 'no', nota: true, bajo: true, banderaB: true, caja: true, brayan: 'bajo', boleta: true, llave: null, cuaderno: false },
+  { doc: true, hiloB: false, caminos: 'no', nota: false, bajo: true, banderaB: false, caja: true, brayan: 'bajo', boleta: false, llave: '2', cuaderno: false },
+  { doc: true, hiloB: true, caminos: 'tenue', nota: false, bajo: false, banderaB: true, caja: false, brayan: 'B', boleta: false, llave: '1', cuaderno: false },
+  { doc: true, hiloB: true, caminos: 'no', nota: false, bajo: false, banderaB: true, caja: false, brayan: 'B', boleta: false, llave: '1', cuaderno: true }
+];
+/* El cuerpo de Brayan sin moverse (paso 0), y lo que se corrió cada tramo
+   al terminar el paso anterior: con eso la sonda rehace su camino. */
+const MEMO_DESTINO = { base: null, tramos: null };
 function historiaBanco() {
   if (historiaBancoMemo) return historiaBancoMemo;
   const html = fs.readFileSync(path.join(RAIZ, 'misiones', 'basica-palabras-que-piensan', 'palabras-que-piensan.html'), 'utf8');
@@ -21158,6 +21288,265 @@ const ESCENAS = {
     if (n === 5) r.push([e.cifra === String(L.HOY - L.corte) && /años lleva la de hoy/.test(e.palabras) && e.texto.includes(L.cuanto) && e.texto.includes('«primaria»'),
       `paso 5: la frase dice «${L.cuanto}», que es verdad del lado seguro`, [e.cifra, e.texto]]);
     if (n === 6) r.push([e.cifra === '?' && /ley de hoy/.test(e.palabras) && /«sexto de primaria»/.test(e.texto), 'paso 6: el marcador deja la pregunta al maestro', [e.cifra, e.palabras]]);
+
+    /* ── lo que se lee ── */
+    const ml = [];
+    x.letras.forEach((a, i) => x.letras.slice(i + 1).forEach(b => { if (monta(a.caja, b.caja)) ml.push([a.txt, b.txt]); }));
+    r.push([ml.length === 0, `paso ${n}: ningún texto se monta en otro`, ml.slice(0, 4)]);
+    const sale = x.letras.filter(t => t.caja.x0 < -0.5 || t.caja.y0 < -0.5 || t.caja.x1 > x.vista[0] + 0.5 || t.caja.y1 > x.vista[1] + 0.5);
+    r.push([sale.length === 0, `paso ${n}: todo lo escrito cabe en el dibujo`, sale.map(t => t.txt)]);
+    return r;
+  },
+  amDestino(e, n) {
+    const x = e.extra, r = [];
+    if (!x) return [[false, `paso ${n}: la sonda pudo leer la escena`, null]];
+    const L = leyDestino(), E = ESTADOS_DESTINO[n], M = MEMO_DESTINO;
+    const monta = (a, b) => a.x0 < b.x1 - 0.5 && b.x0 < a.x1 - 0.5 && a.y0 < b.y1 - 0.5 && b.y0 < a.y1 - 0.5;
+    const dentro = (a, b, mg = 0) => a.x0 >= b.x0 - mg && a.x1 <= b.x1 + mg && a.y0 >= b.y0 - mg && a.y1 <= b.y1 + mg;
+    const cx = c => (c.x0 + c.x1) / 2, cy = c => (c.y0 + c.y1) / 2;
+    const cerca = (a, b, t = 0.5) => Math.abs(a - b) <= t;
+    const enPunto = (p, c, mg = 0) => p[0] >= c.x0 - mg && p[0] <= c.x1 + mg && p[1] >= c.y0 - mg && p[1] <= c.y1 + mg;
+    const rango = ps => ({ x0: Math.min(...ps.map(p => p[0])), x1: Math.max(...ps.map(p => p[0])), y0: Math.min(...ps.map(p => p[1])), y1: Math.max(...ps.map(p => p[1])) });
+    /* «½», «1», «1½»: la cuenta en medios años */
+    const medios = v => { const ent = Math.floor(v + 0.02), fr = v - ent; return cerca(fr, 0.5, 0.02) ? (ent ? String(ent) : '') + '½' : cerca(fr, 0, 0.02) ? String(ent) : '?' + v; };
+
+    /* ── lo que no depende del dibujo va primero ── */
+    /* Ni cómo se llaman el destino de un grado y la meta del sistema (el
+       quiz, el completar y el memorama), ni el documento por su nombre, ni
+       que es normativo y nacional, ni sus niveles, ciclos, áreas, ejes,
+       columnas, bloques o semanas, ni el proyecto del centro, ni la
+       adecuación y sus componentes, ni el alumno con necesidades especiales
+       (es el tercer caso de la misión, para pensarlo), ni la evaluación. */
+    const PROHIBIDAS = /(?<!\p{L})(?:d?cnb|curr[íi]cul\p{L}*|normativ\p{L}*|nacional\p{L}*|nivel(?:es)?|ciclos?|[áa]reas?|ejes?|columnas?|pec|proyecto\p{L}*|adecu\p{L}*|intercultural\p{L}*|especial(?:es)?|necesidad(?:es)?|semanas?|libros?|jornaliz\p{L}*|est[áa]ndar(?:es)?|expectativas?|logros?|competencias?|metas?|escal[óo]n(?:es)?|pelda\p{L}*|grados?|bloques?|sinece|fonac|contenidos?|evalu\p{L}*)(?!\p{L})/iu;
+    const dicho = [e.texto, e.palabras, e.boton].concat(x.textos).join(' · ');
+    r.push([!PROHIBIDAS.test(dicho), `paso ${n}: no se nombra lo que preguntan el quiz, el completar y el memorama, ni la adecuación, ni la evaluación`, (dicho.match(PROHIBIDAS) || [])[0]]);
+    r.push([L.caminos.length === 4 && L.regla && L.suyo && L.exigencia && L.repruebe,
+      'la misión dice los cuatro caminos, que adecuar es cambiar el camino y no el destino, que el cómo es suyo y «para que no repruebe»', L]);
+
+    /* ── la escalera: lo que sube un año sale del año pasado y del que viene ── */
+    const BA = x.bloques.A, BB = x.bloques.B, BC = x.bloques.C;
+    const ANIO = (BA.y0 - BC.y0) / 2, topeB = BA.y0 - ANIO, bajado = BA.y0 - ANIO / 2;
+    r.push([ANIO > 20 && cerca(BA.x1, BB.x0) && cerca(BB.x1, BC.x0) && [BA, BB, BC].every(b => b.y1 >= x.vista[1] - 0.5) && BA.x0 >= 0 && BC.x1 <= x.vista[0],
+      `paso ${n}: la escalera tiene sus tres años seguidos, y siguen por debajo del dibujo`, [BA, BB, BC]]);
+    r.push([cerca(BB.y0, E.bajo ? bajado : topeB), `paso ${n}: ${E.bajo ? 'el destino de este año está medio año más abajo' : 'cada año sube lo mismo'}`, [BA.y0 - BB.y0, BB.y0 - BC.y0]]);
+    const CARAS = { A: 'el año pasado', B: 'este año', C: 'el año que viene' };
+    r.push([['A', 'B', 'C'].every(q => { const t = x.caras[q], b = x.bloques[q]; return t.ve && t.txt === CARAS[q] && cerca(cx(t.tinta), cx(b), 1) && t.tinta.y0 > b.y0 + 4 && t.tinta.x0 > b.x0 && t.tinta.x1 < b.x1; }),
+      `paso ${n}: cada año dice cuál es, en su cara`, ['A', 'B', 'C'].map(q => x.caras[q].txt)]);
+
+    /* ── las banderas: el destino de cada año, plantado encima de él ── */
+    for (const q of ['B', 'C']) {
+      const f = x.banderas[q], bl = x.bloques[q], ve = q === 'C' || E.banderaB;
+      r.push([f.ve === ve, `paso ${n}: la bandera de ${q === 'B' ? 'este año' : 'el año que viene'} ${ve ? 'está' : 'no está'}`, f.ve]);
+      r.push([cerca(f.asta.y1, bl.y0) && f.asta.x0 > bl.x0 + 2 && f.asta.x0 < bl.x1 - 2 && f.asta.y1 - f.asta.y0 > 20,
+        `paso ${n}: el asta de la bandera ${q} está plantada sobre su año`, [f.asta, bl.y0]]);
+      r.push([cerca(f.tela.x0, f.asta.x0) && cerca(f.tela.y0, f.asta.y0) && f.txt.txt === 'destino' && dentro(f.txt.tinta, f.tela),
+        `paso ${n}: la tela de la bandera ${q} va en la punta del asta y dice «destino»`, f.txt.txt]);
+    }
+
+    /* ── el documento, y un hilo de él a cada destino ── */
+    r.push([x.doc.ve === E.doc && x.doc.txt.txt === '📘 el documento' && dentro(x.doc.txt.tinta, x.doc.caja),
+      `paso ${n}: ${E.doc ? 'está el documento' : 'todavía no está el documento'}`, x.doc.ve]);
+    let hilos = 0;
+    for (const q of ['B', 'C']) {
+      const h = x.hilos[q], f = x.banderas[q], ve = q === 'C' ? E.doc : E.hiloB;
+      r.push([h.ve === ve && h.hecho === ve, `paso ${n}: el hilo del documento a la bandera ${q} ${ve ? 'está' : 'no está'}`, [h.ve, h.hecho]]);
+      if (h.ve && h.hecho) hilos++;
+      const a = h.pts[0], b = h.pts[h.pts.length - 1];
+      if (ve) r.push([cerca(a[1], x.doc.caja.y1) && a[0] > x.doc.caja.x0 && a[0] < x.doc.caja.x1 && cerca(b[0], f.asta.x0) && cerca(b[1], f.asta.y0),
+        `paso ${n}: el hilo sale del documento y llega a la punta del asta de la bandera ${q}`, [a, b, f.asta]]);
+    }
+
+    /* ── los cuatro caminos ── */
+    const C = x.caminos, CL = C.lista, veC = E.caminos !== 'no';
+    r.push([CL.length === 4 && C.ve === veC && C.flecha.ve === veC && CL.every(c => c.ve === veC && c.linea.ve === veC && c.linea.hecho === veC && c.txt.ve === veC),
+      `paso ${n}: ${veC ? 'se ven los cuatro caminos' : 'no se ven los caminos'}`, CL.map(c => c.ve)]);
+    const palabras = c => c.txt.txt.split(' ');
+    r.push([CL.length === L.caminos.length && CL.every((c, i) => c.nombre === c.txt.txt && palabras(c).length === 2 && palabras(c)[1] === L.caminos[i]),
+      `paso ${n}: los caminos son los de la misión, en su orden: ${L.caminos.join(', ')}`, CL.map(c => c.txt.txt)]);
+    if (CL.length !== 4 || CL.some(c => c.linea.pts.length !== 8)) return r.concat([[false, `paso ${n}: cada camino sube, va por su carril y baja`, CL.map(c => c.linea.pts.length)]]);
+    const ini = CL.map(c => c.linea.pts[0]), fin = CL.map(c => c.linea.pts[7]), LL = fin[0];
+    r.push([ini.every(p => cerca(p[0], ini[0][0]) && cerca(p[1], ini[0][1])) && fin.every(p => cerca(p[0], LL[0]) && cerca(p[1], LL[1])),
+      `paso ${n}: los cuatro caminos salen del mismo punto y llegan al mismo punto`, [ini, fin]]);
+    const fB = x.banderas.B;
+    r.push([cerca(LL[1], topeB) && LL[0] > BB.x0 + 2 && LL[0] < fB.asta.x0 - 4,
+      `paso ${n}: los caminos llegan arriba de este año, al pie de su bandera`, [LL, topeB, fB.asta.x0]]);
+    const llano = CL.map(c => { const p = c.linea.pts; return { x0: p[3][0], x1: p[4][0], y: p[3][1], y2: p[4][1] }; });
+    r.push([llano.every((l, i) => cerca(l.y, CL[i].carril) && cerca(l.y2, l.y) && l.x1 - l.x0 > 40) && llano.every((l, i) => i === 0 || l.y - llano[i - 1].y >= 20),
+      `paso ${n}: cada camino va por su carril, uno debajo del otro`, llano.map(l => l.y)]);
+    r.push([CL.every((c, i) => { const t = c.txt.tinta, l = llano[i]; return t.y1 <= l.y - 1 && t.x0 >= l.x0 - 0.5 && t.x1 <= l.x1 + 0.5 && (i === 0 || t.y0 > llano[i - 1].y + 1); }),
+      `paso ${n}: el nombre de cada camino va encima de su carril, y debajo del de arriba`, CL.map(c => [c.txt.tinta.x0, c.txt.tinta.x1, c.txt.tinta.y0, c.txt.tinta.y1])]);
+    /* por dónde pasa cada camino, de punta a punta */
+    const bez = (p0, p1, p2, p3, t) => { const u = 1 - t; return [u * u * u * p0[0] + 3 * u * u * t * p1[0] + 3 * u * t * t * p2[0] + t * t * t * p3[0], u * u * u * p0[1] + 3 * u * u * t * p1[1] + 3 * u * t * t * p2[1] + t * t * t * p3[1]]; };
+    const MU = CL.map(c => {
+      const p = c.linea.pts, o = [];
+      for (let i = 0; i <= 40; i++) o.push(bez(p[0], p[1], p[2], p[3], i / 40));
+      for (let i = 0; i <= 40; i++) o.push([p[3][0] + (p[4][0] - p[3][0]) * i / 40, p[3][1]]);
+      for (let i = 0; i <= 40; i++) o.push(bez(p[4], p[5], p[6], p[7], i / 40));
+      return o;
+    });
+    const enBloque = q => ['A', 'B', 'C'].some(k => { const b = x.bloques[k]; return q[0] > b.x0 + 0.5 && q[0] < b.x1 - 0.5 && q[1] > b.y0 + 0.5; });
+    r.push([MU.every(ms => ms.every(q => !enBloque(q))), `paso ${n}: ningún camino se mete en la escalera`, null]);
+    const rotulos = CL.map(c => c.txt.tinta);
+    r.push([MU.every(ms => ms.every(q => !rotulos.some(t => enPunto(q, t, 0.3)))), `paso ${n}: ningún camino pasa por encima del nombre de otro`, null]);
+    const FL = C.flecha.pts;
+    r.push([FL.length === 3 && cerca(FL[1][0], LL[0]) && FL[1][1] < LL[1] && LL[1] - FL[1][1] <= 3 && FL[0][1] < FL[1][1] && FL[2][1] < FL[1][1] && FL[0][0] < FL[1][0] && FL[2][0] > FL[1][0],
+      `paso ${n}: la punta de flecha señala donde llegan los caminos`, FL]);
+    if (veC) {
+      const cb = x.brayan.cuerpo, nom = x.brayan.nombre.tinta;
+      r.push([MU.every(ms => ms.every(q => !enPunto(q, cb, 1) && !enPunto(q, nom, 0.5))) && rotulos.every(t => !monta(t, cb) && !monta(t, nom)),
+        `paso ${n}: los caminos no pasan por encima de Brayan`, null]);
+      r.push([MU.every(ms => ms.every(q => !enPunto(q, fB.tela, 0.5) && !(Math.abs(q[0] - fB.asta.x0) < 1.5 && q[1] >= fB.asta.y0 && q[1] <= fB.asta.y1))),
+        `paso ${n}: los caminos no tocan la bandera`, null]);
+      /* tenues con stroke-opacity, nunca con opacity: lo que baja de 1 la sonda lo da por ido */
+      const tenue = E.caminos === 'tenue', ops = CL.map(c => c.linea.op).concat([C.flecha.op]), opt = CL.map(c => c.txt.op);
+      r.push([C.tenue === tenue && (tenue ? ops.every(o => o <= 0.5) && opt.every(o => o <= 0.6) : ops.every(o => o === 1) && opt.every(o => o === 1)),
+        `paso ${n}: los caminos ${tenue ? 'se quedan tenues, detrás de lo que pasa' : 'se ven enteros'}`, [ops, opt]]);
+    }
+    const quitaCaminos = Math.max(...CL.map(c => c.d + c.apaga));
+    if (n === 2) {
+      const s = ini[0], cb = x.brayan.cuerpo, ds = CL.map(c => c.linea.d);
+      r.push([s[0] > cb.x1 && s[0] - cb.x1 <= 25 && s[1] >= cb.y0 && s[1] <= cb.y1, 'paso 2: los caminos salen de donde está Brayan', [s, cb]]);
+      r.push([ds.every((d, i) => i === 0 || d > ds[i - 1]) && CL.every(c => c.txt.d >= c.linea.d && c.d <= c.linea.d) && C.flecha.d >= ds[3] + CL[3].linea.dura,
+        'paso 2: los caminos se dibujan uno tras otro, cada nombre después de su camino, y la punta cuando llega el último', [ds, CL.map(c => c.txt.d), C.flecha.d]]);
+    }
+    if (n === 1) r.push([x.doc.d < x.hilos.B.d && x.doc.d < x.hilos.C.d, 'paso 1: primero el documento y después sus hilos', [x.doc.d, x.hilos.B.d, x.hilos.C.d]]);
+
+    /* ── Brayan: dónde está parado ── */
+    const cb = x.brayan.cuerpo, bx = cx(x.brayan.cabeza);
+    const sobre = ['A', 'B', 'C'].find(q => bx > x.bloques[q].x0 && bx < x.bloques[q].x1), espera = E.brayan === 'A' ? 'A' : 'B';
+    r.push([x.brayan.ve && sobre === espera && cerca(cb.y1, x.bloques[espera].y0, 0.6),
+      `paso ${n}: Brayan está parado ${E.brayan === 'A' ? 'en el año pasado' : E.brayan === 'bajo' ? 'en su destino bajado' : 'en el destino de este año'}`, [sobre, cb.y1, x.bloques[espera].y0]]);
+    r.push([!['A', 'B', 'C'].some(q => monta(cb, x.bloques[q])) && (!E.banderaB || !monta(cb, fB.tela) && (fB.asta.x0 < cb.x0 - 1 || fB.asta.x0 > cb.x1 + 1)),
+      `paso ${n}: Brayan no se mete en la escalera ni en la bandera`, cb]);
+    const nom = x.brayan.nombre;
+    r.push([nom.txt === 'Brayan' && cerca(cx(nom.tinta), bx, 1.5) && nom.tinta.y1 < x.brayan.cabeza.y0, `paso ${n}: su nombre va encima de su cabeza`, [nom.tinta, x.brayan.cabeza]]);
+
+    /* ── su camino, tramo por tramo: el cuerpo quieto del paso 0 más lo que
+       se corrió cada tramo. Un tramo que lo mueve a la vista va solo, de un
+       eje, y no lo mete en la escalera; los que se mueven juntos van a
+       oscuras (la vuelta del paso 5). ── */
+    const TR = x.brayan.tramos;
+    const suma = vs => vs.reduce((s, v) => [s[0] + v[0], s[1] + v[1]], [0, 0]);
+    const cajaEn = off => ({ x0: M.base.x0 + off[0], x1: M.base.x1 + off[0], y0: M.base.y0 + off[1], y1: M.base.y1 + off[1] });
+    const penetra = c => ['A', 'B', 'C'].some(q => { const b = x.bloques[q]; return c.x1 > b.x0 + 0.5 && c.x0 < b.x1 - 0.5 && c.y1 > b.y0 + 0.5; });
+    if (n === 0) {
+      r.push([TR.length === 6 && TR.every(t => cerca(t.dx, 0, 0.01) && cerca(t.dy, 0, 0.01)), 'paso 0: Brayan empieza sin moverse', TR]);
+      M.base = cb;
+    } else if (M.base && M.tramos) {
+      const fin2 = cajaEn(suma(TR.map(t => [t.dx, t.dy])));
+      r.push([cerca(fin2.x0, cb.x0, 0.6) && cerca(fin2.y1, cb.y1, 0.6), `paso ${n}: lo que se corrió cada tramo lleva a Brayan a donde se le ve`, [fin2, cb]]);
+      const vals = M.tramos.map(t => [t.dx, t.dy]);
+      const movidos = TR.map((t, i) => ({ i, t, antes: vals[i] })).filter(o => !cerca(o.t.dx, o.antes[0], 0.01) || !cerca(o.t.dy, o.antes[1], 0.01));
+      const grupos = [];
+      movidos.slice().sort((a, b) => a.t.d - b.t.d).forEach(o => { const g = grupos.find(gr => gr.d === o.t.d); if (g) g.l.push(o); else grupos.push({ d: o.t.d, l: [o] }); });
+      const malos = [];
+      let fin = -Infinity;
+      grupos.forEach(g => {
+        const antes = cajaEn(suma(vals));
+        g.l.forEach(o => { vals[o.i] = [o.t.dx, o.t.dy]; });
+        const despues = cajaEn(suma(vals));
+        if (g.l.length === 1) {
+          const o = g.l[0], dx = o.t.dx - o.antes[0], dy = o.t.dy - o.antes[1];
+          const barre = { x0: Math.min(antes.x0, despues.x0), x1: Math.max(antes.x1, despues.x1), y0: Math.min(antes.y0, despues.y0), y1: Math.max(antes.y1, despues.y1) };
+          if (!(cerca(dx, 0, 0.01) || cerca(dy, 0, 0.01)) || penetra(barre) || g.d < fin - 0.5) malos.push([TR[o.i].k, dx, dy, g.d]);
+          /* y sube pegado a la pared del año al que sube: lejos de ella parecía que flotaba */
+          if (!cerca(dy, 0, 0.01)) {
+            const llega = ['A', 'B', 'C'].map(q => x.bloques[q]).find(b => cerca(b.y0, despues.y1, 0.6));
+            if (!llega || antes.x1 > llega.x0 + 0.5 || llega.x0 - antes.x1 > 4) malos.push(['lejos de la pared', TR[o.i].k, llega ? llega.x0 - antes.x1 : null]);
+          }
+          fin = Math.max(fin, g.d + o.t.dura);
+        } else fin = Math.max(fin, g.d + Math.max(...g.l.map(o => o.t.dura)));
+      });
+      r.push([malos.length === 0, `paso ${n}: cada tramo de Brayan va solo, de lado o hacia arriba pegado a la pared, sin meterse en la escalera`, malos]);
+      const juntos = grupos.filter(g => g.l.length > 1);
+      if (n === 3) {
+        const a = grupos.map(g => g.l[0].t);
+        r.push([grupos.length === 3 && juntos.length === 0 && grupos.every((g, i) => i === 0 || cerca(g.d, grupos[i - 1].d + grupos[i - 1].l[0].t.dura, 1)) && TR.slice(3).every(t => cerca(t.dx, 0, 0.01) && cerca(t.dy, 0, 0.01)),
+          'paso 3: Brayan camina hasta la pared, sube y pasa encima, un tramo detrás del otro', grupos.map(g => [g.d, g.l.map(o => TR[o.i].k)])]);
+        r.push([x.nota.d >= quitaCaminos && x.baja.d >= x.nota.d && x.hilos.B.d + x.hilos.B.apaga <= x.baja.d && x.caja.d >= x.baja.d
+          && grupos.length > 0 && grupos[0].d >= x.baja.d + x.baja.dura && x.boleta.d >= fin,
+          'paso 3: los caminos se van, sale la nota, el hilo se suelta, el destino baja, Brayan sube cuando ya bajó y la boleta llega cuando él llega',
+          { caminos: quitaCaminos, nota: x.nota.d, hilo: x.hilos.B.d + x.hilos.B.apaga, baja: [x.baja.d, x.baja.dura], caja: x.caja.d, brayan: a.map(t => t.d), boleta: x.boleta.d, llega: fin }]);
+      }
+      if (n === 5) {
+        const O = x.brayan.sale.oscuro, ceros = O.fot.filter(f => f.op === 0).map(f => f.p);
+        const d0 = x.brayan.sale.d, de = d0 + Math.min(...ceros) / 100 * O.dura, hasta = d0 + Math.max(...ceros) / 100 * O.dura;
+        const vuelta = juntos[0], subida = grupos.filter(g => g.l.length === 1);
+        r.push([!!O.nombre && ceros.length >= 2 && O.dura > 0 && cerca(O.fot[0].op, 1, 0.01) && cerca(O.fot[O.fot.length - 1].op, 1, 0.01),
+          'paso 5: Brayan tiene con qué apagarse y volver a encenderse', O]);
+        r.push([juntos.length === 1 && vuelta.l.every(o => cerca(o.t.dx, 0, 0.01) && cerca(o.t.dy, 0, 0.01)) && vuelta.d >= de - 0.5 && vuelta.d + Math.max(...vuelta.l.map(o => o.t.dura)) <= hasta + 0.5,
+          'paso 5: vuelve al año pasado a oscuras: la vuelta cabe en lo que está apagado', { apagado: [de, hasta], vuelta: vuelta && [vuelta.d, vuelta.l.map(o => o.t.dura)] }]);
+        r.push([subida.length === 3 && subida.every((g, i) => i === 0 || cerca(g.d, subida[i - 1].d + subida[i - 1].l[0].t.dura, 1)) && subida[0].d >= d0 + O.dura && subida[0].d >= x.baja.d + x.baja.dura,
+          'paso 5: sube cuando ya se encendió y el destino ya volvió, un tramo detrás del otro', subida.map(g => g.d)]);
+        r.push([CL.every(c => c.d >= x.baja.d + x.baja.dura) && x.hilos.B.d >= x.baja.d + x.baja.dura && x.llaves[1].d >= fin,
+          'paso 5: los caminos y el hilo vuelven cuando el destino ya está en su sitio, y la llave cuando Brayan llega', { vuelve: x.baja.d + x.baja.dura, caminos: CL.map(c => c.d), hilo: x.hilos.B.d, llave: x.llaves[1].d, llega: fin }]);
+      }
+    }
+    M.tramos = TR.map(t => ({ dx: t.dx, dy: t.dy }));
+
+    /* ── lo que le bajan ── */
+    r.push([x.caja.ve === E.caja, `paso ${n}: ${E.caja ? 'se ve el hueco de lo que le bajaron' : 'no hay hueco'}`, x.caja.ve]);
+    if (E.caja) r.push([cerca(x.caja.caja.x0, BB.x0) && cerca(x.caja.caja.x1, BB.x1) && cerca(x.caja.caja.y0, topeB) && cerca(x.caja.caja.y1, BB.y0) && x.caja.raya !== 'none',
+      `paso ${n}: donde estaba su destino queda un hueco de raya cortada, justo lo que bajó`, x.caja]);
+    const notaTxt = x.nota.lineas.map(t => t.txt).join(' ');
+    r.push([x.nota.ve === E.nota, `paso ${n}: ${E.nota ? 'está la nota' : 'no está la nota'}`, x.nota.ve]);
+    r.push([/^«Bájele la exigencia, para que no repruebe»$/.test(notaTxt) && x.nota.lineas.every(t => dentro(t.tinta, x.nota.papel, -2)),
+      `paso ${n}: la nota dice «Bájele la exigencia, para que no repruebe», dentro de su papel`, notaTxt]);
+    r.push([x.boleta.ve === E.boleta && x.boleta.txt.txt === 'aprobó' && dentro(x.boleta.txt.tinta, x.boleta.papel, -1),
+      `paso ${n}: ${E.boleta ? 'la boleta dice que aprobó' : 'no está la boleta'}`, x.boleta.ve]);
+    if (E.boleta) r.push([x.boleta.papel.x1 < cb.x0 && cb.x0 - x.boleta.papel.x1 <= 15 && x.boleta.papel.y0 < cb.y1 && x.boleta.papel.y1 > cb.y0 && !penetra(x.boleta.papel),
+      `paso ${n}: la boleta está junto a Brayan`, [x.boleta.papel, cb]]);
+    if (E.nota) r.push([[x.doc.caja, x.banderas.B.tela, x.banderas.C.tela, cb, x.boleta.papel].every(b => !monta(x.nota.papel, b)) && !penetra(x.nota.papel),
+      `paso ${n}: la nota no tapa nada`, x.nota.papel]);
+
+    /* ── las llaves del año que viene ── */
+    x.llaves.forEach(l => r.push([l.ve === (E.llave === l.k), `paso ${n}: ${E.llave === l.k ? 'se ve' : 'no se ve'} la llave ${l.k === '2' ? 'de lo que le faltó y lo nuevo' : 'de lo nuevo'}`, l.ve]));
+    let tramo = NaN;
+    if (E.llave) {
+      const l = x.llaves.find(o => o.k === E.llave), T = l.trazo, xv = Math.max(...T.map(p => p[0]));
+      const vert = T.filter(p => cerca(p[0], xv)).map(p => p[1]), tics = T.filter(p => !cerca(p[0], xv)).map(p => p[1]);
+      const y0 = Math.min(...vert), y1 = Math.max(...vert), abajo = E.llave === '2' ? bajado : topeB;
+      tramo = (y1 - y0) / ANIO;
+      const esperados = E.llave === '2' ? [BC.y0, topeB, bajado] : [BC.y0, topeB];
+      r.push([cerca(y0, BC.y0) && cerca(y1, abajo) && xv > BC.x0 && xv - BC.x0 < 12 && tics.length === esperados.length && esperados.every(v => tics.some(t => cerca(t, v))),
+        `paso ${n}: la llave va del ${E.llave === '2' ? 'destino bajado' : 'destino de este año'} al de el año que viene, con su marca en cada destino`, { T, ANIO }]);
+      const TRAMOS = E.llave === '2' ? [['falta', topeB, bajado, 'lo que le faltó'], ['nuevo', BC.y0, topeB, 'lo nuevo']] : [['nuevo', BC.y0, topeB, 'lo nuevo']];
+      r.push([l.tramos.length === TRAMOS.length && TRAMOS.every(([k, a, b, txt]) => { const t = l.tramos.find(o => o.k === k); return t && t.ve && t.txt === txt && cy(t.tinta) > a && cy(t.tinta) < b && t.tinta.x0 > xv + 2 && t.tinta.x1 < BC.x1 - 1 && t.tinta.y0 > BC.y0; }),
+        `paso ${n}: lo que dice la llave va a su lado, cada cosa en su tramo`, l.tramos.map(t => [t.txt, cy(t.tinta)])]);
+      if (n === 4 || n === 5) r.push([TRAMOS.every(t => e.texto.includes(t[3])), `paso ${n}: la frase dice lo mismo que la llave`, e.texto]);
+      r.push([!monta(rango(T), cb) && l.tramos.every(t => !monta(t.tinta, cb)), `paso ${n}: la llave no toca a Brayan`, null]);
+      if (n === 4) {
+        const fa = l.tramos.find(o => o.k === 'falta'), nu = l.tramos.find(o => o.k === 'nuevo');
+        r.push([l.d <= fa.d && fa.d < nu.d && l.d >= x.nota.d + x.nota.apaga, 'paso 4: la llave sale cuando se fue la nota, primero con lo que le faltó y después con lo nuevo', [x.nota.d + x.nota.apaga, l.d, fa.d, nu.d]]);
+      }
+    }
+
+    /* ── el cuaderno ── */
+    const CU = x.cuaderno;
+    r.push([CU.ve === E.cuaderno, `paso ${n}: ${E.cuaderno ? 'está el cuaderno' : 'todavía no está el cuaderno'}`, CU.ve]);
+    r.push([CU.pide.length === 2 && CU.rayas.length === 2 && /alumno/.test(CU.pide[0].txt) && /camino/.test(CU.pide[1].txt)
+      && CU.pide.every((t, i) => { const ry = CU.rayas[i]; return dentro(t.tinta, CU.papel, -2) && cerca(ry[0][1], ry[1][1]) && ry[0][1] > t.tinta.y1 + 3 && ry[1][0] - ry[0][0] > 100 && ry[0][1] < CU.papel.y1 && (i === 1 || ry[0][1] < CU.pide[1].tinta.y0); }),
+      `paso ${n}: el cuaderno pide un alumno al que le cuesta y el camino que le cambiaría, cada uno con su raya`, CU.pide.map(t => t.txt)]);
+    if (E.cuaderno) {
+      const hs = ['B', 'C'].map(q => x.hilos[q].pts);
+      const tocaHilo = hs.some(p => { for (let i = 0; i <= 40; i++) { const q = [p[0][0] + (p[1][0] - p[0][0]) * i / 40, p[0][1] + (p[1][1] - p[0][1]) * i / 40]; if (enPunto(q, CU.papel, 0.5)) return true; } return false; });
+      r.push([[x.doc.caja, x.banderas.B.tela, x.banderas.C.tela, cb].every(b => !monta(CU.papel, b)) && !penetra(CU.papel) && !tocaHilo && !monta(CU.papel, rango(x.llaves[1].trazo)),
+        `paso ${n}: el cuaderno no tapa nada`, CU.papel]);
+      if (n === 6) r.push([CU.d >= quitaCaminos, 'paso 6: el cuaderno sale donde estaban los caminos cuando ya se fueron', [quitaCaminos, CU.d]]);
+    }
+
+    /* ── el marcador y la frase dicen lo que se ve ── */
+    if (n === 0) r.push([e.cifra === '?' && /\?$/.test(e.texto.trim()), 'paso 0: la pregunta queda abierta', e.cifra]);
+    if (n === 1) r.push([e.cifra === String(hilos) && /documento/.test(e.palabras) && /documento/.test(e.texto), 'paso 1: el marcador cuenta los destinos que el documento fija', [e.cifra, hilos]]);
+    if (n === 2) {
+      const pos = CL.map(c => e.texto.indexOf(c.txt.txt));
+      r.push([e.cifra === String(CL.filter(c => c.ve).length) && pos.every((p, i) => p >= 0 && (i === 0 || p > pos[i - 1])) && /mismo destino/.test(e.texto),
+        'paso 2: el marcador cuenta los caminos, y la frase los nombra en su orden', [e.cifra, pos]]);
+    }
+    if (n === 3) r.push([e.cifra === medios((BA.y0 - BB.y0) / ANIO) && e.texto.includes('«para que no repruebe»') && e.texto.includes(x.boleta.txt.txt),
+      'paso 3: el marcador dice cuánto subió, medido en años, y la frase cita la nota y la boleta', [e.cifra, (BA.y0 - BB.y0) / ANIO]]);
+    if (n === 4 || n === 5) r.push([e.cifra === medios(tramo), `paso ${n}: el marcador dice cuántos años de camino mide la llave`, [e.cifra, tramo]]);
+    if (n === 6) r.push([e.cifra === '?' && /camino/.test(e.texto) && /destino/.test(e.texto), 'paso 6: el marcador deja la pregunta al maestro', e.cifra]);
 
     /* ── lo que se lee ── */
     const ml = [];
