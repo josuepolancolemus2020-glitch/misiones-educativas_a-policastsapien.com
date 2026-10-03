@@ -16828,6 +16828,15 @@ salen dos reglas:
   producto**. Ahora `abrir()` (`_dev/lib-navegador.js`) pide primero
   `channel: 'chromium'`, que `npx playwright install chromium` trae también
   en GitHub, y solo si no está cae a lo de antes.
+- ⚠️ **Una sonda cortada lo dice.** `spawnSync` guarda de fábrica un mega de
+  lo que escribe cada sonda y, al pasarse, la mata sin avisar: se queda con
+  lo leído y la da por roja con su último renglón en verde. La de las
+  animaciones escribe 1,7 MB, y el 2 de octubre de 2026 salió así, en GitHub
+  y a mano: cuarenta ✓ debajo de «LO QUE FALLÓ» y ni un ✘. Se le echó la
+  culpa a la máquina cargada, y era `corre-sondas`. Ahora le deja escribir
+  64 MB y, si corta una sonda por lo que escribe o por el tiempo, lo dice al
+  lado de su nombre y al final de lo que falló. Es «una sonda que revienta no
+  dice ✘», del lado de quien las corre.
 - **El desfase de `www/` avisa, no falla.** Esa copia va atrasada *a propósito*
   hasta que se compila la app de Android, así que darlo por fallo pintaba de
   rojo el estado normal del repositorio. Lo que sí hace falta saber es cuánto le

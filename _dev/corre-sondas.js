@@ -107,13 +107,37 @@ function esperarPuerto(intentos) {
 }
 
 /* ── correr una ──────────────────────────────────────────────── */
+/* ⚠️ Cuánto se le deja escribir a una sonda, y qué se dice si se la corta.
+   `spawnSync` guarda de fábrica UN mega de lo que escribe la sonda y, al
+   pasarse, la MATA sin decir nada: se queda con lo que llevaba leído y
+   devuelve `status: null`. La de las animaciones escribe 1,7 MB —86
+   animaciones, casi diecinueve mil renglones— y el 2 de octubre de 2026
+   salió roja así, en GitHub y otra vez a mano: cuarenta ✓ debajo de «LO
+   QUE FALLÓ» y ni un ✘. Se le echó la culpa a la máquina cargada, y era
+   esta herramienta, que la cortaba al pasar del mega. Ahora se le dejan
+   64, y si de todos modos se la corta —por lo que escribe o por el
+   tiempo— se DICE: una sonda cortada tiene que contarlo igual que una
+   que revienta. */
+const SALIDA_MAX = 64 * 1024 * 1024;
+const TIEMPO_MAX = 15 * 60 * 1000;
+
+function porQueSeCorto(r) {
+  if (r.error && r.error.code === 'ENOBUFS') return 'escribió más de ' + (SALIDA_MAX / 1048576) + ' MB';
+  if (r.error && r.error.code === 'ETIMEDOUT') return 'pasó de ' + (TIEMPO_MAX / 60000) + ' minutos';
+  if (r.error) return r.error.message;
+  if (r.signal) return 'la paró la señal ' + r.signal;
+  return '';
+}
+
 function correr(nombre) {
   const t0 = Date.now();
   const r = spawnSync(process.execPath, [path.join(DIR, nombre + '.js')],
-    { cwd: RAIZ, encoding: 'utf8', timeout: 15 * 60 * 1000 });
+    { cwd: RAIZ, encoding: 'utf8', timeout: TIEMPO_MAX, maxBuffer: SALIDA_MAX });
   const seg = ((Date.now() - t0) / 1000).toFixed(0);
-  const salida = (r.stdout || '') + (r.stderr || '');
-  return { nombre, ok: r.status === 0, seg, salida };
+  const corte = porQueSeCorto(r);
+  const salida = (r.stdout || '') + (r.stderr || '') +
+    (corte ? '\n✘ No terminó: la cortó corre-sondas porque ' + corte + '.' : '');
+  return { nombre, ok: r.status === 0, seg, salida, corte };
 }
 
 (async () => {
@@ -131,7 +155,7 @@ function correr(nombre) {
   for (const n of sondas) {
     process.stdout.write('  ' + n.padEnd(42));
     const r = correr(n);
-    console.log((r.ok ? '✔' : '✘') + '  ' + r.seg + 's');
+    console.log((r.ok ? '✔' : '✘') + '  ' + r.seg + 's' + (r.corte ? '  · cortada: ' + r.corte : ''));
     if (!r.ok) rojas.push(r);
   }
 
