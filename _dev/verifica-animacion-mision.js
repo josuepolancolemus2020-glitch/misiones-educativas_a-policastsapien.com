@@ -5990,6 +5990,72 @@ const LEER = `
     };
   };
 
+  /* METAS y SACE: el año, las dos listas, los meses de Elías, el «=» de
+     los nombres que tienen pareja, el hueco del que no está, el ✓ del año
+     cerrado, Elías y su sitio, el aviso y el cuaderno. */
+  window.__amExtra.amRegistro = function (raiz) {
+    var H = window.__amHerr(raiz), vis = H.vis, uno = H.uno, todos = H.todos;
+    function texto(t) {
+      return t ? { txt: t.textContent, ve: vis(t), d: H.demora(t), tinta: H.tinta(t), x: +t.getAttribute('x'), y: +t.getAttribute('y') } : null;
+    }
+    function linea(p) {
+      return { pts: H.pares(p.getAttribute('d')).map(function (q) { return H.aVista(p, q[0], q[1]); }), ve: vis(p), d: H.demora(p),
+        raya: getComputedStyle(p).strokeDasharray };
+    }
+    function mueve(el) { var m = new DOMMatrix(getComputedStyle(el).transform); return { dx: m.e, dy: m.f, d: H.demora(el), dura: H.dura(el, 'transform') }; }
+    function union(ls) {
+      return { x0: Math.min.apply(null, ls.map(function (c) { return c.x0; })), y0: Math.min.apply(null, ls.map(function (c) { return c.y0; })),
+        x1: Math.max.apply(null, ls.map(function (c) { return c.x1; })), y1: Math.max.apply(null, ls.map(function (c) { return c.y1; })) };
+    }
+    function panel(k) {
+      var g = uno('[data-rg-panel="' + k + '"]');
+      return { k: k, pantalla: H.caja(uno('[data-rg-pantalla]', g)), titulo: texto(uno('[data-rg-titulo]', g)), regla: linea(uno('[data-rg-regla]', g)),
+        filas: todos('text[data-rg-fila]', g).map(function (t) { var o = texto(t); o.k = +t.getAttribute('data-rg-fila'); return o; }) };
+    }
+    function alta(k) {
+      var g = uno('[data-rg-alta="' + k + '"]'), f = uno('text[data-rg-fila]', g), o = texto(f);
+      o.k = +f.getAttribute('data-rg-fila');
+      return { k: k, ve: vis(g), d: H.demora(g), fondo: H.caja(uno('[data-rg-nuevo]', g)), fila: o };
+    }
+    var elias = uno('[data-rg-elias]'), espera = uno('[data-rg-espera]'), aviso = uno('[data-rg-aviso]'), cua = uno('[data-rg-cuaderno]');
+    var cuerpoE = todos('*', elias).filter(function (c) { return !c.hasAttribute('data-rg-elias-nombre'); }).map(H.caja);
+    var cuerpoEsp = uno('[data-rg-espera-cuerpo]', espera), cabezaEsp = uno('[data-rg-espera-cabeza]', espera);
+    return {
+      vista: [H.svg.viewBox.baseVal.width, H.svg.viewBox.baseVal.height],
+      aria: H.svg.getAttribute('aria-label') || '',
+      cal: { tira: H.caja(uno('[data-rg-tira]')), marca: H.caja(uno('[data-rg-marca]')),
+        meses: todos('[data-rg-mes]').map(function (t) { var o = texto(t); o.k = t.getAttribute('data-rg-mes'); return o; }),
+        sobres: todos('[data-rg-paso]').map(function (g) { var o = mueve(g); o.k = +g.getAttribute('data-rg-paso'); return o; }) },
+      paneles: [panel('metas'), panel('registro')],
+      altas: [alta('metas'), alta('registro')],
+      /* Las casillas y lo marcado se buscan por su clase, que es lo que las
+         pinta, y no por su mes: una casilla de más que no dijera de qué mes
+         es se vería igual en el dibujo, y por el mes la sonda no la veía. */
+      casillas: todos('.rg-casilla').map(function (c) { return { k: c.getAttribute('data-rg-casilla'), caja: H.caja(c) }; }),
+      hechos: todos('.rg-hecho').map(function (c) { return { k: c.getAttribute('data-rg-hecho'), caja: H.caja(c), ve: vis(c), d: H.demora(c) }; }),
+      iguales: todos('[data-rg-igual]').map(function (g) {
+        return { k: +g.getAttribute('data-rg-igual'), ve: vis(g), d: H.demora(g), caja: H.caja(g), rayas: todos('path', g).map(linea) };
+      }),
+      roto: linea(uno('[data-rg-roto]')),
+      huecos: todos('[data-rg-hueco]').map(function (g) {
+        var c = uno('[data-rg-hueco-caja]', g);
+        return { k: g.getAttribute('data-rg-hueco'), ve: vis(g), d: H.demora(g), caja: H.caja(c), raya: getComputedStyle(c).strokeDasharray,
+          txt: texto(uno('[data-rg-hueco-txt]', g)) };
+      }),
+      cierres: todos('[data-rg-cierre]').map(function (p) { var o = linea(p); o.k = +p.getAttribute('data-rg-cierre'); o.caja = H.caja(p); return o; }),
+      elias: { ve: vis(elias), d: H.demora(elias), mov: mueve(elias), cuerpo: union(cuerpoE), cabeza: H.caja(uno('[data-rg-cabeza]', elias)),
+        pies: Math.max.apply(null, todos('[data-rg-pie]', elias).map(function (p) { return H.caja(p).y1; })),
+        nombre: texto(uno('[data-rg-elias-nombre]', elias)) },
+      espera: { ve: vis(espera), d: H.demora(espera), cuerpo: H.caja(cuerpoEsp), cabeza: H.caja(cabezaEsp),
+        raya: [getComputedStyle(cuerpoEsp).strokeDasharray, getComputedStyle(cabezaEsp).strokeDasharray], txt: texto(uno('[data-rg-espera-txt]', espera)) },
+      aviso: { ve: vis(aviso), d: H.demora(aviso), papel: H.caja(uno('[data-rg-aviso-papel]', aviso)), tit: texto(uno('[data-rg-aviso-tit]', aviso)),
+        lineas: todos('[data-rg-aviso-linea]', aviso).map(texto), fecha: texto(uno('[data-rg-fecha]', aviso)), copia: texto(uno('[data-rg-copia]', aviso)) },
+      cuaderno: { ve: vis(cua), d: H.demora(cua), papel: H.caja(uno('[data-rg-cuaderno-papel]', cua)), pide: todos('[data-rg-pide]', cua).map(texto),
+        rayas: todos('[data-rg-raya]', cua).map(linea) },
+      letras: H.letras()
+    };
+  };
+
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -6937,6 +7003,74 @@ const ESTADOS_NOMBRE = [
 const MEMO_NOMBRE = { mal: null };
 /* Los nombres de las letras, para leer lo que dice la mamá («dos efes»). */
 const NOMBRE_LETRAS = { efe: 'f', ele: 'l', erre: 'r', ese: 's', eme: 'm', ene: 'n', te: 't', de: 'd', be: 'b', ce: 'c', ge: 'g', pe: 'p' };
+/* METAS y SACE: lo que la escena afirma, en la misión. Que estar en la
+   lista de Mi aula no es estar en el registro oficial (el momento 1 y el
+   Aprende), que M.E.T.A.S no manda nada al registro (el caso 1) y lo que lo
+   evita: avisar el día que llega, por escrito y con fecha (el caso 2). Y que
+   ningún banco que califica pregunte lo que la escena contesta, ni vuelva lo
+   que se cambió con ella: la misión decía que el Parte Mensual lo arma
+   M.E.T.A.S «sin que usted haga nada extra», y es una calculadora a la que
+   usted le pone los números del mes. */
+let metasRegistroMemo = null;
+function metasRegistro() {
+  if (metasRegistroMemo) return metasRegistroMemo;
+  const dir = path.join(RAIZ, 'misiones', 'docente-metas-sace');
+  const js = fs.readFileSync(path.join(dir, 'js', 'metas-sace.js'), 'utf8').replace(/'\s*\+\s*'/g, '');
+  const html = fs.readFileSync(path.join(dir, 'metas-sace.html'), 'utf8').replace(/\s+/g, ' ');
+  const banco = nombre => {
+    const i = js.indexOf('const ' + nombre + ' = ['), f = i < 0 ? -1 : js.indexOf('\n];', i);
+    return f < 0 ? null : js.slice(i, f);
+  };
+  const paradas = banco('PARADAS') || '';
+  /* Los que califican: el quiz, el completar, el diagnóstico, el Clasifica
+     y el reto. Las tarjetas de estudio y el memorama no: se voltean para
+     ver la respuesta, que es para lo que están. */
+  const califican = ['QZ', 'CP', 'DG', 'CL_GRUPOS', 'RETO'].map(b => [b, banco(b)]);
+  const DICE = [
+    ['el momento 1', paradas, 'Sirve para trabajar, no para inscribir.'],
+    ['el momento 1', paradas, 'Revisar eso en marzo cuesta cinco minutos; en noviembre, un año.'],
+    ['el Aprende', html, 'un alumno que no está en el registro oficial <b>no existe para el sistema educativo</b>'],
+    ['el Aprende', html, 'Reinsertarlo después es un trámite, y el que lo sufre es él.</div>'],
+    ['el caso 1', html, 'M.E.T.A.S <b>no envía nada allá</b>: no tiene forma de hacerlo.'],
+    ['el caso 2', html, 'avisar a la dirección el día que llegó y confirmar que quedó registrado'],
+    ['el caso 2', html, 'déjelo por escrito con fecha']
+  ];
+  const MAL_DICHO = [
+    ['la misión', paradas, 'Todo eso lo lleva M.E.T.A.S sin que usted haga nada extra'],
+    ['el diagnóstico', js, 'El Parte Mensual de M.E.T.A.S, con lo que ya registró'],
+    ['el Aprende', html, 'un trámite, y el que lo sufre es él.</p>']
+  ];
+  /* Lo que la escena contesta: que estar en Mi aula no es estar en el
+     registro (era una pregunta del quiz y otra del diagnóstico, y dos
+     tarjetas del Clasifica), y los distractores del repitiente que se
+     descartaban mirándola («se arregla al cierre», «el sistema lo detecta
+     solo»). */
+  const CONTESTA = /aparece en su lista de Mi aula|lista de trabajo, nada m[áa]s|'La lista de sus alumnos'|'La matr[íi]cula oficial'|se arregla al cierre|El sistema lo detecta solo|Lo corrige el maestro desde su perfil/i;
+  metasRegistroMemo = {
+    falta: DICE.filter(([, t, f]) => !t.includes(f)).map(([d, , f]) => d + ': «' + f + '»'),
+    malDicho: MAL_DICHO.filter(([, t, f]) => t.includes(f)).map(([d, , f]) => d + ': «' + f + '»'),
+    faltan: califican.filter(([, t]) => t === null).map(([b]) => b),
+    preguntan: califican.filter(([, t]) => t && CONTESTA.test(t)).map(([b]) => b)
+  };
+  return metasRegistroMemo;
+}
+/* Lo que se ve al TERMINAR cada paso: en qué mes va el año, quién está en
+   cada lista, si se comparan, si el registro cerró el año, el aviso y el
+   cuaderno, y qué meses pasan en ese paso. Cuántos meses de Elías están
+   hechos, dónde va cada «=» y dónde el hueco no se escribe aquí: lo saca
+   la sonda de lo que se ve. */
+const ESTADOS_REGISTRO = [
+  { mes: 'feb', elias: false, metas6: false, sace6: false, compara: false, cierra: false, aviso: false, cuaderno: false, pasan: [] },
+  { mes: 'ago', elias: true, metas6: true, sace6: false, compara: false, cierra: false, aviso: false, cuaderno: false, pasan: [] },
+  { mes: 'oct', elias: true, metas6: true, sace6: false, compara: false, cierra: false, aviso: false, cuaderno: false, pasan: ['sep', 'oct'] },
+  { mes: 'nov', elias: true, metas6: true, sace6: false, compara: false, cierra: true, aviso: false, cuaderno: false, pasan: ['nov'] },
+  { mes: 'ago', elias: true, metas6: true, sace6: false, compara: true, cierra: false, aviso: false, cuaderno: false, pasan: [] },
+  { mes: 'ago', elias: true, metas6: true, sace6: true, compara: true, cierra: false, aviso: true, cuaderno: false, pasan: [] },
+  { mes: 'nov', elias: true, metas6: true, sace6: true, compara: true, cierra: true, aviso: false, cuaderno: true, pasan: ['sep', 'oct', 'nov'] }
+];
+/* Del paso 0 y del 1: cuántos nombres tenían las listas en febrero, cómo se
+   llama el que llega y en qué mes llega, según la frase y según la marca. */
+const MEMO_REGISTRO = { feb: null, nombre: null, llegaLargo: null, llega: null };
 function historiaBanco() {
   if (historiaBancoMemo) return historiaBancoMemo;
   const html = fs.readFileSync(path.join(RAIZ, 'misiones', 'basica-palabras-que-piensan', 'palabras-que-piensan.html'), 'utf8');
@@ -22824,6 +22958,258 @@ const ESCENAS = {
     const saleT = x.letras.filter(t => t.caja.x0 < -0.5 || t.caja.y0 < -0.5 || t.caja.x1 > x.vista[0] + 0.5 || t.caja.y1 > x.vista[1] + 0.5);
     r.push([saleT.length === 0, `paso ${n}: todo lo escrito cabe en el dibujo`, saleT.map(t => t.txt)]);
     return r;
+  },
+  amRegistro(e, n) {
+    const x = e.extra, r = [];
+    if (!x) return [[false, `paso ${n}: la sonda pudo leer la escena`, null]];
+    const B = metasRegistro(), E = ESTADOS_REGISTRO[n], M = MEMO_REGISTRO;
+    if (n === 0) { M.feb = null; M.nombre = null; M.llegaLargo = null; M.llega = null; M.hueco = null; }
+    const monta = (a, b, t = 0.5) => a.x0 < b.x1 - t && b.x0 < a.x1 - t && a.y0 < b.y1 - t && b.y0 < a.y1 - t;
+    const dentro = (a, b, mg = 0) => a.x0 >= b.x0 - mg && a.x1 <= b.x1 + mg && a.y0 >= b.y0 - mg && a.y1 <= b.y1 + mg;
+    const cerca = (a, b, t = 0.5) => Math.abs(a - b) <= t;
+    const cx = c => (c.x0 + c.x1) / 2, cy = c => (c.y0 + c.y1) / 2;
+    const sin = s => (s || '').replace(/ /g, ' ');
+    const NUM = ['cero', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez'];
+    /* el año de clases en Honduras: de febrero a noviembre */
+    const MESES = ['feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov'];
+    const LARGO = { feb: 'febrero', mar: 'marzo', abr: 'abril', may: 'mayo', jun: 'junio', jul: 'julio', ago: 'agosto', sep: 'septiembre', oct: 'octubre', nov: 'noviembre' };
+    const texto = sin(e.texto), palabras = sin(e.palabras), cifra = sin(e.cifra);
+    const rayada = s => !!s && s !== 'none' && s.split(/[ ,]+/).filter(Boolean).length >= 2;
+    const horizontal = l => l.pts.length === 2 && cerca(l.pts[0][1], l.pts[1][1], 0.05);
+
+    /* ── lo que no depende del dibujo va primero ── */
+    /* Lo demás de la misión lo preguntan el quiz, el completar, el
+       Clasifica y el diagnóstico: quién matricula, los traslados y los
+       repitientes, el cuadro de notas, las claves… La escena no nombra nada
+       de eso, ni las notas: «la nota del parcial, en los dos» es una tarjeta
+       del Clasifica. */
+    const PROHIBIDAS = /(?<!\p{L})(?:matr[íi]\p{L}*|administr\p{L}*|director\p{L}*|direcci[óo]n|centros?|traslad\p{L}*|repit\p{L}*|cuadros?|archivos?|inasistencias?|faltas?|eliminar|borrar|m[óo]dulos?|perfil(?:es)?|boletas?|certificad\p{L}*|constancias?|claves?|accesos?|contrase[ñn]as?|usuarios?|padres?|familias?|plan|acci[óo]n|evidencias?|parte mensual|voucher|tableros?|estad[íi]stic\p{L}*|reprobad\p{L}*|secretar[íi]as?|departamental|notas?|nada m[áa]s|lista de trabajo|inscri\p{L}*|expedientes?|recibos?|educativ\p{L}*|gan[aeóo]\p{L}*|digit\p{L}*)(?!\p{L})/iu;
+    const dicho = [texto, palabras, e.boton, x.aria].concat(x.letras.map(t => t.txt)).join(' · ');
+    r.push([!PROHIBIDAS.test(dicho), `paso ${n}: no se nombra nada de lo que pregunta la prueba de la misión (quién matricula, el centro, los traslados, los repitientes, el cuadro, las claves, las notas…)`, (dicho.match(PROHIBIDAS) || [])[0]]);
+    const digitos = [texto, e.boton, x.aria].join(' ').match(/\d+/g) || [];
+    r.push([digitos.length === 0, `paso ${n}: las frases no llevan números`, digitos]);
+    if (n === 0) {
+      r.push([B.falta.length === 0, 'la misión dice lo que la escena enseña: la lista de Mi aula sirve para trabajar y no para inscribir, el que no está en el registro no existe para el sistema, M.E.T.A.S no manda nada allá, y lo que lo evita es avisar el día que llega, por escrito y con fecha', B.falta]);
+      r.push([B.malDicho.length === 0, 'la misión ya no dice lo que no es: que M.E.T.A.S arma solo el Parte Mensual con lo que ya registró', B.malDicho]);
+      r.push([B.faltan.length === 0 && B.preguntan.length === 0, 'ningún banco que califica pregunta lo que la escena contesta: que estar en Mi aula no es estar en el registro', [B.faltan, B.preguntan]]);
+    }
+
+    /* ── el año: de febrero a noviembre, y la marca del mes ── */
+    const C = x.cal, MS = C.meses.slice().sort((a, b) => a.x - b.x);
+    const paso = MS.length > 1 ? MS[1].x - MS[0].x : 0;
+    r.push([MS.length === MESES.length && paso > 0 && MS.every((m, i) => m.k === MESES[i] && sin(m.txt) === MESES[i] && cerca(m.x - MS[0].x, paso * i, 0.05) && cerca(m.y, MS[0].y, 0.05) && dentro(m.tinta, C.tira, -1)),
+      `paso ${n}: el año de clases va de febrero a noviembre, un mes por casilla, a la misma distancia y dentro de su tira`, MS.map(m => m.txt)]);
+    const enMarca = MS.filter(m => dentro(m.tinta, C.marca, -0.5) && cerca(cx(m.tinta), cx(C.marca), 0.8));
+    const mes = enMarca.length === 1 ? enMarca[0].k : null;
+    if (n === 1) M.llega = mes;
+    r.push([mes === E.mes && dentro(C.marca, C.tira, 0.5), `paso ${n}: la marca del mes está en «${E.mes}», encerrando su nombre`, enMarca.map(m => m.k)]);
+
+    /* ── las dos listas ── */
+    const [PM, PS] = x.paneles, [AM, AS] = x.altas;
+    r.push([cerca(PM.pantalla.y0, PS.pantalla.y0) && cerca(PM.pantalla.y1, PS.pantalla.y1) && cerca(PM.pantalla.x1 - PM.pantalla.x0, PS.pantalla.x1 - PS.pantalla.x0) &&
+      PM.pantalla.x1 < PS.pantalla.x0 - 4 && PM.pantalla.y0 > C.tira.y1 + 2 && sin(PM.titulo.txt) === 'Mi aula' && sin(PS.titulo.txt) === 'SACE' &&
+      [PM, PS].every(p => dentro(p.titulo.tinta, p.pantalla, -3) && horizontal(p.regla) && p.titulo.tinta.y1 < p.regla.pts[0][1] - 1 && p.regla.pts[1][0] - p.regla.pts[0][0] > 0.85 * (p.pantalla.x1 - p.pantalla.x0)),
+      `paso ${n}: las dos listas son del mismo tamaño, una al lado de la otra y debajo del año: Mi aula a la izquierda y SACE a la derecha, cada una con su título arriba`, [PM.titulo.txt, PS.titulo.txt]]);
+    const FILA = /^(\d+) · (\p{Lu}\p{Ll}+ \p{Lu}\p{Ll}+)$/u;
+    const deLista = (p, a) => p.filas.concat([a.fila]).filter(f => f.ve).sort((u, v) => u.y - v.y)
+      .map(f => { const m = sin(f.txt).match(FILA); return { f, k: m ? +m[1] : NaN, nom: m ? m[2] : '' }; });
+    const LM = deLista(PM, AM), LS = deLista(PS, AS);
+    const bienLista = (L, p) => L.every((l, i) => l.k === i + 1 && l.f.k === l.k && dentro(l.f.tinta, p.pantalla, -2) && l.f.tinta.y0 > p.regla.pts[0][1] + 1 && cerca(l.f.x, L[0].f.x, 0.05) &&
+      (i < 2 || cerca(l.f.y - L[i - 1].f.y, L[1].f.y - L[0].f.y, 0.05)));
+    r.push([LM.length >= 2 && LS.length >= 2 && bienLista(LM, PM) && bienLista(LS, PS) && LS.every((l, i) => !!LM[i] && cerca(l.f.y, LM[i].f.y, 0.05)),
+      `paso ${n}: cada lista dice un alumno por renglón, numerados y en orden, a la misma distancia, y los renglones de las dos van a la misma altura`, [LM.map(l => l.f.txt), LS.map(l => l.f.txt)]]);
+    if (n === 0) M.feb = LM.length;
+    const FEB = M.feb || 0;
+    r.push([LM.length === FEB + (E.metas6 ? 1 : 0) && LS.length === FEB + (E.sace6 ? 1 : 0) && LS.every((l, i) => !!LM[i] && l.nom === LM[i].nom),
+      `paso ${n}: las dos listas dicen los mismos nombres en el mismo orden; ${E.metas6 ? (E.sace6 ? 'el que llegó está en las dos' : 'el que llegó solo está en Mi aula') : 'todavía no llega nadie'}`, [LM.map(l => l.nom), LS.map(l => l.nom)]]);
+    const nuevo = LM.length > FEB ? LM[FEB] : null;
+    [[AM, PM], [AS, PS]].forEach(([a, p]) => {
+      if (a.ve) r.push([dentro(a.fila.tinta, a.fondo, -0.5) && dentro(a.fondo, p.pantalla, -1), `paso ${n}: el renglón del que llegó, en ${p.titulo.txt}, va sobre su fondo y dentro de la lista`, a.fondo]);
+    });
+
+    /* ── Elías, y su sitio mientras no llega ── */
+    const EL = x.elias, ES = x.espera, ABAJO = Math.max(PM.pantalla.y1, PS.pantalla.y1);
+    r.push([EL.ve === E.elias && ES.ve === !E.elias, `paso ${n}: ${E.elias ? 'Elías ya llegó' : 'Elías todavía no llega: su sitio va de raya cortada'}`, [EL.ve, ES.ve]]);
+    const casa = c => ({ x0: c.x0 - EL.mov.dx, x1: c.x1 - EL.mov.dx, y0: c.y0 - EL.mov.dy, y1: c.y1 - EL.mov.dy });
+    const cuerpoCasa = casa(EL.cuerpo), cabezaCasa = casa(EL.cabeza);
+    r.push([cuerpoCasa.y0 > ABAJO + 2 && EL.pies - EL.mov.dy <= x.vista[1] && cuerpoCasa.x0 >= 0 && cx(cuerpoCasa) > PM.pantalla.x0 && cx(cuerpoCasa) < cx(PM.pantalla) &&
+      sin(EL.nombre.txt) !== '' && cerca(cx(EL.nombre.tinta), cx(EL.cabeza), 1) && EL.nombre.tinta.y0 > EL.pies + 1 && EL.nombre.tinta.y1 - EL.mov.dy <= x.vista[1],
+      `paso ${n}: Elías se para debajo de Mi aula, con su nombre a sus pies`, [cuerpoCasa, EL.nombre.txt]]);
+    if (E.elias) r.push([cerca(EL.mov.dx, 0, 0.05) && !!nuevo && sin(EL.nombre.txt) === nuevo.nom.split(' ')[0], `paso ${n}: el que llegó es Elías: su nombre es el del renglón nuevo de Mi aula`, [EL.nombre.txt, nuevo && nuevo.nom]]);
+    else r.push([EL.cuerpo.x1 < 0, `paso ${n}: Elías espera fuera del dibujo`, EL.cuerpo]);
+    if (ES.ve) r.push([ES.raya.every(rayada) && cerca(cx(ES.cabeza), cx(cabezaCasa), 0.6) && cerca(cy(ES.cabeza), cy(cabezaCasa), 0.6) && cerca(ES.cuerpo.y1, EL.pies - EL.mov.dy, 1.5) &&
+      sin(ES.txt.txt) === '?' && dentro(ES.txt.tinta, ES.cabeza, 0),
+      `paso ${n}: el sitio de Elías es de raya cortada, de su tamaño y donde se va a parar, con su «?»`, [ES.cabeza, cabezaCasa]]);
+
+    /* ── los meses de Elías en Mi aula: una casilla por mes, del que llega a noviembre ── */
+    const CS = x.casillas.slice().sort((a, b) => a.caja.x0 - b.caja.x0);
+    const desde = MESES.indexOf(CS.length ? CS[0].k : '');
+    const lado = CS.length ? CS[0].caja.x1 - CS[0].caja.x0 : 0, pasoC = CS.length > 1 ? CS[1].caja.x0 - CS[0].caja.x0 : 0;
+    const f6 = AM.fila;
+    r.push([desde > 0 && CS.length === MESES.length - desde && pasoC > lado && CS[0].caja.x0 > f6.tinta.x1 + 3 && (!M.llega || CS[0].k === M.llega) &&
+      CS.every((c, i) => c.k === MESES[desde + i] && cerca(c.caja.x1 - c.caja.x0, lado, 0.05) && cerca(c.caja.y1 - c.caja.y0, lado, 0.05) &&
+        cerca(c.caja.x0 - CS[0].caja.x0, pasoC * i, 0.05) && cy(c.caja) > f6.y - 7 && cy(c.caja) < f6.y - 1 && dentro(c.caja, PM.pantalla, -1)),
+      `paso ${n}: en el renglón del que llega hay una casilla por mes, del mes en que llega hasta noviembre, en fila y a la altura de su nombre`, CS.map(c => c.k)]);
+    const hechosVe = x.hechos.filter(h => h.ve).map(h => h.k).sort((a, b) => MESES.indexOf(a) - MESES.indexOf(b));
+    const debeH = E.metas6 ? MESES.slice(desde, MESES.indexOf(mes) + 1) : [];
+    r.push([hechosVe.join() === debeH.join() && x.hechos.every(h => { const c = CS.find(q => q.k === h.k); return !!c && ['x0', 'y0', 'x1', 'y1'].every(q => cerca(h.caja[q], c.caja[q], 0.05)); }),
+      `paso ${n}: en Mi aula queda marcado cada mes de Elías, del que llegó hasta el que va el año: ${debeH.join(', ') || 'ninguno'}`, hechosVe]);
+
+    /* ── el «=» de los nombres que tienen pareja, renglón por renglón ── */
+    const IG = x.iguales.slice().sort((a, b) => a.k - b.k);
+    const parejas = E.compara ? LM.map((l, i) => i).filter(i => !!LS[i] && LS[i].nom === LM[i].nom).map(i => i + 1) : [];
+    const igVe = IG.filter(g => g.ve).map(g => g.k);
+    r.push([igVe.join() === parejas.join(), `paso ${n}: ${E.compara ? 'hay un «=» entre los renglones de las dos listas que dicen lo mismo, y en ningún otro' : 'todavía no se comparan las listas'}`, [igVe, parejas]]);
+    const malI = [];
+    IG.filter(g => g.ve).forEach(g => {
+      const l = LM[g.k - 1], [a, b] = g.rayas;
+      if (!l || g.rayas.length !== 2 || !horizontal(a) || !horizontal(b) || !cerca(a.pts[0][0], b.pts[0][0], 0.05) || !cerca(a.pts[1][0], b.pts[1][0], 0.05) ||
+        Math.abs(a.pts[0][1] - b.pts[0][1]) < 2 || g.caja.x0 < PM.pantalla.x1 - 0.5 || g.caja.x1 > PS.pantalla.x0 + 0.5 ||
+        !(cy(g.caja) > l.f.y - 6 && cy(g.caja) < l.f.y - 1)) malI.push(g.k);
+    });
+    r.push([malI.length === 0, `paso ${n}: cada «=» son dos rayas iguales entre las dos listas, a la altura de su renglón`, malI]);
+
+    /* ── el que no tiene pareja: raya cortada hasta su hueco, que dice «no está» ── */
+    const sinPar = LM.length > LS.length ? LM[LS.length] : null;
+    const HV = x.huecos.filter(h => h.ve);
+    const debeHueco = !!sinPar && (E.compara || E.cierra);
+    r.push([HV.length === (debeHueco ? 1 : 0), `paso ${n}: ${debeHueco ? 'en el registro, donde iría el que no tiene pareja, hay un hueco que dice que no está' : 'no hay hueco en el registro'}`, HV.map(h => h.k)]);
+    if (HV.length === 1 && sinPar) {
+      const h = HV[0], ult = LS[LS.length - 1];
+      if (n === 4) M.hueco = h.k;
+      r.push([rayada(h.raya) && dentro(h.caja, PS.pantalla, -1) && h.caja.y0 > ult.f.tinta.y1 && cy(sinPar.f.tinta) > h.caja.y0 && cy(sinPar.f.tinta) < h.caja.y1 &&
+        sin(h.txt.txt) === 'no está' && dentro(h.txt.tinta, h.caja, -1) && cerca(cx(h.txt.tinta), cx(h.caja), 1),
+        `paso ${n}: el hueco es de raya cortada, dentro del registro y a la altura del renglón que no tiene pareja, y dice «no está»`, h.caja]);
+    }
+    const RO = x.roto, debeRoto = !!sinPar && E.compara;
+    r.push([RO.ve === debeRoto, `paso ${n}: ${debeRoto ? 'del renglón sin pareja sale una raya cortada hasta su hueco' : 'no hay raya de un renglón sin pareja'}`, RO.ve]);
+    if (RO.ve && HV.length === 1 && sinPar) r.push([rayada(RO.raya) && horizontal(RO) && cerca(RO.pts[0][0], PM.pantalla.x1, 1) && cerca(RO.pts[1][0], HV[0].caja.x0, 1) &&
+      RO.pts[0][1] > sinPar.f.y - 6 && RO.pts[0][1] < sinPar.f.y - 1,
+      `paso ${n}: la raya cortada va de la lista de Mi aula al hueco, a la altura del renglón sin pareja`, RO.pts]);
+
+    /* ── el año cerrado: un ✓ en cada renglón del registro ── */
+    const CI = x.cierres.slice().sort((a, b) => a.k - b.k);
+    const ciVe = CI.filter(c => c.ve).map(c => c.k);
+    const debeC = E.cierra ? LS.map(l => l.k) : [];
+    r.push([ciVe.join() === debeC.join(), `paso ${n}: ${E.cierra ? 'el registro cierra el año con un ✓ en cada uno de sus renglones, y solo en esos' : 'el registro todavía no cierra el año'}`, [ciVe, debeC]]);
+    const malC = [];
+    CI.filter(c => c.ve).forEach(c => {
+      const s = LS[c.k - 1], p = c.pts;
+      if (!s || p.length !== 3 || !(p[1][1] > p[0][1] && p[1][1] > p[2][1] && p[2][1] < p[0][1] && p[0][0] < p[1][0] && p[1][0] < p[2][0]) ||
+        !dentro(c.caja, PS.pantalla, -1) || c.caja.x0 < s.f.tinta.x1 + 2 || !(cy(c.caja) > s.f.y - 7 && cy(c.caja) < s.f.y + 1)) malC.push(c.k);
+    });
+    r.push([malC.length === 0, `paso ${n}: cada ✓ es una raya quebrada, dentro del registro, a la derecha del nombre y a su altura`, malC]);
+
+    /* ── el aviso: por escrito, con fecha, y su copia ── */
+    const AV = x.aviso;
+    r.push([AV.ve === E.aviso, `paso ${n}: ${E.aviso ? 'el aviso está' : 'no hay aviso'}`, AV.ve]);
+    if (AV.ve) {
+      const textos = [AV.tit].concat(AV.lineas, [AV.fecha, AV.copia]);
+      const ls = AV.lineas.slice().sort((a, b) => a.y - b.y).map(t => sin(t.txt));
+      r.push([AV.papel.y0 > ABAJO + 2 && AV.papel.y1 <= x.vista[1] && AV.papel.x0 > EL.cuerpo.x1 + 2 && textos.every(t => t.ve && dentro(t.tinta, AV.papel, -2)) &&
+        sin(AV.tit.txt) === 'Aviso' && !!nuevo && ls[0] === nuevo.nom && ls[1] === 'llegó hoy' && AV.lineas.every(t => t.y > AV.tit.y) &&
+        sin(AV.fecha.txt) === M.llega && cerca(AV.fecha.y, AV.tit.y, 0.05) && AV.fecha.tinta.x1 > AV.papel.x1 - 12 &&
+        sin(AV.copia.txt) === 'su copia' && AV.copia.tinta.x1 > AV.papel.x1 - 12 && AV.copia.tinta.y1 > AV.papel.y1 - 10,
+        `paso ${n}: el aviso es un papel junto a Elías, debajo de las listas: dice su nombre como está en Mi aula, que llegó hoy, el mes en que llegó, y que es su copia`, [ls, AV.fecha.txt]]);
+    }
+
+    /* ── el cuaderno del maestro: donde estaba el aviso ── */
+    const CU = x.cuaderno;
+    r.push([CU.ve === E.cuaderno, `paso ${n}: ${E.cuaderno ? 'el cuaderno del maestro sale al final' : 'el cuaderno todavía no sale'}`, CU.ve]);
+    if (CU.ve) {
+      const [p1, p2] = CU.pide, [r1, r2] = CU.rayas;
+      r.push([CU.pide.length === 2 && CU.rayas.length === 2 && sin(p1.txt) === 'Nombres que no calzan con el registro:' && sin(p2.txt) === 'Se lo aviso por escrito a:' &&
+        r1.pts[0][1] > p1.tinta.y1 + 2 && p2.tinta.y0 > r1.pts[0][1] + 2 && r1.pts[1][0] - r1.pts[0][0] > 0.8 * (CU.papel.x1 - CU.papel.x0) &&
+        r2.pts[0][0] > p2.tinta.x1 + 2 && r2.pts[0][1] >= p2.tinta.y1 - 3 && r2.pts[0][1] <= p2.tinta.y1 + 4 && r2.pts[1][0] - r2.pts[0][0] > 80 &&
+        [r1, r2].every(u => horizontal(u) && u.pts[1][0] <= CU.papel.x1) && CU.pide.every(p => dentro(p.tinta, CU.papel, -2)) &&
+        CU.papel.y0 > ABAJO + 2 && CU.papel.y1 <= x.vista[1] && CU.papel.x0 > EL.cuerpo.x1 + 2,
+        `paso ${n}: el cuaderno sale junto a Elías, con su renglón para los nombres que no calzan y otro para a quién se lo avisa por escrito`, CU.pide.map(p => p.txt)]);
+    }
+
+    /* ── cada cosa, cuando le toca ── */
+    const SO = x.cal.sobres.slice().sort((a, b) => a.k - b.k);
+    const llegaS = s => s.d + s.dura;
+    const hecho = k => x.hechos.find(h => h.k === k);
+    if (E.pasan.length) {
+      const ks = E.pasan.map(m => MESES.indexOf(m) - desde + 1);
+      let bien = ks.every(k => !!SO[k - 1] && SO[k - 1].dura > 0);
+      ks.forEach((k, i) => {
+        const s = SO[k - 1], h = hecho(MESES[desde + k - 1]);
+        bien = bien && !!s && !!h && cerca(h.d, llegaS(s), 1) && (i === 0 || s.d >= llegaS(SO[ks[i - 1] - 1]) - 1);
+      });
+      r.push([bien, `paso ${n}: los meses pasan uno por uno (${E.pasan.join(', ')}), y cada uno queda marcado en Mi aula cuando la marca llega a él`, ks.map(k => SO[k - 1] && [SO[k - 1].d, SO[k - 1].dura])]);
+    }
+    if (n === 1) {
+      const s1 = SO[0], h = hecho(MESES[desde]);
+      r.push([s1.dura > 0 && EL.d >= llegaS(s1) - 1 && EL.mov.dura > 0 && cerca(ES.d, EL.d + EL.mov.dura, 1) && AM.d >= EL.d + EL.mov.dura - 1 && !!h && h.d >= AM.d + 500,
+        'paso 1: el año corre hasta el mes en que llega Elías; entonces él llega, su sitio vacío se va cuando él ya está ahí, y después se anota en Mi aula y se marca su primer mes',
+        { cal: [s1.d, s1.dura], elias: [EL.d, EL.mov.dura], espera: ES.d, alta: AM.d, hecho: h && h.d }]);
+    }
+    if (n === 3) {
+      const hn = hecho(MESES[MESES.length - 1]), cs = CI.filter(c => c.ve), hu = HV[0];
+      let bien = !!hn && cs.length > 0 && cs[0].d >= hn.d + 300 && !!hu && hu.d >= cs[cs.length - 1].d + 300;
+      cs.forEach((c, i) => { bien = bien && (i === 0 || c.d > cs[i - 1].d); });
+      r.push([bien, 'paso 3: llega noviembre y su último mes queda marcado; después el registro pone su ✓ renglón por renglón, y al final sale el hueco del que no está',
+        { hecho: hn && hn.d, cierres: cs.map(c => c.d), hueco: hu && hu.d }]);
+    }
+    if (n === 4) {
+      const vuelta = Math.max(...SO.slice(1).map(llegaS)), gs = IG.filter(g => g.ve);
+      let bien = gs.length > 0 && gs[0].d >= vuelta - 1 && RO.d >= gs[gs.length - 1].d + 300 && !!HV[0] && cerca(HV[0].d, RO.d, 1);
+      gs.forEach((g, i) => { bien = bien && (i === 0 || g.d > gs[i - 1].d); });
+      r.push([bien, 'paso 4: el año vuelve al mes en que llega; después se comparan los nombres uno por uno, y al final sale el que no tiene pareja, con su hueco',
+        { vuelta, iguales: gs.map(g => g.d), roto: RO.d, hueco: HV[0] && HV[0].d }]);
+    }
+    if (n === 5) {
+      const hu = x.huecos.find(h => h.k === M.hueco), gn = IG.find(g => g.k === LM.length);
+      r.push([AV.d < AV.fecha.d && AV.fecha.d < AV.copia.d && !!hu && hu.d >= AV.copia.d && cerca(RO.d, hu.d, 1) && AS.d >= hu.d + 500 - 1 && !!gn && gn.d >= AS.d + 500 - 1,
+        'paso 5: primero el aviso, después su fecha y su copia; con el aviso dado se va el hueco, el que llegó aparece en el registro, y después su «=»',
+        { aviso: [AV.d, AV.fecha.d, AV.copia.d], hueco: hu && hu.d, alta: AS.d, igual: gn && gn.d }]);
+    }
+    if (n === 6) {
+      const ultimo = SO[SO.length - 1], cs = CI.filter(c => c.ve);
+      let bien = cs.length > 0 && cs[0].d >= llegaS(ultimo) - 1 && AV.d >= cs[cs.length - 1].d && CU.d >= AV.d + 500 - 1;
+      cs.forEach((c, i) => { bien = bien && (i === 0 || c.d > cs[i - 1].d); });
+      r.push([bien, 'paso 6: el año corre hasta noviembre; el registro pone su ✓ renglón por renglón, y cuando ya cerró, el aviso se va y en su lugar sale el cuaderno',
+        { cierres: cs.map(c => c.d), aviso: AV.d, cuaderno: CU.d }]);
+    }
+
+    /* ── el marcador y la frase dicen lo que se ve ── */
+    const listasCon = nom => [LM, LS].filter(L => L.some(l => l.nom === nom)).length;
+    if (n === 0) {
+      const m = texto.match(/^En (\p{Ll}+), su lista de Mi aula y la del registro oficial dicen los mismos (\p{Ll}+) nombres\. En (\p{Ll}+) llega (\p{Lu}\p{Ll}+): ¿en cuál va a quedar\?$/u);
+      if (m) { M.nombre = m[4]; M.llegaLargo = m[3]; }
+      r.push([!!m && m[1] === LARGO[mes] && NUM.indexOf(m[2]) === LM.length && LM.length === LS.length && MESES.some(k => LARGO[k] === m[3]) &&
+        cifra === '?' && palabras === 'listas donde va a quedar ' + (m ? m[4] : '?'),
+        'paso 0: la frase dice el mes que marca el año, cuántos nombres dicen las dos listas, y quién llega y cuándo; el marcador deja la pregunta', [texto, cifra, palabras]]);
+    }
+    if (n === 1) r.push([LARGO[mes] === M.llegaLargo && !!nuevo && nuevo.nom.split(' ')[0] === M.nombre && cifra === String(listasCon(nuevo.nom)) &&
+      palabras === 'de ' + x.paneles.length + ' listas lo tienen' && texto.startsWith('Usted lo anota en Mi aula') && texto.endsWith('anotarlo aquí no lo escribe allá.'),
+      'paso 1: llega en el mes que dijo la frase y es el que dijo; el marcador cuenta en cuántas listas está, y la frase dice que anotarlo aquí no lo escribe allá', [mes, cifra, palabras]]);
+    if (n === 2) r.push([cifra === String(hechosVe.length) && palabras === 'meses de trabajo en Mi aula' && texto.startsWith('Pasan los meses y ' + M.nombre + ' trabaja como todos') &&
+      texto.endsWith('En el registro, todavía no está.') && !!nuevo && listasCon(nuevo.nom) === 1,
+      'paso 2: el marcador cuenta los meses marcados en Mi aula, y la frase dice que en el registro todavía no está', [cifra, texto]]);
+    if (n === 3 || n === 6) {
+      const k = ciVe.length;
+      r.push([cifra === String(k) && palabras === 'cierran el año en el registro' && texto.startsWith('En ' + LARGO[mes] + ', el registro cierra el año con los ' + NUM[k]) &&
+        (n === 3 ? texto.includes('con los ' + NUM[k] + ' que tiene. ' + M.nombre + ' no está: para el registro, no existe.') && texto.endsWith('Arreglarlo ahora es un trámite, y lo carga él.')
+                 : texto.endsWith('Compare hoy su lista con la del registro, nombre por nombre.')),
+        `paso ${n}: el marcador cuenta los renglones que cierran el año, y la frase dice cuántos son${n === 3 ? ' y que Elías no está' : ''}`, [cifra, texto]]);
+    }
+    if (n === 4 || n === 5) r.push([cifra === String(igVe.length) && palabras === 'de ' + LM.length + ' nombres tienen pareja' &&
+      (n === 4 ? texto.startsWith('El mismo ' + LARGO[mes] + ', con un paso más:') && texto.includes('compara las dos listas, nombre por nombre') && texto.endsWith(M.nombre + ' no tiene pareja.')
+               : texto.includes('por escrito y con fecha') && texto.includes('guarda su copia') && texto.endsWith('ya tiene pareja.')),
+      `paso ${n}: el marcador cuenta los nombres que tienen pareja, de los que hay en Mi aula`, [cifra, palabras, texto]]);
+
+    /* ── lo que se lee ── */
+    const ml = [];
+    x.letras.forEach((a, i) => x.letras.slice(i + 1).forEach(b => { if (monta(a.caja, b.caja)) ml.push([a.txt, b.txt]); }));
+    r.push([ml.length === 0, `paso ${n}: ningún texto se monta en otro`, ml.slice(0, 4)]);
+    const tapa = x.letras.filter(t => IG.some(g => g.ve && monta(g.caja, t.caja)) || CI.some(c => c.ve && monta(c.caja, t.caja)) || (E.metas6 && CS.some(c => monta(c.caja, t.caja))));
+    r.push([tapa.length === 0, `paso ${n}: ni los «=», ni los ✓, ni las casillas se montan en lo escrito`, tapa.map(t => t.txt)]);
+    const saleT = x.letras.filter(t => t.caja.x0 < -0.5 || t.caja.y0 < -0.5 || t.caja.x1 > x.vista[0] + 0.5 || t.caja.y1 > x.vista[1] + 0.5);
+    r.push([saleT.length === 0, `paso ${n}: todo lo escrito cabe en el dibujo`, saleT.map(t => t.txt)]);
+    return r;
+
   }
 };
 

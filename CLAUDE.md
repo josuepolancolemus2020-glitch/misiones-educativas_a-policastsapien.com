@@ -15334,6 +15334,11 @@ falta: se vuelve a colocar en cada cuadro, y nueve fichas que volaban con su añ
 teléfono barato a 46 cuadros por segundo (con el año quieto en su renglón, 58). Y lo que llega a
 una regla desde abajo no puede tener los rótulos de la regla debajo: cualquier camino los pisa.
 
+Lo que la sonda cuenta lo busca por la clase que lo pinta, no por el dato que la escena le
+escribe: una casilla de más que no dijera de qué mes es se dibujaba igual, y la sonda, que las
+buscaba por su mes, no la contaba. Y un momento del año no llega dos veces: si un paso ya llevó
+el año hasta noviembre, el botón siguiente no puede decir «Llega noviembre».
+
 Una misión puede llevar **más de una** animación: la primera va justo después de
 la historia, y es el gancho; las demás, dentro de la sección cuyo contenido
 explican, cada una en su tarjeta con `data-animacion` y su propio id. La sonda
@@ -16061,6 +16066,133 @@ boleta nueva, que sí se ve, y salió roja.
 
 Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es de
 67 ms; la de la Ley Fundamental, medida el mismo día, va a 57 y 83 ms.
+
+#### La octava: METAS y SACE, dos listas que parecen la misma
+
+En **M.E.T.A.S y SACE: qué hace cada uno** (`misiones/docente-metas-sace/`,
+`js/animacion-registro.js`), dentro de «Momentos», detrás del cuadro de la
+frontera. El momento 1 de la misión lo llama «la confusión más cara de todas»:
+estar en su lista de Mi aula no es estar en el registro oficial, y «revisar eso en
+marzo cuesta cinco minutos; en noviembre, un año». La animación es esa confusión
+con un alumno de verdad:
+
+- el año de clases, de febrero a noviembre, y las dos listas, Mi aula y SACE, con
+  los mismos cinco nombres. Abajo, de raya cortada y con su «?», el sitio de
+  alguien que todavía no llega: Elías llega en agosto, ¿en cuál va a quedar?;
+- el año corre hasta agosto, Elías llega y usted lo anota en Mi aula, con su
+  primer mes marcado. La lista del registro no cambió: anotarlo aquí no lo
+  escribe allá;
+- pasan septiembre y octubre, y en Mi aula cada mes queda marcado;
+- llega noviembre: el registro cierra el año con un ✓ en cada uno de sus cinco
+  renglones, y donde iría Elías queda un hueco que dice «no está»;
+- el mismo agosto, con un paso más: el día que llega, usted compara las dos
+  listas nombre por nombre, con un «=» entre los renglones que dicen lo mismo, y
+  del de Elías sale una raya cortada hasta su hueco;
+- lo avisa ese mismo día, por escrito, con la fecha y guardando su copia; el
+  hueco se va, Elías aparece en el registro y tiene su «=»;
+- en noviembre el registro cierra el año con los seis, y junto a Elías sale el
+  cuaderno del maestro: los nombres que no calzan con el registro, y a quién se
+  lo avisa por escrito.
+
+**Siete cosas que valen para las siguientes:**
+
+1. ⚠️ **El aviso no dice a quién va, y es a propósito.** Quién matricula lo
+   pregunta la prueba (el completar pide «el administrador del ____», y el
+   diagnóstico también), igual que cómo va un traslado o un repitiente. La
+   escena no nombra el centro, ni la dirección, ni la matrícula: el aviso dice el
+   nombre, «llegó hoy», el mes y «su copia», y el cuaderno deja en blanco a quién
+   se le avisa, para que lo escriba el maestro. Tampoco dice «notas»: «la nota
+   del parcial, en los dos» es una tarjeta del Clasifica.
+2. ⚠️ **La escena contestaba dos preguntas y dos tarjetas, y se cambiaron.**
+   «Un alumno aparece en su lista de Mi aula. Eso quiere decir que…» estaba en
+   el quiz y en el diagnóstico, con la respuesta «lo tiene en su lista de
+   trabajo, nada más». Ahora preguntan qué nombre gana cuando su lista y la
+   matrícula lo escriben distinto (el de la matrícula, y se corrige el suyo),
+   que es un paso del mismo momento. En el Clasifica, «La matrícula oficial»
+   (solo en SACE) y «La lista de sus alumnos» (en los dos) pasaron a «Su
+   voucher de pago» y «Las inasistencias del parcial», que la misión ya enseña
+   entre los módulos del perfil docente y lo que pide el archivo de notas. Y la
+   pregunta del repitiente que no quedó registrado se quedó, pero no sus
+   distractores: «se arregla al cierre» y «el sistema lo detecta solo» se
+   descartaban mirando la escena, y con dos de tres fuera la respuesta quedaba
+   sola.
+3. ⚠️ **Escribirla destapó lo que la misión decía mal, y se corrigió con ella.**
+   La parada del respaldo decía que la boleta, el Parte Mensual, la Evidencia de
+   misiones y la economía con recibo los lleva M.E.T.A.S «sin que usted haga nada
+   extra», y el diagnóstico daba por buena «el Parte Mensual de M.E.T.A.S, con lo
+   que ya registró». El Parte Mensual (`js/tools/parte-mensual.js`) es una
+   calculadora: los números del mes los pone el maestro y él saca las cuentas.
+   Ahora lo dicen así la parada y la respuesta. Y el dato del Aprende («un alumno
+   que no está en el registro oficial no existe para el sistema educativo») abría
+   un `<div>` y lo cerraba con un `</p>`: el navegador metía en él el resto de la
+   tarjeta y la tarjeta siguiente. No se veía; lo dijo un contador de etiquetas.
+4. **«Llega noviembre» tiene que llegar en noviembre.** La primera versión llevaba
+   el año hasta noviembre en el paso de los meses, y el botón siguiente decía
+   «Llega noviembre» con la marca ya ahí. Ahora los meses llegan hasta octubre, y
+   noviembre llega con el cierre. Se vio en las capturas, con la sonda en verde.
+5. **Un tercio del dibujo vacío, otra vez.** Debajo de las listas van Elías, el
+   aviso y el cuaderno, y en los primeros pasos solo estaba Elías. El dibujo bajó
+   de 306 a 286 de alto, y en febrero, cuando Elías todavía no está, va su sitio
+   de raya cortada, que se va justo cuando él llega. Su tinta es la de la
+   pantalla y no la del papel: va sobre el fondo de la escena, y en la oscura no
+   se veía.
+6. **Los meses de Elías son casillas, una por mes del que llega a noviembre**, y
+   cada una se marca cuando la marca del año llega a su mes. La marca va en
+   cuatro sobres, uno dentro de otro: el primero la lleva de febrero a agosto y
+   cada uno de los otros le suma un mes. Así cada mes espera su turno.
+7. **Las casillas se miden contra el renglón, no contra su tinta.** «6 · Elías
+   Zelaya» baja por la «y», y el centro de su tinta cae más abajo que el de las
+   casillas, que van a la altura de las mayúsculas. La sonda las acusaba con el
+   dibujo bien; ahora las mide contra la línea del renglón.
+
+La sonda **no le cree nada a la escena**. Lee en el dibujo en qué mes va el año,
+qué dice cada renglón de cada lista y qué casillas están marcadas, y de ahí saca
+lo demás. Comprueba:
+
+- que la misión diga lo que la escena enseña: la lista de Mi aula sirve para
+  trabajar y no para inscribir, el que no está en el registro no existe para el
+  sistema, M.E.T.A.S no manda nada allá, y lo que lo evita es avisar el día que
+  llega, por escrito y con fecha; que ya no diga lo del Parte Mensual, y que
+  ningún banco que califica vuelva a preguntar lo que la escena contesta;
+- que el año vaya de febrero a noviembre, a paso parejo, con la marca en el mes
+  de cada paso;
+- que las dos listas digan los mismos nombres en el mismo orden, y que el que
+  llegó esté solo en Mi aula hasta que se avisa;
+- que haya una casilla por mes, del que llega a noviembre, y que estén marcados
+  justo los meses que ya pasaron;
+- que el «=» esté entre los renglones que dicen lo mismo, y en ningún otro; que el
+  hueco esté donde iría el que no tiene pareja, de raya cortada, con su raya
+  cortada hasta él; y que el año cerrado sea un ✓ en cada renglón del registro, y
+  solo en esos;
+- que el aviso diga el nombre como está en Mi aula, «llegó hoy», el mes en que
+  llegó y «su copia»;
+- que cada cosa pase cuando le toca: Elías llega cuando el año llega a agosto,
+  cada mes se marca cuando llega la marca, el registro cierra después del último
+  mes, se compara nombre por nombre, y el registro lo tiene después del aviso;
+- que el marcador y la frase digan lo que se ve;
+- y que no salga nada de lo que pregunta la prueba.
+
+Se comprobó al revés con treinta y seis averías, plantadas una por una (el «=»
+también en el renglón sin pareja, un ✓ en el renglón que no está, el hueco en
+otro renglón, el hueco o su raya sin raya cortada, la marca llegando a
+septiembre, Elías llegando antes de agosto, su sitio yéndose antes de que llegue,
+el registro anotándolo solo, los meses pasando todos juntos, la fecha antes que el
+aviso, el aviso con otra fecha o con otro nombre, «matrícula» en una frase, el ✓
+dibujado como una ✗, el «=» de una sola raya, la misión volviendo a decir lo del
+Parte Mensual, un banco volviendo a preguntar lo de la lista…). Salieron rojas
+treinta y cinco. La que no, una casilla de más, era de la sonda: buscaba las
+casillas por su mes, y la de más, que no tenía mes, se dibujaba igual. Ahora las
+busca por la clase que las pinta, y sale roja.
+
+⚠️ **Y de paso, una avería de otra ficha del maestro.** La de Derechos de la niñez
+llevaba desde agosto un párrafo partido entre las hojas 5 y 6: un `<p>` abierto y
+vacío al final de la 5, y el texto sin abrir al principio de la 6. El navegador lo
+pintaba bien, y por eso nadie lo vio. Lo encontró el mismo contador de etiquetas;
+se cerró, y la ficha sigue saliendo en sus diez hojas.
+
+Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es de
+67 ms; la de Bienvenida, medida el mismo día, va a 58 y 67 ms. Con esta, las ocho
+misiones del maestro llevan su animación.
 
 ## Normativa: las Sugerencias de una misión salen del teléfono
 

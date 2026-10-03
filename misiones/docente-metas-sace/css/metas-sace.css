@@ -499,3 +499,48 @@ body {
 }
 .ach-fila:last-of-type { border-bottom: none; }
 .ach-fila.no { opacity: .45; font-weight: 600; }
+
+/* ── La animación de las dos listas (#amRegistro) ──
+   Va en «Momentos», detrás del cuadro de la frontera. Las dos listas son
+   pantallas y el calendario, el aviso y el cuaderno son papel: los dos se
+   quedan así en la pantalla oscura, con tinta oscura fija. Lo de M.E.T.A.S
+   va en violeta y lo de SACE en el gris azulado de la misión, como en el
+   cuadro de arriba. Lo que va sobre la tarjeta (el «=» de la comparación y
+   el nombre de Elías) lleva los colores de la pantalla, que se aclaran
+   solos en la oscura. Nada se dice solo con color: el que no tiene pareja
+   va con raya cortada hasta su hueco, y el año cerrado lleva su ✓. */
+/* El marco de una pantalla es oscuro sobre la tarjeta clara y claro sobre
+   la oscura: oscuro sobre oscuro, la pantalla se leía como un papel más. */
+#amRegistro { --rg-marco: #1a2331; --rg-espera: #64748b; --rg-espera-txt: #475569; }
+[data-theme="dark"] #amRegistro { --rg-marco: #94a3b8; --rg-espera: #94a3b8; --rg-espera-txt: #cbd5e1; }
+#amRegistro .rg-pantalla { fill: #ffffff; stroke: var(--rg-marco); stroke-width: 2; }
+#amRegistro .rg-tira { fill: #fffdf5; stroke: #cbd5e1; stroke-width: 1.2; }
+#amRegistro .rg-marca { fill: #ede9fe; stroke: #6d28d9; stroke-width: 1.6; }
+#amRegistro .rg-tinta { fill: #1a2331; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amRegistro .rg-tinta-suave { fill: #475569; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amRegistro .rg-tit { font-family: 'Fredoka', sans-serif; font-weight: 700; }
+#amRegistro .rg-tit-metas { fill: #6d28d9; }
+#amRegistro .rg-tit-registro { fill: #334155; }
+#amRegistro .rg-regla { stroke: #cbd5e1; stroke-width: 1; }
+#amRegistro .rg-nuevo-metas { fill: #f3eeff; }
+#amRegistro .rg-nuevo-registro { fill: #eef2f7; }
+#amRegistro .rg-casilla { fill: none; stroke: #6d28d9; stroke-width: 1.2; }
+#amRegistro .rg-hecho { fill: #6d28d9; }
+#amRegistro .rg-igual { fill: none; stroke: var(--am-sec); stroke-width: 1.8; stroke-linecap: round; }
+#amRegistro .rg-roto { fill: none; stroke: var(--am-sec); stroke-width: 1.8; stroke-dasharray: 3 2.5; }
+#amRegistro .rg-hueco { fill: none; stroke: #64748b; stroke-width: 1.2; stroke-dasharray: 4 3; }
+/* el sitio de Elías antes de que llegue va sobre el fondo de la escena, no
+   sobre papel: su tinta cambia con la pantalla */
+#amRegistro .rg-espera { fill: none; stroke: var(--rg-espera); stroke-width: 1.4; stroke-dasharray: 4 3; }
+#amRegistro .rg-espera-txt { fill: var(--rg-espera-txt); font-family: 'Fredoka', sans-serif; font-weight: 700; }
+#amRegistro .rg-bien { fill: none; stroke: #15803d; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+#amRegistro .rg-papel { fill: #fffdf5; stroke: #cbd5e1; stroke-width: 1.2; }
+#amRegistro .rg-raya { stroke: #94a3b8; stroke-width: 1.2; }
+#amRegistro .rg-camisa { fill: #f8fafc; stroke: #94a3b8; stroke-width: 1; }
+#amRegistro .rg-pantalon { fill: #1e3a8a; }
+#amRegistro .rg-zapato { fill: #1a2331; }
+#amRegistro .rg-mochila { fill: #0f766e; }
+#amRegistro .rg-tiras { stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round; }
+#amRegistro .rg-brazo { fill: none; stroke: #8d5a3b; stroke-width: 3; stroke-linecap: round; }
+#amRegistro .rg-piel { fill: #8d5a3b; }
+#amRegistro .rg-pelo { fill: #1f130b; }

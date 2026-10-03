@@ -8,6 +8,9 @@
 <meta name="robots" content="noindex">
 <link rel="stylesheet" href="../../css/vendor/fuentes/fuentes.css">
 <link rel="stylesheet" href="css/metas-sace.css">
+<!-- La animación de las dos listas: va DESPUÉS del CSS de la misión, que es
+     de donde saca sus colores. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La barra de secciones, arriba y siempre a la vista. Va DESPUÉS del CSS
      de la misión a propósito: de ahí saca su color, y así sobrescribe su
      position:static sin un solo !important. -->
@@ -99,6 +102,16 @@
         la línea de soporte del SACE, el <b>104</b>.</div>
     </div>
 
+    <div class="card" data-animacion>
+      <h2>🧾 Dos listas que parecen la misma</h2>
+      <div id="amRegistro">
+        <p>Su lista de Mi aula y la del registro oficial dicen los mismos nombres, hasta que llega un
+          alumno a mitad de año. Anotarlo en Mi aula no lo escribe en el registro: si nadie compara las
+          dos listas, en noviembre el registro cierra el año sin él. Compararlas el día que llega,
+          nombre por nombre, y avisar por escrito, lo evita.</p>
+      </div>
+    </div>
+
     <div class="card">
       <h2>🗓️ Ocho momentos del año escolar</h2>
       <p>Toque cada momento: se abre debajo con lo que es de SACE, lo que es de M.E.T.A.S, quién
@@ -124,7 +137,7 @@
       <div class="dato">📌 <b>La consecuencia que hay que tener presente todo el año:</b> un alumno
         que no está en el registro oficial <b>no existe para el sistema educativo</b>, por muchas
         misiones que haya completado y por bien que le haya ido en su clase. Reinsertarlo después es
-        un trámite, y el que lo sufre es él.</p>
+        un trámite, y el que lo sufre es él.</div>
       <p>Que M.E.T.A.S no lo sustituya no es una limitación que se toleró: es que son cosas de
         naturaleza distinta. Un registro del Estado tiene que ser único, obligatorio y controlado,
         porque de él dependen la certificación y las estadísticas del país. Una herramienta de
@@ -483,6 +496,8 @@
      Normativa en CLAUDE.md. -->
 <script src="../../js/data/misiones.js"></script>
 <script src="js/metas-sace.js"></script>
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-registro.js"></script>
 <!-- Accesibilidad de aula compartida: añade al pie «🔎 Letra» y
      «📽️ Presentación» (con modo libro). Se engancha sola en .cred-tools,
      .sec.active y go(). -->

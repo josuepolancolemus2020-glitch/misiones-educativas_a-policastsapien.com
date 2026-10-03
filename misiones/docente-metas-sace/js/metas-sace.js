@@ -404,10 +404,11 @@ const PARADAS = [
          'dato oficial va a estar donde tiene que estar, y se comprueba en <b>Ver Cuadro #1</b>. Lo ' +
          'que casi nadie tiene a mano es lo otro: con qué instrumento se evaluó, qué pauta se usó, ' +
          'cuántas veces faltó ese alumno, qué se hizo con los que iban mal, en qué se gastó la ' +
-         'colecta. Todo eso lo lleva M.E.T.A.S sin que usted haga nada extra: <b>boleta</b>, ' +
-         '<b>Parte Mensual</b>, <b>Evidencia de misiones</b>, <b>economía con recibo</b>. Es la ' +
-         'misma lógica del artículo 6 de la Ley Fundamental de Educación, que ya tiene su misión en ' +
-         'esta serie: lo que no está en papel no ocurrió.',
+         'colecta. Casi todo eso ya lo tiene M.E.T.A.S sin trabajo extra: la <b>boleta</b>, la ' +
+         '<b>Evidencia de misiones</b> y la <b>economía con recibo</b>. El <b>Parte Mensual</b> también ' +
+         'está ahí, aunque los números del mes los pone usted y él saca las cuentas. Es la misma ' +
+         'lógica del artículo 6 de la Ley Fundamental de Educación, que ya tiene su misión en esta ' +
+         'serie: lo que no está en papel no ocurrió.',
     ofi: 'La nota oficial y el registro del alumno, comprobables en Ver Cuadro #1: el dato que certifica.',
     metas: 'El instrumento, la pauta, la asistencia, el análisis, el Parte Mensual y los recibos.',
     manda: 'Usted. El respaldo lo arma quien lo va a necesitar, y se arma antes.',
@@ -569,10 +570,10 @@ const QZ = [
     o: ['Se puede modificar, pero no eliminar ni poner en cero', 'Se puede borrar y volver a empezar',
         'Queda bloqueada y no se toca', 'Se corrige llamando a la Dirección Departamental'],
     c: 0, e: 'Por eso no se suben notas provisionales: lo que entra se queda, aunque se pueda corregir su valor.' },
-  { q: 'Un alumno aparece en su lista de Mi aula. Eso quiere decir que…',
-    o: ['Ya quedó matriculado', 'Usted lo tiene en su lista de trabajo, nada más',
-        'El centro ya lo registró', 'Tiene expediente oficial abierto'],
-    c: 1, e: 'La matrícula, los traslados y los repitientes son módulos del administrador del centro: no están en el perfil del docente.' },
+  { q: 'Su lista de Mi aula y la matrícula oficial escriben distinto el nombre de un alumno. ¿Cuál gana?',
+    o: ['El suyo, que es el que usa todos los días', 'El de la matrícula oficial: se corrige el suyo',
+        'El que tenga el nombre más completo', 'Ninguno: se dejan los dos como están'],
+    c: 1, e: 'Para lo oficial manda el registro oficial. Y la boleta y el recibo salen con el nombre de su lista: por eso se escribe tal como está en la matrícula.' },
   { q: 'El grupo salió con promedio 62. ¿Qué le da cada sistema?',
     o: ['Los dos le dicen lo mismo', 'El oficial le dice quiénes van a reprobar; M.E.T.A.S, por qué contenido y qué hacer',
         'Solo M.E.T.A.S dice algo', 'Solo el oficial dice algo'],
@@ -627,9 +628,9 @@ function qzResp(i, j) {
    plataforma «decida» la nota es el mismo que después se queja de la
    plataforma. */
 const CL_GRUPOS = [
-  { t: 'Solo en SACE', it: ['La matrícula oficial', 'El certificado de estudios', 'El listado de reprobados del centro'] },
+  { t: 'Solo en SACE', it: ['Su voucher de pago', 'El certificado de estudios', 'El listado de reprobados del centro'] },
   { t: 'Solo en M.E.T.A.S', it: ['Misiones con juegos y evaluación', 'El Plan de Acción por contenido', 'La ficha imprimible con QR'] },
-  { t: 'En los dos, cada uno a lo suyo', it: ['La nota del parcial', 'La lista de sus alumnos', 'Un acceso para la familia'] },
+  { t: 'En los dos, cada uno a lo suyo', it: ['La nota del parcial', 'Las inasistencias del parcial', 'Un acceso para la familia'] },
   { t: 'En ninguno: eso es suyo', it: ['Decidir la nota final', 'Explicar el tema en clase', 'Sostener la disciplina del grupo'] },
 ];
 let _clSel = null, _clPos = {}, _clTodas = [];
@@ -911,9 +912,9 @@ const DG = [
     o: ['El promedio automático', 'El maestro, con su criterio escrito',
         'El sistema oficial', 'La plataforma, según los juegos completados'], c: 1 },
 
-  { b: 0, q: 'Un alumno aparece en su lista de Mi aula. Eso significa que:',
-    o: ['Ya está matriculado', 'Ya tiene expediente oficial',
-        'Lo tiene en su lista de trabajo, nada más', 'El centro ya lo registró'], c: 2 },
+  { b: 0, q: 'Su lista de Mi aula y la matrícula escriben distinto el nombre de un alumno:',
+    o: ['Gana el suyo, que es el que usa todos los días', 'Se dejan los dos como están',
+        'Gana el de la matrícula: se corrige el suyo', 'Gana el que tenga el nombre más completo'], c: 2 },
   { b: 1, q: 'Ese archivo de notas pide, por cada alumno:',
     o: ['La nota total y la cantidad de inasistencias del parcial', 'Solo la nota',
         'La nota de cada evaluación por separado', 'La nota y la conducta'], c: 0 },
@@ -944,8 +945,8 @@ const DG = [
         'Publicarlo en el aula', 'Decidir a quién atiende primero y con qué'], c: 3 },
 
   { b: 0, q: 'Si un alumno repite y no queda registrado como repitiente:',
-    o: ['Está en el centro, pero no aparece en los cuadros de notas del docente', 'No pasa nada, se arregla al cierre',
-        'El sistema lo detecta solo', 'Lo corrige el maestro desde su perfil'], c: 0 },
+    o: ['Está en el centro, pero no aparece en los cuadros de notas del docente', 'Sale en los cuadros con las notas del año pasado',
+        'Sale dos veces en los cuadros, una por cada año', 'Pasa al grado siguiente aunque haya reprobado'], c: 0 },
   { b: 1, q: 'Después de subir el archivo de notas conviene:',
     o: ['Esperar el correo de confirmación', 'Volver a subirlo por seguridad',
         'Comprobar en Ver Cuadro #1 que quedó cargado', 'Imprimir la boleta de una vez'], c: 2 },
@@ -954,7 +955,7 @@ const DG = [
         'Le dice que no existe', 'Se lo genera usted desde Mi aula'], c: 1 },
   { b: 3, q: 'Le piden el informe del mes. Lo arma:',
     o: ['El sistema oficial, solo', 'La Dirección Departamental',
-        'Nadie: se escribe a mano cada vez', 'El Parte Mensual de M.E.T.A.S, con lo que ya registró'], c: 3 },
+        'La plataforma, sola y sin que usted lo toque', 'Usted, en el Parte Mensual de M.E.T.A.S, que le hace las cuentas'], c: 3 },
   { b: 4, q: 'Si la pantalla del sistema oficial no calza con lo que dice esta misión:',
     o: ['Gana su pantalla, y para dudas está la línea de soporte 104', 'Gana la misión, que se escribió con los manuales',
         'Hay que dejar de usar el sistema', 'Se reporta a la Secretaría de Educación'], c: 0 },
