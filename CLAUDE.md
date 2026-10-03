@@ -15499,6 +15499,71 @@ la misión diciendo otro orden…), y salió roja con cada una.
 Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
 de 67 ms, lo mismo que Palabras que piensan medida el mismo día.
 
+#### La segunda: Derechos de la niñez, cuánto son de verdad veinticuatro horas
+
+En **Derechos de la niñez en la escuela** (`misiones/docente-derechos-ninez/`,
+`js/animacion-moreton.js`), dentro de la sección de las nueve situaciones. El
+maestro que ve un moretón casi siempre piensa «mañana veo si sigue», y no se da
+cuenta de que esperar a mañana es gastarse el plazo entero. La animación es una
+línea del tiempo del lunes de madrugada al martes por la mañana, con el día y la
+noche:
+
+- el lunes a las 7:00 Kenia entra con un moretón en el brazo: ¿hasta cuándo
+  tiene usted para informar?;
+- veinticuatro horas, como máximo: la barra del plazo corre a paso parejo,
+  empujada por una mano, y se acaba el martes a las 7:00, a la entrada del día
+  siguiente;
+- si espera a mañana «para ver si sigue», la espera cruza la noche entera y el
+  martes a las 7:00 la vuelve a ver: el plazo ya se acabó (✗). La ley pone
+  multa por no informar, y el informe se debe igual;
+- lo que sí, el mismo lunes: anotar lo que vio con fecha y hora, avisar a la
+  dirección dejando constancia, y que el informe salga a tiempo;
+- y el deber no es solo del director: la ley nombra también a los responsables
+  directos de los niños en el centro. ¿A quién se reporta hoy en el suyo? Se
+  anota en el cuaderno.
+
+**Cinco cosas que valen para las siguientes:**
+
+1. ⚠️ **Lo que afirma está leído en el PDF del Código** (`_dev/leyes/`), con la
+   reforma del Decreto 35-2013: el artículo 168 pone el plazo máximo de
+   veinticuatro horas ante «signos evidentes de agresión», alcanza a «los
+   responsables directos de los niños y niñas, en esos centros» y sanciona la
+   omisión con multa «sin perjuicio del cumplimiento de la obligación».
+2. ⚠️ **No se nombra a quién se reporta.** El Código dice el IHNFA y el mapa
+   institucional cambió después de 2013: la misión lo matiza y manda a
+   confirmarlo en el centro, así que la animación termina pidiéndole al maestro
+   que lo escriba. Tampoco salen la cifra de la multa ni el número del artículo,
+   que preguntan el quiz, el completar y los pareados.
+3. ⚠️ **El id se busca antes de escribir la escena.** Se llamó primero
+   `#amReloj`, y ese ya era del Sistema Endocrino: la sonda del navegador guarda
+   lo que lee por id y reventó con el lector que no era. La estática lo dice en
+   un segundo (`verifica-animaciones`, «el id no lo usa ninguna otra
+   animación»): se corre ANTES que la del navegador.
+4. ⚠️ **Una raya que se dibuja poco a poco no puede ser de raya cortada**:
+   `A.trazar` usa el `stroke-dasharray` para correrla. La espera es una raya
+   entera.
+5. **Lo que salió mirando, con la sonda en verde**: los tres puntos de lo que sí
+   salían pegados en el cielo, y la curita tapaba el pelo de Kenia. La curita la
+   cazó también la sonda, que mide la tinta del emoji (se montaba cuatro puntos).
+
+La sonda **no le cree nada a la escena**. El plazo lo lee de la escena del
+moretón de la propia misión («plazo máximo de veinticuatro horas»), con que
+alcanza a los responsables directos, la multa y que el informe se debe igual. La
+escala del tiempo la saca de los dos rótulos del cielo (el mediodía y la
+medianoche), y con ella lee la hora de cada cosa: que las rayitas vayan una cada
+tres horas, que de «lunes 7:00» a «martes 7:00» vaya el plazo de la ley, que la
+llave y la barra lo abracen de punta a punta, que la mano y la barra corran
+juntas y en el mismo tiempo, que Kenia vuelva justo cuando se acaba el plazo,
+que lo que sí caiga el mismo lunes, después de verla y en orden, y que el
+cuaderno traiga su raya para escribir. Se comprobó al revés con veintiuna
+averías, plantadas una por una (un plazo de 23 horas, la mano más rápida que la
+barra, Kenia volviendo antes, la ✗ de una sola raya, el informe el martes, el
+mediodía rotulado a la una, la noche empezando a las 21:00, la misión diciendo
+cuarenta y ocho horas…), y salió roja con cada una.
+
+Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
+de 50 ms; la del Estatuto, medida el mismo día, va a 59 y 67 ms.
+
 ## Normativa: las Sugerencias de una misión salen del teléfono
 
 El botón **💬 Sugerencias** de cada misión lleva años ahí y durante todo

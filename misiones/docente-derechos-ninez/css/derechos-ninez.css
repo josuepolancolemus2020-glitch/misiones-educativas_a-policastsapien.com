@@ -409,3 +409,33 @@ body {
 }
 .ach-fila:last-of-type { border-bottom: none; }
 .ach-fila.no { opacity: .45; font-weight: 600; }
+
+/* ── La animación del reloj de las veinticuatro horas (#amMoreton) ───────
+   El cielo es una cosa (el día claro y la noche oscura) y lleva su color
+   en las dos pantallas; lo mismo los papeles de abajo, con tinta oscura
+   fija. Lo que va sobre la tarjeta (las horas, los nombres) lleva la tinta
+   de la pantalla. El plazo corre a paso PAREJO: la barra se llena en el
+   mismo tiempo en que la mano la empuja, y la espera cruza la noche igual. */
+#amMoreton .rl-emoji { font-family: 'Fredoka', sans-serif; }
+#amMoreton .rl-dia { fill: #dbeafe; }
+#amMoreton .rl-noche { fill: #1e293b; }
+#amMoreton .rl-dia-txt { fill: #1a2331; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amMoreton .rl-noche-txt { fill: #e2e8f0; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amMoreton .rl-eje { stroke: var(--gray); stroke-width: 1.2; }
+#amMoreton .rl-marca { stroke: var(--dark); stroke-width: 2; }
+#amMoreton .rl-barra { fill: none; stroke: var(--am-sec); stroke-width: 5; stroke-linecap: butt;
+  transition: stroke-dashoffset 2.4s linear var(--d, 0s), opacity .5s ease var(--d, 0s); }
+#amMoreton .rl-mano { fill: var(--am-pri); }
+#amMoreton .rl-mano.am-viaja { transition: transform 2.4s linear var(--d, 0s), opacity .5s ease var(--d, 0s); }
+#amMoreton .rl-llave { fill: none; stroke: var(--am-pri); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+#amMoreton .rl-espera { fill: none; stroke: var(--dark); stroke-width: 1.8;
+  transition: stroke-dashoffset 2s linear var(--d, 0s), opacity .5s ease var(--d, 0s); }
+#amMoreton .rl-punta { fill: none; stroke: var(--dark); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+#amMoreton .rl-mal { fill: none; stroke: #dc2626; stroke-width: 2.8; stroke-linecap: round; }
+#amMoreton .rl-papel { fill: #fffdf5; stroke: #cbd5e1; stroke-width: 1.2; }
+#amMoreton .rl-tinta { fill: #1a2331; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amMoreton .rl-tinta-fina { fill: #1a2331; font-family: 'Fredoka', sans-serif; font-weight: 500; }
+#amMoreton .rl-punto circle, #amMoreton .rl-num { fill: #6d28d9; }
+#amMoreton .rl-punto-txt, #amMoreton .rl-num-txt { fill: #fff; font-family: 'Fredoka', sans-serif; font-weight: 700; }
+#amMoreton .rl-aro { fill: none; stroke: var(--am-sec); stroke-width: 2.2; }
+#amMoreton .rl-raya { stroke: #94a3b8; stroke-width: 1.2; }

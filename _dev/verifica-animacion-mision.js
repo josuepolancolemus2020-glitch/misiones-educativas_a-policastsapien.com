@@ -5547,6 +5547,53 @@ const LEER = `
     };
   };
 
+  /* Derechos de la niñez: el reloj de las veinticuatro horas. La mano se
+     mueve con transform: su lugar se mide con getBoundingClientRect. */
+  window.__amExtra.amMoreton = function (raiz) {
+    var H = window.__amHerr(raiz), vis = H.vis, uno = H.uno, todos = H.todos;
+    var sb = H.svg.getBoundingClientRect(), k = sb.width / H.svg.viewBox.baseVal.width;
+    function rect(el) { var b = el.getBoundingClientRect(); return { x0: (b.left - sb.left) / k, y0: (b.top - sb.top) / k, x1: (b.right - sb.left) / k, y1: (b.bottom - sb.top) / k }; }
+    function texto(t) { return t ? { txt: t.textContent, ve: vis(t), d: H.demora(t), tinta: H.tinta(t), caja: H.caja(t), x: +t.getAttribute('x') } : null; }
+    function linea(el) { return { x1: +el.getAttribute('x1'), y1: +el.getAttribute('y1'), x2: +el.getAttribute('x2'), y2: +el.getAttribute('y2'), ve: vis(el), d: H.demora(el) }; }
+    function camino(el) { return { pts: H.pares(el.getAttribute('d')), ve: vis(el), hecho: H.trazado(el), d: H.demora(el), dura: H.dura(el, 'stroke-dashoffset') }; }
+    var mano = uno('[data-mano]'), lista = uno('[data-lista]'), usted = uno('[data-usted]'), aro = uno('[data-aro]'), cua = uno('[data-cuaderno]');
+    return {
+      vista: [H.svg.viewBox.baseVal.width, H.svg.viewBox.baseVal.height],
+      eje: linea(uno('[data-eje]')),
+      rayitas: todos('[data-rayita]').map(linea),
+      rotulosHora: todos('[data-hora-rotulo]').map(texto),
+      dias: todos('[data-dia]').map(H.caja), noche: H.caja(uno('[data-noche]')),
+      sol: texto(uno('[data-sol]')), luna: texto(uno('[data-luna]')),
+      marcas: todos('[data-marca]').map(linea),
+      horas: todos('[data-hora]').map(texto),
+      barra: camino(uno('[data-barra]')),
+      mano: { ve: vis(mano), d: H.demora(mano), dura: H.dura(mano, 'transform'), caja: rect(mano) },
+      llave: camino(uno('[data-llave]')),
+      plazo: texto(uno('[data-plazo]')),
+      kenia: todos('[data-kenia]').map(function (g) {
+        return { ve: vis(g), d: H.demora(g), cara: texto(uno('[data-cara]', g)), curita: texto(uno('[data-curita]', g)), nombre: texto(uno('[data-nombre]', g)) };
+      }),
+      piensa: texto(uno('[data-piensa]')),
+      espera: camino(uno('[data-espera]')),
+      punta: camino(uno('[data-punta]')),
+      mal: camino(uno('[data-mal]')),
+      acabo: texto(uno('[data-acabo]')), precio: texto(uno('[data-precio]')),
+      lista: { ve: vis(lista), d: H.demora(lista), caja: H.caja(uno('[data-lista-caja]')), titulo: texto(uno('[data-lista-titulo]')) },
+      puntos: todos('[data-punto]').map(function (g) {
+        var c = uno('circle', g);
+        return { ve: vis(g), d: H.demora(g), cx: +c.getAttribute('cx'), cy: +c.getAttribute('cy'), r: +c.getAttribute('r'), txt: uno('text', g).textContent };
+      }),
+      renglones: todos('[data-renglon]').map(function (g) {
+        return { ve: vis(g), d: H.demora(g), num: uno('text', g).textContent, txt: texto(uno('[data-renglon-txt]', g)) };
+      }),
+      usted: { ve: vis(usted), d: H.demora(usted), caja: H.caja(uno('[data-usted-caja]')), cara: texto(uno('[data-cara]', usted)), nombre: texto(uno('[data-nombre]', usted)) },
+      aro: { ve: vis(aro), d: H.demora(aro), caja: H.caja(aro) },
+      cuaderno: { ve: vis(cua), d: H.demora(cua), caja: H.caja(uno('[data-cuaderno-caja]')), txt: texto(uno('[data-cuaderno-txt]')), raya: linea(uno('[data-raya-escribir]')) },
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; }),
+      letras: H.letras()
+    };
+  };
+
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -6140,6 +6187,31 @@ const ESTADOS_BANCO = [
    cosas, la pregunta que faltó y CUÁNTAS palabras dice que tiene. Esa cuenta
    la sonda la vuelve a hacer: así salió que la historia decía «cuatro». */
 let historiaBancoMemo = null;
+/* Derechos de la niñez: el plazo, a quién alcanza, la multa y que el informe
+   se debe igual, leídos de la escena del moretón de la propia misión (la que
+   cita el artículo 168 del Código). */
+let leyRelojMemo = null;
+function leyReloj() {
+  if (leyRelojMemo) return leyRelojMemo;
+  const js = fs.readFileSync(path.join(RAIZ, 'misiones', 'docente-derechos-ninez', 'js', 'derechos-ninez.js'), 'utf8')
+    .replace(/'\s*\+\s*'/g, '').replace(/<\/?b>/g, '');
+  const NUM = { doce: 12, 'veinticuatro': 24, 'cuarenta y ocho': 48, 'setenta y dos': 72 };
+  const m = js.match(/plazo máximo de ([a-z ]+?) horas/);
+  leyRelojMemo = {
+    plazo: m ? NUM[m[1]] || NaN : NaN,
+    responsables: /responsables directos de los niños y niñas en esos centros/.test(js),
+    multa: /omitir el informe se sanciona con multa/.test(js),
+    igual: /sin perjuicio de tener que cumplir igual la obligación/.test(js)
+  };
+  return leyRelojMemo;
+}
+const ESTADOS_RELOJ = [
+  { plazo: false, espera: false, hacer: false, deber: false },
+  { plazo: true, espera: false, hacer: false, deber: false },
+  { plazo: true, espera: true, hacer: false, deber: false },
+  { plazo: true, espera: false, hacer: true, deber: false },
+  { plazo: true, espera: false, hacer: true, deber: true }
+];
 /* El Estatuto del Docente: el orden de los turnos lo dice la propia misión,
    en el trámite del traslado, y que la lista va de mayor a menor, en el del
    concurso. La sonda lo lee de ahí, no de la escena. */
@@ -20486,6 +20558,142 @@ const ESCENAS = {
     }
     MEMO_PLAZA.antes = {};
     x.gente.forEach(p => { MEMO_PLAZA.antes[p.k] = p.ve; });
+
+    /* ── lo que se lee ── */
+    const ml = [];
+    x.letras.forEach((a, i) => x.letras.slice(i + 1).forEach(b => { if (monta(a.caja, b.caja)) ml.push([a.txt, b.txt]); }));
+    r.push([ml.length === 0, `paso ${n}: ningún texto se monta en otro`, ml.slice(0, 4)]);
+    const sale = x.letras.filter(t => t.caja.x0 < -0.5 || t.caja.y0 < -0.5 || t.caja.x1 > x.vista[0] + 0.5 || t.caja.y1 > x.vista[1] + 0.5);
+    r.push([sale.length === 0, `paso ${n}: todo lo escrito cabe en el dibujo`, sale.map(t => t.txt)]);
+    return r;
+  },
+
+  /* ── Derechos de la niñez: el reloj de las veinticuatro horas ──
+     ⚠️ Nada se le cree a la escena. El plazo se lee del Código citado en la
+     propia misión («plazo máximo de veinticuatro horas»). La escala del
+     tiempo se saca de los dos rótulos del cielo (el mediodía y la
+     medianoche): con ella se lee la hora de cada cosa del dibujo, y se
+     comprueba que el plazo vaya del momento en que se ve el moretón a la
+     misma hora del día siguiente, que la espera lo gaste entero y que lo
+     que sí se hace caiga el mismo lunes. */
+  amMoreton(e, n) {
+    const x = e.extra, r = [];
+    if (!x) return [[false, `paso ${n}: la sonda pudo leer la escena`, null]];
+    const E = ESTADOS_RELOJ[n], L = leyReloj();
+    const APAGA = 500;
+    const monta = (a, b) => a.x0 < b.x1 - 0.5 && b.x0 < a.x1 - 0.5 && a.y0 < b.y1 - 0.5 && b.y0 < a.y1 - 0.5;
+    const dentro = (a, b, mg = 0) => a.x0 >= b.x0 - mg && a.x1 <= b.x1 + mg && a.y0 >= b.y0 - mg && a.y1 <= b.y1 + mg;
+    const cx = c => (c.x0 + c.x1) / 2, cy = c => (c.y0 + c.y1) / 2;
+    const cerca = (a, b, t = 0.6) => Math.abs(a - b) <= t;
+
+    /* ── lo que no depende del dibujo va primero ── */
+    /* Ni a quién se reporta (el nombre de la entidad pudo cambiar), ni la
+       cifra de la multa, ni el número del artículo, ni las otras escenas
+       de la misión. */
+    const PROHIBIDAS = /ihnfa|dinaf|instituto|ministerio|fiscal|polic[ií]a|(?<![0-9])168(?![0-9])|art[ií]culo|salario|dos a cinco|supresi|transgres|humill|disciplin|discapacidad|deserci|trabaj|denuncia/iu;
+    const dicho = [e.texto, e.palabras, e.boton].concat(x.textos).join(' · ');
+    r.push([!PROHIBIDAS.test(dicho), `paso ${n}: no se dice a quién se reporta, ni la cifra de la multa, ni el artículo, ni otra escena de la misión`, (dicho.match(PROHIBIDAS) || [])[0]]);
+    r.push([L.plazo > 0 && L.responsables && L.multa && L.igual, 'la misión dice el plazo, que alcanza a los responsables directos, la multa y que el informe se debe igual', L]);
+
+    /* ── la escala, de los rótulos del cielo ── */
+    const r12 = x.rotulosHora.find(t => t.txt === 'mediodía'), r24 = x.rotulosHora.find(t => t.txt === 'medianoche');
+    r.push([!!r12 && !!r24 && r24.x > r12.x, `paso ${n}: el cielo rotula el mediodía y la medianoche`, x.rotulosHora.map(t => t.txt)]);
+    if (!r12 || !r24) return r;
+    const porHora = (r24.x - r12.x) / 12, hora = px => 12 + (px - r12.x) / porHora, px = h => r12.x + (h - 12) * porHora;
+    const xs = x.rayitas.map(l => l.x1);
+    r.push([x.rayitas.length >= 6 && xs.every((v, i) => i === 0 || cerca(v - xs[i - 1], xs[1] - xs[0], 0.05)) && x.rayitas.every(l => { const h = hora(l.x1); return cerca(h, Math.round(h / 3) * 3, 0.02); }),
+      `paso ${n}: las rayitas del eje van a la misma distancia, una cada tres horas`, xs.map(v => Math.round(hora(v) * 100) / 100)]);
+    r.push([x.rayitas.every(l => l.y1 === x.eje.y1) && cerca(x.eje.x1, xs[0], 0.05) && cerca(x.eje.x2, xs[xs.length - 1], 0.05), `paso ${n}: las rayitas cuelgan del eje, de punta a punta`, null]);
+    r.push([dentro(r12.tinta, x.dias[0]) && dentro(r24.tinta, x.noche) && dentro(x.luna.tinta, x.noche) && x.dias.some(d => dentro(x.sol.tinta, d)),
+      `paso ${n}: el mediodía y el sol van en el día; la medianoche y la luna, en la noche`, null]);
+    const n0 = hora(x.noche.x0), n1 = hora(x.noche.x1);
+    r.push([n0 >= 17 && n0 <= 19 && n1 >= 29 && n1 <= 31, `paso ${n}: la noche va de la tarde del lunes a la madrugada del martes`, [n0, n1]]);
+
+    /* ── el momento en que se ve, y el plazo ── */
+    const leeHora = t => { const m = (t || '').match(/^(lunes|martes) ([0-9]{1,2}):([0-9]{2})$/); return m ? (m[1] === 'martes' ? 24 : 0) + +m[2] + +m[3] / 60 : NaN; };
+    const hs = x.horas.map(t => ({ t, h: leeHora(t.txt) })).sort((a, b) => a.h - b.h);
+    const ini = hs[0], fin = hs[hs.length - 1];
+    r.push([hs.length === 2 && hs.every(o => !isNaN(o.h) && cerca(o.t.x, px(o.h), 0.3)), `paso ${n}: «${ini && ini.t.txt}» y «${fin && fin.t.txt}» van debajo de su hora en el eje`, hs.map(o => [o.t.txt, Math.round(hora(o.t.x) * 100) / 100])]);
+    if (hs.length !== 2) return r;
+    const mIni = x.marcas.find(m => cerca(m.x1, ini.t.x, 0.3)), mFin = x.marcas.find(m => cerca(m.x1, fin.t.x, 0.3));
+    r.push([!!mIni && !!mFin && x.marcas.length === 2, `paso ${n}: cada hora tiene su marca en el eje`, x.marcas.map(m => m.x1)]);
+    r.push([ini.t.ve && !!mIni && mIni.ve && fin.t.ve === E.plazo && !!mFin && mFin.ve === E.plazo, `paso ${n}: ${E.plazo ? 'se ven el momento en que se vio y el fin del plazo' : 'solo se ve el momento en que se vio'}`, [ini.t.ve, fin.t.ve]]);
+    r.push([cerca(fin.h - ini.h, L.plazo, 0.01), `paso ${n}: de «${ini.t.txt}» a «${fin.t.txt}» van ${L.plazo} horas, el plazo de la ley`, fin.h - ini.h]);
+    const K0 = x.kenia[0], K1 = x.kenia[1];
+    r.push([K0.ve && cerca(cx(K0.cara.tinta), ini.t.x, 1) && K0.cara.tinta.y0 > ini.t.tinta.y1 && K0.nombre.txt === 'Kenia' && cerca(cx(K0.nombre.tinta), cx(K0.cara.tinta), 1.5),
+      `paso ${n}: Kenia está en la hora en que se la ve, debajo de la hora`, [cx(K0.cara.tinta), ini.t.x]]);
+    r.push([K1.ve === E.espera && cerca(cx(K1.cara.tinta), fin.t.x, 1) && K1.nombre.txt === 'Kenia', `paso ${n}: ${E.espera ? 'Kenia vuelve a entrar justo a la hora en que se acaba el plazo' : 'Kenia todavía no vuelve'}`, [K1.ve, cx(K1.cara.tinta)]]);
+    [K0, K1].forEach((k, i) => r.push([k.curita.tinta.x0 >= k.cara.tinta.x1 - 4 && k.curita.tinta.y1 <= k.nombre.tinta.y0 + 0.5, `paso ${n}: la curita de Kenia (${i ? 'el martes' : 'el lunes'}) va a su lado, encima de su nombre`, null]));
+
+    /* La barra del plazo, la mano y la llave. */
+    const B = x.barra.pts;
+    r.push([B.length === 2 && cerca(B[0][0], ini.t.x, 0.3) && cerca(B[1][0], fin.t.x, 0.3) && B.every(p => cerca(p[1], x.eje.y1, 0.05)) && x.barra.hecho === E.plazo,
+      `paso ${n}: ${E.plazo ? 'la barra del plazo va de una hora a la otra, sobre el eje' : 'todavía no corre el plazo'}`, [B, x.barra.hecho]]);
+    const LL = x.llave.pts, lx = LL.map(p => p[0]);
+    r.push([cerca(Math.min(...lx), ini.t.x, 0.3) && cerca(Math.max(...lx), fin.t.x, 0.3) && x.llave.hecho === E.plazo, `paso ${n}: ${E.plazo ? 'la llave abraza el plazo de punta a punta' : 'la llave no está'}`, [Math.min(...lx), Math.max(...lx)]]);
+    const num = +(x.plazo.txt.match(/^([0-9]+) horas$/) || [])[1];
+    r.push([num === L.plazo && x.plazo.ve === E.plazo && cerca(cx(x.plazo.tinta), (ini.t.x + fin.t.x) / 2, 1) && x.plazo.tinta.y1 <= Math.min(...LL.map(p => p[1])) + 0.5,
+      `paso ${n}: encima de la llave dice «${L.plazo} horas»`, x.plazo.txt]);
+    r.push([x.mano.ve === (n === 1), `paso ${n}: ${n === 1 ? 'la mano empuja el plazo' : 'la mano no está'}`, x.mano.ve]);
+    if (n === 1) {
+      r.push([cerca(cx(x.mano.caja), fin.t.x, 0.6) && x.mano.caja.y1 <= x.eje.y1 + 0.5, 'paso 1: la mano llega al fin del plazo, encima del eje', cx(x.mano.caja)]);
+      r.push([x.mano.dura > 0 && x.mano.dura === x.barra.dura && x.mano.d === x.barra.d, 'paso 1: la mano y la barra corren juntas, en el mismo tiempo', [x.mano.dura, x.barra.dura, x.mano.d, x.barra.d]]);
+      r.push([mFin.d >= x.barra.d + x.barra.dura && fin.t.d >= x.barra.d + x.barra.dura && x.llave.d >= mFin.d && x.plazo.d >= x.llave.d,
+        'paso 1: el martes sale cuando la barra llega, y después la llave y su rótulo', [x.barra.d + x.barra.dura, mFin.d, x.llave.d, x.plazo.d]]);
+    }
+
+    /* La espera. */
+    const ES = x.espera.pts, PU = x.punta.pts;
+    r.push([x.espera.hecho === E.espera && x.espera.ve === E.espera && x.punta.ve === E.espera && x.piensa.ve === E.espera, `paso ${n}: ${E.espera ? 'la espera cruza de un día al otro' : 'no hay espera'}`, [x.espera.hecho, x.punta.ve]]);
+    r.push([ES.length === 2 && cerca(ES[0][1], ES[1][1], 0.05) && ES[0][0] >= K0.cara.tinta.x1 + 2 && ES[1][0] <= K1.cara.tinta.x0 - 2 && cerca(ES[0][1], cy(K0.cara.tinta), 4),
+      `paso ${n}: la flecha de la espera va de una Kenia a la otra, sin tocarlas`, ES]);
+    r.push([PU.length === 3 && cerca(PU[1][0], ES[1][0], 1.5) && cerca(PU[1][1], ES[1][1], 0.05) && PU[0][0] < PU[1][0] && PU[2][0] < PU[1][0], `paso ${n}: la flecha apunta al martes`, PU]);
+    r.push([x.piensa.txt === '«mañana veo si sigue»' && x.piensa.tinta.y1 <= ES[0][1] - 1 && x.piensa.tinta.x0 > ES[0][0] && x.piensa.tinta.x1 < ES[1][0],
+      `paso ${n}: lo que se piensa va encima de la flecha`, x.piensa.tinta]);
+    const MA = x.mal.pts;
+    const cruza = MA.length === 4 && Math.sign(MA[1][0] - MA[0][0]) !== Math.sign(MA[3][0] - MA[2][0]);
+    r.push([x.mal.ve === E.espera && cruza && cerca((MA[0][0] + MA[1][0]) / 2, fin.t.x, 0.5) && Math.min(MA[0][1], MA[1][1]) > K1.nombre.tinta.y1,
+      `paso ${n}: ${E.espera ? 'debajo de Kenia, la ✗ (dos rayas que se cruzan)' : 'no hay ✗'}`, MA]);
+    r.push([x.acabo.ve === E.espera && x.precio.ve === E.espera && x.acabo.txt === 'se acabó el plazo' && /multa/.test(x.precio.txt) && /informe se debe igual/.test(x.precio.txt)
+      && x.acabo.tinta.y0 > Math.max(MA[0][1], MA[1][1]) && x.precio.tinta.y0 >= x.acabo.tinta.y1, `paso ${n}: debajo de la ✗, que se acabó el plazo y lo que cuesta`, [x.acabo.txt, x.precio.txt]]);
+    if (n === 2) {
+      r.push([x.piensa.d <= x.espera.d && x.espera.dura > 0 && K1.d >= x.espera.d + x.espera.dura && x.punta.d >= x.espera.d + x.espera.dura && x.mal.d > K1.d && x.acabo.d > x.mal.d && x.precio.d >= x.acabo.d,
+        'paso 2: se piensa, la espera cruza, Kenia vuelve cuando llega, y después la ✗ y lo que cuesta', [x.piensa.d, x.espera.d, x.espera.dura, K1.d, x.mal.d, x.acabo.d, x.precio.d]]);
+    }
+
+    /* Lo que sí. */
+    const pts = x.puntos.slice().sort((a, b) => a.cx - b.cx);
+    r.push([pts.every(p => p.ve === E.hacer) && x.lista.ve === E.hacer && x.renglones.every(g => g.ve === E.hacer), `paso ${n}: ${E.hacer ? 'se ve lo que sí se hace' : 'todavía no se dice qué se hace'}`, null]);
+    const hps = pts.map(p => hora(p.cx));
+    r.push([pts.length === 3 && hps.every((h, i) => h > ini.h && h < 24 && (i === 0 || h > hps[i - 1])) && pts.every((p, i) => p.txt === String(i + 1)),
+      `paso ${n}: las tres cosas caen el mismo lunes, después de verla y en orden`, hps.map(h => Math.round(h * 100) / 100)]);
+    r.push([pts.every((p, i) => i === 0 || p.cx - pts[i - 1].cx >= p.r + pts[i - 1].r + 2) && pts.every(p => p.cy - p.r >= x.dias[0].y0 && p.cy + p.r <= x.dias[0].y1),
+      `paso ${n}: los puntos no se tocan y van en el cielo`, pts.map(p => p.cx)]);
+    const rg = x.renglones;
+    r.push([rg.length === pts.length && rg.every((g, i) => g.num === String(i + 1) && dentro(g.txt.tinta, x.lista.caja) && (i === 0 || g.txt.tinta.y0 >= rg[i - 1].txt.tinta.y1 - 0.5)),
+      `paso ${n}: la lista trae un renglón por cada punto, numerados y uno debajo del otro`, rg.map(g => g.txt.txt)]);
+    r.push([/anota/i.test(rg[0].txt.txt) && /fecha y hora/.test(rg[0].txt.txt) && /direcci[oó]n/.test(rg[1].txt.txt) && /constancia/.test(rg[1].txt.txt) && /informe/.test(rg[2].txt.txt),
+      `paso ${n}: lo que sí: anotar con fecha y hora, avisar a la dirección con constancia y el informe`, rg.map(g => g.txt.txt)]);
+    if (n === 3) r.push([pts.every((p, i) => p.d === rg[i].d && (i === 0 || p.d > pts[i - 1].d)) && x.lista.d < pts[0].d && pts[0].d >= APAGA,
+      'paso 3: la espera se va, y después sale cada cosa con su renglón, una por una', pts.map(p => p.d)]);
+
+    /* El deber es suyo, y a quién se reporta lo anota usted. */
+    r.push([x.usted.ve === E.deber && x.aro.ve === E.deber && x.cuaderno.ve === E.deber, `paso ${n}: ${E.deber ? 'usted, su aro y su cuaderno' : 'todavía no'}`, null]);
+    r.push([x.usted.nombre.txt === 'usted' && dentro(x.usted.cara.tinta, x.usted.caja) && dentro(x.usted.nombre.tinta, x.usted.caja) && dentro(x.usted.caja, x.aro.caja) && !monta(x.aro.caja, x.cuaderno.caja),
+      `paso ${n}: el aro rodea a «usted», y no toca el cuaderno`, [x.usted.caja, x.aro.caja]]);
+    const RY = x.cuaderno.raya;
+    r.push([/se reporta a:$/.test(x.cuaderno.txt.txt) && dentro(x.cuaderno.txt.tinta, x.cuaderno.caja) && RY.y1 === RY.y2 && RY.y1 > x.cuaderno.txt.tinta.y1 + 3 && RY.x2 - RY.x1 > 100 && RY.y1 < x.cuaderno.caja.y1,
+      `paso ${n}: el cuaderno pide a quién se reporta, con su raya para escribirlo`, x.cuaderno.txt.txt]);
+    if (n === 4) r.push([x.usted.d < x.aro.d && x.aro.d < x.cuaderno.d, 'paso 4: usted, después su aro y al final el cuaderno', [x.usted.d, x.aro.d, x.cuaderno.d]]);
+    r.push([!E.hacer || !monta(x.lista.caja, x.usted.caja) && !monta(x.lista.caja, x.cuaderno.caja), `paso ${n}: la lista no se monta en lo de abajo`, null]);
+
+    /* ── el marcador y la frase dicen lo que se ve ── */
+    const hh = h => Math.floor(h % 24) + ':' + String(Math.round((h % 1) * 60)).padStart(2, '0');
+    if (n === 0) r.push([e.cifra === hh(ini.h) && /lunes/.test(e.palabras) && e.texto.includes(hh(ini.h)) && /Lunes/.test(e.texto), 'paso 0: el marcador y la frase dicen la hora en que se la ve', [e.cifra, e.palabras]]);
+    if (n === 1) r.push([e.cifra === String(L.plazo) && /veinticuatro/i.test(e.texto) && e.texto.includes('martes'), 'paso 1: el marcador dice el plazo, y la frase, cuándo se acaba', e.cifra]);
+    if (n === 2) r.push([e.cifra === String(Math.round(fin.h - hora(cx(K1.cara.tinta)))) && e.texto.includes('martes a las ' + hh(fin.h)), 'paso 2: el marcador dice las horas que quedan cuando vuelve a verla: ninguna', e.cifra]);
+    if (n === 3) r.push([e.cifra === String(pts.length) && /lunes/.test(e.palabras), 'paso 3: el marcador cuenta lo que sí se hace, el mismo lunes', e.cifra]);
+    if (n === 4) r.push([/responsables directos de los niños/.test(e.texto), 'paso 4: la frase dice a quién nombra la ley: los responsables directos de los niños', null]);
 
     /* ── lo que se lee ── */
     const ml = [];

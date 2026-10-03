@@ -8,6 +8,9 @@
 <meta name="robots" content="noindex">
 <link rel="stylesheet" href="../../css/vendor/fuentes/fuentes.css">
 <link rel="stylesheet" href="css/derechos-ninez.css">
+<!-- La animación del reloj de las veinticuatro horas: va DESPUÉS del CSS
+     de la misión, que es de donde saca sus colores. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La barra de secciones, arriba y siempre a la vista. Va DESPUÉS del CSS
      de la misión a propósito: de ahí saca su color, y así sobrescribe su
      position:static sin un solo !important. -->
@@ -68,6 +71,15 @@
         <button class="btn btn-g" onclick="siMover(-1)">← Anterior</button>
         <button class="btn" onclick="siMover(1)">Siguiente →</button>
       </div>
+    </div>
+    <!-- La animación va en la sección que explica, no detrás del encabezado:
+         el encabezado ya es la situación (ver CLAUDE.md, «Y las del maestro,
+         dentro de la sección que explican»). -->
+    <div class="card" data-animacion>
+      <h2>⏳ Veinticuatro horas: ¿cuánto es de verdad?</h2>
+      <div id="amMoreton"><p>Ante un niño con signos evidentes de agresión, el plazo para informar es de
+        veinticuatro horas como máximo. Si usted lo ve el lunes a las 7:00, el plazo se acaba el
+        martes a la misma hora: esperar a mañana «para ver si sigue» es gastárselo entero.</p></div>
     </div>
   </section>
 
@@ -422,6 +434,8 @@
 </footer>
 
 <script src="js/derechos-ninez.js"></script>
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-moreton.js"></script>
 <!-- Accesibilidad de aula compartida: añade al pie «🔎 Letra» y
      «📽️ Presentación» (con modo libro). Se engancha sola en .cred-tools,
      .sec.active y go(). -->
