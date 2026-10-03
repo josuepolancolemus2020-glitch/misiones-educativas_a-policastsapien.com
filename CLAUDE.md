@@ -232,6 +232,26 @@ Seis reglas de cómo se escribe una de esas situaciones, y ninguna es de adorno:
    ya decía y empujando hacia abajo el contenido. Se quitaron las ocho y se
    marcó el párrafo que ya estaba. La herramienta mira el hero desde entonces.
    Es la lección de siempre: **lo que no se ve, se abre y se mira**.
+
+   ⚠️ **Y al quitarlas se llevaron lo que venía detrás, y estuvo así diecisiete
+   días.** La herramienta que quitó las ocho tarjetas borró también la tarjeta
+   principal de cada misión del maestro —la línea de tiempo de nueve hitos, los
+   veintitrés derechos del artículo 13, los ocho cortes de una fila del DCNB, las
+   nueve situaciones del Código, los nueve trámites del Estatuto, los artículos de
+   la Ley Fundamental, el mapa de las cuatro piezas y el cuadro de SACE— y, en seis
+   de ellas, la sección «Aprende» entera: 406 líneas. La pestaña «🧭 Aprende»
+   llevaba a una pantalla **en blanco**, y el pintor de cada lista buscaba su
+   contenedor, no lo encontraba y se callaba (`if (!lista) return;`). Se encontró
+   el 3 de octubre de 2026 leyendo el JS para escribirles su animación —pintaba en
+   un `tlLista` que el HTML no tenía— y se devolvió tal como estaba, con un solo
+   retoque: el título de la Ley Fundamental dice «nueve artículos y un
+   reglamento», que es lo que ya decía su encabezado. Desde entonces lo vigila
+   `node _dev/verifica-misiones-maestro.js` (en `npm test`): que cada pestaña lleve
+   a una sección con contenido y que todo lo que el JS busca por id esté. Se
+   comprobó al revés con los archivos de antes: 12 fallos. **Una herramienta que
+   borra se comprueba leyendo lo que borró**, no lo que quería borrar: en las
+   misiones del maestro, el diff de ese commit eran 406 líneas borradas y ninguna
+   era de una tarjeta de situación, que no habían llegado a publicarse.
 6. ⚠️ **Va en la sección por la que el alumno ENTRA, no en «Aprende» por
    costumbre.** Contadas: **55 abren en `s-aprende` y 20 en `s-predice`** —«🔮
    Predice antes de resolver», que ya es un buen arranque porque el alumno

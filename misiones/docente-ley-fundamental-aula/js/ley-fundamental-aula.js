@@ -48,7 +48,7 @@ function pintaXP() {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   LOS DIEZ ARTÍCULOS
+   LOS NUEVE ARTÍCULOS Y EL REGLAMENTO
    Cada uno trae: qué manda, la frase con que lo dice la ley y qué
    le deja al aula de hoy. Ese tercer campo es el que convierte un
    número de artículo en algo que el maestro usa el lunes.
