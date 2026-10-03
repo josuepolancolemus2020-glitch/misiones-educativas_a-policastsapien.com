@@ -5914,6 +5914,82 @@ const LEER = `
     };
   };
 
+  /* Bienvenida: el nombre escrito una vez en la lista, y los cuatro sitios
+     donde sale. De cada nombre se leen sus pedazos con su sitio en la vista
+     (la sonda rehace lo que se lee), y de cada flecha, de dónde sale y
+     adónde llega. */
+  window.__amExtra.amNombre = function (raiz) {
+    var H = window.__amHerr(raiz), vis = H.vis, uno = H.uno, todos = H.todos;
+    function texto(t) {
+      return t ? { txt: t.textContent, ve: vis(t), d: H.demora(t), tinta: H.tinta(t),
+        x: +t.getAttribute('x'), y: +t.getAttribute('y'), largo: +t.getAttribute('textLength') || 0 } : null;
+    }
+    function linea(p) {
+      return { pts: H.pares(p.getAttribute('d')).map(function (q) { return H.aVista(p, q[0], q[1]); }), ve: vis(p), hecho: H.trazado(p),
+        d: H.demora(p), dura: H.dura(p, 'stroke-dashoffset'), raya: getComputedStyle(p).strokeDasharray };
+    }
+    function mueve(el) { var m = new DOMMatrix(getComputedStyle(el).transform); return { dx: m.e, dy: m.f, d: H.demora(el), dura: H.dura(el, 'transform') }; }
+    function union(ls) {
+      return { x0: Math.min.apply(null, ls.map(function (c) { return c.x0; })), y0: Math.min.apply(null, ls.map(function (c) { return c.y0; })),
+        x1: Math.max.apply(null, ls.map(function (c) { return c.x1; })), y1: Math.max.apply(null, ls.map(function (c) { return c.y1; })) };
+    }
+    function de(el, attr) { var a = el.closest('[' + attr + ']'); return a ? a.getAttribute(attr) : null; }
+    /* un nombre, en sus pedazos: dónde empieza cada uno en la vista y lo
+       que mide; la efe se mueve con su sobre */
+    function nombre(g) {
+      return { k: g.getAttribute('data-nombre'), ve: vis(g), sitio: de(g, 'data-sitio'), version: de(g, 'data-version'),
+        piezas: todos('[data-pieza]', g).map(function (t) {
+          var o = texto(t), v = H.aVista(t, o.x, o.y), mv = t.getAttribute('data-pieza') === 'f' ? t.parentNode : t;
+          o.pieza = t.getAttribute('data-pieza'); o.vx = v[0]; o.vy = v[1]; o.mov = mueve(mv); o.dv = H.demora(mv);
+          return o;
+        }) };
+    }
+    function flechas(attr) {
+      return todos('[' + attr + ']').map(function (p) {
+        var o = linea(p), k = p.getAttribute(attr), pu = uno('[' + attr + '-punta="' + k + '"]');
+        o.k = k;
+        o.punta = { pts: H.pares(pu.getAttribute('d')).map(function (q) { return H.aVista(pu, q[0], q[1]); }), ve: vis(pu), d: H.demora(pu) };
+        return o;
+      });
+    }
+    var lista = uno('[data-lista]'), hueco = uno('[data-hueco]'), mama = uno('[data-mama]'), globo = uno('[data-globo]'), cua = uno('[data-cuaderno]');
+    return {
+      vista: [H.svg.viewBox.baseVal.width, H.svg.viewBox.baseVal.height],
+      aria: H.svg.getAttribute('aria-label') || '',
+      lista: { ve: vis(lista), papel: H.caja(uno('[data-lista-papel]', lista)), titulo: texto(uno('[data-lista-titulo]', lista)),
+        marca: H.caja(uno('[data-fila-marca]', lista)),
+        filas: todos('text[data-fila]', lista).map(function (t) { var o = texto(t); o.num = +t.getAttribute('data-fila'); return o; }),
+        suya: +uno('g[data-fila]', lista).getAttribute('data-fila') },
+      nombres: todos('[data-nombre]').map(nombre),
+      faltas: todos('[data-falta]').map(function (p) { var o = linea(p); o.k = p.getAttribute('data-falta'); return o; }),
+      marcas: todos('[data-marca]').map(function (g) {
+        return { sitio: de(g, 'data-sitio'), version: de(g, 'data-version'), rayas: todos('path', g).length, caja: H.caja(g), ve: vis(g), d: H.demora(g) };
+      }),
+      flechas: flechas('data-flecha'),
+      corrige: flechas('data-corrige'),
+      sitios: todos('[data-sitio]').map(function (g) {
+        var c = uno('[data-sitio-caja]', g), chip = uno('[data-chip]', g), fn = uno('[data-fila-notas]', g), tp = uno('[data-tapada]', g);
+        return { k: g.getAttribute('data-sitio'), ve: vis(g), d: H.demora(g), caja: H.caja(c), raya: getComputedStyle(c).strokeDasharray,
+          titulo: texto(uno('[data-sitio-titulo]', g)), num: texto(uno('[data-num]', g)), chip: chip ? H.caja(chip) : null,
+          celda: fn ? H.caja(fn) : null,
+          rejas: todos('.bv-reja', g).map(function (p) { return H.pares(p.getAttribute('d')).map(function (q) { return H.aVista(p, q[0], q[1]); }); }),
+          tapada: tp ? H.caja(tp) : null,
+          tags: todos('[data-tag]', g).map(function (t) { var o = texto(t); o.tag = t.getAttribute('data-tag'); o.version = de(t, 'data-version'); return o; }),
+          versiones: todos('[data-version]', g).map(function (v) { return { k: v.getAttribute('data-version'), ve: vis(v), d: H.demora(v), etiqueta: texto(uno('[data-etiqueta]', v)) }; }),
+          textos: todos('text', g).filter(vis).map(function (t) { return { txt: t.textContent, tinta: H.tinta(t), pieza: t.getAttribute('data-pieza') }; }) };
+      }),
+      rotulos: todos('[data-rotulo]').map(function (t) { var o = texto(t); o.k = t.getAttribute('data-rotulo'); return o; }),
+      hueco: { ve: vis(hueco), d: H.demora(hueco), caja: H.caja(uno('[data-hueco-caja]', hueco)),
+        raya: getComputedStyle(uno('[data-hueco-caja]', hueco)).strokeDasharray, txt: texto(uno('[data-hueco-txt]', hueco)) },
+      mama: { ve: vis(mama), d: H.demora(mama), cuerpo: union([].slice.call(mama.children).map(H.caja)),
+        cabeza: H.caja(uno('[data-cabeza]', mama)), pies: Math.max.apply(null, todos('[data-pie]', mama).map(function (p) { return H.caja(p).y1; })) },
+      globo: { ve: vis(globo), d: H.demora(globo), pts: H.pares(uno('[data-globo-caja]', globo).getAttribute('d')).map(function (q) { return H.aVista(globo, q[0], q[1]); }),
+        txts: todos('[data-globo-txt]', globo).map(texto) },
+      cuaderno: { ve: vis(cua), d: H.demora(cua), papel: H.caja(uno('[data-cuaderno-papel]', cua)), pide: todos('[data-pide]', cua).map(texto), rayas: todos('[data-raya]', cua).map(linea) },
+      letras: H.letras()
+    };
+  };
+
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -6777,6 +6853,90 @@ const ESTADOS_CRITERIO = [
 ];
 /* La nota del paso 0, para ver que es la misma en todos. */
 const MEMO_CRITERIO = { nota: null };
+/* Bienvenida: lo que la escena afirma, en tres sitios que no son la
+   escena. El CÓDIGO de la plataforma (qué pantalla pinta el primer nombre
+   de la lista y qué papel imprime el nombre entero, y que la boleta de un
+   solo alumno se puede imprimir otra vez), lo que dice la MISIÓN (la parada
+   de las flechas) y que ningún banco que califica pregunte cuántas veces se
+   escribe la lista. Y lo que la misión decía mal, que se corrigió con ella:
+   que la nota llegaba al Plan de Acción y al Parte Mensual, y que en la
+   sincronización gana siempre el cambio más reciente. */
+let bienvenidaMemo = null;
+function bienvenidaNombre() {
+  if (bienvenidaMemo) return bienvenidaMemo;
+  const dir = path.join(RAIZ, 'misiones', 'docente-bienvenida-metas');
+  const js = fs.readFileSync(path.join(dir, 'js', 'bienvenida-metas.js'), 'utf8').replace(/'\s*\+\s*'/g, '');
+  const ra = fs.readFileSync(path.join(RAIZ, 'js', 'tools', 'registros-admin.js'), 'utf8');
+  const ficha = fs.readFileSync(path.join(RAIZ, 'fichas', 'ficha-docente-bienvenida-metas.html'), 'utf8').replace(/\s+/g, ' ');
+  const sync = fs.readFileSync(path.join(RAIZ, 'js', 'metas-docente-sync.js'), 'utf8').replace(/\s+/g, ' ');
+  const banco = nombre => {
+    const i = js.indexOf('const ' + nombre + ' = ['), f = i < 0 ? -1 : js.indexOf('\n];', i);
+    return f < 0 ? null : js.slice(i, f);
+  };
+  const paradas = banco('PARADAS') || '';
+  /* Los que califican: el quiz, el completar, el diagnóstico, el Clasifica
+     y el reto. Las tarjetas de estudio y el memorama no: se voltean para
+     ver la respuesta, que es para lo que están. */
+  const califican = ['QZ', 'CP', 'DG', 'CL_GRUPOS', 'RETO'].map(b => [b, banco(b)]);
+  const LISTA = /lista[^'"]{0,40}se escribe|veces[^'"]{0,40}lista|se escribe[^'"]{0,30}una (?:sola )?vez/i;
+  const MAL_DICHO = [
+    ['la misión', paradas, 'Plan de Acción</b>, en el <b>Parte Mensual'],
+    ['la misión', paradas, 'gana siempre el cambio más reciente'],
+    ['la misión', paradas, 'en la boleta y en el Plan de Acción'],
+    ['la ficha', ficha, 'en el Plan de Acción, en el Parte Mensual'],
+    ['la ficha', ficha, 'gana el cambio más reciente'],
+    ['la ficha', ficha, 'armado con lo que ya registró'],
+    ['el archivo de la sincronización', sync, 'gana el cambio más reciente (last-write-wins)']
+  ];
+  bienvenidaMemo = {
+    arrastra: paradas.includes('Un nombre mal escrito al inicio se arrastra a la boleta, al recibo y a la tira de la clave. Se corrige el primer día.'),
+    cuatro: paradas.includes('pone cada nombre en la <b>asistencia</b>, en las <b>notas</b>, en la <b>boleta</b> y en la <b>tira de la clave</b>'),
+    /* qué pinta cada sitio, en el código */
+    primer: {
+      funcion: ra.includes("return String(nombre || '').trim().split(/\\s+/)[0]"),
+      asistencia: /const st = reg\.aus\[a\.num\][\s\S]{0,400}?const nom = adPrimerNombre\(a\.nombre\);[\s\S]{0,300}?ad-chip-nom">\$\{adEsc\(nom\)\}/.test(ra),
+      notas: ra.includes('<span class="ad-mx-nom">${adEsc(adPrimerNombre(a.nombre))')
+    },
+    entero: {
+      boleta: ra.includes('<span>Alumno(a)</span><b>${adEsc(a.nombre)'),
+      tira: ra.includes('Alumno/a <strong>#${f.num}</strong>') && ra.includes("${f.nombre ? ' · ' + adEsc(f.nombre) : ''}")
+    },
+    reimprime: ra.includes('id="ad-sace-bol-quien"') && ra.includes('la nota que corregiste y hay que reimprimir'),
+    malDicho: MAL_DICHO.filter(([, t, f]) => t.includes(f)).map(([d, , f]) => d + ': «' + f + '»'),
+    /* y en la ficha, los cuatro sitios son los del nombre: van justo
+       después de nombrarlos */
+    ficha: ficha.includes('pone cada nombre en la asistencia, en las notas, en la boleta y en la tira de la clave: <b>el dato se escribe una vez y aparece en los cuatro sitios.</b>'),
+    faltan: califican.filter(([, t]) => t === null).map(([b]) => b),
+    preguntan: califican.filter(([, t]) => t && LISTA.test(t)).map(([b]) => b)
+  };
+  return bienvenidaMemo;
+}
+/* Los cuatro sitios, en la tabla de la sonda y en su orden de arriba abajo.
+   Qué es pantalla y qué es papel no se le cree a la escena: lo dice el
+   código (bienvenidaNombre), la sonda comprueba que esta tabla diga lo
+   mismo, y la escena se mide contra ella. `num`: si el sitio lleva el
+   número del alumno. */
+const NOMBRE_SITIOS = [
+  { k: 'asistencia', titulo: 'Asistencia · pantalla', papel: false, num: true },
+  { k: 'notas', titulo: 'Notas · pantalla', papel: false, num: true },
+  { k: 'boleta', titulo: 'Boleta · papel', papel: true, num: false },
+  { k: 'tira', titulo: 'Tira de la clave · papel', papel: true, num: true }
+];
+/* Lo que se ve al TERMINAR cada paso. Cómo dice el nombre cada sitio no se
+   escribe aquí: lo saca la sonda de la lista que se ve. */
+const ESTADOS_NOMBRE = [
+  { hueco: true, sitios: false, flechas: false, rotulo: null, corrige: [], corregida: false, faltas: [], nueva: false, entregada: false, mama: false, globo: false, cuaderno: false },
+  { hueco: false, sitios: true, flechas: true, rotulo: 'una', corrige: [], corregida: false, faltas: [], nueva: false, entregada: false, mama: false, globo: false, cuaderno: false },
+  { hueco: false, sitios: true, flechas: true, rotulo: 'una', corrige: [], corregida: false, faltas: ['lista', 'asistencia', 'notas', 'boleta', 'tira'], nueva: false, entregada: false, mama: true, globo: true, cuaderno: false },
+  { hueco: false, sitios: true, flechas: false, rotulo: 'corrige', corrige: ['asistencia', 'notas'], corregida: true, faltas: ['boleta', 'tira'], nueva: false, entregada: true, mama: true, globo: false, cuaderno: false },
+  { hueco: false, sitios: true, flechas: false, rotulo: 'corrige', corrige: ['asistencia', 'notas', 'boleta'], corregida: true, faltas: ['tira'], nueva: true, entregada: true, mama: true, globo: false, cuaderno: false },
+  { hueco: false, sitios: true, flechas: false, rotulo: 'corrige', corrige: ['asistencia', 'notas', 'boleta'], corregida: true, faltas: ['tira'], nueva: true, entregada: true, mama: false, globo: false, cuaderno: true }
+];
+/* Cómo dice el nombre la lista en el paso 0, antes de corregirlo: los
+   papeles impresos se miden contra él. */
+const MEMO_NOMBRE = { mal: null };
+/* Los nombres de las letras, para leer lo que dice la mamá («dos efes»). */
+const NOMBRE_LETRAS = { efe: 'f', ele: 'l', erre: 'r', ese: 's', eme: 'm', ene: 'n', te: 't', de: 'd', be: 'b', ce: 'c', ge: 'g', pe: 'p' };
 function historiaBanco() {
   if (historiaBancoMemo) return historiaBancoMemo;
   const html = fs.readFileSync(path.join(RAIZ, 'misiones', 'basica-palabras-que-piensan', 'palabras-que-piensan.html'), 'utf8');
@@ -22328,6 +22488,335 @@ const ESCENAS = {
     const clave = t => t.txt + '@' + Math.round(t.x0 * 10) + ',' + Math.round(t.y0 * 10);
     const delPapel = new Set(T.map(t => clave(Object.assign({ txt: t.txt }, t.tinta))));
     const seguidos = (a, b) => delPapel.has(clave(Object.assign({ txt: a.txt }, a.caja))) && delPapel.has(clave(Object.assign({ txt: b.txt }, b.caja))) &&
+      Math.min(a.caja.x1, b.caja.x1) - Math.max(a.caja.x0, b.caja.x0) <= 1.2;
+    const ml = [];
+    x.letras.forEach((a, i) => x.letras.slice(i + 1).forEach(b => { if (monta(a.caja, b.caja) && !seguidos(a, b)) ml.push([a.txt, b.txt]); }));
+    r.push([ml.length === 0, `paso ${n}: ningún texto se monta en otro`, ml.slice(0, 4)]);
+    const saleT = x.letras.filter(t => t.caja.x0 < -0.5 || t.caja.y0 < -0.5 || t.caja.x1 > x.vista[0] + 0.5 || t.caja.y1 > x.vista[1] + 0.5);
+    r.push([saleT.length === 0, `paso ${n}: todo lo escrito cabe en el dibujo`, saleT.map(t => t.txt)]);
+    return r;
+  },
+  amNombre(e, n) {
+    const x = e.extra, r = [];
+    if (!x) return [[false, `paso ${n}: la sonda pudo leer la escena`, null]];
+    const B = bienvenidaNombre(), E = ESTADOS_NOMBRE[n], M = MEMO_NOMBRE;
+    if (n === 0) M.mal = null;
+    const monta = (a, b, t = 0.5) => a.x0 < b.x1 - t && b.x0 < a.x1 - t && a.y0 < b.y1 - t && b.y0 < a.y1 - t;
+    const dentro = (a, b, mg = 0) => a.x0 >= b.x0 - mg && a.x1 <= b.x1 + mg && a.y0 >= b.y0 - mg && a.y1 <= b.y1 + mg;
+    const cerca = (a, b, t = 0.5) => Math.abs(a - b) <= t;
+    const cx = c => (c.x0 + c.x1) / 2, cy = c => (c.y0 + c.y1) / 2;
+    const union = ls => ({ x0: Math.min(...ls.map(c => c.x0)), y0: Math.min(...ls.map(c => c.y0)), x1: Math.max(...ls.map(c => c.x1)), y1: Math.max(...ls.map(c => c.y1)) });
+    const sin = s => (s || '').replace(/ /g, ' ');
+    const NUM = ['cero', 'una', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez'];
+    const texto = sin(e.texto), palabras = sin(e.palabras), cifra = sin(e.cifra);
+    const primero = s => s.split(' ')[0];
+
+    /* ── lo que no depende del dibujo va primero ── */
+    /* Lo demás de la misión lo preguntan el quiz, el completar y el
+       diagnóstico: la escena no nombra nada de eso. «Familia» tampoco: es la
+       respuesta de un completar («con su clave de ____»). */
+    const PROHIBIDAS = /(?<!\p{L})(?:c[óo]digos?|plan|acci[óo]n|categor\p{L}*|sace|n[úu]mero de lista|caracter\p{L}*|actualiz\p{L}*|sincroniz\p{L}*|dato por dato|copias?|evidencias?|cuentas?|contrase[ñn]as?|correos?|parte mensual|colectas?|formas?|se[ñn]al(?:es)?|cat[áa]logos?|piezas?|herramientas?|manual(?:es)?|instal\p{L}*|constancias?|familias?|asistente|misi[óo]n(?:es)?|rob[óo]tica|programaci[óo]n|secretar[íi]as?|recibos?)(?!\p{L})/iu;
+    const dicho = [texto, palabras, e.boton, x.aria].concat(x.letras.map(t => t.txt)).join(' · ');
+    r.push([!PROHIBIDAS.test(dicho), `paso ${n}: no se nombra nada de lo que pregunta la prueba de la misión (el código de aula, el Plan de Acción, SACE, cómo se arma la clave, la sincronización, «Actualizar», ni «familia»)`, (dicho.match(PROHIBIDAS) || [])[0]]);
+    const digitos = [texto, e.boton, x.aria].join(' ').match(/\d+/g) || [];
+    const enPalabras = (palabras.match(/\d+/g) || []).filter(v => v !== String(NOMBRE_SITIOS.length));
+    r.push([digitos.length === 0 && enPalabras.length === 0, `paso ${n}: las frases no llevan números; el marcador solo cuenta los sitios`, [digitos, enPalabras]]);
+    if (n === 0) {
+      r.push([B.primer.funcion && B.primer.asistencia && B.primer.notas && B.entero.boleta && B.entero.tira,
+        'el código de la plataforma hace lo que la escena enseña: la asistencia y las notas pintan el primer nombre de la lista cada vez que se abren, y la boleta y la tira imprimen el nombre entero',
+        { primer: B.primer, entero: B.entero }]);
+      r.push([NOMBRE_SITIOS.every(t => t.papel ? B.entero[t.k] === true : B.primer[t.k] === true),
+        'la tabla de la sonda dice lo mismo que el código: las pantallas son las que pintan el primer nombre, y los papeles, los que imprimen el entero', NOMBRE_SITIOS.map(t => t.k + (t.papel ? ' · papel' : ' · pantalla'))]);
+      r.push([B.reimprime, 'la boleta de un solo alumno se puede imprimir otra vez, que es lo que hace el paso 4', B.reimprime]);
+      r.push([B.arrastra && B.cuatro, 'la misión dice lo que la escena enseña: el nombre sale en la asistencia, las notas, la boleta y la tira de la clave, y mal escrito se arrastra a los papeles', [B.arrastra, B.cuatro]]);
+      r.push([B.malDicho.length === 0 && B.ficha, 'ni la misión, ni su ficha, ni la sincronización dicen lo que no es (que la nota llega al Plan de Acción y al Parte Mensual, o que gana siempre el cambio más reciente), y la ficha dice que los cuatro sitios son los del nombre', [B.malDicho, B.ficha]]);
+      r.push([B.faltan.length === 0 && B.preguntan.length === 0, 'ningún banco que califica pregunta cuántas veces se escribe la lista: la escena no lo regala', [B.faltan, B.preguntan]]);
+    }
+
+    /* ── lo que se lee de un nombre: sus pedazos que se ven, en el orden en
+       que quedan, con un espacio donde hay un hueco del ancho de un espacio
+       y nada donde se tocan ── */
+    const ESP = 24.1 * 10.5 / 100;
+    const N = k => x.nombres.find(nm => nm.k === k);
+    const leer = nm => {
+      if (!nm) return { txt: '', mal: ['no está'], piezas: [] };
+      const ps = nm.piezas.filter(p => p.ve).sort((a, b) => a.vx - b.vx), malos = [];
+      let s = '';
+      ps.forEach((p, i) => {
+        if (i) {
+          const q = ps[i - 1], g = p.vx - (q.vx + q.largo);
+          if (cerca(g, ESP, 0.1)) s += ' ';
+          else if (!cerca(g, 0, 0.05)) malos.push([q.txt, p.txt, Math.round(g * 100) / 100]);
+          if (!cerca(p.vy, ps[0].vy, 0.05)) malos.push([p.txt, 'fuera del renglón']);
+        }
+        s += p.txt;
+      });
+      return { txt: s, mal: malos, piezas: ps, tinta: ps.length ? union(ps.map(p => p.tinta)) : null };
+    };
+
+    /* ── la lista de Mi aula ── */
+    const LI = x.lista, lista = leer(N('lista'));
+    const mL = lista.txt.match(/^(\d+) · (.+)$/), numL = mL ? +mL[1] : NaN, nomL = mL ? mL[2] : '';
+    if (n === 0) M.mal = nomL;
+    const MAL = M.mal || '';
+    const filas = LI.filas.slice().sort((a, b) => a.y - b.y);
+    const nums = filas.map(f => f.num).concat(LI.suya).sort((a, b) => a - b);
+    const enOrden = LI.filas.concat([{ num: LI.suya, y: lista.piezas.length ? lista.piezas[0].vy : NaN }]).sort((a, b) => a.y - b.y).map(f => f.num);
+    r.push([sin(LI.titulo.txt) === 'Mi aula · lista' && dentro(LI.titulo.tinta, LI.papel, -2) && filas.every(f => dentro(f.tinta, LI.papel, -2) && new RegExp('^' + f.num + ' · \\p{Lu}\\p{Ll}+ \\p{Lu}\\p{Ll}+$', 'u').test(sin(f.txt))) &&
+      enOrden.every((v, i) => i === 0 || v === enOrden[i - 1] + 1) && new Set(nums).size === nums.length && numL === LI.suya,
+      `paso ${n}: la lista dice su título y un alumno por renglón, por número y en orden`, enOrden]);
+    r.push([lista.mal.length === 0 && !!lista.tinta && dentro(lista.tinta, LI.papel, -2) && lista.tinta.y0 > LI.marca.y0 && lista.tinta.y1 < LI.marca.y1 &&
+      filas.every(f => cy(f.tinta) < LI.marca.y0 || cy(f.tinta) > LI.marca.y1),
+      `paso ${n}: el renglón del alumno se lee entero y es el único marcado`, [lista.txt, lista.mal]]);
+
+    /* ── lo que dice la mamá: su nombre y cuántas letras lleva ── */
+    const G = x.globo, lineas = G.txts.slice().sort((a, b) => a.y - b.y).map(t => sin(t.txt));
+    const mD = (lineas[0] || '').match(/^Es (\p{Lu}\p{Ll}+),$/u), dice = mD ? mD[1] : '';
+    const mC = (lineas[1] || '').match(/^con (\p{Ll}+) (\p{Ll}+?)s\.$/u);
+    const cuantas = mC ? NUM.indexOf(mC[1]) : -1, letra = mC ? NOMBRE_LETRAS[mC[2]] : null;
+    const veces = (s, l) => [...s].filter(c => c === l).length;
+    const mal1 = primero(MAL);
+    const cabe = !!letra && [...Array(mal1.length + 1).keys()].some(i => mal1.slice(0, i) + letra + mal1.slice(i) === dice);
+    r.push([!!dice && !!letra && cuantas > 1 && veces(dice, letra) === cuantas && veces(mal1, letra) === cuantas - 1 && cabe,
+      `paso ${n}: la mamá dice cómo se llama su hijo y cuántas ${mC ? mC[2] : '?'}s lleva; en la lista falta una, y con ella es su nombre`, [lineas, MAL]]);
+    const BIEN = dice + MAL.slice(mal1.length);
+    r.push([nomL === (E.corregida ? BIEN : MAL), `paso ${n}: la lista dice «${E.corregida ? BIEN : MAL}», ${E.corregida ? 'ya corregido' : 'como se escribió'}`, nomL]);
+
+    /* ── los cuatro sitios ── */
+    const S = x.sitios.slice().sort((a, b) => a.caja.y0 - b.caja.y0);
+    r.push([S.length === NOMBRE_SITIOS.length && NOMBRE_SITIOS.every((t, i) => S[i].k === t.k && sin(S[i].titulo.txt) === t.titulo),
+      `paso ${n}: los sitios son los de la tabla de la sonda, de arriba abajo, y cada uno dice si es pantalla o papel`, S.map(s => s.titulo.txt)]);
+    const alto = S.length ? S[0].caja.y1 - S[0].caja.y0 : 0;
+    r.push([S.every((s, i) => cerca(s.caja.x0, S[0].caja.x0) && cerca(s.caja.x1, S[0].caja.x1) && cerca(s.caja.y1 - s.caja.y0, alto) && (i === 0 || s.caja.y0 > S[i - 1].caja.y1 + 2) &&
+      dentro(s.titulo.tinta, s.caja, -2) && s.titulo.tinta.y1 < s.caja.y0 + 20 && s.caja.x0 > LI.papel.x1 + 10),
+      `paso ${n}: los sitios son del mismo tamaño, uno debajo del otro y a la derecha de la lista, con su nombre arriba`, S.map(s => [Math.round(s.caja.y0), Math.round(s.caja.y1)])]);
+    r.push([S.every(s => s.ve === E.sitios), `paso ${n}: ${E.sitios ? 'se ven los cuatro sitios' : 'los sitios todavía no se ven'}`, S.map(s => s.ve)]);
+    const quien = { asistencia: 'asistencia', notas: 'notas', boleta: E.nueva ? 'boleta-nueva' : 'boleta', tira: 'tira' };
+    /* Una pantalla pinta el primer nombre de la lista COMO ESTÁ AHORA; un
+       papel, el nombre entero como estaba el día que se imprimió (la boleta
+       que se vuelve a imprimir, como está ahora). */
+    const espera = t => t.papel ? (t.k === 'boleta' && E.nueva ? nomL : MAL) : primero(nomL);
+    const lee = {}, malS = [];
+    NOMBRE_SITIOS.forEach(t => {
+      const s = S.find(q => q.k === t.k), l = leer(N(quien[t.k]));
+      const pre = t.k === 'tira' ? '#' + numL + ' · ' : '', txt = l.txt.startsWith(pre) ? l.txt.slice(pre.length) : '¿' + l.txt;
+      lee[t.k] = { txt, l };
+      if (!s || l.mal.length || txt !== espera(t)) { malS.push([t.k, l.txt, espera(t), l.mal]); return; }
+      if (t.num && t.k !== 'tira' && (!s.num || sin(s.num.txt) !== '#' + numL)) malS.push([t.k, 'número', s.num && s.num.txt]);
+      /* y dentro de lo suyo */
+      if (t.k === 'asistencia' && !(s.chip && dentro(l.tinta, s.chip, -1) && dentro(s.num.tinta, s.chip, -1) && s.num.tinta.y1 < l.tinta.y0)) malS.push([t.k, 'fuera del chip']);
+      if (t.k === 'notas') {
+        const xs = s.rejas.map(p => p[0][0]).sort((a, b) => a - b);
+        if (!(s.celda && xs.length === 2 && dentro(l.tinta, s.celda, -1) && l.tinta.x0 > xs[0] && l.tinta.x1 < xs[1] && s.num.tinta.x1 < xs[0] && dentro(s.num.tinta, s.celda, -1))) malS.push([t.k, 'fuera de su celda', xs]);
+      }
+      if (t.papel) {
+        const v = t.k === 'boleta' ? s.versiones.find(q => q.k === (E.nueva ? 'nueva' : 'vieja')) : null;
+        if (!dentro(l.tinta, s.caja, -2) || (v && !(v.etiqueta && sin(v.etiqueta.txt) === 'Alumno(a)' && v.etiqueta.tinta.y1 < l.tinta.y0 && cerca(v.etiqueta.tinta.x0, l.tinta.x0, 1.2)))) malS.push([t.k, 'fuera del papel']);
+      }
+      if (t.k === 'tira') {
+        const otros = s.textos.filter(q => !q.pieza && q.txt !== s.titulo.txt && !s.tags.some(g => g.txt === q.txt));
+        if (!(s.tapada && s.tapada.y0 > l.tinta.y1 && dentro(s.tapada, s.caja, -1)) || otros.length || s.textos.some(q => monta(q.tinta, s.tapada))) malS.push([t.k, 'la clave no va tapada', otros.map(q => q.txt)]);
+      }
+    });
+    if (E.sitios) r.push([malS.length === 0, `paso ${n}: cada pantalla dice el primer nombre de la lista como está ahora, cada papel el nombre entero como estaba el día que se imprimió, y la clave de la tira va tapada`, malS]);
+
+    /* ── la marca de lo que falta: justo debajo de donde falta la letra ── */
+    const F = x.faltas, malF = [];
+    ['lista'].concat(NOMBRE_SITIOS.map(t => t.k)).forEach(k => {
+      const c = F.find(f => f.k === k), debe = E.faltas.includes(k);
+      if (!c) { malF.push([k, 'no hay marca']); return; }
+      if (c.ve !== debe) { malF.push([k, debe ? 'no se ve' : 'se ve']); return; }
+      if (!debe) return;
+      const l = k === 'lista' ? lista : lee[k].l, je = l.piezas.find(p => p.pieza === 'je');
+      const nombreTxt = k === 'lista' ? nomL : lee[k].txt, meta = nombreTxt.includes(' ') ? BIEN : primero(BIEN);
+      const ap = c.pts.length === 3 ? c.pts[1] : null;
+      if (!je || !ap || !(nombreTxt.startsWith(je.txt) && je.txt + letra + nombreTxt.slice(je.txt.length) === meta) ||
+        !cerca(ap[0], je.vx + je.largo, 0.3) || !(ap[1] > je.vy + 0.8 && ap[1] < je.vy + 4) ||
+        !cerca(c.pts[0][1], c.pts[2][1], 0.05) || !(c.pts[0][1] > ap[1] + 1) || !cerca(ap[0] - c.pts[0][0], c.pts[2][0] - ap[0], 0.05)) malF.push([k, je && je.txt, ap]);
+    });
+    r.push([malF.length === 0, `paso ${n}: la marca de lo que falta (‸) va justo debajo de donde falta la ${mC ? mC[2] : 'letra'}, y solo en los nombres que la gente ya vio mal escritos`, malF]);
+    if (n >= 2) {
+      const errados = ['lista'].concat(NOMBRE_SITIOS.map(t => t.k)).filter(k => {
+        const tx = k === 'lista' ? nomL : lee[k].txt;
+        return tx !== (tx.includes(' ') ? BIEN : primero(BIEN));
+      });
+      r.push([errados.length === E.faltas.length && errados.every(k => E.faltas.includes(k)), `paso ${n}: desde que la mamá lo dice, todo nombre mal escrito lleva su marca, y ningún nombre bien escrito`, errados]);
+    }
+
+    /* ── lo corregido lleva su ✓ al lado ── */
+    const MK = x.marcas, malM = [];
+    ['asistencia', 'notas', 'boleta'].forEach(k => {
+      const m = MK.find(q => q.sitio === k), debe = E.corrige.includes(k), s = S.find(q => q.k === k);
+      if (!m) { malM.push([k, 'no hay ✓']); return; }
+      if (m.ve !== debe) { malM.push([k, debe ? 'no se ve' : 'se ve']); return; }
+      if (!debe) return;
+      const ref = k === 'asistencia' ? s.chip : lee[k].l.tinta;
+      if (m.rayas !== 1 || !ref || !(m.caja.x0 > ref.x1 + 1 && m.caja.x0 < ref.x1 + 16) || !(cy(m.caja) > ref.y0 && cy(m.caja) < ref.y1) || !dentro(m.caja, s.caja, -1) ||
+        (k === 'notas' && m.caja.x1 > Math.max(...s.rejas.map(p => p[0][0]))) || x.letras.some(t => monta(t.caja, m.caja))) malM.push([k, m.rayas, m.caja]);
+    });
+    r.push([malM.length === 0 && MK.length === 3, `paso ${n}: lo que se corrigió lleva su ✓ (una raya quebrada) al lado, y solo eso`, malM]);
+
+    /* ── las flechas: de la fila de la lista a cada sitio ── */
+    const FL = x.flechas, CO = x.corrige, lp = LI.papel, fm = LI.marca;
+    const flechaBien = (f, s) => {
+      const a = f.pts[0], z = f.pts[f.pts.length - 1], tip = f.punta.pts[0];
+      const base = [(f.punta.pts[1][0] + f.punta.pts[2][0]) / 2, (f.punta.pts[1][1] + f.punta.pts[2][1]) / 2];
+      return a[0] >= lp.x1 - 0.5 && a[0] <= lp.x1 + 4 && a[1] > fm.y0 && a[1] < fm.y1 && Math.hypot(z[0] - base[0], z[1] - base[1]) < 0.6 &&
+        cerca(tip[0], s.caja.x0, 0.6) && cerca(tip[1], cy(s.caja), 0.6) && f.pts.every((p, i) => i === 0 || cerca(p[0], f.pts[i - 1][0], 0.05) || cerca(p[1], f.pts[i - 1][1], 0.05));
+    };
+    const malFl = [];
+    NOMBRE_SITIOS.forEach(t => {
+      const s = S.find(q => q.k === t.k), f = FL.find(q => q.k === t.k), c = CO.find(q => q.k === t.k);
+      if (!f || !flechaBien(f, s)) malFl.push(['violeta', t.k]);
+      if (f && (f.ve !== E.flechas || f.hecho !== E.flechas || f.punta.ve !== E.flechas)) malFl.push(['violeta', t.k, 've']);
+      const debe = E.corrige.includes(t.k);
+      if (debe && (!c || !flechaBien(c, s))) malFl.push(['verde', t.k]);
+      if (c && (c.ve !== debe || c.hecho !== debe || c.punta.ve !== debe)) malFl.push(['verde', t.k, 've']);
+      if (!c && debe) malFl.push(['verde', t.k, 'no hay']);
+    });
+    r.push([malFl.length === 0, `paso ${n}: cada flecha sale del renglón del alumno en la lista y su punta llega al borde de su sitio; ${E.flechas ? 'el nombre baja a los cuatro' : E.corrige.length ? 'la corrección baja solo a ' + E.corrige.join(', ') : 'todavía no baja nada'}`, malFl]);
+    const vivas = FL.concat(CO).filter(f => f.ve);
+    if (vivas.length) {
+      const pisan = [];
+      vivas.forEach(f => {
+        for (let i = 1; i < f.pts.length; i++) {
+          const a = f.pts[i - 1], z = f.pts[i];
+          for (let u = 0.02; u <= 1; u += 0.02) {
+            const p = [a[0] + (z[0] - a[0]) * u, a[1] + (z[1] - a[1]) * u];
+            const en = c => p[0] > c.x0 - 0.5 && p[0] < c.x1 + 0.5 && p[1] > c.y0 - 0.5 && p[1] < c.y1 + 0.5;
+            x.letras.forEach(t => { if (en(t.caja)) pisan.push([f.k, t.txt]); });
+            if (G.ve && en(union([{ x0: Math.min(...G.pts.map(q => q[0])), x1: Math.max(...G.pts.map(q => q[0])), y0: Math.min(...G.pts.map(q => q[1])), y1: Math.max(...G.pts.map(q => q[1])) }]))) pisan.push([f.k, 'el globo']);
+            if (x.mama.ve && en(x.mama.cuerpo)) pisan.push([f.k, 'la mamá']);
+            if (en(lp)) pisan.push([f.k, 'la lista']);
+          }
+        }
+      });
+      r.push([pisan.length === 0, `paso ${n}: las flechas no pasan por encima de lo escrito, de la lista, de la mamá ni de lo que ella dice`, [...new Set(pisan.map(String))].slice(0, 4)]);
+    }
+
+    /* ── lo que dice cada papel, y la boleta que se imprime otra vez ── */
+    const SB = S.find(s => s.k === 'boleta'), ST = S.find(s => s.k === 'tira');
+    const vj = SB.versiones.find(v => v.k === 'vieja'), nv = SB.versiones.find(v => v.k === 'nueva');
+    const tag = (s, t) => s.tags.find(g => g.tag === t);
+    const abajo = (g, s) => g && dentro(g.tinta, s.caja, -1) && g.tinta.x1 > s.caja.x1 - 14 && g.tinta.y1 > s.caja.y0 + 0.7 * (s.caja.y1 - s.caja.y0);
+    r.push([vj && nv && vj.ve === (E.sitios && !E.nueva) && nv.ve === (E.sitios && E.nueva) && cerca(vj.etiqueta.tinta.x0, nv.etiqueta.tinta.x0, 0.05) && cerca(vj.etiqueta.tinta.y0, nv.etiqueta.tinta.y0, 0.05),
+      `paso ${n}: ${E.nueva ? 'la boleta de antes se fue y en su lugar está la que se imprimió otra vez' : 'la boleta es la que se imprimió con la lista de antes'}`, [vj && vj.ve, nv && nv.ve]]);
+    const te = tag(SB, 'entregada'), tt = tag(ST, 'entregada'), to = tag(SB, 'otra vez');
+    r.push([abajo(te, SB) && abajo(tt, ST) && abajo(to, SB) && te.version === 'vieja' && to.version === 'nueva' &&
+      te.ve === (E.entregada && !E.nueva) && tt.ve === E.entregada && to.ve === E.nueva,
+      `paso ${n}: los papeles dicen abajo, a la derecha, si ya se entregaron, y la boleta nueva dice «otra vez»`, [te && te.ve, tt && tt.ve, to && to.ve]]);
+
+    /* ── antes de contestar, el sitio de los sitios va vacío ── */
+    const HU = x.hueco;
+    r.push([HU.ve === E.hueco, `paso ${n}: ${E.hueco ? 'el sitio de los sitios va vacío, con su pregunta' : 'el sitio vacío ya no está'}`, HU.ve]);
+    if (E.hueco) {
+      const todo = union(S.map(s => s.caja));
+      r.push([HU.raya !== 'none' && HU.raya.split(/[ ,]+/).filter(Boolean).length >= 2 && cerca(HU.caja.x0, todo.x0) && cerca(HU.caja.y0, todo.y0) && cerca(HU.caja.x1, todo.x1) && cerca(HU.caja.y1, todo.y1) &&
+        sin(HU.txt.txt) === '¿Dónde más sale?' && dentro(HU.txt.tinta, HU.caja, -4) && cerca(cx(HU.txt.tinta), cx(HU.caja), 1),
+        'paso 0: el sitio vacío es de raya cortada, del tamaño de los cuatro sitios, con su pregunta en medio', HU.txt.txt]);
+    }
+
+    /* ── lo que dice la lista abajo: escrito o corregido una vez ── */
+    const RO = x.rotulos, ru = RO.find(t => t.k === 'una'), rc = RO.find(t => t.k === 'corrige');
+    r.push([ru && rc && sin(ru.txt) === 'escrito una vez' && sin(rc.txt) === 'corregido una vez' && ru.ve === (E.rotulo === 'una') && rc.ve === (E.rotulo === 'corrige') &&
+      [ru, rc].every(t => t.tinta.y0 > LI.papel.y1 + 2 && t.tinta.y0 < LI.papel.y1 + 26 && cerca(cx(t.tinta), cx(LI.papel), 1.5)),
+      `paso ${n}: debajo de la lista ${E.rotulo === 'una' ? 'dice «escrito una vez»' : E.rotulo === 'corrige' ? 'dice «corregido una vez»' : 'no dice nada todavía'}`, [ru && ru.ve, rc && rc.ve]]);
+
+    /* ── la mamá y lo que dice ── */
+    const MA = x.mama;
+    r.push([MA.ve === E.mama && G.ve === E.globo, `paso ${n}: ${E.mama ? 'la mamá está' + (E.globo ? ', y dice cómo se llama su hijo' : '') : 'la mamá no está'}`, [MA.ve, G.ve]]);
+    const tronco = FL.length ? FL[0].pts[1][0] : 0;
+    const ccab = [cx(MA.cabeza), cy(MA.cabeza)], radio = (MA.cabeza.x1 - MA.cabeza.x0) / 2;
+    const punta = G.pts.reduce((m, p) => { const dd = Math.hypot(p[0] - ccab[0], p[1] - ccab[1]); return !m || dd < m.dd ? { p, dd } : m; }, null);
+    const cuerpoG = (() => { const rs = G.pts.filter(p => p !== punta.p); return { x0: Math.min(...rs.map(p => p[0])), x1: Math.max(...rs.map(p => p[0])), y0: Math.min(...rs.map(p => p[1])), y1: Math.max(...rs.map(p => p[1])) }; })();
+    if (n === 0) r.push([G.txts.length === 2 && G.txts.every(t => dentro(t.tinta, cuerpoG, -1)) && punta.dd >= radio - 1 && punta.dd <= radio + 3 && cuerpoG.y1 < MA.cabeza.y0 &&
+      cuerpoG.x1 < tronco - 2 && cuerpoG.y0 > Math.max(ru.tinta.y1, rc.tinta.y1) + 1 && !monta(cuerpoG, MA.cuerpo) && MA.pies <= x.vista[1] && MA.cuerpo.x0 >= 0 && MA.cuerpo.x1 < tronco - 2,
+      'lo que dice la mamá va en su globo, con la punta en su cabeza, a la izquierda de las flechas y debajo de la lista', { punta: punta.dd, globo: cuerpoG, tronco }]);
+
+    /* ── el cuaderno del maestro: donde estaba la mamá ── */
+    const CU = x.cuaderno;
+    r.push([CU.ve === E.cuaderno, `paso ${n}: el cuaderno del maestro sale al final`, CU.ve]);
+    if (E.cuaderno) {
+      const [p1, p2] = CU.pide, [r1, r2] = CU.rayas;
+      r.push([CU.pide.length === 2 && CU.rayas.length === 2 && sin(p1.txt) === 'Antes de imprimir, reviso estos nombres:' && sin(p2.txt) === 'Los confirmo con:' &&
+        r1.pts[0][1] > p1.tinta.y1 + 2 && p2.tinta.y0 > r1.pts[0][1] + 2 && r1.pts[1][0] - r1.pts[0][0] > 0.8 * (CU.papel.x1 - CU.papel.x0) &&
+        r2.pts[0][0] > p2.tinta.x1 + 2 && r2.pts[0][1] >= p2.tinta.y1 - 3 && r2.pts[0][1] <= p2.tinta.y1 + 4 && r2.pts[1][0] - r2.pts[0][0] > 100 &&
+        [r1, r2].every(u => cerca(u.pts[0][1], u.pts[1][1], 0.05) && u.pts[1][0] <= CU.papel.x1) && CU.pide.every(p => dentro(p.tinta, CU.papel, -2)) &&
+        monta(CU.papel, MA.cuerpo) && CU.papel.y0 > Math.max(...S.map(s => s.caja.y1)) + 2,
+        'paso 5: el cuaderno sale donde estaba la mamá, con su renglón para los nombres por revisar y otro para con quién confirmarlos', CU.pide.map(p => p.txt)]);
+    }
+
+    /* ── cada cosa, cuando le toca ── */
+    if (n === 1) {
+      const fs = NOMBRE_SITIOS.map(t => FL.find(f => f.k === t.k)), ss = NOMBRE_SITIOS.map(t => S.find(s => s.k === t.k));
+      let bien = HU.d <= ru.d && ru.d <= fs[0].d;
+      fs.forEach((f, i) => { bien = bien && f.dura > 0 && f.punta.d >= f.d + f.dura - 1 && ss[i].d >= f.d + f.dura - 1 && (i === 0 || f.d >= fs[i - 1].d + fs[i - 1].dura - 1); });
+      r.push([bien, 'paso 1: se va el sitio vacío, y el nombre baja por cada flecha una por una: cada sitio aparece cuando su flecha llega, y la siguiente sale después',
+        { hueco: HU.d, rotulo: ru.d, flechas: fs.map(f => [f.d, f.dura, f.punta.d]), sitios: ss.map(s => s.d) }]);
+    }
+    if (n === 2) {
+      const cs = ['lista'].concat(NOMBRE_SITIOS.map(t => t.k)).map(k => F.find(f => f.k === k));
+      let bien = G.d >= MA.d + 500 && cs[0].d >= G.d + 500;
+      cs.forEach((c, i) => { bien = bien && (i === 0 || c.d > cs[i - 1].d); });
+      r.push([bien, 'paso 2: llega la mamá, dice cómo se llama su hijo, y entonces sale la marca de lo que falta: primero en la lista y después en cada sitio, de arriba abajo',
+        { mama: MA.d, globo: G.d, marcas: cs.map(c => c.d) }]);
+    }
+    if (n === 3) {
+      const fl = lista.piezas.find(p => p.pieza === 'f');
+      const sale = [G.d, F.find(f => f.k === 'lista').d, ru.d].concat(FL.map(f => f.d), FL.map(f => f.punta.d));
+      let bien = !!fl && Math.max(...sale) < fl.dv && fl.mov.dura > 0 && rc.d >= ru.d + 500;
+      const verdes = ['asistencia', 'notas'].map(k => CO.find(c => c.k === k)), marcas = [];
+      verdes.forEach((c, i) => {
+        const l = lee[c.k].l, f = l.piezas.find(p => p.pieza === 'f'), resto = l.piezas.find(p => p.pieza === 'resto');
+        const llega = c.d + c.dura, cr = F.find(q => q.k === c.k), mk = MK.find(q => q.sitio === c.k);
+        marcas.push(mk.d);
+        bien = bien && !!f && !!resto && c.d >= fl.dv + fl.mov.dura - 1 && (i === 0 || c.d > verdes[i - 1].d) && cerca(c.punta.d, llega, 1) &&
+          cerca(f.dv, llega, 1) && cerca(resto.dv, llega, 1) && cerca(cr.d, llega, 1) && mk.d >= f.dv + f.mov.dura - 1;
+      });
+      const te3 = tag(SB, 'entregada'), tt3 = tag(ST, 'entregada');
+      bien = bien && te3.d >= Math.max(...marcas) + 500 && tt3.d >= Math.max(...marcas) + 500;
+      r.push([bien, 'paso 3: se va lo de antes; la letra entra en la lista, y cuando ya entró, la corrección baja a las dos pantallas, que la pintan al llegar y llevan su ✓ cuando la letra ya está; al final, los papeles dicen que ya se entregaron',
+        { letra: fl && [fl.dv, fl.mov.dura], verdes: verdes.map(c => [c.d, c.dura]), marcas, entregada: [te3.d, tt3.d] }]);
+    }
+    if (n === 4) {
+      const c = CO.find(q => q.k === 'boleta'), mk = MK.find(q => q.sitio === 'boleta');
+      r.push([c.d + c.dura - 1 <= vj.d && nv.d >= vj.d + 500 && mk.d >= nv.d + 300 && cerca(c.punta.d, c.d + c.dura, 1),
+        'paso 4: la corrección baja a la boleta, y cuando llega, la de antes se va, sale la nueva y después su ✓',
+        { flecha: [c.d, c.dura], vieja: vj.d, nueva: nv.d, marca: mk.d }]);
+    }
+    if (n === 5) r.push([CU.d >= MA.d + 500, 'paso 5: primero se va la mamá y después sale el cuaderno, en su lugar', [MA.d, CU.d]]);
+
+    /* ── el marcador y la frase dicen lo que se ve ── */
+    const tit = t => t.titulo.split(' · ')[0].split(' ')[0].toLowerCase();
+    const ves = S.filter(s => s.ve).length, conFalta = NOMBRE_SITIOS.filter(t => F.some(f => f.k === t.k && f.ve)).length;
+    const corregidos = NOMBRE_SITIOS.filter(t => lee[t.k].txt === (t.papel ? BIEN : primero(BIEN)));
+    const orden = (t, ws) => ws.every((w, i) => t.indexOf(w) >= 0 && (i === 0 || t.indexOf(w) > t.indexOf(ws[i - 1])));
+    if (n === 0) r.push([cifra === '?' && palabras === 'sitios donde va a salir' && texto.includes('una sola vez, en la lista de Mi aula') && texto.includes('¿Dónde más va a salir ese nombre?'),
+      'paso 0: el marcador deja la pregunta, y la frase dice que el nombre se escribe una sola vez, en la lista', [cifra, palabras]]);
+    if (n === 1) r.push([cifra === String(ves) && palabras === 'sitios, y se escribió una vez' && texto.startsWith('En ' + NUM[ves] + ' sitios, sin volver a escribirlo:') && orden(texto, NOMBRE_SITIOS.map(tit)),
+      'paso 1: el marcador cuenta los sitios que se ven, y la frase los nombra en su orden', [cifra, texto]]);
+    if (n === 2) r.push([cifra === String(conFalta) && palabras === 'sitios con el mismo error' && !!mC && texto.includes(dice + ', con ' + mC[1] + ' ' + mC[2] + 's') && texto.includes('en los ' + NUM[conFalta]),
+      'paso 2: el marcador cuenta los sitios con la marca de lo que falta, y la frase dice lo que dice la mamá', [cifra, texto]]);
+    if (n === 3) {
+      const [a, b] = texto.split('; ');
+      const si = corregidos.map(tit), no = NOMBRE_SITIOS.filter(t => !corregidos.includes(t)).map(tit);
+      r.push([cifra === String(corregidos.length) && palabras === 'de ' + NOMBRE_SITIOS.length + ' se corrigieron solos' && !!b && orden(a, si) && /se corrigen solas$/.test(a) && no.every(w => !a.includes(w)) &&
+        orden(b, no) && /ya estaban entregadas\.$/.test(b) && si.every(w => !b.includes(w)) && texto.startsWith('Usted lo corrige una sola vez, en la lista.'),
+        'paso 3: el marcador cuenta los sitios que se corrigieron solos, y la frase nombra cuáles sí y cuáles ya estaban entregados', [cifra, si, no]]);
+    }
+    if (n === 4) r.push([cifra === '+1' && palabras === 'hoja, y otra entrega en mano' && nv.ve && texto.includes('sigue diciendo ' + primero(lee.tira.txt) + '.') && texto.includes('la boleta se imprime y se entrega otra vez'),
+      'paso 4: el marcador cuenta la hoja que se imprimió otra vez, y la frase dice cómo sigue diciendo la tira', [cifra, texto]]);
+    if (n === 5) r.push([cifra === '?' && palabras === 'nombres por revisar en su lista' && texto.includes('antes de imprimir nada'),
+      'paso 5: el marcador deja la pregunta al maestro, y la frase pide revisar la lista antes de imprimir', [cifra, palabras]]);
+
+    /* ── lo que se lee ── */
+    /* Dos pedazos seguidos de un nombre son una sola palabra: el lienzo mide
+       su tinta en píxeles enteros, y la de uno «toca» la del siguiente por
+       el redondeo, no porque se monten. */
+    const clave = t => t.txt + '@' + Math.round(t.x0 * 10) + ',' + Math.round(t.y0 * 10);
+    const piezas = new Set();
+    x.nombres.forEach(nm => nm.piezas.forEach(p => piezas.add(clave(Object.assign({ txt: p.txt }, p.tinta)))));
+    const seguidos = (a, b) => piezas.has(clave(Object.assign({ txt: a.txt }, a.caja))) && piezas.has(clave(Object.assign({ txt: b.txt }, b.caja))) &&
       Math.min(a.caja.x1, b.caja.x1) - Math.max(a.caja.x0, b.caja.x0) <= 1.2;
     const ml = [];
     x.letras.forEach((a, i) => x.letras.slice(i + 1).forEach(b => { if (monta(a.caja, b.caja) && !seguidos(a, b)) ml.push([a.txt, b.txt]); }));

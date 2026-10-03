@@ -8,6 +8,9 @@
 <meta name="robots" content="noindex">
 <link rel="stylesheet" href="../../css/vendor/fuentes/fuentes.css">
 <link rel="stylesheet" href="css/bienvenida-metas.css">
+<!-- La animación del nombre escrito una vez: va DESPUÉS del CSS de la
+     misión, que es de donde saca sus colores. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La barra de secciones, arriba y siempre a la vista. Va DESPUÉS del CSS
      de la misión a propósito: de ahí saca su color, y así sobrescribe su
      position:static sin un solo !important. -->
@@ -61,7 +64,7 @@
     <div class="card">
       <h2>🗺️ El mapa, antes que nada</h2>
       <p>Cuatro piezas. Lo que ninguna otra herramienta le da no está en las cajas: está en las
-        flechas, porque el dato se escribe <b>una sola vez</b> y sale en los cuatro sitios.</p>
+        flechas, porque el dato se escribe <b>una sola vez</b> y sale solo donde hace falta.</p>
       <div class="mapa">
         <div class="mapa-pz"><b>1 · Misiones del alumno</b>
           <span>hoy {{MISIONES}} misiones · {{RUTAS}} rutas · {{MATERIAS}} materias · y creciendo</span></div>
@@ -75,6 +78,16 @@
         <div class="mapa-fl">▼ y, aparte, lo que estudia usted</div>
         <div class="mapa-pz"><b>4 · Misiones del maestro</b>
           <span>Su propia formación: leyes, estrategias, datos, gestión, familia y tecnología</span></div>
+      </div>
+    </div>
+
+    <div class="card" data-animacion>
+      <h2>🔗 Un nombre escrito una vez, y los cuatro sitios donde sale</h2>
+      <div id="amNombre">
+        <p>El nombre de Jefferson, escrito una vez en la lista de Mi aula, sale en la asistencia, en
+          las notas, en la boleta y en la tira de la clave. Escrito mal, sale mal en los cuatro.
+          Corregido en la lista, la asistencia y las notas se corrigen solas; la boleta y la tira ya
+          impresas, no.</p>
       </div>
     </div>
 
@@ -511,6 +524,8 @@
      Normativa en CLAUDE.md. -->
 <script src="../../js/data/misiones.js"></script>
 <script src="js/bienvenida-metas.js"></script>
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-nombre.js"></script>
 <!-- Accesibilidad de aula compartida: añade al pie «🔎 Letra» y
      «📽️ Presentación» (con modo libro). Se engancha sola en .cred-tools,
      .sec.active y go(). -->

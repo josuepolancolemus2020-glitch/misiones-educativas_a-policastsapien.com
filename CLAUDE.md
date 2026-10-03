@@ -15956,6 +15956,112 @@ tapa, la ley nombrada en una frase…), y salió roja con cada una.
 Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
 de 50 ms; la del patio, medida el mismo día, va a 58 y 100 ms.
 
+#### La séptima: Bienvenida, un nombre escrito una vez
+
+En **Bienvenido: qué es M.E.T.A.S y por qué existe**
+(`misiones/docente-bienvenida-metas/`, `js/animacion-nombre.js`), dentro del
+«Recorrido», detrás del mapa de las cuatro piezas. El mapa dice que lo que ninguna
+otra herramienta le da está en las flechas, y la parada de las flechas lo cuenta
+con un dato de verdad: la lista de Mi aula pone cada nombre en la asistencia, en
+las notas, en la boleta y en la tira de la clave, y «un nombre mal escrito al
+inicio se arrastra». La animación es ese nombre:
+
+- la lista de Mi aula, con el renglón de Jefferson escrito «Jeferson Mejía»:
+  ¿dónde más va a salir ese nombre?;
+- baja por cuatro flechas, una por una, y sale en cuatro sitios: la asistencia y
+  las notas, que son pantallas, y la boleta y la tira de la clave, que son papel.
+  Debajo de la lista, «escrito una vez»;
+- en la reunión, la mamá lee la boleta: «Es Jefferson, con dos efes». Falta una
+  efe en la lista, y por eso falta en los cuatro: debajo de cada nombre sale la
+  marca de lo que falta (‸);
+- se corrige una sola vez, en la lista: la efe entra, la corrección baja solo a
+  las dos pantallas, que la pintan al llegar y llevan su ✓, y la boleta y la tira
+  ya estaban entregadas;
+- lo impreso no se corrige solo: la boleta se imprime otra vez, de la lista
+  corregida, y la tira que ya está en la casa sigue diciendo «Jeferson»;
+- y donde estaba la mamá sale el cuaderno del maestro: los nombres por revisar
+  antes de imprimir, y con quién confirmarlos.
+
+**Siete cosas que valen para las siguientes:**
+
+1. ⚠️ **Lo que asombra sale del código, no de una promesa.** Que las pantallas se
+   corrigen solas y los papeles no es lo que hace la plataforma: los chips de la
+   asistencia y la fila de Notas SACE pintan el primer nombre de la lista cada vez
+   que se abren (`adPrimerNombre`), y la boleta y la tira imprimen el nombre entero
+   el día que se imprimen. La sonda lo busca en `registros-admin.js` y comprueba
+   que su tabla de pantallas y papeles diga lo mismo, y también que la boleta de un
+   solo alumno se pueda imprimir otra vez («Boleta de»), que es el paso 4.
+2. ⚠️ **Escribir la animación destapó lo que la misión decía mal, y se corrigió con
+   ella.** La parada de las flechas decía que la nota sale «a la vez en la boleta,
+   en el Plan de Acción, en el Parte Mensual y en lo que ve la familia», y que en
+   la sincronización «gana siempre el cambio más reciente». Leídas en el código,
+   las dos eran falsas: el Plan de Acción solo trae los nombres («Traer mi lista»),
+   el Parte Mensual se llena a mano (la matrícula y las faltas, y él saca la
+   asistencia media), y desde el 9 de septiembre de 2026 los cambios se juntan dato
+   por dato. Se corrigió en la misión, en su ficha, en la parada 3 («mire cómo
+   aparece ya en la boleta») y en la cabecera de `js/metas-docente-sync.js`, que
+   seguía diciendo «last-write-wins». La sonda comprueba que ninguna de esas frases
+   vuelva.
+3. ⚠️ **Y la animación contestaba dos preguntas, que se cambiaron.** «La lista de
+   alumnos se escribe…» (el quiz) y «¿Cuántas veces hay que escribir la lista…?»
+   (el diagnóstico) eran el paso 0 palabra por palabra. Ahora preguntan qué hacer
+   cuando un colega habla de una misión que usted no ve (tocar «Actualizar») y qué
+   pasa con la asistencia del teléfono y la nota de la computadora al volver la
+   señal (quedan las dos), con la respuesta en el mismo lugar. Las tarjetas de
+   estudio y el memorama se quedan: se voltean para ver la respuesta, que es para lo
+   que están. Y la escena dice «la tira de la clave», nunca «la clave de familia»:
+   «familia» es la respuesta de un completar.
+4. **Los cuatro sitios son los del nombre, y ahora se dice así.** El mapa decía que
+   el dato «sale en los cuatro sitios» al lado de «Cuatro piezas», y la ficha ponía
+   «los cuatro sitios» detrás de una lista de tres. El mapa dice ahora que el dato
+   «sale solo donde hace falta», y en la ficha la frase va justo detrás de los
+   cuatro sitios del nombre.
+5. **El nombre va en pedazos con su ancho medido**, y la efe que falta entra justo
+   donde falta: lo de después se corre lo que mide una efe. La sonda rehace lo que
+   se lee en cada sitio con el lugar de cada pedazo, y la marca de lo que falta
+   tiene que quedar debajo del hueco donde, con la efe, sale el nombre que dice la
+   mamá.
+6. **El globo de la mamá va en dos renglones, a la izquierda de las flechas.** En
+   uno solo llegaba encima de la flecha que baja a la tira. Y en la pantalla oscura
+   el marco de las pantallas no se veía: lleva su propio color. Las dos se vieron
+   en las capturas, con la sonda en verde.
+7. **Lo que sale en el sitio de otra cosa espera a que se haya ido**: la boleta
+   nueva sale cuando la vieja ya se fue, la corrección baja cuando la efe ya entró
+   en la lista, el ✓ sale cuando la efe ya está en su sitio, y las flechas del
+   paso 1 bajan de verdad una por una (iban 100 ms montadas).
+
+La sonda **no le cree nada a la escena**. Lee la lista en el dibujo, pedazo por
+pedazo, y de ahí saca cómo tiene que decir el nombre cada sitio. Comprueba:
+
+- que cada pantalla diga el primer nombre de la lista como está ahora, y cada
+  papel el nombre entero como estaba el día que se imprimió;
+- que la mamá diga cómo se llama su hijo y cuántas efes lleva, que en la lista
+  falte una y que con ella salga su nombre;
+- que la marca de lo que falta vaya justo debajo del hueco, y que desde que la mamá
+  lo dice la lleve todo nombre mal escrito y ninguno bien escrito;
+- que cada flecha salga del renglón del alumno y su punta llegue al borde de su
+  sitio, sin pasar por encima de nada, y que la corrección baje solo a lo que se
+  corrige;
+- que lo corregido lleve su ✓ (una raya) al lado, que la clave de la tira vaya
+  tapada y que los papeles digan si ya se entregaron;
+- que cada cosa pase cuando le toca, que el marcador cuente lo que se ve y que la
+  frase nombre los sitios en su orden;
+- y que no salga nada de lo que pregunta la prueba, ni un número fuera del
+  marcador.
+
+Se comprobó al revés con treinta averías, plantadas una por una (el chip con el
+nombre entero, la tira corrigiéndose sola, la marca corrida tres puntos, la boleta
+nueva antes de que se vaya la vieja, la corrección bajando antes de que entre la
+letra, «familia» en una frase, la mamá diciendo «tres efes», la clave de la tira
+escrita, la misión volviendo a decir lo del Plan de Acción, la asistencia pintando
+el nombre entero en el código…), y salió roja con cada una. Una primera versión de
+la última, que movía el ✓ de la boleta a otro grupo, salió verde, y no era la
+sonda: el dibujo quedaba idéntico. Se cambió por el ✓ llegando junto con la
+boleta nueva, que sí se ve, y salió roja.
+
+Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es de
+67 ms; la de la Ley Fundamental, medida el mismo día, va a 57 y 83 ms.
+
 ## Normativa: las Sugerencias de una misión salen del teléfono
 
 El botón **💬 Sugerencias** de cada misión lleva años ahí y durante todo

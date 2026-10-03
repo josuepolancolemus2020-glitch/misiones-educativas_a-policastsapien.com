@@ -253,7 +253,7 @@ const PARADAS = [
     pasos: [
       'Entre a Mi aula y escriba su lista una sola vez, con los nombres bien escritos desde el principio.',
       'Deje que genere las claves de familia: salen solas, una por alumno.',
-      'Registre la primera nota de un parcial y mire cómo aparece ya en la boleta y en el Plan de Acción.',
+      'Registre la primera nota de un parcial y mire cómo aparece ya en la boleta.',
       'Abra el Plan de Acción: le reparte el grupo en cinco categorías y le dice qué hacer con cada una.',
     ],
     nohacer: [
@@ -329,11 +329,13 @@ const PARADAS = [
     txt: 'Herramientas sueltas hay muchas. Lo que no se consigue armando piezas de distintos ' +
          'lugares es que <b>hablen entre sí</b>. Aquí el trabajo del alumno viaja con su <b>código ' +
          'de aula</b> (cinco letras que usted dicta una vez) y aterriza en su <b>Evidencia de ' +
-         'misiones</b>. La <b>lista</b> que escribió en Mi aula genera las <b>claves de familia</b>. ' +
-         'Las <b>notas</b> que registró salen a la vez en la <b>boleta</b>, en el <b>Plan de ' +
-         'Acción</b>, en el <b>Parte Mensual</b> y en lo que ve la <b>familia</b>. Y todo eso se ' +
-         'sincroniza solo entre su teléfono y su computadora: gana siempre el cambio más reciente, ' +
-         'y usted no decide nada.',
+         'misiones</b>. La <b>lista</b> que escribió en Mi aula genera las <b>claves de familia</b> ' +
+         'y pone cada nombre en la <b>asistencia</b>, en las <b>notas</b>, en la <b>boleta</b> y en ' +
+         'la <b>tira de la clave</b>; el <b>Plan de Acción</b> la trae con un toque. Las <b>notas</b> ' +
+         'que registró en Mi aula salen en la boleta, en el informe de cada alumno y en lo que ve la ' +
+         '<b>familia</b>. Y todo eso se sincroniza solo entre su teléfono y su computadora: los ' +
+         'cambios de los dos se juntan <b>dato por dato</b>, así que la nota que puso en uno no le ' +
+         'borra la asistencia que pasó en el otro.',
     donde: 'El código de aula está en <b>Zona Docente</b>, en la tarjeta con su nombre. La ' +
            'sincronización trabaja sola; hay un botón de <b>Sincronizar ahora</b> por si quiere ' +
            'verla moverse.',
@@ -346,7 +348,7 @@ const PARADAS = [
     nohacer: [
       'No escriba dos listas: una en Mi aula y otra en un cuaderno aparte. La que se parte se pierde.',
       'No cambie el código de aula a mitad de año sin avisar al grado.',
-      'Un nombre mal escrito al inicio se arrastra a la boleta, al recibo y a la clave. Se corrige el primer día.',
+      'Un nombre mal escrito al inicio se arrastra a la boleta, al recibo y a la tira de la clave. Se corrige el primer día.',
       'No dicte el código de aula fuera de su grado: no es un secreto, pero es su aula.',
     ],
     aula: 'Esta es la pieza que no se puede copiar juntando aplicaciones sueltas. No es que cada ' +
@@ -524,10 +526,10 @@ const QZ = [
     o: ['Una cuenta con correo y contraseña', 'Pagar una suscripción',
         'Escribir una sola vez el código de aula de cinco letras', 'Estar conectado todo el tiempo'],
     c: 2, e: 'El alumno no tiene cuenta. Cinco letras dictadas una vez y el avance viaja solo.' },
-  { q: 'La lista de alumnos se escribe…',
-    o: ['Una vez en cada herramienta', 'Cada parcial',
-        'Al inicio y al cierre del año', 'Una sola vez, y de ahí comen todas las herramientas'],
-    c: 3, e: 'Asistencia, notas, boleta, colectas, claves de familia y Plan de Acción salen de esa misma lista.' },
+  { q: 'Un compañero le habla de una misión que usted no ve en su teléfono. Lo primero es…',
+    o: ['Esperar a que la publique la Secretaría de Educación', 'Borrar la aplicación y volver a instalarla',
+        'Reiniciar su aula en Mi aula', 'Tocar «Actualizar», el botón de la flecha en círculo'],
+    c: 3, e: 'El teléfono guarda la versión vieja para poder trabajar sin señal. Ese botón trae lo último y lo deja a usted donde estaba.' },
   { q: 'El Plan de Acción reparte al grupo en…',
     o: ['Aprobados y reprobados', 'Cinco categorías, de Avanzado a Insatisfactorio',
         'Tres niveles de logro', 'Una nota por alumno, sin categorías'],
@@ -850,9 +852,9 @@ const DG = [
   { b: 0, q: 'Un alumno abre una misión con el enlace que usted le pasó. Para que su trabajo le llegue a usted, necesita:',
     o: ['Crear una cuenta con su correo', 'Escribir el código de aula de cinco letras',
         'Pedirle la clave de familia a su madre', 'Nada: llega solo por el enlace'], c: 1 },
-  { b: 1, q: '¿Cuántas veces hay que escribir la lista de alumnos para usar asistencia, notas, boleta, colectas y Plan de Acción?',
-    o: ['Una vez por cada herramienta', 'Una vez por parcial',
-        'Una al inicio y otra al cierre del año', 'Una sola vez'], c: 3 },
+  { b: 1, q: 'Pasó lista en el teléfono sin señal y en la noche puso una nota en la computadora. Al volver la señal:',
+    o: ['Gana la nota y se pierde la asistencia', 'Gana la asistencia y se pierde la nota',
+        'Usted tiene que elegir cuál de las dos copias se queda', 'Quedan las dos: los cambios se juntan dato por dato'], c: 3 },
   { b: 2, q: 'Para entrar al asistente de padres, la familia necesita:',
     o: ['Una cuenta con correo y contraseña', 'Instalar una aplicación',
         'Su clave de familia y nada más', 'Que usted esté conectado en ese momento'], c: 2 },

@@ -13,8 +13,11 @@
      herramienta) y sube solo lo que cambió, con marca de tiempo.
    • Al abrir la Zona Docente / al volver internet / con la app visible,
      baja lo más nuevo de la nube y repinta la vista activa.
-   • Conflicto automático: gana el cambio más reciente (last-write-wins).
-     El maestro NO decide nada: la nube manda y todo converge solo.
+   • Conflicto automático: las dos copias se FUSIONAN dato por dato
+     (js/metas-fusion-aula.js), y el reloj solo decide cuando los dos
+     equipos cambiaron el mismo dato. Si la fusión no se puede hacer,
+     gana el cambio más reciente, como antes. El maestro NO decide nada:
+     todo converge solo.
    • Botón «🔄 Sincronizar ahora»: dispara una sync normal a pedido
      (tranquilidad del usuario; no fuerza nada).
    • «🗑️ Empezar de nuevo» (dsReset): único escape; borra el aula aquí

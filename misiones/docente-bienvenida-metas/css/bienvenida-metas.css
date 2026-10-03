@@ -456,3 +456,40 @@ body {
 }
 .ach-fila:last-of-type { border-bottom: none; }
 .ach-fila.no { opacity: .45; font-weight: 600; }
+
+/* ── La animación del nombre escrito una vez (#amNombre) ──
+   Va en «El recorrido», detrás del mapa de las cuatro piezas. La lista, la
+   boleta, la tira, el globo y el cuaderno son papel, y las dos pantallas
+   son pantallas: los dos se quedan así en la pantalla oscura, con tinta
+   oscura fija. Lo que va sobre la tarjeta (las flechas, lo que lleva la
+   corrección y lo que dice debajo de la lista) lleva los colores de la
+   pantalla, que se aclaran solos en la oscura. Nada se dice solo con
+   color: lo que falta lleva su marca de inserción y lo corregido su ✓. */
+/* El marco de una pantalla es oscuro sobre la tarjeta clara y claro sobre
+   la oscura: oscuro sobre oscuro, la pantalla se leía como un papel más. */
+#amNombre { --bv-verde: #15803d; --bv-marco: #1a2331; }
+[data-theme="dark"] #amNombre { --bv-verde: #4ade80; --bv-marco: #94a3b8; }
+#amNombre .bv-papel { fill: #fffdf5; stroke: #cbd5e1; stroke-width: 1.2; }
+#amNombre .bv-pantalla { fill: #ffffff; stroke: var(--bv-marco); stroke-width: 2; }
+#amNombre .bv-tira { fill: #fffdf5; stroke: #64748b; stroke-width: 1.2; stroke-dasharray: 4 3; }
+#amNombre .bv-doblez { fill: #e2e8f0; stroke: #cbd5e1; stroke-width: 1; stroke-linejoin: round; }
+#amNombre .bv-fila { fill: #ede9fe; }
+#amNombre .bv-chip { fill: #f3eeff; stroke: #a78bfa; stroke-width: 1.2; }
+#amNombre .bv-celda { fill: #ffffff; stroke: #94a3b8; stroke-width: 1; }
+#amNombre .bv-reja { stroke: #94a3b8; stroke-width: 1; }
+#amNombre .bv-tapada { fill: #94a3b8; }
+#amNombre .bv-tinta { fill: #1a2331; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amNombre .bv-tinta-suave { fill: #475569; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amNombre .bv-flecha { fill: none; stroke: var(--am-pri); stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; }
+#amNombre .bv-flecha-punta { fill: var(--am-pri); }
+#amNombre .bv-corrige { fill: none; stroke: var(--bv-verde); stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round; }
+#amNombre .bv-corrige-punta { fill: var(--bv-verde); }
+#amNombre .bv-falta { fill: none; stroke: #b91c1c; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+#amNombre .bv-bien { fill: none; stroke: #15803d; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+#amNombre .bv-globo { fill: #ffffff; stroke: #94a3b8; stroke-width: 1.2; stroke-linejoin: round; }
+#amNombre .bv-raya { stroke: #94a3b8; stroke-width: 1.2; }
+#amNombre .bv-falda { fill: #7c2d12; }
+#amNombre .bv-blusa { fill: #bae6fd; stroke: #7aa6bd; stroke-width: 1; }
+#amNombre .bv-brazo { fill: none; stroke: #8d5a3b; stroke-width: 3; stroke-linecap: round; }
+#amNombre .bv-piel { fill: #8d5a3b; }
+#amNombre .bv-pelo { fill: #1f130b; }
