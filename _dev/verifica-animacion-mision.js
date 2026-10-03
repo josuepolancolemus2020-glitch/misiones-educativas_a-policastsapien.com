@@ -5791,6 +5791,66 @@ const LEER = `
     };
   };
 
+  /* Leer una expectativa: la expectativa en su papel, partida en trozos;
+     las diez cosas del patio, que se mueven con transform; los montones, el
+     hongo, Kenia y el cuaderno. Dónde está cada cosa se lee de su sobre
+     (H.aVista), y cuándo sale, de su demora. */
+  window.__amExtra.amPatio = function (raiz) {
+    var H = window.__amHerr(raiz), vis = H.vis, uno = H.uno, todos = H.todos;
+    function texto(t) {
+      return t ? { txt: t.textContent, ve: vis(t), d: H.demora(t), tinta: H.tinta(t),
+        x: +t.getAttribute('x'), y: +t.getAttribute('y'), largo: +t.getAttribute('textLength') || 0 } : null;
+    }
+    function linea(p) {
+      return { pts: H.pares(p.getAttribute('d')).map(function (q) { return H.aVista(p, q[0], q[1]); }), ve: vis(p), hecho: H.trazado(p),
+        d: H.demora(p), op: +getComputedStyle(p).strokeOpacity, raya: getComputedStyle(p).strokeDasharray };
+    }
+    function mueve(el) { var m = new DOMMatrix(getComputedStyle(el).transform); return { dx: m.e, dy: m.f, d: H.demora(el), dura: H.dura(el, 'transform') }; }
+    function union(ls) {
+      return { x0: Math.min.apply(null, ls.map(function (c) { return c.x0; })), y0: Math.min.apply(null, ls.map(function (c) { return c.y0; })),
+        x1: Math.max.apply(null, ls.map(function (c) { return c.x1; })), y1: Math.max.apply(null, ls.map(function (c) { return c.y1; })) };
+    }
+    var hoja = uno('[data-hoja]'), lim = uno('[data-limite-caja]'), cua = uno('[data-cuaderno]');
+    var hongo = uno('[data-hongo]'), hve = uno('[data-hongo-ve]'), aro = uno('[data-hongo-aro]'), globo = uno('[data-globo]'), ke = uno('[data-kenia]');
+    var trozos = todos('[data-trozo]', hoja);
+    return {
+      vista: [H.svg.viewBox.baseVal.width, H.svg.viewBox.baseVal.height],
+      aria: H.svg.getAttribute('aria-label') || '',
+      hoja: { ve: vis(hoja), d: H.demora(hoja), papel: H.caja(uno('[data-hoja-papel]', hoja)),
+        trozos: trozos.map(function (t) { var o = texto(t); o.pedazo = +(t.getAttribute('data-pedazo') || 0); o.limite = t.hasAttribute('data-limite'); return o; }),
+        rayas: todos('[data-subraya]', hoja).map(function (p) { var o = linea(p); o.pedazo = +p.getAttribute('data-subraya'); return o; }) },
+      /* el resaltador va DEBAJO de la letra: antes que ella en el documento */
+      limite: { ve: vis(lim), d: H.demora(lim), caja: H.caja(lim), relleno: +getComputedStyle(lim).fillOpacity,
+        detras: trozos.every(function (t) { return !!(lim.compareDocumentPosition(t) & 4); }) },
+      cosas: todos('[data-cosa]').map(function (g) {
+        var em = uno('[data-emoji]', g), nm = uno('[data-nombre-de]', g);
+        return { nombre: g.getAttribute('data-cosa'), es: g.getAttribute('data-es'), emoji: em.textContent, ve: vis(g), c: H.aVista(g, 0, 0),
+          mueve: mueve(g), tinta: H.tinta(em), nombreTxt: nm ? texto(nm) : null };
+      }),
+      senales: todos('[data-senal]').map(function (s) {
+        return { de: s.getAttribute('data-senal'), c: H.aVista(s, +s.getAttribute('cx'), +s.getAttribute('cy')), r: +s.getAttribute('r'), ve: vis(s), d: H.demora(s) };
+      }),
+      montones: todos('[data-monton]').map(function (p) {
+        var t = todos('[data-monton-txt]').filter(function (q) { return q.getAttribute('data-monton-txt') === p.getAttribute('data-monton'); })[0];
+        return { txt: p.getAttribute('data-monton'), caja: H.caja(p), ve: vis(p), hecho: H.trazado(p), d: H.demora(p), rotulo: texto(t) };
+      }),
+      hongo: { c: H.aVista(hongo, 0, 0), mueve: mueve(hongo), ve: vis(hve), d: H.demora(hve), tinta: H.tinta(uno('[data-emoji]', hve)),
+        aro: { c: H.aVista(aro, +aro.getAttribute('cx'), +aro.getAttribute('cy')), r: +aro.getAttribute('r'), ve: vis(aro), d: H.demora(aro),
+          raya: getComputedStyle(aro).strokeDasharray },
+        textos: todos('[data-hongo-txt]').map(function (t) { var o = texto(t); o.k = t.getAttribute('data-hongo-txt'); return o; }) },
+      kenia: { ve: vis(ke), cuerpo: union([].slice.call(ke.children).filter(function (c) { return c.tagName !== 'text'; }).map(H.caja)),
+        cabeza: H.caja(uno('[data-cabeza]', ke)), pies: Math.max.apply(null, todos('[data-pie]', ke).map(function (p) { return H.caja(p).y1; })),
+        nombre: texto(uno('[data-nombre]', ke)) },
+      globo: { ve: vis(globo), d: H.demora(globo), caja: H.caja(uno('[data-globo-caja]', globo)),
+        pts: H.pares(uno('[data-globo-caja]', globo).getAttribute('d')).map(function (q) { return H.aVista(globo, q[0], q[1]); }),
+        txt: texto(uno('[data-globo-txt]', globo)) },
+      cuaderno: { ve: vis(cua), d: H.demora(cua), papel: H.caja(uno('[data-cuaderno-papel]', cua)), pide: todos('[data-pide]', cua).map(texto),
+        rayas: todos('[data-raya]', cua).map(linea) },
+      fuera: todos('text').filter(vis).filter(function (t) { return !hoja.contains(t); }).map(function (t) { return t.textContent; }),
+      letras: H.letras()
+    };
+  };
+
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -6542,6 +6602,64 @@ const ESTADOS_DESTINO = [
 /* El cuerpo de Brayan sin moverse (paso 0), y lo que se corrió cada tramo
    al terminar el paso anterior: con eso la sonda rehace su camino. */
 const MEMO_DESTINO = { base: null, tramos: null };
+/* Leer una expectativa: la cita sale del primer peldaño de la misión, y lo
+   que el dibujo afirma de ella se comprueba en el DCNB troceado: que es de
+   la lista del grado (no una fila de la tabla, y la última sección de la
+   misión la pone de ejemplo de eso), que la tabla de su bloque trae la
+   actividad del patio, que primero no nombra los hongos, que el hongo es un
+   reino aparte y que llega en tercero. Y la tarjeta de arriba, que trae el
+   plan de las diez cosas y no le llama fila. */
+let leyPatioMemo = null;
+function leyPatio() {
+  if (leyPatioMemo) return leyPatioMemo;
+  const dir = path.join(RAIZ, 'misiones', 'docente-leer-expectativa');
+  const js = fs.readFileSync(path.join(dir, 'js', 'leer-expectativa.js'), 'utf8').replace(/'\s*\+\s*'/g, '');
+  const html = fs.readFileSync(path.join(dir, 'leer-expectativa.html'), 'utf8');
+  const dcnb = f => fs.readFileSync(path.join(RAIZ, '_dev', 'dcnb', f), 'utf8').replace(/\s+/g, ' ');
+  const plano = s => s.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  const cita = (js.match(/const PELDANOS = \[[\s\S]*?cita: '([^']+)'/) || [])[1] || '';
+  const aprende = (html.match(/<section class="sec" id="sec-aprende">([\s\S]*?)<\/section>/) || [])[1] || '';
+  const tarjeta = plano((aprende.match(/<div class="card">([\s\S]*?)<div class="card/) || [])[1] || '');
+  const lista = dcnb('dcneb-basica-i-ciclo-75-ciencias-naturales-primer-grado.md');
+  const tabla = dcnb('dcneb-basica-i-ciclo-84-ciencias-naturales-primer-grado.md');
+  const area = dcnb('dcneb-basica-i-ciclo-72-ciencias-naturales-1de3.md');
+  const tercero = dcnb('dcneb-basica-i-ciclo-87-ciencias-naturales-tercer-grado-1de4.md');
+  leyPatioMemo = {
+    cita,
+    tarjeta,
+    deLaLista: /EXPECTATIVAS DE LOGRO POR GRADO PRIMER GRADO/.test(lista) && !!cita && lista.includes(cita),
+    ejemploDeLista: !!cita && js.includes('Al finalizar el Primer Grado de la Educación Básica, los alumnos y las alumnas: ' + cita.slice(0, 40)),
+    tablaTrae: tabla.includes('Observan y clasifican las cosas de cada entorno elegido en dos clases principales: seres vivos y seres no vivos.') &&
+      tabla.includes('Clasifican los seres vivos de ese entorno en plantas y animales.'),
+    primeroSinHongo: !/hongo/i.test(lista) && !/hongo/i.test(tabla),
+    reinoAparte: lista.length > 0 && /seis reinos en que se clasifican estos seres: virus, protistas, moneras, hongos, plantas y animales/.test(area),
+    enTercero: /Tercer Grado/i.test(tercero) && /Reinos de seres vivos: animales, vegetales, hongos y microorganismos/.test(tercero)
+  };
+  return leyPatioMemo;
+}
+/* Las diez cosas del patio: qué dibujo lleva cada una y de qué es. Es la
+   tabla de la sonda, no la de la escena: si la escena pone una cosa en otro
+   grupo, se ve. */
+const PATIO_COSAS = {
+  'árbol': ['🌳', 'planta'], lata: ['🥫', 'no'], gallina: ['🐔', 'animal'], agua: ['💧', 'no'], perro: ['🐕', 'animal'],
+  piedra: ['🪨', 'no'], flor: ['🌻', 'planta'], pelota: ['⚽', 'no'], zacate: ['🌿', 'planta'], mariposa: ['🦋', 'animal']
+};
+/* Lo que se ve al TERMINAR cada paso, sin decir dónde: qué pedazos van
+   subrayados (y cuáles tenues), en qué reparto están las cosas y qué más se
+   ve. Dónde va cada cosa lo mide la sonda en el dibujo. */
+const ESTADOS_PATIO = [
+  { subraya: [], tenue: [], limite: false, senal: false, reparto: 'patio', montones: 0, hongo: false, globo: false, nombres: false, hoja: true, cuaderno: false },
+  { subraya: [1, 2], tenue: [], limite: false, senal: true, reparto: 'patio', montones: 0, hongo: false, globo: false, nombres: false, hoja: true, cuaderno: false },
+  { subraya: [3], tenue: [1, 2], limite: false, senal: false, reparto: 'dos', montones: 1, hongo: false, globo: false, nombres: false, hoja: true, cuaderno: false },
+  { subraya: [4], tenue: [1, 2, 3], limite: false, senal: false, reparto: 'cuatro', montones: 2, hongo: false, globo: false, nombres: false, hoja: true, cuaderno: false },
+  { subraya: [], tenue: [1, 2, 3, 4], limite: true, senal: false, reparto: 'cuatro', montones: 2, hongo: true, globo: true, nombres: false, hoja: true, cuaderno: false },
+  { subraya: [5], tenue: [1, 2, 3, 4], limite: false, senal: false, reparto: 'cuatro', montones: 2, hongo: true, globo: false, nombres: true, hoja: true, cuaderno: false },
+  { subraya: [5], tenue: [1, 2, 3, 4], limite: false, senal: false, reparto: 'cuatro', montones: 2, hongo: true, globo: false, nombres: true, hoja: false, cuaderno: true }
+];
+/* Dónde estaba cada cosa al terminar el paso anterior (para rehacer su
+   camino), y dónde esperaba el hongo, escondido, antes de que Kenia lo
+   encuentre. */
+const MEMO_PATIO = { antes: null, hongo: null };
 function historiaBanco() {
   if (historiaBancoMemo) return historiaBancoMemo;
   const html = fs.readFileSync(path.join(RAIZ, 'misiones', 'basica-palabras-que-piensan', 'palabras-que-piensan.html'), 'utf8');
@@ -21554,6 +21672,288 @@ const ESCENAS = {
     r.push([ml.length === 0, `paso ${n}: ningún texto se monta en otro`, ml.slice(0, 4)]);
     const sale = x.letras.filter(t => t.caja.x0 < -0.5 || t.caja.y0 < -0.5 || t.caja.x1 > x.vista[0] + 0.5 || t.caja.y1 > x.vista[1] + 0.5);
     r.push([sale.length === 0, `paso ${n}: todo lo escrito cabe en el dibujo`, sale.map(t => t.txt)]);
+    return r;
+  },
+  amPatio(e, n) {
+    const x = e.extra, r = [];
+    if (!x) return [[false, `paso ${n}: la sonda pudo leer la escena`, null]];
+    const L = leyPatio(), E = ESTADOS_PATIO[n], M = MEMO_PATIO;
+    if (n === 0) { M.antes = null; M.hongo = null; }
+    const monta = (a, b, t = 0.5) => a.x0 < b.x1 - t && b.x0 < a.x1 - t && a.y0 < b.y1 - t && b.y0 < a.y1 - t;
+    const dentro = (a, b, mg = 0) => a.x0 >= b.x0 - mg && a.x1 <= b.x1 + mg && a.y0 >= b.y0 - mg && a.y1 <= b.y1 + mg;
+    const cerca = (a, b, t = 0.5) => Math.abs(a - b) <= t;
+    const cx = c => (c.x0 + c.x1) / 2, cy = c => (c.y0 + c.y1) / 2;
+    const sin = s => s.replace(/ /g, ' ');
+    const NUM = ['cero', 'una', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez'];
+    const uno = s => s.replace(/es$/, '').replace(/s$/, '');
+
+    /* ── lo que no depende del dibujo va primero ── */
+    /* Ni cómo se llaman los pedazos de una expectativa ni lo que dice cada
+       uno (el quiz, el completar, el memorama y el reto), ni dónde está en el
+       documento (las dos listas son la última sección de la misión), ni cómo
+       se evalúa. Y «fila» tampoco: esta expectativa es de la lista del grado. */
+    const PROHIBIDAS = /(?<!\p{L})(?:filas?|tablas?|listas?|columnas?|grados?|bloques?|verbos?|objetos?|techos?|alcances?|componentes?|[ée]nfasis|mirada|exig\p{L}*|evalu\p{L}*|sugerid\p{L}*|instrumentos?|identific\p{L}*|observ\p{L}*|cuadritos?|c[íi]rculos?|conceptual(?:es)?|actitudinal(?:es)?|contenidos?|procesos?|d?cnb|est[áa]ndar(?:es)?|ejes?|defini\p{L}*|subray\p{L}*|hasta d[óo]nde|sobre qu[ée])(?!\p{L})/iu;
+    const dicho = [e.texto, e.palabras, e.boton, x.aria].concat(x.fuera).join(' · ');
+    r.push([!PROHIBIDAS.test(dicho), `paso ${n}: no se nombran los pedazos de una expectativa ni lo que dice cada uno, ni dónde está en el documento, ni cómo se evalúa, ni se le llama fila`, (dicho.match(PROHIBIDAS) || [])[0]]);
+    if (n === 0) {
+      const { tarjeta, ...dcnb } = L;
+      r.push([!!L.cita && L.deLaLista && L.ejemploDeLista && L.tablaTrae && L.primeroSinHongo && L.reinoAparte && L.enTercero,
+        'el DCNB dice lo que la escena afirma: la expectativa es de la lista del grado de primero, la tabla de su bloque trae la actividad, primero no nombra los hongos, el hongo es un reino aparte y llega en tercero', dcnb]);
+      r.push([tarjeta.includes('diez cosas') && tarjeta.includes('separarlas primero en vivas y no vivas, y después las vivas en plantas y animales') &&
+        tarjeta.includes('la tabla de ese mismo bloque ya la trae') && !/(?<!\p{L})filas?(?!\p{L})/iu.test(tarjeta),
+        'la tarjeta de arriba trae el plan de las diez cosas, dice que la actividad la trae la tabla de su bloque y no le llama fila a la expectativa', tarjeta.slice(0, 90)]);
+    }
+    const C = /^(Clasifican) (los elementos ambientales) (en (seres no vivos) y (seres vivos),) (y éstos en (los dos tipos más evidentes), (plantas) y (animales),) (con énfasis en el componente (diversidad)\.)$/.exec(L.cita);
+    r.push([!!C, `paso ${n}: la expectativa de la misión tiene sus pedazos`, L.cita]);
+    if (!C) return r;
+    const citas = (e.texto.match(/«[^»]+»/g) || []).map(s => s.slice(1, -1));
+    r.push([citas.every(c => L.cita.includes(c)), `paso ${n}: lo que la frase cita entre comillas está tal cual en la expectativa`, citas]);
+
+    /* ── el papel: la expectativa tal cual, cada pedazo en su sitio ── */
+    const T = x.hoja.trozos, P = x.hoja.papel, ESP = 24.1 * 12 / 100;
+    const renglones = [];
+    T.slice().sort((a, b) => a.y - b.y || a.x - b.x).forEach(t => { const q = renglones.find(u => cerca(u.y, t.y)); if (q) q.ts.push(t); else renglones.push({ y: t.y, ts: [t] }); });
+    renglones.sort((a, b) => a.y - b.y).forEach(q => q.ts.sort((a, b) => a.x - b.x));
+    const junta = ts => ts.reduce((s, t, i) => s + (i && t.x - (ts[i - 1].x + ts[i - 1].largo) > 1.5 ? ' ' : '') + t.txt, '');
+    const huecos = [];
+    renglones.forEach(q => q.ts.forEach((t, i) => { if (i) { const g = t.x - (q.ts[i - 1].x + q.ts[i - 1].largo); if (!cerca(g, 0, 0.05) && !cerca(g, ESP, 0.1)) huecos.push([q.ts[i - 1].txt, t.txt, g]); } }));
+    const leida = renglones.map(q => junta(q.ts)).join(' ');
+    r.push([leida === '«' + L.cita + '»' && huecos.length === 0, `paso ${n}: el papel dice la expectativa tal cual, de corrido, con un espacio entre palabra y palabra`, [leida, huecos]]);
+    r.push([T.every(t => dentro(t.tinta, P, -2)) && renglones.every(q => cerca(q.ts[0].x, renglones[0].ts[0].x)),
+      `paso ${n}: lo escrito va dentro del papel, y cada renglón empieza en el mismo margen`, renglones.map(q => q.ts[0].x)]);
+    const pedazo = k => renglones.map(q => junta(q.ts.filter(t => t.pedazo === k))).filter(Boolean).join(' ');
+    const PZ = [null, C[1], C[2], C[3], C[6], C[10]];
+    if (n === 0) r.push([[1, 2, 3, 4, 5].every(k => pedazo(k) === PZ[k]), 'cada pedazo del papel es un pedazo de la expectativa', [1, 2, 3, 4, 5].map(pedazo)]);
+
+    /* las rayas: debajo de su pedazo, de la primera letra a la última, sin
+       tocar las letras de arriba ni las de abajo */
+    const R = x.hoja.rayas, malR = [];
+    R.forEach(u => {
+      const a = u.pts[0], b = u.pts[u.pts.length - 1];
+      const q = renglones.find(v => v.ts.some(t => t.pedazo === u.pedazo) && a[1] > v.y && a[1] - v.y < 8);
+      const ts = q ? q.ts.filter(t => t.pedazo === u.pedazo) : [];
+      const sig = q ? renglones[renglones.indexOf(q) + 1] : null;
+      if (!(q && cerca(a[1], b[1], 0.05) && cerca(Math.min(a[0], b[0]), ts[0].x, 0.6) && cerca(Math.max(a[0], b[0]), ts[ts.length - 1].x + ts[ts.length - 1].largo, 0.6) &&
+        q.ts.every(t => a[1] - 0.8 > t.tinta.y1) && (!sig || sig.ts.every(t => a[1] + 0.8 < t.tinta.y0)))) malR.push([u.pedazo, a, b]);
+    });
+    const sinRaya = T.filter(t => t.pedazo && !R.some(u => u.pedazo === t.pedazo && cerca(u.pts[0][1], t.y, 8) && u.pts[0][1] > t.y &&
+      Math.min(u.pts[0][0], u.pts[1][0]) <= t.x + 0.6 && Math.max(u.pts[0][0], u.pts[1][0]) >= t.x + t.largo - 0.6)).map(t => t.txt);
+    r.push([malR.length === 0 && sinRaya.length === 0, `paso ${n}: cada pedazo lleva su raya debajo, de su primera letra a la última, sin tocar las letras de arriba ni las de abajo`, [malR, sinRaya]]);
+    const malV = [];
+    R.forEach(u => {
+      /* con el cuaderno, el papel de la expectativa ya no está, ni sus rayas */
+      const dice = !E.hoja ? 'no' : E.subraya.includes(u.pedazo) ? 'entera' : E.tenue.includes(u.pedazo) ? 'tenue' : 'no';
+      const es = !u.ve || !u.hecho ? 'no' : u.op > 0.9 ? 'entera' : u.op < 0.6 ? 'tenue' : '?';
+      if (dice !== es) malV.push([u.pedazo, dice, es]);
+    });
+    r.push([malV.length === 0, `paso ${n}: va subrayado el pedazo de este paso, y los de antes quedan tenues`, malV]);
+
+    /* el límite, con resaltador: debajo de la letra y sin las de al lado */
+    const LT = T.find(t => t.limite), LC = x.limite;
+    if (n === 0) r.push([!!LT && LT.txt === C[7], 'el resaltador va en «' + C[7] + '»', LT && LT.txt]);
+    if (LT) {
+      const vecinas = renglones.find(q => q.ts.includes(LT)).ts.filter(t => t !== LT);
+      const pisa = vecinas.filter(t => Math.min(LC.caja.x1, t.tinta.x1) - Math.max(LC.caja.x0, t.tinta.x0) > 0.3).map(t => t.txt);
+      r.push([LC.ve === E.limite && LC.detras && LC.relleno > 0.1 && LC.relleno < 0.6 && LC.caja.x0 <= LT.tinta.x0 && LC.caja.x1 >= LT.tinta.x1 &&
+        LC.caja.y0 <= LT.tinta.y0 && LC.caja.y1 >= LT.tinta.y1 && pisa.length === 0,
+        `paso ${n}: el resaltador sale solo con el hongo, debajo de la letra, y cubre «${C[7]}» sin las palabras de al lado`, [LC.ve, LC.detras, LC.relleno, pisa]]);
+    }
+
+    /* ── el patio: diez cosas, cada una con su dibujo ── */
+    const K = x.cosas, es = k => PATIO_COSAS[k.nombre] ? PATIO_COSAS[k.nombre][1] : '?';
+    const caja = k => k.tinta;
+    if (n === 0) {
+      r.push([K.length === Object.keys(PATIO_COSAS).length && K.every(k => PATIO_COSAS[k.nombre] && PATIO_COSAS[k.nombre][0] === k.emoji) && new Set(K.map(k => k.nombre)).size === K.length,
+        'son diez cosas, cada una con su dibujo', K.map(k => k.nombre + k.emoji)]);
+      r.push([K.every(k => k.es === es(k)), 'la escena pone cada cosa en el mismo grupo que la tabla de la sonda', K.filter(k => k.es !== es(k)).map(k => k.nombre)]);
+    }
+    const choca = [];
+    K.forEach((a, i) => K.slice(i + 1).forEach(b => { if (monta(caja(a), caja(b))) choca.push([a.nombre, b.nombre]); }));
+    K.forEach(a => { if (monta(caja(a), x.kenia.cuerpo)) choca.push([a.nombre, 'Kenia']); });
+    r.push([choca.length === 0 && K.every(k => k.ve), `paso ${n}: se ven las diez, y ninguna se monta en otra ni en Kenia`, choca]);
+
+    const MO = {}; x.montones.forEach(m => { MO[m.txt] = m; });
+    const mNo = MO[C[4]], mVi = MO[C[5]], mPl = MO[C[8]], mAn = MO[C[9]];
+    r.push([!!(mNo && mVi && mPl && mAn) && x.montones.length === 4, `paso ${n}: hay un montón por cada grupo que nombra la expectativa`, Object.keys(MO)]);
+    if (!(mNo && mVi && mPl && mAn)) return r;
+    if (n === 0) r.push([dentro(mPl.caja, mVi.caja, -4) && dentro(mAn.caja, mVi.caja, -4) && !monta(mPl.caja, mAn.caja) && mPl.caja.x1 < mAn.caja.x0 &&
+      cerca(mPl.caja.y0, mAn.caja.y0) && mNo.caja.x1 < mVi.caja.x0 && cerca(mNo.caja.y0, mVi.caja.y0) && cerca(mNo.caja.y1, mVi.caja.y1) && P.y1 < mNo.caja.y0,
+      'los montones de las plantas y de los animales van dentro del de los vivos, uno al lado del otro; el de los no vivos, a la izquierda, como los nombra la expectativa', [mNo.caja, mVi.caja, mPl.caja, mAn.caja]]);
+    const veM = [[mNo, E.montones >= 1], [mVi, E.montones >= 1], [mPl, E.montones >= 2], [mAn, E.montones >= 2]];
+    r.push([veM.every(([m, si]) => m.ve === si && m.hecho === si && m.rotulo.ve === si), `paso ${n}: se ven los montones de este paso, enteros y con su nombre`,
+      veM.map(([m, si]) => [m.txt, si, m.ve, m.hecho, m.rotulo.ve])]);
+    const rotMal = [mNo, mVi].filter(m => !(m.rotulo.tinta.y1 < m.caja.y0 - 0.5 && m.caja.y0 - m.rotulo.tinta.y1 < 8 && cerca(cx(m.rotulo.tinta), cx(m.caja), 1)))
+      .concat([mPl, mAn].filter(m => !(dentro(m.rotulo.tinta, m.caja, -2) && m.rotulo.tinta.y0 - m.caja.y0 < 20 && cerca(cx(m.rotulo.tinta), cx(m.caja), 1))));
+    r.push([rotMal.length === 0, `paso ${n}: el nombre de cada montón va encima de él, centrado (el de las plantas y el de los animales, dentro, arriba)`, rotMal.map(m => m.txt)]);
+
+    if (E.reparto === 'patio') {
+      const filas = [];
+      K.forEach(k => { const f = filas.find(q => cerca(q.y, k.c[1], 1)); if (f) f.ks.push(k); else filas.push({ y: k.c[1], ks: [k] }); });
+      r.push([K.every(k => caja(k).y0 > P.y1 + 4 && caja(k).y1 < mNo.caja.y0 - 10) && filas.length === 2 &&
+        filas.every(f => f.ks.some(k => es(k) === 'no') && f.ks.some(k => es(k) !== 'no')),
+        `paso ${n}: las diez están revueltas en el patio, en dos filas, y en cada fila hay de las dos clases`, filas.map(f => [Math.round(f.y), f.ks.map(k => k.nombre)])]);
+    } else {
+      const donde = k => es(k) === 'no' ? mNo : E.reparto === 'dos' ? mVi : es(k) === 'planta' ? mPl : mAn;
+      const fuera = K.filter(k => !dentro(caja(k), donde(k).caja, -3) || (es(k) === 'no' && monta(caja(k), mVi.caja)) ||
+        (E.reparto === 'cuatro' && es(k) !== 'no' && monta(caja(k), es(k) === 'planta' ? mAn.caja : mPl.caja)));
+      r.push([fuera.length === 0, `paso ${n}: cada cosa está dentro de su montón`, fuera.map(k => k.nombre)]);
+    }
+    const cuenta = m => K.filter(k => dentro(caja(k), m.caja, -3)).length;
+
+    /* el camino de cada cosa: una por una, y ninguna pasa por encima de otra
+       que espera o que ya llegó, ni de Kenia */
+    if ((n === 2 || n === 3) && M.antes) {
+      const mov = K.filter(k => M.antes[k.nombre] && Math.hypot(k.c[0] - M.antes[k.nombre][0], k.c[1] - M.antes[k.nombre][1]) > 0.5);
+      r.push([n === 2 ? mov.length === K.length : mov.length === K.filter(k => es(k) !== 'no').length && mov.every(k => es(k) !== 'no'),
+        `paso ${n}: se mueven las que cambian de montón`, mov.map(k => k.nombre)]);
+      const ds = mov.map(k => k.mueve.d).sort((a, b) => a - b);
+      r.push([mov.length > 0 && ds.every((d, i) => i === 0 || d > ds[i - 1]) && mov.every(k => k.mueve.dura > 0), `paso ${n}: salen una por una`, ds]);
+      if (n === 2) {
+        const abajo = Math.max(...mov.map(k => M.antes[k.nombre][1]));
+        const deAbajo = mov.filter(k => cerca(M.antes[k.nombre][1], abajo, 1)), deArriba = mov.filter(k => !deAbajo.includes(k));
+        r.push([deAbajo.length > 0 && deArriba.length > 0 && Math.max(...deAbajo.map(k => k.mueve.d)) < Math.min(...deArriba.map(k => k.mueve.d)),
+          'paso 2: sale primero la fila de abajo, que está más cerca de los montones', [deAbajo.map(k => k.nombre), deArriba.map(k => k.nombre)]]);
+      }
+      const pisa = [];
+      mov.forEach(a => {
+        const o = M.antes[a.nombre], d0 = a.mueve.d, d1 = d0 + a.mueve.dura;
+        const ca = caja(a), w = ca.x1 - ca.x0, h = ca.y1 - ca.y0, off = [cx(ca) - a.c[0], cy(ca) - a.c[1]];
+        const quietas = [];
+        K.filter(b => b !== a).forEach(b => {
+          const cb = caja(b), offb = [cx(cb) - b.c[0], cy(cb) - b.c[1]];
+          let p = null;
+          if (!mov.includes(b)) p = b.c;
+          else if (b.mueve.d >= d1) p = M.antes[b.nombre];
+          else if (b.mueve.d + b.mueve.dura <= d0) p = b.c;
+          if (p) quietas.push({ k: b.nombre, x: p[0] + offb[0], y: p[1] + offb[1], w: cb.x1 - cb.x0, h: cb.y1 - cb.y0 });
+        });
+        const ke = x.kenia.cuerpo;
+        quietas.push({ k: 'Kenia', x: cx(ke), y: cy(ke), w: ke.x1 - ke.x0, h: ke.y1 - ke.y0 });
+        quietas.forEach(q => {
+          for (let s = 0; s <= 1.0001; s += 0.04) {
+            const px = o[0] + (a.c[0] - o[0]) * s + off[0], py = o[1] + (a.c[1] - o[1]) * s + off[1];
+            if (Math.abs(px - q.x) < (w + q.w) / 2 - 1 && Math.abs(py - q.y) < (h + q.h) / 2 - 1) { pisa.push([a.nombre, q.k, Math.round(s * 100) / 100]); break; }
+          }
+        });
+      });
+      r.push([pisa.length === 0, `paso ${n}: ninguna pasa por encima de otra que espera o que ya llegó, ni de Kenia`, pisa.slice(0, 5)]);
+      const sale = Math.min(...mov.map(k => k.mueve.d)), llegan = Math.max(...mov.map(k => k.mueve.d + k.mueve.dura));
+      const raya = R.filter(u => u.pedazo === (n === 2 ? 3 : 4)).map(u => u.d);
+      if (n === 2) r.push([mNo.d < sale && mVi.d < sale && mNo.rotulo.d >= llegan && mVi.rotulo.d >= llegan && raya.every(d => d < mNo.d),
+        'paso 2: primero la raya de los dos montones, después se marcan, después salen las cosas, y el nombre de cada montón llega cuando ya llegaron todas',
+        { raya, montones: [mNo.d, mVi.d], sale, llegan, nombres: [mNo.rotulo.d, mVi.rotulo.d] }]);
+      if (n === 3) r.push([mPl.d >= llegan && mAn.d >= llegan && mPl.rotulo.d >= mPl.d && mAn.rotulo.d >= mAn.d && raya.every(d => d < sale),
+        'paso 3: primero la raya de los dos tipos, después se separan, y cada montón se marca alrededor de los suyos cuando ya llegaron todos (dibujado antes, la raya pasaría por encima de los que esperan)',
+        { raya, sale, llegan, montones: [mPl.d, mAn.d], nombres: [mPl.rotulo.d, mAn.rotulo.d] }]);
+    }
+
+    /* los aros de «se puede señalar»: uno por cosa, uno por uno, como se lee */
+    const S = x.senales;
+    r.push([S.length === K.length && S.every(s => s.ve === E.senal), `paso ${n}: los aros de lo que se puede señalar están solo cuando se señala`, S.filter(s => s.ve !== E.senal).map(s => s.de)]);
+    if (E.senal) {
+      const mal = S.filter(s => { const k = K.find(q => q.nombre === s.de); return !k || !cerca(s.c[0], cx(caja(k)), 1.5) || !cerca(s.c[1], cy(caja(k)), 2.5) || s.r < 0.5 * Math.max(caja(k).x1 - caja(k).x0, caja(k).y1 - caja(k).y0); });
+      const choques = []; S.forEach((a, i) => S.slice(i + 1).forEach(b => { if (Math.hypot(a.c[0] - b.c[0], a.c[1] - b.c[1]) < a.r + b.r) choques.push([a.de, b.de]); }));
+      r.push([mal.length === 0 && choques.length === 0, `paso ${n}: cada aro rodea su cosa, y ninguno toca a otro`, [mal.map(s => s.de), choques]]);
+      if (n === 1) {
+        const orden = S.slice().sort((a, b) => a.c[1] - b.c[1] || a.c[0] - b.c[0]);
+        const raya2 = Math.max(...R.filter(u => u.pedazo === 2).map(u => u.d));
+        r.push([orden.every((s, i) => i === 0 || s.d > orden[i - 1].d) && orden[0].d >= raya2,
+          'paso 1: los aros salen uno por uno, renglón por renglón, después de la raya de lo que hay que agrupar', orden.map(s => [s.de, s.d])]);
+      }
+    }
+
+    /* ── el hongo: no cabe en ninguno de los dos tipos ── */
+    const HG = x.hongo, ni = HG.textos.find(t => t.k === 'ni'), te = HG.textos.find(t => t.k === 'tercero');
+    r.push([HG.ve === E.hongo && HG.aro.ve === E.hongo && HG.textos.length === 2 && HG.textos.every(t => t.ve === E.hongo),
+      `paso ${n}: el hongo, su aro y lo que dice están desde que Kenia lo encuentra`, [HG.ve, HG.aro.ve]]);
+    if (n === 3) M.hongo = HG.c;
+    if (E.hongo) {
+      const hc = HG.tinta, A = HG.aro;
+      r.push([cerca(A.c[0], cx(hc), 1.5) && cerca(A.c[1], cy(hc), 2.5) && A.r >= 0.5 * Math.max(hc.x1 - hc.x0, hc.y1 - hc.y0) && A.raya !== 'none' && A.raya.split(/[ ,]+/).filter(Boolean).length >= 2,
+        `paso ${n}: el hongo lleva su aro de raya cortada`, [A.c, cx(hc), cy(hc), A.r, A.raya]]);
+      r.push([[mNo, mVi, mPl, mAn].every(m => !monta(hc, m.caja)) && cx(hc) > mNo.caja.x1 - 8 && cx(hc) < mVi.caja.x0 + 8 && A.c[1] + A.r < mNo.caja.y0,
+        `paso ${n}: el hongo queda fuera de todos los montones, encima del hueco entre los dos`, [cx(hc), cy(hc)]]);
+      r.push([!!ni && !!te && ni.txt === 'ni ' + uno(C[8]) + ' ni ' + uno(C[9]) && te.txt === 'llega en tercero' &&
+        ni.tinta.y0 > A.c[1] + A.r - 0.5 && cerca(cx(ni.tinta), A.c[0], 1.5) && te.tinta.y0 > ni.tinta.y1 && cerca(cx(te.tinta), A.c[0], 1.5),
+        `paso ${n}: debajo del hongo dice que no es ${uno(C[8])} ni ${uno(C[9])} y que llega en tercero`, [ni && ni.txt, te && te.txt]]);
+    }
+    if (n === 4 && M.hongo) {
+      const k = x.kenia, hc = HG.tinta, w = hc.x1 - hc.x0;
+      const off = [cx(hc) - HG.c[0], hc.y1 - HG.c[1]], salX = M.hongo[0] + off[0], salY1 = M.hongo[1] + off[1];
+      r.push([cerca(salY1, k.pies, 6) && salX + w / 2 <= k.cuerpo.x0 + 2 && k.cuerpo.x0 - (salX + w / 2) < 8,
+        'paso 4: el hongo sale a los pies de Kenia', { abajo: salY1, pies: k.pies, derecha: salX + w / 2, kenia: k.cuerpo.x0 }]);
+      r.push([HG.mueve.d >= HG.d + 500 && HG.mueve.dura > 0 && HG.aro.d >= HG.mueve.d + HG.mueve.dura && ni.d >= HG.aro.d && te.d > ni.d && LC.d <= HG.d,
+        'paso 4: se resalta el límite, Kenia lo encuentra, el hongo vuela, y al llegar le salen su aro y lo que dice', { limite: LC.d, hongo: HG.d, vuela: HG.mueve.d, aro: HG.aro.d, ni: ni.d, tercero: te.d }]);
+      /* la punta del globo es su punto más cercano a la cabeza de Kenia; el
+         cuerpo del globo, todo lo demás, y ese no la toca */
+      const G = x.globo, ccab = [cx(k.cabeza), cy(k.cabeza)], rc = (k.cabeza.x1 - k.cabeza.x0) / 2;
+      const punta = G.pts.reduce((m, p) => { const dd = Math.hypot(p[0] - ccab[0], p[1] - ccab[1]); return !m || dd < m.dd ? { p, dd } : m; }, null);
+      const resto = G.pts.filter(p => p !== punta.p), cuerpoG = { x0: Math.min(...resto.map(p => p[0])), x1: Math.max(...resto.map(p => p[0])), y0: Math.min(...resto.map(p => p[1])), y1: Math.max(...resto.map(p => p[1])) };
+      r.push([G.txt.txt === '¿Y este?' && dentro(G.txt.tinta, cuerpoG, -1) && punta.dd >= rc - 1 && punta.dd <= rc + 3 && !monta(cuerpoG, k.cuerpo) && cerca(G.d, HG.d, 1),
+        'paso 4: Kenia pregunta «¿Y este?» en su globo, con la punta en su cabeza, cuando aparece el hongo', { punta: punta.dd, cabeza: rc, globo: G.d, hongo: HG.d }]);
+    }
+    r.push([x.globo.ve === E.globo, `paso ${n}: el globo de Kenia está solo cuando pregunta`, x.globo.ve]);
+
+    /* ── Kenia y los nombres de los seres vivos ── */
+    const KE = x.kenia;
+    r.push([KE.ve && KE.nombre.ve && KE.nombre.txt === 'Kenia' && KE.nombre.tinta.y1 < KE.cuerpo.y0 && cerca(cx(KE.nombre.tinta), cx(KE.cabeza), 1) && KE.cuerpo.y1 <= mVi.caja.y0 - 10,
+      `paso ${n}: Kenia está en el patio, con su nombre encima`, [KE.cuerpo, KE.nombre.tinta]]);
+    const N = K.filter(k => k.nombreTxt);
+    if (n === 0) r.push([K.every(k => !!k.nombreTxt === (es(k) !== 'no')), 'solo los seres vivos llevan su nombre', N.map(k => k.nombre)]);
+    r.push([N.every(k => k.nombreTxt.ve === E.nombres), `paso ${n}: los nombres de los seres vivos están cuando toca`, N.filter(k => k.nombreTxt.ve !== E.nombres).map(k => k.nombre)]);
+    if (E.nombres) {
+      const mal = N.filter(k => k.nombreTxt.txt !== k.nombre || !cerca(cx(k.nombreTxt.tinta), cx(caja(k)), 1.5) || k.nombreTxt.tinta.y0 < caja(k).y1 - 0.5 ||
+        !dentro(k.nombreTxt.tinta, (es(k) === 'planta' ? mPl : mAn).caja, -1));
+      r.push([mal.length === 0, `paso ${n}: cada ser vivo lleva su nombre debajo, dentro de su montón`, mal.map(k => k.nombre)]);
+    }
+    if (n === 5) {
+      const ds = N.map(k => k.nombreTxt.d), raya5 = Math.max(...R.filter(u => u.pedazo === 5).map(u => u.d));
+      r.push([new Set(ds).size === ds.length && Math.min(...ds) > raya5, 'paso 5: los nombres salen uno por uno, después de la raya de lo que tiene que quedar', [raya5, ds]]);
+    }
+
+    /* ── el cuaderno ── */
+    const CU = x.cuaderno;
+    r.push([CU.ve === E.cuaderno && x.hoja.ve === E.hoja, `paso ${n}: está el papel de la expectativa o el cuaderno, nunca los dos`, [x.hoja.ve, CU.ve]]);
+    if (E.cuaderno) {
+      const [p1, p2] = CU.pide, [r1, r2] = CU.rayas;
+      r.push([CU.pide.length === 2 && CU.rayas.length === 2 && cerca(CU.papel.x0, P.x0) && cerca(CU.papel.y0, P.y0) && cerca(CU.papel.x1, P.x1) && cerca(CU.papel.y1, P.y1) &&
+        p1.txt === 'La expectativa:' && p2.txt === 'Lo que voy a ver hacer:' &&
+        r1.pts[0][1] > p1.tinta.y1 + 2 && p2.tinta.y0 > r1.pts[0][1] + 2 && r2.pts[0][1] > p2.tinta.y1 + 2 && r2.pts[0][1] < CU.papel.y1 &&
+        [r1, r2].every(u => cerca(u.pts[0][1], u.pts[1][1], 0.05) && u.pts[1][0] - u.pts[0][0] > 0.8 * (CU.papel.x1 - CU.papel.x0)),
+        'paso 6: el cuaderno sale donde estaba la expectativa, con un renglón para escribirla y otro para lo que va a ver hacer', CU.pide.map(p => p.txt)]);
+      r.push([CU.d >= x.hoja.d + 500, 'paso 6: el cuaderno sale cuando ya se fue la expectativa', [x.hoja.d, CU.d]]);
+    }
+
+    /* ── el marcador y la frase dicen lo que se ve ── */
+    const visibles = S.filter(s => s.ve).length, nombres = N.filter(k => k.nombreTxt.ve).length;
+    if (n === 0) r.push([e.cifra === '?' && sin(e.palabras).includes(NUM[K.length]) && e.texto.includes(NUM[K.length] + ' cosas'), 'paso 0: el marcador deja la pregunta, y la frase cuenta las diez', [e.cifra, e.palabras]]);
+    if (n === 1) r.push([e.cifra === String(visibles) && visibles === K.length && e.texto.includes('«' + C[1] + '»') && e.texto.includes('«' + C[2] + '»') && e.texto.includes(NUM[K.length] + ' cosas'),
+      'paso 1: el marcador cuenta los aros, y la frase cita lo que hay que hacer y con qué', [e.cifra, visibles]]);
+    if (n === 2) r.push([sin(e.cifra) === cuenta(mNo) + ' y ' + cuenta(mVi) && sin(e.palabras) === C[4] + ' y ' + C[5] && e.texto.toLowerCase().includes(NUM[cuenta(mNo)] + ' y ' + NUM[cuenta(mVi)]),
+      'paso 2: el marcador cuenta lo que hay en cada montón, y la frase también', [e.cifra, cuenta(mNo), cuenta(mVi)]]);
+    if (n === 3) r.push([sin(e.cifra) === cuenta(mPl) + ' y ' + cuenta(mAn) && sin(e.palabras) === C[8] + ' y ' + C[9] && e.texto.toLowerCase().includes(NUM[cuenta(mPl)] + ' y ' + NUM[cuenta(mAn)]),
+      'paso 3: el marcador cuenta lo que hay en cada montón, y la frase también', [e.cifra, cuenta(mPl), cuenta(mAn)]]);
+    if (n === 4) r.push([e.cifra === '1' && /hongo/.test(e.texto) && e.texto.includes('no es ' + uno(C[8]) + ' ni ' + uno(C[9])) && /solo esos dos/.test(e.texto) && /punto/.test(e.palabras),
+      'paso 4: el marcador cuenta el punto, y la frase dice que la expectativa nombra solo esos dos', e.cifra]);
+    if (n === 5) r.push([e.cifra === String(nombres) && nombres === K.filter(k => es(k) !== 'no').length && e.texto.includes(C[11]) && /clases distintas/.test(e.palabras),
+      'paso 5: el marcador cuenta las clases distintas de seres vivos que hay en el patio', [e.cifra, nombres]]);
+    if (n === 6) r.push([e.cifra === '?' && /alumnos/.test(e.texto) && /alumnos/.test(e.palabras), 'paso 6: el marcador deja la pregunta al maestro', e.cifra]);
+
+    /* ── lo que se lee ── */
+    /* Dos trozos seguidos de un mismo renglón del papel son una sola frase
+       («« y «Clasifican»): el lienzo mide su tinta en píxeles enteros, y la
+       de uno «toca» la del siguiente por el redondeo, no porque se monten. */
+    const clave = t => t.txt + '@' + Math.round(t.x0 * 10) + ',' + Math.round(t.y0 * 10);
+    const delPapel = new Set(T.map(t => clave(t.tinta ? Object.assign({ txt: t.txt }, t.tinta) : t)));
+    const seguidos = (a, b) => delPapel.has(clave(Object.assign({ txt: a.txt }, a.caja))) && delPapel.has(clave(Object.assign({ txt: b.txt }, b.caja))) &&
+      cerca(cy(a.caja), cy(b.caja), 3) && Math.min(a.caja.x1, b.caja.x1) - Math.max(a.caja.x0, b.caja.x0) <= 1.2;
+    const ml = [];
+    x.letras.forEach((a, i) => x.letras.slice(i + 1).forEach(b => { if (monta(a.caja, b.caja) && !seguidos(a, b)) ml.push([a.txt, b.txt]); }));
+    r.push([ml.length === 0, `paso ${n}: ningún texto se monta en otro`, ml.slice(0, 4)]);
+    const saleT = x.letras.filter(t => t.caja.x0 < -0.5 || t.caja.y0 < -0.5 || t.caja.x1 > x.vista[0] + 0.5 || t.caja.y1 > x.vista[1] + 0.5);
+    r.push([saleT.length === 0, `paso ${n}: todo lo escrito cabe en el dibujo`, saleT.map(t => t.txt)]);
+
+    M.antes = {}; K.forEach(k => { M.antes[k.nombre] = k.c; });
     return r;
   }
 };

@@ -8,6 +8,9 @@
 <meta name="robots" content="noindex">
 <link rel="stylesheet" href="../../css/vendor/fuentes/fuentes.css">
 <link rel="stylesheet" href="css/leer-expectativa.css">
+<!-- La animación de la expectativa llevada al patio: va DESPUÉS del CSS de
+     la misión, que es de donde saca sus colores. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La barra de secciones, arriba y siempre a la vista. Va DESPUÉS del CSS
      de la misión a propósito: de ahí saca su color, y así sobrescribe su
      position:static sin un solo !important. -->
@@ -72,7 +75,7 @@
   <!-- ══════════ 2. APRENDE ══════════ -->
   <section class="sec" id="sec-aprende">
     <div class="card">
-      <h2>🧭 Una fila entera, leída en voz alta</h2>
+      <h2>🧭 Una expectativa entera, leída en voz alta</h2>
       <p>Antes de los cortes por separado, conviene ver el procedimiento completo sobre un caso
         real. Esta es una expectativa del currículo de <b>Ciencias Naturales de Primer Grado</b>,
         del bloque «Los seres vivos en su ambiente», copiada tal como está en el documento:</p>
@@ -94,7 +97,16 @@
       <div class="aula">🎯 <b>El plan de clase que sale de ahí:</b> salir al patio, recoger o señalar
         diez cosas, separarlas primero en vivas y no vivas, y después las vivas en plantas y
         animales. Se evalúa viendo al niño agrupar, no preguntándole una definición. La actividad no
-        hubo que inventarla: la fila ya la traía.</div>
+        hubo que inventarla: la tabla de ese mismo bloque ya la trae.</div>
+    </div>
+
+    <div class="card" data-animacion>
+      <h2>🌳 La expectativa, llevada al patio</h2>
+      <div id="amPatio">
+        <p>La misma expectativa, en el patio de una escuela: Kenia agrupa diez cosas como pide,
+          primero en seres no vivos y seres vivos, y después los vivos en plantas y animales. Un
+          hongo no es planta ni animal: la expectativa de primero no lo pide, y llega en tercero.</p>
+      </div>
     </div>
 
     <div class="card">
@@ -394,6 +406,8 @@
 </footer>
 
 <script src="js/leer-expectativa.js"></script>
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-patio.js"></script>
 <!-- Accesibilidad de aula compartida: añade al pie «🔎 Letra» y
      «📽️ Presentación» (con modo libro). Se engancha sola en .cred-tools,
      .sec.active y go(). -->

@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════════
-   Misión del maestro · Derechos de la niñez en la escuela
+   Misión del maestro · Leer una expectativa de logro sin marearse
 
    COLOR: violeta. La normativa de colores por materia (roja para
    Sociales, azul para Matemáticas…) existe para que el maestro sepa
@@ -409,3 +409,35 @@ body {
 }
 .ach-fila:last-of-type { border-bottom: none; }
 .ach-fila.no { opacity: .45; font-weight: 600; }
+
+/* ── La animación de la expectativa llevada al patio (#amPatio) ─────
+   Va en «Aprende», detrás de la expectativa leída en voz alta. El papel de
+   la expectativa, el globo de Kenia y el cuaderno son papel, y son papel en
+   las dos pantallas, con tinta oscura fija; lo que va sobre la tarjeta (los
+   montones, sus nombres, los aros) lleva la tinta de la pantalla y el
+   violeta y el ámbar de la misión, que se aclaran solos en la oscura. Kenia
+   es Kenia en las dos. Nada se dice solo con color: el límite va con
+   resaltador, el aro del hongo con raya cortada y cada montón con su nombre. */
+#amPatio .pt-papel { fill: #fffdf5; stroke: #cbd5e1; stroke-width: 1.2; }
+#amPatio .pt-tinta { fill: #1a2331; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+/* El subrayado de cada pedazo; los de antes se quedan tenues, con
+   stroke-opacity y no con opacity, que para la sonda quiere decir que ya no
+   están. La transición del aparato no trae stroke-opacity: va aquí. */
+#amPatio .pt-subraya {
+  fill: none; stroke: #b45309; stroke-width: 1.6; stroke-linecap: round;
+  transition: stroke-dashoffset .8s linear var(--d, 0s), opacity .5s ease var(--d, 0s), stroke-opacity .5s ease var(--d, 0s);
+}
+#amPatio .pt-subraya.pt-tenue { stroke-opacity: .35; }
+#amPatio .pt-limite { fill: #8b5cf6; fill-opacity: .28; stroke: none; }
+#amPatio .pt-monton { fill: none; stroke: var(--am-pri); stroke-width: 1.6; }
+#amPatio .pt-monton2 { fill: none; stroke: var(--am-sec); stroke-width: 1.4; }
+#amPatio .pt-senal { fill: none; stroke: var(--am-sec); stroke-width: 1.4; }
+#amPatio .pt-aro { fill: none; stroke: var(--am-sec); stroke-width: 1.6; stroke-dasharray: 4 3; }
+#amPatio .pt-emoji { font-family: 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif; }
+#amPatio .pt-globo { fill: #ffffff; stroke: #94a3b8; stroke-width: 1.2; stroke-linejoin: round; }
+#amPatio .pt-raya { stroke: #94a3b8; stroke-width: 1.2; }
+#amPatio .pt-falda { fill: #1e3a8a; }
+#amPatio .pt-blusa { fill: #f8fafc; stroke: #94a3b8; stroke-width: 1; }
+#amPatio .pt-brazo { fill: none; stroke: #b07a4f; stroke-width: 2.8; stroke-linecap: round; }
+#amPatio .pt-piel { fill: #b07a4f; }
+#amPatio .pt-pelo { fill: #2b1a10; }

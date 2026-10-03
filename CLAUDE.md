@@ -15766,6 +15766,105 @@ frase, la misión con tres caminos…), y salió roja con cada una.
 Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
 de 50 ms; la de Historia de las leyes, medida el mismo día, va a 58 y 83 ms.
 
+#### La quinta: Leer una expectativa, la expectativa llevada al patio
+
+En **Leer una expectativa de logro sin marearse**
+(`misiones/docente-leer-expectativa/`, `js/animacion-patio.js`), dentro de
+«Aprende», detrás de la expectativa leída en voz alta. Esa tarjeta parte una
+expectativa de Ciencias Naturales de primero en sus pedazos y termina con el plan
+de clase que sale de ahí: salir al patio, señalar diez cosas y agruparlas. La
+animación es ese patio, con la expectativa escrita en su papel arriba:
+
+- en el patio hay diez cosas revueltas, y Kenia: ¿qué tiene que hacer con ellas?;
+- se subrayan «Clasifican» y «los elementos ambientales»: tiene que agrupar, no
+  basta con nombrar, y lo que agrupa son diez cosas que se pueden señalar (a cada
+  una le sale su aro, una por una);
+- primero, dos montones dibujados en el suelo, seres no vivos y seres vivos, y
+  cada cosa va al suyo: cuatro y seis;
+- después, los vivos en los dos tipos que la expectativa nombra, plantas y
+  animales: tres y tres;
+- Kenia encuentra un hongo y pregunta «¿Y este?». Se resalta «los dos tipos más
+  evidentes»: el hongo no es planta ni animal, y la expectativa de primero no lo
+  pide. Si el examen lo pregunta, Kenia pierde un punto por algo que todavía no
+  le toca: llega en tercero;
+- lo que tiene que quedar al final es la diversidad: cada ser vivo lleva su
+  nombre, seis clases distintas en un solo patio;
+- y donde estaba la expectativa sale el cuaderno: el maestro copia una de su
+  planificación y escribe, en una frase, qué va a ver hacer a sus alumnos.
+
+**Seis cosas que valen para las siguientes:**
+
+1. ⚠️ **La tarjeta llamaba «fila» a lo que no es una fila, y se cambió la
+   tarjeta.** La expectativa es de la lista del grado («Al finalizar el Primer
+   Grado…», `dcneb-basica-i-ciclo.pdf`, pág. 394 del archivo, «Secretaría de
+   Educación 402» en el pie impreso), y la última sección de la misma misión la
+   pone de ejemplo justo de eso. La tarjeta decía «Una fila entera, leída en voz
+   alta» y «la fila ya la traía»: ahora dice «expectativa», y que la actividad la
+   trae la tabla de ese mismo bloque (pág. 404: «Observan y clasifican las cosas
+   de cada entorno elegido en dos clases principales» y «Clasifican los seres
+   vivos de ese entorno en plantas y animales»). La escena nunca dice «fila», y la
+   sonda lo vigila.
+2. ⚠️ **Lo que asombra está acreditado en el mismo documento.** Que el hongo no
+   es planta ni animal lo dice el DCNB al definir el área (los seis reinos, pág.
+   377); que en primero no se nombra, la lista y la tabla de primero, donde
+   «hongo» no sale ni una vez; y que llega en tercero, la tabla de Tercer Grado
+   (pág. 424, «Secretaría de Educación 432»: «Reinos de seres vivos: animales,
+   vegetales, hongos y microorganismos»). La sonda lo comprueba en `_dev/dcnb`, y
+   la escena no lo escribe de memoria. La expectativa la lee del primer peldaño
+   de la misión (`PELDANOS[0].cita`): si dejara de tener sus pedazos, no se
+   monta.
+3. ⚠️ **Lo que no se nombra**: cómo se llaman los pedazos de una expectativa ni
+   qué dice cada uno en general (el verbo, el objeto, el techo y el componente
+   son el quiz, el completar y el memorama), dónde está en el documento, las
+   columnas, los símbolos, ni cómo se evalúa. Se ve el caso; el nombre lo pone la
+   tarjeta de arriba.
+4. ⚠️ **El SVG se come el espacio del final de un texto.** Con `textLength`, «y
+   éstos en» seguido de un espacio salía «enlos»: el espacio del final no se
+   pinta, y el texto siguiente quedaba pegado. Ningún trozo acaba en espacio: el
+   espacio va en su propio trozo, que no pinta nada y solo corre el siguiente. Y
+   el subrayado de cada pedazo va por tramos, de su primera letra a la última de
+   cada renglón.
+5. ⚠️ **Lo que se marca dentro de un renglón va con resaltador, no con
+   recuadro.** Un recuadro alrededor de «los dos tipos más evidentes» necesitaba
+   aire a los dos lados y se montaba en «en» y en la coma, que van a un espacio y
+   pegada. El resaltador va DEBAJO de la letra y termina donde termina la
+   palabra: medio punto más largo ya cubría la coma, y lo cazó la sonda.
+6. ⚠️ **Lo que se mueve en filas sale por la que está más cerca, y el montón se
+   marca cuando ya llegaron.** Las cosas de la fila de abajo salen primero, de
+   izquierda a derecha, y así ninguna pasa por encima de otra que espera. Los
+   montones de las plantas y de los animales se dibujan alrededor de los suyos
+   cuando ya llegaron todos (dibujados antes, la raya pasaba por encima de los
+   que todavía no se movían), y el nombre de cada montón sale después. La sonda
+   sigue el camino de cada cosa.
+
+⚠️ **Y la sonda acusó al dibujo dos veces antes de servir.** La tinta de «« y la
+de «Clasifican», medidas con el lienzo en píxeles enteros, «se tocaban» por el
+redondeo: dos trozos seguidos de un mismo renglón del papel son una frase, y no
+se cuentan como montados. Y el globo de Kenia «tocaba» su cuerpo porque la caja
+del globo incluía la punta: ahora la punta es el punto más cercano a su cabeza,
+y el cuerpo del globo, todo lo demás.
+
+La sonda **no le cree nada a la escena**. Lee la expectativa de la misión y el
+DCNB, y lleva su propia tabla de qué es cada cosa. Comprueba que el papel diga la
+expectativa tal cual, de corrido, con un espacio entre palabras; que cada pedazo
+lleve su raya debajo de las letras, entera la del paso y tenues las de antes; que
+el resaltador salga solo con el hongo y cubra justo «los dos tipos más
+evidentes»; que haya un montón por cada grupo que la expectativa nombra, el de
+los no vivos a la izquierda y los de las plantas y los animales dentro del de los
+vivos; que cada cosa esté en su montón, sin montarse, y que vayan una por una sin
+pasar por encima de nada; que cada aro rodee su cosa; que el hongo salga a los
+pies de Kenia, vuele fuera de los montones y le salgan su aro y lo que dice
+cuando llega; que los nombres salgan uno por uno, cada uno debajo de su ser vivo;
+y que el cuaderno salga donde estaba la expectativa, cuando ya se fue. Se
+comprobó al revés con treinta y nueve averías, plantadas una por una (la lata en
+el montón de los vivos, la gallina dicha planta, la fila de arriba saliendo
+primero, el montón marcado antes de que lleguen, el resaltador metido en la coma,
+el subrayado pisando las letras, un espacio de más entre palabras, «fila» en una
+frase, el hongo volando antes de aparecer…), y salió roja con cada una.
+
+Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
+de 67 ms; la del CNB y el DCNB, medida el mismo día, va a 58 y 67 ms.
+
 ## Normativa: las Sugerencias de una misión salen del teléfono
 
 El botón **💬 Sugerencias** de cada misión lleva años ahí y durante todo
