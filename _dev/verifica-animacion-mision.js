@@ -5851,6 +5851,69 @@ const LEER = `
     };
   };
 
+  /* Ley Fundamental: la tarea de Marvin con su nota, el criterio con sus
+     marcas y sus flechas, la semana, la mamá y los dos cuadernos. */
+  window.__amExtra.amCriterio = function (raiz) {
+    var H = window.__amHerr(raiz), vis = H.vis, uno = H.uno, todos = H.todos;
+    function texto(t) {
+      return t ? { txt: t.textContent, ve: vis(t), d: H.demora(t), tinta: H.tinta(t),
+        x: +t.getAttribute('x'), y: +t.getAttribute('y'), largo: +t.getAttribute('textLength') || 0 } : null;
+    }
+    function linea(p) {
+      return { pts: H.pares(p.getAttribute('d')).map(function (q) { return H.aVista(p, q[0], q[1]); }), ve: vis(p), hecho: H.trazado(p),
+        d: H.demora(p), dura: H.dura(p, 'stroke-dashoffset'), raya: getComputedStyle(p).strokeDasharray };
+    }
+    function mueve(el) { var m = new DOMMatrix(getComputedStyle(el).transform); return { dx: m.e, dy: m.f, d: H.demora(el), dura: H.dura(el, 'transform') }; }
+    function union(ls) {
+      return { x0: Math.min.apply(null, ls.map(function (c) { return c.x0; })), y0: Math.min.apply(null, ls.map(function (c) { return c.y0; })),
+        x1: Math.max.apply(null, ls.map(function (c) { return c.x1; })), y1: Math.max.apply(null, ls.map(function (c) { return c.y1; })) };
+    }
+    function marca(g) {
+      return { k: +(g.getAttribute('data-de-cosa') || -1), es: g.getAttribute('data-marca'), rayas: todos('path', g).length, caja: H.caja(g), ve: vis(g), d: H.demora(g) };
+    }
+    var tarea = uno('[data-tarea]'), hueco = uno('[data-hueco]'), tar = uno('[data-criterio]'), chip = uno('[data-chip]'), chipVe = uno('[data-chip-ve]');
+    var mama = uno('[data-mama]'), tapa = uno('[data-cuaderno-tapa]'), suyo = uno('[data-cuaderno-marvin]'), copia = uno('[data-copia]'), cua = uno('[data-cuaderno]');
+    return {
+      vista: [H.svg.viewBox.baseVal.width, H.svg.viewBox.baseVal.height],
+      aria: H.svg.getAttribute('aria-label') || '',
+      tarea: { ve: vis(tarea), papel: H.caja(uno('[data-tarea-papel]', tarea)), de: texto(uno('[data-de]', tarea)),
+        trozos: todos('[data-trozo]', tarea).map(texto), nota: texto(uno('[data-nota]', tarea)), notaCaja: H.caja(uno('[data-nota-caja]', tarea)) },
+      hueco: { ve: vis(hueco), d: H.demora(hueco), caja: H.caja(uno('[data-hueco-caja]', hueco)),
+        raya: getComputedStyle(uno('[data-hueco-caja]', hueco)).strokeDasharray, txt: texto(uno('[data-hueco-txt]', hueco)) },
+      criterio: { ve: vis(tar), d: H.demora(tar), papel: H.caja(uno('[data-criterio-papel]', tar)), titulo: texto(uno('[data-criterio-titulo]', tar)),
+        casillas: todos('[data-casilla]', tar).map(function (c) { return { k: +c.getAttribute('data-casilla'), caja: H.caja(c) }; }),
+        cosas: todos('[data-cosa]', tar).map(function (t) { var o = texto(t); o.k = +t.getAttribute('data-cosa'); return o; }),
+        marcas: todos('[data-marca]', tar).map(marca) },
+      flechas: todos('[data-flecha]').map(function (p) {
+        var o = linea(p), pu = uno('[data-punta="' + p.getAttribute('data-flecha') + '"]');
+        o.k = +p.getAttribute('data-flecha');
+        o.punta = { pts: H.pares(pu.getAttribute('d')).map(function (q) { return H.aVista(pu, q[0], q[1]); }), ve: vis(pu), d: H.demora(pu) };
+        return o;
+      }),
+      semana: { eje: linea(uno('[data-eje]')),
+        rayas: todos('[data-dia-raya]').map(function (p) { var o = linea(p); o.dia = p.getAttribute('data-dia-raya'); return o; }),
+        dias: todos('[data-dia]').map(texto),
+        pasa: todos('[data-pasa]').map(function (g) { return { caja: H.caja(uno('[data-pasa-caja]', g)), txt: texto(uno('text', g)) }; }) },
+      bajas: todos('[data-baja]').map(linea),
+      chip: { ve: vis(chipVe), d: H.demora(chipVe), caja: H.caja(uno('[data-chip-caja]', chip)), txt: texto(uno('[data-chip-txt]', chip)), mueve: mueve(chip) },
+      mama: { ve: vis(mama), d: H.demora(mama), cuerpo: union([].slice.call(mama.children).map(H.caja)),
+        cabeza: H.caja(uno('[data-cabeza]', mama)), pies: Math.max.apply(null, todos('[data-pie]', mama).map(function (p) { return H.caja(p).y1; })) },
+      globos: todos('[data-globo]').map(function (g) {
+        var c = uno('[data-globo-caja]', g);
+        return { ve: vis(g), d: H.demora(g), pts: H.pares(c.getAttribute('d')).map(function (q) { return H.aVista(c, q[0], q[1]); }), txt: texto(uno('[data-globo-txt]', g)) };
+      }),
+      veredictos: todos('[data-veredicto]').map(function (g) {
+        return { ve: vis(g), d: H.demora(g), marca: marca(uno('[data-marca]', g)), txt: texto(uno('[data-veredicto-txt]', g)) };
+      }),
+      tapa: { ve: vis(tapa), d: H.demora(tapa), papel: H.caja(uno('[data-tapa-papel]', tapa)), etiqueta: H.caja(uno('[data-tapa-etiqueta]', tapa)), de: texto(uno('[data-tapa-de]', tapa)) },
+      suyo: { ve: vis(suyo), d: H.demora(suyo), papel: H.caja(uno('[data-cuaderno-marvin-papel]', suyo)), dia: texto(uno('[data-cuaderno-dia]', suyo)),
+        de: texto(uno('[data-cuaderno-de]', suyo)), renglones: todos('[data-renglon]', suyo).map(linea),
+        copia: { ve: vis(copia), d: H.demora(copia), cosas: todos('[data-copia-cosa]', copia).map(function (t) { var o = texto(t); o.k = +t.getAttribute('data-copia-cosa'); return o; }) } },
+      cuaderno: { ve: vis(cua), d: H.demora(cua), papel: H.caja(uno('[data-cuaderno-papel]', cua)), pide: todos('[data-pide]', cua).map(texto), rayas: todos('[data-raya]', cua).map(linea) },
+      letras: H.letras()
+    };
+  };
+
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -6660,6 +6723,60 @@ const ESTADOS_PATIO = [
    camino), y dónde esperaba el hongo, escondido, antes de que Kenia lo
    encuentre. */
 const MEMO_PATIO = { antes: null, hongo: null };
+/* La Ley Fundamental: lo que la escena afirma lo dice la misión con estas
+   palabras en «Aprende» (que la pregunta de una nota es con qué criterio,
+   escrito dónde y avisado cuándo; que uno escrito de antemano la defiende y
+   uno explicado después parece inventado, y que se deja a la vista del
+   alumno), y ningún banco de la misión lo pregunta: la prueba es de otra
+   cosa, y la escena no se la puede regalar. */
+let leyCriterioMemo = null;
+function leyCriterio() {
+  if (leyCriterioMemo) return leyCriterioMemo;
+  const dir = path.join(RAIZ, 'misiones', 'docente-ley-fundamental-aula');
+  const html = fs.readFileSync(path.join(dir, 'ley-fundamental-aula.html'), 'utf8');
+  const js = fs.readFileSync(path.join(dir, 'js', 'ley-fundamental-aula.js'), 'utf8').replace(/'\s*\+\s*'/g, '');
+  const plano = s => s.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  const aprende = plano((html.match(/<section class="sec" id="sec-aprende">([\s\S]*?)<\/section>/) || [])[1] || '');
+  const banco = nombre => {
+    const i = js.indexOf('const ' + nombre + ' = ['), f = i < 0 ? -1 : js.indexOf('\n];', i);
+    return f < 0 ? null : js.slice(i, f);
+  };
+  const bancos = ['FC', 'MEMO', 'QZ', 'CL_GRUPOS', 'CP', 'RETO', 'SOPA_PAL', 'CN'].map(b => [b, banco(b)]);
+  const PREGUNTA = /antemano|inventad|antes de calificar|a la vista del alumno|avisado cu[áa]ndo|escrito d[óo]nde/i;
+  leyCriterioMemo = {
+    pregunta: aprende.includes('la pregunta no es «cuánto le puso», es «con qué criterio, escrito dónde, avisado cuándo»'),
+    antemano: aprende.includes('Un criterio escrito de antemano defiende su nota; uno explicado después parece inventado, aunque sea justo.'),
+    vista: aprende.includes('anote el criterio antes de calificar y déjelo a la vista del alumno'),
+    faltan: bancos.filter(([, t]) => t === null).map(([b]) => b),
+    preguntan: bancos.filter(([, t]) => t && PREGUNTA.test(t)).map(([b]) => b)
+  };
+  return leyCriterioMemo;
+}
+/* El criterio de la tarea de Marvin, en la tabla de la sonda: qué dice cada
+   cosa, cómo se busca en la oración y qué pedazo de la oración señala. Lo
+   que está o no está no se le cree a la escena: se mira la oración que se
+   ve. */
+const CRITERIO_SONDA = [
+  { dice: 'Empieza con mayúscula', palabra: 'mayúscula', esta: o => /^\p{Lu}/u.test(o), blanco: (o, ts) => ts[0] && ts[0].txt === o.charAt(0) ? ts[0] : null },
+  { dice: 'Habla de su escuela', palabra: 'escuela', esta: o => /(?<!\p{L})escuela(?!\p{L})/u.test(o), blanco: (o, ts) => ts.find(t => t.txt === 'escuela') || null },
+  { dice: 'Termina con punto', palabra: 'punto', esta: o => /\.$/.test(o), blanco: (o, ts) => ts.length && ts[ts.length - 1].txt === '.' ? ts[ts.length - 1] : null }
+];
+/* Los días de la semana, en su orden: el lunes que viene después es el 7. */
+const SEMANA_SONDA = { lunes: 0, martes: 1, 'miércoles': 2, jueves: 3, viernes: 4, 'sábado': 5, domingo: 6, 'el otro lunes': 7 };
+/* Lo que pasa en la historia, en su orden: la tarea, la nota y la pregunta. */
+const PASA_SONDA = ['la tarea', 'la nota', 'la pregunta'];
+/* Lo que se ve al TERMINAR cada paso. Dónde está el criterio en la semana
+   no se escribe: «antes» es antes de la tarea, «después» es después de la
+   pregunta, y lo mide la sonda. */
+const ESTADOS_CRITERIO = [
+  { hueco: true, criterio: false, flechas: false, chip: null, globo: 0, veredicto: null, mama: true, tapa: true, suyo: false, copia: false, cuaderno: false },
+  { hueco: false, criterio: true, flechas: true, chip: null, globo: 0, veredicto: null, mama: true, tapa: true, suyo: false, copia: false, cuaderno: false },
+  { hueco: false, criterio: true, flechas: false, chip: 'antes', globo: 1, veredicto: 'bien', mama: true, tapa: false, suyo: true, copia: true, cuaderno: false },
+  { hueco: false, criterio: true, flechas: false, chip: 'despues', globo: 2, veredicto: 'mal', mama: true, tapa: false, suyo: true, copia: false, cuaderno: false },
+  { hueco: false, criterio: true, flechas: false, chip: 'antes', globo: null, veredicto: null, mama: false, tapa: false, suyo: false, copia: false, cuaderno: true }
+];
+/* La nota del paso 0, para ver que es la misma en todos. */
+const MEMO_CRITERIO = { nota: null };
 function historiaBanco() {
   if (historiaBancoMemo) return historiaBancoMemo;
   const html = fs.readFileSync(path.join(RAIZ, 'misiones', 'basica-palabras-que-piensan', 'palabras-que-piensan.html'), 'utf8');
@@ -21954,6 +22071,269 @@ const ESCENAS = {
     r.push([saleT.length === 0, `paso ${n}: todo lo escrito cabe en el dibujo`, saleT.map(t => t.txt)]);
 
     M.antes = {}; K.forEach(k => { M.antes[k.nombre] = k.c; });
+    return r;
+  },
+  /* La Ley Fundamental: «La misma nota, con el criterio antes o después».
+     ⚠️ Nada se le cree a la escena. La sonda lee la oración de Marvin en el
+     dibujo, pedazo por pedazo, y con su propia tabla decide qué cosas del
+     criterio están: de ahí salen la nota, las marcas de cada casilla y adónde
+     tiene que llegar cada flecha. Lee los días de la semana en su orden y lo
+     que pasa cada día, y de dónde quedó el criterio saca si es antes de la
+     tarea o después de la pregunta, que es lo que decide si la nota se
+     defiende o parece inventada. Y en el cuaderno de Marvin el criterio
+     tiene que estar escrito el día que dice la semana, cosa por cosa. */
+  amCriterio(e, n) {
+    const x = e.extra, r = [];
+    if (!x) return [[false, `paso ${n}: la sonda pudo leer la escena`, null]];
+    const L = leyCriterio(), E = ESTADOS_CRITERIO[n], M = MEMO_CRITERIO;
+    if (n === 0) M.nota = null;
+    const monta = (a, b, t = 0.5) => a.x0 < b.x1 - t && b.x0 < a.x1 - t && a.y0 < b.y1 - t && b.y0 < a.y1 - t;
+    const dentro = (a, b, mg = 0) => a.x0 >= b.x0 - mg && a.x1 <= b.x1 + mg && a.y0 >= b.y0 - mg && a.y1 <= b.y1 + mg;
+    const cerca = (a, b, t = 0.5) => Math.abs(a - b) <= t;
+    const cx = c => (c.x0 + c.x1) / 2, cy = c => (c.y0 + c.y1) / 2;
+    const sin = s => (s || '').replace(/ /g, ' ');
+    const NUM = ['cero', 'una', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez'];
+    const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+    const texto = sin(e.texto), palabras = sin(e.palabras), cifra = sin(e.cifra);
+
+    /* ── lo que no depende del dibujo va primero ── */
+    /* Casi todo lo demás de la misión lo preguntan el quiz, el completar, el
+       reto y el simulacro: la escena no nombra nada de eso. */
+    const PROHIBIDAS = /(?<!\p{L})(?:art[íi]culos?|ley(?:es)?|decretos?|acuerdos?|reglamentos?|estatutos?|gacetas?|secretar[íi]as?|circular(?:es)?|porcentajes?|acumulativ\p{L}*|ex[áa]men(?:es)?|curr[íi]culos?|competencias?|objetivos?|contenidos?|metodol[óo]gic\p{L}*|normativ\p{L}*|lectiv\p{L}*|doscient\p{L}*|gratuit\p{L}*|obligatori\p{L}*|ciclos?|preb[áa]sica|b[áa]sica|media|edad(?:es)?|extraedad|modalidad(?:es)?|proyectos?|pec|consejos?|auditor[íi]as?|inversi[óo]n|rend\p{L}*|cuentas|fiscaliz\p{L}*|supervisi[óo]n|simpat[íi]as?|primaria|planific\p{L}*|calendario|jornada|sanci[óo]n(?:es)?|correctivos?)(?!\p{L})/iu;
+    const dicho = [texto, palabras, e.boton, x.aria].concat(x.letras.map(t => t.txt)).join(' · ');
+    r.push([!PROHIBIDAS.test(dicho), `paso ${n}: no se nombra nada de lo que pregunta la prueba de la misión (artículos, días de clase, niveles, currículo, Proyecto Educativo, rendición de cuentas)`, (dicho.match(PROHIBIDAS) || [])[0]]);
+    if (n === 0) {
+      r.push([L.pregunta && L.antemano && L.vista, 'la misión dice lo que la escena enseña: la pregunta de una nota es con qué criterio, escrito dónde y avisado cuándo; el de antemano la defiende, el de después parece inventado, y se deja a la vista del alumno', L]);
+      r.push([L.faltan.length === 0 && L.preguntan.length === 0, 'ningún banco de la misión pregunta cuándo se escribe el criterio: la escena no regala nada', [L.faltan, L.preguntan]]);
+    }
+
+    /* ── la tarea de Marvin: la oración se lee en el dibujo, pedazo por pedazo ── */
+    const T = x.tarea.trozos.slice().sort((a, b) => a.x - b.x), ESP = 24.1 * 16 / 100;
+    const huecos = [];
+    T.forEach((t, i) => { if (i) { const g = t.x - (T[i - 1].x + T[i - 1].largo); if (!cerca(g, 0, 0.05) && !cerca(g, ESP, 0.1)) huecos.push([T[i - 1].txt, t.txt, g]); } });
+    const leida = T.reduce((s, t, i) => s + (i && t.x - (T[i - 1].x + T[i - 1].largo) > 1.5 ? ' ' : '') + t.txt, '');
+    r.push([T.length > 0 && T.every(t => cerca(t.y, T[0].y, 0.05) && t.largo > 0) && huecos.length === 0 && /^\S.*\.$/.test(leida),
+      `paso ${n}: la tarea de Marvin se lee de corrido, en un renglón, con un espacio entre palabra y palabra`, [leida, huecos]]);
+    const NT = x.tarea.nota;
+    r.push([T.every(t => dentro(t.tinta, x.tarea.papel, -2) && !monta(t.tinta, x.tarea.notaCaja)) && dentro(NT.tinta, x.tarea.notaCaja, -1) && dentro(x.tarea.notaCaja, x.tarea.papel, -1),
+      `paso ${n}: la oración y la nota van dentro del papel, y la nota dentro de su recuadro`, null]);
+    const nombre = (x.tarea.de.txt.match(/^Tarea de (\p{Lu}\p{Ll}+)$/u) || [])[1] || '';
+    r.push([!!nombre && dentro(x.tarea.de.tinta, x.tarea.papel, -2), `paso ${n}: el papel dice de quién es la tarea`, x.tarea.de.txt]);
+
+    /* ── el criterio: cada cosa se busca en la oración ── */
+    const CR = x.criterio, K = CRITERIO_SONDA;
+    const dice = k => CR.cosas.filter(t => t.k === k).sort((a, b) => a.y - b.y).map(t => t.txt).join(' ');
+    r.push([CR.casillas.length === K.length && K.every((c, k) => dice(k) === c.dice) && CR.titulo.txt === 'Criterio' && dentro(CR.titulo.tinta, CR.papel, -2),
+      `paso ${n}: el criterio dice sus ${NUM[K.length]} cosas, cada una debajo de su casilla`, K.map((c, k) => dice(k))]);
+    const estan = K.filter(c => c.esta(leida)).length, total = K.length, nota = estan + ' de ' + total;
+    const numeros = (dicho.match(/\d+/g) || []).filter(v => v !== String(estan) && v !== String(total));
+    r.push([numeros.length === 0, `paso ${n}: no sale un número que no sea el de la nota`, numeros]);
+    r.push([sin(NT.txt) === nota, `paso ${n}: la nota de la tarea es lo que da el criterio mirado en la oración: ${nota}`, NT.txt]);
+    if (n === 0) M.nota = NT.txt;
+    r.push([NT.txt === M.nota, `paso ${n}: la nota es la misma en todos los pasos`, [M.nota, NT.txt]]);
+    const malC = [];
+    K.forEach((c, k) => {
+      const cas = CR.casillas.find(q => q.k === k), m = CR.marcas.find(q => q.k === k), ts = CR.cosas.filter(t => t.k === k), bien = c.esta(leida);
+      if (!cas || !m || m.es !== (bien ? 'bien' : 'mal') || m.rayas !== (bien ? 1 : 2) || !dentro(m.caja, cas.caja, 0.5) ||
+        !ts.every(t => t.tinta.y0 > cas.caja.y1 && cerca(cx(t.tinta), cx(cas.caja), 1) && dentro(t.tinta, CR.papel, -1))) malC.push([c.dice, bien, m && m.es, m && m.rayas]);
+    });
+    r.push([malC.length === 0 && CR.marcas.length === K.length, `paso ${n}: cada cosa lleva en su casilla ✓ (una raya) si está en la oración y ✗ (dos) si no`, malC]);
+    r.push([CR.ve === E.criterio && CR.marcas.every(m => m.ve === E.criterio) && x.hueco.ve === E.hueco,
+      `paso ${n}: se ve ${E.criterio ? 'el criterio, con sus marcas' : 'el sitio vacío del criterio'}`, [CR.ve, x.hueco.ve]]);
+    if (E.hueco) {
+      const H0 = x.hueco;
+      r.push([H0.raya !== 'none' && H0.raya.split(/[ ,]+/).filter(Boolean).length >= 2 && cerca(H0.caja.x0, CR.papel.x0) && cerca(H0.caja.y0, CR.papel.y0) &&
+        cerca(H0.caja.x1, CR.papel.x1) && cerca(H0.caja.y1, CR.papel.y1) && H0.txt.txt === '¿Con qué criterio?' && dentro(H0.txt.tinta, H0.caja, -4) && cerca(cx(H0.txt.tinta), cx(H0.caja), 1),
+        `paso ${n}: antes de contestar, el sitio del criterio va vacío, de raya cortada, con su pregunta en medio`, H0.txt.txt]);
+    }
+
+    /* ── las flechas: de cada casilla a lo que busca en la oración ── */
+    const F = x.flechas;
+    r.push([F.length === K.length && F.every(f => f.ve === E.flechas && f.hecho === E.flechas && f.punta.ve === E.flechas),
+      `paso ${n}: las flechas están solo cuando el criterio señala la oración`, F.map(f => [f.ve, f.hecho, f.punta.ve])]);
+    const malF = [];
+    F.forEach(f => {
+      const cas = CR.casillas.find(q => q.k === f.k), b = K[f.k] && K[f.k].blanco(leida, T);
+      const a = f.pts[0], z = f.pts[f.pts.length - 1], tip = f.punta.pts[0];
+      const base = [(f.punta.pts[1][0] + f.punta.pts[2][0]) / 2, (f.punta.pts[1][1] + f.punta.pts[2][1]) / 2];
+      if (!cas || !b || !cerca(a[0], cx(cas.caja), 0.5) || !cerca(a[1], cas.caja.y0, 0.5) || Math.hypot(z[0] - base[0], z[1] - base[1]) > 0.6 ||
+        !(tip[0] >= b.tinta.x0 - 0.3 && tip[0] <= b.tinta.x1 + 0.3 && cerca(tip[0], cx(b.tinta), 1.5)) || !(tip[1] > b.tinta.y1 + 0.5 && tip[1] < b.y + 9))
+        malF.push([f.k, b && b.txt, tip, b && b.tinta]);
+    });
+    r.push([malF.length === 0, `paso ${n}: cada flecha sale de arriba de su casilla y su punta queda justo debajo de lo que busca (la primera letra, la palabra, el punto)`, malF]);
+    if (E.flechas) {
+      const corta = (p, q, a, b) => {
+        const d = (q[0] - p[0]) * (b[1] - a[1]) - (q[1] - p[1]) * (b[0] - a[0]);
+        if (Math.abs(d) < 1e-9) return false;
+        const u = ((a[0] - p[0]) * (b[1] - a[1]) - (a[1] - p[1]) * (b[0] - a[0])) / d, v = ((a[0] - p[0]) * (q[1] - p[1]) - (a[1] - p[1]) * (q[0] - p[0])) / d;
+        return u > 0.01 && u < 0.99 && v > 0.01 && v < 0.99;
+      };
+      const cruces = [], pisan = [];
+      F.forEach((f, i) => F.slice(i + 1).forEach(g => { if (corta(f.pts[0], f.punta.pts[0], g.pts[0], g.punta.pts[0])) cruces.push([f.k, g.k]); }));
+      F.forEach(f => {
+        const a = f.pts[0], z = f.pts[f.pts.length - 1];
+        x.letras.forEach(t => {
+          for (let s = 0.02; s <= 1; s += 0.02) {
+            const p = [a[0] + (z[0] - a[0]) * s, a[1] + (z[1] - a[1]) * s];
+            if (p[0] > t.caja.x0 - 0.5 && p[0] < t.caja.x1 + 0.5 && p[1] > t.caja.y0 - 0.5 && p[1] < t.caja.y1 + 0.5) { pisan.push([f.k, t.txt]); break; }
+          }
+        });
+      });
+      r.push([cruces.length === 0 && pisan.length === 0, `paso ${n}: las flechas no se cruzan ni pasan por encima de lo escrito`, [cruces, pisan]]);
+    }
+    if (n === 1) {
+      const ms = K.map((c, k) => CR.marcas.find(q => q.k === k)), fs = K.map((c, k) => F.find(f => f.k === k));
+      let bien = x.hueco.d + 500 <= CR.d && fs[0].d >= CR.d + 500;
+      fs.forEach((f, k) => { bien = bien && f.dura > 0 && f.punta.d >= f.d + f.dura - 1 && ms[k].d >= f.punta.d && (k === 0 || f.d >= ms[k - 1].d); });
+      r.push([bien, 'paso 1: se va el sitio vacío, sale el criterio, y cada cosa señala su sitio una por una: la flecha, su punta al llegar, y después su marca',
+        { hueco: x.hueco.d, criterio: CR.d, flechas: fs.map(f => [f.d, f.dura, f.punta.d]), marcas: ms.map(m => m.d) }]);
+    }
+
+    /* ── la semana: los días en su orden, y lo que pasa cada día ── */
+    const S = x.semana, ej = S.eje.pts, ey = ej[0][1];
+    const rayas = S.rayas.slice().sort((a, b) => a.pts[0][0] - b.pts[0][0]);
+    const diaDe = u => u ? S.dias.find(t => cerca(cx(t.tinta), u.pts[0][0], 0.6)) : null;
+    r.push([cerca(ej[0][1], ej[1][1], 0.05) && rayas.length >= 2 && rayas.every(u => cerca(u.pts[0][0], u.pts[1][0], 0.05) &&
+      Math.min(u.pts[0][1], u.pts[1][1]) < ey && Math.max(u.pts[0][1], u.pts[1][1]) > ey && u.pts[0][0] > Math.min(ej[0][0], ej[1][0]) && u.pts[0][0] < Math.max(ej[0][0], ej[1][0])),
+      `paso ${n}: la semana es una raya con una rayita por día`, rayas.map(u => u.pts[0][0])]);
+    const etiquetas = rayas.map(diaDe), orden = etiquetas.map(t => t ? SEMANA_SONDA[t.txt] : undefined);
+    r.push([S.dias.length === rayas.length && etiquetas.every(t => t && t.tinta.y0 > ey + 2 && t.tinta.y1 < ey + 22) && orden.every((v, i) => v !== undefined && (i === 0 || v > orden[i - 1])),
+      `paso ${n}: cada día va escrito debajo de su rayita, en el orden de la semana`, etiquetas.map(t => t && t.txt)]);
+    const pasa = PASA_SONDA.map(q => S.pasa.find(p => p.txt.txt === q)), xPasa = pasa.map(p => p ? cx(p.caja) : NaN);
+    r.push([S.pasa.length === PASA_SONDA.length && pasa.every(p => p && rayas.some(u => cerca(u.pts[0][0], cx(p.caja), 0.5)) && p.caja.y1 < ey - 2 && p.caja.y1 > ey - 30 && dentro(p.txt.tinta, p.caja, -1)) &&
+      xPasa.every((v, i) => i === 0 || v > xPasa[i - 1]) && rayas[0].pts[0][0] < xPasa[0] - 1,
+      `paso ${n}: la tarea, la nota y la pregunta van encima de su día, en ese orden, y el primer día no tiene nada`, PASA_SONDA.map((q, i) => [q, Math.round(xPasa[i])])]);
+
+    /* ── el criterio en la semana: antes de la tarea o después de la pregunta ── */
+    const CH = x.chip, xc = cx(CH.caja);
+    r.push([CH.ve === !!E.chip, `paso ${n}: el criterio está en la semana desde que se pregunta cuándo se escribió`, CH.ve]);
+    r.push([CH.caja.y1 < Math.min(...S.pasa.map(p => p.caja.y0)) - 1 && CH.caja.y0 > CR.papel.y1 + 2 && CH.txt.txt === 'criterio' && dentro(CH.txt.tinta, CH.caja, -1) &&
+      CH.caja.x0 >= -0.5 && CH.caja.x1 <= x.vista[0] + 0.5,
+      `paso ${n}: el criterio va en su carril, encima de lo que pasa cada día y debajo de la tarjeta, sin salirse del dibujo`, CH.caja]);
+    const cuando = xc < xPasa[0] ? 'antes' : xc > xPasa[2] ? 'despues' : 'entre';
+    if (E.chip) r.push([cuando === E.chip && (E.chip !== 'antes' || cerca(xc, rayas[0].pts[0][0], 0.5)),
+      `paso ${n}: el criterio está ${E.chip === 'antes' ? 'en el primer día, antes de ' + PASA_SONDA[0] : 'después de ' + PASA_SONDA[2]}`, [Math.round(xc), xPasa.map(Math.round)]]);
+    const B = x.bajas, bv = B.filter(u => u.ve);
+    r.push([bv.length === (E.chip ? 1 : 0), `paso ${n}: del criterio baja una raya a su sitio en la semana, y solo cuando está`, bv.length]);
+    if (E.chip && bv.length === 1) {
+      const a = bv[0].pts[0], z = bv[0].pts[bv[0].pts.length - 1];
+      const choca = S.pasa.filter(p => a[0] > p.caja.x0 - 1 && a[0] < p.caja.x1 + 1).map(p => p.txt.txt);
+      r.push([cerca(a[0], xc, 0.5) && cerca(z[0], xc, 0.5) && cerca(Math.min(a[1], z[1]), CH.caja.y1, 0.5) && cerca(Math.max(a[1], z[1]), ey, 0.5) && choca.length === 0,
+        `paso ${n}: la raya baja del criterio a la semana sin pasar por encima de lo que pasa cada día`, [a, z, choca]]);
+    }
+
+    /* ── la mamá y lo que dice ── */
+    const MA = x.mama, G = x.globos, gv = G.filter(g => g.ve);
+    r.push([MA.ve === E.mama && gv.length === (E.globo === null ? 0 : 1) && (E.globo === null || (G[E.globo] && G[E.globo].ve)),
+      `paso ${n}: ${E.mama ? 'la mamá dice una sola cosa a la vez' : 'la mamá ya no está'}`, G.map(g => g.ve)]);
+    const DICE = [`¿Por qué ${estan} y no ${total}?`, 'Ah, estaba en su cuaderno.', 'Eso lo escribió hoy.'];
+    if (n === 0) r.push([G.length === DICE.length && G.every((g, i) => sin(g.txt.txt) === DICE[i]),
+      'la mamá pregunta por la nota que se ve, y después dice lo que le dice el cuaderno', G.map(g => g.txt.txt)]);
+    gv.forEach(g => {
+      const ccab = [cx(MA.cabeza), cy(MA.cabeza)], rc = (MA.cabeza.x1 - MA.cabeza.x0) / 2;
+      const punta = g.pts.reduce((m, p) => { const dd = Math.hypot(p[0] - ccab[0], p[1] - ccab[1]); return !m || dd < m.dd ? { p, dd } : m; }, null);
+      const resto = g.pts.filter(p => p !== punta.p);
+      const cuerpo = { x0: Math.min(...resto.map(p => p[0])), x1: Math.max(...resto.map(p => p[0])), y0: Math.min(...resto.map(p => p[1])), y1: Math.max(...resto.map(p => p[1])) };
+      r.push([dentro(g.txt.tinta, cuerpo, -1) && punta.dd >= rc - 1 && punta.dd <= rc + 3 && !monta(cuerpo, MA.cuerpo) && cuerpo.y1 < MA.cabeza.y0 && cuerpo.y0 > Math.max(...S.dias.map(t => t.tinta.y1)),
+        `paso ${n}: lo que dice la mamá va en su globo, debajo de la semana, con la punta en su cabeza`, { punta: punta.dd, cabeza: rc }]);
+    });
+
+    /* ── lo que pasa con la nota: se defiende o parece inventada ── */
+    const V = x.veredictos, VB = V.find(v => v.marca.es === 'bien'), VM = V.find(v => v.marca.es === 'mal');
+    r.push([V.length === 2 && !!VB && !!VM && VB.marca.rayas === 1 && VM.marca.rayas === 2 && VB.txt.txt === 'la nota se defiende' && VM.txt.txt === 'parece inventado' &&
+      V.every(v => v.txt.tinta.x0 > v.marca.caja.x1 && cerca(cy(v.txt.tinta), cy(v.marca.caja), 3)),
+      `paso ${n}: lo que pasa con la nota lleva su marca al lado: ✓ (una raya) se defiende, ✗ (dos) parece inventado`, V.map(v => [v.marca.es, v.txt.txt])]);
+    if (!VB || !VM) return r;
+    r.push([VB.ve === (E.veredicto === 'bien') && VM.ve === (E.veredicto === 'mal'), `paso ${n}: lo que pasa con la nota se ve solo cuando ya se sabe cuándo se escribió el criterio`, V.map(v => v.ve)]);
+    if (E.veredicto) {
+      const v = E.veredicto === 'bien' ? VB : VM;
+      r.push([E.veredicto === (cuando === 'antes' ? 'bien' : cuando === 'despues' ? 'mal' : '?') && !monta(v.marca.caja, x.suyo.papel) && !monta(v.txt.tinta, MA.cuerpo) && !monta(v.marca.caja, MA.cuerpo),
+        `paso ${n}: la nota se defiende si el criterio estaba antes de la tarea y parece inventada si se escribió después de la pregunta`, [cuando, E.veredicto]]);
+    }
+
+    /* ── el cuaderno de Marvin: cerrado, abierto con el criterio, o abierto sin él ── */
+    const TP = x.tapa, SU = x.suyo, CO = SU.copia;
+    r.push([TP.ve === E.tapa && SU.ve === E.suyo && CO.ve === E.copia, `paso ${n}: el cuaderno de Marvin, cerrado o abierto, y con el criterio solo si estaba desde antes`, [TP.ve, SU.ve, CO.ve]]);
+    if (n === 0) r.push([cerca(TP.papel.x0, SU.papel.x0) && cerca(TP.papel.y0, SU.papel.y0) && cerca(TP.papel.x1, SU.papel.x1) && cerca(TP.papel.y1, SU.papel.y1) &&
+      TP.de.txt === nombre && SU.de.txt === 'de ' + nombre && dentro(TP.etiqueta, TP.papel, -2) && dentro(TP.de.tinta, TP.etiqueta, -1),
+      'el cuaderno cerrado es el de Marvin, y al abrirse queda en el mismo sitio', [TP.de.txt, SU.de.txt]]);
+    if (E.suyo) {
+      r.push([SU.renglones.length >= K.length && dentro(SU.dia.tinta, SU.papel, -1) && dentro(SU.de.tinta, SU.papel, -1) && !monta(SU.dia.tinta, SU.de.tinta),
+        `paso ${n}: el cuaderno abierto dice el día y de quién es`, [SU.dia.txt, SU.de.txt]]);
+      if (E.copia) {
+        const dia = diaDe(rayas.reduce((m, u) => !m || Math.abs(u.pts[0][0] - xc) < Math.abs(m.pts[0][0] - xc) ? u : m, null));
+        const renglones = SU.renglones.slice().sort((a, b) => a.pts[0][1] - b.pts[0][1]);
+        const malR = CO.cosas.slice().sort((a, b) => a.k - b.k).filter((t, i) => {
+          const u = renglones[i];
+          return !u || t.txt !== K[t.k].dice || !(u.pts[0][1] - t.y > 1 && u.pts[0][1] - t.y < 5) || !dentro(t.tinta, SU.papel, -1) || t.tinta.y1 > u.pts[0][1] + 0.5;
+        });
+        r.push([CO.cosas.length === K.length && malR.length === 0 && !!dia && SU.dia.txt === dia.txt,
+          `paso ${n}: en el cuaderno de Marvin, en la hoja del día del criterio, están las ${NUM[K.length]} cosas, cada una en su renglón`, [SU.dia.txt, dia && dia.txt, malR.map(t => t.txt)]]);
+      }
+    }
+
+    /* ── el cuaderno del maestro ── */
+    const CU = x.cuaderno;
+    r.push([CU.ve === E.cuaderno, `paso ${n}: el cuaderno del maestro sale al final`, CU.ve]);
+    if (E.cuaderno) {
+      const [p1, p2] = CU.pide, [r1, r2] = CU.rayas;
+      r.push([CU.pide.length === 2 && CU.rayas.length === 2 && p1.txt === 'El criterio de mi próxima evaluación:' && p2.txt === 'Mis alumnos lo verán el día:' &&
+        r1.pts[0][1] > p1.tinta.y1 + 2 && p2.tinta.y0 > r1.pts[0][1] + 2 && r2.pts[0][1] > p2.tinta.y1 + 2 && r2.pts[0][1] < CU.papel.y1 &&
+        [r1, r2].every(u => cerca(u.pts[0][1], u.pts[1][1], 0.05) && u.pts[1][0] - u.pts[0][0] > 0.8 * (CU.papel.x1 - CU.papel.x0)) &&
+        CU.pide.every(p => dentro(p.tinta, CU.papel, -2)) && CU.papel.y0 > Math.max(...S.dias.map(t => t.tinta.y1)) + 2,
+        'paso 4: el cuaderno del maestro, debajo de la semana, con un renglón para el criterio y otro para el día en que lo verán sus alumnos', CU.pide.map(p => p.txt)]);
+    }
+
+    /* ── cada cosa, cuando le toca ── */
+    if (n === 2) {
+      const g0 = G[0], g1 = G[1];
+      r.push([F.every(f => f.d <= CH.d && f.punta.d <= CH.d) && TP.d + 500 <= SU.d && CO.d >= SU.d && g1.d >= SU.d + 500 && g0.d + 500 <= g1.d && VB.d >= g1.d + 500,
+        'paso 2: se van las flechas, el criterio se pone en su día, la tapa se va y se abre el cuaderno, y cuando ya se lee, la mamá habla y la nota se defiende',
+        { criterio: CH.d, tapa: TP.d, abre: SU.d, copia: CO.d, globos: [g0.d, g1.d], veredicto: VB.d }]);
+    }
+    if (n === 3) {
+      const g1 = G[1], g2 = G[2], bl = B.find(u => cerca(u.pts[0][0], rayas[0].pts[0][0], 0.5)), bd = bv[0];
+      r.push([g1.d <= CO.d && VB.d <= CO.d && !!bl && bl.d <= CH.mueve.d && CH.mueve.dura > 0 && !!bd && bd.d >= CH.mueve.d + CH.mueve.dura &&
+        g2.d >= CO.d + 500 && g2.d >= g1.d + 500 && g2.d >= bd.d && VM.d >= g2.d + 500,
+        'paso 3: primero se va lo que la mamá decía, después se borra el cuaderno mientras el criterio se corre a después de la pregunta, y cuando llega, ella habla y la nota parece inventada',
+        { dijo: g1.d, borra: CO.d, baja: bl && bl.d, mueve: [CH.mueve.d, CH.mueve.dura], llega: bd && bd.d, dice: g2.d, veredicto: VM.d }]);
+    }
+    if (n === 4) {
+      const bd = B.find(u => u.pts[0][0] > xPasa[2]), bl = bv[0];
+      r.push([MA.d + 500 <= CU.d && SU.d + 500 <= CU.d && G[2].d + 500 <= CU.d && VM.d + 500 <= CU.d &&
+        !!bd && bd.d <= CH.mueve.d && CH.mueve.dura > 0 && !!bl && bl.d >= CH.mueve.d + CH.mueve.dura,
+        'paso 4: se van la mamá y el cuaderno de Marvin, sale el cuaderno del maestro, y el criterio vuelve a antes de la tarea',
+        { mama: MA.d, suyo: SU.d, cuaderno: CU.d, mueve: [CH.mueve.d, CH.mueve.dura], baja: bl && bl.d }]);
+    }
+
+    /* ── el marcador y la frase dicen lo que se ve ── */
+    const falta = K.filter(c => !c.esta(leida));
+    const primerDia = etiquetas[0] ? etiquetas[0].txt : '?';
+    if (n === 0) r.push([cifra === '?' && palabras === 'con qué le contesta' && texto.includes(`por qué le puso ${estan} y no ${total}`) && texto.includes('¿Con qué le contesta usted?'),
+      'paso 0: el marcador deja la pregunta, y la frase dice la nota que se ve', [cifra, palabras]]);
+    if (n === 1) r.push([cifra === nota && palabras === 'cosas del criterio que están' && texto.includes(NUM[total] + ' cosas') &&
+      texto.includes(cap(NUM[estan]) + ' están') && falta.every(c => texto.includes(c.palabra + ' no')),
+      'paso 1: el marcador cuenta lo que está, y la frase dice cuántas cosas hay, cuántas están y cuál falta', [cifra, texto]]);
+    if (n === 2) r.push([cifra === 'antes' && palabras === 'de ' + PASA_SONDA[0] + ': ' + VB.txt.txt && texto.includes('desde el ' + primerDia + ', antes de ' + PASA_SONDA[0]) && texto.includes('cuaderno de ' + nombre),
+      'paso 2: el marcador y la frase dicen que estaba antes de la tarea, en el cuaderno de Marvin, y que la nota se defiende', [cifra, palabras]]);
+    if (n === 3) r.push([cifra === 'después' && palabras === 'de ' + PASA_SONDA[2] + ': ' + VM.txt.txt && texto.includes('después de que ella preguntó') && texto.includes('el mismo criterio') && /parece inventad/.test(texto),
+      'paso 3: el marcador y la frase dicen que se escribió después de la pregunta, que es el mismo criterio, y que la nota parece inventada', [cifra, palabras]]);
+    if (n === 4) r.push([cifra === '?' && /alumnos/.test(palabras) && texto.includes('antes de ' + PASA_SONDA[0]),
+      'paso 4: el marcador deja la pregunta al maestro, y la frase pide el criterio antes de la tarea', [cifra, palabras]]);
+
+    /* ── lo que se lee ── */
+    /* Dos pedazos seguidos de la oración son una sola frase: el lienzo mide
+       su tinta en píxeles enteros, y la de uno «toca» la del siguiente por
+       el redondeo, no porque se monten. */
+    const clave = t => t.txt + '@' + Math.round(t.x0 * 10) + ',' + Math.round(t.y0 * 10);
+    const delPapel = new Set(T.map(t => clave(Object.assign({ txt: t.txt }, t.tinta))));
+    const seguidos = (a, b) => delPapel.has(clave(Object.assign({ txt: a.txt }, a.caja))) && delPapel.has(clave(Object.assign({ txt: b.txt }, b.caja))) &&
+      Math.min(a.caja.x1, b.caja.x1) - Math.max(a.caja.x0, b.caja.x0) <= 1.2;
+    const ml = [];
+    x.letras.forEach((a, i) => x.letras.slice(i + 1).forEach(b => { if (monta(a.caja, b.caja) && !seguidos(a, b)) ml.push([a.txt, b.txt]); }));
+    r.push([ml.length === 0, `paso ${n}: ningún texto se monta en otro`, ml.slice(0, 4)]);
+    const saleT = x.letras.filter(t => t.caja.x0 < -0.5 || t.caja.y0 < -0.5 || t.caja.x1 > x.vista[0] + 0.5 || t.caja.y1 > x.vista[1] + 0.5);
+    r.push([saleT.length === 0, `paso ${n}: todo lo escrito cabe en el dibujo`, saleT.map(t => t.txt)]);
     return r;
   }
 };

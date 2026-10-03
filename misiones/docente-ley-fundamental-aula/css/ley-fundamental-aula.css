@@ -379,3 +379,38 @@ body {
 }
 .ach-fila:last-of-type { border-bottom: none; }
 .ach-fila.no { opacity: .45; font-weight: 600; }
+
+/* ── La animación del criterio escrito antes o después (#amCriterio) ──
+   Va en «Aprende», detrás de las cuatro cosas que la ley pone en sus manos.
+   La tarea, el criterio, los días de la semana, el globo y el cuaderno son
+   papel, y son papel en las dos pantallas, con tinta oscura fija (la tapa
+   del cuaderno de Marvin es azul en las dos, como es de verdad); lo que va
+   sobre la tarjeta (la raya de la semana, lo que baja a cada día, el nombre
+   de cada día y lo que piensa la mamá) lleva la tinta de la pantalla y el
+   violeta de la misión, que se aclaran solos en la oscura. Nada se dice
+   solo con color: ✓ es una raya quebrada y ✗ son dos que se cruzan. */
+#amCriterio .cr-papel { fill: #fffdf5; stroke: #cbd5e1; stroke-width: 1.2; }
+#amCriterio .cr-tarjeta { fill: #fffdf5; stroke: #6d28d9; stroke-width: 1.6; }
+#amCriterio .cr-dia { fill: #fffdf5; stroke: #94a3b8; stroke-width: 1; }
+#amCriterio .cr-tinta { fill: #1a2331; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amCriterio .cr-tinta-suave { fill: #475569; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amCriterio .cr-nota { fill: #b91c1c; font-family: 'Fredoka', sans-serif; font-weight: 700; }
+#amCriterio .cr-nota-caja { fill: none; stroke: #b91c1c; stroke-width: 1.6; }
+#amCriterio .cr-casilla { fill: #ffffff; stroke: #475569; stroke-width: 1.2; }
+#amCriterio .cr-bien { fill: none; stroke: #15803d; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+#amCriterio .cr-mal { fill: none; stroke: #b91c1c; stroke-width: 2.2; stroke-linecap: round; }
+#amCriterio .cr-flecha { fill: none; stroke: #7c3aed; stroke-width: 1.6; stroke-linecap: round; }
+#amCriterio .cr-punta { fill: #7c3aed; }
+#amCriterio .cr-eje { fill: none; stroke: var(--dark, #1a2331); stroke-width: 1.4; }
+#amCriterio .cr-baja { fill: none; stroke: var(--am-pri); stroke-width: 1.4; }
+#amCriterio .cr-globo { fill: #ffffff; stroke: #94a3b8; stroke-width: 1.2; stroke-linejoin: round; }
+#amCriterio .cr-raya { stroke: #94a3b8; stroke-width: 1.2; }
+#amCriterio .cr-falda { fill: #7c2d12; }
+#amCriterio .cr-blusa { fill: #fbcfe8; stroke: #be8aa6; stroke-width: 1; }
+#amCriterio .cr-brazo { fill: none; stroke: #8d5a3b; stroke-width: 3; stroke-linecap: round; }
+#amCriterio .cr-piel { fill: #8d5a3b; }
+#amCriterio .cr-pelo { fill: #1f130b; }
+#amCriterio .cr-margen { stroke: #e7a1a1; stroke-width: 1; }
+#amCriterio .cr-renglon { stroke: #c7d2fe; stroke-width: 0.9; }
+#amCriterio .cr-tapa { fill: #2563eb; stroke: #1e3a8a; stroke-width: 1.2; }
+#amCriterio .cr-lomo { fill: #1e3a8a; }

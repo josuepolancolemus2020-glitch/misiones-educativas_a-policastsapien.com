@@ -15865,6 +15865,97 @@ frase, el hongo volando antes de aparecer…), y salió roja con cada una.
 Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
 de 67 ms; la del CNB y el DCNB, medida el mismo día, va a 58 y 67 ms.
 
+#### La sexta: la Ley Fundamental, el criterio antes o después
+
+En **La Ley Fundamental de Educación en el aula**
+(`misiones/docente-ley-fundamental-aula/`, `js/animacion-criterio.js`), dentro de
+«Aprende», detrás de las cuatro cosas que la ley pone en sus manos. La tercera es
+la evaluación, y la misión la cierra con estas palabras: cuando alguien le
+discuta una nota, la pregunta es «con qué criterio, escrito dónde, avisado
+cuándo», y «un criterio escrito de antemano defiende su nota; uno explicado
+después parece inventado, aunque sea justo». La animación es eso, pasando en el
+aula:
+
+- la tarea de Marvin dice «mi escuela es grande.» y lleva un 2 de 3. Abajo, la
+  semana, el cuaderno de Marvin cerrado y su mamá, que pregunta «¿Por qué 2 y no
+  3?». El sitio del criterio va vacío: ¿con qué le contesta usted?;
+- con el criterio: tres cosas, y cada una señala con una flecha lo que busca en
+  la oración: la primera letra, la palabra «escuela» y el punto. Dos están (✓) y
+  la mayúscula no (✗);
+- si fue antes: el criterio estaba desde el lunes, antes de la tarea. Se abre el
+  cuaderno de Marvin en el lunes y ahí está, cosa por cosa. La mamá dice «Ah,
+  estaba en su cuaderno.», y la nota se defiende sola;
+- si fue después: el mismo criterio, escrito después de que ella preguntó. El
+  cuaderno queda en blanco, ella dice «Eso lo escribió hoy.», y la misma nota,
+  que es justa, parece inventada;
+- y donde estaba la mamá sale el cuaderno del maestro: el criterio de su próxima
+  evaluación y el día en que sus alumnos lo van a ver.
+
+**Seis cosas que valen para las siguientes:**
+
+1. ⚠️ **Se eligió lo único de la evaluación que la prueba no pregunta.** Casi todo
+   lo demás de la misión lo preguntan el quiz, el completar, el reto y el
+   simulacro: los artículos y sus números, los doscientos días, la gratuidad, los
+   niveles con sus edades, qué define el currículo, el Proyecto Educativo de
+   Centro y la rendición de cuentas. Cuándo se escribe un criterio no lo pregunta
+   ninguno, y la sonda lo comprueba en los ocho bancos de la misión (`FC`,
+   `MEMO`, `QZ`, `CL_GRUPOS`, `CP`, `RETO`, `SOPA_PAL` y `CN`). La escena
+   tampoco dice de dónde salen los criterios, que es parte de una pregunta del
+   quiz.
+2. ⚠️ **La nota no se escribe: sale de mirar la oración.** La escena trae sus tres
+   cosas con la forma de buscar cada una, y de ahí salen la nota, las marcas y la
+   cuenta de la frase. La sonda lleva su propia tabla y vuelve a mirar la oración
+   que se ve, pedazo por pedazo. Si alguien le pone mayúscula a «mi», la nota
+   cambia sola en la escena, y la frase del paso 1 («Dos están, y la mayúscula
+   no») queda mintiendo: la sonda se pone roja.
+3. **Lo que decide es dónde quedó el criterio en la semana.** Los días van en su
+   orden y a la misma distancia, porque lo que cuenta es qué pasó antes y qué
+   después, no cuántos días hay entre una cosa y otra. La sonda lee los días, lo
+   que pasa cada uno (la tarea, la nota, la pregunta) y dónde quedó el criterio,
+   y de ahí saca si la nota se defiende o parece inventada.
+4. ⚠️ **Lo que ella decía se va antes de que se borre el cuaderno.** En la primera
+   versión, al pasar de «antes» a «después» el cuaderno de Marvin quedaba en
+   blanco mientras la mamá seguía diciendo «Ah, estaba en su cuaderno»: casi un
+   segundo diciendo lo contrario de lo que se veía. Al final del paso todo estaba
+   bien; se vio en las fotos a medio viaje.
+5. **El cuaderno de Marvin está desde el principio, cerrado.** En los dos
+   primeros pasos la esquina de abajo quedaba vacía. Ahora ahí está, con su tapa
+   y su nombre, y en el paso 2 se abre en el mismo sitio; la página sale cuando
+   la tapa ya se fue. Es lo primero que la mamá va a mirar, y ya estaba en el
+   dibujo antes de nombrarlo.
+6. **El criterio va en su propio carril, encima de lo que pasa cada día.** Así se
+   corre de «antes» a «después» sin pasar por encima de nada. La raya que lo baja
+   a la semana se apaga mientras se mueve y sale cuando ya llegó, y el «después»
+   va a la derecha de «la pregunta», para que esa raya no la cruce.
+
+La sonda **no le cree nada a la escena**. Lee la oración en el dibujo y decide
+con su tabla qué cosas del criterio están. Comprueba:
+
+- que la nota sea la que da el criterio y la misma en todos los pasos, y que cada
+  casilla lleve ✓ (una raya) o ✗ (dos) según la oración;
+- que cada flecha salga de arriba de su casilla y su punta quede justo debajo de
+  lo que busca, sin cruzarse con otra ni pasar por encima de lo escrito, y que
+  salgan una por una: la flecha, su punta al llegar y después la marca;
+- que los días vayan en el orden de la semana, que la tarea, la nota y la
+  pregunta vayan encima de su día, y que el criterio quede antes de la tarea o
+  después de la pregunta, en su carril y con su raya hasta la semana;
+- que la nota se defienda solo si el criterio estaba antes, y que en el cuaderno
+  de Marvin esté escrito el día que dice la semana, cosa por cosa;
+- que la mamá diga una sola cosa a la vez, con la punta del globo en su cabeza,
+  y que cada cosa pase cuando le toca;
+- y que no salga nada de lo que pregunta la prueba de la misión, ni un número que
+  no sea el de la nota.
+
+Se comprobó al revés con treinta y seis averías, plantadas una por una (la
+mayúscula marcada como que está, la flecha de «su escuela» llegando a «grande»,
+la marca antes que la flecha, el criterio «antes» en el miércoles, el «después»
+cruzando la pregunta, la nota que se defiende también después, el cuaderno que
+conserva el criterio, lo que ella decía yéndose tarde, la página antes que la
+tapa, la ley nombrada en una frase…), y salió roja con cada una.
+
+Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
+de 50 ms; la del patio, medida el mismo día, va a 58 y 100 ms.
+
 ## Normativa: las Sugerencias de una misión salen del teléfono
 
 El botón **💬 Sugerencias** de cada misión lleva años ahí y durante todo

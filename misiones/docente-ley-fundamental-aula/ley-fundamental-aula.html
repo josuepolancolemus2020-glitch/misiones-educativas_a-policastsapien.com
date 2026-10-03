@@ -8,6 +8,9 @@
 <meta name="robots" content="noindex">
 <link rel="stylesheet" href="../../css/vendor/fuentes/fuentes.css">
 <link rel="stylesheet" href="css/ley-fundamental-aula.css">
+<!-- La animación del criterio escrito antes o después: va DESPUÉS del
+     CSS de la misión, que es de donde saca sus colores. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La barra de secciones, arriba y siempre a la vista. Va DESPUÉS del CSS
      de la misión a propósito: de ahí saca su color, y así sobrescribe su
      position:static sin un solo !important. -->
@@ -119,6 +122,16 @@
       <div class="dato">📌 <b>Regla de estudio:</b> si en un examen le preguntan por una obligación
         del docente y duda, mire cuál de estas cuatro toca: tiempo, currículo, evaluación o
         cuentas. Casi siempre acierta el sentido aunque falle el número del artículo.</div>
+    </div>
+
+    <div class="card" data-animacion>
+      <h2>📝 La misma nota, con el criterio antes o después</h2>
+      <div id="amCriterio">
+        <p>La tarea de Marvin, 2 de 3, y el criterio con que se calificó. Si el criterio estaba en
+          su cuaderno desde el lunes, antes de la tarea, su mamá lo lee y la nota se defiende sola.
+          Si se escribe después de que ella preguntó, la misma nota parece inventada, aunque sea
+          justa.</p>
+      </div>
     </div>
 
     <div class="card">
@@ -423,6 +436,8 @@
 </footer>
 
 <script src="js/ley-fundamental-aula.js"></script>
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-criterio.js"></script>
 <!-- Accesibilidad de aula compartida: añade al pie «🔎 Letra» y
      «📽️ Presentación» (con modo libro). Se engancha sola en .cred-tools,
      .sec.active y go(). -->
