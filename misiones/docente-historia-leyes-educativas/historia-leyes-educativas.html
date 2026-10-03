@@ -8,6 +8,9 @@
 <meta name="robots" content="noindex">
 <link rel="stylesheet" href="../../css/vendor/fuentes/fuentes.css">
 <link rel="stylesheet" href="css/historia-leyes-educativas.css">
+<!-- La animación de la línea a escala: va DESPUÉS del CSS de la misión, que
+     es de donde saca sus colores. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La barra de secciones, arriba y siempre a la vista. Va DESPUÉS del CSS
      de la misión a propósito: de ahí saca su color, y así sobrescribe su
      position:static sin un solo !important. -->
@@ -67,6 +70,18 @@
       <div class="tl-nav">
         <button class="btn btn-g" onclick="tlMover(-1)">← Anterior</button>
         <button class="btn" onclick="tlMover(1)">Siguiente →</button>
+      </div>
+    </div>
+
+    <!-- La animación explica la lista de arriba: la pone a escala, la mira
+         de cerca y dice cuáles rigen hoy el aula (js/animacion-escala.js). -->
+    <div class="card" data-animacion>
+      <h2>📏 La misma lista, a escala</h2>
+      <div id="amEscala">
+        <p>En la lista, los nueve momentos van a la misma distancia. A escala no: el país pasó
+          sus primeros sesenta años sin escuela pública, y seis de las nueve fechas se amontonan
+          desde 1966. Hoy rigen su aula cuatro a la vez: la Constitución, el Código de la Niñez,
+          el Estatuto del Docente y la Ley Fundamental.</p>
       </div>
     </div>
   </section>
@@ -408,6 +423,8 @@
 </footer>
 
 <script src="js/historia-leyes-educativas.js"></script>
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-escala.js"></script>
 <!-- Accesibilidad de aula compartida: añade al pie «🔎 Letra» y
      «📽️ Presentación» (con modo libro). Se engancha sola en .cred-tools,
      .sec.active y go(). -->

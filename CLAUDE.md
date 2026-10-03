@@ -15327,6 +15327,13 @@ salida más simple es que salga justo debajo de adonde va. Dos nombres puestos u
 se leen como uno si los separa poco más que un espacio: la sonda pide un hueco. Y un reloj se lee
 por el ángulo de sus agujas, no por la hora que dice debajo.
 
+Lo que cambia de golpe pero a su hora lleva `transition: opacity 0s linear var(--d)`: con
+`transition: none` se pierde también la demora, y cambia al tocar el botón (en Historia de las
+leyes, los nueve años se apagaban a la vez). Una letra no va dentro de lo que se mueve si no hace
+falta: se vuelve a colocar en cada cuadro, y nueve fichas que volaban con su año bajaban un
+teléfono barato a 46 cuadros por segundo (con el año quieto en su renglón, 58). Y lo que llega a
+una regla desde abajo no puede tener los rótulos de la regla debajo: cualquier camino los pisa.
+
 Una misión puede llevar **más de una** animación: la primera va justo después de
 la historia, y es el gancho; las demás, dentro de la sección cuyo contenido
 explican, cada una en su tarjeta con `data-animacion` y su propio id. La sonda
@@ -15563,6 +15570,106 @@ cuarenta y ocho horas…), y salió roja con cada una.
 
 Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
 de 50 ms; la del Estatuto, medida el mismo día, va a 59 y 67 ms.
+
+#### La tercera: Historia de las leyes, la misma lista a escala
+
+En **Dos siglos de leyes educativas en Honduras**
+(`misiones/docente-historia-leyes-educativas/`, `js/animacion-escala.js`), dentro
+de la sección de la línea de tiempo, debajo de la lista. Ahí los nueve momentos
+van uno debajo del otro, a la misma distancia, y parece que entre uno y otro
+pasó siempre lo mismo. La animación pone la misma lista a escala:
+
+- la lista, con el año de cada momento en su ficha, y encima una regla de 1821 a
+  hoy: ¿pasó el mismo tiempo entre uno y otro?;
+- cada ficha sale de lado por su renglón y sube a su año de la regla, donde se
+  vuelve un punto; en la lista queda su sitio, de raya cortada. Entre la
+  Independencia y el Código de 1882 pasan 60 años: el país empezó sin escuela
+  pública;
+- y al final se amontonan: seis de las nueve caben en los últimos 60 años, desde
+  1966, con una llave en la regla y otra en la lista («6 de las 9»);
+- de cerca, de 1966 a hoy, el tiempo corre a paso parejo: cada norma sale cuando
+  el tiempo pasa por su año, su barra crece con él, y la de 1966 deja de regir el
+  aula en 2012, cuando llega la que rige hoy;
+- la raya de hoy, la de su aula, cruza cuatro a la vez (la Constitución, el
+  Código de la Niñez, el Estatuto y la Ley Fundamental), cada una con su aro; la
+  de 1989 queda hueca: rige la universidad;
+- las dos barras bajan y se comparan desde el mismo punto: la de 1966 rigió el
+  aula más de tres veces lo que lleva la de hoy, y por eso se sigue oyendo
+  «primaria»;
+- un acta que dice «sexto de primaria» se la devuelven, y el maestro anota en su
+  cuaderno una palabra vieja que se oiga en su centro y cómo la dice la ley de hoy.
+
+**Siete cosas que valen para las siguientes:**
+
+1. ⚠️ **Ni un año escrito a mano: todo sale de los nueve hitos de la misión**
+   (`HITOS`), y lo que afirma se comprueba en su texto ANTES de montarse: que la
+   Ley Orgánica rige «hasta» el año de la Ley Fundamental y que esta «sustituye a
+   la Ley Orgánica de» 1966; que la de 1989 deja el nivel superior «fuera de la
+   Secretaría de Educación»; y que las que siguen rigiendo el aula son las cuatro
+   que nombra la frase. Si la misión cambiara y algo dejara de ser verdad, la
+   escena no se monta.
+2. ⚠️ **Restando años salían mal dos cuentas, y se hacen con fechas.** De la
+   Independencia al Código hay 61 años de calendario y 60 de verdad (del 15 de
+   septiembre de 1821 al 12 de febrero de 1882): la misión dice «sesenta años
+   después», y eso dice la escena, con las fechas del campo `sub` de cada hito. Y
+   «más de tres veces» se afirma solo del lado seguro: lo que rigió la de 1966,
+   como poco (los años enteros entre las dos), contra lo que lleva la de hoy,
+   como mucho (desde el 1 de enero de 2012). Hoy da 45 contra 14,75; el 1 de
+   enero de 2027 deja de poder afirmarse, y la frase pasa sola a «más del doble».
+3. ⚠️ **«Se cortó» no era verdad, y se cambió la frase.** La Ley Fundamental
+   deroga la de 1966 «salvo unos capítulos sobre bibliotecas, archivos nacionales
+   y monumentos»: la de 1966 no se cortó, **dejó de regir el aula**, que es lo
+   que dicen la frase y el marcador. Esos capítulos no se nombran.
+4. ⚠️ **Lo que preguntan el quiz y el simulacro no se dice**: cuántos años
+   rigió la de 1966 (se ve en el largo de su barra), cómo se llama hoy lo que
+   antes era «primaria» (es lo que el maestro anota), los grados y los ciclos de
+   la ley de hoy, los tres adjetivos de 1882, ni artículos, decretos, La Gaceta,
+   la UNAH o una persona. La sonda lo busca en cada paso.
+5. ⚠️ **Una ficha que vuela en diagonal desde su renglón pasa por encima de los
+   de arriba.** Se vio a medio viaje: la de 1989 tapaba el año de 1966 y se leía
+   «196[1989]». Ahora cada ficha va en dos sobres, uno por tramo: sale de lado
+   por su renglón hasta un carril vacío y de ahí sube a la regla. Los años de la
+   regla pasaron ENCIMA de ella, con las dos llaves debajo, una a cada lado: las
+   fichas llegan desde abajo, y con los años debajo cualquier camino los pisaba.
+   Y dónde va el carril no se eligió a ojo: la sonda sigue el camino recto de
+   cada tramo, con la ficha achicándose, contra los nombres, los renglones y los
+   años, y con el carril en 236 la de 1821 todavía rozaba el primer renglón.
+6. ⚠️ **El año de cada ficha no viaja, y eso le devolvió los cuadros.** Con el
+   año dentro de la ficha, nueve fichas en el aire bajaban un teléfono barato a
+   46 cuadros por segundo; apagarlo de golpe al despegar no bastó, porque seguía
+   dentro de lo que se mueve. Ahora el año se queda en su renglón y el del sitio
+   lo reemplaza al salir, en el mismo lugar: 58. Y ahí salió la otra trampa: con
+   `transition: none`, los nueve años se apagaban al tocar el botón y no cada uno
+   al salir su ficha. Va con duración cero y la demora puesta.
+7. **Con un espacio de por medio no cabe un aro.** «sexto de primaria» va con
+   su espacio, y un aro alrededor de «primaria» pisaba el «de»: la primera
+   versión estiraba la palabra un 14 % y dejaba siete puntos de hueco para que
+   cupiera. Se SUBRAYA, que es la regla escrita para lo que va pegado, y las dos
+   piezas llevan el ancho que miden en la Fredoka.
+
+La sonda **no le cree nada a la escena**. Lee los nueve hitos del archivo de la
+misión con sus fechas, y de ahí saca qué norma reemplazó a cuál («sustituye a la
+… de AAAA»), los años sin escuela pública y cuántas veces cabe lo que lleva la
+de hoy en lo que rigió la de 1966; cuál rige la universidad lo lee del
+«Aprende» de la misión («tiene ley propia desde 1989 y no la rige la Secretaría
+de Educación»), no de la escena. Del dibujo saca dos escalas, la de la regla
+(de sus rótulos de 1900 y 2000) y la del panel (de los de 1980 y 2000), y con
+ellas comprueba que cada punto caiga en su año, que las rayitas vayan una cada
+diez años, que cada llave abarque lo que dice, que cada barra vaya de su año a
+hoy o al año en que la reemplazaron, que salga cuando el tiempo pasa por su año
+y crezca a su mismo paso (la velocidad la saca de la raya del tiempo), que los
+aros sean justo los de las normas que rigen el aula y que las dos copias de
+abajo midan lo que sus barras. Se comprobó al revés con treinta y siete
+averías, plantadas una por una (un punto corrido tres años, los años sin escuela
+restando años, la llave de la lista desde 1957, la de 1966 cortada en 2015, las
+barras más rápidas que el tiempo, un aro en la universidad, la copia de hoy más
+larga, «cuarenta y seis» en una frase, el cuaderno con la respuesta, el carril
+en 236, los años de la regla debajo, los años apagándose con `transition:
+none`, la misión diciendo que la universidad es de 1990…), y salió roja con cada
+una.
+
+Con la CPU frenada seis veces va a 58 cuadros por segundo, y el peor cuadro es
+de 67 a 83 ms; la de Derechos de la niñez, medida el mismo día, va a 58 y 67 ms.
 
 ## Normativa: las Sugerencias de una misión salen del teléfono
 
