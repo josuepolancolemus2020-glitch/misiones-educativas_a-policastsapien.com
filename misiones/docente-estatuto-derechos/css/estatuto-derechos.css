@@ -30,6 +30,19 @@
   --sombra: 0 2px 10px rgba(26, 35, 49, .09);
   --r: 14px;
   --r-sm: 10px;
+  /* Los nombres con que se tiñe el aparato de las animaciones
+     (css/animacion-mision.css lee --card, --border, --dark, --gray…).
+     Aquí son alias de los de siempre, así cambian solos en la pantalla
+     oscura. --pri-lt es la tinta violeta para la tarjeta oscura (6,0:1
+     sobre #18202c) y --sec-lt la ámbar (9,8:1): el violeta y el ámbar de
+     la casa, pensados para fondo claro, no se leerían ahí. */
+  --card: var(--papel);
+  --border: var(--linea);
+  --dark: var(--tinta);
+  --gray: var(--gris);
+  --pri-gl: rgba(109, 40, 217, .08);
+  --pri-lt: #a78bfa;
+  --sec-lt: #fbbf24;
 }
 [data-theme="dark"] {
   --pri-soft: #2b2350;
@@ -392,3 +405,23 @@ body {
 }
 .ach-fila:last-of-type { border-bottom: none; }
 .ach-fila.no { opacity: .45; font-weight: 600; }
+
+/* ── La animación de la plaza vacante (#amPlaza) ───────────────────────
+   La plaza es un papel y las etiquetas de cada docente son cosas: llevan su
+   color en las dos pantallas, con tinta oscura fija. Lo que va sobre la
+   tarjeta (los turnos, los nombres) lleva la tinta de la pantalla. Quien no
+   está (el «¿y si no hubiera…?») queda como un hueco de raya cortada, no
+   solo más pálido: se ve sin distinguir colores y fotocopiado. */
+#amPlaza .pz-emoji { font-family: 'Fredoka', sans-serif; }
+#amPlaza .pz-banda { fill: var(--card); stroke: var(--border); stroke-width: 1; }
+#amPlaza .pz-badge { fill: var(--card); stroke: var(--am-pri); stroke-width: 1.6; }
+#amPlaza .pz-duda { fill: var(--dark); font-family: 'Fredoka', sans-serif; font-weight: 700; }
+#amPlaza .pz-titulo { fill: var(--dark); font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amPlaza .pz-sub { fill: var(--gray); font-family: 'Fredoka', sans-serif; font-weight: 500; }
+#amPlaza .pz-tag rect { fill: #f3eeff; stroke: #a78bfa; stroke-width: 1; }
+#amPlaza .pz-tag-txt { fill: #1a2331; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amPlaza .pz-papel { fill: #fffdf5; stroke: #cbd5e1; stroke-width: 1.2; }
+#amPlaza .pz-tinta { fill: #1a2331; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+#amPlaza .pz-gris { fill: #5b6773; font-family: 'Fredoka', sans-serif; font-weight: 600; font-style: italic; }
+#amPlaza .pz-aro { fill: none; stroke: var(--am-sec); stroke-width: 2.2; }
+#amPlaza .pz-turno { fill: var(--am-sec); }

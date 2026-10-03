@@ -968,6 +968,13 @@ function initTheme() {
     document.documentElement.setAttribute('data-theme', 'dark');
     const b = document.getElementById('themeBtn');
     if (b) b.textContent = '☀️ Tema';
+  } else {
+    /* ⚠️ El claro se escribe, no se deja «sin nada». Las hojas compartidas
+       (la de las animaciones, entre otras) se ponen oscuras con
+       prefers-color-scheme cuando la página no dice data-theme="light": con
+       el teléfono en oscuro y esta misión guardada en claro, la animación
+       salía con letra clara sobre la tarjeta clara. */
+    document.documentElement.setAttribute('data-theme', 'light');
   }
   const sb = document.getElementById('sndBtn');
   if (sb && S.sonido === 0) sb.textContent = '🔇 Sonido';

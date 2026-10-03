@@ -40,6 +40,19 @@
      cuál es del Estado. */
   --ofi: #334155;
   --ofi-soft: #eef2f7;
+  /* Los nombres con que se tiñe el aparato de las animaciones
+     (css/animacion-mision.css lee --card, --border, --dark, --gray…).
+     Aquí son alias de los de siempre, así cambian solos en la pantalla
+     oscura. --pri-lt es la tinta violeta para la tarjeta oscura (6,0:1
+     sobre #18202c) y --sec-lt la ámbar (9,8:1): el violeta y el ámbar de
+     la casa, pensados para fondo claro, no se leerían ahí. */
+  --card: var(--papel);
+  --border: var(--linea);
+  --dark: var(--tinta);
+  --gray: var(--gris);
+  --pri-gl: rgba(109, 40, 217, .08);
+  --pri-lt: #a78bfa;
+  --sec-lt: #fbbf24;
 }
 [data-theme="dark"] {
   --ofi: #cbd5e1;

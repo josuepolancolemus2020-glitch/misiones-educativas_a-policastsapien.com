@@ -59,7 +59,10 @@ for (const dir of fs.readdirSync(path.join(RAIZ, 'misiones'))) {
        de sus secciones. Solo la primera tiene que ir justo después de la
        historia; las demás, dentro de una sección. */
     const tarjetas = [...html.matchAll(/<div\b[^>]*\bdata-animacion\b[^>]*>[\s\S]*?<div\b[^>]*\bid="([^"]+)"/g)];
-    tarjetas.forEach((m, i) => misiones.push({ url: `misiones/${dir}/${encodeURI(f)}`, id: m[1], primera: i === 0 }));
+    /* Y en las del maestro no hay «primera»: su historia es el encabezado,
+       y todas sus animaciones van dentro de la sección que explican. */
+    const conTarjetaDeHistoria = /<div\b[^>]*\bdata-situacion\b/.test(html);
+    tarjetas.forEach((m, i) => misiones.push({ url: `misiones/${dir}/${encodeURI(f)}`, id: m[1], primera: i === 0 && conTarjetaDeHistoria }));
   }
 }
 
@@ -5506,6 +5509,44 @@ const LEER = `
     };
   };
 
+  /* ── Las animaciones de las misiones del maestro ── */
+  /* El Estatuto: una plaza vacante, tres turnos y quién se la lleva. La
+     flecha del turno se mueve con transform: su lugar se mide con «centro»
+     (getBoundingClientRect), que lo cuenta. */
+  window.__amExtra.amPlaza = function (raiz, centro) {
+    var H = window.__amHerr(raiz), vis = H.vis, uno = H.uno, todos = H.todos;
+    function texto(t) { return t ? { txt: t.textContent, ve: vis(t), d: H.demora(t), caja: H.caja(t), tinta: H.tinta(t) } : null; }
+    var turno = uno('[data-turno]'), persona = uno('[data-persona]');
+    var tb = turno.getBoundingClientRect(), sb = H.svg.getBoundingClientRect(), k = sb.width / H.svg.viewBox.baseVal.width;
+    return {
+      vista: [H.svg.viewBox.baseVal.width, H.svg.viewBox.baseVal.height],
+      apaga: H.dura(persona, 'opacity'),
+      viaje: H.dura(turno, 'transform'),
+      escuela: texto(uno('[data-escuela]')),
+      plazas: todos('[data-plaza-caja]').length,
+      plaza: { caja: H.caja(uno('[data-plaza-caja]')), silla: texto(uno('[data-silla]')),
+        rotulo: texto(todos('text', uno('[data-plaza]')).filter(function (t) { return t.textContent === 'la plaza'; })[0]),
+        estados: todos('[data-estado]').map(function (t) { var o = texto(t); o.k = t.getAttribute('data-estado'); o.para = t.getAttribute('data-para'); return o; }) },
+      regla: texto(uno('[data-regla]')),
+      filas: todos('[data-fila]').map(function (g) {
+        return { k: g.getAttribute('data-fila'), banda: H.caja(uno('[data-banda]', g)), badge: H.caja(uno('[data-badge]', g)),
+          num: texto(uno('[data-num]', g)), duda: texto(uno('[data-duda]', g)), titulo: texto(uno('[data-titulo]', g)), sub: texto(uno('[data-sub]', g)) };
+      }),
+      turno: { ve: vis(turno), d: H.demora(turno),
+        caja: { x0: (tb.left - sb.left) / k, y0: (tb.top - sb.top) / k, x1: (tb.right - sb.left) / k, y1: (tb.bottom - sb.top) / k } },
+      gente: todos('[data-persona]').map(function (g) {
+        var kk = g.getAttribute('data-persona'), hu = uno('[data-hueco="' + kk + '"]'), aro = uno('[data-aro="' + kk + '"]'), tag = uno('[data-tag]', g);
+        return { k: kk, ve: vis(g), d: H.demora(g),
+          cara: texto(uno('[data-cara]', g)), nombre: texto(uno('[data-nombre]', g)),
+          tag: { caja: H.caja(uno('rect', tag)), texto: texto(uno('[data-tag-txt]', tag)) },
+          hueco: { ve: vis(hu), d: H.demora(hu), caja: H.caja(hu), raya: getComputedStyle(hu).strokeDasharray },
+          aro: { ve: vis(aro), d: H.demora(aro), caja: H.caja(aro), raya: getComputedStyle(aro).strokeDasharray } };
+      }),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; }),
+      letras: H.letras()
+    };
+  };
+
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -6099,6 +6140,34 @@ const ESTADOS_BANCO = [
    cosas, la pregunta que faltó y CUÁNTAS palabras dice que tiene. Esa cuenta
    la sonda la vuelve a hacer: así salió que la historia decía «cuatro». */
 let historiaBancoMemo = null;
+/* El Estatuto del Docente: el orden de los turnos lo dice la propia misión,
+   en el trámite del traslado, y que la lista va de mayor a menor, en el del
+   concurso. La sonda lo lee de ahí, no de la escena. */
+let leyPlazaMemo = null;
+function leyPlaza() {
+  if (leyPlazaMemo) return leyPlazaMemo;
+  const js = fs.readFileSync(path.join(RAIZ, 'misiones', 'docente-estatuto-derechos', 'js', 'estatuto-derechos.js'), 'utf8')
+    .replace(/'\s*\+\s*'/g, '');
+  const m = js.match(/las vacantes se cubren primero por ([a-záéíóúñ ]+?), después con los ([a-záéíóúñ ]+?) y al final por ([a-záéíóúñ ]+?)\./) || [];
+  leyPlazaMemo = {
+    orden: m.slice(1, 4),
+    descendente: /lista ordenada de mayor a menor puntaje/.test(js),
+    pdf: fs.existsSync(path.join(RAIZ, '_dev', 'leyes', 'reglamento-estatuto-docente-acuerdo-0760-se-99.pdf'))
+  };
+  return leyPlazaMemo;
+}
+/* Lo que pasa en cada paso, sin decir quién: si los turnos ya tienen
+   número, si ya se da la plaza y cuántos faltan. Quién falta y a quién le
+   toca lo decide la sonda mirando el dibujo. */
+const ESTADOS_PLAZA = [
+  { numeros: false, da: false, fuera: 0 },
+  { numeros: true, da: false, fuera: 0 },
+  { numeros: true, da: true, fuera: 0 },
+  { numeros: true, da: true, fuera: 1 },
+  { numeros: true, da: true, fuera: 2 },
+  { numeros: true, da: true, fuera: 0 }
+];
+const MEMO_PLAZA = { ocupante: [], antes: null };
 function historiaBanco() {
   if (historiaBancoMemo) return historiaBancoMemo;
   const html = fs.readFileSync(path.join(RAIZ, 'misiones', 'basica-palabras-que-piensan', 'palabras-que-piensan.html'), 'utf8');
@@ -20272,6 +20341,159 @@ const ESCENAS = {
     const fuera = x.letras.filter(t => t.caja.x0 < -0.5 || t.caja.y0 < -0.5 || t.caja.x1 > x.vista[0] + 0.5 || t.caja.y1 > x.vista[1] + 0.5);
     r.push([fuera.length === 0, `paso ${n}: todo lo escrito cabe en el dibujo`, fuera.map(t => t.txt)]);
     return r;
+  },
+
+  /* ── El Estatuto del Docente: ¿a quién le toca la plaza vacante? ──
+     ⚠️ Nada se le cree a la escena. El orden de los turnos se lee del
+     trámite del traslado de la propia misión («las vacantes se cubren
+     primero por traslado, después con los exonerados de concurso y al final
+     por resultados de concurso») y de la lista del concurso («de mayor a
+     menor puntaje»). Del dibujo se lee en qué turno está cada quien (por la
+     banda donde cae su cara), qué dice su etiqueta, quién falta (su hueco)
+     y quién tiene el aro. Con eso la sonda decide ELLA a quién le toca, y
+     lo compara con el aro, con la plaza, con la flecha y con el marcador. */
+  amPlaza(e, n) {
+    const x = e.extra, r = [];
+    if (!x) return [[false, `paso ${n}: la sonda pudo leer la escena`, null]];
+    const E = ESTADOS_PLAZA[n], L = leyPlaza();
+    const APAGA = x.apaga || 500;
+    const monta = (a, b) => a.x0 < b.x1 - 0.5 && b.x0 < a.x1 - 0.5 && a.y0 < b.y1 - 0.5 && b.y0 < a.y1 - 0.5;
+    const dentro = (a, b, mg = 0) => a.x0 >= b.x0 - mg && a.x1 <= b.x1 + mg && a.y0 >= b.y0 - mg && a.y1 <= b.y1 + mg;
+    const cx = c => (c.x0 + c.x1) / 2, cy = c => (c.y0 + c.y1) / 2;
+    const NUMTXT = ['cero', 'una', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez'];
+
+    /* ── lo que no depende del dibujo va primero ── */
+    /* No se dice ninguno de los motivos de traslado ni su orden (los pregunta
+       el simulacro), ni cuánto dura la lista, ni la nota mínima, ni las
+       palabras del concurso que pregunta el examen. */
+    const PROHIBIDAS = /seguridad personal|enfermedad|integraci[oó]n familiar|lugar de origen|fuerza mayor|calamidad|fortuito|un a[nñ]o|(?<![0-9])75(?![0-9])|desiert|fracasad|seis causas|junta|enero|quince|veintitr[eé]s|art[ií]culo 13(?![0-9])|interin/iu;
+    const dicho = [e.texto, e.palabras, e.boton].concat(x.textos).join(' · ');
+    r.push([!PROHIBIDAS.test(dicho), `paso ${n}: no se nombran los motivos de traslado, ni su orden, ni cuánto dura la lista, ni la nota mínima`, (dicho.match(PROHIBIDAS) || [])[0]]);
+    r.push([L.orden.length === 3 && L.descendente, 'la misión dice el orden de los turnos y que la lista va de mayor a menor', L]);
+    r.push([L.pdf, 'el Reglamento del Estatuto está en _dev/leyes/', null]);
+
+    /* ── los tres turnos, en el orden de la misión ── */
+    const filas = x.filas.slice().sort((a, b) => a.banda.y0 - b.banda.y0);
+    r.push([filas.length === L.orden.length, `paso ${n}: hay un turno por cada uno de los que dice la misión`, filas.map(f => f.k)]);
+    if (filas.length !== L.orden.length) return r;
+    const RAIZ_TURNO = [/traslad/i, /exonerad/i, /concurso/i];
+    r.push([filas.every((f, i) => RAIZ_TURNO[i].test(L.orden[i]) && RAIZ_TURNO[i].test(f.titulo.txt + ' ' + f.sub.txt)),
+      `paso ${n}: los turnos van, de arriba abajo, en el orden de la misión`, filas.map(f => f.titulo.txt)]);
+    r.push([filas.every((f, i) => i === 0 || f.banda.y0 >= filas[i - 1].banda.y1 - 0.5) && filas.every(f => dentro(f.banda, { x0: 0, y0: 0, x1: x.vista[0], y1: x.vista[1] })),
+      `paso ${n}: las bandas de los turnos no se montan y caben en el dibujo`, filas.map(f => [f.banda.y0, f.banda.y1])]);
+    filas.forEach((f, i) => {
+      const num = f.num, duda = f.duda;
+      r.push([num.ve === E.numeros && duda.ve === !E.numeros, `paso ${n}: el turno ${i + 1} ${E.numeros ? 'lleva su número' : 'todavía no tiene número: «?»'}`, [num.ve, duda.ve]]);
+      r.push([num.txt === String(i + 1) && duda.txt === '?', `paso ${n}: el número del turno ${i + 1} es ${i + 1}`, num.txt]);
+      const vivo = E.numeros ? num : duda;
+      r.push([dentro(f.badge, f.banda) && Math.abs(cx(vivo.tinta) - cx(f.badge)) < 1.5 && Math.abs(cy(vivo.tinta) - cy(f.badge)) < 1.5,
+        `paso ${n}: el número del turno ${i + 1} va en su círculo, dentro de su banda`, [vivo.tinta, f.badge]]);
+      r.push([dentro(f.titulo.tinta, f.banda) && dentro(f.sub.tinta, f.banda) && f.titulo.tinta.x0 >= f.badge.x1 && f.sub.tinta.y0 >= f.titulo.tinta.y1 - 0.5,
+        `paso ${n}: el nombre del turno ${i + 1} va al lado de su número, dentro de su banda`, [f.titulo.tinta, f.sub.tinta]]);
+    });
+
+    /* ── quién está en cada turno: lo dice la banda donde cae su cara ── */
+    const filaDe = p => filas.findIndex(f => cy(p.cara.tinta) > f.banda.y0 && cy(p.cara.tinta) < f.banda.y1);
+    const nota = p => { const m = (p.tag.texto.txt.match(/^nota ([0-9]+)$/) || [])[1]; return m ? +m : null; };
+    r.push([x.gente.every(p => filaDe(p) >= 0), `paso ${n}: cada docente está en un turno`, x.gente.map(p => [p.k, filaDe(p)])]);
+    r.push([x.gente.every(p => {
+      const i = filaDe(p), t = p.tag.texto.txt;
+      return i === 2 ? nota(p) != null : RAIZ_TURNO[i].test(t) && nota(p) == null;
+    }), `paso ${n}: la etiqueta de cada docente dice su turno, y en la lista, su nota`, x.gente.map(p => p.tag.texto.txt)]);
+    const lista = x.gente.filter(p => filaDe(p) === 2).sort((a, b) => cx(a.cara.tinta) - cx(b.cara.tinta));
+    r.push([lista.length >= 2 && lista.every((p, i) => i === 0 || nota(p) < nota(lista[i - 1])),
+      `paso ${n}: en la lista van de mayor a menor nota, de izquierda a derecha`, lista.map(nota)]);
+    x.gente.forEach(p => {
+      const f = filas[filaDe(p)], banda = f.banda;
+      r.push([p.nombre.tinta.y0 >= cy(p.cara.tinta) && Math.abs(cx(p.nombre.tinta) - cx(p.cara.tinta)) < 2 && p.tag.caja.y0 >= p.nombre.tinta.y1 - 0.5
+        && dentro(p.tag.texto.tinta, p.tag.caja, 0.3) && dentro(p.tag.caja, banda, 0.3) && p.cara.tinta.x0 > Math.max(f.titulo.tinta.x1, f.sub.tinta.x1),
+        `paso ${n}: ${p.nombre.txt}: cara, nombre y etiqueta, uno debajo del otro, dentro de su banda`, [p.cara.tinta, p.nombre.tinta, p.tag.caja]]);
+    });
+    const tags = x.gente.map(p => p.tag.caja), montadas = [];
+    tags.forEach((a, i) => tags.slice(i + 1).forEach((b, j) => { if (monta(a, b)) montadas.push([x.gente[i].k, x.gente[i + 1 + j].k]); }));
+    r.push([!montadas.length, `paso ${n}: ninguna etiqueta se monta en otra`, montadas]);
+
+    /* ── quién falta: su hueco de raya cortada, en su mismo lugar ── */
+    const fuera = x.gente.filter(p => !p.ve);
+    r.push([x.gente.every(p => p.ve !== p.hueco.ve), `paso ${n}: donde falta alguien queda su hueco, y solo ahí`, x.gente.map(p => [p.k, p.ve, p.hueco.ve])]);
+    r.push([x.gente.every(p => p.hueco.raya !== 'none' && dentro(p.cara.tinta, p.hueco.caja, 1) && dentro(p.nombre.tinta, p.hueco.caja, 1)),
+      `paso ${n}: cada hueco es de raya cortada y está en el lugar de su docente`, null]);
+    r.push([fuera.length === E.fuera, `paso ${n}: ${E.fuera ? 'faltan ' + E.fuera : 'están todos'}`, fuera.map(p => p.k)]);
+    const prev = MEMO_PLAZA.ocupante;
+    if (n === 3) r.push([fuera.length === 1 && fuera[0].k === prev[2], 'paso 3: el que falta es el que tenía la plaza', [fuera.map(p => p.k), prev[2]]]);
+    if (n === 4) r.push([fuera.length === 2 && fuera.some(p => p.k === prev[2]) && fuera.some(p => p.k === prev[3]), 'paso 4: faltan los dos que la tenían', [fuera.map(p => p.k), prev[2], prev[3]]]);
+
+    /* ── a quién le toca: lo decide la sonda ── */
+    const enOrden = x.gente.filter(p => p.ve).sort((a, b) => (filaDe(a) - filaDe(b)) || ((nota(b) || 0) - (nota(a) || 0)));
+    const toca = E.da ? enOrden[0] : null;
+    prev[n] = toca ? toca.k : null;
+    const aros = x.gente.filter(p => p.aro.ve);
+    r.push([aros.length === (toca ? 1 : 0) && (!toca || aros[0].k === toca.k),
+      `paso ${n}: ${toca ? 'el aro rodea a ' + toca.nombre.txt + ', el primero que hay en el primer turno con alguien' : 'nadie tiene la plaza todavía'}`, aros.map(p => p.k)]);
+    if (toca) {
+      const a = toca.aro.caja;
+      r.push([a.x0 <= toca.cara.tinta.x0 && a.x1 >= toca.cara.tinta.x1 && a.y0 <= toca.cara.tinta.y0 && dentro(toca.nombre.tinta, a) && dentro(toca.tag.caja, a, 0.3)
+        && toca.aro.raya === 'none' && dentro(a, filas[filaDe(toca)].banda, 0.5),
+        `paso ${n}: el aro encierra a ${toca.nombre.txt} entera, dentro de su banda`, a]);
+    }
+    const estados = x.plaza.estados.filter(t => t.ve);
+    const esperado = toca ? 'para ' + toca.nombre.txt : 'vacante';
+    r.push([estados.length === 1 && estados[0].txt === esperado, `paso ${n}: la plaza dice «${esperado}»`, estados.map(t => t.txt)]);
+    r.push([x.plazas === 1, 'una sola plaza', x.plazas]);
+    r.push([x.plaza.estados.every(t => dentro(t.tinta, x.plaza.caja)) && dentro(x.plaza.silla.tinta, x.plaza.caja) && dentro(x.plaza.rotulo.tinta, x.plaza.caja)
+      && x.escuela.tinta.x1 <= x.plaza.caja.x0 && !monta(x.escuela.tinta, x.regla.tinta),
+      `paso ${n}: lo de la plaza va dentro de su papel, con la escuela al lado`, null]);
+    r.push([x.turno.ve === !!toca, `paso ${n}: ${toca ? 'la flecha señala el turno que se pregunta' : 'todavía no se pregunta ningún turno'}`, x.turno.ve]);
+    if (toca) {
+      const f = filas[filaDe(toca)], t = x.turno.caja;
+      r.push([cy(t) > f.banda.y0 && cy(t) < f.banda.y1 && t.x1 <= f.badge.x0 + 0.5 && t.x0 >= -0.5,
+        `paso ${n}: la flecha está en el turno ${filaDe(toca) + 1}, a la izquierda de su número`, [t, f.banda]]);
+    }
+
+    /* ── el marcador y la frase dicen lo que se ve ── */
+    if (n === 0) {
+      const tope = lista[0];
+      r.push([e.cifra === String(x.plazas) && e.palabras.includes(NUMTXT[x.gente.length]), 'paso 0: el marcador cuenta la plaza y a los que la quieren', [e.cifra, e.palabras]]);
+      r.push([e.texto.includes(tope.nombre.txt) && e.texto.includes(String(nota(tope))), 'paso 0: la frase nombra a la de la nota más alta, con su nota', [tope.nombre.txt, nota(tope)]]);
+    }
+    if (n === 1) r.push([e.cifra === String(filas.length), 'paso 1: el marcador cuenta los turnos', e.cifra]);
+    if (toca && n < 5) {
+      r.push([e.cifra === (filaDe(toca) + 1) + '.º', `paso ${n}: el marcador dice el turno de quien se la lleva`, e.cifra]);
+      r.push([e.texto.includes(toca.nombre.txt), `paso ${n}: la frase nombra a ${toca.nombre.txt}`, e.texto]);
+    }
+    if (n === 3) r.push([fuera.every(p => e.texto.includes(p.nombre.txt)), 'paso 3: la frase nombra a quien falta', null]);
+    if (n === 4) r.push([e.texto.includes(String(nota(toca))), 'paso 4: la frase dice la nota con que se la lleva', e.texto]);
+    const art = (x.regla.txt.match(/art[ií]culo ([0-9]+)/) || [])[1];
+    r.push([x.regla.ve === E.numeros && /^Reglamento, /.test(x.regla.txt) && !!art, `paso ${n}: ${E.numeros ? 'se dice de dónde sale el orden: el Reglamento' : 'todavía no se dice de dónde sale el orden'}`, x.regla.txt]);
+    if (n === 1) r.push([e.texto.includes('artículo ' + art), 'paso 1: la frase cita el mismo artículo que el dibujo', art]);
+    if (n === 5) r.push([e.cifra === art, 'paso 5: el marcador dice el artículo del dibujo', [e.cifra, art]]);
+
+    /* ── cuándo pasa cada cosa ── */
+    if (n === 1) {
+      const dd = filas.map(f => f.duda.d), nd = filas.map(f => f.num.d);
+      r.push([dd.every((d, i) => i === 0 || d > dd[i - 1]) && nd.every((d, i) => d >= dd[i] + APAGA),
+        'paso 1: los turnos reciben su número uno por uno, cuando ya se fue su «?»', [dd, nd]]);
+      r.push([x.regla.d >= Math.max(...nd), 'paso 1: de dónde sale el orden se dice cuando ya están los tres números', [x.regla.d, nd]]);
+    }
+    if (n >= 2) {
+      const est = x.plaza.estados.find(t => t.ve), antes = MEMO_PLAZA.antes;
+      const mueve = n === 2 ? 0 : x.viaje;
+      r.push([x.turno.d + mueve <= toca.aro.d && toca.aro.d < est.d, `paso ${n}: primero la flecha llega a su turno, después el aro y al final la plaza`, [x.turno.d, mueve, toca.aro.d, est.d]]);
+      const salen = x.gente.filter(p => antes && antes[p.k] !== undefined && antes[p.k] !== p.ve);
+      r.push([salen.every(p => p.d === p.hueco.d && p.d < x.turno.d), `paso ${n}: quien sale o vuelve lo hace antes de que la flecha cambie de turno`, salen.map(p => [p.k, p.d, x.turno.d])]);
+      const apagado = x.plaza.estados.filter(t => !t.ve && t.txt !== est.txt);
+      r.push([apagado.every(t => t.d <= est.d - APAGA), `paso ${n}: lo que decía la plaza se va antes de que diga lo nuevo`, apagado.map(t => [t.txt, t.d, est.d])]);
+    }
+    MEMO_PLAZA.antes = {};
+    x.gente.forEach(p => { MEMO_PLAZA.antes[p.k] = p.ve; });
+
+    /* ── lo que se lee ── */
+    const ml = [];
+    x.letras.forEach((a, i) => x.letras.slice(i + 1).forEach(b => { if (monta(a.caja, b.caja)) ml.push([a.txt, b.txt]); }));
+    r.push([ml.length === 0, `paso ${n}: ningún texto se monta en otro`, ml.slice(0, 4)]);
+    const sale = x.letras.filter(t => t.caja.x0 < -0.5 || t.caja.y0 < -0.5 || t.caja.x1 > x.vista[0] + 0.5 || t.caja.y1 > x.vista[1] + 0.5);
+    r.push([sale.length === 0, `paso ${n}: todo lo escrito cabe en el dibujo`, sale.map(t => t.txt)]);
+    return r;
   }
 };
 
@@ -20329,12 +20551,15 @@ function abrirSeccion(id) {
     await pag.evaluate(LEER);
     await pag.evaluate(() => {
       window.__premios = [];
-      ['fin', 'pts', 'unlockAchievement'].forEach(n => {
+      /* `xp` es el que suma en las misiones del maestro. */
+      ['fin', 'pts', 'unlockAchievement', 'xp'].forEach(n => {
         const f = window[n];
         if (typeof f === 'function') window[n] = function () { window.__premios.push(n); return f.apply(this, arguments); };
       });
     });
-    const xp0 = await pag.evaluate(() => (document.getElementById('xpPts') || {}).textContent);
+    /* La barra de XP se llama #xpPts en las misiones del alumno y #xpNum en
+       las del maestro. */
+    const xp0 = await pag.evaluate(() => (document.getElementById('xpPts') || document.getElementById('xpNum') || {}).textContent);
     const tarjeta = pag.locator(`#${m.id}`);
     await tarjeta.scrollIntoViewIfNeeded();
     /* El aparato vuelve a medir las frases cuando llega la letra de la
@@ -20509,7 +20734,7 @@ function abrirSeccion(id) {
     }
 
     /* 5 · no regala nada, no sale del sitio, no revienta */
-    const fin = await pag.evaluate(() => ({ premios: window.__premios, xp: (document.getElementById('xpPts') || {}).textContent }));
+    const fin = await pag.evaluate(() => ({ premios: window.__premios, xp: (document.getElementById('xpPts') || document.getElementById('xpNum') || {}).textContent }));
     ok(fin.premios.length === 0 && fin.xp === xp0, 'mirarla no da XP, ni estrella, ni logro', fin);
     ok(fuera.length === 0, 'no pide nada fuera del sitio', fuera.slice(0, 3));
     ok(errores.length === 0, 'sin errores de JavaScript', errores.slice(0, 2));

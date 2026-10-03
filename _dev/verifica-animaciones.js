@@ -112,7 +112,18 @@ for (const m of misiones) {
   const iSit = html.search(/<div\b[^>]*\bdata-situacion\b[^>]*>/);
   const inicios = [...html.matchAll(/<div\b[^>]*\bdata-animacion\b[^>]*>/g)].map(x => x.index);
   const iAni = inicios.length ? inicios[0] : -1;
-  ok(iSit >= 0, 'la misión tiene su historia de arranque (data-situacion)');
+  /* ⚠️ Las misiones del maestro no traen la historia en una tarjeta: su
+     encabezado ES la situación (`<header class="hero">` con su
+     `<p data-situacion>`), con su precio dentro, y es lo primero que el
+     maestro lee. Una tarjeta puesta detrás de ese encabezado cayó a 764 px,
+     debajo del pliegue, repitiendo lo que ya decía (está en la normativa del
+     relato). Ahí TODAS las animaciones son de contenido: van dentro de la
+     sección cuyo tema explican, como las tres del Himno, y la regla de «justo
+     después de la historia» no se les pide a ninguna. */
+  const enCabecera = iSit < 0 && /<header\b[^>]*>(?:(?!<\/header>)[\s\S])*<p\b[^>]*\bdata-situacion\b/.test(html);
+  ok(iSit >= 0 || enCabecera, enCabecera
+    ? 'la historia es el encabezado (data-situacion), y las animaciones van dentro de las secciones que explican'
+    : 'la misión tiene su historia de arranque (data-situacion)');
   if (iSit >= 0 && iAni >= 0) {
     const finSit = finDelDiv(html, iSit);
     const entre = html.slice(finSit, iAni).trim();
@@ -131,10 +142,20 @@ for (const m of misiones) {
     const idCont = ((tarjeta.match(/<div\b[^>]*\bid="([^"]+)"/) || [])[1]) || '';
     return { i0, tarjeta, idCont };
   });
-  const sec0 = i => { const k = html.slice(0, i).lastIndexOf('<div class="sec'); return k; };
+  /* La sección que la contiene: un <div class="sec…"> en las del alumno, un
+     <section class="sec…"> en las del maestro. De la segunda se sabe dónde
+     cierra, así que se pide que la tarjeta quede ANTES de ese cierre: una
+     tarjeta pegada después de la última sección no se ve nunca. */
+  const sec0 = i => {
+    const antes = html.slice(0, i);
+    const k = antes.lastIndexOf('<div class="sec');
+    const ks = antes.lastIndexOf('<section class="sec');
+    if (ks > k) { const cierra = html.indexOf('</section>', ks); return cierra > i ? ks : -1; }
+    return k;
+  };
   for (const t of tarjetas) {
     ok(!!t.idCont, 'la tarjeta tiene el bloque que el aparato llena (un <div id=…>)', t.idCont);
-    if (t !== tarjetas[0]) ok(sec0(t.i0) >= 0, `la tarjeta de #${t.idCont} va dentro de una sección de la misión`);
+    if (t !== tarjetas[0] || enCabecera) ok(sec0(t.i0) >= 0, `la tarjeta de #${t.idCont} va dentro de una sección de la misión`);
     /* ⚠️ Y ese id es de ESTA tarjeta y de ninguna otra. La sonda del
        navegador guarda lo que mide cada escena por su id: dos con el mismo
        id se pisan, y la segunda revisa la primera con el lector que no es.
@@ -152,7 +173,7 @@ for (const m of misiones) {
   const tarjeta = tarjetas.length ? tarjetas[0].tarjeta : '';
 
   /* 2 · la hoja, después del CSS de la misión */
-  const iCssMision = m.html.search(/<link[^>]*href="css\/[^"]+\.css"/);
+  const iCssMision = m.html.search(/<link[^>]*href="css\/[^"]+\.css(?:\?[^"]*)?"/);
   const iCssAnim = m.html.indexOf('href="../../css/animacion-mision.css"');
   ok(iCssAnim > 0, 'enlaza la hoja de la animación');
   ok(iCssMision < 0 || iCssAnim > iCssMision, 'la hoja de la animación va DESPUÉS del CSS de la misión (de ahí saca sus colores)');

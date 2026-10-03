@@ -15389,20 +15389,115 @@ pida nada fuera, que no reviente, y lo de su escena. Las dos se comprobaron
 al revés: con la tarjeta movida debajo del «Predice» sale roja la primera, y
 con las filas del millón apagadas, la segunda.
 
-### Lo que NO se hizo, y por qué
+### Y las del maestro, dentro de la sección que explican
 
-- ⚠️ **La animación de las 8 misiones del maestro.** Las del alumno la llevan
-  todas: contadas el 2 de octubre de 2026, cuando se puso la última, son 83
-  páginas con `data-animacion`. Las del maestro no, y no es un olvido: lo
-  decidió el autor ese mismo día, con estas palabras: «Déjalas así, sin
-  animación las del maestro». Es el mismo motivo por el que no llevan la
-  tarjeta de la historia: su `<header>` ya es la situación, con su precio
-  dentro, y es lo primero que el maestro lee. Cuando se les escribió esa
-  tarjeta cayó a 764 px, debajo del pliegue, repitiendo lo que el
-  encabezado ya decía (está contado en la normativa del relato); una
-  animación puesta en ese mismo sitio empezaría a esa misma altura.
-  `verifica-animaciones` solo mira las misiones que la montan, así que
-  ninguna sonda pide ponérsela.
+Las 83 páginas del alumno la llevan desde el 2 de octubre de 2026. Ese mismo
+día el autor decidió dejar sin animación las 8 misiones del maestro («Déjalas
+así, sin animación las del maestro»), y al día siguiente, el 3 de octubre, lo
+cambió con estas palabras: «Genera animaciones a las misiones del maestro en
+M.E.T.A.S para que el usuario pueda comprender y asimilar mejor la temática».
+
+⚠️ **El motivo de la primera decisión sigue siendo verdad, y decide dónde van.**
+En una misión del maestro el `<header>` ya es la situación, con su precio
+dentro (`<p data-situacion>`), y es lo primero que el maestro lee. Una tarjeta
+puesta justo detrás cae a 764 px, debajo del pliegue, repitiendo lo que el
+encabezado ya dijo: es lo que pasó con la tarjeta de la historia (está contado
+en la normativa del relato). Por eso aquí **ninguna va detrás del encabezado**:
+cada una va **dentro de la sección cuyo contenido explica**, como las
+animaciones de contenido del Himno. `verifica-animaciones` lo sabe solo: si la
+historia está en el encabezado, todas las tarjetas de esa página son de
+contenido, y a cada una le pide su sección y su escena.
+
+**Tres cosas que hubo que preparar en las 8 antes de la primera:**
+
+1. **Los colores del aparato.** `css/animacion-mision.css` se tiñe con
+   `--card`, `--border`, `--dark`, `--gray`, `--pri-lt` y `--sec-lt`, que son
+   los nombres de las misiones del alumno. Las del maestro llaman a lo mismo
+   `--papel`, `--linea`, `--tinta` y `--gris`: cada una lleva ahora los alias en
+   su `:root`, así cambian solos en la pantalla oscura, y su tinta violeta y
+   ámbar para la tarjeta oscura (6,0:1 y 9,8:1 sobre `#18202c`).
+2. ⚠️ **El tema claro se escribe, no se deja «sin nada».** El aparato se pone
+   oscuro con `prefers-color-scheme` cuando la página no dice
+   `data-theme="light"`, y las del maestro dejaban el atributo vacío en claro:
+   con el teléfono en oscuro y la misión guardada en claro, la animación salía
+   con letra clara sobre la tarjeta clara. `initTheme` pone ahora
+   `data-theme="light"` en las 8.
+3. **Las sondas.** La del navegador cuenta el XP de estas misiones por su
+   `xp()` y su `#xpNum` (las del alumno usan `pts()` y `#xpPts`), y abre la
+   sección de cada tarjeta con el `go()` de la misión, como las del Himno.
+
+#### La primera: el Estatuto, a quién le toca una plaza vacante
+
+En **El Estatuto del Docente y sus derechos**
+(`misiones/docente-estatuto-derechos/`, `js/animacion-plaza.js`), dentro de la
+sección de los nueve trámites. Casi todo maestro cree que una plaza la gana la
+nota más alta del concurso, y no es así: la ley pone **turnos**, y la nota solo
+cuenta en el último. La animación pone arriba la plaza y abajo los tres turnos,
+cada uno en su banda, con quien espera en él:
+
+- cinco docentes la quieren, y Dania sacó la nota más alta, 92: ¿le toca a
+  ella?;
+- los turnos reciben su número uno por uno, y se dice de dónde sale el orden:
+  el Reglamento del Estatuto, artículo 89;
+- se pregunta primero por los traslados: Ana pidió traslado a esa escuela, la
+  flecha señala su turno, el aro la rodea y la plaza dice «para Ana»;
+- ¿y si Ana no lo hubiera pedido? Queda su hueco, de raya cortada, y el turno
+  baja a Luis, exonerado de concurso;
+- solo si tampoco hubiera exonerado le llega el turno a la lista, y ahí sí
+  manda la nota: Dania, con 92;
+- y el orden no es un favor: el Reglamento lo manda, y quien nombra responde
+  si se lo salta.
+
+**Seis cosas que valen para las siguientes:**
+
+1. ⚠️ **Todo lo que afirma está leído en los PDF de `_dev/leyes/`**: el
+   Estatuto, artículo 29 («en defecto de aspirante por traslado, se cubrirá
+   con el exento de concurso […] y, en último caso, se hará por llamamiento a
+   concurso»); el Reglamento, artículo 89, que numera los turnos y termina en
+   «o pena de incurrir en responsabilidad» (lo repite el 113); y el Estatuto,
+   artículo 19, que ordena la lista «exclusivamente por orden descendente de
+   los puntajes».
+2. ⚠️ **Una sola plaza, a propósito.** Con varias, la del segundo turno caía en
+   la segunda plaza y la del tercero en la tercera, y parecía que cada fila
+   tenía la suya. Y **dentro de los traslados no se ordena a nadie**: la ley
+   (artículo 29, por la evaluación) y el Reglamento (artículos 110 y 112, por
+   el motivo) no dicen lo mismo, así que en la escena hay una sola solicitud.
+3. ⚠️ **Lo que pregunta la misión no se dice**: ni los motivos de traslado ni
+   su orden (los preguntan el quiz y el simulacro), ni cuánto dura la lista,
+   ni la nota mínima del concurso, ni el artículo 13. La sonda lo busca en cada
+   paso.
+4. **Quien falta deja su hueco de raya cortada**, en su mismo lugar, no solo
+   más pálido: el «¿y si no hubiera…?» se ve sin distinguir colores y
+   fotocopiado.
+5. ⚠️ **El aro abraza la etiqueta más ancha.** Con un ancho fijo, la etiqueta
+   «exonerado» de Luis se salía 3,5 puntos por cada lado de su aro. Y la Ó de
+   Óscar subía hasta la cara de encima: los nombres bajaron. Las dos las cazó
+   la sonda, que mide la tinta de cada letra; las bandas, que se montaban dos
+   puntos, se vieron en la captura.
+6. **La primera captura enseñó lo que la sonda no podía**: la letra del dibujo
+   era chica para un maestro con la vista cansada (los títulos de los turnos
+   pasaron a 13 y los nombres a 11,5), y un rótulo del marcador se partía en
+   dos renglones.
+
+La sonda **no le cree nada a la escena**. El orden de los turnos lo lee del
+trámite del traslado de la propia misión («las vacantes se cubren primero por
+traslado, después con los exonerados de concurso y al final por resultados de
+concurso») y que la lista va de mayor a menor, del trámite del concurso. Del
+dibujo lee en qué turno está cada quien (por la banda donde cae su cara), qué
+dice su etiqueta, su nota, quién falta (su hueco) y quién tiene el aro; con eso
+decide ELLA a quién le toca y lo compara con el aro, con lo que dice la plaza,
+con la flecha y con el marcador. Comprueba además que el que falta en el paso 3
+sea el que tenía la plaza, que el artículo del dibujo sea el de la frase, que
+cada cosa llegue cuando le toca (los números uno por uno, primero la flecha,
+después el aro y al final la plaza) y que el Reglamento esté en `_dev/leyes/`.
+Se comprobó al revés con veintiuna averías, plantadas una por una (la lista de
+menor a mayor, el aro corrido, el hueco de raya entera, la flecha que no cambia
+de turno, un motivo de traslado en una frase, el aro antes de que llegue la
+flecha, la etiqueta de Luis diciendo «traslado», el artículo 88 en el dibujo,
+la misión diciendo otro orden…), y salió roja con cada una.
+
+Con la CPU frenada seis veces va a 59 cuadros por segundo, y el peor cuadro es
+de 67 ms, lo mismo que Palabras que piensan medida el mismo día.
 
 ## Normativa: las Sugerencias de una misión salen del teléfono
 
