@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Numbers and My Age</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: INGLÉS = ROSA (#be185d)
+     · Colores semánticos: rosa=números básicos, morado=-teen, verde=edad
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --ing: #be185d; --ing-osc: #831843; --ing-claro: #fff1f5;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #fbcfe8;
+    --sal: #be185d; --pre: #7c3aed; --des: #15803d; --pie: #57534e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #fdf2f8; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--ing-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 9px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--ing); background: var(--ing-claro); border-radius: 8px; padding: 9px 14px; margin-bottom: 9px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--ing-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--ing-osc); }
+  .fh-qr { flex: 0 0 120px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+  .fh-qr .url-alterna { display: none; font-size: 7.4pt; color: var(--ing-osc); font-weight: 700; overflow-wrap: normal; line-height: 1.35; }
+  .fh-qr.sin-qr img { display: none; }
+  .fh-qr.sin-qr .url-alterna { display: block; }
+  .fh-qr.sin-qr .qr-pie { display: none; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--ing); padding: 6px 12px; border-radius: 7px; margin: 8px 0 6px; }
+  h3 { font-size: 11pt; color: var(--ing-osc); margin: 9px 0 5px; }
+  p { font-size: 11pt; margin-bottom: 5px; text-align: justify; }
+  ul, ol { margin: 4px 0 6px 26px; font-size: 11pt; }
+  li { margin-bottom: 2px; }
+
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 3px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 7px 12px; margin: 6px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--ing-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--ing-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #15803d; }
+  .truco { background: #f3e8ff; border: 1px solid #ddd0f7; }
+  .truco b { color: #6d28d9; }
+  .ojo { background: #fef2f2; border: 1.5px solid #fca5a5; }
+  .ojo b { color: #b91c1c; }
+
+  table { width: 100%; border-collapse: collapse; margin: 5px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--ing); color: #fff; text-align: left; padding: 3px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 2px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #fdf2f8; }
+  td.k { font-weight: 700; color: var(--ing-osc); white-space: nowrap; }
+  td.fon { font-family: 'Courier New', monospace; color: var(--pre); font-weight: 700; white-space: nowrap; }
+
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 8px; margin: 7px 0; text-align: center; background: #fffafc; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--ing-osc); margin-bottom: 8px; }
+
+  .celula { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; align-items: stretch; justify-content: center; }
+  .celula > div { flex: 1; max-width: 33%; border: 1.5px solid var(--linea); border-radius: 8px; padding: 8px; font-size: 9pt; text-align: center; background: #fff; }
+  .celula b { display: block; font-size: 9.5pt; margin-bottom: 2px; }
+  .celula .c-emoji { font-size: 15pt; display: block; margin-bottom: 3px; }
+  .celula .cm { background: #fce7f3; } .celula .cm b { color: var(--sal); }
+  .celula .cc { background: #ede9fe; } .celula .cc b { color: var(--pre); }
+  .celula .cn { background: #dcfce7; } .celula .cn b { color: var(--des); }
+
+  .tri { display: flex; gap: 7px; margin: 6px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 7px 10px; font-size: 9.5pt; }
+  .tri .tnuc { background: #fce7f3; border: 1px solid #f9a8d4; }
+  .tri .torg { background: #ede9fe; border: 1px solid #ddd0f7; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .tnuc b { color: var(--sal); } .tri .torg b { color: var(--pre); }
+
+  .dialogo { background: #fff; border: 1.5px solid var(--linea); border-radius: 9px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .dialogo .li { margin-bottom: 3px; }
+  .dialogo .a { color: var(--sal); font-weight: 700; }
+  .dialogo .b { color: var(--pre); font-weight: 700; }
+
+  .acts h3 { border-bottom: 2px solid var(--ing-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 5px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--ing); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  .preg { padding: 4px 0; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 3px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--ing); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i { font-style: normal; flex: 0 0 auto; font-size: 10.5pt; font-weight: 800; color: var(--ing-osc); }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--ing-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 9px 14px; margin: 8px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--ing-osc); }
+
+  table.rubrica td { padding: 3px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #fdf2f8; border: 1px solid var(--linea); border-radius: 9px; padding: 10px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--ing-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 11px; padding-top: 7px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--ing); box-shadow: 0 6px 16px rgba(190,24,93,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 22px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .celula > div, .dialogo
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido" data-i18n="p1">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>N.º-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Numbers and My Age</div>
+        <div class="f-meta"><b>Asignatura:</b> Inglés &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica &nbsp;·&nbsp; <b>Ruta de las Primeras Palabras · Etapa 2</b> &nbsp;·&nbsp; <b>Pre-A1 (Cambridge Starters)</b></div>
+        <div class="f-meta"><b>Tema:</b> Números del 1 al 20, decenas (20 al 100), preguntar y decir la edad (How old are you? / I am… years old). Fonética de la <i>th</i> en <i>three</i> y el contraste <i>-teen</i> vs <i>-ty</i></div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-ingles-numeros-edad.png" alt="QR de la misión"
+             onerror="this.closest('.fh-qr').classList.add('sin-qr')">
+        <span class="qr-pie">📷 Juega la misión en tu teléfono</span>
+        <span class="url-alterna">📱 Juega la misión en:<br>metas.policastsapien.com</span>
+      </div>
+    </div>
+
+    <h2>🎯 I CAN: Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li><b>I can count from 1 to 20:</b> nombrar y escribir los números del 1 al 20 en inglés.</li>
+      <li><b>I can ask and tell age:</b> preguntar <i>How old are you?</i> y decir mi edad con <i>I am</i>.</li>
+      <li><b>I can identify tens:</b> reconocer las decenas (20, 30, 40... 100) y formar números compuestos.</li>
+      <li><b>I can pronounce /θ/:</b> pronunciar la <i>th</i> de <i>three</i> y <i>thirteen</i> sin confundirla con <i>tree</i>.</li>
+      <li><b>Evitar el falso calco:</b> usar siempre el verbo <i>to be</i> para la edad (nunca <i>I have 12 years</i>).</li>
+    </ol>
+
+    <h2>🔢 1. Los números del 1 al 12: formas básicas</h2>
+    <p>Los primeros doce números tienen nombres propios en inglés. No siguen un sufijo regular; hay que memorizarlos de memoria uno a uno.</p>
+    <table>
+      <tr><th style="width:16%;">N.º</th><th style="width:24%;">Se escribe</th><th style="width:26%;">Se pronuncia</th><th>Significado y notas</th></tr>
+      <tr><td class="k">1</td><td class="k">One</td><td class="fon">uan</td><td>Uno · rima con <i>sun</i></td></tr>
+      <tr><td class="k">2</td><td class="k">Two</td><td class="fon">tu</td><td>Dos · la <i>w</i> no suena</td></tr>
+      <tr><td class="k">3</td><td class="k">Three</td><td class="fon">zri</td><td>Tres · lengua entre los dientes (/θ/)</td></tr>
+      <tr><td class="k">4</td><td class="k">Four</td><td class="fon">for</td><td>Cuatro · vocal redonda</td></tr>
+      <tr><td class="k">5</td><td class="k">Five</td><td class="fon">faiv</td><td>Cinco · termina en sonido <i>v</i> suave</td></tr>
+      <tr><td class="k">6</td><td class="k">Six</td><td class="fon">siks</td><td>Seis · sonido final <i>ks</i></td></tr>
+      <tr><td class="k">7</td><td class="k">Seven</td><td class="fon">se-ven</td><td>Siete · dos sílabas</td></tr>
+      <tr><td class="k">8</td><td class="k">Eight</td><td class="fon">eit</td><td>Ocho · la <i>gh</i> es muda</td></tr>
+      <tr><td class="k">9</td><td class="k">Nine</td><td class="fon">nain</td><td>Nueve · la <i>e</i> final es muda</td></tr>
+      <tr><td class="k">10</td><td class="k">Ten</td><td class="fon">ten</td><td>Diez · consonante <i>t</i> clara</td></tr>
+      <tr><td class="k">11</td><td class="k">Eleven</td><td class="fon">i-le-ven</td><td>Once · forma completamente irregular</td></tr>
+      <tr><td class="k">12</td><td class="k">Twelve</td><td class="fon">tuelv</td><td>Doce · irregular, no termina en <i>-teen</i></td></tr>
+    </table>
+
+    <div class="ilus">
+      <div class="ilus-t">💡 Dos trampas fonéticas frecuentes del español al inglés</div>
+      <div class="celula">
+        <div class="cm"><span class="c-emoji">🌲</span><b>Three ≠ Tree</b><i>Tree</i> significa árbol. Para decir tres (<i>three</i>), saca la lengua.</div>
+        <div class="cc"><span class="c-emoji">⚡</span><b>11 y 12</b><i>Eleven</i> y <i>twelve</i> no llevan <i>-teen</i>. Son únicos y antiguos.</div>
+        <div class="cn"><span class="c-emoji">🤫</span><b>Eight</b>La <i>gh</i> en <i>eight</i> no suena. Se pronuncia igual que la letra <i>H</i> (eit).</div>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Numbers and My Age</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido" data-i18n="p2">
+
+    <h2 style="margin-top:0;">⚡ 2. Los números del 13 al 19: el sufijo -teen</h2>
+    <p>Del 13 al 19 los números terminan en <strong>-teen</strong> (que da origen a la palabra <i>teenager</i>, adolescente). El acento principal va al final, con la <strong>i larga</strong> bien marcada:</p>
+    <table>
+      <tr><th style="width:16%;">N.º</th><th style="width:24%;">Se escribe</th><th style="width:26%;">Se pronuncia</th><th>Cambio respecto a la unidad</th></tr>
+      <tr><td class="k">13</td><td class="k">Thirteen</td><td class="fon">zer-TIN</td><td>Cambia la raíz: <i>thir-</i> en lugar de <i>three</i></td></tr>
+      <tr><td class="k">14</td><td class="k">Fourteen</td><td class="fon">for-TIN</td><td>Conserva la base <i>four</i> completa</td></tr>
+      <tr><td class="k">15</td><td class="k">Fifteen</td><td class="fon">fif-TIN</td><td>Cambia la raíz: <i>fif-</i> en lugar de <i>five</i></td></tr>
+      <tr><td class="k">16</td><td class="k">Sixteen</td><td class="fon">siks-TIN</td><td>Conserva la base <i>six</i> completa</td></tr>
+      <tr><td class="k">17</td><td class="k">Seventeen</td><td class="fon">se-ven-TIN</td><td>Conserva la base <i>seven</i> completa</td></tr>
+      <tr><td class="k">18</td><td class="k">Eighteen</td><td class="fon">ei-TIN</td><td>Solo una <i>t</i>: <i>eight</i> + <i>een</i></td></tr>
+      <tr><td class="k">19</td><td class="k">Nineteen</td><td class="fon">nain-TIN</td><td>Conserva la base <i>nine</i> con su <i>e</i></td></tr>
+    </table>
+
+    <div class="caja ojo">⚠️ <b>Atención con 13 y 15:</b> no se dice <i>threeteen</i> ni <i>fiveteen</i>. Sus raíces se transforman en <strong>thir-</strong> y <strong>fif-</strong>. Esta misma raíz irregular se mantendrá en las decenas 30 (<i>thirty</i>) y 50 (<i>fifty</i>).</div>
+
+    <h2>🔟 3. Las decenas cerradas: el sufijo -ty</h2>
+    <p>Las decenas del 20 al 90 terminan en <strong>-ty</strong>. El acento cae en la <strong>primera sílaba</strong>, no al final:</p>
+    <table>
+      <tr><th style="width:18%;">Decena</th><th style="width:24%;">Se escribe</th><th style="width:26%;">Se pronuncia</th><th>Notas ortográficas</th></tr>
+      <tr><td class="k">20</td><td class="k">Twenty</td><td class="fon">TUEN-ti</td><td>Raíz especial <i>twen-</i></td></tr>
+      <tr><td class="k">30</td><td class="k">Thirty</td><td class="fon">ZER-ti</td><td>Misma raíz que 13 (<i>thir-</i>)</td></tr>
+      <tr><td class="k">40</td><td class="k">Forty</td><td class="fon">FOR-ti</td><td><strong>¡Ojo!</strong> Pierde la <i>u</i> de <i>four</i></td></tr>
+      <tr><td class="k">50</td><td class="k">Fifty</td><td class="fon">FIF-ti</td><td>Misma raíz que 15 (<i>fif-</i>)</td></tr>
+      <tr><td class="k">60</td><td class="k">Sixty</td><td class="fon">SIKS-ti</td><td>Base regular <i>six</i> + <i>-ty</i></td></tr>
+      <tr><td class="k">70</td><td class="k">Seventy</td><td class="fon">SE-ven-ti</td><td>Base regular <i>seven</i> + <i>-ty</i></td></tr>
+      <tr><td class="k">80</td><td class="k">Eighty</td><td class="fon">EI-ti</td><td>Solo una <i>t</i>: <i>eight</i> + <i>y</i></td></tr>
+      <tr><td class="k">90</td><td class="k">Ninety</td><td class="fon">NAIN-ti</td><td>Conserva la <i>e</i> de <i>nine</i></td></tr>
+      <tr><td class="k">100</td><td class="k">One hundred</td><td class="fon">uan JAN-dred</td><td>Cien · también se dice <i>a hundred</i></td></tr>
+    </table>
+
+    <div class="caja truco">💡 <b>Números compuestos (21 al 99):</b> se une la decena con la unidad mediante un <strong>guion</strong> (-): 21 = <i>twenty-one</i>, 35 = <i>thirty-five</i>, 48 = <i>forty-eight</i>, 99 = <i>ninety-nine</i>.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Numbers and My Age</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido" data-i18n="p3">
+
+    <h2 style="margin-top:0;">🎂 4. Preguntar y decir la edad: «I am», nunca «I have»</h2>
+    <p>En español decimos «yo <i>tengo</i> doce años» porque usamos el verbo tener. Pero en inglés <strong>la edad no se posee: se es</strong>. Por eso se usa el verbo <strong>to be</strong> (<i>ser / estar</i>):</p>
+    <table>
+      <tr><th style="width:34%;">Expresión</th><th style="width:26%;">Se pronuncia</th><th>Uso y significado</th></tr>
+      <tr><td class="k">How old are you?</td><td class="fon">jau OLD ar yu</td><td>¿Cuántos años tienes? (lit. ¿Cuán viejo eres?)</td></tr>
+      <tr><td class="k">I am 12 years old.</td><td class="fon">aim TUELV yirs old</td><td>Tengo 12 años · forma completa estándar</td></tr>
+      <tr><td class="k">I’m 12.</td><td class="fon">aim TUELV</td><td>Tengo 12 · forma corta y natural en conversación</td></tr>
+      <tr><td class="k">How old is he / she?</td><td class="fon">jau OLD is ji / shi</td><td>¿Cuántos años tiene él / ella?</td></tr>
+      <tr><td class="k">He is 10. / She is 14.</td><td class="fon">ji is TEN / shi is for-TIN</td><td>Él tiene 10. / Ella tiene 14.</td></tr>
+    </table>
+
+    <div class="dialogo">
+      <div class="li"><span class="a">Kevin:</span> Hello! What’s your name?</div>
+      <div class="li"><span class="b">Carlos:</span> Hi! My name is Carlos. How old are you?</div>
+      <div class="li"><span class="a">Kevin:</span> I am 12 years old. And you?</div>
+      <div class="li"><span class="b">Carlos:</span> I’m 13. My sister is 8 years old.</div>
+      <div class="li"><span class="a">Kevin:</span> Nice to meet you, Carlos! See you later.</div>
+    </div>
+
+    <h2>🗣️ 5. Pronunciación: Thirteen vs Thirty</h2>
+    <div class="tri">
+      <div class="tnuc"><b>13: Thirteen (zer-TIN)</b>Acento en la <strong>segunda sílaba</strong>. La <i>-teen</i> suena larga y aguda. Piensa en el sonido de una campanilla al final.</div>
+      <div class="torg"><b>30: Thirty (ZER-ti)</b>Acento en la <strong>primera sílaba</strong>. La terminación <i>-ty</i> cae seca y corta, casi como una r suave.</div>
+    </div>
+
+    <h2>🎲 6. Actividades desconectadas (sin computadora)</h2>
+    <ul>
+      <li><strong>🎂 Cadena de edades (en ronda):</strong> el primer estudiante pregunta al de al lado: <i>How old are you?</i>. Este contesta: <i>I am 11 years old</i> y le pregunta al siguiente. Quien diga <i>I have</i> paga una penitencia cantando un número en inglés.</li>
+      <li><strong>🎯 Dictado de números trampa:</strong> el docente dicta 10 números en voz alta mezclando pares trampa (<i>13 vs 30</i>, <i>14 vs 40</i>, <i>15 vs 50</i>). Los alumnos anotan la cifra en su cuaderno.</li>
+      <li><strong>👨‍👩‍👧‍👦 Family Age Tree:</strong> dibuja a 4 miembros de tu familia y escribe debajo su edad en inglés con oración completa: <i>My mother is 38 years old</i>, <i>My brother is 9</i>.</li>
+    </ul>
+
+    <div class="caja hn">🇭🇳 <b>Los números en la vida real de Honduras:</b> comprar en el mercado de Guamilito, dar el cambio exacto en lempiras o acordar el precio de artesanías en Roatán exige entender los números al instante. Confundir <i>13</i> con <i>30</i> puede costarle dinero a cualquiera. ¡Practica en voz alta todos los días! 💚</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Numbers and My Age</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts" data-i18n="p4">
+
+    <h2>✍️ 7. ¡Ponte a Prueba! Activities</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>Para decir la edad en inglés se usa el verbo <i>to be</i>: «I <span class="linea-resp"></span>», nunca «I have».</li>
+      <li>El número 3 en inglés se escribe <span class="linea-resp"></span> (con <i>th</i>).</li>
+      <li>Los números del 13 al 19 terminan con las cuatro letras <span class="linea-resp"></span>.</li>
+      <li>El número 15 no es «fiveteen», se escribe <span class="linea-resp"></span>.</li>
+      <li>La pregunta para consultar la edad es «How <span class="linea-resp"></span> are you?».</li>
+      <li>En el número 40 (forty) se elimina la letra <span class="linea-resp"></span> de «four».</li>
+      <li>Las decenas cerradas del 20 al 90 terminan con las letras <span class="linea-resp"></span>.</li>
+      <li>El número 12 en inglés se escribe <span class="linea-resp"></span>.</li>
+      <li>Si tienes 11 años puedes decir «I am 11» o «I am 11 years <span class="linea-resp"></span>».</li>
+      <li>El número 100 se dice «one <span class="linea-resp"></span>».</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ Decir «I have 12 years» es correcto en el idioma inglés.</li>
+      <li>____ «Eleven» y «twelve» son números que terminan en -teen.</li>
+      <li>____ En «thirteen» el acento de voz cae con fuerza en la terminación -teen.</li>
+      <li>____ «Three» se pronuncia exactamente igual a la palabra «tree» (árbol).</li>
+      <li>____ Para escribir números compuestos como «twenty-five» se usa un guion.</li>
+      <li>____ La pregunta «How old are you?» significa «¿Cómo te llamas?».</li>
+      <li>____ El número 50 en inglés se escribe «fifty».</li>
+      <li>____ «Eighteen» se escribe con una sola «t».</li>
+      <li>____ Es válido decir «I am 12» sin agregar «years old».</li>
+      <li>____ «Thirty» corresponde al número 13 en inglés.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Numbers and My Age</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts" data-i18n="p5">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span>. Marca la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Cómo se dice el número 3 en inglés?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Tree</span>
+        <span class="op"><i>b</i> Three</span>
+        <span class="op"><i>c</i> Free</span>
+        <span class="op"><i>d</i> Tri</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>Te preguntan «How old are you?» y tienes 11 años. ¿Qué respondes?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> I have 11 years</span>
+        <span class="op"><i>b</i> My age is 11</span>
+        <span class="op"><i>c</i> I am 11 years old</span>
+        <span class="op"><i>d</i> I has 11 years</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Cuál de estos números es irregular y no termina en -teen?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Twelve</span>
+        <span class="op"><i>b</i> Fourteen</span>
+        <span class="op"><i>c</i> Sixteen</span>
+        <span class="op"><i>d</i> Nineteen</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Cómo se escribe el número 15 en inglés?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Fiveteen</span>
+        <span class="op"><i>b</i> Fifty</span>
+        <span class="op"><i>c</i> Fiveten</span>
+        <span class="op"><i>d</i> Fifteen</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿Cuál es la forma correcta de escribir el número 40?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Fourty</span>
+        <span class="op"><i>b</i> Forty</span>
+        <span class="op"><i>c</i> Four-ten</span>
+        <span class="op"><i>d</i> Fourti</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>¿Qué significa la pregunta «How old are you?»?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> ¿Cuántos años tienes?</span>
+        <span class="op"><i>b</i> ¿Cómo te llamas?</span>
+        <span class="op"><i>c</i> ¿De dónde vienes?</span>
+        <span class="op"><i>d</i> ¿Cómo estás?</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿A qué número corresponde la palabra «thirteen»?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 3</span>
+        <span class="op"><i>b</i> 30</span>
+        <span class="op"><i>c</i> 13</span>
+        <span class="op"><i>d</i> 33</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>¿Cómo se escribe el número 25 en inglés?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Twenty and five</span>
+        <span class="op"><i>b</i> Twenteen-five</span>
+        <span class="op"><i>c</i> Twenty five</span>
+        <span class="op"><i>d</i> Twenty-five</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Dónde recae el acento de voz en los números del 13 al 19?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> En la primera sílaba</span>
+        <span class="op"><i>b</i> Al final, en -teen</span>
+        <span class="op"><i>c</i> No llevan acento</span>
+        <span class="op"><i>d</i> En la letra inicial</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>Si alguien dice «I am tree», ¿qué error fonético cometió?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Usó mal el verbo to be</span>
+        <span class="op"><i>b</i> Dijo «soy un árbol» en vez de tres</span>
+        <span class="op"><i>c</i> Habló en registro formal</span>
+        <span class="op"><i>d</i> Escribió en plural</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Numbers and My Age</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts" data-i18n="p6">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span>. Escribe la letra de la Columna B.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Doce</td><td>A. Forty</td></tr>
+      <tr><td>2. ____ Quince</td><td>B. Fifteen</td></tr>
+      <tr><td>3. ____ Trece</td><td>C. One hundred</td></tr>
+      <tr><td>4. ____ Veinte</td><td>D. Twelve</td></tr>
+      <tr><td>5. ____ ¿Cuántos años tienes?</td><td>E. How old are you?</td></tr>
+      <tr><td>6. ____ Tengo 10 años</td><td>F. Thirteen</td></tr>
+      <tr><td>7. ____ Cien</td><td>G. Three</td></tr>
+      <tr><td>8. ____ Cuarenta</td><td>H. Twenty</td></tr>
+      <tr><td>9. ____ Tres</td><td>I. Eighteen</td></tr>
+      <tr><td>10. ____ Dieciocho</td><td>J. I am 10 years old</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>Congratulations! Has completado la Misión Numbers and My Age!</b> Ahora dominas los números del 1 al 20,
+      las decenas y puedes decir tu edad con precisión usando <i>I am</i>. ¡Sigue avanzando por la Ruta de las Primeras Palabras! 🔢🗣️
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Inglés.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Participó en la ronda oral de edades y completó su Family Age Tree.</td><td class="lg">Tarea oral en aula y hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Numbers and My Age</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido" data-i18n="p7">
+
+    <h2>✅ Pauta de Respuestas · Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. am &nbsp; 2. three &nbsp; 3. teen &nbsp; 4. fifteen &nbsp; 5. old &nbsp; 6. u &nbsp; 7. ty &nbsp; 8. twelve &nbsp; 9. old &nbsp; 10. hundred</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1F, 2F, 3V, 4F, 5V, 6F, 7V, 8V, 9V, 10F</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2c, 3a, 4d, 5b, 6a, 7c, 8d, 9b, 10b</div>
+      <div><span class="pt">IV. Pareados:</span> 1D, 2B, 3F, 4H, 5E, 6J, 7C, 8A, 9G, 10I</div>
+    </div>
+
+    <div class="caja regla" style="margin-top:10px;">
+      🗣️ <b>Cómo calificar la expresión oral de la edad:</b> en Pre-A1 valore ante todo que el estudiante use
+      <strong>I am</strong> (o <i>I’m</i>) y no caiga en el falso calco del español <i>I have</i>. En la pronunciación,
+      asegure que en los números de 13 a 19 el acento caiga al final (<i>-teen</i>) para no confundirlos con las decenas
+      (<i>-ty</i>), y que en <i>three</i> saque ligeramente la lengua entre los dientes. Priorice la intención comunicativa
+      y la fluidez antes que la perfección absoluta.
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha didáctica está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Numbers and My Age» (Educación Básica, II y III Ciclo), etapa 2 de la Ruta de las Primeras Palabras del área de
+      Inglés, nivel <strong>Pre-A1</strong> del MCER, alineado a <strong>Cambridge English Starters</strong>. La unidad aborda
+      dos competencias centrales: el conteo y reconocimiento numérico (1 al 20 y decenas hasta 100) y la expresión de la edad
+      mediante la estructura <i>How old are you? / I am [number] years old</i>. Se enfatiza el contraste fonético crítico entre
+      <i>-teen</i> (acento final agudo) y <i>-ty</i> (acento inicial seco), fuente recurrente de errores en transacciones y
+      comunicación cotidiana. Asimismo, se previene explícitamente el calco lingüístico «I have ... years». La ficha puede
+      aplicarse de forma 100 % autónoma en entornos sin conectividad gracias a sus ejercicios impresos y actividades dinámicas
+      de aula. La versión interactiva (accesible desde el código QR de portada) proporciona audio con síntesis nativa para
+      modelar la pronunciación de cada número y juego interactivo con evaluación automática. Siguiente etapa recomendada de
+      la ruta: <i>Colors and Classroom Objects</i>.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Numbers and My Age · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>

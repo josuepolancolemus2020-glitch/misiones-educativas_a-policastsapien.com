@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión Numbers and My Age | policastsapien.com</title>
+<meta name="description" content="Misión Numbers and My Age: números del 1 al 20 en inglés, pronunciación del sonido /th/ (three vs tree), decir la edad con I am (no I have) y contar objetos en el aula. Nivel Pre-A1 (Cambridge Starters). Misión educativa interactiva. PolicastSapien.">
+<meta property="og:title" content="Misión Numbers and My Age">
+<meta property="og:description" content="Aprende a contar del 1 al 20, pronunciar sin enredos y decir tu edad en inglés. Juega, escucha y desbloquea todos los logros. PolicastSapien.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Misiones PolicastSapien">
+<meta property="og:url" content="https://metas.policastsapien.com/misiones/2y3ciclo-ingles-numeros-edad/numeros-edad.html">
+<link rel="stylesheet" href="../../css/vendor/fuentes/fuentes.css">
+<link rel="stylesheet" href="css/numeros-edad.css">
+<link rel="stylesheet" href="../../css/animacion-mision.css">
+<!-- La barra de secciones, arriba y siempre a la vista. Va DESPUÉS del CSS
+     de la misión a propósito: de ahí saca su color, y así sobrescribe su
+     position:static sin un solo !important. -->
+<link rel="stylesheet" href="../../css/barra-secciones.css">
+<!-- El acierto y el error NO se dicen solo con color: uno de cada doce
+     niños no distingue el rojo del verde. Va DESPUÉS del CSS de la misión,
+     que es lo que le deja pisar sus reglas. -->
+<link rel="stylesheet" href="../../css/senal-no-color.css">
+<link rel="stylesheet" href="../../css/lab-legible.css">
+<!-- Que las actividades se puedan hacer sin el dedo: el foco visible.
+     Va con js/teclado-actividades.js, que pone las paradas de tabulador
+     y hace que Enter y la barra espaciadora sirvan de algo. -->
+<link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La estrella se gana: antes del primer toque del alumno no se marca
+     ninguna sección, generar una prueba no la da y el XP no se vuelve a
+     ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
+     antes de que el arranque de la misión lo llame. -->
+<script src="../../js/estrella-ganada.js"></script>
+</head>
+<body>
+
+<div class="xp-bar" role="status" aria-label="Barra de progreso XP">
+  <a href="../../index.html?view=misiones" class="xp-back-btn" title="Regresar al catálogo de misiones">
+    <svg class="xp-back-arrow" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H5M12 5l-7 7 7 7"/></svg>
+    <img src="../../img/logo.png" alt="Logo" class="xp-back-logo">
+  </a>
+  <span class="xp-lbl">🎮 XP</span>
+  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <a href="#" class="xp-share-wa" onclick="compartirMision(); return false;" title="Compartir misión por WhatsApp" aria-label="Compartir misión por WhatsApp">
+    <img src="../../img/comparte_whatsapp.webp" alt="WhatsApp" class="xp-share-icon">
+  </a>
+  <span class="xp-pts" id="xpPts">⭐ 0</span>
+  <span class="xp-lvl" id="xpLvl">Beginner 🌱</span>
+</div>
+
+<header class="hero" role="banner">
+  <div class="hero-inner">
+    <div class="hero-mascot" aria-hidden="true">🔢</div>
+    <div class="hero-text">
+      <h1>Mission <span>Numbers and My Age</span></h1>
+      <p class="sub">Cuenta del 1 al 20, pronuncia sin enredos y di tu edad con orgullo en inglés. 🎂</p>
+      <div class="badge">🗣️ Ruta de las Primeras Palabras · Etapa 2 de 8 · Inglés · Pre-A1</div>
+    </div>
+  </div>
+</header>
+
+<main class="main" id="main-content">
+
+<!-- ===== APRENDE ===== -->
+<div class="sec active" id="s-aprende" role="tabpanel">
+
+  <div class="card ac-amber" data-situacion>
+    <h2>⚽ La planilla del torneo y las 13 aguas</h2>
+    <p>Kevin llegó a registrar a su equipo de fútbol escolar al torneo intercolegial bilingüe en San Pedro Sula. En la cafetería le pidieron comprar 3 botellas de agua para los árbitros a L 20 cada una. Al pedir en inglés pronunció mal y dijo «tree waters» y luego «thirteen waters»: el encargado le cobró y le entregó 13 botellas por L 260 en lugar de L 60, perdiendo L 200 de sus viáticos de la semana. Y en la mesa técnica, al registrar a sus compañeros anotó «Kevin have 12 years» en vez de «Kevin is 12 years old», y le rechazaron la inscripción hasta que corrigió la edad con el verbo correcto. Con dos reglas claras en esta misión no volverás a perder dinero ni pasar apuros con los números en inglés.</p>
+    <div class="tip"><span class="ti">❓</span><div>Para que no te pase lo de Kevin, domina dos claves: la lengua entre los dientes al decir <strong>three</strong> y usar <strong>I am</strong> para decir tu edad.</div></div>
+  </div>
+
+  <div class="card ac-teal">
+    <h2>🎯 I CAN: lo que podrás hacer hoy</h2>
+    <p>Al terminar esta misión vas a poder decir, sin ayuda:</p>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">🔢 I can count 1–20</div><div class="t-info">Contar del 1 al 20 con pronunciación clara</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">👅 I can pronounce TH</div><div class="t-info">Decir three y thirteen sin confundirlos con tree ni thirty</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">🎂 I can say my age</div><div class="t-info">Decir y preguntar la edad usando I am y How old are you?</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">📦 I can count objects</div><div class="t-info">Expresar cantidades en el aula con There is y There are</div></div>
+    </div>
+    <div class="tip">
+      <span class="ti">🔊</span>
+      <div><strong>Escucha antes de hablar:</strong> toca el botón 🔊 de cada expresión para oírla. Repite en voz alta dos veces. <b>Primero el oído, después la boca</b>.</div>
+    </div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>🔢 1. Los números del 1 al 12: con nombre propio</h2>
+    <p>Los primeros doce números tienen formas individuales y no siguen una regla regular. Escúchalos uno a uno:</p>
+    <div class="chunk-list">
+      <div class="chunk"><button class="say-btn" onclick="say('One')" aria-label="Escuchar One">🔊</button><b>One</b><span class="ch-fon">«uan»</span><span class="ch-es">Uno (1)</span></div>
+      <div class="chunk"><button class="say-btn" onclick="say('Two')" aria-label="Escuchar Two">🔊</button><b>Two</b><span class="ch-fon">«tuu»</span><span class="ch-es">Dos (2)</span></div>
+      <div class="chunk"><button class="say-btn" onclick="say('Three')" aria-label="Escuchar Three">🔊</button><b>Three</b><span class="ch-fon">«thrii»</span><span class="ch-es">Tres (3) · lengua entre los dientes</span></div>
+      <div class="chunk"><button class="say-btn" onclick="say('Four')" aria-label="Escuchar Four">🔊</button><b>Four</b><span class="ch-fon">«for»</span><span class="ch-es">Cuatro (4)</span></div>
+      <div class="chunk"><button class="say-btn" onclick="say('Five')" aria-label="Escuchar Five">🔊</button><b>Five</b><span class="ch-fon">«faiv»</span><span class="ch-es">Cinco (5)</span></div>
+      <div class="chunk"><button class="say-btn" onclick="say('Six')" aria-label="Escuchar Six">🔊</button><b>Six</b><span class="ch-fon">«siks»</span><span class="ch-es">Seis (6)</span></div>
+      <div class="chunk"><button class="say-btn" onclick="say('Seven')" aria-label="Escuchar Seven">🔊</button><b>Seven</b><span class="ch-fon">«seven»</span><span class="ch-es">Siete (7)</span></div>
+      <div class="chunk"><button class="say-btn" onclick="say('Eight')" aria-label="Escuchar Eight">🔊</button><b>Eight</b><span class="ch-fon">«eit»</span><span class="ch-es">Ocho (8) · gh mudo</span></div>
+      <div class="chunk"><button class="say-btn" onclick="say('Nine')" aria-label="Escuchar Nine">🔊</button><b>Nine</b><span class="ch-fon">«nain»</span><span class="ch-es">Nueve (9)</span></div>
+      <div class="chunk"><button class="say-btn" onclick="say('Ten')" aria-label="Escuchar Ten">🔊</button><b>Ten</b><span class="ch-fon">«ten»</span><span class="ch-es">Diez (10)</span></div>
+      <div class="chunk"><button class="say-btn" onclick="say('Eleven')" aria-label="Escuchar Eleven">🔊</button><b>Eleven</b><span class="ch-fon">«ileven»</span><span class="ch-es">Once (11) · irregular</span></div>
+      <div class="chunk"><button class="say-btn" onclick="say('Twelve')" aria-label="Escuchar Twelve">🔊</button><b>Twelve</b><span class="ch-fon">«tuelv»</span><span class="ch-es">Doce (12) · irregular</span></div>
+    </div>
+    <div class="tip tip-warn">
+      <span class="ti">⚠️</span>
+      <div><strong>¡Cuidado con el 3!</strong> <b>Tree</b> significa «árbol». Para decir el número <b>three</b> (3), saca suavemente la punta de la lengua entre los incisivos y sopla aire con sonido /θ/.</div>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>👥 2. La pandilla del -teen (13 al 19) y el 20</h2>
+    <p>Del 13 al 19 todos terminan en <strong>-teen</strong> (adolescentes). La fuerza de voz se hace al final:</p>
+    <div class="chunk-list">
+      <div class="chunk"><button class="say-btn" onclick="say('Thirteen')" aria-label="Escuchar Thirteen">🔊</button><b>Thirteen</b><span class="ch-fon">«ther-TIIN»</span><span class="ch-es">Trece (13)</span></div>
+      <div class="chunk"><button class="say-btn" onclick="say('Fourteen')" aria-label="Escuchar Fourteen">🔊</button><b>Fourteen</b><span class="ch-fon">«for-TIIN»</span><span class="ch-es">Catorce (14)</span></div>
+      <div class="chunk"><button class="say-btn" onclick="say('Fifteen')" aria-label="Escuchar Fifteen">🔊</button><b>Fifteen</b><span class="ch-fon">«fif-TIIN»</span><span class="ch-es">Quince (15) · cambia five a fif</span></div>
+      <div class="chunk"><button class="say-btn" onclick="say('Sixteen')" aria-label="Escuchar Sixteen">🔊</button><b>Sixteen</b><span class="ch-fon">«siks-TIIN»</span><span class="ch-es">Dieciséis (16)</span></div>
+      <div class="chunk"><button class="say-btn" onclick="say('Seventeen')" aria-label="Escuchar Seventeen">🔊</button><b>Seventeen</b><span class="ch-fon">«seven-TIIN»</span><span class="ch-es">Diecisiete (17)</span></div>
+      <div class="chunk"><button class="say-btn" onclick="say('Eighteen')" aria-label="Escuchar Eighteen">🔊</button><b>Eighteen</b><span class="ch-fon">«ei-TIIN»</span><span class="ch-es">Dieciocho (18) · una sola t</span></div>
+      <div class="chunk"><button class="say-btn" onclick="say('Nineteen')" aria-label="Escuchar Nineteen">🔊</button><b>Nineteen</b><span class="ch-fon">«nain-TIIN»</span><span class="ch-es">Diecinueve (19)</span></div>
+      <div class="chunk"><button class="say-btn" onclick="say('Twenty')" aria-label="Escuchar Twenty">🔊</button><b>Twenty</b><span class="ch-fon">«TUEN-ti»</span><span class="ch-es">Veinte (20) · termina en -ty</span></div>
+    </div>
+  </div>
+
+  <div class="card ac-purple">
+    <h2>🎂 3. Decir y preguntar la edad: I am, no I have</h2>
+    <p>En inglés los años <strong>no se guardan en la bolsa</strong>: la edad <strong>se es</strong> con el verbo to be.</p>
+    <div class="chunk-list">
+      <div class="chunk"><button class="say-btn" onclick="say('How old are you?')" aria-label="Escuchar How old are you?">🔊</button><b>How old are you?</b><span class="ch-fon">«jau ould ar iu»</span><span class="ch-es">¿Cuántos años tienes?</span></div>
+      <div class="chunk"><button class="say-btn" onclick="say('I am eleven years old')" aria-label="Escuchar I am eleven years old">🔊</button><b>I am 11 years old</b><span class="ch-fon">«ai am ileven yiers ould»</span><span class="ch-es">Tengo 11 años</span></div>
+      <div class="chunk"><button class="say-btn" onclick="say('I am twelve')" aria-label="Escuchar I am twelve">🔊</button><b>I am 12</b><span class="ch-fon">«ai am tuelv»</span><span class="ch-es">Tengo 12 (forma corta y natural)</span></div>
+    </div>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>✅ Correcto en inglés</h4>
+        <p><b>I am 12 years old.</b><br><span class="ch-es">Usa el verbo to be (am / is / are).</span></p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>❌ Error común hispanohablante</h4>
+        <p><s>I have 12 years.</s><br><span class="ch-es">En inglés «have» es tener objetos físicos.</span></p>
+      </div>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-estructura')">
+    <span class="nsb-icon">🕐</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== ESTRUCTURA ===== -->
+<div class="sec" id="s-estructura" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🕐 Estructura y reglas de los números</h2>
+    <p>Observa cómo cambian las terminaciones y el acento:</p>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;min-width:480px;">
+        <thead>
+          <tr style="background:var(--pri-gl);">
+            <th style="padding:0.4rem 0.5rem;border:1px solid var(--border);text-align:left;">Grupo</th>
+            <th style="padding:0.4rem 0.5rem;border:1px solid var(--border);">Números</th>
+            <th style="padding:0.4rem 0.5rem;border:1px solid var(--border);">Regla / Terminación</th>
+            <th style="padding:0.4rem 0.5rem;border:1px solid var(--border);">Acento</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:700;">1 al 12</td><td style="padding:0.4rem;border:1px solid var(--border);text-align:center;">one … twelve</td><td style="padding:0.4rem;border:1px solid var(--border);text-align:center;">Nombres propios individuales</td><td style="padding:0.4rem;border:1px solid var(--border);text-align:center;">Natural</td></tr>
+          <tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:700;">13 al 19</td><td style="padding:0.4rem;border:1px solid var(--border);text-align:center;">thirteen … nineteen</td><td style="padding:0.4rem;border:1px solid var(--border);text-align:center;">Sufijo <b>-teen</b></td><td style="padding:0.4rem;border:1px solid var(--border);text-align:center;font-weight:700;">Al final (-TEEN)</td></tr>
+          <tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:700;">20 (Decena)</td><td style="padding:0.4rem;border:1px solid var(--border);text-align:center;">twenty</td><td style="padding:0.4rem;border:1px solid var(--border);text-align:center;">Sufijo <b>-ty</b></td><td style="padding:0.4rem;border:1px solid var(--border);text-align:center;">Al inicio (TWEN-ti)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card ac-amber">
+    <h2>⚡ Miniquiz relámpago</h2>
+    <p style="font-size:0.9rem;margin-bottom:0.5rem;">1) ¿Cómo se escribe el número 13 en inglés?</p>
+    <div class="cmp-opts" role="group" style="margin-bottom:0.4rem;">
+      <button class="cmp-opt" onclick="miniQ(this,true,'fbMq1')">Thirteen</button>
+      <button class="cmp-opt" onclick="miniQ(this,false,'fbMq1')">Threeteen</button>
+      <button class="cmp-opt" onclick="miniQ(this,false,'fbMq1')">Thirty</button>
+    </div>
+    <div id="fbMq1" class="fb" role="alert"></div>
+
+    <p style="font-size:0.9rem;margin:0.9rem 0 0.5rem;">2) Te preguntan: «How old are you?» y tienes 11 años. ¿Qué dices?</p>
+    <div class="cmp-opts" role="group" style="margin-bottom:0.4rem;">
+      <button class="cmp-opt" onclick="miniQ(this,true,'fbMq2')">I am 11 years old</button>
+      <button class="cmp-opt" onclick="miniQ(this,false,'fbMq2')">I have 11 years</button>
+      <button class="cmp-opt" onclick="miniQ(this,false,'fbMq2')">My age has 11</button>
+    </div>
+    <div id="fbMq2" class="fb" role="alert"></div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-lab')">
+    <span class="nsb-icon">🔬</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== LAB ===== -->
+<div class="sec" id="s-lab" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🔬 Laboratorio de Números y Edades</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Selecciona un número del 1 al 20 y explora su pronunciación, cómo expresar edad, objetos escolares y el error típico.</p>
+
+    <div class="lab-controls">
+      <div class="lab-group" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:0.8rem;">
+        <span class="lab-group-label" style="width:100%;font-weight:700;">🔢 Elige número:</span>
+        <button class="lab-btn lab-num-btn" data-n="1" onclick="selectLabNum(1)">1</button>
+        <button class="lab-btn lab-num-btn" data-n="2" onclick="selectLabNum(2)">2</button>
+        <button class="lab-btn lab-num-btn" data-n="3" onclick="selectLabNum(3)">3</button>
+        <button class="lab-btn lab-num-btn" data-n="4" onclick="selectLabNum(4)">4</button>
+        <button class="lab-btn lab-num-btn" data-n="5" onclick="selectLabNum(5)">5</button>
+        <button class="lab-btn lab-num-btn" data-n="6" onclick="selectLabNum(6)">6</button>
+        <button class="lab-btn lab-num-btn" data-n="7" onclick="selectLabNum(7)">7</button>
+        <button class="lab-btn lab-num-btn" data-n="8" onclick="selectLabNum(8)">8</button>
+        <button class="lab-btn lab-num-btn" data-n="9" onclick="selectLabNum(9)">9</button>
+        <button class="lab-btn lab-num-btn" data-n="10" onclick="selectLabNum(10)">10</button>
+        <button class="lab-btn lab-num-btn" data-n="11" onclick="selectLabNum(11)">11</button>
+        <button class="lab-btn lab-num-btn active" data-n="12" onclick="selectLabNum(12)">12</button>
+        <button class="lab-btn lab-num-btn" data-n="13" onclick="selectLabNum(13)">13</button>
+        <button class="lab-btn lab-num-btn" data-n="14" onclick="selectLabNum(14)">14</button>
+        <button class="lab-btn lab-num-btn" data-n="15" onclick="selectLabNum(15)">15</button>
+        <button class="lab-btn lab-num-btn" data-n="16" onclick="selectLabNum(16)">16</button>
+        <button class="lab-btn lab-num-btn" data-n="17" onclick="selectLabNum(17)">17</button>
+        <button class="lab-btn lab-num-btn" data-n="18" onclick="selectLabNum(18)">18</button>
+        <button class="lab-btn lab-num-btn" data-n="19" onclick="selectLabNum(19)">19</button>
+        <button class="lab-btn lab-num-btn" data-n="20" onclick="selectLabNum(20)">20</button>
+      </div>
+
+      <div class="lab-group" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:0.8rem;">
+        <span class="lab-group-label" style="width:100%;font-weight:700;">📌 Aspecto a explorar:</span>
+        <button class="lab-btn lab-asp-btn active" data-a="1" onclick="selectLabAspecto(1)">🗣️ Pronunciación</button>
+        <button class="lab-btn lab-asp-btn" data-a="2" onclick="selectLabAspecto(2)">🎂 Edad</button>
+        <button class="lab-btn lab-asp-btn" data-a="3" onclick="selectLabAspecto(3)">📦 Objetos en el aula</button>
+        <button class="lab-btn lab-asp-btn" data-a="4" onclick="selectLabAspecto(4)">⚠️ Error típico</button>
+      </div>
+    </div>
+
+    <div class="lab-display-box" id="labDisplayContent" style="background:#fff;border:2px solid var(--border);border-radius:12px;padding:1.2rem;text-align:center;">
+      <!-- Rellenado dinámicamente por renderLabDisplay() -->
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
+    <span class="nsb-icon">🃏</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== FLASHCARDS ===== -->
+<div class="sec" id="s-flash" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🃏 Flashcards: Números y Edad</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Toca la tarjeta para voltearla y escúchala con el botón 🔊</p>
+    <div class="fc-wrap">
+      <div class="fc-inner" id="fcCard" onclick="flipFC()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipFC();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
+        <div class="fc-front">
+          <div class="fc-tag" id="fcTag">1 a 10</div>
+          <div class="fw" id="fcQ">One</div>
+          <div class="fc-pron" id="fcPron">/uan/</div>
+          <div class="fhint">🃏 Toca · Enter para voltear</div>
+        </div>
+        <div class="fc-back">
+          <div class="fca" id="fcA">Uno (1)</div>
+          <div class="fcexp" id="fcExp" style="font-size:0.9rem;margin-top:8px;">Para contar una persona o cosa</div>
+        </div>
+      </div>
+    </div>
+    <div class="fc-nav">
+      <button class="btn btn-d" onclick="prevFC()">◀ Anterior</button>
+      <span class="fc-ctr" id="fcIdx" aria-live="polite">1 / 14</span>
+      <button class="btn btn-pri" onclick="nextFC()">Siguiente ▶</button>
+    </div>
+    <div style="margin-top:0.7rem;display:flex;justify-content:center;">
+      <button class="btn btn-g" onclick="sayFC()">🔊 Escuchar esta expresión</button>
+    </div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>🧠 Memorama de Números</h2>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Empareja cada cifra con su palabra escrita en inglés:</p>
+    <div class="memo-grid" id="memoGrid"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-d" onclick="resetMemo()">🔄 Mezclar de nuevo</button>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-quiz')">
+    <span class="nsb-icon">🧠</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== QUIZ ===== -->
+<div class="sec" id="s-quiz" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>🧠 Quiz de Comprensión</h2>
+    <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 9</p>
+    <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
+    <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;margin-top:0.8rem;">
+      <button class="btn btn-pri" onclick="nextQuiz()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetQuiz()">🔄 Reiniciar Quiz</button>
+    </div>
+    <div id="fbQuiz" class="fb" role="alert"></div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-clasifica')">
+    <span class="nsb-icon">🗂️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== CLASIFICA ===== -->
+<div class="sec" id="s-clasifica" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🗂️ Clasifica los Números</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.5rem;">Toca un número del banco y luego colócalo en el grupo correspondiente.</p>
+    <div class="word-bank" id="clsBank" role="list"></div>
+    <div class="cls-cols-grid" id="clsCols" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0.6rem;margin-top:0.8rem;"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkClass()">✔ Verificar</button>
+      <button class="btn btn-d" onclick="resetClass()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbClass" class="fb" role="alert"></div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-identifica')">
+    <span class="nsb-icon">🔍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== IDENTIFICA ===== -->
+<div class="sec" id="s-identifica" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🔍 Identifica la Forma Correcta</h2>
+    <p class="id-prog" id="idProg" aria-live="polite">Identifica 1 de 8</p>
+    <div style="font-size:1.3rem;font-weight:800;color:var(--pri);margin:0.8rem 0;" id="idItemDisplay">Number 3</div>
+    <div class="qz-opts" id="idOpts" role="group"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextIdentify()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetIdentify()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbId" class="fb" role="alert"></div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-completa')">
+    <span class="nsb-icon">✏️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== COMPLETA ===== -->
+<div class="sec" id="s-completa" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>✏️ Completa la Oración</h2>
+    <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
+    <div class="cmp-sent" id="cmpSentence" style="font-size:1.2rem;font-weight:700;margin:0.8rem 0;">I ___ eleven years old.</div>
+    <div class="cmp-opts" id="cmpOpts" role="group"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextComplete()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetComplete()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbCmp" class="fb" role="alert"></div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-widgets')">
+    <span class="nsb-icon">🧩</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== WIDGETS ===== -->
+<div class="sec" id="s-widgets" role="tabpanel">
+
+  <div class="card ac-teal">
+    <h2>🔁 Ordena la secuencia numérica</h2>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Usa las flechas <strong>▲ ▼</strong> para ordenar los números de menor a mayor:</p>
+    <div class="sort-list" id="routeList"></div>
+    <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkRoute()">✅ Verificar orden</button>
+      <button class="btn btn-pri" onclick="nextRoute()">🔄 Nueva secuencia</button>
+    </div>
+    <div id="fbRoute" class="fb" role="alert"></div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>💬 ¿Qué responderías en esta situación?</h2>
+    <p class="id-prog" id="neuronProg" aria-live="polite">Situación 1 de 4</p>
+    <div class="neuron-desc" id="neuronDesc" style="font-size:1rem;font-weight:600;margin:0.8rem 0;">Cargando...</div>
+    <div class="cmp-opts" id="neuronOpts" role="group"></div>
+    <div id="fbNeuron" class="fb" role="alert"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextNeuron()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetNeuron()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>🔗 Empareja: Cifra → Palabra escrita</h2>
+    <p class="id-prog" id="neuroProg" aria-live="polite">1 de 5</p>
+    <div class="neuro-trans-display" id="neuroTrans" style="font-size:1.3rem;font-weight:800;color:var(--pri);margin:0.6rem 0;">12</div>
+    <div class="qz-opts" id="neuroOpts" role="group"></div>
+    <div id="fbNeuro" class="fb" role="alert"></div>
+    <div style="margin-top:0.8rem;">
+      <button class="btn btn-d" onclick="resetNeuro()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <div class="card ac-purple">
+    <h2>🕵️ Detector de Errores: I am vs. I have</h2>
+    <p class="id-prog" id="enferProg" aria-live="polite">1 de 4</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Determina si la oración está bien escrita o si contiene un error típico:</p>
+    <div class="neuro-trans-display" id="enferDisease" style="font-size:1.1rem;font-weight:700;margin:0.6rem 0;">I have 12 years old.</div>
+    <div class="qz-opts" id="enferOpts" role="group"></div>
+    <div id="fbEnfer" class="fb" role="alert"></div>
+    <div style="margin-top:0.8rem;">
+      <button class="btn btn-d" onclick="resetEnfer()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-reto')">
+    <span class="nsb-icon">🏆</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== RETO ===== -->
+<div class="sec" id="s-reto" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🏆 Reto de Cálculo Rápido en Inglés</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.8rem;">Resuelve mentalmente las operaciones y elige el número escrito en inglés.</p>
+    <div style="font-weight:700;color:var(--pri);margin-bottom:0.6rem;" id="retoPairLbl">Reto 1 de 3</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;">
+      <div id="retoP1" style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:0.8rem;"></div>
+      <div id="retoP2" style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:0.8rem;"></div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="changeRetoPair()">🔀 Siguiente reto</button>
+    </div>
+    <div id="fbReto" class="fb" role="alert"></div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-sopa')">
+    <span class="nsb-icon">🤍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== SOPA ===== -->
+<div class="sec" id="s-sopa" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🤍 Sopa de Letras: Números en Inglés</h2>
+    <div class="sopa-words" id="sopaWords"></div>
+    <p class="sopa-hint" id="sopaHint">🖱️ Haz clic en la primera letra y luego en la última</p>
+    <div class="sopa-container">
+      <div class="sopa-grid" id="sopaGrid"></div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextSopaSet()">🔄 Cambiar sopa</button>
+      <button class="btn btn-amber" onclick="sopaLinterna()">🔦 Linterna (-2 XP)</button>
+    </div>
+    <div id="fbSopa" class="fb" role="alert"></div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tareas')">
+    <span class="nsb-icon">📋</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== TAREAS ===== -->
+<div class="sec" id="s-tareas" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>📋 Generador de Tareas Desconectadas</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.8rem;">Genera ejercicios para resolver en tu cuaderno de inglés:</p>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn btn-pri" onclick="genTask('numToWord')">🔢 Cifra a palabra</button>
+      <button class="btn btn-sec" onclick="genTask('ageSentence')">🎂 Oración de edad</button>
+      <button class="btn btn-g" onclick="genTask('mathInEnglish')">➕ Suma en inglés</button>
+    </div>
+    <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:0.8rem;">
+      <p id="taskQ" style="font-weight:700;font-size:1.1rem;color:var(--dark);">Presiona un botón arriba para generar una tarea.</p>
+      <div id="taskA" style="display:none;margin-top:0.6rem;font-weight:700;color:var(--pri);"></div>
+      <button id="taskShowBtn" class="btn btn-d" style="display:none;margin-top:0.6rem;" onclick="showTaskAnswer()">👁 Ver respuesta</button>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')">
+    <span class="nsb-icon">🎓</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== EVALUACIÓN ===== -->
+<div class="sec" id="s-evaluacion" role="tabpanel">
+  <div class="eval-mode-toggle" role="tablist" aria-label="Tipo de evaluación">
+    <button class="eval-mode-btn active" id="evalModeBtnConcept" role="tab" aria-selected="true" onclick="evalSwitchMode('concept')">🎓 Evaluación Conceptual</button>
+    <button class="eval-mode-btn" id="evalModeBtnCrit" role="tab" aria-selected="false" onclick="evalSwitchMode('crit')">🧠 Pensamiento Crítico</button>
+  </div>
+  <div id="evalConceptWrap">
+  <div class="card ac-purple">
+    <div class="eval-print-header">
+      <h2>Evaluación Final · Numbers and My Age · Educación Básica · Inglés</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>N.º Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
+    </div>
+    <h2 id="eval-screen-title">🎓 Evaluación Final · Numbers and My Age</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Copia el examen en tu cuaderno y responde las preguntas, después selecciona <strong>Ver Pauta</strong> para que te autoevalúes. <strong>Genera nuevas preguntas cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
+      <button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="gradeEval()">🧮 Calificar prueba</button>
+      <button class="btn btn-amber" onclick="printEval()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOut"></div>
+  </div>
+  </div>
+  <div id="evalCritWrap" style="display:none;">
+  <div class="card ac-amber">
+    <div class="eval-print-header">
+      <h2>Evaluación Competencial · Pensamiento Crítico · Numbers and My Age · Educación Básica</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>N.º Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · 5 secciones de 20 puntos</p>
+    </div>
+    <h2 id="evalcrit-screen-title">🧠 Prueba de Pensamiento Crítico · Numbers and My Age</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Responde cada caso con tus propias palabras (en pantalla o en tu cuaderno), compara con la <strong>Pauta</strong> y anótate el puntaje de cada sección. <strong>Genera una nueva prueba cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEvalCrit()">🔄 Nueva Prueba</button>
+      <button class="btn btn-d" onclick="toggleEvalCritAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="calcCritTotal()">🧮 Calcular Total</button>
+      <button class="btn btn-amber" onclick="printEvalCrit()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalCritOut"></div>
+  </div>
+  </div>
+  <div id="eval-pauta-sheet"></div>
+  <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,var(--pri),var(--sec));">
+    <span class="nsb-icon">🏅</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi Constancia</span></span>
+    <span class="nsb-arrow">🎓</span>
+  </button>
+</div>
+
+<!-- ===== RECURSOS ===== -->
+<div class="sec" id="s-recursos" role="tabpanel">
+  <div class="card ac-blue">
+    <h2>📁 Recursos del Tema</h2>
+    <div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
+      <p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">📄 Ficha didáctica imprimible</p>
+      <p style="font-size:0.86rem;margin-bottom:0.85rem;">Guía de estudio de 7 páginas (teoría con pronunciación, actividades desconectadas y evaluación) para imprimir o resolver en casa sin teléfono.</p>
+      <a href="../../fichas/ficha-ingles-numeros-edad.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">📄 Abrir / Imprimir la ficha</a>
+    </div>
+    <div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
+      <p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">🗣️ Práctica real sin pantalla</p>
+      <p style="font-size:0.86rem;margin-bottom:0.85rem;">Pregunta la edad a tres personas hoy: <i>«How old are you?»</i> y responde cuando te pregunten a ti: <i>«I am [tu edad] years old»</i>. Recuerda: ¡nunca uses have!</p>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- DIPLOMA MODAL -->
+<div class="diploma-overlay" id="diplomaModal" role="dialog" aria-modal="true" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;align-items:center;justify-content:center;">
+  <div class="diploma-card" id="diplomaCard" style="background:#fff;border-radius:16px;padding:1.5rem;max-width:440px;width:90%;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.3);">
+    <div class="diploma-stars">⭐⭐⭐</div>
+    <div class="diploma-title" style="font-family:'Fredoka',sans-serif;font-size:1.4rem;color:var(--pri);font-weight:800;">CONSTANCIA DE LOGRO</div>
+    <div class="diploma-sub" style="font-size:0.9rem;color:var(--gray);margin:4px 0 10px;">I can count and state my age</div>
+    <div class="diploma-mascot" style="font-size:2.5rem;" aria-hidden="true">🔢</div>
+    <div class="diploma-name" id="diplomaNameDisp" style="font-size:1.3rem;font-weight:800;margin:10px 0;color:var(--dark);">Estudiante Destacado</div>
+    <div class="diploma-fam" style="font-size:0.8rem;color:var(--gray);">🏠 Proyecto Educativo M.E.T.A.S</div>
+    <hr style="margin:0.8rem 0;border:0;border-top:1px solid var(--border);">
+    <input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..." oninput="updateDiplomaName(this.value)" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:0.9rem;margin-bottom:10px;">
+    <div class="diploma-actions" style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button>
+      <button class="btn btn-pri" onclick="captureDiploma()">📷 Guardar foto</button>
+      <button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOGROS -->
+<div class="ach-panel" id="achPanel" role="region" aria-label="Logros desbloqueados">
+  <h4>🏅 Mis Logros</h4>
+  <div id="achList"></div>
+</div>
+
+<!-- NAV -->
+<nav class="nav" role="tablist" aria-label="Secciones de la misión">
+  <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-estructura" data-s="s-estructura" onclick="go('s-estructura')"><span class="ico">🕐</span> Reglas</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lab" data-s="s-lab" onclick="go('s-lab')"><span class="ico">🧪</span> Lab</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash" onclick="go('s-flash')"><span class="ico">🃏</span> Flashcards</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz" onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-clasifica" data-s="s-clasifica" onclick="go('s-clasifica')"><span class="ico">🗂️</span> Clasifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica" onclick="go('s-identifica')"><span class="ico">🔍</span> Identifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa" onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-widgets" data-s="s-widgets" onclick="go('s-widgets')"><span class="ico">🧩</span> Widgets</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto" onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa" onclick="go('s-sopa')"><span class="ico">🤍</span> Sopa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">🎓</span> Evaluación</button>
+  <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);" aria-haspopup="dialog"><span class="ico">🏅</span> Constancia</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-recursos" data-s="s-recursos" onclick="go('s-recursos')"><span class="ico">📁</span> Recursos</button>
+</nav>
+
+<footer class="credits">
+  <p class="fam">🏠 Proyecto Educativo M.E.T.A.S</p>
+  <p class="ppl">Desarrolladores: Josué E. Polanco_Evelyn Castellanos_Jael &amp; Angelly Polanco</p>
+  <div class="mot">«Limita el uso del teléfono móvil solo como herramienta de aprendizaje de lo contrario puede ser perjudicial» 🌱 · Lee, interactúa, recuerda el saber.</div>
+  <div class="cred-contact">
+    <span>💬 <a href="mailto:josuepolancolemus2020@gmail.com">📧 josuepolancolemus2020@gmail.com</a></span>
+    <span>🌐 <a href="https://policastsapien.com/" target="_blank">🔗 policastsapien.com</a></span>
+  </div>
+  <div class="cred-tools">
+    <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+    <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+    <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
+    <button class="cred-btn" onclick="toggleLetra()">🔤 Letra</button>
+    <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+  </div>
+</footer>
+
+<script src="js/html2canvas.min.js"></script>
+<script src="js/numeros-edad.js"></script>
+<!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
+<script src="../../js/metas-presentacion.js"></script>
+<script src="../../js/metas-registro.js"></script>
+<script src="../../js/barra-secciones.js"></script>
+<script src="../../js/teclado-actividades.js"></script>
+</body>
+</html>

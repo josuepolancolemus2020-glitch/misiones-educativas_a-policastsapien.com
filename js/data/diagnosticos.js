@@ -188,4 +188,13 @@ const DIAGNOSTICOS = {
     { etapa: 5, q: '«Una silla es algo donde uno se sienta.» Esa definición…', o: ['está justa', 'es muy ancha: entra una piedra', 'es muy angosta', 'no define nada'], a: 1 },
     { etapa: 5, q: '«Te espero en el banco» dice dos cosas. ¿Con qué se arregla?', o: ['Escribiéndola más bonita', 'Cambiando de tema', 'Preguntando en cuál de los dos', 'Hablando más fuerte'], a: 2 },
   ],
+  /* Ruta de las Primeras Palabras (Inglés Pre-A1 → A2).
+     Dos preguntas por etapa, sacadas del evalMCBank de cada misión.
+     Las respuestas correctas se distribuyen de forma balanceada. */
+  primeras: [
+    { etapa: 1, q: 'Son las 9 de la mañana. ¿Cómo saludas a tu maestra en inglés?', o: ['Hey', 'Good morning', 'Bye', 'See you later'], a: 1 },
+    { etapa: 1, q: '¿Cómo preguntas el nombre a alguien en inglés?', o: ['What\'s your name?', 'How are you?', 'How old are you?', 'Where are you from?'], a: 0 },
+    { etapa: 2, q: '¿Cuál número es irregular y no termina en -teen?', o: ['Fourteen', 'Sixteen', 'Twelve', 'Eighteen'], a: 2 },
+    { etapa: 2, q: '¿Cómo se responde a «How old are you?» si tienes 15 años?', o: ['I have 15 years', 'My age is 15', 'I has 15 years', 'I am 15 years old'], a: 3 },
+  ],
 };

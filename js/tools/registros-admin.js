@@ -41,6 +41,17 @@ let _adGastosOn = 0;         /* dentro de «Gastos de mi bolsillo» */
 let _adInvOn = 0;            /* dentro de «Inventario del aula» */
 let _adFichasOn = 0;         /* dentro de «Identidad y contactos» */
 let _adControlId = null;     /* control abierto en Controles */
+let _adSaceParcial = 'I';    /* Parcial activo en Notas SACE: I | II | III | IV */
+let _adSaceVista = 'aprov';   /* Sección a llenar: aprov | pers | inasis */
+let _adGrupoActivoId = null; /* Grupo/sección activo en el aula */
+try {
+  const _sp = localStorage.getItem('METAS_SACE_PARCIAL');
+  if (['I', 'II', 'III', 'IV'].includes(_sp)) _adSaceParcial = _sp;
+  const _sv = localStorage.getItem('METAS_SACE_VISTA');
+  if (['aprov', 'pers', 'inasis'].includes(_sv)) _adSaceVista = _sv;
+  const _sg = localStorage.getItem('METAS_ADMIN_GRUPO_ACTIVO');
+  if (_sg) _adGrupoActivoId = _sg;
+} catch (_) {}
 
 /* ── Estado v2: GRUPOS (multi-aula) ──
    Un maestro puede atender varios grupos, incluso en DOS colegios.
@@ -168,7 +179,14 @@ function adState() {
   try { st = JSON.parse(localStorage.getItem(ADMIN_KEY)); } catch (_) {}
   if (st && st.v === 2 && Array.isArray(st.grupos) && st.grupos.length) {
     st.grupos.forEach(adNormGrupo);
-    if (!st.grupos.some(g => g.id === st.activo)) st.activo = st.grupos[0].id;
+    if (_adGrupoActivoId && st.grupos.some(g => g.id === _adGrupoActivoId)) {
+      st.activo = _adGrupoActivoId;
+    } else if (st.grupos.some(g => g.id === st.activo)) {
+      _adGrupoActivoId = st.activo;
+    } else {
+      st.activo = st.grupos[0].id;
+      _adGrupoActivoId = st.activo;
+    }
     return st;
   }
   /* migración desde v1 (objeto plano) o inicio en blanco */
@@ -183,10 +201,14 @@ function adState() {
     adMigrarCodigos(g);
   }
   const nuevo = { v: 2, activo: g.id, grupos: [adNormGrupo(g)] };
+  _adGrupoActivoId = g.id;
   try { localStorage.setItem(ADMIN_KEY, JSON.stringify(nuevo)); } catch (_) {}
   return nuevo;
 }
 function adStateSave(st) {
+  if (_adGrupoActivoId && st && st.grupos && st.grupos.some(g => g.id === _adGrupoActivoId)) {
+    st.activo = _adGrupoActivoId;
+  }
   try { localStorage.setItem(ADMIN_KEY, JSON.stringify(st)); } catch (_) {}
   adSyncProgramar();   /* la nube del chatbot se actualiza sola, con calma */
 }
@@ -564,8 +586,18 @@ function adGruposArrastrar(bar) {
 function renderAdmin() {
   const cont = document.getElementById('admin-content');
   if (!cont) return;
+  const st = adState();
+  const d = st.grupos.find(g => g.id === st.activo) || st.grupos[0];
   /* recordar dónde está el docente para restaurarlo al recargar */
-  if (window.metasSaveNav) window.metasSaveNav({ view: 'view-admin', adTab: _adTab, adColecta: _adColectaId, adControl: _adControlId });
+  if (window.metasSaveNav) window.metasSaveNav({
+    view: 'view-admin',
+    adTab: _adTab,
+    adColecta: _adColectaId,
+    adControl: _adControlId,
+    adSaceParcial: _adSaceParcial,
+    adSaceVista: _adSaceVista,
+    adGrupo: st.activo
+  });
   /* la flecha del encabezado dice a dónde lleva AHORA, que cambia según se
      esté dentro de una colecta o de un control */
   const _atras = document.getElementById('admin-back-btn');
@@ -580,8 +612,6 @@ function renderAdmin() {
     _atras.setAttribute('aria-label', rotulo);
     _atras.setAttribute('title', rotulo);
   }
-  const st = adState();
-  const d = st.grupos.find(g => g.id === st.activo) || st.grupos[0];
   /* Barra de grupos: el maestro puede tener varios (incluso en dos
      colegios); todo lo de abajo (lista, economía, asistencia, notas)
      es DEL GRUPO ACTIVO. */
@@ -623,7 +653,9 @@ function renderAdmin() {
     <div id="ad-tab-body"></div>`;
   cont.querySelectorAll('[data-gid]').forEach(b =>
     b.addEventListener('click', () => {
-      const s2 = adState(); s2.activo = b.dataset.gid; adStateSave(s2);
+      _adGrupoActivoId = b.dataset.gid;
+      try { localStorage.setItem('METAS_ADMIN_GRUPO_ACTIVO', _adGrupoActivoId); } catch (_) {}
+      const s2 = adState(); s2.activo = _adGrupoActivoId; adStateSave(s2);
       _adColectaId = null; _adControlId = null; _adGastosOn = 0; _adInvOn = 0; _adFichasOn = 0;
       if (typeof adConvCerrar === 'function') adConvCerrar();
       renderAdmin();
@@ -634,7 +666,10 @@ function renderAdmin() {
       { icono: '🏫', titulo: 'Otro grupo', okTxt: 'Sí, crear' })) return;
     const s2 = adState();
     const g = adGrupoNuevo();
-    s2.grupos.push(g); s2.activo = g.id; adStateSave(s2);
+    s2.grupos.push(g); s2.activo = g.id;
+    _adGrupoActivoId = g.id;
+    try { localStorage.setItem('METAS_ADMIN_GRUPO_ACTIVO', _adGrupoActivoId); } catch (_) {}
+    adStateSave(s2);
     _adTab = 'lista'; renderAdmin();
     toast('🏫 Grupo nuevo: escribe su grado, sección y colegio');
   });
@@ -653,6 +688,10 @@ function renderAdmin() {
     if (chip) { const n = adPendientesTotal(); chip.textContent = n ? '⏳ ' + n + ' por subir' : '☁️ al día'; }
   });
   const body = document.getElementById('ad-tab-body');
+  if (body) {
+    body.dataset.parcial = _adSaceParcial;
+    body.dataset.vista = _adSaceVista;
+  }
   if (_adTab === 'lista') adRenderLista(body, d);
   else if (_adTab === 'eco') adRenderEco(body, d);
   else if (_adTab === 'asis') adRenderAsis(body, d);
@@ -3887,8 +3926,33 @@ function adSugCambios(d, parcial, fuentes) {
 
 function adRenderSace(body, d) {
   if (!d.lista.length) { adSinLista(body, 'la boleta'); return; }
-  const parcial = body.dataset.parcial || 'I';
-  const vista = body.dataset.vista || 'aprov';   // aprov | pers | inasis
+  /* Asegurar que se use y sincronice el parcial y vista activos */
+  if (body.dataset.parcial && ['I', 'II', 'III', 'IV'].includes(body.dataset.parcial)) {
+    _adSaceParcial = body.dataset.parcial;
+  } else {
+    body.dataset.parcial = _adSaceParcial;
+  }
+  if (body.dataset.vista && ['aprov', 'pers', 'inasis'].includes(body.dataset.vista)) {
+    _adSaceVista = body.dataset.vista;
+  } else {
+    body.dataset.vista = _adSaceVista;
+  }
+  const parcial = _adSaceParcial;
+  const vista = _adSaceVista;
+
+  /* Capturar la celda activa para restaurar foco y cursor tras sincronización o re-render */
+  let activeInpInfo = null;
+  const prevActiveEl = document.activeElement;
+  if (prevActiveEl && prevActiveEl.classList && prevActiveEl.classList.contains('ad-mx-inp')) {
+    activeInpInfo = {
+      num: prevActiveEl.dataset.num,
+      campo: prevActiveEl.dataset.campo,
+      parcial: prevActiveEl.dataset.parcial,
+      selStart: prevActiveEl.selectionStart,
+      selEnd: prevActiveEl.selectionEnd
+    };
+  }
+
   const esLetra = vista === 'pers';
   const esInasis = vista === 'inasis';
   const cols = esLetra ? AD_PERSONALIDAD.slice() : esInasis ? ['Inasistencias'] : d.materias.slice();
@@ -3969,7 +4033,7 @@ function adRenderSace(body, d) {
       <p class="pa-optional-hint">${esLetra
         ? 'La <strong>Personalidad</strong> se llena con los <strong>cuatro parciales a la vista</strong>: cada rasgo trae sus columnas I–IV, sin andar cambiando de parcial. Todo va a <strong>SACE</strong> y a la <strong>boleta</strong>.'
         : `Elige el <strong>parcial</strong> y llena cada alumno <strong>a lo ancho</strong>,
-        en el orden de la boleta: al escribir una nota, el cursor <strong>salta solo</strong> a la siguiente
+        en el orden de la boleta: avanza con <strong>Enter</strong> o <strong>Tab</strong> a la siguiente
         materia y, al terminar la fila, baja al siguiente alumno. Las notas van a <strong>SACE</strong> y a la <strong>boleta</strong>.`}</p>
       <div class="pa-row-2">
         ${esLetra ? '' : `
@@ -3989,7 +4053,7 @@ function adRenderSace(body, d) {
           ? 'La conducta es <strong>cualitativa</strong>: <strong>escríbela</strong> (S, MB, B) o toca la celda y luego el <strong>valor</strong> — el cursor recorre los parciales I→IV de cada rasgo y sigue solo. Desliza la tabla → para ver todos los rasgos.'
           : esInasis
             ? 'Escribe el <strong>número de inasistencias</strong>. Enter o «Siguiente» para bajar.'
-            : 'Escribe la <strong>nota (1-100)</strong>. Las de 2+ cifras saltan solas; con Enter también. Desliza la tabla → para ver todas las materias.'}</p>
+            : 'Escribe la <strong>nota (1-100)</strong>. Avanza con <strong>Enter</strong>, <strong>Tab</strong> o las flechas. Desliza la tabla → para ver todas las materias.'}</p>
 
       ${esLetra ? `
       <div class="ad-pers-kp">
@@ -4072,7 +4136,20 @@ function adRenderSace(body, d) {
       <p class="pa-optional-hint" id="ad-sace-estado" style="margin-top:8px"></p>
     </div>`;
 
-  const setSel = (k, v) => { body.dataset[k] = v; adRenderSace(body, adLoad()); };
+  const setSel = (k, v) => {
+    if (k === 'parcial' && ['I', 'II', 'III', 'IV'].includes(v)) {
+      _adSaceParcial = v;
+      try { localStorage.setItem('METAS_SACE_PARCIAL', v); } catch (_) {}
+      if (window.metasSaveNav) window.metasSaveNav({ adSaceParcial: v });
+    }
+    if (k === 'vista' && ['aprov', 'pers', 'inasis'].includes(v)) {
+      _adSaceVista = v;
+      try { localStorage.setItem('METAS_SACE_VISTA', v); } catch (_) {}
+      if (window.metasSaveNav) window.metasSaveNav({ adSaceVista: v });
+    }
+    body.dataset[k] = v;
+    adRenderSace(body, adLoad());
+  };
   document.getElementById('ad-sace-parcial')?.addEventListener('change', e => setSel('parcial', e.target.value));
   document.getElementById('ad-sace-vista').addEventListener('change', e => setSel('vista', e.target.value));
   document.getElementById('ad-sace-addmat')?.addEventListener('click', async () => {
@@ -4132,7 +4209,7 @@ function adRenderSace(body, d) {
     const dd = adLoad();
     const campo = inp.dataset.campo;
     /* cada celda sabe su parcial (en Personalidad conviven los cuatro) */
-    const pDest = inp.dataset.parcial || parcial;
+    const pDest = inp.dataset.parcial || _adSaceParcial || parcial || 'I';
     dd.notas[pDest] = dd.notas[pDest] || {};
     dd.notas[pDest][campo] = dd.notas[pDest][campo] || {};
     let raw = inp.value.trim();
@@ -4191,16 +4268,25 @@ function adRenderSace(body, d) {
         else if (v && esPrefijo) _letraT = setTimeout(() => {
           if (document.activeElement === inp && persValores.indexOf(inp.value) >= 0) focar(idx + 1);
         }, 1200);
-      } else if (!esInasis) {
-        // nota 1-100: salta cuando ya no puede crecer (3 cifras o 2 cifras > 10)
-        if (v.length >= 3 || (v.length === 2 && Number(v) > 10)) focar(idx + 1);
       }
     });
     inp.addEventListener('keydown', ev => {
-      if (ev.key === 'Enter' || ev.key === 'ArrowRight') { ev.preventDefault(); focar(idx + 1); }
-      else if (ev.key === 'ArrowLeft') { ev.preventDefault(); focar(idx - 1); }
-      else if (ev.key === 'ArrowDown') { ev.preventDefault(); focar(idx + ncols); }
-      else if (ev.key === 'ArrowUp') { ev.preventDefault(); focar(idx - ncols); }
+      if (ev.key === 'Tab') {
+        ev.preventDefault();
+        focar(ev.shiftKey ? idx - 1 : idx + 1);
+      } else if (ev.key === 'Enter' || ev.key === 'ArrowRight') {
+        ev.preventDefault();
+        focar(idx + 1);
+      } else if (ev.key === 'ArrowLeft') {
+        ev.preventDefault();
+        focar(idx - 1);
+      } else if (ev.key === 'ArrowDown') {
+        ev.preventDefault();
+        focar(idx + ncols);
+      } else if (ev.key === 'ArrowUp') {
+        ev.preventDefault();
+        focar(idx - ncols);
+      }
     });
   });
 
@@ -4439,6 +4525,23 @@ function adRenderSace(body, d) {
         : '✅ CSV del Parcial ' + parcial + ' copiado (todas las columnas). Pégalo en una hoja de cálculo.'),
       () => estado('⚠️ No se pudo copiar automáticamente en este navegador.'));
   });
+
+  /* Restaurar foco y posición del cursor si una celda estaba activa antes del render */
+  if (activeInpInfo) {
+    const matchingInp = inputs.find(inp =>
+      inp.dataset.num === activeInpInfo.num &&
+      inp.dataset.campo === activeInpInfo.campo &&
+      inp.dataset.parcial === activeInpInfo.parcial
+    );
+    if (matchingInp) {
+      matchingInp.focus();
+      try {
+        if (activeInpInfo.selStart != null && activeInpInfo.selEnd != null) {
+          matchingInp.setSelectionRange(activeInpInfo.selStart, activeInpInfo.selEnd);
+        }
+      } catch (_) {}
+    }
+  }
 }
 
 /* Redimensiona un logo a máx 260px y lo guarda como dataURL en el grupo.
@@ -6335,6 +6438,12 @@ window.adRestoreState = async function (tab, colectaId, controlId) {
   if (tab) _adTab = tab;
   _adColectaId = colectaId || null;
   _adControlId = controlId || null;
+  try {
+    const nav = window.metasLoadNav ? window.metasLoadNav() : {};
+    if (['I', 'II', 'III', 'IV'].includes(nav.adSaceParcial)) _adSaceParcial = nav.adSaceParcial;
+    if (['aprov', 'pers', 'inasis'].includes(nav.adSaceVista)) _adSaceVista = nav.adSaceVista;
+    if (nav.adGrupo) _adGrupoActivoId = nav.adGrupo;
+  } catch (_) {}
   if (typeof paVerificarPin === 'function' &&
       !(await paVerificarPin('Los registros administrativos guardan **dinero y notas finales**:'))) {
     switchView('view-perfil');
