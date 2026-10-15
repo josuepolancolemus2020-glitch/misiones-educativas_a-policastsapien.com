@@ -582,10 +582,212 @@ function adGruposArrastrar(bar) {
   }
 }
 
+/* ── CAPTURA Y RESTAURACIÓN DE ESTADO (foco, cursor, parcial y vista) ── */
+let _adCapturedState = null;
+let _adRenderDiferido = false;
+let _adDiferidoTimer = null;
+
+function adActualizarChipNube() {
+  const chip = document.getElementById('ad-nube-chip');
+  if (chip) {
+    const n = typeof adPendientesTotal === 'function' ? adPendientesTotal() : 0;
+    chip.textContent = n ? '⏳ ' + n + ' por subir' : '☁️ al día';
+  }
+}
+
+function adSaceTieneFocoActivo() {
+  if (_adTab !== 'sace') return false;
+  const el = document.activeElement;
+  if (!el) return false;
+  const tag = (el.tagName || '').toUpperCase();
+  if (tag !== 'INPUT' && tag !== 'SELECT' && tag !== 'TEXTAREA') return false;
+  const body = document.getElementById('ad-tab-body');
+  if (!body) return false;
+  return body.contains(el);
+}
+
+function adCaptureState() {
+  const st = typeof adState === 'function' ? adState() : { activo: _adGrupoActivoId, grupos: [] };
+  const state = {
+    tab: _adTab,
+    grupo: (st && st.activo) || _adGrupoActivoId,
+    colectaId: _adColectaId,
+    controlId: _adControlId,
+    saceParcial: _adSaceParcial,
+    saceVista: _adSaceVista,
+    activeInput: null
+  };
+
+  const el = document.activeElement;
+  if (el && (el.tagName === 'INPUT' || el.tagName === 'SELECT' || el.tagName === 'TEXTAREA')) {
+    const saceBody = document.getElementById('ad-tab-body');
+    if (_adTab === 'sace' && saceBody && saceBody.contains(el)) {
+      let selStart = null, selEnd = null;
+      try {
+        if (typeof el.selectionStart === 'number') {
+          selStart = el.selectionStart;
+          selEnd = el.selectionEnd;
+        }
+      } catch (_) {}
+
+      let uniqueSelector = '';
+      if (el.id) {
+        uniqueSelector = '#' + el.id;
+      } else if (el.classList.contains('ad-mx-inp')) {
+        const al = el.dataset.alumno || el.dataset.num;
+        const mat = el.dataset.materia || el.dataset.campo;
+        const p = el.dataset.parcial;
+        if (al && mat && p) {
+          uniqueSelector = `.ad-mx-inp[data-parcial="${p}"][data-num="${al}"][data-campo="${mat}"]`;
+        }
+      }
+
+      state.activeInput = {
+        isSace: true,
+        tagName: el.tagName,
+        id: el.id || '',
+        num: el.dataset.num || el.dataset.alumno || '',
+        alumno: el.dataset.alumno || el.dataset.num || '',
+        campo: el.dataset.campo || el.dataset.materia || '',
+        materia: el.dataset.materia || el.dataset.campo || '',
+        parcial: el.dataset.parcial || '',
+        idx: el.dataset.idx != null ? el.dataset.idx : '',
+        selector: uniqueSelector,
+        selStart: selStart,
+        selEnd: selEnd,
+        value: el.value
+      };
+    }
+  }
+
+  _adCapturedState = state;
+  return state;
+}
+
+function adRestoreFocus(inpInfo) {
+  if (!inpInfo) return false;
+  let target = null;
+
+  // 1. Si tenía ID único
+  if (inpInfo.id) {
+    target = document.getElementById(inpInfo.id);
+  }
+
+  // 2. Si tenía selector único
+  if (!target && inpInfo.selector) {
+    try {
+      target = document.querySelector(inpInfo.selector);
+    } catch (_) {}
+  }
+
+  // 3. Si era celda de Notas SACE por alumno, materia/campo y parcial
+  if (!target && (inpInfo.alumno || inpInfo.num) && (inpInfo.materia || inpInfo.campo)) {
+    const al = String(inpInfo.alumno || inpInfo.num);
+    const mat = String(inpInfo.materia || inpInfo.campo);
+    const p = inpInfo.parcial ? String(inpInfo.parcial) : '';
+    const allInps = document.querySelectorAll('#ad-tab-body .ad-mx-inp');
+    for (let i = 0; i < allInps.length; i++) {
+      const inp = allInps[i];
+      const matchAl = (String(inp.dataset.alumno || inp.dataset.num) === al);
+      const matchMat = (String(inp.dataset.materia || inp.dataset.campo) === mat);
+      const matchP = (!p || String(inp.dataset.parcial) === p);
+      if (matchAl && matchMat && matchP) {
+        target = inp;
+        break;
+      }
+    }
+  }
+
+  // 4. Fallback por data-idx
+  if (!target && inpInfo.idx !== '' && inpInfo.idx != null) {
+    target = document.querySelector(`#ad-tab-body .ad-mx-inp[data-idx="${inpInfo.idx}"]`);
+  }
+
+  if (target) {
+    try {
+      target.focus({ preventScroll: true });
+      if (inpInfo.selStart != null && inpInfo.selEnd != null && typeof target.setSelectionRange === 'function') {
+        target.setSelectionRange(inpInfo.selStart, inpInfo.selEnd);
+      }
+      return true;
+    } catch (_) {}
+  }
+  return false;
+}
+
+async function adRestoreState(stateOrTab, colectaId, controlId) {
+  let saved = null;
+  let tab = stateOrTab;
+  if (typeof stateOrTab === 'object' && stateOrTab !== null) {
+    saved = stateOrTab;
+    tab = saved.tab;
+    colectaId = saved.colectaId;
+    controlId = saved.controlId;
+  } else if (!stateOrTab && _adCapturedState) {
+    saved = _adCapturedState;
+    tab = saved.tab;
+    colectaId = saved.colectaId;
+    controlId = saved.controlId;
+  }
+  if (tab) _adTab = tab;
+  _adColectaId = colectaId || null;
+  _adControlId = controlId || null;
+  if (saved) {
+    if (saved.saceParcial) _adSaceParcial = saved.saceParcial;
+    if (saved.saceVista) _adSaceVista = saved.saceVista;
+    if (saved.grupo) _adGrupoActivoId = saved.grupo;
+  }
+  try {
+    const nav = window.metasLoadNav ? window.metasLoadNav() : {};
+    if (!saved?.saceParcial && ['I', 'II', 'III', 'IV'].includes(nav.adSaceParcial)) _adSaceParcial = nav.adSaceParcial;
+    if (!saved?.saceVista && ['aprov', 'pers', 'inasis'].includes(nav.adSaceVista)) _adSaceVista = nav.adSaceVista;
+    if (!saved?.grupo && nav.adGrupo) _adGrupoActivoId = nav.adGrupo;
+  } catch (_) {}
+  const inAdmin = document.getElementById('view-admin')?.classList.contains('active');
+  if (!inAdmin && typeof paVerificarPin === 'function' &&
+      !(await paVerificarPin('Los registros administrativos guardan **dinero y notas finales**:'))) {
+    if (typeof switchView === 'function') switchView('view-perfil');
+    return;
+  }
+  if (typeof switchView === 'function') switchView('view-admin');
+  renderAdmin(true);
+  if (saved && saved.activeInput) {
+    adRestoreFocus(saved.activeInput);
+  }
+}
+
+window.adCaptureState = adCaptureState;
+window.adRestoreState = adRestoreState;
+
+// Si el render se difirió porque el usuario estaba digitando, repintar al soltar el foco
+document.addEventListener('focusout', () => {
+  if (!_adRenderDiferido) return;
+  if (_adTab !== 'sace') return;
+  clearTimeout(_adDiferidoTimer);
+  _adDiferidoTimer = setTimeout(() => {
+    if (_adRenderDiferido && !adSaceTieneFocoActivo()) {
+      _adRenderDiferido = false;
+      renderAdmin(true);
+    }
+  }, 250);
+});
+
 /* ── RENDER PRINCIPAL ── */
-function renderAdmin() {
+function renderAdmin(forzar = false) {
   const cont = document.getElementById('admin-content');
   if (!cont) return;
+
+  /* Si el refresco viene de una sincronización en segundo plano mientras el
+     usuario tiene el foco activo en un input de Notas SACE, evitar destruir el DOM
+     de la tabla y actualizar únicamente el indicador del botón de pendientes. */
+  if (!forzar && _adTab === 'sace' && adSaceTieneFocoActivo()) {
+    _adRenderDiferido = true;
+    adActualizarChipNube();
+    return;
+  }
+  _adRenderDiferido = false;
+
+  const savedState = adCaptureState();
   const st = adState();
   const d = st.grupos.find(g => g.id === st.activo) || st.grupos[0];
   /* recordar dónde está el docente para restaurarlo al recargar */
@@ -684,8 +886,7 @@ function renderAdmin() {
      se sabía si lo publicado ya subió); tocarlo sincroniza ya */
   document.getElementById('ad-nube-chip').addEventListener('click', async () => {
     await adSincronizarNube(true);
-    const chip = document.getElementById('ad-nube-chip');
-    if (chip) { const n = adPendientesTotal(); chip.textContent = n ? '⏳ ' + n + ' por subir' : '☁️ al día'; }
+    adActualizarChipNube();
   });
   const body = document.getElementById('ad-tab-body');
   if (body) {
@@ -703,6 +904,10 @@ function renderAdmin() {
      arman los equipos con los que vinieron (js/tools/equipos.js) */
   else if (_adTab === 'eq' && typeof adRenderEquipos === 'function') adRenderEquipos(body, d);
   else adRenderSace(body, d);
+
+  if (savedState && savedState.activeInput) {
+    adRestoreFocus(savedState.activeInput);
+  }
 }
 
 /* ══════════════ 👥 ALUMNOS (el corazón: alimenta TODO) ══════════════ */
@@ -3946,11 +4151,15 @@ function adRenderSace(body, d) {
   if (prevActiveEl && prevActiveEl.classList && prevActiveEl.classList.contains('ad-mx-inp')) {
     activeInpInfo = {
       num: prevActiveEl.dataset.num,
+      alumno: prevActiveEl.dataset.alumno || prevActiveEl.dataset.num,
       campo: prevActiveEl.dataset.campo,
+      materia: prevActiveEl.dataset.materia || prevActiveEl.dataset.campo,
       parcial: prevActiveEl.dataset.parcial,
       selStart: prevActiveEl.selectionStart,
       selEnd: prevActiveEl.selectionEnd
     };
+  } else if (_adCapturedState && _adCapturedState.activeInput) {
+    activeInpInfo = _adCapturedState.activeInput;
   }
 
   const esLetra = vista === 'pers';
@@ -4111,7 +4320,7 @@ function adRenderSace(body, d) {
             ${d.lista.map((a, ri) => `<tr>
               <td class="ad-mx-sticky" title="${adEsc(a.nombre)}"><b>#${a.num}</b> <span class="ad-mx-nom">${adEsc(adPrimerNombre(a.nombre)) || '—'}</span></td>
               ${colDefs.map((cd, ci) => `<td${cd.ini ? ' class="ad-mx-ini"' : ''}><input class="ad-mx-inp" data-idx="${ri * colDefs.length + ci}"
-                data-num="${a.num}" data-campo="${adEsc(cd.campo)}" data-parcial="${cd.parcial}" type="text" inputmode="${esLetra ? 'text' : 'numeric'}"
+                data-num="${a.num}" data-alumno="${a.num}" data-campo="${adEsc(cd.campo)}" data-materia="${adEsc(cd.campo)}" data-parcial="${cd.parcial}" type="text" inputmode="${esLetra ? 'text' : 'numeric'}"
                 maxlength="3" autocapitalize="characters" ${esLetra ? 'style="text-transform:uppercase;"' : ''}
                 value="${valOfP(cd.parcial, cd.campo, a.num) !== '' ? adEsc(String(valOfP(cd.parcial, cd.campo, a.num))) : ''}" placeholder="·"></td>`).join('')}
             </tr>`).join('')}
@@ -4252,9 +4461,15 @@ function adRenderSace(body, d) {
   let _letraT = null;
   inputs.forEach(inp => {
     const idx = +inp.dataset.idx;
-    inp.addEventListener('focus', () => { _activoIdx = idx; marcarActivo(idx); persCtx(idx); });
+    inp.addEventListener('focus', () => {
+      _activoIdx = idx;
+      marcarActivo(idx);
+      persCtx(idx);
+      adCaptureState();
+    });
     inp.addEventListener('input', () => {
       guardar(inp);
+      adCaptureState();
       const v = inp.value;
       if (esLetra) {
         clearTimeout(_letraT);
@@ -4528,19 +4743,7 @@ function adRenderSace(body, d) {
 
   /* Restaurar foco y posición del cursor si una celda estaba activa antes del render */
   if (activeInpInfo) {
-    const matchingInp = inputs.find(inp =>
-      inp.dataset.num === activeInpInfo.num &&
-      inp.dataset.campo === activeInpInfo.campo &&
-      inp.dataset.parcial === activeInpInfo.parcial
-    );
-    if (matchingInp) {
-      matchingInp.focus();
-      try {
-        if (activeInpInfo.selStart != null && activeInpInfo.selEnd != null) {
-          matchingInp.setSelectionRange(activeInpInfo.selStart, activeInpInfo.selEnd);
-        }
-      } catch (_) {}
-    }
+    adRestoreFocus(activeInpInfo);
   }
 }
 
@@ -6137,6 +6340,7 @@ async function adSincronizarNube(manual) {
 
   if (!pendientes.length) {
     if (st) st.textContent = '☁️ Nube del chatbot: al día.';
+    adActualizarChipNube();
     return;
   }
   if (navigator.onLine === false) {
@@ -6149,6 +6353,7 @@ async function adSincronizarNube(manual) {
     return;
   }
   _adSyncBusy = true;
+  adActualizarChipNube();
   if (st) st.textContent = '⏳ Subiendo ' + pendientes.length + ' cambio(s)…';
   /* Qué NOTAS van en este viaje, por parcial: al terminar se avisa con un
      toast «Parcial II subido». El maestro que acaba de llenar la boleta
@@ -6185,6 +6390,7 @@ async function adSincronizarNube(manual) {
       });
       adSbMapSave(mapa);
     }
+    adActualizarChipNube();
     if (st) st.textContent = '✅ Nube del chatbot al día (' + new Date().toLocaleTimeString('es-HN') + ').';
     if (manual) toast('☁️ Registros sincronizados');
     else if (typeof toast === 'function') {
@@ -6198,6 +6404,7 @@ async function adSincronizarNube(manual) {
     if (st) st.textContent = '⚠️ No se pudo subir ahora; se reintenta solo.';
   }
   _adSyncBusy = false;
+  adActualizarChipNube();
 }
 window.addEventListener('online', () => adSyncProgramar());
 
@@ -6431,27 +6638,7 @@ async function avSincronizarNube(manual) {
   _avSyncBusy = false;
 }
 
-/* Restaurar «Mi aula» tras recargar: re-pide el candado del maestro y
-   vuelve a la pestaña/colecta donde estaba. Si no pasa el PIN, va a la
-   Zona Docente en vez de exponer el dinero. */
-window.adRestoreState = async function (tab, colectaId, controlId) {
-  if (tab) _adTab = tab;
-  _adColectaId = colectaId || null;
-  _adControlId = controlId || null;
-  try {
-    const nav = window.metasLoadNav ? window.metasLoadNav() : {};
-    if (['I', 'II', 'III', 'IV'].includes(nav.adSaceParcial)) _adSaceParcial = nav.adSaceParcial;
-    if (['aprov', 'pers', 'inasis'].includes(nav.adSaceVista)) _adSaceVista = nav.adSaceVista;
-    if (nav.adGrupo) _adGrupoActivoId = nav.adGrupo;
-  } catch (_) {}
-  if (typeof paVerificarPin === 'function' &&
-      !(await paVerificarPin('Los registros administrativos guardan **dinero y notas finales**:'))) {
-    switchView('view-perfil');
-    return;
-  }
-  switchView('view-admin');
-  renderAdmin();
-};
+/* Restaurar «Mi aula» tras recargar / sincronizar: implementado en adRestoreState arriba */
 
 /* ── Navegación (mismo patrón que las demás herramientas) ── */
 document.addEventListener('DOMContentLoaded', () => {
