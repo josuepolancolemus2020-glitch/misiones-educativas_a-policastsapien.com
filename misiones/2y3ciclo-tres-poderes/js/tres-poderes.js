@@ -96,19 +96,19 @@ const qzData=[
   {q:'¿Quién ejerce el Poder Ejecutivo?',o:['La Corte Suprema de Justicia','El Presidente de la República','El Congreso Nacional','Los juzgados'],c:1,
    e:'Con las Secretarías de Estado: pone las leyes a funcionar.'},
   {q:'Una ley dice al final «Al Poder Ejecutivo. Por Tanto: Ejecútese». ¿Qué significa?',o:['Que la ley ya se venció','Que el Presidente manda que empiece a cumplirse','Que un juez la revisó','Que el Congreso la va a discutir'],c:1,
-   e:'Es exactamente lo que se lee al pie del Estatuto del Docente, firmado en 1997.'},
+   e:'El Presidente de la República firma «Ejecútese» para ordenar que la ley aprobada empiece a cumplirse.'},
   {q:'¿Por qué se dice que la Constitución es la ley FUNDAMENTAL?',o:['Porque es la más larga','Porque la escribió el primer presidente','Porque está por encima de todas las demás leyes','Porque es la más antigua'],c:2,
    e:'El Código de la Niñez ordena las normas por rango y la pone en el número 1.'},
-  {q:'Dos maestros tienen un pleito por lo que dice el Estatuto del Docente. ¿A quién le toca resolverlo?',o:['Al Congreso Nacional','Al Presidente de la República','A la Secretaría de Educación','A los juzgados y tribunales'],c:3,
-   e:'El Legislativo escribe la ley, el Ejecutivo la aplica a todos, y el Judicial la aplica a TU caso.'},
+  {q:'Dos personas tienen un conflicto sobre la aplicación de una ley. ¿A quién le corresponde resolverlo?',o:['Al Congreso Nacional','Al Presidente de la República','A una Secretaría de Estado','A los juzgados y tribunales'],c:3,
+   e:'El Legislativo escribe la ley, el Ejecutivo la aplica a todos, y el Judicial la aplica a tu caso.'},
   {q:'¿Por qué los tres poderes están separados, si sería más rápido que mandara uno solo?',o:['Por costumbre, desde la Independencia','Para que cada uno pueda pararles la mano a los otros dos','Porque no caben en el mismo edificio','Para repartir el trabajo entre más gente'],c:1,
    e:'Si el que escribe la ley es el mismo que te juzga, no hay a quién reclamarle.'},
   {q:'¿Qué es la rendición de cuentas?',o:['Un impuesto que se paga cada año','El examen que hacen los diputados','Explicar públicamente qué se hizo con el cargo y con el dinero de todos','Contar los votos de una elección'],c:2,
    e:'Es un contenido del DCNB, y no es un favor: es parte del trabajo de quien sirve al Estado.'},
   {q:'¿Qué es un Estado de Derecho?',o:['Un país que tiene ejército propio','Un país donde manda la ley y no la voluntad de quien tiene el poder','Un país con tres poderes y un rey','Un país que cobra impuestos'],c:1,
    e:'Y la ley vale igual para el que gobierna que para cualquiera.'},
-  {q:'El Estatuto del Docente mandó que se hiciera su Reglamento. ¿Quién lo dictó?',o:['La Corte Suprema de Justicia','El Congreso Nacional','Una comisión de maestros','La Secretaría de Educación, que es del Ejecutivo'],c:3,
-   e:'Es el Acuerdo 0760-SE-99. Un reglamento dice CÓMO se aplica una ley, y no puede decir más que ella.'}
+  {q:'El Código de la Niñez y la Adolescencia protege a los menores. ¿Quién dictó su reglamento para aplicarlo?',o:['La Corte Suprema de Justicia','El Congreso Nacional','Una comisión de diputados','El Poder Ejecutivo, mediante una Secretaría de Estado'],c:3,
+   e:'El reglamento de una ley dice cómo se aplica y lo dicta el Poder Ejecutivo, sin contradecir la ley.'}
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -131,7 +131,7 @@ const classGroups=[
   {label:['Es del Poder Judicial','Es de otro poder'],headA:'⚖️ Del Judicial',headB:'🚫 De otro poder',colA:'jud',colB:'otro',
    words:[{w:'La Corte Suprema de Justicia',t:'jud'},{w:'Los juzgados y tribunales',t:'jud'},{w:'La jurisprudencia',t:'jud'},{w:'Decidir quién tiene razón en un pleito',t:'jud'},{w:'El Congreso Nacional',t:'otro'},{w:'Dictar un acuerdo',t:'otro'},{w:'Aprobar un decreto',t:'otro'},{w:'Las Secretarías de Estado',t:'otro'}]},
   {label:['Un decreto','Un acuerdo'],headA:'📜 Decreto',headB:'📋 Acuerdo',colA:'dec',colB:'acu',
-   words:[{w:'El Estatuto del Docente, 136-97',t:'dec'},{w:'El Reglamento del Estatuto, 0760-SE-99',t:'acu'},{w:'El Código de la Niñez, 73-96',t:'dec'},{w:'Lo dicta una Secretaría de Estado',t:'acu'},{w:'Lo aprueba el Congreso Nacional',t:'dec'},{w:'Dice CÓMO se aplica una ley',t:'acu'},{w:'Nace en el Salón de Sesiones',t:'dec'},{w:'No puede decir más que la ley',t:'acu'}]}
+   words:[{w:'El Código de Familia, 76-84',t:'dec'},{w:'El Reglamento del Código de la Niñez',t:'acu'},{w:'El Código de la Niñez, 73-96',t:'dec'},{w:'Lo dicta una Secretaría de Estado',t:'acu'},{w:'Lo aprueba el Congreso Nacional',t:'dec'},{w:'Dice CÓMO se aplica una ley',t:'acu'},{w:'Nace en el Salón de Sesiones',t:'dec'},{w:'No puede decir más que la ley',t:'acu'}]}
 ];
 let currentClassGroupIdx=0,clsSelectedWord=null;
 function buildClass(){const group=classGroups[currentClassGroupIdx];document.getElementById('col-left-head').textContent=group.headA;document.getElementById('col-right-head').textContent=group.headB;const bank=document.getElementById('clsBank');bank.innerHTML='';clsSelectedWord=null;document.getElementById('items-left').innerHTML='';document.getElementById('items-right').innerHTML='';_shuffle([...group.words]).forEach(w=>{const el=document.createElement('div');el.className='wb-item';el.textContent=w.w;el.dataset.t=w.t;el.onclick=()=>{document.querySelectorAll('.wb-item').forEach(i=>i.classList.remove('sel-word'));el.classList.add('sel-word');clsSelectedWord=el;sfx('click');};bank.appendChild(el);});['col-left','col-right'].forEach(colId=>{const col=document.getElementById(colId);col.onclick=(e)=>{if(!clsSelectedWord||e.target.classList.contains('drop-item'))return;const targetId=colId==='col-left'?'items-left':'items-right';const wordsCol=document.getElementById(targetId);const item=document.createElement('div');item.className='drop-item';item.textContent=clsSelectedWord.textContent;item.dataset.t=clsSelectedWord.dataset.t;const original=clsSelectedWord;item.onclick=(ev)=>{ev.stopPropagation();if(clsSelectedWord!==null){col.click();}else{document.getElementById('clsBank').appendChild(original);original.classList.remove('sel-word');item.remove();if(typeof sfx==='function')sfx('click');}};wordsCol.appendChild(item);clsSelectedWord.remove();clsSelectedWord=null;sfx('click');};});}
@@ -239,7 +239,7 @@ const retoPairs=[
   {label:['Es del Poder Judicial','Es de otro poder'],btnA:'⚖️ Del Judicial',btnB:'🚫 De otro poder',colA:'jud',colB:'otro',
    words:[{w:'La Corte Suprema de Justicia',t:'jud'},{w:'Los juzgados y tribunales',t:'jud'},{w:'La jurisprudencia',t:'jud'},{w:'Decidir quién tiene razón en un pleito',t:'jud'},{w:'El Congreso Nacional',t:'otro'},{w:'Dictar un acuerdo',t:'otro'},{w:'Aprobar un decreto',t:'otro'},{w:'Las Secretarías de Estado',t:'otro'},{w:'Dictar una sentencia',t:'jud'},{w:'Mandar «Ejecútese»',t:'otro'}]},
   {label:['Un decreto','Un acuerdo'],btnA:'📜 Decreto',btnB:'📋 Acuerdo',colA:'dec',colB:'acu',
-   words:[{w:'El Estatuto del Docente, 136-97',t:'dec'},{w:'El Reglamento del Estatuto, 0760-SE-99',t:'acu'},{w:'El Código de la Niñez, 73-96',t:'dec'},{w:'Lo dicta una Secretaría de Estado',t:'acu'},{w:'Lo aprueba el Congreso Nacional',t:'dec'},{w:'Dice CÓMO se aplica una ley',t:'acu'},{w:'Nace en el Salón de Sesiones',t:'dec'},{w:'No puede decir más que la ley',t:'acu'}]}
+   words:[{w:'El Código de Familia, 76-84',t:'dec'},{w:'El Reglamento del Código de la Niñez',t:'acu'},{w:'El Código de la Niñez, 73-96',t:'dec'},{w:'Lo dicta una Secretaría de Estado',t:'acu'},{w:'Lo aprueba el Congreso Nacional',t:'dec'},{w:'Dice CÓMO se aplica una ley',t:'acu'},{w:'Nace en el Salón de Sesiones',t:'dec'},{w:'No puede decir más que la ley',t:'acu'}]}
 ];
 let currentRetoPairIdx=0,retoPool=[],retoOk=0,retoErr=0,retoTimerInt=null,retoSec=30,retoRunning=false,retoCurrent=null;
 function updateRetoButtons(){const pair=retoPairs[currentRetoPairIdx];document.querySelectorAll('.reto-btns .btn')[0].textContent=pair.btnA;document.querySelectorAll('.reto-btns .btn')[1].textContent=pair.btnB;document.querySelectorAll('.reto-btns .btn')[0].onclick=()=>ansReto(pair.colA);document.querySelectorAll('.reto-btns .btn')[1].onclick=()=>ansReto(pair.colB);}
@@ -278,8 +278,8 @@ const classifyTaskDB=[
   {w:'Poder Ejecutivo',gen:'Cumple y hace cumplir las leyes',n:'El Presidente y las Secretarías',g:'Un acuerdo',t:'Firma «Por Tanto: Ejecútese»'},
   {w:'Poder Judicial',gen:'Aplica la ley a cada caso',n:'La Corte Suprema y los tribunales',g:'Una sentencia',t:'Lo que resuelve una y otra vez es jurisprudencia'},
   {w:'Constitución',gen:'Es la ley fundamental',n:'Está por encima de todas',g:'Dice cómo se organiza el Estado',t:'Ninguna ley puede contradecirla'},
-  {w:'Decreto',gen:'Una ley del Congreso',n:'Lleva su número y su año',g:'Ejemplo: el 136-97',t:'Nace en el Salón de Sesiones'},
-  {w:'Acuerdo',gen:'La norma con que se reglamenta una ley',n:'La dicta una Secretaría',g:'Ejemplo: el 0760-SE-99',t:'No puede decir más que la ley'},
+  {w:'Decreto',gen:'Una ley del Congreso',n:'Lleva su número y su año',g:'Ejemplo: el 73-96',t:'Nace en el Salón de Sesiones'},
+  {w:'Acuerdo',gen:'La norma con que se reglamenta una ley',n:'La dicta una Secretaría',g:'Un reglamento ministerial',t:'No puede decir más que la ley'},
   {w:'Estado de Derecho',gen:'Manda la ley, no la voluntad de quien gobierna',n:'La ley vale igual para todos',g:'Incluye al que gobierna',t:'Es lo que hace posible reclamar'}
 ];
 /* ⚠️ Cada fila lleva sus `opts`, y no es adorno: `genCompleteTask` pinta
@@ -303,7 +303,7 @@ const explainQuestions=[
   {q:'¿Cuáles son los tres poderes del Estado y qué hace cada uno?',ans:'El Legislativo HACE las leyes y lo ejerce el Congreso Nacional. El Ejecutivo las CUMPLE y hace cumplir, y lo encabeza el Presidente de la República con las Secretarías de Estado. El Judicial las APLICA a cada caso, y lo encabeza la Corte Suprema de Justicia con los juzgados y tribunales.'},
   {q:'¿Por qué se dice que la Constitución es la ley fundamental?',ans:'Porque está por encima de todas las demás: cuando dos normas dicen cosas distintas, manda la que está más arriba. El Código de la Niñez ordena las normas por rango y pone la Constitución en el número 1, antes que los tratados, que el propio Código y que cualquier otra ley.'},
   {q:'Explica por qué los tres poderes están separados, si sería más rápido que mandara uno solo.',ans:'Sería más rápido, y por eso mismo no se hace. Si el que escribe la ley es el mismo que decide si la rompiste y el que te castiga, no hay a quién reclamarle. Separarlos es más lento a propósito, porque cada poder puede pararles la mano a los otros dos.'},
-  {q:'Sigue el recorrido de una ley por los tres poderes, con un ejemplo de verdad.',ans:'El Estatuto del Docente: el Congreso Nacional lo aprobó como Decreto 136-97 el 11 de septiembre de 1997; el Presidente firmó «Al Poder Ejecutivo. Por Tanto: Ejecútese» el 29 de septiembre; entró en vigencia al publicarse en La Gaceta; la Secretaría de Educación dictó su Reglamento por Acuerdo 0760-SE-99; y si hay pleito, lo resuelven los tribunales.'},
+  {q:'Sigue el recorrido de una ley por los tres poderes, con un ejemplo de verdad.',ans:'El Código de la Niñez y la Adolescencia: el Congreso Nacional lo aprobó como Decreto 73-96; el Presidente firmó «Ejecútese»; entró en vigencia al publicarse en La Gaceta; el Poder Ejecutivo emitió su reglamento; y si hay algún conflicto sobre su cumplimiento, lo resuelven los tribunales.'},
   {q:'¿Qué diferencia hay entre un decreto y un acuerdo?',ans:'El decreto es una ley y lo aprueba el Congreso Nacional. El acuerdo lo dicta el Ejecutivo (una Secretaría de Estado) para decir CÓMO se aplica esa ley. Por eso un acuerdo nunca puede decir más de lo que dice su ley: si lo hiciera, el Ejecutivo estaría legislando, que no es lo suyo.'},
   {q:'¿Qué es la rendición de cuentas y por qué te toca a ti?',ans:'Es que quien trabaja para el Estado explique en qué gastó el dinero de todos y qué hizo con el cargo. Me toca porque ese dinero es de todos, incluida mi familia, y porque cualquier ciudadano puede preguntarlo. Pasa igual y en pequeño en mi centro, con la merienda escolar y los fondos del comité de padres.'},
   {q:'¿Qué es un Estado de Derecho y cómo se nota que existe?',ans:'Es aquel en que manda la ley y no la voluntad de quien tiene el poder, y la ley vale igual para el que gobierna que para cualquiera. Se nota en que una persona común puede reclamar ante un juez y ganarle a una autoridad, y en que nadie está por encima de la ley.'},
@@ -404,11 +404,11 @@ const evalTFBank=[
   {q:'Un reglamento puede exigir más de lo que exige su propia ley.',a:false,k:'reglamento-limite'},
   {q:'La Constitución dice cómo se organiza el Estado y qué derechos tiene cada persona.',a:true,k:'constitucion-que'},
   {q:'Cuando dos normas dicen cosas distintas, manda siempre la más nueva.',a:false,k:'regla-rango'},
-  {q:'El Estatuto del Docente empieza citando la Constitución de la República.',a:true,k:'estatuto-cita'},
+  {q:'Ningún poder del Estado puede asumir ni intervenir en las funciones exclusivas de los otros dos.',a:true,k:'separacion-funciones'},
   {q:'Explicar en qué gastó el dinero público es un favor que el funcionario hace si quiere.',a:false,k:'rendicion-obligacion'},
-  {q:'El artículo 101 del Estatuto del Docente dice desde cuándo empieza a valer.',a:true,k:'articulo-101'},
+  {q:'Los niños y las niñas gozan de derechos especiales que el Estado y la sociedad deben garantizar.',a:true,k:'derechos-menores'},
   {q:'Una ley obliga a todos desde el día en que se aprueba, aunque todavía no se haya publicado.',a:false,k:'vigencia'},
-  {q:'El Estatuto del Docente dice cómo entra un maestro a su plaza y qué le deben pagar.',a:true,k:'estatuto-rige'},
+  {q:'Cumplir la ley y respetar a la patria son compromisos que corresponden a cada ciudadano.',a:true,k:'compromiso-ciudadano'},
   {q:'Una ley es solo un consejo: cada quien decide si la sigue.',a:false,k:'ley-consejo'}
 ];
 const evalMCBank=[
@@ -421,18 +421,18 @@ const evalMCBank=[
   {q:'¿Qué va en el segundo escalón de la jerarquía de normas?',o:['Las órdenes que da cada alcalde','Las reglas que pone cada escuela','Las promesas de los candidatos','Los tratados o convenios de los que el país forma parte'],a:3,k:'tratados'},
   {q:'¿Para qué sirve que los tres poderes estén separados?',o:['Para que cada uno pueda pararles la mano a los otros','Para que el trabajo salga más rápido','Para gastar menos dinero','Por costumbre, desde siempre'],a:0,k:'separacion'},
   {q:'¿Quién puede preguntarle a un funcionario en qué gastó el dinero público?',o:['Solo el Presidente','Cualquier ciudadano','Solo sus jefes','Nadie: es asunto suyo'],a:1,k:'rendicion-quien'},
-  {q:'¿En qué ciudad se aprobó el Estatuto del Docente?',o:['San Pedro Sula','Comayagua','Tegucigalpa','La Ceiba'],a:2,k:'estatuto-ciudad'}
+  {q:'¿Cuántos diputados integran el Congreso Nacional de Honduras?',o:['100 diputados','120 diputados','128 diputados','150 diputados'],a:2,k:'diputados-cantidad'}
 ];
 const evalCPBank=[
-  {q:'En el séptimo escalón de la jerarquía de normas va la ___ de la Corte Suprema de Justicia.',a:'jurisprudencia',k:'jurisprudencia'},
+  {q:'Toda ley aprobada formalmente por el Congreso Nacional se emite mediante un ___.',a:'decreto',k:'decreto-congreso'},
   {q:'En el cuarto escalón de la jerarquía de normas va el Código de ___.',a:'Familia',k:'codigo-familia'},
-  {q:'En el último escalón de la jerarquía de normas van los ___ generales del derecho.',a:'principios',k:'principios'},
+  {q:'Para que ningún poder someta a los demás, los tres poderes del Estado deben mantenerse ___.',a:'independientes',k:'poderes-independientes'},
   {q:'La lista de las normas por rango, de la más alta a la más baja, está en el Código de la ___ y la Adolescencia.',a:'Niñez',k:'codigo-ordena'},
-  {q:'El Estatuto del Docente es el ___ 136-97.',a:'Decreto',k:'decreto'},
-  {q:'El Reglamento del Estatuto del Docente lleva el número ___.',a:'0760-SE-99',k:'reglamento-numero'},
-  {q:'La orden «Ejecútese» del Estatuto del Docente se firmó el ___ de septiembre de 1997.',a:'29',k:'ejecutese-fecha'},
-  {q:'El Estatuto del Docente se aprobó el ___ de septiembre de 1997.',a:'11',k:'estatuto-fecha'},
-  {q:'El artículo ___ del Estatuto del Docente mandaba que se hiciera su reglamento.',a:'93',k:'articulo-93'},
+  {q:'En Honduras, los ciudadanos eligen democráticamente a sus gobernantes mediante el ___.',a:'voto',k:'voto-democracia'},
+  {q:'El derecho fundamental de toda persona que el Estado protege desde su concepción es el derecho a la ___.',a:'vida',k:'derecho-vida'},
+  {q:'Los miembros de mayor jerarquía que integran la Corte Suprema de Justicia se llaman ___.',a:'magistrados',k:'magistrados-corte'},
+  {q:'El derecho a pensar, opinar y actuar dentro del marco de la ley se llama ___.',a:'libertad',k:'derecho-libertad'},
+  {q:'La labor de juzgar y resolver los pleitos entre personas corresponde a los jueces y ___.',a:'tribunales',k:'tribunales-aplican'},
   {q:'En tu centro, lo que se hizo con la merienda escolar y con los fondos del comité de padres se explica en una ___.',a:'asamblea',k:'rendicion-escuela'}
 ];
 const evalPRBank=[
@@ -536,7 +536,7 @@ function evalSwitchMode(mode){
    hoja. Antes se pisaban: el caso de «la Corte Suprema hace las leyes», el
    error «la Corte Suprema de Justicia aprueba las leyes» y la comparación
    que pedía decir quién aprueba las leyes preguntaban lo mismo, y la causa
-   «el Congreso Nacional aprobó el Estatuto» lo dejaba contestado. Medido el
+   «el Congreso Nacional aprobó la ley» lo dejaba contestado. Medido el
    25 de septiembre de 2026: 29 de las 30 formas repetían algún dato.
 
    Ahora cada sección tiene su terreno y no pisa el de las otras:
@@ -550,7 +550,7 @@ function evalSwitchMode(mode){
      Marvin con la que abre la misión y lo que enseña su animación, así
      que un caso así se contestaba acordándose de ella;
    - las DECISIONES son de rendición de cuentas y de respeto;
-   - las CAUSAS y los EFECTOS salen del Estatuto del Docente y de lo que es
+   - las CAUSAS y los EFECTOS salen del Código de la Niñez y de lo que es
      una ley. */
 const critCaseBank=[
   {txt:'Un compañero dice que las leyes son cosa de abogados, y que a un niño de su edad no le sirve conocer ninguna.',k:'caso-leyes-ninos'},
@@ -569,7 +569,7 @@ const critCaseQuestions=[
 const critCaseGuides=[
   'Se valora que cuente la situación con sus palabras: quién dice o hace qué, y de qué regla o de qué autoridad se habla.',
   'Se valora que diga si está bien o mal y lo sostenga: hay leyes hechas para los niños, como el Código de la Niñez y la Adolescencia; la ley vale igual para el que gobierna que para cualquiera; nadie hace la ley, la cumple y juzga él solo; lo que una ley dice se compara con lo que de verdad pasa; y un dato que no se sabe se busca en la fuente: no se inventa.',
-  'Se valora que use un dato de verdad de la misión: qué es una ley, qué es un Estado de Derecho, por qué los poderes están separados, qué ley rige la vida de los niños o la de su maestro, o dónde se busca lo que la misión no dice.',
+  'Se valora que use un dato de verdad de la misión: qué es una ley, qué es un Estado de Derecho, por qué los poderes están separados, qué ley rige los derechos de los niños y las niñas, o dónde se busca lo que la misión no dice.',
   'Respuesta abierta. Se valora que explique con respeto y con un dato concreto, no que se burle de la persona.'
 ];
 const critErrorBank=[
@@ -609,9 +609,9 @@ const critCompareBank=[
    gr:'Van juntos y no son lo mismo: los deberes se cumplen y los derechos se respetan. El que exige sus derechos y no cumple sus deberes le pide a la convivencia algo que él no pone.',k:['deberes','derechos']}
 ];
 const critCauseBank=[
-  {cause:'El artículo 93 del Estatuto del Docente mandaba que se hiciera su reglamento.',guide:'Por eso la Secretaría de Educación dictó el Acuerdo 0760-SE-99, que dice cómo se aplica el Estatuto.',k:'articulo-93'},
-  {cause:'El Estatuto del Docente se aprobó en 1997.',guide:'Por eso su número, el 136-97, termina en 97: un decreto lleva su número y su año.',k:'decreto-anio'},
-  {cause:'El Estatuto del Docente es la ley que rige al maestro que tienes delante.',guide:'Por eso, si no le pagan lo que le toca, tiene una ley escrita que señalar para reclamar.',k:'estatuto-rige'}
+  {cause:'El Código de la Niñez y la Adolescencia se aprobó como Decreto 73-96.',guide:'Por eso su número termina en 96: cada decreto lleva su número oficial y el año en que se aprobó.',k:'decreto-anio'},
+  {cause:'El Código de la Niñez y la Adolescencia es la ley que rige los derechos de los estudiantes.',guide:'Por eso, si se vulnera la educación o el bienestar de un menor, hay una ley escrita para defenderlo.',k:'ninez-defensa'},
+  {cause:'Una ley manda que se dicte un reglamento para aplicarla.',guide:'Por eso el Poder Ejecutivo emite un acuerdo con las normas detalladas para cumplirla.',k:'mandato-reglamento'}
 ];
 const critEffectBank=[
   {effect:'A una ley no se le puede contestar «no la cumplo porque no me gusta».',guide:'Porque una ley no es un consejo, y no depende del gusto de nadie: obliga igual al que le gusta y al que no.',k:'ley-no-consejo'},
