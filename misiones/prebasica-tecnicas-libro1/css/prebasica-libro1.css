@@ -58,6 +58,11 @@
   --green-gl: rgba(0, 184, 148, 0.20);
 }
 
+html {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -69,6 +74,7 @@ body {
   background: var(--bg);
   color: var(--dark);
   min-height: 100vh;
+  max-width: 100%;
   overflow-x: hidden;
   transition: background 0.3s, color 0.3s;
   font-size: 1.04rem;
@@ -107,6 +113,8 @@ body::before {
   color: #5c1a16;
   padding: 0.7rem 1.1rem;
   box-shadow: 0 4px 14px rgba(217, 83, 79, 0.18);
+  max-width: 100%;
+  overflow: hidden;
 }
 
 [data-theme="dark"] .adult-imperative-banner {
@@ -122,6 +130,7 @@ body::before {
   display: flex;
   align-items: center;
   gap: 0.85rem;
+  width: 100%;
 }
 
 .adult-banner-icon {
@@ -192,6 +201,8 @@ body::before {
   display: flex;
   align-items: center;
   gap: 0.8rem;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .xp-back-btn {
@@ -226,7 +237,8 @@ body::before {
 }
 
 .xp-track {
-  flex: 1;
+  flex: 1 1 60px;
+  min-width: 40px;
   height: 10px;
   background: rgba(255, 255, 255, 0.14);
   border-radius: 10px;
@@ -453,6 +465,9 @@ body::before {
   padding: 1.25rem 1rem 3rem;
   position: relative;
   z-index: 1;
+  box-sizing: border-box;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .sec {
@@ -478,6 +493,8 @@ body::before {
   position: relative;
   overflow: hidden;
   border: 1px solid var(--border);
+  box-sizing: border-box;
+  max-width: 100%;
 }
 
 .card::before {
@@ -525,11 +542,13 @@ body::before {
   justify-content: space-between;
   gap: 0.85rem;
   flex-wrap: wrap;
+  box-sizing: border-box;
+  max-width: 100%;
 }
 
 .parent-guide-content {
-  flex: 1;
-  min-width: 240px;
+  flex: 1 1 200px;
+  min-width: 0;
 }
 
 .parent-guide-tag {
@@ -620,7 +639,7 @@ body::before {
    ========================================================================== */
 .trace-selector-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
   gap: 0.65rem;
   margin-bottom: 1rem;
 }
@@ -814,8 +833,8 @@ body::before {
   font-family: 'Fredoka', sans-serif;
   font-size: 1.2rem;
   color: var(--dark);
-  flex: 1;
-  min-width: 240px;
+  flex: 1 1 200px;
+  min-width: 0;
 }
 
 .discover-prompt-sub {
@@ -872,7 +891,7 @@ body::before {
 
 .rodea-items-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(115px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 105px), 1fr));
   gap: 0.9rem;
   position: relative;
   z-index: 2;
@@ -1075,7 +1094,7 @@ body::before {
 
 .slots-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 120px), 1fr));
   gap: 0.8rem;
 }
 
@@ -1114,7 +1133,7 @@ body::before {
 /* Rompecabezas Vertical del Cuerpo Humano (pág. 59 del libro) */
 .body-puzzle-layout {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
   gap: 1.2rem;
   align-items: start;
 }
@@ -1152,7 +1171,7 @@ body::before {
 /* Estacionamiento de carros por colores (Color Matching Car Park) */
 .carpark-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 130px), 1fr));
   gap: 0.85rem;
 }
 
@@ -1191,7 +1210,7 @@ body::before {
    ========================================================================== */
 .hands-on-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
   gap: 1.1rem;
 }
 
@@ -1356,6 +1375,23 @@ body::before {
     flex-direction: column;
     align-items: flex-start;
   }
+  .xp-bar {
+    gap: 0.35rem;
+    padding: 0.35rem 0.5rem;
+    flex-wrap: wrap;
+    row-gap: 0.25rem;
+  }
+  .xp-bar .xp-lbl {
+    display: none;
+  }
+  .xp-bar .xp-track {
+    flex: 1 1 50px;
+    min-width: 40px;
+  }
+  .xp-lvl {
+    font-size: 0.7rem;
+    padding: 0.12rem 0.45rem;
+  }
   .hero-inner {
     flex-direction: column;
     text-align: center;
@@ -1365,5 +1401,34 @@ body::before {
   }
   .hero-badges {
     justify-content: center;
+  }
+  .nav {
+    gap: 0.35rem;
+    padding: 0.5rem 0.35rem;
+  }
+  .nav-t {
+    font-size: 0.8rem;
+    padding: 0.35rem 0.65rem;
+    min-height: 42px;
+  }
+  .main {
+    padding: 0.85rem 0.5rem 2.5rem;
+  }
+  .card {
+    padding: 1rem 0.75rem;
+    border-radius: 14px;
+  }
+  .trace-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .trace-progress-row {
+    flex-wrap: wrap;
+  }
+  .discover-prompt-card {
+    padding: 0.85rem 0.75rem;
+  }
+  .discover-prompt-text {
+    font-size: 1.05rem;
   }
 }

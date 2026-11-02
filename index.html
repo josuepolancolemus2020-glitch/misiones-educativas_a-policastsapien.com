@@ -8,21 +8,21 @@
        línea que diga qué gana quien lo abre. Esta es esa línea, y es la misma que
        la de la portada, la del manifest y la del README: si se cambia una, se
        cambian las cuatro. -->
-  <meta name="description" content="Misiones para 4º a 9º con su examen y su ficha listos para fotocopiar. Las de Español, Matemáticas, Ciencias y Sociales llevan señalado su bloque del DCNB. Funcionan sin internet y son gratis para el maestro hondureño.">
+  <meta name="description" content="Misiones de Prebásica a 9.º con su examen y su ficha listos para fotocopiar. Las de Español, Matemáticas, Ciencias y Sociales llevan señalado su bloque del DCNB para la educación.">
   <title>M.E.T.A.S. · Misiones Educativas Tecnológicas Asincrónicas y Sincrónicas</title>
   <link rel="manifest" href="manifest.json">
   <!-- Las tipografías, aquí dentro: antes venían de fonts.googleapis.com por un
        @import de app.css, y una hoja de estilo externa BLOQUEA el pintado. Con el
        CDN colgado —lo que hace la señal de un pueblo— la portada no pintaba NUNCA.
        Va antes de app.css para que el @font-face esté cuando la hoja lo pida. -->
-  <link rel="stylesheet" href="css/vendor/fuentes/fuentes.css?v=438">
-  <link rel="stylesheet" href="css/app.css?v=438">
+  <link rel="stylesheet" href="css/vendor/fuentes/fuentes.css?v=439">
+  <link rel="stylesheet" href="css/app.css?v=439">
 
   <!-- El tamaño de letra del maestro se aplica ANTES del primer pintado:
        si se aplicara al final, vería la pantalla pequeña y luego un salto,
        y en un teléfono lento ese salto le mueve de debajo del dedo lo que
        iba a tocar. Misma razón por la que estrella-ganada.js va aquí. -->
-  <script src="js/letra-maestro.js?v=438"></script>
+  <script src="js/letra-maestro.js?v=439"></script>
   <!-- Font Awesome, local y nada más: el respaldo del CDN se quitó, porque un
        <link> externo bloquea el pintado y ya estaba aquí el mismo archivo. -->
   <link rel="stylesheet" href="css/vendor/fontawesome/css/all.min.css">
@@ -85,13 +85,34 @@
            depende de eso. Y la frase dice que la lista crece, porque una cifra
            sola se lee como el final. -->
       <section class="valor-card" aria-label="Qué es M.E.T.A.S. y para quién">
-        <p class="valor-quien">👩‍🏫 Para el maestro hondureño · y es gratis</p>
-        <p class="valor-txt">Hoy <b id="valor-misiones">66 misiones</b> de 4º a 9º —y siguen
+        <p class="valor-quien">🎓 Para la Educación</p>
+        <p class="valor-txt">Hoy <b id="valor-misiones">85 misiones</b> de Prebásica a 9.º —y siguen
           entrando—, cada una con <b>su examen y su ficha listos para fotocopiar</b>.
           Las de Español, Matemáticas, Ciencias y Sociales llevan señalado su bloque
-          del <b>DCNB</b>. Ábrelas una vez con señal y después
-          <b>trabajan sin internet</b>.</p>
+          del <b>DCNB</b>.</p>
       </section>
+
+      <!-- Prebásica (Con Papá y Mamá) -->
+      <div class="prebasica-home-section">
+        <h2 class="section-title">Prebásica (Con Papá y Mamá)</h2>
+        <a class="prebasica-card" href="misiones/prebasica-tecnicas-libro1/prebasica-libro1.html" onclick="visitMission(85); return true;">
+          <div class="preb-card-badge">👨‍👩‍👧 Con apoyo de un adulto</div>
+          <div class="preb-card-head">
+            <span class="preb-card-icon">🐝</span>
+            <div class="preb-card-titles">
+              <div class="preb-card-title">Prebásica (3.° Grado): Técnicas Gráficas y No Gráficas — Libro 1</div>
+              <div class="preb-card-sub">Técnicas Gráficas, Trazos, Letras y Rompecabezas · Libro 1 (Evelyn S. Castellanos H.)</div>
+            </div>
+          </div>
+          <div class="preb-card-footer">
+            <span class="preb-card-tag"><i class="fa-solid fa-shapes"></i> Prebásica (3.° Grado)</span>
+            <span class="preb-card-xp"><i class="fa-solid fa-star"></i> +40 XP</span>
+            <span class="preb-card-btn">Empezar juntos <i class="fa-solid fa-arrow-right"></i></span>
+          </div>
+        </a>
+      </div>
+
+
 
       <!-- Navegación principal: los 4 accesos más usados, a un toque -->
       <h2 class="section-title">¿Qué quieres hacer hoy?</h2>
@@ -146,26 +167,6 @@
       <button class="asis-sub" onclick="switchView('view-padre')">
         Ver el avance guardado en este teléfono <i class="fa-solid fa-chevron-right"></i>
       </button>
-
-      <!-- Prebásica (Con Papá y Mamá) -->
-      <div class="prebasica-home-section">
-        <h2 class="section-title">Prebásica (Con Papá y Mamá)</h2>
-        <a class="prebasica-card" href="misiones/prebasica-tecnicas-libro1/prebasica-libro1.html" onclick="visitMission(85); return true;">
-          <div class="preb-card-badge">👨‍👩‍👧 Con apoyo de un adulto</div>
-          <div class="preb-card-head">
-            <span class="preb-card-icon">🐝</span>
-            <div class="preb-card-titles">
-              <div class="preb-card-title">Prebásica (3.° Grado): Técnicas Gráficas y No Gráficas — Libro 1</div>
-              <div class="preb-card-sub">Técnicas Gráficas, Trazos, Letras y Rompecabezas · Libro 1 (Evelyn S. Castellanos H.)</div>
-            </div>
-          </div>
-          <div class="preb-card-footer">
-            <span class="preb-card-tag"><i class="fa-solid fa-shapes"></i> Prebásica (3.° Grado)</span>
-            <span class="preb-card-xp"><i class="fa-solid fa-star"></i> +40 XP</span>
-            <span class="preb-card-btn">Empezar juntos <i class="fa-solid fa-arrow-right"></i></span>
-          </div>
-        </a>
-      </div>
 
       <!-- Subjects -->
       <h2 class="section-title">Explorar por materia</h2>
@@ -1182,33 +1183,33 @@
     </nav>
   </aside>
 
-  <script src="js/metas-dialogos.js?v=438"></script>
-  <script src="js/html2canvas.min.js?v=438"></script>
-  <script src="js/data/misiones.js?v=438"></script>
-  <script src="js/catalogo-misiones.js?v=438"></script>
-  <script src="js/data/dcnb-map.js?v=438"></script>
+  <script src="js/metas-dialogos.js?v=439"></script>
+  <script src="js/html2canvas.min.js?v=439"></script>
+  <script src="js/data/misiones.js?v=439"></script>
+  <script src="js/catalogo-misiones.js?v=439"></script>
+  <script src="js/data/dcnb-map.js?v=439"></script>
   <!-- De qué grado es cada misión, y las tres reglas que quitan el estigma
        sin quitar la ayuda. Va después del mapa del DCNB, que es su fuente. -->
-  <script src="js/grado-alumno.js?v=438"></script>
-  <script src="js/data/diagnosticos.js?v=438"></script>
-  <script src="js/data/proceres.js?v=438"></script>
-  <script src="js/data/paises.js?v=438"></script>
-  <script src="js/data/frases.js?v=438"></script>
-  <script src="js/data/consejos-padres.js?v=438"></script>
-  <script src="js/tools/gobierno-escolar.js?v=438"></script>
-  <script src="js/tools/plan-accion.js?v=438"></script>
-  <script src="js/tools/registros-admin.js?v=438"></script>
-  <script src="js/tools/convocatoria.js?v=438"></script>
-  <script src="js/tools/estadisticas-alumno.js?v=438"></script>
-  <script src="js/tools/equipos.js?v=438"></script>
-  <script src="js/data/lectura-normas.js?v=438"></script>
-  <script src="js/data/lectura-textos.js?v=438"></script>
-  <script src="js/tools/lectura-fluidez.js?v=438"></script>
-  <script src="js/tools/parte-mensual.js?v=438"></script>
-  <script src="js/tools/collage-maker.js?v=438"></script>
-  <script src="js/tools/formacion-docente.js?v=438"></script>
-  <script src="js/data/campeonismo-bank.js?v=438"></script>
-  <script src="js/tools/campeonismo.js?v=438"></script>
+  <script src="js/grado-alumno.js?v=439"></script>
+  <script src="js/data/diagnosticos.js?v=439"></script>
+  <script src="js/data/proceres.js?v=439"></script>
+  <script src="js/data/paises.js?v=439"></script>
+  <script src="js/data/frases.js?v=439"></script>
+  <script src="js/data/consejos-padres.js?v=439"></script>
+  <script src="js/tools/gobierno-escolar.js?v=439"></script>
+  <script src="js/tools/plan-accion.js?v=439"></script>
+  <script src="js/tools/registros-admin.js?v=439"></script>
+  <script src="js/tools/convocatoria.js?v=439"></script>
+  <script src="js/tools/estadisticas-alumno.js?v=439"></script>
+  <script src="js/tools/equipos.js?v=439"></script>
+  <script src="js/data/lectura-normas.js?v=439"></script>
+  <script src="js/data/lectura-textos.js?v=439"></script>
+  <script src="js/tools/lectura-fluidez.js?v=439"></script>
+  <script src="js/tools/parte-mensual.js?v=439"></script>
+  <script src="js/tools/collage-maker.js?v=439"></script>
+  <script src="js/tools/formacion-docente.js?v=439"></script>
+  <script src="js/data/campeonismo-bank.js?v=439"></script>
+  <script src="js/tools/campeonismo.js?v=439"></script>
   <script>
     /* Países ENCENDIDOS: el alumno elige su país y el inicio se pinta con los
        colores de esa bandera. Las misiones siguen siendo de Honduras: en los
@@ -1218,14 +1219,14 @@
        Honduras sin que nadie pierda su XP. */
     window.METAS_PAISES_ON = true;
   </script>
-  <script src="js/app.js?v=438"></script>
+  <script src="js/app.js?v=439"></script>
   <!-- La fusión de los datos del aula. Va ANTES del espejo, que es quien la
        llama: sin ella el espejo sigue funcionando como antes —elige la copia
        más nueva— y por eso no revienta si un día no carga; pero con ella el
        maestro que usa el teléfono y la PC el mismo día no pierde nada. -->
-  <script src="js/metas-fusion-aula.js?v=438"></script>
-  <script src="js/metas-docente-sync.js?v=438"></script>
-  <script src="js/tools/pwa-install.js?v=438"></script>
+  <script src="js/metas-fusion-aula.js?v=439"></script>
+  <script src="js/metas-docente-sync.js?v=439"></script>
+  <script src="js/tools/pwa-install.js?v=439"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
