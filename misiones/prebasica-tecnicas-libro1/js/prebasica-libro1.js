@@ -30,6 +30,27 @@
   }
   window.obtenerSaludoEscuela = obtenerSaludoEscuela;
 
+  var MAPA_SALUDO_ESCUELA = {
+    'CEPB María Consuelo': 'saludo-mariaconsuelo.mp3',
+    'Coral Bilingual School': 'saludo-coral.mp3',
+    'CEPB Rafael Pineda Ponce': 'saludo-rafael.mp3',
+    'CEPB Nimia Baquedano': 'saludo-nimia.mp3',
+    'CEPB Dionisio de Herrera': 'saludo-dionisio.mp3',
+    'CEPB Amigo de los Niños': 'saludo-amigo.mp3',
+    'CEBNG Blessing Bilingual School': 'saludo-blessing.mp3',
+    'CEBNG Simiente Santa': 'saludo-simiente.mp3',
+    'CEPB Marina Name': 'saludo-marina.mp3',
+    'John Cook School': 'saludo-johncook.mp3',
+    'Liceo Panamericano': 'saludo-panamericano.mp3',
+    'Edición Oficial M.E.T.A.S. · Evelyn S. Castellanos H.': 'saludo-metas.mp3'
+  };
+
+  function obtenerAudioSaludoEscuela() {
+    var esc = obtenerSaludoEscuela();
+    if (!esc) return null;
+    return MAPA_SALUDO_ESCUELA[esc] || 'saludo-generico.mp3';
+  }
+
   /* --------------------------------------------------------------------------
      CARGA Y GUARDADO DE PROGRESO LOCAL
      -------------------------------------------------------------------------- */
@@ -160,6 +181,106 @@
       .trim();
   }
 
+  function normalizarClaveBusquedaAudio(t) {
+    if (!t) return '';
+    return t
+      .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2300}-\u{23FF}\u{2B00}-\u{2BFF}\u{FE00}-\u{FE0F}\u{200D}]/gu, '')
+      .replace(/[¡!¿?.,:;"'«»()_—–\-\[\]{}]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .toLowerCase();
+  }
+
+  function obtenerArchivoAudio(texto) {
+    if (!window.MAPA_AUDIOS_PREBASICA || !texto) return null;
+    var mapa = window.MAPA_AUDIOS_PREBASICA;
+
+    // 1. Clave exacta
+    if (mapa[texto]) return mapa[texto];
+
+    // 2. Sin emojis
+    var limpio = normalizarTextoAudio(texto);
+    if (mapa[limpio]) return mapa[limpio];
+
+    // 3. Minúsculas
+    var lower = limpio.toLowerCase();
+    if (mapa[lower]) return mapa[lower];
+
+    // 4. Clave ultra tolerante (sin signos)
+    var tolerante = normalizarClaveBusquedaAudio(texto);
+    if (mapa[tolerante]) return mapa[tolerante];
+
+    // 5. Si trae prefijo dinámico institucional, retirarlo y buscar la base
+    var regexPrefijo = /^(?:¡?familia\s+de\s+[^!.,;]+[!:.,;]?\s*|¡?atenci[oó]n\s+querida\s+familia\s+de\s+[^!.,;]+[!:.,;]?\s*|¡?excelente\s+trabajo\s+en\s+familia\s+con\s+[^!.,;]+[!:.,;]?\s*|¡?felicidades\s+familia\s+de\s+[^!.,;]+[!:.,;]?\s*)/i;
+    var sinPrefijo = texto.replace(regexPrefijo, '').trim();
+    if (sinPrefijo && sinPrefijo !== texto) {
+      var archivoSin = obtenerArchivoAudio(sinPrefijo);
+      if (archivoSin) return archivoSin;
+    }
+
+    return null;
+  }
+
+  function reproducirArchivoDirecto(archivo, onEnd) {
+    try {
+      var audio = new Audio('audios/' + archivo);
+      window.audioPrebasicaActual = audio;
+
+      audio.onended = function () {
+        window.audioPrebasicaActual = null;
+        if (typeof onEnd === 'function') onEnd();
+      };
+
+      audio.onerror = function () {
+        window.audioPrebasicaActual = null;
+        if (typeof onEnd === 'function') onEnd();
+      };
+
+      var p = audio.play();
+      if (p !== undefined) {
+        p.catch(function () {
+          window.audioPrebasicaActual = null;
+          if (typeof onEnd === 'function') onEnd();
+        });
+      }
+    } catch (e) {
+      window.audioPrebasicaActual = null;
+      if (typeof onEnd === 'function') onEnd();
+    }
+  }
+
+  var MAPA_TECNICAS_CASA = {
+    'estrujado': 'casa_estrujado.mp3',
+    'rasgado': 'casa_rasgado.mp3',
+    'boleado': 'casa_boleado.mp3',
+    'dactilopintura': 'casa_dactilopintura.mp3',
+    'punzado': 'casa_punzado.mp3',
+    'recorte': 'casa_recorte.mp3'
+  };
+
+  window.hablarTecnicaCasa = function (techId, btn) {
+    if (!state.soundOn) return;
+    var archivo = MAPA_TECNICAS_CASA[techId];
+    if (!archivo) return;
+
+    if (window.audioPrebasicaPlaying && btn && btn === window.ultimoBotonAudio) {
+      window.detenerAudioPrebasica();
+      window.ultimoTextoAudio = null;
+      return;
+    }
+
+    window.detenerAudioPrebasica();
+    window.ultimoBotonAudio = btn || null;
+    window.ultimoTextoAudio = archivo;
+    window.audioPrebasicaPlaying = true;
+    actualizarBotonFlotanteDetener(true);
+    if (btn) btn.classList.add('audio-playing');
+
+    reproducirArchivoDirecto(archivo, function () {
+      limpiarEstadoReproduccionAudio();
+    });
+  };
+
   function actualizarBotonFlotanteDetener(visible) {
     var btn = document.getElementById('btnDetenerVozFlotante');
     if (btn) {
@@ -260,11 +381,7 @@
   }
 
   function reproducirAudioOTexto(limpio, lang, btn, onEnd) {
-    var archivo = null;
-    if (window.MAPA_AUDIOS_PREBASICA) {
-      archivo = window.MAPA_AUDIOS_PREBASICA[limpio] ||
-                window.MAPA_AUDIOS_PREBASICA[limpio.toLowerCase()];
-    }
+    var archivo = obtenerArchivoAudio(limpio);
 
     if (archivo) {
       try {
@@ -333,6 +450,54 @@
     });
   };
 
+  window.hablarConSaludoEscuela = function (textoInstruccion, lang, btn, callback) {
+    if (!state.soundOn || !textoInstruccion) return;
+
+    var esc = obtenerSaludoEscuela();
+    var audioSaludo = esc ? obtenerAudioSaludoEscuela() : null;
+    var esEspañol = !lang || lang.toLowerCase().indexOf('es') === 0;
+
+    // Si hay escuela activa y es en español, encadenar primero el saludo institucional en MP3
+    if (audioSaludo && esEspañol) {
+      // Toggle
+      if (window.audioPrebasicaPlaying && (
+        (btn && btn === window.ultimoBotonAudio) ||
+        window.ultimoTextoAudio === textoInstruccion
+      )) {
+        window.detenerAudioPrebasica();
+        window.ultimoTextoAudio = null;
+        return;
+      }
+
+      window.detenerAudioPrebasica();
+      window.ultimoBotonAudio = btn || null;
+      window.ultimoTextoAudio = textoInstruccion;
+      window.audioPrebasicaPlaying = true;
+      actualizarBotonFlotanteDetener(true);
+      if (btn) btn.classList.add('audio-playing');
+
+      // 1. Reproducir saludo de la escuela
+      reproducirArchivoDirecto(audioSaludo, function () {
+        if (!window.audioPrebasicaPlaying) return;
+        // 2. Pausa natural de 150ms
+        window.audioTimeoutBilingue = setTimeout(function () {
+          if (!window.audioPrebasicaPlaying) return;
+          // 3. Audio de la instrucción oficial
+          reproducirAudioOTexto(textoInstruccion, lang, btn, function () {
+            limpiarEstadoReproduccionAudio();
+            if (typeof callback === 'function') {
+              try { callback(); } catch (e) {}
+            }
+          });
+        }, 150);
+      });
+      return;
+    }
+
+    // Sin escuela activa o en inglés: reproducir directamente
+    window.hablarTexto(textoInstruccion, lang, btn, callback);
+  };
+
   window.hablarBilingue = function (textoEs, textoEn, triggerBtn) {
     if (!state.soundOn) return;
     var claveEs = normalizarTextoAudio(textoEs);
@@ -374,11 +539,8 @@
   };
 
   window.hablarAvisoAdulto = function (btn) {
-    var esc = obtenerSaludoEscuela();
-    var texto = esc
-      ? ('¡Atención querida familia de ' + esc + '! Uso exclusivo con apoyo de un adulto. Esta sección de Prebásica está diseñada para que papá, mamá o encargado trabajen sentados junto al niño. Nunca deje al niño solo con el teléfono o la tablet.')
-      : 'Atención familia: Uso exclusivo con apoyo de un adulto. Esta sección de Prebásica está diseñada para que el padre, madre o encargado trabaje sentado junto al niño. Nunca deje al niño solo con el teléfono o la tablet.';
-    window.hablarTexto(texto, 'es-ES', btn);
+    var textoFijo = 'Atención familia: Uso exclusivo con apoyo de un adulto. Esta sección de Prebásica está diseñada para que el padre, madre o encargado trabaje sentado junto al niño. Nunca deje al niño solo con el teléfono o la tablet.';
+    window.hablarConSaludoEscuela(textoFijo, 'es-ES', btn);
   };
 
   /* --------------------------------------------------------------------------
@@ -748,9 +910,7 @@
         if (statusMsg) {
           statusMsg.innerHTML = '🎉 <strong>¡Felicidades! ✓</strong> Completaste el trazo hasta la meta con mucho control.';
         }
-        var esc = obtenerSaludoEscuela();
-        var fel = esc ? ('¡Excelente trabajo en familia con ' + esc + '! Llegaste a la meta con un gran trazo.') : '¡Muy bien! Llegaste a la meta. ¡Excelente trazo!';
-        window.hablarTexto(fel, 'es-ES');
+        window.hablarTexto('¡Muy bien! Llegaste a la meta. ¡Excelente trazo!', 'es-ES');
         renderTraceSelector();
       }
     }
@@ -901,9 +1061,7 @@
   window.leerRetoTrazoActual = function (btn) {
     var ch = TRACE_CHALLENGES[traceState.currentIdx];
     if (ch) {
-      var esc = obtenerSaludoEscuela();
-      var texto = esc ? ('¡Familia de ' + esc + '! ' + ch.ttsText) : ch.ttsText;
-      window.hablarTexto(texto, 'es-ES', btn);
+      window.hablarConSaludoEscuela(ch.ttsText, 'es-ES', btn);
     }
   };
 
@@ -1253,9 +1411,7 @@
           state.completedRodea[key] = true;
           addXP(15, 's-rodea');
         }
-        var esc = obtenerSaludoEscuela();
-        var fel = esc ? ('¡Excelente trabajo en familia con ' + esc + '! Completaste todo el tablero.') : '¡Muy bien hecho! Completaste todo el tablero.';
-        window.hablarTexto(fel, 'es-ES');
+        window.hablarTexto('¡Muy bien hecho! Completaste todo el tablero.', 'es-ES');
       } else if (statusMsg) {
         statusMsg.textContent = '¡Muy bien! ✓ Llevas ' + rodeaState.foundCount + ' de ' + rodeaState.totalTargets + '. ¡Sigue buscando!';
       }
@@ -1396,26 +1552,21 @@
   };
 
   window.hablarConsignaRodea = function (lang, btn) {
-    var esc = obtenerSaludoEscuela();
-    var prefijo = esc ? ('¡Familia de ' + esc + '! ') : '';
     if (rodeaState.category === 'espacial' && rodeaState.targetId === 'dactilo') {
-      window.hablarTexto(
-        prefijo + 'Pon huellitas de pintura ' + dactiloState.zone.toUpperCase() + ' de la figura: ' + dactiloState.figureEs + '.',
-        'es-ES',
-        btn
-      );
+      var dactiloTxt = 'Pon huellitas de pintura ' + dactiloState.zone.toUpperCase() + ' de la figura: ' + dactiloState.figureEs;
+      window.hablarConSaludoEscuela(dactiloTxt, 'es-ES', btn);
       return;
     }
 
     if (rodeaState.category === 'letras') {
       var l = LETRAS_DATA.find(function (x) { return x.id === rodeaState.targetId; }) || LETRAS_DATA[0];
-      window.hablarTexto(prefijo + l.esTTS, 'es-ES', btn);
+      window.hablarConSaludoEscuela(l.esTTS, 'es-ES', btn);
     } else if (rodeaState.category === 'numeros') {
       var n = NUMEROS_DATA.find(function (x) { return x.id === rodeaState.targetId; }) || NUMEROS_DATA[0];
-      window.hablarTexto(prefijo + 'Rodea todos los números ' + n.id + ', ' + n.es + '.', 'es-ES', btn);
+      window.hablarConSaludoEscuela('Rodea todos los números ' + n.id + ', ' + n.es + '.', 'es-ES', btn);
     } else {
       var esp = ESPACIAL_DATA.find(function (x) { return x.id === rodeaState.targetId; }) || ESPACIAL_DATA[0];
-      window.hablarTexto(prefijo + esp.promptEs + '.', 'es-ES', btn);
+      window.hablarConSaludoEscuela(esp.promptEs, 'es-ES', btn);
     }
   };
 
@@ -1561,9 +1712,7 @@
         state.completedRodea[key] = true;
         sonarCelebracion();
         addXP(15, 's-rodea');
-        var esc = obtenerSaludoEscuela();
-        var fel = esc ? ('¡Excelente trabajo en familia con ' + esc + '! Qué linda pintura con tus deditos.') : '¡Qué linda pintura con tus deditos! Lo hiciste excelente.';
-        window.hablarTexto(fel, 'es-ES');
+        window.hablarTexto('¡Qué linda pintura con tus deditos! Lo hiciste excelente.', 'es-ES');
       }
     } else {
       if (statusBanner) statusBanner.classList.remove('celebrate');
@@ -1786,17 +1935,17 @@
   };
 
   window.leerInstruccionRompecabezas = function (btn) {
-    var esc = obtenerSaludoEscuela();
-    var prefijo = esc ? ('¡Familia de ' + esc + '! ') : '';
+    var textoFijo = '';
     if (puzzleState.currentGame === 'numeros') {
-      window.hablarTexto(prefijo + 'Rompecabezas de los números: toca cada ficha numérica y colócala en su silueta contando los dibujos en orden.', 'es-ES', btn);
+      textoFijo = 'Rompecabezas de los números: toca cada ficha numérica y colócala en su silueta contando los dibujos en orden.';
     } else if (puzzleState.currentGame === 'cuerpo') {
-      window.hablarTexto(prefijo + 'Rompecabezas del cuerpo humano, página cincuenta y nueve: coloca en orden vertical la Cabeza, el Tronco, los Brazos y las Piernas.', 'es-ES', btn);
+      textoFijo = 'Rompecabezas del cuerpo humano, página cincuenta y nueve: coloca en orden vertical la Cabeza, el Tronco, los Brazos y las Piernas.';
     } else if (puzzleState.carSubMode === 'colores') {
-      window.hablarTexto(prefijo + 'Estaciona cada carrito en su estacionamiento del mismo color. Rojo, Azul, Amarillo, Verde, Naranja y Morado.', 'es-ES', btn);
+      textoFijo = 'Estacionamiento de carritos de colores: estaciona cada carrito en su lugar del mismo color. Rojo, Azul, Amarillo, Verde, Naranja y Morado.';
     } else {
-      window.hablarTexto(prefijo + 'Rompecabezas de figuras geométricas: coloca cada figura en su silueta.', 'es-ES', btn);
+      textoFijo = 'Rompecabezas de figuras geométricas: coloca el círculo, cuadrado, triángulo, rectángulo, óvalo, rombo, estrella y corazón en su silueta.';
     }
+    window.hablarConSaludoEscuela(textoFijo, 'es-ES', btn);
   };
 
   function renderCurrentPuzzle() {
@@ -2127,9 +2276,7 @@
         state.completedPuzzles[key] = true;
         addXP(20, 's-rompecabezas');
       }
-      var esc = obtenerSaludoEscuela();
-      var fel = esc ? ('¡Excelente trabajo en familia con ' + esc + '! Completaron todo el rompecabezas.') : '¡Bravo! Completaste todo el rompecabezas sin ningún error.';
-      window.hablarTexto(fel, 'es-ES');
+      window.hablarTexto('¡Bravo! Completaste todo el rompecabezas sin ningún error.', 'es-ES');
     }
   }
 
@@ -2249,7 +2396,7 @@
             '<strong>🛡️ Cuidado del adulto:</strong> ' + t.safety +
           '</div>' +
           '<div class="tech-card-footer">' +
-            '<button type="button" class="btn-kid" data-tts="' + encodeURIComponent(ttsFull) + '" onclick="hablarTexto(decodeURIComponent(this.getAttribute(\'data-tts\')), \'es-ES\', this)">' +
+            '<button type="button" class="btn-kid" onclick="hablarTecnicaCasa(\'' + t.id + '\', this)">' +
               '🔊 Escuchar pasos' +
             '</button>' +
             '<button type="button" class="btn-kid ' + (done ? 'secondary' : 'primary') + '" onclick="marcarTecnicaCasa(\'' + t.id + '\')">' +
@@ -2276,9 +2423,7 @@
     if (!wasDone) {
       sonarCelebracion();
       addXP(20, 's-casa');
-      var esc = obtenerSaludoEscuela();
-      var fel = esc ? ('¡Felicidades familia de ' + esc + '! Una técnica más del libro realizada en casa con papel y manos creativas.') : '¡Felicidades familia! Una técnica más del libro realizada en casa con papel y manos creativas.';
-      window.hablarTexto(fel, 'es-ES');
+      window.hablarTexto('¡Felicidades familia! Una técnica más del libro realizada en casa con papel y manos creativas.', 'es-ES');
     } else {
       saveState();
     }

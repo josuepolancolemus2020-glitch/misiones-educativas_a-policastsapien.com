@@ -62,8 +62,83 @@ def limpiar_texto(t: str) -> str:
     t = re.sub(r"\s+", " ", t)
     return t.strip()
 
+def normalizar_clave_busqueda(s: str) -> str:
+    if not s:
+        return ""
+    s = EMOJI_REGEX.sub("", s)
+    s = re.sub(r"[¡!¿?.,:;\"'«»()_—–\-\[\]{}]", " ", s)
+    s = re.sub(r"\s+", " ", s).strip().lower()
+    return s
+
 # Lista de todos los audios oficiales
 ITEMS = [
+    # --- 0. SALUDOS INSTITUCIONALES NEURONALES (Dalia) ---
+    {
+        "file": "saludo-mariaconsuelo.mp3",
+        "lang": "es",
+        "text": "¡Hola familia de CEPB María Consuelo!",
+    },
+    {
+        "file": "saludo-coral.mp3",
+        "lang": "es",
+        "text": "¡Hola familia de Coral Bilingual School!",
+    },
+    {
+        "file": "saludo-rafael.mp3",
+        "lang": "es",
+        "text": "¡Hola familia de CEPB Rafael Pineda Ponce!",
+    },
+    {
+        "file": "saludo-nimia.mp3",
+        "lang": "es",
+        "text": "¡Hola familia de CEPB Nimia Baquedano!",
+    },
+    {
+        "file": "saludo-dionisio.mp3",
+        "lang": "es",
+        "text": "¡Hola familia de CEPB Dionisio de Herrera!",
+    },
+    {
+        "file": "saludo-amigo.mp3",
+        "lang": "es",
+        "text": "¡Hola familia de CEPB Amigo de los Niños!",
+    },
+    {
+        "file": "saludo-blessing.mp3",
+        "lang": "es",
+        "text": "¡Hola familia de CEBNG Blessing Bilingual School!",
+    },
+    {
+        "file": "saludo-simiente.mp3",
+        "lang": "es",
+        "text": "¡Hola familia de CEBNG Simiente Santa!",
+    },
+    {
+        "file": "saludo-marina.mp3",
+        "lang": "es",
+        "text": "¡Hola familia de CEPB Marina Name!",
+    },
+    {
+        "file": "saludo-johncook.mp3",
+        "lang": "es",
+        "text": "¡Hola familia de John Cook School!",
+    },
+    {
+        "file": "saludo-panamericano.mp3",
+        "lang": "es",
+        "text": "¡Hola familia de Liceo Panamericano!",
+    },
+    {
+        "file": "saludo-metas.mp3",
+        "lang": "es",
+        "text": "¡Hola familia de la Edición Oficial M.E.T.A.S. de la Profesora Evelyn Castellanos!",
+    },
+    {
+        "file": "saludo-generico.mp3",
+        "lang": "es",
+        "text": "¡Hola querida familia!",
+    },
+
     # --- 1. AVISO PARENTAL IMPERATIVO (ESPAÑOL) ---
     {
         "file": "aviso_adulto.mp3",
@@ -501,21 +576,101 @@ async def main():
     success_count = sum(1 for r in results if r)
     print(f"\nResultado generación: {success_count}/{len(ITEMS)} archivos listos.")
 
-    # Construir mapa de asociación (normalizado y raw)
+    # Construir mapa de asociación (normalizado, tolerante y raw)
     mapa = {}
     for item in ITEMS:
         filename = item["file"]
         clean_key = limpiar_texto(item["text"])
         mapa[clean_key] = filename
+        mapa[clean_key.lower()] = filename
+        mapa[normalizar_clave_busqueda(clean_key)] = filename
 
         if "raw" in item:
             mapa[item["raw"]] = filename
             mapa[limpiar_texto(item["raw"])] = filename
+            mapa[normalizar_clave_busqueda(item["raw"])] = filename
 
-        mapa[clean_key.lower()] = filename
-
-    # Aliases adicionales para piezas de puzzle, números y vocabulario básico en inglés
+    # Aliases adicionales para escuelas, piezas de puzzle, números y vocabulario básico
     aliases = {
+        # Saludos por nombre exacto de colegio autorizado
+        "CEPB María Consuelo": "saludo-mariaconsuelo.mp3",
+        "Coral Bilingual School": "saludo-coral.mp3",
+        "CEPB Rafael Pineda Ponce": "saludo-rafael.mp3",
+        "CEPB Nimia Baquedano": "saludo-nimia.mp3",
+        "CEPB Dionisio de Herrera": "saludo-dionisio.mp3",
+        "CEPB Amigo de los Niños": "saludo-amigo.mp3",
+        "CEBNG Blessing Bilingual School": "saludo-blessing.mp3",
+        "CEBNG Simiente Santa": "saludo-simiente.mp3",
+        "CEPB Marina Name": "saludo-marina.mp3",
+        "John Cook School": "saludo-johncook.mp3",
+        "Liceo Panamericano": "saludo-panamericano.mp3",
+        "Edición Oficial M.E.T.A.S. · Evelyn S. Castellanos H.": "saludo-metas.mp3",
+        "saludo-mariaconsuelo": "saludo-mariaconsuelo.mp3",
+        "saludo-coral": "saludo-coral.mp3",
+        "saludo-rafael": "saludo-rafael.mp3",
+        "saludo-nimia": "saludo-nimia.mp3",
+        "saludo-dionisio": "saludo-dionisio.mp3",
+        "saludo-amigo": "saludo-amigo.mp3",
+        "saludo-blessing": "saludo-blessing.mp3",
+        "saludo-simiente": "saludo-simiente.mp3",
+        "saludo-marina": "saludo-marina.mp3",
+        "saludo-johncook": "saludo-johncook.mp3",
+        "saludo-panamericano": "saludo-panamericano.mp3",
+        "saludo-metas": "saludo-metas.mp3",
+        "saludo-generico": "saludo-generico.mp3",
+
+        # Aviso adulto y felicitaciones fijas por clave
+        "aviso_adulto": "aviso_adulto.mp3",
+        "trazo_felicitacion": "trazo_felicitacion.mp3",
+        "rodea_felicitacion_tablero": "rodea_felicitacion_tablero.mp3",
+        "dactilo_felicitacion": "dactilo_felicitacion.mp3",
+        "pz_felicitacion": "pz_felicitacion.mp3",
+        "casa_felicitacion": "casa_felicitacion.mp3",
+
+        # Variaciones de instrucciones de rompecabezas
+        "Estaciona cada carrito en su estacionamiento del mismo color. Rojo, Azul, Amarillo, Verde, Naranja y Morado.": "pz_instruccion_colores.mp3",
+        "Estaciona cada carrito en su estacionamiento del mismo color. Rojo, Azul, Amarillo, Verde, Naranja y Morado": "pz_instruccion_colores.mp3",
+        "Estacionamiento de carritos de colores: estaciona cada carrito en su lugar del mismo color. Rojo, Azul, Amarillo, Verde, Naranja y Morado.": "pz_instruccion_colores.mp3",
+        "Rompecabezas de figuras geométricas: coloca cada figura en su silueta.": "pz_instruccion_figuras.mp3",
+        "Rompecabezas de figuras geométricas: coloca cada figura en su silueta": "pz_instruccion_figuras.mp3",
+        "Rompecabezas de figuras geométricas: coloca el círculo, cuadrado, triángulo, rectángulo, óvalo, rombo, estrella y corazón en su silueta.": "pz_instruccion_figuras.mp3",
+        "Rompecabezas de los números: toca cada ficha numérica y colócala en su silueta contando los dibujos en orden.": "pz_instruccion_numeros.mp3",
+        "Rompecabezas del cuerpo humano, página cincuenta y nueve: coloca en orden vertical la Cabeza, el Tronco, los Brazos y las Piernas.": "pz_instruccion_cuerpo.mp3",
+
+        # Nociones espaciales con o sin punto final
+        "Rodea el ratón que está DETRÁS del queso y pinta el que está DELANTE.": "espacial_detras_delante_es.mp3",
+        "Rodea las mariquitas que están ARRIBA de las flores.": "espacial_arriba_abajo_es.mp3",
+        "Marca con X el objeto GRANDE y rodea el objeto PEQUEÑO en cada pareja.": "espacial_grande_pequeno_es.mp3",
+        "Rodea los recipientes LLENOS y marca con X los que están VACÍOS.": "espacial_lleno_vacio_es.mp3",
+
+        # Dactilopintura con y sin punto final
+        "Pon huellitas de pintura ADENTRO de la figura: Manzana.": "dactilo_adentro_manzana_es.mp3",
+        "Pon huellitas de pintura AFUERA de la figura: Manzana.": "dactilo_afuera_manzana_es.mp3",
+        "Pon huellitas de pintura ADENTRO de la figura: Racimo de Uvas.": "dactilo_adentro_uvas_es.mp3",
+        "Pon huellitas de pintura AFUERA de la figura: Racimo de Uvas.": "dactilo_afuera_uvas_es.mp3",
+        "Pon huellitas de pintura ADENTRO de la figura: Caballito de Mar.": "dactilo_adentro_caballito_es.mp3",
+        "Pon huellitas de pintura AFUERA de la figura: Caballito de Mar.": "dactilo_afuera_caballito_es.mp3",
+
+        # Técnicas de casa por ID y título corto
+        "casa_estrujado": "casa_estrujado.mp3",
+        "casa_rasgado": "casa_rasgado.mp3",
+        "casa_boleado": "casa_boleado.mp3",
+        "casa_dactilopintura": "casa_dactilopintura.mp3",
+        "casa_punzado": "casa_punzado.mp3",
+        "casa_recorte": "casa_recorte.mp3",
+        "estrujado": "casa_estrujado.mp3",
+        "rasgado": "casa_rasgado.mp3",
+        "boleado": "casa_boleado.mp3",
+        "dactilopintura": "casa_dactilopintura.mp3",
+        "punzado": "casa_punzado.mp3",
+        "recorte": "casa_recorte.mp3",
+        "1. Estrujado y Arrugado de Papel": "casa_estrujado.mp3",
+        "2. Rasgado de Papel (Adentro y Afuera)": "casa_rasgado.mp3",
+        "3. Boleado con Índice y Pulgar": "casa_boleado.mp3",
+        "4. Dactilopintura con Témpera Real": "casa_dactilopintura.mp3",
+        "5. Punzado Seguro con Foamy Debajo": "casa_punzado.mp3",
+        "6. Recorte con Tijeras de Punta Redonda": "casa_recorte.mp3",
+
         # Números directos en español
         "1": "pz_num_1_es.mp3", "2": "pz_num_2_es.mp3", "3": "pz_num_3_es.mp3", "4": "pz_num_4_es.mp3", "5": "pz_num_5_es.mp3",
         "6": "pz_num_6_es.mp3", "7": "pz_num_7_es.mp3", "8": "pz_num_8_es.mp3", "9": "pz_num_9_es.mp3", "10": "pz_num_10_es.mp3",
@@ -566,6 +721,7 @@ async def main():
         mapa[k] = v
         mapa[k.lower()] = v
         mapa[limpiar_texto(k)] = v
+        mapa[normalizar_clave_busqueda(k)] = v
 
     # Guardar en JSON
     json_path = os.path.join(AUDIOS_DIR, "mapa-audios.json")
