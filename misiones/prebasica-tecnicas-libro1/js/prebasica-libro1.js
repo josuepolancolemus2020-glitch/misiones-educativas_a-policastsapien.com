@@ -729,6 +729,123 @@
     return out;
   }
 
+  function buildCheckpointsForTrace(ch, w, h) {
+    var checkpoints = [];
+    var numSegments = 1;
+
+    if (ch.id === 'verticales') {
+      var cols = [w * 0.23, w * 0.50, w * 0.77];
+      numSegments = cols.length; // 3 columnas / segmentos
+      var perCol = 12; // 36 checkpoints
+      cols.forEach(function (cx, sIdx) {
+        for (var i = 0; i < perCol; i++) {
+          var t = (i + 0.5) / perCol;
+          checkpoints.push({
+            x: cx,
+            y: 72 + (h - 144) * t,
+            segmentIdx: sIdx,
+            hit: false
+          });
+        }
+      });
+    } else if (ch.id === 'horizontales') {
+      var rows = [h * 0.33, h * 0.68];
+      numSegments = rows.length; // 2 filas / segmentos
+      var perRow = 18; // 36 checkpoints
+      rows.forEach(function (ry, sIdx) {
+        for (var i = 0; i < perRow; i++) {
+          var t = (i + 0.5) / perRow;
+          checkpoints.push({
+            x: 85 + (w - 170) * t,
+            y: ry,
+            segmentIdx: sIdx,
+            hit: false
+          });
+        }
+      });
+    } else if (ch.id === 'zigzag') {
+      var vertices = [
+        { x: 85, y: h * 0.72 },
+        { x: w * 0.24, y: h * 0.24 },
+        { x: w * 0.39, y: h * 0.74 },
+        { x: w * 0.54, y: h * 0.24 },
+        { x: w * 0.69, y: h * 0.74 },
+        { x: w * 0.83, y: h * 0.24 },
+        { x: w - 85, y: h * 0.68 }
+      ];
+      numSegments = vertices.length - 1; // 6 pendientes / segmentos
+      var perSlope = 8; // 48 checkpoints
+      for (var s = 0; s < numSegments; s++) {
+        var a = vertices[s];
+        var b = vertices[s + 1];
+        for (var k = 0; k < perSlope; k++) {
+          var t = (k + 0.5) / perSlope;
+          checkpoints.push({
+            x: a.x + (b.x - a.x) * t,
+            y: a.y + (b.y - a.y) * t,
+            segmentIdx: s,
+            hit: false
+          });
+        }
+      }
+    } else if (ch.id === 'inclinadas') {
+      numSegments = 2; // 2 cometas / diagonales
+      var perKite = 18; // 36 checkpoints
+      var segs = [
+        { a: { x: 100, y: h - 75 }, b: { x: w * 0.48, y: 78 } },
+        { a: { x: w * 0.45, y: h - 75 }, b: { x: w - 95, y: 78 } }
+      ];
+      segs.forEach(function (sg, sIdx) {
+        for (var i = 0; i < perKite; i++) {
+          var t = (i + 0.5) / perKite;
+          checkpoints.push({
+            x: sg.a.x + (sg.b.x - sg.a.x) * t,
+            y: sg.a.y + (sg.b.y - sg.a.y) * t,
+            segmentIdx: sIdx,
+            hit: false
+          });
+        }
+      });
+    } else if (ch.id === 'onduladas') {
+      numSegments = 4; // 4 cuadrantes / tramos de onda
+      var perQuarter = 9; // 36 checkpoints
+      var totalSteps = numSegments * perQuarter;
+      for (var i = 0; i < totalSteps; i++) {
+        var t = (i + 0.5) / totalSteps;
+        var sIdx = Math.min(numSegments - 1, Math.floor(i / perQuarter));
+        var x = 85 + (w - 170) * t;
+        var y = h * 0.52 + Math.sin(t * Math.PI * 3.5) * (h * 0.25);
+        checkpoints.push({
+          x: x,
+          y: y,
+          segmentIdx: sIdx,
+          hit: false
+        });
+      }
+    } else if (ch.id === 'arabescos') {
+      numSegments = 4; // 4 cuadrantes / giros de espiral
+      var perQuarter = 9; // 36 checkpoints
+      var totalSteps = numSegments * perQuarter;
+      for (var i = 0; i < totalSteps; i++) {
+        var t = (i + 0.5) / totalSteps;
+        var sIdx = Math.min(numSegments - 1, Math.floor(i / perQuarter));
+        var x = 85 + (w - 180) * t + Math.sin(t * Math.PI * 4) * 38;
+        var y = h * 0.50 - Math.cos(t * Math.PI * 4) * (h * 0.27);
+        checkpoints.push({
+          x: x,
+          y: y,
+          segmentIdx: sIdx,
+          hit: false
+        });
+      }
+    }
+
+    return {
+      checkpoints: checkpoints,
+      numSegments: numSegments
+    };
+  }
+
   var traceState = {
     currentIdx: 0,
     color: 'rainbow',
@@ -737,6 +854,7 @@
     lastPt: null,
     userStrokes: [],
     waypoints: [],
+    numSegments: 1,
     completedCurrent: false
   };
 
@@ -847,20 +965,9 @@
 
     if (canvas && ch) {
       var paths = ch.buildPaths(canvas.width, canvas.height);
-      var wps = [];
-      paths.forEach(function (p, pIdx) {
-        p.forEach(function (pt, i) {
-          wps.push({
-            x: pt.x,
-            y: pt.y,
-            pathIdx: pIdx,
-            isStart: i === 0,
-            isEnd: i === p.length - 1,
-            hit: false
-          });
-        });
-      });
-      traceState.waypoints = wps;
+      var cpData = buildCheckpointsForTrace(ch, canvas.width, canvas.height);
+      traceState.waypoints = cpData.checkpoints;
+      traceState.numSegments = cpData.numSegments;
       traceState.paths = paths;
     }
 
@@ -880,7 +987,7 @@
   }
 
   function checkTraceWaypoints(pt) {
-    var hitRadius = 42;
+    var hitRadius = 25;
     var newlyHit = false;
     traceState.waypoints.forEach(function (wp) {
       if (!wp.hit) {
@@ -896,10 +1003,29 @@
     if (newlyHit) {
       var total = traceState.waypoints.length || 1;
       var hits = traceState.waypoints.filter(function (w) { return w.hit; }).length;
-      var pct = Math.min(100, Math.round((hits / total) * 100));
-      updateTraceProgressUI(pct);
+      var pct = Math.floor((hits / total) * 100);
 
-      if (pct >= 82 && !traceState.completedCurrent) {
+      var numSegments = traceState.numSegments || 1;
+      var allSegmentsDone = true;
+      for (var s = 0; s < numSegments; s++) {
+        var segTotal = 0;
+        var segHits = 0;
+        traceState.waypoints.forEach(function (w) {
+          if (w.segmentIdx === s) {
+            segTotal++;
+            if (w.hit) segHits++;
+          }
+        });
+        if (segTotal > 0 && (segHits / segTotal) < 0.85) {
+          allSegmentsDone = false;
+          break;
+        }
+      }
+
+      var displayPct = (allSegmentsDone && pct >= 92) ? 100 : Math.min(99, pct);
+      updateTraceProgressUI(displayPct);
+
+      if (allSegmentsDone && pct >= 92 && !traceState.completedCurrent) {
         traceState.completedCurrent = true;
         updateTraceProgressUI(100);
         var ch = TRACE_CHALLENGES[traceState.currentIdx];
@@ -1134,9 +1260,26 @@
             label: '' + n
           });
         }
+        var checkpoints = [];
+        var numSegments = 4;
+        var perSeg = 8;
+        for (var s = 0; s < numSegments; s++) {
+          for (var k = 0; k < perSeg; k++) {
+            var t = (k + 0.5) / perSeg;
+            var a = -Math.PI / 2 + ((s + t) / numSegments) * (Math.PI * 2);
+            checkpoints.push({
+              x: cx + r * Math.cos(a),
+              y: cy + r * Math.sin(a),
+              segmentIdx: s,
+              hit: false
+            });
+          }
+        }
         return {
           type: 'single',
           paths: [pts],
+          checkpoints: checkpoints,
+          numSegments: numSegments,
           fillColor: 'rgba(229, 57, 53, 0.08)',
           strokeColor: '#e53935',
           markers: numberedMarkers,
@@ -1195,9 +1338,31 @@
           { x: (x0 + x1) / 2, y: y1 + 22, text: 'Lado 3 (igual)' },
           { x: x0 - 45, y: (y0 + y1) / 2, text: 'Lado 4 (igual)' }
         ];
+        var checkpoints = [];
+        var numSegments = 4;
+        var perSide = 8;
+        var sideCorners = [
+          { a: { x: x0, y: y0 }, b: { x: x1, y: y0 } },
+          { a: { x: x1, y: y0 }, b: { x: x1, y: y1 } },
+          { a: { x: x1, y: y1 }, b: { x: x0, y: y1 } },
+          { a: { x: x0, y: y1 }, b: { x: x0, y: y0 } }
+        ];
+        sideCorners.forEach(function (sc, sIdx) {
+          for (var k = 0; k < perSide; k++) {
+            var t = (k + 0.5) / perSide;
+            checkpoints.push({
+              x: sc.a.x + (sc.b.x - sc.a.x) * t,
+              y: sc.a.y + (sc.b.y - sc.a.y) * t,
+              segmentIdx: sIdx,
+              hit: false
+            });
+          }
+        });
         return {
           type: 'single',
           paths: [pts],
+          checkpoints: checkpoints,
+          numSegments: numSegments,
           fillColor: 'rgba(30, 136, 229, 0.08)',
           strokeColor: '#1e88e5',
           markers: markers,
@@ -1247,9 +1412,30 @@
           { x: w * 0.5, y: v2.y + 22, text: 'Lado 2' },
           { x: (v1.x + v3.x) / 2 - 35, y: (v1.y + v3.y) / 2, text: 'Lado 3' }
         ];
+        var checkpoints = [];
+        var numSegments = 3;
+        var perSide = 10;
+        var sides = [
+          { a: v1, b: v2 },
+          { a: v2, b: v3 },
+          { a: v3, b: v1 }
+        ];
+        sides.forEach(function (sd, sIdx) {
+          for (var k = 0; k < perSide; k++) {
+            var t = (k + 0.5) / perSide;
+            checkpoints.push({
+              x: sd.a.x + (sd.b.x - sd.a.x) * t,
+              y: sd.a.y + (sd.b.y - sd.a.y) * t,
+              segmentIdx: sIdx,
+              hit: false
+            });
+          }
+        });
         return {
           type: 'single',
           paths: [pts],
+          checkpoints: checkpoints,
+          numSegments: numSegments,
           fillColor: 'rgba(67, 160, 71, 0.08)',
           strokeColor: '#43a047',
           markers: markers,
@@ -1311,10 +1497,32 @@
           { x: (x0 + x1) / 2, y: y1 + 24, text: '↔ LADO LARGO 2', color: '#e65100' },
           { x: x0 - 42, y: (y0 + y1) / 2, text: '↕ CORTO 2', color: '#00838f' }
         ];
+        var checkpoints = [];
+        var numSegments = 4;
+        var perSide = 8;
+        var sideCorners = [
+          { a: { x: x0, y: y0 }, b: { x: x1, y: y0 } },
+          { a: { x: x1, y: y0 }, b: { x: x1, y: y1 } },
+          { a: { x: x1, y: y1 }, b: { x: x0, y: y1 } },
+          { a: { x: x0, y: y1 }, b: { x: x0, y: y0 } }
+        ];
+        sideCorners.forEach(function (sc, sIdx) {
+          for (var k = 0; k < perSide; k++) {
+            var t = (k + 0.5) / perSide;
+            checkpoints.push({
+              x: sc.a.x + (sc.b.x - sc.a.x) * t,
+              y: sc.a.y + (sc.b.y - sc.a.y) * t,
+              segmentIdx: sIdx,
+              hit: false
+            });
+          }
+        });
         return {
           type: 'rectangle_distinct',
           x0: x0, y0: y0, x1: x1, y1: y1,
           paths: [pts],
+          checkpoints: checkpoints,
+          numSegments: numSegments,
           fillColor: 'rgba(251, 140, 0, 0.08)',
           markers: markers,
           sideLabels: sideLabels,
@@ -1369,9 +1577,26 @@
             label: '' + n
           });
         }
+        var checkpoints = [];
+        var numSegments = 4;
+        var perSeg = 8;
+        for (var s = 0; s < numSegments; s++) {
+          for (var k = 0; k < perSeg; k++) {
+            var t = (k + 0.5) / perSeg;
+            var a = -Math.PI / 2 + ((s + t) / numSegments) * (Math.PI * 2);
+            checkpoints.push({
+              x: cx + rx * Math.cos(a),
+              y: cy + ry * Math.sin(a),
+              segmentIdx: s,
+              hit: false
+            });
+          }
+        }
         return {
           type: 'single',
           paths: [pts],
+          checkpoints: checkpoints,
+          numSegments: numSegments,
           fillColor: 'rgba(233, 30, 99, 0.08)',
           strokeColor: '#e91e63',
           markers: numberedMarkers,
@@ -1427,9 +1652,31 @@
           { x: (p3.x + p4.x) / 2 - 25, y: (p3.y + p4.y) / 2 + 10, text: 'Lado inclinado 3' },
           { x: (p4.x + p1.x) / 2 - 25, y: (p4.y + p1.y) / 2 - 10, text: 'Lado inclinado 4' }
         ];
+        var checkpoints = [];
+        var numSegments = 4;
+        var perSide = 8;
+        var sideCorners = [
+          { a: p1, b: p2 },
+          { a: p2, b: p3 },
+          { a: p3, b: p4 },
+          { a: p4, b: p1 }
+        ];
+        sideCorners.forEach(function (sc, sIdx) {
+          for (var k = 0; k < perSide; k++) {
+            var t = (k + 0.5) / perSide;
+            checkpoints.push({
+              x: sc.a.x + (sc.b.x - sc.a.x) * t,
+              y: sc.a.y + (sc.b.y - sc.a.y) * t,
+              segmentIdx: sIdx,
+              hit: false
+            });
+          }
+        });
         return {
           type: 'single',
           paths: [pts],
+          checkpoints: checkpoints,
+          numSegments: numSegments,
           fillColor: 'rgba(211, 47, 47, 0.08)',
           strokeColor: '#d32f2f',
           markers: markers,
@@ -1495,9 +1742,39 @@
                 label: '' + (p + 1)
               });
             }
+            var checkpoints = [];
+            var numSegments = 5;
+            for (var p = 0; p < numPoints; p++) {
+              var idxInBefore = (p * 2 - 1 + numPoints * 2) % (numPoints * 2);
+              var idxOut = p * 2;
+              var idxInAfter = p * 2 + 1;
+              var vIn1 = vertices[idxInBefore];
+              var vOut = vertices[idxOut];
+              var vIn2 = vertices[idxInAfter];
+              for (var k = 0; k < 4; k++) {
+                var t = (k + 0.5) / 4;
+                checkpoints.push({
+                  x: vIn1.x + (vOut.x - vIn1.x) * t,
+                  y: vIn1.y + (vOut.y - vIn1.y) * t,
+                  segmentIdx: p,
+                  hit: false
+                });
+              }
+              for (var k = 0; k < 4; k++) {
+                var t = (k + 0.5) / 4;
+                checkpoints.push({
+                  x: vOut.x + (vIn2.x - vOut.x) * t,
+                  y: vOut.y + (vIn2.y - vOut.y) * t,
+                  segmentIdx: p,
+                  hit: false
+                });
+              }
+            }
             return {
               type: 'single',
               paths: [pts],
+              checkpoints: checkpoints,
+              numSegments: numSegments,
               fillColor: 'rgba(251, 192, 45, 0.12)',
               strokeColor: '#fbc02d',
               markers: markers,
@@ -1542,9 +1819,28 @@
               { num: 3, x: cx, y: cy + 145, label: '3 (Punta abajo)' },
               { num: 4, x: cx + 110, y: cy - 90, label: '4 (Curva der)' }
             ];
+            var checkpoints = [];
+            var numSegments = 4;
+            var perQuarter = 9;
+            var totalCps = numSegments * perQuarter;
+            for (var i = 0; i < totalCps; i++) {
+              var tVal = ((i + 0.5) / totalCps) * Math.PI * 2;
+              var sIdx = Math.min(numSegments - 1, Math.floor(i / perQuarter));
+              var sc = 8.5;
+              var cpX = cx + sc * 16 * Math.pow(Math.sin(tVal), 3);
+              var cpY = cy - sc * (13 * Math.cos(tVal) - 5 * Math.cos(2 * tVal) - 2 * Math.cos(3 * tVal) - Math.cos(4 * tVal));
+              checkpoints.push({
+                x: cpX,
+                y: cpY,
+                segmentIdx: sIdx,
+                hit: false
+              });
+            }
             return {
               type: 'single',
               paths: [pts],
+              checkpoints: checkpoints,
+              numSegments: numSegments,
               fillColor: 'rgba(233, 30, 99, 0.1)',
               strokeColor: '#e91e63',
               markers: markers,
@@ -1568,6 +1864,7 @@
     lastPt: null,
     userStrokes: [],
     waypoints: [],
+    numSegments: 1,
     paths: [],
     perimeterData: null,
     completedCurrent: false,
@@ -1768,18 +2065,31 @@
     if (canvas && active.buildPerimeter) {
       var perim = active.buildPerimeter(canvas.width, canvas.height);
       figuraState.perimeterData = perim;
-      var wps = [];
-      perim.paths.forEach(function (path, pIdx) {
-        path.forEach(function (pt, i) {
-          wps.push({
-            x: pt.x,
-            y: pt.y,
-            pathIdx: pIdx,
+      if (perim.checkpoints && perim.checkpoints.length > 0) {
+        figuraState.waypoints = perim.checkpoints.map(function (cp) {
+          return {
+            x: cp.x,
+            y: cp.y,
+            segmentIdx: cp.segmentIdx !== undefined ? cp.segmentIdx : 0,
             hit: false
+          };
+        });
+        figuraState.numSegments = perim.numSegments || 1;
+      } else {
+        var wps = [];
+        perim.paths.forEach(function (path, pIdx) {
+          path.forEach(function (pt) {
+            wps.push({
+              x: pt.x,
+              y: pt.y,
+              segmentIdx: pIdx,
+              hit: false
+            });
           });
         });
-      });
-      figuraState.waypoints = wps;
+        figuraState.waypoints = wps;
+        figuraState.numSegments = perim.paths.length || 1;
+      }
       figuraState.paths = perim.paths;
     }
 
@@ -1809,7 +2119,7 @@
   };
 
   function checkFiguraWaypoints(pt) {
-    var hitRadius = 46;
+    var hitRadius = 25;
     var newlyHit = false;
     figuraState.waypoints.forEach(function (wp) {
       if (!wp.hit) {
@@ -1825,10 +2135,29 @@
     if (newlyHit) {
       var total = figuraState.waypoints.length || 1;
       var hits = figuraState.waypoints.filter(function (w) { return w.hit; }).length;
-      var pct = Math.min(100, Math.round((hits / total) * 100));
-      updateFiguraProgressUI(pct);
+      var pct = Math.floor((hits / total) * 100);
 
-      if (pct >= 82 && !figuraState.completedCurrent) {
+      var numSegments = figuraState.numSegments || 1;
+      var allSegmentsDone = true;
+      for (var s = 0; s < numSegments; s++) {
+        var segTotal = 0;
+        var segHits = 0;
+        figuraState.waypoints.forEach(function (w) {
+          if (w.segmentIdx === s) {
+            segTotal++;
+            if (w.hit) segHits++;
+          }
+        });
+        if (segTotal > 0 && (segHits / segTotal) < 0.85) {
+          allSegmentsDone = false;
+          break;
+        }
+      }
+
+      var displayPct = (allSegmentsDone && pct >= 92) ? 100 : Math.min(99, pct);
+      updateFiguraProgressUI(displayPct);
+
+      if (allSegmentsDone && pct >= 92 && !figuraState.completedCurrent) {
         figuraState.completedCurrent = true;
         updateFiguraProgressUI(100);
         var active = getActiveFigura();
@@ -2105,7 +2434,10 @@
       card.setAttribute('aria-label', obj.name + '. Toca para escuchar su nombre');
       card.innerHTML =
         '<span class="obj-ico" aria-hidden="true">' + obj.ico + '</span>' +
-        '<span class="obj-name">' + obj.name + '</span>';
+        '<span class="obj-name">' + obj.name + '</span>' +
+        '<span class="obj-status' + (isTouched ? ' badge-descubierto' : '') + '">' +
+          (isTouched ? '✓ ¡Descubierto!' : 'Toca para descubrir') +
+        '</span>';
 
       card.onclick = function () {
         tocarObjetoFigura(obj, card);
@@ -2123,6 +2455,11 @@
   function tocarObjetoFigura(obj, cardEl) {
     if (cardEl) {
       cardEl.classList.add('tocado');
+      var statusEl = cardEl.querySelector('.obj-status');
+      if (statusEl) {
+        statusEl.className = 'obj-status badge-descubierto';
+        statusEl.textContent = '✓ ¡Descubierto!';
+      }
     }
     state.completedFiguraObjects[obj.id] = true;
     saveState();
