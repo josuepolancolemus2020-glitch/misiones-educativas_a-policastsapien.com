@@ -2205,6 +2205,9 @@ function switchView(id) {
 
   const scroll = document.querySelector(`#${id} .view-scroll`);
   if (scroll) scroll.scrollTop = 0;
+  if (typeof actualizarVisibilidadBotonFlotantePrebasica === 'function') {
+    actualizarVisibilidadBotonFlotantePrebasica();
+  }
 }
 
 /* ─────────────────────────────────────────────
@@ -3205,6 +3208,151 @@ function toast(msg) {
   el._t = setTimeout(() => { el.style.opacity = '0'; }, 2000);
 }
 
+/* ==========================================================================
+   ORIENTACIÓN Y RETORNO INTELIGENTE PARA FAMILIAS DE PREBÁSICA
+   ========================================================================== */
+function actualizarVisibilidadBotonFlotantePrebasica() {
+  const btn = document.getElementById('btnFlotantePrebasica');
+  if (!btn || btn.style.display === 'none') return;
+  const viewInicio = document.getElementById('view-inicio');
+  const isInicioActivo = viewInicio && viewInicio.classList.contains('active');
+  if (!isInicioActivo) {
+    // En cualquier otra vista distinta a Inicio, mostrar siempre para volver rápido a Prebásica
+    btn.classList.remove('oculto');
+    return;
+  }
+  const zona = document.getElementById('zona-prebasica');
+  if (!zona) return;
+  const rect = zona.getBoundingClientRect();
+  const vh = window.innerHeight || document.documentElement.clientHeight || 600;
+  // Si zona-prebasica está visible en pantalla (con holgura), ocultar el botón flotante
+  const visible = (rect.top < vh - 40 && rect.bottom > 60);
+  if (visible) {
+    btn.classList.add('oculto');
+  } else {
+    btn.classList.remove('oculto');
+  }
+}
+window.actualizarVisibilidadBotonFlotantePrebasica = actualizarVisibilidadBotonFlotantePrebasica;
+
+function initPrebasicaPortalOrientation() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const vieneDesdePrebasica = (urlParams.get('desde') === 'prebasica' || window.location.hash === '#zona-prebasica');
+  let esUsuarioPrebasica = false;
+  try {
+    esUsuarioPrebasica = localStorage.getItem('metas_usuario_prebasica') === 'true';
+  } catch (_) {}
+
+  if (!vieneDesdePrebasica && !esUsuarioPrebasica) {
+    return;
+  }
+
+  // 1. Escuela / institución activa y última misión
+  let ultimaMisionId = 'prebasica-tecnicas-libro1';
+  let institucion = '';
+  try {
+    ultimaMisionId = localStorage.getItem('metas_ultima_mision_prebasica_id') || 'prebasica-tecnicas-libro1';
+    institucion = (localStorage.getItem('metas_prebasica_institucion') || '').trim();
+    if (!institucion) {
+      const docCfg = JSON.parse(localStorage.getItem('metas_docente_cfg') || '{}');
+      institucion = (docCfg.escuela || '').trim();
+    }
+  } catch (_) {}
+
+  const institucionTxt = institucion ? ` (${institucion})` : '';
+
+  // 2. Banner guía cálido y visible arriba de las tarjetas
+  const bannerWrap = document.getElementById('bannerRetornoPrebasicaWrap');
+  if (bannerWrap && !document.getElementById('bannerRetornoPrebasica')) {
+    bannerWrap.innerHTML = `
+      <div id="bannerRetornoPrebasica" class="banner-retorno-prebasica" role="note">
+        <span class="banner-retorno-prebasica-ico" aria-hidden="true">🐝</span>
+        <div class="banner-retorno-prebasica-txt">
+          <strong>¡Estás en el Portal Principal de M.E.T.A.S.!</strong> Puedes explorar libremente la plataforma. 👇 Aquí abajo tienes siempre tu <strong>Zona de Prebásica${_pEsc(institucionTxt)}</strong> para entrar de nuevo cuando quieras.
+        </div>
+      </div>
+    `;
+  }
+
+  // 3. Resaltar la tarjeta de la misión activa de Prebásica
+  const cardActiva = document.querySelector(`.prebasica-card[data-mision-id="${ultimaMisionId}"]`) || document.querySelector('.prebasica-card');
+  if (cardActiva) {
+    const badgeActiva = cardActiva.querySelector('.preb-card-badge-activa') || document.getElementById('badgeMisionActivaPreb');
+    if (badgeActiva) badgeActiva.style.display = 'inline-flex';
+    const btnAccion = cardActiva.querySelector('.preb-card-btn') || document.getElementById('btnAccionCardPreb');
+    if (btnAccion) {
+      btnAccion.classList.add('preb-card-btn-activa');
+      btnAccion.innerHTML = '🔄 Entrar de nuevo a tu misión <i class="fa-solid fa-arrow-right"></i>';
+    }
+  }
+
+  // 4. Si viene con ?desde=prebasica, scroll suave con halo luminoso y limpiar query
+  const zona = document.getElementById('zona-prebasica');
+  if (vieneDesdePrebasica && zona) {
+    if (typeof switchView === 'function') {
+      switchView('view-inicio');
+    }
+    setTimeout(() => {
+      zona.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      zona.classList.add('prebasica-section-highlight');
+      setTimeout(() => {
+        zona.classList.remove('prebasica-section-highlight');
+      }, 3200);
+    }, 220);
+
+    try {
+      if (window.history && window.history.replaceState) {
+        const u = new URL(window.location.href);
+        u.searchParams.delete('desde');
+        window.history.replaceState({}, '', u.pathname + (u.search ? u.search : '') + (u.hash || '#zona-prebasica'));
+      }
+    } catch (_) {}
+  }
+
+  // 5. Botón flotante discreto (Sticky pill para familias)
+  const btnFlotante = document.getElementById('btnFlotantePrebasica');
+  if (btnFlotante) {
+    btnFlotante.style.display = 'inline-flex';
+
+    btnFlotante.onclick = function (e) {
+      e.preventDefault();
+      if (typeof switchView === 'function') {
+        switchView('view-inicio');
+      }
+      const targetZona = document.getElementById('zona-prebasica');
+      if (targetZona) {
+        targetZona.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        targetZona.classList.add('prebasica-section-highlight');
+        setTimeout(() => {
+          targetZona.classList.remove('prebasica-section-highlight');
+        }, 3000);
+      }
+    };
+
+    // Escuchar scroll del contenedor de view-inicio y de la ventana
+    const inicioScroll = document.querySelector('#view-inicio .view-scroll');
+    if (inicioScroll) {
+      inicioScroll.addEventListener('scroll', actualizarVisibilidadBotonFlotantePrebasica, { passive: true });
+    }
+    window.addEventListener('scroll', actualizarVisibilidadBotonFlotantePrebasica, { passive: true });
+    window.addEventListener('resize', actualizarVisibilidadBotonFlotantePrebasica, { passive: true });
+
+    // IntersectionObserver si está disponible
+    if (zona && 'IntersectionObserver' in window) {
+      try {
+        const obs = new IntersectionObserver(() => {
+          actualizarVisibilidadBotonFlotantePrebasica();
+        }, { threshold: [0, 0.2, 0.5, 0.8, 1.0] });
+        obs.observe(zona);
+      } catch (_) {}
+    }
+
+    // Comprobación inicial de visibilidad
+    setTimeout(actualizarVisibilidadBotonFlotantePrebasica, 300);
+  }
+}
+window.initPrebasicaPortalOrientation = initPrebasicaPortalOrientation;
+
 /* ─────────────────────────────────────────────
    INIT
 ───────────────────────────────────────────── */
@@ -3249,7 +3397,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Restaurar la última vista (recarga con F5 / Ctrl+Shift+R / botón 🔄).
   // El parámetro ?view= (regreso desde una misión) tiene prioridad.
-  if (!_urlParams.get('view')) {
+  // Si viene desde Prebásica, mantenerse en view-inicio para mostrar la sección destacada.
+  const _vieneDePrebasica = (_urlParams.get('desde') === 'prebasica' || window.location.hash === '#zona-prebasica');
+  if (!_urlParams.get('view') && !_vieneDePrebasica) {
     const _nav = metasLoadNav();
     if (_nav.view && _nav.view !== 'view-inicio' && document.getElementById(_nav.view)) {
       if (_nav.view === 'view-admin' && typeof adRestoreState === 'function') {
@@ -3260,6 +3410,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   }
+
+  // Orientación y retorno inteligente para familias de Prebásica
+  initPrebasicaPortalOrientation();
 
   // ── Botón 🔄 Actualizar (estilo navegador): fuerza traer la última
   //    versión y regresa a donde estaba el usuario (limpia cachés/SW).

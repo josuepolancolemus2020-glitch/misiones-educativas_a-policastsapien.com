@@ -4004,10 +4004,30 @@
   };
 
   /* --------------------------------------------------------------------------
+     RETORNO INTELIGENTE Y REGISTRO DE ESTADO PARA EL PORTAL
+     -------------------------------------------------------------------------- */
+  function guardarEstadoPrebasicaParaPortal() {
+    try {
+      localStorage.setItem('metas_usuario_prebasica', 'true');
+      localStorage.setItem('metas_ultima_mision_prebasica_id', 'prebasica-tecnicas-libro1');
+      localStorage.setItem('metas_ultima_mision_prebasica_titulo', 'Prebásica (3.° Grado): Técnicas Gráficas y No Gráficas — Libro 1');
+      localStorage.setItem('metas_ultima_mision_prebasica_url', 'misiones/prebasica-tecnicas-libro1/prebasica-libro1.html');
+    } catch (e) {}
+  }
+  window.guardarEstadoPrebasicaParaPortal = guardarEstadoPrebasicaParaPortal;
+
+  window.guardarYRegresarPrebasica = function (e) {
+    if (e && e.preventDefault) e.preventDefault();
+    guardarEstadoPrebasicaParaPortal();
+    window.location.href = '../../index.html?desde=prebasica#zona-prebasica';
+  };
+
+  /* --------------------------------------------------------------------------
      INICIALIZACIÓN AL CARGAR EL DOM
      -------------------------------------------------------------------------- */
   document.addEventListener('DOMContentLoaded', function () {
     loadState();
+    guardarEstadoPrebasicaParaPortal();
     var sndBtn = document.getElementById('sndBtn');
     if (sndBtn) sndBtn.textContent = state.soundOn ? '🔊 Sonido: Sí' : '🔇 Sonido: No';
     initTraceTab();
