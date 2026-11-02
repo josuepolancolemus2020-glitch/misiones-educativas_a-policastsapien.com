@@ -131,19 +131,114 @@
     playTone(220, 0.22, 'sine', 0.12);
   }
 
-  window.hablarTexto = function (texto, lang) {
-    if (!state.soundOn) return;
+  /* --------------------------------------------------------------------------
+     REPRODUCTOR DE VOZ NEURONAL MP3 + RESPALDO INTELIGENTE SPEECHSYNTHESIS
+     -------------------------------------------------------------------------- */
+  var currentAudioObj = null;
+
+  function normalizarTextoAudio(t) {
+    if (!t) return '';
+    return t
+      .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2300}-\u{23FF}\u{2B00}-\u{2BFF}\u{FE00}-\u{FE0F}\u{200D}]/gu, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function hablarConSintesisRespaldo(textoLimpio, lang) {
     if (!('speechSynthesis' in window)) return;
     try {
       window.speechSynthesis.cancel();
-      var u = new SpeechSynthesisUtterance(texto);
+      var u = new SpeechSynthesisUtterance(textoLimpio);
       u.lang = lang || 'es-ES';
-      u.rate = 0.92;
+      u.rate = 0.94;
       u.pitch = 1.05;
+
+      var voices = window.speechSynthesis.getVoices() || [];
+      var isEn = (lang && lang.toLowerCase().indexOf('en') === 0);
+      var selectedVoice = null;
+
+      if (isEn) {
+        var priorityEn = ['ana', 'aria', 'google us english', 'natural', 'online'];
+        for (var i = 0; i < priorityEn.length; i++) {
+          var needle = priorityEn[i];
+          selectedVoice = voices.find(function (v) {
+            return (v.lang.toLowerCase().indexOf('en') === 0) && v.name.toLowerCase().indexOf(needle) !== -1;
+          });
+          if (selectedVoice) break;
+        }
+        if (!selectedVoice) {
+          selectedVoice = voices.find(function (v) {
+            return v.lang.toLowerCase().indexOf('en') === 0;
+          });
+        }
+      } else {
+        var priorityEs = ['dalia', 'elena', 'salome', 'paulina', 'google español', 'natural', 'online'];
+        for (var j = 0; j < priorityEs.length; j++) {
+          var needleEs = priorityEs[j];
+          selectedVoice = voices.find(function (v) {
+            return (v.lang.toLowerCase().indexOf('es') === 0) && v.name.toLowerCase().indexOf(needleEs) !== -1;
+          });
+          if (selectedVoice) break;
+        }
+        if (!selectedVoice) {
+          selectedVoice = voices.find(function (v) {
+            return v.lang.toLowerCase().indexOf('es') === 0;
+          });
+        }
+      }
+
+      if (selectedVoice) u.voice = selectedVoice;
       window.speechSynthesis.speak(u);
     } catch (e) {
       /* TTS no disponible */
     }
+  }
+
+  window.hablarTexto = function (texto, lang) {
+    if (!state.soundOn || !texto) return;
+
+    // 1. Detener cualquier audio o locución previa antes de reproducir uno nuevo
+    if (currentAudioObj) {
+      try {
+        currentAudioObj.pause();
+        currentAudioObj.currentTime = 0;
+      } catch (e) {}
+      currentAudioObj = null;
+    }
+    if ('speechSynthesis' in window) {
+      try { window.speechSynthesis.cancel(); } catch (e) {}
+    }
+
+    var limpio = normalizarTextoAudio(texto);
+    if (!limpio) return;
+
+    // 2. Si el texto limpio existe en MAPA_AUDIOS_PREBASICA, reproducir de inmediato el MP3
+    var archivo = null;
+    if (window.MAPA_AUDIOS_PREBASICA) {
+      archivo = window.MAPA_AUDIOS_PREBASICA[limpio] ||
+                window.MAPA_AUDIOS_PREBASICA[texto] ||
+                window.MAPA_AUDIOS_PREBASICA[limpio.toLowerCase()];
+    }
+
+    if (archivo) {
+      try {
+        var audio = new Audio('audios/' + archivo);
+        currentAudioObj = audio;
+        var playPromise = audio.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(function () {
+            // Si el navegador bloquea la reproducción de audio o falla el archivo, usar respaldo
+            hablarConSintesisRespaldo(limpio, lang);
+          });
+        }
+        return;
+      } catch (e) {
+        // Fallback inmediato
+      }
+    }
+
+    // 3. Respaldo inteligente con speechSynthesis filtrando voces naturales
+    hablarConSintesisRespaldo(limpio, lang);
   };
 
   /* --------------------------------------------------------------------------
@@ -1966,8 +2061,17 @@
     state.soundOn = !state.soundOn;
     var btn = document.getElementById('sndBtn');
     if (btn) btn.textContent = state.soundOn ? '🔊 Sonido: Sí' : '🔇 Sonido: No';
-    if (!state.soundOn && 'speechSynthesis' in window) {
-      try { window.speechSynthesis.cancel(); } catch (e) {}
+    if (!state.soundOn) {
+      if (currentAudioObj) {
+        try {
+          currentAudioObj.pause();
+          currentAudioObj.currentTime = 0;
+        } catch (e) {}
+        currentAudioObj = null;
+      }
+      if ('speechSynthesis' in window) {
+        try { window.speechSynthesis.cancel(); } catch (e) {}
+      }
     }
     saveState();
   };
