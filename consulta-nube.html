@@ -1,9 +1,9 @@
-ï»¿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>â˜ï¸ Consulta en la Nube â€” M.E.T.A.S</title>
+<title>?? Consulta en la Nube — M.E.T.A.S</title>
 <style>
 :root{
   --pri:#1565c0; --pri-gl:#e3f2fd; --jade:#00b894; --amber:#fdcb6e; --rojo:#d63031;
@@ -45,9 +45,9 @@ tr:hover td{background:var(--pri-gl);}
 .b-evaluacion{background:#fff3d6;color:#9a6b00;}
 .b-prueba_operativa{background:#f0e8ff;color:#6c5ce7;}
 .b-pauta_vista{background:#ffe3e3;color:#c0392b;}
-/* La fila que llegÃ³ SIN cÃ³digo de aula: nadie comprobÃ³ que sea de este
-   maestro. Se marca en vez de esconderse â€”esconderla le harÃ­a perder
-   prÃ¡ctica de verdad de los alumnos que aÃºn no escriben el cÃ³digoâ€” y
+/* La fila que llegó SIN código de aula: nadie comprobó que sea de este
+   maestro. Se marca en vez de esconderse —esconderla le haría perder
+   práctica de verdad de los alumnos que aún no escriben el código— y
    ahora se puede borrar. */
 .sinver{display:inline-block;margin-left:4px;color:#b45309;cursor:help;}
 .btn-borrar{background:none;border:1px solid var(--border);border-radius:6px;cursor:pointer;
@@ -71,87 +71,87 @@ footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5
 <body>
 
 <header>
-  <h1>â˜ï¸ Consulta en la Nube â€” M.E.T.A.S</h1>
+  <h1>?? Consulta en la Nube — M.E.T.A.S</h1>
   <p>Resultados de evaluaciones de <strong>todos los dispositivos</strong> de tu aula, sincronizados a Supabase.
-  Cada telÃ©fono o tablet sube sus notas automÃ¡ticamente cuando tiene internet; aquÃ­ las ves reunidas.</p>
+  Cada teléfono o tablet sube sus notas automáticamente cuando tiene internet; aquí las ves reunidas.</p>
   <div class="top-links">
-    <a class="btn btn-blanco" href="index.html">ğŸ  Volver al inicio</a>
-    <a class="btn btn-blanco" href="registro.html">ğŸ“‹ Evidencia de misiones (este equipo)</a>
-    <a class="btn btn-blanco" href="panel-docente.html">ğŸ” Panel docente (con cuenta)</a>
+    <a class="btn btn-blanco" href="index.html">?? Volver al inicio</a>
+    <a class="btn btn-blanco" href="registro.html">?? Evidencia de misiones (este equipo)</a>
+    <a class="btn btn-blanco" href="panel-docente.html">?? Panel docente (con cuenta)</a>
   </div>
 </header>
 
 <div class="clave-card">
   <div>
-    <label for="correo">ğŸ“§ Correo de tu cuenta de maestro</label>
+    <label for="correo">?? Correo de tu cuenta de maestro</label>
     <input id="correo" type="email" autocomplete="email" placeholder="tucorreo@ejemplo.com">
   </div>
   <div>
-    <label for="clave">ğŸ”‘ ContraseÃ±a</label>
-    <input id="clave" type="password" autocomplete="current-password" placeholder="Tu contraseÃ±a">
+    <label for="clave">?? Contraseña</label>
+    <input id="clave" type="password" autocomplete="current-password" placeholder="Tu contraseña">
   </div>
-  <button class="btn btn-pri" id="btnConsultar" onclick="entrar()">ğŸ” Entrar y consultar</button>
-  <div id="estado">Entra con el correo y la contraseÃ±a de tu cuenta de maestro. La sesiÃ³n se recuerda en este dispositivo.</div>
+  <button class="btn btn-pri" id="btnConsultar" onclick="entrar()">?? Entrar y consultar</button>
+  <div id="estado">Entra con el correo y la contraseña de tu cuenta de maestro. La sesión se recuerda en este dispositivo.</div>
 </div>
 
 <div class="stats" id="stats" style="display:none;"></div>
 
 <div class="filtros" id="filtros" style="display:none;">
-  <label>ğŸš€ MisiÃ³n <select id="fMision"><option value="">Todas</option></select></label>
-  <label>ğŸ“š Grado <select id="fGrado"><option value="">Todos</option></select></label>
-  <label>ğŸ‘¤ Alumno <select id="fAlumno"><option value="">Todos</option></select></label>
-  <label>ğŸ—‚ï¸ Tipo <select id="fTipo">
+  <label>?? Misión <select id="fMision"><option value="">Todas</option></select></label>
+  <label>?? Grado <select id="fGrado"><option value="">Todos</option></select></label>
+  <label>?? Alumno <select id="fAlumno"><option value="">Todos</option></select></label>
+  <label>??? Tipo <select id="fTipo">
     <option value="">Todos</option>
-    <option value="evaluacion">ğŸ“‹ EvaluaciÃ³n</option>
-    <option value="prueba_operativa">ğŸ§® Prueba operativa</option>
-    <option value="pauta_vista">ğŸ” Vio pauta</option>
+    <option value="evaluacion">?? Evaluación</option>
+    <option value="prueba_operativa">?? Prueba operativa</option>
+    <option value="pauta_vista">?? Vio pauta</option>
   </select></label>
 </div>
 
 <div class="acciones" id="acciones" style="display:none;">
-  <button class="btn btn-pri" onclick="exportarCSV()">ğŸ“¥ Exportar CSV</button>
-  <button class="btn btn-jade" onclick="subirPendientes()">â˜ï¸ Subir pendientes de este dispositivo</button>
+  <button class="btn btn-pri" onclick="exportarCSV()">?? Exportar CSV</button>
+  <button class="btn btn-jade" onclick="subirPendientes()">?? Subir pendientes de este dispositivo</button>
 </div>
 
 <div class="tabla-wrap" id="tablaWrap" style="display:none;">
   <table>
-    <thead><tr><th>Fecha</th><th>Hora</th><th>Alumno</th><th>NÂº lista</th><th>Grado</th><th>MisiÃ³n</th><th>Tipo</th><th>Forma</th><th>Nota</th><th>Dispositivo</th><th></th></tr></thead>
+    <thead><tr><th>Fecha</th><th>Hora</th><th>Alumno</th><th>Nº lista</th><th>Grado</th><th>Misión</th><th>Tipo</th><th>Forma</th><th>Nota</th><th>Dispositivo</th><th></th></tr></thead>
     <tbody id="tbody"></tbody>
   </table>
   <div class="vacio" id="vacio" style="display:none;">
-    ğŸ“­ No hay resultados con estos filtros.<br>
-    Si esperabas datos, verifica que tus alumnos escribieran tu nombre en el campo Â«DocenteÂ» y que los dispositivos hayan tenido internet para sincronizar.
+    ?? No hay resultados con estos filtros.<br>
+    Si esperabas datos, verifica que tus alumnos escribieran tu nombre en el campo «Docente» y que los dispositivos hayan tenido internet para sincronizar.
   </div>
 </div>
 
 <div id="progSeccion" style="display:none;">
-  <h2 style="font-size:1.05rem;margin:1.4rem 0 0.6rem;color:var(--pri);">ğŸ–ï¸ Progreso por alumno (XP, insignias y diagnÃ³sticos)</h2>
+  <h2 style="font-size:1.05rem;margin:1.4rem 0 0.6rem;color:var(--pri);">??? Progreso por alumno (XP, insignias y diagnósticos)</h2>
   <div class="tabla-wrap">
     <table>
-      <thead><tr><th>Alumno</th><th>NÂº lista</th><th>Grado</th><th>XP</th><th>Dominadas</th><th>Secciones</th><th>Min</th><th>DiagnÃ³sticos</th><th>Torneos</th><th>Insignias ğŸ†</th><th>Actualizado</th><th>Dispositivo</th></tr></thead>
+      <thead><tr><th>Alumno</th><th>Nº lista</th><th>Grado</th><th>XP</th><th>Dominadas</th><th>Secciones</th><th>Min</th><th>Diagnósticos</th><th>Torneos</th><th>Insignias ??</th><th>Actualizado</th><th>Dispositivo</th></tr></thead>
       <tbody id="progBody"></tbody>
     </table>
     <div class="vacio" id="progVacio" style="display:none;">
-      ğŸ“­ AÃºn no hay fotos de progreso en la nube.<br>
+      ?? Aún no hay fotos de progreso en la nube.<br>
       Se generan solas cuando los estudiantes trabajan en las misiones con internet.
     </div>
   </div>
 </div>
 
 <div class="nota-etica">
-  ğŸ”’ <strong>Privacidad:</strong> la tabla de la nube solo puede leerse desde <strong>tu cuenta de maestro</strong>; los dispositivos de los
-  estudiantes Ãºnicamente pueden <em>agregar</em> resultados, nunca ver los de otros. Se recomienda identificar a los
-  estudiantes con su <strong>nÃºmero de lista o cÃ³digo</strong> en lugar del nombre completo.
+  ?? <strong>Privacidad:</strong> la tabla de la nube solo puede leerse desde <strong>tu cuenta de maestro</strong>; los dispositivos de los
+  estudiantes únicamente pueden <em>agregar</em> resultados, nunca ver los de otros. Se recomienda identificar a los
+  estudiantes con su <strong>número de lista o código</strong> en lugar del nombre completo.
 </div>
 
-<footer>ğŸ  Proyecto Educativo M.E.T.A.S Â· ğŸŒ policastsapien.com<br>
-  Â© 2026 Familia Polanco-Castellanos Â· <a href="privacidad.html">Aviso de privacidad</a>
-  Â· <a href="terminos.html">TÃ©rminos de uso</a></footer>
+<footer>?? Proyecto Educativo M.E.T.A.S · ?? policastsapien.com<br>
+  © 2026 Familia Polanco-Castellanos · <a href="privacidad.html">Aviso de privacidad</a>
+  · <a href="terminos.html">Términos de uso</a></footer>
 
-<script src="js/metas-registro.js?v=446"></script>
+<script src="js/metas-registro.js?v=447"></script>
 <script>
 'use strict';
-/* Misma configuraciÃ³n predeterminada que js/metas-supabase.js */
+/* Misma configuración predeterminada que js/metas-supabase.js */
 let SB_URL = 'https://uljjgrikyigdrkbikcxo.supabase.co';
 let SB_KEY = 'sb_publishable_VGj7He4XL8AGscsY3RsxGg__xlzi48w';
 try {
@@ -159,13 +159,13 @@ try {
   SB_KEY = localStorage.getItem('METAS_SB_KEY') || SB_KEY;
 } catch (e) {}
 
-const NOMBRE_TIPO = { evaluacion:'ğŸ“‹ EvaluaciÃ³n', prueba_operativa:'ğŸ§® Prueba op.', pauta_vista:'ğŸ” Vio pauta' };
+const NOMBRE_TIPO = { evaluacion:'?? Evaluación', prueba_operativa:'?? Prueba op.', pauta_vista:'?? Vio pauta' };
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtF = t => { const d=new Date(t); if(isNaN(d)) return {f:'',h:''}; const p=n=>(n<10?'0':'')+n; return {f:d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()), h:p(d.getHours())+':'+p(d.getMinutes())}; };
 
 let DATOS = [];
 
-/* Maestro con sesiÃ³n (METAS_DOCENTE_V1): entra directo, sin escribir nada,
+/* Maestro con sesión (METAS_DOCENTE_V1): entra directo, sin escribir nada,
    y la nube le devuelve SOLO los resultados de sus alumnos */
 let DOCENTE = null;
 try {
@@ -176,24 +176,24 @@ try { localStorage.removeItem('METAS_SB_CLAVE'); } catch(e) {} // limpieza del f
 
 if (DOCENTE) {
   const cc = document.querySelector('.clave-card');
-  if (cc) cc.innerHTML = '<div id="estado">ğŸ‘©â€ğŸ« <strong>' + esc(DOCENTE.nombre || DOCENTE.correo || '') +
-    '</strong> â€” mostrando solo a tus alumnos.</div>';
+  if (cc) cc.innerHTML = '<div id="estado">????? <strong>' + esc(DOCENTE.nombre || DOCENTE.correo || '') +
+    '</strong> — mostrando solo a tus alumnos.</div>';
   consultar(); // maneja solo el caso sin internet
 } else {
   ['correo','clave'].forEach(id => document.getElementById(id)
     .addEventListener('keydown', e => { if (e.key === 'Enter') entrar(); }));
 }
 
-/* Entrar con la cuenta de maestro (correo + contraseÃ±a) */
+/* Entrar con la cuenta de maestro (correo + contraseña) */
 async function entrar(){
   const estado = document.getElementById('estado');
   const correo = document.getElementById('correo').value.trim();
   const clave = document.getElementById('clave').value;
-  if (!correo || !clave) { estado.textContent = 'âš ï¸ Escribe tu correo y tu contraseÃ±a.'; return; }
-  if (navigator.onLine === false) { estado.textContent = 'ğŸ“´ Sin conexiÃ³n: entrar necesita internet.'; return; }
+  if (!correo || !clave) { estado.textContent = '?? Escribe tu correo y tu contraseña.'; return; }
+  if (navigator.onLine === false) { estado.textContent = '?? Sin conexión: entrar necesita internet.'; return; }
   const btn = document.getElementById('btnConsultar');
   if (btn) btn.disabled = true;
-  estado.textContent = 'â³ Entrando a tu cuenta...';
+  estado.textContent = '? Entrando a tu cuenta...';
   try {
     const r = await fetch(SB_URL + '/rest/v1/rpc/metas_entrar_docente_v2', {
       method: 'POST',
@@ -204,9 +204,9 @@ async function entrar(){
     let j = await r.json();
     if (Array.isArray(j)) j = j[0] || {};
     if (j && j.ok) {
-      /* Se COMPLETA la sesiÃ³n guardada en vez de reemplazarla: aquÃ­ solo
-         entra el par cÃ³digo+clave. Reescribirla entera borraba el rol, la
-         escuela y el cÃ³digo de aula del equipo, y un director quedaba
+      /* Se COMPLETA la sesión guardada en vez de reemplazarla: aquí solo
+         entra el par código+clave. Reescribirla entera borraba el rol, la
+         escuela y el código de aula del equipo, y un director quedaba
          pintado como docente hasta volver a abrir Ajustes. */
       let previo = {};
       try { previo = JSON.parse(localStorage.getItem('METAS_DOCENTE_V1')) || {}; } catch(e) {}
@@ -216,33 +216,33 @@ async function entrar(){
       });
       try { localStorage.setItem('METAS_DOCENTE_V1', JSON.stringify(DOCENTE)); } catch(e) {}
       const cc = document.querySelector('.clave-card');
-      if (cc) cc.innerHTML = '<div id="estado">ğŸ‘©â€ğŸ« <strong>' + esc(DOCENTE.nombre || DOCENTE.correo) +
-        '</strong> â€” mostrando solo a tus alumnos.</div>';
+      if (cc) cc.innerHTML = '<div id="estado">????? <strong>' + esc(DOCENTE.nombre || DOCENTE.correo) +
+        '</strong> — mostrando solo a tus alumnos.</div>';
       consultar();
       return;
     }
     const motivo = j && j.motivo;
     if (motivo === 'espera') {
-      estado.textContent = 'â³ Por seguridad, espera unos 10 minutos antes de intentar de nuevo.';
+      estado.textContent = '? Por seguridad, espera unos 10 minutos antes de intentar de nuevo.';
     } else {
-      estado.textContent = 'âš ï¸ Correo o contraseÃ±a incorrectos. RevÃ­salos e intenta de nuevo.';
+      estado.textContent = '?? Correo o contraseña incorrectos. Revísalos e intenta de nuevo.';
     }
   } catch (err) {
-    estado.textContent = 'âš ï¸ No se pudo entrar (' + err.message + '). Revisa tu internet e intenta de nuevo.';
+    estado.textContent = '?? No se pudo entrar (' + err.message + '). Revisa tu internet e intenta de nuevo.';
   }
   if (btn) btn.disabled = false;
 }
 
 async function consultar(){
   const estado = document.getElementById('estado');
-  if (!DOCENTE) { estado.textContent = 'âš ï¸ Entra primero con tu correo y contraseÃ±a.'; return; }
+  if (!DOCENTE) { estado.textContent = '?? Entra primero con tu correo y contraseña.'; return; }
   const rpc1 = 'metas_consultar_docente';
   const rpc2 = 'metas_consultar_progreso_docente';
   const body = { p_codigo: DOCENTE.codigo, p_clave: DOCENTE.clave };
-  if (navigator.onLine === false) { estado.textContent = 'ğŸ“´ Sin conexiÃ³n: la consulta a la nube necesita internet.'; return; }
+  if (navigator.onLine === false) { estado.textContent = '?? Sin conexión: la consulta a la nube necesita internet.'; return; }
   const btn = document.getElementById('btnConsultar');
   if (btn) btn.disabled = true;
-  estado.textContent = 'â³ Consultando la nube...';
+  estado.textContent = '? Consultando la nube...';
   try {
     const r = await fetch(SB_URL + '/rest/v1/rpc/' + rpc1, {
       method: 'POST',
@@ -263,27 +263,27 @@ async function consultar(){
       if (!Array.isArray(PROG)) PROG = [];
     } catch(e) {}
     estado.textContent = (DATOS.length || PROG.length)
-      ? 'âœ… ' + DATOS.length + ' resultados y ' + PROG.length + ' fotos de progreso recibidos de la nube.'
-      : 'ğŸ“­ AÃºn no hay resultados. Dales a tus alumnos tu cÃ³digo de aula (lo ves en la Zona Docente) para que lo escriban al identificarse.';
+      ? '? ' + DATOS.length + ' resultados y ' + PROG.length + ' fotos de progreso recibidos de la nube.'
+      : '?? Aún no hay resultados. Dales a tus alumnos tu código de aula (lo ves en la Zona Docente) para que lo escriban al identificarse.';
     ['stats','filtros','acciones','tablaWrap','progSeccion'].forEach(id => document.getElementById(id).style.display = '');
     llenarFiltros();
     pintar();
     pintarProgreso(PROG);
   } catch (err) {
-    estado.textContent = 'âš ï¸ No se pudo consultar (' + err.message + '). Revisa tu internet e intenta de nuevo.';
+    estado.textContent = '?? No se pudo consultar (' + err.message + '). Revisa tu internet e intenta de nuevo.';
   }
   if (btn) btn.disabled = false;
 }
 
-/* Borrar una fila de la nube. No existÃ­a NINGÃšN borrado en toda la base: una
-   nota falsa era eterna y el maestro no podÃ­a quitarla. AdemÃ¡s de defensa es
-   el derecho de supresiÃ³n que promete el aviso de privacidad.
+/* Borrar una fila de la nube. No existía NINGÚN borrado en toda la base: una
+   nota falsa era eterna y el maestro no podía quitarla. Además de defensa es
+   el derecho de supresión que promete el aviso de privacidad.
 
-   El servidor solo borra filas que esa misma consulta le devolverÃ­a a Ã©l, asÃ­
+   El servidor solo borra filas que esa misma consulta le devolvería a él, así
    que esto no puede tocar lo de otro maestro aunque se manipule el id. */
 async function borrarFila(id, tr){
   if (!DOCENTE || !DOCENTE.codigo) return;
-  if (!confirm('Â¿Quitar esta fila de la nube?\n\nSe borra para siempre. Ãšsalo con lo que no reconozcas como prÃ¡ctica de tus alumnos.')) return;
+  if (!confirm('¿Quitar esta fila de la nube?\n\nSe borra para siempre. Úsalo con lo que no reconozcas como práctica de tus alumnos.')) return;
   const est = document.getElementById('estado');
   try {
     const r = await fetch(SB_URL + '/rest/v1/rpc/metas_resultados_borrar', {
@@ -292,24 +292,24 @@ async function borrarFila(id, tr){
       body: JSON.stringify({ p_codigo: DOCENTE.codigo, p_clave: DOCENTE.clave, p_ids: [Number(id)] })
     });
     if (!r.ok) {
-      /* 404 = la funciÃ³n todavÃ­a no existe en el servidor: falta pegar
-         SUPABASE-PUERTA-ANONIMA.sql. Se dice ASÃ, con el nombre del archivo,
-         en vez de un Â«HTTP 404Â» que no le sirve a nadie. */
+      /* 404 = la función todavía no existe en el servidor: falta pegar
+         SUPABASE-PUERTA-ANONIMA.sql. Se dice ASÍ, con el nombre del archivo,
+         en vez de un «HTTP 404» que no le sirve a nadie. */
       est.textContent = (r.status === 404)
-        ? 'âš ï¸ El servidor todavÃ­a no sabe borrar: falta correr SUPABASE-PUERTA-ANONIMA.sql en el SQL Editor de Supabase.'
-        : 'âš ï¸ No se pudo borrar (HTTP ' + r.status + ').';
+        ? '?? El servidor todavía no sabe borrar: falta correr SUPABASE-PUERTA-ANONIMA.sql en el SQL Editor de Supabase.'
+        : '?? No se pudo borrar (HTTP ' + r.status + ').';
       return;
     }
     const n = await r.json();
     if (n > 0) {
       DATOS = DATOS.filter(x => String(x.id) !== String(id));
       if (tr) tr.remove();
-      est.textContent = 'ğŸ—‘ Fila quitada de la nube.';
+      est.textContent = '?? Fila quitada de la nube.';
     } else {
-      est.textContent = 'âš ï¸ No se quitÃ³: esa fila no es de tu aula.';
+      est.textContent = '?? No se quitó: esa fila no es de tu aula.';
     }
   } catch (e) {
-    est.textContent = 'âš ï¸ No se pudo borrar (' + e.message + ').';
+    est.textContent = '?? No se pudo borrar (' + e.message + ').';
   }
 }
 document.addEventListener('click', ev => {
@@ -333,24 +333,24 @@ function llenarFiltros(){
   opciones('fAlumno',[...new Set(DATOS.map(r=>r.alumno).filter(Boolean))].sort());
 }
 
-/* âš ï¸ `verificado` puede venir de tres maneras y las tres significan cosas
+/* ?? `verificado` puede venir de tres maneras y las tres significan cosas
    distintas:
-     true       â†’ llegÃ³ con cÃ³digo de aula y el servidor resolviÃ³ al maestro;
-     false      â†’ llegÃ³ sin cÃ³digo: nadie comprobÃ³ de quiÃ©n es;
-     undefined  â†’ el servidor TODAVÃA NO tiene la columna, o sea que aÃºn no se
+     true       ? llegó con código de aula y el servidor resolvió al maestro;
+     false      ? llegó sin código: nadie comprobó de quién es;
+     undefined  ? el servidor TODAVÍA NO tiene la columna, o sea que aún no se
                   ha corrido SUPABASE-PUERTA-ANONIMA.sql.
-   El tercer caso NO se marca: marcarlo pintarÃ­a de aviso todas las filas de
+   El tercer caso NO se marca: marcarlo pintaría de aviso todas las filas de
    todos los maestros mientras el SQL espera a ser pegado, y un aviso que sale
    siempre deja de leerse. */
 function selloSinVerificar(r){
   if(r.verificado!==false) return '';
-  return ' <span class="sinver" title="Esta fila llegÃ³ sin cÃ³digo de aula: nadie comprobÃ³ que sea de un alumno tuyo. '
-    + 'Si no la reconoces, bÃ³rrala con ğŸ—‘.">âš ï¸ sin verificar</span>';
+  return ' <span class="sinver" title="Esta fila llegó sin código de aula: nadie comprobó que sea de un alumno tuyo. '
+    + 'Si no la reconoces, bórrala con ??.">?? sin verificar</span>';
 }
 
 function pintar(){
   const rs=filtrados();
-  // Anti-trampa: aperturas de pauta (respuestas) por dispositivo y misiÃ³n
+  // Anti-trampa: aperturas de pauta (respuestas) por dispositivo y misión
   const pautas=DATOS.filter(r=>r.tipo==='pauta_vista');
   const tb=document.getElementById('tbody'); tb.innerHTML='';
   document.getElementById('vacio').style.display = rs.length?'none':'block';
@@ -364,15 +364,15 @@ function pintar(){
         const tEv=r.fecha||r.creado_en;
         const vio=pautas.find(p=>p.mision===r.mision && p.dispositivo===r.dispositivo &&
           (p.fecha||p.creado_en)<tEv && fmtF(p.fecha||p.creado_en).f===f);
-        if(vio) nota += ' <span class="pauta-warn" title="âš ï¸ La pauta (respuestas) se abriÃ³ en ese dispositivo a las '+esc(fmtF(vio.fecha||vio.creado_en).h)+', ANTES de calificar. La nota podrÃ­a no ser confiable.">âš ï¸</span>';
+        if(vio) nota += ' <span class="pauta-warn" title="?? La pauta (respuestas) se abrió en ese dispositivo a las '+esc(fmtF(vio.fecha||vio.creado_en).h)+', ANTES de calificar. La nota podría no ser confiable.">??</span>';
       }
     }
     const tr=document.createElement('tr');
-    tr.innerHTML = '<td>'+esc(f)+'</td><td>'+esc(h)+'</td><td>'+esc(r.alumno||'â€”')+'</td><td>'+esc(r.codigo_lista||'â€”')+
-      '</td><td>'+esc(r.grado||'â€”')+'</td><td>'+esc(r.mision||'â€”')+
+    tr.innerHTML = '<td>'+esc(f)+'</td><td>'+esc(h)+'</td><td>'+esc(r.alumno||'—')+'</td><td>'+esc(r.codigo_lista||'—')+
+      '</td><td>'+esc(r.grado||'—')+'</td><td>'+esc(r.mision||'—')+
       '</td><td><span class="badge b-'+esc(r.tipo)+'">'+(NOMBRE_TIPO[r.tipo]||esc(r.tipo))+'</span>'+selloSinVerificar(r)+'</td><td>'+esc(r.forma||'')+
       '</td><td>'+nota+'</td><td>'+esc(r.dispositivo||'')+'</td>' +
-      '<td>' + (r.id ? '<button class="btn-borrar" data-id="'+esc(r.id)+'" title="Quitar esta fila de la nube">ğŸ—‘</button>' : '') + '</td>';
+      '<td>' + (r.id ? '<button class="btn-borrar" data-id="'+esc(r.id)+'" title="Quitar esta fila de la nube">??</button>' : '') + '</td>';
     if (r.verificado === false) tr.className = 'fila-sinver';
     tb.appendChild(tr);
   });
@@ -386,8 +386,8 @@ function pintar(){
     stat([...new Set(rs.map(r=>r.alumno).filter(Boolean))].length,'Alumnos') +
     stat([...new Set(rs.map(r=>r.mision).filter(Boolean))].length,'Misiones') +
     stat([...new Set(rs.map(r=>r.dispositivo).filter(Boolean))].length,'Dispositivos') +
-    stat(prom(evals)!=null?prom(evals):'â€”','Promedio conceptual') +
-    stat(prom(ops)!=null?prom(ops):'â€”','Promedio operativa') +
+    stat(prom(evals)!=null?prom(evals):'—','Promedio conceptual') +
+    stat(prom(ops)!=null?prom(ops):'—','Promedio operativa') +
     stat(pend,'Por subir (este equipo)');
 }
 
@@ -399,16 +399,16 @@ function pintarProgreso(prog){
     const {f,h}=fmtF(p.actualizado_en);
     const dom=Array.isArray(r.dominadas)?r.dominadas:[];
     const diag=r.diag&&typeof r.diag==='object'
-      ? Object.keys(r.diag).map(k=>k+(r.diag[k]&&r.diag[k].etapa?(' â†’ '+r.diag[k].etapa):'')).join(', ')
+      ? Object.keys(r.diag).map(k=>k+(r.diag[k]&&r.diag[k].etapa?(' ? '+r.diag[k].etapa):'')).join(', ')
       : '';
     const camp=r.camp||{};
-    const ins=Array.isArray(camp.insignias)?[...new Set(camp.insignias)].slice(0,6).join(' Â· '):'';
+    const ins=Array.isArray(camp.insignias)?[...new Set(camp.insignias)].slice(0,6).join(' · '):'';
     const tr=document.createElement('tr');
-    tr.innerHTML = '<td>'+esc(p.alumno||'â€”')+'</td><td>'+esc(p.codigo_lista||'â€”')+'</td><td>'+esc(p.grado||'â€”')+
-      '</td><td>'+esc(r.xp_index==null?'â€”':r.xp_index)+'</td><td title="'+esc(dom.join(', '))+'">'+dom.length+
-      '</td><td>'+esc(r.secciones==null?'â€”':r.secciones)+'</td><td>'+esc(r.minutos==null?'â€”':r.minutos)+
-      '</td><td>'+esc(diag||'â€”')+'</td><td>'+esc(camp.torneos==null?'â€”':camp.torneos)+
-      '</td><td>'+esc(ins||'â€”')+'</td><td>'+esc(f+' '+h)+'</td><td>'+esc(p.dispositivo||'')+'</td>';
+    tr.innerHTML = '<td>'+esc(p.alumno||'—')+'</td><td>'+esc(p.codigo_lista||'—')+'</td><td>'+esc(p.grado||'—')+
+      '</td><td>'+esc(r.xp_index==null?'—':r.xp_index)+'</td><td title="'+esc(dom.join(', '))+'">'+dom.length+
+      '</td><td>'+esc(r.secciones==null?'—':r.secciones)+'</td><td>'+esc(r.minutos==null?'—':r.minutos)+
+      '</td><td>'+esc(diag||'—')+'</td><td>'+esc(camp.torneos==null?'—':camp.torneos)+
+      '</td><td>'+esc(ins||'—')+'</td><td>'+esc(f+' '+h)+'</td><td>'+esc(p.dispositivo||'')+'</td>';
     tb.appendChild(tr);
   });
 }
@@ -420,7 +420,7 @@ function exportarCSV(){
   const filas=['fecha,hora,alumno,codigo_lista,grado,docente,escuela,mision,tipo,forma,nota,base,xp,dispositivo'];
   rs.forEach(r=>{ const {f,h}=fmtF(r.fecha||r.creado_en);
     filas.push([f,h,r.alumno,r.codigo_lista,r.grado,r.docente,r.escuela,r.mision,r.tipo,r.forma,r.nota,r.base,r.xp,r.dispositivo].map(celda).join(',')); });
-  const blob=new Blob(['ï»¿'+filas.join('\r\n')],{type:'text/csv;charset=utf-8;'});
+  const blob=new Blob(['?'+filas.join('\r\n')],{type:'text/csv;charset=utf-8;'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
   const hoy=fmtF(new Date().toISOString()).f;
@@ -430,7 +430,7 @@ function exportarCSV(){
 }
 
 function subirPendientes(){
-  if(!window.METAS_SB){ alert('La capa de nube aÃºn no carga en esta pÃ¡gina.'); return; }
+  if(!window.METAS_SB){ alert('La capa de nube aún no carga en esta página.'); return; }
   METAS_SB.sincronizar().then(r=>{
     alert(r.enviados+' resultados subidos a la nube.\nPendientes: '+r.pendientes);
     if(DATOS.length) consultar();

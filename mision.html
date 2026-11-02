@@ -1,27 +1,27 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#1e3a7c">
-  <title>Misión — M.E.T.A.S.</title>
+  <title>Misi�n � M.E.T.A.S.</title>
   <link rel="manifest" href="manifest.json">
-  <!-- Las tipografías, aquí dentro: antes venían de fonts.googleapis.com por un
+  <!-- Las tipograf�as, aqu� dentro: antes ven�an de fonts.googleapis.com por un
        @import de app.css, y una hoja de estilo externa BLOQUEA el pintado. Con el
-       CDN colgado —lo que hace la señal de un pueblo— la portada no pintaba NUNCA.
-       Va antes de app.css para que el @font-face esté cuando la hoja lo pida. -->
-  <link rel="stylesheet" href="css/vendor/fuentes/fuentes.css?v=446">
-  <link rel="stylesheet" href="css/app.css?v=446">
+       CDN colgado �lo que hace la se�al de un pueblo� la portada no pintaba NUNCA.
+       Va antes de app.css para que el @font-face est� cuando la hoja lo pida. -->
+  <link rel="stylesheet" href="css/vendor/fuentes/fuentes.css?v=447">
+  <link rel="stylesheet" href="css/app.css?v=447">
 
-  <!-- El tamaño de letra del maestro se aplica ANTES del primer pintado:
-       si se aplicara al final, vería la pantalla pequeña y luego un salto,
-       y en un teléfono lento ese salto le mueve de debajo del dedo lo que
-       iba a tocar. Misma razón por la que estrella-ganada.js va aquí. -->
-  <script src="js/letra-maestro.js?v=446"></script>
+  <!-- El tama�o de letra del maestro se aplica ANTES del primer pintado:
+       si se aplicara al final, ver�a la pantalla peque�a y luego un salto,
+       y en un tel�fono lento ese salto le mueve de debajo del dedo lo que
+       iba a tocar. Misma raz�n por la que estrella-ganada.js va aqu�. -->
+  <script src="js/letra-maestro.js?v=447"></script>
   <link rel="apple-touch-icon" href="img/icon-192.png">
   <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
   <style>
-    /* ── Página de misión dinámica ── */
+    /* -- P�gina de misi�n din�mica -- */
     body { overflow-y: auto; }
 
     .mision-topbar {
@@ -53,10 +53,10 @@
       white-space: nowrap;
     }
     .btn-back:hover { background: var(--border); }
-    /* La flecha era un icono de Font Awesome, y esta página se bajaba los
-       102 KB de la biblioteca entera —de un CDN de otro país, bloqueando el
-       pintado— para pintar ESA sola. Ahora es un SVG que hereda el color y
-       el tamaño del botón (currentColor, 1em); no hace falta alinearlo,
+    /* La flecha era un icono de Font Awesome, y esta p�gina se bajaba los
+       102 KB de la biblioteca entera �de un CDN de otro pa�s, bloqueando el
+       pintado� para pintar ESA sola. Ahora es un SVG que hereda el color y
+       el tama�o del bot�n (currentColor, 1em); no hace falta alinearlo,
        porque .btn-back ya es flex con align-items:center. */
     .topbar-brand {
       font-weight: 800;
@@ -75,14 +75,14 @@
       white-space: nowrap;
     }
 
-    /* ── Contenedor principal ── */
+    /* -- Contenedor principal -- */
     .mision-wrap {
       max-width: 600px;
       margin: 0 auto;
       padding: 20px 16px 60px;
     }
 
-    /* ── Tarjeta de encabezado de misión ── */
+    /* -- Tarjeta de encabezado de misi�n -- */
     .mision-header-card {
       background: var(--surface);
       border-radius: var(--r);
@@ -114,7 +114,7 @@
       line-height: 1.4;
     }
 
-    /* ── Tarjeta de quiz ── */
+    /* -- Tarjeta de quiz -- */
     .quiz-card {
       background: var(--surface);
       border-radius: var(--r);
@@ -146,7 +146,7 @@
       margin-bottom: 14px;
     }
 
-    /* ── Opciones ── */
+    /* -- Opciones -- */
     .quiz-opciones {
       display: flex;
       flex-direction: column;
@@ -169,11 +169,11 @@
     .quiz-opcion:hover:not(:disabled) { border-color: var(--brand-light); background: #eff6ff; }
     .quiz-opcion.sel { border-color: var(--brand-mid); background: #dbeafe; }
     .quiz-opcion.correcto { border-color: #16a34a !important; background: #dcfce7 !important; color: #14532d; }
-    .quiz-opcion.correcto::before { content: '✓ '; font-weight: 900; color: #16a34a; }
+    .quiz-opcion.correcto::before { content: '? '; font-weight: 900; color: #16a34a; }
     .quiz-opcion.incorrecto { border-color: #dc2626 !important; background: #fee2e2 !important; color: #7f1d1d; }
-    .quiz-opcion.incorrecto::before { content: '✗ '; font-weight: 900; color: #dc2626; }
+    .quiz-opcion.incorrecto::before { content: '? '; font-weight: 900; color: #dc2626; }
 
-    /* ── Botones de acción ── */
+    /* -- Botones de acci�n -- */
     .quiz-acciones { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
     .btn-verificar {
       background: #16a34a;
@@ -217,7 +217,7 @@
     }
     .btn-reiniciar:hover { opacity: .75; }
 
-    /* ── Feedback ── */
+    /* -- Feedback -- */
     #feedback-mision {
       display: none;
       border-radius: 10px;
@@ -229,12 +229,12 @@
     }
     #feedback-mision.show { display: block; }
     #feedback-mision.ok { background: #dcfce7; color: #15803d; border: 1.5px solid #16a34a; }
-    #feedback-mision.ok::before { content: '✓ '; }
+    #feedback-mision.ok::before { content: '? '; }
     #feedback-mision.err { background: #fee2e2; color: #dc2626; border: 1.5px solid #dc2626; }
-    #feedback-mision.err::before { content: '✗ '; }
+    #feedback-mision.err::before { content: '? '; }
     @keyframes fadeInFb { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 
-    /* ── Pantalla de resultado ── */
+    /* -- Pantalla de resultado -- */
     .resultado-card {
       background: var(--surface);
       border-radius: var(--r);
@@ -265,7 +265,7 @@
     .btn-resultado.primary { background: var(--brand); color: white; }
     .btn-resultado.secondary { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
 
-    /* ── Estado de carga / error ── */
+    /* -- Estado de carga / error -- */
     .cargando {
       text-align: center;
       padding: 80px 20px;
@@ -285,7 +285,7 @@
 </head>
 <body>
 
-  <!-- Barra superior de navegación -->
+  <!-- Barra superior de navegaci�n -->
   <nav class="mision-topbar">
     <a href="index.html" class="btn-back">
       <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none"
@@ -293,18 +293,18 @@
            aria-hidden="true"><path d="M20 12H5M12 5l-7 7 7 7"/></svg> Volver
     </a>
     <span class="topbar-brand">M.E.T.A.S.</span>
-    <span class="xp-badge" id="xp-badge">⭐ 0 XP</span>
+    <span class="xp-badge" id="xp-badge">? 0 XP</span>
   </nav>
 
-  <!-- Contenido dinámico inyectado por motor-misiones.js -->
+  <!-- Contenido din�mico inyectado por motor-misiones.js -->
   <main id="contenedor-principal">
     <div class="cargando">
-      <p>⏳</p>
-      <p>Cargando misión...</p>
+      <p>?</p>
+      <p>Cargando misi�n...</p>
     </div>
   </main>
 
-  <script src="js/motor-misiones.js?v=446"></script>
+  <script src="js/motor-misiones.js?v=447"></script>
 </body>
 </html>
 

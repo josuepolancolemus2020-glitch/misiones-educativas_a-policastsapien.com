@@ -1,9 +1,9 @@
-ï»¿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ğŸ–¨ï¸ Banco de Evaluaciones â€” M.E.T.A.S</title>
+<title>??? Banco de Evaluaciones — M.E.T.A.S</title>
 <style>
 :root{
   --esp:#c49000; --mat:#1565c0; --cnat:#27ae60; --csoc:#c0392b; --tec:#0e7490; --ing:#be185d;
@@ -43,57 +43,57 @@ footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5
 <body>
 
 <header>
-  <h1>ğŸ–¨ï¸ Banco de Evaluaciones â€” M.E.T.A.S</h1>
-  <p>Las <strong id="totalMisiones">28</strong> misiones con evaluaciÃ³n imprimible en carta, con pauta de correcciÃ³n y clave ZipGrade.
-     Cada <strong>Forma (1 a 30)</strong> genera <strong>siempre el mismo examen</strong>: imprime la Forma 3 hoy y la pauta de la Forma 3 seguirÃ¡ siendo vÃ¡lida maÃ±ana.</p>
+  <h1>??? Banco de Evaluaciones — M.E.T.A.S</h1>
+  <p>Las <strong id="totalMisiones">28</strong> misiones con evaluación imprimible en carta, con pauta de corrección y clave ZipGrade.
+     Cada <strong>Forma (1 a 30)</strong> genera <strong>siempre el mismo examen</strong>: imprime la Forma 3 hoy y la pauta de la Forma 3 seguirá siendo válida mañana.</p>
   <div class="top-links">
-    <a class="btn btn-blanco" href="index.html">ğŸ  Volver al inicio</a>
-    <a class="btn btn-blanco" href="registro.html">ğŸ“‹ Evidencia de misiones</a>
+    <a class="btn btn-blanco" href="index.html">?? Volver al inicio</a>
+    <a class="btn btn-blanco" href="registro.html">?? Evidencia de misiones</a>
   </div>
 </header>
 
 <div class="pasos">
-  <strong>Â¿CÃ³mo imprimir una evaluaciÃ³n?</strong><br>
-  1ï¸âƒ£ Toca la misiÃ³n que necesitas &nbsp;â†’&nbsp; 2ï¸âƒ£ dentro de la misiÃ³n abre <span class="chip">ğŸ“ EvaluaciÃ³n</span>
-  &nbsp;â†’&nbsp; 3ï¸âƒ£ elige la <span class="chip">Forma</span> (1-30) &nbsp;â†’&nbsp; 4ï¸âƒ£ toca <span class="chip">ğŸ–¨ï¸ Imprimir</span>.
+  <strong>¿Cómo imprimir una evaluación?</strong><br>
+  1?? Toca la misión que necesitas &nbsp;?&nbsp; 2?? dentro de la misión abre <span class="chip">?? Evaluación</span>
+  &nbsp;?&nbsp; 3?? elige la <span class="chip">Forma</span> (1-30) &nbsp;?&nbsp; 4?? toca <span class="chip">??? Imprimir</span>.
   La pauta con la clave sale junto al examen.
 </div>
 
 <div id="banco"></div>
 
 <div class="nota-etica">
-  ğŸ’¡ <strong>Consejo:</strong> usa Formas distintas por fila de pupitres (ej. Formas 1, 2 y 3) para evaluar con tranquilidad.
-  El pie de pÃ¡gina de cada examen indica la Forma para calificar con su pauta exacta.
+  ?? <strong>Consejo:</strong> usa Formas distintas por fila de pupitres (ej. Formas 1, 2 y 3) para evaluar con tranquilidad.
+  El pie de página de cada examen indica la Forma para calificar con su pauta exacta.
 </div>
 
-<footer>ğŸ  Proyecto Educativo M.E.T.A.S Â· ğŸŒ policastsapien.com<br>
-  Â© 2026 Familia Polanco-Castellanos Â· <a href="privacidad.html">Aviso de privacidad</a>
-  Â· <a href="terminos.html">TÃ©rminos de uso</a></footer>
+<footer>?? Proyecto Educativo M.E.T.A.S · ?? policastsapien.com<br>
+  © 2026 Familia Polanco-Castellanos · <a href="privacidad.html">Aviso de privacidad</a>
+  · <a href="terminos.html">Términos de uso</a></footer>
 
-<script src="js/data/misiones.js?v=446"></script>
+<script src="js/data/misiones.js?v=447"></script>
 <script>
 'use strict';
-/* El orden y el color de cada materia se escriben; QUÃ‰ materias hay se CUENTA
-   del catÃ¡logo. Escribir las dos cosas costÃ³ 14 misiones: la cabecera contaba
-   las 57 de MISSIONS y la lista solo pintaba cuatro materias, asÃ­ que las
-   evaluaciones de ProgramaciÃ³n, RobÃ³tica e InglÃ©s no tenÃ­an dÃ³nde imprimirse.
-   Una materia que entre al catÃ¡logo y aÃºn no tenga su color sale igual, al
-   final: mejor sin color que sin sus exÃ¡menes. */
+/* El orden y el color de cada materia se escriben; QUÉ materias hay se CUENTA
+   del catálogo. Escribir las dos cosas costó 14 misiones: la cabecera contaba
+   las 57 de MISSIONS y la lista solo pintaba cuatro materias, así que las
+   evaluaciones de Programación, Robótica e Inglés no tenían dónde imprimirse.
+   Una materia que entre al catálogo y aún no tenga su color sale igual, al
+   final: mejor sin color que sin sus exámenes. */
 const ORDEN = [
-  { key: 'espaÃ±ol',      label: 'ğŸ“– EspaÃ±ol',            cls: 'esp'  },
-  { key: 'matemÃ¡ticas',  label: 'ğŸ”¢ MatemÃ¡ticas',        cls: 'mat'  },
-  { key: 'naturales',    label: 'ğŸŒ± Ciencias Naturales', cls: 'cnat' },
-  { key: 'sociales',     label: 'ğŸŒ Ciencias Sociales',  cls: 'csoc' },
-  { key: 'programaciÃ³n', label: 'ğŸ’» ProgramaciÃ³n',       cls: 'tec'  },
-  { key: 'robÃ³tica',     label: 'ğŸ¤– RobÃ³tica',           cls: 'tec'  },
-  { key: 'inglÃ©s',       label: 'ğŸ”¤ InglÃ©s',             cls: 'ing'  },
-  { key: 'cÃ­vica',       label: 'ğŸ‡­ğŸ‡³ E. CÃ­vica',          cls: 'civ'  },
-  { key: 'ia',           label: 'ğŸ§  Inteligencia Artificial', cls: 'ia' },
-  { key: 'filosofÃ­a',    label: 'ğŸŒ³ FilosofÃ­a',          cls: 'filo' },
+  { key: 'español',      label: '?? Español',            cls: 'esp'  },
+  { key: 'matemáticas',  label: '?? Matemáticas',        cls: 'mat'  },
+  { key: 'naturales',    label: '?? Ciencias Naturales', cls: 'cnat' },
+  { key: 'sociales',     label: '?? Ciencias Sociales',  cls: 'csoc' },
+  { key: 'programación', label: '?? Programación',       cls: 'tec'  },
+  { key: 'robótica',     label: '?? Robótica',           cls: 'tec'  },
+  { key: 'inglés',       label: '?? Inglés',             cls: 'ing'  },
+  { key: 'cívica',       label: '???? E. Cívica',          cls: 'civ'  },
+  { key: 'ia',           label: '?? Inteligencia Artificial', cls: 'ia' },
+  { key: 'filosofía',    label: '?? Filosofía',          cls: 'filo' },
 ];
 MISSIONS.forEach(m => {
   if (m.subject && !ORDEN.some(o => o.key === m.subject)) {
-    ORDEN.push({ key: m.subject, label: 'ğŸ“š ' + m.subject.charAt(0).toUpperCase() + m.subject.slice(1), cls: 'otra' });
+    ORDEN.push({ key: m.subject, label: '?? ' + m.subject.charAt(0).toUpperCase() + m.subject.slice(1), cls: 'otra' });
   }
 });
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -103,7 +103,7 @@ document.getElementById('banco').innerHTML = ORDEN.map(o => {
   if (!lista.length) return '';
   return `
   <section class="materia ${o.cls}">
-    <h2>${o.label} <span class="cnt">Â· ${lista.length} evaluaci${lista.length === 1 ? 'Ã³n' : 'ones'}</span></h2>
+    <h2>${o.label} <span class="cnt">· ${lista.length} evaluaci${lista.length === 1 ? 'ón' : 'ones'}</span></h2>
     <div class="lista">
       ${lista.map(m => `
         <a class="mision ${o.cls}" href="${esc(m.url)}">
@@ -112,7 +112,7 @@ document.getElementById('banco').innerHTML = ORDEN.map(o => {
             <span class="tit">${esc(m.title)}</span>
             <div class="sub">${esc(m.grade || '')}</div>
           </span>
-          <span class="go">ğŸ–¨ï¸ â€º</span>
+          <span class="go">??? ›</span>
         </a>`).join('')}
     </div>
   </section>`;

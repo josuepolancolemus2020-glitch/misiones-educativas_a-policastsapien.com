@@ -12,6 +12,8 @@
     xp: 0,
     soundOn: true,
     completedTraces: {},
+    completedFiguras: {},
+    completedFiguraObjects: {},
     completedRodea: {},
     completedPuzzles: {},
     completedHomeTechs: {},
@@ -63,6 +65,8 @@
           state.xp = Number(parsed.xp) || 0;
           state.soundOn = parsed.soundOn !== false;
           state.completedTraces = parsed.completedTraces || {};
+          state.completedFiguras = parsed.completedFiguras || {};
+          state.completedFiguraObjects = parsed.completedFiguraObjects || {};
           state.completedRodea = parsed.completedRodea || {};
           state.completedPuzzles = parsed.completedPuzzles || {};
           state.completedHomeTechs = parsed.completedHomeTechs || {};
@@ -544,7 +548,7 @@
   };
 
   /* --------------------------------------------------------------------------
-     NAVEGACIÓN ENTRE LAS 4 PESTAÑAS
+     NAVEGACIÓN ENTRE LAS 5 PESTAÑAS
      -------------------------------------------------------------------------- */
   window.go = function (secId) {
     window.detenerVozPrebasica();
@@ -560,6 +564,8 @@
     });
     if (secId === 's-trazos') {
       setTimeout(renderTraceCanvas, 40);
+    } else if (secId === 's-figuras') {
+      setTimeout(renderFiguraCanvas, 40);
     } else if (secId === 's-rodea') {
       setTimeout(function () {
         syncLassoCanvasSize();
@@ -1066,7 +1072,1066 @@
   };
 
   /* ==========================================================================
-     PESTAÑA 2: RODEA Y DESCUBRE (LETRAS, NÚMEROS Y NOCIONES ESPACIALES)
+     PESTAÑA 2: FIGURAS PLANAS CON MI DEDITO (PÁGS. 25–32)
+     ========================================================================== */
+  window.lanzarConfetiPrebasica = function () {
+    var colors = ['#e53935', '#1e88e5', '#43a047', '#fb8c00', '#e91e63', '#fbc02d', '#9c27b0', '#00bcd4'];
+    for (var i = 0; i < 60; i++) {
+      var c = document.createElement('div');
+      c.className = 'confetti-piece';
+      c.style.cssText =
+        'left:' + (Math.random() * 100) + 'vw;' +
+        'background:' + colors[Math.floor(Math.random() * colors.length)] + ';' +
+        'animation-duration:' + (0.9 + Math.random() * 1.5) + 's;' +
+        'animation-delay:' + (Math.random() * 0.35) + 's;' +
+        'width:' + (8 + Math.random() * 8) + 'px;' +
+        'height:' + (8 + Math.random() * 8) + 'px;' +
+        'border-radius:' + (Math.random() > 0.5 ? '50%' : '3px') + ';';
+      document.body.appendChild(c);
+      c.addEventListener('animationend', function () {
+        if (this.parentNode) this.parentNode.removeChild(this);
+      });
+    }
+  };
+
+  var FIGURAS_DATA = [
+    {
+      id: 'circulo',
+      nameEs: 'Círculo',
+      nameEn: 'Circle',
+      audioEnKey: 'Circle',
+      bookColorName: 'Rojo',
+      colorHex: '#e53935',
+      page: 25,
+      emoji: '🔴',
+      selectorTitle: '1. Círculo',
+      selectorSubtitle: 'Pág. 25 · Rojo',
+      badges: [
+        { text: '⭕ Línea curva continua', cls: 'curva' },
+        { text: '0 esquinas (rueda)', cls: 'curva' }
+      ],
+      guideText: 'Pasa tu dedito por el contorno del círculo rojo. Es una línea curva que rueda y no tiene esquinas.',
+      audioInst: 'fig_instruccion_circulo',
+      audioFelicita: 'fig_felicita_circulo',
+      hasSubfigures: false,
+      buildPerimeter: function (w, h) {
+        var cx = w * 0.5;
+        var cy = h * 0.5;
+        var r = 135;
+        var pts = [];
+        var numPts = 32;
+        for (var i = 0; i <= numPts; i++) {
+          var angle = -Math.PI / 2 + (i / numPts) * (Math.PI * 2);
+          pts.push({ x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) });
+        }
+        var numberedMarkers = [];
+        for (var n = 1; n <= 8; n++) {
+          var ang = -Math.PI / 2 + ((n - 1) / 8) * (Math.PI * 2);
+          numberedMarkers.push({
+            num: n,
+            x: cx + r * Math.cos(ang),
+            y: cy + r * Math.sin(ang),
+            label: '' + n
+          });
+        }
+        return {
+          type: 'single',
+          paths: [pts],
+          fillColor: 'rgba(229, 57, 53, 0.08)',
+          strokeColor: '#e53935',
+          markers: numberedMarkers,
+          centerText: 'Línea curva sin esquinas'
+        };
+      },
+      objects: [
+        { id: 'cd', name: 'CD o Disco', ico: '💿', audioKey: 'fig_obj_cd' },
+        { id: 'reloj', name: 'Reloj de pared', ico: '⏰', audioKey: 'fig_obj_reloj' },
+        { id: 'pizza', name: 'Pizza redonda', ico: '🍕', audioKey: 'fig_obj_pizza' },
+        { id: 'plato', name: 'Plato', ico: '🍽️', audioKey: 'fig_obj_plato' }
+      ]
+    },
+    {
+      id: 'cuadrado',
+      nameEs: 'Cuadrado',
+      nameEn: 'Square',
+      audioEnKey: 'Square',
+      bookColorName: 'Azul',
+      colorHex: '#1e88e5',
+      page: 26,
+      emoji: '🟦',
+      selectorTitle: '2. Cuadrado',
+      selectorSubtitle: 'Pág. 26 · Azul',
+      badges: [
+        { text: '⏹️ 4 lados rectos iguales', cls: 'cuadrado-iguales' },
+        { text: '4 esquinas (vértices)', cls: 'cuadrado-iguales' }
+      ],
+      guideText: 'Pasa tu dedito por el contorno del cuadrado azul y cuenta sus cuatro lados rectos iguales.',
+      audioInst: 'fig_instruccion_cuadrado',
+      audioFelicita: 'fig_felicita_cuadrado',
+      hasSubfigures: false,
+      buildPerimeter: function (w, h) {
+        var size = 260;
+        var x0 = (w - size) / 2;
+        var y0 = (h - size) / 2;
+        var x1 = x0 + size;
+        var y1 = y0 + size;
+        var vertices = [
+          { x: x0, y: y0 },
+          { x: x1, y: y0 },
+          { x: x1, y: y1 },
+          { x: x0, y: y1 },
+          { x: x0, y: y0 }
+        ];
+        var pts = interpolateSegments(vertices, 8);
+        var markers = [
+          { num: 1, x: x0, y: y0, label: '1' },
+          { num: 2, x: x1, y: y0, label: '2' },
+          { num: 3, x: x1, y: y1, label: '3' },
+          { num: 4, x: x0, y: y1, label: '4' }
+        ];
+        var sideLabels = [
+          { x: (x0 + x1) / 2, y: y0 - 16, text: 'Lado 1 (igual)' },
+          { x: x1 + 45, y: (y0 + y1) / 2, text: 'Lado 2 (igual)' },
+          { x: (x0 + x1) / 2, y: y1 + 22, text: 'Lado 3 (igual)' },
+          { x: x0 - 45, y: (y0 + y1) / 2, text: 'Lado 4 (igual)' }
+        ];
+        return {
+          type: 'single',
+          paths: [pts],
+          fillColor: 'rgba(30, 136, 229, 0.08)',
+          strokeColor: '#1e88e5',
+          markers: markers,
+          sideLabels: sideLabels,
+          centerText: '4 LADOS IGUALES'
+        };
+      },
+      objects: [
+        { id: 'chocolate', name: 'Barra de chocolate', ico: '🍫', audioKey: 'fig_obj_chocolate' },
+        { id: 'ventana', name: 'Ventana cuadrada', ico: '🪟', audioKey: 'fig_obj_ventana' },
+        { id: 'fichas', name: 'Fichas de letras', ico: '🔤', audioKey: 'fig_obj_fichas' },
+        { id: 'nota', name: 'Nota adhesiva', ico: '📝', audioKey: 'fig_obj_nota' }
+      ]
+    },
+    {
+      id: 'triangulo',
+      nameEs: 'Triángulo',
+      nameEn: 'Triangle',
+      audioEnKey: 'Triangle',
+      bookColorName: 'Verde',
+      colorHex: '#43a047',
+      page: 27,
+      emoji: '🔺',
+      selectorTitle: '3. Triángulo',
+      selectorSubtitle: 'Pág. 27 · Verde',
+      badges: [
+        { text: '📐 3 lados rectos', cls: 'triangulo' },
+        { text: '3 puntas o esquinas', cls: 'triangulo' }
+      ],
+      guideText: 'Recorre con tu dedito los tres lados rectos y las tres puntas del triángulo verde.',
+      audioInst: 'fig_instruccion_triangulo',
+      audioFelicita: 'fig_felicita_triangulo',
+      hasSubfigures: false,
+      buildPerimeter: function (w, h) {
+        var v1 = { x: w * 0.5, y: 55 };
+        var v2 = { x: w * 0.5 + 165, y: 345 };
+        var v3 = { x: w * 0.5 - 165, y: 345 };
+        var vertices = [v1, v2, v3, v1];
+        var pts = interpolateSegments(vertices, 10);
+        var markers = [
+          { num: 1, x: v1.x, y: v1.y, label: '1 (Punta)' },
+          { num: 2, x: v2.x, y: v2.y, label: '2 (Punta)' },
+          { num: 3, x: v3.x, y: v3.y, label: '3 (Punta)' }
+        ];
+        var sideLabels = [
+          { x: (v1.x + v2.x) / 2 + 35, y: (v1.y + v2.y) / 2, text: 'Lado 1' },
+          { x: w * 0.5, y: v2.y + 22, text: 'Lado 2' },
+          { x: (v1.x + v3.x) / 2 - 35, y: (v1.y + v3.y) / 2, text: 'Lado 3' }
+        ];
+        return {
+          type: 'single',
+          paths: [pts],
+          fillColor: 'rgba(67, 160, 71, 0.08)',
+          strokeColor: '#43a047',
+          markers: markers,
+          sideLabels: sideLabels,
+          centerText: '3 LADOS Y 3 PUNTAS'
+        };
+      },
+      objects: [
+        { id: 'senal_vial', name: 'Señal vial', ico: '⚠️', audioKey: 'fig_obj_senal_vial' },
+        { id: 'queso', name: 'Trozo de queso', ico: '🧀', audioKey: 'fig_obj_queso' },
+        { id: 'sandwich', name: 'Sándwich', ico: '🥪', audioKey: 'fig_obj_sandwich' },
+        { id: 'triangulo_musical', name: 'Triángulo musical', ico: '📐', audioKey: 'fig_obj_triangulo_musical' }
+      ]
+    },
+    {
+      id: 'rectangulo',
+      nameEs: 'Rectángulo',
+      nameEn: 'Rectangle',
+      audioEnKey: 'Rectangle',
+      bookColorName: 'Anaranjado',
+      colorHex: '#fb8c00',
+      page: 28,
+      emoji: '🟧',
+      selectorTitle: '4. Rectángulo',
+      selectorSubtitle: 'Pág. 28 · Anaranjado',
+      badges: [
+        { text: '↔ 2 lados LARGOS iguales', cls: 'rect-largos' },
+        { text: '↕ 2 lados CORTOS iguales', cls: 'rect-cortos' },
+        { text: '4 esquinas', cls: 'rect-largos' }
+      ],
+      guideText: 'Recorre los dos lados largos y los dos lados cortos del rectángulo anaranjado.',
+      audioInst: 'fig_instruccion_rectangulo',
+      audioFelicita: 'fig_felicita_rectangulo',
+      hasSubfigures: false,
+      buildPerimeter: function (w, h) {
+        var rw = 380;
+        var rh = 200;
+        var x0 = (w - rw) / 2;
+        var y0 = (h - rh) / 2;
+        var x1 = x0 + rw;
+        var y1 = y0 + rh;
+        var vertices = [
+          { x: x0, y: y0 },
+          { x: x1, y: y0 },
+          { x: x1, y: y1 },
+          { x: x0, y: y1 },
+          { x: x0, y: y0 }
+        ];
+        var pts = interpolateSegments(vertices, 9);
+        var markers = [
+          { num: 1, x: x0, y: y0, label: '1' },
+          { num: 2, x: x1, y: y0, label: '2' },
+          { num: 3, x: x1, y: y1, label: '3' },
+          { num: 4, x: x0, y: y1, label: '4' }
+        ];
+        var sideLabels = [
+          { x: (x0 + x1) / 2, y: y0 - 18, text: '↔ LADO LARGO 1', color: '#e65100' },
+          { x: x1 + 42, y: (y0 + y1) / 2, text: '↕ CORTO 1', color: '#00838f' },
+          { x: (x0 + x1) / 2, y: y1 + 24, text: '↔ LADO LARGO 2', color: '#e65100' },
+          { x: x0 - 42, y: (y0 + y1) / 2, text: '↕ CORTO 2', color: '#00838f' }
+        ];
+        return {
+          type: 'rectangle_distinct',
+          x0: x0, y0: y0, x1: x1, y1: y1,
+          paths: [pts],
+          fillColor: 'rgba(251, 140, 0, 0.08)',
+          markers: markers,
+          sideLabels: sideLabels,
+          centerText: '2 LARGOS ↔ y 2 CORTOS ↕'
+        };
+      },
+      objects: [
+        { id: 'sobres', name: 'Sobres de carta', ico: '✉️', audioKey: 'fig_obj_sobres' },
+        { id: 'celular', name: 'Teléfono celular', ico: '📱', audioKey: 'fig_obj_celular' },
+        { id: 'regla', name: 'Regla escolar', ico: '📏', audioKey: 'fig_obj_regla' },
+        { id: 'televisor', name: 'Televisor', ico: '📺', audioKey: 'fig_obj_televisor' },
+        { id: 'libro', name: 'Libro escolar', ico: '📖', audioKey: 'fig_obj_libro' }
+      ]
+    },
+    {
+      id: 'ovalo',
+      nameEs: 'Óvalo',
+      nameEn: 'Oval',
+      audioEnKey: 'Oval',
+      bookColorName: 'Rosado / Fucsia',
+      colorHex: '#e91e63',
+      page: 29,
+      emoji: '🥚',
+      selectorTitle: '5. Óvalo',
+      selectorSubtitle: 'Pág. 29 · Rosado',
+      badges: [
+        { text: '🥚 Curva alargada como huevito', cls: 'curva' },
+        { text: '0 esquinas', cls: 'curva' }
+      ],
+      guideText: 'Pasa tu dedito por la curva alargada del óvalo rosado, parece la forma de un huevito.',
+      audioInst: 'fig_instruccion_ovalo',
+      audioFelicita: 'fig_felicita_ovalo',
+      hasSubfigures: false,
+      buildPerimeter: function (w, h) {
+        var cx = w * 0.5;
+        var cy = h * 0.5;
+        var rx = 185;
+        var ry = 115;
+        var pts = [];
+        var numPts = 32;
+        for (var i = 0; i <= numPts; i++) {
+          var angle = -Math.PI / 2 + (i / numPts) * (Math.PI * 2);
+          pts.push({ x: cx + rx * Math.cos(angle), y: cy + ry * Math.sin(angle) });
+        }
+        var numberedMarkers = [];
+        for (var n = 1; n <= 8; n++) {
+          var ang = -Math.PI / 2 + ((n - 1) / 8) * (Math.PI * 2);
+          numberedMarkers.push({
+            num: n,
+            x: cx + rx * Math.cos(ang),
+            y: cy + ry * Math.sin(ang),
+            label: '' + n
+          });
+        }
+        return {
+          type: 'single',
+          paths: [pts],
+          fillColor: 'rgba(233, 30, 99, 0.08)',
+          strokeColor: '#e91e63',
+          markers: numberedMarkers,
+          centerText: 'Curva alargada como un huevito'
+        };
+      },
+      objects: [
+        { id: 'bandeja', name: 'Bandeja', ico: '🍱', audioKey: 'fig_obj_bandeja' },
+        { id: 'balon', name: 'Balón americano', ico: '🏈', audioKey: 'fig_obj_balon' },
+        { id: 'huevo', name: 'Huevo', ico: '🥚', audioKey: 'fig_obj_huevo' },
+        { id: 'sandia', name: 'Sandía ovalada', ico: '🍉', audioKey: 'fig_obj_sandia' }
+      ]
+    },
+    {
+      id: 'rombo',
+      nameEs: 'Diamante o Rombo',
+      nameEn: 'Diamond',
+      audioEnKey: 'Diamond',
+      bookColorName: 'Rojo',
+      colorHex: '#d32f2f',
+      page: 30,
+      emoji: '♦️',
+      selectorTitle: '6. Rombo / Diamante',
+      selectorSubtitle: 'Pág. 30 · Rojo',
+      badges: [
+        { text: '♦️ 4 lados inclinados iguales', cls: 'rombo' },
+        { text: '4 puntas (arriba, abajo, izq, der)', cls: 'rombo' }
+      ],
+      guideText: 'Traza los cuatro lados inclinados del rombo o diamante rojo y toca sus cuatro puntas.',
+      audioInst: 'fig_instruccion_rombo',
+      audioFelicita: 'fig_felicita_rombo',
+      hasSubfigures: false,
+      buildPerimeter: function (w, h) {
+        var cx = w * 0.5;
+        var cy = h * 0.5;
+        var rx = 160;
+        var ry = 145;
+        var p1 = { x: cx, y: cy - ry };
+        var p2 = { x: cx + rx, y: cy };
+        var p3 = { x: cx, y: cy + ry };
+        var p4 = { x: cx - rx, y: cy };
+        var vertices = [p1, p2, p3, p4, p1];
+        var pts = interpolateSegments(vertices, 8);
+        var markers = [
+          { num: 1, x: p1.x, y: p1.y, label: '1 (Arriba)' },
+          { num: 2, x: p2.x, y: p2.y, label: '2 (Derecha)' },
+          { num: 3, x: p3.x, y: p3.y, label: '3 (Abajo)' },
+          { num: 4, x: p4.x, y: p4.y, label: '4 (Izquierda)' }
+        ];
+        var sideLabels = [
+          { x: (p1.x + p2.x) / 2 + 25, y: (p1.y + p2.y) / 2 - 10, text: 'Lado inclinado 1' },
+          { x: (p2.x + p3.x) / 2 + 25, y: (p2.y + p3.y) / 2 + 10, text: 'Lado inclinado 2' },
+          { x: (p3.x + p4.x) / 2 - 25, y: (p3.y + p4.y) / 2 + 10, text: 'Lado inclinado 3' },
+          { x: (p4.x + p1.x) / 2 - 25, y: (p4.y + p1.y) / 2 - 10, text: 'Lado inclinado 4' }
+        ];
+        return {
+          type: 'single',
+          paths: [pts],
+          fillColor: 'rgba(211, 47, 47, 0.08)',
+          strokeColor: '#d32f2f',
+          markers: markers,
+          sideLabels: sideLabels,
+          centerText: '4 LADOS INCLINADOS'
+        };
+      },
+      objects: [
+        { id: 'carta', name: 'Carta de diamantes', ico: '♦️', audioKey: 'fig_obj_carta' },
+        { id: 'senal_amarilla', name: 'Señal amarilla', ico: '🔶', audioKey: 'fig_obj_senal_amarilla' }
+      ]
+    },
+    {
+      id: 'estrella_corazon',
+      nameEs: 'Estrella y Corazón',
+      nameEn: 'Star & Heart',
+      audioEnKey: 'Star',
+      bookColorName: 'Amarillo y Fucsia',
+      colorHex: '#fbc02d',
+      page: '31–32',
+      emoji: '⭐💖',
+      selectorTitle: '7. Estrella y Corazón',
+      selectorSubtitle: 'Págs. 31–32 · Especial',
+      hasSubfigures: true,
+      currentSub: 'estrella',
+      subfigures: {
+        estrella: {
+          nameEs: 'Estrella',
+          nameEn: 'Star',
+          audioEnKey: 'Star',
+          bookColorName: 'Amarillo',
+          colorHex: '#fbc02d',
+          page: 31,
+          emoji: '⭐',
+          badges: [
+            { text: '⭐ 5 puntas brillantes', cls: 'estrella' },
+            { text: '10 lados en zigzag', cls: 'estrella' }
+          ],
+          guideText: 'Recorre las cinco puntas brillantes de la estrella amarilla como en el cielo o en el mar.',
+          audioInst: 'fig_instruccion_estrella',
+          audioFelicita: 'fig_felicita_estrella',
+          buildPerimeter: function (w, h) {
+            var cx = w * 0.5;
+            var cy = h * 0.52;
+            var rOuter = 145;
+            var rInner = 65;
+            var vertices = [];
+            var numPoints = 5;
+            for (var i = 0; i < numPoints * 2; i++) {
+              var r = (i % 2 === 0) ? rOuter : rInner;
+              var a = -Math.PI / 2 + (i * Math.PI) / numPoints;
+              vertices.push({ x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) });
+            }
+            vertices.push(vertices[0]);
+            var pts = interpolateSegments(vertices, 5);
+            var markers = [];
+            for (var p = 0; p < numPoints; p++) {
+              var aOut = -Math.PI / 2 + (p * 2 * Math.PI) / numPoints;
+              markers.push({
+                num: p + 1,
+                x: cx + rOuter * Math.cos(aOut),
+                y: cy + rOuter * Math.sin(aOut),
+                label: '' + (p + 1)
+              });
+            }
+            return {
+              type: 'single',
+              paths: [pts],
+              fillColor: 'rgba(251, 192, 45, 0.12)',
+              strokeColor: '#fbc02d',
+              markers: markers,
+              centerText: '5 PUNTAS BRILLANTES'
+            };
+          },
+          objects: [
+            { id: 'estrella_mar', name: 'Estrella de mar', ico: '⭐', audioKey: 'fig_obj_estrella_mar' },
+            { id: 'varita', name: 'Varita mágica', ico: '🪄', audioKey: 'fig_obj_varita' }
+          ]
+        },
+        corazon: {
+          nameEs: 'Corazón',
+          nameEn: 'Heart',
+          audioEnKey: 'Heart',
+          bookColorName: 'Fucsia',
+          colorHex: '#e91e63',
+          page: 32,
+          emoji: '💖',
+          badges: [
+            { text: '💖 2 curvas arriba', cls: 'corazon' },
+            { text: '1 punta abajo', cls: 'corazon' }
+          ],
+          guideText: 'Traza las dos curvas de arriba y la punta de abajo de este lindo corazón fucsia.',
+          audioInst: 'fig_instruccion_corazon',
+          audioFelicita: 'fig_felicita_corazon',
+          buildPerimeter: function (w, h) {
+            var cx = w * 0.5;
+            var cy = h * 0.44;
+            var pts = [];
+            var num = 36;
+            for (var i = 0; i <= num; i++) {
+              var t = (i / num) * Math.PI * 2;
+              var scale = 8.5;
+              var x = cx + scale * 16 * Math.pow(Math.sin(t), 3);
+              var y = cy - scale * (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+              pts.push({ x: x, y: y });
+            }
+            var markers = [
+              { num: 1, x: cx, y: cy - 75, label: '1 (Centro)' },
+              { num: 2, x: cx - 110, y: cy - 90, label: '2 (Curva izq)' },
+              { num: 3, x: cx, y: cy + 145, label: '3 (Punta abajo)' },
+              { num: 4, x: cx + 110, y: cy - 90, label: '4 (Curva der)' }
+            ];
+            return {
+              type: 'single',
+              paths: [pts],
+              fillColor: 'rgba(233, 30, 99, 0.1)',
+              strokeColor: '#e91e63',
+              markers: markers,
+              centerText: '2 CURVAS Y 1 PUNTA'
+            };
+          },
+          objects: [
+            { id: 'galletas', name: 'Galletas de corazón', ico: '🍪', audioKey: 'fig_obj_galletas' },
+            { id: 'globos', name: 'Globos de corazón', ico: '🎈', audioKey: 'fig_obj_globos' }
+          ]
+        }
+      }
+    }
+  ];
+
+  var figuraState = {
+    currentIdx: 0,
+    color: 'rainbow',
+    hue: 0,
+    isDrawing: false,
+    lastPt: null,
+    userStrokes: [],
+    waypoints: [],
+    paths: [],
+    perimeterData: null,
+    completedCurrent: false,
+    sparkles: []
+  };
+
+  function getActiveFigura() {
+    var fig = FIGURAS_DATA[figuraState.currentIdx];
+    if (!fig) return null;
+    if (fig.hasSubfigures) {
+      return fig.subfigures[fig.currentSub] || fig.subfigures['estrella'];
+    }
+    return fig;
+  }
+
+  function getActiveFiguraStorageKey() {
+    var fig = FIGURAS_DATA[figuraState.currentIdx];
+    if (!fig) return 'figura';
+    if (fig.hasSubfigures) {
+      return fig.id + '_' + fig.currentSub;
+    }
+    return fig.id;
+  }
+
+  function initFigurasTab() {
+    renderFigurasSelector();
+    selectFigura(0, false);
+
+    var canvas = document.getElementById('figuraCanvas');
+    if (!canvas) return;
+
+    function getCanvasPoint(e) {
+      var rect = canvas.getBoundingClientRect();
+      var clientX, clientY;
+      if (e.touches && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+      } else if (e.changedTouches && e.changedTouches.length > 0) {
+        clientX = e.changedTouches[0].clientX;
+        clientY = e.changedTouches[0].clientY;
+      } else {
+        clientX = e.clientX;
+        clientY = e.clientY;
+      }
+      var scaleX = canvas.width / rect.width;
+      var scaleY = canvas.height / rect.height;
+      return {
+        x: (clientX - rect.left) * scaleX,
+        y: (clientY - rect.top) * scaleY
+      };
+    }
+
+    function startDraw(e) {
+      if (e.cancelable) e.preventDefault();
+      var pt = getCanvasPoint(e);
+      figuraState.isDrawing = true;
+      figuraState.lastPt = pt;
+      figuraState.userStrokes.push({
+        color: figuraState.color,
+        points: [{ x: pt.x, y: pt.y, hue: figuraState.hue }]
+      });
+      addFiguraSparkle(pt.x, pt.y);
+      checkFiguraWaypoints(pt);
+      renderFiguraCanvas();
+    }
+
+    function moveDraw(e) {
+      if (!figuraState.isDrawing) return;
+      if (e.cancelable) e.preventDefault();
+      var pt = getCanvasPoint(e);
+      figuraState.hue = (figuraState.hue + 8) % 360;
+      var currentStroke = figuraState.userStrokes[figuraState.userStrokes.length - 1];
+      if (currentStroke) {
+        currentStroke.points.push({ x: pt.x, y: pt.y, hue: figuraState.hue });
+      }
+      figuraState.lastPt = pt;
+      if (Math.random() < 0.65) {
+        addFiguraSparkle(pt.x, pt.y);
+      }
+      checkFiguraWaypoints(pt);
+      renderFiguraCanvas();
+    }
+
+    function endDraw(e) {
+      if (!figuraState.isDrawing) return;
+      if (e && e.cancelable) e.preventDefault();
+      figuraState.isDrawing = false;
+      figuraState.lastPt = null;
+    }
+
+    canvas.addEventListener('mousedown', startDraw);
+    canvas.addEventListener('mousemove', moveDraw);
+    window.addEventListener('mouseup', endDraw);
+
+    canvas.addEventListener('touchstart', startDraw, { passive: false });
+    canvas.addEventListener('touchmove', moveDraw, { passive: false });
+    canvas.addEventListener('touchend', endDraw, { passive: false });
+  }
+
+  function addFiguraSparkle(x, y) {
+    if (figuraState.sparkles.length > 25) {
+      figuraState.sparkles.shift();
+    }
+    figuraState.sparkles.push({
+      x: x + (Math.random() * 24 - 12),
+      y: y + (Math.random() * 24 - 12),
+      char: Math.random() > 0.4 ? '✦' : '★',
+      size: 14 + Math.random() * 8,
+      alpha: 1.0,
+      hue: figuraState.hue
+    });
+  }
+
+  function renderFigurasSelector() {
+    var grid = document.getElementById('figurasSelectorGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    FIGURAS_DATA.forEach(function (fig, idx) {
+      var isCompleted = false;
+      if (fig.hasSubfigures) {
+        isCompleted = !!(state.completedFiguras[fig.id + '_estrella'] || state.completedFiguras[fig.id + '_corazon']);
+      } else {
+        isCompleted = !!state.completedFiguras[fig.id];
+      }
+
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'figura-chip-btn' +
+        (idx === figuraState.currentIdx ? ' active' : '') +
+        (isCompleted ? ' completed' : '');
+      btn.innerHTML =
+        '<span class="figura-chip-ico" aria-hidden="true">' + fig.emoji + '</span>' +
+        '<div class="figura-chip-info">' +
+          '<strong>' + fig.selectorTitle + '</strong>' +
+          '<span>' + fig.selectorSubtitle + '</span>' +
+        '</div>';
+      btn.onclick = function () {
+        selectFigura(idx, true);
+      };
+      grid.appendChild(btn);
+    });
+  }
+
+  function selectFigura(idx, speak) {
+    window.detenerVozPrebasica();
+    figuraState.currentIdx = idx;
+    figuraState.userStrokes = [];
+    figuraState.sparkles = [];
+    figuraState.completedCurrent = false;
+
+    var fig = FIGURAS_DATA[idx];
+    if (!fig) return;
+    var active = getActiveFigura();
+    if (!active) return;
+
+    // Actualizar banner de presentación
+    var pTag = document.getElementById('figuraPaginaTag');
+    var cTag = document.getElementById('figuraColorTag');
+    var nEs = document.getElementById('figuraNameEs');
+    var nEn = document.getElementById('figuraNameEn');
+    var gLabels = document.getElementById('figuraGeomLabels');
+    var pGuide = document.getElementById('figParentGuideText');
+    var pObjTag = document.getElementById('lblPaginaObjetos');
+
+    if (pTag) pTag.textContent = '📖 Pág. ' + active.page;
+    if (cTag) cTag.textContent = active.emoji + ' Color: ' + active.bookColorName;
+    if (nEs) nEs.textContent = active.nameEs;
+    if (nEn) nEn.textContent = '(' + active.nameEn + ')';
+    if (pGuide) pGuide.textContent = active.guideText;
+    if (pObjTag) pObjTag.textContent = active.page;
+
+    if (gLabels && active.badges) {
+      gLabels.innerHTML = '';
+      active.badges.forEach(function (b) {
+        var span = document.createElement('span');
+        span.className = 'figura-geom-badge ' + b.cls;
+        span.textContent = b.text;
+        gLabels.appendChild(span);
+      });
+    }
+
+    // Selector secundario de Estrella / Corazón
+    var subBar = document.getElementById('figSubSelectorBar');
+    if (subBar) {
+      if (fig.hasSubfigures) {
+        subBar.style.display = 'flex';
+        var bEst = document.getElementById('btnSubFigEstrella');
+        var bCor = document.getElementById('btnSubFigCorazon');
+        if (bEst) bEst.className = 'btn-kid' + (fig.currentSub === 'estrella' ? ' active-chip' : '');
+        if (bCor) bCor.className = 'btn-kid' + (fig.currentSub === 'corazon' ? ' active-chip' : '');
+      } else {
+        subBar.style.display = 'none';
+      }
+    }
+
+    // Configurar caminos y puntos de control en el canvas
+    var canvas = document.getElementById('figuraCanvas');
+    if (canvas && active.buildPerimeter) {
+      var perim = active.buildPerimeter(canvas.width, canvas.height);
+      figuraState.perimeterData = perim;
+      var wps = [];
+      perim.paths.forEach(function (path, pIdx) {
+        path.forEach(function (pt, i) {
+          wps.push({
+            x: pt.x,
+            y: pt.y,
+            pathIdx: pIdx,
+            hit: false
+          });
+        });
+      });
+      figuraState.waypoints = wps;
+      figuraState.paths = perim.paths;
+    }
+
+    updateFiguraProgressUI(0);
+    var statusBanner = document.getElementById('figuraStatusBanner');
+    var statusMsg = document.getElementById('figuraStatusMsg');
+    if (statusBanner) statusBanner.classList.remove('celebrate');
+    if (statusMsg) {
+      statusMsg.innerHTML = '☝️ Pasa tu dedito por los puntos numerados del contorno para descubrir sus lados y forma.';
+    }
+
+    renderFigurasSelector();
+    renderFiguraObjetos();
+    renderFiguraCanvas();
+
+    if (speak) {
+      window.hablarTexto(active.audioInst, 'es-ES');
+    }
+  }
+
+  window.seleccionarSubFigura = function (subId) {
+    var fig = FIGURAS_DATA[figuraState.currentIdx];
+    if (fig && fig.hasSubfigures) {
+      fig.currentSub = subId;
+      selectFigura(figuraState.currentIdx, true);
+    }
+  };
+
+  function checkFiguraWaypoints(pt) {
+    var hitRadius = 46;
+    var newlyHit = false;
+    figuraState.waypoints.forEach(function (wp) {
+      if (!wp.hit) {
+        var dx = pt.x - wp.x;
+        var dy = pt.y - wp.y;
+        if (Math.sqrt(dx * dx + dy * dy) <= hitRadius) {
+          wp.hit = true;
+          newlyHit = true;
+        }
+      }
+    });
+
+    if (newlyHit) {
+      var total = figuraState.waypoints.length || 1;
+      var hits = figuraState.waypoints.filter(function (w) { return w.hit; }).length;
+      var pct = Math.min(100, Math.round((hits / total) * 100));
+      updateFiguraProgressUI(pct);
+
+      if (pct >= 82 && !figuraState.completedCurrent) {
+        figuraState.completedCurrent = true;
+        updateFiguraProgressUI(100);
+        var active = getActiveFigura();
+        var key = getActiveFiguraStorageKey();
+        if (active && !state.completedFiguras[key]) {
+          state.completedFiguras[key] = true;
+          addXP(10, 's-figuras');
+        } else {
+          sonarCelebracion();
+        }
+        sonarCelebracion();
+        window.lanzarConfetiPrebasica();
+        var statusBanner = document.getElementById('figuraStatusBanner');
+        var statusMsg = document.getElementById('figuraStatusMsg');
+        if (statusBanner) statusBanner.classList.add('celebrate');
+        if (statusMsg && active) {
+          statusMsg.innerHTML = '🎉 <strong>¡Fantástico! ⭐</strong> ¡Descubriste el contorno del ' + active.nameEs + '! Ahora toca los objetos de abajo.';
+        }
+        if (active) {
+          window.hablarTexto(active.audioFelicita, 'es-ES');
+        }
+        renderFigurasSelector();
+      }
+    }
+  }
+
+  function updateFiguraProgressUI(pct) {
+    var fill = document.getElementById('figuraProgressFill');
+    var lbl = document.getElementById('figuraProgressPct');
+    if (fill) fill.style.width = pct + '%';
+    if (lbl) lbl.textContent = pct + '%';
+  }
+
+  function renderFiguraCanvas() {
+    var canvas = document.getElementById('figuraCanvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var w = canvas.width;
+    var h = canvas.height;
+    var active = getActiveFigura();
+    var pData = figuraState.perimeterData;
+    if (!active || !pData) return;
+
+    ctx.clearRect(0, 0, w, h);
+
+    // 1. Cuadrícula suave de cuaderno de preescolar
+    ctx.save();
+    ctx.strokeStyle = 'rgba(150, 165, 185, 0.16)';
+    ctx.lineWidth = 1;
+    for (var y = 35; y < h; y += 35) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(w, y);
+      ctx.stroke();
+    }
+    for (var x = 35; x < w; x += 35) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, h);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    // 2. Relleno traslúcido de la figura en su color oficial
+    if (pData.paths && pData.paths.length > 0) {
+      ctx.save();
+      ctx.fillStyle = pData.fillColor || 'rgba(0,0,0,0.05)';
+      pData.paths.forEach(function (path) {
+        if (!path || path.length < 2) return;
+        ctx.beginPath();
+        ctx.moveTo(path[0].x, path[0].y);
+        for (var i = 1; i < path.length; i++) {
+          ctx.lineTo(path[i].x, path[i].y);
+        }
+        ctx.closePath();
+        ctx.fill();
+      });
+      ctx.restore();
+    }
+
+    // 3. Diferenciación geométrica visual especial
+    if (pData.type === 'rectangle_distinct') {
+      // En el Rectángulo: distinguir claramente 2 lados LARGOS ↔ y 2 lados CORTOS ↕
+      ctx.save();
+      ctx.lineWidth = 14;
+      ctx.setLineDash([12, 10]);
+
+      // Lados largos horizontales (Anaranjado vivo)
+      ctx.strokeStyle = '#fb8c00';
+      ctx.beginPath();
+      ctx.moveTo(pData.x0, pData.y0);
+      ctx.lineTo(pData.x1, pData.y0);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(pData.x0, pData.y1);
+      ctx.lineTo(pData.x1, pData.y1);
+      ctx.stroke();
+
+      // Lados cortos verticales (Teal / Cian)
+      ctx.strokeStyle = '#00acc1';
+      ctx.beginPath();
+      ctx.moveTo(pData.x1, pData.y0);
+      ctx.lineTo(pData.x1, pData.y1);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(pData.x0, pData.y0);
+      ctx.lineTo(pData.x0, pData.y1);
+      ctx.stroke();
+      ctx.restore();
+    } else {
+      // Línea punteada guía de contorno en el color del libro
+      pData.paths.forEach(function (path) {
+        if (!path || path.length < 2) return;
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(path[0].x, path[0].y);
+        for (var i = 1; i < path.length; i++) {
+          ctx.lineTo(path[i].x, path[i].y);
+        }
+        ctx.strokeStyle = pData.strokeColor || active.colorHex;
+        ctx.lineWidth = 14;
+        ctx.setLineDash([12, 10]);
+        ctx.stroke();
+        ctx.restore();
+      });
+    }
+
+    // 4. Texto geométrico explicativo en el centro
+    if (pData.centerText) {
+      ctx.save();
+      ctx.font = 'bold 22px Fredoka, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = active.colorHex;
+      ctx.globalAlpha = 0.35;
+      ctx.fillText(pData.centerText, w * 0.5, h * 0.5);
+      ctx.restore();
+    }
+
+    // 5. Etiquetas de lados o puntas
+    if (pData.sideLabels) {
+      pData.sideLabels.forEach(function (lbl) {
+        ctx.save();
+        ctx.font = 'bold 15px Fredoka, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = lbl.color || active.colorHex;
+        ctx.fillText(lbl.text, lbl.x, lbl.y);
+        ctx.restore();
+      });
+    }
+
+    // 6. Puntos de control / waypoints iluminados al pasar el dedo
+    figuraState.waypoints.forEach(function (wp) {
+      if (wp.hit) {
+        ctx.save();
+        ctx.fillStyle = 'rgba(255, 215, 0, 0.45)';
+        ctx.beginPath();
+        ctx.arc(wp.x, wp.y, 16, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    });
+
+    // 7. Trazos pintados por el niño (dedito táctil)
+    figuraState.userStrokes.forEach(function (stroke) {
+      var pts = stroke.points;
+      if (!pts || pts.length === 0) return;
+      ctx.save();
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.lineWidth = 22;
+
+      if (pts.length === 1) {
+        ctx.fillStyle = stroke.color === 'rainbow' ? 'hsl(' + pts[0].hue + ', 95%, 52%)' : stroke.color;
+        ctx.beginPath();
+        ctx.arc(pts[0].x, pts[0].y, 11, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        for (var i = 1; i < pts.length; i++) {
+          ctx.beginPath();
+          ctx.moveTo(pts[i - 1].x, pts[i - 1].y);
+          ctx.lineTo(pts[i].x, pts[i].y);
+          ctx.strokeStyle = stroke.color === 'rainbow'
+            ? 'hsl(' + pts[i].hue + ', 95%, 50%)'
+            : stroke.color;
+          ctx.stroke();
+        }
+      }
+      ctx.restore();
+    });
+
+    // 8. Chispas mágicas doradas en el recorrido del dedo
+    figuraState.sparkles.forEach(function (sp) {
+      ctx.save();
+      ctx.font = sp.size + 'px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = 'hsl(' + sp.hue + ', 100%, 60%)';
+      ctx.globalAlpha = sp.alpha;
+      ctx.fillText(sp.char, sp.x, sp.y);
+      ctx.restore();
+    });
+
+    // 9. Círculos numerados en los vértices / esquinas / tramos (1, 2, 3, 4...)
+    if (pData.markers) {
+      pData.markers.forEach(function (m) {
+        ctx.save();
+        // Círculo base blanco con borde grueso
+        ctx.beginPath();
+        ctx.arc(m.x, m.y, 19, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+        ctx.lineWidth = 3.5;
+        ctx.strokeStyle = active.colorHex;
+        ctx.stroke();
+
+        // Número en el centro
+        ctx.font = 'bold 16px Fredoka, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = active.colorHex;
+        ctx.fillText(m.label, m.x, m.y);
+        ctx.restore();
+      });
+    }
+  }
+
+  window.seleccionarColorFigura = function (color, btn) {
+    figuraState.color = color;
+    var swatches = document.querySelectorAll('.figura-stage-wrap .color-swatch, #s-figuras .color-swatch');
+    swatches.forEach(function (s) { s.classList.remove('active'); });
+    if (btn) btn.classList.add('active');
+  };
+
+  window.borrarTrazoFiguraActual = function () {
+    selectFigura(figuraState.currentIdx, false);
+  };
+
+  window.siguienteFigura = function () {
+    var next = (figuraState.currentIdx + 1) % FIGURAS_DATA.length;
+    selectFigura(next, true);
+  };
+
+  window.leerInstruccionFiguraActual = function (btn) {
+    var active = getActiveFigura();
+    if (active && active.audioInst) {
+      window.hablarTexto(active.audioInst, 'es-ES', btn);
+    }
+  };
+
+  window.escucharInglesFiguraActual = function (btn) {
+    var active = getActiveFigura();
+    if (active && active.audioEnKey) {
+      window.hablarTexto(active.audioEnKey, 'en-US', btn);
+    }
+  };
+
+  function renderFiguraObjetos() {
+    var grid = document.getElementById('figuraObjetosGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    var active = getActiveFigura();
+    if (!active || !active.objects) return;
+
+    active.objects.forEach(function (obj) {
+      var card = document.createElement('div');
+      var isTouched = !!state.completedFiguraObjects[obj.id];
+      card.className = 'figura-objeto-card' + (isTouched ? ' tocado' : '');
+      card.setAttribute('role', 'button');
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('aria-label', obj.name + '. Toca para escuchar su nombre');
+      card.innerHTML =
+        '<span class="obj-ico" aria-hidden="true">' + obj.ico + '</span>' +
+        '<span class="obj-name">' + obj.name + '</span>';
+
+      card.onclick = function () {
+        tocarObjetoFigura(obj, card);
+      };
+      card.onkeydown = function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          tocarObjetoFigura(obj, card);
+        }
+      };
+      grid.appendChild(card);
+    });
+  }
+
+  function tocarObjetoFigura(obj, cardEl) {
+    if (cardEl) {
+      cardEl.classList.add('tocado');
+    }
+    state.completedFiguraObjects[obj.id] = true;
+    saveState();
+    sonarAcierto();
+    window.hablarTexto(obj.audioKey, 'es-ES', cardEl);
+  }
+
+  /* ==========================================================================
+     PESTAÑA 3: RODEA Y DESCUBRE (LETRAS, NÚMEROS Y NOCIONES ESPACIALES)
      ========================================================================== */
   var LETRAS_DATA = [
     { id: 'A', label: 'Vocal A a', esWord: 'Abeja', enWord: 'Apple', emoji: '🐝', esTTS: 'Rodea todas las tarjetas con la vocal A, como Abeja.' },
@@ -2473,6 +3538,8 @@
       xp: 0,
       soundOn: (state && state.soundOn !== false),
       completedTraces: {},
+      completedFiguras: {},
+      completedFiguraObjects: {},
       completedRodea: {},
       completedPuzzles: {},
       completedHomeTechs: {},
@@ -2488,6 +3555,7 @@
       doneNavs[i].classList.remove('done');
     }
     selectTraceChallenge(0, false);
+    selectFigura(0, false);
     buildRodeaExercise();
     mostrarRompecabezas('numeros');
     renderHandsOnTab();
@@ -2606,6 +3674,7 @@
     var sndBtn = document.getElementById('sndBtn');
     if (sndBtn) sndBtn.textContent = state.soundOn ? '🔊 Sonido: Sí' : '🔇 Sonido: No';
     initTraceTab();
+    initFigurasTab();
     initRodeaTab();
     mostrarRompecabezas('numeros');
     renderHandsOnTab();

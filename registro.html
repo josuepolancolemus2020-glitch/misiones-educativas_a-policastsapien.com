@@ -1,9 +1,9 @@
-ï»¿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ğŸ“‹ Evidencia de misiones â€” M.E.T.A.S</title>
+<title>?? Evidencia de misiones — M.E.T.A.S</title>
 <style>
 :root{
   --pri:#1565c0; --pri-gl:#e3f2fd; --jade:#00b894; --amber:#fdcb6e; --rojo:#d63031;
@@ -64,72 +64,72 @@ footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5
 <body>
 
 <header>
-  <h1>ğŸ“‹ Evidencia de misiones â€” M.E.T.A.S</h1>
+  <h1>?? Evidencia de misiones — M.E.T.A.S</h1>
   <p>Lo que las misiones registraron <strong>en este equipo</strong>: sesiones de trabajo, secciones completadas, evaluaciones calificadas y controles de lectura. No se registra nada a mano: la evidencia la dejan los alumnos al trabajar. Exporta el CSV para consolidar los datos de tu aula.</p>
   <div class="top-links">
-    <a class="btn btn-blanco" href="index.html">ğŸ  Volver al inicio</a>
-    <a class="btn btn-blanco" href="consulta-nube.html">â˜ï¸ Consulta en la nube (todos los dispositivos)</a>
-    <a class="btn btn-blanco" href="panel-docente.html">ğŸ” Panel docente (con cuenta)</a>
+    <a class="btn btn-blanco" href="index.html">?? Volver al inicio</a>
+    <a class="btn btn-blanco" href="consulta-nube.html">?? Consulta en la nube (todos los dispositivos)</a>
+    <a class="btn btn-blanco" href="panel-docente.html">?? Panel docente (con cuenta)</a>
   </div>
 </header>
 
 <div class="stats" id="stats"></div>
 
 <div class="filtros">
-  <label>ğŸš€ MisiÃ³n <select id="fMision"><option value="">Todas</option></select></label>
-  <label>ğŸ‘¤ Alumno <select id="fAlumno"><option value="">Todos</option></select></label>
-  <label>ğŸ—‚ï¸ Evento <select id="fTipo">
+  <label>?? Misión <select id="fMision"><option value="">Todas</option></select></label>
+  <label>?? Alumno <select id="fAlumno"><option value="">Todos</option></select></label>
+  <label>??? Evento <select id="fTipo">
     <option value="">Todos</option>
-    <option value="sesion">ğŸ“± SesiÃ³n</option>
-    <option value="seccion">âœ… SecciÃ³n</option>
-    <option value="evaluacion">ğŸ“‹ EvaluaciÃ³n</option>
-    <option value="prueba_operativa">ğŸ§® Prueba operativa</option>
-    <option value="lectura">ğŸ“– Control de lectura</option>
-    <option value="pauta_vista">ğŸ” Vio pauta</option>
-    <option value="sugerencia">ğŸ’¬ Sugerencia</option>
+    <option value="sesion">?? Sesión</option>
+    <option value="seccion">? Sección</option>
+    <option value="evaluacion">?? Evaluación</option>
+    <option value="prueba_operativa">?? Prueba operativa</option>
+    <option value="lectura">?? Control de lectura</option>
+    <option value="pauta_vista">?? Vio pauta</option>
+    <option value="sugerencia">?? Sugerencia</option>
   </select></label>
 </div>
 
 <div class="acciones">
-  <button class="btn btn-pri" onclick="exportar()">ğŸ“¥ Exportar CSV</button>
-  <button class="btn btn-jade" onclick="resumenWA()">ğŸ“¤ Resumen por WhatsApp</button>
-  <button class="btn btn-rojo" onclick="borrarTodo()">ğŸ—‘ï¸ Borrar registros</button>
+  <button class="btn btn-pri" onclick="exportar()">?? Exportar CSV</button>
+  <button class="btn btn-jade" onclick="resumenWA()">?? Resumen por WhatsApp</button>
+  <button class="btn btn-rojo" onclick="borrarTodo()">??? Borrar registros</button>
 </div>
 
 <div class="tabla-wrap">
   <table>
-    <thead><tr><th>Fecha</th><th>Hora</th><th>Alumno</th><th>Grado</th><th>Escuela</th><th>MisiÃ³n</th><th>Evento</th><th>Detalle</th><th>Nota</th><th>XP</th><th>Min</th></tr></thead>
+    <thead><tr><th>Fecha</th><th>Hora</th><th>Alumno</th><th>Grado</th><th>Escuela</th><th>Misión</th><th>Evento</th><th>Detalle</th><th>Nota</th><th>XP</th><th>Min</th></tr></thead>
     <tbody id="tbody"></tbody>
   </table>
   <div class="vacio" id="vacio" style="display:none;">
-    ğŸ“­ AÃºn no hay registros en este dispositivo.<br>
-    Los eventos aparecen automÃ¡ticamente cuando los estudiantes trabajan en las misiones que incluyen la capa de registro.
+    ?? Aún no hay registros en este dispositivo.<br>
+    Los eventos aparecen automáticamente cuando los estudiantes trabajan en las misiones que incluyen la capa de registro.
   </div>
 </div>
 
 <div class="nota-etica">
-  <!-- AquÃ­ decÃ­a Â«estos datos nunca salen del dispositivo por sÃ­ solosÂ». Era
-       verdad cuando se escribiÃ³ y dejÃ³ de serlo el dÃ­a que se aÃ±adiÃ³ la nube:
+  <!-- Aquí decía «estos datos nunca salen del dispositivo por sí solos». Era
+       verdad cuando se escribió y dejó de serlo el día que se añadió la nube:
        cada registro se encola solo (metas-registro.js) y sube en cuanto hay
-       seÃ±al, con el nombre del alumno dentro. Una promesa de privacidad que no
+       señal, con el nombre del alumno dentro. Una promesa de privacidad que no
        se cumple es peor que no prometer nada, porque la familia decide con
-       ella. Se corrigiÃ³ el 7 de septiembre de 2026. -->
-  ğŸ”’ <strong>Privacidad:</strong> los resultados de las misiones <strong>sÃ­ salen de este
-  equipo</strong>: se suben solos, en cuanto hay seÃ±al, para que el maestro los vea sin recoger
-  los telÃ©fonos. QuÃ© se manda exactamente estÃ¡ en el <a href="privacidad.html">aviso de
+       ella. Se corrigió el 7 de septiembre de 2026. -->
+  ?? <strong>Privacidad:</strong> los resultados de las misiones <strong>sí salen de este
+  equipo</strong>: se suben solos, en cuanto hay señal, para que el maestro los vea sin recoger
+  los teléfonos. Qué se manda exactamente está en el <a href="privacidad.html">aviso de
   privacidad</a>.
-  Para estudios formales se recomienda usar un <strong>cÃ³digo de alumno</strong> (ej. A07-M) en lugar del nombre completo, y contar con el
+  Para estudios formales se recomienda usar un <strong>código de alumno</strong> (ej. A07-M) en lugar del nombre completo, y contar con el
   consentimiento informado de madres, padres o tutores.
 </div>
 
-<footer>ğŸ  Proyecto Educativo M.E.T.A.S Â· ğŸŒ policastsapien.com<br>
-  Â© 2026 Familia Polanco-Castellanos Â· <a href="privacidad.html">Aviso de privacidad</a>
-  Â· <a href="terminos.html">TÃ©rminos de uso</a></footer>
+<footer>?? Proyecto Educativo M.E.T.A.S · ?? policastsapien.com<br>
+  © 2026 Familia Polanco-Castellanos · <a href="privacidad.html">Aviso de privacidad</a>
+  · <a href="terminos.html">Términos de uso</a></footer>
 
-<script src="js/metas-registro.js?v=446"></script>
+<script src="js/metas-registro.js?v=447"></script>
 <script>
 'use strict';
-const NOMBRE_TIPO = { sesion:'ğŸ“± SesiÃ³n', seccion:'âœ… SecciÃ³n', evaluacion:'ğŸ“‹ EvaluaciÃ³n', prueba_operativa:'ğŸ§® Prueba operativa', lectura:'ğŸ“– Control de lectura', pauta_vista:'ğŸ” Vio pauta', sugerencia:'ğŸ’¬ Sugerencia' };
+const NOMBRE_TIPO = { sesion:'?? Sesión', seccion:'? Sección', evaluacion:'?? Evaluación', prueba_operativa:'?? Prueba operativa', lectura:'?? Control de lectura', pauta_vista:'?? Vio pauta', sugerencia:'?? Sugerencia' };
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtF = t => { const d=new Date(t); if(isNaN(d)) return {f:'',h:''}; const p=n=>(n<10?'0':'')+n; return {f:d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()), h:p(d.getHours())+':'+p(d.getMinutes())}; };
 
@@ -150,8 +150,8 @@ function llenarFiltros(){
 
 function pintar(){
   llenarFiltros();
-  const evs=filtrados().slice().reverse(); // mÃ¡s recientes primero
-  // Anti-trampa: momentos en que se abriÃ³ la pauta (respuestas) en este equipo
+  const evs=filtrados().slice().reverse(); // más recientes primero
+  // Anti-trampa: momentos en que se abrió la pauta (respuestas) en este equipo
   const pautas=METAS.eventos().filter(e=>e.tipo==='pauta_vista');
   const tb=document.getElementById('tbody'); tb.innerHTML='';
   document.getElementById('vacio').style.display = evs.length?'none':'block';
@@ -160,11 +160,11 @@ function pintar(){
     const detalle = ev.tipo==='seccion' ? (ev.seccion||'').replace(/^s-/,'')
       : (ev.tipo==='evaluacion'||ev.tipo==='prueba_operativa'||ev.tipo==='pauta_vista') ? (ev.forma?('Forma '+ev.forma):'')
       : ev.tipo==='sugerencia' ? ((ev.categoria||'')+(ev.texto?': '+ev.texto:''))
-      // El control de lectura no da nota: da velocidad y comprensiÃ³n, y las
-      // dos juntas, porque leer rÃ¡pido sin entender no es leer.
-      : ev.tipo==='lectura' ? ((ev.titulo||'')+(ev.gradoTexto?' ('+ev.gradoTexto+'Âº)':'')+
-          (typeof ev.ppm==='number'?' Â· '+ev.ppm+' ppm':'')+
-          (typeof ev.comp==='number'?' Â· comprensiÃ³n '+ev.comp+'/'+(ev.compDe||5):''))
+      // El control de lectura no da nota: da velocidad y comprensión, y las
+      // dos juntas, porque leer rápido sin entender no es leer.
+      : ev.tipo==='lectura' ? ((ev.titulo||'')+(ev.gradoTexto?' ('+ev.gradoTexto+'º)':'')+
+          (typeof ev.ppm==='number'?' · '+ev.ppm+' ppm':'')+
+          (typeof ev.comp==='number'?' · comprensión '+ev.comp+'/'+(ev.compDe||5):''))
       : '';
     let nota='';
     if(typeof ev.nota==='number'){
@@ -172,12 +172,12 @@ function pintar(){
       nota = '<span class="'+cls+'">'+ev.nota+'/'+(ev.base||100)+'</span>';
       if(ev.tipo==='evaluacion'||ev.tipo==='prueba_operativa'){
         const vio=pautas.find(p=>p.mision===ev.mision && p.t<ev.t && fmtF(p.t).f===f);
-        if(vio) nota += ' <span class="pauta-warn" title="âš ï¸ La pauta (respuestas) se abriÃ³ en este dispositivo a las '+esc(fmtF(vio.t).h)+', ANTES de calificar esta evaluaciÃ³n. La nota podrÃ­a no ser confiable.">âš ï¸</span>';
+        if(vio) nota += ' <span class="pauta-warn" title="?? La pauta (respuestas) se abrió en este dispositivo a las '+esc(fmtF(vio.t).h)+', ANTES de calificar esta evaluación. La nota podría no ser confiable.">??</span>';
       }
     }
     const tr=document.createElement('tr');
-    const gradoTxt = (ev.grado||'') + (ev.docente ? (ev.grado?' Â· ':'') + ev.docente : '');
-    tr.innerHTML = '<td>'+esc(f)+'</td><td>'+esc(h)+'</td><td>'+esc(ev.alumno||'â€”')+'</td><td>'+esc(gradoTxt||'â€”')+'</td><td>'+esc(ev.escuela||'â€”')+'</td><td>'+esc(ev.mision||'â€”')+
+    const gradoTxt = (ev.grado||'') + (ev.docente ? (ev.grado?' · ':'') + ev.docente : '');
+    tr.innerHTML = '<td>'+esc(f)+'</td><td>'+esc(h)+'</td><td>'+esc(ev.alumno||'—')+'</td><td>'+esc(gradoTxt||'—')+'</td><td>'+esc(ev.escuela||'—')+'</td><td>'+esc(ev.mision||'—')+
       '</td><td><span class="badge b-'+esc(ev.tipo)+'">'+(NOMBRE_TIPO[ev.tipo]||esc(ev.tipo))+'</span></td><td>'+esc(detalle)+
       '</td><td>'+nota+'</td><td>'+esc(ev.xp==null?'':ev.xp)+'</td><td>'+esc(ev.min==null?'':ev.min)+'</td>';
     tb.appendChild(tr);
@@ -187,31 +187,31 @@ function pintar(){
   document.getElementById('stats').innerHTML =
     stat(r.eventos,'Eventos') + stat(r.alumnos.length,'Alumnos') + stat(r.misiones.length,'Misiones') +
     stat(r.evaluaciones + r.pruebasOperativas,'Eval. calificadas') +
-    stat(r.promedioEval!=null?r.promedioEval:'â€”','Promedio conceptual') +
-    stat(r.promedioOp!=null?r.promedioOp:'â€”','Promedio operativa') +
+    stat(r.promedioEval!=null?r.promedioEval:'—','Promedio conceptual') +
+    stat(r.promedioOp!=null?r.promedioOp:'—','Promedio operativa') +
     stat(r.lecturas,'Controles de lectura') +
-    stat(r.promedioPpm!=null?r.promedioPpm:'â€”','Palabras por minuto') +
+    stat(r.promedioPpm!=null?r.promedioPpm:'—','Palabras por minuto') +
     stat(r.minutos,'Minutos activos');
 }
 
 function exportar(){
   if(!METAS.eventos().length){ alert('No hay registros para exportar.'); return; }
-  METAS.exportarCSV().catch(()=>alert('âš ï¸ No se pudo exportar el archivo.'));
+  METAS.exportarCSV().catch(()=>alert('?? No se pudo exportar el archivo.'));
 }
 
 function resumenWA(){
   const r=METAS.resumen();
   if(!r.eventos){ alert('No hay registros para resumir.'); return; }
-  const txt = 'ğŸ“Š *REGISTRO DOCENTE M.E.T.A.S*\n\n'+
-    'ğŸ“… PerÃ­odo: '+(r.desde||'â€”')+' a '+(r.hasta||'â€”')+'\n'+
-    'ğŸ“± Dispositivo: '+METAS.dispositivo()+'\n\n'+
-    'ğŸ‘¥ Alumnos activos: '+r.alumnos.length+'\n'+
-    'ğŸš€ Misiones trabajadas: '+r.misiones.length+'\n'+
-    'ğŸ“‹ Evaluaciones conceptuales: '+r.evaluaciones+(r.promedioEval!=null?' (promedio '+r.promedioEval+'/100)':'')+'\n'+
-    'ğŸ§® Pruebas operativas: '+r.pruebasOperativas+(r.promedioOp!=null?' (promedio '+r.promedioOp+'/100)':'')+'\n'+
-    'ğŸ“– Controles de lectura: '+r.lecturas+(r.promedioPpm!=null?' (promedio '+r.promedioPpm+' palabras por minuto)':'')+'\n'+
-    'â±ï¸ Tiempo activo total: '+r.minutos+' min\n\n'+
-    'ğŸ  Proyecto Educativo M.E.T.A.S\nğŸŒ policastsapien.com';
+  const txt = '?? *REGISTRO DOCENTE M.E.T.A.S*\n\n'+
+    '?? Período: '+(r.desde||'—')+' a '+(r.hasta||'—')+'\n'+
+    '?? Dispositivo: '+METAS.dispositivo()+'\n\n'+
+    '?? Alumnos activos: '+r.alumnos.length+'\n'+
+    '?? Misiones trabajadas: '+r.misiones.length+'\n'+
+    '?? Evaluaciones conceptuales: '+r.evaluaciones+(r.promedioEval!=null?' (promedio '+r.promedioEval+'/100)':'')+'\n'+
+    '?? Pruebas operativas: '+r.pruebasOperativas+(r.promedioOp!=null?' (promedio '+r.promedioOp+'/100)':'')+'\n'+
+    '?? Controles de lectura: '+r.lecturas+(r.promedioPpm!=null?' (promedio '+r.promedioPpm+' palabras por minuto)':'')+'\n'+
+    '?? Tiempo activo total: '+r.minutos+' min\n\n'+
+    '?? Proyecto Educativo M.E.T.A.S\n?? policastsapien.com';
   const enc=encodeURIComponent(txt);
   const esMovil=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
   window.open(esMovil?'https://wa.me/?text='+enc:'https://web.whatsapp.com/send?text='+enc,'_blank');
@@ -220,8 +220,8 @@ function resumenWA(){
 function borrarTodo(){
   const n=METAS.eventos().length;
   if(!n){ alert('No hay registros que borrar.'); return; }
-  if(!confirm('Vas a borrar '+n+' registros de este dispositivo.\n\nÂ¿Ya exportaste el CSV? Esta acciÃ³n no se puede deshacer.')) return;
-  if(!confirm('ConfirmaciÃ³n final: Â¿borrar TODOS los registros?')) return;
+  if(!confirm('Vas a borrar '+n+' registros de este dispositivo.\n\n¿Ya exportaste el CSV? Esta acción no se puede deshacer.')) return;
+  if(!confirm('Confirmación final: ¿borrar TODOS los registros?')) return;
   METAS.borrar();
   pintar();
 }
