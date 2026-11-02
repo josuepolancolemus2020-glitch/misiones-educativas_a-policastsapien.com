@@ -18,6 +18,7 @@ import os
 import re
 import json
 import asyncio
+import sys
 import edge_tts
 
 VOICE_ES = "es-MX-DaliaNeural"
@@ -368,7 +369,8 @@ ITEMS = [
     {
         "file": "pz_instruccion_colores.mp3",
         "lang": "es",
-        "text": "Color Matching Car Park: estaciona cada carrito en su color en español e inglés. Red Rojo, Blue Azul, Yellow Amarillo, Green Verde, Orange Naranja, Violet Morado.",
+        "text": "Color Matching Car Park: estaciona cada carrito en su estacionamiento del mismo color. Rojo, Azul, Amarillo, Verde, Naranja y Morado.",
+        "force": True
     },
     {
         "file": "pz_instruccion_figuras.mp3",
@@ -381,42 +383,90 @@ ITEMS = [
         "text": "¡Bravo! Completaste todo el rompecabezas sin ningún error.",
     },
 
-    # --- 8. ROMPECABEZAS: FICHAS INDIVIDUALES AL TOCARLAS ---
-    # Números 1 al 10 (es + en)
-    {"file": "pz_num_1.mp3", "lang": "es", "text": "Uno. One"},
-    {"file": "pz_num_2.mp3", "lang": "es", "text": "Dos. Two"},
-    {"file": "pz_num_3.mp3", "lang": "es", "text": "Tres. Three"},
-    {"file": "pz_num_4.mp3", "lang": "es", "text": "Cuatro. Four"},
-    {"file": "pz_num_5.mp3", "lang": "es", "text": "Cinco. Five"},
-    {"file": "pz_num_6.mp3", "lang": "es", "text": "Seis. Six"},
-    {"file": "pz_num_7.mp3", "lang": "es", "text": "Siete. Seven"},
-    {"file": "pz_num_8.mp3", "lang": "es", "text": "Ocho. Eight"},
-    {"file": "pz_num_9.mp3", "lang": "es", "text": "Nueve. Nine"},
-    {"file": "pz_num_10.mp3", "lang": "es", "text": "Diez. Ten"},
+    # --- 8. ROMPECABEZAS: FICHAS INDIVIDUALES 100% SEPARADAS POR IDIOMA ---
+    # A) NÚMEROS EN ESPAÑOL (Dalia)
+    {"file": "pz_num_1_es.mp3", "lang": "es", "text": "Uno"},
+    {"file": "pz_num_2_es.mp3", "lang": "es", "text": "Dos"},
+    {"file": "pz_num_3_es.mp3", "lang": "es", "text": "Tres"},
+    {"file": "pz_num_4_es.mp3", "lang": "es", "text": "Cuatro"},
+    {"file": "pz_num_5_es.mp3", "lang": "es", "text": "Cinco"},
+    {"file": "pz_num_6_es.mp3", "lang": "es", "text": "Seis"},
+    {"file": "pz_num_7_es.mp3", "lang": "es", "text": "Siete"},
+    {"file": "pz_num_8_es.mp3", "lang": "es", "text": "Ocho"},
+    {"file": "pz_num_9_es.mp3", "lang": "es", "text": "Nueve"},
+    {"file": "pz_num_10_es.mp3", "lang": "es", "text": "Diez"},
 
-    # Cuerpo humano (Pág. 59)
-    {"file": "pz_cuerpo_cabeza.mp3", "lang": "es", "text": "1. Cabeza. Head"},
-    {"file": "pz_cuerpo_tronco.mp3", "lang": "es", "text": "2. Tronco. Trunk / Torso"},
-    {"file": "pz_cuerpo_brazos.mp3", "lang": "es", "text": "3. Brazos y Manos. Arms & Hands"},
-    {"file": "pz_cuerpo_piernas.mp3", "lang": "es", "text": "4. Piernas y Pies. Legs & Feet"},
+    # B) NÚMEROS EN INGLÉS NATIVO (Ana)
+    {"file": "pz_num_1_en.mp3", "lang": "en", "text": "One"},
+    {"file": "pz_num_2_en.mp3", "lang": "en", "text": "Two"},
+    {"file": "pz_num_3_en.mp3", "lang": "en", "text": "Three"},
+    {"file": "pz_num_4_en.mp3", "lang": "en", "text": "Four"},
+    {"file": "pz_num_5_en.mp3", "lang": "en", "text": "Five"},
+    {"file": "pz_num_6_en.mp3", "lang": "en", "text": "Six"},
+    {"file": "pz_num_7_en.mp3", "lang": "en", "text": "Seven"},
+    {"file": "pz_num_8_en.mp3", "lang": "en", "text": "Eight"},
+    {"file": "pz_num_9_en.mp3", "lang": "en", "text": "Nine"},
+    {"file": "pz_num_10_en.mp3", "lang": "en", "text": "Ten"},
 
-    # Car Park Colores
-    {"file": "pz_color_red.mp3", "lang": "es", "text": "Rojo, Red"},
-    {"file": "pz_color_blue.mp3", "lang": "es", "text": "Azul, Blue"},
-    {"file": "pz_color_yellow.mp3", "lang": "es", "text": "Amarillo, Yellow"},
-    {"file": "pz_color_green.mp3", "lang": "es", "text": "Verde, Green"},
-    {"file": "pz_color_orange.mp3", "lang": "es", "text": "Naranja, Orange"},
-    {"file": "pz_color_violet.mp3", "lang": "es", "text": "Morado, Violet"},
+    # C) CUERPO HUMANO EN ESPAÑOL (Dalia)
+    {"file": "pz_cuerpo_cabeza_es.mp3", "lang": "es", "text": "Cabeza", "raw": "1. Cabeza"},
+    {"file": "pz_cuerpo_tronco_es.mp3", "lang": "es", "text": "Tronco", "raw": "2. Tronco"},
+    {"file": "pz_cuerpo_brazos_es.mp3", "lang": "es", "text": "Brazos y Manos", "raw": "3. Brazos y Manos"},
+    {"file": "pz_cuerpo_piernas_es.mp3", "lang": "es", "text": "Piernas y Pies", "raw": "4. Piernas y Pies"},
 
-    # Figuras Geométricas
-    {"file": "pz_fig_circulo.mp3", "lang": "es", "text": "Círculo, Circle"},
-    {"file": "pz_fig_cuadrado.mp3", "lang": "es", "text": "Cuadrado, Square"},
-    {"file": "pz_fig_triangulo.mp3", "lang": "es", "text": "Triángulo, Triangle"},
-    {"file": "pz_fig_rectangulo.mp3", "lang": "es", "text": "Rectángulo, Rectangle"},
-    {"file": "pz_fig_ovalo.mp3", "lang": "es", "text": "Óvalo, Oval"},
-    {"file": "pz_fig_rombo.mp3", "lang": "es", "text": "Rombo, Diamond"},
-    {"file": "pz_fig_estrella.mp3", "lang": "es", "text": "Estrella, Star"},
-    {"file": "pz_fig_corazon.mp3", "lang": "es", "text": "Corazón, Heart"},
+    # D) CUERPO HUMANO EN INGLÉS NATIVO (Ana)
+    {"file": "pz_cuerpo_head_en.mp3", "lang": "en", "text": "Head"},
+    {"file": "pz_cuerpo_trunk_en.mp3", "lang": "en", "text": "Trunk"},
+    {"file": "pz_cuerpo_arms_en.mp3", "lang": "en", "text": "Arms and Hands", "raw": "Arms & Hands"},
+    {"file": "pz_cuerpo_legs_en.mp3", "lang": "en", "text": "Legs and Feet", "raw": "Legs & Feet"},
+
+    # E) COLORES EN ESPAÑOL (Dalia)
+    {"file": "pz_color_red_es.mp3", "lang": "es", "text": "Rojo"},
+    {"file": "pz_color_blue_es.mp3", "lang": "es", "text": "Azul"},
+    {"file": "pz_color_yellow_es.mp3", "lang": "es", "text": "Amarillo"},
+    {"file": "pz_color_green_es.mp3", "lang": "es", "text": "Verde"},
+    {"file": "pz_color_orange_es.mp3", "lang": "es", "text": "Naranja"},
+    {"file": "pz_color_violet_es.mp3", "lang": "es", "text": "Morado"},
+
+    # F) COLORES EN INGLÉS NATIVO (Ana)
+    {"file": "pz_color_red_en.mp3", "lang": "en", "text": "Red"},
+    {"file": "pz_color_blue_en.mp3", "lang": "en", "text": "Blue"},
+    {"file": "pz_color_yellow_en.mp3", "lang": "en", "text": "Yellow"},
+    {"file": "pz_color_green_en.mp3", "lang": "en", "text": "Green"},
+    {"file": "pz_color_orange_en.mp3", "lang": "en", "text": "Orange"},
+    {"file": "pz_color_violet_en.mp3", "lang": "en", "text": "Violet"},
+
+    # G) FIGURAS GEOMÉTRICAS EN ESPAÑOL (Dalia)
+    {"file": "pz_fig_circulo_es.mp3", "lang": "es", "text": "Círculo"},
+    {"file": "pz_fig_cuadrado_es.mp3", "lang": "es", "text": "Cuadrado"},
+    {"file": "pz_fig_triangulo_es.mp3", "lang": "es", "text": "Triángulo"},
+    {"file": "pz_fig_rectangulo_es.mp3", "lang": "es", "text": "Rectángulo"},
+    {"file": "pz_fig_ovalo_es.mp3", "lang": "es", "text": "Óvalo"},
+    {"file": "pz_fig_rombo_es.mp3", "lang": "es", "text": "Rombo"},
+    {"file": "pz_fig_estrella_es.mp3", "lang": "es", "text": "Estrella"},
+    {"file": "pz_fig_corazon_es.mp3", "lang": "es", "text": "Corazón"},
+
+    # H) FIGURAS GEOMÉTRICAS EN INGLÉS NATIVO (Ana)
+    {"file": "pz_fig_circle_en.mp3", "lang": "en", "text": "Circle"},
+    {"file": "pz_fig_square_en.mp3", "lang": "en", "text": "Square"},
+    {"file": "pz_fig_triangle_en.mp3", "lang": "en", "text": "Triangle"},
+    {"file": "pz_fig_rectangle_en.mp3", "lang": "en", "text": "Rectangle"},
+    {"file": "pz_fig_oval_en.mp3", "lang": "en", "text": "Oval"},
+    {"file": "pz_fig_diamond_en.mp3", "lang": "en", "text": "Diamond"},
+    {"file": "pz_fig_star_en.mp3", "lang": "en", "text": "Star"},
+    {"file": "pz_fig_heart_en.mp3", "lang": "en", "text": "Heart"},
+
+    # I) LETRAS EN INGLÉS NATIVO (Ana) - Pronunciación pura de la letra
+    {"file": "letra_a_sola_en.mp3", "lang": "en", "text": "A"},
+    {"file": "letra_b_sola_en.mp3", "lang": "en", "text": "B"},
+    {"file": "letra_c_sola_en.mp3", "lang": "en", "text": "C"},
+    {"file": "letra_e_sola_en.mp3", "lang": "en", "text": "E"},
+    {"file": "letra_i_sola_en.mp3", "lang": "en", "text": "I"},
+    {"file": "letra_m_sola_en.mp3", "lang": "en", "text": "M"},
+    {"file": "letra_o_sola_en.mp3", "lang": "en", "text": "O"},
+    {"file": "letra_p_sola_en.mp3", "lang": "en", "text": "P"},
+    {"file": "letra_s_sola_en.mp3", "lang": "en", "text": "S"},
+    {"file": "letra_u_sola_en.mp3", "lang": "en", "text": "U"},
 
     # --- 9. PESTAÑA 4: MANOS A LA OBRA EN CASA (6 TÉCNICAS FÍSICAS + FELICITACIÓN) ---
     {
@@ -462,10 +512,11 @@ ITEMS = [
     }
 ]
 
-async def generar_un_audio(sem, item, total, idx):
+async def generar_un_audio(sem, item, total, idx, force=False):
     async with sem:
         outfile = os.path.join(AUDIOS_DIR, item["file"])
-        if os.path.exists(outfile) and os.path.getsize(outfile) > 1000:
+        need_gen = force or item.get("force", False)
+        if not need_gen and os.path.exists(outfile) and os.path.getsize(outfile) > 1000:
             print(f"[{idx+1}/{total}] Ya existe: {item['file']} ({os.path.getsize(outfile)} bytes)")
             return True
 
@@ -473,7 +524,6 @@ async def generar_un_audio(sem, item, total, idx):
         rate = RATE_EN if item["lang"] == "en" else RATE_ES
         pitch = PITCH_EN if item["lang"] == "en" else PITCH_ES
 
-        # Texto a vocalizar (sin emojis)
         spoken_text = limpiar_texto(item["text"])
 
         retries = 3
@@ -495,9 +545,30 @@ async def main():
     os.makedirs(AUDIOS_DIR, exist_ok=True)
     os.makedirs(JS_DIR, exist_ok=True)
 
+    force_all = "--force" in sys.argv
+
+    # Eliminar archivos obsoletos que mezclaban español e inglés
+    obsoletos = [
+        "pz_num_1.mp3", "pz_num_2.mp3", "pz_num_3.mp3", "pz_num_4.mp3", "pz_num_5.mp3",
+        "pz_num_6.mp3", "pz_num_7.mp3", "pz_num_8.mp3", "pz_num_9.mp3", "pz_num_10.mp3",
+        "pz_cuerpo_cabeza.mp3", "pz_cuerpo_tronco.mp3", "pz_cuerpo_brazos.mp3", "pz_cuerpo_piernas.mp3",
+        "pz_color_red.mp3", "pz_color_blue.mp3", "pz_color_yellow.mp3", "pz_color_green.mp3",
+        "pz_color_orange.mp3", "pz_color_violet.mp3",
+        "pz_fig_circulo.mp3", "pz_fig_cuadrado.mp3", "pz_fig_triangulo.mp3", "pz_fig_rectangulo.mp3",
+        "pz_fig_ovalo.mp3", "pz_fig_rombo.mp3", "pz_fig_estrella.mp3", "pz_fig_corazon.mp3"
+    ]
+    for obs in obsoletos:
+        p = os.path.join(AUDIOS_DIR, obs)
+        if os.path.exists(p):
+            try:
+                os.remove(p)
+                print(f"Eliminado archivo obsoleto híbrido: {obs}")
+            except Exception as e:
+                print(f"No se pudo eliminar {obs}: {e}")
+
     print(f"=== Generando {len(ITEMS)} audios neuronales para Prebásica (Libro 1) ===")
-    sem = asyncio.Semaphore(4)  # Concurrencia controlada
-    tasks = [generar_un_audio(sem, item, len(ITEMS), idx) for idx, item in enumerate(ITEMS)]
+    sem = asyncio.Semaphore(4)
+    tasks = [generar_un_audio(sem, item, len(ITEMS), idx, force=force_all) for idx, item in enumerate(ITEMS)]
     results = await asyncio.gather(*tasks)
 
     success_count = sum(1 for r in results if r)
@@ -507,17 +578,55 @@ async def main():
     mapa = {}
     for item in ITEMS:
         filename = item["file"]
-        # Clave limpia normalizada
         clean_key = limpiar_texto(item["text"])
         mapa[clean_key] = filename
 
-        # Si había texto raw con emojis o pequeñas variaciones, registrarlo también
         if "raw" in item:
             mapa[item["raw"]] = filename
             mapa[limpiar_texto(item["raw"])] = filename
 
-        # Registrar también en minúsculas por si acaso
         mapa[clean_key.lower()] = filename
+
+    # Aliases adicionales para piezas de puzzle (bilingües y números directos)
+    aliases = {
+        # Números directos
+        "1": "pz_num_1_es.mp3", "2": "pz_num_2_es.mp3", "3": "pz_num_3_es.mp3", "4": "pz_num_4_es.mp3", "5": "pz_num_5_es.mp3",
+        "6": "pz_num_6_es.mp3", "7": "pz_num_7_es.mp3", "8": "pz_num_8_es.mp3", "9": "pz_num_9_es.mp3", "10": "pz_num_10_es.mp3",
+        # Partes del cuerpo
+        "1. Cabeza": "pz_cuerpo_cabeza_es.mp3",
+        "2. Tronco": "pz_cuerpo_tronco_es.mp3",
+        "3. Brazos y Manos": "pz_cuerpo_brazos_es.mp3",
+        "4. Piernas y Pies": "pz_cuerpo_piernas_es.mp3",
+        "Trunk": "pz_cuerpo_trunk_en.mp3",
+        "Trunk / Torso": "pz_cuerpo_trunk_en.mp3",
+        "Arms and Hands": "pz_cuerpo_arms_en.mp3",
+        "Arms & Hands": "pz_cuerpo_arms_en.mp3",
+        "Legs and Feet": "pz_cuerpo_legs_en.mp3",
+        "Legs & Feet": "pz_cuerpo_legs_en.mp3",
+        "Head": "pz_cuerpo_head_en.mp3",
+        # Colores en inglés
+        "Red": "pz_color_red_en.mp3",
+        "Blue": "pz_color_blue_en.mp3",
+        "Yellow": "pz_color_yellow_en.mp3",
+        "Green": "pz_color_green_en.mp3",
+        "Orange": "pz_color_orange_en.mp3",
+        "Violet": "pz_color_violet_en.mp3",
+        # Letras aisladas en inglés
+        "A": "letra_a_sola_en.mp3",
+        "B": "letra_b_sola_en.mp3",
+        "C": "letra_c_sola_en.mp3",
+        "E": "letra_e_sola_en.mp3",
+        "I": "letra_i_sola_en.mp3",
+        "M": "letra_m_sola_en.mp3",
+        "O": "letra_o_sola_en.mp3",
+        "P": "letra_p_sola_en.mp3",
+        "S": "letra_s_sola_en.mp3",
+        "U": "letra_u_sola_en.mp3"
+    }
+    for k, v in aliases.items():
+        mapa[k] = v
+        mapa[k.lower()] = v
+        mapa[limpiar_texto(k)] = v
 
     # Guardar en JSON
     json_path = os.path.join(AUDIOS_DIR, "mapa-audios.json")

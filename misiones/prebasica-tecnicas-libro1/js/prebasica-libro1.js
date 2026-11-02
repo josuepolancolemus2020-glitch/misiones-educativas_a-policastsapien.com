@@ -132,9 +132,13 @@
   }
 
   /* --------------------------------------------------------------------------
-     REPRODUCTOR DE VOZ NEURONAL MP3 + RESPALDO INTELIGENTE SPEECHSYNTHESIS
+     REPRODUCTOR DE VOZ NEURONAL MP3 + CONTROL DE PAUSA / DETENER + SÍNTESIS
      -------------------------------------------------------------------------- */
-  var currentAudioObj = null;
+  window.audioPrebasicaActual = null;
+  window.ultimoTextoAudio = null;
+  window.ultimoBotonAudio = null;
+  window.audioPrebasicaPlaying = false;
+  window.audioTimeoutBilingue = null;
 
   function normalizarTextoAudio(t) {
     if (!t) return '';
@@ -144,31 +148,79 @@
       .trim();
   }
 
-  function hablarConSintesisRespaldo(textoLimpio, lang) {
-    if (!('speechSynthesis' in window)) return;
+  function actualizarBotonFlotanteDetener(visible) {
+    var btn = document.getElementById('btnDetenerVozFlotante');
+    if (btn) {
+      btn.style.display = visible ? 'inline-flex' : 'none';
+    }
+  }
+
+  function limpiarEstadoReproduccionAudio() {
+    window.audioPrebasicaPlaying = false;
+    window.ultimoTextoAudio = null;
+    if (window.ultimoBotonAudio) {
+      try { window.ultimoBotonAudio.classList.remove('audio-playing'); } catch (e) {}
+      window.ultimoBotonAudio = null;
+    }
+    actualizarBotonFlotanteDetener(false);
+  }
+
+  window.detenerAudioPrebasica = function () {
+    if (window.audioTimeoutBilingue) {
+      clearTimeout(window.audioTimeoutBilingue);
+      window.audioTimeoutBilingue = null;
+    }
+    if (window.audioPrebasicaActual) {
+      try {
+        window.audioPrebasicaActual.pause();
+        window.audioPrebasicaActual.currentTime = 0;
+      } catch (e) {}
+      window.audioPrebasicaActual = null;
+    }
+    if ('speechSynthesis' in window) {
+      try { window.speechSynthesis.cancel(); } catch (e) {}
+    }
+    limpiarEstadoReproduccionAudio();
+  };
+  window.detenerVozPrebasica = window.detenerAudioPrebasica;
+
+  function hablarConSintesisRespaldo(textoLimpio, lang, onEnd) {
+    if (!('speechSynthesis' in window)) {
+      if (typeof onEnd === 'function') onEnd();
+      return;
+    }
     try {
       window.speechSynthesis.cancel();
       var u = new SpeechSynthesisUtterance(textoLimpio);
-      u.lang = lang || 'es-ES';
+      var isEn = (lang && lang.toLowerCase().indexOf('en') === 0);
+      u.lang = isEn ? 'en-US' : (lang || 'es-ES');
       u.rate = 0.94;
       u.pitch = 1.05;
 
+      u.onend = function () {
+        if (typeof onEnd === 'function') onEnd();
+      };
+      u.onerror = function () {
+        if (typeof onEnd === 'function') onEnd();
+      };
+
       var voices = window.speechSynthesis.getVoices() || [];
-      var isEn = (lang && lang.toLowerCase().indexOf('en') === 0);
       var selectedVoice = null;
 
       if (isEn) {
-        var priorityEn = ['ana', 'aria', 'google us english', 'natural', 'online'];
+        // Exclusivamente voces nativas en inglés
+        var priorityEn = ['ana', 'aria', 'jenny', 'michelle', 'google us english', 'natural', 'online'];
         for (var i = 0; i < priorityEn.length; i++) {
           var needle = priorityEn[i];
           selectedVoice = voices.find(function (v) {
-            return (v.lang.toLowerCase().indexOf('en') === 0) && v.name.toLowerCase().indexOf(needle) !== -1;
+            return (v.lang && v.lang.toLowerCase().indexOf('en') === 0) &&
+                   v.name.toLowerCase().indexOf(needle) !== -1;
           });
           if (selectedVoice) break;
         }
         if (!selectedVoice) {
           selectedVoice = voices.find(function (v) {
-            return v.lang.toLowerCase().indexOf('en') === 0;
+            return v.lang && v.lang.toLowerCase().indexOf('en') === 0;
           });
         }
       } else {
@@ -176,13 +228,14 @@
         for (var j = 0; j < priorityEs.length; j++) {
           var needleEs = priorityEs[j];
           selectedVoice = voices.find(function (v) {
-            return (v.lang.toLowerCase().indexOf('es') === 0) && v.name.toLowerCase().indexOf(needleEs) !== -1;
+            return (v.lang && v.lang.toLowerCase().indexOf('es') === 0) &&
+                   v.name.toLowerCase().indexOf(needleEs) !== -1;
           });
           if (selectedVoice) break;
         }
         if (!selectedVoice) {
           selectedVoice = voices.find(function (v) {
-            return v.lang.toLowerCase().indexOf('es') === 0;
+            return v.lang && v.lang.toLowerCase().indexOf('es') === 0;
           });
         }
       }
@@ -190,61 +243,129 @@
       if (selectedVoice) u.voice = selectedVoice;
       window.speechSynthesis.speak(u);
     } catch (e) {
-      /* TTS no disponible */
+      if (typeof onEnd === 'function') onEnd();
     }
   }
 
-  window.hablarTexto = function (texto, lang) {
-    if (!state.soundOn || !texto) return;
-
-    // 1. Detener cualquier audio o locución previa antes de reproducir uno nuevo
-    if (currentAudioObj) {
-      try {
-        currentAudioObj.pause();
-        currentAudioObj.currentTime = 0;
-      } catch (e) {}
-      currentAudioObj = null;
-    }
-    if ('speechSynthesis' in window) {
-      try { window.speechSynthesis.cancel(); } catch (e) {}
-    }
-
-    var limpio = normalizarTextoAudio(texto);
-    if (!limpio) return;
-
-    // 2. Si el texto limpio existe en MAPA_AUDIOS_PREBASICA, reproducir de inmediato el MP3
+  function reproducirAudioOTexto(limpio, lang, btn, onEnd) {
     var archivo = null;
     if (window.MAPA_AUDIOS_PREBASICA) {
       archivo = window.MAPA_AUDIOS_PREBASICA[limpio] ||
-                window.MAPA_AUDIOS_PREBASICA[texto] ||
                 window.MAPA_AUDIOS_PREBASICA[limpio.toLowerCase()];
     }
 
     if (archivo) {
       try {
         var audio = new Audio('audios/' + archivo);
-        currentAudioObj = audio;
+        window.audioPrebasicaActual = audio;
+
+        audio.onended = function () {
+          window.audioPrebasicaActual = null;
+          if (typeof onEnd === 'function') onEnd();
+        };
+
+        audio.onerror = function () {
+          window.audioPrebasicaActual = null;
+          hablarConSintesisRespaldo(limpio, lang, onEnd);
+        };
+
         var playPromise = audio.play();
         if (playPromise !== undefined) {
           playPromise.catch(function () {
-            // Si el navegador bloquea la reproducción de audio o falla el archivo, usar respaldo
-            hablarConSintesisRespaldo(limpio, lang);
+            window.audioPrebasicaActual = null;
+            hablarConSintesisRespaldo(limpio, lang, onEnd);
           });
         }
         return;
       } catch (e) {
-        // Fallback inmediato
+        window.audioPrebasicaActual = null;
       }
     }
 
-    // 3. Respaldo inteligente con speechSynthesis filtrando voces naturales
-    hablarConSintesisRespaldo(limpio, lang);
+    hablarConSintesisRespaldo(limpio, lang, onEnd);
+  }
+
+  window.hablarTexto = function (texto, lang, btn, callback) {
+    if (!state.soundOn || !texto) return;
+
+    var limpio = normalizarTextoAudio(texto);
+    if (!limpio) return;
+
+    // Toggle: si hay un audio sonando y el usuario vuelve a pulsar el mismo botón o texto
+    if (window.audioPrebasicaPlaying && (
+      (window.ultimoTextoAudio && window.ultimoTextoAudio === limpio) ||
+      (btn && btn === window.ultimoBotonAudio)
+    )) {
+      window.detenerAudioPrebasica();
+      window.ultimoTextoAudio = null;
+      return;
+    }
+
+    // Detener cualquier audio previo
+    window.detenerAudioPrebasica();
+
+    window.ultimoTextoAudio = limpio;
+    window.ultimoBotonAudio = btn || null;
+    window.audioPrebasicaPlaying = true;
+    actualizarBotonFlotanteDetener(true);
+
+    if (btn) {
+      btn.classList.add('audio-playing');
+    }
+
+    reproducirAudioOTexto(limpio, lang, btn, function () {
+      limpiarEstadoReproduccionAudio();
+      if (typeof callback === 'function') {
+        try { callback(); } catch (e) {}
+      }
+    });
+  };
+
+  window.hablarBilingue = function (textoEs, textoEn, triggerBtn) {
+    if (!state.soundOn) return;
+    var claveEs = normalizarTextoAudio(textoEs);
+    var claveEn = normalizarTextoAudio(textoEn);
+    var comboClave = claveEs + ' | ' + claveEn;
+
+    // Toggle: si se toca de nuevo el mismo elemento bilingüe mientras suena, detener
+    if (window.audioPrebasicaPlaying && (
+      (triggerBtn && triggerBtn === window.ultimoBotonAudio) ||
+      window.ultimoTextoAudio === comboClave ||
+      window.ultimoTextoAudio === claveEs ||
+      window.ultimoTextoAudio === claveEn
+    )) {
+      window.detenerAudioPrebasica();
+      window.ultimoTextoAudio = null;
+      return;
+    }
+
+    window.detenerAudioPrebasica();
+    window.ultimoTextoAudio = comboClave;
+    window.ultimoBotonAudio = triggerBtn || null;
+    window.audioPrebasicaPlaying = true;
+    actualizarBotonFlotanteDetener(true);
+
+    if (triggerBtn) {
+      triggerBtn.classList.add('audio-playing');
+    }
+
+    // 1. Reproducir primero en español con voz es-MX-DaliaNeural
+    reproducirAudioOTexto(claveEs, 'es-ES', triggerBtn, function () {
+      if (!window.audioPrebasicaPlaying) return;
+      // 2. Pausa natural de 220ms antes del inglés nativo
+      window.audioTimeoutBilingue = setTimeout(function () {
+        if (!window.audioPrebasicaPlaying) return;
+        // 3. Reproducir en inglés nativo con voz en-US-AnaNeural
+        window.hablarTexto(claveEn, 'en-US', triggerBtn);
+      }, 220);
+    });
   };
 
   /* --------------------------------------------------------------------------
      NAVEGACIÓN ENTRE LAS 4 PESTAÑAS
      -------------------------------------------------------------------------- */
   window.go = function (secId) {
+    window.detenerVozPrebasica();
     var secs = document.querySelectorAll('.sec');
     secs.forEach(function (s) {
       s.classList.toggle('active', s.id === secId);
@@ -526,6 +647,7 @@
   }
 
   function selectTraceChallenge(idx, speak) {
+    window.detenerVozPrebasica();
     traceState.currentIdx = idx;
     traceState.userStrokes = [];
     traceState.completedCurrent = false;
@@ -754,9 +876,9 @@
     selectTraceChallenge(next, true);
   };
 
-  window.leerRetoTrazoActual = function () {
+  window.leerRetoTrazoActual = function (btn) {
     var ch = TRACE_CHALLENGES[traceState.currentIdx];
-    if (ch) window.hablarTexto(ch.ttsText, 'es-ES');
+    if (ch) window.hablarTexto(ch.ttsText, 'es-ES', btn);
   };
 
   /* ==========================================================================
@@ -865,6 +987,7 @@
   }
 
   window.cambiarModoRodea = function (modo) {
+    window.detenerAudioPrebasica();
     rodeaState.interactionMode = modo;
     var bLasso = document.getElementById('btnModoLasso');
     var bTap = document.getElementById('btnModoTap');
@@ -875,6 +998,7 @@
   };
 
   window.seleccionarCategoriaRodea = function (cat) {
+    window.detenerVozPrebasica();
     rodeaState.category = cat;
     document.getElementById('subtabLetras').classList.toggle('active-chip', cat === 'letras');
     document.getElementById('subtabNumeros').classList.toggle('active-chip', cat === 'numeros');
@@ -912,6 +1036,7 @@
         btn.textContent = item.label;
       }
       btn.onclick = function () {
+        window.detenerVozPrebasica();
         rodeaState.targetId = item.id;
         renderRodeaPills();
         buildRodeaExercise();
@@ -1223,22 +1348,25 @@
   }
 
   window.reiniciarEjercicioRodea = function () {
+    window.detenerVozPrebasica();
     buildRodeaExercise();
   };
 
-  window.hablarConsignaRodea = function (lang) {
+  window.hablarConsignaRodea = function (lang, btn) {
     if (rodeaState.category === 'espacial' && rodeaState.targetId === 'dactilo') {
       if (lang === 'en') {
         window.hablarTexto(
           dactiloState.zone === 'adentro'
             ? 'Stamp colorful fingerprints INSIDE the ' + dactiloState.figureEn + '!'
             : 'Stamp colorful fingerprints OUTSIDE the ' + dactiloState.figureEn + '!',
-          'en-US'
+          'en-US',
+          btn
         );
       } else {
         window.hablarTexto(
           'Pon huellitas de pintura ' + dactiloState.zone.toUpperCase() + ' de la figura: ' + dactiloState.figureEs,
-          'es-ES'
+          'es-ES',
+          btn
         );
       }
       return;
@@ -1246,17 +1374,17 @@
 
     if (rodeaState.category === 'letras') {
       var l = LETRAS_DATA.find(function (x) { return x.id === rodeaState.targetId; }) || LETRAS_DATA[0];
-      window.hablarTexto(lang === 'en' ? l.enTTS : l.esTTS, lang === 'en' ? 'en-US' : 'es-ES');
+      window.hablarTexto(lang === 'en' ? l.enTTS : l.esTTS, lang === 'en' ? 'en-US' : 'es-ES', btn);
     } else if (rodeaState.category === 'numeros') {
       var n = NUMEROS_DATA.find(function (x) { return x.id === rodeaState.targetId; }) || NUMEROS_DATA[0];
       if (lang === 'en') {
-        window.hablarTexto('Circle every number ' + n.id + ', ' + n.en + '!', 'en-US');
+        window.hablarTexto('Circle every number ' + n.id + ', ' + n.en + '!', 'en-US', btn);
       } else {
-        window.hablarTexto('Rodea todos los números ' + n.id + ', ' + n.es + '.', 'es-ES');
+        window.hablarTexto('Rodea todos los números ' + n.id + ', ' + n.es + '.', 'es-ES', btn);
       }
     } else {
       var esp = ESPACIAL_DATA.find(function (x) { return x.id === rodeaState.targetId; }) || ESPACIAL_DATA[0];
-      window.hablarTexto(lang === 'en' ? esp.promptEn : esp.promptEs, lang === 'en' ? 'en-US' : 'es-ES');
+      window.hablarTexto(lang === 'en' ? esp.promptEn : esp.promptEs, lang === 'en' ? 'en-US' : 'es-ES', btn);
     }
   };
 
@@ -1483,7 +1611,18 @@
   }
 
   window.cambiarFiguraDactilo = function (fig) {
+    window.detenerVozPrebasica();
     dactiloState.figure = fig;
+    if (fig === 'manzana') {
+      dactiloState.figureEs = 'Manzana';
+      dactiloState.figureEn = 'Apple';
+    } else if (fig === 'uvas') {
+      dactiloState.figureEs = 'Uvas';
+      dactiloState.figureEn = 'Grapes';
+    } else {
+      dactiloState.figureEs = 'Caballito de Mar';
+      dactiloState.figureEn = 'Seahorse';
+    }
     dactiloState.stamps = [];
     dactiloState.validCount = 0;
     document.getElementById('btnFigManzana').classList.toggle('active-chip', fig === 'manzana');
@@ -1494,6 +1633,7 @@
   };
 
   window.cambiarZonaDactilo = function (zona) {
+    window.detenerVozPrebasica();
     dactiloState.zone = zona;
     dactiloState.stamps = [];
     dactiloState.validCount = 0;
@@ -1504,6 +1644,7 @@
   };
 
   window.limpiarDactilo = function () {
+    window.detenerVozPrebasica();
     dactiloState.stamps = [];
     dactiloState.validCount = 0;
     updateDactiloPromptText();
@@ -1534,7 +1675,7 @@
       id: 'tronco',
       order: 2,
       es: '2. Tronco',
-      en: 'Trunk / Torso',
+      en: 'Trunk',
       desc: 'Pecho, espalda y abdomen (centro del cuerpo)',
       svg: '<svg width="58" height="58" viewBox="0 0 64 64" aria-hidden="true"><rect x="16" y="10" width="32" height="44" rx="10" fill="#0984e3" stroke="#2d3436" stroke-width="3"/><circle cx="32" cy="32" r="7" fill="#ffeaa7"/></svg>'
     },
@@ -1542,7 +1683,7 @@
       id: 'brazos',
       order: 3,
       es: '3. Brazos y Manos',
-      en: 'Arms & Hands',
+      en: 'Arms and Hands',
       desc: 'Extremidades superiores para abrazar y pintar',
       svg: '<svg width="58" height="58" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 38 L26 22 M56 38 L38 22" stroke="#ffccaa" stroke-width="9" stroke-linecap="round"/><circle cx="8" cy="40" r="6" fill="#ffccaa" stroke="#2d3436" stroke-width="2"/><circle cx="56" cy="40" r="6" fill="#ffccaa" stroke="#2d3436" stroke-width="2"/></svg>'
     },
@@ -1550,7 +1691,7 @@
       id: 'piernas',
       order: 4,
       es: '4. Piernas y Pies',
-      en: 'Legs & Feet',
+      en: 'Legs and Feet',
       desc: 'Extremidades inferiores para caminar, correr y saltar',
       svg: '<svg width="58" height="58" viewBox="0 0 64 64" aria-hidden="true"><rect x="18" y="8" width="11" height="38" rx="5" fill="#00897b" stroke="#2d3436" stroke-width="2.5"/><rect x="35" y="8" width="11" height="38" rx="5" fill="#00897b" stroke="#2d3436" stroke-width="2.5"/><ellipse cx="21" cy="50" rx="9" ry="5" fill="#d63031"/><ellipse cx="43" cy="50" rx="9" ry="5" fill="#d63031"/></svg>'
     }
@@ -1577,6 +1718,7 @@
   ];
 
   window.mostrarRompecabezas = function (tipo) {
+    if (window.detenerVozPrebasica) window.detenerVozPrebasica();
     puzzleState.currentGame = tipo;
     puzzleState.selectedPieceId = null;
     puzzleState.placedMap = {};
@@ -1589,20 +1731,21 @@
   };
 
   window.reiniciarRompecabezasActual = function () {
+    if (window.detenerVozPrebasica) window.detenerVozPrebasica();
     puzzleState.selectedPieceId = null;
     puzzleState.placedMap = {};
     renderCurrentPuzzle();
   };
 
-  window.leerInstruccionRompecabezas = function () {
+  window.leerInstruccionRompecabezas = function (btn) {
     if (puzzleState.currentGame === 'numeros') {
-      window.hablarTexto('Rompecabezas de los números: toca cada ficha numérica y colócala en su silueta contando los dibujos en orden.', 'es-ES');
+      window.hablarTexto('Rompecabezas de los números: toca cada ficha numérica y colócala en su silueta contando los dibujos en orden.', 'es-ES', btn);
     } else if (puzzleState.currentGame === 'cuerpo') {
-      window.hablarTexto('Rompecabezas del cuerpo humano, página cincuenta y nueve: coloca en orden vertical la Cabeza, el Tronco, los Brazos y las Piernas.', 'es-ES');
+      window.hablarTexto('Rompecabezas del cuerpo humano, página cincuenta y nueve: coloca en orden vertical la Cabeza, el Tronco, los Brazos y las Piernas.', 'es-ES', btn);
     } else if (puzzleState.carSubMode === 'colores') {
-      window.hablarTexto('Color Matching Car Park: estaciona cada carrito en su color en español e inglés. Red Rojo, Blue Azul, Yellow Amarillo, Green Verde, Orange Naranja, Violet Morado.', 'es-ES');
+      window.hablarTexto('Color Matching Car Park: estaciona cada carrito en su estacionamiento del mismo color. Rojo, Azul, Amarillo, Verde, Naranja y Morado.', 'es-ES', btn);
     } else {
-      window.hablarTexto('Rompecabezas de figuras geométricas: coloca el círculo, cuadrado, triángulo, rectángulo, óvalo, rombo, estrella y corazón en su silueta.', 'es-ES');
+      window.hablarTexto('Rompecabezas de figuras geométricas: coloca el círculo, cuadrado, triángulo, rectángulo, óvalo, rombo, estrella y corazón en su silueta.', 'es-ES', btn);
     }
   };
 
@@ -1640,7 +1783,7 @@
       var selected = puzzleState.selectedPieceId === n.id;
       html +=
         '<button type="button" class="puzzle-piece' + (placed ? ' placed' : '') + (selected ? ' selected' : '') + '" ' +
-          'draggable="' + (!placed) + '" data-pid="' + n.id + '" onclick="seleccionarPiezaPuzzle(\'' + n.id + '\')">' +
+          'draggable="' + (!placed) + '" data-pid="' + n.id + '" onclick="seleccionarPiezaPuzzle(\'' + n.id + '\', this)">' +
           '<span style="font-size:1.75rem;font-weight:700;color:var(--pri);">' + n.id + '</span>' +
           '<span style="font-size:0.82rem;">' + n.es + ' · ' + n.en + '</span>' +
         '</button>';
@@ -1671,6 +1814,7 @@
   }
 
   window.cambiarBloqueNumeros = function (blk) {
+    if (window.detenerVozPrebasica) window.detenerVozPrebasica();
     puzzleState.numBlock = blk;
     puzzleState.selectedPieceId = null;
     puzzleState.placedMap = {};
@@ -1691,7 +1835,7 @@
       html +=
         '<button type="button" class="puzzle-piece' + (placed ? ' placed' : '') + (selected ? ' selected' : '') + '" ' +
           'style="flex-direction:row;justify-content:flex-start;gap:0.8rem;width:100%;" ' +
-          'draggable="' + (!placed) + '" data-pid="' + bp.id + '" onclick="seleccionarPiezaPuzzle(\'' + bp.id + '\')">' +
+          'draggable="' + (!placed) + '" data-pid="' + bp.id + '" onclick="seleccionarPiezaPuzzle(\'' + bp.id + '\', this)">' +
           bp.svg +
           '<div style="text-align:left;">' +
             '<div style="font-size:1.05rem;font-weight:700;">' + bp.es + ' (' + bp.en + ')</div>' +
@@ -1750,14 +1894,14 @@
       if (isCars) {
         html +=
           '<button type="button" class="puzzle-piece' + (placed ? ' placed' : '') + (selected ? ' selected' : '') + '" ' +
-            'style="border-color:' + it.hex + ';" draggable="' + (!placed) + '" data-pid="' + it.id + '" onclick="seleccionarPiezaPuzzle(\'' + it.id + '\')">' +
+            'style="border-color:' + it.hex + ';" draggable="' + (!placed) + '" data-pid="' + it.id + '" onclick="seleccionarPiezaPuzzle(\'' + it.id + '\', this)">' +
             '<span style="font-size:2rem;">' + it.emoji + '</span>' +
             '<span style="font-size:0.9rem;color:' + it.hex + ';font-weight:700;">' + it.en + ' / ' + it.es + '</span>' +
           '</button>';
       } else {
         html +=
           '<button type="button" class="puzzle-piece' + (placed ? ' placed' : '') + (selected ? ' selected' : '') + '" ' +
-            'draggable="' + (!placed) + '" data-pid="' + it.id + '" onclick="seleccionarPiezaPuzzle(\'' + it.id + '\')">' +
+            'draggable="' + (!placed) + '" data-pid="' + it.id + '" onclick="seleccionarPiezaPuzzle(\'' + it.id + '\', this)">' +
             it.svg +
             '<span style="font-size:0.88rem;font-weight:700;">' + it.es + ' / ' + it.en + '</span>' +
           '</button>';
@@ -1798,30 +1942,36 @@
   }
 
   window.cambiarSubmodoCarros = function (sub) {
+    if (window.detenerVozPrebasica) window.detenerVozPrebasica();
     puzzleState.carSubMode = sub;
     puzzleState.selectedPieceId = null;
     puzzleState.placedMap = {};
     renderCurrentPuzzle();
   };
 
-  window.seleccionarPiezaPuzzle = function (pid) {
+  window.seleccionarPiezaPuzzle = function (pid, btn) {
     if (puzzleState.placedMap[pid]) return;
     puzzleState.selectedPieceId = pid;
     renderCurrentPuzzle();
 
-    // Pronunciar en voz alta la pieza seleccionada (Bilingüe)
+    var targetBtn = document.querySelector('.puzzle-piece[data-pid="' + pid + '"]') || btn;
+
+    // Pronunciar en voz alta la pieza seleccionada (Bilingüe nativa)
     if (puzzleState.currentGame === 'numeros') {
       var n = NUMEROS_DATA.find(function (x) { return x.id === pid; });
-      if (n) window.hablarTexto(n.es + '. ' + n.en, 'es-ES');
+      if (n) window.hablarBilingue(n.es, n.en, targetBtn);
     } else if (puzzleState.currentGame === 'cuerpo') {
       var bp = BODY_PARTS_BOOK.find(function (x) { return x.id === pid; });
-      if (bp) window.hablarTexto(bp.es + '. ' + bp.en, 'es-ES');
+      if (bp) {
+        var esLimpio = bp.es.replace(/^\d+\.\s*/, '');
+        window.hablarBilingue(esLimpio, bp.en, targetBtn);
+      }
     } else if (puzzleState.carSubMode === 'colores') {
       var c = CAR_COLORS.find(function (x) { return x.id === pid; });
-      if (c) window.hablarTexto(c.es + ', ' + c.en, 'es-ES');
+      if (c) window.hablarBilingue(c.es, c.en, targetBtn);
     } else {
       var sh = GEOMETRIC_SHAPES.find(function (x) { return x.id === pid; });
-      if (sh) window.hablarTexto(sh.es + ', ' + sh.en, 'es-ES');
+      if (sh) window.hablarBilingue(sh.es, sh.en, targetBtn);
     }
   };
 
@@ -2020,7 +2170,7 @@
             '<strong>🛡️ Cuidado del adulto:</strong> ' + t.safety +
           '</div>' +
           '<div class="tech-card-footer">' +
-            '<button type="button" class="btn-kid" data-tts="' + encodeURIComponent(ttsFull) + '" onclick="hablarTexto(decodeURIComponent(this.getAttribute(\'data-tts\')), \'es-ES\')">' +
+            '<button type="button" class="btn-kid" data-tts="' + encodeURIComponent(ttsFull) + '" onclick="hablarTexto(decodeURIComponent(this.getAttribute(\'data-tts\')), \'es-ES\', this)">' +
               '🔊 Escuchar pasos' +
             '</button>' +
             '<button type="button" class="btn-kid ' + (done ? 'secondary' : 'primary') + '" onclick="marcarTecnicaCasa(\'' + t.id + '\')">' +
@@ -2062,6 +2212,7 @@
     var btn = document.getElementById('sndBtn');
     if (btn) btn.textContent = state.soundOn ? '🔊 Sonido: Sí' : '🔇 Sonido: No';
     if (!state.soundOn) {
+      if (window.detenerVozPrebasica) window.detenerVozPrebasica();
       if (currentAudioObj) {
         try {
           currentAudioObj.pause();
@@ -2112,6 +2263,80 @@
   };
 
   /* --------------------------------------------------------------------------
+     PORTAL DE ACCESO Y GESTIÓN DE INSTITUCIÓN EDUCATIVA (PREBÁSICA)
+     -------------------------------------------------------------------------- */
+  function actualizarCintilloInstitucion(nombre) {
+    var cintillo = document.getElementById('cintilloInstitucionPrebasica');
+    var lbl = document.getElementById('lblNombreInstitucion');
+    if (cintillo && lbl) {
+      lbl.textContent = nombre;
+      cintillo.style.display = 'block';
+    }
+  }
+
+  function inicializarInstitucionPrebasica() {
+    var guardada = null;
+    try {
+      guardada = localStorage.getItem('metas_prebasica_institucion');
+    } catch (e) {}
+
+    if (guardada) {
+      actualizarCintilloInstitucion(guardada);
+    } else {
+      window.abrirModalInstitucion(false);
+    }
+  }
+
+  window.abrirModalInstitucion = function (permitirCerrar) {
+    var modal = document.getElementById('modalInstitucionPrebasica');
+    var input = document.getElementById('inputColegioPrebasica');
+    var err = document.getElementById('errorInstitucionPrebasica');
+    var btnCancelar = document.getElementById('btnCancelarInstitucion');
+    if (err) err.style.display = 'none';
+    if (btnCancelar) {
+      btnCancelar.style.display = permitirCerrar ? 'inline-flex' : 'none';
+    }
+    if (modal) {
+      modal.style.display = 'flex';
+    }
+    if (input) {
+      input.value = '';
+      setTimeout(function () { input.focus(); }, 120);
+    }
+  };
+
+  window.cerrarModalInstitucion = function () {
+    var modal = document.getElementById('modalInstitucionPrebasica');
+    if (modal) modal.style.display = 'none';
+  };
+
+  window.procesarInstitucionPrebasica = function (e) {
+    if (e && e.preventDefault) e.preventDefault();
+    var input = document.getElementById('inputColegioPrebasica');
+    var err = document.getElementById('errorInstitucionPrebasica');
+    var raw = input ? input.value : '';
+
+    var validado = null;
+    if (typeof window.validarInstitucionPrebasica === 'function') {
+      validado = window.validarInstitucionPrebasica(raw);
+    }
+
+    if (validado) {
+      try {
+        localStorage.setItem('metas_prebasica_institucion', validado);
+      } catch (errLS) {}
+      actualizarCintilloInstitucion(validado);
+      window.cerrarModalInstitucion();
+    } else {
+      if (err) {
+        err.textContent = 'Centro educativo no reconocido. Escribe el nombre de tu escuela autorizada (ej. Consuelo, Coral, Nimia) o usa el formato METAS-NombreDeTuEscuela.';
+        err.style.display = 'block';
+      }
+      if (input) input.focus();
+    }
+  };
+
+  /* --------------------------------------------------------------------------
      INICIALIZACIÓN AL CARGAR EL DOM
      -------------------------------------------------------------------------- */
   document.addEventListener('DOMContentLoaded', function () {
@@ -2122,5 +2347,6 @@
     initRodeaTab();
     mostrarRompecabezas('numeros');
     renderHandsOnTab();
+    inicializarInstitucionPrebasica();
   });
 })();

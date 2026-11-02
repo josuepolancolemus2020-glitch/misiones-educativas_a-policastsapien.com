@@ -1432,3 +1432,252 @@ body::before {
     font-size: 1.05rem;
   }
 }
+
+/* ==========================================================================
+   BOTÓN FLOTANTE: DETENER VOZ / AUDIO EN CURSO
+   ========================================================================== */
+.btn-detener-voz-flotante {
+  position: fixed;
+  bottom: 1.25rem;
+  right: 1.25rem;
+  z-index: 9999;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #d63031;
+  color: #ffffff;
+  border: 2.5px solid #ffffff;
+  border-radius: 999px;
+  padding: 0.65rem 1.15rem;
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(214, 48, 49, 0.45);
+  animation: pulseDetenerVoz 1.4s infinite ease-in-out;
+  transition: transform 0.18s ease, background 0.18s ease;
+}
+
+.btn-detener-voz-flotante:hover {
+  background: #b71540;
+  transform: scale(1.05);
+}
+
+.btn-detener-voz-flotante:active {
+  transform: scale(0.95);
+}
+
+@keyframes pulseDetenerVoz {
+  0% { transform: scale(1); box-shadow: 0 4px 14px rgba(214, 48, 49, 0.4); }
+  50% { transform: scale(1.04); box-shadow: 0 6px 22px rgba(214, 48, 49, 0.65); }
+  100% { transform: scale(1); box-shadow: 0 4px 14px rgba(214, 48, 49, 0.4); }
+}
+
+/* Efecto visual y pulsación en botones mientras reproducen audio */
+.audio-playing {
+  outline: 3px solid #ff7675 !important;
+  box-shadow: 0 0 14px rgba(214, 48, 49, 0.55) !important;
+  animation: audioButtonPlaying 0.9s infinite alternate ease-in-out !important;
+}
+
+@keyframes audioButtonPlaying {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.04); }
+}
+
+/* ==========================================================================
+   PORTAL DE ACCESO Y CINTILLO INSTITUCIONAL EXCLUSIVO PREBÁSICA
+   ========================================================================== */
+.cintillo-colegio-prebasica {
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  border-bottom: 2px solid #fed7aa;
+  padding: 0.55rem 1rem;
+  box-shadow: 0 2px 6px rgba(234, 88, 12, 0.08);
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  position: relative;
+  z-index: 40;
+}
+
+[data-theme="dark"] .cintillo-colegio-prebasica {
+  background: linear-gradient(135deg, #2c1a0e 0%, #1f140b 100%);
+  border-bottom: 2px solid #7c2d12;
+}
+
+.cintillo-colegio-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.cintillo-colegio-texto {
+  font-size: 0.95rem;
+  color: #9a3412;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+[data-theme="dark"] .cintillo-colegio-texto {
+  color: #fdba74;
+}
+
+.cintillo-colegio-texto strong {
+  font-weight: 700;
+  color: #c2410c;
+}
+
+[data-theme="dark"] .cintillo-colegio-texto strong {
+  color: #fb923c;
+}
+
+.btn-cambiar-escuela {
+  background: #ffffff;
+  border: 1.5px solid #fed7aa;
+  border-radius: 999px;
+  padding: 0.25rem 0.75rem;
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #c2410c;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+[data-theme="dark"] .btn-cambiar-escuela {
+  background: #3a1e12;
+  border-color: #9a3412;
+  color: #fed7aa;
+}
+
+.btn-cambiar-escuela:hover {
+  background: #ea580c;
+  color: #ffffff;
+  border-color: #ea580c;
+  transform: scale(1.03);
+}
+
+/* Modal de validación de escuela */
+.modal-institucion-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 1000;
+  animation: fadeInModal 0.25s ease;
+}
+
+.modal-institucion-card {
+  background: var(--card-bg, #ffffff);
+  color: var(--text, #1e293b);
+  border: 2px solid var(--border, #fed7aa);
+  border-radius: 24px;
+  max-width: 480px;
+  width: 100%;
+  padding: 1.75rem 1.5rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  text-align: center;
+  position: relative;
+  animation: scaleUpModal 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal-institucion-icono {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+  line-height: 1;
+}
+
+.modal-institucion-titulo {
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: #c2410c;
+  margin: 0 0 0.5rem;
+}
+
+[data-theme="dark"] .modal-institucion-titulo {
+  color: #fb923c;
+}
+
+.modal-institucion-desc {
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: var(--gray, #475569);
+  margin-bottom: 1.25rem;
+}
+
+.input-colegio-prebasica {
+  width: 100%;
+  padding: 0.85rem 1.1rem;
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-size: 1.05rem;
+  border: 2px solid var(--border, #cbd5e1);
+  border-radius: 14px;
+  background: var(--bg, #f8fafc);
+  color: var(--text, #0f172a);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+.input-colegio-prebasica:focus {
+  border-color: #ea580c;
+  box-shadow: 0 0 0 4px rgba(234, 88, 12, 0.2);
+}
+
+.modal-institucion-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  border-radius: 10px;
+  padding: 0.55rem 0.75rem;
+  font-size: 0.88rem;
+  margin: 0.75rem 0 0;
+  text-align: left;
+}
+
+[data-theme="dark"] .modal-institucion-error {
+  background: #450a0a;
+  border-color: #7f1d1d;
+  color: #fca5a5;
+}
+
+.modal-institucion-hint {
+  font-size: 0.82rem;
+  color: var(--gray, #64748b);
+  margin-top: 1rem;
+  margin-bottom: 0;
+  line-height: 1.35;
+}
+
+.modal-institucion-hint code {
+  background: rgba(234, 88, 12, 0.1);
+  color: #c2410c;
+  padding: 0.15rem 0.35rem;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+[data-theme="dark"] .modal-institucion-hint code {
+  background: rgba(251, 146, 60, 0.15);
+  color: #fdba74;
+}
+
+@keyframes fadeInModal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleUpModal {
+  from { transform: scale(0.92); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}

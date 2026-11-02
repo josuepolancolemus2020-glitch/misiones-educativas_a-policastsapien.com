@@ -198,9 +198,27 @@
     .pagina .contenido { padding: 0 2px; }
     .pag-pie { left: 2px; right: 2px; bottom: 2px; }
     .imprimir-btn { display: none; }
-    .sec-tit, .adult-banner, .fh, .sec-instruccion, .recuadro-familia {
+    .sec-tit, .adult-banner, .fh, .sec-instruccion, .recuadro-familia, .cintillo-ficha-institucion {
       -webkit-print-color-adjust: exact; print-color-adjust: exact;
     }
+  }
+
+  .cintillo-ficha-institucion {
+    background: #fff7ed;
+    border: 1.5px solid #fed7aa;
+    border-left: 5px solid #ea580c;
+    border-radius: 6px;
+    padding: 3px 10px;
+    margin-bottom: 6px;
+    font-size: 8.5pt;
+    color: #9a3412;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .cintillo-ficha-institucion strong {
+    color: #c2410c;
+    font-weight: 800;
   }
 </style>
 </head>
@@ -214,6 +232,10 @@
      ══════════════════════════════════════════════════════════════ -->
 <section class="pagina">
   <div class="contenido">
+
+    <div id="cintilloFichaPrebasica" class="cintillo-ficha-institucion" style="display:none;">
+      🏫 Edición Exclusiva autorizada para: <strong id="lblFichaInstitucion"></strong>
+    </div>
 
     <div class="idline">
       <span>Nombre del Niño(a):</span><span class="raya"></span>
@@ -648,5 +670,20 @@
 </section>
 
 </div>
+<script>
+  (function () {
+    try {
+      var inst = localStorage.getItem('metas_prebasica_institucion');
+      if (inst) {
+        var el = document.getElementById('cintilloFichaPrebasica');
+        var lbl = document.getElementById('lblFichaInstitucion');
+        if (el && lbl) {
+          lbl.textContent = inst;
+          el.style.display = 'flex';
+        }
+      }
+    } catch (e) {}
+  })();
+</script>
 </body>
 </html>

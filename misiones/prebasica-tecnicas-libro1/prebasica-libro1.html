@@ -26,7 +26,7 @@
       <strong>⚠️ USO EXCLUSIVO CON APOYO DE UN ADULTO:</strong>
       Esta sección de Prebásica está diseñada para que el padre, madre o encargado trabaje sentado junto al niño. Nunca deje al niño solo con el teléfono o la tablet.
     </p>
-    <button type="button" class="adult-banner-tts" onclick="hablarTexto('Atención familia: Uso exclusivo con apoyo de un adulto. Esta sección de Prebásica está diseñada para que el padre, madre o encargado trabaje sentado junto al niño. Nunca deje al niño solo con el teléfono o la tablet.', 'es-ES')" aria-label="Escuchar aviso para el adulto">
+    <button type="button" class="adult-banner-tts" onclick="hablarTexto('Atención familia: Uso exclusivo con apoyo de un adulto. Esta sección de Prebásica está diseñada para que el padre, madre o encargado trabaje sentado junto al niño. Nunca deje al niño solo con el teléfono o la tablet.', 'es-ES', this)" aria-label="Escuchar aviso para el adulto">
       🔊 Escuchar aviso
     </button>
   </div>
@@ -45,6 +45,14 @@
   </a>
   <span class="xp-pts" id="xpPts">⭐ 0</span>
   <span class="xp-lvl" id="xpLvl">Semillita 🌱</span>
+</div>
+
+<!-- CINTILLO INSTITUCIONAL EXCLUSIVO PREBÁSICA -->
+<div id="cintilloInstitucionPrebasica" class="cintillo-colegio-prebasica" style="display:none;" role="status">
+  <div class="cintillo-colegio-inner">
+    <span class="cintillo-colegio-texto">🏫 Edición Exclusiva autorizada para: <strong id="lblNombreInstitucion"></strong></span>
+    <button type="button" class="btn-cambiar-escuela" onclick="abrirModalInstitucion(true)" title="Cambiar escuela o centro educativo">Cambiar escuela</button>
+  </div>
 </div>
 
 <!-- ENCABEZADO HERO CON CRÉDITO VISIBLE DEL LIBRO 1 -->
@@ -97,7 +105,7 @@
           </p>
         </div>
         <div class="parent-guide-actions">
-          <button type="button" class="btn-kid secondary" onclick="leerRetoTrazoActual()">
+          <button type="button" class="btn-kid secondary" onclick="leerRetoTrazoActual(this)">
             🔊 Escuchar instrucción
           </button>
         </div>
@@ -197,10 +205,10 @@
           <span class="discover-prompt-sub" id="rodeaPromptEn">Circle all the letter A cards! (A como Abeja / Apple)</span>
         </div>
         <div style="display:flex;gap:0.45rem;flex-wrap:wrap;">
-          <button type="button" class="btn-kid primary" onclick="hablarConsignaRodea('es')">
+          <button type="button" class="btn-kid primary" onclick="hablarConsignaRodea('es', this)">
             🔊 Voz Español
           </button>
-          <button type="button" class="btn-kid purple" onclick="hablarConsignaRodea('en')">
+          <button type="button" class="btn-kid purple" onclick="hablarConsignaRodea('en', this)">
             🔊 Voice English
           </button>
           <button type="button" class="btn-kid danger" onclick="reiniciarEjercicioRodea()">
@@ -262,7 +270,7 @@
           </p>
         </div>
         <div class="parent-guide-actions">
-          <button type="button" class="btn-kid secondary" onclick="leerInstruccionRompecabezas()">
+          <button type="button" class="btn-kid secondary" onclick="leerInstruccionRompecabezas(this)">
             🔊 Escuchar guía
           </button>
           <button type="button" class="btn-kid danger" onclick="reiniciarRompecabezasActual()">
@@ -325,6 +333,39 @@
 
 </main>
 
+<!-- BOTÓN FLOTANTE: DETENER CUALQUIER LOCUCIÓN O AUDIO EN CURSO -->
+<button type="button" id="btnDetenerVozFlotante" class="btn-detener-voz-flotante" onclick="detenerVozPrebasica()" aria-label="Detener voz" style="display:none;">
+  <span aria-hidden="true">🔇</span> Detener voz
+</button>
+
+<!-- MODAL DE ACCESO / VALIDACIÓN DE CENTRO EDUCATIVO PREBÁSICA -->
+<div id="modalInstitucionPrebasica" class="modal-institucion-overlay" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="modalInstitucionTitulo">
+  <div class="modal-institucion-card">
+    <div class="modal-institucion-icono" aria-hidden="true">🏫</div>
+    <h2 id="modalInstitucionTitulo" class="modal-institucion-titulo">Portal de Acceso Educativo</h2>
+    <p class="modal-institucion-desc">
+      Esta edición especial de <strong>Prebásica (Libro 1)</strong> está habilitada para centros educativos autorizados. Por favor escribe el nombre de tu kínder o escuela:
+    </p>
+    <form id="formInstitucionPrebasica" onsubmit="procesarInstitucionPrebasica(event)">
+      <div style="margin-bottom:0.75rem;">
+        <input type="text" id="inputColegioPrebasica" class="input-colegio-prebasica" placeholder="Ej. CEPB María Consuelo, Coral, Nimia..." autocomplete="off" required>
+      </div>
+      <div id="errorInstitucionPrebasica" class="modal-institucion-error" style="display:none;" role="alert"></div>
+      <div style="display:flex;gap:0.5rem;justify-content:center;margin-top:1rem;">
+        <button type="button" id="btnCancelarInstitucion" class="btn-kid secondary" style="display:none;" onclick="cerrarModalInstitucion()">
+          Cancelar
+        </button>
+        <button type="submit" class="btn-kid primary" style="flex:1;justify-content:center;font-size:1.05rem;padding:0.75rem;">
+          ✨ Ingresar y Comenzar
+        </button>
+      </div>
+      <p class="modal-institucion-hint">
+        ℹ️ Para centros nuevos escribe <code>METAS-NombreDeTuKínder</code> o escribe <code>demo</code>.
+      </p>
+    </form>
+  </div>
+</div>
+
 <footer class="credits">
   <p class="fam">🏠 Proyecto Educativo M.E.T.A.S · Sección Especial de Prebásica (3.° Grado)</p>
   <p class="ppl">Basado en el Libro 1: «Técnicas Gráficas y No Gráficas (3.° Grado de Prebásica)» · Compilado por Evelyn S. Castellanos H.</p>
@@ -338,6 +379,7 @@
   </div>
 </footer>
 
+<script src="js/colegios-prebasica.js"></script>
 <script src="js/mapa-audios-prebasica.js"></script>
 <script src="js/prebasica-libro1.js"></script>
 <script src="../../js/barra-secciones.js"></script>
