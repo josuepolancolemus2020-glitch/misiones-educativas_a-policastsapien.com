@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía Metodológica para el Docente · Prebásica (3.° Grado) · Libro 1 · M.E.T.A.S.</title>
+<meta name="description" content="Guía metodológica imprimible para el docente de Educación Prebásica (3.° Grado - 5 años), basada en el Libro 1 de Técnicas Gráficas y No Gráficas de Evelyn S. Castellanos H. Incluye respaldo pedagógico, ruta sensorial de 3 pasos, cláusula legal de exención de responsabilidad sobre pantallas, secuencia didáctica de 4 momentos, tabla de láminas (págs. 25-32 y 111) y rúbrica de observación continua.">
+<meta name="robots" content="noindex">
+<style>
+  :root {
+    --pri: #6d28d9;
+    --pri-osc: #4c1d95;
+    --pri-claro: #f5f3ff;
+    --pri-borde: #ddd6fe;
+    --preb: #ea580c;
+    --preb-osc: #9a3412;
+    --preb-claro: #fff7ed;
+    --preb-borde: #fed7aa;
+    --tinta: #1e293b;
+    --gris: #475569;
+    --gris-claro: #f8fafc;
+    --borde: #cbd5e1;
+    --rojo: #b91c1c;
+    --rojo-claro: #fef2f2;
+    --rojo-borde: #fecaca;
+    --verde: #15803d;
+    --verde-claro: #f0fdf4;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', Arial, Helvetica, sans-serif;
+    font-size: 10pt;
+    line-height: 1.45;
+    color: var(--tinta);
+    background: #f1f5f9;
+    padding: 20px 10px 40px;
+  }
+
+  .top-bar {
+    max-width: 8.5in;
+    margin: 0 auto 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .btn-accion {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 9.5pt;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.15s, background 0.15s;
+  }
+
+  .btn-volver {
+    background: #ffffff;
+    color: var(--tinta);
+    border: 1px solid var(--borde);
+  }
+  .btn-volver:hover {
+    background: #e2e8f0;
+  }
+
+  .btn-imprimir {
+    background: var(--pri);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(109, 40, 217, 0.3);
+  }
+  .btn-imprimir:hover {
+    background: var(--pri-osc);
+    transform: translateY(-1px);
+  }
+
+  .doc {
+    max-width: 8.5in;
+    margin: 0 auto;
+    background: #ffffff;
+    padding: 32px 36px;
+    border-radius: 10px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+  }
+
+  /* Encabezado */
+  .header-doc {
+    border-bottom: 2.5px solid var(--pri);
+    padding-bottom: 14px;
+    margin-bottom: 18px;
+  }
+
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .brand-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .brand-logo {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #ea580c, #f59e0b);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .brand-text h1 {
+    font-size: 14.5pt;
+    color: var(--pri-osc);
+    font-weight: 800;
+    line-height: 1.2;
+  }
+
+  .brand-text .sub {
+    font-size: 9.5pt;
+    color: var(--preb-osc);
+    font-weight: 700;
+  }
+
+  .meta-badges {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    font-size: 8pt;
+    color: var(--gris);
+  }
+
+  .badge-tag {
+    background: var(--pri-claro);
+    color: var(--pri-osc);
+    border: 1px solid var(--pri-borde);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 8pt;
+  }
+
+  .cintillo-institucion {
+    margin-top: 10px;
+    background: var(--preb-claro);
+    border: 1.5px solid var(--preb-borde);
+    border-left: 5px solid var(--preb);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 8.5pt;
+    color: var(--preb-osc);
+    display: none;
+    align-items: center;
+    gap: 6px;
+  }
+  .cintillo-institucion strong {
+    color: #c2410c;
+  }
+
+  /* Bloque de Identificación */
+  .idline {
+    display: flex;
+    gap: 12px;
+    font-size: 8.8pt;
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--borde);
+  }
+  .idline-item {
+    display: flex;
+    align-items: flex-end;
+    flex: 1;
+    gap: 4px;
+    font-weight: 700;
+    color: var(--gris);
+  }
+  .idline-item .raya {
+    flex: 1;
+    border-bottom: 1.2px solid var(--tinta);
+    height: 1.1em;
+  }
+
+  /* Secciones de la guía */
+  .seccion {
+    margin-bottom: 22px;
+  }
+
+  .sec-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--pri-claro);
+    border-left: 4px solid var(--pri);
+    padding: 6px 12px;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 10px;
+  }
+
+  .sec-header h2 {
+    font-size: 11pt;
+    color: var(--pri-osc);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .sec-num {
+    background: var(--pri);
+    color: #fff;
+    font-size: 8pt;
+    font-weight: 800;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Cajas y destacados */
+  .caja-ruta {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 10px 0;
+  }
+
+  .paso-card {
+    background: #ffffff;
+    border: 1.5px solid var(--pri-borde);
+    border-radius: 8px;
+    padding: 10px 12px;
+    position: relative;
+  }
+
+  .paso-card.destacado {
+    border-color: var(--preb);
+    background: #fffaf5;
+  }
+
+  .paso-badge {
+    display: inline-block;
+    font-size: 7.5pt;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+  .paso-1 .paso-badge { background: #e0f2fe; color: #0369a1; }
+  .paso-2 .paso-badge { background: #fef3c7; color: #b45309; }
+  .paso-3 .paso-badge { background: #ffedd5; color: #c2410c; }
+
+  .paso-card h3 {
+    font-size: 9.5pt;
+    color: var(--tinta);
+    margin-bottom: 4px;
+    font-weight: 800;
+  }
+
+  .paso-card p {
+    font-size: 8.3pt;
+    color: var(--gris);
+    line-height: 1.35;
+  }
+
+  .caja-alerta-legal {
+    background: var(--rojo-claro);
+    border: 1.5px solid var(--rojo-borde);
+    border-left: 5px solid var(--rojo);
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 10px 0;
+  }
+
+  .caja-alerta-legal h3 {
+    font-size: 9.5pt;
+    color: var(--rojo);
+    font-weight: 800;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .caja-alerta-legal p {
+    font-size: 8.4pt;
+    color: #7f1d1d;
+    line-height: 1.38;
+    margin-bottom: 6px;
+  }
+
+  .regla-oro {
+    background: #ffffff;
+    border: 1px dashed var(--rojo);
+    padding: 6px 10px;
+    border-radius: 5px;
+    font-weight: 700;
+    color: #991b1b;
+    font-size: 8.5pt;
+  }
+
+  .clausula-texto {
+    font-size: 8pt;
+    color: #450a0a;
+    background: rgba(255,255,255,0.7);
+    padding: 6px 8px;
+    border-radius: 4px;
+    margin-top: 6px;
+    line-height: 1.32;
+    text-align: justify;
+  }
+
+  /* Secuencia de 4 momentos */
+  .grid-momentos {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin: 10px 0;
+  }
+
+  .momento-card {
+    border: 1.2px solid var(--borde);
+    border-radius: 6px;
+    padding: 8px 10px;
+    background: var(--gris-claro);
+  }
+
+  .momento-num {
+    font-size: 7.5pt;
+    font-weight: 800;
+    color: var(--pri);
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .momento-card h4 {
+    font-size: 9pt;
+    color: var(--tinta);
+    margin: 2px 0 4px;
+    font-weight: 800;
+  }
+
+  .momento-card p {
+    font-size: 8pt;
+    color: var(--gris);
+    line-height: 1.32;
+  }
+
+  /* Tablas didácticas */
+  .tabla-guia {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 8.2pt;
+    margin: 10px 0;
+  }
+
+  .tabla-guia th, .tabla-guia td {
+    border: 1px solid var(--borde);
+    padding: 6px 8px;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .tabla-guia th {
+    background: var(--pri-claro);
+    color: var(--pri-osc);
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 7.8pt;
+  }
+
+  .tabla-guia tr:nth-child(even) {
+    background: #fafafa;
+  }
+
+  .tag-pag {
+    background: var(--preb-claro);
+    color: var(--preb-osc);
+    border: 1px solid var(--preb-borde);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-weight: 800;
+    display: inline-block;
+  }
+
+  .fig-color-circ {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    margin-right: 4px;
+    vertical-align: middle;
+  }
+
+  /* Rúbrica */
+  .tabla-rubrica {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 8pt;
+    margin: 10px 0;
+  }
+
+  .tabla-rubrica th, .tabla-rubrica td {
+    border: 1px solid var(--borde);
+    padding: 6px 8px;
+  }
+
+  .tabla-rubrica th {
+    background: var(--preb-claro);
+    color: var(--preb-osc);
+    font-weight: 800;
+    font-size: 7.8pt;
+    text-align: center;
+  }
+
+  .tabla-rubrica td.col-crit {
+    font-weight: 700;
+    color: var(--tinta);
+    width: 28%;
+  }
+
+  .tabla-rubrica td.col-nivel {
+    width: 24%;
+    color: var(--gris);
+  }
+
+  /* Pie de firma */
+  .firma-docente-box {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 18px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--borde);
+    font-size: 8.5pt;
+  }
+
+  .firma-col {
+    width: 45%;
+    text-align: center;
+  }
+
+  .firma-linea {
+    border-bottom: 1.2px solid var(--tinta);
+    margin-bottom: 4px;
+    height: 28px;
+  }
+
+  .footer-doc {
+    margin-top: 18px;
+    padding-top: 10px;
+    border-top: 1.5px solid var(--borde);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 7.8pt;
+    color: var(--gris);
+  }
+
+  /* Impresión A4 / Carta */
+  @media print {
+    body {
+      background: #ffffff;
+      padding: 0;
+      font-size: 8.5pt;
+    }
+    .top-bar { display: none !important; }
+    .doc {
+      padding: 0;
+      box-shadow: none;
+      max-width: 100%;
+    }
+    .seccion {
+      page-break-inside: avoid;
+    }
+    .tabla-guia th, .tabla-rubrica th, .sec-header, .paso-badge, .tag-pag {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .salto-pagina {
+      page-break-before: always;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .doc { padding: 18px 16px; }
+    .caja-ruta, .grid-momentos { grid-template-columns: 1fr; }
+    .header-top { flex-direction: column; }
+    .meta-badges { align-items: flex-start; }
+    .idline { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <a href="prebasica-libro1.html" class="btn-accion btn-volver">
+    ← Volver a la Misión Interactiva
+  </a>
+  <button type="button" class="btn-accion btn-imprimir" onclick="window.print()">
+    🖨️ Imprimir / Guardar en PDF
+  </button>
+</div>
+
+<div class="doc">
+
+  <!-- ENCABEZADO OFICIAL -->
+  <header class="header-doc">
+    <div class="header-top">
+      <div class="brand-area">
+        <div class="brand-logo" aria-hidden="true">🐝</div>
+        <div class="brand-text">
+          <h1>Guía Metodológica para el Docente</h1>
+          <div class="sub">Educación Prebásica (3.° Grado · 5 años) · Técnicas Gráficas y No Gráficas — Libro 1</div>
+        </div>
+      </div>
+      <div class="meta-badges">
+        <span class="badge-tag">M.E.T.A.S. Prebásica · Ciclo 2026</span>
+        <span>Compilación: <b>Evelyn S. Castellanos H.</b></span>
+        <span>Herramienta Oficial de Acompañamiento Didáctico</span>
+      </div>
+    </div>
+
+    <div id="cintilloDocenteInstitucion" class="cintillo-institucion">
+      🏫 Edición Exclusiva autorizada para: <strong id="lblDocenteInstitucion"></strong>
+    </div>
+
+    <div class="idline">
+      <div class="idline-item">Docente: <span class="raya"></span></div>
+      <div class="idline-item">Kínder / Centro Educativo: <span class="raya"></span></div>
+      <div class="idline-item" style="flex:0 0 120px;">Fecha: <span class="raya"></span></div>
+    </div>
+  </header>
+
+  <!-- SECCIÓN 1: PROPÓSITO PEDAGÓGICO Y RUTA SENSORIAL -->
+  <section class="seccion">
+    <div class="sec-header">
+      <span class="sec-num">1</span>
+      <h2>Propósito Pedagógico y Prioridad Absoluta del Libro Físico</h2>
+    </div>
+    <p style="font-size:8.8pt; color:var(--gris); margin-bottom:8px;">
+      El currículo de Educación Prebásica exige que el aprendizaje motor y perceptivo se consolide a través del cuerpo y los sentidos. La plataforma interactiva M.E.T.A.S. <b>no reemplaza ni compite con el libro de texto impreso</b>; funciona como un modelador sensorial de corta duración previo al trabajo gráfico-plástico manual.
+    </p>
+
+    <div class="caja-ruta">
+      <div class="paso-card paso-1">
+        <span class="paso-badge">Paso 1 · Concreto</span>
+        <h3>Exploración Vivencial</h3>
+        <p>Manipulación en el aula de objetos tridimensionales reales (cajas, platos, frutas, bloques). El niño siente bordes, aristas y curvas con sus palmas antes de graficarlas.</p>
+      </div>
+      <div class="paso-card paso-2">
+        <span class="paso-badge">Paso 2 · Digital Guiado</span>
+        <h3>Trazado en Pantalla (10–15 min)</h3>
+        <p>El niño desliza su dedito sobre la silueta digital en la tablet o pantalla. Escucha la consigna en voz neuronal Dalia (español) y Ana (inglés) con checkpoints que afianzan direccionalidad.</p>
+      </div>
+      <div class="paso-card paso-3 destacado">
+        <span class="paso-badge">Paso 3 · Eje Central</span>
+        <h3>Consolidación en Libro Físico</h3>
+        <p><b>El objetivo final de la clase.</b> Traslado inmediato al papel impreso: rasgado, boleado de papel crepé, dactilopintura y trazo firme con crayón jumbo sin levantar la mano.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 2: CONTROL DE PANTALLAS Y CLÁUSULA LEGAL -->
+  <section class="seccion">
+    <div class="sec-header">
+      <span class="sec-num">2</span>
+      <h2>Protocolo de Pantallas Controladas y Exención de Responsabilidad</h2>
+    </div>
+
+    <div class="caja-alerta-legal">
+      <h3>⚠️ Advertencia Pedagógica sobre el Uso de Pantallas en Edad Temprana (0–6 años)</h3>
+      <p>
+        La exposición no supervisada o prolongada a pantallas táctiles en edad preescolar fragmenta la atención sostenida, retrasa el desarrollo de la fuerza en la pinza digital manual y disminuye la tolerancia a la frustración. <b>M.E.T.A.S. prohíbe el uso libre o desatendido de dispositivos.</b> El tiempo digital diario no debe exceder de <b>10 a 15 minutos</b>, siempre bajo mediación activa del docente o padre tutor.
+      </p>
+
+      <div class="regla-oro">
+        ⭐ Regla de Oro del Docente y la Familia: «Si no existe supervisión cercana y control estricto de tiempo por parte de un adulto, trabaje únicamente con el libro físico.»
+      </div>
+
+      <div class="clausula-texto">
+        <b>⚖️ Cláusula Legal de Exención de Responsabilidad Institucional, Editorial y Distribuidora:</b><br>
+        El eje central, obligatorio e irremplazable del proceso de enseñanza-aprendizaje en Prebásica es el libro físico impreso. La plataforma digital M.E.T.A.S. es un recurso complementario opcional para familias y centros educativos responsables. Ni el centro educativo, ni la editorial, ni la distribuidora del libro físico y de la plataforma M.E.T.A.S., ni sus autores o desarrolladores se hacen responsables por el uso inadecuado, prolongado, excesivo o sin supervisión directa de teléfonos celulares, tablets u otros aparatos digitales en el hogar o la institución. Corresponde exclusivamente al padre, madre o encargado legal supervisar y limitar el uso de dispositivos electrónicos.
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 3: SECUENCIA DIDÁCTICA DE 4 MOMENTOS -->
+  <section class="seccion">
+    <div class="sec-header">
+      <span class="sec-num">3</span>
+      <h2>Secuencia Didáctica de 4 Momentos para el Aula (35 a 45 min)</h2>
+    </div>
+
+    <div class="grid-momentos">
+      <div class="momento-card">
+        <div class="momento-num"><span>Momento 1</span> <span>5–8 min</span></div>
+        <h4>Activación Vivencial</h4>
+        <p>Ronda de bienvenida y juego «Caja Sorpresa»: extraer objetos del aula y palpar con ojos cerrados para adivinar si tienen esquinas o si ruedan.</p>
+      </div>
+      <div class="momento-card">
+        <div class="momento-num"><span>Momento 2</span> <span>10–12 min</span></div>
+        <h4>Modelado Digital</h4>
+        <p>En pantalla colectiva o tablet docente, repasar con el dedito la figura del día. Escuchar la instrucción bilingüe y contar en voz alta sus lados y puntas.</p>
+      </div>
+      <div class="momento-card">
+        <div class="momento-num"><span>Momento 3</span> <span>15–20 min</span></div>
+        <h4>Trabajo en Libro Físico</h4>
+        <p>Abrir el Libro 1 en la lámina correspondiente. Aplicar técnica no gráfica (boleado, rasgado, dactilopintura) y graficar con crayón grueso triangular.</p>
+      </div>
+      <div class="momento-card">
+        <div class="momento-num"><span>Momento 4</span> <span>5 min</span></div>
+        <h4>Cierre y Socialización</h4>
+        <p>Exposición en «El Rincón de las Semillitas». Reflexión grupal de lo aprendido y entrega de la Ficha Imprimible para afianzar 10 minutos con papá y mamá.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="salto-pagina"></div>
+
+  <!-- SECCIÓN 4: TABLA DE LÁMINAS DE FIGURAS PLANAS Y LABORATORIO -->
+  <section class="seccion">
+    <div class="sec-header">
+      <span class="sec-num">4</span>
+      <h2>Mapeo Curricular: Figuras Planas (Págs. 25–32) y Laboratorio (Pág. 111)</h2>
+    </div>
+
+    <table class="tabla-guia">
+      <thead>
+        <tr>
+          <th style="width:11%;">Página</th>
+          <th style="width:18%;">Figura y Color</th>
+          <th style="width:23%;">Propiedad Matemática</th>
+          <th style="width:24%;">Objetos del Libro 1</th>
+          <th style="width:24%;">Técnica Didáctica en el Libro</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tag-pag">Pág. 25</span></td>
+          <td><span class="fig-color-circ" style="background:#dc2626;"></span><b>Círculo</b><br><small style="color:var(--gris);">Circle · Rojo</small></td>
+          <td>Línea curva continua cerrada.<br><b>0 esquinas / 0 lados rectos.</b> Rueda en cualquier dirección.</td>
+          <td>Disco CD, reloj de pared, rebanada de pizza, plato sopero.</td>
+          <td><b>Boleado:</b> bolitas de papel crepé rojo en el contorno. Relleno con crayón de cera grueso rojo.</td>
+        </tr>
+        <tr>
+          <td><span class="tag-pag">Pág. 26</span></td>
+          <td><span class="fig-color-circ" style="background:#2563eb;"></span><b>Cuadrado</b><br><small style="color:var(--gris);">Square · Azul</small></td>
+          <td><b>4 lados rectos iguales</b> y <b>4 esquinas</b> o vértices rectos.</td>
+          <td>Barra de chocolate, ventana, fichas de letras, nota adhesiva.</td>
+          <td><b>Rasgado:</b> trocitos de papel lustre azul rasgados con los dedos índice y pulgar, pegados adentro.</td>
+        </tr>
+        <tr>
+          <td><span class="tag-pag">Pág. 27</span></td>
+          <td><span class="fig-color-circ" style="background:#16a34a;"></span><b>Triángulo</b><br><small style="color:var(--gris);">Triangle · Verde</small></td>
+          <td><b>3 lados rectos</b> y <b>3 puntas/esquinas</b>. Base y dos diagonales.</td>
+          <td>Señal vial de ceda el paso, trozo de queso, sándwich, triángulo musical.</td>
+          <td><b>Dactilopintura:</b> huellitas del dedo índice con témpera lavable verde sobre el contorno.</td>
+        </tr>
+        <tr>
+          <td><span class="tag-pag">Pág. 28</span></td>
+          <td><span class="fig-color-circ" style="background:#ea580c;"></span><b>Rectángulo</b><br><small style="color:var(--gris);">Rectangle · Naranja</small></td>
+          <td><b>2 lados largos ↔</b> y <b>2 lados cortos ↕</b>. 4 esquinas rectas.</td>
+          <td>Sobres de carta, teléfono celular, regla escolar, televisor, libro.</td>
+          <td><b>Encolado:</b> lana o pajillas de colores en los lados largos vs. lados cortos para notar la diferencia.</td>
+        </tr>
+        <tr>
+          <td><span class="tag-pag">Pág. 29</span></td>
+          <td><span class="fig-color-circ" style="background:#db2777;"></span><b>Óvalo</b><br><small style="color:var(--gris);">Oval · Fucsia/Rosa</small></td>
+          <td>Línea curva continua alargada («como huevito»). <b>0 esquinas.</b></td>
+          <td>Bandeja de servir, balón de fútbol americano, huevo de gallina, sandía.</td>
+          <td><b>Papel Picado:</b> corte libre con tijera de punta redonda y relleno uniforme dentro del contorno.</td>
+        </tr>
+        <tr>
+          <td><span class="tag-pag">Pág. 30</span></td>
+          <td><span class="fig-color-circ" style="background:#dc2626;"></span><b>Diamante / Rombo</b><br><small style="color:var(--gris);">Diamond · Rojo</small></td>
+          <td><b>4 lados inclinados</b> y <b>4 puntas</b> (arriba, abajo, izquierda, derecha).</td>
+          <td>Carta de naipe (10 de diamantes), señal amarilla de precaución.</td>
+          <td><b>Modelado:</b> rollitos delgados de plastilina roja colocados sobre cada uno de los 4 lados inclinados.</td>
+        </tr>
+        <tr>
+          <td><span class="tag-pag">Págs. 31–32</span></td>
+          <td><span class="fig-color-circ" style="background:#eab308;"></span><b>Estrella y Corazón</b><br><small style="color:var(--gris);">Star & Heart · Amarillo/Fucsia</small></td>
+          <td>Estrella: <b>5 puntas simétricas</b>.<br>Corazón: <b>2 curvas arriba y 1 punta abajo</b>.</td>
+          <td>Estrella de mar, varita mágica; galletas decoradas, globos festivos.</td>
+          <td><b>Coloreado Dirigido:</b> trazo circular suave con crayón amarillo y fucsia. Borde con escarcha/diamantina.</td>
+        </tr>
+        <tr>
+          <td><span class="tag-pag">Pág. 111</span></td>
+          <td><span class="fig-color-circ" style="background:#7c3aed;"></span><b>Secuencias de Laboratorio</b><br><small style="color:var(--gris);">Patterns & Logic</small></td>
+          <td><b>Patrones rítmicos:</b> alternancia de forma y color (AB, AAB, ABC). Fomenta razonamiento lógico.</td>
+          <td>Secuencia de figuras geométricas básicas y carritos en el estacionamiento.</td>
+          <td><b>Recorte y Estampación:</b> recortar piezas geométricas al final del libro y pegarlas siguiendo el patrón lógico.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- SECCIÓN 5: RÚBRICA DE OBSERVACIÓN CONTINUA -->
+  <section class="seccion">
+    <div class="sec-header">
+      <span class="sec-num">5</span>
+      <h2>Rúbrica de Observación Continua (Evaluación Cualitativa Formativa)</h2>
+    </div>
+
+    <table class="tabla-rubrica">
+      <thead>
+        <tr>
+          <th>Criterio Pedagógico</th>
+          <th>🌱 En Proceso (EP)</th>
+          <th>🌿 Logro Esperado (LE)</th>
+          <th>🌟 Logro Destacado (LD)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="col-crit">1. Coordinación Visomotora y Direccionalidad</td>
+          <td class="col-nivel">Se sale del contorno con frecuencia; levanta el crayón repetidamente; requiere guía mano sobre mano.</td>
+          <td class="col-nivel">Sigue la línea punteada de principio a fin con desvíos leves; respeta punto de inicio y llegada.</td>
+          <td class="col-nivel">Trazo continuo, seguro y fluido sin levantar la mano; excelente control del espacio gráfico.</td>
+        </tr>
+        <tr>
+          <td class="col-crit">2. Discriminación de Propiedades Geométricas</td>
+          <td class="col-nivel">Confunde figuras con esquinas y figuras curvas; no verbaliza diferencias de lados.</td>
+          <td class="col-nivel">Distingue círculo de cuadrado y triángulo; identifica cuándo una figura tiene puntas o lados rectos.</td>
+          <td class="col-nivel">Explica con claridad: «el rectángulo tiene 2 lados largos y 2 cortos»; nombra figuras en español e inglés.</td>
+        </tr>
+        <tr>
+          <td class="col-crit">3. Destreza en Técnicas Gráfico-Plásticas</td>
+          <td class="col-nivel">Dificultad en pinza digital al rasgar o bolear; agarra el crayón con el puño cerrado.</td>
+          <td class="col-nivel">Aplica pinza índice-pulgar al rasgar papel; realiza bolitas de crepé y toma el crayón con 3 dedos.</td>
+          <td class="col-nivel">Fuerza muscular equilibrada; boleado compacto; rasgado preciso y excelente pulcritud en el pegado.</td>
+        </tr>
+        <tr>
+          <td class="col-crit">4. Autorregulación y Tiempo de Pantalla</td>
+          <td class="col-nivel">Muestra apego o ansiedad al terminar la actividad digital; le cuesta pasar al libro físico.</td>
+          <td class="col-nivel">Acepta la transición de la pantalla al libro físico (10–15 min) y trabaja con entusiasmo en su mesa.</td>
+          <td class="col-nivel">Comprende la regla de trabajo; colabora ordenando materiales y cuida con esmero su libro físico.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="firma-docente-box">
+      <div class="firma-col">
+        <div class="firma-linea"></div>
+        <b>Firma del Docente de Prebásica</b>
+      </div>
+      <div class="firma-col">
+        <div class="firma-linea"></div>
+        <b>Sello de la Dirección del Centro Educativo</b>
+      </div>
+    </div>
+  </section>
+
+  <!-- PIE DE PÁGINA -->
+  <footer class="footer-doc">
+    <span>Proyecto Educativo <b>M.E.T.A.S.</b> · Sección de Educación Prebásica (3.° Grado)</span>
+    <span>Basado en el Libro 1 compilado por Evelyn S. Castellanos H. · Tegucigalpa, Honduras</span>
+    <span><b>Documento Oficial para Uso Exclusivo del Docente</b></span>
+  </footer>
+
+</div>
+
+<script>
+  (function () {
+    try {
+      var inst = localStorage.getItem('metas_prebasica_institucion');
+      if (inst) {
+        var el = document.getElementById('cintilloDocenteInstitucion');
+        var lbl = document.getElementById('lblDocenteInstitucion');
+        if (el && lbl) {
+          lbl.textContent = inst;
+          el.style.display = 'flex';
+        }
+      }
+    } catch (e) {}
+  })();
+</script>
+</body>
+</html>

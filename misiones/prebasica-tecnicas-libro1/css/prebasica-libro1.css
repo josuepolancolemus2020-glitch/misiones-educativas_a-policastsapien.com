@@ -143,6 +143,14 @@ body::before {
   padding: 0.35rem 0.5rem;
 }
 
+.adult-banner-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
 .adult-banner-text {
   font-size: 0.92rem;
   line-height: 1.38;
@@ -166,6 +174,32 @@ body::before {
   color: #ff8a80;
   background: rgba(0, 0, 0, 0.35);
   border-color: rgba(255, 138, 128, 0.4);
+}
+
+.adult-banner-legal {
+  font-size: 0.81rem;
+  line-height: 1.35;
+  color: #78281f;
+  background: rgba(255, 255, 255, 0.65);
+  border-left: 3px solid #d9534f;
+  border-radius: 4px;
+  padding: 0.35rem 0.6rem;
+}
+
+[data-theme="dark"] .adult-banner-legal {
+  color: #fbd2cb;
+  background: rgba(0, 0, 0, 0.35);
+  border-left-color: #ff7675;
+}
+
+.legal-badge {
+  font-weight: 800;
+  color: #b71c1c;
+  display: inline;
+}
+
+[data-theme="dark"] .legal-badge {
+  color: #ff8a80;
 }
 
 .adult-banner-tts {
@@ -1713,6 +1747,47 @@ body::before {
   padding: 0.5rem 1rem;
   border-radius: 20px;
   color: var(--dark);
+}
+
+.credits-legal-box {
+  max-width: 760px;
+  margin: 0.85rem auto 0.4rem;
+  padding: 0.65rem 1rem;
+  font-size: 0.8rem;
+  line-height: 1.38;
+  color: #5c1a16;
+  background: #fff3cd;
+  border: 1.5px solid #fecaca;
+  border-left: 4px solid #d9534f;
+  border-radius: 8px;
+  text-align: left;
+}
+
+[data-theme="dark"] .credits-legal-box {
+  color: #ffe8d6;
+  background: rgba(59, 36, 22, 0.7);
+  border-color: rgba(217, 83, 79, 0.4);
+  border-left-color: #ff7675;
+}
+
+.credits-legal-box strong {
+  color: #b71c1c;
+}
+
+[data-theme="dark"] .credits-legal-box strong {
+  color: #ff8a80;
+}
+
+.badge-docente-guia {
+  background: #6d28d9 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(109, 40, 217, 0.25);
+  transition: transform 0.15s, filter 0.15s;
+}
+
+.badge-docente-guia:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
 }
 
 .cred-tools {

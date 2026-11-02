@@ -143,8 +143,8 @@ ITEMS = [
     {
         "file": "aviso_adulto.mp3",
         "lang": "es",
-        "text": "Atención familia: Uso exclusivo con apoyo de un adulto. Esta sección de Prebásica está diseñada para que el padre, madre o encargado trabaje sentado junto al niño. Nunca deje al niño solo con el teléfono o la tablet.",
-        "raw": "Atención familia: Uso exclusivo con apoyo de un adulto. Esta sección de Prebásica está diseñada para que el padre, madre o encargado trabaje sentado junto al niño. Nunca deje al niño solo con el teléfono o la tablet."
+        "text": "Esta sección de Prebásica es un complemento exclusivo para trabajar con el padre, madre o encargado sentado junto al niño durante 10 a 15 minutos. No promovemos el uso libre de teléfonos ni tablets. Si no existe supervisión directa de un adulto, utilice únicamente el libro físico.",
+        "raw": "Esta sección de Prebásica es un complemento exclusivo para trabajar con el padre, madre o encargado sentado junto al niño durante 10 a 15 minutos. No promovemos el uso libre de teléfonos ni tablets. Si no existe supervisión directa de un adulto, utilice únicamente el libro físico."
     },
 
     # --- 2. PESTAÑA 1: TRAZOS CON EL DEDO (6 RETOS + FELICITACIÓN) ---
