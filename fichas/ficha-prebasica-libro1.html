@@ -70,12 +70,41 @@
   .fh .f-meta b { color: var(--preb-osc); }
   .fh-icon { font-size: 26pt; line-height: 1; }
 
-  /* Secciones y actividades */
+  /* Secciones y actividades (sin fondo sólido, ahorro de tinta al imprimir) */
   .sec-tit {
-    font-size: 10pt; font-weight: 800; color: #fff; background: var(--preb);
-    padding: 4px 10px; border-radius: 6px; margin: 6px 0 5px;
+    font-size: 9.6pt; font-weight: 800; color: #7c2d12;
+    background: #fffaf5; border: 1px solid #fed7aa;
+    border-left: 4px solid #f97316;
+    padding: 3px 8px; border-radius: 4px; margin: 5px 0 4px;
     display: flex; align-items: center; gap: 6px;
   }
+
+  /* Código QR compacto en cabecera */
+  .fh-qr {
+    flex: 0 0 98px; text-align: center; background: #ffffff;
+    border: 1px solid var(--preb-borde); border-radius: 6px;
+    padding: 3px 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .fh-qr img { width: 62px; height: 62px; display: block; margin: 0 auto; border-radius: 4px; }
+  .fh-qr span {
+    display: block; font-size: 5.6pt; font-weight: 700; color: #9a3412;
+    line-height: 1.15; margin-top: 2px;
+  }
+
+  /* Figuras geométricas para trazar y colorear */
+  .grid-figuras {
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin: 4px 0 0;
+  }
+  .item-figura {
+    border: 1.2px dashed #fed7aa; background: #fffdfa; border-radius: 8px;
+    padding: 4px 2px; text-align: center; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+  .item-figura svg { width: 48px; height: 48px; display: block; margin: 0 auto; }
+  .item-figura .fig-nom {
+    font-size: 7.2pt; font-weight: 800; color: var(--preb-osc); margin-top: 2px; line-height: 1.1;
+  }
+  .item-figura .fig-sub { font-size: 6pt; color: var(--gris); font-weight: 600; }
   .sec-instruccion {
     font-size: 8.8pt; color: #7c2d12; background: #fffbeb; border: 1px solid #fde68a;
     border-radius: 5px; padding: 4px 8px; margin-bottom: 6px;
@@ -208,6 +237,10 @@
           Basado en el <b>Libro 1: Técnicas Gráficas y No Gráficas</b> · Compilado por <b>Evelyn S. Castellanos H.</b>
         </div>
       </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-prebasica-libro1.png" alt="Código QR Misión Prebásica Libro 1">
+        <span>📱 Escanea con papá o mamá para abrir la misión interactiva</span>
+      </div>
     </div>
 
     <!-- RETO 1: LÍNEAS VERTICALES Y HORIZONTALES -->
@@ -327,18 +360,99 @@
     <!-- RETO 4: ARABESCOS Y ESPIRALES -->
     <div class="sec-tit"><span>🌀</span> 4. Arabescos y Espirales</div>
     <div class="sec-instruccion">
-      <b>Espirales continuas:</b> Ayuda al caracolito a pintar su concha y al viento a girar sus remolinos.
+      <b>Espirales continuas:</b> Ayuda al caracolito a pintar su concha y al viento a girar sus remolinos con tu crayón.
     </div>
 
-    <div class="trazo-fila" style="margin-bottom:0;">
+    <div class="trazo-fila">
       <div class="trazo-icono">🐌</div>
       <div class="trazo-lienzo">
         <svg viewBox="0 0 400 24" preserveAspectRatio="none">
-          <!-- Espirales / bucles de práctica -->
+          <circle cx="12" cy="18" r="4" fill="#16a34a" />
           <path d="M 20 18 C 35 2, 50 2, 40 18 C 30 22, 60 22, 70 8 C 80 0, 95 6, 85 20 C 75 24, 110 22, 120 8 C 130 0, 145 6, 135 20 C 125 24, 160 22, 170 8 C 180 0, 195 6, 185 20 C 175 24, 210 22, 220 8 C 230 0, 245 6, 235 20 C 225 24, 260 22, 270 8 C 280 0, 295 6, 285 20 C 275 24, 310 22, 320 8 C 330 0, 345 6, 335 20 C 325 24, 360 22, 370 8" fill="none" stroke="#ea580c" stroke-width="2.2" stroke-dasharray="4,4" />
+          <polygon points="370,4 382,8 370,12" fill="#ea580c" />
         </svg>
       </div>
       <div class="trazo-icono">🍃</div>
+    </div>
+
+    <div class="trazo-fila">
+      <div class="trazo-icono">🪁</div>
+      <div class="trazo-lienzo">
+        <svg viewBox="0 0 400 24" preserveAspectRatio="none">
+          <circle cx="10" cy="12" r="4" fill="#16a34a" />
+          <path d="M 18 12 C 28 22, 44 22, 44 12 C 44 2, 28 2, 34 12 C 40 18, 54 18, 62 12 C 72 2, 88 2, 88 12 C 88 22, 72 22, 78 12 C 84 6, 98 6, 106 12 C 116 22, 132 22, 132 12 C 132 2, 116 2, 122 12 C 128 18, 142 18, 150 12 C 160 2, 176 2, 176 12 C 176 22, 160 22, 166 12 C 172 6, 186 6, 194 12 C 204 22, 220 22, 220 12 C 220 2, 204 2, 210 12 C 216 18, 230 18, 238 12 C 248 2, 264 2, 264 12 C 264 22, 248 22, 254 12 C 260 6, 274 6, 282 12 C 292 22, 308 22, 308 12 C 308 2, 292 2, 298 12 C 304 18, 318 18, 326 12 C 336 2, 352 2, 352 12 C 352 22, 336 22, 342 12 C 348 6, 362 6, 372 12" fill="none" stroke="#7c3aed" stroke-width="2.2" stroke-dasharray="4,4" />
+          <polygon points="372,8 385,12 372,16" fill="#7c3aed" />
+        </svg>
+      </div>
+      <div class="trazo-icono">💨</div>
+    </div>
+
+    <!-- RETO 5: TRAZA Y COLOREA LAS FIGURAS GEOMÉTRICAS -->
+    <div class="sec-tit"><span>🎨</span> 5. Traza y Colorea las Figuras Geométricas</div>
+    <div class="sec-instruccion">
+      <b>Paso a paso con crayón:</b> Repasa con tu crayón favorito las líneas punteadas de cada figura y luego colorea su interior.
+    </div>
+
+    <div class="grid-figuras">
+      <!-- CÍRCULO -->
+      <div class="item-figura">
+        <svg viewBox="0 0 56 56">
+          <circle cx="10" cy="28" r="3.5" fill="#16a34a" />
+          <circle cx="28" cy="28" r="21" fill="#fff" stroke="#ea580c" stroke-width="2.4" stroke-dasharray="4,4" />
+        </svg>
+        <span class="fig-nom">Círculo</span>
+        <span class="fig-sub">Circle</span>
+      </div>
+
+      <!-- CUADRADO -->
+      <div class="item-figura">
+        <svg viewBox="0 0 56 56">
+          <circle cx="7" cy="7" r="3.5" fill="#16a34a" />
+          <rect x="7" y="7" width="42" height="42" rx="4" fill="#fff" stroke="#2563eb" stroke-width="2.4" stroke-dasharray="4,4" />
+        </svg>
+        <span class="fig-nom">Cuadrado</span>
+        <span class="fig-sub">Square</span>
+      </div>
+
+      <!-- TRIÁNGULO -->
+      <div class="item-figura">
+        <svg viewBox="0 0 56 56">
+          <circle cx="28" cy="6" r="3.5" fill="#16a34a" />
+          <polygon points="28,6 7,48 49,48" fill="#fff" stroke="#16a34a" stroke-width="2.4" stroke-dasharray="4,4" />
+        </svg>
+        <span class="fig-nom">Triángulo</span>
+        <span class="fig-sub">Triangle</span>
+      </div>
+
+      <!-- RECTÁNGULO -->
+      <div class="item-figura">
+        <svg viewBox="0 0 56 56">
+          <circle cx="5" cy="12" r="3.5" fill="#16a34a" />
+          <rect x="5" y="12" width="46" height="32" rx="4" fill="#fff" stroke="#d97706" stroke-width="2.4" stroke-dasharray="4,4" />
+        </svg>
+        <span class="fig-nom">Rectángulo</span>
+        <span class="fig-sub">Rectangle</span>
+      </div>
+
+      <!-- ESTRELLA -->
+      <div class="item-figura">
+        <svg viewBox="0 0 56 56">
+          <circle cx="28" cy="4" r="3.5" fill="#16a34a" />
+          <polygon points="28,4 34,18 49,20 38,30 41,46 28,38 15,46 18,30 7,20 22,18" fill="#fff" stroke="#9333ea" stroke-width="2.4" stroke-dasharray="4,4" />
+        </svg>
+        <span class="fig-nom">Estrella</span>
+        <span class="fig-sub">Star</span>
+      </div>
+
+      <!-- CORAZÓN -->
+      <div class="item-figura">
+        <svg viewBox="0 0 56 56">
+          <circle cx="28" cy="11" r="3.5" fill="#16a34a" />
+          <path d="M 28 48 C 12 36, 4 24, 4 15 C 4 7, 12 4, 18 4 C 23 4, 26 8, 28 11 C 30 8, 33 4, 38 4 C 44 4, 52 7, 52 15 C 52 24, 44 36, 28 48 Z" fill="#fff" stroke="#e11d48" stroke-width="2.4" stroke-dasharray="4,4" />
+        </svg>
+        <span class="fig-nom">Corazón</span>
+        <span class="fig-sub">Heart</span>
+      </div>
     </div>
 
   </div>
@@ -362,8 +476,8 @@
       <span style="color:var(--preb-osc); font-size:9pt;">Página 2 · Rodea, Cuenta y Nociones Espaciales</span>
     </div>
 
-    <!-- RETO 5: RODEA LAS VOCALES -->
-    <div class="sec-tit"><span>🔤</span> 5. Rodea las Vocales (A, E, I, O, U)</div>
+    <!-- RETO 6: RODEA LAS VOCALES -->
+    <div class="sec-tit"><span>🔤</span> 6. Rodea las Vocales (A, E, I, O, U)</div>
     <div class="sec-instruccion">
       <b>Papá o mamá lee:</b> "Vamos a buscar las vocales. Rodea con crayón <span style="color:#dc2626; font-weight:800;">ROJO</span> las letras <b>A</b>, con <span style="color:#2563eb; font-weight:800;">AZUL</span> las <b>E</b>, con <span style="color:#16a34a; font-weight:800;">VERDE</span> las <b>I</b>, con <span style="color:#ea580c; font-weight:800;">NARANJA</span> las <b>O</b> y con <span style="color:#7c3aed; font-weight:800;">MORADO</span> las <b>U</b>".
     </div>
@@ -387,8 +501,8 @@
       <div class="letra-circ">U</div>
     </div>
 
-    <!-- RETO 6: CUENTA Y RODEA EL NÚMERO -->
-    <div class="sec-tit"><span>🔢</span> 6. Cuenta los Objetos y Rodea el Número Correcto</div>
+    <!-- RETO 7: CUENTA Y RODEA EL NÚMERO -->
+    <div class="sec-tit"><span>🔢</span> 7. Cuenta los Objetos y Rodea el Número Correcto</div>
     <div class="sec-instruccion">
       <b>Cuenta despacio con tu dedito:</b> ¿Cuántos objetos hay en cada cajita? Rodea con un círculo el número que le corresponde.
     </div>
@@ -428,8 +542,8 @@
       </div>
     </div>
 
-    <!-- RETO 7: NOCIONES ESPACIALES DEL LIBRO 1 -->
-    <div class="sec-tit"><span>📍</span> 7. Nociones Espaciales del Libro 1</div>
+    <!-- RETO 8: NOCIONES ESPACIALES DEL LIBRO 1 -->
+    <div class="sec-tit"><span>📍</span> 8. Nociones Espaciales del Libro 1</div>
     <div class="sec-instruccion">
       <b>Papá o mamá lee la indicación:</b> Guíe al niño para observar la posición y marcar según se pide.
     </div>
