@@ -1681,3 +1681,32 @@ body::before {
   from { transform: scale(0.92); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
 }
+
+/* Botón visible de pronunciación nativa en inglés para tarjetas y fichas */
+.btn-card-audio-en {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  background: #6c5ce7;
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
+  margin-top: 0.25rem;
+  cursor: pointer;
+  z-index: 3;
+  transition: transform 0.15s, background 0.15s;
+}
+
+.btn-card-audio-en:hover {
+  background: #5b4cc4;
+  transform: scale(1.05);
+}
+
+.btn-card-audio-en:active {
+  transform: scale(0.95);
+}

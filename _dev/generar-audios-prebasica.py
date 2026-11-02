@@ -5,8 +5,8 @@ generar-audios-prebasica.py
 Genera todos los archivos de audio MP3 para la misión:
 Prebásica (3.° Grado) · Técnicas Gráficas y No Gráficas — Libro 1
 utilizando edge-tts:
-- Español: es-MX-DaliaNeural (rate="-6%", pitch="+4Hz")
-- Inglés: en-US-AnaNeural (rate="-4%", pitch="+2Hz")
+- Español: es-MX-DaliaNeural (rate="-6%", pitch="+4Hz") para todas las instrucciones y consignas
+- Inglés: en-US-AnaNeural (rate="-4%", pitch="+2Hz") EXCLUSIVAMENTE para vocabulario básico (números, colores, letras, cuerpo)
 
 Genera:
 - misiones/prebasica-tecnicas-libro1/audios/*.mp3
@@ -62,9 +62,9 @@ def limpiar_texto(t: str) -> str:
     t = re.sub(r"\s+", " ", t)
     return t.strip()
 
-# Lista de todos los audios a generar
+# Lista de todos los audios oficiales
 ITEMS = [
-    # --- 1. AVISO PARENTAL IMPERATIVO ---
+    # --- 1. AVISO PARENTAL IMPERATIVO (ESPAÑOL) ---
     {
         "file": "aviso_adulto.mp3",
         "lang": "es",
@@ -121,16 +121,11 @@ ITEMS = [
         "text": "¡Qué linda pintura con tus deditos! Lo hiciste excelente.",
     },
 
-    # --- 4. RODEA Y DESCUBRE: LETRAS (A, E, I, O, U, B, C, M, P, S) ---
+    # --- 4. RODEA Y DESCUBRE: LETRAS EN ESPAÑOL (Dalia) ---
     {
         "file": "letra_a_es.mp3",
         "lang": "es",
         "text": "Rodea todas las tarjetas con la vocal A, como Abeja.",
-    },
-    {
-        "file": "letra_a_en.mp3",
-        "lang": "en",
-        "text": "Circle all the letter A cards! A is for Apple.",
     },
     {
         "file": "letra_e_es.mp3",
@@ -138,19 +133,9 @@ ITEMS = [
         "text": "Rodea todas las tarjetas con la vocal E, como Elefante.",
     },
     {
-        "file": "letra_e_en.mp3",
-        "lang": "en",
-        "text": "Circle all the letter E cards! E is for Elephant.",
-    },
-    {
         "file": "letra_i_es.mp3",
         "lang": "es",
         "text": "Rodea todas las tarjetas con la vocal I, como Iguana.",
-    },
-    {
-        "file": "letra_i_en.mp3",
-        "lang": "en",
-        "text": "Circle all the letter I cards! I is for Igloo.",
     },
     {
         "file": "letra_o_es.mp3",
@@ -158,19 +143,9 @@ ITEMS = [
         "text": "Rodea todas las tarjetas con la vocal O, como Oso.",
     },
     {
-        "file": "letra_o_en.mp3",
-        "lang": "en",
-        "text": "Circle all the letter O cards! O is for Octopus.",
-    },
-    {
         "file": "letra_u_es.mp3",
         "lang": "es",
         "text": "Rodea todas las tarjetas con la vocal U, como Uvas.",
-    },
-    {
-        "file": "letra_u_en.mp3",
-        "lang": "en",
-        "text": "Circle all the letter U cards! U is for Umbrella.",
     },
     {
         "file": "letra_b_es.mp3",
@@ -178,19 +153,19 @@ ITEMS = [
         "text": "Rodea todas las letras B, como Barco.",
     },
     {
-        "file": "letra_b_en.mp3",
-        "lang": "en",
-        "text": "Circle every letter B! B is for Ball.",
-    },
-    {
         "file": "letra_c_es.mp3",
         "lang": "es",
         "text": "Rodea todas las letras C, como Casa.",
     },
     {
-        "file": "letra_c_en.mp3",
-        "lang": "en",
-        "text": "Circle every letter C! C is for Cat.",
+        "file": "letra_d_es.mp3",
+        "lang": "es",
+        "text": "Rodea todas las letras D, como Dado.",
+    },
+    {
+        "file": "letra_f_es.mp3",
+        "lang": "es",
+        "text": "Rodea todas las letras F, como Foca.",
     },
     {
         "file": "letra_m_es.mp3",
@@ -198,19 +173,9 @@ ITEMS = [
         "text": "Rodea todas las letras M, como Mamá.",
     },
     {
-        "file": "letra_m_en.mp3",
-        "lang": "en",
-        "text": "Circle every letter M! M is for Moon.",
-    },
-    {
         "file": "letra_p_es.mp3",
         "lang": "es",
         "text": "Rodea todas las letras P, como Pato.",
-    },
-    {
-        "file": "letra_p_en.mp3",
-        "lang": "en",
-        "text": "Circle every letter P! P is for Pig.",
     },
     {
         "file": "letra_s_es.mp3",
@@ -218,43 +183,28 @@ ITEMS = [
         "text": "Rodea todas las letras S, como Sol.",
     },
     {
-        "file": "letra_s_en.mp3",
-        "lang": "en",
-        "text": "Circle every letter S! S is for Star.",
+        "file": "letra_t_es.mp3",
+        "lang": "es",
+        "text": "Rodea todas las letras T, como Tortuga.",
     },
 
-    # --- 5. RODEA Y DESCUBRE: NÚMEROS (1 al 10 en ES y EN) ---
+    # --- 5. RODEA Y DESCUBRE: NÚMEROS EN ESPAÑOL (Dalia) ---
     {"file": "num_1_es.mp3", "lang": "es", "text": "Rodea todos los números 1, Uno."},
-    {"file": "num_1_en.mp3", "lang": "en", "text": "Circle every number 1, One!"},
     {"file": "num_2_es.mp3", "lang": "es", "text": "Rodea todos los números 2, Dos."},
-    {"file": "num_2_en.mp3", "lang": "en", "text": "Circle every number 2, Two!"},
     {"file": "num_3_es.mp3", "lang": "es", "text": "Rodea todos los números 3, Tres."},
-    {"file": "num_3_en.mp3", "lang": "en", "text": "Circle every number 3, Three!"},
     {"file": "num_4_es.mp3", "lang": "es", "text": "Rodea todos los números 4, Cuatro."},
-    {"file": "num_4_en.mp3", "lang": "en", "text": "Circle every number 4, Four!"},
     {"file": "num_5_es.mp3", "lang": "es", "text": "Rodea todos los números 5, Cinco."},
-    {"file": "num_5_en.mp3", "lang": "en", "text": "Circle every number 5, Five!"},
     {"file": "num_6_es.mp3", "lang": "es", "text": "Rodea todos los números 6, Seis."},
-    {"file": "num_6_en.mp3", "lang": "en", "text": "Circle every number 6, Six!"},
     {"file": "num_7_es.mp3", "lang": "es", "text": "Rodea todos los números 7, Siete."},
-    {"file": "num_7_en.mp3", "lang": "en", "text": "Circle every number 7, Seven!"},
     {"file": "num_8_es.mp3", "lang": "es", "text": "Rodea todos los números 8, Ocho."},
-    {"file": "num_8_en.mp3", "lang": "en", "text": "Circle every number 8, Eight!"},
     {"file": "num_9_es.mp3", "lang": "es", "text": "Rodea todos los números 9, Nueve."},
-    {"file": "num_9_en.mp3", "lang": "en", "text": "Circle every number 9, Nine!"},
     {"file": "num_10_es.mp3", "lang": "es", "text": "Rodea todos los números 10, Diez."},
-    {"file": "num_10_en.mp3", "lang": "en", "text": "Circle every number 10, Ten!"},
 
-    # --- 6. RODEA Y DESCUBRE: NOCIONES ESPACIALES ---
+    # --- 6. RODEA Y DESCUBRE: NOCIONES ESPACIALES EN ESPAÑOL ---
     {
         "file": "espacial_detras_delante_es.mp3",
         "lang": "es",
         "text": "Rodea el ratón que está DETRÁS del queso y pinta el que está DELANTE",
-    },
-    {
-        "file": "espacial_detras_delante_en.mp3",
-        "lang": "en",
-        "text": "Circle the mouse BEHIND the cheese and paint the mouse IN FRONT of the cheese!",
     },
     {
         "file": "espacial_arriba_abajo_es.mp3",
@@ -262,32 +212,17 @@ ITEMS = [
         "text": "Rodea las mariquitas que están ARRIBA de las flores",
     },
     {
-        "file": "espacial_arriba_abajo_en.mp3",
-        "lang": "en",
-        "text": "Circle the ladybugs that are ABOVE the flowers!",
-    },
-    {
         "file": "espacial_grande_pequeno_es.mp3",
         "lang": "es",
         "text": "Marca con X el objeto GRANDE y rodea el objeto PEQUEÑO en cada pareja",
-    },
-    {
-        "file": "espacial_grande_pequeno_en.mp3",
-        "lang": "en",
-        "text": "Mark the BIG object with an X and circle the SMALL object!",
     },
     {
         "file": "espacial_lleno_vacio_es.mp3",
         "lang": "es",
         "text": "Rodea los recipientes LLENOS y marca con X los que están VACÍOS",
     },
-    {
-        "file": "espacial_lleno_vacio_en.mp3",
-        "lang": "en",
-        "text": "Circle the FULL containers and mark the EMPTY ones with an X!",
-    },
 
-    # Dactilopintura instrucciones (Adentro / Afuera)
+    # Dactilopintura instrucciones en español
     {
         "file": "dactilo_adentro_manzana_es.mp3",
         "lang": "es",
@@ -324,38 +259,8 @@ ITEMS = [
         "text": "Pon huellitas de pintura AFUERA de la figura: Caballito de Mar",
         "raw": "Pon huellitas de pintura AFUERA de la figura: Caballito de Mar 🐴🌊",
     },
-    {
-        "file": "dactilo_inside_apple_en.mp3",
-        "lang": "en",
-        "text": "Stamp colorful fingerprints INSIDE the Apple!",
-    },
-    {
-        "file": "dactilo_outside_apple_en.mp3",
-        "lang": "en",
-        "text": "Stamp colorful fingerprints OUTSIDE the Apple!",
-    },
-    {
-        "file": "dactilo_inside_grapes_en.mp3",
-        "lang": "en",
-        "text": "Stamp colorful fingerprints INSIDE the Grapes!",
-    },
-    {
-        "file": "dactilo_outside_grapes_en.mp3",
-        "lang": "en",
-        "text": "Stamp colorful fingerprints OUTSIDE the Grapes!",
-    },
-    {
-        "file": "dactilo_inside_seahorse_en.mp3",
-        "lang": "en",
-        "text": "Stamp colorful fingerprints INSIDE the Seahorse!",
-    },
-    {
-        "file": "dactilo_outside_seahorse_en.mp3",
-        "lang": "en",
-        "text": "Stamp colorful fingerprints OUTSIDE the Seahorse!",
-    },
 
-    # --- 7. PESTAÑA 3: ROMPECABEZAS (INSTRUCCIONES Y FELICITACIÓN) ---
+    # --- 7. PESTAÑA 3: ROMPECABEZAS (INSTRUCCIONES EN ESPAÑOL Y FELICITACIÓN) ---
     {
         "file": "pz_instruccion_numeros.mp3",
         "lang": "es",
@@ -369,7 +274,7 @@ ITEMS = [
     {
         "file": "pz_instruccion_colores.mp3",
         "lang": "es",
-        "text": "Color Matching Car Park: estaciona cada carrito en su estacionamiento del mismo color. Rojo, Azul, Amarillo, Verde, Naranja y Morado.",
+        "text": "Estacionamiento de carritos de colores: estaciona cada carrito en su lugar del mismo color. Rojo, Azul, Amarillo, Verde, Naranja y Morado.",
         "force": True
     },
     {
@@ -383,7 +288,7 @@ ITEMS = [
         "text": "¡Bravo! Completaste todo el rompecabezas sin ningún error.",
     },
 
-    # --- 8. ROMPECABEZAS: FICHAS INDIVIDUALES 100% SEPARADAS POR IDIOMA ---
+    # --- 8. VOCABULARIO BÁSICO (100% SEPARADO POR IDIOMA) ---
     # A) NÚMEROS EN ESPAÑOL (Dalia)
     {"file": "pz_num_1_es.mp3", "lang": "es", "text": "Uno"},
     {"file": "pz_num_2_es.mp3", "lang": "es", "text": "Dos"},
@@ -396,7 +301,7 @@ ITEMS = [
     {"file": "pz_num_9_es.mp3", "lang": "es", "text": "Nueve"},
     {"file": "pz_num_10_es.mp3", "lang": "es", "text": "Diez"},
 
-    # B) NÚMEROS EN INGLÉS NATIVO (Ana)
+    # B) NÚMEROS BÁSICOS EN INGLÉS NATIVO (AnaNeural)
     {"file": "pz_num_1_en.mp3", "lang": "en", "text": "One"},
     {"file": "pz_num_2_en.mp3", "lang": "en", "text": "Two"},
     {"file": "pz_num_3_en.mp3", "lang": "en", "text": "Three"},
@@ -408,17 +313,17 @@ ITEMS = [
     {"file": "pz_num_9_en.mp3", "lang": "en", "text": "Nine"},
     {"file": "pz_num_10_en.mp3", "lang": "en", "text": "Ten"},
 
-    # C) CUERPO HUMANO EN ESPAÑOL (Dalia)
+    # C) PARTES DEL CUERPO EN ESPAÑOL (Dalia)
     {"file": "pz_cuerpo_cabeza_es.mp3", "lang": "es", "text": "Cabeza", "raw": "1. Cabeza"},
     {"file": "pz_cuerpo_tronco_es.mp3", "lang": "es", "text": "Tronco", "raw": "2. Tronco"},
     {"file": "pz_cuerpo_brazos_es.mp3", "lang": "es", "text": "Brazos y Manos", "raw": "3. Brazos y Manos"},
     {"file": "pz_cuerpo_piernas_es.mp3", "lang": "es", "text": "Piernas y Pies", "raw": "4. Piernas y Pies"},
 
-    # D) CUERPO HUMANO EN INGLÉS NATIVO (Ana)
+    # D) PARTES DEL CUERPO BÁSICAS EN INGLÉS NATIVO (AnaNeural)
     {"file": "pz_cuerpo_head_en.mp3", "lang": "en", "text": "Head"},
     {"file": "pz_cuerpo_trunk_en.mp3", "lang": "en", "text": "Trunk"},
-    {"file": "pz_cuerpo_arms_en.mp3", "lang": "en", "text": "Arms and Hands", "raw": "Arms & Hands"},
-    {"file": "pz_cuerpo_legs_en.mp3", "lang": "en", "text": "Legs and Feet", "raw": "Legs & Feet"},
+    {"file": "pz_cuerpo_arms_en.mp3", "lang": "en", "text": "Arms and hands", "raw": "Arms and Hands"},
+    {"file": "pz_cuerpo_legs_en.mp3", "lang": "en", "text": "Legs and feet", "raw": "Legs and Feet"},
 
     # E) COLORES EN ESPAÑOL (Dalia)
     {"file": "pz_color_red_es.mp3", "lang": "es", "text": "Rojo"},
@@ -427,14 +332,22 @@ ITEMS = [
     {"file": "pz_color_green_es.mp3", "lang": "es", "text": "Verde"},
     {"file": "pz_color_orange_es.mp3", "lang": "es", "text": "Naranja"},
     {"file": "pz_color_violet_es.mp3", "lang": "es", "text": "Morado"},
+    {"file": "pz_color_purple_es.mp3", "lang": "es", "text": "Púrpura"},
+    {"file": "pz_color_pink_es.mp3", "lang": "es", "text": "Rosa"},
+    {"file": "pz_color_white_es.mp3", "lang": "es", "text": "Blanco"},
+    {"file": "pz_color_black_es.mp3", "lang": "es", "text": "Negro"},
 
-    # F) COLORES EN INGLÉS NATIVO (Ana)
+    # F) COLORES BÁSICOS EN INGLÉS NATIVO (AnaNeural)
     {"file": "pz_color_red_en.mp3", "lang": "en", "text": "Red"},
     {"file": "pz_color_blue_en.mp3", "lang": "en", "text": "Blue"},
     {"file": "pz_color_yellow_en.mp3", "lang": "en", "text": "Yellow"},
     {"file": "pz_color_green_en.mp3", "lang": "en", "text": "Green"},
     {"file": "pz_color_orange_en.mp3", "lang": "en", "text": "Orange"},
     {"file": "pz_color_violet_en.mp3", "lang": "en", "text": "Violet"},
+    {"file": "pz_color_purple_en.mp3", "lang": "en", "text": "Purple"},
+    {"file": "pz_color_pink_en.mp3", "lang": "en", "text": "Pink"},
+    {"file": "pz_color_white_en.mp3", "lang": "en", "text": "White"},
+    {"file": "pz_color_black_en.mp3", "lang": "en", "text": "Black"},
 
     # G) FIGURAS GEOMÉTRICAS EN ESPAÑOL (Dalia)
     {"file": "pz_fig_circulo_es.mp3", "lang": "es", "text": "Círculo"},
@@ -456,17 +369,21 @@ ITEMS = [
     {"file": "pz_fig_star_en.mp3", "lang": "en", "text": "Star"},
     {"file": "pz_fig_heart_en.mp3", "lang": "en", "text": "Heart"},
 
-    # I) LETRAS EN INGLÉS NATIVO (Ana) - Pronunciación pura de la letra
+    # I) VOCALES Y LETRAS BÁSICAS EN INGLÉS NATIVO (AnaNeural)
+    # A, E, I, O, U, B, C, D, F, M, P, S, T
     {"file": "letra_a_sola_en.mp3", "lang": "en", "text": "A"},
-    {"file": "letra_b_sola_en.mp3", "lang": "en", "text": "B"},
-    {"file": "letra_c_sola_en.mp3", "lang": "en", "text": "C"},
     {"file": "letra_e_sola_en.mp3", "lang": "en", "text": "E"},
     {"file": "letra_i_sola_en.mp3", "lang": "en", "text": "I"},
-    {"file": "letra_m_sola_en.mp3", "lang": "en", "text": "M"},
     {"file": "letra_o_sola_en.mp3", "lang": "en", "text": "O"},
+    {"file": "letra_u_sola_en.mp3", "lang": "en", "text": "U"},
+    {"file": "letra_b_sola_en.mp3", "lang": "en", "text": "B"},
+    {"file": "letra_c_sola_en.mp3", "lang": "en", "text": "C"},
+    {"file": "letra_d_sola_en.mp3", "lang": "en", "text": "D"},
+    {"file": "letra_f_sola_en.mp3", "lang": "en", "text": "F"},
+    {"file": "letra_m_sola_en.mp3", "lang": "en", "text": "M"},
     {"file": "letra_p_sola_en.mp3", "lang": "en", "text": "P"},
     {"file": "letra_s_sola_en.mp3", "lang": "en", "text": "S"},
-    {"file": "letra_u_sola_en.mp3", "lang": "en", "text": "U"},
+    {"file": "letra_t_sola_en.mp3", "lang": "en", "text": "T"},
 
     # --- 9. PESTAÑA 4: MANOS A LA OBRA EN CASA (6 TÉCNICAS FÍSICAS + FELICITACIÓN) ---
     {
@@ -547,7 +464,7 @@ async def main():
 
     force_all = "--force" in sys.argv
 
-    # Eliminar archivos obsoletos que mezclaban español e inglés
+    # Eliminar archivos obsoletos que tenían instrucciones largas en inglés o híbridos
     obsoletos = [
         "pz_num_1.mp3", "pz_num_2.mp3", "pz_num_3.mp3", "pz_num_4.mp3", "pz_num_5.mp3",
         "pz_num_6.mp3", "pz_num_7.mp3", "pz_num_8.mp3", "pz_num_9.mp3", "pz_num_10.mp3",
@@ -555,14 +472,24 @@ async def main():
         "pz_color_red.mp3", "pz_color_blue.mp3", "pz_color_yellow.mp3", "pz_color_green.mp3",
         "pz_color_orange.mp3", "pz_color_violet.mp3",
         "pz_fig_circulo.mp3", "pz_fig_cuadrado.mp3", "pz_fig_triangulo.mp3", "pz_fig_rectangulo.mp3",
-        "pz_fig_ovalo.mp3", "pz_fig_rombo.mp3", "pz_fig_estrella.mp3", "pz_fig_corazon.mp3"
+        "pz_fig_ovalo.mp3", "pz_fig_rombo.mp3", "pz_fig_estrella.mp3", "pz_fig_corazon.mp3",
+        # Eliminación de instrucciones largas en inglés
+        "letra_a_en.mp3", "letra_e_en.mp3", "letra_i_en.mp3", "letra_o_en.mp3", "letra_u_en.mp3",
+        "letra_b_en.mp3", "letra_c_en.mp3", "letra_m_en.mp3", "letra_p_en.mp3", "letra_s_en.mp3",
+        "num_1_en.mp3", "num_2_en.mp3", "num_3_en.mp3", "num_4_en.mp3", "num_5_en.mp3",
+        "num_6_en.mp3", "num_7_en.mp3", "num_8_en.mp3", "num_9_en.mp3", "num_10_en.mp3",
+        "espacial_detras_delante_en.mp3", "espacial_arriba_abajo_en.mp3",
+        "espacial_grande_pequeno_en.mp3", "espacial_lleno_vacio_en.mp3",
+        "dactilo_inside_apple_en.mp3", "dactilo_outside_apple_en.mp3",
+        "dactilo_inside_grapes_en.mp3", "dactilo_outside_grapes_en.mp3",
+        "dactilo_inside_seahorse_en.mp3", "dactilo_outside_seahorse_en.mp3"
     ]
     for obs in obsoletos:
         p = os.path.join(AUDIOS_DIR, obs)
         if os.path.exists(p):
             try:
                 os.remove(p)
-                print(f"Eliminado archivo obsoleto híbrido: {obs}")
+                print(f"Eliminado archivo obsoleto: {obs}")
             except Exception as e:
                 print(f"No se pudo eliminar {obs}: {e}")
 
@@ -587,41 +514,53 @@ async def main():
 
         mapa[clean_key.lower()] = filename
 
-    # Aliases adicionales para piezas de puzzle (bilingües y números directos)
+    # Aliases adicionales para piezas de puzzle, números y vocabulario básico en inglés
     aliases = {
-        # Números directos
+        # Números directos en español
         "1": "pz_num_1_es.mp3", "2": "pz_num_2_es.mp3", "3": "pz_num_3_es.mp3", "4": "pz_num_4_es.mp3", "5": "pz_num_5_es.mp3",
         "6": "pz_num_6_es.mp3", "7": "pz_num_7_es.mp3", "8": "pz_num_8_es.mp3", "9": "pz_num_9_es.mp3", "10": "pz_num_10_es.mp3",
+        # Números directos en inglés
+        "One": "pz_num_1_en.mp3", "Two": "pz_num_2_en.mp3", "Three": "pz_num_3_en.mp3", "Four": "pz_num_4_en.mp3", "Five": "pz_num_5_en.mp3",
+        "Six": "pz_num_6_en.mp3", "Seven": "pz_num_7_en.mp3", "Eight": "pz_num_8_en.mp3", "Nine": "pz_num_9_en.mp3", "Ten": "pz_num_10_en.mp3",
         # Partes del cuerpo
         "1. Cabeza": "pz_cuerpo_cabeza_es.mp3",
         "2. Tronco": "pz_cuerpo_tronco_es.mp3",
         "3. Brazos y Manos": "pz_cuerpo_brazos_es.mp3",
         "4. Piernas y Pies": "pz_cuerpo_piernas_es.mp3",
+        "Head": "pz_cuerpo_head_en.mp3",
         "Trunk": "pz_cuerpo_trunk_en.mp3",
         "Trunk / Torso": "pz_cuerpo_trunk_en.mp3",
+        "Arms and hands": "pz_cuerpo_arms_en.mp3",
         "Arms and Hands": "pz_cuerpo_arms_en.mp3",
         "Arms & Hands": "pz_cuerpo_arms_en.mp3",
+        "Legs and feet": "pz_cuerpo_legs_en.mp3",
         "Legs and Feet": "pz_cuerpo_legs_en.mp3",
         "Legs & Feet": "pz_cuerpo_legs_en.mp3",
-        "Head": "pz_cuerpo_head_en.mp3",
         # Colores en inglés
         "Red": "pz_color_red_en.mp3",
         "Blue": "pz_color_blue_en.mp3",
         "Yellow": "pz_color_yellow_en.mp3",
         "Green": "pz_color_green_en.mp3",
         "Orange": "pz_color_orange_en.mp3",
+        "Purple": "pz_color_purple_en.mp3",
         "Violet": "pz_color_violet_en.mp3",
-        # Letras aisladas en inglés
+        "Pink": "pz_color_pink_en.mp3",
+        "White": "pz_color_white_en.mp3",
+        "Black": "pz_color_black_en.mp3",
+        # Letras aisladas en inglés (A, E, I, O, U, B, C, D, F, M, P, S, T)
         "A": "letra_a_sola_en.mp3",
-        "B": "letra_b_sola_en.mp3",
-        "C": "letra_c_sola_en.mp3",
         "E": "letra_e_sola_en.mp3",
         "I": "letra_i_sola_en.mp3",
-        "M": "letra_m_sola_en.mp3",
         "O": "letra_o_sola_en.mp3",
+        "U": "letra_u_sola_en.mp3",
+        "B": "letra_b_sola_en.mp3",
+        "C": "letra_c_sola_en.mp3",
+        "D": "letra_d_sola_en.mp3",
+        "F": "letra_f_sola_en.mp3",
+        "M": "letra_m_sola_en.mp3",
         "P": "letra_p_sola_en.mp3",
         "S": "letra_s_sola_en.mp3",
-        "U": "letra_u_sola_en.mp3"
+        "T": "letra_t_sola_en.mp3"
     }
     for k, v in aliases.items():
         mapa[k] = v

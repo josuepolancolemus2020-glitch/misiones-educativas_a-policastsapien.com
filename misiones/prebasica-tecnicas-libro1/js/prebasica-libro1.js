@@ -19,6 +19,18 @@
   };
 
   /* --------------------------------------------------------------------------
+     HELPER: ESCUELA / INSTITUCIÓN ACTIVA
+     -------------------------------------------------------------------------- */
+  function obtenerSaludoEscuela() {
+    try {
+      var esc = localStorage.getItem('metas_prebasica_institucion');
+      if (esc && esc.trim()) return esc.trim();
+    } catch (e) {}
+    return '';
+  }
+  window.obtenerSaludoEscuela = obtenerSaludoEscuela;
+
+  /* --------------------------------------------------------------------------
      CARGA Y GUARDADO DE PROGRESO LOCAL
      -------------------------------------------------------------------------- */
   function loadState() {
@@ -359,6 +371,14 @@
         window.hablarTexto(claveEn, 'en-US', triggerBtn);
       }, 220);
     });
+  };
+
+  window.hablarAvisoAdulto = function (btn) {
+    var esc = obtenerSaludoEscuela();
+    var texto = esc
+      ? ('¡Atención querida familia de ' + esc + '! Uso exclusivo con apoyo de un adulto. Esta sección de Prebásica está diseñada para que papá, mamá o encargado trabajen sentados junto al niño. Nunca deje al niño solo con el teléfono o la tablet.')
+      : 'Atención familia: Uso exclusivo con apoyo de un adulto. Esta sección de Prebásica está diseñada para que el padre, madre o encargado trabaje sentado junto al niño. Nunca deje al niño solo con el teléfono o la tablet.';
+    window.hablarTexto(texto, 'es-ES', btn);
   };
 
   /* --------------------------------------------------------------------------
@@ -728,7 +748,9 @@
         if (statusMsg) {
           statusMsg.innerHTML = '🎉 <strong>¡Felicidades! ✓</strong> Completaste el trazo hasta la meta con mucho control.';
         }
-        window.hablarTexto('¡Muy bien! Llegaste a la meta. ¡Excelente trazo!', 'es-ES');
+        var esc = obtenerSaludoEscuela();
+        var fel = esc ? ('¡Excelente trabajo en familia con ' + esc + '! Llegaste a la meta con un gran trazo.') : '¡Muy bien! Llegaste a la meta. ¡Excelente trazo!';
+        window.hablarTexto(fel, 'es-ES');
         renderTraceSelector();
       }
     }
@@ -878,23 +900,30 @@
 
   window.leerRetoTrazoActual = function (btn) {
     var ch = TRACE_CHALLENGES[traceState.currentIdx];
-    if (ch) window.hablarTexto(ch.ttsText, 'es-ES', btn);
+    if (ch) {
+      var esc = obtenerSaludoEscuela();
+      var texto = esc ? ('¡Familia de ' + esc + '! ' + ch.ttsText) : ch.ttsText;
+      window.hablarTexto(texto, 'es-ES', btn);
+    }
   };
 
   /* ==========================================================================
      PESTAÑA 2: RODEA Y DESCUBRE (LETRAS, NÚMEROS Y NOCIONES ESPACIALES)
      ========================================================================== */
   var LETRAS_DATA = [
-    { id: 'A', label: 'Vocal A a', esWord: 'Abeja', enWord: 'Apple', emoji: '🐝', esTTS: 'Rodea todas las tarjetas con la vocal A, como Abeja.', enTTS: 'Circle all the letter A cards! A is for Apple.' },
-    { id: 'E', label: 'Vocal E e', esWord: 'Elefante', enWord: 'Elephant', emoji: '🐘', esTTS: 'Rodea todas las tarjetas con la vocal E, como Elefante.', enTTS: 'Circle all the letter E cards! E is for Elephant.' },
-    { id: 'I', label: 'Vocal I i', esWord: 'Iguana', enWord: 'Igloo', emoji: '🦎', esTTS: 'Rodea todas las tarjetas con la vocal I, como Iguana.', enTTS: 'Circle all the letter I cards! I is for Igloo.' },
-    { id: 'O', label: 'Vocal O o', esWord: 'Oso', enWord: 'Octopus', emoji: '🐻', esTTS: 'Rodea todas las tarjetas con la vocal O, como Oso.', enTTS: 'Circle all the letter O cards! O is for Octopus.' },
-    { id: 'U', label: 'Vocal U u', esWord: 'Uvas', enWord: 'Umbrella', emoji: '🍇', esTTS: 'Rodea todas las tarjetas con la vocal U, como Uvas.', enTTS: 'Circle all the letter U cards! U is for Umbrella.' },
-    { id: 'B', label: 'ABC · B b', esWord: 'Barco', enWord: 'Ball', emoji: '⛵', esTTS: 'Rodea todas las letras B, como Barco.', enTTS: 'Circle every letter B! B is for Ball.' },
-    { id: 'C', label: 'ABC · C c', esWord: 'Casa', enWord: 'Cat', emoji: '🐱', esTTS: 'Rodea todas las letras C, como Casa.', enTTS: 'Circle every letter C! C is for Cat.' },
-    { id: 'M', label: 'ABC · M m', esWord: 'Mamá', enWord: 'Moon', emoji: '🌙', esTTS: 'Rodea todas las letras M, como Mamá.', enTTS: 'Circle every letter M! M is for Moon.' },
-    { id: 'P', label: 'ABC · P p', esWord: 'Pato', enWord: 'Pig', emoji: '🦆', esTTS: 'Rodea todas las letras P, como Pato.', enTTS: 'Circle every letter P! P is for Pig.' },
-    { id: 'S', label: 'ABC · S s', esWord: 'Sol', enWord: 'Star', emoji: '☀️', esTTS: 'Rodea todas las letras S, como Sol.', enTTS: 'Circle every letter S! S is for Star.' }
+    { id: 'A', label: 'Vocal A a', esWord: 'Abeja', enWord: 'Apple', emoji: '🐝', esTTS: 'Rodea todas las tarjetas con la vocal A, como Abeja.' },
+    { id: 'E', label: 'Vocal E e', esWord: 'Elefante', enWord: 'Elephant', emoji: '🐘', esTTS: 'Rodea todas las tarjetas con la vocal E, como Elefante.' },
+    { id: 'I', label: 'Vocal I i', esWord: 'Iguana', enWord: 'Igloo', emoji: '🦎', esTTS: 'Rodea todas las tarjetas con la vocal I, como Iguana.' },
+    { id: 'O', label: 'Vocal O o', esWord: 'Oso', enWord: 'Octopus', emoji: '🐻', esTTS: 'Rodea todas las tarjetas con la vocal O, como Oso.' },
+    { id: 'U', label: 'Vocal U u', esWord: 'Uvas', enWord: 'Umbrella', emoji: '🍇', esTTS: 'Rodea todas las tarjetas con la vocal U, como Uvas.' },
+    { id: 'B', label: 'ABC · B b', esWord: 'Barco', enWord: 'Ball', emoji: '⛵', esTTS: 'Rodea todas las letras B, como Barco.' },
+    { id: 'C', label: 'ABC · C c', esWord: 'Casa', enWord: 'Cat', emoji: '🐱', esTTS: 'Rodea todas las letras C, como Casa.' },
+    { id: 'D', label: 'ABC · D d', esWord: 'Dado', enWord: 'Dog', emoji: '🎲', esTTS: 'Rodea todas las letras D, como Dado.' },
+    { id: 'F', label: 'ABC · F f', esWord: 'Foca', enWord: 'Fish', emoji: '🦭', esTTS: 'Rodea todas las letras F, como Foca.' },
+    { id: 'M', label: 'ABC · M m', esWord: 'Mamá', enWord: 'Moon', emoji: '🌙', esTTS: 'Rodea todas las letras M, como Mamá.' },
+    { id: 'P', label: 'ABC · P p', esWord: 'Pato', enWord: 'Pig', emoji: '🦆', esTTS: 'Rodea todas las letras P, como Pato.' },
+    { id: 'S', label: 'ABC · S s', esWord: 'Sol', enWord: 'Star', emoji: '☀️', esTTS: 'Rodea todas las letras S, como Sol.' },
+    { id: 'T', label: 'ABC · T t', esWord: 'Tortuga', enWord: 'Tiger', emoji: '🐢', esTTS: 'Rodea todas las letras T, como Tortuga.' }
   ];
 
   var NUMEROS_DATA = [
@@ -915,7 +944,6 @@
       id: 'detras_delante',
       label: '🧀 Detrás / Delante',
       promptEs: 'Rodea el ratón que está DETRÁS del queso y pinta el que está DELANTE',
-      promptEn: 'Circle the mouse BEHIND the cheese and paint the mouse IN FRONT of the cheese!',
       items: [
         { id: 'r1', main: '🧀🐭', title: 'Ratón DETRÁS del queso', sub: 'Asomándose por detrás (Behind)', correct: true, markType: 'circled' },
         { id: 'r2', main: '🐭🧀', title: 'Ratón DELANTE del queso', sub: 'Frente al queso (In front) · ¡Píntalo!', correct: true, markType: 'painted' },
@@ -927,7 +955,6 @@
       id: 'arriba_abajo',
       label: '🐞 Arriba de las flores',
       promptEs: 'Rodea las mariquitas que están ARRIBA de las flores',
-      promptEn: 'Circle the ladybugs that are ABOVE the flowers!',
       items: [
         { id: 'm1', main: '🐞⬆️🌻', title: 'Mariquita ARRIBA de la flor', sub: 'Volando arriba (Above)', correct: true, markType: 'circled' },
         { id: 'm2', main: '🌻⬇️🐞', title: 'Mariquita ABAJO en la tierra', sub: 'Abajo en el tallo (Below)', correct: false },
@@ -941,7 +968,6 @@
       id: 'grande_pequeno',
       label: '🐘 Grande / Pequeño',
       promptEs: 'Marca con X el objeto GRANDE y rodea el objeto PEQUEÑO en cada pareja',
-      promptEn: 'Mark the BIG object with an X and circle the SMALL object!',
       items: [
         { id: 'gp1', main: '🐘', sizeStyle: 'font-size:3.1rem;', title: 'Elefante GRANDE (Big)', sub: '¡Márcalo con ❌!', correct: true, markType: 'crossed' },
         { id: 'gp2', main: '🐘', sizeStyle: 'font-size:1.35rem;', title: 'Elefantito PEQUEÑO (Small)', sub: '¡Rodéalo con ⭕!', correct: true, markType: 'circled' },
@@ -953,7 +979,6 @@
       id: 'lleno_vacio',
       label: '🧺 Lleno / Vacío',
       promptEs: 'Rodea los recipientes LLENOS y marca con X los que están VACÍOS',
-      promptEn: 'Circle the FULL containers and mark the EMPTY ones with an X!',
       items: [
         { id: 'lv1', main: '🧺🍎🍊🍇', title: 'Canasta LLENA de frutas', sub: 'Full · ¡Rodéala con ⭕!', correct: true, markType: 'circled' },
         { id: 'lv2', main: '🧺', title: 'Canasta VACÍA', sub: 'Empty · ¡Márcala con ❌!', correct: true, markType: 'crossed' },
@@ -964,8 +989,7 @@
     {
       id: 'dactilo',
       label: '🎨 Dactilopintura Adentro / Afuera',
-      promptEs: 'Dactilopintura digital: pon huellitas de pintura ADENTRO o AFUERA de la figura (manzana, uvas, caballito de mar)',
-      promptEn: 'Finger painting: stamp colorful fingerprints INSIDE or OUTSIDE the figure!'
+      promptEs: 'Dactilopintura digital: pon huellitas de pintura ADENTRO o AFUERA de la figura (manzana, uvas, caballito de mar)'
     }
   ];
 
@@ -1080,7 +1104,7 @@
     if (rodeaState.category === 'letras') {
       var targetL = LETRAS_DATA.find(function (l) { return l.id === rodeaState.targetId; }) || LETRAS_DATA[0];
       if (promptEs) promptEs.textContent = '⭕ Rodea todas las letras «' + targetL.id + '» (' + targetL.esWord + ')';
-      if (promptEn) promptEn.textContent = '🇺🇸 Circle all the letter ' + targetL.id + ' cards! (' + targetL.id + ' is for ' + targetL.enWord + ')';
+      if (promptEn) promptEn.textContent = '🇺🇸 Pronunciación en inglés: ' + targetL.id + ' (toca el botón English para escucharla)';
 
       var othersL = LETRAS_DATA.filter(function (l) { return l.id !== targetL.id; });
       for (var i = 0; i < 4; i++) {
@@ -1089,6 +1113,7 @@
           main: (i % 2 === 0 ? targetL.id : targetL.id.toLowerCase()) + ' ' + targetL.emoji,
           title: targetL.id + ' · ' + targetL.esWord,
           sub: targetL.enWord,
+          enVocab: targetL.id,
           correct: true,
           markType: 'circled',
           done: false
@@ -1100,6 +1125,7 @@
           main: o.id + ' ' + o.emoji,
           title: o.id + ' · ' + o.esWord,
           sub: o.enWord,
+          enVocab: o.id,
           correct: false,
           done: false
         });
@@ -1108,7 +1134,7 @@
     } else if (rodeaState.category === 'numeros') {
       var targetN = NUMEROS_DATA.find(function (n) { return n.id === rodeaState.targetId; }) || NUMEROS_DATA[0];
       if (promptEs) promptEs.textContent = '⭕ Rodea todos los números «' + targetN.id + '» (' + targetN.es + ')';
-      if (promptEn) promptEn.textContent = '🇺🇸 Circle every number ' + targetN.id + ' (' + targetN.en + ')!';
+      if (promptEn) promptEn.textContent = '🇺🇸 Pronunciación en inglés: ' + targetN.en + ' (toca el botón English para escucharla)';
 
       var othersN = NUMEROS_DATA.filter(function (n) { return n.id !== targetN.id; });
       for (var k = 0; k < 4; k++) {
@@ -1117,6 +1143,7 @@
           main: targetN.id,
           title: targetN.es + ' / ' + targetN.en,
           sub: targetN.emoji,
+          enVocab: targetN.en,
           correct: true,
           markType: 'circled',
           done: false
@@ -1128,6 +1155,7 @@
           main: o.id,
           title: o.es + ' / ' + o.en,
           sub: o.emoji,
+          enVocab: o.en,
           correct: false,
           done: false
         });
@@ -1136,7 +1164,7 @@
     } else {
       var esp = ESPACIAL_DATA.find(function (e) { return e.id === rodeaState.targetId; }) || ESPACIAL_DATA[0];
       if (promptEs) promptEs.textContent = '🧭 ' + esp.promptEs;
-      if (promptEn) promptEn.textContent = '🇺🇸 ' + esp.promptEn;
+      if (promptEn) promptEn.textContent = '🇺🇸 Nociones espaciales básicas en familia';
       cards = esp.items.map(function (it, idx) {
         return {
           uid: 'esp_' + idx,
@@ -1174,10 +1202,17 @@
       div.setAttribute('data-idx', String(index));
       div.setAttribute('role', 'button');
       div.setAttribute('tabindex', '0');
+
+      var enBtnHtml = '';
+      if (card.enVocab) {
+        enBtnHtml = '<button type="button" class="btn-card-audio-en" onclick="event.stopPropagation(); hablarTexto(\'' + card.enVocab + '\', \'en-US\', this);" title="Escuchar en inglés">🇺🇸 ' + card.enVocab + '</button>';
+      }
+
       div.innerHTML =
         '<div class="rodea-item-main" style="' + (card.sizeStyle || '') + '">' + card.main + '</div>' +
         '<div style="font-family:\'Fredoka\',sans-serif;font-size:0.92rem;">' + card.title + '</div>' +
-        '<div class="rodea-item-sub">' + card.sub + '</div>';
+        '<div class="rodea-item-sub">' + card.sub + '</div>' +
+        enBtnHtml;
       div.onclick = function () {
         activateRodeaCard(index, div);
       };
@@ -1199,6 +1234,12 @@
       if (domEl) domEl.classList.add(card.markType || 'circled');
       sonarAcierto();
 
+      if (card.enVocab) {
+        setTimeout(function () {
+          window.hablarTexto(card.enVocab, 'en-US');
+        }, 120);
+      }
+
       var statusBanner = document.getElementById('rodeaStatusBanner');
       var statusMsg = document.getElementById('rodeaStatusMsg');
       if (rodeaState.foundCount >= rodeaState.totalTargets) {
@@ -1212,7 +1253,9 @@
           state.completedRodea[key] = true;
           addXP(15, 's-rodea');
         }
-        window.hablarTexto('¡Muy bien hecho! Completaste todo el tablero.', 'es-ES');
+        var esc = obtenerSaludoEscuela();
+        var fel = esc ? ('¡Excelente trabajo en familia con ' + esc + '! Completaste todo el tablero.') : '¡Muy bien hecho! Completaste todo el tablero.';
+        window.hablarTexto(fel, 'es-ES');
       } else if (statusMsg) {
         statusMsg.textContent = '¡Muy bien! ✓ Llevas ' + rodeaState.foundCount + ' de ' + rodeaState.totalTargets + '. ¡Sigue buscando!';
       }
@@ -1353,38 +1396,42 @@
   };
 
   window.hablarConsignaRodea = function (lang, btn) {
+    var esc = obtenerSaludoEscuela();
+    var prefijo = esc ? ('¡Familia de ' + esc + '! ') : '';
     if (rodeaState.category === 'espacial' && rodeaState.targetId === 'dactilo') {
-      if (lang === 'en') {
-        window.hablarTexto(
-          dactiloState.zone === 'adentro'
-            ? 'Stamp colorful fingerprints INSIDE the ' + dactiloState.figureEn + '!'
-            : 'Stamp colorful fingerprints OUTSIDE the ' + dactiloState.figureEn + '!',
-          'en-US',
-          btn
-        );
-      } else {
-        window.hablarTexto(
-          'Pon huellitas de pintura ' + dactiloState.zone.toUpperCase() + ' de la figura: ' + dactiloState.figureEs,
-          'es-ES',
-          btn
-        );
-      }
+      window.hablarTexto(
+        prefijo + 'Pon huellitas de pintura ' + dactiloState.zone.toUpperCase() + ' de la figura: ' + dactiloState.figureEs + '.',
+        'es-ES',
+        btn
+      );
       return;
     }
 
     if (rodeaState.category === 'letras') {
       var l = LETRAS_DATA.find(function (x) { return x.id === rodeaState.targetId; }) || LETRAS_DATA[0];
-      window.hablarTexto(lang === 'en' ? l.enTTS : l.esTTS, lang === 'en' ? 'en-US' : 'es-ES', btn);
+      window.hablarTexto(prefijo + l.esTTS, 'es-ES', btn);
     } else if (rodeaState.category === 'numeros') {
       var n = NUMEROS_DATA.find(function (x) { return x.id === rodeaState.targetId; }) || NUMEROS_DATA[0];
-      if (lang === 'en') {
-        window.hablarTexto('Circle every number ' + n.id + ', ' + n.en + '!', 'en-US', btn);
-      } else {
-        window.hablarTexto('Rodea todos los números ' + n.id + ', ' + n.es + '.', 'es-ES', btn);
-      }
+      window.hablarTexto(prefijo + 'Rodea todos los números ' + n.id + ', ' + n.es + '.', 'es-ES', btn);
     } else {
       var esp = ESPACIAL_DATA.find(function (x) { return x.id === rodeaState.targetId; }) || ESPACIAL_DATA[0];
-      window.hablarTexto(lang === 'en' ? esp.promptEn : esp.promptEs, lang === 'en' ? 'en-US' : 'es-ES', btn);
+      window.hablarTexto(prefijo + esp.promptEs + '.', 'es-ES', btn);
+    }
+  };
+
+  window.hablarVocabularioInglesRodea = function (btn) {
+    if (rodeaState.category === 'espacial' && rodeaState.targetId === 'dactilo') {
+      window.hablarTexto(dactiloState.figureEn || 'Apple', 'en-US', btn);
+      return;
+    }
+    if (rodeaState.category === 'letras') {
+      var l = LETRAS_DATA.find(function (x) { return x.id === rodeaState.targetId; }) || LETRAS_DATA[0];
+      window.hablarTexto(l.id, 'en-US', btn);
+    } else if (rodeaState.category === 'numeros') {
+      var n = NUMEROS_DATA.find(function (x) { return x.id === rodeaState.targetId; }) || NUMEROS_DATA[0];
+      window.hablarTexto(n.en, 'en-US', btn);
+    } else {
+      window.hablarTexto('Apple', 'en-US', btn);
     }
   };
 
@@ -1495,8 +1542,7 @@
         dactiloState.zone.toUpperCase() + ' de la figura (' + info.es + ')';
     }
     if (promptEn) {
-      promptEn.textContent = '🇺🇸 Finger painting: Stamp 10 colorful fingerprints ' +
-        (dactiloState.zone === 'adentro' ? 'INSIDE' : 'OUTSIDE') + ' the ' + info.en + '!';
+      promptEn.textContent = '🇺🇸 Vocabulario en inglés: ' + info.en + ' (toca el botón English para escucharlo)';
     }
     updateDactiloStatus();
   }
@@ -1515,7 +1561,9 @@
         state.completedRodea[key] = true;
         sonarCelebracion();
         addXP(15, 's-rodea');
-        window.hablarTexto('¡Qué linda pintura con tus deditos! Lo hiciste excelente.', 'es-ES');
+        var esc = obtenerSaludoEscuela();
+        var fel = esc ? ('¡Excelente trabajo en familia con ' + esc + '! Qué linda pintura con tus deditos.') : '¡Qué linda pintura con tus deditos! Lo hiciste excelente.';
+        window.hablarTexto(fel, 'es-ES');
       }
     } else {
       if (statusBanner) statusBanner.classList.remove('celebrate');
@@ -1738,14 +1786,16 @@
   };
 
   window.leerInstruccionRompecabezas = function (btn) {
+    var esc = obtenerSaludoEscuela();
+    var prefijo = esc ? ('¡Familia de ' + esc + '! ') : '';
     if (puzzleState.currentGame === 'numeros') {
-      window.hablarTexto('Rompecabezas de los números: toca cada ficha numérica y colócala en su silueta contando los dibujos en orden.', 'es-ES', btn);
+      window.hablarTexto(prefijo + 'Rompecabezas de los números: toca cada ficha numérica y colócala en su silueta contando los dibujos en orden.', 'es-ES', btn);
     } else if (puzzleState.currentGame === 'cuerpo') {
-      window.hablarTexto('Rompecabezas del cuerpo humano, página cincuenta y nueve: coloca en orden vertical la Cabeza, el Tronco, los Brazos y las Piernas.', 'es-ES', btn);
+      window.hablarTexto(prefijo + 'Rompecabezas del cuerpo humano, página cincuenta y nueve: coloca en orden vertical la Cabeza, el Tronco, los Brazos y las Piernas.', 'es-ES', btn);
     } else if (puzzleState.carSubMode === 'colores') {
-      window.hablarTexto('Color Matching Car Park: estaciona cada carrito en su estacionamiento del mismo color. Rojo, Azul, Amarillo, Verde, Naranja y Morado.', 'es-ES', btn);
+      window.hablarTexto(prefijo + 'Estaciona cada carrito en su estacionamiento del mismo color. Rojo, Azul, Amarillo, Verde, Naranja y Morado.', 'es-ES', btn);
     } else {
-      window.hablarTexto('Rompecabezas de figuras geométricas: coloca el círculo, cuadrado, triángulo, rectángulo, óvalo, rombo, estrella y corazón en su silueta.', 'es-ES', btn);
+      window.hablarTexto(prefijo + 'Rompecabezas de figuras geométricas: coloca cada figura en su silueta.', 'es-ES', btn);
     }
   };
 
@@ -1785,7 +1835,8 @@
         '<button type="button" class="puzzle-piece' + (placed ? ' placed' : '') + (selected ? ' selected' : '') + '" ' +
           'draggable="' + (!placed) + '" data-pid="' + n.id + '" onclick="seleccionarPiezaPuzzle(\'' + n.id + '\', this)">' +
           '<span style="font-size:1.75rem;font-weight:700;color:var(--pri);">' + n.id + '</span>' +
-          '<span style="font-size:0.82rem;">' + n.es + ' · ' + n.en + '</span>' +
+          '<span style="font-size:0.82rem;">' + n.es + '</span>' +
+          '<span class="btn-card-audio-en" onclick="event.stopPropagation(); hablarTexto(\'' + n.en + '\', \'en-US\', this);" title="Pronunciación en inglés">🇺🇸 ' + n.en + '</span>' +
         '</button>';
     });
     html += '</div><div class="slots-grid">';
@@ -1837,10 +1888,11 @@
           'style="flex-direction:row;justify-content:flex-start;gap:0.8rem;width:100%;" ' +
           'draggable="' + (!placed) + '" data-pid="' + bp.id + '" onclick="seleccionarPiezaPuzzle(\'' + bp.id + '\', this)">' +
           bp.svg +
-          '<div style="text-align:left;">' +
-            '<div style="font-size:1.05rem;font-weight:700;">' + bp.es + ' (' + bp.en + ')</div>' +
+          '<div style="text-align:left;flex:1;">' +
+            '<div style="font-size:1.05rem;font-weight:700;">' + bp.es + '</div>' +
             '<div style="font-size:0.8rem;color:var(--gray);font-family:\'Nunito\',sans-serif;">' + bp.desc + '</div>' +
           '</div>' +
+          '<span class="btn-card-audio-en" onclick="event.stopPropagation(); hablarTexto(\'' + bp.en + '\', \'en-US\', this);" title="Pronunciación en inglés">🇺🇸 ' + bp.en + '</span>' +
         '</button>';
     });
 
@@ -1896,14 +1948,16 @@
           '<button type="button" class="puzzle-piece' + (placed ? ' placed' : '') + (selected ? ' selected' : '') + '" ' +
             'style="border-color:' + it.hex + ';" draggable="' + (!placed) + '" data-pid="' + it.id + '" onclick="seleccionarPiezaPuzzle(\'' + it.id + '\', this)">' +
             '<span style="font-size:2rem;">' + it.emoji + '</span>' +
-            '<span style="font-size:0.9rem;color:' + it.hex + ';font-weight:700;">' + it.en + ' / ' + it.es + '</span>' +
+            '<span style="font-size:0.9rem;color:' + it.hex + ';font-weight:700;">' + it.es + '</span>' +
+            '<span class="btn-card-audio-en" onclick="event.stopPropagation(); hablarTexto(\'' + it.en + '\', \'en-US\', this);" title="Pronunciación en inglés">🇺🇸 ' + it.en + '</span>' +
           '</button>';
       } else {
         html +=
           '<button type="button" class="puzzle-piece' + (placed ? ' placed' : '') + (selected ? ' selected' : '') + '" ' +
             'draggable="' + (!placed) + '" data-pid="' + it.id + '" onclick="seleccionarPiezaPuzzle(\'' + it.id + '\', this)">' +
             it.svg +
-            '<span style="font-size:0.88rem;font-weight:700;">' + it.es + ' / ' + it.en + '</span>' +
+            '<span style="font-size:0.88rem;font-weight:700;">' + it.es + '</span>' +
+            '<span class="btn-card-audio-en" onclick="event.stopPropagation(); hablarTexto(\'' + it.en + '\', \'en-US\', this);" title="Pronunciación en inglés">🇺🇸 ' + it.en + '</span>' +
           '</button>';
       }
     });
@@ -1978,10 +2032,33 @@
   window.colocarEnSiluetaPuzzle = function (sid) {
     if (!puzzleState.selectedPieceId) return;
     if (puzzleState.selectedPieceId === sid) {
+      var piezaColocadaId = sid;
       puzzleState.placedMap[sid] = true;
       puzzleState.selectedPieceId = null;
       sonarAcierto();
       renderCurrentPuzzle();
+
+      // Pronunciar la palabra en inglés del elemento recién colocado
+      var vocabEn = null;
+      if (puzzleState.currentGame === 'numeros') {
+        var numObj = NUMEROS_DATA.find(function (x) { return x.id === piezaColocadaId; });
+        if (numObj) vocabEn = numObj.en;
+      } else if (puzzleState.currentGame === 'cuerpo') {
+        var bpObj = BODY_PARTS_BOOK.find(function (x) { return x.id === piezaColocadaId; });
+        if (bpObj) vocabEn = bpObj.en;
+      } else if (puzzleState.carSubMode === 'colores') {
+        var colObj = CAR_COLORS.find(function (x) { return x.id === piezaColocadaId; });
+        if (colObj) vocabEn = colObj.en;
+      } else {
+        var shObj = GEOMETRIC_SHAPES.find(function (x) { return x.id === piezaColocadaId; });
+        if (shObj) vocabEn = shObj.en;
+      }
+      if (vocabEn) {
+        setTimeout(function () {
+          window.hablarTexto(vocabEn, 'en-US');
+        }, 120);
+      }
+
       checkPuzzleCompletion();
     } else {
       sonarSuaveError();
@@ -2050,7 +2127,9 @@
         state.completedPuzzles[key] = true;
         addXP(20, 's-rompecabezas');
       }
-      window.hablarTexto('¡Bravo! Completaste todo el rompecabezas sin ningún error.', 'es-ES');
+      var esc = obtenerSaludoEscuela();
+      var fel = esc ? ('¡Excelente trabajo en familia con ' + esc + '! Completaron todo el rompecabezas.') : '¡Bravo! Completaste todo el rompecabezas sin ningún error.';
+      window.hablarTexto(fel, 'es-ES');
     }
   }
 
@@ -2197,7 +2276,9 @@
     if (!wasDone) {
       sonarCelebracion();
       addXP(20, 's-casa');
-      window.hablarTexto('¡Felicidades familia! Una técnica más del libro realizada en casa con papel y manos creativas.', 'es-ES');
+      var esc = obtenerSaludoEscuela();
+      var fel = esc ? ('¡Felicidades familia de ' + esc + '! Una técnica más del libro realizada en casa con papel y manos creativas.') : '¡Felicidades familia! Una técnica más del libro realizada en casa con papel y manos creativas.';
+      window.hablarTexto(fel, 'es-ES');
     } else {
       saveState();
     }
@@ -2258,7 +2339,8 @@
   };
 
   window.compartirMision = function () {
-    var msg = '🐝 ¡Estamos practicando juntos en Prebásica (3.° Grado): Técnicas Gráficas y No Gráficas — Libro 1 en M.E.T.A.S.! ' + window.location.href;
+    var esc = obtenerSaludoEscuela() || 'nuestro centro educativo';
+    var msg = '🌟 ¡Mira qué increíble! En *' + esc + '* estamos aprendiendo en familia con la Misión Interactiva de Prebásica (Libro 1 · Técnicas Gráficas y No Gráficas) en M.E.T.A.S. 🎨✨ Trazos con el dedo, números, colores en inglés y rompecabezas guiados para papá, mamá y los pequeños:\n' + window.location.href;
     window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
   };
 
