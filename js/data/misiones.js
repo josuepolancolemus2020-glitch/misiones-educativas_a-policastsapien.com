@@ -41,6 +41,9 @@ const RUTAS = {
      Constitución— y esta enseña a preguntar POR QUÉ, que es lo que hace falta
      para leer una norma sin creérsela ni descartarla. */
   raiz: { nombre: 'Ruta de la Raíz', emoji: '🌳', color: 'filo' },
+  /* Ruta de las Manitas: Prebásica (3.° Grado). Para que el niño trabaje
+     sus técnicas gráficas y no gráficas en casa con papá y mamá. */
+  manitas: { nombre: 'Ruta de las Manitas', emoji: '🖐️', color: 'preb' },
 };
 
 const MISSIONS = [
@@ -153,6 +156,9 @@ const MISSIONS = [
   { id: 83, title: 'Palabras que piensan: qué hace una frase',            subject: 'filosofía',   color: 'filo', grade: 'I, II y III Ciclo', cycle: 'basica', ruta: 'raiz',    etapa: 5, xp: 35, icon: '💬', pais: 'HN', url: 'misiones/basica-palabras-que-piensan/palabras-que-piensan.html' },
   { id: 84, title: 'Numbers and My Age',                                  subject: 'inglés',      color: 'ing',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'primeras', etapa: 2, xp: 30, icon: '🔢', pais: 'HN', url: 'misiones/2y3ciclo-ingles-numeros-edad/numeros-edad.html' },
   { id: 61, title: 'Prueba de Fin de Grado: 7º Grado',                    subject: 'repaso',      color: 'rep',  grade: '7º grado',       cycle: '3ciclo',   ruta: 'meta',    etapa: 4, xp: 40, icon: '🎓', pais: 'HN', url: 'misiones/fin-de-grado-7mo/fin-de-grado-7mo.html' },
+  /* Prebásica (3.° Grado). Basada en el Libro 1 compilado por Evelyn S. Castellanos H.
+     Trabajo guiado en casa con apoyo de un adulto. */
+  { id: 85, title: 'Prebásica (3.° Grado): Técnicas Gráficas y No Gráficas — Libro 1', subject: 'prebasica', color: 'preb', grade: 'Prebásica (3.° Grado)', cycle: 'prebasica', ruta: 'manitas', etapa: 1, xp: 40, icon: '🐝', pais: 'HN', url: 'misiones/prebasica-tecnicas-libro1/prebasica-libro1.html', badgeAdult: true, subtitle: 'Técnicas Gráficas, Trazos, Letras y Rompecabezas · Libro 1 (Evelyn S. Castellanos H.)' },
 ];
 
 /* ─────────────────────────────────────────────

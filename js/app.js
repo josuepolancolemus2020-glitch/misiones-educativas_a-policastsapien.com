@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 
 
 
@@ -14,6 +14,7 @@ const SUBJECT_LABELS = {
   'cívica':      'E. Cívica',
   'ia':          'Inteligencia Artificial',
   'filosofía':   'Filosofía',
+  'prebasica':   'Prebásica',
 };
 
 const LEVELS = [
@@ -584,9 +585,21 @@ function pintarChipsGrado() {
       '<span class="gr-et">Mi grado</span>' +
       GradoAlumno.GRADOS.map(g =>
         `<button class="gr-chip" data-grado="${g}" aria-pressed="false">${g}º</button>`).join('') +
-      '<button class="gr-chip gr-todos" data-grado="" aria-pressed="false">Todos</button>';
+      '<button class="gr-chip gr-todos" data-grado="" aria-pressed="false">Todos</button>' +
+      '<button class="gr-chip gr-preb" data-preb="1" aria-pressed="false" title="Prebásica con papá y mamá">👶 Prebásica</button>';
     cont.querySelectorAll('.gr-chip').forEach(b => {
       b.addEventListener('click', () => {
+        if (b.dataset.preb) {
+          currentFilter = 'prebasica';
+          setActivePill('prebasica');
+          setGradoVista('');
+          renderMissions(currentFilter, currentQuery);
+          return;
+        }
+        if (currentFilter === 'prebasica') {
+          currentFilter = 'all';
+          setActivePill('all');
+        }
         setGradoVista(b.dataset.grado);
         renderMissions(currentFilter, currentQuery);
         /* No se salta al principio de la página: la alumna acaba de tocar
@@ -596,7 +609,13 @@ function pintarChipsGrado() {
     cont.dataset.listo = '1';
   }
   cont.querySelectorAll('.gr-chip').forEach(b => {
-    const on = b.dataset.grado === actual;
+    if (b.dataset.preb) {
+      const on = currentFilter === 'prebasica';
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      return;
+    }
+    const on = (b.dataset.grado === actual) && (currentFilter !== 'prebasica');
     b.classList.toggle('active', on);
     b.setAttribute('aria-pressed', on ? 'true' : 'false');
   });
@@ -659,13 +678,16 @@ function renderMissions(filter, query) {
 
   const tarjeta = m => {
     const visited = s.visited.includes(m.id);
+    const esPrebasica = m.subject === 'prebasica' || m.cycle === 'prebasica';
     return `
-      <a class="mission-card ${visited ? 'visited' : ''}"
+      <a class="mission-card ${visited ? 'visited' : ''} ${esPrebasica ? 'card-prebasica' : ''}"
          onclick="visitMission(${m.id}); return false;"
          href="${m.url}">
         <div class="mc-icon ${m.color}">${m.icon}</div>
         <div class="mc-info">
+          ${esPrebasica || m.badgeAdult ? `<div class="mc-adult-badge">👨‍👩‍👧 Con apoyo de un adulto</div>` : ''}
           <div class="mc-title">${m.title}</div>
+          ${m.subtitle ? `<div class="mc-subtitle">${m.subtitle}</div>` : ''}
           <div class="mc-meta">
             <span class="mc-subj ${m.color}">${SUBJECT_LABELS[m.subject] || m.subject}</span>
             <span class="mc-grade">${rutaLabel(m)}</span>
@@ -706,7 +728,7 @@ function renderMissions(filter, query) {
 ───────────────────────────────────────────── */
 
 const REGISTRO_KEY = 'METAS_REGISTRO_V1';
-const RUTAS_ORDEN  = ['numero', 'forma', 'palabra', 'planeta', 'cuerpo', 'vida', 'materia', 'tiempo', 'codigo', 'robots', 'maquina', 'patria', 'raiz', 'meta'];
+const RUTAS_ORDEN  = ['numero', 'forma', 'palabra', 'planeta', 'cuerpo', 'vida', 'materia', 'tiempo', 'codigo', 'robots', 'maquina', 'patria', 'raiz', 'meta', 'manitas'];
 
 function _rNorm(s) {
   s = String(s || '').toLowerCase();

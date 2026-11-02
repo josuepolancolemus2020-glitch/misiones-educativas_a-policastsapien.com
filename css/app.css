@@ -85,6 +85,8 @@
      de la IA a la vista no es el tono: es el croma —28 contra 70—, o sea que
      uno es vivo y el otro apagado. */
   --filo: #784a6d; --filo-bg: #faf4f8; --filo-border: rgba(120,74,109,.2);
+  /* Prebásica (Con Papá y Mamá): Naranja ámbar cálido infantil */
+  --preb: #ea580c; --preb-bg: #fff7ed; --preb-border: rgba(234,88,12,.2);
 
   --bg:      #f0f4f9;
   --surface: #ffffff;
@@ -988,6 +990,7 @@ a { text-decoration: none; color: inherit; }
 .subj-chip.civ  { background: var(--civ-bg);  color: var(--civ);  border-color: var(--civ-border); }
 .subj-chip.ia   { background: var(--ia-bg);   color: var(--ia);   border-color: var(--ia-border); }
 .subj-chip.filo { background: var(--filo-bg); color: var(--filo); border-color: var(--filo-border); }
+.subj-chip.preb { background: var(--preb-bg); color: var(--preb); border-color: var(--preb-border); }
 
 /* ====== FEATURED CARD ====== */
 .featured-card {
@@ -1128,6 +1131,7 @@ a { text-decoration: none; color: inherit; }
 .pill.civ  { --pill: var(--civ);  --pill-rgb: 63, 98, 18;   --pill-bg: var(--civ-bg);  }
 .pill.ia   { --pill: var(--ia);   --pill-rgb: 134, 25, 143; --pill-bg: var(--ia-bg);   }
 .pill.filo { --pill: var(--filo); --pill-rgb: 120, 74, 109; --pill-bg: var(--filo-bg); }
+.pill.preb { --pill: var(--preb); --pill-rgb: 234, 88, 12;  --pill-bg: var(--preb-bg);  }
 
 /* «Todas»: aro con los colores de las seis materias girando alrededor */
 .pill-all {
@@ -1199,6 +1203,7 @@ a { text-decoration: none; color: inherit; }
 .mc-icon.civ  { background: var(--civ-bg);  color: var(--civ); }
 .mc-icon.ia   { background: var(--ia-bg);   color: var(--ia); }
 .mc-icon.filo { background: var(--filo-bg); color: var(--filo); }
+.mc-icon.preb { background: var(--preb-bg); color: var(--preb); }
 
 .mc-subj.esp  { background: var(--esp-bg);  color: var(--esp); }
 .mc-subj.mat  { background: var(--mat-bg);  color: var(--mat); }
@@ -1211,6 +1216,117 @@ a { text-decoration: none; color: inherit; }
 .mc-subj.civ  { background: var(--civ-bg);  color: var(--civ); }
 .mc-subj.ia   { background: var(--ia-bg);   color: var(--ia); }
 .mc-subj.filo { background: var(--filo-bg); color: var(--filo); }
+.mc-subj.preb { background: var(--preb-bg); color: var(--preb); }
+
+.mc-adult-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+  border-radius: 999px;
+  padding: 2px 9px;
+  font-size: calc(10.5px * var(--metas-fz, 1));
+  font-weight: 800;
+  margin-bottom: 5px;
+  width: fit-content;
+}
+.mc-subtitle {
+  font-size: calc(11.5px * var(--metas-fz, 1));
+  color: var(--muted);
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+/* Tarjeta especial de presentación de Prebásica en Inicio */
+.prebasica-home-section {
+  margin: 1.25rem 0 1.5rem;
+}
+.prebasica-card {
+  display: block;
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  border: 2px solid #fed7aa;
+  border-radius: 18px;
+  padding: 1.2rem;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 4px 16px rgba(234, 88, 12, 0.08);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.prebasica-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(234, 88, 12, 0.16);
+}
+.preb-card-badge {
+  display: inline-flex;
+  align-items: center;
+  background: #ea580c;
+  color: #fff;
+  font-size: .8rem;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 999px;
+  margin-bottom: .65rem;
+  box-shadow: 0 2px 6px rgba(234, 88, 12, .25);
+}
+.preb-card-head {
+  display: flex;
+  align-items: flex-start;
+  gap: .85rem;
+  margin-bottom: .85rem;
+}
+.preb-card-icon {
+  font-size: 2.3rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.preb-card-titles {
+  flex: 1;
+  min-width: 0;
+}
+.preb-card-title {
+  font-size: 1.08rem;
+  font-weight: 800;
+  color: #9a3412;
+  margin-bottom: .25rem;
+  line-height: 1.3;
+}
+.preb-card-sub {
+  font-size: .85rem;
+  color: #c2410c;
+  line-height: 1.35;
+}
+.preb-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: .5rem;
+  border-top: 1px dashed #fdba74;
+  padding-top: .7rem;
+}
+.preb-card-tag {
+  font-size: .82rem;
+  font-weight: 700;
+  color: #c2410c;
+  background: #ffedd5;
+  padding: 3px 9px;
+  border-radius: 6px;
+}
+.preb-card-xp {
+  font-size: .82rem;
+  font-weight: 800;
+  color: #ea580c;
+}
+.preb-card-btn {
+  font-size: .85rem;
+  font-weight: 700;
+  color: #9a3412;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
 
 /* ====== EMPTY STATE ====== */
 .empty-state { text-align: center; padding: 48px 24px; color: var(--muted); }
@@ -5521,6 +5637,12 @@ body.ad-gr-moviendo { cursor: grabbing; user-select: none; -webkit-user-select: 
    milímetro y medio no se distingue—. */
 .gr-chip.active {
   background: var(--brand); border-color: var(--brand); color: #fff;
+}
+.gr-chip.gr-preb {
+  font-weight: 700; color: #ea580c; border-color: rgba(234,88,12,.35); background: #fff7ed;
+}
+.gr-chip.gr-preb.active {
+  background: #ea580c; border-color: #ea580c; color: #fff;
 }
 
 .mis-sep {

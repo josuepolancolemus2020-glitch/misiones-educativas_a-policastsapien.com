@@ -11,6 +11,7 @@
     --rep: #6d28d9; --civ: #3f6212;
     --ia: #86198f;
     --filo: #784a6d;
+    --preb: #ea580c;
     --tinta: #1a2733; --gris: #5b6773; --linea: #e2e8f0;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -40,7 +41,7 @@
   .m-soc h2 { background: var(--soc); } .m-tec h2 { background: var(--tec); }
   .m-ing h2 { background: var(--ing); } .m-rep h2 { background: var(--rep); }
   .m-civ h2 { background: var(--civ); } .m-ia h2 { background: var(--ia); }
-  .m-filo h2 { background: var(--filo); }
+  .m-filo h2 { background: var(--filo); } .m-preb h2 { background: var(--preb); }
 
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
   a.card {
@@ -65,6 +66,7 @@
   .m-civ a.card { border-left-color: var(--civ); }
   .m-ia a.card { border-left-color: var(--ia); }
   .m-filo a.card { border-left-color: var(--filo); }
+  .m-preb a.card { border-left-color: var(--preb); }
 
   footer { text-align: center; font-size: 0.8rem; color: var(--gris); margin-top: 30px; padding-top: 18px; border-top: 1px solid var(--linea); }
   footer b { color: var(--tinta); }
@@ -102,6 +104,14 @@
   <div class="intro">
     🗺️ <b>Planificación:</b> consulte el <a href="mapa-curricular-metas-dcnb.html"><b>Mapa Curricular M.E.T.A.S · DCNB</b></a> 🔐, documento imprimible con las misiones de las 4 materias básicas y sus rutas de aprendizaje. <b>Exclusivo docentes:</b> requiere sesión iniciada en la Zona Docente. También encontrará su programación por grado en ⚙️ Ajustes → Zona Docente → <b>Mi Programación DCNB</b>.
   </div>
+
+  <!-- PREBÁSICA · CON PAPÁ Y MAMÁ -->
+  <section class="materia m-preb">
+    <h2>👶 Prebásica · Con Papá y Mamá <span class="n">1 ficha</span></h2>
+    <div class="grid">
+      <a class="card" href="ficha-prebasica-libro1.html"><span class="ico">👶</span><span class="txt"><span class="t">Trazos, Nociones y Letras · Libro 1</span><span class="sub">Técnicas Gráficas y No Gráficas · 3.° Grado Prebásica · 2 páginas</span></span><span class="go">→</span></a>
+    </div>
+  </section>
 
   <!-- REPASO GENERAL · va primero porque es la que se busca antes del examen -->
   <section class="materia m-rep">
