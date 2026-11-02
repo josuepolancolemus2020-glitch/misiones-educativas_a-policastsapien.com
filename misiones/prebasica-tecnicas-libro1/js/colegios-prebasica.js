@@ -1,6 +1,6 @@
 /* ==========================================================================
    M.E.T.A.S. · Portal de Acceso y Catálogo de Colegios de Prebásica (Libro 1)
-   Valida el acceso por centro educativo autorizado o mediante prefijo de activación
+   Valida el acceso exclusivamente por centro educativo autorizado
    ========================================================================== */
 (function () {
   'use strict';
@@ -11,7 +11,7 @@
     { nombre: 'CEPB Rafael Pineda Ponce', claves: ['rafael', 'pineda', 'ponce', 'pinedaponce'] },
     { nombre: 'CEPB Nimia Baquedano', claves: ['nimia', 'baquedano', 'nimiabaquedano'] },
     { nombre: 'CEPB Dionisio de Herrera', claves: ['dionisio', 'herrera', 'dionisiodeherrera'] },
-    { nombre: 'CEPB Amigo de los Niños', claves: ['amigo', 'amigodelosninos', 'amigosdelosninos'] },
+    { nombre: 'CEB Amigo de los Niños', claves: ['amigo', 'amigodelosninos', 'amigosdelosninos'] },
     { nombre: 'CEBNG Blessing Bilingual School', claves: ['blessing', 'blessingbilingual'] },
     { nombre: 'CEBNG Simiente Santa', claves: ['simiente', 'simientesanta'] },
     { nombre: 'CEPB Marina Name', claves: ['marina', 'marinaname'] },
@@ -35,16 +35,10 @@
     var raw = input.trim();
     if (!raw) return null;
 
-    // Regla de activación para cualquier escuela nueva: prefijo METAS- o 2027-
-    var matchPrefijo = raw.match(/^(metas|2027)[-\s:]+(.+)$/i);
-    if (matchPrefijo && matchPrefijo[2].trim()) {
-      return matchPrefijo[2].trim();
-    }
-
     var limpio = normalizarTextoColegio(raw);
     if (!limpio) return null;
 
-    // Búsqueda en el catálogo oficial
+    // Búsqueda estricta en el catálogo oficial
     for (var i = 0; i < CATALOGO_COLEGIOS_PREBASICA.length; i++) {
       var item = CATALOGO_COLEGIOS_PREBASICA[i];
       for (var j = 0; j < item.claves.length; j++) {

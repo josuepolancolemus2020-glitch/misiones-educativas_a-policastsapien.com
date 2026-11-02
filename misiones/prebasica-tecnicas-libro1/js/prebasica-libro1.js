@@ -2329,7 +2329,7 @@
       window.cerrarModalInstitucion();
     } else {
       if (err) {
-        err.textContent = 'Centro educativo no reconocido. Escribe el nombre de tu escuela autorizada (ej. Consuelo, Coral, Nimia) o usa el formato METAS-NombreDeTuEscuela.';
+        err.textContent = 'No reconocimos ese centro educativo. Por favor verifica el nombre de tu kínder o escuela (ej. CEB Amigo de los Niños).';
         err.style.display = 'block';
       }
       if (input) input.focus();
