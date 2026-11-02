@@ -2320,22 +2320,42 @@
     document.body.classList.toggle('letra-grande');
   };
 
-  window.resetXP = function () {
+  function reiniciarTodoProgresoPrebasica() {
+    if (typeof window.detenerVozPrebasica === 'function') {
+      window.detenerVozPrebasica();
+    }
     state = {
       xp: 0,
-      soundOn: state.soundOn,
+      soundOn: (state && state.soundOn !== false),
       completedTraces: {},
       completedRodea: {},
       completedPuzzles: {},
       completedHomeTechs: {},
       doneSections: {}
     };
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (e) {}
     saveState();
     updateXPBar();
+    var doneNavs = document.querySelectorAll('.nav-t.done');
+    for (var i = 0; i < doneNavs.length; i++) {
+      doneNavs[i].classList.remove('done');
+    }
     selectTraceChallenge(0, false);
     buildRodeaExercise();
     mostrarRompecabezas('numeros');
     renderHandsOnTab();
+    if (typeof window.go === 'function') {
+      window.go('s-trazos');
+    }
+  }
+  window.reiniciarTodoProgresoPrebasica = reiniciarTodoProgresoPrebasica;
+  window.resetXP = reiniciarTodoProgresoPrebasica;
+
+  window.cambiarEscuelaPrebasica = function () {
+    reiniciarTodoProgresoPrebasica();
+    window.abrirModalInstitucion(true);
   };
 
   window.compartirMision = function () {
@@ -2370,6 +2390,9 @@
   }
 
   window.abrirModalInstitucion = function (permitirCerrar) {
+    if (permitirCerrar) {
+      reiniciarTodoProgresoPrebasica();
+    }
     var modal = document.getElementById('modalInstitucionPrebasica');
     var input = document.getElementById('inputColegioPrebasica');
     var err = document.getElementById('errorInstitucionPrebasica');
@@ -2404,14 +2427,26 @@
     }
 
     if (validado) {
+      var institucionAnterior = null;
+      try {
+        institucionAnterior = localStorage.getItem('metas_prebasica_institucion');
+      } catch (errPrev) {}
+
+      var esDistinta = (!institucionAnterior || institucionAnterior !== validado);
+
       try {
         localStorage.setItem('metas_prebasica_institucion', validado);
       } catch (errLS) {}
+
+      if (esDistinta) {
+        reiniciarTodoProgresoPrebasica();
+      }
+
       actualizarCintilloInstitucion(validado);
       window.cerrarModalInstitucion();
     } else {
       if (err) {
-        err.textContent = 'No reconocimos ese centro educativo. Por favor verifica el nombre de tu kínder o escuela (ej. CEB Amigo de los Niños).';
+        err.textContent = 'No reconocimos ese centro educativo. Por favor verifica e ingresa el nombre oficial de la escuela o kínder donde adquiriste tu libro.';
         err.style.display = 'block';
       }
       if (input) input.focus();

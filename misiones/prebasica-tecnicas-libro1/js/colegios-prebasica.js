@@ -11,7 +11,7 @@
     { nombre: 'CEPB Rafael Pineda Ponce', claves: ['rafael', 'pineda', 'ponce', 'pinedaponce'] },
     { nombre: 'CEPB Nimia Baquedano', claves: ['nimia', 'baquedano', 'nimiabaquedano'] },
     { nombre: 'CEPB Dionisio de Herrera', claves: ['dionisio', 'herrera', 'dionisiodeherrera'] },
-    { nombre: 'CEB Amigo de los Niños', claves: ['amigo', 'amigodelosninos', 'amigosdelosninos'] },
+    { nombre: 'CEPB Amigo de los Niños', claves: ['amigo', 'amigodelosninos', 'amigosdelosninos'] },
     { nombre: 'CEBNG Blessing Bilingual School', claves: ['blessing', 'blessingbilingual'] },
     { nombre: 'CEBNG Simiente Santa', claves: ['simiente', 'simientesanta'] },
     { nombre: 'CEPB Marina Name', claves: ['marina', 'marinaname'] },
@@ -53,6 +53,7 @@
   }
 
   window.CATALOGO_COLEGIOS_PREBASICA = CATALOGO_COLEGIOS_PREBASICA;
+  window.COLEGIOS_PREBASICA_AUTORIZADOS = CATALOGO_COLEGIOS_PREBASICA;
   window.normalizarTextoColegio = normalizarTextoColegio;
   window.validarInstitucionPrebasica = validarInstitucionPrebasica;
 })();

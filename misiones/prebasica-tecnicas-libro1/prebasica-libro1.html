@@ -51,7 +51,7 @@
 <div id="cintilloInstitucionPrebasica" class="cintillo-colegio-prebasica" style="display:none;" role="status">
   <div class="cintillo-colegio-inner">
     <span class="cintillo-colegio-texto">🏫 Edición Exclusiva autorizada para: <strong id="lblNombreInstitucion"></strong></span>
-    <button type="button" class="btn-cambiar-escuela" onclick="abrirModalInstitucion(true)" title="Cambiar escuela o centro educativo">Cambiar escuela</button>
+    <button type="button" class="btn-cambiar-escuela" onclick="cambiarEscuelaPrebasica()" title="Cambiar escuela o centro educativo">Cambiar escuela</button>
   </div>
 </div>
 
@@ -348,7 +348,7 @@
     </p>
     <form id="formInstitucionPrebasica" onsubmit="procesarInstitucionPrebasica(event)">
       <div style="margin-bottom:0.75rem;">
-        <input type="text" id="inputColegioPrebasica" class="input-colegio-prebasica" placeholder="Ej. CEB Amigo de los Niños" autocomplete="off" required>
+        <input type="text" id="inputColegioPrebasica" class="input-colegio-prebasica" placeholder="Escribe aquí el nombre de tu kínder o escuela..." autocomplete="off" required>
       </div>
       <div id="errorInstitucionPrebasica" class="modal-institucion-error" style="display:none;" role="alert"></div>
       <div style="display:flex;gap:0.5rem;justify-content:center;margin-top:1rem;">
