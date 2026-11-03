@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>?? Consulta en la Nube — M.E.T.A.S</title>
+<title>?? Consulta en la Nube ï¿½ M.E.T.A.S</title>
 <style>
 :root{
   --pri:#1565c0; --pri-gl:#e3f2fd; --jade:#00b894; --amber:#fdcb6e; --rojo:#d63031;
@@ -45,9 +45,9 @@ tr:hover td{background:var(--pri-gl);}
 .b-evaluacion{background:#fff3d6;color:#9a6b00;}
 .b-prueba_operativa{background:#f0e8ff;color:#6c5ce7;}
 .b-pauta_vista{background:#ffe3e3;color:#c0392b;}
-/* La fila que llegó SIN código de aula: nadie comprobó que sea de este
-   maestro. Se marca en vez de esconderse —esconderla le haría perder
-   práctica de verdad de los alumnos que aún no escriben el código— y
+/* La fila que llegï¿½ SIN cï¿½digo de aula: nadie comprobï¿½ que sea de este
+   maestro. Se marca en vez de esconderse ï¿½esconderla le harï¿½a perder
+   prï¿½ctica de verdad de los alumnos que aï¿½n no escriben el cï¿½digoï¿½ y
    ahora se puede borrar. */
 .sinver{display:inline-block;margin-left:4px;color:#b45309;cursor:help;}
 .btn-borrar{background:none;border:1px solid var(--border);border-radius:6px;cursor:pointer;
@@ -71,9 +71,9 @@ footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5
 <body>
 
 <header>
-  <h1>?? Consulta en la Nube — M.E.T.A.S</h1>
+  <h1>?? Consulta en la Nube ï¿½ M.E.T.A.S</h1>
   <p>Resultados de evaluaciones de <strong>todos los dispositivos</strong> de tu aula, sincronizados a Supabase.
-  Cada teléfono o tablet sube sus notas automáticamente cuando tiene internet; aquí las ves reunidas.</p>
+  Cada telï¿½fono o tablet sube sus notas automï¿½ticamente cuando tiene internet; aquï¿½ las ves reunidas.</p>
   <div class="top-links">
     <a class="btn btn-blanco" href="index.html">?? Volver al inicio</a>
     <a class="btn btn-blanco" href="registro.html">?? Evidencia de misiones (este equipo)</a>
@@ -87,22 +87,22 @@ footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5
     <input id="correo" type="email" autocomplete="email" placeholder="tucorreo@ejemplo.com">
   </div>
   <div>
-    <label for="clave">?? Contraseña</label>
-    <input id="clave" type="password" autocomplete="current-password" placeholder="Tu contraseña">
+    <label for="clave">?? Contraseï¿½a</label>
+    <input id="clave" type="password" autocomplete="current-password" placeholder="Tu contraseï¿½a">
   </div>
   <button class="btn btn-pri" id="btnConsultar" onclick="entrar()">?? Entrar y consultar</button>
-  <div id="estado">Entra con el correo y la contraseña de tu cuenta de maestro. La sesión se recuerda en este dispositivo.</div>
+  <div id="estado">Entra con el correo y la contraseï¿½a de tu cuenta de maestro. La sesiï¿½n se recuerda en este dispositivo.</div>
 </div>
 
 <div class="stats" id="stats" style="display:none;"></div>
 
 <div class="filtros" id="filtros" style="display:none;">
-  <label>?? Misión <select id="fMision"><option value="">Todas</option></select></label>
+  <label>?? Misiï¿½n <select id="fMision"><option value="">Todas</option></select></label>
   <label>?? Grado <select id="fGrado"><option value="">Todos</option></select></label>
   <label>?? Alumno <select id="fAlumno"><option value="">Todos</option></select></label>
   <label>??? Tipo <select id="fTipo">
     <option value="">Todos</option>
-    <option value="evaluacion">?? Evaluación</option>
+    <option value="evaluacion">?? Evaluaciï¿½n</option>
     <option value="prueba_operativa">?? Prueba operativa</option>
     <option value="pauta_vista">?? Vio pauta</option>
   </select></label>
@@ -115,24 +115,24 @@ footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5
 
 <div class="tabla-wrap" id="tablaWrap" style="display:none;">
   <table>
-    <thead><tr><th>Fecha</th><th>Hora</th><th>Alumno</th><th>Nº lista</th><th>Grado</th><th>Misión</th><th>Tipo</th><th>Forma</th><th>Nota</th><th>Dispositivo</th><th></th></tr></thead>
+    <thead><tr><th>Fecha</th><th>Hora</th><th>Alumno</th><th>Nï¿½ lista</th><th>Grado</th><th>Misiï¿½n</th><th>Tipo</th><th>Forma</th><th>Nota</th><th>Dispositivo</th><th></th></tr></thead>
     <tbody id="tbody"></tbody>
   </table>
   <div class="vacio" id="vacio" style="display:none;">
     ?? No hay resultados con estos filtros.<br>
-    Si esperabas datos, verifica que tus alumnos escribieran tu nombre en el campo «Docente» y que los dispositivos hayan tenido internet para sincronizar.
+    Si esperabas datos, verifica que tus alumnos escribieran tu nombre en el campo ï¿½Docenteï¿½ y que los dispositivos hayan tenido internet para sincronizar.
   </div>
 </div>
 
 <div id="progSeccion" style="display:none;">
-  <h2 style="font-size:1.05rem;margin:1.4rem 0 0.6rem;color:var(--pri);">??? Progreso por alumno (XP, insignias y diagnósticos)</h2>
+  <h2 style="font-size:1.05rem;margin:1.4rem 0 0.6rem;color:var(--pri);">??? Progreso por alumno (XP, insignias y diagnï¿½sticos)</h2>
   <div class="tabla-wrap">
     <table>
-      <thead><tr><th>Alumno</th><th>Nº lista</th><th>Grado</th><th>XP</th><th>Dominadas</th><th>Secciones</th><th>Min</th><th>Diagnósticos</th><th>Torneos</th><th>Insignias ??</th><th>Actualizado</th><th>Dispositivo</th></tr></thead>
+      <thead><tr><th>Alumno</th><th>Nï¿½ lista</th><th>Grado</th><th>XP</th><th>Dominadas</th><th>Secciones</th><th>Min</th><th>Diagnï¿½sticos</th><th>Torneos</th><th>Insignias ??</th><th>Actualizado</th><th>Dispositivo</th></tr></thead>
       <tbody id="progBody"></tbody>
     </table>
     <div class="vacio" id="progVacio" style="display:none;">
-      ?? Aún no hay fotos de progreso en la nube.<br>
+      ?? Aï¿½n no hay fotos de progreso en la nube.<br>
       Se generan solas cuando los estudiantes trabajan en las misiones con internet.
     </div>
   </div>
@@ -140,18 +140,18 @@ footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5
 
 <div class="nota-etica">
   ?? <strong>Privacidad:</strong> la tabla de la nube solo puede leerse desde <strong>tu cuenta de maestro</strong>; los dispositivos de los
-  estudiantes únicamente pueden <em>agregar</em> resultados, nunca ver los de otros. Se recomienda identificar a los
-  estudiantes con su <strong>número de lista o código</strong> en lugar del nombre completo.
+  estudiantes ï¿½nicamente pueden <em>agregar</em> resultados, nunca ver los de otros. Se recomienda identificar a los
+  estudiantes con su <strong>nï¿½mero de lista o cï¿½digo</strong> en lugar del nombre completo.
 </div>
 
-<footer>?? Proyecto Educativo M.E.T.A.S · ?? policastsapien.com<br>
-  © 2026 Familia Polanco-Castellanos · <a href="privacidad.html">Aviso de privacidad</a>
-  · <a href="terminos.html">Términos de uso</a></footer>
+<footer>?? Proyecto Educativo M.E.T.A.S ï¿½ ?? policastsapien.com<br>
+  ï¿½ 2026 Familia Polanco-Castellanos ï¿½ <a href="privacidad.html">Aviso de privacidad</a>
+  ï¿½ <a href="terminos.html">Tï¿½rminos de uso</a></footer>
 
-<script src="js/metas-registro.js?v=460"></script>
+<script src="js/metas-registro.js?v=461"></script>
 <script>
 'use strict';
-/* Misma configuración predeterminada que js/metas-supabase.js */
+/* Misma configuraciï¿½n predeterminada que js/metas-supabase.js */
 let SB_URL = 'https://uljjgrikyigdrkbikcxo.supabase.co';
 let SB_KEY = 'sb_publishable_VGj7He4XL8AGscsY3RsxGg__xlzi48w';
 try {
@@ -159,13 +159,13 @@ try {
   SB_KEY = localStorage.getItem('METAS_SB_KEY') || SB_KEY;
 } catch (e) {}
 
-const NOMBRE_TIPO = { evaluacion:'?? Evaluación', prueba_operativa:'?? Prueba op.', pauta_vista:'?? Vio pauta' };
+const NOMBRE_TIPO = { evaluacion:'?? Evaluaciï¿½n', prueba_operativa:'?? Prueba op.', pauta_vista:'?? Vio pauta' };
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtF = t => { const d=new Date(t); if(isNaN(d)) return {f:'',h:''}; const p=n=>(n<10?'0':'')+n; return {f:d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()), h:p(d.getHours())+':'+p(d.getMinutes())}; };
 
 let DATOS = [];
 
-/* Maestro con sesión (METAS_DOCENTE_V1): entra directo, sin escribir nada,
+/* Maestro con sesiï¿½n (METAS_DOCENTE_V1): entra directo, sin escribir nada,
    y la nube le devuelve SOLO los resultados de sus alumnos */
 let DOCENTE = null;
 try {
@@ -177,20 +177,20 @@ try { localStorage.removeItem('METAS_SB_CLAVE'); } catch(e) {} // limpieza del f
 if (DOCENTE) {
   const cc = document.querySelector('.clave-card');
   if (cc) cc.innerHTML = '<div id="estado">????? <strong>' + esc(DOCENTE.nombre || DOCENTE.correo || '') +
-    '</strong> — mostrando solo a tus alumnos.</div>';
+    '</strong> ï¿½ mostrando solo a tus alumnos.</div>';
   consultar(); // maneja solo el caso sin internet
 } else {
   ['correo','clave'].forEach(id => document.getElementById(id)
     .addEventListener('keydown', e => { if (e.key === 'Enter') entrar(); }));
 }
 
-/* Entrar con la cuenta de maestro (correo + contraseña) */
+/* Entrar con la cuenta de maestro (correo + contraseï¿½a) */
 async function entrar(){
   const estado = document.getElementById('estado');
   const correo = document.getElementById('correo').value.trim();
   const clave = document.getElementById('clave').value;
-  if (!correo || !clave) { estado.textContent = '?? Escribe tu correo y tu contraseña.'; return; }
-  if (navigator.onLine === false) { estado.textContent = '?? Sin conexión: entrar necesita internet.'; return; }
+  if (!correo || !clave) { estado.textContent = '?? Escribe tu correo y tu contraseï¿½a.'; return; }
+  if (navigator.onLine === false) { estado.textContent = '?? Sin conexiï¿½n: entrar necesita internet.'; return; }
   const btn = document.getElementById('btnConsultar');
   if (btn) btn.disabled = true;
   estado.textContent = '? Entrando a tu cuenta...';
@@ -204,9 +204,9 @@ async function entrar(){
     let j = await r.json();
     if (Array.isArray(j)) j = j[0] || {};
     if (j && j.ok) {
-      /* Se COMPLETA la sesión guardada en vez de reemplazarla: aquí solo
-         entra el par código+clave. Reescribirla entera borraba el rol, la
-         escuela y el código de aula del equipo, y un director quedaba
+      /* Se COMPLETA la sesiï¿½n guardada en vez de reemplazarla: aquï¿½ solo
+         entra el par cï¿½digo+clave. Reescribirla entera borraba el rol, la
+         escuela y el cï¿½digo de aula del equipo, y un director quedaba
          pintado como docente hasta volver a abrir Ajustes. */
       let previo = {};
       try { previo = JSON.parse(localStorage.getItem('METAS_DOCENTE_V1')) || {}; } catch(e) {}
@@ -217,7 +217,7 @@ async function entrar(){
       try { localStorage.setItem('METAS_DOCENTE_V1', JSON.stringify(DOCENTE)); } catch(e) {}
       const cc = document.querySelector('.clave-card');
       if (cc) cc.innerHTML = '<div id="estado">????? <strong>' + esc(DOCENTE.nombre || DOCENTE.correo) +
-        '</strong> — mostrando solo a tus alumnos.</div>';
+        '</strong> ï¿½ mostrando solo a tus alumnos.</div>';
       consultar();
       return;
     }
@@ -225,7 +225,7 @@ async function entrar(){
     if (motivo === 'espera') {
       estado.textContent = '? Por seguridad, espera unos 10 minutos antes de intentar de nuevo.';
     } else {
-      estado.textContent = '?? Correo o contraseña incorrectos. Revísalos e intenta de nuevo.';
+      estado.textContent = '?? Correo o contraseï¿½a incorrectos. Revï¿½salos e intenta de nuevo.';
     }
   } catch (err) {
     estado.textContent = '?? No se pudo entrar (' + err.message + '). Revisa tu internet e intenta de nuevo.';
@@ -235,11 +235,11 @@ async function entrar(){
 
 async function consultar(){
   const estado = document.getElementById('estado');
-  if (!DOCENTE) { estado.textContent = '?? Entra primero con tu correo y contraseña.'; return; }
+  if (!DOCENTE) { estado.textContent = '?? Entra primero con tu correo y contraseï¿½a.'; return; }
   const rpc1 = 'metas_consultar_docente';
   const rpc2 = 'metas_consultar_progreso_docente';
   const body = { p_codigo: DOCENTE.codigo, p_clave: DOCENTE.clave };
-  if (navigator.onLine === false) { estado.textContent = '?? Sin conexión: la consulta a la nube necesita internet.'; return; }
+  if (navigator.onLine === false) { estado.textContent = '?? Sin conexiï¿½n: la consulta a la nube necesita internet.'; return; }
   const btn = document.getElementById('btnConsultar');
   if (btn) btn.disabled = true;
   estado.textContent = '? Consultando la nube...';
@@ -264,7 +264,7 @@ async function consultar(){
     } catch(e) {}
     estado.textContent = (DATOS.length || PROG.length)
       ? '? ' + DATOS.length + ' resultados y ' + PROG.length + ' fotos de progreso recibidos de la nube.'
-      : '?? Aún no hay resultados. Dales a tus alumnos tu código de aula (lo ves en la Zona Docente) para que lo escriban al identificarse.';
+      : '?? Aï¿½n no hay resultados. Dales a tus alumnos tu cï¿½digo de aula (lo ves en la Zona Docente) para que lo escriban al identificarse.';
     ['stats','filtros','acciones','tablaWrap','progSeccion'].forEach(id => document.getElementById(id).style.display = '');
     llenarFiltros();
     pintar();
@@ -275,15 +275,15 @@ async function consultar(){
   if (btn) btn.disabled = false;
 }
 
-/* Borrar una fila de la nube. No existía NINGÚN borrado en toda la base: una
-   nota falsa era eterna y el maestro no podía quitarla. Además de defensa es
-   el derecho de supresión que promete el aviso de privacidad.
+/* Borrar una fila de la nube. No existï¿½a NINGï¿½N borrado en toda la base: una
+   nota falsa era eterna y el maestro no podï¿½a quitarla. Ademï¿½s de defensa es
+   el derecho de supresiï¿½n que promete el aviso de privacidad.
 
-   El servidor solo borra filas que esa misma consulta le devolvería a él, así
+   El servidor solo borra filas que esa misma consulta le devolverï¿½a a ï¿½l, asï¿½
    que esto no puede tocar lo de otro maestro aunque se manipule el id. */
 async function borrarFila(id, tr){
   if (!DOCENTE || !DOCENTE.codigo) return;
-  if (!confirm('¿Quitar esta fila de la nube?\n\nSe borra para siempre. Úsalo con lo que no reconozcas como práctica de tus alumnos.')) return;
+  if (!confirm('ï¿½Quitar esta fila de la nube?\n\nSe borra para siempre. ï¿½salo con lo que no reconozcas como prï¿½ctica de tus alumnos.')) return;
   const est = document.getElementById('estado');
   try {
     const r = await fetch(SB_URL + '/rest/v1/rpc/metas_resultados_borrar', {
@@ -292,11 +292,11 @@ async function borrarFila(id, tr){
       body: JSON.stringify({ p_codigo: DOCENTE.codigo, p_clave: DOCENTE.clave, p_ids: [Number(id)] })
     });
     if (!r.ok) {
-      /* 404 = la función todavía no existe en el servidor: falta pegar
-         SUPABASE-PUERTA-ANONIMA.sql. Se dice ASÍ, con el nombre del archivo,
-         en vez de un «HTTP 404» que no le sirve a nadie. */
+      /* 404 = la funciï¿½n todavï¿½a no existe en el servidor: falta pegar
+         SUPABASE-PUERTA-ANONIMA.sql. Se dice ASï¿½, con el nombre del archivo,
+         en vez de un ï¿½HTTP 404ï¿½ que no le sirve a nadie. */
       est.textContent = (r.status === 404)
-        ? '?? El servidor todavía no sabe borrar: falta correr SUPABASE-PUERTA-ANONIMA.sql en el SQL Editor de Supabase.'
+        ? '?? El servidor todavï¿½a no sabe borrar: falta correr SUPABASE-PUERTA-ANONIMA.sql en el SQL Editor de Supabase.'
         : '?? No se pudo borrar (HTTP ' + r.status + ').';
       return;
     }
@@ -306,7 +306,7 @@ async function borrarFila(id, tr){
       if (tr) tr.remove();
       est.textContent = '?? Fila quitada de la nube.';
     } else {
-      est.textContent = '?? No se quitó: esa fila no es de tu aula.';
+      est.textContent = '?? No se quitï¿½: esa fila no es de tu aula.';
     }
   } catch (e) {
     est.textContent = '?? No se pudo borrar (' + e.message + ').';
@@ -335,22 +335,22 @@ function llenarFiltros(){
 
 /* ?? `verificado` puede venir de tres maneras y las tres significan cosas
    distintas:
-     true       ? llegó con código de aula y el servidor resolvió al maestro;
-     false      ? llegó sin código: nadie comprobó de quién es;
-     undefined  ? el servidor TODAVÍA NO tiene la columna, o sea que aún no se
+     true       ? llegï¿½ con cï¿½digo de aula y el servidor resolviï¿½ al maestro;
+     false      ? llegï¿½ sin cï¿½digo: nadie comprobï¿½ de quiï¿½n es;
+     undefined  ? el servidor TODAVï¿½A NO tiene la columna, o sea que aï¿½n no se
                   ha corrido SUPABASE-PUERTA-ANONIMA.sql.
-   El tercer caso NO se marca: marcarlo pintaría de aviso todas las filas de
+   El tercer caso NO se marca: marcarlo pintarï¿½a de aviso todas las filas de
    todos los maestros mientras el SQL espera a ser pegado, y un aviso que sale
    siempre deja de leerse. */
 function selloSinVerificar(r){
   if(r.verificado!==false) return '';
-  return ' <span class="sinver" title="Esta fila llegó sin código de aula: nadie comprobó que sea de un alumno tuyo. '
-    + 'Si no la reconoces, bórrala con ??.">?? sin verificar</span>';
+  return ' <span class="sinver" title="Esta fila llegï¿½ sin cï¿½digo de aula: nadie comprobï¿½ que sea de un alumno tuyo. '
+    + 'Si no la reconoces, bï¿½rrala con ??.">?? sin verificar</span>';
 }
 
 function pintar(){
   const rs=filtrados();
-  // Anti-trampa: aperturas de pauta (respuestas) por dispositivo y misión
+  // Anti-trampa: aperturas de pauta (respuestas) por dispositivo y misiï¿½n
   const pautas=DATOS.filter(r=>r.tipo==='pauta_vista');
   const tb=document.getElementById('tbody'); tb.innerHTML='';
   document.getElementById('vacio').style.display = rs.length?'none':'block';
@@ -364,12 +364,12 @@ function pintar(){
         const tEv=r.fecha||r.creado_en;
         const vio=pautas.find(p=>p.mision===r.mision && p.dispositivo===r.dispositivo &&
           (p.fecha||p.creado_en)<tEv && fmtF(p.fecha||p.creado_en).f===f);
-        if(vio) nota += ' <span class="pauta-warn" title="?? La pauta (respuestas) se abrió en ese dispositivo a las '+esc(fmtF(vio.fecha||vio.creado_en).h)+', ANTES de calificar. La nota podría no ser confiable.">??</span>';
+        if(vio) nota += ' <span class="pauta-warn" title="?? La pauta (respuestas) se abriï¿½ en ese dispositivo a las '+esc(fmtF(vio.fecha||vio.creado_en).h)+', ANTES de calificar. La nota podrï¿½a no ser confiable.">??</span>';
       }
     }
     const tr=document.createElement('tr');
-    tr.innerHTML = '<td>'+esc(f)+'</td><td>'+esc(h)+'</td><td>'+esc(r.alumno||'—')+'</td><td>'+esc(r.codigo_lista||'—')+
-      '</td><td>'+esc(r.grado||'—')+'</td><td>'+esc(r.mision||'—')+
+    tr.innerHTML = '<td>'+esc(f)+'</td><td>'+esc(h)+'</td><td>'+esc(r.alumno||'ï¿½')+'</td><td>'+esc(r.codigo_lista||'ï¿½')+
+      '</td><td>'+esc(r.grado||'ï¿½')+'</td><td>'+esc(r.mision||'ï¿½')+
       '</td><td><span class="badge b-'+esc(r.tipo)+'">'+(NOMBRE_TIPO[r.tipo]||esc(r.tipo))+'</span>'+selloSinVerificar(r)+'</td><td>'+esc(r.forma||'')+
       '</td><td>'+nota+'</td><td>'+esc(r.dispositivo||'')+'</td>' +
       '<td>' + (r.id ? '<button class="btn-borrar" data-id="'+esc(r.id)+'" title="Quitar esta fila de la nube">??</button>' : '') + '</td>';
@@ -386,8 +386,8 @@ function pintar(){
     stat([...new Set(rs.map(r=>r.alumno).filter(Boolean))].length,'Alumnos') +
     stat([...new Set(rs.map(r=>r.mision).filter(Boolean))].length,'Misiones') +
     stat([...new Set(rs.map(r=>r.dispositivo).filter(Boolean))].length,'Dispositivos') +
-    stat(prom(evals)!=null?prom(evals):'—','Promedio conceptual') +
-    stat(prom(ops)!=null?prom(ops):'—','Promedio operativa') +
+    stat(prom(evals)!=null?prom(evals):'ï¿½','Promedio conceptual') +
+    stat(prom(ops)!=null?prom(ops):'ï¿½','Promedio operativa') +
     stat(pend,'Por subir (este equipo)');
 }
 
@@ -402,13 +402,13 @@ function pintarProgreso(prog){
       ? Object.keys(r.diag).map(k=>k+(r.diag[k]&&r.diag[k].etapa?(' ? '+r.diag[k].etapa):'')).join(', ')
       : '';
     const camp=r.camp||{};
-    const ins=Array.isArray(camp.insignias)?[...new Set(camp.insignias)].slice(0,6).join(' · '):'';
+    const ins=Array.isArray(camp.insignias)?[...new Set(camp.insignias)].slice(0,6).join(' ï¿½ '):'';
     const tr=document.createElement('tr');
-    tr.innerHTML = '<td>'+esc(p.alumno||'—')+'</td><td>'+esc(p.codigo_lista||'—')+'</td><td>'+esc(p.grado||'—')+
-      '</td><td>'+esc(r.xp_index==null?'—':r.xp_index)+'</td><td title="'+esc(dom.join(', '))+'">'+dom.length+
-      '</td><td>'+esc(r.secciones==null?'—':r.secciones)+'</td><td>'+esc(r.minutos==null?'—':r.minutos)+
-      '</td><td>'+esc(diag||'—')+'</td><td>'+esc(camp.torneos==null?'—':camp.torneos)+
-      '</td><td>'+esc(ins||'—')+'</td><td>'+esc(f+' '+h)+'</td><td>'+esc(p.dispositivo||'')+'</td>';
+    tr.innerHTML = '<td>'+esc(p.alumno||'ï¿½')+'</td><td>'+esc(p.codigo_lista||'ï¿½')+'</td><td>'+esc(p.grado||'ï¿½')+
+      '</td><td>'+esc(r.xp_index==null?'ï¿½':r.xp_index)+'</td><td title="'+esc(dom.join(', '))+'">'+dom.length+
+      '</td><td>'+esc(r.secciones==null?'ï¿½':r.secciones)+'</td><td>'+esc(r.minutos==null?'ï¿½':r.minutos)+
+      '</td><td>'+esc(diag||'ï¿½')+'</td><td>'+esc(camp.torneos==null?'ï¿½':camp.torneos)+
+      '</td><td>'+esc(ins||'ï¿½')+'</td><td>'+esc(f+' '+h)+'</td><td>'+esc(p.dispositivo||'')+'</td>';
     tb.appendChild(tr);
   });
 }
@@ -430,7 +430,7 @@ function exportarCSV(){
 }
 
 function subirPendientes(){
-  if(!window.METAS_SB){ alert('La capa de nube aún no carga en esta página.'); return; }
+  if(!window.METAS_SB){ alert('La capa de nube aï¿½n no carga en esta pï¿½gina.'); return; }
   METAS_SB.sincronizar().then(r=>{
     alert(r.enviados+' resultados subidos a la nube.\nPendientes: '+r.pendientes);
     if(DATOS.length) consultar();

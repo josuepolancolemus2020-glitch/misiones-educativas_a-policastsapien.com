@@ -27,13 +27,166 @@
   var puzzleAutoAdvanceTimer = null;
 
   /* --------------------------------------------------------------------------
-     HELPER: ESCUELA / INSTITUCIÓN ACTIVA
+     HELPER: ESCUELA / INSTITUCIÓN ACTIVA Y PREFIJOS RÁPIDOS
      -------------------------------------------------------------------------- */
-  function obtenerSaludoEscuela() {
+  var CATALOGO_COLEGIOS_PREBASICA_INTERNO = [
+    { nombre: 'CEPB María Consuelo', claves: ['mariaconsuelo', 'consuelo'] },
+    { nombre: 'Coral Bilingual School', claves: ['coral', 'coralbilingual'] },
+    { nombre: 'CEPB Rafael Pineda Ponce', claves: ['rafael', 'pineda', 'ponce', 'pinedaponce'] },
+    { nombre: 'CEPB Nimia Baquedano', claves: ['nimia', 'baquedano', 'nimiabaquedano'] },
+    { nombre: 'CEPB Dionisio de Herrera', claves: ['dionisio', 'herrera', 'dionisiodeherrera'] },
+    { nombre: 'CEPB Amigo de los Niños', claves: ['amigo', 'amigodelosninos', 'amigosdelosninos'] },
+    { nombre: 'CEBNG Blessing Bilingual School', claves: ['blessing', 'blessingbilingual'] },
+    { nombre: 'CEBNG Simiente Santa', claves: ['simiente', 'simientesanta'] },
+    { nombre: 'CEPB Marina Name', claves: ['marina', 'marinaname'] },
+    { nombre: 'John Cook School', claves: ['johncook', 'john', 'cook', 'jhoncook'] },
+    { nombre: 'Liceo Panamericano', claves: ['panamericano', 'liceopanamericano'] },
+    { nombre: 'Edición Oficial M.E.T.A.S. · Evelyn S. Castellanos H.', claves: ['metas', 'evelyn', 'castellanos', 'demo'] }
+  ];
+
+  function normalizarTextoColegioLocal(str) {
+    if (!str) return '';
+    return str
+      .toString()
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]/g, '');
+  }
+
+  function limpiarPrefijoEscuela(nombre) {
+    if (!nombre) return '';
+    if (typeof nombre === 'object' && nombre !== null) {
+      nombre = nombre.nombre || '';
+    }
+    if (typeof nombre !== 'string') return '';
+    var str = nombre.trim();
+    if (str.charAt(0) === '{' && str.charAt(str.length - 1) === '}') {
+      try {
+        var parseado = JSON.parse(str);
+        if (parseado && parseado.nombre) {
+          str = parseado.nombre;
+        }
+      } catch (e) {}
+    }
+    // Quitar prefijo temporal DEMO (ej. DEMO20-, DEMO7:, DEMO-)
+    str = str.replace(/^DEMO(\d+)?\s*[-:]\s*/i, '');
+    // Quitar prefijos oficiales rápidos (ej. 2027-, METAS-, METAS2027:)
+    str = str.replace(/^(?:2027|metas|metas2027)\s*[-:]\s*/i, '');
+    return str.trim();
+  }
+
+  function obtenerInfoEscuela() {
+    var raw = null;
     try {
-      var esc = localStorage.getItem('metas_prebasica_institucion');
-      if (esc && esc.trim()) return esc.trim();
+      raw = localStorage.getItem('metas_prebasica_institucion');
     } catch (e) {}
+    if (!raw || typeof raw !== 'string' || !raw.trim()) return null;
+    var str = raw.trim();
+
+    if (str.charAt(0) === '{' && str.charAt(str.length - 1) === '}') {
+      try {
+        var obj = JSON.parse(str);
+        if (obj && typeof obj === 'object' && obj.nombre) {
+          obj.nombre = limpiarPrefijoEscuela(obj.nombre);
+          return obj;
+        }
+      } catch (eJson) {}
+    }
+
+    var nombreLimpio = limpiarPrefijoEscuela(str);
+    if (!nombreLimpio) return null;
+    return {
+      nombre: nombreLimpio,
+      tipo: 'OFICIAL'
+    };
+  }
+
+  function guardarInfoEscuela(info) {
+    if (!info || !info.nombre) return;
+    try {
+      var serializado = JSON.stringify(info);
+      localStorage.setItem('metas_prebasica_institucion', serializado);
+      sessionStorage.setItem('metas_prebasica_institucion', serializado);
+    } catch (e) {}
+  }
+
+  function borrarInfoEscuela() {
+    try {
+      localStorage.removeItem('metas_prebasica_institucion');
+    } catch (e1) {}
+    try {
+      sessionStorage.removeItem('metas_prebasica_institucion');
+    } catch (e2) {}
+  }
+
+  function estaColegioRevocadoLocal(nombre) {
+    if (!nombre) return false;
+    var nombreLimpio = limpiarPrefijoEscuela(nombre);
+    if (typeof window.estaColegioRevocado === 'function') {
+      if (window.estaColegioRevocado(nombreLimpio)) return true;
+    }
+    var rev = window.COLEGIOS_REVOCADOS;
+    if (!rev || !Array.isArray(rev) || rev.length === 0) return false;
+    var norm = normalizarTextoColegioLocal(nombreLimpio);
+    if (!norm) return false;
+    for (var i = 0; i < rev.length; i++) {
+      var rNorm = normalizarTextoColegioLocal(rev[i]);
+      if (rNorm && (norm === rNorm || norm.indexOf(rNorm) !== -1 || rNorm.indexOf(norm) !== -1)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function formatearNombreInstitucion(str) {
+    if (!str) return '';
+    var limpio = str.trim().replace(/\s+/g, ' ');
+    if (!limpio) return '';
+
+    var todoMinusculas = (limpio === limpio.toLowerCase());
+    var todoMayusculas = (limpio === limpio.toUpperCase() && /[A-ZÁÉÍÓÚÑ]/.test(limpio));
+
+    if (!todoMinusculas && !todoMayusculas) {
+      return limpio;
+    }
+
+    var palabras = limpio.split(' ');
+    var menores = ['de', 'del', 'la', 'las', 'el', 'los', 'en', 'y', 'e', 'o', 'u', 'al'];
+    var formateadas = palabras.map(function (palabra, idx) {
+      var low = palabra.toLowerCase();
+      if (idx > 0 && menores.indexOf(low) !== -1) {
+        return low;
+      }
+      return low.charAt(0).toUpperCase() + low.slice(1);
+    });
+    return formateadas.join(' ');
+  }
+
+  function buscarEnCatalogoColegios(texto) {
+    if (!texto) return null;
+    var catalogo = window.CATALOGO_COLEGIOS_PREBASICA || CATALOGO_COLEGIOS_PREBASICA_INTERNO;
+    var fnNorm = (typeof window.normalizarTextoColegio === 'function')
+      ? window.normalizarTextoColegio
+      : normalizarTextoColegioLocal;
+    var limpio = fnNorm(texto);
+    if (!limpio) return null;
+
+    for (var i = 0; i < catalogo.length; i++) {
+      var item = catalogo[i];
+      for (var j = 0; j < item.claves.length; j++) {
+        var clave = fnNorm(item.claves[j]);
+        if (limpio === clave || limpio.indexOf(clave) !== -1 || clave.indexOf(limpio) !== -1) {
+          return item.nombre;
+        }
+      }
+    }
+    return null;
+  }
+
+  function obtenerSaludoEscuela() {
+    var info = obtenerInfoEscuela();
+    if (info && info.nombre) return info.nombre;
     return '';
   }
   window.obtenerSaludoEscuela = obtenerSaludoEscuela;
@@ -4721,7 +4874,9 @@
     selectTraceChallenge(0, false);
     selectFigura(0, false);
     buildRodeaExercise();
-    mostrarRompecabezas('numeros');
+    if (typeof window.mostrarRompecabezas === 'function') {
+      window.mostrarRompecabezas('numeros');
+    }
     renderHandsOnTab();
     if (typeof window.go === 'function') {
       window.go('s-trazos');
@@ -4731,8 +4886,11 @@
   window.resetXP = reiniciarTodoProgresoPrebasica;
 
   window.cambiarEscuelaPrebasica = function () {
+    borrarInfoEscuela();
+    var cintillo = document.getElementById('cintilloInstitucionPrebasica');
+    if (cintillo) cintillo.style.display = 'none';
     reiniciarTodoProgresoPrebasica();
-    window.abrirModalInstitucion(true);
+    window.abrirModalInstitucion(false);
   };
 
   /* --------------------------------------------------------------------------
@@ -4748,9 +4906,10 @@
 
   function generarMensajeWhatsAppPrebasica(nombreEscuela) {
     var urlLimpia = obtenerUrlLimpiaMision();
-    var tieneEscuela = (nombreEscuela && typeof nombreEscuela === 'string' && nombreEscuela.trim().length > 0);
+    var escuelaLimpia = limpiarPrefijoEscuela(nombreEscuela);
+    var tieneEscuela = (escuelaLimpia && typeof escuelaLimpia === 'string' && escuelaLimpia.trim().length > 0);
     var paso2 = tieneEscuela
-      ? '2️⃣ En la caja del Portal de Acceso, escriba el nombre oficial de nuestro Kínder / Centro Educativo: *' + nombreEscuela.trim() + '*'
+      ? '2️⃣ En la caja del Portal de Acceso, escriba el nombre oficial de nuestro Kínder / Centro Educativo: *' + escuelaLimpia.trim() + '*'
       : '2️⃣ En la caja del Portal de Acceso, escriba el nombre oficial de nuestro Kínder / Centro Educativo: *[ESCRIBA AQUÍ EL NOMBRE DEL KÍNDER / CEPB]*';
 
     var lineas = [
@@ -4835,13 +4994,9 @@
   };
 
   window.compartirMision = function () {
-    var escuelaActiva = null;
-    try {
-      escuelaActiva = localStorage.getItem('metas_prebasica_institucion');
-    } catch (e) {}
-
-    if (escuelaActiva && typeof escuelaActiva === 'string' && escuelaActiva.trim().length > 0) {
-      window.abrirModalCompartirOpciones(escuelaActiva.trim());
+    var info = obtenerInfoEscuela();
+    if (info && info.nombre) {
+      window.abrirModalCompartirOpciones(info.nombre);
     } else {
       window.compartirWhatsAppDocenteGeneral();
     }
@@ -4851,11 +5006,12 @@
     var modal = document.getElementById('modalCompartirPrebasica');
     var lblEscuela = document.getElementById('lblShareOpcionEscuela');
     var subEscuela = document.getElementById('lblShareSubEscuela');
+    var escuelaLimpia = limpiarPrefijoEscuela(escuelaActiva);
     if (lblEscuela) {
-      lblEscuela.textContent = '🏫 Compartir para mi escuela actual (' + escuelaActiva + ')';
+      lblEscuela.textContent = '🏫 Compartir para mi escuela actual (' + escuelaLimpia + ')';
     }
     if (subEscuela) {
-      subEscuela.textContent = 'Incluye "' + escuelaActiva + '" en el Paso 2 para que las familias ingresen directamente.';
+      subEscuela.textContent = 'Incluye "' + escuelaLimpia + '" en el Paso 2 para que las familias ingresen directamente.';
     }
     if (modal) {
       modal.style.display = 'flex';
@@ -4870,9 +5026,8 @@
   window.enviarWhatsAppPrebasica = function (usarEscuelaActiva) {
     var esc = null;
     if (usarEscuelaActiva) {
-      try {
-        esc = localStorage.getItem('metas_prebasica_institucion');
-      } catch (e) {}
+      var info = obtenerInfoEscuela();
+      esc = info ? info.nombre : null;
     }
     var msg = generarMensajeWhatsAppPrebasica(esc);
     abrirWhatsAppCompartir(msg);
@@ -4882,9 +5037,8 @@
   window.copiarMensajePrebasicaBtn = function (btnElement, usarEscuelaActiva) {
     var esc = null;
     if (usarEscuelaActiva) {
-      try {
-        esc = localStorage.getItem('metas_prebasica_institucion');
-      } catch (e) {}
+      var info = obtenerInfoEscuela();
+      esc = info ? info.nombre : null;
     }
     var msg = generarMensajeWhatsAppPrebasica(esc);
     copiarTextoAlPortapapeles(msg, btnElement, '📋 Copiar texto', '✅ ¡Copiado!');
@@ -4903,26 +5057,93 @@
   /* --------------------------------------------------------------------------
      PORTAL DE ACCESO Y GESTIÓN DE INSTITUCIÓN EDUCATIVA (PREBÁSICA)
      -------------------------------------------------------------------------- */
-  function actualizarCintilloInstitucion(nombre) {
+  function actualizarCintilloInstitucion(infoOrNombre) {
     var cintillo = document.getElementById('cintilloInstitucionPrebasica');
     var lbl = document.getElementById('lblNombreInstitucion');
-    if (cintillo && lbl) {
-      lbl.textContent = nombre;
-      cintillo.style.display = 'block';
+    if (!cintillo || !lbl) return;
+
+    var info = null;
+    if (typeof infoOrNombre === 'object' && infoOrNombre !== null) {
+      info = infoOrNombre;
+    } else if (typeof infoOrNombre === 'string') {
+      var str = infoOrNombre.trim();
+      if (str.charAt(0) === '{' && str.charAt(str.length - 1) === '}') {
+        try { info = JSON.parse(str); } catch (e) {}
+      }
+      if (!info) {
+        info = { nombre: limpiarPrefijoEscuela(str), tipo: 'OFICIAL' };
+      }
+    } else {
+      info = obtenerInfoEscuela();
     }
+
+    if (!info || !info.nombre) {
+      cintillo.style.display = 'none';
+      return;
+    }
+
+    var nombreLimpio = limpiarPrefijoEscuela(info.nombre);
+    if (!nombreLimpio) {
+      cintillo.style.display = 'none';
+      return;
+    }
+
+    if (info.tipo === 'DEMO') {
+      var msRestantes = (info.expiraEn || Date.now()) - Date.now();
+      var diasRestantes = Math.max(1, Math.ceil(msRestantes / 86400000));
+      var sufijoDias = diasRestantes === 1 ? ' día restante)' : ' días restantes)';
+      lbl.textContent = nombreLimpio + ' ⏳ Demo (' + diasRestantes + sufijoDias;
+    } else {
+      lbl.textContent = nombreLimpio;
+    }
+
+    cintillo.style.display = 'block';
   }
 
   function inicializarInstitucionPrebasica() {
-    var guardada = null;
-    try {
-      guardada = localStorage.getItem('metas_prebasica_institucion');
-    } catch (e) {}
-
-    if (guardada) {
-      actualizarCintilloInstitucion(guardada);
-    } else {
+    var info = obtenerInfoEscuela();
+    if (!info || !info.nombre) {
       window.abrirModalInstitucion(false);
+      return;
     }
+
+    var nombreLimpio = limpiarPrefijoEscuela(info.nombre);
+
+    // 1. Verificar revocación remota
+    if (estaColegioRevocadoLocal(nombreLimpio)) {
+      borrarInfoEscuela();
+      var cintilloRev = document.getElementById('cintilloInstitucionPrebasica');
+      if (cintilloRev) cintilloRev.style.display = 'none';
+      window.abrirModalInstitucion(false);
+      var errRev = document.getElementById('errorInstitucionPrebasica');
+      if (errRev) {
+        errRev.textContent = '⛔ El acceso para ' + nombreLimpio + ' ha sido revocado. Para reactivar el servicio, comuníquese con la distribuidora M.E.T.A.S.';
+        errRev.style.display = 'block';
+      }
+      return;
+    }
+
+    // 2. Verificar expiración de prueba DEMO
+    if (info.tipo === 'DEMO') {
+      var ahora = Date.now();
+      if (info.expiraEn && ahora > info.expiraEn) {
+        borrarInfoEscuela();
+        var cintilloExp = document.getElementById('cintilloInstitucionPrebasica');
+        if (cintilloExp) cintilloExp.style.display = 'none';
+        window.abrirModalInstitucion(false);
+        var errExp = document.getElementById('errorInstitucionPrebasica');
+        if (errExp) {
+          errExp.textContent = '⏳ El periodo de prueba gratuita para ' + nombreLimpio + ' ha concluido. Para activar el acceso oficial anual junto con el Libro 1 de Prebásica, comuníquese con la distribuidora M.E.T.A.S.';
+          errExp.style.display = 'block';
+        }
+        return;
+      }
+    }
+
+    // 3. Acceso válido: actualizar almacenamiento a objeto canónico y mostrar cintillo
+    info.nombre = nombreLimpio;
+    guardarInfoEscuela(info);
+    actualizarCintilloInstitucion(info);
   }
 
   window.abrirModalInstitucion = function (permitirCerrar) {
@@ -4956,29 +5177,130 @@
     var input = document.getElementById('inputColegioPrebasica');
     var err = document.getElementById('errorInstitucionPrebasica');
     var raw = input ? input.value : '';
-
-    var validado = null;
-    if (typeof window.validarInstitucionPrebasica === 'function') {
-      validado = window.validarInstitucionPrebasica(raw);
+    if (!raw || !raw.trim()) {
+      if (err) {
+        err.textContent = 'Por favor escribe el nombre de tu centro educativo.';
+        err.style.display = 'block';
+      }
+      if (input) input.focus();
+      return;
     }
 
-    if (validado) {
-      var institucionAnterior = null;
-      try {
-        institucionAnterior = localStorage.getItem('metas_prebasica_institucion');
-      } catch (errPrev) {}
+    var entrada = raw.trim();
+    var validadoInfo = null;
 
-      var esDistinta = (!institucionAnterior || institucionAnterior !== validado);
+    // 1. Detección de prefijo temporal DEMO (DEMO20-, DEMO7-, DEMO-, etc.)
+    var regexDemo = /^DEMO(\d+)?\s*[-:]\s*(.+)$/i;
+    var matchDemo = entrada.match(regexDemo);
+    if (matchDemo) {
+      var dias = matchDemo[1] ? parseInt(matchDemo[1], 10) : 20;
+      if (isNaN(dias) || dias <= 0) dias = 20;
+      var candDemo = matchDemo[2].trim();
+      if (candDemo.length >= 3) {
+        if (estaColegioRevocadoLocal(candDemo)) {
+          if (err) {
+            err.textContent = '⛔ El acceso para ' + candDemo + ' ha sido revocado. Comuníquese con la distribuidora M.E.T.A.S.';
+            err.style.display = 'block';
+          }
+          if (input) input.focus();
+          return;
+        }
+        var nomDemoCat = buscarEnCatalogoColegios(candDemo);
+        var nomDemoFinal = nomDemoCat || ((typeof window.formatearNombreColegio === 'function')
+          ? window.formatearNombreColegio(candDemo)
+          : formatearNombreInstitucion(candDemo));
+        validadoInfo = {
+          nombre: nomDemoFinal,
+          tipo: 'DEMO',
+          expiraEn: Date.now() + (dias * 86400000),
+          diasAsignados: dias
+        };
+      }
+    }
 
-      try {
-        localStorage.setItem('metas_prebasica_institucion', validado);
-      } catch (errLS) {}
+    // 2. Detección de prefijo rápido oficial: 2027-, 2027:, METAS-, METAS:, METAS2027-
+    if (!validadoInfo) {
+      var regexPrefijo = /^\s*(?:2027|metas|metas2027)\s*[-:]\s*(.+)$/i;
+      var matchPrefijo = entrada.match(regexPrefijo);
+      if (matchPrefijo) {
+        var candOficial = matchPrefijo[1].trim();
+        if (candOficial.length >= 3) {
+          if (estaColegioRevocadoLocal(candOficial)) {
+            if (err) {
+              err.textContent = '⛔ El acceso para ' + candOficial + ' ha sido revocado. Comuníquese con la distribuidora M.E.T.A.S.';
+              err.style.display = 'block';
+            }
+            if (input) input.focus();
+            return;
+          }
+          var nomOficialCat = buscarEnCatalogoColegios(candOficial);
+          var nomOficialFinal = nomOficialCat || ((typeof window.formatearNombreColegio === 'function')
+            ? window.formatearNombreColegio(candOficial)
+            : formatearNombreInstitucion(candOficial));
+          validadoInfo = {
+            nombre: nomOficialFinal,
+            tipo: 'OFICIAL'
+          };
+        }
+      }
+    }
+
+    // 3. Validación contra colegios-prebasica.js o catálogo interno (sin prefijo)
+    if (!validadoInfo) {
+      if (typeof window.validarInstitucionPrebasica === 'function') {
+        var resVal = window.validarInstitucionPrebasica(entrada);
+        if (resVal) {
+          if (typeof resVal === 'object' && resVal.nombre) {
+            validadoInfo = resVal;
+          } else if (typeof resVal === 'string') {
+            validadoInfo = {
+              nombre: resVal,
+              tipo: 'OFICIAL'
+            };
+          }
+        }
+      }
+    }
+
+    // 4. Catálogo interno directo si no se resolvió
+    if (!validadoInfo) {
+      var nomDirecto = buscarEnCatalogoColegios(entrada);
+      if (nomDirecto) {
+        if (estaColegioRevocadoLocal(nomDirecto)) {
+          if (err) {
+            err.textContent = '⛔ El acceso para ' + nomDirecto + ' ha sido revocado. Comuníquese con la distribuidora M.E.T.A.S.';
+            err.style.display = 'block';
+          }
+          if (input) input.focus();
+          return;
+        }
+        validadoInfo = {
+          nombre: nomDirecto,
+          tipo: 'OFICIAL'
+        };
+      }
+    }
+
+    if (validadoInfo && validadoInfo.nombre) {
+      if (estaColegioRevocadoLocal(validadoInfo.nombre)) {
+        if (err) {
+          err.textContent = '⛔ El acceso para ' + validadoInfo.nombre + ' ha sido revocado. Comuníquese con la distribuidora M.E.T.A.S.';
+          err.style.display = 'block';
+        }
+        if (input) input.focus();
+        return;
+      }
+
+      var infoAnterior = obtenerInfoEscuela();
+      var esDistinta = (!infoAnterior || infoAnterior.nombre !== validadoInfo.nombre);
+
+      guardarInfoEscuela(validadoInfo);
 
       if (esDistinta) {
         reiniciarTodoProgresoPrebasica();
       }
 
-      actualizarCintilloInstitucion(validado);
+      actualizarCintilloInstitucion(validadoInfo);
       window.cerrarModalInstitucion();
     } else {
       if (err) {
@@ -5019,7 +5341,9 @@
     initTraceTab();
     initFigurasTab();
     initRodeaTab();
-    mostrarRompecabezas('numeros');
+    if (typeof window.mostrarRompecabezas === 'function') {
+      window.mostrarRompecabezas('numeros');
+    }
     renderHandsOnTab();
     inicializarInstitucionPrebasica();
   });

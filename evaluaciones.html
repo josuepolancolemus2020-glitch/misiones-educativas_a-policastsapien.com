@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>??? Banco de Evaluaciones — M.E.T.A.S</title>
+<title>??? Banco de Evaluaciones ï¿½ M.E.T.A.S</title>
 <style>
 :root{
   --esp:#c49000; --mat:#1565c0; --cnat:#27ae60; --csoc:#c0392b; --tec:#0e7490; --ing:#be185d;
@@ -43,9 +43,9 @@ footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5
 <body>
 
 <header>
-  <h1>??? Banco de Evaluaciones — M.E.T.A.S</h1>
-  <p>Las <strong id="totalMisiones">28</strong> misiones con evaluación imprimible en carta, con pauta de corrección y clave ZipGrade.
-     Cada <strong>Forma (1 a 30)</strong> genera <strong>siempre el mismo examen</strong>: imprime la Forma 3 hoy y la pauta de la Forma 3 seguirá siendo válida mañana.</p>
+  <h1>??? Banco de Evaluaciones ï¿½ M.E.T.A.S</h1>
+  <p>Las <strong id="totalMisiones">28</strong> misiones con evaluaciï¿½n imprimible en carta, con pauta de correcciï¿½n y clave ZipGrade.
+     Cada <strong>Forma (1 a 30)</strong> genera <strong>siempre el mismo examen</strong>: imprime la Forma 3 hoy y la pauta de la Forma 3 seguirï¿½ siendo vï¿½lida maï¿½ana.</p>
   <div class="top-links">
     <a class="btn btn-blanco" href="index.html">?? Volver al inicio</a>
     <a class="btn btn-blanco" href="registro.html">?? Evidencia de misiones</a>
@@ -53,8 +53,8 @@ footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5
 </header>
 
 <div class="pasos">
-  <strong>¿Cómo imprimir una evaluación?</strong><br>
-  1?? Toca la misión que necesitas &nbsp;?&nbsp; 2?? dentro de la misión abre <span class="chip">?? Evaluación</span>
+  <strong>ï¿½Cï¿½mo imprimir una evaluaciï¿½n?</strong><br>
+  1?? Toca la misiï¿½n que necesitas &nbsp;?&nbsp; 2?? dentro de la misiï¿½n abre <span class="chip">?? Evaluaciï¿½n</span>
   &nbsp;?&nbsp; 3?? elige la <span class="chip">Forma</span> (1-30) &nbsp;?&nbsp; 4?? toca <span class="chip">??? Imprimir</span>.
   La pauta con la clave sale junto al examen.
 </div>
@@ -63,33 +63,33 @@ footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5
 
 <div class="nota-etica">
   ?? <strong>Consejo:</strong> usa Formas distintas por fila de pupitres (ej. Formas 1, 2 y 3) para evaluar con tranquilidad.
-  El pie de página de cada examen indica la Forma para calificar con su pauta exacta.
+  El pie de pï¿½gina de cada examen indica la Forma para calificar con su pauta exacta.
 </div>
 
-<footer>?? Proyecto Educativo M.E.T.A.S · ?? policastsapien.com<br>
-  © 2026 Familia Polanco-Castellanos · <a href="privacidad.html">Aviso de privacidad</a>
-  · <a href="terminos.html">Términos de uso</a></footer>
+<footer>?? Proyecto Educativo M.E.T.A.S ï¿½ ?? policastsapien.com<br>
+  ï¿½ 2026 Familia Polanco-Castellanos ï¿½ <a href="privacidad.html">Aviso de privacidad</a>
+  ï¿½ <a href="terminos.html">Tï¿½rminos de uso</a></footer>
 
-<script src="js/data/misiones.js?v=460"></script>
+<script src="js/data/misiones.js?v=461"></script>
 <script>
 'use strict';
-/* El orden y el color de cada materia se escriben; QUÉ materias hay se CUENTA
-   del catálogo. Escribir las dos cosas costó 14 misiones: la cabecera contaba
-   las 57 de MISSIONS y la lista solo pintaba cuatro materias, así que las
-   evaluaciones de Programación, Robótica e Inglés no tenían dónde imprimirse.
-   Una materia que entre al catálogo y aún no tenga su color sale igual, al
-   final: mejor sin color que sin sus exámenes. */
+/* El orden y el color de cada materia se escriben; QUï¿½ materias hay se CUENTA
+   del catï¿½logo. Escribir las dos cosas costï¿½ 14 misiones: la cabecera contaba
+   las 57 de MISSIONS y la lista solo pintaba cuatro materias, asï¿½ que las
+   evaluaciones de Programaciï¿½n, Robï¿½tica e Inglï¿½s no tenï¿½an dï¿½nde imprimirse.
+   Una materia que entre al catï¿½logo y aï¿½n no tenga su color sale igual, al
+   final: mejor sin color que sin sus exï¿½menes. */
 const ORDEN = [
-  { key: 'español',      label: '?? Español',            cls: 'esp'  },
-  { key: 'matemáticas',  label: '?? Matemáticas',        cls: 'mat'  },
+  { key: 'espaï¿½ol',      label: '?? Espaï¿½ol',            cls: 'esp'  },
+  { key: 'matemï¿½ticas',  label: '?? Matemï¿½ticas',        cls: 'mat'  },
   { key: 'naturales',    label: '?? Ciencias Naturales', cls: 'cnat' },
   { key: 'sociales',     label: '?? Ciencias Sociales',  cls: 'csoc' },
-  { key: 'programación', label: '?? Programación',       cls: 'tec'  },
-  { key: 'robótica',     label: '?? Robótica',           cls: 'tec'  },
-  { key: 'inglés',       label: '?? Inglés',             cls: 'ing'  },
-  { key: 'cívica',       label: '???? E. Cívica',          cls: 'civ'  },
+  { key: 'programaciï¿½n', label: '?? Programaciï¿½n',       cls: 'tec'  },
+  { key: 'robï¿½tica',     label: '?? Robï¿½tica',           cls: 'tec'  },
+  { key: 'inglï¿½s',       label: '?? Inglï¿½s',             cls: 'ing'  },
+  { key: 'cï¿½vica',       label: '???? E. Cï¿½vica',          cls: 'civ'  },
   { key: 'ia',           label: '?? Inteligencia Artificial', cls: 'ia' },
-  { key: 'filosofía',    label: '?? Filosofía',          cls: 'filo' },
+  { key: 'filosofï¿½a',    label: '?? Filosofï¿½a',          cls: 'filo' },
 ];
 MISSIONS.forEach(m => {
   if (m.subject && !ORDEN.some(o => o.key === m.subject)) {
@@ -103,7 +103,7 @@ document.getElementById('banco').innerHTML = ORDEN.map(o => {
   if (!lista.length) return '';
   return `
   <section class="materia ${o.cls}">
-    <h2>${o.label} <span class="cnt">· ${lista.length} evaluaci${lista.length === 1 ? 'ón' : 'ones'}</span></h2>
+    <h2>${o.label} <span class="cnt">ï¿½ ${lista.length} evaluaci${lista.length === 1 ? 'ï¿½n' : 'ones'}</span></h2>
     <div class="lista">
       ${lista.map(m => `
         <a class="mision ${o.cls}" href="${esc(m.url)}">
@@ -112,7 +112,7 @@ document.getElementById('banco').innerHTML = ORDEN.map(o => {
             <span class="tit">${esc(m.title)}</span>
             <div class="sub">${esc(m.grade || '')}</div>
           </span>
-          <span class="go">??? ›</span>
+          <span class="go">??? ï¿½</span>
         </a>`).join('')}
     </div>
   </section>`;
