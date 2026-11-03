@@ -15,7 +15,7 @@
 //    las etiquetas ?v=NN de las páginas (normativa de sellado del CLAUDE.md).
 //    CACHE_DATOS no se toca nunca: subirlo volvería a borrarle al alumno lo
 //    que tenía guardado, que es justo lo que este arreglo vino a evitar.
-const CACHE_NAME = 'meta-app-v454';
+const CACHE_NAME = 'meta-app-v455';
 const CACHE_APP = CACHE_NAME;
 const CACHE_DATOS = 'meta-datos-v1';
 
@@ -313,8 +313,15 @@ self.addEventListener('fetch', event => {
     const red = fetch(event.request).then(respuesta => {
       if (respuesta && respuesta.ok) {
         guardar(event.request, respuesta, CACHE_DATOS);
+        return respuesta;
       }
-      return respuesta;
+      return fetch(event.request.url, { cache: 'reload' }).then(r2 => {
+        if (r2 && r2.ok) {
+          guardar(event.request, r2, CACHE_DATOS);
+          return r2;
+        }
+        return respuesta;
+      }).catch(() => respuesta);
     });
     const plazo = new Promise(listo => setTimeout(() => listo(null), PLAZO_RED));
     event.respondWith(

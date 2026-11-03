@@ -1,23 +1,603 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="refresh" content="0; url=prebasica-libro1.html">
-  <link rel="canonical" href="prebasica-libro1.html">
-  <title>Misión Prebásica (3.° Grado) · Técnicas Gráficas y No Gráficas — Libro 1 | M.E.T.A.S.</title>
-  <script>
-    (function() {
-      var target = 'prebasica-libro1.html' + (window.location.search || '') + (window.location.hash || '');
-      window.location.replace(target);
-    })();
-  </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión Prebásica (3.° Grado): Técnicas Gráficas y No Gráficas — Libro 1 | M.E.T.A.S.</title>
+<meta name="description" content="Sección especial de Prebásica (3.° Grado) inspirada en el Libro 1: Técnicas Gráficas y No Gráficas compilado por Evelyn S. Castellanos H. Para trabajar padre, madre o encargado junto al niño.">
+<meta property="og:title" content="Prebásica (3.° Grado) · Técnicas Gráficas y No Gráficas · Libro 1">
+<meta property="og:description" content="Trazos con el dedo, rodea y descubre letras, números y nociones espaciales, rompecabezas y guía de técnicas en papel para casa.">
+<meta property="og:image" content="https://metas.policastsapien.com/img/og-mision.png">
+<meta property="og:url" content="https://metas.policastsapien.com/misiones/prebasica-tecnicas-libro1/prebasica-libro1.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Misiones PolicastSapien">
+<link rel="stylesheet" href="../../css/vendor/fuentes/fuentes.css?v=455">
+<link rel="stylesheet" href="css/prebasica-libro1.css?v=455">
+<link rel="stylesheet" href="../../css/barra-secciones.css?v=455">
+<link rel="stylesheet" href="../../css/senal-no-color.css?v=455">
+<link rel="stylesheet" href="../../css/teclado-actividades.css?v=455">
+<script src="../../js/estrella-ganada.js?v=455"></script>
 </head>
-<body style="font-family:system-ui,-apple-system,sans-serif;padding:2rem;text-align:center;background:#fffaf0;color:#2d3436;">
-  <h2>🐝 Misión Prebásica (3.° Grado) · Libro 1</h2>
-  <p>Cargando actividades y trazos con el dedo...</p>
-  <p style="margin-top:1.5rem;">
-    Si no redirige automáticamente en unos segundos, <a href="prebasica-libro1.html" style="color:#0984e3;font-weight:bold;text-decoration:underline;">haz clic aquí para ingresar</a>.
-  </p>
+<body>
+
+<!-- 1. BARRA SUPERIOR DE NAVEGACIÓN Y WHATSAPP SIEMPRE ARRIBA -->
+<div class="xp-bar" role="status" aria-label="Barra de progreso XP">
+  <a href="../../index.html?desde=prebasica#zona-prebasica" class="xp-back-btn" id="xpBackBtn" title="Regresar al portal M.E.T.A.S." onclick="guardarYRegresarPrebasica(event)">
+    <svg class="xp-back-arrow" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H5M12 5l-7 7 7 7"/></svg>
+    <img src="../../img/logo.png" alt="Logo M.E.T.A.S." class="xp-back-logo">
+  </a>
+  <span class="xp-lbl">🌟 Estrellas en Familia</span>
+  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <a href="#" class="xp-share-wa" id="btnWhatsappHeader" onclick="compartirMision(); return false;" title="Compartir misión por WhatsApp" aria-label="Compartir misión por WhatsApp">
+    <img src="../../img/comparte_whatsapp.webp" alt="WhatsApp" class="xp-share-icon">
+  </a>
+  <span class="xp-pts" id="xpPts">⭐ 0</span>
+  <span class="xp-lvl" id="xpLvl">Semillita 🌱</span>
+</div>
+
+<!-- 2. CINTILLO INSTITUCIONAL EXCLUSIVO PREBÁSICA -->
+<div id="cintilloInstitucionPrebasica" class="cintillo-colegio-prebasica" style="display:none;" role="status">
+  <div class="cintillo-colegio-inner">
+    <span class="cintillo-colegio-texto">🏫 Edición Exclusiva autorizada para: <strong id="lblNombreInstitucion"></strong></span>
+    <button type="button" class="btn-cambiar-escuela" onclick="cambiarEscuelaPrebasica()" title="Cambiar escuela o centro educativo">Cambiar escuela</button>
+  </div>
+</div>
+
+<!-- 3. AVISO PARENTAL Y LEGAL EN ACORDEÓN DESPLEGABLE (CARGA COGNITIVA MÍNIMA) -->
+<aside class="aviso-parental-collapsible" id="avisoParentalCollapsible" role="region" aria-label="Aviso de acompañamiento obligatorio de un adulto y aviso legal">
+  <div class="aviso-parental-bar" id="avisoParentalBar" onclick="toggleAvisoParental(event)">
+    <div class="aviso-parental-resumen">
+      <span class="aviso-parental-icono" aria-hidden="true">👨‍👩‍👧</span>
+      <span class="aviso-parental-tit">Uso con adulto (10–15 min) · ⚖️ Aviso legal</span>
+    </div>
+    <div class="aviso-parental-acciones">
+      <button type="button" class="btn-aviso-tts" id="btnAvisoTts" onclick="event.stopPropagation(); toggleAudioAvisoAdulto(this);" aria-label="Escuchar aviso para el adulto" title="Escuchar aviso">
+        🔊 Escuchar
+      </button>
+      <button type="button" class="btn-aviso-toggle" id="btnAvisoToggle" aria-expanded="false" aria-controls="avisoParentalCuerpo" title="Mostrar u ocultar aviso completo">
+        <span class="aviso-toggle-texto" id="avisoToggleTexto">Ver más ▾</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="aviso-parental-cuerpo" id="avisoParentalCuerpo" aria-hidden="true">
+    <div class="aviso-parental-cuerpo-inner">
+      <p class="aviso-parental-destacado">
+        <strong>⚠️ USO EXCLUSIVO CON APOYO DE UN ADULTO:</strong>
+        Esta sección de Prebásica es un complemento exclusivo para trabajar con el padre, madre o encargado sentado junto al niño durante 10 a 15 minutos. No promovemos el uso libre de teléfonos ni tablets. Si no existe supervisión directa de un adulto, utilice únicamente el libro físico.
+      </p>
+      <div class="aviso-parental-legal">
+        <span class="legal-badge">⚖️ Aviso Legal y Pedagógico:</span> El eje central del aprendizaje es el libro físico. Este recurso digital es una herramienta complementaria para padres responsables. Ni el centro educativo, ni la editorial, ni la distribuidora del libro y de la plataforma M.E.T.A.S. se hacen responsables por el uso inadecuado, excesivo o sin supervisión de teléfonos celulares, tablets u otros aparatos digitales.
+      </div>
+      <div class="aviso-parental-pie">
+        <button type="button" class="btn-aviso-ocultar" onclick="cerrarAvisoParental()">
+          ▲ Ocultar aviso
+        </button>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- 4. ENCABEZADO HERO CON CRÉDITO VISIBLE DEL LIBRO 1 -->
+<header class="hero" role="banner">
+  <div class="hero-inner">
+    <div class="hero-mascot-wrap">
+      <div class="hero-mascot" aria-hidden="true">🐝</div>
+    </div>
+    <div class="hero-text">
+      <h1>Prebásica (3.° Grado) · <span>Técnicas Gráficas y No Gráficas</span></h1>
+      <p class="sub">¡Exploremos trazos, vocales, números, colores, nociones espaciales y manualidades en familia! 🎨✋</p>
+      <div class="hero-meta-row">
+        <span class="badge-meta">🧒 Educación Prebásica · 3.° Grado (5 años)</span>
+        <span class="badge-meta-sep">·</span>
+        <span class="badge-meta badge-credit-meta">📖 Basado en el Libro 1: Técnicas Gráficas y No Gráficas · Comp. Evelyn S. Castellanos H.</span>
+      </div>
+      <div class="hero-actions-grid">
+        <a href="../../fichas/ficha-prebasica-libro1.html" class="hero-btn-act hero-btn-padres" target="_blank" rel="noopener noreferrer" title="Ficha Imprimible para Papá y Mamá">🖨️ Ficha Padres</a>
+        <a href="guia-docente-imprimible.html" class="hero-btn-act hero-btn-maestro" target="_blank" rel="noopener noreferrer" title="Guía para el Maestro (Imprimible)">👩‍🏫 Guía Maestro</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- BARRA DE PESTAÑAS -->
+<nav class="nav" role="tablist" aria-label="Actividades del Libro 1 de Prebásica">
+  <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-trazos" data-s="s-trazos" onclick="go('s-trazos')">
+    <span class="ico">☝️</span> 1. Trazos con el Dedo
+  </button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-figuras" data-s="s-figuras" onclick="go('s-figuras')">
+    <span class="ico">🔺</span> 2. Figuras con mi Dedito
+  </button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-rodea" data-s="s-rodea" onclick="go('s-rodea')">
+    <span class="ico">⭕</span> 3. Rodea y Descubre
+  </button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-rompecabezas" data-s="s-rompecabezas" onclick="go('s-rompecabezas')">
+    <span class="ico">🧩</span> 4. Rompecabezas
+  </button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-casa" data-s="s-casa" onclick="go('s-casa')">
+    <span class="ico">✂️</span> 5. Manos a la Obra en Casa
+  </button>
+</nav>
+
+<main class="main" id="main-content">
+
+  <!-- ======================================================================
+       PESTAÑA 1: TRAZOS CON EL DEDO (CANVAS TÁCTIL DE LÍNEAS Y ARABESCOS)
+       ====================================================================== -->
+  <section class="sec active" id="s-trazos" role="tabpanel" aria-label="Trazos con el Dedo">
+    <div class="card ac-amber" data-situacion>
+      <h2>☝️ Trazos con el Dedo · Grafomotricidad Inicial</h2>
+      <div class="parent-guide-box">
+        <div class="parent-guide-content">
+          <span class="parent-guide-tag">👨‍👩‍👧 Indicación para Mamá, Papá o Encargado</span>
+          <p id="traceParentGuideText">
+            Pídale al niño o niña que coloque su <strong>dedo índice</strong> en el punto brillante de salida (🟢) y siga despacito el camino punteado hasta llegar a la meta (🏁) sin levantar el dedo.
+          </p>
+        </div>
+        <div class="parent-guide-actions">
+          <button type="button" class="btn-kid secondary" onclick="leerRetoTrazoActual(this)">
+            🔊 Escuchar instrucción
+          </button>
+        </div>
+      </div>
+
+      <h3>1. Elige uno de los 6 retos de trazo del Libro 1:</h3>
+      <div class="trace-selector-grid" id="traceSelectorGrid" role="group" aria-label="Selector de 6 retos de trazo"></div>
+
+      <div class="trace-toolbar">
+        <div class="color-palette" role="group" aria-label="Colores de pintura para el dedo">
+          <span style="font-family:'Fredoka',sans-serif;font-size:0.9rem;margin-right:0.25rem;">🎨 Color:</span>
+          <button type="button" class="color-swatch rainbow active" data-color="rainbow" onclick="seleccionarColorTrazo('rainbow', this)" title="Arcoíris mágico" aria-label="Color arcoíris"></button>
+          <button type="button" class="color-swatch" style="background:#e65100;" data-color="#e65100" onclick="seleccionarColorTrazo('#e65100', this)" title="Naranja / Orange" aria-label="Color naranja"></button>
+          <button type="button" class="color-swatch" style="background:#0984e3;" data-color="#0984e3" onclick="seleccionarColorTrazo('#0984e3', this)" title="Azul / Blue" aria-label="Color azul"></button>
+          <button type="button" class="color-swatch" style="background:#00b894;" data-color="#00b894" onclick="seleccionarColorTrazo('#00b894', this)" title="Verde / Green" aria-label="Color verde"></button>
+          <button type="button" class="color-swatch" style="background:#d63031;" data-color="#d63031" onclick="seleccionarColorTrazo('#d63031', this)" title="Rojo / Red" aria-label="Color rojo"></button>
+          <button type="button" class="color-swatch" style="background:#6c5ce7;" data-color="#6c5ce7" onclick="seleccionarColorTrazo('#6c5ce7', this)" title="Morado / Violet" aria-label="Color morado"></button>
+        </div>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+          <button type="button" class="btn-kid danger" onclick="borrarTrazoActual()">
+            🧹 Borrar trazo
+          </button>
+          <button type="button" class="btn-kid primary" onclick="siguienteRetoTrazo()">
+            ➡️ Siguiente reto
+          </button>
+        </div>
+      </div>
+
+      <!-- LIENZO HTML5 CANVAS COMPATIBLE CON TOUCH Y RATÓN -->
+      <div class="canvas-stage-wrap">
+        <canvas id="traceCanvas" width="820" height="400" aria-label="Lienzo táctil para trazar líneas y arabescos con el dedo"></canvas>
+      </div>
+
+      <div class="trace-progress-row">
+        <span style="font-family:'Fredoka',sans-serif;font-size:0.92rem;">Avance del camino:</span>
+        <div class="trace-progress-bar" aria-hidden="true">
+          <div class="trace-progress-fill" id="traceProgressFill"></div>
+        </div>
+        <span id="traceProgressPct" style="font-family:'Fredoka',sans-serif;font-weight:700;">0%</span>
+      </div>
+
+      <div class="trace-status-banner" id="traceStatusBanner" role="status" aria-live="polite">
+        <span>🐝</span>
+        <div id="traceStatusMsg">Pon tu dedito en el círculo verde de inicio y sigue los puntitos hasta la meta.</div>
+      </div>
+    </div>
+
+    <button class="next-sec-btn" aria-label="Ir a la pestaña Figuras con mi Dedito" onclick="go('s-figuras')">
+      <span class="nsb-icon">🔺</span>
+      <span class="nsb-label"><span class="nsb-hint">¡Descubramos las formas geométricas!</span><span class="nsb-name">2. Figuras con mi Dedito →</span></span>
+    </button>
+  </section>
+
+  <!-- ======================================================================
+       PESTAÑA 2: FIGURAS PLANAS CON MI DEDITO (PÁGS. 25–32)
+       ====================================================================== -->
+  <section class="sec" id="s-figuras" role="tabpanel" aria-label="Figuras Planas con mi Dedito">
+    <div class="card ac-red" data-situacion>
+      <h2>🔺 Figuras Planas con mi Dedito (Págs. 25–32)</h2>
+      <div class="parent-guide-box">
+        <div class="parent-guide-content">
+          <span class="parent-guide-tag">👨‍👩‍👧 Trazado Sensorial de Contornos + Diferencias de Lados y Curvas</span>
+          <p id="figParentGuideText">
+            Pídale al niño que repase con su dedito el borde punteado de cada figura del Libro 1 para descubrir si tiene <strong>lados rectos iguales</strong>, <strong>lados largos y cortos</strong>, <strong>puntas o esquinas</strong>, o si es una <strong>línea curva continua sin esquinas</strong>.
+          </p>
+        </div>
+        <div class="parent-guide-actions">
+          <button type="button" class="btn-kid secondary" onclick="leerInstruccionFiguraActual(this)">
+            🔊 Escuchar rima e instrucción
+          </button>
+          <button type="button" class="btn-kid purple" id="btnInglesFigura" onclick="escucharInglesFiguraActual(this)">
+            🇺🇸 Escuchar en inglés
+          </button>
+        </div>
+      </div>
+
+      <h3>1. Elige una de las 7 figuras geométricas del Libro 1:</h3>
+      <div class="figuras-selector-grid" id="figurasSelectorGrid" role="group" aria-label="Selector de 7 figuras del Libro 1"></div>
+
+      <!-- Selector secundario para la opción 7: Estrella y Corazón -->
+      <div id="figSubSelectorBar" class="subtab-bar" style="display:none; margin-top:0.2rem; margin-bottom:0.8rem;" role="group" aria-label="Elige Estrella o Corazón">
+        <button type="button" class="btn-kid active-chip" id="btnSubFigEstrella" onclick="seleccionarSubFigura('estrella')">⭐ Estrella de 5 puntas (Pág. 31)</button>
+        <button type="button" class="btn-kid" id="btnSubFigCorazon" onclick="seleccionarSubFigura('corazon')">💖 Corazón (Pág. 32)</button>
+      </div>
+
+      <!-- Tarjeta de presentación de la figura activa con sus propiedades geométricas -->
+      <div class="figura-badge-banner" id="figuraBadgeBanner">
+        <div class="figura-title-col">
+          <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+            <span class="figura-tag-pld" id="figuraPaginaTag">📖 Pág. 25</span>
+            <span class="figura-tag-color" id="figuraColorTag">🔴 Color: Rojo</span>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:0.6rem;margin-top:0.25rem;flex-wrap:wrap;">
+            <span class="figura-name-es" id="figuraNameEs">Círculo</span>
+            <span class="figura-name-en" id="figuraNameEn">(Circle)</span>
+          </div>
+        </div>
+        <div class="figura-geom-labels" id="figuraGeomLabels"></div>
+      </div>
+
+      <!-- Barra de herramientas: color del dedito y acciones -->
+      <div class="trace-toolbar" style="margin-top:0.75rem;">
+        <div class="color-palette" role="group" aria-label="Color o brillo de pintura para el dedito">
+          <span style="font-family:'Fredoka',sans-serif;font-size:0.9rem;margin-right:0.25rem;">✨ Dedito:</span>
+          <button type="button" class="color-swatch rainbow active" data-figcolor="rainbow" onclick="seleccionarColorFigura('rainbow', this)" title="Brillo dorado y arcoíris mágico" aria-label="Efecto arcoíris"></button>
+          <button type="button" class="color-swatch" style="background:#e53935;" data-figcolor="#e53935" onclick="seleccionarColorFigura('#e53935', this)" title="Rojo brillante" aria-label="Rojo brillante"></button>
+          <button type="button" class="color-swatch" style="background:#1e88e5;" data-figcolor="#1e88e5" onclick="seleccionarColorFigura('#1e88e5', this)" title="Azul brillante" aria-label="Azul brillante"></button>
+          <button type="button" class="color-swatch" style="background:#43a047;" data-figcolor="#43a047" onclick="seleccionarColorFigura('#43a047', this)" title="Verde brillante" aria-label="Verde brillante"></button>
+          <button type="button" class="color-swatch" style="background:#fb8c00;" data-figcolor="#fb8c00" onclick="seleccionarColorFigura('#fb8c00', this)" title="Anaranjado brillante" aria-label="Anaranjado brillante"></button>
+          <button type="button" class="color-swatch" style="background:#fbc02d;" data-figcolor="#fbc02d" onclick="seleccionarColorFigura('#fbc02d', this)" title="Amarillo estrella" aria-label="Amarillo estrella"></button>
+        </div>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+          <button type="button" class="btn-kid danger" onclick="borrarTrazoFiguraActual()">
+            🔄 Repasar de nuevo
+          </button>
+          <button type="button" class="btn-kid primary" onclick="siguienteFigura()">
+            ➡️ Siguiente figura
+          </button>
+        </div>
+      </div>
+
+      <!-- LIENZO TÁCTIL INTERACTIVO DE LA FIGURA (CANVAS) -->
+      <div class="canvas-stage-wrap figura-stage-wrap">
+        <canvas id="figuraCanvas" width="820" height="420" aria-label="Lienzo táctil para repasar el contorno de la figura geométrica"></canvas>
+      </div>
+
+      <div class="trace-progress-row">
+        <span style="font-family:'Fredoka',sans-serif;font-size:0.92rem;">Contorno completado:</span>
+        <div class="trace-progress-bar" aria-hidden="true">
+          <div class="trace-progress-fill" id="figuraProgressFill"></div>
+        </div>
+        <span id="figuraProgressPct" style="font-family:'Fredoka',sans-serif;font-weight:700;">0%</span>
+      </div>
+
+      <div class="trace-status-banner" id="figuraStatusBanner" role="status" aria-live="polite">
+        <span>☝️</span>
+        <div id="figuraStatusMsg">Pasa tu dedito por los puntos numerados del contorno para descubrir sus lados.</div>
+      </div>
+
+      <!-- MINI-RETO DESBLOQUEABLE: OBJETOS DE LA VIDA REAL DEL LIBRO -->
+      <div class="figura-objetos-section" id="figuraObjetosSection">
+        <div class="figura-objetos-header">
+          <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+            <span style="font-size:1.45rem;" aria-hidden="true">🔍</span>
+            <h3 style="margin:0;font-size:1.15rem;">¡Toca los objetos reales que tienen esta misma forma!</h3>
+          </div>
+          <p style="font-size:0.92rem;color:var(--gray);margin-top:0.25rem;margin-bottom:0.6rem;">
+            Página <span id="lblPaginaObjetos">25</span> del Libro 1. Toca cada objeto para escuchar su nombre:
+          </p>
+        </div>
+        <div class="figura-objetos-grid" id="figuraObjetosGrid" role="group" aria-label="Objetos del libro con esta forma"></div>
+      </div>
+    </div>
+
+    <button class="next-sec-btn" aria-label="Ir a la pestaña Rodea y Descubre" onclick="go('s-rodea')">
+      <span class="nsb-icon">⭕</span>
+      <span class="nsb-label"><span class="nsb-hint">¡Sigamos aprendiendo juntos!</span><span class="nsb-name">3. Rodea y Descubre →</span></span>
+    </button>
+  </section>
+
+  <!-- ======================================================================
+       PESTAÑA 3: RODEA Y DESCUBRE (LETRAS, NÚMEROS Y NOCIONES ESPACIALES)
+       ====================================================================== -->
+  <section class="sec" id="s-rodea" role="tabpanel" aria-label="Rodea y Descubre">
+    <div class="card ac-teal">
+      <h2>⭕ 3. Rodea y Descubre · Letras, Números y Nociones Espaciales</h2>
+      <div class="parent-guide-box">
+        <div class="parent-guide-content">
+          <span class="parent-guide-tag">🗣️ Lectura guiada + Voz Bilingüe (ES / EN)</span>
+          <p>
+            Lea la consigna al niño o presione los botones de voz en <strong>Español 🇭🇳</strong> o <strong>Inglés 🇺🇸</strong>. El niño puede <strong>dibujar un círculo alrededor con su dedo</strong> sobre la tarjeta o simplemente <strong>tocarla</strong> para rodearla o marcarla con «X».
+          </p>
+        </div>
+        <div class="parent-guide-actions">
+          <button type="button" class="btn-kid active-chip" id="btnModoLasso" onclick="cambiarModoRodea('lasso')">
+            ⭕ Rodear con el dedo o tocar
+          </button>
+          <button type="button" class="btn-kid" id="btnModoTap" onclick="cambiarModoRodea('tap')">
+            👆 Solo tocar / Marcar
+          </button>
+        </div>
+      </div>
+
+      <!-- Selector de las 3 categorías del Libro 1 -->
+      <div class="subtab-bar" role="group" aria-label="Categorías de Rodea y Descubre">
+        <button type="button" class="btn-kid active-chip" id="subtabLetras" onclick="seleccionarCategoriaRodea('letras')">
+          🔤 a) Vocales (A-U) y ABC Bilingüe
+        </button>
+        <button type="button" class="btn-kid" id="subtabNumeros" onclick="seleccionarCategoriaRodea('numeros')">
+          🔢 b) Números del 1 al 10
+        </button>
+        <button type="button" class="btn-kid" id="subtabEspacial" onclick="seleccionarCategoriaRodea('espacial')">
+          🧭 c) Nociones Espaciales y Dactilopintura
+        </button>
+      </div>
+
+      <!-- Barra de selección específica de letra / número / reto espacial -->
+      <div class="target-pills-bar" id="rodeaTargetPills" role="group" aria-label="Selector de ejercicio"></div>
+
+      <!-- Tarjeta de consigna con botones TTS en Español e Inglés -->
+      <div class="discover-prompt-card">
+        <div>
+          <div class="discover-prompt-text" id="rodeaPromptEs">Rodea todas las vocales A que encuentres</div>
+          <span class="discover-prompt-sub" id="rodeaPromptEn">Circle all the letter A cards! (A como Abeja / Apple)</span>
+        </div>
+        <div style="display:flex;gap:0.45rem;flex-wrap:wrap;">
+          <button type="button" class="btn-kid primary" onclick="hablarConsignaRodea('es', this)">
+            🔊 Escuchar instrucción
+          </button>
+          <button type="button" class="btn-kid purple" id="btnVocabularioInglesRodea" onclick="hablarVocabularioInglesRodea(this)">
+            🇺🇸 English
+          </button>
+          <button type="button" class="btn-kid danger" onclick="reiniciarEjercicioRodea()">
+            🔄 Nuevo tablero
+          </button>
+        </div>
+      </div>
+
+      <!-- Contenedor principal del tablero de Rodea / Marca con X -->
+      <div class="rodea-board-wrap" id="rodeaBoardWrap">
+        <div class="rodea-items-grid" id="rodeaItemsGrid"></div>
+        <canvas id="rodeaLassoCanvas" width="820" height="360" aria-hidden="true"></canvas>
+      </div>
+
+      <!-- Contenedor especial para el ejercicio 5 de Nociones Espaciales: Dactilopintura ADENTRO / AFUERA -->
+      <div id="dactiloContainer" style="display:none;">
+        <div class="trace-toolbar" style="margin-top:0.6rem;">
+          <div style="display:flex;gap:0.45rem;flex-wrap:wrap;align-items:center;">
+            <span style="font-family:'Fredoka',sans-serif;">🖼️ Figura del libro:</span>
+            <button type="button" class="btn-kid active-chip" id="btnFigManzana" onclick="cambiarFiguraDactilo('manzana')">🍎 Manzana</button>
+            <button type="button" class="btn-kid" id="btnFigUvas" onclick="cambiarFiguraDactilo('uvas')">🍇 Uvas</button>
+            <button type="button" class="btn-kid" id="btnFigCaballito" onclick="cambiarFiguraDactilo('caballito')">🐴🌊 Caballito de mar</button>
+          </div>
+          <div style="display:flex;gap:0.45rem;flex-wrap:wrap;align-items:center;">
+            <span style="font-family:'Fredoka',sans-serif;">🎯 Consigna:</span>
+            <button type="button" class="btn-kid secondary" id="btnZonaAdentro" onclick="cambiarZonaDactilo('adentro')">🎯 Pintar ADENTRO</button>
+            <button type="button" class="btn-kid" id="btnZonaAfuera" onclick="cambiarZonaDactilo('afuera')">🌌 Pintar AFUERA</button>
+            <button type="button" class="btn-kid danger" onclick="limpiarDactilo()">🧹 Limpiar huellitas</button>
+          </div>
+        </div>
+        <div class="dactilo-stage-wrap">
+          <canvas id="dactiloCanvas" width="820" height="380" aria-label="Lienzo de dactilopintura digital adentro y afuera de la figura"></canvas>
+        </div>
+      </div>
+
+      <div class="trace-status-banner" id="rodeaStatusBanner" role="status" aria-live="polite">
+        <span>🔍</span>
+        <div id="rodeaStatusMsg">Dibuja un círculo con tu dedo alrededor de cada respuesta correcta o tócala.</div>
+      </div>
+    </div>
+
+    <button class="next-sec-btn" aria-label="Ir a la pestaña Rompecabezas" onclick="go('s-rompecabezas')">
+      <span class="nsb-icon">🧩</span>
+      <span class="nsb-label"><span class="nsb-hint">¡Vamos a armar y asociar!</span><span class="nsb-name">4. Rompecabezas →</span></span>
+    </button>
+  </section>
+
+  <!-- ======================================================================
+       PESTAÑA 4: ROMPECABEZAS DE NÚMEROS, CUERPO Y COLORES
+       ====================================================================== -->
+  <section class="sec" id="s-rompecabezas" role="tabpanel" aria-label="Rompecabezas de Números, Cuerpo y Colores">
+    <div class="card ac-purple">
+      <h2>🧩 4. Rompecabezas de Números, Cuerpo Humano, Colores y Figuras</h2>
+      <div class="parent-guide-box">
+        <div class="parent-guide-content">
+          <span class="parent-guide-tag">🤲 Arrastrar o Tocar para Colocar</span>
+          <p>
+            Pensado para manitas en desarrollo: el niño puede <strong>arrastrar cada ficha a su silueta</strong> o, más fácil aún, <strong>tocar primero la ficha de arriba y luego tocar su silueta abajo</strong>.
+          </p>
+        </div>
+        <div class="parent-guide-actions">
+          <button type="button" class="btn-kid secondary" onclick="leerInstruccionRompecabezas(this)">
+            🔊 Escuchar guía
+          </button>
+          <button type="button" class="btn-kid danger" onclick="reiniciarRompecabezasActual()">
+            🔄 Reiniciar juego
+          </button>
+        </div>
+      </div>
+
+      <!-- Selector de los 3 minijuegos táctiles -->
+      <div class="subtab-bar" role="group" aria-label="Selector de minijuegos de rompecabezas">
+        <button type="button" class="btn-kid active-chip" id="pzTabNumeros" onclick="mostrarRompecabezas('numeros')">
+          🔢 a) Secuencia y Cantidad (1-10)
+        </button>
+        <button type="button" class="btn-kid" id="pzTabCuerpo" onclick="mostrarRompecabezas('cuerpo')">
+          🧍 b) Partes del Cuerpo (Pág. 59)
+        </button>
+        <button type="button" class="btn-kid" id="pzTabCarros" onclick="mostrarRompecabezas('carros')">
+          🚗 c) Car Park de Colores y Figuras Geométricas
+        </button>
+      </div>
+
+      <!-- Contenedor dinámico del minijuego activo -->
+      <div id="puzzleStageContainer" class="puzzle-zone"></div>
+
+      <div class="trace-status-banner" id="puzzleStatusBanner" role="status" aria-live="polite">
+        <span>🧩</span>
+        <div id="puzzleStatusMsg">Toca una pieza de la bandeja o arrástrala hasta su silueta correcta.</div>
+      </div>
+    </div>
+
+    <button class="next-sec-btn" aria-label="Ir a la pestaña Manos a la Obra en Casa" onclick="go('s-casa')">
+      <span class="nsb-icon">✂️</span>
+      <span class="nsb-label"><span class="nsb-hint">¡Ahora trabajemos con papel y pintura real!</span><span class="nsb-name">5. Manos a la Obra en Casa →</span></span>
+    </button>
+  </section>
+
+  <!-- ======================================================================
+       PESTAÑA 5: MANOS A LA OBRA EN CASA (TÉCNICAS FÍSICAS EN PAPEL)
+       ====================================================================== -->
+  <section class="sec" id="s-casa" role="tabpanel" aria-label="Manos a la Obra en Casa">
+    <div class="card ac-jade">
+      <h2>✂️ 5. Manos a la Obra en Casa · Guía de Técnicas No Gráficas para la Familia</h2>
+      <div class="parent-guide-box">
+        <div class="parent-guide-content">
+          <span class="parent-guide-tag">🏠 Fuera de la Pantalla · Con Papel, Témpera y Tijeras</span>
+          <p>
+            Ninguna pantalla reemplaza la fuerza que ganan los deditos al arrugar, rasgar, bolear o recortar papel real. Realice estas <strong>6 técnicas del Libro 1</strong> en la mesa con su hijo o hija y marque cada tarjeta al completarla juntos.
+          </p>
+        </div>
+        <div class="parent-guide-actions">
+          <span id="homeTechCounter" class="badge" style="background:var(--sec);color:#fff;font-size:0.9rem;padding:0.4rem 0.85rem;">
+            🏅 0 / 6 técnicas hechas en casa
+          </span>
+        </div>
+      </div>
+
+      <div class="hands-on-grid" id="handsOnGrid"></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- BOTÓN FLOTANTE: DETENER CUALQUIER LOCUCIÓN O AUDIO EN CURSO -->
+<button type="button" id="btnDetenerVozFlotante" class="btn-detener-voz-flotante" onclick="detenerVozPrebasica()" aria-label="Detener voz" style="display:none;">
+  <span aria-hidden="true">🔇</span> Detener voz
+</button>
+
+<!-- MODAL DE ACCESO / VALIDACIÓN DE CENTRO EDUCATIVO PREBÁSICA -->
+<div id="modalInstitucionPrebasica" class="modal-institucion-overlay" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="modalInstitucionTitulo">
+  <div class="modal-institucion-card">
+    <div class="modal-institucion-icono" aria-hidden="true">🏫</div>
+    <h2 id="modalInstitucionTitulo" class="modal-institucion-titulo">Portal de Acceso Educativo</h2>
+    <p class="modal-institucion-desc">
+      Esta edición especial de <strong>Prebásica (Libro 1)</strong> está habilitada para centros educativos autorizados. Por favor escribe el nombre de tu kínder o escuela:
+    </p>
+    <form id="formInstitucionPrebasica" onsubmit="procesarInstitucionPrebasica(event)">
+      <div style="margin-bottom:0.75rem;">
+        <input type="text" id="inputColegioPrebasica" class="input-colegio-prebasica" placeholder="Escribe aquí el nombre de tu kínder o escuela..." autocomplete="off" required>
+      </div>
+      <div id="errorInstitucionPrebasica" class="modal-institucion-error" style="display:none;" role="alert"></div>
+      <div style="display:flex;gap:0.5rem;justify-content:center;margin-top:1rem;">
+        <button type="button" id="btnCancelarInstitucion" class="btn-kid secondary" style="display:none;" onclick="cerrarModalInstitucion()">
+          Cancelar
+        </button>
+        <button type="submit" class="btn-kid primary" style="flex:1;justify-content:center;font-size:1.05rem;padding:0.75rem;">
+          ✨ Ingresar y Comenzar
+        </button>
+      </div>
+    </form>
+
+    <!-- BLOQUE SEPARADOR: COMPARTIR PARA DOCENTES / COORDINADORES (SIN ESCUELA REGISTRADA) -->
+    <div class="modal-docente-share-box">
+      <div class="modal-docente-sep" role="separator" aria-hidden="true">
+        <span>o para educadores</span>
+      </div>
+      <p class="modal-docente-nota">
+        👩‍🏫 <strong>¿Eres docente o coordinador?</strong> Comparte este acceso con las familias de tu centro educativo:
+      </p>
+      <div class="modal-docente-btns">
+        <button type="button" class="btn-share-wa-portal" onclick="compartirWhatsAppDocenteGeneral()">
+          <span class="icon-wa" aria-hidden="true">📲</span> Compartir enlace e instrucciones por WhatsApp
+        </button>
+        <button type="button" class="btn-share-copy-portal" id="btnCopiarInvitacionModal" onclick="copiarMensajeInvitacion(this)">
+          📋 Copiar mensaje de invitación
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DE OPCIONES PARA COMPARTIR POR WHATSAPP (CON O SIN ESCUELA ACTIVA) -->
+<div id="modalCompartirPrebasica" class="modal-institucion-overlay" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="modalCompartirTitulo" onclick="if (event.target === this) cerrarModalCompartir();">
+  <div class="modal-institucion-card modal-share-card">
+    <div class="modal-institucion-icono" aria-hidden="true">📲</div>
+    <h2 id="modalCompartirTitulo" class="modal-institucion-titulo">Compartir Misión por WhatsApp</h2>
+    <p class="modal-institucion-desc" style="margin-bottom:1rem;">
+      Elige cómo deseas compartir las instrucciones con las familias o con tu comunidad educativa:
+    </p>
+
+    <div class="share-options-list">
+      <!-- OPCIÓN A: PARA MI ESCUELA ACTUAL -->
+      <div class="share-option-card opt-escuela">
+        <div class="share-option-header">
+          <span class="share-opt-badge badge-escuela">🏫 Mi Escuela Activa</span>
+          <h3 class="share-opt-title" id="lblShareOpcionEscuela">🏫 Compartir para mi escuela actual</h3>
+          <p class="share-opt-sub" id="lblShareSubEscuela">Incluye el nombre de tu centro en el Paso 2 para que las familias ingresen directamente.</p>
+        </div>
+        <div class="share-opt-actions">
+          <button type="button" class="btn-share-choice btn-share-wa" onclick="enviarWhatsAppPrebasica(true)">
+            📲 Enviar por WhatsApp
+          </button>
+          <button type="button" class="btn-share-choice btn-share-copy" onclick="copiarMensajePrebasicaBtn(this, true)">
+            📋 Copiar texto
+          </button>
+        </div>
+      </div>
+
+      <!-- OPCIÓN B: ENLACE GENERAL -->
+      <div class="share-option-card opt-general">
+        <div class="share-option-header">
+          <span class="share-opt-badge badge-general">🔗 Plantilla General</span>
+          <h3 class="share-opt-title">🔗 Compartir enlace general (sin escuela registrada)</h3>
+          <p class="share-opt-sub">Plantilla con espacio para que el docente o coordinador escriba el nombre oficial de su Kínder / CEPB.</p>
+        </div>
+        <div class="share-opt-actions">
+          <button type="button" class="btn-share-choice btn-share-wa-secondary" onclick="enviarWhatsAppPrebasica(false)">
+            📲 Enviar por WhatsApp
+          </button>
+          <button type="button" class="btn-share-choice btn-share-copy" onclick="copiarMensajePrebasicaBtn(this, false)">
+            📋 Copiar texto
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:1.25rem;">
+      <button type="button" class="btn-kid secondary" style="width:100%;justify-content:center;padding:0.65rem 1rem;" onclick="cerrarModalCompartir()">
+        ✕ Cerrar
+      </button>
+    </div>
+  </div>
+</div>
+
+<footer class="credits">
+  <p class="fam">🏠 Proyecto Educativo M.E.T.A.S · Sección Especial de Prebásica (3.° Grado)</p>
+  <p class="ppl">Basado en el Libro 1: «Técnicas Gráficas y No Gráficas (3.° Grado de Prebásica)» · Compilado por Evelyn S. Castellanos H.</p>
+  <p class="ppl" style="margin-top:0.2rem;">Desarrolladores: Josué E. Polanco · Evelyn Castellanos · Jael &amp; Angelly Polanco</p>
+  <div class="mot">«En Prebásica, la mejor tecnología es el tiempo de calidad de mamá y papá sentados junto al niño» 🌱</div>
+  <div class="credits-legal-box">
+    <strong>⚖️ Aviso Legal y Pedagógico:</strong> El eje central del aprendizaje es el libro físico. Este recurso digital es una herramienta complementaria para padres responsables. Ni el centro educativo, ni la editorial, ni la distribuidora del libro y de la plataforma M.E.T.A.S. se hacen responsables por el uso inadecuado, excesivo o sin supervisión de teléfonos celulares, tablets u otros aparatos digitales.
+  </div>
+  <div class="cred-tools">
+    <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido: Sí</button>
+    <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+    <button class="cred-btn" onclick="toggleLetra()">🔎 Letra grande</button>
+    <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar progreso</button>
+  </div>
+</footer>
+
+<script src="js/colegios-prebasica.js?v=455"></script>
+<script src="js/mapa-audios-prebasica.js?v=455"></script>
+<script src="js/prebasica-libro1.js?v=455"></script>
+<script src="../../js/barra-secciones.js?v=455"></script>
+<script src="../../js/teclado-actividades.js?v=455"></script>
+<script>
+  if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
+    navigator.serviceWorker.register('../../sw.js').then(function (reg) {
+      if (reg && typeof reg.update === 'function') reg.update().catch(function () {});
+    }).catch(function () {});
+  }
+</script>
 </body>
 </html>

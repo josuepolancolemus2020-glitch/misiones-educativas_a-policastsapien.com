@@ -3958,24 +3958,11 @@
      COMPARTIR POR WHATSAPP Y PORTAL DE INVITACIÓN FAMILIAR / DOCENTE
      -------------------------------------------------------------------------- */
   function obtenerUrlLimpiaMision() {
-    try {
-      if (window.location.protocol.indexOf('http') === 0 && window.location.origin) {
-        var base = window.location.origin;
-        var path = window.location.pathname || '';
-        if (path.indexOf('prebasica-tecnicas-libro1') !== -1) {
-          if (path.endsWith('/index.html') || path.endsWith('/')) {
-            path = path.replace(/\/index\.html$|\/$/, '/prebasica-libro1.html');
-          } else if (!path.endsWith('prebasica-libro1.html')) {
-            path = path.replace(/\/[^\/]*$/, '/prebasica-libro1.html');
-          }
-          return base + path;
-        }
-        return base + '/misiones/prebasica-tecnicas-libro1/prebasica-libro1.html';
-      }
-      return 'https://metas.policastsapien.com/misiones/prebasica-tecnicas-libro1/prebasica-libro1.html';
-    } catch (e) {
-      return 'https://metas.policastsapien.com/misiones/prebasica-tecnicas-libro1/prebasica-libro1.html';
+    var meta = document.querySelector('meta[property="og:url"]');
+    if (meta && meta.content) {
+      return meta.content;
     }
+    return 'https://metas.policastsapien.com/misiones/prebasica-tecnicas-libro1/prebasica-libro1.html';
   }
 
   function generarMensajeWhatsAppPrebasica(nombreEscuela) {
@@ -3986,7 +3973,7 @@
       : '2️⃣ En la caja del Portal de Acceso, escriba el nombre oficial de nuestro Kínder / Centro Educativo: *[ESCRIBA AQUÍ EL NOMBRE DEL KÍNDER / CEPB]*';
 
     var lineas = [
-      '📚✨ *M.E.T.A.S. — Prebásica (3.° Grado): Técnicas Gráficas y No Gráficas (Libro 1)*',
+      '📚✨ *M.E.T.A.S. · Prebásica (3.° Grado): Técnicas Gráficas y No Gráficas (Libro 1)*',
       '👨‍👩‍👧 *Recurso de Uso Exclusivo para Centros Educativos Autorizados*',
       '',
       '🔑 *¿Cómo ingresar desde casa?*',
@@ -3995,7 +3982,8 @@
       '',
       '⚠️ *Uso exclusivo y supervisado:* Este complemento digital es únicamente para padres responsables sentados junto a su hijo(a) durante 10 a 15 minutos como refuerzo del libro físico. Prohibido compartir fuera de nuestra comunidad educativa o dejar al niño solo con el dispositivo.',
       '',
-      '👉 *Enlace de acceso:* ' + urlLimpia
+      '👇 *TOQUE EL ENLACE PARA INICIAR LA MISIÓN:* 👇',
+      urlLimpia
     ];
     return lineas.join('\n');
   }
