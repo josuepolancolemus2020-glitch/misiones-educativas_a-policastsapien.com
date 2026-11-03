@@ -4,6 +4,8 @@
    Lógica interactiva táctil + ratón + voz TTS Español/Inglés + Web Audio API
    ========================================================================== */
 
+let deferredPrompt;
+
 (function () {
   'use strict';
 
@@ -5346,5 +5348,51 @@
     }
     renderHandsOnTab();
     inicializarInstitucionPrebasica();
+    enlazarEventoInstalarPWA();
   });
 })();
+
+/* --------------------------------------------------------------------------
+   INSTALACIÓN COMO APLICACIÓN PWA — BOTÓN FLOTANTE PERSONALIZADO
+   -------------------------------------------------------------------------- */
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  var banner = document.getElementById('pwa-install-banner');
+  if (banner) {
+    banner.style.display = 'flex';
+  }
+  enlazarEventoInstalarPWA();
+});
+
+window.addEventListener('appinstalled', () => {
+  var banner = document.getElementById('pwa-install-banner');
+  if (banner) {
+    banner.style.display = 'none';
+  }
+  deferredPrompt = null;
+});
+
+function enlazarEventoInstalarPWA() {
+  var banner = document.getElementById('pwa-install-banner');
+  if (!banner || banner._pwaClickBound) return;
+  banner._pwaClickBound = true;
+  banner.addEventListener('click', async () => {
+    banner.style.display = 'none';
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      if (deferredPrompt.userChoice) {
+        try {
+          await deferredPrompt.userChoice;
+        } catch (err) {}
+      }
+      deferredPrompt = null;
+    }
+  });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', enlazarEventoInstalarPWA);
+} else {
+  enlazarEventoInstalarPWA();
+}
