@@ -3960,11 +3960,21 @@
   function obtenerUrlLimpiaMision() {
     try {
       if (window.location.protocol.indexOf('http') === 0 && window.location.origin) {
-        return window.location.origin + window.location.pathname;
+        var base = window.location.origin;
+        var path = window.location.pathname || '';
+        if (path.indexOf('prebasica-tecnicas-libro1') !== -1) {
+          if (path.endsWith('/index.html') || path.endsWith('/')) {
+            path = path.replace(/\/index\.html$|\/$/, '/prebasica-libro1.html');
+          } else if (!path.endsWith('prebasica-libro1.html')) {
+            path = path.replace(/\/[^\/]*$/, '/prebasica-libro1.html');
+          }
+          return base + path;
+        }
+        return base + '/misiones/prebasica-tecnicas-libro1/prebasica-libro1.html';
       }
-      return window.location.href.split('?')[0].split('#')[0];
+      return 'https://metas.policastsapien.com/misiones/prebasica-tecnicas-libro1/prebasica-libro1.html';
     } catch (e) {
-      return window.location.href;
+      return 'https://metas.policastsapien.com/misiones/prebasica-tecnicas-libro1/prebasica-libro1.html';
     }
   }
 
@@ -4035,9 +4045,18 @@
     }
   }
 
+  function abrirWhatsAppCompartir(msg) {
+    var enc = encodeURIComponent(msg);
+    var esMovil = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    var url = esMovil
+      ? ('https://api.whatsapp.com/send?text=' + enc)
+      : ('https://web.whatsapp.com/send?text=' + enc);
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
+
   window.compartirWhatsAppDocenteGeneral = function () {
     var msg = generarMensajeWhatsAppPrebasica(null);
-    window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+    abrirWhatsAppCompartir(msg);
   };
 
   window.copiarMensajeInvitacion = function (btnElement) {
@@ -4086,7 +4105,7 @@
       } catch (e) {}
     }
     var msg = generarMensajeWhatsAppPrebasica(esc);
-    window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+    abrirWhatsAppCompartir(msg);
     window.cerrarModalCompartir();
   };
 
