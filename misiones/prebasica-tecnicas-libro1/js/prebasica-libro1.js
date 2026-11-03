@@ -822,7 +822,7 @@
       ico: '🐝',
       startEmoji: '🐝',
       endEmoji: '🌸',
-      guideText: 'Pídale al niño que baje su dedito desde cada abejita 🐝 hasta su flor 🌸 siguiendo las 3 líneas verticales de arriba hacia abajo.',
+      guideText: 'Pídale al niño que baje su dedo índice ☝️ desde cada abejita 🐝 hasta su flor 🌸 siguiendo las 3 líneas verticales de arriba hacia abajo.',
       ttsText: 'Reto uno: Líneas verticales. Lleva cada abejita de arriba hacia abajo hasta llegar a la flor.',
       buildPaths: function (w, h) {
         var cols = [w * 0.23, w * 0.50, w * 0.77];
@@ -844,8 +844,8 @@
       ico: '✈️',
       startEmoji: '✈️',
       endEmoji: '🛬',
-      guideText: 'Lleve el dedito de izquierda a derecha acompañando a los dos aviones ✈️ por su ruta horizontal hasta aterrizar en la pista 🛬.',
-      ttsText: 'Reto dos: Líneas horizontales. Desliza tu dedo de izquierda a derecha para llevar el avión hasta la pista.',
+      guideText: 'Lleve el dedo índice ☝️ de izquierda a derecha acompañando a los dos aviones ✈️ por su ruta horizontal hasta aterrizar en la pista 🛬.',
+      ttsText: 'Reto dos: Líneas horizontales. Desliza tu dedo índice de izquierda a derecha para llevar el avión hasta la pista.',
       buildPaths: function (w, h) {
         var rows = [h * 0.33, h * 0.68];
         var paths = [];
@@ -866,7 +866,7 @@
       ico: '🥁',
       startEmoji: '🥢',
       endEmoji: '🥁',
-      guideText: 'Siga los picos de arriba y abajo en zig-zag como las cuerdas de un tambor 🥁. ¡Subo, bajo, subo, bajo sin soltar el dedo!',
+      guideText: 'Siga los picos de arriba y abajo en zig-zag como las cuerdas de un tambor 🥁. ¡Subo, bajo, subo, bajo sin soltar el dedo índice ☝️!',
       ttsText: 'Reto tres: Líneas quebradas en zig zag. Sube y baja por los picos hasta tocar el tambor.',
       buildPaths: function (w, h) {
         var vertices = [
@@ -909,7 +909,7 @@
       ico: '🐠',
       startEmoji: '🐠',
       endEmoji: '🪸',
-      guideText: 'Mueva el dedito con suavidad haciendo olas curvas para que el pececito 🐠 nade hasta el arrecife de coral 🪸.',
+      guideText: 'Mueva el dedo índice ☝️ con suavidad haciendo olas curvas para que el pececito 🐠 nade hasta el arrecife de coral 🪸.',
       ttsText: 'Reto cinco: Líneas curvas y onduladas. Nada con el pececito haciendo olas suaves hasta el coral.',
       buildPaths: function (w, h) {
         var pts = [];
@@ -1387,7 +1387,7 @@
     var statusMsg = document.getElementById('traceStatusMsg');
     if (statusBanner) statusBanner.classList.remove('celebrate');
     if (statusMsg && ch) {
-      statusMsg.textContent = 'Pon tu dedito en ' + ch.startEmoji + ' y sigue los puntitos hasta llegar a ' + ch.endEmoji + '.';
+      statusMsg.textContent = 'Usa tu dedo índice ☝️, ponlo en ' + ch.startEmoji + ' y sigue los puntitos hasta llegar a ' + ch.endEmoji + '.';
     }
 
     renderTraceSelector();
@@ -1732,7 +1732,7 @@
         { text: '⭕ Línea curva continua', cls: 'curva' },
         { text: '0 esquinas (rueda)', cls: 'curva' }
       ],
-      guideText: 'Pasa tu dedito por el contorno del círculo rojo. Es una línea curva que rueda y no tiene esquinas.',
+      guideText: 'Pasa tu dedo índice ☝️ por el contorno del círculo rojo. Es una línea curva que rueda y no tiene esquinas.',
       audioInst: 'fig_instruccion_circulo',
       audioFelicita: 'fig_felicita_circulo',
       hasSubfigures: false,
@@ -1804,7 +1804,7 @@
         { text: '⏹️ 4 lados rectos iguales', cls: 'cuadrado-iguales' },
         { text: '4 esquinas (vértices)', cls: 'cuadrado-iguales' }
       ],
-      guideText: 'Pasa tu dedito por el contorno del cuadrado azul y cuenta sus cuatro lados rectos iguales.',
+      guideText: 'Pasa tu dedo índice ☝️ por el contorno del cuadrado azul y cuenta sus cuatro lados rectos iguales.',
       audioInst: 'fig_instruccion_cuadrado',
       audioFelicita: 'fig_felicita_cuadrado',
       hasSubfigures: false,
@@ -1888,7 +1888,7 @@
         { text: '📐 3 lados rectos', cls: 'triangulo' },
         { text: '3 puntas o esquinas', cls: 'triangulo' }
       ],
-      guideText: 'Recorre con tu dedito los tres lados rectos y las tres puntas del triángulo verde.',
+      guideText: 'Recorre con tu dedo índice ☝️ los tres lados rectos y las tres puntas del triángulo verde.',
       audioInst: 'fig_instruccion_triangulo',
       audioFelicita: 'fig_felicita_triangulo',
       hasSubfigures: false,
@@ -2048,7 +2048,7 @@
         { text: '🥚 Curva alargada como huevito', cls: 'curva' },
         { text: '0 esquinas', cls: 'curva' }
       ],
-      guideText: 'Pasa tu dedito por la curva alargada del óvalo rosado, parece la forma de un huevito.',
+      guideText: 'Pasa tu dedo índice ☝️ por la curva alargada del óvalo rosado, parece la forma de un huevito.',
       audioInst: 'fig_instruccion_ovalo',
       audioFelicita: 'fig_felicita_ovalo',
       hasSubfigures: false,
@@ -2705,7 +2705,7 @@
     var statusMsg = document.getElementById('figuraStatusMsg');
     if (statusBanner) statusBanner.classList.remove('celebrate');
     if (statusMsg) {
-      statusMsg.innerHTML = '☝️ Pasa tu dedito por los puntos numerados del contorno para descubrir sus lados y forma.';
+      statusMsg.innerHTML = '☝️ Usa tu dedo índice ☝️ y pasa por los puntos numerados del contorno para descubrir sus lados y forma.';
     }
 
     renderFigurasSelector();
