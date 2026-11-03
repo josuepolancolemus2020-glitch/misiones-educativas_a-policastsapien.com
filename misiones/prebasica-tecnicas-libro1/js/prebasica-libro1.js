@@ -260,12 +260,37 @@
   }
 
   var MAPA_TECNICAS_CASA = {
-    'estrujado': 'casa_estrujado.mp3',
-    'rasgado': 'casa_rasgado.mp3',
+    'aviso_maestro': 'casa_aviso_maestro.mp3',
     'boleado': 'casa_boleado.mp3',
+    'rasgado': 'casa_rasgado.mp3',
+    'figuras': 'casa_figuras.mp3',
     'dactilopintura': 'casa_dactilopintura.mp3',
-    'punzado': 'casa_punzado.mp3',
-    'recorte': 'casa_recorte.mp3'
+    'recorte': 'casa_recorte.mp3',
+    'germinacion': 'casa_germinacion.mp3'
+  };
+
+  window.hablarAvisoMaestro = function (btn) {
+    window.hablarTecnicaCasa('aviso_maestro', btn);
+  };
+
+  window.hablarVocabularioChip = function (file, btn) {
+    if (!state.soundOn) return;
+    if (window.audioPrebasicaPlaying && btn && btn === window.ultimoBotonAudio) {
+      window.detenerAudioPrebasica();
+      window.ultimoTextoAudio = null;
+      return;
+    }
+
+    window.detenerAudioPrebasica();
+    window.ultimoBotonAudio = btn || null;
+    window.ultimoTextoAudio = file;
+    window.audioPrebasicaPlaying = true;
+    actualizarBotonFlotanteDetener(true);
+    if (btn) btn.classList.add('audio-playing');
+
+    reproducirArchivoDirecto(file, function () {
+      limpiarEstadoReproduccionAudio();
+    });
   };
 
   window.hablarTecnicaCasa = function (techId, btn) {
@@ -4390,86 +4415,131 @@
   }
 
   /* ==========================================================================
-     PESTAÑA 4: MANOS A LA OBRA EN CASA (6 TÉCNICAS FÍSICAS EN PAPEL)
+     PESTAÑA 5: MANOS A LA OBRA (EN EL AULA Y EN CASA)
      ========================================================================== */
   var HOME_TECHNIQUES = [
     {
-      id: 'estrujado',
-      title: '1. Estrujado y Arrugado de Papel',
-      benefit: '💪 Fuerza palmar y tono muscular de la mano',
-      materials: 'Papel periódico, papel reciclado, papel bond o papel china.',
-      steps: [
-        'Entregue al niño media hoja de papel periódico o reciclado.',
-        'Pídale que la apriete con ambas manos y luego con una sola mano hasta formar una pelota bien compacta.',
-        'Jueguen a encestar las pelotas de papel arrugado dentro de una caja o cesto.'
-      ],
-      safety: 'Supervise que el niño no se lleve trocitos de papel a la boca.',
-      svg: '<svg width="46" height="46" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="22" fill="#fdcb6e" stroke="#e65100" stroke-width="3"/><path d="M18 26 L30 20 L44 28 L36 44 L22 40 Z" fill="none" stroke="#d35400" stroke-width="2.5"/></svg>'
-    },
-    {
-      id: 'rasgado',
-      title: '2. Rasgado de Papel (Adentro y Afuera)',
-      benefit: '🤲 Coordinación bimanual y freno inhibitorio',
-      materials: 'Papel lustre, revista o papel construcción y pegamento escolar en barra.',
-      steps: [
-        'Enseñe al niño a tomar el papel con los dedos pulgar e índice de ambas manos (pinza digital).',
-        'Una mano tira hacia adelante y la otra hacia atrás para rasgar tiras y luego cuadritos pequeños.',
-        'Peguen los papelitos rasgados ADENTRO o AFUERA de una figura dibujada en una hoja, tal como indica el Libro 1.'
-      ],
-      safety: 'Use pegamento escolar no tóxico y lávense las manos al terminar.',
-      svg: '<svg width="46" height="46" viewBox="0 0 64 64" aria-hidden="true"><path d="M12 12 H30 L26 24 L32 36 L25 52 H12 Z" fill="#74b9ff" stroke="#0984e3" stroke-width="2.5"/><path d="M36 12 H52 V52 H34 L40 36 L34 24 Z" fill="#a29bfe" stroke="#6c5ce7" stroke-width="2.5"/></svg>'
-    },
-    {
       id: 'boleado',
-      title: '3. Boleado con Índice y Pulgar',
-      benefit: '🤏 Pinza fina digital previa a tomar el lápiz',
-      materials: 'Cuadritos pequeños de papel china (papel seda) o papel crepé y pegamento.',
-      steps: [
-        'Corte cuadritos de papel china de unos 3×3 cm.',
-        'Pídale al niño que forme pelotitas chiquitas girando el papel EXCLUSIVAMENTE con las yemas del dedo índice y el pulgar (sin frotar con las palmas).',
-        'Peguen las bolitas siguiendo el contorno de una letra, número o dibujo.'
-      ],
-      safety: 'Cuide que el niño use solo índice y pulgar; si se cansa, hagan pausas cortas.',
+      title: '1. Boleado de Papel Crepé y Juego de Encestar',
+      benefit: '🤏 Motricidad fina (pinza trípode) y coordinación visomotriz',
+      materials: 'Papel crepé de colores, pegamento escolar y un vasito o recipiente plástico.',
+      aula: {
+        title: '🏫 En el Libro (Aula o Tarea asignada)',
+        hint: '📌 Según indique tu maestro(a) · Págs. de Boleado y Contornos',
+        desc: 'Rasgar tiritas de papel crepé y formar bolitas usando exclusivamente la pinza trípode (dedos pulgar, índice y medio) para pegarlas sobre los contornos indicados del libro.'
+      },
+      casa: {
+        title: '🏠 Juego Complementario en Familia: ¡A encestar bolitas!',
+        desc: '¡Conserven o hagan más bolitas de papel de colores y jueguen en familia a lanzarlas para encestarlas dentro de un vasito o recipiente a corta distancia! Cuenten en español e inglés cuántas bolitas encestan (One, Two, Three...) y clasifíquenlas por color.',
+        vocab: [
+          { label: '🔴 Red', file: 'pz_color_red_en.mp3' },
+          { label: '🔵 Blue', file: 'pz_color_blue_en.mp3' },
+          { label: '🟡 Yellow', file: 'pz_color_yellow_en.mp3' }
+        ]
+      },
+      safety: 'Supervise que el niño no se lleve bolitas de papel a la boca. Usar pegamento no tóxico.',
       svg: '<svg width="46" height="46" viewBox="0 0 64 64" aria-hidden="true"><circle cx="22" cy="24" r="8" fill="#ff7675"/><circle cx="42" cy="22" r="7" fill="#55efc4"/><circle cx="32" cy="40" r="9" fill="#ffeaa7"/><circle cx="46" cy="44" r="6" fill="#a29bfe"/></svg>'
     },
     {
+      id: 'rasgado',
+      title: '2. Rasgado, Trozado y Collage Texturizado',
+      benefit: '🤲 Coordinación bilateral, fuerza bimanual y discriminación táctil',
+      materials: 'Papel lustre, periódico, hojas secas de plantas, cáscaras de huevo limpias o cartón reciclado y pegamento en barra.',
+      aula: {
+        title: '🏫 En el Libro (Aula o Tarea asignada)',
+        hint: '📌 Según indique tu maestro(a) · Págs. de Rasgado y Óvalo/Huevo Pág. 29',
+        desc: 'Rasgar papel con ambas manos coordinadas (una tira hacia adelante y otra hacia atrás) para rellenar figuras del libro (por ejemplo, el óvalo/huevo de la pág. 29 con cascarones o papel trozado).'
+      },
+      casa: {
+        title: '🏠 Juego Complementario en Familia: Caminitos y Texturas de la Naturaleza',
+        desc: 'En una hoja suelta o cartón reciclado, dibujen un caminito o figura y péguenle hojas secas caídas, ramitas, cáscaras de huevo limpias o papel de periódico rasgado. ¡Estimula el sentido táctil y el cuidado del medio ambiente!'
+      },
+      safety: 'Lávense las manos con agua y jabón al terminar la actividad con pegamento.',
+      svg: '<svg width="46" height="46" viewBox="0 0 64 64" aria-hidden="true"><path d="M12 12 H30 L26 24 L32 36 L25 52 H12 Z" fill="#74b9ff" stroke="#0984e3" stroke-width="2.5"/><path d="M36 12 H52 V52 H34 L40 36 L34 24 Z" fill="#a29bfe" stroke="#6c5ce7" stroke-width="2.5"/></svg>'
+    },
+    {
+      id: 'figuras',
+      title: '3. Exploradores de Figuras Geométricas y Constructores',
+      benefit: '📐 Percepción espacial, geometría básica y razonamiento abstracto',
+      materials: 'Objetos de casa (tapas, cajas, libros), palillos de dientes o hisopos, plastilina o masa de harina.',
+      aula: {
+        title: '🏫 En el Libro (Aula o Tarea asignada)',
+        hint: '📌 Según indique tu maestro(a) · Págs. 25 a 32 (Figuras Geométricas)',
+        desc: 'Identificar, colorear y trazar las figuras planas en las páginas 25 a 32 del libro: Círculo, Cuadrado, Triángulo, Rectángulo, Óvalo, Diamante/Rombo, Estrella y Corazón.'
+      },
+      casa: {
+        title: '🏠 Juego Complementario en Familia: Detective de Formas y Constructores',
+        desc: '• Detective: Busquen en casa objetos cotidianos: una tapa (círculo), un cojín (cuadrado), una rebanada o gancho (triángulo), una puerta (rectángulo).\n• Constructores: Con palillos de dientes (o hisopos) y bolitas de plastilina (o masa), construyan cuadrados, triángulos y rectángulos uniendo vértices y lados.',
+        vocab: [
+          { label: '🔴 Circle', file: 'pz_fig_circle_en.mp3' },
+          { label: '🟦 Square', file: 'pz_fig_square_en.mp3' },
+          { label: '🔺 Triangle', file: 'pz_fig_triangle_en.mp3' },
+          { label: '🟧 Rectangle', file: 'pz_fig_rectangle_en.mp3' },
+          { label: '🥚 Oval', file: 'pz_fig_oval_en.mp3' },
+          { label: '💎 Diamond', file: 'pz_fig_diamond_en.mp3' },
+          { label: '⭐ Star', file: 'pz_fig_star_en.mp3' },
+          { label: '💖 Heart', file: 'pz_fig_heart_en.mp3' }
+        ]
+      },
+      safety: 'Supervise el uso de palillos para que las puntas queden protegidas dentro de las bolitas de plastilina.',
+      svg: '<svg width="46" height="46" viewBox="0 0 64 64" aria-hidden="true"><circle cx="20" cy="20" r="12" fill="#ff7675"/><rect x="36" y="8" width="20" height="20" rx="3" fill="#74b9ff"/><polygon points="20,38 32,58 8,58" fill="#55efc4"/><polygon points="46,38 58,48 53,62 39,62 34,48" fill="#ffeaa7"/></svg>'
+    },
+    {
       id: 'dactilopintura',
-      title: '4. Dactilopintura con Témpera Real',
-      benefit: '🎨 Sensopercepción táctil y control del espacio gráfico',
-      materials: 'Témperas lavables no tóxicas, plato plástico, hoja blanca y trapito húmedo.',
-      steps: [
-        'Coloque poquita témpera de colores primarios (rojo, azul, amarillo) en un platito.',
-        'Pídale al niño que moje solo la yema de su dedo índice y estampe huellitas dentro de una manzana, uvas o caballito de mar dibujado en papel.',
-        'Descubran juntos qué pasa al mezclar amarillo + azul (verde) o rojo + amarillo (naranja).'
-      ],
-      safety: 'Utilice únicamente pintura lavable infantil no tóxica.',
+      title: '4. Dactilopintura y Trazos Sensoriales en Bandeja',
+      benefit: '🎨 Sensopercepción táctil, grafomotricidad sin lápiz y control del espacio',
+      materials: 'Témpera lavable escolar, plato plano, y para casa: una bandeja o plato con harina, maicena, avena o sal fina.',
+      aula: {
+        title: '🏫 En el Libro (Aula o Tarea asignada)',
+        hint: '📌 Según indique tu maestro(a) · Págs. 31 y 32',
+        desc: 'Pintura dactilar estampando huellitas con témpera escolar no tóxica sobre las áreas indicadas del libro (frutas, animales o figuras).'
+      },
+      casa: {
+        title: '🏠 Juego Complementario en Familia: Pizarra Mágica de Harina o Avena',
+        desc: 'Viertan una capa fina de harina, maicena, avena o sal fina sobre una bandeja o plato extendido. El niño dibuja con su dedito índice líneas rectas, olas, espirales, círculos y números. Luego sacuden suavemente la bandeja ¡y la pizarra se borra mágicamente para volver a trazar! Cero manchas y máxima estimulación sensorial.'
+      },
+      safety: 'En el aula usar témperas no tóxicas lavables. En casa, si se derrama harina, limpiar juntos en familia.',
       svg: '<svg width="46" height="46" viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="32" cy="34" rx="14" ry="19" fill="#e84393"/><circle cx="18" cy="16" r="5" fill="#0984e3"/><circle cx="32" cy="11" r="5" fill="#00b894"/><circle cx="46" cy="16" r="5" fill="#fdcb6e"/></svg>'
     },
     {
-      id: 'punzado',
-      title: '5. Punzado Seguro con Foamy Debajo',
-      benefit: '📌 Prensión trípode y precisión óculo-manual',
-      materials: 'Hoja con dibujo, una lámina de foamy grueso (o cartón/toalla doblada) debajo y punzón plástico infantil o lápiz de punta gruesa.',
-      steps: [
-        'Coloque el foamy o cartón debajo de la hoja de papel sobre la mesa.',
-        'El niño sujeta el punzón plástico como si fuera un lápiz (con pulgar, índice y cordial) y hace piquitos seguidos sobre la línea del dibujo.',
-        'Al terminar, levanten la hoja contra la luz para ver cómo brilla la silueta perforada.'
-      ],
-      safety: '⚠️ SUPERVISIÓN DIRECTA OBLIGATORIA: Nunca use agujas ni objetos metálicos filosos. Use punzón escolar plástico de punta roma.',
-      svg: '<svg width="46" height="46" viewBox="0 0 64 64" aria-hidden="true"><rect x="10" y="38" width="44" height="14" rx="4" fill="#dfe6e9" stroke="#636e72" stroke-width="2"/><line x1="38" y1="10" x2="28" y2="38" stroke="#e65100" stroke-width="6" stroke-linecap="round"/></svg>'
+      id: 'recorte',
+      title: '5. Recorte Seguro con Tijera y Rompecabezas',
+      benefit: '✂️ Freno inhibitorio, disociación de dedos y coordinación óculo-manual',
+      materials: 'Tijera escolar de punta roma, papel reciclado, tubos de cartón y revistas o fotos para recortar.',
+      aula: {
+        title: '🏫 En el Libro (Aula o Tarea asignada)',
+        hint: '📌 Según indique tu maestro(a) · Páginas de Recorte del Libro 1',
+        desc: 'Uso de tijera punta roma con agarre ergonómico («pulgar siempre hacia arriba mirando al cielo») cortando con cuidado sobre las líneas punteadas asignadas por el docente.'
+      },
+      casa: {
+        title: '🏠 Juego Complementario en Familia: Peluquería de Papel y Rompecabezas de Tiras',
+        desc: '• Peluquería: Dibujen caritas en tiras de papel o tubos de papel higiénico y dejen que el niño le corte el «cabello» haciendo flequillos rectos o en picos.\n• Rompecabezas: Peguen una foto o dibujo infantil en un cartón, corten 3 o 4 tiras rectas y jueguen a armar el rompecabezas en familia.'
+      },
+      safety: '⚠️ Uso exclusivo de tijeras escolares de punta redonda con el adulto sentado al lado supervisando.',
+      svg: '<svg width="46" height="46" viewBox="0 0 64 64" aria-hidden="true"><circle cx="20" cy="44" r="8" fill="none" stroke="#d63031" stroke-width="4"/><circle cx="44" cy="44" r="8" fill="none" stroke="#d63031" stroke-width="4"/><line x1="25" y1="38" x2="46" y2="12" stroke="#636e72" stroke-width="4" stroke-linecap="round"/><line x1="39" y1="38" x2="18" y2="12" stroke="#636e72" stroke-width="4" stroke-linecap="round"/></svg>'
     },
     {
-      id: 'recorte',
-      title: '6. Recorte con Tijeras de Punta Redonda',
-      benefit: '✂️ Coordinación visomotriz y fuerza disociada de dedos',
-      materials: 'Tijera escolar infantil de punta redonda y tiras de papel con líneas rectas, zig-zag y curvas.',
-      steps: [
-        'Verifique la postura: dedo pulgar arriba mirando al techo («el pulgar siempre mira al sol»).',
-        'Empiecen practicando pequeños flecos en el borde de una tira de papel.',
-        'Luego recorten siguiendo líneas rectas, después líneas quebradas (zig-zag) y finalmente líneas curvas.'
-      ],
-      safety: '⚠️ Uso exclusivo de tijeras escolares de punta redonda con el adulto sentado al lado.',
-      svg: '<svg width="46" height="46" viewBox="0 0 64 64" aria-hidden="true"><circle cx="20" cy="44" r="8" fill="none" stroke="#d63031" stroke-width="4"/><circle cx="44" cy="44" r="8" fill="none" stroke="#d63031" stroke-width="4"/><line x1="25" y1="38" x2="46" y2="12" stroke="#636e72" stroke-width="4" stroke-linecap="round"/><line x1="39" y1="38" x2="18" y2="12" stroke="#636e72" stroke-width="4" stroke-linecap="round"/></svg>'
+      id: 'germinacion',
+      title: '6. Laboratorio Vivo: Germinación y Secuencia de las Plantas',
+      benefit: '🌱 Observación científica, paciencia, respeto a la naturaleza y secuenciación temporal',
+      materials: 'Un vaso plástico transparente, algodón o tierra, semillas de frijol o maíz y agua.',
+      aula: {
+        title: '🏫 En el Libro (Aula o Tarea asignada)',
+        hint: '📌 Según indique tu maestro(a) · Página 111 (Ciclo de Vida de las Plantas)',
+        desc: 'Observar, colorear y numerar la secuencia del ciclo de vida de la planta en la página 111 del libro, reconociendo la semilla, el brote, la planta y sus frutos.'
+      },
+      casa: {
+        title: '🏠 Juego Complementario en Familia: El Vaso Mágico de Frijolito',
+        desc: 'Coloquen un frijol o maíz entre algodón húmedo dentro de un vasito transparente. Pónganlo cerca de la ventana y riéguenlo con gotitas de agua. El niño registrará cada 2 días con dibujos cómo nace la raíz, el tallo y las hojas.',
+        vocab: [
+          { label: '💧 Water', file: 'plant_water_en.mp3' },
+          { label: '🌱 Seed', file: 'plant_seed_en.mp3' },
+          { label: '🌿 Plant', file: 'plant_plant_en.mp3' },
+          { label: '🍎 Fruit', file: 'plant_fruit_en.mp3' }
+        ]
+      },
+      safety: 'Supervise que el niño se lave las manos después de regar y no ingiera las semillas crudas.',
+      svg: '<svg width="46" height="46" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="48" r="12" fill="#8d6e63"/><path d="M32 40 Q32 20 22 14 Q28 26 32 28 Q36 26 42 14 Q32 20 32 40 Z" fill="#4caf50"/><circle cx="32" cy="12" r="3" fill="#81c784"/></svg>'
     }
   ];
 
@@ -4483,8 +4553,32 @@
       var card = document.createElement('article');
       card.className = 'tech-card' + (done ? ' done-home' : '');
 
-      var stepsHtml = t.steps.map(function (s) { return '<li>' + s + '</li>'; }).join('');
-      var ttsFull = t.title + '. Beneficio: ' + t.benefit + '. Materiales: ' + t.materials + '. Pasos: ' + t.steps.join(' ') + '. ' + t.safety;
+      var vocabHtml = '';
+      if (t.casa && t.casa.vocab && t.casa.vocab.length) {
+        vocabHtml =
+          '<div class="tech-vocab-chips">' +
+            '<span class="tech-vocab-label">🗣️ Vocabulario en inglés:</span>' +
+            t.casa.vocab.map(function (v) {
+              return '<button type="button" class="btn-chip-audio" onclick="hablarVocabularioChip(\'' + v.file + '\', this)" title="Escuchar pronunciación en inglés">' +
+                v.label + ' 🔊' +
+              '</button>';
+            }).join('') +
+          '</div>';
+      }
+
+      var dualHtml =
+        '<div class="tech-dual-container">' +
+          '<div class="tech-block-aula">' +
+            '<div class="tech-block-title-aula">' + t.aula.title + '</div>' +
+            '<div class="tech-sub-hint">' + t.aula.hint + '</div>' +
+            '<p class="tech-block-desc">' + t.aula.desc + '</p>' +
+          '</div>' +
+          '<div class="tech-block-casa">' +
+            '<div class="tech-block-title-casa">' + t.casa.title + '</div>' +
+            '<p class="tech-block-desc" style="white-space: pre-line;">' + t.casa.desc + '</p>' +
+            vocabHtml +
+          '</div>' +
+        '</div>';
 
       card.innerHTML =
         '<div>' +
@@ -4496,20 +4590,20 @@
             '</div>' +
           '</div>' +
           '<div class="tech-materials" style="margin-top:0.75rem;">' +
-            '<strong>🧺 Materiales en casa:</strong> ' + t.materials +
+            '<strong>🧺 Materiales sugeridos:</strong> ' + t.materials +
           '</div>' +
-          '<ol class="tech-steps" style="margin-top:0.65rem;">' + stepsHtml + '</ol>' +
+          dualHtml +
         '</div>' +
         '<div>' +
-          '<div class="tech-safety" style="margin-bottom:0.75rem;">' +
+          '<div class="tech-safety" style="margin-top:0.75rem; margin-bottom:0.75rem;">' +
             '<strong>🛡️ Cuidado del adulto:</strong> ' + t.safety +
           '</div>' +
           '<div class="tech-card-footer">' +
             '<button type="button" class="btn-kid" onclick="hablarTecnicaCasa(\'' + t.id + '\', this)">' +
-              '🔊 Escuchar pasos' +
+              '🔊 Escuchar explicación' +
             '</button>' +
             '<button type="button" class="btn-kid ' + (done ? 'secondary' : 'primary') + '" onclick="marcarTecnicaCasa(\'' + t.id + '\')">' +
-              (done ? '✓ ¡Hecha en familia! ⭐' : '✅ Marcar como hecha en casa') +
+              (done ? '✓ ¡Hecha en familia! ⭐' : '✅ Marcar como hecha') +
             '</button>' +
           '</div>' +
         '</div>';
@@ -4522,7 +4616,7 @@
     }).length;
     var badge = document.getElementById('homeTechCounter');
     if (badge) {
-      badge.textContent = '🏅 ' + count + ' / ' + HOME_TECHNIQUES.length + ' técnicas hechas en casa';
+      badge.textContent = '🏅 ' + count + ' / ' + HOME_TECHNIQUES.length + ' técnicas completadas';
     }
     var diplomaBox = document.getElementById('diplomaPrebasicaBox');
     if (diplomaBox) {
@@ -4536,7 +4630,11 @@
     if (!wasDone) {
       sonarCelebracion();
       addXP(20, 's-casa');
-      window.hablarTexto('¡Felicidades familia! Una técnica más del libro realizada en casa con papel y manos creativas.', 'es-ES');
+      if (state.soundOn) {
+        reproducirArchivoDirecto('casa_felicitacion.mp3', function () {
+          limpiarEstadoReproduccionAudio();
+        });
+      }
     } else {
       saveState();
     }

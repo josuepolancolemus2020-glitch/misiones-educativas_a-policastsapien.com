@@ -582,48 +582,60 @@ ITEMS = [
     {"file": "fig_obj_galletas.mp3", "lang": "es", "text": "Galletas de corazón"},
     {"file": "fig_obj_globos.mp3", "lang": "es", "text": "Globos de corazón"},
 
-    # --- 9. PESTAÑA 4: MANOS A LA OBRA EN CASA (6 TÉCNICAS FÍSICAS + FELICITACIÓN) ---
+    # --- 9. PESTAÑA 5: MANOS A LA OBRA (EN EL AULA Y EN CASA) ---
     {
-        "file": "casa_estrujado.mp3",
+        "file": "casa_aviso_maestro.mp3",
         "lang": "es",
-        "text": "1. Estrujado y Arrugado de Papel. Beneficio: Fuerza palmar y tono muscular de la mano. Materiales: Papel periódico, papel reciclado, papel bond o papel china.. Pasos: Entregue al niño media hoja de papel periódico o reciclado. Pídale que la apriete con ambas manos y luego con una sola mano hasta formar una pelota bien compacta. Jueguen a encestar las pelotas de papel arrugado dentro de una caja o cesto.. Supervise que el niño no se lleve trocitos de papel a la boca.",
-        "raw": "1. Estrujado y Arrugado de Papel. Beneficio: 💪 Fuerza palmar y tono muscular de la mano. Materiales: Papel periódico, papel reciclado, papel bond o papel china.. Pasos: Entregue al niño media hoja de papel periódico o reciclado. Pídale que la apriete con ambas manos y luego con una sola mano hasta formar una pelota bien compacta. Jueguen a encestar las pelotas de papel arrugado dentro de una caja o cesto.. Supervise que el niño no se lleve trocitos de papel a la boca."
-    },
-    {
-        "file": "casa_rasgado.mp3",
-        "lang": "es",
-        "text": "2. Rasgado de Papel (Adentro y Afuera). Beneficio: Coordinación bimanual y freno inhibitorio. Materiales: Papel lustre, revista o papel construcción y pegamento escolar en barra.. Pasos: Enseñe al niño a tomar el papel con los dedos pulgar e índice de ambas manos (pinza digital). Una mano tira hacia adelante y la otra hacia atrás para rasgar tiras y luego cuadritos pequeños. Peguen los papelitos rasgados ADENTRO o AFUERA de una figura dibujada en una hoja, tal como indica el Libro 1.. Use pegamento escolar no tóxico y lávense las manos al terminar.",
-        "raw": "2. Rasgado de Papel (Adentro y Afuera). Beneficio: 🤲 Coordinación bimanual y freno inhibitorio. Materiales: Papel lustre, revista o papel construcción y pegamento escolar en barra.. Pasos: Enseñe al niño a tomar el papel con los dedos pulgar e índice de ambas manos (pinza digital). Una mano tira hacia adelante y la otra hacia atrás para rasgar tiras y luego cuadritos pequeños. Peguen los papelitos rasgados ADENTRO o AFUERA de una figura dibujada en una hoja, tal como indica el Libro 1.. Use pegamento escolar no tóxico y lávense las manos al terminar."
+        "text": "El Libro 1 se trabaja principalmente en el aula de clases: Antes de realizar o adelantar páginas del libro físico en casa, consulte siempre las indicaciones de su maestro o maestra. En esta sección encontrarán tanto las técnicas del libro para practicar en el kínder o en casa según indique el docente, como juegos prácticos en familia que no requieren manchar hojas del libro y fortalecen la motricidad y el aprendizaje de su hijo o hija.",
+        "force": True,
     },
     {
         "file": "casa_boleado.mp3",
         "lang": "es",
-        "text": "3. Boleado con Índice y Pulgar. Beneficio: Pinza fina digital previa a tomar el lápiz. Materiales: Cuadritos pequeños de papel china (papel seda) o papel crepé y pegamento.. Pasos: Corte cuadritos de papel china de unos 3×3 cm. Pídale al niño que forme pelotitas chiquitas girando el papel EXCLUSIVAMENTE con las yemas del dedo índice y el pulgar (sin frotar con las palmas). Peguen las bolitas siguiendo el contorno de una letra, número o dibujo.. Cuide que el niño use solo índice y pulgar; si se cansa, hagan pausas cortas.",
-        "raw": "3. Boleado con Índice y Pulgar. Beneficio: 🤏 Pinza fina digital previa a tomar el lápiz. Materiales: Cuadritos pequeños de papel china (papel seda) o papel crepé y pegamento.. Pasos: Corte cuadritos de papel china de unos 3×3 cm. Pídale al niño que forme pelotitas chiquitas girando el papel EXCLUSIVAMENTE con las yemas del dedo índice y el pulgar (sin frotar con las palmas). Peguen las bolitas siguiendo el contorno de una letra, número o dibujo.. Cuide que el niño use solo índice y pulgar; si se cansa, hagan pausas cortas."
+        "text": "1. Boleado de Papel Crepé y Juego de Encestar. Motricidad Fina, páginas de boleado y contornos. En el aula o según indique tu maestro: Rasgar tiritas de papel crepé y formar bolitas usando exclusivamente la pinza trípode, con dedos pulgar, índice y medio, para pegarlas sobre los contornos indicados del libro. Juego sugerido en casa: ¡A encestar bolitas! Conserven o hagan más bolitas de papel de colores y jueguen en familia a lanzarlas para encestarlas dentro de un vasito o recipiente a corta distancia. Pueden contar en español e inglés cuántas bolitas encestan: One, Two, Three, y clasificarlas por color: Red, Blue, Yellow.",
+        "force": True,
+    },
+    {
+        "file": "casa_rasgado.mp3",
+        "lang": "es",
+        "text": "2. Rasgado, Trozado y Collage Texturizado. Coordinación Bilateral, páginas de rasgado y óvalo del huevo página 29. En el aula o según indique tu maestro: Rasgar papel con ambas manos coordinadas, una tira hacia adelante y otra hacia atrás, para rellenar figuras del libro. Juego sugerido en casa: Caminitos y Texturas de la Naturaleza. En una hoja suelta o cartón reciclado, dibujen un camino ancho o un huevito gigante y rellénenlo juntos con hojas secas del patio, cáscara de huevo limpia triturada o papel periódico rasgado.",
+        "force": True,
+    },
+    {
+        "file": "casa_figuras.mp3",
+        "lang": "es",
+        "text": "3. Exploradores de Figuras Geométricas. Complemento de las páginas 25 a 32 del Libro 1. En el aula o según indique tu maestro: Repasar con el dedo índice los lados y esquinas de las 7 figuras planas del libro: Círculo, Cuadrado, Triángulo, Rectángulo, Óvalo, Diamante o Rombo, Estrella y Corazón, y aplicar las técnicas de cada lámina. Juego sugerido en casa: El Detective de las Formas en Casa y Figuras con Palillos o Plastilina. Primero: caminata de detectives por la casa para buscar objetos reales: Circle, Square, Triangle, Rectangle y Oval. Segundo: armen con plastilina y palillos las figuras planas tocando sus esquinas o vértices.",
+        "force": True,
     },
     {
         "file": "casa_dactilopintura.mp3",
         "lang": "es",
-        "text": "4. Dactilopintura con Témpera Real. Beneficio: Sensopercepción táctil y control del espacio gráfico. Materiales: Témperas lavables no tóxicas, plato plástico, hoja blanca y trapito húmedo.. Pasos: Coloque poquita témpera de colores primarios (rojo, azul, amarillo) en un platito. Pídale al niño que moje solo la yema de su dedo índice y estampe huellitas dentro de una manzana, uvas o caballito de mar dibujado en papel. Descubran juntos qué pasa al mezclar amarillo + azul (verde) o rojo + amarillo (naranja).. Utilice únicamente pintura lavable infantil no tóxica.",
-        "raw": "4. Dactilopintura con Témpera Real. Beneficio: 🎨 Sensopercepción táctil y control del espacio gráfico. Materiales: Témperas lavables no tóxicas, plato plástico, hoja blanca y trapito húmedo.. Pasos: Coloque poquita témpera de colores primarios (rojo, azul, amarillo) en un platito. Pídale al niño que moje solo la yema de su dedo índice y estampe huellitas dentro de una manzana, uvas o caballito de mar dibujado en papel. Descubran juntos qué pasa al mezclar amarillo + azul (verde) o rojo + amarillo (naranja).. Utilice únicamente pintura lavable infantil no tóxica."
-    },
-    {
-        "file": "casa_punzado.mp3",
-        "lang": "es",
-        "text": "5. Punzado Seguro con Foamy Debajo. Beneficio: Prensión trípode y precisión óculo-manual. Materiales: Hoja con dibujo, una lámina de foamy grueso (o cartón/toalla doblada) debajo y punzón plástico infantil o lápiz de punta gruesa.. Pasos: Coloque el foamy o cartón debajo de la hoja de papel sobre la mesa. El niño sujeta el punzón plástico como si fuera un lápiz (con pulgar, índice y cordial) y hace piquitos seguidos sobre la línea del dibujo. Al terminar, levanten la hoja contra la luz para ver cómo brilla la silueta perforada.. SUPERVISIÓN DIRECTA OBLIGATORIA: Nunca use agujas ni objetos metálicos filosos. Use punzón escolar plástico de punta roma.",
-        "raw": "5. Punzado Seguro con Foamy Debajo. Beneficio: 📌 Prensión trípode y precisión óculo-manual. Materiales: Hoja con dibujo, una lámina de foamy grueso (o cartón/toalla doblada) debajo y punzón plástico infantil o lápiz de punta gruesa.. Pasos: Coloque el foamy o cartón debajo de la hoja de papel sobre la mesa. El niño sujeta el punzón plástico como si fuera un lápiz (con pulgar, índice y cordial) y hace piquitos seguidos sobre la línea del dibujo. Al terminar, levanten la hoja contra la luz para ver cómo brilla la silueta perforada.. ⚠️ SUPERVISIÓN DIRECTA OBLIGATORIA: Nunca use agujas ni objetos metálicos filosos. Use punzón escolar plástico de punta roma."
+        "text": "4. Dactilopintura y Trazos Sensoriales en Bandeja. Grafomotricidad sin Lápiz, páginas de trazos, estrella página 31 y corazón página 32. En el aula o según indique tu maestro: Pintar con la yema del dedo índice respetando los bordes de las figuras y realizar los caminos del libro. Juego sugerido en casa: La Pizarra Mágica de Harina o Azúcar. En un plato plano o bandeja, esparzan una capa delgada de harina, maicena o arena limpia. Pidan al niño que trace con su dedito líneas verticales, zig-zag, círculos, estrellas, vocales y números del 1 al 10. ¡Sacudan suavemente la bandeja para borrar y volver a empezar!",
+        "force": True,
     },
     {
         "file": "casa_recorte.mp3",
         "lang": "es",
-        "text": "6. Recorte con Tijeras de Punta Redonda. Beneficio: Coordinación visomotriz y fuerza disociada de dedos. Materiales: Tijera escolar infantil de punta redonda y tiras de papel con líneas rectas, zig-zag y curvas.. Pasos: Verifique la postura: dedo pulgar arriba mirando al techo («el pulgar siempre mira al sol»). Empiecen practicando pequeños flecos en el borde de una tira de papel. Luego recorten siguiendo líneas rectas, después líneas quebradas (zig-zag) y finalmente líneas curvas.. Uso exclusivo de tijeras escolares de punta redonda con el adulto sentado al lado.",
-        "raw": "6. Recorte con Tijeras de Punta Redonda. Beneficio: ✂️ Coordinación visomotriz y fuerza disociada de dedos. Materiales: Tijera escolar infantil de punta redonda y tiras de papel con líneas rectas, zig-zag y curvas.. Pasos: Verifique la postura: dedo pulgar arriba mirando al techo («el pulgar siempre mira al sol»). Empiecen practicando pequeños flecos en el borde de una tira de papel. Luego recorten siguiendo líneas rectas, después líneas quebradas (zig-zag) y finalmente líneas curvas.. ⚠️ Uso exclusivo de tijeras escolares de punta redonda con el adulto sentado al lado."
+        "text": "5. Recorte Seguro con Tijera y Rompecabezas. Freno Inhibitorio, páginas de recorte y armado. En el aula o según indique tu maestro: Practicar el uso de tijera escolar de punta redonda sobre las líneas punteadas del libro bajo supervisión directa. Juego sugerido en casa: Peluquería de Papel y Rompecabezas de Revistas. Con tiras de papel reciclado, hagan flequillos cortos cortando el pelito al muñeco de papel y recorten en 3 o 4 partes una figura grande de una caja de cereal para volver a armarla juntos en familia.",
+        "force": True,
+    },
+    {
+        "file": "casa_germinacion.mp3",
+        "lang": "es",
+        "text": "6. Laboratorio Vivo: Germinación y Secuencia de las Plantas. Complemento de la página 111 del Libro 1. En el aula o según indique tu maestro: Seguir con el dedito el camino de las flechas verdes en U de la página 111, recortar las 6 tarjetas del crecimiento de la planta frutal y ordenarlas antes de pegarlas. Experimento sugerido en casa: Mi Primera Semillita en Vaso Transparente. En un vasito transparente con algodón húmedo o tierra fértil, siembren juntos un frijolito o semillas de fruta. Pónganlo cerca de la luz, riéguenlo con poquita agua y observen cada mañana cómo brota la raíz y el tallo igual que en la página 111 del libro: Seed, Plant, Fruit.",
+        "force": True,
     },
     {
         "file": "casa_felicitacion.mp3",
         "lang": "es",
-        "text": "¡Felicidades familia! Una técnica más del libro realizada en casa con papel y manos creativas.",
-    }
+        "text": "¡Felicidades familia! Han completado las actividades y juegos de Manos a la Obra, fortaleciendo el aprendizaje tanto en el aula como en casa.",
+        "force": True,
+    },
+    # Vocabulario de la germinación y ciclo de las plantas (en inglés con Ana)
+    {"file": "plant_water_en.mp3", "lang": "en", "text": "Water", "force": True},
+    {"file": "plant_seed_en.mp3", "lang": "en", "text": "Seed", "force": True},
+    {"file": "plant_plant_en.mp3", "lang": "en", "text": "Plant", "force": True},
+    {"file": "plant_fruit_en.mp3", "lang": "en", "text": "Fruit", "force": True},
 ]
 
 async def generar_un_audio(sem, item, total, idx, force=False):
@@ -670,7 +682,8 @@ async def main():
         "pz_color_orange.mp3", "pz_color_violet.mp3",
         "pz_fig_circulo.mp3", "pz_fig_cuadrado.mp3", "pz_fig_triangulo.mp3", "pz_fig_rectangulo.mp3",
         "pz_fig_ovalo.mp3", "pz_fig_rombo.mp3", "pz_fig_estrella.mp3", "pz_fig_corazon.mp3",
-        # Eliminación de instrucciones largas en inglés
+        # Eliminación de instrucciones largas en inglés y archivos obsoletos
+        "casa_estrujado.mp3", "casa_punzado.mp3",
         "letra_a_en.mp3", "letra_e_en.mp3", "letra_i_en.mp3", "letra_o_en.mp3", "letra_u_en.mp3",
         "letra_b_en.mp3", "letra_c_en.mp3", "letra_m_en.mp3", "letra_p_en.mp3", "letra_s_en.mp3",
         "num_1_en.mp3", "num_2_en.mp3", "num_3_en.mp3", "num_4_en.mp3", "num_5_en.mp3",
@@ -838,25 +851,32 @@ async def main():
         "Pon huellitas de pintura ADENTRO de la figura: Caballito de Mar.": "dactilo_adentro_caballito_es.mp3",
         "Pon huellitas de pintura AFUERA de la figura: Caballito de Mar.": "dactilo_afuera_caballito_es.mp3",
 
-        # Técnicas de casa por ID y título corto
-        "casa_estrujado": "casa_estrujado.mp3",
-        "casa_rasgado": "casa_rasgado.mp3",
+        # Técnicas de aula y casa por ID y título corto
+        "aviso_maestro": "casa_aviso_maestro.mp3",
+        "casa_aviso_maestro": "casa_aviso_maestro.mp3",
         "casa_boleado": "casa_boleado.mp3",
+        "casa_rasgado": "casa_rasgado.mp3",
+        "casa_figuras": "casa_figuras.mp3",
         "casa_dactilopintura": "casa_dactilopintura.mp3",
-        "casa_punzado": "casa_punzado.mp3",
         "casa_recorte": "casa_recorte.mp3",
-        "estrujado": "casa_estrujado.mp3",
-        "rasgado": "casa_rasgado.mp3",
+        "casa_germinacion": "casa_germinacion.mp3",
+        "casa_felicitacion": "casa_felicitacion.mp3",
         "boleado": "casa_boleado.mp3",
+        "rasgado": "casa_rasgado.mp3",
+        "figuras": "casa_figuras.mp3",
         "dactilopintura": "casa_dactilopintura.mp3",
-        "punzado": "casa_punzado.mp3",
         "recorte": "casa_recorte.mp3",
-        "1. Estrujado y Arrugado de Papel": "casa_estrujado.mp3",
-        "2. Rasgado de Papel (Adentro y Afuera)": "casa_rasgado.mp3",
-        "3. Boleado con Índice y Pulgar": "casa_boleado.mp3",
-        "4. Dactilopintura con Témpera Real": "casa_dactilopintura.mp3",
-        "5. Punzado Seguro con Foamy Debajo": "casa_punzado.mp3",
-        "6. Recorte con Tijeras de Punta Redonda": "casa_recorte.mp3",
+        "germinacion": "casa_germinacion.mp3",
+        "1. Boleado de Papel Crepé y Juego de Encestar": "casa_boleado.mp3",
+        "2. Rasgado, Trozado y Collage Texturizado": "casa_rasgado.mp3",
+        "3. Exploradores de Figuras Geométricas": "casa_figuras.mp3",
+        "4. Dactilopintura y Trazos Sensoriales en Bandeja": "casa_dactilopintura.mp3",
+        "5. Recorte Seguro con Tijera y Rompecabezas": "casa_recorte.mp3",
+        "6. Laboratorio Vivo: Germinación y Secuencia de las Plantas": "casa_germinacion.mp3",
+        "Water": "plant_water_en.mp3",
+        "Seed": "plant_seed_en.mp3",
+        "Plant": "plant_plant_en.mp3",
+        "Fruit": "plant_fruit_en.mp3",
 
         # Números directos en español
         "1": "pz_num_1_es.mp3", "2": "pz_num_2_es.mp3", "3": "pz_num_3_es.mp3", "4": "pz_num_4_es.mp3", "5": "pz_num_5_es.mp3",

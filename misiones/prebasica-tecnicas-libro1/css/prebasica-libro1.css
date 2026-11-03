@@ -768,6 +768,58 @@ body::before {
   max-width: 100%;
 }
 
+/* RECUADRO ORIENTADOR DESTACADO: REGLA DE ORO DEL MAESTRO(A) */
+.parent-guide-maestro {
+  background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
+  border: 2.5px solid #2563eb;
+  border-left: 7px solid #1d4ed8;
+  border-radius: 16px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.12);
+  flex-wrap: wrap;
+  box-sizing: border-box;
+}
+
+.parent-guide-maestro-icon {
+  font-size: 2.5rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.parent-guide-maestro-body {
+  flex: 1 1 280px;
+  min-width: 0;
+}
+
+.parent-guide-maestro-badge {
+  display: inline-block;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 0.8rem;
+  background: #1d4ed8;
+  color: #ffffff;
+  padding: 0.2rem 0.65rem;
+  border-radius: 12px;
+  margin-bottom: 0.45rem;
+  letter-spacing: 0.3px;
+}
+
+.parent-guide-maestro-body p {
+  font-size: 0.96rem;
+  color: #1e293b;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.parent-guide-maestro-action {
+  flex-shrink: 0;
+}
+
 .parent-guide-content {
   flex: 1 1 200px;
   min-width: 0;
@@ -1972,6 +2024,114 @@ body::before {
   color: var(--dark);
   padding: 0.5rem 0.7rem;
   border-radius: 10px;
+}
+
+/* BLOQUES DUALES: EN EL AULA (LIBRO) Y EN CASA (FAMILIA) */
+.tech-dual-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.tech-block-aula {
+  background: #f8fafc;
+  border: 1.5px solid #bfdbfe;
+  border-left: 5px solid #2563eb;
+  border-radius: 12px;
+  padding: 0.75rem 0.9rem;
+}
+
+.tech-block-title-aula {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 0.96rem;
+  font-weight: 700;
+  color: #1e40af;
+  margin-bottom: 0.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.tech-sub-hint {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #2563eb;
+  margin-bottom: 0.35rem;
+}
+
+.tech-block-casa {
+  background: #f0fdf4;
+  border: 1.5px solid #bbf7d0;
+  border-left: 5px solid #059669;
+  border-radius: 12px;
+  padding: 0.75rem 0.9rem;
+}
+
+.tech-block-title-casa {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 0.96rem;
+  font-weight: 700;
+  color: #065f46;
+  margin-bottom: 0.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.tech-block-desc {
+  font-size: 0.88rem;
+  color: #1e293b;
+  line-height: 1.42;
+  margin: 0;
+}
+
+.tech-vocab-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.55rem;
+  align-items: center;
+}
+
+.tech-vocab-label {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #047857;
+  text-transform: uppercase;
+  margin-right: 0.2rem;
+}
+
+.btn-chip-audio {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: #ffffff;
+  border: 1.5px solid #059669;
+  border-radius: 16px;
+  padding: 0.22rem 0.6rem;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #065f46;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.btn-chip-audio:hover {
+  background: #dcfce7;
+  transform: translateY(-1px);
+}
+
+.btn-chip-audio:active {
+  transform: scale(0.96);
+}
+
+.btn-chip-audio.audio-playing {
+  background: #059669;
+  color: #ffffff;
+  border-color: #047857;
 }
 
 .tech-card-footer {

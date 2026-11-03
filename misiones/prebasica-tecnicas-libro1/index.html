@@ -11,12 +11,12 @@
 <meta property="og:url" content="https://metas.policastsapien.com/misiones/prebasica-tecnicas-libro1/prebasica-libro1.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Misiones PolicastSapien">
-<link rel="stylesheet" href="../../css/vendor/fuentes/fuentes.css?v=458">
-<link rel="stylesheet" href="css/prebasica-libro1.css?v=458">
-<link rel="stylesheet" href="../../css/barra-secciones.css?v=458">
-<link rel="stylesheet" href="../../css/senal-no-color.css?v=458">
-<link rel="stylesheet" href="../../css/teclado-actividades.css?v=458">
-<script src="../../js/estrella-ganada.js?v=458"></script>
+<link rel="stylesheet" href="../../css/vendor/fuentes/fuentes.css?v=459">
+<link rel="stylesheet" href="css/prebasica-libro1.css?v=459">
+<link rel="stylesheet" href="../../css/barra-secciones.css?v=459">
+<link rel="stylesheet" href="../../css/senal-no-color.css?v=459">
+<link rel="stylesheet" href="../../css/teclado-actividades.css?v=459">
+<script src="../../js/estrella-ganada.js?v=459"></script>
 </head>
 <body>
 
@@ -115,7 +115,7 @@
     <span class="ico">🧩</span> 4. Rompecabezas
   </button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-casa" data-s="s-casa" onclick="go('s-casa')">
-    <span class="ico">✂️</span> 5. Manos a la Obra en Casa
+    <span class="ico">🎨</span> 5. Manos a la Obra (En el Aula y en Casa)
   </button>
 </nav>
 
@@ -463,28 +463,45 @@
       </div>
     </div>
 
-    <button class="next-sec-btn" aria-label="Ir a la pestaña Manos a la Obra en Casa" onclick="go('s-casa')">
-      <span class="nsb-icon">✂️</span>
-      <span class="nsb-label"><span class="nsb-hint">¡Ahora trabajemos con papel y pintura real!</span> · <span class="nsb-name">5. Manos a la Obra en Casa →</span></span>
+    <button class="next-sec-btn" aria-label="Ir a la pestaña Manos a la Obra (En el Aula y en Casa)" onclick="go('s-casa')">
+      <span class="nsb-icon">🎨</span>
+      <span class="nsb-label"><span class="nsb-hint">¡Ahora trabajemos en el aula y en casa!</span> · <span class="nsb-name">5. Manos a la Obra (En el Aula y en Casa) →</span></span>
     </button>
   </section>
 
   <!-- ======================================================================
-       PESTAÑA 5: MANOS A LA OBRA EN CASA (TÉCNICAS FÍSICAS EN PAPEL)
+       PESTAÑA 5: MANOS A LA OBRA (EN EL AULA Y EN CASA)
        ====================================================================== -->
-  <section class="sec" id="s-casa" role="tabpanel" aria-label="Manos a la Obra en Casa">
+  <section class="sec" id="s-casa" role="tabpanel" aria-label="Manos a la Obra (En el Aula y en Casa)">
     <div class="card ac-jade">
-      <h2>✂️ 5. Manos a la Obra en Casa · Guía de Técnicas No Gráficas para la Familia</h2>
+      <h2>🎨 5. Manos a la Obra (En el Aula y en Casa) · Guía de Técnicas y Juegos Familiares</h2>
+
+      <!-- RECUADRO ORIENTADOR DESTACADO: REGLA DE ORO PEDAGÓGICA -->
+      <div class="parent-guide-maestro">
+        <div class="parent-guide-maestro-icon" aria-hidden="true">🏫👩‍🏫</div>
+        <div class="parent-guide-maestro-body">
+          <div class="parent-guide-maestro-badge">📌 REGLA DE ORO PEDAGÓGICA · EL LIBRO SE TRABAJA PRINCIPALMENTE EN EL AULA</div>
+          <p>
+            <strong>El Libro 1 se trabaja principalmente en el aula de clases:</strong> Antes de realizar o adelantar páginas del libro físico en casa, consulte siempre las <strong>indicaciones de su maestro(a)</strong>. En esta sección encontrarán tanto las técnicas del libro para practicar en el kínder o en casa (según indique el docente), como <strong>juegos prácticos en familia</strong> que no requieren manchar hojas del libro y fortalecen la motricidad y el aprendizaje de su hijo(a).
+          </p>
+        </div>
+        <div class="parent-guide-maestro-action">
+          <button type="button" class="btn-kid primary" onclick="hablarAvisoMaestro(this)">
+            🔊 Escuchar indicaciones
+          </button>
+        </div>
+      </div>
+
       <div class="parent-guide-box">
         <div class="parent-guide-content">
-          <span class="parent-guide-tag">🏠 Fuera de la Pantalla · Con Papel, Témpera y Tijeras</span>
+          <span class="parent-guide-tag">🎨 Doble Modalidad: En el Libro + Juegos en Familia</span>
           <p>
-            Ninguna pantalla reemplaza la fuerza que ganan los deditos al arrugar, rasgar, bolear o recortar papel real. Realice estas <strong>6 técnicas del Libro 1</strong> en la mesa con su hijo o hija y marque cada tarjeta al completarla juntos.
+            Cada tarjeta contiene dos bloques claros: <strong>🏫 En el Libro</strong> (para el aula o tarea asignada) y <strong>🏠 Juego Complementario en Familia</strong> (actividades lúdicas sin manchar el libro para divertirse en casa).
           </p>
         </div>
         <div class="parent-guide-actions">
           <span id="homeTechCounter" class="badge" style="background:var(--sec);color:#fff;font-size:0.9rem;padding:0.4rem 0.85rem;">
-            🏅 0 / 6 técnicas hechas en casa
+            🏅 0 / 6 actividades completadas
           </span>
         </div>
       </div>
@@ -496,7 +513,7 @@
         <div style="font-size:3rem;margin-bottom:0.25rem;">🎓 ⭐ 🏆</div>
         <h3 style="font-family:'Fredoka',sans-serif;font-size:1.45rem;color:#1b5e20;margin:0 0 0.5rem 0;">¡Misión de Prebásica Completada con Éxito!</h3>
         <p style="font-size:1.02rem;color:#2e7d32;max-width:620px;margin:0 auto 1rem auto;line-height:1.4;">
-          ¡Felicidades a la familia y al estudiante! Han recorrido los trazos con el dedito, las figuras geométricas, letras y números, rompecabezas y todas las técnicas físicas en papel del <strong>Libro 1</strong>.
+          ¡Felicidades a la familia y al estudiante! Han recorrido los trazos con el dedito, las figuras geométricas, letras y números, rompecabezas y todas las actividades de <strong>Manos a la Obra (En el Aula y en Casa)</strong> del <strong>Libro 1</strong>.
         </p>
         <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;">
           <a href="../../fichas/ficha-prebasica-libro1.html" class="btn-kid primary" target="_blank" rel="noopener noreferrer" style="font-size:1rem;text-decoration:none;">
@@ -629,11 +646,11 @@
   </div>
 </footer>
 
-<script src="js/colegios-prebasica.js?v=458"></script>
-<script src="js/mapa-audios-prebasica.js?v=458"></script>
-<script src="js/prebasica-libro1.js?v=458"></script>
-<script src="../../js/barra-secciones.js?v=458"></script>
-<script src="../../js/teclado-actividades.js?v=458"></script>
+<script src="js/colegios-prebasica.js?v=459"></script>
+<script src="js/mapa-audios-prebasica.js?v=459"></script>
+<script src="js/prebasica-libro1.js?v=459"></script>
+<script src="../../js/barra-secciones.js?v=459"></script>
+<script src="../../js/teclado-actividades.js?v=459"></script>
 <script>
   if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
     navigator.serviceWorker.register('../../sw.js').then(function (reg) {
