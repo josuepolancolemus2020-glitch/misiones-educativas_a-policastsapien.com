@@ -979,7 +979,7 @@ body::before {
   border-radius: 20px;
   overflow: hidden;
   box-shadow: inset 0 2px 12px rgba(0, 0, 0, 0.04);
-  touch-action: none;
+  touch-action: pan-y;
 }
 
 [data-theme="dark"] .canvas-stage-wrap {
@@ -991,7 +991,7 @@ body::before {
   width: 100%;
   height: auto;
   cursor: crosshair;
-  touch-action: none;
+  touch-action: pan-y;
 }
 
 .trace-progress-row {
@@ -1254,7 +1254,7 @@ body::before {
   width: 100%;
   height: auto;
   cursor: crosshair;
-  touch-action: none;
+  touch-action: pan-y;
 }
 
 .figura-objetos-section {
@@ -1907,6 +1907,28 @@ body::before {
   font-size: 0.98rem;
   cursor: pointer;
   box-shadow: 0 4px 15px var(--pri-gl);
+}
+
+.next-sec-btn .nsb-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.next-sec-btn .nsb-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.next-sec-btn .nsb-hint {
+  font-size: 0.85rem;
+  opacity: 0.92;
+  font-weight: 500;
+}
+
+.next-sec-btn .nsb-name {
+  font-weight: 700;
 }
 
 .credits {

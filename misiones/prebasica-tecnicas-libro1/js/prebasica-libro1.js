@@ -892,11 +892,81 @@
     };
   }
 
+  /* --------------------------------------------------------------------------
+     HELPER: PROYECCIÓN MAGNÉTICA AL CAMINO GUÍA (SNAP-TO-PATH / MÁSCARA CARRIL)
+     Calcula la distancia mínima entre un punto (x, y) y los segmentos del camino
+     o contorno guía, retornando la coordenada exacta sobre la línea más cercana.
+     -------------------------------------------------------------------------- */
+  function puntoMasCercanoEnCamino(pt, paths) {
+    if (!pt || !paths || paths.length === 0) return null;
+    var bestDistSq = Infinity;
+    var bestPt = null;
+    var bestPathIdx = -1;
+    var bestSegIdx = -1;
+
+    for (var p = 0; p < paths.length; p++) {
+      var path = paths[p];
+      if (!path || path.length === 0) continue;
+      if (path.length === 1) {
+        var d2 = (pt.x - path[0].x) * (pt.x - path[0].x) + (pt.y - path[0].y) * (pt.y - path[0].y);
+        if (d2 < bestDistSq) {
+          bestDistSq = d2;
+          bestPt = { x: path[0].x, y: path[0].y };
+          bestPathIdx = p;
+          bestSegIdx = 0;
+        }
+        continue;
+      }
+      for (var i = 0; i < path.length - 1; i++) {
+        var ax = path[i].x;
+        var ay = path[i].y;
+        var bx = path[i + 1].x;
+        var by = path[i + 1].y;
+
+        var abx = bx - ax;
+        var aby = by - ay;
+        var apx = pt.x - ax;
+        var apy = pt.y - ay;
+
+        var abLenSq = abx * abx + aby * aby;
+        var t = 0;
+        if (abLenSq > 0.0001) {
+          t = (apx * abx + apy * aby) / abLenSq;
+          if (t < 0) t = 0;
+          else if (t > 1) t = 1;
+        }
+
+        var projX = ax + t * abx;
+        var projY = ay + t * aby;
+        var dx = pt.x - projX;
+        var dy = pt.y - projY;
+        var distSq = dx * dx + dy * dy;
+
+        if (distSq < bestDistSq) {
+          bestDistSq = distSq;
+          bestPt = { x: projX, y: projY };
+          bestPathIdx = p;
+          bestSegIdx = i;
+        }
+      }
+    }
+
+    if (!bestPt) return null;
+    return {
+      point: bestPt,
+      dist: Math.sqrt(bestDistSq),
+      pathIdx: bestPathIdx,
+      segIdx: bestSegIdx
+    };
+  }
+
   var traceState = {
     currentIdx: 0,
     color: 'rainbow',
     hue: 0,
     isDrawing: false,
+    inLane: false,
+    lastPathIdx: -1,
     lastPt: null,
     userStrokes: [],
     waypoints: [],
@@ -933,29 +1003,100 @@
     }
 
     function startDraw(e) {
-      if (e.cancelable) e.preventDefault();
+      // Si el reto ya llegó al 100%, desactivar dibujo para permitir scroll libre
+      if (traceState.completedCurrent) {
+        traceState.isDrawing = false;
+        traceState.inLane = false;
+        return;
+      }
+
       var pt = getCanvasPoint(e);
+      var paths = traceState.paths;
+      if (!paths || paths.length === 0) {
+        var ch = TRACE_CHALLENGES[traceState.currentIdx];
+        if (ch) paths = ch.buildPaths(canvas.width, canvas.height);
+      }
+      var snap = puntoMasCercanoEnCamino(pt, paths);
+
+      // Si el toque inicia en zona blanca lejos del inicio/camino (> 32px),
+      // NO activar dibujo ni llamar preventDefault: permitir scroll vertical normal
+      if (!snap || snap.dist > 32) {
+        traceState.isDrawing = false;
+        traceState.inLane = false;
+        return;
+      }
+
+      // Toque directo sobre el carril guía o punto de inicio: capturar trazo
+      if (e.cancelable) e.preventDefault();
       traceState.isDrawing = true;
-      traceState.lastPt = pt;
+      traceState.inLane = true;
+      traceState.lastPathIdx = snap.pathIdx;
+      traceState.lastPt = snap.point;
       traceState.userStrokes.push({
         color: traceState.color,
-        points: [{ x: pt.x, y: pt.y, hue: traceState.hue }]
+        points: [{ x: snap.point.x, y: snap.point.y, hue: traceState.hue }]
       });
-      checkTraceWaypoints(pt);
+      checkTraceWaypoints(snap.point);
       renderTraceCanvas();
     }
 
     function moveDraw(e) {
       if (!traceState.isDrawing) return;
-      if (e.cancelable) e.preventDefault();
-      var pt = getCanvasPoint(e);
-      traceState.hue = (traceState.hue + 7) % 360;
-      var currentStroke = traceState.userStrokes[traceState.userStrokes.length - 1];
-      if (currentStroke) {
-        currentStroke.points.push({ x: pt.x, y: pt.y, hue: traceState.hue });
+      if (traceState.completedCurrent) {
+        traceState.isDrawing = false;
+        traceState.inLane = false;
+        return;
       }
-      traceState.lastPt = pt;
-      checkTraceWaypoints(pt);
+      if (e.cancelable) e.preventDefault();
+
+      var pt = getCanvasPoint(e);
+      var paths = traceState.paths;
+      if (!paths || paths.length === 0) {
+        var ch = TRACE_CHALLENGES[traceState.currentIdx];
+        if (ch) paths = ch.buildPaths(canvas.width, canvas.height);
+      }
+      var snap = puntoMasCercanoEnCamino(pt, paths);
+
+      // Si el dedo está FUERA del radio del carril guía (> 28px):
+      // NO dibujar absolutamente nada (ignorar trazo para que el fondo blanco no se manche)
+      if (!snap || snap.dist > 28) {
+        traceState.inLane = false;
+        return;
+      }
+
+      // DENTRO del carril guía (<= 28px): pintar únicamente sobre la coordenada exacta del camino
+      traceState.hue = (traceState.hue + 7) % 360;
+      var snappedPt = snap.point;
+
+      // Si reingresa al carril tras haber salido o cambió de línea (ej. columnas separadas),
+      // iniciar un nuevo segmento para no trazar líneas que crucen el fondo blanco
+      if (!traceState.inLane || snap.pathIdx !== traceState.lastPathIdx || traceState.userStrokes.length === 0) {
+        traceState.userStrokes.push({
+          color: traceState.color,
+          points: [{ x: snappedPt.x, y: snappedPt.y, hue: traceState.hue }]
+        });
+        traceState.inLane = true;
+        traceState.lastPathIdx = snap.pathIdx;
+      } else {
+        var currentStroke = traceState.userStrokes[traceState.userStrokes.length - 1];
+        if (currentStroke && currentStroke.points && currentStroke.points.length > 0) {
+          var lastP = currentStroke.points[currentStroke.points.length - 1];
+          var dx = snappedPt.x - lastP.x;
+          var dy = snappedPt.y - lastP.y;
+          // Evitar saturar puntos idénticos seguidos
+          if (dx * dx + dy * dy >= 4) {
+            currentStroke.points.push({ x: snappedPt.x, y: snappedPt.y, hue: traceState.hue });
+          }
+        } else {
+          traceState.userStrokes.push({
+            color: traceState.color,
+            points: [{ x: snappedPt.x, y: snappedPt.y, hue: traceState.hue }]
+          });
+        }
+      }
+
+      traceState.lastPt = snappedPt;
+      checkTraceWaypoints(snappedPt);
       renderTraceCanvas();
     }
 
@@ -963,6 +1104,7 @@
       if (!traceState.isDrawing) return;
       if (e && e.cancelable) e.preventDefault();
       traceState.isDrawing = false;
+      traceState.inLane = false;
       traceState.lastPt = null;
     }
 
@@ -973,6 +1115,9 @@
     canvas.addEventListener('touchstart', startDraw, { passive: false });
     canvas.addEventListener('touchmove', moveDraw, { passive: false });
     canvas.addEventListener('touchend', endDraw, { passive: false });
+    canvas.addEventListener('touchcancel', endDraw, { passive: false });
+    window.addEventListener('touchend', endDraw, { passive: false });
+    window.addEventListener('touchcancel', endDraw, { passive: false });
   }
 
   function renderTraceSelector() {
@@ -1003,6 +1148,10 @@
     traceState.currentIdx = idx;
     traceState.userStrokes = [];
     traceState.completedCurrent = false;
+    traceState.isDrawing = false;
+    traceState.inLane = false;
+    traceState.lastPt = null;
+    traceState.lastPathIdx = -1;
 
     var canvas = document.getElementById('traceCanvas');
     var ch = TRACE_CHALLENGES[idx];
@@ -1073,6 +1222,8 @@
 
       if (allSegmentsDone && pct >= 92 && !traceState.completedCurrent) {
         traceState.completedCurrent = true;
+        traceState.isDrawing = false;
+        traceState.inLane = false;
         updateTraceProgressUI(100);
         var ch = TRACE_CHALLENGES[traceState.currentIdx];
         if (ch && !state.completedTraces[ch.id]) {
@@ -1086,7 +1237,7 @@
         var statusMsg = document.getElementById('traceStatusMsg');
         if (statusBanner) statusBanner.classList.add('celebrate');
         if (statusMsg) {
-          statusMsg.innerHTML = '🎉 <strong>¡Felicidades! ✓</strong> Completaste el trazo hasta la meta con mucho control.';
+          statusMsg.innerHTML = '🎉 <strong>¡Felicidades! ✓</strong> Completaste el trazo hasta la meta con mucho control. Toca <strong>🧹 Borrar trazo</strong> si deseas repasar.';
         }
         window.hablarTexto('¡Muy bien! Llegaste a la meta. ¡Excelente trazo!', 'es-ES');
         renderTraceSelector();
@@ -1907,6 +2058,8 @@
     color: 'rainbow',
     hue: 0,
     isDrawing: false,
+    inLane: false,
+    lastPathIdx: -1,
     lastPt: null,
     userStrokes: [],
     waypoints: [],
@@ -1964,33 +2117,109 @@
     }
 
     function startDraw(e) {
-      if (e.cancelable) e.preventDefault();
+      // Si el reto ya llegó al 100%, desactivar dibujo para permitir scroll libre
+      if (figuraState.completedCurrent) {
+        figuraState.isDrawing = false;
+        figuraState.inLane = false;
+        return;
+      }
+
       var pt = getCanvasPoint(e);
+      var paths = figuraState.paths;
+      if (!paths || paths.length === 0) {
+        var active = getActiveFigura();
+        if (active && active.buildPerimeter) {
+          var per = active.buildPerimeter(canvas.width, canvas.height);
+          if (per && per.paths) paths = per.paths;
+        }
+      }
+      var snap = puntoMasCercanoEnCamino(pt, paths);
+
+      // Si el toque inicia en zona blanca lejos del contorno (> 32px),
+      // NO activar dibujo ni llamar preventDefault: permitir scroll vertical normal
+      if (!snap || snap.dist > 32) {
+        figuraState.isDrawing = false;
+        figuraState.inLane = false;
+        return;
+      }
+
+      // Toque directo sobre el contorno: capturar trazo
+      if (e.cancelable) e.preventDefault();
       figuraState.isDrawing = true;
-      figuraState.lastPt = pt;
+      figuraState.inLane = true;
+      figuraState.lastPathIdx = snap.pathIdx;
+      figuraState.lastPt = snap.point;
       figuraState.userStrokes.push({
         color: figuraState.color,
-        points: [{ x: pt.x, y: pt.y, hue: figuraState.hue }]
+        points: [{ x: snap.point.x, y: snap.point.y, hue: figuraState.hue }]
       });
-      addFiguraSparkle(pt.x, pt.y);
-      checkFiguraWaypoints(pt);
+      addFiguraSparkle(snap.point.x, snap.point.y);
+      checkFiguraWaypoints(snap.point);
       renderFiguraCanvas();
     }
 
     function moveDraw(e) {
       if (!figuraState.isDrawing) return;
+      if (figuraState.completedCurrent) {
+        figuraState.isDrawing = false;
+        figuraState.inLane = false;
+        return;
+      }
       if (e.cancelable) e.preventDefault();
+
       var pt = getCanvasPoint(e);
+      var paths = figuraState.paths;
+      if (!paths || paths.length === 0) {
+        var active = getActiveFigura();
+        if (active && active.buildPerimeter) {
+          var per = active.buildPerimeter(canvas.width, canvas.height);
+          if (per && per.paths) paths = per.paths;
+        }
+      }
+      var snap = puntoMasCercanoEnCamino(pt, paths);
+
+      // Si el dedo está FUERA del radio del carril guía (> 28px):
+      // NO dibujar absolutamente nada (ignorar trazo para que el fondo blanco no se manche)
+      if (!snap || snap.dist > 28) {
+        figuraState.inLane = false;
+        return;
+      }
+
+      // DENTRO del carril guía (<= 28px): pintar únicamente sobre la coordenada exacta del contorno
       figuraState.hue = (figuraState.hue + 8) % 360;
-      var currentStroke = figuraState.userStrokes[figuraState.userStrokes.length - 1];
-      if (currentStroke) {
-        currentStroke.points.push({ x: pt.x, y: pt.y, hue: figuraState.hue });
+      var snappedPt = snap.point;
+
+      // Si reingresa al carril tras haber salido, iniciar un nuevo segmento continuo
+      if (!figuraState.inLane || snap.pathIdx !== figuraState.lastPathIdx || figuraState.userStrokes.length === 0) {
+        figuraState.userStrokes.push({
+          color: figuraState.color,
+          points: [{ x: snappedPt.x, y: snappedPt.y, hue: figuraState.hue }]
+        });
+        figuraState.inLane = true;
+        figuraState.lastPathIdx = snap.pathIdx;
+      } else {
+        var currentStroke = figuraState.userStrokes[figuraState.userStrokes.length - 1];
+        if (currentStroke && currentStroke.points && currentStroke.points.length > 0) {
+          var lastP = currentStroke.points[currentStroke.points.length - 1];
+          var dx = snappedPt.x - lastP.x;
+          var dy = snappedPt.y - lastP.y;
+          // Evitar saturar puntos idénticos seguidos
+          if (dx * dx + dy * dy >= 4) {
+            currentStroke.points.push({ x: snappedPt.x, y: snappedPt.y, hue: figuraState.hue });
+          }
+        } else {
+          figuraState.userStrokes.push({
+            color: figuraState.color,
+            points: [{ x: snappedPt.x, y: snappedPt.y, hue: figuraState.hue }]
+          });
+        }
       }
-      figuraState.lastPt = pt;
+
+      figuraState.lastPt = snappedPt;
       if (Math.random() < 0.65) {
-        addFiguraSparkle(pt.x, pt.y);
+        addFiguraSparkle(snappedPt.x, snappedPt.y);
       }
-      checkFiguraWaypoints(pt);
+      checkFiguraWaypoints(snappedPt);
       renderFiguraCanvas();
     }
 
@@ -1998,6 +2227,7 @@
       if (!figuraState.isDrawing) return;
       if (e && e.cancelable) e.preventDefault();
       figuraState.isDrawing = false;
+      figuraState.inLane = false;
       figuraState.lastPt = null;
     }
 
@@ -2008,6 +2238,9 @@
     canvas.addEventListener('touchstart', startDraw, { passive: false });
     canvas.addEventListener('touchmove', moveDraw, { passive: false });
     canvas.addEventListener('touchend', endDraw, { passive: false });
+    canvas.addEventListener('touchcancel', endDraw, { passive: false });
+    window.addEventListener('touchend', endDraw, { passive: false });
+    window.addEventListener('touchcancel', endDraw, { passive: false });
   }
 
   function addFiguraSparkle(x, y) {
@@ -2060,6 +2293,10 @@
     figuraState.userStrokes = [];
     figuraState.sparkles = [];
     figuraState.completedCurrent = false;
+    figuraState.isDrawing = false;
+    figuraState.inLane = false;
+    figuraState.lastPt = null;
+    figuraState.lastPathIdx = -1;
 
     var fig = FIGURAS_DATA[idx];
     if (!fig) return;
@@ -2205,6 +2442,8 @@
 
       if (allSegmentsDone && pct >= 92 && !figuraState.completedCurrent) {
         figuraState.completedCurrent = true;
+        figuraState.isDrawing = false;
+        figuraState.inLane = false;
         updateFiguraProgressUI(100);
         var active = getActiveFigura();
         var key = getActiveFiguraStorageKey();
@@ -2220,7 +2459,7 @@
         var statusMsg = document.getElementById('figuraStatusMsg');
         if (statusBanner) statusBanner.classList.add('celebrate');
         if (statusMsg && active) {
-          statusMsg.innerHTML = '🎉 <strong>¡Fantástico! ⭐</strong> ¡Descubriste el contorno del ' + active.nameEs + '! Ahora toca los objetos de abajo.';
+          statusMsg.innerHTML = '🎉 <strong>¡Fantástico! ⭐</strong> ¡Descubriste el contorno del ' + active.nameEs + '! Toca <strong>🔄 Repasar de nuevo</strong> si deseas volver a trazarlo.';
         }
         if (active) {
           window.hablarTexto(active.audioFelicita, 'es-ES');
@@ -2282,6 +2521,23 @@
         ctx.fill();
       });
       ctx.restore();
+
+      // Carril guía magnético sombreado detrás del contorno punteado
+      pData.paths.forEach(function (path) {
+        if (!path || path.length < 2) return;
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(path[0].x, path[0].y);
+        for (var i = 1; i < path.length; i++) {
+          ctx.lineTo(path[i].x, path[i].y);
+        }
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.07)';
+        ctx.lineWidth = 32;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.stroke();
+        ctx.restore();
+      });
     }
 
     // 3. Diferenciación geométrica visual especial
