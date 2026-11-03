@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica de Acompañamiento · Prebásica (3.° Grado) · Libro 1</title>
+<meta name="description" content="Ficha imprimible de 2 páginas de acompañamiento para Prebásica (3.° Grado) basada en el Libro 1 de Técnicas Gráficas y No Gráficas compilado por Evelyn S. Castellanos H.">
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Formato exacto de 2 páginas carta (Page 1 + Page 2)
+     · Color de Prebásica: Naranja Cálido (#ea580c / #c2410c)
+     · Tipografía legible infantil: Arial / sans-serif
+     · Ilustraciones vectoriales limpias SVG para impresión nítida */
+  :root {
+    --preb: #ea580c; --preb-osc: #9a3412; --preb-claro: #fff7ed; --preb-borde: #fed7aa;
+    --tinta: #1a2733; --gris: #475569; --linea: #fdba74;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 10pt;
+    color: var(--tinta);
+    background: #fffaf5;
+    line-height: 1.35;
+  }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina {
+    background: #fff;
+    padding: 0 0 28px;
+    margin: 0 auto 12px;
+    position: relative;
+    min-height: 254mm;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  }
+  .pagina .contenido { padding: 18px 32px 0; }
+
+  .pag-pie {
+    position: absolute; bottom: 8px; left: 32px; right: 32px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8pt; color: var(--gris); border-top: 1px solid var(--preb-borde); padding-top: 4px;
+  }
+  .pag-pie b { color: var(--preb-osc); }
+
+  /* Encabezado con datos del alumno */
+  .idline {
+    display: flex; align-items: flex-end; gap: 8px; font-size: 9.5pt; font-weight: 700; margin-bottom: 7px;
+  }
+  .idline .raya { flex: 1; border-bottom: 1.2px solid var(--tinta); min-height: 1.1em; }
+  .idline .raya.corta { flex: 0 0 45px; }
+  .idline .raya.med { flex: 0 0 110px; }
+
+  /* Banner de acompañamiento del adulto */
+  .adult-banner {
+    display: flex; gap: 10px; align-items: center;
+    background: #fef2f2; border: 1.5px solid #fecaca; border-radius: 7px;
+    padding: 6px 12px; margin-bottom: 8px; font-size: 8.5pt; color: #991b1b;
+  }
+  .adult-banner b { color: #b91c1c; }
+
+  /* Cabecera institucional */
+  .fh {
+    display: flex; gap: 10px; border-left: 5px solid var(--preb); background: var(--preb-claro);
+    border-radius: 7px; padding: 7px 12px; margin-bottom: 8px; align-items: center;
+  }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 11pt; font-weight: 900; color: var(--preb-osc); }
+  .fh .f-meta { font-size: 8.2pt; color: var(--gris); margin-top: 2px; }
+  .fh .f-meta b { color: var(--preb-osc); }
+  .fh-icon { font-size: 26pt; line-height: 1; }
+
+  /* Secciones y actividades (sin fondo sólido, ahorro de tinta al imprimir) */
+  .sec-tit {
+    font-size: 9.6pt; font-weight: 800; color: #7c2d12;
+    background: #fffaf5; border: 1px solid #fed7aa;
+    border-left: 4px solid #f97316;
+    padding: 3px 8px; border-radius: 4px; margin: 5px 0 4px;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  /* Código QR compacto en cabecera */
+  .fh-qr {
+    flex: 0 0 98px; text-align: center; background: #ffffff;
+    border: 1px solid var(--preb-borde); border-radius: 6px;
+    padding: 3px 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .fh-qr img { width: 62px; height: 62px; display: block; margin: 0 auto; border-radius: 4px; }
+  .fh-qr span {
+    display: block; font-size: 5.6pt; font-weight: 700; color: #9a3412;
+    line-height: 1.15; margin-top: 2px;
+  }
+
+  /* Figuras geométricas para trazar y colorear */
+  .grid-figuras {
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin: 4px 0 0;
+  }
+  .item-figura {
+    border: 1.2px dashed #fed7aa; background: #fffdfa; border-radius: 8px;
+    padding: 4px 2px; text-align: center; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+  .item-figura svg { width: 48px; height: 48px; display: block; margin: 0 auto; }
+  .item-figura .fig-nom {
+    font-size: 7.2pt; font-weight: 800; color: var(--preb-osc); margin-top: 2px; line-height: 1.1;
+  }
+  .item-figura .fig-sub { font-size: 6pt; color: var(--gris); font-weight: 600; }
+  .sec-instruccion {
+    font-size: 8.8pt; color: #7c2d12; background: #fffbeb; border: 1px solid #fde68a;
+    border-radius: 5px; padding: 4px 8px; margin-bottom: 6px;
+  }
+  .sec-instruccion b { color: #b45309; }
+
+  /* Renglones de trazo */
+  .trazo-fila {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 6px; padding: 3px 6px; background: #fafaf9;
+    border: 1px dashed #e7e5e4; border-radius: 6px;
+  }
+  .trazo-icono { font-size: 14pt; flex: 0 0 24px; text-align: center; }
+  .trazo-lienzo { flex: 1; height: 26px; }
+  .trazo-lienzo svg { width: 100%; height: 100%; display: block; }
+
+  /* Nociones espaciales y cuadros de selección */
+  .grid-2col {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 5px 0;
+  }
+  .cuadro-ejercicio {
+    border: 1.5px solid var(--preb-borde); border-radius: 7px;
+    padding: 6px 8px; background: #fff; text-align: center;
+  }
+  .cuadro-ejercicio .ej-tit {
+    font-size: 8.5pt; font-weight: 800; color: var(--preb-osc); margin-bottom: 4px; text-align: left;
+  }
+
+  /* Letras y burbujas de vocales */
+  .letras-burbujas {
+    display: flex; flex-wrap: wrap; justify-content: space-around; gap: 6px; margin: 6px 0;
+  }
+  .letra-circ {
+    width: 32px; height: 32px; border-radius: 50%; border: 1.8px solid #cbd5e1;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14pt; font-weight: 900; color: var(--tinta); background: #fff;
+  }
+
+  /* Conteo de números */
+  .grid-conteo {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 5px 0;
+  }
+  .item-conteo {
+    border: 1px solid var(--preb-borde); border-radius: 6px; padding: 4px;
+    text-align: center; background: #fff;
+  }
+  .item-conteo .dibujos { font-size: 11pt; min-height: 24px; display: flex; align-items: center; justify-content: center; gap: 2px; }
+  .item-conteo .opciones {
+    display: flex; justify-content: center; gap: 6px; margin-top: 3px; font-weight: 700; font-size: 9pt;
+  }
+  .item-conteo .num-caja {
+    width: 20px; height: 20px; border: 1.2px solid #cbd5e1; border-radius: 4px;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+
+  /* Recuadro de felicitación y firma familiar */
+  .recuadro-familia {
+    background: #fff7ed; border: 1.5px dashed #fb923c; border-radius: 8px;
+    padding: 6px 12px; margin-top: 6px; display: flex; align-items: center; justify-content: space-between;
+  }
+  .recuadro-familia .fam-txt { font-size: 8.8pt; color: #9a3412; }
+  .recuadro-familia .fam-txt b { font-size: 9.5pt; color: var(--preb); }
+  .recuadro-familia .fam-firma {
+    border-bottom: 1.2px solid #9a3412; min-width: 140px; text-align: center; font-size: 8pt; color: var(--gris);
+  }
+
+  /* Botón de impresión flotante */
+  .imprimir-btn {
+    position: fixed; right: 18px; bottom: 18px; z-index: 100;
+    border: none; cursor: pointer; padding: 12px 20px; border-radius: 999px;
+    font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--preb);
+    box-shadow: 0 6px 18px rgba(234, 88, 12, .4); font-family: Arial, sans-serif;
+  }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 10mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina {
+      margin: 0;
+      page-break-after: always;
+      height: 254mm;
+      max-height: 254mm;
+      min-height: 254mm;
+      overflow: hidden;
+      padding-bottom: 22px;
+      box-shadow: none;
+    }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 2px; }
+    .imprimir-btn { display: none; }
+    .sec-tit, .adult-banner, .fh, .sec-instruccion, .recuadro-familia, .cintillo-ficha-institucion {
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+  }
+
+  .cintillo-ficha-institucion {
+    background: #fff7ed;
+    border: 1.5px solid #fed7aa;
+    border-left: 5px solid #ea580c;
+    border-radius: 6px;
+    padding: 3px 10px;
+    margin-bottom: 6px;
+    font-size: 8.5pt;
+    color: #9a3412;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .cintillo-ficha-institucion strong {
+    color: #c2410c;
+    font-weight: 800;
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir Ficha (2 Páginas)</button>
+
+<div class="doc">
+
+<!-- ══════════════════════════════════════════════════════════════
+     PÁGINA 1: TRAZOS RECTOS, QUEBRADOS, CURVOS Y ARABESCOS
+     ══════════════════════════════════════════════════════════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div id="cintilloFichaPrebasica" class="cintillo-ficha-institucion" style="display:none;">
+      🏫 Edición Exclusiva autorizada para: <strong id="lblFichaInstitucion"></strong>
+    </div>
+
+    <div class="idline">
+      <span>Nombre del Niño(a):</span><span class="raya"></span>
+      <span>Edad:</span><span class="raya corta"></span>
+      <span>Papá/Mamá/Tutor:</span><span class="raya med"></span>
+      <span>Fecha:</span><span class="raya corta"></span>
+    </div>
+
+    <div class="adult-banner">
+      <span>👨‍👩‍👧</span>
+      <div>
+        <b>USO EXCLUSIVO CON APOYO DE UN ADULTO (10 a 15 MINUTOS):</b> Complemento para trabajar sentado junto al niño. Si no existe supervisión de un adulto, utilice solo el libro físico.
+        <div style="font-size:7.2pt; margin-top:2px; color:#7f1d1d; line-height:1.2;">
+          <b>⚖️ Aviso Legal y Pedagógico:</b> El eje central del aprendizaje es el libro físico. Este recurso digital es complementario. La institución, la editorial y la distribuidora del libro y de M.E.T.A.S. no se responsabilizan por el uso inadecuado o no supervisado de pantallas.
+        </div>
+      </div>
+    </div>
+
+    <div class="fh">
+      <div class="fh-icon">🐝</div>
+      <div class="fh-txt">
+        <div class="f-badge">Prebásica (3.° Grado) · Trazos con el Dedo y Crayón</div>
+        <div class="f-meta">
+          Basado en el <b>Libro 1: Técnicas Gráficas y No Gráficas</b> · Compilado por <b>Evelyn S. Castellanos H.</b>
+        </div>
+      </div>
+      <div class="fh-qr">
+        <img src="../../img/qr-mision-prebasica-libro1.png" alt="Código QR Misión Prebásica Libro 1">
+        <span>📱 Escanea con papá o mamá para abrir la misión interactiva</span>
+      </div>
+    </div>
+
+    <!-- RETO 1: LÍNEAS VERTICALES Y HORIZONTALES -->
+    <div class="sec-tit"><span>✏️</span> 1. Líneas Rectas (Horizontales y Verticales)</div>
+    <div class="sec-instruccion">
+      <b>Papá o mamá:</b> Pida al niño seguir la línea punteada con su crayón favorito sin levantar la mano, desde la flecha verde hasta la meta.
+    </div>
+
+    <div class="trazo-fila">
+      <div class="trazo-icono">🐝</div>
+      <div class="trazo-lienzo">
+        <svg viewBox="0 0 400 24" preserveAspectRatio="none">
+          <circle cx="10" cy="12" r="5" fill="#16a34a" />
+          <line x1="20" y1="12" x2="380" y2="12" stroke="#ea580c" stroke-width="2.5" stroke-dasharray="6,6" />
+          <polygon points="380,8 392,12 380,16" fill="#ea580c" />
+        </svg>
+      </div>
+      <div class="trazo-icono">🌸</div>
+    </div>
+
+    <div class="trazo-fila">
+      <div class="trazo-icono">⛵</div>
+      <div class="trazo-lienzo">
+        <svg viewBox="0 0 400 24" preserveAspectRatio="none">
+          <circle cx="10" cy="12" r="5" fill="#16a34a" />
+          <line x1="20" y1="12" x2="380" y2="12" stroke="#2563eb" stroke-width="2.5" stroke-dasharray="6,6" />
+          <polygon points="380,8 392,12 380,16" fill="#2563eb" />
+        </svg>
+      </div>
+      <div class="trazo-icono">🗼</div>
+    </div>
+
+    <div class="trazo-fila">
+      <div class="trazo-icono">🍎</div>
+      <div class="trazo-lienzo">
+        <svg viewBox="0 0 400 24" preserveAspectRatio="none">
+          <g transform="translate(40,0)">
+            <circle cx="0" cy="4" r="3" fill="#16a34a" /><line x1="0" y1="6" x2="0" y2="20" stroke="#dc2626" stroke-width="2" stroke-dasharray="3,3" />
+          </g>
+          <g transform="translate(120,0)">
+            <circle cx="0" cy="4" r="3" fill="#16a34a" /><line x1="0" y1="6" x2="0" y2="20" stroke="#dc2626" stroke-width="2" stroke-dasharray="3,3" />
+          </g>
+          <g transform="translate(200,0)">
+            <circle cx="0" cy="4" r="3" fill="#16a34a" /><line x1="0" y1="6" x2="0" y2="20" stroke="#dc2626" stroke-width="2" stroke-dasharray="3,3" />
+          </g>
+          <g transform="translate(280,0)">
+            <circle cx="0" cy="4" r="3" fill="#16a34a" /><line x1="0" y1="6" x2="0" y2="20" stroke="#dc2626" stroke-width="2" stroke-dasharray="3,3" />
+          </g>
+          <g transform="translate(360,0)">
+            <circle cx="0" cy="4" r="3" fill="#16a34a" /><line x1="0" y1="6" x2="0" y2="20" stroke="#dc2626" stroke-width="2" stroke-dasharray="3,3" />
+          </g>
+        </svg>
+      </div>
+      <div class="trazo-icono">🧺</div>
+    </div>
+
+    <!-- RETO 2: LÍNEAS QUEBRADAS (ZIG-ZAG) E INCLINADAS -->
+    <div class="sec-tit"><span>⚡</span> 2. Líneas Quebradas (Zig-Zag) e Inclinadas</div>
+    <div class="sec-instruccion">
+      <b>Saltitos en pico:</b> El conejito salta por la montaña para llegar a la zanahoria. Sube y baja con cuidado.
+    </div>
+
+    <div class="trazo-fila">
+      <div class="trazo-icono">🐰</div>
+      <div class="trazo-lienzo">
+        <svg viewBox="0 0 400 24" preserveAspectRatio="none">
+          <circle cx="10" cy="18" r="4" fill="#16a34a" />
+          <path d="M 15 18 L 45 4 L 75 18 L 105 4 L 135 18 L 165 4 L 195 18 L 225 4 L 255 18 L 285 4 L 315 18 L 345 4 L 375 18" fill="none" stroke="#ea580c" stroke-width="2.5" stroke-dasharray="5,5" />
+          <polygon points="375,14 388,18 375,22" fill="#ea580c" />
+        </svg>
+      </div>
+      <div class="trazo-icono">🥕</div>
+    </div>
+
+    <div class="trazo-fila">
+      <div class="trazo-icono">✈️</div>
+      <div class="trazo-lienzo">
+        <svg viewBox="0 0 400 24" preserveAspectRatio="none">
+          <circle cx="10" cy="20" r="4" fill="#16a34a" />
+          <path d="M 15 20 L 55 4 L 95 20 L 135 4 L 175 20 L 215 4 L 255 20 L 295 4 L 335 20 L 375 4" fill="none" stroke="#7c3aed" stroke-width="2.5" stroke-dasharray="5,5" />
+          <polygon points="375,0 388,4 375,8" fill="#7c3aed" />
+        </svg>
+      </div>
+      <div class="trazo-icono">☁️</div>
+    </div>
+
+    <!-- RETO 3: LÍNEAS CURVAS Y ONDULADAS -->
+    <div class="sec-tit"><span>🌊</span> 3. Líneas Curvas y Onduladas</div>
+    <div class="sec-instruccion">
+      <b>Olas suaves:</b> El pececito y el sapito avanzan con ondas redonditas. Sigue las curvas como el agua del mar.
+    </div>
+
+    <div class="trazo-fila">
+      <div class="trazo-icono">🐟</div>
+      <div class="trazo-lienzo">
+        <svg viewBox="0 0 400 24" preserveAspectRatio="none">
+          <circle cx="10" cy="12" r="4" fill="#16a34a" />
+          <path d="M 15 12 Q 40 0, 65 12 T 115 12 T 165 12 T 215 12 T 265 12 T 315 12 T 365 12" fill="none" stroke="#0284c7" stroke-width="2.5" stroke-dasharray="5,5" />
+          <polygon points="365,8 378,12 365,16" fill="#0284c7" />
+        </svg>
+      </div>
+      <div class="trazo-icono">🏝️</div>
+    </div>
+
+    <div class="trazo-fila">
+      <div class="trazo-icono">🐸</div>
+      <div class="trazo-lienzo">
+        <svg viewBox="0 0 400 24" preserveAspectRatio="none">
+          <circle cx="10" cy="20" r="4" fill="#16a34a" />
+          <path d="M 15 20 Q 45 2, 75 20 Q 105 2, 135 20 Q 165 2, 195 20 Q 225 2, 255 20 Q 285 2, 315 20 Q 345 2, 375 20" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-dasharray="5,5" />
+          <polygon points="375,16 388,20 375,24" fill="#16a34a" />
+        </svg>
+      </div>
+      <div class="trazo-icono">🪷</div>
+    </div>
+
+    <!-- RETO 4: ARABESCOS Y ESPIRALES -->
+    <div class="sec-tit"><span>🌀</span> 4. Arabescos y Espirales</div>
+    <div class="sec-instruccion">
+      <b>Espirales continuas:</b> Ayuda al caracolito a pintar su concha y al viento a girar sus remolinos con tu crayón.
+    </div>
+
+    <div class="trazo-fila">
+      <div class="trazo-icono">🐌</div>
+      <div class="trazo-lienzo">
+        <svg viewBox="0 0 400 24" preserveAspectRatio="none">
+          <circle cx="12" cy="18" r="4" fill="#16a34a" />
+          <path d="M 20 18 C 35 2, 50 2, 40 18 C 30 22, 60 22, 70 8 C 80 0, 95 6, 85 20 C 75 24, 110 22, 120 8 C 130 0, 145 6, 135 20 C 125 24, 160 22, 170 8 C 180 0, 195 6, 185 20 C 175 24, 210 22, 220 8 C 230 0, 245 6, 235 20 C 225 24, 260 22, 270 8 C 280 0, 295 6, 285 20 C 275 24, 310 22, 320 8 C 330 0, 345 6, 335 20 C 325 24, 360 22, 370 8" fill="none" stroke="#ea580c" stroke-width="2.2" stroke-dasharray="4,4" />
+          <polygon points="370,4 382,8 370,12" fill="#ea580c" />
+        </svg>
+      </div>
+      <div class="trazo-icono">🍃</div>
+    </div>
+
+    <div class="trazo-fila">
+      <div class="trazo-icono">🪁</div>
+      <div class="trazo-lienzo">
+        <svg viewBox="0 0 400 24" preserveAspectRatio="none">
+          <circle cx="10" cy="12" r="4" fill="#16a34a" />
+          <path d="M 18 12 C 28 22, 44 22, 44 12 C 44 2, 28 2, 34 12 C 40 18, 54 18, 62 12 C 72 2, 88 2, 88 12 C 88 22, 72 22, 78 12 C 84 6, 98 6, 106 12 C 116 22, 132 22, 132 12 C 132 2, 116 2, 122 12 C 128 18, 142 18, 150 12 C 160 2, 176 2, 176 12 C 176 22, 160 22, 166 12 C 172 6, 186 6, 194 12 C 204 22, 220 22, 220 12 C 220 2, 204 2, 210 12 C 216 18, 230 18, 238 12 C 248 2, 264 2, 264 12 C 264 22, 248 22, 254 12 C 260 6, 274 6, 282 12 C 292 22, 308 22, 308 12 C 308 2, 292 2, 298 12 C 304 18, 318 18, 326 12 C 336 2, 352 2, 352 12 C 352 22, 336 22, 342 12 C 348 6, 362 6, 372 12" fill="none" stroke="#7c3aed" stroke-width="2.2" stroke-dasharray="4,4" />
+          <polygon points="372,8 385,12 372,16" fill="#7c3aed" />
+        </svg>
+      </div>
+      <div class="trazo-icono">💨</div>
+    </div>
+
+    <!-- RETO 5: TRAZA Y COLOREA LAS FIGURAS GEOMÉTRICAS -->
+    <div class="sec-tit"><span>🎨</span> 5. Traza y Colorea las Figuras Geométricas</div>
+    <div class="sec-instruccion">
+      <b>Paso a paso con crayón:</b> Repasa con tu crayón favorito las líneas punteadas de cada figura y luego colorea su interior.
+    </div>
+
+    <div class="grid-figuras">
+      <!-- CÍRCULO -->
+      <div class="item-figura">
+        <svg viewBox="0 0 56 56">
+          <circle cx="10" cy="28" r="3.5" fill="#16a34a" />
+          <circle cx="28" cy="28" r="21" fill="#fff" stroke="#ea580c" stroke-width="2.4" stroke-dasharray="4,4" />
+        </svg>
+        <span class="fig-nom">Círculo</span>
+        <span class="fig-sub">Circle</span>
+      </div>
+
+      <!-- CUADRADO -->
+      <div class="item-figura">
+        <svg viewBox="0 0 56 56">
+          <circle cx="7" cy="7" r="3.5" fill="#16a34a" />
+          <rect x="7" y="7" width="42" height="42" rx="4" fill="#fff" stroke="#2563eb" stroke-width="2.4" stroke-dasharray="4,4" />
+        </svg>
+        <span class="fig-nom">Cuadrado</span>
+        <span class="fig-sub">Square</span>
+      </div>
+
+      <!-- TRIÁNGULO -->
+      <div class="item-figura">
+        <svg viewBox="0 0 56 56">
+          <circle cx="28" cy="6" r="3.5" fill="#16a34a" />
+          <polygon points="28,6 7,48 49,48" fill="#fff" stroke="#16a34a" stroke-width="2.4" stroke-dasharray="4,4" />
+        </svg>
+        <span class="fig-nom">Triángulo</span>
+        <span class="fig-sub">Triangle</span>
+      </div>
+
+      <!-- RECTÁNGULO -->
+      <div class="item-figura">
+        <svg viewBox="0 0 56 56">
+          <circle cx="5" cy="12" r="3.5" fill="#16a34a" />
+          <rect x="5" y="12" width="46" height="32" rx="4" fill="#fff" stroke="#d97706" stroke-width="2.4" stroke-dasharray="4,4" />
+        </svg>
+        <span class="fig-nom">Rectángulo</span>
+        <span class="fig-sub">Rectangle</span>
+      </div>
+
+      <!-- ESTRELLA -->
+      <div class="item-figura">
+        <svg viewBox="0 0 56 56">
+          <circle cx="28" cy="4" r="3.5" fill="#16a34a" />
+          <polygon points="28,4 34,18 49,20 38,30 41,46 28,38 15,46 18,30 7,20 22,18" fill="#fff" stroke="#9333ea" stroke-width="2.4" stroke-dasharray="4,4" />
+        </svg>
+        <span class="fig-nom">Estrella</span>
+        <span class="fig-sub">Star</span>
+      </div>
+
+      <!-- CORAZÓN -->
+      <div class="item-figura">
+        <svg viewBox="0 0 56 56">
+          <circle cx="28" cy="11" r="3.5" fill="#16a34a" />
+          <path d="M 28 48 C 12 36, 4 24, 4 15 C 4 7, 12 4, 18 4 C 23 4, 26 8, 28 11 C 30 8, 33 4, 38 4 C 44 4, 52 7, 52 15 C 52 24, 44 36, 28 48 Z" fill="#fff" stroke="#e11d48" stroke-width="2.4" stroke-dasharray="4,4" />
+        </svg>
+        <span class="fig-nom">Corazón</span>
+        <span class="fig-sub">Heart</span>
+      </div>
+    </div>
+
+    <!-- EXENCIÓN DE RESPONSABILIDAD LEGAL Y PEDAGÓGICA -->
+    <div style="margin-top:6px; font-size:6.8pt; color:#64748b; text-align:center; line-height:1.25; background:#fff7ed; border:1px dashed #fed7aa; border-radius:4px; padding:3px 8px;">
+      <b>⚖️ Aviso Legal y Pedagógico:</b> El eje central del aprendizaje es el libro físico. Este recurso digital es una herramienta complementaria para padres responsables. Ni el centro educativo, ni la editorial, ni la distribuidora del libro y de la plataforma M.E.T.A.S. se hacen responsables por el uso inadecuado, excesivo o sin supervisión de teléfonos celulares, tablets u otros aparatos digitales.
+    </div>
+
+  </div>
+
+  <div class="pag-pie">
+    <span>Proyecto Educativo <b>M.E.T.A.S.</b> · Prebásica (3.° Grado)</span>
+    <span>Libro 1: Técnicas Gráficas y No Gráficas · Compilado por Evelyn S. Castellanos H.</span>
+    <span><b>Página 1 de 2</b></span>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PÁGINA 2: RODEA LETRAS, NÚMEROS Y NOCIONES ESPACIALES
+     ══════════════════════════════════════════════════════════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline">
+      <span>Nombre del Niño(a):</span><span class="raya"></span>
+      <span style="color:var(--preb-osc); font-size:9pt;">Página 2 · Rodea, Cuenta y Nociones Espaciales</span>
+    </div>
+
+    <!-- RETO 6: RODEA LAS VOCALES -->
+    <div class="sec-tit"><span>🔤</span> 6. Rodea las Vocales (A, E, I, O, U)</div>
+    <div class="sec-instruccion">
+      <b>Papá o mamá lee:</b> "Vamos a buscar las vocales. Rodea con crayón <span style="color:#dc2626; font-weight:800;">ROJO</span> las letras <b>A</b>, con <span style="color:#2563eb; font-weight:800;">AZUL</span> las <b>E</b>, con <span style="color:#16a34a; font-weight:800;">VERDE</span> las <b>I</b>, con <span style="color:#ea580c; font-weight:800;">NARANJA</span> las <b>O</b> y con <span style="color:#7c3aed; font-weight:800;">MORADO</span> las <b>U</b>".
+    </div>
+
+    <div class="letras-burbujas">
+      <div class="letra-circ">A</div>
+      <div class="letra-circ" style="color:#94a3b8;">M</div>
+      <div class="letra-circ">E</div>
+      <div class="letra-circ" style="color:#94a3b8;">P</div>
+      <div class="letra-circ">I</div>
+      <div class="letra-circ" style="color:#94a3b8;">S</div>
+      <div class="letra-circ">O</div>
+      <div class="letra-circ" style="color:#94a3b8;">L</div>
+      <div class="letra-circ">U</div>
+      <div class="letra-circ">A</div>
+      <div class="letra-circ" style="color:#94a3b8;">T</div>
+      <div class="letra-circ">E</div>
+      <div class="letra-circ">O</div>
+      <div class="letra-circ">I</div>
+      <div class="letra-circ" style="color:#94a3b8;">N</div>
+      <div class="letra-circ">U</div>
+    </div>
+
+    <!-- RETO 7: CUENTA Y RODEA EL NÚMERO -->
+    <div class="sec-tit"><span>🔢</span> 7. Cuenta los Objetos y Rodea el Número Correcto</div>
+    <div class="sec-instruccion">
+      <b>Cuenta despacio con tu dedito:</b> ¿Cuántos objetos hay en cada cajita? Rodea con un círculo el número que le corresponde.
+    </div>
+
+    <div class="grid-conteo">
+      <div class="item-conteo">
+        <div class="dibujos">☀️ ☀️ ☀️</div>
+        <div class="opciones">
+          <span class="num-caja">2</span>
+          <span class="num-caja" style="border-color:var(--preb); color:var(--preb);">3</span>
+          <span class="num-caja">5</span>
+        </div>
+      </div>
+      <div class="item-conteo">
+        <div class="dibujos">🍎 🍎 🍎 🍎 🍎</div>
+        <div class="opciones">
+          <span class="num-caja">4</span>
+          <span class="num-caja" style="border-color:var(--preb); color:var(--preb);">5</span>
+          <span class="num-caja">6</span>
+        </div>
+      </div>
+      <div class="item-conteo">
+        <div class="dibujos">⭐ ⭐ ⭐ ⭐ ⭐ ⭐ ⭐</div>
+        <div class="opciones">
+          <span class="num-caja" style="border-color:var(--preb); color:var(--preb);">7</span>
+          <span class="num-caja">8</span>
+          <span class="num-caja">9</span>
+        </div>
+      </div>
+      <div class="item-conteo">
+        <div class="dibujos">🦆 🦆</div>
+        <div class="opciones">
+          <span class="num-caja">1</span>
+          <span class="num-caja" style="border-color:var(--preb); color:var(--preb);">2</span>
+          <span class="num-caja">4</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RETO 8: NOCIONES ESPACIALES DEL LIBRO 1 -->
+    <div class="sec-tit"><span>📍</span> 8. Nociones Espaciales del Libro 1</div>
+    <div class="sec-instruccion">
+      <b>Papá o mamá lee la indicación:</b> Guíe al niño para observar la posición y marcar según se pide.
+    </div>
+
+    <div class="grid-2col">
+      <!-- ADENTRO / AFUERA -->
+      <div class="cuadro-ejercicio">
+        <div class="ej-tit">A) ADENTRO / AFUERA:</div>
+        <p style="font-size:7.8pt; color:var(--gris); margin-bottom:4px; text-align:left;">
+          Pinta el pececito que está <b>ADENTRO</b> de la pecera y rodea con un círculo el que está <b>AFUERA</b>.
+        </p>
+        <svg viewBox="0 0 160 58" style="width:100%; height:58px; display:block;">
+          <!-- Pecera -->
+          <ellipse cx="60" cy="32" rx="36" ry="24" fill="#f0f9ff" stroke="#0284c7" stroke-width="2" />
+          <ellipse cx="60" cy="12" rx="20" ry="5" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5" />
+          <!-- Pez adentro -->
+          <path d="M 52 32 Q 62 25, 70 32 Q 62 39, 52 32 Z" fill="#f97316" stroke="#c2410c" />
+          <polygon points="70,32 76,27 76,37" fill="#f97316" />
+          <circle cx="56" cy="30" r="1" fill="#fff" />
+          <!-- Pez afuera -->
+          <path d="M 120 28 Q 130 21, 138 28 Q 130 35, 120 28 Z" fill="#94a3b8" stroke="#475569" stroke-dasharray="2,2" />
+          <polygon points="138,28 144,23 144,33" fill="#94a3b8" />
+        </svg>
+      </div>
+
+      <!-- ARRIBA / ABAJO -->
+      <div class="cuadro-ejercicio">
+        <div class="ej-tit">B) ARRIBA / ABAJO:</div>
+        <p style="font-size:7.8pt; color:var(--gris); margin-bottom:4px; text-align:left;">
+          Rodea el pajarito que está <b>ARRIBA</b> del árbol y marca con una "X" el hongo que está <b>ABAJO</b>.
+        </p>
+        <svg viewBox="0 0 160 58" style="width:100%; height:58px; display:block;">
+          <!-- Árbol -->
+          <rect x="74" y="24" width="12" height="30" fill="#a16207" />
+          <circle cx="80" cy="22" r="18" fill="#15803d" />
+          <!-- Pajarito ARRIBA -->
+          <ellipse cx="80" cy="4" rx="7" ry="5" fill="#38bdf8" stroke="#0284c7" stroke-width="1.2" />
+          <polygon points="87,4 91,2 87,6" fill="#f59e0b" />
+          <!-- Hongo ABAJO -->
+          <path d="M 32 46 Q 40 34, 48 46 Z" fill="#ef4444" />
+          <rect x="38" y="46" width="4" height="8" fill="#f1f5f9" />
+        </svg>
+      </div>
+
+      <!-- GRANDE / PEQUEÑO -->
+      <div class="cuadro-ejercicio">
+        <div class="ej-tit">C) GRANDE / PEQUEÑO:</div>
+        <p style="font-size:7.8pt; color:var(--gris); margin-bottom:4px; text-align:left;">
+          Colorea la pelota <b>GRANDE</b> y encierra en un círculo la pelota <b>PEQUEÑA</b>.
+        </p>
+        <svg viewBox="0 0 160 58" style="width:100%; height:58px; display:block;">
+          <!-- Pelota grande -->
+          <circle cx="50" cy="30" r="22" fill="#fed7aa" stroke="#ea580c" stroke-width="2" />
+          <path d="M 32 30 Q 50 12, 68 30 Q 50 48, 32 30" fill="none" stroke="#ea580c" stroke-width="1.5" />
+          <!-- Pelota pequeña -->
+          <circle cx="120" cy="34" r="11" fill="#bae6fd" stroke="#0284c7" stroke-width="1.5" />
+          <path d="M 111 34 Q 120 25, 129 34 Q 120 43, 111 34" fill="none" stroke="#0284c7" stroke-width="1.2" />
+        </svg>
+      </div>
+
+      <!-- DELANTE / DETRÁS -->
+      <div class="cuadro-ejercicio">
+        <div class="ej-tit">D) DELANTE / DETRÁS:</div>
+        <p style="font-size:7.8pt; color:var(--gris); margin-bottom:4px; text-align:left;">
+          Pinta el ratón que está <b>DELANTE</b> del queso y rodea el que está <b>DETRÁS</b>.
+        </p>
+        <svg viewBox="0 0 160 58" style="width:100%; height:58px; display:block;">
+          <!-- Ratón DETRÁS -->
+          <ellipse cx="38" cy="18" rx="10" ry="7" fill="#cbd5e1" stroke="#475569" stroke-width="1.2" />
+          <circle cx="32" cy="12" r="3" fill="#cbd5e1" stroke="#475569" />
+          <!-- Queso en el centro -->
+          <polygon points="50,46 110,46 125,24 65,24" fill="#fef08a" stroke="#ca8a04" stroke-width="1.8" />
+          <circle cx="75" cy="34" r="3" fill="#facc15" />
+          <circle cx="95" cy="40" r="4" fill="#facc15" />
+          <!-- Ratón DELANTE -->
+          <ellipse cx="125" cy="42" rx="12" ry="8" fill="#e2e8f0" stroke="#1e293b" stroke-width="1.5" />
+          <circle cx="134" cy="36" r="3.5" fill="#fbcfe8" stroke="#1e293b" />
+          <circle cx="118" cy="40" r="1.5" fill="#000" />
+        </svg>
+      </div>
+    </div>
+
+    <!-- EVALUACIÓN Y RECONOCIMIENTO FAMILIAR -->
+    <div class="recuadro-familia">
+      <div class="fam-txt">
+        <b>⭐ ¡Gran trabajo en equipo con Mamá y Papá!</b><br>
+        Coloreen las 3 estrellas de felicitación: ⭐ ⭐ ⭐
+      </div>
+      <div>
+        <div class="fam-firma">Firma de Mamá, Papá o Tutor</div>
+        <div style="font-size:7.5pt; color:var(--gris); text-align:center; margin-top:2px;">¡Bien hecho, semillita! 🌱</div>
+      </div>
+    </div>
+
+    <!-- EXENCIÓN DE RESPONSABILIDAD LEGAL Y PEDAGÓGICA -->
+    <div style="margin-top:6px; font-size:6.8pt; color:#64748b; text-align:center; line-height:1.25; background:#fff7ed; border:1px dashed #fed7aa; border-radius:4px; padding:3px 8px;">
+      <b>⚖️ Aviso Legal y Pedagógico:</b> El eje central del aprendizaje es el libro físico. Este recurso digital es una herramienta complementaria para padres responsables. Ni el centro educativo, ni la editorial, ni la distribuidora del libro y de la plataforma M.E.T.A.S. se hacen responsables por el uso inadecuado, excesivo o sin supervisión de teléfonos celulares, tablets u otros aparatos digitales.
+    </div>
+
+  </div>
+
+  <div class="pag-pie">
+    <span>Proyecto Educativo <b>M.E.T.A.S.</b> · Prebásica (3.° Grado)</span>
+    <span>Libro 1: Técnicas Gráficas y No Gráficas · Compilado por Evelyn S. Castellanos H.</span>
+    <span><b>Página 2 de 2</b></span>
+  </div>
+</section>
+
+</div>
+<script>
+  (function () {
+    try {
+      var inst = localStorage.getItem('metas_prebasica_institucion');
+      if (inst) {
+        var el = document.getElementById('cintilloFichaPrebasica');
+        var lbl = document.getElementById('lblFichaInstitucion');
+        if (el && lbl) {
+          lbl.textContent = inst;
+          el.style.display = 'flex';
+        }
+      }
+    } catch (e) {}
+  })();
+</script>
+</body>
+</html>

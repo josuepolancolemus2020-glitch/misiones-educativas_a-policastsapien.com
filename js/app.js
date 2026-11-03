@@ -3387,6 +3387,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Si se regresa desde una misión con ?view=misiones&filter=X, ir directamente
   const _urlParams = new URLSearchParams(window.location.search);
+  const _misionParam = (_urlParams.get('mision') || '').trim().toLowerCase();
+  if (_misionParam === 'prebasica-libro1' || _misionParam === 'prebasica-tecnicas-libro1') {
+    window.location.replace('misiones/prebasica-tecnicas-libro1/prebasica-libro1.html');
+    return;
+  }
   if (_urlParams.get('view') === 'misiones') {
     const _filter = _urlParams.get('filter') || 'all';
     currentFilter = _filter;

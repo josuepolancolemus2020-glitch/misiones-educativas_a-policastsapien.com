@@ -15,7 +15,7 @@
 //    las etiquetas ?v=NN de las páginas (normativa de sellado del CLAUDE.md).
 //    CACHE_DATOS no se toca nunca: subirlo volvería a borrarle al alumno lo
 //    que tenía guardado, que es justo lo que este arreglo vino a evitar.
-const CACHE_NAME = 'meta-app-v453';
+const CACHE_NAME = 'meta-app-v454';
 const CACHE_APP = CACHE_NAME;
 const CACHE_DATOS = 'meta-datos-v1';
 
@@ -243,11 +243,16 @@ const PLAZO_RED = 3000;
    cachés en el orden en que se crearon, y CACHE_DATOS es más vieja que el
    armazón recién publicado: sin esto, después de un despliegue podía servirse
    el index.html guardado de ayer junto al app.js de hoy. Manda el armazón. */
+function copiaValida(copia) {
+  return (copia && (copia.ok || copia.type === 'opaque')) ? copia : null;
+}
+
 function buscarCopia(peticion) {
   return caches.open(CACHE_APP)
     .then(c => c.match(peticion, { ignoreSearch: true }))
-    .then(copia => copia || caches.open(CACHE_DATOS)
-      .then(c => c.match(peticion, { ignoreSearch: true })));
+    .then(copia => copiaValida(copia) || caches.open(CACHE_DATOS)
+      .then(c => c.match(peticion, { ignoreSearch: true }))
+      .then(copiaValida));
 }
 
 function guardar(peticion, respuesta, cual) {
@@ -262,6 +267,7 @@ self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
   const isLocal = url.origin === location.origin;
   const isImage = event.request.destination === 'image';
+  const isNavigate = event.request.mode === 'navigate' || event.request.destination === 'document';
 
   /* ⚠️ LO QUE SE TRANSMITE NO PASA POR AQUÍ. NUNCA.
      ─────────────────────────────────────────────────────────────────
@@ -298,7 +304,26 @@ self.addEventListener('fetch', event => {
   const CASA_YT = /(^|\.)(youtube|youtube-nocookie|googlevideo|ytimg|ggpht|youtu)\.(com|be)$/;
   if (CASA_YT.test(url.hostname) || event.request.headers.has('range')) return;
 
-  if (isLocal && !isImage) {
+  if (isLocal && isNavigate) {
+    /* Navegación a documentos HTML (portada y subcarpetas de misiones como
+       /misiones/prebasica-tecnicas-libro1/prebasica-libro1.html):
+       Se usa fetch(event.request) directo (Network First) sin pasar un objeto
+       init que degrada mode: 'navigate' en móviles/WebAPK, y nunca se devuelve
+       una copia 404 cacheada. */
+    const red = fetch(event.request).then(respuesta => {
+      if (respuesta && respuesta.ok) {
+        guardar(event.request, respuesta, CACHE_DATOS);
+      }
+      return respuesta;
+    });
+    const plazo = new Promise(listo => setTimeout(() => listo(null), PLAZO_RED));
+    event.respondWith(
+      Promise.race([red.catch(() => null), plazo]).then(respuesta => {
+        if (respuesta && respuesta.ok) return respuesta;
+        return buscarCopia(event.request).then(copia => copia || red);
+      })
+    );
+  } else if (isLocal && !isImage) {
     /* Archivos propios (HTML, CSS, JS): la red primero y revalidando contra el
        servidor (cache: 'no-cache' → ETag/304), porque la caché HTTP del
        navegador guarda hasta 10 minutos y escondía los despliegues nuevos:
@@ -317,7 +342,7 @@ self.addEventListener('fetch', event => {
     const plazo = new Promise(listo => setTimeout(() => listo(null), PLAZO_RED));
     event.respondWith(
       Promise.race([red.catch(() => null), plazo]).then(respuesta => {
-        if (respuesta) return respuesta;
+        if (respuesta && respuesta.ok) return respuesta;
         /* ignoreSearch: el precache guarda «js/app.js» y la página lo pide como
            «js/app.js?v=NNN» (el sello de versión). Sin esto, lo precacheado no
            lo encontraba nadie y el armazón guardado no servía de nada. */
@@ -334,7 +359,7 @@ self.addEventListener('fetch', event => {
     // después funcionan sin ella. Esta línea es la que cumple la promesa.
     event.respondWith(
       caches.match(event.request).then(cached => {
-        if (cached) return cached;
+        if (cached && (cached.ok || cached.type === 'opaque')) return cached;
         return fetch(event.request).then(respuesta => {
           guardar(event.request, respuesta, CACHE_DATOS);
           return respuesta;

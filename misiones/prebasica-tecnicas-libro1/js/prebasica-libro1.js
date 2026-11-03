@@ -4045,13 +4045,14 @@
     }
   }
 
-  function abrirWhatsAppCompartir(msg) {
-    var enc = encodeURIComponent(msg);
+  function _waShare(texto) {
+    var enc = encodeURIComponent(texto);
     var esMovil = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    var url = esMovil
-      ? ('https://api.whatsapp.com/send?text=' + enc)
-      : ('https://web.whatsapp.com/send?text=' + enc);
-    window.open(url, '_blank', 'noopener,noreferrer');
+    window.open(esMovil ? 'https://wa.me/?text=' + enc : 'https://web.whatsapp.com/send?text=' + enc, '_blank');
+  }
+
+  function abrirWhatsAppCompartir(msg) {
+    _waShare(msg);
   }
 
   window.compartirWhatsAppDocenteGeneral = function () {
