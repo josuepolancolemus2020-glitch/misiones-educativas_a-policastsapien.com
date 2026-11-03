@@ -102,91 +102,199 @@ body::before {
 }
 
 /* ==========================================================================
-   1. AVISO IMPERATIVO FIJO (SIN CANDADO BLOQUEANTE)
+   1. AVISO PARENTAL Y LEGAL EN ACORDEÓN DESPLEGABLE (CARGA COGNITIVA MÍNIMA)
    ========================================================================== */
-.adult-imperative-banner {
+.aviso-parental-collapsible {
   position: relative;
-  z-index: 70;
-  background: linear-gradient(135deg, #fff3cd 0%, #ffe4de 55%, #fff0c2 100%);
-  border-bottom: 3px solid #d9534f;
-  border-top: 3px solid #f0ad4e;
-  color: #5c1a16;
-  padding: 0.7rem 1.1rem;
-  box-shadow: 0 4px 14px rgba(217, 83, 79, 0.18);
+  z-index: 50;
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  border-bottom: 2px solid #fcd34d;
+  color: #78350f;
+  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.12);
   max-width: 100%;
   overflow: hidden;
+  transition: background 0.3s, border-color 0.3s;
 }
 
-[data-theme="dark"] .adult-imperative-banner {
-  background: linear-gradient(135deg, #3b2416 0%, #431c22 60%, #382714 100%);
-  color: #ffe8d6;
-  border-bottom-color: #ff7675;
-  border-top-color: #fdcb6e;
+[data-theme="dark"] .aviso-parental-collapsible {
+  background: linear-gradient(135deg, #2d1d0c 0%, #241607 100%);
+  border-bottom-color: #b45309;
+  color: #fef3c7;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
 }
 
-.adult-banner-inner {
+.aviso-parental-bar {
   max-width: 980px;
   margin: 0 auto;
+  min-height: 42px;
+  padding: 0.32rem 0.85rem;
   display: flex;
   align-items: center;
-  gap: 0.85rem;
-  width: 100%;
+  justify-content: space-between;
+  gap: 0.55rem;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.adult-banner-icon {
-  font-size: 2.1rem;
+.aviso-parental-resumen {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.aviso-parental-icono {
+  font-size: 1.15rem;
   line-height: 1;
   flex-shrink: 0;
-  background: rgba(217, 83, 79, 0.14);
-  border: 2px solid rgba(217, 83, 79, 0.4);
-  border-radius: 14px;
-  padding: 0.35rem 0.5rem;
 }
 
-.adult-banner-content {
-  flex: 1;
-  min-width: 0;
+.aviso-parental-tit {
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #92400e;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+[data-theme="dark"] .aviso-parental-tit {
+  color: #fde68a;
+}
+
+.aviso-parental-acciones {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.btn-aviso-tts {
+  background: #b45309;
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  padding: 0.22rem 0.65rem;
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  min-height: 32px;
+  line-height: 1;
+  transition: transform 0.15s, background 0.2s;
+  box-shadow: 0 1px 4px rgba(180, 83, 9, 0.25);
+}
+
+.btn-aviso-tts:hover {
+  background: #92400e;
+  transform: scale(1.03);
+}
+
+.btn-aviso-toggle {
+  background: #ffffff;
+  color: #92400e;
+  border: 1.5px solid #f59e0b;
+  border-radius: 999px;
+  padding: 0.22rem 0.65rem;
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  line-height: 1;
+  transition: all 0.2s ease;
+}
+
+[data-theme="dark"] .btn-aviso-toggle {
+  background: #3a220e;
+  color: #fef3c7;
+  border-color: #d97706;
+}
+
+.btn-aviso-toggle:hover,
+.aviso-parental-bar:hover .btn-aviso-toggle {
+  background: #f59e0b;
+  color: #ffffff;
+}
+
+/* Cuerpo desplegable con animación suave */
+.aviso-parental-cuerpo {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+  background: rgba(255, 255, 255, 0.5);
+  border-top: 1px dashed rgba(245, 158, 11, 0.4);
+}
+
+[data-theme="dark"] .aviso-parental-cuerpo {
+  background: rgba(0, 0, 0, 0.25);
+  border-top-color: rgba(217, 119, 6, 0.4);
+}
+
+.aviso-parental-collapsible.abierto .aviso-parental-cuerpo {
+  max-height: 600px;
+  opacity: 1;
+}
+
+.aviso-parental-cuerpo-inner {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 0.75rem 0.95rem 0.85rem;
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.55rem;
 }
 
-.adult-banner-text {
-  font-size: 0.92rem;
-  line-height: 1.38;
-  font-weight: 700;
+.aviso-parental-destacado {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: #5c1a16;
+  font-weight: 600;
 }
 
-.adult-banner-text strong {
+[data-theme="dark"] .aviso-parental-destacado {
+  color: #fecaca;
+}
+
+.aviso-parental-destacado strong {
   font-family: 'Fredoka', sans-serif;
   color: #b71c1c;
   text-transform: uppercase;
   letter-spacing: 0.02em;
   display: inline-block;
-  background: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.85);
   padding: 0.05rem 0.45rem;
   border-radius: 6px;
   margin-right: 0.3rem;
   border: 1px solid rgba(183, 28, 28, 0.3);
 }
 
-[data-theme="dark"] .adult-banner-text strong {
+[data-theme="dark"] .aviso-parental-destacado strong {
   color: #ff8a80;
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(0, 0, 0, 0.4);
   border-color: rgba(255, 138, 128, 0.4);
 }
 
-.adult-banner-legal {
+.aviso-parental-legal {
   font-size: 0.81rem;
   line-height: 1.35;
   color: #78281f;
-  background: rgba(255, 255, 255, 0.65);
+  background: rgba(255, 255, 255, 0.75);
   border-left: 3px solid #d9534f;
   border-radius: 4px;
-  padding: 0.35rem 0.6rem;
+  padding: 0.4rem 0.65rem;
 }
 
-[data-theme="dark"] .adult-banner-legal {
+[data-theme="dark"] .aviso-parental-legal {
   color: #fbd2cb;
   background: rgba(0, 0, 0, 0.35);
   border-left-color: #ff7675;
@@ -202,34 +310,47 @@ body::before {
   color: #ff8a80;
 }
 
-.adult-banner-tts {
-  flex-shrink: 0;
-  background: #b71c1c;
-  color: #ffffff;
-  border: none;
-  border-radius: 20px;
-  padding: 0.45rem 0.85rem;
-  font-family: 'Fredoka', sans-serif;
-  font-size: 0.8rem;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  min-height: 42px;
-  transition: transform 0.15s, background 0.2s;
+.aviso-parental-pie {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 0.2rem;
 }
 
-.adult-banner-tts:hover {
-  background: #8e1414;
-  transform: scale(1.03);
+.btn-aviso-ocultar {
+  background: transparent;
+  border: 1px solid #d97706;
+  border-radius: 999px;
+  color: #92400e;
+  padding: 0.2rem 0.65rem;
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-size: 0.74rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+[data-theme="dark"] .btn-aviso-ocultar {
+  color: #fde68a;
+  border-color: #b45309;
+}
+
+.btn-aviso-ocultar:hover {
+  background: #f59e0b;
+  color: #ffffff;
+}
+
+/* Compatibilidad retroactiva por si quedan referencias */
+.adult-imperative-banner {
+  display: none !important;
 }
 
 /* ==========================================================================
-   XP BAR & HERO
+   2. BARRA SUPERIOR DE NAVEGACIÓN Y WHATSAPP (SIEMPRE ARRIBA)
    ========================================================================== */
 .xp-bar {
-  position: relative;
-  z-index: 15;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
   background: var(--xp-bg);
   padding: 0.4rem 1rem;
   display: flex;
@@ -237,6 +358,7 @@ body::before {
   gap: 0.8rem;
   max-width: 100%;
   overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
 }
 
 .xp-back-btn {
@@ -408,11 +530,77 @@ body::before {
   line-height: 1.3;
 }
 
-.hero-badges {
+.hero-badges,
+.hero-meta-row {
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
   align-items: center;
+}
+
+.hero-meta-row {
+  font-size: 0.76rem;
+  line-height: 1.3;
+  margin-bottom: 0.35rem;
+}
+
+.badge-meta {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(5px);
+  border-radius: 20px;
+  padding: 0.15rem 0.6rem;
+  font-family: 'Fredoka', sans-serif;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.badge-credit-meta {
+  background: rgba(27, 40, 56, 0.45);
+  color: #ffeaa7;
+  border-color: rgba(255, 234, 167, 0.55);
+  font-weight: 600;
+}
+
+.badge-meta-sep {
+  display: none;
+}
+
+.hero-actions-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  align-items: center;
+}
+
+.hero-btn-act {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.28rem 0.8rem;
+  border-radius: 20px;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-decoration: none;
+  color: #ffffff;
+  min-height: 36px;
+  transition: transform 0.15s, opacity 0.2s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.hero-btn-padres {
+  background: #ea580c;
+  border: 1px solid #ffedd5;
+}
+
+.hero-btn-maestro {
+  background: #6d28d9;
+  border: 1px solid #ede9fe;
+}
+
+.hero-btn-act:hover {
+  transform: translateY(-1px);
+  opacity: 0.95;
 }
 
 .badge {
@@ -1810,11 +1998,102 @@ body::before {
   cursor: pointer;
 }
 
-@media (max-width: 640px) {
-  .adult-banner-inner {
-    flex-direction: column;
-    align-items: flex-start;
+/* ==========================================================================
+   RESPONSIVE MÓVIL (max-width: 768px): COMPACTO Y CON EL DEDITO VISIBLE
+   ========================================================================== */
+@media (max-width: 768px) {
+  .hero {
+    padding: 0.45rem 0.75rem 0.55rem;
   }
+  .hero::before {
+    display: none;
+  }
+  .hero-inner {
+    flex-direction: row;
+    align-items: center;
+    text-align: left;
+    gap: 0.55rem;
+  }
+  .hero-mascot-wrap {
+    flex-shrink: 0;
+  }
+  .hero-mascot {
+    width: 44px;
+    height: 44px;
+    font-size: 1.6rem;
+    border-width: 1.5px;
+  }
+  .hero-text {
+    text-align: left;
+    flex: 1;
+    min-width: 0;
+  }
+  .hero h1 {
+    font-size: 1.05rem;
+    line-height: 1.15;
+    margin: 0;
+  }
+  .hero .sub {
+    display: none;
+  }
+  .hero-meta-row {
+    font-size: 0.68rem;
+    line-height: 1.2;
+    margin: 0.2rem 0 0.35rem;
+    gap: 0.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .badge-meta {
+    padding: 0.08rem 0.45rem;
+    font-size: 0.68rem;
+  }
+  .badge-meta-sep {
+    display: inline;
+    opacity: 0.6;
+    font-weight: 700;
+  }
+  .hero-actions-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    width: 100%;
+  }
+  .hero-btn-act {
+    padding: 0.22rem 0.45rem;
+    font-size: 0.74rem;
+    min-height: 32px;
+    border-radius: 12px;
+    text-align: center;
+  }
+  .cintillo-colegio-prebasica {
+    padding: 0.35rem 0.75rem;
+  }
+  .cintillo-colegio-texto {
+    font-size: 0.82rem;
+  }
+  .btn-cambiar-escuela {
+    padding: 0.15rem 0.55rem;
+    font-size: 0.74rem;
+  }
+  .aviso-parental-bar {
+    min-height: 38px;
+    padding: 0.22rem 0.65rem;
+    gap: 0.4rem;
+  }
+  .aviso-parental-tit {
+    font-size: 0.76rem;
+  }
+  .btn-aviso-tts,
+  .btn-aviso-toggle {
+    min-height: 28px;
+    padding: 0.15rem 0.45rem;
+    font-size: 0.72rem;
+  }
+}
+
+@media (max-width: 640px) {
   .xp-bar {
     gap: 0.35rem;
     padding: 0.35rem 0.5rem;
@@ -1832,31 +2111,29 @@ body::before {
     font-size: 0.7rem;
     padding: 0.12rem 0.45rem;
   }
-  .hero-inner {
-    flex-direction: column;
-    text-align: center;
-  }
-  .hero-text {
-    text-align: center;
-  }
-  .hero-badges {
-    justify-content: center;
-  }
   .nav {
     gap: 0.35rem;
-    padding: 0.5rem 0.35rem;
+    padding: 0.4rem 0.35rem;
   }
   .nav-t {
     font-size: 0.8rem;
-    padding: 0.35rem 0.65rem;
-    min-height: 42px;
+    padding: 0.3rem 0.65rem;
+    min-height: 40px;
   }
   .main {
-    padding: 0.85rem 0.5rem 2.5rem;
+    padding: 0.65rem 0.45rem 2.5rem;
   }
   .card {
-    padding: 1rem 0.75rem;
+    padding: 0.85rem 0.7rem;
     border-radius: 14px;
+  }
+  .card h2 {
+    font-size: 1.08rem;
+    margin-bottom: 0.35rem;
+  }
+  .parent-guide-box {
+    padding: 0.55rem 0.7rem;
+    margin-bottom: 0.6rem;
   }
   .trace-toolbar {
     flex-direction: column;

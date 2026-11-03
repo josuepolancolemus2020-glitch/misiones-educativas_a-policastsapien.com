@@ -18,26 +18,7 @@
 </head>
 <body>
 
-<!-- 1. AVISO IMPERATIVO FIJO (SIN CANDADO BLOQUEANTE) -->
-<aside class="adult-imperative-banner" role="region" aria-label="Aviso de acompañamiento obligatorio de un adulto">
-  <div class="adult-banner-inner">
-    <div class="adult-banner-icon" aria-hidden="true">👨‍👩‍👧‍👦</div>
-    <div class="adult-banner-content">
-      <p class="adult-banner-text">
-        <strong>⚠️ USO EXCLUSIVO CON APOYO DE UN ADULTO:</strong>
-        Esta sección de Prebásica es un complemento exclusivo para trabajar con el padre, madre o encargado sentado junto al niño durante 10 a 15 minutos. No promovemos el uso libre de teléfonos ni tablets. Si no existe supervisión directa de un adulto, utilice únicamente el libro físico.
-      </p>
-      <div class="adult-banner-legal">
-        <span class="legal-badge">⚖️ Aviso Legal y Pedagógico:</span> El eje central del aprendizaje es el libro físico. Este recurso digital es una herramienta complementaria para padres responsables. Ni el centro educativo, ni la editorial, ni la distribuidora del libro y de la plataforma M.E.T.A.S. se hacen responsables por el uso inadecuado, excesivo o sin supervisión de teléfonos celulares, tablets u otros aparatos digitales.
-      </div>
-    </div>
-    <button type="button" class="adult-banner-tts" onclick="hablarAvisoAdulto(this)" aria-label="Escuchar aviso para el adulto">
-      🔊 Escuchar aviso
-    </button>
-  </div>
-</aside>
-
-<!-- BARRA DE PROGRESO XP -->
+<!-- 1. BARRA SUPERIOR DE NAVEGACIÓN Y WHATSAPP SIEMPRE ARRIBA -->
 <div class="xp-bar" role="status" aria-label="Barra de progreso XP">
   <a href="../../index.html?desde=prebasica#zona-prebasica" class="xp-back-btn" id="xpBackBtn" title="Regresar al portal M.E.T.A.S." onclick="guardarYRegresarPrebasica(event)">
     <svg class="xp-back-arrow" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H5M12 5l-7 7 7 7"/></svg>
@@ -52,7 +33,7 @@
   <span class="xp-lvl" id="xpLvl">Semillita 🌱</span>
 </div>
 
-<!-- CINTILLO INSTITUCIONAL EXCLUSIVO PREBÁSICA -->
+<!-- 2. CINTILLO INSTITUCIONAL EXCLUSIVO PREBÁSICA -->
 <div id="cintilloInstitucionPrebasica" class="cintillo-colegio-prebasica" style="display:none;" role="status">
   <div class="cintillo-colegio-inner">
     <span class="cintillo-colegio-texto">🏫 Edición Exclusiva autorizada para: <strong id="lblNombreInstitucion"></strong></span>
@@ -60,7 +41,42 @@
   </div>
 </div>
 
-<!-- ENCABEZADO HERO CON CRÉDITO VISIBLE DEL LIBRO 1 -->
+<!-- 3. AVISO PARENTAL Y LEGAL EN ACORDEÓN DESPLEGABLE (CARGA COGNITIVA MÍNIMA) -->
+<aside class="aviso-parental-collapsible" id="avisoParentalCollapsible" role="region" aria-label="Aviso de acompañamiento obligatorio de un adulto y aviso legal">
+  <div class="aviso-parental-bar" id="avisoParentalBar" onclick="toggleAvisoParental(event)">
+    <div class="aviso-parental-resumen">
+      <span class="aviso-parental-icono" aria-hidden="true">👨‍👩‍👧</span>
+      <span class="aviso-parental-tit">Uso con adulto (10–15 min) · ⚖️ Aviso legal</span>
+    </div>
+    <div class="aviso-parental-acciones">
+      <button type="button" class="btn-aviso-tts" id="btnAvisoTts" onclick="event.stopPropagation(); toggleAudioAvisoAdulto(this);" aria-label="Escuchar aviso para el adulto" title="Escuchar aviso">
+        🔊 Escuchar
+      </button>
+      <button type="button" class="btn-aviso-toggle" id="btnAvisoToggle" aria-expanded="false" aria-controls="avisoParentalCuerpo" title="Mostrar u ocultar aviso completo">
+        <span class="aviso-toggle-texto" id="avisoToggleTexto">Ver más ▾</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="aviso-parental-cuerpo" id="avisoParentalCuerpo" aria-hidden="true">
+    <div class="aviso-parental-cuerpo-inner">
+      <p class="aviso-parental-destacado">
+        <strong>⚠️ USO EXCLUSIVO CON APOYO DE UN ADULTO:</strong>
+        Esta sección de Prebásica es un complemento exclusivo para trabajar con el padre, madre o encargado sentado junto al niño durante 10 a 15 minutos. No promovemos el uso libre de teléfonos ni tablets. Si no existe supervisión directa de un adulto, utilice únicamente el libro físico.
+      </p>
+      <div class="aviso-parental-legal">
+        <span class="legal-badge">⚖️ Aviso Legal y Pedagógico:</span> El eje central del aprendizaje es el libro físico. Este recurso digital es una herramienta complementaria para padres responsables. Ni el centro educativo, ni la editorial, ni la distribuidora del libro y de la plataforma M.E.T.A.S. se hacen responsables por el uso inadecuado, excesivo o sin supervisión de teléfonos celulares, tablets u otros aparatos digitales.
+      </div>
+      <div class="aviso-parental-pie">
+        <button type="button" class="btn-aviso-ocultar" onclick="cerrarAvisoParental()">
+          ▲ Ocultar aviso
+        </button>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- 4. ENCABEZADO HERO CON CRÉDITO VISIBLE DEL LIBRO 1 -->
 <header class="hero" role="banner">
   <div class="hero-inner">
     <div class="hero-mascot-wrap">
@@ -69,11 +85,14 @@
     <div class="hero-text">
       <h1>Prebásica (3.° Grado) · <span>Técnicas Gráficas y No Gráficas</span></h1>
       <p class="sub">¡Exploremos trazos, vocales, números, colores, nociones espaciales y manualidades en familia! 🎨✋</p>
-      <div class="hero-badges">
-        <span class="badge">🧒 Educación Prebásica · 3.° Grado (5 años)</span>
-        <span class="badge badge-credit">📖 Basado en el Libro 1: Técnicas Gráficas y No Gráficas (3.° Grado de Prebásica) · Compilado por Evelyn S. Castellanos H.</span>
-        <a href="../../fichas/ficha-prebasica-libro1.html" class="badge" target="_blank" style="text-decoration:none; background:#ea580c; color:#fff; font-weight:700;">🖨️ Ficha Imprimible para Papá y Mamá</a>
-        <a href="guia-docente-imprimible.html" class="badge badge-docente-guia" target="_blank" style="text-decoration:none; background:#6d28d9; color:#fff; font-weight:700;">👩‍🏫 Guía para el Maestro (Imprimible)</a>
+      <div class="hero-meta-row">
+        <span class="badge-meta">🧒 Educación Prebásica · 3.° Grado (5 años)</span>
+        <span class="badge-meta-sep">·</span>
+        <span class="badge-meta badge-credit-meta">📖 Basado en el Libro 1: Técnicas Gráficas y No Gráficas · Comp. Evelyn S. Castellanos H.</span>
+      </div>
+      <div class="hero-actions-grid">
+        <a href="../../fichas/ficha-prebasica-libro1.html" class="hero-btn-act hero-btn-padres" target="_blank" title="Ficha Imprimible para Papá y Mamá">🖨️ Ficha Padres</a>
+        <a href="guia-docente-imprimible.html" class="hero-btn-act hero-btn-maestro" target="_blank" title="Guía para el Maestro (Imprimible)">👩‍🏫 Guía Maestro</a>
       </div>
     </div>
   </div>

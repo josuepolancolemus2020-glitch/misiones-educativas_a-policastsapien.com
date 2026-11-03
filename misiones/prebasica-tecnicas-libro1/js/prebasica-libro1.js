@@ -548,6 +548,52 @@
   };
 
   /* --------------------------------------------------------------------------
+     CONTROL DEL ACORDEÓN DESPLEGABLE DE AVISO PARENTAL
+     -------------------------------------------------------------------------- */
+  window.toggleAvisoParental = function (ev) {
+    var cont = document.getElementById('avisoParentalCollapsible');
+    var btnToggle = document.getElementById('btnAvisoToggle');
+    var cuerpo = document.getElementById('avisoParentalCuerpo');
+    var txt = document.getElementById('avisoToggleTexto');
+    if (!cont) return;
+
+    var abierto = cont.classList.toggle('abierto');
+    if (btnToggle) btnToggle.setAttribute('aria-expanded', abierto ? 'true' : 'false');
+    if (cuerpo) cuerpo.setAttribute('aria-hidden', abierto ? 'false' : 'true');
+    if (txt) txt.textContent = abierto ? '▲ Ocultar' : 'Ver más ▾';
+  };
+
+  window.cerrarAvisoParental = function () {
+    var cont = document.getElementById('avisoParentalCollapsible');
+    var btnToggle = document.getElementById('btnAvisoToggle');
+    var cuerpo = document.getElementById('avisoParentalCuerpo');
+    var txt = document.getElementById('avisoToggleTexto');
+    if (!cont) return;
+
+    cont.classList.remove('abierto');
+    if (btnToggle) btnToggle.setAttribute('aria-expanded', 'false');
+    if (cuerpo) cuerpo.setAttribute('aria-hidden', 'true');
+    if (txt) txt.textContent = 'Ver más ▾';
+  };
+
+  window.toggleAudioAvisoAdulto = function (btn) {
+    var textoFijo = 'Esta sección de Prebásica es un complemento exclusivo para trabajar con el padre, madre o encargado sentado junto al niño durante 10 a 15 minutos. No promovemos el uso libre de teléfonos ni tablets. Si no existe supervisión directa de un adulto, utilice únicamente el libro físico.';
+    var limpio = normalizarTextoAudio(textoFijo);
+
+    // Si ya está sonando este aviso (o cualquier audio) y el botón o texto coinciden:
+    if (window.audioPrebasicaPlaying && (
+      (btn && btn === window.ultimoBotonAudio) ||
+      window.ultimoTextoAudio === limpio
+    )) {
+      window.detenerAudioPrebasica();
+      return;
+    }
+
+    // Si no está sonando este aviso, reproducir con saludo
+    window.hablarConSaludoEscuela(textoFijo, 'es-ES', btn);
+  };
+
+  /* --------------------------------------------------------------------------
      NAVEGACIÓN ENTRE LAS 5 PESTAÑAS
      -------------------------------------------------------------------------- */
   window.go = function (secId) {
