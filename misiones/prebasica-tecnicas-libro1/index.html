@@ -11,12 +11,12 @@
 <meta property="og:url" content="https://metas.policastsapien.com/misiones/prebasica-tecnicas-libro1/prebasica-libro1.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Misiones PolicastSapien">
-<link rel="stylesheet" href="../../css/vendor/fuentes/fuentes.css?v=457">
-<link rel="stylesheet" href="css/prebasica-libro1.css?v=457">
-<link rel="stylesheet" href="../../css/barra-secciones.css?v=457">
-<link rel="stylesheet" href="../../css/senal-no-color.css?v=457">
-<link rel="stylesheet" href="../../css/teclado-actividades.css?v=457">
-<script src="../../js/estrella-ganada.js?v=457"></script>
+<link rel="stylesheet" href="../../css/vendor/fuentes/fuentes.css?v=458">
+<link rel="stylesheet" href="css/prebasica-libro1.css?v=458">
+<link rel="stylesheet" href="../../css/barra-secciones.css?v=458">
+<link rel="stylesheet" href="../../css/senal-no-color.css?v=458">
+<link rel="stylesheet" href="../../css/teclado-actividades.css?v=458">
+<script src="../../js/estrella-ganada.js?v=458"></script>
 </head>
 <body>
 
@@ -163,7 +163,7 @@
             <button type="button" class="btn-kid danger" onclick="borrarTrazoActual()">
               🧹 Borrar trazo
             </button>
-            <button type="button" class="btn-kid primary" onclick="siguienteRetoTrazo()">
+            <button type="button" class="btn-kid primary" id="btnSiguienteRetoTrazo" onclick="siguienteRetoTrazo()">
               ➡️ Siguiente reto
             </button>
           </div>
@@ -269,7 +269,7 @@
             <button type="button" class="btn-kid danger" onclick="borrarTrazoFiguraActual()">
               🔄 Repasar de nuevo
             </button>
-            <button type="button" class="btn-kid primary" onclick="siguienteFigura()">
+            <button type="button" class="btn-kid primary" id="btnSiguienteFigura" onclick="siguienteFigura()">
               ➡️ Siguiente figura
             </button>
           </div>
@@ -370,6 +370,9 @@
           <button type="button" class="btn-kid danger" onclick="reiniciarEjercicioRodea()">
             🔄 Nuevo tablero
           </button>
+          <button type="button" class="btn-kid primary" id="btnSiguienteRodea" onclick="siguienteRodea()">
+            ➡️ Siguiente reto
+          </button>
         </div>
       </div>
 
@@ -432,6 +435,9 @@
           <button type="button" class="btn-kid danger" onclick="reiniciarRompecabezasActual()">
             🔄 Reiniciar juego
           </button>
+          <button type="button" class="btn-kid primary" id="btnSiguienteRompecabezas" onclick="siguienteRompecabezas()">
+            ➡️ Siguiente juego
+          </button>
         </div>
       </div>
 
@@ -484,6 +490,23 @@
       </div>
 
       <div class="hands-on-grid" id="handsOnGrid"></div>
+
+      <!-- CAJA DE CELEBRACIÓN / DIPLOMA FINAL DE LA MISIÓN -->
+      <div id="diplomaPrebasicaBox" class="diploma-prebasica-box" style="display:none;margin-top:1.5rem;text-align:center;background:linear-gradient(135deg,#fff8e1,#e8f5e9);border:3px dashed #43a047;border-radius:18px;padding:1.5rem 1rem;">
+        <div style="font-size:3rem;margin-bottom:0.25rem;">🎓 ⭐ 🏆</div>
+        <h3 style="font-family:'Fredoka',sans-serif;font-size:1.45rem;color:#1b5e20;margin:0 0 0.5rem 0;">¡Misión de Prebásica Completada con Éxito!</h3>
+        <p style="font-size:1.02rem;color:#2e7d32;max-width:620px;margin:0 auto 1rem auto;line-height:1.4;">
+          ¡Felicidades a la familia y al estudiante! Han recorrido los trazos con el dedito, las figuras geométricas, letras y números, rompecabezas y todas las técnicas físicas en papel del <strong>Libro 1</strong>.
+        </p>
+        <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;">
+          <a href="../../fichas/ficha-prebasica-libro1.html" class="btn-kid primary" target="_blank" rel="noopener noreferrer" style="font-size:1rem;text-decoration:none;">
+            🖨️ Ver Ficha Imprimible para Padres
+          </a>
+          <button type="button" class="btn-kid secondary" onclick="go('s-trazos')">
+            🔄 Volver al Inicio (1. Trazos)
+          </button>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -606,11 +629,11 @@
   </div>
 </footer>
 
-<script src="js/colegios-prebasica.js?v=457"></script>
-<script src="js/mapa-audios-prebasica.js?v=457"></script>
-<script src="js/prebasica-libro1.js?v=457"></script>
-<script src="../../js/barra-secciones.js?v=457"></script>
-<script src="../../js/teclado-actividades.js?v=457"></script>
+<script src="js/colegios-prebasica.js?v=458"></script>
+<script src="js/mapa-audios-prebasica.js?v=458"></script>
+<script src="js/prebasica-libro1.js?v=458"></script>
+<script src="../../js/barra-secciones.js?v=458"></script>
+<script src="../../js/teclado-actividades.js?v=458"></script>
 <script>
   if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
     navigator.serviceWorker.register('../../sw.js').then(function (reg) {

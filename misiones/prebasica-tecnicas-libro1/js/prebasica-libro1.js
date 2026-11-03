@@ -20,6 +20,12 @@
     doneSections: {}
   };
 
+  /* Temporizadores de auto-avance secuencial entre retos y pestañas */
+  var traceAutoAdvanceTimer = null;
+  var figuraAutoAdvanceTimer = null;
+  var rodeaAutoAdvanceTimer = null;
+  var puzzleAutoAdvanceTimer = null;
+
   /* --------------------------------------------------------------------------
      HELPER: ESCUELA / INSTITUCIÓN ACTIVA
      -------------------------------------------------------------------------- */
@@ -598,6 +604,10 @@
      -------------------------------------------------------------------------- */
   window.go = function (secId) {
     window.detenerVozPrebasica();
+    if (traceAutoAdvanceTimer) { clearTimeout(traceAutoAdvanceTimer); traceAutoAdvanceTimer = null; }
+    if (figuraAutoAdvanceTimer) { clearTimeout(figuraAutoAdvanceTimer); figuraAutoAdvanceTimer = null; }
+    if (rodeaAutoAdvanceTimer) { clearTimeout(rodeaAutoAdvanceTimer); rodeaAutoAdvanceTimer = null; }
+    if (puzzleAutoAdvanceTimer) { clearTimeout(puzzleAutoAdvanceTimer); puzzleAutoAdvanceTimer = null; }
     var secs = document.querySelectorAll('.sec');
     secs.forEach(function (s) {
       s.classList.toggle('active', s.id === secId);
@@ -1205,6 +1215,15 @@
     renderTraceSelector();
     renderTraceCanvas();
 
+    var btnSigTrazo = document.getElementById('btnSiguienteRetoTrazo');
+    if (btnSigTrazo) {
+      if (idx === TRACE_CHALLENGES.length - 1) {
+        btnSigTrazo.innerHTML = '➡ Pasar a 2. Figuras con mi Dedito';
+      } else {
+        btnSigTrazo.innerHTML = '➡ Siguiente reto';
+      }
+    }
+
     var activeAccItem = document.getElementById('traceAccItem-' + idx);
     if (activeAccItem) {
       try {
@@ -1474,8 +1493,19 @@
       clearTimeout(traceAutoAdvanceTimer);
       traceAutoAdvanceTimer = null;
     }
-    var next = (traceState.currentIdx + 1) % TRACE_CHALLENGES.length;
-    selectTraceChallenge(next, true);
+    if (traceState.currentIdx < TRACE_CHALLENGES.length - 1) {
+      selectTraceChallenge(traceState.currentIdx + 1, true);
+    } else {
+      window.detenerVozPrebasica();
+      window.go('s-figuras');
+      selectFigura(0, true);
+      var sec = document.getElementById('s-figuras');
+      if (sec) {
+        try {
+          sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } catch (e) {}
+      }
+    }
   };
 
   window.leerRetoTrazoActual = function (btn) {
@@ -2143,7 +2173,6 @@
     }
   ];
 
-  var figuraAutoAdvanceTimer = null;
   var figuraState = {
     currentIdx: 0,
     color: 'rainbow',
@@ -2504,6 +2533,15 @@
     renderFigurasSelector();
     renderFiguraObjetos();
     renderFiguraCanvas();
+
+    var btnSigFig = document.getElementById('btnSiguienteFigura');
+    if (btnSigFig) {
+      if (idx === FIGURAS_DATA.length - 1 && (!fig.hasSubfigures || fig.currentSub === 'corazon')) {
+        btnSigFig.innerHTML = '➡ Pasar a 3. Rodea y Descubre';
+      } else {
+        btnSigFig.innerHTML = '➡ Siguiente figura';
+      }
+    }
 
     var activeAccItem = document.getElementById('figuraAccItem-' + idx);
     if (activeAccItem) {
@@ -2894,8 +2932,32 @@
       clearTimeout(figuraAutoAdvanceTimer);
       figuraAutoAdvanceTimer = null;
     }
-    var next = (figuraState.currentIdx + 1) % FIGURAS_DATA.length;
-    selectFigura(next, true);
+    var currentFig = FIGURAS_DATA[figuraState.currentIdx];
+    if (currentFig && currentFig.hasSubfigures && currentFig.currentSub === 'estrella') {
+      window.seleccionarSubFigura('corazon');
+      return;
+    }
+
+    if (figuraState.currentIdx < FIGURAS_DATA.length - 1) {
+      var nextIdx = figuraState.currentIdx + 1;
+      var nextFig = FIGURAS_DATA[nextIdx];
+      if (nextFig && nextFig.hasSubfigures) {
+        nextFig.currentSub = 'estrella';
+      }
+      selectFigura(nextIdx, true);
+    } else {
+      window.detenerVozPrebasica();
+      window.go('s-rodea');
+      if (typeof window.seleccionarCategoriaRodea === 'function') {
+        window.seleccionarCategoriaRodea('letras');
+      }
+      var sec = document.getElementById('s-rodea');
+      if (sec) {
+        try {
+          sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } catch (e) {}
+      }
+    }
   };
 
   window.leerInstruccionFiguraActual = function (btn) {
@@ -3146,6 +3208,7 @@
     if (rodeaState.category === 'espacial' && rodeaState.targetId === 'dactilo') {
       if (boardWrap) boardWrap.style.display = 'none';
       if (dactiloCont) dactiloCont.style.display = 'block';
+      actualizarBotonSiguienteRodea();
       updateDactiloPromptText();
       renderDactiloCanvas();
       return;
@@ -3242,6 +3305,7 @@
     }
 
     renderRodeaCardsDOM();
+    actualizarBotonSiguienteRodea();
     setTimeout(syncLassoCanvasSize, 30);
   }
 
@@ -3308,6 +3372,11 @@
           addXP(15, 's-rodea');
         }
         window.hablarTexto('¡Muy bien hecho! Completaste todo el tablero.', 'es-ES');
+
+        if (rodeaAutoAdvanceTimer) clearTimeout(rodeaAutoAdvanceTimer);
+        rodeaAutoAdvanceTimer = setTimeout(function () {
+          window.siguienteRodea();
+        }, 1800);
       } else if (statusMsg) {
         statusMsg.textContent = '¡Muy bien! ✓ Llevas ' + rodeaState.foundCount + ' de ' + rodeaState.totalTargets + '. ¡Sigue buscando!';
       }
@@ -3442,7 +3511,68 @@
     });
   }
 
+  function actualizarBotonSiguienteRodea() {
+    var btn = document.getElementById('btnSiguienteRodea');
+    if (!btn) return;
+    if (rodeaState.category === 'espacial' && rodeaState.targetId === 'dactilo') {
+      btn.innerHTML = '➡ Pasar a 4. Rompecabezas';
+    } else {
+      btn.innerHTML = '➡ Siguiente reto';
+    }
+  }
+
+  window.siguienteRodea = function () {
+    if (rodeaAutoAdvanceTimer) {
+      clearTimeout(rodeaAutoAdvanceTimer);
+      rodeaAutoAdvanceTimer = null;
+    }
+    window.detenerVozPrebasica();
+
+    if (rodeaState.category === 'letras') {
+      var idxL = LETRAS_DATA.findIndex(function (x) { return x.id === rodeaState.targetId; });
+      if (idxL >= 0 && idxL < LETRAS_DATA.length - 1) {
+        rodeaState.targetId = LETRAS_DATA[idxL + 1].id;
+        renderRodeaPills();
+        buildRodeaExercise();
+      } else {
+        window.seleccionarCategoriaRodea('numeros');
+      }
+    } else if (rodeaState.category === 'numeros') {
+      var idxN = NUMEROS_DATA.findIndex(function (x) { return x.id === rodeaState.targetId; });
+      if (idxN >= 0 && idxN < NUMEROS_DATA.length - 1) {
+        rodeaState.targetId = NUMEROS_DATA[idxN + 1].id;
+        renderRodeaPills();
+        buildRodeaExercise();
+      } else {
+        window.seleccionarCategoriaRodea('espacial');
+      }
+    } else {
+      var idxE = ESPACIAL_DATA.findIndex(function (x) { return x.id === rodeaState.targetId; });
+      if (idxE >= 0 && idxE < ESPACIAL_DATA.length - 1) {
+        rodeaState.targetId = ESPACIAL_DATA[idxE + 1].id;
+        renderRodeaPills();
+        buildRodeaExercise();
+      } else {
+        window.go('s-rompecabezas');
+        if (typeof window.mostrarRompecabezas === 'function') {
+          window.mostrarRompecabezas('numeros');
+        }
+        var sec = document.getElementById('s-rompecabezas');
+        if (sec) {
+          try {
+            sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          } catch (e) {}
+        }
+      }
+    }
+    actualizarBotonSiguienteRodea();
+  };
+
   window.reiniciarEjercicioRodea = function () {
+    if (rodeaAutoAdvanceTimer) {
+      clearTimeout(rodeaAutoAdvanceTimer);
+      rodeaAutoAdvanceTimer = null;
+    }
     window.detenerVozPrebasica();
     buildRodeaExercise();
   };
@@ -3609,7 +3739,14 @@
         sonarCelebracion();
         addXP(15, 's-rodea');
         window.hablarTexto('¡Qué linda pintura con tus deditos! Lo hiciste excelente.', 'es-ES');
+      } else {
+        sonarCelebracion();
       }
+
+      if (rodeaAutoAdvanceTimer) clearTimeout(rodeaAutoAdvanceTimer);
+      rodeaAutoAdvanceTimer = setTimeout(function () {
+        window.siguienteRodea();
+      }, 1800);
     } else {
       if (statusBanner) statusBanner.classList.remove('celebrate');
       if (statusMsg) {
@@ -3704,6 +3841,10 @@
   }
 
   window.cambiarFiguraDactilo = function (fig) {
+    if (rodeaAutoAdvanceTimer) {
+      clearTimeout(rodeaAutoAdvanceTimer);
+      rodeaAutoAdvanceTimer = null;
+    }
     window.detenerVozPrebasica();
     dactiloState.figure = fig;
     if (fig === 'manzana') {
@@ -3726,6 +3867,10 @@
   };
 
   window.cambiarZonaDactilo = function (zona) {
+    if (rodeaAutoAdvanceTimer) {
+      clearTimeout(rodeaAutoAdvanceTimer);
+      rodeaAutoAdvanceTimer = null;
+    }
     window.detenerVozPrebasica();
     dactiloState.zone = zona;
     dactiloState.stamps = [];
@@ -3737,6 +3882,10 @@
   };
 
   window.limpiarDactilo = function () {
+    if (rodeaAutoAdvanceTimer) {
+      clearTimeout(rodeaAutoAdvanceTimer);
+      rodeaAutoAdvanceTimer = null;
+    }
     window.detenerVozPrebasica();
     dactiloState.stamps = [];
     dactiloState.validCount = 0;
@@ -3810,7 +3959,53 @@
     { id: 'corazon', es: 'Corazón', en: 'Heart', color: '#e84393', svg: '<svg width="54" height="54" viewBox="0 0 60 60"><path d="M30 52 C30 52 7 37 7 20 C7 11 15 6 23 10 C27 12 30 16 30 16 C30 16 33 12 37 10 C45 6 53 11 53 20 C53 37 30 52 30 52 Z" fill="#e84393" stroke="#2d3436" stroke-width="2.5"/></svg>' }
   ];
 
+  function actualizarBotonSiguienteRompecabezas() {
+    var btn = document.getElementById('btnSiguienteRompecabezas');
+    if (!btn) return;
+    if (puzzleState.currentGame === 'carros' && puzzleState.carSubMode === 'figuras') {
+      btn.innerHTML = '➡ Pasar a 5. Manos a la Obra en Casa';
+    } else {
+      btn.innerHTML = '➡ Siguiente juego';
+    }
+  }
+
+  window.siguienteRompecabezas = function () {
+    if (puzzleAutoAdvanceTimer) {
+      clearTimeout(puzzleAutoAdvanceTimer);
+      puzzleAutoAdvanceTimer = null;
+    }
+    window.detenerVozPrebasica();
+
+    if (puzzleState.currentGame === 'numeros') {
+      if (puzzleState.numBlock === '1_5') {
+        window.cambiarBloqueNumeros('6_10');
+      } else {
+        window.mostrarRompecabezas('cuerpo');
+      }
+    } else if (puzzleState.currentGame === 'cuerpo') {
+      window.mostrarRompecabezas('carros');
+      window.cambiarSubmodoCarros('colores');
+    } else {
+      if (puzzleState.carSubMode === 'colores') {
+        window.cambiarSubmodoCarros('figuras');
+      } else {
+        window.go('s-casa');
+        var sec = document.getElementById('s-casa');
+        if (sec) {
+          try {
+            sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          } catch (e) {}
+        }
+      }
+    }
+    actualizarBotonSiguienteRompecabezas();
+  };
+
   window.mostrarRompecabezas = function (tipo) {
+    if (puzzleAutoAdvanceTimer) {
+      clearTimeout(puzzleAutoAdvanceTimer);
+      puzzleAutoAdvanceTimer = null;
+    }
     if (window.detenerVozPrebasica) window.detenerVozPrebasica();
     puzzleState.currentGame = tipo;
     puzzleState.selectedPieceId = null;
@@ -3824,6 +4019,10 @@
   };
 
   window.reiniciarRompecabezasActual = function () {
+    if (puzzleAutoAdvanceTimer) {
+      clearTimeout(puzzleAutoAdvanceTimer);
+      puzzleAutoAdvanceTimer = null;
+    }
     if (window.detenerVozPrebasica) window.detenerVozPrebasica();
     puzzleState.selectedPieceId = null;
     puzzleState.placedMap = {};
@@ -3858,6 +4057,7 @@
     } else {
       renderCarsAndShapesPuzzle(cont, statusMsg);
     }
+    actualizarBotonSiguienteRompecabezas();
   }
 
   /* Minijuego A: Rompecabezas de Números y Cantidades */
@@ -3910,6 +4110,10 @@
   }
 
   window.cambiarBloqueNumeros = function (blk) {
+    if (puzzleAutoAdvanceTimer) {
+      clearTimeout(puzzleAutoAdvanceTimer);
+      puzzleAutoAdvanceTimer = null;
+    }
     if (window.detenerVozPrebasica) window.detenerVozPrebasica();
     puzzleState.numBlock = blk;
     puzzleState.selectedPieceId = null;
@@ -4041,6 +4245,10 @@
   }
 
   window.cambiarSubmodoCarros = function (sub) {
+    if (puzzleAutoAdvanceTimer) {
+      clearTimeout(puzzleAutoAdvanceTimer);
+      puzzleAutoAdvanceTimer = null;
+    }
     if (window.detenerVozPrebasica) window.detenerVozPrebasica();
     puzzleState.carSubMode = sub;
     puzzleState.selectedPieceId = null;
@@ -4173,6 +4381,11 @@
         addXP(20, 's-rompecabezas');
       }
       window.hablarTexto('¡Bravo! Completaste todo el rompecabezas sin ningún error.', 'es-ES');
+
+      if (puzzleAutoAdvanceTimer) clearTimeout(puzzleAutoAdvanceTimer);
+      puzzleAutoAdvanceTimer = setTimeout(function () {
+        window.siguienteRompecabezas();
+      }, 1800);
     }
   }
 
@@ -4311,6 +4524,10 @@
     if (badge) {
       badge.textContent = '🏅 ' + count + ' / ' + HOME_TECHNIQUES.length + ' técnicas hechas en casa';
     }
+    var diplomaBox = document.getElementById('diplomaPrebasicaBox');
+    if (diplomaBox) {
+      diplomaBox.style.display = (count >= HOME_TECHNIQUES.length) ? 'block' : 'none';
+    }
   }
 
   window.marcarTecnicaCasa = function (id) {
@@ -4324,6 +4541,19 @@
       saveState();
     }
     renderHandsOnTab();
+
+    var totalHechas = Object.keys(state.completedHomeTechs).filter(function (k) {
+      return state.completedHomeTechs[k];
+    }).length;
+    if (!wasDone && totalHechas >= HOME_TECHNIQUES.length) {
+      window.lanzarConfetiPrebasica();
+      var diplomaBox = document.getElementById('diplomaPrebasicaBox');
+      if (diplomaBox) {
+        try {
+          diplomaBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } catch (e) {}
+      }
+    }
   };
 
   /* --------------------------------------------------------------------------
@@ -4365,6 +4595,11 @@
     if (typeof window.detenerVozPrebasica === 'function') {
       window.detenerVozPrebasica();
     }
+    if (traceAutoAdvanceTimer) { clearTimeout(traceAutoAdvanceTimer); traceAutoAdvanceTimer = null; }
+    if (figuraAutoAdvanceTimer) { clearTimeout(figuraAutoAdvanceTimer); figuraAutoAdvanceTimer = null; }
+    if (rodeaAutoAdvanceTimer) { clearTimeout(rodeaAutoAdvanceTimer); rodeaAutoAdvanceTimer = null; }
+    if (puzzleAutoAdvanceTimer) { clearTimeout(puzzleAutoAdvanceTimer); puzzleAutoAdvanceTimer = null; }
+
     state = {
       xp: 0,
       soundOn: (state && state.soundOn !== false),
