@@ -241,7 +241,7 @@ body::before {
 }
 
 .aviso-parental-collapsible.abierto .aviso-parental-cuerpo {
-  max-height: 600px;
+  max-height: 850px;
   opacity: 1;
 }
 
@@ -252,6 +252,93 @@ body::before {
   display: flex;
   flex-direction: column;
   gap: 0.55rem;
+}
+
+/* Fila destacada de 2 columnas para guías imprimibles */
+.aviso-guias-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.55rem;
+  margin-bottom: 0.2rem;
+}
+
+.btn-aviso-guia {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.52rem 0.85rem;
+  border-radius: 12px;
+  text-decoration: none;
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.15s ease;
+  min-height: 48px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.btn-aviso-guia:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.14);
+}
+
+.btn-aviso-guia:active {
+  transform: scale(0.98);
+}
+
+.btn-aviso-guia.btn-guia-padres {
+  background: linear-gradient(135deg, #ea580c, #f97316);
+  color: #ffffff;
+  border: 1.5px solid #ffedd5;
+}
+
+.btn-aviso-guia.btn-guia-maestro {
+  background: linear-gradient(135deg, #6d28d9, #8b5cf6);
+  color: #ffffff;
+  border: 1.5px solid #ede9fe;
+}
+
+.btn-guia-ico {
+  font-size: 1.35rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.btn-guia-txt {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.22;
+}
+
+.btn-guia-txt strong {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.btn-guia-txt small {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.92);
+  font-weight: 500;
+  margin-top: 1px;
+}
+
+@media (max-width: 540px) {
+  .aviso-guias-grid {
+    grid-template-columns: 1fr;
+    gap: 0.4rem;
+  }
+  .btn-aviso-guia {
+    padding: 0.42rem 0.7rem;
+    min-height: 42px;
+  }
+  .btn-guia-ico {
+    font-size: 1.2rem;
+  }
+  .btn-guia-txt strong {
+    font-size: 0.82rem;
+  }
+  .btn-guia-txt small {
+    font-size: 0.68rem;
+  }
 }
 
 .aviso-parental-destacado {
