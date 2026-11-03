@@ -2311,7 +2311,7 @@ body::before {
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  z-index: 1000;
+  z-index: 2000;
   animation: fadeInModal 0.25s ease;
 }
 
@@ -2419,6 +2419,296 @@ body::before {
 @keyframes scaleUpModal {
   from { transform: scale(0.92); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
+}
+
+/* Bloque de compartir para docentes / coordinadores en el Portal de Acceso */
+.modal-docente-share-box {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--border, #fed7aa);
+  text-align: center;
+}
+
+[data-theme="dark"] .modal-docente-share-box {
+  border-top-color: #475569;
+}
+
+.modal-docente-sep {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: -1.65rem auto 0.75rem;
+}
+
+.modal-docente-sep span {
+  background: var(--card-bg, #ffffff);
+  padding: 0 0.65rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--gray, #64748b);
+  border-radius: 999px;
+}
+
+[data-theme="dark"] .modal-docente-sep span {
+  background: #1e293b;
+  color: #94a3b8;
+}
+
+.modal-docente-nota {
+  font-size: 0.88rem;
+  line-height: 1.4;
+  color: var(--gray, #475569);
+  margin: 0 0 0.75rem;
+}
+
+[data-theme="dark"] .modal-docente-nota {
+  color: #cbd5e1;
+}
+
+.modal-docente-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.btn-share-wa-portal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+  color: #ffffff;
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.35);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-sizing: border-box;
+}
+
+.btn-share-wa-portal:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(37, 211, 102, 0.45);
+}
+
+.btn-share-copy-portal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  width: 100%;
+  padding: 0.6rem 1rem;
+  background: var(--bg, #f8fafc);
+  color: var(--text, #334155);
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  border: 1.5px solid var(--border, #cbd5e1);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  box-sizing: border-box;
+}
+
+.btn-share-copy-portal:hover {
+  background: rgba(37, 211, 102, 0.08);
+  border-color: #25D366;
+  color: #047857;
+}
+
+[data-theme="dark"] .btn-share-copy-portal {
+  background: #334155;
+  color: #f1f5f9;
+  border-color: #475569;
+}
+
+[data-theme="dark"] .btn-share-copy-portal:hover {
+  background: rgba(37, 211, 102, 0.15);
+  border-color: #34d399;
+  color: #6ee7b7;
+}
+
+/* Modal de opciones de compartir por WhatsApp */
+.modal-share-card {
+  max-width: 500px;
+}
+
+.share-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  text-align: left;
+}
+
+.share-option-card {
+  background: var(--card-bg, #ffffff);
+  border: 2px solid var(--border, #cbd5e1);
+  border-radius: 16px;
+  padding: 0.95rem 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.share-option-card.opt-escuela {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.03);
+}
+
+.share-option-card.opt-general {
+  border-color: #cbd5e1;
+}
+
+[data-theme="dark"] .share-option-card.opt-escuela {
+  border-color: #059669;
+  background: rgba(16, 185, 129, 0.08);
+}
+
+[data-theme="dark"] .share-option-card.opt-general {
+  border-color: #475569;
+  background: #1e293b;
+}
+
+.share-opt-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-bottom: 0.35rem;
+}
+
+.badge-escuela {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+[data-theme="dark"] .badge-escuela {
+  background: #064e3b;
+  color: #a7f3d0;
+}
+
+.badge-general {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+[data-theme="dark"] .badge-general {
+  background: #334155;
+  color: #cbd5e1;
+}
+
+.share-opt-title {
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+  color: var(--text, #0f172a);
+}
+
+[data-theme="dark"] .share-opt-title {
+  color: #f8fafc;
+}
+
+.share-opt-sub {
+  font-size: 0.82rem;
+  line-height: 1.35;
+  color: var(--gray, #64748b);
+  margin: 0 0 0.75rem;
+}
+
+[data-theme="dark"] .share-opt-sub {
+  color: #94a3b8;
+}
+
+.share-opt-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn-share-choice {
+  flex: 1;
+  min-width: 140px;
+  padding: 0.6rem 0.85rem;
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  border-radius: 12px;
+  cursor: pointer;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;
+  box-sizing: border-box;
+}
+
+.btn-share-choice.btn-share-wa {
+  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+  color: #ffffff;
+  box-shadow: 0 3px 10px rgba(37, 211, 102, 0.3);
+}
+
+.btn-share-choice.btn-share-wa-secondary {
+  background: #0284c7;
+  color: #ffffff;
+  box-shadow: 0 3px 10px rgba(2, 132, 199, 0.25);
+}
+
+.btn-share-choice.btn-share-wa:hover,
+.btn-share-choice.btn-share-wa-secondary:hover {
+  transform: translateY(-2px);
+  opacity: 0.95;
+}
+
+.btn-share-choice.btn-share-copy {
+  background: var(--bg, #f1f5f9);
+  color: var(--text, #334155);
+  border: 1.5px solid var(--border, #cbd5e1);
+}
+
+.btn-share-choice.btn-share-copy:hover {
+  background: #e2e8f0;
+}
+
+[data-theme="dark"] .btn-share-choice.btn-share-copy {
+  background: #334155;
+  color: #f1f5f9;
+  border-color: #475569;
+}
+
+[data-theme="dark"] .btn-share-choice.btn-share-copy:hover {
+  background: #475569;
+}
+
+.copiado-exito {
+  background: #10b981 !important;
+  color: #ffffff !important;
+  border-color: #059669 !important;
+}
+
+@media (max-width: 480px) {
+  .modal-institucion-card {
+    padding: 1.25rem 1rem;
+    border-radius: 20px;
+  }
+  .share-opt-actions {
+    flex-direction: column;
+  }
+  .btn-share-choice {
+    width: 100%;
+    min-width: 0;
+  }
 }
 
 /* Botón visible de pronunciación nativa en inglés para tarjetas y fichas */

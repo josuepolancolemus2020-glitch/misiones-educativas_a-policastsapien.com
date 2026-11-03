@@ -26,7 +26,7 @@
   </a>
   <span class="xp-lbl">🌟 Estrellas en Familia</span>
   <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
-  <a href="#" class="xp-share-wa" onclick="compartirMision(); return false;" title="Compartir misión por WhatsApp" aria-label="Compartir misión por WhatsApp">
+  <a href="#" class="xp-share-wa" id="btnWhatsappHeader" onclick="compartirMision(); return false;" title="Compartir misión por WhatsApp" aria-label="Compartir misión por WhatsApp">
     <img src="../../img/comparte_whatsapp.webp" alt="WhatsApp" class="xp-share-icon">
   </a>
   <span class="xp-pts" id="xpPts">⭐ 0</span>
@@ -495,6 +495,77 @@
         </button>
       </div>
     </form>
+
+    <!-- BLOQUE SEPARADOR: COMPARTIR PARA DOCENTES / COORDINADORES (SIN ESCUELA REGISTRADA) -->
+    <div class="modal-docente-share-box">
+      <div class="modal-docente-sep" role="separator" aria-hidden="true">
+        <span>o para educadores</span>
+      </div>
+      <p class="modal-docente-nota">
+        👩‍🏫 <strong>¿Eres docente o coordinador?</strong> Comparte este acceso con las familias de tu centro educativo:
+      </p>
+      <div class="modal-docente-btns">
+        <button type="button" class="btn-share-wa-portal" onclick="compartirWhatsAppDocenteGeneral()">
+          <span class="icon-wa" aria-hidden="true">📲</span> Compartir enlace e instrucciones por WhatsApp
+        </button>
+        <button type="button" class="btn-share-copy-portal" id="btnCopiarInvitacionModal" onclick="copiarMensajeInvitacion(this)">
+          📋 Copiar mensaje de invitación
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DE OPCIONES PARA COMPARTIR POR WHATSAPP (CON O SIN ESCUELA ACTIVA) -->
+<div id="modalCompartirPrebasica" class="modal-institucion-overlay" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="modalCompartirTitulo" onclick="if (event.target === this) cerrarModalCompartir();">
+  <div class="modal-institucion-card modal-share-card">
+    <div class="modal-institucion-icono" aria-hidden="true">📲</div>
+    <h2 id="modalCompartirTitulo" class="modal-institucion-titulo">Compartir Misión por WhatsApp</h2>
+    <p class="modal-institucion-desc" style="margin-bottom:1rem;">
+      Elige cómo deseas compartir las instrucciones con las familias o con tu comunidad educativa:
+    </p>
+
+    <div class="share-options-list">
+      <!-- OPCIÓN A: PARA MI ESCUELA ACTUAL -->
+      <div class="share-option-card opt-escuela">
+        <div class="share-option-header">
+          <span class="share-opt-badge badge-escuela">🏫 Mi Escuela Activa</span>
+          <h3 class="share-opt-title" id="lblShareOpcionEscuela">🏫 Compartir para mi escuela actual</h3>
+          <p class="share-opt-sub" id="lblShareSubEscuela">Incluye el nombre de tu centro en el Paso 2 para que las familias ingresen directamente.</p>
+        </div>
+        <div class="share-opt-actions">
+          <button type="button" class="btn-share-choice btn-share-wa" onclick="enviarWhatsAppPrebasica(true)">
+            📲 Enviar por WhatsApp
+          </button>
+          <button type="button" class="btn-share-choice btn-share-copy" onclick="copiarMensajePrebasicaBtn(this, true)">
+            📋 Copiar texto
+          </button>
+        </div>
+      </div>
+
+      <!-- OPCIÓN B: ENLACE GENERAL -->
+      <div class="share-option-card opt-general">
+        <div class="share-option-header">
+          <span class="share-opt-badge badge-general">🔗 Plantilla General</span>
+          <h3 class="share-opt-title">🔗 Compartir enlace general (sin escuela registrada)</h3>
+          <p class="share-opt-sub">Plantilla con espacio para que el docente o coordinador escriba el nombre oficial de su Kínder / CEPB.</p>
+        </div>
+        <div class="share-opt-actions">
+          <button type="button" class="btn-share-choice btn-share-wa-secondary" onclick="enviarWhatsAppPrebasica(false)">
+            📲 Enviar por WhatsApp
+          </button>
+          <button type="button" class="btn-share-choice btn-share-copy" onclick="copiarMensajePrebasicaBtn(this, false)">
+            📋 Copiar texto
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:1.25rem;">
+      <button type="button" class="btn-kid secondary" style="width:100%;justify-content:center;padding:0.65rem 1rem;" onclick="cerrarModalCompartir()">
+        ✕ Cerrar
+      </button>
+    </div>
   </div>
 </div>
 

@@ -3954,11 +3954,162 @@
     window.abrirModalInstitucion(true);
   };
 
-  window.compartirMision = function () {
-    var esc = obtenerSaludoEscuela() || 'nuestro centro educativo';
-    var msg = '🌟 ¡Mira qué increíble! En *' + esc + '* estamos aprendiendo en familia con la Misión Interactiva de Prebásica (Libro 1 · Técnicas Gráficas y No Gráficas) en M.E.T.A.S. 🎨✨ Trazos con el dedo, números, colores en inglés y rompecabezas guiados para papá, mamá y los pequeños:\n' + window.location.href;
+  /* --------------------------------------------------------------------------
+     COMPARTIR POR WHATSAPP Y PORTAL DE INVITACIÓN FAMILIAR / DOCENTE
+     -------------------------------------------------------------------------- */
+  function obtenerUrlLimpiaMision() {
+    try {
+      if (window.location.protocol.indexOf('http') === 0 && window.location.origin) {
+        return window.location.origin + window.location.pathname;
+      }
+      return window.location.href.split('?')[0].split('#')[0];
+    } catch (e) {
+      return window.location.href;
+    }
+  }
+
+  function generarMensajeWhatsAppPrebasica(nombreEscuela) {
+    var urlLimpia = obtenerUrlLimpiaMision();
+    var tieneEscuela = (nombreEscuela && typeof nombreEscuela === 'string' && nombreEscuela.trim().length > 0);
+    var paso2 = tieneEscuela
+      ? '2️⃣ En la caja del Portal de Acceso, escriba el nombre oficial de nuestro Kínder / Centro Educativo: *' + nombreEscuela.trim() + '*'
+      : '2️⃣ En la caja del Portal de Acceso, escriba el nombre oficial de nuestro Kínder / Centro Educativo: *[ESCRIBA AQUÍ EL NOMBRE DEL KÍNDER / CEPB]*';
+
+    var lineas = [
+      '📚✨ *M.E.T.A.S. — Prebásica (3.° Grado): Técnicas Gráficas y No Gráficas (Libro 1)*',
+      '👨‍👩‍👧 *Recurso de Uso Exclusivo para Centros Educativos Autorizados*',
+      '',
+      '🔑 *¿Cómo ingresar desde casa?*',
+      '1️⃣ Toque el enlace oficial al final de este mensaje.',
+      paso2,
+      '',
+      '⚠️ *Uso exclusivo y supervisado:* Este complemento digital es únicamente para padres responsables sentados junto a su hijo(a) durante 10 a 15 minutos como refuerzo del libro físico. Prohibido compartir fuera de nuestra comunidad educativa o dejar al niño solo con el dispositivo.',
+      '',
+      '👉 *Enlace de acceso:* ' + urlLimpia
+    ];
+    return lineas.join('\n');
+  }
+
+  function copiarTextoAlPortapapeles(texto, btn, textoOriginal, textoExito) {
+    var fnFeedback = function () {
+      if (!btn) return;
+      var orig = textoOriginal || btn.innerHTML;
+      btn.innerHTML = textoExito || '✅ ¡Copiado!';
+      btn.classList.add('copiado-exito');
+      setTimeout(function () {
+        btn.innerHTML = orig;
+        btn.classList.remove('copiado-exito');
+      }, 2200);
+    };
+
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(texto).then(function () {
+        fnFeedback();
+      }).catch(function () {
+        fallbackCopiar(texto, fnFeedback);
+      });
+      return;
+    }
+    fallbackCopiar(texto, fnFeedback);
+  }
+
+  function fallbackCopiar(texto, onExito) {
+    try {
+      var ta = document.createElement('textarea');
+      ta.value = texto;
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      ta.style.top = '0';
+      ta.setAttribute('readonly', '');
+      document.body.appendChild(ta);
+      ta.select();
+      var ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      if (ok && typeof onExito === 'function') {
+        onExito();
+      } else if (!ok) {
+        alert('Por favor selecciona y copia el mensaje:\n\n' + texto);
+      }
+    } catch (e) {
+      alert('Por favor selecciona y copia el mensaje:\n\n' + texto);
+    }
+  }
+
+  window.compartirWhatsAppDocenteGeneral = function () {
+    var msg = generarMensajeWhatsAppPrebasica(null);
     window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
   };
+
+  window.copiarMensajeInvitacion = function (btnElement) {
+    var msg = generarMensajeWhatsAppPrebasica(null);
+    copiarTextoAlPortapapeles(msg, btnElement, '📋 Copiar mensaje de invitación', '✅ ¡Mensaje copiado!');
+  };
+
+  window.compartirMision = function () {
+    var escuelaActiva = null;
+    try {
+      escuelaActiva = localStorage.getItem('metas_prebasica_institucion');
+    } catch (e) {}
+
+    if (escuelaActiva && typeof escuelaActiva === 'string' && escuelaActiva.trim().length > 0) {
+      window.abrirModalCompartirOpciones(escuelaActiva.trim());
+    } else {
+      window.compartirWhatsAppDocenteGeneral();
+    }
+  };
+
+  window.abrirModalCompartirOpciones = function (escuelaActiva) {
+    var modal = document.getElementById('modalCompartirPrebasica');
+    var lblEscuela = document.getElementById('lblShareOpcionEscuela');
+    var subEscuela = document.getElementById('lblShareSubEscuela');
+    if (lblEscuela) {
+      lblEscuela.textContent = '🏫 Compartir para mi escuela actual (' + escuelaActiva + ')';
+    }
+    if (subEscuela) {
+      subEscuela.textContent = 'Incluye "' + escuelaActiva + '" en el Paso 2 para que las familias ingresen directamente.';
+    }
+    if (modal) {
+      modal.style.display = 'flex';
+    }
+  };
+
+  window.cerrarModalCompartir = function () {
+    var modal = document.getElementById('modalCompartirPrebasica');
+    if (modal) modal.style.display = 'none';
+  };
+
+  window.enviarWhatsAppPrebasica = function (usarEscuelaActiva) {
+    var esc = null;
+    if (usarEscuelaActiva) {
+      try {
+        esc = localStorage.getItem('metas_prebasica_institucion');
+      } catch (e) {}
+    }
+    var msg = generarMensajeWhatsAppPrebasica(esc);
+    window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+    window.cerrarModalCompartir();
+  };
+
+  window.copiarMensajePrebasicaBtn = function (btnElement, usarEscuelaActiva) {
+    var esc = null;
+    if (usarEscuelaActiva) {
+      try {
+        esc = localStorage.getItem('metas_prebasica_institucion');
+      } catch (e) {}
+    }
+    var msg = generarMensajeWhatsAppPrebasica(esc);
+    copiarTextoAlPortapapeles(msg, btnElement, '📋 Copiar texto', '✅ ¡Copiado!');
+  };
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      window.cerrarModalCompartir();
+      var btnCancelar = document.getElementById('btnCancelarInstitucion');
+      if (btnCancelar && btnCancelar.style.display !== 'none') {
+        window.cerrarModalInstitucion();
+      }
+    }
+  });
 
   /* --------------------------------------------------------------------------
      PORTAL DE ACCESO Y GESTIÓN DE INSTITUCIÓN EDUCATIVA (PREBÁSICA)
