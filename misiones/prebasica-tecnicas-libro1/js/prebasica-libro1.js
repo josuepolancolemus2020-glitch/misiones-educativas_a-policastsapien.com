@@ -960,6 +960,7 @@
     };
   }
 
+  var traceAutoAdvanceTimer = null;
   var traceState = {
     currentIdx: 0,
     color: 'rainbow',
@@ -1123,27 +1124,54 @@
   function renderTraceSelector() {
     var grid = document.getElementById('traceSelectorGrid');
     if (!grid) return;
+    var panel = document.getElementById('traceWorkspacePanel');
+    if (panel && panel.parentNode && panel.parentNode !== grid.parentNode) {
+      grid.parentNode.insertBefore(panel, grid.nextSibling);
+    }
     grid.innerHTML = '';
     TRACE_CHALLENGES.forEach(function (ch, idx) {
-      var btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'trace-chip-btn' +
-        (idx === traceState.currentIdx ? ' active' : '') +
-        (state.completedTraces[ch.id] ? ' completed' : '');
-      btn.innerHTML =
+      var isCompleted = !!state.completedTraces[ch.id];
+      var item = document.createElement('div');
+      item.className = 'trace-acc-item' + (idx === traceState.currentIdx ? ' active' : '');
+      item.id = 'traceAccItem-' + idx;
+
+      var headerBtn = document.createElement('button');
+      headerBtn.type = 'button';
+      headerBtn.className = 'trace-acc-header' + (idx === traceState.currentIdx ? ' active' : '');
+      headerBtn.innerHTML =
         '<span class="trace-chip-ico" aria-hidden="true">' + ch.ico + '</span>' +
-        '<div class="trace-chip-info">' +
+        '<div class="trace-chip-info" style="flex:1;">' +
           '<strong>' + ch.title + '</strong>' +
           '<span>' + ch.subtitle + '</span>' +
+        '</div>' +
+        '<div class="trace-acc-status">' +
+          (isCompleted ? '<span class="acc-tag-done">✓ ¡Listo!</span>' : '<span class="acc-tag-pending">✏ Trazar</span>') +
+          '<span class="acc-chevron">' + (idx === traceState.currentIdx ? '▲' : '▼') + '</span>' +
         '</div>';
-      btn.onclick = function () {
+
+      headerBtn.onclick = function () {
         selectTraceChallenge(idx, true);
       };
-      grid.appendChild(btn);
+
+      var body = document.createElement('div');
+      body.className = 'trace-acc-body';
+      body.id = 'traceAccBody-' + idx;
+
+      item.appendChild(headerBtn);
+      item.appendChild(body);
+      grid.appendChild(item);
+
+      if (idx === traceState.currentIdx && panel) {
+        body.appendChild(panel);
+      }
     });
   }
 
   function selectTraceChallenge(idx, speak) {
+    if (traceAutoAdvanceTimer) {
+      clearTimeout(traceAutoAdvanceTimer);
+      traceAutoAdvanceTimer = null;
+    }
     window.detenerVozPrebasica();
     traceState.currentIdx = idx;
     traceState.userStrokes = [];
@@ -1176,6 +1204,14 @@
 
     renderTraceSelector();
     renderTraceCanvas();
+
+    var activeAccItem = document.getElementById('traceAccItem-' + idx);
+    if (activeAccItem) {
+      try {
+        activeAccItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } catch (e) {}
+    }
+
     if (speak && ch) {
       window.hablarTexto(ch.ttsText, 'es-ES');
     }
@@ -1224,7 +1260,9 @@
         traceState.completedCurrent = true;
         traceState.isDrawing = false;
         traceState.inLane = false;
+        traceState.waypoints.forEach(function (w) { w.hit = true; });
         updateTraceProgressUI(100);
+        renderTraceCanvas();
         var ch = TRACE_CHALLENGES[traceState.currentIdx];
         if (ch && !state.completedTraces[ch.id]) {
           state.completedTraces[ch.id] = true;
@@ -1241,6 +1279,11 @@
         }
         window.hablarTexto('¡Muy bien! Llegaste a la meta. ¡Excelente trazo!', 'es-ES');
         renderTraceSelector();
+
+        if (traceAutoAdvanceTimer) clearTimeout(traceAutoAdvanceTimer);
+        traceAutoAdvanceTimer = setTimeout(function () {
+          window.siguienteRetoTrazo();
+        }, 1800);
       }
     }
   }
@@ -1339,6 +1382,46 @@
       ctx.restore();
     });
 
+    // Si el reto de trazo está 100% completado, pintar todo el camino continuo sin huecos
+    if (traceState.completedCurrent && paths) {
+      paths.forEach(function (path) {
+        if (!path || path.length < 2) return;
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(path[0].x, path[0].y);
+        for (var i = 1; i < path.length; i++) {
+          ctx.lineTo(path[i].x, path[i].y);
+        }
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        if (traceState.color === 'rainbow') {
+          var grad = ctx.createLinearGradient(0, 0, w, h);
+          grad.addColorStop(0, '#e53935');
+          grad.addColorStop(0.2, '#fb8c00');
+          grad.addColorStop(0.4, '#fbc02d');
+          grad.addColorStop(0.6, '#43a047');
+          grad.addColorStop(0.8, '#1e88e5');
+          grad.addColorStop(1, '#8e24aa');
+          ctx.strokeStyle = grad;
+        } else {
+          ctx.strokeStyle = traceState.color || '#e65100';
+        }
+        ctx.lineWidth = 22;
+        ctx.stroke();
+
+        // Brillo interior blanco de celebración
+        ctx.beginPath();
+        ctx.moveTo(path[0].x, path[0].y);
+        for (var j = 1; j < path.length; j++) {
+          ctx.lineTo(path[j].x, path[j].y);
+        }
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
+        ctx.lineWidth = 8;
+        ctx.stroke();
+        ctx.restore();
+      });
+    }
+
     // Iconos de Inicio (🟢) y Meta (🏁) en cada camino
     paths.forEach(function (path) {
       if (!path || path.length < 2) return;
@@ -1379,10 +1462,18 @@
   };
 
   window.borrarTrazoActual = function () {
+    if (traceAutoAdvanceTimer) {
+      clearTimeout(traceAutoAdvanceTimer);
+      traceAutoAdvanceTimer = null;
+    }
     selectTraceChallenge(traceState.currentIdx, false);
   };
 
   window.siguienteRetoTrazo = function () {
+    if (traceAutoAdvanceTimer) {
+      clearTimeout(traceAutoAdvanceTimer);
+      traceAutoAdvanceTimer = null;
+    }
     var next = (traceState.currentIdx + 1) % TRACE_CHALLENGES.length;
     selectTraceChallenge(next, true);
   };
@@ -1942,26 +2033,25 @@
             var checkpoints = [];
             var numSegments = 5;
             for (var p = 0; p < numPoints; p++) {
-              var idxInBefore = (p * 2 - 1 + numPoints * 2) % (numPoints * 2);
-              var idxOut = p * 2;
-              var idxInAfter = p * 2 + 1;
-              var vIn1 = vertices[idxInBefore];
-              var vOut = vertices[idxOut];
-              var vIn2 = vertices[idxInAfter];
-              for (var k = 0; k < 4; k++) {
-                var t = (k + 0.5) / 4;
+              var vPeak = vertices[p * 2];
+              var vValley = vertices[p * 2 + 1];
+              var vNextPeak = vertices[p * 2 + 2];
+              // Tramo 1 del segmento: Vértice Punta -> Vértice Valle
+              for (var k1 = 0; k1 < 4; k1++) {
+                var t1 = (k1 + 0.5) / 4;
                 checkpoints.push({
-                  x: vIn1.x + (vOut.x - vIn1.x) * t,
-                  y: vIn1.y + (vOut.y - vIn1.y) * t,
+                  x: vPeak.x + (vValley.x - vPeak.x) * t1,
+                  y: vPeak.y + (vValley.y - vPeak.y) * t1,
                   segmentIdx: p,
                   hit: false
                 });
               }
-              for (var k = 0; k < 4; k++) {
-                var t = (k + 0.5) / 4;
+              // Tramo 2 del segmento: Vértice Valle -> Siguiente Punta (cierra en Punta 1)
+              for (var k2 = 0; k2 < 4; k2++) {
+                var t2 = (k2 + 0.5) / 4;
                 checkpoints.push({
-                  x: vOut.x + (vIn2.x - vOut.x) * t,
-                  y: vOut.y + (vIn2.y - vOut.y) * t,
+                  x: vValley.x + (vNextPeak.x - vValley.x) * t2,
+                  y: vValley.y + (vNextPeak.y - vValley.y) * t2,
                   segmentIdx: p,
                   hit: false
                 });
@@ -2053,6 +2143,7 @@
     }
   ];
 
+  var figuraAutoAdvanceTimer = null;
   var figuraState = {
     currentIdx: 0,
     color: 'rainbow',
@@ -2260,6 +2351,10 @@
   function renderFigurasSelector() {
     var grid = document.getElementById('figurasSelectorGrid');
     if (!grid) return;
+    var panel = document.getElementById('figuraWorkspacePanel');
+    if (panel && panel.parentNode && panel.parentNode !== grid.parentNode) {
+      grid.parentNode.insertBefore(panel, grid.nextSibling);
+    }
     grid.innerHTML = '';
     FIGURAS_DATA.forEach(function (fig, idx) {
       var isCompleted = false;
@@ -2269,25 +2364,47 @@
         isCompleted = !!state.completedFiguras[fig.id];
       }
 
-      var btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'figura-chip-btn' +
-        (idx === figuraState.currentIdx ? ' active' : '') +
-        (isCompleted ? ' completed' : '');
-      btn.innerHTML =
+      var item = document.createElement('div');
+      item.className = 'figura-acc-item' + (idx === figuraState.currentIdx ? ' active' : '');
+      item.id = 'figuraAccItem-' + idx;
+
+      var headerBtn = document.createElement('button');
+      headerBtn.type = 'button';
+      headerBtn.className = 'figura-acc-header' + (idx === figuraState.currentIdx ? ' active' : '');
+      headerBtn.innerHTML =
         '<span class="figura-chip-ico" aria-hidden="true">' + fig.emoji + '</span>' +
-        '<div class="figura-chip-info">' +
+        '<div class="figura-chip-info" style="flex:1;">' +
           '<strong>' + fig.selectorTitle + '</strong>' +
           '<span>' + fig.selectorSubtitle + '</span>' +
+        '</div>' +
+        '<div class="figura-acc-status">' +
+          (isCompleted ? '<span class="acc-tag-done">✓ ¡Listo!</span>' : '<span class="acc-tag-pending">🎨 Trazar</span>') +
+          '<span class="acc-chevron">' + (idx === figuraState.currentIdx ? '▲' : '▼') + '</span>' +
         '</div>';
-      btn.onclick = function () {
+
+      headerBtn.onclick = function () {
         selectFigura(idx, true);
       };
-      grid.appendChild(btn);
+
+      var body = document.createElement('div');
+      body.className = 'figura-acc-body';
+      body.id = 'figuraAccBody-' + idx;
+
+      item.appendChild(headerBtn);
+      item.appendChild(body);
+      grid.appendChild(item);
+
+      if (idx === figuraState.currentIdx && panel) {
+        body.appendChild(panel);
+      }
     });
   }
 
   function selectFigura(idx, speak) {
+    if (figuraAutoAdvanceTimer) {
+      clearTimeout(figuraAutoAdvanceTimer);
+      figuraAutoAdvanceTimer = null;
+    }
     window.detenerVozPrebasica();
     figuraState.currentIdx = idx;
     figuraState.userStrokes = [];
@@ -2388,6 +2505,13 @@
     renderFiguraObjetos();
     renderFiguraCanvas();
 
+    var activeAccItem = document.getElementById('figuraAccItem-' + idx);
+    if (activeAccItem) {
+      try {
+        activeAccItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } catch (e) {}
+    }
+
     if (speak) {
       window.hablarTexto(active.audioInst, 'es-ES');
     }
@@ -2418,7 +2542,7 @@
     if (newlyHit) {
       var total = figuraState.waypoints.length || 1;
       var hits = figuraState.waypoints.filter(function (w) { return w.hit; }).length;
-      var pct = Math.floor((hits / total) * 100);
+      var rawPct = Math.floor((hits / total) * 100);
 
       var numSegments = figuraState.numSegments || 1;
       var allSegmentsDone = true;
@@ -2431,20 +2555,32 @@
             if (w.hit) segHits++;
           }
         });
-        if (segTotal > 0 && (segHits / segTotal) < 0.85) {
+        if (segTotal > 0 && (segHits / segTotal) < 0.88) {
           allSegmentsDone = false;
           break;
         }
       }
 
-      var displayPct = (allSegmentsDone && pct >= 92) ? 100 : Math.min(99, pct);
+      // Exigir que los últimos checkpoints del tramo final que regresa al vértice 1 estén visitados
+      var lastCps = figuraState.waypoints.slice(-2);
+      var finalClosed = lastCps.length > 0 && lastCps.every(function (w) { return w.hit; });
+
+      var isFullyClosed = allSegmentsDone && finalClosed && rawPct >= 96;
+      // Mientras falte cerrar ese último tramo hacia el punto 1, la barra debe mostrar máximo 95% o 96%
+      var displayPct = isFullyClosed ? 100 : Math.min(95, rawPct);
       updateFiguraProgressUI(displayPct);
 
-      if (allSegmentsDone && pct >= 92 && !figuraState.completedCurrent) {
+      if (isFullyClosed && !figuraState.completedCurrent) {
         figuraState.completedCurrent = true;
         figuraState.isDrawing = false;
         figuraState.inLane = false;
+        // Marcar todos los waypoints como iluminados
+        figuraState.waypoints.forEach(function (w) { w.hit = true; });
         updateFiguraProgressUI(100);
+
+        // Forzar renderizado completo del contorno cerrado al 100% sobre el canvas sin huecos
+        renderFiguraCanvas();
+
         var active = getActiveFigura();
         var key = getActiveFiguraStorageKey();
         if (active && !state.completedFiguras[key]) {
@@ -2465,6 +2601,11 @@
           window.hablarTexto(active.audioFelicita, 'es-ES');
         }
         renderFigurasSelector();
+
+        if (figuraAutoAdvanceTimer) clearTimeout(figuraAutoAdvanceTimer);
+        figuraAutoAdvanceTimer = setTimeout(function () {
+          window.siguienteFigura();
+        }, 1800);
       }
     }
   }
@@ -2654,6 +2795,49 @@
       ctx.restore();
     });
 
+    // Si la figura está 100% completada, forzar el renderizado completo y cerrado del contorno sin huecos
+    if (figuraState.completedCurrent && pData.paths) {
+      pData.paths.forEach(function (path) {
+        if (!path || path.length < 2) return;
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(path[0].x, path[0].y);
+        for (var i = 1; i < path.length; i++) {
+          ctx.lineTo(path[i].x, path[i].y);
+        }
+        ctx.closePath();
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        if (figuraState.color === 'rainbow') {
+          var grad = ctx.createLinearGradient(0, 0, w, h);
+          grad.addColorStop(0, '#e53935');
+          grad.addColorStop(0.2, '#fb8c00');
+          grad.addColorStop(0.4, '#fbc02d');
+          grad.addColorStop(0.6, '#43a047');
+          grad.addColorStop(0.8, '#1e88e5');
+          grad.addColorStop(1, '#8e24aa');
+          ctx.strokeStyle = grad;
+        } else {
+          ctx.strokeStyle = figuraState.color || active.colorHex;
+        }
+        ctx.lineWidth = 24;
+        ctx.stroke();
+
+        // Brillo interior blanco de celebración
+        ctx.beginPath();
+        ctx.moveTo(path[0].x, path[0].y);
+        for (var j = 1; j < path.length; j++) {
+          ctx.lineTo(path[j].x, path[j].y);
+        }
+        ctx.closePath();
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
+        ctx.lineWidth = 8;
+        ctx.stroke();
+        ctx.restore();
+      });
+    }
+
     // 8. Chispas mágicas doradas en el recorrido del dedo
     figuraState.sparkles.forEach(function (sp) {
       ctx.save();
@@ -2698,10 +2882,18 @@
   };
 
   window.borrarTrazoFiguraActual = function () {
+    if (figuraAutoAdvanceTimer) {
+      clearTimeout(figuraAutoAdvanceTimer);
+      figuraAutoAdvanceTimer = null;
+    }
     selectFigura(figuraState.currentIdx, false);
   };
 
   window.siguienteFigura = function () {
+    if (figuraAutoAdvanceTimer) {
+      clearTimeout(figuraAutoAdvanceTimer);
+      figuraAutoAdvanceTimer = null;
+    }
     var next = (figuraState.currentIdx + 1) % FIGURAS_DATA.length;
     selectFigura(next, true);
   };

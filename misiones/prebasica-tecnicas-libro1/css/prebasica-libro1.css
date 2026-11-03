@@ -859,11 +859,112 @@ body::before {
 /* ==========================================================================
    2. PESTAÑA 1: TRAZOS CON EL DEDO (CANVAS TÁCTIL)
    ========================================================================== */
-.trace-selector-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+.trace-selector-grid,
+.figuras-selector-grid {
+  display: flex;
+  flex-direction: column;
   gap: 0.65rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.15rem;
+}
+
+.trace-acc-item,
+.figura-acc-item {
+  display: flex;
+  flex-direction: column;
+  border-radius: 16px;
+  border: 2.5px solid var(--border);
+  background: var(--card);
+  overflow: hidden;
+  transition: all 0.22s ease;
+}
+
+.trace-acc-item.active,
+.figura-acc-item.active {
+  border-color: var(--pri);
+  box-shadow: 0 4px 18px var(--pri-gl);
+}
+
+.trace-acc-header,
+.figura-acc-header {
+  box-sizing: border-box;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.65rem 0.95rem;
+  min-height: 52px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--dark);
+  text-align: left;
+  user-select: none;
+  transition: background 0.18s;
+}
+
+.trace-acc-header:hover,
+.figura-acc-header:hover {
+  background: var(--pri-gl);
+}
+
+.trace-acc-header.active,
+.figura-acc-header.active {
+  background: var(--pri-gl);
+  border-bottom: 2px solid var(--border);
+}
+
+.trace-acc-status,
+.figura-acc-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.acc-tag-done {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(0.72rem, 1.4vw, 0.82rem);
+  background: var(--green);
+  color: #ffffff;
+  padding: 3px 8px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.acc-tag-pending {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(0.7rem, 1.3vw, 0.78rem);
+  background: rgba(150, 165, 185, 0.2);
+  color: var(--gray);
+  padding: 3px 8px;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.acc-chevron {
+  font-size: 0.88rem;
+  color: var(--pri);
+  font-weight: bold;
+}
+
+.trace-acc-body,
+.figura-acc-body {
+  display: none;
+  padding: 0.85rem;
+  background: var(--card);
+}
+
+.trace-acc-item.active .trace-acc-body,
+.figura-acc-item.active .figura-acc-body {
+  display: block;
+}
+
+.trace-workspace-panel,
+.figura-workspace-panel {
+  display: block;
+  width: 100%;
 }
 
 .trace-chip-btn {
@@ -1039,13 +1140,6 @@ body::before {
 /* ==========================================================================
    2.5. PESTAÑA 2: FIGURAS PLANAS CON MI DEDITO (PÁGS. 25–32)
    ========================================================================== */
-.figuras-selector-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
-  gap: 0.65rem;
-  margin-bottom: 0.9rem;
-}
-
 .figura-chip-btn {
   box-sizing: border-box;
   overflow: hidden;

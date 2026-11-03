@@ -11,12 +11,12 @@
 <meta property="og:url" content="https://metas.policastsapien.com/misiones/prebasica-tecnicas-libro1/prebasica-libro1.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Misiones PolicastSapien">
-<link rel="stylesheet" href="../../css/vendor/fuentes/fuentes.css?v=456">
-<link rel="stylesheet" href="css/prebasica-libro1.css?v=456">
-<link rel="stylesheet" href="../../css/barra-secciones.css?v=456">
-<link rel="stylesheet" href="../../css/senal-no-color.css?v=456">
-<link rel="stylesheet" href="../../css/teclado-actividades.css?v=456">
-<script src="../../js/estrella-ganada.js?v=456"></script>
+<link rel="stylesheet" href="../../css/vendor/fuentes/fuentes.css?v=457">
+<link rel="stylesheet" href="css/prebasica-libro1.css?v=457">
+<link rel="stylesheet" href="../../css/barra-secciones.css?v=457">
+<link rel="stylesheet" href="../../css/senal-no-color.css?v=457">
+<link rel="stylesheet" href="../../css/teclado-actividades.css?v=457">
+<script src="../../js/estrella-ganada.js?v=457"></script>
 </head>
 <body>
 
@@ -144,42 +144,48 @@
       <h3>1. Elige uno de los 6 retos de trazo del Libro 1:</h3>
       <div class="trace-selector-grid" id="traceSelectorGrid" role="group" aria-label="Selector de 6 retos de trazo"></div>
 
-      <div class="trace-toolbar">
-        <div class="color-palette" role="group" aria-label="Colores de pintura para el dedo">
-          <span style="font-family:'Fredoka',sans-serif;font-size:0.9rem;margin-right:0.25rem;">🎨 Color:</span>
-          <button type="button" class="color-swatch rainbow active" data-color="rainbow" onclick="seleccionarColorTrazo('rainbow', this)" title="Arcoíris mágico" aria-label="Color arcoíris"></button>
-          <button type="button" class="color-swatch" style="background:#e65100;" data-color="#e65100" onclick="seleccionarColorTrazo('#e65100', this)" title="Naranja / Orange" aria-label="Color naranja"></button>
-          <button type="button" class="color-swatch" style="background:#0984e3;" data-color="#0984e3" onclick="seleccionarColorTrazo('#0984e3', this)" title="Azul / Blue" aria-label="Color azul"></button>
-          <button type="button" class="color-swatch" style="background:#00b894;" data-color="#00b894" onclick="seleccionarColorTrazo('#00b894', this)" title="Verde / Green" aria-label="Color verde"></button>
-          <button type="button" class="color-swatch" style="background:#d63031;" data-color="#d63031" onclick="seleccionarColorTrazo('#d63031', this)" title="Rojo / Red" aria-label="Color rojo"></button>
-          <button type="button" class="color-swatch" style="background:#6c5ce7;" data-color="#6c5ce7" onclick="seleccionarColorTrazo('#6c5ce7', this)" title="Morado / Violet" aria-label="Color morado"></button>
+      <!-- PANEL DE TRABAJO IN-PLACE (SE INSERTA DENTRO DE LA TARJETA ACTIVA DEL ACORDEÓN) -->
+      <div class="trace-workspace-panel" id="traceWorkspacePanel">
+        <div class="trace-toolbar">
+          <div class="color-palette" role="group" aria-label="Colores de pintura para el dedo">
+            <span style="font-family:'Fredoka',sans-serif;font-size:0.9rem;margin-right:0.25rem;">🎨 Color:</span>
+            <button type="button" class="color-swatch rainbow active" data-color="rainbow" onclick="seleccionarColorTrazo('rainbow', this)" title="Arcoíris mágico" aria-label="Color arcoíris"></button>
+            <button type="button" class="color-swatch" style="background:#e65100;" data-color="#e65100" onclick="seleccionarColorTrazo('#e65100', this)" title="Naranja / Orange" aria-label="Color naranja"></button>
+            <button type="button" class="color-swatch" style="background:#0984e3;" data-color="#0984e3" onclick="seleccionarColorTrazo('#0984e3', this)" title="Azul / Blue" aria-label="Color azul"></button>
+            <button type="button" class="color-swatch" style="background:#00b894;" data-color="#00b894" onclick="seleccionarColorTrazo('#00b894', this)" title="Verde / Green" aria-label="Color verde"></button>
+            <button type="button" class="color-swatch" style="background:#d63031;" data-color="#d63031" onclick="seleccionarColorTrazo('#d63031', this)" title="Rojo / Red" aria-label="Color rojo"></button>
+            <button type="button" class="color-swatch" style="background:#6c5ce7;" data-color="#6c5ce7" onclick="seleccionarColorTrazo('#6c5ce7', this)" title="Morado / Violet" aria-label="Color morado"></button>
+          </div>
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+            <button type="button" class="btn-kid secondary" onclick="leerRetoTrazoActual(this)">
+              🔊 Escuchar
+            </button>
+            <button type="button" class="btn-kid danger" onclick="borrarTrazoActual()">
+              🧹 Borrar trazo
+            </button>
+            <button type="button" class="btn-kid primary" onclick="siguienteRetoTrazo()">
+              ➡️ Siguiente reto
+            </button>
+          </div>
         </div>
-        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-          <button type="button" class="btn-kid danger" onclick="borrarTrazoActual()">
-            🧹 Borrar trazo
-          </button>
-          <button type="button" class="btn-kid primary" onclick="siguienteRetoTrazo()">
-            ➡️ Siguiente reto
-          </button>
+
+        <!-- LIENZO HTML5 CANVAS COMPATIBLE CON TOUCH Y RATÓN -->
+        <div class="canvas-stage-wrap">
+          <canvas id="traceCanvas" width="820" height="400" aria-label="Lienzo táctil para trazar líneas y arabescos con el dedo"></canvas>
         </div>
-      </div>
 
-      <!-- LIENZO HTML5 CANVAS COMPATIBLE CON TOUCH Y RATÓN -->
-      <div class="canvas-stage-wrap">
-        <canvas id="traceCanvas" width="820" height="400" aria-label="Lienzo táctil para trazar líneas y arabescos con el dedo"></canvas>
-      </div>
-
-      <div class="trace-progress-row">
-        <span style="font-family:'Fredoka',sans-serif;font-size:0.92rem;">Avance del camino:</span>
-        <div class="trace-progress-bar" aria-hidden="true">
-          <div class="trace-progress-fill" id="traceProgressFill"></div>
+        <div class="trace-progress-row">
+          <span style="font-family:'Fredoka',sans-serif;font-size:0.92rem;">Avance del camino:</span>
+          <div class="trace-progress-bar" aria-hidden="true">
+            <div class="trace-progress-fill" id="traceProgressFill"></div>
+          </div>
+          <span id="traceProgressPct" style="font-family:'Fredoka',sans-serif;font-weight:700;">0%</span>
         </div>
-        <span id="traceProgressPct" style="font-family:'Fredoka',sans-serif;font-weight:700;">0%</span>
-      </div>
 
-      <div class="trace-status-banner" id="traceStatusBanner" role="status" aria-live="polite">
-        <span>🐝</span>
-        <div id="traceStatusMsg">Pon tu dedito en el círculo verde de inicio y sigue los puntitos hasta la meta.</div>
+        <div class="trace-status-banner" id="traceStatusBanner" role="status" aria-live="polite">
+          <span>🐝</span>
+          <div id="traceStatusMsg">Pon tu dedito en el círculo verde de inicio y sigue los puntitos hasta la meta.</div>
+        </div>
       </div>
     </div>
 
@@ -215,78 +221,91 @@
       <h3>1. Elige una de las 7 figuras geométricas del Libro 1:</h3>
       <div class="figuras-selector-grid" id="figurasSelectorGrid" role="group" aria-label="Selector de 7 figuras del Libro 1"></div>
 
-      <!-- Selector secundario para la opción 7: Estrella y Corazón -->
-      <div id="figSubSelectorBar" class="subtab-bar" style="display:none; margin-top:0.2rem; margin-bottom:0.8rem;" role="group" aria-label="Elige Estrella o Corazón">
-        <button type="button" class="btn-kid active-chip" id="btnSubFigEstrella" onclick="seleccionarSubFigura('estrella')">⭐ Estrella de 5 puntas (Pág. 31)</button>
-        <button type="button" class="btn-kid" id="btnSubFigCorazon" onclick="seleccionarSubFigura('corazon')">💖 Corazón (Pág. 32)</button>
-      </div>
-
-      <!-- Tarjeta de presentación de la figura activa con sus propiedades geométricas -->
-      <div class="figura-badge-banner" id="figuraBadgeBanner">
-        <div class="figura-title-col">
-          <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
-            <span class="figura-tag-pld" id="figuraPaginaTag">📖 Pág. 25</span>
-            <span class="figura-tag-color" id="figuraColorTag">🔴 Color: Rojo</span>
-          </div>
-          <div style="display:flex;align-items:baseline;gap:0.6rem;margin-top:0.25rem;flex-wrap:wrap;">
-            <span class="figura-name-es" id="figuraNameEs">Círculo</span>
-            <span class="figura-name-en" id="figuraNameEn">(Circle)</span>
-          </div>
+      <!-- PANEL COMPLETO DE TRABAJO DE FIGURAS (SE INSERTA DENTRO DE LA FIGURA ACTIVA DEL ACORDEÓN) -->
+      <div class="figura-workspace-panel" id="figuraWorkspacePanel">
+        <!-- Selector secundario para la opción 7: Estrella y Corazón -->
+        <div id="figSubSelectorBar" class="subtab-bar" style="display:none; margin-top:0.2rem; margin-bottom:0.8rem;" role="group" aria-label="Elige Estrella o Corazón">
+          <button type="button" class="btn-kid active-chip" id="btnSubFigEstrella" onclick="seleccionarSubFigura('estrella')">⭐ Estrella de 5 puntas (Pág. 31)</button>
+          <button type="button" class="btn-kid" id="btnSubFigCorazon" onclick="seleccionarSubFigura('corazon')">💖 Corazón (Pág. 32)</button>
         </div>
-        <div class="figura-geom-labels" id="figuraGeomLabels"></div>
-      </div>
 
-      <!-- Barra de herramientas: color del dedito y acciones -->
-      <div class="trace-toolbar" style="margin-top:0.75rem;">
-        <div class="color-palette" role="group" aria-label="Color o brillo de pintura para el dedito">
-          <span style="font-family:'Fredoka',sans-serif;font-size:0.9rem;margin-right:0.25rem;">✨ Dedito:</span>
-          <button type="button" class="color-swatch rainbow active" data-figcolor="rainbow" onclick="seleccionarColorFigura('rainbow', this)" title="Brillo dorado y arcoíris mágico" aria-label="Efecto arcoíris"></button>
-          <button type="button" class="color-swatch" style="background:#e53935;" data-figcolor="#e53935" onclick="seleccionarColorFigura('#e53935', this)" title="Rojo brillante" aria-label="Rojo brillante"></button>
-          <button type="button" class="color-swatch" style="background:#1e88e5;" data-figcolor="#1e88e5" onclick="seleccionarColorFigura('#1e88e5', this)" title="Azul brillante" aria-label="Azul brillante"></button>
-          <button type="button" class="color-swatch" style="background:#43a047;" data-figcolor="#43a047" onclick="seleccionarColorFigura('#43a047', this)" title="Verde brillante" aria-label="Verde brillante"></button>
-          <button type="button" class="color-swatch" style="background:#fb8c00;" data-figcolor="#fb8c00" onclick="seleccionarColorFigura('#fb8c00', this)" title="Anaranjado brillante" aria-label="Anaranjado brillante"></button>
-          <button type="button" class="color-swatch" style="background:#fbc02d;" data-figcolor="#fbc02d" onclick="seleccionarColorFigura('#fbc02d', this)" title="Amarillo estrella" aria-label="Amarillo estrella"></button>
+        <!-- Tarjeta de presentación de la figura activa con sus propiedades geométricas -->
+        <div class="figura-badge-banner" id="figuraBadgeBanner">
+          <div class="figura-title-col">
+            <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+              <span class="figura-tag-pld" id="figuraPaginaTag">📖 Pág. 25</span>
+              <span class="figura-tag-color" id="figuraColorTag">🔴 Color: Rojo</span>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:0.6rem;margin-top:0.25rem;flex-wrap:wrap;">
+              <span class="figura-name-es" id="figuraNameEs">Círculo</span>
+              <span class="figura-name-en" id="figuraNameEn">(Circle)</span>
+            </div>
+          </div>
+          <div class="figura-geom-labels" id="figuraGeomLabels"></div>
         </div>
-        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-          <button type="button" class="btn-kid danger" onclick="borrarTrazoFiguraActual()">
-            🔄 Repasar de nuevo
+
+        <!-- Botones de voz bilingüe integrados al panel -->
+        <div class="figura-audio-row" style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.25rem;margin-bottom:0.55rem;">
+          <button type="button" class="btn-kid secondary" onclick="leerInstruccionFiguraActual(this)">
+            🔊 Escuchar rima e instrucción
           </button>
-          <button type="button" class="btn-kid primary" onclick="siguienteFigura()">
-            ➡️ Siguiente figura
+          <button type="button" class="btn-kid purple" id="btnInglesFigura" onclick="escucharInglesFiguraActual(this)">
+            🇺🇸 Escuchar en inglés
           </button>
         </div>
-      </div>
 
-      <!-- LIENZO TÁCTIL INTERACTIVO DE LA FIGURA (CANVAS) -->
-      <div class="canvas-stage-wrap figura-stage-wrap">
-        <canvas id="figuraCanvas" width="820" height="420" aria-label="Lienzo táctil para repasar el contorno de la figura geométrica"></canvas>
-      </div>
-
-      <div class="trace-progress-row">
-        <span style="font-family:'Fredoka',sans-serif;font-size:0.92rem;">Contorno completado:</span>
-        <div class="trace-progress-bar" aria-hidden="true">
-          <div class="trace-progress-fill" id="figuraProgressFill"></div>
-        </div>
-        <span id="figuraProgressPct" style="font-family:'Fredoka',sans-serif;font-weight:700;">0%</span>
-      </div>
-
-      <div class="trace-status-banner" id="figuraStatusBanner" role="status" aria-live="polite">
-        <span>☝️</span>
-        <div id="figuraStatusMsg">Pasa tu dedito por los puntos numerados del contorno para descubrir sus lados.</div>
-      </div>
-
-      <!-- MINI-RETO DESBLOQUEABLE: OBJETOS DE LA VIDA REAL DEL LIBRO -->
-      <div class="figura-objetos-section" id="figuraObjetosSection">
-        <div class="figura-objetos-header">
-          <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
-            <span style="font-size:1.45rem;" aria-hidden="true">🔍</span>
-            <h3 style="margin:0;font-size:1.15rem;">¡Toca los objetos reales que tienen esta misma forma!</h3>
+        <!-- Barra de herramientas: color del dedito y acciones -->
+        <div class="trace-toolbar" style="margin-top:0.25rem;">
+          <div class="color-palette" role="group" aria-label="Color o brillo de pintura para el dedito">
+            <span style="font-family:'Fredoka',sans-serif;font-size:0.9rem;margin-right:0.25rem;">✨ Dedito:</span>
+            <button type="button" class="color-swatch rainbow active" data-figcolor="rainbow" onclick="seleccionarColorFigura('rainbow', this)" title="Brillo dorado y arcoíris mágico" aria-label="Efecto arcoíris"></button>
+            <button type="button" class="color-swatch" style="background:#e53935;" data-figcolor="#e53935" onclick="seleccionarColorFigura('#e53935', this)" title="Rojo brillante" aria-label="Rojo brillante"></button>
+            <button type="button" class="color-swatch" style="background:#1e88e5;" data-figcolor="#1e88e5" onclick="seleccionarColorFigura('#1e88e5', this)" title="Azul brillante" aria-label="Azul brillante"></button>
+            <button type="button" class="color-swatch" style="background:#43a047;" data-figcolor="#43a047" onclick="seleccionarColorFigura('#43a047', this)" title="Verde brillante" aria-label="Verde brillante"></button>
+            <button type="button" class="color-swatch" style="background:#fb8c00;" data-figcolor="#fb8c00" onclick="seleccionarColorFigura('#fb8c00', this)" title="Anaranjado brillante" aria-label="Anaranjado brillante"></button>
+            <button type="button" class="color-swatch" style="background:#fbc02d;" data-figcolor="#fbc02d" onclick="seleccionarColorFigura('#fbc02d', this)" title="Amarillo estrella" aria-label="Amarillo estrella"></button>
           </div>
-          <p style="font-size:0.92rem;color:var(--gray);margin-top:0.25rem;margin-bottom:0.6rem;">
-            Página <span id="lblPaginaObjetos">25</span> del Libro 1. Toca cada objeto para escuchar su nombre:
-          </p>
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+            <button type="button" class="btn-kid danger" onclick="borrarTrazoFiguraActual()">
+              🔄 Repasar de nuevo
+            </button>
+            <button type="button" class="btn-kid primary" onclick="siguienteFigura()">
+              ➡️ Siguiente figura
+            </button>
+          </div>
         </div>
-        <div class="figura-objetos-grid" id="figuraObjetosGrid" role="group" aria-label="Objetos del libro con esta forma"></div>
+
+        <!-- LIENZO TÁCTIL INTERACTIVO DE LA FIGURA (CANVAS) -->
+        <div class="canvas-stage-wrap figura-stage-wrap">
+          <canvas id="figuraCanvas" width="820" height="420" aria-label="Lienzo táctil para repasar el contorno de la figura geométrica"></canvas>
+        </div>
+
+        <div class="trace-progress-row">
+          <span style="font-family:'Fredoka',sans-serif;font-size:0.92rem;">Contorno completado:</span>
+          <div class="trace-progress-bar" aria-hidden="true">
+            <div class="trace-progress-fill" id="figuraProgressFill"></div>
+          </div>
+          <span id="figuraProgressPct" style="font-family:'Fredoka',sans-serif;font-weight:700;">0%</span>
+        </div>
+
+        <div class="trace-status-banner" id="figuraStatusBanner" role="status" aria-live="polite">
+          <span>☝️</span>
+          <div id="figuraStatusMsg">Pasa tu dedito por los puntos numerados del contorno para descubrir sus lados.</div>
+        </div>
+
+        <!-- MINI-RETO DESBLOQUEABLE: OBJETOS DE LA VIDA REAL DEL LIBRO -->
+        <div class="figura-objetos-section" id="figuraObjetosSection">
+          <div class="figura-objetos-header">
+            <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+              <span style="font-size:1.45rem;" aria-hidden="true">🔍</span>
+              <h3 style="margin:0;font-size:1.15rem;">¡Toca los objetos reales que tienen esta misma forma!</h3>
+            </div>
+            <p style="font-size:0.92rem;color:var(--gray);margin-top:0.25rem;margin-bottom:0.6rem;">
+              Página <span id="lblPaginaObjetos">25</span> del Libro 1. Toca cada objeto para escuchar su nombre:
+            </p>
+          </div>
+          <div class="figura-objetos-grid" id="figuraObjetosGrid" role="group" aria-label="Objetos del libro con esta forma"></div>
+        </div>
       </div>
     </div>
 
@@ -587,11 +606,11 @@
   </div>
 </footer>
 
-<script src="js/colegios-prebasica.js?v=456"></script>
-<script src="js/mapa-audios-prebasica.js?v=456"></script>
-<script src="js/prebasica-libro1.js?v=456"></script>
-<script src="../../js/barra-secciones.js?v=456"></script>
-<script src="../../js/teclado-actividades.js?v=456"></script>
+<script src="js/colegios-prebasica.js?v=457"></script>
+<script src="js/mapa-audios-prebasica.js?v=457"></script>
+<script src="js/prebasica-libro1.js?v=457"></script>
+<script src="../../js/barra-secciones.js?v=457"></script>
+<script src="../../js/teclado-actividades.js?v=457"></script>
 <script>
   if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
     navigator.serviceWorker.register('../../sw.js').then(function (reg) {
