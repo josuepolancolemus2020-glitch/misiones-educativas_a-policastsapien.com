@@ -161,7 +161,8 @@ var VIDEOS_MISIONES = {
   '2ciclo-multiplicacion-decimales':                 [],   /* Multiplicación de Decimales */
   '2ciclo-solidos-geometricos':                      [],   /* Sólidos Geométricos */
   '2ciclo-volumen-cuerpos':                          [],   /* Volumen de Cuerpos: cubos, prismas y cilindros */
-  '2ciclo-numeracion-maya':                          []   /* Numeración y Calendario Mayas */
+  '2ciclo-numeracion-maya':                          [],   /* Numeración y Calendario Mayas */
+  'mate-fracciones-heterogeneas':                    []    /* Suma y Resta de Fracciones Heterogéneas */
 
 };
 

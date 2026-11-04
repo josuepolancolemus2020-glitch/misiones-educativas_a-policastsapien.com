@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Suma y Resta de Fracciones Heterogéneas · M.E.T.A.S</title>
+<style>
+  /* ═══════════════════════════════════════════════════════════════
+     FICHA DIDÁCTICA IMPRIMIBLE · M.E.T.A.S
+     Normativa de diseño editorial para fichas de estudio:
+       · Papel: Carta (215.9 × 279.4 mm), orientación vertical.
+       · Márgenes: 14 mm arriba/abajo, 16 mm izquierda/derecha.
+       · Fuente: Arial / Helvetica (sans-serif de alta legibilidad).
+       · Cuerpo: 11 pt, interlineado 1.38.
+       · Color de materia (Matemática): Azul (#1565c0).
+     ═══════════════════════════════════════════════════════════════ */
+  :root {
+    --mat: #1565c0;
+    --mat-osc: #0d47a1;
+    --mat-claro: #e3f2fd;
+    --mat-borde: #90caf9;
+    --acento: #00838f;
+    --acento-claro: #e0f7fa;
+    --verde: #2e7d32;
+    --verde-claro: #e8f5e9;
+    --rojo: #c62828;
+    --rojo-claro: #ffebee;
+    --tinta: #1a1a1a;
+    --gris: #555555;
+    --gris-claro: #f5f5f5;
+    --borde: #cccccc;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  @page {
+    size: letter portrait;
+    margin: 14mm 16mm;
+  }
+
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11pt;
+    line-height: 1.38;
+    color: var(--tinta);
+    background: #e9ecef;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Barra superior solo en pantalla */
+  .barra-acciones {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #1b2838;
+    color: #fff;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  }
+  .barra-acciones .titulo-barra {
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .barra-acciones .botones {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .btn-accion {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-imprimir { background: #2e7d32; color: #fff; }
+  .btn-imprimir:hover { background: #1b5e20; }
+  .btn-volver { background: rgba(255,255,255,0.14); color: #fff; }
+  .btn-volver:hover { background: rgba(255,255,255,0.24); }
+
+  /* Contenedor de hojas en vista previa */
+  .documento {
+    max-width: 215.9mm;
+    margin: 18px auto 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .pagina {
+    background: #ffffff;
+    width: 215.9mm;
+    min-height: 279.4mm;
+    padding: 14mm 16mm 12mm;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    page-break-after: always;
+    break-after: page;
+  }
+  .pagina:last-child {
+    page-break-after: auto;
+    break-after: auto;
+  }
+
+  .contenido { flex: 1; }
+
+  /* ── ENCABEZADO DE PORTADA ── */
+  .encabezado {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: center;
+    border: 2px solid var(--mat);
+    border-radius: 8px;
+    padding: 10px 14px;
+    background: linear-gradient(135deg, var(--mat-claro) 0%, #ffffff 70%);
+    margin-bottom: 10px;
+  }
+  .enc-insignia {
+    display: inline-block;
+    background: var(--mat);
+    color: #fff;
+    font-size: 8.5pt;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .enc-titulo {
+    font-size: 16pt;
+    font-weight: 700;
+    color: var(--mat-osc);
+    line-height: 1.15;
+    margin-bottom: 3px;
+  }
+  .enc-sub {
+    font-size: 9.5pt;
+    color: var(--gris);
+  }
+  .enc-meta {
+    margin-top: 6px;
+    font-size: 8.5pt;
+    color: var(--tinta);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+  }
+  .enc-meta span { font-weight: 700; color: var(--mat-osc); }
+
+  .qr-caja {
+    text-align: center;
+    border: 1.5px solid var(--mat-borde);
+    border-radius: 6px;
+    padding: 5px 7px;
+    background: #fff;
+    width: 112px;
+  }
+  .qr-caja img {
+    width: 82px;
+    height: 82px;
+    display: block;
+    margin: 0 auto 2px;
+  }
+  .qr-caja .qr-txt {
+    font-size: 7pt;
+    line-height: 1.15;
+    color: var(--mat-osc);
+    font-weight: 700;
+  }
+
+  /* Datos del estudiante */
+  .datos-est {
+    display: grid;
+    grid-template-columns: 2.2fr 1fr 1fr;
+    gap: 10px;
+    border: 1px solid var(--borde);
+    border-radius: 6px;
+    padding: 6px 10px;
+    margin-bottom: 10px;
+    font-size: 9.5pt;
+    background: #fafafa;
+  }
+  .datos-est div {
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .datos-est b { color: var(--mat-osc); }
+
+  /* ── TÍTULOS DE SECCIÓN ── */
+  h2 {
+    font-size: 12pt;
+    font-weight: 700;
+    color: #fff;
+    background: var(--mat);
+    padding: 4px 10px;
+    border-radius: 5px;
+    margin: 9px 0 6px;
+    letter-spacing: 0.2px;
+  }
+  h2:first-child { margin-top: 0; }
+
+  h3 {
+    font-size: 10.5pt;
+    font-weight: 700;
+    color: var(--mat-osc);
+    margin: 7px 0 3px;
+    border-left: 3.5px solid var(--mat);
+    padding-left: 7px;
+  }
+
+  p { margin-bottom: 5px; text-align: justify; }
+
+  ul, ol { margin: 3px 0 6px 20px; }
+  li { margin-bottom: 2.5px; }
+
+  /* ── CAJAS DIDÁCTICAS ── */
+  .caja {
+    border: 1px solid var(--mat-borde);
+    background: var(--mat-claro);
+    border-radius: 6px;
+    padding: 7px 10px;
+    margin: 6px 0;
+  }
+  .caja-acento {
+    border: 1px solid #80deea;
+    background: var(--acento-claro);
+    border-radius: 6px;
+    padding: 7px 10px;
+    margin: 6px 0;
+  }
+  .caja-verde {
+    border: 1px solid #a5d6a7;
+    background: var(--verde-claro);
+    border-radius: 6px;
+    padding: 7px 10px;
+    margin: 6px 0;
+  }
+  .caja-roja {
+    border: 1px solid #ef9a9a;
+    background: var(--rojo-claro);
+    border-radius: 6px;
+    padding: 7px 10px;
+    margin: 6px 0;
+  }
+  .caja-titulo {
+    font-weight: 700;
+    color: var(--mat-osc);
+    margin-bottom: 3px;
+    font-size: 10.5pt;
+  }
+
+  /* Objetivos en 2 columnas */
+  .obj-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px 14px;
+    list-style: none;
+    margin: 4px 0 6px 0;
+    font-size: 10pt;
+  }
+  .obj-grid li {
+    position: relative;
+    padding-left: 16px;
+  }
+  .obj-grid li::before {
+    content: "✔";
+    position: absolute;
+    left: 0;
+    color: var(--mat);
+    font-weight: 700;
+  }
+
+  /* Dos columnas simétricas */
+  .dos-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 5px 0;
+  }
+  .col-card {
+    border: 1px solid var(--borde);
+    border-radius: 6px;
+    padding: 7px 9px;
+    background: #fff;
+  }
+  .col-card h4 {
+    font-size: 10.5pt;
+    color: var(--mat-osc);
+    margin-bottom: 4px;
+    border-bottom: 1.5px solid var(--mat-borde);
+    padding-bottom: 2px;
+  }
+
+  /* Esquema visual en cadena */
+  .cadena {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    background: #fff;
+    border: 1.5px solid var(--mat);
+    border-radius: 6px;
+    padding: 7px 10px;
+    margin: 6px 0;
+    text-align: center;
+  }
+  .eslabon {
+    flex: 1;
+    background: var(--mat-claro);
+    border: 1px solid var(--mat-borde);
+    border-radius: 5px;
+    padding: 5px 4px;
+    font-size: 9.5pt;
+  }
+  .eslabon b {
+    display: block;
+    font-size: 12pt;
+    color: var(--mat-osc);
+  }
+  .flecha {
+    font-weight: 700;
+    color: var(--mat);
+    font-size: 11pt;
+  }
+
+  /* Tablas */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 5px 0 7px;
+    font-size: 10pt;
+  }
+  th, td {
+    border: 1px solid #999;
+    padding: 4.5px 7px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: var(--mat);
+    color: #fff;
+    font-weight: 700;
+    font-size: 10pt;
+  }
+  tr:nth-child(even) td { background: #f8fafd; }
+
+  /* Tarjetas de errores comunes */
+  .err-item {
+    border: 1px solid #e0e0e0;
+    border-left: 4px solid var(--rojo);
+    border-radius: 5px;
+    padding: 5px 9px;
+    margin-bottom: 5.5px;
+    background: #fff;
+    font-size: 10pt;
+  }
+  .err-item .err-tit {
+    font-weight: 700;
+    color: var(--rojo);
+    margin-bottom: 2px;
+  }
+  .err-item .mal { color: var(--rojo); font-weight: 700; }
+  .err-item .bien { color: var(--verde); font-weight: 700; }
+
+  /* ── ACTIVIDADES ── */
+  .acts ol { margin-left: 22px; }
+  .acts li {
+    margin-bottom: 8px;
+    line-height: 1.45;
+  }
+  .linea-resp {
+    display: inline-block;
+    border-bottom: 1.2px solid #222;
+    min-width: 125px;
+    height: 13pt;
+    vertical-align: baseline;
+  }
+  .val {
+    font-size: 9pt;
+    font-weight: 400;
+    color: var(--gris);
+  }
+
+  /* Selección múltiple en 2 columnas de opciones */
+  .preg {
+    margin-bottom: 7px;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .preg-q {
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .preg-n {
+    display: inline-block;
+    background: var(--mat);
+    color: #fff;
+    font-weight: 700;
+    font-size: 9pt;
+    width: 19px;
+    height: 19px;
+    line-height: 19px;
+    text-align: center;
+    border-radius: 50%;
+    margin-right: 5px;
+  }
+  .preg-ops {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px 8px;
+    padding-left: 24px;
+    font-size: 10pt;
+  }
+  /* Círculo para rellenar a lápiz (como en las pruebas estandarizadas):
+     el alumno ve dónde marcar y el maestro califica de un vistazo. */
+  .op {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .op i {
+    font-style: normal;
+    font-weight: 700;
+    font-size: 8.5pt;
+    width: 16px;
+    height: 16px;
+    border: 1.4px solid #222;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* Rúbrica */
+  .rubrica th { background: var(--mat-osc); }
+  .rubrica td { height: 22px; }
+  .rubrica td.lg { white-space: nowrap; }
+
+  /* Pauta docente */
+  .pauta {
+    background: var(--gris-claro);
+    border: 1.5px dashed var(--gris);
+    border-radius: 6px;
+    padding: 8px 11px;
+    font-size: 9.5pt;
+    line-height: 1.45;
+  }
+  .pauta div { margin-bottom: 4px; }
+  .pauta .pt { font-weight: 700; color: var(--mat-osc); }
+
+  .nota-doc {
+    margin-top: 10px;
+    border-left: 4px solid var(--acento);
+    background: var(--acento-claro);
+    padding: 8px 11px;
+    border-radius: 5px;
+    font-size: 9.8pt;
+  }
+
+  .felic {
+    border: 2px solid var(--verde);
+    background: var(--verde-claro);
+    border-radius: 7px;
+    padding: 8px 12px;
+    margin: 8px 0;
+    font-size: 10pt;
+  }
+
+  /* Pie de página */
+  .pag-pie {
+    border-top: 1px solid var(--borde);
+    padding-top: 4px;
+    margin-top: 8px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 8pt;
+    color: var(--gris);
+  }
+  .pag-pie b { color: var(--mat-osc); }
+
+  /* ── MODO IMPRESIÓN ── */
+  @media print {
+    body { background: #fff; }
+    .barra-acciones { display: none !important; }
+    .documento { margin: 0; max-width: none; gap: 0; }
+    .pagina {
+      width: auto;
+      min-height: 0;
+      height: 251mm;
+      padding: 0;
+      box-shadow: none;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- Barra de utilidades (no se imprime) -->
+<div class="barra-acciones">
+  <div class="titulo-barra">📄 Ficha Didáctica · Suma y Resta de Fracciones Heterogéneas (7 páginas · lista para imprimir)</div>
+  <div class="botones">
+    <a class="btn-accion btn-volver" href="../misiones/mate-fracciones-heterogeneas/index.html">← Volver a la misión</a>
+    <button class="btn-accion btn-imprimir" onclick="window.print()">🖨️ Imprimir / Guardar en PDF</button>
+  </div>
+</div>
+
+<div class="documento">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="datos-est">
+      <div><b>Estudiante:</b> ___________________________________________</div>
+      <div><b>Grado y sección:</b> ______________</div>
+      <div><b>Fecha:</b> ____/____/______</div>
+    </div>
+
+    <div class="encabezado">
+      <div>
+        <span class="enc-insignia">MATEMÁTICA · EDUCACIÓN BÁSICA · FRACCIONES HETEROGÉNEAS</span>
+        <div class="enc-titulo">Suma y Resta de Fracciones con Diferente Denominador</div>
+        <div class="enc-sub">El denominador común (MCM), las fracciones equivalentes, la suma y resta paso a paso y la simplificación</div>
+        <div class="enc-meta">
+          <div><span>Grados:</span> 4.º a 7.º · II y III Ciclo</div>
+          <div><span>Método:</span> 3 Pasos con MCM + Mariposa</div>
+          <div><span>Proyecto Educativo:</span> M.E.T.A.S</div>
+        </div>
+      </div>
+      <div class="qr-caja">
+        <img src="../img/qr-mision-fracciones.png" alt="Código QR a la misión interactiva">
+        <div class="qr-txt">Escanea para abrir la misión interactiva</div>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de aprendizaje</h2>
+    <ul class="obj-grid">
+      <li>Distinguir las fracciones homogéneas (igual denominador) de las heterogéneas (diferente denominador).</li>
+      <li>Explicar por qué no se pueden sumar ni restar directamente partes de distinto tamaño.</li>
+      <li>Calcular el Mínimo Común Múltiplo (MCM) de los denominadores en el Paso 1.</li>
+      <li>Convertir cada fracción a su fracción equivalente con el denominador común en el Paso 2.</li>
+      <li>Sumar o restar los numeradores equivalentes y conservar el denominador común en el Paso 3.</li>
+      <li>Simplificar el resultado hasta su fracción irreducible dividiendo entre el MCD.</li>
+      <li>Sumar y restar números mixtos con diferente denominador convirtiéndolos a fracciones impropias.</li>
+      <li>Resolver problemas cotidianos de cocina, pulpería, carpintería y cosecha en Honduras.</li>
+    </ul>
+
+    <h2>1. ¿Por qué no se pueden sumar ni restar directamente fracciones heterogéneas?</h2>
+    <p>Dos o más fracciones son <strong>heterogéneas</strong> cuando tienen <strong>diferente denominador</strong>, como <strong>1/2</strong> y <strong>1/3</strong>, o <strong>3/4</strong> y <strong>1/6</strong>. Como el denominador indica en cuántas partes iguales se partió el entero, tener denominadores distintos significa que <strong>los pedazos son de diferente tamaño</strong>: una mitad de quesadilla es más grande que un tercio de quesadilla.</p>
+
+    <div class="caja">
+      <div class="caja-titulo">🔑 La Regla de Oro de la Suma y Resta de Fracciones Heterogéneas</div>
+      <p style="margin-bottom:2px;"><strong>Nunca sumes ni restes abajo con abajo.</strong> Para sumar o restar fracciones con diferente denominador, primero debemos transformarlas en <strong>fracciones equivalentes con el mismo denominador</strong> (usando el Mínimo Común Múltiplo, MCM). Cuando todos los pedazos tienen el mismo tamaño, se suman o restan únicamente los <strong>numeradores</strong> y el denominador común se copia igual.</p>
+    </div>
+
+    <div class="cadena">
+      <div class="eslabon"><b>1/2 + 1/3</b>Pedazos de distinto tamaño</div>
+      <span class="flecha">Paso 1: MCM(2,3)=6<br>───►</span>
+      <div class="eslabon"><b>3/6 + 2/6</b>Fracciones equivalentes</div>
+      <span class="flecha">Paso 3: Suma arriba<br>───►</span>
+      <div class="eslabon"><b>5/6</b>5 sextos (irreducible)</div>
+    </div>
+
+    <p style="font-size:9.8pt;color:var(--gris);">Fíjate en la demostración: <strong>1/2</strong> equivale a <strong>3/6</strong> (porque se multiplicó arriba y abajo por 3) y <strong>1/3</strong> equivale a <strong>2/6</strong> (porque se multiplicó arriba y abajo por 2). Ahora ambos están partidos en sextos: 3 sextos más 2 sextos son <strong>5/6</strong>.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Suma y Resta de Fracciones Heterogéneas</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>2. El Método de los 3 Pasos con el Denominador Común (MCM)</h2>
+    <p>Este método funciona para dos, tres o más fracciones y mantiene los números lo más pequeños y manejables posible.</p>
+
+    <h3>Paso 1 · Encontrar el denominador común (Mínimo Común Múltiplo, MCM)</h3>
+    <p>Buscamos el <strong>menor número positivo</strong> que esté al mismo tiempo en la tabla de multiplicar de todos los denominadores. Ese número será nuestro nuevo denominador común.</p>
+    <ul>
+      <li><strong>Ejemplo A:</strong> Para <strong>3/4 + 1/6</strong>, los múltiplos de 4 son 4, 8, <strong>12</strong>, 16… y los de 6 son 6, <strong>12</strong>, 18… El menor común es <strong>MCM(4, 6) = 12</strong>.</li>
+      <li><strong>Truco rápido:</strong> Si un denominador es múltiplo exacto del otro (como en <strong>1/2 + 3/8</strong>), el MCM es directamente el mayor: <strong>8</strong>. Si no tienen divisores comunes aparte del 1 (como <strong>3 y 5</strong>), el MCM es su producto: <strong>3 × 5 = 15</strong>.</li>
+    </ul>
+
+    <h3>Paso 2 · Convertir cada fracción a su equivalente con el MCM</h3>
+    <p>Para que una fracción no cambie de valor al ponerle el nuevo denominador, debemos <strong>multiplicar su numerador por el mismo factor</strong> por el que se multiplicó su denominador: <em>(MCM ÷ denominador viejo) × numerador viejo</em>.</p>
+    <div class="dos-col">
+      <div class="col-card">
+        <h4>Primera fracción: 3/4 a doceavos</h4>
+        <p style="text-align:left;">¿Por cuánto multiplicamos 4 para llegar a 12? Por <strong>3</strong> (12 ÷ 4 = 3).<br>Multiplicamos arriba por 3: <strong>3 × 3 = 9</strong>.<br>Así, <strong>3/4 = 9/12</strong>.</p>
+      </div>
+      <div class="col-card">
+        <h4>Segunda fracción: 1/6 a doceavos</h4>
+        <p style="text-align:left;">¿Por cuánto multiplicamos 6 para llegar a 12? Por <strong>2</strong> (12 ÷ 6 = 2).<br>Multiplicamos arriba por 2: <strong>1 × 2 = 2</strong>.<br>Así, <strong>1/6 = 2/12</strong>.</p>
+      </div>
+    </div>
+
+    <h3>Paso 3 · Sumar o restar los numeradores y simplificar</h3>
+    <p>Con los denominadores iguales, sumamos o restamos los numeradores y dejamos el mismo denominador común. Al final, revisamos si se puede <strong>simplificar</strong> dividiendo arriba y abajo entre su Máximo Común Divisor (MCD).</p>
+    <div class="caja-verde">
+      <p style="margin:0;"><strong>Ejemplo con simplificación:</strong> Resolvamos <strong>5/6 − 1/2</strong>.<br>
+      • <strong>Paso 1:</strong> Como 6 es múltiplo de 2, el <strong>MCM(6, 2) = 6</strong>.<br>
+      • <strong>Paso 2:</strong> <strong>5/6</strong> queda igual (5/6), y <strong>1/2 = 3/6</strong> (multiplicando por 3 arriba y abajo).<br>
+      • <strong>Paso 3:</strong> Restamos numeradores: <strong>5/6 − 3/6 = 2/6</strong>. Como 2 y 6 son pares, dividimos ambos entre 2 (su MCD): <strong>2/6 = 1/3</strong>.</p>
+    </div>
+
+    <h2>3. El Método de Productos Cruzados («La Mariposa») para 2 fracciones</h2>
+    <p>Cuando solo tienes dos fracciones <strong>a/b ± c/d</strong>, también puedes multiplicar los denominadores entre sí (<strong>b × d</strong>) y cruzar los numeradores (<strong>a × d ± b × c</strong>). Es muy rápido cuando los denominadores son pequeños, pero recuerda <strong>simplificar al final</strong> si el denominador no era el mínimo común.</p>
+    <div class="caja-acento">
+      <p style="margin:0;"><strong>Ejemplo en la cocina hondureña:</strong> Doña María usa <strong>2/3</strong> de taza de leche para los pastelitos y <strong>1/4</strong> de taza para el atol. ¿Cuánta leche usó en total?<br>
+      • Abajo: <strong>3 × 4 = 12</strong>. &nbsp; • En cruz arriba: <strong>(2 × 4) + (3 × 1) = 8 + 3 = 11</strong>. &nbsp; • Resultado: <strong>11/12 de taza</strong>.</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Suma y Resta de Fracciones Heterogéneas</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>4. Suma y Resta con Números Mixtos de Diferente Denominador</h2>
+    <p>Un <strong>número mixto</strong> combina un número entero y una fracción propia (por ejemplo, <strong>1 1/2</strong> libras de maíz). Para sumar o restar números mixtos con diferente denominador sin equivocarte cuando la fracción pide prestado, el camino más seguro es:</p>
+    <ol>
+      <li><strong>Convertir cada mixto a fracción impropia:</strong> multiplica el entero por el denominador y súmale el numerador: <strong>a b/c = (a × c + b)/c</strong>.</li>
+      <li><strong>Aplicar los 3 pasos</strong> de las fracciones heterogéneas (MCM → Equivalentes → Sumar o restar y simplificar).</li>
+    </ol>
+    <div class="caja">
+      <p style="margin:0;"><strong>Ejemplo resuelto:</strong> <strong>1 1/2 + 2/3</strong><br>
+      1. Convertimos el mixto: <strong>1 1/2 = (1 × 2 + 1)/2 = 3/2</strong>.<br>
+      2. Buscamos el MCM de 2 y 3, que es <strong>6</strong>.<br>
+      3. Equivalentes: <strong>3/2 = 9/6</strong> y <strong>2/3 = 4/6</strong>.<br>
+      4. Sumamos: <strong>9/6 + 4/6 = 13/6</strong> (que también se puede escribir como <strong>2 1/6</strong>).</p>
+    </div>
+
+    <h2>5. Tabla comparativa: Fracciones Homogéneas vs. Heterogéneas</h2>
+    <table>
+      <tr><th>Característica</th><th>Fracciones Homogéneas</th><th>Fracciones Heterogéneas</th></tr>
+      <tr><td><strong>Denominadores</strong></td><td>Son <strong>iguales</strong> (ej. 2/7 y 4/7).</td><td>Son <strong>diferentes</strong> (ej. 1/2 y 1/3).</td></tr>
+      <tr><td><strong>Tamaño de las partes</strong></td><td>Todas las partes miden exactamente lo mismo.</td><td>Las partes tienen distinto tamaño; no se pueden juntar directo.</td></tr>
+      <tr><td><strong>Cómo se suman o restan</strong></td><td>Se suman o restan los numeradores de un solo paso y se copia el denominador.</td><td>Paso 1: Hallar MCM. Paso 2: Convertir a equivalentes. Paso 3: Operar arriba y simplificar.</td></tr>
+      <tr><td><strong>Ejemplo resuelto</strong></td><td>2/7 + 3/7 = <strong>5/7</strong></td><td>1/4 + 1/2 = 1/4 + 2/4 = <strong>3/4</strong></td></tr>
+    </table>
+
+    <h2>6. Errores comunes que debes evitar</h2>
+
+    <div class="err-item">
+      <div class="err-tit">✗ Error 1 · Sumar o restar arriba con arriba y abajo con abajo</div>
+      <div><span class="mal">Mal:</span> 1/2 + 1/3 = 2/5. &nbsp;|&nbsp; <b>¿Por qué está mal?</b> Si juntas media tortilla con un tercio de tortilla tienes más de media tortilla, pero 2/5 es menos de la mitad. Los denominadores nunca se suman ni se restan. &nbsp;|&nbsp; <span class="bien">Correcto:</span> MCM(2,3) = 6 → 3/6 + 2/6 = <strong>5/6</strong>.</div>
+    </div>
+
+    <div class="err-item">
+      <div class="err-tit">✗ Error 2 · Cambiar el denominador al MCM pero dejar igual el numerador</div>
+      <div><span class="mal">Mal:</span> 1/2 + 1/4 = 1/4 + 1/4 = 2/4. &nbsp;|&nbsp; <b>¿Por qué está mal?</b> Si conviertes medios en cuartos (multiplicando abajo por 2), también debes multiplicar arriba por 2 para que la fracción siga valiendo lo mismo. &nbsp;|&nbsp; <span class="bien">Correcto:</span> 1/2 = 2/4 → 2/4 + 1/4 = <strong>3/4</strong>.</div>
+    </div>
+
+    <div class="err-item">
+      <div class="err-tit">✗ Error 3 · Sumar los denominadores comunes en el último paso</div>
+      <div><span class="mal">Mal:</span> 3/6 + 2/6 = 5/12. &nbsp;|&nbsp; <b>¿Por qué está mal?</b> El 6 indica que estamos contando sextos. Tres sextos más dos sextos son cinco sextos, no doceavos. &nbsp;|&nbsp; <span class="bien">Correcto:</span> 3/6 + 2/6 = <strong>5/6</strong> (el denominador común se copia).</div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Suma y Resta de Fracciones Heterogéneas</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <div class="err-item">
+      <div class="err-tit">✗ Error 4 · Aplicar la regla de la multiplicación a una suma o resta</div>
+      <div><span class="mal">Mal:</span> 3/4 − 1/2 = (3×1)/(4×2) = 3/8. &nbsp;|&nbsp; <b>¿Por qué está mal?</b> Multiplicar en línea recta es exclusivo de la multiplicación (×). En la suma y la resta (+) y (−) es obligatorio igualar denominadores. &nbsp;|&nbsp; <span class="bien">Correcto:</span> 3/4 − 2/4 = <strong>1/4</strong>.</div>
+    </div>
+
+    <div class="err-item">
+      <div class="err-tit">✗ Error 5 · Entregar el resultado sin simplificar a su mínima expresión</div>
+      <div><span class="mal">Incompleto:</span> 1/6 + 1/3 = 1/6 + 2/6 = 3/6. &nbsp;|&nbsp; <b>¿Por qué falta un paso?</b> Tanto 3 como 6 se pueden dividir entre 3. En matemática siempre expresamos la respuesta en su forma irreducible. &nbsp;|&nbsp; <span class="bien">Correcto:</span> 3/6 ÷ 3/3 = <strong>1/2</strong>.</div>
+    </div>
+
+    <h2>✏️ ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa el espacio en blanco <span class="val">(Valor: 10 puntos c/u)</span></h3>
+
+    <ol>
+      <li>El Mínimo Común Múltiplo (MCM) de los denominadores 4 y 6 es <span class="linea-resp"></span>.</li>
+      <li>Al convertir 2/3 a sextos, la fracción equivalente es <span class="linea-resp"></span>/6.</li>
+      <li>1/2 + 1/4 = <span class="linea-resp"></span>.</li>
+      <li>5/6 − 1/3 = <span class="linea-resp"></span> (escribe la fracción ya simplificada).</li>
+      <li>3/4 + 1/8 = <span class="linea-resp"></span>.</li>
+      <li>7/10 − 1/5 = <span class="linea-resp"></span> (escribe la fracción ya simplificada).</li>
+      <li>2/5 + 1/2 = <span class="linea-resp"></span>.</li>
+      <li>La fracción 6/8 simplificada a su mínima expresión es <span class="linea-resp"></span>.</li>
+      <li>El número mixto 1 2/3 escrito como fracción impropia es <span class="linea-resp"></span>.</li>
+      <li>1/3 + 1/6 = <span class="linea-resp"></span> (escribe la fracción ya simplificada).</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+
+    <ol>
+      <li>____ Las fracciones 2/5 y 3/7 son fracciones heterogéneas porque tienen diferente denominador.</li>
+      <li>____ Para sumar 1/2 + 1/3 se suman los numeradores y los denominadores: 2/5.</li>
+      <li>____ El Mínimo Común Múltiplo (MCM) de 3 y 4 es 12.</li>
+      <li>____ La fracción 3/4 es equivalente a 9/12.</li>
+      <li>____ Al resolver 5/8 − 1/4 el resultado correcto es 4/4.</li>
+      <li>____ En 3/10 + 2/10 = 5/10, al simplificar entre 5 obtenemos 1/2.</li>
+      <li>____ Como 8 es múltiplo de 2, el denominador común (MCM) de 1/2 y 3/8 es 8.</li>
+      <li>____ Para convertir 3/5 a décimos se multiplica el denominador por 2 y se deja el 3 igual: 3/10.</li>
+      <li>____ 2/3 − 1/6 = 1/2.</li>
+      <li>____ Una fracción es irreducible cuando su numerador y su denominador tienen MCD igual a 1.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Suma y Resta de Fracciones Heterogéneas</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span>. Rellena el círculo de la letra de la respuesta correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Cuál es el denominador común (MCM) más pequeño para sumar 1/6 + 3/8?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 14</span>
+        <span class="op"><i>b</i> 24</span>
+        <span class="op"><i>c</i> 48</span>
+        <span class="op"><i>d</i> 16</span>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Cuánto es 1/2 + 1/3?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 5/6</span>
+        <span class="op"><i>b</i> 2/5</span>
+        <span class="op"><i>c</i> 1/6</span>
+        <span class="op"><i>d</i> 2/6</span>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>Para sumar 2/5 + 1/3 con denominador común 15, las fracciones equivalentes son:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 2/15 + 1/15</span>
+        <span class="op"><i>b</i> 5/15 + 3/15</span>
+        <span class="op"><i>c</i> 6/15 + 5/15</span>
+        <span class="op"><i>d</i> 10/15 + 3/15</span>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Cuál es el resultado de 3/4 − 1/3?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 2/1</span>
+        <span class="op"><i>b</i> 2/12</span>
+        <span class="op"><i>c</i> 7/12</span>
+        <span class="op"><i>d</i> 5/12</span>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿Cuánto es 1/4 + 5/12, ya simplificado a su mínima expresión?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 6/16</span>
+        <span class="op"><i>b</i> 6/12</span>
+        <span class="op"><i>c</i> 2/3</span>
+        <span class="op"><i>d</i> 8/12</span>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>Doña Carmen compró 3/4 de libra de queso y usó 1/2 libra en las baleadas. ¿Cuánto queso le quedó?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 1/4 de libra</span>
+        <span class="op"><i>b</i> 2/2 de libra</span>
+        <span class="op"><i>c</i> 2/4 de libra</span>
+        <span class="op"><i>d</i> 5/4 de libra</span>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿Cuál es el resultado de 2/3 + 1/6 + 1/6, simplificado?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 4/15</span>
+        <span class="op"><i>b</i> 1</span>
+        <span class="op"><i>c</i> 4/6</span>
+        <span class="op"><i>d</i> 5/6</span>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>¿Cuánto es 7/8 − 1/2?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 6/6</span>
+        <span class="op"><i>b</i> 6/8</span>
+        <span class="op"><i>c</i> 5/8</span>
+        <span class="op"><i>d</i> 3/8</span>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>Carlos caminó 2/5 de kilómetro por la mañana y 3/10 de kilómetro por la tarde. ¿Cuánto caminó en total?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 5/15 km</span>
+        <span class="op"><i>b</i> 7/10 km</span>
+        <span class="op"><i>c</i> 5/10 km</span>
+        <span class="op"><i>d</i> 6/10 km</span>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>¿Cuánto es 1 1/4 + 1/2?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 6/6</span>
+        <span class="op"><i>b</i> 5/4</span>
+        <span class="op"><i>c</i> 7/4</span>
+        <span class="op"><i>d</i> 3/4</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Suma y Resta de Fracciones Heterogéneas</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span>. Escribe la letra que corresponde.</h3>
+
+    <table>
+      <tr><th>Concepto</th><th>Definición</th></tr>
+      <tr><td>1. ____ Fracciones heterogéneas</td><td>A. Fracciones que se escriben distinto pero representan la misma cantidad</td></tr>
+      <tr><td>2. ____ Fracciones homogéneas</td><td>B. El menor múltiplo positivo que comparten dos o más denominadores</td></tr>
+      <tr><td>3. ____ Denominador común (MCM)</td><td>C. Fracciones que tienen diferente denominador</td></tr>
+      <tr><td>4. ____ Fracciones equivalentes</td><td>D. El número de abajo que indica en cuántas partes iguales se divide el entero</td></tr>
+      <tr><td>5. ____ Simplificar</td><td>E. Fracciones que tienen exactamente el mismo denominador</td></tr>
+      <tr><td>6. ____ Fracción irreducible</td><td>F. El número de arriba que indica cuántas partes se toman del entero</td></tr>
+      <tr><td>7. ____ Numerador</td><td>G. Dividir numerador y denominador entre un mismo divisor común mayor que 1</td></tr>
+      <tr><td>8. ____ Denominador</td><td>H. Un número entero acompañado de una fracción propia</td></tr>
+      <tr><td>9. ____ Número mixto</td><td>I. Aquella que ya no se puede simplificar más porque su MCD es 1</td></tr>
+      <tr><td>10. ____ Amplificar</td><td>J. Multiplicar numerador y denominador por un mismo número para igualar denominadores</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Suma y Resta de Fracciones Heterogéneas.</b> Ahora dominas el método de los 3 pasos: encuentras el denominador común (MCM), transformas a fracciones equivalentes multiplicando el numerador y sumas o restas simplificando hasta la mínima expresión. ¡Con este poder matemático resuelves problemas reales de tu escuela, tu hogar y tu comunidad en Honduras! 🍕✨
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Matemáticas.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió sumas y restas de fracciones heterogéneas con los 3 pasos en su cuaderno.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Suma y Resta de Fracciones Heterogéneas</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas · Hoja del Docente</h2>
+
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. 12 &nbsp; 2. 4 &nbsp; 3. 3/4 &nbsp; 4. 1/2 &nbsp; 5. 7/8 &nbsp; 6. 1/2 &nbsp; 7. 9/10 &nbsp; 8. 3/4 &nbsp; 9. 5/3 &nbsp; 10. 1/2</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4V, 5F, 6V, 7V, 8F, 9V, 10V</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2a, 3c, 4d, 5c, 6a, 7b, 8d, 9b, 10c</div>
+      <div><span class="pt">IV. Pareados:</span> 1C, 2E, 3B, 4A, 5G, 6I, 7F, 8D, 9H, 10J</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha sale del contenido interactivo de la plataforma M.E.T.A.S,
+      «Misión Suma y Resta de Fracciones Heterogéneas», y sus cuatro actividades usan <strong>los mismos bancos de preguntas</strong> que la
+      evaluación de la misión: lo que el alumno practica en la pantalla con círculos y barras fraccionarias iluminadas en 3 pasos es lo que resuelve en el papel.
+      Se recomienda enfatizar visualmente por qué 1/2 + 1/3 no puede ser 2/5 dibujando círculos o barras del mismo largo antes de introducir el cálculo del MCM.
+      La misión interactiva (código QR de la portada) permite practicar paso a paso con retroalimentación inmediata y lectura en voz alta antes de resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Suma y Resta de Fracciones Heterogéneas · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>
