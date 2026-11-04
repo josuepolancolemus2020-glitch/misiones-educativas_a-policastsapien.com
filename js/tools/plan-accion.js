@@ -837,9 +837,15 @@ function paRenderHistorial() {
   if (!card || !list) return;
   const d = paLoadData();
   const fbox = document.getElementById('pa-hist-filtros');
+  const btnRecHtml = `<div style="margin-top:10px;text-align:right;"><button type="button" class="pa-hist-abrir pa-hist-recuperar" style="font-size:.78rem;padding:5px 10px;opacity:.85;">📥 Recuperar análisis de la nube</button></div>`;
+  const bindRec = () => list.querySelectorAll('.pa-hist-recuperar').forEach(b =>
+    b.addEventListener('click', () => paRecuperarHistorialNube(b)));
+
   if (!d.analisis.length) {
-    card.style.display = 'none';
+    card.style.display = '';
     if (fbox) fbox.innerHTML = '';
+    list.innerHTML = `<p class="pa-hist-vacio">Aún no hay análisis guardados en este dispositivo.</p>` + btnRecHtml;
+    bindRec();
     return;
   }
   card.style.display = '';
@@ -847,7 +853,8 @@ function paRenderHistorial() {
   const vistos = paRenderHistFiltros([...d.analisis].reverse(), paHistFiltros());
   if (!vistos.length) {
     list.innerHTML = `<p class="pa-hist-vacio">🔎 Ningún análisis guardado coincide con este filtro.
-      Toca <strong>Todos</strong> y <strong>Todas</strong> para ver el listado completo.</p>`;
+      Toca <strong>Todos</strong> y <strong>Todas</strong> para ver el listado completo.</p>` + btnRecHtml;
+    bindRec();
     return;
   }
 
@@ -878,7 +885,8 @@ function paRenderHistorial() {
         <button class="pa-hist-abrir" data-id="${a.id}">Abrir</button>
         <button class="pa-hist-borrar" data-id="${a.id}" aria-label="Eliminar">🗑</button>
       </div>`;
-  }).join('');
+  }).join('') + btnRecHtml;
+  bindRec();
 
   // «Subir ahora»: dispara la misma sincronización automática, a pedido.
   // El análisis QUEDA guardado (subir nunca lo borra: sirve para actualizar).
@@ -901,6 +909,155 @@ function paRenderHistorial() {
       paRenderHistorial();
       paSincronizarNube(false);
     }));
+}
+
+async function paRecuperarHistorialNube(btn) {
+  const ok = (typeof metasConfirm === 'function')
+    ? await metasConfirm('¿Buscar y recuperar en la nube los análisis sincronizados que falten en este dispositivo?', { icono: '📥', titulo: 'Recuperar historial', okTxt: 'Sí, recuperar' })
+    : confirm('¿Recuperar análisis de la nube?');
+  if (!ok) return;
+
+  let cred = null;
+  try { cred = JSON.parse(localStorage.getItem('METAS_DOCENTE_V1') || 'null'); } catch (_) {}
+  const p_prof  = String((cred && (cred.codigo || cred.prof || cred.user)) || '').trim();
+  const p_clave = String((cred && (cred.clave  || cred.pass || cred.pin))  || '').trim();
+  if (!p_prof || !p_clave) {
+    toast('⚠️ Inicia sesión con tu código y clave de docente para recuperar tu historial.');
+    return;
+  }
+
+  const txtOrig = btn ? btn.textContent : '';
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Recuperando…'; }
+  try {
+    const { url, key } = paSbCfg();
+    const r = await fetch(url + '/rest/v1/rpc/metas_recuperar_historial', {
+      method: 'POST',
+      headers: {
+        apikey: key,
+        Authorization: 'Bearer ' + key,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ p_prof, p_clave })
+    });
+    if (!r.ok) {
+      toast('⚠️ No se pudo recuperar el historial de la nube (HTTP ' + r.status + ')');
+      return;
+    }
+    const filas = await r.json();
+    if (!Array.isArray(filas) || !filas.length) {
+      toast('ℹ️ No se encontraron análisis en la nube para recuperar.');
+      return;
+    }
+
+    const normKey = (ev, pa, gr, se) => [ev, pa, gr, se]
+      .map(v => String(v || '').trim().toLowerCase())
+      .join('||');
+
+    const grupos = new Map();
+    filas.forEach(f => {
+      if (!f || typeof f !== 'object') return;
+      const k = normKey(f.evaluacion, f.parcial, f.grado, f.seccion);
+      if (!grupos.has(k)) grupos.set(k, []);
+      grupos.get(k).push(f);
+    });
+
+    const d = paLoadData();
+    if (!Array.isArray(d.analisis)) d.analisis = [];
+    const existentes = new Set(
+      d.analisis.map(a => normKey(a.evaluacion, a.parcial, a.grado, a.seccion))
+    );
+
+    let agregados = 0;
+    grupos.forEach((rows, k) => {
+      if (existentes.has(k)) return;
+      const f0 = rows[0] || {};
+      let idRec = '';
+      for (const r0 of rows) {
+        const m = String(r0.evento_id || '').match(/^PASB-([^-]+)-\d+$/);
+        if (m && m[1]) { idRec = m[1]; break; }
+      }
+      if (!idRec || d.analisis.some(x => x.id === idRec)) {
+        idRec = 'A' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+      }
+
+      const evTxt = String(f0.evaluacion || '').trim();
+      const misionTxt = String(f0.mision || '').trim();
+      const mObj = (typeof MISSIONS !== 'undefined' && Array.isArray(MISSIONS))
+        ? (MISSIONS.find(m => m.title === misionTxt) || MISSIONS.find(m => evTxt.indexOf(m.title) === 0))
+        : null;
+
+      const porAlumno = new Map();
+      rows.forEach((rFila, idx) => {
+        const num = parseInt(rFila.num, 10) || (idx + 1);
+        const prev = porAlumno.get(num);
+        const tNuevo = String(rFila.fecha_analisis || rFila.creado_en || '');
+        const tPrev  = prev ? String(prev._t || '') : '';
+        if (!prev || tNuevo >= tPrev) {
+          const esNsp = !!(rFila.nsp || String(rFila.categoria || '').toUpperCase() === 'NSP');
+          const notaVal = esNsp
+            ? 'NSP'
+            : (rFila.nota != null && rFila.nota !== '' && !isNaN(Number(rFila.nota)) ? Number(rFila.nota) : 0);
+          const ck = paCatKey(notaVal);
+          const catObj = PA_CATS.find(c => c.key === ck);
+          porAlumno.set(num, {
+            _t: tNuevo,
+            num,
+            nombre: String(rFila.alumno || '').trim() || ('#' + num),
+            nota: notaVal,
+            categoria: String(rFila.categoria || '').trim() || (ck === 'nsp' ? 'NSP' : (catObj ? catObj.label : '')),
+            sugerencia: (ck && ck !== 'nsp') ? PA_SUGS[ck] : (ck === 'nsp' ? 'Programar prueba pendiente.' : ''),
+            msg: String(rFila.mensaje || ''),
+            msgEdit: false,
+            env: 0
+          });
+        }
+      });
+
+      const grado = String(f0.grado || '').trim();
+      const seccion = String(f0.seccion || '').trim();
+      const aNuevo = {
+        id: idRec,
+        t: String(f0.fecha_analisis || f0.creado_en || new Date().toISOString()),
+        grado,
+        seccion,
+        grupoId: paGrupoIdDe(grado, seccion),
+        docente: String(f0.docente || '').trim(),
+        materia: mObj ? (mObj.subject || '') : '',
+        misionId: mObj ? mObj.id : null,
+        evaluacion: evTxt || 'Evaluación',
+        forma: f0.forma != null ? String(f0.forma) : '',
+        tipoEval: String(f0.tipo || 'conceptual'),
+        parcial: String(f0.parcial || '').trim(),
+        fechaPrueba: f0.fecha_prueba ? String(f0.fecha_prueba).slice(0, 10) : '',
+        students: Array.from(porAlumno.values())
+          .sort((x, y) => x.num - y.num)
+          .map(({ _t, ...st }) => st)
+      };
+
+      aNuevo.students.forEach(s => {
+        const cod = paCodigoLista(aNuevo, s);
+        if (cod) s.sb = paSbFirma(aNuevo, s, cod);
+      });
+
+      d.analisis.push(aNuevo);
+      existentes.add(k);
+      agregados++;
+    });
+
+    if (agregados > 0) {
+      d.analisis.sort((x, y) => String(x.t || '').localeCompare(String(y.t || '')));
+      if (d.analisis.length > 400) d.analisis = d.analisis.slice(-400);
+      paSaveData(d);
+      paRenderHistorial();
+      toast('✅ Se recuperaron ' + agregados + ' análisis desde la nube.');
+    } else {
+      toast('ℹ️ Todos los análisis de la nube ya están en este dispositivo.');
+    }
+  } catch (_) {
+    toast('⚠️ Error de conexión al intentar recuperar análisis de la nube.');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = txtOrig || '📥 Recuperar análisis de la nube'; }
+  }
 }
 
 function paAbrirAnalisis(id) {
