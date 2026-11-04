@@ -5976,6 +5976,166 @@ body.ad-gr-moviendo { cursor: grabbing; user-select: none; -webkit-user-select: 
 .eq-medida ul { margin: 0; padding-left: 0; list-style: none; }
 .eq-medida li { font-size: calc(13px * var(--metas-fz, 1)); line-height: 1.5; margin: 2px 0; }
 
+/* ── Historial del Plan de Acción agrupado por Año y Mes (nov 2026) ── */
+.pa-hist-search-wrap {
+  display: flex; gap: 8px; align-items: center; margin-bottom: 10px;
+}
+.pa-hist-search-inp {
+  flex: 1; border: 1.5px solid var(--border); background: var(--surface); color: var(--text);
+  border-radius: 10px; padding: 8px 12px; font-family: inherit;
+  font-size: calc(12.5px * var(--metas-fz, 1)); font-weight: 600;
+  transition: border-color .15s, box-shadow .15s;
+}
+.pa-hist-search-inp:focus {
+  outline: none; border-color: var(--brand-mid);
+  box-shadow: 0 0 0 3px rgba(34, 88, 212, .12);
+}
+.pa-hist-clear-btn {
+  border: 1.5px solid #cbd5e1; background: #f8fafc; color: #475569;
+  border-radius: 999px; padding: 6px 11px; font-family: inherit;
+  font-size: calc(11.5px * var(--metas-fz, 1)); font-weight: 800; cursor: pointer; white-space: nowrap;
+}
+.pa-hist-chip-n {
+  display: inline-block; margin-left: 3px; padding: 1px 6px; border-radius: 999px;
+  font-size: calc(10.5px * var(--metas-fz, 1)); font-weight: 800;
+  background: rgba(15, 23, 42, .08); color: inherit;
+}
+.pa-hist-chip-sel .pa-hist-chip-n {
+  background: rgba(255, 255, 255, .24); color: #fff;
+}
+.pa-hist-toolbar {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 8px; margin-top: 12px; padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+.pa-hist-toolbar .pa-hist-count {
+  margin-top: 0; display: flex; align-items: center; flex-wrap: wrap; gap: 10px;
+}
+.pa-hist-global-avg {
+  background: #eef4ff; color: #1e3a8a; border: 1px solid #c7d9fa;
+  padding: 2px 9px; border-radius: 999px; font-size: calc(11.5px * var(--metas-fz, 1));
+}
+.pa-hist-fold-btns {
+  display: flex; gap: 6px;
+}
+.pa-hist-fold-btn {
+  border: 1px solid var(--border); background: var(--surface); color: var(--muted);
+  border-radius: 8px; padding: 4px 9px; font-family: inherit;
+  font-size: calc(11px * var(--metas-fz, 1)); font-weight: 800; cursor: pointer;
+}
+.pa-hist-fold-btn:hover { color: var(--brand); border-color: var(--brand-light); }
+
+.pa-hist-anio-banner {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  margin: 12px 0 8px; padding: 8px 14px; border-radius: 10px;
+  background: linear-gradient(135deg, #1e3a8a, #2563eb); color: #fff;
+  box-shadow: 0 2px 8px rgba(30, 58, 138, .18);
+}
+.pa-hist-anio-left {
+  font-size: calc(13px * var(--metas-fz, 1)); letter-spacing: .2px;
+}
+.pa-hist-anio-stats {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 12px;
+  font-size: calc(11.5px * var(--metas-fz, 1)); opacity: .95;
+}
+
+.pa-hist-mes-group {
+  margin-bottom: 10px; border: 1.5px solid var(--border); border-radius: 12px;
+  background: var(--surface); overflow: hidden;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, .05);
+}
+.pa-hist-mes-hdr {
+  list-style: none; display: flex; align-items: center; justify-content: space-between;
+  gap: 8px; padding: 10px 14px; cursor: pointer; user-select: none;
+  background: rgba(241, 245, 249, .75); transition: background .15s;
+}
+.pa-hist-mes-hdr::-webkit-details-marker { display: none; }
+.pa-hist-mes-hdr:hover { background: rgba(226, 232, 240, .7); }
+.pa-hist-mes-group[open] > .pa-hist-mes-hdr {
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(90deg, rgba(238, 244, 255, .9), rgba(248, 250, 252, .9));
+}
+.pa-hist-mes-left {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 8px; min-width: 0;
+}
+.pa-hist-mes-ico { font-size: calc(15px * var(--metas-fz, 1)); }
+.pa-hist-mes-tit {
+  font-size: calc(13.5px * var(--metas-fz, 1)); font-weight: 900; color: var(--text);
+}
+.pa-hist-mes-parc {
+  font-size: calc(11px * var(--metas-fz, 1)); font-weight: 800;
+  color: #4338ca; background: #e0e7ff; padding: 2px 8px; border-radius: 999px;
+}
+.pa-hist-mes-right {
+  display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+}
+.pa-hist-mes-count {
+  font-size: calc(11.5px * var(--metas-fz, 1)); font-weight: 800;
+  color: #475569; background: #e2e8f0; padding: 2px 9px; border-radius: 999px;
+}
+.pa-hist-mes-chev {
+  font-size: calc(13px * var(--metas-fz, 1)); color: var(--muted);
+  transition: transform .2s ease; display: inline-block; margin-left: 2px;
+}
+.pa-hist-mes-group:not([open]) .pa-hist-mes-chev {
+  transform: rotate(-90deg);
+}
+.pa-hist-mes-body {
+  padding: 4px 12px;
+}
+.pa-hist-mes-body .pa-hist-row {
+  padding: 10px 4px; gap: 10px;
+}
+.pa-hist-dia-box {
+  flex: 0 0 42px; height: 42px; border-radius: 10px;
+  background: #f1f5f9; border: 1px solid #cbd5e1;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  line-height: 1.05;
+}
+.pa-hist-dia-num {
+  font-size: calc(14px * var(--metas-fz, 1)); font-weight: 900; color: #1e293b;
+}
+.pa-hist-dia-mes {
+  font-size: calc(9.5px * var(--metas-fz, 1)); font-weight: 800; color: #64748b;
+  letter-spacing: .4px;
+}
+.pa-hist-top-line {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 6px;
+}
+.pa-hist-pill-parcial {
+  font-size: calc(10.5px * var(--metas-fz, 1)); font-weight: 900;
+  background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe;
+  padding: 1px 7px; border-radius: 999px; white-space: nowrap;
+}
+.pa-hist-pill-mat {
+  font-size: calc(11px * var(--metas-fz, 1)); font-weight: 700;
+  background: #f8fafc; color: #334155; border: 1px solid #e2e8f0;
+  padding: 1px 8px; border-radius: 999px; white-space: nowrap;
+}
+.pa-hist-meta-row {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-top: 3px;
+}
+.pa-hist-meta-item {
+  font-size: calc(11.5px * var(--metas-fz, 1)); color: var(--muted); font-weight: 600;
+}
+.pa-hist-prom-pill {
+  font-size: calc(11px * var(--metas-fz, 1)); font-weight: 800;
+  padding: 1px 8px; border-radius: 999px; background: #f1f5f9; color: #334155;
+  border: 1px solid #cbd5e1; white-space: nowrap;
+}
+.pa-hist-prom-pill.alto  { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
+.pa-hist-prom-pill.medio { background: #e0f2fe; color: #075985; border-color: #bae6fd; }
+.pa-hist-prom-pill.bajo  { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+.pa-hist-actions {
+  display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+}
+@media (max-width: 640px) {
+  .pa-hist-mes-hdr { flex-wrap: wrap; }
+  .pa-hist-mes-body .pa-hist-row { flex-wrap: wrap; }
+  .pa-hist-info { flex: 1 1 calc(100% - 56px); }
+  .pa-hist-actions { width: 100%; justify-content: flex-end; margin-top: 2px; }
+}
+
 /* ── El papel NO crece con A+ ─────────────────────────────────────────
    Los informes, las fichas y los boletos están medidos al píxel: 42
    alumnos tienen que dar 42 páginas, y una hoja de más son 43 hojas de

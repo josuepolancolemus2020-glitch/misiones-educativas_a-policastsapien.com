@@ -743,13 +743,56 @@ const PA_HIST_MATERIAS = [
    marca para poder encontrarlos. */
 const PA_HIST_SIN = 'sin';
 
+const PA_MESES_NOM = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+const PA_MESES_CORTO = ['', 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+let _paHistBusqueda = '';
+const _paHistMesesEstado = new Map(); // ym -> boolean (open/closed)
+
+function paFechaIsoDe(a) {
+  const f1 = String((a && a.t) || '').slice(0, 10);
+  const f2 = String((a && a.fechaPrueba) || '').slice(0, 10);
+  if (/^\d{4}-\d{2}-\d{2}$/.test(f1)) return f1;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(f2)) return f2;
+  return '';
+}
+function paMesClaveDe(a) {
+  const iso = paFechaIsoDe(a);
+  return iso ? iso.slice(0, 7) : '';
+}
+function paAnioDe(a) {
+  const iso = paFechaIsoDe(a);
+  return iso ? iso.slice(0, 4) : '';
+}
+function paMesEtiqueta(ym, corto) {
+  if (!ym || ym === PA_HIST_SIN) return 'Sin fecha';
+  const m = String(ym).match(/^(\d{4})-(\d{2})$/);
+  if (!m) return ym;
+  const idx = parseInt(m[2], 10);
+  const nom = (corto ? PA_MESES_CORTO[idx] : PA_MESES_NOM[idx]) || m[2];
+  return nom + ' ' + m[1];
+}
+
 /* Materia del análisis: manda la que quedó guardada; los análisis viejos la
-   deducen de la misión del banco a la que se amarraron. */
+   deducen de la misión del banco a la que se amarraron o del título. */
 function paMateriaDe(a) {
   if (a && a.materia) return a.materia;
-  if (a && a.misionId && typeof MISSIONS !== 'undefined') {
-    const m = MISSIONS.find(x => x.id === a.misionId);
-    if (m && m.subject) return m.subject;
+  if (typeof MISSIONS !== 'undefined' && Array.isArray(MISSIONS) && a) {
+    if (a.misionId) {
+      const m = MISSIONS.find(x => x.id === a.misionId);
+      if (m && m.subject) return m.subject;
+    }
+    const evBase = String(a.evaluacion || '')
+      .replace(/\s*—\s*Forma\s+\S+/i, '')
+      .replace(/\s*·\s*Prueba\s+operativa/i, '')
+      .trim()
+      .toLowerCase();
+    if (evBase) {
+      const m2 = MISSIONS.find(x => {
+        const t = String(x.title || '').trim().toLowerCase();
+        return t && (t === evBase || evBase.indexOf(t) === 0 || (evBase.length >= 8 && t.indexOf(evBase) === 0));
+      });
+      if (m2 && m2.subject) return m2.subject;
+    }
   }
   return '';
 }
@@ -757,14 +800,21 @@ function paMateriaNom(k) {
   const x = PA_HIST_MATERIAS.find(y => y.key === k);
   return x ? x.nom : k;
 }
+function paMateriaEmoji(k) {
+  const x = PA_HIST_MATERIAS.find(y => y.key === k);
+  return x ? x.emoji : '📘';
+}
 function paHistFiltros() {
   const f = paLoadData().histFiltros || {};
-  return { parcial: f.parcial || '', materia: f.materia || '' };
+  return { parcial: f.parcial || '', materia: f.materia || '', anio: f.anio || '', mes: f.mes || '' };
 }
 function paHistFiltroSet(campo, valor) {
   const d = paLoadData();
   const f = paHistFiltros();
   f[campo] = (f[campo] === valor) ? '' : valor;   // tocar el mismo chip = quitar el filtro
+  if (campo === 'anio' && f.anio && f.mes && f.mes !== PA_HIST_SIN && f.mes.slice(0, 4) !== f.anio) {
+    f.mes = '';
+  }
   d.histFiltros = f;
   paSaveData(d);
   paRenderHistorial();
@@ -772,44 +822,88 @@ function paHistFiltroSet(campo, valor) {
 function paHistPasa(a, f) {
   const p = String(a.parcial || '');
   const k = paMateriaDe(a);
+  const y = paAnioDe(a);
+  const m = paMesClaveDe(a);
   if (f.parcial === PA_HIST_SIN ? !!p : (f.parcial && p !== f.parcial)) return false;
   if (f.materia === PA_HIST_SIN ? !!k : (f.materia && k !== f.materia)) return false;
+  if (f.anio === PA_HIST_SIN ? !!y : (f.anio && y !== f.anio)) return false;
+  if (f.mes === PA_HIST_SIN ? !!m : (f.mes && m !== f.mes)) return false;
+  if (_paHistBusqueda) {
+    const q = _paHistBusqueda.toLowerCase();
+    const txt = [a.evaluacion || '', paMateriaNom(k), paGrupoTxt(a.grado, a.seccion), a.parcial ? 'p-' + a.parcial : '', paFechaIsoDe(a)].join(' ').toLowerCase();
+    if (txt.indexOf(q) === -1) return false;
+  }
   return true;
 }
 
-/* Chips de filtro: solo se ofrecen los parciales y las materias que DE VERDAD
-   hay guardados, para no llenar la tarjeta de botones que no filtran nada. */
+/* Chips de filtro: ofrece parciales, materias, años y meses que DE VERDAD
+   hay guardados, con contadores claros para explorar el historial acumulado. */
 function paRenderHistFiltros(todos, f) {
   const box = document.getElementById('pa-hist-filtros');
   if (!box) return todos;
 
+  const contar = pred => todos.filter(pred).length;
   const opsP = PA_HIST_PARCIALES
-    .filter(p => todos.some(a => String(a.parcial || '') === p))
-    .map(p => ({ v: p, t: 'P-' + p }));
-  if (todos.some(a => !a.parcial)) opsP.push({ v: PA_HIST_SIN, t: 'Sin parcial' });
-  const opsM = PA_HIST_MATERIAS
-    .filter(x => todos.some(a => paMateriaDe(a) === x.key))
-    .map(x => ({ v: x.key, t: x.emoji + ' ' + x.corto }));
-  if (todos.some(a => !paMateriaDe(a))) opsM.push({ v: PA_HIST_SIN, t: '📋 Sin materia' });
+    .map(p => ({ v: p, n: contar(a => String(a.parcial || '') === p) }))
+    .filter(x => x.n > 0)
+    .map(x => ({ v: x.v, t: `P-${x.v} <span class="pa-hist-chip-n">${x.n}</span>` }));
+  const nSinP = contar(a => !a.parcial);
+  if (nSinP > 0) opsP.push({ v: PA_HIST_SIN, t: `Sin parcial <span class="pa-hist-chip-n">${nSinP}</span>` });
 
-  /* Una fila con una sola opción no filtra nada y solo estorba, así que no se
-     dibuja. Ningún filtro puede quedar activo sin su fila a la vista: si su
-     valor ya no existe (se borró el último análisis) o la fila desaparece, el
-     filtro se cae solo y se olvida, para no dejar la lista corta sin salida. */
+  const opsM = PA_HIST_MATERIAS
+    .map(x => ({ key: x.key, emoji: x.emoji, corto: x.corto, n: contar(a => paMateriaDe(a) === x.key) }))
+    .filter(x => x.n > 0)
+    .map(x => ({ v: x.key, t: `${x.emoji} ${x.corto} <span class="pa-hist-chip-n">${x.n}</span>` }));
+  const nSinM = contar(a => !paMateriaDe(a));
+  if (nSinM > 0) opsM.push({ v: PA_HIST_SIN, t: `📋 Sin materia <span class="pa-hist-chip-n">${nSinM}</span>` });
+
+  const aniosMap = new Map();
+  todos.forEach(a => {
+    const y = paAnioDe(a);
+    if (y) aniosMap.set(y, (aniosMap.get(y) || 0) + 1);
+  });
+  const opsY = Array.from(aniosMap.keys()).sort((a, b) => b.localeCompare(a))
+    .map(y => ({ v: y, t: `📆 ${y} <span class="pa-hist-chip-n">${aniosMap.get(y)}</span>` }));
+
+  const mesesMap = new Map();
+  todos.forEach(a => {
+    if (f.anio && f.anio !== PA_HIST_SIN && paAnioDe(a) !== f.anio) return;
+    const ym = paMesClaveDe(a);
+    if (ym) mesesMap.set(ym, (mesesMap.get(ym) || 0) + 1);
+  });
+  const opsMes = Array.from(mesesMap.keys()).sort((a, b) => b.localeCompare(a))
+    .map(ym => ({ v: ym, t: `${paEsc(paMesEtiqueta(ym, true))} <span class="pa-hist-chip-n">${mesesMap.get(ym)}</span>` }));
+
   const vivo = (sel, ops) => (ops.length > 1 && ops.some(o => o.v === sel)) ? sel : '';
-  const antes = f.parcial + '|' + f.materia;
+  const antes = [f.parcial, f.materia, f.anio, f.mes].join('|');
   f.parcial = vivo(f.parcial, opsP);
   f.materia = vivo(f.materia, opsM);
-  if (antes !== f.parcial + '|' + f.materia) {
+  f.anio    = vivo(f.anio, opsY);
+  f.mes     = vivo(f.mes, opsMes);
+  if (antes !== [f.parcial, f.materia, f.anio, f.mes].join('|')) {
     const d = paLoadData();
-    d.histFiltros = { parcial: f.parcial, materia: f.materia };
+    d.histFiltros = { parcial: f.parcial, materia: f.materia, anio: f.anio, mes: f.mes };
     paSaveData(d);
   }
 
   const vistos = todos.filter(a => paHistPasa(a, f));
   const etiquetas = [];
+  if (f.anio) etiquetas.push('Año ' + f.anio);
+  if (f.mes) etiquetas.push(paMesEtiqueta(f.mes, false));
   if (f.parcial) etiquetas.push(f.parcial === PA_HIST_SIN ? 'sin parcial' : 'Parcial ' + f.parcial);
   if (f.materia) etiquetas.push(f.materia === PA_HIST_SIN ? 'sin materia' : paMateriaNom(f.materia));
+
+  // Calcular promedio global de los análisis visibles
+  let sumaProm = 0, contProm = 0;
+  vistos.forEach(a => {
+    const ns = (a.students || []).filter(s => typeof s.nota === 'number');
+    if (ns.length) {
+      sumaProm += ns.reduce((acc, s) => acc + s.nota, 0) / ns.length;
+      contProm++;
+    }
+  });
+  const promGlobal = contProm ? (sumaProm / contProm).toFixed(1) : '';
+  const mesesUnicos = new Set(vistos.map(paMesClaveDe).filter(Boolean)).size;
 
   const fila = (campo, lbl, todosTxt, ops, sel) => (ops.length < 2 ? '' : `
       <div class="pa-hist-flbl">${lbl}</div>
@@ -818,15 +912,50 @@ function paRenderHistFiltros(todos, f) {
         ${ops.map(o => `<button class="pa-hist-chip${sel === o.v ? ' pa-hist-chip-sel' : ''}" data-fcampo="${campo}" data-fvalor="${paEsc(o.v)}">${o.t}</button>`).join('')}
       </div>`);
 
+  const hayFiltroActivo = !!(f.parcial || f.materia || f.anio || f.mes || _paHistBusqueda);
+
   box.innerHTML =
+    `<div class="pa-hist-search-wrap">
+       <input type="search" id="pa-hist-search-inp" class="pa-hist-search-inp" placeholder="🔎 Buscar evaluación, tema, fecha o grado…" value="${paEsc(_paHistBusqueda)}">
+       ${hayFiltroActivo ? `<button type="button" class="pa-hist-clear-btn" id="pa-hist-clear-btn">✕ Limpiar filtros</button>` : ''}
+     </div>` +
+    fila('anio', '📆 Año', 'Todos', opsY, f.anio) +
+    fila('mes', '📅 Mes y Año', 'Todos los meses', opsMes, f.mes) +
     fila('parcial', '🗓️ Parcial', 'Todos', opsP, f.parcial) +
     fila('materia', '📚 Materia', 'Todas', opsM, f.materia) +
-    `<div class="pa-hist-count">${vistos.length === todos.length
-        ? `${todos.length} análisis guardado${todos.length === 1 ? '' : 's'}`
-        : `${vistos.length} de ${todos.length} análisis${etiquetas.length ? ' · ' + paEsc(etiquetas.join(' · ')) : ''}`}</div>`;
+    `<div class="pa-hist-toolbar">
+       <div class="pa-hist-count">
+         <span>${vistos.length === todos.length
+           ? `${todos.length} análisis guardado${todos.length === 1 ? '' : 's'}`
+           : `${vistos.length} de ${todos.length} análisis`}${mesesUnicos > 1 ? ` · ${mesesUnicos} meses` : ''}${etiquetas.length ? ' · ' + paEsc(etiquetas.join(' · ')) : ''}</span>
+         ${promGlobal ? `<span class="pa-hist-global-avg">📊 Prom. acumulado: <strong>${promGlobal}%</strong></span>` : ''}
+       </div>
+       ${mesesUnicos > 1 ? `<div class="pa-hist-fold-btns">
+         <button type="button" class="pa-hist-fold-btn" id="pa-hist-expand-all">📂 Expandir meses</button>
+         <button type="button" class="pa-hist-fold-btn" id="pa-hist-collapse-all">📁 Contraer meses</button>
+       </div>` : ''}
+     </div>`;
 
   box.querySelectorAll('.pa-hist-chip').forEach(b =>
     b.addEventListener('click', () => paHistFiltroSet(b.dataset.fcampo, b.dataset.fvalor)));
+
+  const sInp = document.getElementById('pa-hist-search-inp');
+  if (sInp) {
+    sInp.addEventListener('input', e => {
+      _paHistBusqueda = e.target.value || '';
+      const pos = e.target.selectionStart;
+      paRenderHistorial();
+      const sInp2 = document.getElementById('pa-hist-search-inp');
+      if (sInp2) { sInp2.focus(); try { sInp2.setSelectionRange(pos, pos); } catch (_) {} }
+    });
+  }
+  document.getElementById('pa-hist-clear-btn')?.addEventListener('click', () => {
+    _paHistBusqueda = '';
+    const d = paLoadData();
+    d.histFiltros = { parcial: '', materia: '', anio: '', mes: '' };
+    paSaveData(d);
+    paRenderHistorial();
+  });
 
   return vistos;
 }
@@ -837,7 +966,7 @@ function paRenderHistorial() {
   if (!card || !list) return;
   const d = paLoadData();
   const fbox = document.getElementById('pa-hist-filtros');
-  const btnRecHtml = `<div style="margin-top:10px;text-align:right;"><button type="button" class="pa-hist-abrir pa-hist-recuperar" style="font-size:.78rem;padding:5px 10px;opacity:.85;">📥 Recuperar análisis de la nube</button></div>`;
+  const btnRecHtml = `<div style="margin-top:12px;text-align:right;"><button type="button" class="pa-hist-abrir pa-hist-recuperar" style="font-size:.78rem;padding:6px 12px;opacity:.9;">📥 Recuperar análisis de la nube</button></div>`;
   const bindRec = () => list.querySelectorAll('.pa-hist-recuperar').forEach(b =>
     b.addEventListener('click', () => paRecuperarHistorialNube(b)));
 
@@ -850,46 +979,173 @@ function paRenderHistorial() {
   }
   card.style.display = '';
 
-  const vistos = paRenderHistFiltros([...d.analisis].reverse(), paHistFiltros());
+  const ordenados = [...d.analisis].sort((a, b) => {
+    const fa = paFechaIsoDe(a) || String(a.t || '');
+    const fb = paFechaIsoDe(b) || String(b.t || '');
+    return fb.localeCompare(fa);
+  });
+  const fAct = paHistFiltros();
+  const vistos = paRenderHistFiltros(ordenados, fAct);
   if (!vistos.length) {
     list.innerHTML = `<p class="pa-hist-vacio">🔎 Ningún análisis guardado coincide con este filtro.
-      Toca <strong>Todos</strong> y <strong>Todas</strong> para ver el listado completo.</p>` + btnRecHtml;
+      Toca <strong>Limpiar filtros</strong> o <strong>Todos</strong> para ver el listado completo.</p>` + btnRecHtml;
     bindRec();
     return;
   }
 
-  list.innerHTML = vistos.map(a => {
-    const nums = a.students.filter(s => typeof s.nota === 'number');
-    const avg  = nums.length ? (nums.reduce((x, s) => x + s.nota, 0) / nums.length).toFixed(1) : '—';
-    // Estado REAL del asistente de padres: cuenta lo que aún no está en la
-    // nube (firma sb desactualizada). La subida es AUTOMÁTICA; aquí solo se
-    // muestra con claridad y, si hay pendientes, se ofrece subir al toque.
-    const pendNube = a.students.filter(s => {
+  // Agrupar análisis por Mes y Año (ej. 2026-11, 2026-10, 2026-09...)
+  const porMes = new Map();
+  vistos.forEach(a => {
+    const ym = paMesClaveDe(a) || PA_HIST_SIN;
+    if (!porMes.has(ym)) porMes.set(ym, []);
+    porMes.get(ym).push(a);
+  });
+
+  // Resumen acumulado por Año cuando hay varios meses
+  const porAnio = new Map();
+  vistos.forEach(a => {
+    const y = paAnioDe(a) || 'Sin año';
+    if (!porAnio.has(y)) porAnio.set(y, []);
+    porAnio.get(y).push(a);
+  });
+
+  const hayFiltro = !!(fAct.parcial || fAct.materia || fAct.anio || fAct.mes || _paHistBusqueda);
+  const clavesMes = Array.from(porMes.keys());
+  let anioActual = null;
+
+  const renderFila = a => {
+    const nums = (a.students || []).filter(s => typeof s.nota === 'number');
+    const avgNum = nums.length ? (nums.reduce((x, s) => x + s.nota, 0) / nums.length) : null;
+    const avg = avgNum !== null ? avgNum.toFixed(1) : '—';
+    const avgCls = avgNum === null ? '' : (avgNum >= 80 ? 'alto' : (avgNum >= 70 ? 'medio' : 'bajo'));
+    const pendNube = (a.students || []).filter(s => {
       const codigo = paCodigoLista(a, s);
       return codigo && s.sb !== paSbFirma(a, s, codigo);
     }).length;
-    const waEnv = a.students.filter(s => s.env).length;
+    const waEnv = (a.students || []).filter(s => s.env).length;
     const nube = pendNube
-      ? `<span class="pa-hist-nube pend">☁️ ${pendNube} por subir al asistente</span>`
+      ? `<span class="pa-hist-nube pend">☁️ ${pendNube} por subir</span>`
       : `<span class="pa-hist-nube ok">☁️ En el asistente de padres ✅</span>`;
-    const wa = waEnv ? ` <span class="pa-hist-wa">📱 ${waEnv}/${a.students.length} avisados por WhatsApp</span>` : '';
+    const wa = waEnv ? `<span class="pa-hist-wa">📱 ${waEnv}/${a.students.length} WhatsApp</span>` : '';
     const mat = paMateriaDe(a);
+    const iso = paFechaIsoDe(a);
+    const dia = iso ? iso.slice(8, 10) : '—';
+    const mesIdx = iso ? parseInt(iso.slice(5, 7), 10) : 0;
+    const mesCorto = (PA_MESES_CORTO[mesIdx] || '').toUpperCase();
     return `
       <div class="pa-hist-row">
-        <div class="pa-hist-info">
-          <span class="pa-hist-titulo">${paEsc(a.evaluacion || 'Evaluación')}${a.parcial ? ' · P-' + paEsc(a.parcial) : ''}</span>
-          <span class="pa-hist-meta">${(a.t || '').slice(0, 10)} · ${paEsc(paGrupoTxt(a.grado, a.seccion))} · ${a.students.length} alumnos · prom. ${avg}${mat ? ' · ' + paEsc(paMateriaNom(mat)) : ''}</span>
-          <span class="pa-hist-meta">${nube}${wa}</span>
+        <div class="pa-hist-dia-box" title="${paEsc(iso || 'Sin fecha')}">
+          <span class="pa-hist-dia-num">${paEsc(dia)}</span>
+          <span class="pa-hist-dia-mes">${paEsc(mesCorto || 'FECHA')}</span>
         </div>
-        ${pendNube ? `<button class="pa-hist-subir" data-id="${a.id}">☁️ Subir ahora</button>` : ''}
-        <button class="pa-hist-abrir" data-id="${a.id}">Abrir</button>
-        <button class="pa-hist-borrar" data-id="${a.id}" aria-label="Eliminar">🗑</button>
+        <div class="pa-hist-info">
+          <div class="pa-hist-top-line">
+            <span class="pa-hist-titulo">${paEsc(a.evaluacion || 'Evaluación')}</span>
+            ${a.parcial ? `<span class="pa-hist-pill-parcial">P-${paEsc(a.parcial)}</span>` : ''}
+            ${mat ? `<span class="pa-hist-pill-mat">${paMateriaEmoji(mat)} ${paEsc(paMateriaNom(mat))}</span>` : ''}
+          </div>
+          <div class="pa-hist-meta-row">
+            <span class="pa-hist-meta-item">👥 ${paEsc(paGrupoTxt(a.grado, a.seccion))} · ${(a.students || []).length} alumnos</span>
+            <span class="pa-hist-prom-pill ${avgCls}">📊 Prom. ${avg}</span>
+            ${nube}${wa}
+          </div>
+        </div>
+        <div class="pa-hist-actions">
+          ${pendNube ? `<button class="pa-hist-subir" data-id="${a.id}">☁️ Subir ahora</button>` : ''}
+          <button class="pa-hist-abrir" data-id="${a.id}">Abrir</button>
+          <button class="pa-hist-borrar" data-id="${a.id}" aria-label="Eliminar">🗑</button>
+        </div>
       </div>`;
-  }).join('') + btnRecHtml;
+  };
+
+  const bloquesHtml = clavesMes.map((ym, idxMes) => {
+    const items = porMes.get(ym) || [];
+    const anio = (ym && ym !== PA_HIST_SIN) ? ym.slice(0, 4) : 'Sin año';
+    let bannerAnio = '';
+    if (anio !== anioActual && anio !== 'Sin año') {
+      anioActual = anio;
+      const itemsAnio = porAnio.get(anio) || items;
+      let sAnio = 0, cAnio = 0;
+      itemsAnio.forEach(a => {
+        const ns = (a.students || []).filter(s => typeof s.nota === 'number');
+        if (ns.length) { sAnio += ns.reduce((x, s) => x + s.nota, 0) / ns.length; cAnio++; }
+      });
+      const promAnio = cAnio ? (sAnio / cAnio).toFixed(1) : '—';
+      const mesesDelAnio = new Set(itemsAnio.map(paMesClaveDe).filter(Boolean)).size;
+      bannerAnio = `
+        <div class="pa-hist-anio-banner">
+          <div class="pa-hist-anio-left">🎓 <strong>Año ${paEsc(anio)}</strong></div>
+          <div class="pa-hist-anio-stats">
+            <span>📚 ${itemsAnio.length} evaluación${itemsAnio.length === 1 ? '' : 'es'}</span>
+            <span>📅 ${mesesDelAnio} mes${mesesDelAnio === 1 ? '' : 'es'}</span>
+            <span>📊 Prom. anual: <strong>${promAnio}</strong></span>
+          </div>
+        </div>`;
+    }
+
+    let sumaM = 0, contM = 0;
+    const parcialesMes = new Set();
+    items.forEach(a => {
+      if (a.parcial) parcialesMes.add('P-' + a.parcial);
+      const ns = (a.students || []).filter(s => typeof s.nota === 'number');
+      if (ns.length) { sumaM += ns.reduce((x, s) => x + s.nota, 0) / ns.length; contM++; }
+    });
+    const promMesNum = contM ? (sumaM / contM) : null;
+    const promMes = promMesNum !== null ? promMesNum.toFixed(1) : '—';
+    const promMesCls = promMesNum === null ? '' : (promMesNum >= 80 ? 'alto' : (promMesNum >= 70 ? 'medio' : 'bajo'));
+    const parcTxt = Array.from(parcialesMes).join(' · ');
+
+    // Abierto por defecto: los 2 meses más recientes o cuando hay filtro activo
+    const abierto = _paHistMesesEstado.has(ym)
+      ? _paHistMesesEstado.get(ym)
+      : (hayFiltro || idxMes < 2 || clavesMes.length <= 2);
+
+    return bannerAnio + `
+      <details class="pa-hist-mes-group" data-ym="${paEsc(ym)}"${abierto ? ' open' : ''}>
+        <summary class="pa-hist-mes-hdr">
+          <div class="pa-hist-mes-left">
+            <span class="pa-hist-mes-ico">📅</span>
+            <span class="pa-hist-mes-tit">${paEsc(paMesEtiqueta(ym, false))}</span>
+            ${parcTxt ? `<span class="pa-hist-mes-parc">${paEsc(parcTxt)}</span>` : ''}
+          </div>
+          <div class="pa-hist-mes-right">
+            <span class="pa-hist-mes-count">${items.length} análisis</span>
+            <span class="pa-hist-prom-pill ${promMesCls}">Prom. ${promMes}</span>
+            <span class="pa-hist-mes-chev">▾</span>
+          </div>
+        </summary>
+        <div class="pa-hist-mes-body">
+          ${items.map(renderFila).join('')}
+        </div>
+      </details>`;
+  }).join('');
+
+  list.innerHTML = bloquesHtml + btnRecHtml;
   bindRec();
 
+  list.querySelectorAll('.pa-hist-mes-group').forEach(det => {
+    det.addEventListener('toggle', () => {
+      const ym = det.getAttribute('data-ym');
+      if (ym) _paHistMesesEstado.set(ym, det.open);
+    });
+  });
+
+  document.getElementById('pa-hist-expand-all')?.addEventListener('click', () => {
+    list.querySelectorAll('.pa-hist-mes-group').forEach(det => {
+      det.open = true;
+      const ym = det.getAttribute('data-ym');
+      if (ym) _paHistMesesEstado.set(ym, true);
+    });
+  });
+  document.getElementById('pa-hist-collapse-all')?.addEventListener('click', () => {
+    list.querySelectorAll('.pa-hist-mes-group').forEach(det => {
+      det.open = false;
+      const ym = det.getAttribute('data-ym');
+      if (ym) _paHistMesesEstado.set(ym, false);
+    });
+  });
+
   // «Subir ahora»: dispara la misma sincronización automática, a pedido.
-  // El análisis QUEDA guardado (subir nunca lo borra: sirve para actualizar).
   list.querySelectorAll('.pa-hist-subir').forEach(b =>
     b.addEventListener('click', async () => {
       b.disabled = true; b.textContent = '⏳ Subiendo…';
@@ -897,8 +1153,10 @@ function paRenderHistorial() {
       paRenderHistorial();
     }));
 
-  list.querySelectorAll('.pa-hist-abrir').forEach(b =>
-    b.addEventListener('click', () => paAbrirAnalisis(b.dataset.id)));
+  list.querySelectorAll('.pa-hist-abrir').forEach(b => {
+    if (b.classList.contains('pa-hist-recuperar')) return;
+    b.addEventListener('click', () => paAbrirAnalisis(b.dataset.id));
+  });
   list.querySelectorAll('.pa-hist-borrar').forEach(b =>
     b.addEventListener('click', async () => {
       if (!await metasConfirm('¿Eliminar este análisis guardado?', { icono: '🗑', titulo: 'Plan de Acción', okTxt: 'Sí, eliminar' })) return;
