@@ -934,8 +934,7 @@ function paRenderHistFiltros(todos, f) {
          <button type="button" class="pa-hist-fold-btn" id="pa-hist-expand-all">📂 Expandir meses</button>
          <button type="button" class="pa-hist-fold-btn" id="pa-hist-collapse-all">📁 Contraer meses</button>
        </div>` : ''}
-     </div>` +
-    paRenderLabLauncherHtml();
+     </div>`;
 
   box.querySelectorAll('.pa-hist-chip').forEach(b =>
     b.addEventListener('click', () => paHistFiltroSet(b.dataset.fcampo, b.dataset.fvalor)));
@@ -957,8 +956,6 @@ function paRenderHistFiltros(todos, f) {
     paSaveData(d);
     paRenderHistorial();
   });
-  paBindLabLauncher(box);
-
   return vistos;
 }
 
@@ -1123,8 +1120,9 @@ function paRenderHistorial() {
   }).join('');
 
   const labHtml = _paLabAbierto ? paRenderLaboratorioHtml(vistos, ordenados) : '';
-  list.innerHTML = labHtml + bloquesHtml + btnRecHtml;
+  list.innerHTML = bloquesHtml + btnRecHtml + paRenderLabLauncherHtml() + labHtml;
   bindRec();
+  paBindLabLauncher(list);
   if (_paLabAbierto) paBindLaboratorioEvents(list, vistos, ordenados);
 
   list.querySelectorAll('.pa-hist-mes-group').forEach(det => {
@@ -1174,44 +1172,60 @@ function paRenderHistorial() {
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
-   🧠 LABORATORIO DE INTELIGENCIA PEDAGÓGICA, CIENCIA DE DATOS Y FILOSOFÍA
+   🧠 LABORATORIO DE INTELIGENCIA PEDAGÓGICA, CIENCIA DE DATOS Y TESIS M.E.T.A.S
    Cruza evaluaciones del Plan de Acción + Asistencia/SACE (Mi Aula) +
-   Práctica autónoma de Misiones en la nube (METAS_STATS_NUBE_V1).
+   Práctica autónoma de Misiones en la nube (METAS_STATS_NUBE_V1) +
+   Generador de Casos de Estudio y Consentimiento Informado Longitudinal.
    ══════════════════════════════════════════════════════════════════════════ */
 let _paLabAbierto = false;
 let _paLabTab = 'descriptivo';
+let _paTesisSeleccion = null; // Set de números de lista seleccionados para imprimir
 
 const PA_LAB_TABS = [
-  { id: 'descriptivo', ico: '📊', corto: 'Análisis Descriptivo',      rol: 'Estadística Descriptiva',  tit: 'Análisis Descriptivo y Temas de Mayor Dificultad' },
-  { id: 'matriz',      ico: '🔢', corto: 'Matriz Alumno × Tema',      rol: 'Analista de Datos',        tit: 'Matriz de Desempeño, Patrones y Dónde Reforzar por Alumno' },
-  { id: 'ausentismo',  ico: '🚫', corto: 'Menos Pruebas × Faltas',    rol: 'Cruce Asistencia / NSP',   tit: 'Alumnos con Menos Pruebas vs. Días Faltados (Pase de Lista y SACE)' },
-  { id: 'misiones',    ico: '🎮', corto: 'Cruce con Misiones',        rol: 'Analítica de Práctica',    tit: 'Cruce entre Práctica Autónoma en Misiones y Notas de Evaluación' },
-  { id: 'grupos',      ico: '👥', corto: 'Análisis por Grupos',       rol: 'Pedagogo Experto',         tit: 'Agrupación Inteligente por Perfiles (Clústeres de Intervención)' },
-  { id: 'hipotesis',   ico: '🧠', corto: 'Hipótesis y Correlaciones', rol: 'Psicólogo y Científico',   tit: 'Contraste de Hipótesis, Correlaciones Causales y Psicología Educativa' },
-  { id: 'filosofia',   ico: '🏛️', corto: 'Teoría y Filosofía',        rol: 'Filósofo de la Educación', tit: 'Interpretación Teórica y Filosófica (Vygotsky, Bloom, Bandura, Ausubel, Freire)' }
+  { id: 'descriptivo',   ico: '📊', corto: 'Análisis Descriptivo',           rol: 'Estadística Descriptiva',       tit: 'Análisis Descriptivo y Temas de Mayor Dificultad' },
+  { id: 'matriz',        ico: '🔢', corto: 'Matriz Alumno × Tema',           rol: 'Analista de Datos',             tit: 'Matriz de Desempeño, Patrones y Dónde Reforzar por Alumno' },
+  { id: 'ausentismo',    ico: '📅', corto: 'Pruebas × Asistencia',           rol: 'Cruce Asistencia / Evidencia',  tit: 'Participación en Pruebas vs. Días Faltados (Pase de Lista y SACE)' },
+  { id: 'misiones',      ico: '🎮', corto: 'Cruce con Misiones',             rol: 'Analítica de Práctica',         tit: 'Cruce entre Práctica Autónoma en Misiones y Notas de Evaluación' },
+  { id: 'grupos',        ico: '👥', corto: 'Análisis por Grupos',            rol: 'Pedagogo Experto',              tit: 'Agrupación Inteligente por Perfiles (Clústeres de Intervención)' },
+  { id: 'hipotesis',     ico: '🧠', corto: 'Hipótesis y Correlaciones',      rol: 'Psicólogo y Científico',        tit: 'Contraste de Hipótesis, Correlaciones Causales y Psicología Educativa' },
+  { id: 'filosofia',     ico: '🏛️', corto: 'Teoría y Filosofía',             rol: 'Filósofo de la Educación',      tit: 'Interpretación Teórica y Filosófica (Vygotsky, Bloom, Bandura, Ausubel, Freire)' },
+  { id: 'investigacion', ico: '🎓', corto: 'Casos y Consentimiento (Tesis)', rol: 'Investigador Educativo (Tesis)', tit: 'Casos de Estudio por Alumno y Consentimiento Informado Longitudinal (Tesis M.E.T.A.S)', dest: true }
 ];
 
 function paRenderLabLauncherHtml() {
   return `
-    <div class="pa-lab-launcher">
-      <div class="pa-lab-launcher-top">
-        <button type="button" class="pa-lab-main-btn${_paLabAbierto && _paLabTab === 'descriptivo' ? ' active' : ''}" data-labtab="descriptivo">
-          📊 Análisis Descriptivo y Dónde Reforzar
-        </button>
-        <span class="pa-lab-launcher-lbl">🔬 Otros análisis sugeridos (Datos · Pedagogía · Psicología · Filosofía):</span>
+    <div class="pa-lab-launcher" id="pa-lab-launcher-box">
+      <div class="pa-lab-launcher-head">
+        <div class="pa-lab-launcher-info">
+          <span class="pa-lab-launcher-kicker">🔬 LABORATORIO DE DATOS, PEDAGOGÍA E INVESTIGACIÓN M.E.T.A.S</span>
+          <div class="pa-lab-launcher-title">Explora patrones por alumno, matrices de refuerzo, cruces y casos de estudio para tesis</div>
+        </div>
+        <div class="pa-lab-launcher-main-actions">
+          <button type="button" class="pa-lab-main-btn${_paLabAbierto && _paLabTab === 'descriptivo' ? ' active' : ''}" data-labtab="descriptivo">
+            <span>📊</span>
+            <span>Análisis Descriptivo y Dónde Reforzar</span>
+          </button>
+          ${_paLabAbierto ? `<button type="button" class="pa-lab-close-pill" id="pa-lab-close-top">✕ Ocultar panel</button>` : ''}
+        </div>
       </div>
-      <div class="pa-lab-sug-row">
-        ${PA_LAB_TABS.slice(1).map(t => `
-          <button type="button" class="pa-lab-sug-btn${_paLabAbierto && _paLabTab === t.id ? ' active' : ''}" data-labtab="${t.id}" title="${paEsc(t.rol + ': ' + t.tit)}">
-            ${t.ico} ${paEsc(t.corto)}
-          </button>`).join('')}
-        ${_paLabAbierto ? `<button type="button" class="pa-lab-close-pill" id="pa-lab-close-top">✕ Ocultar análisis</button>` : ''}
+      <div class="pa-lab-sug-wrap">
+        <span class="pa-lab-sug-label">✨ Análisis especializados sugeridos (toca cualquiera para abrirlo):</span>
+        <div class="pa-lab-sug-row">
+          ${PA_LAB_TABS.slice(1).map(t => `
+            <button type="button" class="pa-lab-sug-btn${t.dest ? ' tesis-btn' : ''}${_paLabAbierto && _paLabTab === t.id ? ' active' : ''}" data-labtab="${t.id}" title="${paEsc(t.rol + ': ' + t.tit)}">
+              <span class="pa-lab-sug-ico">${t.ico}</span>
+              <span class="pa-lab-sug-txt">
+                <strong>${paEsc(t.corto)}</strong>
+                <small>${paEsc(t.rol)}</small>
+              </span>
+            </button>`).join('')}
+        </div>
       </div>
     </div>`;
 }
 
-function paBindLabLauncher(box) {
-  box.querySelectorAll('[data-labtab]').forEach(btn => {
+function paBindLabLauncher(container) {
+  container.querySelectorAll('[data-labtab]').forEach(btn => {
     btn.addEventListener('click', () => {
       const t = btn.getAttribute('data-labtab') || 'descriptivo';
       if (_paLabAbierto && _paLabTab === t) {
@@ -1221,6 +1235,11 @@ function paBindLabLauncher(box) {
         _paLabTab = t;
       }
       paRenderHistorial();
+      if (_paLabAbierto) {
+        setTimeout(() => {
+          document.getElementById('pa-lab-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 50);
+      }
     });
   });
   document.getElementById('pa-lab-close-top')?.addEventListener('click', () => {
@@ -1328,7 +1347,6 @@ function paConstruirDatosLaboratorio(vistos, todos) {
   } catch (_) {}
   const misionesPorAlumno = new Map(); // num -> { intentos, misionesSet, notas:[], minutos, pautas }
   const gDigRef = grupoAula ? dig(grupoAula.grado) : (cron[0] ? dig(cron[0].grado) : '');
-  const secRef  = grupoAula ? secNorm(grupoAula.seccion) : (cron[0] ? secNorm(cron[0].seccion) : '');
   if (nubeCache) {
     const pautasSet = new Set();
     (nubeCache.resultados || []).forEach(r => {
@@ -1425,7 +1443,7 @@ function paConstruirDatosLaboratorio(vistos, todos) {
     pctAprob: m.notas.length ? ((m.notas.length - m.reprobados) / m.notas.length) * 100 : 0
   })).sort((a, b) => (a.prom ?? 999) - (b.prom ?? 999));
 
-  // 5. Construir Matriz y Expediente por Alumno
+  // 5. Construir Matriz, Patrón Pedagógico Lógico y Caso de Estudio por Alumno
   const alumnosMap = new Map();
   if (grupoAula && Array.isArray(grupoAula.lista)) {
     grupoAula.lista.forEach(al => {
@@ -1449,6 +1467,9 @@ function paConstruirDatosLaboratorio(vistos, todos) {
   });
 
   const totalEvals = evalsStats.length;
+  const gCod = gDigRef || '6';
+  const sCod = (grupoAula ? secNorm(grupoAula.seccion) : (cron[0] ? secNorm(cron[0].seccion) : '1')) || '1';
+
   const alumnosStats = Array.from(alumnosMap.values()).sort((a, b) => a.num - b.num).map(al => {
     const celdas = [];
     const notas = [];
@@ -1463,8 +1484,7 @@ function paConstruirDatosLaboratorio(vistos, todos) {
       const faltaEseDia = !!(ev.fecha && asis.fechasSet.has(ev.fecha));
       if (!reg) {
         noRegistrado++;
-        if (faltaEseDia) nspConFaltaDia++;
-        celdas.push({ evalId: ev.id, estado: 'ausente', nota: null, faltaEseDia });
+        celdas.push({ evalId: ev.id, estado: 'sin_acta', nota: null, faltaEseDia });
       } else if (reg.nota === 'NSP' || typeof reg.nota !== 'number' || isNaN(reg.nota)) {
         nspExplicito++;
         if (faltaEseDia) nspConFaltaDia++;
@@ -1481,15 +1501,18 @@ function paConstruirDatosLaboratorio(vistos, todos) {
     });
 
     const pruebasHechas = notas.length;
-    const pruebasSinHacer = nspExplicito + noRegistrado;
-    const pctPruebas = totalEvals ? Math.round((pruebasHechas / totalEvals) * 100) : 0;
+    const totalEnActas = pruebasHechas + nspExplicito;
+    const pruebasSinHacer = nspExplicito; // NSP reales marcados en actas donde el alumno figuraba
+    const ratioPresencia = totalEvals ? (pruebasHechas / totalEvals) : 1;
+    const pctPruebas = totalEvals ? Math.round(ratioPresencia * 100) : 0;
     const prom = paLabMean(notas);
+    const med  = paLabMedian(notas);
     const std  = paLabStd(notas);
     const promConc = paLabMean(notasConc);
     const promOper = paLabMean(notasOper);
     const brechaOper = (promConc !== null && promOper !== null) ? (promOper - promConc) : null;
 
-    // Tendencia longitudinal (1ª mitad vs 2ª mitad de sus pruebas)
+    // Tendencia longitudinal (1ª mitad vs 2ª mitad de sus pruebas presentadas)
     let delta = 0;
     if (notas.length >= 2) {
       const mitad = Math.floor(notas.length / 2);
@@ -1500,69 +1523,127 @@ function paConstruirDatosLaboratorio(vistos, todos) {
 
     // Materias débiles del alumno
     const matsDebiles = [];
+    const matsFuertes = [];
     porMatAlumno.forEach((arrN, mNom) => {
       const pm = paLabMean(arrN);
       if (pm !== null && pm < 75) matsDebiles.push({ materia: mNom, prom: pm });
+      if (pm !== null && pm >= 85) matsFuertes.push({ materia: mNom, prom: pm });
     });
     matsDebiles.sort((x, y) => x.prom - y.prom);
+    matsFuertes.sort((x, y) => y.prom - x.prom);
 
     // Práctica en Misiones
     const mis = misionesPorAlumno.get(al.num) || { intentos: 0, misionesSet: new Set(), notas: [], minutos: 0, pautas: 0 };
     const promMis = paLabMean(mis.notas);
 
-    // Clasificación del patrón de comportamiento individual
-    let patronTag = '🛡️ Estable';
+    // ── CLASIFICACIÓN LÓGICA Y PEDAGÓGICA DEL PATRÓN DEL ALUMNO ──
+    // Nunca etiqueta con "inasistencia" a un alumno que sí se presenta y aprueba.
+    let patronTag = '🛡️ Aprobación Básica';
     let patronClase = 'estable';
-    let patronDesc = 'Participación regular y desempeño consistente.';
-    if (pruebasSinHacer >= 2 && asis.totalFaltas >= 3) {
-      patronTag = '🚫 Rezago por Inasistencia';
-      patronClase = 'riesgo';
-      patronDesc = `Faltó ${asis.totalFaltas} día(s) y dejó ${pruebasSinHacer} prueba(s) sin realizar. La discontinuidad explica sus lagunas.`;
-    } else if (pruebasSinHacer >= 2 && asis.totalFaltas <= 1) {
-      patronTag = '⚠️ Evasión / NSP en Aula';
+    let patronDesc = 'Cumple con el umbral aprobatorio; conviene afianzar los temas puntuales menores a 70%.';
+    let casoTipo = 'Caso Tipo V — Desempeño Regular en Consolidación';
+    let casoDestacado = false;
+
+    if (pruebasHechas === 0) {
+      patronTag = '⚪ Sin Evaluaciones';
       patronClase = 'alerta';
-      patronDesc = `Tiene ${pruebasSinHacer} prueba(s) sin nota pese a registrar solo ${asis.totalFaltas} falta(s). Revisar bloqueo o no entrega.`;
-    } else if (prom !== null && prom < 70) {
-      patronTag = '🆘 Prioridad de Refuerzo';
-      patronClase = 'riesgo';
-      patronDesc = delta < -5 ? 'Promedio insuficiente con tendencia a la baja (riesgo de indefensión aprendida).' : 'Requiere nivelación focalizada en los temas base.';
-    } else if (brechaOper !== null && brechaOper <= -14) {
-      patronTag = '🔧 Brecha Operativa';
-      patronClase = 'alerta';
-      patronDesc = `Domina la teoría (${promConc.toFixed(0)}%) pero cae al resolver ejercicios prácticos (${promOper.toFixed(0)}%).`;
-    } else if (delta <= -8) {
-      patronTag = '📉 En Descenso Reciente';
-      patronClase = 'alerta';
-      patronDesc = `Su rendimiento bajó ${Math.abs(delta).toFixed(1)} pts en las evaluaciones más recientes.`;
-    } else if (delta >= 8) {
-      patronTag = '📈 En Ascenso Sostenido';
+      patronDesc = 'Aún no registra calificaciones numéricas en las evaluaciones filtradas.';
+      casoTipo = 'Caso sin mediciones registradas';
+    } else if (prom >= 88 && std < 14 && delta >= -5) {
+      patronTag = '🌟 Excelencia Sostenida';
       patronClase = 'exito';
-      patronDesc = `Evolución positiva (+${delta.toFixed(1)} pts) respecto a sus primeras evaluaciones.`;
-    } else if (std >= 16) {
-      patronTag = '⚡ Rendimiento Volátil';
-      patronClase = 'alerta';
-      patronDesc = `Alta dispersión entre pruebas (σ=${std.toFixed(1)}): alterna notas altas con caídas abruptas.`;
-    } else if (prom !== null && prom >= 88) {
-      patronTag = '🌟 Dominio / Tutor Par';
+      patronDesc = `Dominio sobresaliente (${prom.toFixed(1)}%) y baja dispersión (σ=${std.toFixed(1)}); perfil ideal de alumno monitor / tutor par.`;
+      casoTipo = 'Caso Tipo I — Alto Dominio, Autorregulación y Mediación Par (ZDP)';
+      casoDestacado = true;
+    } else if (prom >= 70 && delta >= 7) {
+      patronTag = '📈 Superación Sostenida';
       patronClase = 'exito';
-      patronDesc = 'Excelencia sostenida y alta autorregulación; ideal como monitor de equipo (andamiaje).';
+      patronDesc = `Evolución longitudinal muy positiva (+${delta.toFixed(1)} pts en la segunda mitad del periodo) alcanzando ${prom.toFixed(1)}% de promedio.`;
+      casoTipo = 'Caso Tipo II — Respuesta Positiva a la Intervención (Ascenso Longitudinal)';
+      casoDestacado = true;
+    } else if (prom >= 80 && delta > -7 && (brechaOper === null || brechaOper > -12)) {
+      patronTag = '✅ Logro Satisfactorio';
+      patronClase = 'exito';
+      patronDesc = `Desempeño sólido y constante (${prom.toFixed(1)}%) en las ${pruebasHechas} evaluaciones realizadas.`;
+      casoTipo = 'Caso Tipo I — Dominio Satisfactorio y Estabilidad Académica';
+    } else if (prom >= 70 && brechaOper !== null && brechaOper <= -12) {
+      patronTag = '🔧 Brecha Práctica';
+      patronClase = 'alerta';
+      patronDesc = `Comprende la teoría (${promConc.toFixed(0)}%) pero cae al ejecutar pruebas operativas (${promOper.toFixed(0)}%). Requiere modelaje procedimental.`;
+      casoTipo = 'Caso Tipo III — Disociación entre Dominio Conceptual y Ejecución Operativa';
+      casoDestacado = true;
+    } else if (prom >= 70 && delta <= -7) {
+      patronTag = '📉 Alerta de Descenso';
+      patronClase = 'alerta';
+      patronDesc = `Mantiene promedio aprobatorio (${prom.toFixed(1)}%), pero sus evaluaciones recientes bajaron ${Math.abs(delta).toFixed(1)} pts.`;
+      casoTipo = 'Caso Tipo IV — Fatiga Evaluativa / Descenso Reciente en Seguimiento';
+      casoDestacado = true;
+    } else if (prom >= 70 && std >= 16) {
+      patronTag = '⚡ Desempeño Variable';
+      patronClase = 'alerta';
+      patronDesc = `Aprueba el acumulado (${prom.toFixed(1)}%), pero alterna notas altas con caídas abruptas según el tema (σ=${std.toFixed(1)}).`;
+      casoTipo = 'Caso Tipo IV — Alta Variabilidad Intra-Sujeto por Contenido';
+    } else if (prom >= 70) {
+      patronTag = '🛡️ Aprobación en Consolidación';
+      patronClase = 'estable';
+      patronDesc = `Promedio aprobatorio (${prom.toFixed(1)}%) con ${pruebasHechas} pruebas realizadas; reforzar temas <70% para subir a nivel avanzado.`;
+      casoTipo = 'Caso Tipo V — Consolidación en Zona de Aprobación Básica';
+    } else {
+      // Promedio acumulado < 70%
+      if (delta >= 8) {
+        patronTag = `🌱 En Recuperación (+${delta.toFixed(0)} pts)`;
+        patronClase = 'alerta';
+        patronDesc = `Aunque el promedio acumulado es ${prom.toFixed(1)}%, registra un repunte notable de +${delta.toFixed(1)} pts en la segunda mitad.`;
+        casoTipo = 'Caso Tipo II — Resiliencia y Recuperación Longitudinal en Curso';
+        casoDestacado = true;
+      } else if (brechaOper !== null && brechaOper <= -14 && promConc >= 70) {
+        patronTag = '🔧 Falla en Práctica Operativa';
+        patronClase = 'riesgo';
+        patronDesc = `Aprueba la parte conceptual (${promConc.toFixed(0)}%), pero reprueba la resolución operativa (${promOper.toFixed(0)}%).`;
+        casoTipo = 'Caso Tipo III — Bloqueo Procedimental en Resolución de Problemas';
+        casoDestacado = true;
+      } else if ((nspExplicito >= 4 || ratioPresencia < 0.5) && asis.totalFaltas >= 5) {
+        patronTag = '📅 Baja Continuidad';
+        patronClase = 'riesgo';
+        patronDesc = `Solo cuenta con ${pruebasHechas}/${totalEvals} pruebas evaluadas y ${asis.totalFaltas} inasistencias registradas.`;
+        casoTipo = 'Caso Tipo VI — Vulnerabilidad por Discontinuidad Escolar';
+        casoDestacado = true;
+      } else {
+        patronTag = '🎯 Refuerzo Prioritario';
+        patronClase = 'riesgo';
+        patronDesc = `Se presenta a sus evaluaciones (${pruebasHechas} realizadas), pero su media (${prom.toFixed(1)}%) requiere andamiaje focalizado en temas base.`;
+        casoTipo = 'Caso Tipo VI — Sujeto Prioritario de Andamiaje y Nivelación Pedagógica';
+        casoDestacado = true;
+      }
     }
 
+    const codigoTesis = `METAS-${gCod}G-${sCod}-${String(al.num).padStart(2, '0')}`;
+    const topTemasDeb = temasReprobados.slice(0, 3).map(t => `${t.titulo} (${t.nota}%)`).join(', ') || 'ninguno crítico';
+    const sintesisCaso = `Participante ${codigoTesis} (${al.nombre}, lista #${al.num}). En una serie longitudinal de n = ${pruebasHechas} evaluaciones registradas en M.E.T.A.S, presenta una media aritmética de x̄ = ${prom !== null ? prom.toFixed(1) + '%' : 'S/D'} (mediana Me = ${med !== null ? med.toFixed(1) + '%' : 'S/D'}, desviación estándar σ = ±${std.toFixed(1)} pts) y un diferencial de evolución temporal Δ = ${(delta >= 0 ? '+' : '') + delta.toFixed(1)} pts entre la primera y la segunda mitad del periodo.` +
+      (promConc !== null && promOper !== null ? ` El desglose cognitivo muestra ${promConc.toFixed(1)}% en pruebas conceptuales frente a ${promOper.toFixed(1)}% en pruebas operativas.` : '') +
+      ` Focos prioritarios de refuerzo: ${topTemasDeb}. Objetivo de seguimiento al siguiente grado: evaluar la retención a largo plazo y el efecto del acompañamiento mediado por M.E.T.A.S.`;
+
     return {
-      num: al.num, nombre: al.nombre,
-      celdas, notas, pruebasHechas, nspExplicito, noRegistrado, pruebasSinHacer, nspConFaltaDia, pctPruebas,
-      prom, std, delta, promConc, promOper, brechaOper,
-      matsDebiles, temasReprobados: temasReprobados.sort((x, y) => x.nota - y.nota),
+      num: al.num, nombre: al.nombre, codigoTesis,
+      celdas, notas, pruebasHechas, totalEnActas, nspExplicito, noRegistrado, pruebasSinHacer, nspConFaltaDia, pctPruebas,
+      prom, med, std, delta, promConc, promOper, brechaOper,
+      matsDebiles, matsFuertes, temasReprobados: temasReprobados.sort((x, y) => x.nota - y.nota),
       asis, mis: { intentos: mis.intentos, misionesUnicas: mis.misionesSet.size, promMis, minutos: mis.minutos, pautas: mis.pautas },
-      patronTag, patronClase, patronDesc
+      patronTag, patronClase, patronDesc, casoTipo, casoDestacado, sintesisCaso
     };
   });
+
+  // Inicializar selección de tesis por defecto (casos destacados o todos si no se ha tocado)
+  if (!_paTesisSeleccion) {
+    _paTesisSeleccion = new Set(alumnosStats.filter(a => a.casoDestacado).map(a => a.num));
+    if (_paTesisSeleccion.size === 0) alumnosStats.forEach(a => _paTesisSeleccion.add(a.num));
+  }
 
   // 6. Correlaciones de Pearson reales del grupo
   const conProm = alumnosStats.filter(a => a.prom !== null);
   const rFaltasProm = paLabPearson(conProm.map(a => a.asis.totalFaltas), conProm.map(a => a.prom));
-  const rFaltasNsp  = paLabPearson(alumnosStats.map(a => a.asis.totalFaltas), alumnosStats.map(a => a.pruebasSinHacer));
-  const rNspProm    = paLabPearson(conProm.map(a => a.pruebasSinHacer), conProm.map(a => a.prom));
+  const rFaltasNsp  = paLabPearson(alumnosStats.map(a => a.asis.totalFaltas), alumnosStats.map(a => a.nspExplicito));
+  const rNspProm    = paLabPearson(conProm.map(a => a.pruebasHechas), conProm.map(a => a.prom));
   const conMis      = conProm.filter(a => a.mis.intentos > 0 || misionesPorAlumno.size > 0);
   const rMisProm    = misionesPorAlumno.size >= 3 ? paLabPearson(conMis.map(a => a.mis.intentos), conMis.map(a => a.prom)) : null;
   const conAmbas    = conProm.filter(a => a.promConc !== null && a.promOper !== null);
@@ -1597,24 +1678,26 @@ function paRenderLaboratorioHtml(vistos, todos) {
   else if (_paLabTab === 'grupos') bodyHtml = paLabVistaGrupos(datos);
   else if (_paLabTab === 'hipotesis') bodyHtml = paLabVistaHipotesis(datos);
   else if (_paLabTab === 'filosofia') bodyHtml = paLabVistaFilosofia(datos);
+  else if (_paLabTab === 'investigacion') bodyHtml = paLabVistaInvestigacion(datos);
 
   return `
     <div class="pa-lab-panel" id="pa-lab-panel">
       <div class="pa-lab-hdr">
-        <div>
+        <div class="pa-lab-hdr-left">
           <span class="pa-lab-role-badge">${tabInfo.ico} Perspectiva: ${paEsc(tabInfo.rol)}</span>
           <h4 class="pa-lab-title">${paEsc(tabInfo.tit)}</h4>
         </div>
         <div class="pa-lab-hdr-btns">
-          <button type="button" class="pa-lab-act-btn" id="pa-lab-sync-nube" title="Traer últimos registros de práctica de misiones desde la nube">🔄 Cruzar nube de misiones</button>
-          <button type="button" class="pa-lab-act-btn" id="pa-lab-print-btn">🖨️ Imprimir diagnóstico</button>
+          <button type="button" class="pa-lab-act-btn sync" id="pa-lab-sync-nube" title="Traer últimos registros de práctica de misiones desde la nube">🔄 Cruzar nube de misiones</button>
+          <button type="button" class="pa-lab-act-btn print" id="pa-lab-print-btn">🖨️ Imprimir vista actual</button>
           <button type="button" class="pa-lab-act-btn close" id="pa-lab-close-btn">✕ Cerrar</button>
         </div>
       </div>
       <div class="pa-lab-tabs-bar">
         ${PA_LAB_TABS.map(t => `
-          <button type="button" class="pa-lab-tab-btn${_paLabTab === t.id ? ' active' : ''}" data-switchlab="${t.id}">
-            ${t.ico} ${paEsc(t.corto)}
+          <button type="button" class="pa-lab-tab-btn${t.dest ? ' tesis-tab' : ''}${_paLabTab === t.id ? ' active' : ''}" data-switchlab="${t.id}">
+            <span>${t.ico}</span>
+            <span>${paEsc(t.corto)}</span>
           </button>`).join('')}
       </div>
       <div class="pa-lab-body" id="pa-lab-body-content">
@@ -1640,7 +1723,7 @@ function paLabVistaDescriptiva(datos) {
       <div class="pa-lab-kpi"><span class="k-val">${fmt(g.med)}%</span><span class="k-lbl">Mediana central (Me)</span></div>
       <div class="pa-lab-kpi"><span class="k-val">±${fmt(g.std)}</span><span class="k-lbl">Desviación estándar (σ)</span></div>
       <div class="pa-lab-kpi ok"><span class="k-val">${fmt(g.pctAprob)}%</span><span class="k-lbl">Tasa de aprobación (≥70%)</span></div>
-      <div class="pa-lab-kpi warn"><span class="k-val">${g.totalNsp}</span><span class="k-lbl">Pruebas en NSP / Pendientes</span></div>
+      <div class="pa-lab-kpi warn"><span class="k-val">${g.totalNsp}</span><span class="k-lbl">NSP marcados en actas</span></div>
     </div>
 
     ${(promConc !== null && promOper !== null) ? `
@@ -1657,7 +1740,7 @@ function paLabVistaDescriptiva(datos) {
         <p class="pa-lab-hint">Ordenados por Índice de Dificultad (combina bajo promedio y porcentaje de alumnos por debajo de 70%).</p>
         <div class="pa-lab-table-wrap">
           <table class="pa-lab-table">
-            <thead><tr><th>Tema / Evaluación</th><th>Materia</th><th>Tipo</th><th>Prom.</th><th><70%</th><th>Acción sugerida</th></tr></thead>
+            <thead><tr><th>Tema / Evaluación</th><th>Materia</th><th>Tipo</th><th>Prom.</th><th>&lt;70%</th><th>Acción sugerida</th></tr></thead>
             <tbody>
               ${peoresTemas.map(ev => {
                 const urg = ev.prom !== null && ev.prom < 70 ? '🔴 Reenseñar base' : (ev.pctReprob >= 25 ? '🟠 Refuerzo focalizado' : '🟢 Consolidado');
@@ -1699,9 +1782,9 @@ function paLabVistaDescriptiva(datos) {
 
 /* ── VISTA 2: MATRIZ ALUMNO × EVALUACIÓN Y PATRONES INDIVIDUALES ── */
 function paLabVistaMatriz(datos) {
-  const evalsVista = datos.evalsStats.slice(-12); // últimas 12 evaluaciones en columnas del mapa de calor
+  const evalsVista = datos.evalsStats.slice(-12);
   return `
-    <p class="pa-lab-hint">Cada fila sintetiza la trayectoria longitudinal del estudiante, su tendencia (Δ entre primera y segunda mitad del periodo), su dispersión (σ), exactamente <strong>qué temas/materias debe reforzar</strong> y el mapa de calor de sus evaluaciones.</p>
+    <p class="pa-lab-hint">Cada fila sintetiza la trayectoria real del estudiante en las pruebas presentadas, su evolución longitudinal (Δ entre la 1.ª y 2.ª mitad de sus evaluaciones), su patrón pedagógico y exactamente <strong>qué temas/materias debe reforzar</strong>.</p>
     <div class="pa-lab-table-wrap">
       <table class="pa-lab-table pa-lab-matrix">
         <thead>
@@ -1711,7 +1794,7 @@ function paLabVistaMatriz(datos) {
             <th>Prom.</th>
             <th>Tendencia Δ</th>
             <th>Pruebas</th>
-            <th>Patrón Detectado</th>
+            <th>Patrón Pedagógico</th>
             <th>¿Dónde hay que reforzar? (Temas &lt;70%)</th>
             ${evalsVista.map((ev, i) => `<th title="${paEsc(ev.titulo + ' (' + ev.fecha + ')')}">E${i + 1}<br><small>${paEsc(ev.corto.slice(0, 8))}</small></th>`).join('')}
           </tr>
@@ -1722,19 +1805,20 @@ function paLabVistaMatriz(datos) {
             const deltaTxt = al.notas.length >= 2 ? ((al.delta >= 0 ? '+' : '') + al.delta.toFixed(1)) : '—';
             const deltaCls = al.delta >= 5 ? 'pos' : (al.delta <= -5 ? 'neg' : '');
             const refTxt = al.temasReprobados.length
-              ? al.temasReprobados.slice(0, 3).map(t => `<span class="pa-lab-ref-chip">${paEsc(t.titulo)} (${t.nota}%)</span>`).join(' ') + (al.temasReprobados.length > 3 ? ` <small>+${al.temasReprobados.length - 3} más</small>` : '')
-              : (al.matsDebiles.length ? al.matsDebiles.map(m => `${paEsc(m.materia)} (${m.prom.toFixed(0)}%)`).join(', ') : '<span style="color:#15803d;font-weight:700;">✅ Sin rezagos críticos</span>');
+              ? al.temasReprobados.slice(0, 3).map(t => `<span class="pa-lab-ref-chip">${paEsc(t.titulo)} <b>${t.nota}%</b></span>`).join(' ') + (al.temasReprobados.length > 3 ? ` <small class="pa-lab-more-chip">+${al.temasReprobados.length - 3} más</small>` : '')
+              : (al.matsDebiles.length ? al.matsDebiles.map(m => `<span class="pa-lab-ref-chip warn">${paEsc(m.materia)} ${m.prom.toFixed(0)}%</span>`).join(' ') : '<span class="pa-lab-ok-tag">✅ Sin rezagos críticos</span>');
             const celdasVista = al.celdas.slice(-12);
             return `<tr>
               <td><strong>${al.num}</strong></td>
               <td><strong>${paEsc(al.nombre)}</strong></td>
               <td><span class="pa-hist-prom-pill ${al.prom >= 80 ? 'alto' : (al.prom >= 70 ? 'medio' : 'bajo')}">${promTxt}</span></td>
               <td class="pa-lab-delta ${deltaCls}">${deltaTxt}</td>
-              <td>${al.pruebasHechas}/${datos.evalsStats.length}</td>
+              <td><strong>${al.pruebasHechas}</strong>/${datos.evalsStats.length}</td>
               <td><span class="pa-lab-pat-badge ${al.patronClase}" title="${paEsc(al.patronDesc)}">${paEsc(al.patronTag)}</span></td>
               <td>${refTxt}</td>
               ${celdasVista.map(c => {
-                if (c.estado !== 'ok') return `<td class="hm-cell hm-nsp" title="${c.faltaEseDia ? 'NSP (Faltó a clases ese día)' : 'NSP / Sin nota'}">NSP${c.faltaEseDia ? '📅' : ''}</td>`;
+                if (c.estado === 'sin_acta') return `<td class="hm-cell hm-nsp" title="No incluido en el acta de esa evaluación">—</td>`;
+                if (c.estado !== 'ok') return `<td class="hm-cell hm-nsp" title="${c.faltaEseDia ? 'NSP (Faltó a clases ese día)' : 'NSP en acta'}">NSP${c.faltaEseDia ? '📅' : ''}</td>`;
                 const cls = c.nota >= 90 ? 'hm-exc' : (c.nota >= 80 ? 'hm-ava' : (c.nota >= 70 ? 'hm-bas' : 'hm-ins'));
                 return `<td class="hm-cell ${cls}">${c.nota}</td>`;
               }).join('')}
@@ -1745,23 +1829,23 @@ function paLabVistaMatriz(datos) {
     </div>`;
 }
 
-/* ── VISTA 3: QUIÉNES HACEN MENOS PRUEBAS × DÍAS FALTADOS ── */
+/* ── VISTA 3: PARTICIPACIÓN EN PRUEBAS × DÍAS FALTADOS ── */
 function paLabVistaAusentismo(datos) {
   const ranking = [...datos.alumnosStats].sort((a, b) => {
-    if (b.pruebasSinHacer !== a.pruebasSinHacer) return b.pruebasSinHacer - a.pruebasSinHacer;
+    if (a.pruebasHechas !== b.pruebasHechas) return a.pruebasHechas - b.pruebasHechas;
+    if (b.nspExplicito !== a.nspExplicito) return b.nspExplicito - a.nspExplicito;
     return b.asis.totalFaltas - a.asis.totalFaltas;
   });
-  const conNsp = ranking.filter(a => a.pruebasSinHacer > 0 || a.asis.totalFaltas > 0);
-  const rFN = datos.correlaciones.rFaltasNsp;
+  const rNP = datos.correlaciones.rNspProm;
   const rFP = datos.correlaciones.rFaltasProm;
 
   return `
     <div class="pa-lab-insight-box">
-      <strong>🔍 Cruce entre Pruebas No Realizadas (NSP) y Registro de Asistencia (${datos.grupoAula ? paEsc(paGrupoTxt(datos.grupoAula.grado, datos.grupoAula.seccion)) : 'Mi Aula'}):</strong><br>
-      Se analizaron <strong>${datos.evalsStats.length} evaluaciones</strong> frente a <strong>${datos.diasPaseLista} días de pase de lista</strong> y registros SACE.
-      ${rFN !== null ? ` Correlación Días Faltados ↔ Pruebas sin hacer: <strong>r = ${rFN.toFixed(2)}</strong>.` : ''}
-      ${rFP !== null ? ` Correlación Días Faltados ↔ Promedio académico: <strong>r = ${rFP.toFixed(2)}</strong>.` : ''}
-      Distinguimos dos fenómenos distintos: <strong>1) Barrera de Asistencia</strong> (no hizo la prueba porque faltó a la escuela) y <strong>2) Evasión / Bloqueo en Aula</strong> (sí asiste a clases pero deja pruebas en NSP).
+      <strong>📅 Cruce entre Participación en Pruebas y Registro de Asistencia (${datos.grupoAula ? paEsc(paGrupoTxt(datos.grupoAula.grado, datos.grupoAula.seccion)) : 'Mi Aula'}):</strong><br>
+      Se cruzaron <strong>${datos.evalsStats.length} evaluaciones</strong> con <strong>${datos.diasPaseLista} días de pase de lista</strong> y registros SACE.
+      ${rNP !== null ? ` Correlación Pruebas Realizadas ↔ Promedio académico: <strong>r = ${rNP.toFixed(2)}</strong>.` : ''}
+      ${rFP !== null ? ` Correlación Días Faltados ↔ Promedio: <strong>r = ${rFP.toFixed(2)}</strong>.` : ''}
+      Aquí se distingue con precisión entre <strong>NSP marcados en acta</strong> (cuando el alumno estaba en la lista de esa prueba y no tuvo nota) y evaluaciones donde el acta tenía menos alumnos registrados.
     </div>
     <div class="pa-lab-table-wrap">
       <table class="pa-lab-table">
@@ -1769,34 +1853,34 @@ function paLabVistaAusentismo(datos) {
           <tr>
             <th>Nº</th>
             <th>Alumno</th>
-            <th>Pruebas Hechas</th>
-            <th>Pruebas Sin Hacer (NSP)</th>
-            <th>Días Faltados (Lista: A+E / SACE)</th>
-            <th>NSP en día de falta</th>
-            <th>Promedio en pruebas hechas</th>
-            <th>Diagnóstico del Cruce (Asistencia × Evaluación)</th>
+            <th>Pruebas Realizadas</th>
+            <th>NSP en Acta</th>
+            <th>Faltas Registradas (Lista / SACE)</th>
+            <th>Promedio en Pruebas</th>
+            <th>Lectura Pedagógica de Continuidad</th>
           </tr>
         </thead>
         <tbody>
-          ${(conNsp.length ? conNsp : ranking.slice(0, 15)).map(al => {
-            let diag = '✅ Asistencia y evaluaciones al día.';
-            if (al.pruebasSinHacer > 0 && al.asis.totalFaltas >= al.pruebasSinHacer) {
-              diag = '🔴 <strong>Ausentismo directo:</strong> Las pruebas pendientes se explican por sus inasistencias a clases. Reprogramar pruebas al reincorporarse.';
-            } else if (al.pruebasSinHacer >= 2 && al.asis.totalFaltas === 0) {
-              diag = '🟠 <strong>Evasión selectiva / Bloqueo en aula:</strong> No registra faltas de asistencia pero tiene ' + al.pruebasSinHacer + ' pruebas sin nota. Indagar ansiedad evaluativa o negativa a entregar.';
-            } else if (al.pruebasSinHacer > 0) {
-              diag = '🟡 <strong>Rezago mixto:</strong> Combina ' + al.asis.totalFaltas + ' falta(s) con ' + al.pruebasSinHacer + ' prueba(s) pendiente(s).';
-            } else if (al.asis.totalFaltas >= 3) {
-              diag = '🔵 <strong>Resiliencia de cumplimiento:</strong> Pese a faltar ' + al.asis.totalFaltas + ' día(s), se puso al día en todas sus pruebas.';
+          ${ranking.map(al => {
+            let diag = '<span class="pa-lab-ok-tag">✅ Participación constante y evaluaciones al día.</span>';
+            if (al.nspExplicito >= 2 && al.asis.totalFaltas >= 3) {
+              diag = `🔴 <strong>NSP asociados a inasistencias:</strong> Registra ${al.nspExplicito} NSP en acta y ${al.asis.totalFaltas} faltas de asistencia. Reprogramar pruebas pendientes.`;
+            } else if (al.nspExplicito >= 2 && al.asis.totalFaltas <= 1) {
+              diag = `🟠 <strong>NSP estando en aula:</strong> Tiene ${al.nspExplicito} NSP marcados sin registrar ausentismo alto. Revisar entrega de examen o bloqueo.`;
+            } else if (al.pctPruebas < 65 && al.prom !== null && al.prom < 70) {
+              diag = `🟡 <strong>Menor evidencia evaluativa (${al.pruebasHechas}/${datos.evalsStats.length}):</strong> Aparece en menos actas del periodo y requiere nivelación (<70%).`;
+            } else if (al.pctPruebas < 75 && al.prom !== null && al.prom >= 70) {
+              diag = `🔵 <strong>Aprueba las pruebas que presenta (${al.prom.toFixed(1)}%):</strong> Rinde bien cuando es evaluado (${al.pruebasHechas} pruebas registradas).`;
+            } else if (al.asis.totalFaltas >= 4 && al.prom !== null && al.prom >= 75) {
+              diag = `🟢 <strong>Resiliencia académica:</strong> Pese a registrar ${al.asis.totalFaltas} faltas, se puso al día y sostiene buen promedio (${al.prom.toFixed(1)}%).`;
             }
             return `<tr>
               <td><strong>${al.num}</strong></td>
               <td><strong>${paEsc(al.nombre)}</strong></td>
-              <td>${al.pruebasHechas}/${datos.evalsStats.length} (${al.pctPruebas}%)</td>
-              <td><strong>${al.pruebasSinHacer}</strong></td>
+              <td><strong>${al.pruebasHechas}</strong>/${datos.evalsStats.length} <small>(${al.pctPruebas}%)</small></td>
+              <td><strong>${al.nspExplicito}</strong>${al.nspConFaltaDia ? ` <small>(${al.nspConFaltaDia} en día de falta)</small>` : ''}</td>
               <td><strong>${al.asis.totalFaltas}</strong> <small>(A:${al.asis.A} · E:${al.asis.E}${al.asis.sace ? ' · SACE:' + al.asis.sace : ''})</small></td>
-              <td>${al.nspConFaltaDia}</td>
-              <td>${al.prom !== null ? al.prom.toFixed(1) + '%' : '—'}</td>
+              <td><span class="pa-hist-prom-pill ${al.prom >= 80 ? 'alto' : (al.prom >= 70 ? 'medio' : 'bajo')}">${al.prom !== null ? al.prom.toFixed(1) + '%' : '—'}</span></td>
               <td>${diag}</td>
             </tr>`;
           }).join('')}
@@ -1864,9 +1948,9 @@ function paLabVistaMisiones(datos) {
 function paLabVistaGrupos(datos) {
   const gRescate   = datos.alumnosStats.filter(a => a.prom !== null && a.prom < 70);
   const gOperativa = datos.alumnosStats.filter(a => a.prom !== null && a.prom >= 70 && a.brechaOper !== null && a.brechaOper <= -12);
-  const gVolatil   = datos.alumnosStats.filter(a => a.prom !== null && a.prom >= 70 && (a.std >= 15 || a.delta <= -7));
-  const gAusentes  = datos.alumnosStats.filter(a => a.pruebasSinHacer >= 2 || a.asis.totalFaltas >= 4);
-  const gTutores   = datos.alumnosStats.filter(a => a.prom !== null && a.prom >= 85 && a.pruebasSinHacer === 0 && a.std < 14);
+  const gAscenso   = datos.alumnosStats.filter(a => a.delta >= 7);
+  const gVolatil   = datos.alumnosStats.filter(a => a.prom !== null && a.prom >= 70 && (a.std >= 16 || a.delta <= -7));
+  const gTutores   = datos.alumnosStats.filter(a => a.prom !== null && a.prom >= 85 && a.std < 14);
 
   const renderCluster = (icono, titulo, colorCls, desc, estrategia, lista) => `
     <div class="pa-lab-cluster ${colorCls}">
@@ -1877,27 +1961,27 @@ function paLabVistaGrupos(datos) {
       <p class="pa-lab-cluster-desc">${desc}</p>
       <div class="pa-lab-cluster-strat"><strong>💡 Intervención pedagógica:</strong> ${estrategia}</div>
       <div class="pa-lab-cluster-list">
-        ${lista.length ? lista.map(a => `<span class="pa-lab-al-chip"><strong>#${a.num}</strong> ${paEsc(a.nombre)} <small>(${a.prom !== null ? a.prom.toFixed(0) + '%' : 'NSP'})</small></span>`).join('') : '<em>Ningún alumno en este perfil actualmente.</em>'}
+        ${lista.length ? lista.map(a => `<span class="pa-lab-al-chip"><strong>#${a.num}</strong> ${paEsc(a.nombre)} <small>(${a.prom !== null ? a.prom.toFixed(0) + '%' : 'S/D'})</small></span>`).join('') : '<em>Ningún alumno en este perfil actualmente.</em>'}
       </div>
     </div>`;
 
   return `
     <p class="pa-lab-hint">Segmentación automática del salón en <strong>5 clústeres de acción pedagógica</strong> para organizar mesas de refuerzo, nivelación operativa y tutoría entre iguales.</p>
     <div class="pa-lab-clusters-grid">
-      ${renderCluster('🔴', 'Grupo 1: Nivelación Prioritaria y Rescate Base (Prom. < 70%)', 'c-red',
-        'Estudiantes por debajo del umbral mínimo de aprobación acumulada.',
+      ${renderCluster('🔴', 'Grupo 1: Nivelación Prioritaria y Andamiaje Base (Prom. < 70%)', 'c-red',
+        'Estudiantes cuyo promedio acumulado requiere refuerzo directo en los conceptos fundamentales.',
         'Trabajar en mesa focalizada con evaluaciones formativas cortas, retroalimentación inmediata y refuerzo en los temas críticos detectados en la pestaña 1.', gRescate)}
-      ${renderCluster('🟠', 'Grupo 2: Brecha Procedimental / Operativa (Saben la teoría, fallan en la práctica)', 'c-amber',
-        'Aprueban los cuestionarios conceptuales pero caen más de 12 puntos en las pruebas operativas.',
-        'Modelar la resolución de problemas en voz alta (andamiaje paso a paso) y usar listas de cotejo procedimentales antes de evaluar.', gOperativa)}
-      ${renderCluster('🟡', 'Grupo 3: Desempeño Intermitente o en Descenso Reciente (σ ≥ 15 o Δ ≤ -7)', 'c-yellow',
-        'Alumnos con capacidad demostrada (tienen notas de 85-100) pero sufren caídas abruptas en ciertos temas o parciales.',
-        'Revisar hábitos de estudio previo al examen, distracciones y estabilidad emocional; evitar dar por sentado que ya dominan todo el bloque.', gVolatil)}
-      ${renderCluster('🟣', 'Grupo 4: Riesgo por Discontinuidad Evaluativa (≥2 NSP o ≥4 Faltas)', 'c-purple',
-        'Pierden la secuencia didáctica por inasistencias o pruebas no presentadas.',
-        'Aplicar protocolo de reincorporación: entregar guía resumen de la misión perdida y calendarizar las pruebas pendientes.', gAusentes)}
+      ${renderCluster('🟠', 'Grupo 2: Brecha Procedimental / Operativa (Comprenden la teoría, bajan en la práctica)', 'c-amber',
+        'Aprueban los cuestionarios conceptuales pero caen 12 puntos o más en las pruebas operativas.',
+        'Modelar la resolución de problemas paso a paso en pizarra y usar guías de ejercicios resueltos antes de la prueba operativa.', gOperativa)}
+      ${renderCluster('📈', 'Grupo 3: Respuesta Positiva y Superación Longitudinal (Δ ≥ +7 pts)', 'c-blue',
+        'Alumnos que muestran un crecimiento sostenido entre la primera y la segunda mitad del periodo.',
+        'Reconocer públicamente su curva de mejora y enviar felicitación a la familia para afianzar su autoeficacia.', gAscenso)}
+      ${renderCluster('🟡', 'Grupo 4: Desempeño Variable o con Alerta de Descenso (σ ≥ 16 o Δ ≤ -7)', 'c-yellow',
+        'Alumnos con capacidad demostrada (notas altas en varios temas) pero que sufren caídas puntuales.',
+        'Revisar hábitos de repaso previo al examen y verificar qué temas específicos les generaron confusión.', gVolatil)}
       ${renderCluster('🟢', 'Grupo 5: Red de Tutores Pares / Monitores de Aprendizaje (Prom. ≥ 85% constante)', 'c-green',
-        'Estudiantes con dominio sólido, baja dispersión y 100% de evaluaciones completadas.',
+        'Estudiantes con dominio sólido y estabilidad a lo largo de las asignaturas.',
         'Asignarlos como coordinadores o tutores pares (Zona de Desarrollo Próximo de Vygotsky) junto a compañeros de los Grupos 1 y 2.', gTutores)}
     </div>`;
 }
@@ -1921,17 +2005,17 @@ function paLabVistaHipotesis(datos) {
         <div class="pa-lab-subtit">📐 Matriz de Hipótesis y Correlaciones Empíricas del Aula</div>
         <ul class="pa-lab-hyp-list">
           <li>
-            <strong>H₁ — Continuidad Presencial vs. Logro Académico:</strong><br>
-            <span>Cruce Días Faltados ↔ Promedio: <strong>${interpR(c.rFaltasProm)}</strong> · Días Faltados ↔ NSP: <strong>${interpR(c.rFaltasNsp)}</strong>.</span>
-            <p>${c.rFaltasProm !== null && c.rFaltasProm < -0.25
-              ? '✅ <em>Hipótesis confirmada en este grupo:</em> El ausentismo erosiona significativamente el promedio. Cada secuencia perdida rompe el encadenamiento de pre-saberes.'
-              : 'ℹ️ <em>Efecto amortiguado:</em> Los bajos promedios del grupo obedecen más a dificultades didácticas en el aula que a las inasistencias.'}</p>
+            <strong>H₁ — Continuidad Evaluativa vs. Rendimiento Académico:</strong><br>
+            <span>Cruce Pruebas Realizadas ↔ Promedio: <strong>${interpR(c.rNspProm)}</strong> · Inasistencias ↔ Promedio: <strong>${interpR(c.rFaltasProm)}</strong>.</span>
+            <p>${c.rNspProm !== null && c.rNspProm > 0.2
+              ? '✅ <em>Hipótesis confirmada en este grupo:</em> La participación continua en las evaluaciones formativas y sumativas se asocia positivamente con un mayor promedio global.'
+              : 'ℹ️ <em>Efecto distribuido:</em> Las diferencias de promedio responden principalmente a la complejidad de los temas específicos más que a la cantidad de pruebas presentadas.'}</p>
           </li>
           <li>
-            <strong>H₂ — Esfuerzo Autónomo en Misiones vs. Nota de Evaluación:</strong><br>
+            <strong>H₂ — Esfuerzo Autónomo en Misiones M.E.T.A.S vs. Nota de Evaluación:</strong><br>
             <span>Cruce Intentos en Misiones ↔ Promedio: <strong>${interpR(c.rMisProm)}</strong>.</span>
             <p>${c.rMisProm !== null && c.rMisProm > 0.25
-              ? '✅ <em>Hipótesis confirmada:</em> Quienes practican activamente las misiones obtienen mejores calificaciones en las pruebas formales.'
+              ? '✅ <em>Hipótesis confirmada:</em> Quienes practican activamente las misiones interactivas obtienen mejores calificaciones en las pruebas formales.'
               : 'ℹ️ Pulsa «🔄 Cruzar nube de misiones» o fomenta el uso previo del simulador para fortalecer la transferencia al examen.'}</p>
           </li>
           <li>
@@ -1967,7 +2051,7 @@ function paLabVistaHipotesis(datos) {
 /* ── VISTA 7: TEORÍA PEDAGÓGICA Y FILOSOFÍA DE LA EDUCACIÓN ── */
 function paLabVistaFilosofia(datos) {
   const g = datos.global;
-  const tutores = datos.alumnosStats.filter(a => a.prom !== null && a.prom >= 85 && a.pruebasSinHacer === 0);
+  const tutores = datos.alumnosStats.filter(a => a.prom !== null && a.prom >= 85 && a.std < 14);
   const rezago  = datos.alumnosStats.filter(a => a.prom !== null && a.prom < 72);
   const parejas = [];
   for (let i = 0; i < Math.min(tutores.length, rezago.length, 6); i++) {
@@ -1994,9 +2078,314 @@ function paLabVistaFilosofia(datos) {
 
       <div class="pa-lab-philo-card">
         <div class="pa-lab-philo-tit">🏛️ 4. Paulo Freire y la Filosofía del Cuidado Pedagógico</div>
-        <p>En la filosofía de la educación, ningún número es neutral: detrás de los <strong>${g.totalNsp} registros en NSP</strong> y de las diferencias de rendimiento hay historias familiares, ritmos vitales y condiciones materiales. El verdadero valor de esta analítica de datos no es clasificar ni etiquetar a los niños, sino darle al maestro ojos clínicos para llegar a tiempo a quien más necesita acompañamiento humano y pedagógico.</p>
+        <p>En la filosofía de la educación, ningún número es neutral: detrás de cada calificación y de cada curva de progreso hay historias familiares, ritmos vitales y condiciones materiales. El verdadero valor de esta analítica en M.E.T.A.S no es etiquetar a los niños, sino darle al maestro ojos clínicos para llegar a tiempo a quien más necesita acompañamiento humano y pedagógico.</p>
       </div>
     </div>`;
+}
+
+/* ── VISTA 8: INVESTIGACIÓN, CASOS DE ESTUDIO Y CONSENTIMIENTO INFORMADO (TESIS M.E.T.A.S) ── */
+function paTesisLoadCfg(datos) {
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem('METAS_TESIS_CFG_V1') || '{}') || {}; } catch (_) {}
+  let docSt = {};
+  try { docSt = JSON.parse(localStorage.getItem('METAS_DOCENTE_V1') || '{}') || {}; } catch (_) {}
+  const g = datos && datos.grupoAula;
+  const gNum = g ? parseInt(String(g.grado || '').replace(/\D/g, ''), 10) : 6;
+  const sigGradoDef = gNum ? `${gNum + 1}.° Grado (Siguiente Grado Escolar)` : 'Siguiente Grado Escolar';
+  return {
+    titulo: saved.titulo || 'Evaluación Longitudinal del Impacto de la Aplicación Educativa M.E.T.A.S (Módulos Alumno y Docente) en el Rendimiento Académico, la Autorregulación y la Intervención Pedagógica Oportuna',
+    investigador: saved.investigador || docSt.nombre || (g && g.docente) || 'Docente Investigador',
+    centro: saved.centro || (g && g.escuela) || 'Centro de Educación Básica',
+    gradoActual: saved.gradoActual || (g ? paGrupoTxt(g.grado, g.seccion) : '6.° Grado'),
+    gradoSiguiente: saved.gradoSiguiente || sigGradoDef,
+    modo: saved.modo || 'completo' // 'completo' | 'consentimiento' | 'caso'
+  };
+}
+
+function paTesisSaveCfg(cfg) {
+  try { localStorage.setItem('METAS_TESIS_CFG_V1', JSON.stringify(cfg)); } catch (_) {}
+}
+
+function paLabVistaInvestigacion(datos) {
+  const cfg = paTesisLoadCfg(datos);
+  const selCount = _paTesisSeleccion ? _paTesisSeleccion.size : 0;
+
+  return `
+    <div class="pa-tesis-hero">
+      <div class="pa-tesis-hero-top">
+        <div>
+          <span class="pa-tesis-badge">🎓 MÓDULO DE INVESTIGACIÓN CIENTÍFICA Y TESIS — PROYECTO M.E.T.A.S</span>
+          <h5 class="pa-tesis-h5">Expedientes de Caso de Estudio por Alumno y Consentimiento Informado Longitudinal</h5>
+          <p class="pa-tesis-desc">Documenta empíricamente el impacto de <strong>M.E.T.A.S</strong> (tanto en el aprendizaje del alumno como en la toma de decisiones del docente) y genera las actas formales de <strong>Consentimiento Informado</strong> con firma del padre/madre y asentimiento del estudiante para continuar el seguimiento investigativo en el <strong>siguiente grado escolar</strong>.</p>
+        </div>
+      </div>
+
+      <div class="pa-tesis-cfg-grid">
+        <div class="pa-tesis-field full">
+          <label>📘 Título del Estudio / Tesis de Investigación</label>
+          <input type="text" id="pa-tesis-inp-titulo" value="${paEsc(cfg.titulo)}">
+        </div>
+        <div class="pa-tesis-field">
+          <label>👨‍🏫 Docente Investigador(a)</label>
+          <input type="text" id="pa-tesis-inp-inv" value="${paEsc(cfg.investigador)}">
+        </div>
+        <div class="pa-tesis-field">
+          <label>🏫 Centro Educativo</label>
+          <input type="text" id="pa-tesis-inp-centro" value="${paEsc(cfg.centro)}">
+        </div>
+        <div class="pa-tesis-field">
+          <label>📍 Grado / Grupo Actual</label>
+          <input type="text" id="pa-tesis-inp-gact" value="${paEsc(cfg.gradoActual)}">
+        </div>
+        <div class="pa-tesis-field">
+          <label>🚀 Grado de Seguimiento (Próximo Año)</label>
+          <input type="text" id="pa-tesis-inp-gsig" value="${paEsc(cfg.gradoSiguiente)}">
+        </div>
+        <div class="pa-tesis-field full">
+          <label>🖨️ Formato del Documento a Generar e Imprimir</label>
+          <select id="pa-tesis-sel-modo">
+            <option value="completo"${cfg.modo === 'completo' ? ' selected' : ''}>📄 Ficha Completa: Caso de Estudio Longitudinal + Acta de Consentimiento Informado (Con firmas de Padre y Alumno)</option>
+            <option value="consentimiento"${cfg.modo === 'consentimiento' ? ' selected' : ''}>✍️ Solo Acta de Consentimiento Informado Longitudinal (Para enviar a firmar a Padres y Alumnos)</option>
+            <option value="caso"${cfg.modo === 'caso' ? ' selected' : ''}>📊 Solo Ficha Técnica de Caso de Estudio (Anexo Empírico para Tesis)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="pa-tesis-toolbar">
+        <div class="pa-tesis-sel-btns">
+          <button type="button" class="pa-tesis-sbtn" id="pa-tesis-sel-all">☑️ Seleccionar todos (${datos.alumnosStats.length})</button>
+          <button type="button" class="pa-tesis-sbtn" id="pa-tesis-sel-dest">🔬 Seleccionar casos representativos (Muestra de Tesis)</button>
+          <button type="button" class="pa-tesis-sbtn" id="pa-tesis-sel-none">⬜ Desmarcar todos</button>
+        </div>
+        <button type="button" class="pa-tesis-print-main" id="pa-tesis-print-lote">
+          🖨️ Generar e Imprimir Seleccionados (<span id="pa-tesis-cnt">${selCount}</span> alumnos)
+        </button>
+      </div>
+    </div>
+
+    <div class="pa-lab-table-wrap">
+      <table class="pa-lab-table pa-tesis-table">
+        <thead>
+          <tr>
+            <th style="width:36px;text-align:center;">Elegir</th>
+            <th>Nº / Código</th>
+            <th>Alumno(a)</th>
+            <th>Métricas Longitudinales</th>
+            <th>Tipología y Síntesis del Caso de Estudio (M.E.T.A.S)</th>
+            <th style="text-align:right;">Impresión Individual</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${datos.alumnosStats.map(al => {
+            const checked = _paTesisSeleccion && _paTesisSeleccion.has(al.num);
+            const promTxt = al.prom !== null ? al.prom.toFixed(1) + '%' : 'S/D';
+            const deltaTxt = al.notas.length >= 2 ? ((al.delta >= 0 ? '+' : '') + al.delta.toFixed(1) + ' pts') : '—';
+            return `<tr class="${checked ? 'tesis-row-sel' : ''}">
+              <td style="text-align:center;">
+                <input type="checkbox" class="pa-tesis-chk" data-num="${al.num}" ${checked ? 'checked' : ''} style="width:18px;height:18px;cursor:pointer;accent-color:#4338ca;">
+              </td>
+              <td>
+                <strong>#${al.num}</strong><br>
+                <span class="pa-tesis-code">${paEsc(al.codigoTesis)}</span>
+              </td>
+              <td>
+                <strong>${paEsc(al.nombre)}</strong><br>
+                <span class="pa-lab-pat-badge ${al.patronClase}">${paEsc(al.patronTag)}</span>
+              </td>
+              <td style="white-space:nowrap;">
+                <div>📊 Media: <strong>${promTxt}</strong> <small>(±${al.std.toFixed(1)})</small></div>
+                <div>📈 Evolución Δ: <strong>${deltaTxt}</strong></div>
+                <div>📝 Evidencia: <strong>${al.pruebasHechas}/${datos.evalsStats.length}</strong> pruebas</div>
+              </td>
+              <td>
+                <div class="pa-tesis-tipo">${paEsc(al.casoTipo)}</div>
+                <div class="pa-tesis-sintesis">${paEsc(al.sintesisCaso)}</div>
+              </td>
+              <td style="text-align:right;white-space:nowrap;">
+                <button type="button" class="pa-tesis-row-btn primary" data-print-num="${al.num}" data-print-modo="completo" title="Imprimir Caso de Estudio + Consentimiento Informado">📄 Caso + Firma</button>
+                <button type="button" class="pa-tesis-row-btn" data-print-num="${al.num}" data-print-modo="consentimiento" title="Imprimir solo el Consentimiento Informado para firma del padre y alumno">✍️ Solo Firma</button>
+              </td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+function paImprimirDocumentosTesis(datos, listaAlumnos, modoForzado) {
+  if (!listaAlumnos || !listaAlumnos.length) {
+    if (typeof toast === 'function') toast('⚠️ Selecciona al menos un alumno para generar el documento');
+    return;
+  }
+  const cfg = paTesisLoadCfg(datos);
+  const modo = modoForzado || cfg.modo || 'completo';
+  const fechaHoy = new Date().toLocaleDateString('es-HN', { year: 'numeric', month: 'long', day: 'numeric' });
+
+  const paginasHtml = listaAlumnos.map(al => {
+    const promTxt = al.prom !== null ? al.prom.toFixed(1) + '%' : 'S/D';
+    const medTxt  = al.med !== null ? al.med.toFixed(1) + '%' : 'S/D';
+    const stdTxt  = '±' + al.std.toFixed(1) + '%';
+    const deltaTxt = al.notas.length >= 2 ? ((al.delta >= 0 ? '+' : '') + al.delta.toFixed(1) + ' pts') : 'S/D';
+    const concTxt = al.promConc !== null ? al.promConc.toFixed(1) + '%' : 'S/D';
+    const operTxt = al.promOper !== null ? al.promOper.toFixed(1) + '%' : 'S/D';
+    const temasRef = al.temasReprobados.length
+      ? al.temasReprobados.slice(0, 5).map(t => `${paEsc(t.titulo)} (${paEsc(t.materia)}: ${t.nota}%)`).join(' · ')
+      : 'Dominio satisfactorio en los contenidos evaluados (≥70%).';
+
+    const bloqueCaso = (modo === 'completo' || modo === 'caso') ? `
+      <div class="sec-box">
+        <div class="sec-title">I. FICHA TÉCNICA DE CASO DE ESTUDIO LONGITUDINAL (SISTEMA M.E.T.A.S)</div>
+        <table class="meta-tbl">
+          <tr>
+            <th>Estudiante</th><td><strong>${paEsc(al.nombre)}</strong> (Lista #${al.num})</td>
+            <th>Código Anónimo de Tesis</th><td><strong>${paEsc(al.codigoTesis)}</strong></td>
+          </tr>
+          <tr>
+            <th>Grado Actual</th><td>${paEsc(cfg.gradoActual)}</td>
+            <th>Proyección de Seguimiento</th><td>${paEsc(cfg.gradoSiguiente)}</td>
+          </tr>
+          <tr>
+            <th>Tipología Metodológica</th><td colspan="3"><strong>${paEsc(al.casoTipo)}</strong> (${paEsc(al.patronTag)})</td>
+          </tr>
+        </table>
+
+        <table class="kpi-tbl">
+          <thead>
+            <tr>
+              <th>Pruebas Evaluadas (n)</th>
+              <th>Media Aritmética (x̄)</th>
+              <th>Mediana (Me)</th>
+              <th>Desviación (σ)</th>
+              <th>Tendencia Longitudinal (Δ)</th>
+              <th>Media Conceptual</th>
+              <th>Media Operativa</th>
+              <th>Práctica Misiones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>${al.pruebasHechas} / ${datos.evalsStats.length}</strong></td>
+              <td><strong>${promTxt}</strong></td>
+              <td>${medTxt}</td>
+              <td>${stdTxt}</td>
+              <td><strong>${deltaTxt}</strong></td>
+              <td>${concTxt}</td>
+              <td>${operTxt}</td>
+              <td>${al.mis.intentos} int. (${al.mis.misionesUnicas} mis.)</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="narrativa-box">
+          <div><strong>Síntesis Analítica del Caso (Evidencia Empírica):</strong> ${paEsc(al.sintesisCaso)}</div>
+          <div style="margin-top:4px;"><strong>Áreas / Contenidos Curriculares por Reforzar en Transición al Siguiente Grado:</strong> ${temasRef}</div>
+        </div>
+      </div>` : '';
+
+    const bloqueConsentimiento = (modo === 'completo' || modo === 'consentimiento') ? `
+      <div class="sec-box">
+        <div class="sec-title">${modo === 'completo' ? 'II.' : 'I.'} ACTA DE CONSENTIMIENTO INFORMADO FAMILIAR Y ASENTIMIENTO ESTUDIANTIL</div>
+        <p class="legal-p">
+          <strong>1. Propósito de la Investigación:</strong> El presente estudio académico (tesis de investigación educativa) evalúa el impacto pedagógico, formativo y analítico de la plataforma interactiva <strong>M.E.T.A.S</strong>, tanto en su dimensión de aprendizaje autónomo para el estudiante como en su dimensión de diagnóstico y Plan de Acción para el docente en el <strong>${paEsc(cfg.centro)}</strong>.
+        </p>
+        <p class="legal-p">
+          <strong>2. Seguimiento Longitudinal en el Siguiente Grado (${paEsc(cfg.gradoSiguiente)}):</strong> Con el fin de analizar la retención del aprendizaje a mediano plazo, la evolución de los patrones de estudio y la efectividad de las estrategias de refuerzo generadas por el sistema, se solicita autorización para dar seguimiento académico y estadístico a los resultados del estudiante <strong>${paEsc(al.nombre)}</strong> durante su paso por el <strong>${paEsc(cfg.gradoSiguiente)}</strong>.
+        </p>
+        <p class="legal-p">
+          <strong>3. Confidencialidad, Ética y Beneficio Pedagógico:</strong> Toda la información recopilada será tratada bajo estrictos estándares de ética de investigación educativa. En los informes de tesis, matrices estadísticas y publicaciones académicas, la identidad del estudiante se protegerá mediante el código anónimo <strong>${paEsc(al.codigoTesis)}</strong>. La participación es totalmente gratuita, voluntaria, no representa ningún riesgo y aporta retroalimentación pedagógica continua para apoyar el progreso escolar del alumno(a).
+        </p>
+        <div class="auth-check-box">
+          <div style="margin-bottom:5px;font-weight:700;">Declaración de Decisión Informada:</div>
+          <div class="auth-options">
+            <span>☐ <strong>SÍ AUTORIZO</strong> la inclusión del caso de estudio y el seguimiento longitudinal de resultados en el siguiente grado dentro de la investigación del proyecto M.E.T.A.S.</span>
+            <span>☐ <strong>NO AUTORIZO</strong> el seguimiento investigativo.</span>
+          </div>
+        </div>
+
+        <div class="firmas-grid">
+          <div class="firma-col">
+            <div class="firma-line"></div>
+            <div class="firma-rol">FIRMA DEL PADRE, MADRE O ENCARGADO</div>
+            <div class="firma-meta">Nombre: ____________________________________</div>
+            <div class="firma-meta">N.º Identidad (DNI): __________________________</div>
+            <div class="firma-meta">Teléfono: ___________________________________</div>
+          </div>
+          <div class="firma-col">
+            <div class="firma-line"></div>
+            <div class="firma-rol">ASENTIMIENTO Y FIRMA DEL ALUMNO(A)</div>
+            <div class="firma-meta">Alumno(a): <strong>${paEsc(al.nombre)}</strong></div>
+            <div class="firma-meta">Código: <strong>${paEsc(al.codigoTesis)}</strong> · Lista #${al.num}</div>
+            <div class="firma-meta">Grado: ${paEsc(cfg.gradoActual)} → ${paEsc(cfg.gradoSiguiente)}</div>
+          </div>
+          <div class="firma-col">
+            <div class="firma-line"></div>
+            <div class="firma-rol">FIRMA DEL DOCENTE INVESTIGADOR</div>
+            <div class="firma-meta"><strong>${paEsc(cfg.investigador)}</strong></div>
+            <div class="firma-meta">Centro: ${paEsc(cfg.centro)}</div>
+            <div class="firma-meta">Fecha: ${paEsc(fechaHoy)}</div>
+          </div>
+        </div>
+      </div>` : '';
+
+    return `
+      <div class="page-sheet">
+        <div class="doc-hdr">
+          <div class="doc-hdr-top">
+            <span class="doc-kicker">PROYECTO DE INVESTIGACIÓN EDUCATIVA Y TESIS — PLATAFORMA M.E.T.A.S (ALUMNO · DOCENTE)</span>
+            <span class="doc-code-pill">Expediente: ${paEsc(al.codigoTesis)}</span>
+          </div>
+          <h1 class="doc-main-title">${paEsc(cfg.titulo)}</h1>
+          <div class="doc-sub-meta">
+            <span>🏫 <strong>Centro:</strong> ${paEsc(cfg.centro)}</span>
+            <span>👨‍🏫 <strong>Investigador:</strong> ${paEsc(cfg.investigador)}</span>
+            <span>📅 <strong>Fecha:</strong> ${paEsc(fechaHoy)}</span>
+          </div>
+        </div>
+        ${bloqueCaso}
+        ${bloqueConsentimiento}
+      </div>`;
+  }).join('');
+
+  const w = window.open('', '_blank');
+  if (!w) {
+    if (typeof toast === 'function') toast('⚠️ Activa las ventanas emergentes para imprimir los documentos');
+    return;
+  }
+  w.document.write(`<!DOCTYPE html><html lang="es"><head><meta charset="utf-8">
+    <title>Casos de Estudio y Consentimiento Informado — Tesis M.E.T.A.S</title>
+    <style>
+      @page { size: letter portrait; margin: 12mm 14mm; }
+      * { box-sizing: border-box; }
+      body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; color: #0f172a; margin: 0; padding: 0; font-size: 11px; line-height: 1.42; }
+      .page-sheet { page-break-after: always; padding: 4px 0; }
+      .page-sheet:last-child { page-break-after: auto; }
+      .doc-hdr { border-bottom: 2px solid #1e3a8a; padding-bottom: 8px; margin-bottom: 10px; }
+      .doc-hdr-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+      .doc-kicker { font-size: 9.5px; font-weight: 800; color: #1e3a8a; letter-spacing: .5px; text-transform: uppercase; }
+      .doc-code-pill { font-size: 10px; font-weight: 800; background: #e0e7ff; color: #1e1b4b; padding: 2px 8px; border-radius: 99px; border: 1px solid #a5b4fc; }
+      .doc-main-title { font-size: 13px; font-weight: 900; color: #0f172a; margin: 0 0 5px; line-height: 1.25; }
+      .doc-sub-meta { display: flex; flex-wrap: wrap; gap: 14px; font-size: 10px; color: #334155; }
+      .sec-box { border: 1px solid #cbd5e1; border-radius: 8px; padding: 9px 11px; margin-bottom: 10px; background: #fff; }
+      .sec-title { font-size: 10.5px; font-weight: 900; color: #1e3a8a; background: #f1f5f9; padding: 4px 8px; border-radius: 5px; margin-bottom: 8px; letter-spacing: .3px; }
+      table { width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 10.2px; }
+      .meta-tbl th, .meta-tbl td { border: 1px solid #cbd5e1; padding: 4px 7px; text-align: left; }
+      .meta-tbl th { background: #f8fafc; width: 20%; color: #334155; font-weight: 800; }
+      .kpi-tbl th, .kpi-tbl td { border: 1px solid #cbd5e1; padding: 4px 5px; text-align: center; }
+      .kpi-tbl th { background: #f1f5f9; font-size: 9.5px; font-weight: 800; color: #1e293b; }
+      .narrativa-box { background: #f8fafc; border: 1px solid #e2e8f0; border-left: 3.5px solid #1e3a8a; border-radius: 6px; padding: 7px 9px; font-size: 10.2px; text-align: justify; }
+      .legal-p { margin: 0 0 6px; text-align: justify; font-size: 10.3px; color: #1e293b; }
+      .auth-check-box { border: 1px dashed #64748b; border-radius: 6px; padding: 7px 10px; margin: 8px 0 14px; background: #f8fafc; font-size: 10.2px; }
+      .auth-options { display: flex; flex-direction: column; gap: 4px; }
+      .firmas-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-top: 26px; padding-top: 6px; }
+      .firma-col { text-align: center; font-size: 9.8px; }
+      .firma-line { border-bottom: 1.5px solid #0f172a; height: 28px; margin-bottom: 5px; }
+      .firma-rol { font-weight: 900; color: #1e3a8a; margin-bottom: 4px; font-size: 9.5px; }
+      .firma-meta { text-align: left; color: #334155; margin-top: 2px; line-height: 1.35; }
+    </style></head><body>
+    ${paginasHtml}
+    <script>window.onload = function(){ window.print(); };<\/script>
+  </body></html>`);
+  w.document.close();
 }
 
 function paBindLaboratorioEvents(list, vistos, ordenados) {
@@ -2048,6 +2437,70 @@ function paBindLaboratorioEvents(list, vistos, ordenados) {
       <script>window.onload = function(){ window.print(); };<\/script></body></html>`);
     w.document.close();
   });
+
+  // Eventos específicos de la Pestaña 8: Investigación / Tesis / Consentimiento Informado
+  if (_paLabTab === 'investigacion') {
+    const datos = paConstruirDatosLaboratorio(vistos, ordenados);
+    const leerGuardarCfg = () => {
+      const cfg = {
+        titulo: document.getElementById('pa-tesis-inp-titulo')?.value || '',
+        investigador: document.getElementById('pa-tesis-inp-inv')?.value || '',
+        centro: document.getElementById('pa-tesis-inp-centro')?.value || '',
+        gradoActual: document.getElementById('pa-tesis-inp-gact')?.value || '',
+        gradoSiguiente: document.getElementById('pa-tesis-inp-gsig')?.value || '',
+        modo: document.getElementById('pa-tesis-sel-modo')?.value || 'completo'
+      };
+      paTesisSaveCfg(cfg);
+      return cfg;
+    };
+    ['pa-tesis-inp-titulo', 'pa-tesis-inp-inv', 'pa-tesis-inp-centro', 'pa-tesis-inp-gact', 'pa-tesis-inp-gsig', 'pa-tesis-sel-modo'].forEach(id => {
+      document.getElementById(id)?.addEventListener('change', leerGuardarCfg);
+      document.getElementById(id)?.addEventListener('input', leerGuardarCfg);
+    });
+
+    const actContador = () => {
+      const el = document.getElementById('pa-tesis-cnt');
+      if (el && _paTesisSeleccion) el.textContent = String(_paTesisSeleccion.size);
+    };
+
+    list.querySelectorAll('.pa-tesis-chk').forEach(chk => {
+      chk.addEventListener('change', () => {
+        const n = parseInt(chk.getAttribute('data-num'), 10);
+        if (!n) return;
+        if (!_paTesisSeleccion) _paTesisSeleccion = new Set();
+        if (chk.checked) _paTesisSeleccion.add(n); else _paTesisSeleccion.delete(n);
+        chk.closest('tr')?.classList.toggle('tesis-row-sel', chk.checked);
+        actContador();
+      });
+    });
+
+    document.getElementById('pa-tesis-sel-all')?.addEventListener('click', () => {
+      _paTesisSeleccion = new Set(datos.alumnosStats.map(a => a.num));
+      paRenderHistorial();
+    });
+    document.getElementById('pa-tesis-sel-none')?.addEventListener('click', () => {
+      _paTesisSeleccion = new Set();
+      paRenderHistorial();
+    });
+    document.getElementById('pa-tesis-sel-dest')?.addEventListener('click', () => {
+      _paTesisSeleccion = new Set(datos.alumnosStats.filter(a => a.casoDestacado).map(a => a.num));
+      paRenderHistorial();
+    });
+    document.getElementById('pa-tesis-print-lote')?.addEventListener('click', () => {
+      leerGuardarCfg();
+      const elegidos = datos.alumnosStats.filter(a => _paTesisSeleccion && _paTesisSeleccion.has(a.num));
+      paImprimirDocumentosTesis(datos, elegidos, null);
+    });
+    list.querySelectorAll('[data-print-num]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        leerGuardarCfg();
+        const n = parseInt(btn.getAttribute('data-print-num'), 10);
+        const modo = btn.getAttribute('data-print-modo') || 'completo';
+        const al = datos.alumnosStats.find(a => a.num === n);
+        if (al) paImprimirDocumentosTesis(datos, [al], modo);
+      });
+    });
+  }
 }
 
 async function paRecuperarHistorialNube(btn) {
