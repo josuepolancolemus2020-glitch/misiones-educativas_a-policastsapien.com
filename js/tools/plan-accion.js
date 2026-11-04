@@ -1209,15 +1209,19 @@ async function paSincronizarNube(manual) {
   }
   _paSbBusy = true;
   paNubeEstado('🔑 Nube de padres: ⏳ enviando ' + Math.min(filas.length, 200) + '…', '⏳ Enviando al asistente…');
+  const lote = filas.slice(0, 200);
   try {
-    const lote = filas.slice(0, 200);
     const { url, key } = paSbCfg();
     const r = await fetch(url + '/rest/v1/rpc/metas_guardar_plan', {
       method: 'POST',
       headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
       body: JSON.stringify({ p_prof: paCred.prof, p_clave: paCred.clave, filas: lote }),
     });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
+    if (!r.ok) {
+      const httpErr = new Error('HTTP ' + r.status);
+      httpErr.status = r.status;
+      throw httpErr;
+    }
     const _n = await r.clone().json().catch(() => 0);
     if (typeof _n === 'number' && _n < 0) throw new Error('cuenta docente rechazada');
     const enviados = new Set(lote.map(f => f.evento_id));
@@ -1230,7 +1234,24 @@ async function paSincronizarNube(manual) {
     if (manual) toast('✅ Notas enviadas a la nube de padres');
     /* quedaron más de 200 pendientes (re-publicación masiva): siguiente lote solo */
     if (filas.length > lote.length) paNubeProgramar();
-  } catch (_) {
+  } catch (err) {
+    const m = err && err.message ? String(err.message).match(/HTTP\s+(\d+)/) : null;
+    const status = (err && typeof err.status === 'number') ? err.status : (m ? parseInt(m[1], 10) : 0);
+    if (status >= 400 && status <= 499) {
+      try {
+        const prev = JSON.parse(localStorage.getItem('METAS_SB_ERRORES') || '[]');
+        const errores = Array.isArray(prev) ? prev : [];
+        lote.forEach(f => { if (f && f.evento_id) errores.push(f.evento_id); });
+        localStorage.setItem('METAS_SB_ERRORES', JSON.stringify(errores));
+      } catch (_) {}
+      const descartados = new Set(lote.map(f => f.evento_id));
+      d.analisis.forEach(a => (a.students || []).forEach(s => {
+        const codigo = paCodigoLista(a, s);
+        if (descartados.has('PASB-' + a.id + '-' + s.num)) s.sb = paSbFirma(a, s, codigo);
+      }));
+      paSaveData(d);
+      if (filas.length > lote.length) paNubeProgramar();
+    }
     paNubeEstado('🔑 Nube de padres: ⚠️ no se pudo enviar; se reintentará.',
       '⚠️ No se pudo enviar todavía; se reintenta solo.');
   }

@@ -128,7 +128,11 @@
     if (opciones.keepalive) conf.keepalive = true;
     return fetch(SB_URL + '/rest/v1/rpc/metas_guardar', conf)
       .then(function (r) {
-        if (!r.ok) throw new Error('HTTP ' + r.status);
+        if (!r.ok) {
+          var httpErr = new Error('HTTP ' + r.status);
+          httpErr.status = r.status;
+          throw httpErr;
+        }
         var ids = {};
         lote.forEach(function (f) { ids[f.evento_id] = 1; });
         escribirCola(leerCola().filter(function (f) { return !ids[f.evento_id]; }));
@@ -140,7 +144,28 @@
         }
         return { enviados: lote.length, pendientes: leerCola().length };
       })
-      .catch(function () { enCurso = false; return quedan(); });
+      .catch(function (err) {
+        var m = err && err.message ? String(err.message).match(/HTTP\s+(\d+)/) : null;
+        var status = (err && typeof err.status === 'number') ? err.status : (m ? parseInt(m[1], 10) : 0);
+        if (status >= 400 && status <= 499) {
+          try {
+            var prev = JSON.parse(localStorage.getItem('METAS_SB_ERRORES') || '[]');
+            var errores = Array.isArray(prev) ? prev : [];
+            lote.forEach(function (f) { if (f && f.evento_id) errores.push(f.evento_id); });
+            localStorage.setItem('METAS_SB_ERRORES', JSON.stringify(errores));
+          } catch (e) {}
+          var idsDesc = {};
+          lote.forEach(function (f) { idsDesc[f.evento_id] = 1; });
+          escribirCola(leerCola().filter(function (f) { return !idsDesc[f.evento_id]; }));
+          enCurso = false;
+          if (!opciones.keepalive && leerCola().length) {
+            return sincronizar(opciones);
+          }
+          return quedan();
+        }
+        enCurso = false;
+        return quedan();
+      });
   }
 
   var timer = null;
