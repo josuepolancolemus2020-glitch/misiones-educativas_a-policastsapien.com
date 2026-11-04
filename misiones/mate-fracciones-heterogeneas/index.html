@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Misión: Suma y Resta de Fracciones Heterogéneas · M.E.T.A.S.</title>
+  <link rel="stylesheet" href="../../css/vendor/fuentes/fuentes.css">
+  <link rel="stylesheet" href="../../css/senal-no-color.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Barra Superior de Navegación y Progreso -->
+  <header class="topbar" role="banner">
+    <div class="topbar-izq">
+      <a href="../../index.html?view=misiones&filter=matemáticas" class="btn-volver" id="btnVolver" aria-label="Volver al menú principal">
+        &lt; Volver al menú
+      </a>
+      <div class="titulo-mision-wrap">
+        <span class="badge-materia">🍕 Matemáticas · Ruta del Número</span>
+        <h1 class="titulo-mision">Suma y Resta de Fracciones Heterogéneas</h1>
+      </div>
+    </div>
+
+    <div class="topbar-der">
+      <div class="progreso-meta" aria-live="polite">
+        <div class="progreso-texto">
+          <span>Meta de misión:</span>
+          <strong id="contadorEjercicios">0 / 5</strong>
+        </div>
+        <div class="estrellas-meta" id="estrellasMeta" aria-label="Progreso de 5 ejercicios">
+          <span class="estrella" data-idx="1">★</span>
+          <span class="estrella" data-idx="2">★</span>
+          <span class="estrella" data-idx="3">★</span>
+          <span class="estrella" data-idx="4">★</span>
+          <span class="estrella" data-idx="5">★</span>
+        </div>
+      </div>
+
+      <button type="button" class="btn-voz" id="btnVozGeneral" aria-label="Escuchar instrucción del paso actual">
+        🔊 Escuchar
+      </button>
+    </div>
+  </header>
+
+  <!-- Contenido Principal -->
+  <main class="contenedor-mision">
+
+    <!-- Panel Superior: Ejercicio Aleatorio y Representación Visual -->
+    <section class="tarjeta panel-ejercicio" aria-labelledby="tituloEjercicioActual">
+      <div class="ejercicio-cabecera">
+        <div class="ejercicio-info">
+          <span class="chip-ejercicio" id="tituloEjercicioActual">Ejercicio #1</span>
+          <span class="chip-operacion" id="chipOperacion">➕ Suma de fracciones</span>
+        </div>
+        <div class="ejercicio-acciones">
+          <div class="selector-visual" role="group" aria-label="Modo de visualización">
+            <button type="button" class="btn-modo-vis activo" data-modo="ambos">✨ Círculos y Barras</button>
+            <button type="button" class="btn-modo-vis" data-modo="circulos">🍕 Círculos</button>
+            <button type="button" class="btn-modo-vis" data-modo="barras">🍫 Barras</button>
+          </div>
+          <button type="button" class="btn-nuevo-ej" id="btnNuevoEjercicio" title="Generar otro ejercicio aleatorio">
+            🎲 Otro ejercicio
+          </button>
+        </div>
+      </div>
+
+      <!-- Pizarra de la Operación -->
+      <div class="pizarra-ecuacion" aria-live="polite">
+        <div class="fraccion-bloque frac-a">
+          <span class="frac-num" id="eqNum1">1</span>
+          <span class="frac-linea"></span>
+          <span class="frac-den" id="eqDen1">2</span>
+        </div>
+
+        <span class="operador-simbolo" id="eqOperador">+</span>
+
+        <div class="fraccion-bloque frac-b">
+          <span class="frac-num" id="eqNum2">1</span>
+          <span class="frac-linea"></span>
+          <span class="frac-den" id="eqDen2">3</span>
+        </div>
+
+        <span class="operador-simbolo">=</span>
+
+        <!-- Equivalentes (se revelan en Paso 1 y 2) -->
+        <div class="ecuacion-equivalentes" id="bloqueEqEquivalentes">
+          <div class="fraccion-bloque frac-eq">
+            <span class="frac-num" id="eqNumEq1">?</span>
+            <span class="frac-linea"></span>
+            <span class="frac-den" id="eqDenComun1">?</span>
+          </div>
+          <span class="operador-simbolo" id="eqOperador2">+</span>
+          <div class="fraccion-bloque frac-eq">
+            <span class="frac-num" id="eqNumEq2">?</span>
+            <span class="frac-linea"></span>
+            <span class="frac-den" id="eqDenComun2">?</span>
+          </div>
+          <span class="operador-simbolo">=</span>
+        </div>
+
+        <!-- Resultado final (se revela en Paso 3) -->
+        <div class="fraccion-bloque frac-res" id="bloqueEqResultado">
+          <span class="frac-num" id="eqNumRes">?</span>
+          <span class="frac-linea"></span>
+          <span class="frac-den" id="eqDenRes">?</span>
+        </div>
+      </div>
+
+      <!-- Representaciones Visuales (Círculos y Barras Fraccionarias que se iluminan) -->
+      <div class="galeria-visual" id="galeriaVisual">
+        <!-- Tarjeta Visual Fracción 1 -->
+        <div class="tarjeta-visual vis-a" id="cardVisA">
+          <div class="vis-titulo">
+            <span class="vis-etiqueta">Primera fracción</span>
+            <strong class="vis-frac-texto" id="visTextoA">1/2</strong>
+          </div>
+          <div class="vis-figuras">
+            <div class="vis-circulo-wrap" id="wrapCirculoA"></div>
+            <div class="vis-barra-wrap" id="wrapBarraA"></div>
+          </div>
+          <p class="vis-subtitulo" id="visDetalleA">1 de 2 partes iluminadas</p>
+        </div>
+
+        <!-- Signo Operador Visual -->
+        <div class="vis-operador-central" id="visOperadorCentral">+</div>
+
+        <!-- Tarjeta Visual Fracción 2 -->
+        <div class="tarjeta-visual vis-b" id="cardVisB">
+          <div class="vis-titulo">
+            <span class="vis-etiqueta">Segunda fracción</span>
+            <strong class="vis-frac-texto" id="visTextoB">1/3</strong>
+          </div>
+          <div class="vis-figuras">
+            <div class="vis-circulo-wrap" id="wrapCirculoB"></div>
+            <div class="vis-barra-wrap" id="wrapBarraB"></div>
+          </div>
+          <p class="vis-subtitulo" id="visDetalleB">1 de 3 partes iluminadas</p>
+        </div>
+
+        <!-- Signo Igual Visual -->
+        <div class="vis-operador-central">=</div>
+
+        <!-- Tarjeta Visual Resultado -->
+        <div class="tarjeta-visual vis-res" id="cardVisRes">
+          <div class="vis-titulo">
+            <span class="vis-etiqueta">Resultado</span>
+            <strong class="vis-frac-texto" id="visTextoRes">?/?</strong>
+          </div>
+          <div class="vis-figuras">
+            <div class="vis-circulo-wrap" id="wrapCirculoRes"></div>
+            <div class="vis-barra-wrap" id="wrapBarraRes"></div>
+          </div>
+          <p class="vis-subtitulo" id="visDetalleRes">Resuelve los 3 pasos para iluminar</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Indicador de Progreso de los 3 Pasos -->
+    <nav class="barra-pasos" aria-label="Pasos del ejercicio">
+      <div class="indicador-paso activo" id="indPaso1">
+        <span class="num-paso">1</span>
+        <span class="txt-paso">Denominador común (MCM)</span>
+      </div>
+      <div class="conector-paso" id="conector1"></div>
+      <div class="indicador-paso" id="indPaso2">
+        <span class="num-paso">2</span>
+        <span class="txt-paso">Fracciones equivalentes</span>
+      </div>
+      <div class="conector-paso" id="conector2"></div>
+      <div class="indicador-paso" id="indPaso3">
+        <span class="num-paso">3</span>
+        <span class="txt-paso">Operar y simplificar</span>
+      </div>
+    </nav>
+
+    <!-- Contenedor de los 3 Pasos Interactivos -->
+    <section class="pasos-grid">
+
+      <!-- PASO 1: Encontrar el denominador común (MCM) -->
+      <article class="tarjeta tarjeta-paso paso-activo" id="panelPaso1" aria-labelledby="tituloPaso1">
+        <div class="paso-cabecera">
+          <div class="paso-titulo-grupo">
+            <span class="paso-insignia">Paso 1 de 3</span>
+            <h2 id="tituloPaso1">Encuentra el denominador común (MCM)</h2>
+          </div>
+          <button type="button" class="btn-voz btn-voz-paso" data-paso="1" aria-label="Escuchar instrucción del Paso 1">
+            🔊 Escuchar
+          </button>
+        </div>
+
+        <p class="paso-instruccion" id="instruccionPaso1">
+          Los denominadores son diferentes. Busca el <strong>Mínimo Común Múltiplo (MCM)</strong> para que ambas fracciones tengan partes del mismo tamaño.
+        </p>
+
+        <div class="pista-multiplos" id="pistaMultiplosPaso1"></div>
+
+        <div class="opciones-botones" id="opcionesPaso1" role="group" aria-label="Opciones de denominador común">
+          <!-- Generado dinámicamente en mision.js -->
+        </div>
+
+        <div class="feedback-paso" id="feedbackPaso1" role="status" aria-live="polite"></div>
+      </article>
+
+      <!-- PASO 2: Convertir a fracciones equivalentes -->
+      <article class="tarjeta tarjeta-paso paso-bloqueado" id="panelPaso2" aria-labelledby="tituloPaso2">
+        <div class="paso-cabecera">
+          <div class="paso-titulo-grupo">
+            <span class="paso-insignia">Paso 2 de 3</span>
+            <h2 id="tituloPaso2">Convierte a fracciones equivalentes</h2>
+          </div>
+          <button type="button" class="btn-voz btn-voz-paso" data-paso="2" aria-label="Escuchar instrucción del Paso 2">
+            🔊 Escuchar
+          </button>
+        </div>
+
+        <p class="paso-instruccion" id="instruccionPaso2">
+          Multiplica cada numerador por el mismo número que multiplicaste su denominador para llegar al denominador común.
+        </p>
+
+        <div class="conversion-grid" id="contenedorConversionPaso2">
+          <!-- Conversión Fracción 1 -->
+          <div class="tarjeta-conversion conv-a">
+            <div class="conv-encabezado">Primera fracción</div>
+            <div class="conv-formula">
+              <div class="frac-mini">
+                <span id="p2NumOrig1">1</span>
+                <span class="linea-mini"></span>
+                <span id="p2DenOrig1">2</span>
+              </div>
+              <div class="flecha-mult">
+                <span class="etiqueta-mult" id="p2Factor1">× 3</span>
+                <span class="flecha-icono">➜</span>
+              </div>
+              <div class="frac-mini frac-destino">
+                <span class="num-elegido" id="p2NumNuevo1">?</span>
+                <span class="linea-mini"></span>
+                <span id="p2DenComun1">6</span>
+              </div>
+            </div>
+            <p class="conv-pregunta" id="p2Pregunta1">¿Cuánto es 1 × 3?</p>
+            <div class="opciones-mini" id="opcionesNum1Paso2" role="group" aria-label="Opciones para el primer numerador equivalente"></div>
+          </div>
+
+          <!-- Conversión Fracción 2 -->
+          <div class="tarjeta-conversion conv-b">
+            <div class="conv-encabezado">Segunda fracción</div>
+            <div class="conv-formula">
+              <div class="frac-mini">
+                <span id="p2NumOrig2">1</span>
+                <span class="linea-mini"></span>
+                <span id="p2DenOrig2">3</span>
+              </div>
+              <div class="flecha-mult">
+                <span class="etiqueta-mult" id="p2Factor2">× 2</span>
+                <span class="flecha-icono">➜</span>
+              </div>
+              <div class="frac-mini frac-destino">
+                <span class="num-elegido" id="p2NumNuevo2">?</span>
+                <span class="linea-mini"></span>
+                <span id="p2DenComun2">6</span>
+              </div>
+            </div>
+            <p class="conv-pregunta" id="p2Pregunta2">¿Cuánto es 1 × 2?</p>
+            <div class="opciones-mini" id="opcionesNum2Paso2" role="group" aria-label="Opciones para el segundo numerador equivalente"></div>
+          </div>
+        </div>
+
+        <div class="feedback-paso" id="feedbackPaso2" role="status" aria-live="polite"></div>
+      </article>
+
+      <!-- PASO 3: Realizar la suma o resta final y simplificar si es posible -->
+      <article class="tarjeta tarjeta-paso paso-bloqueado" id="panelPaso3" aria-labelledby="tituloPaso3">
+        <div class="paso-cabecera">
+          <div class="paso-titulo-grupo">
+            <span class="paso-insignia">Paso 3 de 3</span>
+            <h2 id="tituloPaso3">Realiza la operación final y simplifica</h2>
+          </div>
+          <button type="button" class="btn-voz btn-voz-paso" data-paso="3" aria-label="Escuchar instrucción del Paso 3">
+            🔊 Escuchar
+          </button>
+        </div>
+
+        <p class="paso-instruccion" id="instruccionPaso3">
+          Ahora que tienen el mismo denominador, opera los numeradores y simplifica el resultado si es posible.
+        </p>
+
+        <!-- Subpaso 3A: Suma o resta de numeradores -->
+        <div class="subpaso-bloque" id="subpaso3Operacion">
+          <div class="ecuacion-paso3" id="resumenEcuacionPaso3">
+            <!-- Dinámico -->
+          </div>
+          <p class="subpaso-label" id="preguntaOperacionPaso3">Elige el resultado de la operación:</p>
+          <div class="opciones-botones" id="opcionesPaso3Operar" role="group" aria-label="Opciones de resultado de la operación"></div>
+        </div>
+
+        <!-- Subpaso 3B: Simplificación (se activa si la fracción es reducible) -->
+        <div class="subpaso-bloque oculto" id="subpaso3Simplificar">
+          <div class="alerta-simplificar" id="textoExplicacionSimplificar">
+            ¡Muy bien! Ahora observemos que esta fracción se puede <strong>simplificar</strong> dividiendo el numerador y el denominador entre su máximo común divisor.
+          </div>
+          <div class="opciones-botones" id="opcionesPaso3Simplificar" role="group" aria-label="Opciones de fracción simplificada"></div>
+        </div>
+
+        <div class="feedback-paso" id="feedbackPaso3" role="status" aria-live="polite"></div>
+
+        <div class="acciones-fin-ejercicio oculto" id="accionesFinEjercicio">
+          <button type="button" class="btn-primario-grande" id="btnSiguienteEjercicio">
+            ✨ Siguiente ejercicio ➜
+          </button>
+        </div>
+      </article>
+
+    </section>
+
+  </main>
+
+  <!-- Modal de Felicitación al Completar 5 Ejercicios -->
+  <div class="modal-overlay oculto" id="modalMisionCompletada" role="dialog" aria-modal="true" aria-labelledby="tituloModalCompletado">
+    <div class="modal-tarjeta">
+      <div class="modal-icono">🏆</div>
+      <h2 id="tituloModalCompletado">¡Misión Completada con Éxito!</h2>
+      <p class="modal-mensaje">
+        Resolviste <strong>5 ejercicios correctos</strong> de suma y resta de fracciones heterogéneas paso a paso.
+      </p>
+      <div class="modal-puntaje">
+        <span>Calificación registrada:</span>
+        <strong>100 / 100 pts · ✓ Guardado en tu Plan de Acción</strong>
+      </div>
+      <div class="modal-botones">
+        <button type="button" class="btn-primario-grande" id="btnSeguirPracticando">
+          🍕 Seguir practicando
+        </button>
+        <a href="../../index.html?view=misiones&filter=matemáticas" class="btn-secundario-grande">
+          &lt; Volver al menú
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/metas-registro.js"></script>
+  <script src="js/mision.js"></script>
+</body>
+</html>

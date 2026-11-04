@@ -159,6 +159,7 @@ const MISSIONS = [
   /* Prebásica (3.° Grado). Basada en el Libro 1 compilado por Evelyn S. Castellanos H.
      Trabajo guiado en casa con apoyo de un adulto. */
   { id: 85, title: 'Prebásica (3.° Grado): Técnicas Gráficas y No Gráficas — Libro 1', subject: 'prebasica', color: 'preb', grade: 'Prebásica (3.° Grado)', cycle: 'prebasica', ruta: 'manitas', etapa: 1, xp: 40, icon: '🐝', pais: 'HN', url: 'misiones/prebasica-tecnicas-libro1/prebasica-libro1.html', badgeAdult: true, subtitle: 'Técnicas Gráficas, Trazos, Letras y Rompecabezas · Libro 1 (Evelyn S. Castellanos H.)' },
+  { id: 150, title: 'Suma y Resta de Fracciones Heterogéneas', subject: 'matemáticas', color: 'mat', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'numero', etapa: 7, xp: 30, icon: '🍕', pais: 'HN', url: 'misiones/mate-fracciones-heterogeneas/index.html' },
 ];
 
 /* ─────────────────────────────────────────────

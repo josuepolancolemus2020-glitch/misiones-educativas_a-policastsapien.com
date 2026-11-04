@@ -1,0 +1,1159 @@
+/* ══════════════════════════════════════════════════════════════════════════════
+   M.E.T.A.S. — Suma y Resta de Fracciones Heterogéneas
+   Hoja de estilos gamificada con paleta pastel, botones grandes y apoyo visual
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Paleta Pastel Gamificada */
+  --bg-pagina: #FBF9FF;
+  --bg-tarjeta: #FFFFFF;
+  --pastel-lila: #EDE5FF;
+  --pastel-lila-borde: #C4B0F8;
+  --pastel-azul: #E0F2FE;
+  --pastel-azul-borde: #93C5FD;
+  --pastel-menta: #DCFCE7;
+  --pastel-menta-borde: #86EFAC;
+  --pastel-durazno: #FFEDD5;
+  --pastel-durazno-borde: #FDBA74;
+  --pastel-rosa: #FCE7F3;
+  --pastel-rosa-borde: #F9A8D4;
+  --pastel-amarillo: #FEF9C3;
+  --pastel-amarillo-borde: #FDE047;
+
+  /* Colores de Acento y Fracciones Iluminadas */
+  --frac-a-luz: #7C5CFC;
+  --frac-a-suave: #EFEAFF;
+  --frac-b-luz: #F97316;
+  --frac-b-suave: #FFF1E6;
+  --frac-res-luz: #10B981;
+  --frac-res-suave: #E6FBF2;
+
+  /* Estados */
+  --exito-bg: #DCFCE7;
+  --exito-borde: #22C55E;
+  --exito-txt: #14532D;
+  --error-bg: #FEE2E2;
+  --error-borde: #EF4444;
+  --error-txt: #7F1D1D;
+
+  /* Texto y Bordes */
+  --texto-principal: #1E293B;
+  --texto-secundario: #475569;
+  --borde-suave: #E2E8F0;
+  --sombra-tarjeta: 0 8px 24px rgba(100, 80, 160, 0.08);
+  --radio-grande: 20px;
+  --radio-medio: 14px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background-color: var(--bg-pagina);
+  background-image:
+    radial-gradient(circle at 12% 15%, rgba(237, 229, 255, 0.65) 0%, transparent 35%),
+    radial-gradient(circle at 88% 80%, rgba(224, 242, 254, 0.65) 0%, transparent 35%);
+  color: var(--texto-principal);
+  min-height: 100vh;
+  line-height: 1.5;
+  padding-bottom: 3rem;
+}
+
+h1, h2, h3, .fraccion-bloque, .btn-opcion, .btn-volver, .btn-voz {
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+}
+
+/* ── Barra Superior ──────────────────────────────────────────────────────── */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 0.85rem 1.4rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 3px solid var(--pastel-lila-borde);
+  box-shadow: 0 4px 14px rgba(124, 92, 252, 0.08);
+}
+
+.topbar-izq {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn-volver {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.65rem 1.15rem;
+  background: var(--pastel-lila);
+  color: #4C1D95;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1rem;
+  border-radius: 999px;
+  border: 2px solid var(--pastel-lila-borde);
+  box-shadow: 0 3px 0 var(--pastel-lila-borde);
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.btn-volver:hover,
+.btn-volver:focus-visible {
+  background: #DFD2FE;
+  transform: translateY(-1px);
+}
+
+.btn-volver:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--pastel-lila-borde);
+}
+
+.titulo-mision-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.badge-materia {
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6D28D9;
+}
+
+.titulo-mision {
+  font-size: 1.25rem;
+  color: var(--texto-principal);
+  font-weight: 700;
+}
+
+.topbar-der {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.progreso-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  background: var(--pastel-amarillo);
+  border: 2px solid var(--pastel-amarillo-borde);
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+}
+
+.progreso-texto {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #713F12;
+}
+
+.estrellas-meta {
+  display: flex;
+  gap: 0.2rem;
+}
+
+.estrella {
+  font-size: 1.2rem;
+  color: #CBD5E1;
+  transition: transform 0.25s ease, color 0.25s ease;
+}
+
+.estrella.ganada {
+  color: #F59E0B;
+  transform: scale(1.18);
+  text-shadow: 0 2px 6px rgba(245, 158, 11, 0.35);
+}
+
+/* ── Botón Estándar de Voz (🔊 Escuchar) ─────────────────────────────────── */
+.btn-voz {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.65rem 1.15rem;
+  min-height: 46px;
+  background: var(--pastel-azul);
+  color: #0C4A6E;
+  border: 2px solid var(--pastel-azul-borde);
+  border-radius: 999px;
+  font-size: 0.98rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 3px 0 var(--pastel-azul-borde);
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.btn-voz:hover,
+.btn-voz:focus-visible {
+  background: #BAE6FD;
+  transform: translateY(-1px);
+}
+
+.btn-voz:active,
+.btn-voz.hablando {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--pastel-azul-borde);
+  background: #7DD3FC;
+}
+
+/* ── Contenedor Principal ────────────────────────────────────────────────── */
+.contenedor-mision {
+  max-width: 1120px;
+  margin: 1.25rem auto;
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.tarjeta {
+  background: var(--bg-tarjeta);
+  border-radius: var(--radio-grande);
+  border: 2px solid var(--borde-suave);
+  box-shadow: var(--sombra-tarjeta);
+  padding: 1.35rem;
+}
+
+/* ── Cabecera del Ejercicio ──────────────────────────────────────────────── */
+.ejercicio-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.ejercicio-info {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.chip-ejercicio {
+  background: var(--pastel-lila);
+  color: #5B21B6;
+  font-weight: 800;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.92rem;
+  border: 2px solid var(--pastel-lila-borde);
+}
+
+.chip-operacion {
+  background: var(--pastel-durazno);
+  color: #9A3412;
+  font-weight: 800;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.92rem;
+  border: 2px solid var(--pastel-durazno-borde);
+}
+
+.ejercicio-acciones {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.selector-visual {
+  display: inline-flex;
+  background: #F1F5F9;
+  padding: 0.25rem;
+  border-radius: 999px;
+  border: 1px solid #CBD5E1;
+}
+
+.btn-modo-vis {
+  border: none;
+  background: transparent;
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--texto-secundario);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-modo-vis.activo {
+  background: #FFFFFF;
+  color: #4C1D95;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.btn-nuevo-ej {
+  padding: 0.55rem 1rem;
+  min-height: 44px;
+  background: var(--pastel-rosa);
+  color: #831843;
+  border: 2px solid var(--pastel-rosa-borde);
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.92rem;
+  cursor: pointer;
+  box-shadow: 0 3px 0 var(--pastel-rosa-borde);
+  transition: transform 0.15s ease;
+}
+
+.btn-nuevo-ej:hover {
+  transform: translateY(-1px);
+}
+
+.btn-nuevo-ej:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--pastel-rosa-borde);
+}
+
+/* ── Pizarra de la Ecuación ──────────────────────────────────────────────── */
+.pizarra-ecuacion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  padding: 1.15rem 1rem;
+  background: linear-gradient(135deg, #F5F0FF 0%, #EFF8FF 100%);
+  border: 2px dashed var(--pastel-lila-borde);
+  border-radius: var(--radio-medio);
+  margin-bottom: 1.25rem;
+}
+
+.ecuacion-equivalentes {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.fraccion-bloque {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 68px;
+  padding: 0.5rem 0.85rem;
+  border-radius: 14px;
+  background: #FFFFFF;
+  border: 3px solid #CBD5E1;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.fraccion-bloque.frac-a {
+  border-color: var(--frac-a-luz);
+  background: var(--frac-a-suave);
+}
+
+.fraccion-bloque.frac-b {
+  border-color: var(--frac-b-luz);
+  background: var(--frac-b-suave);
+}
+
+.fraccion-bloque.frac-eq {
+  border-color: var(--pastel-azul-borde);
+  background: #F8FAFC;
+}
+
+.fraccion-bloque.frac-eq.completado {
+  border-color: #3B82F6;
+  background: var(--pastel-azul);
+  transform: scale(1.04);
+}
+
+.fraccion-bloque.frac-res {
+  border-color: var(--pastel-menta-borde);
+  background: var(--frac-res-suave);
+}
+
+.fraccion-bloque.frac-res.completado {
+  border-color: var(--frac-res-luz);
+  background: var(--pastel-menta);
+  transform: scale(1.06);
+}
+
+.frac-num,
+.frac-den {
+  font-size: 1.7rem;
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--texto-principal);
+}
+
+.frac-linea {
+  width: 100%;
+  height: 4px;
+  background: var(--texto-principal);
+  border-radius: 4px;
+  margin: 0.2rem 0;
+}
+
+.operador-simbolo {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #4C1D95;
+  padding: 0 0.15rem;
+}
+
+/* ── Galería Visual: Círculos y Barras Fraccionarias Iluminadas ──────────── */
+.galeria-visual {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+  align-items: stretch;
+  gap: 0.75rem;
+}
+
+.tarjeta-visual {
+  background: #F8FAFC;
+  border-radius: var(--radio-medio);
+  border: 2px solid var(--borde-suave);
+  padding: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  transition: all 0.25s ease;
+}
+
+.tarjeta-visual.vis-a {
+  background: #FAF7FF;
+  border-color: var(--pastel-lila-borde);
+}
+
+.tarjeta-visual.vis-b {
+  background: #FFF9F5;
+  border-color: var(--pastel-durazno-borde);
+}
+
+.tarjeta-visual.vis-res {
+  background: #F4FDF8;
+  border-color: var(--pastel-menta-borde);
+}
+
+.vis-titulo {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.9rem;
+}
+
+.vis-etiqueta {
+  font-weight: 700;
+  color: var(--texto-secundario);
+}
+
+.vis-frac-texto {
+  font-size: 1.15rem;
+  font-weight: 800;
+  padding: 0.15rem 0.6rem;
+  border-radius: 8px;
+  background: #FFFFFF;
+  border: 1px solid #CBD5E1;
+}
+
+.vis-figuras {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.galeria-visual.modo-circulos .vis-barra-wrap {
+  display: none;
+}
+
+.galeria-visual.modo-barras .vis-circulo-wrap {
+  display: none;
+}
+
+.vis-circulo-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  min-height: 115px;
+}
+
+.svg-circulo-frac {
+  width: 110px;
+  height: 110px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.08));
+  transition: transform 0.3s ease;
+}
+
+.svg-circulo-frac:hover {
+  transform: scale(1.05);
+}
+
+.porcion-circulo {
+  transition: fill 0.35s ease, opacity 0.35s ease;
+}
+
+.porcion-circulo.iluminada {
+  animation: pulsoLuz 1.8s infinite alternate ease-in-out;
+}
+
+@keyframes pulsoLuz {
+  0% { filter: brightness(1); }
+  100% { filter: brightness(1.12); }
+}
+
+/* Barras Fraccionarias */
+.vis-barra-wrap {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.barra-fraccionaria {
+  width: 100%;
+  height: 34px;
+  display: flex;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2.5px solid #334155;
+  background: #FFFFFF;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+.segmento-barra {
+  flex: 1;
+  height: 100%;
+  border-right: 1.5px solid rgba(51, 65, 85, 0.45);
+  background: #F1F5F9;
+  transition: background-color 0.35s ease, box-shadow 0.35s ease;
+  position: relative;
+}
+
+.segmento-barra:last-child {
+  border-right: none;
+}
+
+.segmento-barra.iluminado-a {
+  background: linear-gradient(180deg, #9F85FF 0%, #7C5CFC 100%);
+  box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.45);
+}
+
+.segmento-barra.iluminado-b {
+  background: linear-gradient(180deg, #FB923C 0%, #F97316 100%);
+  box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.45);
+}
+
+.segmento-barra.iluminado-res {
+  background: linear-gradient(180deg, #34D399 0%, #10B981 100%);
+  box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.45);
+}
+
+.vis-subtitulo {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--texto-secundario);
+  text-align: center;
+}
+
+.vis-operador-central {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 900;
+  color: #6D28D9;
+  padding: 0 0.15rem;
+}
+
+/* ── Barra de Progreso de los 3 Pasos ────────────────────────────────────── */
+.barra-pasos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: #FFFFFF;
+  padding: 0.85rem 1.2rem;
+  border-radius: var(--radio-grande);
+  border: 2px solid var(--borde-suave);
+  box-shadow: var(--sombra-tarjeta);
+}
+
+.indicador-paso {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  background: #F1F5F9;
+  color: var(--texto-secundario);
+  font-weight: 700;
+  font-size: 0.92rem;
+  transition: all 0.25s ease;
+}
+
+.indicador-paso .num-paso {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #CBD5E1;
+  color: #1E293B;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+}
+
+.indicador-paso.activo {
+  background: var(--pastel-lila);
+  color: #4C1D95;
+  border: 2px solid var(--pastel-lila-borde);
+}
+
+.indicador-paso.activo .num-paso {
+  background: #7C5CFC;
+  color: #FFFFFF;
+}
+
+.indicador-paso.completado {
+  background: var(--pastel-menta);
+  color: #14532D;
+  border: 2px solid var(--pastel-menta-borde);
+}
+
+.indicador-paso.completado .num-paso {
+  background: #16A34A;
+  color: #FFFFFF;
+}
+
+.conector-paso {
+  flex: 1;
+  max-width: 60px;
+  height: 4px;
+  background: #E2E8F0;
+  border-radius: 4px;
+}
+
+.conector-paso.completado {
+  background: #22C55E;
+}
+
+/* ── Tarjetas de los 3 Pasos ─────────────────────────────────────────────── */
+.pasos-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.tarjeta-paso {
+  transition: opacity 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
+}
+
+.tarjeta-paso.paso-activo {
+  border: 3px solid #8B5CF6;
+  box-shadow: 0 10px 28px rgba(139, 92, 246, 0.14);
+}
+
+.tarjeta-paso.paso-completado {
+  border: 3px solid #22C55E;
+  background: #FAFFFC;
+}
+
+.tarjeta-paso.paso-bloqueado {
+  opacity: 0.58;
+  pointer-events: none;
+  filter: grayscale(0.25);
+}
+
+.paso-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.paso-titulo-grupo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.paso-insignia {
+  background: var(--pastel-lila);
+  color: #5B21B6;
+  font-weight: 800;
+  font-size: 0.85rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  border: 2px solid var(--pastel-lila-borde);
+}
+
+.tarjeta-paso h2 {
+  font-size: 1.25rem;
+  color: var(--texto-principal);
+}
+
+.paso-instruccion {
+  font-size: 1.05rem;
+  color: var(--texto-secundario);
+  margin-bottom: 1rem;
+}
+
+/* Pista de múltiplos en Paso 1 */
+.pista-multiplos {
+  background: #F8FAFC;
+  border: 2px solid #E2E8F0;
+  border-radius: var(--radio-medio);
+  padding: 0.85rem 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.96rem;
+}
+
+.fila-multiplos {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.chip-mult {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 8px;
+  background: #FFFFFF;
+  border: 1.5px solid #CBD5E1;
+  font-weight: 700;
+}
+
+.chip-mult.comun {
+  background: var(--pastel-amarillo);
+  border-color: #EAB308;
+  color: #713F12;
+  font-weight: 800;
+}
+
+/* ── Botones Grandes de Opciones (Pastel) ────────────────────────────────── */
+.opciones-botones {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.btn-opcion {
+  min-height: 64px;
+  padding: 0.85rem 1.2rem;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--texto-principal);
+  background: var(--pastel-lila);
+  border: 3px solid var(--pastel-lila-borde);
+  border-radius: 16px;
+  cursor: pointer;
+  box-shadow: 0 5px 0 var(--pastel-lila-borde);
+  transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-opcion:nth-child(4n+2) {
+  background: var(--pastel-azul);
+  border-color: var(--pastel-azul-borde);
+  box-shadow: 0 5px 0 var(--pastel-azul-borde);
+}
+
+.btn-opcion:nth-child(4n+3) {
+  background: var(--pastel-durazno);
+  border-color: var(--pastel-durazno-borde);
+  box-shadow: 0 5px 0 var(--pastel-durazno-borde);
+}
+
+.btn-opcion:nth-child(4n+4) {
+  background: var(--pastel-rosa);
+  border-color: var(--pastel-rosa-borde);
+  box-shadow: 0 5px 0 var(--pastel-rosa-borde);
+}
+
+.btn-opcion:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(0.98);
+}
+
+.btn-opcion:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.btn-opcion.correcta {
+  background: var(--exito-bg) !important;
+  border-color: var(--exito-borde) !important;
+  color: var(--exito-txt) !important;
+  box-shadow: 0 4px 0 var(--exito-borde) !important;
+}
+
+.btn-opcion.incorrecta {
+  background: var(--error-bg) !important;
+  border-color: var(--error-borde) !important;
+  color: var(--error-txt) !important;
+  box-shadow: 0 4px 0 var(--error-borde) !important;
+}
+
+.btn-opcion:disabled {
+  cursor: default;
+}
+
+/* ── Paso 2: Tarjetas de Conversión de Fracciones Equivalentes ───────────── */
+.conversion-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.tarjeta-conversion {
+  padding: 1.1rem;
+  border-radius: var(--radio-medio);
+  border: 2px solid var(--borde-suave);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.tarjeta-conversion.conv-a {
+  background: #FAF7FF;
+  border-color: var(--pastel-lila-borde);
+}
+
+.tarjeta-conversion.conv-b {
+  background: #FFF9F5;
+  border-color: var(--pastel-durazno-borde);
+}
+
+.conv-encabezado {
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--texto-secundario);
+}
+
+.conv-formula {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+}
+
+.frac-mini {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.4rem 0.75rem;
+  background: #FFFFFF;
+  border: 2.5px solid #94A3B8;
+  border-radius: 12px;
+  font-size: 1.35rem;
+  font-weight: 800;
+  min-width: 56px;
+}
+
+.frac-mini.frac-destino {
+  border-color: #7C5CFC;
+  background: var(--pastel-amarillo);
+}
+
+.linea-mini {
+  width: 100%;
+  height: 3px;
+  background: var(--texto-principal);
+  margin: 0.15rem 0;
+}
+
+.flecha-mult {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-weight: 800;
+  color: #6D28D9;
+}
+
+.etiqueta-mult {
+  background: #FFFFFF;
+  border: 2px solid var(--pastel-lila-borde);
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+}
+
+.flecha-icono {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.conv-pregunta {
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--texto-principal);
+}
+
+.opciones-mini {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.55rem;
+  width: 100%;
+}
+
+.btn-opcion-mini {
+  min-height: 52px;
+  padding: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 800;
+  font-family: 'Fredoka', sans-serif;
+  border-radius: 12px;
+  background: #FFFFFF;
+  border: 2.5px solid #94A3B8;
+  box-shadow: 0 4px 0 #94A3B8;
+  cursor: pointer;
+  transition: transform 0.12s ease, background-color 0.12s ease;
+}
+
+.btn-opcion-mini:hover:not(:disabled) {
+  background: var(--pastel-azul);
+  border-color: var(--pastel-azul-borde);
+  transform: translateY(-1px);
+}
+
+.btn-opcion-mini.correcta {
+  background: var(--exito-bg);
+  border-color: var(--exito-borde);
+  color: var(--exito-txt);
+  box-shadow: 0 3px 0 var(--exito-borde);
+}
+
+.btn-opcion-mini.incorrecta {
+  background: var(--error-bg);
+  border-color: var(--error-borde);
+  color: var(--error-txt);
+  box-shadow: 0 3px 0 var(--error-borde);
+}
+
+/* ── Paso 3: Suma/Resta Final y Simplificación ───────────────────────────── */
+.subpaso-bloque {
+  margin-top: 0.5rem;
+}
+
+.ecuacion-paso3 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 0.85rem;
+  background: #F8FAFC;
+  border-radius: var(--radio-medio);
+  border: 2px solid #E2E8F0;
+  margin-bottom: 0.85rem;
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+
+.subpaso-label {
+  font-weight: 800;
+  margin-bottom: 0.6rem;
+  color: var(--texto-principal);
+}
+
+.alerta-simplificar {
+  background: var(--pastel-amarillo);
+  border: 2px solid var(--pastel-amarillo-borde);
+  color: #713F12;
+  padding: 0.9rem 1.1rem;
+  border-radius: var(--radio-medio);
+  margin: 1rem 0 0.75rem;
+  font-size: 1rem;
+}
+
+/* ── Mensajes de Retroalimentación (con señal no-color ✓ / ✗) ────────────── */
+.feedback-paso {
+  margin-top: 0.9rem;
+  font-weight: 700;
+  font-size: 1rem;
+  min-height: 1.5rem;
+}
+
+.feedback-paso.ok {
+  background: var(--exito-bg);
+  border: 2px solid var(--exito-borde);
+  color: var(--exito-txt);
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+}
+
+.feedback-paso.err {
+  background: var(--error-bg);
+  border: 2px solid var(--error-borde);
+  color: var(--error-txt);
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+}
+
+/* ── Botones Primarios de Acción ─────────────────────────────────────────── */
+.acciones-fin-ejercicio {
+  margin-top: 1.1rem;
+  display: flex;
+  justify-content: center;
+}
+
+.btn-primario-grande {
+  min-height: 58px;
+  padding: 0.9rem 2rem;
+  font-size: 1.2rem;
+  font-weight: 800;
+  font-family: 'Fredoka', sans-serif;
+  background: #22C55E;
+  color: #FFFFFF;
+  border: 3px solid #15803D;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 5px 0 #15803D;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.btn-primario-grande:hover {
+  background: #16A34A;
+  transform: translateY(-2px);
+}
+
+.btn-primario-grande:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 #15803D;
+}
+
+.btn-secundario-grande {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 54px;
+  padding: 0.8rem 1.6rem;
+  font-size: 1.1rem;
+  font-weight: 800;
+  font-family: 'Fredoka', sans-serif;
+  background: var(--pastel-lila);
+  color: #4C1D95;
+  text-decoration: none;
+  border: 3px solid var(--pastel-lila-borde);
+  border-radius: 999px;
+  box-shadow: 0 4px 0 var(--pastel-lila-borde);
+}
+
+.oculto {
+  display: none !important;
+}
+
+/* ── Modal de Misión Completada ──────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modal-tarjeta {
+  background: #FFFFFF;
+  max-width: 500px;
+  width: 100%;
+  border-radius: 24px;
+  border: 4px solid var(--pastel-menta-borde);
+  padding: 2rem 1.5rem;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.modal-icono {
+  font-size: 4rem;
+  line-height: 1;
+}
+
+.modal-mensaje {
+  font-size: 1.1rem;
+  color: var(--texto-secundario);
+}
+
+.modal-puntaje {
+  background: var(--pastel-menta);
+  border: 2px solid var(--pastel-menta-borde);
+  color: #14532D;
+  padding: 0.75rem 1.2rem;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  width: 100%;
+}
+
+.modal-botones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+/* ── Responsividad Móvil ─────────────────────────────────────────────────── */
+@media (max-width: 820px) {
+  .galeria-visual {
+    grid-template-columns: 1fr;
+  }
+
+  .vis-operador-central {
+    padding: 0.1rem 0;
+    font-size: 1.6rem;
+  }
+
+  .barra-pasos {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .conector-paso {
+    display: none;
+  }
+
+  .topbar {
+    padding: 0.75rem 1rem;
+  }
+
+  .titulo-mision {
+    font-size: 1.08rem;
+  }
+}

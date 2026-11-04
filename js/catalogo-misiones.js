@@ -48,10 +48,30 @@
     misionesRef.push(prebasicaMission);
   }
 
+  var fraccionesHeterogeneasMission = {
+    id: 150,
+    title: 'Suma y Resta de Fracciones Heterogéneas',
+    subject: 'matemáticas',
+    color: 'mat',
+    grade: 'II y III Ciclo',
+    cycle: '2y3ciclo',
+    ruta: 'numero',
+    etapa: 7,
+    xp: 30,
+    icon: '🍕',
+    pais: 'HN',
+    url: 'misiones/mate-fracciones-heterogeneas/index.html'
+  };
+
+  if (misionesRef.length && !misionesRef.some(function (m) { return m.id === 150 || m.url === fraccionesHeterogeneasMission.url; })) {
+    misionesRef.push(fraccionesHeterogeneasMission);
+  }
+
   var catalogo = {
     RUTAS: rutasRef,
     MISSIONS: misionesRef,
-    PREBASICA: prebasicaMission
+    PREBASICA: prebasicaMission,
+    FRACCIONES_HETEROGENEAS: fraccionesHeterogeneasMission
   };
 
   if (typeof module !== 'undefined' && module.exports) {
