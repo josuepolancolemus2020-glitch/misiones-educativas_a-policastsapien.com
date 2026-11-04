@@ -6136,6 +6136,141 @@ body.ad-gr-moviendo { cursor: grabbing; user-select: none; -webkit-user-select: 
   .pa-hist-actions { width: 100%; justify-content: flex-end; margin-top: 2px; }
 }
 
+/* ── Laboratorio de Analítica y Sabiduría Pedagógica ── */
+.pa-lab-launcher {
+  margin: 0 0 14px; padding: 14px;
+  border-radius: 16px; border: 1.5px solid #c7d2fe;
+  background: linear-gradient(135deg, #eef2ff 0%, #f8fafc 60%, #f0fdf4 100%);
+  box-shadow: 0 4px 14px rgba(67, 56, 202, .08);
+}
+.pa-lab-launcher-top {
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px;
+}
+.pa-lab-launcher-title {
+  font-size: calc(14px * var(--metas-fz, 1)); font-weight: 900; color: #1e1b4b;
+}
+.pa-lab-launcher-sub {
+  font-size: calc(11.5px * var(--metas-fz, 1)); color: #475569; margin-top: 2px; line-height: 1.4;
+}
+.pa-lab-main-btn {
+  border: none; border-radius: 12px; padding: 10px 16px; cursor: pointer;
+  font-family: inherit; font-size: calc(13px * var(--metas-fz, 1)); font-weight: 900;
+  color: #fff; background: linear-gradient(135deg, #4338ca, #2563eb);
+  box-shadow: 0 4px 12px rgba(67, 56, 202, .28);
+  transition: transform .13s ease, box-shadow .18s ease, filter .18s ease;
+}
+.pa-lab-main-btn:hover { transform: translateY(-1px); filter: brightness(1.06); }
+.pa-lab-main-btn.active { background: linear-gradient(135deg, #1e1b4b, #312e81); }
+.pa-lab-sug-wrap {
+  margin-top: 10px; padding-top: 10px; border-top: 1px dashed #cbd5e1;
+}
+.pa-lab-sug-label {
+  display: block; font-size: calc(11px * var(--metas-fz, 1)); font-weight: 800;
+  color: #4338ca; margin-bottom: 7px; letter-spacing: .2px;
+}
+.pa-lab-sug-btns {
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.pa-lab-sug-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 1.5px solid #cbd5e1; background: #fff; color: #1e293b;
+  border-radius: 10px; padding: 6px 10px; cursor: pointer; font-family: inherit;
+  font-size: calc(12px * var(--metas-fz, 1)); font-weight: 800;
+  transition: all .15s ease;
+}
+.pa-lab-sug-btn small {
+  font-size: calc(10px * var(--metas-fz, 1)); font-weight: 700;
+  color: #64748b; background: #f1f5f9; padding: 1px 6px; border-radius: 999px;
+}
+.pa-lab-sug-btn:hover {
+  border-color: #6366f1; color: #312e81; transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(99, 102, 241, .14);
+}
+.pa-lab-sug-btn.active {
+  background: #312e81; border-color: #312e81; color: #fff;
+  box-shadow: 0 3px 10px rgba(49, 46, 129, .28);
+}
+.pa-lab-sug-btn.active small {
+  background: rgba(255, 255, 255, .2); color: #e0e7ff;
+}
+
+.pa-lab-panel {
+  margin: 0 0 16px; padding: 14px; border-radius: 16px;
+  background: #fff; border: 2px solid #6366f1;
+  box-shadow: 0 10px 28px rgba(30, 41, 59, .12);
+}
+.pa-lab-panel-hdr {
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+  gap: 8px; padding-bottom: 10px; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0;
+}
+.pa-lab-kpis {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
+  gap: 8px; margin-bottom: 14px;
+}
+.pa-lab-kpi {
+  padding: 10px; border-radius: 12px; background: #f8fafc;
+  border: 1px solid #e2e8f0; text-align: center;
+}
+.pa-lab-kpi-val {
+  font-size: calc(20px * var(--metas-fz, 1)); font-weight: 900; color: #0f172a; line-height: 1.15;
+}
+.pa-lab-kpi-lbl {
+  font-size: calc(11px * var(--metas-fz, 1)); font-weight: 800; color: #334155; margin-top: 2px;
+}
+.pa-lab-kpi-sub {
+  font-size: calc(10px * var(--metas-fz, 1)); color: #64748b; margin-top: 1px;
+}
+.pa-lab-sec {
+  margin-top: 14px; padding-top: 12px; border-top: 1px solid #e2e8f0;
+}
+.pa-lab-sec-title {
+  font-size: calc(13.5px * var(--metas-fz, 1)); font-weight: 900; color: #1e293b; margin-bottom: 4px;
+}
+.pa-lab-sec-desc {
+  font-size: calc(12px * var(--metas-fz, 1)); color: #475569; margin: 0 0 10px; line-height: 1.45;
+}
+.pa-lab-table-wrap {
+  overflow-x: auto; border: 1px solid #e2e8f0; border-radius: 12px; background: #fff;
+}
+.pa-lab-table {
+  width: 100%; border-collapse: collapse; font-size: calc(12px * var(--metas-fz, 1));
+}
+.pa-lab-table th {
+  background: #f1f5f9; color: #334155; font-weight: 800; text-align: left;
+  padding: 8px 9px; border-bottom: 1.5px solid #cbd5e1; white-space: nowrap;
+}
+.pa-lab-table td {
+  padding: 7px 9px; border-bottom: 1px solid #f1f5f9; vertical-align: middle;
+}
+.pa-lab-table tr:hover td { background: #f8fafc; }
+
+/* Celdas de la Matriz Alumno × Tema */
+.pa-lab-matrix th, .pa-lab-matrix td { padding: 5px 6px; }
+.hm-cell {
+  text-align: center; font-weight: 800; font-size: calc(11px * var(--metas-fz, 1));
+  border-radius: 6px; min-width: 34px;
+}
+.hm-exc { background: #dcfce7; color: #14532d; }
+.hm-ava { background: #dbeafe; color: #1e3a8a; }
+.hm-bas { background: #fef9c3; color: #854d0e; }
+.hm-ins { background: #fee2e2; color: #991b1b; font-weight: 900; }
+.hm-nsp { background: #f1f5f9; color: #94a3b8; font-weight: 700; }
+
+.pa-lab-cluster {
+  margin-bottom: 10px; padding: 10px 12px; border-radius: 12px;
+  border: 1px solid #e2e8f0; border-left: 5px solid #6366f1;
+}
+.pa-lab-philo-card {
+  margin-bottom: 10px; padding: 12px 14px; border-radius: 12px;
+  background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #312e81;
+}
+.pa-lab-philo-tit {
+  font-size: calc(13px * var(--metas-fz, 1)); font-weight: 900; color: #1e1b4b; margin-bottom: 4px;
+}
+.pa-lab-philo-card p {
+  font-size: calc(12px * var(--metas-fz, 1)); color: #334155; line-height: 1.5; margin: 4px 0;
+}
+
 /* ── El papel NO crece con A+ ─────────────────────────────────────────
    Los informes, las fichas y los boletos están medidos al píxel: 42
    alumnos tienen que dar 42 páginas, y una hoja de más son 43 hojas de
