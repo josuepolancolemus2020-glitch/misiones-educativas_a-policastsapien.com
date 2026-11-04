@@ -634,7 +634,8 @@ function paPersistCurrent(students, meta) {
     _paCurrentId = a.id;
   }
   Object.assign(a, meta, { students: rows });
-  if (d.analisis.length > 40) d.analisis = d.analisis.slice(-40);
+  if (d.analisis.length > 400) d.analisis = d.analisis.slice(-400);
+  if (d.analisis.length >= 350) toast('⚠️ Te acercas al límite de análisis guardados. Considera imprimir los más antiguos.');
   paSaveData(d);
   return a;
 }
