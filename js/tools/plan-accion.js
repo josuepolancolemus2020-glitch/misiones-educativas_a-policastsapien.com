@@ -913,7 +913,7 @@ function paRenderHistorial() {
 
 async function paRecuperarHistorialNube(btn) {
   const ok = (typeof metasConfirm === 'function')
-    ? await metasConfirm('¿Buscar y recuperar en la nube los análisis sincronizados que falten en este dispositivo?', { icono: '📥', titulo: 'Recuperar historial', okTxt: 'Sí, recuperar' })
+    ? await metasConfirm('¿Buscar y forzar la recuperación de todos tus análisis en la nube de padres y respaldos?', { icono: '📥', titulo: 'Recuperar historial', okTxt: 'Sí, recuperar todo' })
     : confirm('¿Recuperar análisis de la nube?');
   if (!ok) return;
 
@@ -921,88 +921,336 @@ async function paRecuperarHistorialNube(btn) {
   try { cred = JSON.parse(localStorage.getItem('METAS_DOCENTE_V1') || 'null'); } catch (_) {}
   const p_prof  = String((cred && (cred.codigo || cred.prof || cred.user)) || '').trim();
   const p_clave = String((cred && (cred.clave  || cred.pass || cred.pin))  || '').trim();
-  if (!p_prof || !p_clave) {
-    toast('⚠️ Inicia sesión con tu código y clave de docente para recuperar tu historial.');
-    return;
-  }
 
   const txtOrig = btn ? btn.textContent : '';
   if (btn) { btn.disabled = true; btn.textContent = '⏳ Recuperando…'; }
+
   try {
     const { url, key } = paSbCfg();
-    const r = await fetch(url + '/rest/v1/rpc/metas_recuperar_historial', {
-      method: 'POST',
-      headers: {
-        apikey: key,
-        Authorization: 'Bearer ' + key,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ p_prof, p_clave })
+    const headers = {
+      apikey: key,
+      Authorization: 'Bearer ' + key,
+      'Content-Type': 'application/json'
+    };
+
+    const normGrado = g => String(g || '').replace(/\D/g, '') || String(g || '').trim().toLowerCase();
+    const normSec = s => {
+      const m = String(s || '').trim().match(/([a-zA-Z0-9])\s*$/);
+      return m ? m[1].toLowerCase() : String(s || '').trim().toLowerCase();
+    };
+    const normKey = (ev, pa, gr, se) => [
+      String(ev || '').trim().toLowerCase(),
+      String(pa || '').trim().toLowerCase(),
+      normGrado(gr),
+      normSec(se)
+    ].join('||');
+
+    const d = paLoadData();
+    if (!Array.isArray(d.analisis)) d.analisis = [];
+    const porClave = new Map();
+    d.analisis.forEach(a => {
+      if (a && typeof a === 'object') {
+        porClave.set(normKey(a.evaluacion, a.parcial, a.grado, a.seccion), a);
+      }
     });
-    if (!r.ok) {
-      toast('⚠️ No se pudo recuperar el historial de la nube (HTTP ' + r.status + ')');
-      return;
+
+    let agregados = 0;
+    let completados = 0;
+
+    const integrarAnalisisObj = aCand => {
+      if (!aCand || typeof aCand !== 'object' || !Array.isArray(aCand.students) || !aCand.students.length) return;
+      const k = normKey(aCand.evaluacion, aCand.parcial, aCand.grado, aCand.seccion);
+      const ex = porClave.get(k);
+      if (!ex) {
+        const copia = JSON.parse(JSON.stringify(aCand));
+        if (!copia.id || d.analisis.some(x => x.id === copia.id)) {
+          copia.id = 'A' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+        }
+        copia.grupoId = copia.grupoId || paGrupoIdDe(copia.grado, copia.seccion);
+        (copia.students || []).forEach(s => {
+          const cod = paCodigoLista(copia, s);
+          if (cod) s.sb = paSbFirma(copia, s, cod);
+        });
+        d.analisis.push(copia);
+        porClave.set(k, copia);
+        agregados++;
+      } else {
+        if (!ex.parcial && aCand.parcial) ex.parcial = aCand.parcial;
+        if (!ex.fechaPrueba && aCand.fechaPrueba) ex.fechaPrueba = aCand.fechaPrueba;
+        const numsEx = new Set((ex.students || []).map(s => Number(s.num)));
+        let sumo = false;
+        (aCand.students || []).forEach(s => {
+          const n = Number(s.num);
+          if (n > 0 && !numsEx.has(n)) {
+            const sCopia = JSON.parse(JSON.stringify(s));
+            const cod = paCodigoLista(ex, sCopia);
+            if (cod) sCopia.sb = paSbFirma(ex, sCopia, cod);
+            ex.students.push(sCopia);
+            numsEx.add(n);
+            sumo = true;
+          }
+        });
+        if (sumo) {
+          ex.students.sort((x, y) => Number(x.num) - Number(y.num));
+          completados++;
+        }
+      }
+    };
+
+    const parseSafe = raw => {
+      if (!raw) return null;
+      if (typeof raw === 'object') return raw;
+      try { return JSON.parse(raw); } catch (_) { return null; }
+    };
+
+    const planesRaw = [];
+    const codigosRaw = [paCodesLoad()];
+    const adminsRaw = [parseSafe(localStorage.getItem('METAS_ADMIN_V1'))];
+
+    // 1. Revisar respaldos locales (BASE, RESPALDO y UNDO)
+    const baseObj = parseSafe(localStorage.getItem('METAS_DOCSYNC_BASE_V1'));
+    if (baseObj && typeof baseObj === 'object') {
+      if (baseObj.METAS_PLANACCION_V1) planesRaw.push(parseSafe(baseObj.METAS_PLANACCION_V1));
+      if (baseObj.METAS_CODIGOS_V1)    codigosRaw.push(parseSafe(baseObj.METAS_CODIGOS_V1));
+      if (baseObj.METAS_ADMIN_V1)      adminsRaw.push(parseSafe(baseObj.METAS_ADMIN_V1));
     }
-    const filas = await r.json();
-    if (!Array.isArray(filas) || !filas.length) {
-      toast('ℹ️ No se encontraron análisis en la nube para recuperar.');
-      return;
+    const respObj = parseSafe(localStorage.getItem('METAS_AULA_RESPALDO_V1'));
+    if (respObj && respObj.datos && typeof respObj.datos === 'object') {
+      if (respObj.datos.METAS_PLANACCION_V1) planesRaw.push(parseSafe(respObj.datos.METAS_PLANACCION_V1));
+      if (respObj.datos.METAS_CODIGOS_V1)    codigosRaw.push(parseSafe(respObj.datos.METAS_CODIGOS_V1));
+      if (respObj.datos.METAS_ADMIN_V1)      adminsRaw.push(parseSafe(respObj.datos.METAS_ADMIN_V1));
+    }
+    const undoArr = parseSafe(localStorage.getItem('METAS_ADMIN_UNDO_V1'));
+    if (Array.isArray(undoArr)) {
+      undoArr.forEach(u => {
+        if (!u || typeof u !== 'object') return;
+        if (u.plan)  planesRaw.push(parseSafe(u.plan));
+        if (u.codes) codigosRaw.push(parseSafe(u.codes));
+        if (u.admin) adminsRaw.push(parseSafe(u.admin));
+      });
     }
 
-    const normKey = (ev, pa, gr, se) => [ev, pa, gr, se]
-      .map(v => String(v || '').trim().toLowerCase())
-      .join('||');
+    // 2. Consultar espejo del estado del docente en Supabase (metas_docente_estado_leer)
+    if (p_prof && p_clave) {
+      try {
+        const rEst = await fetch(url + '/rest/v1/rpc/metas_docente_estado_leer', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ p_codigo: p_prof, p_clave: p_clave })
+        });
+        if (rEst.ok) {
+          const rowsEst = await rEst.json();
+          if (Array.isArray(rowsEst)) {
+            rowsEst.forEach(row => {
+              if (!row || !row.valor) return;
+              const val = parseSafe(row.valor.raw !== undefined ? row.valor.raw : row.valor);
+              if (row.k === 'METAS_PLANACCION_V1' && val) planesRaw.push(val);
+              if (row.k === 'METAS_CODIGOS_V1'    && val) codigosRaw.push(val);
+              if (row.k === 'METAS_ADMIN_V1'      && val) adminsRaw.push(val);
+            });
+          }
+        }
+      } catch (_) {}
+    }
 
+    planesRaw.forEach(pl => {
+      if (pl && Array.isArray(pl.analisis)) {
+        pl.analisis.forEach(integrarAnalisisObj);
+      }
+    });
+
+    // 3. Intentar RPC directa metas_recuperar_historial (si falla con 400 no detiene nada)
+    const filasNube = [];
+    if (p_prof && p_clave) {
+      try {
+        const rHist = await fetch(url + '/rest/v1/rpc/metas_recuperar_historial', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ p_prof, p_clave })
+        });
+        if (rHist.ok) {
+          const arrH = await rHist.json();
+          if (Array.isArray(arrH)) arrH.forEach(x => filasNube.push(x));
+        }
+      } catch (_) {}
+    }
+
+    // 4. Armar mapa de grupos/alumnos y barrer la nube de padres por cada clave de familia
+    //    usando metas_consultar_plan_padre (recupera el 100% de plan_accion aun sin RPC nuevo)
+    const gruposInfo = new Map();
+    adminsRaw.forEach(st => {
+      if (!st || typeof st !== 'object') return;
+      const listaGrupos = Array.isArray(st.grupos) ? st.grupos : (Array.isArray(st.lista) ? [st] : []);
+      listaGrupos.forEach(g => {
+        if (!g || typeof g !== 'object') return;
+        const gId = String(g.id || '').trim();
+        const grado = String(g.grado || '').trim();
+        const seccion = String(g.seccion || '').trim();
+        const alumnosPorNum = new Map();
+        (Array.isArray(g.lista) ? g.lista : []).forEach((al, idx) => {
+          const n = parseInt(al && al.num, 10) || (idx + 1);
+          if (al && al.nombre) alumnosPorNum.set(n, String(al.nombre).trim());
+        });
+        const info = { grupoId: gId, grado, seccion, alumnosPorNum };
+        if (gId) gruposInfo.set('G:' + gId, info);
+        const gd = normGrado(grado);
+        const sc = normSec(seccion).toUpperCase();
+        if (gd) gruposInfo.set(gd + '|' + sc, info);
+      });
+    });
+
+    const codigosMeta = new Map();
+    const registrarCodigo = (rawCod, numHint, gkHint) => {
+      const cod = String(rawCod || '').replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+      if (!/^\d{1,3}[A-Z0-9]{3,8}$/.test(cod)) return;
+      const num = parseInt(numHint, 10) || parseInt((cod.match(/^\d+/) || [])[0], 10) || 0;
+      if (!num) return;
+      const gInfo = (gkHint && gruposInfo.get(gkHint)) || null;
+      let grado = gInfo ? gInfo.grado : '';
+      let seccion = gInfo ? gInfo.seccion : '';
+      if (!grado && gkHint && gkHint.indexOf('|') >= 0) {
+        const pts = gkHint.split('|');
+        grado = pts[0] || '';
+        seccion = pts[1] || '';
+      }
+      const nombre = (gInfo && gInfo.alumnosPorNum.get(num)) || '';
+      const prev = codigosMeta.get(cod);
+      codigosMeta.set(cod, {
+        codigo: cod,
+        num: num || (prev ? prev.num : 0),
+        nombre: nombre || (prev ? prev.nombre : ''),
+        grado: grado || (prev ? prev.grado : ''),
+        seccion: seccion || (prev ? prev.seccion : ''),
+        grupoId: (gInfo && gInfo.grupoId) || (prev ? prev.grupoId : '')
+      });
+    };
+
+    codigosRaw.forEach(cMap => {
+      if (!cMap || typeof cMap !== 'object') return;
+      Object.keys(cMap).forEach(gk => {
+        const sub = cMap[gk];
+        if (!sub || typeof sub !== 'object') return;
+        Object.keys(sub).forEach(numKey => registrarCodigo(sub[numKey], numKey, gk));
+      });
+    });
+
+    [d, ...planesRaw].forEach(pl => {
+      if (!pl || !Array.isArray(pl.analisis)) return;
+      pl.analisis.forEach(a => {
+        if (!a || !Array.isArray(a.students)) return;
+        const gk = a.grupoId ? ('G:' + a.grupoId) : (normGrado(a.grado) + '|' + normSec(a.seccion).toUpperCase());
+        a.students.forEach(s => {
+          if (!s) return;
+          if (typeof s.sb === 'string' && s.sb.indexOf('|') >= 0) {
+            const pts = s.sb.split('|');
+            if (pts[2]) registrarCodigo(pts[2], s.num, gk);
+          }
+          const cod = paCodigoLista(a, s);
+          if (cod) registrarCodigo(cod, s.num, gk);
+        });
+      });
+    });
+
+    gruposInfo.forEach((info, gk) => {
+      if (!info.grado) return;
+      info.alumnosPorNum.forEach((nom, num) => {
+        const cod = paCodigoAlumno(info.grado, info.seccion, num);
+        if (cod) registrarCodigo(cod, num, gk);
+      });
+    });
+
+    const listaMeta = Array.from(codigosMeta.values());
+    const LOTE_CONC = 10;
+    for (let i = 0; i < listaMeta.length; i += LOTE_CONC) {
+      const slice = listaMeta.slice(i, i + LOTE_CONC);
+      if (btn) btn.textContent = '⏳ Buscando en nube (' + Math.min(i + slice.length, listaMeta.length) + '/' + listaMeta.length + ')…';
+      await Promise.all(slice.map(async meta => {
+        try {
+          const rPad = await fetch(url + '/rest/v1/rpc/metas_consultar_plan_padre', {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({ p_codigo: meta.codigo })
+          });
+          if (!rPad.ok) return;
+          const rowsP = await rPad.json();
+          if (!Array.isArray(rowsP)) return;
+          rowsP.forEach(rp => {
+            if (!rp || typeof rp !== 'object') return;
+            filasNube.push({
+              evento_id: rp.evento_id || '',
+              codigo: rp.codigo || meta.codigo,
+              num: rp.num || meta.num,
+              alumno: rp.alumno || meta.nombre || ('#' + meta.num),
+              grado: rp.grado || meta.grado || '',
+              seccion: rp.seccion || meta.seccion || '',
+              docente: rp.docente || (cred && cred.nombre) || '',
+              evaluacion: rp.evaluacion || '',
+              mision: rp.mision || '',
+              forma: rp.forma != null ? rp.forma : '',
+              tipo: rp.tipo || 'conceptual',
+              parcial: rp.parcial || '',
+              fecha_prueba: rp.fecha_prueba || '',
+              nota: rp.nota,
+              base: rp.base || 100,
+              nsp: !!rp.nsp,
+              categoria: rp.categoria || '',
+              mensaje: rp.mensaje || '',
+              fecha_analisis: rp.fecha_analisis || rp.fecha || rp.creado_en || ''
+            });
+          });
+        } catch (_) {}
+      }));
+    }
+
+    // 5. Agrupar todas las filas recuperadas de la nube por evaluación, parcial, grado y sección
     const grupos = new Map();
-    filas.forEach(f => {
-      if (!f || typeof f !== 'object') return;
+    filasNube.forEach(f => {
+      if (!f || typeof f !== 'object' || !f.evaluacion) return;
       const k = normKey(f.evaluacion, f.parcial, f.grado, f.seccion);
       if (!grupos.has(k)) grupos.set(k, []);
       grupos.get(k).push(f);
     });
 
-    const d = paLoadData();
-    if (!Array.isArray(d.analisis)) d.analisis = [];
-    const existentes = new Set(
-      d.analisis.map(a => normKey(a.evaluacion, a.parcial, a.grado, a.seccion))
-    );
-
-    let agregados = 0;
-    grupos.forEach((rows, k) => {
-      if (existentes.has(k)) return;
+    grupos.forEach(rows => {
       const f0 = rows[0] || {};
       let idRec = '';
       for (const r0 of rows) {
         const m = String(r0.evento_id || '').match(/^PASB-([^-]+)-\d+$/);
         if (m && m[1]) { idRec = m[1]; break; }
       }
-      if (!idRec || d.analisis.some(x => x.id === idRec)) {
-        idRec = 'A' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-      }
-
       const evTxt = String(f0.evaluacion || '').trim();
       const misionTxt = String(f0.mision || '').trim();
       const mObj = (typeof MISSIONS !== 'undefined' && Array.isArray(MISSIONS))
         ? (MISSIONS.find(m => m.title === misionTxt) || MISSIONS.find(m => evTxt.indexOf(m.title) === 0))
         : null;
 
+      const grado = String((rows.find(x => x.grado) || f0).grado || '').trim();
+      const seccion = String((rows.find(x => x.seccion) || f0).seccion || '').trim();
+      const gInfo = gruposInfo.get(normGrado(grado) + '|' + normSec(seccion).toUpperCase()) || null;
+
       const porAlumno = new Map();
       rows.forEach((rFila, idx) => {
-        const num = parseInt(rFila.num, 10) || (idx + 1);
+        const num = parseInt(rFila.num, 10) || parseInt((String(rFila.codigo || '').match(/^\d+/) || [])[0], 10) || (idx + 1);
         const prev = porAlumno.get(num);
-        const tNuevo = String(rFila.fecha_analisis || rFila.creado_en || '');
+        const tNuevo = String(rFila.fecha_analisis || rFila.fecha || rFila.creado_en || '');
         const tPrev  = prev ? String(prev._t || '') : '';
         if (!prev || tNuevo >= tPrev) {
           const esNsp = !!(rFila.nsp || String(rFila.categoria || '').toUpperCase() === 'NSP');
-          const notaVal = esNsp
-            ? 'NSP'
-            : (rFila.nota != null && rFila.nota !== '' && !isNaN(Number(rFila.nota)) ? Number(rFila.nota) : 0);
+          let notaVal = 0;
+          if (esNsp) {
+            notaVal = 'NSP';
+          } else if (rFila.nota != null && rFila.nota !== '' && !isNaN(Number(rFila.nota))) {
+            const base = (typeof rFila.base === 'number' && rFila.base > 0) ? rFila.base : 100;
+            notaVal = Math.round((Number(rFila.nota) / base) * 100);
+          }
           const ck = paCatKey(notaVal);
           const catObj = PA_CATS.find(c => c.key === ck);
+          const nomAlumno = String(rFila.alumno || '').trim() ||
+            (gInfo && gInfo.alumnosPorNum.get(num)) || ('#' + num);
           porAlumno.set(num, {
             _t: tNuevo,
             num,
-            nombre: String(rFila.alumno || '').trim() || ('#' + num),
+            nombre: nomAlumno,
             nota: notaVal,
             categoria: String(rFila.categoria || '').trim() || (ck === 'nsp' ? 'NSP' : (catObj ? catObj.label : '')),
             sugerencia: (ck && ck !== 'nsp') ? PA_SUGS[ck] : (ck === 'nsp' ? 'Programar prueba pendiente.' : ''),
@@ -1013,48 +1261,55 @@ async function paRecuperarHistorialNube(btn) {
         }
       });
 
-      const grado = String(f0.grado || '').trim();
-      const seccion = String(f0.seccion || '').trim();
+      let forma = String((rows.find(x => x.forma) || f0).forma || '').trim();
+      if (!forma) {
+        const mF = evTxt.match(/Forma\s+([A-Za-z0-9]+)/i);
+        if (mF) forma = mF[1];
+      }
+      let tipoEval = String((rows.find(x => x.tipo) || f0).tipo || '').trim();
+      if (!tipoEval) {
+        tipoEval = /operativa/i.test(evTxt) ? 'operativa' : 'conceptual';
+      }
+
+      const fechas = rows.map(x => String(x.fecha_analisis || x.fecha || x.creado_en || '')).filter(Boolean).sort();
+      const fechaPrueba = String((rows.find(x => x.fecha_prueba) || f0).fecha_prueba || '').slice(0, 10);
+
       const aNuevo = {
         id: idRec,
-        t: String(f0.fecha_analisis || f0.creado_en || new Date().toISOString()),
+        t: fechas[fechas.length - 1] || new Date().toISOString(),
         grado,
         seccion,
-        grupoId: paGrupoIdDe(grado, seccion),
-        docente: String(f0.docente || '').trim(),
+        grupoId: paGrupoIdDe(grado, seccion) || (gInfo ? gInfo.grupoId : ''),
+        docente: String((rows.find(x => x.docente) || f0).docente || (cred && cred.nombre) || '').trim(),
         materia: mObj ? (mObj.subject || '') : '',
         misionId: mObj ? mObj.id : null,
         evaluacion: evTxt || 'Evaluación',
-        forma: f0.forma != null ? String(f0.forma) : '',
-        tipoEval: String(f0.tipo || 'conceptual'),
-        parcial: String(f0.parcial || '').trim(),
-        fechaPrueba: f0.fecha_prueba ? String(f0.fecha_prueba).slice(0, 10) : '',
+        forma,
+        tipoEval,
+        parcial: String((rows.find(x => x.parcial) || f0).parcial || '').trim(),
+        fechaPrueba,
         students: Array.from(porAlumno.values())
           .sort((x, y) => x.num - y.num)
           .map(({ _t, ...st }) => st)
       };
 
-      aNuevo.students.forEach(s => {
-        const cod = paCodigoLista(aNuevo, s);
-        if (cod) s.sb = paSbFirma(aNuevo, s, cod);
-      });
-
-      d.analisis.push(aNuevo);
-      existentes.add(k);
-      agregados++;
+      integrarAnalisisObj(aNuevo);
     });
 
-    if (agregados > 0) {
+    if (agregados > 0 || completados > 0) {
       d.analisis.sort((x, y) => String(x.t || '').localeCompare(String(y.t || '')));
       if (d.analisis.length > 400) d.analisis = d.analisis.slice(-400);
       paSaveData(d);
       paRenderHistorial();
-      toast('✅ Se recuperaron ' + agregados + ' análisis desde la nube.');
+      const msgPartes = [];
+      if (agregados > 0) msgPartes.push(agregados + ' análisis recuperado(s)');
+      if (completados > 0) msgPartes.push(completados + ' análisis completado(s)');
+      toast('✅ ' + msgPartes.join(' y ') + ' desde la nube.');
     } else {
-      toast('ℹ️ Todos los análisis de la nube ya están en este dispositivo.');
+      toast('ℹ️ Todos los análisis encontrados en la nube (' + grupos.size + ') ya están en este dispositivo.');
     }
   } catch (_) {
-    toast('⚠️ Error de conexión al intentar recuperar análisis de la nube.');
+    toast('⚠️ Error al intentar recuperar análisis de la nube.');
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = txtOrig || '📥 Recuperar análisis de la nube'; }
   }
