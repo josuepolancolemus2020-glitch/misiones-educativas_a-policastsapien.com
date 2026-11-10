@@ -4778,8 +4778,23 @@ a.camp-home-card { text-decoration: none; color: inherit; }
 @media (hover: hover) { .ad-btn-peligro:hover { background: #fdecea !important; border-color: #dc2626 !important; box-shadow: 0 5px 14px rgba(220,38,38,.18) !important; } }
 
 /* lista de alumnos */
-.ad-al-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
-.ad-al-num { flex: 0 0 44px; font-weight: 900; color: var(--brand); }
+.ad-al-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; border-radius: 10px; transition: background .15s, box-shadow .15s; }
+.ad-al-asa {
+  flex: 0 0 14px; height: 26px; display: inline-flex; align-items: center; justify-content: center;
+  cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none;
+  color: var(--faint); opacity: .78; margin-right: -4px;
+}
+.ad-al-asa::before {
+  content: ''; width: 8px; height: 15px; display: block;
+  background-image: radial-gradient(currentColor 1.25px, transparent 1.55px);
+  background-size: 4px 5px;
+}
+@media (hover: hover) { .ad-al-asa:hover { color: var(--brand); opacity: 1; } }
+.ad-al-row.ad-al-moviendo {
+  background: rgba(30,58,124,.09); box-shadow: 0 6px 18px rgba(15,23,42,.16);
+  outline: 2px solid var(--brand-light); z-index: 3;
+}
+.ad-al-num { flex: 0 0 38px; font-weight: 900; color: var(--brand); cursor: grab; user-select: none; }
 .ad-al-row .pa-inp-field { flex: 1; min-width: 120px; margin: 0; }
 .ad-al-del {
   flex: 0 0 auto; background: none; border: none; cursor: pointer;
@@ -5114,12 +5129,66 @@ body.ad-gr-moviendo { cursor: grabbing; user-select: none; -webkit-user-select: 
 .ad-mx-mv:active:not(:disabled) { background: #eef4ff; border-radius: 6px; }
 .ad-mx-sticky {
   position: sticky; left: 0; z-index: 2; background: #fff; text-align: left;
-  padding: 4px 8px; white-space: nowrap; min-width: 128px; max-width: 150px;
+  padding: 4px 8px 4px 6px; white-space: nowrap; min-width: 132px; max-width: 158px;
   box-shadow: 2px 0 0 rgba(0,0,0,.05); font-size: calc(12.5px * var(--metas-fz, 1));
+  user-select: none; -webkit-user-select: none;
 }
 :root[data-theme="dark"] .ad-mx-sticky { background: #1c2733; }
+.ad-mx tbody .ad-mx-sticky { cursor: grab; }
+.ad-mx tbody .ad-mx-sticky:active { cursor: grabbing; }
+/* Asa de 6 puntos (⋮⋮) para arrastrar y ordenar toda la fila con sus notas */
+.ad-mx-asa {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 16px; height: 26px; vertical-align: middle;
+  margin: -4px 3px -4px -2px; cursor: grab;
+  touch-action: none; user-select: none; -webkit-user-select: none;
+  color: var(--faint); opacity: .78;
+  transition: color .15s, opacity .15s, transform .15s;
+}
+.ad-mx-asa::before {
+  content: ''; width: 8px; height: 15px; display: block;
+  background-image: radial-gradient(currentColor 1.25px, transparent 1.55px);
+  background-size: 4px 5px;
+}
+@media (hover: hover) {
+  .ad-mx tbody tr:hover .ad-mx-asa { color: var(--brand); opacity: 1; }
+}
+/* Fila en movimiento: se ilumina de lado a lado con todas sus notas */
+.ad-mx tr.ad-mx-tr-moviendo td {
+  background: #e8f1ff !important;
+  border-top: 2px solid #2563eb !important;
+  border-bottom: 2px solid #2563eb !important;
+}
+.ad-mx tr.ad-mx-tr-moviendo td.ad-mx-sticky {
+  background: #dbeafe !important;
+  color: var(--brand);
+  box-shadow: 3px 0 8px rgba(37,99,235,.22);
+}
+.ad-mx tr.ad-mx-tr-moviendo .ad-mx-asa { color: #1d4ed8; opacity: 1; transform: scale(1.1); }
+:root[data-theme="dark"] .ad-mx tr.ad-mx-tr-moviendo td {
+  background: rgba(37,99,235,.26) !important;
+  border-top-color: #60a5fa !important;
+  border-bottom-color: #60a5fa !important;
+}
+:root[data-theme="dark"] .ad-mx tr.ad-mx-tr-moviendo td.ad-mx-sticky {
+  background: #1e3a5f !important;
+  color: #93c5fd;
+}
+.ad-mx tr.ad-mx-tr-movida td { animation: adRowMoved .85s ease; }
+@keyframes adRowMoved {
+  0%   { background: #dcfce7; }
+  100% { background: transparent; }
+}
+.ad-mx-fantasma {
+  position: fixed; z-index: 9999; pointer-events: none;
+  background: linear-gradient(135deg, var(--brand-mid, #1e3a7c), var(--brand, #1565c0));
+  color: #fff; font-weight: 800; font-size: calc(12.5px * var(--metas-fz, 1));
+  padding: 5px 11px; border-radius: 999px; white-space: nowrap;
+  box-shadow: 0 10px 24px rgba(15,23,42,.32);
+  transform: scale(1.04);
+}
 .ad-mx thead .ad-mx-sticky { z-index: 5; background: var(--bg); font-size: calc(11px * var(--metas-fz, 1)); font-weight: 800; }
-.ad-mx-nom { color: var(--muted); overflow: hidden; text-overflow: ellipsis; display: inline-block; max-width: 90px; vertical-align: bottom; }
+.ad-mx-nom { color: var(--muted); overflow: hidden; text-overflow: ellipsis; display: inline-block; max-width: 84px; vertical-align: bottom; }
 .ad-mx-inp {
   width: 54px; height: 40px; border: none; outline: none; text-align: center;
   font-size: calc(15px * var(--metas-fz, 1)); font-weight: 800; background: transparent; color: var(--text);

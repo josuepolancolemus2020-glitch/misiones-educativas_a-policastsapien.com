@@ -960,6 +960,7 @@ function adRenderLista(body, d) {
           const pr = adEsPrueba(a);
           return `
           <div class="ad-al-row${pr ? ' ad-al-prueba' : ''}" data-num="${a.num}">
+            <span class="ad-al-asa" title="Arrastra para cambiar el orden (se mueven sus notas y registros)" aria-hidden="true"></span>
             <span class="ad-al-num">#${a.num}</span>
             <input class="pa-inp-field ad-al-nombre" value="${adEsc(a.nombre)}" placeholder="Nombre (opcional)">
             <button class="ad-al-code" data-cnum="${a.num}" title="Clave de familia — tócala para editar o imprimir">
@@ -1068,6 +1069,7 @@ function adRenderLista(body, d) {
   ['ad-grado', 'ad-seccion', 'ad-escuela'].forEach(id =>
     document.getElementById(id).addEventListener('change', () => renderAdmin()));
   body.querySelectorAll('.ad-al-nombre').forEach(i => i.addEventListener('input', persist));
+  adListaFilasArrastrar(document.getElementById('ad-lista-rows'));
   body.querySelectorAll('.ad-al-code').forEach(b =>
     b.addEventListener('click', () => adEditarClave(+b.dataset.cnum)));
   /* 🧪 marcar/desmarcar alumno de prueba. Se guarda ANTES de tocar la
@@ -1358,6 +1360,401 @@ async function adInsertarAlumno() {
   }
 }
 
+/* ── Reordenar filas de alumnos a gusto del docente ──
+   Mueve al alumno con TODAS sus notas ( los 4 parciales, materias,
+   personalidad e inasistencias), asistencias, pagos de colectas, controles,
+   tomas de lectura, equipos, comunicados/conducta, evaluaciones del Plan
+   de Acción y su clave de familia (METAS_CODIGOS_V1).
+   Los números de lista se renumeran en el nuevo orden (1, 2, …, N) para que
+   la boleta, SACE y toda Mi aula conserven el orden elegido por el maestro. */
+function adReordenarAlumnos(ordenNums) {
+  const d = adLoad();
+  if (!d || !Array.isArray(d.lista) || d.lista.length < 2) return null;
+  const porNum = {};
+  d.lista.forEach(a => { porNum[a.num] = a; });
+  const vistos = new Set();
+  const nuevaLista = [];
+  (ordenNums || []).forEach(n => {
+    const k = +n;
+    if (porNum[k] && !vistos.has(k)) { vistos.add(k); nuevaLista.push(porNum[k]); }
+  });
+  d.lista.forEach(a => {
+    if (!vistos.has(a.num)) { vistos.add(a.num); nuevaLista.push(a); }
+  });
+  const numsDestino = d.lista.map(a => a.num).slice().sort((a, b) => a - b);
+  let cambio = false;
+  for (let i = 0; i < nuevaLista.length; i++) {
+    if (nuevaLista[i].num !== d.lista[i].num) { cambio = true; break; }
+  }
+  if (!cambio) return null;
+
+  adUndoGuardar('Ordenar filas de alumnos');
+
+  /* Mapa: número anterior → nuevo número de lista según la nueva posición */
+  const mapa = {};
+  nuevaLista.forEach((al, i) => { mapa[al.num] = numsDestino[i]; });
+  const remapearObj = obj => {
+    const out = {};
+    Object.keys(obj || {}).forEach(k => {
+      const nk = mapa[+k] != null ? mapa[+k] : +k;
+      out[nk] = obj[k];
+    });
+    return out;
+  };
+
+  /* 1) Claves de familia siguen a cada alumno (tiras impresas y nube siguen valiendo) */
+  try {
+    const codes = JSON.parse(localStorage.getItem('METAS_CODIGOS_V1')) || {};
+    const key = 'G:' + d.id;
+    if (codes[key]) {
+      codes[key] = remapearObj(codes[key]);
+      localStorage.setItem('METAS_CODIGOS_V1', JSON.stringify(codes));
+    }
+  } catch (_) {}
+
+  /* 2) Notas SACE (todos los parciales, todas las materias, personalidad e inasistencias) */
+  Object.keys(d.notas || {}).forEach(p => {
+    Object.keys(d.notas[p] || {}).forEach(m => {
+      d.notas[p][m] = remapearObj(d.notas[p][m]);
+    });
+  });
+
+  /* 3) Asistencia, colectas, controles, lectura y equipos */
+  (d.asistencia || []).forEach(r => { if (r && r.aus) r.aus = remapearObj(r.aus); });
+  (d.colectas || []).forEach(c => {
+    if (c && c.pagos) c.pagos = remapearObj(c.pagos);
+    if (c && c.pagosF) c.pagosF = remapearObj(c.pagosF);
+  });
+  (d.controles || []).forEach(c => {
+    if (c && c.datos) c.datos = remapearObj(c.datos);
+  });
+  (d.lectura || []).forEach(r => {
+    if (r && mapa[+r.num] != null) r.num = mapa[+r.num];
+  });
+  const eq = d.equipos;
+  if (eq) {
+    const mArr = a => (a || []).map(n => mapa[+n] != null ? mapa[+n] : +n);
+    ['reparto', 'antes'].forEach(k => { if (Array.isArray(eq[k])) eq[k] = eq[k].map(mArr); });
+    if (Array.isArray(eq.coord)) eq.coord = mArr(eq.coord);
+    if (Array.isArray(eq.separar)) eq.separar = eq.separar.map(mArr);
+    if (eq.fuera && Array.isArray(eq.fuera.nums)) eq.fuera.nums = mArr(eq.fuera.nums);
+  }
+
+  /* 4) Comunicados individuales y reportes de conducta del grupo */
+  try {
+    if (typeof avLoad === 'function' && typeof avSaveAll === 'function') {
+      const oAv = avLoad();
+      const gAv = oAv.grupos && oAv.grupos[d.id];
+      if (gAv) {
+        (gAv.avisos || []).forEach(av => {
+          if (av && Array.isArray(av.alumnos)) {
+            av.alumnos = av.alumnos.map(n => mapa[+n] != null ? mapa[+n] : +n);
+          }
+        });
+        (gAv.conducta || []).forEach(c => {
+          if (c && mapa[+c.num] != null) c.num = mapa[+c.num];
+        });
+        avSaveAll(oAv);
+      }
+    }
+  } catch (_) {}
+
+  /* 5) Evaluaciones del Plan de Acción que pertenecen a este grupo */
+  try {
+    const rawPa = localStorage.getItem('METAS_PLANACCION_V1');
+    if (rawPa && typeof adSugMismoGrupo === 'function') {
+      const pa = JSON.parse(rawPa);
+      let modPa = false;
+      ((pa && pa.analisis) || []).forEach(ana => {
+        if (!ana || !Array.isArray(ana.students) || !adSugMismoGrupo(ana, d)) return;
+        ana.students.forEach(s => {
+          if (s && mapa[+s.num] != null && +s.num !== mapa[+s.num]) {
+            s.num = mapa[+s.num];
+            modPa = true;
+          }
+        });
+        ana.students.sort((a, b) => (+a.num || 0) - (+b.num || 0));
+      });
+      if (modPa) localStorage.setItem('METAS_PLANACCION_V1', JSON.stringify(pa));
+    }
+  } catch (_) {}
+
+  /* 6) Actualizar la lista en el nuevo orden con sus números renumerados */
+  d.lista = nuevaLista.map((al, i) => Object.assign({}, al, { num: numsDestino[i] }));
+  adSave(d);
+  return mapa;
+}
+
+/* ── Arrastrar filas en tablas (.ad-mx en Notas SACE e Identidad y contactos) ──
+   Al agarrar una fila por su asa (⋮⋮) o su casilla de nombre (.ad-mx-sticky),
+   se mueve el <tr> entero —con todas sus notas— en vivo. Al soltar, renumera y
+   conserva la posición de desplazamiento. */
+function adTablaFilasArrastrar(tabla, alCambiar) {
+  if (!tabla) return;
+  const tbody = tabla.querySelector('tbody');
+  if (!tbody || tbody.querySelectorAll('tr[data-rnum]').length < 2) return;
+  const wrap = tabla.closest('.ad-mx-wrap');
+
+  const actualizarNumsEnVivo = (fantasma, filaActiva) => {
+    const filas = [...tbody.querySelectorAll('tr[data-rnum]')];
+    filas.forEach((tr, idx) => {
+      const b = tr.querySelector('.ad-mx-num');
+      if (b) b.textContent = '#' + (idx + 1);
+      if (fantasma && tr === filaActiva) {
+        const nom = (tr.querySelector('.ad-mx-nom')?.textContent || '').trim();
+        fantasma.textContent = '↕️ #' + (idx + 1) + (nom && nom !== '—' ? ' · ' + nom : '');
+      }
+    });
+  };
+
+  tbody.addEventListener('pointerdown', e => {
+    if (e.button && e.button !== 0) return;
+    const celda = e.target.closest('.ad-mx-sticky');
+    if (!celda) return;
+    const fila = celda.closest('tr[data-rnum]');
+    if (!fila) return;
+
+    const esAsa = !!e.target.closest('.ad-mx-asa');
+    const id = e.pointerId, x0 = e.clientX, y0 = e.clientY;
+    let UltY = y0, UltX = x0;
+    let timer = null, moviendo = false, fantasma = null, rafScroll = 0;
+    const numOrig = +fila.dataset.rnum;
+
+    const autoScroll = () => {
+      if (!moviendo) return;
+      let dy = 0;
+      const paso = 9;
+      const margen = 42;
+      if (wrap) {
+        const wr = wrap.getBoundingClientRect();
+        if (UltY < wr.top + margen) dy = -paso;
+        else if (UltY > wr.bottom - margen) dy = paso;
+        if (dy && wrap.scrollHeight > wrap.clientHeight) {
+          wrap.scrollTop += dy;
+          reubicarFila(UltY);
+        }
+      }
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+      if (UltY < margen) window.scrollBy(0, -paso);
+      else if (UltY > vh - margen) window.scrollBy(0, paso);
+      rafScroll = requestAnimationFrame(autoScroll);
+    };
+
+    const reubicarFila = y => {
+      const hermanas = [...tbody.querySelectorAll('tr[data-rnum]')].filter(r => r !== fila);
+      for (const otra of hermanas) {
+        const r = otra.getBoundingClientRect();
+        const mid = r.top + r.height / 2;
+        if (y < mid) {
+          if (otra.previousElementSibling !== fila) {
+            tbody.insertBefore(fila, otra);
+            actualizarNumsEnVivo(fantasma, fila);
+          }
+          return;
+        }
+      }
+      const ult = hermanas[hermanas.length - 1];
+      if (ult && ult.nextElementSibling !== fila) {
+        ult.after(fila);
+        actualizarNumsEnVivo(fantasma, fila);
+      }
+    };
+
+    const empezar = () => {
+      moviendo = true;
+      if (document.activeElement && document.activeElement.blur) {
+        try { document.activeElement.blur(); } catch (_) {}
+      }
+      try { celda.setPointerCapture(id); } catch (_) {}
+      if (navigator.vibrate) try { navigator.vibrate(18); } catch (_) {}
+      fila.classList.add('ad-mx-tr-moviendo');
+      document.body.classList.add('ad-gr-moviendo');
+      fantasma = document.createElement('div');
+      fantasma.className = 'ad-mx-fantasma';
+      document.body.appendChild(fantasma);
+      actualizarNumsEnVivo(fantasma, fila);
+      posicionarFantasma(UltX, UltY);
+      rafScroll = requestAnimationFrame(autoScroll);
+    };
+
+    const posicionarFantasma = (x, y) => {
+      if (!fantasma) return;
+      fantasma.style.left = Math.max(8, Math.min((window.innerWidth || 360) - 170, x + 14)) + 'px';
+      fantasma.style.top = Math.max(8, y - 34) + 'px';
+    };
+
+    if (e.pointerType !== 'mouse' && !esAsa) {
+      timer = setTimeout(empezar, 260);
+    }
+
+    const alMover = ev => {
+      if (ev.pointerId !== id) return;
+      UltX = ev.clientX;
+      UltY = ev.clientY;
+      if (!moviendo) {
+        const dist = Math.hypot(ev.clientX - x0, ev.clientY - y0);
+        if (ev.pointerType === 'mouse' || esAsa) {
+          if (dist >= 4) empezar();
+        } else if (dist > 9) {
+          clearTimeout(timer);
+          limpiar();
+          return;
+        }
+      }
+      if (moviendo) {
+        if (ev.cancelable) ev.preventDefault();
+        posicionarFantasma(ev.clientX, ev.clientY);
+        reubicarFila(ev.clientY);
+      }
+    };
+
+    const soltar = ev => {
+      if (ev.pointerId !== id) return;
+      clearTimeout(timer);
+      const seMovio = moviendo;
+      limpiar();
+      if (!seMovio) return;
+
+      const orden = [...tbody.querySelectorAll('tr[data-rnum]')].map(r => +r.dataset.rnum);
+      const st = wrap ? wrap.scrollTop : 0;
+      const sl = wrap ? wrap.scrollLeft : 0;
+      const wy = window.scrollY;
+      const mapa = adReordenarAlumnos(orden);
+      if (mapa) {
+        const nuevoNum = mapa[numOrig];
+        if (typeof alCambiar === 'function') alCambiar(nuevoNum);
+        const w2 = document.querySelector('.ad-mx-wrap');
+        if (w2) { w2.scrollTop = st; w2.scrollLeft = sl; }
+        window.scrollTo(0, wy);
+        if (nuevoNum != null) {
+          const destTr = document.querySelector('tr[data-rnum="' + nuevoNum + '"]');
+          if (destTr) {
+            destTr.classList.add('ad-mx-tr-movida');
+            setTimeout(() => destTr.classList.remove('ad-mx-tr-movida'), 900);
+          }
+        }
+        if (typeof toast === 'function') {
+          toast('↕️ Fila movida a #' + (nuevoNum || '') + ' con todas sus notas');
+        }
+      }
+    };
+
+    const limpiar = () => {
+      if (rafScroll) cancelAnimationFrame(rafScroll);
+      rafScroll = 0;
+      window.removeEventListener('pointermove', alMover);
+      window.removeEventListener('pointerup', soltar);
+      window.removeEventListener('pointercancel', soltar);
+      if (fantasma) { fantasma.remove(); fantasma = null; }
+      fila.classList.remove('ad-mx-tr-moviendo');
+      document.body.classList.remove('ad-gr-moviendo');
+    };
+
+    window.addEventListener('pointermove', alMover, { passive: false });
+    window.addEventListener('pointerup', soltar);
+    window.addEventListener('pointercancel', soltar);
+  });
+}
+
+/* ── Arrastrar filas en la pestaña 👥 Alumnos (#ad-lista-rows) ── */
+function adListaFilasArrastrar(cont) {
+  if (!cont || cont.querySelectorAll('.ad-al-row').length < 2) return;
+
+  const actualizarNums = () => {
+    [...cont.querySelectorAll('.ad-al-row')].forEach((r, idx) => {
+      const n = r.querySelector('.ad-al-num');
+      if (n) n.textContent = '#' + (idx + 1);
+    });
+  };
+
+  cont.addEventListener('pointerdown', e => {
+    if (e.button && e.button !== 0) return;
+    const agarradera = e.target.closest('.ad-al-asa, .ad-al-num');
+    if (!agarradera) return;
+    const fila = agarradera.closest('.ad-al-row');
+    if (!fila) return;
+
+    const esAsa = !!e.target.closest('.ad-al-asa');
+    const id = e.pointerId, x0 = e.clientX, y0 = e.clientY;
+    let timer = null, moviendo = false;
+    const numOrig = +fila.dataset.num;
+
+    const empezar = () => {
+      moviendo = true;
+      try { agarradera.setPointerCapture(id); } catch (_) {}
+      if (navigator.vibrate) try { navigator.vibrate(18); } catch (_) {}
+      fila.classList.add('ad-al-moviendo');
+      document.body.classList.add('ad-gr-moviendo');
+    };
+
+    if (e.pointerType !== 'mouse' && !esAsa) {
+      timer = setTimeout(empezar, 250);
+    }
+
+    const alMover = ev => {
+      if (ev.pointerId !== id) return;
+      if (!moviendo) {
+        const dist = Math.hypot(ev.clientX - x0, ev.clientY - y0);
+        if (ev.pointerType === 'mouse' || esAsa) {
+          if (dist >= 4) empezar();
+        } else if (dist > 9) {
+          clearTimeout(timer);
+          limpiar();
+          return;
+        }
+      }
+      if (!moviendo) return;
+      if (ev.cancelable) ev.preventDefault();
+      const hermanas = [...cont.querySelectorAll('.ad-al-row')].filter(r => r !== fila);
+      for (const otra of hermanas) {
+        const r = otra.getBoundingClientRect();
+        if (ev.clientY < r.top + r.height / 2) {
+          if (otra.previousElementSibling !== fila) {
+            cont.insertBefore(fila, otra);
+            actualizarNums();
+          }
+          return;
+        }
+      }
+      const ult = hermanas[hermanas.length - 1];
+      if (ult && ult.nextElementSibling !== fila) {
+        ult.after(fila);
+        actualizarNums();
+      }
+    };
+
+    const soltar = ev => {
+      if (ev.pointerId !== id) return;
+      clearTimeout(timer);
+      const seMovio = moviendo;
+      limpiar();
+      if (!seMovio) return;
+      const wy = window.scrollY;
+      const orden = [...cont.querySelectorAll('.ad-al-row')].map(r => +r.dataset.num);
+      const mapa = adReordenarAlumnos(orden);
+      if (mapa) {
+        renderAdmin();
+        window.scrollTo(0, wy);
+        if (typeof toast === 'function') {
+          toast('↕️ Fila movida a #' + (mapa[numOrig] || '') + ' con sus notas y registros');
+        }
+      }
+    };
+
+    const limpiar = () => {
+      window.removeEventListener('pointermove', alMover);
+      window.removeEventListener('pointerup', soltar);
+      window.removeEventListener('pointercancel', soltar);
+      fila.classList.remove('ad-al-moviendo');
+      document.body.classList.remove('ad-gr-moviendo');
+    };
+
+    window.addEventListener('pointermove', alMover, { passive: false });
+    window.addEventListener('pointerup', soltar);
+    window.addEventListener('pointercancel', soltar);
+  });
+}
+
 function adTiraUno(d, num) {
   const codigo = adClaveFamilia(d.id, num);
   if (!codigo) { toast('No se pudo generar la clave'); return; }
@@ -1461,8 +1858,8 @@ function adRenderFichas(body, d) {
             ${AD_FICHA_CAMPOS.map(c => `<th><div class="ad-mx-h" style="min-width:${c.w}px">${adEsc(c.et)}</div></th>`).join('')}
           </tr></thead>
           <tbody>
-            ${d.lista.map((a, ri) => `<tr>
-              <td class="ad-mx-sticky" title="${adEsc(a.nombre)}"><b>#${a.num}</b>
+            ${d.lista.map((a, ri) => `<tr data-rnum="${a.num}">
+              <td class="ad-mx-sticky" title="${adEsc(a.nombre ? a.nombre + ' — arrastra desde los puntos para mover la fila' : 'Arrastra desde los puntos para mover la fila')}"><span class="ad-mx-asa" aria-hidden="true"></span><b class="ad-mx-num">#${a.num}</b>
                 <span class="ad-mx-nom">${adEsc(adPrimerNombre(a.nombre)) || '—'}</span></td>
               <td><button class="ad-fi-sexo ad-fi-sx-${a.sexo === 'F' ? 'f' : a.sexo === 'M' ? 'm' : 'no'}"
                 data-sxnum="${a.num}" aria-label="Sexo de ${adEsc(adPrimerNombre(a.nombre) || ('#' + a.num))}: ${a.sexo === 'F' ? 'niña' : a.sexo === 'M' ? 'varón' : 'sin registrar'}. Tocar para cambiar."
@@ -1570,6 +1967,7 @@ function adRenderFichas(body, d) {
     }).filter(Boolean);
     estado(faltan.length ? '🔎 ' + faltan.join(' · ') : '✅ Todas las fichas están completas.');
   });
+  adTablaFilasArrastrar(body.querySelector('.ad-fi-mx'), () => renderAdmin());
 }
 
 /* ══════════════ 📄 EXPEDIENTE DEL AULA ══════════════
@@ -4259,10 +4657,10 @@ function adRenderSace(body, d) {
       </div>
       <p class="pa-optional-hint" style="margin-top:2px">
         ${esLetra
-          ? 'La conducta es <strong>cualitativa</strong>: <strong>escríbela</strong> (S, MB, B) o toca la celda y luego el <strong>valor</strong> — el cursor recorre los parciales I→IV de cada rasgo y sigue solo. Desliza la tabla → para ver todos los rasgos.'
+          ? 'La conducta es <strong>cualitativa</strong>: <strong>escríbela</strong> (S, MB, B) o toca la celda y luego el <strong>valor</strong> — el cursor recorre los parciales I→IV de cada rasgo y sigue solo. Desliza la tabla → para ver todos los rasgos. Arrastra los puntos <strong>⋮⋮</strong> de un alumno para mover toda su fila con sus notas.'
           : esInasis
-            ? 'Escribe el <strong>número de inasistencias</strong>. Enter o «Siguiente» para bajar.'
-            : 'Escribe la <strong>nota (1-100)</strong>. Avanza con <strong>Enter</strong>, <strong>Tab</strong> o las flechas. Desliza la tabla → para ver todas las materias.'}</p>
+            ? 'Escribe el <strong>número de inasistencias</strong>. Enter o «Siguiente» para bajar. Arrastra los puntos <strong>⋮⋮</strong> para ordenar filas.'
+            : 'Escribe la <strong>nota (1-100)</strong>. Avanza con <strong>Enter</strong>, <strong>Tab</strong> o las flechas. Desliza la tabla → para ver todas las materias. Arrastra los puntos <strong>⋮⋮</strong> de cualquier alumno para mover toda su fila con sus notas.'}</p>
 
       ${esLetra ? `
       <div class="ad-pers-kp">
@@ -4317,8 +4715,8 @@ function adRenderSace(body, d) {
           </tr>`}
           </thead>
           <tbody>
-            ${d.lista.map((a, ri) => `<tr>
-              <td class="ad-mx-sticky" title="${adEsc(a.nombre)}"><b>#${a.num}</b> <span class="ad-mx-nom">${adEsc(adPrimerNombre(a.nombre)) || '—'}</span></td>
+            ${d.lista.map((a, ri) => `<tr data-rnum="${a.num}">
+              <td class="ad-mx-sticky" title="${adEsc(a.nombre ? a.nombre + ' — arrastra desde los puntos para mover toda la fila con sus notas' : 'Arrastra desde los puntos para mover toda la fila con sus notas')}"><span class="ad-mx-asa" aria-hidden="true"></span><b class="ad-mx-num">#${a.num}</b> <span class="ad-mx-nom">${adEsc(adPrimerNombre(a.nombre)) || '—'}</span></td>
               ${colDefs.map((cd, ci) => `<td${cd.ini ? ' class="ad-mx-ini"' : ''}><input class="ad-mx-inp" data-idx="${ri * colDefs.length + ci}"
                 data-num="${a.num}" data-alumno="${a.num}" data-campo="${adEsc(cd.campo)}" data-materia="${adEsc(cd.campo)}" data-parcial="${cd.parcial}" type="text" inputmode="${esLetra ? 'text' : 'numeric'}"
                 maxlength="3" autocapitalize="characters" ${esLetra ? 'style="text-transform:uppercase;"' : ''}
@@ -4486,6 +4884,31 @@ function adRenderSace(body, d) {
       }
     });
     inp.addEventListener('keydown', ev => {
+      if (ev.altKey && (ev.key === 'ArrowUp' || ev.key === 'ArrowDown')) {
+        ev.preventDefault();
+        const tr = inp.closest('tr[data-rnum]');
+        const tb = tr && tr.parentElement;
+        if (!tr || !tb) return;
+        const vec = ev.key === 'ArrowUp' ? tr.previousElementSibling : tr.nextElementSibling;
+        if (!vec) return;
+        if (ev.key === 'ArrowUp') tb.insertBefore(tr, vec); else vec.after(tr);
+        const orden = [...tb.querySelectorAll('tr[data-rnum]')].map(r => +r.dataset.rnum);
+        const numOrig = +inp.dataset.num;
+        const campoOrig = inp.dataset.campo;
+        const parcialOrig = inp.dataset.parcial;
+        const wrap = tb.closest('.ad-mx-wrap');
+        const st = wrap ? wrap.scrollTop : 0, sl = wrap ? wrap.scrollLeft : 0, wy = window.scrollY;
+        const mapa = adReordenarAlumnos(orden);
+        if (mapa) {
+          const nuevoNum = mapa[numOrig];
+          _adCapturedState = { activeInput: { num: String(nuevoNum), alumno: String(nuevoNum), campo: campoOrig, materia: campoOrig, parcial: parcialOrig } };
+          adRenderSace(body, adLoad());
+          const w2 = body.querySelector('.ad-mx-wrap');
+          if (w2) { w2.scrollTop = st; w2.scrollLeft = sl; }
+          window.scrollTo(0, wy);
+        }
+        return;
+      }
       if (ev.key === 'Tab') {
         ev.preventDefault();
         focar(ev.shiftKey ? idx - 1 : idx + 1);
@@ -4740,6 +5163,8 @@ function adRenderSace(body, d) {
         : '✅ CSV del Parcial ' + parcial + ' copiado (todas las columnas). Pégalo en una hoja de cálculo.'),
       () => estado('⚠️ No se pudo copiar automáticamente en este navegador.'));
   });
+
+  adTablaFilasArrastrar(body.querySelector('.ad-mx'), () => adRenderSace(body, adLoad()));
 
   /* Restaurar foco y posición del cursor si una celda estaba activa antes del render */
   if (activeInpInfo) {
