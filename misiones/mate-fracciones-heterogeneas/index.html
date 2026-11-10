@@ -2,28 +2,60 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=5.0">
-<title>Suma y Resta de Fracciones con Diferente Denominador · Misión M.E.T.A.S · 5°–8° Grado</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>Suma y Resta de Fracciones Heterogéneas | policastsapien.com</title>
+<meta name="description" content="Suma y Resta de Fracciones con Diferente Denominador: misión educativa interactiva con laboratorio en 3 pasos, MCM, fracciones equivalentes y evaluaciones. PolicastSapien.">
+<meta property="og:title" content="Misión: Suma y Resta de Fracciones Heterogéneas">
+<meta property="og:description" content="Domina el Mínimo Común Múltiplo (MCM), las fracciones equivalentes y la simplificación en 3 pasos visuales. PolicastSapien.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Misiones PolicastSapien">
+<meta property="og:url" content="https://metas.policastsapien.com/misiones/mate-fracciones-heterogeneas/index.html">
 <link rel="stylesheet" href="../../css/vendor/fuentes/fuentes.css">
+<link rel="stylesheet" href="../../css/vendor/fontawesome/css/all.min.css">
 <link rel="stylesheet" href="css/style.css">
+<!-- La barra de secciones, arriba y siempre a la vista. Va DESPUÉS del CSS
+     de la misión a propósito: de ahí saca su color, y así sobrescribe su
+     position:static sin un solo !important. -->
 <link rel="stylesheet" href="../../css/barra-secciones.css">
+<!-- El acierto y el error NO se dicen solo con color: uno de cada doce
+     niños no distingue el rojo del verde. Va DESPUÉS del CSS de la misión,
+     que es lo que le deja pisar sus reglas. -->
 <link rel="stylesheet" href="../../css/senal-no-color.css">
 <link rel="stylesheet" href="../../css/lab-legible.css">
+<!-- Que las actividades se puedan hacer sin el dedo: el foco visible.
+     Va con js/teclado-actividades.js, que pone las paradas de tabulador
+     y hace que Enter y la barra espaciadora sirvan de algo. -->
 <link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La sección 🎬 Videos. Va DESPUÉS del CSS de la misión a propósito:
+     se tiñe del --pri y del --sec que la misión acaba de declarar. -->
 <link rel="stylesheet" href="../../css/videos-mision.css">
+<!-- La animación que explica el tema, justo después de la historia. Va
+     DESPUÉS del CSS de la misión a propósito: se tiñe de su --pri y su --sec. -->
 <link rel="stylesheet" href="../../css/animacion-mision.css">
+<!-- La estrella se gana: antes del primer toque del alumno no se marca
+     ninguna sección, generar una prueba no la da y el XP no se vuelve a
+     ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
+     antes de que el arranque de la misión lo llame. -->
 <script src="../../js/estrella-ganada.js"></script>
 </head>
 <body>
-<a href="#main-content" class="skip-link" style="position:absolute;top:-50px;left:0;background:var(--gold);color:#000;padding:8px 16px;z-index:99999;font-weight:900;text-decoration:none;transition:top 0.2s;" onfocus="this.style.top='0'" onblur="this.style.top='-50px'">Saltar al contenido principal</a>
+<a href="#main-content" class="skip-link" style="position:absolute;top:-50px;left:0;background:var(--gold);color:var(--texto-inverso);padding:8px 16px;z-index:99999;font-weight:900;text-decoration:none;transition:top 0.2s;" onfocus="this.style.top='0'" onblur="this.style.top='-50px'">Saltar al contenido principal</a>
 
 <!-- XP BAR -->
-<div class="xp-bar" role="banner">
-  <a class="btn-volver-menu" href="../../index.html" onclick="if(history.length>1){history.back();return false;}" title="Volver al menú anterior">&lt; Volver al menú</a>
-  <div class="xp-lvl" id="xpLvl">Nv.1 Aprendiz del MCM</div>
-  <div class="xp-track"><div class="xp-fill" id="xpFill"></div></div>
-  <div class="xp-txt" id="xpTxt" aria-live="polite">0 / 600 XP</div>
+<div class="xp-bar" role="status" aria-label="Barra de progreso XP">
+  <a href="../../index.html?view=misiones&filter=matemáticas" class="xp-back-btn" onclick="if(history.length>1){history.back();return false;}" title="Regresar a misiones de Matemáticas">
+    <svg class="xp-back-arrow" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H5M12 5l-7 7 7 7"/></svg>
+    <img src="../../img/logo.png" alt="Logo" class="xp-back-logo">
+  </a>
+  <span class="xp-lbl">🎮 XP</span>
+  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <span class="xp-txt" id="xpTxt" aria-live="polite" style="display:none;">0 / 600 XP</span>
+  <a href="#" class="xp-share-wa" onclick="compartirMision(); return false;" title="Compartir misión por WhatsApp" aria-label="Compartir misión por WhatsApp">
+    <img src="../../img/comparte_whatsapp.webp" alt="WhatsApp" class="xp-share-icon">
+  </a>
   <button class="btn-escuchar" id="btnVozGlobal" onclick="escucharPasoActual()" title="Escuchar la instrucción actual con voz">🔊 Escuchar</button>
+  <span class="xp-pts" id="xpPts">⭐ 0</span>
+  <span class="xp-lvl" id="xpLvl">Aprendiz 🌱</span>
   <button class="snd-b" id="achTopBtn" onclick="toggleAchPanel()" title="Logros" aria-label="Ver logros">🏅 <span id="achCount" style="font-size:0.7rem;">0/12</span></button>
 </div>
 
@@ -31,28 +63,35 @@
 <div class="ach-panel" id="achPanel">
   <div style="display:flex;justify-content:space-between;align-items:center;">
     <h4 style="margin:0;color:var(--gold);font-size:0.95rem;">🏅 Logros Desbloqueados</h4>
-    <button onclick="toggleAchPanel()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.1rem;" aria-label="Cerrar panel de logros">✖</button>
+    <button onclick="toggleAchPanel()" style="background:none;border:none;color:var(--texto-secundario);cursor:pointer;font-size:1.1rem;" aria-label="Cerrar panel de logros">✖</button>
   </div>
   <div class="ach-grid" id="achGrid"></div>
 </div>
 
 <!-- HERO -->
-<header class="hero">
-  <div class="badge">🍕 Matemática · Fracciones Heterogéneas · 5° a 8° Grado · M.E.T.A.S</div>
-  <h1>Suma y Resta de Fracciones Heterogéneas</h1>
-  <p>Descubre por qué no podemos sumar pedazos de distinto tamaño sin antes igualar su denominador con el MCM, ilumina círculos y barras fraccionarias en 3 pasos, y domina las fracciones equivalentes.</p>
-  <div style="margin-top:0.8rem;display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap;">
-    <span class="pill p-gold">🔍 Paso 1: MCM (Denominador Común)</span>
-    <span class="pill p-teal">🔄 Paso 2: Fracciones Equivalentes</span>
-    <span class="pill p-coral">➕➖ Paso 3: Sumar/Restar y Simplificar</span>
-    <span class="pill p-purple">🦋 Método Mariposa y Casos Especiales</span>
+<header class="hero" role="banner">
+  <div class="hero-inner">
+    <div class="hero-mascot-wrap">
+      <div class="hero-mascot" aria-hidden="true">🍕</div>
+    </div>
+    <div class="hero-text">
+      <div class="badge">🍕 Matemática · Fracciones Heterogéneas · 5° a 8° Grado · M.E.T.A.S</div>
+      <h1>Suma y Resta de <span>Fracciones Heterogéneas</span></h1>
+      <p class="sub">Descubre por qué no podemos sumar pedazos de distinto tamaño sin antes igualar su denominador con el MCM, ilumina círculos y barras fraccionarias en 3 pasos, y domina las fracciones equivalentes.</p>
+      <div class="hero-pills">
+        <span class="pill p-gold">🔍 Paso 1: MCM (Denominador Común)</span>
+        <span class="pill p-teal">🔄 Paso 2: Fracciones Equivalentes</span>
+        <span class="pill p-coral">➕➖ Paso 3: Sumar/Restar y Simplificar</span>
+        <span class="pill p-purple">🦋 Método Mariposa y Casos Especiales</span>
+      </div>
+      <div class="hero-actions">
+        <button class="btn btn-gold" onclick="go('s-lab')">🔬 Ir al Reto Visual en 3 Pasos (0/5 ⭐)</button>
+        <button class="btn btn-teal" onclick="go('s-predice')">🔮 Ruta Guiada Completa</button>
+        <button class="btn btn-purple" onclick="go('s-evaluacion')">🎓 Ir a Evaluaciones</button>
+      </div>
+      <div class="prog-dots" id="progDots"></div>
+    </div>
   </div>
-  <div style="margin-top:0.9rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
-    <button class="btn btn-gold" onclick="go('s-lab')" style="font-size:0.9rem;padding:0.65rem 1.3rem;">🔬 Ir al Reto Visual en 3 Pasos (0/5 ⭐)</button>
-    <button class="btn btn-teal" onclick="go('s-predice')" style="font-size:0.85rem;padding:0.65rem 1.2rem;">🔮 Ruta Guiada Completa</button>
-    <button class="btn btn-purple" onclick="go('s-evaluacion')" style="font-size:0.85rem;padding:0.65rem 1.2rem;">🎓 Ir a Evaluaciones</button>
-  </div>
-  <div class="prog-dots" id="progDots"></div>
 </header>
 
 <!-- DIPLOMA OVERLAY -->
@@ -61,11 +100,11 @@
     <div style="font-size:2.8rem;">🎓🍕🏆</div>
     <h2 id="dipTitle">Constancia de Aprendizaje</h2>
     <div class="dip-sub">Proyecto Educativo M.E.T.A.S · Matemática · II y III Ciclo</div>
-    <p style="color:var(--muted);font-size:0.85rem;margin-bottom:0.5rem;">Se otorga la presente constancia a:</p>
+    <p style="color:var(--texto-secundario);font-size:0.85rem;margin-bottom:0.5rem;">Se otorga la presente constancia a:</p>
     <input class="dip-name-in" id="dipName" placeholder="Escribe tu nombre completo aquí..." maxlength="50">
-    <p style="color:var(--text);font-size:0.85rem;line-height:1.5;margin:0.6rem 0;">Por haber superado la misión interactiva <strong>«Suma y Resta de Fracciones con Diferente Denominador (Fracciones Heterogéneas)»</strong>, demostrando dominio del Mínimo Común Múltiplo (MCM), la conversión a fracciones equivalentes y la simplificación.</p>
+    <p style="color:var(--texto-principal);font-size:0.85rem;line-height:1.5;margin:0.6rem 0;">Por haber superado la misión interactiva <strong>«Suma y Resta de Fracciones con Diferente Denominador (Fracciones Heterogéneas)»</strong>, demostrando dominio del Mínimo Común Múltiplo (MCM), la conversión a fracciones equivalentes y la simplificación.</p>
     <div class="dip-stats" id="dipStats"></div>
-    <div style="margin-top:0.8rem;font-size:0.75rem;color:var(--muted);">Fecha: <span id="dipDate"></span> · Desarrolladores: Josué E. Polanco · Evelyn Castellanos · Jael &amp; Angelly Polanco</div>
+    <div style="margin-top:0.8rem;font-size:0.75rem;color:var(--texto-secundario);">Fecha: <span id="dipDate"></span> · Desarrolladores: Josué E. Polanco · Evelyn Castellanos · Jael &amp; Angelly Polanco</div>
     <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;" id="dipBtns">
       <button class="btn btn-gold" onclick="downloadDiploma()">📸 Descargar Imagen</button>
       <button class="btn btn-teal" onclick="window.print()">🖨️ Imprimir</button>
@@ -75,19 +114,25 @@
 </div>
 
 <!-- MAIN CONTENT -->
-<main class="wrap" id="main-content">
+<main class="main" id="main-content">
 
 <!-- ═══════════════ 0. PREDICE ═══════════════ -->
-<section class="sec on" id="s-predice" role="tabpanel">
-  <div class="card">
+<section class="sec active on" id="s-predice" role="tabpanel">
+  <div class="card ac-amber" data-situacion>
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
       <div class="card-h" style="margin-bottom:0;"><span class="ic">🔮</span> Predice y Observa — ¿Antes de la fórmula, qué dice tu intuición?</div>
       <button class="btn-escuchar" onclick="hablarTexto('Bienvenido a la sección Predice y Observa. Lee cada situación cotidiana con fracciones de distinto denominador, elige tu predicción y descubre por qué necesitamos igualar el tamaño de las partes antes de sumar o restar.')">🔊 Escuchar</button>
     </div>
-    <p style="color:var(--muted);font-size:0.88rem;margin:0.5rem 0 1rem;">En las ferias, cocinas y talleres de Honduras sumamos y restamos fracciones todos los días. Haz tu predicción en estos <strong>3 acertijos reales</strong> antes de ver la explicación (+15 XP por cada predicción):</p>
+    <p style="color:var(--texto-secundario);font-size:0.9rem;margin:0.5rem 0 1rem;">En las ferias, cocinas y talleres de Honduras sumamos y restamos fracciones todos los días. Haz tu predicción en estos <strong>3 acertijos reales</strong> antes de ver la explicación (+15 XP por cada predicción):</p>
     <div id="predBox"></div>
-    <!-- Escena animada paso a paso: las dos bandejas de quesadilla -->
-    <div id="amQuesadilla"></div>
+  </div>
+
+  <!-- Escena animada paso a paso: las dos bandejas de quesadilla -->
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Las dos bandejas de quesadilla de Olancho</h2>
+    <div id="amQuesadilla">
+      <p>En una bandeja queda 1/2 de quesadilla y en otra queda 1/3. Como los pedazos son de distinto tamaño, partimos ambas bandejas en sextos (MCM = 6): 1/2 = 3/6 y 1/3 = 2/6. Ahora sí: 3/6 + 2/6 = 5/6.</p>
+    </div>
     <div style="margin-top:1.2rem;text-align:center;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
       <button class="btn btn-gold" onclick="go('s-aprende')">Continuar a Aprende 📖 →</button>
       <button class="btn btn-teal" onclick="go('s-lab')">Ir directo al Laboratorio 3 Pasos 🔬 →</button>
@@ -97,12 +142,12 @@
 
 <!-- ═══════════════ 1. APRENDE ═══════════════ -->
 <section class="sec" id="s-aprende" role="tabpanel">
-  <div class="card">
+  <div class="card ac-gold">
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
       <div class="card-h" style="margin-bottom:0;"><span class="ic">📖</span> ¿Qué son las Fracciones Heterogéneas y por qué no se suman directo?</div>
       <button class="btn-escuchar" onclick="hablarTexto('Dos fracciones son heterogéneas cuando tienen diferente denominador. Como el denominador indica el tamaño de cada pedazo, no podemos sumar medios con tercios directamente sin antes partirlos en pedazos del mismo tamaño usando el Mínimo Común Múltiplo.')">🔊 Escuchar</button>
     </div>
-    <p style="font-size:0.94rem;line-height:1.75;margin-top:0.5rem;">Dos o más fracciones son <strong>heterogéneas</strong> cuando tienen <strong>diferente denominador</strong> (por ejemplo, <strong>1/2</strong> y <strong>1/3</strong>, o <strong>3/4</strong> y <strong>1/6</strong>). Como el <strong>denominador</strong> indica en cuántas partes iguales se partió el entero, tener denominadores distintos significa que <strong>los pedazos son de diferente tamaño</strong>.</p>
+    <p style="font-size:0.95rem;line-height:1.75;margin-top:0.5rem;">Dos o más fracciones son <strong>heterogéneas</strong> cuando tienen <strong>diferente denominador</strong> (por ejemplo, <strong>1/2</strong> y <strong>1/3</strong>, o <strong>3/4</strong> y <strong>1/6</strong>). Como el <strong>denominador</strong> indica en cuántas partes iguales se partió el entero, tener denominadores distintos significa que <strong>los pedazos son de diferente tamaño</strong>.</p>
 
     <div class="explain-box" style="margin-top:0.9rem;">
       <strong style="color:var(--gold);">🍍 La Regla de Oro de la Suma y Resta de Fracciones:</strong><br>
@@ -112,30 +157,30 @@
     <div class="g2" style="margin-top:1rem;">
       <div class="concept-box" style="border-left:4px solid var(--teal);">
         <h4 style="color:var(--teal);margin-bottom:0.4rem;">✅ Fracciones Homogéneas (Mismo denominador)</h4>
-        <p style="font-size:0.86rem;line-height:1.6;color:var(--muted);">Tienen el <strong>mismo denominador</strong>: los pedazos ya son del mismo tamaño. Solo se suman o restan los numeradores y el denominador se copia igual:</p>
+        <p style="font-size:0.88rem;line-height:1.6;color:var(--texto-secundario);">Tienen el <strong>mismo denominador</strong>: los pedazos ya son del mismo tamaño. Solo se suman o restan los numeradores y el denominador se copia igual:</p>
         <div class="formula-pill" style="font-size:0.92rem;display:block;text-align:center;margin-top:0.5rem;">2/7 + 3/7 = (2 + 3)/7 = 5/7</div>
       </div>
       <div class="concept-box" style="border-left:4px solid var(--gold);">
         <h4 style="color:var(--gold);margin-bottom:0.4rem;">🔥 Fracciones Heterogéneas (Diferente denominador)</h4>
-        <p style="font-size:0.86rem;line-height:1.6;color:var(--muted);">Tienen <strong>distinto denominador</strong>: los pedazos tienen tamaños diferentes. Primero las convertimos en <strong>fracciones equivalentes con denominador común (MCM)</strong>:</p>
+        <p style="font-size:0.88rem;line-height:1.6;color:var(--texto-secundario);">Tienen <strong>distinto denominador</strong>: los pedazos tienen tamaños diferentes. Primero las convertimos en <strong>fracciones equivalentes con denominador común (MCM)</strong>:</p>
         <div class="formula-pill" style="font-size:0.92rem;display:block;text-align:center;margin-top:0.5rem;">1/2 + 1/3 = 3/6 + 2/6 = 5/6</div>
       </div>
     </div>
   </div>
 
   <!-- LOS 3 PASOS MAESTROS -->
-  <div class="card">
+  <div class="card ac-teal">
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
       <div class="card-h" style="margin-bottom:0;"><span class="ic">🪜</span> El Método Maestro en 3 Pasos (Con el MCM)</div>
       <button class="btn-escuchar" onclick="hablarTexto('El método maestro tiene tres pasos: Paso uno, encontrar el denominador común usando el Mínimo Común Múltiplo. Paso dos, convertir cada fracción en su equivalente multiplicando el numerador por el mismo factor. Paso tres, sumar o restar los numeradores y simplificar si es posible.')">🔊 Escuchar</button>
     </div>
-    <p style="color:var(--muted);font-size:0.88rem;margin:0.4rem 0 1rem;">Veamos cómo resolver <strong>2/3 + 1/4</strong> y <strong>5/6 − 1/4</strong> siguiendo siempre los mismos 3 pasos infalibles:</p>
+    <p style="color:var(--texto-secundario);font-size:0.9rem;margin:0.4rem 0 1rem;">Veamos cómo resolver <strong>2/3 + 1/4</strong> y <strong>5/6 − 1/4</strong> siguiendo siempre los mismos 3 pasos infalibles:</p>
 
     <div class="g3">
       <div class="concept-box" style="border-top:4px solid var(--gold);">
         <span class="pill p-gold">PASO 1 · Denominador Común (MCM)</span>
         <h4 style="margin:0.5rem 0;color:var(--gold);">Busca el MCM de los denominadores</h4>
-        <p style="font-size:0.85rem;line-height:1.6;color:var(--muted);">El <strong>Mínimo Común Múltiplo (MCM)</strong> es el menor número positivo que está en la tabla de ambos denominadores.<br>
+        <p style="font-size:0.86rem;line-height:1.6;color:var(--texto-secundario);">El <strong>Mínimo Común Múltiplo (MCM)</strong> es el menor número positivo que está en la tabla de ambos denominadores.<br>
         • Múltiplos de 3: 3, 6, 9, <strong>12</strong>, 15...<br>
         • Múltiplos de 4: 4, 8, <strong>12</strong>, 16...<br>
         ¡El denominador común es <strong>12</strong>!</p>
@@ -144,7 +189,7 @@
       <div class="concept-box" style="border-top:4px solid var(--teal);">
         <span class="pill p-teal">PASO 2 · Fracciones Equivalentes</span>
         <h4 style="margin:0.5rem 0;color:var(--teal);">Divide entre el de abajo y multiplica arriba</h4>
-        <p style="font-size:0.85rem;line-height:1.6;color:var(--muted);">Para que la fracción no cambie de valor, multiplicamos numerador y denominador por el mismo factor:<br>
+        <p style="font-size:0.86rem;line-height:1.6;color:var(--texto-secundario);">Para que la fracción no cambie de valor, multiplicamos numerador y denominador por el mismo factor:<br>
         • En <strong>2/3</strong>: ¿3 por cuánto da 12? Por <strong>4</strong> → 2×4 = <strong>8/12</strong>.<br>
         • En <strong>1/4</strong>: ¿4 por cuánto da 12? Por <strong>3</strong> → 1×3 = <strong>3/12</strong>.</p>
       </div>
@@ -152,7 +197,7 @@
       <div class="concept-box" style="border-top:4px solid var(--coral);">
         <span class="pill p-coral">PASO 3 · Opera y Simplifica</span>
         <h4 style="margin:0.5rem 0;color:var(--coral);">Suma o resta numeradores y simplifica</h4>
-        <p style="font-size:0.85rem;line-height:1.6;color:var(--muted);">Ahora que ambas son doceavos, operamos arriba y conservamos el 12 abajo:<br>
+        <p style="font-size:0.86rem;line-height:1.6;color:var(--texto-secundario);">Ahora que ambas son doceavos, operamos arriba y conservamos el 12 abajo:<br>
         • <strong>8/12 + 3/12 = 11/12</strong>.<br>
         • Si el resultado se puede dividir arriba y abajo entre un mismo número (MCD), <strong>simplificamos</strong> a su fracción irreducible.</p>
       </div>
@@ -168,7 +213,7 @@
   </div>
 
   <!-- TABLA COMPARATIVA DE MÉTODOS -->
-  <div class="card">
+  <div class="card ac-purple">
     <div class="card-h"><span class="ic">📊</span> Tabla Comparativa: ¿Cuándo usar MCM, Denominador Múltiplo o Método Mariposa?</div>
     <div style="overflow-x:auto;">
       <table class="tbl">
@@ -208,59 +253,51 @@
         </tbody>
       </table>
     </div>
-    <div style="margin-top:1.2rem;text-align:center;">
-      <button class="btn btn-gold" onclick="go('s-videos')">Continuar a Videos 🎬 →</button>
-    </div>
+    <button class="next-sec-btn" onclick="go('s-videos')">🎬 Ir a Videos →</button>
   </div>
 </section>
 
 <!-- ═══════════════ 2. VIDEOS ═══════════════ -->
 <section class="sec" id="s-videos" role="tabpanel">
-  <div class="card">
+  <div class="card ac-gold">
     <div class="card-h"><span class="ic">🎬</span> Videos de la Misión</div>
-    <p style="color:var(--muted);font-size:0.88rem;margin-bottom:1rem;">Mira con calma la explicación audiovisual sobre suma y resta de fracciones con diferente denominador. Al terminar cada video ganarás <strong>+20 XP</strong>.</p>
+    <p style="color:var(--texto-secundario);font-size:0.9rem;margin-bottom:1rem;">Mira con calma la explicación audiovisual sobre suma y resta de fracciones con diferente denominador. Al terminar cada video ganarás <strong>+20 XP</strong>.</p>
     <div id="vmLista"></div>
-    <div style="margin-top:1.2rem;text-align:center;">
-      <button class="btn btn-gold" onclick="go('s-tipos')">Continuar a Explorar Casos 🔍 →</button>
-    </div>
+    <button class="next-sec-btn" onclick="go('s-tipos')">🔍 Continuar a Explorar Casos →</button>
   </div>
 </section>
 
 <!-- ═══════════════ 3. EXPLORAR CASOS (s-tipos) ═══════════════ -->
 <section class="sec" id="s-tipos" role="tabpanel">
-  <div class="card">
+  <div class="card ac-teal">
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
       <div class="card-h" style="margin-bottom:0;"><span class="ic">🔍</span> Explorador Interactivo de los 6 Casos de Fracciones Heterogéneas</div>
       <button class="btn-escuchar" onclick="hablarTexto('Haz clic en cada una de las seis tarjetas para explorar los casos clave de suma y resta de fracciones heterogéneas: denominadores coprimos, denominador múltiplo, denominadores con factor común, resta heterogénea, simplificación final y problemas con tres fracciones.')">🔊 Escuchar</button>
     </div>
-    <p style="color:var(--muted);font-size:0.88rem;margin:0.4rem 0 1rem;">Haz clic en cada tarjeta para descubrir su estrategia rápida, representación visual y ejemplos paso a paso (+5 XP por tarjeta explorada):</p>
+    <p style="color:var(--texto-secundario);font-size:0.9rem;margin:0.4rem 0 1rem;">Haz clic en cada tarjeta para descubrir su estrategia rápida, representación visual y ejemplos paso a paso (+5 XP por tarjeta explorada):</p>
     <div class="type-grid" id="typeGrid"></div>
     <div id="typeDetail" style="display:none;margin-top:1rem;"></div>
-    <div style="margin-top:1.2rem;text-align:center;">
-      <button class="btn btn-gold" onclick="go('s-errores')">Continuar a Errores Comunes ⚠️ →</button>
-    </div>
+    <button class="next-sec-btn" onclick="go('s-errores')">⚠️ Continuar a Errores Comunes →</button>
   </div>
 </section>
 
 <!-- ═══════════════ 4. ERRORES COMUNES ═══════════════ -->
 <section class="sec" id="s-errores" role="tabpanel">
-  <div class="card">
+  <div class="card ac-amber">
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
       <div class="card-h" style="margin-bottom:0;"><span class="ic">⚠️</span> Los 6 Errores Más Frecuentes al Sumar y Restar Fracciones Heterogéneas</div>
       <button class="btn-escuchar" onclick="hablarTexto('Revisa con mucha atención estos seis errores típicos. El error número uno es sumar o restar los denominadores directamente. Nunca sumes los números de abajo.')">🔊 Escuchar</button>
     </div>
-    <p style="color:var(--muted);font-size:0.88rem;margin:0.4rem 0 1rem;">Conocer las trampas antes de resolver te evitará perder puntos en tus exámenes:</p>
+    <p style="color:var(--texto-secundario);font-size:0.9rem;margin:0.4rem 0 1rem;">Conocer las trampas antes de resolver te evitará perder puntos en tus exámenes:</p>
     <div id="errList"></div>
-    <div style="margin-top:1.2rem;text-align:center;">
-      <button class="btn btn-gold" onclick="go('s-lab')">Ir al Laboratorio en 3 Pasos 🔬 →</button>
-    </div>
+    <button class="next-sec-btn" onclick="go('s-lab')">🔬 Ir al Laboratorio en 3 Pasos →</button>
   </div>
 </section>
 
 <!-- ═══════════════ 5. LABORATORIO EN 3 PASOS (EL CORAZÓN DE LA MISIÓN) ═══════════════ -->
 <section class="sec" id="s-lab" role="tabpanel">
   <!-- LABORATORIO 1: RETO INTERACTIVO EN 3 PASOS CON CÍRCULOS Y BARRAS ILUMINADAS -->
-  <div class="card" style="border-color:rgba(245,158,11,0.45);">
+  <div class="card ac-gold">
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.6rem;">
       <div class="card-h" style="margin-bottom:0;"><span class="ic">🔬</span> Laboratorio 1: Reto Interactivo en 3 Pasos con Círculos y Barras Iluminadas</div>
       <div style="display:flex;gap:0.45rem;align-items:center;flex-wrap:wrap;">
@@ -268,7 +305,7 @@
         <button class="btn btn-teal" onclick="generarNuevoEjercicio()" style="padding:0.4rem 0.85rem;font-size:0.8rem;">🎲 Nuevo Ejercicio</button>
       </div>
     </div>
-    <p style="color:var(--muted);font-size:0.86rem;margin:0.4rem 0 0.9rem;">Completa <strong>5 ejercicios paso a paso</strong> para encender las 5 estrellas y registrar automáticamente tu nota de <strong>100/100</strong> en el Plan de Acción M.E.T.A.S.</p>
+    <p style="color:var(--texto-secundario);font-size:0.88rem;margin:0.4rem 0 0.9rem;">Completa <strong>5 ejercicios paso a paso</strong> para encender las 5 estrellas y registrar automáticamente tu nota de <strong>100/100</strong> en el Plan de Acción M.E.T.A.S.</p>
 
     <!-- Barra de progreso de los 5 ejercicios -->
     <div class="mission-goal-box">
@@ -295,14 +332,14 @@
       <div class="completion-icon">🏆🎉</div>
       <div class="completion-text">
         <strong>¡Meta de 5 Ejercicios Completada! (Nota: 100 / 100)</strong>
-        <p style="margin:0.2rem 0 0;font-size:0.84rem;color:var(--muted);">Se ha disparado el registro local M.E.T.A.S (<code>metas:registro</code>). ¡Puedes seguir practicando o avanzar al Quiz y las Evaluaciones!</p>
+        <p style="margin:0.2rem 0 0;font-size:0.85rem;color:var(--texto-secundario);">Se ha disparado el registro local M.E.T.A.S (<code>metas:registro</code>). ¡Puedes seguir practicando o avanzar al Quiz y las Evaluaciones!</p>
       </div>
       <button class="btn btn-gold" onclick="reiniciarMision5()">🔄 Practicar 5 más</button>
     </div>
 
     <!-- Expresión matemática gigante y controles de visualización -->
     <div class="problem-header" style="margin-top:0.9rem;">
-      <div style="font-size:0.78rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.4rem;">Resuelve paso a paso el ejercicio:</div>
+      <div style="font-size:0.78rem;font-weight:800;color:var(--texto-secundario);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.4rem;">Resuelve paso a paso el ejercicio:</div>
       <div class="math-expression" id="expresionPrincipal" aria-live="polite">
         <div class="frac-box frac-a">
           <span class="num" id="numA">1</span>
@@ -484,9 +521,9 @@
   </div>
 
   <!-- LABORATORIO 2: EXPLORADOR EN VIVO DE MCM Y TABLA DE MÚLTIPLOS -->
-  <div class="card">
+  <div class="card ac-teal">
     <div class="card-h"><span class="ic">🧮</span> Laboratorio 2: Buscador Visual de Mínimo Común Múltiplo (MCM) y Método Mariposa</div>
-    <p style="color:var(--muted);font-size:0.86rem;margin-bottom:0.8rem;">Cambia libremente cualquier par de fracciones para comparar el <strong>Método del MCM</strong> contra el <strong>Método Mariposa</strong> y ver la tabla de múltiplos iluminada:</p>
+    <p style="color:var(--texto-secundario);font-size:0.88rem;margin-bottom:0.8rem;">Cambia libremente cualquier par de fracciones para comparar el <strong>Método del MCM</strong> contra el <strong>Método Mariposa</strong> y ver la tabla de múltiplos iluminada:</p>
     <div class="sim-box">
       <div style="display:flex;gap:0.6rem;align-items:center;justify-content:center;flex-wrap:wrap;margin-bottom:1rem;">
         <div style="display:inline-flex;flex-direction:column;align-items:center;gap:4px;">
@@ -507,20 +544,18 @@
       </div>
       <div id="simMCMOutput"></div>
     </div>
-    <div style="margin-top:1.2rem;text-align:center;">
-      <button class="btn btn-gold" onclick="go('s-flash')">Continuar a Flashcards 🃏 →</button>
-    </div>
+    <button class="next-sec-btn" onclick="go('s-flash')">🃏 Continuar a Flashcards →</button>
   </div>
 </section>
 
 <!-- ═══════════════ 6. FLASHCARDS ═══════════════ -->
 <section class="sec" id="s-flash" role="tabpanel">
-  <div class="card">
+  <div class="card ac-purple">
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
       <div class="card-h" style="margin-bottom:0;"><span class="ic">🃏</span> Flashcards de Repaso Activo</div>
       <button class="btn-escuchar" onclick="hablarFlashcardActual()">🔊 Escuchar Tarjeta</button>
     </div>
-    <p style="color:var(--muted);font-size:0.86rem;margin:0.4rem 0 0.8rem;">Toca la tarjeta para voltearla. Clasifícala como <strong>«La domino»</strong> o <strong>«Repasar luego»</strong> (+5 XP por tarjeta):</p>
+    <p style="color:var(--texto-secundario);font-size:0.88rem;margin:0.4rem 0 0.8rem;">Toca la tarjeta para voltearla. Clasifícala como <strong>«La domino»</strong> o <strong>«Repasar luego»</strong> (+5 XP por tarjeta):</p>
     <div class="fc-wrap" onclick="flipFC()">
       <div class="fc" id="fcCard">
         <div class="fc-f">
@@ -540,21 +575,19 @@
       <button class="btn btn-green" onclick="markFC(true)">✅ La domino (+5 XP)</button>
       <button class="btn btn-ghost" onclick="nextFC()">Siguiente ➡️</button>
     </div>
-    <div style="text-align:center;margin-top:0.6rem;font-size:0.8rem;color:var(--muted);" id="fcStats"></div>
-    <div style="margin-top:1.2rem;text-align:center;">
-      <button class="btn btn-gold" onclick="go('s-quiz')">Continuar al Quiz 🧠 →</button>
-    </div>
+    <div style="text-align:center;margin-top:0.6rem;font-size:0.8rem;color:var(--texto-secundario);" id="fcStats"></div>
+    <button class="next-sec-btn" onclick="go('s-quiz')">🧠 Continuar al Quiz →</button>
   </div>
 </section>
 
 <!-- ═══════════════ 7. QUIZ ═══════════════ -->
 <section class="sec" id="s-quiz" role="tabpanel">
-  <div class="card">
+  <div class="card ac-gold">
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
       <div class="card-h" style="margin-bottom:0;"><span class="ic">🧠</span> Quiz de Práctica Guiada (12 Preguntas con Pistas)</div>
       <span class="pill p-gold" id="qScorePill">Puntos: 0 / 12</span>
     </div>
-    <p style="color:var(--muted);font-size:0.85rem;margin:0.4rem 0 1rem;">Elige la respuesta correcta. Si necesitas ayuda, usa el botón <strong>💡 Ver pista</strong> antes de responder:</p>
+    <p style="color:var(--texto-secundario);font-size:0.88rem;margin:0.4rem 0 1rem;">Elige la respuesta correcta. Si necesitas ayuda, usa el botón <strong>💡 Ver pista</strong> antes de responder:</p>
     <div id="quizBox"></div>
     <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
       <button class="btn btn-ghost" onclick="initQuiz()">🔄 Nuevas Preguntas</button>
@@ -565,37 +598,33 @@
 
 <!-- ═══════════════ 8. CLASIFICA ═══════════════ -->
 <section class="sec" id="s-clasifica" role="tabpanel">
-  <div class="card">
+  <div class="card ac-teal">
     <div class="card-h"><span class="ic">🗂️</span> Clasifica la Estrategia Rápida de Denominador Común</div>
-    <p style="color:var(--muted);font-size:0.86rem;margin-bottom:0.9rem;">Observa cada operación y clasifícala según cómo se obtiene su <strong>Mínimo Común Denominador (MCM)</strong> (+10 XP por acierto):</p>
+    <p style="color:var(--texto-secundario);font-size:0.88rem;margin-bottom:0.9rem;">Observa cada operación y clasifícala según cómo se obtiene su <strong>Mínimo Común Denominador (MCM)</strong> (+10 XP por acierto):</p>
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.8rem;">
       <span class="pill p-teal" id="clProg">Progreso: 0 / 10</span>
       <button class="btn btn-ghost" onclick="initClasifica()" style="font-size:0.78rem;padding:0.35rem 0.8rem;">🔄 Reiniciar</button>
     </div>
     <div id="clBox"></div>
-    <div style="margin-top:1.2rem;text-align:center;">
-      <button class="btn btn-gold" onclick="go('s-identifica')">Continuar a Identifica 🎯 →</button>
-    </div>
+    <button class="next-sec-btn" onclick="go('s-identifica')">🎯 Continuar a Identifica →</button>
   </div>
 </section>
 
 <!-- ═══════════════ 9. IDENTIFICA (CAZADOR DE ERRORES) ═══════════════ -->
 <section class="sec" id="s-identifica" role="tabpanel">
-  <div class="card">
+  <div class="card ac-amber">
     <div class="card-h"><span class="ic">🎯</span> Detective de Fracciones: ¿En qué paso se equivocó el estudiante?</div>
-    <p style="color:var(--muted);font-size:0.86rem;margin-bottom:0.9rem;">Lee el procedimiento completo de cada estudiante y detecta si está <strong>100% correcto</strong> o en cuál de los <strong>3 pasos</strong> cometió un error (+12 XP por caso):</p>
+    <p style="color:var(--texto-secundario);font-size:0.88rem;margin-bottom:0.9rem;">Lee el procedimiento completo de cada estudiante y detecta si está <strong>100% correcto</strong> o en cuál de los <strong>3 pasos</strong> cometió un error (+12 XP por caso):</p>
     <div id="idBox"></div>
-    <div style="margin-top:1.2rem;text-align:center;">
-      <button class="btn btn-gold" onclick="go('s-completa')">Continuar a Completa ✏️ →</button>
-    </div>
+    <button class="next-sec-btn" onclick="go('s-completa')">✏️ Continuar a Completa →</button>
   </div>
 </section>
 
 <!-- ═══════════════ 10. COMPLETA ═══════════════ -->
 <section class="sec" id="s-completa" role="tabpanel">
-  <div class="card">
+  <div class="card ac-jade">
     <div class="card-h"><span class="ic">✏️</span> Completa los Pasos Faltantes</div>
-    <p style="color:var(--muted);font-size:0.86rem;margin-bottom:0.9rem;">Escribe el número que falta en cada igualdad de fracciones heterogéneas y presiona <strong>Verificar</strong> (+10 XP por ejercicio):</p>
+    <p style="color:var(--texto-secundario);font-size:0.88rem;margin-bottom:0.9rem;">Escribe el número que falta en cada igualdad de fracciones heterogéneas y presiona <strong>Verificar</strong> (+10 XP por ejercicio):</p>
     <div id="compBox"></div>
     <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
       <button class="btn btn-teal" onclick="checkAllCompleta()">✅ Verificar Todos</button>
@@ -607,16 +636,16 @@
 
 <!-- ═══════════════ 11. MINI-JUEGOS / WIDGETS ═══════════════ -->
 <section class="sec" id="s-widgets" role="tabpanel">
-  <div class="card">
+  <div class="card ac-purple">
     <div class="card-h"><span class="ic">🎮</span> Mini-Juegos Interactivos de Dominio</div>
-    <p style="color:var(--muted);font-size:0.86rem;margin-bottom:1rem;">Practica con estos 3 entrenadores interactivos para ganar agilidad mental con denominadores comunes, método mariposa y balanza de fracciones:</p>
+    <p style="color:var(--texto-secundario);font-size:0.88rem;margin-bottom:1rem;">Practica con estos 3 entrenadores interactivos para ganar agilidad mental con denominadores comunes, método mariposa y balanza de fracciones:</p>
 
     <div class="g2">
       <!-- Widget 1: Duelo de MCM Relámpago -->
       <div class="sim-box">
         <span class="pill p-gold">⚡ JUEGO 1 · RADAR DE MCM</span>
         <h4 style="margin:0.5rem 0;color:var(--gold);">¿Cuál es el MCM más pequeño?</h4>
-        <p style="font-size:0.82rem;color:var(--muted);margin-bottom:0.7rem;">Toca el Mínimo Común Múltiplo correcto de los dos denominadores:</p>
+        <p style="font-size:0.84rem;color:var(--texto-secundario);margin-bottom:0.7rem;">Toca el Mínimo Común Múltiplo correcto de los dos denominadores:</p>
         <div id="wMcmBox"></div>
       </div>
 
@@ -624,7 +653,7 @@
       <div class="sim-box">
         <span class="pill p-purple">🦋 JUEGO 2 · MÉTODO MARIPOSA</span>
         <h4 style="margin:0.5rem 0;color:var(--purple);">Alas y Antenas de la Mariposa</h4>
-        <p style="font-size:0.82rem;color:var(--muted);margin-bottom:0.7rem;">Calcula los productos cruzados de las dos alas y el producto de la cola:</p>
+        <p style="font-size:0.84rem;color:var(--texto-secundario);margin-bottom:0.7rem;">Calcula los productos cruzados de las dos alas y el producto de la cola:</p>
         <div id="wMariposaBox"></div>
       </div>
     </div>
@@ -633,33 +662,29 @@
     <div class="sim-box" style="margin-top:1rem;">
       <span class="pill p-teal">⚖️ JUEGO 3 · BALANZA DE FRACCIONES HETEROGÉNEAS</span>
       <h4 style="margin:0.5rem 0;color:var(--teal);">¿El resultado es menor, igual o mayor que 1 entero?</h4>
-      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:0.7rem;">Usa el sentido numérico y la estimación: sin escribir todo en papel, decide si la operación da <strong>menos de 1 (&lt; 1)</strong>, <strong>exactamente 1 (= 1)</strong> o <strong>más de 1 (&gt; 1)</strong>:</p>
+      <p style="font-size:0.84rem;color:var(--texto-secundario);margin-bottom:0.7rem;">Usa el sentido numérico y la estimación: sin escribir todo en papel, decide si la operación da <strong>menos de 1 (&lt; 1)</strong>, <strong>exactamente 1 (= 1)</strong> o <strong>más de 1 (&gt; 1)</strong>:</p>
       <div id="wBalanzaBox"></div>
     </div>
 
-    <div style="margin-top:1.2rem;text-align:center;">
-      <button class="btn btn-gold" onclick="go('s-explica')">Continuar a Explica 💬 →</button>
-    </div>
+    <button class="next-sec-btn" onclick="go('s-explica')">💬 Continuar a Explica →</button>
   </div>
 </section>
 
 <!-- ═══════════════ 12. EXPLICA ═══════════════ -->
 <section class="sec" id="s-explica" role="tabpanel">
-  <div class="card">
+  <div class="card ac-gold">
     <div class="card-h"><span class="ic">💬</span> Explica con tus Palabras (Metacognición)</div>
-    <p style="color:var(--muted);font-size:0.86rem;margin-bottom:1rem;">Quien sabe explicar un procedimiento con sus propias palabras ya lo comprende de verdad. Responde estas preguntas reflexivas y compáralas con la respuesta modelo (+20 XP por reflexión):</p>
+    <p style="color:var(--texto-secundario);font-size:0.88rem;margin-bottom:1rem;">Quien sabe explicar un procedimiento con sus propias palabras ya lo comprende de verdad. Responde estas preguntas reflexivas y compáralas con la respuesta modelo (+20 XP por reflexión):</p>
     <div id="expBox"></div>
-    <div style="margin-top:1.2rem;text-align:center;">
-      <button class="btn btn-gold" onclick="go('s-reto')">Continuar al Reto Cronometrado 🏆 →</button>
-    </div>
+    <button class="next-sec-btn" onclick="go('s-reto')">🏆 Continuar al Reto Cronometrado →</button>
   </div>
 </section>
 
 <!-- ═══════════════ 13. RETO CRONOMETRADO ═══════════════ -->
 <section class="sec" id="s-reto" role="tabpanel">
-  <div class="card" style="text-align:center;">
+  <div class="card ac-amber" style="text-align:center;">
     <div class="card-h" style="justify-content:center;"><span class="ic">🏆</span> Reto Relámpago contra el Reloj (90 Segundos)</div>
-    <p style="color:var(--muted);font-size:0.88rem;max-width:600px;margin:0 auto 1rem;">¿Cuántas sumas, restas y preguntas de MCM puedes resolver en <strong>90 segundos</strong>? Cada racha multiplica tus puntos.</p>
+    <p style="color:var(--texto-secundario);font-size:0.88rem;max-width:600px;margin:0 auto 1rem;">¿Cuántas sumas, restas y preguntas de MCM puedes resolver en <strong>90 segundos</strong>? Cada racha multiplica tus puntos.</p>
     <div style="display:flex;gap:0.8rem;justify-content:center;align-items:center;flex-wrap:wrap;margin-bottom:1rem;">
       <span class="pill p-coral" style="font-size:0.9rem;">⏱️ Tiempo: <strong id="chTime">90</strong>s</span>
       <span class="pill p-gold" style="font-size:0.9rem;">⭐ Puntos: <strong id="chScore">0</strong></span>
@@ -677,9 +702,9 @@
 
 <!-- ═══════════════ 14. SOPA DE LETRAS ═══════════════ -->
 <section class="sec" id="s-sopa" role="tabpanel">
-  <div class="card">
+  <div class="card ac-teal">
     <div class="card-h"><span class="ic">🔤</span> Sopa de Letras: Vocabulario de Fracciones Heterogéneas</div>
-    <p style="color:var(--muted);font-size:0.86rem;margin-bottom:0.8rem;">Haz clic en la primera letra y luego en la última letra de cada palabra oculta (horizontal o vertical). ¡Encuentra los <strong>8 conceptos clave</strong>!</p>
+    <p style="color:var(--texto-secundario);font-size:0.88rem;margin-bottom:0.8rem;">Haz clic en la primera letra y luego en la última letra de cada palabra oculta (horizontal o vertical). ¡Encuentra los <strong>8 conceptos clave</strong>!</p>
     <div class="sopa-words" id="sopaWords"></div>
     <div style="overflow-x:auto;text-align:center;">
       <div class="sopa-grid" id="sopaGrid"></div>
@@ -694,24 +719,22 @@
 
 <!-- ═══════════════ 15. TAREAS ═══════════════ -->
 <section class="sec" id="s-tareas" role="tabpanel">
-  <div class="card">
+  <div class="card ac-jade">
     <div class="card-h"><span class="ic">📋</span> Misiones para el Cuaderno y el Hogar (Contexto Hondureño)</div>
-    <p style="color:var(--muted);font-size:0.86rem;margin-bottom:1rem;">Resuelve estas 6 actividades prácticas en tu cuaderno de matemáticas y marca cada casilla al completarla (+25 XP por tarea terminada):</p>
+    <p style="color:var(--texto-secundario);font-size:0.88rem;margin-bottom:1rem;">Resuelve estas 6 actividades prácticas en tu cuaderno de matemáticas y marca cada casilla al completarla (+25 XP por tarea terminada):</p>
     <div id="taskList"></div>
-    <div style="margin-top:1.2rem;text-align:center;">
-      <button class="btn btn-gold" onclick="go('s-evaluacion')">Continuar a Evaluaciones 🎓 →</button>
-    </div>
+    <button class="next-sec-btn" onclick="go('s-evaluacion')">🎓 Continuar a Evaluaciones →</button>
   </div>
 </section>
 
 <!-- ═══════════════ 16. EVALUACIÓN (CONCEPTUAL Y OPERATIVA) ═══════════════ -->
 <section class="sec" id="s-evaluacion" role="tabpanel">
   <!-- Selector de modo de prueba -->
-  <div class="card" style="padding:1rem 1.2rem;">
+  <div class="card ac-gold" style="padding:1rem 1.2rem;">
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.6rem;">
       <div>
-        <div style="font-size:0.75rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;">Tipo de Evaluación Sumativa (100 Puntos)</div>
-        <div style="font-size:0.84rem;color:var(--muted);margin-top:2px;">Elige entre la prueba teórica-conceptual o la prueba práctica-operativa (30 formas distintas por semilla):</div>
+        <div style="font-size:0.75rem;font-weight:800;color:var(--texto-secundario);text-transform:uppercase;letter-spacing:1px;">Tipo de Evaluación Sumativa (100 Puntos)</div>
+        <div style="font-size:0.85rem;color:var(--texto-secundario);margin-top:2px;">Elige entre la prueba teórica-conceptual o la prueba práctica-operativa (30 formas distintas por semilla):</div>
       </div>
       <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
         <button class="btn btn-gold" id="evalModeCBtn" onclick="switchEvalMode('conceptual')">📝 Prueba Conceptual (100 pts)</button>
@@ -722,20 +745,20 @@
 
   <!-- A) PRUEBA CONCEPTUAL -->
   <div id="evalConceptualWrap">
-    <div class="card" style="border:2px solid var(--gold);">
+    <div class="card ac-amber">
       <div style="text-align:center;margin-bottom:1rem;">
         <div style="font-size:2rem;">🎓📝</div>
-        <h2 style="font-family:'Fraunces',serif;font-size:1.45rem;color:var(--gold);">Evaluación Conceptual · Fracciones Heterogéneas</h2>
-        <p style="color:var(--muted);font-size:0.85rem;">Suma y Resta con Diferente Denominador · 4 Secciones · 20 Ítems × 5 pts = 100 Puntos</p>
+        <h2 style="font-family:var(--font-h);font-size:1.45rem;color:var(--gold);justify-content:center;">Evaluación Conceptual · Fracciones Heterogéneas</h2>
+        <p style="color:var(--texto-secundario);font-size:0.86rem;">Suma y Resta con Diferente Denominador · 4 Secciones · 20 Ítems × 5 pts = 100 Puntos</p>
       </div>
 
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0.6rem;margin-bottom:1rem;">
-        <div><label style="font-size:0.75rem;color:var(--muted);font-weight:700;">Nombre del Estudiante:</label>
-          <input id="evName" placeholder="Escribe tu nombre completo..." style="width:100%;padding:0.5rem;border-radius:8px;border:1px solid rgba(255,255,255,0.15);background:var(--card2);color:var(--text);font-family:inherit;font-size:0.85rem;margin-top:2px;"></div>
-        <div><label style="font-size:0.75rem;color:var(--muted);font-weight:700;">Grado y Sección:</label>
-          <input id="evGrade" placeholder="Ej: 6° Grado - Sección A" style="width:100%;padding:0.5rem;border-radius:8px;border:1px solid rgba(255,255,255,0.15);background:var(--card2);color:var(--text);font-family:inherit;font-size:0.85rem;margin-top:2px;"></div>
-        <div><label style="font-size:0.75rem;color:var(--muted);font-weight:700;">Fecha:</label>
-          <input id="evDate" type="date" style="width:100%;padding:0.5rem;border-radius:8px;border:1px solid rgba(255,255,255,0.15);background:var(--card2);color:var(--text);font-family:inherit;font-size:0.85rem;margin-top:2px;"></div>
+        <div><label style="font-size:0.75rem;color:var(--texto-secundario);font-weight:700;">Nombre del Estudiante:</label>
+          <input id="evName" class="eval-field-input" placeholder="Escribe tu nombre completo..."></div>
+        <div><label style="font-size:0.75rem;color:var(--texto-secundario);font-weight:700;">Grado y Sección:</label>
+          <input id="evGrade" class="eval-field-input" placeholder="Ej: 6° Grado - Sección A"></div>
+        <div><label style="font-size:0.75rem;color:var(--texto-secundario);font-weight:700;">Fecha:</label>
+          <input id="evDate" type="date" class="eval-field-input"></div>
       </div>
 
       <div style="display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:center;margin-bottom:1.2rem;">
@@ -752,20 +775,20 @@
 
   <!-- B) PRUEBA OPERATIVA -->
   <div id="evalOperativaWrap" style="display:none;">
-    <div class="card" style="border:2px solid var(--teal);">
+    <div class="card ac-teal">
       <div style="text-align:center;margin-bottom:1rem;">
         <div style="font-size:2rem;">📐🧮</div>
-        <h2 style="font-family:'Fraunces',serif;font-size:1.45rem;color:var(--teal);">Prueba Operativa de Matemática · Fracciones Heterogéneas</h2>
-        <p style="color:var(--muted);font-size:0.85rem;">Resolución de Ejercicios, MCM, Incógnitas y Problemas Reales · 5 Secciones = 100 Puntos</p>
+        <h2 style="font-family:var(--font-h);font-size:1.45rem;color:var(--teal);justify-content:center;">Prueba Operativa de Matemática · Fracciones Heterogéneas</h2>
+        <p style="color:var(--texto-secundario);font-size:0.86rem;">Resolución de Ejercicios, MCM, Incógnitas y Problemas Reales · 5 Secciones = 100 Puntos</p>
       </div>
 
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0.6rem;margin-bottom:1rem;">
-        <div><label style="font-size:0.75rem;color:var(--muted);font-weight:700;">Nombre del Estudiante:</label>
-          <input id="evOpName" placeholder="Escribe tu nombre completo..." style="width:100%;padding:0.5rem;border-radius:8px;border:1px solid rgba(255,255,255,0.15);background:var(--card2);color:var(--text);font-family:inherit;font-size:0.85rem;margin-top:2px;"></div>
-        <div><label style="font-size:0.75rem;color:var(--muted);font-weight:700;">Grado y Sección:</label>
-          <input id="evOpGrade" placeholder="Ej: 6° Grado - Sección A" style="width:100%;padding:0.5rem;border-radius:8px;border:1px solid rgba(255,255,255,0.15);background:var(--card2);color:var(--text);font-family:inherit;font-size:0.85rem;margin-top:2px;"></div>
-        <div><label style="font-size:0.75rem;color:var(--muted);font-weight:700;">Fecha:</label>
-          <input id="evOpDate" type="date" style="width:100%;padding:0.5rem;border-radius:8px;border:1px solid rgba(255,255,255,0.15);background:var(--card2);color:var(--text);font-family:inherit;font-size:0.85rem;margin-top:2px;"></div>
+        <div><label style="font-size:0.75rem;color:var(--texto-secundario);font-weight:700;">Nombre del Estudiante:</label>
+          <input id="evOpName" class="eval-field-input" placeholder="Escribe tu nombre completo..."></div>
+        <div><label style="font-size:0.75rem;color:var(--texto-secundario);font-weight:700;">Grado y Sección:</label>
+          <input id="evOpGrade" class="eval-field-input" placeholder="Ej: 6° Grado - Sección A"></div>
+        <div><label style="font-size:0.75rem;color:var(--texto-secundario);font-weight:700;">Fecha:</label>
+          <input id="evOpDate" type="date" class="eval-field-input"></div>
       </div>
 
       <div style="display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:center;margin-bottom:1.2rem;">
@@ -783,16 +806,16 @@
 
 <!-- ═══════════════ 17. RECURSOS Y FICHA IMPRIMIBLE ═══════════════ -->
 <section class="sec" id="s-recursos" role="tabpanel">
-  <div class="card">
+  <div class="card ac-purple">
     <div class="card-h"><span class="ic">📁</span> Recursos Didácticos y Ficha Imprimible de 7 Páginas</div>
-    <p style="color:var(--muted);font-size:0.88rem;margin-bottom:1rem;">Material listo para imprimir o proyectar en el aula sin necesidad de conexión a internet:</p>
+    <p style="color:var(--texto-secundario);font-size:0.88rem;margin-bottom:1rem;">Material listo para imprimir o proyectar en el aula sin necesidad de conexión a internet:</p>
 
     <div class="g2">
       <div class="concept-box" style="border:2px solid var(--gold);">
         <span class="pill p-gold">🖨️ FICHA DIDÁCTICA OFICIAL (7 PÁGINAS)</span>
         <h4 style="margin:0.5rem 0;color:var(--gold);">Ficha Imprimible: Suma y Resta de Fracciones Heterogéneas</h4>
-        <p style="font-size:0.85rem;line-height:1.6;color:var(--muted);margin-bottom:0.9rem;">Incluye objetivos curriculares DCNB, explicación visual de los 3 pasos (MCM, equivalentes y simplificación), método mariposa, errores comunes, 4 bloques de actividades prácticas, evaluación de 10 preguntas tipo burbuja, rúbrica y hoja de respuestas docente.</p>
-        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+        <p style="font-size:0.86rem;line-height:1.6;color:var(--texto-secundario);margin-bottom:0.9rem;">Incluye objetivos curriculares DCNB, explicación visual de los 3 pasos (MCM, equivalentes y simplificación), método mariposa, errores comunes, 4 bloques de actividades prácticas, evaluación de 10 preguntas tipo burbuja, rúbrica y hoja de respuestas docente.</p>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:center;">
           <a class="btn btn-gold" href="../../fichas/ficha-fracciones-heterogeneas.html" target="_blank" style="text-decoration:none;">📄 Abrir Ficha Imprimible (7 págs.)</a>
           <button class="btn btn-teal" onclick="go('s-evaluacion')">🎓 Ir a Generador de Exámenes</button>
         </div>
@@ -801,7 +824,7 @@
       <div class="concept-box" style="border:2px solid var(--teal);">
         <span class="pill p-teal">🧭 GUÍA PARA EL DOCENTE Y LA FAMILIA</span>
         <h4 style="margin:0.5rem 0;color:var(--teal);">Sugerencias Pedagógicas en el Aula</h4>
-        <ul style="font-size:0.84rem;line-height:1.65;color:var(--muted);padding-left:1.1rem;">
+        <ul style="font-size:0.85rem;line-height:1.65;color:var(--texto-secundario);padding-left:1.1rem;">
           <li><strong>Manipulación concreta primero:</strong> Doble dos hojas de papel bond (una en mitades y otra en tercios) para que el alumno vea físicamente que los dobleces coinciden al hacer 6 partes iguales.</li>
           <li><strong>Uso del Laboratorio en 3 Pasos:</strong> Pida a cada estudiante completar los <strong>5 ejercicios interactivos</strong> en la sección <em>🔬 Laboratorio</em> con el botón <code>🔊 Escuchar</code> activado.</li>
           <li><strong>Evaluación diferenciada:</strong> Use las 30 formas numeradas de la Prueba Conceptual y Operativa para evaluar sin copias en el aula.</li>
@@ -813,9 +836,9 @@
 
 </main>
 
-<!-- STICKY BOTTOM NAV -->
-<nav class="bnav" role="tablist" aria-label="Secciones de la misión">
-  <button class="nav-t on" role="tab" aria-selected="true" aria-controls="s-predice" data-s="s-predice" onclick="go('s-predice')"><span class="ico">🔮</span> Predice</button>
+<!-- STICKY SECTION NAV (mounted at top by barra-secciones.js) -->
+<nav class="nav" role="tablist" aria-label="Secciones de la misión">
+  <button class="nav-t active on" role="tab" aria-selected="true" aria-controls="s-predice" data-s="s-predice" onclick="go('s-predice')"><span class="ico">🔮</span> Predice</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-videos" data-s="s-videos" onclick="go('s-videos')"><span class="ico">🎬</span> Videos</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tipos" data-s="s-tipos" onclick="go('s-tipos')"><span class="ico">🔍</span> Explorar</button>
@@ -842,23 +865,31 @@
   <div class="mot">«Limita el uso del teléfono móvil solo como herramienta de aprendizaje de lo contrario puede ser perjudicial» 🌱 · Lee, interactúa, recuerda el saber.</div>
   <div class="cred-contact">
     <span>💬 <a href="mailto:josuepolancolemus2020@gmail.com">📧 josuepolancolemus2020@gmail.com</a></span>
-    <span>🚀 <a href="https://policastsapien.com/" target="_blank">🌐 policastsapien.com</a></span>
+    <span>🌐 <a href="https://policastsapien.com/" target="_blank">🔗 policastsapien.com</a></span>
   </div>
   <div class="cred-tools">
     <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
     <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
     <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
-    <button class="cred-btn" onclick="toggleLetra()">🔎 Letra</button>
+    <button class="cred-btn" onclick="toggleLetra()">🔤 Letra</button>
     <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
   </div>
 </footer>
 
   <script src="js/html2canvas.min.js"></script>
+  <!-- Las fracciones se escriben como en el cuaderno: el numerador arriba,
+       la raya en medio y el denominador abajo. Va ANTES de la misión porque
+       todo lo que ésta pinta pasa por Fr(). -->
   <script src="../../js/metas-fracciones.js"></script>
   <script src="../../js/animacion-mision.js"></script>
   <script src="js/mision.js"></script>
+  <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+  <!-- La sección 🎬 Videos. El orden importa y es este:
+       el catálogo (dato), el puente de la nube (lo consulta el aparato)
+       y el aparato (que los usa a los dos). Va al final, después del JS
+       de la misión, porque la tapa del final llama a go(). -->
   <script src="../../js/data/videos-misiones.js"></script>
   <script src="../../js/metas-videos.js"></script>
   <script src="../../js/videos-mision.js"></script>
