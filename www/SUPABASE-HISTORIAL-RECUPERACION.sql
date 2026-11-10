@@ -1,33 +1,59 @@
 -- ============================================================
 -- M.E.T.A.S — Supabase: HISTORIAL DE VERSIONES Y RECUPERACIÓN INTEGRAL (I–III PARCIAL)
--- Pegar COMPLETO en supabase.com → tu proyecto → SQL Editor → Run.
--- Es IDEMPOTENTE: se puede correr varias veces sin dañar nada.
 --
--- Qué resuelve y agrega:
---   1) Tabla public.docente_estado_historial + Trigger automático:
---      Cada vez que cambia METAS_ADMIN_V1, METAS_PLANACCION_V1,
---      METAS_CODIGOS_V1 o METAS_AVISOS_V1 en public.docente_estado,
---      se guarda automáticamente una copia histórica (hasta 40 versiones
---      por docente y clave) antes de sobrescribir.
---   2) Tabla public.registro_admin_historial + Trigger automático:
---      Antes de modificar o anular cualquier nota, personalidad o
---      inasistencia en public.registro_admin, conserva la versión previa.
---   3) Auto-reparación de filas ADN- anuladas en public.registro_admin:
---      Restaura año lectivo, parcial (I–IV) y materia a partir del
---      evento_id ('ADN-2026-III-espanol-...') en filas que quedaron
---      con parcial/materia en NULL por sincronizaciones previas.
---   4) Blindaje de public.metas_guardar_admin:
---      Impide que una sincronización con celdas vacías borre notas,
---      personalidad o inasistencias ya subidas a la nube, salvo que
---      el docente envíe explícitamente la marca de borrado ('borrar': true).
---   5) RPC public.metas_docente_historial_listar(p_codigo, p_clave, p_k):
---      Permite a la app consultar todas las versiones disponibles
---      (estado actual, papelera sin consumirla e historial de versiones).
---   6) RPC public.metas_recuperar_admin_docente(p_prof, p_clave):
---      Devuelve todas las filas de registro_admin y registro_admin_historial
---      del docente (incluyendo evento_id) para recuperar notas,
---      personalidad y días perdidos de todos los parciales.
+-- INSTRUCCIONES:
+--   1. En el SQL Editor de Supabase, borra lo que haya en la pestaña.
+--   2. Pega TODO este texto completo.
+--   3. IMPORTANTE: Asegúrate de NO dejar ninguna palabra seleccionada/sombreada
+--      con el ratón antes de darle a "Run" (si dejas algo sombreado, Supabase
+--      intenta correr solo ese pedacito y da error de sintaxis).
 -- ============================================================
+
+-- 0) Asegurar tablas y columnas base por si no existían en el proyecto
+create table if not exists public.docente_estado (
+  codigo text not null,
+  k text not null,
+  valor jsonb,
+  version bigint not null default 1,
+  dispositivo text,
+  actualizado_en timestamptz not null default now(),
+  primary key (codigo, k)
+);
+
+create table if not exists public.registro_admin (
+  id bigint generated always as identity primary key,
+  evento_id text not null unique,
+  codigo text not null,
+  tipo text not null check (tipo in ('asistencia','nota_final','economia')),
+  fecha date,
+  estado text,
+  parcial text,
+  materia text,
+  nota numeric,
+  concepto text,
+  monto numeric,
+  grado text,
+  seccion text,
+  docente text,
+  anio_lectivo text,
+  actualizado_en timestamptz not null default now()
+);
+
+alter table public.registro_admin add column if not exists anio_lectivo text;
+
+create or replace function public.metas_norm(t text)
+returns text
+language sql immutable
+as $$
+  select regexp_replace(
+    translate(
+      lower(coalesce(t, '')),
+      'áéíóúàèìòùäëïöüâêîôûñ',
+      'aeiouaeiouaeiouaeioun'
+    ),
+    '[^a-z0-9]', '', 'g'
+  )
+$$;
 
 -- ────────────────────────────────────────────────────────────
 -- 1) HISTORIAL DE VERSIONES DEL ESTADO DOCENTE (docente_estado_historial)
@@ -55,7 +81,6 @@ declare
   v_raw_old text := coalesce(old.valor->>'raw', '');
   v_raw_new text := case when tg_op = 'UPDATE' then coalesce(new.valor->>'raw', '') else '' end;
 begin
-  -- Solo archivar claves críticas del aula cuando tenían contenido real y cambiaron
   if v_raw_old <> '' and v_raw_old <> v_raw_new
      and old.k in ('METAS_ADMIN_V1', 'METAS_PLANACCION_V1', 'METAS_CODIGOS_V1', 'METAS_AVISOS_V1') then
     insert into public.docente_estado_historial (codigo, k, valor, version, dispositivo, origen, creado_en)
@@ -68,7 +93,6 @@ begin
       case when tg_op = 'DELETE' then 'delete' else 'update' end,
       coalesce(old.actualizado_en, now())
     );
-    -- Conservar las últimas 40 versiones por (codigo, k)
     delete from public.docente_estado_historial h
     where h.codigo = old.codigo
       and h.k = old.k
@@ -90,8 +114,6 @@ create trigger trg_docente_estado_historial
   before update or delete on public.docente_estado
   for each row execute function public._metas_archivar_docente_estado();
 
--- Semilla inicial: copiar a docente_estado_historial lo que hoy esté en
--- docente_estado_papelera (si existe) para que nunca se pierda al restaurar
 do $$
 begin
   if to_regclass('public.docente_estado_papelera') is not null then
@@ -141,7 +163,6 @@ returns trigger
 language plpgsql security definer set search_path = public
 as $$
 begin
-  -- Si la fila anterior tenía nota o estado (ej. personalidad o asistencia) y va a cambiar o borrarse, archivarla
   if (old.nota is not null or coalesce(old.estado, '') <> '')
      and (tg_op = 'DELETE'
           or old.nota is distinct from new.nota
@@ -168,9 +189,6 @@ create trigger trg_registro_admin_historial
 
 -- ────────────────────────────────────────────────────────────
 -- 3) AUTO-REPARACIÓN DE FILAS ADN- ANULADAS EN REGISTRO_ADMIN
---    Recupera parcial, año lectivo y nombre de materia/rasgo desde
---    el evento_id ('ADN-2026-III-espanol-269GW3') cuando fueron
---    puestos en NULL por una anulación automática previa.
 -- ────────────────────────────────────────────────────────────
 update public.registro_admin r
 set
@@ -213,9 +231,6 @@ where r.tipo = 'nota_final'
 
 -- ────────────────────────────────────────────────────────────
 -- 4) BLINDAJE DE metas_guardar_admin
---    Nunca vuelve a pisar parcial/materia con NULL y protege las
---    notas/personalidad/inasistencias existentes frente a envíos vacíos
---    accidentales (salvo borrado explícito con "borrar": true).
 -- ────────────────────────────────────────────────────────────
 create or replace function public.metas_guardar_admin(p_prof text, p_clave text, filas jsonb)
 returns integer
@@ -289,79 +304,81 @@ grant execute on function public.metas_guardar_admin(text,text,jsonb) to anon, a
 
 
 -- ────────────────────────────────────────────────────────────
--- 5) RPC: LISTAR HISTORIAL DE VERSIONES DEL DOCENTE (sin destruir papelera)
+-- 5) RPC: LISTAR HISTORIAL DE VERSIONES DEL DOCENTE (JSONB)
 -- ────────────────────────────────────────────────────────────
+drop function if exists public.metas_docente_historial_listar(text,text,text);
 create or replace function public.metas_docente_historial_listar(
   p_codigo text, p_clave text, p_k text default 'METAS_ADMIN_V1'
-) returns table (
-  id bigint,
-  origen text,
-  k text,
-  valor jsonb,
-  version bigint,
-  dispositivo text,
-  creado_en timestamptz
-)
+) returns jsonb
 language plpgsql security definer stable set search_path = public
 as $$
 declare
   cod text := upper(trim(coalesce(p_codigo,'')));
   clave_k text := coalesce(nullif(trim(p_k), ''), 'METAS_ADMIN_V1');
+  v_arr jsonb := '[]'::jsonb;
+  v_tmp jsonb;
 begin
   if not public._metas_docente_ok(cod, p_clave) then
-    return;
+    return jsonb_build_object('ok', false, 'err', 'clave');
   end if;
 
-  -- 1. Estado vivo actual en la nube
-  return query
-    select
-      0::bigint as id,
-      'nube_actual'::text as origen,
-      d.k,
-      d.valor,
-      d.version,
-      coalesce(d.dispositivo, 'nube') as dispositivo,
-      d.actualizado_en as creado_en
-    from public.docente_estado d
-    where d.codigo = cod
-      and (clave_k = '*' or d.k = clave_k or d.k = 'METAS_CODIGOS_V1')
-      and coalesce(d.valor->>'raw', '') <> '';
+  select coalesce(jsonb_agg(jsonb_build_object(
+    'id', 0,
+    'fuente', 'actual',
+    'k', d.k,
+    'v', d.valor->>'raw',
+    'version', d.version,
+    'motivo', coalesce(d.dispositivo, 'actual'),
+    'guardado_en', d.actualizado_en
+  )), '[]'::jsonb)
+  into v_tmp
+  from public.docente_estado d
+  where d.codigo = cod
+    and d.k = clave_k
+    and coalesce(d.valor->>'raw', '') <> '';
+  v_arr := v_arr || coalesce(v_tmp, '[]'::jsonb);
 
-  -- 2. Papelera en la nube (sin consumirla ni borrarla)
   if to_regclass('public.docente_estado_papelera') is not null then
-    return query
-      select
-        (-1)::bigint as id,
-        'papelera_nube'::text as origen,
-        p.k,
-        p.valor,
-        p.version,
-        'papelera'::text as dispositivo,
-        p.archivado_en as creado_en
+    execute $q$
+      select coalesce(jsonb_agg(jsonb_build_object(
+        'id', -1,
+        'fuente', 'papelera',
+        'k', p.k,
+        'v', p.valor->>'raw',
+        'version', p.version,
+        'motivo', 'papelera',
+        'guardado_en', p.archivado_en
+      )), '[]'::jsonb)
       from public.docente_estado_papelera p
-      where p.codigo = cod
-        and (clave_k = '*' or p.k = clave_k or p.k = 'METAS_CODIGOS_V1')
-        and coalesce(p.valor->>'raw', '') <> '';
+      where p.codigo = $1 and p.k = $2 and coalesce(p.valor->>'raw', '') <> ''
+    $q$ into v_tmp using cod, clave_k;
+    v_arr := v_arr || coalesce(v_tmp, '[]'::jsonb);
   end if;
 
-  -- 3. Historial automático de versiones en la nube
   if to_regclass('public.docente_estado_historial') is not null then
-    return query
-      select
-        h.id,
-        ('historial_' || coalesce(h.origen, 'auto'))::text as origen,
-        h.k,
-        h.valor,
-        h.version,
-        coalesce(h.dispositivo, '') as dispositivo,
-        h.creado_en
+    select coalesce(jsonb_agg(sub.obj), '[]'::jsonb)
+    into v_tmp
+    from (
+      select jsonb_build_object(
+        'id', h.id,
+        'fuente', 'historial',
+        'k', h.k,
+        'v', h.valor->>'raw',
+        'version', h.version,
+        'motivo', coalesce(h.origen, 'historial'),
+        'guardado_en', h.creado_en
+      ) as obj
       from public.docente_estado_historial h
       where h.codigo = cod
-        and (clave_k = '*' or h.k = clave_k or h.k = 'METAS_CODIGOS_V1')
+        and h.k = clave_k
         and coalesce(h.valor->>'raw', '') <> ''
       order by h.creado_en desc, h.id desc
-      limit 40;
+      limit 40
+    ) sub;
+    v_arr := v_arr || coalesce(v_tmp, '[]'::jsonb);
   end if;
+
+  return jsonb_build_object('ok', true, 'versiones', v_arr);
 end
 $$;
 revoke all on function public.metas_docente_historial_listar(text,text,text) from public;
@@ -369,65 +386,65 @@ grant execute on function public.metas_docente_historial_listar(text,text,text) 
 
 
 -- ────────────────────────────────────────────────────────────
--- 6) RPC: RECUPERAR TODAS LAS FILAS DE REGISTRO_ADMIN DEL DOCENTE
---    Devuelve tanto las filas activas como las archivadas en
---    registro_admin_historial (con su evento_id completo).
+-- 6) RPC: RECUPERAR TODAS LAS FILAS DE REGISTRO_ADMIN DEL DOCENTE (JSONB)
 -- ────────────────────────────────────────────────────────────
+drop function if exists public.metas_recuperar_admin_docente(text,text);
 create or replace function public.metas_recuperar_admin_docente(
   p_prof text, p_clave text
-) returns table (
-  evento_id text,
-  codigo text,
-  tipo text,
-  fecha date,
-  estado text,
-  parcial text,
-  materia text,
-  nota numeric,
-  concepto text,
-  monto numeric,
-  grado text,
-  seccion text,
-  docente text,
-  anio_lectivo text,
-  actualizado_en timestamptz,
-  es_historial boolean
-)
+) returns jsonb
 language plpgsql security definer stable set search_path = public
 as $$
 declare
   v_cod text := upper(trim(coalesce(p_prof,'')));
   v_nombre text;
   v_norm text;
+  v_act jsonb := '[]'::jsonb;
+  v_hist jsonb := '[]'::jsonb;
 begin
   if not public._metas_docente_ok(v_cod, p_clave) then
-    return;
+    return jsonb_build_object('ok', false, 'err', 'clave');
   end if;
+
   select d.nombre into v_nombre from public.docentes d where d.codigo = v_cod;
   v_norm := public.metas_norm(v_nombre);
 
-  return query
+  select coalesce(jsonb_agg(to_jsonb(sub)), '[]'::jsonb)
+  into v_act
+  from (
     select
       r.evento_id, r.codigo, r.tipo, r.fecha, r.estado,
       r.parcial, r.materia, r.nota, r.concepto, r.monto,
       r.grado, r.seccion, r.docente, r.anio_lectivo,
-      r.actualizado_en,
-      false as es_historial
+      r.actualizado_en
     from public.registro_admin r
     where r.docente ilike '%' || v_cod || '%'
        or (length(v_norm) >= 6 and public.metas_norm(r.docente) like '%' || v_norm || '%')
-    union all
-    select
-      h.evento_id, h.codigo, h.tipo, h.fecha, h.estado,
-      h.parcial, h.materia, h.nota, h.concepto, h.monto,
-      h.grado, h.seccion, h.docente, h.anio_lectivo,
-      coalesce(h.actualizado_en, h.archivado_en) as actualizado_en,
-      true as es_historial
-    from public.registro_admin_historial h
-    where h.docente ilike '%' || v_cod || '%'
-       or (length(v_norm) >= 6 and public.metas_norm(h.docente) like '%' || v_norm || '%')
-    order by es_historial asc, actualizado_en desc
-    limit 6000;
+    order by r.actualizado_en desc
+    limit 4000
+  ) sub;
+
+  if to_regclass('public.registro_admin_historial') is not null then
+    select coalesce(jsonb_agg(to_jsonb(sub2)), '[]'::jsonb)
+    into v_hist
+    from (
+      select
+        h.evento_id, h.codigo, h.tipo, h.fecha, h.estado,
+        h.parcial, h.materia, h.nota, h.concepto, h.monto,
+        h.grado, h.seccion, h.docente, h.anio_lectivo,
+        coalesce(h.actualizado_en, h.archivado_en) as actualizado_en
+      from public.registro_admin_historial h
+      where h.docente ilike '%' || v_cod || '%'
+         or (length(v_norm) >= 6 and public.metas_norm(h.docente) like '%' || v_norm || '%')
+      order by h.archivado_en desc
+      limit 4000
+    ) sub2;
+  end if;
+
+  return jsonb_build_object(
+    'ok', true,
+    'actuales', coalesce(v_act, '[]'::jsonb),
+    'historial', coalesce(v_hist, '[]'::jsonb)
+  );
 end
 $$;
 revoke all on function public.metas_recuperar_admin_docente(text,text) from public;
