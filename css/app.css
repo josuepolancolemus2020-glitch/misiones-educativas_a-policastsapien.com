@@ -4794,7 +4794,14 @@ a.camp-home-card { text-decoration: none; color: inherit; }
   background: rgba(30,58,124,.09); box-shadow: 0 6px 18px rgba(15,23,42,.16);
   outline: 2px solid var(--brand-light); z-index: 3;
 }
-.ad-al-num { flex: 0 0 38px; font-weight: 900; color: var(--brand); cursor: grab; user-select: none; }
+.ad-al-num {
+  flex: 0 0 auto; min-width: 34px; font-weight: 900; color: var(--brand);
+  background: rgba(30,58,124,.07); border: 1px dashed rgba(30,58,124,.28);
+  border-radius: 7px; padding: 3px 6px; font-family: inherit;
+  font-size: calc(12.5px * var(--metas-fz, 1)); cursor: pointer;
+}
+.ad-al-num:active { transform: scale(.95); background: var(--brand); color: #fff; }
+.ad-al-rbtns { margin-right: -2px; }
 .ad-al-row .pa-inp-field { flex: 1; min-width: 120px; margin: 0; }
 .ad-al-del {
   flex: 0 0 auto; background: none; border: none; cursor: pointer;
@@ -5129,13 +5136,38 @@ body.ad-gr-moviendo { cursor: grabbing; user-select: none; -webkit-user-select: 
 .ad-mx-mv:active:not(:disabled) { background: #eef4ff; border-radius: 6px; }
 .ad-mx-sticky {
   position: sticky; left: 0; z-index: 2; background: #fff; text-align: left;
-  padding: 4px 8px 4px 6px; white-space: nowrap; min-width: 132px; max-width: 158px;
+  padding: 3px 6px 3px 4px; white-space: nowrap; min-width: 148px; max-width: 176px;
   box-shadow: 2px 0 0 rgba(0,0,0,.05); font-size: calc(12.5px * var(--metas-fz, 1));
   user-select: none; -webkit-user-select: none;
 }
 :root[data-theme="dark"] .ad-mx-sticky { background: #1c2733; }
 .ad-mx tbody .ad-mx-sticky { cursor: grab; }
 .ad-mx tbody .ad-mx-sticky:active { cursor: grabbing; }
+/* Botones ▲ ▼ y número # tocable por fila */
+.ad-mx-rbtns {
+  display: inline-flex; flex-direction: column; vertical-align: middle;
+  gap: 1px; margin-right: 2px;
+}
+.ad-mx-rmv {
+  border: none; background: transparent; color: #1565c0;
+  font-size: calc(9.5px * var(--metas-fz, 1)); line-height: 1;
+  padding: 2px 3px; cursor: pointer; border-radius: 4px; font-weight: 900;
+  touch-action: manipulation;
+}
+:root[data-theme="dark"] .ad-mx-rmv { color: #60a5fa; }
+.ad-mx-rmv:disabled { color: #cbd5e1; opacity: .45; cursor: default; }
+.ad-mx-rmv:active:not(:disabled) { background: #dbeafe; transform: scale(.92); }
+@media (hover: hover) {
+  .ad-mx-rmv:hover:not(:disabled) { background: rgba(21,101,192,.12); }
+}
+.ad-mx-num {
+  border: 1px dashed rgba(21,101,192,.32); background: rgba(21,101,192,.06);
+  color: var(--brand); font-family: inherit; font-size: calc(11.5px * var(--metas-fz, 1));
+  font-weight: 900; border-radius: 6px; padding: 2px 5px; margin-right: 2px;
+  cursor: pointer; vertical-align: middle; touch-action: manipulation;
+}
+:root[data-theme="dark"] .ad-mx-num { color: #93c5fd; border-color: rgba(147,197,253,.35); background: rgba(59,130,246,.15); }
+.ad-mx-num:active { background: var(--brand); color: #fff; transform: scale(.94); }
 /* Asa de 6 puntos (⋮⋮) para arrastrar y ordenar toda la fila con sus notas */
 .ad-mx-asa {
   display: inline-flex; align-items: center; justify-content: center;
