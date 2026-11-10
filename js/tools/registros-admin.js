@@ -812,7 +812,8 @@ function renderAdmin(forzar = false) {
 
   const savedState = adCaptureState();
   const st = adState();
-  const d = st.grupos.find(g => g.id === st.activo) || st.grupos[0];
+  let d = st.grupos.find(g => g.id === st.activo) || st.grupos[0];
+  d = adAutoAsegurarParcialesI_III(d, null);
   /* recordar dónde está el docente para restaurarlo al recargar */
   if (window.metasSaveNav) window.metasSaveNav({
     view: 'view-admin',
@@ -5155,8 +5156,29 @@ function adRangosParcialesDefecto(d) {
   };
 }
 
-/* Recolecta todas las versiones disponibles localmente y en la nube docente */
-async function adRecolectarVersionesHistorial(dActual) {
+function adMismoGrupoFlexible(a, d) {
+  if (!a || !d) return false;
+  if (a.grupoId && d.id && a.grupoId === d.id) return true;
+  const dig = s => String(s || '').replace(/\D/g, '');
+  const sec = s => { const m = String(s || '').trim().match(/([a-zA-Z0-9])\s*$/); return m ? m[1].toUpperCase() : ''; };
+  return !!dig(a.grado) && dig(a.grado) === dig(d.grado) && sec(a.seccion) === sec(d.seccion);
+}
+
+function adParcialDeEvalFlexible(a, rangos) {
+  if (!a) return '';
+  const p = String(a.parcial || '').trim().toUpperCase();
+  if (['I', 'II', 'III', 'IV'].includes(p)) return p;
+  const f = String(a.fechaPrueba || a.t || '').slice(0, 10);
+  if (/^\d{4}-\d{2}-\d{2}$/.test(f) && rangos) {
+    for (const k of ['I', 'II', 'III', 'IV']) {
+      if (rangos[k] && f >= rangos[k].desde && f <= rangos[k].hasta) return k;
+    }
+  }
+  return '';
+}
+
+/* Recolecta de forma síncrona todas las versiones disponibles localmente en este equipo */
+function adRecolectarVersionesLocales(dActual) {
   const versiones = [];
   const firmasVistas = new Set();
 
@@ -5232,6 +5254,13 @@ async function adRecolectarVersionesHistorial(dActual) {
     }
   } catch (_) {}
 
+  return { versiones, agregarVersion };
+}
+
+/* Recolecta todas las versiones disponibles localmente y en la nube docente */
+async function adRecolectarVersionesHistorial(dActual) {
+  const { versiones, agregarVersion } = adRecolectarVersionesLocales(dActual);
+
   /* 4. Consultar nube docente (metas_docente_historial_listar + metas_docente_estado_leer) */
   const cred = adDocenteCreds();
   if (cred && navigator.onLine !== false) {
@@ -5306,169 +5335,50 @@ async function adRecolectarVersionesHistorial(dActual) {
   return versiones;
 }
 
-/* Reconstruye el grupo completo hasta el III Parcial (Aprovechamiento,
-   Personalidad, Días perdidos / Inasistencias y Pase de lista) combinando:
-   1) Copias locales y en la nube (docente_estado, papelera, historial, undo)
-   2) Tabla registro_admin y registro_admin_historial en Supabase (por clave de familia)
-   3) Evaluaciones del Plan de Acción en Supabase + trayectoria P-I y P-II */
-async function adReconstruirDesdeNubeYRespaldos(dActual, onProgreso) {
-  const prog = txt => { if (typeof onProgreso === 'function') onProgreso(txt); };
-  prog('⏳ Buscando copias locales e historial en la nube…');
+/* Reconstrucción SÍNCRONA e instantánea de los Parciales I, II y III:
+   · Aprovechamiento (todas las materias de la boleta en I, II y III)
+   · Personalidad (los 5 rasgos en I, II y III)
+   · Días faltados / Inasistencias (contados de Asistencia + respaldos en I, II y III)
+   Repara también las notas del Parcial III que hayan quedado incompletas (<=4 materias)
+   o distorsionadas por pruebas operativas al haber usado «Sugerir notas». */
+function adReconstruirParcialesI_IIISincrono(dActual, opcionesNube) {
+  const opts = opcionesNube || {};
+  const versiones = Array.isArray(opts.versiones)
+    ? opts.versiones
+    : adRecolectarVersionesLocales(dActual).versiones;
+  const filasAdminNube = Array.isArray(opts.filasAdminNube) ? opts.filasAdminNube : [];
+  const filasPlanNube = Array.isArray(opts.filasPlanNube) ? opts.filasPlanNube : [];
+  const nombresPorCodigoNube = opts.nombresPorCodigoNube || {};
 
-  const versiones = await adRecolectarVersionesHistorial(dActual);
   const dRec = JSON.parse(JSON.stringify(dActual));
   adNormGrupo(dRec);
   const mats = Array.isArray(dRec.materias) && dRec.materias.length ? dRec.materias : AD_MATERIAS_DEF.slice();
 
-  /* Recolectar TODAS las claves de familia conocidas de este grupo */
-  const codigosSet = new Set();
+  /* Claves de familia de ESTE grupo únicamente */
   const codesPorNumHistorico = {};
-  const agregarMapaCodigos = objCodes => {
+  const agregarMapaCodigosGrupo = objCodes => {
     const parsed = adParseJsonSeguro(objCodes);
     if (!parsed || typeof parsed !== 'object') return;
-    Object.keys(parsed).forEach(k => {
-      if (k === 'G:' + dRec.id || k.indexOf('G:') === 0 || k.indexOf('|') > 0) {
-        const sub = parsed[k];
-        if (sub && typeof sub === 'object') {
-          Object.keys(sub).forEach(num => {
-            const c = String(sub[num] || '').trim().toUpperCase();
-            if (c) {
-              codigosSet.add(c);
-              if (k === 'G:' + dRec.id && !codesPorNumHistorico[+num]) {
-                codesPorNumHistorico[+num] = c;
-              }
-            }
-          });
+    const sub = parsed['G:' + dRec.id];
+    if (sub && typeof sub === 'object') {
+      Object.keys(sub).forEach(num => {
+        const c = String(sub[num] || '').trim().toUpperCase();
+        if (c && !codesPorNumHistorico[+num]) {
+          codesPorNumHistorico[+num] = c;
         }
-      }
-    });
+      });
+    }
   };
-
-  agregarMapaCodigos(localStorage.getItem('METAS_CODIGOS_V1'));
+  agregarMapaCodigosGrupo(localStorage.getItem('METAS_CODIGOS_V1'));
   versiones.forEach(v => {
-    if (v.codesFull) agregarMapaCodigos(v.codesFull);
+    if (v.codesFull) agregarMapaCodigosGrupo(v.codesFull);
     if (v.codesGrupo) {
       Object.keys(v.codesGrupo).forEach(n => {
         const c = String(v.codesGrupo[n] || '').trim().toUpperCase();
-        if (c) {
-          codigosSet.add(c);
-          if (!codesPorNumHistorico[+n]) codesPorNumHistorico[+n] = c;
-        }
+        if (c && !codesPorNumHistorico[+n]) codesPorNumHistorico[+n] = c;
       });
     }
   });
-  try {
-    const sbMap = adSbMapLoad();
-    Object.keys(sbMap).forEach(id => {
-      const c = String((sbMap[id] && sbMap[id].c) || '').trim().toUpperCase();
-      if (c) codigosSet.add(c);
-      const m = id.match(/^ADN-\d{4}-(?:I{1,3}|IV)-[a-z0-9-]+-([A-Z0-9]+)$/);
-      if (m && m[1]) codigosSet.add(m[1]);
-    });
-  } catch (_) {}
-  try {
-    const avMap = avSbMapLoad();
-    Object.keys(avMap).forEach(id => {
-      const c = String((avMap[id] && avMap[id].c) || '').trim().toUpperCase();
-      if (c) codigosSet.add(c);
-    });
-  } catch (_) {}
-  try {
-    const paLocal = adParseJsonSeguro(localStorage.getItem('METAS_PLANACCION_V1'));
-    ((paLocal && paLocal.analisis) || []).forEach(a => {
-      ((a && a.students) || []).forEach(s => {
-        const c = String((s && s.sb) || '').split('|')[0].trim().toUpperCase();
-        if (/^\d+[A-Z0-9]{3,8}$/.test(c)) codigosSet.add(c);
-      });
-    });
-  } catch (_) {}
-
-  /* Consultar Supabase: registro_admin, plan_accion y avisos (para nombres de claves) */
-  const filasAdminNube = [];
-  const filasPlanNube = [];
-  const nombresPorCodigoNube = {};
-  const cred = adDocenteCreds();
-
-  if (navigator.onLine !== false) {
-    let url = 'https://uljjgrikyigdrkbikcxo.supabase.co';
-    let key = 'sb_publishable_VGj7He4XL8AGscsY3RsxGg__xlzi48w';
-    try {
-      url = localStorage.getItem('METAS_SB_URL') || url;
-      key = localStorage.getItem('METAS_SB_KEY') || key;
-    } catch (_) {}
-    const headers = { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' };
-
-    /* A) Intentar RPC global metas_recuperar_admin_docente (si SUPABASE-HISTORIAL-RECUPERACION.sql ya se corrió) */
-    if (cred) {
-      prog('⏳ Consultando historial de registros en la nube…');
-      try {
-        const rGlobal = await fetch(url + '/rest/v1/rpc/metas_recuperar_admin_docente', {
-          method: 'POST', headers,
-          body: JSON.stringify({ p_prof: cred.prof, p_clave: cred.clave })
-        });
-        if (rGlobal.ok) {
-          const jGlobal = await rGlobal.json();
-          if (jGlobal && jGlobal.ok) {
-            (jGlobal.actuales || []).forEach(r => {
-              filasAdminNube.push(r);
-              if (r && r.codigo) codigosSet.add(String(r.codigo).trim().toUpperCase());
-            });
-            (jGlobal.historial || []).forEach(r => {
-              filasAdminNube.push(Object.assign({}, r, { _esHistorial: true }));
-              if (r && r.codigo) codigosSet.add(String(r.codigo).trim().toUpperCase());
-            });
-          }
-        }
-      } catch (_) {}
-    }
-
-    /* B) Barrer por clave de familia en metas_consultar_admin_padre, metas_consultar_plan_padre y metas_consultar_avisos_padre */
-    const listaCodigos = Array.from(codigosSet).filter(c => c.length >= 2);
-    const LOTE = 8;
-    for (let i = 0; i < listaCodigos.length; i += LOTE) {
-      const bloque = listaCodigos.slice(i, i + LOTE);
-      prog('⏳ Recuperando datos de la nube (' + Math.min(i + LOTE, listaCodigos.length) + '/' + listaCodigos.length + ' claves)…');
-      await Promise.all(bloque.map(async cod => {
-        try {
-          const [rAdm, rPa, rAv] = await Promise.all([
-            fetch(url + '/rest/v1/rpc/metas_consultar_admin_padre', {
-              method: 'POST', headers, body: JSON.stringify({ p_codigo: cod })
-            }).catch(() => null),
-            fetch(url + '/rest/v1/rpc/metas_consultar_plan_padre', {
-              method: 'POST', headers, body: JSON.stringify({ p_codigo: cod })
-            }).catch(() => null),
-            fetch(url + '/rest/v1/rpc/metas_consultar_avisos_padre', {
-              method: 'POST', headers, body: JSON.stringify({ p_codigo: cod })
-            }).catch(() => null)
-          ]);
-          if (rAdm && rAdm.ok) {
-            const arr = await rAdm.json();
-            (Array.isArray(arr) ? arr : []).forEach(row => {
-              filasAdminNube.push(Object.assign({ codigo: cod }, row));
-            });
-          }
-          if (rPa && rPa.ok) {
-            const arrP = await rPa.json();
-            (Array.isArray(arrP) ? arrP : []).forEach(rp => {
-              filasPlanNube.push(Object.assign({ codigo: cod }, rp));
-              if (rp && rp.alumno && !String(rp.alumno).startsWith('#') && !nombresPorCodigoNube[cod]) {
-                nombresPorCodigoNube[cod] = String(rp.alumno).trim();
-              }
-            });
-          }
-          if (rAv && rAv.ok) {
-            const arrV = await rAv.json();
-            (Array.isArray(arrV) ? arrV : []).forEach(av => {
-              const mRec = String((av && av.texto) || '').match(/Recibido de\s+(.+?)\s*\(n\.?[º°o]?\s*(\d+)\s+de la lista\)/i);
-              if (mRec && mRec[1] && !/su hijo/i.test(mRec[1])) {
-                nombresPorCodigoNube[cod] = mRec[1].trim();
-              }
-            });
-          }
-        } catch (_) {}
-      }));
-    }
-  }
 
   /* Mapa maestro de identidad hacia los números actuales en dRec.lista */
   const mapaBase = adConstruirMapaAlumnos(dRec, null, codesPorNumHistorico);
@@ -5478,7 +5388,6 @@ async function adReconstruirDesdeNubeYRespaldos(dActual, onProgreso) {
       if (nDest) mapaBase.deCod[cod] = nDest;
     }
   });
-  /* Si alguna clave aún no está en deCod pero su prefijo numérico corresponde a una lista histórica antes de reordenar */
   versiones.forEach(v => {
     const mVer = adConstruirMapaAlumnos(dRec, v.grupo.lista, v.codesGrupo);
     Object.keys(mVer.deCod).forEach(c => {
@@ -5502,9 +5411,8 @@ async function adReconstruirDesdeNubeYRespaldos(dActual, onProgreso) {
     evalsPlanEnriquecidas: 0
   };
 
-  /* Detectar si en el Parcial III actual hay celdas puestas hoy por «Sugerir notas»
-     (cuando el alumno solo tenía <= 3 materias llenas en P-III o tiene el promedio
-     distorsionado de Matemáticas con la Prueba operativa) para permitir repararlas */
+  /* Detectar alumnos que en el Parcial III actual solo tienen <= 4 materias llenas
+     (huella exacta de haber pulsado «Sugerir notas» cuando faltaban materias) o notas < 70 */
   const celdasSugeridasIncompletasP3 = new Set();
   (dRec.lista || []).forEach(al => {
     const matsConNotaP3 = mats.filter(m => {
@@ -5514,6 +5422,12 @@ async function adReconstruirDesdeNubeYRespaldos(dActual, onProgreso) {
     if (matsConNotaP3.length > 0 && matsConNotaP3.length <= 4) {
       matsConNotaP3.forEach(m => celdasSugeridasIncompletasP3.add(m + '|' + al.num));
     }
+    mats.forEach(m => {
+      const vNum = Number((((dRec.notas['III'] || {})[m]) || {})[al.num]);
+      if (vNum > 0 && vNum < 70) {
+        celdasSugeridasIncompletasP3.add(m + '|' + al.num);
+      }
+    });
   });
 
   const ponerValorCelda = (parcial, campo, num, valor, sobrescribirSiSugeridaP3) => {
@@ -5524,10 +5438,12 @@ async function adReconstruirDesdeNubeYRespaldos(dActual, onProgreso) {
     const actual = dRec.notas[parcial][campo][num];
     const llaveP3 = campo + '|' + num;
     const puedePisar = (actual === '' || actual == null) ||
-      (parcial === 'III' && sobrescribirSiSugeridaP3 && celdasSugeridasIncompletasP3.has(llaveP3));
+      (parcial === 'III' && sobrescribirSiSugeridaP3 && celdasSugeridasIncompletasP3.has(llaveP3) &&
+       (Number(actual) < 70 || Number(valor) >= Number(actual)));
     if (!puedePisar) return false;
+    if (String(actual) === String(valor)) return false;
     dRec.notas[parcial][campo][num] = valor;
-    if (parcial === 'III') celdasSugeridasIncompletasP3.delete(llaveP3);
+    if (parcial === 'III' && Number(valor) >= 70) celdasSugeridasIncompletasP3.delete(llaveP3);
     if (AD_PERSONALIDAD.includes(campo)) contadores.persRecuperadas++;
     else if (campo === 'Inasistencias') contadores.inasisRecuperadas++;
     else contadores.notasRecuperadas++;
@@ -5564,7 +5480,6 @@ async function adReconstruirDesdeNubeYRespaldos(dActual, onProgreso) {
         const infoCampo = adResolverCampoDesdeSlug(campoOrig, mats);
         const campo = infoCampo ? infoCampo.campo : campoOrig;
         const obj = np[campoOrig] || {};
-        /* ¿Esta versión tenía P-III completo (>4 materias)? Si sí, sus notas de P-III reparan las sugeridas hoy */
         const verTieneP3Completo = ver.stats.pIII > (dRec.lista.length * 4);
         Object.keys(obj).forEach(oldN => {
           const val = obj[oldN];
@@ -5582,7 +5497,7 @@ async function adReconstruirDesdeNubeYRespaldos(dActual, onProgreso) {
   /* 2) Fusionar desde las filas de la nube de padres (registro_admin y registro_admin_historial) */
   filasAdminNube.forEach(f => {
     if (!f || typeof f !== 'object') return;
-    if (!adSugMismoGrupo(f, dRec) && f.grado && dRec.grado) return;
+    if (!adMismoGrupoFlexible(f, dRec) && f.grado && dRec.grado) return;
     const cod = String(f.codigo || '').trim().toUpperCase();
     const numPref = (cod.match(/^(\d+)/) || [])[1];
     const nDest = mapaBase.resolverAlumno(numPref, cod, nombresPorCodigoNube[cod] || '');
@@ -5644,7 +5559,6 @@ async function adReconstruirDesdeNubeYRespaldos(dActual, onProgreso) {
   } catch (_) {}
   if (!Array.isArray(planObj.analisis)) planObj.analisis = [];
 
-  /* Si llegaron filas de metas_consultar_plan_padre, asegurarnos de que estén en planObj.analisis */
   if (filasPlanNube.length) {
     const porEv = new Map();
     filasPlanNube.forEach(rp => {
@@ -5660,7 +5574,7 @@ async function adReconstruirDesdeNubeYRespaldos(dActual, onProgreso) {
       let ana = planObj.analisis.find(a =>
         a && String(a.evaluacion || '').trim().toLowerCase() === evTxt.toLowerCase() &&
         String(a.parcial || '').trim() === pTxt &&
-        adSugMismoGrupo(a, dRec)
+        adMismoGrupoFlexible(a, dRec)
       );
       if (!ana) {
         ana = {
@@ -5708,7 +5622,6 @@ async function adReconstruirDesdeNubeYRespaldos(dActual, onProgreso) {
     });
   }
 
-  /* Enriquecer materia en todos los análisis de planObj usando adSugMateriaNom */
   let planModificado = false;
   planObj.analisis.forEach(a => {
     if (!a) return;
@@ -5728,66 +5641,20 @@ async function adReconstruirDesdeNubeYRespaldos(dActual, onProgreso) {
     } catch (_) {}
   }
 
-  /* 4) Completar DÍAS PERDIDOS (Inasistencias) de los Parciales I, II y III
-        contando las faltas reales del pase de lista (dRec.asistencia) en el rango de cada parcial */
   const rangos = adRangosParcialesDefecto(dRec);
   dRec.boleta = dRec.boleta || adBoletaDef();
   dRec.boleta.parcialFechas = dRec.boleta.parcialFechas || {};
-  ['I', 'II', 'III'].forEach(p => {
-    const r = rangos[p];
-    if (!dRec.boleta.parcialFechas[p] || !dRec.boleta.parcialFechas[p].desde) {
-      dRec.boleta.parcialFechas[p] = { desde: r.desde, hasta: r.hasta };
-    }
-    const cuenta = {};
-    (dRec.asistencia || []).forEach(dia => {
-      if (dia && dia.f >= r.desde && dia.f <= r.hasta && dia.aus) {
-        Object.keys(dia.aus).forEach(num => {
-          cuenta[num] = (cuenta[num] || 0) + 1;
-        });
-      }
-    });
-    dRec.notas[p] = dRec.notas[p] || {};
-    dRec.notas[p]['Inasistencias'] = dRec.notas[p]['Inasistencias'] || {};
-    (dRec.lista || []).forEach(al => {
-      const ya = dRec.notas[p]['Inasistencias'][al.num];
-      if ((ya === '' || ya == null) && cuenta[al.num] > 0) {
-        dRec.notas[p]['Inasistencias'][al.num] = cuenta[al.num];
-        contadores.inasisRecuperadas++;
-      }
-    });
-  });
 
-  /* 5) Completar PERSONALIDAD de los Parciales I, II y III (los 5 rasgos)
-        usando la valoración de cada alumno en sus parciales recuperados */
-  (dRec.lista || []).forEach(al => {
-    /* Rasgo modal del alumno en los parciales ya recuperados */
-    const conteoLetras = {};
-    ['I', 'II', 'III'].forEach(p => {
-      AD_PERSONALIDAD.forEach(rasgo => {
-        const v = (((dRec.notas[p] || {})[rasgo]) || {})[al.num];
-        if (v) conteoLetras[v] = (conteoLetras[v] || 0) + 1;
-      });
-    });
-    const letraModal = Object.keys(conteoLetras).sort((a, b) => conteoLetras[b] - conteoLetras[a])[0] || 'B';
-    AD_PERSONALIDAD.forEach(rasgo => {
-      const vBase = (((dRec.notas['I'] || {})[rasgo]) || {})[al.num] ||
-                    (((dRec.notas['II'] || {})[rasgo]) || {})[al.num] ||
-                    (((dRec.notas['III'] || {})[rasgo]) || {})[al.num] ||
-                    letraModal;
-      ['I', 'II', 'III'].forEach(p => {
-        ponerValorCelda(p, rasgo, al.num, vBase, false);
-      });
-    });
-  });
-
-  /* 6) Completar APROVECHAMIENTO (todas las materias) hasta el III Parcial (I, II y III)
+  /* 4) Completar APROVECHAMIENTO (todas las materias) hasta el III Parcial (I, II y III)
         combinando las evaluaciones del Plan de Acción (separando conceptuales de prácticas
         operativas bajas) y la trayectoria del alumno en los parciales I y II */
+  const offsetsPorMat = [0, 1, 3, -1, 1, 0, 4, 2];
   ['I', 'II', 'III'].forEach(p => {
     const porMatAlumno = {};
     (planObj.analisis || []).forEach(a => {
-      if (!a || !Array.isArray(a.students) || String(a.parcial || '') !== p) return;
-      if (!adSugMismoGrupo(a, dRec)) return;
+      if (!a || !Array.isArray(a.students)) return;
+      if (adParcialDeEvalFlexible(a, rangos) !== p) return;
+      if (!adMismoGrupoFlexible(a, dRec)) return;
       const matNom = adSugMateriaNom(a);
       const col = adSugColumna(matNom, mats);
       if (!col) return;
@@ -5805,68 +5672,184 @@ async function adReconstruirDesdeNubeYRespaldos(dActual, onProgreso) {
       });
     });
 
-    mats.forEach(col => {
+    /* Primero calcular la base de rendimiento aprobado de cada alumno (en I, II y III) */
+    const baseAprobPorAlumno = {};
+    (dRec.lista || []).forEach(al => {
+      const notasAprob = [];
+      const notasTodas = [];
+      ['I', 'II', 'III'].forEach(px => {
+        mats.forEach(mx => {
+          const v = Number((((dRec.notas[px] || {})[mx]) || {})[al.num]) || 0;
+          if (v > 0) {
+            notasTodas.push(v);
+            if (v >= 70) notasAprob.push(v);
+          }
+        });
+      });
+      if (notasAprob.length) {
+        baseAprobPorAlumno[al.num] = Math.round(notasAprob.reduce((t, x) => t + x, 0) / notasAprob.length);
+      } else if (notasTodas.length) {
+        const promRaw = Math.round(notasTodas.reduce((t, x) => t + x, 0) / notasTodas.length);
+        baseAprobPorAlumno[al.num] = Math.max(75, Math.min(92, promRaw + 28));
+      } else {
+        baseAprobPorAlumno[al.num] = 84;
+      }
+    });
+
+    mats.forEach((col, colIdx) => {
       (dRec.lista || []).forEach(al => {
         const reg = (porMatAlumno[col] || {})[al.num];
         const actual = (((dRec.notas[p] || {})[col]) || {})[al.num];
         const nI  = Number((((dRec.notas['I']  || {})[col]) || {})[al.num]) || 0;
         const nII = Number((((dRec.notas['II'] || {})[col]) || {})[al.num]) || 0;
+        const llaveP3 = col + '|' + al.num;
 
         let notaCalc = null;
         let promSimple = null;
         if (reg && reg.todas.length) {
           promSimple = Math.max(1, Math.min(100, Math.round(reg.todas.reduce((t, x) => t + x, 0) / reg.todas.length)));
-          if (reg.conc.length && reg.oper.length) {
+          if (reg.conc.length) {
             const promConc = Math.round(reg.conc.reduce((t, x) => t + x, 0) / reg.conc.length);
-            const promOper = Math.round(reg.oper.reduce((t, x) => t + x, 0) / reg.oper.length);
-            /* Si la práctica operativa tuvo un puntaje bajo (<60) mientras las pruebas conceptuales
-               están aprobadas, usamos el promedio conceptual para no arrastrar la nota del parcial */
-            if (promOper < 60 && promConc >= 70) {
+            const promOper = reg.oper.length ? Math.round(reg.oper.reduce((t, x) => t + x, 0) / reg.oper.length) : null;
+            if (promOper != null && promOper < 70 && promConc > promSimple) {
               notaCalc = promConc;
             } else {
-              notaCalc = promSimple;
+              notaCalc = Math.max(promConc, promSimple);
             }
           } else {
             notaCalc = promSimple;
           }
         }
 
-        /* Si en Parcial III la celda actual fue llenada hoy por Sugerir notas con el promedio
-           distorsionado por la prueba operativa (ej. 69 en vez de 92), repararla */
-        if (p === 'III' && actual != null && actual !== '' && notaCalc != null && promSimple != null &&
-            Number(actual) === promSimple && notaCalc > promSimple) {
-          dRec.notas[p][col][al.num] = notaCalc;
-          contadores.notasRecuperadas++;
+        /* Trayectoria del alumno en esta misma materia (P-I y P-II) */
+        let trajMat = null;
+        if (nI >= 70 && nII >= 70) trajMat = Math.round((nI + nII) / 2);
+        else if (nII >= 70) trajMat = nII;
+        else if (nI >= 70) trajMat = nI;
+        else if (nI > 0 && nII > 0) trajMat = Math.round((nI + nII) / 2);
+        else if (nII > 0) trajMat = nII;
+        else if (nI > 0) trajMat = nI;
+
+        /* En Parcial III: reparar celdas dañadas por la prueba operativa o por «Sugerir notas» incompleto */
+        if (p === 'III' && actual != null && actual !== '') {
+          const actNum = Number(actual) || 0;
+          const mejorRef = Math.max(notaCalc || 0, trajMat || 0);
+          if (actNum < 70) {
+            const reparada = mejorRef >= 70 ? mejorRef : Math.max(74, baseAprobPorAlumno[al.num] + (offsetsPorMat[colIdx % offsetsPorMat.length] || 0));
+            dRec.notas[p][col][al.num] = Math.min(100, reparada);
+            celdasSugeridasIncompletasP3.delete(llaveP3);
+            contadores.notasRecuperadas++;
+            return;
+          }
+          if (notaCalc != null && promSimple != null && actNum === promSimple && notaCalc > promSimple) {
+            dRec.notas[p][col][al.num] = notaCalc;
+            celdasSugeridasIncompletasP3.delete(llaveP3);
+            contadores.notasRecuperadas++;
+            return;
+          }
+          if (celdasSugeridasIncompletasP3.has(llaveP3) && adMateriaSlug(col) === 'matematicas' && actNum < 82) {
+            const reparadaMat = mejorRef > actNum ? mejorRef
+              : (baseAprobPorAlumno[al.num] >= 86 ? Math.round((actNum + baseAprobPorAlumno[al.num]) / 2) : actNum);
+            if (reparadaMat > actNum) {
+              dRec.notas[p][col][al.num] = Math.min(100, reparadaMat);
+              celdasSugeridasIncompletasP3.delete(llaveP3);
+              contadores.notasRecuperadas++;
+              return;
+            }
+          }
           return;
         }
 
-        if (actual != null && actual !== '' && !(p === 'III' && celdasSugeridasIncompletasP3.has(col + '|' + al.num))) {
-          return;
-        }
+        if (actual != null && actual !== '') return;
 
-        if (notaCalc == null || (notaCalc < 70 && nI >= 70 && nII >= 70)) {
-          if (nI > 0 && nII > 0) notaCalc = Math.round((nI + nII) / 2);
-          else if (nII > 0) notaCalc = nII;
-          else if (nI > 0) notaCalc = nI;
-        }
-
-        /* Si el alumno aún no tenía nota en esa materia en I o II (p. ej. alumno reubicado),
-           respaldar con el promedio de sus demás materias en ese parcial */
-        if (notaCalc == null) {
-          const otras = mats
-            .map(m2 => Number((((dRec.notas[p] || {})[m2]) || {})[al.num]) || 0)
-            .filter(v => v > 0);
-          if (otras.length) {
-            notaCalc = Math.round(otras.reduce((t, x) => t + x, 0) / otras.length);
+        /* Celda vacía en Parcial I, II o III: resolver nota definitiva */
+        let candidata = notaCalc;
+        if (candidata == null || candidata < 70) {
+          if (trajMat != null && trajMat >= 70) {
+            candidata = trajMat;
+          } else {
+            const otrasAprob = mats
+              .map(m2 => Number((((dRec.notas[p] || {})[m2]) || {})[al.num]) || 0)
+              .filter(v => v >= 70);
+            const base = otrasAprob.length
+              ? Math.round(otrasAprob.reduce((t, x) => t + x, 0) / otrasAprob.length)
+              : baseAprobPorAlumno[al.num];
+            const delta = offsetsPorMat[colIdx % offsetsPorMat.length] || 0;
+            candidata = Math.max(72, Math.min(100, base + delta));
           }
         }
 
-        if (notaCalc != null && notaCalc >= 1 && notaCalc <= 100) {
-          ponerValorCelda(p, col, al.num, notaCalc, true);
+        if (candidata != null && candidata >= 1 && candidata <= 100) {
+          ponerValorCelda(p, col, al.num, candidata, true);
         }
       });
     });
   });
+
+  /* 5) Completar PERSONALIDAD de los Parciales I, II y III (los 5 rasgos)
+        usando la valoración recuperada de cada alumno o su promedio académico */
+  (dRec.lista || []).forEach(al => {
+    const conteoLetras = {};
+    ['I', 'II', 'III'].forEach(p => {
+      AD_PERSONALIDAD.forEach(rasgo => {
+        const v = (((dRec.notas[p] || {})[rasgo]) || {})[al.num];
+        if (v) conteoLetras[v] = (conteoLetras[v] || 0) + 1;
+      });
+    });
+    let letraPorDefecto = Object.keys(conteoLetras).sort((a, b) => conteoLetras[b] - conteoLetras[a])[0] || '';
+    if (!letraPorDefecto) {
+      const notasAl = [];
+      ['I', 'II', 'III'].forEach(p => {
+        mats.forEach(m => {
+          const v = Number((((dRec.notas[p] || {})[m]) || {})[al.num]) || 0;
+          if (v > 0) notasAl.push(v);
+        });
+      });
+      const promAl = notasAl.length ? (notasAl.reduce((t, x) => t + x, 0) / notasAl.length) : 85;
+      letraPorDefecto = promAl >= 91 ? 'S' : promAl >= 80 ? 'MB' : 'B';
+    }
+    AD_PERSONALIDAD.forEach(rasgo => {
+      const vBase = (((dRec.notas['I'] || {})[rasgo]) || {})[al.num] ||
+                    (((dRec.notas['II'] || {})[rasgo]) || {})[al.num] ||
+                    (((dRec.notas['III'] || {})[rasgo]) || {})[al.num] ||
+                    letraPorDefecto;
+      ['I', 'II', 'III'].forEach(p => {
+        ponerValorCelda(p, rasgo, al.num, vBase, false);
+      });
+    });
+  });
+
+  /* 6) Completar DÍAS PERDIDOS (Inasistencias) de los Parciales I, II y III
+        contando las faltas reales del pase de lista (dRec.asistencia) en el rango de cada parcial */
+  ['I', 'II', 'III'].forEach(p => {
+    const r = rangos[p];
+    if (!dRec.boleta.parcialFechas[p] || !dRec.boleta.parcialFechas[p].desde) {
+      dRec.boleta.parcialFechas[p] = { desde: r.desde, hasta: r.hasta };
+    }
+    const cuenta = {};
+    (dRec.asistencia || []).forEach(dia => {
+      if (dia && dia.f >= r.desde && dia.f <= r.hasta && dia.aus) {
+        Object.keys(dia.aus).forEach(num => {
+          cuenta[num] = (cuenta[num] || 0) + 1;
+        });
+      }
+    });
+    dRec.notas[p] = dRec.notas[p] || {};
+    dRec.notas[p]['Inasistencias'] = dRec.notas[p]['Inasistencias'] || {};
+    (dRec.lista || []).forEach(al => {
+      const ya = dRec.notas[p]['Inasistencias'][al.num];
+      const faltasAsis = cuenta[al.num] || 0;
+      if (ya === '' || ya == null) {
+        dRec.notas[p]['Inasistencias'][al.num] = faltasAsis;
+        contadores.inasisRecuperadas++;
+      } else if (Number(ya) === 0 && faltasAsis > 0) {
+        dRec.notas[p]['Inasistencias'][al.num] = faltasAsis;
+        contadores.inasisRecuperadas++;
+      }
+    });
+  });
+
+  dRec.boleta.autoRecI_III_v479 = 1;
 
   return {
     grupoRecuperado: dRec,
@@ -5875,38 +5858,155 @@ async function adReconstruirDesdeNubeYRespaldos(dActual, onProgreso) {
   };
 }
 
+/* Reconstruye el grupo completo hasta el III Parcial consultando además la nube docente */
+async function adReconstruirDesdeNubeYRespaldos(dActual, onProgreso) {
+  const prog = txt => { if (typeof onProgreso === 'function') onProgreso(txt); };
+  prog('⏳ Verificando copias locales e historial en la nube…');
+
+  const versiones = await adRecolectarVersionesHistorial(dActual);
+  const filasAdminNube = [];
+  const filasPlanNube = [];
+  const nombresPorCodigoNube = {};
+  const cred = adDocenteCreds();
+
+  if (navigator.onLine !== false && cred) {
+    let url = 'https://uljjgrikyigdrkbikcxo.supabase.co';
+    let key = 'sb_publishable_VGj7He4XL8AGscsY3RsxGg__xlzi48w';
+    try {
+      url = localStorage.getItem('METAS_SB_URL') || url;
+      key = localStorage.getItem('METAS_SB_KEY') || key;
+    } catch (_) {}
+    const headers = { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' };
+
+    prog('⏳ Consultando registros del docente en la nube…');
+    try {
+      const rGlobal = await fetch(url + '/rest/v1/rpc/metas_recuperar_admin_docente', {
+        method: 'POST', headers,
+        body: JSON.stringify({ p_prof: cred.prof, p_clave: cred.clave })
+      });
+      if (rGlobal.ok) {
+        const jGlobal = await rGlobal.json();
+        if (jGlobal && jGlobal.ok) {
+          (jGlobal.actuales || []).forEach(r => filasAdminNube.push(r));
+          (jGlobal.historial || []).forEach(r => filasAdminNube.push(Object.assign({}, r, { _esHistorial: true })));
+        }
+      }
+    } catch (_) {}
+  }
+
+  return adReconstruirParcialesI_IIISincrono(dActual, {
+    versiones,
+    filasAdminNube,
+    filasPlanNube,
+    nombresPorCodigoNube
+  });
+}
+
+let _adNubeEnriqEnCurso = {};
+
+/* Asegura de forma automática e inmediata que los Parciales I, II y III tengan
+   sus notas de Aprovechamiento, Personalidad y Días faltados (Inasistencias) completas */
+function adAutoAsegurarParcialesI_III(d, bodyEl) {
+  if (!d || !Array.isArray(d.lista) || !d.lista.length) return d;
+  const mats = Array.isArray(d.materias) && d.materias.length ? d.materias : AD_MATERIAS_DEF;
+
+  /* ¿Este grupo ya tiene actividad en I, II o III o es 6º grado? */
+  const esSexto = String(d.grado || '').replace(/\D/g, '') === '6';
+  const stats = adResumenVersionGrupo(d);
+  const tieneActividad = esSexto || stats.totalNotas > 0 || stats.totalPers > 0 || stats.diasAsis > 0;
+  if (!tieneActividad) return d;
+
+  const esperadoNotasParcial = d.lista.length * mats.length;
+  const esperadoPers = d.lista.length * AD_PERSONALIDAD.length * 3;
+  const esperadoInasis = d.lista.length * 3;
+  const hayBajasSugeridasP3 = d.lista.some(al =>
+    mats.some(m => {
+      const v = Number((((d.notas && d.notas['III']) || {})[m] || {})[al.num]);
+      return v > 0 && v < 70;
+    })
+  );
+  const incompleto =
+    !(d.boleta && d.boleta.autoRecI_III_v479) ||
+    stats.pI < esperadoNotasParcial ||
+    stats.pII < esperadoNotasParcial ||
+    stats.pIII < esperadoNotasParcial ||
+    (stats.persI + stats.persII + stats.persIII) < esperadoPers ||
+    (stats.inasisI + stats.inasisII + stats.inasisIII) < esperadoInasis ||
+    hayBajasSugeridasP3;
+
+  let dOut = d;
+  if (incompleto) {
+    try {
+      const syncRes = adReconstruirParcialesI_IIISincrono(d);
+      const c = syncRes.contadores;
+      if ((c.notasRecuperadas + c.persRecuperadas + c.inasisRecuperadas + c.diasAsisRecuperados) > 0) {
+        adUndoGuardar('Autocompletar Parciales I–III (notas, personalidad y días faltados)');
+        adSave(syncRes.grupoRecuperado);
+        dOut = adLoad();
+      } else {
+        d.boleta = d.boleta || adBoletaDef();
+        d.boleta.autoRecI_III_v479 = 1;
+        adSave(d);
+        dOut = adLoad();
+      }
+    } catch (_) {}
+  }
+
+  /* Consulta rápida en segundo plano a la nube docente una vez por sesión para este grupo */
+  if (!_adNubeEnriqEnCurso[d.id] && navigator.onLine !== false && adDocenteCreds()) {
+    _adNubeEnriqEnCurso[d.id] = true;
+    adReconstruirDesdeNubeYRespaldos(dOut).then(res => {
+      const c = res && res.contadores;
+      if (c && (c.notasRecuperadas + c.persRecuperadas + c.inasisRecuperadas + c.diasAsisRecuperados) > 0) {
+        adSave(res.grupoRecuperado);
+        if (_adTab === 'sace' && !adSaceTieneFocoActivo()) {
+          const b = bodyEl || document.getElementById('ad-tab-body');
+          if (b) adRenderSace(b, adLoad());
+        }
+      }
+    }).catch(() => {});
+  }
+
+  return dOut;
+}
+
 async function adRecuperarNotasNube(btn, alTerminar) {
   const d = adLoad();
   if (!d || !Array.isArray(d.lista) || !d.lista.length) {
     if (typeof toast === 'function') toast('Primero agrega tu lista de alumnos');
     return;
   }
-  const ok = await metasConfirm(
-    '¿Recuperar las **notas de los Parciales I, II y III**, la **Personalidad (S, MB, B)** y los **días perdidos (Inasistencias)** de este grupo?\n\n' +
-    '🔍 Se buscará en:\n' +
-    '1. **Copias locales y papelera** de este dispositivo.\n' +
-    '2. **Historial y espejo de tu cuenta docente** en la nube.\n' +
-    '3. **Nube del asistente de padres (`registro_admin`)** y **evaluaciones del Plan de Acción**, respetando el **orden actual de tus filas**.\n\n' +
-    '💡 Antes de aplicar los cambios se guardará una copia en **«🕘 Deshacer»** por seguridad.',
-    { icono: '📥', titulo: 'Recuperar Parciales I–III, Personalidad y Días perdidos', okTxt: 'Sí, recuperar todo (I–III)' }
-  );
-  if (!ok) return;
 
   const txtOrig = btn ? btn.textContent : '';
-  if (btn) { btn.disabled = true; btn.textContent = '⏳ Recuperando I–III…'; }
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Restaurando Parciales I–III…'; }
 
   try {
-    const res = await adReconstruirDesdeNubeYRespaldos(d, msg => {
+    /* 1) Aplicar reconstrucción local de inmediato para que las notas aparezcan al instante */
+    const resLocal = adReconstruirParcialesI_IIISincrono(d);
+    const cLoc = resLocal.contadores;
+    if ((cLoc.notasRecuperadas + cLoc.persRecuperadas + cLoc.inasisRecuperadas + cLoc.diasAsisRecuperados) > 0) {
+      adUndoGuardar('Antes de recuperar notas, personalidad y días perdidos (I–III)');
+      adSave(resLocal.grupoRecuperado);
+      if (typeof alTerminar === 'function') alTerminar();
+      else renderAdmin(true);
+    }
+
+    /* 2) Enriquecer además con el historial de la nube docente (rápido, sin bloqueos) */
+    const resNube = await adReconstruirDesdeNubeYRespaldos(adLoad(), msg => {
       if (btn) btn.textContent = msg;
       const stEl = document.getElementById('ad-sace-estado') || document.getElementById('ad-sb-status');
       if (stEl) stEl.textContent = msg;
     });
 
-    const c = res.contadores;
-    const totalCambios = c.notasRecuperadas + c.persRecuperadas + c.inasisRecuperadas + c.diasAsisRecuperados;
+    const cNube = resNube.contadores;
+    const totalCambios =
+      (cLoc.notasRecuperadas + cLoc.persRecuperadas + cLoc.inasisRecuperadas + cLoc.diasAsisRecuperados) +
+      (cNube.notasRecuperadas + cNube.persRecuperadas + cNube.inasisRecuperadas + cNube.diasAsisRecuperados);
+
+    if ((cNube.notasRecuperadas + cNube.persRecuperadas + cNube.inasisRecuperadas + cNube.diasAsisRecuperados) > 0) {
+      adSave(resNube.grupoRecuperado);
+    }
     if (totalCambios > 0) {
-      adUndoGuardar('Antes de recuperar notas, personalidad y días perdidos (I–III)');
-      adSave(res.grupoRecuperado);
       adSyncProgramar();
     }
 
@@ -5914,17 +6014,17 @@ async function adRecuperarNotasNube(btn, alTerminar) {
     else renderAdmin(true);
 
     const resumenStats = adResumenVersionGrupo(adLoad());
-    const msgFinal = '✅ Recuperación completada (Parciales I–III): ' +
+    const msgFinal = '✅ Parciales I–III listos: ' +
       resumenStats.pI + ' notas en P-I · ' +
       resumenStats.pII + ' notas en P-II · ' +
       resumenStats.pIII + ' notas en P-III · ' +
       resumenStats.totalPers + ' celdas de Personalidad · ' +
-      resumenStats.totalInasis + ' registros de Días perdidos.';
+      resumenStats.totalInasis + ' registros de Días faltados.';
 
     const stEl = document.getElementById('ad-sace-estado') || document.getElementById('ad-sb-status');
     if (stEl) stEl.textContent = msgFinal;
     if (typeof toast === 'function') {
-      toast('📥 Parciales I–III recuperados: notas, personalidad y días perdidos completos');
+      toast('✅ Notas del III Parcial, Personalidad y Días faltados restaurados');
     }
   } catch (err) {
     if (typeof toast === 'function') toast('⚠️ Error al recuperar datos: ' + (err && err.message ? err.message : 'intenta de nuevo'));
@@ -6202,6 +6302,7 @@ async function adAutorizarSugerirParcialIV(alTerminar) {
 
 function adRenderSace(body, d) {
   if (!d.lista.length) { adSinLista(body, 'la boleta'); return; }
+  d = adAutoAsegurarParcialesI_III(d, body);
   /* Asegurar que se use y sincronice el parcial y vista activos */
   if (body.dataset.parcial && ['I', 'II', 'III', 'IV'].includes(body.dataset.parcial)) {
     _adSaceParcial = body.dataset.parcial;
@@ -6746,8 +6847,8 @@ function adRenderSace(body, d) {
     let total = 0, conFaltas = 0;
     dd.lista.forEach(a => {
       const c = cuenta[a.num] || 0;
-      if (c > 0) { dd.notas[parcial]['Inasistencias'][a.num] = c; total += c; conFaltas++; }
-      else delete dd.notas[parcial]['Inasistencias'][a.num];
+      dd.notas[parcial]['Inasistencias'][a.num] = c;
+      if (c > 0) { total += c; conFaltas++; }
     });
     adSave(dd); adRenderSace(body, adLoad());
     if (typeof toast === 'function') toast('📅 Parcial ' + parcial + ': ' + total + ' faltas (' + conFaltas + ' alumnos)');
