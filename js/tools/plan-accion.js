@@ -2569,6 +2569,8 @@ async function paRecuperarHistorialNube(btn) {
       } else {
         if (!ex.parcial && aCand.parcial) ex.parcial = aCand.parcial;
         if (!ex.fechaPrueba && aCand.fechaPrueba) ex.fechaPrueba = aCand.fechaPrueba;
+        if (!ex.materia && aCand.materia) { ex.materia = aCand.materia; completados++; }
+        if (!ex.misionId && aCand.misionId) ex.misionId = aCand.misionId;
         const numsEx = new Set((ex.students || []).map(s => Number(s.num)));
         let sumo = false;
         (aCand.students || []).forEach(s => {
@@ -2812,8 +2814,24 @@ async function paRecuperarHistorialNube(btn) {
       }
       const evTxt = String(f0.evaluacion || '').trim();
       const misionTxt = String(f0.mision || '').trim();
+      const normMisionTit = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/\s*·\s*prueba operativa.*$/i, '')
+        .replace(/\s*[—\-–]\s*forma\s+[a-z0-9]+$/i, '')
+        .replace(/\s+/g, ' ').trim();
+      const nMis = normMisionTit(misionTxt);
+      const nEv  = normMisionTit(evTxt);
       const mObj = (typeof MISSIONS !== 'undefined' && Array.isArray(MISSIONS))
-        ? (MISSIONS.find(m => m.title === misionTxt) || MISSIONS.find(m => evTxt.indexOf(m.title) === 0))
+        ? (MISSIONS.find(m => m.title === misionTxt) ||
+           MISSIONS.find(m => evTxt.indexOf(m.title) === 0) ||
+           MISSIONS.find(m => {
+             const nt = normMisionTit(m.title);
+             if (!nt) return false;
+             if (nMis && nt === nMis) return true;
+             if (nEv && (nt === nEv || nEv.indexOf(nt) === 0)) return true;
+             if (nEv.length >= 8 && nt.indexOf(nEv) === 0) return true;
+             return false;
+           }))
         : null;
 
       const grado = String((rows.find(x => x.grado) || f0).grado || '').trim();

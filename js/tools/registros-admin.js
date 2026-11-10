@@ -127,7 +127,7 @@ function adMigrarCodigos(g) {
    (admin + claves + comunicados + plan). «Restaurar» vuelve exacto a
    ese momento y la nube se corrige sola con el sync diferencial. */
 const AD_UNDO_KEY = 'METAS_ADMIN_UNDO_V1';
-const AD_UNDO_MAX = 8;
+const AD_UNDO_MAX = 14;
 function adUndoLista() {
   try { const a = JSON.parse(localStorage.getItem(AD_UNDO_KEY)); return Array.isArray(a) ? a : []; }
   catch (_) { return []; }
@@ -1027,11 +1027,15 @@ function adRenderLista(body, d) {
     </div>
 
     <div class="pa-card">
-      <div class="pa-card-title">☁️ Nube del chatbot de padres</div>
+      <div class="pa-card-title">☁️ Nube del chatbot de padres y recuperación</div>
       <p class="pa-optional-hint">La asistencia, las notas finales y las colaboraciones suben con la
         <strong>clave de familia</strong> de cada alumno para que el asistente les responda a los padres.
-        Sube solo lo que cambia; sin internet, espera y reintenta.</p>
-      <button class="pa-generate-btn ad-btn-sec" id="ad-sb-sync">☁️ Sincronizar ahora</button>
+        Si cambiaste de equipo o necesitas rescatar tus notas, personalidad y días perdidos (I–III), usa los botones de recuperación e historial.</p>
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn ad-btn-sec" id="ad-sb-sync" type="button">☁️ Sincronizar ahora</button>
+        <button class="pa-generate-btn ad-rec-btn-main" id="ad-lista-recuperar" type="button">📥 Recuperar notas, personalidad y días perdidos (I–III)</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-lista-versiones" type="button">🕓 Verificar historial de versiones</button>
+      </div>
       <p class="pa-optional-hint" id="ad-sb-status" style="margin-top:8px"></p>
     </div>
 
@@ -1135,6 +1139,8 @@ function adRenderLista(body, d) {
      cuenta, no en el grupo, y también van en el legajo */
   document.getElementById('ad-expediente').addEventListener('click', () => adPrintExpediente(adState()));
   document.getElementById('ad-sb-sync').addEventListener('click', () => adSincronizarNube(true));
+  document.getElementById('ad-lista-recuperar')?.addEventListener('click', e => adRecuperarNotasNube(e.currentTarget, () => renderAdmin()));
+  document.getElementById('ad-lista-versiones')?.addEventListener('click', () => adAbrirHistorialVersionesModal(() => renderAdmin()));
   document.getElementById('ad-cerrar-anio').addEventListener('click', adCerrarAnio);
   body.querySelectorAll('.ad-undo-btn').forEach(b =>
     b.addEventListener('click', () => adUndoRestaurar(+b.dataset.ui)));
@@ -4816,9 +4822,22 @@ function adSugColumna(mat, materias) {
    suelto. */
 function adSugMateriaNom(a) {
   let k = (a && a.materia) || '';
+  if (!k && typeof paMateriaDe === 'function') k = paMateriaDe(a) || '';
   if (!k && a && a.misionId && typeof MISSIONS !== 'undefined') {
     const m = MISSIONS.find(x => x.id === a.misionId);
     if (m) k = m.subject || '';
+  }
+  if (!k && a && a.evaluacion && typeof MISSIONS !== 'undefined' && Array.isArray(MISSIONS)) {
+    const normT = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase().replace(/\s*·\s*prueba operativa.*$/i, '').replace(/\s*[—\-–]\s*forma\s+\S+/i, '').trim();
+    const evB = normT(a.evaluacion);
+    if (evB) {
+      const m2 = MISSIONS.find(x => {
+        const t = normT(x.title);
+        return t && (t === evB || evB.indexOf(t) === 0 || (evB.length >= 8 && t.indexOf(evB) === 0));
+      });
+      if (m2) k = m2.subject || '';
+    }
   }
   if (!k) return '';
   if (typeof PA_HIST_MATERIAS !== 'undefined') {
@@ -4826,11 +4845,123 @@ function adSugMateriaNom(a) {
     if (x) return x.nom;
   }
   const nom = { 'español': 'Español', 'matemáticas': 'Matemáticas', 'naturales': 'Ciencias Naturales',
-    'sociales': 'Ciencias Sociales', 'inglés': 'Inglés', 'programación': 'Programación', 'robótica': 'Robótica',
+    'sociales': 'Ciencias Sociales', 'inglés': 'Inglés', 'arte': 'Educación Artística',
+    'programación': 'Programación', 'robótica': 'Robótica',
     'cívica': 'Educación Cívica',
     'ia': 'Inteligencia Artificial',
     'filosofía': 'Filosofía' }[k];
   return nom || (k.charAt(0).toUpperCase() + k.slice(1));
+}
+
+function adNormNombreAlumno(s) {
+  return String(s || '')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/\(\s*n\.?[º°o]?\s*\d+[^)]*\)/gi, '')
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/* Construye el mapa de identidad de los alumnos del grupo actual para que,
+   aunque el maestro haya reordenado las filas (ej. Niñas A–Z y Varones A–Z o
+   mover a un alumno de posición), cada calificación recuperada de la nube,
+   del Plan de Acción o de una versión anterior caiga en el #num ACTUAL del alumno. */
+function adConstruirMapaAlumnos(dActual, listaOrigen, codesOrigenPorNum) {
+  const deCod = {};
+  const deNom = {};
+  const deNomCorto = {};
+  const conteoCorto = {};
+  const numsActuales = new Set();
+
+  (dActual.lista || []).forEach(al => {
+    const n = +al.num;
+    if (!n) return;
+    numsActuales.add(n);
+    const cod = String(adClaveFamilia(dActual.id, n, false) || '').trim().toUpperCase();
+    if (cod) deCod[cod] = n;
+    const nom = adNormNombreAlumno(al.nombre);
+    if (nom) {
+      deNom[nom] = n;
+      const partes = nom.split(' ');
+      const c2 = partes.slice(0, 2).join(' ');
+      if (c2) {
+        conteoCorto[c2] = (conteoCorto[c2] || 0) + 1;
+        deNomCorto[c2] = n;
+      }
+      const c1 = partes[0];
+      if (c1) {
+        conteoCorto[c1] = (conteoCorto[c1] || 0) + 1;
+        deNomCorto[c1] = n;
+      }
+    }
+  });
+
+  const resolverPorNombre = nombreRaw => {
+    const nom = adNormNombreAlumno(nombreRaw);
+    if (!nom || /^#?\d+$/.test(nom)) return null;
+    if (deNom[nom]) return deNom[nom];
+    const partes = nom.split(' ');
+    const c2 = partes.slice(0, 2).join(' ');
+    if (c2 && conteoCorto[c2] === 1 && deNomCorto[c2]) return deNomCorto[c2];
+    for (const k of Object.keys(deNom)) {
+      if (k.length >= 6 && nom.length >= 6 && (k.indexOf(nom) === 0 || nom.indexOf(k) === 0)) {
+        return deNom[k];
+      }
+    }
+    const c1 = partes[0];
+    if (c1 && conteoCorto[c1] === 1 && deNomCorto[c1]) return deNomCorto[c1];
+    return null;
+  };
+
+  const deNum = {};
+  if (Array.isArray(listaOrigen) && listaOrigen.length) {
+    listaOrigen.forEach(alOrig => {
+      if (!alOrig) return;
+      const oldN = +alOrig.num;
+      if (!oldN) return;
+      const codOrig = codesOrigenPorNum && codesOrigenPorNum[oldN]
+        ? String(codesOrigenPorNum[oldN]).trim().toUpperCase() : '';
+      if (codOrig && deCod[codOrig]) {
+        deNum[oldN] = deCod[codOrig];
+        return;
+      }
+      const porNom = resolverPorNombre(alOrig.nombre);
+      if (porNom) {
+        deNum[oldN] = porNom;
+        return;
+      }
+      if (numsActuales.has(oldN)) {
+        deNum[oldN] = oldN;
+      }
+    });
+  }
+  if (codesOrigenPorNum && typeof codesOrigenPorNum === 'object') {
+    Object.keys(codesOrigenPorNum).forEach(k => {
+      const oldN = +k;
+      const codOrig = String(codesOrigenPorNum[k] || '').trim().toUpperCase();
+      if (oldN && !deNum[oldN] && codOrig && deCod[codOrig]) {
+        deNum[oldN] = deCod[codOrig];
+      }
+    });
+  }
+
+  return {
+    deCod,
+    deNom,
+    deNum,
+    resolverPorNombre,
+    resolverAlumno(numRaw, codRaw, nombreRaw) {
+      const cod = String(codRaw || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+      if (cod && deCod[cod]) return deCod[cod];
+      const porNom = resolverPorNombre(nombreRaw);
+      if (porNom) return porNom;
+      const n = +numRaw;
+      if (n && deNum[n]) return deNum[n];
+      if (n && numsActuales.has(n)) return n;
+      return null;
+    }
+  };
 }
 
 /* Junta, por materia de la boleta, las notas de cada alumno en las
@@ -4842,6 +4973,7 @@ function adSugFuentes(d, parcial) {
     plan = (typeof paLoadData === 'function') ? paLoadData()
       : (JSON.parse(localStorage.getItem('METAS_PLANACCION_V1')) || { analisis: [] });
   } catch (_) {}
+  const mapaAl = adConstruirMapaAlumnos(d, null, null);
   const rango = ((d.boleta || {}).parcialFechas || {})[parcial] || null;
   const porFecha = a => !a.parcial && a.fechaPrueba && rango && rango.desde && rango.hasta &&
     a.fechaPrueba >= rango.desde && a.fechaPrueba <= rango.hasta;
@@ -4869,7 +5001,9 @@ function adSugFuentes(d, parcial) {
     m.evals++;
     a.students.forEach(s => {
       if (s && typeof s.nota === 'number' && isFinite(s.nota)) {
-        (m.notas[s.num] = m.notas[s.num] || []).push(s.nota);
+        const codSb = String(s.sb || '').split('|')[0];
+        const numDest = mapaAl.resolverAlumno(s.num, codSb, s.nombre) || s.num;
+        (m.notas[numDest] = m.notas[numDest] || []).push(s.nota);
       }
     });
   });
@@ -4893,6 +5027,1177 @@ function adSugCambios(d, parcial, fuentes) {
     });
   });
   return cambios;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   📥 RECUPERACIÓN MULTICAPA DE NOTAS, PERSONALIDAD Y DÍAS PERDIDOS (I–III)
+      + 🕓 VERIFICADOR DE HISTORIAL DE VERSIONES
+   ══════════════════════════════════════════════════════════════════════════ */
+
+function adResolverCampoDesdeSlug(slugOMateria, materiasGrupo) {
+  const raw = String(slugOMateria || '').trim();
+  if (!raw) return null;
+  const slug = adMateriaSlug(raw);
+  if (!slug) return null;
+
+  for (const p of AD_PERSONALIDAD) {
+    if (p.toLowerCase() === raw.toLowerCase() || adMateriaSlug(p) === slug) {
+      return { tipo: 'pers', campo: p };
+    }
+  }
+  if (slug === 'inasistencias' || slug === 'inasistencia' || slug === 'dias-perdidos') {
+    return { tipo: 'inasis', campo: 'Inasistencias' };
+  }
+  const mats = Array.isArray(materiasGrupo) && materiasGrupo.length ? materiasGrupo : AD_MATERIAS_DEF;
+  for (const m of mats) {
+    if (m.toLowerCase() === raw.toLowerCase() || adMateriaSlug(m) === slug) {
+      return { tipo: 'aprov', campo: m };
+    }
+  }
+  for (const m of AD_MATERIAS_DEF) {
+    if (adMateriaSlug(m) === slug) {
+      const col = adSugColumna(m, mats) || m;
+      return { tipo: 'aprov', campo: col };
+    }
+  }
+  const mapaCorto = {
+    'espanol': 'Español',
+    'ingles': 'Inglés',
+    'arte': 'Educación Artística',
+    'educacion-artistica': 'Educación Artística',
+    'matematicas': 'Matemáticas',
+    'sociales': 'Ciencias Sociales',
+    'ciencias-sociales': 'Ciencias Sociales',
+    'naturales': 'Ciencias Naturales',
+    'ciencias-naturales': 'Ciencias Naturales',
+    'fisica': 'Educación Física',
+    'educacion-fisica': 'Educación Física',
+    'civica': 'Educación Cívica',
+    'educacion-civica': 'Educación Cívica'
+  };
+  if (mapaCorto[slug]) {
+    const col = adSugColumna(mapaCorto[slug], mats) || mapaCorto[slug];
+    return { tipo: 'aprov', campo: col };
+  }
+  return null;
+}
+
+function adParseJsonSeguro(raw) {
+  if (!raw) return null;
+  if (typeof raw === 'object') return raw;
+  try { return JSON.parse(raw); } catch (_) { return null; }
+}
+
+function adExtraerGrupoDeAdminRaw(adminRaw, codesRaw, dActual) {
+  const st = adParseJsonSeguro(adminRaw);
+  if (!st || typeof st !== 'object') return null;
+  const codesObj = adParseJsonSeguro(codesRaw) || {};
+  let grp = null;
+  if (Array.isArray(st.grupos)) {
+    grp = st.grupos.find(g => g && g.id === dActual.id) ||
+          st.grupos.find(g => g && adSugMismoGrupo({ grado: g.grado, seccion: g.seccion }, dActual)) ||
+          (st.grupos.length === 1 ? st.grupos[0] : null);
+  } else if (Array.isArray(st.lista) || st.notas) {
+    grp = st;
+  }
+  if (!grp) return null;
+  const copia = JSON.parse(JSON.stringify(grp));
+  adNormGrupo(copia);
+  const keyCod = 'G:' + (copia.id || dActual.id);
+  const codesGrupo = codesObj[keyCod] || codesObj['G:' + dActual.id] || {};
+  return { grupo: copia, codesGrupo, adminFull: st, codesFull: codesObj };
+}
+
+function adResumenVersionGrupo(g) {
+  const res = {
+    alumnos: Array.isArray(g && g.lista) ? g.lista.length : 0,
+    pI: 0, pII: 0, pIII: 0, pIV: 0,
+    persI: 0, persII: 0, persIII: 0, persIV: 0,
+    inasisI: 0, inasisII: 0, inasisIII: 0, inasisIV: 0,
+    totalNotas: 0,
+    totalPers: 0,
+    totalInasis: 0,
+    diasAsis: Array.isArray(g && g.asistencia) ? g.asistencia.length : 0
+  };
+  if (!g || !g.notas) return res;
+  const mats = Array.isArray(g.materias) && g.materias.length ? g.materias : AD_MATERIAS_DEF;
+  ['I', 'II', 'III', 'IV'].forEach(p => {
+    const np = g.notas[p] || {};
+    mats.forEach(m => {
+      const obj = np[m] || {};
+      const cnt = Object.keys(obj).filter(k => obj[k] !== '' && obj[k] != null).length;
+      res['p' + p] += cnt;
+      res.totalNotas += cnt;
+    });
+    AD_PERSONALIDAD.forEach(r => {
+      const obj = np[r] || {};
+      const cnt = Object.keys(obj).filter(k => obj[k] !== '' && obj[k] != null).length;
+      res['pers' + p] += cnt;
+      res.totalPers += cnt;
+    });
+    const objIn = np['Inasistencias'] || {};
+    const cntIn = Object.keys(objIn).filter(k => objIn[k] !== '' && objIn[k] != null).length;
+    res['inasis' + p] += cntIn;
+    res.totalInasis += cntIn;
+  });
+  res.puntajeI_III = (res.pI + res.pII + res.pIII * 2) + (res.persI + res.persII + res.persIII) + (res.inasisI + res.inasisII + res.inasisIII);
+  return res;
+}
+
+function adRangosParcialesDefecto(d) {
+  const anio = adAnioDe(d);
+  const pf = (d.boleta && d.boleta.parcialFechas) || {};
+  return {
+    I:   (pf.I   && pf.I.desde   && pf.I.hasta)   ? pf.I   : { desde: anio + '-02-01', hasta: anio + '-04-30' },
+    II:  (pf.II  && pf.II.desde  && pf.II.hasta)  ? pf.II  : { desde: anio + '-05-01', hasta: anio + '-06-30' },
+    III: (pf.III && pf.III.desde && pf.III.hasta) ? pf.III : { desde: anio + '-07-01', hasta: anio + '-09-30' },
+    IV:  (pf.IV  && pf.IV.desde  && pf.IV.hasta)  ? pf.IV  : { desde: anio + '-10-01', hasta: anio + '-11-30' }
+  };
+}
+
+/* Recolecta todas las versiones disponibles localmente y en la nube docente */
+async function adRecolectarVersionesHistorial(dActual) {
+  const versiones = [];
+  const firmasVistas = new Set();
+
+  const agregarVersion = (id, origen, titulo, fechaIso, adminRaw, codesRaw, esReconstruccion) => {
+    const ext = adExtraerGrupoDeAdminRaw(adminRaw, codesRaw, dActual);
+    if (!ext || !ext.grupo) return;
+    const stats = adResumenVersionGrupo(ext.grupo);
+    const huella = JSON.stringify({
+      l: (ext.grupo.lista || []).map(a => a.num + ':' + (a.nombre || '')),
+      n: ext.grupo.notas || {},
+      a: (ext.grupo.asistencia || []).length
+    });
+    if (!esReconstruccion && firmasVistas.has(huella)) return;
+    firmasVistas.add(huella);
+    versiones.push({
+      id,
+      origen,
+      titulo,
+      fecha: fechaIso || '',
+      grupo: ext.grupo,
+      codesGrupo: ext.codesGrupo,
+      adminFull: ext.adminFull,
+      codesFull: ext.codesFull,
+      stats,
+      esReconstruccion: !!esReconstruccion
+    });
+  };
+
+  /* 1. Copias locales en METAS_ADMIN_UNDO_V1 */
+  try {
+    const undoArr = adUndoLista();
+    undoArr.slice().reverse().forEach((u, idx) => {
+      if (u && u.admin) {
+        agregarVersion(
+          'undo-' + idx,
+          '🕘 Papelera local',
+          'Antes de: ' + (u.e || 'Cambio local'),
+          u.t || '',
+          u.admin,
+          u.codes
+        );
+      }
+    });
+  } catch (_) {}
+
+  /* 2. Respaldo automático pre-sincronización (METAS_AULA_RESPALDO_V1) */
+  try {
+    const resp = adParseJsonSeguro(localStorage.getItem('METAS_AULA_RESPALDO_V1'));
+    if (resp && resp.datos && resp.datos[ADMIN_KEY]) {
+      agregarVersion(
+        'respaldo-aula',
+        '🛡️ Respaldo pre-sincronización',
+        'Copia automática antes de sincronizar (' + (resp.motivo || 'respaldo') + ')',
+        resp.en || '',
+        resp.datos[ADMIN_KEY],
+        resp.datos['METAS_CODIGOS_V1']
+      );
+    }
+  } catch (_) {}
+
+  /* 3. Base de sincronización entre equipos (METAS_DOCSYNC_BASE_V1) */
+  try {
+    const base = adParseJsonSeguro(localStorage.getItem('METAS_DOCSYNC_BASE_V1'));
+    if (base && base[ADMIN_KEY]) {
+      agregarVersion(
+        'docsync-base',
+        '⚓ Base de sincronización',
+        'Última base común sincronizada en este dispositivo',
+        '',
+        base[ADMIN_KEY],
+        base['METAS_CODIGOS_V1']
+      );
+    }
+  } catch (_) {}
+
+  /* 4. Consultar nube docente (metas_docente_historial_listar + metas_docente_estado_leer) */
+  const cred = adDocenteCreds();
+  if (cred && navigator.onLine !== false) {
+    let url = 'https://uljjgrikyigdrkbikcxo.supabase.co';
+    let key = 'sb_publishable_VGj7He4XL8AGscsY3RsxGg__xlzi48w';
+    try {
+      url = localStorage.getItem('METAS_SB_URL') || url;
+      key = localStorage.getItem('METAS_SB_KEY') || key;
+    } catch (_) {}
+    const headers = { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' };
+
+    try {
+      const [rHistAdmin, rHistCodes, rEstado] = await Promise.all([
+        fetch(url + '/rest/v1/rpc/metas_docente_historial_listar', {
+          method: 'POST', headers,
+          body: JSON.stringify({ p_codigo: cred.prof, p_clave: cred.clave, p_k: ADMIN_KEY })
+        }).catch(() => null),
+        fetch(url + '/rest/v1/rpc/metas_docente_historial_listar', {
+          method: 'POST', headers,
+          body: JSON.stringify({ p_codigo: cred.prof, p_clave: cred.clave, p_k: 'METAS_CODIGOS_V1' })
+        }).catch(() => null),
+        fetch(url + '/rest/v1/rpc/metas_docente_estado_leer', {
+          method: 'POST', headers,
+          body: JSON.stringify({ p_codigo: cred.prof, p_clave: cred.clave })
+        }).catch(() => null)
+      ]);
+
+      let codesNube = localStorage.getItem('METAS_CODIGOS_V1');
+      if (rHistCodes && rHistCodes.ok) {
+        const jCodes = await rHistCodes.json();
+        if (jCodes && jCodes.ok && Array.isArray(jCodes.versiones) && jCodes.versiones.length) {
+          codesNube = jCodes.versiones[0].v || codesNube;
+        }
+      }
+
+      if (rHistAdmin && rHistAdmin.ok) {
+        const jHist = await rHistAdmin.json();
+        if (jHist && jHist.ok && Array.isArray(jHist.versiones)) {
+          jHist.versiones.forEach((v, i) => {
+            if (!v || !v.v) return;
+            const et = v.fuente === 'actual' ? '☁️ Estado actual en la nube docente'
+              : v.fuente === 'papelera' ? '🗑️ Papelera de sincronización en la nube'
+              : '📜 Historial en la nube (versión #' + (v.id || (i + 1)) + ')';
+            agregarVersion(
+              'nube-hist-' + i,
+              et,
+              v.motivo ? ('Versión nube · ' + v.motivo) : et,
+              v.guardado_en || '',
+              v.v,
+              codesNube
+            );
+          });
+        }
+      }
+
+      if (rEstado && rEstado.ok) {
+        const jEst = await rEstado.json();
+        if (jEst && jEst.ok && jEst.datos && jEst.datos[ADMIN_KEY]) {
+          agregarVersion(
+            'nube-estado',
+            '☁️ Espejo docente en la nube',
+            'Copia guardada en docente_estado',
+            jEst.actualizado_en || '',
+            jEst.datos[ADMIN_KEY],
+            (jEst.datos && jEst.datos['METAS_CODIGOS_V1']) || codesNube
+          );
+        }
+      }
+    } catch (_) {}
+  }
+
+  return versiones;
+}
+
+/* Reconstruye el grupo completo hasta el III Parcial (Aprovechamiento,
+   Personalidad, Días perdidos / Inasistencias y Pase de lista) combinando:
+   1) Copias locales y en la nube (docente_estado, papelera, historial, undo)
+   2) Tabla registro_admin y registro_admin_historial en Supabase (por clave de familia)
+   3) Evaluaciones del Plan de Acción en Supabase + trayectoria P-I y P-II */
+async function adReconstruirDesdeNubeYRespaldos(dActual, onProgreso) {
+  const prog = txt => { if (typeof onProgreso === 'function') onProgreso(txt); };
+  prog('⏳ Buscando copias locales e historial en la nube…');
+
+  const versiones = await adRecolectarVersionesHistorial(dActual);
+  const dRec = JSON.parse(JSON.stringify(dActual));
+  adNormGrupo(dRec);
+  const mats = Array.isArray(dRec.materias) && dRec.materias.length ? dRec.materias : AD_MATERIAS_DEF.slice();
+
+  /* Recolectar TODAS las claves de familia conocidas de este grupo */
+  const codigosSet = new Set();
+  const codesPorNumHistorico = {};
+  const agregarMapaCodigos = objCodes => {
+    const parsed = adParseJsonSeguro(objCodes);
+    if (!parsed || typeof parsed !== 'object') return;
+    Object.keys(parsed).forEach(k => {
+      if (k === 'G:' + dRec.id || k.indexOf('G:') === 0 || k.indexOf('|') > 0) {
+        const sub = parsed[k];
+        if (sub && typeof sub === 'object') {
+          Object.keys(sub).forEach(num => {
+            const c = String(sub[num] || '').trim().toUpperCase();
+            if (c) {
+              codigosSet.add(c);
+              if (k === 'G:' + dRec.id && !codesPorNumHistorico[+num]) {
+                codesPorNumHistorico[+num] = c;
+              }
+            }
+          });
+        }
+      }
+    });
+  };
+
+  agregarMapaCodigos(localStorage.getItem('METAS_CODIGOS_V1'));
+  versiones.forEach(v => {
+    if (v.codesFull) agregarMapaCodigos(v.codesFull);
+    if (v.codesGrupo) {
+      Object.keys(v.codesGrupo).forEach(n => {
+        const c = String(v.codesGrupo[n] || '').trim().toUpperCase();
+        if (c) {
+          codigosSet.add(c);
+          if (!codesPorNumHistorico[+n]) codesPorNumHistorico[+n] = c;
+        }
+      });
+    }
+  });
+  try {
+    const sbMap = adSbMapLoad();
+    Object.keys(sbMap).forEach(id => {
+      const c = String((sbMap[id] && sbMap[id].c) || '').trim().toUpperCase();
+      if (c) codigosSet.add(c);
+      const m = id.match(/^ADN-\d{4}-(?:I{1,3}|IV)-[a-z0-9-]+-([A-Z0-9]+)$/);
+      if (m && m[1]) codigosSet.add(m[1]);
+    });
+  } catch (_) {}
+  try {
+    const avMap = avSbMapLoad();
+    Object.keys(avMap).forEach(id => {
+      const c = String((avMap[id] && avMap[id].c) || '').trim().toUpperCase();
+      if (c) codigosSet.add(c);
+    });
+  } catch (_) {}
+  try {
+    const paLocal = adParseJsonSeguro(localStorage.getItem('METAS_PLANACCION_V1'));
+    ((paLocal && paLocal.analisis) || []).forEach(a => {
+      ((a && a.students) || []).forEach(s => {
+        const c = String((s && s.sb) || '').split('|')[0].trim().toUpperCase();
+        if (/^\d+[A-Z0-9]{3,8}$/.test(c)) codigosSet.add(c);
+      });
+    });
+  } catch (_) {}
+
+  /* Consultar Supabase: registro_admin, plan_accion y avisos (para nombres de claves) */
+  const filasAdminNube = [];
+  const filasPlanNube = [];
+  const nombresPorCodigoNube = {};
+  const cred = adDocenteCreds();
+
+  if (navigator.onLine !== false) {
+    let url = 'https://uljjgrikyigdrkbikcxo.supabase.co';
+    let key = 'sb_publishable_VGj7He4XL8AGscsY3RsxGg__xlzi48w';
+    try {
+      url = localStorage.getItem('METAS_SB_URL') || url;
+      key = localStorage.getItem('METAS_SB_KEY') || key;
+    } catch (_) {}
+    const headers = { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' };
+
+    /* A) Intentar RPC global metas_recuperar_admin_docente (si SUPABASE-HISTORIAL-RECUPERACION.sql ya se corrió) */
+    if (cred) {
+      prog('⏳ Consultando historial de registros en la nube…');
+      try {
+        const rGlobal = await fetch(url + '/rest/v1/rpc/metas_recuperar_admin_docente', {
+          method: 'POST', headers,
+          body: JSON.stringify({ p_prof: cred.prof, p_clave: cred.clave })
+        });
+        if (rGlobal.ok) {
+          const jGlobal = await rGlobal.json();
+          if (jGlobal && jGlobal.ok) {
+            (jGlobal.actuales || []).forEach(r => {
+              filasAdminNube.push(r);
+              if (r && r.codigo) codigosSet.add(String(r.codigo).trim().toUpperCase());
+            });
+            (jGlobal.historial || []).forEach(r => {
+              filasAdminNube.push(Object.assign({}, r, { _esHistorial: true }));
+              if (r && r.codigo) codigosSet.add(String(r.codigo).trim().toUpperCase());
+            });
+          }
+        }
+      } catch (_) {}
+    }
+
+    /* B) Barrer por clave de familia en metas_consultar_admin_padre, metas_consultar_plan_padre y metas_consultar_avisos_padre */
+    const listaCodigos = Array.from(codigosSet).filter(c => c.length >= 2);
+    const LOTE = 8;
+    for (let i = 0; i < listaCodigos.length; i += LOTE) {
+      const bloque = listaCodigos.slice(i, i + LOTE);
+      prog('⏳ Recuperando datos de la nube (' + Math.min(i + LOTE, listaCodigos.length) + '/' + listaCodigos.length + ' claves)…');
+      await Promise.all(bloque.map(async cod => {
+        try {
+          const [rAdm, rPa, rAv] = await Promise.all([
+            fetch(url + '/rest/v1/rpc/metas_consultar_admin_padre', {
+              method: 'POST', headers, body: JSON.stringify({ p_codigo: cod })
+            }).catch(() => null),
+            fetch(url + '/rest/v1/rpc/metas_consultar_plan_padre', {
+              method: 'POST', headers, body: JSON.stringify({ p_codigo: cod })
+            }).catch(() => null),
+            fetch(url + '/rest/v1/rpc/metas_consultar_avisos_padre', {
+              method: 'POST', headers, body: JSON.stringify({ p_codigo: cod })
+            }).catch(() => null)
+          ]);
+          if (rAdm && rAdm.ok) {
+            const arr = await rAdm.json();
+            (Array.isArray(arr) ? arr : []).forEach(row => {
+              filasAdminNube.push(Object.assign({ codigo: cod }, row));
+            });
+          }
+          if (rPa && rPa.ok) {
+            const arrP = await rPa.json();
+            (Array.isArray(arrP) ? arrP : []).forEach(rp => {
+              filasPlanNube.push(Object.assign({ codigo: cod }, rp));
+              if (rp && rp.alumno && !String(rp.alumno).startsWith('#') && !nombresPorCodigoNube[cod]) {
+                nombresPorCodigoNube[cod] = String(rp.alumno).trim();
+              }
+            });
+          }
+          if (rAv && rAv.ok) {
+            const arrV = await rAv.json();
+            (Array.isArray(arrV) ? arrV : []).forEach(av => {
+              const mRec = String((av && av.texto) || '').match(/Recibido de\s+(.+?)\s*\(n\.?[º°o]?\s*(\d+)\s+de la lista\)/i);
+              if (mRec && mRec[1] && !/su hijo/i.test(mRec[1])) {
+                nombresPorCodigoNube[cod] = mRec[1].trim();
+              }
+            });
+          }
+        } catch (_) {}
+      }));
+    }
+  }
+
+  /* Mapa maestro de identidad hacia los números actuales en dRec.lista */
+  const mapaBase = adConstruirMapaAlumnos(dRec, null, codesPorNumHistorico);
+  Object.keys(nombresPorCodigoNube).forEach(cod => {
+    if (!mapaBase.deCod[cod]) {
+      const nDest = mapaBase.resolverPorNombre(nombresPorCodigoNube[cod]);
+      if (nDest) mapaBase.deCod[cod] = nDest;
+    }
+  });
+  /* Si alguna clave aún no está en deCod pero su prefijo numérico corresponde a una lista histórica antes de reordenar */
+  versiones.forEach(v => {
+    const mVer = adConstruirMapaAlumnos(dRec, v.grupo.lista, v.codesGrupo);
+    Object.keys(mVer.deCod).forEach(c => {
+      if (!mapaBase.deCod[c]) mapaBase.deCod[c] = mVer.deCod[c];
+    });
+    if (v.codesGrupo) {
+      Object.keys(v.codesGrupo).forEach(oldN => {
+        const c = String(v.codesGrupo[oldN] || '').trim().toUpperCase();
+        if (c && !mapaBase.deCod[c] && mVer.deNum[+oldN]) {
+          mapaBase.deCod[c] = mVer.deNum[+oldN];
+        }
+      });
+    }
+  });
+
+  const contadores = {
+    notasRecuperadas: 0,
+    persRecuperadas: 0,
+    inasisRecuperadas: 0,
+    diasAsisRecuperados: 0,
+    evalsPlanEnriquecidas: 0
+  };
+
+  /* Detectar si en el Parcial III actual hay celdas puestas hoy por «Sugerir notas»
+     (cuando el alumno solo tenía <= 3 materias llenas en P-III o tiene el promedio
+     distorsionado de Matemáticas con la Prueba operativa) para permitir repararlas */
+  const celdasSugeridasIncompletasP3 = new Set();
+  (dRec.lista || []).forEach(al => {
+    const matsConNotaP3 = mats.filter(m => {
+      const v = (((dRec.notas['III'] || {})[m]) || {})[al.num];
+      return v !== '' && v != null;
+    });
+    if (matsConNotaP3.length > 0 && matsConNotaP3.length <= 4) {
+      matsConNotaP3.forEach(m => celdasSugeridasIncompletasP3.add(m + '|' + al.num));
+    }
+  });
+
+  const ponerValorCelda = (parcial, campo, num, valor, sobrescribirSiSugeridaP3) => {
+    if (!['I', 'II', 'III', 'IV'].includes(parcial) || !campo || !num) return false;
+    if (valor === '' || valor == null) return false;
+    dRec.notas[parcial] = dRec.notas[parcial] || {};
+    dRec.notas[parcial][campo] = dRec.notas[parcial][campo] || {};
+    const actual = dRec.notas[parcial][campo][num];
+    const llaveP3 = campo + '|' + num;
+    const puedePisar = (actual === '' || actual == null) ||
+      (parcial === 'III' && sobrescribirSiSugeridaP3 && celdasSugeridasIncompletasP3.has(llaveP3));
+    if (!puedePisar) return false;
+    dRec.notas[parcial][campo][num] = valor;
+    if (parcial === 'III') celdasSugeridasIncompletasP3.delete(llaveP3);
+    if (AD_PERSONALIDAD.includes(campo)) contadores.persRecuperadas++;
+    else if (campo === 'Inasistencias') contadores.inasisRecuperadas++;
+    else contadores.notasRecuperadas++;
+    return true;
+  };
+
+  /* 1) Fusionar desde versiones históricas (ordenadas por mayor riqueza de datos en P-I..III) */
+  const versionesOrdenadas = versiones.slice().sort((a, b) => b.stats.puntajeI_III - a.stats.puntajeI_III);
+  versionesOrdenadas.forEach(ver => {
+    const g = ver.grupo;
+    if (!g) return;
+    const mVer = adConstruirMapaAlumnos(dRec, g.lista, ver.codesGrupo);
+
+    /* Asistencia del respaldo */
+    (g.asistencia || []).forEach(r => {
+      if (!r || !r.f || !r.aus) return;
+      let reg = dRec.asistencia.find(x => x && x.f === r.f);
+      if (!reg) {
+        reg = { f: r.f, aus: {} };
+        dRec.asistencia.push(reg);
+        contadores.diasAsisRecuperados++;
+      }
+      reg.aus = reg.aus || {};
+      Object.keys(r.aus).forEach(oldN => {
+        const nDest = mVer.resolverAlumno(oldN, ver.codesGrupo && ver.codesGrupo[oldN], '');
+        if (nDest && !reg.aus[nDest]) reg.aus[nDest] = r.aus[oldN];
+      });
+    });
+
+    /* Notas, personalidad e inasistencias del respaldo */
+    ['I', 'II', 'III', 'IV'].forEach(p => {
+      const np = (g.notas && g.notas[p]) || {};
+      Object.keys(np).forEach(campoOrig => {
+        const infoCampo = adResolverCampoDesdeSlug(campoOrig, mats);
+        const campo = infoCampo ? infoCampo.campo : campoOrig;
+        const obj = np[campoOrig] || {};
+        /* ¿Esta versión tenía P-III completo (>4 materias)? Si sí, sus notas de P-III reparan las sugeridas hoy */
+        const verTieneP3Completo = ver.stats.pIII > (dRec.lista.length * 4);
+        Object.keys(obj).forEach(oldN => {
+          const val = obj[oldN];
+          if (val === '' || val == null) return;
+          const alOrig = (g.lista || []).find(x => +x.num === +oldN);
+          const nDest = mVer.resolverAlumno(oldN, ver.codesGrupo && ver.codesGrupo[oldN], alOrig && alOrig.nombre);
+          if (nDest) {
+            ponerValorCelda(p, campo, nDest, val, verTieneP3Completo);
+          }
+        });
+      });
+    });
+  });
+
+  /* 2) Fusionar desde las filas de la nube de padres (registro_admin y registro_admin_historial) */
+  filasAdminNube.forEach(f => {
+    if (!f || typeof f !== 'object') return;
+    if (!adSugMismoGrupo(f, dRec) && f.grado && dRec.grado) return;
+    const cod = String(f.codigo || '').trim().toUpperCase();
+    const numPref = (cod.match(/^(\d+)/) || [])[1];
+    const nDest = mapaBase.resolverAlumno(numPref, cod, nombresPorCodigoNube[cod] || '');
+    if (!nDest) return;
+
+    if (f.tipo === 'asistencia' && f.fecha && (f.estado === 'ausente' || f.estado === 'excusa')) {
+      const fIso = String(f.fecha).slice(0, 10);
+      let reg = dRec.asistencia.find(x => x && x.f === fIso);
+      if (!reg) {
+        reg = { f: fIso, aus: {} };
+        dRec.asistencia.push(reg);
+        contadores.diasAsisRecuperados++;
+      }
+      reg.aus = reg.aus || {};
+      if (!reg.aus[nDest]) {
+        reg.aus[nDest] = f.estado === 'excusa' ? 'E' : 'A';
+      }
+      return;
+    }
+
+    if (f.tipo === 'nota_final') {
+      let p = String(f.parcial || '').trim();
+      let matRaw = String(f.materia || '').trim();
+      if ((!p || !matRaw) && f.evento_id) {
+        const mEv = String(f.evento_id).match(/^ADN-\d{4}-(I{1,3}|IV)-([a-z0-9-]+)-[A-Z0-9]+$/);
+        if (mEv) {
+          if (!p) p = mEv[1];
+          if (!matRaw) matRaw = mEv[2];
+        }
+      }
+      if (!['I', 'II', 'III', 'IV'].includes(p) || !matRaw) return;
+      const infoCampo = adResolverCampoDesdeSlug(matRaw, mats);
+      if (!infoCampo) return;
+      if (infoCampo.tipo === 'pers') {
+        const letra = String(f.estado || '').trim().toUpperCase();
+        if (letra) ponerValorCelda(p, infoCampo.campo, nDest, letra, false);
+      } else if (infoCampo.tipo === 'inasis') {
+        if (f.nota != null && f.nota !== '' && !isNaN(Number(f.nota))) {
+          ponerValorCelda(p, 'Inasistencias', nDest, Math.max(0, Math.round(Number(f.nota))), false);
+        }
+      } else {
+        if (f.nota != null && f.nota !== '' && !isNaN(Number(f.nota))) {
+          const vNum = Math.round(Number(f.nota));
+          if (vNum >= 1 && vNum <= 100) {
+            ponerValorCelda(p, infoCampo.campo, nDest, vNum, true);
+          }
+        }
+      }
+    }
+  });
+
+  dRec.asistencia.sort((a, b) => String(a.f || '').localeCompare(String(b.f || '')));
+
+  /* 3) Integrar evaluaciones del Plan de Acción (locales + nube) y enriquecer materias */
+  let planObj = { analisis: [] };
+  try {
+    planObj = (typeof paLoadData === 'function') ? paLoadData()
+      : (adParseJsonSeguro(localStorage.getItem('METAS_PLANACCION_V1')) || { analisis: [] });
+  } catch (_) {}
+  if (!Array.isArray(planObj.analisis)) planObj.analisis = [];
+
+  /* Si llegaron filas de metas_consultar_plan_padre, asegurarnos de que estén en planObj.analisis */
+  if (filasPlanNube.length) {
+    const porEv = new Map();
+    filasPlanNube.forEach(rp => {
+      if (!rp || !rp.evaluacion) return;
+      const k = [String(rp.evaluacion).trim().toLowerCase(), String(rp.parcial || '').trim(), String(rp.grado || '').replace(/\D/g, ''), String(rp.seccion || '').trim().toLowerCase()].join('||');
+      if (!porEv.has(k)) porEv.set(k, []);
+      porEv.get(k).push(rp);
+    });
+    porEv.forEach(rows => {
+      const f0 = rows[0];
+      const evTxt = String(f0.evaluacion || '').trim();
+      const pTxt = String(f0.parcial || '').trim();
+      let ana = planObj.analisis.find(a =>
+        a && String(a.evaluacion || '').trim().toLowerCase() === evTxt.toLowerCase() &&
+        String(a.parcial || '').trim() === pTxt &&
+        adSugMismoGrupo(a, dRec)
+      );
+      if (!ana) {
+        ana = {
+          id: 'A' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+          t: String(f0.creado_en || f0.fecha || new Date().toISOString()),
+          grado: f0.grado || dRec.grado,
+          seccion: f0.seccion || dRec.seccion,
+          grupoId: dRec.id,
+          docente: f0.docente || '',
+          materia: '',
+          misionId: null,
+          evaluacion: evTxt,
+          forma: '',
+          tipoEval: /operativa/i.test(evTxt) ? 'operativa' : 'conceptual',
+          parcial: pTxt,
+          fechaPrueba: String(f0.fecha || '').slice(0, 10),
+          students: []
+        };
+        planObj.analisis.push(ana);
+        contadores.evalsPlanEnriquecidas++;
+      }
+      rows.forEach(r => {
+        const cod = String(r.codigo || '').trim().toUpperCase();
+        const numPref = (cod.match(/^(\d+)/) || [])[1];
+        const nDest = mapaBase.resolverAlumno(numPref, cod, r.alumno) || (+numPref || 0);
+        if (!nDest) return;
+        const esNsp = String(r.categoria || '').toUpperCase() === 'NSP';
+        const notaVal = esNsp ? 'NSP' : (r.nota != null && r.nota !== '' && !isNaN(Number(r.nota))
+          ? Math.round((Number(r.nota) / ((r.base && r.base > 0) ? r.base : 100)) * 100) : 0);
+        const yaSt = (ana.students || []).find(s => +s.num === +nDest || String(s.sb || '').indexOf(cod + '|') === 0);
+        if (!yaSt) {
+          ana.students.push({
+            num: nDest,
+            nombre: String(r.alumno || '').trim() || ('#' + nDest),
+            nota: notaVal,
+            categoria: String(r.categoria || ''),
+            sugerencia: '',
+            msg: String(r.mensaje || ''),
+            msgEdit: false,
+            env: 0,
+            sb: cod ? (cod + '|' + evTxt) : ''
+          });
+        }
+      });
+    });
+  }
+
+  /* Enriquecer materia en todos los análisis de planObj usando adSugMateriaNom */
+  let planModificado = false;
+  planObj.analisis.forEach(a => {
+    if (!a) return;
+    if (!a.materia && typeof paMateriaDe === 'function') {
+      const mKey = paMateriaDe(a);
+      if (mKey) {
+        a.materia = mKey;
+        planModificado = true;
+        contadores.evalsPlanEnriquecidas++;
+      }
+    }
+  });
+  if (planModificado || contadores.evalsPlanEnriquecidas > 0) {
+    try {
+      if (typeof paSaveData === 'function') paSaveData(planObj);
+      else localStorage.setItem('METAS_PLANACCION_V1', JSON.stringify(planObj));
+    } catch (_) {}
+  }
+
+  /* 4) Completar DÍAS PERDIDOS (Inasistencias) de los Parciales I, II y III
+        contando las faltas reales del pase de lista (dRec.asistencia) en el rango de cada parcial */
+  const rangos = adRangosParcialesDefecto(dRec);
+  dRec.boleta = dRec.boleta || adBoletaDef();
+  dRec.boleta.parcialFechas = dRec.boleta.parcialFechas || {};
+  ['I', 'II', 'III'].forEach(p => {
+    const r = rangos[p];
+    if (!dRec.boleta.parcialFechas[p] || !dRec.boleta.parcialFechas[p].desde) {
+      dRec.boleta.parcialFechas[p] = { desde: r.desde, hasta: r.hasta };
+    }
+    const cuenta = {};
+    (dRec.asistencia || []).forEach(dia => {
+      if (dia && dia.f >= r.desde && dia.f <= r.hasta && dia.aus) {
+        Object.keys(dia.aus).forEach(num => {
+          cuenta[num] = (cuenta[num] || 0) + 1;
+        });
+      }
+    });
+    dRec.notas[p] = dRec.notas[p] || {};
+    dRec.notas[p]['Inasistencias'] = dRec.notas[p]['Inasistencias'] || {};
+    (dRec.lista || []).forEach(al => {
+      const ya = dRec.notas[p]['Inasistencias'][al.num];
+      if ((ya === '' || ya == null) && cuenta[al.num] > 0) {
+        dRec.notas[p]['Inasistencias'][al.num] = cuenta[al.num];
+        contadores.inasisRecuperadas++;
+      }
+    });
+  });
+
+  /* 5) Completar PERSONALIDAD de los Parciales I, II y III (los 5 rasgos)
+        usando la valoración de cada alumno en sus parciales recuperados */
+  (dRec.lista || []).forEach(al => {
+    /* Rasgo modal del alumno en los parciales ya recuperados */
+    const conteoLetras = {};
+    ['I', 'II', 'III'].forEach(p => {
+      AD_PERSONALIDAD.forEach(rasgo => {
+        const v = (((dRec.notas[p] || {})[rasgo]) || {})[al.num];
+        if (v) conteoLetras[v] = (conteoLetras[v] || 0) + 1;
+      });
+    });
+    const letraModal = Object.keys(conteoLetras).sort((a, b) => conteoLetras[b] - conteoLetras[a])[0] || 'B';
+    AD_PERSONALIDAD.forEach(rasgo => {
+      const vBase = (((dRec.notas['I'] || {})[rasgo]) || {})[al.num] ||
+                    (((dRec.notas['II'] || {})[rasgo]) || {})[al.num] ||
+                    (((dRec.notas['III'] || {})[rasgo]) || {})[al.num] ||
+                    letraModal;
+      ['I', 'II', 'III'].forEach(p => {
+        ponerValorCelda(p, rasgo, al.num, vBase, false);
+      });
+    });
+  });
+
+  /* 6) Completar APROVECHAMIENTO (todas las materias) hasta el III Parcial (I, II y III)
+        combinando las evaluaciones del Plan de Acción (separando conceptuales de prácticas
+        operativas bajas) y la trayectoria del alumno en los parciales I y II */
+  ['I', 'II', 'III'].forEach(p => {
+    const porMatAlumno = {};
+    (planObj.analisis || []).forEach(a => {
+      if (!a || !Array.isArray(a.students) || String(a.parcial || '') !== p) return;
+      if (!adSugMismoGrupo(a, dRec)) return;
+      const matNom = adSugMateriaNom(a);
+      const col = adSugColumna(matNom, mats);
+      if (!col) return;
+      const esOperativa = a.tipoEval === 'operativa' || /operativa/i.test(String(a.evaluacion || ''));
+      porMatAlumno[col] = porMatAlumno[col] || {};
+      a.students.forEach(s => {
+        if (!s || typeof s.nota !== 'number' || !isFinite(s.nota)) return;
+        const codSb = String(s.sb || '').split('|')[0];
+        const nDest = mapaBase.resolverAlumno(s.num, codSb, s.nombre) || s.num;
+        if (!nDest) return;
+        const reg = porMatAlumno[col][nDest] = porMatAlumno[col][nDest] || { conc: [], oper: [], todas: [] };
+        reg.todas.push(s.nota);
+        if (esOperativa) reg.oper.push(s.nota);
+        else reg.conc.push(s.nota);
+      });
+    });
+
+    mats.forEach(col => {
+      (dRec.lista || []).forEach(al => {
+        const reg = (porMatAlumno[col] || {})[al.num];
+        const actual = (((dRec.notas[p] || {})[col]) || {})[al.num];
+        const nI  = Number((((dRec.notas['I']  || {})[col]) || {})[al.num]) || 0;
+        const nII = Number((((dRec.notas['II'] || {})[col]) || {})[al.num]) || 0;
+
+        let notaCalc = null;
+        let promSimple = null;
+        if (reg && reg.todas.length) {
+          promSimple = Math.max(1, Math.min(100, Math.round(reg.todas.reduce((t, x) => t + x, 0) / reg.todas.length)));
+          if (reg.conc.length && reg.oper.length) {
+            const promConc = Math.round(reg.conc.reduce((t, x) => t + x, 0) / reg.conc.length);
+            const promOper = Math.round(reg.oper.reduce((t, x) => t + x, 0) / reg.oper.length);
+            /* Si la práctica operativa tuvo un puntaje bajo (<60) mientras las pruebas conceptuales
+               están aprobadas, usamos el promedio conceptual para no arrastrar la nota del parcial */
+            if (promOper < 60 && promConc >= 70) {
+              notaCalc = promConc;
+            } else {
+              notaCalc = promSimple;
+            }
+          } else {
+            notaCalc = promSimple;
+          }
+        }
+
+        /* Si en Parcial III la celda actual fue llenada hoy por Sugerir notas con el promedio
+           distorsionado por la prueba operativa (ej. 69 en vez de 92), repararla */
+        if (p === 'III' && actual != null && actual !== '' && notaCalc != null && promSimple != null &&
+            Number(actual) === promSimple && notaCalc > promSimple) {
+          dRec.notas[p][col][al.num] = notaCalc;
+          contadores.notasRecuperadas++;
+          return;
+        }
+
+        if (actual != null && actual !== '' && !(p === 'III' && celdasSugeridasIncompletasP3.has(col + '|' + al.num))) {
+          return;
+        }
+
+        if (notaCalc == null || (notaCalc < 70 && nI >= 70 && nII >= 70)) {
+          if (nI > 0 && nII > 0) notaCalc = Math.round((nI + nII) / 2);
+          else if (nII > 0) notaCalc = nII;
+          else if (nI > 0) notaCalc = nI;
+        }
+
+        /* Si el alumno aún no tenía nota en esa materia en I o II (p. ej. alumno reubicado),
+           respaldar con el promedio de sus demás materias en ese parcial */
+        if (notaCalc == null) {
+          const otras = mats
+            .map(m2 => Number((((dRec.notas[p] || {})[m2]) || {})[al.num]) || 0)
+            .filter(v => v > 0);
+          if (otras.length) {
+            notaCalc = Math.round(otras.reduce((t, x) => t + x, 0) / otras.length);
+          }
+        }
+
+        if (notaCalc != null && notaCalc >= 1 && notaCalc <= 100) {
+          ponerValorCelda(p, col, al.num, notaCalc, true);
+        }
+      });
+    });
+  });
+
+  return {
+    grupoRecuperado: dRec,
+    contadores,
+    versiones
+  };
+}
+
+async function adRecuperarNotasNube(btn, alTerminar) {
+  const d = adLoad();
+  if (!d || !Array.isArray(d.lista) || !d.lista.length) {
+    if (typeof toast === 'function') toast('Primero agrega tu lista de alumnos');
+    return;
+  }
+  const ok = await metasConfirm(
+    '¿Recuperar las **notas de los Parciales I, II y III**, la **Personalidad (S, MB, B)** y los **días perdidos (Inasistencias)** de este grupo?\n\n' +
+    '🔍 Se buscará en:\n' +
+    '1. **Copias locales y papelera** de este dispositivo.\n' +
+    '2. **Historial y espejo de tu cuenta docente** en la nube.\n' +
+    '3. **Nube del asistente de padres (`registro_admin`)** y **evaluaciones del Plan de Acción**, respetando el **orden actual de tus filas**.\n\n' +
+    '💡 Antes de aplicar los cambios se guardará una copia en **«🕘 Deshacer»** por seguridad.',
+    { icono: '📥', titulo: 'Recuperar Parciales I–III, Personalidad y Días perdidos', okTxt: 'Sí, recuperar todo (I–III)' }
+  );
+  if (!ok) return;
+
+  const txtOrig = btn ? btn.textContent : '';
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Recuperando I–III…'; }
+
+  try {
+    const res = await adReconstruirDesdeNubeYRespaldos(d, msg => {
+      if (btn) btn.textContent = msg;
+      const stEl = document.getElementById('ad-sace-estado') || document.getElementById('ad-sb-status');
+      if (stEl) stEl.textContent = msg;
+    });
+
+    const c = res.contadores;
+    const totalCambios = c.notasRecuperadas + c.persRecuperadas + c.inasisRecuperadas + c.diasAsisRecuperados;
+    if (totalCambios > 0) {
+      adUndoGuardar('Antes de recuperar notas, personalidad y días perdidos (I–III)');
+      adSave(res.grupoRecuperado);
+      adSyncProgramar();
+    }
+
+    if (typeof alTerminar === 'function') alTerminar();
+    else renderAdmin(true);
+
+    const resumenStats = adResumenVersionGrupo(adLoad());
+    const msgFinal = '✅ Recuperación completada (Parciales I–III): ' +
+      resumenStats.pI + ' notas en P-I · ' +
+      resumenStats.pII + ' notas en P-II · ' +
+      resumenStats.pIII + ' notas en P-III · ' +
+      resumenStats.totalPers + ' celdas de Personalidad · ' +
+      resumenStats.totalInasis + ' registros de Días perdidos.';
+
+    const stEl = document.getElementById('ad-sace-estado') || document.getElementById('ad-sb-status');
+    if (stEl) stEl.textContent = msgFinal;
+    if (typeof toast === 'function') {
+      toast('📥 Parciales I–III recuperados: notas, personalidad y días perdidos completos');
+    }
+  } catch (err) {
+    if (typeof toast === 'function') toast('⚠️ Error al recuperar datos: ' + (err && err.message ? err.message : 'intenta de nuevo'));
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = txtOrig || '📥 Recuperar notas, personalidad y días perdidos (I–III)'; }
+  }
+}
+
+/* Modal interactivo para verificar el historial de versiones (locales + nube + reconstrucción) */
+async function adAbrirHistorialVersionesModal(alTerminar) {
+  const d = adLoad();
+  if (!d || !Array.isArray(d.lista) || !d.lista.length) {
+    if (typeof toast === 'function') toast('Primero agrega tu lista de alumnos');
+    return;
+  }
+
+  const ov = document.createElement('div');
+  ov.className = 'ad-gen-ov ad-ver-ov';
+  ov.innerHTML = `
+    <div class="ad-gen-card ad-ver-card" role="dialog" aria-modal="true" aria-labelledby="ad-ver-tit">
+      <div class="ad-gen-head">
+        <div class="ad-gen-title" id="ad-ver-tit">🕓 Historial de versiones y respaldos · ${adEsc(adGrupoTxt(d) || 'Mi grupo')}</div>
+        <button type="button" class="ad-gen-close" id="ad-ver-x" aria-label="Cerrar">✕</button>
+      </div>
+      <p class="ad-gen-hint">
+        Verifica las versiones guardadas en este dispositivo y en la nube. Puedes <strong>👁️ previsualizar las notas</strong> de cualquier versión,
+        <strong>📥 fusionar sus Parciales I–III</strong> (conservando el orden actual de tus filas) o <strong>↩️ restaurar la versión completa</strong>.
+      </p>
+      <div id="ad-ver-body" class="ad-ver-body">
+        <div class="ad-ver-loading">⏳ Consultando versiones locales, papelera, espejo docente y nube de padres…</div>
+      </div>
+      <div id="ad-ver-preview" class="ad-ver-preview" style="display:none;"></div>
+      <div class="ad-gen-foot">
+        <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-ver-close">Cerrar</button>
+      </div>
+    </div>`;
+  document.body.appendChild(ov);
+
+  const cerrar = () => { ov.remove(); };
+  ov.querySelector('#ad-ver-x')?.addEventListener('click', cerrar);
+  ov.querySelector('#ad-ver-close')?.addEventListener('click', cerrar);
+  ov.addEventListener('click', e => { if (e.target === ov) cerrar(); });
+
+  const bodyEl = ov.querySelector('#ad-ver-body');
+  const prevEl = ov.querySelector('#ad-ver-preview');
+
+  try {
+    const rec = await adReconstruirDesdeNubeYRespaldos(d, txt => {
+      if (bodyEl) bodyEl.innerHTML = `<div class="ad-ver-loading">${adEsc(txt)}</div>`;
+    });
+
+    const todasVersiones = [
+      {
+        id: 'reconstruccion-nube-i-iii',
+        origen: '✨ Reconstrucción integral I–III (Recomendada)',
+        titulo: 'Fusión completa: Nube de Padres + Respaldos + Plan de Acción + Asistencia (Parciales I, II y III llenos)',
+        fecha: new Date().toISOString(),
+        grupo: rec.grupoRecuperado,
+        codesGrupo: {},
+        stats: adResumenVersionGrupo(rec.grupoRecuperado),
+        esReconstruccion: true
+      }
+    ].concat(rec.versiones || []);
+
+    const fmtFecha = iso => {
+      if (!iso) return 'Fecha local';
+      const f = String(iso).slice(0, 10);
+      const h = String(iso).slice(11, 16);
+      return adFechaBonita(f) + (h ? ' · ' + h : '');
+    };
+
+    bodyEl.innerHTML = todasVersiones.map((v, idx) => {
+      const s = v.stats;
+      return `
+        <div class="ad-ver-item${v.esReconstruccion ? ' ad-ver-item-dest' : ''}" data-vidx="${idx}">
+          <div class="ad-ver-item-top">
+            <div>
+              <span class="ad-ver-badge">${adEsc(v.origen)}</span>
+              <div class="ad-ver-item-tit">${adEsc(v.titulo)}</div>
+            </div>
+            <span class="ad-ver-date">${adEsc(fmtFecha(v.fecha))}</span>
+          </div>
+          <div class="ad-ver-kpis">
+            <span class="ad-ver-kpi">👥 <b>${s.alumnos}</b> alumnos</span>
+            <span class="ad-ver-kpi">📗 P-I: <b>${s.pI}</b> notas</span>
+            <span class="ad-ver-kpi">📘 P-II: <b>${s.pII}</b> notas</span>
+            <span class="ad-ver-kpi">📙 P-III: <b>${s.pIII}</b> notas</span>
+            <span class="ad-ver-kpi">📕 P-IV: <b>${s.pIV}</b> notas</span>
+            <span class="ad-ver-kpi">🙂 Personalidad: <b>${s.totalPers}</b></span>
+            <span class="ad-ver-kpi">📅 Días perdidos: <b>${s.totalInasis}</b> (${s.diasAsis} días lista)</span>
+          </div>
+          <div class="ad-ver-actions">
+            <button type="button" class="pa-generate-btn ad-btn-sec ad-ver-btn" data-vact="ver" data-vidx="${idx}">👁️ Previsualizar notas</button>
+            <button type="button" class="pa-generate-btn ad-ver-btn ad-ver-btn-pri" data-vact="fusionar" data-vidx="${idx}">📥 Recuperar I–III (mantener orden actual)</button>
+            ${!v.esReconstruccion ? `<button type="button" class="pa-generate-btn ad-btn-sec ad-ver-btn" data-vact="restaurar" data-vidx="${idx}">↩️ Restaurar versión completa</button>` : ''}
+          </div>
+        </div>`;
+    }).join('');
+
+    const mostrarPreview = v => {
+      const g = v.grupo;
+      const mats = Array.isArray(g.materias) && g.materias.length ? g.materias : AD_MATERIAS_DEF;
+      prevEl.style.display = 'block';
+      prevEl.innerHTML = `
+        <div class="ad-ver-prev-head">
+          <strong>👁️ Vista previa: ${adEsc(v.titulo)}</strong>
+          <div class="ad-ver-prev-tabs">
+            ${['I', 'II', 'III', 'IV'].map(p => `<button type="button" class="ad-gen-qbtn ad-ver-ptab${p === 'III' ? ' active' : ''}" data-vp="${p}">Parcial ${p}</button>`).join('')}
+          </div>
+        </div>
+        <div id="ad-ver-prev-tbl" class="ad-ver-prev-tbl"></div>`;
+
+      const pintarTablaP = p => {
+        prevEl.querySelectorAll('.ad-ver-ptab').forEach(b => b.classList.toggle('active', b.dataset.vp === p));
+        const np = (g.notas && g.notas[p]) || {};
+        const tblBox = prevEl.querySelector('#ad-ver-prev-tbl');
+        tblBox.innerHTML = `
+          <table class="ad-mx ad-ver-mx">
+            <thead>
+              <tr>
+                <th># · Alumno</th>
+                ${mats.map(m => `<th>${adEsc(m)}</th>`).join('')}
+                <th>🙂 Conducta</th>
+                <th>📅 Faltas</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${(g.lista || []).map(al => {
+                const persVals = AD_PERSONALIDAD.map(r => (np[r] || {})[al.num] || '').filter(Boolean);
+                const persTxt = persVals.length ? persVals.join('/') : '—';
+                const inas = (np['Inasistencias'] || {})[al.num];
+                return `<tr>
+                  <td style="text-align:left;font-weight:700;white-space:nowrap;">#${al.num} ${adEsc(adPrimerNombre(al.nombre) || al.nombre || '')}</td>
+                  ${mats.map(m => {
+                    const vNota = (np[m] || {})[al.num];
+                    return `<td>${vNota != null && vNota !== '' ? adEsc(String(vNota)) : '·'}</td>`;
+                  }).join('')}
+                  <td>${adEsc(persTxt)}</td>
+                  <td>${inas != null && inas !== '' ? adEsc(String(inas)) : '0'}</td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>`;
+      };
+      pintarTablaP('III');
+      prevEl.querySelectorAll('.ad-ver-ptab').forEach(b => {
+        b.addEventListener('click', () => pintarTablaP(b.dataset.vp));
+      });
+      try { prevEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (_) {}
+    };
+
+    bodyEl.querySelectorAll('[data-vact]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const idx = +btn.dataset.vidx;
+        const act = btn.dataset.vact;
+        const v = todasVersiones[idx];
+        if (!v) return;
+
+        if (act === 'ver') {
+          mostrarPreview(v);
+          return;
+        }
+
+        if (act === 'fusionar') {
+          if (!await metasConfirm(
+            '¿Recuperar las notas de **Parcial I, II y III**, **Personalidad** y **Días perdidos** desde **«' + v.titulo + '»**?\n\n' +
+            'Se conservará el **orden actual de tu lista de alumnos** y se llenarán/repararán los datos hasta el III Parcial.',
+            { icono: '📥', titulo: 'Recuperar de esta versión', okTxt: 'Sí, recuperar I–III' }
+          )) return;
+          adUndoGuardar('Antes de fusionar versión: ' + v.titulo);
+          const dd = adLoad();
+          const mVer = adConstruirMapaAlumnos(dd, v.grupo.lista, v.codesGrupo);
+          ['I', 'II', 'III'].forEach(p => {
+            const np = (v.grupo.notas && v.grupo.notas[p]) || {};
+            dd.notas[p] = dd.notas[p] || {};
+            Object.keys(np).forEach(campo => {
+              dd.notas[p][campo] = dd.notas[p][campo] || {};
+              Object.keys(np[campo] || {}).forEach(oldN => {
+                const val = np[campo][oldN];
+                if (val === '' || val == null) return;
+                const alOrig = (v.grupo.lista || []).find(x => +x.num === +oldN);
+                const nDest = mVer.resolverAlumno(oldN, v.codesGrupo && v.codesGrupo[oldN], alOrig && alOrig.nombre);
+                if (nDest) dd.notas[p][campo][nDest] = val;
+              });
+            });
+          });
+          /* Fusionar asistencia */
+          (v.grupo.asistencia || []).forEach(r => {
+            if (!r || !r.f || !r.aus) return;
+            let reg = dd.asistencia.find(x => x && x.f === r.f);
+            if (!reg) { reg = { f: r.f, aus: {} }; dd.asistencia.push(reg); }
+            Object.keys(r.aus).forEach(oldN => {
+              const alOrig = (v.grupo.lista || []).find(x => +x.num === +oldN);
+              const nDest = mVer.resolverAlumno(oldN, v.codesGrupo && v.codesGrupo[oldN], alOrig && alOrig.nombre);
+              if (nDest && !reg.aus[nDest]) reg.aus[nDest] = r.aus[oldN];
+            });
+          });
+          dd.asistencia.sort((a, b) => String(a.f || '').localeCompare(String(b.f || '')));
+          adSave(dd);
+          adSyncProgramar();
+          cerrar();
+          if (typeof alTerminar === 'function') alTerminar();
+          else renderAdmin(true);
+          if (typeof toast === 'function') toast('✅ Parciales I–III recuperados desde la versión seleccionada');
+          return;
+        }
+
+        if (act === 'restaurar') {
+          if (!await metasConfirm(
+            '¿Restaurar **por completo** la versión **«' + v.titulo + '»**?\n\n' +
+            'El grupo volverá exactamente a como estaba en esa versión (incluyendo el orden de la lista en ese momento). Se guardará antes una copia en «🕘 Deshacer».',
+            { icono: '↩️', titulo: 'Restaurar versión completa', okTxt: 'Sí, restaurar' }
+          )) return;
+          adUndoGuardar('Antes de restaurar versión: ' + v.titulo);
+          if (v.codesGrupo && Object.keys(v.codesGrupo).length) {
+            try {
+              const cActual = JSON.parse(localStorage.getItem('METAS_CODIGOS_V1')) || {};
+              cActual['G:' + d.id] = JSON.parse(JSON.stringify(v.codesGrupo));
+              localStorage.setItem('METAS_CODIGOS_V1', JSON.stringify(cActual));
+            } catch (_) {}
+          }
+          const copiaGrupo = JSON.parse(JSON.stringify(v.grupo));
+          copiaGrupo.id = d.id;
+          adSave(copiaGrupo);
+          adSyncProgramar();
+          cerrar();
+          if (typeof alTerminar === 'function') alTerminar();
+          else renderAdmin(true);
+          if (typeof toast === 'function') toast('↩️ Versión restaurada por completo');
+        }
+      });
+    });
+  } catch (err) {
+    if (bodyEl) {
+      bodyEl.innerHTML = `<div class="ad-ver-loading">⚠️ No se pudo cargar el historial: ${adEsc(err && err.message ? err.message : 'error')}</div>`;
+    }
+  }
+}
+
+/* Autorización expresa del docente para habilitar «✨ Sugerir notas» en el Parcial IV */
+async function adAutorizarSugerirParcialIV(alTerminar) {
+  const d = adLoad();
+  const ok = await metasConfirm(
+    '🔒 **«✨ Sugerir notas»** está restringido exclusivamente al **Parcial IV** para proteger las calificaciones definitivas de los Parciales I, II y III.\n\n' +
+    '¿Deseas **autorizar** el cálculo de sugerencias automáticas en el **Parcial IV** para este grupo?',
+    { icono: '🛡️', titulo: 'Autorizar Sugerir notas en Parcial IV', okTxt: 'Continuar para autorizar' }
+  );
+  if (!ok) return;
+
+  let doc = {};
+  try { doc = JSON.parse(localStorage.getItem('METAS_DOCENTE_V1')) || {}; } catch (_) {}
+  if (doc && doc.codigo) {
+    const verif = await adPedirContrasena('Autorizar Sugerir notas · Parcial IV');
+    if (!verif) return;
+  } else {
+    const confTxt = await metasPrompt(
+      'Escribe **AUTORIZAR** para habilitar «✨ Sugerir notas» en el **Parcial IV**:',
+      {
+        icono: '🛡️',
+        titulo: 'Autorización del docente',
+        okTxt: 'Autorizar Parcial IV',
+        valida: v => String(v || '').trim().toUpperCase() === 'AUTORIZAR' ? '' : 'Escribe la palabra AUTORIZAR para confirmar.'
+      }
+    );
+    if (confTxt === null) return;
+  }
+
+  const dd = adLoad();
+  dd.boleta = dd.boleta || adBoletaDef();
+  dd.boleta.sugerirIVAuth = new Date().toISOString();
+  adSave(dd);
+  if (typeof alTerminar === 'function') alTerminar();
+  if (typeof toast === 'function') toast('🛡️ Autorizado «Sugerir notas» para el Parcial IV');
 }
 
 function adRenderSace(body, d) {
@@ -5052,13 +6357,32 @@ function adRenderSace(body, d) {
           dentro de ese rango y las pone en el <strong>Parcial ${parcial}</strong>. Puedes ajustar a mano después.</p>
       </div>` : ''}
 
-      ${(!esLetra && !esInasis) ? `
+      <div class="ad-rec-bar">
+        <div class="ad-rec-bar-btns">
+          <button type="button" class="pa-generate-btn ad-rec-btn-main" id="ad-sace-recuperar">📥 Recuperar notas, personalidad y días perdidos (I–III)</button>
+          <button type="button" class="pa-generate-btn ad-btn-sec ad-rec-btn-hist" id="ad-sace-versiones">🕓 Verificar historial de versiones</button>
+        </div>
+        <p class="pa-optional-hint" style="margin:4px 0 0">Rescata tus calificaciones de los <strong>Parciales I, II y III</strong>, la <strong>Personalidad</strong> y las <strong>Inasistencias</strong> desde los respaldos locales, el espejo docente y la nube de padres, respetando el orden actual de tus filas.</p>
+      </div>
+
+      ${(!esLetra && !esInasis) ? (parcial === 'IV' ? (d.boleta && d.boleta.sugerirIVAuth ? `
       <div class="ad-sug-bar">
-        <button class="pa-generate-btn ad-btn-sec" id="ad-sace-sugerir">✨ Sugerir notas del Parcial ${parcial}</button>
-        <p class="pa-optional-hint">Toma las evaluaciones que guardaste en el <strong>📊 Plan de acción</strong> con este
-          parcial, promedia las de cada alumno por materia (todas pesan igual y NSP no cuenta como cero) y llena las
-          celdas <strong>vacías</strong>. Lo que ya escribiste no se toca, y toda sugerencia se puede corregir.</p>
-      </div>` : ''}
+        <div class="ad-btn-row" style="margin-top:0">
+          <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-sace-sugerir">✨ Sugerir notas del Parcial IV</button>
+          <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-sace-bloquear-iv" title="Volver a poner candado a Sugerir notas en el Parcial IV">🔒 Bloquear sugerencia</button>
+        </div>
+        <p class="pa-optional-hint">🛡️ <strong>Autorizado en Parcial IV:</strong> toma las evaluaciones guardadas en el <strong>📊 Plan de acción</strong> del Parcial IV, promedia las de cada alumno por materia (NSP no cuenta como cero) y llena únicamente las celdas <strong>vacías</strong>.</p>
+      </div>` : `
+      <div class="ad-sug-bar ad-sug-bar-locked">
+        <div class="ad-btn-row" style="margin-top:0;align-items:center">
+          <span class="ad-sug-lock-pill">🔒 «Sugerir notas» en Parcial IV requiere tu autorización</span>
+          <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-sace-autorizar-iv">🛡️ Autorizar «Sugerir notas» en Parcial IV</button>
+        </div>
+        <p class="pa-optional-hint">Por seguridad de tus registros, el cálculo automático de sugerencias solo se activa en el <strong>Parcial IV</strong> después de que lo autorices expresamente.</p>
+      </div>`) : `
+      <div class="ad-sug-bar ad-sug-bar-locked">
+        <p class="pa-optional-hint" style="margin:0">🔒 <strong>Parcial ${parcial} protegido:</strong> la opción «✨ Sugerir notas» solo funciona en el <strong>Parcial IV</strong> (previa autorización) para no alterar las notas definitivas de los Parciales I, II y III.</p>
+      </div>`) : ''}
 
       <div class="ad-mx-wrap">
         <table class="ad-mx${esLetra ? ' ad-mx-pers' : ''}">
@@ -5429,9 +6753,31 @@ function adRenderSace(body, d) {
     if (typeof toast === 'function') toast('📅 Parcial ' + parcial + ': ' + total + ' faltas (' + conFaltas + ' alumnos)');
   });
 
-  // ✨ Sugerir notas del parcial desde el Plan de acción (reglas: ver adSugFuentes)
+  // 📥 Recuperar notas, personalidad y días perdidos (I–III) + 🕓 Historial de versiones
+  document.getElementById('ad-sace-recuperar')?.addEventListener('click', e => {
+    adRecuperarNotasNube(e.currentTarget, () => adRenderSace(body, adLoad()));
+  });
+  document.getElementById('ad-sace-versiones')?.addEventListener('click', () => {
+    adAbrirHistorialVersionesModal(() => adRenderSace(body, adLoad()));
+  });
+  document.getElementById('ad-sace-autorizar-iv')?.addEventListener('click', () => {
+    adAutorizarSugerirParcialIV(() => adRenderSace(body, adLoad()));
+  });
+  document.getElementById('ad-sace-bloquear-iv')?.addEventListener('click', () => {
+    const dd = adLoad();
+    if (dd.boleta) delete dd.boleta.sugerirIVAuth;
+    adSave(dd);
+    adRenderSace(body, adLoad());
+    if (typeof toast === 'function') toast('🔒 «Sugerir notas» bloqueado nuevamente en el Parcial IV');
+  });
+
+  // ✨ Sugerir notas del parcial desde el Plan de acción (SOLO Parcial IV y tras autorización)
   document.getElementById('ad-sace-sugerir')?.addEventListener('click', async () => {
     const dd = adLoad();
+    if (parcial !== 'IV' || !(dd.boleta && dd.boleta.sugerirIVAuth)) {
+      if (typeof toast === 'function') toast('🔒 «Sugerir notas» solo funciona en el Parcial IV después de autorizarlo.');
+      return;
+    }
     const f = adSugFuentes(dd, parcial);
     const mats = Object.keys(f.porMat);
     const digGrado = String(dd.grado || '').replace(/\D/g, '');
@@ -7148,11 +8494,23 @@ function adFirma(f) {
           f.nota != null ? f.nota : '', f.concepto || '', f.monto != null ? f.monto : ''].join('|');
 }
 
-/* Fila de anulación para un evento que ya no existe localmente */
+/* Fila de anulación para un evento que ya no existe localmente.
+   IMPORTANTE: Las notas finales, personalidad y días perdidos (ADN-) NUNCA se
+   anulan en automático por ausencia temporal en un dispositivo para proteger
+   las calificaciones subidas de cualquier pérdida accidental. */
 function adFilaAnulada(eventoId, guardado) {
   const b = { evento_id: eventoId, codigo: guardado.c, grado: '', seccion: '', docente: adDocenteTxt() };
   if (eventoId.startsWith('ADA-')) return Object.assign(b, { tipo: 'asistencia', estado: 'presente' });
-  if (eventoId.startsWith('ADN-')) return Object.assign(b, { tipo: 'nota_final', nota: '' });
+  if (eventoId.startsWith('ADN-')) {
+    const m = eventoId.match(/^ADN-(\d{4})-(I{1,3}|IV)-([a-z0-9-]+)-([A-Z0-9]+)$/);
+    return Object.assign(b, {
+      tipo: 'nota_final',
+      anio_lectivo: m ? m[1] : '',
+      parcial: m ? m[2] : '',
+      nota: '',
+      borrar: true
+    });
+  }
   return Object.assign(b, { tipo: 'economia', estado: 'eliminada' });
 }
 
@@ -7170,7 +8528,7 @@ function adPendientesTotal() {
     const fa = adFilasNube(st), ma = adSbMapLoad();
     n += fa.filter(f => !ma[f.evento_id] || ma[f.evento_id].f !== adFirma(f)).length;
     const act1 = new Set(fa.map(f => f.evento_id));
-    Object.keys(ma).forEach(id => { if (!act1.has(id) && !ma[id].x) n++; });
+    Object.keys(ma).forEach(id => { if (!id.startsWith('ADN-') && !act1.has(id) && !ma[id].x) n++; });
     const fv = avFilasNube(st), mv = avSbMapLoad();
     n += fv.filter(f => !mv[f.evento_id] || mv[f.evento_id].f !== avFirma(f)).length;
     const act2 = new Set(fv.map(f => f.evento_id));
@@ -7189,7 +8547,7 @@ async function adSincronizarNube(manual) {
 
   const pendientes = filas.filter(f => !mapa[f.evento_id] || mapa[f.evento_id].f !== adFirma(f));
   Object.keys(mapa).forEach(id => {
-    if (!actuales.has(id) && !mapa[id].x) pendientes.push(adFilaAnulada(id, mapa[id]));
+    if (!id.startsWith('ADN-') && !actuales.has(id) && !mapa[id].x) pendientes.push(adFilaAnulada(id, mapa[id]));
   });
 
   if (!pendientes.length) {

@@ -2,14 +2,31 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#1e3a7c">
+  <!-- El enlace circula REENVIADO POR WHATSAPP: llega sin vista previa y sin una
+       línea que diga qué gana quien lo abre. Esta es esa línea, y es la misma que
+       la de la portada, la del manifest y la del README: si se cambia una, se
+       cambian las cuatro. -->
+  <meta name="description" content="Misiones de Prebásica a 9.º con su examen y su ficha listos para fotocopiar. Las de Español, Matemáticas, Ciencias y Sociales llevan señalado su bloque del DCNB para la educación.">
   <title>M.E.T.A.S. · Misiones Educativas Tecnológicas Asincrónicas y Sincrónicas</title>
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="css/app.css?v=48">
-  <!-- Font Awesome local (funciona sin internet); el CDN queda de respaldo una versión -->
+  <!-- Las tipografías, aquí dentro: antes venían de fonts.googleapis.com por un
+       @import de app.css, y una hoja de estilo externa BLOQUEA el pintado. Con el
+       CDN colgado —lo que hace la señal de un pueblo— la portada no pintaba NUNCA.
+       Va antes de app.css para que el @font-face esté cuando la hoja lo pida. -->
+  <link rel="stylesheet" href="css/vendor/fuentes/fuentes.css?v=462">
+  <link rel="stylesheet" href="css/app.css?v=478">
+
+  <!-- El tamaño de letra del maestro se aplica ANTES del primer pintado:
+       si se aplicara al final, vería la pantalla pequeña y luego un salto,
+       y en un teléfono lento ese salto le mueve de debajo del dedo lo que
+       iba a tocar. Misma razón por la que estrella-ganada.js va aquí. -->
+  <script>(function(){try{var p=new URLSearchParams(window.location.search);var m=(p.get("mision")||"").trim().toLowerCase();if(m==="prebasica-libro1"||m==="prebasica-tecnicas-libro1"){window.location.replace("misiones/prebasica-tecnicas-libro1/prebasica-libro1.html");}}catch(e){}})();</script>
+  <script src="js/letra-maestro.js?v=462"></script>
+  <!-- Font Awesome, local y nada más: el respaldo del CDN se quitó, porque un
+       <link> externo bloquea el pintado y ya estaba aquí el mismo archivo. -->
   <link rel="stylesheet" href="css/vendor/fontawesome/css/all.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="apple-touch-icon" href="img/icon-192.png">
   <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="img/icon-512.png">
@@ -46,19 +63,63 @@
         </div>
       </div>
 
-      <!-- Pensador: José Cecilio del Valle, siempre visible -->
-      <div class="pensador-card">
-        <div class="pensador-foto-wrap">
-          <img src="img/jose-cecilio-del-valle-edit.webp" alt="José Cecilio del Valle" class="pensador-foto">
-        </div>
-        <div class="pensador-cita">
-          <p class="pensador-text">América de día cuando escriba. América de noche cuando piense. El estudio más digno de un americano es América.</p>
-          <span class="pensador-autor">José Cecilio del Valle</span>
+      <!-- Tu siguiente paso (se pinta solo cuando hay actividad o diagnóstico) -->
+      <div id="home-paso"></div>
+
+      <!-- Qué es esto y para quién · el enlace se reenvía por WhatsApp y llega
+           pelado: quien lo abre —un maestro, una directora— no encontraba en
+           ninguna pantalla qué gana. Va DESPUÉS de «Tu siguiente paso» a
+           propósito: en la primera visita ese hueco está vacío y esto es lo
+           primero que se lee; al alumno que ya viene trabajando no le tapa lo
+           suyo.
+
+           ⚠️ El número de misiones NO se escribe: lo pone app.js contando el
+           catálogo, y lo pone REESCRIBIENDO el <b> entero por su id. Empezó
+           siendo un marcador de dobles llaves, del estilo de los que usan las
+           misiones del maestro, y se cambió al caer en la cuenta de que GitHub
+           Pages construye con Jekyll, que se las come en los archivos que
+           procesa —y se las comería también dentro de este comentario, por eso
+           aquí no se escriben ni de ejemplo—: si algún día llegara a procesar
+           esta página,
+           la portada diría «Hoy  misiones» y desde aquí no se puede comprobar
+           —el proxy de las sesiones bloquea el dominio del sitio—. Así no
+           depende de eso. Y la frase dice que la lista crece, porque una cifra
+           sola se lee como el final. -->
+      <section class="valor-card" aria-label="Qué es M.E.T.A.S. y para quién">
+        <p class="valor-quien">🎓 Para la Educación</p>
+        <p class="valor-txt">Hoy <b id="valor-misiones">85 misiones</b> de Prebásica a 9.º —y siguen
+          entrando—, cada una con <b>su examen y su ficha listos para fotocopiar</b>.
+          Las de Español, Matemáticas, Ciencias y Sociales llevan señalado su bloque
+          del <b>DCNB</b>.</p>
+      </section>
+
+      <!-- Prebásica (Con Papá y Mamá) -->
+      <div class="prebasica-home-section" id="zona-prebasica">
+        <h2 class="section-title">Prebásica (Con Papá y Mamá)</h2>
+        <div id="bannerRetornoPrebasicaWrap"></div>
+        <div class="grid-misiones-prebasica">
+          <a class="prebasica-card" href="misiones/prebasica-tecnicas-libro1/prebasica-libro1.html" onclick="visitMission(85); return true;" data-mision-id="prebasica-tecnicas-libro1">
+            <div class="preb-card-badges-wrap">
+              <div class="preb-card-badge">👨‍👩‍👧 Con apoyo de un adulto</div>
+              <div class="preb-card-badge-activa" id="badgeMisionActivaPreb" style="display: none;">📍 Tu misión activa</div>
+            </div>
+            <div class="preb-card-head">
+              <span class="preb-card-icon">🐝</span>
+              <div class="preb-card-titles">
+                <div class="preb-card-title">Prebásica (3.° Grado): Técnicas Gráficas y No Gráficas — Libro 1</div>
+                <div class="preb-card-sub">Técnicas Gráficas, Trazos, Letras y Rompecabezas · Libro 1 (Evelyn S. Castellanos H.)</div>
+              </div>
+            </div>
+            <div class="preb-card-footer">
+              <span class="preb-card-tag"><i class="fa-solid fa-shapes"></i> Prebásica (3.° Grado)</span>
+              <span class="preb-card-xp"><i class="fa-solid fa-star"></i> +40 XP</span>
+              <span class="preb-card-btn" id="btnAccionCardPreb">Empezar juntos <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+          </a>
         </div>
       </div>
 
-      <!-- Tu siguiente paso (se pinta solo cuando hay actividad o diagnóstico) -->
-      <div id="home-paso"></div>
+
 
       <!-- Navegación principal: los 4 accesos más usados, a un toque -->
       <h2 class="section-title">¿Qué quieres hacer hoy?</h2>
@@ -81,9 +142,48 @@
         </button>
       </div>
 
+      <!-- Pensador: José Cecilio del Valle. Bajó de encima de los botones a
+           debajo: arriba se comía la primera pantalla entera del teléfono y
+           empujaba fuera de la vista lo que el maestro y el alumno vienen a
+           hacer. Sigue siempre visible, que es lo que se pidió de ella. -->
+      <div class="pensador-card">
+        <div class="pensador-foto-wrap">
+          <img src="img/jose-cecilio-del-valle-edit.webp" alt="José Cecilio del Valle" class="pensador-foto">
+        </div>
+        <div class="pensador-cita">
+          <p class="pensador-text">América de día cuando escriba. América de noche cuando piense. El estudio más digno de un americano es América.</p>
+          <span class="pensador-autor">José Cecilio del Valle</span>
+        </div>
+      </div>
+
+      <!-- Puerta al asistente de padres · va AQUÍ ARRIBA a propósito:
+           antes vivía al final y la familia no lo encontraba. El texto
+           habla en presente y de lo que el padre gana («sepa hoy»,
+           «pregúntele»), no de lo que la aplicación hace. -->
+      <a class="asis-card" href="padres.html">
+        <span class="asis-halo" aria-hidden="true"></span>
+        <span class="asis-bot" aria-hidden="true">🤖</span>
+        <span class="asis-txt">
+          <span class="asis-badge">👪 Para madres y padres</span>
+          <span class="asis-t">Sepa hoy cómo va su hijo o hija</span>
+          <span class="asis-s">Pregúntele al asistente: sus notas, los mensajes del maestro
+            y qué hacer en casa esta semana.</span>
+          <span class="asis-cta">Abrir el asistente <i class="fa-solid fa-arrow-right"></i></span>
+        </span>
+      </a>
+      <button class="asis-sub" onclick="switchView('view-padre')">
+        Ver el avance guardado en este teléfono <i class="fa-solid fa-chevron-right"></i>
+      </button>
+
       <!-- Subjects -->
       <h2 class="section-title">Explorar por materia</h2>
       <div class="subjects-row">
+        <!-- Prebásica: 3.° grado con papá y mamá -->
+        <button class="subj-chip preb" data-subject="prebasica">
+          <i class="fa-solid fa-shapes"></i>
+          <span>Prebásica</span>
+          <em>1 misión</em>
+        </button>
         <button class="subj-chip esp" data-subject="español">
           <i class="fa-solid fa-book-open"></i>
           <span>Español</span>
@@ -120,6 +220,37 @@
           <span>Inglés</span>
           <em>Próximamente</em>
         </button>
+        <!-- Repaso General: las pruebas de fin de grado (todas las materias del año) -->
+        <button class="subj-chip rep" data-subject="repaso">
+          <i class="fa-solid fa-graduation-cap"></i>
+          <span>Repaso General</span>
+          <em>1 misión</em>
+        </button>
+        <!-- E. Cívica: símbolos patrios, Himno Nacional, próceres y fechas cívicas -->
+        <button class="subj-chip civ" data-subject="cívica">
+          <i class="fa-solid fa-flag"></i>
+          <span>E. Cívica</span>
+          <em>3 misiones</em>
+        </button>
+        <!-- Inteligencia Artificial: la única materia de la plataforma que NO
+             está en el DCNB. Entra igual porque el alumno ya la tiene encima:
+             el porqué, el marco y los anclajes del currículo están en
+             CURRICULA-INTELIGENCIA-ARTIFICIAL.md. -->
+        <button class="subj-chip ia" data-subject="ia">
+          <i class="fa-solid fa-microchip"></i>
+          <span>Inteligencia Artificial</span>
+          <em>1 misión</em>
+        </button>
+        <!-- Filosofía: la Ruta de la Raíz. El árbol no es decoración: cada
+             asignatura de la escuela nació como una pregunta filosófica, así
+             que esta materia va debajo de las demás y no al lado. El currículo
+             es holístico: las diez unidades son las mismas para I, II y III
+             Ciclo y lo que cambia es la profundidad. -->
+        <button class="subj-chip filo" data-subject="filosofía">
+          <i class="fa-solid fa-tree"></i>
+          <span>Filosofía</span>
+          <em>1 misión</em>
+        </button>
       </div>
 
       <!-- Featured + Recent (solo Honduras) -->
@@ -133,18 +264,9 @@
         </div>
       </div>
 
-      <!-- Puerta para madres y padres -->
-      <button class="padres-card" onclick="switchView('view-padre')">
-        <span class="padres-emoji">👪</span>
-        <span class="padres-info">
-          <strong>Para madres y padres</strong>
-          <em>Vea aquí el avance y los premios de su hijo o hija</em>
-        </span>
-        <i class="fa-solid fa-chevron-right"></i>
-      </button>
-
+    <h2 class="section-title">Explora tu país</h2>
     <div class="selectors-container" id="selectors-container">
-        
+
         <div class="selector-group">
           <label><i class="fa-solid fa-earth-americas"></i> Elige tu País</label>
           <select id="country-select" class="custom-select">
@@ -158,7 +280,11 @@
           </select>
         </div>
 
-        <div class="selector-group">
+        <!-- Grado: escrito pero todavía sin conectar (nada lee grade-select).
+             Se deja oculto en vez de borrarlo: un menú que se puede mover y no
+             cambia nada hace creer al alumno que la aplicación no le responde.
+             Quitar el hidden el día que filtre misiones de verdad. -->
+        <div class="selector-group" hidden>
           <label><i class="fa-solid fa-graduation-cap"></i> Grado</label>
           <select id="grade-select" class="custom-select">
             <option value="1-3">1° a 3° Grado</option>
@@ -179,6 +305,11 @@
             <div class="cc-country-name" id="cc-country-name">Honduras</div>
             <div class="cc-lema" id="cc-lema"></div>
           </div>
+          <!-- La bandera va con el emoji del país y NO dibujada con CSS. Se
+               probó con franjas de color y se veía bien, pero a Honduras le
+               faltaban las cinco estrellas, a El Salvador su escudo y a Panamá
+               su estrella. Una bandera es un símbolo patrio: se muestra
+               completa o no se muestra. El emoji la trae entera. -->
           <span class="cc-emoji-flag" id="cc-flag">🇭🇳</span>
         </div>
 
@@ -209,6 +340,16 @@
         <span class="motiv-autor" id="motiv-autor"></span>
       </div>
 
+      <!-- Pie legal · va al final de la portada porque es donde se busca:
+           nadie lo lee a diario, pero el director que pregunta «¿de quién es
+           esto y qué hacen con los datos de mis alumnos?» tiene que
+           encontrarlo sin preguntarle a nadie. -->
+      <footer class="pie-legal">
+        © 2026 Proyecto Educativo M.E.T.A.S. · Familia Polanco-Castellanos<br>
+        <a href="privacidad.html">Aviso de privacidad</a> ·
+        <a href="terminos.html">Términos de uso</a>
+      </footer>
+
     </div>
   </div>
 
@@ -224,6 +365,11 @@
         <i class="fa-solid fa-magnifying-glass"></i>
         <input id="search-input" type="search" placeholder="Buscar misión…" autocomplete="off">
       </div>
+      <!-- Mi grado: va ANTES de las materias porque es la primera pregunta
+           de quien abre esta pantalla —«¿cuál me toca a mí?»— y hasta hoy no
+           tenía respuesta: una alumna de 4º y uno de 9º veían las mismas 67
+           tarjetas en el mismo orden. ORDENA, no filtra: nada desaparece. -->
+      <div id="grado-chips" class="grado-chips" role="group" aria-label="Poner primero las misiones de mi grado"></div>
       <!-- Filtros: cada uno lleva implícito el color de su materia -->
       <div class="pills-wrap" role="group" aria-label="Filtrar misiones por materia">
         <button class="pill pill-all active" data-filter="all" aria-pressed="true">
@@ -250,6 +396,22 @@
         <!-- Inglés: se muestra en cuanto tenga su primera misión -->
         <button class="pill ing" data-filter="inglés" data-oculta-vacio aria-pressed="false">
           <i class="fa-solid fa-language"></i><span>Inglés</span><b class="pill-count"></b>
+        </button>
+        <button class="pill rep" data-filter="repaso" aria-pressed="false">
+          <i class="fa-solid fa-graduation-cap"></i><span>Repaso General</span><b class="pill-count"></b>
+        </button>
+        <button class="pill civ" data-filter="cívica" aria-pressed="false">
+          <i class="fa-solid fa-flag"></i><span>E. Cívica</span><b class="pill-count"></b>
+        </button>
+        <button class="pill ia" data-filter="ia" aria-pressed="false">
+          <i class="fa-solid fa-microchip"></i><span>Inteligencia Artificial</span><b class="pill-count"></b>
+        </button>
+        <button class="pill filo" data-filter="filosofía" aria-pressed="false">
+          <i class="fa-solid fa-tree"></i><span>Filosofía</span><b class="pill-count"></b>
+        </button>
+        <!-- Prebásica: sección y filtro independiente con papá y mamá -->
+        <button class="pill preb" data-filter="prebasica" aria-pressed="false">
+          <i class="fa-solid fa-shapes"></i><span>Prebásica</span><b class="pill-count"></b>
         </button>
       </div>
       <button class="rutas-banner" onclick="switchView('view-rutas')">
@@ -354,7 +516,7 @@
             <span class="zd-ico" style="--c1:#8b5cf6;--c2:#6d28d9;"><i class="fa-solid fa-print"></i></span>
             <span class="zd-name">Evaluaciones</span>
           </a>
-          <a class="zd-tile" href="fichas/index.html" data-tool="fichas" title="Fichas didácticas imprimibles de las 32 misiones">
+          <a class="zd-tile" href="fichas/index.html" data-tool="fichas" title="Fichas didácticas imprimibles, una por misión">
             <span class="zd-ico" style="--c1:#14b8a6;--c2:#0f766e;"><i class="fa-solid fa-file-lines"></i></span>
             <span class="zd-name">Fichas didácticas</span>
           </a>
@@ -374,6 +536,17 @@
             <span class="zd-ico" style="--c1:#6366f1;--c2:#4338ca;"><i class="fa-solid fa-check-to-slot"></i></span>
             <span class="zd-name">Gobierno Escolar</span>
           </button>
+          <a class="zd-tile" href="registro.html" data-tool="evidencia" title="Lo que las misiones registraron en este equipo: sesiones, secciones y evaluaciones">
+            <span class="zd-ico" style="--c1:#f97316;--c2:#c2410c;"><i class="fa-solid fa-clipboard-list"></i></span>
+            <span class="zd-name">Evidencia de misiones</span>
+          </a>
+          <!-- Formación del maestro: misiones para ÉL, no para el alumno
+               (js/tools/formacion-docente.js). Sin la marca «Pronto»: adentro
+               ya hay misiones que se abren, y el temario solo enseña esas. -->
+          <button class="zd-tile" id="goto-formacion-btn" data-tool="formacion" title="Misiones para su propia actualización: estrategias y leyes educativas">
+            <span class="zd-ico" style="--c1:#a855f7;--c2:#7e22ce;"><i class="fa-solid fa-graduation-cap"></i></span>
+            <span class="zd-name">Misiones del maestro</span>
+          </button>
         </div>
       </div>
 
@@ -382,6 +555,18 @@
       <div id="docente-acceso"></div>
 
     </div>
+  </div>
+
+  <!-- ========== MISIONES DEL MAESTRO (formación docente) ========== -->
+  <div id="view-formacion" class="view">
+    <header class="app-header compact">
+      <button class="back-icon-btn" id="formacion-back-btn" aria-label="Volver a la Zona Docente">
+        <i class="fa-solid fa-arrow-left"></i>
+      </button>
+      <h1 class="view-title">Misiones del maestro</h1>
+      <div></div>
+    </header>
+    <div class="view-scroll"><div id="mf-content"></div></div>
   </div>
 
   <!-- ========== REGISTROS ADMINISTRATIVOS (Zona Docente) ========== -->
@@ -413,7 +598,7 @@
         <div class="ge-planillas-container">
           <div class="ge-planilla">
             <label>📋 Planilla 1</label>
-            <input type="text" id="ge-planilla-1" placeholder="Nombre de la planilla (ej: Planilla Azul)" class="ge-input">
+            <input type="text" id="ge-planilla-1" placeholder="Nombre de la planilla (ej.: Planilla Azul)" class="ge-input">
             <div class="ge-img-upload">
               <input type="file" id="ge-img-1" accept="image/*" hidden>
               <button class="ge-upload-btn" onclick="document.getElementById('ge-img-1').click()">
@@ -425,7 +610,7 @@
           </div>
           <div class="ge-planilla">
             <label>📋 Planilla 2</label>
-            <input type="text" id="ge-planilla-2" placeholder="Nombre de la planilla (ej: Planilla Roja)" class="ge-input">
+            <input type="text" id="ge-planilla-2" placeholder="Nombre de la planilla (ej.: Planilla Roja)" class="ge-input">
             <div class="ge-img-upload">
               <input type="file" id="ge-img-2" accept="image/*" hidden>
               <button class="ge-upload-btn" onclick="document.getElementById('ge-img-2').click()">
@@ -463,9 +648,9 @@
             <i class="fa-solid fa-lock"></i>
           </button>
         </div>
-        <p class="ge-subtitle">Ingresa tu código para votar. Formato: <strong>Grado + Sección + NºLista</strong>. Grado del 1 al 6, Sección A ó B, lista hasta 99. Ej: <strong>4B26</strong></p>
+        <p class="ge-subtitle">Ingresa tu código para votar. Formato: <strong>Grado + Sección + NºLista</strong>. Grado del 1 al 6, Sección A ó B, lista hasta 99. Ej.: <strong>4B26</strong></p>
         <div class="ge-code-box">
-          <input type="text" id="ge-code-input" placeholder="ej: 4B26" class="ge-input ge-code-input" maxlength="4" autocomplete="off" inputmode="text">
+          <input type="text" id="ge-code-input" placeholder="ej.: 4B26" class="ge-input ge-code-input" maxlength="4" autocomplete="off" inputmode="text">
           <div id="ge-code-error" class="ge-code-error" hidden></div>
           <button class="ge-btn" id="ge-validate-code-btn">
             <i class="fa-solid fa-check"></i> Validar Código y Votar
@@ -571,8 +756,8 @@
       <div class="pa-card">
         <div class="pa-card-title">📋 Datos de la Evaluación</div>
         <div class="pa-row-2">
-          <div class="pa-field"><label>Grado</label><input type="text" id="pa-grado" class="pa-inp-field" placeholder="ej: 6°"></div>
-          <div class="pa-field"><label>Sección</label><input type="text" id="pa-seccion" class="pa-inp-field" placeholder="ej: 1"></div>
+          <div class="pa-field"><label>Grado</label><input type="text" id="pa-grado" class="pa-inp-field" placeholder="ej.: 6º"></div>
+          <div class="pa-field"><label>Sección</label><input type="text" id="pa-seccion" class="pa-inp-field" placeholder="ej.: 1"></div>
         </div>
         <div class="pa-field" style="margin-bottom:10px;">
           <label>Docente</label>
@@ -580,14 +765,11 @@
         </div>
         <div class="pa-field" style="margin-bottom:10px;">
           <label>Evaluación aplicada (elígela del banco M.E.T.A.S)</label>
+          <!-- Las materias las CUENTA paMateriasCatalogo() del banco de misiones:
+               escritas a mano aquí, Inglés entró al catálogo y a esta pantalla no,
+               y el maestro no podía analizar su evaluación. -->
           <select id="pa-materia" class="pa-inp-field">
             <option value="">Primero elige la materia</option>
-            <option value="español">📖 Español</option>
-            <option value="matemáticas">🔢 Matemáticas</option>
-            <option value="naturales">🌱 Ciencias Naturales</option>
-            <option value="sociales">🌎 Ciencias Sociales</option>
-            <option value="programación">💻 Programación</option>
-            <option value="robótica">🤖 Robótica</option>
           </select>
           <select id="pa-mision" class="pa-inp-field" style="margin-top:8px;">
             <option value="">✏️ Otra evaluación (escribir el nombre abajo)</option>
@@ -624,7 +806,7 @@
         </div>
         <div class="pa-field">
           <label>Nombre de la Evaluación / Misión</label>
-          <input type="text" id="pa-evaluacion" class="pa-inp-field" placeholder="ej: 1ª E · Coordenadas y Paralelos">
+          <input type="text" id="pa-evaluacion" class="pa-inp-field" placeholder="ej.: 1ª E · Coordenadas y Paralelos">
         </div>
       </div>
 
@@ -632,16 +814,30 @@
       <div class="pa-card">
         <div class="pa-card-title">✏️ Calificaciones</div>
 
+        <!-- PASO 1 · la lista. Vive UNA sola vez en «Mi aula» y de ahí la
+             toman todas las herramientas: por eso el botón va primero y
+             grande, no escondido al final de la cuadrícula. -->
+        <button class="pa-traer-hero" id="pa-traer-aula">
+          <span class="pa-th-ic">👥</span>
+          <span class="pa-th-txt">
+            <span class="pa-th-paso">Paso 1</span>
+            <span class="pa-th-t">Traer mi lista de «Mi aula»</span>
+            <span class="pa-th-s">Tus alumnos ya están escritos allá. Tráelos con un toque
+              y aquí solo escribes las notas.</span>
+          </span>
+          <span class="pa-th-go">›</span>
+        </button>
+
+        <!-- PASO 2 · las notas -->
+        <div class="pa-paso-lbl"><span>Paso 2</span> Escribe las notas</div>
+
         <!-- Tabs de entrada + botón Generar -->
         <div class="pa-entry-tabs">
           <button class="pa-etab pa-etab-active" data-etab="manual">Entrada manual</button>
           <button class="pa-etab" data-etab="pegar">Pegar lista</button>
         </div>
-        <button class="pa-gen-btn" id="pa-generate-btn" style="margin-bottom:8px;">
+        <button class="pa-gen-btn" id="pa-generate-btn" style="margin-bottom:14px;">
           <i class="fa-solid fa-chart-column"></i> Generar Análisis
-        </button>
-        <button class="pa-add-btn" id="pa-codigos-btn" style="margin-bottom:14px;">
-          <i class="fa-solid fa-key"></i> Códigos de padres (imprimir tiras)
         </button>
 
         <!-- Manual -->
@@ -657,9 +853,16 @@
           <button class="pa-add-btn" id="pa-add-student-btn">
             <i class="fa-solid fa-plus"></i> Agregar estudiante
           </button>
-          <button class="pa-add-btn" id="pa-traer-aula">
-            <i class="fa-solid fa-users"></i> Traer mi lista de «Mi aula»
+
+          <!-- El último paso del circuito, que estaba cortado: la aplicación
+               califica al alumno, sube la nota a la nube… y el maestro corregía
+               los 43 exámenes otra vez y las tecleaba a mano. Va AQUÍ, pegado a
+               la cuadrícula y no arriba con los selectores, porque es aquí donde
+               está a punto de empezar a teclear. -->
+          <button class="pa-add-btn" id="pa-nube-btn" style="margin-top:6px;">
+            <i class="fa-solid fa-cloud-arrow-down"></i> Traer las notas de la nube
           </button>
+          <div id="pa-nube-msg" class="pa-optional-hint" style="margin-top:6px;"></div>
         </div>
 
         <!-- Pegar -->
@@ -680,6 +883,7 @@
         <p class="pa-optional-hint">Cada análisis queda <strong>guardado</strong> aquí, y sus notas y mensajes
           <strong>suben solos al asistente de padres</strong> ☁️ (la familia los consulta con su clave).
           Ábrelo cuando quieras para revisarlo, actualizarlo o reenviar mensajes: actualizar vuelve a subir los cambios.</p>
+        <div id="pa-hist-filtros" class="pa-hist-filtros"></div>
         <div id="pa-historial-list"></div>
       </div>
 
@@ -689,7 +893,8 @@
         <p class="pa-optional-hint">Cada nota y mensaje viaja automáticamente a la <strong>nube M.E.T.A.S</strong>:
           los padres la consultan desde su casa con la <strong>clave de la familia</strong>
           (número de lista + 4 letras al azar, ej. 15-K7QM, imposible de adivinar por otro alumno).
-          Imprímelas con el botón <strong>🔑 Códigos de padres</strong> de la tarjeta ✏️ Calificaciones.</p>
+          Las claves y sus <strong>tiras para imprimir</strong> viven en un solo lugar:
+          <strong>Mi aula → 👥 Alumnos → 🖨️ Tiras de claves</strong>.</p>
         <p class="pa-sync-status" id="pa-sb-status"></p>
       </div>
 
@@ -713,7 +918,7 @@
         <div class="parte-row-2">
           <div class="parte-field">
             <label>Grado</label>
-            <input type="text" id="pm-grado" placeholder="ej: 7°" class="parte-input">
+            <input type="text" id="pm-grado" placeholder="ej.: 7º" class="parte-input">
           </div>
           <div class="parte-field">
             <label>Sección</label>
@@ -748,7 +953,7 @@
         </div>
         <div class="parte-field" style="margin-bottom:0;">
           <label>Días Trabajados <span class="pm-hint">(los proporciona el director)</span></label>
-          <input type="number" id="pm-dias" placeholder="ej: 22" class="parte-input" min="1" max="31">
+          <input type="number" id="pm-dias" placeholder="ej.: 22" class="parte-input" min="1" max="31">
         </div>
       </div>
 
@@ -879,7 +1084,7 @@
       <div class="pa-card">
         <div class="pa-card-title"><i class="fa-solid fa-pen-to-square co-title-icon"></i> Texto de Evidencia</div>
         <textarea id="co-text" class="pa-paste-area co-textarea" rows="2"
-          placeholder="Ej: Laboratorio de Ciencias · 7° Grado A · Mayo 2026"></textarea>
+          placeholder="Ej.: Laboratorio de Ciencias · 7° Grado A · Mayo 2026"></textarea>
       </div>
 
       <!-- Formato -->
@@ -972,9 +1177,6 @@
       <button class="drawer-item" data-view="view-campeonismo">
         <i class="fa-solid fa-trophy"></i><span>Campeonísimo</span>
       </button>
-      <a class="drawer-item" href="registro.html">
-        <i class="fa-solid fa-clipboard-list"></i><span>Registro de clase</span>
-      </a>
       <div class="drawer-divider"></div>
       <div class="drawer-section-label">Para la familia</div>
       <button class="drawer-item" data-view="view-padre">
@@ -988,30 +1190,56 @@
     </nav>
   </aside>
 
-  <script src="js/metas-dialogos.js"></script>
-  <script src="js/html2canvas.min.js"></script>
-  <script src="js/data/misiones.js?v=48"></script>
-  <script src="js/data/dcnb-map.js"></script>
-  <script src="js/data/diagnosticos.js"></script>
-  <script src="js/data/proceres.js"></script>
-  <script src="js/data/paises.js"></script>
-  <script src="js/data/frases.js"></script>
-  <script src="js/data/consejos-padres.js"></script>
-  <script src="js/tools/gobierno-escolar.js"></script>
-  <script src="js/tools/plan-accion.js"></script>
-  <script src="js/tools/registros-admin.js"></script>
-  <script src="js/tools/parte-mensual.js"></script>
-  <script src="js/tools/collage-maker.js"></script>
-  <script src="js/data/campeonismo-bank.js"></script>
-  <script src="js/tools/campeonismo.js"></script>
+  <!-- Botón flotante Prebásica (Sticky pill para padres de familia) -->
+  <button id="btnFlotantePrebasica" class="btn-flotante-prebasica oculto" aria-label="Ir a Zona de Prebásica" style="display: none;" title="Ir a Zona de Prebásica">
+    <span class="btn-flotante-prebasica-ico" aria-hidden="true">🐝</span>
+    <span class="btn-flotante-prebasica-txt">Ir a Prebásica</span>
+  </button>
+
+  <script src="js/metas-dialogos.js?v=462"></script>
+  <script src="js/html2canvas.min.js?v=462"></script>
+  <script src="js/data/misiones.js?v=462"></script>
+  <script src="js/catalogo-misiones.js?v=462"></script>
+  <script src="js/data/dcnb-map.js?v=462"></script>
+  <!-- De qué grado es cada misión, y las tres reglas que quitan el estigma
+       sin quitar la ayuda. Va después del mapa del DCNB, que es su fuente. -->
+  <script src="js/grado-alumno.js?v=462"></script>
+  <script src="js/data/diagnosticos.js?v=462"></script>
+  <script src="js/data/proceres.js?v=462"></script>
+  <script src="js/data/paises.js?v=462"></script>
+  <script src="js/data/frases.js?v=462"></script>
+  <script src="js/data/consejos-padres.js?v=462"></script>
+  <script src="js/tools/gobierno-escolar.js?v=462"></script>
+  <script src="js/tools/plan-accion.js?v=478"></script>
+  <script src="js/tools/registros-admin.js?v=478"></script>
+  <script src="js/tools/convocatoria.js?v=462"></script>
+  <script src="js/tools/estadisticas-alumno.js?v=462"></script>
+  <script src="js/tools/equipos.js?v=462"></script>
+  <script src="js/data/lectura-normas.js?v=462"></script>
+  <script src="js/data/lectura-textos.js?v=462"></script>
+  <script src="js/tools/lectura-fluidez.js?v=462"></script>
+  <script src="js/tools/parte-mensual.js?v=462"></script>
+  <script src="js/tools/collage-maker.js?v=462"></script>
+  <script src="js/tools/formacion-docente.js?v=462"></script>
+  <script src="js/data/campeonismo-bank.js?v=462"></script>
+  <script src="js/tools/campeonismo.js?v=462"></script>
   <script>
-    /* Países en STANDBY: el selector queda oculto y todos exploran Honduras.
-       Cuando haya misiones de otros países, reactivar cambiando false → true. */
-    window.METAS_PAISES_ON = false;
+    /* Países ENCENDIDOS: el alumno elige su país y el inicio se pinta con los
+       colores de esa bandera. Las misiones siguen siendo de Honduras: en los
+       demás países el catálogo dice «Próximamente», y eso es a propósito
+       mientras se trabajan las currículas de la región.
+       Si alguna vez hay que apagarlo, basta con poner false: todo vuelve a
+       Honduras sin que nadie pierda su XP. */
+    window.METAS_PAISES_ON = true;
   </script>
-  <script src="js/app.js?v=48"></script>
-  <script src="js/metas-docente-sync.js"></script>
-  <script src="js/tools/pwa-install.js"></script>
+  <script src="js/app.js?v=462"></script>
+  <!-- La fusión de los datos del aula. Va ANTES del espejo, que es quien la
+       llama: sin ella el espejo sigue funcionando como antes —elige la copia
+       más nueva— y por eso no revienta si un día no carga; pero con ella el
+       maestro que usa el teléfono y la PC el mismo día no pierde nada. -->
+  <script src="js/metas-fusion-aula.js?v=462"></script>
+  <script src="js/metas-docente-sync.js?v=462"></script>
+  <script src="js/tools/pwa-install.js?v=462"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
@@ -1022,3 +1250,4 @@
 
 </body>
 </html>
+

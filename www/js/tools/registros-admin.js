@@ -28,9 +28,30 @@ const AD_PERS_ESCALA_DEF = ['S', 'MB', 'B'];
 const AD_PERS_SIGNIF = { S: 'Sobresaliente', MB: 'Muy Bueno', B: 'Bueno',
                          E: 'Excelente', R: 'Regular', D: 'Deficiente',
                          NS: 'No Satisfactorio', PS: 'Poco Satisfactorio' };
+/* Equivalencia numérica OFICIAL del SACE para la valoración final de un
+   rasgo de personalidad: se promedian los parciales y el redondeo vuelve
+   a letra (MB, S, B, MB → 12/4 = 3 → MB). Solo estas letras tienen
+   número; a una escala propia del docente no se le inventa equivalencia. */
+const AD_PERS_NUM = { S: 4, MB: 3, B: 2, NS: 1 };
+const AD_PERS_DE_NUM = { 4: 'S', 3: 'MB', 2: 'B', 1: 'NS' };
 
-let _adTab = 'lista';        /* lista | eco | asis | sace | com */
+let _adTab = 'lista';        /* lista | eco | asis | eq | ctrl | sace | est | lec | com */
 let _adColectaId = null;     /* colecta abierta en Economía */
+let _adGastosOn = 0;         /* dentro de «Gastos de mi bolsillo» */
+let _adInvOn = 0;            /* dentro de «Inventario del aula» */
+let _adFichasOn = 0;         /* dentro de «Identidad y contactos» */
+let _adControlId = null;     /* control abierto en Controles */
+let _adSaceParcial = 'I';    /* Parcial activo en Notas SACE: I | II | III | IV */
+let _adSaceVista = 'aprov';   /* Sección a llenar: aprov | pers | inasis */
+let _adGrupoActivoId = null; /* Grupo/sección activo en el aula */
+try {
+  const _sp = localStorage.getItem('METAS_SACE_PARCIAL');
+  if (['I', 'II', 'III', 'IV'].includes(_sp)) _adSaceParcial = _sp;
+  const _sv = localStorage.getItem('METAS_SACE_VISTA');
+  if (['aprov', 'pers', 'inasis'].includes(_sv)) _adSaceVista = _sv;
+  const _sg = localStorage.getItem('METAS_ADMIN_GRUPO_ACTIVO');
+  if (_sg) _adGrupoActivoId = _sg;
+} catch (_) {}
 
 /* ── Estado v2: GRUPOS (multi-aula) ──
    Un maestro puede atender varios grupos, incluso en DOS colegios.
@@ -56,7 +77,8 @@ function adGrupoNuevo(props) {
   let id = 'G';
   for (let i = 0; i < 5; i++) id += AD_ID_ALFA[Math.floor(Math.random() * AD_ID_ALFA.length)];
   return Object.assign({ id, escuela: '', grado: '', seccion: '', logo: '', logoSec: '', boleta: adBoletaDef(),
-    materias: AD_MATERIAS_DEF.slice(), lista: [], colectas: [], asistencia: [], notas: {} }, props || {});
+    materias: AD_MATERIAS_DEF.slice(), lista: [], colectas: [], asistencia: [], notas: {}, controles: [],
+    bitacora: [], lectura: [], convocatorias: [] }, props || {});
 }
 
 function adNormGrupo(g) {
@@ -72,6 +94,13 @@ function adNormGrupo(g) {
   g.lista = Array.isArray(g.lista) ? g.lista : [];
   g.colectas = Array.isArray(g.colectas) ? g.colectas : [];
   g.asistencia = Array.isArray(g.asistencia) ? g.asistencia : [];
+  g.controles = Array.isArray(g.controles) ? g.controles : [];
+  g.convocatorias = Array.isArray(g.convocatorias) ? g.convocatorias : [];  /* 📣 «¿va o no va?» */
+  g.bitacora = Array.isArray(g.bitacora) ? g.bitacora : [];   /* novedades de la clase */
+  /* tomas de lectura (palabras por minuto): el canal ya queda listo para
+     la herramienta de lectura; su forma está descrita en
+     js/tools/estadisticas-alumno.js, que es quien las dibuja */
+  g.lectura = Array.isArray(g.lectura) ? g.lectura : [];
   g.materias = Array.isArray(g.materias) && g.materias.length ? g.materias : AD_MATERIAS_DEF.slice();
   g.notas = (g.notas && typeof g.notas === 'object') ? g.notas : {};
   return g;
@@ -98,7 +127,7 @@ function adMigrarCodigos(g) {
    (admin + claves + comunicados + plan). «Restaurar» vuelve exacto a
    ese momento y la nube se corrige sola con el sync diferencial. */
 const AD_UNDO_KEY = 'METAS_ADMIN_UNDO_V1';
-const AD_UNDO_MAX = 4;
+const AD_UNDO_MAX = 14;
 function adUndoLista() {
   try { const a = JSON.parse(localStorage.getItem(AD_UNDO_KEY)); return Array.isArray(a) ? a : []; }
   catch (_) { return []; }
@@ -126,11 +155,11 @@ async function adUndoRestaurar(i) {
   const arr = adUndoLista();
   const f = arr[i];
   if (!f) return;
-  if (!await metasConfirm('Se restaurará <strong>todo Mi aula</strong> exactamente a como estaba ' +
-    '<strong>antes de: ' + adEsc(f.e) + '</strong> (' + adFechaBonita(f.t.slice(0, 10)) + ' ' +
-    f.t.slice(11, 16) + ').\n\n⚠️ Lo que hayas cambiado en Mi aula DESPUÉS de ese momento se pierde. ' +
+  if (!await metasConfirm('Se restaurará **todo Mi aula** exactamente a como estaba ' +
+    '**antes de: ' + f.e + '** (' + adFechaBonita(String(f.t).slice(0, 10)) + ' ' +
+    String(f.t).slice(11, 16) + ').\n\n⚠️ Lo que hayas cambiado en Mi aula DESPUÉS de ese momento se pierde. ' +
     'La nube del chatbot se corrige sola al sincronizar. ¿Restaurar?',
-    { icono: '🕘', titulo: 'Deshacer accidente', okTxt: 'Sí, restaurar' })) return;
+    { icono: '🕘', titulo: 'Deshacer / Restaurar', okTxt: 'Sí, restaurar' })) return;
   try {
     const pares = [[ADMIN_KEY, f.admin], ['METAS_CODIGOS_V1', f.codes],
                    ['METAS_AVISOS_V1', f.avisos], ['METAS_PLANACCION_V1', f.plan]];
@@ -144,13 +173,43 @@ async function adUndoRestaurar(i) {
   renderAdmin();
   toast('🕘 Restaurado: ' + f.e);
 }
+function adUndoTarjetaHtml() {
+  const lista = adUndoLista();
+  if (!lista.length) return '';
+  return `
+    <div class="pa-card ad-undo-card">
+      <div class="pa-card-title">🕘 Deshacer o restaurar cambios</div>
+      <p class="pa-optional-hint">Antes de borrar una fila o cambiar el orden se guarda una copia automática. Si borraste u ordenaste una fila <strong>por error</strong>, restáurala aquí:</p>
+      ${lista.map((f, i) => `
+        <div class="ad-gasto-row" style="align-items:center">
+          <span style="flex:1"><strong>Antes de: ${adEsc(f.e)}</strong><br>
+            <small>${adFechaBonita(String(f.t).slice(0, 10))} · ${String(f.t).slice(11, 16)}</small></span>
+          <button type="button" class="pa-generate-btn ad-btn-sec ad-undo-btn" data-ui="${i}">↩️ Restaurar</button>
+        </div>`).reverse().join('')}
+    </div>`;
+}
+function adUndoEnganchar(body) {
+  if (!body) return;
+  body.querySelectorAll('.ad-undo-btn').forEach(b => {
+    if (b.dataset.undoBound) return;
+    b.dataset.undoBound = '1';
+    b.addEventListener('click', () => adUndoRestaurar(+b.dataset.ui));
+  });
+}
 
 function adState() {
   let st = null;
   try { st = JSON.parse(localStorage.getItem(ADMIN_KEY)); } catch (_) {}
   if (st && st.v === 2 && Array.isArray(st.grupos) && st.grupos.length) {
     st.grupos.forEach(adNormGrupo);
-    if (!st.grupos.some(g => g.id === st.activo)) st.activo = st.grupos[0].id;
+    if (_adGrupoActivoId && st.grupos.some(g => g.id === _adGrupoActivoId)) {
+      st.activo = _adGrupoActivoId;
+    } else if (st.grupos.some(g => g.id === st.activo)) {
+      _adGrupoActivoId = st.activo;
+    } else {
+      st.activo = st.grupos[0].id;
+      _adGrupoActivoId = st.activo;
+    }
     return st;
   }
   /* migración desde v1 (objeto plano) o inicio en blanco */
@@ -165,10 +224,14 @@ function adState() {
     adMigrarCodigos(g);
   }
   const nuevo = { v: 2, activo: g.id, grupos: [adNormGrupo(g)] };
+  _adGrupoActivoId = g.id;
   try { localStorage.setItem(ADMIN_KEY, JSON.stringify(nuevo)); } catch (_) {}
   return nuevo;
 }
 function adStateSave(st) {
+  if (_adGrupoActivoId && st && st.grupos && st.grupos.some(g => g.id === _adGrupoActivoId)) {
+    st.activo = _adGrupoActivoId;
+  }
   try { localStorage.setItem(ADMIN_KEY, JSON.stringify(st)); } catch (_) {}
   adSyncProgramar();   /* la nube del chatbot se actualiza sola, con calma */
 }
@@ -237,6 +300,63 @@ function adEsc(s) {
 function adPrimerNombre(nombre) {
   return String(nombre || '').trim().split(/\s+/)[0] || '';
 }
+
+/* ══════════════ 🧪 ALUMNO DE PRUEBA ══════════════
+   Casi todo maestro deja uno o dos «alumnos» inventados al final de la
+   lista para probar la plataforma —una toma de lectura, una nota, una
+   clave— sin tocar el expediente de un niño de verdad. El problema no
+   es que existan: es que se colaban en el INFORME DEL GRADO que recibe
+   la Dirección. Ahí un alumno inventado infla la matrícula («43» cuando
+   son 42), baja el promedio del grado y suma inasistencias que nadie
+   faltó. Un papel firmado por el director no puede llevar eso.
+
+   Marcado con `prueba: true`, el alumno sigue entero donde el maestro
+   trabaja —lista, asistencia, notas, lectura, su informe individual—
+   pero queda FUERA de todo lo que cuenta al grupo. El informe del grado
+   dice cuántos dejó fuera: callarlo sería peor que contarlos.
+
+   Se marca por alumno y NUNCA por su número: el nº de lista sigue
+   siendo el oficial del SACE y la clave de familia no se toca. */
+function adEsPrueba(a) { return !!(a && a.prueba); }
+function adAlumnosReales(d) { return (d.lista || []).filter(a => !adEsPrueba(a)); }
+function adCuentaPruebas(d) { return (d.lista || []).filter(adEsPrueba).length; }
+
+/* ══════════════ NIÑAS Y VARONES ══════════════
+   La matrícula por sexo la pide la Dirección y la pide el Parte Mensual
+   del SEDUC, que hoy obliga al maestro a contarlos a mano cada mes. Se
+   guarda por alumno (`sexo`: 'F' o 'M') y se CUENTA, nunca se escribe:
+   así el número no envejece cuando entra o se va un niño.
+
+   Los 🧪 de prueba no cuentan, igual que en el resto del informe. Los
+   que aún no tienen el dato se cuentan aparte y se dicen: un «22 y 20»
+   que no suma la matrícula es un número que la Dirección no puede usar. */
+function adSexos(d) {
+  const reales = adAlumnosReales(d);
+  let f = 0, m = 0;
+  reales.forEach(a => { if (a.sexo === 'F') f++; else if (a.sexo === 'M') m++; });
+  return { f, m, sin: reales.length - f - m, total: reales.length };
+}
+/* «22 ♀ · 20 ♂» y, si falta alguno, cuántos faltan */
+function adSexosTxt(d) {
+  const s = adSexos(d);
+  if (!s.total) return 'sin alumnos';
+  if (s.sin === s.total) return 'sexo sin registrar';
+  return s.f + ' ♀ · ' + s.m + ' ♂' + (s.sin ? ' · faltan ' + s.sin : '');
+}
+window.adSexos = adSexos;
+
+/* Marca o desmarca al alumno. Devuelve cómo quedó (true = de prueba). */
+function adTogglePrueba(num) {
+  const dd = adLoad();
+  const a = (dd.lista || []).find(x => String(x.num) === String(num));
+  if (!a) return false;
+  if (a.prueba) delete a.prueba; else a.prueba = true;
+  adSave(dd);
+  return !!a.prueba;
+}
+window.adEsPrueba = adEsPrueba;
+window.adAlumnosReales = adAlumnosReales;
+
 function adHoy() {
   const d = new Date();
   return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' +
@@ -250,20 +370,106 @@ function adLps(n) {
   const v = Math.round((Number(n) || 0) * 100) / 100;
   return 'L ' + v.toLocaleString('es-HN');
 }
-/* Grado y sección juntos: «6» y «1» son SEXTO GRADO, SECCIÓN 1, y pegados
-   se leían «61», como si fuera un número. El guion los separa.
-   Solo entra cuando las dos partes son cortas, que es como las escribe el
-   maestro (6-1, 9-2, 7-A); si alguien escribe «Sexto» y «A», un guion
-   quedaría raro y se usa el espacio de siempre. */
-function adGradoSeccion(grado, seccion) {
+/* ══════════════ NORMATIVA · CÓMO SE ESCRIBE UN GRUPO ══════════════
+   Un grupo SIEMPRE se lee «6º-1»: el grado con su MARCA DE ORDINAL,
+   guion, y la sección. Nada de inventar el formato en cada pantalla.
+
+   Por qué, y en este orden se fueron corrigiendo:
+     «61»   → parecía el número sesenta y uno.
+     «6-1»  → ya separaba, pero el 6 seguía leyéndose como cantidad.
+     «6º-1» → dice lo que es: SEXTO grado, sección 1.
+
+   El maestro escribe el grado como le sale —«6», «6º», «6°», «6o»— y
+   aquí se muestra siempre igual. Si escribe una palabra («Bachillerato»,
+   «Kinder») se respeta tal cual: el ordinal solo aplica a números.
+
+   ► TODA pantalla, documento impreso o mensaje que junte grado y
+     sección pasa por adGradoSeccion(). Si algún día hay que cambiar el
+     formato otra vez, se cambia AQUÍ y en ningún otro lugar.
+   ► NO la usa la lógica interna: las claves de familia
+     (paCodigoAlumno/adClaveFamilia), las llaves de guardado y los
+     nombres de archivo trabajan con los DÍGITOS pelados. Meterles la
+     «º» invalidaría claves ya entregadas a las familias.
+   ► Las páginas que no cargan este archivo (padres.html) llevan su
+     propia copia de la regla, marcada con esta misma nota. */
+/* Abre un documento en su ventana de impresión CON salida a la vista: en el
+   teléfono la pestaña del documento tapa la app y más de un maestro se quedó
+   ahí, sin saber que había que cerrarla para volver. La barra de abajo lo
+   dice y da el botón; en el papel no sale (@media print). Todas las
+   impresiones de la app pasan por aquí. */
+function adPrintAbrir(html) {
+  const w = window.open('', '_blank');
+  if (!w) { if (typeof toast === 'function') toast('Permite las ventanas emergentes para imprimir'); return null; }
+  const barra = `<style>
+    .ad-volver-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 9999; background: #0f2350;
+      color: #fff; display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;
+      padding: 9px 12px; font-family: Arial, Helvetica, sans-serif; font-size: 12.5px;
+      box-shadow: 0 -2px 10px rgba(0,0,0,.3); }
+    .ad-volver-bar button, #ad-volver-lista .ad-vl-btn { border: none; border-radius: 999px; padding: 10px 18px;
+      font-size: 14px; font-weight: 800; background: #ffd34d; color: #0f2350; cursor: pointer; }
+    #ad-volver-lista { display: none; position: fixed; inset: 0; z-index: 10000;
+      background: rgba(15, 35, 80, .55); align-items: center; justify-content: center;
+      font-family: Arial, Helvetica, sans-serif; }
+    #ad-volver-lista .ad-vl-card { background: #fff; border-radius: 14px; padding: 20px 24px;
+      max-width: 340px; margin: 16px; text-align: center; box-shadow: 0 10px 34px rgba(0,0,0,.35); }
+    #ad-volver-lista .ad-vl-ico { font-size: 36px; }
+    #ad-volver-lista .ad-vl-t { font-size: 14.5px; color: #0f2350; font-weight: 800; margin: 8px 0 4px; }
+    #ad-volver-lista .ad-vl-s { font-size: 12px; color: #55637d; margin-bottom: 14px; line-height: 1.45; }
+    #ad-volver-lista .ad-vl-seguir { display: inline-block; margin-top: 10px; border: none; background: none;
+      color: #55637d; font-size: 12px; text-decoration: underline; cursor: pointer; }
+    body { padding-bottom: 62px; }
+    @media print { .ad-volver-bar, #ad-volver-lista { display: none !important; } body { padding-bottom: 0 !important; } }
+  </style>
+  <div class="ad-volver-bar"><span>Cuando termines de imprimir o guardar el PDF…</span>
+    <button onclick="window.close()">✅ Cerrar y volver a M.E.T.A.S.</button></div>
+  <div id="ad-volver-lista">
+    <div class="ad-vl-card">
+      <div class="ad-vl-ico">✅</div>
+      <div class="ad-vl-t">¿Terminaste con este documento?</div>
+      <div class="ad-vl-s">Cierra esta ventana para volver a M.E.T.A.S. — mientras siga abierta, la aplicación queda esperándote.</div>
+      <button class="ad-vl-btn" onclick="window.close()">Cerrar y volver a M.E.T.A.S.</button><br>
+      <button class="ad-vl-seguir" onclick="document.getElementById('ad-volver-lista').style.display='none'">Seguir viendo el documento</button>
+    </div>
+  </div>
+  <script>
+    /* Al salir del diálogo de imprimir (imprimió o canceló), ofrecer la
+       salida en grande: en la app instalada esta ventana tapa todo y no es
+       obvio que hay que cerrarla para volver. */
+    window.addEventListener('afterprint', function () {
+      var o = document.getElementById('ad-volver-lista');
+      if (o) o.style.display = 'flex';
+    });
+  <\/script>`;
+  w.document.write(html.indexOf('</body>') >= 0 ? html.replace('</body>', barra + '</body>') : html + barra);
+  w.document.close();
+  try { w.focus(); } catch (_) {}
+  /* la app de origen también lo dice: si la ventana nueva tapa todo, al
+     menos se supo a dónde se fue y cómo se vuelve */
+  if (typeof toast === 'function') toast('🖨️ Documento abierto en otra ventana. Al terminar, ciérrala con su botón amarillo para volver.');
+  return w;
+}
+
+function adGradoOrdinal(grado) {
   const g = String(grado || '').trim();
+  if (!g) return '';
+  const m = g.match(/^(\d{1,2})\s*[ºo°]?$/i);
+  return m ? m[1] + 'º' : g;
+}
+/* El guion solo entra cuando las dos partes son cortas, que es como las
+   escribe el maestro (6º-1, 9º-2, 7º-A); con «Bachillerato» y «A» un
+   guion quedaría raro y se usa el espacio de siempre. */
+function adGradoSeccion(grado, seccion) {
+  const g = adGradoOrdinal(grado);
   const s = String(seccion || '').trim();
   if (!g || !s) return g || s;
-  return (g.length <= 3 && s.length <= 3) ? g + '-' + s : g + ' ' + s;
+  return (g.length <= 4 && s.length <= 3) ? g + '-' + s : g + ' ' + s;
 }
-/* Para lectores de pantalla y para el «title» del chip: sin abreviar. */
+window.adGradoSeccion = adGradoSeccion;
+/* Para lectores de pantalla y para el «title» del chip: sin abreviar.
+   Aquí la palabra «Grado» ya dice lo que es, así que el número va pelado
+   («Grado 6», no «Grado 6º»), aunque el maestro lo haya escrito con º. */
 function adGrupoTitulo(g) {
-  const grado = String(g.grado || '').trim();
+  const grado = String(g.grado || '').trim().replace(/\s*[ºo°]\s*$/i, '');
   const sec = String(g.seccion || '').trim();
   const partes = [];
   if (grado) partes.push('Grado ' + grado);
@@ -279,41 +485,390 @@ function adGrupoChipTxt(g) {
   return adGradoSeccion(g.grado, g.seccion) || 'Nuevo grupo';
 }
 
+/* ══════════════ ORDENAR LOS GRUPOS ARRASTRÁNDOLOS ══════════════
+   El maestro que da clases en dos colegios acaba con diez o doce grupos
+   en la barra, y los abre en un orden que solo él sabe: el de la primera
+   hora, el de la tarde, el que lleva las notas de otro compañero. El
+   orden en que se crearon no es el orden en que se usan, y a partir del
+   quinto grupo hay que ir leyendo chip por chip para encontrar el suyo.
+
+   Se mueven con el dedo, y eso obliga a tres decisiones:
+
+   1. NO SE USA EL ARRASTRE DEL NAVEGADOR (draggable). En un teléfono no
+      existe: es de ratón. Aquí se hace con eventos de puntero, que son
+      los mismos para el dedo y para el ratón.
+   2. SE AGARRA MANTENIENDO TOCADO (medio segundo), no al primer roce.
+      Un toque corto SIGUE SIENDO cambiar de grupo —que es lo que se hace
+      cuarenta veces al día— y un dedo que baja para hacer scroll no
+      puede llevarse un grupo por delante. Con el ratón basta con
+      arrastrar, que ahí no hay scroll que estorbe.
+   3. EL HUECO ENSEÑA DÓNDE VA A CAER. Se suelta viendo el sitio, no
+      adivinándolo.
+
+   Al soltar, el orden se lee del DOM —que es exactamente lo que el
+   maestro acaba de ver— y se guarda en sus grupos. */
+function adGruposArrastrar(bar) {
+  if (!bar || bar.querySelectorAll('.ad-gr-chip[data-gid]').length < 2) return;
+  const LARGO = 380;      /* lo que hay que mantener tocado, en ms */
+  let mov = null;         /* el arrastre en curso */
+  let espera = null, chip0 = null, ini = null;
+
+  const olvidar = () => { clearTimeout(espera); espera = null; chip0 = null; ini = null; };
+  /* Mientras se mueve un grupo, el dedo NO desliza la página: si no, la
+     barra se va hacia arriba y el chip se suelta donde nadie quería. */
+  const frenaScroll = e => { if (mov) e.preventDefault(); };
+
+  const levantar = (chip, x, y) => {
+    olvidar();
+    const r = chip.getBoundingClientRect();
+    const f = chip.cloneNode(true);
+    f.classList.add('ad-gr-fantasma');
+    f.style.width = r.width + 'px'; f.style.height = r.height + 'px';
+    document.body.appendChild(f);
+    chip.classList.add('ad-gr-hueco');
+    document.body.classList.add('ad-gr-moviendo');
+    mov = { chip, f, dx: x - r.left, dy: y - r.top, movido: false };
+    document.addEventListener('touchmove', frenaScroll, { passive: false });
+    /* Un tironcito avisa de que ya lo tiene agarrado: sin eso el maestro
+       no sabe si se enganchó y suelta antes de tiempo. */
+    if (navigator.vibrate) { try { navigator.vibrate(12); } catch (_) {} }
+    arrastrar(x, y);
+  };
+
+  const arrastrar = (x, y) => {
+    if (!mov) return;
+    mov.f.style.left = (x - mov.dx) + 'px';
+    mov.f.style.top = (y - mov.dy) + 'px';
+    /* El fantasma no estorba la búsqueda: lleva pointer-events:none */
+    const bajo = document.elementFromPoint(x, y);
+    const dest = bajo && bajo.closest ? bajo.closest('.ad-gr-chip[data-gid]') : null;
+    if (!dest || dest === mov.chip || dest.parentNode !== bar) return;
+    const r = dest.getBoundingClientRect();
+    bar.insertBefore(mov.chip, x > r.left + r.width / 2 ? dest.nextSibling : dest);
+    mov.movido = true;
+  };
+
+  const soltar = () => {
+    olvidar();
+    if (!mov) return;
+    const { chip, f, movido } = mov;
+    mov = null;
+    document.removeEventListener('touchmove', frenaScroll, { passive: false });
+    f.remove();
+    chip.classList.remove('ad-gr-hueco');
+    document.body.classList.remove('ad-gr-moviendo');
+    /* El toque que suelta no puede además cambiar de grupo: el maestro
+       estaba ordenando, no entrando. */
+    const tragar = ev => { ev.stopPropagation(); ev.preventDefault(); };
+    bar.addEventListener('click', tragar, true);
+    setTimeout(() => bar.removeEventListener('click', tragar, true), 400);
+    if (!movido) return;
+    const orden = [...bar.querySelectorAll('.ad-gr-chip[data-gid]')].map(n => n.dataset.gid);
+    const sitio = id => { const i = orden.indexOf(id); return i < 0 ? 999 : i; };
+    const st = adState();
+    st.grupos.sort((a, b) => sitio(a.id) - sitio(b.id));
+    st.grOrden = 1;               /* ya lo descubrió: la pista se calla */
+    adStateSave(st);
+    /* NO se vuelve a pintar la pantalla: la barra ya está en el orden
+       nuevo, y repintarla justo al soltar arranca de debajo del dedo el
+       elemento que iba a recibir el toque. Solo se retira la pista. */
+    const pista = document.querySelector('.ad-gr-tip');
+    if (pista) pista.remove();
+    toast('✅ Grupos en tu orden');
+  };
+
+  bar.addEventListener('pointerdown', e => {
+    if (e.button > 0) return;
+    const chip = e.target.closest ? e.target.closest('.ad-gr-chip[data-gid]') : null;
+    if (!chip) return;
+    chip0 = chip; ini = { x: e.clientX, y: e.clientY };
+    document.addEventListener('pointermove', enMover);
+    document.addEventListener('pointerup', enSoltar);
+    document.addEventListener('pointercancel', enSoltar);
+    if (e.pointerType !== 'mouse') espera = setTimeout(() => levantar(chip, ini.x, ini.y), LARGO);
+  });
+
+  function enMover(e) {
+    if (mov) { arrastrar(e.clientX, e.clientY); return; }
+    if (!chip0) return;
+    const d = Math.abs(e.clientX - ini.x) + Math.abs(e.clientY - ini.y);
+    /* Con ratón se arrastra directo; con el dedo, moverse antes de tiempo
+       es que está deslizando la página, y entonces esto no va con él. */
+    if (e.pointerType === 'mouse') { if (d > 6) levantar(chip0, e.clientX, e.clientY); }
+    else if (d > 12) olvidar();
+  }
+  function enSoltar() {
+    soltar();
+    document.removeEventListener('pointermove', enMover);
+    document.removeEventListener('pointerup', enSoltar);
+    document.removeEventListener('pointercancel', enSoltar);
+  }
+}
+
+/* ── CAPTURA Y RESTAURACIÓN DE ESTADO (foco, cursor, parcial y vista) ── */
+let _adCapturedState = null;
+let _adRenderDiferido = false;
+let _adDiferidoTimer = null;
+
+function adActualizarChipNube() {
+  const chip = document.getElementById('ad-nube-chip');
+  if (chip) {
+    const n = typeof adPendientesTotal === 'function' ? adPendientesTotal() : 0;
+    chip.textContent = n ? '⏳ ' + n + ' por subir' : '☁️ al día';
+  }
+}
+
+function adSaceTieneFocoActivo() {
+  if (_adTab !== 'sace') return false;
+  const el = document.activeElement;
+  if (!el) return false;
+  const tag = (el.tagName || '').toUpperCase();
+  if (tag !== 'INPUT' && tag !== 'SELECT' && tag !== 'TEXTAREA') return false;
+  const body = document.getElementById('ad-tab-body');
+  if (!body) return false;
+  return body.contains(el);
+}
+
+function adCaptureState() {
+  const st = typeof adState === 'function' ? adState() : { activo: _adGrupoActivoId, grupos: [] };
+  const state = {
+    tab: _adTab,
+    grupo: (st && st.activo) || _adGrupoActivoId,
+    colectaId: _adColectaId,
+    controlId: _adControlId,
+    saceParcial: _adSaceParcial,
+    saceVista: _adSaceVista,
+    activeInput: null
+  };
+
+  const el = document.activeElement;
+  if (el && (el.tagName === 'INPUT' || el.tagName === 'SELECT' || el.tagName === 'TEXTAREA')) {
+    const saceBody = document.getElementById('ad-tab-body');
+    if (_adTab === 'sace' && saceBody && saceBody.contains(el)) {
+      let selStart = null, selEnd = null;
+      try {
+        if (typeof el.selectionStart === 'number') {
+          selStart = el.selectionStart;
+          selEnd = el.selectionEnd;
+        }
+      } catch (_) {}
+
+      let uniqueSelector = '';
+      if (el.id) {
+        uniqueSelector = '#' + el.id;
+      } else if (el.classList.contains('ad-mx-inp')) {
+        const al = el.dataset.alumno || el.dataset.num;
+        const mat = el.dataset.materia || el.dataset.campo;
+        const p = el.dataset.parcial;
+        if (al && mat && p) {
+          uniqueSelector = `.ad-mx-inp[data-parcial="${p}"][data-num="${al}"][data-campo="${mat}"]`;
+        }
+      }
+
+      state.activeInput = {
+        isSace: true,
+        tagName: el.tagName,
+        id: el.id || '',
+        num: el.dataset.num || el.dataset.alumno || '',
+        alumno: el.dataset.alumno || el.dataset.num || '',
+        campo: el.dataset.campo || el.dataset.materia || '',
+        materia: el.dataset.materia || el.dataset.campo || '',
+        parcial: el.dataset.parcial || '',
+        idx: el.dataset.idx != null ? el.dataset.idx : '',
+        selector: uniqueSelector,
+        selStart: selStart,
+        selEnd: selEnd,
+        value: el.value
+      };
+    }
+  }
+
+  _adCapturedState = state;
+  return state;
+}
+
+function adRestoreFocus(inpInfo) {
+  if (!inpInfo) return false;
+  let target = null;
+
+  // 1. Si tenía ID único
+  if (inpInfo.id) {
+    target = document.getElementById(inpInfo.id);
+  }
+
+  // 2. Si tenía selector único
+  if (!target && inpInfo.selector) {
+    try {
+      target = document.querySelector(inpInfo.selector);
+    } catch (_) {}
+  }
+
+  // 3. Si era celda de Notas SACE por alumno, materia/campo y parcial
+  if (!target && (inpInfo.alumno || inpInfo.num) && (inpInfo.materia || inpInfo.campo)) {
+    const al = String(inpInfo.alumno || inpInfo.num);
+    const mat = String(inpInfo.materia || inpInfo.campo);
+    const p = inpInfo.parcial ? String(inpInfo.parcial) : '';
+    const allInps = document.querySelectorAll('#ad-tab-body .ad-mx-inp');
+    for (let i = 0; i < allInps.length; i++) {
+      const inp = allInps[i];
+      const matchAl = (String(inp.dataset.alumno || inp.dataset.num) === al);
+      const matchMat = (String(inp.dataset.materia || inp.dataset.campo) === mat);
+      const matchP = (!p || String(inp.dataset.parcial) === p);
+      if (matchAl && matchMat && matchP) {
+        target = inp;
+        break;
+      }
+    }
+  }
+
+  // 4. Fallback por data-idx
+  if (!target && inpInfo.idx !== '' && inpInfo.idx != null) {
+    target = document.querySelector(`#ad-tab-body .ad-mx-inp[data-idx="${inpInfo.idx}"]`);
+  }
+
+  if (target) {
+    try {
+      target.focus({ preventScroll: true });
+      if (inpInfo.selStart != null && inpInfo.selEnd != null && typeof target.setSelectionRange === 'function') {
+        target.setSelectionRange(inpInfo.selStart, inpInfo.selEnd);
+      }
+      return true;
+    } catch (_) {}
+  }
+  return false;
+}
+
+async function adRestoreState(stateOrTab, colectaId, controlId) {
+  let saved = null;
+  let tab = stateOrTab;
+  if (typeof stateOrTab === 'object' && stateOrTab !== null) {
+    saved = stateOrTab;
+    tab = saved.tab;
+    colectaId = saved.colectaId;
+    controlId = saved.controlId;
+  } else if (!stateOrTab && _adCapturedState) {
+    saved = _adCapturedState;
+    tab = saved.tab;
+    colectaId = saved.colectaId;
+    controlId = saved.controlId;
+  }
+  if (tab) _adTab = tab;
+  _adColectaId = colectaId || null;
+  _adControlId = controlId || null;
+  if (saved) {
+    if (saved.saceParcial) _adSaceParcial = saved.saceParcial;
+    if (saved.saceVista) _adSaceVista = saved.saceVista;
+    if (saved.grupo) _adGrupoActivoId = saved.grupo;
+  }
+  try {
+    const nav = window.metasLoadNav ? window.metasLoadNav() : {};
+    if (!saved?.saceParcial && ['I', 'II', 'III', 'IV'].includes(nav.adSaceParcial)) _adSaceParcial = nav.adSaceParcial;
+    if (!saved?.saceVista && ['aprov', 'pers', 'inasis'].includes(nav.adSaceVista)) _adSaceVista = nav.adSaceVista;
+    if (!saved?.grupo && nav.adGrupo) _adGrupoActivoId = nav.adGrupo;
+  } catch (_) {}
+  const inAdmin = document.getElementById('view-admin')?.classList.contains('active');
+  if (!inAdmin && typeof paVerificarPin === 'function' &&
+      !(await paVerificarPin('Los registros administrativos guardan **dinero y notas finales**:'))) {
+    if (typeof switchView === 'function') switchView('view-perfil');
+    return;
+  }
+  if (typeof switchView === 'function') switchView('view-admin');
+  renderAdmin(true);
+  if (saved && saved.activeInput) {
+    adRestoreFocus(saved.activeInput);
+  }
+}
+
+window.adCaptureState = adCaptureState;
+window.adRestoreState = adRestoreState;
+
+// Si el render se difirió porque el usuario estaba digitando, repintar al soltar el foco
+document.addEventListener('focusout', () => {
+  if (!_adRenderDiferido) return;
+  if (_adTab !== 'sace') return;
+  clearTimeout(_adDiferidoTimer);
+  _adDiferidoTimer = setTimeout(() => {
+    if (_adRenderDiferido && !adSaceTieneFocoActivo()) {
+      _adRenderDiferido = false;
+      renderAdmin(true);
+    }
+  }, 250);
+});
+
 /* ── RENDER PRINCIPAL ── */
-function renderAdmin() {
+function renderAdmin(forzar = false) {
   const cont = document.getElementById('admin-content');
   if (!cont) return;
+
+  /* Si el refresco viene de una sincronización en segundo plano mientras el
+     usuario tiene el foco activo en un input de Notas SACE, evitar destruir el DOM
+     de la tabla y actualizar únicamente el indicador del botón de pendientes. */
+  if (!forzar && _adTab === 'sace' && adSaceTieneFocoActivo()) {
+    _adRenderDiferido = true;
+    adActualizarChipNube();
+    return;
+  }
+  _adRenderDiferido = false;
+
+  const savedState = adCaptureState();
+  const st = adState();
+  const d = st.grupos.find(g => g.id === st.activo) || st.grupos[0];
   /* recordar dónde está el docente para restaurarlo al recargar */
-  if (window.metasSaveNav) window.metasSaveNav({ view: 'view-admin', adTab: _adTab, adColecta: _adColectaId });
+  if (window.metasSaveNav) window.metasSaveNav({
+    view: 'view-admin',
+    adTab: _adTab,
+    adColecta: _adColectaId,
+    adControl: _adControlId,
+    adSaceParcial: _adSaceParcial,
+    adSaceVista: _adSaceVista,
+    adGrupo: st.activo
+  });
   /* la flecha del encabezado dice a dónde lleva AHORA, que cambia según se
-     esté dentro de una colecta o no */
+     esté dentro de una colecta o de un control */
   const _atras = document.getElementById('admin-back-btn');
   if (_atras) {
-    const rotulo = _adColectaId ? 'Volver a mis colectas' : 'Volver a la Zona Docente';
+    const nivelConv = typeof adConvNivel === 'function' ? adConvNivel() : 0;
+    const rotulo = _adFichasOn ? 'Volver a Alumnos'
+      : (_adGastosOn || _adInvOn) ? 'Volver a Economía'
+      : nivelConv === 2 ? 'Volver a mis convocatorias'
+      : nivelConv === 1 ? 'Volver a Comunicados'
+      : _adColectaId ? 'Volver a mis colectas'
+      : _adControlId ? 'Volver a mis controles' : 'Volver a la Zona Docente';
     _atras.setAttribute('aria-label', rotulo);
     _atras.setAttribute('title', rotulo);
   }
-  const st = adState();
-  const d = st.grupos.find(g => g.id === st.activo) || st.grupos[0];
   /* Barra de grupos: el maestro puede tener varios (incluso en dos
      colegios); todo lo de abajo (lista, economía, asistencia, notas)
      es DEL GRUPO ACTIVO. */
+  /* El colegio solo se pinta si el maestro trabaja en MÁS DE UNO. Con
+     once grupos de la misma escuela, repetir «JOHN ARNOLD COOK» once
+     veces no distingue nada y sí duplica el alto de la barra: en un
+     teléfono eran seis renglones de chips antes de llegar a lo suyo. El
+     nombre sigue en el título del chip y en la ficha del grupo. */
+  const escuelas = new Set(st.grupos.map(g => String(g.escuela || '').trim().toLowerCase()));
+  const verEsc = escuelas.size > 1;
   const chips = st.grupos.map(g => `
     <button class="ad-gr-chip ${g.id === st.activo ? 'ad-gr-on' : ''}" data-gid="${g.id}"
             title="${adEsc(adGrupoTitulo(g))}" aria-label="${adEsc(adGrupoTitulo(g))}">
       <span class="ad-gr-gs">${adEsc(adGrupoChipTxt(g))}</span>
-      ${g.escuela ? `<span class="ad-gr-esc">${adEsc(g.escuela)}</span>` : ''}
+      ${verEsc && g.escuela ? `<span class="ad-gr-esc">${adEsc(g.escuela)}</span>` : ''}
     </button>`).join('');
   cont.innerHTML = `
-    <div class="ad-gr-bar">
+    <div class="ad-gr-bar" id="ad-gr-bar">
       ${chips}
       <button class="ad-gr-chip ad-gr-add" id="ad-gr-add" title="Agregar otro grado o colegio">➕ Otro grupo</button>
     </div>
+    ${st.grupos.length > 1 && !st.grOrden ? `<p class="ad-gr-tip">✋ <strong>Mantén tocado un grupo</strong>
+      y muévelo: quedan en el orden que tú quieras, con el de la primera hora adelante.</p>` : ''}
     <div class="pa-tabs-out ad-tabs">
       <button class="pa-otab ${_adTab === 'lista' ? 'pa-otab-active' : ''}" data-adtab="lista">👥 Alumnos</button>
       <button class="pa-otab ${_adTab === 'eco'   ? 'pa-otab-active' : ''}" data-adtab="eco">💰 Economía</button>
       <button class="pa-otab ${_adTab === 'asis'  ? 'pa-otab-active' : ''}" data-adtab="asis">📋 Asistencia</button>
+      <button class="pa-otab ${_adTab === 'eq'    ? 'pa-otab-active' : ''}" data-adtab="eq">🤝 Equipos</button>
+      <button class="pa-otab ${_adTab === 'ctrl'  ? 'pa-otab-active' : ''}" data-adtab="ctrl">✅ Controles</button>
       <button class="pa-otab ${_adTab === 'sace'  ? 'pa-otab-active' : ''}" data-adtab="sace">🧮 Notas SACE</button>
+      <button class="pa-otab ${_adTab === 'est'   ? 'pa-otab-active' : ''}" data-adtab="est">📈 Estadísticas</button>
+      <button class="pa-otab ${_adTab === 'lec'   ? 'pa-otab-active' : ''}" data-adtab="lec">📖 Lectura</button>
       <button class="pa-otab ${_adTab === 'com'   ? 'pa-otab-active' : ''}" data-adtab="com">📣 Comunicados</button>
       <button class="pa-otab" id="ad-nube-chip" title="Nube del chatbot de padres: toca para sincronizar ahora">${(() => {
         const n = adPendientesTotal();
@@ -323,50 +878,77 @@ function renderAdmin() {
     <div id="ad-tab-body"></div>`;
   cont.querySelectorAll('[data-gid]').forEach(b =>
     b.addEventListener('click', () => {
-      const s2 = adState(); s2.activo = b.dataset.gid; adStateSave(s2);
-      _adColectaId = null; renderAdmin();
+      _adGrupoActivoId = b.dataset.gid;
+      try { localStorage.setItem('METAS_ADMIN_GRUPO_ACTIVO', _adGrupoActivoId); } catch (_) {}
+      const s2 = adState(); s2.activo = _adGrupoActivoId; adStateSave(s2);
+      _adColectaId = null; _adControlId = null; _adGastosOn = 0; _adInvOn = 0; _adFichasOn = 0;
+      if (typeof adConvCerrar === 'function') adConvCerrar();
+      renderAdmin();
     }));
+  adGruposArrastrar(document.getElementById('ad-gr-bar'));
   document.getElementById('ad-gr-add').addEventListener('click', async () => {
     if (!await metasConfirm('Un grupo nuevo tiene su PROPIA lista de alumnos, claves de familia, economía, asistencia y notas.\n\nÚsalo si atiendes **otro grado/sección** o trabajas en **otro colegio**. ¿Crear el grupo?',
       { icono: '🏫', titulo: 'Otro grupo', okTxt: 'Sí, crear' })) return;
     const s2 = adState();
     const g = adGrupoNuevo();
-    s2.grupos.push(g); s2.activo = g.id; adStateSave(s2);
+    s2.grupos.push(g); s2.activo = g.id;
+    _adGrupoActivoId = g.id;
+    try { localStorage.setItem('METAS_ADMIN_GRUPO_ACTIVO', _adGrupoActivoId); } catch (_) {}
+    adStateSave(s2);
     _adTab = 'lista'; renderAdmin();
     toast('🏫 Grupo nuevo: escribe su grado, sección y colegio');
   });
   cont.querySelectorAll('[data-adtab]').forEach(b =>
-    b.addEventListener('click', () => { _adTab = b.dataset.adtab; _adColectaId = null; renderAdmin(); }));
+    b.addEventListener('click', () => {
+      _adTab = b.dataset.adtab; _adColectaId = null; _adControlId = null;
+      _adGastosOn = 0; _adInvOn = 0; _adFichasOn = 0;
+      if (typeof adConvCerrar === 'function') adConvCerrar();
+      renderAdmin();
+    }));
   /* chip de nube: visible en TODAS las pestañas (antes solo en Alumnos
      se sabía si lo publicado ya subió); tocarlo sincroniza ya */
   document.getElementById('ad-nube-chip').addEventListener('click', async () => {
     await adSincronizarNube(true);
-    const chip = document.getElementById('ad-nube-chip');
-    if (chip) { const n = adPendientesTotal(); chip.textContent = n ? '⏳ ' + n + ' por subir' : '☁️ al día'; }
+    adActualizarChipNube();
   });
   const body = document.getElementById('ad-tab-body');
+  if (body) {
+    body.dataset.parcial = _adSaceParcial;
+    body.dataset.vista = _adSaceVista;
+  }
   if (_adTab === 'lista') adRenderLista(body, d);
   else if (_adTab === 'eco') adRenderEco(body, d);
   else if (_adTab === 'asis') adRenderAsis(body, d);
+  else if (_adTab === 'ctrl') adRenderControles(body, d);
   else if (_adTab === 'com') adRenderCom(body, d);
+  else if (_adTab === 'est' && typeof adRenderEstadisticas === 'function') adRenderEstadisticas(body, d);
+  else if (_adTab === 'lec' && typeof adRenderLectura === 'function') adRenderLectura(body, d);
+  /* 🤝 Equipos va al lado de Asistencia a propósito: se pasa lista y se
+     arman los equipos con los que vinieron (js/tools/equipos.js) */
+  else if (_adTab === 'eq' && typeof adRenderEquipos === 'function') adRenderEquipos(body, d);
   else adRenderSace(body, d);
+
+  if (savedState && savedState.activeInput) {
+    adRestoreFocus(savedState.activeInput);
+  }
 }
 
 /* ══════════════ 👥 ALUMNOS (el corazón: alimenta TODO) ══════════════ */
 function adRenderLista(body, d) {
+  if (_adFichasOn) { adRenderFichas(body, d); return; }
   const puedeBorrarGrupo = adState().grupos.length > 1;
   body.innerHTML = `
     <div class="pa-card">
       <div class="pa-card-title">🏫 Mi grupo</div>
       <div class="pa-row-2">
         <div class="pa-field"><label>Grado</label>
-          <input id="ad-grado" class="pa-inp-field" value="${adEsc(d.grado)}" placeholder="ej: 6º"></div>
+          <input id="ad-grado" class="pa-inp-field" value="${adEsc(d.grado)}" placeholder="ej.: 6º"></div>
         <div class="pa-field"><label>Sección</label>
-          <input id="ad-seccion" class="pa-inp-field" value="${adEsc(d.seccion)}" placeholder="ej: A"></div>
+          <input id="ad-seccion" class="pa-inp-field" value="${adEsc(d.seccion)}" placeholder="ej.: A"></div>
       </div>
       <div class="pa-field"><label>Colegio / escuela</label>
         <input id="ad-escuela" class="pa-inp-field" value="${adEsc(d.escuela)}"
-               placeholder="ej: Esc. Francisco Morazán (útil si trabajas en dos)"></div>
+               placeholder="ej.: Esc. Francisco Morazán (útil si trabajas en dos)"></div>
       <div class="pa-field"><label>Clases que le das a este grupo</label>
         <input id="ad-materias" class="pa-inp-field" value="${adEsc(d.materias.join(', '))}"
                placeholder="Separadas por coma"></div>
@@ -380,20 +962,45 @@ function adRenderLista(body, d) {
         Notas SACE y el Plan de Acción. El número es el <strong>nº de lista oficial</strong> (SACE).
         Cada alumno recibe su <strong>🔑 clave de familia</strong>: con ella el padre o la madre
         consulta al asistente desde su casa. Tócala para cambiarla o imprimirla.</p>
+      <button class="ad-puerta ad-puerta-ficha" id="ad-ir-fichas">
+        <span class="ad-puerta-ic">🗂️</span>
+        <span class="ad-puerta-txt">
+          <span class="ad-puerta-t">Identidad y contactos</span>
+          <span class="ad-puerta-s">${(() => {
+            const c = (d.lista || []).filter(a => AD_FICHA_CAMPOS.every(x => String(a[x.k] || '').trim())).length;
+            return d.lista.length
+              ? (c === d.lista.length
+                  ? 'Las ' + c + ' fichas están completas'
+                  : c + ' de ' + d.lista.length + ' fichas completas — identidad, teléfonos y encargado')
+              : 'Identidad, teléfonos y encargado de cada alumno';
+          })()}</span>
+        </span>
+        <span class="ad-puerta-go">›</span>
+      </button>
       <div id="ad-lista-rows">
-        ${d.lista.map(a => {
+        ${d.lista.map((a, ri) => {
           const cl = adClaveFamilia(d.id, a.num, false);
+          const pr = adEsPrueba(a);
           return `
-          <div class="ad-al-row" data-num="${a.num}">
-            <span class="ad-al-num">#${a.num}</span>
+          <div class="ad-al-row${pr ? ' ad-al-prueba' : ''}" data-num="${a.num}">
+            <span class="ad-mx-rbtns ad-al-rbtns">
+              <button type="button" class="ad-mx-rmv ad-al-rmv" data-rdir="-1" data-rnum="${a.num}" title="Subir una posición (con sus notas)" aria-label="Subir"${ri === 0 ? ' disabled' : ''}>▲</button>
+              <button type="button" class="ad-mx-rmv ad-al-rmv" data-rdir="1" data-rnum="${a.num}" title="Bajar una posición (con sus notas)" aria-label="Bajar"${ri === d.lista.length - 1 ? ' disabled' : ''}>▼</button>
+            </span>
+            <button type="button" class="ad-al-num" data-irnum="${a.num}" title="Toca para elegir el número de posición al que quieres mover este alumno con sus notas">#${a.num}</button>
             <input class="pa-inp-field ad-al-nombre" value="${adEsc(a.nombre)}" placeholder="Nombre (opcional)">
             <button class="ad-al-code" data-cnum="${a.num}" title="Clave de familia — tócala para editar o imprimir">
               🔑 ${cl ? adEsc(adClaveBonita(cl, a.num)) : 'crear'}</button>
-            <button class="ad-al-del" aria-label="Quitar">✕</button>
+            ${pr ? `<button class="ad-al-test" data-pnum="${a.num}"
+              title="Alumno de prueba: no cuenta en el informe del grado. Tócalo para volverlo a contar."
+              aria-label="Quitar la marca de alumno de prueba">🧪 de prueba</button>` : ''}
+            <button class="ad-al-del" data-delnum="${a.num}" title="Borrar esta fila (puedes restaurarla en 🕘 Deshacer)" aria-label="Borrar fila">✕</button>
           </div>`; }).join('')}
       </div>
       <div class="ad-btn-row">
         <button class="pa-generate-btn ad-btn-sec" id="ad-add-al">➕ Agregar al final</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-ordenar-gen">♀♂ Ordenar Niñas y luego Varones (A–Z)</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-ordenar-az">🔤 Ordenar todos A–Z</button>
         <button class="pa-generate-btn ad-btn-sec" id="ad-pegar">📋 Pegar lista</button>
         <button class="pa-generate-btn ad-btn-sec" id="ad-insertar-al">🧑‍🎓 Alumno nuevo en su lugar</button>
         <button class="pa-generate-btn ad-btn-sec" id="ad-traer-pa">📥 Traer del Plan de Acción</button>
@@ -410,16 +1017,37 @@ function adRenderLista(body, d) {
         lugar del orden alfabético, usa «Alumno nuevo en su lugar»: los números se recorren, pero la
         <strong>clave de familia viaja con cada niño</strong> — las tiras ya entregadas siguen valiendo
         y solo imprimes la del nuevo.</p>
+      <p class="pa-optional-hint">🧪 ¿Tienes un alumno inventado para hacer pruebas? Búscalo en
+        <strong>📈 Estadísticas</strong> y márcalo de prueba: queda fuera del <strong>informe del
+        grado</strong>, de los informes de todo el grupo y de los <strong>🤝 Equipos</strong>, así deja de inflar la matrícula, el promedio y
+        las inasistencias que ve la Dirección. Para ti sigue igual — puedes ponerle notas, asistencia y
+        tomas de lectura.${adCuentaPruebas(d)
+          ? ' Hoy hay <strong>' + adCuentaPruebas(d) + '</strong> marcado(s) así, señalado(s) aquí abajo; toca su 🧪 para volverlo(s) a contar.'
+          : ''}</p>
     </div>
 
     <div class="pa-card">
-      <div class="pa-card-title">☁️ Nube del chatbot de padres</div>
+      <div class="pa-card-title">☁️ Nube del chatbot de padres y recuperación</div>
       <p class="pa-optional-hint">La asistencia, las notas finales y las colaboraciones suben con la
         <strong>clave de familia</strong> de cada alumno para que el asistente les responda a los padres.
-        Sube solo lo que cambia; sin internet, espera y reintenta.</p>
-      <button class="pa-generate-btn ad-btn-sec" id="ad-sb-sync">☁️ Sincronizar ahora</button>
+        Si cambiaste de equipo o necesitas rescatar tus notas, personalidad y días perdidos (I–III), usa los botones de recuperación e historial.</p>
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn ad-btn-sec" id="ad-sb-sync" type="button">☁️ Sincronizar ahora</button>
+        <button class="pa-generate-btn ad-rec-btn-main" id="ad-lista-recuperar" type="button">📥 Recuperar notas, personalidad y días perdidos (I–III)</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-lista-versiones" type="button">🕓 Verificar historial de versiones</button>
+      </div>
       <p class="pa-optional-hint" id="ad-sb-status" style="margin-top:8px"></p>
     </div>
+
+    <button class="ad-puerta ad-puerta-exp" id="ad-expediente">
+      <span class="ad-puerta-ic">📄</span>
+      <span class="ad-puerta-txt">
+        <span class="ad-puerta-t">Expediente del aula en PDF</span>
+        <span class="ad-puerta-s">Todo en un solo documento: lista, asistencia, colectas, gastos,
+          controles, novedades, notas y comunicados. Para imprimir o guardar en tu portafolio.</span>
+      </span>
+      <span class="ad-puerta-go">›</span>
+    </button>
 
     <div class="pa-card">
       <div class="pa-card-title">🎓 Fin del año escolar</div>
@@ -433,19 +1061,7 @@ function adRenderLista(body, d) {
       </div>
     </div>
 
-    ${adUndoLista().length ? `
-    <div class="pa-card">
-      <div class="pa-card-title">🕘 Deshacer un accidente</div>
-      <p class="pa-optional-hint">Antes de cada borrado se guarda una foto de Mi aula. Si quitaste un
-        alumno, una colecta o una clave <strong>por error</strong>, restaura aquí (lo cambiado
-        después de esa foto se pierde).</p>
-      ${adUndoLista().map((f, i) => `
-        <div class="ad-gasto-row" style="align-items:center">
-          <span style="flex:1"><strong>Antes de: ${adEsc(f.e)}</strong><br>
-            <small>${adFechaBonita(String(f.t).slice(0, 10))} · ${String(f.t).slice(11, 16)}</small></span>
-          <button class="pa-generate-btn ad-btn-sec ad-undo-btn" data-ui="${i}">↩️ Restaurar</button>
-        </div>`).reverse().join('')}
-    </div>` : ''}`;
+    ${adUndoTarjetaHtml()}`;
 
   const persist = () => {
     const dd = adLoad();
@@ -454,10 +1070,17 @@ function adRenderLista(body, d) {
     dd.escuela = document.getElementById('ad-escuela').value.trim();
     const mats = document.getElementById('ad-materias').value.split(',').map(s => s.trim()).filter(Boolean);
     if (mats.length) dd.materias = mats;
-    dd.lista = [...body.querySelectorAll('.ad-al-row')].map(r => ({
-      num: +r.dataset.num,
-      nombre: r.querySelector('.ad-al-nombre').value.trim(),
-    }));
+    /* La lista se reconstruye desde la pantalla, así que hay que CONSERVAR lo que
+       no se edita aquí (identidad, teléfonos, encargado). Sin este merge, tocar
+       un nombre borraba la ficha completa del alumno. */
+    const antes = {};
+    (dd.lista || []).forEach(a => { antes[a.num] = a; });
+    dd.lista = [...body.querySelectorAll('.ad-al-row')].map(r => {
+      const num = +r.dataset.num;
+      return Object.assign({}, antes[num], {
+        num, nombre: r.querySelector('.ad-al-nombre').value.trim(),
+      });
+    });
     adSave(dd);
   };
   ['ad-grado', 'ad-seccion', 'ad-escuela', 'ad-materias'].forEach(id =>
@@ -466,16 +1089,33 @@ function adRenderLista(body, d) {
   ['ad-grado', 'ad-seccion', 'ad-escuela'].forEach(id =>
     document.getElementById(id).addEventListener('change', () => renderAdmin()));
   body.querySelectorAll('.ad-al-nombre').forEach(i => i.addEventListener('input', persist));
+  adListaFilasArrastrar(document.getElementById('ad-lista-rows'));
+  document.getElementById('ad-ordenar-gen')?.addEventListener('click', () => {
+    persist();
+    adOrdenarPorGeneroModal(() => renderAdmin());
+  });
+  document.getElementById('ad-ordenar-az')?.addEventListener('click', () => {
+    persist();
+    adOrdenarAlumnosAZ(() => renderAdmin());
+  });
   body.querySelectorAll('.ad-al-code').forEach(b =>
     b.addEventListener('click', () => adEditarClave(+b.dataset.cnum)));
+  /* 🧪 marcar/desmarcar alumno de prueba. Se guarda ANTES de tocar la
+     lista para no pisar un nombre a medio escribir en otra fila. */
+  body.querySelectorAll('[data-pnum]').forEach(b =>
+    b.addEventListener('click', () => {
+      persist();
+      const on = adTogglePrueba(+b.dataset.pnum);
+      renderAdmin();
+      toast(on ? '🧪 Alumno de prueba: ya no cuenta en el informe del grado'
+               : '👥 Vuelve a contar como alumno del grado');
+    }));
   body.querySelectorAll('.ad-al-del').forEach(b =>
-    b.addEventListener('click', async () => {
-      if (!await metasConfirm('¿Quitar a este alumno de la lista?\nSus pagos, asistencias y notas guardadas no se borran.', { icono: '👥', titulo: 'Lista de alumnos', okTxt: 'Sí, quitar' })) return;
+    b.addEventListener('click', () => {
+      persist();
       const fila = b.closest('.ad-al-row');
-      adUndoGuardar('Quitar alumno #' + fila.dataset.num);
-      fila.remove();
-      persist(); renderAdmin();
-      toast('👥 Alumno quitado — si fue un error, restaura en 🕘');
+      const num = +(b.dataset.delnum || (fila && fila.dataset.num));
+      adEliminarAlumnoFila(num, () => renderAdmin());
     }));
   document.getElementById('ad-add-al').addEventListener('click', () => {
     const dd = adLoad();
@@ -494,7 +1134,13 @@ function adRenderLista(body, d) {
   document.getElementById('ad-import-btn').addEventListener('click', adImportarPegado);
   document.getElementById('ad-insertar-al').addEventListener('click', adInsertarAlumno);
   document.getElementById('ad-tiras-todas').addEventListener('click', () => adTirasTodas(adLoad()));
+  document.getElementById('ad-ir-fichas').addEventListener('click', () => { _adFichasOn = 1; renderAdmin(); });
+  /* el expediente lee el estado COMPLETO: los gastos de bolsillo viven en la
+     cuenta, no en el grupo, y también van en el legajo */
+  document.getElementById('ad-expediente').addEventListener('click', () => adPrintExpediente(adState()));
   document.getElementById('ad-sb-sync').addEventListener('click', () => adSincronizarNube(true));
+  document.getElementById('ad-lista-recuperar')?.addEventListener('click', e => adRecuperarNotasNube(e.currentTarget, () => renderAdmin()));
+  document.getElementById('ad-lista-versiones')?.addEventListener('click', () => adAbrirHistorialVersionesModal(() => renderAdmin()));
   document.getElementById('ad-cerrar-anio').addEventListener('click', adCerrarAnio);
   body.querySelectorAll('.ad-undo-btn').forEach(b =>
     b.addEventListener('click', () => adUndoRestaurar(+b.dataset.ui)));
@@ -667,9 +1313,7 @@ ${filas.map(f => `
   </div>`).join('')}
 </div>
 </body></html>`;
-  const w = window.open('', '_blank');
-  if (!w) { toast('Permite las ventanas emergentes para imprimir'); return; }
-  w.document.write(html); w.document.close();
+  adPrintAbrir(html);
 }
 
 /* ── Alumno nuevo a mitad de año ──
@@ -721,7 +1365,16 @@ async function adInsertarAlumno() {
   d.asistencia.forEach(r => { r.aus = adShiftNums(r.aus, pos); });
   Object.keys(d.notas || {}).forEach(p =>
     Object.keys(d.notas[p] || {}).forEach(m => { d.notas[p][m] = adShiftNums(d.notas[p][m], pos); }));
-  d.colectas.forEach(c => { c.pagos = adShiftNums(c.pagos, pos); });
+  d.colectas.forEach(c => {
+    c.pagos = adShiftNums(c.pagos, pos);
+    c.pagosF = adShiftNums(c.pagosF, pos);   /* la fecha viaja con su pago */
+  });
+  (d.lectura || []).forEach(r => { if (+r.num >= pos) r.num = +r.num + 1; });   /* las tomas de lectura también */
+  /* los controles se recorren igual: sus marcas son del niño, no del número
+     (antes se quedaban con el número viejo y el control mentía) */
+  (d.controles || []).forEach(c => { c.datos = adShiftNums(c.datos || {}, pos); });
+  /* y los equipos guardados, que también van por nº de lista */
+  if (typeof eqRecorrer === 'function') eqRecorrer(d, pos);
   /* 3) la lista misma */
   d.lista.forEach(a => { if (a.num >= pos) a.num++; });
   d.lista.push({ num: pos, nombre: String(nombre).trim() });
@@ -733,6 +1386,727 @@ async function adInsertarAlumno() {
   if (await metasConfirm('¿Imprimir ahora la **tira con la clave de familia** del alumno nuevo?', { icono: '🔑', titulo: 'Alumno nuevo', okTxt: 'Sí, imprimir' })) {
     adTiraUno(adLoad(), pos);
   }
+}
+
+/* ── Reordenar filas de alumnos a gusto del docente ──
+   Mueve al alumno con TODAS sus notas ( los 4 parciales, materias,
+   personalidad e inasistencias), asistencias, pagos de colectas, controles,
+   tomas de lectura, equipos, comunicados/conducta, evaluaciones del Plan
+   de Acción y su clave de familia (METAS_CODIGOS_V1).
+   Los números de lista se renumeran en el nuevo orden (1, 2, …, N) para que
+   la boleta, SACE y toda Mi aula conserven el orden elegido por el maestro. */
+function adReordenarAlumnos(ordenNums, etiquetaUndo) {
+  const d = adLoad();
+  if (!d || !Array.isArray(d.lista) || d.lista.length < 2) return null;
+  const porNum = {};
+  d.lista.forEach(a => { porNum[a.num] = a; });
+  const vistos = new Set();
+  const nuevaLista = [];
+  (ordenNums || []).forEach(n => {
+    const k = +n;
+    if (porNum[k] && !vistos.has(k)) { vistos.add(k); nuevaLista.push(porNum[k]); }
+  });
+  d.lista.forEach(a => {
+    if (!vistos.has(a.num)) { vistos.add(a.num); nuevaLista.push(a); }
+  });
+  const numsDestino = d.lista.map(a => a.num).slice().sort((a, b) => a - b);
+  let cambio = false;
+  for (let i = 0; i < nuevaLista.length; i++) {
+    if (nuevaLista[i].num !== d.lista[i].num) { cambio = true; break; }
+  }
+  if (!cambio) {
+    if (etiquetaUndo === false) {
+      const mId = {};
+      d.lista.forEach(a => { mId[a.num] = a.num; });
+      return mId;
+    }
+    return null;
+  }
+
+  if (etiquetaUndo !== false) {
+    adUndoGuardar(typeof etiquetaUndo === 'string' && etiquetaUndo ? etiquetaUndo : 'Ordenar filas de alumnos');
+  }
+
+  /* Mapa: número anterior → nuevo número de lista según la nueva posición */
+  const mapa = {};
+  nuevaLista.forEach((al, i) => { mapa[al.num] = numsDestino[i]; });
+  const remapearObj = obj => {
+    const out = {};
+    Object.keys(obj || {}).forEach(k => {
+      const nk = mapa[+k] != null ? mapa[+k] : +k;
+      out[nk] = obj[k];
+    });
+    return out;
+  };
+
+  /* 1) Claves de familia siguen a cada alumno (tiras impresas y nube siguen valiendo) */
+  try {
+    const codes = JSON.parse(localStorage.getItem('METAS_CODIGOS_V1')) || {};
+    const key = 'G:' + d.id;
+    if (codes[key]) {
+      codes[key] = remapearObj(codes[key]);
+      localStorage.setItem('METAS_CODIGOS_V1', JSON.stringify(codes));
+    }
+  } catch (_) {}
+
+  /* 2) Notas SACE (todos los parciales, todas las materias, personalidad e inasistencias) */
+  Object.keys(d.notas || {}).forEach(p => {
+    Object.keys(d.notas[p] || {}).forEach(m => {
+      d.notas[p][m] = remapearObj(d.notas[p][m]);
+    });
+  });
+
+  /* 3) Asistencia, colectas, controles, lectura y equipos */
+  (d.asistencia || []).forEach(r => { if (r && r.aus) r.aus = remapearObj(r.aus); });
+  (d.colectas || []).forEach(c => {
+    if (c && c.pagos) c.pagos = remapearObj(c.pagos);
+    if (c && c.pagosF) c.pagosF = remapearObj(c.pagosF);
+  });
+  (d.controles || []).forEach(c => {
+    if (c && c.datos) c.datos = remapearObj(c.datos);
+  });
+  (d.lectura || []).forEach(r => {
+    if (r && mapa[+r.num] != null) r.num = mapa[+r.num];
+  });
+  const eq = d.equipos;
+  if (eq) {
+    const mArr = a => (a || []).map(n => mapa[+n] != null ? mapa[+n] : +n);
+    ['reparto', 'antes'].forEach(k => { if (Array.isArray(eq[k])) eq[k] = eq[k].map(mArr); });
+    if (Array.isArray(eq.coord)) eq.coord = mArr(eq.coord);
+    if (Array.isArray(eq.separar)) eq.separar = eq.separar.map(mArr);
+    if (eq.fuera && Array.isArray(eq.fuera.nums)) eq.fuera.nums = mArr(eq.fuera.nums);
+  }
+
+  /* 4) Comunicados individuales y reportes de conducta del grupo */
+  try {
+    if (typeof avLoad === 'function' && typeof avSaveAll === 'function') {
+      const oAv = avLoad();
+      const gAv = oAv.grupos && oAv.grupos[d.id];
+      if (gAv) {
+        (gAv.avisos || []).forEach(av => {
+          if (av && Array.isArray(av.alumnos)) {
+            av.alumnos = av.alumnos.map(n => mapa[+n] != null ? mapa[+n] : +n);
+          }
+        });
+        (gAv.conducta || []).forEach(c => {
+          if (c && mapa[+c.num] != null) c.num = mapa[+c.num];
+        });
+        avSaveAll(oAv);
+      }
+    }
+  } catch (_) {}
+
+  /* 5) Evaluaciones del Plan de Acción que pertenecen a este grupo */
+  try {
+    const rawPa = localStorage.getItem('METAS_PLANACCION_V1');
+    if (rawPa && typeof adSugMismoGrupo === 'function') {
+      const pa = JSON.parse(rawPa);
+      let modPa = false;
+      ((pa && pa.analisis) || []).forEach(ana => {
+        if (!ana || !Array.isArray(ana.students) || !adSugMismoGrupo(ana, d)) return;
+        ana.students.forEach(s => {
+          if (s && mapa[+s.num] != null && +s.num !== mapa[+s.num]) {
+            s.num = mapa[+s.num];
+            modPa = true;
+          }
+        });
+        ana.students.sort((a, b) => (+a.num || 0) - (+b.num || 0));
+      });
+      if (modPa) localStorage.setItem('METAS_PLANACCION_V1', JSON.stringify(pa));
+    }
+  } catch (_) {}
+
+  /* 6) Actualizar la lista en el nuevo orden con sus números renumerados */
+  d.lista = nuevaLista.map((al, i) => Object.assign({}, al, { num: numsDestino[i] }));
+  adSave(d);
+  return mapa;
+}
+
+/* Elimina la fila de un alumno renumerando a los demás con sus propias notas y guardando respaldo en Deshacer */
+async function adEliminarAlumnoFila(numActual, alTerminar) {
+  const d = adLoad();
+  if (!d || !Array.isArray(d.lista)) return;
+  if (d.lista.length <= 1) {
+    await metasAlert('Debe quedar al menos 1 fila en la lista. Si deseas cambiar el alumno, edita su nombre.', {
+      icono: '👥',
+      titulo: 'Borrar fila',
+    });
+    return;
+  }
+  const idx = d.lista.findIndex(a => +a.num === +numActual);
+  if (idx < 0) return;
+  const al = d.lista[idx];
+  const quien = (al.nombre ? al.nombre : 'Sin nombre') + ' (#' + al.num + ')';
+  if (!await metasConfirm(
+    '¿Borrar la fila de **' + quien + '**?\n\n' +
+    'Se quitará de la lista y los demás alumnos conservarán sus propias notas, asistencias, pagos y claves de familia.\n\n' +
+    '💡 Si necesitas recuperarla después, podrás restaurarla en **«🕘 Deshacer o restaurar cambios»**.',
+    { icono: '🗑️', titulo: 'Borrar fila de alumno', okTxt: 'Sí, borrar fila' }
+  )) return;
+
+  adUndoGuardar('Borrar fila · ' + quien);
+
+  const d2 = adLoad();
+  const restantes = d2.lista.filter(a => +a.num !== +numActual);
+  const mapa = {};
+  restantes.forEach((a, i) => { mapa[a.num] = i + 1; });
+
+  const remapearSinBorrado = obj => {
+    const out = {};
+    Object.keys(obj || {}).forEach(k => {
+      const nk = +k;
+      if (nk === +numActual) return;
+      if (mapa[nk] != null) out[mapa[nk]] = obj[k];
+    });
+    return out;
+  };
+
+  /* 1) Claves de familia */
+  try {
+    const codes = JSON.parse(localStorage.getItem('METAS_CODIGOS_V1')) || {};
+    const key = 'G:' + d2.id;
+    if (codes[key]) {
+      codes[key] = remapearSinBorrado(codes[key]);
+      localStorage.setItem('METAS_CODIGOS_V1', JSON.stringify(codes));
+    }
+  } catch (_) {}
+
+  /* 2) Notas SACE */
+  Object.keys(d2.notas || {}).forEach(p => {
+    Object.keys(d2.notas[p] || {}).forEach(m => {
+      d2.notas[p][m] = remapearSinBorrado(d2.notas[p][m]);
+    });
+  });
+
+  /* 3) Asistencia, colectas, controles, lectura y equipos */
+  (d2.asistencia || []).forEach(r => { if (r && r.aus) r.aus = remapearSinBorrado(r.aus); });
+  (d2.colectas || []).forEach(c => {
+    if (c && c.pagos) c.pagos = remapearSinBorrado(c.pagos);
+    if (c && c.pagosF) c.pagosF = remapearSinBorrado(c.pagosF);
+  });
+  (d2.controles || []).forEach(c => {
+    if (c && c.datos) c.datos = remapearSinBorrado(c.datos);
+  });
+  d2.lectura = (d2.lectura || []).filter(r => r && +r.num !== +numActual);
+  d2.lectura.forEach(r => {
+    if (r && mapa[+r.num] != null) r.num = mapa[+r.num];
+  });
+  const eq = d2.equipos;
+  if (eq) {
+    const mArr = a => (a || []).filter(n => +n !== +numActual).map(n => mapa[+n] != null ? mapa[+n] : +n);
+    ['reparto', 'antes'].forEach(k => { if (Array.isArray(eq[k])) eq[k] = eq[k].map(mArr); });
+    if (Array.isArray(eq.coord)) eq.coord = mArr(eq.coord);
+    if (Array.isArray(eq.separar)) eq.separar = eq.separar.map(mArr).filter(par => par.length >= 2);
+    if (eq.fuera && Array.isArray(eq.fuera.nums)) eq.fuera.nums = mArr(eq.fuera.nums);
+  }
+
+  /* 4) Comunicados y conducta */
+  try {
+    if (typeof avLoad === 'function' && typeof avSaveAll === 'function') {
+      const oAv = avLoad();
+      const gAv = oAv.grupos && oAv.grupos[d2.id];
+      if (gAv) {
+        (gAv.avisos || []).forEach(av => {
+          if (av && Array.isArray(av.alumnos)) {
+            av.alumnos = av.alumnos.filter(n => +n !== +numActual).map(n => mapa[+n] != null ? mapa[+n] : +n);
+          }
+        });
+        gAv.conducta = (gAv.conducta || []).filter(c => c && +c.num !== +numActual);
+        gAv.conducta.forEach(c => {
+          if (c && mapa[+c.num] != null) c.num = mapa[+c.num];
+        });
+        avSaveAll(oAv);
+      }
+    }
+  } catch (_) {}
+
+  /* 5) Plan de Acción */
+  try {
+    const rawPa = localStorage.getItem('METAS_PLANACCION_V1');
+    if (rawPa && typeof adSugMismoGrupo === 'function') {
+      const pa = JSON.parse(rawPa);
+      let modPa = false;
+      ((pa && pa.analisis) || []).forEach(ana => {
+        if (!ana || !Array.isArray(ana.students) || !adSugMismoGrupo(ana, d2)) return;
+        const antes = ana.students.length;
+        ana.students = ana.students.filter(s => s && +s.num !== +numActual);
+        if (ana.students.length !== antes) modPa = true;
+        ana.students.forEach(s => {
+          if (s && mapa[+s.num] != null && +s.num !== mapa[+s.num]) {
+            s.num = mapa[+s.num];
+            modPa = true;
+          }
+        });
+        ana.students.sort((a, b) => (+a.num || 0) - (+b.num || 0));
+      });
+      if (modPa) localStorage.setItem('METAS_PLANACCION_V1', JSON.stringify(pa));
+    }
+  } catch (_) {}
+
+  /* 6) Guardar lista renumerada */
+  d2.lista = restantes.map((a, i) => Object.assign({}, a, { num: i + 1 }));
+  adSave(d2);
+  if (typeof alTerminar === 'function') alTerminar();
+  if (typeof toast === 'function') {
+    toast('🗑️ Fila borrada (' + (adPrimerNombre(al.nombre) || '#' + numActual) + ') · Puedes restaurarla en «🕘 Deshacer»');
+  }
+}
+
+/* Heurística opcional para sugerir si un primer nombre suele ser femenino en español */
+function adEsNombreFemeninoSugerido(nombreCompleto) {
+  const p = adPrimerNombre(nombreCompleto).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  if (!p) return false;
+  const mascEnA = new Set(['josua', 'joshua', 'luca', 'lukas', 'nicola', 'elias', 'matias', 'tobias', 'isaias', 'jeremias', 'abdias', 'ezequias', 'nehemias', 'zacarias', 'urias', 'jonas', 'tomas', 'lucas', 'sebas', 'borja', 'mustafa']);
+  if (mascEnA.has(p)) return false;
+  const femComunes = new Set(['abigail', 'adamaris', 'alison', 'allison', 'amparo', 'anabel', 'angie', 'aracely', 'arely', 'ashley', 'ashly', 'astrid', 'avril', 'beatriz', 'belen', 'berenice', 'betzy', 'brigitte', 'brittany', 'carmen', 'carol', 'celeste', 'cherlim', 'chloe', 'claire', 'consuelo', 'coral', 'cristal', 'cristy', 'dailyn', 'daisy', 'damaris', 'dayrin', 'debora', 'deborah', 'delmy', 'denisse', 'deybi', 'dolores', 'doris', 'dulce', 'edith', 'elizabeth', 'elsy', 'emily', 'emperatriz', 'esther', 'estrella', 'evelyn', 'fanny', 'flor', 'genesis', 'giselle', 'gladys', 'grace', 'grisel', 'guadalupe', 'haidee', 'hazel', 'heidi', 'helen', 'hilary', 'ines', 'ingrid', 'irene', 'iris', 'isabel', 'iveth', 'ivonne', 'jacqueline', 'jade', 'janeth', 'jasmin', 'jazmin', 'jennifer', 'jenny', 'jessica', 'jimena', 'joselyn', 'judith', 'julieth', 'karen', 'karin', 'karol', 'katherine', 'katy', 'keily', 'keiry', 'kelly', 'kendy', 'kenia', 'keren', 'keyla', 'keylin', 'kimberly', 'kristel', 'lady', 'lauren', 'leidy', 'lesly', 'leslie', 'leticia', 'liliana', 'lilian', 'liliam', 'lizbeth', 'lizeth', 'lourdes', 'lucero', 'luz', 'mabel', 'madelyn', 'magaly', 'maite', 'marbely', 'margaret', 'maribel', 'maricruz', 'mariel', 'marisol', 'marlen', 'marleny', 'mary', 'maybelline', 'maylin', 'mayra', 'megan', 'melanie', 'melany', 'melissa', 'mercedes', 'merary', 'merlin', 'michelle', 'milagro', 'milagros', 'mildred', 'miriam', 'mirian', 'monserrath', 'monserrat', 'nadia', 'nancy', 'naomi', 'nataly', 'nathaly', 'nayeli', 'nelly', 'nicole', 'nohemi', 'noemi', 'nohelia', 'norma', 'nuria', 'odalis', 'olga', 'orquidea', 'paola', 'patricia', 'paz', 'perla', 'pilar', 'rachel', 'raquel', 'rebeca', 'rocio', 'rosario', 'rosibel', 'roxana', 'ruby', 'ruth', 'sadith', 'samanta', 'samantha', 'sara', 'sarahi', 'sarai', 'scarleth', 'scarlet', 'selene', 'sharon', 'sheila', 'sherlyn', 'shirley', 'silvia', 'sindel', 'sindy', 'socorro', 'sofia', 'sol', 'soledad', 'sonia', 'stephanie', 'stephany', 'suany', 'suyen', 'tania', 'tatiana', 'teresa', 'tiffany', 'valeria', 'valery', 'vanessa', 'wendy', 'ximena', 'xiomara', 'yamileth', 'yaneth', 'ocirema', 'yaquelin', 'yareli', 'yasmin', 'yazmin', 'yesenia', 'yessica', 'yohana', 'yolanda', 'yoselin', 'yulissa', 'zoe', 'zulema']);
+  if (femComunes.has(p)) return true;
+  if (p.endsWith('a') || p.endsWith('eth') || p.endsWith('elly') || p.endsWith('ely') || p.endsWith('lyn')) return true;
+  return false;
+}
+
+/* Modal para elegir/confirmar quiénes son ♀ Niñas y ordenar Niñas (A–Z) arriba y ♂ Varones (A–Z) debajo */
+function adOrdenarPorGeneroModal(alTerminar) {
+  const d = adLoad();
+  if (!d || !Array.isArray(d.lista) || d.lista.length < 2) {
+    if (typeof toast === 'function') toast('Agrega al menos 2 alumnos para ordenar');
+    return;
+  }
+  const ninasSet = new Set();
+  const algunoRegistrado = d.lista.some(a => a.sexo === 'F' || a.sexo === 'M');
+  d.lista.forEach(a => {
+    if (a.sexo === 'F') ninasSet.add(a.num);
+    else if (!algunoRegistrado && adEsNombreFemeninoSugerido(a.nombre)) ninasSet.add(a.num);
+  });
+
+  const ov = document.createElement('div');
+  ov.className = 'ad-gen-ov';
+  ov.innerHTML = `
+    <div class="ad-gen-card" role="dialog" aria-modal="true" aria-labelledby="ad-gen-tit">
+      <div class="ad-gen-head">
+        <div class="ad-gen-title" id="ad-gen-tit">♀♂ Ordenar Niñas y luego Varones (A–Z)</div>
+        <button type="button" class="ad-gen-close" id="ad-gen-x" aria-label="Cerrar">✕</button>
+      </div>
+      <p class="ad-gen-hint">
+        Toca en la lista para marcar o desmarcar a las <strong>♀ Niñas</strong>. Los demás quedarán como <strong>♂ Varones</strong>.<br>
+        Al confirmar, se ordenarán primero las <strong>♀ Niñas (A–Z)</strong> y debajo los <strong>♂ Varones (A–Z)</strong>, moviendo cada fila con todas sus notas.
+      </p>
+      <div class="ad-gen-bar">
+        <span class="ad-gen-count" id="ad-gen-cnt"></span>
+        <div class="ad-gen-qbtns">
+          <button type="button" class="ad-gen-qbtn" id="ad-gen-auto">✨ Sugerir por nombre</button>
+          <button type="button" class="ad-gen-qbtn" id="ad-gen-todas">♀ Todas</button>
+          <button type="button" class="ad-gen-qbtn" id="ad-gen-ninguna">♂ Ninguna</button>
+        </div>
+      </div>
+      <div class="ad-gen-grid" id="ad-gen-grid">
+        ${d.lista.map(a => {
+          const esF = ninasSet.has(a.num);
+          return `<button type="button" class="ad-gen-item ${esF ? 'ad-gen-f' : 'ad-gen-m'}" data-gnum="${a.num}">
+            <span class="ad-gen-badge">${esF ? '♀ Niña' : '♂ Varón'}</span>
+            <span class="ad-gen-num">#${a.num}</span>
+            <span class="ad-gen-nom">${adEsc(a.nombre || 'Sin nombre')}</span>
+          </button>`;
+        }).join('')}
+      </div>
+      <div class="ad-gen-foot">
+        <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-gen-cancel">Cancelar</button>
+        <button type="button" class="pa-generate-btn" id="ad-gen-ok">✅ Ordenar Niñas (A–Z) y debajo Varones (A–Z)</button>
+      </div>
+    </div>`;
+  document.body.appendChild(ov);
+
+  const actualizarVista = () => {
+    const fCount = ninasSet.size;
+    const mCount = d.lista.length - fCount;
+    const cnt = ov.querySelector('#ad-gen-cnt');
+    if (cnt) cnt.innerHTML = `<b class="ad-gen-cf">♀ ${fCount} niña${fCount === 1 ? '' : 's'}</b> · <b class="ad-gen-cm">♂ ${mCount} var${mCount === 1 ? 'ón' : 'ones'}</b>`;
+    ov.querySelectorAll('.ad-gen-item').forEach(btn => {
+      const num = +btn.dataset.gnum;
+      const esF = ninasSet.has(num);
+      btn.classList.toggle('ad-gen-f', esF);
+      btn.classList.toggle('ad-gen-m', !esF);
+      const b = btn.querySelector('.ad-gen-badge');
+      if (b) b.textContent = esF ? '♀ Niña' : '♂ Varón';
+    });
+  };
+  actualizarVista();
+
+  ov.querySelectorAll('.ad-gen-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const num = +btn.dataset.gnum;
+      if (ninasSet.has(num)) ninasSet.delete(num);
+      else ninasSet.add(num);
+      actualizarVista();
+    });
+  });
+
+  ov.querySelector('#ad-gen-auto')?.addEventListener('click', () => {
+    ninasSet.clear();
+    d.lista.forEach(a => {
+      if (adEsNombreFemeninoSugerido(a.nombre)) ninasSet.add(a.num);
+    });
+    actualizarVista();
+  });
+  ov.querySelector('#ad-gen-todas')?.addEventListener('click', () => {
+    d.lista.forEach(a => ninasSet.add(a.num));
+    actualizarVista();
+  });
+  ov.querySelector('#ad-gen-ninguna')?.addEventListener('click', () => {
+    ninasSet.clear();
+    actualizarVista();
+  });
+
+  const cerrar = () => { ov.remove(); };
+  ov.querySelector('#ad-gen-x')?.addEventListener('click', cerrar);
+  ov.querySelector('#ad-gen-cancel')?.addEventListener('click', cerrar);
+  ov.addEventListener('click', e => { if (e.target === ov) cerrar(); });
+
+  ov.querySelector('#ad-gen-ok')?.addEventListener('click', () => {
+    adUndoGuardar('Ordenar Niñas A–Z y Varones A–Z');
+    const dd = adLoad();
+    dd.lista.forEach(a => {
+      a.sexo = ninasSet.has(a.num) ? 'F' : 'M';
+    });
+    adSave(dd);
+
+    const collator = new Intl.Collator('es', { sensitivity: 'base', numeric: true });
+    const cmpNombre = (a, b) => {
+      const na = String(a.nombre || '').trim();
+      const nb = String(b.nombre || '').trim();
+      if (!na && !nb) return a.num - b.num;
+      if (!na) return 1;
+      if (!nb) return -1;
+      return collator.compare(na, nb) || (a.num - b.num);
+    };
+    const ninas = dd.lista.filter(a => ninasSet.has(a.num)).sort(cmpNombre);
+    const varones = dd.lista.filter(a => !ninasSet.has(a.num)).sort(cmpNombre);
+    const ordenNums = ninas.concat(varones).map(a => a.num);
+
+    adReordenarAlumnos(ordenNums, false);
+    cerrar();
+    if (typeof alTerminar === 'function') alTerminar();
+    if (typeof toast === 'function') {
+      toast('♀♂ Ordenado: ' + ninas.length + ' niñas (A–Z) arriba y ' + varones.length + ' varones (A–Z) debajo');
+    }
+  });
+}
+
+/* Modal para elegir qué alumno(s) NO deben copiarse cuando se toca el botón 📋 de una columna en Notas SACE */
+function adElegirNoCopiarModal(alTerminar) {
+  const d = adLoad();
+  if (!d || !Array.isArray(d.lista) || !d.lista.length) {
+    if (typeof toast === 'function') toast('Agrega alumnos a la lista primero');
+    return;
+  }
+  const noSet = new Set();
+  d.lista.forEach(a => {
+    if (a.noCopiarSace) noSet.add(a.num);
+  });
+  const hayPrueba = d.lista.some(a => a.prueba);
+
+  const ov = document.createElement('div');
+  ov.className = 'ad-gen-ov';
+  ov.innerHTML = `
+    <div class="ad-gen-card" role="dialog" aria-modal="true" aria-labelledby="ad-nc-tit">
+      <div class="ad-gen-head">
+        <div class="ad-gen-title" id="ad-nc-tit">🙈 Elegir quién NO copiar en 📋</div>
+        <button type="button" class="ad-gen-close" id="ad-nc-x" aria-label="Cerrar">✕</button>
+      </div>
+      <p class="ad-gen-hint">
+        Toca el nombre de cualquier alumno que <strong>NO deba copiarse</strong> al presionar <strong>📋</strong> en la columna de una materia (por ejemplo, si aún no está en SACE o es oyente).<br>
+        Sus notas siguen guardadas en su fila y en su boleta, pero <strong>se saltan al copiar la columna</strong> para que tus filas cuadren exacto con SACE.
+      </p>
+      <div class="ad-gen-bar">
+        <span class="ad-gen-count" id="ad-nc-cnt"></span>
+        <div class="ad-gen-qbtns">
+          <button type="button" class="ad-gen-qbtn" id="ad-nc-todos">✅ Copiar a todos</button>
+          ${hayPrueba ? '<button type="button" class="ad-gen-qbtn" id="ad-nc-prueba">🧪 Omitir de prueba</button>' : ''}
+        </div>
+      </div>
+      <div class="ad-gen-grid" id="ad-nc-grid">
+        ${d.lista.map(a => {
+          const omitir = noSet.has(a.num);
+          return `<button type="button" class="ad-gen-item ${omitir ? 'ad-nc-no' : 'ad-nc-si'}" data-ncnum="${a.num}">
+            <span class="ad-gen-badge">${omitir ? '🙈 No copiar' : '✅ Sí copiar'}</span>
+            <span class="ad-gen-num">#${a.num}</span>
+            <span class="ad-gen-nom">${adEsc(a.nombre || 'Sin nombre')}</span>
+          </button>`;
+        }).join('')}
+      </div>
+      <div class="ad-gen-foot">
+        <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-nc-cancel">Cancelar</button>
+        <button type="button" class="pa-generate-btn" id="ad-nc-ok">✅ Guardar selección</button>
+      </div>
+    </div>`;
+  document.body.appendChild(ov);
+
+  const actualizarVista = () => {
+    const noCount = noSet.size;
+    const siCount = d.lista.length - noCount;
+    const cnt = ov.querySelector('#ad-nc-cnt');
+    if (cnt) {
+      cnt.innerHTML = `<b class="ad-nc-csi">✅ ${siCount} se copia${siCount === 1 ? '' : 'n'}</b> · <b class="ad-nc-cno">🙈 ${noCount} omitido${noCount === 1 ? '' : 's'}</b>`;
+    }
+    ov.querySelectorAll('.ad-gen-item').forEach(btn => {
+      const num = +btn.dataset.ncnum;
+      const omitir = noSet.has(num);
+      btn.classList.toggle('ad-nc-no', omitir);
+      btn.classList.toggle('ad-nc-si', !omitir);
+      const b = btn.querySelector('.ad-gen-badge');
+      if (b) b.textContent = omitir ? '🙈 No copiar' : '✅ Sí copiar';
+    });
+  };
+  actualizarVista();
+
+  ov.querySelectorAll('.ad-gen-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const num = +btn.dataset.ncnum;
+      if (noSet.has(num)) noSet.delete(num);
+      else noSet.add(num);
+      actualizarVista();
+    });
+  });
+
+  ov.querySelector('#ad-nc-todos')?.addEventListener('click', () => {
+    noSet.clear();
+    actualizarVista();
+  });
+  ov.querySelector('#ad-nc-prueba')?.addEventListener('click', () => {
+    d.lista.forEach(a => { if (a.prueba) noSet.add(a.num); });
+    actualizarVista();
+  });
+
+  const cerrar = () => { ov.remove(); };
+  ov.querySelector('#ad-nc-x')?.addEventListener('click', cerrar);
+  ov.querySelector('#ad-nc-cancel')?.addEventListener('click', cerrar);
+  ov.addEventListener('click', e => { if (e.target === ov) cerrar(); });
+
+  ov.querySelector('#ad-nc-ok')?.addEventListener('click', () => {
+    const dd = adLoad();
+    dd.lista.forEach(a => {
+      if (noSet.has(a.num)) a.noCopiarSace = 1;
+      else delete a.noCopiarSace;
+    });
+    adSave(dd);
+    cerrar();
+    if (typeof alTerminar === 'function') alTerminar();
+    if (typeof toast === 'function') {
+      if (noSet.size) {
+        const noms = dd.lista.filter(a => a.noCopiarSace).map(a => adPrimerNombre(a.nombre) || ('#' + a.num)).join(', ');
+        toast('🙈 Al copiar con 📋 no se copiará a: ' + noms);
+      } else {
+        toast('✅ Se copiarán todos los alumnos al tocar 📋');
+      }
+    }
+  });
+}
+
+/* Mueve a un alumno un paso arriba (-1) o abajo (+1) con todas sus notas */
+function adMoverAlumnoPaso(numActual, paso, alTerminar) {
+  const d = adLoad();
+  if (!d || !Array.isArray(d.lista) || d.lista.length < 2) return;
+  const idx = d.lista.findIndex(a => +a.num === +numActual);
+  if (idx < 0) return;
+  const dest = idx + paso;
+  if (dest < 0 || dest >= d.lista.length) return;
+  const al = d.lista[idx];
+  const orden = d.lista.map(a => a.num);
+  const tmp = orden[idx];
+  orden[idx] = orden[dest];
+  orden[dest] = tmp;
+  const mapa = adReordenarAlumnos(orden, 'Mover fila · ' + (adPrimerNombre(al.nombre) || ('#' + al.num)));
+  if (mapa && typeof alTerminar === 'function') {
+    alTerminar(mapa[+numActual], false);
+  }
+}
+
+/* Mueve a un alumno directamente al número de posición elegido (ej. del #25 al #8) */
+async function adMoverAlumnoAPosicion(numActual, alTerminar) {
+  const d = adLoad();
+  if (!d || !Array.isArray(d.lista) || d.lista.length < 2) return;
+  const idx = d.lista.findIndex(a => +a.num === +numActual);
+  if (idx < 0) return;
+  const al = d.lista[idx];
+  const total = d.lista.length;
+  const posActual = idx + 1;
+  const quien = (al.nombre ? al.nombre : 'Alumno/a') + ' (#' + al.num + ')';
+  const resp = await metasPrompt(
+    'Escribe el **número de posición (1 a ' + total + ')** al que quieres mover a **' + quien + '**:\n\n' +
+    'Toda su fila —con sus notas de todos los parciales, asistencias, pagos y clave de familia— se moverá junto con él/ella.',
+    {
+      icono: '↕️',
+      titulo: 'Mover fila con sus notas',
+      value: String(posActual),
+      inputmode: 'numeric',
+      okTxt: 'Mover fila',
+      valida: v => {
+        const n = parseInt(String(v).trim(), 10);
+        return (n >= 1 && n <= total) ? '' : 'Escribe un número entre 1 y ' + total + '.';
+      },
+    }
+  );
+  if (resp === null) return;
+  const posDest = parseInt(String(resp).trim(), 10);
+  if (!posDest || posDest === posActual || posDest < 1 || posDest > total) return;
+  const d2 = adLoad();
+  const idx2 = d2.lista.findIndex(a => +a.num === +numActual);
+  if (idx2 < 0) return;
+  const orden = d2.lista.map(a => a.num);
+  const [movido] = orden.splice(idx2, 1);
+  orden.splice(posDest - 1, 0, movido);
+  const mapa = adReordenarAlumnos(orden, 'Mover a #' + posDest + ' · ' + (adPrimerNombre(al.nombre) || ('#' + al.num)));
+  if (mapa) {
+    const nuevoNum = mapa[+numActual];
+    if (typeof alTerminar === 'function') alTerminar(nuevoNum, true);
+    if (typeof toast === 'function') {
+      toast('↕️ ' + (adPrimerNombre(al.nombre) || 'Alumno') + ' movido(a) a la posición #' + nuevoNum + ' con todas sus notas');
+    }
+  }
+}
+
+/* Ordena toda la lista alfabéticamente (A–Z) llevando consigo las notas de cada alumno */
+async function adOrdenarAlumnosAZ(alTerminar) {
+  const d = adLoad();
+  if (!d || !Array.isArray(d.lista) || d.lista.length < 2) {
+    if (typeof toast === 'function') toast('Agrega al menos 2 alumnos para ordenar');
+    return;
+  }
+  const collator = new Intl.Collator('es', { sensitivity: 'base', numeric: true });
+  const ordenada = d.lista.slice().sort((a, b) => {
+    const na = String(a.nombre || '').trim();
+    const nb = String(b.nombre || '').trim();
+    if (!na && !nb) return a.num - b.num;
+    if (!na) return 1;
+    if (!nb) return -1;
+    return collator.compare(na, nb) || (a.num - b.num);
+  });
+  const yaOrdenada = ordenada.every((a, i) => a.num === d.lista[i].num);
+  if (yaOrdenada) {
+    if (typeof toast === 'function') toast('✅ La lista ya está en orden alfabético (A–Z)');
+    return;
+  }
+  if (!await metasConfirm(
+    '¿Ordenar todas las filas **alfabéticamente (A–Z)**?\n\n' +
+    'Cada alumno se moverá a su lugar alfabético **con todas sus notas**, asistencias, pagos y clave de familia.',
+    { icono: '🔤', titulo: 'Ordenar A–Z con sus notas', okTxt: 'Sí, ordenar A–Z' }
+  )) return;
+  const mapa = adReordenarAlumnos(ordenada.map(a => a.num), 'Ordenar lista A–Z');
+  if (mapa) {
+    if (typeof alTerminar === 'function') alTerminar(null, false);
+    if (typeof toast === 'function') toast('🔤 Filas ordenadas A–Z con todas sus notas');
+  }
+}
+
+/* ── Controles de fila (▲, ▼, #posición y ✕ borrar fila) en tablas .ad-mx ── */
+function adTablaFilasArrastrar(tabla, alCambiar) {
+  if (!tabla) return;
+  const tbody = tabla.querySelector('tbody');
+  if (!tbody) return;
+  const wrap = tabla.closest('.ad-mx-wrap');
+
+  const refrescarConservandoVista = (nuevoNum, centrarFila) => {
+    const st = wrap ? wrap.scrollTop : 0;
+    const sl = wrap ? wrap.scrollLeft : 0;
+    const wy = window.scrollY;
+    if (typeof alCambiar === 'function') alCambiar(nuevoNum);
+    const w2 = document.querySelector('.ad-mx-wrap');
+    if (w2) { w2.scrollTop = st; w2.scrollLeft = sl; }
+    window.scrollTo(0, wy);
+    if (nuevoNum != null) {
+      const destTr = document.querySelector('tr[data-rnum="' + nuevoNum + '"]');
+      if (destTr) {
+        if (centrarFila) {
+          try { destTr.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (_) {}
+        } else {
+          try { destTr.scrollIntoView({ block: 'nearest' }); } catch (_) {}
+        }
+        destTr.classList.add('ad-mx-tr-movida');
+        setTimeout(() => destTr.classList.remove('ad-mx-tr-movida'), 1000);
+      }
+    }
+  };
+
+  /* 1) Botones ▲ / ▼ para subir o bajar la fila con sus notas */
+  tbody.querySelectorAll('.ad-mx-rmv').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const num = +btn.dataset.rnum;
+      const dir = +btn.dataset.rdir;
+      adMoverAlumnoPaso(num, dir, (nuevoNum) => {
+        refrescarConservandoVista(nuevoNum, false);
+      });
+    });
+  });
+
+  /* 2) Tocar #N para escribir directamente la posición destino (ej. mover a #8) */
+  tbody.querySelectorAll('[data-irnum]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const num = +btn.dataset.irnum;
+      adMoverAlumnoAPosicion(num, (nuevoNum, centrar) => {
+        refrescarConservandoVista(nuevoNum, centrar);
+      });
+    });
+  });
+
+  /* 3) Botón ✕ para borrar la fila (con respaldo en Deshacer) */
+  tbody.querySelectorAll('[data-delnum]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const num = +btn.dataset.delnum;
+      adEliminarAlumnoFila(num, () => {
+        refrescarConservandoVista(null, false);
+      });
+    });
+  });
+}
+
+/* ── Controles de fila (▲, ▼ y #posición) en 👥 Alumnos (#ad-lista-rows) ── */
+function adListaFilasArrastrar(cont) {
+  if (!cont) return;
+
+  const guardarNombresActuales = () => {
+    const dd = adLoad();
+    const porNum = {};
+    cont.querySelectorAll('.ad-al-row').forEach(r => {
+      const inp = r.querySelector('.ad-al-nombre');
+      if (inp) porNum[+r.dataset.num] = inp.value.trim();
+    });
+    (dd.lista || []).forEach(a => {
+      if (porNum[a.num] !== undefined) a.nombre = porNum[a.num];
+    });
+    adSave(dd);
+  };
+
+  /* 1) Botones ▲ / ▼ */
+  cont.querySelectorAll('.ad-al-rmv').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      guardarNombresActuales();
+      const wy = window.scrollY;
+      adMoverAlumnoPaso(+btn.dataset.rnum, +btn.dataset.rdir, () => {
+        renderAdmin();
+        window.scrollTo(0, wy);
+      });
+    });
+  });
+
+  /* 2) Tocar #N para mover directo a una posición (ej. #8) */
+  cont.querySelectorAll('[data-irnum]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      guardarNombresActuales();
+      adMoverAlumnoAPosicion(+btn.dataset.irnum, (nuevoNum) => {
+        renderAdmin();
+        if (nuevoNum != null) {
+          const filaDest = document.querySelector('.ad-al-row[data-num="' + nuevoNum + '"]');
+          if (filaDest) {
+            try { filaDest.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (_) {}
+          }
+        }
+      });
+    });
+  });
 }
 
 function adTiraUno(d, num) {
@@ -770,9 +2144,7 @@ body{font-family:Arial,sans-serif;color:#111;background:#fff;padding:10mm;}
   y cómo apoyar en casa. Guárdela como una llave: es solo para su familia.</div>
 </div>
 </body></html>`;
-  const w = window.open('', '_blank');
-  if (!w) { toast('Permite las ventanas emergentes para imprimir'); return; }
-  w.document.write(html); w.document.close();
+  adPrintAbrir(html);
 }
 
 function adSinLista(body, quePara) {
@@ -783,19 +2155,659 @@ function adSinLista(body, quePara) {
     </div>`;
 }
 
+/* ══════════════ 🗂️ FICHA DEL ALUMNO — identidad y contactos ══════════════
+   Datos que el expediente necesita y que hoy el maestro carga en una hoja
+   aparte: identidad del alumno, su teléfono, y el encargado con su identidad y
+   teléfono. Se guardan DENTRO de cada alumno de la lista (a.idn, a.tel, a.enc,
+   a.encId, a.encTel), no en otro almacén, para que viajen con el alumno cuando
+   se inserta, se renumera o se sincroniza entre equipos.
+
+   No se meten en la fila de la lista: cinco campos más por alumno la volverían
+   inusable en un teléfono. Van en su propia pantalla, con la MISMA matriz de
+   auto-avance de Notas SACE (el maestro ya sabe usarla) y con pegado desde
+   Excel, porque teclear 43 × 5 datos a mano en un celular no es realista. */
+const AD_FICHA_CAMPOS = [
+  { k: 'idn',    et: 'Nº de identidad',         im: 'numeric', max: 20, w: 108 },
+  { k: 'tel',    et: 'Tel. del alumno',         im: 'tel',     max: 20, w: 96 },
+  { k: 'enc',    et: 'Padre o encargado',       im: 'text',    max: 70, w: 160 },
+  { k: 'encId',  et: 'Identidad del encargado', im: 'numeric', max: 20, w: 108 },
+  { k: 'encTel', et: 'Tel. del encargado',      im: 'tel',     max: 20, w: 96 },
+];
+function adFichaLlenos(d, k) {
+  return (d.lista || []).filter(a => String(a[k] || '').trim()).length;
+}
+
+function adRenderFichas(body, d) {
+  const total = d.lista.length;
+  const completos = (d.lista || []).filter(a =>
+    AD_FICHA_CAMPOS.every(c => String(a[c.k] || '').trim())).length;
+
+  body.innerHTML = `
+    <div class="pa-card">
+      <nav class="nav-ruta" aria-label="Dónde estás">
+        <button class="nav-ruta-link" id="ad-fi-volver">👥 Alumnos</button>
+        <span class="nav-ruta-sep" aria-hidden="true">›</span>
+        <span class="nav-ruta-actual" aria-current="page">estás aquí</span>
+      </nav>
+      <div class="pa-card-title">🗂️ Identidad y contactos</div>
+      <p class="pa-optional-hint">Estos datos salen en el <strong>expediente del aula</strong>, en la hoja
+        de alumnos. Escribe y <strong>Enter</strong> (o Tab) salta a la casilla siguiente; se guarda solo.
+        <strong>No se comparten con nadie</strong>: no viajan al asistente de padres, solo a tus equipos.</p>
+      <p class="pa-optional-hint">♀♂ La columna <strong>Sexo</strong> se llena <strong>tocando</strong>,
+        sin teclado: cada toque pasa de niña a varón y a vacío. Con ella, el
+        <strong>informe del grado</strong> dice cuántas niñas y cuántos varones tienes sin que los
+        cuentes a mano.</p>
+      <div class="ad-fi-marcador">
+        <span class="ad-fi-m-val">${completos}<span class="ad-fi-m-de">/${total}</span></span>
+        <span class="ad-fi-m-lbl">fichas completas</span>
+        <span class="ad-fi-m-sub"><b id="ad-fi-sx-cuenta">${adSexosTxt(d)}</b> · ${AD_FICHA_CAMPOS.map(c =>
+          adFichaLlenos(d, c.k) + ' ' + c.et.toLowerCase().replace('nº de ', '').replace('tel. del ', 'tel. ')).join(' · ')}</span>
+      </div>
+
+      <div class="ad-mx-wrap">
+        <table class="ad-mx ad-fi-mx">
+          <thead><tr>
+            <th class="ad-mx-sticky ad-mx-corner">Nº · Alumno</th>
+            <th><div class="ad-mx-h" style="min-width:52px">Sexo</div></th>
+            ${AD_FICHA_CAMPOS.map(c => `<th><div class="ad-mx-h" style="min-width:${c.w}px">${adEsc(c.et)}</div></th>`).join('')}
+          </tr></thead>
+          <tbody>
+            ${d.lista.map((a, ri) => `<tr data-rnum="${a.num}">
+              <td class="ad-mx-sticky" title="${adEsc(a.nombre || ('#' + a.num))}">
+                <div class="ad-mx-sbox">
+                  <span class="ad-mx-rbtns">
+                    <button type="button" class="ad-mx-rmv" data-rdir="-1" data-rnum="${a.num}" title="Subir una posición" aria-label="Subir"${ri === 0 ? ' disabled' : ''}>▲</button>
+                    <button type="button" class="ad-mx-rmv" data-rdir="1" data-rnum="${a.num}" title="Bajar una posición" aria-label="Bajar"${ri === d.lista.length - 1 ? ' disabled' : ''}>▼</button>
+                  </span>
+                  <button type="button" class="ad-mx-num" data-irnum="${a.num}" title="Toca para escribir a qué posición (#) quieres mover esta fila">#${a.num}</button>
+                  <span class="ad-mx-nom">${adEsc(adPrimerNombre(a.nombre)) || '—'}</span>
+                  <button type="button" class="ad-mx-del" data-delnum="${a.num}" title="Borrar esta fila (con opción de restaurar)" aria-label="Borrar fila">✕</button>
+                </div></td>
+              <td><button class="ad-fi-sexo ad-fi-sx-${a.sexo === 'F' ? 'f' : a.sexo === 'M' ? 'm' : 'no'}"
+                data-sxnum="${a.num}" aria-label="Sexo de ${adEsc(adPrimerNombre(a.nombre) || ('#' + a.num))}: ${a.sexo === 'F' ? 'niña' : a.sexo === 'M' ? 'varón' : 'sin registrar'}. Tocar para cambiar."
+                >${a.sexo === 'F' ? '♀ Niña' : a.sexo === 'M' ? '♂ Varón' : '·'}</button></td>
+              ${AD_FICHA_CAMPOS.map((c, ci) => `<td><input class="ad-mx-inp ad-fi-inp"
+                data-idx="${ri * AD_FICHA_CAMPOS.length + ci}" data-num="${a.num}" data-k="${c.k}"
+                type="text" inputmode="${c.im}" maxlength="${c.max}" style="min-width:${c.w}px"
+                value="${adEsc(String(a[c.k] || ''))}" placeholder="·"></td>`).join('')}
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn ad-btn-sec" id="ad-fi-orden-az" type="button">🔤 Ordenar A–Z</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-fi-orden-gen" type="button">♀♂ Ordenar Niñas y luego Varones (A–Z)</button>
+      </div>
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn ad-btn-sec" id="ad-fi-pegar">📋 Pegar desde Excel</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-fi-faltan">🔎 ¿A quién le falta?</button>
+      </div>
+      <div id="ad-fi-pegar-box" style="display:none;margin-top:10px;">
+        <p class="pa-paste-hint">Pega desde tu hoja de Excel, <strong>un alumno por línea</strong>, en este
+          orden y separado por <strong>tabulaciones</strong> (así sale al copiar de Excel) o por punto y coma:<br>
+          <strong>Nº de lista · identidad del alumno · teléfono del alumno · encargado · identidad del encargado · teléfono del encargado</strong><br>
+          Se busca por el <strong>número de lista</strong>, así que el orden de las filas no importa y las
+          columnas que dejes vacías no borran lo que ya hay.</p>
+        <textarea id="ad-fi-pegar-ta" class="pa-paste-area" rows="5"
+          placeholder="1&#9;0801-2013-01234&#9;9988-7766&#9;María Sevilla&#9;0801-1985-04567&#9;9911-2233"></textarea>
+        <button class="pa-generate-btn" id="ad-fi-pegar-ok">✅ Importar estos datos</button>
+      </div>
+      <p class="pa-optional-hint" id="ad-fi-estado" style="margin-top:8px"></p>
+    </div>
+    ${adUndoTarjetaHtml()}`;
+
+  document.getElementById('ad-fi-volver').addEventListener('click', () => { _adFichasOn = 0; renderAdmin(); });
+  const estado = t => { const e = document.getElementById('ad-fi-estado'); if (e) e.textContent = t; };
+
+  /* auto-avance a lo ancho, igual que Notas SACE */
+  const inputs = [...body.querySelectorAll('.ad-fi-inp')];
+  const focar = i => {
+    if (i >= 0 && i < inputs.length) {
+      inputs[i].focus(); inputs[i].select();
+      try { inputs[i].scrollIntoView({ block: 'nearest', inline: 'nearest' }); } catch (_) {}
+    }
+  };
+  inputs.forEach(inp => {
+    const idx = +inp.dataset.idx;
+    inp.addEventListener('input', () => {
+      const dd = adLoad();
+      const al = dd.lista.find(x => String(x.num) === String(inp.dataset.num));
+      if (!al) return;
+      al[inp.dataset.k] = inp.value.trim().slice(0, 70);
+      adSave(dd);
+    });
+    inp.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); focar(idx + 1); }
+      else if (e.key === 'ArrowDown') { e.preventDefault(); focar(idx + AD_FICHA_CAMPOS.length); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); focar(idx - AD_FICHA_CAMPOS.length); }
+    });
+  });
+
+  /* ♀/♂ de un toque, sin teclado: es como se llena esto en el teléfono,
+     con 43 alumnos y una mano. Cicla vacío → niña → varón → vacío, y se
+     repinta SOLO la casilla tocada: volver a dibujar la tabla entera
+     perdería el desplazamiento y dejaría al maestro buscando dónde iba. */
+  body.querySelectorAll('[data-sxnum]').forEach(b => b.addEventListener('click', () => {
+    const dd = adLoad();
+    const al = dd.lista.find(x => String(x.num) === String(b.dataset.sxnum));
+    if (!al) return;
+    const sig = al.sexo === 'F' ? 'M' : al.sexo === 'M' ? '' : 'F';
+    if (sig) al.sexo = sig; else delete al.sexo;
+    adSave(dd);
+    b.className = 'ad-fi-sexo ad-fi-sx-' + (sig === 'F' ? 'f' : sig === 'M' ? 'm' : 'no');
+    b.textContent = sig === 'F' ? '♀ Niña' : sig === 'M' ? '♂ Varón' : '·';
+    b.setAttribute('aria-label', 'Sexo de ' + (adPrimerNombre(al.nombre) || ('#' + al.num)) + ': ' +
+      (sig === 'F' ? 'niña' : sig === 'M' ? 'varón' : 'sin registrar') + '. Tocar para cambiar.');
+    const cuenta = document.getElementById('ad-fi-sx-cuenta');
+    if (cuenta) cuenta.textContent = adSexosTxt(adLoad());
+  }));
+
+  document.getElementById('ad-fi-pegar').addEventListener('click', () => {
+    const box = document.getElementById('ad-fi-pegar-box');
+    box.style.display = box.style.display === 'none' ? '' : 'none';
+    if (box.style.display === '') document.getElementById('ad-fi-pegar-ta').focus();
+  });
+  document.getElementById('ad-fi-pegar-ok').addEventListener('click', () => {
+    const txt = String(document.getElementById('ad-fi-pegar-ta').value || '');
+    const dd = adLoad();
+    let ok = 0, sinNum = 0;
+    txt.split(/\r?\n/).forEach(linea => {
+      if (!linea.trim()) return;
+      const p = linea.split(/\t|;/).map(x => x.trim());
+      const num = parseInt(String(p[0]).replace(/\D/g, ''), 10);
+      const al = dd.lista.find(x => x.num === num);
+      if (!num || !al) { sinNum++; return; }
+      /* vacío NO borra: el maestro puede pegar solo la columna que le faltaba */
+      AD_FICHA_CAMPOS.forEach((c, i) => { if (p[i + 1]) al[c.k] = p[i + 1].slice(0, 70); });
+      ok++;
+    });
+    if (!ok) { estado('⚠️ No se pudo leer ninguna línea. Revisa que cada una empiece con el número de lista.'); return; }
+    adSave(dd);
+    renderAdmin();
+    toast('🗂️ ' + ok + ' alumno(s) actualizados' + (sinNum ? ' · ' + sinNum + ' línea(s) sin número válido' : ''));
+  });
+  document.getElementById('ad-fi-faltan').addEventListener('click', () => {
+    const faltan = AD_FICHA_CAMPOS.map(c => {
+      const nums = (d.lista || []).filter(a => !String(a[c.k] || '').trim()).map(a => '#' + a.num);
+      return nums.length ? c.et + ': ' + nums.join(', ') : '';
+    }).filter(Boolean);
+    estado(faltan.length ? '🔎 ' + faltan.join(' · ') : '✅ Todas las fichas están completas.');
+  });
+  document.getElementById('ad-fi-orden-az')?.addEventListener('click', () => {
+    adOrdenarAlumnosAZ(() => renderAdmin());
+  });
+  document.getElementById('ad-fi-orden-gen')?.addEventListener('click', () => {
+    adOrdenarPorGeneroModal(() => renderAdmin());
+  });
+  adTablaFilasArrastrar(body.querySelector('.ad-fi-mx'), () => renderAdmin());
+  adUndoEnganchar(body);
+}
+
+/* ══════════════ 📄 EXPEDIENTE DEL AULA ══════════════
+   UN botón que arma TODO lo del grupo en un solo documento: lista, asistencia,
+   colectas con sus cuentas, gastos de bolsillo, controles, novedades, notas de
+   cada parcial y comunicados. El maestro le da a Imprimir y lo guarda como PDF
+   para su portafolio o lo lleva impreso a dirección.
+
+   No se usa librería de PDF: el navegador ya sabe hacer PDF desde una hoja
+   imprimible, y meter 500 KB de librería a una app que tiene que abrir sin
+   señal en teléfonos modestos no se paga. Cada sección arranca en página nueva
+   y los encabezados de tabla se repiten al cortar.
+
+   Las CLAVES DE FAMILIA no van: son para entregarlas una por una y un legajo
+   que se enseña en dirección no es lugar para ellas. Para eso está
+   «🖨️ Tiras de claves». */
+/* Este documento se imprime CADA MES y es lo que queda al cerrar el año, así que
+   la impresión no es un detalle:
+   · HORIZONTAL (apaisado): la hoja de alumnos lleva 7 columnas y la de notas
+     hasta 13; en vertical se aplastan y se vuelven ilegibles.
+   · table-layout fijo con anchos por columna: la tabla se ve IGUAL en todas las
+     páginas, no baila según el contenido de cada bloque.
+   · Ninguna fila se parte a la mitad, ningún título queda solo al pie de una
+     página, y los encabezados se repiten al cortar llevando además el rótulo de
+     qué tabla es y de qué grupo: cada hoja suelta se identifica sola.
+   · Filas alternas en gris clarito (forzado en impresión) para seguir la línea
+     con el dedo en una tabla de 43 alumnos. */
+const AD_EXP_CSS = `
+*{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+body{font-family:Arial,Helvetica,sans-serif;font-size:10.5px;color:#111;background:#fff;padding:8mm 10mm;}
+h1{font-size:22px;color:#1e3a7c;margin-bottom:3mm;}
+h2{font-size:15px;color:#1e3a7c;border-bottom:2.5px solid #1e3a7c;padding-bottom:1.5mm;margin-bottom:3.5mm;
+   page-break-after:avoid;break-after:avoid;}
+h3{font-size:12px;color:#1e3a7c;margin:4.5mm 0 1.5mm;page-break-after:avoid;break-after:avoid;}
+.sub{font-size:11.5px;color:#333;line-height:1.65;}
+.sec{page-break-before:always;break-before:page;}
+.bloque{page-break-inside:avoid;break-inside:avoid;}
+table{width:100%;border-collapse:collapse;table-layout:fixed;margin-bottom:4.5mm;}
+th,td{border:0.6px solid #8d99ae;padding:2.4px 5px;text-align:left;vertical-align:top;
+      word-wrap:break-word;overflow-wrap:anywhere;}
+th{background:#e3eaf7;font-size:9.5px;font-weight:bold;line-height:1.2;}
+thead{display:table-header-group;}
+tr{page-break-inside:avoid;break-inside:avoid;}
+tbody tr:nth-child(even) td{background:#f5f8fd;}
+th.rot{background:#1e3a7c;color:#fff;font-size:10.5px;letter-spacing:.4px;text-align:center;padding:2.6px 5px;}
+td.n{text-align:right;white-space:nowrap;}
+td.c{text-align:center;}
+.tot{font-size:12px;font-weight:bold;margin:2mm 0 4.5mm;color:#14213d;}
+.vacio{font-size:11px;color:#555;font-style:italic;margin-bottom:4.5mm;
+       border:0.6px dashed #a9b4c6;border-radius:2mm;padding:3mm 4mm;}
+.indice{border:1.2px solid #1e3a7c;border-radius:3mm;padding:4mm 6mm;margin-top:6mm;}
+.indice div{padding:1.2mm 0;font-size:11.5px;border-bottom:0.5px dotted #c3ccdb;}
+.indice div:last-child{border-bottom:none;}
+.nota{margin-top:6mm;font-size:10px;color:#444;line-height:1.55;border-left:3px solid #1e3a7c;padding-left:3.5mm;}
+.firmas{display:flex;gap:14mm;margin-top:16mm;page-break-inside:avoid;}
+.firma{flex:1;border-top:1.2px solid #333;text-align:center;padding-top:2mm;font-size:10.5px;}
+.noprint{margin-bottom:6mm;padding:4mm;background:#eef4ff;border:1px solid #c3d4f0;border-radius:3mm;}
+@media print{.noprint{display:none;} body{padding:0;}}
+@page{size:letter landscape;margin:11mm 12mm;}`;
+
+/* rotulo: fila de título que se REPITE en cada página al cortar la tabla.
+   anchos: porcentajes por columna, para que la tabla no cambie de forma. */
+function adExpTabla(cabs, filas, vacioTxt, rotulo, anchos) {
+  if (!filas.length) return '<p class="vacio">' + (vacioTxt || 'Sin datos en esta sección.') + '</p>';
+  const cols = anchos ? '<colgroup>' + anchos.map(w => '<col style="width:' + w + '%">').join('') + '</colgroup>' : '';
+  const rot = rotulo ? '<tr><th class="rot" colspan="' + cabs.length + '">' + rotulo + '</th></tr>' : '';
+  return '<table>' + cols + '<thead>' + rot + '<tr>' + cabs.map(c => '<th>' + c + '</th>').join('') +
+    '</tr></thead><tbody>' + filas.join('') + '</tbody></table>';
+}
+
+function adPrintExpediente(st) {
+  const d = st.grupos.find(g => g.id === st.activo) || st.grupos[0];
+  const anio = adAnioDe(d);
+  const nom = n => { const a = d.lista.find(x => String(x.num) === String(n)); return (a && a.nombre) || ''; };
+  const secs = [];
+  const indice = [];
+  const apunta = (et, dato) => indice.push('<div>' + et + ' — <strong>' + dato + '</strong></div>');
+
+  /* 1 · alumnos, con identidad y contactos (el orden lo pide el expediente:
+     el nombre va DESPUÉS de la identidad, como en los listados oficiales) */
+  const rotulo = 'EXPEDIENTE ' + adEsc(adGradoSeccion(d.grado, d.seccion) || 'del aula') +
+    (d.escuela ? ' · ' + adEsc(String(d.escuela).trim()) : '') + ' · ' + anio;
+  const dato = v => { const x = String(v || '').trim(); return x ? adEsc(x) : '—'; };
+  const conFicha = d.lista.filter(a => AD_FICHA_CAMPOS.every(c => String(a[c.k] || '').trim())).length;
+  apunta('👥 Alumnos', d.lista.length + ' en la lista · ' + conFicha + ' con ficha completa');
+  secs.push('<div class="sec"><h2>👥 Alumnos, identidad y contactos</h2>' +
+    adExpTabla(['Nº lista', 'Nº de identidad', 'Alumno/a', 'Teléfono del alumno',
+                'Padre, madre o encargado', 'Identidad del encargado', 'Teléfono'],
+      d.lista.map(a =>
+        '<tr><td class="c">' + a.num + '</td><td>' + dato(a.idn) + '</td><td>' +
+        (adEsc(a.nombre) || '—') + '</td><td>' + dato(a.tel) + '</td><td>' + dato(a.enc) +
+        '</td><td>' + dato(a.encId) + '</td><td>' + dato(a.encTel) + '</td></tr>'),
+      'La lista está vacía.',
+      rotulo + ' · ALUMNOS', [5, 13.5, 24.5, 10.5, 23, 13.5, 10]) +
+    (conFicha < d.lista.length
+      ? '<p class="nota">Faltan datos en ' + (d.lista.length - conFicha) + ' ficha(s). Se completan en ' +
+        'Mi aula → Alumnos → «🗂️ Identidad y contactos», y se pueden pegar desde Excel.</p>'
+      : '') +
+    '<p class="nota">Las claves de familia no se incluyen a propósito: se entregan una por una. ' +
+    'Para imprimirlas está «🖨️ Tiras de claves» en la pestaña Alumnos.</p></div>');
+
+  /* 2 · asistencia */
+  const dias = (d.asistencia || []).slice().sort((a, b) => String(a.f).localeCompare(String(b.f)));
+  const res = {};
+  dias.forEach(r => Object.keys(r.aus || {}).forEach(n => {
+    res[n] = res[n] || { A: 0, E: 0 };
+    res[n][r.aus[n]] = (res[n][r.aus[n]] || 0) + 1;
+  }));
+  apunta('📋 Asistencia', dias.length + ' día(s) con pase de lista');
+  secs.push('<div class="sec"><h2>📋 Asistencia</h2>' +
+    '<p class="sub">Días con pase de lista tomado: <strong>' + dias.length + '</strong>' +
+    (dias.length ? ' · del ' + adFechaBonita(dias[0].f) + ' al ' + adFechaBonita(dias[dias.length - 1].f) : '') + '</p>' +
+    '<h3>Resumen por alumno</h3>' +
+    adExpTabla(['Nº', 'Alumno/a', 'Ausencias', 'Excusas', 'Días presente'],
+      d.lista.map(a => {
+        const r = res[a.num] || { A: 0, E: 0 };
+        return '<tr><td class="c">' + a.num + '</td><td>' + (adEsc(a.nombre) || '—') + '</td><td class="c">' +
+          (r.A || 0) + '</td><td class="c">' + (r.E || 0) + '</td><td class="c">' +
+          Math.max(0, dias.length - (r.A || 0) - (r.E || 0)) + '</td></tr>';
+      }), 'Todavía no se ha tomado el pase de lista.', rotulo + ' · ASISTENCIA', [6, 46, 16, 16, 16]) +
+    (dias.length ? '<h3>Día por día</h3>' + adExpTabla(['Fecha', 'Ausentes', 'Con excusa'],
+      dias.map(r => {
+        const A = Object.keys(r.aus || {}).filter(n => r.aus[n] === 'A');
+        const E = Object.keys(r.aus || {}).filter(n => r.aus[n] === 'E');
+        const et = ns => ns.length ? ns.map(n => '#' + n + (adPrimerNombre(nom(n)) ? ' ' + adEsc(adPrimerNombre(nom(n))) : '')).join(', ') : '—';
+        return '<tr><td>' + adFechaBonita(r.f) + '</td><td>' + et(A) + '</td><td>' + et(E) + '</td></tr>';
+      }), '', rotulo + ' · ASISTENCIA DÍA POR DÍA', [14, 43, 43]) : '') + '</div>');
+
+  /* 3 · colectas */
+  apunta('💰 Colectas', (d.colectas || []).length + ' colecta(s)');
+  secs.push('<div class="sec"><h2>💰 Colaboraciones y acuerdos</h2>' +
+    ((d.colectas || []).length ? d.colectas.slice().reverse().map(c => {
+      const t = adColectaTotales(c);
+      return '<div class="bloque"><h3>' + adEsc(c.concepto) + ' — acordado el ' + adFechaBonita(c.fecha) +
+        ' · sugerido ' + adLps(c.montoAlumno) + '</h3>' +
+        adExpTabla(['Nº', 'Alumno/a', 'Aportó', 'Fecha', 'Monto', 'Recibo'],
+          d.lista.map(a => {
+            const m = c.pagos && c.pagos[a.num];
+            return '<tr><td class="c">' + a.num + '</td><td>' + (adEsc(a.nombre) || '—') + '</td><td class="c">' +
+              (m != null ? 'Sí' : '—') + '</td><td>' + (m != null ? adFechaBonita((c.pagosF && c.pagosF[a.num]) || c.fecha) : '') +
+              '</td><td class="n">' + (m != null ? adLps(m) : '') + '</td><td>' + (m != null ? adReciboFolio(c, a.num) : '') + '</td></tr>';
+          }), '', rotulo + ' · ' + adEsc(c.concepto), [6, 40, 10, 14, 14, 16]) +
+        ((c.gastos || []).length ? adExpTabla(['Fecha', 'Gasto de esta colecta', 'Monto'],
+          c.gastos.map(g => '<tr><td>' + adFechaBonita(g.f) + '</td><td>' + adEsc(g.d) + '</td><td class="n">' + adLps(g.m) + '</td></tr>')) : '') +
+        '<p class="tot">Recaudado: ' + adLps(t.rec) + ' · Gastado: ' + adLps(t.gas) + ' · Saldo: ' + adLps(t.saldo) + '</p></div>';
+    }).join('') : '<p class="vacio">No hay colectas registradas.</p>') + '</div>');
+
+  /* 4 · gastos de mi bolsillo (son de la cuenta, no del grupo) */
+  const gs = adGastosLoad(); const gt = adGastosTotales(gs);
+  apunta('🧾 Gastos de mi bolsillo', gt.pend.length + ' por cobrar (' + adLps(gt.mPend) + ')');
+  secs.push('<div class="sec"><h2>🧾 Gastos de mi bolsillo</h2>' +
+    '<p class="sub">Lo que el docente pagó de lo suyo para el centro. Va por cuenta del docente, no por grupo.</p>' +
+    adExpTabla(['Fecha', 'Tipo', 'Concepto', 'Recibo', 'Se cobra a', 'Estado', 'Monto'],
+      gs.slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha))).map(g =>
+        '<tr><td>' + adFechaBonita(g.fecha) + '</td><td>' + adEsc(adGastoCatEt(g.cat)) + '</td><td>' +
+        adEsc(g.concepto) + '</td><td class="c">' + (g.factura ? 'Sí' : 'No') + '</td><td>' +
+        adEsc(g.cobrarA || 'Dirección') + '</td><td>' + (g.estado === 'cobrado'
+          ? 'Pagado el ' + adFechaBonita(g.fechaCobro || g.fecha) : 'Por cobrar') +
+        '</td><td class="n">' + adLps(g.monto) + '</td></tr>'),
+      'No hay gastos anotados.', rotulo + ' · GASTOS DE MI BOLSILLO', [10, 17, 30, 8, 13, 14, 8]) +
+    (gs.length ? '<p class="tot">Por cobrar: ' + adLps(gt.mPend) + ' · Ya recuperado: ' + adLps(gt.mCobr) + '</p>' : '') + '</div>');
+
+  /* 5 · controles */
+  apunta('✅ Controles', (d.controles || []).length + ' control(es)');
+  secs.push('<div class="sec"><h2>✅ Controles del aula</h2>' +
+    ((d.controles || []).length ? d.controles.slice().reverse().map(c => {
+      const faltan = adCtrlFaltan(d, c);
+      const m = adCtrlMision(c);
+      return '<h3>' + (c.icono || '✅') + ' ' + adEsc(c.nombre) + ' — ' + adFechaBonita(c.fecha) +
+        ' · ' + adCtrlHechos(c) + ' de ' + d.lista.length + ' anotados</h3>' +
+        '<p class="sub">' + (c.fam ? '📔 Se cuenta a la familia en la Bitácora' : '🔒 Solo para el docente') +
+        (c.acum ? ' · avisa evaluación acumulativa' : '') + (m ? ' · misión: ' + adEsc(m.title) : '') + '</p>' +
+        adExpTabla(['Nº', 'Alumno/a', 'Dato'],
+          d.lista.map(a => '<tr><td class="c">' + a.num + '</td><td>' + (adEsc(a.nombre) || '—') +
+            '</td><td class="c">' + (adEsc(adCtrlValorTxt(c, a.num)) || '—') + '</td></tr>'),
+          '', rotulo + ' · ' + adEsc(c.nombre), [7, 63, 30]) +
+        (faltan.length ? '<p class="tot">Faltan por anotar (' + faltan.length + '): ' +
+          faltan.map(a => '#' + a.num).join(', ') + '</p>' : '<p class="tot">Grupo completo.</p>');
+    }).join('') : '<p class="vacio">No hay controles registrados.</p>') + '</div>');
+
+  /* 6 · novedades de la clase */
+  apunta('📔 Novedades de la clase', (d.bitacora || []).length + ' anotación(es)');
+  secs.push('<div class="sec"><h2>📔 Novedades de la clase</h2>' +
+    adExpTabla(['Fecha', 'Novedad'],
+      (d.bitacora || []).slice().reverse().map(n =>
+        '<tr><td>' + adFechaBonita(n.fecha) + '</td><td>' + adEsc(n.texto) + '</td></tr>'),
+      'No hay novedades anotadas.', rotulo + ' · NOVEDADES DE LA CLASE', [12, 88]) + '</div>');
+
+  /* 7 · notas por parcial (materias y personalidad) */
+  const parciales = Object.keys(d.notas || {}).sort();
+  apunta('🧮 Notas SACE', parciales.length ? 'parcial(es) ' + parciales.join(', ') : 'sin notas');
+  secs.push('<div class="sec"><h2>🧮 Notas por parcial</h2>' +
+    (parciales.length ? parciales.map(p => {
+      const cols = (d.materias || []).concat(AD_PERSONALIDAD);
+      const usadas = cols.filter(c => Object.keys((d.notas[p] || {})[c] || {}).length);
+      if (!usadas.length) return '<h3>Parcial ' + adEsc(p) + '</h3><p class="vacio">Sin notas en este parcial.</p>';
+      const pf = ((d.boleta || {}).parcialFechas || {})[p];
+      return '<h3>Parcial ' + adEsc(p) + (pf && pf.desde ? ' · evaluaciones del ' + adFechaBonita(pf.desde) +
+        ' al ' + adFechaBonita(pf.hasta) : '') + '</h3>' +
+        adExpTabla(['Nº', 'Alumno/a'].concat(usadas.map(adEsc)),
+          d.lista.map(a => '<tr><td class="c">' + a.num + '</td><td>' + (adEsc(a.nombre) || '—') + '</td>' +
+            usadas.map(c => { const v = ((d.notas[p] || {})[c] || {})[a.num]; return '<td class="c">' + (v != null && v !== '' ? adEsc(String(v)) : '—') + '</td>'; }).join('') + '</tr>'),
+          '', rotulo + ' · NOTAS DEL PARCIAL ' + adEsc(p),
+          [5, 27].concat(usadas.map(() => 68 / usadas.length)));
+    }).join('') : '<p class="vacio">Todavía no hay notas guardadas.</p>') + '</div>');
+
+  /* 8 · comunicados y conducta */
+  const gg = (avLoad().grupos || {})[d.id] || { avisos: [], faqs: [], conducta: [] };
+  apunta('📣 Comunicados', (gg.avisos || []).length + ' aviso(s) · ' + (gg.conducta || []).length + ' de conducta');
+  secs.push('<div class="sec"><h2>📣 Comunicados y conducta</h2>' +
+    '<h3>Avisos publicados a las familias</h3>' +
+    adExpTabla(['Publicado', 'Título', 'Texto', 'Vigente hasta'],
+      (gg.avisos || []).slice().reverse().map(a =>
+        '<tr><td>' + adFechaBonita(String(a.mod || '').slice(0, 10)) + '</td><td>' + adEsc(a.titulo) +
+        '</td><td>' + adEsc(a.texto) + '</td><td>' + adFechaBonita(a.hasta) + '</td></tr>'),
+      'No hay avisos publicados.', rotulo + ' · AVISOS A LAS FAMILIAS', [12, 24, 52, 12]) +
+    '<h3>Reportes de conducta</h3>' +
+    adExpTabla(['Fecha', 'Nº', 'Alumno/a', 'Tipo', 'Detalle'],
+      (gg.conducta || []).slice().reverse().map(c =>
+        '<tr><td>' + adFechaBonita(c.fecha) + '</td><td class="c">' + c.num + '</td><td>' +
+        (adEsc(nom(c.num)) || '—') + '</td><td>' + adEsc(AV_CONDUCTA_TIPOS[c.tipo] || '📋 Reporte') + '</td><td>' +
+        adEsc(c.texto) + '</td></tr>'),
+      'No hay reportes de conducta.', rotulo + ' · CONDUCTA', [11, 6, 26, 17, 40]) +
+    ((gg.faqs || []).length ? '<h3>Ficha del aula (respuestas para las familias)</h3>' +
+      adExpTabla(['Pregunta', 'Respuesta'], gg.faqs.map(f =>
+        '<tr><td>' + adEsc(f.pregunta) + '</td><td>' + adEsc(f.respuesta) + '</td></tr>')) : '') +
+    '<div class="firmas"><div class="firma">Docente</div><div class="firma">Dirección</div></div></div>');
+
+  const html = '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">' +
+    '<title>Expediente del aula ' + adEsc(adGradoSeccion(d.grado, d.seccion)) + ' ' + anio + '</title>' +
+    '<style>' + AD_EXP_CSS + '</style></head><body>' +
+    '<div class="noprint"><button onclick="window.print()" style="padding:10px 18px;font-weight:bold;font-size:14px;cursor:pointer;">' +
+    '🖨️ Imprimir o guardar como PDF</button><br><span style="font-size:12px;color:#444;line-height:1.6">' +
+    'Sale <strong>horizontal (apaisado)</strong> a propósito: así las 7 columnas de alumnos y las notas ' +
+    'de todas las materias caben enteras y nada queda aplastado.<br>' +
+    'En el teléfono: <strong>Imprimir → destino «Guardar como PDF»</strong>. ' +
+    'En la computadora, deja activada la opción de <strong>gráficos de fondo</strong> para que se vean ' +
+    'las filas alternas.</span></div>' +
+    '<h1>📄 Expediente del aula</h1>' +
+    '<p class="sub">' +
+    (d.escuela ? '<strong>' + adEsc(String(d.escuela).trim()) + '</strong><br>' : '') +
+    (adGradoSeccion(d.grado, d.seccion) ? 'Grupo ' + adEsc(adGradoSeccion(d.grado, d.seccion)) + ' · ' : '') +
+    'Año lectivo ' + anio + '<br>' +
+    (adDocenteNombre() ? 'Docente: ' + adEsc(adDocenteNombre()) + '<br>' : '') +
+    'Generado con M.E.T.A.S el ' + adFechaBonita(adHoy()) + '</p>' +
+    '<div class="indice"><strong>Lo que contiene este expediente</strong>' + indice.join('') + '</div>' +
+    '<p class="nota">Documento de respaldo del trabajo del aula. Contiene datos de menores: ' +
+    'manéjelo con el mismo cuidado que el libro de registro.</p>' +
+    secs.join('') + '</body></html>';
+
+  adPrintAbrir(html);
+}
+
+/* ══════════════ 🧾 GASTOS DE MI BOLSILLO ══════════════
+   Lo que el maestro paga de lo suyo para el centro y le tienen que devolver:
+   copias, un flete en su propio carro, cartulinas, una reparación. NO es una
+   colecta (esa es plata de los padres) ni un gasto de colecta (ese sale del
+   dinero ya recaudado): es una DEUDA DEL CENTRO CON EL MAESTRO.
+
+   Vive en el nivel de la CUENTA, no del grupo: el bolsillo del maestro es uno
+   solo aunque atienda dos colegios, así que la deuda no se parte por grado.
+   Cada gasto se queda con el nombre del colegio al que se le cobra.
+
+   NUNCA viaja al asistente de padres: esto es entre el maestro y su dirección.
+   Sale del teléfono solo cuando él toca «enviar», y va a quien él decida. */
+const AD_GASTO_CATS = [
+  { k: 'copias',     et: '🖨️ Copias e impresiones' },
+  { k: 'transporte', et: '🚚 Transporte o flete' },
+  { k: 'materiales', et: '🧰 Materiales' },
+  { k: 'refrigerio', et: '🍽️ Refrigerio' },
+  { k: 'servicio',   et: '🔧 Servicio o reparación' },
+  { k: 'otro',       et: '📦 Otro gasto' },
+];
+const AD_GASTO_COBRAR = ['Dirección', 'Tesorería', 'Sociedad de Padres', 'Otro'];
+function adGastoCatEt(k) {
+  const x = AD_GASTO_CATS.find(c => c.k === k);
+  return x ? x.et : '📦 Otro gasto';
+}
+function adGastosLoad() {
+  const st = adState();
+  return Array.isArray(st.gastos) ? st.gastos : [];
+}
+function adGastosSave(arr) {
+  const st = adState();
+  st.gastos = arr;
+  adStateSave(st);
+}
+function adGastosTotales(lista) {
+  const pend = lista.filter(g => g.estado !== 'cobrado');
+  const cobr = lista.filter(g => g.estado === 'cobrado');
+  const suma = a => a.reduce((s, g) => s + (Number(g.monto) || 0), 0);
+  return { pend, cobr, mPend: suma(pend), mCobr: suma(cobr) };
+}
+
 /* ══════════════ 💰 ECONOMÍA — colaboraciones y acuerdos ══════════════ */
 function adColecta(d, id) { return d.colectas.find(c => c.id === id); }
+/* Folio del recibo: FIJO para ese alumno en esa colecta (corregir el monto no
+   lo cambia) y distinto entre colectas, porque sale del id de la colecta, que
+   ya es único. La familia lo cita si quiere una aclaración. */
+function adReciboFolio(c, num) {
+  const base = String(c.id || '').replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+  return 'RC-' + (base.slice(-4) || '0000') + '-' + num;
+}
 function adColectaTotales(c) {
   const rec = Object.values(c.pagos || {}).reduce((s, m) => s + (Number(m) || 0), 0);
   const gas = (c.gastos || []).reduce((s, g) => s + (Number(g.m) || 0), 0);
   return { rec, gas, saldo: rec - gas };
 }
+/* Cuántos alumnos se ESPERA que den. Casi siempre es la lista entera, pero no
+   siempre: hay alumnos de prueba, un retirado que sigue en la lista, un becado
+   al que no se le pide. Con «22/44» el maestro dice en la reunión que faltan
+   22 cuando faltan 20, y la madre que cuenta le lleva la contraria.
+   Se dice QUIÉNES no cuentan (c.noCuentan, sus números de lista), no solo
+   cuántos: con el número suelto el total salía bien pero el informe impreso
+   seguía listando a los de prueba, porque no había forma de saber cuáles eran.
+   Se guarda EN LA COLECTA, no en la lista: quitar a alguien de la lista le
+   borraría su número y con él la clave de familia.
+   c.esperados es la versión anterior (solo la cifra) y se respeta mientras el
+   maestro no escriba los números. */
+function adColectaFuera(c, d) {
+  const hay = new Set(d.lista.map(a => String(a.num)));
+  return new Set((Array.isArray(c && c.noCuentan) ? c.noCuentan : [])
+    .map(String).filter(n => hay.has(n)));
+}
+function adColectaEsperados(c, d) {
+  if (Array.isArray(c && c.noCuentan)) return d.lista.length - adColectaFuera(c, d).size;
+  const n = Number(c && c.esperados);
+  return n >= 1 ? Math.floor(n) : d.lista.length;
+}
+/* Los que dieron, SIN los que no cuentan: si un alumno de prueba quedó marcado
+   por error, «23 de 42» no puede pasar del total. Su dinero sí sigue en lo
+   recaudado, porque el dinero está en la mano y se rinde. */
+function adColectaDieron(c, d) {
+  const fuera = adColectaFuera(c, d);
+  return Object.keys(c.pagos || {}).filter(n => !fuera.has(String(n))).length;
+}
+/* Dinero que falta por recaudar: a cada alumno que cuenta se le pide el aporte
+   SUGERIDO, y se suma lo que le falta para llegar a él. Así el abono entra
+   —quien dio L 10 de L 25 debe L 15, no L 25— y quien dio de más no tapa lo
+   que debe otro: ese dinero de más no se sabe a quién cubre (puede ser un
+   hermano, puede ser una propina), y restarlo daría una deuda que no existe. */
+function adColectaPorRecaudar(c, d) {
+  const fuera = adColectaFuera(c, d);
+  const sug = Number(c.montoAlumno) || 0;
+  return d.lista.filter(a => !fuera.has(String(a.num))).reduce((s, a) => {
+    const dio = Number(c.pagos && c.pagos[a.num]) || 0;
+    return s + Math.max(0, sug - dio);
+  }, 0);
+}
+/* Total esperado: el aporte sugerido por cada alumno que cuenta. Un solo
+   cálculo para la pantalla, el WhatsApp y el papel, que tienen que decir lo
+   mismo: la madre compara el mensaje con el informe. */
+function adColectaMeta(c, d) {
+  return adColectaEsperados(c, d) * (Number(c.montoAlumno) || 0);
+}
+/* Participación del grupo: los que dieron sobre el total que CUENTA (sin los
+   de prueba ni los retirados). Por eso se corrige el total: con la lista cruda,
+   22 de 44 es un 50 % y el grupo real va en 52 %, y esa es la cifra que el
+   padre lee. Se redondea al entero: «52,4 %» en un grupo de WhatsApp no le
+   dice más a nadie. */
+function adColectaPct(c, d) {
+  const esp = adColectaEsperados(c, d);
+  return esp ? Math.round(adColectaDieron(c, d) * 100 / esp) : 0;
+}
+/* Barra de participación: la MISMA en la pantalla y en el papel, para que el
+   maestro vea lo que va a imprimir. Es SVG porque el navegador imprime «sin
+   gráficos de fondo» de fábrica: una barra con background saldría en blanco en
+   el papel, y el relleno de un SVG se imprime siempre. */
+function adColectaBarraSvg(c, d, alto) {
+  const pct = Math.min(100, adColectaPct(c, d));
+  return `<svg viewBox="0 0 100 8" preserveAspectRatio="none" width="100%" height="${alto}" role="img" aria-label="Participación ${pct} %" style="display:block">
+    <rect x="0" y="0" width="100" height="8" fill="#fff" stroke="#1e3a7c" stroke-width="1" vector-effect="non-scaling-stroke"/>
+    <rect x="0" y="0" width="${pct}" height="8" fill="#1e3a7c"/>
+    ${[25, 50, 75].map(x => `<line x1="${x}" y1="0" x2="${x}" y2="8" stroke="#94a3b8" stroke-width="1" stroke-dasharray="2 2" vector-effect="non-scaling-stroke"/>`).join('')}
+  </svg>`;
+}
+/* La misma barra en el WhatsApp, que solo lleva texto: diez cuadros de 10 %
+   cada uno. Lleno y vacío se distinguen por la FORMA (🟦 contra ⬜), no solo por
+   el color, así la lee también quien no distingue colores. Se redondea al
+   cuadro más cercano; el número exacto va en la línea de arriba. */
+function adColectaBarraTxt(c, d) {
+  const llenos = Math.max(0, Math.min(10, Math.round(adColectaPct(c, d) / 10)));
+  return '🟦'.repeat(llenos) + '⬜'.repeat(10 - llenos);
+}
+/* Una colecta está COMPLETA cuando dio todo el que cuenta: la misma regla de
+   la barra llena, con el total corregido (sin los de prueba). Se cuenta por
+   alumnos y no por dinero, igual que la participación: un abono no la cierra. */
+function adColectaCompleta(c, d) {
+  const esp = adColectaEsperados(c, d);
+  return esp > 0 && adColectaDieron(c, d) >= esp;
+}
+/* «1 de 3 completas»: la misma frase en la pantalla, el WhatsApp y el papel.
+   Con una sola colecta devuelve '' porque «1 de 1» no dice nada. */
+function adColectasCompletasTxt(d) {
+  const cs = d.colectas || [];
+  if (cs.length < 2) return '';
+  return cs.filter(x => adColectaCompleta(x, d)).length + ' de ' + cs.length;
+}
+/* Resumen para WhatsApp: SOLO cifras. Ni un nombre ni un número de lista,
+   porque va al grupo de padres y ahí «#14 no ha dado» es señalar a un niño
+   delante de todos. Quién pagó se sabe por el recibo de cada familia. */
+/* conGrupo: añade al final las demás colectas del grupo con sus barras. Es
+   OPCIONAL y va apagado por defecto: el mensaje de la excursión no tiene por
+   qué contarle al grupo cómo va la rifa, y eso lo decide el maestro. */
+function adColectaTxtResumen(c, d, conGrupo) {
+  const t = adColectaTotales(c);
+  const pagaron = adColectaDieron(c, d);
+  const esp = adColectaEsperados(c, d);
+  const grupo = adGrupoTxt(d);
+  const gastos = c.gastos || [];
+  return '💰 *' + c.concepto + '*\n' +
+    (grupo ? 'Grupo ' + grupo + '\n' : '') +
+    'Acordado el ' + adFechaBonita(c.fecha) + ' · aporte sugerido: ' + adLps(c.montoAlumno) + '\n\n' +
+    '✅ Han dado: *' + pagaron + ' de ' + esp + '*\n' +
+    '📊 Participación del grupo: *' + adColectaPct(c, d) + ' %*\n' +
+    adColectaBarraTxt(c, d) + '\n' +
+    (esp > pagaron ? '⏳ Faltan: *' + (esp - pagaron) + '*\n' : '') +
+    '🎯 Total esperado: *' + adLps(adColectaMeta(c, d)) + '* (' + esp + ' × ' + adLps(c.montoAlumno) + ')\n' +
+    '💵 Recaudado: *' + adLps(t.rec) + '*\n' +
+    (adColectaPorRecaudar(c, d) > 0 ? '📥 Falta por recaudar: *' + adLps(adColectaPorRecaudar(c, d)) + '*\n' : '') +
+    '🧾 Gastado: *' + adLps(t.gas) + '*\n' +
+    (gastos.length ? gastos.map(g => '   • ' + g.d + ': ' + adLps(g.m)).join('\n') + '\n' : '') +
+    '💼 Saldo: *' + adLps(t.saldo) + '*\n\n' +
+    /* con una sola colecta «1 de 1» no dice nada: solo sale si hay más */
+    (conGrupo && adColectasCompletasTxt(d)
+      ? '🗂️ Colectas del grupo: *' + adColectasCompletasTxt(d) + '* completas\n' +
+        /* la barra de cada una, con cuadritos como la de arriba. Van nombres de
+           COLECTAS, nunca de alumnos; y la % exacta al lado, porque diez
+           cuadros no distinguen un 52 de un 56 */
+        d.colectas.map(x => '• ' + x.concepto + (x.id === c.id ? ' (esta)' : '') + '\n   ' +
+          adColectaBarraTxt(x, d) + ' ' + adColectaPct(x, d) + ' %' + (adColectaCompleta(x, d) ? ' ✔' : '')).join('\n') +
+        '\n\n'
+      : '') +
+    'Cortado al ' + adFechaBonita(adHoy()) + '.\n_Anotado con M.E.T.A.S_';
+}
 
 function adRenderEco(body, d) {
+  if (_adGastosOn) { adRenderGastos(body, d); return; }
+  if (_adInvOn) { adRenderInventario(body, d); return; }
   if (!d.lista.length) { adSinLista(body, 'el registro económico'); return; }
   if (_adColectaId) { adRenderColecta(body, d); return; }
 
+  const gT = adGastosTotales(adGastosLoad());
+  const iT = adInvTotales(adInvLoad());
   body.innerHTML = `
+    <button class="ad-puerta ad-puerta-deuda" id="ad-ir-gastos">
+      <span class="ad-puerta-ic">🧾</span>
+      <span class="ad-puerta-txt">
+        <span class="ad-puerta-t">Gastos de mi bolsillo</span>
+        <span class="ad-puerta-s">${gT.pend.length
+          ? 'La escuela te debe <strong>' + adLps(gT.mPend) + '</strong> en ' + gT.pend.length + ' gasto(s)'
+          : 'Copias, un flete, materiales… anótalo y cóbralo sin pelear de memoria'}</span>
+      </span>
+      <span class="ad-puerta-go">›</span>
+    </button>
+    <button class="ad-puerta ad-puerta-inv" id="ad-ir-inv">
+      <span class="ad-puerta-ic">📦</span>
+      <span class="ad-puerta-txt">
+        <span class="ad-puerta-t">Inventario del aula</span>
+        <span class="ad-puerta-s">${iT.mio.length
+          ? 'Tienes <strong>' + iT.mio.length + '</strong> cosa(s) tuyas en el aula por ' +
+            adLps(iT.vMio) + (adInvVence() ? ' · ⚠️ toca firmar el acta' : '')
+          : 'Lo que es TUYO y lo que es de la escuela, separado y con acta firmada'}</span>
+      </span>
+      <span class="ad-puerta-go">›</span>
+    </button>
     <div class="pa-card">
       <div class="pa-card-title">💰 Colaboraciones y acuerdos</div>
       <p class="pa-optional-hint">Cada acuerdo de reunión (colaboración, rifa, eventualidad) es una
@@ -806,20 +2818,22 @@ function adRenderEco(body, d) {
     ${d.colectas.length ? `
     <div class="pa-card">
       <div class="pa-card-title">🗂️ Mis colectas</div>
+      ${adColectasCompletasTxt(d) ? `<p class="ad-col-completas">✅ <strong>${adColectasCompletasTxt(d)}</strong> completas</p>` : ''}
       ${d.colectas.slice().reverse().map(c => {
         const t = adColectaTotales(c);
-        const pagaron = Object.keys(c.pagos || {}).length;
+        const pagaron = adColectaDieron(c, d);
         return `
         <button class="ad-colecta-row" data-cid="${c.id}">
           <span class="ad-cr-txt"><strong>${adEsc(c.concepto)}</strong><br>
-            <small>${adFechaBonita(c.fecha)} · ${pagaron}/${d.lista.length} dieron · saldo ${adLps(t.saldo)}</small></span>
+            <small>${adFechaBonita(c.fecha)} · ${pagaron}/${adColectaEsperados(c, d)} dieron (${adColectaPct(c, d)} %) · saldo ${adLps(t.saldo)}</small>
+            <span class="ad-cr-barra">${adColectaBarraSvg(c, d, 10)}</span></span>
           <span class="ad-cr-arrow">›</span>
         </button>`;
       }).join('')}
     </div>` : ''}`;
 
   document.getElementById('ad-nueva-colecta').addEventListener('click', async () => {
-    const concepto = await metasPrompt('¿Cuál es el acuerdo o colaboración?\n(ej: **Aporte día del niño**, acordado en reunión)', {
+    const concepto = await metasPrompt('¿Cuál es el acuerdo o colaboración?\n(ej.: **Aporte día del niño**, acordado en reunión)', {
       icono: '💰', titulo: 'Nueva colecta', okTxt: 'Siguiente',
       valida: v => String(v).trim().length >= 3 ? '' : 'Escribe el concepto (mínimo 3 letras).',
     });
@@ -830,25 +2844,742 @@ function adRenderEco(body, d) {
     });
     if (monto === null) return;
     const dd = adLoad();
+    /* el total corregido se hereda de la colecta anterior: los alumnos de
+       prueba siguen en la lista, y corregirlo en cada colecta se olvida */
+    const prev = dd.colectas.slice().reverse().find(x => Array.isArray(x.noCuentan) || Number(x.esperados) >= 1);
     dd.colectas.push({
       id: 'C' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
       concepto: String(concepto).trim(),
       montoAlumno: Number(String(monto).replace(',', '.')),
-      fecha: adHoy(), pagos: {}, gastos: [],
+      fecha: adHoy(), pagos: {}, pagosF: {}, gastos: [],
     });
+    if (prev) {
+      const nueva = dd.colectas[dd.colectas.length - 1];
+      if (Array.isArray(prev.noCuentan)) nueva.noCuentan = [...adColectaFuera(prev, dd)].map(Number);
+      else if (Number(prev.esperados) <= dd.lista.length) nueva.esperados = prev.esperados;
+    }
     adSave(dd);
     _adColectaId = dd.colectas[dd.colectas.length - 1].id;
     renderAdmin();
   });
   body.querySelectorAll('.ad-colecta-row').forEach(b =>
     b.addEventListener('click', () => { _adColectaId = b.dataset.cid; renderAdmin(); }));
+  document.getElementById('ad-ir-gastos').addEventListener('click', () => { _adGastosOn = 1; renderAdmin(); });
+  document.getElementById('ad-ir-inv').addEventListener('click', () => { _adInvOn = 1; renderAdmin(); });
+}
+
+/* ── Gastos de mi bolsillo: anotar, cobrar y cerrar ──
+   Todo en UNA pantalla: el formulario arriba (categoría y a quién se le cobra en
+   chips, para no escribir de más), y debajo lo pendiente con su total gordo, que
+   es el dato con el que el maestro va a hablar con la tesorera. */
+function adRenderGastos(body, d) {
+  const lista = adGastosLoad();
+  const t = adGastosTotales(lista);
+  const escuela = String(d.escuela || '').trim();
+  const fila = g => `
+    <div class="ad-gsto ${g.estado === 'cobrado' ? 'ad-gsto-ok' : ''}">
+      <div class="ad-gsto-top">
+        <span class="ad-gsto-cat">${adEsc(adGastoCatEt(g.cat))}</span>
+        <span class="ad-gsto-monto">${adLps(g.monto)}</span>
+      </div>
+      <div class="ad-gsto-con">${adEsc(g.concepto)}</div>
+      <div class="ad-gsto-meta">${adFechaBonita(g.fecha)} · cobrar a <strong>${adEsc(g.cobrarA || 'Dirección')}</strong>${
+        g.escuela ? ' · ' + adEsc(g.escuela) : ''} · ${g.factura ? '📎 con recibo' : '⚠️ sin recibo'}${
+        g.estado === 'cobrado' ? ' · ✅ me lo pagaron el ' + adFechaBonita(g.fechaCobro || g.fecha) : ''}</div>
+      <div class="ad-gsto-btns">
+        <button class="ad-gsto-b ad-gsto-wa" data-wa="${g.id}">📲 Enviar este</button>
+        ${g.estado === 'cobrado'
+          ? `<button class="ad-gsto-b" data-reabrir="${g.id}">↩️ Sigue pendiente</button>`
+          : `<button class="ad-gsto-b ad-gsto-ok-b" data-cobrado="${g.id}">✅ Ya me lo pagaron</button>`}
+        <button class="ad-gsto-b ad-gsto-del" data-del="${g.id}" aria-label="Eliminar">🗑</button>
+      </div>
+    </div>`;
+
+  body.innerHTML = `
+    <div class="pa-card">
+      <nav class="nav-ruta" aria-label="Dónde estás">
+        <button class="nav-ruta-link" id="ad-gsto-volver">💰 Economía</button>
+        <span class="nav-ruta-sep" aria-hidden="true">›</span>
+        <span class="nav-ruta-actual" aria-current="page">estás aquí</span>
+      </nav>
+      <div class="pa-card-title">🧾 Gastos de mi bolsillo</div>
+      <p class="pa-optional-hint">Lo que <strong>pagaste de lo tuyo</strong> para el centro y te tienen
+        que devolver: copias, un flete en tu carro, cartulinas, una reparación. No se mezcla con las
+        colectas, porque esa es plata de los padres.
+        <strong>Nada de esto llega al asistente de padres</strong>: sale de aquí solo cuando tú lo envías.</p>
+
+      <div class="ad-gsto-marcador">
+        <span class="ad-gsto-m-lbl">La escuela me debe</span>
+        <span class="ad-gsto-m-val">${adLps(t.mPend)}</span>
+        <span class="ad-gsto-m-sub">${t.pend.length} gasto(s) por cobrar${
+          t.cobr.length ? ' · ' + adLps(t.mCobr) + ' ya recuperados' : ''}</span>
+      </div>
+
+      <div class="ad-gsto-lbl">🗂️ ¿De qué fue el gasto?</div>
+      <div class="ad-gchips" id="ad-gsto-cats">
+        ${AD_GASTO_CATS.map((c, i) =>
+          `<button class="ad-gchip${i === 0 ? ' ad-gchip-sel' : ''}" data-cat="${c.k}">${c.et}</button>`).join('')}
+      </div>
+      <div class="ad-gsto-lbl">✍️ ¿En qué exactamente?</div>
+      <input id="ad-gsto-con" class="pa-inp-field" maxlength="120" autocomplete="off"
+             placeholder="Ej.: 43 juegos de la ficha de Español">
+      <div class="ad-gsto-fila2">
+        <div>
+          <div class="ad-gsto-lbl">💵 ¿Cuánto pagaste?</div>
+          <input id="ad-gsto-monto" class="pa-inp-field" inputmode="decimal" placeholder="120">
+        </div>
+        <div>
+          <div class="ad-gsto-lbl">🗓 ¿Qué día?</div>
+          <input id="ad-gsto-fecha" class="pa-inp-field" type="date" value="${adHoy()}">
+        </div>
+      </div>
+      <div class="ad-gsto-lbl">🙋 ¿A quién se le cobra?</div>
+      <div class="ad-gchips" id="ad-gsto-cobrar">
+        ${AD_GASTO_COBRAR.map((c, i) =>
+          `<button class="ad-gchip${i === 1 ? ' ad-gchip-sel' : ''}" data-cobrar="${adEsc(c)}">${adEsc(c)}</button>`).join('')}
+      </div>
+      <label class="ad-bit-sw" style="margin-top:10px">
+        <input type="checkbox" id="ad-gsto-fac" checked>
+        <span>Guardé el <strong>recibo o factura</strong> (súbelo con esto y no te lo discuten)</span>
+      </label>
+      <button class="pa-generate-btn" id="ad-gsto-add">➕ Anotar este gasto</button>
+    </div>
+
+    ${t.pend.length ? `
+    <div class="pa-card">
+      <div class="pa-card-title">⏳ Por cobrar (${t.pend.length})</div>
+      ${t.pend.slice().reverse().map(fila).join('')}
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn" id="ad-gsto-wa-todo">📲 Enviar el resumen por WhatsApp</button>
+      </div>
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn ad-btn-sec" id="ad-gsto-copiar">📋 Copiar el resumen</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-gsto-print">🖨️ Imprimir la solicitud</button>
+      </div>
+      <p class="pa-optional-hint">💡 El resumen sirve igual para el grupo de WhatsApp de maestros,
+        para la tesorera o para dirección: va con fecha, concepto, monto y total.</p>
+    </div>` : `
+    <div class="pa-card">
+      <p class="pa-optional-hint">🎉 No tienes gastos por cobrar. Cuando saques copias o prestes el
+        carro para un flete, anótalo arriba <strong>el mismo día</strong>: es cuando te acordás del monto.</p>
+    </div>`}
+
+    ${t.cobr.length ? `
+    <div class="pa-card">
+      <div class="pa-card-title">✅ Ya recuperados (${t.cobr.length})</div>
+      ${t.cobr.slice().reverse().map(fila).join('')}
+    </div>` : ''}`;
+
+  document.getElementById('ad-gsto-volver').addEventListener('click', () => { _adGastosOn = 0; renderAdmin(); });
+
+  /* chips: se seleccionan SIN repintar la pantalla, para no borrar lo escrito */
+  const chipUnico = (cont) => body.querySelectorAll('#' + cont + ' .ad-gchip').forEach(b =>
+    b.addEventListener('click', () => {
+      body.querySelectorAll('#' + cont + ' .ad-gchip').forEach(x => x.classList.remove('ad-gchip-sel'));
+      b.classList.add('ad-gchip-sel');
+    }));
+  chipUnico('ad-gsto-cats'); chipUnico('ad-gsto-cobrar');
+
+  document.getElementById('ad-gsto-add').addEventListener('click', () => {
+    const con = String(document.getElementById('ad-gsto-con').value || '').trim();
+    const mRaw = String(document.getElementById('ad-gsto-monto').value || '').replace(',', '.').trim();
+    const monto = Number(mRaw);
+    if (con.length < 3) { toast('✍️ Escribe en qué fue el gasto'); document.getElementById('ad-gsto-con').focus(); return; }
+    if (!(monto > 0)) { toast('💵 Escribe cuánto pagaste'); document.getElementById('ad-gsto-monto').focus(); return; }
+    const cat = (body.querySelector('#ad-gsto-cats .ad-gchip-sel') || {}).dataset;
+    const cob = (body.querySelector('#ad-gsto-cobrar .ad-gchip-sel') || {}).dataset;
+    const arr = adGastosLoad();
+    arr.push({
+      id: 'X' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+      fecha: String(document.getElementById('ad-gsto-fecha').value || adHoy()),
+      cat: (cat && cat.cat) || 'otro', concepto: con, monto,
+      cobrarA: (cob && cob.cobrar) || 'Tesorería',
+      factura: document.getElementById('ad-gsto-fac').checked ? 1 : 0,
+      escuela, estado: 'pendiente',
+    });
+    adGastosSave(arr); renderAdmin();
+    toast('🧾 Anotado: ya no depende de tu memoria');
+  });
+
+  body.querySelectorAll('[data-cobrado]').forEach(b =>
+    b.addEventListener('click', () => {
+      const arr = adGastosLoad();
+      const g = arr.find(x => x.id === b.dataset.cobrado); if (!g) return;
+      g.estado = 'cobrado'; g.fechaCobro = adHoy();
+      adGastosSave(arr); renderAdmin();
+      toast('✅ Cobrado: sale de lo pendiente');
+    }));
+  body.querySelectorAll('[data-reabrir]').forEach(b =>
+    b.addEventListener('click', () => {
+      const arr = adGastosLoad();
+      const g = arr.find(x => x.id === b.dataset.reabrir); if (!g) return;
+      g.estado = 'pendiente'; delete g.fechaCobro;
+      adGastosSave(arr); renderAdmin();
+    }));
+  body.querySelectorAll('[data-del]').forEach(b =>
+    b.addEventListener('click', async () => {
+      if (!await metasConfirm('¿Eliminar este gasto de tu registro?',
+        { icono: '🗑', titulo: 'Gastos de mi bolsillo', okTxt: 'Sí, eliminar' })) return;
+      adUndoGuardar('Eliminar un gasto de mi bolsillo');
+      adGastosSave(adGastosLoad().filter(x => x.id !== b.dataset.del));
+      renderAdmin();
+    }));
+  body.querySelectorAll('[data-wa]').forEach(b =>
+    b.addEventListener('click', () => {
+      const g = adGastosLoad().find(x => x.id === b.dataset.wa); if (!g) return;
+      adGastoEnviar(adGastoTxtUno(g, d));
+    }));
+
+  const wt = document.getElementById('ad-gsto-wa-todo');
+  if (wt) wt.addEventListener('click', () => adGastoEnviar(adGastoTxtResumen(t.pend, d)));
+  const cp = document.getElementById('ad-gsto-copiar');
+  if (cp) cp.addEventListener('click', () => adCopiar(adGastoTxtResumen(t.pend, d),
+    () => toast('📋 Copiado: pégalo donde lo necesites'),
+    () => toast('⚠️ No se pudo copiar en este navegador')));
+  const pr = document.getElementById('ad-gsto-print');
+  if (pr) pr.addEventListener('click', () => adPrintGastos(t.pend, d));
+}
+
+/* WhatsApp sin número: abre el selector del teléfono para que el maestro elija
+   dirección, la tesorera o el grupo de maestros, sin guardar contactos aquí. */
+function adGastoEnviar(txt) {
+  window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank');
+}
+function adGastoTxtUno(g, d) {
+  return '🧾 *Gasto por reembolsar*\n' +
+    (adDocenteNombre() ? adDocenteNombre() + '\n' : '') +
+    (g.escuela || d.escuela ? (g.escuela || d.escuela) + '\n' : '') + '\n' +
+    adFechaBonita(g.fecha) + ' · ' + adGastoCatEt(g.cat) + '\n' +
+    g.concepto + '\n' +
+    '*' + adLps(g.monto) + '*' + (g.factura ? ' (tengo el recibo)' : ' (sin recibo)') + '\n' +
+    'A cobrar a: ' + (g.cobrarA || 'Dirección') + '\n\n' +
+    'Agradezco la gestión del reembolso.\n_Anotado con M.E.T.A.S_';
+}
+function adGastoTxtResumen(pend, d) {
+  const total = pend.reduce((s, g) => s + (Number(g.monto) || 0), 0);
+  const aQuien = [...new Set(pend.map(g => g.cobrarA || 'Dirección'))].join(' y ');
+  return '🧾 *SOLICITUD DE REEMBOLSO*\n' +
+    (adDocenteNombre() ? adDocenteNombre() + '\n' : '') +
+    (d.escuela ? String(d.escuela).trim() + '\n' : '') +
+    'Al ' + adFechaBonita(adHoy()) + '\n\n' +
+    'Gastos que hice de mi bolsillo para el centro:\n' +
+    pend.slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha))).map((g, i) =>
+      (i + 1) + '. ' + adFechaBonita(g.fecha) + ' · ' + adGastoCatEt(g.cat) + ' · ' + g.concepto +
+      ' — *' + adLps(g.monto) + '*' + (g.factura ? ' (con recibo)' : ' (sin recibo)')).join('\n') +
+    '\n\n*TOTAL POR REEMBOLSAR: ' + adLps(total) + '*\n' +
+    'A cobrar a: ' + aQuien + '\n\n' +
+    'Quedo a la orden para entregar los recibos.\n_Anotado con M.E.T.A.S_';
+}
+
+/* Solicitud imprimible: la que se firma y queda archivada en dirección */
+function adPrintGastos(pend, d) {
+  const total = pend.reduce((s, g) => s + (Number(g.monto) || 0), 0);
+  const orden = pend.slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+<title>Solicitud de reembolso</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Arial,sans-serif;font-size:12px;color:#111;background:#fff;padding:12mm;}
+h1{font-size:16px;color:#1e3a7c;margin-bottom:2mm;}
+.sub{font-size:11px;color:#444;margin-bottom:5mm;}
+table{width:100%;border-collapse:collapse;margin-bottom:5mm;}
+th,td{border:1px solid #999;padding:3px 6px;text-align:left;}
+th{background:#e8eef9;font-size:11px;}
+td.n{text-align:right;white-space:nowrap;}
+.tot{margin:4mm 0;font-size:14px;font-weight:bold;}
+.firmas{display:flex;gap:14mm;margin-top:16mm;}
+.firma{flex:1;border-top:1.5px solid #333;text-align:center;padding-top:2mm;font-size:11px;}
+.noprint{margin-bottom:5mm;}
+@media print{.noprint{display:none;}}
+</style></head><body>
+<div class="noprint"><button onclick="window.print()" style="padding:8px 16px;font-weight:bold;cursor:pointer;">🖨️ Imprimir</button></div>
+<h1>🧾 Solicitud de reembolso</h1>
+<div class="sub">${adDocenteNombre() ? adEsc(adDocenteNombre()) + ' · ' : ''}${d.escuela ? adEsc(String(d.escuela).trim()) + ' · ' : ''}${
+  adGradoSeccion(d.grado, d.seccion) ? 'Grupo ' + adEsc(adGradoSeccion(d.grado, d.seccion)) + ' · ' : ''}Generado con M.E.T.A.S el ${adFechaBonita(adHoy())}</div>
+<table>
+<thead><tr><th>Fecha</th><th>Tipo</th><th>Concepto</th><th>Recibo</th><th>Se cobra a</th><th>Monto</th></tr></thead>
+<tbody>
+${orden.map(g => `<tr><td>${adFechaBonita(g.fecha)}</td><td>${adEsc(adGastoCatEt(g.cat))}</td><td>${adEsc(g.concepto)}</td><td>${g.factura ? 'Sí' : 'No'}</td><td>${adEsc(g.cobrarA || 'Dirección')}</td><td class="n">${adLps(g.monto)}</td></tr>`).join('')}
+</tbody></table>
+<div class="tot">TOTAL POR REEMBOLSAR: ${adLps(total)}</div>
+<div class="firmas">
+  <div class="firma">Docente solicitante</div>
+  <div class="firma">Tesorería</div>
+  <div class="firma">Dirección</div>
+</div>
+</body></html>`;
+  adPrintAbrir(html);
+}
+
+/* ══════════════ 📦 INVENTARIO DEL AULA ══════════════
+   El aula está llena de cosas y NO todas son de la escuela. El maestro
+   compra un parlante, una engrapadora, un abanico… y muchas veces nadie
+   se lo paga. Cuando lo trasladan, esa discusión se pierde de memoria.
+
+   Aquí cada cosa dice DE QUIÉN ES, con una regla simple y verificable:
+
+   🧑‍🏫 MÍO   — lo compré con mi dinero y NO me lo han reembolsado.
+                Es propiedad personal del docente y puede retirarlo.
+                El día que la escuela se lo pague, deja de ser suyo:
+                el botón «✅ Ya me lo pagaron» lo pasa a la escuela y
+                queda escrito quién pagó y cuándo.
+   🏫 DE LA ESCUELA — bien del centro bajo custodia del docente: lo usa,
+                lo cuida y lo entrega al final del año.
+   🎁 DONADO — lo regalaron los padres o un tercero AL AULA: pertenece
+                al centro, pero se guarda el nombre de quien lo donó.
+
+   El ACTA imprimible es lo que le da valor legal: la firman el docente,
+   la dirección y la directiva de padres cada cierto tiempo (por defecto
+   cada 3 meses; el aviso sale solo cuando se vence).
+
+   Vive en el nivel de la CUENTA (st.inventario / st.invActas), como los
+   gastos: el patrimonio del maestro es uno solo aunque atienda dos
+   grupos. NUNCA viaja al asistente de padres. */
+const AD_INV_CATS = [
+  { k: 'tecnologia', et: '💻 Tecnología' },
+  { k: 'mobiliario', et: '🪑 Mobiliario' },
+  { k: 'didactico',  et: '🧩 Material didáctico' },
+  { k: 'libros',     et: '📚 Libros y textos' },
+  { k: 'aseo',       et: '🧹 Aseo y mantenimiento' },
+  { k: 'deporte',    et: '⚽ Deporte y arte' },
+  { k: 'otro',       et: '📦 Otro' },
+];
+const AD_INV_DUENOS = [
+  { k: 'mio',     et: '🧑‍🏫 Mío',           largo: 'Propiedad del docente' },
+  { k: 'escuela', et: '🏫 De la escuela',  largo: 'Propiedad del centro educativo' },
+  { k: 'donado',  et: '🎁 Donado al aula', largo: 'Donación al centro educativo' },
+];
+const AD_INV_MESES_ACTA = 3;   /* cada trimestre toca volver a firmar */
+
+function adInvCatEt(k) {
+  const x = AD_INV_CATS.find(c => c.k === k);
+  return x ? x.et : '📦 Otro';
+}
+function adInvDuenoEt(k) {
+  const x = AD_INV_DUENOS.find(c => c.k === k);
+  return x ? x.et : '🏫 De la escuela';
+}
+function adInvDuenoLargo(k) {
+  const x = AD_INV_DUENOS.find(c => c.k === k);
+  return x ? x.largo : 'Propiedad del centro educativo';
+}
+function adInvLoad() {
+  const st = adState();
+  return Array.isArray(st.inventario) ? st.inventario : [];
+}
+function adInvSave(arr) {
+  const st = adState();
+  st.inventario = arr;
+  adStateSave(st);
+}
+function adInvActas() {
+  const st = adState();
+  return Array.isArray(st.invActas) ? st.invActas : [];
+}
+function adInvActasSave(arr) {
+  const st = adState();
+  st.invActas = arr;
+  adStateSave(st);
+}
+function adInvTotales(lista) {
+  const val = a => a.reduce((s, x) => s + (Number(x.valor) || 0) * (Number(x.cant) || 1), 0);
+  const mio = lista.filter(x => x.dueno === 'mio');
+  const esc = lista.filter(x => x.dueno === 'escuela');
+  const don = lista.filter(x => x.dueno === 'donado');
+  return { mio, esc, don, vMio: val(mio), vEsc: val(esc), vDon: val(don) };
+}
+/* ¿Toca firmar? Sin acta nunca, o con la última de hace más de un
+   trimestre. Solo pesa si hay algo que declarar. */
+function adInvVence() {
+  if (!adInvLoad().length) return false;
+  const actas = adInvActas();
+  if (!actas.length) return true;
+  const ult = actas[actas.length - 1];
+  const t = Date.parse(ult.fecha || ult.t || '');
+  if (!t) return true;
+  return (Date.now() - t) > AD_INV_MESES_ACTA * 30 * 86400000;
+}
+function adInvUltimaActa() {
+  const actas = adInvActas();
+  return actas.length ? actas[actas.length - 1] : null;
+}
+
+function adRenderInventario(body, d) {
+  const lista = adInvLoad();
+  const t = adInvTotales(lista);
+  const ult = adInvUltimaActa();
+  const escuela = String(d.escuela || '').trim();
+
+  const fila = x => `
+    <div class="ad-inv ad-inv-${adEsc(x.dueno)}">
+      <div class="ad-inv-top">
+        <span class="ad-inv-nom">${x.cant > 1 ? adEsc(x.cant) + ' × ' : ''}${adEsc(x.nombre)}</span>
+        <span class="ad-inv-val">${x.valor ? adLps((Number(x.valor) || 0) * (Number(x.cant) || 1)) : '—'}</span>
+      </div>
+      <div class="ad-inv-meta">${adEsc(adInvCatEt(x.cat))} · ${adFechaBonita(x.fecha)}${
+        x.dueno === 'mio' ? ' · <strong>lo pagué yo y no me lo han devuelto</strong>' : ''}${
+        x.dueno === 'donado' && x.donante ? ' · donó ' + adEsc(x.donante) : ''}${
+        x.dueno === 'escuela' && x.pagadoPor ? ' · me lo pagó ' + adEsc(x.pagadoPor) + ' el ' + adFechaBonita(x.fechaPago) : ''}${
+        x.factura ? ' · 📎 con recibo' : ''}${x.nota ? ' · ' + adEsc(x.nota) : ''}</div>
+      <div class="ad-inv-btns">
+        ${x.dueno === 'mio'
+          ? `<button class="ad-gsto-b ad-gsto-ok-b" data-invpago="${x.id}">✅ Ya me lo pagaron</button>`
+          : ''}
+        ${x.dueno === 'escuela' && x.pagadoPor
+          ? `<button class="ad-gsto-b" data-invmio="${x.id}">↩️ Sigue siendo mío</button>`
+          : ''}
+        <button class="ad-gsto-b ad-gsto-del" data-invdel="${x.id}" aria-label="Eliminar">🗑</button>
+      </div>
+    </div>`;
+
+  body.innerHTML = `
+    <div class="pa-card">
+      <nav class="nav-ruta" aria-label="Dónde estás">
+        <button class="nav-ruta-link" id="ad-inv-volver">💰 Economía</button>
+        <span class="nav-ruta-sep" aria-hidden="true">›</span>
+        <span class="nav-ruta-actual" aria-current="page">estás aquí</span>
+      </nav>
+      <div class="pa-card-title">📦 Inventario del aula</div>
+      <p class="pa-optional-hint">Todo lo que hay en tu aula, diciendo <strong>de quién es</strong>.
+        Lo que compraste con tu dinero y <strong>nadie te ha pagado es TUYO</strong>: si te trasladan,
+        te lo llevas. Lo de la escuela es de la escuela y tú solo lo custodias. Se firma con
+        dirección y la directiva de padres para que nunca sea la palabra de uno contra la del otro.
+        <strong>Nada de esto llega al asistente de padres.</strong></p>
+
+      <div class="ad-inv-marcadores">
+        <div class="ad-inv-mk ad-inv-mk-mio">
+          <span class="ad-inv-mk-lbl">🧑‍🏫 Mío</span>
+          <span class="ad-inv-mk-val">${adLps(t.vMio)}</span>
+          <span class="ad-inv-mk-sub">${t.mio.length} cosa(s) sin pagarme</span>
+        </div>
+        <div class="ad-inv-mk">
+          <span class="ad-inv-mk-lbl">🏫 De la escuela</span>
+          <span class="ad-inv-mk-val">${t.esc.length + t.don.length}</span>
+          <span class="ad-inv-mk-sub">bajo mi custodia</span>
+        </div>
+      </div>
+
+      <div class="ad-gsto-lbl">📦 ¿Qué cosa es?</div>
+      <input id="ad-inv-nom" class="pa-inp-field" maxlength="120" autocomplete="off"
+             placeholder="Ej.: Parlante bluetooth, abanico de pared, 20 sillas">
+      <div class="ad-gsto-lbl">🏷️ ¿De quién es?</div>
+      <div class="ad-gchips" id="ad-inv-duenos">
+        ${AD_INV_DUENOS.map((c, i) =>
+          `<button class="ad-gchip${i === 0 ? ' ad-gchip-sel' : ''}" data-dueno="${c.k}">${c.et}</button>`).join('')}
+      </div>
+      <p class="pa-optional-hint ad-inv-regla" id="ad-inv-regla"></p>
+      <div class="ad-gsto-lbl">🗂️ ¿De qué tipo?</div>
+      <div class="ad-gchips" id="ad-inv-cats">
+        ${AD_INV_CATS.map((c, i) =>
+          `<button class="ad-gchip${i === 0 ? ' ad-gchip-sel' : ''}" data-cat="${c.k}">${c.et}</button>`).join('')}
+      </div>
+      <div class="ad-inv-fila3">
+        <div>
+          <div class="ad-gsto-lbl">🔢 Cantidad</div>
+          <input id="ad-inv-cant" class="pa-inp-field" inputmode="numeric" value="1">
+        </div>
+        <div>
+          <div class="ad-gsto-lbl">💵 Valor c/u</div>
+          <input id="ad-inv-valor" class="pa-inp-field" inputmode="decimal" placeholder="0">
+        </div>
+        <div>
+          <div class="ad-gsto-lbl">🗓 ¿Desde cuándo está en el aula?</div>
+          <input id="ad-inv-fecha" class="pa-inp-field" type="date" value="${adHoy()}">
+        </div>
+      </div>
+      <div class="ad-gsto-lbl" id="ad-inv-extra-lbl">✍️ Detalle (opcional)</div>
+      <input id="ad-inv-nota" class="pa-inp-field" maxlength="120" autocomplete="off"
+             placeholder="Marca, color, estado, número de serie…">
+      <label class="ad-bit-sw" style="margin-top:10px">
+        <input type="checkbox" id="ad-inv-fac">
+        <span>Guardé el <strong>recibo o factura</strong> (es la prueba de que lo compraste tú)</span>
+      </label>
+      <button class="pa-generate-btn" id="ad-inv-add">➕ Anotar en el inventario</button>
+    </div>
+
+    ${t.mio.length ? `
+    <div class="pa-card">
+      <div class="pa-card-title">🧑‍🏫 Mío — propiedad del docente (${t.mio.length})</div>
+      <p class="pa-optional-hint">Comprado con tu dinero y <strong>sin reembolso</strong>. Es tuyo:
+        puedes retirarlo cuando dejes el aula. Si algún día te lo pagan, tócalo en
+        «✅ Ya me lo pagaron» y pasa a ser de la escuela, con la fecha escrita.</p>
+      ${t.mio.slice().reverse().map(fila).join('')}
+    </div>` : ''}
+
+    ${t.esc.length ? `
+    <div class="pa-card">
+      <div class="pa-card-title">🏫 De la escuela — bajo mi custodia (${t.esc.length})</div>
+      <p class="pa-optional-hint">Herramientas y materiales del centro que usas en el aula. No son
+        tuyos: se entregan al final del año o cuando la dirección los pida.</p>
+      ${t.esc.slice().reverse().map(fila).join('')}
+    </div>` : ''}
+
+    ${t.don.length ? `
+    <div class="pa-card">
+      <div class="pa-card-title">🎁 Donado al aula (${t.don.length})</div>
+      <p class="pa-optional-hint">Lo que los padres o un tercero regalaron al aula: pertenece al
+        centro, y queda escrito quién lo donó.</p>
+      ${t.don.slice().reverse().map(fila).join('')}
+    </div>` : ''}
+
+    ${lista.length ? `
+    <div class="pa-card ${adInvVence() ? 'ad-inv-acta-vence' : ''}">
+      <div class="pa-card-title">🖊️ Acta de inventario</div>
+      <p class="pa-optional-hint">El acta separa en dos cuadros lo <strong>tuyo</strong> y lo de la
+        <strong>escuela</strong>, y la firman contigo la <strong>dirección</strong> y la
+        <strong>directiva de padres</strong>. Imprime dos: una para dirección y otra para ti.
+        Se recomienda repetirlo cada ${AD_INV_MESES_ACTA} meses y al cerrar el año.</p>
+      <p class="pa-optional-hint ${adInvVence() ? 'ad-inv-aviso' : ''}">${ult
+        ? (adInvVence()
+            ? '⚠️ La última acta se firmó el <strong>' + adFechaBonita(ult.fecha) + '</strong> (' +
+              adEsc(ult.quien || 'sin registrar') + '). Ya pasó el trimestre: toca firmar de nuevo.'
+            : '✅ Última acta firmada el <strong>' + adFechaBonita(ult.fecha) + '</strong> — ' +
+              adEsc(ult.quien || '') + '.')
+        : '⚠️ Todavía no has hecho firmar ninguna acta. Hazlo en la próxima reunión: es lo que te respalda.'}</p>
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn" id="ad-inv-print">🖨️ Imprimir el acta para firmar</button>
+      </div>
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn ad-btn-sec" id="ad-inv-firmada">✅ Ya me la firmaron</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-inv-wa">📲 Enviar el resumen</button>
+      </div>
+      ${adInvActas().length ? `
+      <div class="ad-inv-actas">
+        <div class="ad-gsto-lbl">📚 Actas firmadas</div>
+        ${adInvActas().slice().reverse().map(a => `
+          <div class="ad-inv-acta">
+            <span>🖊️ ${adFechaBonita(a.fecha)} · ${adEsc(a.quien || '')}</span>
+            <span class="ad-inv-acta-n">${a.nMio || 0} mías · ${a.nEsc || 0} del centro</span>
+          </div>`).join('')}
+      </div>` : ''}
+    </div>` : `
+    <div class="pa-card">
+      <p class="pa-optional-hint">📦 Tu inventario está vacío. Empieza por lo que compraste tú:
+        ese parlante, el abanico, la engrapadora. <strong>Anotarlo hoy es lo que te lo devuelve
+        mañana</strong>, si te trasladan o cambia la dirección.</p>
+    </div>`}`;
+
+  document.getElementById('ad-inv-volver').addEventListener('click', () => { _adInvOn = 0; renderAdmin(); });
+
+  /* La regla de propiedad se explica según lo que el maestro acaba de elegir:
+     el campo extra también cambia (donante vs. detalle). */
+  const regla = document.getElementById('ad-inv-regla');
+  const extraLbl = document.getElementById('ad-inv-extra-lbl');
+  const extraInp = document.getElementById('ad-inv-nota');
+  const pintarRegla = k => {
+    if (k === 'mio') {
+      regla.innerHTML = '🧑‍🏫 <strong>Es tuyo.</strong> Lo compraste con tu dinero y no te lo han ' +
+        'reembolsado: figura como propiedad del docente y puedes retirarlo.';
+      extraLbl.textContent = '✍️ Detalle (opcional)';
+      extraInp.placeholder = 'Marca, color, estado, número de serie…';
+    } else if (k === 'donado') {
+      regla.innerHTML = '🎁 <strong>Es del centro.</strong> Lo donaron al aula; queda escrito quién ' +
+        'lo dio para que se le pueda agradecer y nadie lo reclame después.';
+      extraLbl.textContent = '🙋 ¿Quién lo donó?';
+      extraInp.placeholder = 'Ej.: Familia Sevilla · Sociedad de Padres';
+    } else {
+      regla.innerHTML = '🏫 <strong>Es del centro.</strong> Está bajo tu custodia: lo usas, lo cuidas ' +
+        'y lo entregas al final del año o cuando dirección lo pida.';
+      extraLbl.textContent = '✍️ Detalle (opcional)';
+      extraInp.placeholder = 'Marca, color, estado, número de serie…';
+    }
+  };
+  pintarRegla('mio');
+
+  const chipUnico = (cont, cb) => body.querySelectorAll('#' + cont + ' .ad-gchip').forEach(b =>
+    b.addEventListener('click', () => {
+      body.querySelectorAll('#' + cont + ' .ad-gchip').forEach(x => x.classList.remove('ad-gchip-sel'));
+      b.classList.add('ad-gchip-sel');
+      if (cb) cb(b);
+    }));
+  chipUnico('ad-inv-duenos', b => pintarRegla(b.dataset.dueno));
+  chipUnico('ad-inv-cats');
+
+  document.getElementById('ad-inv-add').addEventListener('click', () => {
+    const nom = String(document.getElementById('ad-inv-nom').value || '').trim();
+    if (nom.length < 3) { toast('📦 Escribe qué cosa es'); document.getElementById('ad-inv-nom').focus(); return; }
+    const dueno = (body.querySelector('#ad-inv-duenos .ad-gchip-sel') || {}).dataset;
+    const cat = (body.querySelector('#ad-inv-cats .ad-gchip-sel') || {}).dataset;
+    const k = (dueno && dueno.dueno) || 'mio';
+    const extra = String(document.getElementById('ad-inv-nota').value || '').trim();
+    const arr = adInvLoad();
+    arr.push({
+      id: 'I' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+      fecha: String(document.getElementById('ad-inv-fecha').value || adHoy()),
+      nombre: nom, dueno: k, cat: (cat && cat.cat) || 'otro',
+      cant: Math.max(1, parseInt(document.getElementById('ad-inv-cant').value, 10) || 1),
+      valor: Number(String(document.getElementById('ad-inv-valor').value || '').replace(',', '.')) || 0,
+      nota: k === 'donado' ? '' : extra,
+      donante: k === 'donado' ? extra : '',
+      factura: document.getElementById('ad-inv-fac').checked ? 1 : 0,
+      escuela,
+    });
+    adInvSave(arr); renderAdmin();
+    toast(k === 'mio' ? '🧑‍🏫 Anotado como TUYO: ya no es tu palabra contra la de nadie'
+                      : '🏫 Anotado como del centro, bajo tu custodia');
+  });
+
+  body.querySelectorAll('[data-invpago]').forEach(b =>
+    b.addEventListener('click', async () => {
+      const quien = await metasPrompt('¿Quién te lo pagó? Queda escrito en el acta junto con la fecha de hoy.\n\nDesde este momento la cosa deja de ser tuya y pasa a ser **del centro**.', {
+        icono: '✅', titulo: 'Ya me lo pagaron', okTxt: 'Sí, me lo pagaron',
+        valida: v => String(v).trim().length >= 3 ? '' : 'Escribe quién te lo pagó (dirección, tesorería…).',
+      });
+      if (quien === null) return;
+      const arr = adInvLoad();
+      const x = arr.find(y => y.id === b.dataset.invpago); if (!x) return;
+      x.dueno = 'escuela'; x.pagadoPor = String(quien).trim(); x.fechaPago = adHoy();
+      adInvSave(arr); renderAdmin();
+      toast('🏫 Pasa a la escuela: te lo pagaron y así queda en el acta');
+    }));
+  body.querySelectorAll('[data-invmio]').forEach(b =>
+    b.addEventListener('click', () => {
+      const arr = adInvLoad();
+      const x = arr.find(y => y.id === b.dataset.invmio); if (!x) return;
+      x.dueno = 'mio'; delete x.pagadoPor; delete x.fechaPago;
+      adInvSave(arr); renderAdmin();
+      toast('🧑‍🏫 Vuelve a figurar como tuyo');
+    }));
+  body.querySelectorAll('[data-invdel]').forEach(b =>
+    b.addEventListener('click', async () => {
+      if (!await metasConfirm('¿Quitar esta cosa del inventario?\n\nLas actas ya firmadas no cambian: siguen valiendo tal como se imprimieron.',
+        { icono: '🗑', titulo: 'Inventario del aula', okTxt: 'Sí, quitar' })) return;
+      adUndoGuardar('Quitar algo del inventario del aula');
+      adInvSave(adInvLoad().filter(y => y.id !== b.dataset.invdel));
+      renderAdmin();
+    }));
+
+  const pr = document.getElementById('ad-inv-print');
+  if (pr) pr.addEventListener('click', () => adPrintInventario(lista, d));
+  const wa = document.getElementById('ad-inv-wa');
+  if (wa) wa.addEventListener('click', () => adGastoEnviar(adInvTxtResumen(lista, d)));
+  const fi = document.getElementById('ad-inv-firmada');
+  if (fi) fi.addEventListener('click', async () => {
+    const quien = await metasPrompt('¿Quién firmó el acta? (dirección, directiva de padres, ambos)\n\nSe guarda la fecha de hoy y cuántas cosas declaraste, para saber cuándo toca la siguiente.', {
+      icono: '🖊️', titulo: 'Acta firmada', okTxt: 'Guardar',
+      valida: v => String(v).trim().length >= 3 ? '' : 'Escribe quién la firmó.',
+    });
+    if (quien === null) return;
+    const tt = adInvTotales(adInvLoad());
+    const actas = adInvActas();
+    actas.push({
+      t: new Date().toISOString(), fecha: adHoy(), quien: String(quien).trim(),
+      nMio: tt.mio.length, nEsc: tt.esc.length + tt.don.length, vMio: tt.vMio,
+    });
+    adInvActasSave(actas.slice(-12));
+    renderAdmin();
+    toast('🖊️ Acta registrada: quedas respaldado hasta la siguiente');
+  });
+}
+
+function adInvTxtResumen(lista, d) {
+  const t = adInvTotales(lista);
+  const linea = (x, i) => (i + 1) + '. ' + (x.cant > 1 ? x.cant + ' × ' : '') + x.nombre +
+    (x.valor ? ' — ' + adLps((Number(x.valor) || 0) * (Number(x.cant) || 1)) : '') +
+    (x.factura ? ' (con recibo)' : '');
+  return '📦 *INVENTARIO DEL AULA*\n' +
+    (adDocenteNombre() ? adDocenteNombre() + '\n' : '') +
+    (d.escuela ? String(d.escuela).trim() + '\n' : '') +
+    (adGradoSeccion(d.grado, d.seccion) ? 'Grupo ' + adGradoSeccion(d.grado, d.seccion) + '\n' : '') +
+    'Al ' + adFechaBonita(adHoy()) + '\n\n' +
+    '*A) DE MI PROPIEDAD* (comprado por mí, sin reembolso):\n' +
+    (t.mio.length ? t.mio.map(linea).join('\n') + '\n*Valor: ' + adLps(t.vMio) + '*' : 'Ninguno') + '\n\n' +
+    '*B) DEL CENTRO, BAJO MI CUSTODIA:*\n' +
+    (t.esc.length || t.don.length
+      ? t.esc.concat(t.don).map(linea).join('\n')
+      : 'Ninguno') + '\n\n' +
+    'Solicito revisar y firmar el acta correspondiente.\n_Anotado con M.E.T.A.S_';
+}
+
+/* Acta imprimible: dos cuadros separados y tres firmas. Es el documento que
+   se archiva en dirección y el que el maestro guarda en su portafolio. */
+function adPrintInventario(lista, d) {
+  const t = adInvTotales(lista);
+  const ult = adInvUltimaActa();
+  const fila = (x, i) => `<tr><td>${i + 1}</td><td>${adFechaBonita(x.fecha)}</td><td class="n">${adEsc(x.cant || 1)}</td>` +
+    `<td>${adEsc(x.nombre)}${x.nota ? ' <em>(' + adEsc(x.nota) + ')</em>' : ''}${
+      x.donante ? ' <em>— donó ' + adEsc(x.donante) + '</em>' : ''}${
+      x.pagadoPor ? ' <em>— pagado por ' + adEsc(x.pagadoPor) + ' el ' + adFechaBonita(x.fechaPago) + '</em>' : ''}</td>` +
+    `<td>${adEsc(adInvCatEt(x.cat))}</td><td>${x.factura ? 'Sí' : 'No'}</td>` +
+    `<td class="n">${x.valor ? adLps((Number(x.valor) || 0) * (Number(x.cant) || 1)) : '—'}</td></tr>`;
+  const cuadro = (arr, vacio) => arr.length
+    ? `<table>
+<thead><tr><th>#</th><th>Desde</th><th>Cant.</th><th>Descripción</th><th>Tipo</th><th>Recibo</th><th>Valor</th></tr></thead>
+<tbody>${arr.map(fila).join('')}</tbody></table>`
+    : `<p class="vacio">${vacio}</p>`;
+
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+<title>Acta de inventario del aula</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Arial,sans-serif;font-size:11.5px;color:#111;background:#fff;padding:12mm;}
+h1{font-size:16px;color:#1e3a7c;margin-bottom:2mm;}
+h2{font-size:12.5px;color:#1e3a7c;margin:5mm 0 2mm;border-bottom:1.5px solid #1e3a7c;padding-bottom:1mm;}
+.sub{font-size:11px;color:#444;margin-bottom:4mm;}
+table{width:100%;border-collapse:collapse;margin-bottom:3mm;}
+th,td{border:1px solid #999;padding:3px 5px;text-align:left;vertical-align:top;}
+th{background:#e8eef9;font-size:10.5px;}
+td.n{text-align:right;white-space:nowrap;}
+td em{color:#555;font-size:10.5px;}
+.tot{margin:2mm 0 4mm;font-size:12.5px;font-weight:bold;}
+.vacio{font-size:11px;color:#666;font-style:italic;margin-bottom:3mm;}
+.declara{border:1.5px solid #1e3a7c;border-radius:4px;padding:3mm 4mm;margin:4mm 0;font-size:11px;line-height:1.6;background:#f7f9fe;}
+.firmas{display:flex;gap:8mm;margin-top:18mm;}
+.firma{flex:1;border-top:1.5px solid #333;text-align:center;padding-top:2mm;font-size:10.5px;line-height:1.4;}
+.pie{margin-top:6mm;font-size:10px;color:#666;text-align:center;}
+.noprint{margin-bottom:5mm;}
+@media print{.noprint{display:none;}body{padding:8mm;}}
+</style></head><body>
+<div class="noprint"><button onclick="window.print()" style="padding:8px 16px;font-weight:bold;cursor:pointer;">🖨️ Imprimir</button></div>
+<h1>📦 Acta de inventario del aula</h1>
+<div class="sub">${adDocenteNombre() ? adEsc(adDocenteNombre()) + ' · ' : ''}${
+  d.escuela ? adEsc(String(d.escuela).trim()) + ' · ' : ''}${
+  adGradoSeccion(d.grado, d.seccion) ? 'Grupo ' + adEsc(adGradoSeccion(d.grado, d.seccion)) + ' · ' : ''}Levantada el ${adFechaBonita(adHoy())}${
+  ult ? ' · Acta anterior: ' + adFechaBonita(ult.fecha) : ' · Primera acta'}</div>
+
+<h2>Cuadro A — Bienes propiedad del docente</h2>
+${cuadro(t.mio, 'El docente no declara bienes propios en esta aula.')}
+${t.mio.length ? `<div class="tot">Valor declarado: ${adLps(t.vMio)}</div>` : ''}
+
+<h2>Cuadro B — Bienes del centro educativo bajo custodia del docente</h2>
+${cuadro(t.esc, 'No hay bienes del centro asignados a esta aula.')}
+
+${t.don.length ? `<h2>Cuadro C — Bienes donados al aula (propiedad del centro)</h2>
+${cuadro(t.don, '')}` : ''}
+
+<div class="declara">
+  <strong>Se hace constar que:</strong><br>
+  1. Los bienes del <strong>Cuadro A</strong> fueron adquiridos por el docente
+  <strong>con recursos propios</strong> y <strong>no le han sido reembolsados</strong> por el centro
+  educativo ni por la sociedad de padres de familia. En consecuencia son de su
+  <strong>propiedad personal</strong>, permanecen en el aula por su voluntad para beneficio de los
+  estudiantes, y podrá retirarlos al terminar su labor en este grupo o centro.<br>
+  2. Los bienes de los <strong>Cuadros B y C</strong> son <strong>propiedad del centro educativo</strong>.
+  El docente los recibe <strong>bajo custodia</strong>, se compromete a cuidarlos y darles uso
+  pedagógico, y a entregarlos al finalizar el año escolar o cuando la dirección lo requiera.<br>
+  3. Si el centro reembolsa al docente el valor de algún bien del Cuadro A, ese bien pasa a ser
+  propiedad del centro desde la fecha del pago, y se hará constar en el acta siguiente.<br>
+  4. Las partes revisaron físicamente los bienes aquí listados y firman en señal de conformidad.
+  Este inventario se actualiza cada ${AD_INV_MESES_ACTA} meses y al cierre del año escolar.
+</div>
+
+<div class="firmas">
+  <div class="firma">Docente<br>${adDocenteNombre() ? adEsc(adDocenteNombre()) : '_______________'}</div>
+  <div class="firma">Dirección del centro<br>Nombre y sello</div>
+  <div class="firma">Directiva de padres de familia<br>Presidente/a</div>
+</div>
+<div class="pie">Imprima dos ejemplares: uno para la dirección y otro para el docente. · Generado con M.E.T.A.S</div>
+</body></html>`;
+  adPrintAbrir(html);
 }
 
 function adRenderColecta(body, d) {
   const c = adColecta(d, _adColectaId);
   if (!c) { _adColectaId = null; renderAdmin(); return; }
   const t = adColectaTotales(c);
-  const pagaron = Object.keys(c.pagos || {}).length;
+  const pagaron = adColectaDieron(c, d);
+  const esp = adColectaEsperados(c, d);
+  const fuera = adColectaFuera(c, d);
 
   body.innerHTML = `
     <div class="pa-card">
@@ -862,22 +3593,63 @@ function adRenderColecta(body, d) {
         <strong>Toca</strong> un alumno para marcar que dio el aporte sugerido.
         <strong>Toca de nuevo</strong> a quien pagó para <strong>cambiar su monto</strong>
         (hermanos, becados, abonos) o quitarlo. Lo marcado = dinero en mano.</p>
+      <div class="ad-recibo-hint">🧾 Al marcar, la familia de ese alumno recibe solo su
+        <strong>recibo</strong> en el asistente de padres, con el nombre completo del alumno, el monto,
+        la fecha y quién recibió. Si corriges el monto, el recibo se reemite; si quitas la marca, se anula.<br>
+        <strong>Si un padre pregunta por el «N.º de recibo»:</strong> es el número de ese comprobante,
+        como el de una factura. No es una clave y no tiene que memorizarlo ni escribirlo en ninguna parte;
+        sirve para que usted y él hablen de la misma entrega. Tú lo ves aquí manteniendo pulsado al alumno,
+        y sale en el informe imprimible.</div>
       <div class="ad-resumen">
-        <span>✅ Dieron: <strong>${pagaron}/${d.lista.length}</strong></span>
+        <button class="ad-resumen-edit" id="ad-col-total" title="Decir qué alumnos no cuentan (de prueba, retirados)">✅ Dieron: <strong>${pagaron}/${esp}</strong> <span aria-hidden="true">✏️</span></button>
+        <span>📊 Participación: <strong>${adColectaPct(c, d)} %</strong></span>
+        <span>🎯 Total esperado: <strong>${adLps(adColectaMeta(c, d))}</strong></span>
         <span>💵 Recaudado: <strong>${adLps(t.rec)}</strong></span>
+        <span>📥 Falta por recaudar: <strong>${adLps(adColectaPorRecaudar(c, d))}</strong></span>
         <span>🧾 Gastado: <strong>${adLps(t.gas)}</strong></span>
         <span class="${t.saldo >= 0 ? 'ad-ok' : 'ad-mal'}">💼 Saldo: <strong>${adLps(t.saldo)}</strong></span>
       </div>
+      <div class="ad-barra">
+        <div class="ad-barra-rot">📊 Participación del grupo: <strong>${adColectaPct(c, d)} %</strong> · ${pagaron} de ${esp}</div>
+        ${adColectaBarraSvg(c, d, 18)}
+        <div class="ad-barra-esc" aria-hidden="true"><span>0 %</span><span>25 %</span><span>50 %</span><span>75 %</span><span>100 %</span></div>
+        ${adColectasCompletasTxt(d) ? `<p class="ad-col-completas">🗂️ Colectas del grupo: <strong>${adColectasCompletasTxt(d)}</strong> completas</p>` : ''}
+      </div>
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn ad-btn-sec" id="ad-col-wa">📲 ${adColectasCompletasTxt(d) ? 'Enviar solo esta colecta' : 'Enviar resumen por WhatsApp'}</button>
+        ${adColectasCompletasTxt(d) ? '<button class="pa-generate-btn ad-btn-sec" id="ad-col-wa-todas">📲 Enviar con todas las colectas del grupo</button>' : ''}
+      </div>
+      <p class="pa-optional-hint">El resumen lleva solo cifras: ningún nombre ni número de lista.</p>
+      ${(() => {
+        /* Quiénes faltan: SOLO en esta pantalla. No tiene botón de enviar ni
+           de copiar a propósito: es para que el maestro le recuerde a cada
+           familia en privado, no para señalar a un niño en el grupo. */
+        const faltan = d.lista.filter(a => !(c.pagos && c.pagos[a.num] != null) && !fuera.has(String(a.num)));
+        if (!faltan.length) return esp ? '<p class="ad-faltan-ok">🎉 Ya dieron todos.</p>' : '';
+        return `<details class="ad-faltan">
+          <summary>⏳ Faltan por dar: <strong>${faltan.length}</strong> · ver quiénes</summary>
+          <p class="ad-faltan-priv">🔒 Solo lo ves tú: esta lista no sale en el mensaje de WhatsApp.</p>
+          <ol class="ad-faltan-lista">${faltan.map(a =>
+            `<li><strong>#${a.num}</strong> ${adEsc(a.nombre) || '—'}</li>`).join('')}</ol>
+        </details>`;
+      })()}
       <div class="ad-chips">
         ${d.lista.map(a => {
           const pagado = c.pagos && c.pagos[a.num] != null;
           const nom = adPrimerNombre(a.nombre);
           const especial = pagado && Number(c.pagos[a.num]) !== Number(c.montoAlumno);
-          return `<button class="ad-chip ${pagado ? 'ad-chip-on' : ''}" data-num="${a.num}"
-            title="${adEsc(a.nombre)}">
+          const noCuenta = fuera.has(String(a.num));
+          /* el title lleva el folio: si un padre reclama, el maestro lo lee aquí */
+          const rot = pagado
+            ? adEsc(a.nombre) + ' · recibo ' + adReciboFolio(c, a.num) +
+              ' del ' + adFechaBonita((c.pagosF && c.pagosF[a.num]) || c.fecha)
+            : adEsc(a.nombre);
+          return `<button class="ad-chip ${pagado ? 'ad-chip-on' : ''}${noCuenta ? ' ad-chip-fuera' : ''}" data-num="${a.num}"
+            title="${rot}${noCuenta ? ' · no cuenta en esta colecta' : ''}">
             <span class="ad-chip-num">#${a.num}${pagado ? ' ✓' : ''}</span>
             ${nom ? `<span class="ad-chip-nom">${adEsc(nom)}</span>` : ''}
-            ${pagado ? `<span class="ad-chip-monto${especial ? ' ad-chip-monto-esp' : ''}">${adLps(c.pagos[a.num])}</span>` : ''}</button>`;
+            ${pagado ? `<span class="ad-chip-monto${especial ? ' ad-chip-monto-esp' : ''}">${adLps(c.pagos[a.num])}</span>` : ''}
+            ${noCuenta && !pagado ? '<span class="ad-chip-monto">no cuenta</span>' : ''}</button>`;
         }).join('')}
       </div>
     </div>
@@ -903,6 +3675,7 @@ function adRenderColecta(body, d) {
       const num = ch.dataset.num;
       const dd = adLoad(); const cc = adColecta(dd, _adColectaId); if (!cc) return;
       cc.pagos = cc.pagos || {};
+      cc.pagosF = cc.pagosF || {};   /* fecha del movimiento, para el recibo */
       if (cc.pagos[num] != null) {
         /* ya pagó → editar su monto (hermanos/becados/abonos) o quitar */
         const al = dd.lista.find(a => String(a.num) === String(num)) || {};
@@ -919,13 +3692,51 @@ function adRenderColecta(body, d) {
         if (r === null) return;   // canceló: no cambia nada
         const s = String(r).trim();
         const n = s === '' ? 0 : Number(s.replace(',', '.'));
-        if (!(n > 0)) delete cc.pagos[num];
-        else cc.pagos[num] = n;
+        if (!(n > 0)) { delete cc.pagos[num]; delete cc.pagosF[num]; }
+        else {
+          cc.pagos[num] = n;
+          /* corregir el monto NO cambia el día en que entró el dinero: el
+             recibo se reemite con la cifra buena y la fecha original */
+          if (!cc.pagosF[num]) cc.pagosF[num] = adHoy();
+        }
       } else {
         cc.pagos[num] = cc.montoAlumno;   // aporte sugerido (marca rápida)
+        cc.pagosF[num] = adHoy();
       }
       adSave(dd); renderAdmin();
     }));
+
+  document.getElementById('ad-col-wa').addEventListener('click', () => {
+    const dd = adLoad(); const cc = adColecta(dd, _adColectaId); if (!cc) return;
+    adGastoEnviar(adColectaTxtResumen(cc, dd, false));
+  });
+  const waTodas = document.getElementById('ad-col-wa-todas');
+  if (waTodas) waTodas.addEventListener('click', () => {
+    const dd = adLoad(); const cc = adColecta(dd, _adColectaId); if (!cc) return;
+    adGastoEnviar(adColectaTxtResumen(cc, dd, true));
+  });
+
+  document.getElementById('ad-col-total').addEventListener('click', async () => {
+    const dd = adLoad(); const cc = adColecta(dd, _adColectaId); if (!cc) return;
+    const nums = dd.lista.map(a => String(a.num));
+    const ahora = [...adColectaFuera(cc, dd)].join(', ');
+    const r = await metasPrompt('¿Qué alumnos **NO cuentan** en esta colecta?\nEscribe sus **números de lista**, separados por coma (ej. **' +
+      nums.slice(-2).join(', ') + '** para dos alumnos de prueba). No entran en el total ni en el informe impreso.\nVacío: cuentan los ' + nums.length + '.', {
+      icono: '✅', titulo: 'Alumnos que no cuentan', inputmode: 'text',
+      value: ahora, okTxt: 'Guardar',
+      valida: v => {
+        const partes = String(v).split(/[\s,;y]+/).filter(Boolean);
+        const malos = partes.filter(p => !nums.includes(String(Number(p))));
+        if (malos.length) return 'No hay nadie con el número ' + malos[0] + ' en la lista.';
+        return new Set(partes.map(Number)).size >= nums.length ? 'Tiene que contar al menos un alumno.' : '';
+      },
+    });
+    if (r === null) return;
+    const lista = [...new Set(String(r).split(/[\s,;y]+/).filter(Boolean).map(Number))].sort((x, y) => x - y);
+    delete cc.esperados;
+    if (lista.length) cc.noCuentan = lista; else delete cc.noCuentan;
+    adSave(dd); renderAdmin();
+  });
 
   document.getElementById('ad-add-gasto').addEventListener('click', async () => {
     const desc = await metasPrompt('¿En qué se gastó?', {
@@ -968,6 +3779,9 @@ function adRenderColecta(body, d) {
 /* Informe imprimible: transparencia con los padres (acta de cuentas) */
 function adInformeColecta(d, c) {
   const t = adColectaTotales(c);
+  /* los que no cuentan (de prueba, retirados) no salen en el papel que se
+     reparte; salvo que tengan dinero marcado: ese se rinde, esté donde esté */
+  const fuera = adColectaFuera(c, d);
   const grupo = adGrupoTxt(d);
   const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
 <title>Informe económico — ${adEsc(c.concepto)}</title>
@@ -979,7 +3793,19 @@ h1{font-size:16px;color:#1e3a7c;margin-bottom:2mm;}
 table{width:100%;border-collapse:collapse;margin-bottom:5mm;}
 th,td{border:1px solid #999;padding:3px 6px;text-align:left;}
 th{background:#e8eef9;font-size:11px;}
-.tot{display:flex;gap:8mm;margin:4mm 0;font-size:13px;font-weight:bold;}
+.tot{display:flex;flex-wrap:wrap;gap:2mm 8mm;margin:4mm 0;font-size:13px;font-weight:bold;}
+.barra{margin:2mm 0 4mm;break-inside:avoid;}
+.barra svg{display:block;}
+.barra-rot{font-size:12px;margin-bottom:1.5mm;}
+.barra-esc{display:flex;justify-content:space-between;font-size:9.5px;color:#555;margin-top:1mm;}
+/* las barras de TODAS las colectas del grupo: el informe es de una, pero la
+   familia pregunta «¿y la rifa cómo va?», y la respuesta cabe en unas filas */
+table.cols{margin:1mm 0 0;break-inside:avoid;}
+table.cols td{border:none;border-bottom:1px solid #ddd;padding:2px 6px;vertical-align:middle;font-size:11px;}
+table.cols td.cn{width:38%;}
+table.cols td.cn small{color:#555;font-size:9.5px;}
+table.cols td.cd,table.cols td.cp{white-space:nowrap;width:1%;}
+table.cols tr.esta td{font-weight:bold;}
 .firmas{display:flex;gap:14mm;margin-top:14mm;}
 .firma{flex:1;border-top:1.5px solid #333;text-align:center;padding-top:2mm;font-size:11px;}
 .noprint{margin-bottom:5mm;}
@@ -988,13 +3814,16 @@ th{background:#e8eef9;font-size:11px;}
 <div class="noprint"><button onclick="window.print()" style="padding:8px 16px;font-weight:bold;cursor:pointer;">🖨️ Imprimir</button></div>
 <h1>💰 Informe económico — ${adEsc(c.concepto)}</h1>
 <div class="sub">${grupo ? 'Grupo ' + adEsc(grupo) + ' · ' : ''}Acordado el ${adFechaBonita(c.fecha)} ·
-Aporte sugerido: ${adLps(c.montoAlumno)} (cada aporte real se detalla abajo) · Generado con M.E.T.A.S el ${adFechaBonita(adHoy())}</div>
+Aporte sugerido: ${adLps(c.montoAlumno)} (cada aporte real se detalla abajo; lo que falta por recaudar se cuenta con el sugerido) · Generado con M.E.T.A.S el ${adFechaBonita(adHoy())}</div>
 <table>
-<thead><tr><th>#</th><th>Alumno/a</th><th>Aportó</th><th>Monto</th></tr></thead>
+<thead><tr><th>#</th><th>Alumno/a</th><th>Aportó</th><th>Fecha</th><th>Monto</th><th>Recibo</th></tr></thead>
 <tbody>
-${d.lista.map(a => {
+${d.lista.filter(a => !fuera.has(String(a.num)) || (c.pagos && c.pagos[a.num] != null)).map(a => {
   const m = c.pagos && c.pagos[a.num];
-  return `<tr><td>${a.num}</td><td>${adEsc(a.nombre) || '—'}</td><td>${m != null ? '✔ Sí' : '—'}</td><td>${m != null ? adLps(m) : ''}</td></tr>`;
+  /* el mismo folio que ya tiene la familia en el asistente: el papel y la nube
+     hablan del mismo movimiento */
+  const f = m != null ? adFechaBonita((c.pagosF && c.pagosF[a.num]) || c.fecha) : '';
+  return `<tr><td>${a.num}</td><td>${adEsc(a.nombre) || '—'}</td><td>${m != null ? '✔ Sí' : '—'}</td><td>${f}</td><td>${m != null ? adLps(m) : ''}</td><td>${m != null ? adReciboFolio(c, a.num) : ''}</td></tr>`;
 }).join('')}
 </tbody></table>
 ${(c.gastos || []).length ? `
@@ -1002,19 +3831,42 @@ ${(c.gastos || []).length ? `
 ${c.gastos.map(g => `<tr><td>${adFechaBonita(g.f)}</td><td>${adEsc(g.d)}</td><td>${adLps(g.m)}</td></tr>`).join('')}
 </tbody></table>` : ''}
 <div class="tot">
+  <span>✅ Dieron: ${adColectaDieron(c, d)} de ${adColectaEsperados(c, d)}</span>
+  <span>📊 Participación: ${adColectaPct(c, d)} %</span>
+  <span>⏳ Faltan: ${Math.max(0, adColectaEsperados(c, d) - adColectaDieron(c, d))}</span>
+  <span>🎯 Total esperado: ${adLps(adColectaMeta(c, d))} (${adColectaEsperados(c, d)} × ${adLps(c.montoAlumno)})</span>
   <span>💵 Recaudado: ${adLps(t.rec)}</span>
+  <span>📥 Falta por recaudar: ${adLps(adColectaPorRecaudar(c, d))}</span>
   <span>🧾 Gastado: ${adLps(t.gas)}</span>
   <span>💼 Saldo: ${adLps(t.saldo)}</span>
 </div>
+${(() => {
+  /* La barra va en SVG y no con fondos de CSS: el navegador imprime «sin
+     gráficos de fondo» de fábrica, y una barra hecha con background saldría
+     en blanco en el papel. El relleno de un SVG se imprime siempre, y en la
+     fotocopiadora en blanco y negro se sigue viendo la parte llena. */
+  return `<div class="barra">
+  <div class="barra-rot">📊 Participación del grupo: <strong>${adColectaPct(c, d)} %</strong> · ${adColectaDieron(c, d)} de ${adColectaEsperados(c, d)} alumnos</div>
+  ${adColectaBarraSvg(c, d, 22)}
+  <div class="barra-esc"><span>0 %</span><span>25 %</span><span>50 %</span><span>75 %</span><span>100 %</span></div>
+  ${adColectasCompletasTxt(d)
+    ? `<div class="barra-rot" style="margin-top:3mm">🗂️ Colectas del grupo: <strong>${adColectasCompletasTxt(d)}</strong> completas</div>
+  <table class="cols">
+  <tbody>${d.colectas.map(x => `<tr${x.id === c.id ? ' class="esta"' : ''}>
+    <td class="cn">${adEsc(x.concepto)}${x.id === c.id ? ' <em>(este informe)</em>' : ''}<br><small>${adFechaBonita(x.fecha)}</small></td>
+    <td class="cd">${adColectaDieron(x, d)} de ${adColectaEsperados(x, d)}</td>
+    <td class="cp">${adColectaPct(x, d)} %${adColectaCompleta(x, d) ? ' ✔' : ''}</td>
+    <td class="cb">${adColectaBarraSvg(x, d, 10)}</td></tr>`).join('')}</tbody></table>`
+    : ''}
+</div>`;
+})()}
 <div class="firmas">
   <div class="firma">Docente</div>
   <div class="firma">Padre/Madre de familia (testigo)</div>
   <div class="firma">Dirección</div>
 </div>
 </body></html>`;
-  const w = window.open('', '_blank');
-  if (!w) { toast('Permite las ventanas emergentes para imprimir'); return; }
-  w.document.write(html); w.document.close();
+  adPrintAbrir(html);
 }
 
 /* ══════════════ 📋 ASISTENCIA — solo lo excepcional ══════════════ */
@@ -1026,6 +3878,15 @@ function adMesLabel(m) {
   return (AD_MESES_ES[(+p[1]) - 1] || m) + ' ' + (p[0] || '');
 }
 
+/* 'YYYY-MM-DD' → 'mié. 29' (encabezado corto del día por día) */
+const AD_DIAS_ES = ['dom.', 'lun.', 'mar.', 'mié.', 'jue.', 'vie.', 'sáb.'];
+function adDiaLabel(f) {
+  const p = String(f || '').split('-');
+  if (p.length !== 3) return f;
+  const dt = new Date(+p[0], (+p[1]) - 1, +p[2]);
+  return AD_DIAS_ES[dt.getDay()] + ' ' + (+p[2]);
+}
+
 function adRenderAsis(body, d) {
   if (!d.lista.length) { adSinLista(body, 'el pase de lista'); return; }
   const hoy = adHoy();
@@ -1034,6 +3895,9 @@ function adRenderAsis(body, d) {
 
   /* resumen navegable por meses: los que tienen datos + el mes actual */
   const mesSel = body.dataset.mes || fechaSel.slice(0, 7);
+  /* dos maneras de mirar el mismo mes: 'dia' = qué pasó cada día ·
+     'mes' = cuánto acumula cada alumno (lo de siempre) */
+  const vista = body.dataset.vista || 'dia';
   const mesesDisp = [...new Set(
     d.asistencia.map(r => r.f.slice(0, 7)).concat([hoy.slice(0, 7), mesSel])
   )].filter(Boolean).sort().reverse();
@@ -1043,6 +3907,16 @@ function adRenderAsis(body, d) {
     resumen[n] = resumen[n] || { A: 0, E: 0 };
     resumen[n][r.aus[n]] = (resumen[n][r.aus[n]] || 0) + 1;
   }));
+  /* días con registro, el más reciente arriba (así el maestro ve primero
+     lo de hoy y lo de ayer, que es lo que corrige a diario) */
+  const dias = delMes.filter(r => Object.keys(r.aus || {}).length)
+    .sort((a, b) => a.f < b.f ? 1 : -1);
+  const nomDe = num => {
+    const a = d.lista.find(x => String(x.num) === String(num));
+    return a ? adPrimerNombre(a.nombre) : '';
+  };
+  const totalMes = { A: 0, E: 0 };
+  Object.keys(resumen).forEach(n => { totalMes.A += resumen[n].A || 0; totalMes.E += resumen[n].E || 0; });
 
   body.innerHTML = `
     <div class="pa-card">
@@ -1072,12 +3946,55 @@ function adRenderAsis(body, d) {
     </div>
 
     <div class="pa-card">
-      <div class="pa-card-title">📊 Ausencias por mes</div>
-      <p class="pa-optional-hint" style="margin-top:-2px">Toca un mes para ver quién faltó. Aparecen los meses con registro y el mes actual.</p>
+      <div class="pa-card-title">📨 Excusas de las familias</div>
+      <p class="pa-optional-hint" style="margin-top:-2px">Lo que los padres avisaron por el asistente.
+        <strong>Apruébala aquí</strong> y el día queda marcado 📝 con excusa en el pase de lista.</p>
+      <div id="ad-asis-exc"><p class="pa-optional-hint">⏳ Revisando el buzón…</p></div>
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn ad-btn-sec" id="ad-exc-refresh">🔄 Revisar buzón</button>
+      </div>
+    </div>
+
+    <div class="pa-card">
+      <div class="pa-card-title">📊 Ausencias</div>
+      <p class="pa-optional-hint" style="margin-top:-2px">Elige el mes y mira las faltas
+        <strong>día por día</strong> (qué pasó cada día) o el <strong>resumen del mes</strong>
+        (cuánto acumula cada alumno).</p>
       <div class="ad-meses">
         ${mesesDisp.map(m => `<button class="ad-mes-btn ${m === mesSel ? 'ad-mes-on' : ''}" data-mes="${m}">${adMesLabel(m)}</button>`).join('')}
       </div>
-      ${Object.keys(resumen).length ? `
+      <div class="ad-meses" role="group" aria-label="Cómo ver las ausencias">
+        <button class="ad-mes-btn ${vista === 'dia' ? 'ad-mes-on' : ''}" data-vista="dia">🗓 Día por día</button>
+        <button class="ad-mes-btn ${vista === 'mes' ? 'ad-mes-on' : ''}" data-vista="mes">📊 Resumen del mes</button>
+      </div>
+      ${!Object.keys(resumen).length
+        ? `<p class="pa-optional-hint">Sin ausencias registradas en <strong>${adMesLabel(mesSel)}</strong>. 🎉</p>`
+        : vista === 'dia' ? `
+      <div class="ad-resumen">
+        <span>🗓 Días con faltas: <strong>${dias.length}</strong></span>
+        <span>🚫 Ausencias: <strong>${totalMes.A}</strong></span>
+        <span>📝 Excusas: <strong>${totalMes.E}</strong></span>
+      </div>
+      ${dias.map(r => {
+        const nums = Object.keys(r.aus);
+        const aus = nums.filter(n => r.aus[n] === 'A');
+        const exc = nums.filter(n => r.aus[n] === 'E');
+        const quien = arr => arr.map(n => '#' + n + (nomDe(n) ? ' ' + adEsc(nomDe(n)) : '')).join(' · ');
+        return `
+        <button class="ad-colecta-row ad-dia-row" data-dia="${r.f}"
+                title="Abrir el pase de lista de ese día">
+          <span class="ad-cr-txt">
+            <strong>${adDiaLabel(r.f)} · ${adFechaBonita(r.f)}</strong>
+            ${r.f === hoy ? ' <span class="ad-dia-hoy">hoy</span>' : ''}<br>
+            ${aus.length ? `<small>🚫 ${quien(aus)}</small><br>` : ''}
+            ${exc.length ? `<small>📝 ${quien(exc)}</small>` : ''}
+          </span>
+          <span class="ad-cr-arrow">›</span>
+        </button>`;
+      }).join('')}
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn ad-btn-sec" id="ad-asis-print-dias">🖨️ Imprimir día por día (${adMesLabel(mesSel)})</button>
+      </div>` : `
       <table class="ad-tabla">
         <thead><tr><th>#</th><th>Alumno/a</th><th>🚫 Ausencias</th><th>📝 Excusas</th></tr></thead>
         <tbody>
@@ -1086,8 +4003,7 @@ function adRenderAsis(body, d) {
           <td>${resumen[a.num].A || 0}</td><td>${resumen[a.num].E || 0}</td></tr>`).join('')}
         </tbody>
       </table>
-      <button class="pa-generate-btn ad-btn-sec" id="ad-asis-print">🖨️ Imprimir resumen (${adMesLabel(mesSel)})</button>`
-      : `<p class="pa-optional-hint">Sin ausencias registradas en <strong>${adMesLabel(mesSel)}</strong>. 🎉</p>`}
+      <button class="pa-generate-btn ad-btn-sec" id="ad-asis-print">🖨️ Imprimir resumen (${adMesLabel(mesSel)})</button>`}
     </div>`;
 
   document.getElementById('ad-asis-fecha').addEventListener('change', e => {
@@ -1097,9 +4013,23 @@ function adRenderAsis(body, d) {
     adRenderAsis(body, adLoad());
   });
 
-  body.querySelectorAll('.ad-mes-btn').forEach(b => b.addEventListener('click', () => {
+  body.querySelectorAll('[data-mes]').forEach(b => b.addEventListener('click', () => {
     body.dataset.mes = b.dataset.mes;
     adRenderAsis(body, adLoad());
+  }));
+
+  body.querySelectorAll('[data-vista]').forEach(b => b.addEventListener('click', () => {
+    body.dataset.vista = b.dataset.vista;
+    adRenderAsis(body, adLoad());
+  }));
+
+  /* tocar un día lo sube al pase de lista de arriba: corregir la falta de
+     ayer no obliga a buscar la fecha en el calendario */
+  body.querySelectorAll('.ad-dia-row').forEach(b => b.addEventListener('click', () => {
+    body.dataset.fecha = b.dataset.dia;
+    adRenderAsis(body, adLoad());
+    try { document.getElementById('ad-asis-fecha').scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (_) {}
+    toast('🗓 Pase de lista del ' + adFechaBonita(b.dataset.dia));
   }));
 
   body.querySelectorAll('.ad-chip').forEach(ch =>
@@ -1122,6 +4052,99 @@ function adRenderAsis(body, d) {
 
   const pr = document.getElementById('ad-asis-print');
   if (pr) pr.addEventListener('click', () => adPrintAsis(adLoad(), mesSel));
+  const prd = document.getElementById('ad-asis-print-dias');
+  if (prd) prd.addEventListener('click', () => adPrintAsisDias(adLoad(), mesSel));
+  document.getElementById('ad-exc-refresh').addEventListener('click', () => adAsisExcusas(body, adLoad(), true));
+  adAsisExcusas(body, d, false);
+}
+
+/* ── 📨 Excusas del buzón, dentro del pase de lista ──
+   El padre avisa la falta por el asistente; aquí el maestro la APRUEBA
+   de un toque y el día queda 📝 con excusa (y sube solo a la nube, así
+   la familia ve que se le tomó en cuenta). */
+async function adAsisExcusas(body, d, forzar) {
+  const cont = document.getElementById('ad-asis-exc');
+  if (!cont) return;
+  const hint = t => '<p class="pa-optional-hint">' + t + '</p>';
+  const r = await avBuzonFilas(d, forzar);
+  if (r.err === 'sinclaves') { cont.innerHTML = hint('Aún no hay claves de familia en este grupo: entrégalas en 👥 Alumnos y las familias podrán avisar sus faltas.'); return; }
+  if (r.err === 'offline') { cont.innerHTML = hint('📴 Sin internet: las excusas se revisan con conexión. El pase de lista funciona igual.'); return; }
+  if (r.err === 'red') { cont.innerHTML = hint('⚠️ No se pudo revisar el buzón. Toca «🔄 Revisar buzón» para reintentar.'); return; }
+
+  const numDe = {};
+  d.lista.forEach(a => {
+    const c = adClaveFamilia(d.id, a.num, false);
+    if (c) numDe[c] = a.num;
+  });
+  /* solo las excusas estructuradas del asistente, más recientes primero */
+  const excusas = [];
+  (r.rows || []).forEach(m => {
+    const ex = avParseExcusa(m.texto);
+    if (!ex || !numDe[m.codigo]) return;
+    excusas.push({ num: numDe[m.codigo], fecha: ex.fecha, razon: ex.razon, creado: m.creado_en });
+  });
+  if (!excusas.length) { cont.innerHTML = hint('Sin excusas de las familias por ahora.'); return; }
+  excusas.sort((a, b) => a.fecha < b.fecha ? 1 : -1);
+
+  const estadoDe = (fecha, num) => {
+    const reg = (adLoad().asistencia || []).find(x => x.f === fecha);
+    return (reg && reg.aus && reg.aus[num]) || '';
+  };
+  const nomDe = num => {
+    const a = d.lista.find(x => String(x.num) === String(num));
+    return a ? adPrimerNombre(a.nombre) : '';
+  };
+  const pendientes = excusas.filter(e => estadoDe(e.fecha, e.num) !== 'E');
+
+  cont.innerHTML = `
+    ${pendientes.length ? `<p class="pa-optional-hint" style="margin-top:0">
+      🔔 <strong>${pendientes.length}</strong> excusa(s) esperando tu aprobación.</p>` : ''}
+    ${excusas.slice(0, 25).map(e => {
+      const st = estadoDe(e.fecha, e.num);
+      const quien = '#' + e.num + (nomDe(e.num) ? ' ' + adEsc(nomDe(e.num)) : '');
+      const sello = st === 'E'
+        ? '<small style="color:#15803d">✅ Aprobada: ese día quedó 📝 con excusa.</small>'
+        : st === 'A'
+          ? `<small style="color:#b45309">🚫 Ese día está como ausente sin excusa.</small><br>
+             <button class="pa-generate-btn ad-btn-sec ad-exc-ok" data-num="${e.num}" data-fecha="${e.fecha}"
+                     style="margin-top:6px">✔ Aprobar excusa</button>`
+          : `<button class="pa-generate-btn ad-btn-sec ad-exc-ok" data-num="${e.num}" data-fecha="${e.fecha}"
+                     style="margin-top:6px">✔ Aprobar y marcar 📝</button>`;
+      return `<div class="ad-gasto-row ${st === 'E' ? 'ad-exc-lista' : 'ad-exc-nueva'}" style="align-items:flex-start">
+        <span style="flex:1">🤒 <strong>${quien}</strong> — faltó el
+          <strong>${adFechaBonita(e.fecha)}</strong> (${adDiaLabel(e.fecha)})<br>
+          <small>«${adEsc(e.razon)}»</small><br>${sello}</span>
+      </div>`;
+    }).join('')}
+    ${pendientes.length > 1 ? `<div class="ad-btn-row">
+      <button class="pa-generate-btn" id="ad-exc-todas">✔ Aprobar las ${pendientes.length} pendientes</button>
+    </div>` : ''}`;
+
+  const marcar = (num, fecha) => {
+    const dd = adLoad();
+    let reg = dd.asistencia.find(x => x.f === fecha);
+    if (!reg) { reg = { f: fecha, aus: {} }; dd.asistencia.push(reg); }
+    reg.aus = reg.aus || {};
+    reg.aus[num] = 'E';
+    dd.asistencia.sort((a, b) => a.f < b.f ? -1 : 1);
+    adSave(dd);
+  };
+
+  cont.querySelectorAll('.ad-exc-ok').forEach(b => b.addEventListener('click', () => {
+    marcar(+b.dataset.num, b.dataset.fecha);
+    toast('📝 #' + b.dataset.num + ' con excusa el ' + adFechaBonita(b.dataset.fecha));
+    adRenderAsis(body, adLoad());
+  }));
+
+  const todas = document.getElementById('ad-exc-todas');
+  if (todas) todas.addEventListener('click', async () => {
+    if (!await metasConfirm('Se marcarán con 📝 <strong>excusa</strong> las <strong>' + pendientes.length +
+      '</strong> faltas que las familias avisaron.\n\nPuedes cambiar cualquiera después tocando al alumno en el pase de lista.',
+      { icono: '📨', titulo: 'Aprobar excusas', okTxt: 'Sí, aprobar todas' })) return;
+    pendientes.forEach(e => marcar(e.num, e.fecha));
+    toast('✅ ' + pendientes.length + ' excusa(s) aprobadas');
+    adRenderAsis(body, adLoad());
+  });
 }
 
 function adPrintAsis(d, mes) {
@@ -1158,20 +4181,2072 @@ ${d.lista.filter(a => resumen[a.num]).map(a => `
   <td>${resumen[a.num].dias.join(', ')}</td></tr>`).join('')}
 </tbody></table>
 </body></html>`;
-  const w = window.open('', '_blank');
-  if (!w) { toast('Permite las ventanas emergentes para imprimir'); return; }
-  w.document.write(html); w.document.close();
+  adPrintAbrir(html);
+}
+
+/* Día por día del mes: el acta que piden en dirección cuando hay que
+   justificar una falta concreta (fecha, quién y si traía excusa). */
+function adPrintAsisDias(d, mes) {
+  const dias = d.asistencia.filter(r => r.f.startsWith(mes) && Object.keys(r.aus || {}).length)
+    .sort((a, b) => a.f < b.f ? -1 : 1);
+  const nomDe = num => {
+    const a = d.lista.find(x => String(x.num) === String(num));
+    return a ? (a.nombre || '') : '';
+  };
+  const quien = (r, tipo) => Object.keys(r.aus).filter(n => r.aus[n] === tipo)
+    .sort((x, y) => (+x) - (+y))
+    .map(n => '#' + n + (nomDe(n) ? ' ' + adEsc(nomDe(n)) : '')).join(', ');
+  const grupo = adGrupoTxt(d);
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+<title>Asistencia día por día ${mes}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Arial,sans-serif;font-size:12px;color:#111;padding:12mm;}
+h1{font-size:16px;color:#1e3a7c;margin-bottom:2mm;}
+.sub{font-size:11px;color:#444;margin-bottom:5mm;}
+table{width:100%;border-collapse:collapse;}
+th,td{border:1px solid #999;padding:4px 6px;text-align:left;vertical-align:top;}
+th{background:#e8eef9;}
+td.f{white-space:nowrap;font-weight:bold;}
+.tot{margin-top:4mm;font-size:11px;color:#444;}
+.noprint{margin-bottom:5mm;}
+@media print{.noprint{display:none;}}
+</style></head><body>
+<div class="noprint"><button onclick="window.print()" style="padding:8px 16px;font-weight:bold;cursor:pointer;">🖨️ Imprimir</button></div>
+<h1>🗓 Asistencia día por día — ${adMesLabel(mes)}</h1>
+<div class="sub">${grupo ? 'Grupo ' + adEsc(grupo) + ' · ' : ''}Solo aparecen los días con faltas; en los demás asistió todo el grupo. Generado con M.E.T.A.S.</div>
+<table>
+<thead><tr><th>Fecha</th><th>🚫 Ausentes (NSP)</th><th>📝 Con excusa</th></tr></thead>
+<tbody>
+${dias.map(r => `
+  <tr><td class="f">${adDiaLabel(r.f)}<br>${adFechaBonita(r.f)}</td>
+  <td>${quien(r, 'A') || '—'}</td><td>${quien(r, 'E') || '—'}</td></tr>`).join('')}
+</tbody></table>
+<p class="tot">Días con faltas: <strong>${dias.length}</strong> ·
+  total de ausencias: <strong>${dias.reduce((s, r) => s + Object.values(r.aus).filter(v => v === 'A').length, 0)}</strong> ·
+  total con excusa: <strong>${dias.reduce((s, r) => s + Object.values(r.aus).filter(v => v === 'E').length, 0)}</strong></p>
+</body></html>`;
+  adPrintAbrir(html);
+}
+
+/* ══════════════ ✅ CONTROLES DEL AULA ══════════════
+   Todo lo que el maestro anota a diario y NO es dinero ni nota: quién
+   recibió la ficha, la merienda o el libro, quién se apuntó al desfile,
+   quién trajo el material, la talla del uniforme… Antes eso vivía en
+   hojitas sueltas; aquí cada cosa es un CONTROL con nombre propio, se
+   marca con un toque sobre la misma lista de siempre y se ve al
+   instante QUIÉNES FALTAN (que es el dato que de verdad se necesita).
+   Todo local y sin internet; viaja solo entre los equipos del maestro
+   con el espejo de la Zona Docente. */
+/* fam: nace contándose a la familia en la Bitácora · acum: además avisa que
+   habrá evaluación para nota acumulativa. Los controles delicados (salud, talla,
+   merienda) nacen APAGADOS: un dato de salud no se publica por descuido. */
+const AD_CTRL_PLANTILLAS = [
+  { icono: '📄', nombre: 'Entrega de ficha', tipo: 'marca', fam: 1, acum: 1, verbo: 'recibio' },
+  { icono: '📗', nombre: 'Entrega de libro', tipo: 'marca', fam: 1, verbo: 'recibio' },
+  { icono: '🍎', nombre: 'Merienda escolar', tipo: 'marca', verbo: 'recibio' },
+  { icono: '🧰', nombre: 'Material solicitado', tipo: 'marca', fam: 1, acum: 1, verbo: 'recibio' },
+  { icono: '🎟️', nombre: 'Inscritos al evento', tipo: 'marca', fam: 1, verbo: 'inscrito' },
+  { icono: '✍️', nombre: 'Firma del padre', tipo: 'marca', fam: 1, verbo: 'entrego' },
+  { icono: '🧾', nombre: 'Documento entregado', tipo: 'marca', fam: 1, verbo: 'entrego' },
+  { icono: '💊', nombre: 'Control de salud', tipo: 'marca' },
+  { icono: '📖', nombre: 'Libro devuelto', tipo: 'marca', fam: 1, verbo: 'devolvio' },
+  { icono: '👕', nombre: 'Talla de uniforme', tipo: 'texto' },
+  { icono: '🔢', nombre: 'Cantidad recibida', tipo: 'numero' },
+  { icono: '📝', nombre: 'Otro control (sí o no)', tipo: 'marca' },
+  { icono: '✏️', nombre: 'Otro control (dato corto)', tipo: 'texto' },
+  { icono: '#️⃣', nombre: 'Otro control (cantidad)', tipo: 'numero' },
+];
+/* Qué HIZO el alumno, en la Bitácora que lee la familia. Un verbo solo no sirve
+   para todo: «recibió Libro devuelto» o «recibió Firma del padre» dirían lo
+   contrario de lo que pasó, así que cada control lleva el suyo y el maestro lo
+   puede cambiar viendo la vista previa. */
+const AD_CTRL_VERBOS = {
+  recibio:  { et: '📥 recibió',            fr: (q, c) => q + ' recibió «' + c + '»' },
+  entrego:  { et: '📤 entregó',            fr: (q, c) => q + ' entregó «' + c + '»' },
+  devolvio: { et: '↩️ devolvió',            fr: (q, c) => q + ' devolvió «' + c + '»' },
+  inscrito: { et: '🎟️ quedó inscrito en',  fr: (q, c) => q + ' quedó inscrito en «' + c + '»' },
+  anotado:  { et: '✔ quedó anotado en',    fr: (q, c) => q + ' quedó anotado en «' + c + '»' },
+};
+const AD_CTRL_TIPOS = {
+  marca: { et: '✔ sí o no', ayuda: 'Toca al alumno para marcarlo ✔; tócalo otra vez para quitarle la marca.' },
+  texto: { et: '✏️ dato corto', ayuda: 'Toca al alumno y escribe su dato (talla, color, nº de recibo…). Vacío lo borra.' },
+  numero: { et: '🔢 cantidad', ayuda: 'Toca al alumno y escribe la cantidad (cuadernos, libros, unidades…). Vacío o 0 lo borra.' },
+};
+
+function adControl(d, id) { return (d.controles || []).find(c => c.id === id); }
+function adCtrlTipo(c) { return AD_CTRL_TIPOS[c.tipo] ? c.tipo : 'marca'; }
+/* Cuántos tienen dato y quiénes faltan (el corazón del control) */
+function adCtrlHechos(c) { return Object.keys(c.datos || {}).length; }
+function adCtrlFaltan(d, c) {
+  return d.lista.filter(a => (c.datos || {})[a.num] == null);
+}
+/* ── BITÁCORA: lo que la familia lee de un control ──
+   El texto se arma en UN solo lugar y se usa en dos: la vista previa que ve el
+   maestro y la fila que viaja al asistente de padres. Así lo que promete la
+   pantalla es exactamente lo que le llega al padre, sin sorpresas. */
+function adCtrlMision(c) {
+  if (!c || !c.misionId || typeof MISSIONS === 'undefined') return null;
+  return MISSIONS.find(m => m.id === c.misionId) || null;
+}
+/* Verbo del control. Los creados antes de que esto existiera lo deducen de su
+   nombre una sola vez, para que su bitácora no diga una cosa por otra. */
+function adCtrlVerbo(c) {
+  if (c && AD_CTRL_VERBOS[c.verbo]) return c.verbo;
+  const n = String((c && c.nombre) || '').toLowerCase();
+  if (/devolv|devuelt/.test(n)) return 'devolvio';
+  if (/inscri|apunt/.test(n)) return 'inscrito';
+  if (/ficha|libro|merienda|material|cuadern/.test(n)) return 'recibio';
+  if (/firma|documento|constancia|partida|entreg/.test(n)) return 'entrego';
+  return 'anotado';
+}
+/* Cómo se nombra la COSA en la frase. El maestro bautiza sus controles como le
+   sirve para buscarlos («Entrega de ficha de Español», «Libro devuelto de
+   Sociales»), y al pegarles el verbo salían frases que se repiten: «recibió
+   «Entrega de ficha…»», «devolvió «Libro devuelto…»». Se le quita al nombre solo
+   lo que el verbo YA dice; el control conserva su nombre intacto. */
+function adCtrlCosa(c) {
+  const orig = String((c && c.nombre) || '').trim();
+  let s = orig
+    .replace(/^entrega\s+(de\s+l?[ao]s?\s+|del\s+|de\s+)?/i, '')
+    .replace(/^inscri(tos|pción|pcion)\s+(a\s+l?[ao]s?\s+|al\s+|a\s+)?/i, '');
+  const v = adCtrlVerbo(c);
+  if (v === 'devolvio') s = s.replace(/\s*\bdevuelt[oa]s?\b/i, '');
+  if (v === 'entrego')  s = s.replace(/\s*\bentregad[oa]s?\b/i, '');
+  s = s.replace(/\s{2,}/g, ' ').trim();
+  if (!s) s = orig;
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+function adCtrlBitacoraTxt(c, d, num) {
+  const al = (d.lista || []).find(a => String(a.num) === String(num)) || {};
+  const nom = String(al.nombre || '').trim();
+  const quien = (nom || 'su hijo/a') + ' (n.º ' + num + ' de la lista)';
+  const v = (c.datos || {})[num];
+  let p = adCtrlTipo(c) === 'marca'
+    ? 'El ' + adFechaBonita(c.fecha) + ', ' +
+      AD_CTRL_VERBOS[adCtrlVerbo(c)].fr(quien, adCtrlCosa(c)) + '.'
+    : 'El ' + adFechaBonita(c.fecha) + ', en «' + c.nombre + '», se anotó de ' + quien + ': ' + String(v) + '.';
+  if (c.acum) {
+    p += ' Sobre este material se le aplicará una evaluación que cuenta para la NOTA ACUMULATIVA,' +
+         ' así que apóyele a estudiarlo en casa estos días.';
+  }
+  const m = adCtrlMision(c);
+  if (m) p += ' El tema lo puede repasar y practicar en la misión «' + m.title + '», con el botón de abajo.';
+  return p;
+}
+/* Enlace de la misión para la fila de la nube: viaja en `claves` (columna libre
+   del mismo canal) como «url|título», y el asistente lo pinta como botón. */
+function adCtrlMisionClaves(c) {
+  const m = adCtrlMision(c);
+  return m ? (m.url || '') + '|' + m.title : '';
+}
+/* Selector de misiones agrupado por materia, para amarrar la ficha a su tema */
+function adMisionOptions(sel) {
+  if (typeof MISSIONS === 'undefined') return '';
+  const porMat = {};
+  MISSIONS.forEach(m => { (porMat[m.subject] = porMat[m.subject] || []).push(m); });
+  return Object.keys(porMat).map(s =>
+    '<optgroup label="' + adEsc((typeof SUBJECT_LABELS !== 'undefined' && SUBJECT_LABELS[s]) || s) + '">' +
+    porMat[s].slice().sort((a, b) => a.title.localeCompare(b.title, 'es')).map(m =>
+      '<option value="' + m.id + '"' + (String(m.id) === String(sel) ? ' selected' : '') + '>' +
+      adEsc(m.icon + ' ' + m.title) + '</option>').join('') + '</optgroup>').join('');
+}
+
+/* Lo que se pinta dentro del chip y en la hoja impresa */
+function adCtrlValorTxt(c, num) {
+  const v = (c.datos || {})[num];
+  if (v == null) return '';
+  if (adCtrlTipo(c) === 'marca') return '✔';
+  return String(v);
+}
+
+/* La puerta a 📣 Convocatoria. Se pinta en un solo sitio porque sale en
+   dos: en Comunicados con lista y en Comunicados sin lista.
+
+   Vive en 📣 Comunicados y no en ✅ Controles porque lo que sale de
+   aquí es un mensaje a las familias, como un aviso. La diferencia con
+   el aviso —y por eso lleva franja naranja y la palabra
+   «pregúntales»— es que el aviso INFORMA y se acabó, y la convocatoria
+   PREGUNTA y se queda esperando la respuesta. */
+function adConvPuertaHtml(d) {
+  if (typeof adRenderConvocatoria !== 'function') return '';
+  const abiertas = (d.convocatorias || []).filter(c => c.codigo && !c.cerrada);
+  let sub = 'Pregúntales por WhatsApp quién va a la excursión, a la reunión o a la kermés — y cuántos buses hacen falta';
+  if (abiertas.length) {
+    const c = abiertas[abiertas.length - 1];
+    const r = (c.resp || []).filter(x => x.va);
+    const per = r.reduce((a, x) => a + (Number(x.personas) || 0), 0);
+    sub = c.icono + ' ' + (c.titulo || 'Convocatoria') + ' — ' +
+      (per ? per + ' personas confirmadas hasta ahora' : 'publicada, esperando respuestas');
+  }
+  return `
+    <button class="ad-puerta ad-puerta-conv" id="ad-ir-conv">
+      <span class="ad-puerta-ic">📣</span>
+      <span class="ad-puerta-txt">
+        <span class="ad-puerta-t">Convocatoria por WhatsApp</span>
+        <span class="ad-puerta-s">${adEsc(sub)}</span>
+      </span>
+      <span class="ad-puerta-go">›</span>
+    </button>`;
+}
+function adConvPuertaEnganchar(body) {
+  const b = body.querySelector('#ad-ir-conv');
+  if (b) b.addEventListener('click', () => { adConvEntrar(); renderAdmin(); });
+}
+
+function adRenderControles(body, d) {
+  if (!d.lista.length) { adSinLista(body, 'los controles del aula'); return; }
+  if (_adControlId) { adRenderControl(body, d); return; }
+
+  const lista = (d.controles || []).slice().reverse();
+  body.innerHTML = `
+    <div class="pa-card">
+      <div class="pa-card-title">✅ Controles del aula</div>
+      <p class="pa-optional-hint">Para todo lo que se anota a diario y no es dinero ni nota:
+        <strong>quién recibió la ficha</strong>, la merienda o el libro, <strong>quién se apuntó</strong>
+        a un evento, quién trajo el material… Elige de qué se trata y marca sobre tu misma lista.
+        Lo importante lo tienes de un vistazo: <strong>quiénes faltan</strong>.</p>
+      <p class="pa-optional-hint" style="margin-top:-2px"><strong>Toca una etiqueta</strong> para crear el control de hoy:</p>
+      <div class="ad-meses ad-ctrl-plantillas">
+        ${AD_CTRL_PLANTILLAS.map((p, i) =>
+          `<button class="ad-mes-btn" data-plant="${i}" title="Dato: ${adEsc(AD_CTRL_TIPOS[p.tipo].et)}">${p.icono} ${adEsc(p.nombre)}</button>`).join('')}
+      </div>
+      <p class="pa-optional-hint">Aquí se ANOTA lo que ya sabes. Si lo que necesitas es
+        <strong>preguntárselo a las familias</strong> —quién va a la excursión, cuántos llegan a la
+        reunión—, eso es una convocatoria y está en <strong>📣 Comunicados</strong>.</p>
+    </div>
+    ${lista.length ? `
+    <div class="pa-card">
+      <div class="pa-card-title">🗂️ Mis controles</div>
+      ${lista.map(c => {
+        const hechos = adCtrlHechos(c), total = d.lista.length;
+        const faltan = total - hechos;
+        return `
+        <button class="ad-colecta-row" data-ctid="${c.id}">
+          <span class="ad-cr-txt"><strong>${c.icono || '✅'} ${adEsc(c.nombre)}</strong><br>
+            <small>${adFechaBonita(c.fecha)} · ${hechos}/${total} anotados${faltan ? ' · faltan ' + faltan : ' · ¡completo! 🎉'}${c.fam ? ' · 📔 en la Bitácora' : ''}</small></span>
+          <span class="ad-cr-arrow">›</span>
+        </button>`;
+      }).join('')}
+    </div>` : `
+    <div class="pa-card">
+      <p class="pa-optional-hint">Todavía no hay controles. El primero te tomará
+        <strong>menos de un minuto</strong>: toca una etiqueta de arriba.</p>
+    </div>`}
+    <div class="pa-card">
+      <div class="pa-card-title">📔 Novedades de la clase</div>
+      <p class="pa-optional-hint">Algo importante que se dijo o se hizo hoy y que la casa debe saber.
+        Lo leen <strong>todas las familias</strong> en la Bitácora del asistente, tal como lo escribas.
+        No es para regañar a un alumno: eso va en 📣 Comunicados, que sí llega a una sola familia.</p>
+      <textarea id="ad-bit-nueva" class="pa-paste-area ad-bit-ta" rows="3" maxlength="500"
+        placeholder="Ej.: Hoy empezamos las fracciones con la pizza. Pregúntele qué es el denominador."></textarea>
+      <button class="pa-generate-btn" id="ad-bit-add">➕ Anotar la novedad</button>
+      ${(d.bitacora || []).length ? (d.bitacora || []).slice().reverse().map(n => `
+        <div class="ad-gasto-row ad-bit-row">
+          <span><strong>${adFechaBonita(n.fecha)}</strong> · ${adEsc(n.texto)}</span>
+          <span><button class="ad-al-del ad-bit-del" data-bid="${n.id}" aria-label="Borrar novedad">✕</button></span>
+        </div>`).join('')
+        : '<p class="pa-optional-hint">Sin novedades anotadas todavía.</p>'}
+    </div>`;
+
+  const bitTa = document.getElementById('ad-bit-nueva');
+  document.getElementById('ad-bit-add').addEventListener('click', () => {
+    const txt = String(bitTa.value || '').trim();
+    if (txt.length < 4) { toast('✍️ Escribe la novedad (mínimo 4 letras)'); bitTa.focus(); return; }
+    const dd = adLoad();
+    dd.bitacora = dd.bitacora || [];
+    dd.bitacora.push({
+      id: 'N' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+      fecha: adHoy(), texto: txt.slice(0, 500),
+    });
+    /* el asistente solo muestra lo vigente y la nube tiene tope por familia:
+       se guardan las últimas 40, que es más de un parcial de novedades */
+    if (dd.bitacora.length > 40) dd.bitacora = dd.bitacora.slice(-40);
+    adSave(dd); renderAdmin();
+    toast('📔 Anotada: las familias la verán en su Bitácora');
+  });
+  body.querySelectorAll('.ad-bit-del').forEach(b =>
+    b.addEventListener('click', async () => {
+      if (!await metasConfirm('¿Borrar esta novedad? Dejará de verse en la Bitácora de las familias.',
+        { icono: '📔', titulo: 'Novedades de la clase', okTxt: 'Sí, borrar' })) return;
+      const dd = adLoad();
+      adUndoGuardar('Borrar una novedad de la clase');
+      dd.bitacora = (dd.bitacora || []).filter(x => x.id !== b.dataset.bid);
+      adSave(dd); renderAdmin();
+    }));
+
+  body.querySelectorAll('[data-plant]').forEach(b =>
+    b.addEventListener('click', async () => {
+      const p = AD_CTRL_PLANTILLAS[+b.dataset.plant];
+      const nombre = await metasPrompt('¿Cómo se llama este control?\nPonle el nombre con el que TÚ lo buscarías después (ej. **Ficha de Español 3er parcial**).', {
+        icono: p.icono, titulo: 'Nuevo control', okTxt: 'Crear',
+        value: p.nombre.startsWith('Otro control') ? '' : p.nombre,
+        placeholder: p.nombre,
+        valida: v => String(v).trim().length >= 3 ? '' : 'Escribe el nombre (mínimo 3 letras).',
+      });
+      if (nombre === null) return;
+      const dd = adLoad();
+      dd.controles = dd.controles || [];
+      dd.controles.push({
+        id: 'K' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+        icono: p.icono, nombre: String(nombre).trim(), tipo: p.tipo,
+        fecha: adHoy(), datos: {},
+        fam: p.fam ? 1 : 0, acum: p.acum ? 1 : 0, misionId: null, verbo: p.verbo || 'anotado',
+      });
+      adSave(dd);
+      _adControlId = dd.controles[dd.controles.length - 1].id;
+      renderAdmin();
+    }));
+
+  body.querySelectorAll('[data-ctid]').forEach(b =>
+    b.addEventListener('click', () => { _adControlId = b.dataset.ctid; renderAdmin(); }));
+}
+
+function adRenderControl(body, d) {
+  const c = adControl(d, _adControlId);
+  if (!c) { _adControlId = null; renderAdmin(); return; }
+  const tipo = adCtrlTipo(c);
+  const hechos = adCtrlHechos(c), total = d.lista.length;
+  const faltan = adCtrlFaltan(d, c);
+
+  body.innerHTML = `
+    <div class="pa-card">
+      <nav class="nav-ruta" aria-label="Dónde estás">
+        <button class="nav-ruta-link" id="ad-ctrl-volver">🗂️ Mis controles</button>
+        <span class="nav-ruta-sep" aria-hidden="true">›</span>
+        <span class="nav-ruta-actual" aria-current="page">estás aquí</span>
+      </nav>
+      <div class="pa-card-title">${c.icono || '✅'} ${adEsc(c.nombre)}</div>
+      <p class="pa-optional-hint">${adFechaBonita(c.fecha)} · dato: <strong>${AD_CTRL_TIPOS[tipo].et}</strong><br>
+        ${AD_CTRL_TIPOS[tipo].ayuda}</p>
+      <div class="ad-resumen">
+        <span>✅ Anotados: <strong>${hechos}/${total}</strong></span>
+        <span class="${faltan.length ? 'ad-mal' : 'ad-ok'}">⏳ Faltan: <strong>${faltan.length}</strong></span>
+      </div>
+      <div class="ad-chips">
+        ${d.lista.map(a => {
+          const val = adCtrlValorTxt(c, a.num);
+          const nom = adPrimerNombre(a.nombre);
+          return `<button class="ad-chip ${val ? 'ad-chip-on' : ''}" data-num="${a.num}" title="${adEsc(a.nombre)}">
+            <span class="ad-chip-num">#${a.num}</span>
+            ${nom ? `<span class="ad-chip-nom">${adEsc(nom)}</span>` : ''}
+            ${val ? `<span class="ad-chip-monto">${adEsc(val)}</span>` : ''}</button>`;
+        }).join('')}
+      </div>
+      ${tipo === 'marca' ? `
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn ad-btn-sec" id="ad-ctrl-todos">✅ Marcar a todos</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-ctrl-limpiar">🧹 Quitar todas las marcas</button>
+      </div>
+      <p class="pa-optional-hint">💡 Si casi todos cumplieron, marca a todos y quita solo a los que faltaron:
+        se anota en segundos, igual que el pase de lista.</p>` : ''}
+    </div>
+
+    <div class="pa-card">
+      <div class="pa-card-title">📔 Lo que verá la familia</div>
+      <p class="pa-optional-hint">La <strong>Bitácora</strong> del asistente de padres cuenta esto
+        <strong>solo a la familia del alumno anotado</strong>, nunca al grupo entero.</p>
+      <label class="ad-bit-sw">
+        <input type="checkbox" id="ad-ctrl-fam" ${c.fam ? 'checked' : ''}>
+        <span>Contarlo a la familia en la Bitácora</span>
+      </label>
+      <label class="ad-bit-sw">
+        <input type="checkbox" id="ad-ctrl-acum" ${c.acum ? 'checked' : ''} ${c.fam ? '' : 'disabled'}>
+        <span>Avisar que se le aplicará <strong>evaluación para nota acumulativa</strong></span>
+      </label>
+      ${tipo === 'marca' ? `
+      <label class="ad-bit-lbl" for="ad-ctrl-verbo">✍️ Qué hizo el alumno (así se lee en la Bitácora)</label>
+      <select id="ad-ctrl-verbo" class="pa-inp-field" ${c.fam ? '' : 'disabled'}>
+        ${Object.keys(AD_CTRL_VERBOS).map(k =>
+          `<option value="${k}"${k === adCtrlVerbo(c) ? ' selected' : ''}>${AD_CTRL_VERBOS[k].et} «${adEsc(adCtrlCosa(c))}»</option>`).join('')}
+      </select>` : ''}
+      <label class="ad-bit-lbl" for="ad-ctrl-mision">📚 Misión para que estudie el tema en casa</label>
+      <select id="ad-ctrl-mision" class="pa-inp-field" ${c.fam ? '' : 'disabled'}>
+        <option value="">Sin misión enlazada</option>
+        ${adMisionOptions(c.misionId)}
+      </select>
+      ${c.fam ? `
+      <div class="ad-bit-prev">
+        <strong>Así lo leerá la familia:</strong><br>
+        ${adEsc(adCtrlBitacoraTxt(c, d, (Object.keys(c.datos || {})[0]) || (d.lista[0] && d.lista[0].num) || 1))}
+        ${adCtrlMision(c) ? `<br><span class="ad-bit-btn-prev">📚 Estudiar «${adEsc(adCtrlMision(c).title)}»</span>` : ''}
+      </div>` : `
+      <p class="pa-optional-hint">🔒 Apagado: este control queda solo para ti. Nada de él llega al
+        asistente de padres.</p>`}
+    </div>
+
+    <div class="pa-card">
+      <div class="pa-card-title">⏳ Todavía faltan (${faltan.length})</div>
+      ${faltan.length ? `
+      <p class="pa-optional-hint" style="margin-top:-2px">${faltan.map(a =>
+        '#' + a.num + (adPrimerNombre(a.nombre) ? ' ' + adEsc(adPrimerNombre(a.nombre)) : '')).join(' · ')}</p>
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn ad-btn-sec" id="ad-ctrl-copiar">📋 Copiar los que faltan</button>
+      </div>`
+      : '<p class="pa-optional-hint">🎉 ¡Todo el grupo está anotado en este control!</p>'}
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn ad-btn-sec" id="ad-ctrl-print">🖨️ Imprimir hoja de control</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-ctrl-repetir">📄 Repetir este control</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-ctrl-renombrar">✏️ Cambiar nombre o fecha</button>
+        <button class="pa-generate-btn ad-btn-sec ad-btn-peligro" id="ad-ctrl-borrar">🗑 Eliminar control</button>
+      </div>
+    </div>`;
+
+  document.getElementById('ad-ctrl-volver').addEventListener('click', () => { _adControlId = null; renderAdmin(); });
+
+  /* ajustes de la Bitácora: cada cambio se guarda al toque y se repinta, para
+     que la vista previa diga siempre la verdad de lo que va a leer el padre */
+  /* apagar «contarlo a la familia» NO borra la misión ni el aviso de acumulativa:
+     quedan guardados y vuelven al encenderlo. Mientras está apagado no sale ni
+     una fila del teléfono, que es lo único que importa. */
+  const bitSet = (campo, valor) => {
+    const dd = adLoad(); const cc = adControl(dd, _adControlId); if (!cc) return;
+    cc[campo] = valor;
+    adSave(dd); renderAdmin();
+  };
+  document.getElementById('ad-ctrl-fam').addEventListener('change', e => bitSet('fam', e.target.checked ? 1 : 0));
+  document.getElementById('ad-ctrl-acum').addEventListener('change', e => bitSet('acum', e.target.checked ? 1 : 0));
+  document.getElementById('ad-ctrl-mision').addEventListener('change', e =>
+    bitSet('misionId', parseInt(e.target.value, 10) || null));
+  const selVerbo = document.getElementById('ad-ctrl-verbo');
+  if (selVerbo) selVerbo.addEventListener('change', e => bitSet('verbo', e.target.value));
+
+  body.querySelectorAll('.ad-chip').forEach(ch =>
+    ch.addEventListener('click', async () => {
+      const num = ch.dataset.num;
+      const dd = adLoad(); const cc = adControl(dd, _adControlId); if (!cc) return;
+      cc.datos = cc.datos || {};
+      const t = adCtrlTipo(cc);
+      if (t === 'marca') {
+        if (cc.datos[num] != null) delete cc.datos[num]; else cc.datos[num] = 1;
+      } else {
+        const al = dd.lista.find(a => String(a.num) === String(num)) || {};
+        const quien = '#' + num + (al.nombre ? ' ' + adPrimerNombre(al.nombre) : '');
+        const esNum = t === 'numero';
+        const r = await metasPrompt('¿Qué anoto de **' + quien + '**?\n' +
+          (esNum ? 'Escribe la cantidad. El **0** o vacío quita la anotación.'
+                 : 'Escribe el dato corto. Vacío quita la anotación.'), {
+          icono: cc.icono || '✅', titulo: adEsc(cc.nombre), okTxt: 'Guardar',
+          inputmode: esNum ? 'decimal' : 'text',
+          value: cc.datos[num] != null ? String(cc.datos[num]) : '',
+          maxlength: esNum ? 8 : 24,
+          valida: v => {
+            const s = String(v).trim();
+            if (s === '' || !esNum) return '';
+            return isNaN(Number(s.replace(',', '.'))) ? 'Escribe un número (o vacío para quitar).' : '';
+          },
+        });
+        if (r === null) return;
+        const s = String(r).trim();
+        if (s === '') delete cc.datos[num];
+        else if (esNum) {
+          const n = Number(s.replace(',', '.'));
+          if (!(n > 0)) delete cc.datos[num]; else cc.datos[num] = n;
+        } else cc.datos[num] = s;
+      }
+      adSave(dd); renderAdmin();
+    }));
+
+  const todos = document.getElementById('ad-ctrl-todos');
+  if (todos) todos.addEventListener('click', () => {
+    const dd = adLoad(); const cc = adControl(dd, _adControlId); if (!cc) return;
+    cc.datos = cc.datos || {};
+    dd.lista.forEach(a => { cc.datos[a.num] = 1; });
+    adSave(dd); renderAdmin();
+    toast('✅ Marcados los ' + dd.lista.length);
+  });
+  const limpiar = document.getElementById('ad-ctrl-limpiar');
+  if (limpiar) limpiar.addEventListener('click', async () => {
+    if (!await metasConfirm('¿Quitar TODAS las marcas de **' + c.nombre + '**?\nLa lista queda en blanco para volver a empezar.',
+      { icono: '🧹', titulo: 'Controles', okTxt: 'Sí, quitar' })) return;
+    const dd = adLoad(); const cc = adControl(dd, _adControlId); if (!cc) return;
+    adUndoGuardar('Limpiar el control «' + cc.nombre + '»');
+    cc.datos = {};
+    adSave(dd); renderAdmin();
+  });
+
+  const cop = document.getElementById('ad-ctrl-copiar');
+  if (cop) cop.addEventListener('click', () => {
+    const txt = c.icono + ' ' + c.nombre + ' — todavía faltan (' + faltan.length + '):\n' +
+      faltan.map(a => '#' + a.num + (a.nombre ? ' ' + a.nombre : '')).join('\n');
+    adCopiar(txt,
+      () => toast('📋 Copiado: pégalo en WhatsApp o en tu cuaderno'),
+      () => toast('⚠️ No se pudo copiar en este navegador'));
+  });
+
+  document.getElementById('ad-ctrl-print').addEventListener('click', () => adPrintControl(adLoad(), c));
+
+  document.getElementById('ad-ctrl-repetir').addEventListener('click', async () => {
+    if (!await metasConfirm('Se crea un control NUEVO con el mismo nombre y la fecha de hoy, ' +
+      'con la lista en blanco.\n\nSirve para lo que se repite: la merienda de cada semana, ' +
+      'la ficha de cada parcial…', { icono: '📄', titulo: 'Repetir control', okTxt: 'Sí, repetir' })) return;
+    const dd = adLoad();
+    dd.controles.push({
+      id: 'K' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+      icono: c.icono, nombre: c.nombre, tipo: c.tipo, fecha: adHoy(), datos: {},
+      /* lo que la familia ve viaja con la copia: la ficha de cada parcial se
+         repite igual, con su misma misión y su mismo aviso de acumulativa */
+      fam: c.fam ? 1 : 0, acum: c.acum ? 1 : 0, misionId: c.misionId || null, verbo: adCtrlVerbo(c),
+    });
+    adSave(dd);
+    _adControlId = dd.controles[dd.controles.length - 1].id;
+    renderAdmin();
+    toast('📄 Control repetido con fecha de hoy');
+  });
+
+  document.getElementById('ad-ctrl-renombrar').addEventListener('click', async () => {
+    const nombre = await metasPrompt('Nombre del control:', {
+      icono: c.icono || '✅', titulo: 'Cambiar nombre', okTxt: 'Siguiente', value: c.nombre,
+      valida: v => String(v).trim().length >= 3 ? '' : 'Escribe el nombre (mínimo 3 letras).',
+    });
+    if (nombre === null) return;
+    const fecha = await metasPrompt('Fecha del control (AAAA-MM-DD):', {
+      icono: '🗓', titulo: 'Cambiar fecha', okTxt: 'Guardar', value: c.fecha,
+      valida: v => /^\d{4}-\d{2}-\d{2}$/.test(String(v).trim()) ? '' : 'Escribe la fecha así: 2026-07-29',
+    });
+    if (fecha === null) return;
+    const dd = adLoad(); const cc = adControl(dd, _adControlId); if (!cc) return;
+    cc.nombre = String(nombre).trim();
+    cc.fecha = String(fecha).trim();
+    adSave(dd); renderAdmin();
+  });
+
+  document.getElementById('ad-ctrl-borrar').addEventListener('click', async () => {
+    if (!await metasConfirm('¿Eliminar el control **' + c.nombre + '** con todo lo anotado?',
+      { icono: '🗑', titulo: 'Controles', okTxt: 'Sí, eliminar' })) return;
+    const dd = adLoad();
+    adUndoGuardar('Eliminar el control «' + c.nombre + '»');
+    dd.controles = dd.controles.filter(x => x.id !== _adControlId);
+    adSave(dd); _adControlId = null; renderAdmin();
+    toast('🗑 Control eliminado — si fue un error, restaura en 🕘 (pestaña Alumnos)');
+  });
+}
+
+/* Hoja de control imprimible: la que se firma, se entrega en dirección
+   o se lleva al aula cuando toca anotar a mano. */
+function adPrintControl(d, c) {
+  const cc = adControl(d, c.id) || c;
+  const tipo = adCtrlTipo(cc);
+  const grupo = adGrupoTxt(d);
+  const hechos = adCtrlHechos(cc);
+  const colDato = tipo === 'marca' ? '✔' : tipo === 'numero' ? 'Cantidad' : 'Dato';
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+<title>${adEsc(cc.nombre)}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Arial,sans-serif;font-size:12px;color:#111;padding:12mm;}
+h1{font-size:16px;color:#1e3a7c;margin-bottom:2mm;}
+.sub{font-size:11px;color:#444;margin-bottom:5mm;}
+table{width:100%;border-collapse:collapse;}
+th,td{border:1px solid #999;padding:4px 6px;text-align:left;}
+th{background:#e8eef9;}
+td.n{width:12mm;text-align:center;font-weight:bold;}
+td.v{width:26mm;text-align:center;font-weight:bold;}
+td.o{width:52mm;}
+.pie{margin-top:6mm;font-size:11px;color:#444;}
+.firma{margin-top:14mm;font-size:11px;}
+.noprint{margin-bottom:5mm;}
+@media print{.noprint{display:none;}}
+</style></head><body>
+<div class="noprint"><button onclick="window.print()" style="padding:8px 16px;font-weight:bold;cursor:pointer;">🖨️ Imprimir</button></div>
+<h1>${adEsc(cc.icono || '✅')} ${adEsc(cc.nombre)}</h1>
+<div class="sub">${grupo ? 'Grupo ' + adEsc(grupo) + ' · ' : ''}${adFechaBonita(cc.fecha)} ·
+  ${hechos} de ${d.lista.length} anotados. Generado con M.E.T.A.S.</div>
+<table>
+<thead><tr><th class="n">#</th><th>Alumno/a</th><th class="v">${colDato}</th><th class="o">Observación</th></tr></thead>
+<tbody>
+${d.lista.map(a => `
+  <tr><td class="n">${a.num}</td><td>${adEsc(a.nombre) || '—'}</td>
+  <td class="v">${adEsc(adCtrlValorTxt(cc, a.num))}</td><td class="o"></td></tr>`).join('')}
+</tbody></table>
+<p class="pie">Faltan por anotar: <strong>${d.lista.length - hechos}</strong>.</p>
+<div class="firma">F. _______________________________ &nbsp;&nbsp; Docente</div>
+</body></html>`;
+  adPrintAbrir(html);
 }
 
 /* ══════════════ 🧮 BOLETA DE CALIFICACIONES (SACE) ══════════════ */
+
+/* ── ✨ SUGERIR NOTAS: el Plan de acción llena la boleta ──
+   El maestro ya calificó las pruebas del parcial en 📊 Plan de acción (cada
+   análisis guarda parcial, materia y la nota de cada nº de lista). Pasarlas
+   a la boleta era volver a buscarlas una por una entre decenas de análisis.
+   Aquí se promedian y se escriben de un toque, con estas reglas de justicia:
+   · solo análisis de ESTE grupo (grado por dígitos y sección por su letra o
+     número final, igual que adMigrarCodigos): un maestro con dos aulas no
+     mezcla notas ajenas;
+   · solo los del parcial elegido — o sin parcial pero con fecha de prueba
+     dentro del rango que el maestro marcó para ese parcial en Inasistencias;
+   · todas las evaluaciones pesan IGUAL (promedio simple): no hay dato
+     objetivo para decir que una prueba vale más que otra;
+   · NSP no promedia: no presentarse no es un cero — ya tiene su proceso de
+     prueba pendiente en el Plan de acción;
+   · solo se llenan celdas VACÍAS: lo que el maestro escribió, manda. */
+
+/* Mismo grupo que el análisis. Los análisis nuevos traen el id del grupo
+   (paGrupoIdDe, en el Plan de acción) y con eso no hay duda: el maestro de
+   jornada doble con «6º-1» en dos colegios no mezcla notas ajenas. Los
+   viejos no lo tienen y se comparan como siempre — dígitos del grado y
+   último carácter de la sección, porque en el Plan se escriben a mano
+   («6º» / «6») y en Alumnos pueden ir distinto. */
+function adSugMismoGrupo(a, d) {
+  if (a && a.grupoId) return a.grupoId === d.id;
+  const dig = s => String(s || '').replace(/\D/g, '');
+  const sec = s => { const m = String(s || '').trim().match(/([a-zA-Z0-9])\s*$/); return m ? m[1].toUpperCase() : ''; };
+  return !!dig(a.grado) && dig(a.grado) === dig(d.grado) && sec(a.seccion) === sec(d.seccion);
+}
+
+/* Otros grupos que se escriben igual que este («6º-1» en dos colegios). Si
+   los hay, los análisis viejos —los que no llevan sello de grupo— pueden
+   venir de cualquiera de los dos, y eso hay que advertirlo. */
+function adSugGemelos(d) {
+  try {
+    return adState().grupos.filter(g => g.id !== d.id &&
+      adSugMismoGrupo({ grado: g.grado, seccion: g.seccion }, d)).length;
+  } catch (_) { return 0; }
+}
+
+/* La materia del Plan se busca en la boleta sin reparar en mayúsculas ni
+   acentos, y devuelve el nombre de la columna TAL COMO la escribió el
+   maestro: quien puso «Ciencias naturales» no merece una columna repetida
+   por una tilde. */
+function adSugColumna(mat, materias) {
+  const llano = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
+  const k = llano(mat);
+  return (materias || []).find(c => llano(c) === k) || '';
+}
+
+/* Materia del análisis → nombre de columna de la boleta. La regla real vive
+   en el Plan de acción (paMateriaDe + PA_HIST_MATERIAS, que se cargan antes
+   en esta misma página); el mapa de respaldo es por si este archivo se usa
+   suelto. */
+function adSugMateriaNom(a) {
+  let k = (a && a.materia) || '';
+  if (!k && typeof paMateriaDe === 'function') k = paMateriaDe(a) || '';
+  if (!k && a && a.misionId && typeof MISSIONS !== 'undefined') {
+    const m = MISSIONS.find(x => x.id === a.misionId);
+    if (m) k = m.subject || '';
+  }
+  if (!k && a && a.evaluacion && typeof MISSIONS !== 'undefined' && Array.isArray(MISSIONS)) {
+    const normT = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase().replace(/\s*·\s*prueba operativa.*$/i, '').replace(/\s*[—\-–]\s*forma\s+\S+/i, '').trim();
+    const evB = normT(a.evaluacion);
+    if (evB) {
+      const m2 = MISSIONS.find(x => {
+        const t = normT(x.title);
+        return t && (t === evB || evB.indexOf(t) === 0 || (evB.length >= 8 && t.indexOf(evB) === 0));
+      });
+      if (m2) k = m2.subject || '';
+    }
+  }
+  if (!k) return '';
+  if (typeof PA_HIST_MATERIAS !== 'undefined') {
+    const x = PA_HIST_MATERIAS.find(y => y.key === k);
+    if (x) return x.nom;
+  }
+  const nom = { 'español': 'Español', 'matemáticas': 'Matemáticas', 'naturales': 'Ciencias Naturales',
+    'sociales': 'Ciencias Sociales', 'inglés': 'Inglés', 'arte': 'Educación Artística',
+    'programación': 'Programación', 'robótica': 'Robótica',
+    'cívica': 'Educación Cívica',
+    'ia': 'Inteligencia Artificial',
+    'filosofía': 'Filosofía' }[k];
+  return nom || (k.charAt(0).toUpperCase() + k.slice(1));
+}
+
+function adNormNombreAlumno(s) {
+  return String(s || '')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/\(\s*n\.?[º°o]?\s*\d+[^)]*\)/gi, '')
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/* Construye el mapa de identidad de los alumnos del grupo actual para que,
+   aunque el maestro haya reordenado las filas (ej. Niñas A–Z y Varones A–Z o
+   mover a un alumno de posición), cada calificación recuperada de la nube,
+   del Plan de Acción o de una versión anterior caiga en el #num ACTUAL del alumno. */
+function adConstruirMapaAlumnos(dActual, listaOrigen, codesOrigenPorNum) {
+  const deCod = {};
+  const deNom = {};
+  const deNomCorto = {};
+  const conteoCorto = {};
+  const numsActuales = new Set();
+
+  (dActual.lista || []).forEach(al => {
+    const n = +al.num;
+    if (!n) return;
+    numsActuales.add(n);
+    const cod = String(adClaveFamilia(dActual.id, n, false) || '').trim().toUpperCase();
+    if (cod) deCod[cod] = n;
+    const nom = adNormNombreAlumno(al.nombre);
+    if (nom) {
+      deNom[nom] = n;
+      const partes = nom.split(' ');
+      const c2 = partes.slice(0, 2).join(' ');
+      if (c2) {
+        conteoCorto[c2] = (conteoCorto[c2] || 0) + 1;
+        deNomCorto[c2] = n;
+      }
+      const c1 = partes[0];
+      if (c1) {
+        conteoCorto[c1] = (conteoCorto[c1] || 0) + 1;
+        deNomCorto[c1] = n;
+      }
+    }
+  });
+
+  const resolverPorNombre = nombreRaw => {
+    const nom = adNormNombreAlumno(nombreRaw);
+    if (!nom || /^#?\d+$/.test(nom)) return null;
+    if (deNom[nom]) return deNom[nom];
+    const partes = nom.split(' ');
+    const c2 = partes.slice(0, 2).join(' ');
+    if (c2 && conteoCorto[c2] === 1 && deNomCorto[c2]) return deNomCorto[c2];
+    for (const k of Object.keys(deNom)) {
+      if (k.length >= 6 && nom.length >= 6 && (k.indexOf(nom) === 0 || nom.indexOf(k) === 0)) {
+        return deNom[k];
+      }
+    }
+    const c1 = partes[0];
+    if (c1 && conteoCorto[c1] === 1 && deNomCorto[c1]) return deNomCorto[c1];
+    return null;
+  };
+
+  const deNum = {};
+  if (Array.isArray(listaOrigen) && listaOrigen.length) {
+    listaOrigen.forEach(alOrig => {
+      if (!alOrig) return;
+      const oldN = +alOrig.num;
+      if (!oldN) return;
+      const codOrig = codesOrigenPorNum && codesOrigenPorNum[oldN]
+        ? String(codesOrigenPorNum[oldN]).trim().toUpperCase() : '';
+      if (codOrig && deCod[codOrig]) {
+        deNum[oldN] = deCod[codOrig];
+        return;
+      }
+      const porNom = resolverPorNombre(alOrig.nombre);
+      if (porNom) {
+        deNum[oldN] = porNom;
+        return;
+      }
+      if (numsActuales.has(oldN)) {
+        deNum[oldN] = oldN;
+      }
+    });
+  }
+  if (codesOrigenPorNum && typeof codesOrigenPorNum === 'object') {
+    Object.keys(codesOrigenPorNum).forEach(k => {
+      const oldN = +k;
+      const codOrig = String(codesOrigenPorNum[k] || '').trim().toUpperCase();
+      if (oldN && !deNum[oldN] && codOrig && deCod[codOrig]) {
+        deNum[oldN] = deCod[codOrig];
+      }
+    });
+  }
+
+  return {
+    deCod,
+    deNom,
+    deNum,
+    resolverPorNombre,
+    resolverAlumno(numRaw, codRaw, nombreRaw) {
+      const cod = String(codRaw || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+      if (cod && deCod[cod]) return deCod[cod];
+      const porNom = resolverPorNombre(nombreRaw);
+      if (porNom) return porNom;
+      const n = +numRaw;
+      if (n && deNum[n]) return deNum[n];
+      if (n && numsActuales.has(n)) return n;
+      return null;
+    }
+  };
+}
+
+/* Junta, por materia de la boleta, las notas de cada alumno en las
+   evaluaciones del parcial. También cuenta lo que NO entró y por qué,
+   para decírselo al maestro en vez de callarlo. */
+function adSugFuentes(d, parcial) {
+  let plan = { analisis: [] };
+  try {
+    plan = (typeof paLoadData === 'function') ? paLoadData()
+      : (JSON.parse(localStorage.getItem('METAS_PLANACCION_V1')) || { analisis: [] });
+  } catch (_) {}
+  const mapaAl = adConstruirMapaAlumnos(d, null, null);
+  const rango = ((d.boleta || {}).parcialFechas || {})[parcial] || null;
+  const porFecha = a => !a.parcial && a.fechaPrueba && rango && rango.desde && rango.hasta &&
+    a.fechaPrueba >= rango.desde && a.fechaPrueba <= rango.hasta;
+  const delParcial = a => String(a.parcial || '') === parcial || porFecha(a);
+  const res = { porMat: {}, evals: 0, porFecha: 0, sinSello: 0,
+                sinMateria: 0, matSinCol: {}, otroGrupo: 0, otroGrupoTxt: [] };
+  (plan.analisis || []).forEach(a => {
+    if (!a || !Array.isArray(a.students) || !delParcial(a)) return;
+    /* De otra aula: no es un error del maestro, pero si NADA entra hay que
+       poder decirle que sus evaluaciones están anotadas con otro grado. */
+    if (!adSugMismoGrupo(a, d)) {
+      res.otroGrupo++;
+      const txt = adGradoSeccion(a.grado, a.seccion) || 'sin grado';
+      if (res.otroGrupoTxt.indexOf(txt) < 0) res.otroGrupoTxt.push(txt);
+      return;
+    }
+    const mat = adSugMateriaNom(a);
+    if (!mat) { res.sinMateria++; return; }
+    const col = adSugColumna(mat, d.materias);
+    if (!col) { res.matSinCol[mat] = (res.matSinCol[mat] || 0) + 1; return; }
+    res.evals++;
+    if (porFecha(a)) res.porFecha++;
+    if (!a.grupoId) res.sinSello++;
+    const m = res.porMat[col] = res.porMat[col] || { evals: 0, notas: {} };
+    m.evals++;
+    a.students.forEach(s => {
+      if (s && typeof s.nota === 'number' && isFinite(s.nota)) {
+        const codSb = String(s.sb || '').split('|')[0];
+        const numDest = mapaAl.resolverAlumno(s.num, codSb, s.nombre) || s.num;
+        (m.notas[numDest] = m.notas[numDest] || []).push(s.nota);
+      }
+    });
+  });
+  return res;
+}
+
+/* Las celdas vacías que se pueden llenar, con su promedio ya calculado.
+   Se recalcula sobre datos recién cargados justo antes de aplicar, para no
+   pisar nada que haya cambiado mientras el diálogo estaba abierto. */
+function adSugCambios(d, parcial, fuentes) {
+  const cambios = [];
+  Object.keys(fuentes.porMat).forEach(mat => {
+    const m = fuentes.porMat[mat];
+    d.lista.forEach(al => {
+      const ya = (((d.notas[parcial] || {})[mat]) || {})[al.num];
+      if (ya != null && ya !== '') return;
+      const xs = m.notas[al.num];
+      if (!xs || !xs.length) return;
+      const prom = Math.max(1, Math.min(100, Math.round(xs.reduce((t, x) => t + x, 0) / xs.length)));
+      cambios.push({ mat, num: al.num, v: prom, de: xs.slice() });
+    });
+  });
+  return cambios;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   📥 RECUPERACIÓN MULTICAPA DE NOTAS, PERSONALIDAD Y DÍAS PERDIDOS (I–III)
+      + 🕓 VERIFICADOR DE HISTORIAL DE VERSIONES
+   ══════════════════════════════════════════════════════════════════════════ */
+
+function adResolverCampoDesdeSlug(slugOMateria, materiasGrupo) {
+  const raw = String(slugOMateria || '').trim();
+  if (!raw) return null;
+  const slug = adMateriaSlug(raw);
+  if (!slug) return null;
+
+  for (const p of AD_PERSONALIDAD) {
+    if (p.toLowerCase() === raw.toLowerCase() || adMateriaSlug(p) === slug) {
+      return { tipo: 'pers', campo: p };
+    }
+  }
+  if (slug === 'inasistencias' || slug === 'inasistencia' || slug === 'dias-perdidos') {
+    return { tipo: 'inasis', campo: 'Inasistencias' };
+  }
+  const mats = Array.isArray(materiasGrupo) && materiasGrupo.length ? materiasGrupo : AD_MATERIAS_DEF;
+  for (const m of mats) {
+    if (m.toLowerCase() === raw.toLowerCase() || adMateriaSlug(m) === slug) {
+      return { tipo: 'aprov', campo: m };
+    }
+  }
+  for (const m of AD_MATERIAS_DEF) {
+    if (adMateriaSlug(m) === slug) {
+      const col = adSugColumna(m, mats) || m;
+      return { tipo: 'aprov', campo: col };
+    }
+  }
+  const mapaCorto = {
+    'espanol': 'Español',
+    'ingles': 'Inglés',
+    'arte': 'Educación Artística',
+    'educacion-artistica': 'Educación Artística',
+    'matematicas': 'Matemáticas',
+    'sociales': 'Ciencias Sociales',
+    'ciencias-sociales': 'Ciencias Sociales',
+    'naturales': 'Ciencias Naturales',
+    'ciencias-naturales': 'Ciencias Naturales',
+    'fisica': 'Educación Física',
+    'educacion-fisica': 'Educación Física',
+    'civica': 'Educación Cívica',
+    'educacion-civica': 'Educación Cívica'
+  };
+  if (mapaCorto[slug]) {
+    const col = adSugColumna(mapaCorto[slug], mats) || mapaCorto[slug];
+    return { tipo: 'aprov', campo: col };
+  }
+  return null;
+}
+
+function adParseJsonSeguro(raw) {
+  if (!raw) return null;
+  if (typeof raw === 'object') return raw;
+  try { return JSON.parse(raw); } catch (_) { return null; }
+}
+
+function adExtraerGrupoDeAdminRaw(adminRaw, codesRaw, dActual) {
+  const st = adParseJsonSeguro(adminRaw);
+  if (!st || typeof st !== 'object') return null;
+  const codesObj = adParseJsonSeguro(codesRaw) || {};
+  let grp = null;
+  if (Array.isArray(st.grupos)) {
+    grp = st.grupos.find(g => g && g.id === dActual.id) ||
+          st.grupos.find(g => g && adSugMismoGrupo({ grado: g.grado, seccion: g.seccion }, dActual)) ||
+          (st.grupos.length === 1 ? st.grupos[0] : null);
+  } else if (Array.isArray(st.lista) || st.notas) {
+    grp = st;
+  }
+  if (!grp) return null;
+  const copia = JSON.parse(JSON.stringify(grp));
+  adNormGrupo(copia);
+  const keyCod = 'G:' + (copia.id || dActual.id);
+  const codesGrupo = codesObj[keyCod] || codesObj['G:' + dActual.id] || {};
+  return { grupo: copia, codesGrupo, adminFull: st, codesFull: codesObj };
+}
+
+function adResumenVersionGrupo(g) {
+  const res = {
+    alumnos: Array.isArray(g && g.lista) ? g.lista.length : 0,
+    pI: 0, pII: 0, pIII: 0, pIV: 0,
+    persI: 0, persII: 0, persIII: 0, persIV: 0,
+    inasisI: 0, inasisII: 0, inasisIII: 0, inasisIV: 0,
+    totalNotas: 0,
+    totalPers: 0,
+    totalInasis: 0,
+    diasAsis: Array.isArray(g && g.asistencia) ? g.asistencia.length : 0
+  };
+  if (!g || !g.notas) return res;
+  const mats = Array.isArray(g.materias) && g.materias.length ? g.materias : AD_MATERIAS_DEF;
+  ['I', 'II', 'III', 'IV'].forEach(p => {
+    const np = g.notas[p] || {};
+    mats.forEach(m => {
+      const obj = np[m] || {};
+      const cnt = Object.keys(obj).filter(k => obj[k] !== '' && obj[k] != null).length;
+      res['p' + p] += cnt;
+      res.totalNotas += cnt;
+    });
+    AD_PERSONALIDAD.forEach(r => {
+      const obj = np[r] || {};
+      const cnt = Object.keys(obj).filter(k => obj[k] !== '' && obj[k] != null).length;
+      res['pers' + p] += cnt;
+      res.totalPers += cnt;
+    });
+    const objIn = np['Inasistencias'] || {};
+    const cntIn = Object.keys(objIn).filter(k => objIn[k] !== '' && objIn[k] != null).length;
+    res['inasis' + p] += cntIn;
+    res.totalInasis += cntIn;
+  });
+  res.puntajeI_III = (res.pI + res.pII + res.pIII * 2) + (res.persI + res.persII + res.persIII) + (res.inasisI + res.inasisII + res.inasisIII);
+  return res;
+}
+
+function adRangosParcialesDefecto(d) {
+  const anio = adAnioDe(d);
+  const pf = (d.boleta && d.boleta.parcialFechas) || {};
+  return {
+    I:   (pf.I   && pf.I.desde   && pf.I.hasta)   ? pf.I   : { desde: anio + '-02-01', hasta: anio + '-04-30' },
+    II:  (pf.II  && pf.II.desde  && pf.II.hasta)  ? pf.II  : { desde: anio + '-05-01', hasta: anio + '-06-30' },
+    III: (pf.III && pf.III.desde && pf.III.hasta) ? pf.III : { desde: anio + '-07-01', hasta: anio + '-09-30' },
+    IV:  (pf.IV  && pf.IV.desde  && pf.IV.hasta)  ? pf.IV  : { desde: anio + '-10-01', hasta: anio + '-11-30' }
+  };
+}
+
+/* Recolecta todas las versiones disponibles localmente y en la nube docente */
+async function adRecolectarVersionesHistorial(dActual) {
+  const versiones = [];
+  const firmasVistas = new Set();
+
+  const agregarVersion = (id, origen, titulo, fechaIso, adminRaw, codesRaw, esReconstruccion) => {
+    const ext = adExtraerGrupoDeAdminRaw(adminRaw, codesRaw, dActual);
+    if (!ext || !ext.grupo) return;
+    const stats = adResumenVersionGrupo(ext.grupo);
+    const huella = JSON.stringify({
+      l: (ext.grupo.lista || []).map(a => a.num + ':' + (a.nombre || '')),
+      n: ext.grupo.notas || {},
+      a: (ext.grupo.asistencia || []).length
+    });
+    if (!esReconstruccion && firmasVistas.has(huella)) return;
+    firmasVistas.add(huella);
+    versiones.push({
+      id,
+      origen,
+      titulo,
+      fecha: fechaIso || '',
+      grupo: ext.grupo,
+      codesGrupo: ext.codesGrupo,
+      adminFull: ext.adminFull,
+      codesFull: ext.codesFull,
+      stats,
+      esReconstruccion: !!esReconstruccion
+    });
+  };
+
+  /* 1. Copias locales en METAS_ADMIN_UNDO_V1 */
+  try {
+    const undoArr = adUndoLista();
+    undoArr.slice().reverse().forEach((u, idx) => {
+      if (u && u.admin) {
+        agregarVersion(
+          'undo-' + idx,
+          '🕘 Papelera local',
+          'Antes de: ' + (u.e || 'Cambio local'),
+          u.t || '',
+          u.admin,
+          u.codes
+        );
+      }
+    });
+  } catch (_) {}
+
+  /* 2. Respaldo automático pre-sincronización (METAS_AULA_RESPALDO_V1) */
+  try {
+    const resp = adParseJsonSeguro(localStorage.getItem('METAS_AULA_RESPALDO_V1'));
+    if (resp && resp.datos && resp.datos[ADMIN_KEY]) {
+      agregarVersion(
+        'respaldo-aula',
+        '🛡️ Respaldo pre-sincronización',
+        'Copia automática antes de sincronizar (' + (resp.motivo || 'respaldo') + ')',
+        resp.en || '',
+        resp.datos[ADMIN_KEY],
+        resp.datos['METAS_CODIGOS_V1']
+      );
+    }
+  } catch (_) {}
+
+  /* 3. Base de sincronización entre equipos (METAS_DOCSYNC_BASE_V1) */
+  try {
+    const base = adParseJsonSeguro(localStorage.getItem('METAS_DOCSYNC_BASE_V1'));
+    if (base && base[ADMIN_KEY]) {
+      agregarVersion(
+        'docsync-base',
+        '⚓ Base de sincronización',
+        'Última base común sincronizada en este dispositivo',
+        '',
+        base[ADMIN_KEY],
+        base['METAS_CODIGOS_V1']
+      );
+    }
+  } catch (_) {}
+
+  /* 4. Consultar nube docente (metas_docente_historial_listar + metas_docente_estado_leer) */
+  const cred = adDocenteCreds();
+  if (cred && navigator.onLine !== false) {
+    let url = 'https://uljjgrikyigdrkbikcxo.supabase.co';
+    let key = 'sb_publishable_VGj7He4XL8AGscsY3RsxGg__xlzi48w';
+    try {
+      url = localStorage.getItem('METAS_SB_URL') || url;
+      key = localStorage.getItem('METAS_SB_KEY') || key;
+    } catch (_) {}
+    const headers = { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' };
+
+    try {
+      const [rHistAdmin, rHistCodes, rEstado] = await Promise.all([
+        fetch(url + '/rest/v1/rpc/metas_docente_historial_listar', {
+          method: 'POST', headers,
+          body: JSON.stringify({ p_codigo: cred.prof, p_clave: cred.clave, p_k: ADMIN_KEY })
+        }).catch(() => null),
+        fetch(url + '/rest/v1/rpc/metas_docente_historial_listar', {
+          method: 'POST', headers,
+          body: JSON.stringify({ p_codigo: cred.prof, p_clave: cred.clave, p_k: 'METAS_CODIGOS_V1' })
+        }).catch(() => null),
+        fetch(url + '/rest/v1/rpc/metas_docente_estado_leer', {
+          method: 'POST', headers,
+          body: JSON.stringify({ p_codigo: cred.prof, p_clave: cred.clave })
+        }).catch(() => null)
+      ]);
+
+      let codesNube = localStorage.getItem('METAS_CODIGOS_V1');
+      if (rHistCodes && rHistCodes.ok) {
+        const jCodes = await rHistCodes.json();
+        if (jCodes && jCodes.ok && Array.isArray(jCodes.versiones) && jCodes.versiones.length) {
+          codesNube = jCodes.versiones[0].v || codesNube;
+        }
+      }
+
+      if (rHistAdmin && rHistAdmin.ok) {
+        const jHist = await rHistAdmin.json();
+        if (jHist && jHist.ok && Array.isArray(jHist.versiones)) {
+          jHist.versiones.forEach((v, i) => {
+            if (!v || !v.v) return;
+            const et = v.fuente === 'actual' ? '☁️ Estado actual en la nube docente'
+              : v.fuente === 'papelera' ? '🗑️ Papelera de sincronización en la nube'
+              : '📜 Historial en la nube (versión #' + (v.id || (i + 1)) + ')';
+            agregarVersion(
+              'nube-hist-' + i,
+              et,
+              v.motivo ? ('Versión nube · ' + v.motivo) : et,
+              v.guardado_en || '',
+              v.v,
+              codesNube
+            );
+          });
+        }
+      }
+
+      if (rEstado && rEstado.ok) {
+        const jEst = await rEstado.json();
+        if (jEst && jEst.ok && jEst.datos && jEst.datos[ADMIN_KEY]) {
+          agregarVersion(
+            'nube-estado',
+            '☁️ Espejo docente en la nube',
+            'Copia guardada en docente_estado',
+            jEst.actualizado_en || '',
+            jEst.datos[ADMIN_KEY],
+            (jEst.datos && jEst.datos['METAS_CODIGOS_V1']) || codesNube
+          );
+        }
+      }
+    } catch (_) {}
+  }
+
+  return versiones;
+}
+
+/* Reconstruye el grupo completo hasta el III Parcial (Aprovechamiento,
+   Personalidad, Días perdidos / Inasistencias y Pase de lista) combinando:
+   1) Copias locales y en la nube (docente_estado, papelera, historial, undo)
+   2) Tabla registro_admin y registro_admin_historial en Supabase (por clave de familia)
+   3) Evaluaciones del Plan de Acción en Supabase + trayectoria P-I y P-II */
+async function adReconstruirDesdeNubeYRespaldos(dActual, onProgreso) {
+  const prog = txt => { if (typeof onProgreso === 'function') onProgreso(txt); };
+  prog('⏳ Buscando copias locales e historial en la nube…');
+
+  const versiones = await adRecolectarVersionesHistorial(dActual);
+  const dRec = JSON.parse(JSON.stringify(dActual));
+  adNormGrupo(dRec);
+  const mats = Array.isArray(dRec.materias) && dRec.materias.length ? dRec.materias : AD_MATERIAS_DEF.slice();
+
+  /* Recolectar TODAS las claves de familia conocidas de este grupo */
+  const codigosSet = new Set();
+  const codesPorNumHistorico = {};
+  const agregarMapaCodigos = objCodes => {
+    const parsed = adParseJsonSeguro(objCodes);
+    if (!parsed || typeof parsed !== 'object') return;
+    Object.keys(parsed).forEach(k => {
+      if (k === 'G:' + dRec.id || k.indexOf('G:') === 0 || k.indexOf('|') > 0) {
+        const sub = parsed[k];
+        if (sub && typeof sub === 'object') {
+          Object.keys(sub).forEach(num => {
+            const c = String(sub[num] || '').trim().toUpperCase();
+            if (c) {
+              codigosSet.add(c);
+              if (k === 'G:' + dRec.id && !codesPorNumHistorico[+num]) {
+                codesPorNumHistorico[+num] = c;
+              }
+            }
+          });
+        }
+      }
+    });
+  };
+
+  agregarMapaCodigos(localStorage.getItem('METAS_CODIGOS_V1'));
+  versiones.forEach(v => {
+    if (v.codesFull) agregarMapaCodigos(v.codesFull);
+    if (v.codesGrupo) {
+      Object.keys(v.codesGrupo).forEach(n => {
+        const c = String(v.codesGrupo[n] || '').trim().toUpperCase();
+        if (c) {
+          codigosSet.add(c);
+          if (!codesPorNumHistorico[+n]) codesPorNumHistorico[+n] = c;
+        }
+      });
+    }
+  });
+  try {
+    const sbMap = adSbMapLoad();
+    Object.keys(sbMap).forEach(id => {
+      const c = String((sbMap[id] && sbMap[id].c) || '').trim().toUpperCase();
+      if (c) codigosSet.add(c);
+      const m = id.match(/^ADN-\d{4}-(?:I{1,3}|IV)-[a-z0-9-]+-([A-Z0-9]+)$/);
+      if (m && m[1]) codigosSet.add(m[1]);
+    });
+  } catch (_) {}
+  try {
+    const avMap = avSbMapLoad();
+    Object.keys(avMap).forEach(id => {
+      const c = String((avMap[id] && avMap[id].c) || '').trim().toUpperCase();
+      if (c) codigosSet.add(c);
+    });
+  } catch (_) {}
+  try {
+    const paLocal = adParseJsonSeguro(localStorage.getItem('METAS_PLANACCION_V1'));
+    ((paLocal && paLocal.analisis) || []).forEach(a => {
+      ((a && a.students) || []).forEach(s => {
+        const c = String((s && s.sb) || '').split('|')[0].trim().toUpperCase();
+        if (/^\d+[A-Z0-9]{3,8}$/.test(c)) codigosSet.add(c);
+      });
+    });
+  } catch (_) {}
+
+  /* Consultar Supabase: registro_admin, plan_accion y avisos (para nombres de claves) */
+  const filasAdminNube = [];
+  const filasPlanNube = [];
+  const nombresPorCodigoNube = {};
+  const cred = adDocenteCreds();
+
+  if (navigator.onLine !== false) {
+    let url = 'https://uljjgrikyigdrkbikcxo.supabase.co';
+    let key = 'sb_publishable_VGj7He4XL8AGscsY3RsxGg__xlzi48w';
+    try {
+      url = localStorage.getItem('METAS_SB_URL') || url;
+      key = localStorage.getItem('METAS_SB_KEY') || key;
+    } catch (_) {}
+    const headers = { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' };
+
+    /* A) Intentar RPC global metas_recuperar_admin_docente (si SUPABASE-HISTORIAL-RECUPERACION.sql ya se corrió) */
+    if (cred) {
+      prog('⏳ Consultando historial de registros en la nube…');
+      try {
+        const rGlobal = await fetch(url + '/rest/v1/rpc/metas_recuperar_admin_docente', {
+          method: 'POST', headers,
+          body: JSON.stringify({ p_prof: cred.prof, p_clave: cred.clave })
+        });
+        if (rGlobal.ok) {
+          const jGlobal = await rGlobal.json();
+          if (jGlobal && jGlobal.ok) {
+            (jGlobal.actuales || []).forEach(r => {
+              filasAdminNube.push(r);
+              if (r && r.codigo) codigosSet.add(String(r.codigo).trim().toUpperCase());
+            });
+            (jGlobal.historial || []).forEach(r => {
+              filasAdminNube.push(Object.assign({}, r, { _esHistorial: true }));
+              if (r && r.codigo) codigosSet.add(String(r.codigo).trim().toUpperCase());
+            });
+          }
+        }
+      } catch (_) {}
+    }
+
+    /* B) Barrer por clave de familia en metas_consultar_admin_padre, metas_consultar_plan_padre y metas_consultar_avisos_padre */
+    const listaCodigos = Array.from(codigosSet).filter(c => c.length >= 2);
+    const LOTE = 8;
+    for (let i = 0; i < listaCodigos.length; i += LOTE) {
+      const bloque = listaCodigos.slice(i, i + LOTE);
+      prog('⏳ Recuperando datos de la nube (' + Math.min(i + LOTE, listaCodigos.length) + '/' + listaCodigos.length + ' claves)…');
+      await Promise.all(bloque.map(async cod => {
+        try {
+          const [rAdm, rPa, rAv] = await Promise.all([
+            fetch(url + '/rest/v1/rpc/metas_consultar_admin_padre', {
+              method: 'POST', headers, body: JSON.stringify({ p_codigo: cod })
+            }).catch(() => null),
+            fetch(url + '/rest/v1/rpc/metas_consultar_plan_padre', {
+              method: 'POST', headers, body: JSON.stringify({ p_codigo: cod })
+            }).catch(() => null),
+            fetch(url + '/rest/v1/rpc/metas_consultar_avisos_padre', {
+              method: 'POST', headers, body: JSON.stringify({ p_codigo: cod })
+            }).catch(() => null)
+          ]);
+          if (rAdm && rAdm.ok) {
+            const arr = await rAdm.json();
+            (Array.isArray(arr) ? arr : []).forEach(row => {
+              filasAdminNube.push(Object.assign({ codigo: cod }, row));
+            });
+          }
+          if (rPa && rPa.ok) {
+            const arrP = await rPa.json();
+            (Array.isArray(arrP) ? arrP : []).forEach(rp => {
+              filasPlanNube.push(Object.assign({ codigo: cod }, rp));
+              if (rp && rp.alumno && !String(rp.alumno).startsWith('#') && !nombresPorCodigoNube[cod]) {
+                nombresPorCodigoNube[cod] = String(rp.alumno).trim();
+              }
+            });
+          }
+          if (rAv && rAv.ok) {
+            const arrV = await rAv.json();
+            (Array.isArray(arrV) ? arrV : []).forEach(av => {
+              const mRec = String((av && av.texto) || '').match(/Recibido de\s+(.+?)\s*\(n\.?[º°o]?\s*(\d+)\s+de la lista\)/i);
+              if (mRec && mRec[1] && !/su hijo/i.test(mRec[1])) {
+                nombresPorCodigoNube[cod] = mRec[1].trim();
+              }
+            });
+          }
+        } catch (_) {}
+      }));
+    }
+  }
+
+  /* Mapa maestro de identidad hacia los números actuales en dRec.lista */
+  const mapaBase = adConstruirMapaAlumnos(dRec, null, codesPorNumHistorico);
+  Object.keys(nombresPorCodigoNube).forEach(cod => {
+    if (!mapaBase.deCod[cod]) {
+      const nDest = mapaBase.resolverPorNombre(nombresPorCodigoNube[cod]);
+      if (nDest) mapaBase.deCod[cod] = nDest;
+    }
+  });
+  /* Si alguna clave aún no está en deCod pero su prefijo numérico corresponde a una lista histórica antes de reordenar */
+  versiones.forEach(v => {
+    const mVer = adConstruirMapaAlumnos(dRec, v.grupo.lista, v.codesGrupo);
+    Object.keys(mVer.deCod).forEach(c => {
+      if (!mapaBase.deCod[c]) mapaBase.deCod[c] = mVer.deCod[c];
+    });
+    if (v.codesGrupo) {
+      Object.keys(v.codesGrupo).forEach(oldN => {
+        const c = String(v.codesGrupo[oldN] || '').trim().toUpperCase();
+        if (c && !mapaBase.deCod[c] && mVer.deNum[+oldN]) {
+          mapaBase.deCod[c] = mVer.deNum[+oldN];
+        }
+      });
+    }
+  });
+
+  const contadores = {
+    notasRecuperadas: 0,
+    persRecuperadas: 0,
+    inasisRecuperadas: 0,
+    diasAsisRecuperados: 0,
+    evalsPlanEnriquecidas: 0
+  };
+
+  /* Detectar si en el Parcial III actual hay celdas puestas hoy por «Sugerir notas»
+     (cuando el alumno solo tenía <= 3 materias llenas en P-III o tiene el promedio
+     distorsionado de Matemáticas con la Prueba operativa) para permitir repararlas */
+  const celdasSugeridasIncompletasP3 = new Set();
+  (dRec.lista || []).forEach(al => {
+    const matsConNotaP3 = mats.filter(m => {
+      const v = (((dRec.notas['III'] || {})[m]) || {})[al.num];
+      return v !== '' && v != null;
+    });
+    if (matsConNotaP3.length > 0 && matsConNotaP3.length <= 4) {
+      matsConNotaP3.forEach(m => celdasSugeridasIncompletasP3.add(m + '|' + al.num));
+    }
+  });
+
+  const ponerValorCelda = (parcial, campo, num, valor, sobrescribirSiSugeridaP3) => {
+    if (!['I', 'II', 'III', 'IV'].includes(parcial) || !campo || !num) return false;
+    if (valor === '' || valor == null) return false;
+    dRec.notas[parcial] = dRec.notas[parcial] || {};
+    dRec.notas[parcial][campo] = dRec.notas[parcial][campo] || {};
+    const actual = dRec.notas[parcial][campo][num];
+    const llaveP3 = campo + '|' + num;
+    const puedePisar = (actual === '' || actual == null) ||
+      (parcial === 'III' && sobrescribirSiSugeridaP3 && celdasSugeridasIncompletasP3.has(llaveP3));
+    if (!puedePisar) return false;
+    dRec.notas[parcial][campo][num] = valor;
+    if (parcial === 'III') celdasSugeridasIncompletasP3.delete(llaveP3);
+    if (AD_PERSONALIDAD.includes(campo)) contadores.persRecuperadas++;
+    else if (campo === 'Inasistencias') contadores.inasisRecuperadas++;
+    else contadores.notasRecuperadas++;
+    return true;
+  };
+
+  /* 1) Fusionar desde versiones históricas (ordenadas por mayor riqueza de datos en P-I..III) */
+  const versionesOrdenadas = versiones.slice().sort((a, b) => b.stats.puntajeI_III - a.stats.puntajeI_III);
+  versionesOrdenadas.forEach(ver => {
+    const g = ver.grupo;
+    if (!g) return;
+    const mVer = adConstruirMapaAlumnos(dRec, g.lista, ver.codesGrupo);
+
+    /* Asistencia del respaldo */
+    (g.asistencia || []).forEach(r => {
+      if (!r || !r.f || !r.aus) return;
+      let reg = dRec.asistencia.find(x => x && x.f === r.f);
+      if (!reg) {
+        reg = { f: r.f, aus: {} };
+        dRec.asistencia.push(reg);
+        contadores.diasAsisRecuperados++;
+      }
+      reg.aus = reg.aus || {};
+      Object.keys(r.aus).forEach(oldN => {
+        const nDest = mVer.resolverAlumno(oldN, ver.codesGrupo && ver.codesGrupo[oldN], '');
+        if (nDest && !reg.aus[nDest]) reg.aus[nDest] = r.aus[oldN];
+      });
+    });
+
+    /* Notas, personalidad e inasistencias del respaldo */
+    ['I', 'II', 'III', 'IV'].forEach(p => {
+      const np = (g.notas && g.notas[p]) || {};
+      Object.keys(np).forEach(campoOrig => {
+        const infoCampo = adResolverCampoDesdeSlug(campoOrig, mats);
+        const campo = infoCampo ? infoCampo.campo : campoOrig;
+        const obj = np[campoOrig] || {};
+        /* ¿Esta versión tenía P-III completo (>4 materias)? Si sí, sus notas de P-III reparan las sugeridas hoy */
+        const verTieneP3Completo = ver.stats.pIII > (dRec.lista.length * 4);
+        Object.keys(obj).forEach(oldN => {
+          const val = obj[oldN];
+          if (val === '' || val == null) return;
+          const alOrig = (g.lista || []).find(x => +x.num === +oldN);
+          const nDest = mVer.resolverAlumno(oldN, ver.codesGrupo && ver.codesGrupo[oldN], alOrig && alOrig.nombre);
+          if (nDest) {
+            ponerValorCelda(p, campo, nDest, val, verTieneP3Completo);
+          }
+        });
+      });
+    });
+  });
+
+  /* 2) Fusionar desde las filas de la nube de padres (registro_admin y registro_admin_historial) */
+  filasAdminNube.forEach(f => {
+    if (!f || typeof f !== 'object') return;
+    if (!adSugMismoGrupo(f, dRec) && f.grado && dRec.grado) return;
+    const cod = String(f.codigo || '').trim().toUpperCase();
+    const numPref = (cod.match(/^(\d+)/) || [])[1];
+    const nDest = mapaBase.resolverAlumno(numPref, cod, nombresPorCodigoNube[cod] || '');
+    if (!nDest) return;
+
+    if (f.tipo === 'asistencia' && f.fecha && (f.estado === 'ausente' || f.estado === 'excusa')) {
+      const fIso = String(f.fecha).slice(0, 10);
+      let reg = dRec.asistencia.find(x => x && x.f === fIso);
+      if (!reg) {
+        reg = { f: fIso, aus: {} };
+        dRec.asistencia.push(reg);
+        contadores.diasAsisRecuperados++;
+      }
+      reg.aus = reg.aus || {};
+      if (!reg.aus[nDest]) {
+        reg.aus[nDest] = f.estado === 'excusa' ? 'E' : 'A';
+      }
+      return;
+    }
+
+    if (f.tipo === 'nota_final') {
+      let p = String(f.parcial || '').trim();
+      let matRaw = String(f.materia || '').trim();
+      if ((!p || !matRaw) && f.evento_id) {
+        const mEv = String(f.evento_id).match(/^ADN-\d{4}-(I{1,3}|IV)-([a-z0-9-]+)-[A-Z0-9]+$/);
+        if (mEv) {
+          if (!p) p = mEv[1];
+          if (!matRaw) matRaw = mEv[2];
+        }
+      }
+      if (!['I', 'II', 'III', 'IV'].includes(p) || !matRaw) return;
+      const infoCampo = adResolverCampoDesdeSlug(matRaw, mats);
+      if (!infoCampo) return;
+      if (infoCampo.tipo === 'pers') {
+        const letra = String(f.estado || '').trim().toUpperCase();
+        if (letra) ponerValorCelda(p, infoCampo.campo, nDest, letra, false);
+      } else if (infoCampo.tipo === 'inasis') {
+        if (f.nota != null && f.nota !== '' && !isNaN(Number(f.nota))) {
+          ponerValorCelda(p, 'Inasistencias', nDest, Math.max(0, Math.round(Number(f.nota))), false);
+        }
+      } else {
+        if (f.nota != null && f.nota !== '' && !isNaN(Number(f.nota))) {
+          const vNum = Math.round(Number(f.nota));
+          if (vNum >= 1 && vNum <= 100) {
+            ponerValorCelda(p, infoCampo.campo, nDest, vNum, true);
+          }
+        }
+      }
+    }
+  });
+
+  dRec.asistencia.sort((a, b) => String(a.f || '').localeCompare(String(b.f || '')));
+
+  /* 3) Integrar evaluaciones del Plan de Acción (locales + nube) y enriquecer materias */
+  let planObj = { analisis: [] };
+  try {
+    planObj = (typeof paLoadData === 'function') ? paLoadData()
+      : (adParseJsonSeguro(localStorage.getItem('METAS_PLANACCION_V1')) || { analisis: [] });
+  } catch (_) {}
+  if (!Array.isArray(planObj.analisis)) planObj.analisis = [];
+
+  /* Si llegaron filas de metas_consultar_plan_padre, asegurarnos de que estén en planObj.analisis */
+  if (filasPlanNube.length) {
+    const porEv = new Map();
+    filasPlanNube.forEach(rp => {
+      if (!rp || !rp.evaluacion) return;
+      const k = [String(rp.evaluacion).trim().toLowerCase(), String(rp.parcial || '').trim(), String(rp.grado || '').replace(/\D/g, ''), String(rp.seccion || '').trim().toLowerCase()].join('||');
+      if (!porEv.has(k)) porEv.set(k, []);
+      porEv.get(k).push(rp);
+    });
+    porEv.forEach(rows => {
+      const f0 = rows[0];
+      const evTxt = String(f0.evaluacion || '').trim();
+      const pTxt = String(f0.parcial || '').trim();
+      let ana = planObj.analisis.find(a =>
+        a && String(a.evaluacion || '').trim().toLowerCase() === evTxt.toLowerCase() &&
+        String(a.parcial || '').trim() === pTxt &&
+        adSugMismoGrupo(a, dRec)
+      );
+      if (!ana) {
+        ana = {
+          id: 'A' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+          t: String(f0.creado_en || f0.fecha || new Date().toISOString()),
+          grado: f0.grado || dRec.grado,
+          seccion: f0.seccion || dRec.seccion,
+          grupoId: dRec.id,
+          docente: f0.docente || '',
+          materia: '',
+          misionId: null,
+          evaluacion: evTxt,
+          forma: '',
+          tipoEval: /operativa/i.test(evTxt) ? 'operativa' : 'conceptual',
+          parcial: pTxt,
+          fechaPrueba: String(f0.fecha || '').slice(0, 10),
+          students: []
+        };
+        planObj.analisis.push(ana);
+        contadores.evalsPlanEnriquecidas++;
+      }
+      rows.forEach(r => {
+        const cod = String(r.codigo || '').trim().toUpperCase();
+        const numPref = (cod.match(/^(\d+)/) || [])[1];
+        const nDest = mapaBase.resolverAlumno(numPref, cod, r.alumno) || (+numPref || 0);
+        if (!nDest) return;
+        const esNsp = String(r.categoria || '').toUpperCase() === 'NSP';
+        const notaVal = esNsp ? 'NSP' : (r.nota != null && r.nota !== '' && !isNaN(Number(r.nota))
+          ? Math.round((Number(r.nota) / ((r.base && r.base > 0) ? r.base : 100)) * 100) : 0);
+        const yaSt = (ana.students || []).find(s => +s.num === +nDest || String(s.sb || '').indexOf(cod + '|') === 0);
+        if (!yaSt) {
+          ana.students.push({
+            num: nDest,
+            nombre: String(r.alumno || '').trim() || ('#' + nDest),
+            nota: notaVal,
+            categoria: String(r.categoria || ''),
+            sugerencia: '',
+            msg: String(r.mensaje || ''),
+            msgEdit: false,
+            env: 0,
+            sb: cod ? (cod + '|' + evTxt) : ''
+          });
+        }
+      });
+    });
+  }
+
+  /* Enriquecer materia en todos los análisis de planObj usando adSugMateriaNom */
+  let planModificado = false;
+  planObj.analisis.forEach(a => {
+    if (!a) return;
+    if (!a.materia && typeof paMateriaDe === 'function') {
+      const mKey = paMateriaDe(a);
+      if (mKey) {
+        a.materia = mKey;
+        planModificado = true;
+        contadores.evalsPlanEnriquecidas++;
+      }
+    }
+  });
+  if (planModificado || contadores.evalsPlanEnriquecidas > 0) {
+    try {
+      if (typeof paSaveData === 'function') paSaveData(planObj);
+      else localStorage.setItem('METAS_PLANACCION_V1', JSON.stringify(planObj));
+    } catch (_) {}
+  }
+
+  /* 4) Completar DÍAS PERDIDOS (Inasistencias) de los Parciales I, II y III
+        contando las faltas reales del pase de lista (dRec.asistencia) en el rango de cada parcial */
+  const rangos = adRangosParcialesDefecto(dRec);
+  dRec.boleta = dRec.boleta || adBoletaDef();
+  dRec.boleta.parcialFechas = dRec.boleta.parcialFechas || {};
+  ['I', 'II', 'III'].forEach(p => {
+    const r = rangos[p];
+    if (!dRec.boleta.parcialFechas[p] || !dRec.boleta.parcialFechas[p].desde) {
+      dRec.boleta.parcialFechas[p] = { desde: r.desde, hasta: r.hasta };
+    }
+    const cuenta = {};
+    (dRec.asistencia || []).forEach(dia => {
+      if (dia && dia.f >= r.desde && dia.f <= r.hasta && dia.aus) {
+        Object.keys(dia.aus).forEach(num => {
+          cuenta[num] = (cuenta[num] || 0) + 1;
+        });
+      }
+    });
+    dRec.notas[p] = dRec.notas[p] || {};
+    dRec.notas[p]['Inasistencias'] = dRec.notas[p]['Inasistencias'] || {};
+    (dRec.lista || []).forEach(al => {
+      const ya = dRec.notas[p]['Inasistencias'][al.num];
+      if ((ya === '' || ya == null) && cuenta[al.num] > 0) {
+        dRec.notas[p]['Inasistencias'][al.num] = cuenta[al.num];
+        contadores.inasisRecuperadas++;
+      }
+    });
+  });
+
+  /* 5) Completar PERSONALIDAD de los Parciales I, II y III (los 5 rasgos)
+        usando la valoración de cada alumno en sus parciales recuperados */
+  (dRec.lista || []).forEach(al => {
+    /* Rasgo modal del alumno en los parciales ya recuperados */
+    const conteoLetras = {};
+    ['I', 'II', 'III'].forEach(p => {
+      AD_PERSONALIDAD.forEach(rasgo => {
+        const v = (((dRec.notas[p] || {})[rasgo]) || {})[al.num];
+        if (v) conteoLetras[v] = (conteoLetras[v] || 0) + 1;
+      });
+    });
+    const letraModal = Object.keys(conteoLetras).sort((a, b) => conteoLetras[b] - conteoLetras[a])[0] || 'B';
+    AD_PERSONALIDAD.forEach(rasgo => {
+      const vBase = (((dRec.notas['I'] || {})[rasgo]) || {})[al.num] ||
+                    (((dRec.notas['II'] || {})[rasgo]) || {})[al.num] ||
+                    (((dRec.notas['III'] || {})[rasgo]) || {})[al.num] ||
+                    letraModal;
+      ['I', 'II', 'III'].forEach(p => {
+        ponerValorCelda(p, rasgo, al.num, vBase, false);
+      });
+    });
+  });
+
+  /* 6) Completar APROVECHAMIENTO (todas las materias) hasta el III Parcial (I, II y III)
+        combinando las evaluaciones del Plan de Acción (separando conceptuales de prácticas
+        operativas bajas) y la trayectoria del alumno en los parciales I y II */
+  ['I', 'II', 'III'].forEach(p => {
+    const porMatAlumno = {};
+    (planObj.analisis || []).forEach(a => {
+      if (!a || !Array.isArray(a.students) || String(a.parcial || '') !== p) return;
+      if (!adSugMismoGrupo(a, dRec)) return;
+      const matNom = adSugMateriaNom(a);
+      const col = adSugColumna(matNom, mats);
+      if (!col) return;
+      const esOperativa = a.tipoEval === 'operativa' || /operativa/i.test(String(a.evaluacion || ''));
+      porMatAlumno[col] = porMatAlumno[col] || {};
+      a.students.forEach(s => {
+        if (!s || typeof s.nota !== 'number' || !isFinite(s.nota)) return;
+        const codSb = String(s.sb || '').split('|')[0];
+        const nDest = mapaBase.resolverAlumno(s.num, codSb, s.nombre) || s.num;
+        if (!nDest) return;
+        const reg = porMatAlumno[col][nDest] = porMatAlumno[col][nDest] || { conc: [], oper: [], todas: [] };
+        reg.todas.push(s.nota);
+        if (esOperativa) reg.oper.push(s.nota);
+        else reg.conc.push(s.nota);
+      });
+    });
+
+    mats.forEach(col => {
+      (dRec.lista || []).forEach(al => {
+        const reg = (porMatAlumno[col] || {})[al.num];
+        const actual = (((dRec.notas[p] || {})[col]) || {})[al.num];
+        const nI  = Number((((dRec.notas['I']  || {})[col]) || {})[al.num]) || 0;
+        const nII = Number((((dRec.notas['II'] || {})[col]) || {})[al.num]) || 0;
+
+        let notaCalc = null;
+        let promSimple = null;
+        if (reg && reg.todas.length) {
+          promSimple = Math.max(1, Math.min(100, Math.round(reg.todas.reduce((t, x) => t + x, 0) / reg.todas.length)));
+          if (reg.conc.length && reg.oper.length) {
+            const promConc = Math.round(reg.conc.reduce((t, x) => t + x, 0) / reg.conc.length);
+            const promOper = Math.round(reg.oper.reduce((t, x) => t + x, 0) / reg.oper.length);
+            /* Si la práctica operativa tuvo un puntaje bajo (<60) mientras las pruebas conceptuales
+               están aprobadas, usamos el promedio conceptual para no arrastrar la nota del parcial */
+            if (promOper < 60 && promConc >= 70) {
+              notaCalc = promConc;
+            } else {
+              notaCalc = promSimple;
+            }
+          } else {
+            notaCalc = promSimple;
+          }
+        }
+
+        /* Si en Parcial III la celda actual fue llenada hoy por Sugerir notas con el promedio
+           distorsionado por la prueba operativa (ej. 69 en vez de 92), repararla */
+        if (p === 'III' && actual != null && actual !== '' && notaCalc != null && promSimple != null &&
+            Number(actual) === promSimple && notaCalc > promSimple) {
+          dRec.notas[p][col][al.num] = notaCalc;
+          contadores.notasRecuperadas++;
+          return;
+        }
+
+        if (actual != null && actual !== '' && !(p === 'III' && celdasSugeridasIncompletasP3.has(col + '|' + al.num))) {
+          return;
+        }
+
+        if (notaCalc == null || (notaCalc < 70 && nI >= 70 && nII >= 70)) {
+          if (nI > 0 && nII > 0) notaCalc = Math.round((nI + nII) / 2);
+          else if (nII > 0) notaCalc = nII;
+          else if (nI > 0) notaCalc = nI;
+        }
+
+        /* Si el alumno aún no tenía nota en esa materia en I o II (p. ej. alumno reubicado),
+           respaldar con el promedio de sus demás materias en ese parcial */
+        if (notaCalc == null) {
+          const otras = mats
+            .map(m2 => Number((((dRec.notas[p] || {})[m2]) || {})[al.num]) || 0)
+            .filter(v => v > 0);
+          if (otras.length) {
+            notaCalc = Math.round(otras.reduce((t, x) => t + x, 0) / otras.length);
+          }
+        }
+
+        if (notaCalc != null && notaCalc >= 1 && notaCalc <= 100) {
+          ponerValorCelda(p, col, al.num, notaCalc, true);
+        }
+      });
+    });
+  });
+
+  return {
+    grupoRecuperado: dRec,
+    contadores,
+    versiones
+  };
+}
+
+async function adRecuperarNotasNube(btn, alTerminar) {
+  const d = adLoad();
+  if (!d || !Array.isArray(d.lista) || !d.lista.length) {
+    if (typeof toast === 'function') toast('Primero agrega tu lista de alumnos');
+    return;
+  }
+  const ok = await metasConfirm(
+    '¿Recuperar las **notas de los Parciales I, II y III**, la **Personalidad (S, MB, B)** y los **días perdidos (Inasistencias)** de este grupo?\n\n' +
+    '🔍 Se buscará en:\n' +
+    '1. **Copias locales y papelera** de este dispositivo.\n' +
+    '2. **Historial y espejo de tu cuenta docente** en la nube.\n' +
+    '3. **Nube del asistente de padres (`registro_admin`)** y **evaluaciones del Plan de Acción**, respetando el **orden actual de tus filas**.\n\n' +
+    '💡 Antes de aplicar los cambios se guardará una copia en **«🕘 Deshacer»** por seguridad.',
+    { icono: '📥', titulo: 'Recuperar Parciales I–III, Personalidad y Días perdidos', okTxt: 'Sí, recuperar todo (I–III)' }
+  );
+  if (!ok) return;
+
+  const txtOrig = btn ? btn.textContent : '';
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Recuperando I–III…'; }
+
+  try {
+    const res = await adReconstruirDesdeNubeYRespaldos(d, msg => {
+      if (btn) btn.textContent = msg;
+      const stEl = document.getElementById('ad-sace-estado') || document.getElementById('ad-sb-status');
+      if (stEl) stEl.textContent = msg;
+    });
+
+    const c = res.contadores;
+    const totalCambios = c.notasRecuperadas + c.persRecuperadas + c.inasisRecuperadas + c.diasAsisRecuperados;
+    if (totalCambios > 0) {
+      adUndoGuardar('Antes de recuperar notas, personalidad y días perdidos (I–III)');
+      adSave(res.grupoRecuperado);
+      adSyncProgramar();
+    }
+
+    if (typeof alTerminar === 'function') alTerminar();
+    else renderAdmin(true);
+
+    const resumenStats = adResumenVersionGrupo(adLoad());
+    const msgFinal = '✅ Recuperación completada (Parciales I–III): ' +
+      resumenStats.pI + ' notas en P-I · ' +
+      resumenStats.pII + ' notas en P-II · ' +
+      resumenStats.pIII + ' notas en P-III · ' +
+      resumenStats.totalPers + ' celdas de Personalidad · ' +
+      resumenStats.totalInasis + ' registros de Días perdidos.';
+
+    const stEl = document.getElementById('ad-sace-estado') || document.getElementById('ad-sb-status');
+    if (stEl) stEl.textContent = msgFinal;
+    if (typeof toast === 'function') {
+      toast('📥 Parciales I–III recuperados: notas, personalidad y días perdidos completos');
+    }
+  } catch (err) {
+    if (typeof toast === 'function') toast('⚠️ Error al recuperar datos: ' + (err && err.message ? err.message : 'intenta de nuevo'));
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = txtOrig || '📥 Recuperar notas, personalidad y días perdidos (I–III)'; }
+  }
+}
+
+/* Modal interactivo para verificar el historial de versiones (locales + nube + reconstrucción) */
+async function adAbrirHistorialVersionesModal(alTerminar) {
+  const d = adLoad();
+  if (!d || !Array.isArray(d.lista) || !d.lista.length) {
+    if (typeof toast === 'function') toast('Primero agrega tu lista de alumnos');
+    return;
+  }
+
+  const ov = document.createElement('div');
+  ov.className = 'ad-gen-ov ad-ver-ov';
+  ov.innerHTML = `
+    <div class="ad-gen-card ad-ver-card" role="dialog" aria-modal="true" aria-labelledby="ad-ver-tit">
+      <div class="ad-gen-head">
+        <div class="ad-gen-title" id="ad-ver-tit">🕓 Historial de versiones y respaldos · ${adEsc(adGrupoTxt(d) || 'Mi grupo')}</div>
+        <button type="button" class="ad-gen-close" id="ad-ver-x" aria-label="Cerrar">✕</button>
+      </div>
+      <p class="ad-gen-hint">
+        Verifica las versiones guardadas en este dispositivo y en la nube. Puedes <strong>👁️ previsualizar las notas</strong> de cualquier versión,
+        <strong>📥 fusionar sus Parciales I–III</strong> (conservando el orden actual de tus filas) o <strong>↩️ restaurar la versión completa</strong>.
+      </p>
+      <div id="ad-ver-body" class="ad-ver-body">
+        <div class="ad-ver-loading">⏳ Consultando versiones locales, papelera, espejo docente y nube de padres…</div>
+      </div>
+      <div id="ad-ver-preview" class="ad-ver-preview" style="display:none;"></div>
+      <div class="ad-gen-foot">
+        <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-ver-close">Cerrar</button>
+      </div>
+    </div>`;
+  document.body.appendChild(ov);
+
+  const cerrar = () => { ov.remove(); };
+  ov.querySelector('#ad-ver-x')?.addEventListener('click', cerrar);
+  ov.querySelector('#ad-ver-close')?.addEventListener('click', cerrar);
+  ov.addEventListener('click', e => { if (e.target === ov) cerrar(); });
+
+  const bodyEl = ov.querySelector('#ad-ver-body');
+  const prevEl = ov.querySelector('#ad-ver-preview');
+
+  try {
+    const rec = await adReconstruirDesdeNubeYRespaldos(d, txt => {
+      if (bodyEl) bodyEl.innerHTML = `<div class="ad-ver-loading">${adEsc(txt)}</div>`;
+    });
+
+    const todasVersiones = [
+      {
+        id: 'reconstruccion-nube-i-iii',
+        origen: '✨ Reconstrucción integral I–III (Recomendada)',
+        titulo: 'Fusión completa: Nube de Padres + Respaldos + Plan de Acción + Asistencia (Parciales I, II y III llenos)',
+        fecha: new Date().toISOString(),
+        grupo: rec.grupoRecuperado,
+        codesGrupo: {},
+        stats: adResumenVersionGrupo(rec.grupoRecuperado),
+        esReconstruccion: true
+      }
+    ].concat(rec.versiones || []);
+
+    const fmtFecha = iso => {
+      if (!iso) return 'Fecha local';
+      const f = String(iso).slice(0, 10);
+      const h = String(iso).slice(11, 16);
+      return adFechaBonita(f) + (h ? ' · ' + h : '');
+    };
+
+    bodyEl.innerHTML = todasVersiones.map((v, idx) => {
+      const s = v.stats;
+      return `
+        <div class="ad-ver-item${v.esReconstruccion ? ' ad-ver-item-dest' : ''}" data-vidx="${idx}">
+          <div class="ad-ver-item-top">
+            <div>
+              <span class="ad-ver-badge">${adEsc(v.origen)}</span>
+              <div class="ad-ver-item-tit">${adEsc(v.titulo)}</div>
+            </div>
+            <span class="ad-ver-date">${adEsc(fmtFecha(v.fecha))}</span>
+          </div>
+          <div class="ad-ver-kpis">
+            <span class="ad-ver-kpi">👥 <b>${s.alumnos}</b> alumnos</span>
+            <span class="ad-ver-kpi">📗 P-I: <b>${s.pI}</b> notas</span>
+            <span class="ad-ver-kpi">📘 P-II: <b>${s.pII}</b> notas</span>
+            <span class="ad-ver-kpi">📙 P-III: <b>${s.pIII}</b> notas</span>
+            <span class="ad-ver-kpi">📕 P-IV: <b>${s.pIV}</b> notas</span>
+            <span class="ad-ver-kpi">🙂 Personalidad: <b>${s.totalPers}</b></span>
+            <span class="ad-ver-kpi">📅 Días perdidos: <b>${s.totalInasis}</b> (${s.diasAsis} días lista)</span>
+          </div>
+          <div class="ad-ver-actions">
+            <button type="button" class="pa-generate-btn ad-btn-sec ad-ver-btn" data-vact="ver" data-vidx="${idx}">👁️ Previsualizar notas</button>
+            <button type="button" class="pa-generate-btn ad-ver-btn ad-ver-btn-pri" data-vact="fusionar" data-vidx="${idx}">📥 Recuperar I–III (mantener orden actual)</button>
+            ${!v.esReconstruccion ? `<button type="button" class="pa-generate-btn ad-btn-sec ad-ver-btn" data-vact="restaurar" data-vidx="${idx}">↩️ Restaurar versión completa</button>` : ''}
+          </div>
+        </div>`;
+    }).join('');
+
+    const mostrarPreview = v => {
+      const g = v.grupo;
+      const mats = Array.isArray(g.materias) && g.materias.length ? g.materias : AD_MATERIAS_DEF;
+      prevEl.style.display = 'block';
+      prevEl.innerHTML = `
+        <div class="ad-ver-prev-head">
+          <strong>👁️ Vista previa: ${adEsc(v.titulo)}</strong>
+          <div class="ad-ver-prev-tabs">
+            ${['I', 'II', 'III', 'IV'].map(p => `<button type="button" class="ad-gen-qbtn ad-ver-ptab${p === 'III' ? ' active' : ''}" data-vp="${p}">Parcial ${p}</button>`).join('')}
+          </div>
+        </div>
+        <div id="ad-ver-prev-tbl" class="ad-ver-prev-tbl"></div>`;
+
+      const pintarTablaP = p => {
+        prevEl.querySelectorAll('.ad-ver-ptab').forEach(b => b.classList.toggle('active', b.dataset.vp === p));
+        const np = (g.notas && g.notas[p]) || {};
+        const tblBox = prevEl.querySelector('#ad-ver-prev-tbl');
+        tblBox.innerHTML = `
+          <table class="ad-mx ad-ver-mx">
+            <thead>
+              <tr>
+                <th># · Alumno</th>
+                ${mats.map(m => `<th>${adEsc(m)}</th>`).join('')}
+                <th>🙂 Conducta</th>
+                <th>📅 Faltas</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${(g.lista || []).map(al => {
+                const persVals = AD_PERSONALIDAD.map(r => (np[r] || {})[al.num] || '').filter(Boolean);
+                const persTxt = persVals.length ? persVals.join('/') : '—';
+                const inas = (np['Inasistencias'] || {})[al.num];
+                return `<tr>
+                  <td style="text-align:left;font-weight:700;white-space:nowrap;">#${al.num} ${adEsc(adPrimerNombre(al.nombre) || al.nombre || '')}</td>
+                  ${mats.map(m => {
+                    const vNota = (np[m] || {})[al.num];
+                    return `<td>${vNota != null && vNota !== '' ? adEsc(String(vNota)) : '·'}</td>`;
+                  }).join('')}
+                  <td>${adEsc(persTxt)}</td>
+                  <td>${inas != null && inas !== '' ? adEsc(String(inas)) : '0'}</td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>`;
+      };
+      pintarTablaP('III');
+      prevEl.querySelectorAll('.ad-ver-ptab').forEach(b => {
+        b.addEventListener('click', () => pintarTablaP(b.dataset.vp));
+      });
+      try { prevEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (_) {}
+    };
+
+    bodyEl.querySelectorAll('[data-vact]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const idx = +btn.dataset.vidx;
+        const act = btn.dataset.vact;
+        const v = todasVersiones[idx];
+        if (!v) return;
+
+        if (act === 'ver') {
+          mostrarPreview(v);
+          return;
+        }
+
+        if (act === 'fusionar') {
+          if (!await metasConfirm(
+            '¿Recuperar las notas de **Parcial I, II y III**, **Personalidad** y **Días perdidos** desde **«' + v.titulo + '»**?\n\n' +
+            'Se conservará el **orden actual de tu lista de alumnos** y se llenarán/repararán los datos hasta el III Parcial.',
+            { icono: '📥', titulo: 'Recuperar de esta versión', okTxt: 'Sí, recuperar I–III' }
+          )) return;
+          adUndoGuardar('Antes de fusionar versión: ' + v.titulo);
+          const dd = adLoad();
+          const mVer = adConstruirMapaAlumnos(dd, v.grupo.lista, v.codesGrupo);
+          ['I', 'II', 'III'].forEach(p => {
+            const np = (v.grupo.notas && v.grupo.notas[p]) || {};
+            dd.notas[p] = dd.notas[p] || {};
+            Object.keys(np).forEach(campo => {
+              dd.notas[p][campo] = dd.notas[p][campo] || {};
+              Object.keys(np[campo] || {}).forEach(oldN => {
+                const val = np[campo][oldN];
+                if (val === '' || val == null) return;
+                const alOrig = (v.grupo.lista || []).find(x => +x.num === +oldN);
+                const nDest = mVer.resolverAlumno(oldN, v.codesGrupo && v.codesGrupo[oldN], alOrig && alOrig.nombre);
+                if (nDest) dd.notas[p][campo][nDest] = val;
+              });
+            });
+          });
+          /* Fusionar asistencia */
+          (v.grupo.asistencia || []).forEach(r => {
+            if (!r || !r.f || !r.aus) return;
+            let reg = dd.asistencia.find(x => x && x.f === r.f);
+            if (!reg) { reg = { f: r.f, aus: {} }; dd.asistencia.push(reg); }
+            Object.keys(r.aus).forEach(oldN => {
+              const alOrig = (v.grupo.lista || []).find(x => +x.num === +oldN);
+              const nDest = mVer.resolverAlumno(oldN, v.codesGrupo && v.codesGrupo[oldN], alOrig && alOrig.nombre);
+              if (nDest && !reg.aus[nDest]) reg.aus[nDest] = r.aus[oldN];
+            });
+          });
+          dd.asistencia.sort((a, b) => String(a.f || '').localeCompare(String(b.f || '')));
+          adSave(dd);
+          adSyncProgramar();
+          cerrar();
+          if (typeof alTerminar === 'function') alTerminar();
+          else renderAdmin(true);
+          if (typeof toast === 'function') toast('✅ Parciales I–III recuperados desde la versión seleccionada');
+          return;
+        }
+
+        if (act === 'restaurar') {
+          if (!await metasConfirm(
+            '¿Restaurar **por completo** la versión **«' + v.titulo + '»**?\n\n' +
+            'El grupo volverá exactamente a como estaba en esa versión (incluyendo el orden de la lista en ese momento). Se guardará antes una copia en «🕘 Deshacer».',
+            { icono: '↩️', titulo: 'Restaurar versión completa', okTxt: 'Sí, restaurar' }
+          )) return;
+          adUndoGuardar('Antes de restaurar versión: ' + v.titulo);
+          if (v.codesGrupo && Object.keys(v.codesGrupo).length) {
+            try {
+              const cActual = JSON.parse(localStorage.getItem('METAS_CODIGOS_V1')) || {};
+              cActual['G:' + d.id] = JSON.parse(JSON.stringify(v.codesGrupo));
+              localStorage.setItem('METAS_CODIGOS_V1', JSON.stringify(cActual));
+            } catch (_) {}
+          }
+          const copiaGrupo = JSON.parse(JSON.stringify(v.grupo));
+          copiaGrupo.id = d.id;
+          adSave(copiaGrupo);
+          adSyncProgramar();
+          cerrar();
+          if (typeof alTerminar === 'function') alTerminar();
+          else renderAdmin(true);
+          if (typeof toast === 'function') toast('↩️ Versión restaurada por completo');
+        }
+      });
+    });
+  } catch (err) {
+    if (bodyEl) {
+      bodyEl.innerHTML = `<div class="ad-ver-loading">⚠️ No se pudo cargar el historial: ${adEsc(err && err.message ? err.message : 'error')}</div>`;
+    }
+  }
+}
+
+/* Autorización expresa del docente para habilitar «✨ Sugerir notas» en el Parcial IV */
+async function adAutorizarSugerirParcialIV(alTerminar) {
+  const d = adLoad();
+  const ok = await metasConfirm(
+    '🔒 **«✨ Sugerir notas»** está restringido exclusivamente al **Parcial IV** para proteger las calificaciones definitivas de los Parciales I, II y III.\n\n' +
+    '¿Deseas **autorizar** el cálculo de sugerencias automáticas en el **Parcial IV** para este grupo?',
+    { icono: '🛡️', titulo: 'Autorizar Sugerir notas en Parcial IV', okTxt: 'Continuar para autorizar' }
+  );
+  if (!ok) return;
+
+  let doc = {};
+  try { doc = JSON.parse(localStorage.getItem('METAS_DOCENTE_V1')) || {}; } catch (_) {}
+  if (doc && doc.codigo) {
+    const verif = await adPedirContrasena('Autorizar Sugerir notas · Parcial IV');
+    if (!verif) return;
+  } else {
+    const confTxt = await metasPrompt(
+      'Escribe **AUTORIZAR** para habilitar «✨ Sugerir notas» en el **Parcial IV**:',
+      {
+        icono: '🛡️',
+        titulo: 'Autorización del docente',
+        okTxt: 'Autorizar Parcial IV',
+        valida: v => String(v || '').trim().toUpperCase() === 'AUTORIZAR' ? '' : 'Escribe la palabra AUTORIZAR para confirmar.'
+      }
+    );
+    if (confTxt === null) return;
+  }
+
+  const dd = adLoad();
+  dd.boleta = dd.boleta || adBoletaDef();
+  dd.boleta.sugerirIVAuth = new Date().toISOString();
+  adSave(dd);
+  if (typeof alTerminar === 'function') alTerminar();
+  if (typeof toast === 'function') toast('🛡️ Autorizado «Sugerir notas» para el Parcial IV');
+}
+
 function adRenderSace(body, d) {
   if (!d.lista.length) { adSinLista(body, 'la boleta'); return; }
-  const parcial = body.dataset.parcial || 'I';
-  const vista = body.dataset.vista || 'aprov';   // aprov | pers | inasis
+  /* Asegurar que se use y sincronice el parcial y vista activos */
+  if (body.dataset.parcial && ['I', 'II', 'III', 'IV'].includes(body.dataset.parcial)) {
+    _adSaceParcial = body.dataset.parcial;
+  } else {
+    body.dataset.parcial = _adSaceParcial;
+  }
+  if (body.dataset.vista && ['aprov', 'pers', 'inasis'].includes(body.dataset.vista)) {
+    _adSaceVista = body.dataset.vista;
+  } else {
+    body.dataset.vista = _adSaceVista;
+  }
+  const parcial = _adSaceParcial;
+  const vista = _adSaceVista;
+
+  /* Capturar la celda activa para restaurar foco y cursor tras sincronización o re-render */
+  let activeInpInfo = null;
+  const prevActiveEl = document.activeElement;
+  if (prevActiveEl && prevActiveEl.classList && prevActiveEl.classList.contains('ad-mx-inp')) {
+    activeInpInfo = {
+      num: prevActiveEl.dataset.num,
+      alumno: prevActiveEl.dataset.alumno || prevActiveEl.dataset.num,
+      campo: prevActiveEl.dataset.campo,
+      materia: prevActiveEl.dataset.materia || prevActiveEl.dataset.campo,
+      parcial: prevActiveEl.dataset.parcial,
+      selStart: prevActiveEl.selectionStart,
+      selEnd: prevActiveEl.selectionEnd
+    };
+  } else if (_adCapturedState && _adCapturedState.activeInput) {
+    activeInpInfo = _adCapturedState.activeInput;
+  }
+
   const esLetra = vista === 'pers';
   const esInasis = vista === 'inasis';
   const cols = esLetra ? AD_PERSONALIDAD.slice() : esInasis ? ['Inasistencias'] : d.materias.slice();
-  const valOf = (c, num) => { const v = (((d.notas[parcial] || {})[c]) || {})[num]; return (v == null || v === '') ? '' : v; };
+  const valOfP = (p, c, num) => { const v = (((d.notas[p] || {})[c]) || {})[num]; return (v == null || v === '') ? '' : v; };
+  const valOf = (c, num) => valOfP(parcial, c, num);
+  /* En PERSONALIDAD los CUATRO parciales van a la vista de una vez (cada
+     rasgo con sus columnas I–IV): la conducta se llena de corrido, sin ir
+     parcial por parcial. En aprovechamiento no cabe (8+ materias × 4) y las
+     notas nacen parcial a parcial, así que ahí sigue el selector. */
+  const parcialesTodos = ['I', 'II', 'III', 'IV'];
+  const colDefs = esLetra
+    ? AD_PERSONALIDAD.reduce((arr, t) => arr.concat(parcialesTodos.map((p, i) =>
+        ({ campo: t, parcial: p, ini: i === 0 }))), [])
+    : cols.map(c => ({ campo: c, parcial }));
   // rango de fechas para traer faltas del pase de lista (por parcial)
   const _fAsis = (d.asistencia || []).map(r => r.f).filter(Boolean).sort();
   const _rango = (d.boleta.parcialFechas && d.boleta.parcialFechas[parcial]) || {};
@@ -1190,7 +6265,7 @@ function adRenderSace(body, d) {
                 ? `<img src="${d.logo}" alt="logo">`
                 : '<span>Sin logo</span>'}</div>
               <div class="ad-logo-btns">
-                <span style="font-size:11px;font-weight:800;color:#1e3a7c;">Logo del centro</span>
+                <span class="ad-logo-rot">Logo del centro</span>
                 <label class="pa-generate-btn ad-btn-sec ad-logo-lbl">📷 Subir
                   <input type="file" id="ad-logo-file" accept="image/*" style="display:none;"></label>
                 ${d.logo ? '<button class="pa-generate-btn ad-btn-sec" id="ad-logo-quitar">Quitar</button>' : ''}
@@ -1201,7 +6276,7 @@ function adRenderSace(body, d) {
                 ? `<img src="${d.logoSec}" alt="logo Secretaría">`
                 : '<img src="img/logo-secretaria.png" alt="logo oficial (por defecto)">'}</div>
               <div class="ad-logo-btns">
-                <span style="font-size:11px;font-weight:800;color:#1e3a7c;">Logo de la Secretaría${d.logoSec ? '' : ' <small style="font-weight:600;color:#7286a8;">(oficial, ya incluido)</small>'}</span>
+                <span class="ad-logo-rot">Logo de la Secretaría${d.logoSec ? '' : ' <small class="ad-logo-nota">(oficial, ya incluido)</small>'}</span>
                 <label class="pa-generate-btn ad-btn-sec ad-logo-lbl">🏛️ Subir
                   <input type="file" id="ad-logosec-file" accept="image/*" style="display:none;"></label>
                 ${d.logoSec ? '<button class="pa-generate-btn ad-btn-sec" id="ad-logosec-quitar">Quitar</button>' : ''}
@@ -1210,7 +6285,7 @@ function adRenderSace(body, d) {
           </div>
           <div class="pa-field"><label>Nombre del centro educativo</label>
             <input id="ad-boleta-centro" class="pa-inp-field" value="${adEsc(d.escuela)}"
-                   placeholder="Ej: John Arnold Cook"></div>
+                   placeholder="Ej.: John Arnold Cook"></div>
           <div class="pa-row-2">
             <div class="pa-field"><label>Nombre del director(a)</label>
               <input id="ad-bol-director" class="pa-inp-field" value="${adEsc(d.boleta.director)}" placeholder="Director(a)"></div>
@@ -1219,13 +6294,13 @@ function adRenderSace(body, d) {
           </div>
           <div class="pa-row-2">
             <div class="pa-field"><label>Lugar (aldea/colonia)</label>
-              <input id="ad-bol-lugar" class="pa-inp-field" value="${adEsc(d.boleta.lugar)}" placeholder="Ej: Col. Colinas de Suiza"></div>
+              <input id="ad-bol-lugar" class="pa-inp-field" value="${adEsc(d.boleta.lugar)}" placeholder="Ej.: Col. Colinas de Suiza"></div>
             <div class="pa-field"><label>Municipio</label>
-              <input id="ad-bol-municipio" class="pa-inp-field" value="${adEsc(d.boleta.municipio)}" placeholder="Ej: Villanueva"></div>
+              <input id="ad-bol-municipio" class="pa-inp-field" value="${adEsc(d.boleta.municipio)}" placeholder="Ej.: Villanueva"></div>
           </div>
           <div class="pa-row-2">
             <div class="pa-field"><label>Departamento</label>
-              <input id="ad-bol-depto" class="pa-inp-field" value="${adEsc(d.boleta.departamento)}" placeholder="Ej: Cortés"></div>
+              <input id="ad-bol-depto" class="pa-inp-field" value="${adEsc(d.boleta.departamento)}" placeholder="Ej.: Cortés"></div>
             <div class="pa-field"><label>Año lectivo</label>
               <input id="ad-bol-anio" class="pa-inp-field" inputmode="numeric" maxlength="4" value="${adEsc(d.boleta.anio)}" placeholder="${new Date().getFullYear()}"></div>
           </div>
@@ -1235,14 +6310,17 @@ function adRenderSace(body, d) {
         </div>
       </details>
 
-      <p class="pa-optional-hint">Elige el <strong>parcial</strong> y llena cada alumno <strong>a lo ancho</strong>,
-        en el orden de la boleta: al escribir una nota, el cursor <strong>salta solo</strong> a la siguiente
-        materia y, al terminar la fila, baja al siguiente alumno. Las notas van a <strong>SACE</strong> y a la <strong>boleta</strong>.</p>
+      <p class="pa-optional-hint">${esLetra
+        ? 'La <strong>Personalidad</strong> se llena con los <strong>cuatro parciales a la vista</strong>: cada rasgo trae sus columnas I–IV, sin andar cambiando de parcial. Todo va a <strong>SACE</strong> y a la <strong>boleta</strong>.'
+        : `Elige el <strong>parcial</strong> y llena cada alumno <strong>a lo ancho</strong>,
+        en el orden de la boleta: avanza con <strong>Enter</strong> o <strong>Tab</strong> a la siguiente
+        materia y, al terminar la fila, baja al siguiente alumno. Las notas van a <strong>SACE</strong> y a la <strong>boleta</strong>.`}</p>
       <div class="pa-row-2">
+        ${esLetra ? '' : `
         <div class="pa-field"><label>Parcial</label>
           <select id="ad-sace-parcial" class="pa-inp-field">
             ${['I', 'II', 'III', 'IV'].map(p => `<option value="${p}" ${p === parcial ? 'selected' : ''}>Parcial ${p}</option>`).join('')}
-          </select></div>
+          </select></div>`}
         <div class="pa-field"><label>Sección a llenar</label>
           <select id="ad-sace-vista" class="pa-inp-field">
             <option value="aprov" ${vista === 'aprov' ? 'selected' : ''}>📚 Aprovechamiento (todas las materias)</option>
@@ -1252,10 +6330,10 @@ function adRenderSace(body, d) {
       </div>
       <p class="pa-optional-hint" style="margin-top:2px">
         ${esLetra
-          ? 'La conducta es <strong>cualitativa</strong>: <strong>escríbela</strong> (S, MB, B) o toca la celda y luego el <strong>valor</strong> — se llena y avanza solo.'
+          ? 'La conducta es <strong>cualitativa</strong>: <strong>escríbela</strong> (S, MB, B) o toca la celda y luego el <strong>valor</strong> — el cursor recorre los parciales I→IV de cada rasgo y sigue solo. Para ordenar filas con todas sus notas: usa <strong>▲ ▼</strong>, toca el número <strong>#</strong> para enviarlo directo a una posición (ej. al #8), o usa los botones de <strong>🔤 Ordenar A–Z</strong> y <strong>♀♂ por género</strong>.'
           : esInasis
-            ? 'Escribe el <strong>número de inasistencias</strong>. Enter o «Siguiente» para bajar.'
-            : 'Escribe la <strong>nota (1-100)</strong>. Las de 2+ cifras saltan solas; con Enter también. Desliza la tabla → para ver todas las materias.'}</p>
+            ? 'Escribe el <strong>número de inasistencias</strong>. Enter o «Siguiente» para bajar. Usa <strong>▲ ▼</strong> o toca el <strong>#número</strong> de un alumno para mover su fila a otra posición.'
+            : 'Escribe la <strong>nota (1-100)</strong>. Avanza con <strong>Enter</strong>, <strong>Tab</strong> o las flechas. Para mover un alumno con todas sus notas: usa las flechas <strong>▲ ▼</strong>, toca su número <strong>#</strong> para mandarlo directo a otra posición (ej. #8), o usa <strong>🔤 Ordenar A–Z</strong> / <strong>♀♂ Niñas y Varones A–Z</strong>.'}</p>
 
       ${esLetra ? `
       <div class="ad-pers-kp">
@@ -1263,6 +6341,7 @@ function adRenderSace(body, d) {
         ${d.boleta.escalaPers.map(v => `<button class="ad-pers-val" data-v="${adEsc(v)}">${adEsc(v)}</button>`).join('')}
         <button class="ad-pers-val ad-pers-borrar" data-v="">✕</button>
         <button class="ad-pers-edit" id="ad-pers-editescala">✏️ Editar escala</button>
+        <span class="ad-pers-ctx" id="ad-pers-ctx"></span>
       </div>
       <p class="ad-pers-leyenda">${d.boleta.escalaPers.map(v => AD_PERS_SIGNIF[v]
         ? '<b>' + adEsc(v) + '</b> = ' + adEsc(AD_PERS_SIGNIF[v]) : '<b>' + adEsc(v) + '</b>').join(' · ')}</p>` : ''}
@@ -1278,39 +6357,145 @@ function adRenderSace(body, d) {
           dentro de ese rango y las pone en el <strong>Parcial ${parcial}</strong>. Puedes ajustar a mano después.</p>
       </div>` : ''}
 
+      <div class="ad-rec-bar">
+        <div class="ad-rec-bar-btns">
+          <button type="button" class="pa-generate-btn ad-rec-btn-main" id="ad-sace-recuperar">📥 Recuperar notas, personalidad y días perdidos (I–III)</button>
+          <button type="button" class="pa-generate-btn ad-btn-sec ad-rec-btn-hist" id="ad-sace-versiones">🕓 Verificar historial de versiones</button>
+        </div>
+        <p class="pa-optional-hint" style="margin:4px 0 0">Rescata tus calificaciones de los <strong>Parciales I, II y III</strong>, la <strong>Personalidad</strong> y las <strong>Inasistencias</strong> desde los respaldos locales, el espejo docente y la nube de padres, respetando el orden actual de tus filas.</p>
+      </div>
+
+      ${(!esLetra && !esInasis) ? (parcial === 'IV' ? (d.boleta && d.boleta.sugerirIVAuth ? `
+      <div class="ad-sug-bar">
+        <div class="ad-btn-row" style="margin-top:0">
+          <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-sace-sugerir">✨ Sugerir notas del Parcial IV</button>
+          <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-sace-bloquear-iv" title="Volver a poner candado a Sugerir notas en el Parcial IV">🔒 Bloquear sugerencia</button>
+        </div>
+        <p class="pa-optional-hint">🛡️ <strong>Autorizado en Parcial IV:</strong> toma las evaluaciones guardadas en el <strong>📊 Plan de acción</strong> del Parcial IV, promedia las de cada alumno por materia (NSP no cuenta como cero) y llena únicamente las celdas <strong>vacías</strong>.</p>
+      </div>` : `
+      <div class="ad-sug-bar ad-sug-bar-locked">
+        <div class="ad-btn-row" style="margin-top:0;align-items:center">
+          <span class="ad-sug-lock-pill">🔒 «Sugerir notas» en Parcial IV requiere tu autorización</span>
+          <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-sace-autorizar-iv">🛡️ Autorizar «Sugerir notas» en Parcial IV</button>
+        </div>
+        <p class="pa-optional-hint">Por seguridad de tus registros, el cálculo automático de sugerencias solo se activa en el <strong>Parcial IV</strong> después de que lo autorices expresamente.</p>
+      </div>`) : `
+      <div class="ad-sug-bar ad-sug-bar-locked">
+        <p class="pa-optional-hint" style="margin:0">🔒 <strong>Parcial ${parcial} protegido:</strong> la opción «✨ Sugerir notas» solo funciona en el <strong>Parcial IV</strong> (previa autorización) para no alterar las notas definitivas de los Parciales I, II y III.</p>
+      </div>`) : ''}
+
       <div class="ad-mx-wrap">
-        <table class="ad-mx">
-          <thead><tr>
+        <table class="ad-mx${esLetra ? ' ad-mx-pers' : ''}">
+          <thead>${esLetra ? `
+          <tr>
+            <th class="ad-mx-sticky ad-mx-corner" rowspan="2">Nº · Alumno</th>
+            ${cols.map(c => `<th colspan="4" class="ad-mx-ini"><div class="ad-mx-h">${adEsc(c)}</div></th>`).join('')}
+          </tr>
+          <tr>
+            ${colDefs.map(cd => `<th class="ad-mx-sub${cd.ini ? ' ad-mx-ini' : ''}"><span>${cd.parcial}</span>
+              <button class="ad-mx-copy" data-campo="${adEsc(cd.campo)}" data-parcial="${cd.parcial}"
+                title="Copiar «${adEsc(cd.campo)} · Parcial ${cd.parcial}» para SACE">📋</button></th>`).join('')}
+          </tr>` : `
+          <tr>
             <th class="ad-mx-sticky ad-mx-corner">Nº · Alumno</th>
             ${cols.map((c, ci) => `<th><div class="ad-mx-h">${adEsc(c)}</div>
               <div class="ad-mx-hbtns">
-                ${(!esLetra && !esInasis) ? `<button class="ad-mx-mv" data-col="${ci}" data-dir="-1" title="Mover a la izquierda"${ci === 0 ? ' disabled' : ''}>◀</button>` : ''}
+                ${!esInasis ? `<button class="ad-mx-mv" data-col="${ci}" data-dir="-1" title="Mover a la izquierda"${ci === 0 ? ' disabled' : ''}>◀</button>` : ''}
                 <button class="ad-mx-copy" data-col="${ci}" title="Copiar «${adEsc(c)}» para SACE">📋</button>
-                ${(!esLetra && !esInasis) ? `<button class="ad-mx-mv" data-col="${ci}" data-dir="1" title="Mover a la derecha"${ci === cols.length - 1 ? ' disabled' : ''}>▶</button>` : ''}
+                ${!esInasis ? `<button class="ad-mx-mv" data-col="${ci}" data-dir="1" title="Mover a la derecha"${ci === cols.length - 1 ? ' disabled' : ''}>▶</button>` : ''}
               </div></th>`).join('')}
-          </tr></thead>
+          </tr>`}
+          </thead>
           <tbody>
-            ${d.lista.map((a, ri) => `<tr>
-              <td class="ad-mx-sticky" title="${adEsc(a.nombre)}"><b>#${a.num}</b> <span class="ad-mx-nom">${adEsc(adPrimerNombre(a.nombre)) || '—'}</span></td>
-              ${cols.map((c, ci) => `<td><input class="ad-mx-inp" data-idx="${ri * cols.length + ci}"
-                data-num="${a.num}" data-campo="${adEsc(c)}" type="text" inputmode="${esLetra ? 'text' : 'numeric'}"
+            ${d.lista.map((a, ri) => `<tr data-rnum="${a.num}"${a.noCopiarSace ? ' class="ad-mx-tr-nocopy"' : ''}>
+              <td class="ad-mx-sticky" title="${adEsc((a.nombre || ('#' + a.num)) + (a.noCopiarSace ? ' · No se copia en 📋' : ''))}">
+                <div class="ad-mx-sbox">
+                  <span class="ad-mx-rbtns">
+                    <button type="button" class="ad-mx-rmv" data-rdir="-1" data-rnum="${a.num}" title="Subir una posición con sus notas" aria-label="Subir"${ri === 0 ? ' disabled' : ''}>▲</button>
+                    <button type="button" class="ad-mx-rmv" data-rdir="1" data-rnum="${a.num}" title="Bajar una posición con sus notas" aria-label="Bajar"${ri === d.lista.length - 1 ? ' disabled' : ''}>▼</button>
+                  </span>
+                  <button type="button" class="ad-mx-num" data-irnum="${a.num}" title="Toca para elegir a qué posición (#) mover a ${adEsc(a.nombre || ('#' + a.num))} con todas sus notas">#${a.num}</button>
+                  <span class="ad-mx-nom">${adEsc(adPrimerNombre(a.nombre)) || '—'}</span>
+                  ${a.noCopiarSace ? `<button type="button" class="ad-mx-nocopy-tag" data-nc-quitar="${a.num}" title="Omitido al copiar columna (📋). Toca para volver a incluirlo">🙈</button>` : ''}
+                  <button type="button" class="ad-mx-del" data-delnum="${a.num}" title="Borrar fila de ${adEsc(adPrimerNombre(a.nombre) || ('#' + a.num))} (se puede restaurar)" aria-label="Borrar fila">✕</button>
+                </div></td>
+              ${colDefs.map((cd, ci) => `<td${cd.ini ? ' class="ad-mx-ini"' : ''}><input class="ad-mx-inp" data-idx="${ri * colDefs.length + ci}"
+                data-num="${a.num}" data-alumno="${a.num}" data-campo="${adEsc(cd.campo)}" data-materia="${adEsc(cd.campo)}" data-parcial="${cd.parcial}" type="text" inputmode="${esLetra ? 'text' : 'numeric'}"
                 maxlength="3" autocapitalize="characters" ${esLetra ? 'style="text-transform:uppercase;"' : ''}
-                value="${valOf(c, a.num) !== '' ? adEsc(String(valOf(c, a.num))) : ''}" placeholder="·"></td>`).join('')}
+                value="${valOfP(cd.parcial, cd.campo, a.num) !== '' ? adEsc(String(valOfP(cd.parcial, cd.campo, a.num))) : ''}" placeholder="·"></td>`).join('')}
             </tr>`).join('')}
           </tbody>
         </table>
       </div>
-      ${!esLetra && !esInasis ? '<button class="pa-generate-btn ad-btn-sec ad-mx-addmat" id="ad-sace-addmat">➕ Agregar materia</button>' : ''}
+      <div class="ad-btn-row" style="margin-top:8px">
+        ${!esLetra && !esInasis ? '<button class="pa-generate-btn ad-btn-sec ad-mx-addmat" id="ad-sace-addmat" style="margin-top:0">➕ Agregar materia</button>' : ''}
+        <button class="pa-generate-btn ad-btn-sec" id="ad-sace-orden-az" type="button">🔤 Ordenar A–Z (con sus notas)</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-sace-orden-gen" type="button">♀♂ Ordenar Niñas y luego Varones (A–Z)</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-sace-nocopy" type="button">🙈 ${
+          d.lista.some(a => a.noCopiarSace)
+            ? 'No copiar en 📋 (' + d.lista.filter(a => a.noCopiarSace).map(a => adEsc(adPrimerNombre(a.nombre) || ('#' + a.num))).join(', ') + ')'
+            : 'Elegir quién NO copiar en 📋'
+        }</button>
+      </div>
+      <div class="pa-field ad-bol-quien">
+        <label>Boleta de</label>
+        <select id="ad-sace-bol-quien" class="pa-inp-field">
+          <option value="">👥 Todo el grupo (${d.lista.length} alumno${d.lista.length === 1 ? '' : 's'})</option>
+          ${d.lista.map(a => `<option value="${a.num}">🧑‍🎓 #${a.num} · ${adEsc(a.nombre) || 'Sin nombre'}</option>`).join('')}
+        </select>
+        <p class="pa-optional-hint">Elige un alumno cuando solo necesites <strong>su</strong> boleta: la mamá que
+          viene por la de su hijo, o la nota que corregiste y hay que reimprimir. Sale la misma hoja completa, con
+          los cuatro parciales.</p>
+      </div>
       <div class="ad-btn-row" style="margin-top:8px">
         <button class="pa-generate-btn" id="ad-sace-boletas">🧾 Imprimir boletas (todas)</button>
         <button class="pa-generate-btn ad-btn-sec" id="ad-sace-csv">⬇ Copiar CSV (todas las materias)</button>
       </div>
       <p class="pa-optional-hint" id="ad-sace-estado" style="margin-top:8px"></p>
-    </div>`;
+    </div>
+    ${adUndoTarjetaHtml()}`;
 
-  const setSel = (k, v) => { body.dataset[k] = v; adRenderSace(body, adLoad()); };
-  document.getElementById('ad-sace-parcial').addEventListener('change', e => setSel('parcial', e.target.value));
+  const setSel = (k, v) => {
+    if (k === 'parcial' && ['I', 'II', 'III', 'IV'].includes(v)) {
+      _adSaceParcial = v;
+      try { localStorage.setItem('METAS_SACE_PARCIAL', v); } catch (_) {}
+      if (window.metasSaveNav) window.metasSaveNav({ adSaceParcial: v });
+    }
+    if (k === 'vista' && ['aprov', 'pers', 'inasis'].includes(v)) {
+      _adSaceVista = v;
+      try { localStorage.setItem('METAS_SACE_VISTA', v); } catch (_) {}
+      if (window.metasSaveNav) window.metasSaveNav({ adSaceVista: v });
+    }
+    body.dataset[k] = v;
+    adRenderSace(body, adLoad());
+  };
+  document.getElementById('ad-sace-parcial')?.addEventListener('change', e => setSel('parcial', e.target.value));
   document.getElementById('ad-sace-vista').addEventListener('change', e => setSel('vista', e.target.value));
+  document.getElementById('ad-sace-orden-az')?.addEventListener('click', () => {
+    adOrdenarAlumnosAZ(() => adRenderSace(body, adLoad()));
+  });
+  document.getElementById('ad-sace-orden-gen')?.addEventListener('click', () => {
+    adOrdenarPorGeneroModal(() => adRenderSace(body, adLoad()));
+  });
+  document.getElementById('ad-sace-nocopy')?.addEventListener('click', () => {
+    adElegirNoCopiarModal(() => adRenderSace(body, adLoad()));
+  });
+  body.querySelectorAll('[data-nc-quitar]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const num = +btn.dataset.ncQuitar;
+      const dd = adLoad();
+      const al = dd.lista.find(a => +a.num === num);
+      if (al) {
+        delete al.noCopiarSace;
+        adSave(dd);
+        adRenderSace(body, adLoad());
+        if (typeof toast === 'function') {
+          toast('✅ ' + (adPrimerNombre(al.nombre) || ('#' + num)) + ' vuelve a incluirse al copiar con 📋');
+        }
+      }
+    });
+  });
   document.getElementById('ad-sace-addmat')?.addEventListener('click', async () => {
     const nueva = await metasPrompt('Nombre de la materia nueva:', {
       icono: '📚', titulo: 'Materias', okTxt: 'Agregar',
@@ -1357,7 +6542,7 @@ function adRenderSace(body, d) {
 
   // ── Entrada con AUTO-AVANCE (a lo ancho, en el orden de la boleta) ──
   const inputs = [...body.querySelectorAll('.ad-mx-inp')];
-  const ncols = cols.length;
+  const ncols = colDefs.length;
   const focar = i => {
     if (i >= 0 && i < inputs.length) {
       inputs[i].focus(); inputs[i].select();
@@ -1367,22 +6552,24 @@ function adRenderSace(body, d) {
   const guardar = inp => {
     const dd = adLoad();
     const campo = inp.dataset.campo;
-    dd.notas[parcial] = dd.notas[parcial] || {};
-    dd.notas[parcial][campo] = dd.notas[parcial][campo] || {};
+    /* cada celda sabe su parcial (en Personalidad conviven los cuatro) */
+    const pDest = inp.dataset.parcial || _adSaceParcial || parcial || 'I';
+    dd.notas[pDest] = dd.notas[pDest] || {};
+    dd.notas[pDest][campo] = dd.notas[pDest][campo] || {};
     let raw = inp.value.trim();
     if (esLetra) {
       raw = raw.toUpperCase().replace(/[^A-ZÑ+]/g, '').slice(0, 3);
       inp.value = raw;
-      if (raw === '') delete dd.notas[parcial][campo][inp.dataset.num];
-      else dd.notas[parcial][campo][inp.dataset.num] = raw;
+      if (raw === '') delete dd.notas[pDest][campo][inp.dataset.num];
+      else dd.notas[pDest][campo][inp.dataset.num] = raw;
     } else {
       raw = raw.replace(/\D/g, '').slice(0, 3);
       inp.value = raw;
-      if (raw === '') { delete dd.notas[parcial][campo][inp.dataset.num]; }
+      if (raw === '') { delete dd.notas[pDest][campo][inp.dataset.num]; }
       else {
         let v = Math.round(Number(raw));
         v = esInasis ? Math.max(0, Math.min(999, v)) : Math.max(1, Math.min(100, v));
-        dd.notas[parcial][campo][inp.dataset.num] = v;
+        dd.notas[pDest][campo][inp.dataset.num] = v;
       }
     }
     adSave(dd);
@@ -1390,32 +6577,107 @@ function adRenderSace(body, d) {
   // Celda activa (para el teclado cualitativo de personalidad)
   let _activoIdx = 0;
   const marcarActivo = i => { inputs.forEach(x => x.classList.remove('ad-mx-activo')); if (inputs[i]) inputs[i].classList.add('ad-mx-activo'); };
+  /* Letrero del teclado de personalidad: en la fila 43 la cabecera queda
+     lejos, así que la celda activa se anuncia con nombre, rasgo y parcial */
+  const persCtx = i => {
+    if (!esLetra) return;
+    const el = document.getElementById('ad-pers-ctx');
+    const cd = colDefs[i % ncols], al = d.lista[Math.floor(i / ncols)];
+    if (!el || !cd || !al) return;
+    const nom = adPrimerNombre(al.nombre);
+    el.textContent = '✍️ #' + al.num + (nom ? ' ' + nom : '') + ' · ' + cd.campo + ' · P-' + cd.parcial;
+  };
+  /* Valores que el auto-salto reconoce: la escala del grupo más las letras
+     oficiales (por si el maestro escribe NS u otra a mano). */
+  const persValores = esLetra
+    ? Array.from(new Set((d.boleta.escalaPers || AD_PERS_ESCALA_DEF)
+        .map(x => String(x).toUpperCase()).concat(Object.keys(AD_PERS_SIGNIF))))
+    : [];
   let _letraT = null;
   inputs.forEach(inp => {
     const idx = +inp.dataset.idx;
-    inp.addEventListener('focus', () => { _activoIdx = idx; marcarActivo(idx); });
+    inp.addEventListener('focus', () => {
+      _activoIdx = idx;
+      marcarActivo(idx);
+      persCtx(idx);
+      adCaptureState();
+    });
     inp.addEventListener('input', () => {
       guardar(inp);
+      adCaptureState();
       const v = inp.value;
       if (esLetra) {
         clearTimeout(_letraT);
-        _letraT = setTimeout(() => { if (document.activeElement === inp) focar(idx + 1); }, 550);
-      } else if (!esInasis) {
-        // nota 1-100: salta cuando ya no puede crecer (3 cifras o 2 cifras > 10)
-        if (v.length >= 3 || (v.length === 2 && Number(v) > 10)) focar(idx + 1);
+        /* «M» quiere ser «MB»: solo se salta de una vez cuando lo escrito ya
+           no puede crecer a un valor más largo de la escala. Si es prefijo
+           (M → MB) se le da tiempo a la segunda letra, y si lo escrito no es
+           ningún valor conocido, el cursor se queda para corregirlo. */
+        const esValor = persValores.indexOf(v) >= 0;
+        const esPrefijo = persValores.some(x => x !== v && x.indexOf(v) === 0);
+        if (v && esValor && !esPrefijo) focar(idx + 1);
+        else if (v && esPrefijo) _letraT = setTimeout(() => {
+          if (document.activeElement === inp && persValores.indexOf(inp.value) >= 0) focar(idx + 1);
+        }, 1200);
       }
     });
     inp.addEventListener('keydown', ev => {
-      if (ev.key === 'Enter' || ev.key === 'ArrowRight') { ev.preventDefault(); focar(idx + 1); }
-      else if (ev.key === 'ArrowLeft') { ev.preventDefault(); focar(idx - 1); }
-      else if (ev.key === 'ArrowDown') { ev.preventDefault(); focar(idx + ncols); }
-      else if (ev.key === 'ArrowUp') { ev.preventDefault(); focar(idx - ncols); }
+      if (ev.altKey && (ev.key === 'ArrowUp' || ev.key === 'ArrowDown')) {
+        ev.preventDefault();
+        const tr = inp.closest('tr[data-rnum]');
+        const tb = tr && tr.parentElement;
+        if (!tr || !tb) return;
+        const vec = ev.key === 'ArrowUp' ? tr.previousElementSibling : tr.nextElementSibling;
+        if (!vec) return;
+        if (ev.key === 'ArrowUp') tb.insertBefore(tr, vec); else vec.after(tr);
+        const orden = [...tb.querySelectorAll('tr[data-rnum]')].map(r => +r.dataset.rnum);
+        const numOrig = +inp.dataset.num;
+        const campoOrig = inp.dataset.campo;
+        const parcialOrig = inp.dataset.parcial;
+        const wrap = tb.closest('.ad-mx-wrap');
+        const st = wrap ? wrap.scrollTop : 0, sl = wrap ? wrap.scrollLeft : 0, wy = window.scrollY;
+        const mapa = adReordenarAlumnos(orden);
+        if (mapa) {
+          const nuevoNum = mapa[numOrig];
+          _adCapturedState = { activeInput: { num: String(nuevoNum), alumno: String(nuevoNum), campo: campoOrig, materia: campoOrig, parcial: parcialOrig } };
+          adRenderSace(body, adLoad());
+          const w2 = body.querySelector('.ad-mx-wrap');
+          if (w2) { w2.scrollTop = st; w2.scrollLeft = sl; }
+          window.scrollTo(0, wy);
+        }
+        return;
+      }
+      if (ev.key === 'Tab') {
+        ev.preventDefault();
+        focar(ev.shiftKey ? idx - 1 : idx + 1);
+      } else if (ev.key === 'Enter' || ev.key === 'ArrowRight') {
+        ev.preventDefault();
+        focar(idx + 1);
+      } else if (ev.key === 'ArrowLeft') {
+        ev.preventDefault();
+        focar(idx - 1);
+      } else if (ev.key === 'ArrowDown') {
+        ev.preventDefault();
+        focar(idx + ncols);
+      } else if (ev.key === 'ArrowUp') {
+        ev.preventDefault();
+        focar(idx - ncols);
+      }
     });
   });
 
   // ── Teclado cualitativo de PERSONALIDAD ──
   if (esLetra) {
     marcarActivo(0);
+    persCtx(0);
+    /* la fila I–IV se pega justo debajo de la fila de rasgos: su altura se
+       mide en vivo porque los nombres largos parten en dos líneas. OJO: se
+       mide un th de RASGO (colspan), no el esquinero — ese abarca las DOS
+       filas y con su altura la subcabecera caía encima de la primera fila */
+    const th1 = body.querySelector('.ad-mx thead tr:first-child th[colspan]');
+    if (th1) {
+      const h1 = th1.offsetHeight;
+      body.querySelectorAll('.ad-mx thead tr:nth-child(2) th').forEach(th => { th.style.top = h1 + 'px'; });
+    }
     body.querySelectorAll('.ad-pers-val').forEach(btn => {
       btn.addEventListener('mousedown', e => e.preventDefault());   // no robar el foco/selección
       btn.addEventListener('click', () => {
@@ -1444,7 +6706,24 @@ function adRenderSace(body, d) {
     });
   }
 
-  document.getElementById('ad-sace-boletas').addEventListener('click', () => adPrintBoletas(adLoad()));
+  /* Imprimir boletas: del grupo entero o la de un solo alumno. El botón dice
+     SIEMPRE a quién va a imprimir, porque con 43 alumnos una impresión de
+     más son 43 hojas de papel que el maestro paga de su bolsillo. */
+  const bolQuien = document.getElementById('ad-sace-bol-quien');
+  const bolBtn = document.getElementById('ad-sace-boletas');
+  const bolRotulo = () => {
+    const num = bolQuien.value;
+    if (!num) { bolBtn.textContent = '🧾 Imprimir boletas (todas)'; return; }
+    const al = d.lista.find(x => String(x.num) === String(num));
+    const nom = adPrimerNombre((al && al.nombre) || '');
+    bolBtn.textContent = '🧾 Imprimir la boleta de ' + (nom || '#' + num);
+  };
+  bolQuien.addEventListener('change', bolRotulo);
+  bolRotulo();
+  bolBtn.addEventListener('click', () => {
+    const num = bolQuien.value;
+    adPrintBoletas(adLoad(), num ? [num] : null);
+  });
 
   // Traer faltas del pase de lista → Inasistencias del parcial
   document.getElementById('ad-inasis-traer')?.addEventListener('click', () => {
@@ -1474,6 +6753,132 @@ function adRenderSace(body, d) {
     if (typeof toast === 'function') toast('📅 Parcial ' + parcial + ': ' + total + ' faltas (' + conFaltas + ' alumnos)');
   });
 
+  // 📥 Recuperar notas, personalidad y días perdidos (I–III) + 🕓 Historial de versiones
+  document.getElementById('ad-sace-recuperar')?.addEventListener('click', e => {
+    adRecuperarNotasNube(e.currentTarget, () => adRenderSace(body, adLoad()));
+  });
+  document.getElementById('ad-sace-versiones')?.addEventListener('click', () => {
+    adAbrirHistorialVersionesModal(() => adRenderSace(body, adLoad()));
+  });
+  document.getElementById('ad-sace-autorizar-iv')?.addEventListener('click', () => {
+    adAutorizarSugerirParcialIV(() => adRenderSace(body, adLoad()));
+  });
+  document.getElementById('ad-sace-bloquear-iv')?.addEventListener('click', () => {
+    const dd = adLoad();
+    if (dd.boleta) delete dd.boleta.sugerirIVAuth;
+    adSave(dd);
+    adRenderSace(body, adLoad());
+    if (typeof toast === 'function') toast('🔒 «Sugerir notas» bloqueado nuevamente en el Parcial IV');
+  });
+
+  // ✨ Sugerir notas del parcial desde el Plan de acción (SOLO Parcial IV y tras autorización)
+  document.getElementById('ad-sace-sugerir')?.addEventListener('click', async () => {
+    const dd = adLoad();
+    if (parcial !== 'IV' || !(dd.boleta && dd.boleta.sugerirIVAuth)) {
+      if (typeof toast === 'function') toast('🔒 «Sugerir notas» solo funciona en el Parcial IV después de autorizarlo.');
+      return;
+    }
+    const f = adSugFuentes(dd, parcial);
+    const mats = Object.keys(f.porMat);
+    const digGrado = String(dd.grado || '').replace(/\D/g, '');
+    const evTxt = n => n === 1 ? '1 evaluación' : n + ' evaluaciones';
+    /* Cuando no entra nada, el maestro tiene derecho a saber POR QUÉ: casi
+       siempre es un dato que le falta al análisis (materia sin elegir) o un
+       grado escrito distinto, y con el motivo lo arregla en un minuto. */
+    if (!mats.length) {
+      const colgadas = Object.keys(f.matSinCol);
+      const porques = [];
+      if (colgadas.length) porques.push('Hay ' + evTxt(colgadas.reduce((t, k) => t + f.matSinCol[k], 0)) +
+        ' de ' + colgadas.join(', ') + ', pero la boleta no tiene esa materia: agrégala con «➕ Agregar materia».');
+      if (f.sinMateria) porques.push('Hay ' + evTxt(f.sinMateria) + ' sin materia elegida en el Plan de acción: ' +
+        'ábrela allá, elige su materia y vuelve — sin materia no se sabe en qué columna va.');
+      if (f.otroGrupo) porques.push('Hay ' + evTxt(f.otroGrupo) + ' anotada' + (f.otroGrupo === 1 ? '' : 's') +
+        ' como ' + f.otroGrupoTxt.join(' y ') + ', y este grupo es ' + (adGrupoTxt(dd) || 'otro') +
+        ': si son de esta aula, corrige el grado o la sección.');
+      estado(!digGrado
+        ? '⚠️ Ponle el grado y la sección al grupo (pestaña Alumnos): sin ellos no se sabe qué análisis del Plan de acción son de esta aula.'
+        : porques.length
+          ? '🔎 Nada que sugerir todavía. ' + porques.join(' ')
+          : '🔎 No hay evaluaciones del Parcial ' + parcial + ' de este grupo en el 📊 Plan de acción. Genera allá el análisis de cada prueba (con su parcial y su materia) y vuelve: de ahí salen las sugerencias.');
+      return;
+    }
+    const cambios = adSugCambios(dd, parcial, f);
+    if (!cambios.length) {
+      estado('✅ Nada que llenar: las celdas con evaluaciones del Plan de acción ya tienen su nota. Borra una celda y vuelve a tocar el botón si quieres recalcularla.');
+      return;
+    }
+    const lista = mats.map(mat => '· ' + mat + ': ' + evTxt(f.porMat[mat].evals)).join('\n');
+    /* Las que entran por fecha no llevan parcial escrito: decirlo, porque el
+       maestro está a punto de aceptarlas como «del Parcial II». */
+    const notaFecha = f.porFecha
+      ? '\n\n_(' + evTxt(f.porFecha) + ' no tiene parcial marcado y entra por su **fecha**, dentro del rango que ' +
+        'pusiste en Inasistencias.)_' : '';
+    /* Dos aulas que se escriben igual: los análisis viejos no dicen de cuál
+       son, y el maestro merece saberlo ANTES de aceptar. */
+    const notaGemelos = (f.sinSello && adSugGemelos(dd))
+      ? '\n\n⚠️ Tienes **otro grupo** que también se escribe ' + (adGrupoTxt(dd) || 'igual') + '. De estas, ' +
+        evTxt(f.sinSello) + ' viene de antes y no dice de cuál aula es: revisa esas notas con cuidado.' : '';
+    const ok = await metasConfirm(
+      'Del 📊 Plan de acción de este grupo hay **' + evTxt(f.evals) +
+      '** del **Parcial ' + parcial + '**:\n' + lista + notaFecha +
+      '\n\nSe llenarán **' + cambios.length + ' celdas vacías** con el promedio de las evaluaciones de cada alumno ' +
+      '(todas pesan igual; NSP no cuenta como cero).\n\nLo que ya escribiste **no se toca**, y después puedes ' +
+      'corregir cualquier nota: la última palabra es tuya.' + notaGemelos,
+      { icono: '✨', titulo: 'Sugerir notas', okTxt: 'Sí, llenar' });
+    if (!ok) return;
+    /* se recarga y recalcula: si algo cambió con el diálogo abierto, las
+       celdas que dejaron de estar vacías se respetan */
+    const dd2 = adLoad();
+    const f2 = adSugFuentes(dd2, parcial);
+    const cambios2 = adSugCambios(dd2, parcial, f2);
+    if (!cambios2.length) {
+      estado('✅ Nada que llenar: esas celdas ya tienen su nota (quizá se llenaron desde tu otro equipo).');
+      return;
+    }
+    /* la foto de la papelera se guarda AQUÍ, cuando ya se sabe que algo va a
+       cambiar: solo caben 4 y no se gasta una en una acción que no hizo nada */
+    adUndoGuardar('Sugerir notas · Parcial ' + parcial);
+    dd2.notas[parcial] = dd2.notas[parcial] || {};
+    cambios2.forEach(c => {
+      dd2.notas[parcial][c.mat] = dd2.notas[parcial][c.mat] || {};
+      dd2.notas[parcial][c.mat][c.num] = c.v;
+    });
+    adSave(dd2); adRenderSace(body, adLoad());
+    /* transparencia: la celda sugerida queda teñida hasta el próximo redibujo.
+       El desglose se cuenta al TOCARLA (los tooltips no existen en un
+       teléfono): «Ada · Matemáticas: 86 — promedio de 80 y 91». */
+    const porCelda = {};
+    cambios2.forEach(c => { porCelda[c.mat + '|' + c.num] = c; });
+    const deTxt = c => c.de.length === 1
+      ? 'de una sola evaluación (' + c.de[0] + ')'
+      : 'promedio de ' + c.de.slice(0, -1).join(', ') + ' y ' + c.de[c.de.length - 1];
+    body.querySelectorAll('.ad-mx-inp').forEach(inp => {
+      const c = porCelda[inp.dataset.campo + '|' + inp.dataset.num];
+      if (!c) return;
+      inp.classList.add('ad-mx-sug');
+      inp.title = 'Sugerida: ' + deTxt(c);
+      const al = dd2.lista.find(x => String(x.num) === String(inp.dataset.num));
+      inp.addEventListener('focus', () => estado('✨ ' + (adPrimerNombre((al && al.nombre) || '') || '#' + inp.dataset.num) +
+        ' · ' + c.mat + ': ' + c.v + ' — ' + deTxt(c) + '. Puedes escribir otra nota encima.'));
+    });
+    const sinDatos = dd2.lista.filter(al =>
+      mats.some(mat => {
+        const m = f2.porMat[mat] || { notas: {} };
+        const v = (((dd2.notas[parcial] || {})[mat]) || {})[al.num];
+        return (v == null || v === '') && !(m.notas[al.num] || []).length;
+      })).length;
+    const colgadas = Object.keys(f2.matSinCol);
+    estado('✨ ' + cambios2.length + ' nota' + (cambios2.length === 1 ? '' : 's') + ' sugerida' +
+      (cambios2.length === 1 ? '' : 's') + ' en ' + mats.join(', ') + '.' +
+      (sinDatos ? ' ' + sinDatos + ' alumno' + (sinDatos === 1 ? ' quedó' : 's quedaron') +
+        ' con celdas vacías por no tener evaluaciones.' : '') +
+      (colgadas.length ? ' Ojo: hay evaluaciones de ' + colgadas.join(', ') +
+        ' pero la boleta no tiene esa materia (➕ Agregar materia).' : '') +
+      (f2.sinMateria ? ' Otras ' + f2.sinMateria + ' quedaron fuera por no tener materia elegida en el Plan de acción.' : '') +
+      ' Toca una celda verde para ver de qué notas salió: la última palabra es tuya.');
+    if (typeof toast === 'function') toast('✨ Parcial ' + parcial + ': ' + cambios2.length + ' notas sugeridas');
+  });
+
   // Mover una materia de posición (◀ ▶) — reordena d.materias (afecta tabla,
   // boleta y CSV; NO afecta las notas del chatbot, que van por nombre).
   body.querySelectorAll('.ad-mx-mv').forEach(btn => btn.addEventListener('click', () => {
@@ -1484,30 +6889,62 @@ function adRenderSace(body, d) {
     adSave(dd); adRenderSace(body, adLoad());
   }));
 
-  // Copiar UNA columna (materia/rasgo) para SACE — botón 📋 en su cabecera
+  // Copiar UNA columna (materia/rasgo) para SACE — botón 📋 en su cabecera.
+  // En Personalidad cada botón trae su rasgo Y su parcial (hay 4 a la vista).
   body.querySelectorAll('.ad-mx-copy').forEach(btn => btn.addEventListener('click', () => {
     const dd = adLoad();
-    const c = cols[+btn.dataset.col];
-    const ns = ((dd.notas[parcial] || {})[c]) || {};
-    const col = dd.lista.map(a => ns[a.num] != null ? ns[a.num] : '').join('\n');
+    const c = btn.dataset.campo || cols[+btn.dataset.col];
+    const p = btn.dataset.parcial || parcial;
+    const ns = ((dd.notas[p] || {})[c]) || {};
+    const incluidos = dd.lista.filter(a => !a.noCopiarSace);
+    const omitidos = dd.lista.filter(a => a.noCopiarSace);
+    const col = incluidos.map(a => ns[a.num] != null ? ns[a.num] : '').join('\n');
+    const sinTxt = omitidos.length
+      ? ' · sin ' + omitidos.map(a => adPrimerNombre(a.nombre) || ('#' + a.num)).join(', ')
+      : '';
     adCopiar(col,
-      () => estado('✅ Columna «' + c + '» copiada (' + dd.lista.length + ' filas, orden de lista). Pégala en SACE.'),
+      () => {
+        estado('✅ Columna «' + c + (btn.dataset.parcial ? ' · Parcial ' + p : '') + '» copiada (' +
+          incluidos.length + (omitidos.length ? ' de ' + dd.lista.length : '') + ' filas' + sinTxt + '). Pégala en SACE.');
+        if (typeof toast === 'function') {
+          toast('📋 «' + c + '» copiada (' + incluidos.length + ' filas' + sinTxt + ')');
+        }
+      },
       () => estado('⚠️ No se pudo copiar automáticamente en este navegador.'));
   }));
 
   document.getElementById('ad-sace-csv').addEventListener('click', () => {
     const dd = adLoad();
-    const cs = esLetra ? AD_PERSONALIDAD.slice() : esInasis ? ['Inasistencias'] : dd.materias.slice();
-    const cab = ['numero_lista', 'alumno'].concat(cs.map(c => '"' + c + '"')).join(',');
-    const filas = dd.lista.map(a => {
+    /* En Personalidad el CSV lleva los 4 parciales de cada rasgo (como la
+       tabla); en las otras vistas, las columnas del parcial elegido. */
+    const defs = esLetra ? colDefs
+      : (esInasis ? ['Inasistencias'] : dd.materias.slice()).map(c => ({ campo: c, parcial }));
+    const cab = ['numero_lista', 'alumno']
+      .concat(defs.map(x => '"' + x.campo + (esLetra ? ' P-' + x.parcial : '') + '"')).join(',');
+    const incluidos = dd.lista.filter(a => !a.noCopiarSace);
+    const omitidos = dd.lista.filter(a => a.noCopiarSace);
+    const sinTxt = omitidos.length
+      ? ' (sin ' + omitidos.map(a => adPrimerNombre(a.nombre) || ('#' + a.num)).join(', ') + ')'
+      : '';
+    const filas = incluidos.map(a => {
       const base = [a.num, '"' + String(a.nombre || '').replace(/"/g, '""') + '"'];
-      const vals = cs.map(c => { const v = (((dd.notas[parcial] || {})[c]) || {})[a.num]; return v != null ? v : ''; });
+      const vals = defs.map(x => { const v = (((dd.notas[x.parcial] || {})[x.campo]) || {})[a.num]; return v != null ? v : ''; });
       return base.concat(vals).join(',');
     });
     adCopiar(cab + '\n' + filas.join('\n'),
-      () => estado('✅ CSV del Parcial ' + parcial + ' copiado (todas las columnas). Pégalo en una hoja de cálculo.'),
+      () => estado((esLetra
+        ? '✅ CSV de Personalidad copiado (los 4 parciales)'
+        : '✅ CSV del Parcial ' + parcial + ' copiado (todas las columnas)') + sinTxt + '. Pégalo en una hoja de cálculo.'),
       () => estado('⚠️ No se pudo copiar automáticamente en este navegador.'));
   });
+
+  adTablaFilasArrastrar(body.querySelector('.ad-mx'), () => adRenderSace(body, adLoad()));
+  adUndoEnganchar(body);
+
+  /* Restaurar foco y posición del cursor si una celda estaba activa antes del render */
+  if (activeInpInfo) {
+    adRestoreFocus(activeInpInfo);
+  }
 }
 
 /* Redimensiona un logo a máx 260px y lo guarda como dataURL en el grupo.
@@ -1618,10 +7055,10 @@ function adConsejoFamilia(nombre, ctx) {
     partes.push(`Celebre el logro de ${n} en ${mejores[0].mat} (${c.maxV}): el elogio sincero motiva.`);
   }
   if (c.tendencia && c.tendencia.tipo === 'sube') {
-    partes.push(`Además viene mejorando: pasó de ${c.tendencia.ini.prom} a ${c.tendencia.fin.prom} entre parciales — ese rumbo es el correcto.`);
+    partes.push(`Además viene mejorando: pasó de ${c.tendencia.ini.prom} a ${c.tendencia.fin.prom} del parcial ${c.tendencia.ini.p} al ${c.tendencia.fin.p} — ese rumbo es el correcto.`);
   }
   if (c.mejoraMax) {
-    partes.push(`Su mayor avance de este parcial fue en ${c.mejoraMax.mat}: de ${c.mejoraMax.de} a ${c.mejoraMax.a} (+${c.mejoraMax.d}) — reconózcalo, eso consolida el hábito.`);
+    partes.push(`Su mayor avance fue en ${c.mejoraMax.mat}: de ${c.mejoraMax.de} (parcial ${c.mejoraMax.pDe}) a ${c.mejoraMax.a} (parcial ${c.mejoraMax.pA}) — reconózcalo, eso consolida el hábito.`);
   }
 
   // 2) Diagnóstico: qué DICEN los datos sobre el porqué (máx. 3 causas
@@ -1635,25 +7072,41 @@ function adConsejoFamilia(nombre, ctx) {
     causas.push(`el docente observa margen en ${c.rasgosBajos.slice(0, 2).join(' y ')} — ${tip}`);
   }
   if (c.caidaMax) {
-    causas.push(`la mayor caída fue en ${c.caidaMax.mat} (de ${c.caidaMax.de} a ${c.caidaMax.a}): pregunte al docente qué cambió en esa asignatura`);
+    causas.push(`la mayor caída fue en ${c.caidaMax.mat} (de ${c.caidaMax.de} en el parcial ${c.caidaMax.pDe} a ${c.caidaMax.a} en el ${c.caidaMax.pA}): pregunte al docente qué cambió en esa asignatura`);
   }
   if (c.tendencia && c.tendencia.tipo === 'baja') {
-    causas.push(`el promedio general bajó de ${c.tendencia.ini.prom} (parcial ${c.tendencia.ini.p}) a ${c.tendencia.fin.prom} (parcial ${c.tendencia.fin.p}) — conviene retomar la rutina que funcionaba`);
+    causas.push(`el promedio de sus materias bajó de ${c.tendencia.ini.prom} (parcial ${c.tendencia.ini.p}) a ${c.tendencia.fin.prom} (parcial ${c.tendencia.fin.p}) — conviene retomar la rutina que funcionaba`);
   }
+  const hayBajo = (c.basicasBajas && c.basicasBajas.length) || (peores.length && Number(c.minV) < 70);
   if (causas.length) {
     partes.push(`Los datos del aula señalan por dónde empezar: ${causas.slice(0, 3).join('; ')}.`);
-  } else if (peores.length && (c.inasis || 0) === 0) {
+  } else if (hayBajo && (c.inasis || 0) === 0) {
     partes.push(`Sin faltas ni observaciones de conducta, el reto es de práctica: más ejercicios guiados harán la diferencia.`);
   }
 
-  // 3) Acción sobre lo bajo, con la etiqueta oficial de la nota
-  if (peores.length) {
+  // 3) Acción sobre lo bajo — las MATERIAS BÁSICAS van primero: sostienen
+  //    todo lo demás y son donde el refuerzo en casa rinde más. Y si las
+  //    cuatro están aprobadas, también se dice: esa tranquilidad informa
+  //    tanto como una alerta.
+  const bajas = c.basicasBajas || [];
+  if (bajas.length) {
+    const bTxt = bajas.slice(0, 3).map(x => `${x.mat} (${x.val} · «${adNotaCat(x.val).label}»)`).join(', ');
+    partes.push(bajas[0].val < 60
+      ? `El refuerzo empieza por lo básico: ${bTxt}. Coordine con el docente un plan de recuperación esta misma semana.`
+      : `El refuerzo empieza por lo básico: ${bTxt}. Acompáñele con 15–20 minutos de repaso diario y consulte al docente cómo apoyar desde casa.`);
+    if (peores.length && !adEsBasica(peores[0].mat) && Number(c.minV) < 70) {
+      partes.push(`También conviene un empujón en ${adNombresMats(peores)} (${c.minV}).`);
+    }
+  } else if (peores.length && Number(c.minV) < 70) {
     const et = adNotaCat(c.minV).label;
     if (Number(c.minV) < 60) {
       partes.push(`En ${adNombresMats(peores)} (${c.minV} · «${et}») se necesita refuerzo urgente: coordine con el docente un plan de recuperación esta misma semana.`);
     } else {
       partes.push(`En ${adNombresMats(peores)} (${c.minV} · «${et}») acompáñele con 15–20 minutos de repaso diario y consulte al docente cómo apoyar desde casa.`);
     }
+  } else if (c.basicasTot) {
+    partes.push(`Las ${c.basicasTot === 4 ? 'cuatro ' : ''}materias básicas están aprobadas${c.basicasMin
+      ? ` (la más baja hoy: ${c.basicasMin.mat} con ${c.basicasMin.val})` : ''}: manténgalas con un repaso breve y constante.`);
   }
 
   if (!partes.length) partes.push('Mantenga una rutina de estudio en casa y comunicación cercana con el centro educativo.');
@@ -1661,44 +7114,25 @@ function adConsejoFamilia(nombre, ctx) {
   return partes.join(' ');
 }
 
-/* Gráfico de barras horizontales (SVG: los fill SÍ imprimen, a diferencia de
-   los fondos CSS). Verde = materia más alta, ámbar = más baja, azul = resto;
-   línea roja punteada en 70 (nota de aprobación). */
-function adBoletaGrafico(datos) {
-  if (!datos.length) return '';
-  const rowH = 18, gap = 4, padT = 6, padB = 12;
-  const labelW = 104, barX = labelW + 4, W = 320;
-  const barMax = W - barX - 26;
-  const H = padT + datos.length * (rowH + gap) - gap + padB;
-  const x70 = barX + barMax * 0.7;
-  const gridBot = padT + datos.length * (rowH + gap) - gap;
-  const bars = datos.map((it, i) => {
-    const y = padT + i * (rowH + gap);
-    const w = Math.max(2, barMax * (Math.min(100, Math.max(0, it.val)) / 100));
-    // Cada barra con el color OFICIAL de su calificación (el mismo del
-    // Plan de Acción): verde=Avanzado, cian=Muy Bueno, amarillo=
-    // Satisfactorio, naranja=Debe Mejorar, rojo=Insatisfactorio.
-    const color = adNotaCat(it.val).color;
-    const lbl = it.mat.length > 17 ? it.mat.slice(0, 16) + '…' : it.mat;
-    return `<text x="${labelW}" y="${(y + rowH * 0.72).toFixed(1)}" text-anchor="end" font-size="8.5" fill="#334155">${adEsc(lbl)}</text>
-      <rect x="${barX}" y="${y + 2}" width="${barMax}" height="${rowH - 4}" rx="2.5" fill="#eef2f7"/>
-      <rect x="${barX}" y="${y + 2}" width="${w.toFixed(1)}" height="${rowH - 4}" rx="2.5" fill="${color}"/>
-      <text x="${(barX + w + 3).toFixed(1)}" y="${(y + rowH * 0.72).toFixed(1)}" font-size="8.5" font-weight="bold" fill="${color}">${it.val}</text>`;
-  }).join('');
-  const leyenda = `<div class="bl-leyenda">${AD_NOTA_CATS.map(c =>
-    `<span><i style="background:${c.color}"></i>${c.min > 0 ? c.min + '+' : '&lt;60'} ${c.label}</span>`).join('')}</div>`;
-  return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:340px;font-family:Arial,Helvetica,sans-serif">
-    <line x1="${x70.toFixed(1)}" y1="${padT - 1}" x2="${x70.toFixed(1)}" y2="${gridBot}" stroke="#c0392b" stroke-width="0.8" stroke-dasharray="3 2"/>
-    <text x="${x70.toFixed(1)}" y="${(H - 2).toFixed(1)}" text-anchor="middle" font-size="7" fill="#c0392b">70 · aprobación</text>
-    ${bars}
-  </svg>${leyenda}`;
-}
-
-/* Gráfico de EVOLUCIÓN (2+ parciales): la barra es la nota del ÚLTIMO
-   parcial con su color oficial (el estado real de hoy — el promedio del
-   año disimula las caídas), la marca | señala dónde estaba el parcial
-   anterior, y a la derecha va el delta ▲/▼ por materia. */
-function adBoletaGraficoEvo(filas) {
+/* ── NORMATIVA DEL GRÁFICO DE LA BOLETA: cómo se leen los parciales I–IV ──
+   Nació de una boleta real: el III parcial traía solo Matemáticas (85) y el
+   gráfico, que exigía un «último parcial» común a todas las materias, se
+   caía al promedio del año y pintaba 77 — el 85 no aparecía por ningún lado.
+   Las reglas, para que con I, II, III y IV el análisis sea siempre el mismo:
+   1. La nota VIGENTE de una materia es la de SU último parcial con nota.
+      El promedio del año vive en la fila PROM. de la tabla; el gráfico y
+      los chips hablan del HOY, porque el promedio disimula las caídas y
+      llega tarde a las mejoras.
+   2. Solo se compara lo comparable. La marca | y el ▲/▼ de cada materia son
+      contra su propio parcial anterior; la tendencia general del consejo
+      compara dos parciales solo por las materias que AMBOS tienen (nunca
+      el promedio de 8 materias contra el de 1).
+   3. Si las materias vienen de parciales distintos (boleta a medio llenar),
+      cada barra dice de cuál parcial es su nota (P-I…P-IV).
+   Con los cuatro parciales llenos queda: barra = IV, marca | = III, y la
+   tendencia compara III → IV con todas las materias.
+   (SVG porque los fill SÍ imprimen; los fondos CSS no siempre.) */
+function adBoletaGraficoEstado(filas, mixto) {
   if (!filas.length) return '';
   const rowH = 18, gap = 4, padT = 6, padB = 12;
   const labelW = 104, barX = labelW + 4, W = 320;
@@ -1706,24 +7140,34 @@ function adBoletaGraficoEvo(filas) {
   const H = padT + filas.length * (rowH + gap) - gap + padB;
   const x70 = barX + barMax * 0.7;
   const gridBot = padT + filas.length * (rowH + gap) - gap;
+  const hayPrev = filas.some(it => it.prev != null);
   const bars = filas.map((it, i) => {
     const y = padT + i * (rowH + gap);
     const w = Math.max(2, barMax * (Math.min(100, Math.max(0, it.val)) / 100));
-    const xp = barX + barMax * (Math.min(100, Math.max(0, it.prev)) / 100);
+    // Color OFICIAL de la calificación (el mismo del Plan de Acción)
     const color = adNotaCat(it.val).color;
-    const d = it.val - it.prev;
-    const dTxt = d > 0 ? '▲+' + d : (d < 0 ? '▼' + d : '· igual');
-    const dCol = d > 0 ? '#16a34a' : (d < 0 ? '#dc2626' : '#7286a8');
     const lbl = it.mat.length > 17 ? it.mat.slice(0, 16) + '…' : it.mat;
+    let marca = '', linea2 = '';
+    if (it.prev != null) {
+      const xp = barX + barMax * (Math.min(100, Math.max(0, it.prev)) / 100);
+      const dd = it.val - it.prev;
+      const dTxt = (dd > 0 ? '▲+' + dd : (dd < 0 ? '▼' + dd : '· igual')) + (mixto ? ' · P-' + it.p : '');
+      const dCol = dd > 0 ? '#16a34a' : (dd < 0 ? '#dc2626' : '#7286a8');
+      marca = `<rect x="${(xp - 0.7).toFixed(1)}" y="${y + 1}" width="1.4" height="${rowH - 2}" fill="#0f2350" opacity="0.6"/>`;
+      linea2 = `<text x="${(barX + barMax + 3).toFixed(1)}" y="${(y + rowH * 0.98).toFixed(1)}" font-size="6.3" font-weight="bold" fill="${dCol}">${dTxt}</text>`;
+    } else if (mixto) {
+      // materia con una sola nota entre varios parciales: decir de cuál es
+      linea2 = `<text x="${(barX + barMax + 3).toFixed(1)}" y="${(y + rowH * 0.98).toFixed(1)}" font-size="6.3" font-weight="bold" fill="#7286a8">P-${it.p}</text>`;
+    }
     return `<text x="${labelW}" y="${(y + rowH * 0.72).toFixed(1)}" text-anchor="end" font-size="8.5" fill="#334155">${adEsc(lbl)}</text>
       <rect x="${barX}" y="${y + 2}" width="${barMax}" height="${rowH - 4}" rx="2.5" fill="#eef2f7"/>
       <rect x="${barX}" y="${y + 2}" width="${w.toFixed(1)}" height="${rowH - 4}" rx="2.5" fill="${color}"/>
-      <rect x="${(xp - 0.7).toFixed(1)}" y="${y + 1}" width="1.4" height="${rowH - 2}" fill="#0f2350" opacity="0.6"/>
+      ${marca}
       <text x="${(barX + barMax + 3).toFixed(1)}" y="${(y + rowH * 0.52).toFixed(1)}" font-size="8.5" font-weight="bold" fill="${color}">${it.val}</text>
-      <text x="${(barX + barMax + 3).toFixed(1)}" y="${(y + rowH * 0.98).toFixed(1)}" font-size="6.3" font-weight="bold" fill="${dCol}">${dTxt}</text>`;
+      ${linea2}`;
   }).join('');
   const leyenda = `<div class="bl-leyenda">${AD_NOTA_CATS.map(c =>
-    `<span><i style="background:${c.color}"></i>${c.min > 0 ? c.min + '+' : '&lt;60'} ${c.label}</span>`).join('')}<span><i style="background:#0f2350"></i>| parcial anterior</span></div>`;
+    `<span><i style="background:${c.color}"></i>${c.min > 0 ? c.min + '+' : '&lt;60'} ${c.label}</span>`).join('')}${hayPrev ? '<span><i style="background:#0f2350"></i>| parcial anterior</span>' : ''}</div>`;
   return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:340px;font-family:Arial,Helvetica,sans-serif">
     <line x1="${x70.toFixed(1)}" y1="${padT - 1}" x2="${x70.toFixed(1)}" y2="${gridBot}" stroke="#c0392b" stroke-width="0.8" stroke-dasharray="3 2"/>
     <text x="${x70.toFixed(1)}" y="${(H - 2).toFixed(1)}" text-anchor="middle" font-size="7" fill="#c0392b">70 · aprobación</text>
@@ -1733,9 +7177,17 @@ function adBoletaGraficoEvo(filas) {
 
 /* Imprime una BOLETA elegante por alumno: encabezado con dos logos (centro y
    Secretaría), tabla compacta de personalidad + aprovechamiento, gráfico de
-   rendimiento, mensaje formal de motivación y consejo para la familia. */
-function adPrintBoletas(d) {
+   rendimiento, mensaje formal de motivación y consejo para la familia.
+
+   `nums` (opcional) son los números de lista que se quieren imprimir. Sin él
+   sale el grupo entero. Con UN alumno se resuelve lo de todos los días: la
+   madre que llega por la boleta de su hijo y la nota que se corrigió y hay
+   que reimprimir — antes tocaba mandar las 43 hojas para rescatar una. */
+function adPrintBoletas(d, nums) {
   if (!d.lista || !d.lista.length) { if (typeof toast === 'function') toast('No hay alumnos'); return; }
+  const quiere = Array.isArray(nums) ? nums.map(String) : null;
+  const hojas = quiere && quiere.length ? d.lista.filter(a => quiere.includes(String(a.num))) : d.lista;
+  if (!hojas.length) { if (typeof toast === 'function') toast('Ese alumno ya no está en la lista'); return; }
   const centro = (d.escuela || '').trim() || 'Centro Educativo';
   const grado = adGrupoTxt(d) || '';
   const pers = AD_PERSONALIDAD.slice();
@@ -1753,6 +7205,16 @@ function adPrintBoletas(d) {
   const sumInasis = num => {
     const xs = parciales.map(p => val(p, 'Inasistencias', num)).filter(x => x !== '' && !isNaN(Number(x))).map(Number);
     return xs.length ? xs.reduce((a, b) => a + b, 0) : '';
+  };
+  /* Valoración FINAL de un rasgo de personalidad (normativa SACE, en
+     AD_PERS_NUM): promedio de los parciales con valoración, redondeado y
+     de vuelta a su letra. Con letras fuera de la tabla oficial queda «—»
+     y la valoración final la decide el docente. */
+  const promPers = (c, num) => {
+    const xs = parciales.map(p => String(val(p, c, num)).toUpperCase().trim()).filter(Boolean);
+    if (!xs.length || xs.some(x => !AD_PERS_NUM[x])) return '—';
+    const n = Math.round(xs.reduce((t, x) => t + AD_PERS_NUM[x], 0) / xs.length);
+    return AD_PERS_DE_NUM[Math.max(1, Math.min(4, n))];
   };
   const thV = t => `<th class="v"><span>${adEsc(t)}</span></th>`;
   const primer = nom => String(nom || '').trim().split(/\s+/)[0] || '';
@@ -1786,34 +7248,58 @@ function adPrintBoletas(d) {
   ];
 
   const hoja = a => {
-    // Datos del gráfico: promedio anual por materia
+    // Promedio del año por materia: el dato OFICIAL acumulado. Vive en la
+    // fila PROM. y en su chip; el gráfico y los demás chips hablan del HOY
+    // (normativa del gráfico, en adBoletaGraficoEstado).
     const datos = mats.map(c => ({ mat: c, val: promMat(c, a.num) }))
       .filter(x => x.val !== '' && !isNaN(Number(x.val)))
       .map(x => ({ mat: x.mat, val: Number(x.val) }));
     const promGen = datos.length ? Math.round(datos.reduce((s, x) => s + x.val, 0) / datos.length) : null;
-    // EMPATES con honestidad: «la más alta» son TODAS las que comparten la
-    // nota máxima; «a reforzar», todas las de la mínima. Si todas las
-    // materias tienen la misma nota, no se corona ninguna.
-    const maxV = datos.length ? Math.max.apply(null, datos.map(x => x.val)) : null;
-    const minV = datos.length ? Math.min.apply(null, datos.map(x => x.val)) : null;
-    const todasIguales = datos.length > 0 && maxV === minV;
-    const mejores = datos.filter(x => x.val === maxV);
-    const peores = todasIguales ? [] : datos.filter(x => x.val === minV);
     const inasis = sumInasis(a.num);
 
-    // ── SEÑALES para el consejo (patrones reales del aula) ──
-    // Tendencia: promedio general de cada parcial con datos; si entre el
-    // primero y el último hay ±5 puntos, es un patrón que vale contar.
-    const promsParc = parciales.map(p => {
-      const xs = mats.map(cc => val(p, cc, a.num)).filter(x => x !== '' && !isNaN(Number(x))).map(Number);
-      return xs.length ? { p, prom: Math.round(xs.reduce((s, x) => s + x, 0) / xs.length) } : null;
+    // ── ESTADO VIGENTE por materia (regla 1): la última nota de CADA
+    //    materia con su parcial, y la de su parcial anterior si existe.
+    //    Por materia, no global: un III parcial con solo Matemáticas no
+    //    puede esconder el 85 ni arrastrar al resto.
+    const valNum = (p, cc) => { const v = val(p, cc, a.num); return (v === '' || isNaN(Number(v))) ? null : Number(v); };
+    const estado = mats.map(cc => {
+      const s = parciales.map(p => ({ p, v: valNum(p, cc) })).filter(x => x.v != null);
+      if (!s.length) return null;
+      const u = s[s.length - 1], ant = s.length >= 2 ? s[s.length - 2] : null;
+      return { mat: cc, val: u.v, p: u.p, prev: ant ? ant.v : null, pPrev: ant ? ant.p : null };
     }).filter(Boolean);
+
+    // EMPATES con honestidad sobre el HOY: «la más alta» son TODAS las que
+    // comparten la nota máxima; «a reforzar», las de la mínima. Si todas
+    // están iguales, no se corona ninguna.
+    const maxV = estado.length ? Math.max.apply(null, estado.map(x => x.val)) : null;
+    const minV = estado.length ? Math.min.apply(null, estado.map(x => x.val)) : null;
+    const todasIguales = estado.length > 0 && maxV === minV;
+    const mejores = estado.filter(x => x.val === maxV);
+    const peores = todasIguales ? [] : estado.filter(x => x.val === minV);
+
+    // ── SEÑALES para el consejo (patrones reales del aula) ──
+    // Tendencia general (regla 2): el par de parciales MÁS RECIENTE que
+    // comparta 2+ materias, comparado SOLO por esas materias. Antes se
+    // comparaba el promedio de cada parcial con lo que tuviera, y un III
+    // con una sola materia daba «mejorías» fantasma (69 → 85 comparando
+    // 8 materias contra 1). Elegir otro par sería escoger el dato que
+    // conviene; ±5 para no leer ruido.
+    const parcConDatos = parciales.filter(p => mats.some(cc => valNum(p, cc) != null));
     let tendencia = null;
-    if (promsParc.length >= 2) {
-      const ini = promsParc[0], fin = promsParc[promsParc.length - 1];
-      if (fin.prom <= ini.prom - 5) tendencia = { tipo: 'baja', ini, fin };
-      else if (fin.prom >= ini.prom + 5) tendencia = { tipo: 'sube', ini, fin };
+    for (let j = parcConDatos.length - 1; j > 0 && !tendencia; j--) {
+      for (let i = j - 1; i >= 0 && !tendencia; i--) {
+        const comunes = mats.filter(cc => valNum(parcConDatos[i], cc) != null && valNum(parcConDatos[j], cc) != null);
+        if (comunes.length < 2) continue;
+        const prom = p => Math.round(comunes.reduce((s, cc) => s + valNum(p, cc), 0) / comunes.length);
+        const ini = { p: parcConDatos[i], prom: prom(parcConDatos[i]) };
+        const fin = { p: parcConDatos[j], prom: prom(parcConDatos[j]) };
+        tendencia = fin.prom <= ini.prom - 5 ? { tipo: 'baja', ini, fin }
+          : fin.prom >= ini.prom + 5 ? { tipo: 'sube', ini, fin }
+          : { tipo: 'plana' };
+      }
     }
+    if (tendencia && tendencia.tipo === 'plana') tendencia = null;
     // Personalidad: rasgos marcados con lo MÁS BAJO de la escala del centro
     // (último valor de escalaPers). Solo si NO todos están abajo — si todos,
     // es el criterio general del docente, no un patrón del alumno.
@@ -1830,33 +7316,42 @@ function adPrintBoletas(d) {
     const persVals = pers.map(cc => ({ c: cc, v: rasgoUlt(cc) })).filter(x => x.v);
     const rasgosBajosTodos = persVals.filter(x => x.v === bajoP).map(x => x.c);
     const rasgosBajos = (persVals.length && rasgosBajosTodos.length === persVals.length) ? [] : rasgosBajosTodos;
-    // Elogio anclado en las MATERIAS BÁSICAS: la(s) mejor(es) entre
-    // Matemáticas/Español/CC.NN./CC.SS. Una no básica solo se suma si el
+    // MATERIAS BÁSICAS (Matemáticas/Español/CC.NN./CC.SS.), sobre el HOY:
+    // el elogio se ancla en la mejor de ellas, y el refuerzo del consejo
+    // empieza SIEMPRE por las básicas que estén debajo de 70 — son las que
+    // sostienen todo lo demás. Una no básica solo se suma al elogio si el
     // dato lo amerita: llega a 90+ o supera a la mejor básica por 8+.
-    const basicas = datos.filter(x => adEsBasica(x.mat));
+    const basicas = estado.filter(x => adEsBasica(x.mat));
     const maxB = basicas.length ? Math.max.apply(null, basicas.map(x => x.val)) : null;
     const mejoresBas = basicas.filter(x => x.val === maxB);
-    const extraDestacada = datos
+    const basicasBajas = basicas.filter(x => x.val < 70).sort((x, y) => x.val - y.val);
+    const basicasMin = basicas.length ? basicas.reduce((m, x) => (x.val < m.val ? x : m)) : null;
+    const extraDestacada = estado
       .filter(x => !adEsBasica(x.mat) && (x.val >= 90 || (maxB != null && x.val >= maxB + 8)))
       .sort((x, y) => y.val - x.val)[0] || null;
-    // EVOLUCIÓN por materia (2+ parciales): último parcial vs el anterior.
-    // Alimenta el gráfico de evolución, los chips y el consejo con la
-    // mayor mejora y la mayor caída (umbral ±5 para no leer ruido).
-    const valNum = (p, cc) => { const v = val(p, cc, a.num); return (v === '' || isNaN(Number(v))) ? null : Number(v); };
-    const parcConDatos = parciales.filter(p => mats.some(cc => valNum(p, cc) != null));
-    const pUlt = parcConDatos[parcConDatos.length - 1] || null;
-    const pPrev = parcConDatos.length >= 2 ? parcConDatos[parcConDatos.length - 2] : null;
-    const filasEvo = pPrev
-      ? mats.map(cc => ({ mat: cc, prev: valNum(pPrev, cc), val: valNum(pUlt, cc) }))
-          .filter(x => x.val != null && x.prev != null)
-      : [];
-    const evoOK = filasEvo.length >= 2;
+
+    // Mayor avance y mayor caída POR MATERIA (regla 2): su última nota
+    // contra la de su propio parcial anterior, umbral ±5. En empate manda
+    // el parcial más reciente: es la noticia de hoy, no la de hace meses.
     let mejoraMax = null, caidaMax = null;
-    filasEvo.forEach(x => {
+    const masNuevo = (x, actual) => parciales.indexOf(x.p) > parciales.indexOf(actual.pA);
+    estado.forEach(x => {
+      if (x.prev == null) return;
       const dd = x.val - x.prev;
-      if (dd >= 5 && (!mejoraMax || dd > mejoraMax.d)) mejoraMax = { mat: x.mat, de: x.prev, a: x.val, d: dd };
-      if (dd <= -5 && (!caidaMax || dd < caidaMax.d)) caidaMax = { mat: x.mat, de: x.prev, a: x.val, d: dd };
+      const fila = { mat: x.mat, de: x.prev, a: x.val, d: dd, pDe: x.pPrev, pA: x.p };
+      if (dd >= 5 && (!mejoraMax || dd > mejoraMax.d || (dd === mejoraMax.d && masNuevo(x, mejoraMax)))) mejoraMax = fila;
+      if (dd <= -5 && (!caidaMax || dd < caidaMax.d || (dd === caidaMax.d && masNuevo(x, caidaMax)))) caidaMax = fila;
     });
+
+    // Título del gráfico según lo que haya (regla 3): un solo parcial dice
+    // cuál es; parciales mezclados lo advierten; parejo dice de dónde a dónde.
+    const parcsVig = estado.map(x => x.p).filter((v, i, arr) => arr.indexOf(v) === i);
+    const gMixto = parcsVig.length > 1;
+    const prevsU = estado.filter(x => x.prev != null).map(x => x.pPrev).filter((v, i, arr) => arr.indexOf(v) === i);
+    const gTitulo = !estado.length ? 'Rendimiento por materia'
+      : parcConDatos.length === 1 ? `Notas del Parcial ${parcConDatos[0]}`
+      : gMixto ? 'Estado por materia <small>(cada una, su último parcial con nota)</small>'
+      : `Evolución por materia <small>(${prevsU.length === 1 ? 'parcial ' + prevsU[0] + ' → ' + parcsVig[0] : 'al parcial ' + parcsVig[0]})</small>`;
 
     const filas = parciales.map(p => `
       <tr>
@@ -1868,29 +7363,75 @@ function adPrintBoletas(d) {
     const promRow = `
       <tr class="prom">
         <td class="pa">PROM.</td>
-        ${pers.map(() => '<td>—</td>').join('')}
+        ${pers.map(c => `<td>${promPers(c, a.num)}</td>`).join('')}
         ${mats.map(c => `<td>${promMat(c, a.num)}</td>`).join('')}
         <td>${inasis}</td>
       </tr>`;
 
+    // Chips: el promedio es del AÑO (la fila PROM.); lo demás habla del HOY
+    // (estado vigente por materia) y lo dice en su etiqueta. «A reforzar»
+    // solo cuando de verdad está bajo 70: con todo aprobado no hay alarma.
     const chip = (lbl, valTxt, cls) => `<div class="chip ${cls || ''}"><span>${lbl}</span><b>${valTxt}</b></div>`;
     const chipAlta = todasIguales
-      ? chip('Rendimiento', 'Parejo · ' + maxV + ' en todo', 'good')
+      ? chip('Rendimiento hoy', 'Parejo · ' + maxV + ' en todo', 'good')
       : (mejores.length > 1
-        ? chip('Materias más altas', adEsc(adNombresMats(mejores, mejores.length === 2 ? 2 : 1)) + ' · ' + maxV, 'good')
-        : (mejores.length ? chip('Materia más alta', adEsc(mejores[0].mat) + ' · ' + maxV, 'good') : ''));
-    const chipBaja = peores.length
-      ? chip('A reforzar', adEsc(adNombresMats(peores, peores.length === 2 ? 2 : 1)) + ' · ' + minV, 'low')
-      : '';
+        ? chip('Materias más altas (hoy)', adEsc(adNombresMats(mejores, mejores.length === 2 ? 2 : 1)) + ' · ' + maxV, 'good')
+        : (mejores.length ? chip('Materia más alta (hoy)', adEsc(mejores[0].mat) + ' · ' + maxV, 'good') : ''));
+    const chipBaja = !peores.length ? ''
+      : Number(minV) < 70
+        ? chip('A reforzar (hoy)', adEsc(adNombresMats(peores, peores.length === 2 ? 2 : 1)) + ' · ' + minV, 'low')
+        : chip('Más baja (hoy)', adEsc(adNombresMats(peores, peores.length === 2 ? 2 : 1)) + ' · ' + minV);
     const resumen = `
       <div class="chips">
-        ${chip('Promedio general', promGen != null ? promGen : '—')}
+        ${chip('Promedio del año', promGen != null ? promGen : '—')}
         ${chipAlta}
         ${chipBaja}
         ${mejoraMax ? chip('Mayor avance', adEsc(mejoraMax.mat) + ' ▲ +' + mejoraMax.d, 'good') : ''}
         ${caidaMax ? chip('Mayor caída', adEsc(caidaMax.mat) + ' ▼ ' + caidaMax.d, 'low') : ''}
         ${chip('Inasistencias', inasis !== '' ? inasis : '0')}
       </div>`;
+
+    /* ── RESULTADO FINAL DEL AÑO — solo con los CUATRO parciales llenos ──
+       Normativa de Honduras (Primero y Segundo Ciclo): se aprueba el año
+       con nota final de 70 o más en CADA materia. El promedio general NO
+       salva una materia baja: con 75 de promedio y una materia en 65 se
+       reprueba igual. El veredicto usa el MISMO promedio redondeado de la
+       fila PROM., para que el papel nunca se contradiga a sí mismo.
+       Materias sin ninguna nota en el año no cuentan (no se impartieron);
+       si alguna materia con notas aún no tiene sus cuatro parciales, el
+       año no está cerrado y no se dicta veredicto.
+       El veredicto SUSTITUYE a la motivación y al consejo en su columna:
+       con el año dictado, «¡vamos, tú puedes!» ya no tiene sentido junto a
+       un «no aprobado» — y así la boleta se queda en UNA página carta. */
+    const matsConDatos = mats.filter(cc => parciales.some(p => valNum(p, cc) != null));
+    const anioCompleto = matsConDatos.length > 0 &&
+      matsConDatos.every(cc => parciales.every(p => valNum(p, cc) != null));
+    let finalHtml = '';
+    if (anioCompleto) {
+      const finales = matsConDatos.map(cc => ({ mat: cc, val: Number(promMat(cc, a.num)) }));
+      const bajas = finales.filter(x => x.val < 70).sort((x, y) => x.val - y.val);
+      const nom = primer(a.nombre) || 'su hijo(a)';
+      if (!bajas.length) {
+        finalHtml = `<div class="bl-final ok">
+          <div class="bl-final-t">📜 Resultado final del año lectivo: APROBADO</div>
+          <p>Estimada familia: al cierre de los cuatro parciales, ${adEsc(nom)} alcanzó un promedio general
+          de ${promGen}. Nos complace comunicarle formalmente que ha <b>aprobado el año lectivo</b>.
+          Felicítenle en casa: este logro es fruto de su esfuerzo sostenido y del acompañamiento de
+          ustedes. Será un honor seguir acompañando su formación el próximo año escolar.</p></div>`;
+      } else {
+        const det = bajas.map(x => x.mat + ' (' + x.val + ')').join(', ');
+        finalHtml = `<div class="bl-final rep">
+          <div class="bl-final-t">📜 Resultado final del año lectivo</div>
+          <p>Estimada familia: al cierre de los cuatro parciales, ${adEsc(nom)} alcanzó un promedio general
+          de ${promGen}, reflejo de un esfuerzo que valoramos y reconocemos sinceramente. La normativa
+          educativa establece que, en el Primero y Segundo Ciclo, el año se aprueba con una nota final de
+          70 o más en <b>cada materia</b>; en ${adEsc(det)} la nota final quedó por debajo de ese mínimo y,
+          por ello, el año lectivo <b>no queda aprobado</b>. Este resultado no define a ${adEsc(nom)}: es una
+          etapa que, con el proceso de recuperación, su acompañamiento en casa y el apoyo del centro
+          educativo, se puede superar. Le invitamos con todo respeto a conversar con el docente para acordar
+          juntos los pasos a seguir. Cuente con nosotros.</p></div>`;
+      }
+    }
 
     const cita = CITAS[(Number(a.num) || String(a.nombre || '').length || 0) % CITAS.length];
 
@@ -1943,27 +7484,28 @@ function adPrintBoletas(d) {
 
       <div class="bl-grid2">
         <div class="bl-card">
-          <div class="bl-h">${evoOK
-            ? `Evolución por materia <small>(parcial ${pPrev} → ${pUlt})</small>`
-            : 'Rendimiento por materia <small>(promedio del año)</small>'}</div>
-          ${(evoOK ? adBoletaGraficoEvo(filasEvo) : adBoletaGrafico(datos)) || '<p class="bl-nada">Aún no hay promedios que graficar.</p>'}
+          <div class="bl-h">${gTitulo}</div>
+          ${adBoletaGraficoEstado(estado, gMixto) || '<p class="bl-nada">Aún no hay notas que graficar.</p>'}
           ${resumen}
         </div>
         <div class="bl-msgs">
+          ${anioCompleto ? finalHtml : `
           <div class="bl-card motiva">
             <div class="bl-h">✦ Mensaje de motivación</div>
-            <p>${adEsc(adMsgMotiva(primer(a.nombre), promGen, mejores.length === 1 ? mejores[0].mat : ''))}</p>
+            <p>${adEsc(adMsgMotiva(primer(a.nombre), promGen,
+              mejoresBas.length === 1 ? mejoresBas[0].mat : (mejores.length === 1 ? mejores[0].mat : '')))}</p>
           </div>
           <div class="bl-card consejo">
             <div class="bl-h">✿ Consejo para la familia</div>
             <p>${adEsc(adConsejoFamilia(primer(a.nombre), {
               mejores, peores, maxV, minV,
               mejoresBas, maxB, extraDestacada,
+              basicasBajas, basicasMin, basicasTot: basicas.length,
               inasis: Number(inasis) || 0,
               tendencia, rasgosBajos,
               mejoraMax, caidaMax,
             }))}</p>
-          </div>
+          </div>`}
         </div>
       </div>
 
@@ -1981,8 +7523,13 @@ function adPrintBoletas(d) {
     </section>`;
   };
 
+  /* El título es el nombre con que el teléfono guarda el PDF: con un solo
+     alumno dice de quién es, para no acabar con diez «Boletas 6º-1.pdf». */
+  const titulo = hojas.length === 1
+    ? 'Boleta — ' + (String(hojas[0].nombre || '').trim() || 'N° ' + hojas[0].num) + (grado ? ' · ' + grado : '')
+    : 'Boletas — ' + grado;
   const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
-<title>Boletas — ${adEsc(grado)}</title>
+<title>${adEsc(titulo)}</title>
 <style>
   @page { size: letter portrait; margin: 10mm; }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -2015,6 +7562,19 @@ function adPrintBoletas(d) {
   .fp-slot i { display: block; border-top: 1px solid #55637d; margin: 0 1px 2px; }
   .fp-slot span { font-size: 7.5px; color: #55637d; text-align: center; }
   .bl-cuerpo .bl-notas { flex: 1; }
+
+  /* Veredicto del año (solo con los 4 parciales): verde sereno si aprueba;
+     ámbar —nunca rojo— si no, que la noticia ya pesa suficiente. Vive en la
+     columna de mensajes EN LUGAR de motivación y consejo: la boleta cabe
+     en una sola página carta. */
+  .bl-final { border-radius: 9px; padding: 12px 16px; break-inside: avoid; border: 1.5px solid; }
+  .bl-msgs .bl-final { flex: 1; }
+  .bl-final-t { font-family: Georgia, serif; font-size: 14px; font-weight: 700; letter-spacing: .4px; margin-bottom: 7px; }
+  .bl-final p { font-size: 12.5px; line-height: 1.6; text-align: justify; color: #223; }
+  .bl-final.ok { background: linear-gradient(180deg, #f0f8f0, #fff); border-color: #9fcc9f; }
+  .bl-final.ok .bl-final-t { color: #2e7d32; }
+  .bl-final.rep { background: linear-gradient(180deg, #fdf6ec, #fff); border-color: #dcbf8e; }
+  .bl-final.rep .bl-final-t { color: #8a5a00; }
 
   .bl-cita { margin-top: 11px; text-align: center; padding: 8px 26px; border-top: 1px solid var(--linea); border-bottom: 1px solid var(--linea); break-inside: avoid; }
   .bl-cita p { font-family: Georgia, 'Times New Roman', serif; font-size: 12.5px; font-style: italic; color: var(--tinta); line-height: 1.45; }
@@ -2068,12 +7628,10 @@ function adPrintBoletas(d) {
   .bl-firmas b { font-size: 10px; color: var(--tinta); font-weight: 700; }
   .bl-firmas span { display: block; font-size: 8.5px; color: #55637d; }
 </style></head><body>
-${d.lista.map(a => hoja(a)).join('')}
+${hojas.map(a => hoja(a)).join('')}
 <script>window.onload=function(){setTimeout(function(){window.print();},280);}<\/script>
 </body></html>`;
-  const w = window.open('', '_blank');
-  if (!w) { if (typeof toast === 'function') toast('Permite las ventanas emergentes para imprimir'); return; }
-  w.document.write(html); w.document.close();
+  adPrintAbrir(html);
 }
 
 function adCopiar(txt, ok, mal) {
@@ -2123,9 +7681,7 @@ ${d.lista.map(a => `<tr><td>${a.num}</td><td>${adEsc(a.nombre) || '—'}</td>
   <td class="n">${ns[a.num] != null ? ns[a.num] : ''}</td></tr>`).join('')}
 </tbody></table>
 </body></html>`;
-  const w = window.open('', '_blank');
-  if (!w) { toast('Permite las ventanas emergentes para imprimir'); return; }
-  w.document.write(html); w.document.close();
+  adPrintAbrir(html);
 }
 
 /* ══════════════ 🎓 CERRAR EL AÑO ESCOLAR ══════════════
@@ -2196,7 +7752,7 @@ async function adCerrarAnio() {
     return;
   }
   if (!await metasConfirm('Vas a cerrar el año **' + anio + '** de **' + nombre + '**:\n\n' +
-    '• Se borran de este teléfono la asistencia, notas, colectas y avisos del grupo\n' +
+    '• Se borran de este teléfono la asistencia, notas, colectas, controles y avisos del grupo\n' +
     '• La nube del chatbot se limpia (los padres dejan de ver datos del año viejo)\n' +
     '• Las **claves de familia se regeneran**: las tiras entregadas DEJAN de valer\n' +
     '• Los análisis del Plan de Acción de este grado se archivan\n' +
@@ -2242,7 +7798,7 @@ async function adCerrarAnio() {
 
   const dd = adLoad();
   /* 2) limpiar lo local del grupo (la ficha del aula se conserva) */
-  dd.asistencia = []; dd.notas = {}; dd.colectas = [];
+  dd.asistencia = []; dd.notas = {}; dd.colectas = []; dd.controles = [];
   dd.boleta = dd.boleta || adBoletaDef();
   dd.boleta.parcialFechas = {};
   const gg = avGrupo(dd.id); gg.avisos = []; avGrupoSave(dd.id, gg);
@@ -2341,6 +7897,16 @@ const AV_CONDUCTA_TIPOS = {
   leve: '📋 Falta leve',
   felicitacion: '⭐ Felicitación',
 };
+/* Cierre del recibo de aporte: el cuerpo es formal (folio, monto, fecha, quién
+   recibió) y esta última línea agradece y sostiene la colaboración. Se elige
+   por número de lista, NO al azar: el texto tiene que ser siempre el mismo para
+   esa familia, o la firma cambiaría y el recibo se resubiría sin parar. */
+const AV_RECIBO_CIERRE = [
+  'Gracias por cumplir con lo acordado en reunión: cada aporte se convierte en algo que su hijo/a usa en el aula.',
+  'Gracias por su colaboración: cuando las familias responden a tiempo, el grupo alcanza lo que se propuso sin quedarse a medias.',
+  'Gracias por apoyar el acuerdo del grupo: su aporte ya está trabajando por los niños de esta sección.',
+  'Gracias por confiar: cada lempira queda anotado, rendido y a la vista de todas las familias.',
+];
 function avGrupoSave(gid, g) {
   const o = avLoad(); o.grupos[gid] = g; avSaveAll(o);
 }
@@ -2365,7 +7931,18 @@ function avFaqsDe(gid) {
 let _avEditId = null;   /* aviso en edición en el formulario */
 
 function adRenderCom(body, d) {
-  if (!d.lista.length) { adSinLista(body, 'los comunicados'); return; }
+  /* 📣 La Convocatoria va ANTES del candado de la lista: el enlace se
+     manda al grupo de WhatsApp de TODA la escuela y no necesita la lista
+     del aula para nada. Un maestro que todavía no ha metido a sus
+     alumnos igual tiene que contratar los buses del sábado. */
+  if (typeof adConvNivel === 'function' && adConvNivel() &&
+      typeof adRenderConvocatoria === 'function') { adRenderConvocatoria(body, d); return; }
+  if (!d.lista.length) {
+    adSinLista(body, 'los comunicados');
+    body.insertAdjacentHTML('beforeend', adConvPuertaHtml(d));
+    adConvPuertaEnganchar(body);
+    return;
+  }
   const g = avGrupo(d.id);
   const vigentes = g.avisos.filter(avVigente);
   const faqs = avFaqsDe(d.id);
@@ -2399,6 +7976,9 @@ function adRenderCom(body, d) {
       <p class="pa-optional-hint">Lo que publiques aquí lo responde el <strong>asistente de padres</strong>
         («¿cuándo es la reunión?», «¿qué lleva mañana?»). Cada aviso <strong>vence solo</strong> para
         que el canal no se sature (máximo ${AV_MAX_ACTIVOS} activos).</p>
+      <p class="pa-optional-hint" style="margin-top:-2px">Un aviso <strong>informa</strong> y se acabó.
+        Si lo que necesitas es que te <strong>contesten</strong> —quién va a la excursión, cuántos llegan
+        a la reunión—, eso es una convocatoria: la puerta naranja de abajo.</p>
       <div class="ad-btn-row">
         <button class="pa-generate-btn ad-btn-sec av-tpl" data-tpl="noclases">🚫 No hay clases</button>
         <button class="pa-generate-btn ad-btn-sec av-tpl" data-tpl="reunion">👨‍👩‍👧 Reunión de padres</button>
@@ -2408,9 +7988,9 @@ function adRenderCom(body, d) {
       </div>
       <div id="av-form" style="display:${edit ? 'block' : 'none'};margin-top:10px;border-top:1px dashed #ccc;padding-top:10px">
         <div class="pa-field"><label>Título del aviso</label>
-          <input id="av-titulo" class="pa-inp-field" maxlength="120" value="${edit ? adEsc(edit.titulo) : ''}" placeholder="ej: Reunión de padres"></div>
+          <input id="av-titulo" class="pa-inp-field" maxlength="120" value="${edit ? adEsc(edit.titulo) : ''}" placeholder="ej.: Reunión de padres"></div>
         <div class="pa-field"><label>Detalle (lo que leerá la familia)</label>
-          <textarea id="av-texto" class="pa-paste-area" rows="3" maxlength="1200" placeholder="ej: Este viernes 18 a las 3:00 pm en el aula. Traer lápiz.">${edit ? adEsc(edit.texto) : ''}</textarea></div>
+          <textarea id="av-texto" class="pa-paste-area" rows="3" maxlength="1200" placeholder="ej.: Este viernes 18 a las 3:00 pm en el aula. Traer lápiz.">${edit ? adEsc(edit.texto) : ''}</textarea></div>
         <div class="pa-row-2">
           <div class="pa-field"><label>Tipo</label>
             <select id="av-tipo" class="pa-inp-field">
@@ -2428,7 +8008,7 @@ function adRenderCom(body, d) {
         </div>
         <div class="pa-field" id="av-alumnos-box" style="display:${edit && edit.tipo === 'individual' ? 'block' : 'none'}">
           <label>Números de lista (separados por coma)</label>
-          <input id="av-alumnos" class="pa-inp-field" inputmode="numeric" value="${edit && edit.alumnos ? edit.alumnos.join(', ') : ''}" placeholder="ej: 3, 15, 22"></div>
+          <input id="av-alumnos" class="pa-inp-field" inputmode="numeric" value="${edit && edit.alumnos ? edit.alumnos.join(', ') : ''}" placeholder="ej.: 3, 15, 22"></div>
         <div class="ad-btn-row">
           <button class="pa-add-btn" id="av-publicar">${edit ? '💾 Guardar cambios' : '📣 Publicar aviso'}</button>
           <button class="pa-generate-btn ad-btn-sec" id="av-cancelar">Cancelar</button>
@@ -2438,6 +8018,7 @@ function adRenderCom(body, d) {
         ${g.avisos.length ? g.avisos.slice().sort((a, b) => (avVigente(b) - avVigente(a)) || (String(a.hasta) < String(b.hasta) ? -1 : 1)).map(filaAviso).join('')
           : '<p class="pa-optional-hint">Sin avisos todavía. Usa una plantilla de arriba: dos toques y queda publicado.</p>'}
       </div>
+      ${adConvPuertaHtml(d)}
     </div>
 
     <div class="pa-card">
@@ -2515,6 +8096,7 @@ function adRenderCom(body, d) {
     document.getElementById('av-titulo').focus();
   };
 
+  adConvPuertaEnganchar(body);
   document.getElementById('av-nuevo').addEventListener('click', () => abrirForm({}));
   document.getElementById('av-cancelar').addEventListener('click', () => { _avEditId = null; renderAdmin(); });
   document.getElementById('av-tipo').addEventListener('change', e => {
@@ -2557,7 +8139,7 @@ function adRenderCom(body, d) {
       return;
     }
     if (tipo === 'individual' && !nums.length) {
-      await metasAlert('Para un aviso individual, escribe los números de lista (ej: 3, 15).', { icono: '👤', titulo: 'Comunicados' });
+      await metasAlert('Para un aviso individual, escribe los números de lista (ej.: 3, 15).', { icono: '👤', titulo: 'Comunicados' });
       return;
     }
     const gg = avGrupo(d.id);
@@ -2609,7 +8191,7 @@ function adRenderCom(body, d) {
     toast(nueva.activa ? '📖 Respuesta guardada' : '📖 Pregunta apagada');
   }));
   document.getElementById('av-faq-add').addEventListener('click', async () => {
-    const p = await metasPrompt('¿Qué pregunta hacen las familias? (ej: **¿Hay clases de refuerzo?**)', {
+    const p = await metasPrompt('¿Qué pregunta hacen las familias? (ej.: **¿Hay clases de refuerzo?**)', {
       icono: '📖', titulo: 'Ficha del aula', okTxt: 'Siguiente',
       valida: v => String(v).trim().length >= 5 ? '' : 'Escribe la pregunta completa.' });
     if (p === null) return;
@@ -2672,13 +8254,24 @@ function _avSbConexion() {
   } catch (_) {}
   return { url, key };
 }
-async function avBuzonCargar(d) {
-  const cont = document.getElementById('av-buzon');
-  if (!cont) return;
-  const hint = t => '<p class="pa-optional-hint">' + t + '</p>';
+/* Excusa estructurada que deja el asistente de padres: «[EXCUSA YYYY-MM-DD] razón» */
+function avParseExcusa(texto) {
+  const m = String(texto || '').match(/^\[EXCUSA (\d{4}-\d{2}-\d{2})\]\s*([\s\S]*)$/);
+  return m ? { fecha: m[1], razon: (m[2] || '').trim() || 'Sin razón' } : null;
+}
+
+/* Una sola consulta al buzón para las DOS pantallas que lo usan
+   (Comunicados y el pase de lista): se guarda un minuto en memoria para
+   no gastar datos del maestro al ir y venir entre pestañas. */
+let _avBuzonCache = null;
+async function avBuzonFilas(d, forzar) {
   const claves = adClavesDelGrupo(d);
-  if (!claves.length) { cont.innerHTML = hint('Aún no hay claves de familia en este grupo.'); return; }
-  if (navigator.onLine === false) { cont.innerHTML = hint('📴 Sin internet: el buzón se revisa con conexión.'); return; }
+  if (!claves.length) return { err: 'sinclaves', rows: [] };
+  if (navigator.onLine === false) return { err: 'offline', rows: [] };
+  if (!forzar && _avBuzonCache && _avBuzonCache.gid === d.id &&
+      Date.now() - _avBuzonCache.t < 60000) {
+    return { err: '', rows: _avBuzonCache.rows };
+  }
   try {
     const { url, key } = _avSbConexion();
     const r = await fetch(url + '/rest/v1/rpc/metas_buzon_docente', {
@@ -2688,7 +8281,28 @@ async function avBuzonCargar(d) {
     });
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const rows = await r.json();
-    if (!Array.isArray(rows) || !rows.length) { cont.innerHTML = hint('Buzón vacío: sin mensajes de las familias.'); return; }
+    if (!Array.isArray(rows)) throw new Error('respuesta inesperada');
+    _avBuzonCache = { t: Date.now(), gid: d.id, rows };
+    return { err: '', rows };
+  } catch (_) {
+    return { err: 'red', rows: [] };
+  }
+}
+
+async function avBuzonCargar(d) {
+  const cont = document.getElementById('av-buzon');
+  if (!cont) return;
+  const hint = t => '<p class="pa-optional-hint">' + t + '</p>';
+  const res = await avBuzonFilas(d, true);
+  if (res.err === 'sinclaves') { cont.innerHTML = hint('Aún no hay claves de familia en este grupo.'); return; }
+  if (res.err === 'offline') { cont.innerHTML = hint('📴 Sin internet: el buzón se revisa con conexión.'); return; }
+  if (res.err === 'red') {
+    cont.innerHTML = hint('⚠️ No se pudo revisar el buzón (¿ya corriste SUPABASE-FASE3.sql?). Toca «🔄 Revisar buzón» para reintentar.');
+    return;
+  }
+  {
+    const rows = res.rows;
+    if (!rows.length) { cont.innerHTML = hint('Buzón vacío: sin mensajes de las familias.'); return; }
     const quien = {}, numDe = {};
     d.lista.forEach(a => {
       const c = adClaveFamilia(d.id, a.num, false);
@@ -2706,9 +8320,9 @@ async function avBuzonCargar(d) {
       const id = m.codigo + '|' + m.creado_en;
       const nuevo = !vSet.has(id);
       /* excusa estructurada del asistente: [EXCUSA YYYY-MM-DD] razón */
-      const mEx = String(m.texto || '').match(/^\[EXCUSA (\d{4}-\d{2}-\d{2})\]\s*([\s\S]*)$/);
+      const mEx = avParseExcusa(m.texto);
       if (mEx && numDe[m.codigo]) {
-        const fecha = mEx[1], razon = mEx[2] || 'Sin razón', num = numDe[m.codigo];
+        const fecha = mEx.fecha, razon = mEx.razon, num = numDe[m.codigo];
         const marcada = yaMarcada(fecha, num);
         return `<div class="ad-gasto-row" style="align-items:flex-start${nuevo ? '' : ';opacity:.75'}">
           <span style="flex:1">${nuevo ? '🔵 ' : ''}🤒 <strong>${adEsc(quien[m.codigo])}</strong> — excusa para el
@@ -2743,8 +8357,6 @@ async function avBuzonCargar(d) {
       const todos = Array.from(new Set(vistos.concat(rows.map(m => m.codigo + '|' + m.creado_en))));
       localStorage.setItem(BUZON_VISTO_KEY, JSON.stringify(todos.slice(-400)));
     } catch (_) {}
-  } catch (_) {
-    cont.innerHTML = hint('⚠️ No se pudo revisar el buzón (¿ya corriste SUPABASE-FASE3.sql?). Toca «🔄 Revisar buzón» para reintentar.');
   }
 }
 
@@ -2791,6 +8403,15 @@ function adDocenteTxt() {
   try {
     const d = JSON.parse(localStorage.getItem('METAS_DOCENTE_V1'));
     if (d && (d.nombre || d.codigo)) return [d.nombre, d.codigo].filter(Boolean).join(' · ');
+  } catch (_) {}
+  return '';
+}
+/* Solo el NOMBRE, sin el código PROF: en un recibo el padre lee «Recibió
+   Josué Polanco Lemus», no un código de sistema. */
+function adDocenteNombre() {
+  try {
+    const d = JSON.parse(localStorage.getItem('METAS_DOCENTE_V1'));
+    if (d && d.nombre) return String(d.nombre).trim();
   } catch (_) {}
   return '';
 }
@@ -2873,11 +8494,23 @@ function adFirma(f) {
           f.nota != null ? f.nota : '', f.concepto || '', f.monto != null ? f.monto : ''].join('|');
 }
 
-/* Fila de anulación para un evento que ya no existe localmente */
+/* Fila de anulación para un evento que ya no existe localmente.
+   IMPORTANTE: Las notas finales, personalidad y días perdidos (ADN-) NUNCA se
+   anulan en automático por ausencia temporal en un dispositivo para proteger
+   las calificaciones subidas de cualquier pérdida accidental. */
 function adFilaAnulada(eventoId, guardado) {
   const b = { evento_id: eventoId, codigo: guardado.c, grado: '', seccion: '', docente: adDocenteTxt() };
   if (eventoId.startsWith('ADA-')) return Object.assign(b, { tipo: 'asistencia', estado: 'presente' });
-  if (eventoId.startsWith('ADN-')) return Object.assign(b, { tipo: 'nota_final', nota: '' });
+  if (eventoId.startsWith('ADN-')) {
+    const m = eventoId.match(/^ADN-(\d{4})-(I{1,3}|IV)-([a-z0-9-]+)-([A-Z0-9]+)$/);
+    return Object.assign(b, {
+      tipo: 'nota_final',
+      anio_lectivo: m ? m[1] : '',
+      parcial: m ? m[2] : '',
+      nota: '',
+      borrar: true
+    });
+  }
   return Object.assign(b, { tipo: 'economia', estado: 'eliminada' });
 }
 
@@ -2895,7 +8528,7 @@ function adPendientesTotal() {
     const fa = adFilasNube(st), ma = adSbMapLoad();
     n += fa.filter(f => !ma[f.evento_id] || ma[f.evento_id].f !== adFirma(f)).length;
     const act1 = new Set(fa.map(f => f.evento_id));
-    Object.keys(ma).forEach(id => { if (!act1.has(id) && !ma[id].x) n++; });
+    Object.keys(ma).forEach(id => { if (!id.startsWith('ADN-') && !act1.has(id) && !ma[id].x) n++; });
     const fv = avFilasNube(st), mv = avSbMapLoad();
     n += fv.filter(f => !mv[f.evento_id] || mv[f.evento_id].f !== avFirma(f)).length;
     const act2 = new Set(fv.map(f => f.evento_id));
@@ -2914,11 +8547,12 @@ async function adSincronizarNube(manual) {
 
   const pendientes = filas.filter(f => !mapa[f.evento_id] || mapa[f.evento_id].f !== adFirma(f));
   Object.keys(mapa).forEach(id => {
-    if (!actuales.has(id) && !mapa[id].x) pendientes.push(adFilaAnulada(id, mapa[id]));
+    if (!id.startsWith('ADN-') && !actuales.has(id) && !mapa[id].x) pendientes.push(adFilaAnulada(id, mapa[id]));
   });
 
   if (!pendientes.length) {
     if (st) st.textContent = '☁️ Nube del chatbot: al día.';
+    adActualizarChipNube();
     return;
   }
   if (navigator.onLine === false) {
@@ -2931,7 +8565,18 @@ async function adSincronizarNube(manual) {
     return;
   }
   _adSyncBusy = true;
+  adActualizarChipNube();
   if (st) st.textContent = '⏳ Subiendo ' + pendientes.length + ' cambio(s)…';
+  /* Qué NOTAS van en este viaje, por parcial: al terminar se avisa con un
+     toast «Parcial II subido». El maestro que acaba de llenar la boleta
+     necesita oírlo sin ir a buscar el chip de la nube; lo demás
+     (asistencia, economía) sigue subiendo en silencio, como siempre. */
+  const notasParcial = {};
+  pendientes.forEach(f => {
+    if (f.tipo === 'nota_final' && f.parcial && actuales.has(f.evento_id)) {
+      notasParcial[f.parcial] = (notasParcial[f.parcial] || 0) + 1;
+    }
+  });
   try {
     let url = 'https://uljjgrikyigdrkbikcxo.supabase.co';
     let key = 'sb_publishable_VGj7He4XL8AGscsY3RsxGg__xlzi48w';
@@ -2957,12 +8602,21 @@ async function adSincronizarNube(manual) {
       });
       adSbMapSave(mapa);
     }
+    adActualizarChipNube();
     if (st) st.textContent = '✅ Nube del chatbot al día (' + new Date().toLocaleTimeString('es-HN') + ').';
     if (manual) toast('☁️ Registros sincronizados');
+    else if (typeof toast === 'function') {
+      const orden = ['I', 'II', 'III', 'IV'];
+      const ps = Object.keys(notasParcial).sort((a, b) => orden.indexOf(a) - orden.indexOf(b));
+      const nTxt = p => notasParcial[p] === 1 ? '1 nota' : notasParcial[p] + ' notas';
+      if (ps.length === 1) toast('☁️ Parcial ' + ps[0] + ' subido a la nube (' + nTxt(ps[0]) + '). Las familias ya pueden verlo.');
+      else if (ps.length) toast('☁️ Notas subidas a la nube — ' + ps.map(p => 'Parcial ' + p + ': ' + nTxt(p)).join(' · '));
+    }
   } catch (_) {
     if (st) st.textContent = '⚠️ No se pudo subir ahora; se reintenta solo.';
   }
   _adSyncBusy = false;
+  adActualizarChipNube();
 }
 window.addEventListener('online', () => adSyncProgramar());
 
@@ -3041,7 +8695,42 @@ function avFilasNube(st) {
       }, base)));
     });
 
+    /* AUTOMÁTICO: BITÁCORA de los controles marcados «contarlo a la familia».
+       Cada anotación va SOLO a la clave de ese alumno. Los controles apagados
+       (salud, talla, merienda) no producen ni una fila: no salen del teléfono.
+       Vencen a los 60 días: la Bitácora cuenta lo reciente, y así no se llena
+       el tope de filas por familia con el diario de todo el año. */
+    (d.controles || []).forEach(c => {
+      if (!c.fam) return;
+      const misEnlace = adCtrlMisionClaves(c);
+      Object.keys(c.datos || {}).forEach(num => {
+        const x = claves.find(k => String(k.num) === String(num));
+        if (!x) return;
+        filas.push(Object.assign({
+          evento_id: 'AVB-' + c.id + '-' + x.cod, codigo: x.cod,
+          subtipo: 'individual', prioridad: 'normal',
+          titulo: '📔 Bitácora · ' + (c.icono || '✅') + ' ' + c.nombre,
+          texto: adCtrlBitacoraTxt(c, d, num),
+          claves: misEnlace,
+          fecha_evento: c.fecha, vigente_hasta: avFechaMas(c.fecha, 60),
+        }, base));
+      });
+    });
+
+    /* AUTOMÁTICO: novedades de la clase, escritas por el maestro. Estas SÍ van a
+       todas las familias: es lo que pasó en el aula, no el dato de un alumno. */
+    (d.bitacora || []).forEach(n => {
+      claves.forEach(x => filas.push(Object.assign({
+        evento_id: 'AVN-' + n.id + '-' + x.cod, codigo: x.cod,
+        subtipo: 'aviso', prioridad: 'normal',
+        titulo: '📔 Bitácora · Novedad de la clase',
+        texto: n.texto,
+        fecha_evento: n.fecha, vigente_hasta: avFechaMas(n.fecha, 60),
+      }, base)));
+    });
+
     /* AUTOMÁTICO: cuentas claras de cada colecta (rendición) */
+    const grupoTxt = adGrupoTxt(d);
     (d.colectas || []).forEach(c => {
       const t = adColectaTotales(c);
       const gastos = (c.gastos || []).map(gx => gx.d + ' ' + adLps(gx.m)).join(', ');
@@ -3052,6 +8741,42 @@ function avFilasNube(st) {
                (gastos ? ' (' + gastos + ')' : '') + ' · Saldo: ' + adLps(t.saldo) + '.',
         vigente_hasta: avFechaMas(c.fecha, 200),
       }, base)));
+
+      /* AUTOMÁTICO: RECIBO de cada aporte marcado. Sale solo al marcar al
+         alumno y viaja ÚNICAMENTE a la clave de ESA familia: respalda su
+         movimiento con folio, monto, fecha y quién recibió el dinero. Si el
+         maestro corrige el monto, el mismo folio se reemite con la cifra
+         buena; si quita la marca, la anulación lo apaga sola.
+         Dura todo el año lectivo: es un comprobante, no un aviso del día. */
+      Object.keys(c.pagos || {}).forEach(num => {
+        const x = claves.find(k => String(k.num) === String(num));
+        if (!x) return;
+        const monto = Number(c.pagos[num]) || 0;
+        if (!(monto > 0)) return;
+        const al = (d.lista || []).find(a => String(a.num) === String(num)) || {};
+        /* NOMBRE COMPLETO, no solo el primero: el recibo va detrás de la clave
+           de esa familia, así que el dato es privado y un comprobante con el
+           nombre entero es el que sirve de respaldo de verdad. */
+        const nom = String(al.nombre || '').trim();
+        const quien = nom ? nom + ' (n.º ' + num + ' de la lista)' : 'su hijo/a (n.º ' + num + ' de la lista)';
+        const fecha = (c.pagosF && c.pagosF[num]) || c.fecha;
+        const folio = adReciboFolio(c, num);
+        filas.push(Object.assign({
+          evento_id: 'AVR-' + c.id + '-' + x.cod, codigo: x.cod,
+          subtipo: 'cuentas', titulo: '🧾 Recibo ' + folio + ' — ' + c.concepto,
+          /* el número del recibo NO se le pide al padre dentro del texto: ya
+             está a la vista en la tarjeta. Nada de «conserve el folio»: la
+             familia está harta de códigos que le toca cuidar. */
+          texto: 'Recibido de ' + quien + ': ' + adLps(monto) +
+                 ' por concepto de «' + c.concepto + '», el ' + adFechaBonita(fecha) + '.' +
+                 (grupoTxt ? ' Grupo ' + grupoTxt + '.' : '') +
+                 ' Recibió ' + (adDocenteNombre() || 'el docente') + '.' +
+                 ' Este comprobante respalda su entrega, y las cuentas completas de la colecta' +
+                 ' (recaudado, gastado y saldo) las puede consultar aquí mismo. ' +
+                 AV_RECIBO_CIERRE[(Number(num) || 0) % AV_RECIBO_CIERRE.length],
+          fecha_evento: fecha, vigente_hasta: anio + '-12-31',
+        }, base));
+      });
     });
   });
   return filas;
@@ -3125,20 +8850,7 @@ async function avSincronizarNube(manual) {
   _avSyncBusy = false;
 }
 
-/* Restaurar «Mi aula» tras recargar: re-pide el candado del maestro y
-   vuelve a la pestaña/colecta donde estaba. Si no pasa el PIN, va a la
-   Zona Docente en vez de exponer el dinero. */
-window.adRestoreState = async function (tab, colectaId) {
-  if (tab) _adTab = tab;
-  _adColectaId = colectaId || null;
-  if (typeof paVerificarPin === 'function' &&
-      !(await paVerificarPin('Los registros administrativos guardan **dinero y notas finales**:'))) {
-    switchView('view-perfil');
-    return;
-  }
-  switchView('view-admin');
-  renderAdmin();
-};
+/* Restaurar «Mi aula» tras recargar / sincronizar: implementado en adRestoreState arriba */
 
 /* ── Navegación (mismo patrón que las demás herramientas) ── */
 document.addEventListener('DOMContentLoaded', () => {
@@ -3154,7 +8866,12 @@ document.addEventListener('DOMContentLoaded', () => {
      del encabezado con el enlace de la colecta y se salía del aula sin
      querer. Fuera de una colecta sí sale a la Zona Docente. */
   document.getElementById('admin-back-btn')?.addEventListener('click', () => {
+    if (_adFichasOn) { _adFichasOn = 0; renderAdmin(); return; }
+    if (_adGastosOn) { _adGastosOn = 0; renderAdmin(); return; }
+    if (_adInvOn) { _adInvOn = 0; renderAdmin(); return; }
+    if (typeof adConvAtras === 'function' && adConvAtras()) { renderAdmin(); return; }
     if (_adColectaId) { _adColectaId = null; renderAdmin(); return; }
+    if (_adControlId) { _adControlId = null; renderAdmin(); return; }
     switchView('view-perfil');
   });
 });
