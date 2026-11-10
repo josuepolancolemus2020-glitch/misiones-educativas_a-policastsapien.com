@@ -35,6 +35,25 @@ const AD_PERS_SIGNIF = { S: 'Sobresaliente', MB: 'Muy Bueno', B: 'Bueno',
 const AD_PERS_NUM = { S: 4, MB: 3, B: 2, NS: 1 };
 const AD_PERS_DE_NUM = { 4: 'S', 3: 'MB', 2: 'B', 1: 'NS' };
 
+/* Convierte un valor cualitativo de personalidad a su número oficial SACE:
+   4: Sobresaliente (S), 3: Muy Bueno (MB), 2: Bueno (B), 1: Insuficiente / No Satisfactorio (NS / I). */
+function adPersANumero(val, escala) {
+  if (val == null || val === '') return '';
+  const k = String(val).trim().toUpperCase();
+  if (!k) return '';
+  if (AD_PERS_NUM[k] != null) return String(AD_PERS_NUM[k]);
+  if (k === '4' || k === '3' || k === '2' || k === '1') return k;
+  if (k === 'SOBRESALIENTE' || k === 'E' || k === 'EXCELENTE') return '4';
+  if (k === 'MUY BUENO' || k === 'MUYBUENO') return '3';
+  if (k === 'BUENO') return '2';
+  if (k === 'I' || k === 'INSUFICIENTE' || k === 'PS' || k === 'R' || k === 'D' || k === 'NO SATISFACTORIO') return '1';
+  if (Array.isArray(escala)) {
+    const idx = escala.map(x => String(x).trim().toUpperCase()).indexOf(k);
+    if (idx >= 0 && idx < 4) return String(4 - idx);
+  }
+  return k;
+}
+
 let _adTab = 'lista';        /* lista | eco | asis | eq | ctrl | sace | est | lec | com */
 let _adColectaId = null;     /* colecta abierta en Economía */
 let _adGastosOn = 0;         /* dentro de «Gastos de mi bolsillo» */
@@ -43,12 +62,15 @@ let _adFichasOn = 0;         /* dentro de «Identidad y contactos» */
 let _adControlId = null;     /* control abierto en Controles */
 let _adSaceParcial = 'I';    /* Parcial activo en Notas SACE: I | II | III | IV */
 let _adSaceVista = 'aprov';   /* Sección a llenar: aprov | pers | inasis */
+let _adPersCopyModo = 'preguntar'; /* Cómo copiar Personalidad con 📋: preguntar | num | letra */
 let _adGrupoActivoId = null; /* Grupo/sección activo en el aula */
 try {
   const _sp = localStorage.getItem('METAS_SACE_PARCIAL');
   if (['I', 'II', 'III', 'IV'].includes(_sp)) _adSaceParcial = _sp;
   const _sv = localStorage.getItem('METAS_SACE_VISTA');
   if (['aprov', 'pers', 'inasis'].includes(_sv)) _adSaceVista = _sv;
+  const _pm = localStorage.getItem('METAS_PERS_COPY_MODO');
+  if (['preguntar', 'num', 'letra'].includes(_pm)) _adPersCopyModo = _pm;
   const _sg = localStorage.getItem('METAS_ADMIN_GRUPO_ACTIVO');
   if (_sg) _adGrupoActivoId = _sg;
 } catch (_) {}
@@ -1900,6 +1922,61 @@ function adElegirNoCopiarModal(alTerminar) {
       }
     }
   });
+}
+
+/* Modal para elegir si copiar la columna de Personalidad en NÚMERO (4, 3, 2 según escala azul de SACE)
+   o en LETRA (S, MB, B) al momento de presionar 📋. */
+function adElegirFormatoCopiaPersModal(campo, parcial, incluidos, ns, escala, alElegir) {
+  const muestras = (incluidos || []).filter(a => ns && ns[a.num] != null && ns[a.num] !== '').slice(0, 4);
+  const ejNum = muestras.map(a => {
+    const v = String(ns[a.num]).trim();
+    const n = adPersANumero(v, escala);
+    return '#' + a.num + ' ' + (adPrimerNombre(a.nombre) || '') + ': ' + v + ' → ' + n;
+  }).join(' · ');
+
+  const ov = document.createElement('div');
+  ov.className = 'ad-gen-ov';
+  ov.innerHTML = `
+    <div class="ad-gen-card ad-pers-copy-modal" role="dialog" aria-modal="true" aria-labelledby="ad-pcp-tit">
+      <div class="ad-gen-head">
+        <div class="ad-gen-title" id="ad-pcp-tit">📋 Copiar «${adEsc(campo)} · Parcial ${adEsc(parcial)}»</div>
+        <button type="button" class="ad-gen-close" id="ad-pcp-x" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="ad-pers-copy-body">
+        <div class="ad-pers-blue-scale">
+          <div class="ad-pers-blue-title">Por favor llene las celdas de personalidad de los alumnos siguiendo la Escala:</div>
+          <div class="ad-pers-blue-item"><b>4:Sobresaliente</b> <span class="ad-pers-blue-eq">(S → 4)</span></div>
+          <div class="ad-pers-blue-item"><b>3:Muy Bueno</b> <span class="ad-pers-blue-eq">(MB → 3)</span></div>
+          <div class="ad-pers-blue-item"><b>2:Bueno</b> <span class="ad-pers-blue-eq">(B → 2)</span></div>
+        </div>
+        ${ejNum ? `<div class="ad-pers-copy-prev">Vista previa (${incluidos.length} filas): <strong>${adEsc(ejNum)}</strong></div>` : ''}
+        <div class="ad-pers-copy-actions">
+          <button type="button" class="pa-generate-btn ad-pers-btn-num" id="ad-pcp-num">
+            🔢 Copiar en número (4, 3, 2) según escala SACE
+          </button>
+          <button type="button" class="pa-generate-btn ad-btn-sec ad-pers-btn-letra" id="ad-pcp-letra">
+            🔤 Copiar en letra (S, MB, B)
+          </button>
+        </div>
+        <label class="ad-pers-copy-rem">
+          <input type="checkbox" id="ad-pcp-recordar">
+          <span>Copiar directo las siguientes columnas con esta misma opción (puedes cambiarlo arriba de la tabla)</span>
+        </label>
+      </div>
+    </div>`;
+  document.body.appendChild(ov);
+
+  const cerrar = () => { ov.remove(); };
+  ov.querySelector('#ad-pcp-x')?.addEventListener('click', cerrar);
+  ov.addEventListener('click', e => { if (e.target === ov) cerrar(); });
+
+  const elegir = formato => {
+    const rec = !!(ov.querySelector('#ad-pcp-recordar') && ov.querySelector('#ad-pcp-recordar').checked);
+    cerrar();
+    if (typeof alElegir === 'function') alElegir(formato, rec);
+  };
+  ov.querySelector('#ad-pcp-num')?.addEventListener('click', () => elegir('num'));
+  ov.querySelector('#ad-pcp-letra')?.addEventListener('click', () => elegir('letra'));
 }
 
 /* Mueve a un alumno un paso arriba (-1) o abajo (+1) con todas sus notas */
@@ -6444,8 +6521,29 @@ function adRenderSace(body, d) {
         <button class="ad-pers-edit" id="ad-pers-editescala">✏️ Editar escala</button>
         <span class="ad-pers-ctx" id="ad-pers-ctx"></span>
       </div>
-      <p class="ad-pers-leyenda">${d.boleta.escalaPers.map(v => AD_PERS_SIGNIF[v]
-        ? '<b>' + adEsc(v) + '</b> = ' + adEsc(AD_PERS_SIGNIF[v]) : '<b>' + adEsc(v) + '</b>').join(' · ')}</p>` : ''}
+      <p class="ad-pers-leyenda">${d.boleta.escalaPers.map(v => {
+        const num = adPersANumero(v, d.boleta.escalaPers);
+        const sig = AD_PERS_SIGNIF[v];
+        return '<b>' + adEsc(v) + (num && num !== v ? ' (' + adEsc(num) + ')' : '') + '</b>' + (sig ? ' = ' + adEsc(sig) : '');
+      }).join(' · ')}</p>
+      <div class="ad-pers-sace-box">
+        <div class="ad-pers-sace-info">
+          <div class="ad-pers-sace-tit">Por favor llene las celdas de personalidad de los alumnos siguiendo la Escala:</div>
+          <div class="ad-pers-sace-escala">
+            <span><b>4:Sobresaliente</b> (S)</span>
+            <span><b>3:Muy Bueno</b> (MB)</span>
+            <span><b>2:Bueno</b> (B)</span>
+          </div>
+        </div>
+        <div class="ad-pers-sace-ctrl">
+          <span class="ad-pers-sace-lbl">Al copiar en 📋:</span>
+          <div class="ad-pers-sace-btns" role="group" aria-label="Formato al copiar personalidad">
+            <button type="button" class="ad-pers-modo-btn${_adPersCopyModo === 'preguntar' ? ' active' : ''}" data-pers-modo="preguntar" title="Preguntar al tocar 📋 si deseas copiar en número (4, 3, 2) o en letra (S, MB, B)">💬 Elegir al copiar</button>
+            <button type="button" class="ad-pers-modo-btn${_adPersCopyModo === 'num' ? ' active' : ''}" data-pers-modo="num" title="Copiar directamente en número (4:Sobresaliente, 3:Muy Bueno, 2:Bueno) al tocar 📋">🔢 Copiar en número (4, 3, 2)</button>
+            <button type="button" class="ad-pers-modo-btn${_adPersCopyModo === 'letra' ? ' active' : ''}" data-pers-modo="letra" title="Copiar directamente en letra (S, MB, B) al tocar 📋">🔤 Copiar en letra (S, MB, B)</button>
+          </div>
+        </div>
+      </div>` : ''}
 
       ${esInasis ? `
       <div class="ad-inasis-bar">
@@ -6550,7 +6648,8 @@ function adRenderSace(body, d) {
       </div>
       <div class="ad-btn-row" style="margin-top:8px">
         <button class="pa-generate-btn" id="ad-sace-boletas">🧾 Imprimir boletas (todas)</button>
-        <button class="pa-generate-btn ad-btn-sec" id="ad-sace-csv">⬇ Copiar CSV (todas las materias)</button>
+        ${esLetra ? '<button class="pa-generate-btn ad-btn-sec" id="ad-sace-csv-num" type="button">🔢 Copiar CSV en número (4, 3, 2)</button>' : ''}
+        <button class="pa-generate-btn ad-btn-sec" id="ad-sace-csv">${esLetra ? '🔤 Copiar CSV en letra (S, MB, B)' : '⬇ Copiar CSV (todas las materias)'}</button>
       </div>
       <p class="pa-optional-hint" id="ad-sace-estado" style="margin-top:8px"></p>
     </div>
@@ -6659,7 +6758,8 @@ function adRenderSace(body, d) {
     dd.notas[pDest][campo] = dd.notas[pDest][campo] || {};
     let raw = inp.value.trim();
     if (esLetra) {
-      raw = raw.toUpperCase().replace(/[^A-ZÑ+]/g, '').slice(0, 3);
+      raw = raw.toUpperCase().replace(/[^A-ZÑ+1-4]/g, '').slice(0, 3);
+      if (AD_PERS_DE_NUM[raw]) raw = AD_PERS_DE_NUM[raw];
       inp.value = raw;
       if (raw === '') delete dd.notas[pDest][campo][inp.dataset.num];
       else dd.notas[pDest][campo][inp.dataset.num] = raw;
@@ -6804,6 +6904,22 @@ function adRenderSace(body, d) {
       dd.boleta.escalaPers = String(nueva).split(',').map(s => s.trim().toUpperCase()).filter(Boolean).slice(0, 8);
       if (!dd.boleta.escalaPers.length) dd.boleta.escalaPers = AD_PERS_ESCALA_DEF.slice();
       adSave(dd); adRenderSace(body, adLoad());
+    });
+    body.querySelectorAll('.ad-pers-modo-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const m = btn.dataset.persModo;
+        if (!['preguntar', 'num', 'letra'].includes(m)) return;
+        _adPersCopyModo = m;
+        try { localStorage.setItem('METAS_PERS_COPY_MODO', m); } catch (_) {}
+        body.querySelectorAll('.ad-pers-modo-btn').forEach(b => b.classList.toggle('active', b.dataset.persModo === m));
+        const desc = m === 'num'
+          ? '🔢 Al tocar 📋 se copiará directo en NÚMERO (4:Sobresaliente, 3:Muy Bueno, 2:Bueno)'
+          : m === 'letra'
+            ? '🔤 Al tocar 📋 se copiará directo en LETRA (S, MB, B)'
+            : '💬 Al tocar 📋 podrás elegir entre copiar en número (4, 3, 2) o en letra (S, MB, B)';
+        estado(desc);
+        if (typeof toast === 'function') toast(desc);
+      });
     });
   }
 
@@ -6999,23 +7115,55 @@ function adRenderSace(body, d) {
     const ns = ((dd.notas[p] || {})[c]) || {};
     const incluidos = dd.lista.filter(a => !a.noCopiarSace);
     const omitidos = dd.lista.filter(a => a.noCopiarSace);
-    const col = incluidos.map(a => ns[a.num] != null ? ns[a.num] : '').join('\n');
     const sinTxt = omitidos.length
       ? ' · sin ' + omitidos.map(a => adPrimerNombre(a.nombre) || ('#' + a.num)).join(', ')
       : '';
-    adCopiar(col,
-      () => {
-        estado('✅ Columna «' + c + (btn.dataset.parcial ? ' · Parcial ' + p : '') + '» copiada (' +
-          incluidos.length + (omitidos.length ? ' de ' + dd.lista.length : '') + ' filas' + sinTxt + '). Pégala en SACE.');
-        if (typeof toast === 'function') {
-          toast('📋 «' + c + '» copiada (' + incluidos.length + ' filas' + sinTxt + ')');
-        }
-      },
-      () => estado('⚠️ No se pudo copiar automáticamente en este navegador.'));
+    const escala = (dd.boleta && dd.boleta.escalaPers) || AD_PERS_ESCALA_DEF;
+
+    const ejecutarCopia = formato => {
+      const enNum = esLetra && formato === 'num';
+      const col = incluidos.map(a => {
+        const raw = ns[a.num];
+        if (raw == null || raw === '') return '';
+        return enNum ? adPersANumero(raw, escala) : String(raw);
+      }).join('\n');
+      const fmtEtiqueta = esLetra
+        ? (enNum ? ' en NÚMERO (4:Sobresaliente, 3:Muy Bueno, 2:Bueno)' : ' en LETRA (S, MB, B)')
+        : '';
+      const fmtCorto = esLetra ? (enNum ? ' · en número (4,3,2)' : ' · en letra') : '';
+      adCopiar(col,
+        () => {
+          estado('✅ Columna «' + c + (btn.dataset.parcial ? ' · Parcial ' + p : '') + '» copiada' + fmtEtiqueta + ' (' +
+            incluidos.length + (omitidos.length ? ' de ' + dd.lista.length : '') + ' filas' + sinTxt + '). Pégala en SACE.');
+          if (typeof toast === 'function') {
+            toast('📋 «' + c + (btn.dataset.parcial ? ' · P-' + p : '') + '» copiada' + fmtCorto + ' (' + incluidos.length + ' filas' + sinTxt + ')');
+          }
+        },
+        () => estado('⚠️ No se pudo copiar automáticamente en este navegador.'));
+    };
+
+    if (esLetra) {
+      if (_adPersCopyModo === 'num' || _adPersCopyModo === 'letra') {
+        ejecutarCopia(_adPersCopyModo);
+      } else {
+        adElegirFormatoCopiaPersModal(c, p, incluidos, ns, escala, (formato, recordar) => {
+          if (recordar && (formato === 'num' || formato === 'letra')) {
+            _adPersCopyModo = formato;
+            try { localStorage.setItem('METAS_PERS_COPY_MODO', formato); } catch (_) {}
+            body.querySelectorAll('.ad-pers-modo-btn').forEach(b => b.classList.toggle('active', b.dataset.persModo === formato));
+          }
+          ejecutarCopia(formato);
+        });
+      }
+      return;
+    }
+
+    ejecutarCopia('raw');
   }));
 
-  document.getElementById('ad-sace-csv').addEventListener('click', () => {
+  const copiarCsvSace = enNumeroPers => {
     const dd = adLoad();
+    const escala = (dd.boleta && dd.boleta.escalaPers) || AD_PERS_ESCALA_DEF;
     /* En Personalidad el CSV lleva los 4 parciales de cada rasgo (como la
        tabla); en las otras vistas, las columnas del parcial elegido. */
     const defs = esLetra ? colDefs
@@ -7029,15 +7177,21 @@ function adRenderSace(body, d) {
       : '';
     const filas = incluidos.map(a => {
       const base = [a.num, '"' + String(a.nombre || '').replace(/"/g, '""') + '"'];
-      const vals = defs.map(x => { const v = (((dd.notas[x.parcial] || {})[x.campo]) || {})[a.num]; return v != null ? v : ''; });
+      const vals = defs.map(x => {
+        const v = (((dd.notas[x.parcial] || {})[x.campo]) || {})[a.num];
+        if (v == null || v === '') return '';
+        return (esLetra && enNumeroPers) ? adPersANumero(v, escala) : v;
+      });
       return base.concat(vals).join(',');
     });
     adCopiar(cab + '\n' + filas.join('\n'),
       () => estado((esLetra
-        ? '✅ CSV de Personalidad copiado (los 4 parciales)'
+        ? '✅ CSV de Personalidad copiado en ' + (enNumeroPers ? 'NÚMERO (4, 3, 2)' : 'LETRA (S, MB, B)') + ' (los 4 parciales)'
         : '✅ CSV del Parcial ' + parcial + ' copiado (todas las columnas)') + sinTxt + '. Pégalo en una hoja de cálculo.'),
       () => estado('⚠️ No se pudo copiar automáticamente en este navegador.'));
-  });
+  };
+  document.getElementById('ad-sace-csv').addEventListener('click', () => copiarCsvSace(false));
+  document.getElementById('ad-sace-csv-num')?.addEventListener('click', () => copiarCsvSace(true));
 
   adTablaFilasArrastrar(body.querySelector('.ad-mx'), () => adRenderSace(body, adLoad()));
   adUndoEnganchar(body);
