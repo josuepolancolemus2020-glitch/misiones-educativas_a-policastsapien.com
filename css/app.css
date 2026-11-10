@@ -5163,6 +5163,13 @@ body.ad-gr-moviendo { cursor: grabbing; user-select: none; -webkit-user-select: 
 }
 .ad-mx-del:hover, .ad-mx-del:active { opacity: 1; background: rgba(220,38,38,.12); }
 :root[data-theme="dark"] .ad-mx-del { color: #f87171; }
+.ad-mx-nocopy-tag {
+  flex: 0 0 auto; border: 1px solid #f59e0b; background: #fef3c7; color: #92400e;
+  border-radius: 6px; padding: 1px 4px; font-size: calc(10.5px * var(--metas-fz, 1));
+  line-height: 1.2; cursor: pointer; touch-action: manipulation;
+}
+:root[data-theme="dark"] .ad-mx-nocopy-tag { background: rgba(245,158,11,.22); border-color: #fbbf24; color: #fde68a; }
+.ad-mx tr.ad-mx-tr-nocopy .ad-mx-nom { text-decoration: line-through; opacity: .72; }
 .ad-mx tr.ad-mx-tr-movida td { animation: adRowMoved .85s ease; }
 @keyframes adRowMoved {
   0%   { background: #dcfce7; }
@@ -5208,8 +5215,12 @@ body.ad-gr-moviendo { cursor: grabbing; user-select: none; -webkit-user-select: 
 .ad-gen-count { font-size: calc(12.5px * var(--metas-fz, 1)); }
 .ad-gen-cf { color: #be185d; }
 .ad-gen-cm { color: #1d4ed8; }
+.ad-nc-csi { color: #15803d; }
+.ad-nc-cno { color: #b45309; }
 :root[data-theme="dark"] .ad-gen-cf { color: #f472b6; }
 :root[data-theme="dark"] .ad-gen-cm { color: #60a5fa; }
+:root[data-theme="dark"] .ad-nc-csi { color: #4ade80; }
+:root[data-theme="dark"] .ad-nc-cno { color: #fbbf24; }
 .ad-gen-qbtns { display: flex; flex-wrap: wrap; gap: 5px; }
 .ad-gen-qbtn {
   border: 1px solid var(--border, #cbd5e1); background: var(--bg, #f8fafc); color: var(--text);
@@ -5240,6 +5251,19 @@ body.ad-gr-moviendo { cursor: grabbing; user-select: none; -webkit-user-select: 
 }
 :root[data-theme="dark"] .ad-gen-item.ad-gen-m {
   background: rgba(59, 130, 246, .18); border-color: #3b82f6; color: #bfdbfe;
+}
+.ad-gen-item.ad-nc-si {
+  background: #f0fdf4; border-color: #86efac; color: #14532d;
+}
+.ad-gen-item.ad-nc-no {
+  background: #fffbeb; border-color: #fbbf24; color: #78350f;
+}
+.ad-gen-item.ad-nc-no .ad-gen-nom { text-decoration: line-through; opacity: .8; }
+:root[data-theme="dark"] .ad-gen-item.ad-nc-si {
+  background: rgba(34, 197, 94, .16); border-color: #22c55e; color: #bbf7d0;
+}
+:root[data-theme="dark"] .ad-gen-item.ad-nc-no {
+  background: rgba(245, 158, 11, .18); border-color: #f59e0b; color: #fde68a;
 }
 .ad-gen-badge {
   flex: 0 0 auto; font-weight: 900; font-size: calc(11px * var(--metas-fz, 1));

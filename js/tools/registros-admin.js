@@ -1785,6 +1785,116 @@ function adOrdenarPorGeneroModal(alTerminar) {
   });
 }
 
+/* Modal para elegir qué alumno(s) NO deben copiarse cuando se toca el botón 📋 de una columna en Notas SACE */
+function adElegirNoCopiarModal(alTerminar) {
+  const d = adLoad();
+  if (!d || !Array.isArray(d.lista) || !d.lista.length) {
+    if (typeof toast === 'function') toast('Agrega alumnos a la lista primero');
+    return;
+  }
+  const noSet = new Set();
+  d.lista.forEach(a => {
+    if (a.noCopiarSace) noSet.add(a.num);
+  });
+  const hayPrueba = d.lista.some(a => a.prueba);
+
+  const ov = document.createElement('div');
+  ov.className = 'ad-gen-ov';
+  ov.innerHTML = `
+    <div class="ad-gen-card" role="dialog" aria-modal="true" aria-labelledby="ad-nc-tit">
+      <div class="ad-gen-head">
+        <div class="ad-gen-title" id="ad-nc-tit">🙈 Elegir quién NO copiar en 📋</div>
+        <button type="button" class="ad-gen-close" id="ad-nc-x" aria-label="Cerrar">✕</button>
+      </div>
+      <p class="ad-gen-hint">
+        Toca el nombre de cualquier alumno que <strong>NO deba copiarse</strong> al presionar <strong>📋</strong> en la columna de una materia (por ejemplo, si aún no está en SACE o es oyente).<br>
+        Sus notas siguen guardadas en su fila y en su boleta, pero <strong>se saltan al copiar la columna</strong> para que tus filas cuadren exacto con SACE.
+      </p>
+      <div class="ad-gen-bar">
+        <span class="ad-gen-count" id="ad-nc-cnt"></span>
+        <div class="ad-gen-qbtns">
+          <button type="button" class="ad-gen-qbtn" id="ad-nc-todos">✅ Copiar a todos</button>
+          ${hayPrueba ? '<button type="button" class="ad-gen-qbtn" id="ad-nc-prueba">🧪 Omitir de prueba</button>' : ''}
+        </div>
+      </div>
+      <div class="ad-gen-grid" id="ad-nc-grid">
+        ${d.lista.map(a => {
+          const omitir = noSet.has(a.num);
+          return `<button type="button" class="ad-gen-item ${omitir ? 'ad-nc-no' : 'ad-nc-si'}" data-ncnum="${a.num}">
+            <span class="ad-gen-badge">${omitir ? '🙈 No copiar' : '✅ Sí copiar'}</span>
+            <span class="ad-gen-num">#${a.num}</span>
+            <span class="ad-gen-nom">${adEsc(a.nombre || 'Sin nombre')}</span>
+          </button>`;
+        }).join('')}
+      </div>
+      <div class="ad-gen-foot">
+        <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-nc-cancel">Cancelar</button>
+        <button type="button" class="pa-generate-btn" id="ad-nc-ok">✅ Guardar selección</button>
+      </div>
+    </div>`;
+  document.body.appendChild(ov);
+
+  const actualizarVista = () => {
+    const noCount = noSet.size;
+    const siCount = d.lista.length - noCount;
+    const cnt = ov.querySelector('#ad-nc-cnt');
+    if (cnt) {
+      cnt.innerHTML = `<b class="ad-nc-csi">✅ ${siCount} se copia${siCount === 1 ? '' : 'n'}</b> · <b class="ad-nc-cno">🙈 ${noCount} omitido${noCount === 1 ? '' : 's'}</b>`;
+    }
+    ov.querySelectorAll('.ad-gen-item').forEach(btn => {
+      const num = +btn.dataset.ncnum;
+      const omitir = noSet.has(num);
+      btn.classList.toggle('ad-nc-no', omitir);
+      btn.classList.toggle('ad-nc-si', !omitir);
+      const b = btn.querySelector('.ad-gen-badge');
+      if (b) b.textContent = omitir ? '🙈 No copiar' : '✅ Sí copiar';
+    });
+  };
+  actualizarVista();
+
+  ov.querySelectorAll('.ad-gen-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const num = +btn.dataset.ncnum;
+      if (noSet.has(num)) noSet.delete(num);
+      else noSet.add(num);
+      actualizarVista();
+    });
+  });
+
+  ov.querySelector('#ad-nc-todos')?.addEventListener('click', () => {
+    noSet.clear();
+    actualizarVista();
+  });
+  ov.querySelector('#ad-nc-prueba')?.addEventListener('click', () => {
+    d.lista.forEach(a => { if (a.prueba) noSet.add(a.num); });
+    actualizarVista();
+  });
+
+  const cerrar = () => { ov.remove(); };
+  ov.querySelector('#ad-nc-x')?.addEventListener('click', cerrar);
+  ov.querySelector('#ad-nc-cancel')?.addEventListener('click', cerrar);
+  ov.addEventListener('click', e => { if (e.target === ov) cerrar(); });
+
+  ov.querySelector('#ad-nc-ok')?.addEventListener('click', () => {
+    const dd = adLoad();
+    dd.lista.forEach(a => {
+      if (noSet.has(a.num)) a.noCopiarSace = 1;
+      else delete a.noCopiarSace;
+    });
+    adSave(dd);
+    cerrar();
+    if (typeof alTerminar === 'function') alTerminar();
+    if (typeof toast === 'function') {
+      if (noSet.size) {
+        const noms = dd.lista.filter(a => a.noCopiarSace).map(a => adPrimerNombre(a.nombre) || ('#' + a.num)).join(', ');
+        toast('🙈 Al copiar con 📋 no se copiará a: ' + noms);
+      } else {
+        toast('✅ Se copiarán todos los alumnos al tocar 📋');
+      }
+    }
+  });
+}
+
 /* Mueve a un alumno un paso arriba (-1) o abajo (+1) con todas sus notas */
 function adMoverAlumnoPaso(numActual, paso, alTerminar) {
   const d = adLoad();
@@ -4973,8 +5083,8 @@ function adRenderSace(body, d) {
           </tr>`}
           </thead>
           <tbody>
-            ${d.lista.map((a, ri) => `<tr data-rnum="${a.num}">
-              <td class="ad-mx-sticky" title="${adEsc(a.nombre || ('#' + a.num))}">
+            ${d.lista.map((a, ri) => `<tr data-rnum="${a.num}"${a.noCopiarSace ? ' class="ad-mx-tr-nocopy"' : ''}>
+              <td class="ad-mx-sticky" title="${adEsc((a.nombre || ('#' + a.num)) + (a.noCopiarSace ? ' · No se copia en 📋' : ''))}">
                 <div class="ad-mx-sbox">
                   <span class="ad-mx-rbtns">
                     <button type="button" class="ad-mx-rmv" data-rdir="-1" data-rnum="${a.num}" title="Subir una posición con sus notas" aria-label="Subir"${ri === 0 ? ' disabled' : ''}>▲</button>
@@ -4982,6 +5092,7 @@ function adRenderSace(body, d) {
                   </span>
                   <button type="button" class="ad-mx-num" data-irnum="${a.num}" title="Toca para elegir a qué posición (#) mover a ${adEsc(a.nombre || ('#' + a.num))} con todas sus notas">#${a.num}</button>
                   <span class="ad-mx-nom">${adEsc(adPrimerNombre(a.nombre)) || '—'}</span>
+                  ${a.noCopiarSace ? `<button type="button" class="ad-mx-nocopy-tag" data-nc-quitar="${a.num}" title="Omitido al copiar columna (📋). Toca para volver a incluirlo">🙈</button>` : ''}
                   <button type="button" class="ad-mx-del" data-delnum="${a.num}" title="Borrar fila de ${adEsc(adPrimerNombre(a.nombre) || ('#' + a.num))} (se puede restaurar)" aria-label="Borrar fila">✕</button>
                 </div></td>
               ${colDefs.map((cd, ci) => `<td${cd.ini ? ' class="ad-mx-ini"' : ''}><input class="ad-mx-inp" data-idx="${ri * colDefs.length + ci}"
@@ -4996,6 +5107,11 @@ function adRenderSace(body, d) {
         ${!esLetra && !esInasis ? '<button class="pa-generate-btn ad-btn-sec ad-mx-addmat" id="ad-sace-addmat" style="margin-top:0">➕ Agregar materia</button>' : ''}
         <button class="pa-generate-btn ad-btn-sec" id="ad-sace-orden-az" type="button">🔤 Ordenar A–Z (con sus notas)</button>
         <button class="pa-generate-btn ad-btn-sec" id="ad-sace-orden-gen" type="button">♀♂ Ordenar Niñas y luego Varones (A–Z)</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-sace-nocopy" type="button">🙈 ${
+          d.lista.some(a => a.noCopiarSace)
+            ? 'No copiar en 📋 (' + d.lista.filter(a => a.noCopiarSace).map(a => adEsc(adPrimerNombre(a.nombre) || ('#' + a.num))).join(', ') + ')'
+            : 'Elegir quién NO copiar en 📋'
+        }</button>
       </div>
       <div class="pa-field ad-bol-quien">
         <label>Boleta de</label>
@@ -5036,6 +5152,25 @@ function adRenderSace(body, d) {
   });
   document.getElementById('ad-sace-orden-gen')?.addEventListener('click', () => {
     adOrdenarPorGeneroModal(() => adRenderSace(body, adLoad()));
+  });
+  document.getElementById('ad-sace-nocopy')?.addEventListener('click', () => {
+    adElegirNoCopiarModal(() => adRenderSace(body, adLoad()));
+  });
+  body.querySelectorAll('[data-nc-quitar]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const num = +btn.dataset.ncQuitar;
+      const dd = adLoad();
+      const al = dd.lista.find(a => +a.num === num);
+      if (al) {
+        delete al.noCopiarSace;
+        adSave(dd);
+        adRenderSace(body, adLoad());
+        if (typeof toast === 'function') {
+          toast('✅ ' + (adPrimerNombre(al.nombre) || ('#' + num)) + ' vuelve a incluirse al copiar con 📋');
+        }
+      }
+    });
   });
   document.getElementById('ad-sace-addmat')?.addEventListener('click', async () => {
     const nueva = await metasPrompt('Nombre de la materia nueva:', {
@@ -5415,10 +5550,20 @@ function adRenderSace(body, d) {
     const c = btn.dataset.campo || cols[+btn.dataset.col];
     const p = btn.dataset.parcial || parcial;
     const ns = ((dd.notas[p] || {})[c]) || {};
-    const col = dd.lista.map(a => ns[a.num] != null ? ns[a.num] : '').join('\n');
+    const incluidos = dd.lista.filter(a => !a.noCopiarSace);
+    const omitidos = dd.lista.filter(a => a.noCopiarSace);
+    const col = incluidos.map(a => ns[a.num] != null ? ns[a.num] : '').join('\n');
+    const sinTxt = omitidos.length
+      ? ' · sin ' + omitidos.map(a => adPrimerNombre(a.nombre) || ('#' + a.num)).join(', ')
+      : '';
     adCopiar(col,
-      () => estado('✅ Columna «' + c + (btn.dataset.parcial ? ' · Parcial ' + p : '') + '» copiada (' +
-        dd.lista.length + ' filas, orden de lista). Pégala en SACE.'),
+      () => {
+        estado('✅ Columna «' + c + (btn.dataset.parcial ? ' · Parcial ' + p : '') + '» copiada (' +
+          incluidos.length + (omitidos.length ? ' de ' + dd.lista.length : '') + ' filas' + sinTxt + '). Pégala en SACE.');
+        if (typeof toast === 'function') {
+          toast('📋 «' + c + '» copiada (' + incluidos.length + ' filas' + sinTxt + ')');
+        }
+      },
       () => estado('⚠️ No se pudo copiar automáticamente en este navegador.'));
   }));
 
@@ -5430,15 +5575,20 @@ function adRenderSace(body, d) {
       : (esInasis ? ['Inasistencias'] : dd.materias.slice()).map(c => ({ campo: c, parcial }));
     const cab = ['numero_lista', 'alumno']
       .concat(defs.map(x => '"' + x.campo + (esLetra ? ' P-' + x.parcial : '') + '"')).join(',');
-    const filas = dd.lista.map(a => {
+    const incluidos = dd.lista.filter(a => !a.noCopiarSace);
+    const omitidos = dd.lista.filter(a => a.noCopiarSace);
+    const sinTxt = omitidos.length
+      ? ' (sin ' + omitidos.map(a => adPrimerNombre(a.nombre) || ('#' + a.num)).join(', ') + ')'
+      : '';
+    const filas = incluidos.map(a => {
       const base = [a.num, '"' + String(a.nombre || '').replace(/"/g, '""') + '"'];
       const vals = defs.map(x => { const v = (((dd.notas[x.parcial] || {})[x.campo]) || {})[a.num]; return v != null ? v : ''; });
       return base.concat(vals).join(',');
     });
     adCopiar(cab + '\n' + filas.join('\n'),
-      () => estado(esLetra
-        ? '✅ CSV de Personalidad copiado (los 4 parciales). Pégalo en una hoja de cálculo.'
-        : '✅ CSV del Parcial ' + parcial + ' copiado (todas las columnas). Pégalo en una hoja de cálculo.'),
+      () => estado((esLetra
+        ? '✅ CSV de Personalidad copiado (los 4 parciales)'
+        : '✅ CSV del Parcial ' + parcial + ' copiado (todas las columnas)') + sinTxt + '. Pégalo en una hoja de cálculo.'),
       () => estado('⚠️ No se pudo copiar automáticamente en este navegador.'));
   });
 
