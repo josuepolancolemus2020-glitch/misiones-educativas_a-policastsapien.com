@@ -127,7 +127,7 @@ function adMigrarCodigos(g) {
    (admin + claves + comunicados + plan). «Restaurar» vuelve exacto a
    ese momento y la nube se corrige sola con el sync diferencial. */
 const AD_UNDO_KEY = 'METAS_ADMIN_UNDO_V1';
-const AD_UNDO_MAX = 4;
+const AD_UNDO_MAX = 8;
 function adUndoLista() {
   try { const a = JSON.parse(localStorage.getItem(AD_UNDO_KEY)); return Array.isArray(a) ? a : []; }
   catch (_) { return []; }
@@ -155,11 +155,11 @@ async function adUndoRestaurar(i) {
   const arr = adUndoLista();
   const f = arr[i];
   if (!f) return;
-  if (!await metasConfirm('Se restaurará <strong>todo Mi aula</strong> exactamente a como estaba ' +
-    '<strong>antes de: ' + adEsc(f.e) + '</strong> (' + adFechaBonita(f.t.slice(0, 10)) + ' ' +
-    f.t.slice(11, 16) + ').\n\n⚠️ Lo que hayas cambiado en Mi aula DESPUÉS de ese momento se pierde. ' +
+  if (!await metasConfirm('Se restaurará **todo Mi aula** exactamente a como estaba ' +
+    '**antes de: ' + f.e + '** (' + adFechaBonita(String(f.t).slice(0, 10)) + ' ' +
+    String(f.t).slice(11, 16) + ').\n\n⚠️ Lo que hayas cambiado en Mi aula DESPUÉS de ese momento se pierde. ' +
     'La nube del chatbot se corrige sola al sincronizar. ¿Restaurar?',
-    { icono: '🕘', titulo: 'Deshacer accidente', okTxt: 'Sí, restaurar' })) return;
+    { icono: '🕘', titulo: 'Deshacer / Restaurar', okTxt: 'Sí, restaurar' })) return;
   try {
     const pares = [[ADMIN_KEY, f.admin], ['METAS_CODIGOS_V1', f.codes],
                    ['METAS_AVISOS_V1', f.avisos], ['METAS_PLANACCION_V1', f.plan]];
@@ -172,6 +172,29 @@ async function adUndoRestaurar(i) {
   adSyncProgramar();
   renderAdmin();
   toast('🕘 Restaurado: ' + f.e);
+}
+function adUndoTarjetaHtml() {
+  const lista = adUndoLista();
+  if (!lista.length) return '';
+  return `
+    <div class="pa-card ad-undo-card">
+      <div class="pa-card-title">🕘 Deshacer o restaurar cambios</div>
+      <p class="pa-optional-hint">Antes de borrar una fila o cambiar el orden se guarda una copia automática. Si borraste u ordenaste una fila <strong>por error</strong>, restáurala aquí:</p>
+      ${lista.map((f, i) => `
+        <div class="ad-gasto-row" style="align-items:center">
+          <span style="flex:1"><strong>Antes de: ${adEsc(f.e)}</strong><br>
+            <small>${adFechaBonita(String(f.t).slice(0, 10))} · ${String(f.t).slice(11, 16)}</small></span>
+          <button type="button" class="pa-generate-btn ad-btn-sec ad-undo-btn" data-ui="${i}">↩️ Restaurar</button>
+        </div>`).reverse().join('')}
+    </div>`;
+}
+function adUndoEnganchar(body) {
+  if (!body) return;
+  body.querySelectorAll('.ad-undo-btn').forEach(b => {
+    if (b.dataset.undoBound) return;
+    b.dataset.undoBound = '1';
+    b.addEventListener('click', () => adUndoRestaurar(+b.dataset.ui));
+  });
 }
 
 function adState() {
@@ -960,7 +983,6 @@ function adRenderLista(body, d) {
           const pr = adEsPrueba(a);
           return `
           <div class="ad-al-row${pr ? ' ad-al-prueba' : ''}" data-num="${a.num}">
-            <span class="ad-al-asa" title="Arrastra para cambiar el orden (se mueven sus notas y registros)" aria-hidden="true"></span>
             <span class="ad-mx-rbtns ad-al-rbtns">
               <button type="button" class="ad-mx-rmv ad-al-rmv" data-rdir="-1" data-rnum="${a.num}" title="Subir una posición (con sus notas)" aria-label="Subir"${ri === 0 ? ' disabled' : ''}>▲</button>
               <button type="button" class="ad-mx-rmv ad-al-rmv" data-rdir="1" data-rnum="${a.num}" title="Bajar una posición (con sus notas)" aria-label="Bajar"${ri === d.lista.length - 1 ? ' disabled' : ''}>▼</button>
@@ -972,12 +994,13 @@ function adRenderLista(body, d) {
             ${pr ? `<button class="ad-al-test" data-pnum="${a.num}"
               title="Alumno de prueba: no cuenta en el informe del grado. Tócalo para volverlo a contar."
               aria-label="Quitar la marca de alumno de prueba">🧪 de prueba</button>` : ''}
-            <button class="ad-al-del" aria-label="Quitar">✕</button>
+            <button class="ad-al-del" data-delnum="${a.num}" title="Borrar esta fila (puedes restaurarla en 🕘 Deshacer)" aria-label="Borrar fila">✕</button>
           </div>`; }).join('')}
       </div>
       <div class="ad-btn-row">
         <button class="pa-generate-btn ad-btn-sec" id="ad-add-al">➕ Agregar al final</button>
-        <button class="pa-generate-btn ad-btn-sec" id="ad-ordenar-az">🔤 Ordenar A–Z (con notas)</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-ordenar-gen">♀♂ Ordenar Niñas y luego Varones (A–Z)</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-ordenar-az">🔤 Ordenar todos A–Z</button>
         <button class="pa-generate-btn ad-btn-sec" id="ad-pegar">📋 Pegar lista</button>
         <button class="pa-generate-btn ad-btn-sec" id="ad-insertar-al">🧑‍🎓 Alumno nuevo en su lugar</button>
         <button class="pa-generate-btn ad-btn-sec" id="ad-traer-pa">📥 Traer del Plan de Acción</button>
@@ -1034,19 +1057,7 @@ function adRenderLista(body, d) {
       </div>
     </div>
 
-    ${adUndoLista().length ? `
-    <div class="pa-card">
-      <div class="pa-card-title">🕘 Deshacer un accidente</div>
-      <p class="pa-optional-hint">Antes de cada borrado se guarda una foto de Mi aula. Si quitaste un
-        alumno, una colecta o una clave <strong>por error</strong>, restaura aquí (lo cambiado
-        después de esa foto se pierde).</p>
-      ${adUndoLista().map((f, i) => `
-        <div class="ad-gasto-row" style="align-items:center">
-          <span style="flex:1"><strong>Antes de: ${adEsc(f.e)}</strong><br>
-            <small>${adFechaBonita(String(f.t).slice(0, 10))} · ${String(f.t).slice(11, 16)}</small></span>
-          <button class="pa-generate-btn ad-btn-sec ad-undo-btn" data-ui="${i}">↩️ Restaurar</button>
-        </div>`).reverse().join('')}
-    </div>` : ''}`;
+    ${adUndoTarjetaHtml()}`;
 
   const persist = () => {
     const dd = adLoad();
@@ -1075,6 +1086,10 @@ function adRenderLista(body, d) {
     document.getElementById(id).addEventListener('change', () => renderAdmin()));
   body.querySelectorAll('.ad-al-nombre').forEach(i => i.addEventListener('input', persist));
   adListaFilasArrastrar(document.getElementById('ad-lista-rows'));
+  document.getElementById('ad-ordenar-gen')?.addEventListener('click', () => {
+    persist();
+    adOrdenarPorGeneroModal(() => renderAdmin());
+  });
   document.getElementById('ad-ordenar-az')?.addEventListener('click', () => {
     persist();
     adOrdenarAlumnosAZ(() => renderAdmin());
@@ -1092,13 +1107,11 @@ function adRenderLista(body, d) {
                : '👥 Vuelve a contar como alumno del grado');
     }));
   body.querySelectorAll('.ad-al-del').forEach(b =>
-    b.addEventListener('click', async () => {
-      if (!await metasConfirm('¿Quitar a este alumno de la lista?\nSus pagos, asistencias y notas guardadas no se borran.', { icono: '👥', titulo: 'Lista de alumnos', okTxt: 'Sí, quitar' })) return;
+    b.addEventListener('click', () => {
+      persist();
       const fila = b.closest('.ad-al-row');
-      adUndoGuardar('Quitar alumno #' + fila.dataset.num);
-      fila.remove();
-      persist(); renderAdmin();
-      toast('👥 Alumno quitado — si fue un error, restaura en 🕘');
+      const num = +(b.dataset.delnum || (fila && fila.dataset.num));
+      adEliminarAlumnoFila(num, () => renderAdmin());
     }));
   document.getElementById('ad-add-al').addEventListener('click', () => {
     const dd = adLoad();
@@ -1376,7 +1389,7 @@ async function adInsertarAlumno() {
    de Acción y su clave de familia (METAS_CODIGOS_V1).
    Los números de lista se renumeran en el nuevo orden (1, 2, …, N) para que
    la boleta, SACE y toda Mi aula conserven el orden elegido por el maestro. */
-function adReordenarAlumnos(ordenNums) {
+function adReordenarAlumnos(ordenNums, etiquetaUndo) {
   const d = adLoad();
   if (!d || !Array.isArray(d.lista) || d.lista.length < 2) return null;
   const porNum = {};
@@ -1395,9 +1408,18 @@ function adReordenarAlumnos(ordenNums) {
   for (let i = 0; i < nuevaLista.length; i++) {
     if (nuevaLista[i].num !== d.lista[i].num) { cambio = true; break; }
   }
-  if (!cambio) return null;
+  if (!cambio) {
+    if (etiquetaUndo === false) {
+      const mId = {};
+      d.lista.forEach(a => { mId[a.num] = a.num; });
+      return mId;
+    }
+    return null;
+  }
 
-  adUndoGuardar('Ordenar filas de alumnos');
+  if (etiquetaUndo !== false) {
+    adUndoGuardar(typeof etiquetaUndo === 'string' && etiquetaUndo ? etiquetaUndo : 'Ordenar filas de alumnos');
+  }
 
   /* Mapa: número anterior → nuevo número de lista según la nueva posición */
   const mapa = {};
@@ -1494,6 +1516,275 @@ function adReordenarAlumnos(ordenNums) {
   return mapa;
 }
 
+/* Elimina la fila de un alumno renumerando a los demás con sus propias notas y guardando respaldo en Deshacer */
+async function adEliminarAlumnoFila(numActual, alTerminar) {
+  const d = adLoad();
+  if (!d || !Array.isArray(d.lista)) return;
+  if (d.lista.length <= 1) {
+    await metasAlert('Debe quedar al menos 1 fila en la lista. Si deseas cambiar el alumno, edita su nombre.', {
+      icono: '👥',
+      titulo: 'Borrar fila',
+    });
+    return;
+  }
+  const idx = d.lista.findIndex(a => +a.num === +numActual);
+  if (idx < 0) return;
+  const al = d.lista[idx];
+  const quien = (al.nombre ? al.nombre : 'Sin nombre') + ' (#' + al.num + ')';
+  if (!await metasConfirm(
+    '¿Borrar la fila de **' + quien + '**?\n\n' +
+    'Se quitará de la lista y los demás alumnos conservarán sus propias notas, asistencias, pagos y claves de familia.\n\n' +
+    '💡 Si necesitas recuperarla después, podrás restaurarla en **«🕘 Deshacer o restaurar cambios»**.',
+    { icono: '🗑️', titulo: 'Borrar fila de alumno', okTxt: 'Sí, borrar fila' }
+  )) return;
+
+  adUndoGuardar('Borrar fila · ' + quien);
+
+  const d2 = adLoad();
+  const restantes = d2.lista.filter(a => +a.num !== +numActual);
+  const mapa = {};
+  restantes.forEach((a, i) => { mapa[a.num] = i + 1; });
+
+  const remapearSinBorrado = obj => {
+    const out = {};
+    Object.keys(obj || {}).forEach(k => {
+      const nk = +k;
+      if (nk === +numActual) return;
+      if (mapa[nk] != null) out[mapa[nk]] = obj[k];
+    });
+    return out;
+  };
+
+  /* 1) Claves de familia */
+  try {
+    const codes = JSON.parse(localStorage.getItem('METAS_CODIGOS_V1')) || {};
+    const key = 'G:' + d2.id;
+    if (codes[key]) {
+      codes[key] = remapearSinBorrado(codes[key]);
+      localStorage.setItem('METAS_CODIGOS_V1', JSON.stringify(codes));
+    }
+  } catch (_) {}
+
+  /* 2) Notas SACE */
+  Object.keys(d2.notas || {}).forEach(p => {
+    Object.keys(d2.notas[p] || {}).forEach(m => {
+      d2.notas[p][m] = remapearSinBorrado(d2.notas[p][m]);
+    });
+  });
+
+  /* 3) Asistencia, colectas, controles, lectura y equipos */
+  (d2.asistencia || []).forEach(r => { if (r && r.aus) r.aus = remapearSinBorrado(r.aus); });
+  (d2.colectas || []).forEach(c => {
+    if (c && c.pagos) c.pagos = remapearSinBorrado(c.pagos);
+    if (c && c.pagosF) c.pagosF = remapearSinBorrado(c.pagosF);
+  });
+  (d2.controles || []).forEach(c => {
+    if (c && c.datos) c.datos = remapearSinBorrado(c.datos);
+  });
+  d2.lectura = (d2.lectura || []).filter(r => r && +r.num !== +numActual);
+  d2.lectura.forEach(r => {
+    if (r && mapa[+r.num] != null) r.num = mapa[+r.num];
+  });
+  const eq = d2.equipos;
+  if (eq) {
+    const mArr = a => (a || []).filter(n => +n !== +numActual).map(n => mapa[+n] != null ? mapa[+n] : +n);
+    ['reparto', 'antes'].forEach(k => { if (Array.isArray(eq[k])) eq[k] = eq[k].map(mArr); });
+    if (Array.isArray(eq.coord)) eq.coord = mArr(eq.coord);
+    if (Array.isArray(eq.separar)) eq.separar = eq.separar.map(mArr).filter(par => par.length >= 2);
+    if (eq.fuera && Array.isArray(eq.fuera.nums)) eq.fuera.nums = mArr(eq.fuera.nums);
+  }
+
+  /* 4) Comunicados y conducta */
+  try {
+    if (typeof avLoad === 'function' && typeof avSaveAll === 'function') {
+      const oAv = avLoad();
+      const gAv = oAv.grupos && oAv.grupos[d2.id];
+      if (gAv) {
+        (gAv.avisos || []).forEach(av => {
+          if (av && Array.isArray(av.alumnos)) {
+            av.alumnos = av.alumnos.filter(n => +n !== +numActual).map(n => mapa[+n] != null ? mapa[+n] : +n);
+          }
+        });
+        gAv.conducta = (gAv.conducta || []).filter(c => c && +c.num !== +numActual);
+        gAv.conducta.forEach(c => {
+          if (c && mapa[+c.num] != null) c.num = mapa[+c.num];
+        });
+        avSaveAll(oAv);
+      }
+    }
+  } catch (_) {}
+
+  /* 5) Plan de Acción */
+  try {
+    const rawPa = localStorage.getItem('METAS_PLANACCION_V1');
+    if (rawPa && typeof adSugMismoGrupo === 'function') {
+      const pa = JSON.parse(rawPa);
+      let modPa = false;
+      ((pa && pa.analisis) || []).forEach(ana => {
+        if (!ana || !Array.isArray(ana.students) || !adSugMismoGrupo(ana, d2)) return;
+        const antes = ana.students.length;
+        ana.students = ana.students.filter(s => s && +s.num !== +numActual);
+        if (ana.students.length !== antes) modPa = true;
+        ana.students.forEach(s => {
+          if (s && mapa[+s.num] != null && +s.num !== mapa[+s.num]) {
+            s.num = mapa[+s.num];
+            modPa = true;
+          }
+        });
+        ana.students.sort((a, b) => (+a.num || 0) - (+b.num || 0));
+      });
+      if (modPa) localStorage.setItem('METAS_PLANACCION_V1', JSON.stringify(pa));
+    }
+  } catch (_) {}
+
+  /* 6) Guardar lista renumerada */
+  d2.lista = restantes.map((a, i) => Object.assign({}, a, { num: i + 1 }));
+  adSave(d2);
+  if (typeof alTerminar === 'function') alTerminar();
+  if (typeof toast === 'function') {
+    toast('🗑️ Fila borrada (' + (adPrimerNombre(al.nombre) || '#' + numActual) + ') · Puedes restaurarla en «🕘 Deshacer»');
+  }
+}
+
+/* Heurística opcional para sugerir si un primer nombre suele ser femenino en español */
+function adEsNombreFemeninoSugerido(nombreCompleto) {
+  const p = adPrimerNombre(nombreCompleto).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  if (!p) return false;
+  const mascEnA = new Set(['josua', 'joshua', 'luca', 'lukas', 'nicola', 'elias', 'matias', 'tobias', 'isaias', 'jeremias', 'abdias', 'ezequias', 'nehemias', 'zacarias', 'urias', 'jonas', 'tomas', 'lucas', 'sebas', 'borja', 'mustafa']);
+  if (mascEnA.has(p)) return false;
+  const femComunes = new Set(['abigail', 'adamaris', 'alison', 'allison', 'amparo', 'anabel', 'angie', 'aracely', 'arely', 'ashley', 'ashly', 'astrid', 'avril', 'beatriz', 'belen', 'berenice', 'betzy', 'brigitte', 'brittany', 'carmen', 'carol', 'celeste', 'cherlim', 'chloe', 'claire', 'consuelo', 'coral', 'cristal', 'cristy', 'dailyn', 'daisy', 'damaris', 'dayrin', 'debora', 'deborah', 'delmy', 'denisse', 'deybi', 'dolores', 'doris', 'dulce', 'edith', 'elizabeth', 'elsy', 'emily', 'emperatriz', 'esther', 'estrella', 'evelyn', 'fanny', 'flor', 'genesis', 'giselle', 'gladys', 'grace', 'grisel', 'guadalupe', 'haidee', 'hazel', 'heidi', 'helen', 'hilary', 'ines', 'ingrid', 'irene', 'iris', 'isabel', 'iveth', 'ivonne', 'jacqueline', 'jade', 'janeth', 'jasmin', 'jazmin', 'jennifer', 'jenny', 'jessica', 'jimena', 'joselyn', 'judith', 'julieth', 'karen', 'karin', 'karol', 'katherine', 'katy', 'keily', 'keiry', 'kelly', 'kendy', 'kenia', 'keren', 'keyla', 'keylin', 'kimberly', 'kristel', 'lady', 'lauren', 'leidy', 'lesly', 'leslie', 'leticia', 'liliana', 'lilian', 'liliam', 'lizbeth', 'lizeth', 'lourdes', 'lucero', 'luz', 'mabel', 'madelyn', 'magaly', 'maite', 'marbely', 'margaret', 'maribel', 'maricruz', 'mariel', 'marisol', 'marlen', 'marleny', 'mary', 'maybelline', 'maylin', 'mayra', 'megan', 'melanie', 'melany', 'melissa', 'mercedes', 'merary', 'merlin', 'michelle', 'milagro', 'milagros', 'mildred', 'miriam', 'mirian', 'monserrath', 'monserrat', 'nadia', 'nancy', 'naomi', 'nataly', 'nathaly', 'nayeli', 'nelly', 'nicole', 'nohemi', 'noemi', 'nohelia', 'norma', 'nuria', 'odalis', 'olga', 'orquidea', 'paola', 'patricia', 'paz', 'perla', 'pilar', 'rachel', 'raquel', 'rebeca', 'rocio', 'rosario', 'rosibel', 'roxana', 'ruby', 'ruth', 'sadith', 'samanta', 'samantha', 'sara', 'sarahi', 'sarai', 'scarleth', 'scarlet', 'selene', 'sharon', 'sheila', 'sherlyn', 'shirley', 'silvia', 'sindel', 'sindy', 'socorro', 'sofia', 'sol', 'soledad', 'sonia', 'stephanie', 'stephany', 'suany', 'suyen', 'tania', 'tatiana', 'teresa', 'tiffany', 'valeria', 'valery', 'vanessa', 'wendy', 'ximena', 'xiomara', 'yamileth', 'yaneth', 'ocirema', 'yaquelin', 'yareli', 'yasmin', 'yazmin', 'yesenia', 'yessica', 'yohana', 'yolanda', 'yoselin', 'yulissa', 'zoe', 'zulema']);
+  if (femComunes.has(p)) return true;
+  if (p.endsWith('a') || p.endsWith('eth') || p.endsWith('elly') || p.endsWith('ely') || p.endsWith('lyn')) return true;
+  return false;
+}
+
+/* Modal para elegir/confirmar quiénes son ♀ Niñas y ordenar Niñas (A–Z) arriba y ♂ Varones (A–Z) debajo */
+function adOrdenarPorGeneroModal(alTerminar) {
+  const d = adLoad();
+  if (!d || !Array.isArray(d.lista) || d.lista.length < 2) {
+    if (typeof toast === 'function') toast('Agrega al menos 2 alumnos para ordenar');
+    return;
+  }
+  const ninasSet = new Set();
+  const algunoRegistrado = d.lista.some(a => a.sexo === 'F' || a.sexo === 'M');
+  d.lista.forEach(a => {
+    if (a.sexo === 'F') ninasSet.add(a.num);
+    else if (!algunoRegistrado && adEsNombreFemeninoSugerido(a.nombre)) ninasSet.add(a.num);
+  });
+
+  const ov = document.createElement('div');
+  ov.className = 'ad-gen-ov';
+  ov.innerHTML = `
+    <div class="ad-gen-card" role="dialog" aria-modal="true" aria-labelledby="ad-gen-tit">
+      <div class="ad-gen-head">
+        <div class="ad-gen-title" id="ad-gen-tit">♀♂ Ordenar Niñas y luego Varones (A–Z)</div>
+        <button type="button" class="ad-gen-close" id="ad-gen-x" aria-label="Cerrar">✕</button>
+      </div>
+      <p class="ad-gen-hint">
+        Toca en la lista para marcar o desmarcar a las <strong>♀ Niñas</strong>. Los demás quedarán como <strong>♂ Varones</strong>.<br>
+        Al confirmar, se ordenarán primero las <strong>♀ Niñas (A–Z)</strong> y debajo los <strong>♂ Varones (A–Z)</strong>, moviendo cada fila con todas sus notas.
+      </p>
+      <div class="ad-gen-bar">
+        <span class="ad-gen-count" id="ad-gen-cnt"></span>
+        <div class="ad-gen-qbtns">
+          <button type="button" class="ad-gen-qbtn" id="ad-gen-auto">✨ Sugerir por nombre</button>
+          <button type="button" class="ad-gen-qbtn" id="ad-gen-todas">♀ Todas</button>
+          <button type="button" class="ad-gen-qbtn" id="ad-gen-ninguna">♂ Ninguna</button>
+        </div>
+      </div>
+      <div class="ad-gen-grid" id="ad-gen-grid">
+        ${d.lista.map(a => {
+          const esF = ninasSet.has(a.num);
+          return `<button type="button" class="ad-gen-item ${esF ? 'ad-gen-f' : 'ad-gen-m'}" data-gnum="${a.num}">
+            <span class="ad-gen-badge">${esF ? '♀ Niña' : '♂ Varón'}</span>
+            <span class="ad-gen-num">#${a.num}</span>
+            <span class="ad-gen-nom">${adEsc(a.nombre || 'Sin nombre')}</span>
+          </button>`;
+        }).join('')}
+      </div>
+      <div class="ad-gen-foot">
+        <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-gen-cancel">Cancelar</button>
+        <button type="button" class="pa-generate-btn" id="ad-gen-ok">✅ Ordenar Niñas (A–Z) y debajo Varones (A–Z)</button>
+      </div>
+    </div>`;
+  document.body.appendChild(ov);
+
+  const actualizarVista = () => {
+    const fCount = ninasSet.size;
+    const mCount = d.lista.length - fCount;
+    const cnt = ov.querySelector('#ad-gen-cnt');
+    if (cnt) cnt.innerHTML = `<b class="ad-gen-cf">♀ ${fCount} niña${fCount === 1 ? '' : 's'}</b> · <b class="ad-gen-cm">♂ ${mCount} var${mCount === 1 ? 'ón' : 'ones'}</b>`;
+    ov.querySelectorAll('.ad-gen-item').forEach(btn => {
+      const num = +btn.dataset.gnum;
+      const esF = ninasSet.has(num);
+      btn.classList.toggle('ad-gen-f', esF);
+      btn.classList.toggle('ad-gen-m', !esF);
+      const b = btn.querySelector('.ad-gen-badge');
+      if (b) b.textContent = esF ? '♀ Niña' : '♂ Varón';
+    });
+  };
+  actualizarVista();
+
+  ov.querySelectorAll('.ad-gen-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const num = +btn.dataset.gnum;
+      if (ninasSet.has(num)) ninasSet.delete(num);
+      else ninasSet.add(num);
+      actualizarVista();
+    });
+  });
+
+  ov.querySelector('#ad-gen-auto')?.addEventListener('click', () => {
+    ninasSet.clear();
+    d.lista.forEach(a => {
+      if (adEsNombreFemeninoSugerido(a.nombre)) ninasSet.add(a.num);
+    });
+    actualizarVista();
+  });
+  ov.querySelector('#ad-gen-todas')?.addEventListener('click', () => {
+    d.lista.forEach(a => ninasSet.add(a.num));
+    actualizarVista();
+  });
+  ov.querySelector('#ad-gen-ninguna')?.addEventListener('click', () => {
+    ninasSet.clear();
+    actualizarVista();
+  });
+
+  const cerrar = () => { ov.remove(); };
+  ov.querySelector('#ad-gen-x')?.addEventListener('click', cerrar);
+  ov.querySelector('#ad-gen-cancel')?.addEventListener('click', cerrar);
+  ov.addEventListener('click', e => { if (e.target === ov) cerrar(); });
+
+  ov.querySelector('#ad-gen-ok')?.addEventListener('click', () => {
+    adUndoGuardar('Ordenar Niñas A–Z y Varones A–Z');
+    const dd = adLoad();
+    dd.lista.forEach(a => {
+      a.sexo = ninasSet.has(a.num) ? 'F' : 'M';
+    });
+    adSave(dd);
+
+    const collator = new Intl.Collator('es', { sensitivity: 'base', numeric: true });
+    const cmpNombre = (a, b) => {
+      const na = String(a.nombre || '').trim();
+      const nb = String(b.nombre || '').trim();
+      if (!na && !nb) return a.num - b.num;
+      if (!na) return 1;
+      if (!nb) return -1;
+      return collator.compare(na, nb) || (a.num - b.num);
+    };
+    const ninas = dd.lista.filter(a => ninasSet.has(a.num)).sort(cmpNombre);
+    const varones = dd.lista.filter(a => !ninasSet.has(a.num)).sort(cmpNombre);
+    const ordenNums = ninas.concat(varones).map(a => a.num);
+
+    adReordenarAlumnos(ordenNums, false);
+    cerrar();
+    if (typeof alTerminar === 'function') alTerminar();
+    if (typeof toast === 'function') {
+      toast('♀♂ Ordenado: ' + ninas.length + ' niñas (A–Z) arriba y ' + varones.length + ' varones (A–Z) debajo');
+    }
+  });
+}
+
 /* Mueve a un alumno un paso arriba (-1) o abajo (+1) con todas sus notas */
 function adMoverAlumnoPaso(numActual, paso, alTerminar) {
   const d = adLoad();
@@ -1502,11 +1793,12 @@ function adMoverAlumnoPaso(numActual, paso, alTerminar) {
   if (idx < 0) return;
   const dest = idx + paso;
   if (dest < 0 || dest >= d.lista.length) return;
+  const al = d.lista[idx];
   const orden = d.lista.map(a => a.num);
   const tmp = orden[idx];
   orden[idx] = orden[dest];
   orden[dest] = tmp;
-  const mapa = adReordenarAlumnos(orden);
+  const mapa = adReordenarAlumnos(orden, 'Mover fila · ' + (adPrimerNombre(al.nombre) || ('#' + al.num)));
   if (mapa && typeof alTerminar === 'function') {
     alTerminar(mapa[+numActual], false);
   }
@@ -1546,7 +1838,7 @@ async function adMoverAlumnoAPosicion(numActual, alTerminar) {
   const orden = d2.lista.map(a => a.num);
   const [movido] = orden.splice(idx2, 1);
   orden.splice(posDest - 1, 0, movido);
-  const mapa = adReordenarAlumnos(orden);
+  const mapa = adReordenarAlumnos(orden, 'Mover a #' + posDest + ' · ' + (adPrimerNombre(al.nombre) || ('#' + al.num)));
   if (mapa) {
     const nuevoNum = mapa[+numActual];
     if (typeof alTerminar === 'function') alTerminar(nuevoNum, true);
@@ -1582,14 +1874,14 @@ async function adOrdenarAlumnosAZ(alTerminar) {
     'Cada alumno se moverá a su lugar alfabético **con todas sus notas**, asistencias, pagos y clave de familia.',
     { icono: '🔤', titulo: 'Ordenar A–Z con sus notas', okTxt: 'Sí, ordenar A–Z' }
   )) return;
-  const mapa = adReordenarAlumnos(ordenada.map(a => a.num));
+  const mapa = adReordenarAlumnos(ordenada.map(a => a.num), 'Ordenar lista A–Z');
   if (mapa) {
     if (typeof alTerminar === 'function') alTerminar(null, false);
     if (typeof toast === 'function') toast('🔤 Filas ordenadas A–Z con todas sus notas');
   }
 }
 
-/* ── Controles de orden (▲, ▼, #posición y arrastre) en tablas .ad-mx ── */
+/* ── Controles de fila (▲, ▼, #posición y ✕ borrar fila) en tablas .ad-mx ── */
 function adTablaFilasArrastrar(tabla, alCambiar) {
   if (!tabla) return;
   const tbody = tabla.querySelector('tbody');
@@ -1641,178 +1933,19 @@ function adTablaFilasArrastrar(tabla, alCambiar) {
     });
   });
 
-  if (tbody.querySelectorAll('tr[data-rnum]').length < 2) return;
-
-  const actualizarNumsEnVivo = (fantasma, filaActiva) => {
-    const filas = [...tbody.querySelectorAll('tr[data-rnum]')];
-    filas.forEach((tr, idx) => {
-      const b = tr.querySelector('.ad-mx-num');
-      if (b) b.textContent = '#' + (idx + 1);
-      if (fantasma && tr === filaActiva) {
-        const nom = (tr.querySelector('.ad-mx-nom')?.textContent || '').trim();
-        fantasma.textContent = '↕️ #' + (idx + 1) + (nom && nom !== '—' ? ' · ' + nom : '');
-      }
+  /* 3) Botón ✕ para borrar la fila (con respaldo en Deshacer) */
+  tbody.querySelectorAll('[data-delnum]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const num = +btn.dataset.delnum;
+      adEliminarAlumnoFila(num, () => {
+        refrescarConservandoVista(null, false);
+      });
     });
-  };
-
-  /* 3) Arrastrar desde el asa ⋮⋮ o desde el nombre */
-  tbody.addEventListener('pointerdown', e => {
-    if (e.button && e.button !== 0) return;
-    if (e.target.closest('button, input, select, textarea, a')) return;
-    const celda = e.target.closest('.ad-mx-sticky');
-    if (!celda) return;
-    const fila = celda.closest('tr[data-rnum]');
-    if (!fila) return;
-
-    const esAsa = !!e.target.closest('.ad-mx-asa');
-    const id = e.pointerId, x0 = e.clientX, y0 = e.clientY;
-    let UltY = y0, UltX = x0;
-    let timer = null, moviendo = false, fantasma = null, rafScroll = 0;
-    const numOrig = +fila.dataset.rnum;
-    const ordenInicial = [...tbody.querySelectorAll('tr[data-rnum]')].map(r => +r.dataset.rnum);
-
-    const autoScroll = () => {
-      if (!moviendo) return;
-      let dy = 0;
-      const paso = 10;
-      const thH = (tabla.querySelector('thead')?.offsetHeight || 56);
-      const margen = 44;
-      if (wrap) {
-        const wr = wrap.getBoundingClientRect();
-        if (UltY < wr.top + thH + margen) dy = -paso;
-        else if (UltY > wr.bottom - margen) dy = paso;
-        if (dy && wrap.scrollHeight > wrap.clientHeight) {
-          wrap.scrollTop += dy;
-          reubicarFila(UltY);
-        }
-      }
-      const vh = window.innerHeight || document.documentElement.clientHeight;
-      if (UltY < margen + 48) window.scrollBy(0, -paso);
-      else if (UltY > vh - margen) window.scrollBy(0, paso);
-      rafScroll = requestAnimationFrame(autoScroll);
-    };
-
-    const reubicarFila = y => {
-      const hermanas = [...tbody.querySelectorAll('tr[data-rnum]')].filter(r => r !== fila);
-      for (const otra of hermanas) {
-        const r = otra.getBoundingClientRect();
-        const mid = r.top + r.height / 2;
-        if (y < mid) {
-          if (otra.previousElementSibling !== fila) {
-            tbody.insertBefore(fila, otra);
-            actualizarNumsEnVivo(fantasma, fila);
-          }
-          return;
-        }
-      }
-      const ult = hermanas[hermanas.length - 1];
-      if (ult && ult.nextElementSibling !== fila) {
-        ult.after(fila);
-        actualizarNumsEnVivo(fantasma, fila);
-      }
-    };
-
-    const empezar = () => {
-      moviendo = true;
-      if (document.activeElement && document.activeElement.blur) {
-        try { document.activeElement.blur(); } catch (_) {}
-      }
-      /* IMPORTANTE: capturar en tbody (contenedor fijo), NUNCA en la celda hija,
-         porque mover <tr> en el DOM libera el pointerCapture del nodo movido. */
-      try { tbody.setPointerCapture(id); } catch (_) {}
-      if (navigator.vibrate) try { navigator.vibrate(18); } catch (_) {}
-      fila.classList.add('ad-mx-tr-moviendo');
-      document.body.classList.add('ad-gr-moviendo');
-      fantasma = document.createElement('div');
-      fantasma.className = 'ad-mx-fantasma';
-      document.body.appendChild(fantasma);
-      actualizarNumsEnVivo(fantasma, fila);
-      posicionarFantasma(UltX, UltY);
-      rafScroll = requestAnimationFrame(autoScroll);
-    };
-
-    const posicionarFantasma = (x, y) => {
-      if (!fantasma) return;
-      fantasma.style.left = Math.max(8, Math.min((window.innerWidth || 360) - 170, x + 14)) + 'px';
-      fantasma.style.top = Math.max(8, y - 34) + 'px';
-    };
-
-    if (e.pointerType !== 'mouse' && !esAsa) {
-      timer = setTimeout(empezar, 260);
-    }
-
-    const alMover = ev => {
-      if (ev.pointerId !== id) return;
-      UltX = ev.clientX;
-      UltY = ev.clientY;
-      if (!moviendo) {
-        const dist = Math.hypot(ev.clientX - x0, ev.clientY - y0);
-        if (ev.pointerType === 'mouse' || esAsa) {
-          if (dist >= 4) empezar();
-        } else if (dist > 9) {
-          clearTimeout(timer);
-          limpiar();
-          return;
-        }
-      }
-      if (moviendo) {
-        if (ev.cancelable) ev.preventDefault();
-        posicionarFantasma(ev.clientX, ev.clientY);
-        reubicarFila(ev.clientY);
-      }
-    };
-
-    const cancelar = ev => {
-      if (ev.pointerId !== id) return;
-      clearTimeout(timer);
-      const estabaMoviendo = moviendo;
-      limpiar();
-      if (estabaMoviendo) {
-        /* Restaurar orden original del DOM si el gesto fue cancelado por el sistema */
-        const porNum = {};
-        [...tbody.querySelectorAll('tr[data-rnum]')].forEach(r => { porNum[+r.dataset.rnum] = r; });
-        ordenInicial.forEach(n => { if (porNum[n]) tbody.appendChild(porNum[n]); });
-        actualizarNumsEnVivo(null, null);
-      }
-    };
-
-    const soltar = ev => {
-      if (ev.pointerId !== id) return;
-      clearTimeout(timer);
-      const seMovio = moviendo;
-      limpiar();
-      if (!seMovio) return;
-
-      const orden = [...tbody.querySelectorAll('tr[data-rnum]')].map(r => +r.dataset.rnum);
-      const mapa = adReordenarAlumnos(orden);
-      if (mapa) {
-        const nuevoNum = mapa[numOrig];
-        refrescarConservandoVista(nuevoNum, false);
-        if (typeof toast === 'function') {
-          toast('↕️ Fila movida a #' + (nuevoNum || '') + ' con todas sus notas');
-        }
-      }
-    };
-
-    const limpiar = () => {
-      if (rafScroll) cancelAnimationFrame(rafScroll);
-      rafScroll = 0;
-      try { if (tbody.hasPointerCapture && tbody.hasPointerCapture(id)) tbody.releasePointerCapture(id); } catch (_) {}
-      window.removeEventListener('pointermove', alMover);
-      window.removeEventListener('pointerup', soltar);
-      window.removeEventListener('pointercancel', cancelar);
-      if (fantasma) { fantasma.remove(); fantasma = null; }
-      fila.classList.remove('ad-mx-tr-moviendo');
-      document.body.classList.remove('ad-gr-moviendo');
-    };
-
-    window.addEventListener('pointermove', alMover, { passive: false });
-    window.addEventListener('pointerup', soltar);
-    window.addEventListener('pointercancel', cancelar);
   });
 }
 
-/* ── Controles de orden (▲, ▼, #posición y arrastre) en 👥 Alumnos (#ad-lista-rows) ── */
+/* ── Controles de fila (▲, ▼ y #posición) en 👥 Alumnos (#ad-lista-rows) ── */
 function adListaFilasArrastrar(cont) {
   if (!cont) return;
 
@@ -1857,116 +1990,6 @@ function adListaFilasArrastrar(cont) {
         }
       });
     });
-  });
-
-  if (cont.querySelectorAll('.ad-al-row').length < 2) return;
-
-  const actualizarNums = () => {
-    [...cont.querySelectorAll('.ad-al-row')].forEach((r, idx) => {
-      const n = r.querySelector('.ad-al-num');
-      if (n) n.textContent = '#' + (idx + 1);
-    });
-  };
-
-  /* 3) Arrastrar desde el asa ⋮⋮ */
-  cont.addEventListener('pointerdown', e => {
-    if (e.button && e.button !== 0) return;
-    if (e.target.closest('button, input, select, textarea, a')) return;
-    const agarradera = e.target.closest('.ad-al-asa');
-    if (!agarradera) return;
-    const fila = agarradera.closest('.ad-al-row');
-    if (!fila) return;
-
-    guardarNombresActuales();
-    const id = e.pointerId, x0 = e.clientX, y0 = e.clientY;
-    let UltY = y0, moviendo = false, rafScroll = 0;
-    const numOrig = +fila.dataset.num;
-
-    const reubicar = y => {
-      const hermanas = [...cont.querySelectorAll('.ad-al-row')].filter(r => r !== fila);
-      for (const otra of hermanas) {
-        const r = otra.getBoundingClientRect();
-        if (y < r.top + r.height / 2) {
-          if (otra.previousElementSibling !== fila) {
-            cont.insertBefore(fila, otra);
-            actualizarNums();
-          }
-          return;
-        }
-      }
-      const ult = hermanas[hermanas.length - 1];
-      if (ult && ult.nextElementSibling !== fila) {
-        ult.after(fila);
-        actualizarNums();
-      }
-    };
-
-    const autoScroll = () => {
-      if (!moviendo) return;
-      const vh = window.innerHeight || document.documentElement.clientHeight;
-      const margen = 54, paso = 10;
-      if (UltY < margen) { window.scrollBy(0, -paso); reubicar(UltY); }
-      else if (UltY > vh - margen) { window.scrollBy(0, paso); reubicar(UltY); }
-      rafScroll = requestAnimationFrame(autoScroll);
-    };
-
-    const empezar = () => {
-      moviendo = true;
-      try { cont.setPointerCapture(id); } catch (_) {}
-      if (navigator.vibrate) try { navigator.vibrate(18); } catch (_) {}
-      fila.classList.add('ad-al-moviendo');
-      document.body.classList.add('ad-gr-moviendo');
-      rafScroll = requestAnimationFrame(autoScroll);
-    };
-
-    const alMover = ev => {
-      if (ev.pointerId !== id) return;
-      UltY = ev.clientY;
-      if (!moviendo) {
-        if (Math.hypot(ev.clientX - x0, ev.clientY - y0) >= 4) empezar();
-      }
-      if (!moviendo) return;
-      if (ev.cancelable) ev.preventDefault();
-      reubicar(ev.clientY);
-    };
-
-    const cancelar = ev => {
-      if (ev.pointerId !== id) return;
-      limpiar();
-      renderAdmin();
-    };
-
-    const soltar = ev => {
-      if (ev.pointerId !== id) return;
-      const seMovio = moviendo;
-      limpiar();
-      if (!seMovio) return;
-      const wy = window.scrollY;
-      const orden = [...cont.querySelectorAll('.ad-al-row')].map(r => +r.dataset.num);
-      const mapa = adReordenarAlumnos(orden);
-      if (mapa) {
-        renderAdmin();
-        window.scrollTo(0, wy);
-        if (typeof toast === 'function') {
-          toast('↕️ Fila movida a #' + (mapa[numOrig] || '') + ' con sus notas y registros');
-        }
-      }
-    };
-
-    const limpiar = () => {
-      if (rafScroll) cancelAnimationFrame(rafScroll);
-      rafScroll = 0;
-      try { if (cont.hasPointerCapture && cont.hasPointerCapture(id)) cont.releasePointerCapture(id); } catch (_) {}
-      window.removeEventListener('pointermove', alMover);
-      window.removeEventListener('pointerup', soltar);
-      window.removeEventListener('pointercancel', cancelar);
-      fila.classList.remove('ad-al-moviendo');
-      document.body.classList.remove('ad-gr-moviendo');
-    };
-
-    window.addEventListener('pointermove', alMover, { passive: false });
-    window.addEventListener('pointerup', soltar);
-    window.addEventListener('pointercancel', cancelar);
   });
 }
 
@@ -2075,13 +2098,15 @@ function adRenderFichas(body, d) {
           <tbody>
             ${d.lista.map((a, ri) => `<tr data-rnum="${a.num}">
               <td class="ad-mx-sticky" title="${adEsc(a.nombre || ('#' + a.num))}">
-                <span class="ad-mx-asa" title="Arrastra para mover la fila" aria-hidden="true"></span>
-                <span class="ad-mx-rbtns">
-                  <button type="button" class="ad-mx-rmv" data-rdir="-1" data-rnum="${a.num}" title="Subir una posición" aria-label="Subir"${ri === 0 ? ' disabled' : ''}>▲</button>
-                  <button type="button" class="ad-mx-rmv" data-rdir="1" data-rnum="${a.num}" title="Bajar una posición" aria-label="Bajar"${ri === d.lista.length - 1 ? ' disabled' : ''}>▼</button>
-                </span>
-                <button type="button" class="ad-mx-num" data-irnum="${a.num}" title="Toca para escribir a qué posición (#) quieres mover esta fila">#${a.num}</button>
-                <span class="ad-mx-nom">${adEsc(adPrimerNombre(a.nombre)) || '—'}</span></td>
+                <div class="ad-mx-sbox">
+                  <span class="ad-mx-rbtns">
+                    <button type="button" class="ad-mx-rmv" data-rdir="-1" data-rnum="${a.num}" title="Subir una posición" aria-label="Subir"${ri === 0 ? ' disabled' : ''}>▲</button>
+                    <button type="button" class="ad-mx-rmv" data-rdir="1" data-rnum="${a.num}" title="Bajar una posición" aria-label="Bajar"${ri === d.lista.length - 1 ? ' disabled' : ''}>▼</button>
+                  </span>
+                  <button type="button" class="ad-mx-num" data-irnum="${a.num}" title="Toca para escribir a qué posición (#) quieres mover esta fila">#${a.num}</button>
+                  <span class="ad-mx-nom">${adEsc(adPrimerNombre(a.nombre)) || '—'}</span>
+                  <button type="button" class="ad-mx-del" data-delnum="${a.num}" title="Borrar esta fila (con opción de restaurar)" aria-label="Borrar fila">✕</button>
+                </div></td>
               <td><button class="ad-fi-sexo ad-fi-sx-${a.sexo === 'F' ? 'f' : a.sexo === 'M' ? 'm' : 'no'}"
                 data-sxnum="${a.num}" aria-label="Sexo de ${adEsc(adPrimerNombre(a.nombre) || ('#' + a.num))}: ${a.sexo === 'F' ? 'niña' : a.sexo === 'M' ? 'varón' : 'sin registrar'}. Tocar para cambiar."
                 >${a.sexo === 'F' ? '♀ Niña' : a.sexo === 'M' ? '♂ Varón' : '·'}</button></td>
@@ -2094,6 +2119,10 @@ function adRenderFichas(body, d) {
         </table>
       </div>
 
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn ad-btn-sec" id="ad-fi-orden-az" type="button">🔤 Ordenar A–Z</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-fi-orden-gen" type="button">♀♂ Ordenar Niñas y luego Varones (A–Z)</button>
+      </div>
       <div class="ad-btn-row">
         <button class="pa-generate-btn ad-btn-sec" id="ad-fi-pegar">📋 Pegar desde Excel</button>
         <button class="pa-generate-btn ad-btn-sec" id="ad-fi-faltan">🔎 ¿A quién le falta?</button>
@@ -2109,7 +2138,8 @@ function adRenderFichas(body, d) {
         <button class="pa-generate-btn" id="ad-fi-pegar-ok">✅ Importar estos datos</button>
       </div>
       <p class="pa-optional-hint" id="ad-fi-estado" style="margin-top:8px"></p>
-    </div>`;
+    </div>
+    ${adUndoTarjetaHtml()}`;
 
   document.getElementById('ad-fi-volver').addEventListener('click', () => { _adFichasOn = 0; renderAdmin(); });
   const estado = t => { const e = document.getElementById('ad-fi-estado'); if (e) e.textContent = t; };
@@ -2188,7 +2218,14 @@ function adRenderFichas(body, d) {
     }).filter(Boolean);
     estado(faltan.length ? '🔎 ' + faltan.join(' · ') : '✅ Todas las fichas están completas.');
   });
+  document.getElementById('ad-fi-orden-az')?.addEventListener('click', () => {
+    adOrdenarAlumnosAZ(() => renderAdmin());
+  });
+  document.getElementById('ad-fi-orden-gen')?.addEventListener('click', () => {
+    adOrdenarPorGeneroModal(() => renderAdmin());
+  });
   adTablaFilasArrastrar(body.querySelector('.ad-fi-mx'), () => renderAdmin());
+  adUndoEnganchar(body);
 }
 
 /* ══════════════ 📄 EXPEDIENTE DEL AULA ══════════════
@@ -4878,10 +4915,10 @@ function adRenderSace(body, d) {
       </div>
       <p class="pa-optional-hint" style="margin-top:2px">
         ${esLetra
-          ? 'La conducta es <strong>cualitativa</strong>: <strong>escríbela</strong> (S, MB, B) o toca la celda y luego el <strong>valor</strong> — el cursor recorre los parciales I→IV de cada rasgo y sigue solo. Para ordenar filas con todas sus notas: usa <strong>▲ ▼</strong>, toca el número <strong>#</strong> para enviarlo directo a una posición (ej. al #8), o arrastra <strong>⋮⋮</strong>.'
+          ? 'La conducta es <strong>cualitativa</strong>: <strong>escríbela</strong> (S, MB, B) o toca la celda y luego el <strong>valor</strong> — el cursor recorre los parciales I→IV de cada rasgo y sigue solo. Para ordenar filas con todas sus notas: usa <strong>▲ ▼</strong>, toca el número <strong>#</strong> para enviarlo directo a una posición (ej. al #8), o usa los botones de <strong>🔤 Ordenar A–Z</strong> y <strong>♀♂ por género</strong>.'
           : esInasis
             ? 'Escribe el <strong>número de inasistencias</strong>. Enter o «Siguiente» para bajar. Usa <strong>▲ ▼</strong> o toca el <strong>#número</strong> de un alumno para mover su fila a otra posición.'
-            : 'Escribe la <strong>nota (1-100)</strong>. Avanza con <strong>Enter</strong>, <strong>Tab</strong> o las flechas. Para mover un alumno con todas sus notas: usa las flechas <strong>▲ ▼</strong>, toca su número <strong>#</strong> para mandarlo directo a otra posición (ej. #8), o usa <strong>🔤 Ordenar A–Z</strong>.'}</p>
+            : 'Escribe la <strong>nota (1-100)</strong>. Avanza con <strong>Enter</strong>, <strong>Tab</strong> o las flechas. Para mover un alumno con todas sus notas: usa las flechas <strong>▲ ▼</strong>, toca su número <strong>#</strong> para mandarlo directo a otra posición (ej. #8), o usa <strong>🔤 Ordenar A–Z</strong> / <strong>♀♂ Niñas y Varones A–Z</strong>.'}</p>
 
       ${esLetra ? `
       <div class="ad-pers-kp">
@@ -4938,13 +4975,15 @@ function adRenderSace(body, d) {
           <tbody>
             ${d.lista.map((a, ri) => `<tr data-rnum="${a.num}">
               <td class="ad-mx-sticky" title="${adEsc(a.nombre || ('#' + a.num))}">
-                <span class="ad-mx-asa" title="Arrastra para mover toda la fila con sus notas" aria-hidden="true"></span>
-                <span class="ad-mx-rbtns">
-                  <button type="button" class="ad-mx-rmv" data-rdir="-1" data-rnum="${a.num}" title="Subir una posición con sus notas" aria-label="Subir"${ri === 0 ? ' disabled' : ''}>▲</button>
-                  <button type="button" class="ad-mx-rmv" data-rdir="1" data-rnum="${a.num}" title="Bajar una posición con sus notas" aria-label="Bajar"${ri === d.lista.length - 1 ? ' disabled' : ''}>▼</button>
-                </span>
-                <button type="button" class="ad-mx-num" data-irnum="${a.num}" title="Toca para elegir a qué posición (#) mover a ${adEsc(a.nombre || ('#' + a.num))} con todas sus notas">#${a.num}</button>
-                <span class="ad-mx-nom">${adEsc(adPrimerNombre(a.nombre)) || '—'}</span></td>
+                <div class="ad-mx-sbox">
+                  <span class="ad-mx-rbtns">
+                    <button type="button" class="ad-mx-rmv" data-rdir="-1" data-rnum="${a.num}" title="Subir una posición con sus notas" aria-label="Subir"${ri === 0 ? ' disabled' : ''}>▲</button>
+                    <button type="button" class="ad-mx-rmv" data-rdir="1" data-rnum="${a.num}" title="Bajar una posición con sus notas" aria-label="Bajar"${ri === d.lista.length - 1 ? ' disabled' : ''}>▼</button>
+                  </span>
+                  <button type="button" class="ad-mx-num" data-irnum="${a.num}" title="Toca para elegir a qué posición (#) mover a ${adEsc(a.nombre || ('#' + a.num))} con todas sus notas">#${a.num}</button>
+                  <span class="ad-mx-nom">${adEsc(adPrimerNombre(a.nombre)) || '—'}</span>
+                  <button type="button" class="ad-mx-del" data-delnum="${a.num}" title="Borrar fila de ${adEsc(adPrimerNombre(a.nombre) || ('#' + a.num))} (se puede restaurar)" aria-label="Borrar fila">✕</button>
+                </div></td>
               ${colDefs.map((cd, ci) => `<td${cd.ini ? ' class="ad-mx-ini"' : ''}><input class="ad-mx-inp" data-idx="${ri * colDefs.length + ci}"
                 data-num="${a.num}" data-alumno="${a.num}" data-campo="${adEsc(cd.campo)}" data-materia="${adEsc(cd.campo)}" data-parcial="${cd.parcial}" type="text" inputmode="${esLetra ? 'text' : 'numeric'}"
                 maxlength="3" autocapitalize="characters" ${esLetra ? 'style="text-transform:uppercase;"' : ''}
@@ -4956,6 +4995,7 @@ function adRenderSace(body, d) {
       <div class="ad-btn-row" style="margin-top:8px">
         ${!esLetra && !esInasis ? '<button class="pa-generate-btn ad-btn-sec ad-mx-addmat" id="ad-sace-addmat" style="margin-top:0">➕ Agregar materia</button>' : ''}
         <button class="pa-generate-btn ad-btn-sec" id="ad-sace-orden-az" type="button">🔤 Ordenar A–Z (con sus notas)</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-sace-orden-gen" type="button">♀♂ Ordenar Niñas y luego Varones (A–Z)</button>
       </div>
       <div class="pa-field ad-bol-quien">
         <label>Boleta de</label>
@@ -4972,7 +5012,8 @@ function adRenderSace(body, d) {
         <button class="pa-generate-btn ad-btn-sec" id="ad-sace-csv">⬇ Copiar CSV (todas las materias)</button>
       </div>
       <p class="pa-optional-hint" id="ad-sace-estado" style="margin-top:8px"></p>
-    </div>`;
+    </div>
+    ${adUndoTarjetaHtml()}`;
 
   const setSel = (k, v) => {
     if (k === 'parcial' && ['I', 'II', 'III', 'IV'].includes(v)) {
@@ -4992,6 +5033,9 @@ function adRenderSace(body, d) {
   document.getElementById('ad-sace-vista').addEventListener('change', e => setSel('vista', e.target.value));
   document.getElementById('ad-sace-orden-az')?.addEventListener('click', () => {
     adOrdenarAlumnosAZ(() => adRenderSace(body, adLoad()));
+  });
+  document.getElementById('ad-sace-orden-gen')?.addEventListener('click', () => {
+    adOrdenarPorGeneroModal(() => adRenderSace(body, adLoad()));
   });
   document.getElementById('ad-sace-addmat')?.addEventListener('click', async () => {
     const nueva = await metasPrompt('Nombre de la materia nueva:', {
@@ -5399,6 +5443,7 @@ function adRenderSace(body, d) {
   });
 
   adTablaFilasArrastrar(body.querySelector('.ad-mx'), () => adRenderSace(body, adLoad()));
+  adUndoEnganchar(body);
 
   /* Restaurar foco y posición del cursor si una celda estaba activa antes del render */
   if (activeInpInfo) {
