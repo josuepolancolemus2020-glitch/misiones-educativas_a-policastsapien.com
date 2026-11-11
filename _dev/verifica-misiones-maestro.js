@@ -64,6 +64,12 @@ fs.readdirSync(path.join(RAIZ, 'misiones')).sort().forEach(dir => {
     .map(f => sinComentariosJS(fs.readFileSync(path.join(jsDir, f), 'utf8'))).join('\n');
   const m = js.match(/const\s+SECS\s*=\s*\[([\s\S]*?)\];/);
   if (!m) return;
+  /* Solo cuenta la lista de PARES [id, rótulo], que es la que arma la barra.
+     Una misión del alumno puede llamar SECS a una lista de ids sueltos para
+     pintar sus puntos de progreso, con la barra escrita en su HTML: esa no
+     arma ninguna barra, y acusarla de «secciones sin pestaña» con las
+     pestañas a la vista es una sonda que se pone roja sin avería. */
+  if (!/\[\s*'[^']+'\s*,/.test(m[1])) return;
   const htmlF = fs.readdirSync(d).find(f => /\.html$/.test(f) && !/^juego-/.test(f));
   if (!htmlF) return;
   const html = sinComentariosHTML(fs.readFileSync(path.join(d, htmlF), 'utf8'));

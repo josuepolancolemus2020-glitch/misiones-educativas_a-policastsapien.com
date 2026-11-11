@@ -130,7 +130,10 @@ async function abrirMision(nav, rel) {
       const todo = m.s + '\n' + js;
       if (!/sopaGrid/.test(todo)) continue;
       conSopa.push(m.dir);
-      const clic = /class="sopa-c[ "]/.test(todo) && /onclick="sopaToca/.test(todo);
+      /* El motor remata con el clic de la celda, se llame como se llame la
+         función: las del maestro usan sopaToca() y Fracciones Heterogéneas,
+         clickSopa(). Pedir el nombre la acusaba sin avería. */
+      const clic = /class="sopa-c[ "]/.test(todo) && /class="sopa-c[^"]*"[^>]*\bonclick="\w+\(/.test(todo);
       const ruta = /function getSopaPath/.test(todo) && /function checkSopaSelection/.test(todo);
       if (!clic && !ruta) sinRemate.push(m.dir);
     }

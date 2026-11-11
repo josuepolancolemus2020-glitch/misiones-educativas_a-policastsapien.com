@@ -261,6 +261,24 @@ const LEER = `
       notas: todos('.mt-nota').map(function (t) { return t.textContent; })
     };
   };
+  /* Fracciones Heterogéneas: las bandejas de quesadilla. Lo lleno de cada
+     bandeja se mide por la caja de cada pedazo que cae dentro de ella, y la
+     fracción de al lado se lee de sus dos números. */
+  window.__amExtra.amQuesadilla = function (raiz) {
+    var vis = window.__amVisible;
+    function todos(sel) { return [].filter.call(raiz.querySelectorAll(sel), vis); }
+    var svg = raiz.querySelector('svg'), s = svg.getBoundingClientRect(), k = s.width / svg.viewBox.baseVal.width;
+    function caja(el) { var b = el.getBoundingClientRect(); return { x0: (b.left - s.left) / k, x1: (b.right - s.left) / k, y0: (b.top - s.top) / k, y1: (b.bottom - s.top) / k }; }
+    return {
+      bandejas: todos('.qh-bandeja').map(function (r) { return Object.assign({ b: +r.getAttribute('data-b') }, caja(r)); }),
+      piezas: todos('.qh-sexto rect, .qh-quinto rect').map(caja),
+      fracs: todos('.qh-fr').map(function (g) {
+        var c = caja(g.querySelector('.qh-barra'));
+        return { b: +g.getAttribute('data-b'), dice: g.querySelector('.qh-num').textContent + '/' + g.querySelector('.qh-den').textContent, y: (c.y0 + c.y1) / 2 };
+      }),
+      mitad: todos('.qh-mitad').map(caja)
+    };
+  };
   /* Números Decimales: la tabla y los dos cuadros de cien centavos.
      La cuadrícula se lee de sus rayas (son lo que se ve), y lo pintado
      por su caja: el área dice cuántos cuadritos son. */
@@ -20268,6 +20286,38 @@ const ESCENAS = {
      con la fracción de al lado, con lo escrito a la derecha (que se vuelve
      a calcular aquí) y con el marcador. Y entre las dos tazas hay siempre
      3/4: la manteca no aparece ni desaparece. */
+  /* Fracciones Heterogéneas: lo lleno de cada bandeja es lo que dice su
+     fracción, la quesadilla no aparece ni desaparece (siempre 1/2 + 1/3), y
+     2/5 no llega a la raya de la mitad. */
+  amQuesadilla(e, n) {
+    const x = e.extra, r = [];
+    const val = t => { const [a, b] = t.split('/').map(Number); return a / b; };
+    const cerca = (a, b, t = 0.02) => Math.abs(a - b) <= t;
+    const dentro = (p, b) => { const cx = (p.x0 + p.x1) / 2, cy = (p.y0 + p.y1) / 2; return cx > b.x0 && cx < b.x1 && cy > b.y0 && cy < b.y1; };
+    const lleno = b => x.piezas.filter(p => dentro(p, b)).reduce((t, p) => t + (p.x1 - p.x0), 0) / (b.x1 - b.x0);
+    r.push([x.piezas.every(p => x.bandejas.some(b => dentro(p, b))), `paso ${n}: todo lo lleno está dentro de una bandeja`]);
+    for (const b of x.bandejas) {
+      const f = x.fracs.filter(f => f.b === b.b);
+      /* Lo lleno se mide sumando anchos: dos pedazos montados contarían dos
+         veces el mismo sitio, así que primero, que ninguno pise a otro. */
+      const ps = x.piezas.filter(p => dentro(p, b)).sort((a, c) => a.x0 - c.x0);
+      r.push([ps.every((p, i) => i === 0 || p.x0 >= ps[i - 1].x1 - 0.5), `paso ${n}: en la bandeja ${b.b + 1} ningún pedazo pisa a otro`]);
+      r.push([f.length === 1 && f[0].y > b.y0 && f[0].y < b.y1, `paso ${n}: la bandeja ${b.b + 1} lleva una sola fracción, a su altura`, f.map(f => f.dice)]);
+      if (f.length === 1) r.push([cerca(lleno(b), val(f[0].dice)), `paso ${n}: lo lleno de la bandeja ${b.b + 1} es lo que dice su fracción (${f[0].dice})`, Math.round(lleno(b) * 1000) / 1000]);
+    }
+    const reales = x.bandejas.filter(b => b.b < 2);
+    r.push([cerca(reales.reduce((t, b) => t + lleno(b), 0), 1 / 2 + 1 / 3), `paso ${n}: entre las dos bandejas hay siempre 1/2 + 1/3: la quesadilla no aparece ni desaparece`]);
+    const c = x.bandejas.find(b => b.b === 2);
+    r.push([!!c === (n === 1) && (x.mitad.length === 1) === (n === 1), `paso ${n}: la bandeja de «arriba y abajo» y la raya de la mitad salen solo en el paso 1`]);
+    if (c && x.mitad.length) {
+      const b0 = x.bandejas.find(b => b.b === 0), m = (x.mitad[0].x0 + x.mitad[0].x1) / 2;
+      r.push([cerca(m, (b0.x0 + b0.x1) / 2, 1), 'paso 1: la raya va por la mitad de la bandeja', m]);
+      r.push([c.x0 + lleno(c) * (c.x1 - c.x0) < m - 2, 'paso 1: lo lleno de 2/5 no llega a la raya de la mitad']);
+    }
+    const marca = { 0: "?", 1: "2/5", 2: "6", 3: "5/6" }[n];
+    r.push([e.cifra.replace(/\s/g, '') === marca, `paso ${n}: el marcador dice ${marca}`, e.cifra]);
+    return r;
+  },
   amManteca(e, n) {
     const x = e.extra, r = [];
     const T = x.tazas, H = T[0].alto;

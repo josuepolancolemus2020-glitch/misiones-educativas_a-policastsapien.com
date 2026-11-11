@@ -11,7 +11,6 @@
 <meta property="og:site_name" content="Misiones PolicastSapien">
 <meta property="og:url" content="https://metas.policastsapien.com/misiones/mate-fracciones-heterogeneas/index.html">
 <link rel="stylesheet" href="../../css/vendor/fuentes/fuentes.css">
-<link rel="stylesheet" href="../../css/vendor/fontawesome/css/all.min.css">
 <link rel="stylesheet" href="css/style.css">
 <!-- La barra de secciones, arriba y siempre a la vista. Va DESPUÉS del CSS
      de la misión a propósito: de ahí saca su color, y así sobrescribe su
@@ -120,10 +119,10 @@
 <section class="sec active on" id="s-predice" role="tabpanel">
   <div class="card ac-amber" data-situacion>
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
-      <div class="card-h" style="margin-bottom:0;"><span class="ic">🔮</span> Predice y Observa — ¿Antes de la fórmula, qué dice tu intuición?</div>
+      <div class="card-h" style="margin-bottom:0;"><span class="ic">🔮</span> Predice y Observa: ¿antes de la fórmula, qué dice tu intuición?</div>
       <button class="btn-escuchar" onclick="hablarTexto('Bienvenido a la sección Predice y Observa. Lee cada situación cotidiana con fracciones de distinto denominador, elige tu predicción y descubre por qué necesitamos igualar el tamaño de las partes antes de sumar o restar.')">🔊 Escuchar</button>
     </div>
-    <p style="color:var(--texto-secundario);font-size:0.9rem;margin:0.5rem 0 1rem;">En las ferias, cocinas y talleres de Honduras sumamos y restamos fracciones todos los días. Haz tu predicción en estos <strong>3 acertijos reales</strong> antes de ver la explicación (+15 XP por cada predicción):</p>
+    <p style="color:var(--texto-secundario);font-size:0.9rem;margin:0.5rem 0 1rem;">En las ferias, cocinas y talleres de Honduras sumamos y restamos fracciones todos los días. Haz tu predicción en estos <strong>3 acertijos reales</strong> antes de ver la explicación:</p>
     <div id="predBox"></div>
   </div>
 
@@ -261,7 +260,7 @@
 <section class="sec" id="s-videos" role="tabpanel">
   <div class="card ac-gold">
     <div class="card-h"><span class="ic">🎬</span> Videos de la Misión</div>
-    <p style="color:var(--texto-secundario);font-size:0.9rem;margin-bottom:1rem;">Mira con calma la explicación audiovisual sobre suma y resta de fracciones con diferente denominador. Al terminar cada video ganarás <strong>+20 XP</strong>.</p>
+    <p style="color:var(--texto-secundario);font-size:0.9rem;margin-bottom:1rem;">Mira con calma la explicación audiovisual sobre suma y resta de fracciones con diferente denominador.</p>
     <div id="vmLista"></div>
     <button class="next-sec-btn" onclick="go('s-tipos')">🔍 Continuar a Explorar Casos →</button>
   </div>
@@ -274,7 +273,7 @@
       <div class="card-h" style="margin-bottom:0;"><span class="ic">🔍</span> Explorador Interactivo de los 6 Casos de Fracciones Heterogéneas</div>
       <button class="btn-escuchar" onclick="hablarTexto('Haz clic en cada una de las seis tarjetas para explorar los casos clave de suma y resta de fracciones heterogéneas: denominadores coprimos, denominador múltiplo, denominadores con factor común, resta heterogénea, simplificación final y problemas con tres fracciones.')">🔊 Escuchar</button>
     </div>
-    <p style="color:var(--texto-secundario);font-size:0.9rem;margin:0.4rem 0 1rem;">Haz clic en cada tarjeta para descubrir su estrategia rápida, representación visual y ejemplos paso a paso (+5 XP por tarjeta explorada):</p>
+    <p style="color:var(--texto-secundario);font-size:0.9rem;margin:0.4rem 0 1rem;">Haz clic en cada tarjeta para descubrir su estrategia rápida, representación visual y ejemplos paso a paso:</p>
     <div class="type-grid" id="typeGrid"></div>
     <div id="typeDetail" style="display:none;margin-top:1rem;"></div>
     <button class="next-sec-btn" onclick="go('s-errores')">⚠️ Continuar a Errores Comunes →</button>
@@ -555,7 +554,7 @@
       <div class="card-h" style="margin-bottom:0;"><span class="ic">🃏</span> Flashcards de Repaso Activo</div>
       <button class="btn-escuchar" onclick="hablarFlashcardActual()">🔊 Escuchar Tarjeta</button>
     </div>
-    <p style="color:var(--texto-secundario);font-size:0.88rem;margin:0.4rem 0 0.8rem;">Toca la tarjeta para voltearla. Clasifícala como <strong>«La domino»</strong> o <strong>«Repasar luego»</strong> (+5 XP por tarjeta):</p>
+    <p style="color:var(--texto-secundario);font-size:0.88rem;margin:0.4rem 0 0.8rem;">Toca la tarjeta para voltearla. Clasifícala como <strong>«La domino»</strong> o <strong>«Repasar luego»</strong>:</p>
     <div class="fc-wrap" onclick="flipFC()">
       <div class="fc" id="fcCard">
         <div class="fc-f">
@@ -572,7 +571,7 @@
     <div class="fc-nav">
       <button class="btn btn-ghost" onclick="prevFC()">⬅️ Anterior</button>
       <button class="btn btn-coral" onclick="markFC(false)">🔄 Repasar luego</button>
-      <button class="btn btn-green" onclick="markFC(true)">✅ La domino (+5 XP)</button>
+      <button class="btn btn-green" onclick="markFC(true)">✅ La domino</button>
       <button class="btn btn-ghost" onclick="nextFC()">Siguiente ➡️</button>
     </div>
     <div style="text-align:center;margin-top:0.6rem;font-size:0.8rem;color:var(--texto-secundario);" id="fcStats"></div>
@@ -600,7 +599,7 @@
 <section class="sec" id="s-clasifica" role="tabpanel">
   <div class="card ac-teal">
     <div class="card-h"><span class="ic">🗂️</span> Clasifica la Estrategia Rápida de Denominador Común</div>
-    <p style="color:var(--texto-secundario);font-size:0.88rem;margin-bottom:0.9rem;">Observa cada operación y clasifícala según cómo se obtiene su <strong>Mínimo Común Denominador (MCM)</strong> (+10 XP por acierto):</p>
+    <p style="color:var(--texto-secundario);font-size:0.88rem;margin-bottom:0.9rem;">Observa cada operación y clasifícala según cómo se obtiene su <strong>Mínimo Común Denominador (MCM)</strong>:</p>
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.8rem;">
       <span class="pill p-teal" id="clProg">Progreso: 0 / 10</span>
       <button class="btn btn-ghost" onclick="initClasifica()" style="font-size:0.78rem;padding:0.35rem 0.8rem;">🔄 Reiniciar</button>
@@ -614,7 +613,7 @@
 <section class="sec" id="s-identifica" role="tabpanel">
   <div class="card ac-amber">
     <div class="card-h"><span class="ic">🎯</span> Detective de Fracciones: ¿En qué paso se equivocó el estudiante?</div>
-    <p style="color:var(--texto-secundario);font-size:0.88rem;margin-bottom:0.9rem;">Lee el procedimiento completo de cada estudiante y detecta si está <strong>100% correcto</strong> o en cuál de los <strong>3 pasos</strong> cometió un error (+12 XP por caso):</p>
+    <p style="color:var(--texto-secundario);font-size:0.88rem;margin-bottom:0.9rem;">Lee el procedimiento completo de cada estudiante y detecta si está <strong>100% correcto</strong> o en cuál de los <strong>3 pasos</strong> cometió un error:</p>
     <div id="idBox"></div>
     <button class="next-sec-btn" onclick="go('s-completa')">✏️ Continuar a Completa →</button>
   </div>
@@ -624,7 +623,7 @@
 <section class="sec" id="s-completa" role="tabpanel">
   <div class="card ac-jade">
     <div class="card-h"><span class="ic">✏️</span> Completa los Pasos Faltantes</div>
-    <p style="color:var(--texto-secundario);font-size:0.88rem;margin-bottom:0.9rem;">Escribe el número que falta en cada igualdad de fracciones heterogéneas y presiona <strong>Verificar</strong> (+10 XP por ejercicio):</p>
+    <p style="color:var(--texto-secundario);font-size:0.88rem;margin-bottom:0.9rem;">Escribe el número que falta en cada igualdad de fracciones heterogéneas y presiona <strong>Verificar</strong>:</p>
     <div id="compBox"></div>
     <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
       <button class="btn btn-teal" onclick="checkAllCompleta()">✅ Verificar Todos</button>
@@ -674,7 +673,7 @@
 <section class="sec" id="s-explica" role="tabpanel">
   <div class="card ac-gold">
     <div class="card-h"><span class="ic">💬</span> Explica con tus Palabras (Metacognición)</div>
-    <p style="color:var(--texto-secundario);font-size:0.88rem;margin-bottom:1rem;">Quien sabe explicar un procedimiento con sus propias palabras ya lo comprende de verdad. Responde estas preguntas reflexivas y compáralas con la respuesta modelo (+20 XP por reflexión):</p>
+    <p style="color:var(--texto-secundario);font-size:0.88rem;margin-bottom:1rem;">Quien sabe explicar un procedimiento con sus propias palabras ya lo comprende de verdad. Responde estas preguntas reflexivas y compáralas con la respuesta modelo:</p>
     <div id="expBox"></div>
     <button class="next-sec-btn" onclick="go('s-reto')">🏆 Continuar al Reto Cronometrado →</button>
   </div>
@@ -721,7 +720,7 @@
 <section class="sec" id="s-tareas" role="tabpanel">
   <div class="card ac-jade">
     <div class="card-h"><span class="ic">📋</span> Misiones para el Cuaderno y el Hogar (Contexto Hondureño)</div>
-    <p style="color:var(--texto-secundario);font-size:0.88rem;margin-bottom:1rem;">Resuelve estas 6 actividades prácticas en tu cuaderno de matemáticas y marca cada casilla al completarla (+25 XP por tarea terminada):</p>
+    <p style="color:var(--texto-secundario);font-size:0.88rem;margin-bottom:1rem;">Resuelve estas 6 actividades prácticas en tu cuaderno de matemáticas y marca cada casilla al completarla:</p>
     <div id="taskList"></div>
     <button class="next-sec-btn" onclick="go('s-evaluacion')">🎓 Continuar a Evaluaciones →</button>
   </div>
@@ -756,7 +755,7 @@
         <div><label style="font-size:0.75rem;color:var(--texto-secundario);font-weight:700;">Nombre del Estudiante:</label>
           <input id="evName" class="eval-field-input" placeholder="Escribe tu nombre completo..."></div>
         <div><label style="font-size:0.75rem;color:var(--texto-secundario);font-weight:700;">Grado y Sección:</label>
-          <input id="evGrade" class="eval-field-input" placeholder="Ej: 6° Grado - Sección A"></div>
+          <input id="evGrade" class="eval-field-input" placeholder="Ej.: 6° Grado - Sección A"></div>
         <div><label style="font-size:0.75rem;color:var(--texto-secundario);font-weight:700;">Fecha:</label>
           <input id="evDate" type="date" class="eval-field-input"></div>
       </div>
@@ -786,7 +785,7 @@
         <div><label style="font-size:0.75rem;color:var(--texto-secundario);font-weight:700;">Nombre del Estudiante:</label>
           <input id="evOpName" class="eval-field-input" placeholder="Escribe tu nombre completo..."></div>
         <div><label style="font-size:0.75rem;color:var(--texto-secundario);font-weight:700;">Grado y Sección:</label>
-          <input id="evOpGrade" class="eval-field-input" placeholder="Ej: 6° Grado - Sección A"></div>
+          <input id="evOpGrade" class="eval-field-input" placeholder="Ej.: 6° Grado - Sección A"></div>
         <div><label style="font-size:0.75rem;color:var(--texto-secundario);font-weight:700;">Fecha:</label>
           <input id="evOpDate" type="date" class="eval-field-input"></div>
       </div>
@@ -883,6 +882,7 @@
   <script src="../../js/metas-fracciones.js"></script>
   <script src="../../js/animacion-mision.js"></script>
   <script src="js/mision.js"></script>
+  <script src="js/animacion-quesadilla.js"></script>
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
