@@ -6877,3 +6877,21 @@ body:has(.ad-sace-card) #metasInstallBtn { display: none !important; }
 :root[data-theme="dark"] .ad-sace-grupo { border-color: rgba(148,163,184,.35); }
 :root[data-theme="dark"] .ad-sace-nota { color: #cbd5e1; }
 :root[data-theme="dark"] .ad-fi-estado { background: transparent; border-color: rgba(148,163,184,.5); }
+
+/* ── 📋 Resumen final de resultados por grado ──
+   Los cuadros llevan hasta 37 columnas: en el teléfono se desplazan de
+   lado DENTRO de su caja, la página no. Ancha en la PC para verlos enteros. */
+.rf-card { max-width: min(1180px, 100%); }
+.rf-enc { display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 4px 0; }
+.rf-enc div { display: flex; gap: 4px; }
+.rf-enc dt { font-weight: 800; }
+.rf-enc dd { margin: 0; }
+.rf-titulo { font-size: calc(12.5px * var(--metas-fz, 1)); font-weight: 800; margin: 12px 0 4px; }
+.rf-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 100%; }
+.rf-tabla { border-collapse: collapse; width: max-content; min-width: 100%; }
+.rf-tabla th, .rf-tabla td { border: 1px solid var(--border, #cbd5e1); padding: 6px 5px; text-align: center;
+  font-size: calc(12px * var(--metas-fz, 1)); min-width: 28px; }
+.rf-tabla thead th { background: var(--bg, #f1f5f9); font-weight: 800; font-size: calc(11px * var(--metas-fz, 1)); }
+.rf-tabla tbody th { text-align: left; white-space: nowrap; }
+.rf-tabla .rf-ini { border-left: 2px solid #64748b; }
+.rf-tabla tr.rf-total th, .rf-tabla tr.rf-total td { font-weight: 800; border-top: 2px solid currentColor; }

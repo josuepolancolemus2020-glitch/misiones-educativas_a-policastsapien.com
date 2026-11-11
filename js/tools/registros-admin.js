@@ -2401,6 +2401,9 @@ function adRenderFichas(body, d) {
         fecha de nacimiento oficiales. Antes de guardar te enseña qué cambia y tú confirmas cada grupo;
         nunca borra fichas ni notas. La <strong>estadística</strong> cuenta solo a los alumnos de la lista
         oficial que siguen activos.</p>
+      <p class="pa-optional-hint">↔ <strong>Estado · Fecha de movimiento</strong>: marca <strong>Ingreso</strong> a quien llegó
+        ya empezado el año, <strong>Traslado</strong> o <strong>Desertor</strong> a quien se fue, con la fecha. Nadie se borra:
+        con esto sale solo el <strong>📋 Resumen final de resultados por grado</strong>.</p>
       <p class="pa-optional-hint">♀♂ La columna <strong>Sexo</strong> se llena <strong>tocando</strong>,
         sin teclado: cada toque pasa de niña a varón y a vacío. Con ella, el
         <strong>informe del grado</strong> dice cuántas niñas y cuántos varones tienes sin que los
@@ -2422,7 +2425,7 @@ function adRenderFichas(body, d) {
             <th><div class="ad-mx-h" style="min-width:52px">Sexo</div></th>
             <th><div class="ad-mx-h" style="min-width:128px">Fecha de nacimiento</div></th>
             <th><div class="ad-mx-h" style="min-width:112px">Edad</div></th>
-            <th><div class="ad-mx-h" style="min-width:150px">Estado</div></th>
+            <th><div class="ad-mx-h" style="min-width:150px">Estado · Fecha de movimiento</div></th>
             ${AD_FICHA_CAMPOS.map(c => `<th><div class="ad-mx-h" style="min-width:${c.w}px">${adEsc(c.et)}</div></th>`).join('')}
           </tr></thead>
           <tbody>
@@ -2451,7 +2454,7 @@ function adRenderFichas(body, d) {
                 </select>
                 <input class="ad-mx-inp ad-fi-estf" type="date" data-efnum="${a.num}" value="${adEsc(a.estadoF || '')}"
                   ${(a.estado || 'activo') === 'activo' ? 'hidden' : ''}
-                  aria-label="Fecha del estado de ${adEsc(adPrimerNombre(a.nombre) || ('#' + a.num))}"></td>
+                  aria-label="Fecha de movimiento de ${adEsc(adPrimerNombre(a.nombre) || ('#' + a.num))}"></td>
               ${AD_FICHA_CAMPOS.map((c, ci) => {
                 const mal = c.k === 'idn' && String(a.idn || '').trim() && !SL.idnValida(a.idn);
                 return `<td${mal ? ' class="ad-fi-idn-mal" title="⚠ No tiene 13 dígitos"' : ''}><input class="ad-mx-inp ad-fi-inp"
@@ -2475,6 +2478,7 @@ function adRenderFichas(body, d) {
       <div class="ad-btn-row">
         <button class="pa-generate-btn" id="ad-fi-sace" type="button">📥 Importar lista del SACE</button>
         <button class="pa-generate-btn ad-btn-sec" id="ad-fi-cuadro" type="button">📊 Matrícula final por edades y género</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-fi-resumen" type="button">📋 Resumen final de resultados por grado</button>
         <input type="file" id="ad-fi-sace-file" accept=".csv,text/csv,text/plain" hidden>
       </div>
       <div id="ad-fi-pegar-box" style="display:none;margin-top:10px;">
@@ -2578,6 +2582,7 @@ function adRenderFichas(body, d) {
     fr.readAsText(file, 'utf-8');
   });
   document.getElementById('ad-fi-cuadro').addEventListener('click', () => adCuadroEdadesModal());
+  document.getElementById('ad-fi-resumen').addEventListener('click', () => adResumenFinalModal());
 
   document.getElementById('ad-fi-pegar').addEventListener('click', () => {
     const box = document.getElementById('ad-fi-pegar-box');
@@ -2920,6 +2925,197 @@ function adPrintCuadroEdades(d, corte) {
   <div class="firmas"><div>${adEsc(bol.docente || '')}<br>Docente de grado</div><div>${adEsc(bol.director || '')}<br>Director(a)</div></div>
 </section><script>window.onload=function(){setTimeout(function(){window.print();},280);}<\/script></body></html>`;
   adPrintAbrir(html);
+}
+
+/* ══════════════ 📋 RESUMEN FINAL DE RESULTADOS POR GRADO ══════════════
+   El formulario de fin de año con sus cinco cuadros, contado solo. Las
+   cuentas viven en js/tools/cuadros-sace.js (ResumenSace) y aquí solo se
+   pintan, se imprimen y se bajan a Excel. Es SOLO LECTURA: lo único que
+   se guarda es el texto del Período, y solo si el maestro lo cambia.
+   Cuenta únicamente a quien está «En lista oficial SACE». */
+function adResumenCorte(d) {
+  const SL = window.SaceLista;
+  return SL.fechaValida(d.edadCorte) ? d.edadCorte : adHoy();
+}
+function adResumenPeriodo(d) {
+  const bol = d.boleta || {};
+  return String(d.resumenPeriodo || '').trim() || ('Año lectivo ' + (bol.anio || new Date().getFullYear()));
+}
+function adResumenDatos(d) {
+  const r = ResumenSace.calcular(d, { corte: adResumenCorte(d), SL: window.SaceLista });
+  const cs = ResumenSace.cuadros(r, adGradoSeccion(d.grado, d.seccion) || 'Grupo');
+  return { r, cs };
+}
+/* Avisos en palabras de maestro. `grave` = algo que cambia los números
+   y que conviene arreglar antes de entregar. */
+function adResumenAvisos(r, d) {
+  const SL = window.SaceLista;
+  const nom = a => '#' + a.num + ' ' + (String(a.nombre || '').trim() || 'Sin nombre');
+  const fecha = a => a.estadoF ? ' (' + adFechaBonita(a.estadoF) + ')' : '';
+  const av = [];
+  const A = r.avisos;
+  if (!SL.hayImportacion(d)) av.push({ grave: true, t: 'Aún no has importado la lista del SACE: los cuadros cuentan solo a los alumnos «En lista oficial SACE». Toca 📥 Importar lista del SACE en Identidad y contactos.' });
+  if (!r.cuadra) {
+    av.push({ grave: true, t: 'La matrícula final no cuadra: inicial ' + r.mov.inicial.T + ' + ingresos ' + r.mov.ingresos.T +
+      ' − traslados ' + r.mov.traslados.T + ' − desertores ' + r.mov.desertores.T + ' = ' + r.formula.T +
+      ', pero el conteo de activos e ingresos da ' + r.mov.final.T + '.' +
+      (A.raros.length ? ' Revisa el Estado de: ' + A.raros.map(nom).join(', ') + '.' : '') });
+  }
+  if (A.sinNota.length) {
+    av.push({ grave: true, t: 'Sin nota completa (' + A.sinNota.length + '): no entran en Evaluados, ni en la escala, ni en Aprobados o Reprobados; ' +
+      'en cada asignatura cuentan solo donde sí tienen nota final. ' +
+      A.sinNota.map(x => nom(x.a) + ': ' + (x.faltan.length
+        ? x.faltan.map(f => f.asig + ' (falta' + (f.parciales.length > 1 ? 'n' : '') + ' ' + f.parciales.join(', ') + ')').join(', ')
+        : 'no hay asignaturas con notas')).join(' · ') + '.' });
+  }
+  if (A.sinSexo.length) av.push({ grave: true, t: 'Sin sexo registrado (cuentan en T, no en N ni en V): ' + A.sinSexo.map(nom).join(', ') + '.' });
+  if (A.sinFecha.length) av.push({ grave: true, t: 'Sin fecha de nacimiento (no entran en el cuadro de edades): ' + A.sinFecha.map(nom).join(', ') + '.' });
+  if (A.menores.length) av.push({ grave: true, t: 'Menores de 6 años a la fecha de corte (no entran en el cuadro de edades): ' + A.menores.map(nom).join(', ') + '.' });
+  if (A.fueraSace.length) av.push({ t: A.fueraSace.length + ' ficha(s) fuera de la lista oficial del SACE, no se cuentan: ' + A.fueraSace.map(nom).join(', ') + '.' });
+  if (A.ingresos.length) av.push({ t: 'Ingresos: ' + A.ingresos.map(a => nom(a) + fecha(a)).join(', ') + '.' });
+  if (A.traslados.length) av.push({ t: 'Traslados: ' + A.traslados.map(a => nom(a) + fecha(a)).join(', ') + '.' });
+  if (A.desertores.length) av.push({ t: 'Desertores: ' + A.desertores.map(a => nom(a) + fecha(a)).join(', ') + '.' });
+  if (A.sinColumna.length) av.push({ t: 'Sin columna en Notas SACE (va con «·»): ' + A.sinColumna.map(x => x.et).join(', ') + '.' });
+  if (A.vacias.length) av.push({ t: 'Columna sin ninguna nota en el año, se toma como no impartida (va con «·»): ' + A.vacias.map(x => x.et).join(', ') + '.' });
+  if (A.sobran.length) av.push({ t: 'Columnas de Notas SACE que no están en el formulario (no se cuentan): ' + A.sobran.join(', ') + '.' });
+  return av;
+}
+function adResumenEncabezado(d, r) {
+  const bol = d.boleta || {};
+  return [
+    ['Grado y sección', adGradoSeccion(d.grado, d.seccion) || '·'],
+    ['Docente', bol.docente || '·'],
+    ['Centro', String(d.escuela || '').trim() || '·'],
+    ['Período', adResumenPeriodo(d)],
+    ['Total según SACE', r.totalSace + ' alumno' + (r.totalSace === 1 ? '' : 's')]
+  ];
+}
+
+function adResumenFinalModal() {
+  if (!window.ResumenSace || !window.SaceLista) { toast('⚠️ Cargando… intenta de nuevo'); return; }
+  const ov = document.createElement('div');
+  ov.className = 'ad-gen-ov ad-ver-ov';
+  ov.innerHTML = `
+    <div class="ad-gen-card ad-ver-card rf-card" role="dialog" aria-modal="true" aria-labelledby="ad-rf-tit">
+      <div class="ad-gen-head">
+        <div class="ad-gen-title" id="ad-rf-tit">📋 Resumen final de resultados por grado</div>
+        <button type="button" class="ad-gen-close" id="ad-rf-x" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="ad-ver-body">
+        <label class="ad-ced-corte">Período
+          <input type="text" id="ad-rf-periodo" class="pa-inp-field" maxlength="60" value="${adEsc(adResumenPeriodo(adLoad()))}"></label>
+        <div id="ad-rf-cuerpo"></div>
+      </div>
+      <div class="ad-gen-foot">
+        <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-rf-no">Cerrar</button>
+        <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-rf-xlsx">📥 Descargar Excel</button>
+        <button type="button" class="pa-generate-btn" id="ad-rf-print">🖨️ Imprimir / PDF</button>
+      </div>
+    </div>`;
+  document.body.appendChild(ov);
+  const pintar = () => {
+    const d = adLoad();
+    const { r, cs } = adResumenDatos(d);
+    const enc = adResumenEncabezado(d, r);
+    const av = adResumenAvisos(r, d);
+    ov.querySelector('#ad-rf-cuerpo').innerHTML =
+      `<dl class="rf-enc">${enc.map(x => `<div><dt>${adEsc(x[0])}:</dt> <dd>${adEsc(x[1])}</dd></div>`).join('')}</dl>
+      <p class="ad-sace-nota">Matrícula final: <b>${r.mov.final.T}</b> · Evaluados: <b>${r.evaluados.T}</b> ·
+        Edad cumplida al <b>${adEsc(adFechaBonita(r.corte))}</b> (la del cuadro de edades).
+        Escala: Inicial hasta 69 · Básico 70–79 · Avanzado 80–90 · Excelente 91–100. A = aprobado (70 o más), NA = no aprobado.</p>
+      ${av.map(x => `<p class="${x.grave ? 'ad-sace-aviso' : 'ad-sace-nota'}">${x.grave ? '⚠ ' : 'ℹ '}${adEsc(x.t)}</p>`).join('')}
+      ${cs.map(c => `<h3 class="rf-titulo">${adEsc(c.titulo)}</h3><div class="rf-scroll">${ResumenSace.tablaHtml(c)}</div>`).join('')}`;
+  };
+  pintar();
+  const fin = () => ov.remove();
+  ov.querySelector('#ad-rf-x').addEventListener('click', fin);
+  ov.querySelector('#ad-rf-no').addEventListener('click', fin);
+  ov.querySelector('#ad-rf-periodo').addEventListener('change', e => {
+    const dd = adLoad();
+    const v = String(e.target.value || '').trim();
+    const def = 'Año lectivo ' + ((dd.boleta || {}).anio || new Date().getFullYear());
+    if (v && v !== def) dd.resumenPeriodo = v.slice(0, 60); else delete dd.resumenPeriodo;
+    adSave(dd); pintar();
+  });
+  ov.querySelector('#ad-rf-print').addEventListener('click', () => adPrintResumenFinal(adLoad()));
+  ov.querySelector('#ad-rf-xlsx').addEventListener('click', () => adResumenFinalExcel(adLoad()));
+}
+
+/* Hoja carta HORIZONTAL, como el formulario: los cuadros llevan hasta 37
+   columnas y en vertical serían ilegibles. Va todo en una sola hoja; los
+   avisos van al pie, en letra de nota, para que el que revisa sepa quién
+   no entró y por qué. */
+function adPrintResumenFinal(d) {
+  const { r, cs } = adResumenDatos(d);
+  const enc = adResumenEncabezado(d, r);
+  const av = adResumenAvisos(r, d);
+  const bol = d.boleta || {};
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+<title>${adEsc('Resumen final de resultados · ' + (adGradoSeccion(d.grado, d.seccion) || ''))}</title>
+<style>
+  @page { size: letter landscape; margin: 9mm 10mm; }
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { font-family: Arial, Helvetica, sans-serif; color: #111; font-size: 10px; margin: 0; }
+  h1 { font-size: 15px; text-align: center; margin: 0 0 4px; font-style: italic; font-weight: 400; letter-spacing: .3px; }
+  .enc { display: flex; flex-wrap: wrap; gap: 2px 22px; margin: 0 0 4px; font-size: 11px; }
+  .enc b { font-weight: 800; }
+  .enc span { border-bottom: 1px solid #111; padding: 0 4px 1px 0; }
+  h3 { font-size: 10.5px; font-weight: 800; font-style: italic; margin: 5px 0 1px; text-transform: uppercase; }
+  table { border-collapse: collapse; width: 100%; table-layout: fixed; }
+  th, td { border: 1px solid #111; text-align: center; padding: 1.5px 1px; font-size: 9.5px; line-height: 1.15; }
+  thead th { font-weight: 800; font-size: 8.5px; background: #fff; }
+  thead th small { font-weight: 700; font-size: 8px; }
+  th.rf-primera { width: 21mm; }
+  tbody th { font-weight: 800; text-align: left; padding-left: 4px; }
+  .rf-ini { border-left: 2px solid #111; }
+  tr.rf-total th, tr.rf-total td { font-weight: 800; border-top: 2px solid #111; }
+  .rf-c4 thead th, .rf-c3 thead th { font-size: 8px; }
+  p.nota { margin: 2px 0; font-size: 8.5px; line-height: 1.25; }
+  .firmas { display: flex; gap: 40px; margin-top: 18px; font-size: 10px; }
+  .firmas div { flex: 1; text-align: center; border-top: 1px solid #111; padding-top: 3px; }
+</style></head><body>
+  <h1>RESUMEN FINAL DE RESULTADOS POR GRADO</h1>
+  <div class="enc">${enc.map(x => `<span><b>${adEsc(x[0]).toUpperCase()}:</b> ${adEsc(x[1])}</span>`).join('')}</div>
+  ${cs.map(c => `<h3>${adEsc(c.titulo)}</h3>${ResumenSace.tablaHtml(c)}`).join('')}
+  <p class="nota">Cuenta solo a los alumnos en la lista oficial del SACE${d.saceImport && d.saceImport.f ? ' (importada el ' + adEsc(adFechaBonita(d.saceImport.f)) + ')' : ''}.
+    Nota final = promedio de los cuatro parciales, redondeado. Escala: I hasta 69 · B 70–79 · A 80–90 · E 91–100. Aprobado = 70 o más en todas las asignaturas.
+    Edad cumplida al ${adEsc(adFechaBonita(r.corte))}.</p>
+  ${av.map(x => '<p class="nota">' + (x.grave ? '⚠ ' : '') + adEsc(x.t) + '</p>').join('')}
+  <div class="firmas"><div>${adEsc(bol.docente || '')}<br>Docente de grado</div><div>${adEsc(bol.director || '')}<br>Director(a)</div></div>
+<script>window.onload=function(){setTimeout(function(){window.print();},280);}<\/script></body></html>`;
+  adPrintAbrir(html);
+}
+
+/* El mismo formulario en .xlsx, para pegarlo en el consolidado del
+   centro. Se arma en el teléfono; no viaja a ningún lado. */
+async function adResumenFinalExcel(d) {
+  try {
+    const { r, cs } = adResumenDatos(d);
+    const enc = adResumenEncabezado(d, r);
+    const notas = adResumenAvisos(r, d).map(x => (x.grave ? '⚠ ' : '') + x.t);
+    const bytes = ResumenSace.xlsx(cs, { titulo: 'RESUMEN FINAL DE RESULTADOS POR GRADO', datos: enc, notas });
+    /* nombre sin «º» ni tildes: dan problemas al guardar y compartir */
+    const limpio = s => String(s || '').normalize('NFD').replace(/[^\w-]/g, '') || 'x';
+    const nombre = 'resumen-final-' + limpio(d.grado) + '-' + limpio(d.seccion) + '.xlsx';
+    const tipo = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+    const cap = window.Capacitor;
+    if (cap && cap.isNativePlatform?.() && cap.Plugins?.Filesystem && cap.Plugins?.Share) {
+      let bin = '';
+      for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+      const res = await cap.Plugins.Filesystem.writeFile({ path: nombre, data: btoa(bin), directory: 'CACHE' });
+      await cap.Plugins.Share.share({ url: res.uri, dialogTitle: 'Guardar / Compartir el resumen final' });
+    } else {
+      const url = URL.createObjectURL(new Blob([bytes], { type: tipo }));
+      const a = document.createElement('a');
+      a.href = url; a.download = nombre;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 4000);
+    }
+    toast('📥 Excel listo: ' + nombre);
+  } catch (e) {
+    if (e && e.name === 'AbortError') return;
+    toast('⚠️ No se pudo armar el Excel');
+  }
 }
 
 /* ══════════════ 📄 EXPEDIENTE DEL AULA ══════════════
@@ -6913,6 +7109,7 @@ function adRenderSace(body, d) {
       </div>
       <div class="ad-btn-row" style="margin-top:8px">
         <button class="pa-generate-btn" id="ad-sace-boletas">🧾 Imprimir boletas (todas)</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-sace-resumen" type="button">📋 Resumen final de resultados por grado</button>
         ${esLetra ? '<button class="pa-generate-btn ad-btn-sec" id="ad-sace-csv-num" type="button">🔢 Copiar CSV en número (4, 3, 2)</button>' : ''}
         <button class="pa-generate-btn ad-btn-sec" id="ad-sace-csv">${esLetra ? '🔤 Copiar CSV en letra (S, MB, B)' : '⬇ Copiar CSV (todas las materias)'}</button>
       </div>
@@ -7206,6 +7403,7 @@ function adRenderSace(body, d) {
     const num = bolQuien.value;
     adPrintBoletas(adLoad(), num ? [num] : null);
   });
+  document.getElementById('ad-sace-resumen')?.addEventListener('click', () => adResumenFinalModal());
 
   // Traer faltas del pase de lista → Inasistencias del parcial
   document.getElementById('ad-inasis-traer')?.addEventListener('click', () => {
