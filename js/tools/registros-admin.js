@@ -2560,6 +2560,7 @@ function adSaceImportarTexto(texto) {
         <div class="ad-gen-title" id="ad-sace-tit">📥 Lista del SACE: revisa antes de guardar</div>
         <button type="button" class="ad-gen-close" id="ad-sace-x" aria-label="Cerrar">✕</button>
       </div>
+      <div class="ad-sace-cuerpo">
       <div class="ad-gen-hint">El SACE trae <b>${leido.filas.length}</b> alumno(s); en Mi aula tienes <b>${reales}</b> ficha(s).
         Todavía <b>no se ha guardado nada</b>. Revisa cada grupo, deja marcado lo que quieres y toca
         <b>Guardar lo marcado</b>. No se borra ninguna ficha ni ninguna nota.
@@ -2621,8 +2622,9 @@ function adSaceImportarTexto(texto) {
             </select></td>
           </tr>`).join('')}</tbody></table></div>` : ''}
       </section>
+      </div>
 
-      <div class="ad-gen-foot">
+      <div class="ad-gen-foot ad-sace-pie">
         <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-sace-no">Cancelar</button>
         <button type="button" class="pa-generate-btn" id="ad-sace-si">✅ Guardar lo marcado</button>
       </div>
