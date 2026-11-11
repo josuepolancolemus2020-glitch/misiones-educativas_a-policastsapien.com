@@ -30,7 +30,7 @@
   var ESTADOS = {
     activo:     'Activo',
     ingreso:    'Ingreso',
-    trasladado: 'Trasladado',
+    trasladado: 'Traslado',   /* la clave no cambia: ya hay fichas guardadas con ella */
     desertor:   'Desertor'
   };
   /* los que se fueron siguen en la lista con sus notas, pero ya no son
