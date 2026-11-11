@@ -2693,8 +2693,11 @@ function adSaceImportarTexto(texto) {
           <tbody>${plan.pares.map((p, i) => `<tr>
             <td><label class="ad-sace-rchk"><input type="checkbox" data-par="${i}" checked aria-label="Confirmar que la ficha #${p.num} es ${adEsc(p.f.nombre)}"></label></td>
             <td style="text-align:left">#${p.num} ${nombreDe(p.num)}</td>
-            <td style="text-align:left">${p.f.num ? 'Nº ' + p.f.num + ' · ' : ''}${adEsc(p.f.nombre)}<br><small>${p.por === 'identidad'
-              ? '✓ por identidad' : '≈ por nombre parecido (' + Math.round(p.parecido * 100) + ' %): revisa que sea la misma persona'}</small></td>
+            <td style="text-align:left">${p.f.num ? 'Nº ' + p.f.num + ' · ' : ''}${adEsc(p.f.nombre)}<br><small>${p.por === 'identidad' ? '✓ por identidad'
+              : p.por === 'nombre' ? '≈ por nombre parecido (' + Math.round(p.parecido * 100) + ' %): revisa que sea la misma persona'
+              : p.por === 'identidad parecida' ? '≈ identidad casi igual y una palabra del nombre: revisa que sea la misma persona'
+              : p.por === 'fecha y nombre' ? '≈ misma fecha de nacimiento y una palabra del nombre: revisa'
+              : '≈ solo coincide parte del nombre y es la única ficha posible: revisa'}</small></td>
             <td style="text-align:left">${p.cambios.length ? p.cambios.map(c =>
               `<div data-cc="${c.campo}">${AD_SACE_CAMPO_ET[c.campo]}: ${adEsc(adSaceValorTxt(c.campo, c.antes))} → <b>${adEsc(adSaceValorTxt(c.campo, c.despues))}</b></div>`).join('') : 'Nada: ya coincide'}
               ${idnMal(p.f)}${fnMal(p.f)}</td>
@@ -2704,14 +2707,20 @@ function adSaceImportarTexto(texto) {
       <section class="ad-sace-grupo">
         <label class="ad-sace-gchk"><input type="checkbox" id="ad-sace-g2"${plan.sinFicha.length ? '' : ' disabled'}>
           <span><b>➕ Alumnos del SACE sin ficha en Mi aula (${plan.sinFicha.length})</b><br>
-          Si lo marcas, se agregan al final de la lista con su número nuevo y su clave de familia.</span></label>
+          Si ya tiene ficha pero con otro nombre o identidad, elígela en <b>«Es la ficha»</b>: queda en la
+          lista oficial con sus notas. Si lo marcas, los que no elijas se agregan al final con su número
+          nuevo y su clave de familia.</span></label>
         ${plan.sinFicha.length ? `<div class="ad-ver-prev-tbl"><table class="ad-mx ad-ver-mx ad-sace-tbl">
-          <thead><tr><th>Agregar</th><th style="text-align:left">En el SACE</th><th style="text-align:left">Datos</th></tr></thead>
+          <thead><tr><th>Agregar</th><th style="text-align:left">En el SACE</th><th style="text-align:left">Datos</th><th>Es la ficha</th></tr></thead>
           <tbody>${plan.sinFicha.map((f, i) => `<tr>
             <td><label class="ad-sace-rchk"><input type="checkbox" data-nuevo="${i}" checked aria-label="Agregar a ${adEsc(f.nombre)}"></label></td>
             <td style="text-align:left">${f.num ? 'Nº ' + f.num + ' · ' : ''}${adEsc(f.nombre)}</td>
             <td style="text-align:left">${adEsc(f.idn || 'sin identidad')} · ${adEsc(adSaceValorTxt('sexo', f.sexo))} · ${adEsc(adSaceValorTxt('fnac', f.fnac))}
               ${idnMal(f)}${fnMal(f)}</td>
+            <td><select class="ad-fi-estado" data-mano="${i}" aria-label="¿${adEsc(f.nombre)} ya tiene ficha?">
+              <option value="">No tiene ficha</option>
+              ${plan.sinSace.map(num => `<option value="${num}">#${num} ${nombreDe(num)}</option>`).join('')}
+            </select></td>
           </tr>`).join('')}</tbody></table></div>` : ''}
       </section>
 
@@ -2762,7 +2771,14 @@ function adSaceImportarTexto(texto) {
     if (g1) ov.querySelectorAll('[data-campo]').forEach(x => { campos[x.dataset.campo] = x.checked; });
     const estados = {};
     ov.querySelectorAll('[data-fuera]').forEach(x => { if (x.value) estados[x.dataset.fuera] = x.value; });
+    /* emparejados a mano: una ficha no puede ser de dos alumnos */
+    const manuales = [...ov.querySelectorAll('[data-mano]')].filter(x => x.value)
+      .map(x => ({ i: +x.dataset.mano, num: +x.value }));
+    if (new Set(manuales.map(m => m.num)).size !== manuales.length) {
+      toast('⚠️ Elegiste la misma ficha para dos alumnos del SACE. Corrígelo antes de guardar.'); return;
+    }
     const conf = {
+      manuales,
       pares: g1 ? [...ov.querySelectorAll('[data-par]')].filter(x => x.checked).map(x => +x.dataset.par) : [],
       campos,
       nuevos: g2 ? [...ov.querySelectorAll('[data-nuevo]')].filter(x => x.checked).map(x => +x.dataset.nuevo) : [],
@@ -2770,7 +2786,7 @@ function adSaceImportarTexto(texto) {
       estados,
       fecha: adHoy()
     };
-    if (!conf.pares.length && !conf.nuevos.length && !conf.fuera.length) { toast('No hay nada marcado para guardar'); return; }
+    if (!conf.pares.length && !conf.nuevos.length && !conf.fuera.length && !conf.manuales.length) { toast('No hay nada marcado para guardar'); return; }
     adUndoGuardar('Importar lista del SACE');
     const dd = adLoad();
     /* el plan se rehace sobre lo guardado AHORA: si otro equipo sincronizó

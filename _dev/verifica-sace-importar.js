@@ -111,5 +111,38 @@ ok(SL.matriculaFinal(d).length === 40, 'trasladar a uno de la lista oficial lo s
 ok(SL.matriculaFinal(FIX.grupo).length === 0 && SL.alumnosQueCuentan(FIX.grupo).length === 44,
   'sin lista del SACE no hay matrícula oficial; los informes de siempre siguen contando 44');
 
+/* ── el caso de Fredy (6º-1, nov. 2026): la ficha con una sola palabra
+   del nombre y otra identidad quedaba «Fuera de la lista oficial» ── */
+{
+  const base = JSON.parse(JSON.stringify(FIX.grupo));
+  const fila25 = leido.filas.find(f => FIX.saceNumAFicha[f.num] === 25);
+  const primerNombre = fila25.nombre.split(' ')[2];           // el SACE: APELLIDO APELLIDO NOMBRE …
+  const solo = n => { const d2 = JSON.parse(JSON.stringify(base)); const a = d2.lista.find(x => x.num === 25); Object.assign(a, n); return d2; };
+
+  let d2 = solo({ nombre: primerNombre, idn: fila25.idn.slice(0, 7) + '99' + fila25.idn.slice(9) });
+  let p2 = SL.emparejar(d2.lista, leido.filas);
+  ok(p2.pares.some(p => p.num === 25 && p.por === 'identidad parecida'), 'solo el primer nombre + identidad con 2 dígitos distintos: se empareja');
+
+  d2 = solo({ nombre: primerNombre, idn: '0801-1999-99999' });
+  delete d2.lista.find(x => x.num === 25).fnac;
+  p2 = SL.emparejar(d2.lista, leido.filas);
+  ok(p2.pares.some(p => p.num === 25 && p.por === 'nombre parcial'), 'solo el primer nombre y es el único candidato: se empareja');
+
+  d2 = solo({ nombre: primerNombre + ' Mejía', idn: '0801-1999-99999', fnac: fila25.fnac });
+  p2 = SL.emparejar(d2.lista, leido.filas);
+  ok(p2.pares.some(p => p.num === 25 && p.por === 'fecha y nombre'), 'otro apellido pero la misma fecha de nacimiento: se empareja');
+
+  d2 = solo({ nombre: primerNombre + ' Mejía', idn: '0801-1999-99999' });
+  delete d2.lista.find(x => x.num === 25).fnac;
+  p2 = SL.emparejar(d2.lista, leido.filas);
+  ok(!p2.pares.some(p => p.num === 25) && p2.sinSace.includes(25), 'sin nada que lo respalde no se adivina');
+  const iFila = p2.sinFicha.findIndex(f => f === fila25);
+  SL.aplicar(d2, p2, { pares: p2.pares.map((_, i) => i), campos: { fnac: true, sexo: true }, nuevos: p2.sinFicha.map((_, i) => i),
+    fuera: p2.sinSace.slice(), manuales: [{ i: iFila, num: 25 }], fecha: '2026-11-11' });
+  const a25 = d2.lista.find(x => x.num === 25);
+  ok(a25.sace === true && a25.fnac === fila25.fnac, 'emparejado a mano: queda en la lista oficial con la fecha del SACE');
+  ok(!d2.lista.some(x => x.num > 44 && x.nombre === fila25.nombre), 'y no se agrega una ficha repetida');
+}
+
 console.log(fallos ? '\n✘ ' + fallos + ' comprobación(es) fallaron' : '\n✓ Importar la lista del SACE: todo en orden');
 process.exit(fallos ? 1 : 0);
