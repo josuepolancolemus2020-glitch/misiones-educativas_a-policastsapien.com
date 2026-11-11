@@ -6824,3 +6824,42 @@ body.ad-gr-moviendo { cursor: grabbing; user-select: none; -webkit-user-select: 
 @media print {
   :root { --metas-fz: 1 !important; }
 }
+
+/* ── 📥 Lista oficial del SACE en «Identidad y contactos» ──
+   Cada marca lleva su símbolo y su texto además del color: un maestro
+   que imprime en blanco y negro o no distingue el rojo del verde tiene
+   que leer igual quién está fuera de la lista oficial. */
+.ad-fi-badge { display: inline-block; margin-left: 6px; padding: 1px 7px; border-radius: 999px;
+  font-size: calc(10.5px * var(--metas-fz, 1)); font-weight: 800; white-space: nowrap; border: 1px solid; }
+.ad-fi-b-ok { background: #ecfdf5; border-color: #86efac; color: #166534; }
+.ad-fi-b-fuera { background: #fff7ed; border-color: #fdba74; color: #9a3412; }
+.ad-fi-b-ido { background: #f1f5f9; border-color: #94a3b8; color: #334155; }
+.ad-fi-ido .ad-mx-nom { text-decoration: line-through; text-decoration-thickness: 1px; }
+.ad-fi-marca { padding: 2px 6px; }
+.ad-fi-marca .ad-fi-badge { display: block; margin: 2px 0; text-align: center; }
+.ad-fi-idn-mal { box-shadow: inset 0 0 0 2px #dc2626; }
+.ad-fi-idn-mal::after { content: '⚠ 13 dígitos'; display: block; font-size: calc(10px * var(--metas-fz, 1));
+  font-weight: 800; color: #b91c1c; padding: 0 4px 2px; }
+.ad-fi-edad { font-size: calc(12px * var(--metas-fz, 1)); font-weight: 700; white-space: nowrap; padding: 0 6px; }
+.ad-fi-fnac, .ad-fi-estf { min-height: 44px; min-width: 128px; }
+.ad-fi-estado { min-height: 44px; font-size: calc(13px * var(--metas-fz, 1)); border-radius: 8px;
+  border: 1px solid #cbd5e1; padding: 0 6px; background: #fff; color: inherit; }
+.ad-fi-est-td { white-space: nowrap; }
+.ad-sace-card { max-width: 760px; }
+.ad-sace-grupo { border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 12px; margin: 10px 0; }
+.ad-sace-gchk, .ad-sace-campos label, .ad-sace-rchk { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; }
+.ad-sace-gchk input, .ad-sace-campos input, .ad-sace-rchk input { width: 22px; height: 22px; margin: 11px; flex: none; }
+.ad-sace-campos { display: flex; flex-wrap: wrap; gap: 0 14px; align-items: center; margin-top: 6px; font-weight: 700; }
+.ad-sace-campos label { align-items: center; min-height: 44px; }
+.ad-sace-nota { font-size: calc(12px * var(--metas-fz, 1)); color: #475569; margin: 6px 0; }
+.ad-sace-aviso { margin-top: 4px; padding: 4px 8px; border-radius: 8px; background: #fef2f2;
+  border: 1px solid #fecaca; color: #991b1b; font-size: calc(12px * var(--metas-fz, 1)); font-weight: 700; }
+.ad-sace-tbl td { vertical-align: top; }
+.ad-ced-corte { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-weight: 800; margin: 8px 0; }
+.ad-ced-corte input { min-height: 44px; }
+.ad-cuadro-ed { width: 100%; margin: 8px 0; }
+.ad-cuadro-ed td, .ad-cuadro-ed th { padding: 8px; text-align: center; }
+.ad-cuadro-ed tfoot td { border-top: 2px solid currentColor; }
+:root[data-theme="dark"] .ad-sace-grupo { border-color: rgba(148,163,184,.35); }
+:root[data-theme="dark"] .ad-sace-nota { color: #cbd5e1; }
+:root[data-theme="dark"] .ad-fi-estado { background: transparent; border-color: rgba(148,163,184,.5); }

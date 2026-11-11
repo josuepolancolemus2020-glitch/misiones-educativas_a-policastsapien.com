@@ -353,7 +353,9 @@ function adCuentaPruebas(d) { return (d.lista || []).filter(adEsPrueba).length; 
    que aún no tienen el dato se cuentan aparte y se dicen: un «22 y 20»
    que no suma la matrícula es un número que la Dirección no puede usar. */
 function adSexos(d) {
-  const reales = adAlumnosReales(d);
+  /* con la lista del SACE importada cuenta la matrícula final (la oficial);
+     sin ella, todos menos los trasladados y desertores */
+  const reales = window.SaceLista ? SaceLista.alumnosQueCuentan(d) : adAlumnosReales(d);
   let f = 0, m = 0;
   reales.forEach(a => { if (a.sexo === 'F') f++; else if (a.sexo === 'M') m++; });
   return { f, m, sin: reales.length - f - m, total: reales.length };
@@ -2260,6 +2262,20 @@ function adRenderFichas(body, d) {
   const total = d.lista.length;
   const completos = (d.lista || []).filter(a =>
     AD_FICHA_CAMPOS.every(c => String(a[c.k] || '').trim())).length;
+  const SL = window.SaceLista;
+  const hoy = adHoy();
+  const oficial = SL && SL.hayImportacion(d);
+  const idnMal = (d.lista || []).filter(a => String(a.idn || '').trim() && !SL.idnValida(a.idn)).length;
+  /* lo que la ficha dice del alumno frente a la lista oficial: con ✓/⚠ y
+     texto, nunca solo con color */
+  const marcaOficial = a => {
+    const t = [];
+    if (oficial && !a.prueba) t.push(a.sace === true
+      ? '<span class="ad-fi-badge ad-fi-b-ok" title="En la lista oficial del SACE">✓ SACE</span>'
+      : '<span class="ad-fi-badge ad-fi-b-fuera" title="No está en la lista oficial del SACE: no entra en ningún cuadro">⚠ Fuera de la lista oficial</span>');
+    if (SL.seFue(a)) t.push('<span class="ad-fi-badge ad-fi-b-ido">' + (a.estado === 'trasladado' ? '↪ Trasladado' : '✗ Desertor') + '</span>');
+    return t.join('');
+  };
 
   body.innerHTML = `
     <div class="pa-card">
@@ -2272,6 +2288,10 @@ function adRenderFichas(body, d) {
       <p class="pa-optional-hint">Estos datos salen en el <strong>expediente del aula</strong>, en la hoja
         de alumnos. Escribe y <strong>Enter</strong> (o Tab) salta a la casilla siguiente; se guarda solo.
         <strong>No se comparten con nadie</strong>: no viajan al asistente de padres, solo a tus equipos.</p>
+      <p class="pa-optional-hint">📥 <strong>Importar lista del SACE</strong> trae identidad, nombre, sexo y
+        fecha de nacimiento oficiales. Antes de guardar te enseña qué cambia y tú confirmas cada grupo;
+        nunca borra fichas ni notas. La <strong>estadística</strong> cuenta solo a los alumnos de la lista
+        oficial que siguen activos.</p>
       <p class="pa-optional-hint">♀♂ La columna <strong>Sexo</strong> se llena <strong>tocando</strong>,
         sin teclado: cada toque pasa de niña a varón y a vacío. Con ella, el
         <strong>informe del grado</strong> dice cuántas niñas y cuántos varones tienes sin que los
@@ -2279,6 +2299,8 @@ function adRenderFichas(body, d) {
       <div class="ad-fi-marcador">
         <span class="ad-fi-m-val">${completos}<span class="ad-fi-m-de">/${total}</span></span>
         <span class="ad-fi-m-lbl">fichas completas</span>
+        ${oficial ? `<span class="ad-fi-m-sub">📥 Matrícula final (lista oficial del SACE): <b>${SL.matriculaFinal(d).length}</b> de ${adAlumnosReales(d).length} fichas</span>` : ''}
+        ${idnMal ? `<span class="ad-fi-m-sub">⚠ ${idnMal} identidad(es) sin 13 dígitos</span>` : ''}
         <span class="ad-fi-m-sub"><b id="ad-fi-sx-cuenta">${adSexosTxt(d)}</b> · ${AD_FICHA_CAMPOS.map(c =>
           adFichaLlenos(d, c.k) + ' ' + c.et.toLowerCase().replace('nº de ', '').replace('tel. del ', 'tel. ')).join(' · ')}</span>
       </div>
@@ -2287,11 +2309,15 @@ function adRenderFichas(body, d) {
         <table class="ad-mx ad-fi-mx">
           <thead><tr>
             <th class="ad-mx-sticky ad-mx-corner">Nº · Alumno</th>
+            <th><div class="ad-mx-h" style="min-width:96px">Lista oficial</div></th>
             <th><div class="ad-mx-h" style="min-width:52px">Sexo</div></th>
+            <th><div class="ad-mx-h" style="min-width:128px">Fecha de nacimiento</div></th>
+            <th><div class="ad-mx-h" style="min-width:112px">Edad</div></th>
+            <th><div class="ad-mx-h" style="min-width:150px">Estado</div></th>
             ${AD_FICHA_CAMPOS.map(c => `<th><div class="ad-mx-h" style="min-width:${c.w}px">${adEsc(c.et)}</div></th>`).join('')}
           </tr></thead>
           <tbody>
-            ${d.lista.map((a, ri) => `<tr data-rnum="${a.num}">
+            ${d.lista.map((a, ri) => `<tr data-rnum="${a.num}"${SL.seFue(a) ? ' class="ad-fi-ido"' : ''}>
               <td class="ad-mx-sticky" title="${adEsc(a.nombre || ('#' + a.num))}">
                 <div class="ad-mx-sbox">
                   <span class="ad-mx-rbtns">
@@ -2302,13 +2328,28 @@ function adRenderFichas(body, d) {
                   <span class="ad-mx-nom">${adEsc(adPrimerNombre(a.nombre)) || '—'}</span>
                   <button type="button" class="ad-mx-del" data-delnum="${a.num}" title="Borrar esta fila (con opción de restaurar)" aria-label="Borrar fila">✕</button>
                 </div></td>
+              <td class="ad-fi-marca">${marcaOficial(a) || '·'}</td>
               <td><button class="ad-fi-sexo ad-fi-sx-${a.sexo === 'F' ? 'f' : a.sexo === 'M' ? 'm' : 'no'}"
                 data-sxnum="${a.num}" aria-label="Sexo de ${adEsc(adPrimerNombre(a.nombre) || ('#' + a.num))}: ${a.sexo === 'F' ? 'niña' : a.sexo === 'M' ? 'varón' : 'sin registrar'}. Tocar para cambiar."
                 >${a.sexo === 'F' ? '♀ Niña' : a.sexo === 'M' ? '♂ Varón' : '·'}</button></td>
-              ${AD_FICHA_CAMPOS.map((c, ci) => `<td><input class="ad-mx-inp ad-fi-inp"
+              <td><input class="ad-mx-inp ad-fi-fnac" type="date" data-fnnum="${a.num}" max="${hoy}"
+                value="${adEsc(SL.fechaValida(a.fnac) ? a.fnac : '')}"
+                aria-label="Fecha de nacimiento de ${adEsc(adPrimerNombre(a.nombre) || ('#' + a.num))}"></td>
+              <td class="ad-fi-edad" data-ednum="${a.num}">${SL.edadTxt(a.fnac, hoy) || '·'}</td>
+              <td class="ad-fi-est-td"><select class="ad-fi-estado" data-esnum="${a.num}"
+                  aria-label="Estado de ${adEsc(adPrimerNombre(a.nombre) || ('#' + a.num))}">
+                  ${Object.keys(SL.ESTADOS).map(k => `<option value="${k}"${(a.estado || 'activo') === k ? ' selected' : ''}>${SL.ESTADOS[k]}</option>`).join('')}
+                </select>
+                <input class="ad-mx-inp ad-fi-estf" type="date" data-efnum="${a.num}" value="${adEsc(a.estadoF || '')}"
+                  ${(a.estado || 'activo') === 'activo' ? 'hidden' : ''}
+                  aria-label="Fecha del estado de ${adEsc(adPrimerNombre(a.nombre) || ('#' + a.num))}"></td>
+              ${AD_FICHA_CAMPOS.map((c, ci) => {
+                const mal = c.k === 'idn' && String(a.idn || '').trim() && !SL.idnValida(a.idn);
+                return `<td${mal ? ' class="ad-fi-idn-mal" title="⚠ No tiene 13 dígitos"' : ''}><input class="ad-mx-inp ad-fi-inp"
                 data-idx="${ri * AD_FICHA_CAMPOS.length + ci}" data-num="${a.num}" data-k="${c.k}"
                 type="text" inputmode="${c.im}" maxlength="${c.max}" style="min-width:${c.w}px"
-                value="${adEsc(String(a[c.k] || ''))}" placeholder="·"></td>`).join('')}
+                value="${adEsc(String(a[c.k] || ''))}" placeholder="·"${mal ? ' aria-invalid="true"' : ''}></td>`;
+              }).join('')}
             </tr>`).join('')}
           </tbody>
         </table>
@@ -2321,6 +2362,11 @@ function adRenderFichas(body, d) {
       <div class="ad-btn-row">
         <button class="pa-generate-btn ad-btn-sec" id="ad-fi-pegar">📋 Pegar desde Excel</button>
         <button class="pa-generate-btn ad-btn-sec" id="ad-fi-faltan">🔎 ¿A quién le falta?</button>
+      </div>
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn" id="ad-fi-sace" type="button">📥 Importar lista del SACE</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-fi-cuadro" type="button">📊 Matrícula final por edades y género</button>
+        <input type="file" id="ad-fi-sace-file" accept=".csv,text/csv,text/plain" hidden>
       </div>
       <div id="ad-fi-pegar-box" style="display:none;margin-top:10px;">
         <p class="pa-paste-hint">Pega desde tu hoja de Excel, <strong>un alumno por línea</strong>, en este
@@ -2382,6 +2428,48 @@ function adRenderFichas(body, d) {
     if (cuenta) cuenta.textContent = adSexosTxt(adLoad());
   }));
 
+  /* fecha de nacimiento: la edad se recalcula sola en su casilla */
+  body.querySelectorAll('.ad-fi-fnac').forEach(inp => inp.addEventListener('change', () => {
+    const dd = adLoad();
+    const al = dd.lista.find(x => String(x.num) === String(inp.dataset.fnnum));
+    if (!al) return;
+    if (SL.fechaValida(inp.value)) al.fnac = inp.value; else delete al.fnac;
+    adSave(dd);
+    const ed = body.querySelector('[data-ednum="' + al.num + '"]');
+    if (ed) ed.textContent = SL.edadTxt(al.fnac, adHoy()) || '·';
+  }));
+  /* estado: activo, ingreso, trasladado o desertor, con su fecha. Quien se
+     va NO se borra: queda en la lista con sus notas, marcado y fuera de
+     la matrícula final. */
+  body.querySelectorAll('.ad-fi-estado').forEach(sel => sel.addEventListener('change', () => {
+    const dd = adLoad();
+    const al = dd.lista.find(x => String(x.num) === String(sel.dataset.esnum));
+    if (!al) return;
+    if (sel.value === 'activo') { delete al.estado; delete al.estadoF; }
+    else { al.estado = sel.value; if (!al.estadoF) al.estadoF = adHoy(); }
+    adSave(dd);
+    renderAdmin();
+  }));
+  body.querySelectorAll('.ad-fi-estf').forEach(inp => inp.addEventListener('change', () => {
+    const dd = adLoad();
+    const al = dd.lista.find(x => String(x.num) === String(inp.dataset.efnum));
+    if (!al) return;
+    if (SL.fechaValida(inp.value)) al.estadoF = inp.value; else delete al.estadoF;
+    adSave(dd);
+  }));
+  document.getElementById('ad-fi-sace').addEventListener('click', () => document.getElementById('ad-fi-sace-file').click());
+  document.getElementById('ad-fi-sace-file').addEventListener('change', e => {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (!file) return;
+    /* se lee aquí, en el teléfono: el CSV del SACE no viaja a ningún lado */
+    const fr = new FileReader();
+    fr.onload = () => adSaceImportarTexto(String(fr.result || ''));
+    fr.onerror = () => toast('⚠️ No se pudo leer el archivo');
+    fr.readAsText(file, 'utf-8');
+  });
+  document.getElementById('ad-fi-cuadro').addEventListener('click', () => adCuadroEdadesModal());
+
   document.getElementById('ad-fi-pegar').addEventListener('click', () => {
     const box = document.getElementById('ad-fi-pegar-box');
     box.style.display = box.style.display === 'none' ? '' : 'none';
@@ -2411,6 +2499,10 @@ function adRenderFichas(body, d) {
       const nums = (d.lista || []).filter(a => !String(a[c.k] || '').trim()).map(a => '#' + a.num);
       return nums.length ? c.et + ': ' + nums.join(', ') : '';
     }).filter(Boolean);
+    const sinFn = (d.lista || []).filter(a => !SL.fechaValida(a.fnac)).map(a => '#' + a.num);
+    if (sinFn.length) faltan.push('Fecha de nacimiento: ' + sinFn.join(', '));
+    const malas = (d.lista || []).filter(a => String(a.idn || '').trim() && !SL.idnValida(a.idn)).map(a => '#' + a.num);
+    if (malas.length) faltan.push('⚠ Identidad sin 13 dígitos: ' + malas.join(', '));
     estado(faltan.length ? '🔎 ' + faltan.join(' · ') : '✅ Todas las fichas están completas.');
   });
   document.getElementById('ad-fi-orden-az')?.addEventListener('click', () => {
@@ -2421,6 +2513,282 @@ function adRenderFichas(body, d) {
   });
   adTablaFilasArrastrar(body.querySelector('.ad-fi-mx'), () => renderAdmin());
   adUndoEnganchar(body);
+}
+
+/* ══════════════ 📥 IMPORTAR LISTA DEL SACE ══════════════
+   El SACE manda en la estadística; Mi aula manda en el trabajo diario.
+   Por eso importar NO reemplaza la lista: empareja cada fila del SACE con
+   su ficha (por identidad y, si no, por nombre parecido), enseña TODO lo
+   que cambiaría y guarda solo los grupos que el maestro deja marcados.
+   Ninguna ficha se borra, ningún `num` cambia y d.notas ni se mira: la
+   lógica vive en js/tools/sace-lista.js y la sonda
+   _dev/verifica-sace-notas.js lo comprueba. */
+const AD_SACE_CAMPO_ET = { idn: 'Identidad', nombre: 'Nombre', sexo: 'Sexo', fnac: 'Fecha de nacimiento' };
+function adSaceValorTxt(campo, v) {
+  if (!v) return '(vacío)';
+  if (campo === 'sexo') return v === 'F' ? '♀ Niña' : v === 'M' ? '♂ Varón' : v;
+  if (campo === 'fnac') return adFechaBonita(v);
+  return v;
+}
+
+function adSaceImportarTexto(texto) {
+  const SL = window.SaceLista;
+  const leido = SL.parseCsv(texto);
+  if (!leido.filas.length) {
+    metasAlert('No encontré alumnos en el archivo. Debe ser un CSV con las columnas ' +
+      '**num, identidad, nombre, sexo, fecha_nacimiento, edad_sace**.' +
+      (leido.errores.length ? '\n\n' + leido.errores.join('\n') : ''), { icono: '📥', titulo: 'Lista del SACE' });
+    return;
+  }
+  const d = adLoad();
+  const plan = SL.emparejar(d.lista, leido.filas);
+  const porNum = {}; d.lista.forEach(a => { porNum[a.num] = a; });
+  const nombreDe = num => adEsc((porNum[num] || {}).nombre || ('#' + num));
+  const idnMal = f => f.idn && !f.idnOk
+    ? `<div class="ad-sace-aviso">⚠ Identidad del SACE sin 13 dígitos: <b>${adEsc(f.idn)}</b>. No se copia; revísala en el SACE.</div>` : '';
+  const fnMal = f => f.fnacRaw && !f.fnacOk
+    ? `<div class="ad-sace-aviso">⚠ Fecha de nacimiento que no se entiende: <b>${adEsc(f.fnacRaw)}</b>.</div>` : '';
+  const conCambios = plan.pares.filter(p => p.cambios.length).length;
+  const cuenta = c => plan.pares.filter(p => p.cambios.some(x => x.campo === c)).length;
+  const reales = adAlumnosReales(d).length;
+
+  const ov = document.createElement('div');
+  ov.className = 'ad-gen-ov ad-ver-ov';
+  ov.innerHTML = `
+    <div class="ad-gen-card ad-ver-card ad-sace-card" role="dialog" aria-modal="true" aria-labelledby="ad-sace-tit">
+      <div class="ad-gen-head">
+        <div class="ad-gen-title" id="ad-sace-tit">📥 Lista del SACE: revisa antes de guardar</div>
+        <button type="button" class="ad-gen-close" id="ad-sace-x" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="ad-gen-hint">El SACE trae <b>${leido.filas.length}</b> alumno(s); en Mi aula tienes <b>${reales}</b> ficha(s).
+        Todavía <b>no se ha guardado nada</b>. Revisa cada grupo, deja marcado lo que quieres y toca
+        <b>Guardar lo marcado</b>. No se borra ninguna ficha ni ninguna nota.
+        ${leido.errores.length ? '<br>⚠ ' + leido.errores.map(adEsc).join('<br>⚠ ') : ''}</div>
+
+      <section class="ad-sace-grupo">
+        <label class="ad-sace-gchk"><input type="checkbox" id="ad-sace-g1" checked>
+          <span><b>✓ Fichas que se emparejan con el SACE (${plan.pares.length})</b><br>
+          Se marcan «En lista oficial SACE». ${conCambios} traen datos distintos.</span></label>
+        <div class="ad-sace-campos" id="ad-sace-campos">
+          <span>Copiar del SACE:</span>
+          <label><input type="checkbox" data-campo="fnac" checked> Fecha de nacimiento (${cuenta('fnac')})</label>
+          <label><input type="checkbox" data-campo="sexo" checked> Sexo (${cuenta('sexo')})</label>
+          <label><input type="checkbox" data-campo="idn" checked> Identidad (${cuenta('idn')})</label>
+          <label><input type="checkbox" data-campo="nombre"> Nombre (${cuenta('nombre')})</label>
+        </div>
+        <p class="ad-sace-nota">La fecha de nacimiento y el sexo oficiales son los del SACE: si la ficha decía otra cosa, gana el SACE.
+          El nombre viene sin marcar porque el SACE lo escribe a su manera; márcalo si quieres el nombre oficial en la ficha.</p>
+        ${plan.pares.length ? `<div class="ad-ver-prev-tbl"><table class="ad-mx ad-ver-mx ad-sace-tbl">
+          <thead><tr><th>Es la misma</th><th style="text-align:left">Ficha</th><th style="text-align:left">En el SACE</th><th style="text-align:left">Qué cambia</th></tr></thead>
+          <tbody>${plan.pares.map((p, i) => `<tr>
+            <td><label class="ad-sace-rchk"><input type="checkbox" data-par="${i}" checked aria-label="Confirmar que la ficha #${p.num} es ${adEsc(p.f.nombre)}"></label></td>
+            <td style="text-align:left">#${p.num} ${nombreDe(p.num)}</td>
+            <td style="text-align:left">${p.f.num ? 'Nº ' + p.f.num + ' · ' : ''}${adEsc(p.f.nombre)}<br><small>${p.por === 'identidad'
+              ? '✓ por identidad' : '≈ por nombre parecido (' + Math.round(p.parecido * 100) + ' %): revisa que sea la misma persona'}</small></td>
+            <td style="text-align:left">${p.cambios.length ? p.cambios.map(c =>
+              `<div data-cc="${c.campo}">${AD_SACE_CAMPO_ET[c.campo]}: ${adEsc(adSaceValorTxt(c.campo, c.antes))} → <b>${adEsc(adSaceValorTxt(c.campo, c.despues))}</b></div>`).join('') : 'Nada: ya coincide'}
+              ${idnMal(p.f)}${fnMal(p.f)}</td>
+          </tr>`).join('')}</tbody></table></div>` : ''}
+      </section>
+
+      <section class="ad-sace-grupo">
+        <label class="ad-sace-gchk"><input type="checkbox" id="ad-sace-g2"${plan.sinFicha.length ? '' : ' disabled'}>
+          <span><b>➕ Alumnos del SACE sin ficha en Mi aula (${plan.sinFicha.length})</b><br>
+          Si lo marcas, se agregan al final de la lista con su número nuevo y su clave de familia.</span></label>
+        ${plan.sinFicha.length ? `<div class="ad-ver-prev-tbl"><table class="ad-mx ad-ver-mx ad-sace-tbl">
+          <thead><tr><th>Agregar</th><th style="text-align:left">En el SACE</th><th style="text-align:left">Datos</th></tr></thead>
+          <tbody>${plan.sinFicha.map((f, i) => `<tr>
+            <td><label class="ad-sace-rchk"><input type="checkbox" data-nuevo="${i}" checked aria-label="Agregar a ${adEsc(f.nombre)}"></label></td>
+            <td style="text-align:left">${f.num ? 'Nº ' + f.num + ' · ' : ''}${adEsc(f.nombre)}</td>
+            <td style="text-align:left">${adEsc(f.idn || 'sin identidad')} · ${adEsc(adSaceValorTxt('sexo', f.sexo))} · ${adEsc(adSaceValorTxt('fnac', f.fnac))}
+              ${idnMal(f)}${fnMal(f)}</td>
+          </tr>`).join('')}</tbody></table></div>` : ''}
+      </section>
+
+      <section class="ad-sace-grupo">
+        <label class="ad-sace-gchk"><input type="checkbox" id="ad-sace-g3"${plan.sinSace.length ? ' checked' : ' disabled'}>
+          <span><b>⚠ Fichas sin alumno en el SACE (${plan.sinSace.length})</b><br>
+          Posibles trasladados o desertores. Se marcan «Fuera de la lista oficial»: siguen en Mi aula con sus notas,
+          pero no entran en ningún cuadro.</span></label>
+        ${plan.sinSace.length ? `<div class="ad-ver-prev-tbl"><table class="ad-mx ad-ver-mx ad-sace-tbl">
+          <thead><tr><th style="text-align:left">Ficha</th><th>Estado</th></tr></thead>
+          <tbody>${plan.sinSace.map(num => `<tr>
+            <td style="text-align:left">#${num} ${nombreDe(num)}</td>
+            <td><select class="ad-fi-estado" data-fuera="${num}" aria-label="Estado de la ficha #${num}">
+              <option value="">Sin cambiar estado</option>
+              <option value="trasladado"${porNum[num].estado === 'trasladado' ? ' selected' : ''}>Trasladado</option>
+              <option value="desertor"${porNum[num].estado === 'desertor' ? ' selected' : ''}>Desertor</option>
+            </select></td>
+          </tr>`).join('')}</tbody></table></div>` : ''}
+      </section>
+
+      <div class="ad-gen-foot">
+        <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-sace-no">Cancelar</button>
+        <button type="button" class="pa-generate-btn" id="ad-sace-si">✅ Guardar lo marcado</button>
+      </div>
+    </div>`;
+  document.body.appendChild(ov);
+  const cerrar = () => ov.remove();
+  ov.querySelector('#ad-sace-x').addEventListener('click', cerrar);
+  ov.querySelector('#ad-sace-no').addEventListener('click', cerrar);
+
+  /* el casillero del grupo manda sobre sus filas: desmarcado, el grupo
+     entero se queda como estaba */
+  const grupo = (gid, sel) => {
+    const g = ov.querySelector(gid);
+    const sync = () => ov.querySelectorAll(sel).forEach(x => { x.disabled = !g.checked; });
+    g.addEventListener('change', sync); sync();
+  };
+  grupo('#ad-sace-g1', '[data-par], [data-campo]');
+  grupo('#ad-sace-g2', '[data-nuevo]');
+  grupo('#ad-sace-g3', '[data-fuera]');
+
+  ov.querySelector('#ad-sace-si').addEventListener('click', () => {
+    const g1 = ov.querySelector('#ad-sace-g1').checked;
+    const g2 = ov.querySelector('#ad-sace-g2').checked;
+    const g3 = ov.querySelector('#ad-sace-g3').checked;
+    const campos = {};
+    if (g1) ov.querySelectorAll('[data-campo]').forEach(x => { campos[x.dataset.campo] = x.checked; });
+    const estados = {};
+    ov.querySelectorAll('[data-fuera]').forEach(x => { if (x.value) estados[x.dataset.fuera] = x.value; });
+    const conf = {
+      pares: g1 ? [...ov.querySelectorAll('[data-par]')].filter(x => x.checked).map(x => +x.dataset.par) : [],
+      campos,
+      nuevos: g2 ? [...ov.querySelectorAll('[data-nuevo]')].filter(x => x.checked).map(x => +x.dataset.nuevo) : [],
+      fuera: g3 ? plan.sinSace.slice() : [],
+      estados,
+      fecha: adHoy()
+    };
+    if (!conf.pares.length && !conf.nuevos.length && !conf.fuera.length) { toast('No hay nada marcado para guardar'); return; }
+    adUndoGuardar('Importar lista del SACE');
+    const dd = adLoad();
+    /* el plan se rehace sobre lo guardado AHORA: si otro equipo sincronizó
+       mientras el maestro revisaba, los índices tienen que seguir valiendo */
+    const plan2 = SL.emparejar(dd.lista, leido.filas);
+    if (JSON.stringify(plan2.pares.map(p => [p.f.i, p.num])) !== JSON.stringify(plan.pares.map(p => [p.f.i, p.num]))) {
+      cerrar(); toast('⚠️ La lista cambió mientras revisabas. Vuelve a importar el archivo.'); return;
+    }
+    const res = SL.aplicar(dd, plan2, conf);
+    res.nuevas.forEach(num => adClaveFamilia(dd.id, num));
+    adSave(dd);
+    cerrar();
+    renderAdmin();
+    toast('📥 SACE: ' + res.marcadas + ' en lista oficial' + (res.actualizadas ? ' · ' + res.actualizadas + ' actualizadas' : '') +
+      (res.nuevas.length ? ' · ' + res.nuevas.length + ' nuevas' : '') + (res.fuera ? ' · ' + res.fuera + ' fuera de la lista oficial' : ''));
+  });
+}
+
+/* ══════════════ 📊 MATRÍCULA FINAL POR EDADES Y GÉNERO ══════════════
+   El cuadro que pide la estadística de fin de año. Cuenta SOLO la
+   matrícula final: alumnos de la lista oficial del SACE que no se
+   trasladaron ni desertaron. La edad es la cumplida a la FECHA DE CORTE;
+   por defecto, la fecha del informe (hoy). Si el distrito pide otra, el
+   maestro la escribe y se guarda en el grupo (d.edadCorte). */
+function adCuadroEdadesHtml(c) {
+  return `<table class="ad-mx ad-cuadro-ed">
+    <thead><tr><th>Edad</th><th>Niñas</th><th>Varones</th><th>Total</th></tr></thead>
+    <tbody>${c.filas.length ? c.filas.map(r => `<tr><td>${r.edad} años</td><td>${r.F}</td><td>${r.M}</td><td><b>${r.total}</b></td></tr>`).join('')
+      : '<tr><td colspan="4">Sin datos todavía</td></tr>'}</tbody>
+    <tfoot><tr><td><b>Total</b></td><td><b>${c.total.F}</b></td><td><b>${c.total.M}</b></td><td><b>${c.total.total}</b></td></tr></tfoot>
+  </table>`;
+}
+function adCuadroNotas(c, d) {
+  const n = [];
+  const nom = num => { const a = (d.lista || []).find(x => x.num === num); return '#' + num + (a ? ' ' + adPrimerNombre(a.nombre) : ''); };
+  if (c.sinFecha.length) n.push('⚠ Sin fecha de nacimiento (no entran en el cuadro): ' + c.sinFecha.map(nom).join(', ') + '.');
+  if (c.sinSexo.length) n.push('⚠ Sin sexo registrado (no entran en el cuadro): ' + c.sinSexo.map(nom).join(', ') + '.');
+  if (c.fueraOficial) n.push(c.fueraOficial + ' ficha(s) de Mi aula fuera de la lista oficial del SACE: no se cuentan.');
+  if (c.trasladados.length) n.push('Trasladados (no se cuentan): ' + c.trasladados.map(a => nom(a.num) + (a.estadoF ? ' (' + adFechaBonita(a.estadoF) + ')' : '')).join(', ') + '.');
+  if (c.desertores.length) n.push('Desertores (no se cuentan): ' + c.desertores.map(a => nom(a.num) + (a.estadoF ? ' (' + adFechaBonita(a.estadoF) + ')' : '')).join(', ') + '.');
+  if (c.ingresos.length) n.push('Ingresos durante el año (sí se cuentan si están en el SACE): ' + c.ingresos.map(a => nom(a.num) + (a.estadoF ? ' (' + adFechaBonita(a.estadoF) + ')' : '')).join(', ') + '.');
+  return n;
+}
+
+function adCuadroEdadesModal() {
+  const SL = window.SaceLista;
+  const d = adLoad();
+  const corte = () => (SL.fechaValida(adLoad().edadCorte) ? adLoad().edadCorte : adHoy());
+  const ov = document.createElement('div');
+  ov.className = 'ad-gen-ov ad-ver-ov';
+  ov.innerHTML = `
+    <div class="ad-gen-card ad-ver-card" role="dialog" aria-modal="true" aria-labelledby="ad-ced-tit">
+      <div class="ad-gen-head">
+        <div class="ad-gen-title" id="ad-ced-tit">📊 Matrícula final por edades y género</div>
+        <button type="button" class="ad-gen-close" id="ad-ced-x" aria-label="Cerrar">✕</button>
+      </div>
+      ${SL.hayImportacion(d) ? '' : `<div class="ad-sace-aviso">⚠ Aún no has importado la lista del SACE. La estadística cuenta
+        solo a los alumnos de la lista oficial: toca <b>📥 Importar lista del SACE</b> primero.</div>`}
+      <label class="ad-ced-corte">Edad cumplida al
+        <input type="date" id="ad-ced-fecha" value="${corte()}"></label>
+      <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-ced-hoy">Usar la fecha del informe (hoy)</button>
+      <div id="ad-ced-cuerpo"></div>
+      <div class="ad-gen-foot">
+        <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-ced-no">Cerrar</button>
+        <button type="button" class="pa-generate-btn" id="ad-ced-print">🖨️ Imprimir</button>
+      </div>
+    </div>`;
+  document.body.appendChild(ov);
+  const pintar = () => {
+    const dd = adLoad();
+    const c = SL.cuadroEdades(dd, corte());
+    ov.querySelector('#ad-ced-cuerpo').innerHTML =
+      `<p class="ad-gen-hint">Matrícula final: <b>${c.matricula}</b> alumno(s) de la lista oficial del SACE,
+        edad al <b>${adFechaBonita(c.corte)}</b>.</p>` + adCuadroEdadesHtml(c) +
+      adCuadroNotas(c, dd).map(t => '<p class="ad-sace-nota">' + adEsc(t) + '</p>').join('');
+  };
+  pintar();
+  const fin = () => ov.remove();
+  ov.querySelector('#ad-ced-x').addEventListener('click', fin);
+  ov.querySelector('#ad-ced-no').addEventListener('click', fin);
+  ov.querySelector('#ad-ced-fecha').addEventListener('change', e => {
+    const dd = adLoad();
+    if (SL.fechaValida(e.target.value) && e.target.value !== adHoy()) dd.edadCorte = e.target.value; else delete dd.edadCorte;
+    adSave(dd); pintar();
+  });
+  ov.querySelector('#ad-ced-hoy').addEventListener('click', () => {
+    const dd = adLoad(); delete dd.edadCorte; adSave(dd);
+    ov.querySelector('#ad-ced-fecha').value = adHoy(); pintar();
+  });
+  ov.querySelector('#ad-ced-print').addEventListener('click', () => adPrintCuadroEdades(adLoad(), corte()));
+}
+
+/* Una hoja carta: encabezado, el cuadro y las notas de quién no entra. */
+function adPrintCuadroEdades(d, corte) {
+  const SL = window.SaceLista;
+  const c = SL.cuadroEdades(d, corte);
+  const bol = d.boleta || {};
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+<title>${adEsc('Matrícula final por edades y género · ' + adGradoSeccion(d.grado, d.seccion))}</title>
+<style>
+  @page { size: letter portrait; margin: 14mm; }
+  body { font-family: Arial, Helvetica, sans-serif; color: #111; font-size: 13px; margin: 0; }
+  .hoja { max-height: 248mm; overflow: hidden; }
+  h1 { font-size: 16px; text-align: center; margin: 0 0 2px; }
+  h2 { font-size: 14px; text-align: center; margin: 0 0 10px; font-weight: 700; }
+  .datos { display: flex; flex-wrap: wrap; gap: 4px 18px; margin-bottom: 10px; }
+  table { border-collapse: collapse; width: 100%; margin: 8px 0; }
+  th, td { border: 1px solid #555; padding: 5px 8px; text-align: center; }
+  th { background: #e8edf5; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  tfoot td { font-weight: 800; border-top: 2px solid #111; }
+  p.nota { margin: 4px 0; font-size: 12px; }
+  .firmas { display: flex; gap: 40px; margin-top: 40px; }
+  .firmas div { flex: 1; text-align: center; border-top: 1px solid #111; padding-top: 4px; }
+</style></head><body><section class="hoja">
+  <h1>${adEsc((d.escuela || 'Centro Educativo').toUpperCase())}</h1>
+  <h2>MATRÍCULA FINAL POR EDADES Y GÉNERO</h2>
+  <div class="datos">
+    <span><b>Grado y sección:</b> ${adEsc(adGradoSeccion(d.grado, d.seccion) || '—')}</span>
+    <span><b>Docente:</b> ${adEsc(bol.docente || '—')}</span>
+    <span><b>Año lectivo:</b> ${adEsc(bol.anio || String(new Date().getFullYear()))}</span>
+    <span><b>Edad cumplida al:</b> ${adEsc(adFechaBonita(c.corte))}</span>
+  </div>
+  ${adCuadroEdadesHtml(c)}
+  <p class="nota">Cuenta los ${c.matricula} alumno(s) de la matrícula final según la lista oficial del SACE${
+    d.saceImport && d.saceImport.f ? ' importada el ' + adEsc(adFechaBonita(d.saceImport.f)) : ''}.</p>
+  ${adCuadroNotas(c, d).map(t => '<p class="nota">' + adEsc(t) + '</p>').join('')}
+  <div class="firmas"><div>${adEsc(bol.docente || '')}<br>Docente de grado</div><div>${adEsc(bol.director || '')}<br>Director(a)</div></div>
+</section><script>window.onload=function(){setTimeout(function(){window.print();},280);}<\/script></body></html>`;
+  adPrintAbrir(html);
 }
 
 /* ══════════════ 📄 EXPEDIENTE DEL AULA ══════════════
