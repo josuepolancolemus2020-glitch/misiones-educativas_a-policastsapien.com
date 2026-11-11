@@ -1319,9 +1319,13 @@ function estInformeCss() {
    porque el informe lo dice: un total que no cuadra con la lista, sin
    explicación, es un papel que la Dirección no puede firmar tranquila. */
 function estDatosGrado(d) {
-  const reales = (typeof adAlumnosReales === 'function') ? adAlumnosReales(d) : (d.lista || []);
+  /* El informe del grado es estadística: con la lista del SACE importada
+     cuenta solo la matrícula final; las fichas fuera de la lista oficial,
+     los trasladados y los desertores siguen en Mi aula pero no aquí. */
+  const reales = window.SaceLista ? SaceLista.alumnosQueCuentan(d)
+    : (typeof adAlumnosReales === 'function') ? adAlumnosReales(d) : (d.lista || []);
   const xs = reales.map(a => ({ a, x: estDatosAlumno(d, a) }));
-  const pruebas = (d.lista || []).length - reales.length;
+  const pruebas = (d.lista || []).filter(a => a.prueba).length;
   const mats = (d.materias || []).slice();
   const media = arr => {
     const v = arr.filter(n => n != null);
@@ -1400,7 +1404,8 @@ function estDatosGrado(d) {
   const decs = xs.map(r => estDecision(r.x.sace)).filter(dc => dc.tipo !== 'sindatos');
 
   return {
-    total: xs.length, pruebas, mats, matsConDatos, porMateria, promMat, promParcial,
+    total: xs.length, pruebas, mats,
+    noCuentan: (d.lista || []).filter(a => !a.prueba).length - xs.length, matsConDatos, porMateria, promMat, promParcial,
     parcialesConDatos, estado, bajo70Mat, conNotas: conNotas.length, promGen,
     porNivel, refuerzo, evaluables, meses, totalA, totalE,
     inasisSace: inasisVals.length ? inasisVals.reduce((a, b) => a + b, 0) : null,
@@ -1686,7 +1691,8 @@ function estImprimirInformeGrado(d) {
     </div>
     <p class="inf-fuente">Informe del grado ${adEsc(grupo)} generado por M.E.T.A.S. con los registros del aula (Notas SACE, pase de lista,
       Plan de Acción y práctica de misiones en la nube) al ${adEsc(hoy)}. El detalle de cada alumno está en su informe individual.${
-      g.pruebas ? ' No se cuenta' + (g.pruebas === 1 ? ' 1 registro de prueba del docente, ajeno' : ' ' + g.pruebas + ' registros de prueba del docente, ajenos') + ' a la matrícula.' : ''}</p>
+      g.pruebas ? ' No se cuenta' + (g.pruebas === 1 ? ' 1 registro de prueba del docente, ajeno' : ' ' + g.pruebas + ' registros de prueba del docente, ajenos') + ' a la matrícula.' : ''}${
+      g.noCuentan ? ' No entra' + (g.noCuentan === 1 ? ' 1 ficha' : 'n ' + g.noCuentan + ' fichas') + ' de Mi aula fuera de la matrícula final (fuera de la lista oficial del SACE, trasladados o desertores).' : ''}</p>
   </footer>
 </section>
 <script>window.onload=function(){setTimeout(function(){window.print();},280);}<\/script>
