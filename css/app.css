@@ -6895,3 +6895,5 @@ body:has(.ad-sace-card) #metasInstallBtn { display: none !important; }
 .rf-tabla tbody th { text-align: left; white-space: nowrap; }
 .rf-tabla .rf-ini { border-left: 2px solid #64748b; }
 .rf-tabla tr.rf-total th, .rf-tabla tr.rf-total td { font-weight: 800; border-top: 2px solid currentColor; }
+/* la hoja de gráficos es papel: blanca también en modo oscuro */
+.rf-papel { background: #fff; border-radius: 12px; padding: 10px; }

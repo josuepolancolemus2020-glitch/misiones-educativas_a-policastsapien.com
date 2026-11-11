@@ -168,6 +168,26 @@ const g3 = JSON.parse(antes); delete g3.lista[0].sexo;
 const r3 = RS.calcular(g3, { corte: CORTE, SL });
 ok(r3.mov.final.T === 8 && r3.mov.final.N === 3 && r3.avisos.sinSexo.length === 1, 'sin sexo: cuenta en T, no en N, y se avisa');
 
+/* ── la hoja de gráficos y estadística descriptiva ── */
+igual(RS.describir([69, 70, 79, 80, 90, 91]), { n: 6, media: 79.8, mediana: 79.5, desv: 8.6, min: 69, max: 91 },
+  'describir: promedio, mediana, desviación, mínima y máxima contadas a mano');
+const est = RS.estadistica(r);
+igual([est.general.n, est.general.media, est.general.mediana, est.general.min, est.general.max], [7, 81.6, 80, 69, 92],
+  'promedio del grupo: los 7 evaluados (69, 70, 79, 80, 90, 91, 92)');
+igual([est.ninas.n, est.varones.n], [4, 3], 'niñas y varones por separado');
+igual([est.pctAprob, est.permanencia], [71, 80], 'aprobados 71 % de los evaluados; permanencia 8 de 10 = 80 %');
+const ing = est.porAsig.find(a => a.k === 'ingles');
+igual([ing.n, ing.media, ing.min, ing.max], [7, 82, 69, 95], 'Inglés: sin Jaco, 7 notas');
+ok(est.porAsig.find(a => a.k === 'tecnologia').n === 0, 'Tecnología sin estadística: no se imparte');
+const gh = RS.graficosHtml(r, [{ t: 'aviso de prueba' }]);
+ok((gh.match(/<svg [^>]*role="img"/g) || []).length === 4, 'cuatro gráficos: escala, aprobados, movimiento y edades');
+ok(/>81,6</.test(gh) && /80 %/.test(gh) && /aviso de prueba/.test(gh), 'mosaicos con promedio y permanencia, y los avisos al pie');
+ok(/N · Niñas/.test(gh) && /V · Varones/.test(gh), 'cada gráfico de dos series trae su leyenda con nombre, no solo color');
+ok(!/Kilo|Registro de prueba|—/.test(gh), 'sin el de fuera del SACE, sin el de prueba y sin guiones largos');
+const gv = RS.graficosHtml(RS.calcular({ grado: '6', seccion: '1', materias: [], lista: [], notas: {} }, { corte: CORTE, SL }));
+ok(!/NaN|undefined|Infinity/.test(gv), 'un grupo vacío no pinta NaN ni undefined');
+ok(!/NaN|undefined|Infinity/.test(gh), 'el grupo de prueba tampoco');
+
 /* ── el Excel ── */
 const bytes = RS.xlsx(cs, { titulo: 'RESUMEN FINAL DE RESULTADOS POR GRADO', datos: [['Grado y sección', '6º-1']], notas: ['nota'] });
 const buf = Buffer.from(bytes);
@@ -205,6 +225,7 @@ ok(/id="ad-fi-resumen"[^>]*>📋 Resumen final de resultados por grado</.test(ad
 ok(/id="ad-sace-resumen"[^>]*>📋 Resumen final de resultados por grado</.test(adm), 'y en Notas SACE');
 ok(/🖨️ Imprimir \/ PDF/.test(pant) && /📥 Descargar Excel/.test(pant), 'botones «🖨️ Imprimir / PDF» y «📥 Descargar Excel»');
 ok(/size:\s*letter landscape/.test(pant), 'la hoja impresa es carta horizontal');
+ok((pant.match(/<section class="hoja">/g) || []).length === 2 && /graficosHtml\(r, av\)/.test(pant), 'dos hojas: el formulario y la de gráficos con los avisos');
 const idx = fs.readFileSync(path.join(RAIZ, 'index.html'), 'utf8');
 const pSL = idx.indexOf('js/tools/sace-lista.js'), pRS = idx.indexOf('js/tools/cuadros-sace.js'), pAD = idx.indexOf('js/tools/registros-admin.js');
 ok(pSL > 0 && pRS > pSL && pAD > pRS, 'index.html carga sace-lista, cuadros-sace y registros-admin en ese orden');

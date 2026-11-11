@@ -3024,7 +3024,10 @@ function adResumenFinalModal() {
         Edad cumplida al <b>${adEsc(adFechaBonita(r.corte))}</b> (la del cuadro de edades).
         Escala: Inicial hasta 69 · Básico 70–79 · Avanzado 80–90 · Excelente 91–100. A = aprobado (70 o más), NA = no aprobado.</p>
       ${av.map(x => `<p class="${x.grave ? 'ad-sace-aviso' : 'ad-sace-nota'}">${x.grave ? '⚠ ' : 'ℹ '}${adEsc(x.t)}</p>`).join('')}
-      ${cs.map(c => `<h3 class="rf-titulo">${adEsc(c.titulo)}</h3><div class="rf-scroll">${ResumenSace.tablaHtml(c)}</div>`).join('')}`;
+      ${cs.map(c => `<h3 class="rf-titulo">${adEsc(c.titulo)}</h3><div class="rf-scroll">${ResumenSace.tablaHtml(c)}</div>`).join('')}
+      <h3 class="rf-titulo">📈 Gráficos y estadística descriptiva</h3>
+      <style>${ResumenSace.GRAF_CSS}</style>
+      <div class="rf-papel">${ResumenSace.graficosHtml(r)}</div>`;
   };
   pintar();
   const fin = () => ov.remove();
@@ -3041,47 +3044,93 @@ function adResumenFinalModal() {
   ov.querySelector('#ad-rf-xlsx').addEventListener('click', () => adResumenFinalExcel(adLoad()));
 }
 
-/* Hoja carta HORIZONTAL, como el formulario: los cuadros llevan hasta 37
-   columnas y en vertical serían ilegibles. Va todo en una sola hoja; los
-   avisos van al pie, en letra de nota, para que el que revisa sepa quién
-   no entró y por qué. */
+/* Dos hojas carta HORIZONTALES (los cuadros llevan hasta 37 columnas; en
+   vertical serían ilegibles):
+   1. El formulario oficial, con la misma cara que las boletas: los dos
+      logos, el nombre del centro en letra de libro, encabezados azules y
+      la fila TOTAL en dorado. Solo el formulario y las firmas: cabe entero.
+   2. Gráficos y estadística descriptiva, sacados del MISMO cálculo, más
+      los avisos para quien revisa (quién no entró y por qué). */
 function adPrintResumenFinal(d) {
   const { r, cs } = adResumenDatos(d);
   const enc = adResumenEncabezado(d, r);
   const av = adResumenAvisos(r, d);
   const bol = d.boleta || {};
+  const centro = String(d.escuela || '').trim() || 'Centro Educativo';
+  const gs = adGradoSeccion(d.grado, d.seccion) || '';
+  let logoSec = d.logoSec || '';
+  if (!logoSec) {
+    try { logoSec = new URL('img/logo-secretaria.png', location.href).href; } catch (_) { logoSec = 'img/logo-secretaria.png'; }
+  }
+  const cabeza = sub => `<header class="rf-head">
+      <div class="rf-logo">${d.logo ? `<img src="${d.logo}" alt="">` : ''}</div>
+      <div class="rf-mid">
+        <div class="rf-centro">${adEsc(centro.toUpperCase())}</div>
+        <div class="rf-doc">${adEsc(sub)}</div>
+        <div class="rf-anio">${adEsc(adResumenPeriodo(d))}</div>
+      </div>
+      <div class="rf-logo der"><img src="${logoSec}" alt="Secretaría de Educación"></div>
+    </header>`;
   const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
-<title>${adEsc('Resumen final de resultados · ' + (adGradoSeccion(d.grado, d.seccion) || ''))}</title>
+<title>${adEsc('Resumen final de resultados · ' + gs)}</title>
 <style>
-  @page { size: letter landscape; margin: 9mm 10mm; }
-  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  body { font-family: Arial, Helvetica, sans-serif; color: #111; font-size: 10px; margin: 0; }
-  h1 { font-size: 15px; text-align: center; margin: 0 0 4px; font-style: italic; font-weight: 400; letter-spacing: .3px; }
-  .enc { display: flex; flex-wrap: wrap; gap: 2px 22px; margin: 0 0 4px; font-size: 11px; }
-  .enc b { font-weight: 800; }
-  .enc span { border-bottom: 1px solid #111; padding: 0 4px 1px 0; }
-  h3 { font-size: 10.5px; font-weight: 800; font-style: italic; margin: 5px 0 1px; text-transform: uppercase; }
-  table { border-collapse: collapse; width: 100%; table-layout: fixed; }
-  th, td { border: 1px solid #111; text-align: center; padding: 1.5px 1px; font-size: 9.5px; line-height: 1.15; }
-  thead th { font-weight: 800; font-size: 8.5px; background: #fff; }
-  thead th small { font-weight: 700; font-size: 8px; }
-  th.rf-primera { width: 21mm; }
-  tbody th { font-weight: 800; text-align: left; padding-left: 4px; }
-  .rf-ini { border-left: 2px solid #111; }
-  tr.rf-total th, tr.rf-total td { font-weight: 800; border-top: 2px solid #111; }
-  .rf-c4 thead th, .rf-c3 thead th { font-size: 8px; }
-  p.nota { margin: 2px 0; font-size: 8.5px; line-height: 1.25; }
-  .firmas { display: flex; gap: 40px; margin-top: 18px; font-size: 10px; }
-  .firmas div { flex: 1; text-align: center; border-top: 1px solid #111; padding-top: 3px; }
+  @page { size: letter landscape; margin: 8mm 9mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  :root { --tinta:#0f2350; --azul:#1e3a7c; --oro:#a8791a; --linea:#d4dbe6; --suave:#f4f7fc; }
+  body { font-family: Arial, Helvetica, sans-serif; color: var(--tinta); font-size: 10px; }
+  .hoja { height: 198mm; display: flex; flex-direction: column; overflow: hidden; page-break-after: always; break-after: page; }
+  .hoja:last-child { page-break-after: auto; break-after: auto; }
+  .rf-head { display: flex; align-items: center; gap: 12px; padding-bottom: 5px; border-bottom: 2.5px solid var(--azul); }
+  .rf-logo { flex: 0 0 150px; height: 40px; display: flex; align-items: center; }
+  .rf-logo.der { justify-content: flex-end; }
+  .rf-logo img { max-width: 150px; max-height: 40px; object-fit: contain; }
+  .rf-mid { flex: 1; text-align: center; }
+  .rf-centro { font-family: Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: 700; letter-spacing: .3px; }
+  .rf-doc { font-family: Georgia, serif; font-size: 12px; font-weight: 700; color: var(--oro); letter-spacing: .8px; margin-top: 1px; }
+  .rf-anio { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: var(--azul); margin-top: 2px; }
+  .enc { display: flex; gap: 6px; margin: 5px 0 2px; }
+  .enc > div { flex: 1; background: var(--suave); border: 1px solid var(--linea); border-radius: 6px; padding: 2px 7px; }
+  .enc > div:nth-child(2), .enc > div:nth-child(3) { flex: 1.6; }
+  .enc span { display: block; font-size: 7px; letter-spacing: .5px; text-transform: uppercase; color: #7286a8; }
+  .enc b { font-size: 10.5px; }
+  h3 { font-family: Georgia, serif; font-size: 10.5px; font-weight: 700; color: var(--azul); margin: 8px 0 3px; letter-spacing: .2px; }
+  h3 i { display: inline-block; width: 15px; height: 15px; line-height: 15px; border-radius: 50%; background: var(--azul); color: #fff;
+    font-style: normal; font-family: Arial, sans-serif; font-size: 9px; text-align: center; margin-right: 5px; }
+  table.rf-tabla { border-collapse: collapse; width: 100%; table-layout: fixed; }
+  .rf-tabla th, .rf-tabla td { border: 1px solid #c7cfdd; text-align: center; padding: 3.2px 1px; font-size: 10px; line-height: 1.15; }
+  .rf-tabla thead tr:first-child th { background: var(--azul); color: #fff; font-size: 7.6px; font-weight: 700; letter-spacing: .2px; padding: 2.5px 1px; }
+  .rf-tabla thead tr:first-child th small { font-size: 7px; font-weight: 400; color: #d8e2f4; }
+  .rf-tabla thead th.rf-sub { background: #eaf0fa; color: var(--tinta); font-size: 8px; font-weight: 800; }
+  .rf-tabla th.rf-primera { width: 21mm; background: var(--tinta) !important; }
+  .rf-tabla tbody th { background: #eaf0fa; font-weight: 800; text-align: left; padding-left: 5px; }
+  .rf-tabla tbody td { font-weight: 600; }
+  .rf-tabla .rf-ini { border-left: 1.8px solid var(--azul); }
+  .rf-tabla tr.rf-total th, .rf-tabla tr.rf-total td { background: #fdf6e3; color: #8a5a00; font-weight: 800; border-top: 1.6px solid #c9a24a; }
+  .rf-tabla tr.rf-total th { background: #f7edc9; }
+  .pie { margin-top: auto; }
+  p.nota { font-size: 8px; color: #55637d; margin-top: 4px; line-height: 1.3; }
+  .firmas { display: flex; gap: 60px; margin: 18px 40px 0; font-size: 9.5px; }
+  .firmas div { flex: 1; text-align: center; border-top: 1px solid var(--tinta); padding-top: 3px; }
+  .firmas small { color: #55637d; }
+  ${ResumenSace.GRAF_CSS}
+  .hoja .rf2 { margin-top: 6px; }
 </style></head><body>
-  <h1>RESUMEN FINAL DE RESULTADOS POR GRADO</h1>
-  <div class="enc">${enc.map(x => `<span><b>${adEsc(x[0]).toUpperCase()}:</b> ${adEsc(x[1])}</span>`).join('')}</div>
-  ${cs.map(c => `<h3>${adEsc(c.titulo)}</h3>${ResumenSace.tablaHtml(c)}`).join('')}
-  <p class="nota">Cuenta solo a los alumnos en la lista oficial del SACE${d.saceImport && d.saceImport.f ? ' (importada el ' + adEsc(adFechaBonita(d.saceImport.f)) + ')' : ''}.
-    Nota final = promedio de los cuatro parciales, redondeado. Escala: I hasta 69 · B 70–79 · A 80–90 · E 91–100. Aprobado = 70 o más en todas las asignaturas.
-    Edad cumplida al ${adEsc(adFechaBonita(r.corte))}.</p>
-  ${av.map(x => '<p class="nota">' + (x.grave ? '⚠ ' : '') + adEsc(x.t) + '</p>').join('')}
-  <div class="firmas"><div>${adEsc(bol.docente || '')}<br>Docente de grado</div><div>${adEsc(bol.director || '')}<br>Director(a)</div></div>
+<section class="hoja">
+  ${cabeza('RESUMEN FINAL DE RESULTADOS POR GRADO')}
+  <div class="enc">${enc.map(x => `<div><span>${adEsc(x[0])}</span><b>${adEsc(x[1])}</b></div>`).join('')}</div>
+  ${cs.map((c, i) => `<h3><i>${i + 1}</i>${adEsc(c.titulo)}</h3>${ResumenSace.tablaHtml(c)}`).join('')}
+  <div class="pie">
+    <p class="nota">N = niñas · V = varones · T = total · A = aprobado (70 o más) · NA = no aprobado · Escala: I = Inicial (hasta 69),
+      B = Básico (70–79), A = Avanzado (80–90), E = Excelente (91–100) · «·» = no se imparte. Cuenta solo a los alumnos en la lista
+      oficial del SACE${d.saceImport && d.saceImport.f ? ' (importada el ' + adEsc(adFechaBonita(d.saceImport.f)) + ')' : ''}.
+      Nota final = promedio de los cuatro parciales, redondeado. Edad cumplida al ${adEsc(adFechaBonita(r.corte))}.</p>
+    <div class="firmas"><div>${adEsc(bol.docente || '')}<br><small>Docente de grado</small></div><div>${adEsc(bol.director || '')}<br><small>Director(a)</small></div></div>
+  </div>
+</section>
+<section class="hoja">
+  ${cabeza('GRÁFICOS Y ESTADÍSTICA DESCRIPTIVA · ' + gs)}
+  ${ResumenSace.graficosHtml(r, av)}
+</section>
 <script>window.onload=function(){setTimeout(function(){window.print();},280);}<\/script></body></html>`;
   adPrintAbrir(html);
 }

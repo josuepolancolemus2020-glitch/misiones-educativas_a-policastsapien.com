@@ -340,6 +340,258 @@
     return h + '</tbody></table>';
   }
 
+  /* ══════════ 📈 SEGUNDA HOJA: GRÁFICOS Y ESTADÍSTICA DESCRIPTIVA ══════════
+     Sale del MISMO cálculo que los cinco cuadros: ningún número nuevo se
+     cuenta aparte, así la hoja de gráficos no puede contradecir al
+     formulario. SVG escrito a mano (sin librería): se imprime nítido,
+     pesa nada y abre sin señal.
+     Colores (validados con el validador de la guía de gráficos, visión
+     normal y daltonismo): varones azul, niñas naranja; la escala usa un
+     solo azul de claro a oscuro porque va en orden. Ningún dato se dice
+     solo con color: cada barra lleva su número y cada serie su nombre. */
+  var COL = {
+    V: '#2a78d6', N: '#eb6834',
+    esc: { I: '#86b6ef', B: '#5598e7', A: '#256abf', E: '#104281' },
+    tinta: '#0f2350', gris: '#52514e', suave: '#898781', linea: '#d4dbe6',
+    sube: '#0ca30c', baja: '#d03b3b', azul: '#1e3a7c'
+  };
+
+  function describir(xs) {
+    var n = xs.length;
+    if (!n) return { n: 0 };
+    var s = xs.slice().sort(function (a, b) { return a - b; });
+    var media = s.reduce(function (t, x) { return t + x; }, 0) / n;
+    var mediana = n % 2 ? s[(n - 1) / 2] : (s[n / 2 - 1] + s[n / 2]) / 2;
+    /* desviación de la población: el grupo entero, no una muestra */
+    var desv = Math.sqrt(s.reduce(function (t, x) { return t + (x - media) * (x - media); }, 0) / n);
+    var r1 = function (v) { return Math.round(v * 10) / 10; };
+    return { n: n, media: r1(media), mediana: r1(mediana), desv: r1(desv), min: s[0], max: s[n - 1] };
+  }
+
+  function estadistica(r) {
+    var ev = r.porAlumno.filter(function (x) { return x.completo; });
+    var proms = function (sexo) {
+      return ev.filter(function (x) { return !sexo || x.a.sexo === sexo; }).map(function (x) { return x.prom; });
+    };
+    var porAsig = r.asignaturas.map(function (as) {
+      var xs = as.cuenta ? r.porAlumno.map(function (x) { return x.fin[as.k]; }).filter(function (v) { return v != null; }) : [];
+      var d = describir(xs);
+      d.k = as.k; d.et = as.et; d.cuenta = as.cuenta;
+      d.A = r.porAsig[as.k].A; d.T = r.porAsig[as.k].T;
+      return d;
+    });
+    var puedenQuedar = r.mov.inicial.T + r.mov.ingresos.T;
+    return {
+      general: describir(proms()), ninas: describir(proms('F')), varones: describir(proms('M')),
+      porAsig: porAsig,
+      permanencia: puedenQuedar ? Math.round(r.mov.final.T * 100 / puedenQuedar) : null,
+      pctAprob: r.evaluados.T ? Math.round(r.aprobados.T * 100 / r.evaluados.T) : null
+    };
+  }
+
+  function fmt(v) { return v == null ? '·' : String(v).replace('.', ','); }
+  function txt(x, y, t, o) {
+    o = o || {};
+    return '<text x="' + x + '" y="' + y + '" font-size="' + (o.fs || 10) + '"' +
+      (o.anc ? ' text-anchor="' + o.anc + '"' : '') + (o.peso ? ' font-weight="' + o.peso + '"' : '') +
+      ' fill="' + (o.col || COL.tinta) + '">' + esc(t) + '</text>';
+  }
+  /* barra con el extremo de datos redondeado y la base recta */
+  function barraV(x, y, w, h, col) {
+    if (h <= 0) return '';
+    var rr = Math.min(3, h, w / 2);
+    return '<path d="M' + x + ' ' + (y + h) + 'V' + (y + rr) + 'Q' + x + ' ' + y + ' ' + (x + rr) + ' ' + y +
+      'H' + (x + w - rr) + 'Q' + (x + w) + ' ' + y + ' ' + (x + w) + ' ' + (y + rr) + 'V' + (y + h) + 'Z" fill="' + col + '"/>';
+  }
+  function barraH(x, y, w, h, col, izq) {
+    if (w <= 0) return '';
+    var rr = Math.min(3, w, h / 2);
+    if (izq) {
+      return '<path d="M' + (x + w) + ' ' + y + 'H' + (x + rr) + 'Q' + x + ' ' + y + ' ' + x + ' ' + (y + rr) +
+        'V' + (y + h - rr) + 'Q' + x + ' ' + (y + h) + ' ' + (x + rr) + ' ' + (y + h) + 'H' + (x + w) + 'Z" fill="' + col + '"/>';
+    }
+    return '<path d="M' + x + ' ' + y + 'H' + (x + w - rr) + 'Q' + (x + w) + ' ' + y + ' ' + (x + w) + ' ' + (y + rr) +
+      'V' + (y + h - rr) + 'Q' + (x + w) + ' ' + (y + h) + ' ' + (x + w - rr) + ' ' + (y + h) + 'H' + x + 'Z" fill="' + col + '"/>';
+  }
+  function svg(w, h, cuerpo, titulo) {
+    return '<svg viewBox="0 0 ' + w + ' ' + h + '" width="100%" role="img" aria-label="' + esc(titulo) +
+      '" font-family="Arial, Helvetica, sans-serif">' + cuerpo + '</svg>';
+  }
+  function leyendaSexo() {
+    return '<div class="rf2-ley"><span><i style="background:' + COL.N + '"></i>N · Niñas</span>' +
+      '<span><i style="background:' + COL.V + '"></i>V · Varones</span></div>';
+  }
+
+  /* 1 · evaluados por escala del promedio general, niñas y varones lado a lado */
+  function svgEscala(r) {
+    var W = 300, H = 150, top = 16, base = 118, alto = base - top;
+    var max = 1;
+    ESCALAS.forEach(function (e) { max = Math.max(max, r.escalaGen[e.k].N, r.escalaGen[e.k].V); });
+    var paso = W / 4, bw = 22, out = '';
+    out += '<line x1="0" y1="' + base + '" x2="' + W + '" y2="' + base + '" stroke="' + COL.suave + '" stroke-width="1"/>';
+    ESCALAS.forEach(function (e, i) {
+      var c = r.escalaGen[e.k], cx = paso * i + paso / 2;
+      [['N', cx - bw - 1], ['V', cx + 1]].forEach(function (p) {
+        var v = c[p[0]], h = Math.round(v / max * (alto - 12));
+        out += barraV(p[1], base - h, bw, h, COL[p[0]]);
+        out += txt(p[1] + bw / 2, base - h - 3, v, { anc: 'middle', fs: 10, peso: 700 });
+      });
+      var pct = r.evaluados.T ? Math.round(c.T * 100 / r.evaluados.T) : 0;
+      out += txt(cx, base + 13, e.et, { anc: 'middle', fs: 10, peso: 700 });
+      out += txt(cx, base + 25, e.rango + ' · ' + c.T + ' (' + pct + ' %)', { anc: 'middle', fs: 8.5, col: COL.gris });
+    });
+    return svg(W, H, out, 'Evaluados por escala del promedio general');
+  }
+
+  /* 2 · porcentaje que aprobó cada asignatura */
+  function svgAprobacion(est) {
+    var filas = est.porAsig, fh = 15, W = 300, H = filas.length * fh + 4, x0 = 126, ancho = 104, out = '';
+    out += '<line x1="' + x0 + '" y1="0" x2="' + x0 + '" y2="' + (H - 2) + '" stroke="' + COL.suave + '" stroke-width="1"/>';
+    filas.forEach(function (a, i) {
+      var y = i * fh + 2;
+      out += txt(x0 - 5, y + 10, a.et, { anc: 'end', fs: 8.8 });
+      if (!a.cuenta || !a.T) { out += txt(x0 + 5, y + 10, 'no se imparte', { fs: 8.5, col: COL.suave }); return; }
+      var pct = Math.round(a.A * 100 / a.T);
+      out += '<rect x="' + x0 + '" y="' + (y + 2) + '" width="' + ancho + '" height="' + (fh - 5) + '" fill="#eef2f8"/>';
+      out += barraH(x0, y + 2, Math.round(pct / 100 * ancho), fh - 5, COL.V);
+      out += txt(x0 + ancho + 4, y + 10, pct + ' % (' + a.A + ' de ' + a.T + ')', { fs: 8.5, peso: 700 });
+    });
+    return svg(W, H, out, 'Porcentaje de aprobados por asignatura');
+  }
+
+  /* 3 · de la matrícula inicial a la final, paso a paso (cascada) */
+  function svgMovimiento(r) {
+    var m = r.mov, W = 300, H = 150, base = 116, alto = 92;
+    var pasos = [
+      { et: 'Inicial', v: m.inicial.T, tipo: 'tot' },
+      { et: '+ Ingresos', v: m.ingresos.T, tipo: 'sube' },
+      { et: '− Traslados', v: m.traslados.T, tipo: 'baja' },
+      { et: '− Desertores', v: m.desertores.T, tipo: 'baja' },
+      { et: 'Final', v: m.final.T, tipo: 'tot' }
+    ];
+    var max = Math.max(1, m.inicial.T + m.ingresos.T), esc_ = function (v) { return Math.round(v / max * alto); };
+    var paso = W / 5, bw = 34, nivel = 0, out = '';
+    out += '<line x1="0" y1="' + base + '" x2="' + W + '" y2="' + base + '" stroke="' + COL.suave + '" stroke-width="1"/>';
+    pasos.forEach(function (p, i) {
+      var x = paso * i + (paso - bw) / 2, de, a, col;
+      if (p.tipo === 'tot') { de = 0; a = p.v; nivel = p.v; col = COL.azul; }
+      else if (p.tipo === 'sube') { de = nivel; a = nivel + p.v; nivel = a; col = COL.sube; }
+      else { de = nivel - p.v; a = nivel; nivel = de; col = COL.baja; }
+      var y = base - esc_(a), h = esc_(a) - esc_(de);
+      if (h > 0) out += '<rect x="' + x + '" y="' + y + '" width="' + bw + '" height="' + h + '" rx="2" fill="' + col + '"/>';
+      out += txt(x + bw / 2, y - 3, (p.tipo === 'sube' ? '+' : p.tipo === 'baja' ? '−' : '') + p.v, { anc: 'middle', fs: 10, peso: 700 });
+      out += txt(x + bw / 2, base + 13, p.et, { anc: 'middle', fs: 8.5 });
+      /* conector punteado al siguiente paso */
+      if (i < pasos.length - 1) {
+        var yn = base - esc_(nivel);
+        out += '<line x1="' + (x + bw) + '" y1="' + yn + '" x2="' + (x + paso) + '" y2="' + yn + '" stroke="' + COL.suave + '" stroke-dasharray="2 2"/>';
+      }
+    });
+    return svg(W, H, out, 'Movimiento de la matrícula');
+  }
+
+  /* 4 · pirámide de edades: niñas a la izquierda, varones a la derecha */
+  function svgPiramide(r) {
+    var filas = EDADES.slice().reverse(), fh = 12, W = 300, H = filas.length * fh + 6, cx = 150, media = 90, gap = 30, out = '';
+    var max = 1;
+    EDADES.forEach(function (e) { max = Math.max(max, r.edades[e.k].N, r.edades[e.k].V); });
+    filas.forEach(function (e, i) {
+      var y = i * fh + 2, c = r.edades[e.k];
+      var wn = Math.round(c.N / max * media), wv = Math.round(c.V / max * media);
+      out += barraH(cx - gap - wn, y + 1, wn, fh - 3, COL.N, true);
+      out += barraH(cx + gap, y + 1, wv, fh - 3, COL.V);
+      out += txt(cx, y + 9, e.et, { anc: 'middle', fs: 8.5, peso: 700 });
+      if (c.N) out += txt(cx - gap - 4 - wn, y + 9, c.N, { anc: 'end', fs: 8.5 });
+      if (c.V) out += txt(cx + gap + 4 + wv, y + 9, c.V, { fs: 8.5 });
+    });
+    return svg(W, H, out, 'Matrícula final por edad y sexo');
+  }
+
+  /* tira de 0 a 100: de la nota más baja a la más alta, la media como
+     punto y la línea del 70 que separa aprobado de no aprobado */
+  function tira(d) {
+    if (!d.n) return '';
+    var X = function (v) { return Math.round(v * 1.2 * 10) / 10; };
+    return '<svg viewBox="0 0 120 12" width="120" height="12" aria-hidden="true">' +
+      '<line x1="0" y1="6" x2="120" y2="6" stroke="#eef2f8" stroke-width="4"/>' +
+      '<line x1="' + X(70) + '" y1="0" x2="' + X(70) + '" y2="12" stroke="' + COL.baja + '" stroke-width="1" stroke-dasharray="2 1.5"/>' +
+      '<line x1="' + X(d.min) + '" y1="6" x2="' + X(d.max) + '" y2="6" stroke="' + COL.esc.B + '" stroke-width="4" stroke-linecap="round"/>' +
+      '<circle cx="' + X(d.media) + '" cy="6" r="3.6" fill="' + COL.esc.E + '" stroke="#fff" stroke-width="1.5"/></svg>';
+  }
+
+  function graficosHtml(r, avisos) {
+    var est = estadistica(r);
+    var g = est.general;
+    var tile = function (et, v, sub) {
+      return '<div class="rf2-kpi"><span>' + esc(et) + '</span><b>' + esc(v) + '</b>' + (sub ? '<small>' + esc(sub) + '</small>' : '') + '</div>';
+    };
+    var filaEst = function (et, d, extra) {
+      return '<tr><th scope="row">' + esc(et) + '</th>' + (d.n
+        ? '<td>' + d.n + '</td><td><b>' + fmt(d.media) + '</b></td><td>' + fmt(d.mediana) + '</td><td>' + fmt(d.desv) +
+          '</td><td>' + d.min + '</td><td>' + d.max + '</td><td class="rf2-tira">' + tira(d) + '</td>'
+        : '<td colspan="7" class="rf2-nada">' + esc(extra || 'sin notas finales') + '</td>') + '</tr>';
+    };
+    return '<div class="rf2">' +
+      '<div class="rf2-kpis">' +
+        tile('Matrícula final', r.mov.final.T, r.mov.final.N + ' niñas · ' + r.mov.final.V + ' varones') +
+        tile('Evaluados', r.evaluados.T, r.avisos.sinNota.length ? r.avisos.sinNota.length + ' sin nota completa' : 'todos con nota completa') +
+        tile('Aprobados', r.aprobados.T, est.pctAprob == null ? 'de los evaluados' : est.pctAprob + ' % de los evaluados') +
+        tile('Reprobados', r.reprobados.T, 'al menos una asignatura bajo 70') +
+        tile('Promedio del grupo', g.n ? fmt(g.media) : '·', g.n ? 'mediana ' + fmt(g.mediana) + ' · de ' + g.min + ' a ' + g.max : '') +
+        tile('Permanencia', est.permanencia == null ? '·' : est.permanencia + ' %', 'siguen ' + r.mov.final.T + ' de ' + (r.mov.inicial.T + r.mov.ingresos.T)) +
+      '</div>' +
+      '<div class="rf2-grid">' +
+        '<section class="rf2-card"><h4>Evaluados por escala del promedio general</h4>' + leyendaSexo() + svgEscala(r) + '</section>' +
+        '<section class="rf2-card"><h4>Aprobados por asignatura</h4>' + svgAprobacion(est) + '</section>' +
+        '<section class="rf2-card"><h4>Movimiento de la matrícula</h4>' +
+          '<div class="rf2-ley"><span><i style="background:' + COL.azul + '"></i>Total</span><span><i style="background:' + COL.sube + '"></i>+ Entra</span><span><i style="background:' + COL.baja + '"></i>− Sale</span></div>' +
+          svgMovimiento(r) + '</section>' +
+        '<section class="rf2-card rf2-ancha"><h4>Estadística descriptiva de las notas finales</h4>' +
+          '<table class="rf2-est"><thead><tr><th scope="col">Asignatura</th><th scope="col">Alumnos</th><th scope="col">Promedio</th>' +
+          '<th scope="col">Mediana</th><th scope="col">Desviación</th><th scope="col">Mínima</th><th scope="col">Máxima</th>' +
+          '<th scope="col">De la más baja a la más alta (0 a 100)</th></tr></thead><tbody>' +
+          est.porAsig.map(function (a) { return filaEst(a.et, a, a.cuenta ? '' : 'no se imparte en este grupo'); }).join('') +
+          '</tbody><tfoot>' +
+          filaEst('Promedio general', g) + filaEst('· Niñas', est.ninas) + filaEst('· Varones', est.varones) +
+          '</tfoot></table>' +
+          '<p class="rf2-pie">Mediana: la nota del alumno de en medio. Desviación: cuánto se separan las notas del promedio; ' +
+          'mientras más baja, más parejo va el grupo. En la tira, ● es el promedio y la raya punteada es el 70.</p></section>' +
+        '<section class="rf2-card"><h4>Matrícula final por edad</h4>' + leyendaSexo() + svgPiramide(r) + '</section>' +
+      '</div>' +
+      (avisos && avisos.length ? '<div class="rf2-avisos"><b>Para quien revisa:</b> ' +
+        avisos.map(function (a) { return '<span>' + (a.grave ? '⚠ ' : '') + esc(a.t) + '</span>'; }).join(' ') + '</div>' : '') +
+      '</div>';
+  }
+
+  /* Estilos de la hoja de gráficos: van con ella, así la pantalla y la
+     ventana de imprimir la pintan igual. Es una hoja de papel: fondo
+     blanco también en modo oscuro. */
+  var GRAF_CSS =
+    '.rf2{background:#fff;color:#0f2350;font-family:Arial,Helvetica,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}' +
+    '.rf2-kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:7px}' +
+    '.rf2-kpi{border:1px solid #d4dbe6;border-radius:8px;padding:5px 8px;background:linear-gradient(180deg,#f4f7fc,#fff)}' +
+    '.rf2-kpi span{display:block;font-size:8px;letter-spacing:.5px;text-transform:uppercase;color:#55637d;font-weight:700}' +
+    '.rf2-kpi b{display:block;font-family:Georgia,"Times New Roman",serif;font-size:21px;line-height:1.1;color:#1e3a7c}' +
+    '.rf2-kpi small{display:block;font-size:8.5px;color:#52514e}' +
+    '.rf2-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}' +
+    '.rf2-card{border:1px solid #d4dbe6;border-radius:9px;padding:6px 9px;break-inside:avoid;min-width:0}' +
+    '.rf2-ancha{grid-column:span 2}' +
+    '.rf2-card h4{font-family:Georgia,serif;font-size:11px;color:#1e3a7c;margin:0 0 4px;padding-bottom:3px;border-bottom:1px solid #d4dbe6}' +
+    '.rf2-ley{display:flex;gap:12px;font-size:8.5px;color:#52514e;margin:0 0 2px}' +
+    '.rf2-ley i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:-1px}' +
+    '.rf2-est{border-collapse:collapse;width:100%;font-size:9px}' +
+    '.rf2-est th,.rf2-est td{border-bottom:1px solid #e6ebf3;padding:1.6px 4px;text-align:center}' +
+    '.rf2-est thead th{font-size:7.5px;text-transform:uppercase;letter-spacing:.3px;color:#55637d;border-bottom:1.5px solid #1e3a7c}' +
+    '.rf2-est tbody th,.rf2-est tfoot th{text-align:left;font-weight:700;white-space:nowrap}' +
+    '.rf2-est tfoot tr:first-child th,.rf2-est tfoot tr:first-child td{border-top:1.5px solid #1e3a7c;background:#fdf6e3;color:#8a5a00}' +
+    '.rf2-est .rf2-tira{padding:0 4px;line-height:0}' +
+    '.rf2-est .rf2-nada{color:#898781;font-style:italic}' +
+    '.rf2-pie{font-size:8px;color:#52514e;margin:3px 0 0;line-height:1.3}' +
+    '.rf2-avisos{margin-top:6px;font-size:8px;line-height:1.3;color:#33415c;border-top:1px solid #d4dbe6;padding-top:4px}' +
+    '.rf2-avisos span{margin-right:6px}' +
+    '@media screen and (max-width:760px){.rf2-kpis{grid-template-columns:repeat(2,1fr)}.rf2-grid{grid-template-columns:1fr}.rf2-ancha{grid-column:auto}' +
+    '.rf2-card{overflow-x:auto}}';
+
   /* ══════════ 📥 EXCEL (.xlsx) sin librería ══════════
      Un .xlsx es un ZIP con unos cuantos XML. Meter una librería de
      planillas (cientos de KB) a una app que abre sin señal en teléfonos
@@ -510,6 +762,7 @@
     PARCIALES: PARCIALES, ASIGNATURAS: ASIGNATURAS, ESCALAS: ESCALAS, EDADES: EDADES,
     escalaDe: escalaDe, mapearMaterias: mapearMaterias,
     calcular: calcular, cuadros: cuadros, tablaHtml: tablaHtml,
+    describir: describir, estadistica: estadistica, graficosHtml: graficosHtml, GRAF_CSS: GRAF_CSS,
     xlsx: xlsx, crc32: crc32, colLetra: colLetra
   };
   raiz.ResumenSace = API;
