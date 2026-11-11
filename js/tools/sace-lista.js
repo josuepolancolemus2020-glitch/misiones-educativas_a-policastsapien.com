@@ -199,6 +199,43 @@
   }
   var UMBRAL = 0.6;
 
+  /* palabras en común, con la misma tolerancia de una letra */
+  function comunes(a, b) {
+    var ta = normNombre(a).split(' ').filter(Boolean), tb = normNombre(b).split(' ').filter(Boolean);
+    var usadas = {}, hits = 0;
+    ta.forEach(function (x) {
+      for (var k = 0; k < tb.length; k++) {
+        if (usadas[k]) continue;
+        var y = tb[k];
+        if (x === y || (x.length >= 4 && y.length >= 4 && lev(x, y) <= 1)) { usadas[k] = 1; hits++; return; }
+      }
+    });
+    return { hits: hits, na: ta.length, nb: tb.length };
+  }
+  function similitudSuelta(a, b) {
+    var c = comunes(a, b);
+    return c.na && c.nb ? (2 * c.hits) / (c.na + c.nb) : 0;
+  }
+  function difDigitos(a, b) {
+    a = digitos(a); b = digitos(b);
+    if (a.length !== 13 || b.length !== 13) return 99;
+    var n = 0; for (var i = 0; i < 13; i++) if (a[i] !== b[i]) n++;
+    return n;
+  }
+  /* ¿qué respalda emparejar esta fila del SACE con esta ficha? */
+  function pista(f, al) {
+    var c = comunes(al.nombre, f.nombre);
+    if (!c.hits) return null;
+    var idCasi = difDigitos(f.idn, al.idn) <= 2;
+    var fecha = f.fnacOk && al.fnac === f.fnac;
+    var contenida = c.na > 0 && c.hits === c.na;          // todo lo que dice la ficha está en el SACE
+    return {
+      al: al, vale: idCasi || fecha || contenida,
+      peso: (idCasi ? 100 : 0) + (fecha ? 50 : 0) + c.hits,
+      por: idCasi ? 'identidad parecida' : fecha ? 'fecha y nombre' : 'nombre parcial'
+    };
+  }
+
   function cambiosDe(al, f) {
     var c = [];
     /* una identidad mal escrita en el SACE no pisa la de la ficha: se marca */
@@ -250,6 +287,24 @@
       tomada[c.f.i] = 1; delete libre[c.al.num];
       pares.push({ f: c.f, num: c.al.num, por: 'nombre', parecido: Math.round(c.s * 100) / 100, cambios: cambiosDe(c.al, c.f) });
     });
+    /* 3 · lo que sobra, con UNA palabra en común y algo más que lo
+       respalde. Pasó en 6º-1 (nov. 2026): la ficha decía solo «Fredy» y el
+       SACE trae «FREDY ESAU MEZA DIAZ» con una identidad distinta; con la
+       regla de dos palabras quedaba «Fuera de la lista oficial» siendo
+       alumno del grado. Se acepta si además (a) la identidad difiere en dos
+       dígitos o menos, (b) la fecha de nacimiento es la misma, o (c) todas
+       las palabras de la ficha están en el SACE y es el ÚNICO candidato.
+       Sin un ganador claro no se adivina: queda para emparejar a mano. */
+    var resto = pend.filter(function (f) { return !tomada[f.i]; });
+    resto.forEach(function (f) {
+      var opciones = Object.keys(libre).map(function (k) { return pista(f, libre[k]); })
+        .filter(function (o) { return o && o.vale; })
+        .sort(function (x, y) { return y.peso - x.peso; });
+      if (!opciones.length || (opciones[1] && opciones[1].peso === opciones[0].peso)) return;
+      var o = opciones[0];
+      tomada[f.i] = 1; delete libre[o.al.num];
+      pares.push({ f: f, num: o.al.num, por: o.por, parecido: Math.round(similitudSuelta(f.nombre, o.al.nombre) * 100) / 100, cambios: cambiosDe(o.al, f) });
+    });
     pares.sort(function (x, y) { return x.f.i - y.f.i; });
 
     return {
@@ -292,10 +347,26 @@
       if (cambio) res.actualizadas++;
     });
 
+    /* emparejados A MANO en la vista previa: { i: fila de sinFicha, num } */
+    var aMano = {};
+    (conf.manuales || []).forEach(function (m) {
+      var f = plan.sinFicha[m.i], al = porNum[m.num];
+      if (!f || !al || aMano[m.num]) return;
+      aMano[m.num] = 1;
+      al.sace = true; res.marcadas++;
+      if (f.num) al.saceNum = f.num;
+      if (f.edadSace) al.edadSace = f.edadSace;
+      var cambio = false;
+      cambiosDe(al, f).forEach(function (c) { if (campos[c.campo]) { al[c.campo] = c.despues; cambio = true; } });
+      if (cambio) res.actualizadas++;
+    });
+    var filaAMano = {};
+    (conf.manuales || []).forEach(function (m) { filaAMano[m.i] = 1; });
+
     var maxNum = (d.lista || []).reduce(function (m, a) { return Math.max(m, +a.num || 0); }, 0);
     (conf.nuevos || []).forEach(function (i) {
       var f = plan.sinFicha[i];
-      if (!f) return;
+      if (!f || filaAMano[i]) return;
       var al = { num: ++maxNum, nombre: f.nombre, sace: true };
       if (f.idn) al.idn = f.idnOk ? idnBonita(f.idn) : f.idn;
       if (f.sexo) al.sexo = f.sexo;
@@ -308,7 +379,7 @@
 
     (conf.fuera || []).forEach(function (num) {
       var al = porNum[num];
-      if (!al) return;
+      if (!al || aMano[num]) return;
       al.sace = false; res.fuera++;
       var e = conf.estados && conf.estados[num];
       if (e && ESTADOS_FUERA[e]) { al.estado = e; if (conf.fecha) al.estadoF = conf.fecha; }
