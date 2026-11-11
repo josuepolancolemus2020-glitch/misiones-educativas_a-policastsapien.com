@@ -129,7 +129,10 @@ for (const m of misiones) {
     const entre = html.slice(finSit, iAni).trim();
     ok(finSit > 0 && entre === '', 'la animación va JUSTO después de la historia, sin nada en medio', entre.slice(0, 60));
     const antes = html.slice(0, iSit);
-    const sec = antes.lastIndexOf('<div class="sec');
+    /* La sección puede ser un <div> o un <section>: las misiones de la
+       plantilla nueva (Fracciones Heterogéneas) usan <section>, y buscar solo
+       <div> la acusaba de no estar en la sección activa estándolo. */
+    const sec = Math.max(antes.lastIndexOf('<div class="sec'), antes.lastIndexOf('<section class="sec'));
     const cab = sec >= 0 ? html.slice(sec, html.indexOf('>', sec) + 1) : '';
     ok(/\bactive\b/.test(cab), 'y las dos están en la sección por la que el alumno entra (la marcada active)', cab);
   }

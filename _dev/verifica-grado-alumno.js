@@ -97,7 +97,12 @@ const mirar = pg => pg.evaluate(() => {
   let r = await mirar(pg);
   const c4 = r.chips.find(x => x.t === '4º');
   ok('el chip de 4º sale marcado solo, sin preguntar nada', !!c4 && c4.on, r.chips.map(x => x.t + (x.on ? '✓' : '')));
-  ok('hay chips de 4º a 9º y un «Todos»', r.chips.length === 7 && r.chips[6].t === 'Todos', r.chips.map(x => x.t));
+  /* Detrás de «Todos» va el chip de Prebásica, que no es un grado: abre la
+     zona de Prebásica (con papá y mamá). Se le pide que esté al final y que
+     no se cuente entre los grados. */
+  const grados = r.chips.filter(x => !/Prebásica/.test(x.t));
+  ok('hay chips de 4º a 9º y un «Todos»', grados.length === 7 && grados[6].t === 'Todos', r.chips.map(x => x.t));
+  ok('el de Prebásica, si está, va al final y no lleva grado', r.chips.length === 7 || (r.chips.length === 8 && /Prebásica/.test(r.chips[7].t)), r.chips.map(x => x.t));
   ok('y se pueden tocar: 44 px y nada encima', r.chips.every(x => x.alto >= 44 && x.recibe),
      r.chips.map(x => x.t + ':' + x.alto + (x.recibe ? '' : ' TAPADO')));
 

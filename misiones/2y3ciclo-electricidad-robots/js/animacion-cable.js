@@ -478,7 +478,7 @@
   };
   var BOTONES = {
     es: ['🔋 Cambiar la pila', '🔍 Seguir el camino', '🔗 Unir el cable', '✂️ Otro corte', '📝 Tu turno', '↺ Empezar otra vez'],
-    en: ['🔋 Change the battery', '🔍 Follow the path', '🔗 Join the wire', '✂️ Cut it elsewhere', '📝 Your turn', '↺ Start over']
+    en: ['🔋 Swap the battery', '🔍 Follow the path', '🔗 Join the wire', '✂️ Cut it elsewhere', '📝 Your turn', '↺ Start over']
   };
   var MARCADOR = {
     es: [['0', 'puntitos que se mueven'], ['4', 'cambios, y no se mueve nada'], ['5', 'uniones revisadas: la quinta, suelta'],

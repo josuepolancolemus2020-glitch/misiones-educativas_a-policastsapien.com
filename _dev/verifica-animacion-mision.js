@@ -261,6 +261,24 @@ const LEER = `
       notas: todos('.mt-nota').map(function (t) { return t.textContent; })
     };
   };
+  /* Fracciones Heterogéneas: las bandejas de quesadilla. Lo lleno de cada
+     bandeja se mide por la caja de cada pedazo que cae dentro de ella, y la
+     fracción de al lado se lee de sus dos números. */
+  window.__amExtra.amQuesadilla = function (raiz) {
+    var vis = window.__amVisible;
+    function todos(sel) { return [].filter.call(raiz.querySelectorAll(sel), vis); }
+    var svg = raiz.querySelector('svg'), s = svg.getBoundingClientRect(), k = s.width / svg.viewBox.baseVal.width;
+    function caja(el) { var b = el.getBoundingClientRect(); return { x0: (b.left - s.left) / k, x1: (b.right - s.left) / k, y0: (b.top - s.top) / k, y1: (b.bottom - s.top) / k }; }
+    return {
+      bandejas: todos('.qh-bandeja').map(function (r) { return Object.assign({ b: +r.getAttribute('data-b') }, caja(r)); }),
+      piezas: todos('.qh-sexto rect, .qh-quinto rect').map(caja),
+      fracs: todos('.qh-fr').map(function (g) {
+        var c = caja(g.querySelector('.qh-barra'));
+        return { b: +g.getAttribute('data-b'), dice: g.querySelector('.qh-num').textContent + '/' + g.querySelector('.qh-den').textContent, y: (c.y0 + c.y1) / 2 };
+      }),
+      mitad: todos('.qh-mitad').map(caja)
+    };
+  };
   /* Números Decimales: la tabla y los dos cuadros de cien centavos.
      La cuadrícula se lee de sus rayas (son lo que se ve), y lo pintado
      por su caja: el área dice cuántos cuadritos son. */
@@ -4554,7 +4572,10 @@ const LEER = `
     function numeros(t) { return ((t || '').match(/-?[0-9.]+/g) || []).map(Number); }
     function pares(nn) { var ps = []; for (var i = 0; i + 1 < nn.length; i += 2) ps.push([nn[i], nn[i + 1]]); return ps; }
     function puntos(el) { return pares(numeros(el.getAttribute('d') || el.getAttribute('points'))).map(function (p) { return aVista(el, p[0], p[1]); }); }
-    function texto(t) { return t ? { txt: t.textContent, caja: caja(t), ve: vis(t), d: demora(t) } : null; }
+    /* La línea base de cada palabra, además de su caja: la caja crece con una
+       tilde («países») y en Chromium 153 movía su centro medio punto, con todas
+       las palabras en el mismo renglón. */
+    function texto(t) { return t ? { txt: t.textContent, caja: caja(t), base: aVista(t, +t.getAttribute('x') || 0, +t.getAttribute('y') || 0)[1], ve: vis(t), d: demora(t) } : null; }
     function trazado(p) { return Math.abs(parseFloat(getComputedStyle(p).strokeDashoffset) || 0) < 0.5; }
     function raya(el) { var r = getComputedStyle(el).strokeDasharray; return r && r !== 'none' && r !== '0px' ? r : ''; }
     function trazos(el) { return ((el.getAttribute('d') || '').match(/M/g) || []).length; }
@@ -8199,7 +8220,7 @@ const ESCENAS = {
     r.push([!falsas.length, `paso ${n}: todo lo que leyó es verdad: cada frase está en la tabla de la sonda, con su fuente`, falsas]);
     const malArmada = TV.filter(t => {
       if (t.pz.length !== 4 || t.k !== 1 || !t.palabra || !t.pz.every(p => dentro(p.caja, t.caja, 0.1))) return true;
-      const ys = t.pz.map(p => cy(p.caja));
+      const ys = t.pz.map(p => p.base);
       if (Math.max(...ys) - Math.min(...ys) > 0.5) return true;
       return t.pz.some((p, j) => j > 0 && (p.caja.x0 - t.pz[j - 1].caja.x1 < 1.5 || p.caja.x0 - t.pz[j - 1].caja.x1 > 8));
     }).map(t => t.frase);
@@ -11706,7 +11727,11 @@ const ESCENAS = {
        sus «…») se tocan por el hueco de la última letra: eso no es montarse.
        Se pide que no se metan uno en el otro más de un píxel. */
     const cajas = x.cajasTexto, choqT = [];
-    const pegados = (a, b) => cerca(a.y0, b.y0, 0.6) && cerca(a.y1, b.y1, 0.6) && Math.min(a.x1, b.x1) - Math.max(a.x0, b.x0) < 1.2;
+    /* «Del mismo renglón» se mide por el centro de las cajas, no por su alto:
+       en Chromium 153 la caja de la coma ya no mide lo mismo que la de
+       «bloque», y estando en el mismo renglón se daban por montadas. Dos
+       renglones del examen van a 14 puntos; 2,5 los separa de sobra. */
+    const pegados = (a, b) => cerca((a.y0 + a.y1) / 2, (b.y0 + b.y1) / 2, 2.5) && Math.min(a.x1, b.x1) - Math.max(a.x0, b.x0) < 1.2;
     cajas.forEach((a, i) => cajas.forEach((b, j) => { if (j > i && monta(a, b) && !pegados(a, b)) choqT.push([x.textos[i], x.textos[j]]); }));
     r.push([choqT.length === 0, `paso ${n}: ningún texto se monta en otro`, choqT]);
     r.push([cajas.every(c => dentro(c, { x0: 0, y0: 0, x1: x.vista[0], y1: x.vista[1] })), `paso ${n}: todo cabe en el dibujo`, null]);
@@ -20268,6 +20293,38 @@ const ESCENAS = {
      con la fracción de al lado, con lo escrito a la derecha (que se vuelve
      a calcular aquí) y con el marcador. Y entre las dos tazas hay siempre
      3/4: la manteca no aparece ni desaparece. */
+  /* Fracciones Heterogéneas: lo lleno de cada bandeja es lo que dice su
+     fracción, la quesadilla no aparece ni desaparece (siempre 1/2 + 1/3), y
+     2/5 no llega a la raya de la mitad. */
+  amQuesadilla(e, n) {
+    const x = e.extra, r = [];
+    const val = t => { const [a, b] = t.split('/').map(Number); return a / b; };
+    const cerca = (a, b, t = 0.02) => Math.abs(a - b) <= t;
+    const dentro = (p, b) => { const cx = (p.x0 + p.x1) / 2, cy = (p.y0 + p.y1) / 2; return cx > b.x0 && cx < b.x1 && cy > b.y0 && cy < b.y1; };
+    const lleno = b => x.piezas.filter(p => dentro(p, b)).reduce((t, p) => t + (p.x1 - p.x0), 0) / (b.x1 - b.x0);
+    r.push([x.piezas.every(p => x.bandejas.some(b => dentro(p, b))), `paso ${n}: todo lo lleno está dentro de una bandeja`]);
+    for (const b of x.bandejas) {
+      const f = x.fracs.filter(f => f.b === b.b);
+      /* Lo lleno se mide sumando anchos: dos pedazos montados contarían dos
+         veces el mismo sitio, así que primero, que ninguno pise a otro. */
+      const ps = x.piezas.filter(p => dentro(p, b)).sort((a, c) => a.x0 - c.x0);
+      r.push([ps.every((p, i) => i === 0 || p.x0 >= ps[i - 1].x1 - 0.5), `paso ${n}: en la bandeja ${b.b + 1} ningún pedazo pisa a otro`]);
+      r.push([f.length === 1 && f[0].y > b.y0 && f[0].y < b.y1, `paso ${n}: la bandeja ${b.b + 1} lleva una sola fracción, a su altura`, f.map(f => f.dice)]);
+      if (f.length === 1) r.push([cerca(lleno(b), val(f[0].dice)), `paso ${n}: lo lleno de la bandeja ${b.b + 1} es lo que dice su fracción (${f[0].dice})`, Math.round(lleno(b) * 1000) / 1000]);
+    }
+    const reales = x.bandejas.filter(b => b.b < 2);
+    r.push([cerca(reales.reduce((t, b) => t + lleno(b), 0), 1 / 2 + 1 / 3), `paso ${n}: entre las dos bandejas hay siempre 1/2 + 1/3: la quesadilla no aparece ni desaparece`]);
+    const c = x.bandejas.find(b => b.b === 2);
+    r.push([!!c === (n === 1) && (x.mitad.length === 1) === (n === 1), `paso ${n}: la bandeja de «arriba y abajo» y la raya de la mitad salen solo en el paso 1`]);
+    if (c && x.mitad.length) {
+      const b0 = x.bandejas.find(b => b.b === 0), m = (x.mitad[0].x0 + x.mitad[0].x1) / 2;
+      r.push([cerca(m, (b0.x0 + b0.x1) / 2, 1), 'paso 1: la raya va por la mitad de la bandeja', m]);
+      r.push([c.x0 + lleno(c) * (c.x1 - c.x0) < m - 2, 'paso 1: lo lleno de 2/5 no llega a la raya de la mitad']);
+    }
+    const marca = { 0: "?", 1: "2/5", 2: "6", 3: "5/6" }[n];
+    r.push([e.cifra.replace(/\s/g, '') === marca, `paso ${n}: el marcador dice ${marca}`, e.cifra]);
+    return r;
+  },
   amManteca(e, n) {
     const x = e.extra, r = [];
     const T = x.tazas, H = T[0].alto;

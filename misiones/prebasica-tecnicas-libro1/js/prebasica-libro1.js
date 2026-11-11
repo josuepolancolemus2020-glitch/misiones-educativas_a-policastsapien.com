@@ -5320,7 +5320,7 @@ let deferredPrompt;
     try {
       localStorage.setItem('metas_usuario_prebasica', 'true');
       localStorage.setItem('metas_ultima_mision_prebasica_id', 'prebasica-tecnicas-libro1');
-      localStorage.setItem('metas_ultima_mision_prebasica_titulo', 'Prebásica (3.° Grado): Técnicas Gráficas y No Gráficas — Libro 1');
+      localStorage.setItem('metas_ultima_mision_prebasica_titulo', 'Prebásica (3.° Grado): Técnicas Gráficas y No Gráficas · Libro 1');
       localStorage.setItem('metas_ultima_mision_prebasica_url', 'misiones/prebasica-tecnicas-libro1/prebasica-libro1.html');
     } catch (e) {}
   }

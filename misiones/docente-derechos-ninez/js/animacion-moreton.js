@@ -152,7 +152,7 @@
     /* ── y el deber es suyo: usted, y a quién se reporta ── */
     P.usted = A.el('g', { 'data-usted': '' }, svg);
     A.el('rect', { x: 12, y: Y.abajo0, width: 52, height: Y.abajo1 - Y.abajo0, rx: 8, 'class': 'rl-papel', 'data-usted-caja': '' }, P.usted);
-    texto(A, P.usted, 38, Y.abajo0 + 24, 'rl-emoji', 20, 'middle', '🧑‍🏫').setAttribute('data-cara', '');
+    texto(A, P.usted, 38, Y.abajo0 + 22, 'rl-emoji', 20, 'middle', '🧑‍🏫').setAttribute('data-cara', '');   // +22 y no +24: en Chromium 153 la caja del emoji baja más y rozaba «usted»
     texto(A, P.usted, 38, Y.abajo1 - 6, 'rl-tinta', 10.5, 'middle', 'usted').setAttribute('data-nombre', '');
     P.aro = A.el('rect', { x: 8, y: Y.abajo0 - 4, width: 60, height: Y.abajo1 - Y.abajo0 + 8, rx: 10, 'class': 'rl-aro', 'data-aro': '' }, svg);
     P.cuaderno = A.el('g', { 'data-cuaderno': '' }, svg);

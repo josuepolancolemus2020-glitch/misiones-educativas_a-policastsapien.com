@@ -64,12 +64,32 @@ function catalogo() {
 (async () => {
   const { MISSIONS, RUTAS } = catalogo();
   const fuente = fs.readFileSync(path.join(RAIZ, KIT), 'utf8');
+
+  /* ⚠️ Desde noviembre de 2026 las cifras NO se escriben: el Kit las CUENTA
+     al abrirse (un script lee js/data/misiones.js y rellena cada
+     [data-cuenta]). Lo que se comprueba entonces es lo que sale pintado, que
+     es lo que se imprime, y además que las cifras vayan marcadas para
+     contarse: una escrita a mano envejece sola, que es como el Kit llegó a
+     decir 57 misiones cuando ya eran 68. */
+  console.log('\n🔢 Las cifras se cuentan, no se escriben');
+  ok(/<script src="js\/data\/misiones\.js"><\/script>/.test(fuente), 'el Kit carga el catálogo (js/data/misiones.js)');
+  ['misiones', 'rutas', 'fecha'].forEach(q =>
+    ok(new RegExp('data-cuenta="' + q + '"').test(fuente), 'la cifra de ' + q + ' va marcada con data-cuenta="' + q + '"'));
+
+  const nav = await abrir();
+  const pg = await nav.newPage();
+  const resp = await pg.goto(BASE + '/' + KIT, { waitUntil: 'networkidle' }).catch(() => null);
+  if (!resp || !resp.ok()) {
+    ok(false, 'el Kit se abre desde ' + BASE + ' (¿está el servidor estático?)');
+    await nav.close();
+    process.exit(1);
+  }
   /* Se quitan los comentarios antes de buscar: el sitio donde se explica por
      qué una cifra ya no está es justo donde esa cifra sigue escrita. Es la
      trampa que este repositorio ya mordió cuatro veces. */
-  const texto = fuente.replace(/<!--[\s\S]*?-->/g, '');
+  const texto = (await pg.evaluate(() => document.body.innerHTML)).replace(/<!--[\s\S]*?-->/g, '');
 
-  console.log('\n📊 Las cifras del catálogo');
+  console.log('\n📊 Las cifras del catálogo, como salen pintadas');
 
   const misiones = MISSIONS.length;
   const rutas = new Set(MISSIONS.map(m => m.ruta).filter(Boolean)).size;
@@ -118,13 +138,8 @@ function catalogo() {
     faltan);
 
   console.log('\n🖨️  Lo que se manda a fotocopiar');
-  const nav = await abrir();
   try {
-    const pg = await nav.newPage();
-    const resp = await pg.goto(BASE + '/' + KIT, { waitUntil: 'networkidle' });
-    if (!resp || !resp.ok()) {
-      ok(false, 'el Kit se abre desde ' + BASE + ' (¿está el servidor estático?)');
-    } else {
+    {
       const pdf = await pg.pdf({ format: 'Letter', printBackground: true });
       /* Las páginas del PDF, que es la verdad de la impresora. Medir el alto
          en pantalla ancha miente: las columnas se estiran. */

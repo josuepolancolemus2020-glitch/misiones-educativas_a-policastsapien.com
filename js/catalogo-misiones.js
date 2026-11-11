@@ -29,7 +29,7 @@
 
   var prebasicaMission = {
     id: 85,
-    title: 'Prebásica (3.° Grado): Técnicas Gráficas y No Gráficas — Libro 1',
+    title: 'Prebásica (3.° Grado): Técnicas Gráficas y No Gráficas · Libro 1',
     subject: 'prebasica',
     color: 'preb',
     grade: 'Prebásica (3.° Grado)',

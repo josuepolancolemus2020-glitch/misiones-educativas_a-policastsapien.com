@@ -437,7 +437,6 @@ function initPredice() {
       <div id="predExp_${idx}" class="explain-box" style="display:none;margin-top:0.7rem;"></div>
     </div>
   `).join('');
-  montarAnimacionQuesadilla();
 }
 
 function ansPred(idx, oi) {
@@ -460,66 +459,6 @@ function ansPred(idx, oi) {
     if (S.predDone.size === PREDS.length) unlockAch('first_pred');
   }
   if (window.Fr && Fr.barrer) Fr.barrer(expEl);
-}
-
-function montarAnimacionQuesadilla() {
-  if (!window.AnimacionMision || !document.getElementById('amQuesadilla')) return;
-  window.AnimacionMision.montar('#amQuesadilla', {
-    titulo: '🎬 Míralo paso a paso: ¿Por qué 1/2 + 1/3 se convierte en 3/6 + 2/6 = 5/6?',
-    pasos: [
-      {
-        texto: '<strong>Paso 1 · Dos bandejas iguales con cortes distintos:</strong> En la primera bandeja tenemos <strong>1/2</strong> (1 mitad dorada) y en la segunda <strong>1/3</strong> (1 tercio turquesa). Como los pedazos no miden lo mismo, todavía no podemos contarlos juntos.',
-        svg: `<svg viewBox="0 0 680 220" xmlns="http://www.w3.org/2000/svg">
-          <rect x="10" y="10" width="660" height="200" rx="16" fill="var(--bg-tarjeta-alt)" stroke="var(--borde-suave)" stroke-width="2"/>
-          <text x="160" y="42" text-anchor="middle" fill="var(--gold)" font-weight="900" font-size="18">Bandeja A: 1/2</text>
-          <rect x="60" y="60" width="100" height="90" rx="8" fill="var(--gold)" stroke="var(--bg-tarjeta)" stroke-width="2.5"/>
-          <rect x="160" y="60" width="100" height="90" rx="8" fill="var(--frac-empty)" stroke="var(--borde-suave)" stroke-width="2.5"/>
-          <text x="160" y="180" text-anchor="middle" fill="var(--texto-secundario)" font-weight="700" font-size="14">Partida en 2 mitades</text>
-          <text x="340" y="115" text-anchor="middle" fill="var(--purple)" font-weight="900" font-size="34">+</text>
-          <text x="510" y="42" text-anchor="middle" fill="var(--teal)" font-weight="900" font-size="18">Bandeja B: 1/3</text>
-          <rect x="410" y="60" width="66.6" height="90" rx="8" fill="var(--teal)" stroke="var(--bg-tarjeta)" stroke-width="2.5"/>
-          <rect x="476.6" y="60" width="66.6" height="90" rx="8" fill="var(--frac-empty)" stroke="var(--borde-suave)" stroke-width="2.5"/>
-          <rect x="543.2" y="60" width="66.8" height="90" rx="8" fill="var(--frac-empty)" stroke="var(--borde-suave)" stroke-width="2.5"/>
-          <text x="510" y="180" text-anchor="middle" fill="var(--texto-secundario)" font-weight="700" font-size="14">Partida en 3 tercios</text>
-        </svg>`
-      },
-      {
-        texto: '<strong>Paso 2 · Cortamos ambas bandejas en el MCM (6 partes iguales):</strong> Como <strong>MCM(2, 3) = 6</strong>, hacemos cortes para que las dos bandejas queden divididas en <strong>sextos</strong>. Mira cómo <strong>1/2 se vuelve 3/6</strong> y <strong>1/3 se vuelve 2/6</strong> sin cambiar la cantidad de comida.',
-        svg: `<svg viewBox="0 0 680 220" xmlns="http://www.w3.org/2000/svg">
-          <rect x="10" y="10" width="660" height="200" rx="16" fill="var(--bg-tarjeta-alt)" stroke="var(--borde-suave)" stroke-width="2"/>
-          <text x="160" y="42" text-anchor="middle" fill="var(--gold)" font-weight="900" font-size="18">1/2 = 3/6 (×3 arriba y abajo)</text>
-          <rect x="60" y="60" width="100" height="90" fill="var(--gold)" stroke="var(--bg-tarjeta)" stroke-width="2"/>
-          <rect x="160" y="60" width="100" height="90" fill="var(--frac-empty)" stroke="var(--borde-suave)" stroke-width="2"/>
-          <line x1="60" y1="90" x2="260" y2="90" stroke="var(--texto-principal)" stroke-dasharray="5,4" stroke-width="2"/>
-          <line x1="60" y1="120" x2="260" y2="120" stroke="var(--texto-principal)" stroke-dasharray="5,4" stroke-width="2"/>
-          <text x="160" y="180" text-anchor="middle" fill="var(--gold)" font-weight="800" font-size="14">3 de 6 sextos iluminados</text>
-          <text x="340" y="115" text-anchor="middle" fill="var(--purple)" font-weight="900" font-size="34">+</text>
-          <text x="510" y="42" text-anchor="middle" fill="var(--teal)" font-weight="900" font-size="18">1/3 = 2/6 (×2 arriba y abajo)</text>
-          <rect x="410" y="60" width="66.6" height="90" fill="var(--teal)" stroke="var(--bg-tarjeta)" stroke-width="2"/>
-          <rect x="476.6" y="60" width="66.6" height="90" fill="var(--frac-empty)" stroke="var(--borde-suave)" stroke-width="2"/>
-          <rect x="543.2" y="60" width="66.8" height="90" fill="var(--frac-empty)" stroke="var(--borde-suave)" stroke-width="2"/>
-          <line x1="410" y1="105" x2="610" y2="105" stroke="var(--texto-principal)" stroke-dasharray="5,4" stroke-width="2"/>
-          <text x="510" y="180" text-anchor="middle" fill="var(--teal)" font-weight="800" font-size="14">2 de 6 sextos iluminados</text>
-        </svg>`
-      },
-      {
-        texto: '<strong>Paso 3 · ¡Ahora sí sumamos pedazos iguales!</strong> Juntamos los <strong>3 sextos dorados</strong> más los <strong>2 sextos turquesas</strong> en una sola bandeja de 6 partes: <strong>3/6 + 2/6 = 5/6</strong>. ¡5 de las 6 partes quedan llenas!',
-        svg: `<svg viewBox="0 0 680 220" xmlns="http://www.w3.org/2000/svg">
-          <rect x="10" y="10" width="660" height="200" rx="16" fill="var(--bg-tarjeta-alt)" stroke="var(--green)" stroke-width="2"/>
-          <text x="340" y="42" text-anchor="middle" fill="var(--green)" font-weight="900" font-size="20">Resultado Final: 3/6 + 2/6 = 5/6</text>
-          <g transform="translate(130, 62)">
-            <rect x="0" y="0" width="70" height="86" fill="var(--gold)" stroke="var(--bg-tarjeta)" stroke-width="2.5"/>
-            <rect x="70" y="0" width="70" height="86" fill="var(--gold)" stroke="var(--bg-tarjeta)" stroke-width="2.5"/>
-            <rect x="140" y="0" width="70" height="86" fill="var(--gold)" stroke="var(--bg-tarjeta)" stroke-width="2.5"/>
-            <rect x="210" y="0" width="70" height="86" fill="var(--teal)" stroke="var(--bg-tarjeta)" stroke-width="2.5"/>
-            <rect x="280" y="0" width="70" height="86" fill="var(--teal)" stroke="var(--bg-tarjeta)" stroke-width="2.5"/>
-            <rect x="350" y="0" width="70" height="86" fill="var(--frac-empty)" stroke="var(--borde-suave)" stroke-width="2.5"/>
-          </g>
-          <text x="340" y="182" text-anchor="middle" fill="var(--texto-principal)" font-weight="800" font-size="15">3 sextos (de 1/2) + 2 sextos (de 1/3) = 5/6 de bandeja</text>
-        </svg>`
-      }
-    ]
-  });
 }
 
 /* ═══════════════ 3. SECCIÓN EXPLORAR CASOS (s-tipos) ═══════════════ */
@@ -1712,6 +1651,8 @@ let retoTimer = null;
 let retoTimeLeft = 90;
 let retoScore = 0;
 let retoStreak = 0;
+let retoOk = 0;
+let retoTotal = 0;
 let retoCurQ = null;
 
 const RETO_POOL = [
@@ -1736,6 +1677,8 @@ function startReto() {
   retoTimeLeft = 90;
   retoScore = 0;
   retoStreak = 0;
+  retoOk = 0;
+  retoTotal = 0;
   document.getElementById('chStartArea').style.display = 'none';
   const area = document.getElementById('chGameArea');
   area.style.display = 'block';
@@ -1770,12 +1713,13 @@ function nextRetoQ() {
 }
 
 function ansReto(choice) {
+  retoTotal++;
   if (choice === retoCurQ.ans) {
+    retoOk++;
     retoStreak++;
     const pts = 10 + Math.min(20, retoStreak * 2);
     retoScore += pts;
     sfx('ok');
-    if (retoScore >= 60) unlockAch('reto_hero');
   } else {
     retoStreak = 0;
     sfx('bad');
@@ -1787,14 +1731,23 @@ function ansReto(choice) {
 function endReto() {
   clearInterval(retoTimer);
   retoTimer = null;
-  addXP(Math.min(50, Math.round(retoScore / 3)));
+  /* El elogio depende del resultado (normativa de la estrella): con 0 de 8
+     no se felicita, y el logro pide el 70 % de aciertos. */
+  const pct = retoTotal ? Math.round(retoOk / retoTotal * 100) : 0;
+  if (retoTotal >= 5 && pct >= 70) unlockAch('reto_hero');
+  if (retoOk > 0) addXP(Math.min(50, Math.round(retoScore / 3)));
+  const msg = pct >= 90 ? '¡Excelente! Dominas las fracciones heterogéneas.'
+    : pct >= 70 ? '¡Bien hecho! Vas muy bien.'
+    : pct >= 40 ? 'Vas avanzando: repasa los pasos del MCM y vuelve a intentarlo.'
+    : 'Todavía no: repasa el Laboratorio de 3 pasos y vuelve a jugar.';
+  const color = pct >= 40 ? 'var(--green)' : 'var(--gold)';
   const area = document.getElementById('chGameArea');
   area.innerHTML = `
-    <div class="concept-box" style="border:2px solid var(--green);">
-      <div style="font-size:2.4rem;">🏁🏆</div>
-      <h3 style="color:var(--green);margin:0.4rem 0;">¡Tiempo Terminado! Puntaje: ${retoScore} pts</h3>
-      <p style="font-size:0.86rem;color:var(--muted);margin-bottom:0.8rem;">Has ganado XP adicional por tu agilidad mental.</p>
-      <button class="btn btn-gold" onclick="startReto()">🔄 Jugar de Nuevo</button>
+    <div class="concept-box" style="border:2px solid ${color};">
+      <div style="font-size:2.4rem;">🏁</div>
+      <h3 style="color:${color};margin:0.4rem 0;">¡Tiempo terminado! ${retoOk} de ${retoTotal} correctas</h3>
+      <p style="font-size:0.86rem;color:var(--muted);margin-bottom:0.8rem;">${msg}</p>
+      <button class="btn btn-gold" onclick="startReto()">🔄 Jugar de nuevo</button>
     </div>
   `;
 }
@@ -2086,7 +2039,7 @@ function renderEval() {
           <button class="btn btn-ghost" id="evVFB_${i}_F" onclick="selVF(${i},false)" style="padding:0.25rem 0.7rem;font-size:0.8rem;min-width:40px;">F</button>
         </div>
       </div>
-      <div class="ev-ans" id="evVFAns_${i}" style="display:none;margin-top:0.3rem;font-size:0.78rem;color:var(--green);font-weight:700;">✅ Respuesta: <strong>${item.v ? 'V (Verdadero)' : 'F (Falso)'}</strong>${!item.v ? ' — ' + item.just : ''}</div>
+      <div class="ev-ans" id="evVFAns_${i}" style="display:none;margin-top:0.3rem;font-size:0.78rem;color:var(--green);font-weight:700;">✅ Respuesta: <strong>${item.v ? 'V (Verdadero)' : 'F (Falso)'}</strong>${!item.v ? ': ' + item.just : ''}</div>
     </div>`;
   });
   html += `</div>`;
@@ -2122,7 +2075,7 @@ function renderEval() {
         <div style="font-size:0.75rem;font-weight:800;color:var(--purple);text-transform:uppercase;margin-bottom:0.4rem;">Columna A (Conceptos)</div>
         ${pairUsed.map((p, i) => `<div class="ev-item-card" style="display:flex;align-items:center;gap:0.4rem;" id="evPair_${i}">
           <select id="evPairSel_${i}" style="width:52px;padding:0.25rem;border-radius:6px;border:1.5px solid var(--purple);background:var(--bg-tarjeta);color:var(--gold);font-family:inherit;font-weight:800;font-size:0.82rem;text-align:center;">
-            <option value="">—</option>
+            <option value="">?</option>
             ${letters.map(l => `<option value="${l}">${l}</option>`).join('')}
           </select>
           <span style="font-size:0.84rem;font-weight:700;">${i + 1}. ${p.term}</span>
@@ -2215,8 +2168,8 @@ function gradeEval() {
   let grade = '', col = '';
   if (total >= 90) { grade = '🏆 ¡EXCELENTE! Dominio sobresaliente'; col = 'var(--green)'; }
   else if (total >= 70) { grade = '👏 ¡MUY BIEN! Buen dominio del tema'; col = 'var(--teal)'; }
-  else if (total >= 50) { grade = '📖 ACEPTABLE — Repasa las secciones con errores'; col = 'var(--gold)'; }
-  else { grade = '🔄 NECESITA REFORZAR — Vuelve al Laboratorio 3 Pasos'; col = 'var(--coral)'; }
+  else if (total >= 50) { grade = '📖 ACEPTABLE: repasa las secciones con errores'; col = 'var(--gold)'; }
+  else { grade = '🔄 NECESITA REFORZAR: vuelve al Laboratorio 3 Pasos'; col = 'var(--coral)'; }
 
   sb.style.display = 'block';
   sb.style.background = 'var(--card2)';
@@ -2265,7 +2218,7 @@ function printEval() {
     .pauta{page-break-before:always;border-top:2px dashed #000;padding-top:10px;}
   </style></head><body>
     <div style="text-align:center;border-bottom:2px solid #000;padding-bottom:6px;margin-bottom:8px;">
-      <h1>EVALUACIÓN DE MATEMÁTICA — SUMA Y RESTA DE FRACCIONES HETEROGÉNEAS</h1>
+      <h1>EVALUACIÓN DE MATEMÁTICA · SUMA Y RESTA DE FRACCIONES HETEROGÉNEAS</h1>
       <div style="font-size:9pt;">Proyecto Educativo M.E.T.A.S · Forma ${formaNum} · Valor: 100 Puntos</div>
     </div>
     <div style="margin-bottom:8px;font-size:9.5pt;">Nombre: _______________________________________ Grado: __________ Fecha: ____________</div>
@@ -2281,7 +2234,7 @@ function printEval() {
       ${pairRight.map((d, i) => `<tr><td style="padding:3px 0;">${pairUsed[i] ? `( &nbsp; ) ${i + 1}. ${pairUsed[i].term}` : ''}</td><td style="padding:3px 0;"><strong>${letters[i]})</strong> ${d}</td></tr>`).join('')}
     </table>
     <div class="pauta">
-      <h1>PAUTA DEL DOCENTE — FORMA ${formaNum}</h1>
+      <h1>PAUTA DEL DOCENTE · FORMA ${formaNum}</h1>
       <p><strong>I. Completación:</strong> ${comp.map((c, i) => `${i + 1}) ${c.ans}`).join(' · ')}</p>
       <p><strong>II. Verdadero o Falso:</strong> ${vf.map((v, i) => `${i + 1}) ${v.v ? 'V' : 'F'}`).join(' · ')}</p>
       <p><strong>III. Selección Única:</strong> ${mc.map((m, i) => `${i + 1}) ${m.ans}`).join(' · ')}</p>
@@ -2369,7 +2322,7 @@ function renderEvalOp() {
       ${calc.map((c, i) => `<div class="ev-item-card" id="evOpC_${i}">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:0.4rem;">
           <strong style="font-size:0.95rem;">${i + 1}) ${c.expr} =</strong>
-          <input id="evOpCIn_${i}" class="ev-inline-in" placeholder="Ej: 5/6" style="width:95px;">
+          <input id="evOpCIn_${i}" class="ev-inline-in" placeholder="Ej.: 5/6" style="width:95px;">
         </div>
         <div class="ev-op-ans" style="display:none;margin-top:0.35rem;font-size:0.76rem;color:var(--green);font-weight:700;">✅ ${c.ans} (${c.proc})</div>
       </div>`).join('')}
@@ -2387,7 +2340,7 @@ function renderEvalOp() {
         <span style="font-size:0.88rem;"><strong>${i + 1}.</strong> ${m.q}</span>
         <input id="evOpMIn_${i}" class="ev-inline-in" placeholder="Resp." style="width:95px;color:var(--teal);">
       </div>
-      <div class="ev-op-ans" style="display:none;margin-top:0.3rem;font-size:0.76rem;color:var(--green);font-weight:700;">✅ ${m.ans} — ${m.exp}</div>
+      <div class="ev-op-ans" style="display:none;margin-top:0.3rem;font-size:0.76rem;color:var(--green);font-weight:700;">✅ ${m.ans}: ${m.exp}</div>
     </div>`).join('')}
   </div>`;
 
@@ -2416,10 +2369,10 @@ function renderEvalOp() {
       <div style="font-size:0.86rem;line-height:1.55;margin-bottom:0.4rem;"><strong style="color:var(--gold);">${i + 1}. ${p.title}:</strong> ${p.text}</div>
       <div style="display:flex;align-items:center;gap:0.4rem;">
         <span style="font-size:0.8rem;color:var(--texto-secundario);">Respuesta:</span>
-        <input id="evOpPIn_${i}" class="ev-inline-in" placeholder="Ej: 11/12" style="width:105px;">
+        <input id="evOpPIn_${i}" class="ev-inline-in" placeholder="Ej.: 11/12" style="width:105px;">
         <span style="font-size:0.8rem;color:var(--texto-secundario);">${p.unit}</span>
       </div>
-      <div class="ev-op-ans" style="display:none;margin-top:0.3rem;font-size:0.76rem;color:var(--green);font-weight:700;">✅ ${p.ans} ${p.unit} — ${p.sol}</div>
+      <div class="ev-op-ans" style="display:none;margin-top:0.3rem;font-size:0.76rem;color:var(--green);font-weight:700;">✅ ${p.ans} ${p.unit}: ${p.sol}</div>
     </div>`).join('')}
   </div>`;
 
@@ -2436,7 +2389,7 @@ function renderEvalOp() {
           <input type="radio" name="evOpR_${i}" value="${o}"> ${o}
         </label>`).join('')}
       </div>
-      <div class="ev-op-ans" style="display:none;margin-top:0.3rem;font-size:0.76rem;color:var(--green);font-weight:700;">✅ ${r.ans} — ${r.exp}</div>
+      <div class="ev-op-ans" style="display:none;margin-top:0.3rem;font-size:0.76rem;color:var(--green);font-weight:700;">✅ ${r.ans}: ${r.exp}</div>
     </div>`).join('')}
   </div>`;
 
@@ -2527,7 +2480,7 @@ function printEvalOp() {
     .pauta{page-break-before:always;border-top:2px dashed #000;padding-top:10px;}
   </style></head><body>
     <div style="text-align:center;border-bottom:2px solid #000;padding-bottom:6px;margin-bottom:8px;">
-      <h1>PRUEBA OPERATIVA DE MATEMÁTICA — FRACCIONES HETEROGÉNEAS</h1>
+      <h1>PRUEBA OPERATIVA DE MATEMÁTICA · FRACCIONES HETEROGÉNEAS</h1>
       <div style="font-size:9pt;">Proyecto Educativo M.E.T.A.S · Forma ${formaNum} · Valor: 100 Puntos</div>
     </div>
     <div style="margin-bottom:8px;">Nombre: _______________________________________ Grado: __________ Fecha: ____________</div>
@@ -2542,7 +2495,7 @@ function printEvalOp() {
     <div class="sec-h">V. RETOS DE PENSAMIENTO CRÍTICO (15 pts · 5 pts c/u)</div>
     ${reto.map((r, i) => `<div style="margin-bottom:6px;"><strong>${i + 1}. ${r.q}</strong><br>${r.shuffledOpts.map(o => `[ &nbsp; ] ${o}`).join(' &nbsp;&nbsp;&nbsp; ')}</div>`).join('')}
     <div class="pauta">
-      <h1>PAUTA DOCENTE — PRUEBA OPERATIVA FORMA ${formaNum}</h1>
+      <h1>PAUTA DOCENTE · PRUEBA OPERATIVA FORMA ${formaNum}</h1>
       <p><strong>I:</strong> ${calc.map((c, i) => `${i + 1}) ${c.ans}`).join(' · ')}</p>
       <p><strong>II:</strong> ${mcm.map((m, i) => `${i + 1}) ${m.ans}`).join(' · ')}</p>
       <p><strong>III:</strong> ${inc.map((it, i) => `${i + 1}) ${it.ans}`).join(' · ')}</p>

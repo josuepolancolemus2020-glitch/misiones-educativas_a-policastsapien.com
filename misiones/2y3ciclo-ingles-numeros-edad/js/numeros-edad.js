@@ -677,20 +677,40 @@ function renderReto(){
   document.getElementById('fbReto').className='fb';
   document.getElementById('fbReto').textContent='';
 }
+/* El Reto cuenta el PRIMER intento de cada cálculo: se puede seguir tocando
+   hasta dar con la buena, pero eso ya no suma ni felicita. El logro y la
+   estrella piden los dos cálculos de un reto acertados a la primera
+   (normativa de la estrella: el elogio depende del resultado). */
+const retoPrimero={}, retoResuelto={};
 function checkRetoAnswer(part,ans){
   const pair=retoPairs[retoCur];
   const target=part===1?pair.p1:pair.p2;
+  const clave=retoCur+'-'+part, letra=part===1?'A':'B';
+  if(retoResuelto[clave])return;
   if(ans===target.a){
     sfx('ok');
-    fb('fbReto','¡Acierto en Cálculo '+(part===1?'A':'B')+'!',true);
-    pts(3);
-    retoScore++;
-    if(retoScore>=2){
-      unlockAchievement('reto_hero');
-      fin('s-reto');
+    retoResuelto[clave]=true;
+    if(!retoPrimero[clave]){
+      retoPrimero[clave]='ok';
+      retoScore++;
+      pts(3);
+      fb('fbReto','¡Acierto a la primera en el Cálculo '+letra+'!',true);
+    }else{
+      fb('fbReto','Esa es la respuesta del Cálculo '+letra+'. La próxima, a la primera.',true);
+    }
+    if(retoResuelto[retoCur+'-1']&&retoResuelto[retoCur+'-2']){
+      const aciertos=(retoPrimero[retoCur+'-1']==='ok'?1:0)+(retoPrimero[retoCur+'-2']==='ok'?1:0);
+      if(aciertos>=2){
+        fb('fbReto','¡Excelente! Los dos cálculos a la primera.',true);
+        unlockAchievement('reto_hero');
+        fin('s-reto');
+      }else{
+        fb('fbReto','Resolviste el reto con '+aciertos+' de 2 a la primera. Prueba con otro reto.',false);
+      }
     }
   }else{
     sfx('no');
+    if(!retoPrimero[clave])retoPrimero[clave]='fallo';
     fb('fbReto','Cálculo incorrecto. Intenta otra opción.',false);
   }
 }
@@ -925,76 +945,69 @@ function sopaLinterna(){
 }
 
 // ===================== BANCOS DE EVALUACIÓN DETERMINISTA =====================
+/* Revisión «examen sin pistas» (noviembre de 2026): cada número se pregunta
+   UNA vez entre los cuatro bancos, y una palabra que es la respuesta de una
+   pregunta no sale escrita en ninguna otra, tampoco como opción equivocada.
+   Los pareados van del español al inglés: su respuesta es la palabra en
+   español, que no sale en ninguna otra pregunta. Los verdaderos o falsos sí
+   pueden nombrar palabras en inglés, porque su respuesta es V o F. */
 const evalTFBank = [
-  { q: 'En inglés la edad se dice con «I am» y no con «I have».', a: true, exp: 'Correcto: se usa el verbo to be (I am 11 years old).', k: 'edad_verbo' },
-  { q: 'La palabra «tree» significa el número 3 en inglés.', a: false, exp: 'Falso: tree es árbol; el número 3 se escribe three.', k: 'three_tree' },
-  { q: 'Los números eleven (11) y twelve (12) terminan en -teen.', a: false, exp: 'Falso: son irregulares y tienen nombre propio.', k: 'eleven_twelve' },
-  { q: 'Los números del 13 al 19 llevan la terminación -teen.', a: true, exp: 'Correcto: thirteen, fourteen, fifteen, etc.', k: 'sufijo_teen' },
-  { q: 'Al decir «three», la lengua se coloca entre los dientes para el sonido th.', a: true, exp: 'Correcto: es el sonido interdental sordo /θ/.', k: 'pron_th' },
-  { q: '«How old are you?» sirve para preguntar el nombre.', a: false, exp: 'Falso: pregunta la edad; para el nombre se usa What is your name?.', k: 'how_old' },
-  { q: 'El número 15 se escribe «fiveteen».', a: false, exp: 'Falso: cambia la raíz a fif-, se escribe fifteen.', k: 'fifteen_ort' },
-  { q: 'El número 20 en inglés se escribe «twenty».', a: true, exp: 'Correcto: twenty es 20.', k: 'twenty_ort' },
-  { q: 'En «thirteen», el acento va en la sílaba final (-teen).', a: true, exp: 'Correcto: thir-TEEN lleva el acento al final.', k: 'acento_teen' },
-  { q: 'La expresión «There are» se usa para decir que hay una sola cosa.', a: false, exp: 'Falso: There are es para plural (dos o más).', k: 'there_are' },
-  { q: 'Decir «I am 10 years old» significa «tengo 10 años».', a: true, exp: 'Correcto: es la fórmula estándar de la edad.', k: 'i_am_age' },
-  { q: 'El número 8 se escribe «eight» con g y h mudas.', a: true, exp: 'Correcto: se escribe eight y se pronuncia /eit/.', k: 'eight_ort' },
-  { q: '«One, two, three» son números pares todos.', a: false, exp: 'Falso: one y three son impares.', k: 'par_impar' },
-  { q: 'La pregunta «How many?» significa «¿cuántos?».', a: true, exp: 'Correcto: se usa para preguntar cantidades contables.', k: 'how_many' },
-  { q: 'A la pregunta «How old are you?» se puede responder simplemente «I am twelve».', a: true, exp: 'Correcto: ambas formas son válidas (con o sin years old).', k: 'respuesta_corta' }
+  { q: 'Para decir los años que tienes, en inglés se usa «I am» y no «I have».', a: true, exp: 'Correcto: se usa el verbo to be (I am 11 years old).', k: 'edad_verbo' },
+  { q: '«Three» y «tree» se pronuncian igual.', a: false, exp: 'Falso: three lleva la lengua entre los dientes (/θ/); tree es árbol.', k: 'three_tree' },
+  { q: '«Eleven» y «twelve» siguen la misma regla que los números del 13 al 19.', a: false, exp: 'Falso: son irregulares y tienen nombre propio.', k: 'eleven_twelve' },
+  { q: '«How old are you?» sirve para preguntar el nombre.', a: false, exp: 'Falso: para el nombre se usa What is your name?.', k: 'how_old' },
+  { q: 'El número 15 se escribe «fiveteen».', a: false, exp: 'Falso: cambia la raíz a fif-.', k: 'fifteen_ort' },
+  { q: 'En «thirteen», el acento va en la última sílaba.', a: true, exp: 'Correcto: thir-TEEN lleva el acento al final.', k: 'acento_teen' },
+  { q: 'A «How old are you?» se puede responder solo «I am twelve».', a: true, exp: 'Correcto: con o sin years old, las dos formas valen.', k: 'respuesta_corta' },
+  { q: 'El número 40 se escribe «fourty», con u.', a: false, exp: 'Falso: al pasar a decena se pierde la u.', k: 'forty_ort' },
+  { q: '«Thirty» y «thirteen» son el mismo número.', a: false, exp: 'Falso: uno es 30 y el otro es 13.', k: 'thirty_thirteen' },
+  { q: '«Seven» es un número par.', a: false, exp: 'Falso: es impar.', k: 'par_impar' },
+  { q: 'En inglés el número va antes de «years old»: «I am 12 years old».', a: true, exp: 'Correcto: primero el número y después years old.', k: 'orden_years_old' },
+  { q: 'La palabra «zero» es el número 0.', a: true, exp: 'Correcto.', k: 'zero' }
 ];
 
 const evalMCBank = [
-  { q: '¿Cómo se dice el número 3 en inglés?', o: ['a) Three', 'b) Tree', 'c) Tri', 'd) Free'], a: 0, exp: 'Three lleva th.', k: 'num_3' },
-  { q: '¿Cómo se responde a «How old are you?» si tienes 12 años?', o: ['a) I have 12 years', 'b) I am 12 years old', 'c) I has 12 years', 'd) My age is 12 years'], a: 1, exp: 'Se usa I am.', k: 'ans_age' },
-  { q: '¿Cuál número es irregular y no termina en -teen?', o: ['a) Fourteen', 'b) Sixteen', 'c) Twelve', 'd) Eighteen'], a: 2, exp: 'Twelve es irregular.', k: 'irr_12' },
-  { q: '¿Cómo se escribe el número 15 en inglés?', o: ['a) Fiveteen', 'b) Fiveten', 'c) Fifty', 'd) Fifteen'], a: 3, exp: 'Fifteen es la forma correcta.', k: 'num_15' },
-  { q: '¿Qué significa la pregunta «How old are you?»?', o: ['a) ¿Cuántos años tienes?', 'b) ¿Cómo te llamas?', 'c) ¿Dónde vives?', 'd) ¿Qué hora es?'], a: 0, exp: 'Pregunta por la edad.', k: 'meaning_how_old' },
-  { q: '¿Cómo se escribe 20 en inglés?', o: ['a) Twenteen', 'b) Twenty', 'c) Twelveteen', 'd) Two-ten'], a: 1, exp: 'Twenty es 20.', k: 'num_20' },
-  { q: '¿Cuál de estas frases es gramaticalmente correcta en inglés?', o: ['a) He have ten years', 'b) She has tree cats', 'c) She is eleven years old', 'd) I has twelve years'], a: 2, exp: 'She is eleven years old es la única correcta.', k: 'gram_correct' },
-  { q: '¿Cómo se pronuncia la palabra «three»?', o: ['a) Igual que tree (árbol)', 'b) Con s suave', 'c) Como la f en free', 'd) Con la lengua entre los dientes (/θ/)'], a: 3, exp: 'Sonido interdental sordo /θ/.', k: 'pron_three' },
-  { q: '¿Cuántos jugadores hay en la cancha si contamos «eleven»?', o: ['a) 11 jugadores', 'b) 12 jugadores', 'c) 10 jugadores', 'd) 13 jugadores'], a: 0, exp: 'Eleven es 11.', k: 'meaning_eleven' },
-  { q: '¿Cuál es la suma de «seven plus six»?', o: ['a) Twelve', 'b) Thirteen', 'c) Fourteen', 'd) Eleven'], a: 1, exp: '7 + 6 = 13 (thirteen).', k: 'math_13' },
-  { q: '¿Qué palabra completa la frase: «I see ___ apples in the basket» (4)?', o: ['a) for', 'b) fourteen', 'c) four', 'd) fourth'], a: 2, exp: 'Four es cuatro.', k: 'num_4' },
-  { q: '¿Por qué no se debe decir «I have 11 years» en inglés?', o: ['a) Porque falta la s', 'b) Porque falta la palabra old', 'c) Porque es una regla solo para niños', 'd) Porque en inglés la edad se es, no se tiene'], a: 3, exp: 'La edad se concibe como un estado del ser.', k: 'rule_age_be' },
-  { q: '¿Cómo se escribe el número 8 en inglés?', o: ['a) Eight', 'b) Eigth', 'c) Aight', 'd) Eigt'], a: 0, exp: 'Se escribe eight.', k: 'num_8' },
-  { q: '¿Qué número sigue en la serie: ten, eleven, twelve, ___?', o: ['a) Fourteen', 'b) Thirteen', 'c) Fifteen', 'd) Twenty'], a: 1, exp: 'Sigue thirteen (13).', k: 'series_13' },
-  { q: 'Si una persona dice «I am fourteen», ¿cuántos años tiene?', o: ['a) 4 años', 'b) 40 años', 'c) 14 años', 'd) 24 años'], a: 2, exp: 'Fourteen es 14.', k: 'meaning_14' }
+  { q: '¿Cómo se escribe el número 4 en inglés?', o: ['a) For', 'b) Four', 'c) Fourth', 'd) Foor'], a: 1, exp: 'Four es cuatro; for es una preposición.', k: 'num_4' },
+  { q: '¿Cómo se escribe el número 6 en inglés?', o: ['a) Sixe', 'b) Sicks', 'c) Six', 'd) Siks'], a: 2, exp: 'Se escribe six.', k: 'num_6' },
+  { q: 'Si alguien dice «I am fourteen», ¿cuántos años tiene?', o: ['a) 4 años', 'b) 40 años', 'c) 24 años', 'd) 14 años'], a: 3, exp: 'Fourteen es 14.', k: 'meaning_14' },
+  { q: '¿Cuánto es «nine plus nine»?', o: ['a) 18', 'b) 99', 'c) 81', 'd) 16'], a: 0, exp: '9 + 9 = 18.', k: 'math_18' },
+  { q: '¿Cómo se escribe el número 50 en inglés?', o: ['a) Fivety', 'b) Fifty', 'c) Fifteen', 'd) Fiveten'], a: 1, exp: 'Fifty es 50; fifteen es 15.', k: 'num_50' },
+  { q: 'En el mercado te dicen «sixty lempiras». ¿Cuánto pagas?', o: ['a) L 16', 'b) L 6', 'c) L 60', 'd) L 66'], a: 2, exp: 'Sixty es 60.', k: 'meaning_60' },
+  { q: '¿Qué número va entre «sixteen» y «eighteen»?', o: ['a) 15', 'b) 19', 'c) 81', 'd) 17'], a: 3, exp: 'Entre 16 y 18 va el 17.', k: 'series_17' },
+  { q: '¿Cómo se escribe 100 en inglés?', o: ['a) One hundred', 'b) Ten hundred', 'c) One hundreds', 'd) Hundred one'], a: 0, exp: 'One hundred es 100.', k: 'num_100' },
+  { q: '¿Qué dice la frase «She is ten years old»?', o: ['a) Que tiene diez hermanos', 'b) Que tiene diez años', 'c) Que vive en el número diez', 'd) Que mide diez metros'], a: 1, exp: 'Es la fórmula de la edad.', k: 'meaning_age' },
+  { q: '¿Cómo se escribe 33 en inglés?', o: ['a) Thirty three', 'b) Thirteen-three', 'c) Thirty-three', 'd) Three-thirty'], a: 2, exp: 'Decena y unidad, unidas con guion.', k: 'num_33' }
 ];
 
 const evalCPBank = [
-  { q: 'En inglés, la edad se expresa con el verbo «to ___» (am/is/are).', a: 'be', acc: ['be', 'to be', 'BE'], k: 'cp_verbo' },
-  { q: 'El número 3 en inglés se escribe ___.', a: 'three', acc: ['three', 'THREE'], k: 'cp_three' },
-  { q: 'El número 11 en inglés se escribe ___.', a: 'eleven', acc: ['eleven', 'ELEVEN'], k: 'cp_eleven' },
-  { q: 'El número 12 en inglés se escribe ___.', a: 'twelve', acc: ['twelve', 'TWELVE'], k: 'cp_twelve' },
+  { q: 'El número 5 en inglés se escribe ___.', a: 'five', acc: ['five', 'FIVE'], k: 'cp_five' },
+  { q: 'El número 2 en inglés se escribe ___.', a: 'two', acc: ['two', 'TWO'], k: 'cp_two' },
+  { q: 'El número 19 en inglés se escribe ___.', a: 'nineteen', acc: ['nineteen', 'NINETEEN'], k: 'cp_nineteen' },
+  { q: 'El número 70 en inglés se escribe ___.', a: 'seventy', acc: ['seventy', 'SEVENTY'], k: 'cp_seventy' },
+  { q: 'El número 80 en inglés se escribe ___.', a: 'eighty', acc: ['eighty', 'EIGHTY'], k: 'cp_eighty' },
+  { q: 'El número 90 en inglés se escribe ___.', a: 'ninety', acc: ['ninety', 'NINETY'], k: 'cp_ninety' },
   { q: 'Los números del 13 al 19 llevan el sufijo ___.', a: '-teen', acc: ['-teen', 'teen', 'TEEN'], k: 'cp_teen' },
-  { q: 'Para preguntar la edad decimos: «How ___ are you?».', a: 'old', acc: ['old', 'OLD'], k: 'cp_how_old' },
-  { q: 'Para decir «tengo 10 años» escribo: «I ___ 10 years old».', a: 'am', acc: ['am', 'AM', "'m"], k: 'cp_i_am' },
-  { q: 'El número 20 en inglés se escribe ___.', a: 'twenty', acc: ['twenty', 'TWENTY'], k: 'cp_twenty' },
-  { q: 'El número 15 en inglés se escribe ___.', a: 'fifteen', acc: ['fifteen', 'FIFTEEN'], k: 'cp_fifteen' },
-  { q: 'Para decir «hay» en plural usamos «There ___».', a: 'are', acc: ['are', 'ARE'], k: 'cp_there_are' },
-  { q: 'El número 8 en inglés se escribe ___.', a: 'eight', acc: ['eight', 'EIGHT'], k: 'cp_eight' },
-  { q: 'La palabra inglesa «tree» en español significa ___.', a: 'arbol', acc: ['arbol', 'árbol'], k: 'cp_tree_trans' },
-  { q: 'El número 13 en inglés se escribe ___.', a: 'thirteen', acc: ['thirteen', 'THIRTEEN'], k: 'cp_thirteen' },
-  { q: 'En la frase «I am twelve years old», la palabra «old» significa literalmente ___.', a: 'viejo', acc: ['viejo', 'de edad', 'edad'], k: 'cp_old_meaning' },
-  { q: 'Cinco más cinco en inglés da como resultado ___.', a: 'ten', acc: ['ten', 'TEN'], k: 'cp_ten' }
+  { q: 'Las decenas como 30, 40 o 50 terminan en el sufijo ___.', a: '-ty', acc: ['-ty', 'ty', 'TY'], k: 'cp_ty' },
+  { q: 'En «I am twelve years old», la palabra «old» significa literalmente ___.', a: 'viejo', acc: ['viejo', 'de edad'], k: 'cp_old_meaning' },
+  { q: 'Para preguntar por una cantidad («¿cuántos?») se dice «How ___?».', a: 'many', acc: ['many', 'MANY'], k: 'cp_how_many' },
+  { q: 'La pregunta «How old are you?» sirve para saber la ___ de alguien.', a: 'edad', acc: ['edad', 'EDAD'], k: 'cp_edad' }
 ];
 
 const evalPRBank = [
-  { term: 'One', def: '1 (Uno)', k: 'pr_1' },
-  { term: 'Two', def: '2 (Dos)', k: 'pr_2' },
-  { term: 'Three', def: '3 (Tres)', k: 'pr_3' },
-  { term: 'Four', def: '4 (Cuatro)', k: 'pr_4' },
-  { term: 'Five', def: '5 (Cinco)', k: 'pr_5' },
-  { term: 'Six', def: '6 (Seis)', k: 'pr_6' },
-  { term: 'Seven', def: '7 (Siete)', k: 'pr_7' },
-  { term: 'Eight', def: '8 (Ocho)', k: 'pr_8' },
-  { term: 'Nine', def: '9 (Nueve)', k: 'pr_9' },
-  { term: 'Ten', def: '10 (Diez)', k: 'pr_10' },
-  { term: 'Eleven', def: '11 (Once)', k: 'pr_11' },
-  { term: 'Twelve', def: '12 (Doce)', k: 'pr_12' },
-  { term: 'Thirteen', def: '13 (Trece)', k: 'pr_13' },
-  { term: 'Fifteen', def: '15 (Quince)', k: 'pr_15' },
-  { term: 'Twenty', def: '20 (Veinte)', k: 'pr_20' }
+  { term: 'Cero', def: 'Zero', k: 'pr_0' },
+  { term: 'Tres', def: 'Three', k: 'pr_3' },
+  { term: 'Siete', def: 'Seven', k: 'pr_7' },
+  { term: 'Ocho', def: 'Eight', k: 'pr_8' },
+  { term: 'Nueve', def: 'Nine', k: 'pr_9' },
+  { term: 'Once', def: 'Eleven', k: 'pr_11' },
+  { term: 'Doce', def: 'Twelve', k: 'pr_12' },
+  { term: 'Trece', def: 'Thirteen', k: 'pr_13' },
+  { term: 'Quince', def: 'Fifteen', k: 'pr_15' },
+  { term: 'Dieciséis', def: 'Sixteen', k: 'pr_16' },
+  { term: 'Dieciocho', def: 'Eighteen', k: 'pr_18' },
+  { term: 'Veinte', def: 'Twenty', k: 'pr_20' },
+  { term: 'Treinta', def: 'Thirty', k: 'pr_30' },
+  { term: 'Cuarenta', def: 'Forty', k: 'pr_40' }
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -1320,17 +1333,17 @@ const critCicloQuestions = [
 ];
 
 const critCicloBank = [
-  { k: 'ci-kevin', txt: 'Kevin inscribe a su hermano Marvin en un campamento deportivo en Siguatepeque. Al llenar la ficha en inglés, el coordinador le pregunta la edad de Marvin (13 años) y cuántas pelotas traen (3 pelotas). Kevin se confunde con la pronunciación y dice "tree" en ambas.', p: 'Confundió «tree» (árbol) con «three» (3) y omitió el sufijo -teen para 13.', d: 'Para 13 años debe decir «He is thirteen years old» (con acento en -teen). Para 3 pelotas: «We have three balls» (con sonido /θ/).', a: 'Coordinador: «How old is Marvin? How many balls do you have?» — Kevin: «He is thirteen years old, and we have three balls. Thank you!»' },
-  { k: 'ci-lucia', txt: 'Lucía (11 años) y Denis (12 años) visitan una biblioteca bilingüe en Santa Rosa de Copán. La encargada les pide sus edades en inglés, pero Denis traduce literalmente diciendo "We have 11 and 12 years".', p: 'Usaron «have» (posesión en español) en vez del verbo «to be» para la edad en inglés.', d: 'En inglés la edad se formula con to be: Lucía es «I am eleven years old» y Denis es «I am twelve years old». Eleven y twelve son excepciones que no llevan -teen.', a: 'Encargada: «How old are you both?» — Lucía: «I am eleven years old.» — Denis: «And I am twelve years old. Nice to meet you!»' },
-  { k: 'ci-carmen', txt: 'Doña Carmen vende artesanías de barro en Valle de Ángeles. Una turista le pregunta en inglés el precio de 15 jarritos y cuántos años tiene su nieta Sofía que ayuda en el puesto (14 años). Carmen no recuerda si 15 se dice fiveteen y dice que Sofía "has fourteen years".', p: 'Dudas entre fiveteen vs fifteen, y uso de has en vez de is para la edad de la niña.', d: '15 se dice fifteen (raíz fif-). La edad de Sofía se expresa con is: «She is fourteen years old». Ambas palabras llevan acento en -teen.', a: 'Turista: «How many cups are there, and how old is the girl?» — Carmen: «There are fifteen cups, and she is fourteen years old.»' },
-  { k: 'ci-mateo', txt: 'El profesor de educación física pide a Mateo contar a los compañeros presentes en la cancha (20 alumnos) y confirmar si todos tienen entre 11 y 13 años.', p: 'Riesgo de confundir twenty con twenteen, y de no reconocer que 11 y 12 no llevan -teen mientras 13 sí.', d: '20 se dice twenty. Las edades son eleven (11), twelve (12) y thirteen (13). Para el grupo se usa «There are twenty students».', a: 'Profesor: «Mateo, how many students are here and how old are they?» — Mateo: «There are twenty students. They are eleven, twelve, and thirteen years old.»' },
-  { k: 'ci-elena', txt: 'En una fogata con scouts de Canadá en La Tigra, cada integrante debe decir su nombre, edad (Elena tiene 15) y cuántas carpas armaron (4 carpas). Elena duda entre for y four, y si usar have o am.', p: 'Duda ortográfica entre for (para) y four (cuatro), y confusión gramatical de la edad.', d: 'El número 4 se escribe «four». La edad requiere «I am fifteen years old». Para las carpas: «We have four tents».', a: 'Scout líder: «Please introduce yourself and your patrol.» — Elena: «Hello! I am Elena. I am fifteen years old, and we have four tents. Welcome!»' }
+  { k: 'ci-kevin', txt: 'Kevin inscribe a su hermano Marvin en un campamento deportivo en Siguatepeque. Al llenar la ficha en inglés, el coordinador le pregunta la edad de Marvin (13 años) y cuántas pelotas traen (3 pelotas). Kevin se confunde con la pronunciación y dice "tree" en ambas.', p: 'Confundió «tree» (árbol) con «three» (3) y omitió el sufijo -teen para 13.', d: 'Para 13 años debe decir «He is thirteen years old» (con acento en -teen). Para 3 pelotas: «We have three balls» (con sonido /θ/).', a: 'Coordinador: «How old is Marvin? How many balls do you have?» · Kevin: «He is thirteen years old, and we have three balls. Thank you!»' },
+  { k: 'ci-lucia', txt: 'Lucía (11 años) y Denis (12 años) visitan una biblioteca bilingüe en Santa Rosa de Copán. La encargada les pide sus edades en inglés, pero Denis traduce literalmente diciendo "We have 11 and 12 years".', p: 'Usaron «have» (posesión en español) en vez del verbo «to be» para la edad en inglés.', d: 'En inglés la edad se formula con to be: Lucía es «I am eleven years old» y Denis es «I am twelve years old». Eleven y twelve son excepciones que no llevan -teen.', a: 'Encargada: «How old are you both?» · Lucía: «I am eleven years old.» · Denis: «And I am twelve years old. Nice to meet you!»' },
+  { k: 'ci-carmen', txt: 'Doña Carmen vende artesanías de barro en Valle de Ángeles. Una turista le pregunta en inglés el precio de 15 jarritos y cuántos años tiene su nieta Sofía que ayuda en el puesto (14 años). Carmen no recuerda si 15 se dice fiveteen y dice que Sofía "has fourteen years".', p: 'Dudas entre fiveteen vs. fifteen, y uso de has en vez de is para la edad de la niña.', d: '15 se dice fifteen (raíz fif-). La edad de Sofía se expresa con is: «She is fourteen years old». Ambas palabras llevan acento en -teen.', a: 'Turista: «How many cups are there, and how old is the girl?» · Carmen: «There are fifteen cups, and she is fourteen years old.»' },
+  { k: 'ci-mateo', txt: 'El profesor de educación física pide a Mateo contar a los compañeros presentes en la cancha (20 alumnos) y confirmar si todos tienen entre 11 y 13 años.', p: 'Riesgo de confundir twenty con twenteen, y de no reconocer que 11 y 12 no llevan -teen mientras 13 sí.', d: '20 se dice twenty. Las edades son eleven (11), twelve (12) y thirteen (13). Para el grupo se usa «There are twenty students».', a: 'Profesor: «Mateo, how many students are here and how old are they?» · Mateo: «There are twenty students. They are eleven, twelve, and thirteen years old.»' },
+  { k: 'ci-elena', txt: 'En una fogata con scouts de Canadá en La Tigra, cada integrante debe decir su nombre, edad (Elena tiene 15) y cuántas carpas armaron (4 carpas). Elena duda entre for y four, y si usar have o am.', p: 'Duda ortográfica entre for (para) y four (cuatro), y confusión gramatical de la edad.', d: 'El número 4 se escribe «four». La edad requiere «I am fifteen years old». Para las carpas: «We have four tents».', a: 'Scout líder: «Please introduce yourself and your patrol.» · Elena: «Hello! I am Elena. I am fifteen years old, and we have four tents. Welcome!»' }
 ];
 
 const critCompareBank = [
-  { k: 'cm-teen-ty', a: 'Números adolescentes del 13 al 19 (thirteen, fourteen, etc.).', b: 'Decenas exactas como 30, 40, etc. (thirty, forty, etc.).', ga: 'Sufijo -teen con acento prosódico fuerte al final (thir-TEEN).', gb: 'Sufijo -ty con acento prosódico en la primera sílaba (THIR-ty).', gr: 'Semejanza: ambos grupos se forman a partir de las raíces de los números básicos. Diferencia: el sufijo (-teen vs -ty) y la posición del acento prosódico, lo cual cambia radicalmente la cantidad expresada.' },
+  { k: 'cm-teen-ty', a: 'Números adolescentes del 13 al 19 (thirteen, fourteen, etc.).', b: 'Decenas exactas como 30, 40, etc. (thirty, forty, etc.).', ga: 'Sufijo -teen con acento prosódico fuerte al final (thir-TEEN).', gb: 'Sufijo -ty con acento prosódico en la primera sílaba (THIR-ty).', gr: 'Semejanza: ambos grupos se forman a partir de las raíces de los números básicos. Diferencia: el sufijo (-teen vs. -ty) y la posición del acento prosódico, lo cual cambia radicalmente la cantidad expresada.' },
   { k: 'cm-edad-esp-eng', a: 'Expresar la edad en español: «Tengo 12 años».', b: 'Expresar la edad en inglés: «I am 12 years old».', ga: 'Uso del verbo poseer/tener (la edad se concibe como posesión que se acumula).', gb: 'Uso del verbo ser/estar (to be), concibiendo la edad como un estado del ser humano.', gr: 'Semejanza: ambas frases comunican la misma información cronológica sobre la persona. Diferencia: la estructura mental y gramatical; en inglés es un error grave traducir «I have 12 years».' },
-  { k: 'cm-three-tree', a: 'La palabra «three» (número 3).', b: 'La palabra «tree» (árbol).', ga: 'Pronunciación con sonido fricativo interdental sordo /θ/ (lengua entre los dientes).', gb: 'Pronunciación oclusiva alveolar /t/ (la lengua toca el paladar superior).', gr: 'Semejanza: se escriben casi igual y para un hispanohablante suenan parecidas si no se entrena el oído. Diferencia: el fonema inicial /θ/ vs /t/ y el significado totalmente diferente (una cantidad vs una planta).' },
+  { k: 'cm-three-tree', a: 'La palabra «three» (número 3).', b: 'La palabra «tree» (árbol).', ga: 'Pronunciación con sonido fricativo interdental sordo /θ/ (lengua entre los dientes).', gb: 'Pronunciación oclusiva alveolar /t/ (la lengua toca el paladar superior).', gr: 'Semejanza: se escriben casi igual y para un hispanohablante suenan parecidas si no se entrena el oído. Diferencia: el fonema inicial /θ/ vs. /t/ y el significado totalmente diferente (una cantidad vs. una planta).' },
   { k: 'cm-irr-reg', a: 'Los números 11 (eleven) y 12 (twelve).', b: 'Los números del 13 al 19 (thirteen al nineteen).', ga: 'Formas irregulares de origen germánico antiguo que no usan sufijo.', gb: 'Formas regulares que combinan la raíz numérica con el sufijo -teen.', gr: 'Semejanza: todos son números intermedios entre 10 y 20 indispensables para contar y dar edades. Diferencia: eleven y twelve tienen nombres propios únicos y no se dice «oneteen» ni «twoteen».' }
 ];
 
@@ -1342,7 +1355,7 @@ const critDesignBank = [
   'Participas en una videollamada con un colegio de Canadá para intercambiar información sobre cuántos años tienen y cuántos miembros hay en tu familia.'
 ];
 
-const critDesignGuide = 'Rúbrica de 3 criterios (total 20 pts): ① PREGUNTA Y RESPUESTA DE EDAD (7 pts): fórmula correcta con «How old are you?» y respuesta con «I am [número] years old» sin usar «have». ② PRECISIÓN NUMÉRICA (7 pts): escritura y uso correcto de números del 1 al 20, cuidando excepciones (eleven, twelve, fifteen, three vs tree). ③ FLUIDEZ Y COHERENCIA (6 pts): diálogo completo de al menos 6 líneas con saludo, intercambio de datos y despedida cortés.';
+const critDesignGuide = 'Rúbrica de 3 criterios (total 20 pts): ① PREGUNTA Y RESPUESTA DE EDAD (7 pts): fórmula correcta con «How old are you?» y respuesta con «I am [número] years old» sin usar «have». ② PRECISIÓN NUMÉRICA (7 pts): escritura y uso correcto de números del 1 al 20, cuidando excepciones (eleven, twelve, fifteen, three vs. tree). ③ FLUIDEZ Y COHERENCIA (6 pts): diálogo completo de al menos 6 líneas con saludo, intercambio de datos y despedida cortés.';
 
 function genEvalCrit(){
   sfx('click');

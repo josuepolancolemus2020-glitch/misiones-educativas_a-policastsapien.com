@@ -363,7 +363,7 @@
     pintar: pintar,
     texto: function (n) { return TEXTOS[n]; },
     boton: function (n) {
-      return ['✏️ ¿Qué se subraya?', '👥 ¿Y en parejas?', '✍️ Escribir «Primero»', '✍️ Escribir «Después»', '🏷️ ¿Qué son?', '↺ Empezar otra vez'][n];
+      return ['✏️ ¿Qué se subraya?', '👥 ¿Y en parejas?', '✍️ Poner «Primero»', '✍️ Poner «Después»', '🏷️ ¿Qué son?', '↺ Empezar otra vez'][n];
     },
     atajo: function () { return null; },
     marcador: marcador

@@ -477,7 +477,7 @@
   /* Los rótulos del botón caben en un renglón en un teléfono de 360 px con
      la letra grande. */
   var BOTONES = {
-    es: ['💧 Llega el martes', '📡 Ponerle un sensor', '▶️ Encender la bomba', '🔍 ¿Qué cambió?', '📝 Tu turno', '↺ Empezar otra vez'],
+    es: ['💧 Llega el martes', '📡 Ponerle un sensor', '▶️ Prender la bomba', '🔍 ¿Qué cambió?', '📝 Tu turno', '↺ Empezar otra vez'],
     en: ['💧 Tuesday comes', '📡 Give it a sensor', '▶️ Turn the pump on', '🔍 What changed?', '📝 Your turn', '↺ Start over']
   };
   var MARCADOR = {

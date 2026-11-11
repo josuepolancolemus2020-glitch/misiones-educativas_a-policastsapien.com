@@ -251,7 +251,17 @@ const GRUPOS = [['6', '1'], ['2', '2'], ['3', '1'], ['5', '1'], ['1', '2'], ['4'
       if (cs.position === 'fixed') return;
       const r = el.getBoundingClientRect();
       const nom = el.tagName.toLowerCase() + '.' + String(el.className).trim().split(/\s+/).slice(0, 2).join('.');
-      if (r.width > 0 && r.right > W + 1) fuera.push({ nom, right: Math.round(r.right) });
+      /* Lo que va dentro de una caja que se desliza de lado (la tabla de
+         Notas SACE, en su .ad-mx-wrap con overflow-x:auto) no se sale de la
+         pantalla: se desliza dentro de ella, con la columna de nombres
+         pegada, y el documento sigue midiendo lo que mide el teléfono. Lo
+         que sí cuenta es que esa caja quepa. */
+      let enDeslizador = false;
+      for (let n = el.parentElement; n && n !== raiz; n = n.parentElement) {
+        const ox = getComputedStyle(n).overflowX;
+        if ((ox === 'auto' || ox === 'scroll') && n.getBoundingClientRect().right <= W + 1) { enDeslizador = true; break; }
+      }
+      if (r.width > 0 && r.right > W + 1 && !enDeslizador) fuera.push({ nom, right: Math.round(r.right) });
       const hx = cs.overflowX === 'hidden' || cs.overflow === 'hidden';
       const hy = cs.overflowY === 'hidden' || cs.overflow === 'hidden';
       if (hx && el.scrollWidth > el.clientWidth + 1) recorta.push({ nom, sw: el.scrollWidth, cw: el.clientWidth });

@@ -59,7 +59,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 
 /* HERO */
 .hero{position:relative;z-index:10;padding:0.6rem 1.2rem 0.8rem;background:linear-gradient(90deg,#155e75 0%,#0e7490 55%,#c2410c 100%);color:white;overflow:hidden;}
-.hero::before{content:'HELLO · HI · GOOD MORNING · GOOD AFTERNOON · GOOD EVENING · WHAT’S YOUR NAME? · NICE TO MEET YOU · HOW ARE YOU? · THANK YOU · GOODBYE · SEE YOU TOMORROW';position:absolute;top:0;left:-10%;width:120%;height:100%;font-family:'Fredoka',sans-serif;font-size:0.9rem;font-weight:600;letter-spacing:0.06em;color:rgba(255,255,255,0.15);white-space:nowrap;overflow:hidden;display:flex;align-items:center;animation:drift 28s linear infinite;pointer-events:none;}
+.hero::before{content:'ONE · TWO · THREE · ELEVEN · TWELVE · THIRTEEN · THIRTY · FIFTEEN · FIFTY · TWENTY · ONE HUNDRED · HOW OLD ARE YOU? · I AM TWELVE YEARS OLD';position:absolute;top:0;left:-10%;width:120%;height:100%;font-family:'Fredoka',sans-serif;font-size:0.9rem;font-weight:600;letter-spacing:0.06em;color:rgba(255,255,255,0.15);white-space:nowrap;overflow:hidden;display:flex;align-items:center;animation:drift 28s linear infinite;pointer-events:none;}
 @keyframes drift{0%{transform:translateX(0)}100%{transform:translateX(-30%)}}
 .hero::after{display:none;}
 .hero-inner{display:flex;align-items:center;justify-content:center;gap:0.6rem;}
