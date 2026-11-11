@@ -5378,6 +5378,14 @@ body.ad-gr-moviendo { cursor: grabbing; user-select: none; -webkit-user-select: 
   color: var(--brand, #1e3a7c); margin-bottom: 2px;
 }
 :root[data-theme="dark"] .ad-ver-badge { color: #93c5fd; }
+/* La copia que trae notas del autocompletado de v479 se dice con palabras y
+   con ⚠️, no solo con el color. */
+.ad-ver-badge-alerta { color: #9a3412; }
+:root[data-theme="dark"] .ad-ver-badge-alerta { color: #fdba74; }
+/* La revisión de notas puestas solas: cada casilla es un blanco de 44 px */
+.ad-cam-tbl { max-height: 52vh; overflow: auto; }
+.ad-cam-chk { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; cursor: pointer; }
+.ad-cam-chk input { width: 20px; height: 20px; }
 .ad-ver-item-tit {
   font-size: calc(13px * var(--metas-fz, 1)); font-weight: 800; color: var(--text);
 }

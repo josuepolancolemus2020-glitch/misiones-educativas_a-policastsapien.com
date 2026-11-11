@@ -835,7 +835,6 @@ function renderAdmin(forzar = false) {
   const savedState = adCaptureState();
   const st = adState();
   let d = st.grupos.find(g => g.id === st.activo) || st.grupos[0];
-  d = adAutoAsegurarParcialesI_III(d, null);
   /* recordar dónde está el docente para restaurarlo al recargar */
   if (window.metasSaveNav) window.metasSaveNav({
     view: 'view-admin',
@@ -1053,11 +1052,12 @@ function adRenderLista(body, d) {
       <div class="pa-card-title">☁️ Nube del chatbot de padres y recuperación</div>
       <p class="pa-optional-hint">La asistencia, las notas finales y las colaboraciones suben con la
         <strong>clave de familia</strong> de cada alumno para que el asistente les responda a los padres.
-        Si cambiaste de equipo o necesitas rescatar tus notas, personalidad y días perdidos (I–III), usa los botones de recuperación e historial.</p>
+        Si cambiaste de equipo y te faltan notas que ya habías escrito, «Copiar notas de mis respaldos» te enseña cuáles encontró antes de copiar nada.</p>
       <div class="ad-btn-row">
         <button class="pa-generate-btn ad-btn-sec" id="ad-sb-sync" type="button">☁️ Sincronizar ahora</button>
-        <button class="pa-generate-btn ad-rec-btn-main" id="ad-lista-recuperar" type="button">📥 Recuperar notas, personalidad y días perdidos (I–III)</button>
+        <button class="pa-generate-btn ad-rec-btn-main" id="ad-lista-recuperar" type="button">📥 Copiar notas de mis respaldos</button>
         <button class="pa-generate-btn ad-btn-sec" id="ad-lista-versiones" type="button">🕓 Verificar historial de versiones</button>
+        ${adVersionTieneAutocompletado(d) ? '<button class="pa-generate-btn ad-btn-sec" id="ad-lista-revisar-solas" type="button">🔎 Revisar notas que la aplicación puso sola</button>' : ''}
       </div>
       <p class="pa-optional-hint" id="ad-sb-status" style="margin-top:8px"></p>
     </div>
@@ -1163,6 +1163,7 @@ function adRenderLista(body, d) {
   document.getElementById('ad-expediente').addEventListener('click', () => adPrintExpediente(adState()));
   document.getElementById('ad-sb-sync').addEventListener('click', () => adSincronizarNube(true));
   document.getElementById('ad-lista-recuperar')?.addEventListener('click', e => adRecuperarNotasNube(e.currentTarget, () => renderAdmin()));
+  document.getElementById('ad-lista-revisar-solas')?.addEventListener('click', e => adRevisarNotasPuestasSolas(e.currentTarget, () => renderAdmin()));
   document.getElementById('ad-lista-versiones')?.addEventListener('click', () => adAbrirHistorialVersionesModal(() => renderAdmin()));
   document.getElementById('ad-cerrar-anio').addEventListener('click', adCerrarAnio);
   body.querySelectorAll('.ad-undo-btn').forEach(b =>
@@ -5412,20 +5413,53 @@ async function adRecolectarVersionesHistorial(dActual) {
   return versiones;
 }
 
-/* Reconstrucción SÍNCRONA e instantánea de los Parciales I, II y III:
-   · Aprovechamiento (todas las materias de la boleta en I, II y III)
-   · Personalidad (los 5 rasgos en I, II y III)
-   · Días faltados / Inasistencias (contados de Asistencia + respaldos en I, II y III)
-   Repara también las notas del Parcial III que hayan quedado incompletas (<=4 materias)
-   o distorsionadas por pruebas operativas al haber usado «Sugerir notas». */
+/* ⚠️ Lo que fue el «autocompletado de los Parciales I–III» (v479, publicado
+   el 10 de noviembre de 2026 a la 1:39 de Honduras):
+
+   corría SOLO cada vez que se abría Mi aula o la boleta, y donde no
+   encontraba nota la INVENTABA (84 de base, nunca menos de 72, la letra
+   S/MB/B en Personalidad, «reparaba» las notas bajas del III Parcial) y la
+   subía a la nube de las familias. Una nota que el maestro no puso no puede
+   aparecer en una boleta.
+
+   Lo que queda es un botón que el maestro pulsa, con vista previa y
+   confirmación, que SOLO copia notas que ya existían en otro respaldo de
+   este mismo grupo y SOLO en celdas vacías. Nunca escribe un valor que no
+   haya escrito antes el maestro. La sonda _dev/verifica-notas-sin-pedir.js
+   falla si algo vuelve a escribir notas al pintar Mi aula.
+
+   Los grupos que pasaron por el autocompletado quedaron con la marca
+   d.boleta.autoRecI_III_v479 = 1; adRevisarNotasPuestasSolas() los compara
+   con la copia de antes y deja que el maestro decida qué borrar. */
+const AD_V479_DESDE = '2026-11-10T07:39:00Z';   // 1:39 en Honduras (UTC−6)
+
+/* ¿Esta copia ya traía notas inventadas? Si la marca está, sus notas no
+   sirven de fuente: se copiaría lo inventado como si fuera del maestro. */
+function adVersionTieneAutocompletado(g) {
+  return !!(g && g.boleta && g.boleta.autoRecI_III_v479);
+}
+
+/* Copia SOLO a celdas vacías las notas, la personalidad, las inasistencias
+   y los días de asistencia que ya existían en otros respaldos del grupo
+   (copias de deshacer, respaldo antes de sincronizar, base común entre
+   equipos, historial de la nube, filas que ven las familias). No inventa,
+   no promedia, no «repara»: si ninguna copia tiene el dato, la celda se
+   queda vacía. Devuelve la lista de cambios para que el maestro la vea
+   antes de aceptar; no guarda nada. */
 function adReconstruirParcialesI_IIISincrono(dActual, opcionesNube) {
   const opts = opcionesNube || {};
-  const versiones = Array.isArray(opts.versiones)
+  const todas = Array.isArray(opts.versiones)
     ? opts.versiones
     : adRecolectarVersionesLocales(dActual).versiones;
   const filasAdminNube = Array.isArray(opts.filasAdminNube) ? opts.filasAdminNube : [];
-  const filasPlanNube = Array.isArray(opts.filasPlanNube) ? opts.filasPlanNube : [];
   const nombresPorCodigoNube = opts.nombresPorCodigoNube || {};
+
+  const omitidas = { versiones: 0, filasNube: 0 };
+  const versiones = todas.filter(v => {
+    if (!v || !v.grupo || v.esReconstruccion) return false;
+    if (adVersionTieneAutocompletado(v.grupo)) { omitidas.versiones++; return false; }
+    return true;
+  });
 
   const dRec = JSON.parse(JSON.stringify(dActual));
   adNormGrupo(dRec);
@@ -5440,9 +5474,7 @@ function adReconstruirParcialesI_IIISincrono(dActual, opcionesNube) {
     if (sub && typeof sub === 'object') {
       Object.keys(sub).forEach(num => {
         const c = String(sub[num] || '').trim().toUpperCase();
-        if (c && !codesPorNumHistorico[+num]) {
-          codesPorNumHistorico[+num] = c;
-        }
+        if (c && !codesPorNumHistorico[+num]) codesPorNumHistorico[+num] = c;
       });
     }
   };
@@ -5457,7 +5489,7 @@ function adReconstruirParcialesI_IIISincrono(dActual, opcionesNube) {
     }
   });
 
-  /* Mapa maestro de identidad hacia los números actuales en dRec.lista */
+  /* Mapa de identidad hacia los números actuales de la lista */
   const mapaBase = adConstruirMapaAlumnos(dRec, null, codesPorNumHistorico);
   Object.keys(nombresPorCodigoNube).forEach(cod => {
     if (!mapaBase.deCod[cod]) {
@@ -5465,133 +5497,91 @@ function adReconstruirParcialesI_IIISincrono(dActual, opcionesNube) {
       if (nDest) mapaBase.deCod[cod] = nDest;
     }
   });
-  versiones.forEach(v => {
-    const mVer = adConstruirMapaAlumnos(dRec, v.grupo.lista, v.codesGrupo);
-    Object.keys(mVer.deCod).forEach(c => {
-      if (!mapaBase.deCod[c]) mapaBase.deCod[c] = mVer.deCod[c];
-    });
-    if (v.codesGrupo) {
-      Object.keys(v.codesGrupo).forEach(oldN => {
-        const c = String(v.codesGrupo[oldN] || '').trim().toUpperCase();
-        if (c && !mapaBase.deCod[c] && mVer.deNum[+oldN]) {
-          mapaBase.deCod[c] = mVer.deNum[+oldN];
-        }
-      });
-    }
-  });
 
-  const contadores = {
-    notasRecuperadas: 0,
-    persRecuperadas: 0,
-    inasisRecuperadas: 0,
-    diasAsisRecuperados: 0,
-    evalsPlanEnriquecidas: 0
+  const contadores = { notasRecuperadas: 0, persRecuperadas: 0, inasisRecuperadas: 0, diasAsisRecuperados: 0 };
+  const cambios = [];
+  const nombreDe = num => {
+    const al = (dRec.lista || []).find(x => +x.num === +num);
+    return al ? (al.nombre || '') : '';
   };
 
-  /* Detectar alumnos que en el Parcial III actual solo tienen <= 4 materias llenas
-     (huella exacta de haber pulsado «Sugerir notas» cuando faltaban materias) o notas < 70 */
-  const celdasSugeridasIncompletasP3 = new Set();
-  (dRec.lista || []).forEach(al => {
-    const matsConNotaP3 = mats.filter(m => {
-      const v = (((dRec.notas['III'] || {})[m]) || {})[al.num];
-      return v !== '' && v != null;
-    });
-    if (matsConNotaP3.length > 0 && matsConNotaP3.length <= 4) {
-      matsConNotaP3.forEach(m => celdasSugeridasIncompletasP3.add(m + '|' + al.num));
-    }
-    mats.forEach(m => {
-      const vNum = Number((((dRec.notas['III'] || {})[m]) || {})[al.num]);
-      if (vNum > 0 && vNum < 70) {
-        celdasSugeridasIncompletasP3.add(m + '|' + al.num);
-      }
-    });
-  });
-
-  const ponerValorCelda = (parcial, campo, num, valor, sobrescribirSiSugeridaP3) => {
+  /* Solo celdas VACÍAS: lo que el maestro ya escribió no se toca nunca. */
+  const ponerValorCelda = (parcial, campo, num, valor, fuente) => {
     if (!['I', 'II', 'III', 'IV'].includes(parcial) || !campo || !num) return false;
     if (valor === '' || valor == null) return false;
     dRec.notas[parcial] = dRec.notas[parcial] || {};
     dRec.notas[parcial][campo] = dRec.notas[parcial][campo] || {};
     const actual = dRec.notas[parcial][campo][num];
-    const llaveP3 = campo + '|' + num;
-    const puedePisar = (actual === '' || actual == null) ||
-      (parcial === 'III' && sobrescribirSiSugeridaP3 && celdasSugeridasIncompletasP3.has(llaveP3) &&
-       (Number(actual) < 70 || Number(valor) >= Number(actual)));
-    if (!puedePisar) return false;
-    if (String(actual) === String(valor)) return false;
+    if (actual !== '' && actual != null) return false;
     dRec.notas[parcial][campo][num] = valor;
-    if (parcial === 'III' && Number(valor) >= 70) celdasSugeridasIncompletasP3.delete(llaveP3);
     if (AD_PERSONALIDAD.includes(campo)) contadores.persRecuperadas++;
     else if (campo === 'Inasistencias') contadores.inasisRecuperadas++;
     else contadores.notasRecuperadas++;
+    cambios.push({ parcial, campo, num: +num, nombre: nombreDe(num), valor, fuente });
     return true;
   };
 
-  /* 1) Fusionar desde versiones históricas (ordenadas por mayor riqueza de datos en P-I..III) */
+  /* Un día de asistencia solo se copia si aquí no existe: si el día ya
+     está, el maestro ya pasó lista y lo que dice manda. */
+  const ponerDiaAsistencia = (fecha, aus, fuente) => {
+    if (!fecha || !aus || !Object.keys(aus).length) return;
+    if (dRec.asistencia.some(x => x && x.f === fecha)) return;
+    dRec.asistencia.push({ f: fecha, aus });
+    contadores.diasAsisRecuperados++;
+    cambios.push({ parcial: '', campo: 'Asistencia', num: 0, nombre: '', valor: fecha + ' · ' + Object.keys(aus).length + ' ausente(s)', fuente });
+  };
+
+  /* 1) Respaldos, del más completo al menos completo */
   const versionesOrdenadas = versiones.slice().sort((a, b) => b.stats.puntajeI_III - a.stats.puntajeI_III);
   versionesOrdenadas.forEach(ver => {
     const g = ver.grupo;
-    if (!g) return;
     const mVer = adConstruirMapaAlumnos(dRec, g.lista, ver.codesGrupo);
+    const fuente = ver.origen + (ver.fecha ? ' · ' + String(ver.fecha).slice(0, 10) : '');
 
-    /* Asistencia del respaldo */
     (g.asistencia || []).forEach(r => {
       if (!r || !r.f || !r.aus) return;
-      let reg = dRec.asistencia.find(x => x && x.f === r.f);
-      if (!reg) {
-        reg = { f: r.f, aus: {} };
-        dRec.asistencia.push(reg);
-        contadores.diasAsisRecuperados++;
-      }
-      reg.aus = reg.aus || {};
+      const aus = {};
       Object.keys(r.aus).forEach(oldN => {
         const nDest = mVer.resolverAlumno(oldN, ver.codesGrupo && ver.codesGrupo[oldN], '');
-        if (nDest && !reg.aus[nDest]) reg.aus[nDest] = r.aus[oldN];
+        if (nDest) aus[nDest] = r.aus[oldN];
       });
+      ponerDiaAsistencia(r.f, aus, fuente);
     });
 
-    /* Notas, personalidad e inasistencias del respaldo */
     ['I', 'II', 'III', 'IV'].forEach(p => {
       const np = (g.notas && g.notas[p]) || {};
       Object.keys(np).forEach(campoOrig => {
         const infoCampo = adResolverCampoDesdeSlug(campoOrig, mats);
         const campo = infoCampo ? infoCampo.campo : campoOrig;
         const obj = np[campoOrig] || {};
-        const verTieneP3Completo = ver.stats.pIII > (dRec.lista.length * 4);
         Object.keys(obj).forEach(oldN => {
           const val = obj[oldN];
           if (val === '' || val == null) return;
           const alOrig = (g.lista || []).find(x => +x.num === +oldN);
           const nDest = mVer.resolverAlumno(oldN, ver.codesGrupo && ver.codesGrupo[oldN], alOrig && alOrig.nombre);
-          if (nDest) {
-            ponerValorCelda(p, campo, nDest, val, verTieneP3Completo);
-          }
+          if (nDest) ponerValorCelda(p, campo, nDest, val, fuente);
         });
       });
     });
   });
 
-  /* 2) Fusionar desde las filas de la nube de padres (registro_admin y registro_admin_historial) */
+  /* 2) Filas que ven las familias. Las que subieron desde el 10 de
+     noviembre pueden ser del autocompletado: no sirven de fuente. */
+  const diasNube = {};
   filasAdminNube.forEach(f => {
     if (!f || typeof f !== 'object') return;
     if (!adMismoGrupoFlexible(f, dRec) && f.grado && dRec.grado) return;
+    if (f.tipo === 'nota_final' && String(f.actualizado_en || '') >= AD_V479_DESDE) { omitidas.filasNube++; return; }
     const cod = String(f.codigo || '').trim().toUpperCase();
     const numPref = (cod.match(/^(\d+)/) || [])[1];
     const nDest = mapaBase.resolverAlumno(numPref, cod, nombresPorCodigoNube[cod] || '');
     if (!nDest) return;
+    const fuente = f._esHistorial ? '☁️ Historial de la nube de familias' : '☁️ Nube de familias';
 
     if (f.tipo === 'asistencia' && f.fecha && (f.estado === 'ausente' || f.estado === 'excusa')) {
       const fIso = String(f.fecha).slice(0, 10);
-      let reg = dRec.asistencia.find(x => x && x.f === fIso);
-      if (!reg) {
-        reg = { f: fIso, aus: {} };
-        dRec.asistencia.push(reg);
-        contadores.diasAsisRecuperados++;
-      }
-      reg.aus = reg.aus || {};
-      if (!reg.aus[nDest]) {
-        reg.aus[nDest] = f.estado === 'excusa' ? 'E' : 'A';
-      }
+      diasNube[fIso] = diasNube[fIso] || {};
+      if (!diasNube[fIso][nDest]) diasNube[fIso][nDest] = f.estado === 'excusa' ? 'E' : 'A';
       return;
     }
 
@@ -5610,340 +5600,31 @@ function adReconstruirParcialesI_IIISincrono(dActual, opcionesNube) {
       if (!infoCampo) return;
       if (infoCampo.tipo === 'pers') {
         const letra = String(f.estado || '').trim().toUpperCase();
-        if (letra) ponerValorCelda(p, infoCampo.campo, nDest, letra, false);
+        if (letra) ponerValorCelda(p, infoCampo.campo, nDest, letra, fuente);
       } else if (infoCampo.tipo === 'inasis') {
         if (f.nota != null && f.nota !== '' && !isNaN(Number(f.nota))) {
-          ponerValorCelda(p, 'Inasistencias', nDest, Math.max(0, Math.round(Number(f.nota))), false);
+          ponerValorCelda(p, 'Inasistencias', nDest, Math.max(0, Math.round(Number(f.nota))), fuente);
         }
-      } else {
-        if (f.nota != null && f.nota !== '' && !isNaN(Number(f.nota))) {
-          const vNum = Math.round(Number(f.nota));
-          if (vNum >= 1 && vNum <= 100) {
-            ponerValorCelda(p, infoCampo.campo, nDest, vNum, true);
-          }
-        }
+      } else if (f.nota != null && f.nota !== '' && !isNaN(Number(f.nota))) {
+        const vNum = Math.round(Number(f.nota));
+        if (vNum >= 1 && vNum <= 100) ponerValorCelda(p, infoCampo.campo, nDest, vNum, fuente);
       }
     }
   });
+  Object.keys(diasNube).forEach(fIso => ponerDiaAsistencia(fIso, diasNube[fIso], '☁️ Nube de familias'));
 
   dRec.asistencia.sort((a, b) => String(a.f || '').localeCompare(String(b.f || '')));
 
-  /* 3) Integrar evaluaciones del Plan de Acción (locales + nube) y enriquecer materias */
-  let planObj = { analisis: [] };
-  try {
-    planObj = (typeof paLoadData === 'function') ? paLoadData()
-      : (adParseJsonSeguro(localStorage.getItem('METAS_PLANACCION_V1')) || { analisis: [] });
-  } catch (_) {}
-  if (!Array.isArray(planObj.analisis)) planObj.analisis = [];
-
-  if (filasPlanNube.length) {
-    const porEv = new Map();
-    filasPlanNube.forEach(rp => {
-      if (!rp || !rp.evaluacion) return;
-      const k = [String(rp.evaluacion).trim().toLowerCase(), String(rp.parcial || '').trim(), String(rp.grado || '').replace(/\D/g, ''), String(rp.seccion || '').trim().toLowerCase()].join('||');
-      if (!porEv.has(k)) porEv.set(k, []);
-      porEv.get(k).push(rp);
-    });
-    porEv.forEach(rows => {
-      const f0 = rows[0];
-      const evTxt = String(f0.evaluacion || '').trim();
-      const pTxt = String(f0.parcial || '').trim();
-      let ana = planObj.analisis.find(a =>
-        a && String(a.evaluacion || '').trim().toLowerCase() === evTxt.toLowerCase() &&
-        String(a.parcial || '').trim() === pTxt &&
-        adMismoGrupoFlexible(a, dRec)
-      );
-      if (!ana) {
-        ana = {
-          id: 'A' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
-          t: String(f0.creado_en || f0.fecha || new Date().toISOString()),
-          grado: f0.grado || dRec.grado,
-          seccion: f0.seccion || dRec.seccion,
-          grupoId: dRec.id,
-          docente: f0.docente || '',
-          materia: '',
-          misionId: null,
-          evaluacion: evTxt,
-          forma: '',
-          tipoEval: /operativa/i.test(evTxt) ? 'operativa' : 'conceptual',
-          parcial: pTxt,
-          fechaPrueba: String(f0.fecha || '').slice(0, 10),
-          students: []
-        };
-        planObj.analisis.push(ana);
-        contadores.evalsPlanEnriquecidas++;
-      }
-      rows.forEach(r => {
-        const cod = String(r.codigo || '').trim().toUpperCase();
-        const numPref = (cod.match(/^(\d+)/) || [])[1];
-        const nDest = mapaBase.resolverAlumno(numPref, cod, r.alumno) || (+numPref || 0);
-        if (!nDest) return;
-        const esNsp = String(r.categoria || '').toUpperCase() === 'NSP';
-        const notaVal = esNsp ? 'NSP' : (r.nota != null && r.nota !== '' && !isNaN(Number(r.nota))
-          ? Math.round((Number(r.nota) / ((r.base && r.base > 0) ? r.base : 100)) * 100) : 0);
-        const yaSt = (ana.students || []).find(s => +s.num === +nDest || String(s.sb || '').indexOf(cod + '|') === 0);
-        if (!yaSt) {
-          ana.students.push({
-            num: nDest,
-            nombre: String(r.alumno || '').trim() || ('#' + nDest),
-            nota: notaVal,
-            categoria: String(r.categoria || ''),
-            sugerencia: '',
-            msg: String(r.mensaje || ''),
-            msgEdit: false,
-            env: 0,
-            sb: cod ? (cod + '|' + evTxt) : ''
-          });
-        }
-      });
-    });
-  }
-
-  let planModificado = false;
-  planObj.analisis.forEach(a => {
-    if (!a) return;
-    if (!a.materia && typeof paMateriaDe === 'function') {
-      const mKey = paMateriaDe(a);
-      if (mKey) {
-        a.materia = mKey;
-        planModificado = true;
-        contadores.evalsPlanEnriquecidas++;
-      }
-    }
-  });
-  if (planModificado || contadores.evalsPlanEnriquecidas > 0) {
-    try {
-      if (typeof paSaveData === 'function') paSaveData(planObj);
-      else localStorage.setItem('METAS_PLANACCION_V1', JSON.stringify(planObj));
-    } catch (_) {}
-  }
-
-  const rangos = adRangosParcialesDefecto(dRec);
-  dRec.boleta = dRec.boleta || adBoletaDef();
-  dRec.boleta.parcialFechas = dRec.boleta.parcialFechas || {};
-
-  /* 4) Completar APROVECHAMIENTO (todas las materias) hasta el III Parcial (I, II y III)
-        combinando las evaluaciones del Plan de Acción (separando conceptuales de prácticas
-        operativas bajas) y la trayectoria del alumno en los parciales I y II */
-  const offsetsPorMat = [0, 1, 3, -1, 1, 0, 4, 2];
-  ['I', 'II', 'III'].forEach(p => {
-    const porMatAlumno = {};
-    (planObj.analisis || []).forEach(a => {
-      if (!a || !Array.isArray(a.students)) return;
-      if (adParcialDeEvalFlexible(a, rangos) !== p) return;
-      if (!adMismoGrupoFlexible(a, dRec)) return;
-      const matNom = adSugMateriaNom(a);
-      const col = adSugColumna(matNom, mats);
-      if (!col) return;
-      const esOperativa = a.tipoEval === 'operativa' || /operativa/i.test(String(a.evaluacion || ''));
-      porMatAlumno[col] = porMatAlumno[col] || {};
-      a.students.forEach(s => {
-        if (!s || typeof s.nota !== 'number' || !isFinite(s.nota)) return;
-        const codSb = String(s.sb || '').split('|')[0];
-        const nDest = mapaBase.resolverAlumno(s.num, codSb, s.nombre) || s.num;
-        if (!nDest) return;
-        const reg = porMatAlumno[col][nDest] = porMatAlumno[col][nDest] || { conc: [], oper: [], todas: [] };
-        reg.todas.push(s.nota);
-        if (esOperativa) reg.oper.push(s.nota);
-        else reg.conc.push(s.nota);
-      });
-    });
-
-    /* Primero calcular la base de rendimiento aprobado de cada alumno (en I, II y III) */
-    const baseAprobPorAlumno = {};
-    (dRec.lista || []).forEach(al => {
-      const notasAprob = [];
-      const notasTodas = [];
-      ['I', 'II', 'III'].forEach(px => {
-        mats.forEach(mx => {
-          const v = Number((((dRec.notas[px] || {})[mx]) || {})[al.num]) || 0;
-          if (v > 0) {
-            notasTodas.push(v);
-            if (v >= 70) notasAprob.push(v);
-          }
-        });
-      });
-      if (notasAprob.length) {
-        baseAprobPorAlumno[al.num] = Math.round(notasAprob.reduce((t, x) => t + x, 0) / notasAprob.length);
-      } else if (notasTodas.length) {
-        const promRaw = Math.round(notasTodas.reduce((t, x) => t + x, 0) / notasTodas.length);
-        baseAprobPorAlumno[al.num] = Math.max(75, Math.min(92, promRaw + 28));
-      } else {
-        baseAprobPorAlumno[al.num] = 84;
-      }
-    });
-
-    mats.forEach((col, colIdx) => {
-      (dRec.lista || []).forEach(al => {
-        const reg = (porMatAlumno[col] || {})[al.num];
-        const actual = (((dRec.notas[p] || {})[col]) || {})[al.num];
-        const nI  = Number((((dRec.notas['I']  || {})[col]) || {})[al.num]) || 0;
-        const nII = Number((((dRec.notas['II'] || {})[col]) || {})[al.num]) || 0;
-        const llaveP3 = col + '|' + al.num;
-
-        let notaCalc = null;
-        let promSimple = null;
-        if (reg && reg.todas.length) {
-          promSimple = Math.max(1, Math.min(100, Math.round(reg.todas.reduce((t, x) => t + x, 0) / reg.todas.length)));
-          if (reg.conc.length) {
-            const promConc = Math.round(reg.conc.reduce((t, x) => t + x, 0) / reg.conc.length);
-            const promOper = reg.oper.length ? Math.round(reg.oper.reduce((t, x) => t + x, 0) / reg.oper.length) : null;
-            if (promOper != null && promOper < 70 && promConc > promSimple) {
-              notaCalc = promConc;
-            } else {
-              notaCalc = Math.max(promConc, promSimple);
-            }
-          } else {
-            notaCalc = promSimple;
-          }
-        }
-
-        /* Trayectoria del alumno en esta misma materia (P-I y P-II) */
-        let trajMat = null;
-        if (nI >= 70 && nII >= 70) trajMat = Math.round((nI + nII) / 2);
-        else if (nII >= 70) trajMat = nII;
-        else if (nI >= 70) trajMat = nI;
-        else if (nI > 0 && nII > 0) trajMat = Math.round((nI + nII) / 2);
-        else if (nII > 0) trajMat = nII;
-        else if (nI > 0) trajMat = nI;
-
-        /* En Parcial III: reparar celdas dañadas por la prueba operativa o por «Sugerir notas» incompleto */
-        if (p === 'III' && actual != null && actual !== '') {
-          const actNum = Number(actual) || 0;
-          const mejorRef = Math.max(notaCalc || 0, trajMat || 0);
-          if (actNum < 70) {
-            const reparada = mejorRef >= 70 ? mejorRef : Math.max(74, baseAprobPorAlumno[al.num] + (offsetsPorMat[colIdx % offsetsPorMat.length] || 0));
-            dRec.notas[p][col][al.num] = Math.min(100, reparada);
-            celdasSugeridasIncompletasP3.delete(llaveP3);
-            contadores.notasRecuperadas++;
-            return;
-          }
-          if (notaCalc != null && promSimple != null && actNum === promSimple && notaCalc > promSimple) {
-            dRec.notas[p][col][al.num] = notaCalc;
-            celdasSugeridasIncompletasP3.delete(llaveP3);
-            contadores.notasRecuperadas++;
-            return;
-          }
-          if (celdasSugeridasIncompletasP3.has(llaveP3) && adMateriaSlug(col) === 'matematicas' && actNum < 82) {
-            const reparadaMat = mejorRef > actNum ? mejorRef
-              : (baseAprobPorAlumno[al.num] >= 86 ? Math.round((actNum + baseAprobPorAlumno[al.num]) / 2) : actNum);
-            if (reparadaMat > actNum) {
-              dRec.notas[p][col][al.num] = Math.min(100, reparadaMat);
-              celdasSugeridasIncompletasP3.delete(llaveP3);
-              contadores.notasRecuperadas++;
-              return;
-            }
-          }
-          return;
-        }
-
-        if (actual != null && actual !== '') return;
-
-        /* Celda vacía en Parcial I, II o III: resolver nota definitiva */
-        let candidata = notaCalc;
-        if (candidata == null || candidata < 70) {
-          if (trajMat != null && trajMat >= 70) {
-            candidata = trajMat;
-          } else {
-            const otrasAprob = mats
-              .map(m2 => Number((((dRec.notas[p] || {})[m2]) || {})[al.num]) || 0)
-              .filter(v => v >= 70);
-            const base = otrasAprob.length
-              ? Math.round(otrasAprob.reduce((t, x) => t + x, 0) / otrasAprob.length)
-              : baseAprobPorAlumno[al.num];
-            const delta = offsetsPorMat[colIdx % offsetsPorMat.length] || 0;
-            candidata = Math.max(72, Math.min(100, base + delta));
-          }
-        }
-
-        if (candidata != null && candidata >= 1 && candidata <= 100) {
-          ponerValorCelda(p, col, al.num, candidata, true);
-        }
-      });
-    });
-  });
-
-  /* 5) Completar PERSONALIDAD de los Parciales I, II y III (los 5 rasgos)
-        usando la valoración recuperada de cada alumno o su promedio académico */
-  (dRec.lista || []).forEach(al => {
-    const conteoLetras = {};
-    ['I', 'II', 'III'].forEach(p => {
-      AD_PERSONALIDAD.forEach(rasgo => {
-        const v = (((dRec.notas[p] || {})[rasgo]) || {})[al.num];
-        if (v) conteoLetras[v] = (conteoLetras[v] || 0) + 1;
-      });
-    });
-    let letraPorDefecto = Object.keys(conteoLetras).sort((a, b) => conteoLetras[b] - conteoLetras[a])[0] || '';
-    if (!letraPorDefecto) {
-      const notasAl = [];
-      ['I', 'II', 'III'].forEach(p => {
-        mats.forEach(m => {
-          const v = Number((((dRec.notas[p] || {})[m]) || {})[al.num]) || 0;
-          if (v > 0) notasAl.push(v);
-        });
-      });
-      const promAl = notasAl.length ? (notasAl.reduce((t, x) => t + x, 0) / notasAl.length) : 85;
-      letraPorDefecto = promAl >= 91 ? 'S' : promAl >= 80 ? 'MB' : 'B';
-    }
-    AD_PERSONALIDAD.forEach(rasgo => {
-      const vBase = (((dRec.notas['I'] || {})[rasgo]) || {})[al.num] ||
-                    (((dRec.notas['II'] || {})[rasgo]) || {})[al.num] ||
-                    (((dRec.notas['III'] || {})[rasgo]) || {})[al.num] ||
-                    letraPorDefecto;
-      ['I', 'II', 'III'].forEach(p => {
-        ponerValorCelda(p, rasgo, al.num, vBase, false);
-      });
-    });
-  });
-
-  /* 6) Completar DÍAS PERDIDOS (Inasistencias) de los Parciales I, II y III
-        contando las faltas reales del pase de lista (dRec.asistencia) en el rango de cada parcial */
-  ['I', 'II', 'III'].forEach(p => {
-    const r = rangos[p];
-    if (!dRec.boleta.parcialFechas[p] || !dRec.boleta.parcialFechas[p].desde) {
-      dRec.boleta.parcialFechas[p] = { desde: r.desde, hasta: r.hasta };
-    }
-    const cuenta = {};
-    (dRec.asistencia || []).forEach(dia => {
-      if (dia && dia.f >= r.desde && dia.f <= r.hasta && dia.aus) {
-        Object.keys(dia.aus).forEach(num => {
-          cuenta[num] = (cuenta[num] || 0) + 1;
-        });
-      }
-    });
-    dRec.notas[p] = dRec.notas[p] || {};
-    dRec.notas[p]['Inasistencias'] = dRec.notas[p]['Inasistencias'] || {};
-    (dRec.lista || []).forEach(al => {
-      const ya = dRec.notas[p]['Inasistencias'][al.num];
-      const faltasAsis = cuenta[al.num] || 0;
-      if (ya === '' || ya == null) {
-        dRec.notas[p]['Inasistencias'][al.num] = faltasAsis;
-        contadores.inasisRecuperadas++;
-      } else if (Number(ya) === 0 && faltasAsis > 0) {
-        dRec.notas[p]['Inasistencias'][al.num] = faltasAsis;
-        contadores.inasisRecuperadas++;
-      }
-    });
-  });
-
-  dRec.boleta.autoRecI_III_v479 = 1;
-
-  return {
-    grupoRecuperado: dRec,
-    contadores,
-    versiones
-  };
+  return { grupoRecuperado: dRec, contadores, cambios, omitidas, versiones };
 }
 
-/* Reconstruye el grupo completo hasta el III Parcial consultando además la nube docente */
+/* Igual que la anterior, pero buscando también en la nube del maestro */
 async function adReconstruirDesdeNubeYRespaldos(dActual, onProgreso) {
   const prog = txt => { if (typeof onProgreso === 'function') onProgreso(txt); };
-  prog('⏳ Verificando copias locales e historial en la nube…');
+  prog('⏳ Buscando en tus copias de este equipo y en la nube…');
 
   const versiones = await adRecolectarVersionesHistorial(dActual);
   const filasAdminNube = [];
-  const filasPlanNube = [];
-  const nombresPorCodigoNube = {};
   const cred = adDocenteCreds();
 
   if (navigator.onLine !== false && cred) {
@@ -5955,7 +5636,7 @@ async function adReconstruirDesdeNubeYRespaldos(dActual, onProgreso) {
     } catch (_) {}
     const headers = { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' };
 
-    prog('⏳ Consultando registros del docente en la nube…');
+    prog('⏳ Consultando lo que ven las familias…');
     try {
       const rGlobal = await fetch(url + '/rest/v1/rpc/metas_recuperar_admin_docente', {
         method: 'POST', headers,
@@ -5971,82 +5652,69 @@ async function adReconstruirDesdeNubeYRespaldos(dActual, onProgreso) {
     } catch (_) {}
   }
 
-  return adReconstruirParcialesI_IIISincrono(dActual, {
-    versiones,
-    filasAdminNube,
-    filasPlanNube,
-    nombresPorCodigoNube
+  return adReconstruirParcialesI_IIISincrono(dActual, { versiones, filasAdminNube });
+}
+
+/* Ventana con una tabla de cambios. Con `marcables`, cada fila lleva su
+   casilla y se devuelve la lista de las que quedaron marcadas; sin ella,
+   true o false. Nada se aplica aquí: quien llama decide. */
+function adModalCambios(o) {
+  return new Promise(resolve => {
+    const filas = o.filas || [];
+    const ov = document.createElement('div');
+    ov.className = 'ad-gen-ov ad-ver-ov';
+    ov.innerHTML = `
+      <div class="ad-gen-card ad-ver-card" role="dialog" aria-modal="true" aria-labelledby="ad-cam-tit">
+        <div class="ad-gen-head">
+          <div class="ad-gen-title" id="ad-cam-tit">${adEsc(o.titulo)}</div>
+          <button type="button" class="ad-gen-close" id="ad-cam-x" aria-label="Cerrar">✕</button>
+        </div>
+        <div class="ad-gen-hint">${o.introHtml || ''}</div>
+        ${filas.length ? `
+        ${o.marcables ? `<div class="ad-btn-row" style="margin:4px 0">
+          <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-cam-todas">☑️ Marcar todas</button>
+          <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-cam-ninguna">⬜ Desmarcar todas</button>
+        </div>` : ''}
+        <div class="ad-ver-prev-tbl ad-cam-tbl">
+          <table class="ad-mx ad-ver-mx">
+            <thead><tr>
+              ${o.marcables ? '<th>Borrar</th>' : ''}
+              <th>Parcial</th><th>Qué</th><th style="text-align:left">Alumno</th><th>${adEsc(o.colValor || 'Valor')}</th><th style="text-align:left">${adEsc(o.colFuente || 'De dónde sale')}</th>
+            </tr></thead>
+            <tbody>
+              ${filas.map((c, i) => `<tr>
+                ${o.marcables ? `<td><label class="ad-cam-chk"><input type="checkbox" data-i="${i}" ${c.marcada === false ? '' : 'checked'} aria-label="Borrar esta"></label></td>` : ''}
+                <td>${adEsc(c.parcial || '·')}</td>
+                <td>${adEsc(c.campo)}</td>
+                <td style="text-align:left">${c.num ? '#' + c.num + ' ' + adEsc(c.nombre || '') : '·'}</td>
+                <td><b>${adEsc(String(c.valor))}</b></td>
+                <td style="text-align:left">${adEsc(c.fuente || '')}</td>
+              </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>` : ''}
+        <div class="ad-gen-foot">
+          <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-cam-no">${adEsc(o.noTxt || 'Cancelar')}</button>
+          ${filas.length && o.okTxt ? `<button type="button" class="pa-generate-btn" id="ad-cam-si">${adEsc(o.okTxt)}</button>` : ''}
+        </div>
+      </div>`;
+    document.body.appendChild(ov);
+    const fin = v => { ov.remove(); resolve(v); };
+    ov.querySelector('#ad-cam-x').addEventListener('click', () => fin(o.marcables ? null : false));
+    ov.querySelector('#ad-cam-no').addEventListener('click', () => fin(o.marcables ? null : false));
+    ov.addEventListener('click', e => { if (e.target === ov) fin(o.marcables ? null : false); });
+    const marcar = v => ov.querySelectorAll('.ad-cam-chk input').forEach(x => { x.checked = v; });
+    ov.querySelector('#ad-cam-todas')?.addEventListener('click', () => marcar(true));
+    ov.querySelector('#ad-cam-ninguna')?.addEventListener('click', () => marcar(false));
+    ov.querySelector('#ad-cam-si')?.addEventListener('click', () => {
+      if (!o.marcables) { fin(true); return; }
+      fin([...ov.querySelectorAll('.ad-cam-chk input')].filter(x => x.checked).map(x => filas[+x.dataset.i]));
+    });
   });
 }
 
-let _adNubeEnriqEnCurso = {};
-
-/* Asegura de forma automática e inmediata que los Parciales I, II y III tengan
-   sus notas de Aprovechamiento, Personalidad y Días faltados (Inasistencias) completas */
-function adAutoAsegurarParcialesI_III(d, bodyEl) {
-  if (!d || !Array.isArray(d.lista) || !d.lista.length) return d;
-  const mats = Array.isArray(d.materias) && d.materias.length ? d.materias : AD_MATERIAS_DEF;
-
-  /* ¿Este grupo ya tiene actividad en I, II o III o es 6º grado? */
-  const esSexto = String(d.grado || '').replace(/\D/g, '') === '6';
-  const stats = adResumenVersionGrupo(d);
-  const tieneActividad = esSexto || stats.totalNotas > 0 || stats.totalPers > 0 || stats.diasAsis > 0;
-  if (!tieneActividad) return d;
-
-  const esperadoNotasParcial = d.lista.length * mats.length;
-  const esperadoPers = d.lista.length * AD_PERSONALIDAD.length * 3;
-  const esperadoInasis = d.lista.length * 3;
-  const hayBajasSugeridasP3 = d.lista.some(al =>
-    mats.some(m => {
-      const v = Number((((d.notas && d.notas['III']) || {})[m] || {})[al.num]);
-      return v > 0 && v < 70;
-    })
-  );
-  const incompleto =
-    !(d.boleta && d.boleta.autoRecI_III_v479) ||
-    stats.pI < esperadoNotasParcial ||
-    stats.pII < esperadoNotasParcial ||
-    stats.pIII < esperadoNotasParcial ||
-    (stats.persI + stats.persII + stats.persIII) < esperadoPers ||
-    (stats.inasisI + stats.inasisII + stats.inasisIII) < esperadoInasis ||
-    hayBajasSugeridasP3;
-
-  let dOut = d;
-  if (incompleto) {
-    try {
-      const syncRes = adReconstruirParcialesI_IIISincrono(d);
-      const c = syncRes.contadores;
-      if ((c.notasRecuperadas + c.persRecuperadas + c.inasisRecuperadas + c.diasAsisRecuperados) > 0) {
-        adUndoGuardar('Autocompletar Parciales I–III (notas, personalidad y días faltados)');
-        adSave(syncRes.grupoRecuperado);
-        dOut = adLoad();
-      } else {
-        d.boleta = d.boleta || adBoletaDef();
-        d.boleta.autoRecI_III_v479 = 1;
-        adSave(d);
-        dOut = adLoad();
-      }
-    } catch (_) {}
-  }
-
-  /* Consulta rápida en segundo plano a la nube docente una vez por sesión para este grupo */
-  if (!_adNubeEnriqEnCurso[d.id] && navigator.onLine !== false && adDocenteCreds()) {
-    _adNubeEnriqEnCurso[d.id] = true;
-    adReconstruirDesdeNubeYRespaldos(dOut).then(res => {
-      const c = res && res.contadores;
-      if (c && (c.notasRecuperadas + c.persRecuperadas + c.inasisRecuperadas + c.diasAsisRecuperados) > 0) {
-        adSave(res.grupoRecuperado);
-        if (_adTab === 'sace' && !adSaceTieneFocoActivo()) {
-          const b = bodyEl || document.getElementById('ad-tab-body');
-          if (b) adRenderSace(b, adLoad());
-        }
-      }
-    }).catch(() => {});
-  }
-
-  return dOut;
-}
-
+/* El botón «Copiar notas de mis respaldos». Busca, enseña lo que copiaría
+   y solo guarda si el maestro acepta. */
 async function adRecuperarNotasNube(btn, alTerminar) {
   const d = adLoad();
   if (!d || !Array.isArray(d.lista) || !d.lista.length) {
@@ -6055,58 +5723,155 @@ async function adRecuperarNotasNube(btn, alTerminar) {
   }
 
   const txtOrig = btn ? btn.textContent : '';
-  if (btn) { btn.disabled = true; btn.textContent = '⏳ Restaurando Parciales I–III…'; }
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Buscando en tus respaldos…'; }
 
   try {
-    /* 1) Aplicar reconstrucción local de inmediato para que las notas aparezcan al instante */
-    const resLocal = adReconstruirParcialesI_IIISincrono(d);
-    const cLoc = resLocal.contadores;
-    if ((cLoc.notasRecuperadas + cLoc.persRecuperadas + cLoc.inasisRecuperadas + cLoc.diasAsisRecuperados) > 0) {
-      adUndoGuardar('Antes de recuperar notas, personalidad y días perdidos (I–III)');
-      adSave(resLocal.grupoRecuperado);
-      if (typeof alTerminar === 'function') alTerminar();
-      else renderAdmin(true);
-    }
+    const res = await adReconstruirDesdeNubeYRespaldos(d, msg => { if (btn) btn.textContent = msg; });
+    const c = res.contadores;
+    const n = res.cambios.length;
+    const avisoOmitidas = (res.omitidas.versiones || res.omitidas.filasNube)
+      ? `<p>No se usaron ${res.omitidas.versiones ? res.omitidas.versiones + ' copia(s)' : ''}${res.omitidas.versiones && res.omitidas.filasNube ? ' ni ' : ''}${res.omitidas.filasNube ? res.omitidas.filasNube + ' nota(s) de la nube' : ''} porque son del 10 de noviembre en adelante y pueden traer notas que la aplicación puso sola.</p>`
+      : '';
+    const intro = n
+      ? `<p>Encontré <strong>${n}</strong> dato(s) que ya habías escrito en otra copia y que hoy están <strong>vacíos</strong> aquí:
+          ${c.notasRecuperadas} nota(s), ${c.persRecuperadas} de personalidad, ${c.inasisRecuperadas} de inasistencias y ${c.diasAsisRecuperados} día(s) de asistencia.</p>
+         <p>Solo se llenan celdas vacías. Lo que ya tienes escrito no cambia, y no se inventa ningún valor. Antes de copiar se guarda una copia en «🕘 Deshacer».</p>${avisoOmitidas}`
+      : `<p>No encontré ninguna nota en tus respaldos que falte aquí. No se cambió nada.</p>${avisoOmitidas}`;
 
-    /* 2) Enriquecer además con el historial de la nube docente (rápido, sin bloqueos) */
-    const resNube = await adReconstruirDesdeNubeYRespaldos(adLoad(), msg => {
-      if (btn) btn.textContent = msg;
-      const stEl = document.getElementById('ad-sace-estado') || document.getElementById('ad-sb-status');
-      if (stEl) stEl.textContent = msg;
+    const ok = await adModalCambios({
+      titulo: '📥 Copiar notas de mis respaldos',
+      introHtml: intro,
+      filas: res.cambios,
+      okTxt: n ? 'Sí, copiar estos ' + n : '',
+      noTxt: n ? 'No copiar' : 'Cerrar'
     });
+    if (!ok || !n) return;
 
-    const cNube = resNube.contadores;
-    const totalCambios =
-      (cLoc.notasRecuperadas + cLoc.persRecuperadas + cLoc.inasisRecuperadas + cLoc.diasAsisRecuperados) +
-      (cNube.notasRecuperadas + cNube.persRecuperadas + cNube.inasisRecuperadas + cNube.diasAsisRecuperados);
-
-    if ((cNube.notasRecuperadas + cNube.persRecuperadas + cNube.inasisRecuperadas + cNube.diasAsisRecuperados) > 0) {
-      adSave(resNube.grupoRecuperado);
-    }
-    if (totalCambios > 0) {
-      adSyncProgramar();
-    }
-
+    adUndoGuardar('Copiar notas de mis respaldos (' + n + ' dato(s))');
+    adSave(res.grupoRecuperado);
+    adSyncProgramar();
     if (typeof alTerminar === 'function') alTerminar();
     else renderAdmin(true);
-
-    const resumenStats = adResumenVersionGrupo(adLoad());
-    const msgFinal = '✅ Parciales I–III listos: ' +
-      resumenStats.pI + ' notas en P-I · ' +
-      resumenStats.pII + ' notas en P-II · ' +
-      resumenStats.pIII + ' notas en P-III · ' +
-      resumenStats.totalPers + ' celdas de Personalidad · ' +
-      resumenStats.totalInasis + ' registros de Días faltados.';
-
-    const stEl = document.getElementById('ad-sace-estado') || document.getElementById('ad-sb-status');
-    if (stEl) stEl.textContent = msgFinal;
-    if (typeof toast === 'function') {
-      toast('✅ Notas del III Parcial, Personalidad y Días faltados restaurados');
-    }
+    if (typeof toast === 'function') toast('✅ Copiados ' + n + ' dato(s) de tus respaldos');
   } catch (err) {
-    if (typeof toast === 'function') toast('⚠️ Error al recuperar datos: ' + (err && err.message ? err.message : 'intenta de nuevo'));
+    if (typeof toast === 'function') toast('⚠️ No se pudo buscar en tus respaldos: ' + (err && err.message ? err.message : 'intenta de nuevo'));
   } finally {
-    if (btn) { btn.disabled = false; btn.textContent = txtOrig || '📥 Recuperar notas, personalidad y días perdidos (I–III)'; }
+    if (btn) { btn.disabled = false; btn.textContent = txtOrig || '📥 Copiar notas de mis respaldos'; }
+  }
+}
+
+/* «Revisar notas que la aplicación puso sola». Compara el grupo de hoy con
+   la copia de JUSTO ANTES del autocompletado (la de «🕘 Deshacer» que él
+   mismo guardó, o una del historial de la nube anterior al 10 de noviembre)
+   y lista las celdas que estaban vacías y hoy tienen algo, o que cambiaron.
+   El maestro marca cuáles borrar; nada se borra sin su «Sí». */
+async function adRevisarNotasPuestasSolas(btn, alTerminar) {
+  const d = adLoad();
+  if (!d || !Array.isArray(d.lista) || !d.lista.length) {
+    if (typeof toast === 'function') toast('Primero agrega tu lista de alumnos');
+    return;
+  }
+  const txtOrig = btn ? btn.textContent : '';
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Buscando la copia de antes…'; }
+  try {
+    const versiones = await adRecolectarVersionesHistorial(d);
+    /* La copia de referencia: la más reciente que NO trae la marca y que es
+       de antes del autocompletado (o es la que él mismo guardó al entrar). */
+    const candidatas = versiones.filter(v => v && v.grupo && !adVersionTieneAutocompletado(v.grupo) &&
+      (/Autocompletar Parciales I/.test(v.titulo || '') || (v.fecha && String(v.fecha) < AD_V479_DESDE)));
+    candidatas.sort((a, b) => {
+      const pa = /Autocompletar Parciales I/.test(a.titulo || '') ? 1 : 0;
+      const pb = /Autocompletar Parciales I/.test(b.titulo || '') ? 1 : 0;
+      if (pa !== pb) return pb - pa;
+      return String(b.fecha || '').localeCompare(String(a.fecha || ''));
+    });
+    const ref = candidatas[0];
+    const marcado = adVersionTieneAutocompletado(d);
+
+    if (!ref) {
+      await adModalCambios({
+        titulo: '🔎 Notas que la aplicación puso sola',
+        introHtml: marcado
+          ? '<p>Este grupo pasó por el autocompletado del 10 de noviembre, pero no encontré en este equipo ni en tu nube una copia de antes para comparar. Revisa a mano las notas de los Parciales I, II y III, o abre esta herramienta desde el equipo donde trabajas más seguido.</p>'
+          : '<p>Este grupo no tiene la marca del autocompletado y no encontré una copia de antes. No hay nada que revisar.</p>',
+        filas: [], noTxt: 'Cerrar'
+      });
+      return;
+    }
+
+    const g = ref.grupo;
+    const mVer = adConstruirMapaAlumnos(d, g.lista, ref.codesGrupo);
+    const antes = {};   // 'p|campo|numActual' → valor de antes
+    ['I', 'II', 'III'].forEach(p => {
+      const np = (g.notas && g.notas[p]) || {};
+      Object.keys(np).forEach(campo => {
+        Object.keys(np[campo] || {}).forEach(oldN => {
+          const val = np[campo][oldN];
+          if (val === '' || val == null) return;
+          const alOrig = (g.lista || []).find(x => +x.num === +oldN);
+          const nDest = mVer.resolverAlumno(oldN, ref.codesGrupo && ref.codesGrupo[oldN], alOrig && alOrig.nombre);
+          if (nDest) antes[p + '|' + campo + '|' + nDest] = val;
+        });
+      });
+    });
+
+    const filas = [];
+    const nombreDe = num => { const al = d.lista.find(x => +x.num === +num); return al ? al.nombre || '' : ''; };
+    ['I', 'II', 'III'].forEach(p => {
+      const np = (d.notas && d.notas[p]) || {};
+      Object.keys(np).forEach(campo => {
+        Object.keys(np[campo] || {}).forEach(num => {
+          const hoy = np[campo][num];
+          if (hoy === '' || hoy == null) return;
+          const era = antes[p + '|' + campo + '|' + num];
+          if (era != null && String(era) === String(hoy)) return;
+          filas.push({
+            parcial: p, campo, num: +num, nombre: nombreDe(num),
+            valor: String(hoy), era: era == null ? '' : era,
+            fuente: era == null ? 'antes estaba vacía' : 'antes decía ' + era,
+            /* Una celda que antes tenía otra nota se devuelve a esa nota,
+               no se deja vacía. Inasistencias en 0 no se marca de entrada:
+               casi siempre es verdad. */
+            marcada: !(campo === 'Inasistencias' && Number(hoy) === 0)
+          });
+        });
+      });
+    });
+
+    const fechaRef = ref.fecha ? adFechaBonita(String(ref.fecha).slice(0, 10)) + (String(ref.fecha).slice(11, 16) ? ' ' + String(ref.fecha).slice(11, 16) : '') : '';
+    const elegidas = await adModalCambios({
+      titulo: '🔎 Notas que la aplicación puso sola',
+      introHtml: `<p>Comparo tus notas de hoy con la copia <strong>${adEsc(ref.titulo)}</strong>${fechaRef ? ' (' + adEsc(fechaRef) + ')' : ''}.
+        Estas <strong>${filas.length}</strong> celda(s) de los Parciales I, II y III estaban vacías o decían otra cosa en esa copia.</p>
+        <p>Algunas las pudiste escribir tú después: desmarca las que sean tuyas. Las marcadas que antes estaban vacías se vacían; las que decían otra nota vuelven a esa nota. Antes se guarda una copia en «🕘 Deshacer», y la nube de las familias se corrige al sincronizar.</p>`,
+      filas, marcables: true, colValor: 'Hoy dice', colFuente: 'En la copia de antes',
+      okTxt: 'Borrar las marcadas…', noTxt: 'Cerrar sin borrar'
+    });
+    if (!elegidas || !elegidas.length) return;
+
+    if (!await metasConfirm('¿Borrar **' + elegidas.length + '** dato(s) de los Parciales I, II y III de **' +
+      (adGrupoTxt(d) || 'este grupo') + '**?\n\nSe guarda antes una copia en «🕘 Deshacer» para volver atrás si te equivocas.',
+      { icono: '🗑️', titulo: 'Borrar notas puestas solas', okTxt: 'Sí, borrar' })) return;
+
+    adUndoGuardar('Antes de borrar ' + elegidas.length + ' nota(s) puestas por el autocompletado');
+    const dd = adLoad();
+    elegidas.forEach(c => {
+      const obj = ((dd.notas[c.parcial] || {})[c.campo]) || null;
+      if (!obj) return;
+      if (c.era !== '' && c.era != null) obj[c.num] = c.era;
+      else obj[c.num] = '';   // vacía, no se quita: así sube como «nota borrada» y la familia deja de verla
+    });
+    /* La marca se queda solo si el maestro dejó celdas sin revisar */
+    if (dd.boleta && elegidas.length === filas.length) delete dd.boleta.autoRecI_III_v479;
+    adSave(dd);
+    adSyncProgramar();
+    if (typeof alTerminar === 'function') alTerminar();
+    else renderAdmin(true);
+    if (typeof toast === 'function') toast('🗑️ Borradas ' + elegidas.length + ' nota(s); puedes deshacerlo en «🕘 Deshacer»');
+  } catch (err) {
+    if (typeof toast === 'function') toast('⚠️ No se pudo revisar: ' + (err && err.message ? err.message : 'intenta de nuevo'));
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = txtOrig || '🔎 Revisar notas que la aplicación puso sola'; }
   }
 }
 
@@ -6156,8 +5921,8 @@ async function adAbrirHistorialVersionesModal(alTerminar) {
     const todasVersiones = [
       {
         id: 'reconstruccion-nube-i-iii',
-        origen: '✨ Reconstrucción integral I–III (Recomendada)',
-        titulo: 'Fusión completa: Nube de Padres + Respaldos + Plan de Acción + Asistencia (Parciales I, II y III llenos)',
+        origen: '📥 Lo de hoy + lo que falta y está en tus respaldos',
+        titulo: 'Tus notas de hoy, más las celdas vacías que otra copia sí tenía (' + (rec.cambios || []).length + ' dato(s)). No inventa ninguna nota.',
         fecha: new Date().toISOString(),
         grupo: rec.grupoRecuperado,
         codesGrupo: {},
@@ -6179,7 +5944,7 @@ async function adAbrirHistorialVersionesModal(alTerminar) {
         <div class="ad-ver-item${v.esReconstruccion ? ' ad-ver-item-dest' : ''}" data-vidx="${idx}">
           <div class="ad-ver-item-top">
             <div>
-              <span class="ad-ver-badge">${adEsc(v.origen)}</span>
+              <span class="ad-ver-badge">${adEsc(v.origen)}</span>${!v.esReconstruccion && adVersionTieneAutocompletado(v.grupo) ? ' <span class="ad-ver-badge ad-ver-badge-alerta">⚠️ Trae notas que la aplicación puso sola (10 nov.)</span>' : ''}
               <div class="ad-ver-item-tit">${adEsc(v.titulo)}</div>
             </div>
             <span class="ad-ver-date">${adEsc(fmtFecha(v.fecha))}</span>
@@ -6268,7 +6033,8 @@ async function adAbrirHistorialVersionesModal(alTerminar) {
         if (act === 'fusionar') {
           if (!await metasConfirm(
             '¿Recuperar las notas de **Parcial I, II y III**, **Personalidad** y **Días perdidos** desde **«' + v.titulo + '»**?\n\n' +
-            'Se conservará el **orden actual de tu lista de alumnos** y se llenarán/repararán los datos hasta el III Parcial.',
+            'Se conservará el **orden actual de tu lista de alumnos**. Donde esa versión tiene un dato escrito, **reemplaza** al de hoy. Antes se guarda una copia en «🕘 Deshacer».' +
+            (!v.esReconstruccion && adVersionTieneAutocompletado(v.grupo) ? '\n\n⚠️ Esta versión es del autocompletado del 10 de noviembre: trae notas que tú no pusiste.' : ''),
             { icono: '📥', titulo: 'Recuperar de esta versión', okTxt: 'Sí, recuperar I–III' }
           )) return;
           adUndoGuardar('Antes de fusionar versión: ' + v.titulo);
@@ -6379,7 +6145,6 @@ async function adAutorizarSugerirParcialIV(alTerminar) {
 
 function adRenderSace(body, d) {
   if (!d.lista.length) { adSinLista(body, 'la boleta'); return; }
-  d = adAutoAsegurarParcialesI_III(d, body);
   /* Asegurar que se use y sincronice el parcial y vista activos */
   if (body.dataset.parcial && ['I', 'II', 'III', 'IV'].includes(body.dataset.parcial)) {
     _adSaceParcial = body.dataset.parcial;
@@ -6558,10 +6323,11 @@ function adRenderSace(body, d) {
 
       <div class="ad-rec-bar">
         <div class="ad-rec-bar-btns">
-          <button type="button" class="pa-generate-btn ad-rec-btn-main" id="ad-sace-recuperar">📥 Recuperar notas, personalidad y días perdidos (I–III)</button>
+          <button type="button" class="pa-generate-btn ad-rec-btn-main" id="ad-sace-recuperar">📥 Copiar notas de mis respaldos</button>
           <button type="button" class="pa-generate-btn ad-btn-sec ad-rec-btn-hist" id="ad-sace-versiones">🕓 Verificar historial de versiones</button>
+          ${adVersionTieneAutocompletado(d) ? '<button type="button" class="pa-generate-btn ad-btn-sec" id="ad-sace-revisar-solas">🔎 Revisar notas que la aplicación puso sola</button>' : ''}
         </div>
-        <p class="pa-optional-hint" style="margin:4px 0 0">Rescata tus calificaciones de los <strong>Parciales I, II y III</strong>, la <strong>Personalidad</strong> y las <strong>Inasistencias</strong> desde los respaldos locales, el espejo docente y la nube de padres, respetando el orden actual de tus filas.</p>
+        <p class="pa-optional-hint" style="margin:4px 0 0">Busca en tus copias y en la nube las notas, la personalidad y las inasistencias que <strong>ya habías escrito</strong> y hoy faltan aquí. Te enseña la lista antes de copiar, solo llena celdas vacías y nunca inventa una nota.</p>
       </div>
 
       ${(!esLetra && !esInasis) ? (parcial === 'IV' ? (d.boleta && d.boleta.sugerirIVAuth ? `
@@ -6970,9 +6736,12 @@ function adRenderSace(body, d) {
     if (typeof toast === 'function') toast('📅 Parcial ' + parcial + ': ' + total + ' faltas (' + conFaltas + ' alumnos)');
   });
 
-  // 📥 Recuperar notas, personalidad y días perdidos (I–III) + 🕓 Historial de versiones
+  // 📥 Copiar notas de mis respaldos + 🔎 revisar lo del autocompletado + 🕓 Historial
   document.getElementById('ad-sace-recuperar')?.addEventListener('click', e => {
     adRecuperarNotasNube(e.currentTarget, () => adRenderSace(body, adLoad()));
+  });
+  document.getElementById('ad-sace-revisar-solas')?.addEventListener('click', e => {
+    adRevisarNotasPuestasSolas(e.currentTarget, () => adRenderSace(body, adLoad()));
   });
   document.getElementById('ad-sace-versiones')?.addEventListener('click', () => {
     adAbrirHistorialVersionesModal(() => adRenderSace(body, adLoad()));
