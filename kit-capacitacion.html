@@ -165,14 +165,14 @@
         <li>Resuélvela como si fueras tu alumno: flashcards, memorama, retos, sopa de letras…</li>
         <li>Fíjate cómo <strong>todo se califica solo</strong> y cómo el niño gana XP e insignias.</li>
       </ol>
-      <p class="nota" style="margin-top:8px;">Así se ven las misiones del catálogo: <b>hoy, en septiembre de 2026,
-      son 83 y siguen entrando</b>. Hay español, matemáticas, ciencias naturales y sociales; <b>programación 💻,
+      <p class="nota" style="margin-top:8px;">Así se ven las misiones del catálogo: <b>hoy, en <span data-cuenta="fecha">noviembre de 2026</span>,
+      son <span data-cuenta="misiones">86</span> y siguen entrando</b>. Hay español, matemáticas, ciencias naturales y sociales; <b>programación 💻,
       robótica 🤖 e inglés 🗣️</b> (las dos primeras no necesitan computadoras ni kits); <b>E. Cívica 🇭🇳</b>, con los
       símbolos patrios, el Himno, los próceres, los tres poderes y la Constitución;
       <b>Inteligencia Artificial 🧠</b>, de I a III Ciclo, desde qué es hasta sus peligros y los
       escenarios por venir; <b>Filosofía 🌳</b>, la Ruta de la Raíz, que va para los
-      tres ciclos a la vez; y <b>Repaso General 🎯</b>, con las Pruebas de Fin de Grado. Todo
-      ordenado en <b>15 rutas de aprendizaje</b>.</p>
+      tres ciclos a la vez; <b>Repaso General 🎯</b>, con las Pruebas de Fin de Grado; y <b>Prebásica 👶</b>,
+      para hacer en casa con papá y mamá. Todo ordenado en <b><span data-cuenta="rutas">16</span> rutas de aprendizaje</b>.</p>
     </div>
     <div class="qr-caja">
       <img src="img/qr-mision-demo.png" alt="QR misión de prueba">
@@ -284,5 +284,27 @@
   </div>
 
 </div>
+<!-- Las cifras del catálogo se CUENTAN al abrir el Kit, no se escriben: el
+     papel se imprime el día que se imprime, y ese día dice cuántas misiones y
+     rutas hay, con su mes. Las cifras escritas arriba son las de noviembre de
+     2026 y solo se ven si este script no llega (sin JavaScript): por eso van
+     fechadas también. -->
+<script src="js/data/misiones.js"></script>
+<script>
+(function () {
+  try {
+    var MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    var hoy = new Date();
+    var rutas = {};
+    MISSIONS.forEach(function (m) { if (m.ruta) rutas[m.ruta] = 1; });
+    var cifras = { misiones: MISSIONS.length, rutas: Object.keys(rutas).length,
+                   fecha: MESES[hoy.getMonth()] + ' de ' + hoy.getFullYear() };
+    document.querySelectorAll('[data-cuenta]').forEach(function (el) {
+      var v = cifras[el.getAttribute('data-cuenta')];
+      if (v != null) el.textContent = v;
+    });
+  } catch (e) { /* sin catálogo se queda lo escrito, que va fechado */ }
+})();
+</script>
 </body>
 </html>
