@@ -10,13 +10,20 @@
 # `android/`, `node_modules/` y `_dev/` se van por lo mismo: son del árbol de
 # trabajo, no del sitio.
 #
-# Se deja fuera de esta lista, a propósito, todo lo demás: los .md del
-# repositorio (los manuales, las propuestas, este mismo CLAUDE.md) hoy se
-# publican convertidos a página y nadie los enlaza desde el sitio. Excluirlos
-# sería más de lo que hacía falta para arreglar lo de www/, y es una decisión
-# aparte.
+# Desde la limpieza de noviembre de 2026 también se van los documentos de
+# trabajo: `_privado/` (SQL de Supabase, auditorías, propuestas, manuales),
+# `docs/` (el historial de normativas) y las guías del repositorio
+# (CLAUDE.md, README.md). Jekyll ya ignora lo que empieza por «.» o «_»; se
+# escriben igual para que esta lista diga entera qué no es el sitio, y para
+# que coincida con `.assetsignore`, que es la de Cloudflare.
 exclude:
   - www/
   - android/
   - node_modules/
   - _dev/
+  - _privado/
+  - docs/
+  - .claude/
+  - .idea/
+  - CLAUDE.md
+  - README.md

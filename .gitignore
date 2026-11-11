@@ -1,0 +1,4 @@
+# Configuración local del editor y de Claude Code: rutas de la computadora
+# del autor, no son del proyecto. Se quedan en el disco, fuera del repositorio.
+.claude/settings.local.json
+.idea/
