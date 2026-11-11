@@ -6845,7 +6845,21 @@ body.ad-gr-moviendo { cursor: grabbing; user-select: none; -webkit-user-select: 
 .ad-fi-estado { min-height: 44px; font-size: calc(13px * var(--metas-fz, 1)); border-radius: 8px;
   border: 1px solid #cbd5e1; padding: 0 6px; background: #fff; color: inherit; }
 .ad-fi-est-td { white-space: nowrap; }
-.ad-sace-card { max-width: 760px; }
+/* Con 41 alumnos la vista previa mide varias pantallas: el cuerpo se
+   desplaza solo y el pie con «Guardar lo marcado» queda fijo y a la
+   vista. Sin esto el botón quedaba cortado fuera de la ventana y no
+   había forma de llegar a él. */
+.ad-sace-card { max-width: 760px; max-height: calc(100vh - 28px); max-height: calc(100dvh - 28px); }
+.ad-sace-cuerpo { flex: 1 1 auto; min-height: 0; max-height: calc(100vh - 160px); max-height: calc(100dvh - 160px);
+  overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; padding: 0 16px; }
+.ad-sace-cuerpo > .ad-gen-hint { padding-left: 0; padding-right: 0; }
+.ad-sace-pie { flex: none; flex-wrap: nowrap; background: var(--card, #fff); }
+/* lado a lado también en un teléfono chico: apilados, el pie se comía la
+   mitad de la ventana y dejaba ver dos renglones de la lista */
+.ad-sace-pie .pa-generate-btn { flex: 1 1 0; min-width: 0; }
+/* el botón flotante «Instalar app» va por encima de todo y tapaba
+   «Guardar lo marcado»: mientras la vista previa está abierta, se esconde */
+body:has(.ad-sace-card) #metasInstallBtn { display: none !important; }
 .ad-sace-grupo { border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 12px; margin: 10px 0; }
 .ad-sace-gchk, .ad-sace-campos label, .ad-sace-rchk { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; }
 .ad-sace-gchk input, .ad-sace-campos input, .ad-sace-rchk input { width: 22px; height: 22px; margin: 11px; flex: none; }
