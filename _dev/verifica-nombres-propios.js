@@ -200,6 +200,11 @@ const CON_NUMERO = [
 const EXCEPCIONES = [
   'misiones/2y3ciclo-sustantivos/js/sustantivos.js',
   'fichas/ficha-sustantivos.html',
+  /* Y una tabla de búsqueda que nadie lee: las claves en minúscula del mapa de
+     audios de Prebásica son el texto ya pasado a minúsculas, que es como
+     obtenerArchivoAudio() lo busca en su tercer intento. En pantalla sale la
+     frase con sus mayúsculas; la clave solo encuentra el MP3. */
+  'misiones/prebasica-tecnicas-libro1/js/mapa-audios-prebasica.js',
 ];
 
 const CARPETAS = ['misiones', 'fichas'];

@@ -168,7 +168,11 @@ if (!fallos) ok('≥10 preguntas por misión, sin duplicados internos ni contra 
 /* ── 6. CAMP_SUBJECTS vs subjects de misiones.js ─────────── */
 console.log('\n4) Materias: CAMP_SUBJECTS vs misiones.js');
 const keys     = CAMP_SUBJECTS.map(s => s.key);
-const subjects = [...new Set(MISSIONS.map(m => m.subject))].filter(s => s !== 'bachillerato');
+/* Fuera de la ruleta: Bachillerato y Prebásica. La de Prebásica es una
+   misión para niños de cinco años que se hace con la familia: no tiene banco
+   de preguntas, y un gajo suyo en la ruleta saldría vacío en pleno concurso. */
+const FUERA_DEL_CONCURSO = ['bachillerato', 'prebasica'];
+const subjects = [...new Set(MISSIONS.map(m => m.subject))].filter(s => !FUERA_DEL_CONCURSO.includes(s));
 subjects.forEach(s => { if (!keys.includes(s)) err(`El subject «${s}» del catálogo no está en CAMP_SUBJECTS`); });
 keys.forEach(k => { if (!subjects.includes(k)) err(`CAMP_SUBJECTS tiene «${k}» pero ninguna misión lo usa`); });
 if (new Set(keys).size !== keys.length) err('Hay `key` repetidas en CAMP_SUBJECTS');
