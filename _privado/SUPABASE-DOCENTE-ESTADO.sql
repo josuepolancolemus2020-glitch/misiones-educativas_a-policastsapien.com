@@ -48,6 +48,7 @@ language plpgsql security definer set search_path = public
 as $$
 declare
   n integer := 0;
+  filas integer := 0;
   e jsonb;
   cod text := upper(trim(coalesce(p_codigo,'')));
 begin
@@ -74,7 +75,11 @@ begin
         dispositivo = excluded.dispositivo,
         actualizado_en = now()
       where p_forzar or excluded.version >= public.docente_estado.version;  -- LWW, salvo forzado
-      n := n + 1;
+      -- Cuenta SOLO lo que se escribió. Antes contaba también lo descartado
+      -- por versión y el equipo daba por subido algo que la nube no tenía
+      -- (nov. 2026: la importación del SACE «no guardaba»).
+      get diagnostics filas = row_count;
+      n := n + filas;
     exception when others then
       null;                                     -- una fila mala no tumba el lote
     end;

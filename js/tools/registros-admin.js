@@ -150,6 +150,22 @@ function adMigrarCodigos(g) {
    ese momento y la nube se corrige sola con el sync diferencial. */
 const AD_UNDO_KEY = 'METAS_ADMIN_UNDO_V1';
 const AD_UNDO_MAX = 14;
+const AD_UNDO_PRESUPUESTO = 1500000;   /* caracteres; deja sitio al aula y a la base de la nube */
+
+/* Suelta la mitad más vieja de las fotos de «Deshacer» para hacer sitio.
+   Devuelve true si liberó algo. La usa también la sincronización antes de
+   quedarse sin base (js/metas-docente-sync.js). */
+function adLiberarEspacio() {
+  const arr = adUndoLista();
+  if (!arr.length) return false;
+  const quedan = arr.slice(Math.ceil(arr.length / 2));
+  try {
+    if (quedan.length) localStorage.setItem(AD_UNDO_KEY, JSON.stringify(quedan));
+    else localStorage.removeItem(AD_UNDO_KEY);
+  } catch (_) { try { localStorage.removeItem(AD_UNDO_KEY); } catch (__) {} }
+  return true;
+}
+window.metasLiberarEspacio = adLiberarEspacio;
 function adUndoLista() {
   try { const a = JSON.parse(localStorage.getItem(AD_UNDO_KEY)); return Array.isArray(a) ? a : []; }
   catch (_) { return []; }
@@ -166,6 +182,11 @@ function adUndoGuardar(etiqueta) {
     let arr = adUndoLista();
     arr.push(foto);
     arr = arr.slice(-AD_UNDO_MAX);
+    /* Tope de espacio: 14 fotos de un aula llena pasaban de los 5 MB del
+       navegador, y cuando el almacén se llenaba el siguiente guardado de
+       Mi aula fallaba EN SILENCIO (la importación del SACE «no guardaba»).
+       Las fotos se quedan con un presupuesto y siempre queda la última. */
+    while (arr.length > 1 && JSON.stringify(arr).length > AD_UNDO_PRESUPUESTO) arr.shift();
     /* si no cabe (fotos muy grandes), se sueltan las más viejas */
     while (arr.length) {
       try { localStorage.setItem(AD_UNDO_KEY, JSON.stringify(arr)); return; }
@@ -219,11 +240,72 @@ function adUndoEnganchar(body) {
   });
 }
 
+/* ══════════════ 🪦 FICHAS BORRADAS QUE NO VUELVEN ══════════════
+   Borrar una fila renumera la lista (1..n). Cuando un equipo sin «base»
+   fusiona con la nube, la fusión une las dos copias y la fila que sobraba
+   en la copia vieja reaparece al final (la #43 «Alumno» que volvía).
+
+   Por eso cada borrado deja una marca en el grupo, d.borrados =
+   [{ t, n, nombre, idn }]: cuándo, cuántas filas quedaron y qué ficha
+   era. Al leer el aula se quita toda ficha que aparezca DESPUÉS de la
+   fila n, que no se haya creado después del borrado (`alta`) y que sea la
+   borrada o un duplicado de una que ya está; y la borrada con nombre o
+   identidad se quita esté donde esté (una copia vieja la trae en su
+   número viejo). Lo que se añade a propósito
+   lleva `alta` y nunca se toca; «Deshacer» devuelve la foto de antes del
+   borrado, sin la marca, y la ficha vuelve porque así se quiso.
+   Solo se quita la FICHA; las notas no se miran. */
+const AD_BORRADOS_MAX = 20;
+function adFirmaFicha(a) {
+  return String((a && a.nombre) || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase().replace(/\s+/g, ' ').trim() + '|' + String((a && a.idn) || '').replace(/\D/g, '');
+}
+function adPurgarRevividas(g) {
+  const tumbas = (Array.isArray(g.borrados) ? g.borrados : []).filter(b => b && +b.t > 0 && +b.n >= 0);
+  if (!tumbas.length || !Array.isArray(g.lista)) return 0;
+  const lista = g.lista.slice().sort((a, b) => (+a.num || 0) - (+b.num || 0));
+  const fuera = new Set();
+  const viejaPara = (a, b) => !((+a.alta || 0) > +b.t);
+  tumbas.forEach(b => {
+    const fb = adFirmaFicha(b);
+    /* 1 · La ficha borrada, esté donde esté: de las que se le parecen
+       (mismo nombre e identidad) se dejan las que quedaban al borrar
+       (`quedan`, casi siempre 0) y se quita el resto. Con nombre o
+       identidad, la firma es la ficha; vacía no dice quién es. */
+    if (fb !== '|') {
+      const iguales = lista.filter(a => !fuera.has(a) && viejaPara(a, b) && adFirmaFicha(a) === fb);
+      iguales.slice(Math.max(0, +b.quedan || 0)).forEach(a => fuera.add(a));
+    }
+    /* 2 · Lo que sobra DESPUÉS de la última fila que quedó: la borrada
+       si era vacía, o el duplicado que deja una lista renumerada */
+    lista.forEach(a => {
+      if (fuera.has(a) || +a.num <= +b.n || !viejaPara(a, b)) return;
+      const f = adFirmaFicha(a);
+      if (f === fb || lista.some(x => x !== a && !fuera.has(x) && +x.num <= +b.n && adFirmaFicha(x) === f)) fuera.add(a);
+    });
+  });
+  if (!fuera.size) return 0;
+  g.lista = g.lista.filter(a => !fuera.has(a));
+  return fuera.size;
+}
+function adMarcarBorrado(g, al) {
+  const ahora = Date.now();
+  const firma = adFirmaFicha(al);
+  g.borrados = (Array.isArray(g.borrados) ? g.borrados : [])
+    .filter(b => b && ahora - (+b.t || 0) < 400 * 864e5)
+    .concat([{ t: ahora, n: g.lista.length, nombre: String(al.nombre || ''), idn: String(al.idn || ''),
+      quedan: g.lista.filter(a => adFirmaFicha(a) === firma).length }])
+    .slice(-AD_BORRADOS_MAX);
+}
+
 function adState() {
   let st = null;
   try { st = JSON.parse(localStorage.getItem(ADMIN_KEY)); } catch (_) {}
   if (st && st.v === 2 && Array.isArray(st.grupos) && st.grupos.length) {
     st.grupos.forEach(adNormGrupo);
+    let revividas = 0;
+    st.grupos.forEach(g => { revividas += adPurgarRevividas(g); });
+    if (revividas) { try { localStorage.setItem(ADMIN_KEY, JSON.stringify(st)); } catch (_) {} }
     if (_adGrupoActivoId && st.grupos.some(g => g.id === _adGrupoActivoId)) {
       st.activo = _adGrupoActivoId;
     } else if (st.grupos.some(g => g.id === st.activo)) {
@@ -254,8 +336,27 @@ function adStateSave(st) {
   if (_adGrupoActivoId && st && st.grupos && st.grupos.some(g => g.id === _adGrupoActivoId)) {
     st.activo = _adGrupoActivoId;
   }
-  try { localStorage.setItem(ADMIN_KEY, JSON.stringify(st)); } catch (_) {}
+  const txt = JSON.stringify(st);
+  let ok = false;
+  try { localStorage.setItem(ADMIN_KEY, txt); ok = true; } catch (_) {}
+  /* Si no cupo, se hace sitio soltando fotos viejas de «Deshacer» y se
+     reintenta. Un guardado de Mi aula NUNCA puede fallar callado: el
+     maestro cree que guardó y al recargar no hay nada. */
+  while (!ok && adLiberarEspacio()) {
+    try { localStorage.setItem(ADMIN_KEY, txt); ok = true; } catch (_) {}
+  }
+  if (!ok) adAvisarSinEspacio();
   adSyncProgramar();   /* la nube del chatbot se actualiza sola, con calma */
+  return ok;
+}
+let _adAvisoEspacio = 0;
+function adAvisarSinEspacio() {
+  if (Date.now() - _adAvisoEspacio < 60000) return;
+  _adAvisoEspacio = Date.now();
+  const txt = 'No se pudo guardar el último cambio: el almacenamiento de este navegador está lleno. ' +
+    'Tus datos anteriores siguen a salvo. Libera espacio (borra datos de otras páginas en este navegador) y vuelve a intentarlo.';
+  if (typeof metasAlert === 'function') metasAlert(txt, { icono: '⚠️', titulo: 'No se guardó' });
+  else if (typeof toast === 'function') toast('⚠️ ' + txt);
 }
 
 function adLoad() {
@@ -266,7 +367,7 @@ function adSave(d) {
   const st = adState();
   const i = st.grupos.findIndex(x => x.id === d.id);
   if (i >= 0) st.grupos[i] = d; else st.grupos.push(adNormGrupo(d));
-  adStateSave(st);
+  return adStateSave(st);
 }
 
 /* ── Claves de familia por GRUPO ──
@@ -1145,7 +1246,7 @@ function adRenderLista(body, d) {
   document.getElementById('ad-add-al').addEventListener('click', () => {
     const dd = adLoad();
     const sig = dd.lista.length ? Math.max(...dd.lista.map(a => a.num)) + 1 : 1;
-    dd.lista.push({ num: sig, nombre: '' });
+    dd.lista.push({ num: sig, nombre: '', alta: Date.now() });
     adClaveFamilia(dd.id, sig);          /* su clave de familia nace con él */
     adSave(dd); renderAdmin();
   });
@@ -1194,9 +1295,12 @@ function adRenderLista(body, d) {
     if (!await metasConfirm('Se traerá la lista del análisis más reciente (**' + (ana.evaluacion || 'Evaluación') + '**, ' + ana.students.length + ' alumnos). ¿Reemplazar la lista actual?', { icono: '📥', titulo: 'Lista de alumnos', okTxt: 'Sí, traer' })) return;
     adUndoGuardar('Traer lista del Plan de Acción');
     const dd = adLoad();
+    const alta = Date.now();
     dd.lista = ana.students.map(s => ({
-      num: +s.num, nombre: String(s.nombre || '').startsWith('#') ? '' : (s.nombre || ''),
+      num: +s.num, nombre: String(s.nombre || '').startsWith('#') ? '' : (s.nombre || ''), alta,
     }));
+    /* lista nueva entera: las marcas de borrado de la anterior ya no aplican */
+    dd.borrados = [];
     if (!dd.grado) dd.grado = ana.grado || '';
     if (!dd.seccion) dd.seccion = ana.seccion || '';
     adSave(dd); renderAdmin();
@@ -1235,7 +1339,7 @@ async function adImportarPegado() {
     if (!num || usados.has(num)) { do { num = ++maxNum; } while (usados.has(num)); }
     else { maxNum = Math.max(maxNum, num); }
     usados.add(num);
-    dd.lista.push({ num, nombre: p.nombre });
+    dd.lista.push({ num, nombre: p.nombre, alta: Date.now() });
     adClaveFamilia(dd.id, num);          /* cada alumno recibe su clave de familia */
   });
   dd.lista.sort((a, b) => a.num - b.num);
@@ -1403,7 +1507,10 @@ async function adInsertarAlumno() {
   if (typeof eqRecorrer === 'function') eqRecorrer(d, pos);
   /* 3) la lista misma */
   d.lista.forEach(a => { if (a.num >= pos) a.num++; });
-  d.lista.push({ num: pos, nombre: String(nombre).trim() });
+  d.lista.push({ num: pos, nombre: String(nombre).trim(), alta: Date.now() });
+  /* la lista crece una fila: las marcas de borrado también, para que la
+     última fila recorrida no parezca una ficha revivida */
+  (d.borrados || []).forEach(b => { if (b && +b.n >= pos - 1) b.n = +b.n + 1; });
   d.lista.sort((a, b) => a.num - b.num);
   adSave(d);
   renderAdmin();
@@ -1669,9 +1776,11 @@ async function adEliminarAlumnoFila(numActual, alTerminar) {
     }
   } catch (_) {}
 
-  /* 6) Guardar lista renumerada */
+  /* 6) Guardar lista renumerada, con la marca del borrado para que una
+     copia vieja de otro equipo o de la nube no la devuelva */
   d2.lista = restantes.map((a, i) => Object.assign({}, a, { num: i + 1 }));
-  adSave(d2);
+  adMarcarBorrado(d2, al);
+  if (!adSave(d2)) return;
   if (typeof alTerminar === 'function') alTerminar();
   if (typeof toast === 'function') {
     toast('🗑️ Fila borrada (' + (adPrimerNombre(al.nombre) || '#' + numActual) + ') · Puedes restaurarla en «🕘 Deshacer»');
@@ -2671,8 +2780,12 @@ function adSaceImportarTexto(texto) {
       cerrar(); toast('⚠️ La lista cambió mientras revisabas. Vuelve a importar el archivo.'); return;
     }
     const res = SL.aplicar(dd, plan2, conf);
-    res.nuevas.forEach(num => adClaveFamilia(dd.id, num));
-    adSave(dd);
+    const alta = Date.now();
+    res.nuevas.forEach(num => {
+      adClaveFamilia(dd.id, num);
+      const n = dd.lista.find(a => a.num === num); if (n) n.alta = alta;
+    });
+    if (!adSave(dd)) { cerrar(); return; }   /* adSave ya avisó que no cupo */
     cerrar();
     renderAdmin();
     toast('📥 SACE: ' + res.marcadas + ' en lista oficial' + (res.actualizadas ? ' · ' + res.actualizadas + ' actualizadas' : '') +

@@ -169,8 +169,12 @@
   function baseSet(k, raw) {
     var o = baseLoad();
     if (raw == null) delete o[k]; else o[k] = raw;
-    try { localStorage.setItem(BASE_KEY, JSON.stringify(o)); }
-    catch (_) {
+    try { localStorage.setItem(BASE_KEY, JSON.stringify(o)); return; } catch (_) {}
+    /* Sin base la fusión solo puede unir, y unir revive lo borrado: antes
+       de soltarla se le pide espacio a Mi aula (las fotos de «Deshacer»). */
+    try { if (typeof window.metasLiberarEspacio === 'function' && window.metasLiberarEspacio()) {
+      localStorage.setItem(BASE_KEY, JSON.stringify(o)); return; } } catch (_) {}
+    {
       /* No cupo. Se tira ESTA clave de la base en vez de dejar una base
          mentirosa: una base vieja diría que lo que hay ahora se «borró». */
       try { delete o[k]; localStorage.setItem(BASE_KEY, JSON.stringify(o)); } catch (__) {}
@@ -192,7 +196,14 @@
       if (!e) {
         if (cur != null) { m[k] = { v: t, h: h, sv: t }; toca = true; }   // ya existía: NO es edición
       } else if (e.h !== h) {
-        e.v = t; e.h = h; toca = true;                                     // edición real → pendiente
+        /* La versión de una edición NUNCA queda por debajo de la última que
+           se vio en la nube (cv) ni de la anterior de este equipo. La nube
+           solo acepta versiones mayores o iguales a la suya, y con la hora
+           sola, un teléfono con el reloj adelantado dejaba a la PC sin poder
+           guardar nada: la nube lo descartaba en silencio y la siguiente
+           sincronización ponía encima la copia vieja (noviembre de 2026: la
+           importación del SACE «no guardaba» y las fichas borradas volvían). */
+        e.v = Math.max(t, (e.v || 0) + 1, (e.cv || 0) + 1); e.h = h; toca = true;   // edición real → pendiente
       }
     });
     if (toca) metaSave(m);
@@ -224,8 +235,8 @@
       var edicionReal = e.v !== e.sv;
       var semilla = !!cloudKeys && !cloudKeys.has(k) && cur != null;   // la nube no lo tiene aún
       if (!(force || edicionReal || semilla)) return;
-      var version = force ? t : e.v;
-      if (force) { e.v = version; e.h = hash(cur); }
+      var version = force ? Math.max(t, (e.cv || 0) + 1) : Math.max(e.v, (e.cv || 0) + 1);
+      if (force || version !== e.v) { e.v = version; e.h = hash(cur); }
       entradas.push({ k: k, valor: { raw: cur }, version: version, dispositivo: deviceId() });
     });
     if (!entradas.length) { return Promise.resolve(true); }
@@ -240,10 +251,18 @@
       return r.json();
     }).then(function (n) {
       if (typeof n !== 'number' || n < 0) throw new Error('rechazado');
+      /* Con el SQL nuevo, n cuenta solo lo que la nube ESCRIBIÓ. Si se
+         quedó corta, algo se rechazó por versión: no se marca nada como
+         subido y la próxima sincronización fusiona y vuelve a subir. Con
+         el SQL viejo n siempre es el total, y por eso lo de abajo. */
+      if (n < entradas.length) { metaSave(m); return false; }
       entradas.forEach(function (en) {
-        var e = m[en.k]; if (e) e.sv = en.version;
-        /* La nube ya tiene esto: es lo último que los dos lados tienen igual. */
-        baseSet(en.k, en.valor.raw);
+        var e = m[en.k]; if (e) { e.sv = en.version; e.cv = Math.max(e.cv || 0, en.version); }
+        /* La BASE no avanza aquí. Que la nube respondiera no prueba que
+           guardara: el SQL viejo cuenta también lo que descarta. La base
+           avanza en pull(), al VER en la nube lo mismo que hay aquí; hasta
+           entonces, si la nube trae otra cosa, se fusiona contra la base
+           de verdad en vez de pisar lo de este equipo. */
       });
       metaSave(m);
       return true;
@@ -294,6 +313,13 @@
           return;
         }
         var pendiente = !!(m[row.k] && m[row.k].v !== m[row.k].sv);
+        /* Subido pero NUNCA visto en la nube: la base es la copia común
+           anterior y lo local se movió de ella. Si la nube trae otra cosa,
+           o la subida se descartó o alguien más escribió encima; en los dos
+           casos se fusiona, no se pisa. Sin esto la importación del SACE y
+           los borrados se perdían al recargar. */
+        var baseK = baseLoad()[row.k];
+        var sinConfirmar = !pendiente && baseK != null && localRaw != null && localRaw !== baseK;
         /* ── FUSIONAR, que es lo que de verdad arregla el hallazgo ──
            Si este equipo tiene cambios SIN SUBIR y la nube trae otra cosa,
            las dos copias se movieron desde la base y elegir una tira el
@@ -301,11 +327,13 @@
            sin señal a las 9:00 y pone una nota en la PC a las 20:00; con
            «gana la más nueva» desaparecía la asistencia del día, que son 43
            nombres que ya no se pueden reconstruir. */
-        if (!force && pendiente && localRaw != null && raw != null &&
+        if (!force && (pendiente || sinConfirmar) && localRaw != null && raw != null &&
             typeof MetasFusion !== 'undefined' && MetasFusion && MetasFusion.fusionar) {
           /* En un empate de verdad —los dos cambiaron EL MISMO dato— manda
              el más reciente; es el único sitio donde se elige. */
-          var fus = MetasFusion.fusionar(baseLoad()[row.k], localRaw, raw, local >= remota);
+          /* Si lo de aquí ya se subió, en un empate de verdad manda la nube:
+             puede ser otro equipo que escribió DESPUÉS sobre lo nuestro. */
+          var fus = MetasFusion.fusionar(baseK, localRaw, raw, pendiente ? local >= remota : false);
           /* Red de seguridad: una fusión no puede devolver menos de la mitad
              de la copia más llena. Borrar media aula en una sincronización no
              pasa; un error en la fusión, sí podría. Ante la duda, lo de siempre. */
@@ -317,7 +345,7 @@
             /* Queda PENDIENTE y con una versión que gana: la copia fusionada
                tiene que llegar también al otro equipo, o mañana volvería a
                mandarnos la suya a medias. */
-            m[row.k] = { v: Math.max(remota, local, ahora()) + 1, h: hash(fus), sv: 0 };
+            m[row.k] = { v: Math.max(remota, local, ahora()) + 1, h: hash(fus), sv: 0, cv: remota };
             cambio = true; fusionado = true;
             return;
           }
@@ -338,6 +366,12 @@
         m[row.k] = { v: remota, h: hash(raw), sv: remota };
         baseSet(row.k, raw);                   // lo aplicado es ahora la base
         cambio = true;
+      });
+      /* cv = la versión más alta que se ha visto en la nube para cada clave:
+         la próxima edición tiene que pasarla para que la nube la acepte */
+      rows.forEach(function (row) {
+        if (!row || !m[row.k]) return;
+        m[row.k].cv = Math.max(m[row.k].cv || 0, Number(row.version) || 0);
       });
       metaSave(m);
       if (cambio || protegido) repaint();
@@ -404,7 +438,14 @@
 
   function schedulePush() {
     clearTimeout(_pushT);
-    _pushT = setTimeout(function () { if (!_busy) { _busy = true; push(false).then(function () { _busy = false; estado(); }); } }, 4000);
+    /* Baja ANTES de subir: así la versión sale por encima de la que tiene
+       la nube y, si otro equipo escribió en medio, se fusiona primero. */
+    _pushT = setTimeout(function () {
+      if (_busy) return;
+      _busy = true;
+      pull(false).then(function (res) { return push(false, res.cloudKeys); })
+        .then(function () { _busy = false; estado(); }, function () { _busy = false; });
+    }, 4000);
   }
 
   /* Actualiza el texto de estado en la tarjeta del maestro (si está). */
