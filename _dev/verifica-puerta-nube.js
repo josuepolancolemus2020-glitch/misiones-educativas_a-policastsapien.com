@@ -38,7 +38,7 @@ const { abrir, SIN_SW } = require('./lib-navegador');
 
 const RAIZ = path.resolve(__dirname, '..');
 const BASE = 'http://localhost:8123';
-const SQL = fs.readFileSync(path.join(RAIZ, 'SUPABASE-PUERTA-ANONIMA.sql'), 'utf8');
+const SQL = fs.readFileSync(path.join(RAIZ, '_privado', 'SUPABASE-PUERTA-ANONIMA.sql'), 'utf8');
 
 let fallos = 0;
 const ok = (nombre, cond, extra) => {

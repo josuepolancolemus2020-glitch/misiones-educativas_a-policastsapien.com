@@ -4,7 +4,7 @@
   "description": "Misiones para 4º a 9º con su examen y su ficha listos para fotocopiar. Las de Español, Matemáticas, Ciencias y Sociales llevan señalado su bloque del DCNB. Funcionan sin internet y son gratis para el maestro hondureño.",
   "main": "sw.js",
   "scripts": {
-    "build:www": "robocopy . www /E /XD android node_modules .git .github .claude www _dev /XF *.md package.json package-lock.json capacitor.config.json .gitignore /NFL /NDL /NJH /NJS /NC /NS & exit 0",
+    "build:www": "robocopy . www /E /XD android node_modules .git .github .claude .idea www _dev _privado docs /XF *.md *.sql package.json package-lock.json capacitor.config.json .gitignore /NFL /NDL /NJH /NJS /NC /NS & exit 0",
     "sync": "npm run build:www && npx cap sync",
     "install:android": "npm run build:www && npx cap sync && cd android && gradlew.bat installDebug",
     "test": "node _dev/corre-sondas.js",
