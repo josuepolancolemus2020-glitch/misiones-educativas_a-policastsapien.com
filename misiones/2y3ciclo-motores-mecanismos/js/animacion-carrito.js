@@ -447,7 +447,7 @@
   /* Los rótulos del botón caben en un renglón en un teléfono de 360 px con
      la letra grande. */
   var BOTONES = {
-    es: ['🔋 Encenderlo', '📚 Ponerlo en el suelo', '⚙️ Ponerle engranajes', '📚 Otra vez al suelo', '📝 Tu turno', '↺ Empezar otra vez'],
+    es: ['🔋 Encenderlo', '📚 Bajarlo al suelo', '⚙️ Con engranajes', '📚 Otra vez al suelo', '📝 Tu turno', '↺ Empezar otra vez'],
     en: ['🔋 Switch it on', '📚 Put it on the floor', '⚙️ Add gears', '📚 Back on the floor', '📝 Your turn', '↺ Start over']
   };
   var MARCADOR = {

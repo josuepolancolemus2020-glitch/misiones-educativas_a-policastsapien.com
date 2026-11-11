@@ -109,7 +109,7 @@
   var COL = { cinco: { x0: 216, x1: 260 }, siete: { x0: 266, x1: 310 } };
   /* Lo que pregunta Kenia, el teléfono y lo que escribe */
   var PREGUNTA = { rotulo: { x: 8, base: 145, tam: 10, texto: 'Kenia pregunta:' }, x0: 8, x1: 112, y0: 150, y1: 180, tam: 10.5,
-    lineas: [['¿Cuántas estrofas', 163.5], ['tiene el Himno?', 175.5]] };
+    lineas: [['¿Cuántas estrofas', 163], ['tiene el Himno?', 176]] };
   var TEL = { x0: 126, x1: 148, y0: 145, y1: 183 };
   var GLOBO = { x0: 156, x1: 312, y0: 148, y1: 178, tam: 13, cola: [[156, 158], [149, 164], [156, 166]] };
   var CAJA = { x0: 257, x1: 303, y0: 152, y1: 172 };

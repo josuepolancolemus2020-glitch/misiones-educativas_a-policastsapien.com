@@ -42,7 +42,7 @@
     { k: 'kevin', nombre: 'Kevin', cara: '🧒', y: 118 },
     { k: 'yeimy', nombre: 'Yeimy', cara: '👧', y: 164 }
   ];
-  var CARA = { x: 20, baja: 7, tam: 22, nombre: 19 };
+  var CARA = { x: 20, baja: 7, tam: 22, nombre: 21 };   // 21 y no 19: en Chromium 153 la caja del emoji baja más, y el nombre la rozaba
 
   /* ── lo que dijo cada uno, en pedazos (Fredoka 600 a 12) ──
      La columna X_P es donde empieza «para el jueves» en las tres; lo de

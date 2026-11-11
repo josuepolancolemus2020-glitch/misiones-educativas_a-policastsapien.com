@@ -4572,7 +4572,10 @@ const LEER = `
     function numeros(t) { return ((t || '').match(/-?[0-9.]+/g) || []).map(Number); }
     function pares(nn) { var ps = []; for (var i = 0; i + 1 < nn.length; i += 2) ps.push([nn[i], nn[i + 1]]); return ps; }
     function puntos(el) { return pares(numeros(el.getAttribute('d') || el.getAttribute('points'))).map(function (p) { return aVista(el, p[0], p[1]); }); }
-    function texto(t) { return t ? { txt: t.textContent, caja: caja(t), ve: vis(t), d: demora(t) } : null; }
+    /* La línea base de cada palabra, además de su caja: la caja crece con una
+       tilde («países») y en Chromium 153 movía su centro medio punto, con todas
+       las palabras en el mismo renglón. */
+    function texto(t) { return t ? { txt: t.textContent, caja: caja(t), base: aVista(t, +t.getAttribute('x') || 0, +t.getAttribute('y') || 0)[1], ve: vis(t), d: demora(t) } : null; }
     function trazado(p) { return Math.abs(parseFloat(getComputedStyle(p).strokeDashoffset) || 0) < 0.5; }
     function raya(el) { var r = getComputedStyle(el).strokeDasharray; return r && r !== 'none' && r !== '0px' ? r : ''; }
     function trazos(el) { return ((el.getAttribute('d') || '').match(/M/g) || []).length; }
@@ -8217,7 +8220,7 @@ const ESCENAS = {
     r.push([!falsas.length, `paso ${n}: todo lo que leyó es verdad: cada frase está en la tabla de la sonda, con su fuente`, falsas]);
     const malArmada = TV.filter(t => {
       if (t.pz.length !== 4 || t.k !== 1 || !t.palabra || !t.pz.every(p => dentro(p.caja, t.caja, 0.1))) return true;
-      const ys = t.pz.map(p => cy(p.caja));
+      const ys = t.pz.map(p => p.base);
       if (Math.max(...ys) - Math.min(...ys) > 0.5) return true;
       return t.pz.some((p, j) => j > 0 && (p.caja.x0 - t.pz[j - 1].caja.x1 < 1.5 || p.caja.x0 - t.pz[j - 1].caja.x1 > 8));
     }).map(t => t.frase);
@@ -11724,7 +11727,11 @@ const ESCENAS = {
        sus «…») se tocan por el hueco de la última letra: eso no es montarse.
        Se pide que no se metan uno en el otro más de un píxel. */
     const cajas = x.cajasTexto, choqT = [];
-    const pegados = (a, b) => cerca(a.y0, b.y0, 0.6) && cerca(a.y1, b.y1, 0.6) && Math.min(a.x1, b.x1) - Math.max(a.x0, b.x0) < 1.2;
+    /* «Del mismo renglón» se mide por el centro de las cajas, no por su alto:
+       en Chromium 153 la caja de la coma ya no mide lo mismo que la de
+       «bloque», y estando en el mismo renglón se daban por montadas. Dos
+       renglones del examen van a 14 puntos; 2,5 los separa de sobra. */
+    const pegados = (a, b) => cerca((a.y0 + a.y1) / 2, (b.y0 + b.y1) / 2, 2.5) && Math.min(a.x1, b.x1) - Math.max(a.x0, b.x0) < 1.2;
     cajas.forEach((a, i) => cajas.forEach((b, j) => { if (j > i && monta(a, b) && !pegados(a, b)) choqT.push([x.textos[i], x.textos[j]]); }));
     r.push([choqT.length === 0, `paso ${n}: ningún texto se monta en otro`, choqT]);
     r.push([cajas.every(c => dentro(c, { x0: 0, y0: 0, x1: x.vista[0], y1: x.vista[1] })), `paso ${n}: todo cabe en el dibujo`, null]);
