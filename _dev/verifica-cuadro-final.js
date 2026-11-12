@@ -72,8 +72,25 @@ igual(f(3).notas[0].final, null, 'y no se inventa su nota de Español');
 igual(f(6).notas.map(x => x.final), [70, 80, 91], 'Fito: 69.75 → 70, 79.75 → 80, 90.75 → 91');
 igual([f(6).prom, f(6).valoracion, f(6).estado], [80, 'A', 'APROBADO'], 'Fito (ingreso): promedio 80, aprobado');
 igual(f(1).pers, ['MB', 'MB', 'MB', 'MB', 'MB'], 'personalidad S, MB, B, MB → MB');
-igual(f(1).inasis, 6, 'inasistencias: la suma de los cuatro parciales');
+igual([cf.inasisFuente, f(1).inasis], ['parciales', 6], 'sin pase de lista: la suma de lo escrito en los cuatro parciales');
 igual(f(1).idn, '0801201500001', 'trae la identidad');
+
+console.log('\n2b · Inasistencias reales, del pase de lista');
+{
+  const g2 = JSON.parse(antes);
+  g2.asistencia = [
+    { f: '2026-03-02', aus: { 1: 'A', 2: 'E' } },
+    { f: '2026-03-03', aus: { 1: 'A', 2: 'A' } },
+    { f: '2026-03-03', aus: { 1: 'A' } },              // el mismo día repetido: cuenta una vez
+    { f: '2026-03-04', aus: { 1: 'E', 6: 'E' } },      // excusas: no son inasistencia
+    { f: '2026-03-05', aus: {} }
+  ];
+  const c2 = RS.cuadroFinal(g2, { SL, pers: PERS });
+  const g = n => c2.filas.find(x => x.num === n).inasis;
+  igual([c2.inasisFuente, c2.diasPase], ['pase', 4], 'con pase de lista, cuenta de ahí (4 días con lista)');
+  igual([g(1), g(2), g(6)], [2, 1, 0], 'Alba 2 ausencias (con excusa no cuenta, día repetido una vez), Bruno 1, Fito 0');
+  ok(g(3) === 0, 'y no usa la columna de los parciales (que decía 6)');
+}
 
 console.log('\n3 · El resumen del pie');
 const r = cf.resumen;
@@ -102,6 +119,11 @@ ok(/adNotaEscalaClase\(v\)/.test(bol) && /class="bl-escala"/.test(bol), 'la bole
 ok(/tr\.prom td\.nt-i/.test(bol), 'también la fila PROM.');
 const graf = adm.slice(adm.indexOf('function adBoletaGraficoEstado('), adm.indexOf('function adBoletaGraficoEstado(') + 4000);
 ok(/AD_NOTA_ESCALA_INFO/.test(graf) && !/adNotaCat\(/.test(graf), 'la gráfica de la boleta usa la misma escala que la tabla');
+
+const tr = adm.slice(adm.indexOf("getElementById('ad-inasis-traer')?.addEventListener"), adm.indexOf("getElementById('ad-inasis-traer')?.addEventListener") + 2500);
+ok(/r\.aus\[num\] === 'A'/.test(tr) && /vistos\[r\.f\]/.test(tr), '«Traer faltas» cuenta solo Ausente, cada día una vez');
+ok(/cruces/.test(tr), 'y avisa si el rango se cruza con otro parcial');
+ok(/excusas no cuentan/.test(adm), 'la ayuda lo dice');
 
 console.log(fallos ? '\n✘ ' + fallos + ' comprobación(es) fallaron' : '\n✓ El cuadro final dice lo mismo que la boleta');
 process.exit(fallos ? 1 : 0);
