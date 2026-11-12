@@ -4763,12 +4763,21 @@ function adRenderColecta(body, d) {
       valida: v => (Number(String(v).replace(',', '.')) > 0) ? '' : 'Escribe un monto mayor que cero.',
     });
     if (monto === null) return;
+    /* La fecha la pone el maestro: el dinero no siempre se anota el mismo
+       día que se entrega, y el informe para padres dice CUÁNDO salió. Antes
+       iba siempre la de hoy, y un gasto del 10/11 anotado el 12/11 quedaba
+       con la fecha equivocada. */
+    const fecha = await metasPrompt('¿Qué día se entregó o se pagó?\nSi fue hoy, solo toca **Guardar**.', {
+      icono: '🧾', titulo: 'Anotar gasto', type: 'date', value: adHoy(), okTxt: 'Guardar',
+      valida: v => (/^\d{4}-\d{2}-\d{2}$/.test(String(v)) && String(v) <= adHoy()) ? '' : 'Elige una fecha de hoy o de antes.',
+    });
+    if (fecha === null) return;
     const dd = adLoad(); const cc = adColecta(dd, _adColectaId); if (!cc) return;
     cc.gastos = cc.gastos || [];
     /* con su propia identidad: dos gastos del mismo día anotados en dos
        equipos ya no se confunden al sincronizar */
     cc.gastos.push({ id: 'G' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
-      d: String(desc).trim(), m: Number(String(monto).replace(',', '.')), f: adHoy() });
+      d: String(desc).trim(), m: Number(String(monto).replace(',', '.')), f: String(fecha) });
     adSave(dd); renderAdmin();
   });
 
