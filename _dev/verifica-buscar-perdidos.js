@@ -131,6 +131,10 @@ const deNube = cloud => JSON.parse(cloud.datos.METAS_ADMIN_V1.raw).grupos[0];
     const h = adm.slice(i, i + 900);
     ok(i > 0 && /dataset\.gf/.test(h) && /findIndex/.test(h) && !/splice\(\+b\.dataset\.gi/.test(h), 'borrar un gasto busca ESE gasto, no la posición');
     ok(/id: 'G' \+ Date\.now\(\)/.test(adm), 'cada gasto nuevo de colecta lleva su identidad');
+    const ig = adm.indexOf("document.getElementById('ad-add-gasto').addEventListener");
+    const hg = adm.slice(ig, ig + 2000);
+    ok(ig > 0 && /type: 'date'/.test(hg) && /f: String\(fecha\)/.test(hg) && !/f: adHoy\(\) \}\)/.test(hg),
+      'al anotar un gasto se elige el día (un gasto del 10/11 anotado el 12/11 queda con su fecha)');
     ok(/id="ad-col-perdidos"/.test(adm) && /id="ad-sace-perdidos"/.test(adm), 'el botón 🔎 está en la colecta y en Notas SACE');
     const bp = fs.readFileSync(path.join(__dirname, '..', 'js', 'tools', 'buscar-perdidos.js'), 'utf8');
     ok(!/localStorage|fetch\s*\(|supabase/i.test(bp), 'buscar-perdidos.js no guarda ni manda nada por su cuenta');
