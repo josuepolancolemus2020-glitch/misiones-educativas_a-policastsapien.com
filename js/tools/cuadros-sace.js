@@ -629,6 +629,14 @@
       return { k: as.k, et: as.et, corto: as.corto, area: AREA[as.k], col: col, cuenta: conNotas };
     }).filter(function (x) { return x.cuenta; });
 
+    var asis = Array.isArray(d.asistencia) ? d.asistencia : [];
+    var conPase = asis.some(function (r) { return r && r.f; });
+    var faltas = {}, diasVistos = {};
+    asis.forEach(function (r) {
+      if (!r || !r.f || !r.aus || diasVistos[r.f]) return;
+      diasVistos[r.f] = 1;
+      Object.keys(r.aus).forEach(function (n) { if (r.aus[n] === 'A') faltas[n] = (faltas[n] || 0) + 1; });
+    });
     var porVal = { E: nvt(), A: nvt(), B: nvt(), I: nvt() };
     var aprob = nvt(), reprob = nvt(), pend = nvt(), proms = [];
     var filas = alumnos.map(function (a) {
@@ -646,7 +654,14 @@
         var n = Math.round(xs.reduce(function (t, x) { return t + PERS_NUM[x]; }, 0) / xs.length);
         return PERS_DE_NUM[Math.max(1, Math.min(4, n))];
       });
-      var inas = PARCIALES.map(function (p) { return val(p, 'Inasistencias', a.num); }).filter(function (x) { return x != null; });
+      /* Inasistencias REALES: los días marcados Ausente («A») en el pase
+         de lista, cada día una sola vez. Las excusas («E») no son
+         inasistencia. Antes se sumaba la columna de cada parcial, que se
+         llena eligiendo fechas: si dos rangos se cruzaban, los mismos días
+         contaban dos veces, y las excusas entraban también. Sin pase de
+         lista en el grupo, se usa lo escrito en los parciales. */
+      var inas = conPase ? [faltas[a.num] || 0]
+        : PARCIALES.map(function (p) { return val(p, 'Inasistencias', a.num); }).filter(function (x) { return x != null; });
       var completo = asigs.length > 0 && !faltan.length;
       var prom = completo ? Math.round(ns.reduce(function (t, x) { return t + x.final; }, 0) / ns.length) : null;
       var estado = !completo ? 'PENDIENTE' : ns.every(function (x) { return x.final >= APRUEBA; }) ? 'APROBADO' : 'REPROBADO';
@@ -661,6 +676,7 @@
     });
     return {
       pers: pers, asigs: asigs, filas: filas, sobran: m.sobran,
+      inasisFuente: conPase ? 'pase' : 'parciales', diasPase: Object.keys(diasVistos).length,
       resumen: { aprob: aprob, reprob: reprob, pend: pend, porVal: porVal, total: contar(alumnos),
         promGrupo: proms.length ? Math.round(proms.reduce(function (t, x) { return t + x; }, 0) / proms.length * 10) / 10 : null }
     };

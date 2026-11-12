@@ -3311,7 +3311,9 @@ function adCuadroFinalModal() {
     ov.querySelector('#ad-cf-cuerpo').innerHTML = `<style>${AD_CF_CSS}</style>
       <p class="ad-sace-nota"><b>${cf.filas.length}</b> alumno(s)${window.SaceLista.hayImportacion(d) ? ' de la lista oficial del SACE' : ''}.
         Nota final = promedio de los cuatro parciales, redondeado. La recuperación no la guarda la aplicación: aprobado va «N/A»;
-        reprobado deja la casilla en blanco para escribirla a mano.</p>
+        reprobado deja la casilla en blanco para escribirla a mano. ${cf.inasisFuente === 'pase'
+          ? 'Inasistencias: los días marcados <b>Ausente</b> en el pase de lista (' + cf.diasPase + ' días con lista); las excusas no cuentan.'
+          : 'Inasistencias: no hay pase de lista en este grupo; se suma lo escrito en cada parcial.'}</p>
       ${cf.filas.some(f => f.estado === 'PENDIENTE') ? '<p class="ad-sace-aviso">⚠ Hay alumnos con parciales sin nota: salen como PENDIENTE y se dice qué les falta.</p>' : ''}
       <div class="rf-papel rf-scroll"><div class="cf" style="min-width:980px">${adCfTablaHtml(cf)}${adCfPieHtml(cf)}</div></div>`;
   };
@@ -3371,7 +3373,7 @@ function adPrintCuadroFinal(d) {
   <div class="datos">${datos.map(x => `<div><span>${adEsc(x[0])}</span><b>${adEsc(x[1] || '·')}</b></div>`).join('')}</div>
   <div class="cf">${adCfTablaHtml(cf)}${adCfPieHtml(cf)}</div>
   <div class="firmas"><div>${adEsc(bol.docente || '')}<br><small>Docente de grado</small></div><div>${adEsc(bol.director || '')}<br><small>Director(a)</small></div></div>
-  <div class="marca">Elaborado con M.E.T.A.S · ${adEsc(adFechaBonita(adHoy()))}</div>
+  <div class="marca">${cf.inasisFuente === 'pase' ? 'Inasistencias: días marcados Ausente en el pase de lista; las excusas no cuentan. · ' : ''}Elaborado con M.E.T.A.S · ${adEsc(adFechaBonita(adHoy()))}</div>
 <script>window.onload=function(){setTimeout(function(){window.print();},280);}<\/script></body></html>`;
   adPrintAbrir(html);
 }
@@ -7435,8 +7437,9 @@ function adRenderSace(body, d) {
           <div class="pa-field"><label>Hasta</label><input type="date" id="ad-inasis-hasta" class="pa-inp-field" value="${hastaDef}"></div>
         </div>
         <button class="pa-generate-btn ad-btn-sec" id="ad-inasis-traer">📅 Traer faltas del pase de lista</button>
-        <p class="pa-optional-hint">Cuenta las faltas (ausentes y con excusa) registradas en <strong>Asistencia</strong>
-          dentro de ese rango y las pone en el <strong>Parcial ${parcial}</strong>. Puedes ajustar a mano después.</p>
+        <p class="pa-optional-hint">Cuenta los días marcados <strong>Ausente</strong> en <strong>Asistencia</strong>
+          dentro de ese rango y los pone en el <strong>Parcial ${parcial}</strong>. Las <strong>excusas no cuentan</strong>
+          como inasistencia. Puedes ajustar a mano después.</p>
       </div>` : ''}
 
       <div class="ad-rec-bar">
@@ -7818,11 +7821,24 @@ function adRenderSace(body, d) {
     dd.boleta = dd.boleta || adBoletaDef();
     dd.boleta.parcialFechas = dd.boleta.parcialFechas || {};
     dd.boleta.parcialFechas[parcial] = { desde, hasta };
-    const cuenta = {};
+    /* Solo AUSENTE («A»): la excusa no es inasistencia. Cada día una vez,
+       aunque la sincronización hubiera dejado el día repetido. */
+    const cuenta = {}, vistos = {};
+    let excusas = 0;
     (dd.asistencia || []).forEach(r => {
-      if (r && r.f >= desde && r.f <= hasta && r.aus) {
-        Object.keys(r.aus).forEach(num => { cuenta[num] = (cuenta[num] || 0) + 1; });
+      if (r && r.f >= desde && r.f <= hasta && r.aus && !vistos[r.f]) {
+        vistos[r.f] = 1;
+        Object.keys(r.aus).forEach(num => {
+          if (r.aus[num] === 'A') cuenta[num] = (cuenta[num] || 0) + 1;
+          else if (r.aus[num] === 'E') excusas++;
+        });
       }
+    });
+    /* rangos de otros parciales que se cruzan con este: esos días saldrían
+       en dos parciales */
+    const cruces = Object.keys(dd.boleta.parcialFechas).filter(p => p !== parcial).filter(p => {
+      const r = dd.boleta.parcialFechas[p];
+      return r && r.desde && r.hasta && r.desde <= hasta && r.hasta >= desde;
     });
     dd.notas[parcial] = dd.notas[parcial] || {};
     dd.notas[parcial]['Inasistencias'] = dd.notas[parcial]['Inasistencias'] || {};
@@ -7833,7 +7849,10 @@ function adRenderSace(body, d) {
       if (c > 0) { total += c; conFaltas++; }
     });
     adSave(dd); adRenderSace(body, adLoad());
-    if (typeof toast === 'function') toast('📅 Parcial ' + parcial + ': ' + total + ' faltas (' + conFaltas + ' alumnos)');
+    if (typeof toast === 'function') toast('📅 Parcial ' + parcial + ': ' + total + ' faltas (' + conFaltas + ' alumnos)' +
+      (excusas ? ' · ' + excusas + ' excusa(s) no cuentan' : ''));
+    if (cruces.length) estado('⚠️ Estas fechas se cruzan con las del Parcial ' + cruces.join(', ') +
+      ': esos días quedan contados en los dos. Revisa «Desde» y «Hasta».');
   });
 
   // 📥 Copiar notas de mis respaldos + 🔎 revisar lo del autocompletado + 🕓 Historial
