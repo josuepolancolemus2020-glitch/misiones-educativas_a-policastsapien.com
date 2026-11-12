@@ -6929,3 +6929,14 @@ body:has(.ad-sace-card) #metasInstallBtn { display: none !important; }
 .cf-campos { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 6px 10px; }
 .cf-campo { display: flex; flex-direction: column; gap: 3px; font-weight: 800; font-size: calc(12px * var(--metas-fz, 1)); }
 .cf-campo input { min-height: 44px; }
+/* ── Cuadro final: recuperación y mensajes a las familias ── */
+.cf-sec { margin-top: 14px; border-top: 1px dashed var(--border, #cbd5e1); padding-top: 6px; }
+.cf-rec-fila { display: flex; flex-wrap: wrap; gap: 6px 14px; padding: 8px 0; border-bottom: 1px solid var(--border, #e2e8f0); }
+.cf-rec-nom { flex: 1 1 220px; font-size: calc(13px * var(--metas-fz, 1)); }
+.cf-rec-nom small { display: block; color: var(--muted, #64748b); }
+.cf-rec-inps { display: flex; flex-wrap: wrap; gap: 8px; }
+.cf-rec-inps label { display: flex; flex-direction: column; gap: 2px; font-weight: 800; font-size: calc(12px * var(--metas-fz, 1)); }
+.cf-rec-inp { width: 84px; min-height: 44px; text-align: center; font-weight: 800; }
+.cf-msg { border: 1px solid var(--border, #e2e8f0); border-radius: 12px; padding: 8px 10px; margin: 8px 0; }
+.cf-msg-h small { display: block; color: var(--muted, #64748b); }
+.cf-msg-txt { width: 100%; margin: 6px 0; font-size: calc(13px * var(--metas-fz, 1)); line-height: 1.4; resize: vertical; }

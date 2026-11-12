@@ -3217,6 +3217,7 @@ const AD_CF_CSS = `
 .cf td.cf-idn { font-size: 7.6px; color: #33415c; }
 .cf td.cf-rec { color: #8a94a8; font-size: 6.8px; }
 .cf td.cf-rec.cf-vacia { background: #fff; box-shadow: inset 0 0 0 1px #b45309; }
+.cf td.cf-rec.cf-rnota { color: #0f2350; font-weight: 800; font-size: 8.2px; }
 .cf td.cf-n { font-weight: 800; }
 .cf td.nt-i { background: #fde2e2; } .cf td.nt-b { background: #fef3c7; }
 .cf td.nt-a { background: #dbeafe; } .cf td.nt-e { background: #dcfce7; }
@@ -3256,10 +3257,13 @@ function adCfTablaHtml(cf) {
     const pers = f.pers.map(x => `<td class="cf-p">${adEsc(x || '·')}</td>`).join('');
     const notas = f.notas.map(n => {
       if (n.final == null) return '<td class="cf-rec"></td><td class="cf-n">·</td>';
-      return `<td class="cf-rec${n.recup === '' ? ' cf-vacia' : ''}">${adEsc(n.recup)}</td><td class="cf-n ${adNotaEscalaClase(n.final)}">${n.final}</td>`;
+      const rc = n.recup === '' ? ' cf-vacia' : n.recup === 'N/A' ? '' : ' cf-rnota ' + adNotaEscalaClase(n.recup);
+      return `<td class="cf-rec${rc}">${adEsc(n.recup)}</td><td class="cf-n ${adNotaEscalaClase(n.final)}">${n.final}</td>`;
     }).join('');
+    const det = ResumenSace.observacion(f).split(': ').slice(1).join(': ');
     const obs = f.estado === 'APROBADO' ? '<td class="cf-obs ok">✓ APROBADO</td>'
-      : f.estado === 'REPROBADO' ? '<td class="cf-obs no">✗ REPROBADO</td>'
+      : f.estado === 'APROBADO EN RECUPERACIÓN' ? '<td class="cf-obs ok">✓ APROBADO <small>en recuperación</small></td>'
+      : f.estado === 'REPROBADO' ? `<td class="cf-obs no" title="${adEsc(det)}">✗ REPROBADO${det ? ' <small>' + adEsc(det) + '</small>' : ''}</td>`
       : `<td class="cf-obs pe" title="${adEsc(f.faltan.join(', '))}">⏳ PENDIENTE <small>falta ${adEsc(f.faltan.join(', '))}</small></td>`;
     return `<tr><td class="cf-num">${f.num}</td><td class="cf-idn">${adEsc(SL.idnBonita(f.idn))}</td><td class="cf-nom">${adEsc(f.nombre || '·')}</td>
       ${pers}${notas}<td>${f.inasis === '' ? 0 : f.inasis}</td>
@@ -3271,7 +3275,7 @@ function adCfTablaHtml(cf) {
 function adCfPieHtml(cf) {
   const r = cf.resumen;
   const k = (et, c) => `<span class="k">${et}<b>${c.T}</b> <small>(${c.N} N · ${c.V} V)</small></span>`;
-  return `<div class="cf-pie">${k('✓ Aprobados', r.aprob)}${k('✗ Reprobados', r.reprob)}${r.pend.T ? k('⏳ Pendientes', r.pend) : ''}
+  return `<div class="cf-pie">${k('✓ Aprobados', r.aprob)}${r.aprobRec.T ? k('✓ Aprobados en recuperación', r.aprobRec) : ''}${k('✗ Reprobados', r.reprob)}${r.pend.T ? k('⏳ Pendientes', r.pend) : ''}
     <span class="k">Promedio del grupo<b>${r.promGrupo == null ? '·' : String(r.promGrupo).replace('.', ',')}</b></span>
     <span class="k">Valoración: E<b>${r.porVal.E.T}</b> · A<b>${r.porVal.A.T}</b> · B<b>${r.porVal.B.T}</b> · I<b>${r.porVal.I.T}</b></span>
     <span class="esc"><span class="nt-i">I: hasta 69</span><span class="nt-b">B: 70 a 79</span><span class="nt-a">A: 80 a 90</span><span class="nt-e">E: 91 a 100</span></span></div>`;
@@ -3310,12 +3314,15 @@ function adCuadroFinalModal() {
     const cf = ResumenSace.cuadroFinal(d, { SL: window.SaceLista, pers: AD_PERSONALIDAD });
     ov.querySelector('#ad-cf-cuerpo').innerHTML = `<style>${AD_CF_CSS}</style>
       <p class="ad-sace-nota"><b>${cf.filas.length}</b> alumno(s)${window.SaceLista.hayImportacion(d) ? ' de la lista oficial del SACE' : ''}.
-        Nota final = promedio de los cuatro parciales, redondeado. La recuperación no la guarda la aplicación: aprobado va «N/A»;
-        reprobado deja la casilla en blanco para escribirla a mano. ${cf.inasisFuente === 'pase'
+        Nota final = promedio de los cuatro parciales, redondeado. Recuperación: aprobado va «N/A»; en una materia reprobada,
+        escribe la nota abajo en <b>✍️ Notas de recuperación</b> (la casilla vacía queda para escribirla a mano). ${cf.inasisFuente === 'pase'
           ? 'Inasistencias: los días marcados <b>Ausente</b> en el pase de lista (' + cf.diasPase + ' días con lista); las excusas no cuentan.'
           : 'Inasistencias: no hay pase de lista en este grupo; se suma lo escrito en cada parcial.'}</p>
       ${cf.filas.some(f => f.estado === 'PENDIENTE') ? '<p class="ad-sace-aviso">⚠ Hay alumnos con parciales sin nota: salen como PENDIENTE y se dice qué les falta.</p>' : ''}
-      <div class="rf-papel rf-scroll"><div class="cf" style="min-width:980px">${adCfTablaHtml(cf)}${adCfPieHtml(cf)}</div></div>`;
+      <div class="rf-papel rf-scroll"><div class="cf" style="min-width:980px">${adCfTablaHtml(cf)}${adCfPieHtml(cf)}</div></div>
+      ${adCfRecHtml(cf)}
+      ${adCfInformarHtml(cf)}`;
+    adCfEnganchar(ov, cf, pintar);
   };
   pintar();
   [['ad-cf-cod', 'codigoCentro'], ['ad-cf-mod', 'modalidad'], ['ad-cf-jor', 'jornada'], ['ad-cf-ald', 'aldea']].forEach(([id, k]) =>
@@ -3331,6 +3338,147 @@ function adCuadroFinalModal() {
   ov.querySelector('#ad-cf-print').addEventListener('click', () => adPrintCuadroFinal(adLoad()));
   ov.querySelector('#ad-cf-xlsx').addEventListener('click', () => adCuadroFinalExcel(adLoad()));
 }
+/* ── ✍️ Notas de recuperación ──
+   Solo para las materias reprobadas. Se guardan en d.recuperacion =
+   { columna: { nº: nota } }, junto a las notas, y viajan con el grupo.
+   La nota no toca el promedio ordinario (como en el SACE): cambia la
+   observación. Con 70 o más en TODAS las reprobadas, «Aprobado en
+   recuperación». */
+function adCfRecHtml(cf) {
+  const conRep = cf.filas.filter(f => f.reprobadas.length);
+  if (!conRep.length) return '';
+  return `<div class="cf-sec"><h4 class="bp-h">✍️ Notas de recuperación (${conRep.length} alumno${conRep.length === 1 ? '' : 's'})</h4>
+    <p class="ad-sace-nota">Escribe la nota (1 a 100) de cada materia que presentó en recuperación. Con <b>70 o más en todas</b>
+      sus materias reprobadas queda <b>✓ Aprobado en recuperación</b>. Déjala vacía mientras no la presente.</p>
+    ${conRep.map(f => `<div class="cf-rec-fila"><div class="cf-rec-nom"><b>#${f.num}</b> ${adEsc(f.nombre)}
+        <small>${adEsc(ResumenSace.observacion(f))}</small></div>
+      <div class="cf-rec-inps">${f.reprobadas.map(x => `<label>${adEsc(x.et)} <small>(${x.final})</small>
+        <input type="text" inputmode="numeric" maxlength="3" class="pa-inp-field cf-rec-inp" data-col="${adEsc(x.col)}" data-num="${f.num}"
+          value="${x.recup === '' ? '' : adEsc(String(x.recup))}" placeholder="·" aria-label="Recuperación de ${adEsc(x.et)}, ${adEsc(f.nombre)}"></label>`).join('')}</div>
+    </div>`).join('')}</div>`;
+}
+
+/* ── 📣 Informar a las familias ──
+   Un mensaje por familia (de usted), listo para WhatsApp al teléfono del
+   encargado si está en la ficha. Y uno para el grupo de padres SIN
+   nombres: la lista de quién aprobó dice por omisión quién no. */
+let _adCfInf = 'rep';
+function adCfCtx(d) {
+  return { docente: (d.boleta || {}).docente || '', grupo: adGradoSeccion(d.grado, d.seccion) || '',
+    centro: String(d.escuela || '').trim(), anio: (d.boleta || {}).anio || String(new Date().getFullYear()),
+    grado: parseInt(String(d.grado || '').replace(/\D/g, ''), 10) || 0 };
+}
+function adCfTelWa(tel) {
+  const n = String(tel || '').replace(/\D/g, '');
+  if (n.length < 8) return '';
+  return n.length === 8 ? '504' + n : n;   // Honduras: 8 dígitos sin el 504
+}
+function adCfInformarHtml(cf) {
+  const rep = cf.filas.filter(f => f.estado === 'REPROBADO' || f.estado === 'PENDIENTE');
+  const apr = cf.filas.filter(f => f.estado === 'APROBADO' || f.estado === 'APROBADO EN RECUPERACIÓN');
+  const d = adLoad(), ctx = adCfCtx(d);
+  const tab = (k, et) => `<button type="button" class="ad-pers-modo-btn${_adCfInf === k ? ' active' : ''}" data-cfinf="${k}">${et}</button>`;
+  const tarjeta = f => {
+    const msg = ResumenSace.mensajeFamilia(f, ctx), tel = adCfTelWa(f.tel);
+    return `<div class="cf-msg"><div class="cf-msg-h"><b>#${f.num} ${adEsc(f.nombre)}</b>
+        <small>${f.encargado ? adEsc(f.encargado) + ' · ' : ''}${tel ? '📞 ' + adEsc(f.tel) : 'sin teléfono del encargado en la ficha'}</small></div>
+      <textarea class="pa-inp-field cf-msg-txt" rows="12">${adEsc(msg)}</textarea>
+      <div class="ad-btn-row"><button type="button" class="pa-generate-btn" data-cfwa="${tel}">📲 ${tel ? 'Enviar por WhatsApp' : 'Abrir WhatsApp'}</button>
+        <button type="button" class="pa-generate-btn ad-btn-sec" data-cfcopiar="1">📋 Copiar</button></div></div>`;
+  };
+  let cuerpo = '';
+  if (_adCfInf === 'rep') {
+    cuerpo = rep.length ? `<div class="ad-btn-row"><button type="button" class="pa-generate-btn ad-btn-sec" id="ad-cf-lista-rep">🖨️ Listado de reprobados</button></div>` +
+      rep.map(tarjeta).join('') : '<p class="ad-sace-nota">✓ Nadie reprobó ni tiene notas pendientes.</p>';
+  } else if (_adCfInf === 'apr') {
+    cuerpo = apr.length ? apr.map(tarjeta).join('') : '<p class="ad-sace-nota">Todavía no hay alumnos aprobados con el año completo.</p>';
+  } else {
+    cuerpo = `<p class="ad-sace-nota">Para el grupo de WhatsApp de padres. <b>No lleva nombres</b>: una lista de quién aprobó
+      deja ver, por omisión, quién no. A cada familia escríbele en privado con las otras pestañas.</p>
+      <div class="cf-msg"><textarea class="pa-inp-field cf-msg-txt" rows="9">${adEsc(ResumenSace.mensajeGrupo(cf, ctx))}</textarea>
+      <div class="ad-btn-row"><button type="button" class="pa-generate-btn" data-cfwa="">📲 Abrir WhatsApp</button>
+        <button type="button" class="pa-generate-btn ad-btn-sec" data-cfcopiar="1">📋 Copiar</button></div></div>`;
+  }
+  return `<div class="cf-sec"><h4 class="bp-h">📣 Informar a las familias</h4>
+    <p class="ad-sace-nota">Revisa y ajusta cada mensaje antes de enviarlo: lo que escribas aquí es lo que se manda.</p>
+    <div class="ad-pers-modo">${tab('rep', '✗ Reprobados y pendientes (' + rep.length + ')')}${tab('apr', '✓ Aprobados (' + apr.length + ')')}${tab('grupo', '👥 Mensaje para el grupo')}</div>
+    ${cuerpo}</div>`;
+}
+function adCfEnganchar(ov, cf, pintar) {
+  ov.querySelectorAll('.cf-rec-inp').forEach(inp => inp.addEventListener('change', () => {
+    const t = String(inp.value || '').replace(/\D/g, '').slice(0, 3);
+    const dd = adLoad();
+    dd.recuperacion = dd.recuperacion || {};
+    const col = inp.dataset.col, num = inp.dataset.num;
+    dd.recuperacion[col] = dd.recuperacion[col] || {};
+    if (t === '') delete dd.recuperacion[col][num];
+    else dd.recuperacion[col][num] = Math.max(1, Math.min(100, Number(t)));
+    if (!Object.keys(dd.recuperacion[col]).length) delete dd.recuperacion[col];
+    adSave(dd);
+    pintar();
+  }));
+  ov.querySelectorAll('[data-cfinf]').forEach(b => b.addEventListener('click', () => { _adCfInf = b.dataset.cfinf; pintar(); }));
+  ov.querySelectorAll('[data-cfwa]').forEach(b => b.addEventListener('click', () => {
+    const txt = b.closest('.cf-msg').querySelector('.cf-msg-txt').value;
+    const tel = b.dataset.cfwa, enc = encodeURIComponent(txt);
+    const movil = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    window.open(tel ? (movil ? 'https://wa.me/' + tel + '?text=' + enc : 'https://web.whatsapp.com/send?phone=' + tel + '&text=' + enc)
+      : 'https://wa.me/?text=' + enc, '_blank');
+  }));
+  ov.querySelectorAll('[data-cfcopiar]').forEach(b => b.addEventListener('click', async () => {
+    const txt = b.closest('.cf-msg').querySelector('.cf-msg-txt').value;
+    try { await navigator.clipboard.writeText(txt); toast('📋 Mensaje copiado'); }
+    catch (_) { const ta = b.closest('.cf-msg').querySelector('.cf-msg-txt'); ta.select(); toast('Selecciona y copia el mensaje'); }
+  }));
+  ov.querySelector('#ad-cf-lista-rep')?.addEventListener('click', () => adPrintListaReprobados(adLoad()));
+}
+
+/* 🖨️ Listado de reprobados: una hoja carta para dirección y para citar a
+   las familias, con las materias, la nota, la recuperación y el teléfono. */
+function adPrintListaReprobados(d) {
+  const cf = ResumenSace.cuadroFinal(d, { SL: window.SaceLista, pers: AD_PERSONALIDAD });
+  const rep = cf.filas.filter(f => f.estado === 'REPROBADO' || f.estado === 'PENDIENTE');
+  const bol = d.boleta || {};
+  const gs = adGradoSeccion(d.grado, d.seccion) || '';
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+<title>${adEsc('Listado de reprobados · ' + gs)}</title>
+<style>
+  @page { size: letter portrait; margin: 13mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { font-family: Arial, Helvetica, sans-serif; color: #0f2350; font-size: 11px; }
+  .hoja { max-height: 248mm; overflow: hidden; }
+  h1 { font-family: Georgia, serif; font-size: 15px; text-align: center; }
+  h2 { font-family: Georgia, serif; font-size: 12.5px; color: #a8791a; text-align: center; letter-spacing: .6px; margin: 2px 0 8px; }
+  .datos { display: flex; flex-wrap: wrap; gap: 4px 18px; margin-bottom: 8px; border-bottom: 2px solid #1e3a7c; padding-bottom: 6px; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { border: 1px solid #c7cfdd; padding: 4px 5px; vertical-align: top; text-align: left; }
+  thead th { background: #1e3a7c; color: #fff; font-size: 10px; }
+  tbody tr:nth-child(even) td { background: #f4f7fc; }
+  .n { text-align: center; } small { color: #55637d; }
+  .nt-i { background: #fde2e2; border-radius: 4px; padding: 0 4px; font-weight: 800; }
+  .nota { font-size: 10px; margin-top: 8px; color: #33415c; }
+  .firmas { display: flex; gap: 50px; margin-top: 34px; font-size: 10.5px; }
+  .firmas div { flex: 1; text-align: center; border-top: 1px solid #0f2350; padding-top: 3px; }
+</style></head><body><section class="hoja">
+  <h1>${adEsc(String(d.escuela || 'Centro Educativo').toUpperCase())}</h1>
+  <h2>ALUMNOS CON ASIGNATURAS REPROBADAS</h2>
+  <div class="datos"><span><b>Grado y sección:</b> ${adEsc(gs)}</span><span><b>Docente:</b> ${adEsc(bol.docente || '·')}</span>
+    <span><b>Año lectivo:</b> ${adEsc(bol.anio || String(new Date().getFullYear()))}</span><span><b>Fecha:</b> ${adEsc(adFechaBonita(adHoy()))}</span>
+    <span><b>Total:</b> ${rep.length} de ${cf.filas.length} alumnos</span></div>
+  <table><thead><tr><th class="n">#</th><th>Alumno</th><th>Asignaturas reprobadas (nota final)</th><th>Recuperación</th><th>Encargado y teléfono</th></tr></thead>
+  <tbody>${rep.length ? rep.map(f => `<tr><td class="n">${f.num}</td><td><b>${adEsc(f.nombre)}</b></td>
+    <td>${f.estado === 'PENDIENTE' ? '<small>Faltan notas: ' + adEsc(f.faltan.join(', ')) + '</small>'
+      : f.reprobadas.map(x => adEsc(x.et) + ' <span class="nt-i">' + x.final + '</span>').join('<br>')}</td>
+    <td>${f.estado === 'PENDIENTE' ? '·' : f.reprobadas.map(x => x.recup === '' ? 'pendiente' : (x.recup >= 70 ? '✓ ' : '✗ ') + x.recup).join('<br>')}</td>
+    <td>${adEsc(f.encargado || '·')}${f.tel ? '<br><small>📞 ' + adEsc(f.tel) + '</small>' : ''}</td></tr>`).join('')
+    : '<tr><td colspan="5" class="n">Nadie reprobó.</td></tr>'}</tbody></table>
+  <p class="nota">Nota final = promedio de los cuatro parciales, redondeado; se aprueba con 70 o más en cada asignatura.
+    ✓ / ✗ en recuperación: superó o no superó el 70.</p>
+  <div class="firmas"><div>${adEsc(bol.docente || '')}<br><small>Docente de grado</small></div><div>${adEsc(bol.director || '')}<br><small>Director(a)</small></div></div>
+</section><script>window.onload=function(){setTimeout(function(){window.print();},280);}<\/script></body></html>`;
+  adPrintAbrir(html);
+}
+
 function adPrintCuadroFinal(d) {
   const cf = ResumenSace.cuadroFinal(d, { SL: window.SaceLista, pers: AD_PERSONALIDAD });
   const bol = d.boleta || {};
