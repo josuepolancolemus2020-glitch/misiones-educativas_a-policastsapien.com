@@ -194,15 +194,50 @@ function adUndoGuardar(etiqueta) {
     }
   } catch (_) {}
 }
+/* Notas que hay AHORA y que la foto no tiene: lo que «Restaurar» borraría.
+   Por parcial y materia, para que el maestro reconozca qué es. */
+function adUndoNotasPerdidas(fotoRaw, ahoraRaw) {
+  const celdas = raw => {
+    const m = {};
+    try {
+      (JSON.parse(raw).grupos || []).forEach(g => {
+        Object.keys(g.notas || {}).forEach(p => Object.keys(g.notas[p] || {}).forEach(c => {
+          Object.keys(g.notas[p][c] || {}).forEach(n => {
+            const v = g.notas[p][c][n];
+            if (v !== '' && v != null) m[g.id + '|' + p + '|' + c + '|' + n] = 1;
+          });
+        }));
+      });
+    } catch (_) {}
+    return m;
+  };
+  const antes = celdas(fotoRaw), ahora = celdas(ahoraRaw), por = {};
+  let total = 0;
+  Object.keys(ahora).forEach(k => {
+    if (antes[k]) return;
+    total++;
+    const p = k.split('|');
+    const et = p[2] === 'Inasistencias' ? 'inasistencias del ' + p[1] + ' parcial' : p[2] + ' del ' + p[1] + ' parcial';
+    por[et] = (por[et] || 0) + 1;
+  });
+  return { total, detalle: Object.keys(por).slice(0, 6).map(k => por[k] + ' de ' + k).join(', ') +
+    (Object.keys(por).length > 6 ? ' y más' : '') };
+}
 async function adUndoRestaurar(i) {
   const arr = adUndoLista();
   const f = arr[i];
   if (!f) return;
+  /* La foto es de ESTE equipo, pero después pudieron llegar notas de los
+     otros (la tablet llenó el IV parcial). Restaurar las borraría en todos:
+     se cuentan y se dicen con su número antes de preguntar. */
+  const perdidas = adUndoNotasPerdidas(f.admin, localStorage.getItem(ADMIN_KEY));
   if (!await metasConfirm('Se restaurará **todo Mi aula** exactamente a como estaba ' +
     '**antes de: ' + f.e + '** (' + adFechaBonita(String(f.t).slice(0, 10)) + ' ' +
-    String(f.t).slice(11, 16) + ').\n\n⚠️ Lo que hayas cambiado en Mi aula DESPUÉS de ese momento se pierde. ' +
-    'La nube del chatbot se corrige sola al sincronizar. ¿Restaurar?',
-    { icono: '🕘', titulo: 'Deshacer / Restaurar', okTxt: 'Sí, restaurar' })) return;
+    String(f.t).slice(11, 16) + ').\n\n⚠️ Lo que hayas cambiado en Mi aula DESPUÉS de ese momento se pierde' +
+    (perdidas.total ? ', **en este y en tus otros equipos**, también lo que llegó de ellos.\n\n' +
+      '🧮 **Se borrarían ' + perdidas.total + ' nota(s) escritas después**: ' + perdidas.detalle + '.' : '.') +
+    '\n\nLa nube del chatbot se corrige sola al sincronizar. ¿Restaurar?',
+    { icono: '🕘', titulo: 'Deshacer / Restaurar', okTxt: perdidas.total ? 'Sí, restaurar y borrar esas notas' : 'Sí, restaurar' })) return;
   try {
     const pares = [[ADMIN_KEY, f.admin], ['METAS_CODIGOS_V1', f.codes],
                    ['METAS_AVISOS_V1', f.avisos], ['METAS_PLANACCION_V1', f.plan]];
@@ -359,15 +394,53 @@ function adAvisarSinEspacio() {
   else if (typeof toast === 'function') toast('⚠️ ' + txt);
 }
 
+/* ══════════════ UNA COPIA VIEJA NUNCA PISA LO QUE LLEGÓ ══════════════
+   Noviembre de 2026: el maestro llenó el IV parcial en la tablet y al rato
+   no estaba en ningún equipo. La causa: en el teléfono una pantalla había
+   leído el aula (adLoad) y esperaba un diálogo —un pago de colecta, el
+   nombre de un alumno nuevo—; mientras tanto la sincronización trajo las
+   notas de la tablet, y al tocar «Guardar» se escribió la copia de ANTES,
+   sin el IV parcial. Para la sincronización eso era un borrado hecho a
+   propósito en el teléfono, y lo llevó a la nube y a la tablet.
+
+   Por eso cada aula leída recuerda cómo estaba al leerse. Al guardar, si
+   lo guardado en este equipo ya no es eso, alguien escribió en medio: se
+   FUSIONAN las tres (cómo estaba, lo que la pantalla cambió, lo que hay
+   ahora) con la misma fusión dato por dato de la sincronización
+   (js/metas-fusion-aula.js). Queda lo que la pantalla cambió y queda lo
+   que llegó; si los dos tocaron la misma casilla, manda la pantalla, que
+   es lo que el maestro acaba de hacer. */
+const _adLeido = new WeakMap();
 function adLoad() {
   const st = adState();
-  return st.grupos.find(g => g.id === st.activo) || st.grupos[0];
+  const g = st.grupos.find(x => x.id === st.activo) || st.grupos[0];
+  try { _adLeido.set(g, JSON.stringify(g)); } catch (_) {}
+  return g;
 }
 function adSave(d) {
   const st = adState();
   const i = st.grupos.findIndex(x => x.id === d.id);
-  if (i >= 0) st.grupos[i] = d; else st.grupos.push(adNormGrupo(d));
-  return adStateSave(st);
+  if (i >= 0) {
+    const leido = _adLeido.get(d);
+    let ahora = null;
+    try { ahora = JSON.stringify(st.grupos[i]); } catch (_) {}
+    if (leido != null && ahora != null && leido !== ahora &&
+        typeof MetasFusion !== 'undefined' && MetasFusion && MetasFusion.fusionar) {
+      let f = null;
+      try { f = MetasFusion.fusionar(leido, JSON.stringify(d), ahora, true); } catch (_) {}
+      if (f) {
+        /* el mismo objeto queda al día: si la pantalla lo vuelve a guardar,
+           ya lleva lo que llegó y no lo borra en la segunda vuelta */
+        const g = JSON.parse(f);
+        Object.keys(d).forEach(k => { if (!(k in g)) delete d[k]; });
+        Object.assign(d, g);
+      }
+    }
+    st.grupos[i] = d;
+  } else st.grupos.push(adNormGrupo(d));
+  const ok = adStateSave(st);
+  try { _adLeido.set(d, JSON.stringify(d)); } catch (_) {}
+  return ok;
 }
 
 /* ── Claves de familia por GRUPO ──

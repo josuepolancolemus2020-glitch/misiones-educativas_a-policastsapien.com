@@ -138,6 +138,15 @@
     var o;
     try { o = JSON.parse(ls(RESPALDO_KEY)); } catch (_) {}
     if (!o || typeof o !== 'object' || !o.datos) o = { fecha: null, datos: {} };
+    /* Las TRES copias anteriores se quedan, no solo la última. Con una sola,
+       la siguiente sincronización la cambiaba por la copia ya sin datos: el
+       IV parcial que la tablet perdió por la tarde ya no estaba en el
+       respaldo por la noche. «Recuperar» las junta todas con lo de ahora. */
+    if (o.datos[k] != null && o.datos[k] !== raw) {
+      if (!o.prev || typeof o.prev !== 'object') o.prev = {};
+      o.prev[k] = [o.datos[k]].concat(Array.isArray(o.prev[k]) ? o.prev[k] : [])
+        .filter(function (x, i, a) { return x !== raw && a.indexOf(x) === i; }).slice(0, 3);
+    }
     o.datos[k] = raw;
     o.fecha = new Date().toISOString();
     /* Por qué se guardó, y no es un adorno: el respaldo de «Empezar de nuevo»
@@ -147,8 +156,22 @@
        Antes se escondía siempre, así que una pérdida por sincronización no
        tenía botón de vuelta. */
     o.motivo = 'sync';
-    try { localStorage.setItem(RESPALDO_KEY, JSON.stringify(o)); } catch (_) {}
+    /* si no cabe, se sueltan las copias más viejas antes que la última */
+    for (var intento = 0; intento < 4; intento++) {
+      try { localStorage.setItem(RESPALDO_KEY, JSON.stringify(o)); break; } catch (_) {
+        var hay = false;
+        Object.keys(o.prev || {}).forEach(function (kk) { if (o.prev[kk] && o.prev[kk].length) { o.prev[kk].pop(); hay = true; } });
+        if (!hay) break;
+      }
+    }
     _papeleraFecha = o.fecha;
+  }
+  /* Todas las copias guardadas de una clave: la última y las anteriores. */
+  function copiasDe(b, k) {
+    var out = [];
+    if (b && b.datos && b.datos[k] != null) out.push(b.datos[k]);
+    if (b && b.prev && Array.isArray(b.prev[k])) out = out.concat(b.prev[k]);
+    return out;
   }
 
   /* ── LA BASE ──
@@ -617,9 +640,12 @@
       : Promise.resolve(true);
     Promise.resolve(ask).then(function (ok) {
       if (!ok) return;
-      // 1) intenta la nube primero
-      var pNube = c ? rpc('metas_docente_reset_deshacer', { p_codigo: c.codigo, p_clave: c.clave })
-                    : Promise.resolve(null);
+      /* 1) la nube primero… salvo que lo perdido vino de una SINCRONIZACIÓN:
+         entonces la copia buena es la de este equipo, y la papelera de la
+         nube es de un «Empezar de nuevo» de otro día que pisaría el aula. */
+      var pNube = (c && !(b && b.motivo === 'sync'))
+        ? rpc('metas_docente_reset_deshacer', { p_codigo: c.codigo, p_clave: c.clave })
+        : Promise.resolve(null);
       pNube.then(function (rows) {
         if (Array.isArray(rows) && rows.length && aplicarRows(rows)) {
           limpiarRespaldos();
@@ -637,8 +663,14 @@
                En un empate manda lo actual, que es lo más reciente. */
             var val = b.datos[k], act = ls(k);
             if (act != null && typeof MetasFusion !== 'undefined' && MetasFusion && MetasFusion.fusionar) {
-              var f2 = MetasFusion.fusionar(null, act, val, true);
-              if (f2 !== null && peso(k, f2) >= peso(k, val)) val = f2;
+              /* se junta lo de ahora con CADA copia guardada (sin base: solo
+                 se une, nada se borra; en un empate manda lo de ahora) */
+              var junto = act;
+              copiasDe(b, k).forEach(function (cp) {
+                var f2 = MetasFusion.fusionar(null, junto, cp, true);
+                if (f2 !== null && peso(k, f2) >= peso(k, junto)) junto = f2;
+              });
+              val = junto;
             }
             try { localStorage.setItem(k, val); } catch (_) {}
             m[k] = { v: t, h: hash(val), sv: 0 };   // marca para re-subir
@@ -820,7 +852,7 @@
     var falta = false;
     Object.keys((b && b.datos) || {}).forEach(function (k) {
       if (DS_KEYS.indexOf(k) === -1) return;
-      if (peso(k, b.datos[k]) > peso(k, ls(k))) falta = true;
+      copiasDe(b, k).forEach(function (cp) { if (peso(k, cp) > peso(k, ls(k))) falta = true; });
     });
     return falta;
   }
