@@ -638,15 +638,17 @@
       Object.keys(r.aus).forEach(function (n) { if (r.aus[n] === 'A') faltas[n] = (faltas[n] || 0) + 1; });
     });
     var porVal = { E: nvt(), A: nvt(), B: nvt(), I: nvt() };
-    var aprob = nvt(), reprob = nvt(), pend = nvt(), proms = [];
+    var aprob = nvt(), aprobRec = nvt(), reprob = nvt(), pend = nvt(), proms = [];
     var filas = alumnos.map(function (a) {
       var faltan = [];
       var ns = asigs.map(function (as) {
         var xs = PARCIALES.map(function (p) { return val(p, as.col, a.num); });
         var vacios = PARCIALES.filter(function (_, i) { return xs[i] == null; });
-        if (vacios.length) { faltan.push(as.et + ' (' + vacios.join(', ') + ')'); return { k: as.k, final: null, recup: '' }; }
+        if (vacios.length) { faltan.push(as.et + ' (' + vacios.join(', ') + ')'); return { k: as.k, et: as.et, col: as.col, final: null, recup: '' }; }
         var f = Math.round(xs.reduce(function (t, x) { return t + x; }, 0) / 4);
-        return { k: as.k, final: f, recup: f >= APRUEBA ? 'N/A' : '' };
+        /* la nota de recuperación solo existe para una materia reprobada */
+        var rn = f < APRUEBA ? numero(((d.recuperacion || {})[as.col] || {})[a.num]) : null;
+        return { k: as.k, et: as.et, col: as.col, final: f, recup: f >= APRUEBA ? 'N/A' : (rn == null ? '' : rn) };
       });
       var pf = pers.map(function (r) {
         var xs = PARCIALES.map(function (p) { return txt(p, r, a.num); }).filter(Boolean);
@@ -664,22 +666,111 @@
         : PARCIALES.map(function (p) { return val(p, 'Inasistencias', a.num); }).filter(function (x) { return x != null; });
       var completo = asigs.length > 0 && !faltan.length;
       var prom = completo ? Math.round(ns.reduce(function (t, x) { return t + x.final; }, 0) / ns.length) : null;
-      var estado = !completo ? 'PENDIENTE' : ns.every(function (x) { return x.final >= APRUEBA; }) ? 'APROBADO' : 'REPROBADO';
+      /* Reprobadas en la evaluación ordinaria, y qué pasó en recuperación.
+         El promedio y la valoración se quedan con las notas ordinarias,
+         como en el consolidado del SACE: la recuperación va en su columna
+         y cambia la observación, no el promedio. */
+      var reprobadas = completo ? ns.filter(function (x) { return x.final < APRUEBA; }) : [];
+      var recPend = reprobadas.filter(function (x) { return x.recup === ''; });
+      var recNo = reprobadas.filter(function (x) { return x.recup !== '' && x.recup < APRUEBA; });
+      var estado = !completo ? 'PENDIENTE'
+        : !reprobadas.length ? 'APROBADO'
+        : (!recPend.length && !recNo.length) ? 'APROBADO EN RECUPERACIÓN'
+        : 'REPROBADO';
       var vl = prom == null ? '' : escalaDe(prom);
       if (prom != null) { proms.push(prom); sumar(porVal[vl], a); }
-      sumar(estado === 'APROBADO' ? aprob : estado === 'REPROBADO' ? reprob : pend, a);
+      sumar(estado === 'APROBADO' ? aprob : estado === 'REPROBADO' ? reprob : estado === 'PENDIENTE' ? pend : aprobRec, a);
       return {
         num: a.num, idn: a.idn || '', nombre: String(a.nombre || '').trim(), sexo: a.sexo || '',
         pers: pf, notas: ns, inasis: inas.length ? inas.reduce(function (t, x) { return t + x; }, 0) : '',
-        prom: prom, valoracion: vl, estado: estado, faltan: faltan
+        prom: prom, valoracion: vl, estado: estado, faltan: faltan,
+        reprobadas: reprobadas, recPend: recPend, recNo: recNo,
+        encargado: String(a.enc || '').trim(), tel: String(a.encTel || '').trim()
       };
     });
     return {
       pers: pers, asigs: asigs, filas: filas, sobran: m.sobran,
       inasisFuente: conPase ? 'pase' : 'parciales', diasPase: Object.keys(diasVistos).length,
-      resumen: { aprob: aprob, reprob: reprob, pend: pend, porVal: porVal, total: contar(alumnos),
+      resumen: { aprob: aprob, aprobRec: aprobRec, reprob: reprob, pend: pend, porVal: porVal, total: contar(alumnos),
         promGrupo: proms.length ? Math.round(proms.reduce(function (t, x) { return t + x; }, 0) / proms.length * 10) / 10 : null }
     };
+  }
+
+  /* La observación en palabras (Excel, listado y pantalla). */
+  function observacion(f) {
+    if (f.estado === 'PENDIENTE') return 'PENDIENTE: falta ' + f.faltan.join(', ');
+    if (f.estado === 'APROBADO') return 'APROBADO';
+    if (f.estado === 'APROBADO EN RECUPERACIÓN') return 'APROBADO EN RECUPERACIÓN';
+    var p = [];
+    if (f.recPend.length) p.push('recuperación pendiente: ' + f.recPend.map(function (x) { return x.et; }).join(', '));
+    if (f.recNo.length) p.push('no superó la recuperación: ' + f.recNo.map(function (x) { return x.et + ' (' + x.recup + ')'; }).join(', '));
+    return 'REPROBADO' + (p.length ? ': ' + p.join('; ') : '');
+  }
+
+  /* ── Mensajes a las familias ──
+     A la familia se le habla de usted; sin guiones largos; con el nombre
+     completo del alumno una vez y luego su primer nombre. El de reprobado
+     reconoce el esfuerzo de todos y deja abierta la puerta: no culpa. */
+  var VAL_TXT = { E: 'Excelente', A: 'Avanzado', B: 'Básico', I: 'Inicial' };
+  var SIGUIENTE = ['', 'segundo grado', 'tercer grado', 'cuarto grado', 'quinto grado', 'sexto grado',
+    'séptimo grado', 'octavo grado', 'noveno grado', 'la siguiente etapa de sus estudios'];
+  /* «de la Escuela…», «del Centro…», «del centro educativo John Arnold Cook» */
+  function delCentro(c) {
+    c = String(c || '').trim();
+    if (/^(escuela|unidad)\b/i.test(c)) return 'de la ' + c;
+    if (/^(centro|instituto|colegio|jard[ií]n|ceb|c\.e\.b)\b/i.test(c)) return 'del ' + c;
+    return 'del centro educativo ' + c;
+  }
+  function lista(xs) { return xs.length < 2 ? xs.join('') : xs.slice(0, -1).join(', ') + ' y ' + xs[xs.length - 1]; }
+  /* ctx: { docente, grupo ('6º-1'), centro, anio, grado (número) } */
+  function mensajeFamilia(f, ctx) {
+    ctx = ctx || {};
+    var primer = String(f.nombre || '').trim().split(/\s+/)[0] || 'su hijo(a)';
+    var saludo = 'Estimado(a) padre, madre o encargado(a) de *' + (f.nombre || primer) + '*:\n\n' +
+      'Le saluda ' + (ctx.docente || 'el docente') + ', docente de ' + (ctx.grupo || 'su grado') +
+      (ctx.centro ? ' ' + delCentro(ctx.centro) : '') + '.\n\n';
+    var firma = '\n\nQuedo a sus órdenes.\n' + (ctx.docente || '');
+    var sig = SIGUIENTE[+ctx.grado] || 'el siguiente grado';
+    if (f.estado === 'APROBADO' || f.estado === 'APROBADO EN RECUPERACIÓN') {
+      return saludo + '🎉 ¡Felicidades! Al cierre del año lectivo ' + (ctx.anio || '') + ', *' + primer + ' aprobó el grado*' +
+        (f.estado === 'APROBADO EN RECUPERACIÓN' ? ' después de presentar con éxito la recuperación de ' + lista(f.reprobadas.map(function (x) { return x.et; })) : '') +
+        ', con un promedio de *' + f.prom + '* (' + VAL_TXT[f.valoracion] + ').\n\n' +
+        'Este logro es de ' + primer + ' y también de ustedes, que lo acompañaron todo el año. ' +
+        'Le animo a que en vacaciones siga leyendo un poco cada día, para llegar con fuerza a ' + sig + '. ' +
+        '¡A seguir adelante!' + firma;
+    }
+    if (f.estado === 'PENDIENTE') {
+      return saludo + 'Le escribo porque a ' + primer + ' aún le faltan notas para cerrar el año en: ' + f.faltan.join(', ') +
+        '. Le pido acercarse al centro para revisarlo juntos.' + firma;
+    }
+    var bajas = f.reprobadas.map(function (x) { return x.et + ' (' + x.final + ')'; });
+    var txt = saludo + 'Al cierre del año lectivo ' + (ctx.anio || '') + ', ' + primer +
+      ' no alcanzó la nota mínima de 70 en *' + lista(bajas) + '*.\n\n' +
+      'Durante el año trabajamos con refuerzos, tareas y seguimiento en clase, y sabemos el esfuerzo que también hicieron en casa. ' +
+      'Hicimos todo lo posible para que lo lograra, y este resultado no define a ' + primer + '.';
+    if (f.recPend.length) {
+      txt += '\n\nTodavía hay una oportunidad: la *recuperación* de ' + lista(f.recPend.map(function (x) { return x.et; })) + '. ' +
+        'Le pido acercarse al centro para acordar la fecha y el material de estudio. Con su apoyo en casa, ' + primer + ' puede lograrlo.';
+    } else {
+      txt += '\n\n' + primer + ' presentó la recuperación, pero no alcanzó el 70 en ' +
+        lista(f.recNo.map(function (x) { return x.et + ' (' + x.recup + ')'; })) + ', por lo que el año no queda aprobado. ' +
+        'Le invito con todo respeto a conversar conmigo para acordar juntos los pasos a seguir.';
+    }
+    return txt + firma;
+  }
+  /* Para el grupo de WhatsApp de padres: SIN nombres. Una lista de quién
+     aprobó dice, por omisión, quién no. */
+  function mensajeGrupo(cf, ctx) {
+    ctx = ctx || {};
+    var r = cf.resumen;
+    var ap = r.aprob.T + r.aprobRec.T;
+    return 'Estimados padres de familia de ' + (ctx.grupo || 'nuestro grado') + ':\n\n' +
+      'Cerramos el año lectivo ' + (ctx.anio || '') + '. Gracias por acompañar a sus hijos todo el año: ' +
+      'cada tarea revisada en casa y cada reunión a la que asistieron se nota en el aula.\n\n' +
+      '🎉 *' + ap + ' de ' + cf.filas.length + ' alumnos aprobaron el grado.* ¡Felicidades a ellos y a sus familias! ' +
+      'Les animo a que en vacaciones sigan leyendo un poco cada día.\n\n' +
+      'A cada familia le escribo en privado con el resultado de su hijo(a). ' +
+      'Si su hijo(a) tiene recuperación, ahí le explico los pasos.\n\nCon aprecio,\n' + (ctx.docente || '');
   }
 
   /* El mismo cuadro como tabla para el Excel (xlsx de abajo): dos filas de
@@ -692,8 +783,7 @@
     var filas = cf.filas.map(function (f) {
       var vals = [idnBonita ? idnBonita(f.idn) : f.idn, f.nombre].concat(f.pers.map(function (x) { return x || '·'; }));
       f.notas.forEach(function (n) { vals.push(n.final == null ? '' : n.recup); vals.push(n.final == null ? '·' : n.final); });
-      vals.push(f.inasis === '' ? 0 : f.inasis, f.prom == null ? '·' : f.prom, f.valoracion || '·',
-        f.estado + (f.faltan.length ? ': falta ' + f.faltan.join(', ') : ''));
+      vals.push(f.inasis === '' ? 0 : f.inasis, f.prom == null ? '·' : f.prom, f.valoracion || '·', observacion(f));
       return { et: f.num, vals: vals };
     });
     return { id: 'cf', titulo: 'CUADRO FINAL DEL AÑO', primera: '#', grupos: grupos, filas: filas };
@@ -875,6 +965,7 @@
     calcular: calcular, cuadros: cuadros, tablaHtml: tablaHtml,
     describir: describir, estadistica: estadistica, graficosHtml: graficosHtml, GRAF_CSS: GRAF_CSS,
     cuadroFinal: cuadroFinal, cuadroFinalTabla: cuadroFinalTabla,
+    observacion: observacion, mensajeFamilia: mensajeFamilia, mensajeGrupo: mensajeGrupo, delCentro: delCentro,
     xlsx: xlsx, crc32: crc32, colLetra: colLetra
   };
   raiz.ResumenSace = API;

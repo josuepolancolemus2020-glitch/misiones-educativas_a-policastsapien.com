@@ -92,16 +92,52 @@ console.log('\n2b · Inasistencias reales, del pase de lista');
   ok(g(3) === 0, 'y no usa la columna de los parciales (que decía 6)');
 }
 
+console.log('\n2c · Recuperación');
+{
+  const g3 = JSON.parse(antes);
+  const c0 = RS.cuadroFinal(g3, { SL, pers: PERS });
+  const b0 = c0.filas.find(x => x.num === 2);
+  igual([b0.estado, b0.recPend.map(x => x.et)], ['REPROBADO', ['Matemáticas']], 'Bruno sin recuperación: reprobado, recuperación pendiente en Matemáticas');
+  ok(/recuperación pendiente: Matemáticas/.test(RS.observacion(b0)), 'y la observación lo dice');
+  g3.recuperacion = { 'Matemáticas': { 2: 62 } };
+  const b1 = RS.cuadroFinal(g3, { SL, pers: PERS }).filas.find(x => x.num === 2);
+  igual([b1.estado, b1.notas[1].recup], ['REPROBADO', 62], 'recuperación con 62: sigue reprobado y la casilla muestra 62');
+  ok(/no superó la recuperación: Matemáticas \(62\)/.test(RS.observacion(b1)), 'la observación dice que no la superó');
+  g3.recuperacion = { 'Matemáticas': { 2: 70 } };
+  const c2 = RS.cuadroFinal(g3, { SL, pers: PERS });
+  const b2 = c2.filas.find(x => x.num === 2);
+  igual([b2.estado, b2.prom, b2.valoracion], ['APROBADO EN RECUPERACIÓN', 88, 'A'], 'recuperación con 70: aprobado en recuperación; promedio y valoración siguen los ordinarios');
+  igual([c2.resumen.aprobRec.T, c2.resumen.reprob.T], [1, 0], 'el pie lo cuenta aparte');
+  g3.recuperacion = { 'Matemáticas': { 1: 99 } };
+  ok(RS.cuadroFinal(g3, { SL, pers: PERS }).filas.find(x => x.num === 1).notas[1].recup === 'N/A', 'en una materia aprobada la recuperación no existe: N/A');
+  ok(JSON.stringify(RS.cuadroFinal(g3, { SL, pers: PERS }).filas.find(x => x.num === 1).notas.map(n => n.final)) === '[70,91,80]', 'y no cambia ninguna nota');
+
+  console.log('\n2d · Mensajes a las familias');
+  const ctx = { docente: 'Docente de Prueba', grupo: '6º-1', centro: 'Escuela de Fantasía', anio: '2026', grado: 6 };
+  const mR = RS.mensajeFamilia(c0.filas.find(x => x.num === 2), ctx);
+  ok(/\*Bruno Prueba Dos\*/.test(mR) && /Matemáticas \(69\)/.test(mR) && /recuperación/.test(mR) && /Hicimos todo lo posible/.test(mR),
+    'reprobado: nombre, materia con su nota, que se hizo todo lo posible y la recuperación');
+  ok(/de la Escuela de Fantasía/.test(mR), 'redacción: «de la Escuela…»');
+  const mA = RS.mensajeFamilia(c0.filas.find(x => x.num === 1), ctx);
+  ok(/Felicidades/.test(mA) && /promedio de \*80\*/.test(mA) && /séptimo grado/.test(mA), 'aprobado: felicita, da el promedio y anima hacia séptimo grado');
+  const mRec = RS.mensajeFamilia(b2, ctx);
+  ok(/aprobó el grado\* después de presentar con éxito la recuperación de Matemáticas/.test(mRec), 'aprobado en recuperación: lo reconoce');
+  const mG = RS.mensajeGrupo(c0, ctx);
+  ok(!/Alba|Bruno|Cira|Fito/.test(mG) && /aprobaron el grado/.test(mG), 'el mensaje para el grupo no lleva ningún nombre');
+  ok([mR, mA, mRec, mG].every(t => !/—/.test(t) && !/\bundefined\b|NaN/.test(t)), 'sin guiones largos ni huecos');
+  ok(/del centro educativo JOHN ARNOLD COOK/.test(RS.mensajeFamilia(c0.filas[0], Object.assign({}, ctx, { centro: 'JOHN ARNOLD COOK' }))), 'redacción: «del centro educativo …»');
+}
+
 console.log('\n3 · El resumen del pie');
 const r = cf.resumen;
-igual([r.aprob, r.reprob, r.pend], [{ N: 1, V: 1, T: 2 }, { N: 0, V: 1, T: 1 }, { N: 1, V: 0, T: 1 }], 'aprobados 2, reprobados 1, pendientes 1, por sexo');
+igual([r.aprob, r.reprob, r.pend, r.aprobRec.T], [{ N: 1, V: 1, T: 2 }, { N: 0, V: 1, T: 1 }, { N: 1, V: 0, T: 1 }, 0], 'aprobados 2, reprobados 1, pendientes 1, por sexo');
 igual(r.promGrupo, Math.round((80 + 88 + 80) / 3 * 10) / 10, 'promedio del grupo con los que tienen promedio');
 igual([r.porVal.E.T, r.porVal.A.T, r.porVal.B.T, r.porVal.I.T], [0, 3, 0, 0], 'valoraciones contadas');
 
 console.log('\n4 · Excel');
 const t = RS.cuadroFinalTabla(cf, SL.idnBonita);
 igual(t.filas[0].vals.slice(0, 2), ['0801-2015-00001', 'Alba Prueba Uno'], 'la fila trae la identidad con guiones y el nombre');
-igual(t.filas[1].vals.slice(-4), [6, 88, 'A', 'REPROBADO'], 'y al final inasistencias, promedio, valoración y observación');
+igual(t.filas[1].vals.slice(-4), [6, 88, 'A', 'REPROBADO: recuperación pendiente: Matemáticas'], 'y al final inasistencias, promedio, valoración y observación con su detalle');
 ok(/falta Español \(IV\)/.test(t.filas[2].vals.slice(-1)[0]), 'el pendiente dice qué le falta');
 const bytes = RS.xlsx([t], { titulo: 'CUADRO FINAL', datos: [], anchos: [4, 17, 34] });
 ok(bytes.length > 1000 && Buffer.from(bytes).readUInt32LE(0) === 0x04034b50, 'el .xlsx se arma');
@@ -113,7 +149,8 @@ const i0 = adm.indexOf('📒 CUADRO FINAL DEL AÑO'), i1 = adm.indexOf('🔎 BUS
 const cfui = adm.slice(i0, i1);
 ok(/size: letter landscape/.test(cfui) && /🖨️ Imprimir \/ PDF/.test(cfui) && /📥 Descargar Excel/.test(cfui), 'hoja carta horizontal, Imprimir / PDF y Excel');
 ok(/adNotaEscalaClase\(n\.final\)/.test(cfui) && /✓ APROBADO/.test(cfui) && /✗ REPROBADO/.test(cfui), 'notas con color y observación con ✓ / ✗, no solo color');
-ok(!/\.notas\b\s*\[[^\]]*\]\s*=/.test(cfui) && (cfui.match(/adSave\(/g) || []).length === 1, 'solo lectura: lo único que guarda son los datos del encabezado');
+ok(!/\.notas\b\s*\[[^\]]*\]\s*=/.test(cfui) && !/delete [^;]*\.notas/.test(cfui) && (cfui.match(/adSave\(/g) || []).length === 2 &&
+  /dd\.boleta\[k\] = v/.test(cfui) && /dd\.recuperacion\[col\]\[num\] =/.test(cfui), 'no toca las notas: solo guarda el encabezado y la recuperación');
 const bol = adm.slice(adm.indexOf('function adPrintBoletas('), adm.indexOf('function adPrintBoletas(') + 40000);
 ok(/adNotaEscalaClase\(v\)/.test(bol) && /class="bl-escala"/.test(bol), 'la boleta pinta cada nota con la escala y trae la leyenda');
 ok(/tr\.prom td\.nt-i/.test(bol), 'también la fila PROM.');
@@ -124,6 +161,10 @@ const tr = adm.slice(adm.indexOf("getElementById('ad-inasis-traer')?.addEventLis
 ok(/r\.aus\[num\] === 'A'/.test(tr) && /vistos\[r\.f\]/.test(tr), '«Traer faltas» cuenta solo Ausente, cada día una vez');
 ok(/cruces/.test(tr), 'y avisa si el rango se cruza con otro parcial');
 ok(/excusas no cuentan/.test(adm), 'la ayuda lo dice');
+
+ok(/id="ad-cf-lista-rep"/.test(adm) && /function adPrintListaReprobados/.test(adm) && /size: letter portrait/.test(adm.slice(adm.indexOf('function adPrintListaReprobados'))),
+  'el listado de reprobados sale en una hoja carta');
+ok(/dd\.recuperacion\[col\]\[num\] = Math\.max\(1, Math\.min\(100/.test(adm), 'la nota de recuperación se guarda entre 1 y 100');
 
 console.log(fallos ? '\n✘ ' + fallos + ' comprobación(es) fallaron' : '\n✓ El cuadro final dice lo mismo que la boleta');
 process.exit(fallos ? 1 : 0);
