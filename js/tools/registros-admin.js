@@ -2740,7 +2740,7 @@ function adSaceImportarTexto(texto) {
             <td style="text-align:left">#${num} ${nombreDe(num)}</td>
             <td><select class="ad-fi-estado" data-fuera="${num}" aria-label="Estado de la ficha #${num}">
               <option value="">Sin cambiar estado</option>
-              <option value="trasladado"${porNum[num].estado === 'trasladado' ? ' selected' : ''}>Trasladado</option>
+              <option value="trasladado"${porNum[num].estado === 'trasladado' ? ' selected' : ''}>Traslado</option>
               <option value="desertor"${porNum[num].estado === 'desertor' ? ' selected' : ''}>Desertor</option>
             </select></td>
           </tr>`).join('')}</tbody></table></div>` : ''}
