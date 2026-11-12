@@ -3240,6 +3240,120 @@ async function adResumenFinalExcel(d) {
   }
 }
 
+/* ══════════════ 🔎 BUSCAR DATOS PERDIDOS ══════════════
+   La pantalla de js/tools/buscar-perdidos.js: junta las copias que hay en
+   este equipo (respaldo de la sincronización y fotos de «Deshacer»), y si
+   el maestro lo pide, el historial de la nube; enseña lo que estaba y hoy
+   falta, y devuelve SOLO lo que el maestro marca. Devolver añade; no
+   cambia ni borra nada de lo que hay. */
+function adCopiasLocales() {
+  const copias = [];
+  try {
+    const r = JSON.parse(localStorage.getItem('METAS_AULA_RESPALDO_V1'));
+    if (r && r.datos && r.datos[ADMIN_KEY]) copias.push({ raw: r.datos[ADMIN_KEY], cuando: r.fecha || '', fuente: 'respaldo' });
+    ((r && r.prev && r.prev[ADMIN_KEY]) || []).forEach(raw => copias.push({ raw, cuando: '', fuente: 'respaldo' }));
+  } catch (_) {}
+  adUndoLista().forEach(f => { if (f && f.admin) copias.push({ raw: f.admin, cuando: f.t || '', fuente: 'deshacer' }); });
+  return copias;
+}
+function adFechaHora(iso) {
+  const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2}))?/);
+  if (!m) return '';
+  let txt = m[3] + '/' + m[2] + '/' + m[1];
+  if (m[4]) {
+    try { const d = new Date(iso); txt = adFechaBonita(adHoyDe(d)) + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); } catch (_) {}
+  }
+  return txt;
+}
+function adHoyDe(d) {
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+function adBuscarPerdidosModal() {
+  if (!window.BuscarPerdidos) { toast('⚠️ Cargando… intenta de nuevo'); return; }
+  let copias = adCopiasLocales();
+  let nube = 'sin buscar';
+  const ov = document.createElement('div');
+  ov.className = 'ad-gen-ov ad-ver-ov';
+  ov.innerHTML = `
+    <div class="ad-gen-card ad-ver-card bp-card" role="dialog" aria-modal="true" aria-labelledby="ad-bp-tit">
+      <div class="ad-gen-head">
+        <div class="ad-gen-title" id="ad-bp-tit">🔎 Buscar datos perdidos</div>
+        <button type="button" class="ad-gen-close" id="ad-bp-x" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="ad-ver-body" id="ad-bp-cuerpo"></div>
+      <div class="ad-gen-foot">
+        <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-bp-no">Cerrar</button>
+        <button type="button" class="pa-generate-btn" id="ad-bp-si" disabled>↩️ Devolver lo marcado</button>
+      </div>
+    </div>`;
+  document.body.appendChild(ov);
+  let items = [];
+  const nom = it => '#' + it.num + (it.nombre ? ' ' + it.nombre : '');
+  const pintar = () => {
+    const d = adLoad();
+    items = BuscarPerdidos.buscar(localStorage.getItem(ADMIN_KEY), copias).filter(it => it.grupo === d.id);
+    const pagos = items.filter(i => i.tipo === 'pago'), gastos = items.filter(i => i.tipo === 'gasto');
+    const notas = items.filter(i => i.tipo === 'nota');
+    const porMat = {};
+    notas.forEach(n => { const k = n.parcial + '|' + n.materia; (porMat[k] = porMat[k] || []).push(n); });
+    const visto = it => it.vistoEn ? ' <small>· visto en la copia del ' + adEsc(adFechaHora(it.vistoEn)) + '</small>' : '';
+    const fila = (val, txt) => `<label class="bp-fila"><input type="checkbox" class="bp-chk" value="${adEsc(val)}"><span>${txt}</span></label>`;
+    ov.querySelector('#ad-bp-cuerpo').innerHTML = `
+      <p class="ad-sace-nota">Revisé <b>${copias.length}</b> copia(s) guardadas en este equipo${
+        nube === 'ok' ? ' y el historial de la nube' : ''}. Aquí sale lo que estaba en alguna copia y <b>hoy falta</b> en
+        ${adEsc(adGradoSeccion(d.grado, d.seccion) || 'este grupo')}. Algo pudo quitarse a propósito: marca solo lo que de verdad
+        va. Devolver <b>no cambia ni borra</b> nada de lo que hay.</p>
+      ${!items.length ? '<p class="ad-sace-aviso" style="background:#f0fdf4;border-color:#bbf7d0;color:#166534">✓ No encontré nada que falte en estas copias.</p>' : ''}
+      ${pagos.length ? `<h4 class="bp-h">💰 Pagos de colecta (${pagos.length})</h4>` + pagos.map(it => fila(it.clave,
+        `<b>${adEsc(it.colectaTxt)}</b> · ${adEsc(nom(it))} · <b>${adLps(it.monto)}</b>${it.fecha ? ' · pagó el ' + adEsc(adFechaBonita(it.fecha)) : ''}${visto(it)}`)).join('') : ''}
+      ${gastos.length ? `<h4 class="bp-h">🧾 Gastos de colecta (${gastos.length})</h4>` + gastos.map(it => fila(it.clave,
+        `<b>${adEsc(it.colectaTxt)}</b> · ${adEsc(it.desc)} · <b>${adLps(it.monto)}</b>${it.fecha ? ' · ' + adEsc(adFechaBonita(it.fecha)) : ''}${visto(it)}`)).join('') : ''}
+      ${notas.length ? `<h4 class="bp-h">🧮 Notas (${notas.length})</h4>` + Object.keys(porMat).map(k => {
+        const xs = porMat[k];
+        const muestra = xs.slice(0, 4).map(n => '#' + n.num + ': ' + n.valor).join(', ') + (xs.length > 4 ? '…' : '');
+        return fila('M|' + k, `<b>${adEsc(xs[0].materia)} · ${adEsc(xs[0].parcial)} parcial</b>: ${xs.length} nota(s) <small>(${adEsc(muestra)})</small>${visto(xs[0])}`);
+      }).join('') : ''}
+      ${items.length ? '<button type="button" class="pa-generate-btn ad-btn-sec" id="ad-bp-todo">☑ Marcar todo</button>' : ''}
+      <div class="bp-nube">
+        <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-bp-nube"${nube === 'buscando' ? ' disabled' : ''}>☁️ Buscar también en el historial de la nube</button>
+        <p class="ad-sace-nota">${nube === 'ok' ? '✓ Historial de la nube revisado.'
+          : nube === 'no' ? 'ℹ El historial de la nube aún no está activado o no hay internet.'
+          : nube === 'buscando' ? '⏳ Buscando en la nube…'
+          : 'Necesita internet. Revisa las copias que tu cuenta guardó en la nube, de cualquiera de tus equipos.'}</p>
+      </div>`;
+    const marcar = () => { ov.querySelector('#ad-bp-si').disabled = !ov.querySelector('.bp-chk:checked'); };
+    ov.querySelectorAll('.bp-chk').forEach(c => c.addEventListener('change', marcar));
+    ov.querySelector('#ad-bp-todo')?.addEventListener('click', () => { ov.querySelectorAll('.bp-chk').forEach(c => { c.checked = true; }); marcar(); });
+    ov.querySelector('#ad-bp-nube').addEventListener('click', () => {
+      if (typeof window.dsHistorial !== 'function') { nube = 'no'; pintar(); return; }
+      nube = 'buscando'; pintar();
+      window.dsHistorial(ADMIN_KEY, 15).then(rows => {
+        if (!rows) { nube = 'no'; pintar(); return; }
+        rows.forEach(r => copias.push({ raw: r.raw, cuando: r.cuando, fuente: 'nube' }));
+        nube = 'ok'; pintar();
+      }, () => { nube = 'no'; pintar(); });
+    });
+    marcar();
+  };
+  pintar();
+  const fin = () => ov.remove();
+  ov.querySelector('#ad-bp-x').addEventListener('click', fin);
+  ov.querySelector('#ad-bp-no').addEventListener('click', fin);
+  ov.querySelector('#ad-bp-si').addEventListener('click', () => {
+    const marcados = new Set([...ov.querySelectorAll('.bp-chk:checked')].map(c => c.value));
+    const elegidos = items.filter(it => marcados.has(it.clave) ||
+      (it.tipo === 'nota' && marcados.has('M|' + it.parcial + '|' + it.materia)));
+    if (!elegidos.length) return;
+    adUndoGuardar('Devolver datos encontrados (' + elegidos.length + ')');
+    const dd = adLoad();
+    const n = BuscarPerdidos.devolver(dd, elegidos);
+    if (n && !adSave(dd)) return;
+    toast(n ? '↩️ Devueltos ' + n + ' dato(s). Se suben solos a tus otros equipos.' : 'Ya estaban de vuelta: no hubo nada que añadir');
+    renderAdmin();
+    pintar();
+  });
+}
+
 /* ══════════════ 📄 EXPEDIENTE DEL AULA ══════════════
    UN botón que arma TODO lo del grupo en un solo documento: lista, asistencia,
    colectas con sus cuentas, gastos de bolsillo, controles, novedades, notas de
@@ -4555,12 +4669,15 @@ function adRenderColecta(body, d) {
       ${(c.gastos || []).length ? c.gastos.map((g, i) => `
         <div class="ad-gasto-row">
           <span>${adFechaBonita(g.f)} · ${adEsc(g.d)}</span>
-          <span><strong>${adLps(g.m)}</strong> <button class="ad-al-del ad-gasto-del" data-gi="${i}" aria-label="Borrar gasto">✕</button></span>
+          <span><strong>${adLps(g.m)}</strong> <button class="ad-al-del ad-gasto-del" data-gi="${i}" data-gf="${adEsc(JSON.stringify(g))}" aria-label="Borrar gasto">✕</button></span>
         </div>`).join('') : '<p class="pa-optional-hint">Sin gastos todavía.</p>'}
       <div class="ad-btn-row">
         <button class="pa-generate-btn ad-btn-sec" id="ad-add-gasto">➕ Anotar gasto</button>
         <button class="pa-generate-btn ad-btn-sec" id="ad-informe">🖨️ Informe para padres</button>
         <button class="pa-generate-btn ad-btn-sec ad-btn-peligro" id="ad-borrar-colecta">🗑 Eliminar colecta</button>
+      </div>
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn ad-btn-sec" id="ad-col-perdidos" type="button">🔎 Buscar pagos o gastos perdidos</button>
       </div>
     </div>`;
 
@@ -4634,6 +4751,7 @@ function adRenderColecta(body, d) {
     adSave(dd); renderAdmin();
   });
 
+  document.getElementById('ad-col-perdidos').addEventListener('click', () => adBuscarPerdidosModal());
   document.getElementById('ad-add-gasto').addEventListener('click', async () => {
     const desc = await metasPrompt('¿En qué se gastó?', {
       icono: '🧾', titulo: 'Anotar gasto', okTxt: 'Siguiente',
@@ -4647,7 +4765,10 @@ function adRenderColecta(body, d) {
     if (monto === null) return;
     const dd = adLoad(); const cc = adColecta(dd, _adColectaId); if (!cc) return;
     cc.gastos = cc.gastos || [];
-    cc.gastos.push({ d: String(desc).trim(), m: Number(String(monto).replace(',', '.')), f: adHoy() });
+    /* con su propia identidad: dos gastos del mismo día anotados en dos
+       equipos ya no se confunden al sincronizar */
+    cc.gastos.push({ id: 'G' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+      d: String(desc).trim(), m: Number(String(monto).replace(',', '.')), f: adHoy() });
     adSave(dd); renderAdmin();
   });
 
@@ -4655,8 +4776,14 @@ function adRenderColecta(body, d) {
     b.addEventListener('click', async () => {
       if (!await metasConfirm('¿Borrar este gasto?', { icono: '🧾', titulo: 'Gastos', okTxt: 'Sí, borrar' })) return;
       const dd = adLoad(); const cc = adColecta(dd, _adColectaId); if (!cc) return;
+      /* Se borra ESE gasto, buscado por lo que dice, no «el de la posición
+         3»: si mientras se confirmaba llegó otro gasto de otro equipo, la
+         posición ya es de otro y se borraba el que no era. */
+      const quiere = b.dataset.gf || '';
+      const i = (cc.gastos || []).findIndex(x => JSON.stringify(x) === quiere);
+      if (i < 0) { toast('Ese gasto ya cambió en otro equipo: revisa la lista'); renderAdmin(); return; }
       adUndoGuardar('Borrar gasto de «' + cc.concepto + '»');
-      cc.gastos.splice(+b.dataset.gi, 1);
+      cc.gastos.splice(i, 1);
       adSave(dd); renderAdmin();
     }));
 
@@ -7232,6 +7359,7 @@ function adRenderSace(body, d) {
       <div class="ad-btn-row" style="margin-top:8px">
         <button class="pa-generate-btn" id="ad-sace-boletas">🧾 Imprimir boletas (todas)</button>
         <button class="pa-generate-btn ad-btn-sec" id="ad-sace-resumen" type="button">📋 Resumen final de resultados por grado</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-sace-perdidos" type="button">🔎 Buscar notas perdidas</button>
         ${esLetra ? '<button class="pa-generate-btn ad-btn-sec" id="ad-sace-csv-num" type="button">🔢 Copiar CSV en número (4, 3, 2)</button>' : ''}
         <button class="pa-generate-btn ad-btn-sec" id="ad-sace-csv">${esLetra ? '🔤 Copiar CSV en letra (S, MB, B)' : '⬇ Copiar CSV (todas las materias)'}</button>
       </div>
@@ -7526,6 +7654,7 @@ function adRenderSace(body, d) {
     adPrintBoletas(adLoad(), num ? [num] : null);
   });
   document.getElementById('ad-sace-resumen')?.addEventListener('click', () => adResumenFinalModal());
+  document.getElementById('ad-sace-perdidos')?.addEventListener('click', () => adBuscarPerdidosModal());
 
   // Traer faltas del pase de lista → Inasistencias del parcial
   document.getElementById('ad-inasis-traer')?.addEventListener('click', () => {
