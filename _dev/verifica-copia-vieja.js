@@ -64,6 +64,29 @@ function montar() {
       'y lo que guardó el diálogo del teléfono llega a todos');
   }
 
+  console.log('\n1b · El caso del maestro: un pago de colecta en el teléfono');
+  {
+    /* Lo mismo que hace la pantalla de Colectas al tocar a un alumno que ya
+       pagó: lee el aula, pregunta «¿Cuánto aportó…?» y guarda al responder. */
+    const { cloud, lsT, lsP, total } = montar();
+    const P = S.equipo(lsP, cloud); P.__arrancar(); await P.__esperar();
+    const d0 = P.adLoad();
+    d0.colectas = [{ id: 'col-prueba', nombre: 'Excursión', montoAlumno: 50, fecha: '2026-11-11', pagos: { 1: 50 }, pagosF: {}, gastos: [] }];
+    P.adSave(d0); await P.__esperar();
+    const T = S.equipo(lsT, cloud); T.__arrancar(); await T.dsSync(); await T.__esperar();
+    const dd = P.adLoad(); const cc = dd.colectas.find(c => c.id === 'col-prueba');   // toca el chip
+    ponerIV(T); await T.__esperar();                 // la tablet sube el IV mientras la pregunta está abierta
+    await P.dsSync(); await P.__esperar();
+    cc.pagos[1] = 100; cc.pagosF[1] = '2026-11-11';  // «Guardar» con el monto nuevo
+    P.adSave(dd); await P.__esperar();
+    const T2 = S.equipo(lsT, cloud); T2.__arrancar(); await T2.dsSync(); await T2.__esperar();
+    const pago = g => ((g.colectas || []).find(c => c.id === 'col-prueba') || { pagos: {} }).pagos[1];
+    ok(celdasIV(S.grupo(lsP)) === total() && celdasIV(deNube(cloud)) === total() && celdasIV(S.grupo(lsT)) === total(),
+      'el IV parcial sigue en el teléfono, la nube y la tablet');
+    ok(pago(S.grupo(lsP)) === 100 && pago(deNube(cloud)) === 100 && pago(S.grupo(lsT)) === 100,
+      'y el pago de L 100 queda guardado en los tres');
+  }
+
   console.log('\n2 · La pantalla vieja borra UNA nota a propósito');
   {
     const { cloud, lsT, lsP, total } = montar();
