@@ -89,6 +89,18 @@
     return null;
   }
 
+  /* ¿Dos elementos difieren en algún dato suelto (texto, número)? */
+  function escalaresDistintos(a, b) {
+    if (!esObjeto(a) || !esObjeto(b)) return !igual(a, b);
+    var ks = Object.keys(a).concat(Object.keys(b));
+    return ks.some(function (k) {
+      var x = a[k], y = b[k];
+      var sx = x === undefined || x === null || typeof x !== 'object';
+      var sy = y === undefined || y === null || typeof y !== 'object';
+      return sx && sy && x !== undefined && y !== undefined && x !== y;
+    });
+  }
+
   /* Una lista se vuelve mapa {identidad: elemento} conservando el orden. */
   function aMapa(lista, campo) {
     var m = { orden: [], por: {} };
@@ -129,8 +141,23 @@
       [primero, segundo].forEach(function (m) {
         m.orden.forEach(function (k) {
           if (puestas[k]) return;
-          var v = fusionarEntrada(mb, ml, mr, k, ganaLocal, hayBase);
           puestas[k] = 1;
+          /* Dos equipos AÑADIERON cada uno algo con la misma fecha: no es
+             una cosa editada en dos lados, son dos cosas. Pasaba con los
+             gastos de una colecta: «Entregado a dirección» anotado en el
+             teléfono y otro gasto del mismo día en la PC; la fusión los
+             tomaba por el mismo y uno desaparecía. Si traen datos sueltos
+             distintos (descripción, monto), se quedan los dos. El número
+             de lista no entra aquí: dos alumnos con el mismo número
+             descuadrarían sus notas. */
+          if ((campo === 'f' || campo === 'fecha' || campo === 'codigo') &&
+              (k in ml.por) && (k in mr.por) && !(hayBase && (k in mb.por)) &&
+              escalaresDistintos(ml.por[k], mr.por[k])) {
+            out.push(primero === ml ? ml.por[k] : mr.por[k]);
+            out.push(primero === ml ? mr.por[k] : ml.por[k]);
+            return;
+          }
+          var v = fusionarEntrada(mb, ml, mr, k, ganaLocal, hayBase);
           if (v !== undefined) out.push(v);
         });
       });

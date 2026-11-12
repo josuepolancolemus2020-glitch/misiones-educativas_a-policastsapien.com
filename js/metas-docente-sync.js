@@ -174,6 +174,12 @@
     return out;
   }
 
+  /* Fusión que nunca revienta: devuelve el texto fusionado o null. */
+  function juntar(baseRaw, localRaw, remotoRaw, ganaLocal) {
+    if (typeof MetasFusion === 'undefined' || !MetasFusion || !MetasFusion.fusionar) return null;
+    try { return MetasFusion.fusionar(baseRaw, localRaw, remotoRaw, ganaLocal); } catch (_) { return null; }
+  }
+
   /* ── LA BASE ──
      Lo último que ESTE equipo y la nube tuvieron igual. Es lo que
      convierte «elegir una copia» en «fusionar las dos»: sin ella solo se
@@ -330,8 +336,21 @@
         // datos → NO pisar. Conservar lo local y re-subirlo GANANDO versión,
         // para que la nube y el otro equipo se curen solos con la copia buena.
         if (!force && lp >= 300 && rp * 2 < lp) {
+          /* Lo local manda, pero lo que la nube trae de NUEVO también se
+             queda: antes se tiraba entero, y un pago anotado en otro equipo
+             desaparecía junto con la copia vacía. Se junta sin base (unir
+             no borra nada) y, si no se puede, se queda lo local como antes. */
           var winV = Math.max(remota, local, ahora()) + 1;
-          m[row.k] = { v: winV, h: hash(localRaw), sv: 0 };   // pendiente, con versión que gana
+          var unidoG = juntar(null, localRaw, raw, true);
+          if (unidoG !== null && unidoG !== localRaw && peso(row.k, unidoG) >= lp) {
+            backupLocal(row.k, localRaw);
+            _applying = true;
+            try { localStorage.setItem(row.k, unidoG); } catch (_) {}
+            _applying = false;
+            m[row.k] = { v: winV, h: hash(unidoG), sv: 0, cv: remota };
+          } else {
+            m[row.k] = { v: winV, h: hash(localRaw), sv: 0 };   // pendiente, con versión que gana
+          }
           protegido = true;
           return;
         }
@@ -359,7 +378,12 @@
           var fus = MetasFusion.fusionar(baseK, localRaw, raw, pendiente ? local >= remota : false);
           /* Red de seguridad: una fusión no puede devolver menos de la mitad
              de la copia más llena. Borrar media aula en una sincronización no
-             pasa; un error en la fusión, sí podría. Ante la duda, lo de siempre. */
+             pasa; un error en la fusión, sí podría. Ante la duda NO se elige
+             una copia entera (eso tiraba los pagos y las notas del otro
+             equipo): se UNEN las dos sin base, que no borra nada. */
+          if (fus === null || peso(row.k, fus) < Math.max(lp, rp) * 0.5) {
+            fus = juntar(null, localRaw, raw, pendiente ? local >= remota : false);
+          }
           if (fus !== null && peso(row.k, fus) >= Math.max(lp, rp) * 0.5) {
             if (lp > 0) backupLocal(row.k, localRaw);
             _applying = true;
@@ -823,6 +847,20 @@
     try { if (creds() && navigator.onLine !== false) push(false); } catch (_) {}
     dsWipeLocal();
   }
+
+  /* Historial de la nube (SUPABASE-DOCENTE-HISTORIAL.sql): las copias
+     anteriores de una clave, la más nueva primero. Resuelve null si el SQL
+     no está instalado o no hay red; nunca revienta. Solo LEE. */
+  window.dsHistorial = function (k, limite) {
+    var c = creds();
+    if (!c) return Promise.resolve(null);
+    return rpc('metas_docente_historial', { p_codigo: c.codigo, p_clave: c.clave, p_k: k, p_limite: limite || 15 })
+      .then(function (rows) {
+        if (!Array.isArray(rows)) return null;
+        return rows.filter(function (r) { return r && r.valor && typeof r.valor.raw === 'string'; })
+          .map(function (r) { return { raw: r.valor.raw, cuando: r.guardado_en || '', dispositivo: r.dispositivo || '' }; });
+      });
+  };
 
   window.dsWipeLocal = dsWipeLocal;
   window.dsClaim = dsClaimFor;

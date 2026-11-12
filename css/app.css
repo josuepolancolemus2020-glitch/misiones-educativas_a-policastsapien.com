@@ -6897,3 +6897,11 @@ body:has(.ad-sace-card) #metasInstallBtn { display: none !important; }
 .rf-tabla tr.rf-total th, .rf-tabla tr.rf-total td { font-weight: 800; border-top: 2px solid currentColor; }
 /* la hoja de gráficos es papel: blanca también en modo oscuro */
 .rf-papel { background: #fff; border-radius: 12px; padding: 10px; }
+/* ── 🔎 Buscar datos perdidos: cada fila se marca con el dedo (44 px) ── */
+.bp-card { max-width: 640px; }
+.bp-h { font-size: calc(13px * var(--metas-fz, 1)); font-weight: 800; margin: 12px 0 4px; }
+.bp-fila { display: flex; gap: 10px; align-items: flex-start; min-height: 44px; padding: 6px 4px;
+  border-bottom: 1px solid var(--border, #e2e8f0); cursor: pointer; font-size: calc(13px * var(--metas-fz, 1)); line-height: 1.35; }
+.bp-fila input { width: 22px; height: 22px; margin: 2px 0 0; flex: none; }
+.bp-fila small { color: var(--muted, #64748b); }
+.bp-nube { margin-top: 12px; border-top: 1px dashed var(--border, #cbd5e1); padding-top: 8px; }
