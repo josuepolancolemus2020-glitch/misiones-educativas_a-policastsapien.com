@@ -592,6 +592,97 @@
     '@media screen and (max-width:760px){.rf2-kpis{grid-template-columns:repeat(2,1fr)}.rf2-grid{grid-template-columns:1fr}.rf2-ancha{grid-column:auto}' +
     '.rf2-card{overflow-x:auto}}';
 
+  /* ══════════ 📒 CUADRO FINAL DEL AÑO (el consolidado del SACE) ══════════
+     Una fila por alumno con todo el año: identidad, personalidad final,
+     la nota final de cada asignatura con su casilla de recuperación,
+     inasistencias, promedio, valoración y observación. Las reglas son las
+     de la boleta, para que el cuadro y la boleta digan lo mismo:
+     · nota final = promedio de los CUATRO parciales, redondeado; si falta
+       un parcial no hay nota final y el alumno queda «PENDIENTE»;
+     · personalidad final = promedio de los parciales en número oficial
+       (S 4, MB 3, B 2, NS 1), redondeado y vuelto a letra;
+     · aprobado = 70 o más en CADA asignatura (el promedio no salva una
+       materia baja);
+     · valoración = la escala del formulario: I, B, A, E.
+     Recuperación: la aplicación no la guarda. Si la materia está aprobada
+     va «N/A» como en el SACE; si no, la casilla queda en blanco para
+     escribirla a mano. No se inventa una nota. */
+  var PERS_DEF = ['Puntualidad', 'Espíritu de trabajo', 'Orden y presentación', 'Sociabilidad', 'Moralidad'];
+  var PERS_NUM = { S: 4, MB: 3, B: 2, NS: 1 };
+  var PERS_DE_NUM = { 4: 'S', 3: 'MB', 2: 'B', 1: 'NS' };
+  var AREA = { artistica: 'COMUNICACIÓN', espanol: 'COMUNICACIÓN', ingles: 'COMUNICACIÓN', matematicas: 'MATEMÁTICAS',
+    naturales: 'CIENCIAS NATURALES', civica: 'CIENCIAS SOCIALES', sociales: 'CIENCIAS SOCIALES',
+    fisica: 'EDUCACIÓN FÍSICA', tecnologia: 'TECNOLOGÍA' };
+
+  function cuadroFinal(d, opc) {
+    opc = opc || {};
+    var SL = opc.SL || raiz.SaceLista;
+    var notas = (d && d.notas) || {};
+    var pers = opc.pers || PERS_DEF;
+    var alumnos = SL.alumnosQueCuentan(d).slice().sort(function (a, b) { return (+a.num || 0) - (+b.num || 0); });
+    var val = function (p, col, num) { return numero(((notas[p] || {})[col] || {})[num]); };
+    var txt = function (p, col, num) { var v = ((notas[p] || {})[col] || {})[num]; return v == null ? '' : String(v).trim().toUpperCase(); };
+    var m = mapearMaterias(d.materias);
+    var asigs = ASIGNATURAS.map(function (as) {
+      var col = m.mapa[as.k] || '';
+      var conNotas = !!col && alumnos.some(function (a) { return PARCIALES.some(function (p) { return val(p, col, a.num) != null; }); });
+      return { k: as.k, et: as.et, corto: as.corto, area: AREA[as.k], col: col, cuenta: conNotas };
+    }).filter(function (x) { return x.cuenta; });
+
+    var porVal = { E: nvt(), A: nvt(), B: nvt(), I: nvt() };
+    var aprob = nvt(), reprob = nvt(), pend = nvt(), proms = [];
+    var filas = alumnos.map(function (a) {
+      var faltan = [];
+      var ns = asigs.map(function (as) {
+        var xs = PARCIALES.map(function (p) { return val(p, as.col, a.num); });
+        var vacios = PARCIALES.filter(function (_, i) { return xs[i] == null; });
+        if (vacios.length) { faltan.push(as.et + ' (' + vacios.join(', ') + ')'); return { k: as.k, final: null, recup: '' }; }
+        var f = Math.round(xs.reduce(function (t, x) { return t + x; }, 0) / 4);
+        return { k: as.k, final: f, recup: f >= APRUEBA ? 'N/A' : '' };
+      });
+      var pf = pers.map(function (r) {
+        var xs = PARCIALES.map(function (p) { return txt(p, r, a.num); }).filter(Boolean);
+        if (!xs.length || xs.some(function (x) { return !PERS_NUM[x]; })) return '';
+        var n = Math.round(xs.reduce(function (t, x) { return t + PERS_NUM[x]; }, 0) / xs.length);
+        return PERS_DE_NUM[Math.max(1, Math.min(4, n))];
+      });
+      var inas = PARCIALES.map(function (p) { return val(p, 'Inasistencias', a.num); }).filter(function (x) { return x != null; });
+      var completo = asigs.length > 0 && !faltan.length;
+      var prom = completo ? Math.round(ns.reduce(function (t, x) { return t + x.final; }, 0) / ns.length) : null;
+      var estado = !completo ? 'PENDIENTE' : ns.every(function (x) { return x.final >= APRUEBA; }) ? 'APROBADO' : 'REPROBADO';
+      var vl = prom == null ? '' : escalaDe(prom);
+      if (prom != null) { proms.push(prom); sumar(porVal[vl], a); }
+      sumar(estado === 'APROBADO' ? aprob : estado === 'REPROBADO' ? reprob : pend, a);
+      return {
+        num: a.num, idn: a.idn || '', nombre: String(a.nombre || '').trim(), sexo: a.sexo || '',
+        pers: pf, notas: ns, inasis: inas.length ? inas.reduce(function (t, x) { return t + x; }, 0) : '',
+        prom: prom, valoracion: vl, estado: estado, faltan: faltan
+      };
+    });
+    return {
+      pers: pers, asigs: asigs, filas: filas, sobran: m.sobran,
+      resumen: { aprob: aprob, reprob: reprob, pend: pend, porVal: porVal, total: contar(alumnos),
+        promGrupo: proms.length ? Math.round(proms.reduce(function (t, x) { return t + x; }, 0) / proms.length * 10) / 10 : null }
+    };
+  }
+
+  /* El mismo cuadro como tabla para el Excel (xlsx de abajo): dos filas de
+     encabezado, como el consolidado. */
+  function cuadroFinalTabla(cf, idnBonita) {
+    var grupos = [{ et: 'IDENTIDAD', subs: [''] }, { et: 'NOMBRE', subs: [''] },
+      { et: 'PERSONALIDAD', subs: cf.pers.slice() }]
+      .concat(cf.asigs.map(function (as) { return { et: as.corto, subs: ['RECUP.', 'PROMEDIO'] }; }))
+      .concat([{ et: 'INASISTENCIAS', subs: [''] }, { et: 'PROMEDIO', subs: [''] }, { et: 'VALORACIÓN', subs: [''] }, { et: 'OBSERVACIONES', subs: [''] }]);
+    var filas = cf.filas.map(function (f) {
+      var vals = [idnBonita ? idnBonita(f.idn) : f.idn, f.nombre].concat(f.pers.map(function (x) { return x || '·'; }));
+      f.notas.forEach(function (n) { vals.push(n.final == null ? '' : n.recup); vals.push(n.final == null ? '·' : n.final); });
+      vals.push(f.inasis === '' ? 0 : f.inasis, f.prom == null ? '·' : f.prom, f.valoracion || '·',
+        f.estado + (f.faltan.length ? ': falta ' + f.faltan.join(', ') : ''));
+      return { et: f.num, vals: vals };
+    });
+    return { id: 'cf', titulo: 'CUADRO FINAL DEL AÑO', primera: '#', grupos: grupos, filas: filas };
+  }
+
   /* ══════════ 📥 EXCEL (.xlsx) sin librería ══════════
      Un .xlsx es un ZIP con unos cuantos XML. Meter una librería de
      planillas (cientos de KB) a una app que abre sin señal en teléfonos
@@ -714,8 +805,12 @@
       if (x.v === '' || x.v == null) return '<c r="' + ref + '" s="' + x.s + '"/>';
       return '<c r="' + ref + '" s="' + x.s + '" t="inlineStr"><is><t xml:space="preserve">' + xmlEsc(x.v) + '</t></is></c>';
     };
-    var cols = '<cols><col min="1" max="1" width="18" customWidth="1"/>' +
-      (ancho > 1 ? '<col min="2" max="' + ancho + '" width="5.2" customWidth="1"/>' : '') + '</cols>';
+    /* meta.anchos: ancho de cada columna (el cuadro final necesita el
+       nombre ancho); sin él, la primera ancha y el resto angostas */
+    var cols = '<cols>' + (Array.isArray(meta.anchos)
+      ? meta.anchos.map(function (w, i) { return '<col min="' + (i + 1) + '" max="' + (i + 1) + '" width="' + w + '" customWidth="1"/>'; }).join('')
+      : '<col min="1" max="1" width="18" customWidth="1"/>' +
+        (ancho > 1 ? '<col min="2" max="' + ancho + '" width="5.2" customWidth="1"/>' : '')) + '</cols>';
     var hoja = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
       '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" ' +
       'xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">' +
@@ -763,6 +858,7 @@
     escalaDe: escalaDe, mapearMaterias: mapearMaterias,
     calcular: calcular, cuadros: cuadros, tablaHtml: tablaHtml,
     describir: describir, estadistica: estadistica, graficosHtml: graficosHtml, GRAF_CSS: GRAF_CSS,
+    cuadroFinal: cuadroFinal, cuadroFinalTabla: cuadroFinalTabla,
     xlsx: xlsx, crc32: crc32, colLetra: colLetra
   };
   raiz.ResumenSace = API;

@@ -216,7 +216,7 @@ ok(!/localStorage|sessionStorage|indexedDB/.test(src), 'cuadros-sace.js no guard
 ok(!/fetch\s*\(|XMLHttpRequest|supabase|sendBeacon|WebSocket/i.test(src), 'cuadros-sace.js no manda nada fuera del dispositivo');
 ok(!/notas\s*\[[^\]]*\]\s*(\[[^\]]*\]\s*)*=[^=]|delete\s+[^;]*notas/.test(src), 'cuadros-sace.js no escribe ni borra notas');
 const adm = fs.readFileSync(path.join(RAIZ, 'js', 'tools', 'registros-admin.js'), 'utf8');
-const i0 = adm.indexOf('📋 RESUMEN FINAL DE RESULTADOS POR GRADO'), i1 = adm.indexOf('🔎 BUSCAR DATOS PERDIDOS', i0);
+const i0 = adm.indexOf('📋 RESUMEN FINAL DE RESULTADOS POR GRADO'), i1 = adm.indexOf('📒 CUADRO FINAL DEL AÑO', i0);
 const pant = i0 > 0 && i1 > i0 ? adm.slice(i0, i1) : '';
 ok(pant.length > 0, 'la pantalla del resumen está en registros-admin.js');
 ok(!/\.notas\b/.test(pant), 'la pantalla del resumen no toca las notas');
