@@ -3170,6 +3170,241 @@ async function adResumenFinalExcel(d) {
   }
 }
 
+/* ══════════════ 📒 CUADRO FINAL DEL AÑO ══════════════
+   El consolidado que pide el SACE al cerrar el año (una fila por alumno
+   con personalidad, notas finales, inasistencias, promedio, valoración y
+   observación), con la cara de las boletas. Las cuentas viven en
+   ResumenSace.cuadroFinal (js/tools/cuadros-sace.js) y son las mismas de
+   la boleta. Solo lectura: lo único que se guarda son los datos del
+   encabezado que la aplicación no tenía (código del centro, modalidad,
+   jornada, aldea), en la boleta del grupo. */
+const AD_GRADOS_TXT = ['', 'Primer', 'Segundo', 'Tercer', 'Cuarto', 'Quinto', 'Sexto', 'Séptimo', 'Octavo', 'Noveno'];
+function adCfDatos(d) {
+  const bol = d.boleta || {};
+  const n = parseInt(String(d.grado || '').replace(/\D/g, ''), 10);
+  const ciclo = n >= 1 && n <= 3 ? 'I Ciclo de Educación Básica' : n >= 4 && n <= 6 ? 'II Ciclo de Educación Básica'
+    : n >= 7 && n <= 9 ? 'III Ciclo de Educación Básica' : '';
+  return [
+    ['Período', 'Período ' + (bol.anio || new Date().getFullYear())],
+    ['Modalidad', bol.modalidad || 'No aplica'],
+    ['Curso', AD_GRADOS_TXT[n] ? AD_GRADOS_TXT[n] + ' grado' : String(d.grado || '')],
+    ['Sección', String(d.seccion || '')],
+    ['Nivel educativo', 'Educación Básica'],
+    ['Ciclo', ciclo],
+    ['Jornada', bol.jornada || ''],
+    ['Departamento', bol.departamento || ''],
+    ['Municipio', bol.municipio || ''],
+    ['Aldea', bol.aldea || bol.lugar || ''],
+    ['Fecha', adFechaBonita(adHoy())],
+    ['Docente', bol.docente || '']
+  ];
+}
+/* en vertical, la personalidad completa hacía el encabezado tan alto
+   que el último alumno caía en otra hoja */
+const AD_CF_PERS_CORTO = { 'Puntualidad': 'PUNTUALIDAD', 'Espíritu de trabajo': 'ESP. TRABAJO',
+  'Orden y presentación': 'ORDEN Y PRES.', 'Sociabilidad': 'SOCIABILIDAD', 'Moralidad': 'MORALIDAD' };
+const AD_CF_CSS = `
+.cf { color:#0f2350; font-family: Arial, Helvetica, sans-serif; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+.cf table { border-collapse: collapse; width: 100%; table-layout: fixed; }
+.cf th, .cf td { border: 1px solid #c7cfdd; text-align: center; font-size: 8.2px; padding: 0.7px 1px; line-height: 1.12; overflow: hidden; }
+.cf thead th { background: #1e3a7c; color: #fff; font-weight: 700; font-size: 7.2px; letter-spacing: .2px; }
+.cf thead tr.cf-h2 th { background: #2c4f9e; }
+.cf thead th.cf-sub { background: #eaf0fa; color: #0f2350; font-size: 6.8px; }
+.cf thead th.cf-v { height: 40px; vertical-align: bottom; padding: 0 0 2px; font-size: 6.6px; }
+.cf thead th.cf-v span { writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; display: inline-block; }
+.cf thead th.cf-fijo { background: #0f2350; }
+.cf td.cf-nom { text-align: left; padding-left: 4px; white-space: nowrap; text-overflow: ellipsis; font-weight: 600; }
+.cf td.cf-idn { font-size: 7.6px; color: #33415c; }
+.cf td.cf-rec { color: #8a94a8; font-size: 6.8px; }
+.cf td.cf-rec.cf-vacia { background: #fff; box-shadow: inset 0 0 0 1px #b45309; }
+.cf td.cf-n { font-weight: 800; }
+.cf td.nt-i { background: #fde2e2; } .cf td.nt-b { background: #fef3c7; }
+.cf td.nt-a { background: #dbeafe; } .cf td.nt-e { background: #dcfce7; }
+.cf td.cf-prom { font-weight: 900; box-shadow: inset 2px 0 0 #c9a24a, inset -2px 0 0 #c9a24a; }
+.cf tbody tr:nth-child(even) td.cf-nom, .cf tbody tr:nth-child(even) td.cf-idn, .cf tbody tr:nth-child(even) td.cf-num,
+.cf tbody tr:nth-child(even) td.cf-p { background: #f4f7fc; }
+.cf .cf-val { display: inline-block; min-width: 13px; border-radius: 999px; font-weight: 900; padding: 0 3px; }
+.cf .cf-obs { font-weight: 800; font-size: 7.4px; text-align: left; padding-left: 4px; white-space: nowrap; text-overflow: ellipsis; }
+.cf .cf-obs.ok { color: #166534; } .cf .cf-obs.no { color: #9a3412; } .cf .cf-obs.pe { color: #55637d; }
+.cf .cf-obs small { font-weight: 400; color: #55637d; }
+.cf-pie { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; align-items: center; }
+.cf-pie .k { border: 1px solid #d4dbe6; border-radius: 7px; padding: 2px 7px; font-size: 8px; background: linear-gradient(180deg,#f4f7fc,#fff); }
+.cf-pie .k b { font-family: Georgia, serif; font-size: 11px; color: #1e3a7c; margin-left: 3px; }
+.cf-pie .esc span { font-size: 7.5px; font-weight: 700; border-radius: 999px; padding: 1px 7px; border: 1px solid #d4dbe6; margin-left: 3px; }
+.cf-pie .esc .nt-i { background: #fde2e2; } .cf-pie .esc .nt-b { background: #fef3c7; }
+.cf-pie .esc .nt-a { background: #dbeafe; } .cf-pie .esc .nt-e { background: #dcfce7; }
+`;
+function adCfTablaHtml(cf) {
+  const SL = window.SaceLista;
+  const areas = [];
+  cf.asigs.forEach(as => { const u = areas[areas.length - 1]; if (u && u.et === as.area) u.n++; else areas.push({ et: as.area, n: 1 }); });
+  const nPers = cf.pers.length, nCols = 3 + nPers + cf.asigs.length * 2 + 4;
+  const anchos = ['2.6%', '7.6%', '15.5%'].concat(cf.pers.map(() => '2.3%')).concat(cf.asigs.map(() => ['2.2%', '2.9%']).flat())
+    .concat(['2.8%', '3.2%', '3%']);
+  const fijo = (t, cls) => `<th rowspan="3" class="cf-fijo ${cls || ''}">${t}</th>`;
+  const head = `<colgroup>${anchos.map(w => `<col style="width:${w}">`).join('')}<col></colgroup>
+    <thead>
+      <tr>${fijo('#')}${fijo('IDENTIDAD')}${fijo('NOMBRE DEL ALUMNO')}
+        <th colspan="${nPers}">ACTITUDES Y VALORES</th>
+        <th colspan="${cf.asigs.length * 2}">RENDIMIENTO ACADÉMICO</th>
+        ${fijo('<span>INASISTENCIAS</span>', 'cf-v')}${fijo('<span>PROMEDIO</span>', 'cf-v')}${fijo('<span>VALORACIÓN</span>', 'cf-v')}${fijo('OBSERVACIONES')}</tr>
+      <tr class="cf-h2"><th colspan="${nPers}">PERSONALIDAD</th>${areas.map(a => `<th colspan="${a.n * 2}">${adEsc(a.et)}</th>`).join('')}</tr>
+      <tr>${cf.pers.map(r => `<th class="cf-sub cf-v" title="${adEsc(r)}"><span>${adEsc(AD_CF_PERS_CORTO[r] || r.toUpperCase())}</span></th>`).join('')}
+        ${cf.asigs.map(as => `<th colspan="2" class="cf-sub">${adEsc(as.corto)}<br><small>Recup. · Prom.</small></th>`).join('')}</tr>
+    </thead>`;
+  const body = cf.filas.map(f => {
+    const pers = f.pers.map(x => `<td class="cf-p">${adEsc(x || '·')}</td>`).join('');
+    const notas = f.notas.map(n => {
+      if (n.final == null) return '<td class="cf-rec"></td><td class="cf-n">·</td>';
+      return `<td class="cf-rec${n.recup === '' ? ' cf-vacia' : ''}">${adEsc(n.recup)}</td><td class="cf-n ${adNotaEscalaClase(n.final)}">${n.final}</td>`;
+    }).join('');
+    const obs = f.estado === 'APROBADO' ? '<td class="cf-obs ok">✓ APROBADO</td>'
+      : f.estado === 'REPROBADO' ? '<td class="cf-obs no">✗ REPROBADO</td>'
+      : `<td class="cf-obs pe" title="${adEsc(f.faltan.join(', '))}">⏳ PENDIENTE <small>falta ${adEsc(f.faltan.join(', '))}</small></td>`;
+    return `<tr><td class="cf-num">${f.num}</td><td class="cf-idn">${adEsc(SL.idnBonita(f.idn))}</td><td class="cf-nom">${adEsc(f.nombre || '·')}</td>
+      ${pers}${notas}<td>${f.inasis === '' ? 0 : f.inasis}</td>
+      <td class="cf-prom ${f.prom == null ? '' : adNotaEscalaClase(f.prom)}">${f.prom == null ? '·' : f.prom}</td>
+      <td class="${f.prom == null ? '' : adNotaEscalaClase(f.prom)}"><span class="cf-val">${f.valoracion || '·'}</span></td>${obs}</tr>`;
+  }).join('');
+  return `<table>${head}<tbody>${body || `<tr><td colspan="${nCols}">Sin alumnos</td></tr>`}</tbody></table>`;
+}
+function adCfPieHtml(cf) {
+  const r = cf.resumen;
+  const k = (et, c) => `<span class="k">${et}<b>${c.T}</b> <small>(${c.N} N · ${c.V} V)</small></span>`;
+  return `<div class="cf-pie">${k('✓ Aprobados', r.aprob)}${k('✗ Reprobados', r.reprob)}${r.pend.T ? k('⏳ Pendientes', r.pend) : ''}
+    <span class="k">Promedio del grupo<b>${r.promGrupo == null ? '·' : String(r.promGrupo).replace('.', ',')}</b></span>
+    <span class="k">Valoración: E<b>${r.porVal.E.T}</b> · A<b>${r.porVal.A.T}</b> · B<b>${r.porVal.B.T}</b> · I<b>${r.porVal.I.T}</b></span>
+    <span class="esc"><span class="nt-i">I: hasta 69</span><span class="nt-b">B: 70 a 79</span><span class="nt-a">A: 80 a 90</span><span class="nt-e">E: 91 a 100</span></span></div>`;
+}
+function adCuadroFinalModal() {
+  if (!window.ResumenSace || !window.SaceLista) { toast('⚠️ Cargando… intenta de nuevo'); return; }
+  const ov = document.createElement('div');
+  ov.className = 'ad-gen-ov ad-ver-ov';
+  const bol = adLoad().boleta || {};
+  const campo = (id, et, v, ph) => `<label class="cf-campo">${et}<input type="text" id="${id}" class="pa-inp-field" maxlength="60" value="${adEsc(v || '')}" placeholder="${adEsc(ph)}"></label>`;
+  ov.innerHTML = `
+    <div class="ad-gen-card ad-ver-card rf-card" role="dialog" aria-modal="true" aria-labelledby="ad-cf-tit">
+      <div class="ad-gen-head">
+        <div class="ad-gen-title" id="ad-cf-tit">📒 Cuadro final del año</div>
+        <button type="button" class="ad-gen-close" id="ad-cf-x" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="ad-ver-body">
+        <p class="ad-sace-nota">Datos del encabezado que la aplicación no tiene. Se guardan para el próximo año.</p>
+        <div class="cf-campos">
+          ${campo('ad-cf-cod', 'Código del centro', bol.codigoCentro, 'ej. 051100134B10')}
+          ${campo('ad-cf-mod', 'Modalidad', bol.modalidad, 'No aplica')}
+          ${campo('ad-cf-jor', 'Jornada', bol.jornada, 'ej. Jornada matutina')}
+          ${campo('ad-cf-ald', 'Aldea', bol.aldea, 'ej. Campo Dos Caminos')}
+        </div>
+        <div id="ad-cf-cuerpo"></div>
+      </div>
+      <div class="ad-gen-foot">
+        <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-cf-no">Cerrar</button>
+        <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-cf-xlsx">📥 Descargar Excel</button>
+        <button type="button" class="pa-generate-btn" id="ad-cf-print">🖨️ Imprimir / PDF</button>
+      </div>
+    </div>`;
+  document.body.appendChild(ov);
+  const pintar = () => {
+    const d = adLoad();
+    const cf = ResumenSace.cuadroFinal(d, { SL: window.SaceLista, pers: AD_PERSONALIDAD });
+    ov.querySelector('#ad-cf-cuerpo').innerHTML = `<style>${AD_CF_CSS}</style>
+      <p class="ad-sace-nota"><b>${cf.filas.length}</b> alumno(s)${window.SaceLista.hayImportacion(d) ? ' de la lista oficial del SACE' : ''}.
+        Nota final = promedio de los cuatro parciales, redondeado. La recuperación no la guarda la aplicación: aprobado va «N/A»;
+        reprobado deja la casilla en blanco para escribirla a mano.</p>
+      ${cf.filas.some(f => f.estado === 'PENDIENTE') ? '<p class="ad-sace-aviso">⚠ Hay alumnos con parciales sin nota: salen como PENDIENTE y se dice qué les falta.</p>' : ''}
+      <div class="rf-papel rf-scroll"><div class="cf" style="min-width:980px">${adCfTablaHtml(cf)}${adCfPieHtml(cf)}</div></div>`;
+  };
+  pintar();
+  [['ad-cf-cod', 'codigoCentro'], ['ad-cf-mod', 'modalidad'], ['ad-cf-jor', 'jornada'], ['ad-cf-ald', 'aldea']].forEach(([id, k]) =>
+    ov.querySelector('#' + id).addEventListener('change', e => {
+      const dd = adLoad(); dd.boleta = dd.boleta || adBoletaDef();
+      const v = String(e.target.value || '').trim().slice(0, 60);
+      if (v) dd.boleta[k] = v; else delete dd.boleta[k];
+      adSave(dd);
+    }));
+  const fin = () => ov.remove();
+  ov.querySelector('#ad-cf-x').addEventListener('click', fin);
+  ov.querySelector('#ad-cf-no').addEventListener('click', fin);
+  ov.querySelector('#ad-cf-print').addEventListener('click', () => adPrintCuadroFinal(adLoad()));
+  ov.querySelector('#ad-cf-xlsx').addEventListener('click', () => adCuadroFinalExcel(adLoad()));
+}
+function adPrintCuadroFinal(d) {
+  const cf = ResumenSace.cuadroFinal(d, { SL: window.SaceLista, pers: AD_PERSONALIDAD });
+  const bol = d.boleta || {};
+  const centro = String(d.escuela || '').trim() || 'Centro Educativo';
+  let logoSec = d.logoSec || '';
+  if (!logoSec) { try { logoSec = new URL('img/logo-secretaria.png', location.href).href; } catch (_) { logoSec = 'img/logo-secretaria.png'; } }
+  const datos = adCfDatos(d);
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+<title>${adEsc('Cuadro final · ' + (adGradoSeccion(d.grado, d.seccion) || ''))}</title>
+<style>
+  @page { size: letter landscape; margin: 7mm 8mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { font-family: Arial, Helvetica, sans-serif; color: #0f2350; }
+  .head { display: flex; align-items: center; gap: 10px; padding-bottom: 4px; border-bottom: 2.5px solid #1e3a7c; }
+  .logo { flex: 0 0 140px; height: 36px; display: flex; align-items: center; }
+  .logo.der { justify-content: flex-end; } .logo img { max-width: 140px; max-height: 36px; object-fit: contain; }
+  .mid { flex: 1; text-align: center; }
+  .centro { font-family: Georgia, serif; font-size: 12.5px; font-weight: 700; }
+  .centro small { font-family: Arial, sans-serif; font-weight: 400; font-size: 9px; color: #55637d; }
+  .doc { font-family: Georgia, serif; font-size: 11.5px; font-weight: 700; color: #a8791a; letter-spacing: .8px; margin-top: 1px; }
+  .datos { display: grid; grid-template-columns: repeat(6, 1fr); gap: 2px 3px; margin: 3px 0 3px; }
+  .datos div { background: #f4f7fc; border: 1px solid #d4dbe6; border-radius: 5px; padding: 0 6px; line-height: 1.15; }
+  .datos span { display: block; font-size: 6.4px; letter-spacing: .4px; text-transform: uppercase; color: #7286a8; }
+  .datos b { font-size: 8.6px; }
+  thead { display: table-header-group; } tr { break-inside: avoid; }
+  .firmas { display: flex; gap: 60px; margin: 13px 50px 0; font-size: 9px; break-inside: avoid; }
+  .firmas div { flex: 1; text-align: center; border-top: 1px solid #0f2350; padding-top: 2px; }
+  .firmas small { color: #55637d; }
+  .marca { text-align: right; font-size: 7px; color: #8a94a8; margin-top: 3px; }
+  ${AD_CF_CSS}
+</style></head><body>
+  <header class="head">
+    <div class="logo">${d.logo ? `<img src="${d.logo}" alt="">` : ''}</div>
+    <div class="mid">
+      <div class="centro">${bol.codigoCentro ? '<small>(' + adEsc(bol.codigoCentro) + ')</small> ' : ''}${adEsc(centro.toUpperCase())}</div>
+      <div class="doc">CUADRO FINAL DE CALIFICACIONES</div>
+    </div>
+    <div class="logo der"><img src="${logoSec}" alt="Secretaría de Educación"></div>
+  </header>
+  <div class="datos">${datos.map(x => `<div><span>${adEsc(x[0])}</span><b>${adEsc(x[1] || '·')}</b></div>`).join('')}</div>
+  <div class="cf">${adCfTablaHtml(cf)}${adCfPieHtml(cf)}</div>
+  <div class="firmas"><div>${adEsc(bol.docente || '')}<br><small>Docente de grado</small></div><div>${adEsc(bol.director || '')}<br><small>Director(a)</small></div></div>
+  <div class="marca">Elaborado con M.E.T.A.S · ${adEsc(adFechaBonita(adHoy()))}</div>
+<script>window.onload=function(){setTimeout(function(){window.print();},280);}<\/script></body></html>`;
+  adPrintAbrir(html);
+}
+async function adCuadroFinalExcel(d) {
+  try {
+    const cf = ResumenSace.cuadroFinal(d, { SL: window.SaceLista, pers: AD_PERSONALIDAD });
+    const tabla = ResumenSace.cuadroFinalTabla(cf, window.SaceLista.idnBonita);
+    const anchos = [4, 17, 34].concat(cf.pers.map(() => 5)).concat(cf.asigs.map(() => [6, 7]).flat()).concat([7, 7, 7, 34]);
+    const bol = d.boleta || {};
+    const datos = [['Centro', (bol.codigoCentro ? '(' + bol.codigoCentro + ') ' : '') + (String(d.escuela || '').trim() || '·')]]
+      .concat(adCfDatos(d).map(x => [x[0], x[1] || '·']));
+    const bytes = ResumenSace.xlsx([tabla], { titulo: 'CUADRO FINAL DE CALIFICACIONES', datos, anchos, notas: [] });
+    const limpio = s => String(s || '').normalize('NFD').replace(/[^\w-]/g, '') || 'x';
+    const nombre = 'cuadro-final-' + limpio(d.grado) + '-' + limpio(d.seccion) + '.xlsx';
+    const cap = window.Capacitor;
+    if (cap && cap.isNativePlatform?.() && cap.Plugins?.Filesystem && cap.Plugins?.Share) {
+      let bin = '';
+      for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+      const res = await cap.Plugins.Filesystem.writeFile({ path: nombre, data: btoa(bin), directory: 'CACHE' });
+      await cap.Plugins.Share.share({ url: res.uri, dialogTitle: 'Guardar / Compartir el cuadro final' });
+    } else {
+      const url = URL.createObjectURL(new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+      const a = document.createElement('a');
+      a.href = url; a.download = nombre; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 4000);
+    }
+    toast('📥 Excel listo: ' + nombre);
+  } catch (e) {
+    if (e && e.name === 'AbortError') return;
+    toast('⚠️ No se pudo armar el Excel');
+  }
+}
+
 /* ══════════════ 🔎 BUSCAR DATOS PERDIDOS ══════════════
    La pantalla de js/tools/buscar-perdidos.js: junta las copias que hay en
    este equipo (respaldo de la sincronización y fotos de «Deshacer»), y si
@@ -7297,6 +7532,7 @@ function adRenderSace(body, d) {
       </div>
       <div class="ad-btn-row" style="margin-top:8px">
         <button class="pa-generate-btn" id="ad-sace-boletas">🧾 Imprimir boletas (todas)</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-sace-cfinal" type="button">📒 Cuadro final del año</button>
         <button class="pa-generate-btn ad-btn-sec" id="ad-sace-resumen" type="button">📋 Resumen final de resultados por grado</button>
         <button class="pa-generate-btn ad-btn-sec" id="ad-sace-perdidos" type="button">🔎 Buscar notas perdidas</button>
         ${esLetra ? '<button class="pa-generate-btn ad-btn-sec" id="ad-sace-csv-num" type="button">🔢 Copiar CSV en número (4, 3, 2)</button>' : ''}
@@ -7569,6 +7805,7 @@ function adRenderSace(body, d) {
     adPrintBoletas(adLoad(), num ? [num] : null);
   });
   document.getElementById('ad-sace-resumen')?.addEventListener('click', () => adResumenFinalModal());
+  document.getElementById('ad-sace-cfinal')?.addEventListener('click', () => adCuadroFinalModal());
   document.getElementById('ad-sace-perdidos')?.addEventListener('click', () => adBuscarPerdidosModal());
 
   // Traer faltas del pase de lista → Inasistencias del parcial
@@ -7890,6 +8127,15 @@ function adNotaEscalaClase(v) {
   if (n < 1 || n > 100) return '';
   return n < 70 ? 'nt-i' : n < 80 ? 'nt-b' : n <= 90 ? 'nt-a' : 'nt-e';
 }
+/* La misma escala con nombre y color de barra (más fuerte que el fondo de
+   la casilla, para que la barra se vea impresa). */
+const AD_NOTA_ESCALA_INFO = {
+  'nt-i': { et: 'Inicial', rango: 'hasta 69', barra: '#e05252' },
+  'nt-b': { et: 'Básico', rango: '70 a 79', barra: '#e0a800' },
+  'nt-a': { et: 'Avanzado', rango: '80 a 90', barra: '#3b82f6' },
+  'nt-e': { et: 'Excelente', rango: '91 a 100', barra: '#16a34a' }
+};
+function adNotaEscalaEt(v) { const k = adNotaEscalaClase(v); return k ? AD_NOTA_ESCALA_INFO[k].et : ''; }
 function adNotaPintar(td, v) {
   if (!td) return;
   AD_NOTA_ESCALA.forEach(c => td.classList.remove(c));
@@ -7996,7 +8242,7 @@ function adConsejoFamilia(nombre, ctx) {
   //    tanto como una alerta.
   const bajas = c.basicasBajas || [];
   if (bajas.length) {
-    const bTxt = bajas.slice(0, 3).map(x => `${x.mat} (${x.val} · «${adNotaCat(x.val).label}»)`).join(', ');
+    const bTxt = bajas.slice(0, 3).map(x => `${x.mat} (${x.val} · «${adNotaEscalaEt(x.val)}»)`).join(', ');
     partes.push(bajas[0].val < 60
       ? `El refuerzo empieza por lo básico: ${bTxt}. Coordine con el docente un plan de recuperación esta misma semana.`
       : `El refuerzo empieza por lo básico: ${bTxt}. Acompáñele con 15–20 minutos de repaso diario y consulte al docente cómo apoyar desde casa.`);
@@ -8004,7 +8250,7 @@ function adConsejoFamilia(nombre, ctx) {
       partes.push(`También conviene un empujón en ${adNombresMats(peores)} (${c.minV}).`);
     }
   } else if (peores.length && Number(c.minV) < 70) {
-    const et = adNotaCat(c.minV).label;
+    const et = adNotaEscalaEt(c.minV);
     if (Number(c.minV) < 60) {
       partes.push(`En ${adNombresMats(peores)} (${c.minV} · «${et}») se necesita refuerzo urgente: coordine con el docente un plan de recuperación esta misma semana.`);
     } else {
@@ -8050,8 +8296,10 @@ function adBoletaGraficoEstado(filas, mixto) {
   const bars = filas.map((it, i) => {
     const y = padT + i * (rowH + gap);
     const w = Math.max(2, barMax * (Math.min(100, Math.max(0, it.val)) / 100));
-    // Color OFICIAL de la calificación (el mismo del Plan de Acción)
-    const color = adNotaCat(it.val).color;
+    /* Color de la escala del formulario, la misma de la tabla de arriba:
+       en una hoja, «Avanzado» no puede significar dos cosas. El número va
+       en tinta oscura para que se lea impreso. */
+    const color = (AD_NOTA_ESCALA_INFO[adNotaEscalaClase(it.val)] || { barra: '#94a3b8' }).barra;
     const lbl = it.mat.length > 17 ? it.mat.slice(0, 16) + '…' : it.mat;
     let marca = '', linea2 = '';
     if (it.prev != null) {
@@ -8069,11 +8317,11 @@ function adBoletaGraficoEstado(filas, mixto) {
       <rect x="${barX}" y="${y + 2}" width="${barMax}" height="${rowH - 4}" rx="2.5" fill="#eef2f7"/>
       <rect x="${barX}" y="${y + 2}" width="${w.toFixed(1)}" height="${rowH - 4}" rx="2.5" fill="${color}"/>
       ${marca}
-      <text x="${(barX + barMax + 3).toFixed(1)}" y="${(y + rowH * 0.52).toFixed(1)}" font-size="8.5" font-weight="bold" fill="${color}">${it.val}</text>
+      <text x="${(barX + barMax + 3).toFixed(1)}" y="${(y + rowH * 0.52).toFixed(1)}" font-size="8.5" font-weight="bold" fill="#0f2350">${it.val}</text>
       ${linea2}`;
   }).join('');
-  const leyenda = `<div class="bl-leyenda">${AD_NOTA_CATS.map(c =>
-    `<span><i style="background:${c.color}"></i>${c.min > 0 ? c.min + '+' : '&lt;60'} ${c.label}</span>`).join('')}${hayPrev ? '<span><i style="background:#0f2350"></i>| parcial anterior</span>' : ''}</div>`;
+  const leyenda = `<div class="bl-leyenda">${Object.keys(AD_NOTA_ESCALA_INFO).map(k => { const c = AD_NOTA_ESCALA_INFO[k];
+    return `<span><i style="background:${c.barra}"></i>${c.et}: ${c.rango}</span>`; }).join('')}${hayPrev ? '<span><i style="background:#0f2350"></i>| parcial anterior</span>' : ''}</div>`;
   return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:340px;font-family:Arial,Helvetica,sans-serif">
     <line x1="${x70.toFixed(1)}" y1="${padT - 1}" x2="${x70.toFixed(1)}" y2="${gridBot}" stroke="#c0392b" stroke-width="0.8" stroke-dasharray="3 2"/>
     <text x="${x70.toFixed(1)}" y="${(H - 2).toFixed(1)}" text-anchor="middle" font-size="7" fill="#c0392b">70 · aprobación</text>
@@ -8263,14 +8511,16 @@ function adPrintBoletas(d, nums) {
       <tr>
         <td class="pa">${p}</td>
         ${pers.map(c => `<td>${adEsc(String(val(p, c, a.num)))}</td>`).join('')}
-        ${mats.map(c => `<td>${adEsc(String(val(p, c, a.num)))}</td>`).join('')}
+        ${mats.map(c => { const v = val(p, c, a.num), k = adNotaEscalaClase(v);
+          return `<td${k ? ' class="' + k + '"' : ''}>${adEsc(String(v))}</td>`; }).join('')}
         <td>${adEsc(String(val(p, 'Inasistencias', a.num)))}</td>
       </tr>`).join('');
     const promRow = `
       <tr class="prom">
         <td class="pa">PROM.</td>
         ${pers.map(c => `<td>${promPers(c, a.num)}</td>`).join('')}
-        ${mats.map(c => `<td>${promMat(c, a.num)}</td>`).join('')}
+        ${mats.map(c => { const v = promMat(c, a.num), k = adNotaEscalaClase(v);
+          return `<td${k ? ' class="' + k + '"' : ''}>${v}</td>`; }).join('')}
         <td>${inasis}</td>
       </tr>`;
 
@@ -8387,6 +8637,8 @@ function adPrintBoletas(d, nums) {
           <tbody>${filas}${promRow}</tbody>
         </table>
       </div>
+      <div class="bl-escala"><span class="nt-i">Inicial: hasta 69</span><span class="nt-b">Básico: 70 a 79</span>
+        <span class="nt-a">Avanzado: 80 a 90</span><span class="nt-e">Excelente: 91 a 100</span></div>
 
       <div class="bl-grid2">
         <div class="bl-card">
@@ -8501,6 +8753,15 @@ function adPrintBoletas(d, nums) {
   .bl-notas tbody td { font-weight: 600; }
   .bl-notas tr.prom td { font-weight: 800; background: #fdf6e3; color: #8a5a00; }
   .bl-notas tr.prom td.pa { background: #f7edc9; }
+  /* el color de la escala, el mismo de Notas SACE y del Resumen final; el
+     número sigue escrito, el color solo ayuda a la familia a ubicarse */
+  .bl-notas td.nt-i, .bl-notas tr.prom td.nt-i, .bl-escala .nt-i { background: #fde2e2; color: #111; }
+  .bl-notas td.nt-b, .bl-notas tr.prom td.nt-b, .bl-escala .nt-b { background: #fef3c7; color: #111; }
+  .bl-notas td.nt-a, .bl-notas tr.prom td.nt-a, .bl-escala .nt-a { background: #dbeafe; color: #111; }
+  .bl-notas td.nt-e, .bl-notas tr.prom td.nt-e, .bl-escala .nt-e { background: #dcfce7; color: #111; }
+  .bl-notas tr.prom td[class*="nt-"] { box-shadow: inset 0 2px 0 #c9a24a; }
+  .bl-escala { display: flex; justify-content: flex-end; gap: 4px; margin-top: 3px; }
+  .bl-escala span { font-size: 7.5px; font-weight: 700; border-radius: 999px; padding: 1px 7px; border: 1px solid #d4dbe6; }
 
   .bl-grid2 { display: flex; gap: 10px; margin-top: 11px; align-items: stretch; }
   .bl-grid2 > .bl-card { flex: 1; }

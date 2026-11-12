@@ -6925,3 +6925,7 @@ body:has(.ad-sace-card) #metasInstallBtn { display: none !important; }
    viven solo en 👥 Alumnos */
 .ad-mx-num-fijo { cursor: default; border-style: solid; }
 .ad-mx-num-fijo:active { background: rgba(21,101,192,.06); color: var(--brand); transform: none; }
+/* ── 📒 Cuadro final del año: los datos del encabezado ── */
+.cf-campos { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 6px 10px; }
+.cf-campo { display: flex; flex-direction: column; gap: 3px; font-weight: 800; font-size: calc(12px * var(--metas-fz, 1)); }
+.cf-campo input { min-height: 44px; }
