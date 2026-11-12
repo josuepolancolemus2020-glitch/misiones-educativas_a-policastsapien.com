@@ -2260,70 +2260,6 @@ async function adOrdenarAlumnosAZ(alTerminar) {
   }
 }
 
-/* ── Controles de fila (▲, ▼, #posición y ✕ borrar fila) en tablas .ad-mx ── */
-function adTablaFilasArrastrar(tabla, alCambiar) {
-  if (!tabla) return;
-  const tbody = tabla.querySelector('tbody');
-  if (!tbody) return;
-  const wrap = tabla.closest('.ad-mx-wrap');
-
-  const refrescarConservandoVista = (nuevoNum, centrarFila) => {
-    const st = wrap ? wrap.scrollTop : 0;
-    const sl = wrap ? wrap.scrollLeft : 0;
-    const wy = window.scrollY;
-    if (typeof alCambiar === 'function') alCambiar(nuevoNum);
-    const w2 = document.querySelector('.ad-mx-wrap');
-    if (w2) { w2.scrollTop = st; w2.scrollLeft = sl; }
-    window.scrollTo(0, wy);
-    if (nuevoNum != null) {
-      const destTr = document.querySelector('tr[data-rnum="' + nuevoNum + '"]');
-      if (destTr) {
-        if (centrarFila) {
-          try { destTr.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (_) {}
-        } else {
-          try { destTr.scrollIntoView({ block: 'nearest' }); } catch (_) {}
-        }
-        destTr.classList.add('ad-mx-tr-movida');
-        setTimeout(() => destTr.classList.remove('ad-mx-tr-movida'), 1000);
-      }
-    }
-  };
-
-  /* 1) Botones ▲ / ▼ para subir o bajar la fila con sus notas */
-  tbody.querySelectorAll('.ad-mx-rmv').forEach(btn => {
-    btn.addEventListener('click', e => {
-      e.stopPropagation();
-      const num = +btn.dataset.rnum;
-      const dir = +btn.dataset.rdir;
-      adMoverAlumnoPaso(num, dir, (nuevoNum) => {
-        refrescarConservandoVista(nuevoNum, false);
-      });
-    });
-  });
-
-  /* 2) Tocar #N para escribir directamente la posición destino (ej. mover a #8) */
-  tbody.querySelectorAll('[data-irnum]').forEach(btn => {
-    btn.addEventListener('click', e => {
-      e.stopPropagation();
-      const num = +btn.dataset.irnum;
-      adMoverAlumnoAPosicion(num, (nuevoNum, centrar) => {
-        refrescarConservandoVista(nuevoNum, centrar);
-      });
-    });
-  });
-
-  /* 3) Botón ✕ para borrar la fila (con respaldo en Deshacer) */
-  tbody.querySelectorAll('[data-delnum]').forEach(btn => {
-    btn.addEventListener('click', e => {
-      e.stopPropagation();
-      const num = +btn.dataset.delnum;
-      adEliminarAlumnoFila(num, () => {
-        refrescarConservandoVista(null, false);
-      });
-    });
-  });
-}
-
 /* ── Controles de fila (▲, ▼ y #posición) en 👥 Alumnos (#ad-lista-rows) ── */
 function adListaFilasArrastrar(cont) {
   if (!cont) return;
@@ -2505,13 +2441,8 @@ function adRenderFichas(body, d) {
             ${d.lista.map((a, ri) => `<tr data-rnum="${a.num}"${SL.seFue(a) ? ' class="ad-fi-ido"' : ''}>
               <td class="ad-mx-sticky" title="${adEsc(a.nombre || ('#' + a.num))}">
                 <div class="ad-mx-sbox">
-                  <span class="ad-mx-rbtns">
-                    <button type="button" class="ad-mx-rmv" data-rdir="-1" data-rnum="${a.num}" title="Subir una posición" aria-label="Subir"${ri === 0 ? ' disabled' : ''}>▲</button>
-                    <button type="button" class="ad-mx-rmv" data-rdir="1" data-rnum="${a.num}" title="Bajar una posición" aria-label="Bajar"${ri === d.lista.length - 1 ? ' disabled' : ''}>▼</button>
-                  </span>
-                  <button type="button" class="ad-mx-num" data-irnum="${a.num}" title="Toca para escribir a qué posición (#) quieres mover esta fila">#${a.num}</button>
-                  <span class="ad-mx-nom">${adEsc(adPrimerNombre(a.nombre)) || '—'}</span>
-                  <button type="button" class="ad-mx-del" data-delnum="${a.num}" title="Borrar esta fila (con opción de restaurar)" aria-label="Borrar fila">✕</button>
+                  <span class="ad-mx-num ad-mx-num-fijo">#${a.num}</span>
+                  <span class="ad-mx-nom">${adEsc(adPrimerNombre(a.nombre)) || '·'}</span>
                 </div></td>
               <td class="ad-fi-marca">${marcaOficial(a) || '·'}</td>
               <td><button class="ad-fi-sexo ad-fi-sx-${a.sexo === 'F' ? 'f' : a.sexo === 'M' ? 'm' : 'no'}"
@@ -2698,7 +2629,6 @@ function adRenderFichas(body, d) {
   document.getElementById('ad-fi-orden-gen')?.addEventListener('click', () => {
     adOrdenarPorGeneroModal(() => renderAdmin());
   });
-  adTablaFilasArrastrar(body.querySelector('.ad-fi-mx'), () => renderAdmin());
   adUndoEnganchar(body);
 }
 
@@ -7226,10 +7156,10 @@ function adRenderSace(body, d) {
       </div>
       <p class="pa-optional-hint" style="margin-top:2px">
         ${esLetra
-          ? 'La conducta es <strong>cualitativa</strong>: <strong>escríbela</strong> (S, MB, B) o toca la celda y luego el <strong>valor</strong> — el cursor recorre los parciales I→IV de cada rasgo y sigue solo. Para ordenar filas con todas sus notas: usa <strong>▲ ▼</strong>, toca el número <strong>#</strong> para enviarlo directo a una posición (ej. al #8), o usa los botones de <strong>🔤 Ordenar A–Z</strong> y <strong>♀♂ por género</strong>.'
+          ? 'La conducta es <strong>cualitativa</strong>: <strong>escríbela</strong> (S, MB, B) o toca la celda y luego el <strong>valor</strong>: el cursor recorre los parciales I→IV de cada rasgo y sigue solo. Para mover o borrar un alumno ve a <strong>👥 Alumnos</strong>; aquí puedes ordenar con <strong>🔤 Ordenar A–Z</strong> y <strong>♀♂ por género</strong>.'
           : esInasis
-            ? 'Escribe el <strong>número de inasistencias</strong>. Enter o «Siguiente» para bajar. Usa <strong>▲ ▼</strong> o toca el <strong>#número</strong> de un alumno para mover su fila a otra posición.'
-            : 'Escribe la <strong>nota (1-100)</strong>. Avanza con <strong>Enter</strong>, <strong>Tab</strong> o las flechas. Para mover un alumno con todas sus notas: usa las flechas <strong>▲ ▼</strong>, toca su número <strong>#</strong> para mandarlo directo a otra posición (ej. #8), o usa <strong>🔤 Ordenar A–Z</strong> / <strong>♀♂ Niñas y Varones A–Z</strong>.'}</p>
+            ? 'Escribe el <strong>número de inasistencias</strong>. Enter o «Siguiente» para bajar. Para mover o borrar un alumno ve a <strong>👥 Alumnos</strong>.'
+            : 'Escribe la <strong>nota (1-100)</strong>. Avanza con <strong>Enter</strong>, <strong>Tab</strong> o las flechas. Cada casilla toma el color de su escala. Para mover o borrar un alumno ve a <strong>👥 Alumnos</strong>; aquí puedes ordenar con <strong>🔤 Ordenar A–Z</strong> / <strong>♀♂ Niñas y Varones A–Z</strong>.'}</p>
 
       ${esLetra ? `
       <div class="ad-pers-kp">
@@ -7302,6 +7232,9 @@ function adRenderSace(body, d) {
         <p class="pa-optional-hint" style="margin:0">🔒 <strong>Parcial ${parcial} protegido:</strong> la opción «✨ Sugerir notas» solo funciona en el <strong>Parcial IV</strong> (previa autorización) para no alterar las notas definitivas de los Parciales I, II y III.</p>
       </div>`) : ''}
 
+      ${!esLetra && !esInasis ? `<div class="ad-nt-ley" aria-label="Colores de las notas">
+        <span class="nt-i">Inicial: hasta 69</span><span class="nt-b">Básico: 70 a 79</span>
+        <span class="nt-a">Avanzado: 80 a 90</span><span class="nt-e">Excelente: 91 a 100</span></div>` : ''}
       <div class="ad-mx-wrap">
         <table class="ad-mx${esLetra ? ' ad-mx-pers' : ''}">
           <thead>${esLetra ? `
@@ -7328,19 +7261,16 @@ function adRenderSace(body, d) {
             ${d.lista.map((a, ri) => `<tr data-rnum="${a.num}"${a.noCopiarSace ? ' class="ad-mx-tr-nocopy"' : ''}>
               <td class="ad-mx-sticky" title="${adEsc((a.nombre || ('#' + a.num)) + (a.noCopiarSace ? ' · No se copia en 📋' : ''))}">
                 <div class="ad-mx-sbox">
-                  <span class="ad-mx-rbtns">
-                    <button type="button" class="ad-mx-rmv" data-rdir="-1" data-rnum="${a.num}" title="Subir una posición con sus notas" aria-label="Subir"${ri === 0 ? ' disabled' : ''}>▲</button>
-                    <button type="button" class="ad-mx-rmv" data-rdir="1" data-rnum="${a.num}" title="Bajar una posición con sus notas" aria-label="Bajar"${ri === d.lista.length - 1 ? ' disabled' : ''}>▼</button>
-                  </span>
-                  <button type="button" class="ad-mx-num" data-irnum="${a.num}" title="Toca para elegir a qué posición (#) mover a ${adEsc(a.nombre || ('#' + a.num))} con todas sus notas">#${a.num}</button>
-                  <span class="ad-mx-nom">${adEsc(adPrimerNombre(a.nombre)) || '—'}</span>
+                  <span class="ad-mx-num ad-mx-num-fijo">#${a.num}</span>
+                  <span class="ad-mx-nom">${adEsc(adPrimerNombre(a.nombre)) || '·'}</span>
                   ${a.noCopiarSace ? `<button type="button" class="ad-mx-nocopy-tag" data-nc-quitar="${a.num}" title="Omitido al copiar columna (📋). Toca para volver a incluirlo">🙈</button>` : ''}
-                  <button type="button" class="ad-mx-del" data-delnum="${a.num}" title="Borrar fila de ${adEsc(adPrimerNombre(a.nombre) || ('#' + a.num))} (se puede restaurar)" aria-label="Borrar fila">✕</button>
                 </div></td>
-              ${colDefs.map((cd, ci) => `<td${cd.ini ? ' class="ad-mx-ini"' : ''}><input class="ad-mx-inp" data-idx="${ri * colDefs.length + ci}"
+              ${colDefs.map((cd, ci) => { const cls = [cd.ini ? 'ad-mx-ini' : '',
+                !esLetra && cd.campo !== 'Inasistencias' ? adNotaEscalaClase(valOfP(cd.parcial, cd.campo, a.num)) : ''].filter(Boolean).join(' ');
+                return `<td${cls ? ' class="' + cls + '"' : ''}><input class="ad-mx-inp" data-idx="${ri * colDefs.length + ci}"
                 data-num="${a.num}" data-alumno="${a.num}" data-campo="${adEsc(cd.campo)}" data-materia="${adEsc(cd.campo)}" data-parcial="${cd.parcial}" type="text" inputmode="${esLetra ? 'text' : 'numeric'}"
                 maxlength="3" autocapitalize="characters" ${esLetra ? 'style="text-transform:uppercase;"' : ''}
-                value="${valOfP(cd.parcial, cd.campo, a.num) !== '' ? adEsc(String(valOfP(cd.parcial, cd.campo, a.num))) : ''}" placeholder="·"></td>`).join('')}
+                value="${valOfP(cd.parcial, cd.campo, a.num) !== '' ? adEsc(String(valOfP(cd.parcial, cd.campo, a.num))) : ''}" placeholder="·"></td>`; }).join('')}
             </tr>`).join('')}
           </tbody>
         </table>
@@ -7493,6 +7423,7 @@ function adRenderSace(body, d) {
         v = esInasis ? Math.max(0, Math.min(999, v)) : Math.max(1, Math.min(100, v));
         dd.notas[pDest][campo][inp.dataset.num] = v;
       }
+      if (!esInasis && campo !== 'Inasistencias') adNotaPintar(inp.closest('td'), raw);
     }
     adSave(dd);
   };
@@ -7543,31 +7474,6 @@ function adRenderSace(body, d) {
       }
     });
     inp.addEventListener('keydown', ev => {
-      if (ev.altKey && (ev.key === 'ArrowUp' || ev.key === 'ArrowDown')) {
-        ev.preventDefault();
-        const tr = inp.closest('tr[data-rnum]');
-        const tb = tr && tr.parentElement;
-        if (!tr || !tb) return;
-        const vec = ev.key === 'ArrowUp' ? tr.previousElementSibling : tr.nextElementSibling;
-        if (!vec) return;
-        if (ev.key === 'ArrowUp') tb.insertBefore(tr, vec); else vec.after(tr);
-        const orden = [...tb.querySelectorAll('tr[data-rnum]')].map(r => +r.dataset.rnum);
-        const numOrig = +inp.dataset.num;
-        const campoOrig = inp.dataset.campo;
-        const parcialOrig = inp.dataset.parcial;
-        const wrap = tb.closest('.ad-mx-wrap');
-        const st = wrap ? wrap.scrollTop : 0, sl = wrap ? wrap.scrollLeft : 0, wy = window.scrollY;
-        const mapa = adReordenarAlumnos(orden);
-        if (mapa) {
-          const nuevoNum = mapa[numOrig];
-          _adCapturedState = { activeInput: { num: String(nuevoNum), alumno: String(nuevoNum), campo: campoOrig, materia: campoOrig, parcial: parcialOrig } };
-          adRenderSace(body, adLoad());
-          const w2 = body.querySelector('.ad-mx-wrap');
-          if (w2) { w2.scrollTop = st; w2.scrollLeft = sl; }
-          window.scrollTo(0, wy);
-        }
-        return;
-      }
       if (ev.key === 'Tab') {
         ev.preventDefault();
         focar(ev.shiftKey ? idx - 1 : idx + 1);
@@ -7919,7 +7825,6 @@ function adRenderSace(body, d) {
   document.getElementById('ad-sace-csv').addEventListener('click', () => copiarCsvSace(false));
   document.getElementById('ad-sace-csv-num')?.addEventListener('click', () => copiarCsvSace(true));
 
-  adTablaFilasArrastrar(body.querySelector('.ad-mx'), () => adRenderSace(body, adLoad()));
   adUndoEnganchar(body);
 
   /* Restaurar foco y posición del cursor si una celda estaba activa antes del render */
@@ -7971,6 +7876,26 @@ function adMsgMotiva(nombre, prom, mejor) {
 /* ── Código de colores OFICIAL de calificaciones — el MISMO del Plan
    de Acción (PA_CATS en plan-accion.js): la boleta y el plan hablan
    el mismo idioma de colores y etiquetas. ── */
+/* ── Color de la casilla según la escala del formulario oficial ──
+   Inicial hasta 69 (rojo claro), Básico 70 a 79 (amarillo), Avanzado 80 a
+   90 (azul claro), Excelente 91 a 100 (verde): de un vistazo se ve quién
+   va bajo sin leer 43 números. El número sigue escrito en la casilla, así
+   que el color nunca es lo único que lo dice. Los cortes son los mismos
+   del Resumen final (js/tools/cuadros-sace.js). */
+const AD_NOTA_ESCALA = ['nt-i', 'nt-b', 'nt-a', 'nt-e'];
+function adNotaEscalaClase(v) {
+  const t = String(v == null ? '' : v).trim();
+  if (t === '' || isNaN(Number(t))) return '';
+  const n = Number(t);
+  if (n < 1 || n > 100) return '';
+  return n < 70 ? 'nt-i' : n < 80 ? 'nt-b' : n <= 90 ? 'nt-a' : 'nt-e';
+}
+function adNotaPintar(td, v) {
+  if (!td) return;
+  AD_NOTA_ESCALA.forEach(c => td.classList.remove(c));
+  const c = adNotaEscalaClase(v);
+  if (c) td.classList.add(c);
+}
 const AD_NOTA_CATS = [
   { min: 95, label: 'Avanzado',        color: '#16a34a' },
   { min: 80, label: 'Muy Bueno',       color: '#0891b2' },

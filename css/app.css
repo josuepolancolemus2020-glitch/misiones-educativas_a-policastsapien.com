@@ -6905,3 +6905,23 @@ body:has(.ad-sace-card) #metasInstallBtn { display: none !important; }
 .bp-fila input { width: 22px; height: 22px; margin: 2px 0 0; flex: none; }
 .bp-fila small { color: var(--muted, #64748b); }
 .bp-nube { margin-top: 12px; border-top: 1px dashed var(--border, #cbd5e1); padding-top: 8px; }
+
+/* ── Notas SACE: color de cada casilla según la escala ──
+   Fondos claros para que el número negro se lea igual de bien. El número
+   sigue en la casilla: el color acompaña, no reemplaza. */
+.ad-mx td.nt-i, .ad-nt-ley .nt-i { background: #fde2e2; }
+.ad-mx td.nt-b, .ad-nt-ley .nt-b { background: #fef3c7; }
+.ad-mx td.nt-a, .ad-nt-ley .nt-a { background: #dbeafe; }
+.ad-mx td.nt-e, .ad-nt-ley .nt-e { background: #dcfce7; }
+.ad-mx td[class*="nt-"] .ad-mx-inp { color: #0f172a; }
+:root[data-theme="dark"] .ad-mx td.nt-i, :root[data-theme="dark"] .ad-nt-ley .nt-i { background: #fca5a5; }
+:root[data-theme="dark"] .ad-mx td.nt-b, :root[data-theme="dark"] .ad-nt-ley .nt-b { background: #fde68a; }
+:root[data-theme="dark"] .ad-mx td.nt-a, :root[data-theme="dark"] .ad-nt-ley .nt-a { background: #93c5fd; }
+:root[data-theme="dark"] .ad-mx td.nt-e, :root[data-theme="dark"] .ad-nt-ley .nt-e { background: #86efac; }
+.ad-nt-ley { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
+.ad-nt-ley span { border-radius: 999px; padding: 3px 10px; font-size: calc(11.5px * var(--metas-fz, 1));
+  font-weight: 800; color: #0f172a; border: 1px solid rgba(15,23,42,.12); }
+/* el número de lista en Notas SACE y Fichas ya no es botón: mover y borrar
+   viven solo en 👥 Alumnos */
+.ad-mx-num-fijo { cursor: default; border-style: solid; }
+.ad-mx-num-fijo:active { background: rgba(21,101,192,.06); color: var(--brand); transform: none; }
