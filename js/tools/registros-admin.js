@@ -4219,9 +4219,13 @@ function adRenderEco(body, d) {
           <span class="ad-cr-arrow">›</span>
         </button>`;
       }).join('')}
-      <button class="pa-generate-btn" id="ad-cuadro-ingresos" type="button">🖨️ Imprimir cuadro de ingresos</button>
-      <p class="pa-optional-hint">Para Dirección: todas las colectas en una hoja carta, alumno por alumno,
-        y en la segunda hoja quién no ha colaborado y cuánto falta. Lleva nombres: no es para el grupo de padres.</p>
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn" id="ad-cuadro-ingresos" type="button">🖨️ Imprimir cuadro de ingresos</button>
+        <button class="pa-generate-btn" id="ad-cuadro-egresos" type="button">🖨️ Imprimir cuadro de egresos</button>
+      </div>
+      <p class="pa-optional-hint">Para Dirección. <strong>Ingresos:</strong> todas las colectas alumno por alumno,
+        y quién no ha colaborado (lleva nombres: no es para el grupo de padres).
+        <strong>Egresos:</strong> cada gasto con el saldo que le queda a su colecta, y el balance mes a mes.</p>
     </div>` : ''}`;
 
   document.getElementById('ad-nueva-colecta').addEventListener('click', async () => {
@@ -4258,6 +4262,8 @@ function adRenderEco(body, d) {
     b.addEventListener('click', () => { _adColectaId = b.dataset.cid; renderAdmin(); }));
   const btnIng = document.getElementById('ad-cuadro-ingresos');
   if (btnIng) btnIng.addEventListener('click', () => adPrintCuadroIngresos(adLoad()));
+  const btnEgr = document.getElementById('ad-cuadro-egresos');
+  if (btnEgr) btnEgr.addEventListener('click', () => adPrintCuadroEgresos(adLoad()));
   document.getElementById('ad-ir-gastos').addEventListener('click', () => { _adGastosOn = 1; renderAdmin(); });
   document.getElementById('ad-ir-inv').addEventListener('click', () => { _adInvOn = 1; renderAdmin(); });
 }
@@ -5387,32 +5393,27 @@ function adIngPctHtml(p) {
   return `<span class="pc" style="background:${t.fondo};color:${t.tinta}">${sig} ${p} %</span>`;
 }
 
-function adPrintCuadroIngresos(d) {
-  const D = adIngDatos(d);
-  if (!D.cols.length) { if (typeof toast === 'function') toast('Aún no hay colectas hasta hoy'); return; }
+/* Lo que comparten el cuadro de ingresos y el de egresos: el mismo
+   encabezado, los mismos recuadros de datos, la misma hoja. Van juntos a
+   Dirección y tienen que verse como un solo juego. */
+function adCuadroDatos(d, extra) {
   const bol = d.boleta || {};
-  const centro = String(d.escuela || '').trim() || 'Centro Educativo';
-  let logoSec = d.logoSec || '';
-  if (!logoSec) { try { logoSec = new URL('img/logo-secretaria.png', location.href).href; } catch (_) { logoSec = 'img/logo-secretaria.png'; } }
-  const SL = window.SaceLista;
-  const hayIdn = D.filas.some(f => String(f.a.idn || '').trim());
-  /* Vertical mientras quepan las colectas; con más, horizontal. Lo que
-     sobre de alto lo ajusta el guion de abajo, sin cortar la hoja. */
-  const nC = D.cols.length;
-  const vertical = nC <= (hayIdn ? 4 : 5);
-  const T = D.tot;
   const n = parseInt(String(d.grado || '').replace(/\D/g, ''), 10);
-  const datos = [
+  return [
     ['Período', 'Período ' + (bol.anio || new Date().getFullYear())],
     ['Curso', AD_GRADOS_TXT[n] ? AD_GRADOS_TXT[n] + ' grado' : String(d.grado || '')],
     ['Grupo', adGradoSeccion(d.grado, d.seccion)],
     ['Jornada', bol.jornada || ''],
     ['Municipio', bol.municipio || ''],
     ['Docente', bol.docente || ''],
-    ['Colectas al corte', String(nC)],
-    ['Corte al', adFechaBonita(adHoy())],
-  ];
-  const cabeza = (titulo) => `
+  ].concat(extra || [], [['Corte al', adFechaBonita(adHoy())]]);
+}
+function adCuadroCabeza(d, titulo, datos) {
+  const bol = d.boleta || {};
+  const centro = String(d.escuela || '').trim() || 'Centro Educativo';
+  let logoSec = d.logoSec || '';
+  if (!logoSec) { try { logoSec = new URL('img/logo-secretaria.png', location.href).href; } catch (_) { logoSec = 'img/logo-secretaria.png'; } }
+  return `
   <header class="head">
     <div class="logo">${d.logo ? `<img src="${d.logo}" alt="">` : ''}</div>
     <div class="mid">
@@ -5422,6 +5423,139 @@ function adPrintCuadroIngresos(d) {
     <div class="logo der"><img src="${logoSec}" alt="Secretaría de Educación"></div>
   </header>
   <div class="datos">${datos.map(x => `<div><span>${adEsc(x[0])}</span><b>${adEsc(x[1] || '·')}</b></div>`).join('')}</div>`;
+}
+function adCuadroCss(vertical) {
+  return `  @page { size: letter ${vertical ? 'portrait' : 'landscape'}; margin: 7mm 8mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html, body { background: #fff; }
+  body { font-family: Arial, Helvetica, sans-serif; color: #0f2350; }
+  /* cada hoja mide lo que mide el papel menos los márgenes; si el contenido
+     se pasa, el guion de abajo lo encoge para que no salte a otra hoja */
+  .hoja { width: ${vertical ? 200 : 263}mm; height: ${vertical ? 263 : 199}mm; overflow: hidden; break-after: page; }
+  .hoja:last-child { break-after: auto; }
+  @media screen { body { background: #e5e9f0; padding: 10px 0 70px; } .hoja { background: #fff; margin: 0 auto 12px; padding: 0; box-shadow: 0 2px 10px rgba(0,0,0,.18); } }
+  .head { display: flex; align-items: center; gap: 10px; padding-bottom: 4px; border-bottom: 2.5px solid #1e3a7c; }
+  .logo { flex: 0 0 120px; height: 36px; display: flex; align-items: center; }
+  .logo.der { justify-content: flex-end; } .logo img { max-width: 120px; max-height: 36px; object-fit: contain; }
+  .mid { flex: 1; text-align: center; }
+  .centro { font-family: Georgia, serif; font-size: 12.5px; font-weight: 700; }
+  .centro small { font-family: Arial, sans-serif; font-weight: 400; font-size: 9px; color: #55637d; }
+  .doc { font-family: Georgia, serif; font-size: 12px; font-weight: 700; color: #a8791a; letter-spacing: .8px; margin-top: 1px; }
+  .datos { display: grid; grid-template-columns: repeat(${vertical ? 4 : 8}, 1fr); gap: 2px 3px; margin: 3px 0 4px; }
+  .datos div { background: #f4f7fc; border: 1px solid #d4dbe6; border-radius: 5px; padding: 1px 6px; font-size: 8.6px; line-height: 1.2; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .datos span { display: block; font-size: 6.4px; letter-spacing: .4px; text-transform: uppercase; color: #7286a8; }
+  .datos b { font-size: 8.6px; }
+  table.ing { border-collapse: collapse; width: 100%; table-layout: fixed; }
+  .ing th, .ing td { border: 1px solid #c7cfdd; text-align: center; font-size: 8.4px; padding: 1.1px 2px; line-height: 1.15; overflow: hidden; }
+  .ing thead th { background: #1e3a7c; color: #fff; font-weight: 700; font-size: 7.3px; letter-spacing: .2px; }
+  .ing thead th small { font-weight: 400; }
+  .ing thead th.fijo { background: #0f2350; }
+  .ing thead tr.h2 th { background: #eaf0fa; color: #0f2350; font-size: 6.9px; vertical-align: bottom; }
+  .ing thead tr.h2 th small { display: block; color: #55637d; font-size: 6.2px; white-space: nowrap; }
+  .ing .cc { max-height: 2.3em; overflow: hidden; line-height: 1.15; }
+  .ing td.nom { text-align: left; padding-left: 4px; white-space: nowrap; text-overflow: ellipsis; font-weight: 600; }
+  .ing td.idn { font-size: 7.6px; color: #33415c; }
+  .ing tbody tr:nth-child(even) td.num, .ing tbody tr:nth-child(even) td.idn, .ing tbody tr:nth-child(even) td.nom { background: #f4f7fc; }
+  .ing td.m { font-weight: 700; white-space: nowrap; }
+  .ing td.m.ok { background: #dcfce7; color: #166534; }
+  .ing td.m.ab { background: #fef3c7; color: #92400e; }
+  .ing td.m.no { background: #fde2e2; color: #b91c1c; }
+  .ing td.m.nc { background: #f1f5f9; color: #8a94a8; font-weight: 400; font-size: 7px; }
+  .ing td.tt { font-weight: 900; box-shadow: inset 2px 0 0 #c9a24a; }
+  .ing td.tp { color: #9a3412; font-weight: 700; }
+  .pc { display: inline-block; border-radius: 999px; padding: 0 4px; font-weight: 900; font-size: 7.6px; white-space: nowrap; }
+  .ing td.obs { text-align: left; padding-left: 4px; font-weight: 800; font-size: 7.4px; white-space: nowrap; text-overflow: ellipsis; }
+  .ing td.obs small { font-weight: 400; color: #55637d; }
+  .ing td.obs.ok { color: #166534; } .ing td.obs.no { color: #b91c1c; } .ing td.obs.pa { color: #92400e; } .ing td.obs.pe { color: #8a94a8; }
+  .ing tfoot td { background: #f4f7fc; font-weight: 800; border-top: 1.6px solid #1e3a7c; }
+  .ing tfoot tr + tr td { border-top: 1px solid #c7cfdd; }
+  .ing td.tf-et { text-align: right; padding-right: 5px; font-size: 7px; letter-spacing: .3px; color: #1e3a7c; }
+  .ing td.tf-n { font-size: 8.6px; }
+  .ing td.tf-p { font-size: 7.4px; line-height: 1.25; }
+  .ing td.tf-p small { font-weight: 600; color: #55637d; }
+  .ing td.tf-s { font-size: 7.2px; text-align: left; padding-left: 4px; }
+  .pie { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; align-items: center; }
+  .pie .k { border: 1px solid #d4dbe6; border-radius: 7px; padding: 2px 7px; font-size: 8px; background: #f4f7fc; }
+  .pie .k b { font-family: Georgia, serif; font-size: 11px; color: #1e3a7c; margin-left: 3px; }
+  .ley { font-size: 7.4px; color: #33415c; margin-top: 4px; line-height: 1.7; }
+  .ley span { font-weight: 700; border-radius: 999px; padding: 1px 6px; border: 1px solid #d4dbe6; margin-left: 3px; white-space: nowrap; }
+  .firmas { display: flex; gap: 34px; margin: 26px 24px 0; font-size: 9px; }
+  .firmas div { flex: 1; text-align: center; border-top: 1px solid #0f2350; padding-top: 2px; }
+  .firmas small { color: #55637d; }
+  .marca { text-align: right; font-size: 7px; color: #8a94a8; margin-top: 5px; }
+  /* hoja 2 */
+  h3 { font-family: Georgia, serif; font-size: 11px; color: #1e3a7c; margin: 7px 0 4px; border-bottom: 1px solid #d4dbe6; padding-bottom: 2px; }
+  h3 small { font-family: Arial, sans-serif; font-weight: 400; font-size: 7.6px; color: #55637d; }
+  .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 4px; }
+  .tile { border: 1.5px solid; border-radius: 9px; padding: 5px 8px; display: flex; flex-direction: column; }
+  .tile-ic { font-size: 11px; font-weight: 900; } .tile-et { font-size: 7.6px; text-transform: uppercase; letter-spacing: .4px; color: #55637d; }
+  .tile b { font-family: Georgia, serif; font-size: 21px; line-height: 1.1; } .tile b small { font-size: 10px; }
+  .tile > small { font-size: 8px; color: #33415c; }
+  .frases { margin: 6px 0 0; padding: 5px 9px; background: #fffbeb; border: 1px solid #f3d38a; border-radius: 8px; }
+  .frases p { font-size: 9px; line-height: 1.5; }
+  .dos-col { display: grid; grid-template-columns: ${vertical ? '1fr' : '1.25fr 1fr'}; gap: 0 14px; }
+  table.bc { width: 100%; border-collapse: collapse; }
+  .bc td { padding: 2.5px 3px; border-bottom: 1px solid #e2e8f0; vertical-align: middle; font-size: 8.4px; }
+  .bc td small { color: #55637d; font-size: 7.2px; }
+  .bc td.bc-n { width: 34%; } .bc td.bc-p { width: 20%; text-align: right; white-space: nowrap; }
+  .esc { display: flex; justify-content: space-between; font-size: 6.8px; color: #64748b; margin: 1px 20% 0 34%; }
+  .dist-ley { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 10px; margin-top: 4px; font-size: 8.2px; }
+  .dist-ley i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
+  .dist-ley small { color: #55637d; }
+  .db-wrap.dos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: start; }
+  table.db { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  .db th { background: #1e3a7c; color: #fff; font-size: 7.3px; padding: 2px; }
+  .db td { border: 1px solid #c7cfdd; font-size: 8.3px; padding: 1.2px 3px; text-align: center; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .db td.nom { text-align: left; font-weight: 600; }
+  .db td.col { text-align: left; } .db .mini { display: inline-block; width: 42%; vertical-align: middle; margin-right: 3px; }
+  .db td.pen { font-weight: 800; color: #9a3412; }
+  .db td.fal { text-align: left; font-size: 7.2px; color: #55637d; }
+  .db tbody tr:nth-child(even) td { background: #f8fafc; }
+  .todos { font-size: 11px; font-weight: 700; color: #166534; margin: 8px 0; }
+`;
+}
+const AD_CUADRO_AJUSTE = `<script>
+  /* Una hoja = una página: si algo se pasa de alto (muchos alumnos o muchas
+     colectas), se encoge la hoja entera en vez de partirla. */
+  function ajustar() {
+    document.querySelectorAll('.hoja').forEach(function (h) {
+      var f = h.querySelector('.fit'), alto = h.getBoundingClientRect().height;
+      f.style.zoom = 1;
+      /* con espacio de sobra, las filas crecen un poco: se leen mejor y la
+         hoja no queda con un tercio en blanco */
+      var nFil = f.querySelectorAll('table.ing tbody tr').length;
+      var sobra = alto - f.getBoundingClientRect().height - 6;
+      if (nFil && sobra > 0) {
+        var extra = Math.min(sobra / nFil, 9) / 2;
+        f.querySelectorAll('table.ing tbody td').forEach(function (td) {
+          td.style.paddingTop = td.style.paddingBottom = (1.1 + extra) + 'px';
+        });
+      }
+      /* y si se pasa, se encoge entera; se mide otra vez porque la letra
+         no se reduce en proporción exacta */
+      for (var i = 0; i < 5; i++) {
+        var r = alto / f.getBoundingClientRect().height;
+        if (r >= 1) break;
+        f.style.zoom = Math.floor((parseFloat(f.style.zoom) || 1) * r * 995) / 1000;
+      }
+    });
+  }
+  window.onload = function () { ajustar(); setTimeout(function () { window.print(); }, 300); };
+<\/script>`;
+
+function adPrintCuadroIngresos(d) {
+  const D = adIngDatos(d);
+  if (!D.cols.length) { if (typeof toast === 'function') toast('Aún no hay colectas hasta hoy'); return; }
+  const bol = d.boleta || {};
+  const SL = window.SaceLista;
+  const hayIdn = D.filas.some(f => String(f.a.idn || '').trim());
+  /* Vertical mientras quepan las colectas; con más, horizontal. Lo que
+     sobre de alto lo ajusta el guion de abajo, sin cortar la hoja. */
+  const nC = D.cols.length;
+  const vertical = nC <= (hayIdn ? 4 : 5);
+  const T = D.tot;
+  const datos = adCuadroDatos(d, [['Colectas al corte', String(nC)]]);
+  const cabeza = titulo => adCuadroCabeza(d, titulo, datos);
 
   /* ── Hoja 1: el cuadro ── */
   const anchoCol = vertical ? (hayIdn ? 15 : 14) : Math.max(8, Math.min(14, 140 / nC));
@@ -5540,94 +5674,7 @@ function adPrintCuadroIngresos(d) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${adEsc('Cuadro de ingresos · ' + (adGradoSeccion(d.grado, d.seccion) || ''))}</title>
 <style>
-  @page { size: letter ${vertical ? 'portrait' : 'landscape'}; margin: 7mm 8mm; }
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  html, body { background: #fff; }
-  body { font-family: Arial, Helvetica, sans-serif; color: #0f2350; }
-  /* cada hoja mide lo que mide el papel menos los márgenes; si el contenido
-     se pasa, el guion de abajo lo encoge para que no salte a otra hoja */
-  .hoja { width: ${vertical ? 200 : 263}mm; height: ${vertical ? 263 : 199}mm; overflow: hidden; break-after: page; }
-  .hoja:last-child { break-after: auto; }
-  @media screen { body { background: #e5e9f0; padding: 10px 0 70px; } .hoja { background: #fff; margin: 0 auto 12px; padding: 0; box-shadow: 0 2px 10px rgba(0,0,0,.18); } }
-  .head { display: flex; align-items: center; gap: 10px; padding-bottom: 4px; border-bottom: 2.5px solid #1e3a7c; }
-  .logo { flex: 0 0 120px; height: 36px; display: flex; align-items: center; }
-  .logo.der { justify-content: flex-end; } .logo img { max-width: 120px; max-height: 36px; object-fit: contain; }
-  .mid { flex: 1; text-align: center; }
-  .centro { font-family: Georgia, serif; font-size: 12.5px; font-weight: 700; }
-  .centro small { font-family: Arial, sans-serif; font-weight: 400; font-size: 9px; color: #55637d; }
-  .doc { font-family: Georgia, serif; font-size: 12px; font-weight: 700; color: #a8791a; letter-spacing: .8px; margin-top: 1px; }
-  .datos { display: grid; grid-template-columns: repeat(${vertical ? 4 : 8}, 1fr); gap: 2px 3px; margin: 3px 0 4px; }
-  .datos div { background: #f4f7fc; border: 1px solid #d4dbe6; border-radius: 5px; padding: 1px 6px; font-size: 8.6px; line-height: 1.2; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-  .datos span { display: block; font-size: 6.4px; letter-spacing: .4px; text-transform: uppercase; color: #7286a8; }
-  .datos b { font-size: 8.6px; }
-  table.ing { border-collapse: collapse; width: 100%; table-layout: fixed; }
-  .ing th, .ing td { border: 1px solid #c7cfdd; text-align: center; font-size: 8.4px; padding: 1.1px 2px; line-height: 1.15; overflow: hidden; }
-  .ing thead th { background: #1e3a7c; color: #fff; font-weight: 700; font-size: 7.3px; letter-spacing: .2px; }
-  .ing thead th small { font-weight: 400; }
-  .ing thead th.fijo { background: #0f2350; }
-  .ing thead tr.h2 th { background: #eaf0fa; color: #0f2350; font-size: 6.9px; vertical-align: bottom; }
-  .ing thead tr.h2 th small { display: block; color: #55637d; font-size: 6.2px; white-space: nowrap; }
-  .ing .cc { max-height: 2.3em; overflow: hidden; line-height: 1.15; }
-  .ing td.nom { text-align: left; padding-left: 4px; white-space: nowrap; text-overflow: ellipsis; font-weight: 600; }
-  .ing td.idn { font-size: 7.6px; color: #33415c; }
-  .ing tbody tr:nth-child(even) td.num, .ing tbody tr:nth-child(even) td.idn, .ing tbody tr:nth-child(even) td.nom { background: #f4f7fc; }
-  .ing td.m { font-weight: 700; white-space: nowrap; }
-  .ing td.m.ok { background: #dcfce7; color: #166534; }
-  .ing td.m.ab { background: #fef3c7; color: #92400e; }
-  .ing td.m.no { background: #fde2e2; color: #b91c1c; }
-  .ing td.m.nc { background: #f1f5f9; color: #8a94a8; font-weight: 400; font-size: 7px; }
-  .ing td.tt { font-weight: 900; box-shadow: inset 2px 0 0 #c9a24a; }
-  .ing td.tp { color: #9a3412; font-weight: 700; }
-  .pc { display: inline-block; border-radius: 999px; padding: 0 4px; font-weight: 900; font-size: 7.6px; white-space: nowrap; }
-  .ing td.obs { text-align: left; padding-left: 4px; font-weight: 800; font-size: 7.4px; white-space: nowrap; text-overflow: ellipsis; }
-  .ing td.obs small { font-weight: 400; color: #55637d; }
-  .ing td.obs.ok { color: #166534; } .ing td.obs.no { color: #b91c1c; } .ing td.obs.pa { color: #92400e; } .ing td.obs.pe { color: #8a94a8; }
-  .ing tfoot td { background: #f4f7fc; font-weight: 800; border-top: 1.6px solid #1e3a7c; }
-  .ing tfoot tr + tr td { border-top: 1px solid #c7cfdd; }
-  .ing td.tf-et { text-align: right; padding-right: 5px; font-size: 7px; letter-spacing: .3px; color: #1e3a7c; }
-  .ing td.tf-n { font-size: 8.6px; }
-  .ing td.tf-p { font-size: 7.4px; line-height: 1.25; }
-  .ing td.tf-p small { font-weight: 600; color: #55637d; }
-  .ing td.tf-s { font-size: 7.2px; text-align: left; padding-left: 4px; }
-  .pie { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; align-items: center; }
-  .pie .k { border: 1px solid #d4dbe6; border-radius: 7px; padding: 2px 7px; font-size: 8px; background: #f4f7fc; }
-  .pie .k b { font-family: Georgia, serif; font-size: 11px; color: #1e3a7c; margin-left: 3px; }
-  .ley { font-size: 7.4px; color: #33415c; margin-top: 4px; line-height: 1.7; }
-  .ley span { font-weight: 700; border-radius: 999px; padding: 1px 6px; border: 1px solid #d4dbe6; margin-left: 3px; white-space: nowrap; }
-  .firmas { display: flex; gap: 34px; margin: 26px 24px 0; font-size: 9px; }
-  .firmas div { flex: 1; text-align: center; border-top: 1px solid #0f2350; padding-top: 2px; }
-  .firmas small { color: #55637d; }
-  .marca { text-align: right; font-size: 7px; color: #8a94a8; margin-top: 5px; }
-  /* hoja 2 */
-  h3 { font-family: Georgia, serif; font-size: 11px; color: #1e3a7c; margin: 7px 0 4px; border-bottom: 1px solid #d4dbe6; padding-bottom: 2px; }
-  h3 small { font-family: Arial, sans-serif; font-weight: 400; font-size: 7.6px; color: #55637d; }
-  .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 4px; }
-  .tile { border: 1.5px solid; border-radius: 9px; padding: 5px 8px; display: flex; flex-direction: column; }
-  .tile-ic { font-size: 11px; font-weight: 900; } .tile-et { font-size: 7.6px; text-transform: uppercase; letter-spacing: .4px; color: #55637d; }
-  .tile b { font-family: Georgia, serif; font-size: 21px; line-height: 1.1; } .tile b small { font-size: 10px; }
-  .tile > small { font-size: 8px; color: #33415c; }
-  .frases { margin: 6px 0 0; padding: 5px 9px; background: #fffbeb; border: 1px solid #f3d38a; border-radius: 8px; }
-  .frases p { font-size: 9px; line-height: 1.5; }
-  .dos-col { display: grid; grid-template-columns: ${vertical ? '1fr' : '1.25fr 1fr'}; gap: 0 14px; }
-  table.bc { width: 100%; border-collapse: collapse; }
-  .bc td { padding: 2.5px 3px; border-bottom: 1px solid #e2e8f0; vertical-align: middle; font-size: 8.4px; }
-  .bc td small { color: #55637d; font-size: 7.2px; }
-  .bc td.bc-n { width: 34%; } .bc td.bc-p { width: 20%; text-align: right; white-space: nowrap; }
-  .esc { display: flex; justify-content: space-between; font-size: 6.8px; color: #64748b; margin: 1px 20% 0 34%; }
-  .dist-ley { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 10px; margin-top: 4px; font-size: 8.2px; }
-  .dist-ley i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
-  .dist-ley small { color: #55637d; }
-  .db-wrap.dos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: start; }
-  table.db { width: 100%; border-collapse: collapse; table-layout: fixed; }
-  .db th { background: #1e3a7c; color: #fff; font-size: 7.3px; padding: 2px; }
-  .db td { border: 1px solid #c7cfdd; font-size: 8.3px; padding: 1.2px 3px; text-align: center; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-  .db td.nom { text-align: left; font-weight: 600; }
-  .db td.col { text-align: left; } .db .mini { display: inline-block; width: 42%; vertical-align: middle; margin-right: 3px; }
-  .db td.pen { font-weight: 800; color: #9a3412; }
-  .db td.fal { text-align: left; font-size: 7.2px; color: #55637d; }
-  .db tbody tr:nth-child(even) td { background: #f8fafc; }
-  .todos { font-size: 11px; font-weight: 700; color: #166534; margin: 8px 0; }
-</style></head><body>
+${adCuadroCss(vertical)}</style></head><body>
   <div class="hoja"><div class="fit">
     ${cabeza('CUADRO DE INGRESOS · APORTES DE PADRES DE FAMILIA')}
     ${tabla}
@@ -5636,34 +5683,226 @@ function adPrintCuadroIngresos(d) {
     <div class="marca">Recaudado = dinero en mano, incluido lo dado de más. Pendiente = lo que falta para el aporte sugerido de cada colecta. · Elaborado con M.E.T.A.S · ${adEsc(adFechaBonita(adHoy()))}</div>
   </div></div>
   <div class="hoja"><div class="fit">${hoja2}</div></div>
-<script>
-  /* Una hoja = una página: si algo se pasa de alto (muchos alumnos o muchas
-     colectas), se encoge la hoja entera en vez de partirla. */
-  function ajustar() {
-    document.querySelectorAll('.hoja').forEach(function (h) {
-      var f = h.querySelector('.fit'), alto = h.getBoundingClientRect().height;
-      f.style.zoom = 1;
-      /* con espacio de sobra, las filas crecen un poco: se leen mejor y la
-         hoja no queda con un tercio en blanco */
-      var nFil = f.querySelectorAll('table.ing tbody tr').length;
-      var sobra = alto - f.getBoundingClientRect().height - 6;
-      if (nFil && sobra > 0) {
-        var extra = Math.min(sobra / nFil, 9) / 2;
-        f.querySelectorAll('table.ing tbody td').forEach(function (td) {
-          td.style.paddingTop = td.style.paddingBottom = (1.1 + extra) + 'px';
-        });
-      }
-      /* y si se pasa, se encoge entera; se mide otra vez porque la letra
-         no se reduce en proporción exacta */
-      for (var i = 0; i < 5; i++) {
-        var r = alto / f.getBoundingClientRect().height;
-        if (r >= 1) break;
-        f.style.zoom = Math.floor((parseFloat(f.style.zoom) || 1) * r * 995) / 1000;
-      }
+${AD_CUADRO_AJUSTE}</body></html>`;
+  adPrintAbrir(html);
+}
+
+/* ══════════════ 🧾 CUADRO DE EGRESOS (gastos hechos con los aportes) ══════════════
+   La otra mitad de la rendición de cuentas: en qué se usó lo que dieron
+   los padres. Mismo encabezado y misma letra que el de ingresos, para que
+   Dirección los archive juntos.
+   Hoja 1: cada gasto agrupado por su colecta, con el saldo que le quedaba
+   a ese fondo después de cada salida (así se audita renglón por renglón)
+   y una columna en blanco para el número de factura o recibo, que el
+   maestro escribe a mano porque la app no lo pide.
+   Hoja 2: el balance: cuánto entró, cuánto salió, cuánto queda, mes a mes. */
+function adEgrDatos(d) {
+  const hoy = adHoy();
+  const cols = (d.colectas || []).filter(c => !c.fecha || String(c.fecha).slice(0, 10) <= hoy);
+  const fondos = cols.map(c => {
+    const t = adColectaTotales(c);
+    const gastos = (c.gastos || []).slice().sort((a, b) => String(a.f || '').localeCompare(String(b.f || '')));
+    const pctUso = t.rec > 0 ? Math.round(t.gas * 100 / t.rec) : (t.gas > 0 ? null : 0);
+    return { c, rec: t.rec, gas: t.gas, saldo: t.saldo, gastos, pctUso };
+  });
+  const tot = {
+    rec: fondos.reduce((s, f) => s + f.rec, 0),
+    gas: fondos.reduce((s, f) => s + f.gas, 0),
+    n: fondos.reduce((s, f) => s + f.gastos.length, 0),
+  };
+  tot.saldo = tot.rec - tot.gas;
+  tot.pctUso = tot.rec > 0 ? Math.round(tot.gas * 100 / tot.rec) : 0;
+  /* mes a mes: el ingreso se fecha con el día en que se marcó el pago
+     (el del recibo); si no lo tiene, con el día de la colecta */
+  const meses = {};
+  const mes = iso => String(iso || '').slice(0, 7);
+  cols.forEach(c => {
+    Object.keys(c.pagos || {}).forEach(num => {
+      const m = mes((c.pagosF && c.pagosF[num]) || c.fecha);
+      if (!m) return;
+      (meses[m] = meses[m] || { ent: 0, sal: 0 }).ent += Number(c.pagos[num]) || 0;
     });
-  }
-  window.onload = function () { ajustar(); setTimeout(function () { window.print(); }, 300); };
-<\/script></body></html>`;
+    (c.gastos || []).forEach(g => {
+      const m = mes(g.f || c.fecha);
+      if (!m) return;
+      (meses[m] = meses[m] || { ent: 0, sal: 0 }).sal += Number(g.m) || 0;
+    });
+  });
+  let acum = 0;
+  const porMes = Object.keys(meses).sort().map(m => {
+    acum += meses[m].ent - meses[m].sal;
+    return { m, ent: meses[m].ent, sal: meses[m].sal, saldo: acum };
+  });
+  const todos = [];
+  fondos.forEach(f => f.gastos.forEach(g => todos.push({ g, c: f.c })));
+  const mayores = todos.slice().sort((a, b) => (Number(b.g.m) || 0) - (Number(a.g.m) || 0));
+  return { cols, fondos, tot, porMes, mayores };
+}
+/* El estado de cada fondo: lo que alarma es gastar más de lo recaudado. */
+function adEgrEstado(f) {
+  if (f.saldo < 0) return { cls: 'no', txt: '✗ SOBREGIRO', fondo: '#fde2e2', tinta: '#991b1b', barra: '#dc2626' };
+  if (f.gas === 0) return { cls: 'pe', txt: '● SIN GASTOS', fondo: '#f1f5f9', tinta: '#475569', barra: '#94a3b8' };
+  if (f.saldo === 0) return { cls: 'ok', txt: '✓ USADO COMPLETO', fondo: '#dcfce7', tinta: '#166534', barra: '#16a34a' };
+  return { cls: 'pa', txt: '◐ CON SALDO', fondo: '#dbeafe', tinta: '#1e40af', barra: '#2563eb' };
+}
+
+function adPrintCuadroEgresos(d) {
+  const D = adEgrDatos(d);
+  if (!D.cols.length) { if (typeof toast === 'function') toast('Aún no hay colectas hasta hoy'); return; }
+  const bol = d.boleta || {};
+  const T = D.tot;
+  const vertical = true;
+  const datos = adCuadroDatos(d, [['Gastos anotados', String(T.n)]]);
+  const cabeza = titulo => adCuadroCabeza(d, titulo, datos);
+  const L = v => (v < 0 ? '−' : '') + adIngNum(Math.abs(v));
+
+  /* ── Hoja 1: el detalle, fondo por fondo ── */
+  let nro = 0;
+  const cuerpo = D.fondos.map(f => {
+    const est = adEgrEstado(f);
+    let saldo = f.rec;
+    const filas = f.gastos.length ? f.gastos.map(g => {
+      nro++;
+      saldo -= Number(g.m) || 0;
+      return `<tr><td class="num">${nro}</td><td>${adFechaBonita(g.f)}</td><td class="nom">${adEsc(g.d)}</td>
+        <td class="cpb"></td><td class="mo">${L(Number(g.m) || 0)}</td><td class="sd${saldo < 0 ? ' neg' : ''}">${L(saldo)}</td></tr>`;
+    }).join('') : '<tr><td></td><td></td><td class="nom vac" colspan="4">Sin gastos anotados: el dinero de esta colecta sigue completo.</td></tr>';
+    return `<tbody class="fondo">
+      <tr class="g"><td colspan="4" class="g-et">💰 ${adEsc(f.c.concepto)} <small>· acordada el ${adFechaBonita(f.c.fecha)}</small></td>
+        <td colspan="2" class="g-rec">Recaudado <b>${L(f.rec)}</b></td></tr>
+      ${filas}
+      <tr class="st"><td colspan="4" class="st-et">Total gastado de «${adEsc(f.c.concepto)}»</td><td class="mo">${L(f.gas)}</td>
+        <td class="sd" style="background:${est.fondo};color:${est.tinta}">${L(f.saldo)}</td></tr>
+    </tbody>`;
+  }).join('');
+  const tabla = `<table class="ing eg">
+    <colgroup><col style="width:8mm"><col style="width:19mm"><col><col style="width:26mm"><col style="width:22mm"><col style="width:24mm"></colgroup>
+    <thead><tr><th class="fijo">N.º</th><th class="fijo">FECHA</th><th class="fijo">DESCRIPCIÓN DEL GASTO</th>
+      <th class="fijo">FACTURA O<br>RECIBO N.º</th><th class="fijo">MONTO<br><small>L</small></th><th class="fijo">SALDO DEL<br>FONDO <small>L</small></th></tr></thead>
+    ${cuerpo}
+    <tfoot><tr><td colspan="4" class="tf-et">TOTAL DE EGRESOS (${T.n} gasto${T.n === 1 ? '' : 's'})</td><td class="tf-n">${L(T.gas)}</td>
+      <td class="tf-n" style="${T.saldo < 0 ? 'color:#991b1b' : ''}">${L(T.saldo)}</td></tr></tfoot>
+  </table>`;
+  const balance = `<h3>Balance por colecta</h3>
+  <table class="ing bal">
+    <colgroup><col><col style="width:22mm"><col style="width:22mm"><col style="width:22mm"><col style="width:40mm"><col style="width:30mm"></colgroup>
+    <thead><tr><th class="fijo">COLECTA</th><th class="fijo">RECAUDADO</th><th class="fijo">GASTADO</th><th class="fijo">SALDO</th><th class="fijo">DINERO USADO</th><th class="fijo">ESTADO</th></tr></thead>
+    <tbody>${D.fondos.map(f => {
+      const est = adEgrEstado(f);
+      const p = f.pctUso;
+      return `<tr><td class="nom">${adEsc(f.c.concepto)}</td><td>${L(f.rec)}</td><td>${L(f.gas)}</td>
+        <td class="sd" style="background:${est.fondo};color:${est.tinta}">${L(f.saldo)}</td>
+        <td class="uso"><div class="mini">${adIngBarra(p == null ? 100 : p, 7, est.barra)}</div><b>${p == null ? 'sin ingreso' : p + ' %'}</b></td>
+        <td class="obs ${est.cls}">${est.txt}</td></tr>`;
+    }).join('')}</tbody>
+    <tfoot><tr><td class="tf-et">TOTAL</td><td class="tf-n">${L(T.rec)}</td><td class="tf-n">${L(T.gas)}</td>
+      <td class="tf-n" style="${T.saldo < 0 ? 'color:#991b1b' : ''}">${L(T.saldo)}</td><td class="tf-n">${T.pctUso} %</td><td></td></tr></tfoot>
+  </table>`;
+  const k = (et, v) => `<span class="k">${et}<b>${v}</b></span>`;
+  const pie = `<div class="pie">${k('💵 Ingresos', adLps(T.rec))}${k('🧾 Egresos', adLps(T.gas))}${k('💼 Saldo en caja', adLps(T.saldo))}${k('📊 Dinero usado', T.pctUso + ' %')}${k('🗂️ Gastos', T.n)}</div>
+  <div class="ley"><b>Estado:</b> <span style="background:#dbeafe;color:#1e40af">◐ Con saldo</span><span style="background:#dcfce7;color:#166534">✓ Usado completo</span><span style="background:#f1f5f9;color:#475569">● Sin gastos</span><span style="background:#fde2e2;color:#991b1b">✗ Sobregiro: se gastó más de lo recaudado</span></div>`;
+
+  /* ── Hoja 2: el balance ── */
+  const enRojo = D.fondos.filter(f => f.saldo < 0);
+  const sinGasto = D.fondos.filter(f => f.gas === 0);
+  const tile = (ic, et, v, sub, st) => `<div class="tile" style="border-color:${st.borde};background:${st.fondo}">
+      <span class="tile-ic">${ic}</span><span class="tile-et">${et}</span><b style="color:${st.tinta}">${v}</b><small>${sub}</small></div>`;
+  const azul = { borde: '#2563eb', fondo: '#dbeafe', tinta: '#1e3a7c' };
+  const ambar = { borde: '#c9a24a', fondo: '#fef3c7', tinta: '#92400e' };
+  const tiles = `<div class="tiles">
+    ${tile('💵', 'Ingresos', adLps(T.rec), 'lo que dieron los padres', azul)}
+    ${tile('🧾', 'Egresos', adLps(T.gas), T.n + ' gasto' + (T.n === 1 ? '' : 's') + ' anotado' + (T.n === 1 ? '' : 's'), ambar)}
+    ${tile('💼', 'Saldo en caja', adLps(T.saldo), T.saldo < 0 ? 'se gastó de más' : 'dinero disponible', T.saldo < 0 ? { borde: '#dc2626', fondo: '#fde2e2', tinta: '#991b1b' } : { borde: '#16a34a', fondo: '#dcfce7', tinta: '#166534' })}
+    ${tile('📊', 'Dinero usado', T.pctUso + ' %', 'de lo recaudado', T.pctUso > 100 ? { borde: '#dc2626', fondo: '#fde2e2', tinta: '#991b1b' } : { borde: '#d4dbe6', fondo: '#f4f7fc', tinta: '#0f2350' })}
+  </div>`;
+  const may = D.mayores[0];
+  const frases = [
+    `Se ha usado el <b>${T.pctUso} %</b> de lo recaudado; ${T.saldo >= 0 ? 'quedan <b>' + adLps(T.saldo) + '</b> en caja.' : 'se gastaron <b>' + adLps(-T.saldo) + '</b> más de lo que entró.'}`,
+    may ? `El gasto más grande fue <b>${adEsc(may.g.d)}</b> (${adLps(may.g.m)}, ${adFechaBonita(may.g.f)}), de «${adEsc(may.c.concepto)}».` : 'Todavía no hay gastos anotados.',
+    enRojo.length ? `⚠️ En <b>${enRojo.length}</b> colecta${enRojo.length === 1 ? '' : 's'} se gastó más de lo recaudado: ${enRojo.map(f => '<b>' + adEsc(f.c.concepto) + '</b> (' + adLps(f.saldo) + ')').join(', ')}.`
+      : 'Ninguna colecta gastó más de lo que recaudó.',
+    sinGasto.length ? `${sinGasto.length} colecta${sinGasto.length === 1 ? ' no tiene' : 's no tienen'} gastos todavía: su dinero sigue completo (${adLps(sinGasto.reduce((s, f) => s + f.rec, 0))}).` : '',
+  ].filter(Boolean);
+  /* barras pareadas: lo que entró y lo que salió de cada colecta, a la
+     misma escala. Además del color, cada barra lleva su nombre y su cifra. */
+  const max = Math.max(1, ...D.fondos.map(f => Math.max(f.rec, f.gas)));
+  const barra = (v, color) => `<svg viewBox="0 0 100 6" preserveAspectRatio="none" width="100%" height="9" style="display:block"><rect x="0" y="0" width="${Math.max(0, v * 100 / max)}" height="6" fill="${color}"/></svg>`;
+  const pares = `<table class="bc">${D.fondos.map(f => `<tr>
+      <td class="bc-n"><b>${adEsc(f.c.concepto)}</b><br><small>saldo ${adLps(f.saldo)}</small></td>
+      <td class="bc-b"><div class="par"><span>Entró</span>${barra(f.rec, '#1e3a7c')}<em>${adLps(f.rec)}</em></div>
+        <div class="par"><span>Salió</span>${barra(f.gas, f.saldo < 0 ? '#dc2626' : '#c9a24a')}<em>${adLps(f.gas)}</em></div></td></tr>`).join('')}</table>`;
+  const maxMes = Math.max(1, ...D.porMes.map(m => Math.max(m.ent, m.sal)));
+  const mini = (v, color) => `<svg viewBox="0 0 100 6" preserveAspectRatio="none" width="100%" height="7" style="display:block"><rect x="0" y="0" width="${v * 100 / maxMes}" height="6" fill="${color}"/></svg>`;
+  const tablaMes = D.porMes.length ? `<table class="db mes"><thead><tr><th>Mes</th><th>Entró</th><th>Salió</th><th>Saldo acumulado</th></tr></thead>
+    <tbody>${D.porMes.map(m => `<tr><td class="nom">${adEsc(adMesLabel(m.m))}</td>
+      <td><div class="mv">${mini(m.ent, '#1e3a7c')}</div>${adLps(m.ent)}</td>
+      <td><div class="mv">${mini(m.sal, '#c9a24a')}</div>${adLps(m.sal)}</td>
+      <td class="${m.saldo < 0 ? 'neg' : 'pos'}">${adLps(m.saldo)}</td></tr>`).join('')}</tbody></table>` : '<p class="todos">Sin movimientos todavía.</p>';
+  const top = D.mayores.slice(0, 10);
+  const tablaTop = top.length ? `<table class="db"><thead><tr><th style="width:6mm">#</th><th>Gasto</th><th style="width:16mm">Fecha</th><th style="width:19mm">Monto</th><th style="width:13mm">Del total</th></tr></thead>
+    <tbody>${top.map((x, i) => `<tr><td>${i + 1}</td><td class="nom" title="${adEsc(x.c.concepto)}">${adEsc(x.g.d)}<br><small>${adEsc(x.c.concepto)}</small></td>
+      <td>${adFechaBonita(x.g.f).slice(0, 5)}</td><td class="pen">${adLps(x.g.m)}</td><td>${T.gas ? Math.round((Number(x.g.m) || 0) * 100 / T.gas) : 0} %</td></tr>`).join('')}</tbody></table>`
+    : '<p class="todos">Todavía no hay gastos anotados.</p>';
+  /* a dónde se fue el dinero: la parte de los egresos que tomó cada colecta */
+  const conGasto = D.fondos.filter(f => f.gas > 0);
+  const tonos = ['#1e3a7c', '#c9a24a', '#2563eb', '#16a34a', '#9333ea', '#ea580c', '#0891b2', '#be185d'];
+  let x0 = 0;
+  const reparto = T.gas > 0 ? `<svg viewBox="0 0 100 10" preserveAspectRatio="none" width="100%" height="20" style="display:block">
+    ${conGasto.map((f, i) => { const w = f.gas * 100 / T.gas; const r = `<rect x="${x0}" y="0" width="${w}" height="10" fill="${tonos[i % tonos.length]}" stroke="#fff" stroke-width="1" vector-effect="non-scaling-stroke"/>`; x0 += w; return r; }).join('')}</svg>
+    <div class="dist-ley">${conGasto.map((f, i) => `<span><i style="background:${tonos[i % tonos.length]}"></i>${adEsc(f.c.concepto)}: <b>${Math.round(f.gas * 100 / T.gas)} %</b> <small>(${adLps(f.gas)})</small></span>`).join('')}</div>` : '';
+
+  const hoja2 = `
+    ${cabeza('BALANCE DE INGRESOS Y EGRESOS')}
+    ${tiles}
+    <div class="frases">${frases.map(f => `<p>• ${f}</p>`).join('')}</div>
+    <h3>Lo que entró y lo que salió de cada colecta <small>(a la misma escala)</small></h3>
+    ${pares}
+    ${reparto ? `<h3>A dónde se fue el dinero <small>(parte de los egresos que tomó cada colecta)</small></h3>${reparto}` : ''}
+    <div class="eg-dos">
+      <section><h3>Movimiento por mes</h3>${tablaMes}</section>
+      <section><h3>Los gastos más grandes</h3>${tablaTop}</section>
+    </div>
+    <div class="marca">Ingresos = dinero marcado como recibido en cada colecta. Egresos = gastos anotados en cada colecta. · Elaborado con M.E.T.A.S · ${adEsc(adFechaBonita(adHoy()))}</div>`;
+
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${adEsc('Cuadro de egresos · ' + (adGradoSeccion(d.grado, d.seccion) || ''))}</title>
+<style>
+${adCuadroCss(vertical)}
+  .eg tbody.fondo tr.g td { background: #eaf0fa; text-align: left; font-weight: 800; font-size: 8.6px; padding: 2.5px 5px; border-top: 1.6px solid #1e3a7c; }
+  .eg tr.g td small { font-weight: 400; color: #55637d; }
+  .eg tr.g td.g-rec { text-align: right; } .eg tr.g td.g-rec b { font-family: Georgia, serif; font-size: 10px; color: #1e3a7c; }
+  .eg td.nom { white-space: normal; font-weight: 500; }
+  .eg td.vac { color: #64748b; font-style: italic; }
+  .eg td.cpb { background: #fff; border-bottom: 1px dotted #94a3b8; }
+  .eg td.mo { text-align: right; padding-right: 5px; font-weight: 800; color: #92400e; }
+  .ing td.sd { text-align: right; padding-right: 5px; font-weight: 700; color: #1e3a7c; }
+  .ing td.sd.neg, td.neg { color: #991b1b !important; }
+  .eg tr.st td { background: #f8fafc; font-weight: 800; font-size: 8px; }
+  .eg tr.st td.st-et { text-align: right; padding-right: 5px; color: #1e3a7c; }
+  .bal td { padding: 2.5px 3px; } .bal td.nom { font-weight: 700; }
+  .bal td.uso { text-align: left; } .bal .mini { display: inline-block; width: 60%; vertical-align: middle; margin-right: 4px; }
+  .bal td.obs { font-size: 7.4px; }
+  .bc td.bc-n { width: 30%; }
+  .par { display: grid; grid-template-columns: 30px 1fr 62px; align-items: center; gap: 4px; font-size: 7.4px; color: #33415c; }
+  .par em { font-style: normal; font-weight: 700; text-align: right; }
+  .eg-dos { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; align-items: start; }
+  .db.mes .mv { display: inline-block; width: 40%; vertical-align: middle; margin-right: 3px; }
+  .db.mes td { text-align: right; } .db.mes td.nom { text-align: left; }
+  .db td.pos { color: #166534; font-weight: 800; }
+  .db td.nom small { font-weight: 400; color: #64748b; font-size: 6.8px; }
+  .db td.nom { white-space: normal; line-height: 1.15; }
+</style></head><body>
+  <div class="hoja"><div class="fit">
+    ${cabeza('CUADRO DE EGRESOS · GASTOS CON LOS APORTES DE PADRES')}
+    ${tabla}
+    ${balance}
+    ${pie}
+    <div class="firmas"><div>${adEsc(bol.docente || '')}<br><small>Docente de grado</small></div><div><br><small>Tesorero(a) de padres de familia</small></div><div>${adEsc(bol.director || '')}<br><small>Director(a)</small></div></div>
+    <div class="marca">Saldo del fondo = lo recaudado en esa colecta menos los gastos hasta ese renglón. La columna de factura o recibo se llena a mano. · Elaborado con M.E.T.A.S · ${adEsc(adFechaBonita(adHoy()))}</div>
+  </div></div>
+  <div class="hoja"><div class="fit">${hoja2}</div></div>
+${AD_CUADRO_AJUSTE}</body></html>`;
   adPrintAbrir(html);
 }
 
