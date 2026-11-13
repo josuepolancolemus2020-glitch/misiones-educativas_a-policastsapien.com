@@ -40,8 +40,9 @@
    en adInsertarAlumno). Esta pestaña las dibuja sin tocar nada más.
 
    NORMATIVA de colores: las calificaciones usan SIEMPRE la escala
-   oficial de la plataforma (AD_NOTA_CATS, la misma de la boleta y del
-   Plan de Acción) y CADA barra lleva su número escrito al lado: el
+   de la Secretaría de Educación (AD_NOTA_CATS: Inicial, Básico,
+   Avanzado, Excelente; la misma de Notas SACE, la boleta, el Resumen
+   final y el Plan de Acción) y CADA barra lleva su número escrito al lado: el
    color refuerza, nunca es el único mensaje (daltonismo e impresión
    en blanco y negro). En asistencia: 🚫 ausencia roja, 📝 excusa
    turquesa — par verificado para visión con daltonismo.
@@ -615,7 +616,7 @@ function estGBarras(filas, opts) {
 
 function estLeyendaNotas() {
   return '<div class="est-leyenda">' + AD_NOTA_CATS.map(c =>
-    '<span><i style="background:' + c.color + '"></i>' + (c.min > 0 ? c.min + '+' : '&lt;60') + ' ' + c.label + '</span>').join('') +
+    '<span><i style="background:' + c.color + '"></i>' + c.label + ' ' + c.rango + '</span>').join('') +
     '<span><i style="background:#0f2350"></i>| parcial anterior</span></div>';
 }
 
@@ -1380,9 +1381,19 @@ function estDatosGrado(d) {
 
   const conNotas = xs.filter(r => r.x.sace.promGen != null);
   const promGen = media(conNotas.map(r => r.x.sace.promGen));
-  /* distribución de alumnos por nivel según su promedio del año */
+  /* Distribución por nivel con la regla del Resumen final (cuadro 1): quien
+     no aprueba (alguna materia bajo 70 sin recuperar) va en Inicial; quien
+     aprueba, por su promedio y nunca por debajo de Básico. Así los
+     iniciales del informe son los mismos que los «no aprueban». */
+  const INICIAL = AD_NOTA_CATS[AD_NOTA_CATS.length - 1];
+  const BASICO = AD_NOTA_CATS[AD_NOTA_CATS.length - 2];
+  const nivelDe = r => {
+    if (!estDecision(r.x.sace).aprueba) return INICIAL;
+    const c = adNotaCat(r.x.sace.promGen);
+    return c === INICIAL ? BASICO : c;
+  };
   const porNivel = AD_NOTA_CATS.map(cat => ({
-    cat, n: conNotas.filter(r => adNotaCat(r.x.sace.promGen) === cat).length,
+    cat, n: conNotas.filter(r => nivelDe(r) === cat).length,
   }));
 
   /* quiénes necesitan refuerzo hoy (alguna materia vigente bajo 70) */
@@ -1529,7 +1540,7 @@ function estImprimirInformeGrado(d) {
   /* distribución de alumnos por nivel: barra proporcional + número */
   const maxNivel = Math.max(1, ...g.porNivel.map(r => r.n));
   const nivelesHtml = g.porNivel.map(r =>
-    '<div class="gr-nivel"><span style="color:' + r.cat.color + '">' + r.cat.label + (r.cat.min > 0 ? ' (' + r.cat.min + '+)' : ' (&lt;60)') + '</span>' +
+    '<div class="gr-nivel"><span style="color:' + r.cat.color + '">' + r.cat.label + ' (' + r.cat.rango + ')' + '</span>' +
     '<div class="gr-nv-pista"><i style="width:' + Math.round(100 * r.n / maxNivel) + '%;background:' + r.cat.color + '"></i></div>' +
     '<b>' + r.n + '</b></div>').join('');
 
@@ -1671,7 +1682,7 @@ function estImprimirInformeGrado(d) {
         <thead><tr><th>Materia</th><th>I</th><th>II</th><th>III</th><th>IV</th><th>Prom.</th><th>Nivel</th><th>&lt;70</th></tr></thead>
         <tbody>${g.matsConDatos.length ? g.matsConDatos.map(filaMat).join('') : '<tr><td colspan="8" class="vacio">Sin notas guardadas</td></tr>'}</tbody>
       </table>
-      <div class="inf-h" style="margin-top:8px">🧒 Alumnos por nivel <small>(según su promedio del año; con notas: ${g.conNotas} de ${g.total})</small></div>
+      <div class="inf-h" style="margin-top:8px">🧒 Alumnos por nivel <small>(quien no aprueba va en Inicial; los demás, por su promedio; con notas: ${g.conNotas} de ${g.total})</small></div>
       ${nivelesHtml}
       <div class="inf-h gr-meses-h">📋 Faltas por mes <small>(pase de lista de todo el grado)</small></div>
       ${mesesHtml}

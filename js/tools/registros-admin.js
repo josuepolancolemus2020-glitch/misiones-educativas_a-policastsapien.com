@@ -8794,13 +8794,16 @@ function adNotaPintar(td, v) {
   const c = adNotaEscalaClase(v);
   if (c) td.classList.add(c);
 }
-const AD_NOTA_CATS = [
-  { min: 95, label: 'Avanzado',        color: '#16a34a' },
-  { min: 80, label: 'Muy Bueno',       color: '#0891b2' },
-  { min: 70, label: 'Satisfactorio',   color: '#a16207' },
-  { min: 60, label: 'Debe Mejorar',    color: '#ea580c' },
-  { min: 0,  label: 'Insatisfactorio', color: '#dc2626' },
-];
+/* Niveles para Estadísticas y sus informes: la escala de la Secretaría de
+   Educación (Inicial hasta 69 · Básico 70 a 79 · Avanzado 80 a 90 ·
+   Excelente 91 a 100), la misma de Notas SACE, la boleta y el Resumen
+   final. Antes había aquí otra de cinco niveles (Avanzado 95+, Muy
+   Bueno…, Insatisfactorio) y un 85 era «Avanzado» en Notas SACE y «Muy
+   Bueno» en Estadísticas. Se arma de AD_NOTA_ESCALA_INFO para que las
+   dos no se vuelvan a separar. Del más alto al más bajo: adNotaCat toma
+   el primero cuyo mínimo alcanza. */
+const AD_NOTA_CATS = [['nt-e', 91], ['nt-a', 80], ['nt-b', 70], ['nt-i', 0]].map(([k, min]) => ({
+  min, label: AD_NOTA_ESCALA_INFO[k].et, rango: AD_NOTA_ESCALA_INFO[k].rango, color: AD_NOTA_ESCALA_INFO[k].barra }));
 function adNotaCat(v) {
   const n = Number(v);
   return AD_NOTA_CATS.find(c => n >= c.min) || AD_NOTA_CATS[AD_NOTA_CATS.length - 1];

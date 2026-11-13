@@ -37,7 +37,7 @@
                                            js/data/misiones.js
      10 herramientas del aula ........... la rejilla zd-grid de
                                            index.html
-     5 categorías del Plan de Acción .... PA_CATS en
+     4 niveles del Plan de Acción ....... PA_CATS en
                                            js/tools/plan-accion.js
      código de aula de 5 letras ......... kit-capacitacion.html,
                                            paso 3
@@ -254,7 +254,7 @@ const PARADAS = [
       'Entre a Mi aula y escriba su lista una sola vez, con los nombres bien escritos desde el principio.',
       'Deje que genere las claves de familia: salen solas, una por alumno.',
       'Registre la primera nota de un parcial y mire cómo aparece ya en la boleta.',
-      'Abra el Plan de Acción: le reparte el grupo en cinco categorías y le dice qué hacer con cada una.',
+      'Abra el Plan de Acción: le reparte el grupo en los cuatro niveles de la Secretaría y le dice qué hacer con cada uno.',
     ],
     nohacer: [
       'No envían nada a SACE por su cuenta: la nota oficial la sigue digitando usted allá.',
@@ -263,7 +263,7 @@ const PARADAS = [
       'No es una herramienta de vigilancia del maestro: nadie del centro ve sus datos, salvo que usted los enseñe.',
     ],
     aula: 'El <b>Plan de Acción</b> es lo que cambia la conversación. Deja de ser «el grupo va mal» ' +
-          'y pasa a ser «siete alumnos en Debe Mejorar por el mismo contenido». Eso ya se puede ' +
+          'y pasa a ser «siete alumnos en Inicial por el mismo contenido». Eso ya se puede ' +
           'atender el lunes, y se puede enseñar en una reunión.',
   },
   {
@@ -437,7 +437,7 @@ const FC = [
   ['¿A qué familia de proyectos pertenece M.E.T.A.S?', 'A la de JClic, del Departament d\'Educació de la Generalitat de Catalunya, y el Proyecto Descartes, de España: material educativo libre hecho por docentes. La diferencia es que esta es hondureña y está pensada con el DCNB.'],
   ['¿Cuántas herramientas hay en la Zona Docente?', 'Diez: Mi aula, Plan de Acción, Evaluaciones, Fichas didácticas, Campeonísimo, Parte Mensual, Collage, Gobierno Escolar, Evidencia de misiones y Misiones del maestro.'],
   ['¿Cuántas veces se escribe la lista de alumnos?', 'Una sola vez, en Mi aula. De ahí comen la asistencia, las notas, la boleta, las colectas, las claves de familia y el Plan de Acción.'],
-  ['¿En cuántas categorías reparte el grupo el Plan de Acción?', 'En cinco: Avanzado, Muy Bueno, Satisfactorio, Debe Mejorar e Insatisfactorio.'],
+  ['¿En cuántos niveles reparte el grupo el Plan de Acción?', 'En los cuatro de la Secretaría de Educación: Inicial (hasta 69), Básico (70 a 79), Avanzado (80 a 90) y Excelente (91 a 100).'],
   ['¿Qué necesita el alumno para que su trabajo le llegue al maestro?', 'El código de aula: cinco letras que el maestro dicta una vez. No necesita cuenta ni contraseña.'],
   ['¿Cómo entra la familia al asistente?', 'Con su clave de familia (el número de lista más cuatro caracteres). Sin cuenta, sin correo y sin instalar nada.'],
   ['¿Qué ve la familia con su clave?', 'Las notas, la boleta del parcial, las faltas, la conducta, los avisos del maestro y las colaboraciones de su hijo o hija. De ningún otro alumno.'],
@@ -465,7 +465,7 @@ function fcPasa(d) { _fc = (_fc + d + FC.length) % FC.length; fcPinta(); }
 /* ══════════════════ MEMORAMA ══════════════════ */
 const MEMO = [
   ['Mi aula', 'La lista que se escribe una sola vez'],
-  ['Plan de Acción', 'Reparte el grupo en cinco categorías'],
+  ['Plan de Acción', 'Reparte el grupo en los cuatro niveles de la Secretaría'],
   ['Evidencia de misiones', 'Qué trabajó cada alumno y cuánto'],
   ['Clave de familia', 'La casa consulta sin cuenta y sin app'],
   ['Código de aula', 'Cinco letras y el avance le llega solo'],
@@ -531,9 +531,9 @@ const QZ = [
         'Reiniciar su aula en Mi aula', 'Tocar «Actualizar», el botón de la flecha en círculo'],
     c: 3, e: 'El teléfono guarda la versión vieja para poder trabajar sin señal. Ese botón trae lo último y lo deja a usted donde estaba.' },
   { q: 'El Plan de Acción reparte al grupo en…',
-    o: ['Aprobados y reprobados', 'Cinco categorías, de Avanzado a Insatisfactorio',
+    o: ['Aprobados y reprobados', 'Los cuatro niveles de la Secretaría, de Inicial a Excelente',
         'Tres niveles de logro', 'Una nota por alumno, sin categorías'],
-    c: 1, e: 'Y propone qué hacer con cada categoría. Deja de ser «el grupo va mal» y pasa a ser un grupo concreto de alumnos.' },
+    c: 1, e: 'Y propone qué hacer con cada nivel. Deja de ser «el grupo va mal» y pasa a ser un grupo concreto de alumnos.' },
   { q: 'Para consultar las notas de su hijo, una madre necesita…',
     o: ['Instalar la aplicación', 'Crear una cuenta con su correo',
         'Su clave de familia y nada más', 'Que el maestro esté conectado en ese momento'],
@@ -634,7 +634,7 @@ const CP = [
   ['La familia entra al asistente con su clave de ____.', ['familia']],
   ['La evaluación de cada misión tiene ____ formas distintas.', ['30', 'treinta']],
   ['El código de aula que el maestro dicta tiene ____ letras.', ['5', 'cinco']],
-  ['El Plan de Acción reparte al grupo en ____ categorías.', ['5', 'cinco']],
+  ['El Plan de Acción reparte al grupo en ____ niveles de la Secretaría.', ['4', 'cuatro']],
   ['La Zona Docente tiene ____ herramientas del aula.', ['10', 'diez']],
   ['El registro oficial del Estado, que M.E.T.A.S no sustituye, es el ____.', ['SACE', 'sace']],
 ];
@@ -869,7 +869,7 @@ const DG = [
     o: ['Está cerrado: es el que hay y no cambia', 'Solo crece si el maestro lo pide',
         'Está en construcción: la meta es cubrir Básica completa y Media', 'Cambia de temas cada año, quitando los viejos'], c: 2 },
   { b: 1, q: 'El Plan de Acción reparte al grupo en:',
-    o: ['Cinco categorías, de Avanzado a Insatisfactorio', 'Aprobados y reprobados',
+    o: ['Los cuatro niveles de la Secretaría, de Inicial a Excelente', 'Aprobados y reprobados',
         'Tres niveles de logro', 'Una nota por alumno, sin categorías'], c: 0 },
   { b: 2, q: 'La clave de familia se arma con:',
     o: ['El nombre completo del alumno', 'El código de aula del maestro',

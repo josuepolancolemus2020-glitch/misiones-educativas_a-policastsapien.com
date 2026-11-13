@@ -48,7 +48,7 @@ const MF_AREAS = [
       { t: 'El código de aula: cómo el trabajo del alumno le llega solo',
         s: 'Cinco letras en la pizarra y el avance de sus alumnos aparece en su cuenta. Sin cuentas ni contraseñas para ellos, y sin que usted escriba un nombre dos veces.' },
       { t: 'Decidir con datos, no con impresiones',
-        s: 'Del «el grupo va mal» al «siete alumnos en Debe Mejorar por el mismo contenido». El Plan de Acción, el análisis de la prueba y la asistencia que avisa antes de la deserción.' },
+        s: 'Del «el grupo va mal» al «siete alumnos en Inicial por el mismo contenido». El Plan de Acción, el análisis de la prueba y la asistencia que avisa antes de la deserción.' },
       { t: 'El asistente de padres: la clave que baja los reclamos',
         s: 'Qué ve la familia con su clave y qué no ve. El padre deja de preguntar cómo va su hijo porque ya lo sabe, y usted recupera la reunión de padres.' },
       { t: 'El papeleo que se hace solo',

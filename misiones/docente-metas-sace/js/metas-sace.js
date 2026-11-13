@@ -319,11 +319,11 @@ const PARADAS = [
          '<b>Tablero de Estadísticas</b> muestra el rendimiento del centro y deja descargar el ' +
          '<b>listado de reprobados</b> y el de <b>alumnos en peligro de reprobación</b>. Eso ya es ' +
          'una alerta, y sirve. Lo que no le da es lo otro: <b>por qué contenido</b> fallaron y ' +
-         '<b>qué hacer</b> con cada grupo. El <b>Plan de Acción</b> reparte al grado en cinco ' +
-         'categorías (Avanzado, Muy Bueno, Satisfactorio, Debe Mejorar, Insatisfactorio) y propone ' +
+         '<b>qué hacer</b> con cada grupo. El <b>Plan de Acción</b> reparte al grado en los cuatro ' +
+         'niveles de la Secretaría (Inicial, Básico, Avanzado, Excelente) y propone ' +
          'qué hacer con cada una, y la <b>Evidencia de misiones</b> dice quién trabajó y cuánto.',
     ofi: 'El Tablero de Estadísticas: rendimiento del centro, listado de reprobados y de alumnos en peligro.',
-    metas: 'Por qué contenido falló cada quien, el grupo repartido en cinco categorías y qué hacer con cada una.',
+    metas: 'Por qué contenido falló cada quien, el grupo repartido en los cuatro niveles de la Secretaría y qué hacer con cada uno.',
     manda: 'Usted, que conoce al grupo. Los dos sistemas señalan; decidir es del maestro.',
     pasos: [
       'Mire el listado de alumnos en peligro que le da el sistema oficial: es una alerta gratis.',
@@ -333,7 +333,7 @@ const PARADAS = [
     ],
     nohacer: [
       'No lea el promedio del grado como si fuera un diagnóstico: un 62 puede ser dos grupos muy distintos.',
-      'No use el reparto en categorías para etiquetar a un alumno delante de nadie.',
+      'No use el reparto en niveles para etiquetar a un alumno delante de nadie.',
       'No espere a fin de año para mirarlo: en noviembre ya no hay clase que cambiar.',
     ],
     aula: 'Un listado de reprobados le dice a quién perdió. El Plan de Acción le dice a quién todavía ' +
@@ -940,7 +940,7 @@ const DG = [
   { b: 3, q: 'Ante un reclamo por una nota, lo que lo respalda es:',
     o: ['Su memoria de cómo trabajó el alumno', 'La palabra del director',
         'El criterio escrito, el instrumento, la pauta y el registro', 'El promedio del grado'], c: 2 },
-  { b: 4, q: 'El Plan de Acción reparte al grupo en cinco categorías. Lo que hace usted con eso es:',
+  { b: 4, q: 'El Plan de Acción reparte al grupo en los cuatro niveles de la Secretaría. Lo que hace usted con eso es:',
     o: ['Archivarlo con la boleta', 'Enviarlo al sistema oficial',
         'Publicarlo en el aula', 'Decidir a quién atiende primero y con qué'], c: 3 },
 
