@@ -3706,7 +3706,11 @@ function adBuscarPerdidosModal() {
     ov.querySelector('#ad-bp-nube').addEventListener('click', () => {
       if (typeof window.dsHistorial !== 'function') { nube = 'no'; pintar(); return; }
       nube = 'buscando'; pintar();
-      window.dsHistorial(ADMIN_KEY, 15).then(rows => {
+      /* 50 y no 15: con 15 solo llegaban las copias de las últimas horas
+         (la nube guarda hasta una cada 10 minutos), y un pago perdido hace
+         dos semanas no aparecía. Con SUPABASE-HISTORIAL-MES.sql la nube
+         manda las 12 más nuevas y la última de cada día del mes. */
+      window.dsHistorial(ADMIN_KEY, 50).then(rows => {
         if (!rows) { nube = 'no'; pintar(); return; }
         rows.forEach(r => copias.push({ raw: r.raw, cuando: r.cuando, fuente: 'nube' }));
         nube = 'ok'; pintar();
