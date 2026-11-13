@@ -61,14 +61,15 @@ let _adInvOn = 0;            /* dentro de «Inventario del aula» */
 let _adFichasOn = 0;         /* dentro de «Identidad y contactos» */
 let _adControlId = null;     /* control abierto en Controles */
 let _adSaceParcial = 'I';    /* Parcial activo en Notas SACE: I | II | III | IV */
-let _adSaceVista = 'aprov';   /* Sección a llenar: aprov | pers | inasis | recup | inasanio */
+let _adSaceVista = 'aprov';   /* Sección a llenar: aprov | pers | inasis | recup */
 let _adPersCopyModo = 'preguntar'; /* Cómo copiar Personalidad con 📋: preguntar | num | letra */
 let _adGrupoActivoId = null; /* Grupo/sección activo en el aula */
 try {
   const _sp = localStorage.getItem('METAS_SACE_PARCIAL');
   if (['I', 'II', 'III', 'IV'].includes(_sp)) _adSaceParcial = _sp;
-  const _sv = localStorage.getItem('METAS_SACE_VISTA');
-  if (['aprov', 'pers', 'inasis', 'recup', 'inasanio'].includes(_sv)) _adSaceVista = _sv;
+  /* la sección «Inasistencias del año» (v501–v502) ahora vive dentro de 📅 Inasistencias */
+  const _sv = localStorage.getItem('METAS_SACE_VISTA') === 'inasanio' ? 'inasis' : localStorage.getItem('METAS_SACE_VISTA');
+  if (['aprov', 'pers', 'inasis', 'recup'].includes(_sv)) _adSaceVista = _sv;
   const _pm = localStorage.getItem('METAS_PERS_COPY_MODO');
   if (['preguntar', 'num', 'letra'].includes(_pm)) _adPersCopyModo = _pm;
   const _sg = localStorage.getItem('METAS_ADMIN_GRUPO_ACTIVO');
@@ -961,7 +962,8 @@ async function adRestoreState(stateOrTab, colectaId, controlId) {
   try {
     const nav = window.metasLoadNav ? window.metasLoadNav() : {};
     if (!saved?.saceParcial && ['I', 'II', 'III', 'IV'].includes(nav.adSaceParcial)) _adSaceParcial = nav.adSaceParcial;
-    if (!saved?.saceVista && ['aprov', 'pers', 'inasis', 'recup', 'inasanio'].includes(nav.adSaceVista)) _adSaceVista = nav.adSaceVista;
+    if (!saved?.saceVista && nav.adSaceVista === 'inasanio') _adSaceVista = 'inasis';
+    else if (!saved?.saceVista && ['aprov', 'pers', 'inasis', 'recup'].includes(nav.adSaceVista)) _adSaceVista = nav.adSaceVista;
     if (!saved?.grupo && nav.adGrupo) _adGrupoActivoId = nav.adGrupo;
   } catch (_) {}
   const inAdmin = document.getElementById('view-admin')?.classList.contains('active');
@@ -3316,7 +3318,7 @@ function adCuadroFinalModal() {
       <p class="ad-sace-nota"><b>${cf.filas.length}</b> alumno(s)${window.SaceLista.hayImportacion(d) ? ' de la lista oficial del SACE' : ''}.
         Nota final = promedio de los cuatro parciales, redondeado. Recuperación: aprobado va «N/A»; en una materia reprobada,
         escribe la nota abajo en <b>✍️ Notas de recuperación</b> (la casilla vacía queda para escribirla a mano). ${cf.inasisFuente === 'pase'
-          ? 'Inasistencias: las <b>voluntarias</b>, los días marcados <b>Ausente</b> sin excusa en el pase de lista (' + cf.diasPase + ' días con lista); las involuntarias (con excusa) no se suman. El total separado está en <b>Notas SACE → 📅 Inasistencias del año</b>.'
+          ? 'Inasistencias: las <b>voluntarias</b>, los días marcados <b>Ausente</b> sin excusa en el pase de lista (' + cf.diasPase + ' días con lista); las involuntarias (con excusa) no se suman. Las dos, separadas y listas para copiar, están en <b>Notas SACE → 📅 Inasistencias</b>.'
           : 'Inasistencias: no hay pase de lista en este grupo; se suma lo escrito en cada parcial.'}</p>
       ${cf.filas.some(f => f.estado === 'PENDIENTE') ? '<p class="ad-sace-aviso">⚠ Hay alumnos con parciales sin nota: salen como PENDIENTE y se dice qué les falta.</p>' : ''}
       <div class="rf-papel rf-scroll"><div class="cf" id="ad-cf-tabla" style="min-width:980px">${adCfTablaHtml(cf)}${adCfPieHtml(cf)}</div></div>
@@ -5297,6 +5299,10 @@ function adDiaLabel(f) {
    fecha dos veces, aquí se juntan (manda la primera donde dicen cosas
    distintas): con dos copias, quitar la falta en una dejaba viva la de
    la otra, y al vaciarse la primera la falta «volvía». */
+function adDiasEntre(a, b) {
+  const t = x => { const p = String(x).split('-'); return Date.UTC(+p[0], +p[1] - 1, +p[2]); };
+  return Math.round((t(b) - t(a)) / 864e5) + 1;
+}
 function adAsisDia(dd, fecha, crear) {
   const mismos = (dd.asistencia || []).filter(r => r && r.f === fecha);
   if (!mismos.length) {
@@ -7626,7 +7632,11 @@ function adRenderSace(body, d) {
   } else {
     body.dataset.parcial = _adSaceParcial;
   }
-  if (body.dataset.vista && ['aprov', 'pers', 'inasis', 'recup', 'inasanio'].includes(body.dataset.vista)) {
+  /* «Inasistencias del año» fue una sección aparte (v501–v502); ahora sus
+     columnas viven dentro de 📅 Inasistencias: quien la tenía abierta cae ahí */
+  if (body.dataset.vista === 'inasanio') body.dataset.vista = 'inasis';
+  if (_adSaceVista === 'inasanio') _adSaceVista = 'inasis';
+  if (body.dataset.vista && ['aprov', 'pers', 'inasis', 'recup'].includes(body.dataset.vista)) {
     _adSaceVista = body.dataset.vista;
   } else {
     body.dataset.vista = _adSaceVista;
@@ -7658,14 +7668,16 @@ function adRenderSace(body, d) {
      nota final (promedio de I a IV) quedó bajo 70. Se guarda en
      d.recuperacion, el mismo sitio que usa el Cuadro final. */
   const esRec = vista === 'recup' && !!window.ResumenSace;
-  /* 📅 Inasistencias del año: solo lectura, sumadas del pase de lista y
-     separadas como las pide el SACE al cerrar el año. Cada columna con su
-     📋 para pegarla en el último archivo del SACE. */
-  const esAnio = vista === 'inasanio' && !!window.ResumenSace;
+  /* 📅 Inasistencias: una sola sección. A la izquierda, la del PARCIAL
+     (se escribe, va a la boleta); a la derecha, las del AÑO, de solo
+     lectura, sumadas del pase de lista y separadas como las pide el SACE
+     al cerrar el año, cada columna con su 📋. Dos secciones con el mismo
+     nombre confundían al maestro. */
+  const esAnio = esInasis && !!window.ResumenSace;
   const AD_IA_COLS = [{ k: 'inv', et: 'Involuntarias', sub: 'con excusa' }, { k: 'vol', et: 'Voluntarias', sub: 'sin excusa' },
     { k: 'total', et: 'Total', sub: 'las dos' }];
   const ia = esAnio ? window.ResumenSace.inasistenciasAnio(d) : null;
-  const cols = esLetra ? AD_PERSONALIDAD.slice() : esInasis ? ['Inasistencias'] : esAnio ? AD_IA_COLS.map(x => x.et) : d.materias.slice();
+  const cols = esLetra ? AD_PERSONALIDAD.slice() : esInasis ? ['Inasistencias'] : d.materias.slice();
   const RS = window.ResumenSace;
   const finalDe = (c, num) => RS ? RS.notaFinal(d, c, num) : null;
   /* quiénes tienen alguna materia con final bajo 70 (aviso del aprovechamiento) */
@@ -7746,9 +7758,7 @@ function adRenderSace(body, d) {
         </div>
       </details>
 
-      <p class="pa-optional-hint">${esAnio
-        ? 'Las <strong>inasistencias del año</strong>, sumadas del <strong>📋 pase de lista</strong> y separadas como las pide el SACE: <strong>Involuntarias</strong> son los días con <strong>excusa</strong> (📝 justificadas); <strong>Voluntarias</strong> son los días <strong>Ausente sin excusa</strong> (🚫). Las <strong>voluntarias</strong> son las que suma el <strong>📒 Cuadro final</strong> y las que van a los cuadros oficiales. Toca <strong>📋</strong> en la columna y pégala en el último archivo del SACE.'
-        : esRec
+      <p class="pa-optional-hint">${esRec
         ? 'La <strong>recuperación</strong> va <strong>al final del año</strong>, después de los cuatro parciales, como en el SACE. Solo se escribe en las materias con <strong>nota final bajo 70</strong> (promedio de los parciales I a IV). Con 70 o más en todas sus materias reprobadas, el alumno queda <strong>✓ Aprobado en recuperación</strong> en el Cuadro final, el Resumen final y los mensajes a las familias.'
         : esLetra
         ? 'La <strong>Personalidad</strong> se llena con los <strong>cuatro parciales a la vista</strong>: cada rasgo trae sus columnas I–IV, sin andar cambiando de parcial. Todo va a <strong>SACE</strong> y a la <strong>boleta</strong>.'
@@ -7756,7 +7766,7 @@ function adRenderSace(body, d) {
         en el orden de la boleta: avanza con <strong>Enter</strong> o <strong>Tab</strong> a la siguiente
         materia y, al terminar la fila, baja al siguiente alumno. Las notas van a <strong>SACE</strong> y a la <strong>boleta</strong>.`}</p>
       <div class="pa-row-2">
-        ${esLetra || esRec || esAnio ? '' : `
+        ${esLetra || esRec ? '' : `
         <div class="pa-field"><label>Parcial</label>
           <select id="ad-sace-parcial" class="pa-inp-field">
             ${['I', 'II', 'III', 'IV'].map(p => `<option value="${p}" ${p === parcial ? 'selected' : ''}>Parcial ${p}</option>`).join('')}
@@ -7766,24 +7776,18 @@ function adRenderSace(body, d) {
             <option value="aprov" ${vista === 'aprov' ? 'selected' : ''}>📚 Aprovechamiento (todas las materias)</option>
             <option value="pers" ${vista === 'pers' ? 'selected' : ''}>🙂 Personalidad (en letra)</option>
             <option value="inasis" ${vista === 'inasis' ? 'selected' : ''}>📅 Inasistencias</option>
-            <option value="inasanio" ${vista === 'inasanio' ? 'selected' : ''}>📅 Inasistencias del año (total para el SACE)</option>
             <option value="recup" ${vista === 'recup' ? 'selected' : ''}>✍️ Recuperación (al final del año)</option>
           </select></div>
       </div>
       <p class="pa-optional-hint" style="margin-top:2px">
         ${esLetra
           ? 'La conducta es <strong>cualitativa</strong>: <strong>escríbela</strong> (S, MB, B) o toca la celda y luego el <strong>valor</strong>: el cursor recorre los parciales I→IV de cada rasgo y sigue solo. Para mover o borrar un alumno ve a <strong>👥 Alumnos</strong>; aquí puedes ordenar con <strong>🔤 Ordenar A–Z</strong> y <strong>♀♂ por género</strong>.'
-          : esAnio
-            ? (ia.fuente === 'pase'
-              ? 'Cuenta <strong>' + ia.dias + ' día(s) con pase de lista de ' + ia.anio + '</strong> (el año lectivo de la boleta), cada fecha una sola vez' +
-                (ia.otrosAnios ? '; <strong>' + ia.otrosAnios + ' día(s) de otros años no se suman</strong>' : '') +
-                (ia.repetidos ? '; <strong>' + ia.repetidos + ' fecha(s) repetida(s)</strong> cuentan una vez' : '') +
-                '. Toca <strong>🔎</strong> en un alumno para ver cada día que tiene marcado y corregirlo ahí mismo.'
-              : '⚠️ Este grupo <strong>no tiene pase de lista</strong>: no hay cómo separar las excusas. Las <strong>voluntarias</strong> salen de la suma de lo escrito en cada parcial y las <strong>involuntarias</strong> quedan vacías. Pasa lista en <strong>📋 Asistencia</strong> para que se separen solas.')
           : esRec
             ? 'Bajo cada casilla va la <strong>nota final</strong> de esa materia. <strong>N/A</strong>: la aprobó, no hay recuperación. <strong>·</strong> gris: le falta algún parcial. Avanza con <strong>Enter</strong>, <strong>Tab</strong> o las flechas: el cursor salta solo a la siguiente casilla que se puede llenar. Con <strong>📋</strong> copias la columna para la RECUPERACIÓN del SACE.'
           : esInasis
-            ? 'Escribe el <strong>número de inasistencias</strong> de este parcial (el total del año está en <strong>📅 Inasistencias del año</strong>). Enter o «Siguiente» para bajar. Para mover o borrar un alumno ve a <strong>👥 Alumnos</strong>.'
+            ? 'La columna <strong>Parcial ' + parcial + '</strong> es la de la <strong>boleta</strong>: escríbela o tráela del pase de lista. Las columnas del <strong>año</strong>, a la derecha, se suman solas del <strong>📋 pase de lista</strong> y son las del <strong>último archivo del SACE</strong>: <strong>Involuntarias</strong> = días con <strong>excusa</strong> 📝; <strong>Voluntarias</strong> = días <strong>Ausente sin excusa</strong> 🚫 (las que suma el 📒 Cuadro final y van a los cuadros oficiales). Toca <strong>📋</strong> en la columna para copiarla y <strong>🔎</strong> en un alumno para ver y corregir cada día. ' + (esAnio ? (ia.fuente === 'pase'
+              ? 'Se cuentan <strong>' + ia.dias + ' día(s) con pase de lista de ' + ia.anio + '</strong>, cada fecha una vez' + (ia.otrosAnios ? '; <strong>' + ia.otrosAnios + ' día(s) de otros años no se suman</strong>' : '') + (ia.repetidos ? '; <strong>' + ia.repetidos + ' fecha(s) repetida(s)</strong> cuentan una vez' : '') + '.'
+              : '⚠️ Este grupo <strong>no tiene pase de lista</strong> este año: las voluntarias salen de la suma de los parciales y las involuntarias quedan vacías.') : '')
             : 'Escribe la <strong>nota (1-100)</strong>. Avanza con <strong>Enter</strong>, <strong>Tab</strong> o las flechas. Cada casilla toma el color de su escala. Para mover o borrar un alumno ve a <strong>👥 Alumnos</strong>; aquí puedes ordenar con <strong>🔤 Ordenar A–Z</strong> / <strong>♀♂ Niñas y Varones A–Z</strong>.'}</p>
 
       ${esLetra ? `
@@ -7824,6 +7828,7 @@ function adRenderSace(body, d) {
           <div class="pa-field"><label>Desde</label><input type="date" id="ad-inasis-desde" class="pa-inp-field" value="${desdeDef}"></div>
           <div class="pa-field"><label>Hasta</label><input type="date" id="ad-inasis-hasta" class="pa-inp-field" value="${hastaDef}"></div>
         </div>
+        ${desdeDef && hastaDef && adDiasEntre(desdeDef, hastaDef) > 100 ? `<p class="ad-sace-aviso">⚠️ Este rango tiene ${adDiasEntre(desdeDef, hastaDef)} días, casi el año entero: «Traer faltas» pondría en el <strong>Parcial ${parcial}</strong> las faltas de todo el año. Pon solo las fechas de este parcial.</p>` : ''}
         <button class="pa-generate-btn ad-btn-sec" id="ad-inasis-traer">📅 Traer faltas del pase de lista</button>
         <p class="pa-optional-hint">Cuenta los días marcados <strong>Ausente</strong> en <strong>Asistencia</strong>
           dentro de ese rango y los pone en el <strong>Parcial ${parcial}</strong>. Las <strong>excusas no cuentan</strong>
@@ -7839,7 +7844,7 @@ function adRenderSace(body, d) {
         <p class="pa-optional-hint" style="margin:4px 0 0">Busca en tus copias y en la nube las notas, la personalidad y las inasistencias que <strong>ya habías escrito</strong> y hoy faltan aquí. Te enseña la lista antes de copiar, solo llena celdas vacías y nunca inventa una nota.</p>
       </div>
 
-      ${(!esLetra && !esInasis && !esRec && !esAnio) ? (parcial === 'IV' ? (d.boleta && d.boleta.sugerirIVAuth ? `
+      ${(!esLetra && !esInasis && !esRec) ? (parcial === 'IV' ? (d.boleta && d.boleta.sugerirIVAuth ? `
       <div class="ad-sug-bar">
         <div class="ad-btn-row" style="margin-top:0">
           <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-sace-sugerir">✨ Sugerir notas del Parcial IV</button>
@@ -7858,10 +7863,10 @@ function adRenderSace(body, d) {
         <p class="pa-optional-hint" style="margin:0">🔒 <strong>Parcial ${parcial} protegido:</strong> la opción «✨ Sugerir notas» solo funciona en el <strong>Parcial IV</strong> (previa autorización) para no alterar las notas definitivas de los Parciales I, II y III.</p>
       </div>`) : ''}
 
-      ${!esLetra && !esInasis && !esAnio ? `<div class="ad-nt-ley" aria-label="Colores de las notas">
+      ${!esLetra && !esInasis ? `<div class="ad-nt-ley" aria-label="Colores de las notas">
         <span class="nt-i">Inicial: hasta 69</span><span class="nt-b">Básico: 70 a 79</span>
         <span class="nt-a">Avanzado: 80 a 90</span><span class="nt-e">Excelente: 91 a 100</span></div>` : ''}
-      ${!esLetra && !esInasis && !esRec && !esAnio ? `<div class="ad-rec-aviso" id="ad-sace-rec-aviso"${contarBajo70(d) ? '' : ' hidden'}>
+      ${!esLetra && !esInasis && !esRec ? `<div class="ad-rec-aviso" id="ad-sace-rec-aviso"${contarBajo70(d) ? '' : ' hidden'}>
         <span id="ad-sace-rec-aviso-txt">✍️ <strong>${contarBajo70(d)}</strong> alumno(s) con nota final bajo 70 en alguna materia: les toca recuperación.</span>
         <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-sace-ir-rec">✍️ Escribir la recuperación</button></div>` : ''}
       <div class="ad-mx-wrap">
@@ -7878,13 +7883,15 @@ function adRenderSace(body, d) {
           </tr>` : `
           <tr>
             <th class="ad-mx-sticky ad-mx-corner">Nº · Alumno</th>
-            ${esAnio ? '<th><div class="ad-mx-h">Revisar<small class="ad-mx-hsub">día por día</small></div></th>' : ''}
-            ${cols.map((c, ci) => `<th><div class="ad-mx-h">${adEsc(c)}${esAnio ? '<small class="ad-mx-hsub">' + AD_IA_COLS[ci].sub + '</small>' : ''}</div>
+            ${cols.map((c, ci) => `<th><div class="ad-mx-h">${esInasis ? 'Parcial ' + parcial + '<small class="ad-mx-hsub">para la boleta</small>' : adEsc(c)}</div>
               <div class="ad-mx-hbtns">
-                ${!esInasis && !esRec && !esAnio ? `<button class="ad-mx-mv" data-col="${ci}" data-dir="-1" title="Mover a la izquierda"${ci === 0 ? ' disabled' : ''}>◀</button>` : ''}
-                <button class="ad-mx-copy" data-col="${ci}" title="Copiar «${adEsc(c)}${esRec ? ' · Recuperación' : esAnio ? ' · inasistencias del año' : ''}» para SACE">📋</button>
-                ${!esInasis && !esRec && !esAnio ? `<button class="ad-mx-mv" data-col="${ci}" data-dir="1" title="Mover a la derecha"${ci === cols.length - 1 ? ' disabled' : ''}>▶</button>` : ''}
+                ${!esInasis && !esRec ? `<button class="ad-mx-mv" data-col="${ci}" data-dir="-1" title="Mover a la izquierda"${ci === 0 ? ' disabled' : ''}>◀</button>` : ''}
+                <button class="ad-mx-copy" data-col="${ci}" title="Copiar «${adEsc(c)}${esRec ? ' · Recuperación' : ''}» para SACE">📋</button>
+                ${!esInasis && !esRec ? `<button class="ad-mx-mv" data-col="${ci}" data-dir="1" title="Mover a la derecha"${ci === cols.length - 1 ? ' disabled' : ''}>▶</button>` : ''}
               </div></th>`).join('')}
+            ${esAnio ? AD_IA_COLS.map((x, i) => `<th class="ad-mx-ia-h${i === 0 ? ' ad-mx-ini' : ''}"><div class="ad-mx-h">${x.et}<small class="ad-mx-hsub">${x.sub} · año ${adEsc(ia.anio)}</small></div>
+              <div class="ad-mx-hbtns"><button class="ad-mx-copy" data-ia="${x.k}" title="Copiar «${x.et}» del año para el SACE">📋</button></div></th>`).join('') +
+              '<th><div class="ad-mx-h">Revisar<small class="ad-mx-hsub">día por día</small></div></th>' : ''}
           </tr>`}
           </thead>
           <tbody>
@@ -7895,19 +7902,20 @@ function adRenderSace(body, d) {
                   <span class="ad-mx-nom">${adEsc(adPrimerNombre(a.nombre)) || '·'}</span>
                   ${a.noCopiarSace ? `<button type="button" class="ad-mx-nocopy-tag" data-nc-quitar="${a.num}" title="Omitido al copiar columna (📋). Toca para volver a incluirlo">🙈</button>` : ''}
                 </div></td>
-              ${esAnio ? `<td class="ad-mx-ia ad-mx-ia-rev"><button type="button" class="ad-mx-rev" data-rf-num="${a.num}" title="Ver y corregir cada falta de ${adEsc(a.nombre || '')}">🔎</button></td>` + AD_IA_COLS.map(x => { const v = (ia.porAlumno[a.num] || {})[x.k]; return `<td class="ad-mx-ia${x.k === 'vol' ? ' ad-mx-ia-vol' : ''}">${v === '' || v == null ? '<span class="ad-mx-ia-na">·</span>' : v}</td>`; }).join('')
-              : esRec ? colDefs.map((cd, ci) => adRecCeldaHtml(d, cd.campo, a.num, ri * colDefs.length + ci, finalDe(cd.campo, a.num))).join('') : colDefs.map((cd, ci) => { const cls = [cd.ini ? 'ad-mx-ini' : '',
+              ${esRec ? colDefs.map((cd, ci) => adRecCeldaHtml(d, cd.campo, a.num, ri * colDefs.length + ci, finalDe(cd.campo, a.num))).join('') : colDefs.map((cd, ci) => { const cls = [cd.ini ? 'ad-mx-ini' : '',
                 !esLetra && cd.campo !== 'Inasistencias' ? adNotaEscalaClase(valOfP(cd.parcial, cd.campo, a.num)) : ''].filter(Boolean).join(' ');
                 return `<td${cls ? ' class="' + cls + '"' : ''}><input class="ad-mx-inp" data-idx="${ri * colDefs.length + ci}"
                 data-num="${a.num}" data-alumno="${a.num}" data-campo="${adEsc(cd.campo)}" data-materia="${adEsc(cd.campo)}" data-parcial="${cd.parcial}" type="text" inputmode="${esLetra ? 'text' : 'numeric'}"
                 maxlength="3" autocapitalize="characters" ${esLetra ? 'style="text-transform:uppercase;"' : ''}
                 value="${valOfP(cd.parcial, cd.campo, a.num) !== '' ? adEsc(String(valOfP(cd.parcial, cd.campo, a.num))) : ''}" placeholder="·"></td>`; }).join('')}
+              ${esAnio ? AD_IA_COLS.map((x, i) => { const v = (ia.porAlumno[a.num] || {})[x.k]; return `<td class="ad-mx-ia${x.k === 'vol' ? ' ad-mx-ia-vol' : ''}${i === 0 ? ' ad-mx-ini' : ''}">${v === '' || v == null ? '<span class="ad-mx-ia-na">·</span>' : v}</td>`; }).join('') +
+                `<td class="ad-mx-ia ad-mx-ia-rev"><button type="button" class="ad-mx-rev" data-rf-num="${a.num}" title="Ver y corregir cada falta de ${adEsc(a.nombre || '')}">🔎</button></td>` : ''}
             </tr>`).join('')}
           </tbody>
         </table>
       </div>
       <div class="ad-btn-row" style="margin-top:8px">
-        ${!esLetra && !esInasis && !esRec && !esAnio ? '<button class="pa-generate-btn ad-btn-sec ad-mx-addmat" id="ad-sace-addmat" style="margin-top:0">➕ Agregar materia</button>' : ''}
+        ${!esLetra && !esInasis && !esRec ? '<button class="pa-generate-btn ad-btn-sec ad-mx-addmat" id="ad-sace-addmat" style="margin-top:0">➕ Agregar materia</button>' : ''}
         <button class="pa-generate-btn ad-btn-sec" id="ad-sace-orden-az" type="button">🔤 Ordenar A–Z (con sus notas)</button>
         <button class="pa-generate-btn ad-btn-sec" id="ad-sace-orden-gen" type="button">♀♂ Ordenar Niñas y luego Varones (A–Z)</button>
         <button class="pa-generate-btn ad-btn-sec" id="ad-sace-nocopy" type="button">🙈 ${
@@ -7932,7 +7940,7 @@ function adRenderSace(body, d) {
         <button class="pa-generate-btn ad-btn-sec" id="ad-sace-resumen" type="button">📋 Resumen final de resultados por grado</button>
         <button class="pa-generate-btn ad-btn-sec" id="ad-sace-perdidos" type="button">🔎 Buscar notas perdidas</button>
         ${esLetra ? '<button class="pa-generate-btn ad-btn-sec" id="ad-sace-csv-num" type="button">🔢 Copiar CSV en número (4, 3, 2)</button>' : ''}
-        ${esRec || esAnio ? '' : `<button class="pa-generate-btn ad-btn-sec" id="ad-sace-csv">${esLetra ? '🔤 Copiar CSV en letra (S, MB, B)' : '⬇ Copiar CSV (todas las materias)'}</button>`}
+        ${esRec ? '' : `<button class="pa-generate-btn ad-btn-sec" id="ad-sace-csv">${esLetra ? '🔤 Copiar CSV en letra (S, MB, B)' : '⬇ Copiar CSV (todas las materias)'}</button>`}
       </div>
       <p class="pa-optional-hint" id="ad-sace-estado" style="margin-top:8px"></p>
     </div>
@@ -7944,7 +7952,7 @@ function adRenderSace(body, d) {
       try { localStorage.setItem('METAS_SACE_PARCIAL', v); } catch (_) {}
       if (window.metasSaveNav) window.metasSaveNav({ adSaceParcial: v });
     }
-    if (k === 'vista' && ['aprov', 'pers', 'inasis', 'recup', 'inasanio'].includes(v)) {
+    if (k === 'vista' && ['aprov', 'pers', 'inasis', 'recup'].includes(v)) {
       _adSaceVista = v;
       try { localStorage.setItem('METAS_SACE_VISTA', v); } catch (_) {}
       if (window.metasSaveNav) window.metasSaveNav({ adSaceVista: v });
@@ -8270,6 +8278,11 @@ function adRenderSace(body, d) {
       (excusas ? ' · ' + excusas + ' excusa(s) no cuentan' : ''));
     if (cruces.length) estado('⚠️ Estas fechas se cruzan con las del Parcial ' + cruces.join(', ') +
       ': esos días quedan contados en los dos. Revisa «Desde» y «Hasta».');
+    /* un parcial dura unos dos meses y medio: un rango de casi todo el año
+       mete en un solo parcial las faltas de los cuatro */
+    else if (adDiasEntre(desde, hasta) > 100) estado('⚠️ Del ' + adFechaBonita(desde) + ' al ' + adFechaBonita(hasta) + ' son ' +
+      adDiasEntre(desde, hasta) + ' días: casi el año entero. Si es solo el Parcial ' + parcial +
+      ', pon sus fechas de inicio y fin y vuelve a tocar «Traer faltas». El total del año ya está en las columnas de la derecha.');
   });
 
   // 📥 Copiar notas de mis respaldos + 🔎 revisar lo del autocompletado + 🕓 Historial
@@ -8415,12 +8428,13 @@ function adRenderSace(body, d) {
   // En Personalidad cada botón trae su rasgo Y su parcial (hay 4 a la vista).
   body.querySelectorAll('.ad-mx-copy').forEach(btn => btn.addEventListener('click', () => {
     const dd = adLoad();
-    const c = btn.dataset.campo || cols[+btn.dataset.col];
+    const iaK = btn.dataset.ia;
+    const c = iaK ? AD_IA_COLS.find(x => x.k === iaK).et : (btn.dataset.campo || cols[+btn.dataset.col]);
     const p = btn.dataset.parcial || parcial;
     /* en ✍️ Recuperación se copia la recuperación, y solo la que cuenta
        (final bajo 70): el SACE la deja vacía en las materias aprobadas */
-    const ns = esAnio
-      ? (() => { const k = AD_IA_COLS[+btn.dataset.col].k, pa = window.ResumenSace.inasistenciasAnio(dd).porAlumno;
+    const ns = iaK
+      ? (() => { const k = iaK, pa = window.ResumenSace.inasistenciasAnio(dd).porAlumno;
           return dd.lista.reduce((o, a) => { const v = (pa[a.num] || {})[k]; if (v !== '' && v != null) o[a.num] = v; return o; }, {}); })()
       : esRec
       ? dd.lista.reduce((o, a) => { const r = RS.recuperacionDe(dd, c, a.num); if (r != null) o[a.num] = r; return o; }, {})
@@ -8445,7 +8459,7 @@ function adRenderSace(body, d) {
       const fmtCorto = esLetra ? (enNum ? ' · en número (4,3,2)' : ' · en letra') : '';
       adCopiar(col,
         () => {
-          estado('✅ Columna «' + c + (esRec ? ' · Recuperación' : esAnio ? ' · inasistencias del año' : btn.dataset.parcial ? ' · Parcial ' + p : '') + '» copiada' + fmtEtiqueta + ' (' +
+          estado('✅ Columna «' + c + (esRec ? ' · Recuperación' : iaK ? ' · del año' : btn.dataset.parcial ? ' · Parcial ' + p : '') + '» copiada' + fmtEtiqueta + ' (' +
             incluidos.length + (omitidos.length ? ' de ' + dd.lista.length : '') + ' filas' + sinTxt + '). Pégala en SACE.');
           if (typeof toast === 'function') {
             toast('📋 «' + c + (btn.dataset.parcial ? ' · P-' + p : '') + '» copiada' + fmtCorto + ' (' + incluidos.length + ' filas' + sinTxt + ')');
