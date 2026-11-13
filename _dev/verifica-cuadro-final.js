@@ -65,7 +65,8 @@ const f = n => cf.filas.find(x => x.num === n);
 igual(f(1).notas.map(x => x.final), [70, 91, 80], 'Alba: 70, 90.75 → 91, 80');
 igual([f(1).prom, f(1).valoracion, f(1).estado], [80, 'A', 'APROBADO'], 'Alba: promedio 80, valoración A, aprobado');
 igual(f(1).notas.map(x => x.recup), ['N/A', 'N/A', 'N/A'], 'aprobó todo: recuperación N/A');
-igual([f(2).prom, f(2).valoracion, f(2).estado], [88, 'A', 'REPROBADO'], 'Bruno: promedio 88 pero Matemáticas 69 → reprobado');
+/* reprobado = Inicial (pedido del maestro, como el cuadro 1 del Resumen final) */
+igual([f(2).prom, f(2).valoracion, f(2).estado], [88, 'I', 'REPROBADO'], 'Bruno: promedio 88 pero Matemáticas 69 → reprobado, y su valoración es Inicial');
 igual(f(2).notas.map(x => x.recup), ['N/A', '', 'N/A'], 'la materia reprobada deja la recuperación en blanco, para escribirla a mano');
 igual([f(3).prom, f(3).estado, f(3).faltan], [null, 'PENDIENTE', ['Español (IV)']], 'Cira: sin el IV de Español → pendiente y se dice qué falta');
 igual(f(3).notas[0].final, null, 'y no se inventa su nota de Español');
@@ -128,16 +129,32 @@ console.log('\n2c · Recuperación');
   ok(/del centro educativo JOHN ARNOLD COOK/.test(RS.mensajeFamilia(c0.filas[0], Object.assign({}, ctx, { centro: 'JOHN ARNOLD COOK' }))), 'redacción: «del centro educativo …»');
 }
 
+console.log('\n2e · La inasistencia del cuadro oficial del SACE');
+{
+  /* el maestro escribe la del cuadro oficial en Notas SACE → 📅 Inasistencias;
+     esa es la que va al Cuadro final, y donde no la escribe sigue la del pase */
+  const g4 = JSON.parse(JSON.stringify(grupo));
+  g4.inasisOficial = { 2: 15, 1: 0 };
+  const c4 = RS.cuadroFinal(g4, { SL, pers: PERS });
+  const f4 = n => c4.filas.find(x => x.num === n);
+  igual([f4(2).inasis, f4(1).inasis], [15, 0], 'Bruno lleva 15 y Alba 0: lo que el maestro escribió como oficial (el cero también cuenta)');
+  ok(c4.filas.filter(x => x.num !== 1 && x.num !== 2).every(x => x.inasis === cf.filas.find(y => y.num === x.num).inasis),
+    'donde la columna oficial está vacía, sigue la del pase de lista, sin cambiar');
+  ok(c4.inasisOficiales === 2 && cf.inasisOficiales === 0, 'el cuadro sabe cuántas salen de la columna oficial');
+  ok(RS.inasisOficialDe(g4, 2) === 15 && RS.inasisOficialDe(g4, 3) === null && RS.inasisOficialDe(grupo, 2) === null, 'inasisOficialDe lee solo d.inasisOficial');
+  ok(JSON.stringify(g4.notas) === JSON.stringify(grupo.notas), 'y no toca las notas');
+}
+
 console.log('\n3 · El resumen del pie');
 const r = cf.resumen;
 igual([r.aprob, r.reprob, r.pend, r.aprobRec.T], [{ N: 1, V: 1, T: 2 }, { N: 0, V: 1, T: 1 }, { N: 1, V: 0, T: 1 }, 0], 'aprobados 2, reprobados 1, pendientes 1, por sexo');
 igual(r.promGrupo, Math.round((80 + 88 + 80) / 3 * 10) / 10, 'promedio del grupo con los que tienen promedio');
-igual([r.porVal.E.T, r.porVal.A.T, r.porVal.B.T, r.porVal.I.T], [0, 3, 0, 0], 'valoraciones contadas');
+igual([r.porVal.E.T, r.porVal.A.T, r.porVal.B.T, r.porVal.I.T], [0, 2, 0, 1], 'valoraciones contadas: el reprobado, en Inicial');
 
 console.log('\n4 · Excel');
 const t = RS.cuadroFinalTabla(cf, SL.idnBonita);
 igual(t.filas[0].vals.slice(0, 2), ['0801-2015-00001', 'Alba Prueba Uno'], 'la fila trae la identidad con guiones y el nombre');
-igual(t.filas[1].vals.slice(-4), [6, 88, 'A', 'REPROBADO: recuperación pendiente: Matemáticas'], 'y al final inasistencias, promedio, valoración y observación con su detalle');
+igual(t.filas[1].vals.slice(-4), [6, 88, 'I', 'REPROBADO: recuperación pendiente: Matemáticas'], 'y al final inasistencias, promedio, valoración y observación con su detalle');
 ok(/falta Español \(IV\)/.test(t.filas[2].vals.slice(-1)[0]), 'el pendiente dice qué le falta');
 const bytes = RS.xlsx([t], { titulo: 'CUADRO FINAL', datos: [], anchos: [4, 17, 34] });
 ok(bytes.length > 1000 && Buffer.from(bytes).readUInt32LE(0) === 0x04034b50, 'el .xlsx se arma');

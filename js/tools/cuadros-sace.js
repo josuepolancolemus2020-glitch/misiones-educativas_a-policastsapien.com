@@ -123,6 +123,16 @@
     return numero(((d && d.recuperacion) || {})[col] && d.recuperacion[col][num]);
   }
 
+  /* La inasistencia del año que el maestro escribe tal como la lleva el
+     cuadro oficial del SACE (Notas SACE → 📅 Inasistencias, columna
+     «Oficial SACE»). Se guarda aparte, en d.inasisOficial = { num: días },
+     y es la que va al Cuadro final; donde está vacía, el Cuadro final
+     sigue con las voluntarias del pase de lista. */
+  function inasisOficialDe(d, num) {
+    var o = (d && d.inasisOficial) || {};
+    return numero(o[num]);
+  }
+
   /* ── Inasistencias del año, como las pide el SACE ──
      · Voluntarias: los días marcados Ausente («A») en el pase de lista, sin
        excusa. Son las que suma el Cuadro final y las que van a los cuadros
@@ -741,6 +751,7 @@
     var conPase = ia.fuente === 'pase';
     var porVal = { E: nvt(), A: nvt(), B: nvt(), I: nvt() };
     var aprob = nvt(), aprobRec = nvt(), reprob = nvt(), pend = nvt(), proms = [];
+    var conOficial = 0;
     var filas = alumnos.map(function (a) {
       var faltan = [];
       var ns = asigs.map(function (as) {
@@ -765,7 +776,9 @@
          contaban dos veces, y las excusas entraban también. Sin pase de
          lista en el grupo, se usa lo escrito en los parciales. */
       var ia1 = ia.porAlumno[a.num];
-      var inas = ia1 && ia1.vol !== '' ? [ia1.vol] : [];
+      var ofi = inasisOficialDe(d, a.num);
+      if (ofi != null) conOficial++;
+      var inas = ofi != null ? [ofi] : ia1 && ia1.vol !== '' ? [ia1.vol] : [];
       var completo = asigs.length > 0 && !faltan.length;
       var prom = completo ? Math.round(ns.reduce(function (t, x) { return t + x.final; }, 0) / ns.length) : null;
       /* Reprobadas en la evaluación ordinaria, y qué pasó en recuperación.
@@ -779,7 +792,13 @@
         : !reprobadas.length ? 'APROBADO'
         : (!recPend.length && !recNo.length) ? 'APROBADO EN RECUPERACIÓN'
         : 'REPROBADO';
-      var vl = prom == null ? '' : escalaDe(prom);
+      /* Valoración con la regla del Resumen final (cuadro 1), pedida por el
+         maestro: el REPROBADO va en Inicial aunque su promedio sea alto; el
+         que aprueba, también en recuperación, va por su promedio y nunca
+         por debajo de Básico. El promedio sigue siendo el de las notas
+         ordinarias. */
+      var vl = prom == null ? '' : estado === 'REPROBADO' ? 'I'
+        : (escalaDe(prom) === 'I' ? 'B' : escalaDe(prom));
       if (prom != null) { proms.push(prom); sumar(porVal[vl], a); }
       sumar(estado === 'APROBADO' ? aprob : estado === 'REPROBADO' ? reprob : estado === 'PENDIENTE' ? pend : aprobRec, a);
       return {
@@ -792,7 +811,7 @@
     });
     return {
       pers: pers, asigs: asigs, filas: filas, sobran: m.sobran,
-      inasisFuente: ia.fuente, diasPase: ia.dias,
+      inasisFuente: ia.fuente, diasPase: ia.dias, inasisOficiales: conOficial,
       resumen: { aprob: aprob, aprobRec: aprobRec, reprob: reprob, pend: pend, porVal: porVal, total: contar(alumnos),
         promGrupo: proms.length ? Math.round(proms.reduce(function (t, x) { return t + x; }, 0) / proms.length * 10) / 10 : null }
     };
@@ -1065,6 +1084,7 @@
     PARCIALES: PARCIALES, ASIGNATURAS: ASIGNATURAS, ESCALAS: ESCALAS, EDADES: EDADES,
     escalaDe: escalaDe, mapearMaterias: mapearMaterias, APRUEBA: APRUEBA,
     notaFinal: notaFinal, recuperacionDe: recuperacionDe, inasistenciasAnio: inasistenciasAnio, unirDias: unirDias,
+    inasisOficialDe: inasisOficialDe,
     calcular: calcular, cuadros: cuadros, tablaHtml: tablaHtml,
     describir: describir, estadistica: estadistica, graficosHtml: graficosHtml, GRAF_CSS: GRAF_CSS,
     cuadroFinal: cuadroFinal, cuadroFinalTabla: cuadroFinalTabla,

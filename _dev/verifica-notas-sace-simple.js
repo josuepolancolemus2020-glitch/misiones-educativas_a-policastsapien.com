@@ -211,6 +211,30 @@ const POR_VISTA = {
   comprueba('Esc cierra la ventana', !(await visible(pg, 'ad-boleta-centro')));
 
   comprueba('pasearse por todo esto no cambia ninguna nota', await notas(pg) === n0);
+
+  /* 📅 la inasistencia oficial del SACE (v507): columna que se escribe,
+     pegada al nombre, guardada aparte de las notas, y la del Cuadro final */
+  console.log('\n── 📅 Inasistencia oficial del SACE ──');
+  await pinta(pg, 'IV', 'inasis');
+  const pos = await pg.evaluate(() => {
+    const ths = [...document.querySelectorAll('#ad-tab-body .ad-mx thead th')];
+    const tds = [...document.querySelector('#ad-tab-body .ad-mx tbody tr').children];
+    return { th1: ths[1].textContent, th2: ths[2].textContent, td1: !!tds[1].querySelector('.ad-mx-ofi'), copia: !!ths[1].querySelector('[data-ia="ofi"]') };
+  });
+  comprueba('la columna «Oficial SACE» va justo después del nombre, antes de «Parcial IV», con su 📋',
+    /Oficial SACE/.test(pos.th1) && /Parcial IV/.test(pos.th2) && pos.td1 && pos.copia, pos);
+  await pg.fill('[data-ofi-num="1"]', '9');
+  await pg.focus('[data-ofi-num="1"]');
+  await pg.keyboard.press('Enter');
+  comprueba('Enter baja al siguiente alumno', await pg.evaluate(() => document.activeElement.dataset.ofiNum) === '2');
+  await pg.keyboard.type('0');
+  const g = await pg.evaluate(() => { const d = adLoad(); return { ofi: d.inasisOficial, cf: ResumenSace.cuadroFinal(d, { SL: Object.assign({}, SaceLista, { alumnosQueCuentan: x => x.lista }), pers: AD_PERSONALIDAD }) }; });
+  comprueba('se guarda aparte, en inasisOficial (9 y 0), sin tocar las notas',
+    JSON.stringify(g.ofi) === '{"1":9,"2":0}' && await notas(pg) === n0, g.ofi);
+  comprueba('y es la que lleva el Cuadro final', g.cf.filas.find(f => f.num === 1).inasis === 9 && g.cf.filas.find(f => f.num === 2).inasis === 0 && g.cf.inasisOficiales === 2);
+  await pg.fill('[data-ofi-num="2"]', '');
+  comprueba('borrarla la quita del dato', await pg.evaluate(() => JSON.stringify(adLoad().inasisOficial)) === '{"1":9}');
+  await pg.evaluate(() => { const d = adLoad(); delete d.inasisOficial; adSave(d); });
   await pg.close();
 
   /* ── 2 · la ayuda, como la ve un maestro (sin navigator.webdriver) ── */

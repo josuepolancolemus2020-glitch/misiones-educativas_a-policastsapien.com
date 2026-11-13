@@ -3320,7 +3320,7 @@ function adCuadroFinalModal() {
     ov.querySelector('#ad-cf-cuerpo').innerHTML = `<style>${AD_CF_CSS}</style>
       <p class="ad-sace-nota"><b>${cf.filas.length}</b> alumno(s)${window.SaceLista.hayImportacion(d) ? ' de la lista oficial del SACE' : ''}.
         Nota final = promedio de los cuatro parciales, redondeado. Recuperación: aprobado va «N/A»; en una materia reprobada,
-        escribe la nota abajo en <b>✍️ Notas de recuperación</b> (la casilla vacía queda para escribirla a mano). ${cf.inasisFuente === 'pase'
+        escribe la nota abajo en <b>✍️ Notas de recuperación</b> (la casilla vacía queda para escribirla a mano). ${cf.inasisOficiales ? 'Inasistencias: la <b>oficial del SACE</b> que escribiste en <b>Notas SACE → 📅 Inasistencias</b> (' + cf.inasisOficiales + ' de ' + cf.filas.length + ' alumnos)' + (cf.inasisOficiales < cf.filas.length ? '; donde está vacía, ' + (cf.inasisFuente === 'pase' ? 'las voluntarias del pase de lista.' : 'lo escrito en cada parcial.') : '.') : cf.inasisFuente === 'pase'
           ? 'Inasistencias: las <b>voluntarias</b>, los días marcados <b>Ausente</b> sin excusa en el pase de lista (' + cf.diasPase + ' días con lista); las involuntarias (con excusa) no se suman. Las dos, separadas y listas para copiar, están en <b>Notas SACE → 📅 Inasistencias</b>.'
           : 'Inasistencias: no hay pase de lista en este grupo; se suma lo escrito en cada parcial.'}</p>
       ${cf.filas.some(f => f.estado === 'PENDIENTE') ? '<p class="ad-sace-aviso">⚠ Hay alumnos con parciales sin nota: salen como PENDIENTE y se dice qué les falta.</p>' : ''}
@@ -3585,7 +3585,7 @@ function adPrintCuadroFinal(d) {
   <div class="datos">${datos.map(x => `<div><span>${adEsc(x[0])}</span><b>${adEsc(x[1] || '·')}</b></div>`).join('')}</div>
   <div class="cf">${adCfTablaHtml(cf)}${adCfPieHtml(cf)}</div>
   <div class="firmas"><div>${adEsc(bol.docente || '')}<br><small>Docente de grado</small></div><div>${adEsc(bol.director || '')}<br><small>Director(a)</small></div></div>
-  <div class="marca">${cf.inasisFuente === 'pase' ? 'Inasistencias voluntarias: días marcados Ausente sin excusa en el pase de lista. · ' : ''}Elaborado con M.E.T.A.S · ${adEsc(adFechaBonita(adHoy()))}</div>
+  <div class="marca">${cf.inasisOficiales ? 'Inasistencias: la oficial del SACE' + (cf.inasisOficiales < cf.filas.length ? '; donde falta, las voluntarias del pase de lista' : '') + '. · ' : cf.inasisFuente === 'pase' ? 'Inasistencias voluntarias: días marcados Ausente sin excusa en el pase de lista. · ' : ''}Elaborado con M.E.T.A.S · ${adEsc(adFechaBonita(adHoy()))}</div>
 <script>window.onload=function(){setTimeout(function(){window.print();},280);}<\/script></body></html>`;
   adPrintAbrir(html);
 }
@@ -7651,7 +7651,7 @@ function adSacePasos(vista, parcial) {
   if (vista === 'pers') return ['Los cuatro parciales están a la vista, rasgo por rasgo.',
     'Escribe S, MB o B, o toca el valor de arriba.', 'Toca 📋 en cada columna y pégala en el SACE.'];
   if (vista === 'inasis') return ['Elige las fechas y toca «Traer faltas del pase de lista».',
-    'Las excusas no cuentan. Puedes corregir a mano.', 'Las columnas del año se suman solas. Toca 📋 para copiar.'];
+    'Las excusas no cuentan. Puedes corregir a mano.', 'En «Oficial SACE» escribe la del año: va al Cuadro final.'];
   if (vista === 'recup') return ['Solo se llenan las materias con final bajo 70.',
     'N/A ya la aprobó. El punto gris: le falta un parcial.', 'Toca 📋 en cada materia y pégala en el SACE.'];
   return ['Elige el parcial y la sección arriba.',
@@ -7898,7 +7898,9 @@ function adRenderSace(body, d) {
           </tr>` : `
           <tr>
             <th class="ad-mx-sticky ad-mx-corner">Nº · Alumno</th>
-            ${cols.map((c, ci) => `<th><div class="ad-mx-h">${esInasis ? 'Parcial ' + parcial + '<small class="ad-mx-hsub">para la boleta</small>' : adEsc(c)}</div>
+            ${esAnio ? `<th class="ad-mx-ofi-h"><div class="ad-mx-h">Oficial SACE<small class="ad-mx-hsub">del año · va al Cuadro final</small></div>
+              <div class="ad-mx-hbtns"><button class="ad-mx-copy" data-ia="ofi" title="Copiar la inasistencia oficial del año para el SACE">📋</button></div></th>` : ''}
+            ${cols.map((c, ci) => `<th${esAnio ? ' class="ad-mx-ini"' : ''}><div class="ad-mx-h">${esInasis ? 'Parcial ' + parcial + '<small class="ad-mx-hsub">para la boleta</small>' : adEsc(c)}</div>
               <div class="ad-mx-hbtns">
                 ${!esInasis && !esRec ? `<button class="ad-mx-mv" data-col="${ci}" data-dir="-1" title="Mover a la izquierda"${ci === 0 ? ' disabled' : ''}>◀</button>` : ''}
                 <button class="ad-mx-copy" data-col="${ci}" title="Copiar «${adEsc(c)}${esRec ? ' · Recuperación' : ''}» para SACE">📋</button>
@@ -7917,8 +7919,14 @@ function adRenderSace(body, d) {
                   <span class="ad-mx-nom">${adEsc(adPrimerNombre(a.nombre)) || '·'}</span>
                   ${a.noCopiarSace ? `<button type="button" class="ad-mx-nocopy-tag" data-nc-quitar="${a.num}" title="Omitido al copiar columna (📋). Toca para volver a incluirlo">🙈</button>` : ''}
                 </div></td>
+              ${esAnio ? (() => { const o = window.ResumenSace.inasisOficialDe(d, a.num), v = (ia.porAlumno[a.num] || {}).vol;
+                /* vacía: el gris dice lo que el Cuadro final usa mientras tanto (las voluntarias) */
+                return `<td class="ad-mx-ofi-td"><input class="ad-mx-ofi" data-ofi-num="${a.num}" type="text" inputmode="numeric" maxlength="3"
+                  aria-label="Inasistencia oficial del año de ${adEsc(adPrimerNombre(a.nombre) || ('#' + a.num))}"
+                  value="${o == null ? '' : o}" placeholder="${v === '' || v == null ? '·' : v}"></td>`; })() : ''}
               ${esRec ? colDefs.map((cd, ci) => adRecCeldaHtml(d, cd.campo, a.num, ri * colDefs.length + ci, finalDe(cd.campo, a.num))).join('') : colDefs.map((cd, ci) => { const cls = [cd.ini ? 'ad-mx-ini' : '',
-                !esLetra && cd.campo !== 'Inasistencias' ? adNotaEscalaClase(valOfP(cd.parcial, cd.campo, a.num)) : ''].filter(Boolean).join(' ');
+                !esLetra && cd.campo !== 'Inasistencias' ? adNotaEscalaClase(valOfP(cd.parcial, cd.campo, a.num)) : '',
+                esAnio ? 'ad-mx-ini' : ''].filter(Boolean).join(' ');
                 return `<td${cls ? ' class="' + cls + '"' : ''}><input class="ad-mx-inp" data-idx="${ri * colDefs.length + ci}"
                 data-num="${a.num}" data-alumno="${a.num}" data-campo="${adEsc(cd.campo)}" data-materia="${adEsc(cd.campo)}" data-parcial="${cd.parcial}" type="text" inputmode="${esLetra ? 'text' : 'numeric'}"
                 maxlength="3" autocapitalize="characters" ${esLetra ? 'style="text-transform:uppercase;"' : ''}
@@ -8591,14 +8599,37 @@ function adRenderSace(body, d) {
 
   // Copiar UNA columna (materia/rasgo) para SACE — botón 📋 en su cabecera.
   // En Personalidad cada botón trae su rasgo Y su parcial (hay 4 a la vista).
+  /* 📅 Inasistencia oficial del año: se guarda aparte de las notas, en
+     d.inasisOficial (vacía = se borra). Enter o ↓ bajan al siguiente alumno. */
+  const ofis = [...body.querySelectorAll('.ad-mx-ofi')];
+  ofis.forEach((inp, i) => {
+    inp.addEventListener('input', () => {
+      const t = inp.value.replace(/\D/g, '').slice(0, 3);
+      if (t !== inp.value) inp.value = t;
+      const dd = adLoad();
+      dd.inasisOficial = dd.inasisOficial || {};
+      if (t === '') delete dd.inasisOficial[inp.dataset.ofiNum];
+      else dd.inasisOficial[inp.dataset.ofiNum] = Number(t);
+      if (!Object.keys(dd.inasisOficial).length) delete dd.inasisOficial;
+      adSave(dd);
+    });
+    inp.addEventListener('keydown', ev => {
+      const j = ev.key === 'Enter' || ev.key === 'ArrowDown' ? i + 1 : ev.key === 'ArrowUp' ? i - 1 : null;
+      if (j == null) return;
+      ev.preventDefault();
+      if (ofis[j]) { ofis[j].focus(); ofis[j].select(); }
+    });
+  });
   body.querySelectorAll('.ad-mx-copy').forEach(btn => btn.addEventListener('click', () => {
     const dd = adLoad();
     const iaK = btn.dataset.ia;
-    const c = iaK ? AD_IA_COLS.find(x => x.k === iaK).et : (btn.dataset.campo || cols[+btn.dataset.col]);
+    const c = iaK === 'ofi' ? 'Inasistencia oficial' : iaK ? AD_IA_COLS.find(x => x.k === iaK).et : (btn.dataset.campo || cols[+btn.dataset.col]);
     const p = btn.dataset.parcial || parcial;
     /* en ✍️ Recuperación se copia la recuperación, y solo la que cuenta
        (final bajo 70): el SACE la deja vacía en las materias aprobadas */
-    const ns = iaK
+    const ns = iaK === 'ofi'
+      ? dd.lista.reduce((o, a) => { const v = window.ResumenSace.inasisOficialDe(dd, a.num); if (v != null) o[a.num] = v; return o; }, {})
+      : iaK
       ? (() => { const k = iaK, pa = window.ResumenSace.inasistenciasAnio(dd).porAlumno;
           return dd.lista.reduce((o, a) => { const v = (pa[a.num] || {})[k]; if (v !== '' && v != null) o[a.num] = v; return o; }, {}); })()
       : esRec

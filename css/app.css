@@ -7077,3 +7077,19 @@ body:has(.ad-sace-card) #metasInstallBtn { display: none !important; }
 @media (hover: hover) { .est-alumno-btn:hover { border-color: var(--brand-light); } }
 .est-alumno-btn:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
 .ad-herr.ad-herr-on { background: var(--brand-mid); color: #fff; border-color: var(--brand-mid); }
+
+/* ── 📅 Inasistencia oficial del SACE (v507) ─────────────────────────
+   La escribe el maestro tal como la lleva el cuadro oficial; es la que va
+   al Cuadro final. Fondo verde suave: es la única del año que se escribe
+   (las demás se suman solas). El gris de la casilla vacía es lo que el
+   Cuadro final usa mientras tanto. */
+.ad-mx th.ad-mx-ofi-h { background: #ecfdf5; }
+.ad-mx td.ad-mx-ofi-td { background: #f0fdf4; min-width: 92px; }
+.ad-mx-ofi {
+  width: 64px; height: 44px; border: none; outline: none; text-align: center; background: transparent;
+  font-family: inherit; font-size: calc(15px * var(--metas-fz, 1)); font-weight: 900; color: var(--text);
+}
+.ad-mx-ofi::placeholder { color: #94a3b8; font-weight: 600; }
+.ad-mx-ofi:focus { background: #eef4ff; box-shadow: inset 0 0 0 2px #1565c0; }
+:root[data-theme="dark"] .ad-mx th.ad-mx-ofi-h, :root[data-theme="dark"] .ad-mx td.ad-mx-ofi-td { background: rgba(22,163,74,.14); }
+:root[data-theme="dark"] .ad-mx-ofi:focus { background: rgba(21,101,192,.25); }
