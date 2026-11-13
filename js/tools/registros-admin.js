@@ -5475,10 +5475,8 @@ function adRenderAsis(body, d) {
 
   body.innerHTML = `
     <div class="pa-card">
-      <div class="pa-card-title">📋 Pase de lista</div>
-      <p class="pa-optional-hint">Toca solo a los que <strong>faltaron</strong>: un toque =
-        🚫 ausente (NSP) · dos toques = 📝 con excusa · tres toques = presente otra vez.
-        Los demás cuentan como presentes sin tocar nada.</p>
+      <div class="ad-tit-fila"><div class="pa-card-title">📋 Pase de lista</div>
+        <button type="button" class="ad-sace-ayuda" id="ad-asis-ayuda">ⓘ ¿Cómo se pasa lista?</button></div>
       <div class="pa-field"><label>Fecha</label>
         <input type="date" id="ad-asis-fecha" class="pa-inp-field" value="${fechaSel}" max="${hoy}"></div>
       <div class="ad-chips">
@@ -5492,7 +5490,7 @@ function adRenderAsis(body, d) {
             ${nom ? `<span class="ad-chip-nom">${adEsc(nom)}</span>` : ''}</button>`;
         }).join('')}
       </div>
-      <p class="pa-optional-hint" style="margin-top:8px">
+      <p class="ad-linea" id="ad-asis-cuenta">
         ${Object.keys(reg.aus).length
           ? '🚫 ' + Object.entries(reg.aus).filter(([, v]) => v === 'A').length + ' ausentes · 📝 ' +
             Object.entries(reg.aus).filter(([, v]) => v === 'E').length + ' con excusa'
@@ -5502,8 +5500,7 @@ function adRenderAsis(body, d) {
 
     <div class="pa-card">
       <div class="pa-card-title">📨 Excusas de las familias</div>
-      <p class="pa-optional-hint" style="margin-top:-2px">Lo que los padres avisaron por el asistente.
-        <strong>Apruébala aquí</strong> y el día queda marcado 📝 con excusa en el pase de lista.</p>
+      <p class="ad-linea">Apruébala aquí y el día queda con 📝 excusa.</p>
       <div id="ad-asis-exc"><p class="pa-optional-hint">⏳ Revisando el buzón…</p></div>
       <div class="ad-btn-row">
         <button class="pa-generate-btn ad-btn-sec" id="ad-exc-refresh">🔄 Revisar buzón</button>
@@ -5512,9 +5509,6 @@ function adRenderAsis(body, d) {
 
     <div class="pa-card">
       <div class="pa-card-title">📊 Ausencias</div>
-      <p class="pa-optional-hint" style="margin-top:-2px">Elige el mes y mira las faltas
-        <strong>día por día</strong> (qué pasó cada día) o el <strong>resumen del mes</strong>
-        (cuánto acumula cada alumno).</p>
       <div class="ad-meses">
         ${mesesDisp.map(m => `<button class="ad-mes-btn ${m === mesSel ? 'ad-mes-on' : ''}" data-mes="${m}">${adMesLabel(m)}</button>`).join('')}
       </div>
@@ -5524,7 +5518,7 @@ function adRenderAsis(body, d) {
         <button class="ad-mes-btn ${vista === 'mes' ? 'ad-mes-on' : ''}" data-vista="mes">📊 Resumen del mes</button>
       </div>
       ${!Object.keys(resumen).length
-        ? `<p class="pa-optional-hint">Sin ausencias registradas en <strong>${adMesLabel(mesSel)}</strong>. 🎉</p>`
+        ? `<p class="ad-linea">Sin ausencias en <strong>${adMesLabel(mesSel)}</strong>. 🎉</p>`
         : vista === 'dia' ? `
       <div class="ad-resumen">
         <span>🗓 Días con faltas: <strong>${dias.length}</strong></span>
@@ -5562,6 +5556,11 @@ function adRenderAsis(body, d) {
       <button class="pa-generate-btn ad-btn-sec" id="ad-asis-print">🖨️ Imprimir resumen (${adMesLabel(mesSel)})</button>`}
     </div>`;
 
+  /* la explicación de los toques vivía en una caja amarilla fija */
+  const AD_ASIS_PASOS = ['Toca solo a los que faltaron. Los demás quedan presentes.',
+    'Un toque: 🚫 ausente. Dos toques: 📝 con excusa.', 'Tres toques: vuelve a presente.'];
+  document.getElementById('ad-asis-ayuda').addEventListener('click', () => adAyudaVentana('ⓘ ¿Cómo se pasa lista?', AD_ASIS_PASOS));
+  adAyudaPrimeraVez('METAS_ASIS_AYUDA_VISTA_V1', 'ⓘ ¿Cómo se pasa lista?', AD_ASIS_PASOS);
   document.getElementById('ad-asis-fecha').addEventListener('change', e => {
     const f = e.target.value || hoy;
     body.dataset.fecha = f;
@@ -7658,6 +7657,59 @@ function adSacePasos(vista, parcial) {
   return ['Elige el parcial y la sección arriba.',
     'Escribe la nota y pasa con Enter o Tab.', 'Toca 📋 en cada materia y pégala en el SACE.'];
 }
+/* Ventana de ayuda de 3 pasos para cualquier pestaña de Mi aula (las
+   cajas amarillas de instrucciones se mudaron aquí). Se crea al pedirla. */
+function adAyudaVentana(titulo, pasos) {
+  const ov = document.createElement('div');
+  ov.className = 'ad-gen-ov';
+  ov.innerHTML = `
+    <div class="ad-gen-card" role="dialog" aria-modal="true" aria-labelledby="ad-ayuda-tit">
+      <div class="ad-gen-head"><div class="ad-gen-title" id="ad-ayuda-tit">${adEsc(titulo)}</div>
+        <button type="button" class="ad-gen-close" data-cerrar aria-label="Cerrar">✕</button></div>
+      <ol class="ad-sace-pasos">${pasos.map(t => '<li>' + t + '</li>').join('')}</ol>
+      <div class="ad-gen-foot"><button type="button" class="pa-generate-btn" data-cerrar>Entendido</button></div>
+    </div>`;
+  const fin = () => { ov.remove(); document.removeEventListener('keydown', esc); };
+  const esc = e => { if (e.key === 'Escape') fin(); };
+  ov.addEventListener('click', e => { if (e.target === ov || e.target.closest('[data-cerrar]')) fin(); });
+  document.addEventListener('keydown', esc);
+  document.body.appendChild(ov);
+  ov.querySelector('.ad-gen-foot button').focus();
+  return ov;
+}
+/* La ayuda de una pestaña se abre sola solo la primera vez (llave propia,
+   de vista). No en las sondas automáticas: taparía lo que ellas tocan. */
+function adAyudaPrimeraVez(llave, titulo, pasos) {
+  if (!navigator.webdriver && adSacePrefPrimeraVez(llave)) adAyudaVentana(titulo, pasos);
+}
+/* Elegir un alumno con botones (en vez de una lista desplegable).
+   Resuelve con su número, o null si se cierra sin elegir. */
+function adElegirAlumnoVentana(lista, actual, titulo) {
+  return new Promise(resolve => {
+    const ov = document.createElement('div');
+    ov.className = 'ad-gen-ov';
+    ov.innerHTML = `
+      <div class="ad-gen-card" role="dialog" aria-modal="true" aria-labelledby="ad-elegir-tit">
+        <div class="ad-gen-head"><div class="ad-gen-title" id="ad-elegir-tit">${adEsc(titulo || '🧑‍🎓 Elige al alumno')}</div>
+          <button type="button" class="ad-gen-close" data-cerrar aria-label="Cerrar">✕</button></div>
+        <div class="ad-sace-vent-cuerpo"><div class="ad-sace-alumnos">
+          ${lista.map(a => `<button type="button" class="ad-herr ad-sace-al${String(a.num) === String(actual) ? ' ad-herr-on' : ''}" data-elegir="${a.num}"
+            aria-pressed="${String(a.num) === String(actual)}">${(typeof adEsPrueba === 'function' && adEsPrueba(a)) ? '🧪 ' : ''}#${a.num} · ${adEsc(adPrimerNombre(a.nombre)) || 'Sin nombre'}</button>`).join('')}
+        </div></div>
+      </div>`;
+    const fin = v => { ov.remove(); document.removeEventListener('keydown', esc); resolve(v); };
+    const esc = e => { if (e.key === 'Escape') fin(null); };
+    ov.addEventListener('click', e => {
+      const b = e.target.closest('[data-elegir]');
+      if (b) fin(+b.dataset.elegir);
+      else if (e.target === ov || e.target.closest('[data-cerrar]')) fin(null);
+    });
+    document.addEventListener('keydown', esc);
+    document.body.appendChild(ov);
+    (ov.querySelector('.ad-herr-on') || ov.querySelector('[data-elegir]')).focus();
+  });
+}
+
 function adSaceVentAbrir(body, cual) {
   adSaceVentCerrar(body);
   const ov = body.querySelector('#ad-sace-v-' + cual);
@@ -7793,6 +7845,9 @@ function adRenderSace(body, d) {
         const sig = AD_PERS_SIGNIF[v];
         return '<b>' + adEsc(v) + (num && num !== v ? ' (' + adEsc(num) + ')' : '') + '</b>' + (sig ? ' = ' + adEsc(sig) : '');
       }).join(' · ')}</p>
+      <!-- PENDIENTE (v505, pedido del maestro): esta caja azul es lo último de
+           Notas SACE con el criterio viejo. La escala ya está en la leyenda de
+           arriba; «Al copiar en 📋» podría ir a un chip de Herramientas. -->
       <div class="ad-pers-sace-box">
         <div class="ad-pers-sace-info">
           <div class="ad-pers-sace-tit">Por favor llene las celdas de personalidad de los alumnos siguiendo la Escala:</div>

@@ -106,11 +106,12 @@ igual(fin(7).prom, 92, 'promedio general de Gala: 92');
 ok(fin(7).aprobo === false, 'Gala reprueba: el promedio no salva una materia en 69');
 ok(!r.porAlumno.some(x => [8, 9, 11, 12].includes(x.a.num)), 'traslado, desertora, fuera del SACE y prueba no tienen fila de notas');
 
-/* ── cuadro 1: escala por promedio general ── */
-igual(r.escalaGen.I, { N: 0, V: 1, T: 1 }, 'Inicial: Bruno (69)');
+/* ── cuadro 1: el reprobado va en Inicial; los demás, por su promedio ──
+   (13 de noviembre de 2026: con 9 reprobados el cuadro decía 10 iniciales) */
+igual(r.escalaGen.I, { N: 1, V: 1, T: 2 }, 'Inicial: Bruno (69) y Gala (reprueba Matemáticas aunque promedia 92)');
 igual(r.escalaGen.B, { N: 2, V: 0, T: 2 }, 'Básico: Alba (70) y Cira (79)');
 igual(r.escalaGen.A, { N: 1, V: 1, T: 2 }, 'Avanzado: Dimas (80) y Eva (90)');
-igual(r.escalaGen.E, { N: 1, V: 1, T: 2 }, 'Excelente: Fito (91) y Gala (92)');
+igual(r.escalaGen.E, { N: 0, V: 1, T: 1 }, 'Excelente: Fito (91)');
 
 /* ── cuadro 5 ── */
 igual(r.aprobados, { N: 3, V: 2, T: 5 }, 'Aprobados: Alba, Cira, Eva, Dimas, Fito');
@@ -125,6 +126,26 @@ igual(pa('artistica'), [7, 1, 8, 1, 2, 3, 2, 0], 'Educación Artística: Gala co
 ok(r.porAsig.fisica.T === 8 && r.asignaturas.find(x => x.k === 'fisica').col === 'Educación Física',
   '«Educación Física» de Notas SACE es «Educación Física y Deportes» del formulario');
 ok(r.porAsig.tecnologia.cuenta === false, 'Tecnología no cuenta');
+
+/* ── los cuadros cuadran entre sí ── */
+const cuadran = rr => ['N', 'V', 'T'].every(k => rr.escalaGen.I[k] === rr.reprobados[k]) &&
+  ['N', 'V', 'T'].every(k => rr.escalaGen.I[k] + rr.escalaGen.B[k] + rr.escalaGen.A[k] + rr.escalaGen.E[k] === rr.evaluados[k]) &&
+  rr.asignaturas.filter(x => rr.porAsig[x.k].cuenta).every(x => { const p = rr.porAsig[x.k];
+    return p.I === p.NA && p.A + p.NA === p.T && p.I + p.B + p.AV + p.E === p.T; });
+ok(cuadran(r), 'cuadro 1: Inicial = reprobados del cuadro 5, y las cuatro escalas suman los evaluados; cuadro 3: I = NA del cuadro 2');
+/* Bruno aprueba en recuperación todo lo que reprobó (como Balloteth): sale
+   de reprobados y también de Inicial, en el cuadro 1 y en cada materia */
+const gRec = JSON.parse(antes);
+const finBruno = r.porAlumno.find(x => x.a.num === 2).fin;
+gRec.recuperacion = {};
+r.asignaturas.filter(x => x.col && finBruno[x.k] != null && finBruno[x.k] < 70).forEach(x => {
+  gRec.recuperacion[x.col] = { 2: 75 };
+});
+const rRec = RS.calcular(gRec, { corte: CORTE, SL });
+ok(Object.keys(gRec.recuperacion).length > 0 && rRec.reprobados.T === r.reprobados.T - 1 && rRec.escalaGen.I.T === r.escalaGen.I.T - 1 &&
+  rRec.escalaGen.B.T === r.escalaGen.B.T + 1 && rRec.aprobadosRec.T === 1,
+  'aprobado en recuperación: sale de reprobados y de Inicial, y entra en Básico (no en Inicial)');
+ok(cuadran(rRec), 'y con recuperación los cuadros siguen cuadrando entre sí');
 
 /* ── cuadro 4 ── */
 const ed = k => r.edades[k];
