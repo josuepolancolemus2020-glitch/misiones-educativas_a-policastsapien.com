@@ -63,6 +63,9 @@ let _adControlId = null;     /* control abierto en Controles */
 let _adSaceParcial = 'I';    /* Parcial activo en Notas SACE: I | II | III | IV */
 let _adSaceVista = 'aprov';   /* Sección a llenar: aprov | pers | inasis | recup */
 let _adPersCopyModo = 'preguntar'; /* Cómo copiar Personalidad con 📋: preguntar | num | letra */
+/* Ventana de Notas SACE que sigue abierta al re-pintar (subir un logo
+   re-pinta la pestaña: sin esto la ventana del Encabezado se cerraba sola) */
+let _adSaceVent = '';
 let _adGrupoActivoId = null; /* Grupo/sección activo en el aula */
 try {
   const _sp = localStorage.getItem('METAS_SACE_PARCIAL');
@@ -7624,6 +7627,63 @@ async function adAutorizarSugerirParcialIV(alTerminar) {
   if (typeof toast === 'function') toast('🛡️ Autorizado «Sugerir notas» para el Parcial IV');
 }
 
+/* Parciales con «Sugerir notas» cerrado: solo pinta el 🔒 de los botones.
+   La protección de verdad sigue en el manejador de #ad-sace-sugerir. */
+const AD_SACE_CERRADOS = ['I', 'II', 'III'];
+const AD_SACE_VISTAS = [
+  { k: 'aprov', et: '📚 Aprovechamiento' }, { k: 'pers', et: '🙂 Personalidad' },
+  { k: 'inasis', et: '📅 Inasistencias' }, { k: 'recup', et: '✍️ Recuperación' }];
+/* Llaves NUEVAS, solo de vista: ya vio la ayuda / ya vio el aviso del 🔒.
+   Parcial y sección se siguen recordando en METAS_SACE_PARCIAL y
+   METAS_SACE_VISTA, como antes. */
+const AD_SACE_AYUDA_KEY = 'METAS_SACE_AYUDA_VISTA_V1';
+const AD_SACE_CANDADO_KEY = 'METAS_SACE_CANDADO_AVISO_V1';
+/* true solo la primera vez; desde ahí queda marcada. Sin localStorage
+   (modo privado) cuenta como ya vista: mejor callar que repetir siempre. */
+function adSacePrefPrimeraVez(llave) {
+  try {
+    if (localStorage.getItem(llave)) return false;
+    localStorage.setItem(llave, '1');
+    return true;
+  } catch (_) { return false; }
+}
+/* Los pasos de «¿Cómo se llena?», tres como máximo, según la sección */
+function adSacePasos(vista, parcial) {
+  if (vista === 'pers') return ['Los cuatro parciales están a la vista, rasgo por rasgo.',
+    'Escribe S, MB o B, o toca el valor de arriba.', 'Toca 📋 en cada columna y pégala en el SACE.'];
+  if (vista === 'inasis') return ['Elige las fechas y toca «Traer faltas del pase de lista».',
+    'Las excusas no cuentan. Puedes corregir a mano.', 'Las columnas del año se suman solas. Toca 📋 para copiar.'];
+  if (vista === 'recup') return ['Solo se llenan las materias con final bajo 70.',
+    'N/A ya la aprobó. El punto gris: le falta un parcial.', 'Toca 📋 en cada materia y pégala en el SACE.'];
+  return ['Elige el parcial y la sección arriba.',
+    'Escribe la nota y pasa con Enter o Tab.', 'Toca 📋 en cada materia y pégala en el SACE.'];
+}
+function adSaceVentAbrir(body, cual) {
+  adSaceVentCerrar(body);
+  const ov = body.querySelector('#ad-sace-v-' + cual);
+  if (!ov) return;
+  _adSaceVent = cual;
+  ov.hidden = false;
+  /* el foco entra a la ventana (el primero que se ve: el input del logo
+     está escondido dentro de su «📷 Subir») */
+  const f = [...ov.querySelectorAll('.ad-sace-vent-cuerpo button, .ad-sace-vent-cuerpo input, .ad-gen-foot button')]
+    .find(x => x.offsetParent);
+  if (f) f.focus();
+  /* Esc cierra aunque el foco se haya quedado fuera; se engancha una vez */
+  if (!adSaceVentAbrir._esc) {
+    adSaceVentAbrir._esc = true;
+    document.addEventListener('keydown', e => {
+      if (e.key !== 'Escape') return;
+      const b = document.getElementById('ad-tab-body');
+      if (b && b.querySelector('.ad-sace-vent:not([hidden])')) adSaceVentCerrar(b);
+    });
+  }
+}
+function adSaceVentCerrar(body) {
+  _adSaceVent = '';
+  body.querySelectorAll('.ad-sace-vent').forEach(ov => { ov.hidden = true; });
+}
+
 function adRenderSace(body, d) {
   if (!d.lista.length) { adSinLista(body, 'la boleta'); return; }
   /* Asegurar que se use y sincronice el parcial y vista activos */
@@ -7704,8 +7764,159 @@ function adRenderSace(body, d) {
   body.innerHTML = `
     <div class="pa-card">
       <div class="pa-card-title">🧾 Boleta de calificaciones</div>
-      <details class="ad-boleta-cfg">
-        <summary>🏫 Encabezado (logos y datos oficiales)</summary>
+      <!-- Parcial y sección como botones a la vista: el maestro ve las
+           opciones sin abrir nada y sabe cuál está elegida. -->
+      <div class="ad-seg-fila">
+        <span class="ad-seg-lbl" id="ad-seg-lbl-parcial">Parcial</span>
+        ${esLetra || esRec ? `<p class="ad-seg-nota">${esRec ? 'Al final del año, después del Parcial IV.' : 'Los cuatro parciales están a la vista.'}</p>` : `
+        <div class="ad-seg" id="ad-sace-parcial" role="group" aria-labelledby="ad-seg-lbl-parcial">
+          ${['I', 'II', 'III', 'IV'].map(p => `<button type="button" class="ad-seg-btn" data-sel-parcial="${p}" aria-pressed="${p === parcial}">${p}${AD_SACE_CERRADOS.includes(p) ? '<span class="ad-seg-candado" aria-label="cerrado">🔒</span>' : ''}</button>`).join('')}
+        </div>`}
+      </div>
+      <div class="ad-seg-fila">
+        <span class="ad-seg-lbl" id="ad-seg-lbl-vista">Sección</span>
+        <div class="ad-seg ad-seg-sec" id="ad-sace-vista" role="group" aria-labelledby="ad-seg-lbl-vista">
+          ${AD_SACE_VISTAS.map(v => `<button type="button" class="ad-seg-btn" data-sel-vista="${v.k}" aria-pressed="${v.k === vista}">${v.et}</button>`).join('')}
+        </div>
+      </div>
+
+      ${esLetra ? `
+      <div class="ad-pers-kp">
+        <span class="ad-pers-kp-lbl">Valor:</span>
+        ${d.boleta.escalaPers.map(v => `<button class="ad-pers-val" data-v="${adEsc(v)}">${adEsc(v)}</button>`).join('')}
+        <button class="ad-pers-val ad-pers-borrar" data-v="">✕</button>
+        <button class="ad-pers-edit" id="ad-pers-editescala">✏️ Editar escala</button>
+        <span class="ad-pers-ctx" id="ad-pers-ctx"></span>
+      </div>
+      <p class="ad-pers-leyenda">${d.boleta.escalaPers.map(v => {
+        const num = adPersANumero(v, d.boleta.escalaPers);
+        const sig = AD_PERS_SIGNIF[v];
+        return '<b>' + adEsc(v) + (num && num !== v ? ' (' + adEsc(num) + ')' : '') + '</b>' + (sig ? ' = ' + adEsc(sig) : '');
+      }).join(' · ')}</p>
+      <div class="ad-pers-sace-box">
+        <div class="ad-pers-sace-info">
+          <div class="ad-pers-sace-tit">Por favor llene las celdas de personalidad de los alumnos siguiendo la Escala:</div>
+          <div class="ad-pers-sace-escala">
+            <span><b>4:Sobresaliente</b> (S)</span>
+            <span><b>3:Muy Bueno</b> (MB)</span>
+            <span><b>2:Bueno</b> (B)</span>
+          </div>
+        </div>
+        <div class="ad-pers-sace-ctrl">
+          <span class="ad-pers-sace-lbl">Al copiar en 📋:</span>
+          <div class="ad-pers-sace-btns" role="group" aria-label="Formato al copiar personalidad">
+            <button type="button" class="ad-pers-modo-btn${_adPersCopyModo === 'preguntar' ? ' active' : ''}" data-pers-modo="preguntar" title="Preguntar al tocar 📋 si deseas copiar en número (4, 3, 2) o en letra (S, MB, B)">💬 Elegir al copiar</button>
+            <button type="button" class="ad-pers-modo-btn${_adPersCopyModo === 'num' ? ' active' : ''}" data-pers-modo="num" title="Copiar directamente en número (4:Sobresaliente, 3:Muy Bueno, 2:Bueno) al tocar 📋">🔢 Copiar en número (4, 3, 2)</button>
+            <button type="button" class="ad-pers-modo-btn${_adPersCopyModo === 'letra' ? ' active' : ''}" data-pers-modo="letra" title="Copiar directamente en letra (S, MB, B) al tocar 📋">🔤 Copiar en letra (S, MB, B)</button>
+          </div>
+        </div>
+      </div>` : ''}
+
+      ${esInasis ? `
+      <div class="ad-inasis-bar">
+        <div class="pa-row-2">
+          <div class="pa-field"><label>Desde</label><input type="date" id="ad-inasis-desde" class="pa-inp-field" value="${desdeDef}"></div>
+          <div class="pa-field"><label>Hasta</label><input type="date" id="ad-inasis-hasta" class="pa-inp-field" value="${hastaDef}"></div>
+        </div>
+        ${desdeDef && hastaDef && adDiasEntre(desdeDef, hastaDef) > 100 ? `<p class="ad-sace-aviso">⚠️ Este rango tiene ${adDiasEntre(desdeDef, hastaDef)} días, casi el año entero: «Traer faltas» pondría en el <strong>Parcial ${parcial}</strong> las faltas de todo el año. Pon solo las fechas de este parcial.</p>` : ''}
+        <button class="pa-generate-btn ad-btn-sec" id="ad-inasis-traer">📅 Traer faltas del pase de lista</button>
+      </div>
+      ${esAnio && ia.fuente !== 'pase' ? '<p class="ad-sace-aviso">⚠️ Este grupo no tiene pase de lista este año.</p>' : ''}` : ''}
+
+      <div class="ad-nt-fila">
+        ${!esLetra && !esInasis ? `<div class="ad-nt-ley" aria-label="Colores de las notas">
+          <span class="nt-i">Inicial: hasta 69</span><span class="nt-b">Básico: 70 a 79</span>
+          <span class="nt-a">Avanzado: 80 a 90</span><span class="nt-e">Excelente: 91 a 100</span></div>` : ''}
+        <button type="button" class="ad-sace-ayuda" id="ad-sace-ayuda">ⓘ ¿Cómo se llena?</button>
+      </div>
+      <div class="ad-mx-wrap">
+        <table class="ad-mx${esLetra ? ' ad-mx-pers' : ''}">
+          <thead>${esLetra ? `
+          <tr>
+            <th class="ad-mx-sticky ad-mx-corner" rowspan="2">Nº · Alumno</th>
+            ${cols.map(c => `<th colspan="4" class="ad-mx-ini"><div class="ad-mx-h">${adEsc(c)}</div></th>`).join('')}
+          </tr>
+          <tr>
+            ${colDefs.map(cd => `<th class="ad-mx-sub${cd.ini ? ' ad-mx-ini' : ''}"><span>${cd.parcial}</span>
+              <button class="ad-mx-copy" data-campo="${adEsc(cd.campo)}" data-parcial="${cd.parcial}"
+                title="Copiar «${adEsc(cd.campo)} · Parcial ${cd.parcial}» para SACE">📋</button></th>`).join('')}
+          </tr>` : `
+          <tr>
+            <th class="ad-mx-sticky ad-mx-corner">Nº · Alumno</th>
+            ${cols.map((c, ci) => `<th><div class="ad-mx-h">${esInasis ? 'Parcial ' + parcial + '<small class="ad-mx-hsub">para la boleta</small>' : adEsc(c)}</div>
+              <div class="ad-mx-hbtns">
+                ${!esInasis && !esRec ? `<button class="ad-mx-mv" data-col="${ci}" data-dir="-1" title="Mover a la izquierda"${ci === 0 ? ' disabled' : ''}>◀</button>` : ''}
+                <button class="ad-mx-copy" data-col="${ci}" title="Copiar «${adEsc(c)}${esRec ? ' · Recuperación' : ''}» para SACE">📋</button>
+                ${!esInasis && !esRec ? `<button class="ad-mx-mv" data-col="${ci}" data-dir="1" title="Mover a la derecha"${ci === cols.length - 1 ? ' disabled' : ''}>▶</button>` : ''}
+              </div></th>`).join('')}
+            ${esAnio ? AD_IA_COLS.map((x, i) => `<th class="ad-mx-ia-h${i === 0 ? ' ad-mx-ini' : ''}"><div class="ad-mx-h">${x.et}<small class="ad-mx-hsub">${x.sub} · año ${adEsc(ia.anio)}</small></div>
+              <div class="ad-mx-hbtns"><button class="ad-mx-copy" data-ia="${x.k}" title="Copiar «${x.et}» del año para el SACE">📋</button></div></th>`).join('') +
+              '<th><div class="ad-mx-h">Revisar<small class="ad-mx-hsub">día por día</small></div></th>' : ''}
+          </tr>`}
+          </thead>
+          <tbody>
+            ${d.lista.map((a, ri) => `<tr data-rnum="${a.num}"${a.noCopiarSace ? ' class="ad-mx-tr-nocopy"' : ''}>
+              <td class="ad-mx-sticky" title="${adEsc((a.nombre || ('#' + a.num)) + (a.noCopiarSace ? ' · No se copia en 📋' : ''))}">
+                <div class="ad-mx-sbox">
+                  <span class="ad-mx-num ad-mx-num-fijo">#${a.num}</span>
+                  <span class="ad-mx-nom">${adEsc(adPrimerNombre(a.nombre)) || '·'}</span>
+                  ${a.noCopiarSace ? `<button type="button" class="ad-mx-nocopy-tag" data-nc-quitar="${a.num}" title="Omitido al copiar columna (📋). Toca para volver a incluirlo">🙈</button>` : ''}
+                </div></td>
+              ${esRec ? colDefs.map((cd, ci) => adRecCeldaHtml(d, cd.campo, a.num, ri * colDefs.length + ci, finalDe(cd.campo, a.num))).join('') : colDefs.map((cd, ci) => { const cls = [cd.ini ? 'ad-mx-ini' : '',
+                !esLetra && cd.campo !== 'Inasistencias' ? adNotaEscalaClase(valOfP(cd.parcial, cd.campo, a.num)) : ''].filter(Boolean).join(' ');
+                return `<td${cls ? ' class="' + cls + '"' : ''}><input class="ad-mx-inp" data-idx="${ri * colDefs.length + ci}"
+                data-num="${a.num}" data-alumno="${a.num}" data-campo="${adEsc(cd.campo)}" data-materia="${adEsc(cd.campo)}" data-parcial="${cd.parcial}" type="text" inputmode="${esLetra ? 'text' : 'numeric'}"
+                maxlength="3" autocapitalize="characters" ${esLetra ? 'style="text-transform:uppercase;"' : ''}
+                value="${valOfP(cd.parcial, cd.campo, a.num) !== '' ? adEsc(String(valOfP(cd.parcial, cd.campo, a.num))) : ''}" placeholder="·"></td>`; }).join('')}
+              ${esAnio ? AD_IA_COLS.map((x, i) => { const v = (ia.porAlumno[a.num] || {})[x.k]; return `<td class="ad-mx-ia${x.k === 'vol' ? ' ad-mx-ia-vol' : ''}${i === 0 ? ' ad-mx-ini' : ''}">${v === '' || v == null ? '<span class="ad-mx-ia-na">·</span>' : v}</td>`; }).join('') +
+                `<td class="ad-mx-ia ad-mx-ia-rev"><button type="button" class="ad-mx-rev" data-rf-num="${a.num}" title="Ver y corregir cada falta de ${adEsc(a.nombre || '')}">🔎</button></td>` : ''}
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+      ${!esLetra && !esInasis && !esRec ? `<div class="ad-rec-aviso" id="ad-sace-rec-aviso"${contarBajo70(d) ? '' : ' hidden'}>
+        <span id="ad-sace-rec-aviso-txt">⚠️ <strong>${contarBajo70(d)}</strong> alumno(s) con final bajo 70: les toca recuperación.</span>
+        <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-sace-ir-rec">✍️ Escribir la recuperación</button></div>` : ''}
+
+      <div class="ad-grupo-tit">Lista</div>
+      <div class="ad-herrs">
+        ${!esLetra && !esInasis && !esRec ? '<button type="button" class="ad-herr" id="ad-sace-addmat">➕ Agregar materia</button>' : ''}
+        <button type="button" class="ad-herr" id="ad-sace-orden-az">🔤 Ordenar A–Z</button>
+        <button type="button" class="ad-herr" id="ad-sace-orden-gen">♀♂ Niñas y luego varones</button>
+        <button type="button" class="ad-herr" id="ad-sace-nocopy">👀 Alumnos que no se copian al SACE${
+          d.lista.some(a => a.noCopiarSace) ? ' (' + d.lista.filter(a => a.noCopiarSace).length + ')' : ''}</button>
+      </div>
+
+      <div class="ad-grupo-tit">Imprimir y copiar</div>
+      <div class="ad-btn-row ad-imp-fila">
+        <button type="button" class="pa-generate-btn" id="ad-sace-boletas">🧾 Boletas de todo el grupo</button>
+        <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-sace-resumen">📋 Resumen final por grado</button>
+      </div>
+      <div class="ad-herrs">
+        <button type="button" class="ad-herr" id="ad-sace-bol-quien" value="">🧑‍🎓 Boleta de un alumno</button>
+        <button type="button" class="ad-herr" id="ad-sace-cfinal">📒 Cuadro final del año</button>
+        ${esLetra ? '<button type="button" class="ad-herr" id="ad-sace-csv-num">🔢 Copiar CSV en número (4, 3, 2)</button>' : ''}
+        ${esRec ? '' : `<button type="button" class="ad-herr" id="ad-sace-csv">${esLetra ? '🔤 Copiar CSV en letra (S, MB, B)' : '⬇ Copiar CSV (todas las materias)'}</button>`}
+      </div>
+
+      <div class="ad-grupo-tit">Herramientas</div>
+      <div class="ad-herrs">
+        <button type="button" class="ad-herr" id="ad-sace-chip-encabezado">🏫 Encabezado y logos</button>
+        <button type="button" class="ad-herr" id="ad-sace-chip-rescate">🛟 Recuperar o revisar notas</button>
+        <button type="button" class="ad-herr" id="ad-sace-versiones">🕓 Ver cambios guardados</button>
+        ${!esLetra && !esInasis && !esRec ? `<button type="button" class="ad-herr" id="ad-sace-sugerir">✨ Sugerir notas</button>
+        ${parcial === 'IV' ? (d.boleta && d.boleta.sugerirIVAuth
+          ? '<button type="button" class="ad-herr" id="ad-sace-bloquear-iv">🔒 Bloquear sugerencia</button>'
+          : '<button type="button" class="ad-herr" id="ad-sace-autorizar-iv">🛡️ Autorizar sugerir notas</button>') : ''}` : ''}
+      </div>
+      <p class="pa-optional-hint" id="ad-sace-estado" style="margin-top:8px"></p>
+    </div>
+
+    <div class="ad-gen-ov ad-sace-vent" id="ad-sace-v-encabezado" data-vent="encabezado" hidden>
+      <div class="ad-gen-card" role="dialog" aria-modal="true" aria-labelledby="ad-sace-v-enc-tit">
+        <div class="ad-gen-head"><div class="ad-gen-title" id="ad-sace-v-enc-tit">🏫 Encabezado de la boleta</div>
+          <button type="button" class="ad-gen-close" data-vent-cerrar aria-label="Cerrar">✕</button></div>
+        <div class="ad-sace-vent-cuerpo">
         <div class="ad-boleta-cfg-body">
           <div style="display:flex;gap:10px;flex-wrap:wrap;">
             <div class="ad-logo-fila" style="flex:1;min-width:180px;">
@@ -7756,193 +7967,54 @@ function adRenderSace(body, d) {
             <strong>reverso oficial</strong>). Se guardan y sincronizan con tus equipos. El grado y la sección
             se toman de la pestaña <strong>Alumnos</strong>.</p>
         </div>
-      </details>
-
-      <p class="pa-optional-hint">${esRec
-        ? 'La <strong>recuperación</strong> va <strong>al final del año</strong>, después de los cuatro parciales, como en el SACE. Solo se escribe en las materias con <strong>nota final bajo 70</strong> (promedio de los parciales I a IV). Con 70 o más en todas sus materias reprobadas, el alumno queda <strong>✓ Aprobado en recuperación</strong> en el Cuadro final, el Resumen final y los mensajes a las familias.'
-        : esLetra
-        ? 'La <strong>Personalidad</strong> se llena con los <strong>cuatro parciales a la vista</strong>: cada rasgo trae sus columnas I–IV, sin andar cambiando de parcial. Todo va a <strong>SACE</strong> y a la <strong>boleta</strong>.'
-        : `Elige el <strong>parcial</strong> y llena cada alumno <strong>a lo ancho</strong>,
-        en el orden de la boleta: avanza con <strong>Enter</strong> o <strong>Tab</strong> a la siguiente
-        materia y, al terminar la fila, baja al siguiente alumno. Las notas van a <strong>SACE</strong> y a la <strong>boleta</strong>.`}</p>
-      <div class="pa-row-2">
-        ${esLetra || esRec ? '' : `
-        <div class="pa-field"><label>Parcial</label>
-          <select id="ad-sace-parcial" class="pa-inp-field">
-            ${['I', 'II', 'III', 'IV'].map(p => `<option value="${p}" ${p === parcial ? 'selected' : ''}>Parcial ${p}</option>`).join('')}
-          </select></div>`}
-        <div class="pa-field"><label>Sección a llenar</label>
-          <select id="ad-sace-vista" class="pa-inp-field">
-            <option value="aprov" ${vista === 'aprov' ? 'selected' : ''}>📚 Aprovechamiento (todas las materias)</option>
-            <option value="pers" ${vista === 'pers' ? 'selected' : ''}>🙂 Personalidad (en letra)</option>
-            <option value="inasis" ${vista === 'inasis' ? 'selected' : ''}>📅 Inasistencias</option>
-            <option value="recup" ${vista === 'recup' ? 'selected' : ''}>✍️ Recuperación (al final del año)</option>
-          </select></div>
+        </div>
+        <div class="ad-gen-foot"><button type="button" class="pa-generate-btn" data-vent-cerrar>Listo</button></div>
       </div>
-      <p class="pa-optional-hint" style="margin-top:2px">
-        ${esLetra
-          ? 'La conducta es <strong>cualitativa</strong>: <strong>escríbela</strong> (S, MB, B) o toca la celda y luego el <strong>valor</strong>: el cursor recorre los parciales I→IV de cada rasgo y sigue solo. Para mover o borrar un alumno ve a <strong>👥 Alumnos</strong>; aquí puedes ordenar con <strong>🔤 Ordenar A–Z</strong> y <strong>♀♂ por género</strong>.'
-          : esRec
-            ? 'Bajo cada casilla va la <strong>nota final</strong> de esa materia. <strong>N/A</strong>: la aprobó, no hay recuperación. <strong>·</strong> gris: le falta algún parcial. Avanza con <strong>Enter</strong>, <strong>Tab</strong> o las flechas: el cursor salta solo a la siguiente casilla que se puede llenar. Con <strong>📋</strong> copias la columna para la RECUPERACIÓN del SACE.'
-          : esInasis
-            ? 'La columna <strong>Parcial ' + parcial + '</strong> es la de la <strong>boleta</strong>: escríbela o tráela del pase de lista. Las columnas del <strong>año</strong>, a la derecha, se suman solas del <strong>📋 pase de lista</strong> y son las del <strong>último archivo del SACE</strong>: <strong>Involuntarias</strong> = días con <strong>excusa</strong> 📝; <strong>Voluntarias</strong> = días <strong>Ausente sin excusa</strong> 🚫 (las que suma el 📒 Cuadro final y van a los cuadros oficiales). Toca <strong>📋</strong> en la columna para copiarla y <strong>🔎</strong> en un alumno para ver y corregir cada día. ' + (esAnio ? (ia.fuente === 'pase'
-              ? 'Se cuentan <strong>' + ia.dias + ' día(s) con pase de lista de ' + ia.anio + '</strong>, cada fecha una vez' + (ia.otrosAnios ? '; <strong>' + ia.otrosAnios + ' día(s) de otros años no se suman</strong>' : '') + (ia.repetidos ? '; <strong>' + ia.repetidos + ' fecha(s) repetida(s)</strong> cuentan una vez' : '') + '.'
-              : '⚠️ Este grupo <strong>no tiene pase de lista</strong> este año: las voluntarias salen de la suma de los parciales y las involuntarias quedan vacías.') : '')
-            : 'Escribe la <strong>nota (1-100)</strong>. Avanza con <strong>Enter</strong>, <strong>Tab</strong> o las flechas. Cada casilla toma el color de su escala. Para mover o borrar un alumno ve a <strong>👥 Alumnos</strong>; aquí puedes ordenar con <strong>🔤 Ordenar A–Z</strong> / <strong>♀♂ Niñas y Varones A–Z</strong>.'}</p>
+    </div>
 
-      ${esLetra ? `
-      <div class="ad-pers-kp">
-        <span class="ad-pers-kp-lbl">Valor:</span>
-        ${d.boleta.escalaPers.map(v => `<button class="ad-pers-val" data-v="${adEsc(v)}">${adEsc(v)}</button>`).join('')}
-        <button class="ad-pers-val ad-pers-borrar" data-v="">✕</button>
-        <button class="ad-pers-edit" id="ad-pers-editescala">✏️ Editar escala</button>
-        <span class="ad-pers-ctx" id="ad-pers-ctx"></span>
+    <div class="ad-gen-ov ad-sace-vent" id="ad-sace-v-rescate" data-vent="rescate" hidden>
+      <div class="ad-gen-card" role="dialog" aria-modal="true" aria-labelledby="ad-sace-v-res-tit">
+        <div class="ad-gen-head"><div class="ad-gen-title" id="ad-sace-v-res-tit">🛟 Recuperar o revisar notas</div>
+          <button type="button" class="ad-gen-close" data-vent-cerrar aria-label="Cerrar">✕</button></div>
+        <div class="ad-sace-vent-cuerpo ad-sace-opciones">
+          <div class="ad-sace-opcion">
+            <button type="button" class="pa-generate-btn ad-rec-btn-main" id="ad-sace-recuperar">📥 Recuperar notas que faltan</button>
+            <p>Faltan notas que ya escribiste. Solo llena casillas vacías.</p>
+          </div>
+          <div class="ad-sace-opcion">
+            <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-sace-perdidos">🔎 Buscar notas perdidas</button>
+            <p>Desapareció una nota o un pago. Tú eliges qué vuelve.</p>
+          </div>
+          ${adVersionTieneAutocompletado(d) ? `<div class="ad-sace-opcion">
+            <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-sace-revisar-solas">🔎 Revisar notas puestas solas</button>
+            <p>Ves las notas que tú no escribiste y puedes quitarlas.</p>
+          </div>` : ''}
+          <p class="ad-sace-vent-pie">Antes de cambiar algo, te enseña la lista.</p>
+        </div>
       </div>
-      <p class="ad-pers-leyenda">${d.boleta.escalaPers.map(v => {
-        const num = adPersANumero(v, d.boleta.escalaPers);
-        const sig = AD_PERS_SIGNIF[v];
-        return '<b>' + adEsc(v) + (num && num !== v ? ' (' + adEsc(num) + ')' : '') + '</b>' + (sig ? ' = ' + adEsc(sig) : '');
-      }).join(' · ')}</p>
-      <div class="ad-pers-sace-box">
-        <div class="ad-pers-sace-info">
-          <div class="ad-pers-sace-tit">Por favor llene las celdas de personalidad de los alumnos siguiendo la Escala:</div>
-          <div class="ad-pers-sace-escala">
-            <span><b>4:Sobresaliente</b> (S)</span>
-            <span><b>3:Muy Bueno</b> (MB)</span>
-            <span><b>2:Bueno</b> (B)</span>
+    </div>
+
+    <div class="ad-gen-ov ad-sace-vent" id="ad-sace-v-uno" data-vent="uno" hidden>
+      <div class="ad-gen-card" role="dialog" aria-modal="true" aria-labelledby="ad-sace-v-uno-tit">
+        <div class="ad-gen-head"><div class="ad-gen-title" id="ad-sace-v-uno-tit">🧑‍🎓 ¿De quién es la boleta?</div>
+          <button type="button" class="ad-gen-close" data-vent-cerrar aria-label="Cerrar">✕</button></div>
+        <div class="ad-sace-vent-cuerpo">
+          <p class="ad-sace-vent-pie">Sirve cuando la mamá pide la de su hijo. O la nota que corregiste y hay que reimprimir.</p>
+          <div class="ad-sace-alumnos">
+            <button type="button" class="ad-herr ad-sace-al" data-bol-num="">👥 Todo el grupo (${d.lista.length})</button>
+            ${d.lista.map(a => `<button type="button" class="ad-herr ad-sace-al" data-bol-num="${a.num}">#${a.num} · ${adEsc(adPrimerNombre(a.nombre)) || 'Sin nombre'}</button>`).join('')}
           </div>
         </div>
-        <div class="ad-pers-sace-ctrl">
-          <span class="ad-pers-sace-lbl">Al copiar en 📋:</span>
-          <div class="ad-pers-sace-btns" role="group" aria-label="Formato al copiar personalidad">
-            <button type="button" class="ad-pers-modo-btn${_adPersCopyModo === 'preguntar' ? ' active' : ''}" data-pers-modo="preguntar" title="Preguntar al tocar 📋 si deseas copiar en número (4, 3, 2) o en letra (S, MB, B)">💬 Elegir al copiar</button>
-            <button type="button" class="ad-pers-modo-btn${_adPersCopyModo === 'num' ? ' active' : ''}" data-pers-modo="num" title="Copiar directamente en número (4:Sobresaliente, 3:Muy Bueno, 2:Bueno) al tocar 📋">🔢 Copiar en número (4, 3, 2)</button>
-            <button type="button" class="ad-pers-modo-btn${_adPersCopyModo === 'letra' ? ' active' : ''}" data-pers-modo="letra" title="Copiar directamente en letra (S, MB, B) al tocar 📋">🔤 Copiar en letra (S, MB, B)</button>
-          </div>
-        </div>
-      </div>` : ''}
+      </div>
+    </div>
 
-      ${esInasis ? `
-      <div class="ad-inasis-bar">
-        <div class="pa-row-2">
-          <div class="pa-field"><label>Desde</label><input type="date" id="ad-inasis-desde" class="pa-inp-field" value="${desdeDef}"></div>
-          <div class="pa-field"><label>Hasta</label><input type="date" id="ad-inasis-hasta" class="pa-inp-field" value="${hastaDef}"></div>
-        </div>
-        ${desdeDef && hastaDef && adDiasEntre(desdeDef, hastaDef) > 100 ? `<p class="ad-sace-aviso">⚠️ Este rango tiene ${adDiasEntre(desdeDef, hastaDef)} días, casi el año entero: «Traer faltas» pondría en el <strong>Parcial ${parcial}</strong> las faltas de todo el año. Pon solo las fechas de este parcial.</p>` : ''}
-        <button class="pa-generate-btn ad-btn-sec" id="ad-inasis-traer">📅 Traer faltas del pase de lista</button>
-        <p class="pa-optional-hint">Cuenta los días marcados <strong>Ausente</strong> en <strong>Asistencia</strong>
-          dentro de ese rango y los pone en el <strong>Parcial ${parcial}</strong>. Las <strong>excusas no cuentan</strong>
-          como inasistencia. Puedes ajustar a mano después.</p>
-      </div>` : ''}
-
-      <div class="ad-rec-bar">
-        <div class="ad-rec-bar-btns">
-          <button type="button" class="pa-generate-btn ad-rec-btn-main" id="ad-sace-recuperar">📥 Copiar notas de mis respaldos</button>
-          <button type="button" class="pa-generate-btn ad-btn-sec ad-rec-btn-hist" id="ad-sace-versiones">🕓 Verificar historial de versiones</button>
-          ${adVersionTieneAutocompletado(d) ? '<button type="button" class="pa-generate-btn ad-btn-sec" id="ad-sace-revisar-solas">🔎 Revisar notas que la aplicación puso sola</button>' : ''}
-        </div>
-        <p class="pa-optional-hint" style="margin:4px 0 0">Busca en tus copias y en la nube las notas, la personalidad y las inasistencias que <strong>ya habías escrito</strong> y hoy faltan aquí. Te enseña la lista antes de copiar, solo llena celdas vacías y nunca inventa una nota.</p>
+    <div class="ad-gen-ov ad-sace-vent" id="ad-sace-v-ayuda" data-vent="ayuda" hidden>
+      <div class="ad-gen-card" role="dialog" aria-modal="true" aria-labelledby="ad-sace-v-ayu-tit">
+        <div class="ad-gen-head"><div class="ad-gen-title" id="ad-sace-v-ayu-tit">ⓘ ¿Cómo se llena?</div>
+          <button type="button" class="ad-gen-close" data-vent-cerrar aria-label="Cerrar">✕</button></div>
+        <ol class="ad-sace-pasos">${adSacePasos(vista, parcial).map(t => '<li>' + t + '</li>').join('')}</ol>
+        <div class="ad-gen-foot"><button type="button" class="pa-generate-btn" data-vent-cerrar>Entendido</button></div>
       </div>
-
-      ${(!esLetra && !esInasis && !esRec) ? (parcial === 'IV' ? (d.boleta && d.boleta.sugerirIVAuth ? `
-      <div class="ad-sug-bar">
-        <div class="ad-btn-row" style="margin-top:0">
-          <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-sace-sugerir">✨ Sugerir notas del Parcial IV</button>
-          <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-sace-bloquear-iv" title="Volver a poner candado a Sugerir notas en el Parcial IV">🔒 Bloquear sugerencia</button>
-        </div>
-        <p class="pa-optional-hint">🛡️ <strong>Autorizado en Parcial IV:</strong> toma las evaluaciones guardadas en el <strong>📊 Plan de acción</strong> del Parcial IV, promedia las de cada alumno por materia (NSP no cuenta como cero) y llena únicamente las celdas <strong>vacías</strong>.</p>
-      </div>` : `
-      <div class="ad-sug-bar ad-sug-bar-locked">
-        <div class="ad-btn-row" style="margin-top:0;align-items:center">
-          <span class="ad-sug-lock-pill">🔒 «Sugerir notas» en Parcial IV requiere tu autorización</span>
-          <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-sace-autorizar-iv">🛡️ Autorizar «Sugerir notas» en Parcial IV</button>
-        </div>
-        <p class="pa-optional-hint">Por seguridad de tus registros, el cálculo automático de sugerencias solo se activa en el <strong>Parcial IV</strong> después de que lo autorices expresamente.</p>
-      </div>`) : `
-      <div class="ad-sug-bar ad-sug-bar-locked">
-        <p class="pa-optional-hint" style="margin:0">🔒 <strong>Parcial ${parcial} protegido:</strong> la opción «✨ Sugerir notas» solo funciona en el <strong>Parcial IV</strong> (previa autorización) para no alterar las notas definitivas de los Parciales I, II y III.</p>
-      </div>`) : ''}
-
-      ${!esLetra && !esInasis ? `<div class="ad-nt-ley" aria-label="Colores de las notas">
-        <span class="nt-i">Inicial: hasta 69</span><span class="nt-b">Básico: 70 a 79</span>
-        <span class="nt-a">Avanzado: 80 a 90</span><span class="nt-e">Excelente: 91 a 100</span></div>` : ''}
-      ${!esLetra && !esInasis && !esRec ? `<div class="ad-rec-aviso" id="ad-sace-rec-aviso"${contarBajo70(d) ? '' : ' hidden'}>
-        <span id="ad-sace-rec-aviso-txt">✍️ <strong>${contarBajo70(d)}</strong> alumno(s) con nota final bajo 70 en alguna materia: les toca recuperación.</span>
-        <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-sace-ir-rec">✍️ Escribir la recuperación</button></div>` : ''}
-      <div class="ad-mx-wrap">
-        <table class="ad-mx${esLetra ? ' ad-mx-pers' : ''}">
-          <thead>${esLetra ? `
-          <tr>
-            <th class="ad-mx-sticky ad-mx-corner" rowspan="2">Nº · Alumno</th>
-            ${cols.map(c => `<th colspan="4" class="ad-mx-ini"><div class="ad-mx-h">${adEsc(c)}</div></th>`).join('')}
-          </tr>
-          <tr>
-            ${colDefs.map(cd => `<th class="ad-mx-sub${cd.ini ? ' ad-mx-ini' : ''}"><span>${cd.parcial}</span>
-              <button class="ad-mx-copy" data-campo="${adEsc(cd.campo)}" data-parcial="${cd.parcial}"
-                title="Copiar «${adEsc(cd.campo)} · Parcial ${cd.parcial}» para SACE">📋</button></th>`).join('')}
-          </tr>` : `
-          <tr>
-            <th class="ad-mx-sticky ad-mx-corner">Nº · Alumno</th>
-            ${cols.map((c, ci) => `<th><div class="ad-mx-h">${esInasis ? 'Parcial ' + parcial + '<small class="ad-mx-hsub">para la boleta</small>' : adEsc(c)}</div>
-              <div class="ad-mx-hbtns">
-                ${!esInasis && !esRec ? `<button class="ad-mx-mv" data-col="${ci}" data-dir="-1" title="Mover a la izquierda"${ci === 0 ? ' disabled' : ''}>◀</button>` : ''}
-                <button class="ad-mx-copy" data-col="${ci}" title="Copiar «${adEsc(c)}${esRec ? ' · Recuperación' : ''}» para SACE">📋</button>
-                ${!esInasis && !esRec ? `<button class="ad-mx-mv" data-col="${ci}" data-dir="1" title="Mover a la derecha"${ci === cols.length - 1 ? ' disabled' : ''}>▶</button>` : ''}
-              </div></th>`).join('')}
-            ${esAnio ? AD_IA_COLS.map((x, i) => `<th class="ad-mx-ia-h${i === 0 ? ' ad-mx-ini' : ''}"><div class="ad-mx-h">${x.et}<small class="ad-mx-hsub">${x.sub} · año ${adEsc(ia.anio)}</small></div>
-              <div class="ad-mx-hbtns"><button class="ad-mx-copy" data-ia="${x.k}" title="Copiar «${x.et}» del año para el SACE">📋</button></div></th>`).join('') +
-              '<th><div class="ad-mx-h">Revisar<small class="ad-mx-hsub">día por día</small></div></th>' : ''}
-          </tr>`}
-          </thead>
-          <tbody>
-            ${d.lista.map((a, ri) => `<tr data-rnum="${a.num}"${a.noCopiarSace ? ' class="ad-mx-tr-nocopy"' : ''}>
-              <td class="ad-mx-sticky" title="${adEsc((a.nombre || ('#' + a.num)) + (a.noCopiarSace ? ' · No se copia en 📋' : ''))}">
-                <div class="ad-mx-sbox">
-                  <span class="ad-mx-num ad-mx-num-fijo">#${a.num}</span>
-                  <span class="ad-mx-nom">${adEsc(adPrimerNombre(a.nombre)) || '·'}</span>
-                  ${a.noCopiarSace ? `<button type="button" class="ad-mx-nocopy-tag" data-nc-quitar="${a.num}" title="Omitido al copiar columna (📋). Toca para volver a incluirlo">🙈</button>` : ''}
-                </div></td>
-              ${esRec ? colDefs.map((cd, ci) => adRecCeldaHtml(d, cd.campo, a.num, ri * colDefs.length + ci, finalDe(cd.campo, a.num))).join('') : colDefs.map((cd, ci) => { const cls = [cd.ini ? 'ad-mx-ini' : '',
-                !esLetra && cd.campo !== 'Inasistencias' ? adNotaEscalaClase(valOfP(cd.parcial, cd.campo, a.num)) : ''].filter(Boolean).join(' ');
-                return `<td${cls ? ' class="' + cls + '"' : ''}><input class="ad-mx-inp" data-idx="${ri * colDefs.length + ci}"
-                data-num="${a.num}" data-alumno="${a.num}" data-campo="${adEsc(cd.campo)}" data-materia="${adEsc(cd.campo)}" data-parcial="${cd.parcial}" type="text" inputmode="${esLetra ? 'text' : 'numeric'}"
-                maxlength="3" autocapitalize="characters" ${esLetra ? 'style="text-transform:uppercase;"' : ''}
-                value="${valOfP(cd.parcial, cd.campo, a.num) !== '' ? adEsc(String(valOfP(cd.parcial, cd.campo, a.num))) : ''}" placeholder="·"></td>`; }).join('')}
-              ${esAnio ? AD_IA_COLS.map((x, i) => { const v = (ia.porAlumno[a.num] || {})[x.k]; return `<td class="ad-mx-ia${x.k === 'vol' ? ' ad-mx-ia-vol' : ''}${i === 0 ? ' ad-mx-ini' : ''}">${v === '' || v == null ? '<span class="ad-mx-ia-na">·</span>' : v}</td>`; }).join('') +
-                `<td class="ad-mx-ia ad-mx-ia-rev"><button type="button" class="ad-mx-rev" data-rf-num="${a.num}" title="Ver y corregir cada falta de ${adEsc(a.nombre || '')}">🔎</button></td>` : ''}
-            </tr>`).join('')}
-          </tbody>
-        </table>
-      </div>
-      <div class="ad-btn-row" style="margin-top:8px">
-        ${!esLetra && !esInasis && !esRec ? '<button class="pa-generate-btn ad-btn-sec ad-mx-addmat" id="ad-sace-addmat" style="margin-top:0">➕ Agregar materia</button>' : ''}
-        <button class="pa-generate-btn ad-btn-sec" id="ad-sace-orden-az" type="button">🔤 Ordenar A–Z (con sus notas)</button>
-        <button class="pa-generate-btn ad-btn-sec" id="ad-sace-orden-gen" type="button">♀♂ Ordenar Niñas y luego Varones (A–Z)</button>
-        <button class="pa-generate-btn ad-btn-sec" id="ad-sace-nocopy" type="button">🙈 ${
-          d.lista.some(a => a.noCopiarSace)
-            ? 'No copiar en 📋 (' + d.lista.filter(a => a.noCopiarSace).map(a => adEsc(adPrimerNombre(a.nombre) || ('#' + a.num))).join(', ') + ')'
-            : 'Elegir quién NO copiar en 📋'
-        }</button>
-      </div>
-      <div class="pa-field ad-bol-quien">
-        <label>Boleta de</label>
-        <select id="ad-sace-bol-quien" class="pa-inp-field">
-          <option value="">👥 Todo el grupo (${d.lista.length} alumno${d.lista.length === 1 ? '' : 's'})</option>
-          ${d.lista.map(a => `<option value="${a.num}">🧑‍🎓 #${a.num} · ${adEsc(a.nombre) || 'Sin nombre'}</option>`).join('')}
-        </select>
-        <p class="pa-optional-hint">Elige un alumno cuando solo necesites <strong>su</strong> boleta: la mamá que
-          viene por la de su hijo, o la nota que corregiste y hay que reimprimir. Sale la misma hoja completa, con
-          los cuatro parciales.</p>
-      </div>
-      <div class="ad-btn-row" style="margin-top:8px">
-        <button class="pa-generate-btn" id="ad-sace-boletas">🧾 Imprimir boletas (todas)</button>
-        <button class="pa-generate-btn ad-btn-sec" id="ad-sace-cfinal" type="button">📒 Cuadro final del año</button>
-        <button class="pa-generate-btn ad-btn-sec" id="ad-sace-resumen" type="button">📋 Resumen final de resultados por grado</button>
-        <button class="pa-generate-btn ad-btn-sec" id="ad-sace-perdidos" type="button">🔎 Buscar notas perdidas</button>
-        ${esLetra ? '<button class="pa-generate-btn ad-btn-sec" id="ad-sace-csv-num" type="button">🔢 Copiar CSV en número (4, 3, 2)</button>' : ''}
-        ${esRec ? '' : `<button class="pa-generate-btn ad-btn-sec" id="ad-sace-csv">${esLetra ? '🔤 Copiar CSV en letra (S, MB, B)' : '⬇ Copiar CSV (todas las materias)'}</button>`}
-      </div>
-      <p class="pa-optional-hint" id="ad-sace-estado" style="margin-top:8px"></p>
     </div>
     ${adUndoTarjetaHtml()}`;
 
@@ -7960,8 +8032,15 @@ function adRenderSace(body, d) {
     body.dataset[k] = v;
     adRenderSace(body, adLoad());
   };
-  document.getElementById('ad-sace-parcial')?.addEventListener('change', e => setSel('parcial', e.target.value));
-  document.getElementById('ad-sace-vista').addEventListener('change', e => setSel('vista', e.target.value));
+  body.querySelectorAll('[data-sel-parcial]').forEach(b => b.addEventListener('click', () => {
+    const p = b.dataset.selParcial;
+    setSel('parcial', p);
+    /* el 🔒 se explica una sola vez; después lo dice solo «Sugerir notas» */
+    if (AD_SACE_CERRADOS.includes(p) && adSacePrefPrimeraVez(AD_SACE_CANDADO_KEY) && typeof toast === 'function') {
+      toast('🔒 Parcial ' + p + ' cerrado: escribes notas, pero no se sugieren.');
+    }
+  }));
+  body.querySelectorAll('[data-sel-vista]').forEach(b => b.addEventListener('click', () => setSel('vista', b.dataset.selVista)));
   document.getElementById('ad-sace-orden-az')?.addEventListener('click', () => {
     adOrdenarAlumnosAZ(() => adRenderSace(body, adLoad()));
   });
@@ -8085,7 +8164,7 @@ function adRenderSace(body, d) {
       const av = document.getElementById('ad-sace-rec-aviso');
       const tx = document.getElementById('ad-sace-rec-aviso-txt');
       if (av) av.hidden = !n;
-      if (tx) tx.innerHTML = '✍️ <strong>' + n + '</strong> alumno(s) con nota final bajo 70 en alguna materia: les toca recuperación.';
+      if (tx) tx.innerHTML = '⚠️ <strong>' + n + '</strong> alumno(s) con final bajo 70: les toca recuperación.';
     }
   };
   document.getElementById('ad-sace-ir-rec')?.addEventListener('click', () => setSel('vista', 'recup'));
@@ -8221,11 +8300,26 @@ function adRenderSace(body, d) {
   const bolBtn = document.getElementById('ad-sace-boletas');
   const bolRotulo = () => {
     const num = bolQuien.value;
-    if (!num) { bolBtn.textContent = '🧾 Imprimir boletas (todas)'; return; }
+    if (!num) {
+      bolBtn.textContent = '🧾 Boletas de todo el grupo';
+      bolQuien.textContent = '🧑‍🎓 Boleta de un alumno';
+      return;
+    }
     const al = d.lista.find(x => String(x.num) === String(num));
     const nom = adPrimerNombre((al && al.nombre) || '');
     bolBtn.textContent = '🧾 Imprimir la boleta de ' + (nom || '#' + num);
+    bolQuien.textContent = '🧑‍🎓 Solo ' + (nom || '#' + num) + ' · cambiar';
   };
+  /* «Boleta de» era una lista desplegable; ahora el chip abre una ventana
+     con un botón por alumno. El elegido se guarda en el value del chip,
+     así lo de imprimir sigue leyendo bolQuien.value como antes. */
+  bolQuien.addEventListener('click', () => adSaceVentAbrir(body, 'uno'));
+  body.querySelectorAll('[data-bol-num]').forEach(b => b.addEventListener('click', () => {
+    bolQuien.value = b.dataset.bolNum;
+    adSaceVentCerrar(body);
+    bolRotulo();
+    bolQuien.focus();
+  }));
   bolQuien.addEventListener('change', bolRotulo);
   bolRotulo();
   bolBtn.addEventListener('click', () => {
@@ -8284,6 +8378,22 @@ function adRenderSace(body, d) {
       adDiasEntre(desde, hasta) + ' días: casi el año entero. Si es solo el Parcial ' + parcial +
       ', pon sus fechas de inicio y fin y vuelve a tocar «Traer faltas». El total del año ya está en las columnas de la derecha.');
   });
+
+  // Ventanas de la pestaña (Encabezado, 🛟, ayuda): cerrar con ✕, Esc o el fondo
+  body.querySelectorAll('.ad-sace-vent').forEach(ov => {
+    ov.addEventListener('click', e => { if (e.target === ov || e.target.closest('[data-vent-cerrar]')) adSaceVentCerrar(body); });
+  });
+  /* las tres opciones de 🛟 abren su propia ventana: esta se quita primero */
+  body.querySelectorAll('#ad-sace-v-rescate .ad-sace-opcion button').forEach(b =>
+    b.addEventListener('click', () => adSaceVentCerrar(body)));
+  document.getElementById('ad-sace-chip-encabezado')?.addEventListener('click', () => adSaceVentAbrir(body, 'encabezado'));
+  document.getElementById('ad-sace-chip-rescate')?.addEventListener('click', () => adSaceVentAbrir(body, 'rescate'));
+  document.getElementById('ad-sace-ayuda')?.addEventListener('click', () => adSaceVentAbrir(body, 'ayuda'));
+  /* subir un logo re-pinta la pestaña: la ventana del Encabezado se vuelve a abrir */
+  if (_adSaceVent === 'encabezado') adSaceVentAbrir(body, 'encabezado');
+  /* La ayuda se abre sola una vez. No en las sondas automáticas
+     (navigator.webdriver): taparía los botones que ellas tocan. */
+  else if (!navigator.webdriver && adSacePrefPrimeraVez(AD_SACE_AYUDA_KEY)) adSaceVentAbrir(body, 'ayuda');
 
   // 📥 Copiar notas de mis respaldos + 🔎 revisar lo del autocompletado + 🕓 Historial
   document.getElementById('ad-sace-recuperar')?.addEventListener('click', e => {

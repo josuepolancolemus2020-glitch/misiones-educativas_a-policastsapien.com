@@ -170,7 +170,8 @@ ok(/Math\.max\(1, Math\.min\(100/.test(rg) && /dd\.recuperacion\[col\]\[num\] = 
 console.log('\n6 · La recuperación se escribe una vez y se ve en todas partes (noviembre de 2026)');
 ok(/\.cf-rec-inp'\)\.forEach\(inp => \{\s*inp\.addEventListener\('input'/.test(adm) && /adCfTablaHtml\(cf\) \+ adCfPieHtml\(cf\)/.test(adm),
   'en el Cuadro final, el cuadro y su pie de aprobados cambian al escribir, sin repintar la ventana');
-ok(/<option value="recup"/.test(adm) && /adRecCeldaHtml\(/.test(adm) && /data-parcial="REC"/.test(adm),
+/* v504: la sección ya no es un <option> sino un botón de AD_SACE_VISTAS */
+ok(/\{ k: 'recup', et: '✍️ Recuperación' \}/.test(adm) && /data-sel-vista="\$\{v\.k\}"/.test(adm) && /adRecCeldaHtml\(/.test(adm) && /data-parcial="REC"/.test(adm),
   'Notas SACE tiene la sección ✍️ Recuperación, aparte de los parciales, como en el SACE');
 ok(/esRec\) \{\s*const v = adRecGuardar\(dd/.test(adm), 'y guarda en el mismo sitio que el Cuadro final');
 ok(/id="ad-sace-rec-aviso"/.test(adm) && /contarBajo70\(dd\)/.test(adm), 'una nota que deja el final bajo 70 enciende el aviso de recuperación');

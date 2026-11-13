@@ -222,7 +222,8 @@ ok(pant.length > 0, 'la pantalla del resumen está en registros-admin.js');
 ok(!/\.notas\b/.test(pant), 'la pantalla del resumen no toca las notas');
 ok((pant.match(/adSave\(/g) || []).length === 1 && /resumenPeriodo/.test(pant), 'lo único que guarda es el Período');
 ok(/id="ad-fi-resumen"[^>]*>📋 Resumen final de resultados por grado</.test(adm), 'el botón está en Identidad y contactos');
-ok(/id="ad-sace-resumen"[^>]*>📋 Resumen final de resultados por grado</.test(adm), 'y en Notas SACE');
+/* v504: en Notas SACE la etiqueta se acortó («por grado») para caber en un botón */
+ok(/id="ad-sace-resumen"[^>]*>📋 Resumen final por grado</.test(adm), 'y en Notas SACE');
 ok(/🖨️ Imprimir \/ PDF/.test(pant) && /📥 Descargar Excel/.test(pant), 'botones «🖨️ Imprimir / PDF» y «📥 Descargar Excel»');
 ok(/size:\s*letter landscape/.test(pant), 'la hoja impresa es carta horizontal');
 ok((pant.match(/<section class="hoja">/g) || []).length === 2 && /graficosHtml\(r, av\)/.test(pant), 'dos hojas: el formulario y la de gráficos con los avisos');
