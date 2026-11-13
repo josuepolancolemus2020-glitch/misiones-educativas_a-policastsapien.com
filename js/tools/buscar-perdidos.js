@@ -55,6 +55,12 @@
       if ((gv.lista || []).length) return null;
       return lista.some(function (x) { return String(x.num) === String(num); }) ? String(num) : null;
     }
+    /* primero su identidad interna (js/metas-numeracion.js), que no cambia
+       ni al corregirle el nombre */
+    if (enCopia.uid) {
+      var porUid = lista.filter(function (x) { return x.uid === enCopia.uid; });
+      if (porUid.length === 1) return String(porUid[0].num);
+    }
     var n = normNom(enCopia.nombre), idn = digitos(enCopia.idn);
     var mismos = lista.filter(function (x) { return normNom(x.nombre) === n; });
     if (mismos.length > 1 && idn) mismos = mismos.filter(function (x) { return digitos(x.idn) === idn; });

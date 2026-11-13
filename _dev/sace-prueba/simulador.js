@@ -20,7 +20,7 @@ const path = require('path');
 const vm = require('vm');
 
 const RAIZ = path.resolve(__dirname, '..', '..');
-const ARCHIVOS = ['js/metas-fusion-aula.js', 'js/metas-docente-sync.js', 'js/tools/sace-lista.js', 'js/tools/buscar-perdidos.js', 'js/tools/registros-admin.js'];
+const ARCHIVOS = ['js/metas-fusion-aula.js', 'js/metas-numeracion.js', 'js/metas-docente-sync.js', 'js/tools/sace-lista.js', 'js/tools/buscar-perdidos.js', 'js/tools/registros-admin.js'];
 const COD = 'PROF-PRUEBA', CLAVE = 'clave';
 
 function almacen(tope) {

@@ -344,7 +344,11 @@ function adState() {
     st.grupos.forEach(adNormGrupo);
     let revividas = 0;
     st.grupos.forEach(g => { revividas += adPurgarRevividas(g); });
-    if (revividas) { try { localStorage.setItem(ADMIN_KEY, JSON.stringify(st)); } catch (_) {} }
+    /* cada alumno con su identidad interna, que no cambia al reordenar: se
+       guarda de una vez para que no salga otra distinta en cada lectura */
+    let uids = 0;
+    if (window.MetasNumeracion) st.grupos.forEach(g => { uids += MetasNumeracion.asegurarUids(g); });
+    if (revividas || uids) { try { localStorage.setItem(ADMIN_KEY, JSON.stringify(st)); } catch (_) {} }
     if (_adGrupoActivoId && st.grupos.some(g => g.id === _adGrupoActivoId)) {
       st.activo = _adGrupoActivoId;
     } else if (st.grupos.some(g => g.id === st.activo)) {
@@ -1570,23 +1574,15 @@ async function adInsertarAlumno() {
   adUndoGuardar('Insertar alumno «' + String(nombre).trim() + '» como #' + pos);
   /* 1) claves de familia siguen a su niño */
   adRemapCodigos(d, pos);
-  /* 2) registros locales se recorren con sus niños */
-  d.asistencia.forEach(r => { r.aus = adShiftNums(r.aus, pos); });
-  Object.keys(d.notas || {}).forEach(p =>
-    Object.keys(d.notas[p] || {}).forEach(m => { d.notas[p][m] = adShiftNums(d.notas[p][m], pos); }));
-  d.colectas.forEach(c => {
-    c.pagos = adShiftNums(c.pagos, pos);
-    c.pagosF = adShiftNums(c.pagosF, pos);   /* la fecha viaja con su pago */
-  });
-  (d.lectura || []).forEach(r => { if (+r.num >= pos) r.num = +r.num + 1; });   /* las tomas de lectura también */
-  /* los controles se recorren igual: sus marcas son del niño, no del número
-     (antes se quedaban con el número viejo y el control mentía) */
-  (d.controles || []).forEach(c => { c.datos = adShiftNums(c.datos || {}, pos); });
-  /* y los equipos guardados, que también van por nº de lista */
-  if (typeof eqRecorrer === 'function') eqRecorrer(d, pos);
-  /* 3) la lista misma */
-  d.lista.forEach(a => { if (a.num >= pos) a.num++; });
+  /* 2) registros locales se recorren con sus niños: TODO lo del grupo que
+     va por número (js/metas-numeracion.js), la lista incluida */
+  const mapaIns = {};
+  d.lista.forEach(a => { mapaIns[a.num] = a.num >= pos ? +a.num + 1 : +a.num; });
+  MetasNumeracion.remapGrupo(d, mapaIns, false);
+  /* 3) el nuevo, con su identidad interna desde ya */
   d.lista.push({ num: pos, nombre: String(nombre).trim(), alta: Date.now() });
+  MetasNumeracion.asegurarUids(d);
+  d.ordenT = Date.now();
   /* la lista crece una fila: las marcas de borrado también, para que la
      última fila recorrida no parezca una ficha revivida */
   (d.borrados || []).forEach(b => { if (b && +b.n >= pos - 1) b.n = +b.n + 1; });
@@ -1661,33 +1657,10 @@ function adReordenarAlumnos(ordenNums, etiquetaUndo) {
     }
   } catch (_) {}
 
-  /* 2) Notas SACE (todos los parciales, todas las materias, personalidad e inasistencias) */
-  Object.keys(d.notas || {}).forEach(p => {
-    Object.keys(d.notas[p] || {}).forEach(m => {
-      d.notas[p][m] = remapearObj(d.notas[p][m]);
-    });
-  });
-
-  /* 3) Asistencia, colectas, controles, lectura y equipos */
-  (d.asistencia || []).forEach(r => { if (r && r.aus) r.aus = remapearObj(r.aus); });
-  (d.colectas || []).forEach(c => {
-    if (c && c.pagos) c.pagos = remapearObj(c.pagos);
-    if (c && c.pagosF) c.pagosF = remapearObj(c.pagosF);
-  });
-  (d.controles || []).forEach(c => {
-    if (c && c.datos) c.datos = remapearObj(c.datos);
-  });
-  (d.lectura || []).forEach(r => {
-    if (r && mapa[+r.num] != null) r.num = mapa[+r.num];
-  });
-  const eq = d.equipos;
-  if (eq) {
-    const mArr = a => (a || []).map(n => mapa[+n] != null ? mapa[+n] : +n);
-    ['reparto', 'antes'].forEach(k => { if (Array.isArray(eq[k])) eq[k] = eq[k].map(mArr); });
-    if (Array.isArray(eq.coord)) eq.coord = mArr(eq.coord);
-    if (Array.isArray(eq.separar)) eq.separar = eq.separar.map(mArr);
-    if (eq.fuera && Array.isArray(eq.fuera.nums)) eq.fuera.nums = mArr(eq.fuera.nums);
-  }
+  /* 2-3) TODO lo del grupo que va por número de lista (notas, recuperación,
+     inasistencias oficiales, asistencia, colectas, controles, lectura,
+     equipos), con la lista única de js/metas-numeracion.js */
+  MetasNumeracion.remapGrupo(d, mapa, false);   // la lista se reescribe en el paso 6
 
   /* 4) Comunicados individuales y reportes de conducta del grupo */
   try {
@@ -1728,8 +1701,11 @@ function adReordenarAlumnos(ordenNums, etiquetaUndo) {
     }
   } catch (_) {}
 
-  /* 6) Actualizar la lista en el nuevo orden con sus números renumerados */
+  /* 6) Actualizar la lista en el nuevo orden con sus números renumerados,
+     y sellar cuándo cambió la numeración: al juntarse con otro equipo,
+     manda la más reciente (js/metas-numeracion.js) */
   d.lista = nuevaLista.map((al, i) => Object.assign({}, al, { num: numsDestino[i] }));
+  d.ordenT = Date.now();
   adSave(d);
   return mapa;
 }
@@ -1783,34 +1759,8 @@ async function adEliminarAlumnoFila(numActual, alTerminar) {
     }
   } catch (_) {}
 
-  /* 2) Notas SACE */
-  Object.keys(d2.notas || {}).forEach(p => {
-    Object.keys(d2.notas[p] || {}).forEach(m => {
-      d2.notas[p][m] = remapearSinBorrado(d2.notas[p][m]);
-    });
-  });
-
-  /* 3) Asistencia, colectas, controles, lectura y equipos */
-  (d2.asistencia || []).forEach(r => { if (r && r.aus) r.aus = remapearSinBorrado(r.aus); });
-  (d2.colectas || []).forEach(c => {
-    if (c && c.pagos) c.pagos = remapearSinBorrado(c.pagos);
-    if (c && c.pagosF) c.pagosF = remapearSinBorrado(c.pagosF);
-  });
-  (d2.controles || []).forEach(c => {
-    if (c && c.datos) c.datos = remapearSinBorrado(c.datos);
-  });
-  d2.lectura = (d2.lectura || []).filter(r => r && +r.num !== +numActual);
-  d2.lectura.forEach(r => {
-    if (r && mapa[+r.num] != null) r.num = mapa[+r.num];
-  });
-  const eq = d2.equipos;
-  if (eq) {
-    const mArr = a => (a || []).filter(n => +n !== +numActual).map(n => mapa[+n] != null ? mapa[+n] : +n);
-    ['reparto', 'antes'].forEach(k => { if (Array.isArray(eq[k])) eq[k] = eq[k].map(mArr); });
-    if (Array.isArray(eq.coord)) eq.coord = mArr(eq.coord);
-    if (Array.isArray(eq.separar)) eq.separar = eq.separar.map(mArr).filter(par => par.length >= 2);
-    if (eq.fuera && Array.isArray(eq.fuera.nums)) eq.fuera.nums = mArr(eq.fuera.nums);
-  }
+  /* 2-3) TODO lo del grupo que va por número de lista; lo del borrado se va */
+  MetasNumeracion.remapGrupo(d2, mapa, true);   // la lista se reescribe en el paso 6
 
   /* 4) Comunicados y conducta */
   try {
@@ -1858,6 +1808,7 @@ async function adEliminarAlumnoFila(numActual, alTerminar) {
   /* 6) Guardar lista renumerada, con la marca del borrado para que una
      copia vieja de otro equipo o de la nube no la devuelva */
   d2.lista = restantes.map((a, i) => Object.assign({}, a, { num: i + 1 }));
+  d2.ordenT = Date.now();
   adMarcarBorrado(d2, al);
   if (!adSave(d2)) return;
   if (typeof alTerminar === 'function') alTerminar();
