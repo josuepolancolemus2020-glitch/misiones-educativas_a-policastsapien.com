@@ -207,7 +207,9 @@ console.log('\n7 · Inasistencias del año: involuntarias y voluntarias, como en
   const g6 = JSON.parse(antes);
   igual([RS.inasistenciasAnio(g6).fuente, RS.inasistenciasAnio(g6).porAlumno[1]], ['parciales', { inv: '', vol: 6, total: 6 }],
     'sin pase de lista: voluntarias de los parciales e involuntarias vacías, sin inventar un cero');
-  ok(/<option value="inasanio"/.test(adm) && /inasistenciasAnio\(dd\)\.porAlumno/.test(adm), 'Notas SACE → 📅 Inasistencias del año, con 📋 por columna');
+  ok(!/<option value="inasanio"/.test(adm) && /const esAnio = esInasis &&/.test(adm) && /data-ia="\$\{x\.k\}"/.test(adm) && /inasistenciasAnio\(dd\)\.porAlumno/.test(adm),
+    'una sola sección 📅 Inasistencias: la del parcial y, a su lado, las del año con 📋 por columna');
+  ok(/adDiasEntre\(desde, hasta\) > 100/.test(adm), '«Traer faltas» avisa si el rango del parcial es casi el año entero');
 }
 
 console.log('\n8 · Faltas que no se pusieron (noviembre de 2026: «Dayrin con 37»)');
