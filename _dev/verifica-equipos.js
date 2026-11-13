@@ -117,7 +117,10 @@ async function paginasDe(nav, html, nombre) {
   const idx = fs.readFileSync(path.join(RAIZ, 'index.html'), 'utf8');
   const insertar = (ra.match(/async function adInsertarAlumno\(\)[\s\S]*?\n}\n/) || [''])[0];
   comprueba('al insertar un alumno a media lista, los equipos guardados se recorren con él',
-    /eqRecorrer\(d, pos\)/.test(insertar));
+    /* desde nov. 2026 lo hace la lista única de js/metas-numeracion.js
+       (que recorre el reparto, los coordinadores, las separaciones y los
+       de fuera, como eqRecorrer); _dev/verifica-numeracion.js lo prueba */
+    /eqRecorrer\(d, pos\)/.test(insertar) || /MetasNumeracion\.remapGrupo\(d, mapaIns/.test(insertar));
   comprueba('la portada carga js/tools/equipos.js, sellado como los demás',
     /<script src="js\/tools\/equipos\.js\?v=\d+"><\/script>/.test(idx));
   const orden = [...ra.matchAll(/data-adtab="(\w+)"/g)].map(m => m[1]);
