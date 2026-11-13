@@ -193,5 +193,21 @@ ok(/\.ad-mx-sticky \{\s*position: -webkit-sticky; position: sticky; left: 0;/.te
     'nota final y recuperación salen de una sola regla');
 }
 
+console.log('\n7 · Inasistencias del año: involuntarias y voluntarias, como en el SACE');
+{
+  const g5 = JSON.parse(antes);
+  g5.asistencia = [{ f: '2026-02-03', aus: { 1: 'A', 2: 'E' } }, { f: '2026-02-04', aus: { 1: 'E', 2: 'A' } },
+    { f: '2026-02-04', aus: { 1: 'E', 2: 'A' } }, { f: '2026-03-10', aus: { 1: 'A' } }];
+  const ia = RS.inasistenciasAnio(g5);
+  igual([ia.fuente, ia.dias], ['pase', 3], 'del pase de lista, cada fecha una sola vez');
+  igual(ia.porAlumno[1], { inv: 1, vol: 2, total: 3 }, 'involuntarias = con excusa; voluntarias = Ausente sin excusa; total = las dos');
+  igual(ia.porAlumno[3], { inv: 0, vol: 0, total: 0 }, 'quien no faltó: ceros');
+  igual(RS.cuadroFinal(g5, { SL, pers: PERS }).filas.filter(f => f.num <= 2).map(f => f.inasis), [2, 1], 'el Cuadro final suma solo las voluntarias');
+  const g6 = JSON.parse(antes);
+  igual([RS.inasistenciasAnio(g6).fuente, RS.inasistenciasAnio(g6).porAlumno[1]], ['parciales', { inv: '', vol: 6, total: 6 }],
+    'sin pase de lista: voluntarias de los parciales e involuntarias vacías, sin inventar un cero');
+  ok(/<option value="inasanio"/.test(adm) && /inasistenciasAnio\(dd\)\.porAlumno/.test(adm), 'Notas SACE → 📅 Inasistencias del año, con 📋 por columna');
+}
+
 console.log(fallos ? '\n✘ ' + fallos + ' comprobación(es) fallaron' : '\n✓ El cuadro final dice lo mismo que la boleta');
 process.exit(fallos ? 1 : 0);

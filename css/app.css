@@ -5291,6 +5291,13 @@ body.ad-gr-moviendo { cursor: grabbing; user-select: none; -webkit-user-select: 
 .ad-mx-inp[readonly] { cursor: pointer; }
 /* ✍️ Recuperación: la nota final va debajo de la casilla; N/A y «sin
    final» quedan en gris porque ahí no se escribe nada */
+/* 📅 Inasistencias del año: solo lectura; las voluntarias (las que van
+   al Cuadro final) con raya y letra más marcada, no solo con color */
+.ad-mx td.ad-mx-ia { min-width: 92px; height: 44px; font-size: calc(15px * var(--metas-fz, 1)); font-weight: 800; color: var(--text); }
+.ad-mx td.ad-mx-ia-vol { background: #fff7ed; box-shadow: inset 0 0 0 2px #c2410c; font-weight: 900; }
+:root[data-theme="dark"] .ad-mx td.ad-mx-ia-vol { background: rgba(194,65,12,.18); box-shadow: inset 0 0 0 2px #fb923c; }
+.ad-mx-ia-na { color: #8a94a8; font-weight: 600; }
+.ad-mx-hsub { display: block; font-size: calc(10px * var(--metas-fz, 1)); font-weight: 700; color: var(--muted, #64748b); }
 .ad-mx-fin { display: block; font-size: calc(10.5px * var(--metas-fz, 1)); font-weight: 700; color: #33415c; padding: 0 3px 3px; white-space: nowrap; }
 .ad-mx td.ad-mx-recna { background: #f1f4f8; }
 .ad-mx td.ad-mx-recna .ad-mx-inp { color: #8a94a8; cursor: not-allowed; font-size: calc(12px * var(--metas-fz, 1)); }

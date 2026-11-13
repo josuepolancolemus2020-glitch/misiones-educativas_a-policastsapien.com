@@ -123,6 +123,44 @@
     return numero(((d && d.recuperacion) || {})[col] && d.recuperacion[col][num]);
   }
 
+  /* ── Inasistencias del año, como las pide el SACE ──
+     · Voluntarias: los días marcados Ausente («A») en el pase de lista, sin
+       excusa. Son las que suma el Cuadro final y las que van a los cuadros
+       oficiales.
+     · Involuntarias: los días con excusa («E»), justificados.
+     Cada fecha cuenta una sola vez aunque la sincronización la hubiera
+     dejado repetida. Sin pase de lista en el grupo no hay cómo separarlas:
+     las voluntarias salen de lo escrito en cada parcial (que «Traer
+     faltas» llena solo con Ausente) y las involuntarias quedan vacías,
+     sin inventar un cero. */
+  function inasistenciasAnio(d) {
+    var asis = Array.isArray(d && d.asistencia) ? d.asistencia : [];
+    var conPase = asis.some(function (r) { return r && r.f; });
+    var vol = {}, inv = {}, vistos = {};
+    asis.forEach(function (r) {
+      if (!r || !r.f || !r.aus || vistos[r.f]) return;
+      vistos[r.f] = 1;
+      Object.keys(r.aus).forEach(function (n) {
+        if (r.aus[n] === 'A') vol[n] = (vol[n] || 0) + 1;
+        else if (r.aus[n] === 'E') inv[n] = (inv[n] || 0) + 1;
+      });
+    });
+    var notas = (d && d.notas) || {};
+    var porAlumno = {};
+    ((d && d.lista) || []).forEach(function (a) {
+      if (conPase) {
+        var v = vol[a.num] || 0, i = inv[a.num] || 0;
+        porAlumno[a.num] = { inv: i, vol: v, total: v + i };
+        return;
+      }
+      var xs = PARCIALES.map(function (p) { return numero(((notas[p] || {}).Inasistencias || {})[a.num]); })
+        .filter(function (x) { return x != null; });
+      var s = xs.length ? xs.reduce(function (t, x) { return t + x; }, 0) : '';
+      porAlumno[a.num] = { inv: '', vol: s, total: s };
+    });
+    return { fuente: conPase ? 'pase' : 'parciales', dias: Object.keys(vistos).length, porAlumno: porAlumno };
+  }
+
   /* N/V/T vacío y cómo se suma un alumno */
   function nvt() { return { N: 0, V: 0, T: 0 }; }
   function sumar(c, a) {
@@ -662,14 +700,8 @@
       return { k: as.k, et: as.et, corto: as.corto, area: AREA[as.k], col: col, cuenta: conNotas };
     }).filter(function (x) { return x.cuenta; });
 
-    var asis = Array.isArray(d.asistencia) ? d.asistencia : [];
-    var conPase = asis.some(function (r) { return r && r.f; });
-    var faltas = {}, diasVistos = {};
-    asis.forEach(function (r) {
-      if (!r || !r.f || !r.aus || diasVistos[r.f]) return;
-      diasVistos[r.f] = 1;
-      Object.keys(r.aus).forEach(function (n) { if (r.aus[n] === 'A') faltas[n] = (faltas[n] || 0) + 1; });
-    });
+    var ia = inasistenciasAnio(d);
+    var conPase = ia.fuente === 'pase';
     var porVal = { E: nvt(), A: nvt(), B: nvt(), I: nvt() };
     var aprob = nvt(), aprobRec = nvt(), reprob = nvt(), pend = nvt(), proms = [];
     var filas = alumnos.map(function (a) {
@@ -695,8 +727,8 @@
          llena eligiendo fechas: si dos rangos se cruzaban, los mismos días
          contaban dos veces, y las excusas entraban también. Sin pase de
          lista en el grupo, se usa lo escrito en los parciales. */
-      var inas = conPase ? [faltas[a.num] || 0]
-        : PARCIALES.map(function (p) { return val(p, 'Inasistencias', a.num); }).filter(function (x) { return x != null; });
+      var ia1 = ia.porAlumno[a.num];
+      var inas = ia1 && ia1.vol !== '' ? [ia1.vol] : [];
       var completo = asigs.length > 0 && !faltan.length;
       var prom = completo ? Math.round(ns.reduce(function (t, x) { return t + x.final; }, 0) / ns.length) : null;
       /* Reprobadas en la evaluación ordinaria, y qué pasó en recuperación.
@@ -723,7 +755,7 @@
     });
     return {
       pers: pers, asigs: asigs, filas: filas, sobran: m.sobran,
-      inasisFuente: conPase ? 'pase' : 'parciales', diasPase: Object.keys(diasVistos).length,
+      inasisFuente: ia.fuente, diasPase: ia.dias,
       resumen: { aprob: aprob, aprobRec: aprobRec, reprob: reprob, pend: pend, porVal: porVal, total: contar(alumnos),
         promGrupo: proms.length ? Math.round(proms.reduce(function (t, x) { return t + x; }, 0) / proms.length * 10) / 10 : null }
     };
@@ -995,7 +1027,7 @@
   var API = {
     PARCIALES: PARCIALES, ASIGNATURAS: ASIGNATURAS, ESCALAS: ESCALAS, EDADES: EDADES,
     escalaDe: escalaDe, mapearMaterias: mapearMaterias, APRUEBA: APRUEBA,
-    notaFinal: notaFinal, recuperacionDe: recuperacionDe,
+    notaFinal: notaFinal, recuperacionDe: recuperacionDe, inasistenciasAnio: inasistenciasAnio,
     calcular: calcular, cuadros: cuadros, tablaHtml: tablaHtml,
     describir: describir, estadistica: estadistica, graficosHtml: graficosHtml, GRAF_CSS: GRAF_CSS,
     cuadroFinal: cuadroFinal, cuadroFinalTabla: cuadroFinalTabla,
