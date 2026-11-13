@@ -2,19 +2,24 @@
    PLAN DE ACCIÓN — ANÁLISIS DE CALIFICACIONES
 ───────────────────────────────────────────── */
 
+/* La escala de la Secretaría de Educación, la misma de Notas SACE, la
+   boleta, el Resumen final y Estadísticas: Inicial hasta 69 · Básico 70
+   a 79 · Avanzado 80 a 90 · Excelente 91 a 100 (pedido del maestro, 13 de
+   noviembre de 2026). Antes eran cinco niveles propios (Avanzado 95+,
+   Muy Bueno, Satisfactorio, Debe Mejorar, Insatisfactorio) y un 85 se
+   llamaba distinto en cada pantalla. Los análisis ya guardados conservan
+   el nombre con que se guardaron. Del más alto al más bajo. */
 const PA_CATS = [
-  { key:'avanzado',       label:'Avanzado',       min:95,  max:100, color:'#16a34a', bg:'#dcfce7' },
-  { key:'muyBueno',       label:'Muy Bueno',      min:80,  max:94,  color:'#0891b2', bg:'#cffafe' },
-  { key:'satisfactorio',  label:'Satisfactorio',  min:70,  max:79,  color:'#a16207', bg:'#fef9c3' },
-  { key:'debeMejorar',    label:'Debe Mejorar',   min:60,  max:69,  color:'#ea580c', bg:'#ffedd5' },
-  { key:'insatisfactorio',label:'Insatisfactorio',min:0,   max:59,  color:'#dc2626', bg:'#fee2e2' },
+  { key:'excelente', label:'Excelente', min:91, max:100, color:'#16a34a', bg:'#dcfce7' },
+  { key:'avanzado',  label:'Avanzado',  min:80, max:90,  color:'#1d4ed8', bg:'#dbeafe' },
+  { key:'basico',    label:'Básico',    min:70, max:79,  color:'#a16207', bg:'#fef3c7' },
+  { key:'inicial',   label:'Inicial',   min:0,  max:69,  color:'#dc2626', bg:'#fde2e2' },
 ];
 const PA_SUGS = {
-  avanzado:       'Excelente comprensión. Retarlos con ejercicios de nivel superior y tutorías entre pares.',
-  muyBueno:       'Dominan el tema teóricamente. Proporcionarles actividades de aplicación práctica.',
-  satisfactorio:  'Comprensión básica. Usar recursos visuales y reglas mnemotécnicas para afianzar.',
-  debeMejorar:    'Confunden conceptos. Actividades lúdicas y trabajo con pares más avanzados.',
-  insatisfactorio:'ALERTA: Atención inmediata. Regresar a conceptos fundamentales con material simplificado.',
+  excelente: 'Dominan el tema. Retarlos con ejercicios de nivel superior y tutoría entre pares.',
+  avanzado:  'Lo comprenden. Darles actividades de aplicación práctica.',
+  basico:    'Comprensión básica. Recursos visuales y reglas para afianzar.',
+  inicial:   'Atención inmediata: volver a lo fundamental, con material sencillo y trabajo con pares.',
 };
 
 let _paInitDone = false;
@@ -35,11 +40,11 @@ function paGrupoTxt(grado, seccion) {
 
 function paGradeColors(g) {
   if (typeof g !== 'number') return { bg:'#e5e7eb', txt:'#374151' };
-  if (g >= 95) return { bg:'#22c55e', txt:'#fff' };
-  if (g >= 80) return { bg:'#22d3ee', txt:'#000' };
-  if (g >= 70) return { bg:'#fef08a', txt:'#000' };
-  if (g >= 60) return { bg:'#f97316', txt:'#fff' };
-  return { bg:'#ef4444', txt:'#fff' };
+  /* los colores de las casillas de Notas SACE, por la escala de la Secretaría */
+  if (g >= 91) return { bg:'#dcfce7', txt:'#14532d' };
+  if (g >= 80) return { bg:'#dbeafe', txt:'#1e3a8a' };
+  if (g >= 70) return { bg:'#fef3c7', txt:'#78350f' };
+  return { bg:'#fde2e2', txt:'#7f1d1d' };
 }
 
 /* El Nº de LISTA es EDITABLE: es la identidad del alumno (de él nace la
@@ -570,16 +575,14 @@ function paCatKey(grade) {
 
 /* Mensajes para padres por categoría — borradores que el maestro puede editar */
 const PA_MSG_PADRES = {
+  excelente: (n, g, t) =>
+    `🌟 ¡Excelentes noticias! ${n} obtuvo ${g}/100 en «${t}» (nivel Excelente). Su dedicación está dando frutos: felicítele en casa, ese reconocimiento vale oro. Puede retarse con temas superiores.`,
   avanzado: (n, g, t) =>
-    `🌟 ¡Excelentes noticias! ${n} obtuvo ${g}/100 en «${t}». Su dedicación está dando frutos: felicítele en casa, ese reconocimiento vale oro. Está en el nivel Avanzado y puede retarse con temas superiores.`,
-  muyBueno: (n, g, t) =>
-    `💪 ¡Muy buen trabajo! ${n} obtuvo ${g}/100 en «${t}» (nivel Muy Bueno). Domina el tema; con un poco de práctica adicional puede alcanzar la excelencia. Anímele a seguir así.`,
-  satisfactorio: (n, g, t) =>
-    `📘 ${n} obtuvo ${g}/100 en «${t}» (nivel Satisfactorio). Aprobó, pero conviene afianzar lo aprendido: 15 minutos de repaso al día esta semana harán una gran diferencia. Su apoyo en casa es clave.`,
-  debeMejorar: (n, g, t) =>
-    `⚠️ ${n} obtuvo ${g}/100 en «${t}» y necesita reforzar el tema esta semana (irá a recuperación). No es motivo de castigo sino de acompañamiento: pregúntele qué aprendió hoy y ayúdele a practicar un poco cada día.`,
-  insatisfactorio: (n, g, t) =>
-    `🚨 IMPORTANTE: ${n} obtuvo ${g}/100 en «${t}» y necesita apoyo inmediato; irá a recuperación. Le invito a conversar conmigo para acordar juntos un plan de apoyo. Con su ayuda en casa, ${n} puede lograrlo — nadie aprende sin acompañamiento.`,
+    `💪 ¡Muy buen trabajo! ${n} obtuvo ${g}/100 en «${t}» (nivel Avanzado). Domina el tema; con un poco de práctica adicional puede llegar a Excelente. Anímele a seguir así.`,
+  basico: (n, g, t) =>
+    `📘 ${n} obtuvo ${g}/100 en «${t}» (nivel Básico). Aprobó, pero conviene afianzar lo aprendido: 15 minutos de repaso al día esta semana harán una gran diferencia. Su apoyo en casa es clave.`,
+  inicial: (n, g, t) =>
+    `⚠️ ${n} obtuvo ${g}/100 en «${t}» (nivel Inicial) y necesita reforzar el tema esta semana; irá a recuperación. No es motivo de castigo sino de acompañamiento: le invito a conversar conmigo para acordar juntos cómo apoyarle en casa.`,
   nsp: (n, g, t) =>
     `📋 ${n} no se presentó a la evaluación «${t}» (NSP). Podrá hacerla el día programado para pruebas pendientes. Por favor asegúrese de que asista; si hubo una causa de fuerza mayor, comuníquemela.`,
 };
@@ -591,7 +594,7 @@ function paMsgPadre(name, grade, tema) {
   const quien = /^#\d+$/.test(name) ? `Su hijo/a (código ${name})` : name;
   let msg = PA_MSG_PADRES[k](quien, grade, tema || 'la evaluación');
   /* Si el tema coincide con una misión del catálogo, sugerir repaso con enlace */
-  if (typeof _findMissionByTitle === 'function' && k !== 'avanzado') {
+  if (typeof _findMissionByTitle === 'function' && k !== 'excelente') {
     const m = _findMissionByTitle(tema || '');
     if (m) msg += `\n📱 Puede repasar gratis en M.E.T.A.S: «${m.title}» → ${PA_SITE}${encodeURI(m.url)}`;
   }
