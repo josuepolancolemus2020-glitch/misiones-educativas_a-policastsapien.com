@@ -235,6 +235,47 @@ const POR_VISTA = {
   await pg.fill('[data-ofi-num="2"]', '');
   comprueba('borrarla la quita del dato', await pg.evaluate(() => JSON.stringify(adLoad().inasisOficial)) === '{"1":9}');
   await pg.evaluate(() => { const d = adLoad(); delete d.inasisOficial; adSave(d); });
+
+  /* 📥 pegar en columna (v508): lo contrario de 📋 */
+  console.log('\n── 📥 pegar en columna ──');
+  const pegarEn = (sel, t) => pg.evaluate(([s, t]) => {
+    const dt = new DataTransfer(); dt.setData('text/plain', t);
+    document.querySelector(s).dispatchEvent(new ClipboardEvent('paste', { clipboardData: dt, bubbles: true, cancelable: true }));
+  }, [sel, t]);
+  const celda = (p, m, n) => pg.evaluate(([p, m, n]) => ((adLoad().notas[p] || {})[m] || {})[n], [p, m, n]);
+  await pinta(pg, 'IV', 'aprov');
+  const antesPeg = [await celda('IV', 'Español', 1), await celda('IV', 'Español', 3)];
+  await pegarEn('[data-num="1"][data-campo="Español"]', '70\n80\n\nX\n95\n');
+  await pg.waitForSelector('#mdlg-cancel');
+  comprueba('si va a cambiar notas que ya estaban, pregunta antes', /cambian/.test(await pg.textContent('.mdlg-card')));
+  await pg.click('#mdlg-cancel');
+  await pg.waitForTimeout(200);
+  comprueba('y si dice que no, no cambia nada', await notas(pg) === n0);
+  await pegarEn('[data-num="1"][data-campo="Español"]', '70\n80\n\nX\n95\n');
+  await pg.waitForSelector('#mdlg-ok');
+  await pg.click('#mdlg-ok');
+  await pg.waitForTimeout(300);
+  comprueba('pega hacia abajo: 70, 80; el renglón vacío no borra; la X no se pega; 95 en el quinto',
+    await celda('IV', 'Español', 1) === 70 && await celda('IV', 'Español', 2) === 80 && await celda('IV', 'Español', 3) === antesPeg[1] &&
+    await celda('IV', 'Español', 4) !== undefined && await celda('IV', 'Español', 5) === 95, antesPeg);
+  comprueba('antes de pegar guarda una copia en 🕘 Deshacer',
+    await pg.evaluate(() => JSON.parse(localStorage.getItem('METAS_ADMIN_UNDO_V1') || '[]').some(u => /Pegar en columna/.test(u.e))));
+  comprueba('y la pantalla muestra lo pegado', await pg.$eval('[data-num="2"][data-campo="Español"]', i => i.value) === '80');
+  await pegarEn('[data-num="6"][data-campo="Español"]', '61\t62\n');
+  await pg.waitForSelector('#mdlg-ok'); await pg.click('#mdlg-ok'); await pg.waitForTimeout(300);
+  comprueba('con tabuladores (de Excel o del SACE) sigue hacia la derecha',
+    await celda('IV', 'Español', 6) === 61 && await celda('IV', 'Inglés', 6) === 62);
+  /* la inasistencia oficial, con el botón 📥 y saltando al 🙈 */
+  await pg.evaluate(() => { const d = adLoad(); d.lista.find(a => a.num === 2).noCopiarSace = true; adSave(d); });
+  await pinta(pg, 'IV', 'inasis');
+  await pg.click('[data-pkey="ofi"]');
+  await pg.fill('#ad-pegar-txt', '5\n6\n7');
+  await pg.click('#ad-pegar-ok');
+  await pg.waitForTimeout(300);
+  comprueba('📥 de «Oficial SACE» pega desde el primero y salta al 🙈, como 📋 al copiar',
+    await pg.evaluate(() => JSON.stringify(adLoad().inasisOficial)) === '{"1":5,"3":6,"4":7}');
+  comprueba('pegar en celdas vacías no pregunta (no había nada que cambiar)', !(await pg.$('#mdlg-ok')));
+  await pg.evaluate(() => { const d = adLoad(); delete d.inasisOficial; delete d.lista.find(a => a.num === 2).noCopiarSace; adSave(d); });
   await pg.close();
 
   /* ── 2 · la ayuda, como la ve un maestro (sin navigator.webdriver) ── */

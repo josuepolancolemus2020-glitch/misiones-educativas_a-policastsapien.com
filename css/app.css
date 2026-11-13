@@ -5114,8 +5114,8 @@ body.ad-gr-moviendo { cursor: grabbing; user-select: none; -webkit-user-select: 
 .ad-mx thead th { background: var(--bg); padding: 5px 4px; vertical-align: bottom; position: sticky; top: 0; z-index: 3; }
 .ad-mx-h { font-size: calc(11px * var(--metas-fz, 1)); font-weight: 800; color: var(--text); min-width: 54px; max-width: 90px; line-height: 1.15; }
 .ad-mx-hbtns { display: flex; justify-content: center; align-items: center; gap: 1px; margin-top: 3px; }
-.ad-mx-copy { border: none; background: transparent; cursor: pointer; font-size: calc(12px * var(--metas-fz, 1)); opacity: .6; padding: 2px; }
-.ad-mx-copy:active { opacity: 1; }
+.ad-mx-copy, .ad-mx-paste { border: none; background: transparent; cursor: pointer; font-size: calc(12px * var(--metas-fz, 1)); opacity: .6; padding: 2px; }
+.ad-mx-copy:active, .ad-mx-paste:active { opacity: 1; }
 .ad-mx-mv { border: none; background: transparent; cursor: pointer; font-size: calc(13px * var(--metas-fz, 1)); color: #1565c0; padding: 3px 4px; font-weight: 900; }
 .ad-mx-mv:disabled { color: #cbd5e1; cursor: default; }
 .ad-mx-mv:active:not(:disabled) { background: #eef4ff; border-radius: 6px; }
@@ -5337,7 +5337,7 @@ body.ad-gr-moviendo { cursor: grabbing; user-select: none; -webkit-user-select: 
 .ad-mx-pers .ad-mx-h { max-width: 148px; }
 .ad-mx-sub { font-size: calc(10px * var(--metas-fz, 1)); font-weight: 800; color: var(--muted); padding: 2px 1px 3px; min-width: 34px; }
 .ad-mx-sub span { display: block; }
-.ad-mx-sub .ad-mx-copy { display: block; margin: 1px auto 0; }
+.ad-mx-sub .ad-mx-copy, .ad-mx-sub .ad-mx-paste { display: block; margin: 1px auto 0; }
 .ad-mx th.ad-mx-ini, .ad-mx td.ad-mx-ini { border-left: 2px solid #9db1cc; }
 :root[data-theme="dark"] .ad-mx th.ad-mx-ini, :root[data-theme="dark"] .ad-mx td.ad-mx-ini { border-left-color: #46586e; }
 .ad-mx-addmat { margin-top: 8px; }

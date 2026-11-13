@@ -3371,7 +3371,7 @@ function adCfRecHtml(cf) {
     <p class="ad-sace-nota">Escribe la nota (1 a 100) de cada materia que presentó en recuperación. Con <b>70 o más en todas</b>
       sus materias reprobadas queda <b>✓ Aprobado en recuperación</b>. Déjala vacía mientras no la presente.
       El cuadro de arriba, el conteo de aprobados, el Resumen final y los mensajes a las familias cambian al escribirla.
-      También puedes llenarla en <b>Notas SACE → Sección a llenar → ✍️ Recuperación</b>.</p>
+      También puedes llenarla, o pegarla en columna con 📥, en <b>Notas SACE → Sección → ✍️ Recuperación</b>.</p>
     <p class="cf-rec-cuenta" id="ad-cf-rec-cuenta" aria-live="polite">${adCfRecResumen(cf)}</p>
     ${conRep.map(f => { const e = adCfRecEstado(f); return `<div class="cf-rec-fila"><div class="cf-rec-nom"><b>#${f.num}</b> ${adEsc(f.nombre)}
         <small class="cf-rec-est ${e.cls}" data-cfest="${f.num}">${adEsc(e.txt)}</small></div>
@@ -7649,13 +7649,13 @@ function adSacePrefPrimeraVez(llave) {
 /* Los pasos de «¿Cómo se llena?», tres como máximo, según la sección */
 function adSacePasos(vista, parcial) {
   if (vista === 'pers') return ['Los cuatro parciales están a la vista, rasgo por rasgo.',
-    'Escribe S, MB o B, o toca el valor de arriba.', 'Toca 📋 en cada columna y pégala en el SACE.'];
+    'Escribe S, MB o B, o toca el valor de arriba.', 'Con 📋 copias al SACE; con 📥 pegas una columna.'];
   if (vista === 'inasis') return ['Elige las fechas y toca «Traer faltas del pase de lista».',
     'Las excusas no cuentan. Puedes corregir a mano.', 'En «Oficial SACE» escribe la del año: va al Cuadro final.'];
   if (vista === 'recup') return ['Solo se llenan las materias con final bajo 70.',
-    'N/A ya la aprobó. El punto gris: le falta un parcial.', 'Toca 📋 en cada materia y pégala en el SACE.'];
+    'N/A ya la aprobó. El punto gris: le falta un parcial.', 'Con 📋 copias al SACE; con 📥 pegas una columna.'];
   return ['Elige el parcial y la sección arriba.',
-    'Escribe la nota y pasa con Enter o Tab.', 'Toca 📋 en cada materia y pégala en el SACE.'];
+    'Escribe la nota y pasa con Enter o Tab.', 'Con 📋 copias al SACE; con 📥 pegas una columna.'];
 }
 /* Ventana de ayuda de 3 pasos para cualquier pestaña de Mi aula (las
    cajas amarillas de instrucciones se mudaron aquí). Se crea al pedirla. */
@@ -7676,6 +7676,36 @@ function adAyudaVentana(titulo, pasos) {
   document.body.appendChild(ov);
   ov.querySelector('.ad-gen-foot button').focus();
   return ov;
+}
+/* Ventana con un cuadro para pegar una columna. Resuelve con el texto, o
+   null si se cierra sin pegar. */
+function adPegarVentana(que) {
+  return new Promise(resolve => {
+    const ov = document.createElement('div');
+    ov.className = 'ad-gen-ov';
+    ov.innerHTML = `
+      <div class="ad-gen-card" role="dialog" aria-modal="true" aria-labelledby="ad-pegar-tit">
+        <div class="ad-gen-head"><div class="ad-gen-title" id="ad-pegar-tit">📥 Pegar ${adEsc(que)}</div>
+          <button type="button" class="ad-gen-close" data-cerrar aria-label="Cerrar">✕</button></div>
+        <div class="ad-sace-vent-cuerpo">
+          <p class="ad-linea">Pega aquí la columna: un dato por renglón, desde el primer alumno.</p>
+          <textarea class="pa-paste-area" id="ad-pegar-txt" rows="8" aria-label="Datos para pegar"></textarea>
+        </div>
+        <div class="ad-gen-foot">
+          <button type="button" class="pa-generate-btn ad-btn-sec" data-cerrar>Cancelar</button>
+          <button type="button" class="pa-generate-btn" id="ad-pegar-ok">📥 Pegar en la columna</button>
+        </div>
+      </div>`;
+    const fin = v => { ov.remove(); document.removeEventListener('keydown', esc); resolve(v); };
+    const esc = e => { if (e.key === 'Escape') fin(null); };
+    ov.addEventListener('click', e => {
+      if (e.target.closest('#ad-pegar-ok')) fin(ov.querySelector('#ad-pegar-txt').value);
+      else if (e.target === ov || e.target.closest('[data-cerrar]')) fin(null);
+    });
+    document.addEventListener('keydown', esc);
+    document.body.appendChild(ov);
+    ov.querySelector('#ad-pegar-txt').focus();
+  });
 }
 /* La ayuda de una pestaña se abre sola solo la primera vez (llave propia,
    de vista). No en las sondas automáticas: taparía lo que ellas tocan. */
@@ -7894,16 +7924,18 @@ function adRenderSace(body, d) {
           <tr>
             ${colDefs.map(cd => `<th class="ad-mx-sub${cd.ini ? ' ad-mx-ini' : ''}"><span>${cd.parcial}</span>
               <button class="ad-mx-copy" data-campo="${adEsc(cd.campo)}" data-parcial="${cd.parcial}"
-                title="Copiar «${adEsc(cd.campo)} · Parcial ${cd.parcial}» para SACE">📋</button></th>`).join('')}
+                title="Copiar «${adEsc(cd.campo)} · Parcial ${cd.parcial}» para SACE">📋</button><button class="ad-mx-paste" data-pkey="${adEsc(cd.campo + '|' + cd.parcial)}"
+                title="Pegar «${adEsc(cd.campo)} · Parcial ${cd.parcial}» en columna">📥</button></th>`).join('')}
           </tr>` : `
           <tr>
             <th class="ad-mx-sticky ad-mx-corner">Nº · Alumno</th>
             ${esAnio ? `<th class="ad-mx-ofi-h"><div class="ad-mx-h">Oficial SACE<small class="ad-mx-hsub">del año · va al Cuadro final</small></div>
-              <div class="ad-mx-hbtns"><button class="ad-mx-copy" data-ia="ofi" title="Copiar la inasistencia oficial del año para el SACE">📋</button></div></th>` : ''}
+              <div class="ad-mx-hbtns"><button class="ad-mx-copy" data-ia="ofi" title="Copiar la inasistencia oficial del año para el SACE">📋</button><button class="ad-mx-paste" data-pkey="ofi" title="Pegar la inasistencia oficial del año en columna">📥</button></div></th>` : ''}
             ${cols.map((c, ci) => `<th${esAnio ? ' class="ad-mx-ini"' : ''}><div class="ad-mx-h">${esInasis ? 'Parcial ' + parcial + '<small class="ad-mx-hsub">para la boleta</small>' : adEsc(c)}</div>
               <div class="ad-mx-hbtns">
                 ${!esInasis && !esRec ? `<button class="ad-mx-mv" data-col="${ci}" data-dir="-1" title="Mover a la izquierda"${ci === 0 ? ' disabled' : ''}>◀</button>` : ''}
                 <button class="ad-mx-copy" data-col="${ci}" title="Copiar «${adEsc(c)}${esRec ? ' · Recuperación' : ''}» para SACE">📋</button>
+                <button class="ad-mx-paste" data-pkey="${adEsc(c + '|' + (esRec ? 'REC' : parcial))}" title="Pegar «${adEsc(c)}${esRec ? ' · Recuperación' : ''}» en columna">📥</button>
                 ${!esInasis && !esRec ? `<button class="ad-mx-mv" data-col="${ci}" data-dir="1" title="Mover a la derecha"${ci === cols.length - 1 ? ' disabled' : ''}>▶</button>` : ''}
               </div></th>`).join('')}
             ${esAnio ? AD_IA_COLS.map((x, i) => `<th class="ad-mx-ia-h${i === 0 ? ' ad-mx-ini' : ''}"><div class="ad-mx-h">${x.et}<small class="ad-mx-hsub">${x.sub} · año ${adEsc(ia.anio)}</small></div>
@@ -8620,6 +8652,88 @@ function adRenderSace(body, d) {
       if (ofis[j]) { ofis[j].focus(); ofis[j].select(); }
     });
   });
+  /* 📥 PEGAR EN COLUMNA: lo contrario de 📋. Un renglón por alumno, en el
+     orden de la tabla y saltando a los 🙈 que no se copian al SACE (así lo
+     que 📋 copia y lo que 📥 pega se corresponden renglón por renglón).
+     Con tabuladores (de Excel o del SACE) sigue también hacia la derecha.
+     Un renglón vacío no borra nada; un dato que no sirve no se pega; si va
+     a cambiar una casilla que ya tenía otro dato, pregunta primero; y antes
+     de pegar guarda una copia en 🕘 Deshacer. Cada casilla se guarda con
+     la misma función que al escribirla a mano. */
+  const pegKey = inp => inp.classList.contains('ad-mx-ofi') ? 'ofi' : inp.dataset.campo + '|' + inp.dataset.parcial;
+  const pegCeldas = tr => [...tr.querySelectorAll('.ad-mx-ofi, .ad-mx-inp')];
+  const pegValor = (inp, t) => {
+    if (inp.classList.contains('ad-mx-ofi')) {
+      return /^\d{1,3}$/.test(t) ? String(Number(t)) : null;
+    }
+    if (esLetra) {
+      const u = t.toUpperCase().replace(/\s+/g, '');
+      const v = AD_PERS_DE_NUM[u] || u;
+      return /^[A-ZÑ+]{1,3}$/.test(v) ? v : null;
+    }
+    const n = Number(t.replace(',', '.'));
+    if (!/^\d{1,3}([.,]\d+)?$/.test(t) || isNaN(n)) return null;
+    const v = Math.round(n);
+    if (inp.dataset.campo === 'Inasistencias') return v <= 999 ? String(v) : null;
+    return v >= 1 && v <= 100 ? String(v) : null;
+  };
+  const pegar = async (inp0, texto) => {
+    const lineas = String(texto || '').replace(/\r/g, '').split('\n');
+    if (lineas.length > 1 && lineas[lineas.length - 1] === '') lineas.pop();
+    const tr0 = inp0.closest('tr');
+    const filas = [...body.querySelectorAll('.ad-mx tbody tr')]
+      .filter(tr => tr === tr0 || !tr.classList.contains('ad-mx-tr-nocopy'));
+    const desde = filas.indexOf(tr0), c0 = pegCeldas(tr0).indexOf(inp0);
+    const plan = [];
+    let malos = 0, sobran = 0, cambian = 0;
+    lineas.forEach((ln, i) => {
+      const tr = filas[desde + i];
+      ln.split('\t').forEach((t, j) => {
+        t = t.trim();
+        if (!tr) { if (t) sobran++; return; }
+        const inp = pegCeldas(tr)[c0 + j];
+        if (!inp || inp.disabled || !t) return;
+        const v = pegValor(inp, t);
+        if (v == null) { malos++; return; }
+        if (inp.value.trim() !== '' && inp.value.trim().toUpperCase() !== v) cambian++;
+        plan.push([inp, v]);
+      });
+    });
+    const quien = inp0.classList.contains('ad-mx-ofi') ? 'Inasistencia oficial' : inp0.dataset.campo;
+    if (!plan.length) {
+      estado('⚠️ No había nada que pegar en «' + quien + '»' + (malos ? ': ' + malos + ' dato(s) no sirven aquí.' : '.'));
+      return;
+    }
+    const notas = (malos ? '\n\n' + malos + ' dato(s) no sirven aquí y no se pegan.' : '') +
+      (sobran ? '\n\n' + sobran + ' dato(s) sobran: hay más renglones que alumnos.' : '');
+    if (cambian && !await metasConfirm('Se pegan **' + plan.length + '** dato(s) en «' + quien + '».\n\n**' + cambian +
+        '** casilla(s) ya tenían otro dato y cambian.' + notas, { icono: '📥', titulo: 'Pegar en columna', okTxt: 'Sí, pegar' })) return;
+    adUndoGuardar('Pegar en columna: ' + quien);
+    plan.forEach(([inp, v]) => {
+      inp.value = v;
+      if (inp.classList.contains('ad-mx-ofi')) inp.dispatchEvent(new Event('input'));
+      else guardar(inp);
+    });
+    estado('📥 ' + plan.length + ' dato(s) pegados en «' + quien + '».' + notas.replace(/\n\n/g, ' '));
+    if (typeof toast === 'function') toast('📥 ' + plan.length + ' dato(s) pegados' + (malos ? ' · ' + malos + ' no servían' : ''));
+  };
+  /* Ctrl+V (o pegar en el teléfono) en una casilla: si trae varios datos,
+     llena desde ahí hacia abajo; un solo dato se pega como siempre. */
+  body.querySelectorAll('.ad-mx-ofi, .ad-mx-inp').forEach(inp => inp.addEventListener('paste', e => {
+    const t = (e.clipboardData || window.clipboardData).getData('text') || '';
+    if (!/[\n\t]/.test(t.replace(/[\r\n]+$/, ''))) return;
+    e.preventDefault();
+    pegar(inp, t);
+  }));
+  /* 📥 en el encabezado: una ventana para pegar la columna entera desde el
+     primer alumno (en el teléfono es más fácil que buscar la casilla) */
+  body.querySelectorAll('.ad-mx-paste').forEach(btn => btn.addEventListener('click', async () => {
+    const fila = [...body.querySelectorAll('.ad-mx tbody tr')].find(tr => !tr.classList.contains('ad-mx-tr-nocopy'));
+    const inp0 = fila && pegCeldas(fila).find(x => pegKey(x) === btn.dataset.pkey);
+    if (!inp0) return;
+    const txt = await adPegarVentana(btn.title.replace(/^Pegar /, '').replace(/ en columna$/, ''));
+    if (txt != null) pegar(inp0, txt);
+  }));
   body.querySelectorAll('.ad-mx-copy').forEach(btn => btn.addEventListener('click', () => {
     const dd = adLoad();
     const iaK = btn.dataset.ia;
