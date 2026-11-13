@@ -219,8 +219,13 @@ function sembrado(extraBoleta) {
   /* ── 3 · el botón, con vista previa ── */
   console.log('\n── el botón «Copiar notas de mis respaldos» ──');
   await pg.evaluate(() => { _adTab = 'sace'; renderAdmin(true); });
+  /* desde v504 los tres botones de rescate viven en la ventana «🛟
+     Recuperar o revisar notas»: se abre antes de cada toque */
+  const rescate = () => pg.click('#ad-sace-chip-rescate');
+  await pg.waitForSelector('#ad-sace-chip-rescate');
+  await rescate();
   await pg.waitForSelector('#ad-sace-recuperar');
-  comprueba('el botón dice lo que hace', /Copiar notas de mis respaldos/.test(await pg.textContent('#ad-sace-recuperar')));
+  comprueba('el botón dice lo que hace', /Recuperar notas que faltan/.test(await pg.textContent('#ad-sace-recuperar')));
   const n0 = await notas();
   await pg.click('#ad-sace-recuperar');
   await pg.waitForSelector('#ad-cam-tit');
@@ -230,6 +235,7 @@ function sembrado(extraBoleta) {
   await pg.click('#ad-cam-no');
   await pg.waitForTimeout(200);
   comprueba('«No copiar» no cambia nada', await notas() === n0);
+  await rescate();
   await pg.click('#ad-sace-recuperar');
   await pg.waitForSelector('#ad-cam-si');
   await pg.click('#ad-cam-si');
@@ -256,6 +262,7 @@ function sembrado(extraBoleta) {
   comprueba('el grupo con la marca ofrece «Revisar notas que la aplicación puso sola»', !!hayRev);
   const nInv = await notas();
   if (hayRev) {
+    await rescate();
     await pg.click('#ad-sace-revisar-solas');
     await pg.waitForSelector('#ad-cam-tit');
     const lst = await pg.$$eval('.ad-cam-tbl tbody tr', ts => ts.map(t => [...t.querySelectorAll('td')].slice(1).map(x => x.textContent.trim())));
@@ -264,6 +271,7 @@ function sembrado(extraBoleta) {
     await pg.click('#ad-cam-no');
     await pg.waitForTimeout(200);
     comprueba('«Cerrar sin borrar» no borra nada', await notas() === nInv);
+    await rescate();
     await pg.click('#ad-sace-revisar-solas');
     await pg.waitForSelector('#ad-cam-si');
     await pg.click('#ad-cam-si');
@@ -272,6 +280,7 @@ function sembrado(extraBoleta) {
     await pg.click('#mdlg-cancel');
     await pg.waitForTimeout(200);
     comprueba('y si dice que no, tampoco se borra', await notas() === nInv);
+    await rescate();
     await pg.click('#ad-sace-revisar-solas');
     await pg.waitForSelector('#ad-cam-si');
     await pg.click('#ad-cam-si');
