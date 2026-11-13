@@ -279,9 +279,111 @@
     F.fusionar = nueva;
   }
 
+
+  /* ══ LO QUE VIVE FUERA DEL AULA: comunicados, conducta, Plan de Acción ══
+     Se guardan en otras llaves (METAS_AVISOS_V1, METAS_PLANACCION_V1) y se
+     sincronizan aparte, SIN la lista al lado: al juntarse, el «#17» de un
+     equipo podía llegar a otro donde el #17 es otro niño, y un reporte de
+     conducta o un comunicado individual le llegaba a OTRA familia.
+     Por eso cada registro lleva quién es (`uid` y `nombre`) y, cada vez
+     que se lee el aula, se le vuelve a poner el número que ese alumno
+     tiene HOY. Si ya no está en la lista, queda con número 0: no le llega
+     a nadie y no se borra (se ve como «ya no está en la lista»). */
+  function buscarAlumno(lista, ref) {
+    var l = (lista || []).filter(function (a) { return a && a.num != null; });
+    if (ref.uid) {
+      var u = l.filter(function (a) { return a.uid === ref.uid; });
+      if (u.length === 1) return u[0];
+    }
+    var i = digitos(ref.idn);
+    if (i.length >= 6) {
+      var x = l.filter(function (a) { return digitos(a.idn) === i; });
+      if (x.length === 1) return x[0];
+    }
+    var n = normNom(ref.nombre);
+    if (n) {
+      var y = l.filter(function (a) { return normNom(a.nombre) === n; });
+      if (y.length === 1) return y[0];
+    }
+    return null;
+  }
+  /* Ancla UN registro { num, uid?, nombre? }. Devuelve true si cambió. */
+  /* sinCero: si no lo encuentra, lo deja como está en vez de ponerle 0
+     (el Plan de Acción admite nombres escritos a mano, que pueden no
+     coincidir letra por letra con la lista) */
+  function anclar(lista, r, sinCero) {
+    if (!r || typeof r !== 'object') return false;
+    var cn = 'nombre';
+    var conQuien = !!(r.uid || (r[cn] && normNom(r[cn])));
+    if (!conQuien) {
+      /* registro de antes: se le pone quién es según el número de HOY,
+         que en este equipo cuadra (reordenar mueve todo junto) */
+      var a0 = (lista || []).filter(function (a) { return a && +a.num === +r.num; })[0];
+      if (!a0) return false;
+      r.uid = a0.uid || undefined; r[cn] = String(a0.nombre || '');
+      if (!r.uid) delete r.uid;
+      return true;
+    }
+    var a = buscarAlumno(lista, { uid: r.uid, nombre: r[cn], idn: r.idn });
+    if (!a) {
+      if (sinCero || +r.num === 0) return false;
+      /* el número de hoy es de otro niño: no se le manda a él */
+      r.numAntes = r.num; r.num = 0;
+      return true;
+    }
+    var cambio = false;
+    if (+r.num !== +a.num) { r.num = +a.num; cambio = true; }
+    if (a.uid && r.uid !== a.uid) { r.uid = a.uid; cambio = true; }
+    if (r.numAntes != null) { delete r.numAntes; cambio = true; }
+    return cambio;
+  }
+  /* comunicados individuales: `alumnos` (números) + `alumnosId` (quiénes) */
+  function anclarAviso(lista, av) {
+    if (!av || !Array.isArray(av.alumnos) || !av.alumnos.length) return false;
+    var ids = Array.isArray(av.alumnosId) ? av.alumnosId : null;
+    if (!ids) {
+      av.alumnosId = av.alumnos.map(function (n) {
+        var a = (lista || []).filter(function (x) { return x && +x.num === +n; })[0];
+        return a ? { uid: a.uid, nombre: String(a.nombre || '') } : { num: +n };
+      });
+      return true;
+    }
+    var nums = [];
+    ids.forEach(function (q) {
+      var a = (q && (q.uid || q.nombre)) ? buscarAlumno(lista, q) : null;
+      if (a) { nums.push(+a.num); if (a.uid && q.uid !== a.uid) q.uid = a.uid; }
+      else if (q && q.num != null && !q.uid && !q.nombre) nums.push(+q.num);
+    });
+    /* si ninguno sigue en la lista, el aviso NO puede pasar a ser para todos */
+    if (!nums.length) nums = [0];
+    var antes = JSON.stringify(av.alumnos);
+    av.alumnos = nums;
+    return JSON.stringify(nums) !== antes;
+  }
+  /* El aviso del grupo { avisos, conducta } con la lista de hoy */
+  function anclarAvisosGrupo(lista, gAv) {
+    if (!gAv || typeof gAv !== 'object') return false;
+    var c = false;
+    (Array.isArray(gAv.conducta) ? gAv.conducta : []).forEach(function (r) { if (anclar(lista, r)) c = true; });
+    (Array.isArray(gAv.avisos) ? gAv.avisos : []).forEach(function (av) {
+      if (av && av.tipo === 'individual' && anclarAviso(lista, av)) c = true;
+    });
+    return c;
+  }
+  /* Un análisis del Plan de Acción: sus alumnos ya traen `nombre` */
+  function anclarPlan(lista, analisis) {
+    var c = false;
+    (analisis && Array.isArray(analisis.students) ? analisis.students : []).forEach(function (s) {
+      if (anclar(lista, s, true)) c = true;
+    });
+    return c;
+  }
+
   var API = {
     remapGrupo: remapGrupo, asegurarUids: asegurarUids, emparejar: emparejar,
     traducir: traducir, alinear: alinear, envolver: envolver, normNom: normNom,
+    buscarAlumno: buscarAlumno, anclar: anclar, anclarAviso: anclarAviso,
+    anclarAvisosGrupo: anclarAvisosGrupo, anclarPlan: anclarPlan,
   };
   raiz.MetasNumeracion = API;
   if (raiz.MetasFusion) envolver(raiz.MetasFusion);

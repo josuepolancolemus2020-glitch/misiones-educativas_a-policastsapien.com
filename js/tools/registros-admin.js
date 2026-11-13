@@ -337,6 +337,57 @@ function adMarcarBorrado(g, al) {
     .slice(-AD_BORRADOS_MAX);
 }
 
+/* ══════════════ COMUNICADOS, CONDUCTA Y PLAN DE ACCIÓN, POR IDENTIDAD ══════════════
+   Viven en otras llaves y se sincronizan sin la lista al lado: un «#17»
+   de otro equipo podía ser hoy otro niño, y un reporte de conducta o un
+   comunicado individual le llegaba a OTRA familia. Cada registro lleva
+   quién es, y aquí se le vuelve a poner el número que ese alumno tiene
+   hoy (js/metas-numeracion.js). Solo trabaja si algo cambió desde la
+   última vez: adState se llama a cada rato. */
+let _adAnclaVisto = '';
+function adAnclarFuera(st) {
+  if (!window.MetasNumeracion || !st || !Array.isArray(st.grupos)) return;
+  let avRaw = '', paRaw = '', adRaw = '';
+  try {
+    avRaw = localStorage.getItem('METAS_AVISOS_V1') || '';
+    paRaw = localStorage.getItem('METAS_PLANACCION_V1') || '';
+    adRaw = localStorage.getItem(ADMIN_KEY) || '';
+  } catch (_) { return; }
+  const visto = adRaw.length + '|' + avRaw.length + '|' + paRaw.length + '|' + adRaw.slice(-64) + avRaw.slice(-64) + paRaw.slice(-64);
+  if (visto === _adAnclaVisto) return;
+  let cambio = false;
+  try {
+    const av = avRaw ? JSON.parse(avRaw) : null;
+    if (av && av.grupos && typeof av.grupos === 'object') {
+      let c = false;
+      st.grupos.forEach(g => { if (MetasNumeracion.anclarAvisosGrupo(g.lista, av.grupos[g.id])) c = true; });
+      if (c) { localStorage.setItem('METAS_AVISOS_V1', JSON.stringify(av)); cambio = true; }
+    }
+  } catch (_) {}
+  try {
+    const pa = paRaw ? JSON.parse(paRaw) : null;
+    if (pa && Array.isArray(pa.analisis)) {
+      let c = false;
+      pa.analisis.forEach(a => {
+        if (!a || !Array.isArray(a.students)) return;
+        /* el grupo del análisis: su sello, o el único grupo con ese grado y
+           sección (con dos «6º-1» en dos colegios no se adivina) */
+        const cands = a.grupoId ? st.grupos.filter(g => g.id === a.grupoId)
+          : st.grupos.filter(g => adSugMismoGrupo(a, g));
+        if (cands.length !== 1) return;
+        if (MetasNumeracion.anclarPlan(cands[0].lista, a)) c = true;
+      });
+      if (c) { localStorage.setItem('METAS_PLANACCION_V1', JSON.stringify(pa)); cambio = true; }
+    }
+  } catch (_) {}
+  try {
+    _adAnclaVisto = (localStorage.getItem(ADMIN_KEY) || '').length + '|' + (localStorage.getItem('METAS_AVISOS_V1') || '').length + '|' +
+      (localStorage.getItem('METAS_PLANACCION_V1') || '').length + '|' + (localStorage.getItem(ADMIN_KEY) || '').slice(-64) +
+      (localStorage.getItem('METAS_AVISOS_V1') || '').slice(-64) + (localStorage.getItem('METAS_PLANACCION_V1') || '').slice(-64);
+  } catch (_) {}
+  if (cambio && typeof adSyncProgramar === 'function') adSyncProgramar();
+}
+
 function adState() {
   let st = null;
   try { st = JSON.parse(localStorage.getItem(ADMIN_KEY)); } catch (_) {}
@@ -349,6 +400,7 @@ function adState() {
     let uids = 0;
     if (window.MetasNumeracion) st.grupos.forEach(g => { uids += MetasNumeracion.asegurarUids(g); });
     if (revividas || uids) { try { localStorage.setItem(ADMIN_KEY, JSON.stringify(st)); } catch (_) {} }
+    adAnclarFuera(st);
     if (_adGrupoActivoId && st.grupos.some(g => g.id === _adGrupoActivoId)) {
       st.activo = _adGrupoActivoId;
     } else if (st.grupos.some(g => g.id === st.activo)) {
@@ -10903,7 +10955,7 @@ function adRenderCom(body, d) {
       <span style="flex:1">${a.prioridad === 'urgente' ? '🔴 ' : ''}${AV_TIPOS[a.tipo] ? AV_TIPOS[a.tipo].split(' ')[0] : '📣'}
         <strong>${adEsc(a.titulo)}</strong><br>
         <small>${adEsc(a.texto)}</small><br>
-        <small style="color:#666">${a.fechaEvento ? '📅 ' + adFechaBonita(a.fechaEvento) + ' · ' : ''}${vive ? 'se muestra hasta el ' + adFechaBonita(a.hasta) : 'VENCIDO (ya no se muestra)'}${a.tipo === 'individual' && a.alumnos ? ' · solo #' + a.alumnos.join(', #') : ''}
+        <small style="color:#666">${a.fechaEvento ? '📅 ' + adFechaBonita(a.fechaEvento) + ' · ' : ''}${vive ? 'se muestra hasta el ' + adFechaBonita(a.hasta) : 'VENCIDO (ya no se muestra)'}${a.tipo === 'individual' && a.alumnos ? (a.alumnos.some(n => +n) ? ' · solo #' + a.alumnos.filter(n => +n).join(', #') : ' · ninguno de sus alumnos sigue en la lista: no se le envía a nadie') : ''}
       <span data-vistos="AVI-${a.id}" style="color:#1e8e3e"></span></small></span>
       <span style="white-space:nowrap">
         <button class="ad-al-del av-edit" data-avid="${a.id}" aria-label="Editar" style="color:#1e3a7c">✏️</button>
@@ -10980,11 +11032,13 @@ function adRenderCom(body, d) {
       </div>
       <div style="margin-top:10px">
         ${g.conducta.length ? g.conducta.slice().reverse().map(c => {
-          const al = d.lista.find(a => a.num === c.num) || {};
+          const al = (+c.num ? d.lista.find(a => a.num === c.num) : null) || {};
           const vive = avVigente(c);
+          const fuera = !+c.num;
           return `<div class="ad-gasto-row" style="align-items:flex-start${vive ? '' : ';opacity:.55'}">
             <span style="flex:1">${(AV_CONDUCTA_TIPOS[c.tipo] || '📋').split(' ')[0]}
-              <strong>#${c.num}${al.nombre ? ' ' + adEsc(adPrimerNombre(al.nombre)) : ''}</strong>
+              <strong>${fuera ? adEsc(c.nombre || 'Alumno') + ' <small>(ya no está en la lista: no se le envía a nadie)</small>'
+                : '#' + c.num + (al.nombre ? ' ' + adEsc(adPrimerNombre(al.nombre)) : '')}</strong>
               · <small>${adFechaBonita(c.fecha)}</small><br>
               <small>${adEsc(c.texto)}</small><br>
               <small style="color:#666">${vive ? 'la familia lo ve hasta el ' + adFechaBonita(c.hasta) : 'VENCIDO (ya no se muestra)'}</small></span>
@@ -11099,7 +11153,9 @@ function adRenderCom(body, d) {
       prioridad: urgente ? 'urgente' : 'normal', titulo, texto,
       fechaEvento: tipo === 'evento' ? fechaEvento : (fechaEvento || null),
       hasta: (tipo === 'evento' && fechaEvento && fechaEvento > hasta) ? avFechaMas(fechaEvento, 1) : hasta,
-      alumnos: tipo === 'individual' ? nums : null, mod: new Date().toISOString() };
+      alumnos: tipo === 'individual' ? nums : null,
+      alumnosId: tipo === 'individual' ? nums.map(n => { const a = d.lista.find(x => +x.num === +n) || {}; return { uid: a.uid, nombre: String(a.nombre || '') }; }) : null,
+      mod: new Date().toISOString() };
     if (!nuevo.fechaEvento) nuevo.fechaEvento = null;
     const i = gg.avisos.findIndex(a => a.id === nuevo.id);
     if (i >= 0) gg.avisos[i] = nuevo; else gg.avisos.push(nuevo);
@@ -11170,7 +11226,9 @@ function adRenderCom(body, d) {
     });
     if (texto === null) return;
     const gg = avGrupo(d.id);
-    gg.conducta.push({ id: 'CD' + Date.now().toString(36), num, tipo,
+    /* con quién es, no solo su número: si la lista se reordena en otro
+       equipo, el reporte sigue a ESTE niño (js/metas-numeracion.js) */
+    gg.conducta.push({ id: 'CD' + Date.now().toString(36), num, uid: al.uid, nombre: String(al.nombre || ''), tipo,
       texto: String(texto).trim().slice(0, 500), fecha: adHoy(), hasta: avFechaMas(adHoy(), 45) });
     avGrupoSave(d.id, gg);
     renderAdmin();

@@ -160,6 +160,44 @@ console.log('\n6 · Identidad interna');
   ok(Object.keys(N.emparejar(ref, otro)).length === 0, 'dos «Luis» sin identidad no se emparejan a ciegas');
 }
 
+console.log('\n6b · Comunicados, conducta y Plan de Acción siguen a su alumno');
+{
+  /* la lista de HOY, ya reordenada en otro equipo: Génesis pasó del #3 al #2 */
+  const lista = [{ num: 1, nombre: 'Ada Sevilla', uid: 'UA' }, { num: 2, nombre: 'Génesis Janeth Maldonado', uid: 'UG' },
+    { num: 3, nombre: 'Emely Natalia García', uid: 'UE' }, { num: 4, nombre: 'Dayrin Liliana Orellana', uid: 'UD' }];
+  /* llegan de un equipo con la numeración vieja (Génesis #3, Emely #5, un alumno borrado #4) */
+  const gAv = {
+    conducta: [
+      { id: 'c1', num: 3, uid: 'UG', nombre: 'Génesis Janeth Maldonado', tipo: 'felicitacion' },
+      { id: 'c2', num: 5, nombre: 'Emely Natalia García', tipo: 'llamado' },
+      { id: 'c3', num: 4, nombre: 'Alumno de prueba', tipo: 'leve' },
+    ],
+    avisos: [
+      { id: 'a1', tipo: 'individual', alumnos: [3, 5], alumnosId: [{ uid: 'UG', nombre: 'Génesis Janeth Maldonado' }, { nombre: 'Emely Natalia García' }] },
+      { id: 'a2', tipo: 'individual', alumnos: [4], alumnosId: [{ nombre: 'Alumno de prueba' }] },
+      { id: 'a3', tipo: 'aviso', alumnos: null },
+    ],
+  };
+  ok(N.anclarAvisosGrupo(lista, gAv) === true, 'algo había que corregir');
+  ok(gAv.conducta[0].num === 2 && gAv.conducta[1].num === 3 && gAv.conducta[1].uid === 'UE',
+    'cada reporte de conducta va al número que su alumno tiene hoy (Génesis #2, Emely #3)');
+  ok(gAv.conducta[2].num === 0 && gAv.conducta[2].numAntes === 4,
+    'el reporte de un alumno que ya no está NO le llega a quien hoy tiene su número (queda en 0, sin borrarse)');
+  ok(JSON.stringify(gAv.avisos[0].alumnos) === '[2,3]', 'el comunicado individual llega a Génesis y Emely');
+  ok(JSON.stringify(gAv.avisos[1].alumnos) === '[0]', 'si ninguno sigue en la lista, el comunicado NO pasa a ser para todos');
+  ok(N.anclarAvisosGrupo(lista, gAv) === false, 'anclar otra vez no cambia nada');
+  /* registros de antes, sin identidad: se les pone según el número de hoy */
+  const viejo = { conducta: [{ id: 'v', num: 4, tipo: 'leve' }], avisos: [{ id: 'v2', tipo: 'individual', alumnos: [1] }] };
+  N.anclarAvisosGrupo(lista, viejo);
+  ok(viejo.conducta[0].uid === 'UD' && /Dayrin/.test(viejo.conducta[0].nombre) && viejo.avisos[0].alumnosId[0].uid === 'UA',
+    'a los registros de antes se les anota quién es, con la lista de este equipo');
+  /* Plan de Acción: nombres de la lista se corrigen; escritos a mano distinto, se respetan */
+  const ana = { students: [{ num: 3, nombre: 'Génesis Janeth Maldonado', nota: 55 }, { num: 9, nombre: 'Génesis M.', nota: 60 }] };
+  N.anclarPlan(lista, ana);
+  ok(ana.students[0].num === 2 && ana.students[0].uid === 'UG', 'en el Plan, Génesis pasa a su número de hoy');
+  ok(ana.students[1].num === 9, 'un nombre escrito a mano que no está en la lista se deja como estaba');
+}
+
 console.log('\n7 · El código');
 {
   const src = fs.readFileSync(path.join(__dirname, '../js/tools/registros-admin.js'), 'utf8');
@@ -167,6 +205,12 @@ console.log('\n7 · El código');
   ok((src.match(/MetasNumeracion\.remapGrupo\(/g) || []).length >= 3, 'reordenar, borrar e insertar usan la lista única');
   ok((src.match(/\.ordenT = Date\.now\(\)/g) || []).length >= 3, 'las tres sellan cuándo cambió la numeración');
   ok(/MetasNumeracion\.asegurarUids/.test(src), 'cada alumno recibe su identidad interna al leer el aula');
+  ok(/adAnclarFuera\(st\);/.test(src) && /anclarAvisosGrupo/.test(src) && /anclarPlan/.test(src),
+    'al leer el aula se anclan comunicados, conducta y Plan de Acción');
+  ok(/gg\.conducta\.push\(\{[^}]*uid: al\.uid/.test(src) && /alumnosId: tipo === 'individual'/.test(src),
+    'los reportes y comunicados nuevos nacen con su identidad');
+  ok(/const x = claves\.find\(k => k\.num === c\.num\);\s*if \(!x\) return;/.test(src),
+    'un reporte con número 0 no sube a ninguna familia');
   ok(idx.indexOf('js/metas-fusion-aula.js') < idx.indexOf('js/metas-numeracion.js') &&
      idx.indexOf('js/metas-numeracion.js') < idx.indexOf('js/metas-docente-sync.js'),
     'index.html carga la numeración después de la fusión y antes de la sincronización');
