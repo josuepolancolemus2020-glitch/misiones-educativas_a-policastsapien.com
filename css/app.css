@@ -6944,6 +6944,15 @@ body:has(.ad-sace-card) #metasInstallBtn { display: none !important; }
 /* ── 🔎 Buscar datos perdidos: cada fila se marca con el dedo (44 px) ── */
 .bp-card { max-width: 640px; }
 .bp-h { font-size: calc(13px * var(--metas-fz, 1)); font-weight: 800; margin: 12px 0 4px; }
+/* 🕵️ Revisar cruces entre equipos: un caso por tarjeta, con su tabla de
+   casillas; el borde rojo (y el «⚠️ sigue») dice cuál falta arreglar */
+.rc-caso { border: 1.5px solid var(--border); border-radius: var(--r-sm); padding: 10px 12px; margin: 8px 0; }
+.rc-caso.rc-sigue { border-color: #dc2626; background: #fff7f7; }
+.rc-tit { font-size: calc(13.5px * var(--metas-fz, 1)); margin-bottom: 6px; line-height: 1.45; }
+.rc-t { width: 100%; border-collapse: collapse; font-size: calc(12.5px * var(--metas-fz, 1)); margin-bottom: 8px; }
+.rc-t th, .rc-t td { border: 1px solid var(--border); padding: 4px 6px; text-align: left; }
+.rc-t th { background: rgba(30,58,124,.07); }
+.rc-rev { margin: 4px 0 8px 18px; font-size: calc(13px * var(--metas-fz, 1)); line-height: 1.5; }
 .bp-fila { display: flex; gap: 10px; align-items: flex-start; min-height: 44px; padding: 6px 4px;
   border-bottom: 1px solid var(--border, #e2e8f0); cursor: pointer; font-size: calc(13px * var(--metas-fz, 1)); line-height: 1.35; }
 .bp-fila input { width: 22px; height: 22px; margin: 2px 0 0; flex: none; }

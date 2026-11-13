@@ -255,10 +255,21 @@ async function adUndoRestaurar(i) {
   renderAdmin();
   toast('🕘 Restaurado: ' + f.e);
 }
+/* La revisión de cruces vive junto a «Deshacer»: las dos sirven para
+   volver atrás algo que no debió pasar */
+function adCrucesTarjetaHtml() {
+  return `
+    <div class="pa-card">
+      <div class="pa-card-title">🕵️ Revisar cruces entre equipos</div>
+      <p class="pa-optional-hint">Hasta noviembre de 2026, si un equipo reordenaba la lista y otro tenía la de antes, los datos
+        de un niño podían caer en otro. Esto revisa las copias del último mes, caso por caso, y te deja devolverle a cada quien lo suyo.</p>
+      <button type="button" class="pa-generate-btn ad-btn-sec ad-cruces-btn">🕵️ Revisar cruces del último mes</button>
+    </div>`;
+}
 function adUndoTarjetaHtml() {
   const lista = adUndoLista();
-  if (!lista.length) return '';
-  return `
+  if (!lista.length) return adCrucesTarjetaHtml();
+  return adCrucesTarjetaHtml() + `
     <div class="pa-card ad-undo-card">
       <div class="pa-card-title">🕘 Deshacer o restaurar cambios</div>
       <p class="pa-optional-hint">Antes de borrar una fila o cambiar el orden se guarda una copia automática. Si borraste u ordenaste una fila <strong>por error</strong>, restáurala aquí:</p>
@@ -6368,6 +6379,125 @@ ${adCuadroCss(true)}
 ${AD_CUADRO_AJUSTE}</body></html>`;
   adPrintAbrir(html);
 }
+
+/* ══════════════ 🕵️ REVISAR CRUCES ENTRE EQUIPOS (pantalla) ══════════════
+   La lógica está en js/tools/revisa-cruces.js. Aquí: juntar las copias
+   (las de este equipo y las del último mes en la nube), enseñar cada caso
+   con sus casillas y, si el maestro lo pide, devolverle a cada quien lo
+   suyo con una foto de «Deshacer» antes. Nada se arregla solo: un cruce
+   lo confirma quien conoce a sus alumnos. */
+function adCruceValor(campo, v) {
+  if (v === undefined || v === null || v === '') return '—';
+  const t = String(campo).split('|')[0];
+  if (t === 'p') return adLps(v);
+  if (t === 'pf') return adFechaBonita(v);
+  if (t === 'a') return v === 'A' ? 'Ausente' : v === 'E' ? 'Excusa' : String(v);
+  if (v === true) return '✓';
+  return adEsc(String(v));
+}
+async function adRevisarCrucesModal() {
+  if (!window.RevisaCruces || !window.MetasNumeracion) { toast('⚠️ Cargando… intenta de nuevo'); return; }
+  const ov = document.createElement('div');
+  ov.className = 'ad-gen-ov ad-ver-ov';
+  ov.innerHTML = `
+    <div class="ad-gen-card ad-ver-card bp-card" role="dialog" aria-modal="true" aria-labelledby="ad-rc-tit">
+      <div class="ad-gen-head">
+        <div class="ad-gen-title" id="ad-rc-tit">🕵️ Revisar cruces entre equipos</div>
+        <button type="button" class="ad-gen-close" id="ad-rc-x" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="ad-ver-body" id="ad-rc-cuerpo"><p class="ad-sace-nota">⏳ Reuniendo las copias de este equipo y de la nube…</p></div>
+      <div class="ad-gen-foot">
+        <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-rc-imp" disabled>🖨️ Imprimir la revisión</button>
+        <button type="button" class="pa-generate-btn" id="ad-rc-no">Cerrar</button>
+      </div>
+    </div>`;
+  document.body.appendChild(ov);
+  const fin = () => ov.remove();
+  ov.querySelector('#ad-rc-x').addEventListener('click', fin);
+  ov.querySelector('#ad-rc-no').addEventListener('click', fin);
+
+  const copias = adCopiasLocales();
+  let nube = false;
+  if (typeof window.dsHistorial === 'function' && navigator.onLine !== false) {
+    try {
+      const rows = await window.dsHistorial(ADMIN_KEY, 50);
+      if (rows) { nube = true; rows.forEach(r => copias.push({ raw: r.raw, cuando: r.cuando, fuente: 'nube' })); }
+    } catch (_) {}
+  }
+  const nombreGrupo = gid => { const g = adState().grupos.find(x => x.id === gid); return g ? (adGradoSeccion(g.grado, g.seccion) || 'grupo') : 'grupo'; };
+  const fh = iso => iso === 'ahora' ? 'hoy' : adFechaHora(iso);
+  let res = null;
+  const pintar = () => {
+    res = RevisaCruces.analizar(localStorage.getItem(ADMIN_KEY), copias);
+    const siguen = res.casos.filter(c => c.sigue), ya = res.casos.filter(c => !c.sigue);
+    const tabla = c => `<table class="rc-t"><thead><tr><th>Dato</th><th>Era de ${adEsc(adPrimerNombre(c.a.nombre))}</th>
+        <th>Era de ${adEsc(adPrimerNombre(c.de.nombre))}</th><th>Hoy ${adEsc(adPrimerNombre(c.a.nombre))} tiene</th><th></th></tr></thead>
+      <tbody>${c.campos.map(x => `<tr><td>${adEsc(x.etiqueta)}</td><td>${adCruceValor(x.campo, x.suyo)}</td><td>${adCruceValor(x.campo, x.ajeno)}</td>
+        <td>${adCruceValor(x.campo, x.hoy)}</td><td>${x.sigue ? '⚠️ sigue' : '✓ ya no'}</td></tr>`).join('')}</tbody></table>`;
+    const tarjeta = (c, i) => `<div class="rc-caso${c.sigue ? ' rc-sigue' : ''}">
+        <div class="rc-tit">🔀 ${adEsc(nombreGrupo(c.grupo))} · lo de <b>${adEsc(c.de.nombre)}</b> (era el #${c.de.numAntes}) cayó en
+          <b>${adEsc(c.a.nombre)}</b> (hoy #${c.a.num}) · entre el ${fh(c.antes)} y el ${fh(c.cuando)}</div>
+        ${tabla(c)}
+        ${c.sigue ? `<button type="button" class="pa-generate-btn rc-arreglar" data-i="${i}">↩️ Devolver a cada quien lo suyo</button>
+          <p class="ad-sace-nota">Solo se cambian las casillas marcadas «sigue». Lo que corregiste después se respeta. Antes se guarda una copia en 🕘 Deshacer.</p>` : ''}
+      </div>`;
+    ov.querySelector('#ad-rc-cuerpo').innerHTML = `
+      <p class="ad-sace-nota">Revisé <b>${res.revisadas}</b> copia(s) de tu aula${res.desde ? ', del ' + fh(res.desde) + ' al ' + fh(res.hasta) : ''}
+        (${nube ? 'las de la nube del último mes y las de este equipo' : 'solo las de este equipo: la nube no respondió o falta su SQL de historial'}).
+        Un <b>cruce</b> es cuando varios datos de un alumno quedaron de golpe iguales a los de otro, justo en el número que el otro tenía antes.</p>
+      ${!res.casos.length && !res.revisar.length ? '<p class="ad-sace-aviso" style="background:#f0fdf4;border-color:#bbf7d0;color:#166534">✓ No encontré cruces en estas copias.</p>' : ''}
+      ${siguen.length ? `<h4 class="bp-h">⚠️ Siguen cruzados (${siguen.length})</h4>` + siguen.map(c => tarjeta(c, res.casos.indexOf(c))).join('') : ''}
+      ${res.revisar.length ? `<h4 class="bp-h">📝 Para confirmar con el papel (${res.revisar.length})</h4>
+        <p class="ad-sace-nota">Pagos que aparecieron justo cuando cambió la numeración. Pueden ser buenos; confírmalos con la hoja de la colecta o el talonario.</p>
+        <ul class="rc-rev">${res.revisar.map(r => `<li><b>${adEsc(r.nombre)}</b> (#${r.num}, ${adEsc(nombreGrupo(r.grupo))}) · ${adEsc(r.etiqueta)}:
+          ${adCruceValor('p', r.monto)}${r.fecha ? ' del ' + adFechaBonita(r.fecha) : ''} · apareció el ${fh(r.cuando)}</li>`).join('')}</ul>` : ''}
+      ${ya.length ? `<details><summary>✓ Ya corregidos (${ya.length})</summary>${ya.map(c => tarjeta(c, res.casos.indexOf(c))).join('')}</details>` : ''}`;
+    ov.querySelector('#ad-rc-imp').disabled = !(res.casos.length || res.revisar.length);
+    ov.querySelectorAll('.rc-arreglar').forEach(b => b.addEventListener('click', async () => {
+      const c = res.casos[+b.dataset.i];
+      if (!c) return;
+      if (!await metasConfirm('¿Devolverle a **' + c.a.nombre + '** lo suyo y a **' + c.de.nombre + '** lo suyo?\n\nSe cambian solo las ' +
+        c.campos.filter(x => x.sigue).length + ' casilla(s) que siguen cruzadas. Antes se guarda una copia en 🕘 Deshacer.',
+        { icono: '🔀', titulo: 'Revisar cruces', okTxt: 'Sí, devolver' })) return;
+      adUndoGuardar('Antes de deshacer el cruce de ' + c.de.nombre + ' a ' + c.a.nombre);
+      const st = adState();
+      const g = st.grupos.find(x => x.id === c.grupo);
+      const n = g ? RevisaCruces.arreglar(g, c) : 0;
+      /* un pago ajeno que se le quita a alguien queda como «quitado a
+         propósito»: si no, la recuperación automática lo vería perdido en
+         las copias viejas y se lo volvería a poner */
+      if (g && n) (c.arreglo || []).forEach(x => {
+        if (String(x.campo).indexOf('p|') !== 0 || (x.poner !== undefined && x.poner !== null && x.poner !== '')) return;
+        const col = (g.colectas || []).find(k => k.id === String(x.campo).slice(2));
+        const al = (g.lista || []).find(a => +a.num === +x.num);
+        if (col && al && (col.pagos || {})[x.num] == null) adPagoQuitado(col, al, true);
+      });
+      if (n && adStateSave(st)) toast('↩️ Listo: ' + n + ' casilla(s) devueltas a su dueño');
+      else toast('Nada que cambiar: esas casillas ya cambiaron');
+      renderAdmin();
+      pintar();
+    }));
+  };
+  pintar();
+  ov.querySelector('#ad-rc-imp').addEventListener('click', () => {
+    const cuerpo = ov.querySelector('#ad-rc-cuerpo').cloneNode(true);
+    cuerpo.querySelectorAll('button, .ad-sace-nota + .ad-sace-nota').forEach(x => x.remove());
+    cuerpo.querySelectorAll('details').forEach(x => x.setAttribute('open', ''));
+    const doc = adDocenteTxt();
+    adPrintAbrir(`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Revisión de cruces</title>
+<style>body{font-family:Arial,sans-serif;font-size:11px;color:#0f2350;padding:10mm}h1{font-size:15px;margin-bottom:2mm}
+.rc-caso{border:1px solid #c7cfdd;border-radius:6px;padding:6px 8px;margin:6px 0;break-inside:avoid}.rc-sigue{border-color:#dc2626}
+.rc-tit{margin-bottom:4px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #c7cfdd;padding:2px 4px;text-align:left}
+th{background:#eaf0fa}h4{margin:8px 0 2px}summary{font-weight:bold;margin-top:6px}</style></head><body>
+<h1>🕵️ Revisión de cruces entre equipos · ${adEsc(adFechaBonita(adHoy()))}</h1><p>${adEsc(doc)}</p>${cuerpo.innerHTML}
+<p style="margin-top:8mm">Firma del docente: ______________________</p>
+<script>window.onload=function(){setTimeout(function(){window.print();},250);}<\/script></body></html>`);
+  });
+}
+document.addEventListener('click', e => {
+  const b = e.target && e.target.closest && e.target.closest('.ad-cruces-btn');
+  if (b) adRevisarCrucesModal();
+});
 
 /* ══════════════ 📋 ASISTENCIA — solo lo excepcional ══════════════ */
 const AD_MESES_ES = ['ene.', 'feb.', 'mar.', 'abr.', 'may.', 'jun.',
