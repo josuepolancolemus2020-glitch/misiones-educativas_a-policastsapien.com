@@ -196,6 +196,7 @@ ok(/\.ad-mx-sticky \{\s*position: -webkit-sticky; position: sticky; left: 0;/.te
 console.log('\n7 · Inasistencias del año: involuntarias y voluntarias, como en el SACE');
 {
   const g5 = JSON.parse(antes);
+  g5.boleta = { anio: '2026' };
   g5.asistencia = [{ f: '2026-02-03', aus: { 1: 'A', 2: 'E' } }, { f: '2026-02-04', aus: { 1: 'E', 2: 'A' } },
     { f: '2026-02-04', aus: { 1: 'E', 2: 'A' } }, { f: '2026-03-10', aus: { 1: 'A' } }];
   const ia = RS.inasistenciasAnio(g5);
@@ -207,6 +208,28 @@ console.log('\n7 · Inasistencias del año: involuntarias y voluntarias, como en
   igual([RS.inasistenciasAnio(g6).fuente, RS.inasistenciasAnio(g6).porAlumno[1]], ['parciales', { inv: '', vol: 6, total: 6 }],
     'sin pase de lista: voluntarias de los parciales e involuntarias vacías, sin inventar un cero');
   ok(/<option value="inasanio"/.test(adm) && /inasistenciasAnio\(dd\)\.porAlumno/.test(adm), 'Notas SACE → 📅 Inasistencias del año, con 📋 por columna');
+}
+
+console.log('\n8 · Faltas que no se pusieron (noviembre de 2026: «Dayrin con 37»)');
+{
+  const g7 = JSON.parse(antes);
+  g7.boleta = { anio: '2026' };
+  g7.asistencia = [{ f: '2025-05-05', aus: { 1: 'A' } }, { f: '2025-05-06', aus: { 1: 'A' } },
+    { f: '2026-02-03', aus: { 1: 'A' } }, { f: '2026-02-04', aus: { 1: 'E' } }, { f: '2026-02-04', aus: { 2: 'A', 1: 'A' } }];
+  const ia = RS.inasistenciasAnio(g7);
+  igual([ia.otrosAnios, ia.dias, ia.repetidos], [2, 2, 1], 'solo cuenta el año lectivo de la boleta; la fecha repetida, una vez');
+  igual([ia.porAlumno[1], ia.porAlumno[2]], [{ inv: 1, vol: 1, total: 2 }, { inv: 0, vol: 1, total: 1 }],
+    'en la fecha repetida manda la primera copia (la que enseña el pase de lista) y no se pierde lo que solo tiene la otra');
+  igual(RS.cuadroFinal(g7, { SL, pers: PERS }).filas.find(f => f.num === 1).inasis, 1, 'el Cuadro final tampoco suma el año pasado');
+  const iAsis = adm.indexOf("body.querySelectorAll('.ad-chip').forEach", adm.indexOf('function adRenderAsis('));
+  const chip = adm.slice(iAsis, iAsis + 1200);
+  ok(/adAsisDia\(dd, fechaSel, true\)/.test(chip) && !/dd\.asistencia = dd\.asistencia\.filter\(x => x !== r\)/.test(chip),
+    'pase de lista: un día con todos presentes ya no se borra (el respaldo no le vuelve a pegar faltas)');
+  const fus = adm.slice(adm.indexOf("if (act === 'fusionar')"), adm.indexOf("if (act === 'restaurar')"));
+  ok(/dd\.asistencia\.some\(x => x && x\.f === r\.f\)\) return/.test(fus), 'recuperar de una versión no le suma faltas viejas a un día que ya existe');
+  ok(/origen: fuente/.test(adm), 'el día pegado de un respaldo lleva de dónde vino');
+  ok(/function adAsisRevisarModal/.test(adm) && /data-rf-num=/.test(adm) && /id="ad-asis-revisar"/.test(adm),
+    '🔎 Revisar faltas: en 📋 Asistencia y en cada alumno de 📅 Inasistencias del año');
 }
 
 console.log(fallos ? '\n✘ ' + fallos + ' comprobación(es) fallaron' : '\n✓ El cuadro final dice lo mismo que la boleta');

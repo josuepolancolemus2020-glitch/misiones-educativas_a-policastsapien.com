@@ -135,11 +135,15 @@
      sin inventar un cero. */
   function inasistenciasAnio(d) {
     var asis = Array.isArray(d && d.asistencia) ? d.asistencia : [];
-    var conPase = asis.some(function (r) { return r && r.f; });
-    var vol = {}, inv = {}, vistos = {};
-    asis.forEach(function (r) {
-      if (!r || !r.f || !r.aus || vistos[r.f]) return;
-      vistos[r.f] = 1;
+    /* Solo el año lectivo de la boleta: un grupo que viene del año pasado
+       trae su pase de lista viejo, y sumarlo inflaba las faltas. */
+    var anio = String(((d && d.boleta) || {}).anio || new Date().getFullYear()).trim();
+    var delAnio = asis.filter(function (r) { return r && r.f && String(r.f).slice(0, 4) === anio; });
+    var otrosAnios = asis.filter(function (r) { return r && r.f && String(r.f).slice(0, 4) !== anio; }).length;
+    var conPase = delAnio.length > 0;
+    var dias = unirDias(delAnio);
+    var vol = {}, inv = {};
+    dias.forEach(function (r) {
       Object.keys(r.aus).forEach(function (n) {
         if (r.aus[n] === 'A') vol[n] = (vol[n] || 0) + 1;
         else if (r.aus[n] === 'E') inv[n] = (inv[n] || 0) + 1;
@@ -158,7 +162,25 @@
       var s = xs.length ? xs.reduce(function (t, x) { return t + x; }, 0) : '';
       porAlumno[a.num] = { inv: '', vol: s, total: s };
     });
-    return { fuente: conPase ? 'pase' : 'parciales', dias: Object.keys(vistos).length, porAlumno: porAlumno };
+    return { fuente: conPase ? 'pase' : 'parciales', dias: dias.length, anio: anio, otrosAnios: otrosAnios,
+      repetidos: delAnio.length - dias.length, porAlumno: porAlumno };
+  }
+  /* Una fecha, un día. Si la sincronización dejó la misma fecha dos veces,
+     se juntan en uno; donde las dos copias dicen cosas distintas de un
+     mismo alumno manda la primera, que es la que el pase de lista enseña
+     y corrige. Devuelve copias: no toca el grupo. */
+  function unirDias(lista) {
+    var por = {}, orden = [];
+    (lista || []).forEach(function (r) {
+      if (!r || !r.f) return;
+      var k = String(r.f).slice(0, 10);
+      if (!por[k]) { por[k] = { f: k, aus: {} }; orden.push(k); }
+      Object.keys(r.aus || {}).forEach(function (n) {
+        var v = r.aus[n];
+        if ((v === 'A' || v === 'E') && !por[k].aus[n]) por[k].aus[n] = v;
+      });
+    });
+    return orden.sort().map(function (k) { return por[k]; });
   }
 
   /* N/V/T vacío y cómo se suma un alumno */
@@ -1027,7 +1049,7 @@
   var API = {
     PARCIALES: PARCIALES, ASIGNATURAS: ASIGNATURAS, ESCALAS: ESCALAS, EDADES: EDADES,
     escalaDe: escalaDe, mapearMaterias: mapearMaterias, APRUEBA: APRUEBA,
-    notaFinal: notaFinal, recuperacionDe: recuperacionDe, inasistenciasAnio: inasistenciasAnio,
+    notaFinal: notaFinal, recuperacionDe: recuperacionDe, inasistenciasAnio: inasistenciasAnio, unirDias: unirDias,
     calcular: calcular, cuadros: cuadros, tablaHtml: tablaHtml,
     describir: describir, estadistica: estadistica, graficosHtml: graficosHtml, GRAF_CSS: GRAF_CSS,
     cuadroFinal: cuadroFinal, cuadroFinalTabla: cuadroFinalTabla,
