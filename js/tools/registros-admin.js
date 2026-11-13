@@ -5158,6 +5158,7 @@ function adRenderInventario(body, d) {
         : '⚠️ Todavía no has hecho firmar ninguna acta. Hazlo en la próxima reunión: es lo que te respalda.'}</p>
       <div class="ad-btn-row">
         <button class="pa-generate-btn" id="ad-inv-print">🖨️ Imprimir el acta para firmar</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-inv-cuadro">📒 Cuadro para Dirección</button>
       </div>
       <div class="ad-btn-row">
         <button class="pa-generate-btn ad-btn-sec" id="ad-inv-firmada">✅ Ya me la firmaron</button>
@@ -5271,6 +5272,8 @@ function adRenderInventario(body, d) {
 
   const pr = document.getElementById('ad-inv-print');
   if (pr) pr.addEventListener('click', () => adPrintInventario(lista, d));
+  const cu = document.getElementById('ad-inv-cuadro');
+  if (cu) cu.addEventListener('click', () => adPrintCuadroInventario(adLoad()));
   const wa = document.getElementById('ad-inv-wa');
   if (wa) wa.addEventListener('click', () => adGastoEnviar(adInvTxtResumen(lista, d)));
   const fi = document.getElementById('ad-inv-firmada');
@@ -5313,6 +5316,166 @@ function adInvTxtResumen(lista, d) {
 
 /* Acta imprimible: dos cuadros separados y tres firmas. Es el documento que
    se archiva en dirección y el que el maestro guarda en su portafolio. */
+/* ══════════════ 📒 CUADRO DEL INVENTARIO DEL AULA (para Dirección) ══════════════
+   El acta es para firmar: dos listas, lo mío y lo de la escuela. Este
+   cuadro es para revisar el aula con Dirección, con la misma cara que los
+   cuadros de economía: cada cosa con su dueño, de dónde vino, cuánto vale
+   y una casilla para marcar en qué estado se encontró (se rellena el
+   círculo, a lapicero, el día de la revisión).
+   Hoja 1: el cuadro, agrupado por dueño, con subtotales y firmas.
+   Hoja 2: cuánto vale lo que hay en el aula y de quién es, por tipo, las
+   donaciones y lo que el docente puso de su bolsillo sin que se lo paguen.
+   Los colores de dueño van siempre con su nombre y su ícono. */
+const AD_INV_COLOR = {
+  escuela: { barra: '#2563eb', fondo: '#dbeafe', tinta: '#1e40af' },
+  donado:  { barra: '#16a34a', fondo: '#dcfce7', tinta: '#166534' },
+  mio:     { barra: '#d97706', fondo: '#fef3c7', tinta: '#92400e' },
+};
+function adPrintCuadroInventario(d) {
+  const lista = adInvLoad().slice().sort((a, b) => String(a.fecha || '').localeCompare(String(b.fecha || '')));
+  if (!lista.length) { if (typeof toast === 'function') toast('El inventario está vacío'); return; }
+  const bol = d.boleta || {};
+  const t = adInvTotales(lista);
+  const vt = x => (Number(x.valor) || 0) * (Number(x.cant) || 1);
+  const total = t.vEsc + t.vDon + t.vMio;
+  const unidades = lista.reduce((s, x) => s + (Number(x.cant) || 1), 0);
+  const sinRec = lista.filter(x => !x.factura && x.dueno !== 'donado');
+  const sinValor = lista.filter(x => !(Number(x.valor) > 0));
+  const ult = adInvUltimaActa();
+  const datos = adCuadroDatos(d, [['Cosas en el aula', String(lista.length)]]);
+  const cabeza = titulo => adCuadroCabeza(d, titulo, datos);
+  const L = v => adIngNum(v);
+  const pct = v => total > 0 ? Math.round(v * 100 / total) : 0;
+  const ORDEN = ['escuela', 'donado', 'mio'];
+  const grupos = ORDEN.map(k => ({ k, arr: lista.filter(x => (x.dueno || 'escuela') === k) })).filter(g => g.arr.length);
+
+  /* ── Hoja 1 ── */
+  let nro = 0;
+  const origen = x => x.dueno === 'donado' ? (x.donante ? 'Donó ' + adEsc(x.donante) : 'Donación')
+    : x.dueno === 'mio' ? 'Lo pagó el docente; no se le ha devuelto'
+    : x.pagadoPor ? 'Lo pagó el docente; se lo devolvió ' + adEsc(x.pagadoPor) + ' el ' + adFechaBonita(x.fechaPago) : 'Del centro';
+  const cuerpo = grupos.map(g => {
+    const c = AD_INV_COLOR[g.k];
+    const sub = g.arr.reduce((s, x) => s + vt(x), 0);
+    return `<tbody class="du">
+      <tr class="g"><td colspan="10" style="background:${c.fondo};color:${c.tinta}">${adEsc(adInvDuenoEt(g.k))} · ${adEsc(adInvDuenoLargo(g.k))}
+        <span class="gs">${g.arr.length} cosa(s) · L ${L(sub)}</span></td></tr>
+      ${g.arr.map(x => { nro++; return `<tr><td class="num">${nro}</td><td>${adFechaBonita(x.fecha)}</td><td>${adEsc(x.cant || 1)}</td>
+        <td class="nom"><b>${adEsc(x.nombre)}</b>${x.nota ? '<br><small>' + adEsc(x.nota) + '</small>' : ''}</td>
+        <td class="ti">${adEsc(adInvCatEt(x.cat))}</td><td class="mo">${Number(x.valor) > 0 ? L(x.valor) : '—'}</td>
+        <td class="mo b">${Number(x.valor) > 0 ? L(vt(x)) : '—'}</td>
+        <td class="${x.factura ? 'ok' : (x.dueno === 'donado' ? '' : 'no')}">${x.factura ? '✓ Sí' : x.dueno === 'donado' ? '—' : '⚠️ No'}</td>
+        <td class="or">${origen(x)}</td><td class="ev">○B ○R ○M</td></tr>`; }).join('')}
+      <tr class="st"><td colspan="6" class="st-et">Subtotal ${adEsc(adInvDuenoLargo(g.k).toLowerCase())}</td><td class="mo b">${L(sub)}</td><td colspan="3"></td></tr>
+    </tbody>`;
+  }).join('');
+  const tabla = `<table class="ing iv">
+    <colgroup><col style="width:7mm"><col style="width:16mm"><col style="width:8mm"><col><col style="width:24mm"><col style="width:14mm">
+      <col style="width:15mm"><col style="width:11mm"><col style="width:33mm"><col style="width:17mm"></colgroup>
+    <thead><tr><th class="fijo">N.º</th><th class="fijo">DESDE</th><th class="fijo">CANT.</th><th class="fijo">DESCRIPCIÓN</th><th class="fijo">TIPO</th>
+      <th class="fijo">VALOR<br>UNIT. L</th><th class="fijo">VALOR<br>TOTAL L</th><th class="fijo">RECIBO</th><th class="fijo">ORIGEN</th><th class="fijo">ESTADO AL<br>REVISAR</th></tr></thead>
+    ${cuerpo}
+    <tfoot><tr><td colspan="6" class="tf-et">VALOR DE TODO LO QUE HAY EN EL AULA (${unidades} unidad(es))</td><td class="tf-n">${L(total)}</td><td colspan="3"></td></tr></tfoot>
+  </table>`;
+  const k = (et, v) => `<span class="k">${et}<b>${v}</b></span>`;
+  const pie = `<div class="pie">${k('🏫 De la escuela', adLps(t.vEsc))}${k('🎁 Donado', adLps(t.vDon))}${k('🧑‍🏫 Del docente', adLps(t.vMio))}${k('📦 Total', adLps(total))}${
+    sinRec.length ? k('⚠️ Sin recibo', sinRec.length) : ''}</div>
+    <div class="ley"><b>Estado al revisar:</b> rellena el círculo · B = bueno · R = regular (sirve, pero gastado) · M = malo (no sirve o falta).
+      <b>Última acta firmada:</b> ${ult ? adFechaBonita(ult.fecha) + (ult.quien ? ' (' + adEsc(ult.quien) + ')' : '') : 'ninguna todavía'}${adInvVence() ? ' · ⚠️ toca firmar de nuevo' : ''}.</div>`;
+
+  /* ── Hoja 2 ── */
+  const tile = (ic, et, v, sub, c) => `<div class="tile" style="border-color:${c.barra};background:${c.fondo}">
+      <span class="tile-ic">${ic}</span><span class="tile-et">${et}</span><b style="color:${c.tinta}">${v}</b><small>${sub}</small></div>`;
+  const tiles = `<div class="tiles">
+    ${tile('📦', 'Todo lo del aula', adLps(total), lista.length + ' cosa(s) · ' + unidades + ' unidad(es)', { barra: '#1e3a7c', fondo: '#eaf0fa', tinta: '#0f2350' })}
+    ${tile('🏫', 'De la escuela', adLps(t.vEsc), pct(t.vEsc) + ' % · ' + t.esc.length + ' cosa(s)', AD_INV_COLOR.escuela)}
+    ${tile('🎁', 'Donado al aula', adLps(t.vDon), pct(t.vDon) + ' % · ' + t.don.length + ' cosa(s)', AD_INV_COLOR.donado)}
+    ${tile('🧑‍🏫', 'Del docente', adLps(t.vMio), pct(t.vMio) + ' % · ' + t.mio.length + ' cosa(s)', AD_INV_COLOR.mio)}
+  </div>`;
+  const reemb = t.esc.filter(x => x.pagadoPor);
+  const frases = [
+    t.mio.length ? `El docente tiene en el aula <b>${t.mio.length}</b> cosa(s) suyas por <b>${adLps(t.vMio)}</b> que nadie le ha pagado: si lo trasladan, puede llevárselas.`
+      : 'Todo lo que hay en el aula es del centro o fue donado: el docente no tiene nada suyo sin pagar.',
+    t.don.length ? `Las familias y otras personas han donado <b>${t.don.length}</b> cosa(s) por <b>${adLps(t.vDon)}</b>.` : '',
+    reemb.length ? `<b>${reemb.length}</b> cosa(s) las compró el docente y ya se las devolvieron: hoy son del centro.` : '',
+    sinRec.length ? `<b>${sinRec.length}</b> cosa(s) no tienen recibo: conviene describirlas bien en el acta.` : 'Todo lo comprado tiene su recibo.',
+    sinValor.length ? `<b>${sinValor.length}</b> cosa(s) no tienen valor anotado y no suman en los totales.` : '',
+    ult ? `La última acta se firmó el <b>${adFechaBonita(ult.fecha)}</b>${adInvVence() ? ': ya pasó el trimestre y toca firmar de nuevo.' : '.'}` : 'Todavía no se ha firmado ninguna acta del inventario.',
+  ].filter(Boolean);
+  /* de quién es lo que hay, en una barra */
+  let x0 = 0;
+  const barraDueno = total > 0 ? `<svg viewBox="0 0 100 10" preserveAspectRatio="none" width="100%" height="22" style="display:block" role="img" aria-label="De quién es lo que hay en el aula">
+    ${[['escuela', t.vEsc], ['donado', t.vDon], ['mio', t.vMio]].map(([kk, v]) => { const w = v * 100 / total; const r = `<rect x="${x0}" y="0" width="${w}" height="10" fill="${AD_INV_COLOR[kk].barra}" stroke="#fff" stroke-width="1" vector-effect="non-scaling-stroke"/>`; x0 += w; return r; }).join('')}</svg>
+    <div class="dist-ley">${[['escuela', t.vEsc, t.esc.length], ['donado', t.vDon, t.don.length], ['mio', t.vMio, t.mio.length]].map(([kk, v, n]) =>
+      `<span><i style="background:${AD_INV_COLOR[kk].barra}"></i>${adEsc(adInvDuenoEt(kk))}: <b>${adLps(v)}</b> · ${pct(v)} % · ${n} cosa(s)</span>`).join('')}</div>` : '<p class="todos">Sin valores anotados.</p>';
+  /* por tipo, partido por dueño */
+  const cats = {};
+  lista.forEach(x => { const c = adInvCatEt(x.cat); cats[c] = cats[c] || { escuela: 0, donado: 0, mio: 0, n: 0 }; cats[c][x.dueno || 'escuela'] += vt(x); cats[c].n++; });
+  const filasCat = Object.keys(cats).map(c => Object.assign({ c, tot: cats[c].escuela + cats[c].donado + cats[c].mio }, cats[c])).sort((a, b) => b.tot - a.tot);
+  const maxC = Math.max(1, ...filasCat.map(f => f.tot));
+  const barCat = `<table class="bc">${filasCat.map(f => { let xx = 0; return `<tr><td class="bc-n"><b>${adEsc(f.c)}</b><br><small>${f.n} cosa(s)</small></td>
+    <td class="bc-b"><svg viewBox="0 0 100 8" preserveAspectRatio="none" width="100%" height="12" style="display:block">
+      ${['escuela', 'donado', 'mio'].map(kk => { const w = f[kk] * 100 / maxC; const r = `<rect x="${xx}" y="0" width="${w}" height="8" fill="${AD_INV_COLOR[kk].barra}"/>`; xx += w; return r; }).join('')}</svg></td>
+    <td class="bc-p"><b>${adLps(f.tot)}</b></td></tr>`; }).join('')}</table>
+    <div class="dist-ley" style="grid-template-columns:repeat(3,auto);justify-content:start;gap:2px 16px">${['escuela', 'donado', 'mio'].map(kk =>
+      `<span><i style="background:${AD_INV_COLOR[kk].barra}"></i>${adEsc(adInvDuenoEt(kk))}</span>`).join('')}</div>`;
+  const mios = t.mio.slice().sort((a, b) => vt(b) - vt(a));
+  const tablaMio = mios.length ? `<table class="db"><thead><tr><th>Lo que puso el docente</th><th style="width:15mm">Desde</th><th style="width:19mm">Valor</th><th style="width:12mm">Recibo</th></tr></thead>
+    <tbody>${mios.slice(0, 12).map(x => `<tr><td class="nom">${x.cant > 1 ? adEsc(x.cant) + ' × ' : ''}${adEsc(x.nombre)}<br><small>${adEsc(adInvCatEt(x.cat))}</small></td>
+      <td>${adFechaBonita(x.fecha)}</td><td class="pen">${Number(x.valor) > 0 ? adLps(vt(x)) : '—'}</td><td>${x.factura ? '✓' : '⚠️'}</td></tr>`).join('')}</tbody></table>`
+    : '<p class="todos">El docente no tiene cosas suyas sin pagar en el aula.</p>';
+  const donantes = {};
+  t.don.forEach(x => { const q = String(x.donante || 'Sin nombre').trim() || 'Sin nombre'; donantes[q] = donantes[q] || { n: 0, v: 0, cosas: [] }; donantes[q].n++; donantes[q].v += vt(x); donantes[q].cosas.push(x.nombre); });
+  const tablaDon = Object.keys(donantes).length ? `<table class="db"><thead><tr><th>Donó</th><th>Qué</th><th style="width:19mm">Valor</th></tr></thead>
+    <tbody>${Object.keys(donantes).sort((a, b) => donantes[b].v - donantes[a].v).slice(0, 12).map(q => `<tr><td class="nom">${adEsc(q)}</td>
+      <td class="nom"><small>${adEsc(donantes[q].cosas.join(', '))}</small></td><td class="pos">${adLps(donantes[q].v)}</td></tr>`).join('')}</tbody></table>`
+    : '<p class="todos">No hay donaciones anotadas.</p>';
+
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${adEsc('Inventario del aula · ' + (adGradoSeccion(d.grado, d.seccion) || ''))}</title>
+<style>
+${adCuadroCss(true)}
+  .iv tbody.du tr.g td { text-align: left; font-weight: 800; font-size: 8.6px; padding: 3px 5px; border-top: 1.6px solid #1e3a7c; }
+  .iv tr.g .gs { float: right; font-weight: 700; }
+  .iv td.nom { white-space: normal; text-align: left; } .iv td.nom small { color: #64748b; font-size: 7px; }
+  .iv td.ti { font-size: 7.2px; text-align: left; color: #33415c; }
+  .iv td.mo { text-align: right; padding-right: 4px; } .iv td.mo.b { font-weight: 800; }
+  .iv td.ok { color: #166534; font-weight: 700; } .iv td.no { color: #b45309; font-weight: 700; }
+  .iv td.or { font-size: 7px; text-align: left; white-space: normal; line-height: 1.2; color: #33415c; }
+  .iv td.ev { font-size: 8.4px; letter-spacing: .6px; color: #475569; white-space: nowrap; }
+  .iv tr.st td { background: #f8fafc; font-weight: 800; font-size: 8px; } .iv tr.st td.st-et { text-align: right; padding-right: 5px; color: #1e3a7c; }
+  .bc td.bc-n { width: 30%; } .bc td.bc-p { width: 16%; }
+  .eg-dos { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; align-items: start; }
+  .db td.nom { white-space: normal; line-height: 1.15; } .db td.nom small { color: #64748b; font-size: 6.8px; }
+  .db td.pos { color: #166534; font-weight: 800; }
+  .dist-ley { grid-template-columns: 1fr; }
+</style></head><body>
+  <div class="hoja"><div class="fit">
+    ${cabeza('INVENTARIO DEL AULA · CUADRO PARA DIRECCIÓN')}
+    ${tabla}
+    ${pie}
+    <div class="firmas"><div>${adEsc(bol.docente || adDocenteNombre() || '')}<br><small>Docente responsable del aula</small></div><div>${adEsc(bol.director || '')}<br><small>Director(a)</small></div><div><br><small>Directiva de padres de familia</small></div></div>
+    <div class="marca">Revisado el ____/____/______. Valor total = valor unitario × cantidad. Lo «del docente» es suyo mientras el centro no se lo pague. · Elaborado con M.E.T.A.S · ${adEsc(adFechaBonita(adHoy()))}</div>
+  </div></div>
+  <div class="hoja"><div class="fit">
+    ${cabeza('INVENTARIO DEL AULA · ESTADÍSTICAS')}
+    ${tiles}
+    <div class="frases">${frases.map(f => `<p>• ${f}</p>`).join('')}</div>
+    <h3>De quién es lo que hay en el aula <small>(por valor)</small></h3>
+    ${barraDueno}
+    <h3>Por tipo <small>(cada barra partida por dueño, a la misma escala)</small></h3>
+    ${barCat}
+    <div class="eg-dos">
+      <section><h3>Lo que puso el docente y no le han pagado</h3>${tablaMio}</section>
+      <section><h3>Donaciones</h3>${tablaDon}</section>
+    </div>
+    <div class="marca">Esto es entre el docente y su centro: no se comparte con las familias. · Elaborado con M.E.T.A.S · ${adEsc(adFechaBonita(adHoy()))}</div>
+  </div></div>
+${AD_CUADRO_AJUSTE}</body></html>`;
+  adPrintAbrir(html);
+}
+
 function adPrintInventario(lista, d) {
   const t = adInvTotales(lista);
   const ult = adInvUltimaActa();
