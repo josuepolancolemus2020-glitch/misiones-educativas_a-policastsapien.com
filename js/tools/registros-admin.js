@@ -4219,6 +4219,9 @@ function adRenderEco(body, d) {
           <span class="ad-cr-arrow">›</span>
         </button>`;
       }).join('')}
+      <button class="pa-generate-btn" id="ad-cuadro-ingresos" type="button">🖨️ Imprimir cuadro de ingresos</button>
+      <p class="pa-optional-hint">Para Dirección: todas las colectas en una hoja carta, alumno por alumno,
+        y en la segunda hoja quién no ha colaborado y cuánto falta. Lleva nombres: no es para el grupo de padres.</p>
     </div>` : ''}`;
 
   document.getElementById('ad-nueva-colecta').addEventListener('click', async () => {
@@ -4253,6 +4256,8 @@ function adRenderEco(body, d) {
   });
   body.querySelectorAll('.ad-colecta-row').forEach(b =>
     b.addEventListener('click', () => { _adColectaId = b.dataset.cid; renderAdmin(); }));
+  const btnIng = document.getElementById('ad-cuadro-ingresos');
+  if (btnIng) btnIng.addEventListener('click', () => adPrintCuadroIngresos(adLoad()));
   document.getElementById('ad-ir-gastos').addEventListener('click', () => { _adGastosOn = 1; renderAdmin(); });
   document.getElementById('ad-ir-inv').addEventListener('click', () => { _adInvOn = 1; renderAdmin(); });
 }
@@ -5277,6 +5282,388 @@ ${(() => {
   <div class="firma">Dirección</div>
 </div>
 </body></html>`;
+  adPrintAbrir(html);
+}
+
+/* ══════════════ 📒 CUADRO DE INGRESOS (todas las colectas, para Dirección) ══════════════
+   El informe de cada colecta es para los padres y habla de UNA. La Dirección
+   pide otra cosa: cuánto entró en el año, de quién y qué falta, en una sola
+   hoja que se firma y se archiva. Por eso tiene la cara del Cuadro final
+   (mismo encabezado, misma letra, mismos colores): el director ya sabe leerlo.
+   Hoja 1: el cuadro, un alumno por fila y una colecta por columna.
+   Hoja 2: quién no ha colaborado y cuánto, con los porcentajes coloreados.
+   Lleva nombres, así que es un papel INTERNO: no va al grupo de WhatsApp. */
+
+/* Tramos de colaboración: los mismos en las dos hojas y en la leyenda. Cada
+   tramo lleva además su signo (✗ ◐ ✓) y la cifra, para que la fotocopia en
+   blanco y negro diga lo mismo que el color. */
+const AD_ING_TRAMOS = [
+  { k: 0, et: 'Crítico',  rango: '0 a 49 %',  fondo: '#fde2e2', tinta: '#991b1b', barra: '#dc2626' },
+  { k: 1, et: 'Bajo',     rango: '50 a 74 %', fondo: '#ffedd5', tinta: '#9a3412', barra: '#ea580c' },
+  { k: 2, et: 'Bueno',    rango: '75 a 99 %', fondo: '#dbeafe', tinta: '#1e40af', barra: '#2563eb' },
+  { k: 3, et: 'Completo', rango: '100 %',     fondo: '#dcfce7', tinta: '#166534', barra: '#16a34a' },
+];
+function adIngTramo(p) {
+  if (p == null) return null;
+  return AD_ING_TRAMOS[p >= 100 ? 3 : p >= 75 ? 2 : p >= 50 ? 1 : 0];
+}
+function adIngNum(n) {
+  const v = Math.round((Number(n) || 0) * 100) / 100;
+  return v.toLocaleString('es-HN');
+}
+
+/* Todo el cálculo en un lugar, con las MISMAS reglas de cada colecta:
+   - el que «no cuenta» en una colecta no debe nada en ella;
+   - lo que se espera de cada alumno es el aporte sugerido;
+   - quien dio de más no tapa lo que debe en otra colecta (se topa al
+     sugerido para el porcentaje), pero su dinero sí entra en lo recaudado. */
+function adIngDatos(d) {
+  const hoy = adHoy();
+  /* «hasta la fecha»: una colecta anotada con fecha futura todavía no se cobra */
+  const cols = (d.colectas || []).filter(c => !c.fecha || String(c.fecha).slice(0, 10) <= hoy);
+  const fueras = cols.map(c => adColectaFuera(c, d));
+  const filas = [];
+  (d.lista || []).forEach(a => {
+    const celdas = cols.map((c, i) => {
+      const fuera = fueras[i].has(String(a.num));
+      const pagado = !!(c.pagos && c.pagos[a.num] != null);
+      const dio = pagado ? Number(c.pagos[a.num]) || 0 : 0;
+      const sug = Number(c.montoAlumno) || 0;
+      const est = pagado ? (fuera || dio >= sug ? 'ok' : 'ab') : (fuera ? 'nc' : 'no');
+      return { est, dio, sug, fuera, pagado };
+    });
+    const conDinero = celdas.some(x => x.pagado);
+    /* el alumno de prueba no sale, salvo que tenga dinero: ese se rinde */
+    if (adEsPrueba(a) && !conDinero) return;
+    let esperado = 0, cubierto = 0, aportado = 0, de = 0, dioEn = 0;
+    const faltan = [];
+    celdas.forEach((x, i) => {
+      aportado += x.dio;
+      if (x.fuera) return;
+      de++; esperado += x.sug; cubierto += Math.min(x.dio, x.sug);
+      if (x.pagado) dioEn++;
+      if (x.dio < x.sug) faltan.push(cols[i].concepto);
+    });
+    const pct = esperado > 0 ? Math.floor(cubierto * 100 / esperado) : null;
+    filas.push({ a, celdas, esperado, cubierto, aportado, pendiente: Math.max(0, esperado - cubierto),
+      pct, de, dioEn, faltan });
+  });
+  const porCol = cols.map((c, i) => ({
+    c, rec: filas.reduce((s, f) => s + f.celdas[i].dio, 0),
+    meta: adColectaMeta(c, d), dieron: adColectaDieron(c, d), esp: adColectaEsperados(c, d), pct: adColectaPct(c, d),
+  }));
+  const cuentan = filas.filter(f => f.pct != null);
+  const tot = {
+    rec: filas.reduce((s, f) => s + f.aportado, 0),
+    esperado: cuentan.reduce((s, f) => s + f.esperado, 0),
+    cubierto: cuentan.reduce((s, f) => s + f.cubierto, 0),
+    pendiente: cuentan.reduce((s, f) => s + f.pendiente, 0),
+    alDia: cuentan.filter(f => f.pct >= 100).length,
+    parcial: cuentan.filter(f => f.pct > 0 && f.pct < 100).length,
+    nada: cuentan.filter(f => f.pct === 0 && f.aportado === 0).length,
+    cuentan: cuentan.length,
+  };
+  /* un alumno que dio algo pero menos del 1 % no es «sin aporte»: es parcial */
+  tot.parcial = tot.cuentan - tot.alDia - tot.nada;
+  tot.pct = tot.esperado > 0 ? Math.floor(tot.cubierto * 100 / tot.esperado) : null;
+  tot.porTramo = AD_ING_TRAMOS.map(t => cuentan.filter(f => adIngTramo(f.pct).k === t.k).length);
+  return { cols, filas, porCol, tot, cuentan };
+}
+
+/* Barra horizontal en SVG (el relleno de un SVG se imprime aunque el
+   navegador quite los fondos). Marcas a 25/50/75 para leerla sin regla. */
+function adIngBarra(p, alto, color) {
+  const w = Math.max(0, Math.min(100, Number(p) || 0));
+  return `<svg viewBox="0 0 100 8" preserveAspectRatio="none" width="100%" height="${alto}" role="img" aria-label="${w} %" style="display:block">
+    <rect x="0" y="0" width="100" height="8" fill="#fff" stroke="#94a3b8" stroke-width="1" vector-effect="non-scaling-stroke"/>
+    <rect x="0" y="0" width="${w}" height="8" fill="${color}"/>
+    ${[25, 50, 75].map(x => `<line x1="${x}" y1="0" x2="${x}" y2="8" stroke="#64748b" stroke-width="1" stroke-dasharray="2 2" vector-effect="non-scaling-stroke"/>`).join('')}
+  </svg>`;
+}
+function adIngPctHtml(p) {
+  const t = adIngTramo(p);
+  if (!t) return '<span class="pc">·</span>';
+  const sig = p >= 100 ? '✓' : p === 0 ? '✗' : '◐';
+  return `<span class="pc" style="background:${t.fondo};color:${t.tinta}">${sig} ${p} %</span>`;
+}
+
+function adPrintCuadroIngresos(d) {
+  const D = adIngDatos(d);
+  if (!D.cols.length) { if (typeof toast === 'function') toast('Aún no hay colectas hasta hoy'); return; }
+  const bol = d.boleta || {};
+  const centro = String(d.escuela || '').trim() || 'Centro Educativo';
+  let logoSec = d.logoSec || '';
+  if (!logoSec) { try { logoSec = new URL('img/logo-secretaria.png', location.href).href; } catch (_) { logoSec = 'img/logo-secretaria.png'; } }
+  const SL = window.SaceLista;
+  const hayIdn = D.filas.some(f => String(f.a.idn || '').trim());
+  /* Vertical mientras quepan las colectas; con más, horizontal. Lo que
+     sobre de alto lo ajusta el guion de abajo, sin cortar la hoja. */
+  const nC = D.cols.length;
+  const vertical = nC <= (hayIdn ? 4 : 5);
+  const T = D.tot;
+  const n = parseInt(String(d.grado || '').replace(/\D/g, ''), 10);
+  const datos = [
+    ['Período', 'Período ' + (bol.anio || new Date().getFullYear())],
+    ['Curso', AD_GRADOS_TXT[n] ? AD_GRADOS_TXT[n] + ' grado' : String(d.grado || '')],
+    ['Grupo', adGradoSeccion(d.grado, d.seccion)],
+    ['Jornada', bol.jornada || ''],
+    ['Municipio', bol.municipio || ''],
+    ['Docente', bol.docente || ''],
+    ['Colectas al corte', String(nC)],
+    ['Corte al', adFechaBonita(adHoy())],
+  ];
+  const cabeza = (titulo) => `
+  <header class="head">
+    <div class="logo">${d.logo ? `<img src="${d.logo}" alt="">` : ''}</div>
+    <div class="mid">
+      <div class="centro">${bol.codigoCentro ? '<small>(' + adEsc(bol.codigoCentro) + ')</small> ' : ''}${adEsc(centro.toUpperCase())}</div>
+      <div class="doc">${titulo}</div>
+    </div>
+    <div class="logo der"><img src="${logoSec}" alt="Secretaría de Educación"></div>
+  </header>
+  <div class="datos">${datos.map(x => `<div><span>${adEsc(x[0])}</span><b>${adEsc(x[1] || '·')}</b></div>`).join('')}</div>`;
+
+  /* ── Hoja 1: el cuadro ── */
+  const anchoCol = vertical ? (hayIdn ? 15 : 14) : Math.max(8, Math.min(14, 140 / nC));
+  const celda = x => x.est === 'ok' ? `<td class="m ok">✓ ${adIngNum(x.dio)}</td>`
+    : x.est === 'ab' ? `<td class="m ab">◐ ${adIngNum(x.dio)}</td>`
+    : x.est === 'nc' ? '<td class="m nc">N/C</td>'
+    : '<td class="m no">✗</td>';
+  const filasHtml = D.filas.map((f, i) => {
+    const est = f.pct == null ? '<td class="obs pe">· NO APLICA</td>'
+      : f.pct >= 100 ? '<td class="obs ok">✓ AL DÍA</td>'
+      : f.aportado === 0 ? '<td class="obs no">✗ SIN APORTE</td>'
+      : `<td class="obs pa">◐ PARCIAL <small>dio en ${f.dioEn} de ${f.de}</small></td>`;
+    return `<tr><td class="num">${adEsc(f.a.num)}</td>${hayIdn ? `<td class="idn">${adEsc(SL && SL.idnBonita ? SL.idnBonita(f.a.idn) : (f.a.idn || ''))}</td>` : ''}
+      <td class="nom">${adEsc(f.a.nombre || '·')}</td>${f.celdas.map(celda).join('')}
+      <td class="tt">${adIngNum(f.aportado)}</td><td class="tp">${f.pendiente ? adIngNum(f.pendiente) : '·'}</td>
+      <td class="tc">${adIngPctHtml(f.pct)}</td>${est}</tr>`;
+  }).join('');
+  const nFijas = hayIdn ? 3 : 2;
+  const tabla = `<table class="ing">
+    <colgroup><col style="width:${vertical ? 6 : 6}mm">${hayIdn ? '<col style="width:19mm">' : ''}<col>
+      ${D.cols.map(() => `<col style="width:${anchoCol}mm">`).join('')}
+      <col style="width:15mm"><col style="width:14mm"><col style="width:15mm"><col style="width:${vertical ? 27 : 30}mm"></colgroup>
+    <thead>
+      <tr><th rowspan="2" class="fijo">#</th>${hayIdn ? '<th rowspan="2" class="fijo">IDENTIDAD</th>' : ''}<th rowspan="2" class="fijo">NOMBRE DEL ALUMNO</th>
+        <th colspan="${nC}">APORTES POR COLECTA <small>(en lempiras)</small></th>
+        <th colspan="3">RESUMEN DEL ALUMNO</th><th rowspan="2" class="fijo">ESTADO</th></tr>
+      <tr class="h2">${D.cols.map(c => `<th class="sub"><div class="cc" title="${adEsc(c.concepto)}">${adEsc(c.concepto)}</div><small>${adFechaBonita(c.fecha).slice(0, 5)} · sug. ${adIngNum(c.montoAlumno)}</small></th>`).join('')}
+        <th class="sub">APORTADO<br><small>L</small></th><th class="sub">PENDIENTE<br><small>L</small></th><th class="sub">COLABORA-<br>CIÓN</th></tr>
+    </thead>
+    <tbody>${filasHtml}</tbody>
+    <tfoot>
+      <tr><td colspan="${nFijas}" class="tf-et">RECAUDADO POR COLECTA</td>${D.porCol.map(p => `<td class="tf-n">${adIngNum(p.rec)}</td>`).join('')}
+        <td class="tf-n">${adIngNum(T.rec)}</td><td class="tf-n">${adIngNum(T.pendiente)}</td><td class="tf-n">${adIngPctHtml(T.pct)}</td><td class="tf-s">Total del grupo</td></tr>
+      <tr><td colspan="${nFijas}" class="tf-et">ESPERADO · DIERON · PARTICIPACIÓN</td>${D.porCol.map(p => `<td class="tf-p"><small>${adIngNum(p.meta)}</small><br><small>${p.dieron}/${p.esp}</small> ${adIngPctHtml(p.pct)}</td>`).join('')}
+        <td class="tf-n" colspan="3"><small>Esperado ${adLps(T.esperado)}</small></td><td class="tf-s">${T.alDia} de ${T.cuentan} al día</td></tr>
+    </tfoot>
+  </table>`;
+  const k = (et, v, extra) => `<span class="k">${et}<b>${v}</b>${extra ? ' <small>' + extra + '</small>' : ''}</span>`;
+  const pie = `<div class="pie">
+    ${k('💵 Recaudado', adLps(T.rec))}${k('🎯 Esperado', adLps(T.esperado))}${k('📥 Falta por recaudar', adLps(T.pendiente))}
+    ${k('📊 Cumplimiento', (T.pct == null ? '·' : T.pct + ' %'))}
+    ${k('✓ Al día', T.alDia)}${k('◐ Parcial', T.parcial)}${k('✗ Sin aporte', T.nada)}
+  </div>
+  <div class="ley"><b>Celdas:</b> ✓ dio el aporte sugerido (o más) · ◐ abono, dio menos · ✗ no ha dado · N/C no le corresponde.
+    <b>Colaboración:</b> ${AD_ING_TRAMOS.map(t => `<span style="background:${t.fondo};color:${t.tinta}">${t.et} ${t.rango}</span>`).join('')}</div>`;
+
+  /* ── Hoja 2: estadísticas de quién no ha colaborado ── */
+  const pct = (a, b) => b ? Math.round(a * 100 / b) : 0;
+  const tile = (t, et, v, sub, tr) => `<div class="tile" style="border-color:${tr ? tr.barra : '#d4dbe6'};background:${tr ? tr.fondo : '#f4f7fc'}">
+      <span class="tile-ic">${t}</span><span class="tile-et">${et}</span>
+      <b style="color:${tr ? tr.tinta : '#0f2350'}">${v}</b><small>${sub}</small></div>`;
+  const pAlDia = pct(T.alDia, T.cuentan), pNada = pct(T.nada, T.cuentan), pParc = pct(T.parcial, T.cuentan);
+  const tiles = `<div class="tiles">
+    ${tile('📊', 'Cumplimiento económico', T.pct == null ? '·' : T.pct + ' %', adLps(T.cubierto) + ' de ' + adLps(T.esperado), adIngTramo(T.pct))}
+    ${tile('✓', 'Alumnos al día', T.alDia + ' <small>de ' + T.cuentan + '</small>', pAlDia + ' % del grupo', adIngTramo(pAlDia))}
+    ${tile('◐', 'Con aporte parcial', T.parcial, pParc + ' % del grupo', null)}
+    ${tile('✗', 'Sin ningún aporte', T.nada, pNada + ' % del grupo', T.nada ? AD_ING_TRAMOS[0] : AD_ING_TRAMOS[3])}
+  </div>`;
+  const barrasCol = `<table class="bc">${D.porCol.map(p => {
+    const tr = adIngTramo(p.pct);
+    return `<tr><td class="bc-n"><b>${adEsc(p.c.concepto)}</b><br><small>${adFechaBonita(p.c.fecha)} · ${adLps(p.rec)} de ${adLps(p.meta)}</small></td>
+      <td class="bc-b">${adIngBarra(p.pct, 13, tr.barra)}</td>
+      <td class="bc-p">${adIngPctHtml(p.pct)}<br><small>${p.dieron} de ${p.esp} · faltan ${Math.max(0, p.esp - p.dieron)}</small></td></tr>`;
+  }).join('')}</table>`;
+  /* la distribución: cuántos alumnos hay en cada tramo, en una sola barra */
+  let x0 = 0;
+  const distSvg = T.cuentan ? `<svg viewBox="0 0 100 10" preserveAspectRatio="none" width="100%" height="22" style="display:block" role="img" aria-label="Distribución del grupo por tramo">
+    ${AD_ING_TRAMOS.map((t, i) => { const w = T.porTramo[i] * 100 / T.cuentan; const r = `<rect x="${x0}" y="0" width="${w}" height="10" fill="${t.barra}" stroke="#fff" stroke-width="1" vector-effect="non-scaling-stroke"/>`; x0 += w; return r; }).join('')}
+  </svg>` : '';
+  const dist = `<div class="dist">${distSvg}
+    <div class="dist-ley">${AD_ING_TRAMOS.map((t, i) => `<span><i style="background:${t.barra}"></i>${t.et} <small>(${t.rango})</small>: <b>${T.porTramo[i]}</b> alumno${T.porTramo[i] === 1 ? '' : 's'} · ${pct(T.porTramo[i], T.cuentan)} %</span>`).join('')}</div></div>`;
+
+  /* lo que más le sirve a Dirección, dicho en frases: dónde está la deuda */
+  const deben = D.cuentan.filter(f => f.pct < 100).sort((a, b) => a.pct - b.pct || b.pendiente - a.pendiente || Number(a.a.num) - Number(b.a.num));
+  const porDeuda = deben.slice().sort((a, b) => b.pendiente - a.pendiente);
+  let acum = 0, nMitad = 0;
+  for (const f of porDeuda) { if (acum >= T.pendiente / 2) break; acum += f.pendiente; nMitad++; }
+  const peor = D.porCol.slice().sort((a, b) => a.pct - b.pct)[0];
+  const mejor = D.porCol.slice().sort((a, b) => b.pct - a.pct)[0];
+  const frases = [
+    T.nada ? `<b>${T.nada}</b> alumno${T.nada === 1 ? '' : 's'} (${pNada} %) no ${T.nada === 1 ? 'ha' : 'han'} aportado en ninguna colecta.` : 'Todos los alumnos han aportado al menos una vez.',
+    T.pendiente > 0 ? `Falta por recaudar <b>${adLps(T.pendiente)}</b>; la mitad de esa cifra está en <b>${nMitad}</b> alumno${nMitad === 1 ? '' : 's'}.` : 'No queda nada por recaudar.',
+    nC > 1 ? `La colecta con menor participación es <b>${adEsc(peor.c.concepto)}</b> (${peor.pct} %); la de mayor, <b>${adEsc(mejor.c.concepto)}</b> (${mejor.pct} %).`
+      : `Participación de la colecta: <b>${peor.pct} %</b> (${peor.dieron} de ${peor.esp}).`,
+  ];
+  /* la lista se parte en dos columnas cuando no cabría en una */
+  const cap = vertical ? 24 : 22;
+  const partes = deben.length > cap ? [deben.slice(0, Math.ceil(deben.length / 2)), deben.slice(Math.ceil(deben.length / 2))] : [deben];
+  const conFaltan = partes.length === 1;
+  const tablaDeben = rows => `<table class="db">
+    <thead><tr><th style="width:6mm">#</th><th>Alumno</th><th style="width:12mm">Dio en</th><th style="width:${conFaltan ? 30 : 26}mm">Colaboración</th><th style="width:15mm">Pendiente</th>${conFaltan ? '<th>Le falta</th>' : ''}</tr></thead>
+    <tbody>${rows.map(f => {
+      const tr = adIngTramo(f.pct);
+      return `<tr><td>${adEsc(f.a.num)}</td><td class="nom">${adEsc(f.a.nombre || '·')}</td><td>${f.dioEn} de ${f.de}</td>
+        <td class="col"><div class="mini">${adIngBarra(f.pct, 7, tr.barra)}</div>${adIngPctHtml(f.pct)}</td>
+        <td class="pen">${adLps(f.pendiente)}</td>${conFaltan ? `<td class="fal">${adEsc(f.faltan.join(' · '))}</td>` : ''}</tr>`;
+    }).join('')}</tbody></table>`;
+  const listaDeben = deben.length
+    ? `<div class="db-wrap${partes.length > 1 ? ' dos' : ''}">${partes.map(tablaDeben).join('')}</div>`
+    : '<p class="todos">🎉 Todo el grupo está al día con sus aportes.</p>';
+
+  const hoja2 = `
+    ${cabeza('ESTADÍSTICAS DE COLABORACIÓN')}
+    ${tiles}
+    <div class="frases">${frases.map(f => `<p>• ${f}</p>`).join('')}</div>
+    <div class="dos-col">
+      <section><h3>Participación por colecta <small>(alumnos que dieron, sobre los que les corresponde)</small></h3>${barrasCol}
+        <div class="esc"><span>0 %</span><span>25 %</span><span>50 %</span><span>75 %</span><span>100 %</span></div></section>
+      <section><h3>El grupo por tramo de colaboración <small>(dinero dado sobre el esperado de cada alumno)</small></h3>${dist}</section>
+    </div>
+    <h3>Alumnos con aportes pendientes <small>(${deben.length} de ${T.cuentan} · de menor a mayor colaboración)</small></h3>
+    ${listaDeben}
+    <div class="marca">Documento interno para Dirección: lleva nombres de alumnos, no se comparte en el grupo de padres. · Colaboración = lo dado (sin pasar del aporte sugerido) sobre lo esperado de cada alumno. · Elaborado con M.E.T.A.S · ${adEsc(adFechaBonita(adHoy()))}</div>`;
+
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${adEsc('Cuadro de ingresos · ' + (adGradoSeccion(d.grado, d.seccion) || ''))}</title>
+<style>
+  @page { size: letter ${vertical ? 'portrait' : 'landscape'}; margin: 7mm 8mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html, body { background: #fff; }
+  body { font-family: Arial, Helvetica, sans-serif; color: #0f2350; }
+  /* cada hoja mide lo que mide el papel menos los márgenes; si el contenido
+     se pasa, el guion de abajo lo encoge para que no salte a otra hoja */
+  .hoja { width: ${vertical ? 200 : 263}mm; height: ${vertical ? 263 : 199}mm; overflow: hidden; break-after: page; }
+  .hoja:last-child { break-after: auto; }
+  @media screen { body { background: #e5e9f0; padding: 10px 0 70px; } .hoja { background: #fff; margin: 0 auto 12px; padding: 0; box-shadow: 0 2px 10px rgba(0,0,0,.18); } }
+  .head { display: flex; align-items: center; gap: 10px; padding-bottom: 4px; border-bottom: 2.5px solid #1e3a7c; }
+  .logo { flex: 0 0 120px; height: 36px; display: flex; align-items: center; }
+  .logo.der { justify-content: flex-end; } .logo img { max-width: 120px; max-height: 36px; object-fit: contain; }
+  .mid { flex: 1; text-align: center; }
+  .centro { font-family: Georgia, serif; font-size: 12.5px; font-weight: 700; }
+  .centro small { font-family: Arial, sans-serif; font-weight: 400; font-size: 9px; color: #55637d; }
+  .doc { font-family: Georgia, serif; font-size: 12px; font-weight: 700; color: #a8791a; letter-spacing: .8px; margin-top: 1px; }
+  .datos { display: grid; grid-template-columns: repeat(${vertical ? 4 : 8}, 1fr); gap: 2px 3px; margin: 3px 0 4px; }
+  .datos div { background: #f4f7fc; border: 1px solid #d4dbe6; border-radius: 5px; padding: 1px 6px; font-size: 8.6px; line-height: 1.2; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .datos span { display: block; font-size: 6.4px; letter-spacing: .4px; text-transform: uppercase; color: #7286a8; }
+  .datos b { font-size: 8.6px; }
+  table.ing { border-collapse: collapse; width: 100%; table-layout: fixed; }
+  .ing th, .ing td { border: 1px solid #c7cfdd; text-align: center; font-size: 8.4px; padding: 1.1px 2px; line-height: 1.15; overflow: hidden; }
+  .ing thead th { background: #1e3a7c; color: #fff; font-weight: 700; font-size: 7.3px; letter-spacing: .2px; }
+  .ing thead th small { font-weight: 400; }
+  .ing thead th.fijo { background: #0f2350; }
+  .ing thead tr.h2 th { background: #eaf0fa; color: #0f2350; font-size: 6.9px; vertical-align: bottom; }
+  .ing thead tr.h2 th small { display: block; color: #55637d; font-size: 6.2px; white-space: nowrap; }
+  .ing .cc { max-height: 2.3em; overflow: hidden; line-height: 1.15; }
+  .ing td.nom { text-align: left; padding-left: 4px; white-space: nowrap; text-overflow: ellipsis; font-weight: 600; }
+  .ing td.idn { font-size: 7.6px; color: #33415c; }
+  .ing tbody tr:nth-child(even) td.num, .ing tbody tr:nth-child(even) td.idn, .ing tbody tr:nth-child(even) td.nom { background: #f4f7fc; }
+  .ing td.m { font-weight: 700; white-space: nowrap; }
+  .ing td.m.ok { background: #dcfce7; color: #166534; }
+  .ing td.m.ab { background: #fef3c7; color: #92400e; }
+  .ing td.m.no { background: #fde2e2; color: #b91c1c; }
+  .ing td.m.nc { background: #f1f5f9; color: #8a94a8; font-weight: 400; font-size: 7px; }
+  .ing td.tt { font-weight: 900; box-shadow: inset 2px 0 0 #c9a24a; }
+  .ing td.tp { color: #9a3412; font-weight: 700; }
+  .pc { display: inline-block; border-radius: 999px; padding: 0 4px; font-weight: 900; font-size: 7.6px; white-space: nowrap; }
+  .ing td.obs { text-align: left; padding-left: 4px; font-weight: 800; font-size: 7.4px; white-space: nowrap; text-overflow: ellipsis; }
+  .ing td.obs small { font-weight: 400; color: #55637d; }
+  .ing td.obs.ok { color: #166534; } .ing td.obs.no { color: #b91c1c; } .ing td.obs.pa { color: #92400e; } .ing td.obs.pe { color: #8a94a8; }
+  .ing tfoot td { background: #f4f7fc; font-weight: 800; border-top: 1.6px solid #1e3a7c; }
+  .ing tfoot tr + tr td { border-top: 1px solid #c7cfdd; }
+  .ing td.tf-et { text-align: right; padding-right: 5px; font-size: 7px; letter-spacing: .3px; color: #1e3a7c; }
+  .ing td.tf-n { font-size: 8.6px; }
+  .ing td.tf-p { font-size: 7.4px; line-height: 1.25; }
+  .ing td.tf-p small { font-weight: 600; color: #55637d; }
+  .ing td.tf-s { font-size: 7.2px; text-align: left; padding-left: 4px; }
+  .pie { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; align-items: center; }
+  .pie .k { border: 1px solid #d4dbe6; border-radius: 7px; padding: 2px 7px; font-size: 8px; background: #f4f7fc; }
+  .pie .k b { font-family: Georgia, serif; font-size: 11px; color: #1e3a7c; margin-left: 3px; }
+  .ley { font-size: 7.4px; color: #33415c; margin-top: 4px; line-height: 1.7; }
+  .ley span { font-weight: 700; border-radius: 999px; padding: 1px 6px; border: 1px solid #d4dbe6; margin-left: 3px; white-space: nowrap; }
+  .firmas { display: flex; gap: 34px; margin: 26px 24px 0; font-size: 9px; }
+  .firmas div { flex: 1; text-align: center; border-top: 1px solid #0f2350; padding-top: 2px; }
+  .firmas small { color: #55637d; }
+  .marca { text-align: right; font-size: 7px; color: #8a94a8; margin-top: 5px; }
+  /* hoja 2 */
+  h3 { font-family: Georgia, serif; font-size: 11px; color: #1e3a7c; margin: 7px 0 4px; border-bottom: 1px solid #d4dbe6; padding-bottom: 2px; }
+  h3 small { font-family: Arial, sans-serif; font-weight: 400; font-size: 7.6px; color: #55637d; }
+  .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 4px; }
+  .tile { border: 1.5px solid; border-radius: 9px; padding: 5px 8px; display: flex; flex-direction: column; }
+  .tile-ic { font-size: 11px; font-weight: 900; } .tile-et { font-size: 7.6px; text-transform: uppercase; letter-spacing: .4px; color: #55637d; }
+  .tile b { font-family: Georgia, serif; font-size: 21px; line-height: 1.1; } .tile b small { font-size: 10px; }
+  .tile > small { font-size: 8px; color: #33415c; }
+  .frases { margin: 6px 0 0; padding: 5px 9px; background: #fffbeb; border: 1px solid #f3d38a; border-radius: 8px; }
+  .frases p { font-size: 9px; line-height: 1.5; }
+  .dos-col { display: grid; grid-template-columns: ${vertical ? '1fr' : '1.25fr 1fr'}; gap: 0 14px; }
+  table.bc { width: 100%; border-collapse: collapse; }
+  .bc td { padding: 2.5px 3px; border-bottom: 1px solid #e2e8f0; vertical-align: middle; font-size: 8.4px; }
+  .bc td small { color: #55637d; font-size: 7.2px; }
+  .bc td.bc-n { width: 34%; } .bc td.bc-p { width: 20%; text-align: right; white-space: nowrap; }
+  .esc { display: flex; justify-content: space-between; font-size: 6.8px; color: #64748b; margin: 1px 20% 0 34%; }
+  .dist-ley { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 10px; margin-top: 4px; font-size: 8.2px; }
+  .dist-ley i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
+  .dist-ley small { color: #55637d; }
+  .db-wrap.dos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: start; }
+  table.db { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  .db th { background: #1e3a7c; color: #fff; font-size: 7.3px; padding: 2px; }
+  .db td { border: 1px solid #c7cfdd; font-size: 8.3px; padding: 1.2px 3px; text-align: center; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .db td.nom { text-align: left; font-weight: 600; }
+  .db td.col { text-align: left; } .db .mini { display: inline-block; width: 42%; vertical-align: middle; margin-right: 3px; }
+  .db td.pen { font-weight: 800; color: #9a3412; }
+  .db td.fal { text-align: left; font-size: 7.2px; color: #55637d; }
+  .db tbody tr:nth-child(even) td { background: #f8fafc; }
+  .todos { font-size: 11px; font-weight: 700; color: #166534; margin: 8px 0; }
+</style></head><body>
+  <div class="hoja"><div class="fit">
+    ${cabeza('CUADRO DE INGRESOS · APORTES DE PADRES DE FAMILIA')}
+    ${tabla}
+    ${pie}
+    <div class="firmas"><div>${adEsc(bol.docente || '')}<br><small>Docente de grado</small></div><div><br><small>Tesorero(a) de padres de familia</small></div><div>${adEsc(bol.director || '')}<br><small>Director(a)</small></div></div>
+    <div class="marca">Recaudado = dinero en mano, incluido lo dado de más. Pendiente = lo que falta para el aporte sugerido de cada colecta. · Elaborado con M.E.T.A.S · ${adEsc(adFechaBonita(adHoy()))}</div>
+  </div></div>
+  <div class="hoja"><div class="fit">${hoja2}</div></div>
+<script>
+  /* Una hoja = una página: si algo se pasa de alto (muchos alumnos o muchas
+     colectas), se encoge la hoja entera en vez de partirla. */
+  function ajustar() {
+    document.querySelectorAll('.hoja').forEach(function (h) {
+      var f = h.querySelector('.fit'), alto = h.getBoundingClientRect().height;
+      f.style.zoom = 1;
+      /* con espacio de sobra, las filas crecen un poco: se leen mejor y la
+         hoja no queda con un tercio en blanco */
+      var nFil = f.querySelectorAll('table.ing tbody tr').length;
+      var sobra = alto - f.getBoundingClientRect().height - 6;
+      if (nFil && sobra > 0) {
+        var extra = Math.min(sobra / nFil, 9) / 2;
+        f.querySelectorAll('table.ing tbody td').forEach(function (td) {
+          td.style.paddingTop = td.style.paddingBottom = (1.1 + extra) + 'px';
+        });
+      }
+      /* y si se pasa, se encoge entera; se mide otra vez porque la letra
+         no se reduce en proporción exacta */
+      for (var i = 0; i < 5; i++) {
+        var r = alto / f.getBoundingClientRect().height;
+        if (r >= 1) break;
+        f.style.zoom = Math.floor((parseFloat(f.style.zoom) || 1) * r * 995) / 1000;
+      }
+    });
+  }
+  window.onload = function () { ajustar(); setTimeout(function () { window.print(); }, 300); };
+<\/script></body></html>`;
   adPrintAbrir(html);
 }
 
