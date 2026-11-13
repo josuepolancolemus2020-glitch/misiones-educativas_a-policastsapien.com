@@ -3642,6 +3642,77 @@ function adPagoQuitado(c, al, quitado) {
   if (quitado) { c.quitados = Object.assign({}, c.quitados || {}); c.quitados[f] = Date.now(); }
   else if (c.quitados && c.quitados[f]) { c.quitados = Object.assign({}, c.quitados); delete c.quitados[f]; }
 }
+/* La otra memoria de la nube: lo que ven las familias. Cada pago marcado
+   sube como una fila «pago» de registro_admin (evento ADE-<colecta>-<clave
+   de familia>), y si después pasa a «pendiente», el historial guarda la
+   fila de antes, sin plazo (SUPABASE-HISTORIAL-RECUPERACION.sql). Las
+   copias del aula solo duran 30 días; esto dura lo que dure la base.
+   Devuelve los pagos que la nube vio como PAGADOS y hoy faltan aquí, en
+   el mismo formato que BuscarPerdidos.buscar. Al alumno se le encuentra
+   por su clave de familia, que lo sigue aunque la lista se reordene. */
+async function adPagosDesdeRegistroNube() {
+  const cred = adDocenteCreds();
+  if (!cred || navigator.onLine === false) return [];
+  let url = 'https://uljjgrikyigdrkbikcxo.supabase.co';
+  let key = 'sb_publishable_VGj7He4XL8AGscsY3RsxGg__xlzi48w';
+  try {
+    url = localStorage.getItem('METAS_SB_URL') || url;
+    key = localStorage.getItem('METAS_SB_KEY') || key;
+  } catch (_) {}
+  let filas = [];
+  try {
+    const r = await fetch(url + '/rest/v1/rpc/metas_recuperar_admin_docente', {
+      method: 'POST',
+      headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_prof: cred.prof, p_clave: cred.clave }),
+    });
+    if (!r.ok) return [];
+    const j = await r.json();
+    if (!j || !j.ok) return [];
+    filas = (j.actuales || []).concat(j.historial || []);
+  } catch (_) { return []; }
+  /* el último «pago» que se vio de cada evento */
+  const pagado = {};
+  filas.forEach(f => {
+    if (!f || f.tipo !== 'economia' || f.estado !== 'pago' || !(Number(f.monto) > 0)) return;
+    const id = String(f.evento_id || '');
+    if (!id.startsWith('ADE-')) return;
+    const ya = pagado[id];
+    if (!ya || String(f.actualizado_en || '') > String(ya.actualizado_en || '')) pagado[id] = f;
+  });
+  if (!Object.keys(pagado).length) return [];
+  const st = adState();
+  const codes = typeof paCodesLoad === 'function' ? paCodesLoad() : {};
+  const items = [];
+  st.grupos.forEach(g => {
+    const cg = codes['G:' + g.id] || {};
+    const numDe = {};
+    Object.keys(cg).forEach(n => { numDe[String(cg[n]).toUpperCase()] = String(n); });
+    (g.colectas || []).forEach(c => {
+      const pre = 'ADE-' + c.id + '-';
+      Object.keys(pagado).forEach(id => {
+        if (!id.startsWith(pre)) return;
+        const num = numDe[id.slice(pre.length).toUpperCase()];
+        if (!num) return;
+        const al = (g.lista || []).find(a => String(a.num) === num);
+        if (!al) return;
+        if (c.pagos && c.pagos[num] != null && c.pagos[num] !== '') return;
+        if (c.quitados && window.BuscarPerdidos && c.quitados[BuscarPerdidos.firmaAlumno(al)]) return;
+        const f = pagado[id];
+        items.push({ tipo: 'pago', clave: 'p|' + g.id + '|' + c.id + '|' + num, grupo: g.id, colecta: c.id,
+          colectaTxt: c.concepto || 'Colecta', num, nombre: String(al.nombre || '').trim(), monto: Number(f.monto),
+          fecha: String(f.actualizado_en || '').slice(0, 10), vistoEn: f.actualizado_en || '', fuente: 'familias' });
+      });
+    });
+  });
+  return items;
+}
+/* une las dos listas sin repetir: si las dos traen el mismo pago, manda la
+   copia del aula, que tiene el día exacto en que se marcó */
+function adUnirHallados(a, b) {
+  const ya = new Set(a.map(x => x.clave));
+  return a.concat(b.filter(x => !ya.has(x.clave)));
+}
 let _adAutoRecT = 0, _adAutoRecVa = false;
 function adRecuperarSoloProgramar() {
   if (_adAutoRecVa || Date.now() - _adAutoRecT < 10 * 60e3) return;
@@ -3659,11 +3730,13 @@ async function adRecuperarSolo() {
         (rows || []).forEach(r => copias.push({ raw: r.raw, cuando: r.cuando, fuente: 'nube' }));
       } catch (_) {}
     }
-    if (!copias.length) return 0;
+    const deFamilias = await adPagosDesdeRegistroNube();
+    if (!copias.length && !deFamilias.length) return 0;
     /* desde aquí no hay más esperas: se lee y se guarda de un tirón, así
-       nada que llegue en medio queda pisado */
-    const items = BuscarPerdidos.buscar(localStorage.getItem(ADMIN_KEY), copias)
-      .filter(i => i.tipo === 'pago' || i.tipo === 'gasto');
+       nada que llegue en medio queda pisado (los de la nube de familias se
+       vuelven a comprobar al devolver: devolver no pisa una casilla llena) */
+    const items = adUnirHallados(BuscarPerdidos.buscar(localStorage.getItem(ADMIN_KEY), copias)
+      .filter(i => i.tipo === 'pago' || i.tipo === 'gasto'), deFamilias);
     if (!items.length) return 0;
     adUndoGuardar('Antes de devolver ' + items.length + ' pago(s) o gasto(s) que se habían perdido');
     const st = adState();
@@ -3739,11 +3812,11 @@ function adBuscarPerdidosModal() {
       </div>
     </div>`;
   document.body.appendChild(ov);
-  let items = [];
+  let items = [], extraNube = [];
   const nom = it => '#' + it.num + (it.nombre ? ' ' + it.nombre : '');
   const pintar = () => {
     const d = adLoad();
-    items = BuscarPerdidos.buscar(localStorage.getItem(ADMIN_KEY), copias).filter(it => it.grupo === d.id);
+    items = adUnirHallados(BuscarPerdidos.buscar(localStorage.getItem(ADMIN_KEY), copias), extraNube).filter(it => it.grupo === d.id);
     const pagos = items.filter(i => i.tipo === 'pago'), gastos = items.filter(i => i.tipo === 'gasto');
     const notas = items.filter(i => i.tipo === 'nota');
     const porMat = {};
@@ -3783,9 +3856,10 @@ function adBuscarPerdidosModal() {
          (la nube guarda hasta una cada 10 minutos), y un pago perdido hace
          dos semanas no aparecía. Con SUPABASE-HISTORIAL-MES.sql la nube
          manda las 12 más nuevas y la última de cada día del mes. */
-      window.dsHistorial(ADMIN_KEY, 50).then(rows => {
-        if (!rows) { nube = 'no'; pintar(); return; }
-        rows.forEach(r => copias.push({ raw: r.raw, cuando: r.cuando, fuente: 'nube' }));
+      Promise.all([window.dsHistorial(ADMIN_KEY, 50).catch(() => null), adPagosDesdeRegistroNube().catch(() => [])]).then(([rows, fam]) => {
+        if (!rows && !fam.length) { nube = 'no'; pintar(); return; }
+        (rows || []).forEach(r => copias.push({ raw: r.raw, cuando: r.cuando, fuente: 'nube' }));
+        extraNube = fam;
         nube = 'ok'; pintar();
       }, () => { nube = 'no'; pintar(); });
     });

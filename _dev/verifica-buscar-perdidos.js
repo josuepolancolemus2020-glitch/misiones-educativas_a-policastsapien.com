@@ -160,6 +160,9 @@ const deNube = cloud => JSON.parse(cloud.datos.METAS_ADMIN_V1.raw).grupos[0];
     ok(/filter\(i => i\.tipo === 'pago' \|\| i\.tipo === 'gasto'\)/.test(src), 'lo automático es SOLO dinero de colectas (las notas van a mano)');
     ok(/adPagoQuitado\(cc, al, true\)/.test(src) && /gastosQuitados/.test(src), 'quitar un pago o borrar un gasto deja su marca');
     ok(/adUndoGuardar\('Antes de devolver/.test(src), 'antes de devolver solo se toma una foto de Deshacer');
+    ok(/const deFamilias = await adPagosDesdeRegistroNube\(\)/.test(src) && /adPagosDesdeRegistroNube\(\)\.catch/.test(src),
+      'también se busca en lo que ven las familias (registro_admin y su historial), solo y con 🔎');
+    ok(/numDe\[id\.slice\(pre\.length\)\.toUpperCase\(\)\]/.test(src), 'el pago de la nube de familias se ubica por la clave de familia, no por el número');
   }
 
   console.log('\n5 · El código');
