@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Boceto · Notas SACE simple</title>
+<!-- Boceto de prueba: no se publica (_dev/). Solo pinta; no lee ni guarda notas. -->
+<link rel="stylesheet" href="../css/vendor/fuentes/fuentes.css">
+<style>
+:root {
+  --bg: #eef2f7; --card: #fff; --text: #1e293b; --muted: #64748b; --line: #dbe3ee;
+  --azul: #1d4ed8; --azul-suave: #eff4ff; --chip: #f1f5f9; --chip-borde: #d5dde8;
+  --ambar: #fff7e6; --ambar-borde: #f59e0b; --ambar-txt: #92400e;
+  --ni: #fde2e4; --nb: #fdf3c4; --na: #dbeafe; --ne: #dcfce7;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f172a; --card: #172033; --text: #e2e8f0; --muted: #94a3b8; --line: #2b3a52;
+    --azul: #3b82f6; --azul-suave: #1e2a44; --chip: #1e293b; --chip-borde: #334155;
+    --ambar: rgba(245,158,11,.14); --ambar-borde: #f59e0b; --ambar-txt: #fde68a;
+    --ni: #4a1f27; --nb: #46391a; --na: #1e3355; --ne: #18402a;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: 'Outfit', system-ui, sans-serif; background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.45; }
+
+/* ── nota del boceto (no es parte de la pantalla) ── */
+.nota-boceto { max-width: 1100px; margin: 12px auto; padding: 10px 14px; border: 2px dashed #94a3b8; border-radius: 12px; font-size: 14px; background: var(--card); }
+.nota-boceto summary { cursor: pointer; font-weight: 700; min-height: 32px; }
+.nota-boceto li { margin: 3px 0; }
+
+/* ── armazón aproximado de Mi aula (igual que hoy) ── */
+.app-top { height: 56px; background: var(--card); display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--azul); font-size: 19px; border-bottom: 1px solid var(--line); }
+.wrap { max-width: 1100px; margin: 0 auto; padding: 8px 16px 40px; }
+.fila-falsa { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0; }
+.fila-falsa span { padding: 8px 14px; border-radius: 10px; background: var(--card); border: 1px solid var(--line); font-size: 13px; font-weight: 600; }
+.fila-falsa span.on { background: var(--azul); color: #fff; border-color: var(--azul); }
+
+.card { background: var(--card); border-radius: 16px; border: 1px solid var(--line); padding: 14px; }
+
+/* ── 1. Controles segmentados ── */
+.seg-fila { display: grid; grid-template-columns: 92px 1fr; align-items: center; gap: 8px; margin-bottom: 8px; }
+.seg-lbl { font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.seg { display: flex; gap: 4px; padding: 4px; background: var(--chip); border-radius: 999px; border: 1px solid var(--chip-borde); }
+.seg button {
+  flex: 1 1 0; min-height: 44px; min-width: 0; border: 1.5px solid transparent; border-radius: 999px;
+  background: transparent; color: var(--text); font: inherit; font-weight: 600; font-size: 15px; cursor: pointer;
+  transition: background-color 150ms, color 150ms, border-color 150ms, box-shadow 150ms; white-space: nowrap;
+}
+.seg button:hover { border-color: var(--chip-borde); background: var(--card); }
+.seg button[aria-pressed="true"] { background: var(--azul); color: #fff; box-shadow: 0 2px 6px rgba(29,78,216,.3); }
+.seg button:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
+.seg .candado { font-size: 12px; margin-left: 4px; opacity: .85; }
+.seg-nota { font-size: 14px; color: var(--muted); padding: 10px 4px; }
+
+/* ── línea de leyenda + ayuda, pegada a la tabla ── */
+.ley { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 4px 0 6px; font-size: 12px; }
+.ley span { padding: 2px 8px; border-radius: 999px; font-weight: 600; }
+.ley .i { background: var(--ni); } .ley .b { background: var(--nb); } .ley .a { background: var(--na); } .ley .e { background: var(--ne); }
+.ayuda { margin-left: auto; min-height: 44px; padding: 0 12px; border: 1px solid var(--chip-borde); background: var(--card); color: var(--azul); border-radius: 999px; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+
+/* ── 2. Tabla (igual que hoy, solo pegada arriba) ── */
+.tabla-wrap { overflow: auto; max-height: 56vh; border: 1px solid var(--line); border-radius: 12px; }
+table { border-collapse: separate; border-spacing: 0; width: 100%; }
+th, td { border-bottom: 1px solid var(--line); border-right: 1px solid var(--line); text-align: center; padding: 0; height: 40px; min-width: 92px; }
+th { position: sticky; top: 0; background: var(--card); font-size: 13px; padding: 4px 6px; z-index: 1; }
+th small { display: block; color: var(--muted); font-weight: 400; }
+.fijo { position: sticky; left: 0; background: var(--card); z-index: 2; text-align: left; padding: 0 10px; min-width: 120px; box-shadow: inset -2px 0 0 var(--azul); }
+th.fijo { z-index: 3; }
+td.fijo b { color: var(--azul); font-size: 12px; margin-right: 6px; }
+td input { width: 100%; height: 100%; border: 0; background: transparent; text-align: center; font: inherit; font-weight: 700; font-size: 16px; color: var(--text); }
+.ci { background: var(--ni); } .cb { background: var(--nb); } .ca { background: var(--na); } .ce { background: var(--ne); }
+
+/* ── 7. Franja de recuperación ── */
+.franja { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 8px; padding: 4px 6px 4px 12px; border-left: 4px solid var(--ambar-borde); background: var(--ambar); color: var(--ambar-txt); border-radius: 8px; font-size: 14px; }
+.franja button { margin-left: auto; }
+
+/* ── botones bajo la tabla ── */
+.grupo-tit { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin: 14px 0 6px; }
+.fila { display: flex; gap: 6px; flex-wrap: wrap; }
+.btn { min-height: 44px; padding: 0 14px; border-radius: 10px; border: 1px solid var(--chip-borde); background: var(--card); color: var(--text); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+.btn.prim { background: var(--azul); color: #fff; border-color: var(--azul); }
+/* 3. chips discretos */
+.chip { min-height: 44px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--chip-borde); background: var(--chip); color: var(--text); font: inherit; font-size: 13px; font-weight: 500; cursor: pointer; transition: background-color 150ms; }
+.chip:hover { background: var(--card); }
+
+/* ── ventana y aviso breve ── */
+.velo { position: fixed; inset: 0; background: rgba(15,23,42,.45); display: none; align-items: center; justify-content: center; padding: 16px; z-index: 50; }
+.velo.abierto { display: flex; }
+.ventana { background: var(--card); border-radius: 16px; max-width: 420px; width: 100%; padding: 18px; }
+.ventana h3 { margin: 0 0 10px; font-size: 18px; }
+.ventana ol { margin: 0 0 14px; padding-left: 0; list-style: none; counter-reset: p; }
+.ventana li { counter-increment: p; display: flex; gap: 10px; align-items: flex-start; margin: 10px 0; font-size: 16px; }
+.ventana li::before { content: counter(p); flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--azul); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 14px; }
+.ventana .alumnos { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; max-height: 50vh; overflow: auto; margin-bottom: 12px; }
+.toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(20px); background: #1e293b; color: #fff; padding: 10px 16px; border-radius: 12px; font-size: 15px; opacity: 0; transition: opacity 150ms, transform 150ms; pointer-events: none; max-width: calc(100% - 32px); z-index: 60; }
+.toast.ver { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── 9. Celular ── */
+@media (max-width: 640px) {
+  .seg-fila { grid-template-columns: 1fr; gap: 4px; }
+  .seg-sec { display: grid; grid-template-columns: 1fr 1fr; border-radius: 18px; }
+  .seg-sec button { border-radius: 14px; }
+  .tabla-wrap { max-height: 60vh; }
+  .franja button { margin-left: 0; width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<details class="nota-boceto" open>
+  <summary>📝 Boceto: Notas SACE simple. Toca los botones; no guarda nada.</summary>
+  <ul>
+    <li>Arriba solo: <b>Parcial</b> y <b>Sección</b> como botones. Abajo, la tabla.</li>
+    <li>La línea de colores y el botón <b>ⓘ ¿Cómo se llena?</b> van pegados a la tabla.</li>
+    <li>Toca <b>I, II o III</b> (🔒) o <b>✨ Sugerir notas</b> para ver el aviso breve.</li>
+    <li>«Boleta de un alumno» hoy es una lista desplegable; aquí abre una ventana con botones.</li>
+    <li>«Sugerir notas», «Buscar notas perdidas» y lo de imprimir siguen; solo cambian de lugar.</li>
+    <li>En Personalidad y Recuperación se ven los 4 parciales; la fila Parcial dice eso.</li>
+    <li>Prueba el ancho de un celular: los botones se reparten y la columna de nombres queda fija.</li>
+  </ul>
+</details>
+
+<div class="app-top">Mi aula</div>
+<div class="wrap">
+  <div class="fila-falsa"><span>1º-1</span><span>2º-1</span><span>3º-1</span><span>4º-1</span><span>5º-1</span><span class="on">6º-1</span></div>
+  <div class="fila-falsa"><span>👥 Alumnos</span><span>💰 Economía</span><span>📋 Asistencia</span><span>🤝 Equipos</span><span>✅ Controles</span><span class="on">🧾 Notas SACE</span><span>📈 Estadísticas</span><span>📖 Lectura</span><span>📣 Comunicados</span><span>☁️ al día</span></div>
+
+  <div class="card">
+    <div class="seg-fila">
+      <span class="seg-lbl" id="lbl-parcial">Parcial</span>
+      <div class="seg" role="group" aria-labelledby="lbl-parcial" id="seg-parcial">
+        <button type="button" data-p="I" aria-pressed="false">I<span class="candado" aria-label="cerrado">🔒</span></button>
+        <button type="button" data-p="II" aria-pressed="false">II<span class="candado" aria-label="cerrado">🔒</span></button>
+        <button type="button" data-p="III" aria-pressed="true">III<span class="candado" aria-label="cerrado">🔒</span></button>
+        <button type="button" data-p="IV" aria-pressed="false">IV</button>
+      </div>
+    </div>
+    <div class="seg-fila">
+      <span class="seg-lbl" id="lbl-sec">Sección</span>
+      <div class="seg seg-sec" role="group" aria-labelledby="lbl-sec" id="seg-sec">
+        <button type="button" data-v="aprov" aria-pressed="true">📚 Aprovechamiento</button>
+        <button type="button" data-v="pers" aria-pressed="false">🙂 Personalidad</button>
+        <button type="button" data-v="inasis" aria-pressed="false">📅 Inasistencias</button>
+        <button type="button" data-v="recup" aria-pressed="false">✍️ Recuperación</button>
+      </div>
+    </div>
+
+    <div class="ley" aria-label="Colores de las notas">
+      <span class="i">Inicial ≤69</span><span class="b">Básico 70–79</span><span class="a">Avanzado 80–90</span><span class="e">Excelente 91–100</span>
+      <button type="button" class="ayuda" id="btn-ayuda">ⓘ ¿Cómo se llena?</button>
+    </div>
+
+    <div class="tabla-wrap">
+      <table>
+        <thead><tr><th class="fijo">Nº · Alumno</th>
+          <th>Español<small>◀ 📋 ▶</small></th><th>Inglés<small>◀ 📋 ▶</small></th><th>Ed. Artística<small>◀ 📋 ▶</small></th>
+          <th>Matemáticas<small>◀ 📋 ▶</small></th><th>C. Sociales<small>◀ 📋 ▶</small></th><th>C. Naturales<small>◀ 📋 ▶</small></th>
+          <th>Ed. Física<small>◀ 📋 ▶</small></th><th>Ed. Cívica<small>◀ 📋 ▶</small></th></tr></thead>
+        <tbody id="cuerpo"></tbody>
+      </table>
+    </div>
+
+    <div class="franja" role="status">
+      <span>⚠️ <b>10</b> alumnos con nota final bajo 70.</span>
+      <button type="button" class="btn">✍️ Escribir la recuperación</button>
+    </div>
+
+    <div class="grupo-tit">Lista</div>
+    <div class="fila">
+      <button type="button" class="chip">➕ Agregar materia</button>
+      <button type="button" class="chip">🔤 Ordenar A–Z</button>
+      <button type="button" class="chip">♀♂ Niñas y luego varones</button>
+      <button type="button" class="chip">🙈 Quién no se copia en 📋</button>
+    </div>
+
+    <div class="grupo-tit">Imprimir y copiar</div>
+    <div class="fila">
+      <button type="button" class="btn prim">🧾 Boletas de todo el grupo</button>
+      <button type="button" class="btn" id="btn-uno">🧑‍🎓 Boleta de un alumno</button>
+      <button type="button" class="btn">📒 Cuadro final del año</button>
+      <button type="button" class="btn">📋 Resumen final por grado</button>
+      <button type="button" class="btn">⬇ Copiar CSV</button>
+    </div>
+
+    <div class="grupo-tit">Herramientas</div>
+    <div class="fila">
+      <button type="button" class="chip">🏫 Encabezado y logos</button>
+      <button type="button" class="chip">📥 Recuperar notas que faltan</button>
+      <button type="button" class="chip">🕓 Ver cambios guardados</button>
+      <button type="button" class="chip">🔎 Revisar notas puestas solas</button>
+      <button type="button" class="chip">🔎 Buscar notas perdidas</button>
+      <button type="button" class="chip" id="btn-sugerir">✨ Sugerir notas</button>
+    </div>
+  </div>
+</div>
+
+<div class="velo" id="velo-ayuda" role="dialog" aria-modal="true" aria-labelledby="t-ayuda">
+  <div class="ventana">
+    <h3 id="t-ayuda">¿Cómo se llena?</h3>
+    <ol>
+      <li>Elige el parcial y la sección arriba.</li>
+      <li>Escribe la nota y pasa con Enter.</li>
+      <li>Toca 📋 en cada materia y pégala en el SACE.</li>
+    </ol>
+    <button type="button" class="btn prim" data-cerrar>Entendido</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-uno" role="dialog" aria-modal="true" aria-labelledby="t-uno">
+  <div class="ventana">
+    <h3 id="t-uno">¿De quién es la boleta?</h3>
+    <div class="alumnos" id="lista-uno"></div>
+    <button type="button" class="btn" data-cerrar>Cerrar</button>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+  const nombres = ['Ada','Ashly','Balloteth','Carlos','Dania','Elmer','Fany','Gerson','Heidy','Iris','José','Karla','Luis','María','Nelson'];
+  const clase = n => n <= 69 ? 'ci' : n <= 79 ? 'cb' : n <= 90 ? 'ca' : 'ce';
+  document.getElementById('cuerpo').innerHTML = nombres.map((nom, i) => '<tr><td class="fijo"><b>#' + (i + 1) + '</b>' + nom + '</td>' +
+    Array.from({ length: 8 }, (_, j) => { const n = 65 + ((i * 7 + j * 11) % 36); return '<td class="' + clase(n) + '"><input value="' + n + '" inputmode="numeric" aria-label="' + nom + '"></td>'; }).join('') + '</tr>').join('');
+  document.getElementById('lista-uno').innerHTML = nombres.map((n, i) => '<button type="button" class="btn">#' + (i + 1) + ' ' + n + '</button>').join('');
+
+  let tt;
+  const toast = m => { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('ver'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('ver'), 2600); };
+  let parcial = 'III';
+  const marca = (grupo, btn) => grupo.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'));
+  document.getElementById('seg-parcial').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    parcial = b.dataset.p; marca(e.currentTarget, b);
+    if (parcial !== 'IV') toast('🔒 Parcial ' + parcial + ' cerrado: puedes escribir, pero no sugerir notas.');
+  });
+  document.getElementById('seg-sec').addEventListener('click', e => { const b = e.target.closest('button'); if (b) marca(e.currentTarget, b); });
+  document.getElementById('btn-sugerir').addEventListener('click', () => toast(parcial === 'IV'
+    ? '🛡️ Primero autoriza «Sugerir notas» en el Parcial IV.'
+    : '🔒 «Sugerir notas» solo funciona en el Parcial IV.'));
+  const abre = id => document.getElementById(id).classList.add('abierto');
+  document.getElementById('btn-ayuda').onclick = () => abre('velo-ayuda');
+  document.getElementById('btn-uno').onclick = () => abre('velo-uno');
+  document.querySelectorAll('[data-cerrar]').forEach(b => b.onclick = () => b.closest('.velo').classList.remove('abierto'));
+  // En la app: se abre sola solo la primera vez (llave nueva propia).
+  try { if (!localStorage.getItem('BOCETO_SACE_AYUDA_VISTA')) { abre('velo-ayuda'); localStorage.setItem('BOCETO_SACE_AYUDA_VISTA', '1'); } } catch (_) {}
+</script>
+</body>
+</html>
