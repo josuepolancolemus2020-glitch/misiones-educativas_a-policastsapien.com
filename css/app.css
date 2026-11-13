@@ -5120,12 +5120,15 @@ body.ad-gr-moviendo { cursor: grabbing; user-select: none; -webkit-user-select: 
 .ad-mx-mv:disabled { color: #cbd5e1; cursor: default; }
 .ad-mx-mv:active:not(:disabled) { background: #eef4ff; border-radius: 6px; }
 .ad-mx-sticky {
-  position: sticky; left: 0; z-index: 2; background: #fff; text-align: left;
+  position: -webkit-sticky; position: sticky; left: 0; z-index: 2; background: #fff; text-align: left;
   padding: 3px 5px 3px 4px; white-space: nowrap; min-width: 156px; max-width: 196px;
-  box-shadow: 2px 0 0 rgba(0,0,0,.05); font-size: calc(12.5px * var(--metas-fz, 1));
+  /* la columna de nombres queda inmovilizada; con border-collapse el borde
+     se iría con el desplazamiento, así que la raya oscura es una sombra
+     pegada a la celda y marca bien dónde empiezan las notas */
+  box-shadow: inset -2px 0 0 #0f2350, 4px 0 6px -3px rgba(15,35,80,.28); font-size: calc(12.5px * var(--metas-fz, 1));
   user-select: none; -webkit-user-select: none;
 }
-:root[data-theme="dark"] .ad-mx-sticky { background: #1c2733; }
+:root[data-theme="dark"] .ad-mx-sticky { background: #1c2733; box-shadow: inset -2px 0 0 #93c5fd, 4px 0 6px -3px rgba(0,0,0,.5); }
 .ad-mx-sbox {
   display: flex; align-items: center; gap: 3px; width: 100%;
 }
@@ -5286,6 +5289,22 @@ body.ad-gr-moviendo { cursor: grabbing; user-select: none; -webkit-user-select: 
 .ad-mx-inp.ad-mx-activo { background: #fff7e0; box-shadow: inset 0 0 0 2px #d9a400; }
 :root[data-theme="dark"] .ad-mx-inp.ad-mx-activo { background: rgba(217,164,0,.22); }
 .ad-mx-inp[readonly] { cursor: pointer; }
+/* ✍️ Recuperación: la nota final va debajo de la casilla; N/A y «sin
+   final» quedan en gris porque ahí no se escribe nada */
+.ad-mx-fin { display: block; font-size: calc(10.5px * var(--metas-fz, 1)); font-weight: 700; color: #33415c; padding: 0 3px 3px; white-space: nowrap; }
+.ad-mx td.ad-mx-recna { background: #f1f4f8; }
+.ad-mx td.ad-mx-recna .ad-mx-inp { color: #8a94a8; cursor: not-allowed; font-size: calc(12px * var(--metas-fz, 1)); }
+.ad-mx td.ad-mx-recna .ad-mx-fin { color: #8a94a8; font-weight: 600; }
+.ad-mx td.ad-mx-recpen { background: #fff; box-shadow: inset 0 0 0 2px #b45309; }
+:root[data-theme="dark"] .ad-mx td.ad-mx-recna { background: #18212b; }
+:root[data-theme="dark"] .ad-mx td.ad-mx-recpen { background: #1c2733; box-shadow: inset 0 0 0 2px #f59e0b; }
+:root[data-theme="dark"] .ad-mx-fin { color: #cbd5e1; }
+.ad-mx td[class*="nt-"] .ad-mx-fin { color: #0f172a; }
+.ad-rec-aviso { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 10px; padding: 8px 12px;
+  border: 1.5px solid #f59e0b; background: #fffbeb; color: #78350f; border-radius: 12px; font-size: calc(13px * var(--metas-fz, 1)); }
+.ad-rec-aviso[hidden] { display: none; }
+.ad-rec-aviso .pa-generate-btn { margin: 0; min-height: 44px; }
+:root[data-theme="dark"] .ad-rec-aviso { background: rgba(245,158,11,.14); color: #fde68a; }
 /* Personalidad con los 4 parciales a la vista: celdas angostas, subcabecera
    I–IV con su botón de copiar, y una raya más marcada donde empieza cada
    rasgo para que el ojo no se pierda entre 20 columnas */
@@ -6934,6 +6953,13 @@ body:has(.ad-sace-card) #metasInstallBtn { display: none !important; }
 .cf-rec-fila { display: flex; flex-wrap: wrap; gap: 6px 14px; padding: 8px 0; border-bottom: 1px solid var(--border, #e2e8f0); }
 .cf-rec-nom { flex: 1 1 220px; font-size: calc(13px * var(--metas-fz, 1)); }
 .cf-rec-nom small { display: block; color: var(--muted, #64748b); }
+.cf-rec-nom small.cf-rec-est { font-weight: 800; }
+.cf-rec-est.ok, .cf-rec-cuenta .ok { color: #166534; }
+.cf-rec-est.no, .cf-rec-cuenta .no { color: #9a3412; }
+.cf-rec-est.pe, .cf-rec-cuenta .pe { color: var(--muted, #55637d); }
+:root[data-theme="dark"] .cf-rec-est.ok, :root[data-theme="dark"] .cf-rec-cuenta .ok { color: #86efac; }
+:root[data-theme="dark"] .cf-rec-est.no, :root[data-theme="dark"] .cf-rec-cuenta .no { color: #fdba74; }
+.cf-rec-cuenta { display: flex; flex-wrap: wrap; gap: 6px 14px; font-weight: 800; font-size: calc(12.5px * var(--metas-fz, 1)); margin: 4px 0 2px; }
 .cf-rec-inps { display: flex; flex-wrap: wrap; gap: 8px; }
 .cf-rec-inps label { display: flex; flex-direction: column; gap: 2px; font-weight: 800; font-size: calc(12px * var(--metas-fz, 1)); }
 .cf-rec-inp { width: 84px; min-height: 44px; text-align: center; font-weight: 800; }
