@@ -4373,10 +4373,12 @@ function adRenderEco(body, d) {
       <div class="ad-btn-row">
         <button class="pa-generate-btn" id="ad-cuadro-ingresos" type="button">🖨️ Imprimir cuadro de ingresos</button>
         <button class="pa-generate-btn" id="ad-cuadro-egresos" type="button">🖨️ Imprimir cuadro de egresos</button>
+        <button class="pa-generate-btn" id="ad-talonario" type="button">🎟️ Imprimir talonario por alumno</button>
       </div>
       <p class="pa-optional-hint">Para Dirección. <strong>Ingresos:</strong> todas las colectas alumno por alumno,
         y quién no ha colaborado (lleva nombres: no es para el grupo de padres).
-        <strong>Egresos:</strong> cada gasto con el saldo que le queda a su colecta, y el balance mes a mes.</p>
+        <strong>Egresos:</strong> cada gasto con el saldo que le queda a su colecta, y el balance mes a mes.
+        <strong>Talonario:</strong> un talón por alumno con matriz para el aula y copia para la familia, y una hoja de resumen.</p>
     </div>` : ''}`;
 
   document.getElementById('ad-nueva-colecta').addEventListener('click', async () => {
@@ -4415,6 +4417,8 @@ function adRenderEco(body, d) {
   if (btnIng) btnIng.addEventListener('click', () => adPrintCuadroIngresos(adLoad()));
   const btnEgr = document.getElementById('ad-cuadro-egresos');
   if (btnEgr) btnEgr.addEventListener('click', () => adPrintCuadroEgresos(adLoad()));
+  const btnTal = document.getElementById('ad-talonario');
+  if (btnTal) btnTal.addEventListener('click', () => adPrintTalonario(adLoad()));
   document.getElementById('ad-ir-gastos').addEventListener('click', () => { _adGastosOn = 1; renderAdmin(); });
   document.getElementById('ad-ir-inv').addEventListener('click', () => { _adInvOn = 1; renderAdmin(); });
 }
@@ -6059,6 +6063,165 @@ ${adCuadroCss(vertical)}
     <div class="marca">Saldo del fondo = lo recaudado en esa colecta menos los gastos hasta ese renglón. La columna de factura o recibo se llena a mano. · Elaborado con M.E.T.A.S · ${adEsc(adFechaBonita(adHoy()))}</div>
   </div></div>
   <div class="hoja"><div class="fit">${hoja2}</div></div>
+${AD_CUADRO_AJUSTE}</body></html>`;
+  adPrintAbrir(html);
+}
+
+/* ══════════════ 🎟️ TALONARIO DE APORTES (papel para la familia y el aula) ══════════════
+   Lección de noviembre de 2026: dos pagos ya entregados desaparecieron
+   de la app y la familia no tenía cómo demostrarlo. El papel no se
+   sincroniza ni se pisa: este talonario deja, por cada alumno, una
+   MATRIZ que se queda en el aula y una COPIA que se lleva la familia,
+   las dos con lo mismo. Al alumno se le nombra por su nombre y su
+   identidad, nunca solo por su número de lista, porque el número cambia
+   cuando se reordena o se borra una fila.
+   Las casillas de lo que aún no se ha dado quedan en blanco para
+   llenarlas a mano el día que entregue, y la familia firma la matriz.
+   La primera hoja es el resumen de todas las colectas. */
+function adPrintTalonario(d) {
+  const D = adIngDatos(d);
+  if (!D.cols.length) { if (typeof toast === 'function') toast('Aún no hay colectas hasta hoy'); return; }
+  const bol = d.boleta || {};
+  const SL = window.SaceLista;
+  const idnTxt = a => { const v = String(a.idn || '').trim(); return v ? (SL && SL.idnBonita ? SL.idnBonita(v) : v) : ''; };
+  const grupo = adGradoSeccion(d.grado, d.seccion);
+  const centro = String(d.escuela || '').trim();
+  const corte = adFechaBonita(adHoy());
+  const nC = D.cols.length;
+  const L = v => adIngNum(v);
+
+  /* ── Hoja de resumen ── */
+  const datos = adCuadroDatos(d, [['Colectas al corte', String(nC)]]);
+  const T = D.tot;
+  const resumen = `
+    ${adCuadroCabeza(d, 'RESUMEN DE COLECTAS · TALONARIO DE APORTES', datos)}
+    <table class="rs">
+      <thead><tr><th>#</th><th>Colecta</th><th>Acordada</th><th>Sugerido</th><th>Dieron</th><th>Participación</th>
+        <th>Esperado</th><th>Recaudado</th><th>Pendiente</th><th>Gastado</th><th>Saldo</th></tr></thead>
+      <tbody>${D.porCol.map((p, i) => {
+        const tr = adIngTramo(p.pct);
+        const t = adColectaTotales(p.c);
+        return `<tr><td>${i + 1}</td><td class="nom">${adEsc(p.c.concepto)}</td><td>${adFechaBonita(p.c.fecha)}</td>
+          <td>${L(p.c.montoAlumno)}</td><td>${p.dieron} de ${p.esp}</td>
+          <td class="pp"><div class="mini">${adIngBarra(p.pct, 7, tr.barra)}</div>${adIngPctHtml(p.pct)}</td>
+          <td>${L(p.meta)}</td><td class="b">${L(p.rec)}</td><td class="pen">${L(adColectaPorRecaudar(p.c, d))}</td>
+          <td>${L(t.gas)}</td><td class="b${t.saldo < 0 ? ' neg' : ''}">${L(t.saldo)}</td></tr>`;
+      }).join('')}</tbody>
+      <tfoot><tr><td colspan="6" class="et">TOTAL DE TODAS LAS COLECTAS</td><td>${L(T.esperado)}</td><td>${L(T.rec)}</td><td>${L(T.pendiente)}</td>
+        <td>${L(D.porCol.reduce((s, p) => s + adColectaTotales(p.c).gas, 0))}</td>
+        <td>${L(D.porCol.reduce((s, p) => s + adColectaTotales(p.c).saldo, 0))}</td></tr></tfoot>
+    </table>
+    <div class="pie">
+      <span class="k">✓ Alumnos al día<b>${T.alDia}</b></span><span class="k">◐ Con aporte parcial<b>${T.parcial}</b></span>
+      <span class="k">✗ Sin ningún aporte<b>${T.nada}</b></span><span class="k">📊 Cumplimiento<b>${T.pct == null ? '·' : T.pct + ' %'}</b></span>
+    </div>
+    <div class="como">
+      <b>Cómo se usa este talonario</b>
+      <p>1. Cada alumno tiene un talón con dos partes: la <b>matriz</b> (izquierda) se queda en el aula y la <b>copia</b> (derecha) se corta y se entrega a la familia.</p>
+      <p>2. Lo que ya está anotado en M.E.T.A.S sale impreso. Cuando la familia entregue un aporte nuevo, se escribe a mano el monto y la fecha <b>en las dos partes</b>.</p>
+      <p>3. El padre, madre o encargado firma la matriz al recibir su copia. Si hay una duda, se busca por el <b>nombre y la identidad</b> del alumno; el número de lista puede cambiar.</p>
+    </div>
+    <div class="firmas"><div>${adEsc(bol.docente || '')}<br><small>Docente de grado</small></div><div><br><small>Tesorero(a) de padres de familia</small></div><div>${adEsc(bol.director || '')}<br><small>Director(a)</small></div></div>
+    <div class="marca">Corte al ${corte}. Pendiente = lo que falta para el aporte sugerido. · Elaborado con M.E.T.A.S · ${corte}</div>`;
+
+  /* ── Talones ── */
+  const filasMatriz = f => f.celdas.map((x, i) => {
+    const c = D.cols[i];
+    const fecha = x.pagado ? adFechaBonita((c.pagosF && c.pagosF[f.a.num]) || c.fecha) : '';
+    return `<tr${x.fuera ? ' class="nc"' : ''}><td class="cn">${adEsc(c.concepto)}</td>
+      <td class="m">${x.fuera && !x.pagado ? 'N/C' : x.pagado ? L(x.dio) : ''}</td><td class="f">${fecha}</td></tr>`;
+  }).join('') + '<tr><td class="cn hand">&nbsp;</td><td class="m"></td><td class="f"></td></tr>';
+  const filasCopia = f => f.celdas.map((x, i) => {
+    const c = D.cols[i];
+    const fecha = x.pagado ? adFechaBonita((c.pagosF && c.pagosF[f.a.num]) || c.fecha) : '';
+    const falta = x.fuera ? 0 : Math.max(0, x.sug - x.dio);
+    const est = x.fuera && !x.pagado ? '<td class="e nc">No le corresponde</td>'
+      : x.est === 'ok' ? '<td class="e ok">✓ Completo</td>'
+      : x.est === 'ab' ? `<td class="e ab">◐ Falta ${L(falta)}</td>`
+      : '<td class="e no">Pendiente</td>';
+    return `<tr${x.fuera ? ' class="nc"' : ''}><td class="cn">${adEsc(c.concepto)}</td><td class="f">${adFechaBonita(c.fecha)}</td>
+      <td class="m s">${L(x.sug)}</td><td class="m">${x.pagado ? L(x.dio) : ''}</td><td class="f">${fecha}</td>
+      <td class="rc">${x.pagado ? adReciboFolio(c, f.a.num) : ''}</td>${est}</tr>`;
+  }).join('') + '<tr><td class="cn hand">&nbsp;</td><td class="f"></td><td class="m s"></td><td class="m"></td><td class="f"></td><td class="rc"></td><td class="e"></td></tr>';
+  const talon = f => {
+    const idn = idnTxt(f.a);
+    const clave = typeof adClaveFamilia === 'function' ? adClaveFamilia(d.id, f.a.num, false) : '';
+    const estado = f.pct == null ? '' : f.pct >= 100 ? '✓ Al día' : f.aportado === 0 ? '✗ Sin aportes' : '◐ ' + f.pct + ' % aportado';
+    return `<section class="talon">
+      <div class="matriz">
+        <div class="t-tit">MATRIZ · queda en el aula</div>
+        <div class="al"><b>${adEsc(f.a.nombre || '·')}</b>${idn ? `<span>Identidad ${adEsc(idn)}</span>` : ''}<span>Grupo ${adEsc(grupo)} · lista #${adEsc(f.a.num)}</span></div>
+        <table class="tm"><thead><tr><th>Colecta</th><th>Dio L</th><th>Fecha</th></tr></thead><tbody>${filasMatriz(f)}</tbody></table>
+        <div class="tot">Aportado <b>L ${L(f.aportado)}</b> · Falta <b>L ${L(f.pendiente)}</b></div>
+        <div class="firma">Recibí mi copia: ______________________</div>
+      </div>
+      <div class="corte" aria-hidden="true"><span>✂</span></div>
+      <div class="copia">
+        <div class="t-tit">COPIA PARA LA FAMILIA · ${adEsc(centro || 'Centro educativo')} · Grupo ${adEsc(grupo)}</div>
+        <div class="al"><b>${adEsc(f.a.nombre || '·')}</b>${idn ? `<span>Identidad ${adEsc(idn)}</span>` : ''}
+          ${clave ? `<span>Clave del asistente de padres: <b>${adEsc(adClaveBonita(clave, f.a.num))}</b></span>` : ''}</div>
+        <table class="tc"><thead><tr><th>Colecta</th><th>Acordada</th><th>Sugerido</th><th>Aportó L</th><th>Fecha</th><th>Recibo N.º</th><th>Estado</th></tr></thead>
+          <tbody>${filasCopia(f)}</tbody></table>
+        <div class="tot">Total aportado <b>L ${L(f.aportado)}</b> · Falta por aportar <b>L ${L(f.pendiente)}</b>${estado ? ` · <span class="est">${estado}</span>` : ''}</div>
+        <div class="firma">Corte al ${corte} · Firma del docente: ______________________</div>
+      </div>
+    </section>`;
+  };
+  /* cuántos talones caben en una hoja: depende de cuántas colectas hay */
+  const altoTalon = 30 + (nC + 1) * 4.7;
+  const porHoja = Math.max(1, Math.floor((263 + 5) / (altoTalon + 5)));
+  const hojas = [];
+  for (let i = 0; i < D.filas.length; i += porHoja) hojas.push(D.filas.slice(i, i + porHoja));
+
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${adEsc('Talonario de aportes · ' + (grupo || ''))}</title>
+<style>
+${adCuadroCss(true)}
+  table.rs { width: 100%; border-collapse: collapse; margin-top: 4px; }
+  .rs th { background: #1e3a7c; color: #fff; font-size: 7.4px; padding: 3px 2px; }
+  .rs td { border: 1px solid #c7cfdd; font-size: 8.4px; padding: 3px 3px; text-align: center; }
+  .rs td.nom { text-align: left; font-weight: 700; } .rs td.b { font-weight: 800; } .rs td.pen { color: #9a3412; font-weight: 700; }
+  .rs td.neg { color: #991b1b; } .rs td.pp { text-align: left; white-space: nowrap; }
+  .rs .mini { display: inline-block; width: 40%; vertical-align: middle; margin-right: 3px; }
+  .rs tfoot td { background: #f4f7fc; font-weight: 900; border-top: 1.6px solid #1e3a7c; }
+  .rs tfoot td.et { text-align: right; padding-right: 6px; font-size: 7.4px; color: #1e3a7c; }
+  .como { margin-top: 8px; border: 1px solid #f3d38a; background: #fffbeb; border-radius: 8px; padding: 6px 10px; }
+  .como b { color: #92400e; } .como > b { display: block; font-family: Georgia, serif; font-size: 10.5px; } .como p { font-size: 9px; line-height: 1.5; margin-top: 2px; }
+  .talones { display: flex; flex-direction: column; }
+  .talon { display: flex; border: 1.2px solid #1e3a7c; border-radius: 6px; overflow: hidden; break-inside: avoid; }
+  /* entre talón y talón, la línea por donde se corta la hoja */
+  .tijera { height: 5mm; position: relative; }
+  .tijera::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; border-top: 1.5px dashed #64748b; }
+  .tijera span { position: absolute; left: 4mm; top: 50%; transform: translateY(-55%); background: #fff; padding: 0 3px; font-size: 10px; color: #475569; }
+  .matriz { flex: 0 0 64mm; padding: 2.5mm 3mm; background: #f8fafc; }
+  .copia { flex: 1; padding: 2.5mm 3mm; min-width: 0; }
+  .corte { flex: 0 0 4mm; border-left: 1.5px dashed #64748b; position: relative; }
+  .corte span { position: absolute; top: 40%; left: -2.3mm; font-size: 10px; background: #fff; color: #475569; line-height: 1; }
+  .t-tit { font-size: 6.6px; letter-spacing: .5px; color: #a8791a; font-weight: 800; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .al { margin: 1px 0 2px; line-height: 1.25; }
+  .al b { display: block; font-family: Georgia, serif; font-size: 10.5px; color: #0f2350; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .al span { font-size: 7.4px; color: #33415c; margin-right: 8px; }
+  .tm, .tc { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  .tm th, .tc th { background: #eaf0fa; color: #0f2350; font-size: 6.6px; padding: 1px 2px; border: 1px solid #c7cfdd; }
+  .tm td, .tc td { border: 1px solid #c7cfdd; font-size: 7.6px; height: 4.3mm; padding: 0 2px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .tm td.cn, .tc td.cn { text-align: left; }
+  .tm td.m, .tc td.m { text-align: right; font-weight: 800; } .tc td.m.s { font-weight: 400; color: #55637d; }
+  .tm td.f, .tc td.f, .tc td.rc { text-align: center; font-size: 7px; }
+  .tc td.rc { font-family: monospace; font-size: 6.6px; }
+  .tm th:nth-child(2), .tm td.m { width: 13mm; } .tm th:nth-child(3), .tm td.f { width: 14mm; }
+  .tc th:nth-child(2) { width: 13mm; } .tc th:nth-child(3) { width: 12mm; } .tc th:nth-child(4) { width: 13mm; }
+  .tc th:nth-child(5) { width: 13mm; } .tc th:nth-child(6) { width: 19mm; } .tc th:nth-child(7) { width: 19mm; }
+  .tc td.e { font-size: 6.8px; font-weight: 800; text-align: center; }
+  .tc td.e.ok { color: #166534; } .tc td.e.ab { color: #92400e; } .tc td.e.no { color: #b91c1c; } .tc td.e.nc { color: #8a94a8; font-weight: 400; }
+  tr.nc td { color: #8a94a8; }
+  td.hand { border-bottom: 1px dotted #94a3b8; }
+  .tot { font-size: 7.8px; margin-top: 1.5px; } .tot b { color: #0f2350; } .tot .est { font-weight: 800; }
+  .firma { font-size: 7.2px; color: #55637d; margin-top: 3px; }
+  .hoja.libre { height: auto; overflow: visible; }
+</style></head><body>
+  <div class="hoja"><div class="fit">${resumen}</div></div>
+  ${hojas.map(h => `<div class="hoja"><div class="fit"><div class="talones">${h.map(talon).join('<div class="tijera" aria-hidden="true"><span>✂</span></div>')}</div></div></div>`).join('')}
 ${AD_CUADRO_AJUSTE}</body></html>`;
   adPrintAbrir(html);
 }
