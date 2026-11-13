@@ -337,6 +337,53 @@ function adMarcarBorrado(g, al) {
     .slice(-AD_BORRADOS_MAX);
 }
 
+/* ══════════════ 🔑 LA CLAVE DE FAMILIA VIAJA CON SU NIÑO ══════════════
+   Las claves viven en METAS_CODIGOS_V1 como { 'G:<grupo>': { num: clave } }
+   y se sincronizan aparte de la lista: si otro equipo traía el mapa con la
+   numeración vieja, el #17 podía apuntar a la clave de otro niño, y esa
+   familia veía pagos, notas y recibos ajenos.
+   Por eso cada alumno guarda también SU clave en la lista (a.clave), que
+   ya se junta por identidad (js/metas-numeracion.js), y al leer el aula el
+   mapa se corrige con la lista: cada número de hoy apunta a la clave de su
+   alumno. Ninguna clave cambia de valor (las tiras entregadas siguen
+   valiendo); solo se corrige a quién apunta. Si un número apuntaba a la
+   clave de OTRO niño, se le quita: mejor una clave nueva que ver lo ajeno.
+   Devuelve true si cambió la lista (quien llama la guarda). */
+function adAnclarClaves(st) {
+  if (typeof paCodesLoad !== 'function' || typeof paCodesSave !== 'function') return false;
+  let codes;
+  try { codes = paCodesLoad(); } catch (_) { return false; }
+  let cambioLista = false, cambioCodes = false;
+  (st.grupos || []).forEach(g => {
+    const key = 'G:' + g.id;
+    const cg = codes[key] || {};
+    const lista = (g.lista || []).filter(a => a && a.num != null);
+    /* 1) lo que la lista ya sabe: clave → su número de hoy */
+    const duena = {};
+    lista.forEach(a => { if (a.clave) duena[String(a.clave).toUpperCase()] = String(a.num); });
+    lista.forEach(a => {
+      if (a.clave && cg[a.num] !== a.clave) { cg[a.num] = a.clave; cambioCodes = true; }
+    });
+    /* 2) alumnos de antes, sin clave en la lista: la del mapa, si no es de otro */
+    lista.forEach(a => {
+      if (a.clave) return;
+      const v = cg[a.num];
+      if (!v) return;
+      const quien = duena[String(v).toUpperCase()];
+      if (quien != null && quien !== String(a.num)) { delete cg[a.num]; cambioCodes = true; return; }
+      a.clave = v; duena[String(v).toUpperCase()] = String(a.num); cambioLista = true;
+    });
+    /* 3) ningún otro número puede quedarse con la clave de un alumno */
+    Object.keys(cg).forEach(n => {
+      const quien = duena[String(cg[n]).toUpperCase()];
+      if (quien != null && quien !== String(n)) { delete cg[n]; cambioCodes = true; }
+    });
+    if (Object.keys(cg).length || codes[key]) codes[key] = cg;
+  });
+  if (cambioCodes) { try { paCodesSave(codes); } catch (_) {} }
+  return cambioLista;
+}
+
 /* ══════════════ COMUNICADOS, CONDUCTA Y PLAN DE ACCIÓN, POR IDENTIDAD ══════════════
    Viven en otras llaves y se sincronizan sin la lista al lado: un «#17»
    de otro equipo podía ser hoy otro niño, y un reporte de conducta o un
@@ -399,7 +446,8 @@ function adState() {
        guarda de una vez para que no salga otra distinta en cada lectura */
     let uids = 0;
     if (window.MetasNumeracion) st.grupos.forEach(g => { uids += MetasNumeracion.asegurarUids(g); });
-    if (revividas || uids) { try { localStorage.setItem(ADMIN_KEY, JSON.stringify(st)); } catch (_) {} }
+    const claves = adAnclarClaves(st);
+    if (revividas || uids || claves) { try { localStorage.setItem(ADMIN_KEY, JSON.stringify(st)); } catch (_) {} }
     adAnclarFuera(st);
     if (_adGrupoActivoId && st.grupos.some(g => g.id === _adGrupoActivoId)) {
       st.activo = _adGrupoActivoId;
@@ -539,6 +587,15 @@ function adClaveFamilia(grupoId, num, crear) {
 function adClaveFamiliaSet(grupoId, num, clave) {
   const n = String(num || '').replace(/\D/g, '');
   if (!grupoId || !n || typeof paCodesLoad !== 'function') return '';
+  /* primero la lista: la clave viaja con el niño (adAnclarClaves), y si
+     solo cambiara el mapa, la próxima lectura la devolvería a la de antes */
+  try {
+    const st = adState();
+    const g = st.grupos.find(x => x.id === grupoId);
+    const a = g && g.lista.find(x => String(x.num) === n);
+    if (a && a.clave !== clave) { a.clave = clave; localStorage.setItem(ADMIN_KEY, JSON.stringify(st)); adSyncProgramar(); }
+  } catch (_) {}
+  /* el mapa se lee DESPUÉS: adState pudo corregirlo y guardarlo */
   const codes = paCodesLoad();
   const key = 'G:' + grupoId;
   const cg = codes[key] || (codes[key] = {});
@@ -10809,6 +10866,8 @@ async function adCerrarAnio() {
       const cg = codes[key] || {};
       Object.keys(cg).forEach(n => { cg[n] = n + adSufijoClave(); });
       codes[key] = cg;
+      /* la clave nueva también en la lista, que es la que manda */
+      (dd.lista || []).forEach(a => { if (cg[a.num]) a.clave = cg[a.num]; else delete a.clave; });
     } else {
       delete codes[key];
       dd.lista = [];
