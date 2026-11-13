@@ -5293,11 +5293,148 @@ function adDiaLabel(f) {
   return AD_DIAS_ES[dt.getDay()] + ' ' + (+p[2]);
 }
 
+/* Un día del pase de lista, uno solo. Si la sincronización dejó la misma
+   fecha dos veces, aquí se juntan (manda la primera donde dicen cosas
+   distintas): con dos copias, quitar la falta en una dejaba viva la de
+   la otra, y al vaciarse la primera la falta «volvía». */
+function adAsisDia(dd, fecha, crear) {
+  const mismos = (dd.asistencia || []).filter(r => r && r.f === fecha);
+  if (!mismos.length) {
+    if (!crear) return null;
+    const nuevo = { f: fecha, aus: {} };
+    dd.asistencia.push(nuevo);
+    return nuevo;
+  }
+  if (mismos.length === 1) { mismos[0].aus = mismos[0].aus || {}; return mismos[0]; }
+  const uno = window.ResumenSace ? window.ResumenSace.unirDias(mismos)[0] : { f: fecha, aus: Object.assign({}, ...mismos.map(r => r.aus || {}).reverse()) };
+  const ori = mismos.map(r => r.origen).filter(Boolean)[0];
+  if (ori) uno.origen = ori;
+  dd.asistencia = dd.asistencia.filter(r => !(r && r.f === fecha));
+  dd.asistencia.push(uno);
+  return uno;
+}
+/* ── 🔎 Revisar faltas ──
+   El maestro vio 37 faltas donde no recordaba tantas. Aquí cada falta se
+   ve con su fecha y su día, con lo que la hace sospechosa (fin de semana,
+   fecha repetida, medio grupo ausente, día pegado desde un respaldo), y
+   se corrige de un toque: ✓ presente, 📝 con excusa o 🚫 sin excusa.
+   Antes del primer cambio se guarda una copia en «🕘 Deshacer». */
+function adAsisRevisarModal(numIni, alCerrar) {
+  if (!window.ResumenSace) { toast('⚠️ Cargando… intenta de nuevo'); return; }
+  const ov = document.createElement('div');
+  ov.className = 'ad-gen-ov ad-ver-ov';
+  let numSel = numIni != null ? String(numIni) : '';
+  let undoHecho = false;
+  const conUndo = () => { if (!undoHecho) { adUndoGuardar('Antes de revisar faltas'); undoHecho = true; } };
+  const diaSem = f => { const p = f.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]).getDay(); };
+  const pintar = () => {
+    const d = adLoad();
+    const RS = window.ResumenSace, ia = RS.inasistenciasAnio(d);
+    const delAnio = d.asistencia.filter(r => r && r.f && String(r.f).slice(0, 4) === ia.anio);
+    const dias = RS.unirDias(delAnio);
+    const origen = {};
+    delAnio.forEach(r => { if (r.origen) origen[r.f] = r.origen; });
+    const nums = new Set(d.lista.map(a => String(a.num)));
+    const mitad = Math.max(3, Math.ceil(d.lista.length / 2));
+    const finde = dias.filter(r => { const w = diaSem(r.f); return (w === 0 || w === 6) && Object.keys(r.aus).length; });
+    const masivos = dias.filter(r => Object.keys(r.aus).length >= mitad);
+    const recuperados = dias.filter(r => origen[r.f] && Object.keys(r.aus).length);
+    const huerfanas = dias.reduce((t, r) => t + Object.keys(r.aus).filter(n => !nums.has(String(n))).length, 0);
+    const nomDe = n => { const a = d.lista.find(x => String(x.num) === String(n)); return a ? a.nombre : ''; };
+    const cuenta = r => { const v = Object.values(r.aus); return v.filter(x => x === 'A').length + ' 🚫 · ' + v.filter(x => x === 'E').length + ' 📝'; };
+    const marcasDe = r => [
+      (diaSem(r.f) === 0 || diaSem(r.f) === 6) ? '📅 fin de semana' : '',
+      Object.keys(r.aus).length >= mitad ? '👥 faltó medio grupo o más' : '',
+      origen[r.f] ? '📥 pegado de ' + origen[r.f] : '',
+      delAnio.filter(x => x.f === r.f).length > 1 ? '♊ fecha repetida' : ''
+    ].filter(Boolean);
+    const diaFila = r => `<div class="ad-rf-dia"><b>${AD_DIAS_ES[diaSem(r.f)]} ${adFechaBonita(r.f)}</b> · ${cuenta(r)}
+        ${marcasDe(r).map(m => `<span class="ad-rf-marca">${adEsc(m)}</span>`).join('')}
+        <button type="button" class="pa-generate-btn ad-btn-sec" data-rf-vaciar="${r.f}">✓ Todos presentes ese día</button></div>`;
+    const avisos = [];
+    if (ia.otrosAnios) avisos.push(`<li>🗓 Hay <b>${ia.otrosAnios}</b> día(s) de pase de lista de <b>otros años</b>. Ya <b>no se suman</b>: solo cuenta ${adEsc(ia.anio)} (el año lectivo de la boleta).</li>`);
+    if (ia.repetidos) avisos.push(`<li>♊ <b>${ia.repetidos}</b> fecha(s) quedaron <b>repetidas</b> al sincronizar. Se cuentan una sola vez.
+      <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-rf-unir">Unir las fechas repetidas</button></li>`);
+    if (huerfanas) avisos.push(`<li>❔ <b>${huerfanas}</b> falta(s) son de números de lista que ya no existen. No se suman a nadie.</li>`);
+    const bloque = (tit, lista, ayuda) => lista.length ? `<details class="ad-rf-grupo"${lista.length <= 6 ? ' open' : ''}><summary>${tit} (${lista.length})</summary>
+      <p class="pa-optional-hint">${ayuda}</p>${lista.map(diaFila).join('')}</details>` : '';
+    const lista = d.lista.map(a => ({ a, t: ia.porAlumno[a.num] || { inv: 0, vol: 0, total: 0 } }));
+    const sel = d.lista.find(a => String(a.num) === numSel);
+    const misDias = sel ? dias.filter(r => r.aus[sel.num] || r.aus[String(sel.num)]) : [];
+    ov.innerHTML = `
+    <div class="ad-gen-card ad-ver-card rf-card" role="dialog" aria-modal="true" aria-labelledby="ad-rf-tit">
+      <div class="ad-gen-head"><div class="ad-gen-title" id="ad-rf-tit">🔎 Revisar faltas · ${adEsc(ia.anio)}</div>
+        <button type="button" class="ad-gen-close" id="ad-rf-x" aria-label="Cerrar">✕</button></div>
+      <div class="ad-ver-body">
+        <p class="ad-sace-nota">${ia.fuente === 'pase' ? `Se cuentan <b>${ia.dias}</b> día(s) con pase de lista en ${adEsc(ia.anio)}, cada fecha una sola vez.` : 'Este grupo no tiene pase de lista en este año.'}
+          Elige un alumno para ver <b>cada día</b> que tiene marcado y corregirlo. Lo que cambies aquí cambia también en 📋 Asistencia, en el Cuadro final y en lo que copias al SACE.</p>
+        ${avisos.length ? `<ul class="ad-rf-avisos">${avisos.join('')}</ul>` : ''}
+        ${bloque('👥 Días en que faltó medio grupo o más', masivos, '¿Fue un día sin clases, un feriado o un pase de lista marcado por error? Si nadie debió contar falta, toca «Todos presentes ese día».')}
+        ${bloque('📅 Faltas en sábado o domingo', finde, 'No hay clases en fin de semana: lo más seguro es que la fecha se eligió mal.')}
+        ${bloque('📥 Días pegados desde un respaldo', recuperados, 'Estos días no los marcaste aquí: vinieron de una copia vieja. Revisa que digan lo que de verdad pasó.')}
+        <div class="pa-field"><label for="ad-rf-al">Alumno</label>
+          <select id="ad-rf-al" class="pa-inp-field"><option value="">Elige un alumno…</option>
+            ${lista.map(x => `<option value="${x.a.num}"${String(x.a.num) === numSel ? ' selected' : ''}>#${x.a.num} ${adEsc(x.a.nombre || '')} · 🚫 ${x.t.vol === '' ? '·' : x.t.vol} sin excusa · 📝 ${x.t.inv === '' ? '·' : x.t.inv} con excusa</option>`).join('')}
+          </select></div>
+        ${sel ? `<p class="ad-rf-tot"><b>#${sel.num} ${adEsc(sel.nombre || '')}</b>: 🚫 <b>${(ia.porAlumno[sel.num] || {}).vol || 0}</b> voluntarias (sin excusa) ·
+            📝 <b>${(ia.porAlumno[sel.num] || {}).inv || 0}</b> involuntarias (con excusa)</p>
+          ${misDias.length ? misDias.map(r => { const st = r.aus[sel.num] || r.aus[String(sel.num)]; return `<div class="ad-rf-fila">
+            <span class="ad-rf-f"><b>${AD_DIAS_ES[diaSem(r.f)]} ${adFechaBonita(r.f)}</b>
+              <span class="ad-rf-st ${st === 'A' ? 'aus' : 'exc'}">${st === 'A' ? '🚫 Sin excusa' : '📝 Con excusa'}</span>
+              ${marcasDe(r).map(m => `<span class="ad-rf-marca">${adEsc(m)}</span>`).join('')}</span>
+            <span class="ad-rf-btns">
+              <button type="button" class="pa-generate-btn ad-btn-sec" data-rf-f="${r.f}" data-rf-v="">✓ Presente</button>
+              <button type="button" class="pa-generate-btn ad-btn-sec" data-rf-f="${r.f}" data-rf-v="${st === 'A' ? 'E' : 'A'}">${st === 'A' ? '📝 Con excusa' : '🚫 Sin excusa'}</button>
+            </span></div>`; }).join('') : '<p class="pa-optional-hint">✅ No tiene ninguna falta marcada este año.</p>'}` : ''}
+      </div>
+      <div class="ad-gen-foot"><button type="button" class="pa-generate-btn" id="ad-rf-ok">Listo</button></div>
+    </div>`;
+    const fin = () => { ov.remove(); if (typeof alCerrar === 'function') alCerrar(); };
+    ov.querySelector('#ad-rf-x').addEventListener('click', fin);
+    ov.querySelector('#ad-rf-ok').addEventListener('click', fin);
+    ov.querySelector('#ad-rf-al').addEventListener('change', e => { numSel = e.target.value; pintar(); });
+    ov.querySelectorAll('[data-rf-f]').forEach(b => b.addEventListener('click', () => {
+      conUndo();
+      const dd = adLoad();
+      const r = adAsisDia(dd, b.dataset.rfF, true);
+      delete r.aus[numSel]; delete r.aus[+numSel];
+      if (b.dataset.rfV) r.aus[numSel] = b.dataset.rfV;
+      delete r.origen;
+      adSave(dd);
+      pintar();
+    }));
+    ov.querySelectorAll('[data-rf-vaciar]').forEach(b => b.addEventListener('click', async () => {
+      const f = b.dataset.rfVaciar;
+      if (!await metasConfirm('¿Dejar a **todos presentes** el ' + adFechaBonita(f) + '?\n\nSe quitan las faltas y excusas de ese día. Antes se guarda una copia en «🕘 Deshacer».',
+        { icono: '📋', titulo: 'Revisar faltas', okTxt: 'Sí, todos presentes' })) return;
+      conUndo();
+      const dd = adLoad();
+      const r = adAsisDia(dd, f, true);
+      r.aus = {}; delete r.origen;
+      adSave(dd);
+      pintar();
+    }));
+    ov.querySelector('#ad-rf-unir')?.addEventListener('click', () => {
+      conUndo();
+      const dd = adLoad();
+      [...new Set(dd.asistencia.map(r => r && r.f).filter(Boolean))].forEach(f => adAsisDia(dd, f, false));
+      dd.asistencia.sort((a, b) => a.f < b.f ? -1 : 1);
+      adSave(dd);
+      toast('♊ Fechas repetidas unidas');
+      pintar();
+    });
+  };
+  document.body.appendChild(ov);
+  pintar();
+}
 function adRenderAsis(body, d) {
   if (!d.lista.length) { adSinLista(body, 'el pase de lista'); return; }
   const hoy = adHoy();
   const fechaSel = body.dataset.fecha || hoy;
-  const reg = d.asistencia.find(r => r.f === fechaSel) || { f: fechaSel, aus: {} };
+  /* lo que se ve es lo que se cuenta: si la fecha quedó repetida, se
+     enseña junta, igual que la suman el Cuadro final y el SACE */
+  const reg = (window.ResumenSace && window.ResumenSace.unirDias(d.asistencia.filter(r => r.f === fechaSel))[0]) ||
+    d.asistencia.find(r => r.f === fechaSel) || { f: fechaSel, aus: {} };
 
   /* resumen navegable por meses: los que tienen datos + el mes actual */
   const mesSel = body.dataset.mes || fechaSel.slice(0, 7);
@@ -5307,7 +5444,10 @@ function adRenderAsis(body, d) {
   const mesesDisp = [...new Set(
     d.asistencia.map(r => r.f.slice(0, 7)).concat([hoy.slice(0, 7), mesSel])
   )].filter(Boolean).sort().reverse();
-  const delMes = d.asistencia.filter(r => r.f.startsWith(mesSel));
+  /* una fecha repetida por la sincronización se cuenta una vez, como en
+     el Cuadro final */
+  const delMes = window.ResumenSace ? window.ResumenSace.unirDias(d.asistencia.filter(r => r.f.startsWith(mesSel)))
+    : d.asistencia.filter(r => r.f.startsWith(mesSel));
   const resumen = {};
   delMes.forEach(r => Object.keys(r.aus || {}).forEach(n => {
     resumen[n] = resumen[n] || { A: 0, E: 0 };
@@ -5369,6 +5509,7 @@ function adRenderAsis(body, d) {
       <div class="ad-meses">
         ${mesesDisp.map(m => `<button class="ad-mes-btn ${m === mesSel ? 'ad-mes-on' : ''}" data-mes="${m}">${adMesLabel(m)}</button>`).join('')}
       </div>
+      <div class="ad-btn-row" style="margin-top:0"><button type="button" class="pa-generate-btn ad-btn-sec" id="ad-asis-revisar">🔎 Revisar las faltas del año, alumno por alumno</button></div>
       <div class="ad-meses" role="group" aria-label="Cómo ver las ausencias">
         <button class="ad-mes-btn ${vista === 'dia' ? 'ad-mes-on' : ''}" data-vista="dia">🗓 Día por día</button>
         <button class="ad-mes-btn ${vista === 'mes' ? 'ad-mes-on' : ''}" data-vista="mes">📊 Resumen del mes</button>
@@ -5442,20 +5583,22 @@ function adRenderAsis(body, d) {
     ch.addEventListener('click', () => {
       const num = ch.dataset.num;
       const dd = adLoad();
-      let r = dd.asistencia.find(x => x.f === fechaSel);
-      if (!r) { r = { f: fechaSel, aus: {} }; dd.asistencia.push(r); }
+      const r = adAsisDia(dd, fechaSel, true);
       const st = r.aus[num] || '';
       if (st === '') r.aus[num] = 'A';
       else if (st === 'A') r.aus[num] = 'E';
       else delete r.aus[num];
-      /* días sin excepciones no ocupan espacio */
-      if (!Object.keys(r.aus).length) dd.asistencia = dd.asistencia.filter(x => x !== r);
+      /* Un día con todos presentes NO se borra: queda como «lista pasada,
+         nadie faltó». Borrarlo hacía que «Copiar notas de mis respaldos»
+         lo creyera vacío y le volviera a pegar las faltas viejas. */
+      delete r.origen;
       dd.asistencia.sort((a, b) => a.f < b.f ? -1 : 1);
       adSave(dd);
       body.dataset.fecha = fechaSel;
       adRenderAsis(body, adLoad());
     }));
 
+  document.getElementById('ad-asis-revisar')?.addEventListener('click', () => adAsisRevisarModal(null, () => adRenderAsis(body, adLoad())));
   const pr = document.getElementById('ad-asis-print');
   if (pr) pr.addEventListener('click', () => adPrintAsis(adLoad(), mesSel));
   const prd = document.getElementById('ad-asis-print-dias');
@@ -5528,9 +5671,7 @@ async function adAsisExcusas(body, d, forzar) {
 
   const marcar = (num, fecha) => {
     const dd = adLoad();
-    let reg = dd.asistencia.find(x => x.f === fecha);
-    if (!reg) { reg = { f: fecha, aus: {} }; dd.asistencia.push(reg); }
-    reg.aus = reg.aus || {};
+    const reg = adAsisDia(dd, fecha, true);
     reg.aus[num] = 'E';
     dd.asistencia.sort((a, b) => a.f < b.f ? -1 : 1);
     adSave(dd);
@@ -6853,7 +6994,9 @@ function adReconstruirParcialesI_IIISincrono(dActual, opcionesNube) {
   const ponerDiaAsistencia = (fecha, aus, fuente) => {
     if (!fecha || !aus || !Object.keys(aus).length) return;
     if (dRec.asistencia.some(x => x && x.f === fecha)) return;
-    dRec.asistencia.push({ f: fecha, aus });
+    /* el día recuperado lleva de dónde vino, para que el maestro lo pueda
+       revisar en 🔎 Revisar faltas */
+    dRec.asistencia.push({ f: fecha, aus, origen: fuente });
     contadores.diasAsisRecuperados++;
     cambios.push({ parcial: '', campo: 'Asistencia', num: 0, nombre: '', valor: fecha + ' · ' + Object.keys(aus).length + ' ausente(s)', fuente });
   };
@@ -6869,7 +7012,10 @@ function adReconstruirParcialesI_IIISincrono(dActual, opcionesNube) {
       if (!r || !r.f || !r.aus) return;
       const aus = {};
       Object.keys(r.aus).forEach(oldN => {
-        const nDest = mVer.resolverAlumno(oldN, ver.codesGrupo && ver.codesGrupo[oldN], '');
+        /* con el nombre de esa copia, como las notas: solo con el número,
+           una lista que luego se ordenó A–Z le pasaba la falta a otro */
+        const alOrig = (g.lista || []).find(x => +x.num === +oldN);
+        const nDest = mVer.resolverAlumno(oldN, ver.codesGrupo && ver.codesGrupo[oldN], alOrig && alOrig.nombre);
         if (nDest) aus[nDest] = r.aus[oldN];
       });
       ponerDiaAsistencia(r.f, aus, fuente);
@@ -7381,16 +7527,18 @@ async function adAbrirHistorialVersionesModal(alTerminar) {
               });
             });
           });
-          /* Fusionar asistencia */
+          /* Asistencia: solo los días que aquí NO existen. Si el día ya está,
+             el maestro pasó lista y lo que dice manda: sumarle las faltas de
+             la copia vieja revivía las que él ya había quitado. */
           (v.grupo.asistencia || []).forEach(r => {
-            if (!r || !r.f || !r.aus) return;
-            let reg = dd.asistencia.find(x => x && x.f === r.f);
-            if (!reg) { reg = { f: r.f, aus: {} }; dd.asistencia.push(reg); }
+            if (!r || !r.f || !r.aus || dd.asistencia.some(x => x && x.f === r.f)) return;
+            const reg = { f: r.f, aus: {}, origen: 'Versión «' + v.titulo + '»' };
             Object.keys(r.aus).forEach(oldN => {
               const alOrig = (v.grupo.lista || []).find(x => +x.num === +oldN);
               const nDest = mVer.resolverAlumno(oldN, v.codesGrupo && v.codesGrupo[oldN], alOrig && alOrig.nombre);
               if (nDest && !reg.aus[nDest]) reg.aus[nDest] = r.aus[oldN];
             });
+            if (Object.keys(reg.aus).length) dd.asistencia.push(reg);
           });
           dd.asistencia.sort((a, b) => String(a.f || '').localeCompare(String(b.f || '')));
           adSave(dd);
@@ -7627,7 +7775,10 @@ function adRenderSace(body, d) {
           ? 'La conducta es <strong>cualitativa</strong>: <strong>escríbela</strong> (S, MB, B) o toca la celda y luego el <strong>valor</strong>: el cursor recorre los parciales I→IV de cada rasgo y sigue solo. Para mover o borrar un alumno ve a <strong>👥 Alumnos</strong>; aquí puedes ordenar con <strong>🔤 Ordenar A–Z</strong> y <strong>♀♂ por género</strong>.'
           : esAnio
             ? (ia.fuente === 'pase'
-              ? 'Cuenta <strong>' + ia.dias + ' día(s) con pase de lista</strong>; cada fecha una sola vez. Para corregir una falta o marcar una excusa ve a <strong>📋 Asistencia</strong>: aquí se actualiza solo.'
+              ? 'Cuenta <strong>' + ia.dias + ' día(s) con pase de lista de ' + ia.anio + '</strong> (el año lectivo de la boleta), cada fecha una sola vez' +
+                (ia.otrosAnios ? '; <strong>' + ia.otrosAnios + ' día(s) de otros años no se suman</strong>' : '') +
+                (ia.repetidos ? '; <strong>' + ia.repetidos + ' fecha(s) repetida(s)</strong> cuentan una vez' : '') +
+                '. Toca <strong>🔎</strong> en un alumno para ver cada día que tiene marcado y corregirlo ahí mismo.'
               : '⚠️ Este grupo <strong>no tiene pase de lista</strong>: no hay cómo separar las excusas. Las <strong>voluntarias</strong> salen de la suma de lo escrito en cada parcial y las <strong>involuntarias</strong> quedan vacías. Pasa lista en <strong>📋 Asistencia</strong> para que se separen solas.')
           : esRec
             ? 'Bajo cada casilla va la <strong>nota final</strong> de esa materia. <strong>N/A</strong>: la aprobó, no hay recuperación. <strong>·</strong> gris: le falta algún parcial. Avanza con <strong>Enter</strong>, <strong>Tab</strong> o las flechas: el cursor salta solo a la siguiente casilla que se puede llenar. Con <strong>📋</strong> copias la columna para la RECUPERACIÓN del SACE.'
@@ -7727,6 +7878,7 @@ function adRenderSace(body, d) {
           </tr>` : `
           <tr>
             <th class="ad-mx-sticky ad-mx-corner">Nº · Alumno</th>
+            ${esAnio ? '<th><div class="ad-mx-h">Revisar<small class="ad-mx-hsub">día por día</small></div></th>' : ''}
             ${cols.map((c, ci) => `<th><div class="ad-mx-h">${adEsc(c)}${esAnio ? '<small class="ad-mx-hsub">' + AD_IA_COLS[ci].sub + '</small>' : ''}</div>
               <div class="ad-mx-hbtns">
                 ${!esInasis && !esRec && !esAnio ? `<button class="ad-mx-mv" data-col="${ci}" data-dir="-1" title="Mover a la izquierda"${ci === 0 ? ' disabled' : ''}>◀</button>` : ''}
@@ -7743,7 +7895,7 @@ function adRenderSace(body, d) {
                   <span class="ad-mx-nom">${adEsc(adPrimerNombre(a.nombre)) || '·'}</span>
                   ${a.noCopiarSace ? `<button type="button" class="ad-mx-nocopy-tag" data-nc-quitar="${a.num}" title="Omitido al copiar columna (📋). Toca para volver a incluirlo">🙈</button>` : ''}
                 </div></td>
-              ${esAnio ? AD_IA_COLS.map(x => { const v = (ia.porAlumno[a.num] || {})[x.k]; return `<td class="ad-mx-ia${x.k === 'vol' ? ' ad-mx-ia-vol' : ''}">${v === '' || v == null ? '<span class="ad-mx-ia-na">·</span>' : v}</td>`; }).join('')
+              ${esAnio ? `<td class="ad-mx-ia ad-mx-ia-rev"><button type="button" class="ad-mx-rev" data-rf-num="${a.num}" title="Ver y corregir cada falta de ${adEsc(a.nombre || '')}">🔎</button></td>` + AD_IA_COLS.map(x => { const v = (ia.porAlumno[a.num] || {})[x.k]; return `<td class="ad-mx-ia${x.k === 'vol' ? ' ad-mx-ia-vol' : ''}">${v === '' || v == null ? '<span class="ad-mx-ia-na">·</span>' : v}</td>`; }).join('')
               : esRec ? colDefs.map((cd, ci) => adRecCeldaHtml(d, cd.campo, a.num, ri * colDefs.length + ci, finalDe(cd.campo, a.num))).join('') : colDefs.map((cd, ci) => { const cls = [cd.ini ? 'ad-mx-ini' : '',
                 !esLetra && cd.campo !== 'Inasistencias' ? adNotaEscalaClase(valOfP(cd.parcial, cd.campo, a.num)) : ''].filter(Boolean).join(' ');
                 return `<td${cls ? ' class="' + cls + '"' : ''}><input class="ad-mx-inp" data-idx="${ri * colDefs.length + ci}"
@@ -7929,6 +8081,8 @@ function adRenderSace(body, d) {
     }
   };
   document.getElementById('ad-sace-ir-rec')?.addEventListener('click', () => setSel('vista', 'recup'));
+  body.querySelectorAll('[data-rf-num]').forEach(b => b.addEventListener('click', () =>
+    adAsisRevisarModal(b.dataset.rfNum, () => adRenderSace(body, adLoad()))));
   // Celda activa (para el teclado cualitativo de personalidad)
   let _activoIdx = 0;
   const marcarActivo = i => { inputs.forEach(x => x.classList.remove('ad-mx-activo')); if (inputs[i]) inputs[i].classList.add('ad-mx-activo'); };
@@ -8088,7 +8242,7 @@ function adRenderSace(body, d) {
        aunque la sincronización hubiera dejado el día repetido. */
     const cuenta = {}, vistos = {};
     let excusas = 0;
-    (dd.asistencia || []).forEach(r => {
+    (window.ResumenSace ? window.ResumenSace.unirDias(dd.asistencia || []) : (dd.asistencia || [])).forEach(r => {
       if (r && r.f >= desde && r.f <= hasta && r.aus && !vistos[r.f]) {
         vistos[r.f] = 1;
         Object.keys(r.aus).forEach(num => {
@@ -9830,10 +9984,9 @@ async function avBuzonCargar(d) {
     cont.querySelectorAll('.av-excusa-ok').forEach(b => b.addEventListener('click', () => {
       const num = +b.dataset.num, fecha = b.dataset.fecha;
       const dd = adLoad();
-      let reg = dd.asistencia.find(r => r.f === fecha);
-      if (!reg) { reg = { f: fecha, aus: {} }; dd.asistencia.push(reg); }
-      reg.aus = reg.aus || {};
+      const reg = adAsisDia(dd, fecha, true);
       reg.aus[num] = 'E';
+      dd.asistencia.sort((a, b) => a.f < b.f ? -1 : 1);
       adSave(dd);
       toast('📝 #' + num + ' con excusa el ' + adFechaBonita(fecha));
       avBuzonCargar(adLoad());
