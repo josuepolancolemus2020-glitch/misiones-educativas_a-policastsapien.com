@@ -2202,6 +2202,7 @@ function switchView(id) {
   if (id === 'view-collage')        initCollage();
   if (id === 'view-campeonismo' && typeof initCampeonismo === 'function') initCampeonismo();
   if (id === 'view-formacion' && typeof mfRender === 'function') mfRender();
+  if (id === 'view-herr-eval' && typeof heRender === 'function') heRender();
 
   const scroll = document.querySelector(`#${id} .view-scroll`);
   if (scroll) scroll.scrollTop = 0;
