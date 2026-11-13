@@ -7058,3 +7058,22 @@ body:has(.ad-sace-card) #metasInstallBtn { display: none !important; }
   .ad-rec-aviso .pa-generate-btn { margin-left: 0; width: 100%; }
   .ad-imp-fila .pa-generate-btn { flex: 1 1 100%; }
 }
+
+/* ── Asistencia y Estadísticas sin cajas de instrucciones (v505) ──────
+   Las instrucciones fijas se mudaron a «ⓘ»; lo que queda es una línea
+   pequeña y gris. El amarillo se queda solo para advertencias reales. */
+.ad-tit-fila { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.ad-tit-fila .pa-card-title { margin-bottom: 0; }
+.ad-tit-fila .ad-sace-ayuda { margin-left: auto; }
+.ad-linea { margin: 6px 0; font-size: calc(13px * var(--metas-fz, 1)); color: var(--muted); line-height: 1.45; }
+.est-alumno-btn {
+  flex: 1 1 auto; min-width: 0; min-height: 44px; padding: 0 14px; border-radius: 12px;
+  border: 1.5px solid var(--border); background: var(--bg); color: var(--text); text-align: left;
+  font-family: inherit; font-size: calc(15px * var(--metas-fz, 1)); font-weight: 700; cursor: pointer;
+  /* el nombre baja de renglón en vez de cortarse: con A+ en un teléfono
+     un «Alumno…» recortado no dice de quién son los datos */
+  padding-top: 6px; padding-bottom: 6px; line-height: 1.3; overflow-wrap: anywhere; transition: border-color 150ms ease;
+}
+@media (hover: hover) { .est-alumno-btn:hover { border-color: var(--brand-light); } }
+.est-alumno-btn:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
+.ad-herr.ad-herr-on { background: var(--brand-mid); color: #fff; border-color: var(--brand-mid); }

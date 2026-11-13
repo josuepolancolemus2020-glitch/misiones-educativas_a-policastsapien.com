@@ -3,7 +3,7 @@
    ──────────────────────────────────────────────────────────────
    El formulario que la Dirección pide al cerrar el año, contado solo:
      1. Resumen de exámenes ordinarios (centros) en N/V/T, con la escala
-        del PROMEDIO GENERAL de cada evaluado.
+        del PROMEDIO GENERAL de cada evaluado; el reprobado va en Inicial.
      2. Resumen de Educación Básica: por asignatura, A / NA / T.
      3. Número de alumnos por materia y escala: I / B / A / E.
      4. Matrícula final por edades y género (6, 6½, 7…14, más de 14).
@@ -278,7 +278,20 @@
 
     var escalaGen = {};
     ESCALAS.forEach(function (e) { escalaGen[e.k] = nvt(); });
-    evaluados.forEach(function (r) { sumar(escalaGen[escalaDe(r.prom)], r.a); });
+    /* Inicial = quien queda REPROBADO al cerrar el año (después de la
+       recuperación), aunque su promedio sea alto: así la columna Inicial
+       cuadra con los reprobados del cuadro 5. Decisión del maestro, 13 de
+       noviembre de 2026: con 9 reprobados el cuadro decía 10 iniciales
+       porque la niña aprobada en recuperación seguía contada en Inicial,
+       y un 62 en una sola materia no bajaba el promedio a Inicial. Quien
+       aprueba (también en recuperación) va por su promedio, y nunca por
+       debajo de Básico. */
+    var escalaResumen = function (r) {
+      if (!r.aprobo) return 'I';
+      var e = escalaDe(r.prom);
+      return e === 'I' ? 'B' : e;
+    };
+    evaluados.forEach(function (r) { sumar(escalaGen[escalaResumen(r)], r.a); });
 
     var aprobados = contar(evaluados.filter(function (r) { return r.aprobo; }).map(function (r) { return r.a; }));
     var reprobados = contar(evaluados.filter(function (r) { return !r.aprobo; }).map(function (r) { return r.a; }));
@@ -294,12 +307,14 @@
           var v = x.fin[as.k];
           if (v == null) { r.sinNota++; return; }
           r.T++;
-          /* una materia superada en recuperación cuenta como aprobada;
-             su escala (cuadro 3) sigue siendo la de la nota ordinaria */
+          /* una materia superada en recuperación cuenta como aprobada, y en
+             el cuadro 3 pasa a Básico: la I de cada materia cuadra con su
+             NA del cuadro 2 (misma regla que el cuadro 1) */
           var rv = x.rec && x.rec[as.k];
-          if (v >= APRUEBA || (rv != null && rv >= APRUEBA)) r.A++; else r.NA++;
-          if (v < APRUEBA && rv != null && rv >= APRUEBA) r.recA = (r.recA || 0) + 1;
-          var e = escalaDe(v);
+          var porRec = v < APRUEBA && rv != null && rv >= APRUEBA;
+          if (v >= APRUEBA || porRec) r.A++; else r.NA++;
+          if (porRec) r.recA = (r.recA || 0) + 1;
+          var e = porRec ? 'B' : escalaDe(v);
           r[e === 'A' ? 'AV' : e]++;
         });
       }

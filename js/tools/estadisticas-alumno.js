@@ -164,8 +164,13 @@ function estSace(d, num) {
   const parcialesConDatos = EST_PARCIALES.filter(p => mats.some(c => porMateria[c][p] != null));
   const anioCompleto = conDatos.length > 0 &&
     conDatos.every(c => EST_PARCIALES.every(p => porMateria[c][p] != null));
+  /* La recuperación escrita en Notas SACE (solo existe con final bajo 70).
+     Sin esto el veredicto decía NO APROBADO a quien la boleta y el Cuadro
+     final ya daban por aprobado en recuperación. */
+  const rec = {};
+  if (window.ResumenSace) conDatos.forEach(c => { rec[c] = window.ResumenSace.recuperacionDe(d, c, num, promMat[c]); });
   return {
-    mats, porMateria, promMat, promGen, promParcial, estado,
+    mats, porMateria, promMat, promGen, promParcial, estado, rec,
     inasisSace: inasis.length ? inasis.reduce((a, b) => a + b, 0) : null,
     parcialesConDatos, anioCompleto, matsConDatos: conDatos,
   };
@@ -734,11 +739,15 @@ function estGSerieFechas(puntos, opts) {
    veredicto; antes, es una proyección y el texto lo dice. */
 function estDecision(sace) {
   if (!sace.matsConDatos.length) return { tipo: 'sindatos' };
-  const finales = sace.matsConDatos.map(c => ({ mat: c, val: sace.promMat[c] }));
-  const bajas = finales.filter(f => f.val < 70).sort((a, b) => a.val - b.val);
+  const finales = sace.matsConDatos.map(c => ({ mat: c, val: sace.promMat[c], rec: (sace.rec || {})[c] }));
+  /* con el año cerrado, una materia bajo 70 superada en recuperación ya no
+     reprueba (misma regla que la boleta y el Cuadro final) */
+  const superada = f => sace.anioCompleto && f.rec != null && f.rec >= 70;
+  const recuperadas = finales.filter(f => f.val < 70 && superada(f));
+  const bajas = finales.filter(f => f.val < 70 && !superada(f)).sort((a, b) => a.val - b.val);
   return {
     tipo: sace.anioCompleto ? 'veredicto' : 'proyeccion',
-    aprueba: !bajas.length, bajas, promGen: sace.promGen,
+    aprueba: !bajas.length, bajas, recuperadas, promGen: sace.promGen,
     parciales: sace.parcialesConDatos.length,
   };
 }
@@ -749,6 +758,10 @@ function estDecisionHtml(dec, compacto) {
   }
   const regla = compacto ? '' : '<small>Normativa (Primero y Segundo Ciclo): el año se aprueba con 70 o más en cada materia; el promedio no salva una materia baja.</small>';
   if (dec.tipo === 'veredicto') {
+    if (dec.aprueba && dec.recuperadas && dec.recuperadas.length) {
+      return '<div class="est-dec ok"><b>📜 Año lectivo cerrado: APROBADO EN RECUPERACIÓN.</b> Superó ' +
+        dec.recuperadas.map(b => b.mat + ' (' + b.val + ' → ' + b.rec + ')').join(', ') + ' en la recuperación. ' + regla + '</div>';
+    }
     return dec.aprueba
       ? '<div class="est-dec ok"><b>📜 Año lectivo cerrado: APROBADO.</b> Los cuatro parciales están llenos y todas las materias cierran en 70 o más (promedio general ' + dec.promGen + '). ' + regla + '</div>'
       : '<div class="est-dec rep"><b>📜 Año lectivo cerrado: NO APROBADO.</b> Con los cuatro parciales llenos, queda bajo 70 en ' + dec.bajas.map(b => b.mat + ' (' + b.val + ')').join(', ') + '; promedio general ' + dec.promGen + '. ' + regla + '</div>';
@@ -787,25 +800,18 @@ function adRenderEstadisticas(body, d) {
 
   body.innerHTML = `
     <div class="pa-card">
-      <div class="pa-card-title">📈 Estadísticas del alumno</div>
-      <p class="pa-optional-hint">Todo lo que registras —notas, asistencia, evaluaciones, controles y
-        la práctica de misiones— junto y leído para <strong>decidir con datos</strong>: refuerzos,
-        avisos a la familia y, al cierre, la aprobación del año.</p>
+      <div class="ad-tit-fila"><div class="pa-card-title">📈 Estadísticas del alumno</div>
+        <button type="button" class="ad-sace-ayuda" id="est-ayuda">ⓘ ¿Para qué sirve?</button></div>
+      <!-- el alumno se elige con ‹ ›, o tocando su nombre: abre una ventana
+           con un botón por alumno (antes, una lista desplegable) -->
       <div class="est-selector">
         <button class="pa-generate-btn ad-btn-sec" id="est-prev" aria-label="Alumno anterior">‹</button>
-        <select id="est-alumno" class="pa-inp-field" aria-label="Elegir alumno">
-          ${d.lista.map(a => '<option value="' + a.num + '"' + (String(a.num) === String(_estNum) ? ' selected' : '') + '>' + adEsc(nom(a)) + '</option>').join('')}
-        </select>
+        <button type="button" class="est-alumno-btn" id="est-alumno" value="${al.num}" aria-label="Elegir alumno">${adEsc(nom(al))} <span aria-hidden="true">▾</span></button>
         <button class="pa-generate-btn ad-btn-sec" id="est-next" aria-label="Alumno siguiente">›</button>
       </div>
-      <p class="pa-optional-hint est-prueba-linea">
-        ${esPrueba
-          ? '🧪 <strong>Alumno de prueba.</strong> No entra en el informe del grado, ni en los informes de todo el grupo, ni en los 🤝 Equipos: no infla la matrícula ni las inasistencias que ve la Dirección. Aquí lo sigues viendo entero.'
-          : '¿Este es un alumno inventado que solo usas para probar?'}
-        <button class="est-prueba-tog" id="est-prueba">${esPrueba ? '👥 Volverlo alumno del grado' : '🧪 Marcarlo como de prueba'}</button>
-      </p>
+      ${esPrueba ? '<p class="ad-linea">🧪 Alumno de prueba: no cuenta en informes ni en equipos.</p>' : ''}
       ${enRiesgo.length ? `
-      <p class="pa-optional-hint" style="margin-top:8px"><strong>A quién mirar primero:</strong></p>
+      <div class="ad-grupo-tit">A quién mirar primero</div>
       <div class="est-riesgo-row">
         ${enRiesgo.map(r => '<button class="est-riesgo-chip" data-estnum="' + r.a.num + '" title="' + adEsc(r.razones.join(' · ')) + '">⚠️ ' + adEsc(adPrimerNombre(r.a.nombre) || ('#' + r.a.num)) + ' <small>' + adEsc(r.razones[0] || '') + '</small></button>').join('')}
       </div>` : ''}
@@ -814,15 +820,15 @@ function adRenderEstadisticas(body, d) {
         <button class="pa-generate-btn ad-btn-sec" id="est-print-todos">🖨️ Informes de todo el grupo</button>
         <button class="pa-generate-btn ad-btn-sec" id="est-print-grado">🏫 Informe del grado (1 hoja, para la Dirección)</button>
       </div>
+      <div class="ad-grupo-tit">Herramientas</div>
+      <div class="ad-herrs">
+        <button type="button" class="ad-herr" id="est-prueba">${esPrueba ? '👥 Volverlo alumno del grado' : '🧪 Marcar como alumno de prueba'}</button>
+      </div>
     </div>
 
     <div class="pa-card">
       <div class="pa-card-title">✍️ Tu observación <small class="est-sub">(va en el informe del grado)</small></div>
-      <p class="pa-optional-hint">Los números cuentan lo que está registrado; <strong>lo que ellos no explican
-        lo escribes tú</strong>. Sale impreso <strong>encima de las firmas</strong>, así que queda como
-        respaldo tuyo ante la Dirección: alumnos que tienes en tu lista pero no aparecen en el SACE, un mes
-        con clases suspendidas, un traslado a medio año… Se imprime <strong>seguido, como un párrafo</strong>
-        (los renglones sueltos se juntan), para que la hoja siga siendo una.</p>
+      <p class="ad-linea">Lo que los números no explican. Sale encima de las firmas.</p>
       <textarea id="est-obs" class="pa-paste-area" rows="4" maxlength="${EST_OBS_MAX}"
         placeholder="Ej.: La alumna Nº 42 y los alumnos Estarlin y Kenny están en mi lista pero no aparecen registrados en el SACE; su inscripción corresponde a la Dirección.">${adEsc(d.obsGrado || '')}</textarea>
       <p class="pa-optional-hint" id="est-obs-pie"></p>
@@ -845,19 +851,19 @@ function adRenderEstadisticas(body, d) {
     <div class="pa-card">
       <div class="pa-card-title">🧮 Notas por materia <small class="est-sub">(la última nota de cada una, con su parcial anterior)</small></div>
       ${x.sace.estado.length ? estGBarras(x.sace.estado) + estLeyendaNotas()
-        : '<p class="pa-optional-hint">Aún no hay notas en Notas SACE para este alumno.</p>'}
+        : '<p class="ad-linea">Aún no hay notas en Notas SACE para este alumno.</p>'}
     </div>
 
     <div class="pa-card">
       <div class="pa-card-title">📊 Evolución por parcial <small class="est-sub">(azul = promedio; gris = cada materia)</small></div>
       ${x.sace.parcialesConDatos.length ? estGEvolucion(x.sace)
-        : '<p class="pa-optional-hint">El gráfico aparece al guardar notas de al menos un parcial.</p>'}
+        : '<p class="ad-linea">El gráfico aparece al guardar notas de un parcial.</p>'}
     </div>
 
     <div class="pa-card">
       <div class="pa-card-title">📋 Asistencia <small class="est-sub">(pase de lista por mes)</small></div>
       ${x.asis.meses.length ? estGAsis(x.asis.meses)
-        : '<p class="pa-optional-hint">Sin faltas registradas en el pase de lista. 🎉</p>'}
+        : '<p class="ad-linea">Sin faltas en el pase de lista. 🎉</p>'}
       ${x.sace.inasisSace != null ? '<p class="pa-optional-hint">La cifra oficial del año es la columna «Inasistencias» de Notas SACE: <strong>' + x.sace.inasisSace + '</strong>.</p>' : ''}
     </div>
 
@@ -892,8 +898,7 @@ function adRenderEstadisticas(body, d) {
       <ul class="est-obs">
         ${obs.map(o => '<li class="est-obs-' + o.nivel + '"><span>' + o.ic + '</span> ' + o.txt + '</li>').join('')}
       </ul>
-      <p class="pa-optional-hint">Observaciones automáticas a partir de lo registrado: señalan coincidencias,
-        no causas. La decisión siempre es tuya.</p>
+      <p class="ad-linea">Señalan coincidencias, no causas. La decisión siempre es tuya.</p>
     </div>
 
     <div class="pa-card">
@@ -902,8 +907,17 @@ function adRenderEstadisticas(body, d) {
     </div>`;
 
   /* ── eventos ── */
-  const sel = document.getElementById('est-alumno');
-  sel.addEventListener('change', () => { _estNum = +sel.value; adRenderEstadisticas(body, adLoad()); });
+  document.getElementById('est-alumno').addEventListener('click', async () => {
+    const n = await adElegirAlumnoVentana(d.lista, _estNum, '🧑‍🎓 ¿De quién quieres ver los datos?');
+    if (n == null) return;
+    _estNum = n;
+    adRenderEstadisticas(body, adLoad());
+  });
+  /* lo que decía la caja amarilla de arriba, en tres pasos */
+  const EST_PASOS = ['Elige al alumno con ‹ › o tocando su nombre.',
+    'Mira sus notas, su asistencia y su lectura juntas.', 'Imprime su informe, o el del grado para la Dirección.'];
+  document.getElementById('est-ayuda').addEventListener('click', () => adAyudaVentana('ⓘ ¿Para qué sirve?', EST_PASOS));
+  adAyudaPrimeraVez('METAS_EST_AYUDA_VISTA_V1', 'ⓘ ¿Para qué sirve?', EST_PASOS);
   const mover = paso => {
     const i = d.lista.findIndex(a => String(a.num) === String(_estNum));
     const j = (i + paso + d.lista.length) % d.lista.length;

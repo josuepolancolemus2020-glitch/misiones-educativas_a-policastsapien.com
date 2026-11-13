@@ -55,7 +55,7 @@ ok(nuevas.every(k => adm.split("'" + k + "'").length === 2), 'las dos llaves nue
 ok(!/METAS_ADMIN_V1|METAS_ALUMNO_V1/.test(adm.slice(adm.indexOf('const AD_SACE_CERRADOS'), i0)),
   'y no se guardan dentro de los datos del maestro');
 
-const pasos = [...adm.slice(adm.indexOf('function adSacePasos('), adm.indexOf('function adSaceVentAbrir(')).matchAll(/'([^']+)'/g)]
+const pasos = [...adm.slice(adm.indexOf('function adSacePasos('), adm.indexOf('\n}\n', adm.indexOf('function adSacePasos('))).matchAll(/'([^']+)'/g)]
   .map(m => m[1]).filter(t => /\s/.test(t));
 ok(pasos.length >= 3 && pasos.every(t => t.split(/\s+/).length <= 12), 'los pasos de «¿Cómo se llena?» tienen 12 palabras o menos',
   pasos.filter(t => t.split(/\s+/).length > 12));
