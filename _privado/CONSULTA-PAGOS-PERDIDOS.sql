@@ -1,6 +1,7 @@
 -- ============================================================
 -- M.E.T.A.S — CONSULTA: pagos y gastos de colecta que se PERDIERON
--- en el último mes. SOLO LEE: no cambia, no borra, no devuelve nada.
+-- en el último mes. SOLO LEE los datos: no cambia, no borra, no devuelve
+-- nada (solo crea un ayudante para comparar nombres).
 -- Pegar COMPLETO en el SQL Editor de Supabase → Run.
 --
 -- Compara cada copia del aula guardada en la nube en los últimos 31
@@ -16,6 +17,17 @@
 -- que solo AÑADE lo que falta y no pisa nada de lo que hay.
 -- ============================================================
 
+-- Ayudante sin efectos: deja un nombre sin tildes, en mayúsculas y con un
+-- solo espacio, para comparar «Génesis» con «GENESIS». No toca ningún dato.
+create or replace function public._metas_nom(t text) returns text
+language sql immutable as $f$
+  select regexp_replace(regexp_replace(upper(translate(coalesce(t, ''),
+    'áéíóúàèìòùäëïöüâêîôûñÁÉÍÓÚÀÈÌÒÙÄËÏÖÜÂÊÎÔÛÑ', 'aeiouaeiouaeiouaeiounAEIOUAEIOUAEIOUAEIOUN')),
+    '[^A-Z0-9]+', ' ', 'g'), '^ | $', '', 'g')
+$f$;
+
+-- El alumno se compara por su NOMBRE, no por su número de lista: si la
+-- lista se reordenó, el #17 de una copia vieja puede ser hoy otro niño.
 with yo as (
   select d.codigo
   from public.docente_estado d
@@ -49,12 +61,20 @@ pagos_copia as (
   where jsonb_typeof(p.value) in ('number', 'string') and p.value #>> '{}' <> ''
 ),
 pagos_hoy as (
-  select h.codigo, g->>'id' as gid, col->>'id' as cid, p.key as num
+  select h.codigo, g->>'id' as gid, col->>'id' as cid,
+         (select a->>'nombre' from jsonb_array_elements(coalesce(g->'lista', '[]')) a
+           where a->>'num' = p.key limit 1) as alumno
   from hoy h
   cross join lateral jsonb_array_elements(coalesce(h.j->'grupos', '[]')) g
   cross join lateral jsonb_array_elements(coalesce(g->'colectas', '[]')) col
   cross join lateral jsonb_each(case when jsonb_typeof(col->'pagos') = 'object' then col->'pagos' else '{}' end) p
   where jsonb_typeof(p.value) in ('number', 'string') and p.value #>> '{}' <> ''
+),
+lista_hoy as (
+  select h.codigo, g->>'id' as gid, a->>'num' as num, a->>'nombre' as alumno
+  from hoy h
+  cross join lateral jsonb_array_elements(coalesce(h.j->'grupos', '[]')) g
+  cross join lateral jsonb_array_elements(coalesce(g->'lista', '[]')) a
 ),
 colectas_hoy as (
   select h.codigo, g->>'id' as gid, col->>'id' as cid
@@ -83,15 +103,18 @@ gastos_hoy as (
   cross join lateral jsonb_array_elements(case when jsonb_typeof(col->'gastos') = 'array' then col->'gastos' else '[]' end) gs
 ),
 perdidos as (
-  select distinct on (pc.codigo, pc.gid, pc.cid, pc.num)
+  select distinct on (pc.codigo, pc.gid, pc.cid, public._metas_nom(pc.alumno))
     'PAGO' as que, pc.codigo, pc.grupo, pc.colecta,
-    '#' || pc.num || ' ' || coalesce(pc.alumno, '') as detalle,
+    coalesce((select '#' || lh.num || ' ' from lista_hoy lh
+              where lh.codigo = pc.codigo and lh.gid = pc.gid and public._metas_nom(lh.alumno) = public._metas_nom(pc.alumno)
+              limit 1), '(ya no está en la lista) ') || coalesce(pc.alumno, '#' || pc.num) as detalle,
     pc.monto, pc.fecha_pago as fecha, pc.cuando as visto_por_ultima_vez,
     exists (select 1 from colectas_hoy ch where ch.codigo = pc.codigo and ch.gid = pc.gid and ch.cid = pc.cid) as colecta_sigue
   from pagos_copia pc
   where not exists (select 1 from pagos_hoy ph
-                    where ph.codigo = pc.codigo and ph.gid = pc.gid and ph.cid = pc.cid and ph.num = pc.num)
-  order by pc.codigo, pc.gid, pc.cid, pc.num, pc.cuando desc
+                    where ph.codigo = pc.codigo and ph.gid = pc.gid and ph.cid = pc.cid
+                      and public._metas_nom(ph.alumno) = public._metas_nom(pc.alumno))
+  order by pc.codigo, pc.gid, pc.cid, public._metas_nom(pc.alumno), pc.cuando desc
 ),
 gastos_perdidos as (
   select distinct on (gc.codigo, gc.gid, gc.cid, gc.llave)

@@ -124,6 +124,44 @@ const deNube = cloud => JSON.parse(cloud.datos.METAS_ADMIN_V1.raw).grupos[0];
     ok(BP.buscar(ahoraRaw, [{ raw: 'no es json' }]).length === 0, 'una copia rota no revienta');
   }
 
+  console.log('\n4b · El alumno se reconoce por su nombre, y lo quitado a propósito no vuelve');
+  {
+    /* la copia de hace dos semanas: Génesis era la #3 y ya había pagado
+       los pupitres; después se ordenó la lista (Niñas y Varones) y hoy es
+       la #1, sin pago. El #3 de hoy es otro niño. */
+    const copia = { v: 2, activo: 'G', grupos: [{ id: 'G', lista: [
+      { num: 1, nombre: 'Carlos Meza' }, { num: 2, nombre: 'Ana Ruiz' }, { num: 3, nombre: 'Génesis Janeth Maldonado' }],
+      colectas: [{ id: 'pup', concepto: 'Pupitres', montoAlumno: 600, pagos: { 1: 600, 3: 600 }, pagosF: { 3: '2026-10-28' },
+        gastos: [{ id: 'gA', d: 'Madera', m: 900, f: '2026-10-29' }] }] }] };
+    const hoy = { v: 2, activo: 'G', grupos: [{ id: 'G', lista: [
+      { num: 1, nombre: 'GENESIS JANETH MALDONADO' }, { num: 2, nombre: 'Ana Ruiz' }, { num: 3, nombre: 'Carlos Meza' }],
+      colectas: [{ id: 'pup', concepto: 'Pupitres', montoAlumno: 600, pagos: { 3: 600 }, pagosF: {}, gastos: [] }] }] };
+    let it = BP.buscar(JSON.stringify(hoy), [{ raw: JSON.stringify(copia), cuando: '2026-10-30T10:00', fuente: 'nube' }]);
+    const pagos = it.filter(x => x.tipo === 'pago');
+    ok(pagos.length === 1 && pagos[0].num === '1' && /GENESIS/i.test(pagos[0].nombre) && pagos[0].fecha === '2026-10-28',
+      'el pago de Génesis vuelve a Génesis (#1 hoy), no al #3 de hoy');
+    ok(!pagos.some(x => x.num === '3'), 'Carlos (#1 en la copia, #3 hoy) ya tiene su pago: no se duplica ni se mueve');
+    const g = JSON.parse(JSON.stringify(hoy.grupos[0]));
+    ok(BP.devolver(g, it) === 2 && g.colectas[0].pagos[1] === 600 && g.colectas[0].gastos.length === 1, 'devolver pone el pago y el gasto');
+    /* el maestro quitó a propósito el pago de Génesis y borró el gasto */
+    const hoy2 = JSON.parse(JSON.stringify(hoy));
+    hoy2.grupos[0].colectas[0].quitados = { [BP.firmaAlumno({ nombre: 'Génesis Janeth Maldonado' })]: 1 };
+    hoy2.grupos[0].colectas[0].gastosQuitados = [BP.gastoId({ id: 'gA' })];
+    it = BP.buscar(JSON.stringify(hoy2), [{ raw: JSON.stringify(copia), cuando: '2026-10-30T10:00', fuente: 'nube' }]);
+    ok(it.length === 0, 'lo quitado a propósito (pago y gasto) no vuelve solo');
+    /* un alumno que ya no está en la lista no recibe nada */
+    const hoy3 = JSON.parse(JSON.stringify(hoy)); hoy3.grupos[0].lista = hoy3.grupos[0].lista.filter(a => a.num !== 1);
+    it = BP.buscar(JSON.stringify(hoy3), [{ raw: JSON.stringify(copia), cuando: '', fuente: 'nube' }]).filter(x => x.tipo === 'pago');
+    ok(it.length === 0, 'si la alumna ya no está en la lista, su pago no se le pone a otro');
+  }
+  {
+    const src = fs.readFileSync(path.join(__dirname, '../js/tools/registros-admin.js'), 'utf8');
+    ok(/adRecuperarSoloProgramar\(\);\s*\n\s*\n\s*const savedState/.test(src), 'al pintar Mi aula se buscan solos los pagos y gastos perdidos');
+    ok(/filter\(i => i\.tipo === 'pago' \|\| i\.tipo === 'gasto'\)/.test(src), 'lo automático es SOLO dinero de colectas (las notas van a mano)');
+    ok(/adPagoQuitado\(cc, al, true\)/.test(src) && /gastosQuitados/.test(src), 'quitar un pago o borrar un gasto deja su marca');
+    ok(/adUndoGuardar\('Antes de devolver/.test(src), 'antes de devolver solo se toma una foto de Deshacer');
+  }
+
   console.log('\n5 · El código');
   {
     const adm = fs.readFileSync(path.join(__dirname, '..', 'js', 'tools', 'registros-admin.js'), 'utf8');

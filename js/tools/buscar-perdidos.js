@@ -33,6 +33,47 @@
   function gastoId(g) {
     return g && g.id ? 'id:' + g.id : 'c:' + String(g && g.d || '').trim().toLowerCase() + '|' + Number(g && g.m) + '|' + (g && g.f || '');
   }
+  /* El ALUMNO se reconoce por su nombre (y su identidad si hay dos
+     iguales), no por su número de lista: ordenar «Niñas y luego Varones»
+     o borrar una fila renumera la lista, y el pago que una copia vieja
+     guarda en el #17 puede ser hoy de otro niño. Acreditárselo a otro
+     sería peor que no devolverlo. */
+  function normNom(s) {
+    return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .toUpperCase().replace(/[^A-Z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+  }
+  function digitos(s) { return String(s || '').replace(/\D/g, ''); }
+  function firmaAlumno(a) { return normNom(a && a.nombre) + '|' + digitos(a && a.idn); }
+  /* num de HOY del alumno que en la copia `gv` tenía el número `num`;
+     null si ya no está o no se puede saber con seguridad */
+  function numDeHoy(g, gv, num) {
+    var lista = g.lista || [];
+    var enCopia = (gv.lista || []).find(function (x) { return String(x.num) === String(num); });
+    if (!enCopia || !normNom(enCopia.nombre)) {
+      /* la copia no dice quién era: solo vale si el número sigue siendo
+         de alguien y la copia no tenía lista con la que comparar */
+      if ((gv.lista || []).length) return null;
+      return lista.some(function (x) { return String(x.num) === String(num); }) ? String(num) : null;
+    }
+    var n = normNom(enCopia.nombre), idn = digitos(enCopia.idn);
+    var mismos = lista.filter(function (x) { return normNom(x.nombre) === n; });
+    if (mismos.length > 1 && idn) mismos = mismos.filter(function (x) { return digitos(x.idn) === idn; });
+    if (mismos.length === 1) return String(mismos[0].num);
+    if (!mismos.length && idn) {
+      var porIdn = lista.filter(function (x) { return digitos(x.idn) === idn; });
+      if (porIdn.length === 1) return String(porIdn[0].num);
+    }
+    return null;
+  }
+  /* Lo que el maestro QUITÓ a propósito (tocó al alumno y borró su marca,
+     o borró un gasto) queda anotado en la colecta y no vuelve solo. */
+  function quitadoPago(c, alumno) {
+    return !!(c && c.quitados && alumno && c.quitados[firmaAlumno(alumno)]);
+  }
+  function quitadoGasto(c, gs) {
+    return !!(c && Array.isArray(c.gastosQuitados) && c.gastosQuitados.indexOf(gastoId(gs)) >= 0);
+  }
+
   function mismoGasto(a, b) {
     if (a.id && b.id) return a.id === b.id;
     return String(a.d || '').trim().toLowerCase() === String(b.d || '').trim().toLowerCase() &&
@@ -66,16 +107,21 @@
         (gv.colectas || []).forEach(function (cv) {
           var ca = (g.colectas || []).find(function (x) { return x.id === cv.id; });
           if (!ca) return;                  // colecta borrada entera: decisión del maestro
-          Object.keys(cv.pagos || {}).forEach(function (num) {
-            if (vacio(cv.pagos[num])) return;
+          Object.keys(cv.pagos || {}).forEach(function (numViejo) {
+            if (vacio(cv.pagos[numViejo])) return;
+            var num = numDeHoy(g, gv, numViejo);
+            if (num == null) return;
             if (!vacio((ca.pagos || {})[num])) return;
+            var al = (g.lista || []).find(function (x) { return String(x.num) === num; });
+            if (quitadoPago(ca, al)) return;
             poner({ tipo: 'pago', clave: 'p|' + g.id + '|' + cv.id + '|' + num, grupo: g.id,
               colecta: cv.id, colectaTxt: cv.concepto || cv.nombre || 'Colecta', num: num,
-              nombre: nombreDe(num), monto: Number(cv.pagos[num]),
-              fecha: (cv.pagosF || {})[num] || '' }, c);
+              nombre: nombreDe(num), monto: Number(cv.pagos[numViejo]),
+              fecha: (cv.pagosF || {})[numViejo] || '' }, c);
           });
           (cv.gastos || []).forEach(function (gs) {
             if ((ca.gastos || []).some(function (x) { return mismoGasto(x, gs); })) return;
+            if (quitadoGasto(ca, gs)) return;
             poner({ tipo: 'gasto', clave: 'g|' + g.id + '|' + cv.id + '|' + gastoId(gs), grupo: g.id,
               colecta: cv.id, colectaTxt: cv.concepto || cv.nombre || 'Colecta',
               gasto: gs, desc: gs.d || '', monto: Number(gs.m), fecha: gs.f || '' }, c);
@@ -84,12 +130,13 @@
         /* ── notas: casilla por casilla ── */
         Object.keys(gv.notas || {}).forEach(function (p) {
           Object.keys(gv.notas[p] || {}).forEach(function (mat) {
-            Object.keys(gv.notas[p][mat] || {}).forEach(function (num) {
-              var v = gv.notas[p][mat][num];
+            Object.keys(gv.notas[p][mat] || {}).forEach(function (numViejo) {
+              var v = gv.notas[p][mat][numViejo];
               if (vacio(v)) return;
+              var num = numDeHoy(g, gv, numViejo);
+              if (num == null) return;
               var va = (((g.notas || {})[p] || {})[mat] || {})[num];
               if (!vacio(va)) return;
-              if (!(g.lista || []).some(function (x) { return String(x.num) === String(num); })) return;
               poner({ tipo: 'nota', clave: 'n|' + g.id + '|' + p + '|' + mat + '|' + num, grupo: g.id,
                 parcial: p, materia: mat, num: num, nombre: nombreDe(num), valor: v }, c);
             });
@@ -137,7 +184,7 @@
     return n;
   }
 
-  var API = { buscar: buscar, devolver: devolver };
+  var API = { buscar: buscar, devolver: devolver, firmaAlumno: firmaAlumno, gastoId: gastoId };
   raiz.BuscarPerdidos = API;
   if (typeof module !== 'undefined' && module.exports) module.exports = API;
 })(typeof window !== 'undefined' ? window : globalThis);

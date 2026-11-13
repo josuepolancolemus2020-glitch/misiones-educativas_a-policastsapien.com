@@ -1012,6 +1012,7 @@ function renderAdmin(forzar = false) {
     return;
   }
   _adRenderDiferido = false;
+  adRecuperarSoloProgramar();
 
   const savedState = adCaptureState();
   const st = adState();
@@ -3619,6 +3620,78 @@ async function adCuadroFinalExcel(d) {
   }
 }
 
+/* ══════════════ ↩️ LO ANOTADO NO SE PIERDE ══════════════
+   Regla del maestro (13 de noviembre de 2026): «todo lo que se agregó se
+   debe anotar; lo que no se debe anotar es lo que nunca se agregó». Dos
+   pagos de la colecta de pupitres ya entregados desaparecieron, y el
+   asistente de padres le decía a esas familias que les faltaba pagar.
+
+   Por eso los PAGOS y GASTOS de colecta que estuvieron en alguna copia
+   (las de este equipo y las del último mes en la nube) y hoy faltan, se
+   devuelven SOLOS al abrir Mi aula, sin esperar a que alguien los
+   busque. Al alumno se le reconoce por su nombre, no por su número
+   (js/tools/buscar-perdidos.js), y solo se AÑADE: nada de lo que hay se
+   cambia. Lo único que no vuelve es lo que el maestro quitó a propósito
+   (queda anotado en c.quitados / c.gastosQuitados). Antes de devolver se
+   toma una foto de «Deshacer» y se le dice al maestro qué volvió.
+   Las notas no: borrar una casilla a propósito no deja marca, así que
+   esas se devuelven a mano con 🔎. */
+function adPagoQuitado(c, al, quitado) {
+  if (!window.BuscarPerdidos || !al || !al.nombre) return;
+  const f = BuscarPerdidos.firmaAlumno(al);
+  if (quitado) { c.quitados = Object.assign({}, c.quitados || {}); c.quitados[f] = Date.now(); }
+  else if (c.quitados && c.quitados[f]) { c.quitados = Object.assign({}, c.quitados); delete c.quitados[f]; }
+}
+let _adAutoRecT = 0, _adAutoRecVa = false;
+function adRecuperarSoloProgramar() {
+  if (_adAutoRecVa || Date.now() - _adAutoRecT < 10 * 60e3) return;
+  _adAutoRecT = Date.now();
+  setTimeout(() => { adRecuperarSolo(); }, 2500);
+}
+async function adRecuperarSolo() {
+  if (!window.BuscarPerdidos || _adAutoRecVa) return 0;
+  _adAutoRecVa = true;
+  try {
+    const copias = adCopiasLocales();
+    if (typeof window.dsHistorial === 'function' && navigator.onLine !== false) {
+      try {
+        const rows = await window.dsHistorial(ADMIN_KEY, 50);
+        (rows || []).forEach(r => copias.push({ raw: r.raw, cuando: r.cuando, fuente: 'nube' }));
+      } catch (_) {}
+    }
+    if (!copias.length) return 0;
+    /* desde aquí no hay más esperas: se lee y se guarda de un tirón, así
+       nada que llegue en medio queda pisado */
+    const items = BuscarPerdidos.buscar(localStorage.getItem(ADMIN_KEY), copias)
+      .filter(i => i.tipo === 'pago' || i.tipo === 'gasto');
+    if (!items.length) return 0;
+    adUndoGuardar('Antes de devolver ' + items.length + ' pago(s) o gasto(s) que se habían perdido');
+    const st = adState();
+    let n = 0;
+    st.grupos.forEach(g => { n += BuscarPerdidos.devolver(g, items); });
+    if (!n) return 0;
+    if (!adStateSave(st)) return 0;
+    const grupoTxt = id => { const g = st.grupos.find(x => x.id === id); return g ? (adGradoSeccion(g.grado, g.seccion) || 'grupo') : 'grupo'; };
+    const lineas = items.slice(0, 25).map(it => it.tipo === 'pago'
+      ? '• ' + grupoTxt(it.grupo) + ' · **' + it.colectaTxt + '**: #' + it.num + ' ' + (it.nombre || '') + ' · ' + adLps(it.monto) +
+        (it.fecha ? ' (pagó el ' + adFechaBonita(it.fecha) + ')' : '')
+      : '• ' + grupoTxt(it.grupo) + ' · **' + it.colectaTxt + '**: gasto «' + it.desc + '» · ' + adLps(it.monto));
+    if (typeof renderAdmin === 'function') renderAdmin();
+    if (typeof metasAlert === 'function') {
+      metasAlert('Encontré **' + n + '** dato(s) de colecta que ya estaban anotados y se habían perdido. Ya están de vuelta, ' +
+        'y el asistente de padres se corrige en cuanto haya internet:\n\n' + lineas.join('\n') +
+        (items.length > 25 ? '\n… y ' + (items.length - 25) + ' más.' : '') +
+        '\n\nSi alguno lo habías quitado a propósito, entra a la colecta y quítalo otra vez: ya no volverá. ' +
+        'O usa **🕘 Deshacer** para dejar todo como estaba.', { icono: '↩️', titulo: 'Pagos recuperados' });
+    }
+    return n;
+  } catch (_) {
+    return 0;
+  } finally {
+    _adAutoRecVa = false;
+  }
+}
+
 /* ══════════════ 🔎 BUSCAR DATOS PERDIDOS ══════════════
    La pantalla de js/tools/buscar-perdidos.js: junta las copias que hay en
    este equipo (respaldo de la sincronización y fotos de «Deshacer»), y si
@@ -5083,9 +5156,9 @@ function adRenderColecta(body, d) {
       const dd = adLoad(); const cc = adColecta(dd, _adColectaId); if (!cc) return;
       cc.pagos = cc.pagos || {};
       cc.pagosF = cc.pagosF || {};   /* fecha del movimiento, para el recibo */
+      const al = dd.lista.find(a => String(a.num) === String(num)) || {};
       if (cc.pagos[num] != null) {
         /* ya pagó → editar su monto (hermanos/becados/abonos) o quitar */
-        const al = dd.lista.find(a => String(a.num) === String(num)) || {};
         const quien = '#' + num + (al.nombre ? ' ' + adPrimerNombre(al.nombre) : '');
         const r = await metasPrompt('¿Cuánto aportó **' + quien + '**? (Lempiras)\nEscribe la cantidad real (ej. **500**). El **0** o vacío quita la marca.', {
           icono: '💰', titulo: 'Aporte del alumno', inputmode: 'decimal',
@@ -5099,9 +5172,10 @@ function adRenderColecta(body, d) {
         if (r === null) return;   // canceló: no cambia nada
         const s = String(r).trim();
         const n = s === '' ? 0 : Number(s.replace(',', '.'));
-        if (!(n > 0)) { delete cc.pagos[num]; delete cc.pagosF[num]; }
+        if (!(n > 0)) { delete cc.pagos[num]; delete cc.pagosF[num]; adPagoQuitado(cc, al, true); }
         else {
           cc.pagos[num] = n;
+          adPagoQuitado(cc, al, false);
           /* corregir el monto NO cambia el día en que entró el dinero: el
              recibo se reemite con la cifra buena y la fecha original */
           if (!cc.pagosF[num]) cc.pagosF[num] = adHoy();
@@ -5109,6 +5183,7 @@ function adRenderColecta(body, d) {
       } else {
         cc.pagos[num] = cc.montoAlumno;   // aporte sugerido (marca rápida)
         cc.pagosF[num] = adHoy();
+        adPagoQuitado(cc, al, false);
       }
       adSave(dd); renderAdmin();
     }));
@@ -5186,6 +5261,10 @@ function adRenderColecta(body, d) {
       const i = (cc.gastos || []).findIndex(x => JSON.stringify(x) === quiere);
       if (i < 0) { toast('Ese gasto ya cambió en otro equipo: revisa la lista'); renderAdmin(); return; }
       adUndoGuardar('Borrar gasto de «' + cc.concepto + '»');
+      if (window.BuscarPerdidos) {
+        cc.gastosQuitados = (Array.isArray(cc.gastosQuitados) ? cc.gastosQuitados : [])
+          .concat([BuscarPerdidos.gastoId(cc.gastos[i])]).slice(-300);
+      }
       cc.gastos.splice(i, 1);
       adSave(dd); renderAdmin();
     }));
