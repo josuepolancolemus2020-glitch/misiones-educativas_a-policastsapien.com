@@ -105,6 +105,24 @@
     return Number(t);
   }
 
+  /* Nota final de una materia: promedio de los CUATRO parciales,
+     redondeado; sin uno de ellos no hay final (null). La usan el cuadro
+     final, el resumen y la matriz de Notas SACE: una sola regla. */
+  function notaFinal(d, col, num) {
+    var notas = (d && d.notas) || {};
+    var xs = PARCIALES.map(function (p) { return numero(((notas[p] || {})[col] || {})[num]); });
+    if (xs.some(function (x) { return x == null; })) return null;
+    return Math.round(xs.reduce(function (t, x) { return t + x; }, 0) / 4);
+  }
+  /* La recuperación va DESPUÉS de los cuatro parciales, como en el SACE:
+     solo existe si la nota final quedó bajo 70. Una nota guardada para una
+     materia que luego se aprobó (se corrigió un parcial) no cuenta. */
+  function recuperacionDe(d, col, num, fin) {
+    if (fin === undefined) fin = notaFinal(d, col, num);
+    if (fin == null || fin >= APRUEBA) return null;
+    return numero(((d && d.recuperacion) || {})[col] && d.recuperacion[col][num]);
+  }
+
   /* N/V/T vacío y cómo se suma un alumno */
   function nvt() { return { N: 0, V: 0, T: 0 }; }
   function sumar(c, a) {
@@ -182,8 +200,17 @@
       var completo = cuentan.length > 0 && !faltan.length;
       var valores = cuentan.map(function (as) { return fin[as.k]; });
       var prom = completo ? Math.round(valores.reduce(function (t, x) { return t + x; }, 0) / valores.length) : null;
-      var aprobo = completo ? valores.every(function (v) { return v >= APRUEBA; }) : null;
-      return { a: a, fin: fin, faltan: faltan, completo: completo, prom: prom, aprobo: aprobo };
+      /* Aprobado = 70 o más en cada asignatura, en la ordinaria O en la
+         recuperación (la misma regla del Cuadro final). El promedio y las
+         escalas siguen con la nota ordinaria, como en el SACE. */
+      var rec = {};
+      cuentan.forEach(function (as) {
+        if (fin[as.k] != null && fin[as.k] < APRUEBA) rec[as.k] = recuperacionDe(d, as.col, a.num, fin[as.k]);
+      });
+      var pasa = function (as) { var v = fin[as.k]; return v >= APRUEBA || (rec[as.k] != null && rec[as.k] >= APRUEBA); };
+      var aprobo = completo ? cuentan.every(pasa) : null;
+      var enRec = !!aprobo && cuentan.some(function (as) { return fin[as.k] < APRUEBA; });
+      return { a: a, fin: fin, rec: rec, faltan: faltan, completo: completo, prom: prom, aprobo: aprobo, enRec: enRec };
     });
 
     var evaluados = porAlumno.filter(function (r) { return r.completo; });
@@ -195,6 +222,7 @@
 
     var aprobados = contar(evaluados.filter(function (r) { return r.aprobo; }).map(function (r) { return r.a; }));
     var reprobados = contar(evaluados.filter(function (r) { return !r.aprobo; }).map(function (r) { return r.a; }));
+    var aprobadosRec = contar(evaluados.filter(function (r) { return r.enRec; }).map(function (r) { return r.a; }));
 
     /* cuadros 2 y 3: por asignatura, todos los de la matrícula final que
        tienen nota final EN ESA asignatura */
@@ -206,7 +234,11 @@
           var v = x.fin[as.k];
           if (v == null) { r.sinNota++; return; }
           r.T++;
-          if (v >= APRUEBA) r.A++; else r.NA++;
+          /* una materia superada en recuperación cuenta como aprobada;
+             su escala (cuadro 3) sigue siendo la de la nota ordinaria */
+          var rv = x.rec && x.rec[as.k];
+          if (v >= APRUEBA || (rv != null && rv >= APRUEBA)) r.A++; else r.NA++;
+          if (v < APRUEBA && rv != null && rv >= APRUEBA) r.recA = (r.recA || 0) + 1;
           var e = escalaDe(v);
           r[e === 'A' ? 'AV' : e]++;
         });
@@ -238,7 +270,7 @@
       totalSace: base.length,
       mov: mov, formula: formula, cuadra: cuadra,
       evaluados: contar(evaluados.map(function (r) { return r.a; })),
-      escalaGen: escalaGen, aprobados: aprobados, reprobados: reprobados,
+      escalaGen: escalaGen, aprobados: aprobados, reprobados: reprobados, aprobadosRec: aprobadosRec,
       asignaturas: asigs, porAsig: porAsig,
       edades: edades, edTotal: edTotal,
       porAlumno: porAlumno,
@@ -535,8 +567,9 @@
       '<div class="rf2-kpis">' +
         tile('Matrícula final', r.mov.final.T, r.mov.final.N + ' niñas · ' + r.mov.final.V + ' varones') +
         tile('Evaluados', r.evaluados.T, r.avisos.sinNota.length ? r.avisos.sinNota.length + ' sin nota completa' : 'todos con nota completa') +
-        tile('Aprobados', r.aprobados.T, est.pctAprob == null ? 'de los evaluados' : est.pctAprob + ' % de los evaluados') +
-        tile('Reprobados', r.reprobados.T, 'al menos una asignatura bajo 70') +
+        tile('Aprobados', r.aprobados.T, (est.pctAprob == null ? 'de los evaluados' : est.pctAprob + ' % de los evaluados') +
+          (r.aprobadosRec && r.aprobadosRec.T ? ' · ' + r.aprobadosRec.T + ' en recuperación' : '')) +
+        tile('Reprobados', r.reprobados.T, 'al menos una asignatura bajo 70, también en recuperación') +
         tile('Promedio del grupo', g.n ? fmt(g.media) : '·', g.n ? 'mediana ' + fmt(g.mediana) + ' · de ' + g.min + ' a ' + g.max : '') +
         tile('Permanencia', est.permanencia == null ? '·' : est.permanencia + ' %', 'siguen ' + r.mov.final.T + ' de ' + (r.mov.inicial.T + r.mov.ingresos.T)) +
       '</div>' +
@@ -645,9 +678,9 @@
         var xs = PARCIALES.map(function (p) { return val(p, as.col, a.num); });
         var vacios = PARCIALES.filter(function (_, i) { return xs[i] == null; });
         if (vacios.length) { faltan.push(as.et + ' (' + vacios.join(', ') + ')'); return { k: as.k, et: as.et, col: as.col, final: null, recup: '' }; }
-        var f = Math.round(xs.reduce(function (t, x) { return t + x; }, 0) / 4);
+        var f = notaFinal(d, as.col, a.num);
         /* la nota de recuperación solo existe para una materia reprobada */
-        var rn = f < APRUEBA ? numero(((d.recuperacion || {})[as.col] || {})[a.num]) : null;
+        var rn = recuperacionDe(d, as.col, a.num, f);
         return { k: as.k, et: as.et, col: as.col, final: f, recup: f >= APRUEBA ? 'N/A' : (rn == null ? '' : rn) };
       });
       var pf = pers.map(function (r) {
@@ -961,7 +994,8 @@
 
   var API = {
     PARCIALES: PARCIALES, ASIGNATURAS: ASIGNATURAS, ESCALAS: ESCALAS, EDADES: EDADES,
-    escalaDe: escalaDe, mapearMaterias: mapearMaterias,
+    escalaDe: escalaDe, mapearMaterias: mapearMaterias, APRUEBA: APRUEBA,
+    notaFinal: notaFinal, recuperacionDe: recuperacionDe,
     calcular: calcular, cuadros: cuadros, tablaHtml: tablaHtml,
     describir: describir, estadistica: estadistica, graficosHtml: graficosHtml, GRAF_CSS: GRAF_CSS,
     cuadroFinal: cuadroFinal, cuadroFinalTabla: cuadroFinalTabla,

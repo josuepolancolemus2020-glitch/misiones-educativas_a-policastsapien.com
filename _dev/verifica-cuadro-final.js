@@ -164,7 +164,34 @@ ok(/excusas no cuentan/.test(adm), 'la ayuda lo dice');
 
 ok(/id="ad-cf-lista-rep"/.test(adm) && /function adPrintListaReprobados/.test(adm) && /size: letter portrait/.test(adm.slice(adm.indexOf('function adPrintListaReprobados'))),
   'el listado de reprobados sale en una hoja carta');
-ok(/dd\.recuperacion\[col\]\[num\] = Math\.max\(1, Math\.min\(100/.test(adm), 'la nota de recuperación se guarda entre 1 y 100');
+const rg = adm.slice(adm.indexOf('function adRecGuardar('), adm.indexOf('function adRecGuardar(') + 700);
+ok(/Math\.max\(1, Math\.min\(100/.test(rg) && /dd\.recuperacion\[col\]\[num\] = v/.test(rg), 'la nota de recuperación se guarda entre 1 y 100');
+
+console.log('\n6 · La recuperación se escribe una vez y se ve en todas partes (noviembre de 2026)');
+ok(/\.cf-rec-inp'\)\.forEach\(inp => \{\s*inp\.addEventListener\('input'/.test(adm) && /adCfTablaHtml\(cf\) \+ adCfPieHtml\(cf\)/.test(adm),
+  'en el Cuadro final, el cuadro y su pie de aprobados cambian al escribir, sin repintar la ventana');
+ok(/<option value="recup"/.test(adm) && /adRecCeldaHtml\(/.test(adm) && /data-parcial="REC"/.test(adm),
+  'Notas SACE tiene la sección ✍️ Recuperación, aparte de los parciales, como en el SACE');
+ok(/esRec\) \{\s*const v = adRecGuardar\(dd/.test(adm), 'y guarda en el mismo sitio que el Cuadro final');
+ok(/id="ad-sace-rec-aviso"/.test(adm) && /contarBajo70\(dd\)/.test(adm), 'una nota que deja el final bajo 70 enciende el aviso de recuperación');
+ok(/while \(i >= 0 && i < inputs\.length && inputs\[i\]\.disabled\) i \+= paso/.test(adm), 'el cursor salta las casillas N/A');
+const css = fs.readFileSync(path.join(__dirname, '..', 'css', 'app.css'), 'utf8');
+ok(/\.ad-mx-sticky \{\s*position: -webkit-sticky; position: sticky; left: 0;/.test(css) && /inset -2px 0 0 #0f2350/.test(css),
+  'la columna de nombres queda inmovilizada, con su raya oscura');
+{
+  const g4 = JSON.parse(antes);
+  const cuenta = () => { const rr = RS.calcular(g4, { SL }); const c = RS.cuadroFinal(g4, { SL, pers: PERS });
+    return [rr.aprobados.T, rr.reprobados.T, rr.aprobadosRec.T, rr.porAsig.matematicas.A, c.resumen.aprob.T + c.resumen.aprobRec.T, c.resumen.reprob.T]; };
+  const c0 = cuenta();
+  g4.recuperacion = { 'Matemáticas': { 2: 75 } };
+  const c1 = cuenta();
+  igual([c1[0] - c0[0], c1[1] - c0[1], c1[2], c1[3] - c0[3]], [1, -1, 1, 1], 'Resumen final: el aprobado en recuperación pasa a aprobados, y su materia a A');
+  ok(c1[0] === c1[4] && c1[1] === c1[5], 'Resumen final y Cuadro final cuentan lo mismo');
+  g4.recuperacion = { 'Matemáticas': { 2: 60 } };
+  igual(cuenta(), c0, 'con 60 sigue reprobado en los dos');
+  ok(RS.notaFinal(g4, 'Matemáticas', 2) === 69 && RS.recuperacionDe(g4, 'Matemáticas', 2) === 60 && RS.recuperacionDe(g4, 'Español', 2) === null,
+    'nota final y recuperación salen de una sola regla');
+}
 
 console.log(fallos ? '\n✘ ' + fallos + ' comprobación(es) fallaron' : '\n✓ El cuadro final dice lo mismo que la boleta');
 process.exit(fallos ? 1 : 0);
