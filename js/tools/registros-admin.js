@@ -4354,6 +4354,7 @@ function adRenderEco(body, d) {
         <strong>colecta</strong>: se marca quién dio, se anotan los gastos y el saldo queda claro
         para rendir cuentas a los padres.</p>
       <button class="pa-generate-btn" id="ad-nueva-colecta">➕ Nueva colecta o acuerdo</button>
+      <button class="pa-generate-btn ad-btn-sec" id="ad-hoja-blanco" type="button">📝 Hoja en blanco para anotar una colecta</button>
     </div>
     ${d.colectas.length ? `
     <div class="pa-card">
@@ -4381,6 +4382,7 @@ function adRenderEco(body, d) {
         <strong>Talonario:</strong> un talón por alumno con matriz para el aula y copia para la familia, y una hoja de resumen.</p>
     </div>` : ''}`;
 
+  document.getElementById('ad-hoja-blanco').addEventListener('click', () => adPrintHojaColecta(adLoad(), null));
   document.getElementById('ad-nueva-colecta').addEventListener('click', async () => {
     const concepto = await metasPrompt('¿Cuál es el acuerdo o colaboración?\n(ej.: **Aporte día del niño**, acordado en reunión)', {
       icono: '💰', titulo: 'Nueva colecta', okTxt: 'Siguiente',
@@ -5219,6 +5221,7 @@ function adRenderColecta(body, d) {
       <div class="ad-btn-row">
         <button class="pa-generate-btn ad-btn-sec" id="ad-add-gasto">➕ Anotar gasto</button>
         <button class="pa-generate-btn ad-btn-sec" id="ad-informe">🖨️ Informe para padres</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-hoja-colecta">📝 Hoja para anotar a mano</button>
         <button class="pa-generate-btn ad-btn-sec ad-btn-peligro" id="ad-borrar-colecta">🗑 Eliminar colecta</button>
       </div>
       <div class="ad-btn-row">
@@ -5357,6 +5360,7 @@ function adRenderColecta(body, d) {
   });
 
   document.getElementById('ad-informe').addEventListener('click', () => adInformeColecta(d, c));
+  document.getElementById('ad-hoja-colecta').addEventListener('click', () => { const dd = adLoad(); adPrintHojaColecta(dd, adColecta(dd, _adColectaId) || c); });
 }
 
 /* Informe imprimible: transparencia con los padres (acta de cuentas) */
@@ -6222,6 +6226,85 @@ ${adCuadroCss(true)}
 </style></head><body>
   <div class="hoja"><div class="fit">${resumen}</div></div>
   ${hojas.map(h => `<div class="hoja"><div class="fit"><div class="talones">${h.map(talon).join('<div class="tijera" aria-hidden="true"><span>✂</span></div>')}</div></div></div>`).join('')}
+${AD_CUADRO_AJUSTE}</body></html>`;
+  adPrintAbrir(html);
+}
+
+/* ══════════════ 📝 HOJA DE CONTROL DE UNA COLECTA (para anotar a mano) ══════════════
+   La planilla que se queda en el escritorio el día que se recoge: todos
+   los alumnos en UNA hoja carta, por nombre e identidad, con el monto, la
+   fecha, el recibo y la firma de quien entrega. Lo que ya está en la app
+   sale impreso; lo demás queda en blanco para el lapicero. Sin colecta
+   (c = null) sale en blanco, para una colecta que aún no se ha creado.
+   Al final del día se pasa a la app, y el papel firmado queda como
+   prueba: si un dato se pierde en un teléfono, aquí sigue. */
+function adPrintHojaColecta(d, c) {
+  const bol = d.boleta || {};
+  const SL = window.SaceLista;
+  const fuera = c ? adColectaFuera(c, d) : new Set();
+  const lista = (d.lista || []).filter(a => !adEsPrueba(a) || (c && c.pagos && c.pagos[a.num] != null));
+  if (!lista.length) { if (typeof toast === 'function') toast('Primero agrega la lista de alumnos'); return; }
+  const hayIdn = lista.some(a => String(a.idn || '').trim());
+  const sug = c ? Number(c.montoAlumno) || 0 : 0;
+  /* en blanco, la colecta se escribe a mano en su renglón de abajo */
+  const datos = adCuadroDatos(d, c ? [
+    ['Colecta', c.concepto], ['Acordada el', adFechaBonita(c.fecha)], ['Aporte sugerido', adLps(sug)],
+  ] : []).filter(x => !c || (x[0] !== 'Municipio' && x[0] !== 'Jornada'));
+  const filas = lista.map(a => {
+    const pagado = !!(c && c.pagos && c.pagos[a.num] != null);
+    const nc = fuera.has(String(a.num)) && !pagado;
+    const idn = String(a.idn || '').trim();
+    return `<tr${nc ? ' class="nc"' : ''}><td class="num">${adEsc(a.num)}</td>
+      <td class="nom">${adEsc(a.nombre || '·')}</td>
+      ${hayIdn ? `<td class="idn">${adEsc(idn ? (SL && SL.idnBonita ? SL.idnBonita(idn) : idn) : '')}</td>` : ''}
+      ${nc ? '<td class="m" colspan="3">No le corresponde</td>'
+        : `<td class="m">${pagado ? adIngNum(c.pagos[a.num]) : ''}</td>
+           <td class="f">${pagado ? adFechaBonita((c.pagosF && c.pagosF[a.num]) || c.fecha) : ''}</td>
+           <td class="rc">${pagado ? adReciboFolio(c, a.num) : ''}</td>`}
+      <td class="fi"></td><td class="ob"></td></tr>`;
+  }).join('');
+  const t = c ? adColectaTotales(c) : null;
+  const titulo = c ? 'HOJA DE CONTROL DE COLECTA' : 'HOJA DE CONTROL DE COLECTA · EN BLANCO';
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${adEsc('Hoja de colecta · ' + (c ? c.concepto : 'en blanco'))}</title>
+<style>
+${adCuadroCss(true)}
+  .hc-blanco { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 6px; margin: 2px 0 4px; font-size: 9px; }
+  .hc-blanco div { border-bottom: 1px solid #0f2350; padding: 6px 2px 1px; }
+  .hc { border-collapse: collapse; width: 100%; table-layout: fixed; }
+  .hc th { background: #1e3a7c; color: #fff; font-size: 7.4px; padding: 3px 2px; border: 1px solid #1e3a7c; }
+  .hc td { border: 1px solid #b8c3d6; font-size: 8.6px; padding: 1px 3px; height: 4.8mm; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .hc td.num { text-align: center; color: #55637d; }
+  .hc td.nom { font-weight: 700; }
+  .hc td.idn { font-size: 7.6px; color: #33415c; text-align: center; }
+  .hc td.m { text-align: right; font-weight: 800; color: #166534; }
+  .hc td.f, .hc td.rc { text-align: center; font-size: 7.4px; }
+  .hc td.rc { font-family: monospace; font-size: 7px; }
+  .hc tbody tr:nth-child(even) td { background: #f6f8fc; }
+  .hc tr.nc td { color: #94a3b8; } .hc tr.nc td.m { text-align: center; font-weight: 400; font-style: italic; color: #94a3b8; }
+  .hc tfoot td { border: 1px solid #b8c3d6; background: #f4f7fc; font-weight: 800; font-size: 8.4px; padding: 4px; }
+  .hc tfoot td.et { text-align: right; color: #1e3a7c; }
+  .hc-nota { font-size: 7.6px; color: #55637d; margin-top: 4px; line-height: 1.5; }
+</style></head><body>
+  <div class="hoja"><div class="fit">
+    ${adCuadroCabeza(d, titulo, datos)}
+    ${c ? '' : '<div class="hc-blanco"><div>Colecta o acuerdo:</div><div>Acordada el:</div><div>Aporte sugerido: L</div></div>'}
+    <table class="ing hc">
+      <colgroup><col style="width:7mm"><col>${hayIdn ? '<col style="width:24mm">' : ''}<col style="width:15mm"><col style="width:17mm"><col style="width:${c ? 20 : 17}mm"><col style="width:34mm"><col style="width:${hayIdn ? 20 : 28}mm"></colgroup>
+      <thead><tr><th>#</th><th>NOMBRE DEL ALUMNO</th>${hayIdn ? '<th>IDENTIDAD</th>' : ''}<th>APORTÓ L</th><th>FECHA</th><th>RECIBO N.º</th><th>FIRMA DE QUIEN ENTREGA</th><th>OBSERVACIÓN</th></tr></thead>
+      <tbody>${filas}</tbody>
+      <tfoot>
+        <tr><td colspan="${hayIdn ? 3 : 2}" class="et">${c ? 'ANOTADO EN M.E.T.A.S AL ' + adFechaBonita(adHoy()) : 'TOTALES'}</td>
+          <td colspan="5">${c ? `Dieron ${adColectaDieron(c, d)} de ${adColectaEsperados(c, d)} · Recaudado ${adLps(t.rec)} · Falta por recaudar ${adLps(adColectaPorRecaudar(c, d))}`
+            : 'Dieron ______ de ______ · Recaudado L ____________'}</td></tr>
+        <tr><td colspan="${hayIdn ? 3 : 2}" class="et">CONTADO A MANO</td><td colspan="5">Dieron ______ de ______ · Total en efectivo L ____________ · Contado el ____/____/______</td></tr>
+      </tfoot>
+    </table>
+    <p class="hc-nota">Lo impreso ya está anotado en M.E.T.A.S. Lo escrito a mano se pasa a la app el mismo día. Quien entrega firma su renglón. Si el número de lista cambia, vale el <b>nombre y la identidad</b> del alumno.</p>
+    <div class="firmas"><div>${adEsc(bol.docente || '')}<br><small>Docente de grado</small></div><div><br><small>Tesorero(a) de padres de familia</small></div><div><br><small>Testigo (padre o madre de familia)</small></div></div>
+    <div class="marca">Elaborado con M.E.T.A.S · ${adEsc(adFechaBonita(adHoy()))}</div>
+  </div></div>
 ${AD_CUADRO_AJUSTE}</body></html>`;
   adPrintAbrir(html);
 }
