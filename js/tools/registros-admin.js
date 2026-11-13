@@ -4596,6 +4596,14 @@ function adRenderGastos(body, d) {
     <div class="pa-card">
       <div class="pa-card-title">✅ Ya recuperados (${t.cobr.length})</div>
       ${t.cobr.slice().reverse().map(fila).join('')}
+    </div>` : ''}
+
+    ${lista.length ? `
+    <div class="pa-card">
+      <div class="pa-card-title">📒 Cuadro para Dirección</div>
+      <p class="pa-optional-hint">Todos tus gastos en una hoja carta, con lo reembolsado, lo que falta y cuántos días lleva
+        esperando cada uno, más una hoja de estadísticas. Con la misma cara que los cuadros de ingresos y egresos.</p>
+      <button class="pa-generate-btn" id="ad-gsto-cuadro">🖨️ Imprimir cuadro de gastos de mi bolsillo</button>
     </div>` : ''}`;
 
   document.getElementById('ad-gsto-volver').addEventListener('click', () => { _adGastosOn = 0; renderAdmin(); });
@@ -4666,6 +4674,8 @@ function adRenderGastos(body, d) {
     () => toast('⚠️ No se pudo copiar en este navegador')));
   const pr = document.getElementById('ad-gsto-print');
   if (pr) pr.addEventListener('click', () => adPrintGastos(t.pend, d));
+  const cu = document.getElementById('ad-gsto-cuadro');
+  if (cu) cu.addEventListener('click', () => adPrintCuadroBolsillo(adLoad()));
 }
 
 /* WhatsApp sin número: abre el selector del teléfono para que el maestro elija
@@ -4736,6 +4746,188 @@ ${orden.map(g => `<tr><td>${adFechaBonita(g.fecha)}</td><td>${adEsc(adGastoCatEt
   <div class="firma">Dirección</div>
 </div>
 </body></html>`;
+  adPrintAbrir(html);
+}
+
+/* ══════════════ 📒 CUADRO DE GASTOS DE MI BOLSILLO (para Dirección) ══════════════
+   La «Solicitud de reembolso» lleva solo lo pendiente. Este cuadro es la
+   cuenta completa entre el maestro y su centro, con la misma cara que los
+   cuadros de ingresos y egresos: TODO lo que adelantó, lo que ya le
+   devolvieron y lo que falta, con cuántos días lleva esperando cada gasto.
+   Hoja 1: el cuadro, gasto por gasto, con resúmenes y firmas.
+   Hoja 2: las cifras que pesan en la conversación con Dirección: cuánto
+   se ha recuperado, cuánto tiempo llevan esperando y en qué se va.
+   Si el maestro atiende dos colegios, salen solo los gastos que se le
+   cobran al colegio de este grupo (y los que no dicen colegio). */
+const AD_BOLS_TRAMOS = [
+  { hasta: 30,  et: 'Reciente',       rango: 'hasta 30 días', fondo: '#dbeafe', tinta: '#1e40af', barra: '#2563eb' },
+  { hasta: 60,  et: 'Atrasado',       rango: '31 a 60 días',  fondo: '#fef3c7', tinta: '#92400e', barra: '#d97706' },
+  { hasta: 90,  et: 'Muy atrasado',   rango: '61 a 90 días',  fondo: '#ffedd5', tinta: '#9a3412', barra: '#ea580c' },
+  { hasta: 1e9, et: 'Más de 3 meses', rango: 'más de 90 días', fondo: '#fde2e2', tinta: '#991b1b', barra: '#dc2626' },
+];
+function adBolsDias(iso) {
+  const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!m) return 0;
+  const a = new Date(+m[1], +m[2] - 1, +m[3]), h = new Date();
+  return Math.max(0, Math.floor((new Date(h.getFullYear(), h.getMonth(), h.getDate()) - a) / 864e5));
+}
+function adBolsTramo(dias) { return AD_BOLS_TRAMOS.find(t => dias <= t.hasta); }
+
+function adPrintCuadroBolsillo(d) {
+  const escuela = String(d.escuela || '').trim();
+  const todos = adGastosLoad();
+  const variasEscuelas = new Set(todos.map(g => String(g.escuela || '').trim()).filter(Boolean)).size > 1;
+  const lista = todos.filter(g => !variasEscuelas || !String(g.escuela || '').trim() || String(g.escuela).trim() === escuela)
+    .slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
+  if (!lista.length) { if (typeof toast === 'function') toast('Aún no hay gastos anotados'); return; }
+  const bol = d.boleta || {};
+  const t = adGastosTotales(lista);
+  const total = t.mPend + t.mCobr;
+  const pctRec = total > 0 ? Math.round(t.mCobr * 100 / total) : 0;
+  const sinRec = lista.filter(g => !g.factura);
+  const mSinRec = sinRec.reduce((s, g) => s + (Number(g.monto) || 0), 0);
+  const datos = adCuadroDatos(d, [['Gastos anotados', String(lista.length)]]);
+  const cabeza = titulo => adCuadroCabeza(d, titulo, datos);
+  const L = v => adIngNum(v);
+  const pend = t.pend.map(g => Object.assign({ dias: adBolsDias(g.fecha) }, g));
+
+  /* ── Hoja 1 ── */
+  const filas = lista.map((g, i) => {
+    const cobrado = g.estado === 'cobrado';
+    const dias = adBolsDias(g.fecha), tr = adBolsTramo(dias);
+    return `<tr><td class="num">${i + 1}</td><td>${adFechaBonita(g.fecha)}</td><td class="ti">${adEsc(adGastoCatEt(g.cat))}</td>
+      <td class="nom">${adEsc(g.concepto)}</td><td>${adEsc(g.cobrarA || 'Dirección')}</td>
+      <td class="${g.factura ? 'ok' : 'no'}">${g.factura ? '✓ Sí' : '⚠️ No'}</td>
+      <td class="mo">${L(g.monto)}</td>
+      ${cobrado ? `<td class="es ok" colspan="2">✅ Pagado el ${adFechaBonita(g.fechaCobro || g.fecha)}</td>`
+        : `<td class="es pe">⏳ Por cobrar</td><td class="di" style="background:${tr.fondo};color:${tr.tinta}">${dias} d</td>`}</tr>`;
+  }).join('');
+  const tabla = `<table class="ing bo">
+    <colgroup><col style="width:7mm"><col style="width:17mm"><col style="width:29mm"><col><col style="width:22mm"><col style="width:13mm">
+      <col style="width:17mm"><col style="width:20mm"><col style="width:12mm"></colgroup>
+    <thead><tr><th class="fijo">N.º</th><th class="fijo">FECHA</th><th class="fijo">TIPO</th><th class="fijo">CONCEPTO</th><th class="fijo">SE COBRA A</th>
+      <th class="fijo">RECIBO</th><th class="fijo">MONTO<br><small>L</small></th><th class="fijo">ESTADO</th><th class="fijo">ESPERA</th></tr></thead>
+    <tbody>${filas}</tbody>
+    <tfoot>
+      <tr><td colspan="6" class="tf-et">TOTAL ADELANTADO POR EL DOCENTE</td><td class="tf-n">${L(total)}</td><td colspan="2"></td></tr>
+      <tr><td colspan="6" class="tf-et">YA REEMBOLSADO</td><td class="tf-n" style="color:#166534">${L(t.mCobr)}</td><td colspan="2" class="tf-s">${t.cobr.length} gasto(s)</td></tr>
+      <tr><td colspan="6" class="tf-et">POR COBRAR</td><td class="tf-n" style="color:#991b1b">${L(t.mPend)}</td><td colspan="2" class="tf-s">${t.pend.length} gasto(s)</td></tr>
+    </tfoot>
+  </table>`;
+  const porClave = (arr, k) => {
+    const m = {};
+    arr.forEach(g => { const c = k(g); (m[c] = m[c] || { n: 0, tot: 0, pend: 0 }); m[c].n++; m[c].tot += Number(g.monto) || 0;
+      if (g.estado !== 'cobrado') m[c].pend += Number(g.monto) || 0; });
+    return Object.keys(m).map(c => Object.assign({ c }, m[c])).sort((a, b) => b.tot - a.tot);
+  };
+  const porTipo = porClave(lista, g => adGastoCatEt(g.cat));
+  const porQuien = porClave(lista, g => g.cobrarA || 'Dirección');
+  const mini = (titulo, filas2) => `<table class="ing res"><thead><tr><th class="fijo">${titulo}</th><th class="fijo">GASTOS</th><th class="fijo">TOTAL L</th><th class="fijo">POR COBRAR L</th></tr></thead>
+    <tbody>${filas2.map(x => `<tr><td class="nom">${adEsc(x.c)}</td><td>${x.n}</td><td>${L(x.tot)}</td><td class="${x.pend ? 'pe' : ''}">${L(x.pend)}</td></tr>`).join('')}</tbody></table>`;
+  const k = (et, v) => `<span class="k">${et}<b>${v}</b></span>`;
+  const pie = `<div class="pie">${k('🧾 Adelantado', adLps(total))}${k('✅ Reembolsado', adLps(t.mCobr))}${k('⏳ Por cobrar', adLps(t.mPend))}${k('📊 Recuperado', pctRec + ' %')}${
+    sinRec.length ? k('⚠️ Sin recibo', sinRec.length + ' · ' + adLps(mSinRec)) : ''}</div>
+    <div class="ley"><b>Espera</b> (días desde el gasto, solo lo pendiente): ${AD_BOLS_TRAMOS.map(x => `<span style="background:${x.fondo};color:${x.tinta}">${x.et} · ${x.rango}</span>`).join('')}</div>`;
+
+  /* ── Hoja 2 ── */
+  const tile = (ic, et, v, sub, st) => `<div class="tile" style="border-color:${st.b};background:${st.f}">
+      <span class="tile-ic">${ic}</span><span class="tile-et">${et}</span><b style="color:${st.t}">${v}</b><small>${sub}</small></div>`;
+  const viejo = pend.slice().sort((a, b) => b.dias - a.dias)[0];
+  const trRec = pctRec >= 75 ? { b: '#16a34a', f: '#dcfce7', t: '#166534' } : pctRec >= 50 ? { b: '#d97706', f: '#fef3c7', t: '#92400e' } : { b: '#dc2626', f: '#fde2e2', t: '#991b1b' };
+  const trViejo = viejo ? adBolsTramo(viejo.dias) : null;
+  const tiles = `<div class="tiles">
+    ${tile('🧾', 'Adelantado', adLps(total), lista.length + ' gasto(s)', { b: '#2563eb', f: '#dbeafe', t: '#1e3a7c' })}
+    ${tile('✅', 'Reembolsado', adLps(t.mCobr), t.cobr.length + ' gasto(s)', { b: '#16a34a', f: '#dcfce7', t: '#166534' })}
+    ${tile('⏳', 'Por cobrar', adLps(t.mPend), t.pend.length + ' gasto(s)', t.mPend ? { b: '#dc2626', f: '#fde2e2', t: '#991b1b' } : { b: '#16a34a', f: '#dcfce7', t: '#166534' })}
+    ${tile('📊', 'Recuperado', pctRec + ' %', 'de lo adelantado', trRec)}
+  </div>`;
+  const frases = [
+    t.mPend ? `El centro le debe al docente <b>${adLps(t.mPend)}</b> en <b>${t.pend.length}</b> gasto(s).` : 'El centro no le debe nada al docente: todo está reembolsado.',
+    viejo ? `El gasto más viejo sin pagar es <b>${adEsc(viejo.concepto)}</b> (${adLps(viejo.monto)}, ${adFechaBonita(viejo.fecha)}): lleva <b>${viejo.dias} días</b> esperando.` : '',
+    sinRec.length ? `<b>${sinRec.length}</b> gasto(s) por ${adLps(mSinRec)} no tienen recibo: conviene pedirlo o firmar un vale.` : 'Todos los gastos tienen su recibo.',
+    porTipo.length ? `En lo que más se ha gastado: <b>${adEsc(porTipo[0].c.replace(/^\S+\s/, ''))}</b> (${adLps(porTipo[0].tot)}, ${total ? Math.round(porTipo[0].tot * 100 / total) : 0} % del total).` : '',
+  ].filter(Boolean);
+  /* la deuda por tiempo de espera, en una barra */
+  const porTramo = AD_BOLS_TRAMOS.map(x => ({ x, m: 0, n: 0 }));
+  pend.forEach(g => { const i = AD_BOLS_TRAMOS.indexOf(adBolsTramo(g.dias)); porTramo[i].m += Number(g.monto) || 0; porTramo[i].n++; });
+  let x0 = 0;
+  const espera = t.mPend ? `<svg viewBox="0 0 100 10" preserveAspectRatio="none" width="100%" height="22" style="display:block" role="img" aria-label="Lo pendiente por tiempo de espera">
+    ${porTramo.map(p => { const w = p.m * 100 / t.mPend; const r = `<rect x="${x0}" y="0" width="${w}" height="10" fill="${p.x.barra}" stroke="#fff" stroke-width="1" vector-effect="non-scaling-stroke"/>`; x0 += w; return r; }).join('')}</svg>
+    <div class="dist-ley">${porTramo.map(p => `<span><i style="background:${p.x.barra}"></i>${p.x.et} <small>(${p.x.rango})</small>: <b>${adLps(p.m)}</b> · ${p.n} gasto(s)</span>`).join('')}</div>`
+    : '<p class="todos">🎉 No hay nada pendiente.</p>';
+  /* por tipo: lo reembolsado y lo pendiente, a la misma escala */
+  const max = Math.max(1, ...porTipo.map(p => p.tot));
+  const barTipo = `<table class="bc">${porTipo.map(p => `<tr><td class="bc-n"><b>${adEsc(p.c)}</b><br><small>${p.n} gasto(s)</small></td>
+    <td class="bc-b"><svg viewBox="0 0 100 8" preserveAspectRatio="none" width="100%" height="12" style="display:block">
+      <rect x="0" y="0" width="${(p.tot - p.pend) * 100 / max}" height="8" fill="#16a34a"/>
+      <rect x="${(p.tot - p.pend) * 100 / max}" y="0" width="${p.pend * 100 / max}" height="8" fill="#dc2626"/></svg></td>
+    <td class="bc-p"><b>${adLps(p.tot)}</b><br><small>${p.pend ? 'por cobrar ' + adLps(p.pend) : '✓ todo reembolsado'}</small></td></tr>`).join('')}</table>
+    <div class="dist-ley" style="grid-template-columns:auto auto;justify-content:start;gap:2px 16px"><span><i style="background:#16a34a"></i>Reembolsado</span><span><i style="background:#dc2626"></i>Por cobrar</span></div>`;
+  /* mes a mes: lo que adelantó y lo que le devolvieron */
+  const meses = {};
+  lista.forEach(g => {
+    const m1 = String(g.fecha || '').slice(0, 7);
+    if (m1) (meses[m1] = meses[m1] || { ade: 0, dev: 0 }).ade += Number(g.monto) || 0;
+    if (g.estado === 'cobrado') { const m2 = String(g.fechaCobro || g.fecha || '').slice(0, 7); if (m2) (meses[m2] = meses[m2] || { ade: 0, dev: 0 }).dev += Number(g.monto) || 0; }
+  });
+  let deuda = 0;
+  const maxMes = Math.max(1, ...Object.values(meses).map(m => Math.max(m.ade, m.dev)));
+  const mb = (v, c) => `<svg viewBox="0 0 100 6" preserveAspectRatio="none" width="100%" height="7" style="display:block"><rect x="0" y="0" width="${v * 100 / maxMes}" height="6" fill="${c}"/></svg>`;
+  const tablaMes = `<table class="db mes"><thead><tr><th>Mes</th><th>Adelantó</th><th>Le devolvieron</th><th>Deuda acumulada</th></tr></thead>
+    <tbody>${Object.keys(meses).sort().map(m => { deuda += meses[m].ade - meses[m].dev; return `<tr><td class="nom">${adEsc(adMesLabel(m))}</td>
+      <td><div class="mv">${mb(meses[m].ade, '#1e3a7c')}</div>${adLps(meses[m].ade)}</td><td><div class="mv">${mb(meses[m].dev, '#16a34a')}</div>${adLps(meses[m].dev)}</td>
+      <td class="${deuda > 0 ? 'neg' : 'pos'}">${adLps(deuda)}</td></tr>`; }).join('')}</tbody></table>`;
+  const pendTabla = pend.length ? `<table class="db"><thead><tr><th style="width:15mm">Fecha</th><th>Lo que falta cobrar (del más viejo al más nuevo)</th><th style="width:19mm">Monto</th><th style="width:20mm">Espera</th></tr></thead>
+    <tbody>${pend.slice().sort((a, b) => b.dias - a.dias).slice(0, 12).map(g => { const tr = adBolsTramo(g.dias); return `<tr><td>${adFechaBonita(g.fecha)}</td>
+      <td class="nom">${adEsc(g.concepto)}<br><small>${adEsc(adGastoCatEt(g.cat))} · ${adEsc(g.cobrarA || 'Dirección')}${g.factura ? '' : ' · ⚠️ sin recibo'}</small></td>
+      <td class="pen">${adLps(g.monto)}</td><td><span class="pc" style="background:${tr.fondo};color:${tr.tinta}">${g.dias} días</span></td></tr>`; }).join('')}</tbody></table>
+      ${pend.length > 12 ? `<p class="hc-nota">… y ${pend.length - 12} más en la hoja 1.</p>` : ''}` : '';
+
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${adEsc('Gastos del docente · ' + (adDocenteNombre() || ''))}</title>
+<style>
+${adCuadroCss(true)}
+  .bo td.nom { white-space: normal; font-weight: 500; text-align: left; }
+  .bo td.ti { font-size: 7.4px; text-align: left; color: #33415c; }
+  .bo td.mo { text-align: right; padding-right: 5px; font-weight: 800; }
+  .bo td.ok { color: #166534; font-weight: 700; } .bo td.no { color: #b45309; font-weight: 700; }
+  .bo td.es { font-size: 7.6px; font-weight: 800; text-align: left; padding-left: 4px; }
+  .bo td.es.ok { color: #166534; background: #f0fdf4; } .bo td.es.pe { color: #991b1b; }
+  .bo td.di { font-weight: 800; font-size: 7.6px; }
+  .bo-res { display: grid; grid-template-columns: 1fr 1fr; gap: 0 10px; margin-top: 6px; }
+  table.res td { padding: 2px 3px; } table.res td.nom { text-align: left; font-weight: 700; } table.res td.pe { color: #991b1b; font-weight: 800; }
+  .bc td.bc-n { width: 34%; } .bc td.bc-p { width: 24%; }
+  .eg-dos { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; align-items: start; }
+  .db.mes .mv { display: inline-block; width: 40%; vertical-align: middle; margin-right: 3px; }
+  .db.mes td { text-align: right; } .db.mes td.nom { text-align: left; }
+  .db td.pos { color: #166534; font-weight: 800; } .db td.neg { color: #991b1b; font-weight: 800; }
+  .db td.nom small { font-weight: 400; color: #64748b; font-size: 6.8px; } .db td.nom { white-space: normal; line-height: 1.15; }
+  .hc-nota { font-size: 7.6px; color: #55637d; margin-top: 3px; }
+</style></head><body>
+  <div class="hoja"><div class="fit">
+    ${cabeza('CUADRO DE GASTOS DEL DOCENTE · REEMBOLSOS')}
+    ${tabla}
+    <div class="bo-res">${mini('POR TIPO', porTipo)}${mini('SE COBRA A', porQuien)}</div>
+    ${pie}
+    <div class="firmas"><div>${adEsc(bol.docente || adDocenteNombre() || '')}<br><small>Docente solicitante</small></div><div><br><small>Tesorería</small></div><div>${adEsc(bol.director || '')}<br><small>Director(a)</small></div></div>
+    <div class="marca">Gastos que el docente pagó de lo suyo para el centro${variasEscuelas ? ', solo los que se le cobran a ' + adEsc(escuela || 'este centro') : ''}. Espera = días desde el gasto hasta hoy. · Elaborado con M.E.T.A.S · ${adEsc(adFechaBonita(adHoy()))}</div>
+  </div></div>
+  <div class="hoja"><div class="fit">
+    ${cabeza('ESTADÍSTICAS DE GASTOS Y REEMBOLSOS')}
+    ${tiles}
+    <div class="frases">${frases.map(f => `<p>• ${f}</p>`).join('')}</div>
+    <h3>Lo que falta cobrar, por tiempo de espera ${trViejo ? `<small>(lo más viejo: ${viejo.dias} días)</small>` : ''}</h3>
+    ${espera}
+    <h3>En qué se va el dinero del docente <small>(por tipo de gasto)</small></h3>
+    ${barTipo}
+    <div class="eg-dos">
+      <section><h3>Mes a mes</h3>${tablaMes}</section>
+      <section>${pendTabla ? '<h3>Lo pendiente, del más viejo</h3>' + pendTabla : ''}</section>
+    </div>
+    <div class="marca">Esto es entre el docente y su centro: no se comparte con las familias. · Elaborado con M.E.T.A.S · ${adEsc(adFechaBonita(adHoy()))}</div>
+  </div></div>
+${AD_CUADRO_AJUSTE}</body></html>`;
   adPrintAbrir(html);
 }
 
