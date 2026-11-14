@@ -380,14 +380,29 @@ function heImprimirLista(h, llenar) {
   let al = heAlumnos(g).map(a => ({ num: a.num, nombre: a.nombre }));
   /* sin lista, filas en blanco: la hoja sirve igual, se escriben a mano */
   if (!al.length) al = Array.from({ length: 35 }, () => ({ num: '', nombre: '' }));
-  const mitad = Math.ceil(al.length / 2);
-  const partes = [al.slice(0, mitad), al.slice(mitad)];
 
   const pie = `<div class="pie"><span>Firma del docente <span class="raya r50"></span></span>
     <span class="hecho">Hecha con M.E.T.A.S · metas.policastsapien.com</span></div>`;
-  const una = `<section class="hoja">${heEncabezado(h, g)}${heTabla(h, al, llenar)}${pie}</section>`;
-  const dos = partes.map((p, i) => `<section class="hoja">${heEncabezado(h, g,
-    'Hoja ' + (i + 1) + ' de 2')}${heTabla(h, p, llenar)}${pie}</section>`).join('');
+  /* Una lista sale en una hoja o en dos; las dos formas se arman de una
+     vez y el botón solo cambia cuál se ve. */
+  const vista = (lista, aviso) => {
+    const mitad = Math.ceil(lista.length / 2);
+    const partes = [lista.slice(0, mitad), lista.slice(mitad)];
+    const una = `<section class="hoja">${heEncabezado(h, g, aviso)}${heTabla(h, lista, llenar)}${pie}</section>`;
+    const dos = partes.map((p, i) => `<section class="hoja">${heEncabezado(h, g,
+      ['Hoja ' + (i + 1) + ' de 2', aviso].filter(Boolean).join(' · '))}${heTabla(h, p, llenar)}${pie}</section>`).join('');
+    return `<div class="v-una">${una}</div><div class="v-dos">${dos}</div>`;
+  };
+  /* Con las notas puestas, la hoja suele ir de captura al grupo de
+     WhatsApp de las familias: ahí sobran los renglones vacíos de quien
+     todavía no tiene nada, y un renglón vacío junto a un nombre se lee
+     como un cero. Por eso sale sin ellos, y un botón los devuelve para
+     el papel que se archiva. */
+  const filtra = !!(llenar && llenar.tiene);
+  const conNota = filtra ? al.filter(a => llenar.tiene(a)) : al;
+  const cuerpo = filtra
+    ? `<div class="v-solo">${vista(conNota, 'Alumnos con nota: ' + conNota.length + ' de ' + al.length)}</div><div class="v-todos">${vista(al)}</div>`
+    : vista(al);
 
   const html = `<!DOCTYPE html><html lang="es"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -402,6 +417,7 @@ body{font-family:Arial,Helvetica,sans-serif;color:#111;-webkit-print-color-adjus
 .hoja + .hoja{break-before:page;page-break-before:always;}
 @media screen{.hoja{margin:6mm auto;box-shadow:0 0 0 1px #e2e8f0;padding:0;}}
 body.dos .v-una, body:not(.dos) .v-dos{display:none;}
+body.todos .v-solo, body:not(.todos) .v-todos{display:none;}
 .enc{border-bottom:2px solid #1e3a7c;padding-bottom:1.6mm;margin-bottom:2mm;}
 .esc{font-size:8.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:#334155;}
 .t{font-size:14px;font-weight:900;line-height:1.2;color:#0f2350;}
@@ -436,10 +452,11 @@ tr{break-inside:avoid;page-break-inside:avoid;}
 <div class="noprint">
   <button onclick="window.print()">🖨️ Imprimir</button>
   <button id="he-modo">📄 Sacarla en dos hojas, renglón más alto</button>
+  ${filtra ? `<button id="he-todos">👥 Mostrar también a los que no tienen nota</button>` : ''}
   <p id="he-modo-txt"></p>
+  ${filtra ? `<p id="he-todos-txt"></p>` : ''}
 </div>
-<div class="v-una">${una}</div>
-<div class="v-dos">${dos}</div>
+${cuerpo}
 <script>
 /* El alto del renglón se MIDE, no se adivina: se reparte entre las filas
    todo lo que sobra hasta el tope de 248 mm, para que la nota se escriba
@@ -458,7 +475,10 @@ tr{break-inside:avoid;page-break-inside:avoid;}
       hoja.style.maxHeight = 'none';
       var base = hoja.getBoundingClientRect().height;
       var nat = filas[0].getBoundingClientRect().height;
-      var alto = Math.min(MAX, nat + (TOPE - base - 1) / filas.length);
+      /* la de solo-con-nota va de captura al teléfono: renglón justo, que
+         la imagen no salga larguísima con diez alumnos */
+      var tope = hoja.closest('.v-solo') ? 7 * MM : MAX;
+      var alto = Math.min(tope, nat + (TOPE - base - 1) / filas.length);
       filas.forEach(function (f) { f.style.height = alto + 'px'; });
       hoja.style.maxHeight = '';
       hoja.dataset.mm = (alto / MM).toFixed(1);
@@ -467,7 +487,7 @@ tr{break-inside:avoid;page-break-inside:avoid;}
   var b = document.getElementById('he-modo'), t = document.getElementById('he-modo-txt');
   function texto() {
     var dos = document.body.classList.contains('dos');
-    var h = document.querySelector(dos ? '.v-dos .hoja' : '.v-una .hoja');
+    var h = [].slice.call(document.querySelectorAll('.hoja')).filter(function (x) { return x.offsetParent; })[0];
     var mm = h ? +h.dataset.mm : 0;
     b.textContent = dos ? '📄 Volver a una sola hoja' : '📄 Sacarla en dos hojas, renglón más alto';
     t.innerHTML = (dos ? 'Sale en <strong>dos hojas</strong>, cada una con su encabezado.'
@@ -476,7 +496,16 @@ tr{break-inside:avoid;page-break-inside:avoid;}
       (!dos && mm < CHICO ? ': es bajito para escribir la nota. Si prefieres más espacio, sácala en dos hojas.' : '.');
   }
   b.addEventListener('click', function () { document.body.classList.toggle('dos'); ajustar(); texto(); });
-  ajustar(); texto();
+  var bt = document.getElementById('he-todos'), tt = document.getElementById('he-todos-txt');
+  function textoTodos() {
+    if (!bt) return;
+    var todos = document.body.classList.contains('todos');
+    bt.textContent = todos ? '🙈 Ocultar a los que no tienen nota' : '👥 Mostrar también a los que no tienen nota';
+    tt.innerHTML = todos ? 'Salen <strong>todos</strong> los alumnos, para archivar la hoja.'
+      : 'Salen <strong>solo los alumnos con alguna nota</strong>: así la captura para WhatsApp no lleva renglones vacíos.';
+  }
+  if (bt) bt.addEventListener('click', function () { document.body.classList.toggle('todos'); ajustar(); texto(); textoTodos(); });
+  ajustar(); texto(); textoTodos();
 })();
 <\/script>
 </body></html>`;

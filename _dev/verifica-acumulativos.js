@@ -11,7 +11,10 @@
      📝 Acumulativos, que va justo antes de 🧮 Notas SACE, con las mismas
      cinco actividades.
    · QUE EL PROMEDIO SEA EL BUENO: 90, 80, 100, 70 y 85 dan 85; con
-     notas a medias, dice cuántas faltan; vacío nunca es cero.
+     notas a medias se divide entre todas las actividades (así lo pidió el
+     maestro: la final va subiendo) y dice cuántas faltan.
+   · QUE LA HOJA CON NOTAS, que va de captura a WhatsApp, salga sin los
+     alumnos que no tienen nada, y con la fecha.
    · QUE UNA NOTA FUERA DE RANGO NO SE GUARDE (150 de un dedo de más).
    · QUE ENTER BAJE por la misma columna.
    · QUE EL RESUMEN DIGA el promedio del grupo y quiénes van bajo 70.
@@ -79,7 +82,7 @@ function sembrado() {
   const fin = async num => (await pg.textContent(`[data-fin="${num}"]`)).replace(/\s+/g, ' ').trim();
   comprueba('90, 80, 100, 70 y 85 dan 85', (await fin(1)) === '85', await fin(1));
   await escribe(2, [60, 70, 65]);
-  comprueba('con tres de cinco: 65 y «faltan 2»', /^65 faltan 2$/.test(await fin(2)), await fin(2));
+  comprueba('con tres de cinco se divide entre las cinco: 39 y «faltan 2»', /^39 faltan 2$/.test(await fin(2)), await fin(2));
   comprueba('sin notas, una raya (no un cero)', (await fin(4)) === '—', await fin(4));
   await escribe(3, [50, 60, 55, 65, 50]);
   comprueba('bajo 70 se marca con ↓, no solo con color', /^56 ↓$/.test(await fin(3)), await fin(3));
@@ -139,13 +142,25 @@ function sembrado() {
     !JSON.parse(localStorage.getItem('METAS_ADMIN_V1')).grupos[0].materias.includes('Formación Ciudadana')));
   comprueba('y las notas siguen ahí', (await fin(1)) === '85', await fin(1));
 
+  await pg.fill('#ac-fecha', '2026-11-13');
+  await pg.dispatchEvent('#ac-fecha', 'change');
+  await pg.waitForSelector('.ac-tabla');
+  comprueba('la fecha se guarda', await pg.evaluate(() =>
+    JSON.parse(localStorage.getItem('METAS_ADMIN_V1')).grupos[0].acumulativos[0].fecha) === '2026-11-13');
+
   console.log('\n── en papel ──');
   const [hoja] = await Promise.all([pg.waitForEvent('popup'), pg.click('#ac-imprimir')]);
   await hoja.waitForLoadState('load');
-  const fila1 = await hoja.$$eval('.v-una tbody tr:first-child td', ts => ts.map(t => t.textContent.trim()));
+  const fila1 = await hoja.$$eval('.v-solo .v-una tbody tr:first-child td', ts => ts.map(t => t.textContent.trim()));
   comprueba('la hoja sale con las notas y la final', JSON.stringify(fila1.slice(2)) === '["90","80","100","70","85","85"]', fila1);
-  const fila2 = await hoja.$$eval('.v-una tbody tr:nth-child(2) td', ts => ts.map(t => t.textContent.trim()));
-  comprueba('y la incompleta lo dice', fila2[7] === '65 (faltan 2)', fila2[7]);
+  const fila2 = await hoja.$$eval('.v-solo .v-una tbody tr:nth-child(2) td', ts => ts.map(t => t.textContent.trim()));
+  comprueba('y la incompleta lo dice', fila2[7] === '39 (faltan 2)', fila2[7]);
+  const visibles = () => hoja.$$eval('.hoja', hs => hs.filter(h => h.offsetParent)[0].querySelectorAll('tbody tr').length);
+  comprueba('sin los alumnos que no tienen ninguna nota (4 de 42)', await visibles() === 4, await visibles());
+  comprueba('y lo dice en el encabezado', /Alumnos con nota: 4 de 42/.test(await hoja.textContent('.v-solo .v-una .enc')));
+  comprueba('la fecha sale escrita', /2026/.test(await hoja.textContent('.v-solo .v-una .enc')));
+  await hoja.click('#he-todos');
+  comprueba('un botón los devuelve a todos para el papel', await visibles() === 42, await visibles());
   await hoja.close();
 
   console.log('\n── después de cerrar la aplicación ──');

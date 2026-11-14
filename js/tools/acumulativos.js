@@ -12,9 +12,12 @@
      dato por dato que todo lo demás (js/metas-fusion-aula.js). Por eso
      cada acumulativo y cada actividad llevan `id`, y las notas van por
      número de lista: dos equipos que escriben notas distintas no se pisan.
-   · Una casilla vacía es «todavía no la califiqué», nunca un cero. La
-     nota final se muestra con lo que hay y avisa cuántas faltan; el
-     promedio del grupo solo cuenta a los que tienen todas.
+   · Una casilla vacía es «todavía no la califiqué». En el promedio se
+     divide SIEMPRE entre todas las actividades (lo pidió el maestro: la
+     final va subiendo conforme califica, y con una sola actividad de
+     cinco un 100 vale 20, no 100). La final avisa cuántas faltan, y ni
+     el promedio del grupo ni el aviso de bajo 70 cuentan a quien le
+     faltan: con medio trabajo calificado, todos irían bajo 70.
    · El redondeo es Math.round, la misma regla de Notas SACE.
    · Las formas de calificar son las de 📏 Herramientas de evaluación
      (js/tools/herramientas-evaluacion.js), y la hoja impresa es la misma,
@@ -27,6 +30,10 @@ let _acNuevo = false;    /* eligiendo de dónde sale uno nuevo */
 const AC_PARCIALES = ['I', 'II', 'III', 'IV'];
 
 function acEsc(s) { return (typeof adEsc === 'function') ? adEsc(s) : String(s == null ? '' : s); }
+function acHoyIso() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
 function acId(p) { return p + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
 
 function acAlumnos(d) {
@@ -65,7 +72,7 @@ function acFinal(ac, num) {
   });
   const falta = ac.criterios.length - hay;
   if (!hay) return { nota: null, falta, exacta: null };
-  const exacta = (ac.tipo === 'actividades' && ac.calculo !== 'suma') ? suma / hay : suma;
+  const exacta = (ac.tipo === 'actividades' && ac.calculo !== 'suma') ? suma / ac.criterios.length : suma;
   return { nota: Math.round(exacta), falta, exacta };
 }
 /* Bajo 70 solo tiene sentido en una nota sobre 100 */
@@ -85,7 +92,9 @@ function acDesdeHoja(h) {
     icono: h.icono || '📝',
     materia: h.materia || '',
     parcial: (typeof _adSaceParcial !== 'undefined' && AC_PARCIALES.includes(_adSaceParcial)) ? _adSaceParcial : 'I',
-    fecha: h.fecha || '',
+    /* sin fecha en la hoja, la de hoy: es el día en que se pasan las
+       notas, casi siempre el mismo de la actividad o el siguiente */
+    fecha: h.fecha || acHoyIso(),
     tipo: h.tipo || 'actividades',
     calculo: h.calculo || 'promedio',
     criterios: (h.criterios || []).map((c, i) => ({ id: 'c' + (i + 1), t: c.t || '', pts: +c.pts || 10 })),
@@ -239,6 +248,9 @@ function acRenderUno(body, d, ac) {
     <div class="pa-card">
       <button class="he-volver" id="ac-volver">← Mis acumulativos</button>
       <div class="pa-card-title">${acEsc(ac.icono || '📝')} ${acEsc(ac.titulo)}</div>
+      <div class="he-campo"><label for="ac-fecha">Fecha de la actividad</label>
+        <input id="ac-fecha" type="date" class="pa-inp-field" value="${acEsc(ac.fecha || '')}"></div>
+      ${ac.fecha ? '' : '<p class="he-nota">Sin fecha, la hoja impresa sale con la raya en blanco.</p>'}
       <div class="he-sub">Parcial</div>
       <div class="he-chips" role="group" aria-label="Parcial">
         ${AC_PARCIALES.map(p => `<button class="he-chip ${p === ac.parcial ? 'he-chip-on' : ''}" data-par="${p}" aria-pressed="${p === ac.parcial}">${p === ac.parcial ? '✓ ' : ''}${p}</button>`).join('')}
@@ -255,7 +267,8 @@ function acRenderUno(body, d, ac) {
     <div class="pa-card">
       <div class="ac-resumen" id="ac-resumen">${acResumenHtml(ac, al, r)}</div>
       <p class="he-nota">${cot ? 'Toca la casilla: ✓ lo logró, ✗ todavía no, y otra vez para dejarla vacía.'
-        : 'Escribe la nota y pasa al siguiente con <strong>Enter</strong> o <strong>Siguiente</strong> del teclado: baja por la misma columna. En computadora, las <strong>flechas</strong> te mueven a cualquier lado. Una casilla vacía es «todavía no»; nunca cuenta como cero.'}</p>
+        : 'Escribe la nota y pasa al siguiente con <strong>Enter</strong> o <strong>Siguiente</strong> del teclado: baja por la misma columna. En computadora, las <strong>flechas</strong> te mueven a cualquier lado.' +
+          (acSobre100(ac) ? ' La nota final se divide entre las ' + ac.criterios.length + ' actividades: va subiendo conforme calificas y dice cuántas faltan.' : '')}</p>
       <div class="ac-tabla-wrap">
         <table class="ac-tabla">
           <thead><tr><th class="ac-nom">Alumno</th>
@@ -298,6 +311,9 @@ function acRenderUno(body, d, ac) {
   };
 
   body.querySelector('#ac-volver').addEventListener('click', () => { _acAbierto = null; renderAdmin(true); acArriba(); });
+  body.querySelector('#ac-fecha').addEventListener('change', e => {
+    acCambiar(ac.id, x => { x.fecha = e.target.value; }); renderAdmin(true);
+  });
   body.querySelectorAll('[data-par]').forEach(b => b.addEventListener('click', () => {
     acCambiar(ac.id, x => { x.parcial = b.dataset.par; }); renderAdmin(true);
   }));
@@ -398,6 +414,7 @@ function acRenderUno(body, d, ac) {
         const v = acValor(fresco, a.num, fresco.criterios[i].id);
         return v === null ? '' : fresco.tipo === 'cotejo' ? (v === 'si' ? '✓' : '✗') : String(v);
       },
+      tiene: a => fresco.criterios.some(c => acValor(fresco, a.num, c.id) !== null),
       fin: a => {
         const f = acFinal(fresco, a.num);
         return f.nota === null ? '' : String(f.nota) + (f.falta ? ' (faltan ' + f.falta + ')' : '');
