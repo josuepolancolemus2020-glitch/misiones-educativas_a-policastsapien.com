@@ -7155,3 +7155,38 @@ body:has(.ad-sace-card) #metasInstallBtn { display: none !important; }
 .he-desc-n { display: block; font-size: calc(12px * var(--metas-fz, 1)); font-weight: 700; color: var(--muted); margin-bottom: 6px; }
 .he-desc-n input { margin-top: 3px; }
 .he-agregar { width: 100%; }
+
+/* ══════════ 📝 ACUMULATIVOS (Mi aula · js/tools/acumulativos.js) ══════════
+   La tabla se desliza de lado DENTRO de su caja, con el nombre fijo a la
+   izquierda: cinco actividades no caben en 360 px, y perder de vista de
+   quién es la fila es como se escribe la nota en el renglón de otro. */
+.ac-leyenda { margin: 6px 0 0 20px; font-size: calc(13px * var(--metas-fz, 1)); line-height: 1.45; color: var(--text); }
+.ac-leyenda li { margin-bottom: 3px; }
+.ac-leyenda small { color: var(--muted); }
+.ac-resumen { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: calc(13px * var(--metas-fz, 1)); margin-bottom: 8px; }
+.ac-tabla-wrap { scroll-padding: 0 66px 0 130px; overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--border); border-radius: 10px; }
+.ac-tabla { border-collapse: separate; border-spacing: 0; width: 100%; font-size: calc(13px * var(--metas-fz, 1)); }
+.ac-tabla th, .ac-tabla td { border-bottom: 1px solid var(--border); padding: 3px 4px; text-align: center; background: var(--surface); }
+.ac-tabla thead th { background: var(--bg); font-weight: 900; color: var(--brand); position: sticky; top: 0; z-index: 2; min-width: 52px; }
+.ac-tabla .ac-nom {
+  position: sticky; left: 0; z-index: 1; text-align: left; min-width: 112px; max-width: 126px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-shadow: 1px 0 0 var(--border);
+}
+.ac-tabla thead .ac-nom { z-index: 3; }
+.ac-n { display: inline-block; min-width: 20px; font-weight: 900; color: var(--muted); }
+.ac-inp, .ac-cot {
+  width: 50px; min-height: 44px; border: 1.5px solid var(--border); border-radius: 8px; text-align: center;
+  font-size: 16px; font-weight: 700; background: var(--bg); color: var(--text); font-family: inherit;
+}
+.ac-inp:focus { border-color: var(--brand-light); background: var(--surface); outline: none; }
+.ac-inp.ac-malo { border-color: #b91c1c; background: #fef2f2; }
+.ac-cot { cursor: pointer; font-size: 20px; }
+.ac-si { background: #ecfdf5; border-color: #059669; color: #047857; }
+.ac-no { background: #fef2f2; border-color: #dc2626; color: #b91c1c; }
+.ac-tabla .ac-fin { min-width: 62px; background: #fffbeb; position: sticky; right: 0; z-index: 1; box-shadow: -1px 0 0 var(--border); }
+.ac-tabla thead .ac-fin { background: #fef3c7; z-index: 3; }
+.ac-fin strong { font-size: 16px; }
+.ac-falta { display: block; font-size: 10px; color: var(--muted); line-height: 1.1; }
+.ac-bajo { color: #b91c1c; }
+.ac-vacia { color: var(--faint); }
+.ac-fila { width: 100%; }

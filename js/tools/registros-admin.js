@@ -54,7 +54,7 @@ function adPersANumero(val, escala) {
   return k;
 }
 
-let _adTab = 'lista';        /* lista | eco | asis | eq | ctrl | sace | est | lec | com */
+let _adTab = 'lista';        /* lista | eco | asis | eq | ctrl | acum | sace | est | lec | com */
 let _adColectaId = null;     /* colecta abierta en Economía */
 let _adGastosOn = 0;         /* dentro de «Gastos de mi bolsillo» */
 let _adInvOn = 0;            /* dentro de «Inventario del aula» */
@@ -123,6 +123,8 @@ function adNormGrupo(g) {
   g.controles = Array.isArray(g.controles) ? g.controles : [];
   g.convocatorias = Array.isArray(g.convocatorias) ? g.convocatorias : [];  /* 📣 «¿va o no va?» */
   g.bitacora = Array.isArray(g.bitacora) ? g.bitacora : [];   /* novedades de la clase */
+  /* 📝 las notas de cada actividad calificada (js/tools/acumulativos.js) */
+  g.acumulativos = Array.isArray(g.acumulativos) ? g.acumulativos : [];
   /* tomas de lectura (palabras por minuto): el canal ya queda listo para
      la herramienta de lectura; su forma está descrita en
      js/tools/estadisticas-alumno.js, que es quien las dibuja */
@@ -944,8 +946,11 @@ function adActualizarChipNube() {
   }
 }
 
+/* Vale también para 📝 Acumulativos: allí se escriben cuarenta notas de
+   corrido, y una sincronización que repinte a media nota cierra el
+   teclado y se lleva lo que iba escrito. */
 function adSaceTieneFocoActivo() {
-  if (_adTab !== 'sace') return false;
+  if (_adTab !== 'sace' && _adTab !== 'acum') return false;
   const el = document.activeElement;
   if (!el) return false;
   const tag = (el.tagName || '').toUpperCase();
@@ -1112,7 +1117,7 @@ window.adRestoreState = adRestoreState;
 // Si el render se difirió porque el usuario estaba digitando, repintar al soltar el foco
 document.addEventListener('focusout', () => {
   if (!_adRenderDiferido) return;
-  if (_adTab !== 'sace') return;
+  if (_adTab !== 'sace' && _adTab !== 'acum') return;
   clearTimeout(_adDiferidoTimer);
   _adDiferidoTimer = setTimeout(() => {
     if (_adRenderDiferido && !adSaceTieneFocoActivo()) {
@@ -1130,7 +1135,7 @@ function renderAdmin(forzar = false) {
   /* Si el refresco viene de una sincronización en segundo plano mientras el
      usuario tiene el foco activo en un input de Notas SACE, evitar destruir el DOM
      de la tabla y actualizar únicamente el indicador del botón de pendientes. */
-  if (!forzar && _adTab === 'sace' && adSaceTieneFocoActivo()) {
+  if (!forzar && (_adTab === 'sace' || _adTab === 'acum') && adSaceTieneFocoActivo()) {
     _adRenderDiferido = true;
     adActualizarChipNube();
     return;
@@ -1194,6 +1199,7 @@ function renderAdmin(forzar = false) {
       <button class="pa-otab ${_adTab === 'asis'  ? 'pa-otab-active' : ''}" data-adtab="asis">📋 Asistencia</button>
       <button class="pa-otab ${_adTab === 'eq'    ? 'pa-otab-active' : ''}" data-adtab="eq">🤝 Equipos</button>
       <button class="pa-otab ${_adTab === 'ctrl'  ? 'pa-otab-active' : ''}" data-adtab="ctrl">✅ Controles</button>
+      <button class="pa-otab ${_adTab === 'acum'  ? 'pa-otab-active' : ''}" data-adtab="acum">📝 Acumulativos</button>
       <button class="pa-otab ${_adTab === 'sace'  ? 'pa-otab-active' : ''}" data-adtab="sace">🧮 Notas SACE</button>
       <button class="pa-otab ${_adTab === 'est'   ? 'pa-otab-active' : ''}" data-adtab="est">📈 Estadísticas</button>
       <button class="pa-otab ${_adTab === 'lec'   ? 'pa-otab-active' : ''}" data-adtab="lec">📖 Lectura</button>
@@ -1254,6 +1260,7 @@ function renderAdmin(forzar = false) {
   /* 🤝 Equipos va al lado de Asistencia a propósito: se pasa lista y se
      arman los equipos con los que vinieron (js/tools/equipos.js) */
   else if (_adTab === 'eq' && typeof adRenderEquipos === 'function') adRenderEquipos(body, d);
+  else if (_adTab === 'acum' && typeof adRenderAcum === 'function') adRenderAcum(body, d);
   else adRenderSace(body, d);
 
   if (savedState && savedState.activeInput) {

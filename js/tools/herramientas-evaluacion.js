@@ -250,6 +250,12 @@ function heRenderEditor(body) {
         <button class="pa-generate-btn ad-btn-sec" id="he-guardar">💾 Guardar para otra vez</button>
       </div>
       <p class="he-nota">Sale en hoja carta, lista para fotocopiar o guardar en PDF.</p>
+      ${grupos.length && typeof acCrearDesdeHoja === 'function' ? `
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn ad-btn-sec" id="he-a-acum">📝 Ya califiqué: pasar las notas a Mi aula</button>
+      </div>
+      <p class="he-nota">Abre <strong>Mi aula → 📝 Acumulativos</strong> con estas mismas actividades, para escribir
+        las notas de cada alumno y que la nota final salga sola.</p>` : ''}
     </div>`;
 
   /* Lo que se escribe se guarda en _he sin repintar: repintar a cada
@@ -285,6 +291,7 @@ function heRenderEditor(body) {
   val('he-menu').addEventListener('click', () => { _he = null; heRender(); heArriba(); });
   val('he-imp-lista').addEventListener('click', () => heImprimirLista(h));
   const rb = val('he-imp-rub'); if (rb) rb.addEventListener('click', () => heImprimirRubricas(h));
+  const pa = val('he-a-acum'); if (pa) pa.addEventListener('click', () => acCrearDesdeHoja(h, h.gid));
   val('he-guardar').addEventListener('click', () => {
     const lista = heGuardadas();
     const copia = JSON.parse(JSON.stringify(h));
@@ -343,7 +350,9 @@ function heEncabezado(h, g, extra) {
     </div>`;
 }
 
-function heTabla(h, filas) {
+/* `llenar` es opcional: con él la hoja sale con las notas ya escritas
+   (📝 Acumulativos de Mi aula); sin él, con las casillas en blanco. */
+function heTabla(h, filas, llenar) {
   const n = h.criterios.length;
   /* anchos en mm sobre los 196 de la carta con márgenes de 10: el nombre
      se queda con lo suyo y las casillas se reparten lo que sobra */
@@ -361,12 +370,12 @@ function heTabla(h, filas) {
       </tr></thead>
       <tbody>
         ${filas.map(a => `<tr><td class="c">${heEsc(a.num || '')}</td><td class="nom">${heEsc(a.nombre || '')}</td>
-          ${h.criterios.map(() => '<td></td>').join('')}<td class="fin"></td></tr>`).join('')}
+          ${h.criterios.map((c, i) => '<td class="v">' + (llenar ? heEsc(llenar.celda(a, i)) : '') + '</td>').join('')}<td class="fin v">${llenar ? heEsc(llenar.fin(a)) : ''}</td></tr>`).join('')}
       </tbody>
     </table>`;
 }
 
-function heImprimirLista(h) {
+function heImprimirLista(h, llenar) {
   const g = heGrupo(h.gid);
   let al = heAlumnos(g).map(a => ({ num: a.num, nombre: a.nombre }));
   /* sin lista, filas en blanco: la hoja sirve igual, se escriben a mano */
@@ -376,9 +385,9 @@ function heImprimirLista(h) {
 
   const pie = `<div class="pie"><span>Firma del docente <span class="raya r50"></span></span>
     <span class="hecho">Hecha con M.E.T.A.S · metas.policastsapien.com</span></div>`;
-  const una = `<section class="hoja">${heEncabezado(h, g)}${heTabla(h, al)}${pie}</section>`;
+  const una = `<section class="hoja">${heEncabezado(h, g)}${heTabla(h, al, llenar)}${pie}</section>`;
   const dos = partes.map((p, i) => `<section class="hoja">${heEncabezado(h, g,
-    'Hoja ' + (i + 1) + ' de 2')}${heTabla(h, p)}${pie}</section>`).join('');
+    'Hoja ' + (i + 1) + ' de 2')}${heTabla(h, p, llenar)}${pie}</section>`).join('');
 
   const html = `<!DOCTYPE html><html lang="es"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -411,6 +420,7 @@ td{border:1px solid #64748b;font-size:9px;line-height:1.15;padding:0 1mm;vertica
   overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
 td.c{text-align:center;font-weight:700;}
 td.fin{background:#fffbeb;}
+td.v{text-align:center;font-weight:700;}
 /* Cebra suave: con cuarenta filas el ojo salta de renglón y la nota de
    uno cae en la casilla del otro. */
 tbody tr:nth-child(even) td{background:#f8fafc;}
