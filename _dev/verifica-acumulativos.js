@@ -97,6 +97,23 @@ function sembrado() {
   comprueba('Enter baja a la misma actividad del siguiente alumno',
     await pg.evaluate(() => document.activeElement.dataset.num + '/' + document.activeElement.dataset.col) === '7/1');
 
+  /* las flechas, como en una hoja de cálculo (lo pidió el maestro que
+     pasa las notas en la computadora) */
+  const donde = () => pg.evaluate(() => document.activeElement.dataset.num + '/' + document.activeElement.dataset.col);
+  await pg.focus(celda(8, 2));
+  await pg.keyboard.press('ArrowDown');
+  comprueba('flecha abajo: el siguiente alumno', await donde() === '9/2', await donde());
+  await pg.keyboard.press('ArrowUp');
+  comprueba('flecha arriba: el de antes', await donde() === '8/2', await donde());
+  await pg.keyboard.press('ArrowLeft');
+  comprueba('flecha izquierda: la actividad de antes', await donde() === '8/1', await donde());
+  await pg.keyboard.press('ArrowRight');
+  comprueba('flecha derecha: la siguiente', await donde() === '8/2', await donde());
+  await pg.keyboard.type('88');
+  await pg.keyboard.press('ArrowLeft');
+  comprueba('con el cursor dentro del número, la flecha se queda a corregir la cifra', await donde() === '8/2', await donde());
+  await pg.fill(celda(8, 2), '');
+
   const res = (await pg.textContent('#ac-resumen')).replace(/\s+/g, ' ');
   comprueba('el resumen: 2 de 42 completos, promedio 71, Nº 3 bajo 70',
     /2 de 42 con todas sus notas/.test(res) && /Promedio del grupo: 71/.test(res) && /1 bajo 70: Nº 3/.test(res), res);
@@ -109,6 +126,18 @@ function sembrado() {
   const chicos = await pg.$$eval('#ad-tab-body button, #ad-tab-body input', bs => bs.filter(b => b.offsetParent)
     .map(b => b.getBoundingClientRect()).filter(r => r.height < 44).length);
   comprueba('lo que se toca mide 44 px de alto', chicos === 0, chicos);
+
+  console.log('\n── otra asignatura ──');
+  await pg.click('#ac-otra-mat');
+  await pg.waitForSelector('#mdlg-ok');
+  await pg.fill('#mdlg-inp', 'Formación Ciudadana');
+  await pg.click('#mdlg-ok');
+  await pg.waitForSelector('.ac-tabla');
+  comprueba('se puede escribir otra asignatura y queda elegida',
+    /Formación Ciudadana/.test(await pg.textContent('[data-mat].he-chip-on')));
+  comprueba('sin tocar las materias del grupo (las de Notas SACE)', await pg.evaluate(() =>
+    !JSON.parse(localStorage.getItem('METAS_ADMIN_V1')).grupos[0].materias.includes('Formación Ciudadana')));
+  comprueba('y las notas siguen ahí', (await fin(1)) === '85', await fin(1));
 
   console.log('\n── en papel ──');
   const [hoja] = await Promise.all([pg.waitForEvent('popup'), pg.click('#ac-imprimir')]);

@@ -246,6 +246,7 @@ function acRenderUno(body, d, ac) {
       <div class="he-sub">Asignatura</div>
       <div class="he-chips" role="group" aria-label="Asignatura">
         ${mats.map(m => `<button class="he-chip ${m === ac.materia ? 'he-chip-on' : ''}" data-mat="${acEsc(m)}" aria-pressed="${m === ac.materia}">${m === ac.materia ? '✓ ' : ''}${acEsc(m)}</button>`).join('')}
+        <button class="he-chip" id="ac-otra-mat">✏️ Otra…</button>
       </div>
       <p class="he-como">${acEsc(como)}</p>
       <ol class="ac-leyenda">${ac.criterios.map(c => `<li>${acEsc(c.t)}${ac.tipo === 'actividades' && ac.calculo === 'suma' ? ' <small>(' + (+c.pts || 0) + ' pts)</small>' : ''}</li>`).join('')}</ol>
@@ -254,7 +255,7 @@ function acRenderUno(body, d, ac) {
     <div class="pa-card">
       <div class="ac-resumen" id="ac-resumen">${acResumenHtml(ac, al, r)}</div>
       <p class="he-nota">${cot ? 'Toca la casilla: ✓ lo logró, ✗ todavía no, y otra vez para dejarla vacía.'
-        : 'Escribe la nota y pasa al siguiente con <strong>Enter</strong> o <strong>Siguiente</strong> del teclado: baja por la misma columna. Una casilla vacía es «todavía no»; nunca cuenta como cero.'}</p>
+        : 'Escribe la nota y pasa al siguiente con <strong>Enter</strong> o <strong>Siguiente</strong> del teclado: baja por la misma columna. En computadora, las <strong>flechas</strong> te mueven a cualquier lado. Una casilla vacía es «todavía no»; nunca cuenta como cero.'}</p>
       <div class="ac-tabla-wrap">
         <table class="ac-tabla">
           <thead><tr><th class="ac-nom">Alumno</th>
@@ -304,6 +305,36 @@ function acRenderUno(body, d, ac) {
     acCambiar(ac.id, x => { x.materia = b.dataset.mat; }); renderAdmin(true);
   }));
 
+  /* Otra asignatura (Formación Ciudadana, Hogar, Computación…) queda
+     solo en este acumulativo. No se agrega a las materias del grupo:
+     esas son las columnas de Notas SACE y la boleta, y una actividad no
+     debe cambiarle la boleta a nadie. */
+  body.querySelector('#ac-otra-mat').addEventListener('click', async () => {
+    const pide = (typeof metasPrompt === 'function')
+      ? metasPrompt('¿De qué asignatura es esta actividad?', { titulo: 'Otra asignatura', okTxt: 'Listo',
+          placeholder: 'ej.: Formación Ciudadana', maxlength: 50, value: (d.materias || []).includes(ac.materia) ? '' : (ac.materia || '') })
+      : Promise.resolve(window.prompt('¿De qué asignatura es esta actividad?', ''));
+    const v = String((await pide) || '').trim();
+    if (!v) return;
+    acCambiar(ac.id, x => { x.materia = v; }); renderAdmin(true);
+  });
+
+  /* Las flechas se mueven entre casillas como en una hoja de cálculo:
+     arriba y abajo siempre; a los lados cuando el cursor ya está en la
+     orilla del número (o lo tiene todo marcado, que es como queda al
+     entrar), para no quitarle al maestro corregir una cifra. */
+  const mover = (inp, dFila, dCol) => {
+    const fila = inp.closest('tr');
+    let col = +inp.dataset.col + dCol;
+    let tr = fila;
+    if (dFila) { tr = dFila > 0 ? fila.nextElementSibling : fila.previousElementSibling; col = +inp.dataset.col; }
+    if (!tr) return false;
+    const sig = tr.querySelector(`.ac-inp[data-col="${col}"]`);
+    if (!sig) return false;
+    sig.focus(); try { sig.select(); } catch (_) {}
+    return true;
+  };
+
   body.querySelectorAll('.ac-inp').forEach(inp => {
     inp.addEventListener('input', () => {
       const t = inp.value.replace(/[^\d]/g, '');
@@ -326,6 +357,12 @@ function acRenderUno(body, d, ac) {
       repintarFila(inp.dataset.num);
     });
     inp.addEventListener('keydown', e => {
+      const ini = inp.selectionStart, fin = inp.selectionEnd, largo = inp.value.length;
+      const todo = ini === 0 && fin === largo;
+      if (e.key === 'ArrowDown') { if (mover(inp, 1, 0)) e.preventDefault(); return; }
+      if (e.key === 'ArrowUp') { if (mover(inp, -1, 0)) e.preventDefault(); return; }
+      if (e.key === 'ArrowRight' && (todo || ini === largo)) { if (mover(inp, 0, 1)) e.preventDefault(); return; }
+      if (e.key === 'ArrowLeft' && (todo || fin === 0)) { if (mover(inp, 0, -1)) e.preventDefault(); return; }
       if (e.key !== 'Enter') return;
       e.preventDefault();
       const todos = [...body.querySelectorAll(`.ac-inp[data-col="${inp.dataset.col}"]`)];
