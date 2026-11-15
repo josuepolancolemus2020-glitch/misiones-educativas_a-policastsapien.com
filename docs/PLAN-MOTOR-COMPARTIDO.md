@@ -1089,10 +1089,12 @@ actividades no se tocaron.
 
 ### Lo que queda
 
-- **Congelar las formas 31 a 50** cuando Josué apruebe las preguntas. Falta
-  la bandera en `genera-formas-oro.js` (el equivalente de `--critica-ampliar`)
-  y que `verifica-formas-oro.js` las compare; no se hizo antes de tener el
-  visto bueno porque congelar es dejar fija la clave.
+- ~~Congelar las formas 31 a 50.~~ Josué aprobó las preguntas el 15 de
+  noviembre de 2026 y quedaron congeladas con la bandera nueva
+  `genera-formas-oro.js --conceptual-ampliar` (la referencia lleva
+  `conceptualAmpliada`). Desde entonces `verifica-formas-oro.js` compara las
+  50 formas conceptuales de La Célula, y la bandera se niega a volver a
+  congelarlas.
 - **La ficha de La Célula** no ofrece ninguna pregunta que no esté en el
   examen: su «Ponte a prueba» es el banco de antes. No se cambió.
 - **Las demás misiones.** El motor ya sirve a cualquiera que use la plantilla

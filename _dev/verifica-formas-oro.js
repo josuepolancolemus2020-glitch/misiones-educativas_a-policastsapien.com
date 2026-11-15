@@ -39,7 +39,9 @@
    Las congeladas tienen que seguir idénticas; las nuevas no pueden
    repetir a ninguna y sus preguntas tienen que ser de uno de los dos
    bancos. Mientras Josué no las apruebe no tienen referencia: se nombran
-   sin poner la sonda en rojo.
+   sin poner la sonda en rojo. Aprobadas, se congelan aparte
+   (`--conceptual-ampliar`; la referencia lleva `conceptualAmpliada`) y
+   desde entonces se comparan como las de antes.
 
    Si una forma congelada cambió, NO se arregla volviendo a congelar: se
    deshace el cambio. Volver a congelar es invalidar la clave impresa, y
@@ -138,7 +140,9 @@ lista.forEach(slug => {
         else if (ref.hoja !== hoy.hoja) falla(slug, p.llave, n, 'dice lo mismo pero cambió cómo se ve la hoja impresa (si fue a propósito: genera-formas-oro.js --resellar-hoja ' + slug + ')');
         else nCongeladas++;
       } else if (p.prueba === 'critica' && oro.criticaDeAntes && !oro.criticaAmpliada && n > oro.criticaDeAntes) sinCongelar++;
-      else if (oro.pruebas[p.llave] && n <= (p.prueba === 'critica' ? topePrueba : oro.tope)) falla(slug, p.llave, n, 'falta en la referencia');
+      /* Con las nuevas del banco grande congeladas, el examen conceptual
+         tiene referencia hasta su última forma. */
+      else if (oro.pruebas[p.llave] && n <= (p.prueba === 'critica' || (p.prueba === 'conceptual' && oro.conceptualAmpliada) ? topePrueba : oro.tope)) falla(slug, p.llave, n, 'falta en la referencia');
 
       /* 3 · del banco */
       if (p.prueba === 'conceptual') {
