@@ -27,9 +27,15 @@
 --   · Los totales se CALCULAN en vistas; no hay columnas de totales.
 --
 -- La base nueva empieza VACÍA. No hay migración automática. Las tablas viejas
--- se congelan aparte (SUPABASE-V2-CONGELAR.sql). Lo único que esta base lee
--- del archivo viejo es, al crear una familia con una clave ya entregada, si
--- esa clave era de ESE docente (metas._clave_era_mia).
+-- se congelan aparte (SUPABASE-V2-CONGELAR.sql). Lo único que esta base
+-- consulta del pasado es metas.claves_archivo: una COPIA INMUTABLE de las
+-- claves de familia de cada docente, tomada en el paso 1 del congelado (y al
+-- vincularse quien llegue después), para aceptar una clave ya entregada solo
+-- si era de ESE docente (metas._clave_era_mia). El blob vivo no se lee.
+--
+-- Orden: SUPABASE-V2-VINCULACION.sql (crea el esquema, metas.cuentas,
+-- metas.claves_archivo y el freno) → este archivo → SUPABASE-V2-FAMILIAS.sql
+-- → paso 1 de SUPABASE-V2-CONGELAR.sql.
 --
 -- Todo vive en el esquema `metas`. Hay que añadirlo en Settings → API →
 -- Exposed schemas.
@@ -37,11 +43,12 @@
 
 create schema if not exists metas;
 revoke all on schema metas from public, anon;
-grant usage on schema metas to authenticated;
--- Ninguna función nueva de este esquema se puede llamar por defecto: cada una
+grant usage on schema metas to authenticated, service_role;   -- service_role: las funciones de borde
+-- Ninguna función de este esquema se puede llamar por defecto: cada una
 -- recibe su GRANT a mano. (PostgreSQL da EXECUTE a PUBLIC si no se dice nada.)
-alter default privileges in schema metas revoke execute on functions from public;
-alter default privileges for role postgres in schema metas revoke execute on functions from public;
+-- (Que ninguna función nueva quede abierta a PUBLIC se hace al FINAL del
+--  archivo con «revoke execute on all functions in schema metas from public»:
+--  «alter default privileges … in schema» no alcanza, ver el cierre.)
 
 -- ════════════════════════════════════════════════════════════════════════════
 -- 0. Utilidades
@@ -202,8 +209,12 @@ end $$;
 -- alumno no se puede borrar en el mismo instante en que otro aparato le
 -- anota una nota (ver t_borrado_protegido).
 -- TG_ARGV en pares: columna, tabla.
+-- SECURITY DEFINER porque FOR SHARE exige permiso de UPDATE sobre la tabla
+-- padre, y las tablas de dinero (gastos_docente, por ejemplo) no lo dan a
+-- nadie. Como corre sin RLS, comprueba ella misma que el padre sea del MISMO
+-- dueño que la fila nueva (las llaves compuestas lo vuelven a exigir).
 create or replace function metas.t_padres_activos()
-returns trigger language plpgsql set search_path = metas, pg_temp as $$
+returns trigger language plpgsql security definer set search_path = metas, pg_temp as $$
 declare
   i int := 0;
   v_col text; v_tab text; v_id uuid; v_borrada boolean;
@@ -218,8 +229,8 @@ begin
     if tg_op = 'UPDATE' and v_id is not distinct from (to_jsonb(old) ->> v_col)::uuid then
       continue;
     end if;
-    execute format('select deleted_at is not null from metas.%I where id = $1 for share', v_tab)
-      into v_borrada using v_id;
+    execute format('select deleted_at is not null from metas.%I where id = $1 and owner = $2 for share', v_tab)
+      into v_borrada using v_id, new.owner;
     if v_borrada is null or v_borrada then
       raise exception 'metas: % % no existe o está borrado', v_tab, v_id using errcode = 'MT003';
     end if;
@@ -228,8 +239,8 @@ begin
 end $$;
 
 -- ── Borrado protegido ──────────────────────────────────────────────────────
--- No se borra un alumno ni un aula con pagos o notas activos, ni una colecta
--- con pagos o gastos activos. Para el alumno que se va está su estado (retirado,
+-- No se borra un alumno con pagos o notas activos, ni un aula con alumnos,
+-- colectas o gastos activos, ni una colecta con pagos o gastos activos. Para el alumno que se va está su estado (retirado,
 -- trasladado, desertor); para la colecta, cerrarla. Así nunca desaparece
 -- dinero de los totales por borrar al dueño.
 create or replace function metas.t_borrado_protegido()
@@ -238,6 +249,12 @@ begin
   if old.deleted_at is not null or new.deleted_at is null then
     return new;
   end if;
+  -- PRIMERO se toma la fila con FOR UPDATE: espera a que terminen las
+  -- transacciones que la tienen tomada FOR SHARE (un pago, una nota o una
+  -- colecta que se están creando sobre ella) y, como en READ COMMITTED cada
+  -- consulta de abajo ve lo ya confirmado, las comprobaciones ven ese pago o
+  -- esa nota. Sin esto, borrar el aula y crear un pago a la vez pasaban los dos.
+  execute format('select 1 from metas.%I where id = $1 for update', tg_table_name) using old.id;
   if tg_table_name = 'alumnos' then
     if exists (select 1 from metas.pagos where alumno_id = old.id and deleted_at is null)
        or exists (select 1 from metas.notas where alumno_id = old.id and deleted_at is null) then
@@ -245,9 +262,15 @@ begin
         using errcode = 'MT007';
     end if;
   elsif tg_table_name = 'aulas' then
-    if exists (select 1 from metas.pagos where aula_id = old.id and deleted_at is null)
-       or exists (select 1 from metas.notas where aula_id = old.id and deleted_at is null) then
-      raise exception 'metas: el aula tiene pagos o notas; no se borra'
+    -- Un aula solo se borra VACÍA: sin alumnos, colectas ni gastos activos
+    -- (y por tanto sin pagos ni notas, que cuelgan de ellos).
+    if exists (select 1 from metas.alumnos  where aula_id = old.id and deleted_at is null)
+       or exists (select 1 from metas.colectas where aula_id = old.id and deleted_at is null)
+       or exists (select 1 from metas.gastos   where aula_id = old.id and deleted_at is null)
+       or exists (select 1 from metas.gastos_docente where aula_id = old.id and deleted_at is null)
+       or exists (select 1 from metas.pagos    where aula_id = old.id and deleted_at is null)
+       or exists (select 1 from metas.notas    where aula_id = old.id and deleted_at is null) then
+      raise exception 'metas: el aula tiene alumnos, colectas o gastos; no se borra'
         using errcode = 'MT007';
     end if;
   elsif tg_table_name = 'colectas' then
@@ -534,26 +557,18 @@ create unique index if not exists familias_alumno_unica on metas.familias (alumn
 create unique index if not exists familias_clave_unica on metas.familias (clave)
   where deleted_at is null;
 
--- ¿Esta clave estaba en los datos congelados de este docente? Lee el archivo
--- viejo (docente_estado: METAS_CODIGOS_V1 y las claves pegadas a la lista en
--- METAS_ADMIN_V1) SOLO del código de docente vinculado a esta cuenta.
+-- ¿Esta clave era de este docente? Se busca en metas.claves_archivo, la copia
+-- INMUTABLE tomada en el paso 1 del congelado (o al vincularse, para quien se
+-- vincule después). NO se lee el blob vivo: así una clave que alguien meta
+-- hoy en su copia vieja no se puede «conservar».
 create or replace function metas._clave_era_mia(p_owner uuid, p_clave text)
-returns boolean language sql stable security definer set search_path = metas, public, pg_temp as $$
+returns boolean language sql stable security definer set search_path = metas, pg_temp as $$
   select exists (
     select 1
       from metas.cuentas c
-      join public.docente_estado e on e.codigo = c.docente_codigo
+      join metas.claves_archivo a on a.docente_codigo = c.docente_codigo
      where c.auth_uid = p_owner
-       and e.k in ('METAS_CODIGOS_V1', 'METAS_ADMIN_V1')
-       and (
-         (e.k = 'METAS_CODIGOS_V1'
-          and exists (select 1 from jsonb_path_query((e.valor ->> 'raw')::jsonb, '$.*.*') v
-                       where metas.norm_clave(v #>> '{}') = p_clave))
-         or
-         (e.k = 'METAS_ADMIN_V1'
-          and exists (select 1 from jsonb_path_query((e.valor ->> 'raw')::jsonb, '$.grupos[*].lista[*].clave') v
-                       where metas.norm_clave(v #>> '{}') = p_clave))
-       )
+       and a.clave = p_clave
   )
 $$;
 
@@ -621,9 +636,9 @@ create unique index if not exists colecta_exenciones_unica on metas.colecta_exen
 -- · Un alumno puede tener VARIOS pagos en la misma colecta (abonos), cada uno
 --   con su recibo.
 -- · El recibo lo numera la base; es único en todo el sistema e inmutable.
--- · El MONTO no cambia una vez numerado. Corregir = anular este pago y crear
---   otro con reemplaza_a = este id (metas.pago_corregir, en una sola
---   transacción). Anular = deleted_at + motivo; el recibo anulado queda en la
+-- · El MONTO y la FECHA no cambian una vez numerado. Corregir cualquiera de
+--   los dos = anular este pago y crear otro con reemplaza_a = este id
+--   (metas.pago_corregir, en una sola transacción). Anular = deleted_at + motivo; el recibo anulado queda en la
 --   auditoría.
 -- · Solo se escribe con las funciones metas.pago_*: no hay INSERT ni UPDATE
 --   por la API, así que tampoco hay upsert posible.
@@ -1037,6 +1052,8 @@ create table if not exists metas.bienes (
   reembolso_monto  numeric(12,2) check (reembolso_monto >= 0),
   donado_al_centro boolean not null default false,
   pasa_al_centro_at date,                                  -- cuándo pasó a ser del centro (si fue del docente)
+  gasto_docente_id uuid,                                   -- opcional: el gasto con que el docente lo compró
+  foreign key (gasto_docente_id, owner) references metas.gastos_docente (id, owner),
   check (propietario = 'docente' or pasa_al_centro_at is null
          or reembolso_fecha is not null or donado_al_centro),
   foreign key (aula_id, owner) references metas.aulas (id, owner)
@@ -1179,11 +1196,11 @@ select metas._preparar('alumnos',          '{aula_id}',                 '{aula_i
 select metas._preparar('familias',         '{aula_id,alumno_id,clave,clave_origen}', '{alumno_id,alumnos}');
 select metas._preparar('colectas',         '{aula_id}',                 '{aula_id,aulas}');
 select metas._preparar('colecta_exenciones','{aula_id,colecta_id,alumno_id}', '{colecta_id,colectas,alumno_id,alumnos}');
-select metas._preparar('pagos',            '{aula_id,colecta_id,alumno_id,monto,recibo,reemplaza_a,reemplaza_recibo}',
+select metas._preparar('pagos',            '{aula_id,colecta_id,alumno_id,monto,fecha,recibo,reemplaza_a,reemplaza_recibo}',
                                            '{colecta_id,colectas,alumno_id,alumnos}', 'funciones');
 select metas._preparar('gastos',           '{aula_id,colecta_id}',      '{aula_id,aulas,colecta_id,colectas}', 'funciones');
 select metas._preparar('gastos_docente',   '{}',                        '{aula_id,aulas}', 'funciones');
-select metas._preparar('reembolsos',       '{gasto_id,monto,reemplaza_a}', '{gasto_id,gastos_docente}', 'funciones');
+select metas._preparar('reembolsos',       '{gasto_id,monto,fecha,reemplaza_a}', '{gasto_id,gastos_docente}', 'funciones');
 select metas._preparar('asistencia_dias',  '{aula_id,fecha}',           '{aula_id,aulas}');
 select metas._preparar('asistencia',       '{aula_id,alumno_id,fecha}', '{alumno_id,alumnos}');
 select metas._preparar('inasistencias_oficiales', '{aula_id,alumno_id,periodo}', '{alumno_id,alumnos}');
@@ -1204,7 +1221,7 @@ select metas._preparar('repartos',         '{aula_id}',                 '{aula_i
 select metas._preparar('reparto_miembros', '{aula_id,reparto_id,alumno_id}', '{reparto_id,repartos,alumno_id,alumnos}');
 select metas._preparar('analisis',         '{aula_id}',                 '{aula_id,aulas}');
 select metas._preparar('analisis_alumnos', '{aula_id,analisis_id,alumno_id}', '{analisis_id,analisis,alumno_id,alumnos}');
-select metas._preparar('bienes',           '{}',                        '{aula_id,aulas}');
+select metas._preparar('bienes',           '{}',                        '{aula_id,aulas,gasto_docente_id,gastos_docente}');
 select metas._preparar('actas_inventario', '{centro,numero,fecha,periodo_desde,entrega,recibe,contenido,totales,reemplaza_a}',
                                            '{}', 'funciones');
 select metas._preparar('convocatorias',    '{}');
@@ -1366,6 +1383,8 @@ begin
    where id = p_colecta and owner = v_uid and deleted_at is null for share;
   if not found then return jsonb_build_object('ok', false, 'motivo', 'colecta'); end if;
   if v_col.estado = 'cerrada' then return jsonb_build_object('ok', false, 'motivo', 'colecta_cerrada'); end if;
+  perform 1 from metas.aulas where id = v_col.aula_id and deleted_at is null for share;   -- el aula no se borra mientras tanto
+  if not found then return jsonb_build_object('ok', false, 'motivo', 'aula'); end if;
   perform 1 from metas.alumnos
    where id = p_alumno and owner = v_uid and aula_id = v_col.aula_id and deleted_at is null for share;
   if not found then return jsonb_build_object('ok', false, 'motivo', 'alumno'); end if;
@@ -1391,9 +1410,13 @@ begin
   return jsonb_build_object('ok', true, 'pago', metas._pago_json(r));
 end $$;
 
--- ── Corregir el monto (o monto y fecha): anular + nuevo, en una transacción ──
+-- ── Corregir monto o fecha: anular + nuevo, en una transacción ────────────
+-- p_base = {"monto":"50.00","fecha":"2027-03-03"}: lo que el aparato veía.
+-- Solo se PREGUNTA si otro aparato cambió lo que importa: el monto, la fecha
+-- o si el pago sigue vivo (anulado o ya reemplazado). Un cambio en la nota o
+-- en el recibo anterior NO es motivo para preguntar.
 create or replace function metas.pago_corregir(
-  p_pago uuid, p_base_version int, p_nuevo_id uuid, p_op uuid,
+  p_pago uuid, p_base jsonb, p_nuevo_id uuid, p_op uuid,
   p_monto text, p_fecha date, p_motivo text default 'corrección'
 ) returns jsonb language plpgsql security definer set search_path = metas, pg_temp as $$
 declare
@@ -1413,13 +1436,17 @@ begin
   end if;
   select * into v from metas.pagos where id = p_pago and owner = v_uid for update;
   if not found then return jsonb_build_object('ok', false, 'motivo', 'no_existe'); end if;
-  if v.deleted_at is not null or v.version <> p_base_version then
-    -- Otro aparato lo anuló, lo corrigió o le cambió la fecha: NO se decide.
+  if v.deleted_at is not null
+     or v.monto is distinct from metas._monto(p_base ->> 'monto')
+     or v.fecha is distinct from (p_base ->> 'fecha')::date then
     select * into w from metas.pagos where reemplaza_a = p_pago;
     return jsonb_build_object('ok', false, 'pregunta', 'pago_cambiado_en_otro_aparato',
       'actual', metas._pago_json(v),
       'reemplazo', case when w.id is not null then metas._pago_json(w) end,
       'este', jsonb_build_object('monto', v_monto::text, 'fecha', p_fecha));
+  end if;
+  if v_monto = v.monto and coalesce(p_fecha, v.fecha) = v.fecha then
+    return jsonb_build_object('ok', true, 'sin_cambios', true, 'pago', metas._pago_json(v));
   end if;
   update metas.pagos set deleted_at = now(), anulado_motivo = left(coalesce(p_motivo, 'corrección'), 200)
    where id = p_pago;
@@ -1459,38 +1486,28 @@ begin
   return jsonb_build_object('ok', true, 'pago', metas._pago_json(v));
 end $$;
 
--- ── Editar fecha, nota o recibo anterior (el monto NO) ─────────────────────
--- p_base: lo que el aparato veía de los campos que cambia, p. ej.
--- {"fecha":"2027-03-03"}. Si otro aparato cambió la FECHA, se pregunta.
-create or replace function metas.pago_editar(p_pago uuid, p_base jsonb, p_cambios jsonb, p_op uuid)
+-- ── Editar nota o recibo anterior ─────────────────────────────────────────
+-- El monto y la fecha de un pago numerado NO se editan (pago_corregir). Lo
+-- que queda no es dinero: se aplica sin preguntar.
+create or replace function metas.pago_editar(p_pago uuid, p_cambios jsonb, p_op uuid)
 returns jsonb language plpgsql security definer set search_path = metas, pg_temp as $$
 declare
   v metas.pagos;
-  v_fecha date;
 begin
   if not metas.es_docente() then
     raise exception 'metas: se necesita una cuenta de docente' using errcode = '42501';
   end if;
-  if exists (select 1 from jsonb_object_keys(p_cambios) k where k not in ('fecha', 'nota', 'recibo_anterior')) then
-    return jsonb_build_object('ok', false, 'motivo', 'campo_no_editable');   -- el monto se corrige con pago_corregir
+  if exists (select 1 from jsonb_object_keys(p_cambios) k where k not in ('nota', 'recibo_anterior')) then
+    return jsonb_build_object('ok', false, 'motivo', 'campo_no_editable');   -- monto y fecha: pago_corregir
   end if;
   select * into v from metas.pagos where id = p_pago and owner = auth.uid() for update;
   if not found then return jsonb_build_object('ok', false, 'motivo', 'no_existe'); end if;
   if v.deleted_at is not null then return jsonb_build_object('ok', false, 'motivo', 'anulado'); end if;
-  if p_cambios ? 'fecha' then
-    v_fecha := (p_cambios ->> 'fecha')::date;
-    if v.fecha is distinct from (p_base ->> 'fecha')::date and v.fecha is distinct from v_fecha then
-      return jsonb_build_object('ok', false, 'pregunta', 'fecha_cambiada_en_otro_aparato',
-                                'actual', metas._pago_json(v), 'este', jsonb_build_object('fecha', v_fecha));
-    end if;
-  end if;
-  if (not p_cambios ? 'fecha' or v_fecha is not distinct from v.fecha)
-     and (not p_cambios ? 'nota' or (p_cambios ->> 'nota') is not distinct from v.nota)
-     and (not p_cambios ? 'recibo_anterior' or nullif(p_cambios ->> 'recibo_anterior', '') is not distinct from v.recibo_anterior) then
+  if (not p_cambios ? 'nota' or (p_cambios ->> 'nota') is not distinct from v.nota)
+     and (not p_cambios ? 'recibo_anterior' or nullif(trim(p_cambios ->> 'recibo_anterior'), '') is not distinct from v.recibo_anterior) then
     return jsonb_build_object('ok', true, 'ya_estaba', true, 'pago', metas._pago_json(v));
   end if;
   update metas.pagos set
-    fecha           = coalesce(v_fecha, fecha),
     nota            = case when p_cambios ? 'nota' then p_cambios ->> 'nota' else nota end,
     recibo_anterior = case when p_cambios ? 'recibo_anterior' then nullif(trim(p_cambios ->> 'recibo_anterior'), '') else recibo_anterior end
   where id = p_pago returning * into v;
@@ -1627,6 +1644,11 @@ begin
     end if;
     return jsonb_build_object('ok', false, 'motivo', 'id_ocupado');
   end if;
+  if p_campos ? 'aula_id' and nullif(p_campos ->> 'aula_id', '') is not null then
+    perform 1 from metas.aulas where id = (p_campos ->> 'aula_id')::uuid and owner = v_uid
+                                 and deleted_at is null for share;
+    if not found then return jsonb_build_object('ok', false, 'motivo', 'aula'); end if;
+  end if;
   perform pg_advisory_xact_lock(hashtextextended(v_uid::text || 'gastos_docente', 0));
   if not p_son_distintos then
     select coalesce(jsonb_agg(metas._gasto_docente_json(g) order by g.created_at), '[]'::jsonb) into v_otros
@@ -1640,7 +1662,7 @@ begin
     end if;
   end if;
   insert into metas.gastos_docente (id, op_creacion, aula_id, fecha, tipo, concepto, cobrar_a, tiene_recibo, monto, escuela)
-  values (p_id, p_op, (p_campos ->> 'aula_id')::uuid, p_fecha, p_tipo, p_concepto, p_cobrar_a,
+  values (p_id, p_op, nullif(p_campos ->> 'aula_id', '')::uuid, p_fecha, p_tipo, p_concepto, p_cobrar_a,
           coalesce((p_campos ->> 'tiene_recibo')::boolean, false), v_monto, p_campos ->> 'escuela')
   returning * into r;
   return jsonb_build_object('ok', true, 'gasto', metas._gasto_docente_json(r));
@@ -1649,12 +1671,14 @@ end $$;
 -- Editar: monto y fecha con pregunta si otro aparato los cambió; lo demás
 -- campo por campo. El monto de un gasto del docente SÍ se puede corregir (no
 -- tiene recibo numerado; los reembolsos sí son inmutables).
-create or replace function metas.gasto_docente_editar(p_gasto uuid, p_base jsonb, p_cambios jsonb, p_op uuid)
+create or replace function metas.gasto_docente_editar(p_gasto uuid, p_base jsonb, p_cambios jsonb, p_op uuid,
+                                                      p_confirmado boolean default false)
 returns jsonb language plpgsql security definer set search_path = metas, pg_temp as $$
 declare
   v metas.gastos_docente;
   v_monto numeric;
   v_fecha date;
+  v_reemb numeric;
 begin
   if not metas.es_docente() then
     raise exception 'metas: se necesita una cuenta de docente' using errcode = '42501';
@@ -1674,6 +1698,16 @@ begin
     return jsonb_build_object('ok', false, 'pregunta', 'gasto_cambiado_en_otro_aparato',
       'actual', metas._gasto_docente_json(v),
       'este', jsonb_build_object('monto', coalesce(v_monto, v.monto)::text, 'fecha', coalesce(v_fecha, v.fecha)));
+  end if;
+  -- Bajar el monto por debajo de lo que ya le devolvieron deja un reembolso
+  -- «de más»: se pregunta, con las dos cifras, antes de guardarlo.
+  if v_monto is not null and not p_confirmado then
+    select coalesce(sum(monto), 0) into v_reemb from metas.reembolsos
+     where gasto_id = p_gasto and deleted_at is null;
+    if v_monto < v_reemb then
+      return jsonb_build_object('ok', false, 'pregunta', 'monto_menor_que_reembolsado',
+        'reembolsado', v_reemb::text, 'este', jsonb_build_object('monto', v_monto::text));
+    end if;
   end if;
   update metas.gastos_docente set
     monto         = coalesce(v_monto, monto),
@@ -1816,7 +1850,7 @@ end $$;
 -- p_reemplaza: si el acta corrige a otra (que queda anulada con motivo).
 create or replace function metas.acta_inventario_crear(
   p_id uuid, p_op uuid, p_centro text, p_fecha date, p_entrega text, p_recibe text,
-  p_reemplaza uuid default null, p_motivo text default null
+  p_reemplaza uuid default null, p_motivo text default null, p_misma_fecha_ok boolean default false
 ) returns jsonb language plpgsql security definer set search_path = metas, pg_temp as $$
 declare
   v_uid uuid := auth.uid();
@@ -1833,7 +1867,22 @@ begin
     end if;
     return jsonb_build_object('ok', false, 'motivo', 'id_ocupado');
   end if;
+  if p_fecha is null or p_fecha > (now() at time zone 'America/Tegucigalpa')::date then
+    return jsonb_build_object('ok', false, 'motivo', 'fecha_futura');   -- un acta fija lo que YA hay
+  end if;
   perform pg_advisory_xact_lock(hashtextextended(v_uid::text || metas.norm_nombre(p_centro), 0));
+  -- Dos aparatos que hacen el acta a la vez reciben números seguidos (2 y 3).
+  -- Solo se pregunta si ya hay un acta ACTIVA de ese centro con la MISMA fecha.
+  if p_reemplaza is null and not p_misma_fecha_ok then
+    select * into v_ant from metas.actas_inventario
+     where owner = v_uid and metas.norm_nombre(centro) = metas.norm_nombre(p_centro)
+       and fecha = p_fecha and deleted_at is null
+     order by numero desc limit 1;
+    if found then
+      return jsonb_build_object('ok', false, 'pregunta', 'acta_misma_fecha',
+                                'existente', jsonb_build_object('numero', v_ant.numero, 'fecha', v_ant.fecha));
+    end if;
+  end if;
   if p_reemplaza is not null then
     select * into v_ant from metas.actas_inventario
      where id = p_reemplaza and owner = v_uid and deleted_at is null for update;
@@ -1959,19 +2008,19 @@ $$;
 grant execute on function
   metas.alumno_choques(uuid, text, text, text),
   metas.pago_crear(uuid, uuid, uuid, uuid, text, date, text, text, uuid[], boolean),
-  metas.pago_corregir(uuid, int, uuid, uuid, text, date, text),
+  metas.pago_corregir(uuid, jsonb, uuid, uuid, text, date, text),
   metas.pago_anular(uuid, text, uuid),
-  metas.pago_editar(uuid, jsonb, jsonb, uuid),
+  metas.pago_editar(uuid, jsonb, uuid),
   metas.gasto_crear(uuid, uuid, uuid, date, text, text, jsonb, uuid[], boolean),
   metas.gasto_editar(uuid, jsonb, jsonb, uuid),
   metas.gasto_anular(uuid, text, uuid),
   metas.gasto_docente_crear(uuid, uuid, date, text, text, text, text, jsonb, uuid[], boolean),
-  metas.gasto_docente_editar(uuid, jsonb, jsonb, uuid),
+  metas.gasto_docente_editar(uuid, jsonb, jsonb, uuid, boolean),
   metas.gasto_docente_anular(uuid, text, uuid),
   metas.reembolso_crear(uuid, uuid, uuid, text, date, text, text, uuid[], boolean),
   metas.reembolso_corregir(uuid, int, uuid, uuid, text, date, text),
   metas.reembolso_anular(uuid, text, uuid),
-  metas.acta_inventario_crear(uuid, uuid, text, date, text, text, uuid, text),
+  metas.acta_inventario_crear(uuid, uuid, text, date, text, text, uuid, text, boolean),
   metas.alumno_crear(uuid, uuid, uuid, jsonb, uuid[])
 to authenticated;
 
@@ -2184,35 +2233,11 @@ grant select on metas.v_colecta_alumnos, metas.v_colectas_resumen,
   to authenticated;
 
 -- ════════════════════════════════════════════════════════════════════════════
--- 9. Freno de intentos (lo usan las funciones de borde)
+-- 9. Freno de intentos
 -- ════════════════════════════════════════════════════════════════════════════
--- La IP NO se lee aquí de cabeceras que el cliente pueda escribir. La pasan
--- las funciones de borde (metas-entrar, familia-vincular), que la toman del
--- valor que añade la infraestructura de Supabase (02, sección 2.5). La base
--- solo cuenta.
-create table if not exists metas.frenos (
-  llave    text        not null,
-  ventana  timestamptz not null,
-  n        integer     not null default 0,
-  primary key (llave, ventana)
-);
-alter table metas.frenos enable row level security;   -- sin políticas: solo las funciones
-revoke all on metas.frenos from public, anon, authenticated;
-
-create or replace function metas.freno_ok(p_llave text, p_max int, p_ventana interval)
-returns boolean language plpgsql volatile security definer set search_path = metas, pg_temp as $$
-declare
-  v_ini timestamptz := date_bin(p_ventana, now(), timestamptz '2000-01-01');
-  v_n   int;
-begin
-  delete from metas.frenos where ventana < now() - interval '1 day';
-  insert into metas.frenos as f (llave, ventana, n) values (left(p_llave, 200), v_ini, 1)
-  on conflict (llave, ventana) do update set n = f.n + 1
-  returning n into v_n;
-  return v_n <= p_max;
-end $$;
-revoke all on function metas.freno_ok(text, int, interval) from public, anon, authenticated;
-grant execute on function metas.freno_ok(text, int, interval) to service_role;
+-- metas.frenos y metas.freno_ok se crean en SUPABASE-V2-VINCULACION.sql, que
+-- va antes que este archivo: metas-entrar ya los necesita para el freno por
+-- IP. La IP nunca se lee aquí de cabeceras que el cliente pueda escribir.
 
 -- La lectura de las familias (padres.html, asistente) va en
 -- SUPABASE-V2-FAMILIAS.sql.
@@ -2247,4 +2272,13 @@ grant execute on function metas.freno_ok(text, int, interval) to service_role;
 -- e) Ninguna función de metas ejecutable por PUBLIC:
 --    select p.oid::regprocedure from pg_proc p join pg_namespace n on n.oid = p.pronamespace
 --     where n.nspname = 'metas' and has_function_privilege('public', p.oid, 'execute');   → 0 filas
+-- ── Cierre de permisos ──────────────────────────────────────────────────────
+-- «alter default privileges … in schema metas revoke … from public» NO quita
+-- el EXECUTE que PostgreSQL da a PUBLIC (un permiso global no se quita por
+-- esquema; lo comprobó la capa A). Por eso, al final de cada archivo, se
+-- quita a mano de TODAS las funciones de metas. Las que la app necesita ya
+-- tienen su GRANT explícito a authenticated, service_role o al rol lector,
+-- que no depende de PUBLIC.
+revoke execute on all functions in schema metas from public;
+
 -- ============================================================================

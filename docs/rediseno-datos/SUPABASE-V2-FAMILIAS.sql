@@ -104,9 +104,16 @@ begin
   if not found then
     -- Fallos: por IP y además un tope GLOBAL, para que repartir el ataque
     -- entre muchas IP no sirva para recorrer claves.
-    if not metas.freno_ok('famfallo-ip:' || coalesce(p_ip, 'sin-ip'), 20, interval '1 hour')
-       or not metas.freno_ok('famfallo-global', 2000, interval '1 hour') then
+    if not metas.freno_ok('famfallo-ip:' || coalesce(p_ip, 'sin-ip'), 20, interval '1 hour') then
       return jsonb_build_object('ok', false, 'motivo', 'espera');
+    end if;
+    -- Tope GLOBAL: no bloquea a nadie (un ataque repartido no puede dejar a
+    -- todas las familias sin entrar); deja UNA alerta por hora para quien
+    -- administra cuando se pasan las 2 000 claves equivocadas en una hora.
+    if not metas.freno_ok('famfallo-global', 2000, interval '1 hour')
+       and metas.freno_ok('famfallo-global-alerta', 1, interval '1 hour') then
+      insert into metas.alertas (tipo, detalle)
+      values ('claves_familia_equivocadas', jsonb_build_object('umbral', 2000, 'ventana', '1 hour'));
     end if;
     -- 'clave' también cuando el aula todavía no se cargó en la base nueva: el
     -- portal entonces consulta el archivo congelado (07, transición).
@@ -166,6 +173,9 @@ grant select (id, alumno_id, tipo, texto, fecha, visible_hasta, para_familia, de
 grant select (id, aula_id, pregunta, claves, respuesta, activa, deleted_at)      on metas.preguntas_frecuentes to metas_lector_familias;
 grant select (id, analisis_id, alumno_id, nota, no_se_presento, categoria, mensaje, enviado, deleted_at) on metas.analisis_alumnos to metas_lector_familias;
 grant select (id, aula_id, evaluacion, asignatura_id, periodo, fecha_prueba, deleted_at) on metas.analisis to metas_lector_familias;
+grant select (id, aula_id, nombre, icono, tipo, fecha, para_familia, deleted_at)  on metas.controles   to metas_lector_familias;
+grant select (id, control_id, alumno_id, marcado, numero, texto, deleted_at)      on metas.control_valores to metas_lector_familias;
+grant select (id, aula_id, fecha, texto, deleted_at)                             on metas.bitacora    to metas_lector_familias;
 
 -- Políticas: solo SELECT, solo filas activas, solo sus alumnos (o su aula
 -- para lo que es de toda el aula: colectas, avisos, preguntas, gastos).
@@ -209,6 +219,15 @@ create policy familia_lee on metas.analisis_alumnos for select to metas_lector_f
   using (deleted_at is null and enviado and alumno_id in (select metas.familia_alumnos()));
 create policy familia_lee on metas.analisis      for select to metas_lector_familias
   using (deleted_at is null and aula_id in (select metas.familia_aulas()));
+-- Controles marcados «para la familia» (antes iban como mensaje AVB) y lo
+-- anotado de SU hijo en ellos.
+create policy familia_lee on metas.controles     for select to metas_lector_familias
+  using (deleted_at is null and para_familia and aula_id in (select metas.familia_aulas()));
+create policy familia_lee on metas.control_valores for select to metas_lector_familias
+  using (deleted_at is null and alumno_id in (select metas.familia_alumnos()));
+-- Bitácora del aula (antes mensaje AVN «Novedad de la clase»): los últimos 60 días.
+create policy familia_lee on metas.bitacora      for select to metas_lector_familias
+  using (deleted_at is null and fecha >= current_date - 60 and aula_id in (select metas.familia_aulas()));
 
 -- ════════════════════════════════════════════════════════════════════════════
 -- 3. Vistas de solo lectura para padres
@@ -229,8 +248,9 @@ create or replace view metas.vf_colectas as
 select a.id as alumno_id, c.id as colecta_id, c.concepto, c.fecha, c.estado, c.monto_sugerido,
        x.aplicable, x.pagado,
        greatest(x.aplicable - x.pagado, 0)                              as falta,
-       greatest(x.pagado - x.aplicable, 0)                              as pago_de_mas,
-       case when x.aplicable = 0 and x.pagado = 0 then 'no_corresponde'
+       case when a.estado in ('activo', 'ingreso') then greatest(x.pagado - x.aplicable, 0) else 0 end as pago_de_mas,
+       case when a.estado not in ('activo', 'ingreso') then 'ya_no_esta'
+            when x.aplicable = 0 and x.pagado = 0 then 'no_corresponde'
             when x.pagado = 0 then 'debe'
             when x.pagado < x.aplicable then 'abono'
             when x.pagado = x.aplicable then 'pagado'
@@ -239,7 +259,11 @@ select a.id as alumno_id, c.id as colecta_id, c.concepto, c.fecha, c.estado, c.m
   join metas.colectas c on c.aula_id = a.aula_id
   left join metas.colecta_exenciones e on e.colecta_id = c.id and e.alumno_id = a.id
   cross join lateral (
-    select case when e.id is null then c.monto_sugerido else coalesce(e.monto_aplicable, 0) end as aplicable,
+    -- misma regla que v_colecta_alumnos: si ya no está (retirado, trasladado,
+    -- desertor) no le corresponde nada; si está exento, 0 o lo parcial
+    select case when a.estado not in ('activo', 'ingreso') then 0
+                when e.id is null then c.monto_sugerido
+                else coalesce(e.monto_aplicable, 0) end                                         as aplicable,
            coalesce((select sum(p.monto) from metas.pagos p
                       where p.colecta_id = c.id and p.alumno_id = a.id), 0)                    as pagado
   ) x;
@@ -289,6 +313,19 @@ select aa.alumno_id, an.evaluacion, an.periodo, an.fecha_prueba,
 create or replace view metas.vf_preguntas as
 select aula_id, pregunta, claves, respuesta from metas.preguntas_frecuentes;
 
+-- Fechas de los parciales (antes mensaje AVP).
+create or replace view metas.vf_periodos as
+select aula_id, periodo, desde, hasta from metas.periodos;
+
+-- Controles para la familia con lo de SU hijo (antes mensaje AVB).
+create or replace view metas.vf_controles as
+select v.alumno_id, k.nombre, k.icono, k.tipo, k.fecha, v.marcado, v.numero, v.texto
+  from metas.control_valores v join metas.controles k on k.id = v.control_id;
+
+-- Novedades de la clase (antes mensaje AVN).
+create or replace view metas.vf_bitacora as
+select aula_id, fecha, texto from metas.bitacora;
+
 -- Para poder ser dueño de las vistas, el rol necesita CREATE en el esquema
 -- un momento; se le quita al terminar.
 grant create on schema metas to metas_lector_familias;
@@ -297,7 +334,8 @@ do $$
 declare v text;
 begin
   foreach v in array array['vf_hijos','vf_colectas','vf_pagos','vf_cuentas_claras','vf_notas','vf_personalidad',
-                           'vf_asistencia','vf_avisos','vf_observaciones','vf_plan_accion','vf_preguntas'] loop
+                           'vf_asistencia','vf_avisos','vf_observaciones','vf_plan_accion','vf_preguntas',
+                           'vf_periodos','vf_controles','vf_bitacora'] loop
     execute format('alter view metas.%I owner to metas_lector_familias', v);
     execute format('revoke all on metas.%I from public, anon, authenticated', v);
     execute format('grant select on metas.%I to authenticated', v);
@@ -418,7 +456,7 @@ begin
   foreach t in array array['alumnos','colectas','colecta_exenciones','pagos','gastos','notas',
                            'notas_personalidad','asistencia','inasistencias_oficiales','avisos',
                            'aviso_destinatarios','observaciones','preguntas_frecuentes',
-                           'analisis_alumnos','familias'] loop
+                           'analisis_alumnos','familias','periodos','controles','control_valores','bitacora'] loop
     execute format('create trigger %I after insert or update on metas.%I for each row execute function metas.t_tocar_familias()',
                    t || '_tocar_familias', t);
   end loop;
@@ -450,4 +488,13 @@ create policy familias_escuchan_su_canal on realtime.messages
 -- f) El docente anula o corrige un pago → en < 1 s llega «cambio» a familia:<id>
 --    y vf_pagos ya no trae el recibo anulado (sí el nuevo, con corrige_al_recibo).
 -- g) El docente reemplaza la familia (tira perdida) → la sesión vieja ya no ve nada.
+-- ── Cierre de permisos ──────────────────────────────────────────────────────
+-- «alter default privileges … in schema metas revoke … from public» NO quita
+-- el EXECUTE que PostgreSQL da a PUBLIC (un permiso global no se quita por
+-- esquema; lo comprobó la capa A). Por eso, al final de cada archivo, se
+-- quita a mano de TODAS las funciones de metas. Las que la app necesita ya
+-- tienen su GRANT explícito a authenticated, service_role o al rol lector,
+-- que no depende de PUBLIC.
+revoke execute on all functions in schema metas from public;
+
 -- ============================================================================

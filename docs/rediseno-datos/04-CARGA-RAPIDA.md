@@ -70,7 +70,9 @@ Validación en cada fila, al momento:
 | misma identidad que otra fila de la tabla o que un alumno ya guardado | ✗ «Esta identidad ya es de **Ana María López Cruz** (n.º 12)». No se puede guardar esa fila |
 | mismo nombre completo que otra fila o que un alumno ya guardado (sin importar tildes, mayúsculas ni espacios dobles) | ⚠ **solo aviso**: «Ya tienes a **Ana María López Cruz** (n.º 12)». Si a uno de los dos le falta la identidad, al guardar se pregunta «¿Es la misma persona?» con dos botones; si las dos identidades son distintas, se guardan los dos (homónimos). La identidad es la única regla dura |
 | número de lista repetido | ⚠ aviso suave; se permite (es solo visual) |
-| clave de familia que ya tiene la familia (opcional) | se acepta **solo si estaba en tus datos anteriores** (la base la busca en el archivo congelado de tu cuenta). Si no: ✗ «Esa clave no está en tus datos anteriores; deja la casilla vacía y se genera una nueva». Vacía: la base genera una nueva de 10 símbolos (`K7QMX-4PA2B`) |
+| clave de familia que ya tiene la familia (opcional) | se acepta **solo si estaba en tus datos anteriores**: la base la busca en la **copia inmutable** de tus claves tomada en el paso 1 (`metas.claves_archivo`), no en el blob vivo. Si no está: ✗ «Esa clave no está en tus datos anteriores; deja la casilla vacía y se genera una nueva». Vacía: la base genera una nueva de 10 símbolos (`K7QMX-4PA2B`) |
+| esa clave era de **otro niño** en tus datos anteriores | ⚠ «En tus datos anteriores, la clave 1-K7QM era de **Alumna Ficticia Uno**. ¿Es la misma familia?» → **[Sí]** **[No, darle una nueva]** (la copia guarda el nombre que tenía en la lista vieja) |
+| la clave conservada **ya la usa otra familia** (error `23505` de la base) | ✗ si es de una familia tuya: «Esa clave ya es de la familia de **Ana**»; si no: «Esa clave ya no se puede usar; se generará una nueva». En los dos casos la fila se puede guardar con clave nueva, y la pantalla recuerda **entregar tira nueva** a esa familia |
 | nombre con menos de dos palabras | ⚠ «¿Falta el apellido?» |
 
 La comprobación contra lo ya guardado usa `metas.alumno_choques` cuando hay
@@ -159,8 +161,8 @@ Vas a guardar en 6º-1 · Escuela (ficticia) Las Flores · 2027
 
 - Las filas con ✗ **no** se guardan y la pantalla dice cuáles y por qué.
 - Al tocar «Guardar», las filas entran a la cola en orden (alumnos antes que
-  sus familias, colectas antes que sus pagos) y la pantalla pasa a «Guardando…»
-  y luego «Guardado», como en el resto de la app.
+  sus familias, colectas antes que sus pagos) y la pantalla vuelve a la lista,
+  ya con los datos. No se muestra «Guardando» ni «Guardado» (`09-INTERFAZ.md`).
 
 ## 4.4 Formato para importar datos extraídos de documentos escaneados
 

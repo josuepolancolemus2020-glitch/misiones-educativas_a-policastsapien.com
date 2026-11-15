@@ -1,10 +1,10 @@
-# Rediseño de datos de M.E.T.A.S · Fase 1: diseño (revisión 2)
+# Rediseño de datos de M.E.T.A.S · Fase 1: diseño (revisión 3)
 
-Rama `rediseño-datos`. **Solo documentos.** No se modificó código de la app,
-no se ejecutó SQL (ni en una base local: la sintaxis se revisó con un
-analizador que solo lee el texto), no se tocó Supabase ni ninguna fila de
-docentes. Lo único fuera de `docs/rediseno-datos/` son dos reglas nuevas en
-`CLAUDE.md`, que pediste.
+Rama `rediseño-datos`. **Solo diseño**: no se modificó código de la app, no se
+tocó Supabase ni ninguna fila de docentes, y no hubo merge. Los `.sql` se
+**probaron de verdad** en un PostgreSQL 16 local y desechable con un Supabase
+simulado (capa A, `pruebas-capa-a/`), nunca en el proyecto real. Fuera de
+`docs/rediseno-datos/` solo cambió `CLAUDE.md` (reglas 15 a 18, que pediste).
 
 ## Qué se quiere
 
@@ -12,26 +12,94 @@ El modelo actual (blob en `docente_estado` + fusiones + reposición de pagos
 desde `registro_admin_historial`) inventa, revive y duplica pagos y gastos. Se
 **elimina entero**. En su lugar: **cada dato que el docente escribe es una
 fila propia en Supabase, con su id, y se ve igual en todos sus aparatos.** Sin
-botones de sincronizar, recuperar ni restaurar: una línea dice «Guardado».
+botones de sincronizar, recuperar ni restaurar, y sin ningún indicador de
+«guardado»: el docente escribe y queda. Solo sin señal aparece un punto gris.
 
 ## Documentos
 
 | archivo | qué tiene |
 |---|---|
-| `01-INVENTARIO-DE-DATOS.md` | cada dato de `localStorage` y `docente_estado` (con `sace-lista.js`, boletas, cuadros, gastos del docente e inventario) y su tabla; qué se calcula y nunca se guarda |
-| `02-CUENTAS-Y-SEGURIDAD.md` | Supabase Auth sin tocar `docentes`; vinculación (fase aparte); RLS por dueño **más restrictiva de cuentas**; IP solo desde la infraestructura; claves de familia |
-| `03-GUARDADO-CONFLICTOS-Y-SIN-CONEXION.md` | operaciones de una fila, ids, montos como texto, conflictos, **preguntas de dinero con dos botones**, identidad, cola sin conexión |
-| `04-CARGA-RAPIDA.md` + `formato-importacion.schema.json` + `ejemplo-importacion.json` | carga desde los papeles y formato para escaneos (datos ficticios) |
-| `05-ELIMINACION-Y-ANDROID.md` | lista exacta de lo que se elimina; congelado por pasos; Android con `server.url` |
-| `06-PRUEBAS.md` | 107 escenarios y la prueba de estrés; criterio «cero inventados, revividos, duplicados o mal asignados» |
-| `07-VISTA-DE-PADRES.md` | de dónde lee hoy el portal; cómo leerá las mismas filas con RLS; transición aula por aula |
-| `08-PLAN-POR-CORTES.md` | implementación por cortes; el primero: dinero, alumnos, notas, asistencia y controles |
-| `SUPABASE-V2-ESQUEMA.sql` | esquema `metas`: 40 tablas de datos, auditoría, recibos, funciones de dinero y de alta de alumnos, vistas de totales |
-| `SUPABASE-V2-FAMILIAS.sql` | vínculo de familias, rol lector, vistas `vf_*`, totales por colecta, «visto» de avisos, aviso inmediato |
-| `SUPABASE-V2-VINCULACION.sql` | vinculación de cuentas (**fase aparte**) |
-| `SUPABASE-V2-CONGELAR.sql` | congelar lo viejo por pasos, alineados con los cortes |
+| `01-INVENTARIO-DE-DATOS.md` | cada dato de `localStorage` y `docente_estado` y su tabla; qué se calcula y nunca se guarda |
+| `02-CUENTAS-Y-SEGURIDAD.md` | Supabase Auth sin tocar `docentes`; vinculación (fase aparte); RLS dueño + restrictiva de cuentas; IP solo desde la infraestructura; claves de familia |
+| `03-GUARDADO-CONFLICTOS-Y-SIN-CONEXION.md` | operaciones de una fila, ids, montos como texto, conflictos, preguntas de dinero, identidad, cola sin conexión |
+| `04-CARGA-RAPIDA.md` + `formato-importacion.schema.json` + `ejemplo-importacion.json` | carga desde papel y formato para escaneos (datos ficticios) |
+| `05-ELIMINACION-Y-ANDROID.md` | qué se elimina; congelado por pasos; Android con `server.url` |
+| `06-PRUEBAS.md` | escenarios (dinero, seguridad, convivencia…) y el estado de la capa A |
+| `07-VISTA-DE-PADRES.md` | de dónde lee hoy el portal; cómo leerá las mismas filas; transición aula por aula |
+| `08-PLAN-POR-CORTES.md` | cortes; el primero con dinero, alumnos, notas, asistencia, controles, avisos y conducta; retiro de la APK v480 |
+| `09-INTERFAZ.md` | **regla de interfaz** y la lista de cada pantalla y elemento que se elimina, con archivo:línea |
+| `SUPABASE-V2-VINCULACION.sql` | primer archivo: esquema, freno, vínculo, copia inmutable de claves (**fase aparte**) |
+| `SUPABASE-V2-ESQUEMA.sql` | 40 tablas de datos, auditoría, recibos, funciones de dinero y de alta, vistas de totales |
+| `SUPABASE-V2-FAMILIAS.sql` | vínculo de familias, rol lector, vistas `vf_*`, totales, «visto», aviso inmediato |
+| `SUPABASE-V2-CONGELAR.sql` | candado y congelado por pasos |
+| `pruebas-capa-a/` | `corre.sh` + Supabase simulado + datos ficticios + **130 pruebas en verde** |
 
-## Cambios de la revisión 2, por punto
+## Cambios de la revisión 3, por punto
+
+**Bloqueantes**
+
+1. **Candado del blob (paso 1).** Disparador en `public.docente_estado`: para
+   docentes con cuenta vinculada rechaza (`MT040`, «actualiza la app») toda
+   escritura de `METAS_CODIGOS_V1`, de `METAS_AVISOS_V1` y de `METAS_ADMIN_V1`
+   con secciones del corte 1 no vacías (`lista`, `notas`, `recuperacion`,
+   `inasisOficial`, `asistencia`, `colectas`, `controles`, `bitacora`,
+   `gastos`) o con `raw` inválido. `metas_docente_estado_guardar` (misma firma)
+   responde `-2` y lo anota en `metas.blob_rechazos`: la app vieja lo deja
+   pendiente y no lo marca como subido (`js/metas-docente-sync.js:281`). La app
+   nueva usa el blob por sesión (`metas.blob_leer`/`blob_guardar`) con el mismo
+   candado. Pruebas V1 a V9. Plan de retiro de la APK v480 en `08`, 8.6.
+2. **Paso 1** cierra también `metas_docente_historial`, `_historial_listar`,
+   `_papelera`, `_reset` y `_reset_deshacer`. **`metas_cerrar_familias` sigue
+   abierta** (cierre de año), y `registro_admin` deja pasar justo su borrado y
+   el archivo de lo borrado. Prueba V11.
+3. **Avisos y conducta al corte 1**, y con ellos preguntas frecuentes y
+   bitácora: `avFilasNube` desaparece entero, incluidos los `AVC-` y `AVR-`
+   (`js/tools/registros-admin.js:12286-12330`). `mensajes_docente` rechaza todo
+   lo de docentes vinculados (`MT041`). Las familias solo ven recibos de la
+   base nueva; el archivo ya no les muestra dinero. Vistas nuevas
+   `vf_periodos`, `vf_controles`, `vf_bitacora`. Prueba V10.
+4. **Claves de familia:** `_clave_era_mia` lee `metas.claves_archivo`, copia
+   **inmutable** tomada en el paso 1 (y al vincularse, para quien llegue
+   después), que tolera `raw` inválido y guarda el nombre del niño. La carga
+   rápida maneja el `23505` de una clave ya ocupada. Pruebas K0 a K6.
+
+**No bloqueantes**
+
+5. `vf_colectas`: retirado, trasladado o desertor → le corresponde 0 (F6).
+6. Borrar un aula exige que no tenga alumnos, colectas ni gastos activos; el
+   borrado toma primero la fila `FOR UPDATE`, lo que cierra la carrera con un
+   pago o una nota que se están creando (B2, B4 en los dos órdenes con dos
+   sesiones de verdad).
+7. La consulta del paso 4 cuenta docentes sin vincular, vinculados sin aula y
+   aulas del archivo sin aula nueva.
+8. `metas.frenos`/`freno_ok` viven en `VINCULACION` (primer archivo).
+   Turnstile **obligatorio**.
+9. `pago_corregir` recibe la base (`monto`, `fecha`) y solo pregunta si cambió
+   el monto, la fecha o si el pago ya no está vivo; una nota cambiada no hace
+   preguntar (P9). La **fecha de un pago numerado es inmutable**:
+   `pago_editar` solo cambia nota y recibo anterior.
+10. Actas: fecha no futura; `bienes.gasto_docente_id`; dos actas a la vez →
+    números 2 y 3, y solo pregunta si ya hay una del mismo centro y fecha.
+11. `gasto_docente_editar` pregunta si el monto queda por debajo de lo ya
+    reembolsado. Estado calculado y `no_se_cobrara`: aprobados.
+12. Tope global de vinculación: **alerta** (una por hora en `metas.alertas`),
+    no bloquea (P12).
+13. `CLAUDE.md`: reglas 17 (toda tabla pasa por `_preparar`; toda función de
+    `metas` sin EXECUTE para PUBLIC) y 18 (el dinero solo por funciones del
+    servidor).
+14. **Capa A en verde**: 130 pruebas, incluidas S1 a S4, M1 a M15, F1 a F6, B4
+    y convivencia. Encontró **tres fallos reales**, ya corregidos: 50 funciones
+    abiertas a PUBLIC (el `alter default privileges … in schema` no quita un
+    permiso global), `FOR SHARE` sin permiso de UPDATE en tablas de dinero, y
+    una variable que chocaba con la columna `k` en `blob_guardar`.
+
+**Regla de interfaz** (mensaje aparte): `09-INTERFAZ.md`. Fuera «Guardado /
+Guardando…», «recibo pendiente» y el aviso al cerrar sesión; solo queda el
+punto gris sin señal (con `aria-label`), las preguntas de dos botones
+(«¿L 50 o L 60?») y «no quedó anotado» con la razón del aula. Lista de cada
+pantalla y elemento con archivo:línea. Respaldo a Drive: fase futura.
+
+## Cambios de la revisión 2, por punto (historial)
 
 1. **[Crítico] Sesiones anónimas.** `_preparar` añade a cada tabla una política
    **restrictiva** que exige `metas.es_docente()` (sesión no anónima **y**
@@ -100,59 +168,59 @@ botones de sincronizar, recuperar ni restaurar: una línea dice «Guardado».
 
 ## Decisiones tomadas (vigentes)
 
-1. Supabase Auth con la contraseña de siempre: `public.docentes` sigue siendo
+1. Supabase Auth con la contraseña de siempre; `public.docentes` sigue siendo
    la única autoridad; `metas-entrar` entrega la sesión.
-2. Esquema aparte `metas`; lo viejo intacto y congelado por pasos.
-3. Cada fila: `id`, `owner`, `created_at`/`updated_at` del servidor,
-   `updated_by`, `device_id`, `deleted_at`, `version`, `op_creacion`. Nunca
-   `DELETE`.
-4. Políticas: dueño **y** cuenta de docente (restrictiva). Las familias, solo
-   por vistas `vf_*` de un rol lector sin escritura.
-5. Dinero solo por funciones del servidor, montos inmutables donde hay
-   recibo, y **nunca** una decisión de dinero sin el docente.
-6. La identidad es la única regla dura del alumno; el número de lista no
-   relaciona nada.
-7. Todos los totales, estados de cobro, días de espera, boletas y cuadros se
-   calculan.
+2. Esquema aparte `metas`; lo viejo intacto, con candado y congelado por pasos.
+3. Cada fila: `id`, `owner`, horas del servidor, `updated_by`, `device_id`,
+   `deleted_at`, `version`, `op_creacion`. Nunca `DELETE`.
+4. Políticas: dueño **y** cuenta de docente (restrictiva). Familias solo por
+   vistas `vf_*` de un rol lector sin escritura.
+5. Dinero solo por funciones del servidor; monto y fecha de un pago numerado
+   inmutables; **ninguna decisión de dinero sin el docente**.
+6. La identidad (país + documento) es la única regla dura del alumno.
+7. Totales, estados de cobro, días de espera, boletas y cuadros: calculados.
 8. Auditoría de solo inserción.
-9. Base nueva vacía; carga rápida desde papel; claves de familia conservadas
-   solo si eran del docente.
-10. Android carga el sitio publicado.
-11. Directores, PIN de convocatorias y bcrypt: pospuestos.
+9. Base nueva vacía; carga rápida; claves conservadas solo si estaban en la
+   copia inmutable de ese docente.
+10. **Android con `server.url`** (aprobado).
+11. **Plan de acción, acumulativos, lecturas y equipos empiezan en blanco** en
+    su corte, con una frase clara para el docente (aprobado).
+12. **El archivo se cierra a las familias** cuando todos estén migrados o al
+    terminar el primer parcial de 2027, con dos semanas de aviso (aprobado).
+13. Estado calculado de los gastos del docente y `no_se_cobrara` (aprobado).
+14. Directores (solo lectura), PIN de convocatorias y bcrypt: pospuestos; bcrypt
+    con permiso aparte.
+15. **Interfaz sin nada técnico** (`09-INTERFAZ.md`).
 
 ## Riesgos
 
 | riesgo | qué se hace |
 |---|---|
-| **Empezar en blanco** | carga rápida; el archivo queda consultable para las familias hasta el paso 4 |
-| **Convivencia de cortes**: entre el corte 1 y el último, el blob y la fusión siguen vivos para las herramientas que aún no pasan a filas | la app nueva quita del blob todo lo del corte 1; los cortes siguientes deben venir pronto |
-| **Herramientas que nombran alumnos** (avisos, conducta, plan, acumulativos, lecturas, equipos) pierden lo guardado con números de la lista vieja al pasar al id nuevo | pendiente 3 de abajo |
-| **Familias con clave nueva** no reciben avisos hasta el corte 2 | conservar claves en la carga rápida; corte 2 pronto |
-| **Muchas preguntas** si dos aparatos anotan a la vez | solo aparecen cuando un aparato no había visto el otro dato; con señal y Realtime son raras |
-| **Dependencia de funciones de borde** para entrar y para vincular familias | se prueban con cuentas ficticias antes; se pueden deshacer sin tocar cuentas (antes de crear datos) |
-| **Huella de contraseña vieja (SHA-256 rápido)** | pospuesto con permiso aparte; el freno por IP reduce el riesgo |
-| **Recibo sin señal** no existe hasta que llega | «recibo pendiente» |
-| **Dueño del proyecto Supabase** puede quitar disparadores de auditoría | ningún rol de la app puede |
-| **Android**: primera apertura con señal; datos viejos del APK en otro origen; política de Google Play | se avisa antes de actualizar |
-| **Realtime pierde mensajes** si se cae | cursor al reconectar, incluidas las borradas |
+| **Empezar en blanco** | carga rápida; las familias ven notas, asistencia y avisos del archivo (sin dinero) hasta el paso 4 |
+| **APK v480 y pestañas viejas** siguen abiertas en algunos teléfonos | candado + `-2` + funciones cerradas: no pierden ni inventan nada; `blob_rechazos` dice quién falta; mensaje y página «Actualiza la app» (`08`, 8.6). La app vieja no puede mostrar nuestro aviso |
+| **Llave de firma de la APK**: vive fuera del repositorio (`C:\Users\Dell\.metas-android-key.properties`) | si se perdió, la APK nueva no instala encima: hay que desinstalar la vieja |
+| **Cierre de año en curso** | `metas_cerrar_familias` sigue abierta; el corte 1 no se publica en medio de un cierre |
+| **Herramientas que quedan en el blob** entre cortes (plan, acumulativos, lecturas, equipos…) siguen con la fusión vieja para sus llaves | el candado impide que cualquier dato del corte 1 vuelva por ahí; plan de acción no publica a las familias hasta su corte |
+| **Supabase simulado ≠ Supabase real** | la capa A prueba SQL, permisos, RLS y concurrencia; Realtime, Auth y la exposición del esquema se confirman con `supabase start` antes del corte 1 |
+| **Muchas preguntas** si dos aparatos anotan a la vez | solo cuando un aparato no había visto el otro dato |
+| **Dependencia de funciones de borde** | se prueban con cuentas ficticias; se deshacen sin tocar cuentas (antes de crear datos) |
+| **Huella de contraseña vieja (SHA-256 rápido)** | pospuesto con permiso aparte |
+| **Dueño del proyecto Supabase** puede quitar disparadores | ningún rol de la app puede |
 
 ## Pendiente de tu aprobación
 
 1. **La vinculación a Supabase Auth** (fase aparte) y su configuración del
-   panel (alta pública apagada, sesiones anónimas, Turnstile obligatorio,
-   esquema `metas` expuesto, tres funciones de borde).
-2. **Empezar el corte 1** tal como está en `08`, incluidos `familias` y la
-   vista de padres de esos datos (los añadí al corte 1 porque sin ellos los
-   padres no verían pagos ni notas).
-3. **Herramientas que todavía no pasan a filas y nombran alumnos**: desde el
-   corte 1 guardan el id del alumno y no traen lo que tenían con la lista
-   vieja. Alternativa: adelantar avisos y conducta al corte 1.
-4. **Cambios a las reglas 4 y 5 de `CLAUDE.md`** (fusión y llaves de
-   `localStorage`) y a «Cómo se publica» (APK), para el corte 1.
-5. **Gastos del docente**: el estado se calcula de los reembolsos (no es un
-   campo); añadí `no_se_cobrara` como decisión del docente. Confirmar que así
-   lo quieres.
-6. **Actas de inventario**: dos aparatos que crean el acta del mismo centro a
-   la vez obtienen los números 2 y 3. ¿Prefieres que el segundo pregunte?
-7. Cuándo correr el **paso 4** de `CONGELAR` (cerrar el archivo para las
-   familias).
+   panel.
+2. **Empezar el corte 1** tal como está en `08` (con avisos, conducta,
+   preguntas frecuentes y bitácora adelantados, y la reescritura de «Cerrar el
+   año escolar»).
+3. **Primera vez sin señal** (entrar, crear la cuenta, primera apertura en
+   Android): ¿una sola frase neutra, «Para entrar la primera vez se necesita
+   señal»? (`09`, 9.4).
+4. **Lado del alumno y `buzon.html`**: ¿aplicar también la regla de interfaz?
+5. **`android:allowBackup` en `false`** (`09`, Android).
+6. **Cambios a las reglas 4 y 5 de `CLAUDE.md`** (fusión y llaves de
+   `localStorage`) para el corte 1.
+7. **Mientras el plan de acción siga en el blob, no publica a las familias**
+   (no hay contraseña guardada para llamar a `metas_guardar_plan`). ¿Aceptas
+   esa pausa hasta el corte 2, o adelantamos el plan de acción?

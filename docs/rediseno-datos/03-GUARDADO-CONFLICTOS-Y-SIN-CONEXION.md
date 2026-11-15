@@ -69,7 +69,7 @@ Fase 1: diseño (revisión 2). Nada de esto está programado.
 | `pago_crear`, `gasto_crear` | función del servidor | misma operación → `ya_estaba`; nunca un segundo pago |
 | `pago_corregir` | función: anula el pago y crea su reemplazo en una sola transacción | misma operación → `ya_estaba` |
 | `pago_anular`, `gasto_anular` | función | ya anulado → hecho |
-| `pago_editar`, `gasto_editar` | función, comparando con la base | los campos ya valen lo pedido → no cambia nada |
+| `pago_editar` (solo nota y recibo anterior), `gasto_editar` | función; los gastos comparan con la base | los campos ya valen lo pedido → no cambia nada |
 
 **Nunca «upsert» en pagos ni en pagos de convocatoria.** La base no da
 permiso de `INSERT` ni `UPDATE` directos sobre esas tablas, y una sonda rápida
@@ -120,9 +120,9 @@ garantiza con un `unique` sobre `reemplaza_a`.
 | caso | cuándo | tarjeta que ve el docente |
 |---|---|---|
 | **Pago creado que el aparato no sabía que existía** | `pago_crear` encuentra otro pago activo de ese alumno en esa colecta que no estaba en `conocidos` (lo anotó otro aparato, quizá sin señal) | 1.º «En otro aparato se anotó **L 50.00** de Ana para Excursión (3 de marzo). Aquí anotaste **L 60.00**. ¿Es el mismo dinero?» → **[Son dos pagos distintos]** guarda este también · **[Es el mismo dinero]** pasa a: 2.º «¿Cuál es el monto correcto?» → **[Dejar L 50.00]** (se descarta este) · **[Dejar L 60.00]** (se corrige el otro a 60 con `pago_corregir`). Con montos iguales se pregunta igual: dos abonos de L 50 son posibles |
-| **Corregir un pago que otro aparato ya cambió** | `pago_corregir` encuentra el pago anulado, reemplazado o con otra fecha | «En otro aparato el pago de Ana quedó en **L 55.00**. Tú lo corriges a **L 60.00**.» → **[Dejar L 55.00]** · **[Dejar L 60.00]** |
+| **Corregir un pago que otro aparato ya cambió** | `pago_corregir` encuentra el pago anulado, reemplazado, o con **otro monto u otra fecha** que la base que el aparato veía. Un cambio en la nota o en el recibo anterior **no** hace preguntar | «En otro aparato el pago de Ana quedó en **L 55.00**. Tú lo corriges a **L 60.00**.» → **[Dejar L 55.00]** · **[Dejar L 60.00]** |
 | **Anular un pago que otro aparato corrigió** | `pago_anular` encuentra que ya fue reemplazado | «En otro aparato este pago se corrigió a **L 60.00**.» → **[Anular también el de L 60.00]** · **[Dejar L 60.00]** |
-| **Cambiar la fecha de un pago** que otro aparato cambió | `pago_editar` | «Fecha en otro aparato: **3 de marzo**. Fecha que pones: **5 de marzo**.» → dos botones con las dos fechas |
+| **Fecha de un pago**: es inmutable una vez numerado (como el monto). Cambiarla es corregir: `pago_corregir` | `pago_corregir` | «Pago de Ana: ¿3 de marzo o 5 de marzo?» → dos botones con las dos fechas |
 | **Gasto creado sin saber del otro** | `gasto_crear` encuentra otro gasto de esa colecta el mismo día con el mismo monto o concepto | «¿Es el mismo gasto?» → **[Son dos gastos]** · **[Es el mismo]** (y si los montos difieren, segunda tarjeta con los dos montos) |
 | **Editar monto o fecha de un gasto** que otro aparato cambió | `gasto_editar`, `gasto_docente_editar` | dos botones con los dos montos (o fechas). El concepto, la categoría y a quién cobrar se aplican campo por campo sin preguntar |
 | **Reembolso de un gasto del docente** anotado en dos aparatos, corregido o anulado a la vez | `reembolso_crear`, `reembolso_corregir`, `reembolso_anular` | las mismas tarjetas que para los pagos: «¿Es el mismo dinero?», y si lo es, dos botones con los dos montos |
@@ -170,29 +170,32 @@ espera respuesta) esperan con ella.
 |---|---|
 | éxito | se saca de la cola; la fila devuelta reemplaza a la de la copia local |
 | sin red, 5xx, tiempo agotado | se reintenta igual (es idempotente) |
-| 401 | se renueva la sesión; si no se puede, la cola **se pausa** y se pide la contraseña con una frase normal |
+| 401 | se renueva la sesión; si no se puede, la cola **se pausa** y se pide la contraseña («Escribe tu contraseña»), sin explicar por qué |
 | `{pregunta:…}` | al almacén `preguntas`; tarjeta con dos botones (3.5, 3.6) |
 | choque de llave natural (no dinero) | camino de 3.6 |
-| error permanente (alumno borrado en otro aparato, colecta cerrada, alumno con pagos que se quiso borrar) | sale de la cola y pasa a la lista **«No se guardó»** |
+| error permanente (alumno borrado en otro aparato, colecta cerrada, alumno con pagos que se quiso borrar) | sale de la cola y se muestra la tarjeta «no quedó anotado», con la razón del aula |
 
-**«No se guardó».** Tarjeta discreta en la pantalla del dato, en lenguaje del
-aula: «No se guardó el pago de Ana para Excursión, porque la colecta se cerró
-en otro aparato». Un solo botón: «Entendido». Se manda también a
-`metas.rechazos` (con tope de tamaño y de frecuencia) para soporte. Sin botón
-de reintentar, recuperar ni restaurar.
+**Lo que no se pudo anotar.** Pocas veces pasa, porque la pantalla valida
+antes de encolar. Cuando pasa, se dice **la razón del aula**, nunca una razón
+técnica: «El pago de Ana para Excursión no quedó anotado: esa colecta ya está
+cerrada». Un solo botón: «Entendido». Se manda también a `metas.rechazos` (con
+tope de tamaño y de frecuencia) para soporte. Sin botón de reintentar,
+recuperar ni restaurar.
 
 **Una cola por cuenta.** Cada operación lleva su `owner`. Si en el aparato
 entra otra cuenta, las operaciones de la anterior no se envían con la sesión
-nueva. Al cerrar sesión con pendientes: «Hay 3 datos que todavía no llegan a
-tu cuenta. Si cierras ahora, se enviarán la próxima vez que entres en este
-aparato».
+nueva. Al cerrar sesión: si hay señal, la app termina de enviar lo pendiente
+antes de cerrar (el botón muestra su espera normal, sin texto); si no hay
+señal, lo conserva para esa cuenta en ese aparato y lo envía cuando esa cuenta
+vuelva a entrar. **Sin mensaje** (regla de interfaz, `09-INTERFAZ.md`).
 
 ## 3.8 Lectura: lo que muestra la pantalla
 
 **Al abrir con señal**: se pinta con la copia local; se piden las filas
 **activas** del aula (montos como texto); la copia de esa aula se
-**reemplaza**; encima se dibujan las operaciones de la cola y las preguntas
-pendientes («Guardando…», «Esperando tu respuesta»).
+**reemplaza**; encima se dibujan las operaciones de la cola (como si ya
+estuvieran guardadas: el docente no ve diferencia) y las preguntas de dos
+botones que esperan respuesta.
 
 **Mientras está abierta**: Realtime en un canal por aula, filtrado por
 `aula_id`. En tablas de dinero, el evento solo avisa: el aparato vuelve a
@@ -205,16 +208,25 @@ evento). En el resto, si la `version` es mayor se reemplaza; si trae
 descarta por `version`.
 
 **Sin señal**: copia local + cola. Boletas, cuadros y totales se calculan con
-lo mismo que se ve; el recibo de un pago nuevo dice «recibo pendiente».
+lo mismo que se ve. El número del recibo de un pago anotado sin señal
+todavía no aparece (lo pone la base) y el botón de imprimir ese recibo espera
+sin decir nada; aparece solo cuando vuelve la señal.
 
 ## 3.9 Lo que ve el docente
 
-Una línea pequeña, como en Google Drive: «Guardado» · «Guardando…» · «Sin
-señal. Lo que escribas se guarda en cuanto vuelva». Más, cuando haga falta,
-las tarjetas de pregunta (dos botones) y las de «No se guardó» («Entendido»).
+Nada técnico (`09-INTERFAZ.md`). Escribe y queda. Lo único:
 
-Desaparecen todos los botones y avisos de sincronizar, recuperar, restaurar y
-«pagos recuperados» (lista exacta en `05-ELIMINACION-Y-ANDROID.md`).
+- **sin señal**, un punto gris con un ícono de señal tachada en la barra de
+  arriba (con `aria-label="Sin señal"`), que desaparece solo al volver la
+  señal. Con señal no se muestra nada: ni «Guardado» ni «Guardando…»;
+- las **preguntas de dinero** de dos botones («¿L 50 o L 60?») y la de
+  «¿es la misma persona?»;
+- la tarjeta «no quedó anotado» con la razón del aula, rara vez.
+
+Desaparecen todos los botones, avisos e indicadores de sincronizar, estar al
+día, recuperar, restaurar, papelera, versiones, copias en la nube, usar este
+equipo, empezar de nuevo y «pagos recuperados» (lista exacta, con
+archivo:línea, en `09-INTERFAZ.md`).
 
 ## 3.10 Módulos nuevos del lado del aparato
 
@@ -227,6 +239,7 @@ Desaparecen todos los botones y avisos de sincronizar, recuperar, restaurar y
 | `js/datos/almacen.js` | IndexedDB: copia de lectura, `cola`, `preguntas`, `rechazos`, cursores |
 | `js/datos/cola.js` | envío en orden, reintentos, conflictos (3.4), preguntas de dinero (3.5), identidad (3.6) |
 | `js/datos/tiempo-real.js` | canal por aula, reconexión, cursor |
+| `js/datos/senal.js` | el punto gris de «sin señal»: lo único que la app dice de la conexión |
 | `js/datos/datos.js` | la única API de las herramientas: `crear`, `editar`, `borrar`, `lista`, `escuchar`, y `pagar`, `corregirPago`, `anularPago`, `gasto…`, `gastoDocente…`, `reembolso…`, `actaInventario` |
 | `js/datos/calculos.js` | totales, boletas, cuadros y promedios **calculados** desde filas, con las mismas fórmulas que las vistas |
 

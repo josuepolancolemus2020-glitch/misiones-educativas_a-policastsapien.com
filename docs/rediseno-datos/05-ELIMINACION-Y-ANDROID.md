@@ -43,7 +43,7 @@ que solo pinta o calcula se queda y pasa a leer filas.
 |---|---|
 | llamadas a `dsClaim` en `docenteRecuperar` :1569 y `docenteSuscribir` :1980 | descargar el blob al entrar |
 | banner «↩️ Recuperar los datos de mi aula» (`dsTieneRespaldo` / `dsRecuperar`, :1685-1703) | |
-| `#doc-sync-status` :1710 | se reemplaza por la línea «Guardado / Guardando… / Sin señal» (sección 3.8) |
+| `#doc-sync-status` :1710 | desaparece; solo queda el punto gris de «sin señal» (`09-INTERFAZ.md`) |
 | `dsOnProfile()` :1741, `dsLogout()` :2075 | |
 | tarjeta «🚑 Rescate de datos» en Ajustes :2410-2426 («🔄 Sincronizar ahora», «🚑 Imponer la copia de ESTE equipo en todos», «🗑️ Empezar de nuevo») | |
 | `METAS_DOCENTE_V1.clave` (:1492, :1566, :1977, :2111, :2129) | contraseña en texto plano; la reemplaza la sesión de Supabase |
@@ -59,6 +59,9 @@ que solo pinta o calcula se queda y pasa a leer filas.
 | `METAS_SB_URL` / `METAS_SB_KEY` en todos los archivos | permiten apuntar la app a otro servidor (y mandarle la sesión) |
 
 ### Elementos de pantalla que desaparecen
+
+La lista **completa** por pantalla, con archivo:línea, está en
+`09-INTERFAZ.md` (regla de interfaz de la revisión 3). Resumen:
 
 «🔄 Sincronizar ahora» (Ajustes y Registros), «☁️ Sincronizar ahora»
 `#ad-sb-sync`, «↩️ Recuperar los datos de mi aula», «🚑 Imponer la copia de
@@ -96,25 +99,29 @@ mismo cambio que borra el código.
 
 ## 5.4 SQL viejo: se congela, no se borra (por pasos, con los cortes)
 
-Archivo propuesto: `SUPABASE-V2-CONGELAR.sql` (sin ejecutar). Va por pasos
-porque el rediseño entra por cortes (`08-PLAN-POR-CORTES.md`): mientras haya
-herramientas que todavía guardan en el blob, el blob tiene que seguir abierto.
+Archivo propuesto: `SUPABASE-V2-CONGELAR.sql` (sin ejecutar en el proyecto
+real; probado en la capa A).
 
-| paso | cuándo | qué queda de solo lectura | qué funciones se cierran |
-|---|---|---|---|
-| 1 | corte 1 (dinero, alumnos, notas, asistencia, controles) | `registro_admin`, `registro_admin_historial` | `metas_guardar_admin` (**todas sus firmas**, incluida la de un argumento sin contraseña), `metas_recuperar_admin_docente` (la que «reponía» pagos), `metas_cerrar_familias`, y dos restos inseguros que nadie llama: `metas_consultar_progreso(p_clave)`, `metas_restaurar_codigos` |
-| 2 | corte de avisos y plan de acción | `mensajes_docente`, `plan_accion` | `metas_guardar_avisos`, `metas_guardar_plan` (todas sus firmas), `metas_recuperar_historial` |
-| 3 | último corte | `docente_estado`, sus dos historiales y su papelera | `metas_docente_estado_*`, `metas_docente_reset*`, `metas_docente_papelera`, `metas_docente_historial*` |
-| 4 | la última aula ya está en la base nueva | — | lecturas de padres sobre el archivo (`metas_consultar_*_padre`) y, si ya tienen reemplazo publicado, `metas_buzon_docente` y `metas_avisos_vistos` |
+| paso | cuándo | qué hace |
+|---|---|---|
+| 1 | corte 1 | copia inmutable de las claves de familia (`metas.claves_archivo`); **candado** en `docente_estado` para docentes vinculados (rechaza `METAS_CODIGOS_V1`, `METAS_AVISOS_V1` y `METAS_ADMIN_V1` con secciones del corte 1); `metas_docente_estado_guardar` responde `-2` y lo anota en vez de escribir; blob por sesión para la app nueva (`metas.blob_leer`/`blob_guardar`); `mensajes_docente` no acepta nada de docentes vinculados; `registro_admin` congelado **salvo el borrado del cierre de año**; se cierran `metas_guardar_admin` (todas sus firmas), `metas_recuperar_admin_docente`, `metas_docente_historial`, `metas_docente_historial_listar`, `metas_docente_papelera`, `metas_docente_reset`, `metas_docente_reset_deshacer`, `metas_consultar_progreso(p_clave)` y `metas_restaurar_codigos` |
+| 2 | corte de plan de acción, acumulativos, lecturas y equipos | `plan_accion` de solo lectura; se cierran `metas_guardar_plan` y `metas_recuperar_historial`; `METAS_PLANACCION_V1` entra al candado |
+| 3 | último corte | `docente_estado`, sus historiales y su papelera de solo lectura; se cierran las funciones del blob y el blob por sesión |
+| 4 | todos migrados, o fin del primer parcial de 2027, con dos semanas de aviso | se cierran las lecturas de padres sobre el archivo, `metas_cerrar_familias`, `metas_guardar_avisos` y, si ya tienen reemplazo, `metas_buzon_docente` y `metas_avisos_vistos`; `mensajes_docente` de solo lectura |
 
-**Nunca se cierran:** `metas_guardar` y **`metas_guardar_progreso`** (los usa
-el lado del alumno, `js/metas-supabase.js:129` y `:267`), las cuentas, las
-convocatorias públicas, el Campeonísimo en vivo y lo que escriben los padres.
+**No se cierra en el paso 1 `metas_cerrar_familias`**: «Cerrar el año
+escolar» (`js/tools/registros-admin.js:11235-11338`) la usa para borrar del
+chatbot los datos de las claves viejas, y estamos en pleno cierre de año.
+Sigue abierta hasta que el cierre de año esté reescrito y llegue el paso 4.
 
-**Archivos `.sql` de `_privado/` que, si se vuelven a correr, resucitan
-funciones sin contraseña o el modelo viejo**: se les antepone una línea que
-aborta, en el mismo paso en que se congela lo suyo. No se borran: son el
-historial.
+**Nunca se cierran:** `metas_guardar` y **`metas_guardar_progreso`** (lado del
+alumno, `js/metas-supabase.js:129` y `:267`), las cuentas, las convocatorias
+públicas, el Campeonísimo en vivo y lo que escriben los padres.
+
+**Archivos `.sql` de `_privado/` que, si se vuelven a correr, resucitan lo
+cerrado** (por ejemplo `SUPABASE-DOCENTE-ESTADO.sql` volvería a crear
+`metas_docente_estado_guardar` sin candado): se les antepone una línea que
+aborta, en el mismo paso en que se congela lo suyo. No se borran.
 
 ## 5.5 Android: exactamente el mismo código que la web
 

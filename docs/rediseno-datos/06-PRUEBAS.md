@@ -24,16 +24,16 @@ Además, sin excepción:
 - **Convergencia**: al final, cada aparato muestra exactamente lo de la base.
 - **Totales** (`v_colectas_resumen`, `v_colecta_alumnos`) iguales a los del
   oráculo, centavo por centavo.
-- **Cola vacía**, ninguna pregunta sin responder, y «No se guardó» solo con lo
+- **Cola vacía**, ninguna pregunta sin responder, y «no quedó anotado» solo con lo
   que el escenario espera.
 
 ## 6.2 Andamio
 
 | capa | con qué | qué prueba |
 |---|---|---|
-| **A. Base** | Supabase local (`supabase start`, Docker) con los cuatro `.sql`; usuarios de Auth ficticios: 2 docentes vinculados, 1 usuario de Auth **sin** vínculo, 3 sesiones anónimas; datos congelados ficticios en `public.docente_estado` | restricciones, disparadores, RLS (permisiva y restrictiva), auditoría, recibos, funciones de dinero, vistas, familias |
+| **A. Base** | **Ya escrita y en verde**: Postgres 16 local desechable con un Supabase simulado (`pruebas-capa-a/`, ver 6.5); más adelante también contra `supabase start` (Docker) para probar Realtime y Auth reales. Los cuatro `.sql`; usuarios de Auth ficticios: 2 docentes vinculados, 1 usuario de Auth **sin** vínculo, 3 sesiones anónimas; datos congelados ficticios en `public.docente_estado` | restricciones, disparadores, RLS (permisiva y restrictiva), auditoría, recibos, funciones de dinero, vistas, familias |
 | **B. Cola y conflictos** | Node + `fake-indexeddb`; N instancias de `MetasDatos` con su almacén y su `device_id`; un **proxy de red** que corta, demora, y **pierde la respuesta después de que la base aplicó**; un «docente simulado» que responde las preguntas según el guion | sin conexión, orden, idempotencia, conflictos, preguntas de dinero, identidad, Realtime |
-| **C. Navegador** | Playwright con 3 contextos (teléfono 390 px, tablet 800 px, PC 1366 px), `context.setOffline` | la pantalla: «Guardado / Guardando… / Sin señal», tarjetas de dos botones, carga rápida, ningún botón de recuperar ni de sincronizar |
+| **C. Navegador** | Playwright con 3 contextos (teléfono 390 px, tablet 800 px, PC 1366 px), `context.setOffline` | la pantalla: con señal no hay ningún indicador; sin señal, solo el punto gris (con su `aria-label`); tarjetas de dos botones; carga rápida; **ninguno** de los textos de `09-INTERFAZ.md` aparece en ninguna pantalla |
 
 Datos ficticios con semilla fija (`_dev/datos-ficticios.js`): «Escuela
 Ficticia Las Flores», 43 alumnos «Alumna Ficticia 01»…, identidades
@@ -70,11 +70,11 @@ base, con las reglas de `03`, y produce el estado esperado.
 | M5 | Dos aparatos sin señal anotan el pago de Ana para Excursión: **L 50** y **L 60** | al llegar el segundo, **pregunta** «¿Es el mismo dinero?»; guion 1: «son dos» → dos pagos (110); guion 2: «es el mismo» + «Dejar L 60» → el de 50 corregido a 60 (un pago activo, recibo nuevo); guion 3: «es el mismo» + «Dejar L 50» → un pago de 50 |
 | M6 | Igual que M5 con **montos iguales** | se pregunta igual; nunca se une solo |
 | M7 | PC corrige un pago a L 55 mientras el teléfono, sin señal, lo corrige a L 60 | pregunta con **L 55** y **L 60**, dos botones; nunca «gana el segundo» |
-| M8 | PC cambia la **fecha** de un pago; el teléfono, sin señal, cambia la fecha a otra | pregunta con las dos fechas |
+| M8 | PC corrige la **fecha** de un pago; el teléfono, sin señal, la corrige a otra | pregunta con las dos fechas (la fecha de un pago numerado solo cambia con `pago_corregir`) |
 | M9 | PC corrige un pago; el teléfono, sin señal, lo anula | pregunta «se corrigió a L 60: ¿anular también?» |
 | M10 | Gasto de L 40: PC lo cambia a 45, tablet a 48 | pregunta con 45 y 48. Si la tablet solo cambió el concepto → se aplica sin preguntar |
 | M11 | Dos aparatos sin señal anotan el mismo gasto (mismo día y monto) | pregunta «¿Es el mismo gasto?» |
-| M12 | Anular un gasto mientras otro aparato, sin señal, lo edita | la edición vuelve como «No se guardó: el gasto fue anulado» |
+| M12 | Anular un gasto mientras otro aparato, sin señal, lo edita | la edición vuelve como «no quedó anotado: el gasto fue anulado» |
 | M13 | La red se pierde **después** de que `pago_crear`, `pago_corregir` y `pago_anular` se aplicaron | al reintentar: `ya_estaba`; ni un pago ni un recibo de más |
 | M14 | 1 000 pagos de L 0.10 | recaudado = L 100.00 exacto |
 | M15 | La API devuelve los montos; el aparato los lee | siempre como texto (`"100.00"`); la sonda rápida falla si algún módulo de `js/datos/` hace `Number(`/`parseFloat(` sobre un monto |
@@ -147,7 +147,7 @@ base, con las reglas de `03`, y produce el estado esperado.
 | I1 | **Nunca `Math.random` para ids**: sonda rápida sobre `js/` | ninguna llamada a `Math.random` en `js/datos/` ni en ningún generador de ids |
 | I2 | `nuevoId()` con `crypto.randomUUID` presente; sin él (se borra en la prueba) | uuid v4 válido en los dos casos; con `getRandomValues` en el segundo; 1 000 000 de ids sin repetir |
 | I3 | Reenviar un `crear` cuyo id ya existe **con el mismo** `op_creacion` | `ya_estaba`, nada cambia |
-| I4 | Un `crear` cuyo id ya existe con **otro** `op_creacion` (se fuerza) | va a «No se guardó»; la fila existente **no se toca** |
+| I4 | Un `crear` cuyo id ya existe con **otro** `op_creacion` (se fuerza) | va a «no quedó anotado»; la fila existente **no se toca** |
 | I5 | Importar un archivo que trae un campo `id` | se ignora; las filas nuevas tienen ids nuevos |
 | I6 | Sin señal: crear alumno, 3 pagos y 2 notas; cerrar; abrir con señal | sale en orden; el alumno antes que sus pagos |
 | I7 | Matar la app a mitad de la cola | sigue desde la pendiente, sin repetir |
@@ -227,6 +227,25 @@ base, con las reglas de `03`, y produce el estado esperado.
 | Q3 | Abrir `ejemplo-importacion.json` | la vista previa marca exactamente lo de `04`; nada guardado sin confirmar |
 | Q4 | Pago en la carga para un alumno que ya tiene pagos | entra como **abono nuevo** con su recibo; el guardado no cambia |
 
+### Convivencia con el modelo viejo (paso 1 de `CONGELAR`)
+
+| # | escenario | se espera |
+|---|---|---|
+| V1 | **APK v480** de una docente ya vinculada sube su `METAS_ADMIN_V1` con la lista | la función responde `-2`; la app vieja lo deja pendiente (no lo marca como subido); queda una fila en `metas.blob_rechazos`; el blob no cambia |
+| V2 | La misma APK sube una llave que aún vive en el blob (`METAS_PLANACCION_V1`) | se guarda |
+| V3 | **Pestaña vieja abierta** (código anterior al corte) sube `METAS_CODIGOS_V1` o `METAS_AVISOS_V1` | `-2` |
+| V4 | Un docente **sin vincular** con la app vieja | todo como hoy |
+| V5 | **Restaurar una versión vieja**: «Recuperar lo que borré» (`metas_docente_reset_deshacer`) y una escritura directa de una lista vieja en `docente_estado` | la función está cerrada; la escritura directa la frena el candado (`MT040`) |
+| V6 | Pestaña vieja llama a `metas_guardar_admin` (las dos firmas), al historial, a la papelera o a la reposición de pagos | cerradas |
+| V7 | `raw` inválido de un docente vinculado | no se acepta |
+| V8 | `METAS_ADMIN_V1` sin secciones del corte 1 (equipos, lecturas…) | se guarda |
+| V9 | La app nueva usa `metas.blob_guardar` (sesión, sin contraseña) para lo que aún vive en el blob; intenta mandar algo del corte 1; una sesión de padre lo intenta | se guarda; `MT040`; `42501` |
+| V10 | Un recibo `AVR-` o un aviso de un docente vinculado llega a `mensajes_docente` | rechazado (`MT041`); un docente sin vincular sigue mandando avisos |
+| V11 | **Cierre de año** con `metas_cerrar_familias` después del paso 1 | sigue borrando las claves viejas y archivando lo borrado; `registro_admin` no acepta escrituras |
+| V12 | Después del paso 1 siguen abiertas: `metas_guardar`, `metas_guardar_progreso`, lecturas de padres, buzón | sí |
+| K5 | Clave conservada que ya ocupa otra familia | `23505`; la carga rápida ofrece una clave nueva y avisa que hay que entregar tira nueva |
+| K6 | Docente que se vincula **después** del paso 1 | su copia de claves se toma al vincularse |
+
 ### Prueba de estrés al azar (nocturna)
 
 Tres aparatos, 2 000 operaciones al azar (crear, editar, borrar; pagar, abonar,
@@ -242,3 +261,39 @@ contadores de 6.1.
 | `npm test` (rápidas, sin red) | sondas que leen archivos: toda tabla de `metas` pasa por `_preparar`; ningún `float`, `real` ni `double precision`; ningún `.upsert(` sobre `pagos` o `convocatoria_pagos`; ningún `Math.random` en generadores de ids; ningún `Number(`/`parseFloat(` sobre montos en `js/datos/`; ningún `delete from metas.`; ningún botón «Recuperar», «Restaurar» ni «Sincronizar»; `capacitor.config.json` con `server.url` | cada empujón |
 | `npm run test:datos` (nueva) | capas A y B contra Supabase local en Docker | cada empujón que toque `js/datos/` o los `.sql`, y de noche |
 | `npm run test:navegador` | capa C y la prueba de estrés | de noche |
+
+## 6.5 Capa A: lo que ya corre (revisión 3)
+
+```
+bash docs/rediseno-datos/pruebas-capa-a/corre.sh
+```
+
+Arma un PostgreSQL 16 **local y desechable** (nunca el proyecto real), le pone
+un Supabase simulado (`00-supabase-simulado.sql`: roles `anon`,
+`authenticated`, `service_role`; `auth.uid()` y `auth.jwt()` leídos de los
+«claims» como en Supabase; `realtime.send`; publicación; `pgcrypto`) y una
+copia mínima del modelo viejo con datos ficticios. Aplica los cuatro `.sql` en
+el orden real (vinculación → esquema → familias → paso 1) y corre
+`10-pruebas.sql`.
+
+**Resultado: 130 pruebas en verde**, entre ellas todas las que pide el punto
+14 de la revisión 3: S1 a S9, M1 a M15 (las de base de datos; M15 completa
+necesita la capa B), F1 a F6, B4 en los dos órdenes con **dos sesiones de
+verdad** (`dblink`), K0 a K6, A1 a A8, G, N, P y la convivencia V1 a V12.
+
+La capa A **encontró tres fallos reales del diseño**, ya corregidos en los
+`.sql`:
+
+1. `alter default privileges … in schema metas revoke execute … from public`
+   no quita nada (PostgreSQL no deja quitar por esquema un permiso global):
+   **50 funciones quedaban abiertas a PUBLIC**. Ahora cada archivo termina con
+   `revoke execute on all functions in schema metas from public`.
+2. La comprobación de «padre activo» usaba `FOR SHARE`, que exige permiso de
+   UPDATE: crear un bien enlazado a un gasto del docente habría fallado
+   siempre. Ahora corre como dueño del esquema y comprueba el dueño ella misma.
+3. `metas.blob_guardar` tenía una variable con el mismo nombre que la columna
+   `k`: habría fallado en la primera escritura.
+
+**Antes del corte 1** (punto 14): esta capa en verde, más la misma corrida
+contra `supabase start` para confirmar Realtime y Auth reales.
+

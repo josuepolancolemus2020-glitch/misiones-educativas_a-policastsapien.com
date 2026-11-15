@@ -1,0 +1,676 @@
+-- ============================================================================
+-- Capa A · pruebas de la base (datos FICTICIOS, Postgres local desechable)
+-- ----------------------------------------------------------------------------
+-- Cada prueba deja una fila en prueba.resultados. Al final, si alguna falló,
+-- el archivo termina con error (y corre.sh también).
+--   prueba.como('A' | 'B' | 'panel' | 'padre1' | 'padre2' | 'nadie')
+--     fija los «claims» del JWT como lo hace Supabase en cada petición; después
+--     se cambia de rol con SET ROLE authenticated / anon / service_role.
+-- ============================================================================
+\set QUIET on
+\o /dev/null
+select set_config('prueba.conninfo', :'conninfo', false);
+
+create schema prueba;
+grant usage on schema prueba to public;
+create table prueba.resultados (n serial primary key, nombre text, ok boolean, detalle text);
+grant insert, select on prueba.resultados to public;
+grant usage on sequence prueba.resultados_n_seq to public;
+
+create function prueba.ok(p_cond boolean, p_nombre text, p_detalle text default null)
+returns boolean language plpgsql as $$
+begin
+  insert into prueba.resultados (nombre, ok, detalle) values (p_nombre, coalesce(p_cond, false), p_detalle);
+  return coalesce(p_cond, false);
+end $$;
+
+-- Ejecuta p_sql y espera que FALLE (con ese SQLSTATE si se da).
+create function prueba.falla(p_sql text, p_nombre text, p_estado text default null)
+returns boolean language plpgsql as $$
+begin
+  execute p_sql;
+  return prueba.ok(false, p_nombre, 'no falló: ' || left(p_sql, 120));
+exception when others then
+  return prueba.ok(p_estado is null or sqlstate = p_estado, p_nombre, sqlstate || ' ' || sqlerrm);
+end $$;
+
+-- Devuelve el SQLSTATE y el mensaje de un error (para comparar dos errores).
+create function prueba.error_de(p_sql text) returns text language plpgsql as $$
+begin
+  execute p_sql;
+  return 'sin error';
+exception when others then
+  return sqlstate || '|' || sqlerrm;
+end $$;
+
+create function prueba.como(p_quien text, p_aparato text default 'telefono') returns void language plpgsql as $$
+declare v_claims jsonb;
+begin
+  v_claims := case p_quien
+    when 'A'      then '{"sub":"00000000-0000-0000-0000-00000000000a","role":"authenticated","is_anonymous":false}'
+    when 'B'      then '{"sub":"00000000-0000-0000-0000-00000000000b","role":"authenticated","is_anonymous":false}'
+    when 'panel'  then '{"sub":"00000000-0000-0000-0000-0000000000c0","role":"authenticated","is_anonymous":false}'
+    when 'padre1' then '{"sub":"00000000-0000-0000-0000-0000000000f1","role":"authenticated","is_anonymous":true}'
+    when 'padre2' then '{"sub":"00000000-0000-0000-0000-0000000000f2","role":"authenticated","is_anonymous":true}'
+    when 'padre3' then '{"sub":"00000000-0000-0000-0000-0000000000f3","role":"authenticated","is_anonymous":true}'
+    else '{}' end::jsonb;
+  perform set_config('request.jwt.claims', v_claims::text, false);
+  perform set_config('request.headers', jsonb_build_object('x-metas-aparato', p_aparato)::text, false);
+end $$;
+grant execute on all functions in schema prueba to public;
+
+-- Ids fijos para leer las pruebas con calma.
+\set aula      '''00000000-0000-0000-0000-0000000a0001'''
+\set aula_vac  '''00000000-0000-0000-0000-0000000a0002'''
+\set ana       '''00000000-0000-0000-0000-0000000b0001'''
+\set beto      '''00000000-0000-0000-0000-0000000b0002'''
+\set carla     '''00000000-0000-0000-0000-0000000b0003'''
+\set dani      '''00000000-0000-0000-0000-0000000b0004'''
+\set eva       '''00000000-0000-0000-0000-0000000b0005'''
+\set fito      '''00000000-0000-0000-0000-0000000b0006'''
+\set gabi      '''00000000-0000-0000-0000-0000000b0007'''
+\set c1        '''00000000-0000-0000-0000-0000000c0001'''
+\set c2        '''00000000-0000-0000-0000-0000000c0002'''
+\set c3        '''00000000-0000-0000-0000-0000000c0003'''
+\set mate      '''00000000-0000-0000-0000-0000000d0001'''
+
+-- ════════════════════════════════════════════════════════════════════════════
+-- Preparación: la docente A arma su aula (como lo haría la app nueva)
+-- ════════════════════════════════════════════════════════════════════════════
+select prueba.como('A');
+set role authenticated;
+insert into metas.aulas (id, escuela, grado, seccion, anio_lectivo, docente_nombre)
+values (:aula, 'Escuela Ficticia Las Flores', 6, '1', 2027, 'Docente Ficticia A'),
+       (:aula_vac, 'Escuela Ficticia Las Flores', 5, '2', 2027, 'Docente Ficticia A');
+insert into metas.asignaturas (id, aula_id, nombre) values (:mate, :aula, 'Matemáticas');
+select metas.alumno_crear(:ana,   gen_random_uuid(), :aula, '{"nombre_completo":"Alumna Ficticia Uno","identidad":"0000-2015-00001","num_lista":1}');
+select metas.alumno_crear(:beto,  gen_random_uuid(), :aula, '{"nombre_completo":"Alumno Ficticio Dos","identidad":"0000201500002","num_lista":2}');
+select metas.alumno_crear(:carla, gen_random_uuid(), :aula, '{"nombre_completo":"Alumna Ficticia Tres","num_lista":3}');
+select metas.alumno_crear(:dani,  gen_random_uuid(), :aula, '{"nombre_completo":"Alumno Ficticio Cuatro","num_lista":4}');
+select metas.alumno_crear(:eva,   gen_random_uuid(), :aula, '{"nombre_completo":"Alumna Ficticia Cinco","num_lista":5}');
+select metas.alumno_crear(:fito,  gen_random_uuid(), :aula, '{"nombre_completo":"Alumno Ficticio Seis","num_lista":6}');
+select metas.alumno_crear(:gabi,  gen_random_uuid(), :aula, '{"nombre_completo":"Alumna Ficticia Siete","num_lista":7}');
+insert into metas.colectas (id, aula_id, concepto, monto_sugerido, fecha) values
+  (:c1, :aula, 'Excursión (ficticia)', 50, '2027-02-01'),
+  (:c2, :aula, 'Refrigerio (ficticio)', 100, '2027-02-01'),
+  (:c3, :aula, 'Monedas (ficticio)', 0, '2027-02-01');
+reset role;
+
+select prueba.ok((select count(*) from metas.alumnos) = 7, 'preparación: 7 alumnos creados');
+select prueba.ok((select owner from metas.aulas where id = :aula) = '00000000-0000-0000-0000-00000000000a',
+                 'sello: el dueño lo pone la base (auth.uid)');
+select prueba.ok((select device_id from metas.aulas where id = :aula) = 'telefono',
+                 'sello: device_id sale de la cabecera x-metas-aparato');
+select prueba.ok((select identidad from metas.alumnos where id = :ana) = '0000201500001',
+                 'identidad normalizada sin guiones');
+
+-- ════════════════════════════════════════════════════════════════════════════
+-- S · Seguridad de las sesiones
+-- ════════════════════════════════════════════════════════════════════════════
+-- S1: una sesión ANÓNIMA (padre) intenta crear de todo
+select prueba.como('padre1');
+set role authenticated;
+select prueba.falla($$insert into metas.aulas (escuela, grado, seccion, anio_lectivo) values ('X', 6, '1', 2027)$$,
+                    'S1 padre anónimo no crea aulas', '42501');
+select prueba.falla($$select metas.alumno_crear(gen_random_uuid(), gen_random_uuid(), '00000000-0000-0000-0000-0000000a0001', '{"nombre_completo":"Intruso Ficticio"}')$$,
+                    'S1 padre anónimo no crea alumnos (función)', '42501');
+select prueba.falla($$insert into metas.familias (aula_id, alumno_id) values ('00000000-0000-0000-0000-0000000a0001', '00000000-0000-0000-0000-0000000b0001')$$,
+                    'S1 padre anónimo no crea familias', '42501');
+select prueba.falla($$select metas.pago_crear(gen_random_uuid(), gen_random_uuid(), '00000000-0000-0000-0000-0000000c0001', '00000000-0000-0000-0000-0000000b0001', '50.00', '2027-02-02')$$,
+                    'S1 padre anónimo no crea pagos', '42501');
+-- S4: lee directo las tablas → 0 filas
+select prueba.ok((select count(*) from metas.pagos) = 0 and (select count(*) from metas.alumnos) = 0
+             and (select count(*) from metas.auditoria) = 0 and (select count(*) from metas.rechazos) = 0
+             and (select count(*) from metas.recibo_series) = 0 and (select count(*) from metas.claves_archivo) = 0,
+                 'S4 padre anónimo: 0 filas en tablas del docente');
+reset role;
+
+-- S2: no se averigua una clave insertando: mismo error exista o no
+select prueba.como('padre1');
+set role authenticated;
+select prueba.ok(
+  prueba.error_de($$insert into metas.familias (aula_id, alumno_id, clave) values ('00000000-0000-0000-0000-0000000a0001', '00000000-0000-0000-0000-0000000b0001', '1K7QM')$$)
+  = prueba.error_de($$insert into metas.familias (aula_id, alumno_id, clave) values ('00000000-0000-0000-0000-0000000a0001', '00000000-0000-0000-0000-0000000b0001', '8NOEXISTE')$$),
+  'S2 mismo error con clave existente y con clave inventada');
+reset role;
+
+-- S3: usuario de Auth SIN vínculo (cuenta del panel) = como un extraño
+select prueba.como('panel');
+set role authenticated;
+select prueba.falla($$insert into metas.aulas (escuela, grado, seccion, anio_lectivo) values ('X', 6, '1', 2027)$$,
+                    'S3 usuario sin vínculo no crea', '42501');
+select prueba.ok((select count(*) from metas.aulas) = 0, 'S3 usuario sin vínculo no lee');
+reset role;
+
+-- S3b: el rol anon ni siquiera ve el esquema
+select prueba.como('nadie');
+set role anon;
+select prueba.falla($$select * from metas.pagos$$, 'S3b anon sin permiso sobre metas', '42501');
+reset role;
+
+-- S6/S7: sin DELETE físico; auditoría intocable
+select prueba.como('A');
+set role authenticated;
+select prueba.falla($$delete from metas.alumnos where id = '00000000-0000-0000-0000-0000000b0001'$$, 'S6 sin DELETE físico (authenticated)', '42501');
+select prueba.falla($$update metas.auditoria set accion = 'crear'$$, 'S7 auditoría no se edita', '42501');
+reset role;
+set role service_role;
+select prueba.falla($$delete from metas.alumnos where id = '00000000-0000-0000-0000-0000000b0001'$$, 'S6 sin DELETE físico (service_role)');
+select prueba.falla($$delete from metas.auditoria$$, 'S7 auditoría no se borra (service_role)');
+reset role;
+select prueba.falla($$truncate metas.auditoria$$, 'S7 auditoría no se vacía ni como dueño', 'MT006');
+
+-- S8: tope de rechazos (16 KB)
+select prueba.como('A');
+set role authenticated;
+select prueba.falla($$insert into metas.rechazos (operacion) values (jsonb_build_object('x', repeat('a', 20000)))$$,
+                    'S8 rechazo de más de 16 KB no entra', '23514');
+reset role;
+
+-- S9: ninguna función de metas ejecutable por PUBLIC
+select prueba.ok((select count(*) from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+                   where n.nspname = 'metas' and has_function_privilege('public', p.oid, 'execute')) = 0,
+                 'S9 ninguna función de metas abierta a PUBLIC');
+
+-- ════════════════════════════════════════════════════════════════════════════
+-- F · Lo que falta por recaudar (colecta C1, sugerido 50)
+-- ════════════════════════════════════════════════════════════════════════════
+select prueba.como('A');
+set role authenticated;
+insert into metas.colecta_exenciones (aula_id, colecta_id, alumno_id, monto_aplicable)
+values (:aula, :c1, :carla, null), (:aula, :c1, :dani, 25), (:aula, :c1, :gabi, null);
+select metas.pago_crear(gen_random_uuid(), gen_random_uuid(), :c1, :ana,  '50.00', '2027-02-02');
+select metas.pago_crear(gen_random_uuid(), gen_random_uuid(), :c1, :dani, '10.00', '2027-02-02');
+select metas.pago_crear(gen_random_uuid(), gen_random_uuid(), :c1, :fito, '70.00', '2027-02-02');
+select metas.pago_crear(gen_random_uuid(), gen_random_uuid(), :c1, :eva,  '30.00', '2027-02-02');
+select metas.pago_crear(gen_random_uuid(), gen_random_uuid(), :c1, :gabi, '20.00', '2027-02-02');
+update metas.alumnos set estado = 'trasladado' where id = :eva;
+select prueba.ok((select aplicable = 0 and falta = 0 and situacion = 'no_corresponde' from metas.v_colecta_alumnos
+                   where colecta_id = :c1 and alumno_id = :carla), 'F1 exento total: no le falta nada');
+select prueba.ok((select aplicable = 25 and pagado = 10 and falta = 15 from metas.v_colecta_alumnos
+                   where colecta_id = :c1 and alumno_id = :dani), 'F2 exento parcial: falta 15');
+select prueba.ok((select falta = 0 and pago_de_mas = 20 and situacion = 'pago_de_mas' from metas.v_colecta_alumnos
+                   where colecta_id = :c1 and alumno_id = :fito), 'F3 pagó de más: falta 0, pago de más 20');
+select prueba.ok((select falta = 0 and situacion = 'ya_no_esta' from metas.v_colecta_alumnos
+                   where colecta_id = :c1 and alumno_id = :eva), 'F4 trasladado: no le falta, ya no está');
+select prueba.ok((select falta = 0 and pago_de_mas = 20 from metas.v_colecta_alumnos
+                   where colecta_id = :c1 and alumno_id = :gabi), 'F5 exento que igual pagó: pago de más 20');
+select prueba.ok((select esperados = 4 and meta = 175 and recaudado = 180 and falta_total = 65
+                          and pago_de_mas_total = 40 and pagaron = 5
+                    from metas.v_colectas_resumen where colecta_id = :c1),
+                 'F resumen: esperados 4, meta 175, recaudado 180 (incluye al trasladado), falta 65');
+reset role;
+
+-- ════════════════════════════════════════════════════════════════════════════
+-- K · Claves de familia (copia inmutable del paso 1)
+-- ════════════════════════════════════════════════════════════════════════════
+select prueba.ok((select count(*) from metas.claves_archivo where docente_codigo = 'PROF-AAAA000001') = 4,
+                 'K0 copia del paso 1: las 4 claves de A (sin repetir)');
+select prueba.ok(not exists (select 1 from metas.claves_archivo where docente_codigo = 'PROF-CCCC000003'),
+                 'K0 un raw inválido no rompe la copia');
+select prueba.falla($$update metas.claves_archivo set clave = 'X'$$, 'K0 la copia de claves es inmutable', 'MT006');
+-- Cambiar el blob vivo DESPUÉS del paso 1 no cambia lo que se puede conservar
+update public.docente_estado set valor = jsonb_build_object('raw', '{"G:G1":{"5":"5NUEVA"}}')
+ where codigo = 'PROF-BBBB000002' and k = 'METAS_CODIGOS_V1';       -- B no está vinculado: se deja
+
+select prueba.como('A');
+set role authenticated;
+insert into metas.familias (aula_id, alumno_id) values (:aula, :beto);
+select prueba.ok((select clave ~ '^[A-HJ-NP-Z2-9]{10}$' and clave_origen = 'nueva' from metas.familias where alumno_id = :beto),
+                 'K1 clave nueva de 10 símbolos sin I, O, 0 ni 1');
+insert into metas.familias (aula_id, alumno_id, clave) values (:aula, :ana, '1-K7QM');
+select prueba.ok((select clave = '1K7QM' and clave_origen = 'conservada' from metas.familias where alumno_id = :ana),
+                 'K2 clave conservada que estaba en la copia de A');
+select prueba.falla($$insert into metas.familias (aula_id, alumno_id, clave) values ('00000000-0000-0000-0000-0000000a0001', '00000000-0000-0000-0000-0000000b0003', '2ZZZZ')$$,
+                    'K3 la clave de otro docente no se conserva', 'MT020');
+select prueba.falla($$update metas.familias set clave = '2PRBA' where alumno_id = '00000000-0000-0000-0000-0000000b0001'$$,
+                    'K4 la clave no se cambia', 'MT002');
+select prueba.falla($$insert into metas.familias (aula_id, alumno_id, clave) values ('00000000-0000-0000-0000-0000000a0001', '00000000-0000-0000-0000-0000000b0003', '1K7QM')$$,
+                    'K5 clave conservada ya ocupada → 23505 (la carga rápida ofrece una nueva)', '23505');
+insert into metas.familias (aula_id, alumno_id) values (:aula, :dani), (:aula, :eva);
+reset role;
+
+-- B se vincula DESPUÉS del paso 1: su copia se toma en ese momento
+set role service_role;
+select metas.cuenta_registrar('00000000-0000-0000-0000-00000000000b', 'PROF-BBBB000002',
+                              'prof-bbbb000002@cuentas.metas.policastsapien.com');
+reset role;
+select prueba.ok(exists (select 1 from metas.claves_archivo where docente_codigo = 'PROF-BBBB000002' and clave = '5NUEVA'),
+                 'K6 quien se vincula después del paso 1 tiene su copia al vincularse');
+
+-- S5: B no ve ni toca lo de A aunque conozca los uuid
+select prueba.como('B');
+set role authenticated;
+select prueba.ok((select count(*) from metas.alumnos) = 0, 'S5 B no ve alumnos de A');
+select prueba.ok((metas.pago_crear(gen_random_uuid(), gen_random_uuid(), :c1, :ana, '50.00', '2027-02-02') ->> 'motivo') = 'colecta',
+                 'S5 B recibe «colecta» (no existe para él)');
+reset role;
+
+
+-- ════════════════════════════════════════════════════════════════════════════
+-- M · Dinero (colecta C2, sugerido 100)
+-- ════════════════════════════════════════════════════════════════════════════
+select prueba.como('A');
+set role authenticated;
+-- M1: no hay upsert ni escritura directa de pagos
+select prueba.falla($$insert into metas.pagos (aula_id, colecta_id, alumno_id, monto, fecha) values ('00000000-0000-0000-0000-0000000a0001', '00000000-0000-0000-0000-0000000c0002', '00000000-0000-0000-0000-0000000b0002', 1, '2027-02-02') on conflict (id) do update set monto = 2$$,
+                    'M1 upsert de pagos denegado', '42501');
+select prueba.falla($$insert into metas.convocatoria_pagos (convocatoria_id, huella, monto, fecha) values (gen_random_uuid(), 'x', 1, '2027-02-02') on conflict (id) do nothing$$,
+                    'M1 upsert de pagos de convocatoria denegado', '42501');
+-- M2: el monto y la fecha no se editan
+select prueba.falla($$update metas.pagos set monto = 1$$, 'M2 update directo del monto denegado', '42501');
+select prueba.ok((metas.pago_editar((select id from metas.pagos where alumno_id = '00000000-0000-0000-0000-0000000b0001' limit 1),
+                                    '{"monto":"1.00"}', gen_random_uuid()) ->> 'motivo') = 'campo_no_editable',
+                 'M2 pago_editar no cambia el monto');
+select prueba.ok((metas.pago_editar((select id from metas.pagos where alumno_id = '00000000-0000-0000-0000-0000000b0001' limit 1),
+                                    '{"fecha":"2027-02-09"}', gen_random_uuid()) ->> 'motivo') = 'campo_no_editable',
+                 'M2 la fecha de un pago numerado tampoco se edita');
+reset role;
+
+-- M3: corregir 50 → 60 = anular + nuevo con otro recibo
+create temp table t (k text primary key, v jsonb);
+grant all on t to public;
+select prueba.como('A');
+set role authenticated;
+insert into t values ('p1', metas.pago_crear('00000000-0000-0000-0000-00000000e001', '00000000-0000-0000-0000-0000000f0001',
+                                             :c2, :ana, '50.00', '2027-03-03'));
+insert into t values ('p1c', metas.pago_corregir('00000000-0000-0000-0000-00000000e001', '{"monto":"50.00","fecha":"2027-03-03"}',
+                                                 '00000000-0000-0000-0000-00000000e002', '00000000-0000-0000-0000-0000000f0002',
+                                                 '60.00', '2027-03-03', 'se anotó mal'));
+select prueba.ok((select (v ->> 'ok')::boolean and v -> 'pago' ->> 'monto' = '60.00'
+                          and v -> 'pago' ->> 'reemplaza_a' = '00000000-0000-0000-0000-00000000e001'
+                          and v -> 'pago' ->> 'recibo' <> (select v -> 'pago' ->> 'recibo' from t where k = 'p1')
+                   from t where k = 'p1c'), 'M3 corregir crea otro pago con otro recibo que reemplaza al viejo');
+select prueba.ok((select deleted_at is not null and anulado_motivo = 'se anotó mal' from metas.pagos
+                   where id = '00000000-0000-0000-0000-00000000e001'), 'M3 el viejo queda anulado con su motivo');
+-- M15: el dinero sale como texto
+select prueba.ok((select jsonb_typeof(v -> 'pago' -> 'monto') = 'string' from t where k = 'p1c'), 'M15 montos salen como texto');
+-- M13: reenviar lo mismo no repite nada
+select prueba.ok((metas.pago_crear('00000000-0000-0000-0000-00000000e001', '00000000-0000-0000-0000-0000000f0001',
+                                   :c2, :ana, '50.00', '2027-03-03') ->> 'ya_estaba')::boolean,
+                 'M13 reenviar pago_crear → ya estaba');
+select prueba.ok((metas.pago_corregir('00000000-0000-0000-0000-00000000e001', '{"monto":"50.00","fecha":"2027-03-03"}',
+                                      '00000000-0000-0000-0000-00000000e002', '00000000-0000-0000-0000-0000000f0002',
+                                      '60.00', '2027-03-03') ->> 'ya_estaba')::boolean,
+                 'M13 reenviar pago_corregir → ya estaba');
+select prueba.ok((select count(*) from metas.pagos where colecta_id = :c2 and alumno_id = :ana) = 2,
+                 'M13 sigue habiendo exactamente un pago anulado y uno vivo');
+select prueba.ok((metas.pago_crear('00000000-0000-0000-0000-00000000e001', gen_random_uuid(),
+                                   :c2, :ana, '50.00', '2027-03-03') ->> 'motivo') = 'id_ocupado',
+                 'I4 mismo id con otra operación → id ocupado, no pisa');
+-- M7: otro aparato ya lo corrigió (base vieja) → pregunta con los dos montos
+insert into t values ('m7', metas.pago_corregir('00000000-0000-0000-0000-00000000e002', '{"monto":"55.00","fecha":"2027-03-03"}',
+                                                gen_random_uuid(), gen_random_uuid(), '70.00', '2027-03-03'));
+select prueba.ok((select v ->> 'pregunta' = 'pago_cambiado_en_otro_aparato' and v -> 'actual' ->> 'monto' = '60.00'
+                          and v -> 'este' ->> 'monto' = '70.00' from t where k = 'm7'),
+                 'M7 corregir sobre un monto que otro aparato cambió → pregunta «¿L 60 o L 70?»');
+-- Punto 9: cambiar solo la nota NO hace preguntar al corregir
+select metas.pago_editar('00000000-0000-0000-0000-00000000e002', '{"nota":"la mamá pagó en dos partes"}', gen_random_uuid());
+insert into t values ('n9', metas.pago_corregir('00000000-0000-0000-0000-00000000e002', '{"monto":"60.00","fecha":"2027-03-03"}',
+                                                '00000000-0000-0000-0000-00000000e003', gen_random_uuid(), '65.00', '2027-03-03'));
+select prueba.ok((select (v ->> 'ok')::boolean from t where k = 'n9'),
+                 'P9 una nota cambiada en otro aparato no es motivo para preguntar');
+-- M8: la fecha cambiada en otro aparato SÍ pregunta
+insert into t values ('m8', metas.pago_corregir('00000000-0000-0000-0000-00000000e003', '{"monto":"65.00","fecha":"2027-03-01"}',
+                                                gen_random_uuid(), gen_random_uuid(), '65.00', '2027-03-05'));
+select prueba.ok((select v ->> 'pregunta' = 'pago_cambiado_en_otro_aparato' from t where k = 'm8'),
+                 'M8 fecha cambiada en otro aparato → pregunta');
+-- M9: anular algo que otro aparato ya corrigió → pregunta
+select prueba.ok((metas.pago_anular('00000000-0000-0000-0000-00000000e002', 'devuelto', gen_random_uuid()) ->> 'pregunta')
+                 = 'pago_corregido_en_otro_aparato', 'M9 anular un pago ya corregido → pregunta');
+-- M4: abonos
+select metas.pago_crear(gen_random_uuid(), gen_random_uuid(), :c2, :beto, '20.00', '2027-03-01');
+select metas.pago_crear(gen_random_uuid(), gen_random_uuid(), :c2, :beto, '20.00', '2027-03-02',
+                        p_conocidos => array(select id from metas.pagos where colecta_id = :c2 and alumno_id = :beto and deleted_at is null));
+select metas.pago_crear(gen_random_uuid(), gen_random_uuid(), :c2, :beto, '20.00', '2027-03-03',
+                        p_conocidos => array(select id from metas.pagos where colecta_id = :c2 and alumno_id = :beto and deleted_at is null));
+select prueba.ok((select pagado = 60 and pagos = 3 from metas.v_colecta_alumnos where colecta_id = :c2 and alumno_id = :beto),
+                 'M4 tres abonos de 20: pagado 60, tres pagos');
+select prueba.ok((select count(distinct recibo) = 3 from metas.pagos where colecta_id = :c2 and alumno_id = :beto),
+                 'M4 cada abono con su recibo');
+-- M5/M6: un pago que este aparato no conocía → pregunta, con montos distintos o iguales
+select prueba.ok((metas.pago_crear(gen_random_uuid(), gen_random_uuid(), :c2, :beto, '60.00', '2027-03-04') ->> 'pregunta')
+                 = 'otro_pago_sin_ver', 'M5 pago que no conocía (montos distintos) → pregunta');
+select prueba.ok((metas.pago_crear(gen_random_uuid(), gen_random_uuid(), :c2, :beto, '20.00', '2027-03-04') ->> 'pregunta')
+                 = 'otro_pago_sin_ver', 'M6 con montos iguales también pregunta');
+select prueba.ok((metas.pago_crear(gen_random_uuid(), gen_random_uuid(), :c2, :beto, '15.00', '2027-03-04',
+                                   p_son_distintos => true) ->> 'ok')::boolean, 'M5 «son dos pagos» → se guarda');
+reset role;
+
+-- M10-M12: gastos de colecta
+select prueba.como('A');
+set role authenticated;
+insert into t values ('g1', metas.gasto_crear('00000000-0000-0000-0000-0000000e0101', gen_random_uuid(), :c1, '2027-02-05', 'Entradas', '40.00'));
+select metas.gasto_editar('00000000-0000-0000-0000-0000000e0101', '{"monto":"40.00"}', '{"monto":"45.00"}', gen_random_uuid());
+select prueba.ok((metas.gasto_editar('00000000-0000-0000-0000-0000000e0101', '{"monto":"40.00"}', '{"monto":"48.00"}', gen_random_uuid())
+                  ->> 'pregunta') = 'gasto_cambiado_en_otro_aparato', 'M10 monto de gasto cambiado en otro aparato → pregunta');
+select prueba.ok((metas.gasto_editar('00000000-0000-0000-0000-0000000e0101', '{}', '{"concepto":"Entradas al museo"}', gen_random_uuid())
+                  ->> 'ok')::boolean, 'M10 el concepto se aplica sin preguntar');
+select prueba.ok((metas.gasto_crear(gen_random_uuid(), gen_random_uuid(), :c1, '2027-02-05', 'Entradas', '45.00') ->> 'pregunta')
+                 = 'otro_gasto_sin_ver', 'M11 mismo gasto anotado en otro aparato → pregunta');
+select metas.gasto_anular('00000000-0000-0000-0000-0000000e0101', 'era de otra colecta', gen_random_uuid());
+select prueba.ok((metas.gasto_editar('00000000-0000-0000-0000-0000000e0101', '{}', '{"concepto":"x"}', gen_random_uuid()) ->> 'motivo')
+                 = 'anulado', 'M12 editar un gasto anulado → no se revive');
+-- M14: 1 000 pagos de L 0.10 suman 100.00 exactos, con recibos seguidos
+do $$
+declare i int;
+begin
+  for i in 1..1000 loop
+    perform metas.pago_crear(gen_random_uuid(), gen_random_uuid(), '00000000-0000-0000-0000-0000000c0003',
+                             '00000000-0000-0000-0000-0000000b0006', '0.10', '2027-02-10', p_son_distintos => true);
+  end loop;
+end $$;
+select prueba.ok((select recaudado = 100.00 from metas.v_colectas_resumen where colecta_id = :c3), 'M14 1 000 × 0.10 = 100.00 exacto');
+reset role;
+select prueba.ok((select count(distinct recibo) = count(*) and max(split_part(recibo, '-', 4)::int) - min(split_part(recibo, '-', 4)::int) + 1 = count(*)
+                    from metas.pagos where owner = '00000000-0000-0000-0000-00000000000a'),
+                 'R1 recibos únicos y correlativos sin huecos');
+select prueba.ok((select bool_and(recibo ~ '^RC-[0-9]{2}-[A-HJ-NP-Z2-9]{4}-[0-9]{4}$') from metas.pagos), 'R1 formato RC-AA-SSSS-NNNN');
+
+-- ════════════════════════════════════════════════════════════════════════════
+-- B · Borrado protegido (incluida la carrera con dos sesiones de verdad)
+-- ════════════════════════════════════════════════════════════════════════════
+select prueba.como('A');
+set role authenticated;
+select prueba.falla($$update metas.alumnos set deleted_at = now() where id = '00000000-0000-0000-0000-0000000b0001'$$,
+                    'B1 no se borra un alumno con pagos', 'MT007');
+select prueba.falla($$update metas.colectas set deleted_at = now() where id = '00000000-0000-0000-0000-0000000c0001'$$,
+                    'B2 no se borra una colecta con pagos', 'MT007');
+select prueba.falla($$update metas.aulas set deleted_at = now() where id = '00000000-0000-0000-0000-0000000a0001'$$,
+                    'B2 no se borra un aula con alumnos', 'MT007');
+update metas.aulas set deleted_at = now() where id = :aula_vac;
+select prueba.ok((select deleted_at is not null from metas.aulas where id = :aula_vac), 'B3 un aula vacía sí se borra');
+select prueba.falla($$update metas.aulas set deleted_at = null where id = '00000000-0000-0000-0000-0000000a0002'$$,
+                    'B3 lo borrado no se revive', 'MT001');
+-- Un alumno sin pagos ni notas para la carrera
+select metas.alumno_crear('00000000-0000-0000-0000-0000000b0099', gen_random_uuid(), :aula, '{"nombre_completo":"Alumno Ficticio Carrera"}');
+reset role;
+
+-- B4: la tablet anota una nota (transacción abierta) mientras la PC borra al alumno
+do $$
+declare
+  c text := current_setting('prueba.conninfo');
+  ini text := $i$select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000a","role":"authenticated","is_anonymous":false}', false); set role authenticated;$i$;
+  r text;
+begin
+  perform dblink_connect('tablet', c);
+  perform dblink_connect('pc', c);
+  perform dblink_exec('tablet', ini);
+  perform dblink_exec('pc', ini);
+  perform dblink_exec('tablet', 'begin');
+  perform dblink_exec('tablet', $n$insert into metas.notas (aula_id, alumno_id, asignatura_id, periodo, valor)
+                                  values ('00000000-0000-0000-0000-0000000a0001', '00000000-0000-0000-0000-0000000b0099',
+                                          '00000000-0000-0000-0000-0000000d0001', 'I', 85)$n$);
+  perform dblink_send_query('pc', $d$update metas.alumnos set deleted_at = now() where id = '00000000-0000-0000-0000-0000000b0099'$d$);
+  perform pg_sleep(0.5);
+  perform prueba.ok(dblink_is_busy('pc') = 1, 'B4 el borrado ESPERA a la nota que se está guardando');
+  perform dblink_exec('tablet', 'commit');
+  begin
+    perform * from dblink_get_result('pc') as x(r text);
+    r := 'sin error';
+  exception when others then
+    r := sqlerrm;
+  end;
+  perform prueba.ok(r like '%tiene pagos o notas%', 'B4 y después lo rechaza: la nota quedó y el alumno no se borró', r);
+  perform dblink_disconnect('tablet');
+  perform dblink_disconnect('pc');
+end $$;
+select prueba.ok((select deleted_at is null from metas.alumnos where id = '00000000-0000-0000-0000-0000000b0099')
+             and (select count(*) = 1 from metas.notas where alumno_id = '00000000-0000-0000-0000-0000000b0099'),
+                 'B4 resultado: alumno vivo con su nota');
+
+-- B4 al revés: la PC borra primero (transacción abierta) y la tablet anota después
+select prueba.como('A');
+set role authenticated;
+select metas.alumno_crear('00000000-0000-0000-0000-0000000b0098', gen_random_uuid(), :aula, '{"nombre_completo":"Alumna Ficticia Carrera Dos"}');
+reset role;
+do $$
+declare
+  c text := current_setting('prueba.conninfo');
+  ini text := $i$select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000a","role":"authenticated","is_anonymous":false}', false); set role authenticated;$i$;
+  r text;
+begin
+  perform dblink_connect('pc', c);
+  perform dblink_connect('tablet', c);
+  perform dblink_exec('pc', ini);
+  perform dblink_exec('tablet', ini);
+  perform dblink_exec('pc', 'begin');
+  perform dblink_exec('pc', $d$update metas.alumnos set deleted_at = now() where id = '00000000-0000-0000-0000-0000000b0098'$d$);
+  perform dblink_send_query('tablet', $n$insert into metas.notas (aula_id, alumno_id, asignatura_id, periodo, valor)
+                                         values ('00000000-0000-0000-0000-0000000a0001', '00000000-0000-0000-0000-0000000b0098',
+                                                 '00000000-0000-0000-0000-0000000d0001', 'I', 90)$n$);
+  perform pg_sleep(0.5);
+  perform dblink_exec('pc', 'commit');
+  begin
+    perform * from dblink_get_result('tablet') as x(r text);
+    r := 'sin error';
+  exception when others then
+    r := sqlerrm;
+  end;
+  perform prueba.ok(r like '%no existe o está borrado%', 'B4 al revés: la nota para un alumno ya borrado se rechaza', r);
+  perform dblink_disconnect('pc');
+  perform dblink_disconnect('tablet');
+end $$;
+
+-- ════════════════════════════════════════════════════════════════════════════
+-- A · Alumnos: solo la identidad une; homónimos
+-- ════════════════════════════════════════════════════════════════════════════
+select prueba.como('A');
+set role authenticated;
+select prueba.ok((metas.alumno_crear(gen_random_uuid(), gen_random_uuid(), :aula,
+                  '{"nombre_completo":"Otra Persona Ficticia","identidad":"0000201500001"}') ->> 'misma_identidad')::boolean,
+                 'A1 misma identidad → es el mismo alumno (se devuelve el existente)');
+select prueba.ok((metas.alumno_crear(gen_random_uuid(), gen_random_uuid(), :aula,
+                  '{"nombre_completo":"alumna ficticia   tres"}') ->> 'pregunta') = 'misma_persona',
+                 'A2 mismo nombre sin identidad → pregunta «¿es la misma persona?»');
+select prueba.ok((metas.alumno_crear(gen_random_uuid(), gen_random_uuid(), :aula,
+                  '{"nombre_completo":"Alumno Ficticio Dos","identidad":"0000201599999"}') ->> 'homonimo')::boolean,
+                 'A3 homónimos con identidades distintas → se crea, con aviso');
+select prueba.ok((metas.alumno_crear(gen_random_uuid(), gen_random_uuid(), :aula,
+                  '{"nombre_completo":"Alumno Ficticio Guatemala","identidad":"0000000000001","documento_pais":"GT","documento_tipo":"cui"}') ->> 'ok')::boolean,
+                 'A6 documento de Guatemala aceptado');
+select prueba.falla($$select metas.alumno_crear(gen_random_uuid(), gen_random_uuid(), '00000000-0000-0000-0000-0000000a0001', '{"nombre_completo":"Alumna Doce Digitos","identidad":"000020150001"}')$$,
+                    'A6 identidad hondureña de 12 dígitos rechazada', '23514');
+update metas.alumnos set num_lista = 40 where id = :ana;
+select prueba.ok((select count(*) = 1 from metas.familias where alumno_id = :ana and deleted_at is null)
+             and (select pagado = 50 from metas.v_colecta_alumnos where colecta_id = :c1 and alumno_id = :ana),
+                 'A8 cambiar el número de lista no mueve familia ni pagos');
+reset role;
+
+-- ════════════════════════════════════════════════════════════════════════════
+-- G · Gastos del docente y reembolsos; N · inventario y actas
+-- ════════════════════════════════════════════════════════════════════════════
+select prueba.como('A');
+set role authenticated;
+select metas.gasto_docente_crear('00000000-0000-0000-0000-0000000e0201', gen_random_uuid(), '2027-02-01', 'material',
+                                 'Marcadores', 'Dirección', '300.00');
+select metas.reembolso_crear(gen_random_uuid(), gen_random_uuid(), '00000000-0000-0000-0000-0000000e0201', '100.00', '2027-02-10');
+select metas.reembolso_crear(gen_random_uuid(), gen_random_uuid(), '00000000-0000-0000-0000-0000000e0201', '150.00', '2027-02-20',
+                             p_conocidos => array(select id from metas.reembolsos where gasto_id = '00000000-0000-0000-0000-0000000e0201'));
+select prueba.ok((select estado = 'reembolsado_parcial' and falta = 50 from metas.v_gastos_docente
+                   where gasto_id = '00000000-0000-0000-0000-0000000e0201'), 'G2 reembolsado parcial, falta 50 (calculado)');
+select prueba.ok((metas.gasto_docente_editar('00000000-0000-0000-0000-0000000e0201', '{"monto":"300.00"}', '{"monto":"200.00"}',
+                                             gen_random_uuid()) ->> 'pregunta') = 'monto_menor_que_reembolsado',
+                 'P11 bajar el monto por debajo de lo reembolsado → pregunta');
+select prueba.ok((metas.gasto_docente_anular('00000000-0000-0000-0000-0000000e0201', 'x', gen_random_uuid()) ->> 'motivo')
+                 = 'tiene_reembolsos', 'G6 no se anula un gasto con reembolsos');
+insert into metas.bienes (id, centro, fecha_desde, descripcion, valor, propietario, gasto_docente_id)
+values ('00000000-0000-0000-0000-0000000e0301', 'Escuela Ficticia Las Flores', current_date - 30, 'Librero', 900, 'docente',
+        '00000000-0000-0000-0000-0000000e0201');
+select prueba.falla($$update metas.bienes set propietario = 'centro' where id = '00000000-0000-0000-0000-0000000e0301'$$,
+                    'N2 pasar al centro sin fecha de reembolso → rechazado', 'MT030');
+update metas.bienes set propietario = 'centro', reembolso_fecha = current_date - 20 where id = '00000000-0000-0000-0000-0000000e0301';
+select prueba.ok((select propietario = 'centro' and pasa_al_centro_at = current_date - 20 from metas.bienes
+                   where id = '00000000-0000-0000-0000-0000000e0301'), 'N1 el bien pasa al centro en la misma fila');
+select prueba.ok(exists (select 1 from metas.v_bien_historia where bien_id = '00000000-0000-0000-0000-0000000e0301'
+                          and propietario_antes = 'docente' and propietario_despues = 'centro'),
+                 'N1 la historia muestra que era del docente');
+select prueba.ok((metas.acta_inventario_crear(gen_random_uuid(), gen_random_uuid(), 'Escuela Ficticia Las Flores',
+                  current_date + 1, 'A', 'Dirección') ->> 'motivo') = 'fecha_futura', 'P10 un acta no lleva fecha futura');
+select prueba.ok((metas.acta_inventario_crear(gen_random_uuid(), gen_random_uuid(), 'Escuela Ficticia Las Flores',
+                  current_date - 10, 'A', 'Dirección') -> 'acta' ->> 'numero') = '1', 'N4 primera acta = número 1');
+select prueba.ok((metas.acta_inventario_crear(gen_random_uuid(), gen_random_uuid(), 'Escuela Ficticia Las Flores',
+                  current_date - 10, 'A', 'Dirección') ->> 'pregunta') = 'acta_misma_fecha', 'P10 otra acta con la misma fecha → pregunta');
+select prueba.ok((metas.acta_inventario_crear(gen_random_uuid(), gen_random_uuid(), 'Escuela Ficticia Las Flores',
+                  current_date - 9, 'A', 'Dirección') -> 'acta' ->> 'numero') = '2', 'P10 con otra fecha → acta número 2');
+select prueba.ok((select jsonb_array_length(contenido) = 1 and totales ->> 'valor_centro' = '900.00' from metas.actas_inventario where numero = 1),
+                 'N4 el acta fija los bienes y sus totales');
+update metas.bienes set valor = 950 where id = '00000000-0000-0000-0000-0000000e0301';
+select prueba.ok((select totales ->> 'valor_centro' = '900.00' from metas.actas_inventario where numero = 1),
+                 'N5 editar un bien después no cambia el acta');
+reset role;
+
+-- ════════════════════════════════════════════════════════════════════════════
+-- P · Padres
+-- ════════════════════════════════════════════════════════════════════════════
+select clave as clave_dani from metas.familias where alumno_id = :dani \gset
+select clave as clave_eva  from metas.familias where alumno_id = :eva \gset
+set role service_role;
+select prueba.ok((metas.familia_vincular('00000000-0000-0000-0000-0000000000f1', '1-K7QM', 'ip-1') ->> 'ok')::boolean, 'P0 padre 1 se vincula con la clave de Ana');
+select metas.familia_vincular('00000000-0000-0000-0000-0000000000f2', :'clave_dani', 'ip-2');
+select metas.familia_vincular('00000000-0000-0000-0000-0000000000f3', :'clave_eva', 'ip-3');
+reset role;
+
+select prueba.como('padre1');
+set role authenticated;
+select prueba.ok((select count(distinct alumno_id) = 1 and bool_and(alumno_id = '00000000-0000-0000-0000-0000000b0001') from metas.vf_colectas),
+                 'P1 padre 1 solo ve a su hijo');
+select prueba.ok((select count(*) from metas.pagos) = 0, 'P1 0 filas en la tabla directa');
+select prueba.falla($$insert into metas.vf_colectas (alumno_id) values (gen_random_uuid())$$, 'P2 no escribe en una vista con uniones');
+select prueba.falla($$insert into metas.vf_personalidad (alumno_id, periodo, rasgo, letra) values (gen_random_uuid(), 'I', 'Moralidad', 'S')$$,
+                    'P2 no escribe en una vista simple (sin permiso)', '42501');
+select prueba.falla($$select metas.familia_vincular('00000000-0000-0000-0000-0000000000f1', '1K7QM', 'x')$$, 'P2 no llama a familia_vincular directo', '42501');
+select prueba.ok((select bool_and(recaudado is not null) and count(*) >= 3 from metas.familia_totales_colectas()),
+                 'P6 ve solo totales por colecta');
+reset role;
+select prueba.como('padre2');
+set role authenticated;
+select prueba.ok((select aplicable = 25 and falta = 15 from metas.vf_colectas where colecta_id = :c1), 'F6 padre de exento parcial ve falta 15');
+reset role;
+select prueba.como('padre3');
+set role authenticated;
+select prueba.ok((select aplicable = 0 and falta = 0 and situacion = 'ya_no_esta' from metas.vf_colectas where colecta_id = :c1),
+                 'F6/P5 padre de alumna trasladada: no le corresponde nada');
+reset role;
+-- P3: el docente anula un pago → toque en el canal de esa familia
+select count(*) as antes from realtime.messages
+ where topic = 'familia:' || (select id from metas.familias where alumno_id = '00000000-0000-0000-0000-0000000b0001') \gset
+select prueba.como('A');
+set role authenticated;
+select metas.pago_anular((select id from metas.pagos where colecta_id = :c1 and alumno_id = :ana and deleted_at is null),
+                         'devuelto a la familia', gen_random_uuid());
+reset role;
+select prueba.ok((select count(*) > :antes from realtime.messages
+                   where topic = 'familia:' || (select id from metas.familias where alumno_id = '00000000-0000-0000-0000-0000000b0001')),
+                 'P3 anular un pago avisa al canal de esa familia');
+select prueba.como('padre1');
+set role authenticated;
+select prueba.ok((select situacion = 'debe' from metas.vf_colectas where colecta_id = :c1), 'P3 el padre ya ve «debe» tras la anulación');
+reset role;
+
+-- P12: el tope global de claves equivocadas ALERTA, no bloquea a todos
+set role service_role;
+do $$
+declare i int;
+begin
+  for i in 1..2005 loop
+    -- claves BIEN FORMADAS que no existen (10 símbolos del alfabeto)
+    perform metas.familia_vincular(('00000000-0000-0000-0000-' || lpad(to_hex(4096 + i), 12, '0'))::uuid,
+                                   translate(upper(substr(md5(i::text), 1, 10)), '01', '23'), 'ip-x' || i);
+  end loop;
+end $$;
+select prueba.ok((metas.familia_vincular('00000000-0000-0000-0000-0000000000f2', '1K7QM', 'ip-nueva') ->> 'ok')::boolean,
+                 'P12 una clave buena sigue entrando (no se bloqueó a todos)');
+reset role;
+select prueba.ok((select count(*) = 1 from metas.alertas where tipo = 'claves_familia_equivocadas'), 'P12 una sola alerta global');
+
+-- ════════════════════════════════════════════════════════════════════════════
+-- V · Convivencia con el modelo viejo (paso 1)
+-- ════════════════════════════════════════════════════════════════════════════
+select prueba.como('nadie');
+set role anon;
+-- V1 APK v480: A (vinculada) sube su lista vieja por la función de siempre
+select prueba.ok(public.metas_docente_estado_guardar('PROF-AAAA000001', 'clave-a',
+  '[{"k":"METAS_ADMIN_V1","valor":{"raw":"{\"v\":2,\"grupos\":[{\"id\":\"G1\",\"lista\":[{\"num\":1,\"nombre\":\"Alumna Ficticia Uno\"}]}]}"},"version":99,"dispositivo":"apk-v480"}]') = -2,
+  'V1 APK v480 con datos del corte 1 → -2 (la app vieja lo deja pendiente)');
+-- V2 la misma app vieja, con una llave que todavía vive en el blob
+select prueba.ok(public.metas_docente_estado_guardar('PROF-AAAA000001', 'clave-a',
+  '[{"k":"METAS_PLANACCION_V1","valor":{"raw":"{\"analisis\":[]}"},"version":5,"dispositivo":"apk-v480"}]') = 1,
+  'V2 una llave que aún vive en el blob se guarda');
+select prueba.ok(public.metas_docente_estado_guardar('PROF-AAAA000001', 'clave-a',
+  '[{"k":"METAS_CODIGOS_V1","valor":{"raw":"{}"},"version":99,"dispositivo":"pestana-vieja"}]') = -2,
+  'V3 pestaña vieja: las claves de familia ya no se suben');
+select prueba.ok(public.metas_docente_estado_guardar('PROF-AAAA000001', 'clave-a',
+  '[{"k":"METAS_ADMIN_V1","valor":{"raw":"{no es json"},"version":99}]') = -2,
+  'V7 raw inválido de un docente vinculado → no se acepta');
+select prueba.ok(public.metas_docente_estado_guardar('PROF-AAAA000001', 'clave-a',
+  '[{"k":"METAS_ADMIN_V1","valor":{"raw":"{\"v\":2,\"grupos\":[{\"id\":\"G1\",\"lista\":[],\"equipos\":{\"reparto\":\"1,2|3,4\"}}]}"},"version":100}]') = 1,
+  'V8 METAS_ADMIN_V1 sin secciones del corte 1 se guarda');
+select prueba.ok(public.metas_docente_estado_guardar('PROF-CCCC000003', 'clave-c',
+  '[{"k":"METAS_ADMIN_V1","valor":{"raw":"{\"v\":2,\"grupos\":[{\"id\":\"G9\",\"lista\":[{\"num\":1}]}]}"},"version":1}]') = 1,
+  'V4 docente sin vincular: todo como hoy');
+-- V5 restaurar una versión vieja: la función está cerrada…
+select prueba.falla($$select public.metas_docente_reset_deshacer('PROF-AAAA000001', 'clave-a', 'METAS_ADMIN_V1', '{}')$$,
+                    'V5 «restaurar» viejo cerrado', '42501');
+-- V6 pestaña vieja: funciones de la copia para el chatbot y del historial cerradas
+select prueba.falla($$select public.metas_guardar_admin('[]'::jsonb)$$, 'V6 metas_guardar_admin(jsonb) cerrada', '42501');
+select prueba.falla($$select public.metas_guardar_admin('PROF-AAAA000001', 'clave-a', '[]'::jsonb)$$, 'V6 metas_guardar_admin(3 args) cerrada', '42501');
+select prueba.falla($$select public.metas_docente_historial('PROF-AAAA000001', 'clave-a', 'METAS_ADMIN_V1', 5)$$, 'V6 historial cerrado', '42501');
+select prueba.falla($$select public.metas_docente_papelera('PROF-AAAA000001', 'clave-a')$$, 'V6 papelera cerrada', '42501');
+select prueba.falla($$select public.metas_recuperar_admin_docente('PROF-AAAA000001', 'clave-a')$$, 'V6 reposición de pagos cerrada', '42501');
+-- Lo que DEBE seguir abierto
+select prueba.ok(public.metas_guardar('[]') = 1 and public.metas_guardar_progreso('[]') = 1,
+                 'V12 lado del alumno sigue abierto (metas_guardar, metas_guardar_progreso)');
+select prueba.ok(public.metas_consultar_admin_padre('X') is not null and public.metas_buzon_docente('[]') is not null,
+                 'V12 lecturas de padres y buzón siguen abiertos');
+reset role;
+select prueba.ok((select count(*) >= 3 from metas.blob_rechazos where codigo = 'PROF-AAAA000001'),
+                 'V1 cada intento de una app vieja queda anotado');
+select prueba.ok((select valor -> 'raw' ->> 0 is null and (valor ->> 'raw') like '%Alumna Ficticia Uno%' from public.docente_estado
+                   where codigo = 'PROF-AAAA000001' and k = 'METAS_ADMIN_V1') is not null,
+                 'V1 el blob de A no cambió con el intento rechazado');
+-- V5 …y aunque alguien escriba directo en la tabla, el candado la frena
+select prueba.falla($$update public.docente_estado set valor = jsonb_build_object('raw', '{"grupos":[{"lista":[{"num":1}]}]}') where codigo = 'PROF-AAAA000001' and k = 'METAS_ADMIN_V1'$$,
+                    'V5 escribir directo una lista vieja → candado', 'MT040');
+-- V9 la app nueva usa el blob por sesión, con el mismo candado
+select prueba.como('A');
+set role authenticated;
+select prueba.ok(metas.blob_guardar('[{"k":"METAS_PLANACCION_V1","valor":{"raw":"{\"analisis\":[1]}"},"version":200}]') = 1,
+                 'V9 la app nueva guarda por sesión lo que aún vive en el blob');
+select prueba.falla($$select metas.blob_guardar('[{"k":"METAS_ADMIN_V1","valor":{"raw":"{\"gastos\":[{\"monto\":5}]}"},"version":300}]')$$,
+                    'V9 ni la app nueva puede devolver al blob algo del corte 1', 'MT040');
+reset role;
+select prueba.como('padre1');
+set role authenticated;
+select prueba.falla($$select metas.blob_guardar('[]')$$, 'V9 una sesión de padre no toca el blob', '42501');
+reset role;
+-- V10 mensajes_docente: nada de docentes vinculados
+select prueba.falla($$insert into public.mensajes_docente (evento_id, codigo, docente, subtipo, titulo) values ('AVR-C1-1K7QM', '1K7QM', 'Docente Ficticia A · PROF-AAAA000001', 'cuentas', '🧾 Recibo RC-0001-1')$$,
+                    'V10 un recibo viejo de un docente vinculado no entra', 'MT041');
+insert into public.mensajes_docente (evento_id, codigo, docente, subtipo, titulo)
+values ('AVI-X-9VIEJ', '9VIEJ', 'Docente Ficticia C · PROF-CCCC000003', 'aviso', 'Aviso');
+select prueba.ok(true, 'V10 un docente sin vincular sigue mandando avisos');
+-- V11 cierre de año: metas_cerrar_familias sigue funcionando y archiva
+set role anon;
+select prueba.ok(public.metas_cerrar_familias('PROF-AAAA000001', 'clave-a', '["9VIEJ"]') >= 2, 'V11 el cierre de año sigue borrando las claves viejas');
+reset role;
+select prueba.ok((select count(*) >= 2 from public.registro_admin_historial where codigo = '9VIEJ'), 'V11 y deja lo borrado en el historial');
+select prueba.falla($$insert into public.registro_admin (evento_id, codigo, tipo) values ('ADA-X', 'X', 'asistencia')$$,
+                    'V11 registro_admin ya no se escribe', 'MT010');
+
+-- ════════════════════════════════════════════════════════════════════════════
+-- Resultado
+-- ════════════════════════════════════════════════════════════════════════════
+\o
+\set QUIET off
+select n, case when ok then '✔' else '✘' end as r, nombre, case when not ok then detalle end as detalle
+  from prueba.resultados order by n;
+do $$
+declare f int; t int;
+begin
+  select count(*) filter (where not ok), count(*) into f, t from prueba.resultados;
+  if f > 0 then
+    raise exception '% de % pruebas FALLARON', f, t;
+  end if;
+  raise notice '✅ Las % pruebas de la capa A en verde', t;
+end $$;

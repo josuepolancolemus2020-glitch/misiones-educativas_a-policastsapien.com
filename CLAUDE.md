@@ -82,6 +82,13 @@ Sin framework ni compilación: HTML, CSS y JS planos servidos tal cual.
     anula; nunca se pisa. Ver `docs/rediseno-datos/03-GUARDADO-CONFLICTOS-Y-SIN-CONEXION.md`.
 16. **Nunca `Math.random()` para generar ids**: `crypto.randomUUID()` y, si no
     existe, `crypto.getRandomValues()`.
+17. **Toda tabla nueva del esquema `metas` pasa por `metas._preparar`** (RLS
+    por dueño, política restrictiva de cuentas, sello, sin DELETE, auditoría y
+    Realtime), y todo archivo SQL que cree funciones en `metas` termina con
+    `revoke execute on all functions in schema metas from public`.
+18. **El dinero solo se escribe por funciones del servidor** (`metas.pago_*`,
+    `metas.gasto_*`, `metas.gasto_docente_*`, `metas.reembolso_*`): ni
+    `insert` ni `update` directos sobre pagos, gastos o reembolsos.
 
 ## Cómo correr las pruebas
 

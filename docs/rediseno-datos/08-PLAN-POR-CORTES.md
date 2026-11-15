@@ -1,125 +1,157 @@
 # 8. Plan de implementación por cortes
 
-Fase 1: diseño (revisión 2). Cada corte es un cambio que se publica entero,
-con sus pruebas en verde, y que deja la app funcionando. Ningún corte se
-empieza sin tu aprobación.
+Fase 1: diseño (revisión 3). Cada corte se publica entero, con sus pruebas en
+verde, y deja la app funcionando. Ningún corte se empieza sin tu aprobación.
 
-## 8.0 Antes del primer corte: la vinculación de cuentas (fase aparte)
+## 8.0 Antes del primer corte: vinculación de cuentas (fase aparte)
 
-- `SUPABASE-V2-VINCULACION.sql`, función de borde `metas-entrar` (con el
-  freno por IP), `metas-salir-todos` (llamada también desde `reset-clave`),
-  configuración del panel (alta pública apagada, sesiones anónimas con
-  Turnstile obligatorio, esquema `metas` expuesto).
-- El docente no ve ningún cambio: entra con su correo y su contraseña. Por
-  debajo ya tiene sesión de Supabase.
-- Se prueba con cuentas ficticias (T6 de `06-PRUEBAS.md`).
+- `SUPABASE-V2-VINCULACION.sql` (crea `metas`, el freno de intentos, el
+  vínculo y la copia de claves), funciones de borde `metas-entrar` (con el
+  freno por IP antes de validar la contraseña), `metas-salir-todos` (llamada
+  también desde `reset-clave`) y `familia-vincular`; panel: alta pública
+  apagada, sesiones anónimas con **Turnstile obligatorio**, esquema `metas`
+  expuesto.
+- El docente no ve ningún cambio. Se prueba con cuentas ficticias.
 - Se puede deshacer **mientras nadie haya creado datos** en la base nueva.
 
-## 8.1 Corte 1: dinero, alumnos, notas, asistencia y controles
+## 8.1 Corte 1: dinero, alumnos, notas, asistencia, controles, avisos y conducta
 
-**Tablas** (de `SUPABASE-V2-ESQUEMA.sql`): `aulas`, `periodos`, `asignaturas`
-(son la base de todo lo demás), `alumnos`, `familias` (la ficha del alumno y
-su clave: la vista de padres la necesita para mostrar el dinero y las notas),
-`colectas`, `colecta_exenciones`, `pagos`, `gastos` (de colecta),
-`gastos_docente`, `reembolsos`, `notas`, `notas_personalidad`,
-`inasistencias_oficiales`, `asistencia_dias`, `asistencia`, `controles`,
-`control_valores`; más auditoría, rechazos, recibos y frenos. Y de
-`SUPABASE-V2-FAMILIAS.sql`, lo que lee esos datos (vínculo, vistas `vf_hijos`,
-`vf_colectas`, `vf_pagos`, `vf_cuentas_claras`, `vf_notas`,
-`vf_personalidad`, `vf_asistencia`, totales por colecta, aviso por Realtime).
+**Requisito para empezar** (punto 14): la capa A en verde
+(`pruebas-capa-a/corre.sh`, hoy 130 pruebas: S1 a S9, M1 a M15, F1 a F6, B4,
+convivencia V1 a V12) y la misma corrida contra `supabase start`.
 
-**Código nuevo**: `js/datos/` entero (ids, montos, nube, almacén, cola,
-tiempo real, cálculos), la carga rápida (aula, alumnos, notas, colectas),
-las tarjetas de pregunta de dinero y de «¿es la misma persona?», la línea
-«Guardado / Guardando… / Sin señal», y en `padres.html` la sesión anónima
-con Turnstile, `familia-vincular` y las vistas.
+**Tablas**: `aulas`, `periodos`, `asignaturas`, `alumnos`, `familias`,
+`colectas`, `colecta_exenciones`, `pagos`, `gastos`, `gastos_docente`,
+`reembolsos`, `notas`, `notas_personalidad`, `inasistencias_oficiales`,
+`asistencia_dias`, `asistencia`, `controles`, `control_valores`, **`avisos`,
+`aviso_destinatarios`, `observaciones` (conducta y expediente),
+`preguntas_frecuentes`, `avisos_vistos` y `bitacora`** (adelantados: ver
+abajo). Y de `SUPABASE-V2-FAMILIAS.sql`, todo lo que lee esos datos.
 
-**Herramientas que pasan a filas**: Mi aula (lista, ficha, familias), colectas
-y pagos, gastos de colecta, gastos del docente, Notas SACE (notas,
-personalidad, recuperación, inasistencias oficiales), asistencia diaria y
-justificaciones, controles y registros. Boletas, cuadros SACE, cuadros
-estadísticos, lista oficial del SACE (`sace-lista.js`) y `ResumenSace`
-**leen filas**.
+**Por qué avisos, conducta, preguntas y bitácora entran ya**: todo eso le
+llegaba a las familias por `avFilasNube` → `metas_guardar_avisos`, que pide
+la contraseña del docente en cada llamada. La app nueva ya no la guarda, así
+que no podría seguir publicando por ese camino. Con estas tablas en el corte
+1, `avFilasNube` desaparece entero (incluidos los `AVC-` y `AVR-` de cuentas
+y recibos, `js/tools/registros-admin.js:12286-12330`) y las familias leen todo
+de la base nueva.
 
-**Se elimina en este corte** (de `05-ELIMINACION-Y-ANDROID.md`): la
-reposición de pagos (`adPagosDesdeRegistroNube`, `adRecuperarSolo`, el aviso
-«Pagos recuperados»), `buscar-perdidos.js`, `revisa-cruces.js`, el deshacer
-por fotos (`METAS_ADMIN_UNDO_V1`), las lápidas, la reconstrucción de notas
-desde respaldos e historial, todos los botones de recuperar, restaurar y
-sincronizar, la copia al chatbot de pagos, notas y asistencia
-(`adFilasNube`, `adSincronizarNube`, chip «N por subir»), la caché del padre
-(`METAS_PADRE_CACHE_V1`), la contraseña en `METAS_DOCENTE_V1`, las llaves
-`METAS_SB_URL`/`METAS_SB_KEY`, y las sondas que probaban todo eso.
+**Código nuevo**: `js/datos/` entero; carga rápida (aula, alumnos, familias
+con su clave, notas, colectas, gastos del docente); tarjetas de pregunta;
+el punto gris de «sin señal»; en `padres.html`, sesión anónima con Turnstile,
+`familia-vincular`, las vistas y la transición aula por aula.
 
-**SQL**: esquema y familias (corte 1), y el **paso 1** de
-`SUPABASE-V2-CONGELAR.sql`.
+**Herramientas que pasan a filas**: Mi aula (lista, ficha, familias),
+colectas, pagos, gastos de colecta, gastos del docente, Notas SACE,
+asistencia y justificaciones, controles, comunicados (avisos, conducta,
+preguntas frecuentes, bitácora). Boletas, cuadros, `sace-lista.js` y
+`ResumenSace` leen filas.
 
-**Android**: `server.url` desde este corte, para que web y Android corran lo
-mismo desde el primer día del modelo nuevo.
+**«Cerrar el año escolar» se reescribe** (`js/tools/registros-admin.js:11235-11338`)
+para la base nueva: el aula del año que termina queda de solo consulta, sus
+familias se dan de baja (los teléfonos vinculados dejan de ver) y el año
+nuevo es un aula nueva. Mientras haya datos en el archivo, la versión nueva
+también llama a `metas_cerrar_familias` para borrar las claves viejas del
+chatbot; por eso esa función **sigue abierta** hasta el paso 4. Como estamos
+en pleno cierre de año, el corte 1 no se publica en medio de un cierre: o
+antes de que empiece, o cuando el docente ya cerró.
 
-**Normas**: se reescriben las reglas 4 y 5 de `CLAUDE.md` (pendiente de tu
-aprobación, ver `05`, sección 5.6).
+**Se elimina** (lista con archivo:línea en `05` y `09`): sincronizar,
+recuperar, restaurar, papelera, versiones, copias, «usar este equipo»,
+«empezar de nuevo», «pagos recuperados», `buscar-perdidos.js`,
+`revisa-cruces.js`, la reposición de pagos, el deshacer por fotos,
+`avFilasNube`, `adFilasNube`, la caché del padre, la contraseña en
+`METAS_DOCENTE_V1`, `METAS_SB_URL`/`METAS_SB_KEY`.
 
-### Cómo conviven el corte 1 y lo que todavía no pasa a filas
+**SQL**: esquema, familias y el **paso 1** de `SUPABASE-V2-CONGELAR.sql`
+(copia de claves, candado del blob, `-2` para apps viejas, blob por sesión,
+`mensajes_docente` cerrado para docentes vinculados, `registro_admin`
+congelado salvo el borrado del cierre de año, funciones cerradas).
 
-- Lo que aún no pasa a filas (avisos, conducta, preguntas frecuentes, plan de
-  acción, acumulativos, instrumentos, lecturas, equipos, bitácora, inventario,
-  convocatorias, Campeonísimo, gobierno escolar) **sigue guardándose como
-  hoy**, en su llave local y en el blob, hasta su corte. El espejo y la fusión
-  siguen vivos **solo para esas llaves**, y la app nueva **quita** del blob
-  todo lo del corte 1 antes de subirlo (no se sube ni se lee ningún pago,
-  nota, asistencia ni alumno por ese camino).
-- Esas herramientas nombran alumnos (avisos individuales, conducta, plan de
-  acción, acumulativos, lecturas, equipos). Desde el corte 1 los toman de la
-  lista nueva y **guardan el id del alumno (uuid), no su número de lista**.
-  Lo que tenían guardado con los números de la lista vieja **no se traslada**
-  (la base nueva empieza vacía; queda en el archivo). Pendiente de tu
-  aprobación: es una pérdida de comodidad para el docente en esas
-  herramientas hasta su corte.
-- Avisos y conducta para las familias siguen saliendo por el canal viejo
-  (`mensajes_docente`, con la clave de familia) hasta el corte 2. Para que le
-  lleguen a una familia de un aula ya cargada, su clave tiene que ser la
-  **conservada**. Riesgo: una familia con clave **nueva** no recibe avisos
-  hasta el corte 2. Por eso se recomienda que el corte 2 siga pronto.
+**Android**: `server.url` (aprobado) desde este corte, y retiro de la APK
+v480 (8.6).
 
-## 8.2 Corte 2: avisos, conducta, preguntas, plan de acción, evaluaciones
+### Cómo convive el corte 1 con lo que todavía no pasa a filas
 
-Tablas `avisos`, `aviso_destinatarios`, `preguntas_frecuentes`,
-`observaciones` (conducta y expediente), `avisos_vistos`, `analisis`,
-`analisis_alumnos`, `evaluaciones`, `evaluacion_puntos`, `instrumentos`; vistas
-`vf_avisos`, `vf_observaciones`, `vf_preguntas`, `vf_plan_accion`; buzón nuevo
-del docente sobre `metas` (reemplazo de `metas_buzon_docente`). **Paso 2** de
-`CONGELAR`.
+- **Siguen en el blob** hasta su corte: plan de acción, acumulativos e
+  instrumentos, lecturas, equipos, inventario, convocatorias, Campeonísimo,
+  gobierno escolar. La app nueva los guarda con `metas.blob_guardar` y los lee
+  con `metas.blob_leer` (por sesión, sin contraseña). El **candado** del
+  servidor impide que por ese camino vuelva al blob cualquier cosa del corte 1
+  (`MT040`), aunque la mande una app vieja, una pestaña vieja o un SQL a mano.
+- **Plan de acción, acumulativos, lecturas y equipos empiezan en blanco en
+  su corte** (decidido). Hasta entonces funcionan como hoy en el aparato. El
+  día de su corte, la herramienta le dice al docente, una sola vez y en
+  lenguaje claro: «Desde hoy, el plan de acción se guarda de otra forma y
+  empieza vacío. Lo que tenías antes queda en tus papeles impresos». Nada
+  técnico.
+- Mientras plan de acción siga en el blob, **no publica a las familias**
+  (`metas_guardar_plan` también pide la contraseña). Vuelve a publicar en su
+  corte.
 
-## 8.3 Corte 3: aula del día a día
+## 8.2 Corte 2: plan de acción, acumulativos, instrumentos, lecturas y equipos
 
-`bitacora`, `lecturas`, `repartos`, `reparto_miembros`, `bienes` y
-`actas_inventario` (con su acta inicial y el aviso de «toca acta» cada 3
-meses).
+`analisis`, `analisis_alumnos`, `evaluaciones`, `evaluacion_puntos`,
+`instrumentos`, `lecturas`, `repartos`, `reparto_miembros`; vista
+`vf_plan_accion`. Empiezan en blanco (8.1). **Paso 2** de `CONGELAR`.
 
-## 8.4 Corte 4: el resto, y cierre del modelo viejo
+## 8.3 Corte 3: inventario, convocatorias, Campeonísimo, gobierno escolar
 
-`convocatorias`, `convocatoria_inscritos`, `convocatoria_pagos` (con sus
-funciones de dinero y la decisión del PIN), `campeonatos`, `elecciones`,
-`eleccion_votos`, `ajustes_docente`. Directores en **solo lectura** (política
-según `docente_permisos`).
+`bienes` y `actas_inventario` (acta inicial; aviso de «toca acta» cada 3
+meses), `convocatorias`, `convocatoria_inscritos`, `convocatoria_pagos` (con
+sus funciones de dinero y la decisión del PIN), `campeonatos`, `elecciones`,
+`eleccion_votos`, `ajustes_docente`. Directores en **solo lectura**. Con este
+corte ya nada vive en el blob: se borran `metas-docente-sync.js`,
+`metas-fusion-aula.js` y el resto de `metas-numeracion.js`, y se corre el
+**paso 3** de `CONGELAR`.
 
-Con este corte ya nada vive en el blob: se borran del código
-`metas-docente-sync.js`, `metas-fusion-aula.js` y el resto de
-`metas-numeracion.js`, y se corre el **paso 3** de `CONGELAR`.
+## 8.4 Cierre del archivo para las familias (paso 4)
 
-## 8.5 Después: cerrar el archivo para las familias
+Cuando todos los docentes estén migrados **o** al terminar el **primer parcial
+de 2027**, lo que llegue primero, con **dos semanas de aviso** a docentes y
+familias (decidido). La consulta del paso 4 dice cuántos docentes faltan por
+vincular, cuántos vinculados no tienen aula y cuántas aulas del archivo no
+tienen aula nueva. Con el paso 4 se cierran también `metas_cerrar_familias`,
+`metas_guardar_avisos` y, si ya tienen reemplazo, el buzón y los «vistos»
+viejos.
 
-Cuando la consulta de soporte diga que ya no quedan claves sin aula nueva (o
-tú decidas cerrar), **paso 4** de `CONGELAR`: el portal deja de consultar el
-archivo.
+## 8.5 Lo que exige cada corte antes de publicarse
 
-## 8.6 Lo que exige cada corte antes de publicarse
-
-1. `npm test` y `npm run test:datos` en verde, y las pruebas de su sección de
-   `06-PRUEBAS.md` escritas **antes** del código.
+1. Capa A en verde; capas B y C de su sección de `06-PRUEBAS.md`, escritas
+   **antes** del código.
 2. Los cuatro contadores de 6.1 en cero en la prueba de estrés de esa noche.
-3. Sellar la versión (`?v=` y `CACHE_NAME`) como siempre.
-4. Confirmar la publicación con el `head_sha` en `completed / success`.
-5. El SQL del corte va completo en la respuesta del chat, con orden, qué
-   comprobar y cómo deshacerlo, y lo pegas tú en el SQL Editor.
+3. Ninguno de los textos de `09-INTERFAZ.md` en ninguna pantalla.
+4. Sellar la versión (`?v=` y `CACHE_NAME`) como siempre.
+5. Confirmar la publicación con el `head_sha` en `completed / success`.
+6. El SQL del corte, completo en la respuesta del chat, con orden, qué
+   comprobar y cómo deshacerlo; lo pegas tú en el SQL Editor.
+
+## 8.6 Retiro de las APK v480
+
+La APK instalada hoy lleva dentro una copia vieja de la web (`www/`, v480) y
+no se actualiza sola. Plan:
+
+1. **Antes del corte 1**: se arma la APK nueva (`server.url`,
+   `versionCode` 4) firmada con **la misma llave de release** que la v480
+   (`android/app/build.gradle:3-6`: el keystore vive fuera del repositorio).
+   Con la misma llave, instala **encima** de la v480 sin desinstalar. Si la
+   llave se perdió, hay que desinstalar la vieja primero (y con ella sus datos
+   locales, que de todas formas no se usan en la base nueva).
+2. **Se reparte por el mismo camino de siempre** (enlace directo), con una
+   página corta en el sitio, «Actualiza la app de M.E.T.A.S», y un mensaje a
+   los docentes dos semanas antes del corte 1.
+3. **Desde el corte 1, la v480 ya no puede hacer daño**:
+   - lo del corte 1 que intente subir lo rechaza el candado con `-2`; la app
+     vieja lo deja pendiente (no lo marca como subido, `js/metas-docente-sync.js:281`);
+   - no puede restaurar versiones ni papelera (funciones cerradas);
+   - no puede publicar recibos ni avisos para familias de un docente
+     vinculado (`MT041`);
+   - las familias de un docente vinculado ya no leen nada que venga de ella.
+4. **Seguimiento**: cada intento de una app vieja queda en
+   `metas.blob_rechazos` (código de docente, llave, aparato, motivo). Una
+   consulta semanal dice qué docentes siguen usando una APK o una pestaña
+   vieja, para escribirles directamente.
+5. **La app vieja no puede mostrar nuestro mensaje** «actualiza la app»: su
+   código es el de hace meses y solo enseña sus propios textos. Por eso el
+   aviso real va por el mensaje a los docentes y la página del sitio; el
+   servidor solo garantiza que no se pierda ni se invente nada.

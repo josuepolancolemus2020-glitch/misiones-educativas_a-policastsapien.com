@@ -183,6 +183,11 @@ averiguar una clave insertando.
 
 ## 2.5 Límite de intentos y de dónde sale la IP
 
+**El freno vive en `SUPABASE-V2-VINCULACION.sql`** (`metas.frenos`,
+`metas.freno_ok`), que es el primer archivo: `metas-entrar` lo usa desde el
+primer día. `service_role` tiene permiso de uso sobre el esquema `metas`
+solo para que las funciones de borde puedan llamar a sus funciones.
+
 **La base no lee la IP de cabeceras que el cliente puede escribir**
 (`x-forwarded-for`, `cf-connecting-ip` mandados por el aparato). La IP la
 obtienen las **funciones de borde** de la cabecera que añade la propia
@@ -195,7 +200,7 @@ exige un token Turnstile, que es lo que de verdad frena a un programa.
 |---|---|
 | `metas-entrar` (docente) | el de hoy: 5 fallos por correo → 10 minutos (`docente_intentos`, sin tocar) **y** 30 intentos por hora por IP (`freno_ok('entrar-ip:'…)`), implementado en la función de borde **antes** de validar la contraseña |
 | Sesión anónima de padres | CAPTCHA Turnstile obligatorio + límites de Auth por IP |
-| `familia-vincular` | token Turnstile por intento; 20 por hora por sesión; 60 por hora por IP; 20 claves equivocadas por hora por IP; **2 000 claves equivocadas por hora en total** (para que repartir el ataque entre muchas IP no sirva) |
+| `familia-vincular` | token Turnstile por intento; 20 por hora por sesión; 60 por hora por IP; 20 claves equivocadas por hora por IP. Más de **2 000 claves equivocadas por hora en total** deja **una alerta** en `metas.alertas` para quien administra, pero **no bloquea** a las familias (un ataque repartido no puede dejar a todas sin entrar) |
 | Funciones viejas que validan contraseña | quedan **congeladas** (`SUPABASE-V2-CONGELAR.sql`) |
 
 Al cambiar la contraseña (`metas_cambiar_clave_docente`) y al recuperarla por

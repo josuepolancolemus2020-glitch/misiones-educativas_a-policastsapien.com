@@ -126,15 +126,27 @@ hizo sin señal, el padre ve lo de antes hasta que la cola del docente lo envía
 
 ### Sin copias en el teléfono del padre
 
-- Se elimina `METAS_PADRE_CACHE_V1`. Sin señal, el chatbot dice: «Ahora no hay
-  señal. Los pagos y las notas se muestran con señal, para que siempre sean los
-  que tiene el maestro». Mostrar una copia vieja es justo lo que hace que un
-  pago borrado siga apareciendo.
+- Se elimina `METAS_PADRE_CACHE_V1`. Sin señal, el portal muestra solo el
+  **punto gris** de «sin señal» (`09-INTERFAZ.md`) y no inventa nada: mostrar
+  una copia vieja es justo lo que hace que un pago borrado siga apareciendo.
+  Desaparecen el chip «🔄 Actualizar», «datos guardados el …», «el maestro no
+  publica desde el …» y todos los «consultando la nube»: las vistas se leen
+  solas al abrir, al volver a la pestaña, al volver la señal y con cada toque
+  de Realtime.
 - `METAS_PADRE_V1` deja de guardar las claves: el vínculo vive en la base. En el
-  teléfono solo queda la sesión anónima de Supabase (un token, no datos) y los
-  alias para el selector de hijos se leen de `metas.familia_accesos`.
-- Si el padre borra los datos del navegador, vuelve a escribir la clave. Igual
-  que hoy.
+  teléfono solo queda la sesión anónima de Supabase (un token, no datos).
+- Si el padre borra los datos del navegador, vuelve a escribir la clave.
+
+### Más vistas, porque `avFilasNube` desaparece en el corte 1
+
+Lo que antes llegaba al chatbot como mensaje armado en el aparato del docente
+ahora se lee de sus filas: `vf_periodos` (fechas de los parciales, antes
+`AVP-`), `vf_controles` (controles marcados para la familia, antes `AVB-`),
+`vf_bitacora` (novedades de la clase de los últimos 60 días, antes `AVN-`).
+Avisos, conducta y preguntas frecuentes ya estaban en `vf_avisos`,
+`vf_observaciones` y `vf_preguntas`. Los recibos (`AVR-`) y las cuentas claras
+(`AVC-`) salen de `vf_pagos`, `vf_cuentas_claras` y
+`familia_totales_colectas()`.
 
 ## 7.3 Qué se elimina del lado de padres (en la fase de implementación)
 
@@ -146,9 +158,9 @@ hizo sin señal, el padre ve lo de antes hasta que la cola del docente lo envía
 | chip «⏳ N por subir / ☁️ al día» `#ad-nube-chip` | `js/tools/registros-admin.js:1207`, `adActualizarChipNube` :941 |
 | `paSincronizarNube` → `metas_guardar_plan` | `js/tools/plan-accion.js:3217` |
 | caché `METAS_PADRE_CACHE_V1`, `_cacheTodo`, `cacheLoad`, `cacheSave`, `_desdeCache` | `padres.html:223`, `:299-318` |
-| las tres llamadas `metas_consultar_*_padre` | `padres.html:543-545`, `js/app.js:1436` |
+| las tres llamadas `metas_consultar_*_padre` | `padres.html:543-545`, `js/app.js:1436` (quedan solo para claves que aún no están en la base nueva, sin dinero, hasta el paso 4) |
 | reconocer recibos por el título (`esRecibo`, `reciboFolio`) | `padres.html:941-950` (el folio viene de la vista) |
-| funciones SQL de **escritura** del chatbot viejo (`metas_guardar_admin`, `metas_guardar_avisos`, `metas_guardar_plan`, `metas_cerrar_familias`) | se congelan con su corte (pasos 1 y 2 de `SUPABASE-V2-CONGELAR.sql`) |
+| funciones SQL de **escritura** del chatbot viejo | `metas_guardar_admin` se cierra en el paso 1; `metas_guardar_plan` en el paso 2; `metas_guardar_avisos` y `metas_cerrar_familias` en el paso 4 (antes, `mensajes_docente` ya rechaza todo lo de docentes vinculados y el cierre de año sigue funcionando) |
 | funciones SQL de **lectura** de padres (`metas_consultar_admin_padre`, `metas_consultar_avisos_padre`, `metas_consultar_plan_padre`) y el buzón viejo del docente (`metas_buzon_docente`, `metas_avisos_vistos`) | **siguen abiertas** hasta que la última aula esté en la base nueva y el buzón tenga reemplazo (paso 4) |
 
 Lo que **se queda** igual: el buzón de mensajes y excusas que escriben los
@@ -162,20 +174,33 @@ El portal nuevo no espera a que todos los docentes carguen su aula:
 
 1. El padre escribe su clave. `familia-vincular` la busca en la base nueva.
 2. Si está (el docente ya cargó el aula con esa clave conservada), el padre
-   queda vinculado y lee **solo** las vistas `vf_*`.
-3. Si no está, el portal consulta las funciones de lectura viejas (que siguen
-   abiertas hasta el paso 4) y muestra lo que encuentre como **«Datos guardados hasta el
-   <fecha del corte 1>»**, sin caché y sin mezclarlo con nada nuevo. Esos datos
-   ya no cambian: el archivo está congelado.
-4. Cuando la última aula esté cargada (la consulta de soporte del paso 4 da 0
-   claves sin migrar), se cierran las lecturas viejas.
+   queda vinculado y lee **solo** las vistas `vf_*`. Para esa familia, el
+   archivo viejo ya no se consulta.
+3. Si no está, el portal consulta las funciones de lectura viejas (abiertas
+   hasta el paso 4) y muestra **solo notas, asistencia y avisos**, bajo una
+   frase de fecha: «Información registrada hasta el <fecha del corte 1>».
+   **Ningún dato de dinero sale del archivo**: ni colaboraciones, ni cuentas
+   claras, ni recibos. Las familias solo ven recibos de la base nueva (el
+   archivo es justo el que inventaba y revivía pagos). Sin caché.
+4. **Se cierra el archivo a las familias** (paso 4 de `CONGELAR`) cuando todos
+   los docentes estén migrados **o** al terminar el **primer parcial de 2027**,
+   lo que llegue primero, con **dos semanas de aviso** a docentes y familias.
+   La consulta del paso 4 cuenta docentes sin vincular, vinculados sin aula y
+   aulas del archivo sin aula nueva.
 
-Para que la clave de la familia siga sirviendo, el docente la escribe en la
-carga rápida (se acepta solo si estaba en **sus** datos anteriores).
+Del lado del servidor, desde el paso 1, `mensajes_docente` no acepta nada de
+docentes vinculados (`MT041`): una pestaña vieja o una APK vieja no pueden
+seguir publicando recibos (`AVR-`), cuentas (`AVC-`) ni avisos para esas
+familias.
 
-## 7.5 Decisiones tomadas en la revisión 2
+## 7.5 Decisiones tomadas
 
 - Sesiones anónimas activadas, con **CAPTCHA Turnstile obligatorio**.
+- Tope global de claves equivocadas: **alerta** para quien administra (una por
+  hora, en `metas.alertas`), **no bloquea** a todas las familias. Siguen los
+  frenos por sesión y por IP.
+- `vf_colectas`: a un alumno retirado, trasladado o desertor no le corresponde
+  nada (mismo cálculo que `v_colecta_alumnos`).
 - Las familias ven **solo el total recaudado** de cada colecta
   (`familia_totales_colectas`), nunca los pagos de otros alumnos.
 - «Visto» de avisos en tabla nueva, escrita solo por función del servidor.
