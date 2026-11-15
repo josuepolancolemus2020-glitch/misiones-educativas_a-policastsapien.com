@@ -508,15 +508,26 @@ tbody tr:nth-child(even){background:#f8fafc;}
 window.paPrint = paPrint;
 
 async function paCaptureGrilla() {
-  if (typeof html2canvas === 'undefined') { toast('⚠️ Cargando... intenta de nuevo'); return; }
   const card = document.getElementById('pa-ng-capture');
   const btn  = card?.querySelector('.pa-ng-capture-btn');
   const acts = card?.querySelector('.pa-ng-actions');
   if (!card) return;
   if (btn)  { btn.disabled = true; btn.innerHTML = '⏳ Capturando...'; }
+  /* La biblioteca que saca la foto ya no viaja con la portada (199 KB que
+     pagaba cada visita): se pide aquí, la primera vez que el maestro toca
+     el botón. Si la señal no la trae, se le dice y el botón queda listo
+     para otro intento, en vez del «intenta de nuevo» que no cargaba nada. */
+  let sacarFoto;
+  try {
+    sacarFoto = (typeof html2canvas !== 'undefined') ? html2canvas : await window.metasCargarHtml2canvas();
+  } catch (_) {
+    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-camera"></i> Capturar / Compartir'; }
+    toast('⚠️ No se pudo preparar la imagen. Revisa tu conexión e intenta de nuevo.');
+    return;
+  }
   if (acts) acts.style.display = 'none';
   try {
-    const canvas = await html2canvas(card, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+    const canvas = await sacarFoto(card, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
     if (acts) acts.style.display = '';
     const dataUrl   = canvas.toDataURL('image/png');
     const grado     = document.getElementById('pa-grado')?.value    || 'grado';

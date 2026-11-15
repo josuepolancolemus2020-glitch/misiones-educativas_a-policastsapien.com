@@ -50,8 +50,30 @@ const sobran = copias.filter(p => p !== UNICA);
 ok('no hay ninguna otra copia en lo que se publica', sobran.length === 0, lista(sobran.map(rel)));
 
 console.log('— Las páginas la piden bien —');
-const sello = (/src="js\/html2canvas\.min\.js(\?v=\d+)"/.exec(fs.readFileSync(path.join(RAIZ, 'index.html'), 'utf8')) || [])[1];
-ok('la portada la pide con sello (' + sello + ')', !!sello);
+/* La portada ya no la trae en un <script>: pesa 199 KB y solo la usa el
+   botón de la foto de las calificaciones, así que la pide js/metas-carga.js
+   cuando el maestro lo toca. La regla es la misma de antes y no se afloja:
+   una sola dirección, con sello, y el mismo sello que las misiones. Lo que
+   cambia es dónde está escrita. */
+const portada = fs.readFileSync(path.join(RAIZ, 'index.html'), 'utf8');
+const cargadorTxt = fs.readFileSync(path.join(RAIZ, 'js', 'metas-carga.js'), 'utf8');
+const pedidas = cargadorTxt.match(/['"][\w.\/-]*html2canvas[\w.\/-]*\.js[^'"\s]*['"]/g) || [];
+const sello = (/^['"]js\/html2canvas\.min\.js(\?v=\d+)['"]$/.exec(pedidas[0] || '') || [])[1];
+ok('la portada no la baja al arrancar (sin <script> en index.html)', !/<script[^>]*html2canvas/i.test(portada));
+ok('el cargador la pide de js/html2canvas.min.js, una sola vez y con sello (' + sello + ')', pedidas.length === 1 && !!sello, lista(pedidas));
+ok('y la portada carga el cargador con su sello', /<script src="js\/metas-carga\.js\?v=\d+"><\/script>/.test(portada));
+
+/* Nadie más de la portada puede traerla por su cuenta: un segundo
+   createElement('script') con otra dirección sería la segunda copia que
+   esta sonda existe para impedir. Y quien la usa tiene que pasar por el
+   cargador, o el botón diría «intenta de nuevo» para siempre. */
+const dePortada = guiones.filter(g => !/[\\/]misiones[\\/]|[\\/]fichas[\\/]/.test(g) && path.basename(g) !== 'metas-carga.js');
+const porSuCuenta = dePortada.filter(g => /['"][\w.\/-]*html2canvas[\w.\/-]*\.js/.test(fs.readFileSync(g, 'utf8')));
+ok('ningún otro guion escribe su dirección', porSuCuenta.length === 0, lista(porSuCuenta.map(rel)));
+const enPortada = new Set((portada.match(/<script src="([^"?]+)/g) || []).map(s => s.replace('<script src="', '')));
+const sinCargador = dePortada.filter(g => enPortada.has(rel(g)))
+  .filter(g => { const x = fs.readFileSync(g, 'utf8'); return /(^|[^\w$.])html2canvas\s*\(|typeof html2canvas/.test(x) && !/metasCargarHtml2canvas\s*\(/.test(x); });
+ok('los guiones de la portada que sacan una foto la piden con metasCargarHtml2canvas()', sinCargador.length === 0, lista(sinCargador.map(rel)));
 
 const aOtraParte = [], otroSello = [], deFuera = [];
 let piden = 0;
@@ -73,7 +95,7 @@ paginas.forEach(p => {
 });
 ok('ninguna la pide de fuera (CDN)', deFuera.length === 0, lista(deFuera));
 ok('las ' + piden + ' páginas que la piden van a js/html2canvas.min.js', aOtraParte.length === 0, lista(aOtraParte));
-ok('y todas con el mismo sello que la portada', otroSello.length === 0, lista(otroSello));
+ok('y todas con el mismo sello que el cargador de la portada', otroSello.length === 0, lista(otroSello));
 
 /* Una misión que la usa y cuya página no la carga: el botón de guardar el
    diploma diría «Cargando... intenta de nuevo» para siempre. */

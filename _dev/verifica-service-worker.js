@@ -57,6 +57,19 @@ const hay = (e, cache, frag) => (e.entradas[cache] || []).some(u => u.indexOf(fr
   ok(/'\.\/js\/3d\/parque-3d\.js'/.test(sw) && /'\.\/css\/parque-3d\.css'/.test(sw),
      'sigue precacheado el andamio de los juegos 3D');
 
+  /* Abrir rápido lo ya guardado (v536). Lo que se vigila es que no vuelva
+     «la red primero» para todo, que eran 2,8 s de pantalla en blanco en una
+     portada que el teléfono ya tenía entera. */
+  ok(/cache\.add\(new Request\(url, \{ cache: 'reload' \}\)\)/.test(sw),
+     'el armazón se baja sin pasar por la caché del navegador (max-age=600 de GitHub Pages)');
+  ok(/copiaMasNueva\(event\.request\)\.then/.test(sw) && /if \(!sellado\) event\.waitUntil\(actualizarPorDetras/.test(sw),
+     'lo que lleva sello ?v= se sirve por dirección exacta y sin tocar la red');
+  ok(/esPortada\(url\)/.test(sw) && /copiaMasNueva\(event\.request, \{ ignoreSearch: true \}\)/.test(sw),
+     'la portada se sirve de lo guardado y se renueva por detrás');
+  const portada = fs.readFileSync('index.html', 'utf8');
+  ok(!/<script[^>]*lectura-textos/.test(portada) && !/<script[^>]*html2canvas/.test(portada),
+     'la portada no baja al arrancar ni los textos de lectura ni html2canvas');
+
   const nav = await abrir({ args: ['--no-sandbox'] });
   const ctx = await nav.newContext({ viewport: { width: 393, height: 873 }, isMobile: true, hasTouch: true });
   await ctx.route('**/*.supabase.co/**', r => r.abort());
@@ -69,6 +82,27 @@ const hay = (e, cache, frag) => (e.entradas[cache] || []).some(u => u.indexOf(fr
   await pag.evaluate(() => navigator.serviceWorker.ready);
   await pag.waitForTimeout(2500);
   const e1 = await estado(pag);
+
+  /* La página le dice al service worker qué guiones acaba de bajar, y él los
+     guarda con su sello: es lo que hace que la SEGUNDA visita ya no pida
+     nada. Sin esto hacía falta una tercera. */
+  ok(hay(e1, 'meta-datos-v1', '/js/app.js?v=') && hay(e1, 'meta-datos-v1', '/css/app.css?v='),
+     'los guiones de la portada quedan guardados CON su sello a la primera visita');
+
+  /* Y la segunda visita, con la red del sitio cortada para todo lo que es
+     código: si la portada arranca, es que salió entera de lo guardado. */
+  console.log('\nLa segunda visita, sin red para el código');
+  const pag2 = await ctx.newPage();
+  const pedidos = [];
+  pag2.on('response', r => {
+    if (/\.(js|css)(\?|$)/.test(r.url()) && r.url().indexOf(BASE) === 0 && !r.fromServiceWorker()) pedidos.push(r.url());
+  });
+  await pag2.goto(`${BASE}/index.html`, { waitUntil: 'load' });
+  ok(await pag2.evaluate(() => !!navigator.serviceWorker.controller), 'el service worker ya manda');
+  ok(await pag2.evaluate(() => typeof MISSIONS !== 'undefined' && typeof window.metasCargarHtml2canvas === 'function'),
+     'la portada arranca con su catálogo y su cargador');
+  ok(pedidos.length === 0, 'ningún guion ni hoja de estilo salió a la red', pedidos.slice(0, 5));
+  await pag2.close();
 
   const app = e1.cachés.find(n => n.indexOf('meta-app-') === 0);
   ok(!!app, 'existe la caché del armazón', e1.cachés);
