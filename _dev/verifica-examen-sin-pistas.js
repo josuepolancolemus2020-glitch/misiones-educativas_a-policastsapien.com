@@ -25,8 +25,11 @@
       como opción equivocada: si «Hartling» es la respuesta de un
       completar, no puede ser la b) de una selección. Esto no lo ve
       la `k` —son dos datos distintos— y por eso se lee el texto.
-   3. Las 30 formas, armadas con EL MISMO generador de la misión
-      (su _evalRng y su _pickF, leídos del archivo), sin un choque.
+   3. Las formas, armadas con EL MISMO generador de la misión (su
+      _evalRng y su _pickF: leídos de su archivo o, desde que viven una
+      sola vez, de js/motor-misiones.js), sin un choque. La prueba de
+      pensamiento crítico que ya reparte sus formas sin repetir se arma
+      con el reparto del motor (_repartoCritica), de la 1 a la 50.
    4. La ficha imprimible, con la misma regla: todas sus preguntas
       son UNA prueba y se reparten juntas.
 
@@ -151,11 +154,33 @@ function cuerpoDe(src, nombreFn) {
 /* El generador de formas de la misión, tal cual está escrito: si mañana
    cambia la semilla o el barajado, la sonda arma las formas nuevas y no
    unas que ya no existen. */
+/* ⚠️ Desde que el generador se sacó de las 84 misiones al motor
+   compartido, ninguna lo trae escrito, y esta función devolvía «no hay
+   generador»: la comprobación de las formas se saltaba en todas sin
+   ponerse roja. Ahora, si la misión no trae su copia, se usa la del
+   motor, que es la que corre en la página. */
+let _delMotor;
+function generadorDelMotor() {
+  if (_delMotor !== undefined) return _delMotor;
+  const caja = { document: {}, location: { search: '' }, URLSearchParams };
+  caja.window = caja;
+  vm.createContext(caja);
+  try {
+    vm.runInContext(fs.readFileSync(path.join(RAIZ, 'js', 'motor-misiones.js'), 'utf8'), caja);
+    _delMotor = { rng: caja._evalRng, pick: caja._pickF, reparto: caja._repartoCritica, formasCritica: caja._formasCritica };
+  } catch (e) { _delMotor = null; }
+  return _delMotor;
+}
+
 function generador(src) {
   const rng = src.match(/function\s+_evalRng\s*\([^)]*\)\s*\{/);
   const sh = src.match(/const\s+_shuffleF\s*=[^\n]*/);
   const pk = src.match(/const\s+_pickF\s*=[^\n]*/);
-  if (!rng || !sh || !pk) return null;
+  const formasDe = () => +(src.match(/const\s+EVAL_FORMAS\s*=\s*(\d+)/) || [0, 30])[1];
+  if (!rng || !sh || !pk) {
+    const m = generadorDelMotor();
+    return m && typeof m.rng === 'function' && typeof m.pick === 'function' ? Object.assign({ formas: formasDe() }, m) : null;
+  }
   const cuerpo = 'function _evalRng' + src.slice(rng.index + rng[0].indexOf('('), rng.index + rng[0].length - 1)
     + trozoBalanceado(src, rng.index + rng[0].length - 1);
   const caja = {};
@@ -171,6 +196,15 @@ function generador(src) {
 function receta(src, nombreFn) {
   const cuerpo = cuerpoDe(src, nombreFn);
   if (!cuerpo) return null;
+  /* La prueba crítica que ya reparte sus formas no saca con _pickF:
+     declara sus apartados (`[[critCaseBank, 1], …]`) en `critApartados`
+     y el motor los reparte. Se leen de ahí, o esta prueba se quedaría sin
+     mirar justo cuando cambia de método. */
+  if (/_turnoCritica\s*\(/.test(cuerpo)) {
+    const declarados = cuerpoDe(src, 'critApartados');
+    const pares = declarados ? [...declarados.matchAll(/\[\s*(\w+)\s*,\s*(\d+)\s*\]/g)].map(m => ({ banco: m[1], n: +m[2] })) : [];
+    return pares.length ? { picks: pares, desplaza: 0, fiel: true, reparto: true } : null;
+  }
   const picks = [...cuerpo.matchAll(/_pickF\(\s*(\w+)\s*,\s*(\d+)/g)].map(m => ({ banco: m[1], n: +m[2] }));
   if (!picks.length) return null;
   const semilla = cuerpo.match(/_evalRng\(\s*(\d+)\s*\+/);
@@ -426,18 +460,33 @@ function formasConChoque(gen, rec, bancos, items, tema, titulo) {
   items.forEach(it => { (porBanco[it.banco] = porBanco[it.banco] || [])[it.i] = it; });
   let malas = 0;
   const ejemplos = [];
-  for (let f = 1; f <= gen.formas; f++) {
-    const r = gen.rng(rec.desplaza + f);
+  /* Con el reparto, las formas son las del motor: tantas como dé el banco
+     (hasta 50) y con los casos que le tocan a cada una. Se reparten las
+     posiciones de cada banco, que es de lo único que depende. */
+  /* Un banco que no se deja leer como texto (el de los recorridos de
+     Programando un Robot lleva constantes del simulador) no tiene ítems
+     que comparar, pero su TAMAÑO sí hace falta: sin él las formas que se
+     arman aquí no serían las de la misión. Viene en `rec.tamanos`. */
+  const largo = p => Array.isArray(bancos[p.banco]) ? bancos[p.banco].length : (rec.tamanos || {})[p.banco];
+  const apartados = rec.reparto ? rec.picks.map(p => [Array.from({ length: largo(p) || 0 }, (_, i) => i), p.n]) : null;
+  if (apartados && (typeof gen.reparto !== 'function' || rec.picks.some(p => !(largo(p) >= p.n)))) return null;
+  const total = apartados ? gen.formasCritica(apartados) : gen.formas;
+  for (let f = 1; f <= total; f++) {
     const hoja = [];
-    for (const p of rec.picks) {
-      const arr = bancos[p.banco];
-      if (!Array.isArray(arr)) continue;
-      gen.pick(arr.map((_, i) => i), p.n, r).forEach(i => { if (porBanco[p.banco] && porBanco[p.banco][i]) hoja.push(porBanco[p.banco][i]); });
+    const pon = (banco, i) => { if (porBanco[banco] && porBanco[banco][i]) hoja.push(porBanco[banco][i]); };
+    if (apartados) gen.reparto(f, apartados).forEach((posiciones, j) => posiciones.forEach(i => pon(rec.picks[j].banco, i)));
+    else {
+      const r = gen.rng(rec.desplaza + f);
+      for (const p of rec.picks) {
+        const arr = bancos[p.banco];
+        if (!Array.isArray(arr)) continue;
+        gen.pick(arr.map((_, i) => i), p.n, r).forEach(i => pon(p.banco, i));
+      }
     }
     const ch = revisaPares(hoja, () => true, tema, titulo);
     if (ch.length) { malas++; if (ejemplos.length < 3) ejemplos.push({ f, ch: ch[0] }); }
   }
-  return { malas, ejemplos, fiel: rec.fiel };
+  return { malas, ejemplos, fiel: rec.fiel, total };
 }
 
 /* ── La ficha imprimible ─────────────────────────────────────────
@@ -629,7 +678,6 @@ function revisa(m, exigir) {
   const recC = receta(m.src, 'genEval');
   if (gen && recC) {
     r.conceptual = formasConChoque(gen, recC, m.bancos, items, temaC, m.titulo);
-    r.conceptual.total = gen.formas;
     if (exigir) {
       if (r.conceptual.malas) mal('Conceptual: ' + r.conceptual.malas + ' de las ' + gen.formas + ' formas llevan un choque');
       else bien('Conceptual: las ' + gen.formas + ' formas, armadas con el generador de la misión, sin un choque');
@@ -654,11 +702,23 @@ function revisa(m, exigir) {
       if (!sinK.length && !chK.length) bien('Pensamiento crítico: ' + itemsK.length + ' casos, errores, comparaciones, causas y efectos sin pistas cruzadas');
     }
     if (gen) {
+      /* Los bancos declarados que no se pudieron leer del texto: su tamaño
+         se le pregunta a la misión cargada de verdad. */
+      const sinLeer = recK.reparto ? recK.picks.filter(p => !Array.isArray(m.bancos[p.banco])).map(p => p.banco) : [];
+      if (sinLeer.length) {
+        recK.tamanos = {};
+        try {
+          const L = require('./lib-formas.js');
+          const cargada = L.cargarMision(m.dir, 7);
+          sinLeer.forEach(n => { recK.tamanos[n] = cargada.correr('Array.isArray(' + n + ') ? ' + n + '.length : 0', 'tamaño'); });
+        } catch (e) { /* sin tamaño, abajo se dice que no se pudieron armar */ }
+      }
       r.critico = formasConChoque(gen, recK, m.bancos, itemsK.map(it => it), temaK, m.titulo);
-      r.critico.total = gen.formas;
-      if (exigir) {
-        if (r.critico.malas) mal('Pensamiento crítico: ' + r.critico.malas + ' de las ' + gen.formas + ' formas llevan un choque');
-        else bien('Pensamiento crítico: las ' + gen.formas + ' formas sin un choque');
+      if (!r.critico) { if (exigir) mal('Pensamiento crítico: no se pudieron armar sus formas con el reparto del motor (falta un banco de los que declara critApartados)'); }
+      else if (exigir) {
+        if (r.critico.malas) mal('Pensamiento crítico: ' + r.critico.malas + ' de las ' + r.critico.total + ' formas llevan un choque');
+        else bien('Pensamiento crítico: las ' + r.critico.total + ' formas' + (recK.reparto ? ', repartidas por el motor,' : '') + ' sin un choque' +
+          (sinLeer.length ? ' (los casos de ' + sinLeer.join(', ') + ' no se leen como texto y no entran en la comparación, igual que antes)' : ''));
       }
     }
   }

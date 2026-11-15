@@ -413,8 +413,11 @@ const evalPRBank=[
 const EVAL_FORMAS = 30;
 /* _evalRng, _shuffleF, _pickF y _injectFormaSel ya no se copian aquí: están en
    js/motor-misiones.js, que la página carga antes que este archivo. Si un teléfono
-   abre la página guardada de antes, que no lo pide, se pide aquí. */
-if (typeof _evalRng !== 'function') { (function () { var m = document.createElement('script'); m.src = '../../js/motor-misiones.js'; document.head.appendChild(m); })(); }
+   abre la página guardada de antes, que no lo pide, se pide aquí. Y también si
+   tiene guardado el motor de antes, que todavía no sabe repartir la prueba de
+   pensamiento crítico (_turnoCritica): con mala señal puede llegar este archivo
+   nuevo y servirse el motor viejo. */
+if (typeof _evalRng !== 'function' || typeof _turnoCritica !== 'function') { (function () { var m = document.createElement('script'); m.src = '../../js/motor-misiones.js'; document.head.appendChild(m); })(); }
 // Selector «Forma exacta»: el docente elige qué forma generar (p.ej. para
 // reimprimir la pauta de la Forma 15 que ya repartió a los alumnos).
 function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalFormNum, function (v) { evalFormNum = v; }); }
@@ -560,41 +563,37 @@ const critEffectBank=[
 ];
 
 
+/* Los apartados de la prueba, con su banco y cuántos casos saca cada uno.
+   Con esto el motor (js/motor-misiones.js) reparte las formas sin que dos
+   lleven el mismo conjunto de casos. El orden es el de la hoja. */
+function critApartados(){
+  return [[critCaseBank,1],[critErrorBank,1],[critDecisionBank,1],[critCompareBank,1],[critCauseBank,2],[critEffectBank,3]];
+}
 function genEvalCrit(){
   sfx('click');
-  _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
-  const _sC = document.getElementById('evalCritFormaSel');
-  if (_sC && parseInt(_sC.value, 10)) evalCritFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_sC.value, 10)));
-  const cf=evalCritFormNum;window._currentEvalCritForm=cf;
-  const rngC = _evalRng(200000 + cf);
-  evalCritFormNum=(evalCritFormNum%EVAL_FORMAS)+1;
-  _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
-  saveProgress();
+  const turno=_turnoCritica(evalCritFormNum, critApartados(), function (v) { evalCritFormNum = v; });
+  const cf=turno.forma;window._currentEvalCritForm=cf;saveProgress();
+  const [[kase],[err],[dec],[cmp],causes,effects]=turno.casos;
   document.getElementById('evalcrit-screen-title').textContent=`🧠 Pensamiento Crítico · Forma ${cf} · Los Tipos de Textos`;
   evalCritAnsVisible=false;
   const out=document.getElementById('evalCritOut');out.innerHTML='';
 
-  const kase=_pickF(critCaseBank,1,rngC)[0];
   const s1=document.createElement('div');
   s1.innerHTML=`<div class="eval-section-title">I. Caso de análisis: ¿qué tipo de texto es? <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q,i)=>`<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${critCaseGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s1);
 
-  const err=_pickF(critErrorBank,1,rngC)[0];
   const s2=document.createElement('div');
   s2.innerHTML=`<div class="eval-section-title">II. Corrige el error <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${err.txt}</div><p style="font-size:0.85rem;margin-bottom:0.5rem;">Identifica <strong>dos errores</strong> y corrígelos con tus propias palabras:</p><div class="crit-q-block"><div class="crit-q-label">Error 1 y su corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 1 y su corrección"></textarea><div class="crit-pauta">${err.g1}</div></div><div class="crit-q-block"><div class="crit-q-label">Error 2 y su corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 2 y su corrección"></textarea><div class="crit-pauta">${err.g2}</div></div><div class="crit-selfscore"><label for="critScore1">Obtenido:</label><input type="number" id="critScore1" class="crit-score-input" data-score="1" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s2);
 
-  const dec=_pickF(critDecisionBank,1,rngC)[0];
   const s3=document.createElement('div');
   s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: elige el texto adecuado <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué tipo de texto usarías? Explica por qué y menciona sus marcas o su estructura.</div><textarea class="crit-textarea" rows="4" aria-label="Tipo de texto elegido y justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s3);
 
-  const cmp=_pickF(critCompareBank,1,rngC)[0];
   const s4=document.createElement('div');
   s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Texto A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Texto B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué tipo de texto es cada uno? 2. ¿Qué pistas lo indican? 3. ¿Por qué no son el mismo tipo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los textos A y B"></textarea><div class="crit-pauta">Texto A: ${cmp.ga} · Texto B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s4);
 
-  const causes=_pickF(critCauseBank,2,rngC),effects=_pickF(critEffectBank,3,rngC);
   let ceRows='';
   causes.forEach((it,i)=>{ceRows+=`<div class="crit-ce-item"><div class="crit-ce-row"><div class="crit-ce-cell crit-ce-given"><span class="crit-ce-tag">Pista del texto</span>${it.cause}</div><div class="crit-ce-cell"><span class="crit-ce-tag">¿Qué tipo es?</span><textarea class="crit-textarea" rows="2" aria-label="Tipo de texto de: ${it.cause}" placeholder="Escribe el tipo de texto..."></textarea></div></div><div class="crit-pauta">${it.guide}</div></div>`;});
   effects.forEach((it,i)=>{ceRows+=`<div class="crit-ce-item"><div class="crit-ce-row"><div class="crit-ce-cell"><span class="crit-ce-tag">¿Qué texto se usó?</span><textarea class="crit-textarea" rows="2" aria-label="Texto que produjo: ${it.effect}" placeholder="Escribe el tipo de texto..."></textarea></div><div class="crit-ce-cell crit-ce-given"><span class="crit-ce-tag">Efecto en el lector</span>${it.effect}</div></div><div class="crit-pauta">${it.guide}</div></div>`;});
@@ -711,4 +710,4 @@ window.addEventListener('DOMContentLoaded',()=>{
 });
 
 // Formas deterministas v1: selectores de forma visibles desde la carga de la página
-(function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalOp==='function') _injectFormaSel('genEvalOp','evalOpFormaSel',evalOpFormNum,function(v){evalOpFormNum=v;}); }catch(e){} try{ if(typeof genEvalCrit==='function') _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
+(function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalOp==='function') _injectFormaSel('genEvalOp','evalOpFormaSel',evalOpFormNum,function(v){evalOpFormNum=v;}); }catch(e){} try{ if(typeof genEvalCrit==='function') _selectorCritica(evalCritFormNum,critApartados(),function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();

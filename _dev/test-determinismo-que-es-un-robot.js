@@ -32,12 +32,16 @@ ok('misma forma (7) dos veces → idéntica', concept(7) === concept(7));
 ok('forma 1 ≠ forma 2', concept(1) !== concept(2));
 
 // ── Selección determinista de la prueba crítica (misma composición que genEvalCrit) ──
-const criticalKey = 'JSON.stringify((function(){var r=_evalRng(200000+__FORMA__);return {sens:_pickF(critSensorBank,2,r),err:_pickF(critErrorBank,1,r),cic:_pickF(critCicloBank,1,r),cmp:_pickF(critCompareBank,1,r),dis:_pickF(critDesignBank,1,r)};})())';
+/* La crítica ya no se sortea: el motor reparte los casos para que ninguna
+   forma lleve el mismo conjunto que otra (_repartoCritica), de la 1 a la 50. */
+const criticalKey = 'JSON.stringify(_repartoCritica(__FORMA__, critApartados()))';
 const critical = f => vm.runInContext(criticalKey.replace(/__FORMA__/g, String(f)), sandbox);
-console.log('— Pensamiento crítico (semilla _evalRng(200000+forma)) —');
+console.log('— Pensamiento crítico (reparto sin repetir del motor) —');
 ok('misma forma (7) dos veces → idéntica', critical(7) === critical(7));
 ok('forma 1 ≠ forma 2', critical(1) !== critical(2));
-ok('semillas independientes: conceptual(5) ≠ crítica(5)', concept(5) !== critical(5));
+const conjuntosCrit = new Set();
+for (let f = 1; f <= 50; f++) conjuntosCrit.add(JSON.stringify(JSON.parse(critical(f)).map(ap => ap.map(c => JSON.stringify(c)).sort())));
+ok('las 50 formas críticas llevan 50 conjuntos de casos distintos', conjuntosCrit.size === 50);
 
 // ── Generadores completos: genEval / genEvalCrit + printEval / printEvalCrit ──
 console.log('— Generación e impresión (examen + pauta idénticos por forma) —');
@@ -68,7 +72,9 @@ ok('los documentos llevan la etiqueta Forma 15', a.docConcept.includes('Forma 15
 // ── Ciclo: tras la Forma 30 vuelve la 1 ──
 const z = runForma(30);
 ok('tras la Forma 30, la siguiente es la 1 (conceptual)', z.nextF === 1);
-ok('tras la Forma 30, la siguiente es la 1 (crítica)', z.nextFC === 1);
+ok('tras la Forma 30 crítica, la siguiente es la 31', z.nextFC === 31);
+const z50 = runForma(50);
+ok('tras la Forma 50 crítica, la siguiente es la 1', z50.fc === 50 && z50.nextFC === 1);
 
 // ── Estructura de puntos ──
 console.log('— Estructura de puntos —');
