@@ -527,7 +527,10 @@
 
       critCasoBank: [
         {k:'ca-basura',txt:'At school the plastic and the paper end up in the same bin.',ans:'Problem: mixed trash cannot be recycled. Sensor: weight or color. Actuator: a belt with a motor and a gate that diverts. Program: if the container is light, then divert it to the plastic bin.'},
-        {k:'ca-milpa',txt:'The birds eat the freshly sown corn in the cornfield when nobody is watching.',ans:'Problem: the sowing is lost for lack of watching over it. Sensor: motion. Actuator: a rotating arm with ribbons and a horn. Program: if it detects movement in the cornfield, then spin the arm and sound the horn.'}
+        {k:'ca-milpa',txt:'The birds eat the freshly sown corn in the cornfield when nobody is watching.',ans:'Problem: the sowing is lost for lack of watching over it. Sensor: motion. Actuator: a rotating arm with ribbons and a horn. Program: if it detects movement in the cornfield, then spin the arm and sound the horn.'},
+        {k:'ca-gallinero',txt:'At nightfall nobody remembers to close the henhouse, and the opossums get in to eat the eggs and the chicks.',ans:'Problem: the henhouse stays open at night and the family loses its animals. Sensor: light. Actuator: a motor that lowers the door. Program: if it gets dark, then close the door.'},
+        {k:'ca-pila',txt:'The school’s water tank overflows whenever the water comes, and it goes to waste because nobody is keeping an eye on it.',ans:'Problem: the water the school needs goes to waste. Sensor: water level (a float). Actuator: a valve that shuts off the tap. Program: if the water reaches the top mark, then close the valve.'},
+        {k:'ca-bodega',txt:'In the village storehouse for basic grains, the dampness turns the beans moldy and they can no longer be sold.',ans:'Problem: the harvest and the families’ money are lost. Sensor: air humidity. Actuator: a fan or an extractor. Program: if the humidity goes past the limit, then turn on the fan.'}
       ],
 
       critErrorBank: [
@@ -547,11 +550,14 @@
       ],
 
       critCompareBank: [
-        {k:'co-criterio',a:'What the robot MUST ACHIEVE to count as a success (for example: sorting 19 out of every 20 containers correctly).',b:'The LIMIT that cannot be crossed (for example: spending no more than 200 lempiras).',ga:'The criterion.',gb:'The constraint.',gr:'Similarity: both are written before designing and both guide the team’s decisions. Difference: the criterion measures success; the constraint sets the limit on cost, materials or time.'}
+        {k:'co-criterio',a:'What the robot MUST ACHIEVE to count as a success (for example: sorting 19 out of every 20 containers correctly).',b:'The LIMIT that cannot be crossed (for example: spending no more than 200 lempiras).',ga:'The criterion.',gb:'The constraint.',gr:'Similarity: both are written before designing and both guide the team’s decisions. Difference: the criterion measures success; the constraint sets the limit on cost, materials or time.'},
+        {k:'co-boceto',a:'A labeled drawing on paper that the team reviews before building anything.',b:'A version built with simple materials that can already be tried out.',ga:'The sketch.',gb:'The prototype.',gr:'Similarity: both come before the final version and both can be changed. Difference: the sketch is drawn and reviewed with the team; the prototype is built and tested to see if it meets the criterion.'}
       ],
 
       critDesignBank: [
-        'The water from the creek floods the houses in the neighborhood at night and the families do not manage to move their things.'
+        'The water from the creek floods the houses in the neighborhood at night and the families do not manage to move their things.',
+        'In front of the school the cars go by fast, and the first graders cross the street without anyone warning them.',
+        'At the village health center, the vaccines spoil if the refrigerator warms up when the power goes out, and nobody notices until the next day.'
       ],
 
       critDesignGuide: 'Rubric with 4 criteria (20 pts total): ① A WELL-DEFINED PROBLEM (5 pts): says what is going wrong, who it affects and why it matters, with a measurable success criterion. ② JUSTIFIED SENSORS AND MECHANISMS (5 pts): names which sensor measures the signal of the problem, which mechanism or actuator carries out the action and which energy source it uses, explaining WHY each one was chosen. ③ A COHERENT PROGRAM (5 pts): writes the main order in the form «if X happens, then do Y», matching the sensor with the actuator. ④ TEST, IMPROVEMENT AND ETHICS (5 pts): says how it would be tested and measured, proposes an improvement if it does not meet the criterion, and mentions who it benefits, who it might harm and how it is kept safe.',
