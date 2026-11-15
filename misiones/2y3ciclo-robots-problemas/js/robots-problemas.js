@@ -531,6 +531,9 @@ function evalSwitchMode(mode){
 let critCasoBank=[
   {k:'ca-basura',txt:'En el centro educativo el plástico y el papel se mezclan en el mismo depósito.',ans:'Problema: la basura mezclada no se puede reciclar. Sensor: de peso o de color. Actuador: banda con motor y compuerta que desvía. Programa: si el envase es liviano, entonces desvía al depósito del plástico.'},
   {k:'ca-milpa',txt:'Los pájaros se comen el maíz recién sembrado de la milpa cuando nadie está cuidando.',ans:'Problema: se pierde la siembra por falta de vigilancia. Sensor: de movimiento. Actuador: brazo giratorio con cintas y bocina. Programa: si detecta movimiento en la milpa, entonces gira el brazo y suena.'},
+  {k:'ca-gallinero',txt:'Al anochecer nadie se acuerda de cerrar el gallinero y los tacuacines entran a comerse los huevos y los pollitos.',ans:'Problema: el gallinero queda abierto de noche y la familia pierde sus animales. Sensor: de luz. Actuador: motor que baja la puerta. Programa: si oscurece, entonces cierra la puerta.'},
+  {k:'ca-pila',txt:'La pila de la escuela se rebalsa siempre que llega el agua y se desperdicia porque nadie está pendiente.',ans:'Problema: se desperdicia el agua que la escuela necesita. Sensor: de nivel (flotador). Actuador: válvula que cierra el chorro. Programa: si el agua llega a la marca de arriba, entonces cierra la válvula.'},
+  {k:'ca-bodega',txt:'En la bodega de granos básicos de la aldea, la humedad enmohece el frijol y ya no se puede vender.',ans:'Problema: se pierde la cosecha y el dinero de las familias. Sensor: de humedad del aire. Actuador: ventilador o extractor. Programa: si la humedad pasa del límite, entonces enciende el ventilador.'},
 ];
 let critErrorBank=[
   {k:'er-fallo',txt:'"Si el prototipo falla en la primera prueba, el proyecto ya fracasó: mejor empezar otro".',g1:'Ningún prototipo sale bien a la PRIMERA: equivocarse es parte de diseñar.',g2:'Se ANOTA el fallo, se cambia una sola cosa y se ensaya OTRA VEZ.'},
@@ -547,9 +550,12 @@ let critProcesoBank=[
 ];
 let critCompareBank=[
   {k:'co-criterio',a:'Lo que el robot DEBE LOGRAR para considerarse un éxito (ejemplo: separar bien 19 de cada 20 envases).',b:'El LÍMITE que no se puede pasar (ejemplo: no gastar más de 200 lempiras).',ga:'El criterio.',gb:'La restricción.',gr:'Semejanza: los dos se escriben antes de dibujar y guían las decisiones del equipo. Diferencia: el criterio mide el éxito; la restricción pone el límite de costo, materiales o tiempo.'},
+  {k:'co-boceto',a:'Dibujo rotulado en papel que el equipo revisa antes de construir nada.',b:'Versión construida con materiales sencillos que ya se puede ensayar.',ga:'El boceto.',gb:'El prototipo.',gr:'Semejanza: los dos vienen antes de la versión final y se pueden cambiar. Diferencia: el boceto se dibuja y se revisa con el equipo; el prototipo se construye y se prueba para ver si cumple el criterio.'},
 ];
 let critDesignBank=[
   'El agua de la quebrada inunda las casas del barrio de noche y las familias no alcanzan a resguardar sus cosas.',
+  'Frente a la escuela los carros pasan rápido y los niños de primer grado cruzan la calle sin que nadie les avise.',
+  'En el centro de salud de la aldea, las vacunas se dañan si la refrigeradora se calienta cuando se va la luz, y nadie se da cuenta hasta el día siguiente.',
 ];
 let critDesignGuide='Rúbrica de 4 criterios (total 20 pts): ① PROBLEMA BIEN DEFINIDO (5 pts): dice qué falla, a quién afecta y por qué importa, con un criterio de éxito medible. ② SENSORES Y MECANISMOS JUSTIFICADOS (5 pts): nombra qué sensor mide la señal del problema, qué mecanismo o actuador ejecuta la acción y qué fuente de energía usa, explicando POR QUÉ escogió cada uno. ③ PROGRAMA COHERENTE (5 pts): escribe la instrucción principal en la forma «si pasa X, entonces hace Y», y respeta las restricciones de costo, materiales, tiempo y seguridad. ④ MEJORA TRAS LA PRUEBA (5 pts): describe cómo probaría el prototipo (qué mediría y cuántas veces) y qué mejoraría si falla, mostrando que fallar es parte del proceso.';
 function genEvalCrit(){

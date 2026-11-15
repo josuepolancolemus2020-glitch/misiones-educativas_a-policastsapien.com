@@ -32,7 +32,7 @@ de la misión.
 
 | misión | conjuntos hoy | distintas hoy (1 a 30) | mínimo para 50 | con holgura |
 |---|---|---|---|---|
-| `2y3ciclo-robots-problemas` | 4 | 8 | 4 | 6 |
+| `2y3ciclo-robots-problemas` | **resuelta: 240** | 30 | — | — |
 | `3ciclo-peligros-ia` | 2 | 18 | 3 | 5 |
 | `2ciclo-como-aprende-una-maquina` | 4 | 24 | 3 | 4 |
 | `3ciclo-albores-singularidad` | 4 | 24 | 3 | 4 |
@@ -53,7 +53,25 @@ si se quiere dar variedad también ahí.
 
 ---
 
-## 1. `2y3ciclo-robots-problemas`
+## 1. `2y3ciclo-robots-problemas` · resuelta
+
+**Resuelta el 15 de noviembre de 2026** con los 6 casos de holgura que aprobó
+Josué: Caso +3 (gallinero que queda abierto de noche, pila de la escuela que
+se rebalsa, frijol que se enmohece en la bodega), Comparación +1 (boceto
+frente a prototipo) y Diseño +2 (niños de primer grado que cruzan frente a la
+escuela, vacunas del centro de salud cuando se va la luz). Ahora son
+**240 conjuntos** (10 × 2 × 2 × 2 × 3) y las formas 1 a 30 salen las 30
+distintas. No cambió cuántos casos saca cada apartado ni el generador; las
+formas conceptual y operativa congeladas siguen idénticas.
+
+Cuatro textos se retocaron para no dejar pistas cruzadas
+(`_dev/verifica-examen-sin-pistas.js`): la comparación ya no nombra «boceto»
+ni «prototipo» ni dice «para qué sirve» cada parte, que es la corrección del
+error del boceto; la pila ya no dice que «nadie cierra el chorro», que se
+parecía a la respuesta del regador; y la bodega ya no repite palabras de otro
+caso. Las pautas quedaron como se aprobaron.
+
+Lo que había antes:
 
 Banco en `misiones/2y3ciclo-robots-problemas/js/robots-problemas.js` (la prueba se arma en la línea 842).
 
