@@ -9,6 +9,8 @@
 
    1. EL EXAMEN POR FORMAS (`_evalRng`, `_shuffleF`, `_pickF`,
       `_injectFormaSel`). Estaban copiadas, idénticas, en 84 misiones.
+      El selector de forma (círculos con número) y los botones del examen
+      se pintan desde aquí para todas.
    2. EL REPARTO DE LA PRUEBA DE PENSAMIENTO CRÍTICO (`_repartoCritica`,
       `_formasCritica`, `_turnoCritica`, `_selectorCritica`): cada forma,
       de la 1 a la 50, lleva un conjunto de casos que no lleva ninguna otra.
@@ -56,40 +58,338 @@
   }
   function _pickF(arr, n, rng) { return _shuffleF(arr, rng).slice(0, n); }
 
-  /* El desplegable «Forma N» que va antes del botón de generar.
+  /* El selector de forma: arriba, pastillas de grupos de diez (1–10,
+     11–20…, solo las que existan); debajo, una fila con los diez círculos
+     del grupo elegido. Va encima de los botones del examen. Era un desplegable, y el
+     desplegable tenía dos defectos que el maestro veía:
+
+     · al recargar enseñaba «Forma 1» aunque la guardada fuera otra: la
+       misión lo pintaba antes de leer su progreso (el progreso se lee en
+       un DOMContentLoaded de `window`, que llega DESPUÉS que el de
+       `document`, que es donde se pintaba);
+     · después de generar la Forma 4 enseñaba la 5, la que vendría, así
+       que el título decía una forma y el desplegable otra.
+
+     Ahora el círculo marcado es la forma que está en la pantalla: la que
+     dice el título. Si todavía no se generó ninguna, es la que va a salir
+     al tocar «Nueva». Tocar un círculo genera esa forma en el acto, para
+     que nunca quede marcado un número que no es el de la hoja.
+
      `EVAL_FORMAS` y `saveProgress` son de la misión: cada una tiene su
      tope de formas (30, o 20 en Fin de grado) y su llave de guardado, y
      aquí solo se usan, no se deciden.
      `tope` es para la prueba que no llega hasta `EVAL_FORMAS`: la de
      pensamiento crítico reparte 50 formas aunque el examen conceptual de
-     la misma misión siga en 30. Sin `tope`, todo queda como estaba. */
+     la misma misión siga en 30. Sin `tope`, todo queda como estaba.
+
+     La misión sigue leyendo `document.getElementById(selId).value`, como
+     cuando era un desplegable: el contenedor de los círculos responde a
+     `value` (y a `options.length`) igual que respondía el <select>. Así
+     no se toca ninguna de las 84 misiones. */
   function _opcionesDeForma(tope, actual) {
     var ops = '';
     for (var i = 1; i <= tope; i++) ops += '<option value="' + i + '"' + (i === actual ? ' selected' : '') + '>Forma ' + i + '</option>';
     return ops;
   }
   function _rotuloDeForma(tope) { return 'Elegir número de forma exacta (1 a ' + tope + ')'; }
+
+  /* La variable donde cada misión guarda la forma que le toca. Se lee
+     por su nombre UNA vez, cuando la misión ya leyó su progreso, para
+     corregir lo que se pintó antes de tiempo. Los nombres son los mismos
+     en las 84 misiones (Fin de grado lleva una por materia). */
+  var VARIABLE_DE = {
+    evalFormaSel: "typeof evalMateria !== 'undefined' && typeof evalFormNumEsp !== 'undefined' ? (evalMateria === 'esp' ? evalFormNumEsp : evalFormNumMat) : (typeof evalFormNum !== 'undefined' ? evalFormNum : null)",
+    evalOpFormaSel: "typeof evalOpFormNum !== 'undefined' ? evalOpFormNum : null",
+    evalCritFormaSel: "typeof evalCritFormNum !== 'undefined' ? evalCritFormNum : null"
+  };
+  function _formaDeLaMision(selId) {
+    var expr = VARIABLE_DE[selId];
+    if (!expr) return null;
+    /* `new Function` y no `window.evalFormNum`: la misión la declara con
+       `let`, que no cuelga de `window` pero sí se ve desde una función
+       creada así, que vive en el ámbito global. */
+    try { var n = parseInt((new Function('return (' + expr + ');'))(), 10); return n >= 1 ? n : null; } catch (e) { return null; }
+  }
+
+  /* Los botones del examen, más bajos y con el texto corto. El texto
+     largo queda como nombre del botón (lo lee el lector de pantalla y
+     sale al dejar el puntero encima), y es el que ya traduce
+     js/metas-i18n.js. Los cortos tienen su traducción allí mismo.
+     «👁 Ver Pauta» se queda como está: ya es corto, y el texto de arriba
+     de cada examen dice «selecciona Ver Pauta». */
+  var BOTON_CORTO = {
+    '🔄 Nueva Evaluación': '🔄 Nueva', '🔄 Nueva Prueba': '🔄 Nueva', '🔄 Nueva Prueba Operativa': '🔄 Nueva',
+    '🧮 Calificar prueba': '🧮 Calificar', '🧮 Calcular Total': '🧮 Total'
+  };
+
+  /* Se escribe una vez, desde aquí, para las 84 misiones: cada misión
+     trae su propia hoja de estilos copiada y no hay otra hoja común a
+     todas. El color es `--pri`, el de cada misión. */
+  var CSS_FORMAS = [
+    '.metas-formas{margin:0 0 .7rem;}',
+    '.metas-formas-tit{font-weight:700;font-size:.8rem;opacity:.85;margin:0 0 .35rem;}',
+    /* Las pastillas de grupo: 1–10, 11–20… Solo cambian qué diez círculos
+       se ven; no generan nada. */
+    '.metas-grupos{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 .4rem;}',
+    '.metas-grupo{appearance:none;-webkit-appearance:none;font:inherit;font-size:.75rem;font-weight:700;line-height:1;min-height:32px;min-width:48px;padding:0 .75rem;border-radius:999px;border:2px solid transparent;background:rgba(127,127,127,.16);color:inherit;cursor:pointer;font-variant-numeric:tabular-nums;-webkit-tap-highlight-color:transparent;}',
+    '.metas-grupo[aria-pressed="true"]{background:var(--pri,#555);border-color:var(--pri,#555);color:#fff;font-weight:800;}',
+    '.metas-grupo:focus-visible{outline:3px solid var(--pri,#555);outline-offset:2px;}',
+    /* La fila de diez. En el teléfono toma del relleno de la tarjeta solo
+       lo que le falta para llegar a 350 px, y nunca más que ese relleno:
+       sin eso, en una pantalla de 360 px diez círculos no caben a 32 px. */
+    '.metas-formas-rejilla{display:grid;grid-template-columns:repeat(10,minmax(32px,1fr));gap:0;margin:0 max(-1.2rem,min(0px,calc((100% - 350px) / 2)));}',
+    '.metas-forma{appearance:none;-webkit-appearance:none;background:none;border:0;margin:0;padding:0;min-width:32px;min-height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font:inherit;color:inherit;-webkit-tap-highlight-color:transparent;}',
+    '.metas-forma-num{box-sizing:border-box;width:32px;height:32px;flex:none;border-radius:50%;border:2px solid var(--pri,#555);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;line-height:1;font-variant-numeric:tabular-nums;}',
+    '.metas-forma[aria-pressed="true"] .metas-forma-num{background:var(--pri,#555);color:#fff;font-weight:800;}',
+    '.metas-forma:focus-visible{outline:none;}',
+    '.metas-forma:focus-visible .metas-forma-num{outline:3px solid var(--pri,#555);outline-offset:2px;}',
+    '@media (hover:hover){.metas-forma:hover .metas-forma-num{box-shadow:0 0 0 2px var(--pri,#555) inset;}}',
+    /* Entre 360 y 379 px la casilla mide 32 justos: el círculo se dibuja
+       a 30 para que no se toquen, y el dedo sigue teniendo los 32. */
+    '@media (max-width:379px){.metas-forma-num{width:30px;height:30px;}}',
+    /* En la pantalla más angosta (320 px) diez no caben ni así: van de
+       cinco en cinco antes que achicar el círculo por debajo del dedo. */
+    '@media (max-width:359px){.metas-formas-rejilla{grid-template-columns:repeat(5,minmax(32px,1fr));margin:0;}}',
+    '@media (min-width:600px){.metas-formas-rejilla{grid-template-columns:repeat(10,40px);gap:4px;margin:0;}}',
+    /* Los cuatro botones: una fila en la computadora, dos en el teléfono. */
+    '.eval-controls.metas-botones{display:flex;flex-wrap:nowrap;align-items:center;gap:.4rem;}',
+    '.eval-controls.metas-botones>.btn{font-size:.78rem;padding:.3rem .75rem;min-height:32px;border-radius:10px;gap:.3rem;white-space:nowrap;line-height:1.2;}',
+    '@media (max-width:599px){.eval-controls.metas-botones{display:grid;grid-template-columns:1fr 1fr;}.eval-controls.metas-botones>.btn{justify-content:center;}.eval-controls.metas-botones>:not(.btn){grid-column:1/-1;}}',
+    /* En el papel solo va «Forma N», que ya lleva la hoja. */
+    '@media print{.metas-formas,.eval-controls{display:none!important;}}'
+  ].join('\n');
+
+  function _estilos() {
+    var doc = global.document;
+    if (!doc || !doc.getElementById || doc.getElementById('metas-formas-css')) return;
+    var st = doc.createElement('style');
+    st.id = 'metas-formas-css';
+    st.textContent = CSS_FORMAS;
+    (doc.head || doc.documentElement).appendChild(st);
+  }
+
+  function _traducir(el) {
+    try { if (global.MetasI18N && global.MetasI18N.idioma() === 'en') global.MetasI18N.traducirZona(el); } catch (e) { }
+  }
+
+  function _acortarBotones(raiz) {
+    if (!raiz || !raiz.querySelectorAll) return;
+    var filas = raiz.classList && raiz.classList.contains('eval-controls') ? [raiz] : raiz.querySelectorAll('.eval-controls');
+    Array.prototype.forEach.call(filas, function (fila) {
+      if (fila.classList.contains('metas-botones')) return;
+      fila.classList.add('metas-botones');
+      Array.prototype.forEach.call(fila.querySelectorAll('button'), function (b) {
+        var largo = (b.textContent || '').trim(), corto = BOTON_CORTO[largo];
+        if (!corto) return;
+        b.setAttribute('aria-label', largo);
+        b.setAttribute('title', largo);
+        b.textContent = corto;
+        _traducir(b);
+      });
+    });
+  }
+
+  /* Lo que se marca: la forma de la pantalla, o la que va a salir. */
+  function _marcada(s) { return s.mostrada || s.pendiente; }
+
+  var POR_GRUPO = 10;
+  function _boton(doc, clase, texto, rotulo) {
+    var b = doc.createElement('button');
+    b.type = 'button';
+    b.className = clase;
+    b.setAttribute('aria-label', rotulo);
+    b.innerHTML = texto;
+    return b;
+  }
+
+  function _pintar(el) {
+    var s = el._fs, marcada = _marcada(s), doc = global.document;
+    var grupos = Math.ceil(s.tope / POR_GRUPO);
+    /* Cada vez que cambia la forma marcada (se generó otra, o se leyó el
+       progreso) se abre su grupo. Tocar una pastilla solo cambia el grupo
+       a la vista, y la marcada sigue siendo la misma. */
+    if (marcada !== s.vista) { s.vista = marcada; s.grupo = Math.floor((marcada - 1) / POR_GRUPO); }
+    s.grupo = Math.min(Math.max(0, s.grupo), grupos - 1);
+
+    if (s.pastillas.length !== grupos) {
+      s.cajaGrupos.innerHTML = '';
+      s.pastillas = [];
+      for (var g = 0; g < grupos; g++) {
+        var desde = g * POR_GRUPO + 1, hasta = Math.min(s.tope, desde + POR_GRUPO - 1);
+        var p = _boton(doc, 'metas-grupo', desde + '–' + hasta, 'Formas ' + desde + ' a ' + hasta);
+        p.setAttribute('data-grupo', String(g));
+        s.cajaGrupos.appendChild(p);
+        s.pastillas.push(p);
+      }
+      /* Con diez formas o menos no hay grupos que elegir. */
+      s.cajaGrupos.hidden = grupos < 2;
+      el.setAttribute('aria-label', _rotuloDeForma(s.tope));
+      _traducir(s.cajaGrupos);
+    }
+    s.pastillas.forEach(function (p, i) { p.setAttribute('aria-pressed', i === s.grupo ? 'true' : 'false'); });
+
+    var clave = s.grupo + '/' + s.tope;
+    if (s.filaPintada !== clave) {
+      s.filaPintada = clave;
+      el.innerHTML = '';
+      s.botones = [];
+      var ini = s.grupo * POR_GRUPO + 1, fin = Math.min(s.tope, ini + POR_GRUPO - 1);
+      for (var i = ini; i <= fin; i++) {
+        var b = _boton(doc, 'metas-forma', '<span class="metas-forma-num" aria-hidden="true">' + i + '</span>', 'Forma ' + i);
+        b.setAttribute('data-forma', String(i));
+        el.appendChild(b);
+        s.botones.push(b);
+      }
+      _traducir(el);
+    }
+    s.botones.forEach(function (b) { b.setAttribute('aria-pressed', parseInt(b.getAttribute('data-forma'), 10) === marcada ? 'true' : 'false'); });
+  }
+
+  /* Lo que pasa mientras se genera, para saber qué forma quedó en la
+     pantalla. La misión lee `value` justo antes de sembrar el examen:
+     ese número es la forma que sale. Si una misión no lo leyera, vale la
+     primera forma que la misión le pasa al selector durante el toque. */
+  function _empezarGenerar(s) { s.turno = { primera: null, llamadas: 0, leyo: false }; }
+  function _terminarGenerar(el) {
+    var s = el._fs, t = s.turno;
+    s.turno = null;
+    if (t && !t.leyo && t.llamadas && t.primera) s.mostrada = t.primera;
+    /* Después de generar se vuelve a abrir el grupo de la forma generada,
+       aunque el maestro hubiera estado mirando otro. */
+    if (t && (t.leyo || t.llamadas)) s.vista = null;
+    _pintar(el);
+  }
+
+  function _crearSelector(fnName, selId, actual, onPick, tope, btn) {
+    _estilos();
+    var doc = global.document;
+    var caja = doc.createElement('div');
+    caja.className = 'metas-formas';
+    var titulo = doc.createElement('div');
+    titulo.className = 'metas-formas-tit';
+    titulo.textContent = 'Elige la forma';
+    var cajaGrupos = doc.createElement('div');
+    cajaGrupos.className = 'metas-grupos';
+    cajaGrupos.setAttribute('role', 'group');
+    cajaGrupos.setAttribute('aria-label', 'Grupos de formas');
+    var el = doc.createElement('div');
+    el.id = selId;
+    el.className = 'metas-formas-rejilla';
+    el.setAttribute('role', 'group');
+    caja.appendChild(titulo);
+    caja.appendChild(cajaGrupos);
+    caja.appendChild(el);
+    var s = el._fs = { fnName: fnName, onPick: onPick, tope: tope, pendiente: actual, mostrada: null, leida: null, botones: [], pastillas: [], cajaGrupos: cajaGrupos, grupo: 0, vista: null, filaPintada: '', turno: null };
+
+    cajaGrupos.addEventListener('click', function (ev) {
+      var p = ev.target && ev.target.closest ? ev.target.closest('.metas-grupo') : null;
+      if (!p) return;
+      s.grupo = parseInt(p.getAttribute('data-grupo'), 10) || 0;
+      _pintar(el);
+    });
+
+    Object.defineProperty(el, 'value', {
+      configurable: true,
+      get: function () { s.leida = s.pendiente; if (s.turno) s.turno.leyo = true; return String(s.pendiente); },
+      set: function (v) { var n = parseInt(v, 10); if (n >= 1 && n <= s.tope) { s.pendiente = n; _pintar(el); } }
+    });
+    /* Como el desplegable: tantas «opciones» como formas, aunque a la vista
+       haya diez. */
+    Object.defineProperty(el, 'options', { configurable: true, get: function () { return { length: s.tope }; } });
+    /* Quien cambie `value` desde fuera y avise con «change» (como se hacía
+       con el desplegable) pide esa forma, igual que antes. */
+    el.addEventListener('change', function () { s.onPick(s.pendiente); try { saveProgress(); } catch (e) { } });
+
+    el.addEventListener('click', function (ev) {
+      var b = ev.target && ev.target.closest ? ev.target.closest('.metas-forma') : null;
+      if (!b) return;
+      var n = parseInt(b.getAttribute('data-forma'), 10);
+      if (!(n >= 1 && n <= s.tope)) return;
+      s.pendiente = n;
+      s.leida = null;
+      s.onPick(n);
+      try { saveProgress(); } catch (e) { }
+      var gen = global[s.fnName];
+      if (typeof gen !== 'function') { _pintar(el); return; }
+      _empezarGenerar(s);
+      try { gen(); } finally { _terminarGenerar(el); }
+    });
+
+    /* El botón «Nueva» de la misión también se sigue, por si una misión
+       no lee `value`. Se escucha en `document` para que la misión ya haya
+       generado cuando se mira qué quedó. */
+    doc.addEventListener('click', function (ev) {
+      if (!el.isConnected || !ev.target || !ev.target.closest) return;
+      var b = ev.target.closest('[onclick*="' + s.fnName + '()"]');
+      if (b && s.turno) _terminarGenerar(el);
+    });
+    doc.addEventListener('click', function (ev) {
+      if (!el.isConnected || !ev.target || !ev.target.closest) return;
+      if (ev.target.closest('[onclick*="' + s.fnName + '()"]')) _empezarGenerar(s);
+    }, true);
+
+    /* Va encima de la fila de botones y no dentro: así los botones quedan
+       en su fila y los círculos en la suya. */
+    var fila = btn.parentNode;
+    if (fila.classList && fila.classList.contains('eval-controls') && fila.parentNode) {
+      fila.parentNode.insertBefore(caja, fila);
+      _acortarBotones(fila);
+    } else fila.insertBefore(caja, btn);
+    _pintar(el);
+    _traducir(caja);
+  }
+
   function _injectFormaSel(fnName, selId, actual, onPick, tope) {
     var ya = document.getElementById(selId);
+    actual = parseInt(actual, 10) || 1;
+    if (ya && ya._fs) {
+      var s = ya._fs;
+      if (tope && tope !== s.tope) s.tope = tope;
+      if (s.turno) { s.turno.llamadas++; if (s.turno.primera === null) s.turno.primera = actual; }
+      /* Si la misión ya leyó la forma para generar, esta llamada trae la
+         SIGUIENTE: la leída es la que quedó en la pantalla. */
+      if (s.leida !== null) { s.mostrada = s.leida; s.leida = null; s.vista = null; }
+      s.pendiente = Math.min(s.tope, Math.max(1, actual));
+      s.onPick = onPick || s.onPick;
+      _pintar(ya);
+      return;
+    }
     if (ya) {
-      /* Un desplegable que se pintó con otro tope (el de una página
-         guardada de antes, que lo pintaba con 30) se rehace: si no, las
-         formas 31 a 50 no se podrían pedir. Sin `tope` no se mira nada
-         más, como siempre: el examen conceptual sigue este camino. */
+      /* Algo con ese id que no pintó este motor (la página de mentira de
+         las sondas, o un desplegable de una página guardada de antes): se
+         trata como el desplegable de siempre, con el mismo efecto. */
       if (tope && ya.options && ya.options.length !== tope) { ya.innerHTML = _opcionesDeForma(tope, actual); ya.setAttribute('aria-label', _rotuloDeForma(tope)); }
       ya.value = String(actual); return;
     }
     var btn = document.querySelector('[onclick*="' + fnName + '()"]');
     if (!btn || !btn.parentNode) return;
-    tope = tope || EVAL_FORMAS;
-    var rotulo = _rotuloDeForma(tope);
-    var wrap = document.createElement('label');
-    wrap.style.cssText = 'display:inline-flex;align-items:center;gap:6px;margin:0 8px 6px 0;font-weight:700;font-size:0.95rem;';
-    wrap.innerHTML = '📋 <select id="' + selId + '" style="padding:6px 10px;border-radius:8px;border:2px solid #888;font-weight:700;font-size:0.95rem;background:#fff;color:#222;" aria-label="' + rotulo + '">' + _opcionesDeForma(tope, actual) + '</select>';
-    btn.parentNode.insertBefore(wrap, btn);
-    var sel = wrap.querySelector('select');
-    if (sel) sel.addEventListener('change', function () { onPick(parseInt(this.value, 10) || 1); try { saveProgress(); } catch (e) { } });
+    _crearSelector(fnName, selId, actual, onPick, tope || EVAL_FORMAS, btn);
   }
+
+  /* Ya con el progreso leído, cada selector que nadie usó todavía se pone
+     en la forma que la misión tiene guardada. */
+  function _alinearConLaMision() {
+    var doc = global.document;
+    Object.keys(VARIABLE_DE).forEach(function (id) {
+      var el = doc.getElementById(id);
+      if (!el || !el._fs || el._fs.mostrada) return;
+      var n = _formaDeLaMision(id);
+      if (n && n <= el._fs.tope && n !== el._fs.pendiente) { el._fs.pendiente = n; _pintar(el); }
+    });
+  }
+
+  (function _alCargar() {
+    var doc = global.document;
+    if (!doc || typeof doc.addEventListener !== 'function' || typeof global.setTimeout !== 'function') return;
+    var acortar = function () { try { _acortarBotones(doc); } catch (e) { } };
+    /* El setTimeout espera a que terminen TODOS los DOMContentLoaded,
+       también los de `window`, que es donde las misiones leen su progreso. */
+    var alinear = function () { global.setTimeout(function () { try { _alinearConLaMision(); } catch (e) { } }, 0); };
+    if (doc.readyState === 'loading') {
+      doc.addEventListener('DOMContentLoaded', function () { _estilos(); acortar(); alinear(); });
+    } else { try { _estilos(); } catch (e) { } acortar(); alinear(); }
+    if (typeof global.addEventListener === 'function') global.addEventListener('load', alinear);
+  })();
 
   global._evalRng = _evalRng;
   global._shuffleF = _shuffleF;
@@ -216,13 +516,13 @@
     });
   }
 
-  /* El desplegable de la prueba crítica, con su propio tope. */
+  /* El selector de la prueba crítica, con su propio tope. */
   function _selectorCritica(actual, apartados, onPick) {
     _injectFormaSel('genEvalCrit', 'evalCritFormaSel', actual, onPick, _formasCritica(apartados));
   }
 
   /* Lo que toda misión hacía igual al generar la prueba crítica: leer
-     del desplegable qué forma se pidió, dejar apuntada la siguiente y
+     del selector qué forma se pidió, dejar apuntada la siguiente y
      sacar los casos. `onPick` recibe la forma siguiente para que la
      misión la guarde en su variable; guardar el progreso sigue siendo
      cosa de la misión. */

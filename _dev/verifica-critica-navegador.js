@@ -4,15 +4,15 @@
    ------------------------------------------------------------
    `verifica-critica-sin-repetir.js` arma las formas en Node, con una
    página de mentira. Esto abre la misión en un navegador y hace lo que
-   hace el maestro: elige la forma en el desplegable, toca «Generar» y
-   manda a imprimir. Comprueba lo que la página de mentira no ve:
+   hace el maestro: toca la pastilla del grupo y el círculo de la forma
+   (que la genera en el acto) y manda a imprimir. Comprueba lo que la página de mentira no ve:
 
-   · el desplegable de la prueba crítica llega a la Forma 50 y el del
+   · el selector de la prueba crítica llega a la Forma 50 y el del
      examen conceptual sigue donde estaba;
    · de la Forma 1 a la 50, lo que queda PINTADO en la pantalla no se
      repite: ninguna hoja trae los mismos casos que otra;
    · después de la 50 vuelve la 1, y la forma que toca se guarda con el
-     progreso y sigue ahí al recargar;
+     progreso y sigue ahí al recargar, con su círculo marcado;
    · un progreso guardado de antes (cuando la prueba llegaba a la 30) se
      abre sin tropiezo, y generar la crítica no mueve la forma que le toca
      al examen conceptual;
@@ -50,6 +50,16 @@ const reparten = L.listarMisiones().dentro.filter(slug => {
 pedidas.forEach(s => { if (!reparten.includes(s)) { console.error('✘ ' + s + ' no reparte todavía su prueba crítica (no declara critApartados)'); process.exit(2); } });
 const lista = pedidas.length ? pedidas : reparten;
 
+/* Lo que hace el dedo: abrir el grupo de diez y tocar el círculo. Con
+   `click()` del elemento, como el resto de esta sonda, para que el aviso de
+   identificarse que tapa la página no se interponga. */
+const tocarForma = (id, n) => {
+  const sel = document.getElementById(id);
+  sel.parentNode.querySelector('.metas-grupo[data-grupo="' + Math.floor((n - 1) / 10) + '"]').click();
+  sel.querySelector('[data-forma="' + n + '"]').click();
+};
+const marcada = id => { const b = document.getElementById(id).querySelector('[aria-pressed="true"]'); return b ? parseInt(b.getAttribute('data-forma'), 10) : 0; };
+
 const paginaDe = slug => fs.readdirSync(path.join(L.DIR_MISIONES, slug)).find(f => f.endsWith('.html') && !f.startsWith('juego-'));
 
 /* Lo que el alumno lee de una forma: los textos de los casos, tal como
@@ -80,33 +90,34 @@ const leerHoja = () => Array.from(document.querySelectorAll('#evalCritOut .crit-
       const c = document.getElementById('evalCritFormaSel'), e = document.getElementById('evalFormaSel');
       return { crit: c ? c.options.length : 0, rotulo: c ? c.getAttribute('aria-label') : '', conceptual: e ? e.options.length : 0, tope: EVAL_FORMAS, formas: _formasCritica(critApartados()) };
     });
-    if (sel.crit !== sel.formas || !/1 a 50/.test(sel.rotulo) || sel.formas !== 50) mal('el desplegable de la prueba crítica tiene ' + sel.crit + ' formas («' + sel.rotulo + '») y tendría que llegar a la 50');
-    else bien('el desplegable de la prueba crítica llega a la Forma 50, y lo dice a quien no lo ve');
-    if (sel.conceptual !== sel.tope) mal('el desplegable del examen conceptual tiene ' + sel.conceptual + ' formas y la misión dice ' + sel.tope);
-    else bien('el desplegable del examen conceptual sigue en ' + sel.tope + ' formas');
+    if (sel.crit !== sel.formas || !/1 a 50/.test(sel.rotulo) || sel.formas !== 50) mal('el selector de la prueba crítica tiene ' + sel.crit + ' formas («' + sel.rotulo + '») y tendría que llegar a la 50');
+    else bien('el selector de la prueba crítica llega a la Forma 50, y lo dice a quien no lo ve');
+    if (sel.conceptual !== sel.tope) mal('el selector del examen conceptual tiene ' + sel.conceptual + ' formas y la misión dice ' + sel.tope);
+    else bien('el selector del examen conceptual sigue en ' + sel.tope + ' formas');
 
-    /* De la 1 a la 50, eligiendo en el desplegable y tocando el botón. */
+    /* De la 1 a la 50, tocando el círculo de cada una. */
     const hojas = {};
-    let sinTitulo = 0, vacias = 0;
+    let sinTitulo = 0, vacias = 0, otroCirculo = 0;
     const conceptualAntes = await page.evaluate(() => evalFormNum);
     for (let n = 1; n <= sel.formas; n++) {
-      await page.selectOption('#evalCritFormaSel', String(n));
-      const h = await page.evaluate(leer => {
-        document.querySelector('[onclick*="genEvalCrit()"]').click();
-        return { titulo: document.getElementById('evalcrit-screen-title').textContent, casos: (new Function('return (' + leer + ')()'))(), siguiente: document.getElementById('evalCritFormaSel').value };
-      }, leerHoja.toString());
+      const h = await page.evaluate(([leer, tocar, marc, n]) => {
+        (new Function('return (' + tocar + ')'))()('evalCritFormaSel', n);
+        return { titulo: document.getElementById('evalcrit-screen-title').textContent, casos: (new Function('return (' + leer + ')()'))(), siguiente: document.getElementById('evalCritFormaSel').value, marcada: (new Function('return (' + marc + ')'))()('evalCritFormaSel') };
+      }, [leerHoja.toString(), tocarForma.toString(), marcada.toString(), n]);
       if (!new RegExp('Forma ' + n + '\\b').test(h.titulo)) sinTitulo++;
+      if (h.marcada !== n) otroCirculo++;
       if (!h.casos.length) vacias++;
       hojas[n] = h;
     }
     if (sinTitulo || vacias) mal(sinTitulo + ' formas no dicen su número en el título y ' + vacias + ' salieron vacías');
+    if (otroCirculo) mal('en ' + otroCirculo + ' formas el círculo marcado no es el de la forma generada');
     const conjuntos = new Map(), repetidas = [];
     Object.keys(hojas).forEach(n => {
       const c = JSON.stringify(hojas[n].casos.slice().sort());
       if (conjuntos.has(c)) repetidas.push('la ' + n + ' con la ' + conjuntos.get(c)); else conjuntos.set(c, n);
     });
     if (repetidas.length) mal('en la pantalla se repiten ' + repetidas.length + ' formas: ' + repetidas.slice(0, 5).join(', '));
-    else if (!sinTitulo && !vacias) bien('las ' + sel.formas + ' formas, generadas desde el desplegable, pintan ' + conjuntos.size + ' hojas con casos distintos');
+    else if (!sinTitulo && !vacias && !otroCirculo) bien('las ' + sel.formas + ' formas, generadas tocando su círculo, quedan marcadas y pintan ' + conjuntos.size + ' hojas con casos distintos');
 
     /* Lo pintado sale de los bancos de la misión. */
     const fuera = await page.evaluate(vistos => {
@@ -124,20 +135,19 @@ const leerHoja = () => Array.from(document.querySelectorAll('#evalCritOut .crit-
     if (conceptualDespues !== conceptualAntes) mal('generar la prueba crítica movió el examen conceptual de la Forma ' + conceptualAntes + ' a la ' + conceptualDespues);
     else bien('generar las ' + sel.formas + ' formas críticas no mueve la forma del examen conceptual');
 
-    if (hojas[sel.formas] && hojas[sel.formas].siguiente !== '1') mal('después de la Forma ' + sel.formas + ' el desplegable no vuelve a la 1 (dice ' + hojas[sel.formas].siguiente + ')');
+    if (hojas[sel.formas] && hojas[sel.formas].siguiente !== '1') mal('después de la Forma ' + sel.formas + ' la que toca no vuelve a la 1 (dice ' + hojas[sel.formas].siguiente + ')');
     else bien('después de la Forma ' + sel.formas + ' vuelve la Forma 1');
 
     /* La hoja impresa de una forma nueva (de la 31 en adelante). */
     const FORMA_IMPRESA = 37;
-    await page.selectOption('#evalCritFormaSel', String(FORMA_IMPRESA));
-    const impresa = await page.evaluate(leer => {
-      document.querySelector('[onclick*="genEvalCrit()"]').click();
+    const impresa = await page.evaluate(([leer, tocar, n]) => {
+      (new Function('return (' + tocar + ')'))()('evalCritFormaSel', n);
       let doc = '';
       const real = window.open;
       window.open = () => ({ document: { write: h => { doc = h; }, close: () => {} }, print: () => {}, focus: () => {}, close: () => {} });
       try { printEvalCrit(); } finally { window.open = real; }
       return { doc, casos: (new Function('return (' + leer + ')()'))() };
-    }, leerHoja.toString());
+    }, [leerHoja.toString(), tocarForma.toString(), FORMA_IMPRESA]);
     if (!impresa.doc) mal('la Forma ' + FORMA_IMPRESA + ' no generó hoja para imprimir');
     else {
       const hoja = await ctx.newPage();
@@ -160,22 +170,19 @@ const leerHoja = () => Array.from(document.querySelectorAll('#evalCritOut .crit-
     }
 
     /* La forma que toca se guarda con el progreso y sigue ahí al recargar.
-       Entrar a la pestaña genera sola la que toca: tiene que ser la 42.
-       (El desplegable se pinta antes de leer el progreso y al recargar
-       enseña «Forma 1» hasta que se genera; pasa igual en el examen
-       conceptual y en todas las misiones, y aquí no se mide.) */
-    await page.selectOption('#evalCritFormaSel', '41');
-    await page.evaluate(() => document.querySelector('[onclick*="genEvalCrit()"]').click());
+       Entrar a la pestaña genera sola la que toca: tiene que ser la 42, y
+       su círculo es el marcado. */
+    await page.evaluate(([tocar]) => (new Function('return (' + tocar + ')'))()('evalCritFormaSel', 41), [tocarForma.toString()]);
     await page.reload({ waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(800);
-    const trasRecargar = await page.evaluate(() => {
+    const trasRecargar = await page.evaluate(([marc]) => {
       const guardada = evalCritFormNum;
       if (typeof go === 'function') go('s-evaluacion'); evalSwitchMode('crit');
       const sel = document.getElementById('evalCritFormaSel');
-      return { guardada, titulo: document.getElementById('evalcrit-screen-title').textContent, sel: sel.value, ops: sel.options.length };
-    });
-    if (trasRecargar.guardada !== 42 || !/Forma 42\b/.test(trasRecargar.titulo) || trasRecargar.sel !== '43' || trasRecargar.ops !== 50) mal('tras generar la Forma 41 y recargar, estaba guardada la ' + trasRecargar.guardada + ', se generó «' + trasRecargar.titulo + '» y el desplegable dice ' + trasRecargar.sel + ' de ' + trasRecargar.ops);
-    else bien('la forma que toca (la 42, después de la 41) se guarda, y al recargar se genera esa y queda apuntada la 43');
+      return { guardada, titulo: document.getElementById('evalcrit-screen-title').textContent, sel: sel.value, ops: sel.options.length, marcada: (new Function('return (' + marc + ')'))()('evalCritFormaSel') };
+    }, [marcada.toString()]);
+    if (trasRecargar.guardada !== 42 || !/Forma 42\b/.test(trasRecargar.titulo) || trasRecargar.marcada !== 42 || trasRecargar.sel !== '43' || trasRecargar.ops !== 50) mal('tras generar la Forma 41 y recargar, estaba guardada la ' + trasRecargar.guardada + ', se generó «' + trasRecargar.titulo + '», está marcado el círculo ' + trasRecargar.marcada + ' y toca la ' + trasRecargar.sel + ' de ' + trasRecargar.ops);
+    else bien('la forma que toca (la 42, después de la 41) se guarda; al recargar se genera esa, su círculo queda marcado y la siguiente es la 43');
 
     /* Un progreso guardado de antes: la prueba llegaba a la 30. */
     const llave = await page.evaluate(() => SAVE_KEY);
@@ -207,7 +214,7 @@ const leerHoja = () => Array.from(document.querySelectorAll('#evalCritOut .crit-
         return r;
       }, posiciones.toString());
       if (es !== en.posiciones || /-1/.test(es)) mal('en inglés las Formas 7 y 38 no sacan las mismas posiciones de los bancos que en español: ' + es + ' frente a ' + en.posiciones);
-      else if (en.formas !== 50 || en.ops !== 50 || en.forma !== 7 || !en.pintados) mal('en inglés la prueba no llega a la 50 o no se genera (' + en.formas + ' formas, ' + en.ops + ' en el desplegable, Forma ' + en.forma + ')');
+      else if (en.formas !== 50 || en.ops !== 50 || en.forma !== 7 || !en.pintados) mal('en inglés la prueba no llega a la 50 o no se genera (' + en.formas + ' formas, ' + en.ops + ' en el selector, Forma ' + en.forma + ')');
       else bien('en inglés las Formas 7 y 38 sacan los mismos casos que en español, y también llega a la 50');
     }
 
