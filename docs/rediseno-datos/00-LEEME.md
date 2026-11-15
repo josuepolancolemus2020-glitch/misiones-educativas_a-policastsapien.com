@@ -1,10 +1,11 @@
-# Rediseño de datos de M.E.T.A.S · Fase 1: diseño (revisión 3)
+# Rediseño de datos de M.E.T.A.S · Fase 1: diseño (revisión 4)
 
 Rama `rediseño-datos`. **Solo diseño**: no se modificó código de la app, no se
 tocó Supabase ni ninguna fila de docentes, y no hubo merge. Los `.sql` se
 **probaron de verdad** en un PostgreSQL 16 local y desechable con un Supabase
 simulado (capa A, `pruebas-capa-a/`), nunca en el proyecto real. Fuera de
-`docs/rediseno-datos/` solo cambió `CLAUDE.md` (reglas 15 a 18, que pediste).
+`docs/rediseno-datos/` solo cambió `CLAUDE.md`: reglas 15 a 18 (revisión 3)
+y reglas 4 y 5 (revisión 4, con el texto que aprobaste).
 
 ## Qué se quiere
 
@@ -32,7 +33,72 @@ botones de sincronizar, recuperar ni restaurar, y sin ningún indicador de
 | `SUPABASE-V2-ESQUEMA.sql` | 40 tablas de datos, auditoría, recibos, funciones de dinero y de alta, vistas de totales |
 | `SUPABASE-V2-FAMILIAS.sql` | vínculo de familias, rol lector, vistas `vf_*`, totales, «visto», aviso inmediato |
 | `SUPABASE-V2-CONGELAR.sql` | candado y congelado por pasos |
-| `pruebas-capa-a/` | `corre.sh` + Supabase simulado + datos ficticios + **130 pruebas en verde** |
+| `pruebas-capa-a/` | `corre.sh` + Supabase simulado (con los permisos de fábrica de `public`) + datos ficticios + **194 pruebas en verde** |
+
+## Cambios de la revisión 4, por punto
+
+**N1. Candado de `metas_guardar_avisos`.** El de la revisión 3 reconocía al
+docente por la columna `docente`, texto libre: con «Ana López» o con el código
+en minúsculas, un `AVR-` viejo entraba. Y peor: la función vieja se traga el
+error de cada fila y devuelve un número no negativo, así que la app vieja lo
+daba por publicado. Ahora `metas_guardar_avisos` (misma firma, envuelve a la
+vieja) valida `p_prof`/`p_clave` contra `public.docentes` y busca el código
+**normalizado** en `metas.cuentas`: si está vinculado no escribe nada, anota el
+intento en `metas.blob_rechazos` y responde `-2`, como el candado del blob
+(la app vieja lo deja pendiente, `js/tools/registros-admin.js:12393`).
+Primero la contraseña (`-1` como siempre), para que nadie averigüe quién está
+vinculado. El disparador `MT041` queda de respaldo, ahora sin importar
+mayúsculas. Pruebas N1, V10.
+
+**N2. Sin dinero del archivo desde el paso 1.** `metas_consultar_admin_padre`
+y `metas_consultar_avisos_padre` (misma firma y columnas, envuelven a las
+viejas, que quedan cerradas) quitan pagos, cuentas claras y recibos cuando la
+clave está en la copia de claves de un docente vinculado **o** el texto
+«docente» trae su código. El dinero de quien se vincula después deja de verse
+en ese momento. Prueba N2.
+
+**N3. Claves viejas de familia: vencen al terminar la transición** (tu
+decisión). Sin cambiar ninguna clave entregada: el docente imprime la tira
+nueva (`familias_preparar_claves_nuevas`; la base pone `clave_siguiente`, de
+10 símbolos), que sirve desde ese momento; en la fecha del hito
+`claves_viejas_vencen` (paso 4, dos semanas de aviso) la vieja deja de abrir
+en vincular, ver, «visto» y canal. Regla 4 de `CLAUDE.md` ajustada. Pruebas
+K7 a K10.
+
+**N4. El candado del blob cubre el aula entera**: `boleta`, `materias`,
+`logo`, `logoSec`, `edadCorte` y `obsGrado`, en cada aula y también en la raíz
+(formato v1 de una app muy vieja). Un texto vacío no cuenta como dato. Cada
+rechazo dice qué sección lo frenó. Prueba V14.
+
+**N5. Detalles.**
+- `gasto_docente_editar` sin monto base (o con una fecha base ilegible):
+  pregunta `gasto_sin_base` con las dos cifras y dos botones, sin error. G9.
+- `pago_corregir` respeta una colecta cerrada (toma la colecta antes que el
+  pago, en el mismo orden que `pago_crear`). M16.
+- Quitado el comentario de «recibo pendiente» del esquema.
+- V10 ya no es `prueba.ok(true, …)`: comprueba que el rechazo no deja fila y
+  que la fila del docente sin vincular quedó con su texto. De paso se
+  corrigió V1, cuya comprobación «el blob no cambió» era siempre verdadera.
+- `CONGELAR` se puede correr dos veces: disparadores `create or replace`,
+  renombres solo la primera vez (si no, la envoltura se llamaría a sí misma),
+  copia de claves una sola vez. `corre.sh` lo corre dos veces; prueba C5.
+
+**N6. Permisos de fábrica de Supabase en el simulador** (`grant all` en
+`public` a `anon`, `authenticated` y `service_role` sobre tablas, funciones y
+secuencias) y RLS sin políticas en las tablas viejas, como en el proyecto. Con
+eso, la revisión 3 dejaba las funciones de disparador ejecutables por `anon`
+(no se pueden llamar fuera de un disparador, no era una puerta) y
+`_metas_cerrar_funciones` y la guardadora vieja `_v1` ejecutables por
+`service_role`. Todo lo interno de `public` se cierra ahora a los cuatro
+roles. Prueba V13.
+
+**Resultado**: 194 pruebas de la capa A en verde (eran 130). Con el
+`CONGELAR` y el esquema de la revisión 3, 27 de las nuevas fallan y G9 rompe
+la corrida: las pruebas distinguen lo corregido. `npm test`: 77 sondas en
+verde.
+
+**Tus decisiones sobre los siete pendientes** quedan en `08` (1, 2, 7), `09`
+(3, 4, 5) y `CLAUDE.md` (6).
 
 ## Cambios de la revisión 3, por punto
 
@@ -191,36 +257,39 @@ pantalla y elemento con archivo:línea. Respaldo a Drive: fase futura.
 14. Directores (solo lectura), PIN de convocatorias y bcrypt: pospuestos; bcrypt
     con permiso aparte.
 15. **Interfaz sin nada técnico** (`09-INTERFAZ.md`).
+16. **Vinculación con Supabase Auth**: sí, primero con `supabase start` y
+    cuentas ficticias (revisión 4).
+17. **Corte 1**: empieza en la rama; se publica solo con N1 y N2 resueltos y
+    la capa A en verde contra `supabase start`.
+18. **Primera vez sin señal**: «Para entrar la primera vez se necesita señal».
+19. **Lado del alumno**: se quitan solo los textos técnicos de guardado; toda
+    la interactividad se conserva. `buzon.html` queda fuera.
+20. **`android:allowBackup="false"`**.
+21. **Reglas 4 y 5 de `CLAUDE.md`** reescritas (texto aprobado).
+22. **Plan de acción no publica a las familias** hasta su corte.
+23. **Claves viejas de familia vencen** al terminar la transición (paso 4);
+    cada familia recibe una clave nueva.
+24. **Ningún dato de dinero del archivo** para familias de docentes
+    vinculados desde el paso 1, garantizado por el servidor.
 
 ## Riesgos
 
 | riesgo | qué se hace |
 |---|---|
-| **Empezar en blanco** | carga rápida; las familias ven notas, asistencia y avisos del archivo (sin dinero) hasta el paso 4 |
+| **Empezar en blanco** | carga rápida; las familias ven notas, asistencia y avisos del archivo (sin dinero, garantizado por el servidor para docentes vinculados) hasta el paso 4 |
+| **Familias que no reciben la tira nueva** antes de que venza la vieja | la tira nueva sirve desde que se imprime; dos semanas de aviso; «Mi aula» cuenta cuántas faltan |
 | **APK v480 y pestañas viejas** siguen abiertas en algunos teléfonos | candado + `-2` + funciones cerradas: no pierden ni inventan nada; `blob_rechazos` dice quién falta; mensaje y página «Actualiza la app» (`08`, 8.6). La app vieja no puede mostrar nuestro aviso |
 | **Llave de firma de la APK**: vive fuera del repositorio (`C:\Users\Dell\.metas-android-key.properties`) | si se perdió, la APK nueva no instala encima: hay que desinstalar la vieja |
 | **Cierre de año en curso** | `metas_cerrar_familias` sigue abierta; el corte 1 no se publica en medio de un cierre |
 | **Herramientas que quedan en el blob** entre cortes (plan, acumulativos, lecturas, equipos…) siguen con la fusión vieja para sus llaves | el candado impide que cualquier dato del corte 1 vuelva por ahí; plan de acción no publica a las familias hasta su corte |
-| **Supabase simulado ≠ Supabase real** | la capa A prueba SQL, permisos, RLS y concurrencia; Realtime, Auth y la exposición del esquema se confirman con `supabase start` antes del corte 1 |
+| **Supabase simulado ≠ Supabase real** | la capa A prueba SQL, permisos (con los de fábrica de `public`), RLS y concurrencia; Realtime, Auth y la exposición del esquema se confirman con `supabase start`, requisito para publicar el corte 1 |
 | **Muchas preguntas** si dos aparatos anotan a la vez | solo cuando un aparato no había visto el otro dato |
 | **Dependencia de funciones de borde** | se prueban con cuentas ficticias; se deshacen sin tocar cuentas (antes de crear datos) |
 | **Huella de contraseña vieja (SHA-256 rápido)** | pospuesto con permiso aparte |
 | **Dueño del proyecto Supabase** puede quitar disparadores | ningún rol de la app puede |
 
-## Pendiente de tu aprobación
+## Pendiente
 
-1. **La vinculación a Supabase Auth** (fase aparte) y su configuración del
-   panel.
-2. **Empezar el corte 1** tal como está en `08` (con avisos, conducta,
-   preguntas frecuentes y bitácora adelantados, y la reescritura de «Cerrar el
-   año escolar»).
-3. **Primera vez sin señal** (entrar, crear la cuenta, primera apertura en
-   Android): ¿una sola frase neutra, «Para entrar la primera vez se necesita
-   señal»? (`09`, 9.4).
-4. **Lado del alumno y `buzon.html`**: ¿aplicar también la regla de interfaz?
-5. **`android:allowBackup` en `false`** (`09`, Android).
-6. **Cambios a las reglas 4 y 5 de `CLAUDE.md`** (fusión y llaves de
-   `localStorage`) para el corte 1.
-7. **Mientras el plan de acción siga en el blob, no publica a las familias**
-   (no hay contraseña guardada para llamar a `metas_guardar_plan`). ¿Aceptas
-   esa pausa hasta el corte 2, o adelantamos el plan de acción?
+Nada de diseño pendiente de tu decisión. Lo que sigue, con tu aprobación ya
+dada: correr la capa A contra `supabase start` (vinculación con cuentas
+ficticias) y empezar el corte 1 en la rama, sin publicar.

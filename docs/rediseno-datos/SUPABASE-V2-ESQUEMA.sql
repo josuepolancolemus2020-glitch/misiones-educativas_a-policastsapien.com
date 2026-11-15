@@ -538,6 +538,16 @@ create index if not exists alumnos_nombre_idx on metas.alumnos (aula_id, nombre_
 --     SOLO si aparece en los datos congelados de ESTE MISMO docente.
 -- No se cambia: si se pierde la tira, se borra esta fila y se crea otra (los
 -- teléfonos vinculados con la clave vieja dejan de ver al instante).
+--
+-- Las conservadas VENCEN al terminar la transición (decisión de Josué, rev. 4):
+-- son de unos 20 bits, salieron de Math.random y nunca vencían. Para que
+-- ninguna familia se quede un día sin entrar, la clave entregada no se toca:
+--   · el docente prepara la tira nueva cuando quiera (familias_preparar_claves_nuevas):
+--     la base pone una clave de 10 símbolos en «clave_siguiente», que sirve
+--     desde ese momento junto con la vieja;
+--   · en la fecha del hito «claves_viejas_vencen» (paso 4, con dos semanas
+--     de aviso) la conservada deja de servir y queda solo la siguiente.
+--     Los teléfonos que entraron con la vieja dejan de ver y piden la nueva.
 create table if not exists metas.familias (
   like metas._fila including all,
   aula_id              uuid not null,
@@ -549,13 +559,59 @@ create table if not exists metas.familias (
   telefono_alumno      text check (telefono_alumno ~ '^[0-9 +()-]{8,20}$'),
   clave                text not null default '',   -- normalizada, sin guiones; la pone t_clave_familia
   clave_origen         text not null default 'nueva' check (clave_origen in ('nueva', 'conservada')),
+  -- la que reemplaza a una conservada; la pone t_clave_familia, una sola vez
+  clave_siguiente      text check (clave_siguiente ~ '^[A-HJ-NP-Z2-9]{10}$'),
   check (clave ~ '^([A-HJ-NP-Z2-9]{10}|[0-9]{1,2}[A-Z0-9]{4})$'),
+  check (clave_siguiente is null or clave_origen = 'conservada'),
   foreign key (alumno_id, owner, aula_id) references metas.alumnos (id, owner, aula_id)
 );
 create unique index if not exists familias_alumno_unica on metas.familias (alumno_id)
   where deleted_at is null;
 create unique index if not exists familias_clave_unica on metas.familias (clave)
   where deleted_at is null;
+create unique index if not exists familias_clave_siguiente_unica on metas.familias (clave_siguiente)
+  where deleted_at is null and clave_siguiente is not null;
+
+-- Una clave nueva no puede repetir ninguna activa, ni de «clave» ni de
+-- «clave_siguiente» (un índice no cruza columnas; con 50 bits, dos sorteos
+-- iguales al mismo tiempo no se dan en la práctica).
+create or replace function metas._clave_libre(p text)
+returns boolean language sql stable security definer set search_path = metas, pg_temp as $$
+  select not exists (select 1 from metas.familias
+                      where deleted_at is null and (clave = p or clave_siguiente = p))
+$$;
+
+create or replace function metas._clave_al_azar()
+returns text language plpgsql volatile security definer set search_path = metas, pg_temp as $$
+declare v text; i int := 0;
+begin
+  loop
+    i := i + 1;
+    v := metas.letras_azar(10);
+    exit when metas._clave_libre(v);
+    if i >= 10 then
+      raise exception 'metas: no se pudo generar una clave' using errcode = 'MT021';
+    end if;
+  end loop;
+  return v;
+end $$;
+
+-- ¿Ya pasó la fecha en que vencen las claves viejas? (hito del paso 4)
+create or replace function metas._claves_viejas_vencidas()
+returns boolean language sql stable security definer set search_path = metas, pg_temp as $$
+  select exists (select 1 from metas.hitos where nombre = 'claves_viejas_vencen' and at <= now())
+$$;
+
+-- ¿Esta clave abre esta familia hoy? La única regla para todas las puertas de
+-- las familias (vincular, ver, marcar «visto», escuchar su canal).
+create or replace function metas._clave_vale(p_clave text, p_familia_clave text, p_origen text, p_siguiente text)
+returns boolean language sql stable security definer set search_path = metas, pg_temp as $$
+  select p_clave is not null and (
+           (p_clave = p_familia_clave and (p_origen = 'nueva' or not metas._claves_viejas_vencidas()))
+        or p_clave = p_siguiente)
+$$;
+-- La política de Realtime de las familias la llama con la sesión del padre.
+grant execute on function metas._clave_vale(text, text, text, text) to authenticated;
 
 -- ¿Esta clave era de este docente? Se busca en metas.claves_archivo, la copia
 -- INMUTABLE tomada en el paso 1 del congelado (o al vincularse, para quien se
@@ -582,8 +638,17 @@ begin
     if new.clave is distinct from old.clave or new.clave_origen is distinct from old.clave_origen then
       raise exception 'metas: la clave de familia no se cambia; se crea otra familia' using errcode = 'MT002';
     end if;
+    -- clave_siguiente: solo de vacía a una que pone la base, y solo para una
+    -- conservada. Lo que mande el aparato se ignora: nadie la elige.
+    if new.clave_siguiente is distinct from old.clave_siguiente then
+      if old.clave_siguiente is not null or old.clave_origen <> 'conservada' or new.clave_siguiente is null then
+        raise exception 'metas: la clave de familia no se cambia; se crea otra familia' using errcode = 'MT002';
+      end if;
+      new.clave_siguiente := metas._clave_al_azar();
+    end if;
     return new;
   end if;
+  new.clave_siguiente := null;          -- nace sin siguiente
   if v_pedida is not null then
     if not metas._clave_era_mia(new.owner, v_pedida) then
       raise exception 'metas: esa clave no está en tus datos anteriores' using errcode = 'MT020';
@@ -592,17 +657,29 @@ begin
     new.clave_origen := 'conservada';
     return new;
   end if;
-  loop
-    v_intento := v_intento + 1;
-    new.clave := metas.letras_azar(10);
-    exit when not exists (select 1 from metas.familias where clave = new.clave and deleted_at is null);
-    if v_intento >= 10 then
-      raise exception 'metas: no se pudo generar una clave' using errcode = 'MT021';
-    end if;
-  end loop;
+  new.clave := metas._clave_al_azar();
   new.clave_origen := 'nueva';
   return new;
 end $$;
+
+-- El docente prepara las tiras nuevas de sus familias con clave conservada
+-- (todas, o las de un aula). Corre con SU sesión: la RLS y el sello aplican.
+-- Devuelve cuántas preparó; repetirla no cambia las ya preparadas.
+create or replace function metas.familias_preparar_claves_nuevas(p_aula uuid default null)
+returns integer language plpgsql security invoker set search_path = metas, pg_temp as $$
+declare n int;
+begin
+  if not metas.es_docente() then
+    raise exception 'metas: se necesita una cuenta de docente' using errcode = '42501';
+  end if;
+  update metas.familias set clave_siguiente = 'PREPARAR00'      -- t_clave_familia la cambia por una al azar
+   where owner = (select auth.uid()) and deleted_at is null
+     and clave_origen = 'conservada' and clave_siguiente is null
+     and (p_aula is null or aula_id = p_aula);
+  get diagnostics n = row_count;
+  return n;
+end $$;
+grant execute on function metas.familias_preparar_claves_nuevas(uuid) to authenticated;
 
 -- ── 4.6 colectas y exenciones ──────────────────────────────────────────────
 create table if not exists metas.colectas (
@@ -1256,7 +1333,8 @@ revoke all on function metas._preparar(text, text[], text[], text) from public, 
 --   docente; se crea sola con el primer pago, con un máximo de 20 intentos.
 -- · El correlativo es por docente y año, sin huecos: el contador se sube en la
 --   misma transacción que crea el pago; si el pago se rechaza, vuelve atrás.
--- · Sin señal, el pago se ve con «recibo pendiente» hasta que llega.
+-- · Sin señal, el pago queda anotado en el aparato y el número lo pone la
+--   base cuando llega; la pantalla no dice nada mientras tanto (09-INTERFAZ.md).
 create table if not exists metas.recibo_series (
   owner      uuid primary key,
   prefijo    text not null unique check (prefijo ~ '^[A-HJ-NP-Z2-9]{4}$'),
@@ -1333,6 +1411,18 @@ begin
   end if;
   return p::numeric(12,2);
 end $$;
+
+-- Para la BASE que manda el aparato (lo que veía): si falta o no se entiende,
+-- no es un error del docente, es que no se sabe qué veía. Se devuelve null y
+-- quien llama pregunta.
+create or replace function metas._monto_o_nulo(p text)
+returns numeric language sql immutable as $$
+  select case when p ~ '^[0-9]{1,10}(\.[0-9]{1,2})?$' then p::numeric(12,2) end
+$$;
+create or replace function metas._fecha_o_nula(p text)
+returns date language sql immutable as $$
+  select case when p ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' then p::date end
+$$;
 
 create or replace function metas._pago_json(p metas.pagos)
 returns jsonb language sql immutable as $$
@@ -1422,6 +1512,7 @@ create or replace function metas.pago_corregir(
 declare
   v_uid uuid := auth.uid();
   v_monto numeric := metas._monto(p_monto);
+  v_estado text;
   v metas.pagos; w metas.pagos; r metas.pagos;
 begin
   if not metas.es_docente() then
@@ -1434,11 +1525,22 @@ begin
     end if;
     return jsonb_build_object('ok', false, 'motivo', 'id_ocupado');
   end if;
+  -- La colecta primero y en modo compartido, en el mismo orden que pago_crear
+  -- (colecta → pago): así no hay abrazo mortal con quien la está cerrando, y
+  -- mientras se corrige nadie la cierra. Una colecta cerrada no cambia sus
+  -- cuentas: ni pagos nuevos ni correcciones.
+  select c.estado into v_estado
+    from metas.colectas c
+   where c.id = (select colecta_id from metas.pagos where id = p_pago and owner = v_uid)
+     for share of c;
+  if v_estado = 'cerrada' then
+    return jsonb_build_object('ok', false, 'motivo', 'colecta_cerrada');
+  end if;
   select * into v from metas.pagos where id = p_pago and owner = v_uid for update;
   if not found then return jsonb_build_object('ok', false, 'motivo', 'no_existe'); end if;
   if v.deleted_at is not null
-     or v.monto is distinct from metas._monto(p_base ->> 'monto')
-     or v.fecha is distinct from (p_base ->> 'fecha')::date then
+     or v.monto is distinct from metas._monto_o_nulo(p_base ->> 'monto')
+     or v.fecha is distinct from metas._fecha_o_nula(p_base ->> 'fecha') then
     select * into w from metas.pagos where reemplaza_a = p_pago;
     return jsonb_build_object('ok', false, 'pregunta', 'pago_cambiado_en_otro_aparato',
       'actual', metas._pago_json(v),
@@ -1671,6 +1773,11 @@ end $$;
 -- Editar: monto y fecha con pregunta si otro aparato los cambió; lo demás
 -- campo por campo. El monto de un gasto del docente SÍ se puede corregir (no
 -- tiene recibo numerado; los reembolsos sí son inmutables).
+-- Si el aparato no manda lo que veía (p_base sin monto o sin fecha, o con algo
+-- que no se entiende), no se sabe si otro aparato lo cambió: en vez de un
+-- error, se pregunta con las dos cifras («¿L 300 o L 200?») y dos botones.
+-- Para responder, la app vuelve a llamar con p_base = lo que mostró como
+-- «actual».
 create or replace function metas.gasto_docente_editar(p_gasto uuid, p_base jsonb, p_cambios jsonb, p_op uuid,
                                                       p_confirmado boolean default false)
 returns jsonb language plpgsql security definer set search_path = metas, pg_temp as $$
@@ -1693,9 +1800,16 @@ begin
   if v.deleted_at is not null then return jsonb_build_object('ok', false, 'motivo', 'anulado'); end if;
   if p_cambios ? 'monto' then v_monto := metas._monto(p_cambios ->> 'monto'); end if;
   if p_cambios ? 'fecha' then v_fecha := (p_cambios ->> 'fecha')::date; end if;
-  if (p_cambios ? 'monto' and v.monto is distinct from metas._monto(p_base ->> 'monto') and v.monto is distinct from v_monto)
-     or (p_cambios ? 'fecha' and v.fecha is distinct from (p_base ->> 'fecha')::date and v.fecha is distinct from v_fecha) then
-    return jsonb_build_object('ok', false, 'pregunta', 'gasto_cambiado_en_otro_aparato',
+  -- Solo se mira la base de lo que de verdad cambia: pedir el mismo monto que
+  -- ya hay no necesita base ni pregunta.
+  if (p_cambios ? 'monto' and v.monto is distinct from v_monto
+        and v.monto is distinct from metas._monto_o_nulo(p_base ->> 'monto'))
+     or (p_cambios ? 'fecha' and v.fecha is distinct from v_fecha
+        and v.fecha is distinct from metas._fecha_o_nula(p_base ->> 'fecha')) then
+    return jsonb_build_object('ok', false,
+      'pregunta', case when (p_cambios ? 'monto' and metas._monto_o_nulo(p_base ->> 'monto') is null)
+                         or (p_cambios ? 'fecha' and metas._fecha_o_nula(p_base ->> 'fecha') is null)
+                       then 'gasto_sin_base' else 'gasto_cambiado_en_otro_aparato' end,
       'actual', metas._gasto_docente_json(v),
       'este', jsonb_build_object('monto', coalesce(v_monto, v.monto)::text, 'fecha', coalesce(v_fecha, v.fecha)));
   end if;

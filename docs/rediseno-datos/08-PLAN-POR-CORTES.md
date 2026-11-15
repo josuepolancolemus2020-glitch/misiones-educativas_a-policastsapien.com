@@ -1,7 +1,13 @@
 # 8. Plan de implementación por cortes
 
-Fase 1: diseño (revisión 3). Cada corte se publica entero, con sus pruebas en
+Fase 1: diseño (revisión 4). Cada corte se publica entero, con sus pruebas en
 verde, y deja la app funcionando. Ningún corte se empieza sin tu aprobación.
+
+**Decisiones de Josué (revisión 4)**: la vinculación con Supabase Auth va,
+primero con `supabase start` y cuentas ficticias; el corte 1 **empieza en la
+rama** y **se publica solo** con N1 y N2 resueltos y la capa A en verde
+contra `supabase start`; el plan de acción no publica a las familias hasta su
+corte (pausa aceptada).
 
 ## 8.0 Antes del primer corte: vinculación de cuentas (fase aparte)
 
@@ -11,14 +17,18 @@ verde, y deja la app funcionando. Ningún corte se empieza sin tu aprobación.
   también desde `reset-clave`) y `familia-vincular`; panel: alta pública
   apagada, sesiones anónimas con **Turnstile obligatorio**, esquema `metas`
   expuesto.
-- El docente no ve ningún cambio. Se prueba con cuentas ficticias.
+- El docente no ve ningún cambio. Se prueba **primero en `supabase start`**
+  con cuentas ficticias (aprobado), y solo después en el proyecto real.
 - Se puede deshacer **mientras nadie haya creado datos** en la base nueva.
 
 ## 8.1 Corte 1: dinero, alumnos, notas, asistencia, controles, avisos y conducta
 
-**Requisito para empezar** (punto 14): la capa A en verde
-(`pruebas-capa-a/corre.sh`, hoy 130 pruebas: S1 a S9, M1 a M15, F1 a F6, B4,
-convivencia V1 a V12) y la misma corrida contra `supabase start`.
+**Empezar** (aprobado): en la rama, con la capa A en verde
+(`pruebas-capa-a/corre.sh`, hoy 194 pruebas: S1 a S9, M1 a M16, F1 a F6, B4,
+K0 a K10, convivencia V1 a V14, N1, N2, C5).
+
+**Publicar**: solo con N1 y N2 resueltos (lo están en la revisión 4) y la
+misma capa A en verde **contra `supabase start`**.
 
 **Tablas**: `aulas`, `periodos`, `asignaturas`, `alumnos`, `familias`,
 `colectas`, `colecta_exenciones`, `pagos`, `gastos`, `gastos_docente`,
@@ -87,7 +97,7 @@ v480 (8.6).
   técnico.
 - Mientras plan de acción siga en el blob, **no publica a las familias**
   (`metas_guardar_plan` también pide la contraseña). Vuelve a publicar en su
-  corte.
+  corte. **Pausa aprobada** (revisión 4).
 
 ## 8.2 Corte 2: plan de acción, acumulativos, instrumentos, lecturas y equipos
 
@@ -114,6 +124,11 @@ vincular, cuántos vinculados no tienen aula y cuántas aulas del archivo no
 tienen aula nueva. Con el paso 4 se cierran también `metas_cerrar_familias`,
 `metas_guardar_avisos` y, si ya tienen reemplazo, el buzón y los «vistos»
 viejos.
+
+En esa misma fecha **vencen las claves viejas de familia** (N3, decisión de
+Josué). Con el aviso de dos semanas se fija la fecha (hito
+`claves_viejas_vencen`) y «Mi aula» le pide al docente imprimir las tiras
+nuevas; la tira nueva sirve desde que se imprime, la vieja hasta la fecha.
 
 ## 8.5 Lo que exige cada corte antes de publicarse
 
@@ -145,7 +160,11 @@ no se actualiza sola. Plan:
      vieja lo deja pendiente (no lo marca como subido, `js/metas-docente-sync.js:281`);
    - no puede restaurar versiones ni papelera (funciones cerradas);
    - no puede publicar recibos ni avisos para familias de un docente
-     vinculado (`MT041`);
+     vinculado: `metas_guardar_avisos` lo reconoce por el código con que
+     entra y responde `-2` (lo deja pendiente), y el disparador `MT041` es el
+     respaldo;
+   - no puede subir el encabezado de boleta, las asignaturas, los logos, la
+     fecha de corte de edad ni la observación del grado (`-2`);
    - las familias de un docente vinculado ya no leen nada que venga de ella.
 4. **Seguimiento**: cada intento de una app vieja queda en
    `metas.blob_rechazos` (código de docente, llave, aparato, motivo). Una

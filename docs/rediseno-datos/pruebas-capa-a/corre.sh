@@ -48,5 +48,10 @@ echo "▶ SUPABASE-V2-FAMILIAS.sql"
 psql_pg -f "'$TMP/SUPABASE-V2-FAMILIAS.sql'"
 echo "▶ SUPABASE-V2-CONGELAR.sql (paso 1)"
 psql_pg -f "'$TMP/SUPABASE-V2-CONGELAR.sql'"
+# Una segunda vez, como si alguien lo pegara de nuevo en el SQL Editor: no
+# debe fallar ni cambiar nada (las pruebas C5 lo comprueban).
+echo "▶ SUPABASE-V2-CONGELAR.sql otra vez (debe aguantar)"
+psql_pg -f "'$TMP/SUPABASE-V2-CONGELAR.sql'" >/dev/null 2>&1 \
+  || { echo "✘ CONGELAR falló la segunda vez"; psql_pg -f "'$TMP/SUPABASE-V2-CONGELAR.sql'"; exit 1; }
 echo "▶ Pruebas"
 psql_pg -v "conninfo='host=$TMP port=$PUERTO user=postgres dbname=metas_prueba'" -f "'$TMP/10-pruebas.sql'"

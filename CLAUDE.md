@@ -53,11 +53,21 @@ Sin framework ni compilación: HTML, CSS y JS planos servidos tal cual.
 3. **Los números se cuentan, no se escriben**: el catálogo está en
    `js/data/misiones.js`; en papel, las cifras se fechan.
 4. **Grupos** siempre como `6º-1`, vía `adGradoSeccion`
-   (`js/tools/registros-admin.js`). No tocar `paCodigoAlumno`,
-   `adClaveFamilia`, llaves de `localStorage` ni códigos ya entregados.
-5. **Datos del maestro se fusionan** (`js/metas-fusion-aula.js`), no se elige
-   una copia. Preferencias de vista van en su propia llave, nunca en
-   `METAS_ADMIN_V1` ni `METAS_ALUMNO_V1`.
+   (`js/tools/registros-admin.js`). No tocar `paCodigoAlumno` ni las
+   llaves de `localStorage` de preferencias y del lado del alumno. Las
+   llaves de datos del docente (`METAS_ADMIN_V1`, `METAS_CODIGOS_V1`,
+   `METAS_AVISOS_V1`…) dejan de usarse con el corte que pasa ese dato a
+   filas. **Claves de familia**: las pone la base (`metas.familias`).
+   Las viejas (`n-XXXX`) sirven durante la transición y **vencen al
+   terminarla** (paso 4): cada familia recibe una clave nueva. Antes de
+   esa fecha no se cambia ninguna clave ya entregada.
+5. **Datos del maestro: una fila por dato en Supabase** (esquema
+   `metas`, por `MetasDatos`). Nunca se fusiona, nunca se repone y
+   nunca se elige una copia. Lo que todavía no pasó a filas sigue en el
+   blob con la fusión vieja (`js/metas-fusion-aula.js`) solo hasta su
+   corte, y nada que ya es fila vuelve al blob. Preferencias de vista
+   van en su propia llave de `localStorage`, nunca en `METAS_ADMIN_V1`
+   ni `METAS_ALUMNO_V1`.
 6. **Accesibilidad**: nunca `user-scalable=no`; blancos de toque de 44 px;
    nada dicho solo con color (✓/✗ además del color); todo se hace sin arrastrar.
 7. **Papel**: un informe = una hoja carta (tope de 248 mm); no se baja el

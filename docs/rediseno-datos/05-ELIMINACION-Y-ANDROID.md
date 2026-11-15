@@ -197,11 +197,18 @@ que no actualiza el APK se quedaría con código viejo.
 **Añadidas en esta revisión** (lo pediste explícitamente): nunca «upsert» en
 pagos ni en pagos de convocatoria, y nunca `Math.random()` para generar ids.
 
-**Pendientes de tu aprobación**, para cuando se implemente el primer corte:
+**Aprobadas y aplicadas en la revisión 4** (texto exacto en `CLAUDE.md`):
 
-- Regla 5, «Datos del maestro se fusionan (`js/metas-fusion-aula.js`)»: pasa
-  a «Datos del maestro: una fila por dato en Supabase, por `MetasDatos`. Nunca
-  se fusiona, nunca se repone, nunca se guarda un blob».
-- Regla 4, «No tocar llaves de `localStorage`»: las llaves de datos del
-  docente dejan de existir; las de preferencias siguen.
-- Sección «Cómo se publica»: el APK carga el sitio publicado y no lleva copia.
+- Regla 4: no tocar `paCodigoAlumno` ni las llaves de `localStorage` de
+  preferencias y del lado del alumno; las llaves de datos del docente dejan
+  de usarse con el corte que pasa ese dato a filas; las claves viejas de
+  familia sirven durante la transición y vencen al terminarla (paso 4).
+- Regla 5: una fila por dato en Supabase (`MetasDatos`); nunca se fusiona,
+  nunca se repone, nunca se elige una copia; lo que aún no pasó a filas sigue
+  con la fusión vieja solo hasta su corte, y nada que ya es fila vuelve al
+  blob.
+
+**Pendiente**, para cuando el corte lo publique: sección «Cómo se publica»
+(el APK carga el sitio publicado y no lleva copia).
+
+**`android:allowBackup` en `false`**: aprobado (revisión 4).

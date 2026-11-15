@@ -240,11 +240,22 @@ base, con las reglas de `03`, y produce el estado esperado.
 | V7 | `raw` inválido de un docente vinculado | no se acepta |
 | V8 | `METAS_ADMIN_V1` sin secciones del corte 1 (equipos, lecturas…) | se guarda |
 | V9 | La app nueva usa `metas.blob_guardar` (sesión, sin contraseña) para lo que aún vive en el blob; intenta mandar algo del corte 1; una sesión de padre lo intenta | se guarda; `MT040`; `42501` |
-| V10 | Un recibo `AVR-` o un aviso de un docente vinculado llega a `mensajes_docente` | rechazado (`MT041`); un docente sin vincular sigue mandando avisos |
+| V10 | Un recibo `AVR-` o un aviso de un docente vinculado llega a `mensajes_docente` por un SQL a mano (con su código en el texto, también en minúsculas, o cambiando el texto de una fila vieja) | el disparador de respaldo lo rechaza (`MT041`) y no queda ninguna fila; un docente sin vincular sigue mandando avisos y **la fila queda con su texto** |
 | V11 | **Cierre de año** con `metas_cerrar_familias` después del paso 1 | sigue borrando las claves viejas y archivando lo borrado; `registro_admin` no acepta escrituras |
 | V12 | Después del paso 1 siguen abiertas: `metas_guardar`, `metas_guardar_progreso`, lecturas de padres, buzón | sí |
+| V13 | Con los permisos **de fábrica** de Supabase (GRANT ALL en `public` a `anon`, `authenticated` y `service_role`): `anon` escribe directo en `mensajes_docente` o `docente_estado`, o llama a una función interna (`_v1`, disparadores, `_metas_cerrar_funciones`) | `42501` en todo; ninguna función interna ejecutable por los tres roles |
+| V14 | APK vieja de una docente vinculada sube `boleta`, `materias`, `logo`, `logoSec`, `edadCorte` u `obsGrado`; o el formato v1 (lista y materias en la raíz); o varias aulas y solo una con datos del corte 1 | `-2` en cada caso, anotado con la sección que lo frenó; un `logo` u `obsGrado` **vacíos** no son datos y se guardan |
+| N1 | `metas_guardar_avisos` de una docente vinculada con «Ana López» en la fila, con su código en minúsculas o con espacios, o un recibo sin texto «docente» | `-2`, nada escrito, cada intento anotado en `metas.blob_rechazos` con el código normalizado; con contraseña equivocada `-1` (no revela si está vinculada); un docente sin vincular, como hoy |
+| N2 | La familia de una docente vinculada consulta el archivo con `metas_consultar_admin_padre` o `metas_consultar_avisos_padre` (clave en minúsculas o con espacios incluida), con filas cuyo texto «docente» no trae el código | sin pagos, cuentas claras ni recibos; sí sus notas, asistencia y avisos; la familia de un docente sin vincular ve todo; el dinero de quien se vincula después deja de verse **en el momento** en que se vincula |
+| C5 | `SUPABASE-V2-CONGELAR.sql` se corre dos veces | sin error; cada disparador una sola vez; el hito una vez; ninguna envoltura renombrada sobre sí misma; la copia de claves no se amplía |
 | K5 | Clave conservada que ya ocupa otra familia | `23505`; la carga rápida ofrece una clave nueva y avisa que hay que entregar tira nueva |
 | K6 | Docente que se vincula **después** del paso 1 | su copia de claves se toma al vincularse |
+| K7 | La docente prepara las tiras nuevas (`familias_preparar_claves_nuevas`) | solo las familias con clave conservada reciben `clave_siguiente` (10 símbolos, puesta por la base); la clave entregada no cambia; repetir no cambia nada; nadie elige ni cambia la siguiente (`MT002`) |
+| K8 | Antes de la fecha del hito `claves_viejas_vencen` | la vieja y la nueva sirven |
+| K9 | Pasa la fecha | el teléfono que entró con la vieja deja de ver y de escuchar su canal; la vieja ya no vincula (`clave_vencida`); con la tira nueva se vuelve a entrar |
+| K10 | Familias con clave nueva | no vencen |
+| G9 | `gasto_docente_editar` sin monto base (o con una fecha base que no se entiende) | **pregunta** `gasto_sin_base` con las dos cifras, sin error y sin cambiar nada; el segundo botón (base = lo que vio) guarda; pedir el mismo monto no pregunta |
+| M16 | `pago_corregir` de un pago en una colecta cerrada | «esa colecta ya está cerrada»; el pago no se anula ni se reemplaza |
 
 ### Prueba de estrés al azar (nocturna)
 
@@ -262,7 +273,7 @@ contadores de 6.1.
 | `npm run test:datos` (nueva) | capas A y B contra Supabase local en Docker | cada empujón que toque `js/datos/` o los `.sql`, y de noche |
 | `npm run test:navegador` | capa C y la prueba de estrés | de noche |
 
-## 6.5 Capa A: lo que ya corre (revisión 3)
+## 6.5 Capa A: lo que ya corre (revisión 4)
 
 ```
 bash docs/rediseno-datos/pruebas-capa-a/corre.sh
@@ -273,13 +284,27 @@ un Supabase simulado (`00-supabase-simulado.sql`: roles `anon`,
 `authenticated`, `service_role`; `auth.uid()` y `auth.jwt()` leídos de los
 «claims» como en Supabase; `realtime.send`; publicación; `pgcrypto`) y una
 copia mínima del modelo viejo con datos ficticios. Aplica los cuatro `.sql` en
-el orden real (vinculación → esquema → familias → paso 1) y corre
-`10-pruebas.sql`.
+el orden real (vinculación → esquema → familias → paso 1), **corre el paso 1
+una segunda vez** y corre `10-pruebas.sql`.
 
-**Resultado: 130 pruebas en verde**, entre ellas todas las que pide el punto
-14 de la revisión 3: S1 a S9, M1 a M15 (las de base de datos; M15 completa
-necesita la capa B), F1 a F6, B4 en los dos órdenes con **dos sesiones de
-verdad** (`dblink`), K0 a K6, A1 a A8, G, N, P y la convivencia V1 a V12.
+Desde la revisión 4 el simulador trae los **permisos de fábrica de Supabase en
+`public`** (`alter default privileges … grant all on tables, functions,
+sequences to anon, authenticated, service_role`), la RLS sin políticas de las
+tablas viejas como en el proyecto real, y copias fieles de
+`metas_guardar_avisos`, `metas_consultar_admin_padre` y
+`metas_consultar_avisos_padre`.
+
+**Resultado: 194 pruebas en verde**: S1 a S9, M1 a M16, F1 a F6, B4 en los
+dos órdenes con **dos sesiones de verdad** (`dblink`), K0 a K10, A1 a A8, G
+(con G9), N, P, la convivencia V1 a V14, N1, N2 y C5. Con el `CONGELAR` y el
+esquema de la revisión 3, 27 de ellas fallan (y G9 rompe la corrida): las
+pruebas nuevas sí distinguen lo corregido.
+
+Con los permisos de fábrica, la revisión 3 dejaba en `public` las funciones
+de disparador ejecutables por `anon` y `authenticated` (PostgreSQL no deja
+llamarlas fuera de un disparador, así que no era una puerta) y
+`_metas_cerrar_funciones` y la guardadora vieja `_v1` ejecutables por
+`service_role`. Ahora se cierran a los cuatro roles y V13 lo comprueba.
 
 La capa A **encontró tres fallos reales del diseño**, ya corregidos en los
 `.sql`:
@@ -294,6 +319,9 @@ La capa A **encontró tres fallos reales del diseño**, ya corregidos en los
 3. `metas.blob_guardar` tenía una variable con el mismo nombre que la columna
    `k`: habría fallado en la primera escritura.
 
-**Antes del corte 1** (punto 14): esta capa en verde, más la misma corrida
-contra `supabase start` para confirmar Realtime y Auth reales.
+**Antes de publicar el corte 1** (decisión de Josué, rev. 4): N1 y N2
+resueltos (lo están) y esta capa en verde **contra `supabase start`**, con
+cuentas ficticias, para confirmar los permisos, Realtime y Auth reales. Lo
+mismo vale para la vinculación con Supabase Auth: primero en `supabase start`
+con cuentas ficticias.
 

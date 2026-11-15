@@ -230,6 +230,11 @@ select prueba.falla($$insert into metas.familias (aula_id, alumno_id, clave) val
 insert into metas.familias (aula_id, alumno_id) values (:aula, :dani), (:aula, :eva);
 reset role;
 
+-- N2 antes de que B se vincule: su familia todavía ve el dinero del archivo
+set role anon;
+select prueba.ok((select count(*) from public.metas_consultar_admin_padre('5NUEVA') where tipo = 'economia') = 1,
+                 'N2 docente aún sin vincular: su familia ve sus pagos del archivo');
+reset role;
 -- B se vincula DESPUÉS del paso 1: su copia se toma en ese momento
 set role service_role;
 select metas.cuenta_registrar('00000000-0000-0000-0000-00000000000b', 'PROF-BBBB000002',
@@ -237,6 +242,10 @@ select metas.cuenta_registrar('00000000-0000-0000-0000-00000000000b', 'PROF-BBBB
 reset role;
 select prueba.ok(exists (select 1 from metas.claves_archivo where docente_codigo = 'PROF-BBBB000002' and clave = '5NUEVA'),
                  'K6 quien se vincula después del paso 1 tiene su copia al vincularse');
+set role anon;
+select prueba.ok((select count(*) from public.metas_consultar_admin_padre('5NUEVA') where tipo = 'economia') = 0,
+                 'N2 en cuanto B se vincula, el archivo deja de mostrar su dinero');
+reset role;
 
 -- S5: B no ve ni toca lo de A aunque conozca los uuid
 select prueba.como('B');
@@ -298,6 +307,18 @@ select prueba.ok((select count(*) from metas.pagos where colecta_id = :c2 and al
 select prueba.ok((metas.pago_crear('00000000-0000-0000-0000-00000000e001', gen_random_uuid(),
                                    :c2, :ana, '50.00', '2027-03-03') ->> 'motivo') = 'id_ocupado',
                  'I4 mismo id con otra operación → id ocupado, no pisa');
+-- M16: una colecta cerrada no se corrige (pago_corregir respeta el cierre)
+insert into metas.colectas (id, aula_id, concepto, monto_sugerido, fecha)
+values ('00000000-0000-0000-0000-0000000c0004', :aula, 'Rifa (ficticia)', 20, '2027-02-01');
+select metas.pago_crear('00000000-0000-0000-0000-00000000e401', gen_random_uuid(),
+                        '00000000-0000-0000-0000-0000000c0004', :fito, '20.00', '2027-03-04');
+update metas.colectas set estado = 'cerrada' where id = '00000000-0000-0000-0000-0000000c0004';
+select prueba.ok((metas.pago_corregir('00000000-0000-0000-0000-00000000e401', '{"monto":"20.00","fecha":"2027-03-04"}',
+                                      gen_random_uuid(), gen_random_uuid(), '25.00', '2027-03-04') ->> 'motivo') = 'colecta_cerrada',
+                 'M16 corregir un pago de una colecta cerrada → «esa colecta ya está cerrada»');
+select prueba.ok((select count(*) = 1 and bool_and(deleted_at is null and monto = 20.00) from metas.pagos
+                   where colecta_id = '00000000-0000-0000-0000-0000000c0004'),
+                 'M16 el pago sigue igual: ni anulado ni reemplazado');
 -- M7: otro aparato ya lo corrigió (base vieja) → pregunta con los dos montos
 insert into t values ('m7', metas.pago_corregir('00000000-0000-0000-0000-00000000e002', '{"monto":"55.00","fecha":"2027-03-03"}',
                                                 gen_random_uuid(), gen_random_uuid(), '70.00', '2027-03-03'));
@@ -494,6 +515,23 @@ select prueba.ok((metas.gasto_docente_editar('00000000-0000-0000-0000-0000000e02
                  'P11 bajar el monto por debajo de lo reembolsado → pregunta');
 select prueba.ok((metas.gasto_docente_anular('00000000-0000-0000-0000-0000000e0201', 'x', gen_random_uuid()) ->> 'motivo')
                  = 'tiene_reembolsos', 'G6 no se anula un gasto con reembolsos');
+-- G9: el aparato no manda lo que veía → pregunta con las dos cifras, no error
+insert into t values ('g9', metas.gasto_docente_editar('00000000-0000-0000-0000-0000000e0201', '{}', '{"monto":"280.00"}',
+                                                       gen_random_uuid()));
+select prueba.ok((select v ->> 'pregunta' = 'gasto_sin_base' and v -> 'actual' ->> 'monto' = '300.00'
+                         and v -> 'este' ->> 'monto' = '280.00' from t where k = 'g9'),
+                 'G9 sin monto base → pregunta «¿L 300.00 o L 280.00?»');
+select prueba.ok((select monto = 300.00 from metas.gastos_docente where id = '00000000-0000-0000-0000-0000000e0201'),
+                 'G9 mientras no responda, el monto no cambia');
+select prueba.ok((metas.gasto_docente_editar('00000000-0000-0000-0000-0000000e0201', '{"fecha":"ayer"}', '{"fecha":"2027-02-02"}',
+                                             gen_random_uuid()) ->> 'pregunta') = 'gasto_sin_base',
+                 'G9 una fecha base que no se entiende también pregunta');
+select prueba.ok((metas.gasto_docente_editar('00000000-0000-0000-0000-0000000e0201', '{}', '{"monto":"300.00"}',
+                                             gen_random_uuid()) ->> 'ok')::boolean,
+                 'G9 pedir el mismo monto que ya hay no necesita base');
+select prueba.ok((metas.gasto_docente_editar('00000000-0000-0000-0000-0000000e0201', '{"monto":"300.00"}', '{"monto":"280.00"}',
+                                             gen_random_uuid()) -> 'gasto' ->> 'monto') = '280.00',
+                 'G9 el segundo botón (base = lo que vio) guarda L 280.00');
 insert into metas.bienes (id, centro, fecha_desde, descripcion, valor, propietario, gasto_docente_id)
 values ('00000000-0000-0000-0000-0000000e0301', 'Escuela Ficticia Las Flores', current_date - 30, 'Librero', 900, 'docente',
         '00000000-0000-0000-0000-0000000e0201');
@@ -585,8 +623,83 @@ reset role;
 select prueba.ok((select count(*) = 1 from metas.alertas where tipo = 'claves_familia_equivocadas'), 'P12 una sola alerta global');
 
 -- ════════════════════════════════════════════════════════════════════════════
+-- K · Las claves viejas vencen al terminar la transición (N3, decisión de Josué)
+-- ════════════════════════════════════════════════════════════════════════════
+select prueba.como('A');
+set role authenticated;
+select prueba.ok(metas.familias_preparar_claves_nuevas() = 1,
+                 'K7 la docente prepara las tiras nuevas: solo la familia con clave conservada');
+select prueba.ok((select clave = '1K7QM' and clave_siguiente ~ '^[A-HJ-NP-Z2-9]{10}$' from metas.familias where alumno_id = :ana),
+                 'K7 la clave entregada no cambia; la siguiente la pone la base (10 símbolos)');
+select prueba.ok((select clave_siguiente is null from metas.familias where alumno_id = :dani),
+                 'K7 una familia con clave nueva no necesita otra');
+select prueba.ok(metas.familias_preparar_claves_nuevas() = 0, 'K7 repetir no cambia las ya preparadas');
+select prueba.falla($$update metas.familias set clave_siguiente = 'ZZZZZZZZZZ' where alumno_id = '00000000-0000-0000-0000-0000000b0001'$$,
+                    'K7 la siguiente tampoco se cambia una vez puesta', 'MT002');
+select prueba.falla($$update metas.familias set clave_siguiente = 'ZZZZZZZZZZ' where alumno_id = '00000000-0000-0000-0000-0000000b0004'$$,
+                    'K7 a una clave nueva no se le pone siguiente', 'MT002');
+reset role;
+select clave_siguiente as clave_ana_nueva from metas.familias where alumno_id = :ana \gset
+-- Antes de la fecha: la vieja y la nueva sirven
+select prueba.como('padre1');
+set role authenticated;
+select prueba.ok((select count(*) from metas.familia_alumnos() x where x = '00000000-0000-0000-0000-0000000b0001') = 1,
+                 'K8 antes de la fecha, el teléfono que entró con la clave vieja sigue viendo');
+reset role;
+set role service_role;
+select prueba.ok((metas.familia_vincular('00000000-0000-0000-0000-0000000000f3', :'clave_ana_nueva', 'ip-k8') ->> 'ok')::boolean,
+                 'K8 la tira nueva ya sirve antes de la fecha');
+reset role;
+-- La fecha llega (hito del paso 4)
+insert into metas.hitos (nombre, at) values ('claves_viejas_vencen', now() - interval '1 second');
+select prueba.como('padre1');
+set role authenticated;
+select prueba.ok((select count(*) from metas.familia_alumnos() x where x = '00000000-0000-0000-0000-0000000b0001') = 0,
+                 'K9 vencida la clave vieja, ese teléfono deja de ver a Ana');
+select prueba.ok((select count(*) = 1 and bool_and(not metas.familia_canal_ok('familia:' || familia_id::text))
+                    from metas.familia_accesos where clave_usada = '1K7QM'),
+                 'K9 y deja de escuchar su canal');
+reset role;
+select prueba.como('padre3');
+set role authenticated;
+select prueba.ok((select count(*) from metas.familia_alumnos() x where x = '00000000-0000-0000-0000-0000000b0001') = 1,
+                 'K9 quien entró con la tira nueva sigue viendo');
+select prueba.ok((select count(*) = 1 and bool_and(metas.familia_canal_ok('familia:' || familia_id::text))
+                    from metas.familia_accesos where clave_usada = :'clave_ana_nueva'),
+                 'K9 y sigue escuchando el canal de su familia');
+reset role;
+select prueba.como('padre2');
+set role authenticated;
+select prueba.ok((select count(*) from metas.familia_alumnos() x where x = '00000000-0000-0000-0000-0000000b0004') = 1,
+                 'K10 las claves nuevas no vencen');
+reset role;
+set role service_role;
+select prueba.ok((metas.familia_vincular('00000000-0000-0000-0000-0000000000f1', '1-K7QM', 'ip-k9') ->> 'motivo') = 'clave_vencida',
+                 'K9 la clave vieja ya no vincula: «pida la tira nueva»');
+select prueba.ok((metas.familia_vincular('00000000-0000-0000-0000-0000000000f1', :'clave_ana_nueva', 'ip-k9') ->> 'ok')::boolean,
+                 'K9 con la tira nueva vuelve a entrar');
+reset role;
+select prueba.ok((select clave = '1K7QM' from metas.familias where alumno_id = :ana),
+                 'K9 en ningún momento se cambió la clave entregada');
+
+-- ════════════════════════════════════════════════════════════════════════════
 -- V · Convivencia con el modelo viejo (paso 1)
 -- ════════════════════════════════════════════════════════════════════════════
+-- C5: CONGELAR se corrió DOS veces (corre.sh). Nada quedó doble ni enredado.
+select prueba.ok((select count(*) from pg_trigger where not tgisinternal and tgname in
+                   ('docente_estado_candado', 'mensajes_docente_candado', 'registro_admin_congelada',
+                    'registro_admin_congelada_truncate', 'registro_admin_historial_congelada',
+                    'registro_admin_historial_congelada_truncate')) = 6,
+                 'C5 cada disparador del paso 1 existe una sola vez');
+select prueba.ok((select count(*) from metas.hitos where nombre = 'paso1') = 1,
+                 'C5 el hito del paso 1 se marcó una vez');
+select prueba.ok(not exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+                              where n.nspname = 'public' and p.proname like '\_metas\_%\_v1'
+                                and p.prosrc like '%' || p.proname || '%'),
+                 'C5 ninguna función _v1 es la envoltura (no quedó una llamándose a sí misma)');
+select prueba.ok((select count(*) from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+                   where n.nspname = 'public' and p.proname like '\_metas\_%\_v1') = 4,
+                 'C5 las 4 funciones viejas envueltas siguen ahí, una vez cada una');
 select prueba.como('nadie');
 set role anon;
 -- V1 APK v480: A (vinculada) sube su lista vieja por la función de siempre
@@ -603,9 +716,43 @@ select prueba.ok(public.metas_docente_estado_guardar('PROF-AAAA000001', 'clave-a
 select prueba.ok(public.metas_docente_estado_guardar('PROF-AAAA000001', 'clave-a',
   '[{"k":"METAS_ADMIN_V1","valor":{"raw":"{no es json"},"version":99}]') = -2,
   'V7 raw inválido de un docente vinculado → no se acepta');
+reset role;
+select prueba.ok((select version = 1 and (valor ->> 'raw') like '%Alumna Ficticia Uno%' from public.docente_estado
+                   where codigo = 'PROF-AAAA000001' and k = 'METAS_ADMIN_V1'),
+                 'V1 el blob de A no cambió con los intentos rechazados (misma versión, mismo contenido)');
+set role anon;
+-- N4: el aula misma también es del corte 1 (boleta, asignaturas, logos,
+-- fecha de corte de edad, observación del grado)
+select prueba.ok(public.metas_docente_estado_guardar('PROF-AAAA000001', 'clave-a',
+  '[{"k":"METAS_ADMIN_V1","valor":{"raw":"{\"v\":2,\"grupos\":[{\"id\":\"G1\",\"boleta\":{\"director\":\"Director Ficticio\"}}]}"},"version":101}]') = -2,
+  'V14 boleta vieja → -2');
+select prueba.ok(public.metas_docente_estado_guardar('PROF-AAAA000001', 'clave-a',
+  '[{"k":"METAS_ADMIN_V1","valor":{"raw":"{\"v\":2,\"grupos\":[{\"id\":\"G1\",\"materias\":[\"Español\"]}]}"},"version":101}]') = -2,
+  'V14 materias viejas → -2');
+select prueba.ok(public.metas_docente_estado_guardar('PROF-AAAA000001', 'clave-a',
+  '[{"k":"METAS_ADMIN_V1","valor":{"raw":"{\"v\":2,\"grupos\":[{\"id\":\"G1\",\"logo\":\"data:image/png;base64,AAAA\"}]}"},"version":101}]') = -2,
+  'V14 logo viejo → -2');
+select prueba.ok(public.metas_docente_estado_guardar('PROF-AAAA000001', 'clave-a',
+  '[{"k":"METAS_ADMIN_V1","valor":{"raw":"{\"v\":2,\"grupos\":[{\"id\":\"G1\",\"logoSec\":\"data:image/png;base64,BBBB\"}]}"},"version":101}]') = -2,
+  'V14 segundo logo viejo → -2');
+select prueba.ok(public.metas_docente_estado_guardar('PROF-AAAA000001', 'clave-a',
+  '[{"k":"METAS_ADMIN_V1","valor":{"raw":"{\"v\":2,\"grupos\":[{\"id\":\"G1\",\"edadCorte\":\"2027-01-15\"}]}"},"version":101}]') = -2,
+  'V14 fecha de corte de edad vieja → -2');
+select prueba.ok(public.metas_docente_estado_guardar('PROF-AAAA000001', 'clave-a',
+  '[{"k":"METAS_ADMIN_V1","valor":{"raw":"{\"v\":2,\"grupos\":[{\"id\":\"G1\",\"obsGrado\":\"Dos alumnos no aparecen en el SACE\"}]}"},"version":101}]') = -2,
+  'V14 observación del grado vieja → -2');
+select prueba.ok(public.metas_docente_estado_guardar('PROF-AAAA000001', 'clave-a',
+  '[{"k":"METAS_ADMIN_V1","valor":{"raw":"{\"grado\":\"6\",\"lista\":[{\"num\":1}],\"materias\":[\"Español\"]}"},"version":101}]') = -2,
+  'V14 formato v1 (lista y materias en la raíz) → -2');
+select prueba.ok(public.metas_docente_estado_guardar('PROF-AAAA000001', 'clave-a',
+  '[{"k":"METAS_ADMIN_V1","valor":{"raw":"{\"v\":2,\"grupos\":[{\"id\":\"G1\",\"boleta\":{\"director\":\"X\"}},{\"id\":\"G2\",\"equipos\":{}}]}"},"version":101}]') = -2,
+  'V14 basta un aula con datos del corte 1 para rechazar el envío entero');
 select prueba.ok(public.metas_docente_estado_guardar('PROF-AAAA000001', 'clave-a',
   '[{"k":"METAS_ADMIN_V1","valor":{"raw":"{\"v\":2,\"grupos\":[{\"id\":\"G1\",\"lista\":[],\"equipos\":{\"reparto\":\"1,2|3,4\"}}]}"},"version":100}]') = 1,
   'V8 METAS_ADMIN_V1 sin secciones del corte 1 se guarda');
+select prueba.ok(public.metas_docente_estado_guardar('PROF-AAAA000001', 'clave-a',
+  '[{"k":"METAS_ADMIN_V1","valor":{"raw":"{\"v\":2,\"grupos\":[{\"id\":\"G1\",\"logo\":\"\",\"obsGrado\":\"\",\"acumulativos\":[]}]}"},"version":102}]') = 1,
+  'V14 un logo u observación VACÍOS no son datos: se guarda');
 select prueba.ok(public.metas_docente_estado_guardar('PROF-CCCC000003', 'clave-c',
   '[{"k":"METAS_ADMIN_V1","valor":{"raw":"{\"v\":2,\"grupos\":[{\"id\":\"G9\",\"lista\":[{\"num\":1}]}]}"},"version":1}]') = 1,
   'V4 docente sin vincular: todo como hoy');
@@ -621,14 +768,52 @@ select prueba.falla($$select public.metas_recuperar_admin_docente('PROF-AAAA0000
 -- Lo que DEBE seguir abierto
 select prueba.ok(public.metas_guardar('[]') = 1 and public.metas_guardar_progreso('[]') = 1,
                  'V12 lado del alumno sigue abierto (metas_guardar, metas_guardar_progreso)');
-select prueba.ok(public.metas_consultar_admin_padre('X') is not null and public.metas_buzon_docente('[]') is not null,
+select prueba.ok((select count(*) from public.metas_consultar_admin_padre('7CCCC')) = 1
+                 and (select count(*) from public.metas_consultar_avisos_padre('7CCCC')) = 1
+                 and public.metas_buzon_docente('[]') is not null,
                  'V12 lecturas de padres y buzón siguen abiertos');
+-- N1: metas_guardar_avisos reconoce al docente por su código y contraseña,
+-- no por el texto «docente» de la fila
+select prueba.ok(public.metas_guardar_avisos('PROF-AAAA000001', 'clave-a',
+  '[{"evento_id":"AVI-N1-1","codigo":"1K7QM","subtipo":"aviso","titulo":"Reunión","vigente_hasta":"2099-01-01","docente":"Ana López"}]') = -2,
+  'N1 docente vinculado con «Ana López» en la fila → -2');
+select prueba.ok(public.metas_guardar_avisos('prof-aaaa000001', 'clave-a',
+  '[{"evento_id":"AVI-N1-2","codigo":"1K7QM","subtipo":"aviso","titulo":"Reunión","vigente_hasta":"2099-01-01","docente":"x"}]') = -2,
+  'N1 código en minúsculas → -2');
+select prueba.ok(public.metas_guardar_avisos('  PROF-AAAA000001 ', 'clave-a',
+  '[{"evento_id":"AVR-N1-3","codigo":"1K7QM","subtipo":"cuentas","titulo":"Recibo","vigente_hasta":"2099-01-01"}]') = -2,
+  'N1 código con espacios y un recibo sin «docente» → -2');
+select prueba.ok(public.metas_guardar_avisos('PROF-AAAA000001', 'otra-clave',
+  '[{"evento_id":"AVI-N1-4","codigo":"1K7QM","subtipo":"aviso","titulo":"x","vigente_hasta":"2099-01-01"}]') = -1,
+  'N1 contraseña equivocada → -1 como siempre (no revela si está vinculado)');
+select prueba.ok(public.metas_guardar_avisos('PROF-CCCC000003', 'clave-c',
+  '[{"evento_id":"AVI-N1-C","codigo":"7CCCC","subtipo":"aviso","titulo":"Aviso de C","vigente_hasta":"2099-01-01","docente":"Docente Ficticia C · PROF-CCCC000003"}]') = 1,
+  'N1 docente sin vincular: metas_guardar_avisos como hoy');
+-- N2: sin dinero de docentes vinculados en las lecturas viejas
+select prueba.ok((select count(*) filter (where tipo = 'economia') = 0 and count(*) filter (where tipo = 'asistencia') = 1
+                    from public.metas_consultar_admin_padre('1K7QM')),
+                 'N2 clave de A con «Ana López» en la fila: sin pagos, con su asistencia');
+select prueba.ok((select count(*) from public.metas_consultar_admin_padre('1k7 qm') where tipo = 'economia') = 0,
+                 'N2 la misma clave escrita en minúsculas y con espacio: sin pagos');
+select prueba.ok((select count(*) from public.metas_consultar_admin_padre('8MINU') where tipo = 'economia') = 0,
+                 'N2 fila con el código de A en minúsculas: sin pagos');
+select prueba.ok((select count(*) filter (where subtipo = 'cuentas') = 0
+                         and count(*) filter (where evento_id = 'AVI-1-1K7QM') = 1
+                    from public.metas_consultar_avisos_padre('1K7QM')),
+                 'N2 avisos de A: sin recibos ni cuentas claras, con el aviso de la reunión');
+select prueba.ok((select count(*) from public.metas_consultar_avisos_padre('8MINU')) = 0,
+                 'N2 recibo con el código de A en minúsculas: no se devuelve');
+select prueba.ok((select count(*) from public.metas_consultar_admin_padre('7CCCC') where tipo = 'economia' and monto = 30) = 1
+                 and (select count(*) from public.metas_consultar_avisos_padre('7CCCC') where evento_id = 'AVR-C1-7CCCC') = 1,
+                 'N2 docente sin vincular: su familia sigue viendo pagos y recibos');
 reset role;
-select prueba.ok((select count(*) >= 3 from metas.blob_rechazos where codigo = 'PROF-AAAA000001'),
+select prueba.ok((select count(*) >= 3 from metas.blob_rechazos where codigo = 'PROF-AAAA000001' and k <> 'metas_guardar_avisos'),
                  'V1 cada intento de una app vieja queda anotado');
-select prueba.ok((select valor -> 'raw' ->> 0 is null and (valor ->> 'raw') like '%Alumna Ficticia Uno%' from public.docente_estado
-                   where codigo = 'PROF-AAAA000001' and k = 'METAS_ADMIN_V1') is not null,
-                 'V1 el blob de A no cambió con el intento rechazado');
+select prueba.ok((select count(*) from metas.blob_rechazos where codigo = 'PROF-AAAA000001' and motivo like 'seccion_corte1:%') >= 8
+                 and (select array_agg(distinct substr(motivo, 16) order by substr(motivo, 16)) from metas.blob_rechazos
+                       where codigo = 'PROF-AAAA000001' and motivo like 'seccion_corte1:%')
+                     @> array['boleta', 'edadCorte', 'lista', 'logo', 'logoSec', 'materias', 'obsGrado'],
+                 'V14 cada rechazo dice qué sección lo frenó');
 -- V5 …y aunque alguien escriba directo en la tabla, el candado la frena
 select prueba.falla($$update public.docente_estado set valor = jsonb_build_object('raw', '{"grupos":[{"lista":[{"num":1}]}]}') where codigo = 'PROF-AAAA000001' and k = 'METAS_ADMIN_V1'$$,
                     'V5 escribir directo una lista vieja → candado', 'MT040');
@@ -644,12 +829,58 @@ select prueba.como('padre1');
 set role authenticated;
 select prueba.falla($$select metas.blob_guardar('[]')$$, 'V9 una sesión de padre no toca el blob', '42501');
 reset role;
--- V10 mensajes_docente: nada de docentes vinculados
-select prueba.falla($$insert into public.mensajes_docente (evento_id, codigo, docente, subtipo, titulo) values ('AVR-C1-1K7QM', '1K7QM', 'Docente Ficticia A · PROF-AAAA000001', 'cuentas', '🧾 Recibo RC-0001-1')$$,
+-- N1: lo que se rechazó no entró, y quedó anotado
+select prueba.ok(not exists (select 1 from public.mensajes_docente where evento_id like '%-N1-%' and evento_id <> 'AVI-N1-C'),
+                 'N1 ninguno de los intentos de A llegó a mensajes_docente');
+select prueba.ok((select count(*) from metas.blob_rechazos
+                   where codigo = 'PROF-AAAA000001' and k = 'metas_guardar_avisos' and motivo = 'avisos_migrados') = 3,
+                 'N1 cada intento con la contraseña buena quedó anotado con el código normalizado (y el de contraseña mala no)');
+select prueba.ok((select titulo = 'Aviso de C' and codigo = '7CCCC' from public.mensajes_docente where evento_id = 'AVI-N1-C'),
+                 'N1 el aviso del docente sin vincular quedó guardado tal cual');
+-- V10 mensajes_docente: el disparador de respaldo (un SQL a mano)
+select prueba.falla($$insert into public.mensajes_docente (evento_id, codigo, docente, subtipo, titulo, vigente_hasta) values ('AVR-V10-1K7QM', '1K7QM', 'Docente Ficticia A · PROF-AAAA000001', 'cuentas', '🧾 Recibo RC-0001-1', '2099-01-01')$$,
                     'V10 un recibo viejo de un docente vinculado no entra', 'MT041');
-insert into public.mensajes_docente (evento_id, codigo, docente, subtipo, titulo)
-values ('AVI-X-9VIEJ', '9VIEJ', 'Docente Ficticia C · PROF-CCCC000003', 'aviso', 'Aviso');
-select prueba.ok(true, 'V10 un docente sin vincular sigue mandando avisos');
+select prueba.falla($$insert into public.mensajes_docente (evento_id, codigo, docente, subtipo, titulo, vigente_hasta) values ('AVR-V10-MIN', '1K7QM', 'docente ficticia a · prof-aaaa000001', 'cuentas', 'Recibo', '2099-01-01')$$,
+                    'V10 el respaldo también reconoce el código en minúsculas', 'MT041');
+select prueba.falla($$update public.mensajes_docente set docente = 'Docente Ficticia A · PROF-AAAA000001' where evento_id = 'AVI-1-1K7QM'$$,
+                    'V10 tampoco se cambia una fila vieja para hacerla pasar por un docente vinculado', 'MT041');
+select prueba.ok(not exists (select 1 from public.mensajes_docente where evento_id like 'AVR-V10-%'),
+                 'V10 y no quedó ninguna fila rechazada');
+insert into public.mensajes_docente (evento_id, codigo, docente, subtipo, titulo, vigente_hasta)
+values ('AVI-X-9VIEJ', '9VIEJ', 'Docente Ficticia C · PROF-CCCC000003', 'aviso', 'Aviso de C a mano', '2099-01-01');
+select prueba.ok((select count(*) = 1 and bool_and(titulo = 'Aviso de C a mano' and docente like '%PROF-CCCC000003')
+                    from public.mensajes_docente where evento_id = 'AVI-X-9VIEJ'),
+                 'V10 un docente sin vincular sigue mandando avisos (la fila quedó, con su texto)');
+-- V13 con los permisos de fábrica de Supabase (GRANT ALL a anon en public),
+-- anon tampoco escribe directo: la RLS sin políticas lo frena
+set role anon;
+select prueba.falla($$insert into public.mensajes_docente (evento_id, codigo, subtipo, vigente_hasta) values ('AVI-V13', '1K7QM', 'aviso', '2099-01-01')$$,
+                    'V13 anon no escribe directo en mensajes_docente', '42501');
+select prueba.falla($$insert into public.docente_estado (codigo, k, valor) values ('PROF-AAAA000001', 'METAS_PLANACCION_V1', '{}')$$,
+                    'V13 anon no escribe directo en docente_estado', '42501');
+-- …ni ejecuta las funciones internas que estos archivos crean o renombran en public
+select prueba.falla($$select public._metas_docente_estado_guardar_v1('PROF-CCCC000003', 'clave-c', '[]', false)$$,
+                    'V13 la guardadora vieja envuelta no se llama directo', '42501');
+select prueba.falla($$select public._metas_guardar_avisos_v1('PROF-AAAA000001', 'clave-a', '[]')$$,
+                    'V13 metas_guardar_avisos vieja envuelta no se llama directo', '42501');
+select prueba.falla($$select * from public._metas_consultar_admin_padre_v1('1K7QM')$$,
+                    'V13 la lectura vieja con dinero no se llama directo', '42501');
+select prueba.falla($$select * from public._metas_consultar_avisos_padre_v1('1K7QM')$$,
+                    'V13 los recibos viejos no se leen directo', '42501');
+select prueba.falla($$select public._metas_cerrar_funciones(array['metas_guardar'])$$,
+                    'V13 anon no cierra funciones', '42501');
+reset role;
+select prueba.ok(not exists (
+  select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+   where n.nspname = 'public'
+     and p.proname in ('_metas_docente_estado_guardar_v1', '_metas_guardar_avisos_v1',
+                       '_metas_consultar_admin_padre_v1', '_metas_consultar_avisos_padre_v1',
+                       '_metas_cerrar_funciones', '_metas_archivo_congelado', '_metas_candado_blob',
+                       '_metas_candado_mensajes', '_metas_registro_congelado')
+     and (has_function_privilege('anon', p.oid, 'execute')
+          or has_function_privilege('authenticated', p.oid, 'execute')
+          or has_function_privilege('service_role', p.oid, 'execute'))),
+  'V13 ninguna función interna de public queda ejecutable por anon, authenticated ni service_role');
 -- V11 cierre de año: metas_cerrar_familias sigue funcionando y archiva
 set role anon;
 select prueba.ok(public.metas_cerrar_familias('PROF-AAAA000001', 'clave-a', '["9VIEJ"]') >= 2, 'V11 el cierre de año sigue borrando las claves viejas');

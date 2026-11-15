@@ -201,15 +201,16 @@ que ve el usuario en el APK sale de las páginas web de arriba. Además:
 | `privacidad.html`: «…lo que guarda en Mi aula se sincroniza con su cuenta…», «El maestro puede vaciar su nube… se archiva y se limpia…», «Su clave… no se sincroniza nunca…» | párrafos | `privacidad.html:82, 88-89, 91` (se reescribe para el modelo nuevo; es el aviso legal) |
 | `kit-auto-1.html`, `kit-auto-2.html`: «offline-first… la nube es una copia», «☁️ NUBE · Supabase», «copia local → abre SIN internet», «…cliente de nube, sincronización docente…» | tablas y diagrama | `kit-auto-1.html:139-143, 170, 180, 186`; `kit-auto-2.html:144` (material de capacitación técnica: se actualiza en su corte) |
 
-### Lado del alumno (fuera de la regla, propuesta)
+### Lado del alumno (decidido, revisión 4)
 
-La regla nombra docente, padres y Android. En las misiones del alumno hay
-cuatro textos del mismo tipo; propongo tratarlos igual (indicador sin texto):
+Se quitan **solo los textos técnicos de guardado**, y **se conserva toda la
+interactividad** de las misiones (nada de lo que el alumno toca, arrastra,
+responde o juega cambia):
 «📴 Sin internet: se confirmará al reconectar.» (`js/metas-registro.js:536`,
-`js/metas-i18n.js:100`), «📴 Ahora mismo no hay internet. La lista se ve…»
-(`js/videos-mision.js:1062`), «☁️ Lista actualizada por el equipo…» /
-«💾 Última lista guardada en este aparato» (`js/videos-mision.js:1090-1091`).
-Pendiente de tu decisión.
+`js/metas-i18n.js:100` y su clave en inglés), «📴 Ahora mismo no hay
+internet. La lista se ve…» (`js/videos-mision.js:1062`), «☁️ Lista
+actualizada por el equipo…» / «💾 Última lista guardada en este aparato»
+(`js/videos-mision.js:1090-1091`).
 
 ### No se tocan (otro significado)
 
@@ -227,8 +228,8 @@ de Android (exportar, no sincronizar) y «Empezar la misión de cero» del
 alumno (`js/metas-registro.js:601`).
 
 `buzon.html` es del buzón de lectores (otro proyecto, F.A.R.O): su aviso
-«Le quedó algo sin mandar…» (`buzon.html:490-494, 1064-1075`) queda fuera de
-esta regla salvo que digas lo contrario.
+«Le quedó algo sin mandar…» (`buzon.html:490-494, 1064-1075`) **queda fuera
+de esta regla** (decidido, revisión 4).
 
 ## 9.3 Dónde va el indicador sin señal
 
@@ -237,11 +238,20 @@ Una sola pieza compartida (`js/datos/senal.js`) que escucha `online` /
 verdadero no garantiza señal). La pintan la barra de arriba del inicio, de
 Mi aula y de `padres.html`. Nada más en la app habla de la conexión.
 
-## 9.4 Pendiente de tu decisión
+## 9.4 Decisiones de la revisión 4
 
 1. **Primera vez sin señal** (entrar, crear la cuenta, abrir la app por
-   primera vez en Android): no hay datos que mostrar y el punto gris solo no
-   explica qué hacer. Propuesta: una sola frase neutra en esa pantalla, «Para
-   entrar la primera vez se necesita señal», sin íconos de alarma.
-2. **Lado del alumno**: ¿aplicar la misma regla?
-3. **`buzon.html`** (lectores): ¿aplicar la misma regla?
+   primera vez en Android): una sola frase neutra en esa pantalla, **«Para
+   entrar la primera vez se necesita señal»**, sin íconos de alarma.
+   Aprobada. Reemplaza a los textos de `js/app.js:1551, 1960, 1671, 2090` y
+   a la página sin señal de `sw.js:311, 332-333`.
+2. **Lado del alumno**: solo los textos técnicos de guardado; toda la
+   interactividad se conserva (ver arriba).
+3. **`buzon.html`**: fuera.
+4. **`android:allowBackup="false"`**: aprobado.
+5. **Claves viejas que vencen** (N3): dos textos, sin nada técnico. Al
+   docente, de tú, en Mi aula: «N familias tienen todavía la clave del año
+   pasado. Imprime sus tiras nuevas antes del <fecha>», con un botón
+   «Imprimir tiras nuevas». A la familia, de usted, cuando su clave ya
+   venció: «Esta clave ya no sirve. Escriba la clave de la tira nueva que le
+   dio su docente».

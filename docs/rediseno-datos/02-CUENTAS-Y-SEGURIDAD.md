@@ -240,6 +240,23 @@ diseño completo está en `07-VISTA-DE-PADRES.md` y `SUPABASE-V2-FAMILIAS.sql`.
 - **No cambian.** Si una tira se pierde, se reemplaza la familia (se borra la
   fila y se crea otra, con clave nueva); los teléfonos vinculados con la vieja
   dejan de ver al instante.
+- **Las conservadas vencen al terminar la transición** (revisión 4, N3,
+  decisión de Josué). Son de unos 20 bits, salieron de `Math.random` y nunca
+  vencían. Para no dejar a ninguna familia un día sin entrar, la clave
+  entregada no se toca:
+  1. el docente prepara las tiras nuevas cuando quiera
+     (`metas.familias_preparar_claves_nuevas`): la base pone en
+     `familias.clave_siguiente` una clave de 10 símbolos, que sirve desde ese
+     momento junto con la vieja. Nadie la elige ni la cambia (`MT002`);
+  2. al dar el aviso de dos semanas del paso 4 se fija la fecha (hito
+     `claves_viejas_vencen`). «Mi aula» le dice al docente, de tú: «N
+     familias tienen todavía la clave del año pasado. Imprime sus tiras
+     nuevas antes del <fecha>»;
+  3. en esa fecha la conservada deja de abrir (`metas._clave_vale`, la única
+     regla para vincular, ver, marcar «visto» y escuchar el canal): el
+     teléfono que entró con ella deja de ver y el portal pide la tira nueva.
+     Las claves nuevas no vencen.
+  Pruebas K7 a K10.
 
 ## 2.8 Decisiones de la revisión 2 y lo que se pospone
 

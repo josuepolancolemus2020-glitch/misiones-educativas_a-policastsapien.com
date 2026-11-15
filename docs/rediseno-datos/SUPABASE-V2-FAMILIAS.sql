@@ -37,6 +37,8 @@ create table if not exists metas.familia_accesos (
   familia_id   uuid        not null references metas.familias (id),
   -- La clave con la que se vinculó. Las claves no cambian (se crea otra
   -- familia), pero si la familia se borra o se reemplaza, el vínculo muere.
+  -- También muere si entró con una clave conservada y esta ya venció
+  -- (metas._clave_vale): la familia escribe la de la tira nueva.
   clave_usada  text        not null,
   alias        text        check (length(alias) <= 40),
   created_at   timestamptz not null default now(),
@@ -56,15 +58,16 @@ returns boolean language sql stable as $$
 $$;
 grant execute on function metas.es_sesion_familia() to authenticated;
 
--- Alumnos que la sesión puede ver: vínculo vigente, familia activa con la
--- MISMA clave y alumno activo (no borrado; puede estar trasladado).
+-- Alumnos que la sesión puede ver: vínculo vigente, familia activa con una
+-- clave que todavía VALE (la misma con que entró, si no venció, o la
+-- siguiente) y alumno activo (no borrado; puede estar trasladado).
 create or replace function metas.familia_alumnos()
 returns setof uuid language sql stable security definer set search_path = metas, pg_temp as $$
   select f.alumno_id
     from metas.familia_accesos fa
     join metas.familias f on f.id = fa.familia_id
                          and f.deleted_at is null
-                         and f.clave = fa.clave_usada
+                         and metas._clave_vale(fa.clave_usada, f.clave, f.clave_origen, f.clave_siguiente)
     join metas.alumnos  a on a.id = f.alumno_id and a.deleted_at is null
    where fa.auth_uid = (select auth.uid())
      and fa.revocado_at is null
@@ -100,7 +103,15 @@ begin
     perform metas.freno_ok('famfallo-ip:' || coalesce(p_ip, 'sin-ip'), 20, interval '1 hour');
     return jsonb_build_object('ok', false, 'motivo', 'clave');
   end if;
-  select * into f from metas.familias where clave = v_cl and deleted_at is null;
+  select * into f from metas.familias
+   where (clave = v_cl or clave_siguiente = v_cl) and deleted_at is null;
+  -- Una conservada que ya venció: se cuenta como intento fallido y se le dice
+  -- a la familia que pida la tira nueva (no revela nada útil: esa clave ya
+  -- no abre nada).
+  if found and not metas._clave_vale(v_cl, f.clave, f.clave_origen, f.clave_siguiente) then
+    perform metas.freno_ok('famfallo-ip:' || coalesce(p_ip, 'sin-ip'), 20, interval '1 hour');
+    return jsonb_build_object('ok', false, 'motivo', 'clave_vencida');
+  end if;
   if not found then
     -- Fallos: por IP y además un tope GLOBAL, para que repartir el ataque
     -- entre muchas IP no sirva para recorrer claves.
@@ -125,7 +136,7 @@ begin
     return jsonb_build_object('ok', false, 'motivo', 'muchos');
   end if;
   insert into metas.familia_accesos (auth_uid, familia_id, clave_usada, alias)
-  values (p_uid, f.id, f.clave, left(coalesce(nullif(trim(p_alias), ''), split_part(a.nombre_completo, ' ', 1)), 40))
+  values (p_uid, f.id, v_cl, left(coalesce(nullif(trim(p_alias), ''), split_part(a.nombre_completo, ' ', 1)), 40))
   on conflict do nothing;
   return jsonb_build_object('ok', true, 'familia_id', f.id, 'alias', split_part(a.nombre_completo, ' ', 1));
 end $$;
@@ -396,7 +407,8 @@ begin
   -- aviso le llega (de toda el aula, o individual con su hijo)
   select f.id into v_fam
     from metas.familia_accesos fa
-    join metas.familias f on f.id = fa.familia_id and f.deleted_at is null and f.clave = fa.clave_usada
+    join metas.familias f on f.id = fa.familia_id and f.deleted_at is null
+                         and metas._clave_vale(fa.clave_usada, f.clave, f.clave_origen, f.clave_siguiente)
     join metas.alumnos a on a.id = f.alumno_id and a.deleted_at is null and a.aula_id = v_av.aula_id
    where fa.auth_uid = (select auth.uid()) and fa.revocado_at is null
      and (v_av.tipo <> 'individual'
@@ -462,14 +474,25 @@ begin
   end loop;
 end $$;
 
+-- ¿Esta sesión de familia puede escuchar este canal? Con la sesión del padre
+-- la RLS no deja leer metas.familias, y hace falta para saber si su clave
+-- todavía vale: por eso va en una función con los permisos del dueño.
+create or replace function metas.familia_canal_ok(p_topic text)
+returns boolean language sql stable security definer set search_path = metas, pg_temp as $$
+  select exists (select 1 from metas.familia_accesos fa
+                   join metas.familias f on f.id = fa.familia_id and f.deleted_at is null
+                                        and metas._clave_vale(fa.clave_usada, f.clave, f.clave_origen, f.clave_siguiente)
+                  where fa.auth_uid = (select auth.uid()) and fa.revocado_at is null
+                    and 'familia:' || fa.familia_id::text = p_topic)
+$$;
+grant execute on function metas.familia_canal_ok(text) to authenticated;
+
 create policy familias_escuchan_su_canal on realtime.messages
   for select to authenticated
   using (
     realtime.topic() like 'familia:%'
     and metas.es_sesion_familia()
-    and exists (select 1 from metas.familia_accesos fa
-                 where fa.auth_uid = (select auth.uid()) and fa.revocado_at is null
-                   and 'familia:' || fa.familia_id::text = realtime.topic())
+    and metas.familia_canal_ok(realtime.topic())
   );
 
 -- ════════════════════════════════════════════════════════════════════════════

@@ -182,16 +182,35 @@ El portal nuevo no espera a que todos los docentes carguen su aula:
    **Ningún dato de dinero sale del archivo**: ni colaboraciones, ni cuentas
    claras, ni recibos. Las familias solo ven recibos de la base nueva (el
    archivo es justo el que inventaba y revivía pagos). Sin caché.
+   Para los docentes vinculados lo garantiza **el servidor** desde el paso 1,
+   no solo el portal (revisión 4, N2): `metas_consultar_admin_padre` y
+   `metas_consultar_avisos_padre` (misma firma, envuelven a las viejas)
+   quitan pagos (`economia`), cuentas claras (`AVC-`) y recibos (`AVR-`)
+   cuando la clave está en la copia de claves de un docente vinculado **o**
+   el texto «docente» de la fila trae su código, sin importar mayúsculas.
+   Así, una `padres.html` vieja guardada en un teléfono tampoco los ve. El
+   dinero de quien se vincula después deja de verse en ese momento.
 4. **Se cierra el archivo a las familias** (paso 4 de `CONGELAR`) cuando todos
    los docentes estén migrados **o** al terminar el **primer parcial de 2027**,
    lo que llegue primero, con **dos semanas de aviso** a docentes y familias.
    La consulta del paso 4 cuenta docentes sin vincular, vinculados sin aula y
    aulas del archivo sin aula nueva.
 
-Del lado del servidor, desde el paso 1, `mensajes_docente` no acepta nada de
-docentes vinculados (`MT041`): una pestaña vieja o una APK vieja no pueden
-seguir publicando recibos (`AVR-`), cuentas (`AVC-`) ni avisos para esas
-familias.
+Del lado del servidor, desde el paso 1, `metas_guardar_avisos` reconoce al
+docente por el código y la contraseña con que llama (no por el texto libre
+«docente» de cada fila) y, si está vinculado, no escribe nada y responde `-2`
+(revisión 4, N1). Un disparador en `mensajes_docente` (`MT041`) queda como
+respaldo para lo que no pase por la función. Una pestaña vieja o una APK
+vieja no pueden seguir publicando recibos (`AVR-`), cuentas (`AVC-`) ni
+avisos para esas familias.
+
+**Claves viejas** (revisión 4, N3, decisión de Josué): las conservadas vencen
+al terminar la transición (paso 4). Antes, el docente imprime la tira nueva
+de cada familia con clave vieja; la nueva sirve desde que se imprime. En la
+fecha avisada, la vieja deja de abrir: el teléfono que entró con ella deja de
+ver y el portal le dice a la familia, de usted: «Esta clave ya no sirve.
+Escriba la clave de la tira nueva que le dio su docente». Detalle en `02`,
+2.7.
 
 ## 7.5 Decisiones tomadas
 

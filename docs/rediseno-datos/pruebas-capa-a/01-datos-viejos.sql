@@ -21,7 +21,26 @@ insert into public.docente_estado (codigo, k, valor, version) values
 -- Copias viejas para el chatbot (registro_admin) que el cierre de año borra.
 insert into public.registro_admin (evento_id, codigo, tipo, estado, monto, docente) values
   ('ADE-C1-9VIEJ', '9VIEJ', 'economia', 'pago', 50, 'Docente Ficticia A · PROF-AAAA000001'),
-  ('ADA-2026-9VIEJ', '9VIEJ', 'asistencia', 'ausente', null, 'Docente Ficticia A · PROF-AAAA000001');
+  ('ADA-2026-9VIEJ', '9VIEJ', 'asistencia', 'ausente', null, 'Docente Ficticia A · PROF-AAAA000001'),
+-- Copias para N2: dinero de A con el texto «docente» escrito de tres formas.
+-- La columna es texto libre: no basta para saber de quién es el dato.
+  ('ADE-C1-1K7QM', '1K7QM', 'economia',   'pago',     50, 'Ana López'),                          -- sin código
+  ('ADE-C1-8MINU', '8MINU', 'economia',   'pago',     25, 'docente ficticia a · prof-aaaa000001'), -- en minúsculas
+  ('ADA-2026-1K7QM', '1K7QM', 'asistencia', 'ausente', null, 'Ana López'),                         -- no es dinero
+-- C no se vincula: sus familias siguen viendo todo, dinero incluido.
+  ('ADE-C1-7CCCC', '7CCCC', 'economia',   'pago',     30, 'Docente Ficticia C · PROF-CCCC000003'),
+-- B se vincula DESPUÉS del paso 1 (en las pruebas): su dinero deja de verse entonces.
+  ('ADE-C1-5NUEVA', '5NUEVA', 'economia', 'pago',     40, 'Profe Beto');
+
+-- Avisos y recibos viejos del chatbot (mensajes_docente), mismos casos.
+insert into public.mensajes_docente (evento_id, codigo, subtipo, titulo, texto, vigente_hasta, docente) values
+  ('AVR-C1-1K7QM', '1K7QM', 'cuentas', '🧾 Recibo RC-0001-1 — Excursión', 'Recibido: L 50.00', current_date + 200, 'Ana López'),
+  ('AVC-C1-1K7QM', '1K7QM', 'cuentas', 'Cuentas claras — Excursión', 'Recaudado: L 50.00', current_date + 200, 'Ana López'),
+  ('AVI-1-1K7QM',  '1K7QM', 'aviso',   'Reunión de padres', 'El viernes a las 8', current_date + 10, 'Ana López'),
+  ('AVR-C1-8MINU', '8MINU', 'cuentas', '🧾 Recibo RC-0001-8 — Excursión', 'Recibido: L 25.00', current_date + 200,
+   'docente ficticia a · prof-aaaa000001'),
+  ('AVR-C1-7CCCC', '7CCCC', 'cuentas', '🧾 Recibo RC-0009-7 — Excursión', 'Recibido: L 30.00', current_date + 200,
+   'Docente Ficticia C · PROF-CCCC000003');
 
 -- Usuarios de Auth (ficticios): A, B, uno de panel SIN vínculo, y padres anónimos.
 insert into auth.users (id, email, is_anonymous) values
