@@ -25,6 +25,7 @@
      … --critica <carpeta> …                        → añade la crítica a esas referencias
      … --critica-de-antes <carpeta> …               → congela la crítica 1–30 tal como sale hoy
      … --critica-ampliar <carpeta> …                → añade las formas nuevas (31–50) a esas
+     … --conceptual-ampliar <carpeta> …             → añade las formas nuevas del examen conceptual
      … --pendiente-critica                          → reescribe la lista de la crítica
 
    Sin `--sobrescribir` se niega a tocar una referencia que ya existe, y
@@ -50,6 +51,13 @@
    sin tocar las de antes. Se niega si alguna de las de antes ya no sale
    idéntica a la referencia o si una forma nueva repite a otra.
 
+   `--conceptual-ampliar` es lo mismo para el EXAMEN CONCEPTUAL de una
+   misión con banco grande (evalCPBankNuevo…): cuando ya ofrece formas
+   después de las de antes y Josué aprobó sus preguntas, las añade a la
+   referencia sin tocar las de antes. Se niega si alguna de las de antes
+   ya no sale idéntica, si una forma repite el conjunto de otra o si ya
+   estaban congeladas.
+
    `--resellar-hoja` es para cuando se cambia a propósito CÓMO se ve la
    hoja (un margen, un color) sin cambiar lo que dice. Solo actualiza la
    huella de la hoja, y solo si el dato y el texto que se lee siguen
@@ -65,7 +73,7 @@ const L = require('./lib-formas.js');
 const args = process.argv.slice(2);
 const banderas = new Set(args.filter(a => a.startsWith('--')));
 const pedidas = args.filter(a => !a.startsWith('--'));
-const conocidas = ['--sobrescribir', '--resellar-hoja', '--pendiente-critica', '--critica', '--critica-de-antes', '--critica-ampliar'];
+const conocidas = ['--sobrescribir', '--resellar-hoja', '--pendiente-critica', '--critica', '--critica-de-antes', '--critica-ampliar', '--conceptual-ampliar'];
 banderas.forEach(b => { if (!conocidas.includes(b)) { console.error('✘ No conozco ' + b); process.exit(2); } });
 
 const { dentro } = L.listarMisiones();
@@ -80,7 +88,7 @@ if (banderas.has('--critica') && !pedidas.length) {
   process.exit(2);
 }
 if (banderas.has('--critica') && banderas.size > 1) { console.error('✘ --critica va sola'); process.exit(2); }
-['--critica-de-antes', '--critica-ampliar'].forEach(b => {
+['--critica-de-antes', '--critica-ampliar', '--conceptual-ampliar'].forEach(b => {
   if (!banderas.has(b)) return;
   if (!pedidas.length) { console.error('✘ ' + b + ' pide las carpetas por su nombre: deja fija la pauta impresa de esas misiones.'); process.exit(2); }
   if (banderas.size > 1) { console.error('✘ ' + b + ' va sola'); process.exit(2); }
@@ -196,6 +204,34 @@ lista.forEach(slug => {
     return;
   }
 
+  if (banderas.has('--conceptual-ampliar')) {
+    const ref = existe && existe.pruebas.conceptual;
+    if (!ref) { console.error('✘ ' + slug + ': no tiene congelado su examen conceptual'); process.exit(1); }
+    if (existe.conceptualAmpliada) { console.error('✘ ' + slug + ': sus formas conceptuales nuevas ya están congeladas. Volver a congelarlas invalida la clave impresa (--sobrescribir, y lo decide Josué).'); process.exit(1); }
+    const hasta = m.topeDe('conceptual');
+    if (hasta <= existe.tope) { console.error('✘ ' + slug + ': su examen conceptual no ofrece formas nuevas después de la ' + existe.tope + ' (no trae banco grande)'); process.exit(1); }
+    const formas = g.pruebas.conceptual.formas;
+    const datos = {}; Object.keys(formas).forEach(n => { datos[n] = formas[n].dato; });
+    const r = L.repetidas(datos);
+    if (r.iguales.length || r.mismoConjunto.length) { console.error('✘ ' + slug + ': su examen conceptual repite formas. No se congela un examen que repite.'); process.exit(1); }
+    /* Las de antes tienen clave impresa: si una ya no sale idéntica,
+       ampliar taparía que se movió. */
+    for (let n = 1; n <= existe.tope; n++) {
+      const viejo = ref[n], nuevo = L.sellarForma(formas[n]);
+      if (!viejo || JSON.stringify(viejo) !== JSON.stringify(nuevo)) { console.error('✘ ' + slug + ' · conceptual · forma ' + n + ': ya no sale idéntica a la referencia. No se amplía; se deshace el cambio.'); process.exit(1); }
+    }
+    let nuevas = 0;
+    for (let n = existe.tope + 1; n <= hasta; n++) { ref[n] = L.sellarForma(formas[n]); nuevas++; }
+    /* Los cuatro bancos nuevos entran a la referencia con su huella: si
+       mañana se toca uno, la sonda dirá por qué cambiaron las formas. */
+    const todos = L.bancosDe(m);
+    Object.keys(todos).filter(n => /^eval\w+BankNuevo$/.test(n)).forEach(n => { existe.bancos[n] = L.huellaBanco(todos[n]); });
+    existe.conceptualAmpliada = hoy; existe.conceptualAmpliadaDesde = commit;
+    L.escribirOro(existe); criticas++;
+    console.log('  ✔ ' + slug.padEnd(52) + 'conceptual ' + (existe.tope + 1) + '–' + hasta + ' añadidas (' + nuevas + '); las 1–' + existe.tope + ' no se tocaron');
+    return;
+  }
+
   if (banderas.has('--resellar-hoja')) {
     if (!existe) { console.error('✘ ' + slug + ': no tiene referencia que resellar'); process.exit(1); }
     let cambios = 0;
@@ -232,7 +268,7 @@ lista.forEach(slug => {
 /* La lista de la crítica solo se escribe la primera vez o si se pide: es
    la cuenta de la deuda de HOY, y reescribirla sola taparía una misión
    que empezó a repetir después. */
-const escribirPendiente = banderas.has('--pendiente-critica') || (!fs.existsSync(L.RUTA_PENDIENTE) && !pedidas.length && !banderas.has('--resellar-hoja') && !banderas.has('--critica') && !banderas.has('--critica-de-antes') && !banderas.has('--critica-ampliar'));
+const escribirPendiente = banderas.has('--pendiente-critica') || (!fs.existsSync(L.RUTA_PENDIENTE) && !pedidas.length && !banderas.has('--resellar-hoja') && !banderas.has('--critica') && !banderas.has('--critica-de-antes') && !banderas.has('--critica-ampliar') && !banderas.has('--conceptual-ampliar'));
 if (escribirPendiente) {
   if (pedidas.length) { console.error('✘ --pendiente-critica cuenta todas las misiones; no lleva carpetas'); process.exit(2); }
   const orden = {}; Object.keys(pendiente).sort().forEach(k => { orden[k] = pendiente[k]; });
@@ -246,4 +282,4 @@ if (escribirPendiente) {
 
 console.log('\n' + (escritas ? '✅ ' + escritas + ' referencias escritas, ' + formasOro + ' formas, ' + (bytes / 1048576).toFixed(2) + ' MB.' : criticas ? '✅' : '· No se escribió ninguna referencia.') +
   (saltadas ? ' ' + saltadas + ' ya existían y no se tocaron.' : '') + (reselladas ? ' ' + reselladas + ' reselladas.' : '') +
-  (criticas ? ' ' + criticas + ' referencias ya tienen congelada la prueba de pensamiento crítico; lo demás de ellas no se tocó.' : ''));
+  (criticas ? ' ' + criticas + ' referencias ampliadas; lo demás de ellas no se tocó.' : ''));

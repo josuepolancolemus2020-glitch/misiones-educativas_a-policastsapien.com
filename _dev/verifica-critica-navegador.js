@@ -96,12 +96,12 @@ const leerRenglones = () => document.getElementById('evalCritOut').innerText.spl
 
     const sel = await page.evaluate(() => {
       const c = document.getElementById('evalCritFormaSel'), e = document.getElementById('evalFormaSel');
-      return { crit: c ? c.options.length : 0, rotulo: c ? c.getAttribute('aria-label') : '', conceptual: e ? e.options.length : 0, tope: EVAL_FORMAS, formas: _formasCritica(critApartados()), deAntes: critApartados().formasDeAntes || 0 };
+      return { crit: c ? c.options.length : 0, rotulo: c ? c.getAttribute('aria-label') : '', conceptual: e ? e.options.length : 0, tope: typeof evalFormasTotal === 'function' ? evalFormasTotal() : EVAL_FORMAS, formas: _formasCritica(critApartados()), deAntes: critApartados().formasDeAntes || 0 };
     });
     if (sel.crit !== sel.formas || !/1 a 50/.test(sel.rotulo) || sel.formas !== 50) mal('el selector de la prueba crítica tiene ' + sel.crit + ' formas («' + sel.rotulo + '») y tendría que llegar a la 50');
     else bien('el selector de la prueba crítica llega a la Forma 50, y lo dice a quien no lo ve');
     if (sel.conceptual !== sel.tope) mal('el selector del examen conceptual tiene ' + sel.conceptual + ' formas y la misión dice ' + sel.tope);
-    else bien('el selector del examen conceptual sigue en ' + sel.tope + ' formas');
+    else bien('el selector del examen conceptual tiene las ' + sel.tope + ' formas que dice la misión');
 
     /* De la 1 a la 50, tocando el círculo de cada una. */
     const hojas = {};

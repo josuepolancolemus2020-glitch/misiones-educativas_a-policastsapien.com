@@ -32,6 +32,11 @@
       con el reparto del motor (_repartoCritica), de la 1 a la 50.
    4. La ficha imprimible, con la misma regla: todas sus preguntas
       son UNA prueba y se reparten juntas.
+   5. EL BANCO GRANDE. La misión que trae un banco nuevo al lado del de
+      siempre (evalCPBankNuevo…) arma formas nuevas que mezclan los dos:
+      las preguntas nuevas se miden contra las nuevas Y contra las de
+      antes, y las formas nuevas se arman con el reparto del motor
+      (_repartoConceptual).
 
    Una misión «pasó por la revisión» cuando sus bancos llevan `k`.
    Las demás se cuentan como pendientes y no se ponen rojas: la
@@ -167,7 +172,8 @@ function generadorDelMotor() {
   vm.createContext(caja);
   try {
     vm.runInContext(fs.readFileSync(path.join(RAIZ, 'js', 'motor-misiones.js'), 'utf8'), caja);
-    _delMotor = { rng: caja._evalRng, pick: caja._pickF, reparto: caja._repartoCritica, formasCritica: caja._formasCritica };
+    _delMotor = { rng: caja._evalRng, pick: caja._pickF, reparto: caja._repartoCritica, formasCritica: caja._formasCritica,
+      formasConceptual: caja._formasConceptual, repartoConceptual: caja._repartoConceptual };
   } catch (e) { _delMotor = null; }
   return _delMotor;
 }
@@ -259,18 +265,21 @@ function palabras(txt) {
    visible: lo que el alumno lee en la hoja.
    resp:    lo que tiene que escribir o elegir (vacío si es V/F).
    ctx:     la pregunta que rodea a la respuesta. */
-function itemsConceptual(b) {
+/* `sufijo` es para el banco grande: los cuatro bancos nuevos se llaman
+   como los de siempre con «Nuevo» detrás y tienen la misma forma. */
+function itemsConceptual(b, sufijo = '') {
   const L = [];
-  (b.evalCPBank || []).forEach((it, i) => L.push({ banco: 'evalCPBank', i, k: it.k, tipo: 'completar',
+  const CP = 'evalCPBank' + sufijo, TF = 'evalTFBank' + sufijo, MC = 'evalMCBank' + sufijo, PR = 'evalPRBank' + sufijo;
+  (b[CP] || []).forEach((it, i) => L.push({ banco: CP, i, k: it.k, tipo: 'completar',
     visible: it.q.replace(/_{2,}/g, ' '), resp: it.a, ctx: it.q }));
-  (b.evalTFBank || []).forEach((it, i) => L.push({ banco: 'evalTFBank', i, k: it.k, tipo: 'vf',
+  (b[TF] || []).forEach((it, i) => L.push({ banco: TF, i, k: it.k, tipo: 'vf',
     visible: it.q, resp: '', ctx: '' }));
-  (b.evalMCBank || []).forEach((it, i) => {
+  (b[MC] || []).forEach((it, i) => {
     const ops = (it.o || []).map(o => String(o).replace(/^[a-e]\)\s*/i, ''));
-    L.push({ banco: 'evalMCBank', i, k: it.k, tipo: 'seleccion',
+    L.push({ banco: MC, i, k: it.k, tipo: 'seleccion',
       visible: it.q + ' ' + ops.join(' · '), resp: ops[it.a] || '', ctx: it.q });
   });
-  (b.evalPRBank || []).forEach((it, i) => L.push({ banco: 'evalPRBank', i, k: it.k, tipo: 'pareado',
+  (b[PR] || []).forEach((it, i) => L.push({ banco: PR, i, k: it.k, tipo: 'pareado',
     visible: it.term + ' · ' + it.def, resp: '', ctx: '', term: it.term, def: it.def }));
   return L;
 }
@@ -645,13 +654,73 @@ for (const dir of fs.readdirSync(MIS).sort()) {
   const html = htmlArchivo ? fs.readFileSync(path.join(MIS, dir, htmlArchivo), 'utf8') : '';
   const bancos = {};
   const nombresOtros = [...new Set([...src.matchAll(/(?:const|let|var)\s+(crit\w*Bank)\s*=/g)].map(x => x[1]))].filter(n => !nombresK.includes(n));
-  [...nombresC, ...nombresK, ...nombresOtros].forEach(n => { const b = banco(src, n) || bancoGenerado(src, n, html); if (b) bancos[n] = b; });
+  const nombresN = nombresC.map(n => n + 'Nuevo');
+  [...nombresC, ...nombresN, ...nombresK, ...nombresOtros].forEach(n => { const b = banco(src, n) || bancoGenerado(src, n, html); if (b) bancos[n] = b; });
   const conceptual = itemsConceptual(bancos);
+  const nuevas = itemsConceptual(bancos, 'Nuevo');
   const conK = conceptual.filter(it => it.k).length;
   const ficha = fichaDe(dir, html);
-  const m = { dir, archivo, src, bancos, conceptual, ficha, titulo: palabrasTitulo(html) };
+  const m = { dir, archivo, src, bancos, conceptual, nuevas, ficha, titulo: palabrasTitulo(html) };
   if (conK === 0) pendientes.push(m);
   else revisadas.push(m);
+}
+
+/* El banco grande. En las formas nuevas caen juntas preguntas del banco
+   nuevo y del de antes, así que el dato de una nueva no puede ser el de
+   ninguna otra, nueva o de antes, y su respuesta no puede estar escrita en
+   ninguna. Los choques entre dos preguntas DE ANTES no se cuentan aquí: ya
+   los mide la revisión de arriba, con las palabras del tema de su banco.
+
+   El tema se mide dos veces a propósito. Una palabra es «del tema» si sale
+   en muchas preguntas, y al juntar los dos bancos el listón sube: una
+   palabra que era tema con cuarenta preguntas puede dejar de serlo con
+   ochenta. Se toma lo que es tema en el banco entero, y nada más: así una
+   pregunta nueva no se libra por repetir muchas veces una palabra que el
+   banco de antes cuidaba. */
+function revisaBancoGrande(m, gen, exigir) {
+  const todas = m.conceptual.concat(m.nuevas);
+  const esNueva = it => /Nuevo$/.test(it.banco);
+  const sinK = m.nuevas.filter(it => !it.k);
+  const vistas = new Map();
+  todas.forEach(it => claves(it).forEach(k => { (vistas.get(k) || vistas.set(k, []).get(k)).push(it); }));
+  const rep = [...vistas].filter(([, v]) => v.length > 1 && v.some(esNueva));
+  const tema = temaDe(todas);
+  const ch = revisaPares(todas, (a, b) => esNueva(a) || esNueva(b), tema, m.titulo).filter(c => !c.por.startsWith('preguntan'));
+  if (exigir) {
+    sinK.slice(0, 5).forEach(it => mal('Banco grande, sin `k`, no se puede comprobar: ' + nombre(it)));
+    rep.forEach(([k, v]) => mal('Banco grande: el dato «' + k + '» se pregunta ' + v.length + ' veces: ' + v.map(nombre).join(' / ')));
+    ch.forEach(c => mal('Banco grande: ' + nombre(c.X) + ' y ' + nombre(c.Y) + ': ' + c.por));
+    if (!sinK.length && !rep.length) bien('Banco grande: ' + m.nuevas.length + ' preguntas nuevas, y ninguna pregunta un dato que ya pregunte otra, nueva o de antes');
+    if (!ch.length) bien('Banco grande: ninguna respuesta, nueva o de antes, aparece escrita en una pregunta con la que pueda caer');
+  }
+
+  /* Las formas nuevas, armadas con el reparto del motor sobre los bancos
+     de verdad (baraja las opciones de la selección, y para eso las pide). */
+  const B = m.bancos, S = { cp: 'evalCPBank', tf: 'evalTFBank', mc: 'evalMCBank', pr: 'evalPRBank' };
+  const completo = Object.keys(S).every(s => Array.isArray(B[S[s]]) && Array.isArray(B[S[s] + 'Nuevo']));
+  if (!gen || typeof gen.repartoConceptual !== 'function' || !completo) {
+    if (exigir) mal('Banco grande: no se pudieron armar sus formas nuevas con el reparto del motor (falta un banco nuevo o el motor no trae _repartoConceptual)');
+    return { malas: 0, total: 0, choques: ch.length };
+  }
+  const grande = {};
+  Object.keys(S).forEach(s => { grande[s] = { deAntes: B[S[s]], nuevas: B[S[s] + 'Nuevo'] }; });
+  const porK = new Map();
+  todas.forEach(it => claves(it).forEach(k => porK.set(k, it)));
+  const deAntes = gen.formas, total = gen.formasConceptual(deAntes, grande);
+  let malas = 0;
+  const ejemplos = [];
+  for (let f = deAntes + 1; f <= total; f++) {
+    const h = gen.repartoConceptual(f, deAntes, grande);
+    const hoja = [].concat(h.cp, h.tf, h.mc, h.pr).map(it => porK.get(it.k)).filter(Boolean);
+    const c = revisaPares(hoja, () => true, tema, m.titulo);
+    if (c.length) { malas++; if (ejemplos.length < 3) ejemplos.push({ f, ch: c[0] }); }
+  }
+  if (exigir) {
+    if (total <= deAntes) mal('Banco grande: el banco nuevo no da ninguna forma nueva');
+    else if (malas) { mal('Banco grande: ' + malas + ' de las formas ' + (deAntes + 1) + ' a ' + total + ' llevan un choque'); ejemplos.forEach(e => console.log('      · Forma ' + e.f + ': ' + nombre(e.ch.X) + ' / ' + nombre(e.ch.Y) + ': ' + e.ch.por)); }
+    else bien('Banco grande: las formas ' + (deAntes + 1) + ' a ' + total + ', repartidas por el motor, sin un choque');
+  }
+  return { malas, total, choques: ch.length };
 }
 
 function revisa(m, exigir) {
@@ -683,6 +752,9 @@ function revisa(m, exigir) {
       else bien('Conceptual: las ' + gen.formas + ' formas, armadas con el generador de la misión, sin un choque');
     }
   }
+
+  /* 1b · El banco grande: las preguntas nuevas, y las formas que las mezclan */
+  if (m.nuevas.length) r.grande = revisaBancoGrande(m, gen, exigir);
 
   /* 2 · Pensamiento crítico */
   const recK = receta(m.src, 'genEvalCrit');
