@@ -234,6 +234,55 @@ async function abrirMision(nav, rel, viewport) {
     await ctx.close();
   }
 
+  /* ── 3b · Se guarda al bajar en un teléfono DE VERDAD ─────────
+     En v542 la barra decidía si era «alta» comparándola con el 20 % del
+     alto de la ventana. Con 360×640 (lo que miraba esta sonda) daba que
+     sí; en un Android real de 360×800, y más en la app instalada, que no
+     tiene barra de direcciones, el 20 % son 160 px y la barra de 3 filas
+     mide 157: nunca se guardaba y tapaba la lectura. Se mira con 800 de
+     alto y con el gesto del dedo (no con scrollTo), que es como llega en
+     el teléfono. */
+  console.log('\n── en un teléfono de 360×800: baja 400 px y se guarda; sube 50 y vuelve ──');
+  /* El 412×915 es el otro teléfono común (tipo Pixel): con la regla del
+     20 % ahí no se guardaba en NINGUNA misión. */
+  for (const [rel, w, h] of [
+    ['basica-pensar-con-orden/pensar-con-orden.html', 360, 800],
+    ['2y3ciclo-eras-geologicas/eras_geologicas.html', 360, 800],
+    ['2y3ciclo-desastres-naturales/desastres-naturales.html', 360, 800],
+    ['basica-pensar-con-orden/pensar-con-orden.html', 412, 915],
+  ]) {
+    console.log(`  · ${rel.split('/')[0]} en ${w}×${h}`);
+    const { ctx, pg, errores } = await abrirMision(nav, rel, { width: w, height: h });
+    const cdp = await ctx.newCDPSession(pg);
+    const marco = () => pg.evaluate(() => {
+      const r = document.querySelector('.bs-marco').getBoundingClientRect();
+      return { top: Math.round(r.top), bottom: Math.round(r.bottom), y: Math.round(scrollY) };
+    });
+    await cdp.send('Input.synthesizeScrollGesture', { x: 180, y: 600, yDistance: -400, speed: 800 });
+    await pg.waitForTimeout(500);
+    const abajo = await marco();
+    ok(`${rel.split('/')[0]}: al bajar 400 px la barra sale de la vista`, abajo.bottom <= 0, abajo);
+    await cdp.send('Input.synthesizeScrollGesture', { x: 180, y: 300, yDistance: 50, speed: 400 });
+    await pg.waitForTimeout(500);
+    const arriba = await marco();
+    ok(`${rel.split('/')[0]}: y al subir 50 px vuelve entera`, arriba.top >= -1 && arriba.top <= 2 && arriba.y > 0, arriba);
+    /* El caso que de verdad pasa en el aula: el alumno TOCA una pestaña y
+       sigue leyendo. Tocar deja el foco en el botón, y en v542 eso la
+       dejaba fija para siempre. */
+    await pg.tap('nav.nav .nav-t[data-s]:nth-of-type(3)');
+    await pg.waitForTimeout(800);
+    await cdp.send('Input.synthesizeScrollGesture', { x: 180, y: 600, yDistance: -400, speed: 800 });
+    await pg.waitForTimeout(500);
+    const trasTocar = await marco();
+    ok(`${rel.split('/')[0]}: después de tocar una pestaña, al bajar también se guarda`, trasTocar.bottom <= 0, trasTocar);
+    await cdp.send('Input.synthesizeScrollGesture', { x: 180, y: 300, yDistance: 50, speed: 400 });
+    await pg.waitForTimeout(500);
+    const vuelve = await marco();
+    ok(`${rel.split('/')[0]}: y vuelve al subir 50 px`, vuelve.top >= -1 && vuelve.top <= 2, vuelve);
+    ok(`${rel.split('/')[0]}: sin errores de JavaScript`, !errores.length, errores.slice(0, 2));
+    await ctx.close();
+  }
+
   /* ── 4 · La pantalla del maestro, que no es un teléfono ──────── */
   console.log('\n── en la computadora del maestro (1280×720) ──');
   {
