@@ -18,7 +18,14 @@
      grupo es el abierto, y «Nueva» genera justo esa;
    · en el teléfono va una sola fila de diez, cada círculo da al menos
      32 × 32 al dedo y la página no se corre de lado;
-   · al imprimir no salen ni los círculos ni los botones.
+   · al imprimir no salen ni los círculos ni los botones;
+   · en la pantalla no se ve el encabezado de la hoja (Nombre, Fecha…).
+
+   Fin de grado entra en la lista con sus dos materias y su prueba
+   operativa: su «Nueva» es otro botón (`evalNueva()`) y, al generar,
+   BORRA el selector y lo vuelve a crear. Ahí el título decía una forma y
+   el círculo marcado la siguiente, hasta que el motor aprendió a leer la
+   forma del título.
 
      node _dev/servidor-estatico.js            (en otra terminal)
      node _dev/verifica-forma-marcada.js                → las de siempre
@@ -34,17 +41,20 @@ const BASE = process.env.METAS_BASE || 'http://localhost:8123';
 const DIR = path.join(__dirname, '..', 'misiones');
 /* Las tres que se piden siempre (conceptual y crítica) y una con prueba
    operativa, para que las tres pruebas queden medidas. */
-const DE_SIEMPRE = ['2y3ciclo-la-celula', '2y3ciclo-robots-problemas', '2y3ciclo-desastres-naturales', '2y3ciclo-division-decimales'];
+const DE_SIEMPRE = ['2y3ciclo-la-celula', '2y3ciclo-robots-problemas', '2y3ciclo-desastres-naturales', '2y3ciclo-division-decimales', 'fin-de-grado-6to'];
 const lista = process.argv.slice(2).length ? process.argv.slice(2) : DE_SIEMPRE;
 
 let fallos = 0;
 const mal = m => { console.log('  ❌ ' + m); fallos++; };
 const bien = m => console.log('  ✅ ' + m);
 
+/* `gen`: los botones «Nueva» posibles; vale el primero que tenga la
+   misión. `pide`: el botón que hace falta para que la prueba exista. */
 const PRUEBAS = [
-  { nombre: 'conceptual', sel: 'evalFormaSel', titulo: 'eval-screen-title', modo: 'concept', gen: 'genEval' },
-  { nombre: 'operativa', sel: 'evalOpFormaSel', titulo: 'evalop-screen-title', modo: 'op', gen: 'genEvalOp' },
-  { nombre: 'crítica', sel: 'evalCritFormaSel', titulo: 'evalcrit-screen-title', modo: 'crit', gen: 'genEvalCrit' }
+  { nombre: 'conceptual', sel: 'evalFormaSel', titulo: 'eval-screen-title', modo: 'concept', gen: ['genEval', 'evalNueva'] },
+  { nombre: 'español (Fin de grado)', sel: 'evalFormaSel', titulo: 'eval-screen-title', modo: 'esp', gen: ['evalNueva'], pide: 'evalModeBtnEsp' },
+  { nombre: 'operativa', sel: 'evalOpFormaSel', titulo: 'evalop-screen-title', modo: 'op', gen: ['genEvalOp', 'evalOpNueva'] },
+  { nombre: 'crítica', sel: 'evalCritFormaSel', titulo: 'evalcrit-screen-title', modo: 'crit', gen: ['genEvalCrit'] }
 ];
 
 const paginaDe = slug => fs.readdirSync(path.join(DIR, slug)).find(f => f.endsWith('.html') && !f.startsWith('juego-'));
@@ -78,18 +88,21 @@ function mirar(P) {
     const page = await ctx.newPage();
     const errores = [];
     page.on('pageerror', e => errores.push(String(e)));
+    /* Fin de grado pregunta antes de borrar respuestas; aquí no hay. */
+    page.on('dialog', d => d.accept());
     const entrar = async modo => {
       await page.evaluate(m => {
         const aviso = document.getElementById('metasIdModal'); if (aviso) aviso.remove();
         if (typeof go === 'function') go('s-evaluacion');
         if (m !== 'concept' && typeof evalSwitchMode === 'function') evalSwitchMode(m);
         else if (typeof evalSwitchMode === 'function' && document.getElementById('evalModeBtnConcept')) evalSwitchMode('concept');
+        else if (typeof evalSwitchMode === 'function' && document.getElementById('evalModeBtnMat')) evalSwitchMode('mat');
       }, modo);
       await page.waitForTimeout(150);
     };
     await page.goto(url, { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(800);
-    const hay = await page.evaluate(ps => ps.filter(p => document.getElementById(p.sel)).map(p => p.nombre), PRUEBAS);
+    const hay = await page.evaluate(ps => ps.filter(p => document.getElementById(p.sel) && (!p.pide || document.getElementById(p.pide))).map(p => p.nombre), PRUEBAS);
     if (!hay.length) { mal('no tiene selector de forma'); await ctx.close(); continue; }
 
     for (const P of PRUEBAS.filter(p => hay.includes(p.nombre))) {
@@ -101,7 +114,7 @@ function mirar(P) {
         sel.parentNode.querySelector('.metas-grupo[data-grupo="' + Math.floor((n - 1) / 10) + '"]').click();
         sel.querySelector('[data-forma="' + n + '"]').click();
       }, [P.sel, n]);
-      const nueva = () => page.evaluate(gen => document.querySelector('[onclick*="' + gen + '()"]').click(), P.gen);
+      const nueva = () => page.evaluate(gens => gens.map(g => document.querySelector('[onclick*="' + g + '()"]')).find(Boolean).click(), P.gen);
       const cuadra = (v, n) => v.marcada === n && v.titulo === n && v.fila.includes(n) && v.grupo === Math.floor((n - 1) / 10);
 
       let v = await ver();
@@ -140,12 +153,21 @@ function mirar(P) {
       await page.waitForTimeout(800);
       await entrar(P.modo);
       v = await ver();
-      /* La crítica se genera sola al entrar a su pestaña: entonces ya está
-         en el título. Las otras esperan a «Nueva». */
-      const recargada = v.titulo ? v.titulo : v.marcada;
-      if (recargada !== debeTocar || v.marcada !== debeTocar || v.grupo !== Math.floor((debeTocar - 1) / 10)) mal('al recargar está marcado el ' + v.marcada + ' (grupo ' + (v.grupo + 1) + ') y la misión tenía guardada la ' + debeTocar);
+      /* Al recargar hay tres casos, y en los tres manda el título:
+         · ninguna en la pantalla (esperan a «Nueva»): marcada la que toca;
+         · la crítica se genera sola al entrar: ya es la que toca;
+         · Fin de grado vuelve a armar el examen que el alumno tenía, para
+           devolverle sus respuestas: marcada ESA, y «Nueva» da la que toca. */
+      if (v.titulo) {
+        if (!cuadra(v, v.titulo)) mal('al recargar el título dice «' + v.textoTitulo + '» y está marcado el ' + v.marcada + ' (grupo ' + (v.grupo + 1) + ')');
+        else {
+          if (v.titulo !== debeTocar) { await nueva(); v = await ver(); }
+          if (!cuadra(v, debeTocar)) mal('al recargar, «Nueva» tenía que dar la ' + debeTocar + ' y dio «' + v.textoTitulo + '» con el ' + v.marcada + ' marcado');
+          else bien('al recargar queda marcada la forma del título, con su grupo abierto, y la siguiente que sale es la ' + debeTocar);
+        }
+      } else if (v.marcada !== debeTocar || v.grupo !== Math.floor((debeTocar - 1) / 10)) mal('al recargar está marcado el ' + v.marcada + ' (grupo ' + (v.grupo + 1) + ') y la misión tenía guardada la ' + debeTocar);
       else {
-        if (!v.titulo) { await nueva(); v = await ver(); }
+        await nueva(); v = await ver();
         if (!cuadra(v, debeTocar)) mal('al recargar se marcó la ' + debeTocar + ' pero se generó «' + v.textoTitulo + '»');
         else bien('al recargar queda marcada la Forma ' + debeTocar + ', la guardada, con su grupo abierto, y es la que se genera');
       }
@@ -160,6 +182,10 @@ function mirar(P) {
     });
     if (medida.filas !== 1 || medida.n > 10 || medida.chico || medida.corre) mal('en el teléfono: ' + medida.n + ' círculos en ' + medida.filas + ' filas, ' + medida.chico + ' con menos de 32 px, ' + (medida.corre ? 'la página se corre de lado' : 'sin correrse'));
     else bien('en el teléfono: una fila de ' + medida.n + ' círculos de al menos 32 × 32 y la página no se corre de lado');
+
+    const cabecera = await page.evaluate(() => Array.from(document.querySelectorAll('.eval-print-header')).filter(e => e.getBoundingClientRect().height > 0).length);
+    if (cabecera) mal('en la pantalla se ve ' + cabecera + ' encabezado(s) de la hoja impresa (Nombre, Fecha…)');
+    else bien('en la pantalla no se ve el encabezado de la hoja impresa');
 
     await page.emulateMedia({ media: 'print' });
     const enPapel = await page.evaluate(() => Array.from(document.querySelectorAll('.metas-formas, .eval-controls')).filter(e => getComputedStyle(e).display !== 'none').length);
