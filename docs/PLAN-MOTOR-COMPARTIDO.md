@@ -997,18 +997,17 @@ formas 31 a 50.
   desplegables conservan su orden.
 - **No se escribió ningún caso**: a las 11 les alcanzan sus bancos. La más
   justa es América-Oceanía-Antártida, con 42 336 conjuntos.
-- **Las formas 31 a 50 no están congeladas**: esperan el visto bueno de
-  Josué (`genera-formas-oro.js --critica-ampliar <carpeta>`, que se niega si
-  una forma de antes dejó de salir idéntica). `verifica-formas-oro.js` las
-  nombra sin ponerse roja.
+- **Las formas 31 a 50 quedaron congeladas** el 15 de noviembre de 2026,
+  con el visto bueno de Josué (`genera-formas-oro.js --critica-ampliar`, que
+  se niega si una forma de antes dejó de salir idéntica; la referencia lleva
+  `criticaAmpliada`). Desde entonces `verifica-formas-oro.js` compara las 50
+  formas de cada una.
 
 Con esto las 53 misiones con prueba de pensamiento crítico llegan a la Forma
 50 sin repetir conjunto.
 
 ### Lo que queda
 
-- **Congelar las formas 31 a 50** de las 11 de estructura propia, cuando
-  Josué las apruebe.
 - **El aviso a los docentes** (decisión 1): las pautas impresas de la prueba
   de pensamiento crítico dejan de corresponder a la forma del mismo número,
   de la 1 a la 30, en las 42 misiones que repartieron todo de nuevo. En las
