@@ -3627,6 +3627,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { passive: true });
   });
 
+  /* La portada ya está pintada y TODOS sus botones tienen su escucha: ahora
+     sí se apaga la señal de carga de index.html. Va al final y no después de
+     renderHome() porque lo que el maestro espera no es ver la portada, es que
+     al tocar responda. Si algo de arriba revienta, esta línea no llega y la
+     señal se quita sola a los 10 s (el reloj de seguridad de index.html). */
+  if (typeof window.metasLista === 'function') window.metasLista();
+
 });
 
 /* ══════════════ ⚡ ACCESO RÁPIDO DE LA ZONA DOCENTE ══════════════
