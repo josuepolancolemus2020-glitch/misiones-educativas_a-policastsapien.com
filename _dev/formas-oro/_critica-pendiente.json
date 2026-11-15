@@ -1,7 +1,7 @@
 {
   "nota": "Lo que la prueba de pensamiento crítico tiene pendiente HOY. No es una referencia: la crítica se rehace entera (plan del motor, decisión 1). Sirve para que la sonda distinga esta deuda conocida de una nueva. «repiten»: misiones con formas iguales o con las mismas preguntas en otro orden. «fueraDeBanco»: misiones donde parte de la prueba no sale de un banco sino del generador (rúbrica fija o respuesta calculada), con cuántos textos distintos.",
   "contado": "2026-11-15",
-  "desde": "7d84b64",
+  "desde": "f1fdccc",
   "repiten": {
     "1ciclo-que-es-la-ia": {
       "formas": 30,
@@ -11,9 +11,9 @@
     },
     "2ciclo-como-aprende-una-maquina": {
       "formas": 30,
-      "distintas": 4,
-      "iguales": 6,
-      "mismoConjunto": 20
+      "distintas": 28,
+      "iguales": 0,
+      "mismoConjunto": 2
     },
     "2y3ciclo-cinco-reinos": {
       "formas": 30,
@@ -89,21 +89,21 @@
     },
     "3ciclo-albores-singularidad": {
       "formas": 30,
-      "distintas": 4,
-      "iguales": 6,
-      "mismoConjunto": 20
+      "distintas": 28,
+      "iguales": 0,
+      "mismoConjunto": 2
     },
     "3ciclo-escenarios-porvenir": {
       "formas": 30,
-      "distintas": 4,
-      "iguales": 6,
-      "mismoConjunto": 20
+      "distintas": 28,
+      "iguales": 0,
+      "mismoConjunto": 2
     },
     "3ciclo-ia-generativa": {
       "formas": 30,
-      "distintas": 4,
-      "iguales": 6,
-      "mismoConjunto": 20
+      "distintas": 28,
+      "iguales": 0,
+      "mismoConjunto": 2
     },
     "3ciclo-peligros-ia": {
       "formas": 30,

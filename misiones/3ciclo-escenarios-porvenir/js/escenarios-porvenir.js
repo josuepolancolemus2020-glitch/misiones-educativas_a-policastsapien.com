@@ -608,12 +608,14 @@ const critCompareBank=[
 ];
 const critCauseBank=[
   {k:'ca-ladera',cause:'Nadie midió la lluvia en su ladera.',guide:'Por eso la predicción del valle no le sirve a don Chele.'},
-  {k:'ca-barrio',cause:'La tarea pedía un dato de su propio barrio.',guide:'Por eso la máquina no pudo entregarla hecha.'},
+  {k:'ca-barrio',cause:'La tarea pedía un dato de su propio barrio.',guide:'Por eso la máquina no pudo entregarla hecha.'},  {k:'ca-garifuna',cause:'El programa de traducir no conoce las palabras de la comunidad garífuna.',guide:'Por eso el maestro bilingüe sigue siendo necesario.'},
 ];
 const critEffectBank=[
   {k:'ef-nota',effect:'Un alumno con buenas notas en las tareas y mala nota en el examen.',guide:'Porque la máquina le hacía las tareas: la nota de la tarea se la llevaba ella, y el examen lo hizo él solo.'},
   {k:'ef-padre',effect:'Un padre enojado atendido por una persona, no por un programa.',guide:'Porque bajarle el enojo a alguien no es una tarea que se delegue.'},
-  {k:'ef-dato',effect:'Un dato inventado entregado con el nombre del alumno.',guide:'Porque lo que la máquina escribe lo firma quien lo entrega.'},
+  {k:'ef-dato',effect:'Un dato inventado entregado con el nombre del alumno.',guide:'Porque lo que la máquina escribe lo firma quien lo entrega.'},  {k:'ef-taller',effect:'Un taller de carpintería usa un programa para las cuentas y aun así contrata otro aprendiz.',guide:'Porque la máquina se quedó con una tarea, no con el oficio: el tiempo se usó para hacer más muebles.'},
+  {k:'ef-cajera',effect:'Una cajera del supermercado aprende a revisar las cajas automáticas.',guide:'Porque cuando una tarea cambia, aparece otra nueva que alguien tiene que aprender.'},
+  {k:'ef-ingles',effect:'Una estudiante practica inglés con la máquina y luego conversa sola con un turista en Copán.',guide:'Porque la usó para practicar, no para que hablara por ella.'},
 ];
 function genEvalCrit(){
   sfx('click');
