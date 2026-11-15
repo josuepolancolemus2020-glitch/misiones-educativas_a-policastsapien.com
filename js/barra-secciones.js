@@ -91,10 +91,38 @@
     nav.addEventListener('scroll', pintar, { passive: true });
     window.addEventListener('resize', function () { centrar(nav); pintar(); }, { passive: true });
 
+    /* 4. GUARDARLA AL BAJAR, solo si es alta. Con todas las pestañas a
+       la vista, en un teléfono de 360 px la barra ocupa 3 filas
+       (unos 160 px) y pegada arriba le quitaba un cuarto de pantalla
+       a la lectura. Al bajar leyendo se guarda; al subir un poco, o al
+       cambiar de sección, vuelve. En tablet y computadora, con 2
+       filas, nunca se guarda: «alta» se mide, no se adivina por el
+       ancho, porque la misma misión puede traer 5 pestañas o 20.
+
+       El ancla marca dónde empieza la barra en el documento: mientras
+       el alumno no la haya pasado, la barra está en su sitio natural y
+       guardarla dejaría un hueco. */
+    var ancla = document.createElement('div');
+    ancla.setAttribute('aria-hidden', 'true');
+    marco.parentNode.insertBefore(ancla, marco);
+    var ultimoY = window.scrollY;
+    var mostrar = function () { marco.classList.remove('bs-guardada'); };
+    window.addEventListener('scroll', function () {
+      var y = window.scrollY;
+      var alta = marco.offsetHeight > Math.max(100, window.innerHeight * 0.2);
+      var pasada = ancla.getBoundingClientRect().top + marco.offsetHeight < 0;
+      /* 8 px de margen: el temblor del dedo al leer no la hace saltar. */
+      if (!alta || !pasada || y < ultimoY - 8) mostrar();
+      else if (y > ultimoY + 8 && !marco.contains(document.activeElement)) marco.classList.add('bs-guardada');
+      if (Math.abs(y - ultimoY) > 8 || !pasada) ultimoY = y;
+    }, { passive: true });
+    /* Quien navega con teclado tiene que ver dónde está el foco. */
+    marco.addEventListener('focusin', mostrar);
+
     /* Cambiar de sección lo hace go(), que no es de aquí y vive
        copiada en las 74 misiones. En vez de engancharla se mira la
        barra: cualquier cosa que marque otro chip pasa por aquí. */
-    new MutationObserver(function () { centrar(nav); pintar(); })
+    new MutationObserver(function () { mostrar(); centrar(nav); pintar(); })
       .observe(nav, { attributes: true, attributeFilter: ['class', 'aria-selected'], subtree: true });
 
     centrar(nav);

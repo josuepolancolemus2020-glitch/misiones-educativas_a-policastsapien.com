@@ -62,6 +62,8 @@ const mirar = pg => pg.evaluate(() => {
     top: Math.round(b.top),
     alto: Math.round(b.height),
     filas: ys.size,
+    fuera: chips.filter(c => c.getBoundingClientRect().right > innerWidth + 1 || c.getBoundingClientRect().left < -1).length,
+    letra: chips.length ? Math.min(...chips.map(c => parseFloat(getComputedStyle(c).fontSize))) : 0,
     chips: chips.length,
     altoMinChip: chips.length ? Math.round(Math.min(...chips.map(c => c.getBoundingClientRect().height))) : 0,
     activo: act && act.textContent.trim().slice(0, 24),
@@ -135,7 +137,12 @@ async function abrirMision(nav, rel, viewport) {
 
     const alAbrir = await mirar(pg);
     ok('se ve al abrir, sin deslizar', alAbrir.enPantalla, alAbrir);
-    ok('en UNA fila, no en siete', alAbrir.filas === 1, { filas: alAbrir.filas, chips: alAbrir.chips });
+    /* Antes era UNA fila que se deslizaba, y en 360 px escondía 12 de
+       15 pestañas. Ahora todas a la vista: ninguna se sale del ancho, y
+       con el formato compacto del teléfono no pasan de 4 filas. */
+    ok('todas las pestañas a la vista, sin deslizar', alAbrir.fuera === 0, { fuera: alAbrir.fuera, chips: alAbrir.chips });
+    ok('en pocas filas (≤ 4), no en siete', alAbrir.filas <= 4, { filas: alAbrir.filas, chips: alAbrir.chips });
+    ok('y la letra no baja de 12 px', alAbrir.letra >= 12, alAbrir.letra);
     ok('ningún chip baja de 44 px de alto', alAbrir.altoMinChip >= 44, alAbrir.altoMinChip);
 
     /* La ⭐ de una sección hecha va con top:-6px, o sea FUERA del chip. En
@@ -149,7 +156,7 @@ async function abrirMision(nav, rel, viewport) {
       return Math.round(c.getBoundingClientRect().top - n.getBoundingClientRect().top);
     });
     ok('y la ⭐ de lo hecho no se corta por arriba', estrella === null || estrella >= 6, { aireArriba: estrella });
-    ok('y no se come la pantalla (≤ 90 px)', alAbrir.alto <= 90, alAbrir.alto);
+    ok('y no se come la pantalla (≤ 220 px)', alAbrir.alto <= 220, alAbrir.alto);
 
     /* La barra es role="tablist" y las secciones role="tabpanel": si
        va detrás, un lector de pantalla lee la misión entera antes de
@@ -159,10 +166,16 @@ async function abrirMision(nav, rel, viewport) {
         .compareDocumentPosition(document.querySelector('.sec')) & Node.DOCUMENT_POSITION_FOLLOWING)));
 
     /* Lo que de verdad estaba roto: usarla dos veces seguidas. */
-    await pg.evaluate(() => window.scrollTo(0, 1200));
+    /* En el teléfono la barra alta se guarda al bajar leyendo (si no,
+       sus 3 filas le quitan un cuarto de pantalla a la lectura) y
+       vuelve con solo subir un poco. Eso es lo que se comprueba: que
+       esté a un gesto, no a un viaje. */
+    for (let y = 150; y <= 1200; y += 150) { await pg.evaluate(y => window.scrollTo(0, y), y); await pg.waitForTimeout(40); }
     await pg.waitForTimeout(300);
+    await pg.evaluate(() => window.scrollTo(0, window.scrollY - 60));
+    await pg.waitForTimeout(400);
     const bajando = await mirar(pg);
-    ok('sigue ahí con la sección a medio leer', bajando.enPantalla && bajando.top <= 2, bajando);
+    ok('con la sección a medio leer, vuelve al subir un poco', bajando.enPantalla && bajando.top <= 2, bajando);
 
     const secs = await pg.evaluate(() => [...document.querySelectorAll('nav.nav .nav-t')].map(b => b.dataset.s).filter(Boolean));
     const lejos = secs[secs.length - 2] || secs[secs.length - 1];
@@ -201,6 +214,10 @@ async function abrirMision(nav, rel, viewport) {
     await pg.goto(`${BASE}/misiones/${rel}`, { waitUntil: 'domcontentloaded', timeout: 30000 });
     await pg.waitForTimeout(800);
     await pg.evaluate(() => window.scrollTo(0, 900));
+    await pg.waitForTimeout(200);
+    /* En el teléfono la barra alta se guarda al bajar: se sube un poco,
+       que es lo que hace el alumno para traerla, y ahí se mira. */
+    await pg.evaluate(() => window.scrollTo(0, 840));
     await pg.waitForTimeout(400);
     const r = await pg.evaluate(() => {
       const n = document.querySelector('nav.nav'), marco = n.parentElement, b = marco.getBoundingClientRect();
@@ -223,12 +240,17 @@ async function abrirMision(nav, rel, viewport) {
     const { ctx, pg } = await abrirMision(nav, '2ciclo-angulos-basicos/angulos-basicos.html', { width: 1280, height: 720 });
     const r = await mirar(pg);
     ok('también se ve al abrir', r.enPantalla, r);
-    ok('y sigue en una fila', r.filas === 1, r.filas);
+    ok('con todas las pestañas a la vista', r.fuera === 0 && r.filas <= 2, { filas: r.filas, fuera: r.fuera });
+    /* Con 2 filas la barra no es alta: en la computadora no se guarda. */
+    for (let y = 150; y <= 1200; y += 150) { await pg.evaluate(y => window.scrollTo(0, y), y); await pg.waitForTimeout(40); }
+    await pg.waitForTimeout(300);
+    const abajo = await mirar(pg);
+    ok('y no se guarda al bajar', abajo.enPantalla && abajo.top <= 2, abajo);
     await ctx.close();
   }
 
   await nav.close();
   console.log('\n' + '─'.repeat(52));
   if (fallos) { console.log(`✖ ${fallos} problema(s): el alumno vuelve a perderse buscando las secciones.`); process.exit(1); }
-  console.log('✅ TODO EN VERDE: la barra está arriba, en una fila y no se va.');
+  console.log('✅ TODO EN VERDE: la barra está arriba, con todas las pestañas a la vista, y no se pierde.');
 })().catch(e => { console.error('✘ La sonda tropezó:', e.message); process.exit(1); });
