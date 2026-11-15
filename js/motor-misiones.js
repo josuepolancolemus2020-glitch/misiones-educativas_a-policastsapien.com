@@ -115,8 +115,7 @@
      largo queda como nombre del botón (lo lee el lector de pantalla y
      sale al dejar el puntero encima), y es el que ya traduce
      js/metas-i18n.js. Los cortos tienen su traducción allí mismo.
-     «👁 Ver Pauta» se queda como está: ya es corto, y el texto de arriba
-     de cada examen dice «selecciona Ver Pauta». */
+     «👁 Ver Pauta» se queda como está: ya es corto. */
   var BOTON_CORTO = {
     '🔄 Nueva Evaluación': '🔄 Nueva', '🔄 Nueva Prueba': '🔄 Nueva', '🔄 Nueva Prueba Operativa': '🔄 Nueva',
     '🧮 Calificar prueba': '🧮 Calificar', '🧮 Calcular Total': '🧮 Total'
@@ -126,11 +125,13 @@
      trae su propia hoja de estilos copiada y no hay otra hoja común a
      todas. El color es `--pri`, el de cada misión. */
   var CSS_FORMAS = [
-    '.metas-formas{margin:0 0 .7rem;}',
+    /* Centrado: el título del examen ya no lleva párrafo debajo, y el
+       bloque de formas a un lado dejaba la tarjeta cargada a la izquierda. */
+    '.metas-formas{margin:0 0 .7rem;text-align:center;}',
     '.metas-formas-tit{font-weight:700;font-size:.8rem;opacity:.85;margin:0 0 .35rem;}',
     /* Las pastillas de grupo: 1–10, 11–20… Solo cambian qué diez círculos
        se ven; no generan nada. */
-    '.metas-grupos{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 .4rem;}',
+    '.metas-grupos{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:0 0 .4rem;}',
     '.metas-grupo{appearance:none;-webkit-appearance:none;font:inherit;font-size:.75rem;font-weight:700;line-height:1;min-height:32px;min-width:48px;padding:0 .75rem;border-radius:999px;border:2px solid transparent;background:rgba(127,127,127,.16);color:inherit;cursor:pointer;font-variant-numeric:tabular-nums;-webkit-tap-highlight-color:transparent;}',
     '.metas-grupo[aria-pressed="true"]{background:var(--pri,#555);border-color:var(--pri,#555);color:#fff;font-weight:800;}',
     '.metas-grupo:focus-visible{outline:3px solid var(--pri,#555);outline-offset:2px;}',
@@ -150,11 +151,29 @@
     /* En la pantalla más angosta (320 px) diez no caben ni así: van de
        cinco en cinco antes que achicar el círculo por debajo del dedo. */
     '@media (max-width:359px){.metas-formas-rejilla{grid-template-columns:repeat(5,minmax(32px,1fr));margin:0;}}',
-    '@media (min-width:600px){.metas-formas-rejilla{grid-template-columns:repeat(10,40px);gap:4px;margin:0;}}',
+    '@media (min-width:600px){.metas-formas-rejilla{grid-template-columns:repeat(10,40px);gap:4px;margin:0;justify-content:center;}}',
     /* Los cuatro botones: una fila en la computadora, dos en el teléfono. */
-    '.eval-controls.metas-botones{display:flex;flex-wrap:nowrap;align-items:center;gap:.4rem;}',
+    '.eval-controls.metas-botones{display:flex;flex-wrap:nowrap;align-items:center;justify-content:center;gap:.4rem;}',
     '.eval-controls.metas-botones>.btn{font-size:.78rem;padding:.3rem .75rem;min-height:32px;border-radius:10px;gap:.3rem;white-space:nowrap;line-height:1.2;}',
     '@media (max-width:599px){.eval-controls.metas-botones{display:grid;grid-template-columns:1fr 1fr;}.eval-controls.metas-botones>.btn{justify-content:center;}.eval-controls.metas-botones>:not(.btn){grid-column:1/-1;}}',
+    /* «Completar el espacio» en la pantalla: una raya gruesa donde va la
+       palabra, como en la hoja impresa, y no una caja de formulario. Se
+       sigue escribiendo y calificando igual. Solo `screen`: el papel sale
+       de otra ventana (printEval) y no cambia. `#evalOut` sube la
+       especificidad por encima de la hoja copiada de cada misión (también
+       de su `:focus`) y deja fuera las cajas de los laboratorios. La raya
+       usa `currentColor` y no un color fijo para que en el tema oscuro no
+       desaparezca. */
+    '@media screen{',
+    '#evalOut input.eval-cp-input{border:0;border-bottom:3px solid currentColor;border-radius:0;background:transparent;box-shadow:none;padding:.15rem .3rem .1rem;}',
+    '#evalOut input.eval-cp-input:focus{outline:none;border-bottom-color:var(--pri,currentColor);}',
+    /* Al teclado, además, un contorno: la raya de otro color sola no basta. */
+    '#evalOut input.eval-cp-input:focus-visible{outline:2px solid var(--pri,currentColor);outline-offset:2px;}',
+    /* Calificada: la raya toma el color y el renglón un tinte; el ✓ o el
+       «Revisar» lo dice en letras el comentario de cada pregunta. */
+    '#evalOut input.eval-cp-input.eval-input-ok{border-bottom-color:var(--jade,#00b894);background:rgba(0,184,148,.1);}',
+    '#evalOut input.eval-cp-input.eval-input-no{border-bottom-color:var(--red,#d63031);background:rgba(214,48,49,.08);}',
+    '}',
     /* En el papel solo va «Forma N», que ya lleva la hoja. */
     '@media print{.metas-formas,.eval-controls{display:none!important;}}'
   ].join('\n');
