@@ -25,7 +25,14 @@
           dice cuántas da: no se inventan preguntas para rellenar;
         · si tiene versión en inglés, sus bancos tienen el mismo tamaño,
           que es lo que hace que la Forma 7 sea la misma en los dos idiomas.
-   3. LAS QUE FALTAN. Las misiones pasan al reparto por tandas. Las que
+   3. LAS DE ESTRUCTURA PROPIA. Once misiones ya tenían impresas sus
+      formas 1 a 30, que salían de un sorteo con la semilla y no repetían.
+      Esas no se reparten de nuevo (`_conFormasDeAntes`): el motor las
+      devuelve como salían y reparte solo de la 31 a la 50, saltando los
+      conjuntos que ya salieron. Aquí se mira que ninguna forma nueva
+      repita a otra nueva ni a una de antes, también con bancos de mentira
+      puestos a propósito para chocar.
+   4. LAS QUE FALTAN. Las misiones pasan al reparto por tandas. Las que
       todavía sacan al azar se nombran y no ponen la sonda en rojo: su
       deuda la cuenta `verifica-formas-oro.js`.
 
@@ -61,8 +68,8 @@ ventana.window = ventana;
 vm.createContext(ventana);
 vm.runInContext(fs.readFileSync(MOTOR, 'utf8'), ventana, { filename: MOTOR });
 const reparto = ventana._repartoCritica, conjuntos = ventana._conjuntosCritica, formasDe = ventana._formasCritica;
-ok('el motor publica _repartoCritica, _formasCritica, _conjuntosCritica, _turnoCritica y _selectorCritica',
-  ['_repartoCritica', '_formasCritica', '_conjuntosCritica', '_turnoCritica', '_selectorCritica'].every(n => typeof ventana[n] === 'function'));
+ok('el motor publica _repartoCritica, _formasCritica, _conjuntosCritica, _turnoCritica, _selectorCritica y _conFormasDeAntes',
+  ['_repartoCritica', '_formasCritica', '_conjuntosCritica', '_turnoCritica', '_selectorCritica', '_conFormasDeAntes'].every(n => typeof ventana[n] === 'function'));
 
 /* Bancos de mentira: lo que importa del reparto es el tamaño de cada
    banco y cuántos saca, no lo que dicen los casos. */
@@ -114,6 +121,19 @@ lista.forEach(slug => {
   const ajenos = m.correr('(function () { var ap = critApartados(), malos = []; for (var f = 1; f <= ' + tope + '; f++) { _repartoCritica(f, ap).forEach(function (casos, i) { if (casos.length !== ap[i][1] || !casos.every(function (c) { return ap[i][0].indexOf(c) >= 0; })) malos.push(f + "/" + (i + 1)); }); } return malos.join(" "); })()', 'ajenos');
   if (ajenos) falla(slug, 'hay casos que no salen del banco de su apartado (forma/apartado): ' + ajenos.slice(0, 120));
 
+  /* Ninguna forma lleva el conjunto de otra, mirado donde no engaña: las
+     posiciones que cada forma saca de cada banco. Comparar la hoja entera
+     no basta en las misiones que además calculan datos con la semilla
+     (coordenadas, horas): dos formas con los mismos casos y otros números
+     parecerían distintas. */
+  const conjuntosPorForma = JSON.parse(m.correr('JSON.stringify((function () { var ap = critApartados(), salida = []; for (var f = 1; f <= ' + tope + '; f++) salida.push(_repartoCritica(f, ap).map(function (casos, i) { return casos.map(function (c) { return ap[i][0].indexOf(c); }).sort(function (a, b) { return a - b; }).join(","); }).join("|")); return salida; })())', 'conjuntos'));
+  const vistoEn = new Map();
+  conjuntosPorForma.forEach((c, i) => {
+    if (vistoEn.has(c)) falla(slug, 'la Forma ' + (i + 1) + ' saca de los bancos el mismo conjunto de casos que la Forma ' + vistoEn.get(c));
+    else vistoEn.set(c, i + 1);
+  });
+  const deAntes = m.correr('critApartados().formasDeAntes || 0', 'formas de antes');
+
   const datos = {}, usos = {};
   let desiguales = 0;
   for (let n = 1; n <= tope; n++) {
@@ -164,7 +184,7 @@ lista.forEach(slug => {
   }
 
   const veces = Object.values(usos);
-  filas.push({ slug, apartados, posibles, tope, distintas: r.distintas, menos: Math.min(...veces), mas: Math.max(...veces), ingles: !!enIngles });
+  filas.push({ slug, apartados, posibles, tope, distintas: Math.min(r.distintas, vistoEn.size), menos: Math.min(...veces), mas: Math.max(...veces), ingles: !!enIngles, deAntes });
 });
 
 /* ── 1 (sigue) · el reparto, con los tamaños de verdad ───────── */
@@ -203,12 +223,72 @@ let avisa = false;
 try { reparto(1, [[['solo uno'], 2]]); } catch (e) { avisa = /apartado 1/.test(e.message); }
 ok('un apartado que pide más casos de los que tiene su banco se dice claro, con su número', avisa);
 
+/* ── 1 (sigue) · con formas de antes ─────────────────────────── */
+/* Las formas de antes salen como las saca una misión de estructura
+   propia: con la semilla de la forma, un `_pickF` por apartado. Y dos
+   casos puestos para chocar: unas formas de antes que son justo las
+   primeras del reparto (hay que saltarlas todas) y un banco tan chico
+   que no llega a 50. */
+const conAntes = ventana._conFormasDeAntes, rngMotor = ventana._evalRng, sacar = ventana._pickF;
+const sorteoDeAntes = ap => f => { const r = rngMotor(200000 + f); return ap.map(a => sacar(a[0], a[1], r)); };
+const fallosAntes = [];
+const probarConAntes = (nombre, tamanos, cuantas, comoSalian, esperadas) => {
+  const base = bancosDeMentira(tamanos);
+  const limpio = bancosDeMentira(tamanos).map((a, i) => [base[i][0], a[1]]);
+  const ap = conAntes(base, cuantas, comoSalian(limpio));
+  const tope = formasDe(ap);
+  if (esperadas && tope !== esperadas) fallosAntes.push(nombre + ': dice que da ' + tope + ' formas y son ' + esperadas);
+  const vistos = new Map();
+  for (let f = 1; f <= tope; f++) {
+    const casos = reparto(f, ap);
+    if (f <= cuantas && JSON.stringify(casos) !== JSON.stringify(comoSalian(limpio)(f))) fallosAntes.push(nombre + ': la Forma ' + f + ', que es de antes, no sale como salía');
+    const c = conjuntoDe(casos);
+    /* Que dos formas de antes se repitan entre sí es cosa del sorteo de
+       antes (en las misiones de verdad no pasa, y lo mira la referencia).
+       Lo que el motor garantiza es que ninguna NUEVA repite a nadie. */
+    if (vistos.has(c) && f > cuantas) { fallosAntes.push(nombre + ': la Forma ' + f + ' repite a la ' + vistos.get(c)); break; }
+    if (!vistos.has(c)) vistos.set(c, f);
+  }
+  if (JSON.stringify(reparto(tope, ap)) !== JSON.stringify(reparto(tope, ap))) fallosAntes.push(nombre + ': la Forma ' + tope + ' no sale igual dos veces');
+  return { ap, tope };
+};
+probarConAntes('sorteo de antes, bancos grandes', [[8, 5], [8, 5], [4, 1], [6, 4]], 30, sorteoDeAntes, 50);
+probarConAntes('sorteo de antes, con un apartado fijo', [[5, 5], [10, 2], [3, 1]], 30, sorteoDeAntes, 50);
+/* Un sorteo de antes que se repite entre sí (banco de 12 conjuntos, 10
+   formas): las repetidas ocupan un solo conjunto, y los libres se cuentan bien. */
+const repetido = probarConAntes('sorteo de antes que se repite', [[4, 1], [3, 1]], 10, sorteoDeAntes);
+const usadosRepetido = new Set(Array.from({ length: 10 }, (_, i) => conjuntoDe(reparto(i + 1, repetido.ap)))).size;
+if (repetido.tope !== 10 + 12 - usadosRepetido) fallosAntes.push('sorteo de antes que se repite: ofrece ' + repetido.tope + ' formas y son ' + (10 + 12 - usadosRepetido));
+/* Las 30 de antes son las 30 primeras del reparto: las nuevas tienen que
+   saltárselas todas y empezar en la 31 del reparto. */
+const calcado = probarConAntes('formas de antes calcadas del reparto', [[6, 2], [5, 1], [4, 1]], 30, limpio => f => reparto(f, limpio), 50);
+if (conjuntoDe(reparto(31, calcado.ap)) !== conjuntoDe(reparto(31, bancosDeMentira([[6, 2], [5, 1], [4, 1]])))) fallosAntes.push('formas de antes calcadas del reparto: la primera forma nueva no es la primera libre');
+/* 12 conjuntos y 5 formas de antes: quedan 7 libres, llega a la 12 y vuelve a la 1. */
+const chicoAntes = probarConAntes('banco chico con formas de antes', [[3, 1], [2, 1], [2, 1]], 5, limpio => f => reparto(f + 3, limpio), 12);
+if (conjuntoDe(reparto(13, chicoAntes.ap)) !== conjuntoDe(reparto(1, chicoAntes.ap))) fallosAntes.push('banco chico con formas de antes: después de la última no vuelve la primera');
+let avisaAntes = false;
+try { reparto(31, conAntes(bancosDeMentira([[4, 2]]), 30, () => [['no es del banco', 'tampoco']])); } catch (e) { avisaAntes = /apartado 1/.test(e.message); }
+if (!avisaAntes) fallosAntes.push('una forma de antes con un caso que no es de su banco no se dice');
+/* Barajar las opciones de un caso: las mismas opciones, la correcta
+   sigue siendo la correcta y el caso del banco no se toca. */
+const casoConOpciones = { q: '¿?', o: ['uno', 'dos', 'tres', 'cuatro'], a: 2 }, antesDeBarajar = JSON.stringify(casoConOpciones);
+const posicionesBuena = new Set();
+for (let f = 31; f <= 50; f++) {
+  const b = ventana._conOpcionesBarajadas(casoConOpciones, rngMotor(200000 + f), 'o', 'a');
+  if (b.o[b.a] !== 'tres' || b.o.slice().sort().join() !== casoConOpciones.o.slice().sort().join() || b.q !== '¿?') fallosAntes.push('al barajar las opciones se pierde una o se mueve la correcta');
+  posicionesBuena.add(b.a);
+}
+if (JSON.stringify(casoConOpciones) !== antesDeBarajar) fallosAntes.push('barajar las opciones tocó el caso del banco');
+if (posicionesBuena.size < 3) fallosAntes.push('las opciones barajadas dejan la correcta casi siempre en el mismo sitio');
+ok('con formas ya impresas: las de antes salen como salían, las nuevas no repiten a ninguna (ni puestas a chocar), un banco chico ofrece solo las que da y las opciones se barajan sin perder la correcta',
+  fallosAntes.length === 0, fallosAntes.slice(0, 5).join('\n      '));
+
 /* ── lo que salió ────────────────────────────────────────────── */
 console.log('\n— Las misiones —');
 console.log('  ' + conCritica + ' misiones con prueba de pensamiento crítico · ' + filas.length + ' ya reparten sin repetir' + (faltan.length ? ' · ' + faltan.length + ' todavía sacan al azar' : ''));
 if (filas.length) {
-  console.log('\n  ' + 'misión'.padEnd(46) + 'banco → saca'.padEnd(30) + 'conjuntos'.padEnd(11) + 'formas'.padEnd(8) + 'distintas');
-  filas.forEach(f => console.log('  ' + f.slug.padEnd(46) + f.apartados.map(a => a.n + '→' + a.saca).join(' ').padEnd(30) + String(f.posibles).padEnd(11) + String(f.tope).padEnd(8) + f.distintas + (f.ingles ? '  (y en inglés)' : '')));
+  console.log('\n  ' + 'misión'.padEnd(52) + 'banco → saca'.padEnd(36) + 'conjuntos'.padEnd(18) + 'formas'.padEnd(8) + 'distintas');
+  filas.forEach(f => console.log('  ' + f.slug.padEnd(52) + f.apartados.map(a => a.n + '→' + a.saca).join(' ').padEnd(36) + String(f.posibles).padEnd(18) + String(f.tope).padEnd(8) + f.distintas + (f.ingles ? '  (y en inglés)' : '') + (f.deAntes ? '  (1–' + f.deAntes + ' como salían antes)' : '')));
   if (TABLA) {
     console.log('\n  Cuántas veces sale cada texto en las formas de la misión (el que menos y el que más):');
     filas.forEach(f => console.log('  ' + f.slug.padEnd(46) + f.menos + ' a ' + f.mas + ' de ' + f.tope));
