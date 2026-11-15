@@ -965,7 +965,10 @@ Van 42 de 53, las 42 con la crítica congelada.
   protegidas, Eras geológicas, Coordenadas, los dos de Continentes,
   Pronombres, Sustantivos, Verbos y Adjetivos de bachillerato. En siete de
   ellas la prueba, además de sacar casos, baraja opciones o calcula datos con
-  la semilla: se miran una por una.
+  la semilla: se miran una por una. Josué decidió cerrar esta rama con las 42
+  y llevar estas 11 en otra rama, después. Mientras tanto siguen sacando sus
+  casos como antes; hoy ninguna repite dentro de sus 30 formas, y
+  `verifica-critica-sin-repetir` las nombra sin ponerse roja.
 - **El aviso a los docentes** (decisión 1): las pautas impresas de la prueba
   de pensamiento crítico dejan de corresponder a la forma del mismo número,
   de la 1 a la 30, en las 42 misiones que ya reparten.
