@@ -16,9 +16,13 @@ misma Forma 7 después de construir el motor compartido
     en la hoja impresa y la huella de la `hoja` completa.
   - `bancos` lleva el tamaño y la huella de cada banco. Solo sirve para
     explicar un fallo: si un banco cambió, por eso cambian las formas.
-- `_critica-pendiente.json`: la prueba de pensamiento crítico **no** se congela
-  porque se rehace entera. Este archivo cuenta qué misiones repiten formas hoy
-  en esa prueba, para que la sonda distinga lo ya sabido de lo nuevo.
+  - La prueba de pensamiento crítico (`critica`, formas 1 a 50) solo en las
+    misiones que ya reparten sus formas sin repetir y cuyo banco aprobó Josué.
+    La referencia lleva entonces `criticaCongelada` y `criticaDesde`.
+- `_critica-pendiente.json`: la prueba de pensamiento crítico se rehízo entera
+  y pasa al reparto sin repetir por tandas. Este archivo cuenta qué misiones
+  siguen sacando los casos al azar y repiten formas, para que la sonda
+  distinga lo ya sabido de lo nuevo. Una misión sale de aquí cuando reparte.
 
 Fuera del alcance: las misiones de docentes, Prebásica y Fracciones
 heterogéneas.
@@ -29,6 +33,12 @@ heterogéneas.
   el código vigente y las compara con estas.
 - `node _dev/genera-formas-oro.js`: escribe la referencia. Se niega a tocar una
   que ya existe.
+- `node _dev/genera-formas-oro.js --critica <carpeta>`: añade a una referencia
+  que ya existe las formas de la prueba de pensamiento crítico, sin tocar lo
+  demás. Solo cuando Josué aprobó el banco de esa misión: desde ese momento su
+  pauta impresa queda fija.
+- `node _dev/verifica-critica-sin-repetir.js` (va en `npm test`): ninguna forma
+  crítica repite el conjunto de casos de otra y todo sale del banco de su misión.
 
 ## Si la sonda se pone roja
 

@@ -57,18 +57,22 @@ for (let f = 1; f <= 30; f++) {
 }
 ok('pareados sin puntos fijos en las 30 formas (derangement determinista)', sinPuntosFijos);
 
-// ── Pensamiento crítico (semilla _evalRng(200000+forma)) ──
+// ── Pensamiento crítico (reparto sin repetir del motor, formas 1 a 50) ──
 function runCrit(forma) {
   vm.runInContext('window._evalCritData=null; evalCritFormNum=' + forma + '; genEvalCrit();', sandbox);
   return vm.runInContext('JSON.stringify(window._evalCritData)', sandbox);
 }
-console.log('— Prueba de pensamiento crítico (semilla _evalRng(200000+forma)) —');
+console.log('— Prueba de pensamiento crítico (reparto sin repetir del motor) —');
 const k7a = runCrit(7), k7b = runCrit(7), k8 = runCrit(8);
 ok('Forma 7 dos veces → prueba idéntica', k7a === k7b);
 ok('Forma 7 ≠ Forma 8', k7a !== k8);
 runCrit(30);
-ok('tras la Forma 30 sigue la 1 (evalCritFormNum cicla)', vm.runInContext('evalCritFormNum', sandbox) === 1);
-ok('Forma 5 conceptual ≠ Forma 5 crítica (semillas separadas)', runConceptual(5) !== runCrit(5));
+ok('tras la Forma 30 crítica sigue la 31', vm.runInContext('evalCritFormNum', sandbox) === 31);
+runCrit(50);
+ok('tras la Forma 50 crítica sigue la 1 (evalCritFormNum cicla)', vm.runInContext('evalCritFormNum', sandbox) === 1);
+const conjuntosCrit = new Set();
+for (let f = 1; f <= 50; f++) conjuntosCrit.add(vm.runInContext('JSON.stringify(_repartoCritica(' + f + ', critApartados()).map(function (ap) { return ap.map(function (c) { return JSON.stringify(c); }).sort(); }))', sandbox));
+ok('las 50 formas críticas llevan 50 conjuntos de casos distintos', conjuntosCrit.size === 50);
 const kd = JSON.parse(k7a);
 ok('crítica: 2 diagnósticos + 1 error + 1 análisis + 1 comparación + 1 diseño (5 × 20 = 100)',
   kd.sens.length === 2 && !!kd.err && !!kd.cic && !!kd.cmp && typeof kd.dis === 'string' && 5 * 20 === 100);
