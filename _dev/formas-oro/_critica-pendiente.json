@@ -1,0 +1,159 @@
+{
+  "nota": "Lo que la prueba de pensamiento crítico tiene pendiente HOY. No es una referencia: la crítica se rehace entera (plan del motor, decisión 1). Sirve para que la sonda distinga esta deuda conocida de una nueva. «repiten»: misiones con formas iguales o con las mismas preguntas en otro orden. «fueraDeBanco»: misiones donde parte de la prueba no sale de un banco sino del generador (rúbrica fija o respuesta calculada), con cuántos textos distintos.",
+  "contado": "2026-11-15",
+  "desde": "8f62337",
+  "repiten": {
+    "1ciclo-que-es-la-ia": {
+      "formas": 30,
+      "distintas": 28,
+      "iguales": 0,
+      "mismoConjunto": 2
+    },
+    "2ciclo-como-aprende-una-maquina": {
+      "formas": 30,
+      "distintas": 4,
+      "iguales": 6,
+      "mismoConjunto": 20
+    },
+    "2y3ciclo-cinco-reinos": {
+      "formas": 30,
+      "distintas": 28,
+      "iguales": 0,
+      "mismoConjunto": 2
+    },
+    "2y3ciclo-constitucion": {
+      "formas": 30,
+      "distintas": 25,
+      "iguales": 1,
+      "mismoConjunto": 4
+    },
+    "2y3ciclo-ecosistemas": {
+      "formas": 30,
+      "distintas": 26,
+      "iguales": 0,
+      "mismoConjunto": 4
+    },
+    "2y3ciclo-electricidad-robots": {
+      "formas": 30,
+      "distintas": 22,
+      "iguales": 4,
+      "mismoConjunto": 4
+    },
+    "2y3ciclo-historia-ia": {
+      "formas": 30,
+      "distintas": 12,
+      "iguales": 1,
+      "mismoConjunto": 17
+    },
+    "2y3ciclo-la-celula": {
+      "formas": 30,
+      "distintas": 26,
+      "iguales": 0,
+      "mismoConjunto": 4
+    },
+    "2y3ciclo-la-energia": {
+      "formas": 30,
+      "distintas": 23,
+      "iguales": 0,
+      "mismoConjunto": 7
+    },
+    "2y3ciclo-la-materia": {
+      "formas": 30,
+      "distintas": 24,
+      "iguales": 1,
+      "mismoConjunto": 5
+    },
+    "2y3ciclo-mayas-precolombinas": {
+      "formas": 30,
+      "distintas": 19,
+      "iguales": 1,
+      "mismoConjunto": 10
+    },
+    "2y3ciclo-motores-mecanismos": {
+      "formas": 30,
+      "distintas": 28,
+      "iguales": 1,
+      "mismoConjunto": 1
+    },
+    "2y3ciclo-programando-robot": {
+      "formas": 30,
+      "distintas": 23,
+      "iguales": 7,
+      "mismoConjunto": 0
+    },
+    "2y3ciclo-robots-problemas": {
+      "formas": 30,
+      "distintas": 4,
+      "iguales": 22,
+      "mismoConjunto": 4
+    },
+    "2y3ciclo-sensores-robot": {
+      "formas": 30,
+      "distintas": 29,
+      "iguales": 0,
+      "mismoConjunto": 1
+    },
+    "3ciclo-albores-singularidad": {
+      "formas": 30,
+      "distintas": 4,
+      "iguales": 6,
+      "mismoConjunto": 20
+    },
+    "3ciclo-escenarios-porvenir": {
+      "formas": 30,
+      "distintas": 4,
+      "iguales": 6,
+      "mismoConjunto": 20
+    },
+    "3ciclo-ia-generativa": {
+      "formas": 30,
+      "distintas": 4,
+      "iguales": 6,
+      "mismoConjunto": 20
+    },
+    "3ciclo-peligros-ia": {
+      "formas": 30,
+      "distintas": 2,
+      "iguales": 12,
+      "mismoConjunto": 16
+    },
+    "basica-como-se-que-se": {
+      "formas": 30,
+      "distintas": 10,
+      "iguales": 2,
+      "mismoConjunto": 18
+    },
+    "basica-de-que-esta-hecho-el-mundo": {
+      "formas": 30,
+      "distintas": 8,
+      "iguales": 3,
+      "mismoConjunto": 19
+    },
+    "basica-el-asombro": {
+      "formas": 30,
+      "distintas": 26,
+      "iguales": 1,
+      "mismoConjunto": 3
+    },
+    "basica-palabras-que-piensan": {
+      "formas": 30,
+      "distintas": 10,
+      "iguales": 2,
+      "mismoConjunto": 18
+    },
+    "basica-pensar-con-orden": {
+      "formas": 30,
+      "distintas": 28,
+      "iguales": 1,
+      "mismoConjunto": 1
+    }
+  },
+  "fueraDeBanco": {
+    "2y3ciclo-adverbios": 4,
+    "2y3ciclo-eras-geologicas": 4,
+    "2y3ciclo-geografia-coordenadas": 3,
+    "2y3ciclo-los-Continentes-Europa-Asia-y-Africa": 15,
+    "2y3ciclo-programando-robot": 26,
+    "2y3ciclo-sustantivos": 23
+  }
+}

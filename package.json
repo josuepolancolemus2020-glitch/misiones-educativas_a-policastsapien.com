@@ -1,7 +1,7 @@
 {
   "name": "misiones-educativas_a-policastsapien.com",
   "version": "1.0.0",
-  "description": "Misiones para 4º a 9º con su examen y su ficha listos para fotocopiar. Las de Español, Matemáticas, Ciencias y Sociales llevan señalado su bloque del DCNB. Funcionan sin internet y son gratis para el maestro hondureño.",
+  "description": "Misiones de Prebásica a 9.º con su examen y su ficha listos para fotocopiar. Las de Español, Matemáticas, Ciencias y Sociales llevan señalado su bloque del DCNB para la educación.",
   "main": "sw.js",
   "scripts": {
     "build:www": "robocopy . www /E /XD android node_modules .git .github .claude .idea www _dev _privado docs /XF *.md *.sql package.json package-lock.json capacitor.config.json .gitignore /NFL /NDL /NJH /NJS /NC /NS & exit 0",

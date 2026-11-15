@@ -127,7 +127,11 @@ async function abrirMision(nav, rel) {
         ? fs.readdirSync(dirJs).filter(f => f.endsWith('.js'))
             .map(f => fs.readFileSync(path.join(dirJs, f), 'utf8')).join('\n')
         : '';
-      const todo = m.s + '\n' + js;
+      /* Una misión que usa la plantilla del motor ya no trae la sopa en su
+         carpeta: la trae js/motor-mision.js, y es ahí donde hay que mirar. */
+      const delMotor = /<script[^>]*\ssrc="[^"]*js\/motor-mision\.js/.test(m.s)
+        ? fs.readFileSync(path.join(RAIZ, 'js', 'motor-mision.js'), 'utf8') : '';
+      const todo = m.s + '\n' + js + '\n' + delMotor;
       if (!/sopaGrid/.test(todo)) continue;
       conSopa.push(m.dir);
       /* El motor remata con el clic de la celda, se llame como se llame la

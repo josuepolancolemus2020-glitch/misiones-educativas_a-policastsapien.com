@@ -828,34 +828,12 @@ const evalPRBank=[
 // sort(() => rng() - 0.5): el resultado depende del motor del navegador.
 // ⚠️ Editar los bancos de preguntas CAMBIA el contenido de todas las formas.
 const EVAL_FORMAS = 30;
-function _evalRng(forma) {
-    let s = (forma * 2654435761 + 909090909) >>> 0;
-    return function () {
-        s = (s + 0x6D2B79F5) >>> 0;
-        let t = s;
-        t = Math.imul(t ^ (t >>> 15), t | 1);
-        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-    };
-}
-const _shuffleF = (arr, rng) => { const a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); const tmp = a[i]; a[i] = a[j]; a[j] = tmp; } return a; };
-const _pickF = (arr, n, rng) => _shuffleF(arr, rng).slice(0, n);
+/* _evalRng, _shuffleF, _pickF y _injectFormaSel ya no se copian aquí: están en
+   js/motor-misiones.js, que la página carga antes que este archivo. Si un teléfono
+   abre la página guardada de antes, que no lo pide, se pide aquí. */
+if (typeof _evalRng !== 'function') { (function () { var m = document.createElement('script'); m.src = '../../js/motor-misiones.js'; document.head.appendChild(m); })(); }
 // Selector «Forma exacta»: el docente elige qué forma generar (p.ej. para
 // reimprimir la pauta de la Forma 15 que ya repartió a los alumnos).
-function _injectFormaSel(fnName, selId, actual, onPick) {
-    const ya = document.getElementById(selId);
-    if (ya) { ya.value = String(actual); return; }
-    const btn = document.querySelector('[onclick*="' + fnName + '()"]');
-    if (!btn || !btn.parentNode) return;
-    const wrap = document.createElement('label');
-    wrap.style.cssText = 'display:inline-flex;align-items:center;gap:6px;margin:0 8px 6px 0;font-weight:700;font-size:0.95rem;';
-    let ops = '';
-    for (let i = 1; i <= EVAL_FORMAS; i++) ops += '<option value="' + i + '"' + (i === actual ? ' selected' : '') + '>Forma ' + i + '</option>';
-    wrap.innerHTML = '📋 <select id="' + selId + '" style="padding:6px 10px;border-radius:8px;border:2px solid #888;font-weight:700;font-size:0.95rem;background:#fff;color:#222;" aria-label="Elegir número de forma exacta (1 a ' + EVAL_FORMAS + ')">' + ops + '</select>';
-    btn.parentNode.insertBefore(wrap, btn);
-    const sel = wrap.querySelector('select');
-    if (sel) sel.addEventListener('change', function () { onPick(parseInt(this.value, 10) || 1); try { saveProgress(); } catch (e) { } });
-}
 function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalFormNum, function (v) { evalFormNum = v; }); }
 
 function genEval(){

@@ -1,8 +1,8 @@
 # M.E.T.A.S.
 
-**Misiones para 4º a 9º con su examen y su ficha listos para fotocopiar. Las de
-Español, Matemáticas, Ciencias y Sociales llevan señalado su bloque del DCNB.
-Funcionan sin internet y son gratis para el maestro hondureño.**
+**Misiones de Prebásica a 9.º con su examen y su ficha listos para fotocopiar.
+Las de Español, Matemáticas, Ciencias y Sociales llevan señalado su bloque del
+DCNB para la educación.**
 
 👉 **[Entrar](https://metas.policastsapien.com/)**
 
@@ -17,8 +17,6 @@ Funcionan sin internet y son gratis para el maestro hondureño.**
 - **Todo se puede llevar al papel.** Cada misión trae su **ficha imprimible** con
   su código QR, y su evaluación sale medida para una hoja carta. En un aula de 43
   alumnos con tres teléfonos, eso es lo que hace que la misión le llegue a todos.
-- **Sin internet.** Se abre una vez con señal y después trabaja sin ella, que es
-  como se usa de verdad en un aula de pueblo.
 - **Mi aula**: lista, asistencia, notas, boleta, control de lectura, comunicados a
   las familias y convocatorias — el dato se escribe una vez y sale en todos.
 - **Para la familia**: una pantalla donde la madre consulta cómo va su hijo, sin

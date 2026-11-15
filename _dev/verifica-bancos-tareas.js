@@ -129,7 +129,9 @@ console.log('\n📋 El Generador de Tareas: que cada banco traiga lo que su func
 let conGenerador = 0, revisados = 0;
 misiones().forEach(abs => {
   const rel = path.relative(RAIZ, abs);
-  const src = sinComentarios(fs.readFileSync(abs, 'utf8'));
+  /* En una misión que usa el motor, la función que pinta está en el motor
+     y el banco en su contenido: se leen juntos. */
+  const src = sinComentarios(require('./lib-formas.js').fuenteDeMision(abs));
   let tocada = false;
   FUNCIONES.forEach(fn => {
     const cuerpo = cuerpoDe(src, fn);
