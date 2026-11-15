@@ -44,6 +44,8 @@ const NO_SON_SONDAS = {
   'corre-sondas':           'es esta misma herramienta',
   'lib-sonda-3d':           'es una biblioteca que usan las sondas de los juegos',
   'lib-navegador':          'es quien abre el navegador; no comprueba nada',
+  'lib-formas':             'carga una misión y le saca sus formas de examen; la usan genera-formas-oro y verifica-formas-oro',
+  'genera-formas-oro':      'ESCRIBE la referencia de las formas congeladas; se corre a mano y se niega a sobrescribir',
   'three-de-mentira':       'es el Three.js de mentira de esas sondas',
   'estado':                 'lleva la cuenta de la auditoría, no comprueba nada',
   'playwright-abrir':       'es un ayudante de la auditoría',

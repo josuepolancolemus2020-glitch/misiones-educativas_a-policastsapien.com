@@ -679,3 +679,36 @@ sección 9. Mandan sobre cualquier recomendación anterior de este informe.
 - **No se ha empezado código.** Lo siguiente es tu visto bueno para abrir la
   rama de codificación.
 
+---
+
+## 11. Red de seguridad: hecha
+
+Hecha el 15 de noviembre de 2026 en la rama `claude/adoring-meitner-fqrqo2`,
+sin tocar ninguna misión ni nada de lo que se publica. Es la «Fase 0» de la
+sección 6.5.
+
+- **Referencia:** `_dev/formas-oro/<carpeta>.json`, una por misión del alcance.
+  Qué guarda y cómo se usa está en `_dev/formas-oro/LEEME.md`.
+- **Sonda:** `_dev/verifica-formas-oro.js`, dentro de `npm test`. Comprueba
+  formas congeladas idénticas, ninguna forma repetida y toda pregunta en el
+  banco de su misión.
+- **Generador:** `_dev/genera-formas-oro.js`. Se niega a sobrescribir.
+
+Diferencias con lo que proponía la sección 7.2, y por qué:
+
+- De la hoja impresa se guarda la huella y no el documento entero: entero
+  pesaba unas siete veces más que el dato y casi todo era estilo repetido.
+  La sonda distingue tres casos: cambió una pregunta, cambió lo que se lee en
+  la hoja, o cambió solo cómo se ve.
+- «Toda pregunta es del banco» se comprueba hoy contra los bancos que ya
+  están en el JavaScript de cada misión. La parte de `id` y `fuente` espera a
+  que exista `contenido.json`.
+- La prueba operativa no tiene banco: sus números salen de la semilla. La
+  protege la comparación con la referencia.
+- La crítica no lleva referencia (decisión 1). Sus repeticiones de hoy están
+  contadas en `_dev/formas-oro/_critica-pendiente.json` y no ponen la sonda en
+  rojo; una repetición nueva, sí. La cuenta da 24 misiones y no 18 porque
+  aquí también cuentan las formas con las mismas preguntas en otro orden.
+- Quedan para después la sonda de codificación (va con la rama de la
+  decisión 6) y las de navegador del piloto.
+
