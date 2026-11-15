@@ -882,7 +882,7 @@ prueba crítica y el laboratorio.
 ## 16. La prueba de pensamiento crítico reparte sin repetir: el piloto
 
 Hecho el 15 de noviembre de 2026 en la rama `feat/critica-sin-repetir`
-(v537), sobre los 13 bancos ya completos de `docs/FALTANTES-BANCO-CRITICO.md`.
+(v538), sobre los 13 bancos ya completos de `docs/FALTANTES-BANCO-CRITICO.md`.
 Aplicado solo a La Célula y a Robots que Resuelven Problemas; las otras 51
 esperan el visto bueno de Josué y van por tandas.
 

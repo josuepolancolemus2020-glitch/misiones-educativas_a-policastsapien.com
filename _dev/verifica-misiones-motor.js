@@ -32,7 +32,7 @@ const MOTOR = path.join(RAIZ, 'js', 'motor-misiones.js');
 
 /* Lo que ya se pasó al motor. Al pasar otra tanda, se añade aquí. */
 const EN_EL_MOTOR = ['_evalRng', '_shuffleF', '_pickF', '_injectFormaSel',
-  /* El reparto de la prueba de pensamiento crítico (v537). */
+  /* El reparto de la prueba de pensamiento crítico (v538). */
   '_repartoCritica', '_formasCritica', '_conjuntosCritica', '_turnoCritica', '_selectorCritica'];
 
 let fallos = 0;
