@@ -618,18 +618,33 @@
     });
   }
 
-  /* Una copia del caso con sus opciones barajadas y la posición de la
-     correcta movida con ella. Es para las formas NUEVAS de una misión con
-     formas de antes: en las de antes las opciones van como estaban, que
-     es como las tiene el maestro en su pauta. No toca el banco.
-     `opciones` y `correcta` son los nombres de esos dos campos del caso. */
-  function _conOpcionesBarajadas(caso, rng, opciones, correcta) {
-    var orden = _shuffleF(caso[opciones].map(function (_, i) { return i; }), rng);
-    var copia = {};
-    Object.keys(caso).forEach(function (k) { copia[k] = caso[k]; });
-    copia[opciones] = orden.map(function (i) { return caso[opciones][i]; });
-    copia[correcta] = orden.indexOf(caso[correcta]);
-    return copia;
+  /* Los casos de una sección de selección, cada uno en una copia con sus
+     opciones barajadas y la posición de la correcta movida con ellas. La
+     correcta no se deja al azar de cada caso, que amontona: se REPARTE
+     entre las letras. Se toman las letras en tandas barajadas (a, b, c, d
+     en desorden; al acabarse, otra tanda), así en una misma hoja ninguna
+     letra se repite hasta que salieron todas, y el orden no se adivina.
+     Es para las formas NUEVAS de una misión con formas de antes: en las de
+     antes las opciones van como estaban, que es como las tiene el maestro
+     en su pauta. No toca el banco. `opciones` y `correcta` son los
+     nombres de esos dos campos del caso; `correcta` puede guardar la
+     posición o el texto de la opción buena. */
+  function _conOpcionesRepartidas(casos, rng, opciones, correcta) {
+    var tanda = [];
+    return casos.map(function (caso) {
+      var todas = caso[opciones], n = todas.length;
+      var porTexto = typeof caso[correcta] !== 'number';
+      var buena = porTexto ? todas.indexOf(caso[correcta]) : caso[correcta];
+      if (!tanda.length) tanda = _shuffleF(todas.map(function (_, i) { return i; }), rng);
+      var sitio = tanda.shift() % n;
+      var nuevas = _shuffleF(todas.filter(function (_, i) { return i !== buena; }), rng);
+      nuevas.splice(sitio, 0, todas[buena]);
+      var copia = {};
+      Object.keys(caso).forEach(function (k) { copia[k] = caso[k]; });
+      copia[opciones] = nuevas;
+      if (!porTexto) copia[correcta] = sitio;
+      return copia;
+    });
   }
 
   /* Barajar la columna de un pareado sin dejar ninguna respuesta en la
@@ -669,7 +684,7 @@
 
   global._repartoCritica = _repartoCritica;
   global._conFormasDeAntes = _conFormasDeAntes;
-  global._conOpcionesBarajadas = _conOpcionesBarajadas;
+  global._conOpcionesRepartidas = _conOpcionesRepartidas;
   global._barajarSinFilaPropia = _barajarSinFilaPropia;
   global._formasCritica = _formasCritica;
   global._conjuntosCritica = _conjuntosCritica;
@@ -767,7 +782,7 @@
 
   global.MotorMisiones = {
     examen: { rng: _evalRng, barajar: _shuffleF, elegir: _pickF, selectorDeForma: _injectFormaSel },
-    critica: { formasMaximas: FORMAS_CRITICA, conjuntos: _conjuntosCritica, formas: _formasCritica, reparto: _repartoCritica, conFormasDeAntes: _conFormasDeAntes, conOpcionesBarajadas: _conOpcionesBarajadas, barajarSinFilaPropia: _barajarSinFilaPropia, selector: _selectorCritica, turno: _turnoCritica },
+    critica: { formasMaximas: FORMAS_CRITICA, conjuntos: _conjuntosCritica, formas: _formasCritica, reparto: _repartoCritica, conFormasDeAntes: _conFormasDeAntes, conOpcionesRepartidas: _conOpcionesRepartidas, barajarSinFilaPropia: _barajarSinFilaPropia, selector: _selectorCritica, turno: _turnoCritica },
     abrirPedida: abrirPedida, buscar: buscar, carpetaDe: carpetaDe
   };
 /* `globalThis` y no `window` a secas: en el navegador son lo mismo, y las

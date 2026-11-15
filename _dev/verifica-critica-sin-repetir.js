@@ -134,6 +134,8 @@ lista.forEach(slug => {
   });
   const deAntes = m.correr('critApartados().formasDeAntes || 0', 'formas de antes');
 
+  const textosDeBancos = new Set(L.cadenasDe(bancos));
+  const textosDeApartados = new Set(L.cadenasDe(JSON.parse(m.correr('JSON.stringify(critApartados().map(function (a) { return a[0]; }))', 'bancos de los apartados'))));
   const datos = {}, usos = {};
   let desiguales = 0;
   for (let n = 1; n <= tope; n++) {
@@ -145,9 +147,15 @@ lista.forEach(slug => {
     const repartidos = L.cadenasDe(JSON.parse(m.correr('JSON.stringify(_repartoCritica(' + n + ', critApartados()))', 'reparto'))).sort();
     const pintados = L.cadenasDe(f.dato).sort();
     const sobran = pintados.filter(t => !repartidos.includes(t));
-    /* Lo sabido se cuenta en textos DISTINTOS (las letras A a D de un
-       pareado son cuatro, aunque salgan dos veces en el dato). */
-    if (new Set(sobran).size > (sueltosSabidos[slug] || 0) || repartidos.some(t => !pintados.includes(t))) desiguales++;
+    /* Lo que la hoja trae de más se mira de dos maneras. Un caso de los
+       bancos de la prueba que el motor NO repartió a esta forma es la
+       misión sacando por su cuenta. Lo demás (una rúbrica fija, las letras
+       A a D de un pareado, un dato calculado) es lo que escribe el
+       generador: se cuenta en textos DISTINTOS y fuera de todo banco, que
+       es como lo cuenta la lista de lo sabido. */
+    const porSuCuenta = sobran.filter(t => t.length >= 20 && textosDeApartados.has(t));
+    const delGenerador = new Set(sobran.filter(t => !textosDeBancos.has(t)));
+    if (porSuCuenta.length || delGenerador.size > (sueltosSabidos[slug] || 0) || repartidos.some(t => !pintados.includes(t))) desiguales++;
     if (!f.impreso.includes('Forma ' + n)) falla(slug, 'la hoja impresa de la Forma ' + n + ' no dice su número');
     L.cadenasDe(f.dato).forEach(t => { usos[t] = (usos[t] || 0) + 1; });
   }
@@ -271,17 +279,28 @@ if (conjuntoDe(reparto(13, chicoAntes.ap)) !== conjuntoDe(reparto(1, chicoAntes.
 let avisaAntes = false;
 try { reparto(31, conAntes(bancosDeMentira([[4, 2]]), 30, () => [['no es del banco', 'tampoco']])); } catch (e) { avisaAntes = /apartado 1/.test(e.message); }
 if (!avisaAntes) fallosAntes.push('una forma de antes con un caso que no es de su banco no se dice');
-/* Barajar las opciones de un caso: las mismas opciones, la correcta
-   sigue siendo la correcta y el caso del banco no se toca. */
-const casoConOpciones = { q: '¿?', o: ['uno', 'dos', 'tres', 'cuatro'], a: 2 }, antesDeBarajar = JSON.stringify(casoConOpciones);
-const posicionesBuena = new Set();
+/* Barajar las opciones de una sección: las mismas opciones, la correcta
+   sigue siendo la correcta, los casos del banco no se tocan y la correcta
+   queda repartida entre las letras, en cada hoja y en el conjunto. */
+const seccion = [0, 1, 2, 3, 0].map((a, i) => ({ q: '¿' + i + '?', o: ['uno' + i, 'dos' + i, 'tres' + i, 'cuatro' + i], a }));
+const porTexto = [{ q: '¿?', opts: ['x', 'y', 'z'], ans: 'y' }, { q: '¿?', opts: ['p', 'q', 'r'], ans: 'p' }];
+const antesDeBarajar = JSON.stringify([seccion, porTexto]);
+const letras = [0, 0, 0, 0];
 for (let f = 31; f <= 50; f++) {
-  const b = ventana._conOpcionesBarajadas(casoConOpciones, rngMotor(200000 + f), 'o', 'a');
-  if (b.o[b.a] !== 'tres' || b.o.slice().sort().join() !== casoConOpciones.o.slice().sort().join() || b.q !== '¿?') fallosAntes.push('al barajar las opciones se pierde una o se mueve la correcta');
-  posicionesBuena.add(b.a);
+  const r = rngMotor(200000 + f);
+  const nuevos = ventana._conOpcionesRepartidas(seccion, r, 'o', 'a');
+  nuevos.forEach((b, i) => {
+    if (b.o[b.a] !== seccion[i].o[seccion[i].a] || b.o.slice().sort().join() !== seccion[i].o.slice().sort().join() || b.q !== seccion[i].q) fallosAntes.push('al barajar las opciones se pierde una o se mueve la correcta');
+    letras[b.a]++;
+  });
+  /* Cinco casos y cuatro letras: en una hoja ninguna letra pasa de dos. */
+  if ([0, 1, 2, 3].some(l => nuevos.filter(b => b.a === l).length > 2)) fallosAntes.push('en la forma ' + f + ' la correcta se amontona en una letra');
+  ventana._conOpcionesRepartidas(porTexto, r, 'opts', 'ans').forEach((b, i) => {
+    if (b.ans !== porTexto[i].ans || !b.opts.includes(b.ans) || b.opts.length !== 3) fallosAntes.push('al barajar opciones cuya correcta se guarda por su texto, se pierde');
+  });
 }
-if (JSON.stringify(casoConOpciones) !== antesDeBarajar) fallosAntes.push('barajar las opciones tocó el caso del banco');
-if (posicionesBuena.size < 3) fallosAntes.push('las opciones barajadas dejan la correcta casi siempre en el mismo sitio');
+if (JSON.stringify([seccion, porTexto]) !== antesDeBarajar) fallosAntes.push('barajar las opciones tocó los casos del banco');
+if (Math.max(...letras) > 0.4 * 100) fallosAntes.push('la correcta cae más del 40 % de las veces en una letra: ' + letras.join(', ') + ' de 100');
 /* El pareado de una forma nueva: nadie queda en la fila de su pregunta. */
 for (let f = 31; f <= 50; f++) {
   const filas = ['a', 'b', 'c', 'd'], col = ventana._barajarSinFilaPropia(filas, rngMotor(200000 + f));

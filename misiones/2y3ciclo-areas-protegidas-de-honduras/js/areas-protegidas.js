@@ -1313,14 +1313,13 @@ function critApartados(){
 }
 /* Lo que lleva una forma. Las de antes, su sorteo. Las nuevas, los casos
    que repartió el motor, con las opciones de las secciones I y III
-   barajadas: en el banco la correcta está repartida a mano entre las
-   cuatro letras, pero una forma nueva saca OTRA combinación de casos y
-   sin barajar podría juntar varias con la misma letra. */
+   barajadas y la correcta repartida entre las cuatro letras: en el banco
+   está repartida a mano, pero una forma nueva saca OTRA combinación de
+   casos y sin barajar podría juntar varias con la misma letra. */
 function critSorteo(forma,casos){
   if(forma<=CRIT_FORMAS_DE_ANTES) return critSorteoDeAntes(forma);
   const rng=_evalRng(200000+forma);
-  const baraja=it=>_conOpcionesBarajadas(it,rng,'o','a');
-  return {ce:casos[0].map(baraja),cases:casos[1],data:casos[2].map(baraja),clsSet:casos[3][0],clsItems:_shuffleF(casos[3][0].items,rng),arg:casos[4][0]};
+  return {ce:_conOpcionesRepartidas(casos[0],rng,'o','a'),cases:casos[1],data:_conOpcionesRepartidas(casos[2],rng,'o','a'),clsSet:casos[3][0],clsItems:_shuffleF(casos[3][0].items,rng),arg:casos[4][0]};
 }
 
 function _evalCritFormaSelector(){_selectorCritica(evalCritFormNum,critApartados(),function(v){evalCritFormNum=v;});}
