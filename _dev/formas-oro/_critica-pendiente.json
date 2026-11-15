@@ -1,7 +1,7 @@
 {
-  "nota": "Lo que la prueba de pensamiento crítico tiene pendiente HOY. No es una referencia: la crítica se rehace entera (plan del motor, decisión 1). Sirve para que la sonda distinga esta deuda conocida de una nueva. «repiten»: misiones con formas iguales o con las mismas preguntas en otro orden. «fueraDeBanco»: misiones donde parte de la prueba no sale de un banco sino del generador (rúbrica fija o respuesta calculada), con cuántos textos distintos.",
+  "nota": "Lo que la prueba de pensamiento crítico tiene pendiente HOY. No es una referencia. Las misiones salen de «repiten» a medida que pasan al reparto sin repetir del motor (critApartados). Sirve para que la sonda distinga esta deuda conocida de una nueva. «repiten»: misiones con formas iguales o con las mismas preguntas en otro orden. «fueraDeBanco»: misiones donde parte de la prueba no sale de un banco sino del generador (rúbrica fija o respuesta calculada), con cuántos textos distintos.",
   "contado": "2026-11-15",
-  "desde": "37d3992",
+  "desde": "c90c28d",
   "repiten": {
     "1ciclo-que-es-la-ia": {
       "formas": 30,
@@ -28,12 +28,6 @@
       "mismoConjunto": 4
     },
     "2y3ciclo-ecosistemas": {
-      "formas": 30,
-      "distintas": 26,
-      "iguales": 0,
-      "mismoConjunto": 4
-    },
-    "2y3ciclo-la-celula": {
       "formas": 30,
       "distintas": 26,
       "iguales": 0,
