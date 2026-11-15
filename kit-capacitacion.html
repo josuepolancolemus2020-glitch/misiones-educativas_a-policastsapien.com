@@ -103,16 +103,28 @@
 
   .salto { page-break-before: always; }
   @page { size: letter; margin: 10mm 9mm; }
+  /* ⚠️ El Kit cabe en TRES hojas y así tiene que imprimirse. Hasta noviembre
+     de 2026 prometía cuatro, y la cuarta llevaba SOLO esta línea del pie: la
+     hoja 3 se pasaba por 3 mm. Quien fotocopiaba para treinta pagaba treinta
+     hojas con un renglón. Se ganó el sitio con los espacios de impresión
+     (títulos, listas, recuadros), nunca bajando la letra, y con holgura medida
+     también con DejaVu Sans, la letra ancha de Linux que usa el CI: con ella
+     la hoja 2 se pasaba una línea y el Kit salía en cinco. Medido con las
+     letras de Windows (medidas de Segoe UI), Android (Roboto) y Linux, la hoja
+     más justa conserva 9 mm. */
   @media print {
     body { background: #fff; }
     .hoja { max-width: none; padding: 0; }
     .imprimir-btn { display: none; }
-    h2 { -webkit-print-color-adjust: exact; print-color-adjust: exact; margin: 14px 0 9px; }
+    h2 { -webkit-print-color-adjust: exact; print-color-adjust: exact; margin: 10px 0 7px; }
     table.guion th, .destacado, .nota { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .paso { margin: 8px 0 10px; }
-    .check li { padding: 5px 0 5px 34px; }
-    .check li::before { top: 6px; }
-    .pie { margin-top: 14px; }
+    .paso { margin: 6px 0 6px; }
+    .paso-txt ol li, .paso-txt ul li { margin-bottom: 3px; }
+    .nota, .destacado { margin: 8px 0; }
+    .check { margin: 4px 0; }
+    .check li { padding: 3px 0 3px 34px; }
+    .check li::before { top: 4px; }
+    .pie { margin-top: 8px; padding-top: 6px; }
   }
 </style>
 </head>
@@ -280,7 +292,7 @@
 
   <div class="pie">
     <span>🎒 Kit de Capacitación M.E.T.A.S · Proyecto Educativo policastsapien.com</span>
-    <span>Se imprimen las 4 hojas, un juego por participante · versión septiembre 2026</span>
+    <span>Se imprimen las 3 hojas, un juego por participante · versión noviembre 2026</span>
   </div>
 
 </div>

@@ -20,6 +20,11 @@
      sale en CUATRO. Quien fotocopiaba para treinta leía 30 hojas
      donde hacían falta 120, y los últimos se quedaban sin el
      guion y sin la lista de comprobación.
+   · Y en noviembre de 2026 resultó que la cuarta hoja llevaba
+     SOLO el pie: el Kit cabía en tres y se pasaba por 3 mm. En
+     el CI, con la letra ancha de Linux, salía en cinco. Ahora
+     cabe en tres con holgura, y se vigila que ninguna hoja sea
+     solo el pie y que la última aguante un renglón más.
 
    Las dos se descubrieron mirando, que es lo que no se repite.
    Esta sonda las mira sola.
@@ -153,6 +158,27 @@ function catalogo() {
           'promete ' + prometidas + ' hojas y el PDF sale en ' + hojas,
           { promete: Number(prometidas), imprime: hojas });
       }
+
+      /* La hoja que lleva solo el pie. El Kit salió así meses: «4 hojas» y la
+         cuarta con un renglón, y la cuenta de arriba salía verde porque el pie
+         decía cuatro y el PDF también. Se mira quitando el pie: si sin él sale
+         una hoja menos, esa hoja era solo el pie. */
+      await pg.evaluate(() => { document.querySelector('.pie').style.display = 'none'; });
+      const sinPie = (Buffer.from(await pg.pdf({ format: 'Letter', printBackground: true }))
+        .toString('latin1').match(/\/Type\s*\/Page[^s]/g) || []).length;
+      await pg.evaluate(() => { document.querySelector('.pie').style.display = ''; });
+      ok(sinPie === hojas, 'ninguna hoja lleva solo el pie', { conPie: hojas, sinPie });
+
+      /* La holgura: el Kit se imprime con la letra del sistema de cada quien
+         (Segoe UI en Windows, Roboto en Android, DejaVu en Linux), y cada una
+         mide distinto. Una hoja llena al milímetro con una letra sale en una
+         hoja más con otra. Se le añade al final un renglón de 6 mm y tiene
+         que seguir saliendo igual. */
+      await pg.evaluate(() => { const e = document.createElement('div'); e.id = '__holgura'; e.style.height = '6mm'; document.querySelector('.pie').after(e); });
+      const conHolgura = (Buffer.from(await pg.pdf({ format: 'Letter', printBackground: true }))
+        .toString('latin1').match(/\/Type\s*\/Page[^s]/g) || []).length;
+      await pg.evaluate(() => document.getElementById('__holgura').remove());
+      ok(conHolgura === hojas, 'la última hoja aguanta 6 mm más sin pasarse (otra letra no la rompe)', { hojas, conHolgura });
     }
   } finally {
     await nav.close();
