@@ -41,7 +41,40 @@ function deReserva() {
   ].filter(Boolean);
 }
 
-async function abrir(opciones) {
+/* ============================================================
+   Las misiones del maestro y sus fichas se tapan sin cuenta
+   (js/solo-docente.js). Las sondas las abren para medirlas —la barra,
+   las estrellas, las hojas de la ficha—, no para comprobar el candado,
+   así que en ESAS páginas, y solo en esas, entran como un maestro de
+   mentira. Sin esto medirían el aviso y saldrían verdes o rojas sin
+   haber mirado la misión.
+
+   La cuenta de mentira se quita al salir de la página: si se quedara,
+   la portada que la sonda abra después se vería como la de un maestro
+   con sesión y cambiaría lo que mide.
+
+   Quien SÍ comprueba el candado (verifica-solo-docente.js) abre con
+   `nav.sinMaestro()`, que devuelve un contexto sin este arreglo.
+   ============================================================ */
+function entraComoMaestro() {
+  if (!/\/(misiones\/docente-|fichas\/ficha-docente-)/.test(location.pathname)) return;
+  try {
+    if (localStorage.getItem('METAS_DOCENTE_V1')) return;
+    localStorage.setItem('METAS_DOCENTE_V1', JSON.stringify({ codigo: 'SONDA' }));
+    addEventListener('pagehide', function () { try { localStorage.removeItem('METAS_DOCENTE_V1'); } catch (_) {} });
+  } catch (_) { /* sin almacenamiento, la sonda verá el aviso y lo dirá */ }
+}
+function conMaestro(nav) {
+  const contexto = nav.newContext.bind(nav), pagina = nav.newPage.bind(nav);
+  nav.newContext = async o => { const c = await contexto(o); await c.addInitScript(entraComoMaestro); return c; };
+  nav.newPage = async o => { const p = await pagina(o); await p.addInitScript(entraComoMaestro); return p; };
+  nav.sinMaestro = contexto;
+  return nav;
+}
+
+async function abrir(opciones) { return conMaestro(await lanzar(opciones)); }
+
+async function lanzar(opciones) {
   const op = Object.assign({}, opciones);
   /* ⚠️ Primero el Chromium COMPLETO (`channel: 'chromium'`), no el
      «headless shell» que Playwright abre por defecto. El shell coloca la
