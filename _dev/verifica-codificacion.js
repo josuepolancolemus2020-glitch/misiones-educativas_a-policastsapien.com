@@ -131,7 +131,10 @@ ok('ninguna tiene «?» donde iba un símbolo', conHuella.length === 0, conHuell
 /* Las cuatro que se rompieron, por su nombre: si alguien las vuelve a guardar
    con la herramienta equivocada, que el aviso diga cuál y qué se perdió. */
 const TESTIGOS = {
-  'mision.html':        ['Misión', "content: '✓ '", "content: '✗ '", '⭐ 0 XP', '⏳'],
+  /* mision.html dejó de ser un cuestionario y pasó a ser la puerta de
+     ?m=<carpeta>: ya no lleva ✓ ✗ ⭐ ⏳. Sus testigos son ahora las tildes
+     y el símbolo que sí pinta. */
+  'mision.html':        ['Misión — M.E.T.A.S.', 'No encontramos esa misión', 'qué misión abrir', '🧭'],
   'consulta-nube.html': ['Contraseña', '☁️ Consulta en la Nube'],
   'registro.html':      ['📋 Evidencia de misiones', 'Sesión'],
   'evaluaciones.html':  ["key: 'español'", "key: 'matemáticas'", 'Banco de Evaluaciones']

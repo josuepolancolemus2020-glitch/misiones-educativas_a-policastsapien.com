@@ -712,3 +712,22 @@ Diferencias con lo que proponía la sección 7.2, y por qué:
 - Quedan para después la sonda de codificación (va con la rama de la
   decisión 6) y las de navegador del piloto.
 
+---
+
+## 12. `mision.html` vuelve a funcionar: hecho
+
+Hecho el 15 de noviembre de 2026 en la rama `claude/puerta-mision-fqrqo2`
+(sale de la de la red de seguridad e incorpora la de codificación). Es la
+«Fase 1» de la sección 6.5. Ninguna misión cambió.
+
+- `mision.html?m=<carpeta>` lleva a la misión en su dirección de siempre. La
+  carpeta es la de `misiones/` (por ejemplo `2y3ciclo-la-celula`) y sale de la
+  `url` del catálogo; no hay un dato nuevo que mantener.
+- Si la carpeta no existe o falta, un aviso y un solo botón a `index.html`.
+  `?id=N` no se atiende.
+- No hay pantalla intermedia: quien trae un enlace bueno entra directo y el
+  botón de atrás no lo devuelve a la puerta.
+- `js/motor-misiones.js` existe y hoy solo hace eso.
+- Sonda: `_dev/verifica-puerta-mision.js`, dentro de `npm test`. Prueba las
+  86 misiones del catálogo, no una de muestra.
+
