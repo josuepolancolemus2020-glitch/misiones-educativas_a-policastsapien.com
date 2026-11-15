@@ -69,6 +69,14 @@ const paginaDe = slug => fs.readdirSync(path.join(L.DIR_MISIONES, slug)).find(f 
 const leerHoja = () => Array.from(document.querySelectorAll('#evalCritOut .crit-scenario, #evalCritOut .crit-compare-box, #evalCritOut .crit-ce-given'))
   .map(e => { const c = e.cloneNode(true); c.querySelectorAll('h5, .crit-ce-tag').forEach(r => r.remove()); return c.textContent.replace(/\s+/g, ' ').trim(); });
 
+/* En las misiones de estructura propia no todo apartado va en una caja de
+   esas: unos casos son un renglón con un espacio para escribir, otros una
+   fila de tabla. Ahí se lee lo que el alumno VE, renglón por renglón (la
+   pauta está oculta y `innerText` no la trae), sin el número de orden
+   («1.», «A.»), que cambia con la posición y no con el caso. */
+const leerRenglones = () => document.getElementById('evalCritOut').innerText.split('\n')
+  .map(t => t.replace(/\s+/g, ' ').trim().replace(/^(?:\d+|[A-E])[.)]\s*/, '')).filter(Boolean);
+
 (async () => {
   const nav = await abrir();
   for (const slug of lista) {
@@ -88,7 +96,7 @@ const leerHoja = () => Array.from(document.querySelectorAll('#evalCritOut .crit-
 
     const sel = await page.evaluate(() => {
       const c = document.getElementById('evalCritFormaSel'), e = document.getElementById('evalFormaSel');
-      return { crit: c ? c.options.length : 0, rotulo: c ? c.getAttribute('aria-label') : '', conceptual: e ? e.options.length : 0, tope: EVAL_FORMAS, formas: _formasCritica(critApartados()) };
+      return { crit: c ? c.options.length : 0, rotulo: c ? c.getAttribute('aria-label') : '', conceptual: e ? e.options.length : 0, tope: EVAL_FORMAS, formas: _formasCritica(critApartados()), deAntes: critApartados().formasDeAntes || 0 };
     });
     if (sel.crit !== sel.formas || !/1 a 50/.test(sel.rotulo) || sel.formas !== 50) mal('el selector de la prueba crítica tiene ' + sel.crit + ' formas («' + sel.rotulo + '») y tendría que llegar a la 50');
     else bien('el selector de la prueba crítica llega a la Forma 50, y lo dice a quien no lo ve');
@@ -100,20 +108,23 @@ const leerHoja = () => Array.from(document.querySelectorAll('#evalCritOut .crit-
     let sinTitulo = 0, vacias = 0, otroCirculo = 0;
     const conceptualAntes = await page.evaluate(() => evalFormNum);
     for (let n = 1; n <= sel.formas; n++) {
-      const h = await page.evaluate(([leer, tocar, marc, n]) => {
+      const h = await page.evaluate(([leer, renglones, tocar, marc, n]) => {
         (new Function('return (' + tocar + ')'))()('evalCritFormaSel', n);
-        return { titulo: document.getElementById('evalcrit-screen-title').textContent, casos: (new Function('return (' + leer + ')()'))(), siguiente: document.getElementById('evalCritFormaSel').value, marcada: (new Function('return (' + marc + ')'))()('evalCritFormaSel') };
-      }, [leerHoja.toString(), tocarForma.toString(), marcada.toString(), n]);
+        return { titulo: document.getElementById('evalcrit-screen-title').textContent, casos: (new Function('return (' + leer + ')()'))(), renglones: (new Function('return (' + renglones + ')()'))(), siguiente: document.getElementById('evalCritFormaSel').value, marcada: (new Function('return (' + marc + ')'))()('evalCritFormaSel') };
+      }, [leerHoja.toString(), leerRenglones.toString(), tocarForma.toString(), marcada.toString(), n]);
       if (!new RegExp('Forma ' + n + '\\b').test(h.titulo)) sinTitulo++;
       if (h.marcada !== n) otroCirculo++;
-      if (!h.casos.length) vacias++;
+      /* Lo que se compara entre formas: las cajas, o todos los renglones
+         en las de estructura propia. */
+      h.vista = sel.deAntes ? h.renglones : h.casos;
+      if (!h.vista.length) vacias++;
       hojas[n] = h;
     }
     if (sinTitulo || vacias) mal(sinTitulo + ' formas no dicen su número en el título y ' + vacias + ' salieron vacías');
     if (otroCirculo) mal('en ' + otroCirculo + ' formas el círculo marcado no es el de la forma generada');
     const conjuntos = new Map(), repetidas = [];
     Object.keys(hojas).forEach(n => {
-      const c = JSON.stringify(hojas[n].casos.slice().sort());
+      const c = JSON.stringify(hojas[n].vista.slice().sort());
       if (conjuntos.has(c)) repetidas.push('la ' + n + ' con la ' + conjuntos.get(c)); else conjuntos.set(c, n);
     });
     if (repetidas.length) mal('en la pantalla se repiten ' + repetidas.length + ' formas: ' + repetidas.slice(0, 5).join(', '));
