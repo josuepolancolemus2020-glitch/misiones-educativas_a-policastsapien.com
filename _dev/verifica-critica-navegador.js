@@ -170,7 +170,7 @@ const leerRenglones = () => document.getElementById('evalCritOut').innerText.spl
          otras palabras que la pantalla. */
       const fuertes = Array.from(document.querySelectorAll('#evalCritOut .crit-scenario, #evalCritOut .crit-compare-box, #evalCritOut .crit-ce-given'))
         .map(e => Array.from(e.querySelectorAll('strong, b')).map(x => x.textContent.replace(/\s+/g, ' ').trim()).filter(t => t.length >= 3 && !/^\d+\.$/.test(t)));
-      return { doc, casos: (new Function('return (' + leer + ')()'))(), delBanco: delBanco.filter(t => t.length >= 8), fuertes };
+      return { doc, casos: (new Function('return (' + leer + ')()'))(), delBanco: delBanco.filter(t => t.length >= 3), fuertes };
     }, [leerHoja.toString(), tocarForma.toString(), FORMA_IMPRESA]);
     if (!impresa.doc) mal('la Forma ' + FORMA_IMPRESA + ' no generó hoja para imprimir');
     else {
@@ -193,8 +193,13 @@ const leerRenglones = () => document.getElementById('evalCritOut').innerText.spl
       const sinEspacios = t => t.replace(/\s+/g, '');
       const faltan = impresa.casos.filter((c, i) => {
         if (texto.indexOf(sinEspacios(c).slice(0, 60)) >= 0) return false;
-        const suyos = impresa.delBanco.filter(b => c.indexOf(b) >= 0);
-        if (suyos.length) return !suyos.some(b => texto.indexOf(sinEspacios(b).slice(0, 60)) >= 0);
+        /* Palabra entera: «exporta», que es un dato de otro banco, no
+           cuenta por estar dentro de «exportación». */
+        const entera = b => { const i = c.indexOf(b); return i >= 0 && !/[\p{L}\p{N}]/u.test(c.charAt(i - 1)) && !/[\p{L}\p{N}]/u.test(c.charAt(i + b.length)); };
+        const suyos = impresa.delBanco.filter(entera);
+        /* Todos: una serie de palabras sueltas («lápiz · flores · ríos»)
+           está en el papel si están todas sus palabras. */
+        if (suyos.length) return !suyos.every(b => texto.indexOf(sinEspacios(b).slice(0, 60)) >= 0);
         /* Una caja sin texto de banco es un caso calculado: tienen que
            estar en el papel todos sus datos. */
         const datos = impresa.fuertes[i] || [];
