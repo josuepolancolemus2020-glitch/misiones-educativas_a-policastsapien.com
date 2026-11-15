@@ -38,14 +38,20 @@ de la misión.
 | `3ciclo-albores-singularidad` | **resuelta: 240** | 28 | — | — |
 | `3ciclo-escenarios-porvenir` | **resuelta: 240** | 28 | — | — |
 | `3ciclo-ia-generativa` | **resuelta: 240** | 28 | — | — |
-| `2y3ciclo-programando-robot` | 48 | 23 | 1 | 2 |
-| `basica-de-que-esta-hecho-el-mundo` | 8 | 27 | 2 | 3 |
-| `2y3ciclo-electricidad-robots` | 64 | 26 | 0 | 2 |
-| `basica-como-se-que-se` | 10 | 28 | 2 | 3 |
-| `basica-palabras-que-piensan` | 10 | 28 | 2 | 3 |
-| `2y3ciclo-historia-ia` | 12 | 29 | 2 | 3 |
-| `2y3ciclo-mayas-precolombinas` | 24 | 29 | 1 | 2 |
-| **Total** | | | **29** | **45** |
+| `2y3ciclo-programando-robot` | **resuelta: 288** | 27 | — | — |
+| `basica-de-que-esta-hecho-el-mundo` | **resuelta: 240** | 26 | — | — |
+| `2y3ciclo-electricidad-robots` | **resuelta: 384** | 30 | — | — |
+| `basica-como-se-que-se` | **resuelta: 300** | 29 | — | — |
+| `basica-palabras-que-piensan` | **resuelta: 300** | 29 | — | — |
+| `2y3ciclo-historia-ia` | **resuelta: 360** | 30 | — | — |
+| `2y3ciclo-mayas-precolombinas` | **resuelta: 288** | 29 | — | — |
+| **Total** | **las 13 resueltas** | | | |
+
+Las cifras de «distintas» de las misiones resueltas cuentan conjuntos de
+casos, sin el orden: es la misma cuenta que `_dev/formas-oro/_critica-pendiente.json`
+(`genera-formas-oro.js --pendiente-critica`). Donde no llegan a 30, las que
+se repiten chocan por azar: se arreglan con el reparto sin repetición, sin
+escribir contenido.
 
 El mínimo matemático deja varios apartados con un solo caso, que seguiría
 saliendo en las 50 formas. Al final de cada misión se anota cuáles son, por
@@ -248,7 +254,22 @@ Banco en `misiones/3ciclo-ia-generativa/js/ia-generativa.js` (línea 1503).
 - **Con holgura: 4 casos** (Causa +1, Efecto +3), da 240.
 - Seguirían con un solo caso: Decisión y Comparación.
 
-## 7. `2y3ciclo-programando-robot`
+## 7. `2y3ciclo-programando-robot` · resuelta
+
+**Resuelta el 15 de noviembre de 2026** con los casos de holgura que aprobó
+Josué: Qué le falta +2 (el robot que se detiene al primer paso porque falta REPITE, y
+el que se sale en la primera curva porque no revisa el sensor), con su par en
+`programando-robot-en.js`.
+Ahora son **288 conjuntos** (6 × 2 × 4 × 2 × 3) y las formas 1 a 30 dan **27 distintas**
+(antes 23, contando conjuntos). No cambió cuántos casos saca cada apartado ni
+el generador; las formas conceptual y operativa congeladas siguen idénticas.
+
+Un retoque para no dejar pistas cruzadas (`_dev/verifica-examen-sin-pistas.js`):
+en el caso del REPITE, «se detiene después de un solo paso» pasa a «se
+detiene al primer paso» (y en inglés, «stops after a single step» a «stops at
+the first step»), porque la pauta del contador dice «después de RECOGE».
+
+Lo que había antes:
 
 Banco en `misiones/2y3ciclo-programando-robot/js/programando-robot.js` (línea 987).
 
@@ -265,7 +286,18 @@ Banco en `misiones/2y3ciclo-programando-robot/js/programando-robot.js` (línea 9
 - **Con holgura: 2 casos** (Qué le falta +2), da 288.
 - Es bilingüe: cada caso nuevo necesita su par en `programando-robot-en.js`.
 
-## 8. `basica-de-que-esta-hecho-el-mundo`
+## 8. `basica-de-que-esta-hecho-el-mundo` · resuelta
+
+**Resuelta el 15 de noviembre de 2026** con los casos de holgura que aprobó
+Josué: Causa +1 (el agua de la quebrada nunca es la misma) y Efecto +2 (el machete
+del abuelo con cabo y hoja nuevos, el ternero que creció). Salen de lo que ya
+enseña `js/data/filosofia-mundo.js`: Heráclito y el machete al que le
+cambian el mango.
+Ahora son **240 conjuntos** (4 × 2 × 3 × 10) y las formas 1 a 30 dan **26 distintas**
+(antes 8, contando conjuntos). No cambió cuántos casos saca cada apartado ni
+el generador; las formas conceptual y operativa congeladas siguen idénticas.
+
+Lo que había antes:
 
 Banco en `misiones/basica-de-que-esta-hecho-el-mundo/js/de-que-esta-hecho-el-mundo.js` (línea 1152).
 
@@ -285,7 +317,18 @@ Banco en `misiones/basica-de-que-esta-hecho-el-mundo/js/de-que-esta-hecho-el-mun
 - Los datos de esta misión viven en `js/data/filosofia-mundo.js` y su ficha se
   arma con `_dev/arma-ficha-mundo.js`: un caso nuevo tiene que salir de ahí.
 
-## 9. `2y3ciclo-electricidad-robots`
+## 9. `2y3ciclo-electricidad-robots` · resuelta
+
+**Resuelta el 15 de noviembre de 2026** con los casos de holgura que aprobó
+Josué: Diagnóstico +1 (el timbre que suena cada día más débil: la pila) y
+Comparación +1 (la pila frente al tomacorriente), con su par en
+`electricidad-robots-en.js`. Ya no queda ningún apartado que salga igual en
+todas las formas.
+Ahora son **384 conjuntos** (3 × 4 × 4 × 2 × 4) y las formas 1 a 30 dan **30 distintas**
+(antes 22, contando conjuntos). No cambió cuántos casos saca cada apartado ni
+el generador; las formas conceptual y operativa congeladas siguen idénticas.
+
+Lo que había antes:
 
 Banco en `misiones/2y3ciclo-electricidad-robots/js/electricidad-robots.js` (línea 852).
 
@@ -305,7 +348,16 @@ Banco en `misiones/2y3ciclo-electricidad-robots/js/electricidad-robots.js` (lín
   quita los dos apartados que hoy salen iguales en todas las formas.
 - Es bilingüe: cada caso nuevo necesita su par en `electricidad-robots-en.js`.
 
-## 10. `basica-como-se-que-se`
+## 10. `basica-como-se-que-se` · resuelta
+
+**Resuelta el 15 de noviembre de 2026** con los casos de holgura que aprobó
+Josué: Causa +1 (lo que otro cuenta pasa por su memoria) y Efecto +2 (los vecinos que
+miden el solar con cinta, la niña que sabe que 7 + 5 son 12 razonando).
+Ahora son **300 conjuntos** (5 × 2 × 3 × 10) y las formas 1 a 30 dan **29 distintas**
+(antes 10, contando conjuntos). No cambió cuántos casos saca cada apartado ni
+el generador; las formas conceptual y operativa congeladas siguen idénticas.
+
+Lo que había antes:
 
 Banco en `misiones/basica-como-se-que-se/js/como-se-que-se.js` (línea 1154).
 
@@ -324,7 +376,16 @@ Banco en `misiones/basica-como-se-que-se/js/como-se-que-se.js` (línea 1154).
 - Seguirían con un solo caso: Error y Decisión.
 - Datos en `js/data/filosofia-saber.js`; ficha armada con `_dev/arma-ficha-saber.js`.
 
-## 11. `basica-palabras-que-piensan`
+## 11. `basica-palabras-que-piensan` · resuelta
+
+**Resuelta el 15 de noviembre de 2026** con los casos de holgura que aprobó
+Josué: Causa +1 (la definición demasiado ancha) y Efecto +2 (la banca del parque y el
+banco del centro, la noticia que llama «invasores» a unas familias).
+Ahora son **300 conjuntos** (5 × 2 × 3 × 10) y las formas 1 a 30 dan **29 distintas**
+(antes 10, contando conjuntos). No cambió cuántos casos saca cada apartado ni
+el generador; las formas conceptual y operativa congeladas siguen idénticas.
+
+Lo que había antes:
 
 Banco en `misiones/basica-palabras-que-piensan/js/palabras-que-piensan.js` (línea 1248).
 
@@ -343,7 +404,21 @@ Banco en `misiones/basica-palabras-que-piensan/js/palabras-que-piensan.js` (lín
 - Seguirían con un solo caso: Decisión y Comparación.
 - Datos en `js/data/filosofia-lenguaje.js`; ficha armada con `_dev/arma-ficha-lenguaje.js`.
 
-## 12. `2y3ciclo-historia-ia`
+## 12. `2y3ciclo-historia-ia` · resuelta
+
+**Resuelta el 15 de noviembre de 2026** con los casos de holgura que aprobó
+Josué: Causa +1 (el invierno de los años setenta) y Efecto +2 (el programa de damas de
+1959, el transformador de 2017). Los tres hitos están en `js/data/ia-historia.js`.
+Ahora son **360 conjuntos** (2 × 2 × 3 × 3 × 10) y las formas 1 a 30 dan **30 distintas**
+(antes 12, contando conjuntos). No cambió cuántos casos saca cada apartado ni
+el generador; las formas conceptual y operativa congeladas siguen idénticas.
+
+Un retoque para no dejar pistas cruzadas (`_dev/verifica-examen-sin-pistas.js`):
+en la pauta de las damas, «Arthur Samuel le puso nombre a eso: aprendizaje de
+máquina» pasa a «Arthur Samuel lo llamó aprendizaje de máquina», porque la
+causa de Dartmouth dice «le puso nombre».
+
+Lo que había antes:
 
 Banco en `misiones/2y3ciclo-historia-ia/js/historia-ia.js` (línea 1686).
 
@@ -363,7 +438,22 @@ Banco en `misiones/2y3ciclo-historia-ia/js/historia-ia.js` (línea 1686).
 - Las fechas de esta misión viven en `js/data/ia-historia.js`. Un caso nuevo
   solo puede usar hitos que ya están ahí.
 
-## 13. `2y3ciclo-mayas-precolombinas`
+## 13. `2y3ciclo-mayas-precolombinas` · resuelta
+
+**Resuelta el 15 de noviembre de 2026** con los casos de holgura que aprobó
+Josué: Causa +1 (el cacao, de donde nos viene el chocolate) y Efecto +1 (los glifos
+de las gradas de Copán).
+Ahora son **288 conjuntos** (4 × 3 × 2 × 3 × 4) y las formas 1 a 30 dan **29 distintas**
+(antes 19, contando conjuntos). No cambió cuántos casos saca cada apartado ni
+el generador; las formas conceptual y operativa congeladas siguen idénticas.
+
+Un retoque para no dejar pistas cruzadas (`_dev/verifica-examen-sin-pistas.js`):
+el efecto «En Copán hay una escalinata con miles de glifos tallados en sus
+gradas» pasa a «En Copán hay unas gradas de piedra con miles de glifos»,
+porque la comparación pide reconocer la Escalinata Jeroglífica de Copán y el
+caso le dejaba escrito el nombre.
+
+Lo que había antes:
 
 Banco en `misiones/2y3ciclo-mayas-precolombinas/js/mayas-precolombinas.js` (línea 808).
 

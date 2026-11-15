@@ -549,7 +549,9 @@
 
       critFaltaBank: [
         {k:'cr-contador',txt:'The robot picks up bottles in the yard, but in the end it always says it collected 0 objects. Program: REPEAT: IF there is an object THEN PICK IT UP.',ans:'Raising the counter is missing: after PICK IT UP you have to write «objects = objects + 1». Without that instruction the variable never changes.'},
-        {k:'cr-regador',txt:'The watering robot opens the water and never closes it again: the garden floods. Program: IF the soil is dry THEN OPEN THE VALVE.',ans:'The ELSE branch is missing: IF the soil is dry THEN OPEN THE VALVE, ELSE CLOSE THE VALVE. Every conditional must also say what to do when the answer is NO.'}
+        {k:'cr-regador',txt:'The watering robot opens the water and never closes it again: the garden floods. Program: IF the soil is dry THEN OPEN THE VALVE.',ans:'The ELSE branch is missing: IF the soil is dry THEN OPEN THE VALVE, ELSE CLOSE THE VALVE. Every conditional must also say what to do when the answer is NO.'},
+        {k:'cr-repite',txt:'The robot must move forward up to the wall, but it stops at the first step. Program: FORWARD 1.',ans:'The loop is missing: REPEAT UNTIL it touches the wall: FORWARD 1. Without REPEAT, the instruction runs only once.'},
+        {k:'cr-sensor',txt:'The robot that follows the black line goes off it at the first curve. Program: REPEAT: FORWARD.',ans:'Checking the sensor is missing: REPEAT: IF the sensor sees the line THEN FORWARD, ELSE TURN until it finds it. Without the condition, the robot never notices that the line turned.'}
       ],
 
       critErrorBank: [

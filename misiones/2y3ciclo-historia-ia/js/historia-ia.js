@@ -527,11 +527,14 @@ const critCompareBank=[
 const critCauseBank=[
   {k:'ca-dartmouth',cause:'En 1956 un grupo se reunió en Dartmouth y le puso nombre.',guide:'Por eso ese año se pregunta en los exámenes.'},
   {k:'ca-tarjetas',cause:'Las tarjetas gráficas de los videojuegos servían para entrenar redes.',guide:'Por eso en 2012 se entrenó con un millón de fotos.'},
+  {k:'ca-invierno',cause:'En los años setenta no llegaron la traducción automática ni las máquinas que razonan que se habían prometido.',guide:'Por eso se cortó el dinero, cerraron laboratorios y a esa época se le llama invierno.'},
 ];
 const critEffectBank=[
   {k:'ef-voz',effect:'Hoy cuesta saber si una voz o un video son de verdad.',guide:'Porque desde 2023 los modelos también trabajan con imagen, voz y video, e imitan una voz con pocos segundos.'},
   {k:'ef-alphago',effect:'AlphaGo hizo una jugada que sorprendió a los expertos.',guide:'Porque aprendió jugando millones de partidas contra sí mismo, no copiando a nadie.'},
   {k:'ef-tareas',effect:'Un maestro corrige textos que no sabe de dónde salen.',guide:'Porque, desde que el chat llegó al público, entró en las tareas escolares.'},
+  {k:'ef-damas',effect:'En 1959 un programa de damas llegó a ganarle a quien lo escribió.',guide:'Porque mejoraba jugando. Arthur Samuel lo llamó aprendizaje de máquina.'},
+  {k:'ef-transformador',effect:'Los chats de hoy se pudieron entrenar con muchísimo texto.',guide:'Porque en 2017 se presentó el transformador, una manera de armar redes de texto que se entrenan más rápido.'},
 ];
 function genEvalCrit(){
   sfx('click');

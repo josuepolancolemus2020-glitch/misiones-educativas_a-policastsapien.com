@@ -611,11 +611,14 @@ const critCompareBank=[
 const critCauseBank=[
   {k:'ca-ortega',cause:'Cada palabra arrastra la vida de quien la usa.',guide:'Por eso dos personas usan la misma palabra y no dicen lo mismo, y conviene preguntar qué quiere decir el otro.'},
   {k:'ca-russell',cause:'Una frase puede estar bien escrita y no decir nada claro.',guide:'Por eso hay que pedir que se aclare antes de ponerse a discutirla.'},
+  {k:'ca-ancha',cause:'Una definición demasiado ancha deja entrar cosas que no son.',guide:'Por eso, si decimos que una silla es «algo para sentarse», entra también una piedra.'},
 ];
 const critEffectBank=[
   {k:'ef-ironia',effect:'Alguien lee «¡Qué buena idea!» en un mensaje y no sabe si lo están felicitando.',guide:'Porque por escrito no se ve la cara, y la ironía suena a elogio y dice lo contrario.'},
   {k:'ef-seis',effect:'Una visita se queda hasta tarde aunque le dijeron «ya son las seis».',guide:'Porque tomó la frase como un dato y no vio que le estaban pidiendo que se fuera.'},
   {k:'ef-nombre',effect:'Dos libros cuentan el mismo hecho con nombres distintos, y los que leen cada uno salen pensando cosas distintas.',guide:'Porque quien le pone el nombre a un hecho ya contó la historia. Se arregla mirando el hecho con los dos nombres.'},
+  {k:'ef-banco',effect:'Pedro espera en la banca del parque y Ana en el banco del centro, y no se encuentran.',guide:'Porque «te espero en el banco» tiene dos sentidos y nadie preguntó cuál.'},
+  {k:'ef-juzga',effect:'Una noticia llama «invasores» a unas familias y la gente se enoja antes de saber qué pasó.',guide:'Porque el nombre ya juzga: decide por el lector antes de contar los hechos.'},
 ];
 function genEvalCrit(){
   sfx('click');
