@@ -39,50 +39,77 @@ docente escribe ─▶ metas.pagos (una fila) ─┬─▶ metas.vf_colectas ─
 ### Quién es el padre para la base
 
 1. `padres.html` abre una **sesión anónima** de Supabase Auth
-   (`signInAnonymously`). El padre no crea cuenta: escribe la clave de la tira,
-   como hoy.
-2. `metas.familia_vincular(clave)` guarda el vínculo sesión ↔ familia en
-   `metas.familia_accesos`, con freno de intentos. Varios hijos = varias claves.
-3. Cada lectura comprueba, en la base: vínculo vigente, familia activa,
-   **la misma clave** con la que se vinculó y alumno activo. Si el docente le
-   cambia la clave a una familia (tira perdida), los teléfonos vinculados con la
-   clave vieja dejan de ver al instante.
+   (`signInAnonymously`) con **CAPTCHA Turnstile obligatorio**. El padre no
+   crea cuenta: escribe la clave de la tira, como hoy.
+2. La función de borde `familia-vincular` comprueba **otro token Turnstile en
+   cada intento**, toma la IP que añadió la infraestructura (nunca una cabecera
+   escrita por el cliente) y llama a `metas.familia_vincular`, que **solo
+   puede llamar el servidor**. Guarda el vínculo sesión ↔ familia en
+   `metas.familia_accesos`, con frenos por sesión, por IP y un tope global de
+   claves equivocadas. Varios hijos = varias claves.
+3. Cada lectura comprueba, en la base: sesión anónima, vínculo vigente,
+   familia activa con **la misma clave** con la que se vinculó y alumno
+   activo. Las claves no cambian; si una tira se pierde, el docente
+   **reemplaza** la familia (clave nueva) y los teléfonos vinculados con la
+   vieja dejan de ver al instante.
 
-### RLS: cada padre solo ve a sus hijos
+### RLS: cada padre solo ve a sus hijos, y no puede escribir nada
 
 - Las vistas `metas.vf_*` pertenecen al rol `metas_lector_familias`, que **no**
   salta la RLS. Ese rol tiene políticas de solo `SELECT` en cada tabla, que
   dejan pasar únicamente filas de los alumnos vinculados a `auth.uid()`.
 - Ese rol tiene permiso solo sobre **columnas** que una familia puede ver: nada
-  de número de identidad, teléfono, aparato, autor, ni la nota interna del pago.
-- La sesión del padre (`authenticated`, anónima) no tiene ninguna política
-  sobre las tablas de `metas`: si las consulta directo, recibe 0 filas. Solo
-  tiene `SELECT` sobre las vistas `vf_*`.
-- **No puede escribir**: no hay `INSERT`, `UPDATE` ni `DELETE` para él en
-  ninguna tabla ni vista. Las únicas funciones que puede llamar son vincular y
-  desvincular su propio teléfono.
+  de número de identidad, teléfono, aparato, autor, nota interna del pago ni
+  motivo de anulación. Necesita `CREATE` en el esquema solo para quedarse con
+  las vistas; se le quita en el mismo archivo.
+- La sesión del padre usa el rol `authenticated`, **el mismo que los
+  docentes**. Por eso cada tabla del docente tiene además una política
+  **restrictiva** que exige una cuenta de docente vinculada
+  (`metas.es_docente()`), y el primer disparador de cada tabla lo vuelve a
+  exigir antes de tocar nada. Con eso, una sesión anónima:
+  - **no lee** ninguna tabla directa (0 filas);
+  - **no puede crear** aulas, alumnos, familias, pagos ni nada (error `42501`);
+  - **no puede averiguar si una clave existe** insertando una familia: el
+    error es el mismo exista o no la clave, porque el rechazo ocurre antes de
+    llegar al índice único;
+  - no puede llamar a las funciones de dinero ni de alta de alumnos (exigen
+    `es_docente()`).
+- Solo tiene `SELECT` sobre las vistas `vf_*` y sobre su propio vínculo. Lo
+  único que escribe, y siempre por funciones del servidor: su vínculo (por
+  `familia-vincular`), quitar un hijo de su teléfono y el «visto» de un aviso.
 
 ### Las vistas
 
 | vista | qué trae | reemplaza |
 |---|---|---|
 | `vf_hijos` | primer nombre, grado, sección, escuela, nombre del docente (sin su código) | la cabecera del chatbot |
-| `vf_colectas` | por colecta: sugerido, pagado, falta, situación (`debe`, `abono`, `pagado`, `no_corresponde`), fecha del pago, **número de recibo** del pago, recibo anterior si lo hay, y fecha de corrección | `registro_admin` tipo `economia` + recibos `AVR` |
-| `vf_cuentas_claras` | lo gastado de cada colecta del aula, con su detalle | comunicados `AVC` |
+| `vf_colectas` | por colecta, lo de **su** hijo: lo que le corresponde (0 si está exento; menos si la exención es parcial), lo pagado (suma de abonos), lo que falta (**0 si está exento**), pago de más, situación | `registro_admin` tipo `economia` |
+| `vf_pagos` | cada pago o abono de su hijo con su **número de recibo**, fecha, recibo anterior y, si corrige otro, «corrige al recibo RC-…» | recibos `AVR` |
+| `metas.familia_totales_colectas()` | **solo el total** recaudado, gastado y saldo de cada colecta del aula. Nunca los pagos de otros alumnos | — |
+| `vf_cuentas_claras` | el detalle de lo gastado de cada colecta del aula | comunicados `AVC` |
 | `vf_notas`, `vf_personalidad` | notas por asignatura y parcial, rasgos | `registro_admin` tipo `nota_final` |
 | `vf_asistencia` | ausencias, excusas y tardanzas | `registro_admin` tipo `asistencia` |
-| `vf_avisos`, `vf_observaciones`, `vf_preguntas` | avisos vigentes, conducta visible para la familia, preguntas frecuentes | `mensajes_docente` |
-| `vf_plan_accion` | resultados enviados del plan de acción | `plan_accion` |
+| `vf_avisos` | avisos de toda el aula y los **individuales** dirigidos a su hijo (se decide por `tipo = 'individual'`, no por si hay destinatarios) | `mensajes_docente` |
+| `vf_observaciones` | **solo** llamados, faltas leves y felicitaciones que el docente marcó para la familia y que no han vencido. El **expediente nunca** (la base no deja marcarlo para la familia) | conducta en `mensajes_docente` |
+| `vf_preguntas`, `vf_plan_accion` | preguntas frecuentes activas; resultados **enviados** del plan de acción | `mensajes_docente`, `plan_accion` |
 
 El recibo **es** el pago: su número (`pagos.recibo`, por ejemplo
-`RC-27-K7Q-0001`) lo pone la base al crear la fila, es único en todo el
-sistema y no cambia nunca. Hoy el folio se arma con el número de lista
-(`adReciboFolio`, `js/tools/registros-admin.js:4262`: `'RC-' + 4 del id de la
-colecta + '-' + num`), así que reordenar la lista cambiaba el folio. Si el
-docente corrige el monto, el recibo conserva su número y muestra el monto
-nuevo con la leyenda «corregido el …»; si lo borra, el recibo desaparece. No
-hay un recibo guardado aparte que pueda contradecir al pago. El número del
-sistema viejo, si el docente lo copió, se muestra como «Recibo anterior».
+`RC-27-K7QM-0001`) lo pone la base, es único en todo el sistema y no cambia
+nunca. Hoy el folio se arma con el número de lista (`adReciboFolio`,
+`js/tools/registros-admin.js:4262`: `'RC-' + 4 del id de la colecta + '-' +
+num`), así que reordenar la lista cambiaba el folio. El **monto** de un pago
+tampoco cambia: si el docente lo corrige, el recibo viejo queda **anulado** y
+desaparece de la vista del padre, y aparece uno **nuevo** con «corrige al
+recibo RC-…». Si lo anula, desaparece. El número del sistema viejo, si el
+docente lo copió, se muestra como «Recibo anterior».
+
+### «Visto» de los avisos
+
+Tabla nueva `metas.avisos_vistos` (una fila por aviso y familia). La familia
+la escribe **solo** con `metas.familia_marcar_visto(aviso)`, que comprueba que
+ese aviso le llega a uno de sus hijos. El docente la lee con su RLS
+(`v_avisos_vistos`: cuántas familias vieron cada aviso). Nadie la edita ni la
+borra.
 
 ### «De inmediato»
 
@@ -95,7 +122,7 @@ abrir, al volver a la pestaña y al recuperar la señal.
 
 «De inmediato» empieza cuando el cambio **llega a Supabase**. Si el docente lo
 hizo sin señal, el padre ve lo de antes hasta que la cola del docente lo envía
-(sección 3.6). Nunca ve una mezcla.
+(sección 3.7). Nunca ve una mezcla.
 
 ### Sin copias en el teléfono del padre
 
@@ -121,21 +148,34 @@ hizo sin señal, el padre ve lo de antes hasta que la cola del docente lo envía
 | caché `METAS_PADRE_CACHE_V1`, `_cacheTodo`, `cacheLoad`, `cacheSave`, `_desdeCache` | `padres.html:223`, `:299-318` |
 | las tres llamadas `metas_consultar_*_padre` | `padres.html:543-545`, `js/app.js:1436` |
 | reconocer recibos por el título (`esRecibo`, `reciboFolio`) | `padres.html:941-950` (el folio viene de la vista) |
-| funciones SQL `metas_consultar_admin_padre`, `metas_consultar_avisos_padre`, `metas_consultar_plan_padre`, `metas_guardar_admin`, `metas_guardar_avisos`, `metas_guardar_plan`, `metas_cerrar_familias`, `metas_buzon_docente` | se congelan (ver `SUPABASE-V2-CONGELAR.sql`) |
+| funciones SQL de **escritura** del chatbot viejo (`metas_guardar_admin`, `metas_guardar_avisos`, `metas_guardar_plan`, `metas_cerrar_familias`) | se congelan con su corte (pasos 1 y 2 de `SUPABASE-V2-CONGELAR.sql`) |
+| funciones SQL de **lectura** de padres (`metas_consultar_admin_padre`, `metas_consultar_avisos_padre`, `metas_consultar_plan_padre`) y el buzón viejo del docente (`metas_buzon_docente`, `metas_avisos_vistos`) | **siguen abiertas** hasta que la última aula esté en la base nueva y el buzón tenga reemplazo (paso 4) |
 
 Lo que **se queda** igual: el buzón de mensajes y excusas que escriben los
 padres (`metas_mensaje_padre`, `mensajes_padre`) y el aviso de visto. Son datos
 **del padre**, no del docente. La excusa aceptada por el docente sí pasa a ser
 una fila: `metas.asistencia` con `estado = 'excusa'` y su `justificacion`.
 
-## 7.4 Pendiente de tu decisión
+## 7.4 Transición aula por aula (decidido)
 
-1. **Activar inicios de sesión anónimos** en Supabase Auth (y, recomendado, el
-   CAPTCHA de Turnstile para que nadie cree sesiones anónimas en masa).
-2. **¿Las familias ven lo recaudado del grado?** Hoy «cuentas claras» muestra
-   lo gastado; lo recaudado se mostraría solo como una suma, nunca quién pagó.
-3. **Transición del chatbot**: mientras el docente no cargue su aula en la base
-   nueva, sus familias no verían nada en el portal nuevo. Opciones: (a) el
-   portal nuevo se activa por aula cuando esta tiene al menos un alumno con
-   familia; antes, se sigue leyendo lo congelado (solo lectura, sin caché);
-   (b) corte el mismo día para todos.
+El portal nuevo no espera a que todos los docentes carguen su aula:
+
+1. El padre escribe su clave. `familia-vincular` la busca en la base nueva.
+2. Si está (el docente ya cargó el aula con esa clave conservada), el padre
+   queda vinculado y lee **solo** las vistas `vf_*`.
+3. Si no está, el portal consulta las funciones de lectura viejas (que siguen
+   abiertas hasta el paso 4) y muestra lo que encuentre como **«Datos guardados hasta el
+   <fecha del corte 1>»**, sin caché y sin mezclarlo con nada nuevo. Esos datos
+   ya no cambian: el archivo está congelado.
+4. Cuando la última aula esté cargada (la consulta de soporte del paso 4 da 0
+   claves sin migrar), se cierran las lecturas viejas.
+
+Para que la clave de la familia siga sirviendo, el docente la escribe en la
+carga rápida (se acepta solo si estaba en **sus** datos anteriores).
+
+## 7.5 Decisiones tomadas en la revisión 2
+
+- Sesiones anónimas activadas, con **CAPTCHA Turnstile obligatorio**.
+- Las familias ven **solo el total recaudado** de cada colecta
+  (`familia_totales_colectas`), nunca los pagos de otros alumnos.
+- «Visto» de avisos en tabla nueva, escrita solo por función del servidor.

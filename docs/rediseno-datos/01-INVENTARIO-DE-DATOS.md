@@ -48,10 +48,10 @@ sin tocar ninguna otra tabla.
 | `boleta.sugerirIVAuth`, `autoRecI…` y otras banderas | preferencias del aula | `aulas.ajustes` (jsonb) | |
 | `logo`, `logoSec` (base64) | logos de la boleta | Storage `metas-imagenes` + `aulas.logo_path` | |
 | `materias:['Español',…]` | asignaturas | `asignaturas` (con id: renombrar no mueve notas) | aula + nombre |
-| `lista[]`: `num, nombre, idn, sexo, fnac, estado, estadoF, sace, saceNum, edadSace, noCopiarSace, alta, uid` | alumno | `alumnos` (`identidad` normalizada + `documento_pais` + `documento_tipo`: acepta documentos extranjeros) | aula + país + identidad; aula + nombre completo |
+| `lista[]`: `num, nombre, idn, sexo, fnac, estado, estadoF, sace, saceNum, edadSace, noCopiarSace, alta, uid` | alumno | `alumnos` (`identidad` normalizada + `documento_pais` + `documento_tipo`: acepta documentos extranjeros; `estado` suma `retirado`) | aula + país + identidad (**única regla dura**); el nombre repetido es solo aviso |
 | `lista[].prueba` | marca de alumno de prueba | se descarta (la base nueva empieza vacía, sin datos de prueba) | |
 | `lista[].{tel, enc, encId, encTel}` | contacto y encargado | `familias` | una por alumno |
-| `lista[].clave` y `METAS_CODIGOS_V1['G:id'][num]` | clave de familia | `familias.clave` | única en todo el sistema |
+| `lista[].clave` y `METAS_CODIGOS_V1['G:id'][num]` | clave de familia | `familias.clave`, puesta por la base: nueva de 10 símbolos, o la ya entregada **solo si está en los datos congelados de ese docente** | única en todo el sistema |
 | `notas[p][materia][num]` (1 a 100) | nota SACE del parcial | `notas` (`componente = 'final'`) | alumno + asignatura + periodo + componente |
 | `notas[p][rasgo][num]` (S/MB/B) | personalidad | `notas_personalidad` | alumno + periodo + rasgo |
 | `notas[p]['Inasistencias'][num]` | inasistencias del parcial para el SACE | `inasistencias_oficiales` (solo si el docente escribe un número distinto del contado) | alumno + periodo |
@@ -61,14 +61,14 @@ sin tocar ninguna otra tabla.
 | `asistencia[].aus[num] = 'A'/'E'` | ausente / con excusa | `asistencia` (`estado`) | alumno + fecha |
 | excusa aceptada desde el buzón (hoy solo cambia `'A'` por `'E'` y **pierde el motivo**) | justificación | `asistencia.justificacion` (misma fila) | |
 | `colectas[]`: `id, concepto, montoAlumno, fecha` | colecta | `colectas` | |
-| `colectas[].pagos[num]` + `pagosF[num]` | lo que dio cada alumno y cuándo | `pagos` | colecta + alumno |
-| folio del recibo, hoy **calculado con el número de lista** (`adReciboFolio`, `registros-admin.js:4262`: `RC-<4 del id de la colecta>-<num>`) | número de recibo | `pagos.recibo`: lo pone la base, único en todo el sistema e inmutable (`RC-27-K7Q-0001`); `pagos.recibo_anterior` guarda el viejo si el docente lo copia | recibo |
-| `colectas[].noCuentan[num]` | a quién no le corresponde | `colecta_exenciones` | colecta + alumno |
-| `colectas[].gastos[]`: `id, d, m, f` | gasto de la colecta | `gastos` (`tipo = 'colecta'`) | |
+| `colectas[].pagos[num]` + `pagosF[num]` | lo que dio cada alumno y cuándo (hoy UN monto que se sobrescribe con cada abono) | `pagos`: **una fila por pago o abono**, cada una con su recibo; monto inmutable (corregir = anular + reemplazo) | ninguna: un alumno puede tener varios pagos en una colecta |
+| folio del recibo, hoy **calculado con el número de lista** (`adReciboFolio`, `registros-admin.js:4262`: `RC-<4 del id de la colecta>-<num>`) | número de recibo | `pagos.recibo`: lo pone la base, único en todo el sistema e inmutable (`RC-27-K7QM-0001`); `pagos.recibo_anterior` guarda el viejo si el docente lo copia | recibo |
+| `colectas[].noCuentan[num]` | a quién no le corresponde | `colecta_exenciones` (con `monto_aplicable` opcional para exenciones parciales) | colecta + alumno |
+| `colectas[].gastos[]`: `id, d, m, f` | gasto de la colecta | `gastos` (solo gastos de colecta) | |
 | `colectas[].quitados`, `gastosQuitados`, `esperados` | marcas de la fusión y la reposición | **se eliminan**: borrar es `deleted_at`, y los esperados se calculan | |
-| `st.gastos[]`: `fecha, cat, concepto, monto, cobrarA, factura, escuela, estado, fechaCobro` | gasto de bolsillo | `gastos` (`tipo = 'bolsillo'`) | |
-| `st.inventario[]` | inventario | `inventario` | |
-| `st.invActas[]` | acta firmada de entrega | `inventario_actas` (el acta fija lo entregado: es un documento) | |
+| `st.gastos[]`: `fecha, cat, concepto, monto, cobrarA, factura, escuela, estado, fechaCobro` | gasto del docente que se cobra después (hoy con un estado escrito a mano y **una sola** fecha de cobro) | `gastos_docente` (fecha, tipo, concepto, a quién se cobra, si tiene recibo, monto, escuela) + `reembolsos` (**una fila por cada reembolso**, con su fecha y monto inmutable). El estado, lo que falta y los días de espera **se calculan** | |
+| `st.inventario[]`: `fecha, nombre, dueno ('mio'/'escuela'/'donado'), cat, cant, valor, nota, donante, factura, escuela, pagadoPor, fechaPago` | bien del aula | `bienes` (fecha desde, cantidad, descripción, nota, tipo, si tiene recibo, valor, propietario `docente`/`centro` —este último bajo custodia del docente—, origen, donante). Si el centro le reembolsa un bien al docente: `reembolso_fecha` y pasa a `centro` en la **misma fila**; su historia queda en la auditoría (`v_bien_historia`) | |
+| `st.invActas[]`: `t, fecha, quien, nMio, nEsc, vMio` (las últimas 12) | acta de inventario | `actas_inventario`: **versiones fechadas** y numeradas por centro (la primera al empezar, las siguientes cada 3 meses); la foto de los bienes la toma el servidor; un acta no se edita (se anula y se reemplaza) | centro + número |
 | `controles[]`: `id, icono, nombre, tipo, fecha, fam, acum, misionId, verbo` | control o registro | `controles` | |
 | `controles[].datos[num]` | marca, número o texto por alumno | `control_valores` | control + alumno |
 | `acumulativos[]`: `id, titulo, icono, materia, parcial, fecha, tipo, calculo, criterios` | evaluación acumulativa | `evaluaciones` (criterios = definición en jsonb) | |
@@ -137,9 +137,10 @@ leen el grupo entero (`adLoad()`) y calculan.
 
 | resultado | se calcula desde | dónde |
 |---|---|---|
-| total recaudado, gastado, saldo, meta, cuántos pagaron | `pagos`, `gastos`, `colectas`, `colecta_exenciones`, `alumnos` | `v_colectas_resumen` |
-| situación de cada alumno en una colecta (`debe`, `abono`, `pagado`, `no_corresponde`) y cuánto le falta | `pagos`, `colectas`, `colecta_exenciones` | `v_colecta_alumnos` |
-| lo que hay por cobrar de los gastos de bolsillo | `gastos` | `v_gastos_bolsillo` |
+| total recaudado, gastado, saldo, meta, **falta total** (suma de lo que le falta a cada alumno que sigue y no está exento), pago de más, cuántos pagaron | `pagos`, `gastos`, `colectas`, `colecta_exenciones`, `alumnos` | `v_colectas_resumen` |
+| por alumno: lo que le corresponde (sugerido; 0 si exento; `monto_aplicable` si exento parcial; 0 si ya no está), lo pagado (suma de abonos), lo que falta (**0 si está exento**, nunca negativo), pago de más, situación | `pagos`, `colectas`, `colecta_exenciones`, `alumnos` | `v_colecta_alumnos` |
+| gastos del docente: reembolsado, lo que falta, **estado** (por cobrar, reembolsado parcial o total) y **días de espera**; totales por a quién se cobra | `gastos_docente`, `reembolsos` | `v_gastos_docente`, `v_gastos_docente_resumen` |
+| inventario: renglones, unidades y valor por centro y propietario; cuándo toca la próxima acta | `bienes`, `actas_inventario` | `v_inventario_resumen`, `v_proxima_acta` |
 | ausencias, excusas y tardanzas por parcial; número para el SACE | `asistencia`, `periodos`, `inasistencias_oficiales` | `v_inasistencias_periodo` |
 | promedio anual, parciales con nota, recuperación | `notas` | `v_notas_alumno` |
 | resultado de cada acumulativo | `evaluacion_puntos`, `evaluaciones.criterios` | `v_evaluacion_resultado` |

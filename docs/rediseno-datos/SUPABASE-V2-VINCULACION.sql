@@ -72,10 +72,25 @@ grant execute on function metas.cuenta_de(text) to service_role;
 -- 4. Edge Functions: desplegar metas-entrar (boceto en 02-CUENTAS-Y-SEGURIDAD.md).
 -- 5. API → Exposed schemas: añadir «metas».
 --
--- ── Cómo deshacerlo sin tocar a nadie ───────────────────────────────────────
--- Borrar las filas de metas.cuentas y los usuarios de Auth con correo
--- @cuentas.metas.policastsapien.com. public.docentes queda como estaba, y el
--- docente sigue entrando a la app vieja igual.
+-- ── Cómo deshacerlo ─────────────────────────────────────────────────────────
+-- ⚠️ SOLO es seguro ANTES de que ese docente cree datos en la base nueva.
+-- Toda fila de metas guarda owner = auth_uid de su usuario de Auth. Si se
+-- borra el usuario y luego se vuelve a vincular, nace OTRO auth_uid y el
+-- docente deja de ver sus filas (siguen en la base, pero ya no son «suyas»).
+-- Antes de crear datos: borrar la fila de metas.cuentas y el usuario de Auth
+-- con correo @cuentas.metas.policastsapien.com. public.docentes queda como
+-- estaba, y el docente sigue entrando a la app vieja igual.
+-- Después de crear datos: NO se deshace; si hiciera falta, se mueve el vínculo
+-- (no el usuario) con soporte y un plan aparte.
+--
+-- ── Cerrar las otras sesiones al cambiar la contraseña ─────────────────────
+-- La función de borde «metas-salir-todos» (admin.auth.admin.signOut(uid,
+-- 'others')) se llama:
+--   · desde la app, después de metas_cambiar_clave_docente;
+--   · desde la función de borde «reset-clave», después de que
+--     metas_reset_confirmar dice ok (recuperación por correo): ahí se cierran
+--     TODAS las sesiones de ese docente ('global'), porque quien recupera la
+--     contraseña puede ser justo quien la perdió con un teléfono robado.
 --
 -- ── Comprobación ────────────────────────────────────────────────────────────
 -- Tras la primera entrada de un docente de prueba (cuenta ficticia):

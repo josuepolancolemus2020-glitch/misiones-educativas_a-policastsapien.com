@@ -1,28 +1,31 @@
 -- ============================================================================
--- M.E.T.A.S · Vista de padres v2 · PROPUESTA (FASE 1: SOLO DISEÑO)
+-- M.E.T.A.S · Vista de padres v2 · PROPUESTA (FASE 1: SOLO DISEÑO, rev. 2)
 -- ----------------------------------------------------------------------------
 -- ⚠️ NO EJECUTAR. Va DESPUÉS de SUPABASE-V2-ESQUEMA.sql.
 --
--- Qué resuelve: el portal y el asistente de padres leen las MISMAS filas que
--- escribe el docente (alumnos, colectas, pagos, notas, asistencia, avisos…),
--- por vistas de solo lectura, sin copias:
---   · nada de registro_admin ni mensajes_docente (copias que armaba el
---     aparato del docente a partir de su blob);
---   · nada de METAS_PADRE_CACHE_V1 en el teléfono del padre;
---   · un pago borrado o corregido se ve igual para el padre al instante.
+-- El portal y el asistente de padres leen las MISMAS filas que escribe el
+-- docente, por vistas de solo lectura, sin copias y sin caché en el teléfono.
 --
--- Cómo sabe la base QUIÉN es el padre (para la RLS):
---   1. padres.html abre una sesión ANÓNIMA de Supabase Auth
---      (supabase.auth.signInAnonymously()). El padre no crea cuenta ni
---      contraseña: lo que ve es igual que hoy, escribe la clave de familia.
---   2. metas.familia_vincular(clave) une esa sesión con la familia
---      (metas.familia_accesos). Varios hijos = varias filas.
---   3. Las vistas metas.vf_* filtran por los alumnos vinculados a auth.uid().
---      El filtro es RLS de verdad: las vistas pertenecen al rol
---      metas_lector_familias, que NO salta la RLS, y las políticas de ese rol
---      sobre las tablas solo dejan pasar filas de alumnos vinculados.
---   4. El padre no tiene permiso de escritura sobre nada de metas: ni
---      INSERT/UPDATE/DELETE en tablas, ni las vistas son actualizables para él.
+-- Quién es el padre para la base:
+--   1. padres.html abre una sesión ANÓNIMA de Supabase Auth, con CAPTCHA
+--      (Turnstile) OBLIGATORIO. El padre no crea cuenta: escribe la clave.
+--   2. La función de borde «familia-vincular» comprueba OTRO token Turnstile
+--      en cada intento, toma la IP de la infraestructura (no de cabeceras que
+--      escribe el cliente) y llama a metas.familia_vincular con la llave de
+--      servicio. El padre no puede llamar a esa función directamente.
+--   3. Las vistas metas.vf_* filtran por los alumnos vinculados a auth.uid():
+--      son del rol metas_lector_familias, que NO salta la RLS, y sus
+--      políticas solo dejan pasar filas de esos alumnos.
+--
+-- Lo que una sesión anónima NO puede hacer (además de lo de arriba):
+--   · leer, crear o editar cualquier tabla del docente: cada tabla tiene una
+--     política RESTRICTIVA que exige una cuenta de docente vinculada
+--     (metas.es_docente(), SUPABASE-V2-ESQUEMA.sql). Esto también impide
+--     averiguar si una clave existe intentando insertar una familia: el sello
+--     la rechaza antes de llegar al índice único.
+--   · escribir en vistas: solo tiene SELECT.
+--   · Lo único que escribe, y solo por funciones del servidor: su propio
+--     vínculo (por la función de borde) y el «visto» de un aviso.
 -- ============================================================================
 
 -- ════════════════════════════════════════════════════════════════════════════
@@ -32,10 +35,10 @@ create table if not exists metas.familia_accesos (
   id           uuid        primary key default gen_random_uuid(),
   auth_uid     uuid        not null,                 -- sesión anónima del teléfono del padre
   familia_id   uuid        not null references metas.familias (id),
-  -- La clave con la que se vinculó. Si el docente le cambia la clave a la
-  -- familia (porque se perdió la tira), este vínculo deja de valer solo.
+  -- La clave con la que se vinculó. Las claves no cambian (se crea otra
+  -- familia), pero si la familia se borra o se reemplaza, el vínculo muere.
   clave_usada  text        not null,
-  alias        text        check (length(alias) <= 40),   -- «Ana», para el selector de hijos
+  alias        text        check (length(alias) <= 40),
   created_at   timestamptz not null default now(),
   revocado_at  timestamptz
 );
@@ -43,124 +46,116 @@ create unique index if not exists familia_accesos_unico on metas.familia_accesos
   where revocado_at is null;
 alter table metas.familia_accesos enable row level security;
 create policy familia_accesos_mios on metas.familia_accesos for select to authenticated
-  using (auth_uid = auth.uid());
+  using (auth_uid = (select auth.uid()));
 revoke all on metas.familia_accesos from public, anon, authenticated;
 grant select on metas.familia_accesos to authenticated;
--- Solo las funciones de abajo escriben aquí.
 
--- Alumnos que la sesión actual puede ver. STABLE para que el planificador la
--- evalúe una vez por consulta. Comprueba, en cada lectura:
---   · que el vínculo no esté revocado,
---   · que la familia siga activa y con la MISMA clave,
---   · que el alumno siga activo.
+create or replace function metas.es_sesion_familia()
+returns boolean language sql stable as $$
+  select coalesce(((select auth.jwt()) ->> 'is_anonymous')::boolean, false)
+$$;
+grant execute on function metas.es_sesion_familia() to authenticated;
+
+-- Alumnos que la sesión puede ver: vínculo vigente, familia activa con la
+-- MISMA clave y alumno activo (no borrado; puede estar trasladado).
 create or replace function metas.familia_alumnos()
 returns setof uuid language sql stable security definer set search_path = metas, pg_temp as $$
   select f.alumno_id
     from metas.familia_accesos fa
     join metas.familias f on f.id = fa.familia_id
                          and f.deleted_at is null
-                         and upper(replace(f.clave, '-', '')) = upper(replace(fa.clave_usada, '-', ''))
+                         and f.clave = fa.clave_usada
     join metas.alumnos  a on a.id = f.alumno_id and a.deleted_at is null
-   where fa.auth_uid = auth.uid()
+   where fa.auth_uid = (select auth.uid())
      and fa.revocado_at is null
+     and metas.es_sesion_familia()
 $$;
-revoke all on function metas.familia_alumnos() from public, anon;
-grant execute on function metas.familia_alumnos() to authenticated;
-
 create or replace function metas.familia_aulas()
 returns setof uuid language sql stable security definer set search_path = metas, pg_temp as $$
   select distinct a.aula_id from metas.alumnos a where a.id in (select metas.familia_alumnos())
 $$;
-revoke all on function metas.familia_aulas() from public, anon;
-grant execute on function metas.familia_aulas() to authenticated;
+grant execute on function metas.familia_alumnos(), metas.familia_aulas() to authenticated;
 
--- ── Vincular: el padre escribe la clave de la tira ─────────────────────────
-create or replace function metas.familia_vincular(p_clave text, p_alias text default null)
+-- ── Vincular: SOLO la función de borde «familia-vincular» (llave de servicio)
+-- Recibe el uid de la sesión anónima (ya verificado por la función de borde
+-- con el JWT), la clave y la IP que puso la infraestructura.
+create or replace function metas.familia_vincular(p_uid uuid, p_clave text, p_ip text, p_alias text default null)
 returns jsonb language plpgsql volatile security definer set search_path = metas, pg_temp as $$
 declare
-  v_uid uuid := auth.uid();
-  v_ip  text := metas.ip_cliente();
-  v_cl  text := upper(replace(trim(coalesce(p_clave, '')), '-', ''));
+  v_cl  text := metas.norm_clave(p_clave);
   f     metas.familias;
   a     metas.alumnos;
 begin
-  if v_uid is null then
+  if p_uid is null then
     return jsonb_build_object('ok', false, 'motivo', 'sesion');
   end if;
-  -- Solo sesiones anónimas: una cuenta de docente no se vincula como padre.
-  if coalesce((auth.jwt() ->> 'is_anonymous')::boolean, false) is not true then
-    return jsonb_build_object('ok', false, 'motivo', 'sesion');
+  if exists (select 1 from metas.cuentas where auth_uid = p_uid) then
+    return jsonb_build_object('ok', false, 'motivo', 'sesion');   -- una cuenta de docente no se vincula como padre
   end if;
-  if not metas.freno_ok('famvinc:' || v_ip, 60, interval '1 hour')
-     or not metas.freno_ok('famvinc-uid:' || v_uid, 20, interval '1 hour') then
+  if not metas.freno_ok('famvinc-uid:' || p_uid, 20, interval '1 hour')
+     or not metas.freno_ok('famvinc-ip:' || coalesce(p_ip, 'sin-ip'), 60, interval '1 hour') then
     return jsonb_build_object('ok', false, 'motivo', 'espera');
   end if;
-  if v_cl !~ '^[0-9]{1,2}[A-Z0-9]{4,8}$' then
-    perform metas.freno_ok('famfallo:' || v_ip, 20, interval '1 hour');
+  if v_cl is null or v_cl !~ '^([A-HJ-NP-Z2-9]{10}|[0-9]{1,2}[A-Z0-9]{4})$' then
+    perform metas.freno_ok('famfallo-ip:' || coalesce(p_ip, 'sin-ip'), 20, interval '1 hour');
     return jsonb_build_object('ok', false, 'motivo', 'clave');
   end if;
-  select * into f from metas.familias
-   where upper(replace(clave, '-', '')) = v_cl and deleted_at is null;
+  select * into f from metas.familias where clave = v_cl and deleted_at is null;
   if not found then
-    if not metas.freno_ok('famfallo:' || v_ip, 20, interval '1 hour') then
+    -- Fallos: por IP y además un tope GLOBAL, para que repartir el ataque
+    -- entre muchas IP no sirva para recorrer claves.
+    if not metas.freno_ok('famfallo-ip:' || coalesce(p_ip, 'sin-ip'), 20, interval '1 hour')
+       or not metas.freno_ok('famfallo-global', 2000, interval '1 hour') then
       return jsonb_build_object('ok', false, 'motivo', 'espera');
     end if;
+    -- 'clave' también cuando el aula todavía no se cargó en la base nueva: el
+    -- portal entonces consulta el archivo congelado (07, transición).
     return jsonb_build_object('ok', false, 'motivo', 'clave');
   end if;
   select * into a from metas.alumnos where id = f.alumno_id and deleted_at is null;
-  if not found then
-    return jsonb_build_object('ok', false, 'motivo', 'clave');
-  end if;
-  if (select count(*) from metas.familia_accesos where auth_uid = v_uid and revocado_at is null) >= 10 then
+  if not found then return jsonb_build_object('ok', false, 'motivo', 'clave'); end if;
+  if (select count(*) from metas.familia_accesos where auth_uid = p_uid and revocado_at is null) >= 10 then
     return jsonb_build_object('ok', false, 'motivo', 'muchos');
   end if;
   insert into metas.familia_accesos (auth_uid, familia_id, clave_usada, alias)
-  values (v_uid, f.id, f.clave, left(coalesce(nullif(trim(p_alias), ''), split_part(a.nombre_completo, ' ', 1)), 40))
+  values (p_uid, f.id, f.clave, left(coalesce(nullif(trim(p_alias), ''), split_part(a.nombre_completo, ' ', 1)), 40))
   on conflict do nothing;
-  return jsonb_build_object('ok', true, 'familia_id', f.id,
-                            'alias', split_part(a.nombre_completo, ' ', 1));
+  return jsonb_build_object('ok', true, 'familia_id', f.id, 'alias', split_part(a.nombre_completo, ' ', 1));
 end $$;
-revoke all on function metas.familia_vincular(text, text) from public, anon;
-grant execute on function metas.familia_vincular(text, text) to authenticated;
+revoke all on function metas.familia_vincular(uuid, text, text, text) from public, anon, authenticated;
+grant execute on function metas.familia_vincular(uuid, text, text, text) to service_role;
 
--- ── Quitar un hijo de este teléfono ────────────────────────────────────────
 create or replace function metas.familia_desvincular(p_familia uuid)
 returns boolean language sql volatile security definer set search_path = metas, pg_temp as $$
   update metas.familia_accesos set revocado_at = now()
-   where auth_uid = auth.uid() and familia_id = p_familia and revocado_at is null
+   where auth_uid = (select auth.uid()) and familia_id = p_familia and revocado_at is null
   returning true
 $$;
-revoke all on function metas.familia_desvincular(uuid) from public, anon;
 grant execute on function metas.familia_desvincular(uuid) to authenticated;
 
 -- ════════════════════════════════════════════════════════════════════════════
 -- 2. Rol lector de familias y RLS sobre las tablas del docente
 -- ════════════════════════════════════════════════════════════════════════════
--- Rol sin entrada propia y SIN bypassrls. Es el dueño de las vistas vf_*;
--- como la vista corre con los permisos de su dueño, la RLS que se aplica es
--- la de ESTE rol, y su política pregunta por auth.uid() de quien consulta.
 do $$ begin
   if not exists (select 1 from pg_roles where rolname = 'metas_lector_familias') then
     create role metas_lector_familias nologin nobypassrls;
   end if;
 end $$;
 grant usage on schema metas to metas_lector_familias;
--- Para poder ser dueño de las vistas (ALTER VIEW … OWNER TO exige CREATE en el
--- esquema y poder asumir el rol). No le da permiso sobre ninguna tabla.
-grant create on schema metas to metas_lector_familias;
-grant metas_lector_familias to postgres;
-grant execute on function metas.familia_alumnos(), metas.familia_aulas() to metas_lector_familias;
+grant execute on function metas.familia_alumnos(), metas.familia_aulas(), metas.es_sesion_familia()
+  to metas_lector_familias;
 
--- SOLO las columnas que una familia puede ver (nada de identidad, teléfono,
--- device_id, updated_by, ni notas privadas del pago).
-grant select (id, aula_id, nombre_completo, deleted_at)                          on metas.alumnos     to metas_lector_familias;
+-- SOLO las columnas que una familia puede ver: nada de identidad, teléfonos,
+-- aparato, autor, nota interna del pago ni motivo de anulación.
+grant select (id, aula_id, nombre_completo, estado, deleted_at)                  on metas.alumnos     to metas_lector_familias;
 grant select (id, escuela, grado, seccion, anio_lectivo, docente_nombre, deleted_at) on metas.aulas   to metas_lector_familias;
 grant select (id, aula_id, nombre, orden, deleted_at)                            on metas.asignaturas to metas_lector_familias;
 grant select (id, aula_id, periodo, desde, hasta, deleted_at)                    on metas.periodos    to metas_lector_familias;
-grant select (id, aula_id, concepto, monto_sugerido, fecha, deleted_at)          on metas.colectas    to metas_lector_familias;
-grant select (id, colecta_id, alumno_id, deleted_at)                             on metas.colecta_exenciones to metas_lector_familias;
-grant select (id, aula_id, colecta_id, alumno_id, monto, fecha, recibo, recibo_anterior, created_at, updated_at, deleted_at) on metas.pagos to metas_lector_familias;
-grant select (id, colecta_id, fecha, concepto, monto, deleted_at)                on metas.gastos      to metas_lector_familias;
+grant select (id, aula_id, concepto, monto_sugerido, fecha, estado, deleted_at)  on metas.colectas    to metas_lector_familias;
+grant select (id, colecta_id, alumno_id, monto_aplicable, deleted_at)            on metas.colecta_exenciones to metas_lector_familias;
+grant select (id, aula_id, colecta_id, alumno_id, monto, fecha, recibo, recibo_anterior,
+              reemplaza_recibo, created_at, deleted_at)                          on metas.pagos       to metas_lector_familias;
+grant select (id, aula_id, colecta_id, fecha, concepto, monto, deleted_at)       on metas.gastos      to metas_lector_familias;
 grant select (id, alumno_id, asignatura_id, periodo, componente, valor, deleted_at) on metas.notas    to metas_lector_familias;
 grant select (id, alumno_id, periodo, rasgo, letra, deleted_at)                  on metas.notas_personalidad to metas_lector_familias;
 grant select (id, alumno_id, fecha, estado, deleted_at)                          on metas.asistencia  to metas_lector_familias;
@@ -170,9 +165,10 @@ grant select (id, aviso_id, alumno_id, deleted_at)                              
 grant select (id, alumno_id, tipo, texto, fecha, visible_hasta, para_familia, deleted_at) on metas.observaciones to metas_lector_familias;
 grant select (id, aula_id, pregunta, claves, respuesta, activa, deleted_at)      on metas.preguntas_frecuentes to metas_lector_familias;
 grant select (id, analisis_id, alumno_id, nota, no_se_presento, categoria, mensaje, enviado, deleted_at) on metas.analisis_alumnos to metas_lector_familias;
-grant select (id, evaluacion, asignatura_id, periodo, fecha_prueba, deleted_at)  on metas.analisis    to metas_lector_familias;
+grant select (id, aula_id, evaluacion, asignatura_id, periodo, fecha_prueba, deleted_at) on metas.analisis to metas_lector_familias;
 
--- Políticas: una por tabla, solo SELECT, solo filas activas de sus alumnos.
+-- Políticas: solo SELECT, solo filas activas, solo sus alumnos (o su aula
+-- para lo que es de toda el aula: colectas, avisos, preguntas, gastos).
 create policy familia_lee on metas.alumnos       for select to metas_lector_familias
   using (deleted_at is null and id in (select metas.familia_alumnos()));
 create policy familia_lee on metas.aulas         for select to metas_lector_familias
@@ -187,10 +183,8 @@ create policy familia_lee on metas.colecta_exenciones for select to metas_lector
   using (deleted_at is null and alumno_id in (select metas.familia_alumnos()));
 create policy familia_lee on metas.pagos         for select to metas_lector_familias
   using (deleted_at is null and alumno_id in (select metas.familia_alumnos()));
--- Los gastos de una colecta son «cuentas claras» del grado: los ve toda
--- familia del aula, sin datos de nadie.
 create policy familia_lee on metas.gastos        for select to metas_lector_familias
-  using (deleted_at is null and tipo = 'colecta' and aula_id in (select metas.familia_aulas()));
+  using (deleted_at is null and aula_id in (select metas.familia_aulas()));   -- solo gastos de colecta (los del docente están en otra tabla)
 create policy familia_lee on metas.notas         for select to metas_lector_familias
   using (deleted_at is null and alumno_id in (select metas.familia_alumnos()));
 create policy familia_lee on metas.notas_personalidad for select to metas_lector_familias
@@ -203,8 +197,12 @@ create policy familia_lee on metas.avisos        for select to metas_lector_fami
   using (deleted_at is null and aula_id in (select metas.familia_aulas()));
 create policy familia_lee on metas.aviso_destinatarios for select to metas_lector_familias
   using (deleted_at is null and alumno_id in (select metas.familia_alumnos()));
+-- Observaciones: solo llamados, faltas leves y felicitaciones que el docente
+-- dejó marcadas para la familia y que no han vencido. El expediente, nunca.
 create policy familia_lee on metas.observaciones for select to metas_lector_familias
-  using (deleted_at is null and para_familia and alumno_id in (select metas.familia_alumnos()));
+  using (deleted_at is null and para_familia and tipo in ('llamado', 'leve', 'felicitacion')
+         and (visible_hasta is null or visible_hasta >= current_date)
+         and alumno_id in (select metas.familia_alumnos()));
 create policy familia_lee on metas.preguntas_frecuentes for select to metas_lector_familias
   using (deleted_at is null and activa and aula_id in (select metas.familia_aulas()));
 create policy familia_lee on metas.analisis_alumnos for select to metas_lector_familias
@@ -213,54 +211,51 @@ create policy familia_lee on metas.analisis      for select to metas_lector_fami
   using (deleted_at is null and aula_id in (select metas.familia_aulas()));
 
 -- ════════════════════════════════════════════════════════════════════════════
--- 3. Vistas de solo lectura para padres (lo único que lee padres.html)
+-- 3. Vistas de solo lectura para padres
 -- ════════════════════════════════════════════════════════════════════════════
--- security_invoker = false (por defecto): corren como su dueño,
--- metas_lector_familias, y por eso les aplica la RLS de arriba con el
--- auth.uid() de quien consulta. Un docente que las consulte recibe 0 filas.
--- No son actualizables para nadie: authenticated solo tiene SELECT.
+-- Corren como su dueño (metas_lector_familias) → les aplica la RLS de arriba
+-- con el auth.uid() de quien consulta. Un docente que las consulte recibe 0
+-- filas. Nadie puede escribir en ellas.
 
 create or replace view metas.vf_hijos as
 select a.id as alumno_id, split_part(a.nombre_completo, ' ', 1) as nombre,
        au.grado, au.seccion, au.escuela, au.anio_lectivo, au.docente_nombre as docente
   from metas.alumnos a join metas.aulas au on au.id = a.aula_id;
 
--- Lo que debe y lo que dio, por colecta. Calculado en cada lectura desde
--- metas.pagos: si el docente borra o corrige un pago, la próxima lectura ya
--- lo trae así. No hay otra copia de la que pudiera salir un pago viejo.
+-- Lo de SU hijo en cada colecta, con la misma regla que v_colecta_alumnos:
+-- exento → le corresponde 0 y no le falta nada; exento parcial → le
+-- corresponde monto_aplicable; varios abonos se suman.
 create or replace view metas.vf_colectas as
-select a.id as alumno_id, c.id as colecta_id, c.concepto, c.fecha, c.monto_sugerido,
-       (e.id is not null)                         as no_le_corresponde,
-       coalesce(p.monto, 0)                       as pagado,
-       p.fecha                                    as fecha_pago,
-       case when e.id is not null then 'no_corresponde'
-            when p.id is null then 'debe'
-            when p.monto < c.monto_sugerido then 'abono'
-            else 'pagado' end                     as situacion,
-       greatest(c.monto_sugerido - coalesce(p.monto, 0), 0) as falta,
-       -- el número de recibo ES el del pago (único e inmutable): si el docente
-       -- corrige el monto, el recibo conserva su número y muestra el monto
-       -- nuevo y la fecha de la corrección; si lo borra, el recibo desaparece
-       p.recibo                                   as recibo,
-       p.recibo_anterior                          as recibo_anterior,
-       case when p.id is not null and p.updated_at > p.created_at + interval '1 minute'
-            then p.updated_at end                 as corregido_at
+select a.id as alumno_id, c.id as colecta_id, c.concepto, c.fecha, c.estado, c.monto_sugerido,
+       x.aplicable, x.pagado,
+       greatest(x.aplicable - x.pagado, 0)                              as falta,
+       greatest(x.pagado - x.aplicable, 0)                              as pago_de_mas,
+       case when x.aplicable = 0 and x.pagado = 0 then 'no_corresponde'
+            when x.pagado = 0 then 'debe'
+            when x.pagado < x.aplicable then 'abono'
+            when x.pagado = x.aplicable then 'pagado'
+            else 'pago_de_mas' end                                       as situacion
   from metas.alumnos a
   join metas.colectas c on c.aula_id = a.aula_id
   left join metas.colecta_exenciones e on e.colecta_id = c.id and e.alumno_id = a.id
-  left join metas.pagos p on p.colecta_id = c.id and p.alumno_id = a.id;
+  cross join lateral (
+    select case when e.id is null then c.monto_sugerido else coalesce(e.monto_aplicable, 0) end as aplicable,
+           coalesce((select sum(p.monto) from metas.pagos p
+                      where p.colecta_id = c.id and p.alumno_id = a.id), 0)                    as pagado
+  ) x;
 
--- Cuentas claras del grado (antes un comunicado AVC armado en el aparato).
+-- Cada pago (abono) de su hijo, con su recibo. Si el docente corrige un
+-- monto, el recibo viejo desaparece (anulado) y aparece el nuevo con
+-- «corrige al recibo …»; si lo anula, desaparece.
+create or replace view metas.vf_pagos as
+select p.alumno_id, p.colecta_id, c.concepto, p.monto, p.fecha, p.recibo, p.recibo_anterior,
+       p.reemplaza_recibo as corrige_al_recibo, p.created_at as registrado_at
+  from metas.pagos p join metas.colectas c on c.id = p.colecta_id;
+
+-- Gastos de cada colecta del aula (cuentas claras), sin datos de nadie.
 create or replace view metas.vf_cuentas_claras as
-select c.id as colecta_id, c.aula_id, c.concepto,
-       (select coalesce(sum(g.monto), 0) from metas.gastos g where g.colecta_id = c.id) as gastado,
-       (select coalesce(jsonb_agg(jsonb_build_object('fecha', g.fecha, 'concepto', g.concepto, 'monto', g.monto)
-                                  order by g.fecha), '[]'::jsonb)
-          from metas.gastos g where g.colecta_id = c.id)                                as gastos
-  from metas.colectas c;
--- (Lo recaudado del grado NO se le muestra a la familia porque la política de
---  pagos solo le deja ver los de su hijo. Si se quiere mostrar, se hace con
---  una función que devuelva solo la suma: decisión pendiente, ver 07-VISTA-DE-PADRES.md.)
+select g.colecta_id, c.concepto as colecta, g.fecha, g.concepto, g.monto
+  from metas.gastos g join metas.colectas c on c.id = g.colecta_id;
 
 create or replace view metas.vf_notas as
 select n.alumno_id, s.nombre as asignatura, n.periodo, n.componente, n.valor
@@ -272,21 +267,19 @@ select alumno_id, periodo, rasgo, letra from metas.notas_personalidad;
 create or replace view metas.vf_asistencia as
 select alumno_id, fecha, estado from metas.asistencia;
 
+-- Avisos: los de toda el aula (tipo distinto de 'individual') y los
+-- 'individual' que tienen a SU hijo como destinatario. No se decide por la
+-- ausencia de destinatarios (la RLS esconde los de otros alumnos).
 create or replace view metas.vf_avisos as
 select a.id as alumno_id, av.id as aviso_id, av.tipo, av.titulo, av.texto, av.fecha_evento, av.hasta
   from metas.alumnos a
   join metas.avisos av on av.aula_id = a.aula_id
  where (av.hasta is null or av.hasta >= current_date)
-   and ( not exists (select 1 from metas.aviso_destinatarios d where d.aviso_id = av.id)
+   and ( av.tipo <> 'individual'
          or exists (select 1 from metas.aviso_destinatarios d where d.aviso_id = av.id and d.alumno_id = a.id));
--- Nota: el «not exists» ve solo los destinatarios de SUS hijos (RLS). Por eso
--- la implementación debe marcar el aviso individual con tipo = 'individual'
--- y filtrar por tipo, no por la ausencia de destinatarios. Se deja escrito
--- así para revisarlo en la fase de implementación.
 
 create or replace view metas.vf_observaciones as
-select alumno_id, tipo, texto, fecha from metas.observaciones
- where visible_hasta is null or visible_hasta >= current_date;
+select alumno_id, tipo, texto, fecha from metas.observaciones;
 
 create or replace view metas.vf_plan_accion as
 select aa.alumno_id, an.evaluacion, an.periodo, an.fecha_prueba,
@@ -296,25 +289,107 @@ select aa.alumno_id, an.evaluacion, an.periodo, an.fecha_prueba,
 create or replace view metas.vf_preguntas as
 select aula_id, pregunta, claves, respuesta from metas.preguntas_frecuentes;
 
+-- Para poder ser dueño de las vistas, el rol necesita CREATE en el esquema
+-- un momento; se le quita al terminar.
+grant create on schema metas to metas_lector_familias;
+grant metas_lector_familias to postgres;
 do $$
 declare v text;
 begin
-  foreach v in array array['vf_hijos','vf_colectas','vf_cuentas_claras','vf_notas','vf_personalidad',
+  foreach v in array array['vf_hijos','vf_colectas','vf_pagos','vf_cuentas_claras','vf_notas','vf_personalidad',
                            'vf_asistencia','vf_avisos','vf_observaciones','vf_plan_accion','vf_preguntas'] loop
     execute format('alter view metas.%I owner to metas_lector_familias', v);
     execute format('revoke all on metas.%I from public, anon, authenticated', v);
     execute format('grant select on metas.%I to authenticated', v);
   end loop;
 end $$;
+revoke create on schema metas from metas_lector_familias;
+
+-- ── Total recaudado de cada colecta (sin los pagos de otros alumnos) ───────
+-- La política de pagos solo deja ver los del hijo; el total del aula se da
+-- con esta función, que devuelve SOLO sumas por colecta.
+create or replace function metas.familia_totales_colectas()
+returns table (colecta_id uuid, concepto text, recaudado text, gastado text, saldo text)
+language sql stable security definer set search_path = metas, pg_temp as $$
+  select c.id, c.concepto,
+         coalesce(r.s, 0)::text, coalesce(g.s, 0)::text, (coalesce(r.s, 0) - coalesce(g.s, 0))::text
+    from metas.colectas c
+    left join lateral (select sum(p.monto) s from metas.pagos p
+                        where p.colecta_id = c.id and p.deleted_at is null) r on true
+    left join lateral (select sum(x.monto) s from metas.gastos x
+                        where x.colecta_id = c.id and x.deleted_at is null) g on true
+   where c.deleted_at is null
+     and c.aula_id in (select metas.familia_aulas())
+$$;
+grant execute on function metas.familia_totales_colectas() to authenticated;
 
 -- ════════════════════════════════════════════════════════════════════════════
--- 4. «De inmediato»: aviso por Realtime al teléfono del padre
+-- 4. «Visto» de los avisos (lo escribe la familia, solo por función)
 -- ════════════════════════════════════════════════════════════════════════════
--- Los padres NO se suscriben a las tablas (recibirían filas completas). Se
--- suscriben a un canal PRIVADO por familia, y la base les manda solo un
--- toque sin datos: «algo cambió». El teléfono vuelve a leer las vistas vf_*.
--- Así, un pago borrado o corregido se ve igual en el padre en menos de un
--- segundo después de que el cambio del docente llega a Supabase.
+create table if not exists metas.avisos_vistos (
+  id          uuid        primary key default gen_random_uuid(),
+  owner       uuid        not null,                 -- el DOCENTE dueño del aviso (para su RLS)
+  aviso_id    uuid        not null references metas.avisos (id),
+  familia_id  uuid        not null references metas.familias (id),
+  visto_at    timestamptz not null default now(),
+  unique (aviso_id, familia_id)
+);
+alter table metas.avisos_vistos enable row level security;
+create policy avisos_vistos_docente on metas.avisos_vistos for select to authenticated
+  using (owner = (select auth.uid()));
+create policy avisos_vistos_solo_docentes on metas.avisos_vistos as restrictive
+  for all to authenticated using ((select metas.es_docente())) with check ((select metas.es_docente()));
+revoke all on metas.avisos_vistos from public, anon, authenticated;
+grant select on metas.avisos_vistos to authenticated;
+create trigger avisos_vistos_sin_cambios before update or delete on metas.avisos_vistos
+  for each row execute function metas.t_auditoria_inmutable();
+
+create or replace function metas.familia_marcar_visto(p_aviso uuid)
+returns boolean language plpgsql volatile security definer set search_path = metas, pg_temp as $$
+declare
+  v_av metas.avisos;
+  v_fam uuid;
+begin
+  if not metas.es_sesion_familia() then return false; end if;
+  if not metas.freno_ok('visto:' || (select auth.uid()), 300, interval '1 hour') then return false; end if;
+  select * into v_av from metas.avisos where id = p_aviso and deleted_at is null;
+  if not found then return false; end if;
+  -- la familia de esta sesión que tiene a un hijo en esa aula y a quien el
+  -- aviso le llega (de toda el aula, o individual con su hijo)
+  select f.id into v_fam
+    from metas.familia_accesos fa
+    join metas.familias f on f.id = fa.familia_id and f.deleted_at is null and f.clave = fa.clave_usada
+    join metas.alumnos a on a.id = f.alumno_id and a.deleted_at is null and a.aula_id = v_av.aula_id
+   where fa.auth_uid = (select auth.uid()) and fa.revocado_at is null
+     and (v_av.tipo <> 'individual'
+          or exists (select 1 from metas.aviso_destinatarios d
+                      where d.aviso_id = v_av.id and d.alumno_id = a.id and d.deleted_at is null))
+   limit 1;
+  if v_fam is null then return false; end if;
+  insert into metas.avisos_vistos (owner, aviso_id, familia_id) values (v_av.owner, v_av.id, v_fam)
+  on conflict (aviso_id, familia_id) do nothing;
+  return true;
+end $$;
+grant execute on function metas.familia_marcar_visto(uuid) to authenticated;
+
+-- Para el docente: quién vio cada aviso (calculado).
+create or replace view metas.v_avisos_vistos with (security_invoker = true) as
+select av.id as aviso_id, av.aula_id, av.titulo,
+       count(v.id) as familias_que_vieron,
+       array_agg(f.alumno_id) filter (where v.id is not null) as alumnos_cuya_familia_vio
+  from metas.avisos av
+  left join metas.avisos_vistos v on v.aviso_id = av.id
+  left join metas.familias f on f.id = v.familia_id
+ where av.deleted_at is null
+ group by av.id, av.aula_id, av.titulo;
+grant select on metas.v_avisos_vistos to authenticated;
+
+-- ════════════════════════════════════════════════════════════════════════════
+-- 5. «De inmediato»: aviso por Realtime al teléfono del padre
+-- ════════════════════════════════════════════════════════════════════════════
+-- Los padres NO se suscriben a las tablas. Se suscriben a un canal PRIVADO
+-- por familia y la base les manda un toque SIN DATOS: «algo cambió». El
+-- teléfono vuelve a leer las vistas vf_*.
 create or replace function metas.t_tocar_familias()
 returns trigger language plpgsql security definer set search_path = metas, pg_temp as $$
 declare
@@ -322,6 +397,9 @@ declare
   v_aula   uuid := (to_jsonb(new) ->> 'aula_id')::uuid;
   r record;
 begin
+  if tg_table_name = 'alumnos' then
+    v_alumno := new.id;               -- un alumno solo le importa a SU familia
+  end if;
   for r in
     select f.id from metas.familias f
      where f.deleted_at is null
@@ -333,7 +411,6 @@ begin
   end loop;
   return null;
 end $$;
-revoke all on function metas.t_tocar_familias() from public, anon, authenticated;
 
 do $$
 declare t text;
@@ -346,30 +423,31 @@ begin
                    t || '_tocar_familias', t);
   end loop;
 end $$;
--- (alumnos no tiene alumno_id: el disparador usa aula_id y toca a todas las
---  familias del aula; en implementación se afina para tocar solo la suya.)
 
--- Quién puede escuchar qué canal privado:
 create policy familias_escuchan_su_canal on realtime.messages
   for select to authenticated
   using (
     realtime.topic() like 'familia:%'
+    and metas.es_sesion_familia()
     and exists (select 1 from metas.familia_accesos fa
-                 where fa.auth_uid = auth.uid() and fa.revocado_at is null
+                 where fa.auth_uid = (select auth.uid()) and fa.revocado_at is null
                    and 'familia:' || fa.familia_id::text = realtime.topic())
   );
 
 -- ════════════════════════════════════════════════════════════════════════════
--- 5. Comprobaciones (fase de implementación)
+-- 6. Comprobaciones (fase de implementación, datos ficticios)
 -- ════════════════════════════════════════════════════════════════════════════
--- a) Con una sesión anónima vinculada a la familia de Ana (datos ficticios):
---      select count(*) from metas.pagos;            → 0  (sin permiso directo)
---      select * from metas.vf_colectas;             → solo filas de Ana
--- b) Con la misma sesión, intentar escribir:
---      update metas.pagos set monto = 1;            → permiso denegado
---      insert into metas.vf_colectas ...            → permiso denegado
--- c) El docente borra el pago de Ana → en < 1 s llega «cambio» al canal
---    familia:<id> y vf_colectas ya no lo trae (situacion = 'debe').
--- d) El docente cambia la clave de la familia → la sesión vieja ya no ve
---    nada (familia_alumnos compara la clave actual con clave_usada).
+-- Con una sesión ANÓNIMA vinculada a la familia de «Alumna Ficticia 01»:
+-- a) select count(*) from metas.pagos;                 → 0 (restrictiva + sin política)
+-- b) insert into metas.aulas (escuela, grado, seccion, anio_lectivo) values ('X', 6, '1', 2027);
+--    insert into metas.familias (aula_id, alumno_id, clave) values (…, …, '15K7QM');
+--    select metas.pago_crear(…);  select metas.alumno_crear(…);
+--                                                     → TODOS rechazados con 42501, el mismo error
+--                                                       exista o no la clave (no se puede averiguar)
+-- c) select * from metas.vf_colectas;                 → solo filas de su hijo
+-- d) select * from metas.familia_totales_colectas();  → sumas por colecta, sin nombres
+-- e) select metas.familia_vincular(…);                → permiso denegado (solo service_role)
+-- f) El docente anula o corrige un pago → en < 1 s llega «cambio» a familia:<id>
+--    y vf_pagos ya no trae el recibo anulado (sí el nuevo, con corrige_al_recibo).
+-- g) El docente reemplaza la familia (tira perdida) → la sesión vieja ya no ve nada.
 -- ============================================================================

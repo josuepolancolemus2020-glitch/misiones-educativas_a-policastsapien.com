@@ -10,8 +10,9 @@ notas y el cuaderno de colectas.
 - **Todo pasa por una vista previa** que el docente confirma. Nada se guarda
   mientras escribe o pega.
 - **Lo que se confirma son filas normales**: cada alumno, nota y pago entra a
-  la cola como un `crear` de una fila (sección 3.6), con su id generado **una
-  vez**, en el momento de armar la vista previa. Si el docente toca
+  la cola como una operación de una fila (`03`, sección 3.7), con su id
+  generado **una vez** (`crypto.randomUUID`), en el momento de armar la vista
+  previa. Si el docente toca
   «Guardar» dos veces, o se corta la señal a la mitad, no se duplica nada: los
   ids ya existen y el segundo envío es el mismo.
 - **Nada se empareja por número de lista.** Las notas y los pagos se unen al
@@ -67,15 +68,16 @@ Validación en cada fila, al momento:
 | documento de otro país (por ejemplo, el CUI de Guatemala, una partida de nacimiento o un pasaporte) | se elige el país y el tipo; se acepta de 4 a 25 letras y números. Solo para Honduras se exige el formato de 13 dígitos |
 | identidad vacía | se permite; marca discreta «falta identidad» (gris, con ícono) |
 | misma identidad que otra fila de la tabla o que un alumno ya guardado | ✗ «Esta identidad ya es de **Ana María López Cruz** (n.º 12)». No se puede guardar esa fila |
-| mismo nombre completo que otra fila o que un alumno ya guardado (sin importar tildes, mayúsculas ni espacios dobles) | ✗ «Ya tienes a **Ana María López Cruz** en la lista (n.º 12)» |
+| mismo nombre completo que otra fila o que un alumno ya guardado (sin importar tildes, mayúsculas ni espacios dobles) | ⚠ **solo aviso**: «Ya tienes a **Ana María López Cruz** (n.º 12)». Si a uno de los dos le falta la identidad, al guardar se pregunta «¿Es la misma persona?» con dos botones; si las dos identidades son distintas, se guardan los dos (homónimos). La identidad es la única regla dura |
 | número de lista repetido | ⚠ aviso suave; se permite (es solo visual) |
-| clave de familia ya usada por otra familia | ✗ «Esa clave ya está en uso; deja la casilla vacía y se genera una nueva» |
+| clave de familia que ya tiene la familia (opcional) | se acepta **solo si estaba en tus datos anteriores** (la base la busca en el archivo congelado de tu cuenta). Si no: ✗ «Esa clave no está en tus datos anteriores; deja la casilla vacía y se genera una nueva». Vacía: la base genera una nueva de 10 símbolos (`K7QMX-4PA2B`) |
 | nombre con menos de dos palabras | ⚠ «¿Falta el apellido?» |
 
 La comprobación contra lo ya guardado usa `metas.alumno_choques` cuando hay
-señal y la copia local cuando no. La base lo vuelve a impedir con sus índices
-únicos (sección 3.5), así que dos aparatos cargando la misma lista sin señal
-no acaban con alumnos repetidos.
+señal y la copia local cuando no. Al guardar, `metas.alumno_crear` une sola
+a quien tiene la misma identidad y pregunta cuando coincide el nombre sin
+identidad (`03`, sección 3.6), así que dos aparatos cargando la misma lista sin
+señal no acaban con alumnos repetidos.
 
 ### ③ Notas
 
@@ -100,15 +102,24 @@ mismo mecanismo (letras S/MB/B; días 0 a 999).
 2. La lista de alumnos con una casilla «Dio» (L), otra «Fecha» y otra
    opcional «N.º de recibo viejo». Atajos:
    «✓ dio lo sugerido» en cada fila (un toque, sin arrastrar).
-3. Casilla para marcar a quién **no le corresponde**.
+3. Casilla para marcar a quién **no le corresponde**, y, si le corresponde
+   menos (hermanos, beca parcial), cuánto le corresponde a él
+   (`monto_aplicable`). A quien no le corresponde **no le falta nada**.
+   Varios pagos del mismo alumno (abonos) se escriben en renglones separados,
+   cada uno con su fecha; cada abono tendrá su propio recibo.
 4. **Control contra el papel**: el docente escribe «Total que tengo anotado
    en el cuaderno». La pantalla compara con la suma calculada de lo escrito y
    muestra «Coincide ✓» o «Diferencia: L 50.00 ✗». Se puede guardar igual con
    diferencia, pero tiene que tocar «Guardar con la diferencia».
 5. Gastos de la colecta: fecha, concepto, monto.
 
+**Gastos del docente** (en el mismo paso, pestaña aparte): un renglón por
+gasto con fecha, tipo, concepto, a quién se cobra, si tiene recibo y monto;
+debajo de cada uno, un renglón por **cada reembolso** ya recibido (fecha y
+monto). El estado y los días de espera no se escriben: los calcula la app.
+
 **Número de recibo.** Cada pago guardado recibe de la base un número nuevo,
-único en todo el sistema y que no cambia nunca (`RC-27-K7Q-0001`: año, serie
+único en todo el sistema y que no cambia nunca (`RC-27-K7QM-0001`: año, serie
 del docente, correlativo). No sale del número de lista. El número viejo, si lo
 hay, queda al lado como «Recibo anterior» para que la familia lo reconozca.
 
@@ -116,18 +127,20 @@ Validación de montos:
 
 | caso | qué ve el docente |
 |---|---|
-| `150`, `150.00`, `150,50`, `L 150` | se entiende como 150.00 / 150.50 |
+| `150`, `150.00`, `150,50`, `L 150` | se entiende como 150.00 / 150.50 (coma o punto con **1 o 2** cifras = centavos) |
+| `1,500` o `1.500` | **se pregunta**: «¿**Mil quinientos** (L 1,500.00) o **uno con cincuenta** (L 1.50)?», dos botones. Nunca se adivina |
 | más de dos decimales | ✗ «Los centavos llevan dos cifras» |
 | 0 o vacío | «no dio» (no se crea un pago) |
 | negativo o letras | ✗ |
 | mayor que el sugerido | se permite (hermanos, donación); se muestra «más que lo sugerido» |
 | mayor que 10 veces lo sugerido | ⚠ «¿Seguro? Es 10 veces lo sugerido» (para atrapar un cero de más) |
-| ese alumno ya tiene pago en esta colecta | se muestra el guardado; si cambia, se **edita** ese pago |
+| ese alumno ya tiene pagos en esta colecta | se muestran al lado («ya dio L 50.00 el 3 de marzo»). Lo que se escribe aquí es un **abono más**, con su propio recibo; nunca cambia el pago guardado. Para corregir un pago guardado se usa «Corregir» en la colecta (anula y reemplaza) |
 | «N.º de recibo viejo» (opcional) | si la familia ya tiene un recibo del sistema anterior, se copia aquí (`RC-03EX-12`). Se valida la forma `RC-` + letras y números + `-` + número; no se puede repetir en otro pago |
 
-Los montos se manejan como texto decimal hasta llegar a la base (`numeric`):
-nunca pasan por un número de coma flotante. En pantalla y en la cola se
-guardan como cadena `"150.50"`; las sumas de control usan centavos enteros.
+Los montos se manejan como texto decimal hasta llegar a la base (`numeric`)
+y vuelven como texto: nunca pasan por un número de coma flotante. En pantalla
+y en la cola se guardan como cadena `"150.50"`; las sumas de control usan
+centavos enteros (ver `03`, sección 3.11).
 
 ## 4.3 La vista previa
 
@@ -163,11 +176,14 @@ Reglas del formato:
 
 1. **Sin ids de la base.** El archivo no trae uuids ni números de lista como
    llave. Cada alumno trae una `ref` local («a1», «a2»…) solo para unir sus
-   notas y pagos dentro del mismo archivo.
-2. **Emparejar con lo guardado**: primero por `identidad`; si no hay, por
-   nombre completo normalizado exacto. Si no coincide con nadie, es un alumno
-   nuevo. Si coincide con dos (no debería poder pasar), la fila se marca ✗ y el
-   docente decide. **Nunca** por número de lista ni por posición.
+   notas y pagos dentro del mismo archivo. **La importación nunca reutiliza un
+   id que venga en un archivo**: aunque un archivo traiga un campo `id`, se
+   ignora; cada fila nueva recibe un id generado en el aparato al armar la
+   vista previa (`crypto.randomUUID`).
+2. **Emparejar con lo guardado**: por `identidad` (país + documento), que une
+   sola. Si no hay identidad y el nombre coincide, se **pregunta** «¿Es la
+   misma persona?» con dos botones (como en 4.2). Si coincide con dos, el
+   docente elige. **Nunca** por número de lista ni por posición.
 3. **Montos y notas como texto** (`"150.00"`, `"85"`), tal como se leyeron.
    La app los valida con las mismas reglas de 4.2.
 4. **Confianza y procedencia** por dato: `confianza` (0 a 1) y `fuente`

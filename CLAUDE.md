@@ -77,6 +77,11 @@ Sin framework ni compilación: HTML, CSS y JS planos servidos tal cual.
     cuando un cambio los necesite, el SQL completo va en la respuesta del chat,
     con orden, si hay que re-correr algo y cómo comprobarlo.
 14. Comentarios en español, explicando **por qué**, no qué.
+15. **Nunca «upsert» en pagos** (ni en pagos de convocatoria, ni en
+    reembolsos): un pago se crea, se corrige anulándolo y creando otro, o se
+    anula; nunca se pisa. Ver `docs/rediseno-datos/03-GUARDADO-CONFLICTOS-Y-SIN-CONEXION.md`.
+16. **Nunca `Math.random()` para generar ids**: `crypto.randomUUID()` y, si no
+    existe, `crypto.getRandomValues()`.
 
 ## Cómo correr las pruebas
 

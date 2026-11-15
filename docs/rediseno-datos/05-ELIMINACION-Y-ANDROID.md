@@ -73,8 +73,10 @@ completa», «🕘 Deshacer o restaurar cambios», el chip «⏳ N por subir / �
 día», y los avisos «Pagos recuperados», «Datos recuperados», «Trayendo el aula
 de TU cuenta», «Todo al día».
 
-«🗑️ Empezar de nuevo» **no** se reemplaza por nada: borrar un aula es
-borrarla (lógicamente) desde su propia pantalla, con confirmación.
+«🗑️ Empezar de nuevo» **no** se reemplaza por nada. Un aula, un alumno o una
+colecta **con pagos o notas activos no se pueden borrar** (la base lo
+rechaza): el alumno pasa a retirado, trasladado o desertor, y la colecta se
+cierra. Solo lo que está vacío se borra (lógicamente), con confirmación.
 
 ## 5.3 Sondas que se eliminan o reemplazan
 
@@ -92,40 +94,27 @@ mismo cambio que borra el código.
 | `_dev/verifica-roles-director.js:201-202` | quitar los simulacros de `metas_docente_estado_*` |
 | `_dev/verifica-notas-sin-pedir.js:97, :115, :227-228` | quitar de su lista las funciones de recuperación |
 
-## 5.4 SQL viejo: se congela, no se borra
+## 5.4 SQL viejo: se congela, no se borra (por pasos, con los cortes)
 
-Archivo propuesto: `SUPABASE-V2-CONGELAR.sql` (sin ejecutar). Se corre **el día
-del cambio**, no antes: mientras tanto la app vieja sigue funcionando.
+Archivo propuesto: `SUPABASE-V2-CONGELAR.sql` (sin ejecutar). Va por pasos
+porque el rediseño entra por cortes (`08-PLAN-POR-CORTES.md`): mientras haya
+herramientas que todavía guardan en el blob, el blob tiene que seguir abierto.
 
-- **Tablas** que quedan como archivo de solo lectura (ni la app nueva ni nadie
-  escribe; la app nueva **no las lee**): `docente_estado`,
-  `docente_estado_hist`, `docente_estado_historial`,
-  `docente_estado_papelera`, `registro_admin`, `registro_admin_historial`,
-  `mensajes_docente`, `plan_accion`. Un disparador rechaza `insert`, `update`,
-  `delete` y `truncate`.
-- **Funciones** a las que se les quita `execute` a `anon` y `authenticated`
-  (no se borran): `metas_docente_estado_guardar`, `metas_docente_estado_leer`,
-  `metas_docente_reset`, `metas_docente_reset_deshacer`,
-  `metas_docente_papelera`, `metas_docente_historial`,
-  `metas_docente_historial_listar`, `metas_recuperar_admin_docente`,
-  `metas_recuperar_historial`, **`metas_guardar_admin` (las dos firmas, incluida
-  la de un argumento sin contraseña)**, `metas_guardar_avisos` (las dos),
-  `metas_guardar_plan` (las dos), `metas_cerrar_familias` (las dos),
-  `metas_buzon_docente`, `metas_consultar_admin_padre`,
-  `metas_consultar_avisos_padre`, `metas_consultar_plan_padre`,
-  `metas_consultar_progreso(p_clave)` (la de Fase 1 que devuelve todo el
-  progreso con `CAMBIA-ESTA-CLAVE`), `metas_guardar_progreso`,
-  `metas_restaurar_codigos`.
-- **Se quedan como están** (no son datos que el docente digita en Mi aula):
-  cuentas (`docentes`, entrada, alta, cambio y recuperación de contraseña),
-  resultados y progreso de alumnos (`metas_guardar`), convocatorias públicas,
-  Campeonísimo en vivo, buzón de padres, sugerencias, videos.
-- **Archivos `.sql` de `_privado/` que, si se vuelven a correr, resucitan
-  funciones sin contraseña** (`SUPABASE-FASE3.sql`, `SUPABASE-AVISOS.sql`,
-  `SUPABASE-REGISTROS-ADMIN.sql`, `SUPABASE-PLAN-ACCION.sql`,
-  `SUPABASE-PLAN-PARCIAL.sql`, `SUPABASE-PLAN-FECHA.sql`): se les añade al
-  principio una línea que aborta (`do $$ begin raise exception 'archivo
-  congelado'; end $$;`). No se borran: son el historial.
+| paso | cuándo | qué queda de solo lectura | qué funciones se cierran |
+|---|---|---|---|
+| 1 | corte 1 (dinero, alumnos, notas, asistencia, controles) | `registro_admin`, `registro_admin_historial` | `metas_guardar_admin` (**todas sus firmas**, incluida la de un argumento sin contraseña), `metas_recuperar_admin_docente` (la que «reponía» pagos), `metas_cerrar_familias`, y dos restos inseguros que nadie llama: `metas_consultar_progreso(p_clave)`, `metas_restaurar_codigos` |
+| 2 | corte de avisos y plan de acción | `mensajes_docente`, `plan_accion` | `metas_guardar_avisos`, `metas_guardar_plan` (todas sus firmas), `metas_recuperar_historial` |
+| 3 | último corte | `docente_estado`, sus dos historiales y su papelera | `metas_docente_estado_*`, `metas_docente_reset*`, `metas_docente_papelera`, `metas_docente_historial*` |
+| 4 | la última aula ya está en la base nueva | — | lecturas de padres sobre el archivo (`metas_consultar_*_padre`) y, si ya tienen reemplazo publicado, `metas_buzon_docente` y `metas_avisos_vistos` |
+
+**Nunca se cierran:** `metas_guardar` y **`metas_guardar_progreso`** (los usa
+el lado del alumno, `js/metas-supabase.js:129` y `:267`), las cuentas, las
+convocatorias públicas, el Campeonísimo en vivo y lo que escriben los padres.
+
+**Archivos `.sql` de `_privado/` que, si se vuelven a correr, resucitan
+funciones sin contraseña o el modelo viejo**: se les antepone una línea que
+aborta, en el mismo paso en que se congela lo suyo. No se borran: son el
+historial.
 
 ## 5.5 Android: exactamente el mismo código que la web
 
@@ -142,7 +131,7 @@ del cambio**, no antes: mientras tanto la app vieja sigue funcionando.
   archivos `SUPABASE-*.sql`**, el `.bat`, el `.cmd`, `CNAME` y `.idea/`,
   copiados antes de la limpieza de noviembre.
 
-### Propuesta: el APK carga el sitio publicado
+### Decidido: el APK carga el sitio publicado (`server.url`)
 
 ```json
 {
@@ -193,20 +182,19 @@ Riesgos de esta opción, para que decidas:
    APK se instala directo (versionCode 3, `installDebug`); si se publica en
    Play, hay que revisarlo.
 
-Alternativa (si prefieres que el APK lleve el código dentro): un script de
-Node que **borra y recrea** `www/` desde una lista de lo permitido (html, css,
-js, img, misiones, fichas, manifest, sw.js), un flujo de GitHub Actions que lo
-corre y arma el APK en cada publicación, y una sonda que falla si
-`www/sw.js` no tiene el mismo `CACHE_NAME` que `sw.js`. Así el código es el
-mismo **en cada APK nuevo**, pero un teléfono que no actualiza el APK se queda
-con la versión vieja. Por eso la recomendación es `server.url`.
+La alternativa (APK con copia generada en CI) queda descartada: un teléfono
+que no actualiza el APK se quedaría con código viejo.
 
-## 5.6 Normas de `CLAUDE.md` que cambian (pendiente de tu aprobación)
+## 5.6 Normas de `CLAUDE.md`
+
+**Añadidas en esta revisión** (lo pediste explícitamente): nunca «upsert» en
+pagos ni en pagos de convocatoria, y nunca `Math.random()` para generar ids.
+
+**Pendientes de tu aprobación**, para cuando se implemente el primer corte:
 
 - Regla 5, «Datos del maestro se fusionan (`js/metas-fusion-aula.js`)»: pasa
   a «Datos del maestro: una fila por dato en Supabase, por `MetasDatos`. Nunca
   se fusiona, nunca se repone, nunca se guarda un blob».
 - Regla 4, «No tocar llaves de `localStorage`»: las llaves de datos del
   docente dejan de existir; las de preferencias siguen.
-- Sección «Cómo se publica»: añadir que el APK carga el sitio publicado y no
-  lleva copia.
+- Sección «Cómo se publica»: el APK carga el sitio publicado y no lleva copia.

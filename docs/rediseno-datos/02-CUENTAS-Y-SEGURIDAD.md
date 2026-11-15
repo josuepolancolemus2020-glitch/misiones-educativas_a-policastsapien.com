@@ -120,42 +120,88 @@ docente sigue entrando a la app vieja exactamente igual.
 Requisitos de configuración en Supabase (todos en el panel, fase aparte):
 
 - Auth → Providers → Email: **desactivar el alta pública** (`Allow new users
-  to sign up` apagado). Las cuentas solo las crea `metas-entrar`.
+  to sign up` apagado). Las cuentas de docente solo las crea `metas-entrar`.
+- Auth → Providers: **activar las sesiones anónimas** (las usan los padres,
+  sección 2.7).
+- Auth → Bot and Abuse Protection: **CAPTCHA Turnstile OBLIGATORIO**. Sin token
+  válido, Supabase no abre ninguna sesión anónima.
 - Auth → Rate limits: dejar el freno de entradas y verificaciones por IP.
-- Edge Functions: desplegar `metas-entrar` con `SUPABASE_SERVICE_ROLE_KEY`.
+- Edge Functions: desplegar `metas-entrar`, `metas-salir-todos` y
+  `familia-vincular` con `SUPABASE_SERVICE_ROLE_KEY` y el secreto de Turnstile.
 - API → Exposed schemas: añadir `metas`.
 
-## 2.4 RLS por dueño
+**Deshacer la vinculación solo es seguro antes de que el docente cree datos**
+en la base nueva: sus filas guardan `owner = auth_uid`, y un usuario de Auth
+nuevo tendría otro `auth_uid` (ver `SUPABASE-V2-VINCULACION.sql`).
 
-Cada tabla de `metas` tiene la misma forma (ver `SUPABASE-V2-ESQUEMA.sql`):
+## 2.4 RLS: dueño, y además solo cuentas de docente
+
+Corrección importante de la revisión 2. Las sesiones anónimas de los padres
+usan el **mismo rol** que los docentes (`authenticated`). Con solo la política
+«dueño = `auth.uid()`», una sesión anónima podía **crear** su propia aula, sus
+alumnos, familias y pagos (era dueña de lo que creaba) y, al chocar con el
+índice único de claves, **averiguar si una clave de familia existe**. Ahora
+cada tabla tiene dos capas:
 
 ```sql
-alter table metas.<t> enable row level security;
-create policy <t>_leer     on metas.<t> for select to authenticated using (owner = auth.uid());
-create policy <t>_crear    on metas.<t> for insert to authenticated with check (owner = auth.uid());
-create policy <t>_editar   on metas.<t> for update to authenticated using (owner = auth.uid()) with check (owner = auth.uid());
--- sin política de DELETE, y además: revoke delete, truncate ... from anon, authenticated;
+-- permisivas: solo lo propio
+create policy <t>_leer   on metas.<t> for select to authenticated using (owner = (select auth.uid()));
+create policy <t>_crear  on metas.<t> for insert to authenticated with check (owner = (select auth.uid()));
+create policy <t>_editar on metas.<t> for update to authenticated using (owner = (select auth.uid())) with check (owner = (select auth.uid()));
+-- RESTRICTIVA: además, la sesión tiene que ser de un docente vinculado
+create policy <t>_solo_docentes on metas.<t> as restrictive for all to authenticated
+  using ((select metas.es_docente())) with check ((select metas.es_docente()));
+-- sin política de DELETE y sin el permiso
 ```
 
-- `anon` no tiene **ningún** permiso sobre `metas`. Ni lectura.
-- No se usa `force row level security`: las pocas funciones `security
-  definer` (vinculación de familias, freno de intentos) corren como dueño del
-  esquema y necesitan leer sin la política del docente. Cada una filtra por
-  `auth.uid()` por su cuenta.
-- Las vistas de totales se crean con `security_invoker = true`, así respetan
-  la RLS de quien consulta.
-- Las relaciones (pago → alumno → aula) llevan además una **comprobación de
-  dueño cruzada** en el disparador: no se puede colgar un pago propio de un
-  alumno ajeno aunque se adivine su id.
+`metas.es_docente()` es verdadera solo si la sesión **no** es anónima **y**
+tiene fila en `metas.cuentas`. La misma restrictiva está en `auditoria`,
+`rechazos`, `recibo_series`, `recibo_contadores` y `avisos_vistos`, y la
+numeración de recibos comprueba la cuenta otra vez por su lado.
 
-## 2.5 Límite de intentos
+Además, el **sello** (`t_sellar`, el primer disparador de cada tabla) exige
+`es_docente()` antes que nada: una sesión anónima que intente insertar recibe
+siempre el mismo error `42501`, exista o no la clave que probó. No hay forma de
+averiguar una clave insertando.
+
+- `anon` no tiene **ningún** permiso sobre `metas`. Ni lectura.
+- `(select auth.uid())` en las políticas, para que la base lo evalúe una vez
+  por consulta y no una vez por fila.
+- **Dinero sin escritura directa**: `pagos`, `gastos` y `convocatoria_pagos`
+  no tienen permiso de `INSERT` ni `UPDATE` por la API; solo se escriben con
+  las funciones `metas.pago_*` y `metas.gasto_*`. Por eso **no puede haber
+  «upsert» de pagos**. Los alumnos se crean con `metas.alumno_crear` y se
+  editan por la API.
+- Ninguna función nueva se puede llamar por defecto
+  (`alter default privileges in schema metas revoke execute on functions from
+  public`); cada una recibe su permiso a mano.
+- No se usa `force row level security`: las funciones `security definer`
+  corren como dueño del esquema y filtran por `auth.uid()` por su cuenta.
+- Vistas de totales con `security_invoker = true`.
+- Llaves foráneas compuestas con `owner` (y `aula_id`): no se puede colgar una
+  fila propia de una fila ajena aunque se adivine su id.
+
+## 2.5 Límite de intentos y de dónde sale la IP
+
+**La base no lee la IP de cabeceras que el cliente puede escribir**
+(`x-forwarded-for`, `cf-connecting-ip` mandados por el aparato). La IP la
+obtienen las **funciones de borde** de la cabecera que añade la propia
+infraestructura de Supabase (el **último** valor de `x-forwarded-for`, el que
+agrega su proxy, nunca el primero), y se la pasan a `metas.freno_ok`, que solo
+la llama `service_role`. En la consulta de familias, además, cada intento
+exige un token Turnstile, que es lo que de verdad frena a un programa.
 
 | puerta | freno |
 |---|---|
-| `metas-entrar` (docente) | el de hoy: 5 fallos por correo → 10 minutos (`docente_intentos`). **Se añade** un freno por IP: 30 intentos por hora (`metas_rate_ok`, que ya existe y lee `cf-connecting-ip`) para cortar el rociado de contraseñas sobre muchos correos |
-| Auth de Supabase | sus propios límites por IP (panel → Auth → Rate limits) |
-| Vinculación de familias | 60 por hora por IP, 20 por hora por sesión **y** 20 claves equivocadas por hora por IP |
-| Funciones viejas que validan contraseña | quedan **congeladas** (`05-ELIMINACION-Y-ANDROID.md`): se les quita `execute` a `anon` y `authenticated`, así dejan de servir de oráculo |
+| `metas-entrar` (docente) | el de hoy: 5 fallos por correo → 10 minutos (`docente_intentos`, sin tocar) **y** 30 intentos por hora por IP (`freno_ok('entrar-ip:'…)`), implementado en la función de borde **antes** de validar la contraseña |
+| Sesión anónima de padres | CAPTCHA Turnstile obligatorio + límites de Auth por IP |
+| `familia-vincular` | token Turnstile por intento; 20 por hora por sesión; 60 por hora por IP; 20 claves equivocadas por hora por IP; **2 000 claves equivocadas por hora en total** (para que repartir el ataque entre muchas IP no sirva) |
+| Funciones viejas que validan contraseña | quedan **congeladas** (`SUPABASE-V2-CONGELAR.sql`) |
+
+Al cambiar la contraseña (`metas_cambiar_clave_docente`) y al recuperarla por
+correo (`reset-clave` → `metas_reset_confirmar`), se llama a
+`metas-salir-todos`: en el primer caso cierra las **otras** sesiones; en el
+segundo, **todas**.
 
 ## 2.6 Lo que se guarda en el aparato
 
@@ -165,32 +211,38 @@ create policy <t>_editar   on metas.<t> for update to authenticated using (owner
 | `METAS_APARATO_ID` | uuid de este aparato, para `device_id` | no |
 | IndexedDB `metas-datos-v2` | copia de lectura de las filas y la cola de cambios | datos del aula; se borra al cerrar sesión **si la cola está vacía** |
 
-`METAS_DOCENTE_V1` deja de guardar `clave` (pendiente de la fase de
-implementación: hoy la usan las funciones viejas). Las llaves
-`METAS_SB_URL` / `METAS_SB_KEY` que permiten apuntar la app a **otro**
-servidor se eliminan: con ellas se podía mandar la sesión a un servidor ajeno.
+`METAS_DOCENTE_V1` deja de guardar `clave`. Las llaves `METAS_SB_URL` /
+`METAS_SB_KEY` que permiten apuntar la app a **otro** servidor se eliminan:
+con ellas se podía mandar la sesión a un servidor ajeno.
 
-## 2.7 Familias
+## 2.7 Familias y claves de familia
 
 Las familias siguen **sin cuenta y sin contraseña**: escriben la clave de la
-tira, como hoy. Por debajo, el teléfono abre una sesión **anónima** de
-Supabase Auth y la clave la vincula con su hijo, para que la RLS sepa qué
-filas puede leer. El diseño completo está en `07-VISTA-DE-PADRES.md` y
-`SUPABASE-V2-FAMILIAS.sql`.
+tira, como hoy. Por debajo, el teléfono abre una sesión **anónima** (con
+Turnstile) y la función de borde `familia-vincular` la une con su hijo. El
+diseño completo está en `07-VISTA-DE-PADRES.md` y `SUPABASE-V2-FAMILIAS.sql`.
 
-Las claves ya entregadas en papel se conservan: en la carga rápida el docente
-puede escribir la clave que ya tiene la familia; si la deja vacía, la app le
-genera una nueva (más larga que las de hoy). Ver `04-CARGA-RAPIDA.md`.
+**Las claves las pone la base** (disparador `t_clave_familia`):
 
-## 2.8 Pendiente de decidir (no bloquea el diseño)
+- **Nuevas**: 10 símbolos al azar de un alfabeto de 32 sin I, O, 0 ni 1
+  (50 bits; las de hoy son el número de lista + 4 símbolos, unos 20 bits).
+  Se muestran en dos grupos: `K7QMX-4PA2B`. No dependen del número de lista.
+- **Conservadas** (la familia ya tiene la tira): el docente la escribe y la
+  base la acepta **solo si aparece en los datos congelados de ese mismo
+  docente** (`METAS_CODIGOS_V1` o la lista de `METAS_ADMIN_V1` en
+  `docente_estado`, buscadas por el código de docente de su vínculo). Así nadie
+  puede "reclamar" la clave de una familia de otro docente.
+- **No cambian.** Si una tira se pierde, se reemplaza la familia (se borra la
+  fila y se crea otra, con clave nueva); los teléfonos vinculados con la vieja
+  dejan de ver al instante.
 
-- **Endurecer la huella vieja** (pasar `clave_hash` a bcrypt la próxima vez
-  que el docente entra). Mejora la seguridad pero **modifica** filas de
-  `docentes`: por la regla de cuentas, no se hace sin tu permiso.
-- **Directores y roles** (`metas_rol_*`) hoy leen el blob con una lista de
-  campos. En el modelo nuevo se haría con una política RLS extra de lectura
-  para quien tenga permiso concedido en `docente_permisos`. Se diseña cuando
-  se apruebe lo básico.
+## 2.8 Decisiones de la revisión 2 y lo que se pospone
+
+- **bcrypt** para la huella vieja: **pospuesto**. Modifica filas de
+  `docentes` y necesitará tu permiso aparte.
+- **Directores y roles**: **solo lectura, pospuesto** a un corte posterior
+  (política de lectura según `docente_permisos`).
+- **PIN de convocatorias**: **pospuesto** al corte de convocatorias.
 
 ## 2.9 Boceto de la función de borde `metas-entrar` (fase aparte)
 
@@ -210,8 +262,15 @@ Deno.serve(async (req) => {
   const { correo, clave } = await req.json();
   const admin = createClient(URL, SERVICIO, { auth: { persistSession: false } });
 
+  // 0. Freno por IP, ANTES de tocar la contraseña. La IP es la que añadió el
+  //    proxy de Supabase (último valor de x-forwarded-for), nunca la primera,
+  //    que la puede escribir el cliente.
+  const ip = (req.headers.get('x-forwarded-for') ?? '').split(',').map(s => s.trim()).filter(Boolean).pop() ?? 'sin-ip';
+  const { data: libre } = await admin.schema('metas').rpc('freno_ok',
+    { p_llave: 'entrar-ip:' + ip, p_max: 30, p_ventana: '1 hour' });
+  if (!libre) return json({ ok: false, motivo: 'espera' }, 429);
+
   // 1. La contraseña se valida como HOY, con su freno de 5 fallos por correo.
-  //    (más el freno por IP: metas.freno_ok('entrar:' || ip, 30, '1 hour'))
   const { data: r } = await admin.rpc('metas_entrar_docente_v2', { p_correo: correo, p_clave: clave });
   if (!r?.ok) return json({ ok: false, motivo: r?.motivo ?? 'datos' }, 401);
 
@@ -255,7 +314,9 @@ const json = (o: unknown, status = 200) =>
   new Response(JSON.stringify(o), { status, headers: { 'content-type': 'application/json' } });
 ```
 
-Al cambiar la contraseña (`metas_cambiar_clave_docente`, que no cambia), el
-aparato llama además a una función `metas-salir-todos` que hace
-`admin.auth.admin.signOut(uid, 'others')`, para que los otros aparatos pidan la
-contraseña nueva la próxima vez que renueven.
+`metas-salir-todos` hace `admin.auth.admin.signOut(uid, 'others')` después de
+`metas_cambiar_clave_docente` (la llama la app) y `signOut(uid, 'global')`
+después de una recuperación por correo (la llama la función `reset-clave`
+cuando `metas_reset_confirmar` dice ok). En los dos casos los otros aparatos
+piden la contraseña nueva la próxima vez que renuevan; su cola de cambios
+espera, no se pierde.
