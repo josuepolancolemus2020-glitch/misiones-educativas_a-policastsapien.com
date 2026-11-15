@@ -135,7 +135,13 @@ lista.forEach(slug => {
   const deAntes = m.correr('critApartados().formasDeAntes || 0', 'formas de antes');
 
   const textosDeBancos = new Set(L.cadenasDe(bancos));
-  const textosDeApartados = new Set(L.cadenasDe(JSON.parse(m.correr('JSON.stringify(critApartados().map(function (a) { return a[0]; }))', 'bancos de los apartados'))));
+  const bancosDeApartados = JSON.parse(m.correr('JSON.stringify(critApartados().map(function (a) { return a[0]; }))', 'bancos de los apartados'));
+  const textosDeApartados = new Set(L.cadenasDe(bancosDeApartados));
+  /* Lo que está escrito en un banco que NO es de un apartado (la matriz
+     fija de Adjetivos de bachillerato, la tabla de los Continentes): la
+     hoja lo trae en todas las formas y no es un caso repartido. */
+  const jsonDeApartados = new Set(bancosDeApartados.map(b => JSON.stringify(b)));
+  const textosDeOtrosBancos = new Set(L.cadenasDe(Object.keys(bancos).filter(n => !jsonDeApartados.has(JSON.stringify(bancos[n]))).map(n => bancos[n])));
   const datos = {}, usos = {};
   let desiguales = 0;
   for (let n = 1; n <= tope; n++) {
@@ -153,7 +159,7 @@ lista.forEach(slug => {
        A a D de un pareado, un dato calculado) es lo que escribe el
        generador: se cuenta en textos DISTINTOS y fuera de todo banco, que
        es como lo cuenta la lista de lo sabido. */
-    const porSuCuenta = sobran.filter(t => t.length >= 20 && textosDeApartados.has(t));
+    const porSuCuenta = sobran.filter(t => t.length >= 20 && textosDeApartados.has(t) && !textosDeOtrosBancos.has(t));
     const delGenerador = new Set(sobran.filter(t => !textosDeBancos.has(t)));
     if (porSuCuenta.length || delGenerador.size > (sueltosSabidos[slug] || 0) || repartidos.some(t => !pintados.includes(t))) desiguales++;
     if (!f.impreso.includes('Forma ' + n)) falla(slug, 'la hoja impresa de la Forma ' + n + ' no dice su número');
