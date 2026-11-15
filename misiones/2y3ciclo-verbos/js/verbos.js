@@ -952,8 +952,11 @@ const evalPRBank=[
 const EVAL_FORMAS = 30;
 /* _evalRng, _shuffleF, _pickF y _injectFormaSel ya no se copian aquí: están en
    js/motor-misiones.js, que la página carga antes que este archivo. Si un teléfono
-   abre la página guardada de antes, que no lo pide, se pide aquí. */
-if (typeof _evalRng !== 'function') { (function () { var m = document.createElement('script'); m.src = '../../js/motor-misiones.js'; document.head.appendChild(m); })(); }
+   abre la página guardada de antes, que no lo pide, se pide aquí. Y también si
+   tiene guardado el motor de antes, que todavía no sabe conservar las formas
+   ya impresas de la prueba de pensamiento crítico (_conFormasDeAntes): con
+   mala señal puede llegar este archivo nuevo y servirse el motor viejo. */
+if (typeof _evalRng !== 'function' || typeof _conFormasDeAntes !== 'function') { (function () { var m = document.createElement('script'); m.src = '../../js/motor-misiones.js'; document.head.appendChild(m); })(); }
 // Selector «Forma exacta»: el docente elige qué forma generar (p.ej. para
 // reimprimir la pauta de la Forma 15 que ya repartió a los alumnos).
 function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalFormNum, function (v) { evalFormNum = v; }); }
@@ -1286,14 +1289,28 @@ function _critHasWord(student, key) {
     return words.includes(normalizeEvalAnswer(key));
 }
 
+/* Las formas 1 a 30 de esta prueba ya están impresas en las escuelas con
+   su pauta. Salían de un sorteo con la semilla de la forma, y así siguen
+   saliendo: aquí no se cambia ni el orden de las cuatro sacadas. Lo vigila
+   _dev/verifica-formas-oro.js contra la referencia congelada. */
+const CRIT_FORMAS_DE_ANTES = 30;
+function critFormaDeAntes(forma) {
+    const rng = _evalRng(200000 + forma);
+    return [_pickF(critCirBank, 5, rng), _pickF(critTMBank, 5, rng), _pickF(critConcBank, 5, rng), _pickF(critTransBank, 5, rng)];
+}
+/* Los apartados que se sacan de un banco, con cuántos casos saca cada uno
+   (la sección V no entra: son siempre sus dos preguntas). Con esto el motor
+   (js/motor-misiones.js) deja las formas 1 a 30 como estaban y reparte las
+   nuevas, de la 31 a la 50, sin que ninguna lleve el conjunto de casos de
+   otra. El orden es el de la hoja. */
+function critApartados() {
+    return _conFormasDeAntes([[critCirBank, 5], [critTMBank, 5], [critConcBank, 5], [critTransBank, 5]], CRIT_FORMAS_DE_ANTES, critFormaDeAntes);
+}
 function genEvalCrit() {
     sfx('click');
-    _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
-    const _sC = document.getElementById('evalCritFormaSel');
-    if (_sC && parseInt(_sC.value, 10)) evalCritFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_sC.value, 10)));
-    const cf = evalCritFormNum; window._currentEvalCritForm = cf; const rngC = _evalRng(200000 + cf);
-    evalCritFormNum = (evalCritFormNum % EVAL_FORMAS) + 1;
-    _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
+    const turno = _turnoCritica(evalCritFormNum, critApartados(), function (v) { evalCritFormNum = v; });
+    const cf = turno.forma; window._currentEvalCritForm = cf;
+    const [cirItems, tmItems, concItems, transItems] = turno.casos;
     saveProgress();
     document.getElementById('evalcrit-screen-title').textContent = `🧠 Pensamiento Crítico · Forma ${cf} · Los Verbos`;
     evalCritAnsVisible = false;
@@ -1305,7 +1322,6 @@ function genEvalCrit() {
     out.appendChild(bar);
 
     // ── I. Cirujano del verbo (5×4=20)
-    const cirItems = _pickF(critCirBank, 5, rngC);
     let cirRows = '';
     cirItems.forEach((it, i) => {
         cirRows += `<div class="crit-q-block"><div class="crit-scenario"><strong>🔪 Verbo ${i + 1}:</strong> <em style="font-size:1.05rem;">${it.w}</em></div><div class="crit-cir-row">Raíz: <input class="eval-cp-input crit-cir-input" type="text" data-cirr="${i}" autocomplete="off" aria-label="Raíz del verbo ${it.w}"> + Desinencia: <input class="eval-cp-input crit-cir-input" type="text" data-cird="${i}" autocomplete="off" aria-label="Desinencia del verbo ${it.w}"> · Conjugación del infinitivo: ${_critSel('crit-sel', 'data-circ', i, critConjOptions, 'Conjugación del infinitivo de ' + it.w)}</div><div class="eval-answer">${it.raiz}- + -${it.des} → infinitivo ${it.inf}, ${it.conj} conjugación</div><div class="eval-item-feedback" id="critFbCir${i}" aria-live="polite"></div></div>`;
@@ -1315,7 +1331,6 @@ function genEvalCrit() {
     out.appendChild(s1);
 
     // ── II. Detective del tiempo y modo (5×4=20)
-    const tmItems = _pickF(critTMBank, 5, rngC);
     let tmRows = '';
     tmItems.forEach((it, i) => {
         tmRows += `<div class="crit-q-block"><div class="crit-scenario"><strong>🕵️ Oración ${i + 1}:</strong> ${it.s}</div><div class="crit-cir-row">Tiempo: ${_critSel('crit-sel', 'data-tmt', i, critTiempoOptions, 'Tiempo verbal de la oración ' + (i + 1))} · Modo: ${_critSel('crit-sel', 'data-tmm', i, critModoOptions, 'Modo verbal de la oración ' + (i + 1))} · Palabra-pista: <input class="eval-cp-input crit-cir-input" type="text" data-tmp="${i}" autocomplete="off" aria-label="Palabra pista de la oración ${i + 1}"></div><div class="eval-answer">Tiempo ${it.t} · modo ${it.m} · pista: «${it.pista}»</div><div class="eval-item-feedback" id="critFbTm${i}" aria-live="polite"></div></div>`;
@@ -1325,7 +1340,6 @@ function genEvalCrit() {
     out.appendChild(s2);
 
     // ── III. Detective del error de concordancia (5×4=20)
-    const concItems = _pickF(critConcBank, 5, rngC);
     let concRows = '';
     concItems.forEach((it, i) => {
         concRows += `<div class="crit-q-block"><div class="crit-scenario">❌ ${it.bad}</div><div class="crit-cir-row">Forma verbal correcta: <input class="eval-cp-input crit-cir-input" type="text" data-conc="${i}" autocomplete="off" aria-label="Forma verbal correcta de la oración ${i + 1}"></div><div class="crit-q-label" style="margin-top:0.35rem;">¿Por qué está mal? Explica:</div><textarea class="crit-textarea" rows="2" aria-label="Explicación del error ${i + 1}" placeholder="El sujeto es... por eso el verbo debe..."></textarea><div class="eval-answer">${it.fix}. ${it.model}</div><div class="eval-item-feedback" id="critFbConc${i}" aria-live="polite"></div></div>`;
@@ -1335,7 +1349,6 @@ function genEvalCrit() {
     out.appendChild(s3);
 
     // ── IV. Transformador de oraciones (5×4=20)
-    const transItems = _pickF(critTransBank, 5, rngC);
     let transRows = '';
     transItems.forEach((it, i) => {
         transRows += `<div class="crit-q-block"><div class="crit-scenario"><strong>⚙️ Original ${i + 1}:</strong> ${it.orig}<br><strong>Cambio pedido:</strong> ${it.pedido}</div><textarea class="crit-textarea" data-trans="${i}" rows="2" aria-label="Oración transformada ${i + 1}" placeholder="Reescribe la oración completa con el cambio pedido..."></textarea><div class="eval-answer">${it.model} (forma verbal clave: «${it.key}»)</div><div class="eval-item-feedback" id="critFbTrans${i}" aria-live="polite"></div></div>`;
@@ -1634,7 +1647,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fin('s-tipos', false);
 });
 // Formas deterministas v1: selectores de forma visibles desde la carga de la página
-(function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalOp==='function') _injectFormaSel('genEvalOp','evalOpFormaSel',evalOpFormNum,function(v){evalOpFormNum=v;}); }catch(e){} try{ if(typeof genEvalCrit==='function') _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
+(function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalOp==='function') _injectFormaSel('genEvalOp','evalOpFormaSel',evalOpFormNum,function(v){evalOpFormNum=v;}); }catch(e){} try{ if(typeof genEvalCrit==='function') _selectorCritica(evalCritFormNum,critApartados(),function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
 
 // ═════════════════ 📖 CONTROL DE LECTURA ═════════════════
 // Se paga UNA vez por lectura, no por repetirla: releer el mismo texto dos o
