@@ -1358,10 +1358,17 @@
            instalación baja el armazón entero y con mala señal tarda, y el
            maestro puede haber cerrado la aplicación antes de que termine. */
         navigator.serviceWorker.register('sw.js').then(reg => {
-          const sw = reg.installing || reg.waiting || reg.active;
           const vistos = performance.getEntriesByType('resource').map(e => e.name)
             .filter(u => u.indexOf(location.origin + '/') === 0 && /\.(js|css)\?(.*&)?v=/.test(u));
-          if (sw && vistos.length) sw.postMessage({ tipo: 'guardar-vistos', urls: vistos });
+          const avisar = sw => { if (sw && vistos.length) sw.postMessage({ tipo: 'guardar-vistos', urls: vistos }); };
+          avisar(reg.installing || reg.waiting || reg.active);
+          /* Y al nuevo, si llega mientras la página está abierta. En un
+             teléfono con un service worker de hace meses, el aviso de arriba
+             le llega al VIEJO, que no lo entiende, y el nuevo se instala un
+             momento después sin saber qué guiones tiene la página: la próxima
+             apertura sin señal esperaba diez segundos por cada uno que le
+             faltaba. */
+          reg.addEventListener('updatefound', () => avisar(reg.installing));
         }).catch(() => {});
       });
     }
