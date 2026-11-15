@@ -66,16 +66,22 @@ async function senalLenta(ctx, msApp) {
 }
 
 /* Anota cuándo avisó app.js y si la señal llegó a verse. Se envuelve la
-   función en cuanto index.html la define: aquí todavía no existe ni <html>. */
+   función en cuanto index.html la define: aquí todavía no existe ni <html>.
+   ⚠️ El tiempo se cuenta desde que index.html la DEFINE, que es el mismo
+   reloj que usa la portada para decidir si se encendió. Contarlo desde el
+   inicio de la navegación sumaba lo que tarda en llegar app.css, y una
+   visita que abría en 338 ms de navegación pero en menos de 300 ms de
+   portada salía en rojo sin que nada estuviera mal. */
 const anotaAviso = () => {
   let real;
   Object.defineProperty(window, 'metasLista', {
     configurable: true,
     get() { return real; },
     set(v) {
+      window.__definidaEn = performance.now();
       real = function () {
         const primera = window.__avisoEn === undefined;
-        if (primera) window.__avisoEn = performance.now();
+        if (primera) window.__avisoEn = performance.now() - window.__definidaEn;
         v();
         if (primera) window.__seVio = document.documentElement.classList.contains('metas-vista');
       };

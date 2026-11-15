@@ -307,7 +307,15 @@ const POR_VISTA = {
     const fijo = document.querySelector('#ad-tab-body .ad-mx-sticky');
     const wrap = document.querySelector('#ad-tab-body .ad-mx-wrap');
     return { cortados, anchos, card: Math.round(card), deLado: document.documentElement.scrollWidth > innerWidth,
-      fijo: getComputedStyle(fijo).position, tablaCorre: wrap.scrollWidth > wrap.clientWidth, bajo44: bs.filter(b => b.getBoundingClientRect().height < 44).length };
+      fijo: getComputedStyle(fijo).position, tablaCorre: wrap.scrollWidth > wrap.clientWidth, /* ⚠️ La altura se redondea a la unidad con que Chromium coloca las cajas
+         (1/64 de px) antes de compararla. El botón mide 44 px de verdad
+         (min-height: 44px), pero cuando queda a una altura con decimales —el
+         borde de 1,5 px del grupo lo deja así, y dónde cae depende de la letra
+         y de lo que haya encima— getBoundingClientRect resta en coma flotante
+         y devuelve 43,99997. Con «< 44» a secas la sonda salía roja en el CI y
+         verde aquí sin que el botón cambiara un píxel. Lo que no mide 44 de
+         verdad (43,98 o menos) sigue saliendo rojo. */
+      bajo44: bs.filter(b => Math.round(b.getBoundingClientRect().height * 64) / 64 < 44).length };
   });
   comprueba('los botones de parcial y sección se leen completos', !cel.cortados.length, cel.cortados);
   comprueba('y ocupan el ancho de la tarjeta', cel.anchos.every(a => a >= cel.card - 40), cel);
