@@ -959,19 +959,60 @@ banco. Su crítica quedó congelada al terminar.
 
 Van 42 de 53, las 42 con la crítica congelada.
 
+### Las 11 de estructura propia (rama `feat/critica-50-estructura-propia`)
+
+Adjetivos, Adverbios, Áreas protegidas, Eras geológicas, Coordenadas, los dos
+de Continentes, Pronombres, Sustantivos, Verbos y Adjetivos de bachillerato.
+Aquí la decisión de Josué fue otra que en las 42: **las formas 1 a 30 no se
+reparten de nuevo**. Ninguna repetía conjunto dentro de sus 30, y la pauta
+impresa tiene que seguir valiendo pregunta por pregunta. Solo se añaden las
+formas 31 a 50.
+
+- **Primero se congeló** la crítica 1 a 30 de las 11, tal como salía en
+  `main`, antes de tocar ninguna (`genera-formas-oro.js --critica-de-antes`;
+  la referencia lleva `criticaDeAntes: 30`).
+- **El motor** aprendió a conservar formas ya impresas: la misión cuelga de
+  sus apartados cuántas son y cómo salían
+  (`_conFormasDeAntes(apartados, 30, critFormaDeAntes)`). Hasta la 30,
+  `_repartoCritica` devuelve lo que daba el sorteo con la semilla; de la 31
+  en adelante sigue el reparto de siempre desde su primera posición,
+  **saltando** los conjuntos que alguna forma de antes ya llevó.
+- **Las 11 usan el reparto del motor** para las formas nuevas; ninguna tuvo
+  que quedarse con generador propio. Lo que cada una hacía además de sacar
+  casos se quedó en la misión, en una función `critSorteoDeAntes` que gasta
+  la semilla en el mismo orden que antes: barajar la columna de un pareado
+  (Eras, Europa-Asia-África), los elementos por clasificar (Áreas), las
+  palabras de una serie (Sustantivos), las filas de una matriz (Adjetivos de
+  bachillerato), las opciones (América-Oceanía-Antártida), o calcular puntos
+  y husos horarios (Coordenadas).
+- **Lo que no sale de un banco no es un apartado**: los puntos y husos de
+  Coordenadas, la tabla comparativa de América-Oceanía-Antártida, las dos
+  preguntas fijas de Verbos y la matriz de Adjetivos de bachillerato van en
+  todas las formas y se calculan o barajan con la semilla de la forma.
+- **Solo en las formas nuevas** se barajan las opciones de selección, con la
+  correcta repartida entre las letras (`_conOpcionesRepartidas`), y los
+  pareados no dejan ninguna respuesta en la fila de su pregunta
+  (`_barajarSinFilaPropia`). Los pares de dos opciones con orden natural
+  (Oración A / B, Sí / No, Válida / No válida, Vos / Tú / Usted) y los
+  desplegables conservan su orden.
+- **No se escribió ningún caso**: a las 11 les alcanzan sus bancos. La más
+  justa es América-Oceanía-Antártida, con 42 336 conjuntos.
+- **Las formas 31 a 50 no están congeladas**: esperan el visto bueno de
+  Josué (`genera-formas-oro.js --critica-ampliar <carpeta>`, que se niega si
+  una forma de antes dejó de salir idéntica). `verifica-formas-oro.js` las
+  nombra sin ponerse roja.
+
+Con esto las 53 misiones con prueba de pensamiento crítico llegan a la Forma
+50 sin repetir conjunto.
+
 ### Lo que queda
 
-- **Las otras 11**, con estructura propia: Adjetivos, Adverbios, Áreas
-  protegidas, Eras geológicas, Coordenadas, los dos de Continentes,
-  Pronombres, Sustantivos, Verbos y Adjetivos de bachillerato. En siete de
-  ellas la prueba, además de sacar casos, baraja opciones o calcula datos con
-  la semilla: se miran una por una. Josué decidió cerrar esta rama con las 42
-  y llevar estas 11 en otra rama, después. Mientras tanto siguen sacando sus
-  casos como antes; hoy ninguna repite dentro de sus 30 formas, y
-  `verifica-critica-sin-repetir` las nombra sin ponerse roja.
+- **Congelar las formas 31 a 50** de las 11 de estructura propia, cuando
+  Josué las apruebe.
 - **El aviso a los docentes** (decisión 1): las pautas impresas de la prueba
   de pensamiento crítico dejan de corresponder a la forma del mismo número,
-  de la 1 a la 30, en las 42 misiones que ya reparten.
+  de la 1 a la 30, en las 42 misiones que repartieron todo de nuevo. En las
+  11 de estructura propia la pauta impresa sigue valiendo.
 - **Visto al probar la tanda 2, sin tocar:** `verifica-mision-navegador` se
   cae con Numbers and My Age porque espera tarjetas (`#fcW`) que esa misión
   no tiene. Viene de antes y no es de la prueba crítica.
