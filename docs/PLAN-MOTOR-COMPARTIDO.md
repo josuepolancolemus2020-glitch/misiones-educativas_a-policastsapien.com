@@ -304,17 +304,16 @@ formas 1 a 20 quedan idénticas. Aquí las «nuevas» serían de la 21 a la 50.
 | `2y3ciclo-mayas-precolombinas` | 29 | 46 | 24 |
 | `2y3ciclo-la-materia` | 29 | 47 | 54 |
 | `2y3ciclo-la-energia` | 30 | 48 | 75 |
-| `2y3ciclo-constitucion` | 29 | 49 | sin dato |
+| `2y3ciclo-constitucion` | 29 | 49 | 80 |
 | `2y3ciclo-ecosistemas` | 30 | 49 | 180 |
 | `2y3ciclo-la-celula` | 30 | 49 | 120 |
-| `2y3ciclo-motores-mecanismos` | 29 | 49 | sin dato |
-| `2y3ciclo-sensores-robot` | 30 | 49 | sin dato |
+| `2y3ciclo-motores-mecanismos` | 29 | 49 | 360 |
+| `2y3ciclo-sensores-robot` | 30 | 49 | 240 |
 | `basica-el-asombro` | 29 | 49 | 90 |
 | `basica-pensar-con-orden` | 29 | 49 | 180 |
 
 «Distintas» aquí compara la forma entera (preguntas y orden). La última
-columna es el producto de combinaciones de cada banco; «sin dato» son misiones
-cuyos bancos tienen otros nombres y no los conté.
+columna es el producto de combinaciones de cada banco, sin contar el orden.
 
 Lectura:
 
