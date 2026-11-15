@@ -113,6 +113,48 @@
     try { var n = parseInt((new Function('return (' + expr + ');'))(), 10); return n >= 1 ? n : null; } catch (e) { return null; }
   }
 
+  /* La forma que dice el TÍTULO de cada prueba. Es lo que el alumno tiene
+     delante, así que manda sobre todo lo demás: el círculo marcado tiene
+     que ser esa.
+
+     Hacía falta porque una misión puede BORRAR el selector y volver a
+     crearlo en medio de una generación (Fin de grado lo hace en cada
+     examen, para cambiar de materia), y el selector nuevo nacía sin saber
+     qué forma acababa de salir: marcaba la siguiente. El título decía
+     «Forma 2» y el círculo marcado era el 3, y al recargar pasaba lo mismo
+     con el examen que la misión vuelve a armar. Leer el título lo arregla
+     para cualquier misión, sin tocar ninguna: todas lo escriben igual
+     («… Forma 7 …», o «Forma R-7» en la adaptada; «Form 7» si está en
+     inglés). Un título sin forma (antes de generar) no cambia nada. */
+  var TITULO_DE = {
+    evalFormaSel: 'eval-screen-title',
+    evalOpFormaSel: 'evalop-screen-title',
+    evalCritFormaSel: 'evalcrit-screen-title'
+  };
+  function _formaDelTitulo(selId) {
+    var doc = global.document, t = TITULO_DE[selId] && doc.getElementById(TITULO_DE[selId]);
+    var m = t && (t.textContent || '').match(/\bForma?\s+(?:R-)?(\d+)\b/);
+    return m ? parseInt(m[1], 10) : null;
+  }
+  function _alinearConTitulo(selId) {
+    var el = global.document.getElementById(selId);
+    if (!el || !el._fs) return;
+    var s = el._fs, n = _formaDelTitulo(selId);
+    if (!n || n > s.tope || n === s.mostrada) return;
+    s.mostrada = n;
+    s.vista = null;
+    _pintar(el);
+  }
+  /* Se vigila el título, no la generación: la misión lo escribe DESPUÉS de
+     rehacer el selector, y es ese último cambio el que cuenta. */
+  function _seguirTitulo(selId) {
+    var doc = global.document, t = TITULO_DE[selId] && doc.getElementById(TITULO_DE[selId]);
+    if (!t || t._metasSigueForma || typeof global.MutationObserver !== 'function') return;
+    t._metasSigueForma = true;
+    new global.MutationObserver(function () { _alinearConTitulo(selId); })
+      .observe(t, { childList: true, characterData: true, subtree: true });
+  }
+
   /* Los botones del examen, más bajos y con el texto corto. El texto
      largo queda como nombre del botón (lo lee el lector de pantalla y
      sale al dejar el puntero encima), y es el que ya traduce
@@ -177,6 +219,12 @@
     '#evalOut input.eval-cp-input.eval-input-no{border-bottom-color:var(--red,#d63031);background:rgba(214,48,49,.08);}',
     '}',
     /* En el papel solo va «Forma N», que ya lleva la hoja. */
+    /* El encabezado de la hoja (Nombre, Fecha, Centro Educativo, Valor
+       total) no es de la pantalla. 60 misiones lo esconden en su hoja; 22
+       (Fin de grado y casi todas las de Matemáticas) no, y se veía encima
+       del examen. La hoja impresa no lo usa: printEval arma la suya en
+       otra ventana, con su propio encabezado. */
+    '@media screen{.eval-print-header{display:none;}}',
     '@media print{.metas-formas,.eval-controls{display:none!important;}}'
   ].join('\n');
 
@@ -301,6 +349,11 @@
     caja.appendChild(cajaGrupos);
     caja.appendChild(el);
     var s = el._fs = { fnName: fnName, onPick: onPick, tope: tope, pendiente: actual, mostrada: null, leida: null, botones: [], pastillas: [], cajaGrupos: cajaGrupos, grupo: 0, vista: null, filaPintada: '', turno: null };
+    /* Si el título ya dice una forma (el selector se rehízo, o la misión
+       armó el examen al abrir), esa es la que está en la pantalla. */
+    var enTitulo = _formaDelTitulo(selId);
+    if (enTitulo && enTitulo <= tope) s.mostrada = enTitulo;
+    _seguirTitulo(selId);
 
     cajaGrupos.addEventListener('click', function (ev) {
       var p = ev.target && ev.target.closest ? ev.target.closest('.metas-grupo') : null;
