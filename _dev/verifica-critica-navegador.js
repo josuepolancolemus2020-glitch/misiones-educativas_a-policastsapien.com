@@ -164,7 +164,13 @@ const leerRenglones = () => document.getElementById('evalCritOut').innerText.spl
       const delBanco = [];
       const junta = x => { if (typeof x === 'string') delBanco.push(quita(x)); else if (Array.isArray(x)) x.forEach(junta); else if (x && typeof x === 'object') Object.keys(x).forEach(k => junta(x[k])); };
       junta(_repartoCritica(n, critApartados()));
-      return { doc, casos: (new Function('return (' + leer + ')()'))(), delBanco: delBanco.filter(t => t.length >= 8) };
+      /* Y de cada caja, sus datos en negrita (sin el número de orden):
+         así se reconoce en el papel un caso CALCULADO («57° N, 42° O»,
+         «7:00»), que no está en ningún banco y que la hoja redacta con
+         otras palabras que la pantalla. */
+      const fuertes = Array.from(document.querySelectorAll('#evalCritOut .crit-scenario, #evalCritOut .crit-compare-box, #evalCritOut .crit-ce-given'))
+        .map(e => Array.from(e.querySelectorAll('strong, b')).map(x => x.textContent.replace(/\s+/g, ' ').trim()).filter(t => t.length >= 3 && !/^\d+\.$/.test(t)));
+      return { doc, casos: (new Function('return (' + leer + ')()'))(), delBanco: delBanco.filter(t => t.length >= 8), fuertes };
     }, [leerHoja.toString(), tocarForma.toString(), FORMA_IMPRESA]);
     if (!impresa.doc) mal('la Forma ' + FORMA_IMPRESA + ' no generó hoja para imprimir');
     else {
@@ -185,8 +191,15 @@ const leerRenglones = () => document.getElementById('evalCritOut').innerText.spl
          rótulo: «Grado positivo: …»), si está el texto del banco que esa
          caja enseña. */
       const sinEspacios = t => t.replace(/\s+/g, '');
-      const faltan = impresa.casos.filter(c => texto.indexOf(sinEspacios(c).slice(0, 60)) < 0
-        && !impresa.delBanco.some(b => c.indexOf(b) >= 0 && texto.indexOf(sinEspacios(b).slice(0, 60)) >= 0));
+      const faltan = impresa.casos.filter((c, i) => {
+        if (texto.indexOf(sinEspacios(c).slice(0, 60)) >= 0) return false;
+        const suyos = impresa.delBanco.filter(b => c.indexOf(b) >= 0);
+        if (suyos.length) return !suyos.some(b => texto.indexOf(sinEspacios(b).slice(0, 60)) >= 0);
+        /* Una caja sin texto de banco es un caso calculado: tienen que
+           estar en el papel todos sus datos. */
+        const datos = impresa.fuertes[i] || [];
+        return !datos.length || datos.some(d => texto.indexOf(sinEspacios(d)) < 0);
+      });
       if (!/Forma 37/.test(visible)) mal('la hoja impresa no dice «Forma ' + FORMA_IMPRESA + '»');
       else if (faltan.length) mal('la hoja impresa de la Forma ' + FORMA_IMPRESA + ' no trae ' + faltan.length + ' de los casos de la pantalla, por ejemplo: ' + JSON.stringify(faltan[0].slice(0, 70)));
       else if (paginas !== 2) mal('la Forma ' + FORMA_IMPRESA + ' se imprime en ' + paginas + ' hojas: tienen que ser 2 (prueba y pauta)');
