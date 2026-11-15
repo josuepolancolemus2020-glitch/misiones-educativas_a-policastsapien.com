@@ -145,7 +145,9 @@ lista.forEach(slug => {
     const repartidos = L.cadenasDe(JSON.parse(m.correr('JSON.stringify(_repartoCritica(' + n + ', critApartados()))', 'reparto'))).sort();
     const pintados = L.cadenasDe(f.dato).sort();
     const sobran = pintados.filter(t => !repartidos.includes(t));
-    if (sobran.length > (sueltosSabidos[slug] || 0) || repartidos.some(t => !pintados.includes(t))) desiguales++;
+    /* Lo sabido se cuenta en textos DISTINTOS (las letras A a D de un
+       pareado son cuatro, aunque salgan dos veces en el dato). */
+    if (new Set(sobran).size > (sueltosSabidos[slug] || 0) || repartidos.some(t => !pintados.includes(t))) desiguales++;
     if (!f.impreso.includes('Forma ' + n)) falla(slug, 'la hoja impresa de la Forma ' + n + ' no dice su número');
     L.cadenasDe(f.dato).forEach(t => { usos[t] = (usos[t] || 0) + 1; });
   }
@@ -280,7 +282,12 @@ for (let f = 31; f <= 50; f++) {
 }
 if (JSON.stringify(casoConOpciones) !== antesDeBarajar) fallosAntes.push('barajar las opciones tocó el caso del banco');
 if (posicionesBuena.size < 3) fallosAntes.push('las opciones barajadas dejan la correcta casi siempre en el mismo sitio');
-ok('con formas ya impresas: las de antes salen como salían, las nuevas no repiten a ninguna (ni puestas a chocar), un banco chico ofrece solo las que da y las opciones se barajan sin perder la correcta',
+/* El pareado de una forma nueva: nadie queda en la fila de su pregunta. */
+for (let f = 31; f <= 50; f++) {
+  const filas = ['a', 'b', 'c', 'd'], col = ventana._barajarSinFilaPropia(filas, rngMotor(200000 + f));
+  if (col.slice().sort().join() !== 'a,b,c,d' || col.some((x, i) => x === filas[i])) fallosAntes.push('el pareado de la forma ' + f + ' deja una respuesta en su propia fila o pierde una');
+}
+ok('con formas ya impresas: las de antes salen como salían, las nuevas no repiten a ninguna (ni puestas a chocar), un banco chico ofrece solo las que da, las opciones se barajan sin perder la correcta y los pareados nuevos no caen en su propia fila',
   fallosAntes.length === 0, fallosAntes.slice(0, 5).join('\n      '));
 
 /* ── lo que salió ────────────────────────────────────────────── */

@@ -632,6 +632,19 @@
     return copia;
   }
 
+  /* Barajar la columna de un pareado sin dejar ninguna respuesta en la
+     fila de su pregunta: un pareado alineado se contesta sin leer. Vuelve
+     a barajar con la misma semilla hasta que ninguna quede en su sitio.
+     También solo para las formas NUEVAS; las de antes van como salían. */
+  function _barajarSinFilaPropia(lista, rng) {
+    var barajada = _shuffleF(lista, rng);
+    for (var intento = 0; intento < 40 && lista.length > 1; intento++) {
+      if (!barajada.some(function (x, i) { return x === lista[i]; })) break;
+      barajada = _shuffleF(lista, rng);
+    }
+    return barajada;
+  }
+
   /* El selector de la prueba crítica, con su propio tope. */
   function _selectorCritica(actual, apartados, onPick) {
     _injectFormaSel('genEvalCrit', 'evalCritFormaSel', actual, onPick, _formasCritica(apartados));
@@ -657,6 +670,7 @@
   global._repartoCritica = _repartoCritica;
   global._conFormasDeAntes = _conFormasDeAntes;
   global._conOpcionesBarajadas = _conOpcionesBarajadas;
+  global._barajarSinFilaPropia = _barajarSinFilaPropia;
   global._formasCritica = _formasCritica;
   global._conjuntosCritica = _conjuntosCritica;
   global._selectorCritica = _selectorCritica;
@@ -753,7 +767,7 @@
 
   global.MotorMisiones = {
     examen: { rng: _evalRng, barajar: _shuffleF, elegir: _pickF, selectorDeForma: _injectFormaSel },
-    critica: { formasMaximas: FORMAS_CRITICA, conjuntos: _conjuntosCritica, formas: _formasCritica, reparto: _repartoCritica, conFormasDeAntes: _conFormasDeAntes, conOpcionesBarajadas: _conOpcionesBarajadas, selector: _selectorCritica, turno: _turnoCritica },
+    critica: { formasMaximas: FORMAS_CRITICA, conjuntos: _conjuntosCritica, formas: _formasCritica, reparto: _repartoCritica, conFormasDeAntes: _conFormasDeAntes, conOpcionesBarajadas: _conOpcionesBarajadas, barajarSinFilaPropia: _barajarSinFilaPropia, selector: _selectorCritica, turno: _turnoCritica },
     abrirPedida: abrirPedida, buscar: buscar, carpetaDe: carpetaDe
   };
 /* `globalThis` y no `window` a secas: en el navegador son lo mismo, y las
