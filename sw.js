@@ -245,6 +245,106 @@ self.addEventListener('activate', event => {
    nuevo, y lo bastante poco para que la aplicación no parezca trabada. */
 const PLAZO_RED = 3000;
 
+/* ── Ninguna espera infinita ───────────────────────────────────────────
+   Una tablet con la aplicación instalada desde abril se quedó en la pantalla
+   de inicio (el logo con el nombre viejo) y no pasó de ahí. Esa pantalla dura
+   hasta que llega el primer HTML, y el HTML no llegaba: la señal no fallaba,
+   se quedaba colgada, y el service worker esperaba a la red SIN RELOJ.
+
+   PLAZO_RED es cuánto se espera antes de mirar lo guardado. Pero si no había
+   nada guardado se seguía esperando a la red, y eso podía ser para siempre.
+   Ahora todo lo que se le pide a la red tiene un tope:
+
+     · Una página (navegación) sin copia: PLAZO_PAGINA en total. Pasado eso,
+       la página mínima de PAGINA_SIN_SENAL con su botón «Reintentar», en vez
+       de la pantalla congelada.
+     · Un guion, una hoja o una imagen sin copia: PLAZO_RECURSO. Pasado eso,
+       un error, y la página sigue sin esa pieza. Un <script> que no contesta
+       detiene TODO lo que viene después en la página: con 30 guiones en la
+       portada, uno colgado bastaba para que nunca arrancara.
+     · Lo que se trae por detrás: PLAZO_DETRAS, para no dejar conexiones
+       abiertas que le roban turno a lo que el maestro sí está esperando.
+
+   Los topes miden hasta que llegan las cabeceras, no la descarga entera: una
+   conexión lenta pero viva contesta en uno o dos segundos aunque luego tarde
+   en bajar el archivo, y esa no se corta. */
+const PLAZO_PAGINA = 10000;
+const PLAZO_RECURSO = 10000;
+const PLAZO_DETRAS = 30000;
+
+/* La promesa con reloj: si no se resuelve a tiempo, sale `null`. Si falla,
+   también `null`: quien llama decide qué hacer sin respuesta. */
+function conTope(promesa, ms) {
+  return new Promise(listo => {
+    const reloj = setTimeout(() => listo(null), ms);
+    promesa.then(r => { clearTimeout(reloj); listo(r); },
+                 () => { clearTimeout(reloj); listo(null); });
+  });
+}
+
+/* fetch que se CANCELA al vencer el plazo, para soltar la conexión. Solo
+   para lo que no es una navegación: a la petición de una página no se le
+   pueden pasar opciones sin estropearla (ver navegarPorRed). Si vence, la
+   promesa falla como falla una red caída, y cada rama ya sabe qué hacer. */
+function traer(peticion, opciones, ms) {
+  const corte = typeof AbortController === 'function' ? new AbortController() : null;
+  const op = Object.assign({}, opciones, corte ? { signal: corte.signal } : null);
+  const reloj = setTimeout(() => corte && corte.abort(), ms);
+  const red = fetch(peticion, op);
+  red.then(() => clearTimeout(reloj), () => clearTimeout(reloj));
+  /* Sin AbortController (navegadores muy viejos) no se puede cancelar, pero
+     igual se deja de esperar: el tope lo pone conTope. */
+  return corte ? red : conTope(red, ms).then(r => r || Promise.reject(new Error('sin respuesta')));
+}
+
+/* La página para cuando no hay copia guardada y la red no contesta. Va aquí
+   dentro y no en un archivo: si dependiera de un archivo, ese archivo tendría
+   que llegar por la misma red que no contesta. No promete nada sin internet;
+   dice lo que pasa y deja reintentar. Sin letra ni hoja de fuera: las del
+   sistema, que ya están en el teléfono. */
+const PAGINA_SIN_SENAL = `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1e3a7c">
+<title>M.E.T.A.S. · Sin señal suficiente</title>
+<style>
+  :root { color-scheme: light; }
+  html, body { margin: 0; height: 100%; }
+  body { display: flex; align-items: center; justify-content: center; padding: 24px;
+         box-sizing: border-box; background: #ffffff; color: #1f2937; text-align: center;
+         font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 26rem; }
+  .logo { font-size: 2rem; font-weight: 900; letter-spacing: 5px; color: #1e3a7c; line-height: 1; }
+  .sub { font-size: .8rem; font-weight: 600; color: #6b7280; margin-top: 6px; }
+  p { font-size: 1.15rem; line-height: 1.5; margin: 28px 0; }
+  button { font: inherit; font-size: 1.1rem; font-weight: 700; min-height: 48px; min-width: 44px;
+           padding: 10px 28px; border: 0; border-radius: 12px; background: #1e3a7c; color: #ffffff;
+           cursor: pointer; }
+  button:focus-visible { outline: 3px solid #3b82f6; outline-offset: 3px; }
+</style>
+</head>
+<body>
+<main>
+  <div class="logo" role="img" aria-label="M.E.T.A.S.">M.E.T.A.S.</div>
+  <div class="sub">Misiones Educativas Tecnológicas Asincrónicas y Sincrónicas</div>
+  <p>No hay señal suficiente para abrir M.E.T.A.S por primera vez.</p>
+  <button type="button" id="reintentar" onclick="location.reload()">Reintentar</button>
+</main>
+</body>
+</html>`;
+
+function paginaSinSenal() {
+  /* 503 y no-store: que nadie la guarde como si fuera la portada. guardar()
+     tampoco la guardaría, porque no es `ok`. */
+  return new Response(PAGINA_SIN_SENAL, {
+    status: 503,
+    statusText: 'Sin señal',
+    headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' }
+  });
+}
+
 /* Guardar es lo que hace real la promesa de funcionar sin internet, pero no
    todo se puede guardar: `cache.put` revienta con un POST —y a Supabase se le
    habla por POST— y guardar un error 404 o 500 le enseñaría al teléfono una
@@ -334,7 +434,7 @@ function copiaMasNueva(peticion, opciones) {
    Se pide por la dirección y no con el Request original: el de una
    navegación no admite que se le cambien las opciones. */
 function actualizarPorDetras(direccion, llave) {
-  return fetch(direccion, { cache: 'no-cache' }).then(respuesta => {
+  return traer(direccion, { cache: 'no-cache' }, PLAZO_DETRAS).then(respuesta => {
     /* Una respuesta redirigida no se le puede servir a una navegación. */
     if (respuesta && respuesta.ok && !respuesta.redirected) {
       return caches.open(CACHE_DATOS).then(c => c.put(llave, respuesta));
@@ -357,7 +457,7 @@ self.addEventListener('message', event => {
       if (url.origin !== location.origin || !conSello(url)) return null;
       return cache.match(url.href).then(ya => {
         if (ya) return null;
-        return fetch(url.href).then(r => (r && r.ok) ? cache.put(url.href, r) : null);
+        return traer(url.href, {}, PLAZO_DETRAS).then(r => (r && r.ok) ? cache.put(url.href, r) : null);
       }).catch(() => {});
     }))
   ));
@@ -367,14 +467,20 @@ self.addEventListener('message', event => {
    /misiones/prebasica-tecnicas-libro1/prebasica-libro1.html):
    Se usa fetch(event.request) directo (Network First) sin pasar un objeto
    init que degrada mode: 'navigate' en móviles/WebAPK, y nunca se devuelve
-   una copia 404 cacheada. */
+   una copia 404 cacheada.
+
+   Tres relojes: a los PLAZO_RED se mira si hay copia guardada; si no la hay
+   se sigue esperando a la red, pero solo hasta PLAZO_PAGINA en total; y si la
+   red tampoco llegó, la página sin señal. Antes, sin copia, se esperaba a la
+   red para siempre: era la pantalla de inicio congelada. */
 function navegarPorRed(event) {
+  const inicio = Date.now();
   const red = fetch(event.request).then(respuesta => {
     if (respuesta && respuesta.ok) {
       guardar(event.request, respuesta, CACHE_DATOS);
       return respuesta;
     }
-    return fetch(event.request.url, { cache: 'reload' }).then(r2 => {
+    return traer(event.request.url, { cache: 'reload' }, PLAZO_PAGINA).then(r2 => {
       if (r2 && r2.ok) {
         guardar(event.request, r2, CACHE_DATOS);
         return r2;
@@ -385,7 +491,14 @@ function navegarPorRed(event) {
   const plazo = new Promise(listo => setTimeout(() => listo(null), PLAZO_RED));
   return Promise.race([red.catch(() => null), plazo]).then(respuesta => {
     if (respuesta && respuesta.ok) return respuesta;
-    return buscarCopia(event.request).then(copia => copia || red);
+    return buscarCopia(event.request).then(copia => {
+      if (copia) return copia;
+      /* Sin copia: lo que contestó la red, aunque sea un 404 (decir «no está»
+         es mejor que esperar), o lo que conteste antes del tope. */
+      if (respuesta) return respuesta;
+      const queda = Math.max(0, PLAZO_PAGINA - (Date.now() - inicio));
+      return conTope(red, queda).then(r => r || paginaSinSenal());
+    });
   });
 }
 
@@ -468,7 +581,7 @@ self.addEventListener('fetch', event => {
        una pantalla que tarda. */
     const sellado = conSello(url);
     const deLaRed = () => {
-      const red = fetch(event.request, { cache: 'no-cache' }).then(respuesta => {
+      const red = traer(event.request, { cache: 'no-cache' }, PLAZO_RECURSO).then(respuesta => {
         guardar(event.request, respuesta, CACHE_DATOS);
         return respuesta;
       });
@@ -478,6 +591,9 @@ self.addEventListener('fetch', event => {
         /* ignoreSearch: el precache guarda «js/app.js» y la página lo pide como
            «js/app.js?v=NNN» (el sello de versión). Sin esto, lo precacheado no
            lo encontraba nadie y el armazón guardado no servía de nada. */
+        /* Sin copia se espera a la red hasta PLAZO_RECURSO, ni un segundo
+           más: `traer` corta ahí, y entonces sale un error y la página sigue
+           sin esta pieza en vez de quedarse detenida en ella. */
         return buscarCopia(event.request).then(copia => copia || red);
       });
     };
@@ -501,7 +617,14 @@ self.addEventListener('fetch', event => {
     event.respondWith(
       caches.match(event.request).then(cached => {
         if (cached && (cached.ok || cached.type === 'opaque')) return cached;
-        return fetch(event.request).then(respuesta => {
+        /* Con tope solo lo que detiene la página: un guion, una hoja, una
+           letra o una imagen. Lo demás —lo que la aplicación le habla a
+           Supabase, sobre todo los POST que suben datos y pueden tardar—
+           sigue sin reloj: ahí el código de la aplicación decide, y cortar
+           una subida lenta a medias sería perderle al maestro lo que mandó. */
+        const bloquea = esGet && /^(script|style|font|image)$/.test(event.request.destination);
+        const red = bloquea ? traer(event.request, {}, PLAZO_RECURSO) : fetch(event.request);
+        return red.then(respuesta => {
           guardar(event.request, respuesta, CACHE_DATOS);
           return respuesta;
         });
