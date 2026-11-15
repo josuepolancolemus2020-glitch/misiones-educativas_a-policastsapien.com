@@ -766,3 +766,21 @@ Dos ajustes posteriores en la misma rama (v528):
   `mision.html?m=docente-…` abre las 8 misiones del maestro. El slug es
   siempre el nombre completo de la carpeta, sin forma corta.
 
+---
+
+## 14. Segunda tanda: una sola copia de `html2canvas`
+
+Hecha el 15 de noviembre de 2026 en la rama `claude/motor-html2canvas-fqrqo2`
+(sale de la de la primera tanda).
+
+- Se borraron las 85 copias de `misiones/<carpeta>/js/html2canvas.min.js`.
+  Eran idénticas byte a byte entre sí y a `js/html2canvas.min.js`.
+- La copia única es `js/html2canvas.min.js`, la que ya usaba la portada. No se
+  movió a `js/vendor/` para no tocar la portada ni la copia de Android.
+- Las 85 páginas la piden como `../../js/html2canvas.min.js?v=462`, la misma
+  dirección exacta que la portada: el teléfono que ya la bajó no la vuelve a
+  bajar en cada misión.
+- Sigue cargándose al abrir la página. Cargarla solo al pedir el diploma
+  (sección 6.2) queda para cuando el diploma pase al motor.
+- Sonda: `_dev/verifica-html2canvas.js`, en `npm test`.
+
