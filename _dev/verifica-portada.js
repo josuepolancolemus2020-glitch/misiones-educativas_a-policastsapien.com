@@ -4,9 +4,15 @@
    El enlace de M.E.T.A.S. circula REENVIADO POR WHATSAPP. Llega
    pelado —sin vista previa— y quien lo abre suele ser el que
    decide: un maestro, una directora. Hasta el 6 de septiembre de
-   2026 la portada no contenía «DCNB», ni «sin internet», ni
-   «gratis», ni «imprimir», y no había `meta description`: en dos
-   pantallas no había forma de saber qué se gana con esto.
+   2026 la portada no contenía «DCNB», ni «fotocopiar», ni
+   «examen», y no había `meta description`: en dos pantallas no
+   había forma de saber qué se gana con esto.
+
+   En noviembre de 2026 se dejó de prometer que las misiones
+   trabajan desconectadas (el plan del motor compartido quita
+   esa promesa: el service worker queda mínimo). La sonda vigila
+   también que ninguno de los cuatro sitios la vuelva a hacer:
+   prometer lo que no se cumple es peor que no decirlo.
 
    Lo que vigila esta sonda, y por qué cada cosa:
 
@@ -24,7 +30,8 @@
    5. La misma frase está en `meta description`, en el manifest y
       en el README. Si se cambia una, se cambian las cuatro.
    6. Nada de lo que afirma es mentira: las misiones que dice que
-      llevan bloque del DCNB lo llevan, y todas enlazan su ficha.
+      llevan bloque del DCNB lo llevan, y todas enlazan su ficha, y
+      ningún sitio promete que funcionan desconectadas.
 
    Uso:  node _dev/servidor-estatico.js   (en otra terminal)
          node _dev/verifica-portada.js
@@ -73,7 +80,7 @@ function catalogo() {
   console.log('1) Lo que se lee en la pantalla');
   ok('la portada carga sin errores', errores.length === 0, errores[0]);
   const txt = await pg.innerText('.valor-card');
-  for (const k of ['DCNB', 'sin internet', 'gratis', 'fotocopiar', 'maestro']) {
+  for (const k of ['DCNB', 'examen', 'ficha', 'fotocopiar', 'Educación']) {
     ok(`dice «${k}»`, new RegExp(k, 'i').test(txt));
   }
 
@@ -113,6 +120,15 @@ function catalogo() {
   const aplana = s => String(s).replace(/\s+/g, ' ').trim();
   ok('el README también', aplana(readme).includes(aplana(meta)));
   ok('el README ya no vende «enseñar gramática»', !/enseñar gramática/i.test(readme));
+  /* Ya no se promete uso desconectado: si vuelve a aparecer en la pantalla,
+     la meta, el manifest, package.json o el README, es una promesa que el
+     service worker mínimo no cumple. */
+  const PROMESA = /sin\s+(internet|conexi[oó]n|se[ñn]al)|offline|desconectad/i;
+  [['la portada', txt], ['la meta', meta], ['el manifest', manifest],
+   ['package.json', paquete], ['el README', readme]].forEach(([donde, t]) => {
+    const m = String(t).match(PROMESA);
+    ok(`${donde} no promete funcionar desconectada`, !m, m && m[0]);
+  });
 
   console.log('\n5) Lo que afirma es verdad');
   const conMapa = M.filter(m => DM[m.id]).map(m => m.subject);
