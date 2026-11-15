@@ -534,6 +534,7 @@ function evalSwitchMode(mode){
 let critSensorBank=[
   {k:'di-led-reves',txt:'El LED del circuito de tu equipo no enciende. Revisaste cada unión y todas están firmes, y la pila es nueva. Tu compañero dice que el LED está malo.',ans:'Antes de cambiar el LED, revisaría si está conectado AL REVÉS: tiene POLARIDAD y solo enciende en un sentido (la pata larga va al +). Se le da la vuelta. Si así tampoco enciende, entonces se prueba con otro LED.'},
   {k:'di-serie',txt:'Tienes dos foquitos conectados en serie y ninguno enciende; al revisar, uno tiene el filamento roto.',ans:'En SERIE hay un solo camino: el foco quemado abre el circuito y por eso se apagan los dos. Se cambia el foco quemado o se conectan en PARALELO para que cada uno tenga su propio camino.'},
+  {k:'di-pila',txt:'El timbre que armaste suena cada día más débil, aunque todas las uniones están firmes.',ans:'Revisaría la PILA: se está gastando y ya no da suficiente energía. Se cambia por una nueva y se vuelve a probar; si sigue débil, se revisa el timbre.'},
 ];
 let critErrorBank=[
   {k:'er-voltaje',txt:'"El voltaje es la cantidad de corriente que pasa por el cable, y se mide en amperios".',g1:'Falso: el voltaje es el EMPUJE que la pila le da a la corriente; lo que pasa por el cable es la corriente.',g2:'El voltaje se mide en VOLTIOS; en amperios se mide la corriente.'},
@@ -554,6 +555,7 @@ let critCicloBank=[
 ];
 let critCompareBank=[
   {k:'co-conductor',a:'Material que deja pasar la corriente con facilidad, como el cobre del cable.',b:'Material que no deja pasar la corriente, como el plástico que forra el cable.',ga:'El conductor.',gb:'El aislante.',gr:'Semejanza: los dos están presentes en un mismo cable y son necesarios para que funcione con seguridad. Diferencia: el conductor forma el camino de la corriente; el aislante lo encierra y nos protege. Cuidado: el agua con sales conduce, por eso no se tocan aparatos con las manos mojadas.'},
+  {k:'co-pila-toma',a:'La pila de una linterna.',b:'El tomacorriente de la casa.',ga:'La pila.',gb:'El tomacorriente.',gr:'Semejanza: los dos dan energía eléctrica a un aparato. Diferencia: la pila es pequeña, se lleva a cualquier lado y tiene voltaje bajo, por eso sirve para experimentar; el tomacorriente tiene voltaje alto y es peligroso: nunca se usa para experimentos.'},
 ];
 let critDesignBank=[
   'En tu casa los apagones son frecuentes y en la noche nadie encuentra las velas ni la linterna.',

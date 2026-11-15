@@ -663,6 +663,8 @@ function evalSwitchMode(mode){
 let critFaltaBank=[
   {k:'cr-contador',txt:'El robot recoge botellas del patio, pero al final siempre dice que recogió 0 objetos. Programa: REPITE: SI hay objeto ENTONCES RECOGE.',ans:'Falta subir el contador: después de RECOGE hay que escribir «objetos = objetos + 1». Sin esa instrucción la variable nunca cambia.'},
   {k:'cr-regador',txt:'El robot regador abre el agua y ya nunca la cierra: el huerto se inunda. Programa: SI la tierra está seca ENTONCES ABRE LA VÁLVULA.',ans:'Falta la rama SINO: SI la tierra está seca ENTONCES ABRE LA VÁLVULA, SINO CIERRA LA VÁLVULA. Todo condicional debe decir también qué hacer cuando la respuesta es NO.'},
+  {k:'cr-repite',txt:'El robot debe avanzar hasta la pared, pero se detiene al primer paso. Programa: AVANZA 1.',ans:'Falta el ciclo: REPITE HASTA tocar la pared: AVANZA 1. Sin REPITE, la instrucción se ejecuta una sola vez.'},
+  {k:'cr-sensor',txt:'El robot que sigue la línea negra se sale en la primera curva. Programa: REPITE: AVANZA.',ans:'Falta revisar el sensor: REPITE: SI el sensor ve la línea ENTONCES AVANZA, SINO GIRA hasta encontrarla. Sin la condición, el robot no se entera de que la línea dobló.'},
 ];
 let critErrorBank=[
   {k:'er-gira',txt:'«Para llegar a la casilla de al lado, el robot gira cuatro veces a la derecha: girar también lo hace avanzar».',g1:'Girar solo cambia hacia dónde mira el robot: al girar NO SE MUEVE de su casilla.',g2:'Cuatro giros a la derecha son una VUELTA ENTERA: el robot queda mirando igual que antes y en la misma casilla; para pasar a la de al lado tiene que avanzar.'},
