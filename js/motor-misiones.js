@@ -16,6 +16,9 @@
       de la 1 a la 50, lleva un conjunto de casos que no lleva ninguna otra.
       Una misión con formas ya impresas las conserva (`_conFormasDeAntes`)
       y solo reparte las nuevas.
+      Y EL BANCO GRANDE DEL EXAMEN CONCEPTUAL (`_formasConceptual`,
+      `_repartoConceptual`): la misión que trae un banco nuevo al lado del
+      de siempre ofrece formas nuevas, repartidas con las mismas ruedas.
    3. LA PUERTA (`mision.html?m=<carpeta>`), que lleva a una misión.
 
    Las funciones del examen se publican con el MISMO nombre global que
@@ -735,6 +738,89 @@
     return { forma: forma, formas: tope, casos: _repartoCritica(forma, apartados) };
   }
 
+  /* ══════════ 2b · El examen conceptual con banco grande ══════════
+
+     El examen conceptual saca cinco preguntas de cada banco de diez, y un
+     alumno que se aprende las primeras formas se sabe el banco entero. La
+     misión que trae un banco NUEVO al lado del de siempre ofrece formas
+     nuevas después de las que ya tenía (31 a 50, si tenía 30).
+
+     Las formas de antes no se tocan: las sigue sacando el generador v1 de
+     arriba, del banco de siempre, y por eso el banco nuevo va en OTRO
+     arreglo y no añadido al primero (un ítem más en él cambiaría las
+     formas impresas).
+
+     Las nuevas se REPARTEN con las mismas ruedas de la prueba crítica.
+     Cada sección (Completar, V/F, Selección, Pareados) son dos ruedas:
+     tres preguntas del banco nuevo y dos del de antes. No se mezclan los
+     dos bancos en una sola rueda a propósito. Se midió: con una rueda por
+     sección las cuatro avanzan al mismo paso, y la primera forma nueva
+     salía sin una sola pregunta nueva y otras con cuatro de veinte, que
+     se aprueban de memoria. Con la cuota, TODA forma nueva lleva doce
+     preguntas nuevas de veinte.
+
+     Ninguna forma nueva repite a otra nueva (es el reparto de siempre) ni
+     a una de antes (las de antes no llevan ninguna pregunta nueva).
+
+     Solo en las formas nuevas se barajan las opciones de la selección,
+     con la correcta repartida entre las letras, y los pareados no dejan
+     ninguna definición en la fila de su término (decisión 2 del plan).
+
+     ⚠️ Queda congelado igual que el reparto: añadir o quitar una pregunta
+     del banco nuevo cambia todas las formas nuevas de esa misión. */
+  var NUEVAS_POR_SECCION = 3, DE_ANTES_POR_SECCION = 2;
+  var SECCIONES_CONCEPTUAL = ['cp', 'tf', 'mc', 'pr'];
+
+  /* `grande` dice, por sección, el banco de antes y el nuevo:
+     { cp: { deAntes: […], nuevas: […] }, tf: …, mc: …, pr: … } */
+  function _apartadosConceptual(grande) {
+    var apartados = [];
+    SECCIONES_CONCEPTUAL.forEach(function (s) {
+      var par = grande && grande[s];
+      if (!par || !Array.isArray(par.deAntes) || !Array.isArray(par.nuevas))
+        throw new Error('Examen conceptual, banco grande: falta el banco de antes o el nuevo de la sección ' + s);
+      apartados.push([par.nuevas, NUEVAS_POR_SECCION], [par.deAntes, DE_ANTES_POR_SECCION]);
+    });
+    return apartados;
+  }
+
+  /* Cuántas formas tiene el examen conceptual: las de antes, y con banco
+     grande hasta 50 (o hasta donde den sus conjuntos). */
+  function _formasConceptual(deAntes, grande) {
+    if (!grande) return deAntes;
+    return Math.max(deAntes, Math.min(FORMAS_CRITICA, deAntes + _conjuntosCritica(_apartadosConceptual(grande))));
+  }
+
+  /* Las letras de las opciones («a) », «b) »…) van escritas en el banco:
+     al barajarlas hay que volver a ponerlas en orden. */
+  function _reletrar(casos) {
+    return casos.map(function (caso) {
+      caso.o = caso.o.map(function (texto, i) { return 'abcdef'.charAt(i) + ') ' + String(texto).replace(/^[a-f]\)\s*/i, ''); });
+      return caso;
+    });
+  }
+
+  /* Las preguntas de una forma NUEVA (la primera es `deAntes + 1`):
+     cinco por sección ya mezcladas, y las definiciones de los pareados en
+     el orden de la hoja. No toca los bancos. */
+  function _repartoConceptual(forma, deAntes, grande) {
+    var casos = _repartoCritica(forma - deAntes, _apartadosConceptual(grande));
+    /* Otra semilla que la del examen de antes (la forma) y que la crítica
+       (200000 + forma): la mezcla de aquí no tiene que parecerse a ninguna. */
+    var rng = _evalRng(300000 + forma);
+    var hoja = {};
+    /* Nuevas y de antes revueltas: si las tres nuevas fueran siempre las
+       primeras, el alumno sabría cuáles son sin leerlas. */
+    SECCIONES_CONCEPTUAL.forEach(function (s, i) { hoja[s] = _shuffleF(casos[2 * i].concat(casos[2 * i + 1]), rng); });
+    hoja.mc = _reletrar(_conOpcionesRepartidas(hoja.mc, rng, 'o', 'a'));
+    hoja.defs = _barajarSinFilaPropia(hoja.pr, rng);
+    return hoja;
+  }
+
+  global._formasConceptual = _formasConceptual;
+  global._repartoConceptual = _repartoConceptual;
+  global._apartadosConceptual = _apartadosConceptual;
+
   global._repartoCritica = _repartoCritica;
   global._conFormasDeAntes = _conFormasDeAntes;
   global._conOpcionesRepartidas = _conOpcionesRepartidas;
@@ -835,6 +921,7 @@
 
   global.MotorMisiones = {
     examen: { rng: _evalRng, barajar: _shuffleF, elegir: _pickF, selectorDeForma: _injectFormaSel },
+    conceptual: { formas: _formasConceptual, reparto: _repartoConceptual, apartados: _apartadosConceptual, nuevasPorSeccion: NUEVAS_POR_SECCION, deAntesPorSeccion: DE_ANTES_POR_SECCION },
     critica: { formasMaximas: FORMAS_CRITICA, conjuntos: _conjuntosCritica, formas: _formasCritica, reparto: _repartoCritica, conFormasDeAntes: _conFormasDeAntes, conOpcionesRepartidas: _conOpcionesRepartidas, barajarSinFilaPropia: _barajarSinFilaPropia, selector: _selectorCritica, turno: _turnoCritica },
     abrirPedida: abrirPedida, buscar: buscar, carpetaDe: carpetaDe
   };

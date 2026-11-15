@@ -34,6 +34,13 @@
    (`--critica-ampliar`); hasta entonces se nombran sin poner la sonda
    en rojo.
 
+   El examen conceptual con BANCO GRANDE (la misión trae un banco nuevo
+   al lado del de siempre) ofrece formas después de la última congelada.
+   Las congeladas tienen que seguir idénticas; las nuevas no pueden
+   repetir a ninguna y sus preguntas tienen que ser de uno de los dos
+   bancos. Mientras Josué no las apruebe no tienen referencia: se nombran
+   sin poner la sonda en rojo.
+
    Si una forma congelada cambió, NO se arregla volviendo a congelar: se
    deshace el cambio. Volver a congelar es invalidar la clave impresa, y
    esa decisión es de Josué (`genera-formas-oro.js --sobrescribir`).
@@ -74,7 +81,7 @@ const sueltosSabidos = (listaPendiente && listaPendiente.fueraDeBanco) || {};
 if (!pendiente) falla('_critica-pendiente.json', 'crítica', 0, 'falta la lista de lo pendiente; se escribe con genera-formas-oro.js --pendiente-critica');
 
 let nFormas = 0, nCongeladas = 0, nPreguntas = 0;
-const deuda = [], deudaBanco = [], criticaSinCongelar = [], deAntesSinNuevas = [], nuevasSinCongelar = [];
+const deuda = [], deudaBanco = [], criticaSinCongelar = [], deAntesSinNuevas = [], nuevasSinCongelar = [], conceptualSinCongelar = [];
 
 lista.forEach(slug => {
   let m;
@@ -141,10 +148,14 @@ lista.forEach(slug => {
           const banco = B[parte.slice(0, 2)];
           if (!Array.isArray(partes[parte]) || !partes[parte].length) { falla(slug, p.llave, n, 'no trae la parte ' + parte); return; }
           if (!Array.isArray(banco)) { falla(slug, p.llave, n, 'no encuentro el banco de ' + parte); return; }
-          const enBanco = new Set(banco.map(x => JSON.stringify(x)));
+          /* En una forma nueva del banco grande las opciones de la
+             selección van barajadas: se compara sin su orden. En las de
+             antes, letra por letra, como siempre. */
+          const igual = n > m.tope && parte === 'mc' ? x => JSON.stringify(L.sinOrdenDeOpciones(x)) : x => JSON.stringify(x);
+          const enBanco = new Set(banco.map(igual));
           partes[parte].forEach(it => {
             nPreguntas++;
-            if (!enBanco.has(JSON.stringify(it))) falla(slug, p.llave, n, 'una pregunta de ' + parte + ' no está en el banco de la misión: ' + JSON.stringify(it).slice(0, 110));
+            if (!enBanco.has(igual(it))) falla(slug, p.llave, n, 'una pregunta de ' + parte + ' no está en el banco de la misión: ' + JSON.stringify(it).slice(0, 110));
           });
         });
       }
@@ -153,6 +164,10 @@ lista.forEach(slug => {
     }
 
     if (sinCongelar) nuevasSinCongelar.push(slug + ' (' + (oro.criticaDeAntes + 1) + ' a ' + topePrueba + ')');
+    /* Las formas nuevas del examen conceptual (banco grande) que todavía
+       no tienen referencia: se nombran, como las de la crítica. */
+    if (p.prueba === 'conceptual' && topePrueba > oro.tope && oro.pruebas[p.llave] && !oro.pruebas[p.llave][topePrueba])
+      conceptualSinCongelar.push(slug + ' (' + (oro.tope + 1) + ' a ' + topePrueba + ')');
 
     /* 3 · del banco, en la crítica. Se mira por texto. En unas pocas
        misiones parte de la prueba la escribe el generador (una rúbrica
@@ -231,6 +246,11 @@ if (nuevasSinCongelar.length) {
   console.log('\n  Por congelar · ' + nuevasSinCongelar.length + ' misiones de estructura propia ya ofrecen formas nuevas de la prueba de pensamiento crítico.');
   console.log('  Sus formas de antes siguen idénticas; las nuevas esperan el visto bueno de Josué (genera-formas-oro.js --critica-ampliar <carpeta>):');
   nuevasSinCongelar.forEach(d => console.log('    · ' + d));
+}
+if (conceptualSinCongelar.length) {
+  console.log('\n  Por congelar · ' + conceptualSinCongelar.length + ' misiones ofrecen formas nuevas del examen conceptual con su banco grande.');
+  console.log('  Sus formas de antes siguen idénticas; las nuevas esperan el visto bueno de Josué y no tienen referencia todavía:');
+  conceptualSinCongelar.forEach(d => console.log('    · ' + d));
 }
 if (deudaBanco.length) {
   console.log('\n  Pendiente conocido · en ' + deudaBanco.length + ' misiones parte de la prueba crítica la escribe el generador y no un banco');

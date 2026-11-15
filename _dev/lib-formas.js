@@ -227,7 +227,11 @@ function cargarMision(slug, semillaAzar) {
   const reparteCritica = tiene('critApartados') && tiene('_formasCritica');
   const topeCritica = reparteCritica ? correr('_formasCritica(critApartados())', 'tope crítica') : tope;
   const conjuntosCritica = reparteCritica ? correr('_conjuntosCritica(critApartados())', 'conjuntos crítica') : null;
-  const topeDe = prueba => prueba === 'critica' ? topeCritica : tope;
+  /* El examen conceptual con banco grande ofrece formas nuevas después de
+     las de antes (`EVAL_FORMAS`, que es lo que está congelado). La misión
+     dice hasta dónde llega con `evalFormasTotal`. */
+  const topeConceptual = tiene('evalFormasTotal') ? correr('evalFormasTotal()', 'tope conceptual') : tope;
+  const topeDe = prueba => prueba === 'critica' ? topeCritica : prueba === 'conceptual' ? topeConceptual : tope;
   /* Fin de grado tiene dos exámenes conceptuales, uno por materia. */
   const materias = correr("typeof MATERIA_EVAL === 'object' && MATERIA_EVAL ? Object.keys(MATERIA_EVAL) : null", 'materias');
 
@@ -246,7 +250,7 @@ function cargarMision(slug, semillaAzar) {
     return { dato: JSON.parse(dato), impreso: documentos[0] };
   }
 
-  return { slug, js, pruebas, tope, topeDe, reparteCritica, topeCritica, conjuntosCritica, materias, forma, correr };
+  return { slug, js, pruebas, tope, topeDe, topeConceptual, reparteCritica, topeCritica, conjuntosCritica, materias, forma, correr };
 }
 
 /* ── lo que se guarda de cada forma ──────────────────────────── */
@@ -307,9 +311,25 @@ function bancosDe(mision) {
    hay un juego por materia y la selección múltiple es un solo banco que
    se filtra por `materia`. */
 function bancosConceptual(mision, bancos, materia) {
-  if (!materia) return { cp: bancos.evalCPBank, tf: bancos.evalTFBank, mc: bancos.evalMCBank, pr: bancos.evalPRBank };
+  /* Con banco grande, las formas nuevas salen de los dos: el de antes y el
+     nuevo (el mismo nombre con «Nuevo» detrás). */
+  const con = n => (bancos[n] || []).concat(bancos[n + 'Nuevo'] || []);
+  if (!materia) return { cp: con('evalCPBank'), tf: con('evalTFBank'), mc: con('evalMCBank'), pr: con('evalPRBank') };
   const M = JSON.parse(mision.correr('JSON.stringify(MATERIA_EVAL[' + JSON.stringify(materia) + '])', 'materia'));
   return { cp: M.cp, tf: M.tf, pr: M.pr, mc: (bancos.evalMCBank || []).filter(x => x.materia === materia) };
+}
+
+/* Una pregunta de selección sin el orden de sus opciones. En las formas
+   nuevas del banco grande las opciones se barajan y la correcta cambia de
+   letra: la pregunta es la del banco si dice lo mismo, ofrece las mismas
+   opciones y la correcta es el mismo texto. Lo demás se deja como está. */
+function sinOrdenDeOpciones(it) {
+  if (!it || !Array.isArray(it.o) || typeof it.a !== 'number') return it;
+  const limpia = t => String(t).replace(/^[a-f]\)\s*/i, '');
+  const copia = Object.assign({}, it);
+  copia.a = limpia(it.o[it.a]);
+  copia.o = it.o.map(limpia).sort();
+  return copia;
 }
 
 /* Dos formas «con las mismas preguntas» aunque cambie el orden: se
@@ -384,4 +404,4 @@ function sellarForma(f) {
 const huellaBanco = b => ({ n: b.length, huella: sha(JSON.stringify(b)).slice(0, 16) });
 
 module.exports = { RAIZ, DIR_MISIONES, DIR_ORO, RUTA_PENDIENTE, PRUEBAS, FUERA_DE_ALCANCE, listarMisiones, usaElMotor, fuenteDeMision, cargarMision, pruebasDe,
-  textoImpreso, cadenasDe, sha, bancosDe, textosFueraDeBanco, bancosConceptual, sinOrden, repetidas, rutaOro, escribirOro, leerOro, sellarForma, huellaBanco };
+  textoImpreso, cadenasDe, sha, bancosDe, textosFueraDeBanco, bancosConceptual, sinOrdenDeOpciones, sinOrden, repetidas, rutaOro, escribirOro, leerOro, sellarForma, huellaBanco };
