@@ -959,19 +959,59 @@ banco. Su crítica quedó congelada al terminar.
 
 Van 42 de 53, las 42 con la crítica congelada.
 
+### Las 11 de estructura propia (rama `feat/critica-50-estructura-propia`)
+
+Adjetivos, Adverbios, Áreas protegidas, Eras geológicas, Coordenadas, los dos
+de Continentes, Pronombres, Sustantivos, Verbos y Adjetivos de bachillerato.
+Aquí la decisión de Josué fue otra que en las 42: **las formas 1 a 30 no se
+reparten de nuevo**. Ninguna repetía conjunto dentro de sus 30, y la pauta
+impresa tiene que seguir valiendo pregunta por pregunta. Solo se añaden las
+formas 31 a 50.
+
+- **Primero se congeló** la crítica 1 a 30 de las 11, tal como salía en
+  `main`, antes de tocar ninguna (`genera-formas-oro.js --critica-de-antes`;
+  la referencia lleva `criticaDeAntes: 30`).
+- **El motor** aprendió a conservar formas ya impresas: la misión cuelga de
+  sus apartados cuántas son y cómo salían
+  (`_conFormasDeAntes(apartados, 30, critFormaDeAntes)`). Hasta la 30,
+  `_repartoCritica` devuelve lo que daba el sorteo con la semilla; de la 31
+  en adelante sigue el reparto de siempre desde su primera posición,
+  **saltando** los conjuntos que alguna forma de antes ya llevó.
+- **Las 11 usan el reparto del motor** para las formas nuevas; ninguna tuvo
+  que quedarse con generador propio. Lo que cada una hacía además de sacar
+  casos se quedó en la misión, en una función `critSorteoDeAntes` que gasta
+  la semilla en el mismo orden que antes: barajar la columna de un pareado
+  (Eras, Europa-Asia-África), los elementos por clasificar (Áreas), las
+  palabras de una serie (Sustantivos), las filas de una matriz (Adjetivos de
+  bachillerato), las opciones (América-Oceanía-Antártida), o calcular puntos
+  y husos horarios (Coordenadas).
+- **Lo que no sale de un banco no es un apartado**: los puntos y husos de
+  Coordenadas, la tabla comparativa de América-Oceanía-Antártida, las dos
+  preguntas fijas de Verbos y la matriz de Adjetivos de bachillerato van en
+  todas las formas y se calculan o barajan con la semilla de la forma.
+- **Solo en las formas nuevas** se barajan las opciones de selección, con la
+  correcta repartida entre las letras (`_conOpcionesRepartidas`), y los
+  pareados no dejan ninguna respuesta en la fila de su pregunta
+  (`_barajarSinFilaPropia`). Los pares de dos opciones con orden natural
+  (Oración A / B, Sí / No, Válida / No válida, Vos / Tú / Usted) y los
+  desplegables conservan su orden.
+- **No se escribió ningún caso**: a las 11 les alcanzan sus bancos. La más
+  justa es América-Oceanía-Antártida, con 42 336 conjuntos.
+- **Las formas 31 a 50 quedaron congeladas** el 15 de noviembre de 2026,
+  con el visto bueno de Josué (`genera-formas-oro.js --critica-ampliar`, que
+  se niega si una forma de antes dejó de salir idéntica; la referencia lleva
+  `criticaAmpliada`). Desde entonces `verifica-formas-oro.js` compara las 50
+  formas de cada una.
+
+Con esto las 53 misiones con prueba de pensamiento crítico llegan a la Forma
+50 sin repetir conjunto.
+
 ### Lo que queda
 
-- **Las otras 11**, con estructura propia: Adjetivos, Adverbios, Áreas
-  protegidas, Eras geológicas, Coordenadas, los dos de Continentes,
-  Pronombres, Sustantivos, Verbos y Adjetivos de bachillerato. En siete de
-  ellas la prueba, además de sacar casos, baraja opciones o calcula datos con
-  la semilla: se miran una por una. Josué decidió cerrar esta rama con las 42
-  y llevar estas 11 en otra rama, después. Mientras tanto siguen sacando sus
-  casos como antes; hoy ninguna repite dentro de sus 30 formas, y
-  `verifica-critica-sin-repetir` las nombra sin ponerse roja.
 - **El aviso a los docentes** (decisión 1): las pautas impresas de la prueba
   de pensamiento crítico dejan de corresponder a la forma del mismo número,
-  de la 1 a la 30, en las 42 misiones que ya reparten.
+  de la 1 a la 30, en las 42 misiones que repartieron todo de nuevo. En las
+  11 de estructura propia la pauta impresa sigue valiendo.
 - **Visto al probar la tanda 2, sin tocar:** `verifica-mision-navegador` se
   cae con Numbers and My Age porque espera tarjetas (`#fcW`) que esa misión
   no tiene. Viene de antes y no es de la prueba crítica.
@@ -979,3 +1019,84 @@ Van 42 de 53, las 42 con la crítica congelada.
   desplegables (conceptual y crítica) enseñan «Forma 1» aunque la forma
   guardada sea otra; al generar sale la guardada. Pasa en todas las misiones
   y viene de antes.
+
+---
+
+## 17. El banco grande del examen conceptual: la muestra de La Célula
+
+Rama `feat/banco-conceptual-muestra-celula`. Es una muestra en una sola
+misión, para que Josué lea las preguntas antes de extenderlo.
+
+**El problema.** La sección 5.2 midió que el examen conceptual da 50 formas
+distintas sin tocar los bancos, y es cierto: con diez preguntas por tipo hay
+252 maneras de sacar cinco. Pero son las MISMAS cuarenta preguntas. El alumno
+que se aprende las primeras formas se sabe el banco entero y aprobaría la 31
+de memoria. Hacen falta preguntas nuevas, no solo combinaciones nuevas.
+
+### El diseño
+
+- **Las formas 1 a 30 no se tocan.** Las sigue sacando el generador v1 del
+  banco de siempre. `EVAL_FORMAS` sigue en 30: dice cuántas son las de antes.
+- **El banco nuevo va aparte**, en `contenido.js`, en cuatro arreglos con el
+  nombre de siempre y «Nuevo» detrás (`evalCPBankNuevo`…). Añadir una pregunta
+  a un banco de antes cambiaría las formas impresas.
+- **Las formas 31 a 50 las reparte el motor** con las ruedas de la prueba
+  crítica (`_repartoConceptual`, en `js/motor-misiones.js`). Cada sección son
+  dos ruedas: **tres preguntas del banco nuevo y dos del de antes**.
+- **Por qué con cuota y no un solo banco mezclado.** Se midió primero una
+  rueda por sección con los dos bancos juntos: las cuatro ruedas avanzan al
+  mismo paso, la Forma 31 salía sin una sola pregunta nueva y otras con
+  cuatro de veinte. Con la cuota, toda forma nueva lleva doce nuevas de
+  veinte, y el que solo se sabe el banco de antes no pasa de 40.
+- **Sin repetir conjunto entre las 50:** las nuevas no se repiten entre sí
+  (es el reparto de siempre) ni repiten a una de antes (las de antes no
+  llevan ninguna pregunta nueva).
+- **Solo en las formas nuevas** se barajan las opciones de la selección, con
+  la correcta repartida entre las letras, y los pareados no dejan ninguna
+  definición en la fila de su término (decisión 2).
+- **La misión no trae código:** declara los cuatro bancos nuevos y nada más.
+  `genEval` (en `js/motor-mision.js`) mira si están; la misión que no los
+  trae queda como estaba.
+
+### De dónde salen las preguntas
+
+De lo que la misión ya enseña: la ficha, la guía (la sección Aprende) y las
+actividades. Cada pregunta nueva anota su `fuente`. Antes de escribirlas se
+contó qué preguntaban: las 75 preguntas de las actividades piden 17 datos, y
+la ficha repite palabra por palabra 39 de las 40 del examen. Un dato repetido
+cuenta una vez. El detalle está en la descripción del PR; las fichas y las
+actividades no se tocaron.
+
+### Cómo se vigila
+
+- `_dev/verifica-conceptual-banco-grande.js` (en `npm test`): dice cuántas
+  formas conceptuales distintas hay y qué porcentaje de las preguntas de las
+  formas nuevas viene del banco nuevo. Roja si una forma de antes cambió, si
+  dos repiten conjunto, si una forma nueva no trae su cuota, si una pregunta
+  nueva no cae en ninguna forma, si la correcta se amontona en una letra o si
+  una pregunta nueva no anota su dato y su fuente. Con `--formas 31,40,50`
+  escribe esas formas para leerlas.
+- `_dev/verifica-examen-sin-pistas.js`: las preguntas nuevas se miden contra
+  las nuevas y contra las de antes, y las formas 31 a 50 se arman con el
+  reparto del motor.
+- `_dev/verifica-formas-oro.js`: las 30 de antes idénticas; las nuevas, sin
+  repetir y del banco. Mientras no se aprueben no tienen referencia y se
+  nombran como «por congelar», sin poner la sonda en rojo.
+- `_dev/verifica-banco-grande-navegador.js` (tanda de navegador): el
+  selector llega a la 50, la página da las mismas formas que la sonda rápida,
+  una forma nueva se contesta y se imprime con su clave, y un teléfono con el
+  motor de antes guardado sigue dando sus 30 formas.
+
+### Lo que queda
+
+- ~~Congelar las formas 31 a 50.~~ Josué aprobó las preguntas el 15 de
+  noviembre de 2026 y quedaron congeladas con la bandera nueva
+  `genera-formas-oro.js --conceptual-ampliar` (la referencia lleva
+  `conceptualAmpliada`). Desde entonces `verifica-formas-oro.js` compara las
+  50 formas conceptuales de La Célula, y la bandera se niega a volver a
+  congelarlas.
+- **La ficha de La Célula** no ofrece ninguna pregunta que no esté en el
+  examen: su «Ponte a prueba» es el banco de antes. No se cambió.
+- **Las demás misiones.** El motor ya sirve a cualquiera que use la plantilla
+  (`js/motor-mision.js`); hoy solo la usa La Célula. Las preguntas se escriben
+  misión por misión.

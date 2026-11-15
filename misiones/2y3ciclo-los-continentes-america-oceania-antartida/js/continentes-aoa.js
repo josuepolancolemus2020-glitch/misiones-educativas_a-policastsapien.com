@@ -781,8 +781,11 @@ const evalPRBank=[
 const EVAL_FORMAS = 30;
 /* _evalRng, _shuffleF, _pickF y _injectFormaSel ya no se copian aquí: están en
    js/motor-misiones.js, que la página carga antes que este archivo. Si un teléfono
-   abre la página guardada de antes, que no lo pide, se pide aquí. */
-if (typeof _evalRng !== 'function') { (function () { var m = document.createElement('script'); m.src = '../../js/motor-misiones.js'; document.head.appendChild(m); })(); }
+   abre la página guardada de antes, que no lo pide, se pide aquí. Y también si
+   tiene guardado el motor de antes, que todavía no sabe conservar las formas
+   ya impresas de la prueba de pensamiento crítico (_conFormasDeAntes): con
+   mala señal puede llegar este archivo nuevo y servirse el motor viejo. */
+if (typeof _evalRng !== 'function' || typeof _conFormasDeAntes !== 'function') { (function () { var m = document.createElement('script'); m.src = '../../js/motor-misiones.js'; document.head.appendChild(m); })(); }
 // Selector «Forma exacta»: el docente elige qué forma generar (p.ej. para
 // reimprimir la pauta de la Forma 15 que ya repartió a los alumnos).
 function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalFormNum, function (v) { evalFormNum = v; }); }
@@ -1096,14 +1099,65 @@ const critDetBank=[
   {bad:'Oceanía es el continente más grande del mundo',key:'pequeno',wrong:'más grande',fix:'Oceanía es el continente más pequeño del mundo.'},
 ];
 
+// ── La sección I no saca casos: lleva siempre las cinco filas de la tabla,
+// y con la semilla de la forma decide qué celda de cada fila queda en blanco
+// y en qué orden se ofrecen sus tres datos. Gasta la semilla en este orden
+// exacto; cambiarlo cambiaría las formas ya impresas.
+function _critCompDe(rng){
+  return critCompBank.map(row=>{
+    const blank=Math.floor(rng()*3);
+    const opts=_shuffleF(row.vals,rng);
+    return {attr:row.attr,contins:row.contins,vals:row.vals,blank,opts,answer:row.vals[blank]};
+  });
+}
+/* Las formas 1 a 30 de esta prueba ya están impresas en las escuelas con
+   su pauta. Salían de un sorteo con la semilla de la forma, y así siguen
+   saliendo: la tabla, los cinco datos con sus opciones barajadas, las
+   afirmaciones, los dos casos con las suyas y los cinco errores, en ese
+   orden de semilla. Lo vigila _dev/verifica-formas-oro.js contra la
+   referencia congelada. */
+const CRIT_FORMAS_DE_ANTES=30;
+function critSorteoDeAntes(forma){
+  const rng=_evalRng(200000+forma);
+  const compRows=_critCompDe(rng);
+  const inSacados=_pickF(critInterpBank,5,rng);
+  const inItems=inSacados.map(it=>{
+    const order=_shuffleF(it.opts.map((o,oi)=>({o,oi})),rng);
+    const opts=order.map(x=>x.o);
+    const correct=order.findIndex(x=>x.oi===it.correct);
+    return {dato:it.dato,q:it.q,opts,correct,model:it.model};
+  });
+  const anItems=_pickF(critAnalizBank,5,rng);
+  const caSacados=_pickF(critCasoBank,2,rng);
+  const caItems=caSacados.map(it=>({...it,opts:_shuffleF(it.opts,rng)}));
+  const deItems=_pickF(critDetBank,5,rng);
+  return {compRows,inItems,anItems,caItems,deItems,casos:[inSacados,anItems,caSacados,deItems]};
+}
+function critFormaDeAntes(forma){ return critSorteoDeAntes(forma).casos; }
+/* Los apartados que salen de un banco, con cuántos casos saca cada uno
+   (la tabla de la sección I no entra: son siempre sus cinco filas). Con
+   esto el motor (js/motor-misiones.js) deja las formas 1 a 30 como estaban
+   y reparte las nuevas, de la 31 a la 50, sin que ninguna lleve el conjunto
+   de casos de otra. El orden es el de la hoja. */
+function critApartados(){
+  return _conFormasDeAntes([[critInterpBank,5],[critAnalizBank,5],[critCasoBank,2],[critDetBank,5]],CRIT_FORMAS_DE_ANTES,critFormaDeAntes);
+}
+/* Lo que lleva una forma. Las de antes, su sorteo. Las nuevas, los casos
+   que repartió el motor: la tabla se calcula con la semilla como siempre,
+   y las opciones de los datos y de los casos se barajan con la correcta
+   repartida entre las letras. */
+function critSorteo(forma,casos){
+  if(forma<=CRIT_FORMAS_DE_ANTES) return critSorteoDeAntes(forma);
+  const rng=_evalRng(200000+forma);
+  const compRows=_critCompDe(rng);
+  const inItems=_conOpcionesRepartidas(casos[0],rng,'opts','correct').map(it=>({dato:it.dato,q:it.q,opts:it.opts,correct:it.correct,model:it.model}));
+  return {compRows,inItems,anItems:casos[1],caItems:_conOpcionesRepartidas(casos[2],rng,'opts','ans'),deItems:casos[3]};
+}
 function genEvalCrit(){
   sfx('click');
-  _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;});
-  const _sC=document.getElementById('evalCritFormaSel');
-  if(_sC&&parseInt(_sC.value,10))evalCritFormNum=Math.min(EVAL_FORMAS,Math.max(1,parseInt(_sC.value,10)));
-  const cf=evalCritFormNum;window._currentEvalCritForm=cf;const rngC=_evalRng(200000+cf);
-  evalCritFormNum=(evalCritFormNum%EVAL_FORMAS)+1;
-  _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;});
+  const turno=_turnoCritica(evalCritFormNum,critApartados(),function(v){evalCritFormNum=v;});
+  const cf=turno.forma;window._currentEvalCritForm=cf;
+  const {compRows,inItems,anItems,caItems,deItems}=critSorteo(cf,turno.casos);
   saveProgress();
   document.getElementById('evalcrit-screen-title').textContent=`🧠 Pensamiento Crítico · Forma ${cf} · América, Oceanía y la Antártida`;
   evalCritAnsVisible=false;
@@ -1114,11 +1168,6 @@ function genEvalCrit(){
   out.appendChild(bar);
 
   // ── I. Comparo los tres continentes (tabla; una celda por fila queda en blanco)
-  const compRows=critCompBank.map(row=>{
-    const blank=Math.floor(rngC()*3);
-    const opts=_shuffleF(row.vals,rngC);
-    return {attr:row.attr,contins:row.contins,vals:row.vals,blank,opts,answer:row.vals[blank]};
-  });
   let compHtml='<div class="crit-table-wrap"><table class="crit-table"><thead><tr><th>Aspecto</th><th>🌎 América</th><th>🌏 Oceanía</th><th>❄️ Antártida</th></tr></thead><tbody>';
   compRows.forEach((r,i)=>{
     compHtml+=`<tr><td class="crit-td-attr">${r.attr}</td>`;
@@ -1134,7 +1183,6 @@ function genEvalCrit(){
   out.appendChild(s1);
 
   // ── II. Interpreto los datos (radios: implicación correcta)
-  const inItems=critInterpBank_pick(rngC);
   let inHtml='';
   inItems.forEach((it,i)=>{
     inHtml+=`<div class="crit-q-block"><div class="crit-scenario"><strong>📊 Dato:</strong> ${it.dato}</div><div class="crit-q-label">${it.q}</div><div class="crit-mc-opts">${it.opts.map((o,oi)=>`<label class="crit-mc-opt"><input type="radio" name="interp${i}" value="${oi}"> ${o}</label>`).join('')}</div><div class="crit-pauta">${it.opts[it.correct]}: ${it.model}</div><div class="eval-item-feedback" id="critFbIn${i}" aria-live="polite"></div></div>`;
@@ -1144,7 +1192,6 @@ function genEvalCrit(){
   out.appendChild(s2);
 
   // ── III. Analizo y justifico (radios Válida / No válida)
-  const anItems=_pickF(critAnalizBank,5,rngC);
   let anHtml='';
   anItems.forEach((it,i)=>{
     anHtml+=`<div class="crit-q-block"><div class="crit-scenario">📝 ${it.af}</div><div class="crit-tf-opts"><label class="crit-tf-opt"><input type="radio" name="analiz${i}" value="v"> Válida</label><label class="crit-tf-opt"><input type="radio" name="analiz${i}" value="nv"> No válida</label></div><textarea class="crit-textarea" rows="2" aria-label="Justifica la afirmación ${i+1}" placeholder="Justifica tu respuesta..."></textarea><div class="crit-pauta">${it.valida?'Válida':'No válida'}. ${it.model}</div><div class="eval-item-feedback" id="critFbAn${i}" aria-live="polite"></div></div>`;
@@ -1154,7 +1201,6 @@ function genEvalCrit(){
   out.appendChild(s3);
 
   // ── IV. Casos hondureños (2 minicasos: select cerrado + justificación)
-  const caItems=_pickF(critCasoBank,2,rngC).map(it=>({...it,opts:_shuffleF(it.opts,rngC)}));
   let caHtml='';
   caItems.forEach((it,i)=>{
     caHtml+=`<div class="crit-fossil-item"><div class="crit-scenario"><strong>🇭🇳 Caso ${i+1}:</strong> ${it.esc}</div><div class="crit-q-label">${it.q}</div><select class="crit-caso-select" data-caso="${i}" aria-label="Respuesta del caso ${i+1}"><option value="">Elige</option>${it.opts.map(o=>`<option value="${o}">${o}</option>`).join('')}</select><textarea class="crit-textarea" rows="2" aria-label="Justifica el caso ${i+1}" placeholder="Explica por qué (¿qué le conviene y por qué?)..."></textarea><div class="crit-pauta">${it.ans}: ${it.model}</div></div>`;
@@ -1164,7 +1210,6 @@ function genEvalCrit(){
   out.appendChild(s4);
 
   // ── V. Detective geográfico (párrafo con 5 errores → corregir por palabra clave)
-  const deItems=_pickF(critDetBank,5,rngC);
   const parrafo=deItems.map((it,i)=>`<span class="crit-det-err">(${i+1}) ${it.bad}</span>`).join('; ')+'.';
   let deHtml=`<div class="crit-scenario"><strong>🧭 El explorador despistado escribió:</strong> «Queridos amigos: en mi viaje descubrí que ${parrafo}» <em>Contiene 5 errores.</em></div>`;
   deItems.forEach((it,i)=>{
@@ -1179,14 +1224,6 @@ function genEvalCrit(){
   totalPanel.innerHTML='<strong>🧮 Prueba de pensamiento crítico:</strong> resuelve en pantalla, autoevalúa las justificaciones del caso con la rúbrica y presiona <em>Calificar prueba</em>. La impresión conserva el formato limpio para papel.';
   out.appendChild(totalPanel);
   fin('s-evaluacion');
-}
-function critInterpBank_pick(rngC){
-  return _pickF(critInterpBank,5,rngC).map(it=>{
-    const order=_shuffleF(it.opts.map((o,oi)=>({o,oi})),rngC);
-    const opts=order.map(x=>x.o);
-    const correct=order.findIndex(x=>x.oi===it.correct);
-    return {dato:it.dato,q:it.q,opts,correct,model:it.model};
-  });
 }
 function toggleEvalCritAns(){
   evalCritAnsVisible=!evalCritAnsVisible;
@@ -1441,4 +1478,4 @@ window.addEventListener('DOMContentLoaded',()=>{
 });
 
 // Formas deterministas v1: selectores de forma visibles desde la carga de la página
-(function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalOp==='function') _injectFormaSel('genEvalOp','evalOpFormaSel',evalOpFormNum,function(v){evalOpFormNum=v;}); }catch(e){} try{ if(typeof genEvalCrit==='function') _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
+(function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalOp==='function') _injectFormaSel('genEvalOp','evalOpFormaSel',evalOpFormNum,function(v){evalOpFormNum=v;}); }catch(e){} try{ if(typeof genEvalCrit==='function') _selectorCritica(evalCritFormNum,critApartados(),function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();

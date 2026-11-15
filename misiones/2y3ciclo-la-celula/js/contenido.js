@@ -11,7 +11,9 @@
    ⚠️ El orden de cada banco del examen (evalTFBank, evalMCBank,
    evalCPBank, evalPRBank) no se cambia y no se le añaden preguntas en
    medio: el orden decide qué preguntas caen en cada forma, y hay
-   claves impresas. Lo vigila _dev/verifica-formas-oro.js.
+   claves impresas. Lo vigila _dev/verifica-formas-oro.js. Las
+   preguntas nuevas van en el banco grande (los mismos nombres con
+   «Nuevo» detrás), que es de donde salen las formas 31 a 50.
 
    Va como declaraciones de JavaScript y no como un archivo .json por
    dos razones medidas: los guiones de la página leen SAVE_KEY, xp y
@@ -321,7 +323,88 @@ const evalPRBank=[
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
+// Las formas de antes, las que tienen clave impresa. No se sube este
+// número para ofrecer más formas: las nuevas salen del banco grande de abajo.
 const EVAL_FORMAS = 30;
+
+// ===================== EXAMEN CONCEPTUAL · BANCO GRANDE =====================
+// Los cuatro bancos de arriba son de diez, y cada forma saca cinco: el alumno
+// que se aprende las primeras formas se sabe el banco entero. Estos cuatro
+// son preguntas NUEVAS para las formas 31 a 50. Cada una de esas formas lleva,
+// por sección, tres de aquí y dos del banco de antes; las reparte el motor
+// (js/motor-misiones.js) sin que dos formas lleven el mismo conjunto.
+//
+// ⚠️ Van en arreglos APARTE a propósito. Añadir una pregunta a un banco de
+// arriba cambiaría las formas 1 a 30, que tienen clave impresa.
+// ⚠️ Y el orden de estos tampoco se cambia una vez aprobados: decide qué
+// preguntas caen en cada forma nueva.
+//
+// De dónde salen. De lo que la misión ya enseña: la ficha imprimible, la guía
+// (la sección Aprende) y las actividades. Cada pregunta lo anota en `fuente`.
+// Antes de escribirlas se contó qué preguntaban la ficha y las actividades:
+// las 75 preguntas de las actividades piden 17 datos, y diez de ellos ya los
+// pide el examen (la mitocondria, diez veces entre todo). Un dato repetido
+// cuenta UNA vez: el que ya está arriba no vuelve a entrar aquí, y el que
+// sale en varias actividades entra una sola vez, con todas sus fuentes.
+//
+// Las mismas reglas de arriba, y contra los dos bancos a la vez, porque en
+// una forma nueva caen juntas preguntas de los dos:
+// · UN DATO, UNA PREGUNTA: ninguna `k` de aquí repite una de arriba.
+// · Ninguna respuesta, de aquí o de arriba, aparece escrita en otra pregunta.
+//   Por eso aquí no se nombra al ADN, al ATP ni a los organelos de los
+//   pareados de arriba fuera de un pareado: se dice «centrales energéticas»,
+//   «material hereditario», «la capa que controla lo que entra y sale».
+// · Ninguna la contesta la historia de don Tulio ni su animación.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`, y cuántas formas hay y
+// cuánto de cada forma nueva sale de aquí, `_dev/verifica-conceptual-banco-grande.js`.
+const evalTFBankNuevo=[
+  {q:'La célula animal fabrica su propio alimento con la luz del sol.',a:false,k:'tf-animal-luz',fuente:'Ficha, página 3 (6. Errores comunes) · Ficha, página 2 (tabla Animal vs. Vegetal)'},
+  {q:'Una lechuga marchita se pone firme en agua porque el agua entra en sus células.',a:true,k:'tf-lechuga',fuente:'Actividad Laboratorio: Membrana, Dato curioso y Función (ósmosis)'},
+  {q:'Casi todas las células de tu cuerpo guardan la misma información hereditaria.',a:true,k:'tf-misma-informacion',fuente:'Actividad Laboratorio: Núcleo, Dato curioso'},
+  {q:'En la célula vegetal, las bolsas de almacén son muchas y pequeñas.',a:false,k:'tf-bolsas',fuente:'Ficha, página 2 (tabla Animal vs. Vegetal) · Actividad «¿En qué célula se encuentra?» 6'},
+  {q:'Una bacteria es más grande y compleja que una célula de tu cuerpo.',a:false,k:'tf-bacteria-grande',fuente:'Ficha, página 2 (2. Procariota vs. Eucariota)'},
+  {q:'Un perro y una planta son seres formados por una sola célula.',a:false,k:'tf-perro',fuente:'Ficha, página 1 (Idea clave) · Guía (Aprende): Organismos unicelulares y pluricelulares'},
+  {q:'Se cree que algunos organelos fueron, hace muchísimo tiempo, bacterias que empezaron a vivir dentro de otras células.',a:true,k:'tf-bacterias-antiguas',fuente:'Ficha, página 3 (Dato curioso) · Actividad Laboratorio: Mitocondria, Dato curioso'},
+  {q:'Las células de las plantas también tienen «centrales energéticas».',a:true,k:'tf-plantas-centrales',fuente:'Ficha, página 3 (4. Los organelos y sus funciones) · Actividad «¿En qué célula se encuentra?» 3'},
+  {q:'Solo las células de los animales fabrican proteínas.',a:false,k:'tf-proteinas-todas',fuente:'Ficha, página 3 (4. Los organelos y sus funciones)'},
+  {q:'Los hongos fabrican su alimento con la luz, igual que las plantas.',a:false,k:'tf-hongos-luz',fuente:'Ficha, página 3 (5. La fotosíntesis)'}
+];
+const evalMCBankNuevo=[
+  {q:'¿En qué año se descubrió la célula?',o:['a) 1492','b) 1665','c) 1821','d) 1969'],a:1,k:'mc-1665',fuente:'Ficha, página 1 (Dato clave) · Guía (Aprende): ¿Qué es la Célula?'},
+  {q:'¿Qué células tienen más «centrales energéticas»?',o:['a) Las que no gastan energía','b) Las que gastan poca energía','c) Las que guardan su energía','d) Las que gastan mucha energía'],a:3,k:'mc-mas-centrales',fuente:'Actividad Laboratorio: Mitocondria, Función · Actividad Tarjetas: Mitocondria'},
+  {q:'Si se estirara todo el material hereditario de una sola de tus células, ¿cuánto mediría?',o:['a) Menos que una pestaña','b) Lo que mide tu dedo','c) Más que la altura de una persona','d) Lo que mide una cancha de fútbol'],a:2,k:'mc-dos-metros',fuente:'Actividad Laboratorio: Núcleo, Dato curioso'},
+  {q:'¿Cuál de estas células NO tiene una cubierta rígida por fuera?',o:['a) La de un animal','b) La de una planta','c) La de un hongo','d) La de una bacteria'],a:0,k:'mc-sin-cubierta',fuente:'Actividad Tarjetas: Pared celular · Actividad Quiz 8 · Actividad «¿En qué célula se encuentra?» 2'},
+  {q:'En un ser formado por muchas células, ¿cómo trabajan estas?',o:['a) Cada una por su lado','b) Todas juntas','c) Solo de noche','d) Una sola a la vez'],a:1,k:'mc-juntas',fuente:'Ficha, página 1 (Idea clave) · Guía (Aprende): Organismos unicelulares y pluricelulares'},
+  {q:'Los frijoles, el maíz y el café que se cultivan en Honduras, ¿de qué están formados?',o:['a) De minerales sin vida','b) De células animales','c) De células vegetales','d) De bacterias'],a:2,k:'mc-frijoles',fuente:'Ficha, página 4 (En Honduras)'},
+  {q:'¿Cuál de estas cosas NO está formada por células?',o:['a) Una flor','b) Un zancudo','c) Un pez','d) Una piedra'],a:3,k:'mc-piedra',fuente:'Ficha, página 5 (Ponte a prueba, III.5; con otras opciones)'},
+  {q:'¿Qué forma tiene la célula animal?',o:['a) Irregular','b) De cubo','c) De ladrillo','d) De triángulo'],a:0,k:'mc-forma-animal',fuente:'Ficha, página 2 (tabla Animal vs. Vegetal) · Actividad Clasifica: Célula Animal'},
+  {q:'¿Con qué proceso obtiene la célula su energía?',o:['a) La división celular','b) La respiración celular','c) La teoría celular','d) La pared celular'],a:1,k:'mc-respiracion',fuente:'Ficha, página 3 (4. Los organelos y sus funciones) · Actividad Laboratorio: Mitocondria, Función'},
+  {q:'¿Qué hace una célula justo antes de dividirse?',o:['a) Se agranda y duplica su contenido','b) Se encoge y se arruga','c) Expulsa su agua y se seca','d) Se queda sin energía'],a:0,k:'mc-antes-de-dividirse',fuente:'Actividad Secuencia: Ciclo celular (mitosis), primer paso'}
+];
+const evalCPBankNuevo=[
+  {q:'En la capa que rodea a la célula hay proteínas que funcionan como canales y como ___.',a:'puertas',acc:['puertas'],k:'cp-puertas',fuente:'Actividad Laboratorio: Membrana, Estructura'},
+  {q:'El ___ fértil está lleno de seres vivos de una sola célula.',a:'suelo',acc:['suelo'],k:'cp-suelo',fuente:'Ficha, página 4 (En Honduras)'},
+  {q:'Las «centrales energéticas» de tus células las heredaste solo de tu ___.',a:'madre',acc:['madre','mamá','mama'],k:'cp-madre',fuente:'Actividad Laboratorio: Mitocondria, Dato curioso'},
+  {q:'Las dos células que salen de una división se llaman células ___.',a:'hijas',acc:['hijas'],k:'cp-hijas',fuente:'Actividad Secuencia: Ciclo celular (mitosis), último paso'},
+  {q:'La capa que controla lo que entra y sale de la célula no es rígida: es delgada y ___.',a:'flexible',acc:['flexible','elástica','elastica'],k:'cp-flexible',fuente:'Ficha, página 3 (6. Errores comunes) · Actividad Laboratorio: Membrana, Estructura'},
+  {q:'Tus células producen energía todo el tiempo, incluso mientras tú ___.',a:'duermes',acc:['duermes'],k:'cp-duermes',fuente:'Actividad Laboratorio: Mitocondria, Dato curioso'},
+  {q:'Las proteínas se arman siguiendo las ___ que da el material hereditario.',a:'instrucciones',acc:['instrucciones'],k:'cp-instrucciones',fuente:'Guía (Aprende): Los Organelos y sus funciones · Actividad Tarjetas: Ribosoma'},
+  {q:'En una planta, las células que fabrican alimento abundan en las ___, que es donde llega más luz.',a:'hojas',acc:['hojas'],k:'cp-hojas',fuente:'Actividad Laboratorio: Cloroplasto, ¿En qué célula?'},
+  {q:'En los niveles de organización de la vida, después de la célula sigue el ___.',a:'tejido',acc:['tejido'],k:'cp-tejido',fuente:'Actividad Secuencia: Niveles de organización de la vida'},
+  {q:'La teoría celular es uno de los pilares de una ciencia: la ___.',a:'biología',acc:['biología','biologia'],k:'cp-biologia',fuente:'Guía (Aprende): La Teoría Celular'}
+];
+const evalPRBankNuevo=[
+  {term:'Envoltura nuclear',def:'Cubierta que rodea al centro de mando',k:'pr-envoltura',fuente:'Actividad Clasifica: Cubiertas de la célula · Actividad Tarjetas: Núcleo · Actividad Laboratorio: Núcleo, Estructura'},
+  {term:'Nucleoide',def:'Zona donde queda suelto el material hereditario cuando no hay núcleo',k:'pr-nucleoide',fuente:'Ficha, página 2 (2. Procariota vs. Eucariota) · Actividad Clasifica: Célula Procariota · Actividad Reto: Procariota'},
+  {term:'Mitosis',def:'División con la que una célula se reproduce',k:'pr-mitosis',fuente:'Actividad Secuencia: Ciclo celular (mitosis) · Actividad Laboratorio: Núcleo, Función'},
+  {term:'Glóbulo rojo',def:'Célula que al madurar pierde su centro de mando',k:'pr-globulo-rojo',fuente:'Actividad Laboratorio: Núcleo, Dato curioso'},
+  {term:'Procariota',def:'Célula sin núcleo definido',k:'pr-sin-nucleo',fuente:'Ficha, página 2 (2. Procariota vs. Eucariota) · Actividad Quiz 3 · Actividad Completa 5'},
+  {term:'Eucariota',def:'Célula con núcleo definido',k:'pr-con-nucleo',fuente:'Ficha, página 2 (2. Procariota vs. Eucariota) · Actividad «¿En qué célula se encuentra?» 5'},
+  {term:'Cápsula',def:'Cubierta que llevan por fuera algunas bacterias',k:'pr-capsula',fuente:'Actividad Clasifica: Cubiertas de la célula · Actividad Reto: Cubierta'},
+  {term:'Sistema de órganos',def:'Nivel de organización que va justo antes del organismo completo',k:'pr-sistema',fuente:'Actividad Secuencia: Niveles de organización de la vida'},
+  {term:'Lípidos',def:'Grasas que forman la capa que rodea a la célula',k:'pr-lipidos',fuente:'Guía (Aprende): Membrana celular · Actividad Laboratorio: Membrana, Estructura'},
+  {term:'Alga',def:'No es una planta, pero también fabrica su alimento con la luz',k:'pr-alga',fuente:'Ficha, página 3 (5. La fotosíntesis) · Actividad Laboratorio: Cloroplasto, ¿En qué célula?'}
+];
 
 // ===================== PRUEBA DE PENSAMIENTO CRÍTICO =====================
 // ⚠️ Pensamiento crítico, con la misma regla: «las células no están vivas»,

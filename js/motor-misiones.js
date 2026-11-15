@@ -14,6 +14,11 @@
    2. EL REPARTO DE LA PRUEBA DE PENSAMIENTO CRÍTICO (`_repartoCritica`,
       `_formasCritica`, `_turnoCritica`, `_selectorCritica`): cada forma,
       de la 1 a la 50, lleva un conjunto de casos que no lleva ninguna otra.
+      Una misión con formas ya impresas las conserva (`_conFormasDeAntes`)
+      y solo reparte las nuevas.
+      Y EL BANCO GRANDE DEL EXAMEN CONCEPTUAL (`_formasConceptual`,
+      `_repartoConceptual`): la misión que trae un banco nuevo al lado del
+      de siempre ofrece formas nuevas, repartidas con las mismas ruedas.
    3. LA PUERTA (`mision.html?m=<carpeta>`), que lleva a una misión.
 
    Las funciones del examen se publican con el MISMO nombre global que
@@ -111,12 +116,53 @@
     try { var n = parseInt((new Function('return (' + expr + ');'))(), 10); return n >= 1 ? n : null; } catch (e) { return null; }
   }
 
+  /* La forma que dice el TÍTULO de cada prueba. Es lo que el alumno tiene
+     delante, así que manda sobre todo lo demás: el círculo marcado tiene
+     que ser esa.
+
+     Hacía falta porque una misión puede BORRAR el selector y volver a
+     crearlo en medio de una generación (Fin de grado lo hace en cada
+     examen, para cambiar de materia), y el selector nuevo nacía sin saber
+     qué forma acababa de salir: marcaba la siguiente. El título decía
+     «Forma 2» y el círculo marcado era el 3, y al recargar pasaba lo mismo
+     con el examen que la misión vuelve a armar. Leer el título lo arregla
+     para cualquier misión, sin tocar ninguna: todas lo escriben igual
+     («… Forma 7 …», o «Forma R-7» en la adaptada; «Form 7» si está en
+     inglés). Un título sin forma (antes de generar) no cambia nada. */
+  var TITULO_DE = {
+    evalFormaSel: 'eval-screen-title',
+    evalOpFormaSel: 'evalop-screen-title',
+    evalCritFormaSel: 'evalcrit-screen-title'
+  };
+  function _formaDelTitulo(selId) {
+    var doc = global.document, t = TITULO_DE[selId] && doc.getElementById(TITULO_DE[selId]);
+    var m = t && (t.textContent || '').match(/\bForma?\s+(?:R-)?(\d+)\b/);
+    return m ? parseInt(m[1], 10) : null;
+  }
+  function _alinearConTitulo(selId) {
+    var el = global.document.getElementById(selId);
+    if (!el || !el._fs) return;
+    var s = el._fs, n = _formaDelTitulo(selId);
+    if (!n || n > s.tope || n === s.mostrada) return;
+    s.mostrada = n;
+    s.vista = null;
+    _pintar(el);
+  }
+  /* Se vigila el título, no la generación: la misión lo escribe DESPUÉS de
+     rehacer el selector, y es ese último cambio el que cuenta. */
+  function _seguirTitulo(selId) {
+    var doc = global.document, t = TITULO_DE[selId] && doc.getElementById(TITULO_DE[selId]);
+    if (!t || t._metasSigueForma || typeof global.MutationObserver !== 'function') return;
+    t._metasSigueForma = true;
+    new global.MutationObserver(function () { _alinearConTitulo(selId); })
+      .observe(t, { childList: true, characterData: true, subtree: true });
+  }
+
   /* Los botones del examen, más bajos y con el texto corto. El texto
      largo queda como nombre del botón (lo lee el lector de pantalla y
      sale al dejar el puntero encima), y es el que ya traduce
      js/metas-i18n.js. Los cortos tienen su traducción allí mismo.
-     «👁 Ver Pauta» se queda como está: ya es corto, y el texto de arriba
-     de cada examen dice «selecciona Ver Pauta». */
+     «👁 Ver Pauta» se queda como está: ya es corto. */
   var BOTON_CORTO = {
     '🔄 Nueva Evaluación': '🔄 Nueva', '🔄 Nueva Prueba': '🔄 Nueva', '🔄 Nueva Prueba Operativa': '🔄 Nueva',
     '🧮 Calificar prueba': '🧮 Calificar', '🧮 Calcular Total': '🧮 Total'
@@ -126,11 +172,13 @@
      trae su propia hoja de estilos copiada y no hay otra hoja común a
      todas. El color es `--pri`, el de cada misión. */
   var CSS_FORMAS = [
-    '.metas-formas{margin:0 0 .7rem;}',
+    /* Centrado: el título del examen ya no lleva párrafo debajo, y el
+       bloque de formas a un lado dejaba la tarjeta cargada a la izquierda. */
+    '.metas-formas{margin:0 0 .7rem;text-align:center;}',
     '.metas-formas-tit{font-weight:700;font-size:.8rem;opacity:.85;margin:0 0 .35rem;}',
     /* Las pastillas de grupo: 1–10, 11–20… Solo cambian qué diez círculos
        se ven; no generan nada. */
-    '.metas-grupos{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 .4rem;}',
+    '.metas-grupos{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:0 0 .4rem;}',
     '.metas-grupo{appearance:none;-webkit-appearance:none;font:inherit;font-size:.75rem;font-weight:700;line-height:1;min-height:32px;min-width:48px;padding:0 .75rem;border-radius:999px;border:2px solid transparent;background:rgba(127,127,127,.16);color:inherit;cursor:pointer;font-variant-numeric:tabular-nums;-webkit-tap-highlight-color:transparent;}',
     '.metas-grupo[aria-pressed="true"]{background:var(--pri,#555);border-color:var(--pri,#555);color:#fff;font-weight:800;}',
     '.metas-grupo:focus-visible{outline:3px solid var(--pri,#555);outline-offset:2px;}',
@@ -150,12 +198,36 @@
     /* En la pantalla más angosta (320 px) diez no caben ni así: van de
        cinco en cinco antes que achicar el círculo por debajo del dedo. */
     '@media (max-width:359px){.metas-formas-rejilla{grid-template-columns:repeat(5,minmax(32px,1fr));margin:0;}}',
-    '@media (min-width:600px){.metas-formas-rejilla{grid-template-columns:repeat(10,40px);gap:4px;margin:0;}}',
+    '@media (min-width:600px){.metas-formas-rejilla{grid-template-columns:repeat(10,40px);gap:4px;margin:0;justify-content:center;}}',
     /* Los cuatro botones: una fila en la computadora, dos en el teléfono. */
-    '.eval-controls.metas-botones{display:flex;flex-wrap:nowrap;align-items:center;gap:.4rem;}',
+    '.eval-controls.metas-botones{display:flex;flex-wrap:nowrap;align-items:center;justify-content:center;gap:.4rem;}',
     '.eval-controls.metas-botones>.btn{font-size:.78rem;padding:.3rem .75rem;min-height:32px;border-radius:10px;gap:.3rem;white-space:nowrap;line-height:1.2;}',
     '@media (max-width:599px){.eval-controls.metas-botones{display:grid;grid-template-columns:1fr 1fr;}.eval-controls.metas-botones>.btn{justify-content:center;}.eval-controls.metas-botones>:not(.btn){grid-column:1/-1;}}',
+    /* «Completar el espacio» en la pantalla: una raya gruesa donde va la
+       palabra, como en la hoja impresa, y no una caja de formulario. Se
+       sigue escribiendo y calificando igual. Solo `screen`: el papel sale
+       de otra ventana (printEval) y no cambia. `#evalOut` sube la
+       especificidad por encima de la hoja copiada de cada misión (también
+       de su `:focus`) y deja fuera las cajas de los laboratorios. La raya
+       usa `currentColor` y no un color fijo para que en el tema oscuro no
+       desaparezca. */
+    '@media screen{',
+    '#evalOut input.eval-cp-input{border:0;border-bottom:3px solid currentColor;border-radius:0;background:transparent;box-shadow:none;padding:.15rem .3rem .1rem;}',
+    '#evalOut input.eval-cp-input:focus{outline:none;border-bottom-color:var(--pri,currentColor);}',
+    /* Al teclado, además, un contorno: la raya de otro color sola no basta. */
+    '#evalOut input.eval-cp-input:focus-visible{outline:2px solid var(--pri,currentColor);outline-offset:2px;}',
+    /* Calificada: la raya toma el color y el renglón un tinte; el ✓ o el
+       «Revisar» lo dice en letras el comentario de cada pregunta. */
+    '#evalOut input.eval-cp-input.eval-input-ok{border-bottom-color:var(--jade,#00b894);background:rgba(0,184,148,.1);}',
+    '#evalOut input.eval-cp-input.eval-input-no{border-bottom-color:var(--red,#d63031);background:rgba(214,48,49,.08);}',
+    '}',
     /* En el papel solo va «Forma N», que ya lleva la hoja. */
+    /* El encabezado de la hoja (Nombre, Fecha, Centro Educativo, Valor
+       total) no es de la pantalla. 60 misiones lo esconden en su hoja; 22
+       (Fin de grado y casi todas las de Matemáticas) no, y se veía encima
+       del examen. La hoja impresa no lo usa: printEval arma la suya en
+       otra ventana, con su propio encabezado. */
+    '@media screen{.eval-print-header{display:none;}}',
     '@media print{.metas-formas,.eval-controls{display:none!important;}}'
   ].join('\n');
 
@@ -280,6 +352,11 @@
     caja.appendChild(cajaGrupos);
     caja.appendChild(el);
     var s = el._fs = { fnName: fnName, onPick: onPick, tope: tope, pendiente: actual, mostrada: null, leida: null, botones: [], pastillas: [], cajaGrupos: cajaGrupos, grupo: 0, vista: null, filaPintada: '', turno: null };
+    /* Si el título ya dice una forma (el selector se rehízo, o la misión
+       armó el examen al abrir), esa es la que está en la pantalla. */
+    var enTitulo = _formaDelTitulo(selId);
+    if (enTitulo && enTitulo <= tope) s.mostrada = enTitulo;
+    _seguirTitulo(selId);
 
     cajaGrupos.addEventListener('click', function (ev) {
       var p = ev.target && ev.target.closest ? ev.target.closest('.metas-grupo') : null;
@@ -488,20 +565,101 @@
     return _ruedasDe(apartados).reduce(function (total, r) { return Math.min(total * r.maneras, Number.MAX_SAFE_INTEGER); }, 1);
   }
 
+  /* ── Las misiones con formas ya impresas ──
+
+     Once misiones arman su prueba crítica con estructura propia, y sus
+     formas 1 a 30 salían de un sorteo con la semilla. Esas 30 no repetían
+     conjunto y hay maestros que las tienen impresas con su pauta: no se
+     vuelven a repartir. La misión lo dice colgando de sus apartados
+     cuántas formas son de antes y cómo salían:
+
+        _conFormasDeAntes([[banco, 5], …], 30, function (forma) {
+          return [casos del apartado 1, casos del apartado 2, …];
+        })
+
+     De ahí en adelante todo lo demás (`_repartoCritica`, `_formasCritica`,
+     `_turnoCritica`, `_selectorCritica`) recibe esos mismos apartados y ya
+     sabe qué hacer: hasta la última forma de antes devuelve lo que salía,
+     y de la siguiente en adelante sigue el reparto de siempre desde su
+     primera posición, SALTANDO los conjuntos que una forma de antes ya
+     llevó. Así ninguna forma nueva repite a otra nueva (es el mismo
+     reparto) ni a una de antes (se saltó).
+
+     Los casos nuevos de un banco se añaden AL FINAL y en otro arreglo
+     (`banco.concat(nuevos)`): el sorteo de antes baraja el banco entero,
+     y un caso más en él cambiaría las 30 formas impresas. */
+  function _conFormasDeAntes(apartados, cuantas, deAntes) {
+    if (!(cuantas >= 1) || typeof deAntes !== 'function') throw new Error('Pensamiento crítico: las formas de antes piden cuántas son y cómo salían');
+    apartados.formasDeAntes = Math.floor(cuantas);
+    apartados.deAntes = deAntes;
+    return apartados;
+  }
+
+  /* El conjunto de una forma, sin el orden: de cada apartado, las
+     posiciones de sus casos en el banco. Un caso que no está en el banco
+     de su apartado revienta aquí con su número. */
+  function _llaveDeConjunto(ruedas, casos) {
+    return ruedas.map(function (r, i) {
+      var suyos = casos && casos[i];
+      if (!Array.isArray(suyos) || suyos.length !== r.saca) throw new Error('Pensamiento crítico, apartado ' + (i + 1) + ': una forma de antes no trae los ' + r.saca + ' casos que saca');
+      return suyos.map(function (c) {
+        var pos = r.banco.indexOf(c);
+        if (pos < 0) throw new Error('Pensamiento crítico, apartado ' + (i + 1) + ': una forma de antes trae un caso que no está en su banco');
+        return pos;
+      }).sort(function (a, b) { return a - b; }).join(',');
+    }).join('|');
+  }
+
+  /* Los conjuntos que ya llevaron las formas de antes. Se guarda colgado
+     de los mismos apartados: en un turno se pregunta varias veces. */
+  function _usadosAntes(apartados, ruedas) {
+    if (apartados._usadosAntes) return apartados._usadosAntes;
+    var usados = {}, distintos = 0;
+    for (var f = 1; f <= apartados.formasDeAntes; f++) {
+      var llave = _llaveDeConjunto(ruedas, apartados.deAntes(f));
+      if (!usados[llave]) { usados[llave] = f; distintos++; }
+    }
+    return (apartados._usadosAntes = { llaves: usados, distintos: distintos });
+  }
+
   /* Cuántas formas tiene la prueba crítica de una misión: 50, o las que
-     su banco dé si no alcanza. Nunca se ofrece una forma que repita. */
-  function _formasCritica(apartados) { return Math.min(FORMAS_CRITICA, _conjuntosCritica(apartados)); }
+     su banco dé si no alcanza. Nunca se ofrece una forma que repita. Con
+     formas de antes, son esas más los conjuntos que quedaron libres. */
+  function _formasCritica(apartados) {
+    var posibles = _conjuntosCritica(apartados);
+    if (!apartados.deAntes) return Math.min(FORMAS_CRITICA, posibles);
+    return Math.min(FORMAS_CRITICA, apartados.formasDeAntes + posibles - _usadosAntes(apartados, _ruedasDe(apartados)).distintos);
+  }
 
   /* Los casos de una forma: un arreglo por apartado, en el orden en que
      se declararon. No toca los bancos. */
   function _repartoCritica(forma, apartados) {
     var f = Math.max(1, Math.floor(forma) || 1) - 1;
+    var ruedas = _ruedasDe(apartados);
+    if (!apartados.deAntes) return _repartoDeRuedas(f, ruedas);
+    var antes = apartados.formasDeAntes, usados = _usadosAntes(apartados, ruedas);
+    var posibles = _conjuntosCritica(apartados);
+    /* Agotadas las de antes y todos los conjuntos libres, vuelve la 1. */
+    f = f % (antes + posibles - usados.distintos);
+    if (f < antes) return apartados.deAntes(f + 1);
+    /* La forma nueva número n es el n-ésimo conjunto del reparto que
+       ninguna forma de antes llevó. */
+    var faltan = f - antes + 1;
+    for (var paso = 0; paso < posibles; paso++) {
+      var casos = _repartoDeRuedas(paso, ruedas);
+      if (!usados.llaves[_llaveDeConjunto(ruedas, casos)] && --faltan === 0) return casos;
+    }
+    throw new Error('Pensamiento crítico: no quedan conjuntos libres para la forma ' + forma);
+  }
+
+  /* El reparto de siempre, con `f` contando desde 0. */
+  function _repartoDeRuedas(f, ruedas) {
     /* El orden de los casos DENTRO de un apartado no cambia el conjunto,
        pero sí cómo se ve la hoja: se baraja con el generador de siempre,
        con la semilla que ya usaba esta prueba. */
     var rng = _evalRng(200000 + f + 1);
     var peso = 1, pesos = [];
-    return _ruedasDe(apartados).map(function (r) {
+    return ruedas.map(function (r) {
       /* Un apartado con una sola manera (un banco de 1, o sacar los 3 de
          3) no es una rueda: sale igual en todas las formas. */
       if (r.maneras === 1) return _shuffleF(r.banco.slice(0, r.saca), rng);
@@ -514,6 +672,48 @@
       var casos = _maneraNumero(r.banco.length, r.saca, posicion).map(function (i) { return r.banco[i]; });
       return _shuffleF(casos, rng);
     });
+  }
+
+  /* Los casos de una sección de selección, cada uno en una copia con sus
+     opciones barajadas y la posición de la correcta movida con ellas. La
+     correcta no se deja al azar de cada caso, que amontona: se REPARTE
+     entre las letras. Se toman las letras en tandas barajadas (a, b, c, d
+     en desorden; al acabarse, otra tanda), así en una misma hoja ninguna
+     letra se repite hasta que salieron todas, y el orden no se adivina.
+     Es para las formas NUEVAS de una misión con formas de antes: en las de
+     antes las opciones van como estaban, que es como las tiene el maestro
+     en su pauta. No toca el banco. `opciones` y `correcta` son los
+     nombres de esos dos campos del caso; `correcta` puede guardar la
+     posición o el texto de la opción buena. */
+  function _conOpcionesRepartidas(casos, rng, opciones, correcta) {
+    var tanda = [];
+    return casos.map(function (caso) {
+      var todas = caso[opciones], n = todas.length;
+      var porTexto = typeof caso[correcta] !== 'number';
+      var buena = porTexto ? todas.indexOf(caso[correcta]) : caso[correcta];
+      if (!tanda.length) tanda = _shuffleF(todas.map(function (_, i) { return i; }), rng);
+      var sitio = tanda.shift() % n;
+      var nuevas = _shuffleF(todas.filter(function (_, i) { return i !== buena; }), rng);
+      nuevas.splice(sitio, 0, todas[buena]);
+      var copia = {};
+      Object.keys(caso).forEach(function (k) { copia[k] = caso[k]; });
+      copia[opciones] = nuevas;
+      if (!porTexto) copia[correcta] = sitio;
+      return copia;
+    });
+  }
+
+  /* Barajar la columna de un pareado sin dejar ninguna respuesta en la
+     fila de su pregunta: un pareado alineado se contesta sin leer. Vuelve
+     a barajar con la misma semilla hasta que ninguna quede en su sitio.
+     También solo para las formas NUEVAS; las de antes van como salían. */
+  function _barajarSinFilaPropia(lista, rng) {
+    var barajada = _shuffleF(lista, rng);
+    for (var intento = 0; intento < 40 && lista.length > 1; intento++) {
+      if (!barajada.some(function (x, i) { return x === lista[i]; })) break;
+      barajada = _shuffleF(lista, rng);
+    }
+    return barajada;
   }
 
   /* El selector de la prueba crítica, con su propio tope. */
@@ -538,7 +738,93 @@
     return { forma: forma, formas: tope, casos: _repartoCritica(forma, apartados) };
   }
 
+  /* ══════════ 2b · El examen conceptual con banco grande ══════════
+
+     El examen conceptual saca cinco preguntas de cada banco de diez, y un
+     alumno que se aprende las primeras formas se sabe el banco entero. La
+     misión que trae un banco NUEVO al lado del de siempre ofrece formas
+     nuevas después de las que ya tenía (31 a 50, si tenía 30).
+
+     Las formas de antes no se tocan: las sigue sacando el generador v1 de
+     arriba, del banco de siempre, y por eso el banco nuevo va en OTRO
+     arreglo y no añadido al primero (un ítem más en él cambiaría las
+     formas impresas).
+
+     Las nuevas se REPARTEN con las mismas ruedas de la prueba crítica.
+     Cada sección (Completar, V/F, Selección, Pareados) son dos ruedas:
+     tres preguntas del banco nuevo y dos del de antes. No se mezclan los
+     dos bancos en una sola rueda a propósito. Se midió: con una rueda por
+     sección las cuatro avanzan al mismo paso, y la primera forma nueva
+     salía sin una sola pregunta nueva y otras con cuatro de veinte, que
+     se aprueban de memoria. Con la cuota, TODA forma nueva lleva doce
+     preguntas nuevas de veinte.
+
+     Ninguna forma nueva repite a otra nueva (es el reparto de siempre) ni
+     a una de antes (las de antes no llevan ninguna pregunta nueva).
+
+     Solo en las formas nuevas se barajan las opciones de la selección,
+     con la correcta repartida entre las letras, y los pareados no dejan
+     ninguna definición en la fila de su término (decisión 2 del plan).
+
+     ⚠️ Queda congelado igual que el reparto: añadir o quitar una pregunta
+     del banco nuevo cambia todas las formas nuevas de esa misión. */
+  var NUEVAS_POR_SECCION = 3, DE_ANTES_POR_SECCION = 2;
+  var SECCIONES_CONCEPTUAL = ['cp', 'tf', 'mc', 'pr'];
+
+  /* `grande` dice, por sección, el banco de antes y el nuevo:
+     { cp: { deAntes: […], nuevas: […] }, tf: …, mc: …, pr: … } */
+  function _apartadosConceptual(grande) {
+    var apartados = [];
+    SECCIONES_CONCEPTUAL.forEach(function (s) {
+      var par = grande && grande[s];
+      if (!par || !Array.isArray(par.deAntes) || !Array.isArray(par.nuevas))
+        throw new Error('Examen conceptual, banco grande: falta el banco de antes o el nuevo de la sección ' + s);
+      apartados.push([par.nuevas, NUEVAS_POR_SECCION], [par.deAntes, DE_ANTES_POR_SECCION]);
+    });
+    return apartados;
+  }
+
+  /* Cuántas formas tiene el examen conceptual: las de antes, y con banco
+     grande hasta 50 (o hasta donde den sus conjuntos). */
+  function _formasConceptual(deAntes, grande) {
+    if (!grande) return deAntes;
+    return Math.max(deAntes, Math.min(FORMAS_CRITICA, deAntes + _conjuntosCritica(_apartadosConceptual(grande))));
+  }
+
+  /* Las letras de las opciones («a) », «b) »…) van escritas en el banco:
+     al barajarlas hay que volver a ponerlas en orden. */
+  function _reletrar(casos) {
+    return casos.map(function (caso) {
+      caso.o = caso.o.map(function (texto, i) { return 'abcdef'.charAt(i) + ') ' + String(texto).replace(/^[a-f]\)\s*/i, ''); });
+      return caso;
+    });
+  }
+
+  /* Las preguntas de una forma NUEVA (la primera es `deAntes + 1`):
+     cinco por sección ya mezcladas, y las definiciones de los pareados en
+     el orden de la hoja. No toca los bancos. */
+  function _repartoConceptual(forma, deAntes, grande) {
+    var casos = _repartoCritica(forma - deAntes, _apartadosConceptual(grande));
+    /* Otra semilla que la del examen de antes (la forma) y que la crítica
+       (200000 + forma): la mezcla de aquí no tiene que parecerse a ninguna. */
+    var rng = _evalRng(300000 + forma);
+    var hoja = {};
+    /* Nuevas y de antes revueltas: si las tres nuevas fueran siempre las
+       primeras, el alumno sabría cuáles son sin leerlas. */
+    SECCIONES_CONCEPTUAL.forEach(function (s, i) { hoja[s] = _shuffleF(casos[2 * i].concat(casos[2 * i + 1]), rng); });
+    hoja.mc = _reletrar(_conOpcionesRepartidas(hoja.mc, rng, 'o', 'a'));
+    hoja.defs = _barajarSinFilaPropia(hoja.pr, rng);
+    return hoja;
+  }
+
+  global._formasConceptual = _formasConceptual;
+  global._repartoConceptual = _repartoConceptual;
+  global._apartadosConceptual = _apartadosConceptual;
+
   global._repartoCritica = _repartoCritica;
+  global._conFormasDeAntes = _conFormasDeAntes;
+  global._conOpcionesRepartidas = _conOpcionesRepartidas;
+  global._barajarSinFilaPropia = _barajarSinFilaPropia;
   global._formasCritica = _formasCritica;
   global._conjuntosCritica = _conjuntosCritica;
   global._selectorCritica = _selectorCritica;
@@ -635,7 +921,8 @@
 
   global.MotorMisiones = {
     examen: { rng: _evalRng, barajar: _shuffleF, elegir: _pickF, selectorDeForma: _injectFormaSel },
-    critica: { formasMaximas: FORMAS_CRITICA, conjuntos: _conjuntosCritica, formas: _formasCritica, reparto: _repartoCritica, selector: _selectorCritica, turno: _turnoCritica },
+    conceptual: { formas: _formasConceptual, reparto: _repartoConceptual, apartados: _apartadosConceptual, nuevasPorSeccion: NUEVAS_POR_SECCION, deAntesPorSeccion: DE_ANTES_POR_SECCION },
+    critica: { formasMaximas: FORMAS_CRITICA, conjuntos: _conjuntosCritica, formas: _formasCritica, reparto: _repartoCritica, conFormasDeAntes: _conFormasDeAntes, conOpcionesRepartidas: _conOpcionesRepartidas, barajarSinFilaPropia: _barajarSinFilaPropia, selector: _selectorCritica, turno: _turnoCritica },
     abrirPedida: abrirPedida, buscar: buscar, carpetaDe: carpetaDe
   };
 /* `globalThis` y no `window` a secas: en el navegador son lo mismo, y las

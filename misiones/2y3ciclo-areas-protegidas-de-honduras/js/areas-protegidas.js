@@ -891,8 +891,11 @@ const evalPRBank=[
 const EVAL_FORMAS = 30;
 /* _evalRng, _shuffleF, _pickF y _injectFormaSel ya no se copian aquí: están en
    js/motor-misiones.js, que la página carga antes que este archivo. Si un teléfono
-   abre la página guardada de antes, que no lo pide, se pide aquí. */
-if (typeof _evalRng !== 'function') { (function () { var m = document.createElement('script'); m.src = '../../js/motor-misiones.js'; document.head.appendChild(m); })(); }
+   abre la página guardada de antes, que no lo pide, se pide aquí. Y también si
+   tiene guardado el motor de antes, que todavía no sabe conservar las formas
+   ya impresas de la prueba de pensamiento crítico (_conFormasDeAntes): con
+   mala señal puede llegar este archivo nuevo y servirse el motor viejo. */
+if (typeof _evalRng !== 'function' || typeof _conFormasDeAntes !== 'function') { (function () { var m = document.createElement('script'); m.src = '../../js/motor-misiones.js'; document.head.appendChild(m); })(); }
 // Selector «Forma exacta»: el docente elige qué forma generar (p.ej. para
 // reimprimir la pauta de la Forma 15 que ya repartió a los alumnos).
 function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalFormNum, function (v) { evalFormNum = v; }); }
@@ -1280,15 +1283,52 @@ const critArgueCriteria=['Usa conceptos de la misión','Conecta la causa con el 
 
 const _critScored=new Set();
 
-function _evalCritFormaSelector(){_injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;});}
+/* Las formas 1 a 30 de esta prueba ya están impresas en las escuelas con
+   su pauta. Salían de un sorteo con la semilla de la forma, y así siguen
+   saliendo: aquí no se cambia ni el orden de las sacadas ni el barajado de
+   los elementos por clasificar, que gasta la misma semilla entre la cuarta
+   sacada y la quinta. Lo vigila _dev/verifica-formas-oro.js contra la
+   referencia congelada. */
+const CRIT_FORMAS_DE_ANTES=30;
+function critSorteoDeAntes(forma){
+  const rng=_evalRng(200000+forma);
+  const ce=_pickF(critCauseEffectBank,5,rng);
+  const cases=_pickF(critCaseBank,2,rng);
+  const data=_pickF(critDataBank,3,rng);
+  const clsSet=_pickF(critClassifyBank,1,rng)[0];
+  const clsItems=_shuffleF(clsSet.items,rng);
+  const arg=_pickF(critArgueBank,1,rng)[0];
+  return {ce,cases,data,clsSet,clsItems,arg};
+}
+function critFormaDeAntes(forma){
+  const s=critSorteoDeAntes(forma);
+  return [s.ce,s.cases,s.data,[s.clsSet],[s.arg]];
+}
+/* Los apartados de la prueba, con su banco y cuántos casos saca cada uno.
+   Con esto el motor (js/motor-misiones.js) deja las formas 1 a 30 como
+   estaban y reparte las nuevas, de la 31 a la 50, sin que ninguna lleve el
+   conjunto de casos de otra. El orden es el de la hoja. */
+function critApartados(){
+  return _conFormasDeAntes([[critCauseEffectBank,5],[critCaseBank,2],[critDataBank,3],[critClassifyBank,1],[critArgueBank,1]],CRIT_FORMAS_DE_ANTES,critFormaDeAntes);
+}
+/* Lo que lleva una forma. Las de antes, su sorteo. Las nuevas, los casos
+   que repartió el motor, con las opciones de las secciones I y III
+   barajadas y la correcta repartida entre las cuatro letras: en el banco
+   está repartida a mano, pero una forma nueva saca OTRA combinación de
+   casos y sin barajar podría juntar varias con la misma letra. */
+function critSorteo(forma,casos){
+  if(forma<=CRIT_FORMAS_DE_ANTES) return critSorteoDeAntes(forma);
+  const rng=_evalRng(200000+forma);
+  return {ce:_conOpcionesRepartidas(casos[0],rng,'o','a'),cases:casos[1],data:_conOpcionesRepartidas(casos[2],rng,'o','a'),clsSet:casos[3][0],clsItems:_shuffleF(casos[3][0].items,rng),arg:casos[4][0]};
+}
+
+function _evalCritFormaSelector(){_selectorCritica(evalCritFormNum,critApartados(),function(v){evalCritFormNum=v;});}
 
 function genEvalCrit(){
   sfx('click');
-  _evalCritFormaSelector();
-  const _sC=document.getElementById('evalCritFormaSel');
-  if(_sC&&parseInt(_sC.value,10)) evalCritFormNum=Math.min(EVAL_FORMAS,Math.max(1,parseInt(_sC.value,10)));
-  const cf=evalCritFormNum;window._currentEvalCritForm=cf;const rngC=_evalRng(200000+cf);
-  evalCritFormNum=(evalCritFormNum%EVAL_FORMAS)+1;_evalCritFormaSelector();saveProgress();
+  const turno=_turnoCritica(evalCritFormNum,critApartados(),function(v){evalCritFormNum=v;});
+  const cf=turno.forma;window._currentEvalCritForm=cf;saveProgress();
+  const {ce,cases,data,clsSet,clsItems,arg}=critSorteo(cf,turno.casos);
   const titleEl=document.getElementById('evalcrit-screen-title');
   if(titleEl) titleEl.textContent=`🧠 Pensamiento Crítico · Forma ${cf} · El Bosque y las Áreas Protegidas`;
   evalCritAnsVisible=false;
@@ -1300,7 +1340,6 @@ function genEvalCrit(){
   out.appendChild(bar);
 
   // I. Causa y consecuencia ecológica (5 × 4 = 20) — autocalificable
-  const ce=_pickF(critCauseEffectBank,5,rngC);
   const s1=document.createElement('div');
   s1.innerHTML='<div class="eval-section-title">I. Causa y consecuencia ecológica <span class="eval-pts">20 pts · 4 pts c/u</span></div><p class="crit-hint">Lee el hecho (la causa) y elige su consecuencia ecológica correcta.</p>';
   ce.forEach((it,i)=>{
@@ -1312,7 +1351,6 @@ function genEvalCrit(){
   out.appendChild(s1);
 
   // II. Analiza el caso y decide (2 × 10 = 20) — abierta, autoevaluación
-  const cases=_pickF(critCaseBank,2,rngC);
   const s2=document.createElement('div');
   s2.innerHTML='<div class="eval-section-title">II. Analiza el caso y decide <span class="eval-pts">20 pts · 10 pts c/u</span></div>';
   cases.forEach((c,i)=>{
@@ -1323,7 +1361,6 @@ function genEvalCrit(){
   out.appendChild(s2);
 
   // III. Interpreta datos y mapa (3 × 5 = 15) — autocalificable
-  const data=_pickF(critDataBank,3,rngC);
   const s3=document.createElement('div');
   s3.innerHTML='<div class="eval-section-title">III. Interpreta datos y mapa <span class="eval-pts">15 pts · 5 pts c/u</span></div><div class="crit-scenario"><strong>📊 Datos de la misión:</strong> Punto más alto: cerro Las Minas <strong>2,849 m</strong> (Celaque) · Reserva Río Plátano <strong>832,000 ha</strong> · Cobertura forestal <strong>~45%</strong> · La Tigra provee el <strong>40%</strong> del agua de Tegucigalpa · Bosque de pino-roble <strong>~3.5 millones de ha</strong>.</div>';
   data.forEach((it,i)=>{
@@ -1335,15 +1372,12 @@ function genEvalCrit(){
   out.appendChild(s3);
 
   // IV. Clasifica y justifica (5 × 3 = 15) — abierta, autoevaluación
-  const clsSet=_pickF(critClassifyBank,1,rngC)[0];
-  const clsItems=_shuffleF(clsSet.items,rngC);
   const s4=document.createElement('div');
   const rows=clsItems.map((it,i)=>`<div class="crit-ce-item"><div class="crit-classify-row"><span class="crit-classify-el">${it.el}</span><label class="crit-classify-opt"><input type="radio" name="crit4_${i}" value="A"> ${clsSet.catA}</label><label class="crit-classify-opt"><input type="radio" name="crit4_${i}" value="B"> ${clsSet.catB}</label></div></div>`).join('');
   s4.innerHTML=`<div class="eval-section-title">IV. Clasifica y justifica <span class="eval-pts">15 pts · 3 pts c/u</span></div><p class="crit-hint">Clasifica cada elemento en <strong>${clsSet.catA}</strong> o <strong>${clsSet.catB}</strong> y luego escribe la razón.</p><div class="eval-item">${rows}<div class="crit-q-block" style="margin-top:0.7rem;"><div class="crit-q-label">${clsSet.reason}</div><textarea class="crit-textarea" rows="2" aria-label="Razón de la clasificación"></textarea><div class="crit-pauta">Clasificación correcta: ${clsSet.items.map(it=>it.el+' → '+(it.cat==='A'?clsSet.catA:clsSet.catB)).join(' · ')}. ${clsSet.g}</div></div><div class="crit-selfscore"><label for="critSelf4">Obtenido:</label> <input type="number" id="critSelf4" class="crit-score-input" data-max="15" min="0" max="15" value="0"> <span>de 15 pts</span></div></div>`;
   out.appendChild(s4);
 
   // V. Argumenta tu postura (30 = 3 criterios × 10) — abierta, rúbrica
-  const arg=_pickF(critArgueBank,1,rngC)[0];
   const s5=document.createElement('div');
   const rubric=critArgueCriteria.map((cr,i)=>`<div class="crit-rubric-row"><span class="crit-rubric-crit">${i+1}. ${cr}</span> <input type="number" id="critSelf5_${i}" class="crit-score-input" data-max="10" min="0" max="10" value="0"> <span>/ 10</span></div>`).join('');
   s5.innerHTML=`<div class="eval-section-title">V. Argumenta tu postura <span class="eval-pts">30 pts · rúbrica 3 × 10</span></div><div class="eval-item"><div class="crit-scenario"><strong>Pregunta abierta:</strong> ${arg.q}</div><div class="crit-q-block"><div class="crit-q-label">Escribe tu argumento (mínimo 4 líneas):</div><textarea class="crit-textarea" rows="5" aria-label="Argumento"></textarea><div class="crit-pauta"><strong>Respuesta modelo:</strong> ${arg.model}</div></div><div class="crit-rubric"><div class="crit-rubric-title">📋 Rúbrica de autoevaluación (0–10 por criterio):</div>${rubric}</div></div>`;
@@ -1578,4 +1612,4 @@ window.addEventListener('DOMContentLoaded',()=>{
 });
 
 // Formas deterministas v1: selectores de forma visibles desde la carga de la página
-(function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalOp==='function') _injectFormaSel('genEvalOp','evalOpFormaSel',evalOpFormNum,function(v){evalOpFormNum=v;}); }catch(e){} try{ if(typeof genEvalCrit==='function') _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
+(function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalOp==='function') _injectFormaSel('genEvalOp','evalOpFormaSel',evalOpFormNum,function(v){evalOpFormNum=v;}); }catch(e){} try{ if(typeof genEvalCrit==='function') _selectorCritica(evalCritFormNum,critApartados(),function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();

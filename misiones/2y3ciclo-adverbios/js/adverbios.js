@@ -921,8 +921,11 @@ const evalPRBank=[
 const EVAL_FORMAS = 30;
 /* _evalRng, _shuffleF, _pickF y _injectFormaSel ya no se copian aquí: están en
    js/motor-misiones.js, que la página carga antes que este archivo. Si un teléfono
-   abre la página guardada de antes, que no lo pide, se pide aquí. */
-if (typeof _evalRng !== 'function') { (function () { var m = document.createElement('script'); m.src = '../../js/motor-misiones.js'; document.head.appendChild(m); })(); }
+   abre la página guardada de antes, que no lo pide, se pide aquí. Y también si
+   tiene guardado el motor de antes, que todavía no sabe conservar las formas
+   ya impresas de la prueba de pensamiento crítico (_conFormasDeAntes): con
+   mala señal puede llegar este archivo nuevo y servirse el motor viejo. */
+if (typeof _evalRng !== 'function' || typeof _conFormasDeAntes !== 'function') { (function () { var m = document.createElement('script'); m.src = '../../js/motor-misiones.js'; document.head.appendChild(m); })(); }
 // Selector «Forma exacta»: el docente elige qué forma generar (p.ej. para
 // reimprimir la pauta de la Forma 15 que ya repartió a los alumnos).
 function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalFormNum, function (v) { evalFormNum = v; }); }
@@ -1290,14 +1293,27 @@ function _critClassSelect(dataAttr, i) {
     return `<select class="crit-fossil-select" ${dataAttr}="${i}" aria-label="Clase del adverbio ${i + 1}"><option value="">Elige la clase</option>${critClassOptions.map(e => `<option value="${e}">${e}</option>`).join('')}</select>`;
 }
 
+/* Las formas 1 a 30 de esta prueba ya están impresas en las escuelas con
+   su pauta. Salían de un sorteo con la semilla de la forma, y así siguen
+   saliendo: aquí no se cambia ni el orden de las cinco sacadas. Lo vigila
+   _dev/verifica-formas-oro.js contra la referencia congelada. */
+const CRIT_FORMAS_DE_ANTES = 30;
+function critFormaDeAntes(forma) {
+    const rng = _evalRng(200000 + forma);
+    return [_pickF(critAdjAdvBank, 5, rng), _pickF(critMenteBank, 5, rng), _pickF(critErrBank, 4, rng), _pickF(critTextBank, 1, rng), _pickF(critProdBank, 1, rng)];
+}
+/* Los apartados de la prueba, con su banco y cuántos casos saca cada uno.
+   Con esto el motor (js/motor-misiones.js) deja las formas 1 a 30 como
+   estaban y reparte las nuevas, de la 31 a la 50, sin que ninguna lleve el
+   conjunto de casos de otra. El orden es el de la hoja. */
+function critApartados() {
+    return _conFormasDeAntes([[critAdjAdvBank, 5], [critMenteBank, 5], [critErrBank, 4], [critTextBank, 1], [critProdBank, 1]], CRIT_FORMAS_DE_ANTES, critFormaDeAntes);
+}
 function genEvalCrit() {
     sfx('click');
-    _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
-    const _sC = document.getElementById('evalCritFormaSel');
-    if (_sC && parseInt(_sC.value, 10)) evalCritFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_sC.value, 10)));
-    const cf = evalCritFormNum; window._currentEvalCritForm = cf; const rngC = _evalRng(200000 + cf);
-    evalCritFormNum = (evalCritFormNum % EVAL_FORMAS) + 1;
-    _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
+    const turno = _turnoCritica(evalCritFormNum, critApartados(), function (v) { evalCritFormNum = v; });
+    const cf = turno.forma; window._currentEvalCritForm = cf;
+    const [adjItems, menteItems, errItems, [txtItem], [prodItem]] = turno.casos;
     saveProgress();
     document.getElementById('evalcrit-screen-title').textContent = `🧠 Pensamiento Crítico · Forma ${cf} · Los Adverbios`;
     evalCritAnsVisible = false;
@@ -1309,7 +1325,6 @@ function genEvalCrit() {
     out.appendChild(bar);
 
     // ── I. ¿Adjetivo o adverbio? (5 × 4 = 20; radios autocalificables + reescritura modelo)
-    const adjItems = _pickF(critAdjAdvBank, 5, rngC);
     let adjRows = '';
     adjItems.forEach((it, i) => {
         adjRows += `<div class="crit-q-block"><div class="crit-q-label">${i + 1}. ${it.sent.replace(it.word.toUpperCase(), '<strong>' + it.word.toUpperCase() + '</strong>')}</div><div class="crit-adj-opts"><label class="crit-radio"><input type="radio" name="critAdj${i}" value="adj"> Adjetivo (concuerda)</label><label class="crit-radio"><input type="radio" name="critAdj${i}" value="adv"> Adverbio (invariable)</label></div><div class="crit-q-sub">Aplica la prueba: reescríbela con sujeto femenino o plural en tu cuaderno.</div><div class="crit-pauta">Es <strong>${it.ans === 'adj' ? 'ADJETIVO' : 'ADVERBIO'}</strong>. ${it.rewrite}</div><div class="eval-item-feedback" id="critFbAdj${i}" aria-live="polite"></div></div>`;
@@ -1319,7 +1334,6 @@ function genEvalCrit() {
     out.appendChild(s1);
 
     // ── II. Laboratorio del sufijo -mente (5 × 3 = 15; inputs, exige la tilde correcta)
-    const menteItems = _pickF(critMenteBank, 5, rngC);
     let menteRows = '';
     menteItems.forEach((it, i) => {
         menteRows += `<div class="crit-tl-row"><span class="crit-tl-ev"><strong>${it.adj}</strong> → <input type="text" class="crit-mente-input" data-mente="${i}" autocomplete="off" spellcheck="false" aria-label="Adverbio en -mente de ${it.adj}" placeholder="adverbio en -mente"> <span class="crit-mente-hint">(${it.hint})</span></span><div class="crit-pauta">${it.adj} → <strong>${it.adv}</strong></div><div class="eval-item-feedback" id="critFbMente${i}" aria-live="polite"></div></div>`;
@@ -1329,7 +1343,6 @@ function genEvalCrit() {
     out.appendChild(s2);
 
     // ── III. Detective del error (4 × 5 = 20; corrección autocalificable + regla modelo)
-    const errItems = _pickF(critErrBank, 4, rngC);
     let errRows = '';
     errItems.forEach((it, i) => {
         errRows += `<div class="crit-q-block"><div class="crit-scenario">❌ ${it.bad}</div><div class="crit-q-label">Escribe la forma correcta:</div><textarea class="crit-textarea" data-err="${i}" rows="2" aria-label="Corrige la afirmación ${i + 1}" placeholder="Reescribe la oración corregida..."></textarea><div class="crit-pauta">${it.fix} <em>Regla:</em> ${it.rule}</div><div class="eval-item-feedback" id="critFbErr${i}" aria-live="polite"></div></div>`;
@@ -1339,7 +1352,6 @@ function genEvalCrit() {
     out.appendChild(s3);
 
     // ── IV. El poder del adverbio en el texto (5 clasificaciones × 5 = 25; + 2 preguntas de efecto)
-    const txtItem = _pickF(critTextBank, 1, rngC)[0];
     let advRows = '';
     txtItem.advs.forEach((a, i) => {
         advRows += `<div class="crit-tl-row"><span class="crit-match-n">${a.n}. ${a.w}</span> ${_critClassSelect('data-adv', i)}<div class="eval-item-feedback" id="critFbAdv${i}" aria-live="polite"></div></div>`;
@@ -1354,7 +1366,6 @@ function genEvalCrit() {
     out.appendChild(s4);
 
     // ── V. Producción escrita (autoevaluación 0-20; rúbrica de 4 criterios × 5)
-    const prodItem = _pickF(critProdBank, 1, rngC)[0];
     const rubricHtml = critProdRubric.map((c, i) => `<label class="crit-rubric-item"><input type="checkbox" class="crit-rubric-chk" data-rubric="${i}"> ${c} <span class="crit-rubric-pts">(5 pts)</span></label>`).join('');
     const s5 = document.createElement('div');
     s5.innerHTML = `<div class="eval-section-title">V. Producción escrita <span class="eval-pts">20 pts · 4 criterios × 5 pts</span></div><div class="eval-item"><div class="crit-q-label">${prodItem.prompt}</div><textarea class="crit-textarea" rows="5" aria-label="Producción escrita"></textarea><div class="crit-rubric"><strong>📋 Autoevaluación (marca lo que cumpliste, cada casilla vale 5 pts):</strong><div class="crit-rubric-list">${rubricHtml}</div></div><div class="crit-selfscore"><span>Puntaje de esta sección (según las casillas marcadas):</span> <strong id="critScoreVout">0</strong> <span>de 20 pts</span></div></div>`;
@@ -1793,7 +1804,7 @@ function _classroomHint(msg, ok) {
 }
 
 // Formas deterministas v1: selectores de forma visibles desde la carga de la página
-(function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalOp==='function') _injectFormaSel('genEvalOp','evalOpFormaSel',evalOpFormNum,function(v){evalOpFormNum=v;}); }catch(e){} try{ if(typeof genEvalCrit==='function') _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
+(function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalOp==='function') _injectFormaSel('genEvalOp','evalOpFormaSel',evalOpFormNum,function(v){evalOpFormNum=v;}); }catch(e){} try{ if(typeof genEvalCrit==='function') _selectorCritica(evalCritFormNum,critApartados(),function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
 
 // ═════════════════ 📖 CONTROL DE LECTURA ═════════════════
 // Se paga UNA vez por lectura, no por repetirla: releer el mismo texto dos o

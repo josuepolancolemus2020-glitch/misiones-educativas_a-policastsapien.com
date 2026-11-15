@@ -37,10 +37,10 @@
   top: 0;
   z-index: 60;
 
-  /* UNA fila que se desliza de lado. Eran hasta siete filas de
-     chips: en un teléfono eso es media pantalla de barra antes de
-     llegar a lo suyo, y es la misma lección que la barra de grupos
-     de Mi aula. */
+  /* UNA fila que se desliza de lado: es lo que queda para las 8
+     misiones del maestro, que arman su barra desde JS con su propio
+     estilo. Las del alumno ya no se deslizan: ver «Todas las
+     pestañas a la vista», más abajo. */
   flex-wrap: nowrap;
   justify-content: flex-start;
   overflow-x: auto;
@@ -77,6 +77,101 @@
    barra de grupos. */
 .nav-t.active{ box-shadow: 0 0 0 2px var(--card, #fff), 0 0 0 4px var(--pri, #1565c0); }
 
+/* ============================================================
+   Todas las pestañas a la vista, sin deslizar (misiones del alumno)
+   ------------------------------------------------------------
+   Medido el 15 de noviembre de 2026 en Desastres Naturales, La
+   Célula y Robots que Resuelven Problemas (15 pestañas cada una):
+   con la fila que se desliza, en un teléfono de 360 px se veían 3
+   y quedaban 12 escondidas; en una tablet de 768, 8 escondidas; y
+   hasta en la computadora de 1 280 px faltaban 3. El maestro dice
+   «abran Evaluación» y el alumno no la encuentra porque no sabe
+   que hay que deslizar.
+
+   Ahora pasan a otra fila cuando no caben. Así quedan 2 filas en
+   tablet y computadora, y 3 en el teléfono de 360 px gracias al
+   formato compacto de abajo (ícono encima del nombre, columnas
+   parejas). Con la fila corrida eran 5 filas y 258 px pegados
+   arriba: el 40 % de la pantalla.
+
+   ⚠️ Va con [role="tablist"], que llevan las 87 del alumno y NO
+   las 8 del maestro: esas tienen su propio estilo de pestañas y
+   siguen como estaban.
+   ============================================================ */
+body:not([data-barra-propia]) .nav[role="tablist"]{
+  flex-wrap: wrap;
+  justify-content: center;
+  /* Sin desplazamiento ya no hay nada que recortar: visible deja
+     respirar el anillo del chip activo y la ⭐ de lo hecho. */
+  overflow: visible;
+  padding: 0.45rem 0.4rem;
+  gap: 0.3rem;
+}
+/* La letra no baja de 12,5 px (antes 12): se achica el relleno,
+   no lo que se lee. Los 44 px de alto se quedan. */
+body:not([data-barra-propia]) .nav[role="tablist"] > .nav-t{
+  font-size: 0.78rem;
+  padding: 0.2rem 0.5rem;
+  gap: 0.2rem;
+}
+
+@media (max-width: 600px){
+  body:not([data-barra-propia]) .nav[role="tablist"]{ gap: 0.25rem; padding: 0.4rem 0.3rem; }
+  /* Ícono encima del nombre y columnas que se estiran a lo ancho:
+     cabe un chip más por fila que con el ícono al lado, y las filas
+     quedan parejas en vez de dejar un hueco al final de cada una.
+     4 rem de base es lo que mide «Evaluación» a 12,5 px. */
+  body:not([data-barra-propia]) .nav[role="tablist"] > .nav-t{
+    flex: 1 1 4rem;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    padding: 0.15rem;
+    gap: 0;
+    line-height: 1.1;
+    border-radius: 12px;
+  }
+  body:not([data-barra-propia]) .nav[role="tablist"] > .nav-t .ico{ line-height: 1; }
+}
+
+/* Tres filas en el teléfono son unos 160 px: pegados arriba todo el
+   tiempo le quitarían un cuarto de pantalla a la lectura. Por eso,
+   SOLO cuando la barra es alta (el JS lo decide midiendo), se guarda
+   al bajar leyendo y vuelve en cuanto el alumno sube un poco o
+   cambia de sección. En tablet y computadora (2 filas) no se mueve. */
+.bs-marco{ transition: transform .2s ease; }
+.bs-marco.bs-guardada{ transform: translateY(calc(-100% - 4px)); }
+
+/* ============================================================
+   El encabezado de la misión, más bajo
+   ------------------------------------------------------------
+   Con la letra grande (que es la de arranque), el <span> del título
+   hereda line-height 1.6 y cada renglón del título medía 32 px para
+   una letra de 20: en el teléfono el título de dos renglones ocupaba
+   64 px. Se le devuelve el interlineado del propio título, sin
+   achicar la letra ni cortarlo.
+
+   La descripción ya está oculta en el teléfono (≤ 600 px) en las 87
+   misiones del alumno; de ahí para arriba se corta en 2 renglones
+   con puntos suspensivos, para que una descripción larga no estire
+   el encabezado en la tablet.
+
+   ⚠️ [role="banner"]: lo llevan las del alumno y no las del maestro,
+   que tienen su encabezado propio.
+   ============================================================ */
+body:not([data-barra-propia]) .hero[role="banner"]{ padding: 0.4rem 1rem 0.5rem; }
+body:not([data-barra-propia]) .hero[role="banner"] h1 span{ line-height: 1.15; }
+@media (min-width: 601px){
+  body:not([data-barra-propia]) .hero[role="banner"] .sub{
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+    line-height: 1.3;
+  }
+}
+
 /* ⚠️ El fondo del marco es el paracaídas de las 8 misiones del maestro,
    que traen la barra SIN fondo. Quieta al final del documento eso no se
    notaba; pegada arriba, el contenido se vería pasar por debajo. El JS
@@ -111,5 +206,5 @@
   .nav-t:not(.active):hover{ transform: none; box-shadow: none; }
 }
 @media (prefers-reduced-motion: reduce){
-  .bs-marco::before, .bs-marco::after{ transition: none; }
+  .bs-marco, .bs-marco::before, .bs-marco::after{ transition: none; }
 }

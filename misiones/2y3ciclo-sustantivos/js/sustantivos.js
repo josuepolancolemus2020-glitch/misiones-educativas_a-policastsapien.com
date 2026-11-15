@@ -952,8 +952,11 @@ const evalPRBank=[
 const EVAL_FORMAS = 30;
 /* _evalRng, _shuffleF, _pickF y _injectFormaSel ya no se copian aquí: están en
    js/motor-misiones.js, que la página carga antes que este archivo. Si un teléfono
-   abre la página guardada de antes, que no lo pide, se pide aquí. */
-if (typeof _evalRng !== 'function') { (function () { var m = document.createElement('script'); m.src = '../../js/motor-misiones.js'; document.head.appendChild(m); })(); }
+   abre la página guardada de antes, que no lo pide, se pide aquí. Y también si
+   tiene guardado el motor de antes, que todavía no sabe conservar las formas
+   ya impresas de la prueba de pensamiento crítico (_conFormasDeAntes): con
+   mala señal puede llegar este archivo nuevo y servirse el motor viejo. */
+if (typeof _evalRng !== 'function' || typeof _conFormasDeAntes !== 'function') { (function () { var m = document.createElement('script'); m.src = '../../js/motor-misiones.js'; document.head.appendChild(m); })(); }
 // Selector «Forma exacta»: el docente elige qué forma generar (p.ej. para
 // reimprimir la pauta de la Forma 15 que ya repartió a los alumnos).
 function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalFormNum, function (v) { evalFormNum = v; }); }
@@ -1295,14 +1298,46 @@ function _critNormCase(v) { return (v || '').toString().normalize('NFD').replace
 function _critMayusOk(student, expected) { const s = _critNormCase(student); return !!s && s === _critNormCase(expected); }
 function _critFabOk(student, item) { const s = normalizeEvalAnswer(student); return !!s && item.acc.some(v => normalizeEvalAnswer(v) === s); }
 
+/* Las formas 1 a 30 de esta prueba ya están impresas en las escuelas con
+   su pauta. Salían de un sorteo con la semilla de la forma, y así siguen
+   saliendo: aquí no se cambia ni el orden de las sacadas ni el barajado de
+   las palabras de cada serie del intruso, que gasta la misma semilla antes
+   de las tres palabras del escritor. Lo vigila _dev/verifica-formas-oro.js
+   contra la referencia congelada. */
+const CRIT_FORMAS_DE_ANTES = 30;
+function critSorteoDeAntes(forma) {
+    const rng = _evalRng(200000 + forma);
+    const mayItem = _pickF(critMayusBank, 1, rng)[0];
+    const tabItems = _pickF(classifyTaskDB, 5, rng);
+    const fabItems = _pickF(critFabBank, 10, rng);
+    const intrSacados = _pickF(critIntrBank, 4, rng);
+    const intrItems = intrSacados.map(it => ({ words: _shuffleF(it.words, rng), bad: it.bad, why: it.why }));
+    const esc = { propio: _pickF(critEscPropios, 1, rng)[0], colectivo: _pickF(critEscColectivos, 1, rng)[0], abstracto: _pickF(critEscAbstractos, 1, rng)[0] };
+    return { mayItem, tabItems, fabItems, intrItems, esc, casos: [[mayItem], tabItems, fabItems, intrSacados, [esc.propio], [esc.colectivo], [esc.abstracto]] };
+}
+function critFormaDeAntes(forma) { return critSorteoDeAntes(forma).casos; }
+/* Los apartados de la prueba, con su banco y cuántos casos saca cada uno
+   (los tres últimos son las palabras que se le dan al escritor). Con esto
+   el motor (js/motor-misiones.js) deja las formas 1 a 30 como estaban y
+   reparte las nuevas, de la 31 a la 50, sin que ninguna lleve el conjunto
+   de casos de otra. El orden es el de la hoja. */
+function critApartados() {
+    return _conFormasDeAntes([[critMayusBank, 1], [classifyTaskDB, 5], [critFabBank, 10], [critIntrBank, 4], [critEscPropios, 1], [critEscColectivos, 1], [critEscAbstractos, 1]], CRIT_FORMAS_DE_ANTES, critFormaDeAntes);
+}
+/* Lo que lleva una forma. Las de antes, su sorteo. Las nuevas, los casos
+   que repartió el motor; las palabras de cada serie del intruso se barajan
+   con el intruso repartido entre los cuatro lugares. */
+function critSorteo(forma, casos) {
+    if (forma <= CRIT_FORMAS_DE_ANTES) return critSorteoDeAntes(forma);
+    const rng = _evalRng(200000 + forma);
+    const intrItems = _conOpcionesRepartidas(casos[3], rng, 'words', 'bad').map(it => ({ words: it.words, bad: it.bad, why: it.why }));
+    return { mayItem: casos[0][0], tabItems: casos[1], fabItems: casos[2], intrItems, esc: { propio: casos[4][0], colectivo: casos[5][0], abstracto: casos[6][0] } };
+}
 function genEvalCrit() {
     sfx('click');
-    _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
-    const _sC = document.getElementById('evalCritFormaSel');
-    if (_sC && parseInt(_sC.value, 10)) evalCritFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_sC.value, 10)));
-    const cf = evalCritFormNum; window._currentEvalCritForm = cf; const rngC = _evalRng(200000 + cf);
-    evalCritFormNum = (evalCritFormNum % EVAL_FORMAS) + 1;
-    _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
+    const turno = _turnoCritica(evalCritFormNum, critApartados(), function (v) { evalCritFormNum = v; });
+    const cf = turno.forma; window._currentEvalCritForm = cf;
+    const { mayItem, tabItems, fabItems, intrItems, esc } = critSorteo(cf, turno.casos);
     saveProgress();
     document.getElementById('evalcrit-screen-title').textContent = `🧠 Pensamiento Crítico · Forma ${cf} · Los Sustantivos`;
     evalCritAnsVisible = false;
@@ -1314,7 +1349,6 @@ function genEvalCrit() {
     out.appendChild(bar);
 
     // ── I. Corrector de mayúsculas (5×4=20)
-    const mayItem = _pickF(critMayusBank, 1, rngC)[0];
     let mayRows = '';
     mayItem.props.forEach((p, i) => { mayRows += `<div class="crit-q-block"><div class="crit-q-label">Propio ${i + 1}: <input type="text" class="eval-cp-input" data-may="${i}" autocomplete="off" aria-label="Sustantivo propio ${i + 1} corregido"></div><div class="crit-pauta">${p}</div><div class="eval-item-feedback" id="critFbMay${i}" aria-live="polite"></div></div>`; });
     const s1 = document.createElement('div');
@@ -1322,7 +1356,6 @@ function genEvalCrit() {
     out.appendChild(s1);
 
     // ── II. Tabla de análisis completo (5×4=20) — tomada de classifyTaskDB
-    const tabItems = _pickF(classifyTaskDB, 5, rngC);
     const _critSel = (i, attr, opts, lbl) => `<select class="crit-tbl-select" data-tab="${i}" data-attr="${attr}" aria-label="${lbl} de ${tabItems[i].w}"><option value="">?</option>${opts.map(o => `<option value="${o}">${o}</option>`).join('')}</select>`;
     let tabRows = '';
     tabItems.forEach((it, i) => { tabRows += `<div class="crit-tbl-row"><div class="crit-tbl-word">${i + 1}. ${it.w}</div><div class="crit-tbl-selects"><label>Clase ${_critSel(i, 't', critClaseOpts, 'Clase')}</label><label>Género ${_critSel(i, 'p', critGenOpts, 'Género')}</label><label>Número ${_critSel(i, 'n', critNumOpts, 'Número')}</label></div><div class="crit-pauta">Clase: ${it.t} · Género: ${it.p} · Número: ${it.n}</div><div class="eval-item-feedback" id="critFbTab${i}" aria-live="polite"></div></div>`; });
@@ -1331,7 +1364,6 @@ function genEvalCrit() {
     out.appendChild(s2);
 
     // ── III. Fábrica de palabras (10×2=20)
-    const fabItems = _pickF(critFabBank, 10, rngC);
     let fabRows = '';
     fabItems.forEach((it, i) => { fabRows += `<div class="crit-q-block"><div class="crit-q-label">${i + 1}. ${it.lbl}: <input type="text" class="eval-cp-input" data-fab="${i}" autocomplete="off" aria-label="${it.lbl}"></div><div class="crit-pauta">${it.a}${it.acc.length > 1 ? ' (también se acepta: ' + it.acc.slice(1).join(', ') + ')' : ''}</div><div class="eval-item-feedback" id="critFbFab${i}" aria-live="polite"></div></div>`; });
     const s3 = document.createElement('div');
@@ -1339,8 +1371,6 @@ function genEvalCrit() {
     out.appendChild(s3);
 
     // ── IV. Detective del intruso (4×5=20) — palabras barajadas con _shuffleF
-    const intrPick = _pickF(critIntrBank, 4, rngC);
-    const intrItems = intrPick.map(it => ({ words: _shuffleF(it.words, rngC), bad: it.bad, why: it.why }));
     let intrRows = '';
     intrItems.forEach((it, i) => {
         const opts = it.words.map(w => `<label class="crit-intr-opt"><input type="radio" name="intr${i}" value="${w}"> ${w}</label>`).join('');
@@ -1351,7 +1381,6 @@ function genEvalCrit() {
     out.appendChild(s4);
 
     // ── V. Escritor hondureño (2×10=20) — palabras asignadas por la forma
-    const esc = { propio: _pickF(critEscPropios, 1, rngC)[0], colectivo: _pickF(critEscColectivos, 1, rngC)[0], abstracto: _pickF(critEscAbstractos, 1, rngC)[0] };
     const escChk = (o) => `<div class="crit-chk-row"><label class="crit-chk"><input type="checkbox" class="crit-esc-chk" data-esc="${o}" data-pts="4"> Usa las clases pedidas (4 pts)</label><label class="crit-chk"><input type="checkbox" class="crit-esc-chk" data-esc="${o}" data-pts="3"> Mayúsculas correctas (3 pts)</label><label class="crit-chk"><input type="checkbox" class="crit-esc-chk" data-esc="${o}" data-pts="3"> Concordancia de género y número (3 pts)</label></div>`;
     const s5 = document.createElement('div');
     s5.innerHTML = `<div class="eval-section-title">V. Escritor hondureño <span class="eval-pts">20 pts · 10 pts c/u</span></div><div class="eval-item"><div class="crit-scenario">✍️ Palabras asignadas por la Forma ${cf}: propio hondureño «<strong>${esc.propio}</strong>» · colectivo «<strong>${esc.colectivo.w}</strong>» · abstracto «<strong>${esc.abstracto}</strong>».</div><div class="crit-q-block"><div class="crit-q-label">Oración 1: usa «${esc.propio}» y «${esc.colectivo.w}».</div><textarea class="crit-textarea" rows="2" aria-label="Oración 1"></textarea>${escChk(0)}</div><div class="crit-q-block"><div class="crit-q-label">Oración 2: usa «${esc.abstracto}» y un sustantivo común de tu elección.</div><textarea class="crit-textarea" rows="2" aria-label="Oración 2"></textarea>${escChk(1)}</div><div class="crit-rubric"><strong>📋 Rúbrica (3 criterios por oración):</strong> usa las clases pedidas (4 pts) · mayúsculas correctas (3 pts) · concordancia de género y número (3 pts). Marca las casillas que tu oración cumple: esa es tu autoevaluación.</div><div class="crit-pauta">Respuesta libre. Ejemplo 1: Cuando viajamos a ${esc.propio}, ${esc.colectivo.ej}. Ejemplo 2: Al terminar el paseo, todos sentimos una gran ${esc.abstracto}.</div></div>`;
@@ -1943,7 +1972,7 @@ function maqShowEnd() {
     sfx(pct >= 70 ? 'fan' : 'up');
 }
 // Formas deterministas v1: selectores de forma visibles desde la carga de la página
-(function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalOp==='function') _injectFormaSel('genEvalOp','evalOpFormaSel',evalOpFormNum,function(v){evalOpFormNum=v;}); }catch(e){} try{ if(typeof genEvalCrit==='function') _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
+(function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalOp==='function') _injectFormaSel('genEvalOp','evalOpFormaSel',evalOpFormNum,function(v){evalOpFormNum=v;}); }catch(e){} try{ if(typeof genEvalCrit==='function') _selectorCritica(evalCritFormNum,critApartados(),function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
 
 // ═════════════════ 📖 CONTROL DE LECTURA ═════════════════
 // El motor y el corpus son archivos aparte; aquí solo se dice qué gana el
