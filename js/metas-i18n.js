@@ -207,6 +207,10 @@
     '🔄 Nueva Evaluación': '🔄 New Test', '🔄 Nueva Prueba': '🔄 New Test',
     '👁 Ver Pauta': '👁 Show Answer Key', '🧮 Calificar prueba': '🧮 Grade the test',
     '🧮 Calcular Total': '🧮 Add up the total', '🖨️ Imprimir': '🖨️ Print',
+    /* el selector de forma y los botones cortos que pinta js/motor-misiones.js
+       (el texto largo queda en aria-label y se traduce con las claves de arriba) */
+    '🔄 Nueva': '🔄 New', '🧮 Calificar': '🧮 Grade', '🧮 Total': '🧮 Total',
+    'Elige la forma': 'Choose the form',
     '📊 Distribución de puntaje · 100 puntos': '📊 Score distribution · 100 points',
     'Cada sección vale 25 puntos (5 preguntas × 5 pts)': 'Each section is worth 25 points (5 questions × 5 pts)',
     'Completar 25 pts': 'Fill in 25 pts', 'V/F 25 pts': 'T/F 25 pts',
@@ -377,6 +381,10 @@
     [/🎯 Clave rápida estilo ZipGrade · Forma (\d+): respuestas correctas ya rellenadas para digitar la clave en la app/g,
       '🎯 ZipGrade-style quick key · Form $1: correct answers already filled in so you can type the key into the app'],
     [/Test Version \/ Forma:/g, 'Test Version / Form:'],
+    /* selector de forma (js/motor-misiones.js): rótulos para el lector de pantalla */
+    [/Elegir número de forma exacta \(1 a (\d+)\)/g, 'Choose the exact form number (1 to $1)'],
+    [/^Formas (\d+) a (\d+)$/g, 'Forms $1 to $2'],
+    [/^Grupos de formas$/g, 'Form groups'],
     [/Forma (\d+)/g, 'Form $1'],
     /* fecha de la constancia: «25 de julio de 2026» → «July 25, 2026» */
     [/(\d+) de enero de (\d+)/g, 'January $1, $2'], [/(\d+) de febrero de (\d+)/g, 'February $1, $2'],
