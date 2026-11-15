@@ -946,19 +946,32 @@ Comparación, 2 Causas y 3 Efectos. El cambio es el mismo en todas: declarar
 distintos en las formas 1 a 50. Antes, 13 de las 33 llegaban a 50 y las más
 cortas eran La Energía y La Materia (33) y El Asombro (35).
 
-Van 35 de 53. La crítica de estas 33 todavía no está congelada.
+Josué aprobó la tanda y su crítica quedó congelada.
+
+### Tanda 2: las 7 de la familia de los robots
+
+Electricidad para Robots, Motores y Mecanismos, Programando un Robot, ¿Qué es
+un Robot?, Sensores, Numbers and My Age y Hello! Saludos. Sacan 2 casos de
+diagnóstico, 1 error, 1 de proceso, 1 comparación y 1 diseño. Las 7 dan 50
+conjuntos distintos; antes solo dos llegaban. Las cinco con versión en inglés
+reparten igual en los dos idiomas, porque el reparto va por posición en el
+banco. Su crítica quedó congelada al terminar.
+
+Van 42 de 53, las 42 con la crítica congelada.
 
 ### Lo que queda
 
-- **Las otras 18**, por tandas: 7 de la familia de los robots y 11 con
-  estructura propia (Adjetivos, Adverbios, Áreas protegidas, Eras geológicas,
-  Coordenadas, los dos de Continentes, Pronombres, Sustantivos, Verbos y
-  Adjetivos de bachillerato). En siete de estas últimas la prueba, además de
-  sacar casos, baraja opciones o calcula datos con la semilla: se miran una
-  por una.
+- **Las otras 11**, con estructura propia: Adjetivos, Adverbios, Áreas
+  protegidas, Eras geológicas, Coordenadas, los dos de Continentes,
+  Pronombres, Sustantivos, Verbos y Adjetivos de bachillerato. En siete de
+  ellas la prueba, además de sacar casos, baraja opciones o calcula datos con
+  la semilla: se miran una por una.
 - **El aviso a los docentes** (decisión 1): las pautas impresas de la prueba
   de pensamiento crítico dejan de corresponder a la forma del mismo número,
-  de la 1 a la 30, en las 35 misiones que ya reparten.
+  de la 1 a la 30, en las 42 misiones que ya reparten.
+- **Visto al probar la tanda 2, sin tocar:** `verifica-mision-navegador` se
+  cae con Numbers and My Age porque espera tarjetas (`#fcW`) que esa misión
+  no tiene. Viene de antes y no es de la prueba crítica.
 - **Visto al probar, sin tocar:** al recargar la página, los dos
   desplegables (conceptual y crítica) enseñan «Forma 1» aunque la forma
   guardada sea otra; al generar sale la guardada. Pasa en todas las misiones
