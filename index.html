@@ -1217,7 +1217,10 @@
   </button>
 
   <script src="js/metas-dialogos.js?v=462"></script>
-  <script src="js/html2canvas.min.js?v=462"></script>
+  <!-- Aquí iba html2canvas (199 KB) y más abajo los textos de lectura
+       (980 KB). Ya no viajan con la portada: los pide js/metas-carga.js la
+       primera vez que el maestro toca lo que los usa. -->
+  <script src="js/metas-carga.js?v=536"></script>
   <script src="js/data/misiones.js?v=485"></script>
   <script src="js/catalogo-misiones.js?v=485"></script>
   <script src="js/data/dcnb-map.js?v=462"></script>
@@ -1230,7 +1233,7 @@
   <script src="js/data/frases.js?v=462"></script>
   <script src="js/data/consejos-padres.js?v=462"></script>
   <script src="js/tools/gobierno-escolar.js?v=462"></script>
-  <script src="js/tools/plan-accion.js?v=506"></script>
+  <script src="js/tools/plan-accion.js?v=536"></script>
   <script src="js/tools/sace-lista.js?v=490"></script>
   <script src="js/tools/cuadros-sace.js?v=507"></script>
   <script src="js/tools/buscar-perdidos.js?v=515"></script>
@@ -1240,8 +1243,7 @@
   <script src="js/tools/estadisticas-alumno.js?v=506"></script>
   <script src="js/tools/equipos.js?v=462"></script>
   <script src="js/data/lectura-normas.js?v=462"></script>
-  <script src="js/data/lectura-textos.js?v=462"></script>
-  <script src="js/tools/lectura-fluidez.js?v=462"></script>
+  <script src="js/tools/lectura-fluidez.js?v=536"></script>
   <script src="js/data/instrumentos-evaluacion.js?v=521"></script>
   <script src="js/tools/herramientas-evaluacion.js?v=524"></script>
   <script src="js/tools/acumulativos.js?v=524"></script>
@@ -1271,7 +1273,20 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js').catch(() => {});
+        /* En la primera visita el service worker todavía no manda, así que
+           los guiones de esta página no pasaron por él y no quedaron en su
+           caché: la SEGUNDA visita los volvía a pedir uno por uno. Se le
+           dice cuáles se acaban de bajar (con su sello ?v=) y él los guarda
+           sacándolos de la caché del navegador, sin gastar datos otra vez.
+           Se le dice en cuanto existe, aunque todavía esté instalándose: la
+           instalación baja el armazón entero y con mala señal tarda, y el
+           maestro puede haber cerrado la aplicación antes de que termine. */
+        navigator.serviceWorker.register('sw.js').then(reg => {
+          const sw = reg.installing || reg.waiting || reg.active;
+          const vistos = performance.getEntriesByType('resource').map(e => e.name)
+            .filter(u => u.indexOf(location.origin + '/') === 0 && /\.(js|css)\?(.*&)?v=/.test(u));
+          if (sw && vistos.length) sw.postMessage({ tipo: 'guardar-vistos', urls: vistos });
+        }).catch(() => {});
       });
     }
   </script>

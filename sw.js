@@ -15,7 +15,7 @@
 //    las etiquetas ?v=NN de las páginas (normativa de sellado del CLAUDE.md).
 //    CACHE_DATOS no se toca nunca: subirlo volvería a borrarle al alumno lo
 //    que tenía guardado, que es justo lo que este arreglo vino a evitar.
-const CACHE_NAME = 'meta-app-v535';
+const CACHE_NAME = 'meta-app-v536';
 const CACHE_APP = CACHE_NAME;
 const CACHE_DATOS = 'meta-datos-v1';
 
@@ -45,6 +45,9 @@ const ARMAZON = [
   './css/vendor/fuentes/outfit-latin.woff2',
   './js/app.js',
   './js/metas-dialogos.js',
+  // Quien pide lo pesado cuando hace falta (los textos de lectura y la foto
+  // de las calificaciones). Pesa 3 KB y sin él esos dos botones no cargan nada.
+  './js/metas-carga.js',
   './js/data/misiones.js',
   './js/data/dcnb-map.js',
   // De qué grado es cada misión. Va en el armazón porque la lista de
@@ -199,9 +202,15 @@ const STATIC_ASSETS = [
    Es la misma lección que ya está escrita en el cargador de los juegos 3D. */
 const PLAZO_INSTALA = 12000;
 
+/* Con `cache: 'reload'`, y no es un capricho: GitHub Pages manda sus archivos
+   con max-age=600, así que durante diez minutos después de publicar el
+   navegador le contestaba al precacheo con SU copia vieja sin preguntarle al
+   servidor. El armazón «nuevo» se llenaba con archivos del despliegue
+   anterior y ahí se quedaban, porque el armazón no se vuelve a bajar hasta
+   la siguiente versión. */
 function precachear(cache, url) {
   return Promise.race([
-    cache.add(url).catch(err => console.warn('[sw] no se pudo cachear', url, err)),
+    cache.add(new Request(url, { cache: 'reload' })).catch(err => console.warn('[sw] no se pudo cachear', url, err)),
     new Promise(listo => setTimeout(() => {
       console.warn('[sw] tardó demasiado y se sigue sin él:', url);
       listo();
@@ -264,7 +273,123 @@ function guardar(peticion, respuesta, cual) {
   caches.open(cual).then(cache => cache.put(peticion, copia)).catch(() => {});
 }
 
-// Fetch: Network-first para HTML/CSS/JS, cache-first para imágenes externas
+/* ── Abrir rápido lo que ya está guardado ──────────────────────────────
+   Hasta la v535 TODO lo propio iba «la red primero»: 39 guiones, cada uno
+   preguntándole al servidor si había cambiado y esperando hasta tres
+   segundos por la respuesta. Con la señal de un aula eso eran 2,8 segundos
+   de pantalla en blanco en una portada que el teléfono ya tenía entera.
+
+   No hacía falta preguntar. Hay tres casos y cada uno tiene su regla:
+
+     1. Guion u hoja de estilo CON sello (?v=NN). El sello es la versión:
+        si la dirección exacta está guardada, es ESE archivo y no otro. Se
+        sirve sin tocar la red. Por eso aquí se busca SIN ignoreSearch: con
+        él, «app.js?v=521» encontraría el «app.js?v=520» de ayer.
+     2. La portada. Se sirve la copia guardada al instante y se trae la
+        nueva por detrás para la próxima vez. El maestro ve un despliegue
+        una visita más tarde, y a cambio la portada abre sin esperar.
+     3. Lo que no lleva sello (las letras, all.min.css, el manifest, los
+        guiones de una misión): igual que la portada.
+
+   Lo que NO cambia: sin copia guardada se va a la red como siempre, con
+   su plazo y su copia de respaldo. Esto no promete más que antes sin
+   internet; solo deja de hacer esperar por lo que ya se tiene. */
+const RAIZ = new URL('./', self.location).pathname;
+
+function conSello(url) {
+  return /\.(js|css)$/.test(url.pathname) && url.searchParams.has('v');
+}
+
+function esPortada(url) {
+  return url.pathname === RAIZ || url.pathname === RAIZ + 'index.html';
+}
+
+function fechaDe(copia) {
+  const f = Date.parse(copia.headers.get('date') || '');
+  return isNaN(f) ? 0 : f;
+}
+
+/* La copia MÁS NUEVA de las dos cachés, y no «manda el armazón» como en
+   buscarCopia. Allí el armazón gana porque es lo único que se sabe fresco;
+   aquí las dos se refrescan —el armazón al publicar, CACHE_DATOS en cada
+   visita por detrás— y gana la que el servidor fechó más tarde. Si mandara
+   siempre el armazón, lo que se trae por detrás no se serviría nunca.
+   Se miran TODAS las coincidencias: con ignoreSearch puede haber guardado
+   un «index.html?mision=x» de hace meses delante del de hoy. */
+function copiaMasNueva(peticion, opciones) {
+  return Promise.all([CACHE_APP, CACHE_DATOS].map(nombre =>
+    caches.open(nombre).then(c => c.matchAll(peticion, opciones)).catch(() => [])
+  )).then(listas => {
+    let mejor = null;
+    listas.forEach(lista => lista.forEach(copia => {
+      if (copiaValida(copia) && (!mejor || fechaDe(copia) > fechaDe(mejor))) mejor = copia;
+    }));
+    return mejor;
+  });
+}
+
+/* Traer la versión nueva por detrás. Siempre preguntándole al servidor
+   ('no-cache' → ETag/304): si no, la caché del navegador contestaría con su
+   copia de hasta diez minutos y se «actualizaría» con lo mismo que había.
+   Se pide por la dirección y no con el Request original: el de una
+   navegación no admite que se le cambien las opciones. */
+function actualizarPorDetras(direccion, llave) {
+  return fetch(direccion, { cache: 'no-cache' }).then(respuesta => {
+    /* Una respuesta redirigida no se le puede servir a una navegación. */
+    if (respuesta && respuesta.ok && !respuesta.redirected) {
+      return caches.open(CACHE_DATOS).then(c => c.put(llave, respuesta));
+    }
+  }).catch(() => {});
+}
+
+/* La página avisa de los guiones con sello que acaba de bajar (ver el final
+   de index.html). En la primera visita este service worker aún no mandaba,
+   así que no los vio pasar; sin esto la SEGUNDA visita los pedía todos a la
+   red. Se piden con la caché del navegador permitida a propósito: acaban de
+   bajar, así que salen de ahí sin gastarle datos al maestro otra vez. */
+self.addEventListener('message', event => {
+  const d = event.data;
+  if (!d || d.tipo !== 'guardar-vistos' || !Array.isArray(d.urls)) return;
+  event.waitUntil(caches.open(CACHE_DATOS).then(cache =>
+    Promise.all(d.urls.slice(0, 200).map(u => {
+      let url;
+      try { url = new URL(u); } catch (_) { return null; }
+      if (url.origin !== location.origin || !conSello(url)) return null;
+      return cache.match(url.href).then(ya => {
+        if (ya) return null;
+        return fetch(url.href).then(r => (r && r.ok) ? cache.put(url.href, r) : null);
+      }).catch(() => {});
+    }))
+  ));
+});
+
+/* Navegación a documentos HTML (portada y subcarpetas de misiones como
+   /misiones/prebasica-tecnicas-libro1/prebasica-libro1.html):
+   Se usa fetch(event.request) directo (Network First) sin pasar un objeto
+   init que degrada mode: 'navigate' en móviles/WebAPK, y nunca se devuelve
+   una copia 404 cacheada. */
+function navegarPorRed(event) {
+  const red = fetch(event.request).then(respuesta => {
+    if (respuesta && respuesta.ok) {
+      guardar(event.request, respuesta, CACHE_DATOS);
+      return respuesta;
+    }
+    return fetch(event.request.url, { cache: 'reload' }).then(r2 => {
+      if (r2 && r2.ok) {
+        guardar(event.request, r2, CACHE_DATOS);
+        return r2;
+      }
+      return respuesta;
+    }).catch(() => respuesta);
+  });
+  const plazo = new Promise(listo => setTimeout(() => listo(null), PLAZO_RED));
+  return Promise.race([red.catch(() => null), plazo]).then(respuesta => {
+    if (respuesta && respuesta.ok) return respuesta;
+    return buscarCopia(event.request).then(copia => copia || red);
+  });
+}
+
+// Fetch: lo guardado primero cuando se sabe que vale; si no, la red con plazo.
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
   const isLocal = url.origin === location.origin;
@@ -306,34 +431,31 @@ self.addEventListener('fetch', event => {
   const CASA_YT = /(^|\.)(youtube|youtube-nocookie|googlevideo|ytimg|ggpht|youtu)\.(com|be)$/;
   if (CASA_YT.test(url.hostname) || event.request.headers.has('range')) return;
 
-  if (isLocal && isNavigate) {
-    /* Navegación a documentos HTML (portada y subcarpetas de misiones como
-       /misiones/prebasica-tecnicas-libro1/prebasica-libro1.html):
-       Se usa fetch(event.request) directo (Network First) sin pasar un objeto
-       init que degrada mode: 'navigate' en móviles/WebAPK, y nunca se devuelve
-       una copia 404 cacheada. */
-    const red = fetch(event.request).then(respuesta => {
-      if (respuesta && respuesta.ok) {
-        guardar(event.request, respuesta, CACHE_DATOS);
-        return respuesta;
-      }
-      return fetch(event.request.url, { cache: 'reload' }).then(r2 => {
-        if (r2 && r2.ok) {
-          guardar(event.request, r2, CACHE_DATOS);
-          return r2;
-        }
-        return respuesta;
-      }).catch(() => respuesta);
-    });
-    const plazo = new Promise(listo => setTimeout(() => listo(null), PLAZO_RED));
+  const esGet = event.request.method === 'GET';
+
+  if (isLocal && isNavigate && esGet && esPortada(url)) {
+    /* La portada: lo guardado al instante, lo nuevo por detrás. Se guarda
+       sin los parámetros (?mision=…): la portada es un solo archivo, y con
+       una llave por cada parámetro se irían amontonando copias viejas. */
+    const llave = url.origin + url.pathname;
     event.respondWith(
-      Promise.race([red.catch(() => null), plazo]).then(respuesta => {
-        if (respuesta && respuesta.ok) return respuesta;
-        return buscarCopia(event.request).then(copia => copia || red);
+      copiaMasNueva(event.request, { ignoreSearch: true }).then(copia => {
+        if (copia) {
+          event.waitUntil(actualizarPorDetras(llave, llave));
+          return copia;
+        }
+        /* Sin copia, como siempre: la red con su plazo. */
+        return navegarPorRed(event);
       })
     );
-  } else if (isLocal && !isImage) {
-    /* Archivos propios (HTML, CSS, JS): la red primero y revalidando contra el
+  } else if (isLocal && isNavigate) {
+    event.respondWith(navegarPorRed(event));
+  } else if (isLocal && !isImage && esGet) {
+
+    /* Archivos propios (HTML, CSS, JS). Primero se mira si ya están: con
+       sello, la dirección exacta; sin sello, la copia más nueva, que además
+       se renueva por detrás. Solo si no hay nada se sigue a lo de siempre:
+       la red primero y revalidando contra el
        servidor (cache: 'no-cache' → ETag/304), porque la caché HTTP del
        navegador guarda hasta 10 minutos y escondía los despliegues nuevos:
        llegaba el HTML nuevo con el CSS y el JS viejos.
@@ -344,18 +466,28 @@ self.addEventListener('fetch', event => {
        milisegundos; pasados esos, si hay copia guardada se sirve esa. Si NO
        la hay se sigue esperando a la red, porque media pantalla es peor que
        una pantalla que tarda. */
-    const red = fetch(event.request, { cache: 'no-cache' }).then(respuesta => {
-      guardar(event.request, respuesta, CACHE_DATOS);
-      return respuesta;
-    });
-    const plazo = new Promise(listo => setTimeout(() => listo(null), PLAZO_RED));
-    event.respondWith(
-      Promise.race([red.catch(() => null), plazo]).then(respuesta => {
+    const sellado = conSello(url);
+    const deLaRed = () => {
+      const red = fetch(event.request, { cache: 'no-cache' }).then(respuesta => {
+        guardar(event.request, respuesta, CACHE_DATOS);
+        return respuesta;
+      });
+      const plazo = new Promise(listo => setTimeout(() => listo(null), PLAZO_RED));
+      return Promise.race([red.catch(() => null), plazo]).then(respuesta => {
         if (respuesta && respuesta.ok) return respuesta;
         /* ignoreSearch: el precache guarda «js/app.js» y la página lo pide como
            «js/app.js?v=NNN» (el sello de versión). Sin esto, lo precacheado no
            lo encontraba nadie y el armazón guardado no servía de nada. */
         return buscarCopia(event.request).then(copia => copia || red);
+      });
+    };
+    event.respondWith(
+      /* Las dos búsquedas son por dirección EXACTA (sin ignoreSearch). */
+      copiaMasNueva(event.request).then(copia => {
+        if (!copia) return deLaRed();
+        /* Con sello no se toca la red: esa dirección es esa versión. */
+        if (!sellado) event.waitUntil(actualizarPorDetras(event.request.url, event.request.url));
+        return copia;
       })
     );
   } else {
