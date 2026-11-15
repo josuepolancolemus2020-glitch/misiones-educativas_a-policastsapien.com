@@ -25,7 +25,11 @@ const sandbox = {
   setTimeout: noop, clearTimeout: noop, setInterval: noop, clearInterval: noop,
 };
 sandbox.window.document = sandbox.document;
-vm.createContext(sandbox); vm.runInContext(code, sandbox);
+vm.createContext(sandbox);
+/* El generador de las formas ya no viene dentro de la misión: está en el motor
+   compartido, que la página carga antes. Aquí se carga igual. */
+vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'js', 'motor-misiones.js'), 'utf8'), sandbox);
+vm.runInContext(code, sandbox);
 const ev = expr => vm.runInContext(expr, sandbox);
 
 let fallos = 0;

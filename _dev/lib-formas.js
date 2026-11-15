@@ -152,8 +152,9 @@ function cargarMision(slug, semillaAzar) {
   const ctx = vm.createContext(ventana);
   const correr = (codigo, nombre) => vm.runInContext(codigo, ctx, { filename: nombre });
 
-  /* Lo que la misión pide de fuera para armar sus bancos (los datos de
-     `js/data/` y `js/metas-*.js`) se carga antes, en el orden de su HTML.
+  /* Lo que la misión pide de fuera para armar su examen (los datos de
+     `js/data/`, `js/metas-fracciones.js` y el motor compartido, que trae
+     el generador de las formas) se carga antes, en el orden de su HTML.
      Lo demás de la página (animación, barra, teclado) no toca el examen. */
   const dirMision = path.join(DIR_MISIONES, slug);
   const html = fs.readdirSync(dirMision).filter(f => f.endsWith('.html'))
@@ -168,7 +169,7 @@ function cargarMision(slug, semillaAzar) {
     if (/^https?:|^\/\//.test(src)) continue;
     const abs = path.resolve(dirMision, src);
     if (abs === js) break;
-    if (/[\\/]js[\\/]data[\\/]/.test(abs) || /[\\/]js[\\/]metas-fracciones\.js$/.test(abs)) previos.push(abs);
+    if (/[\\/]js[\\/]data[\\/]/.test(abs) || /[\\/]js[\\/](metas-fracciones|motor-misiones)\.js$/.test(abs)) previos.push(abs);
   }
   previos.forEach(p => correr(fs.readFileSync(p, 'utf8'), p));
   correr(fs.readFileSync(js, 'utf8'), js);

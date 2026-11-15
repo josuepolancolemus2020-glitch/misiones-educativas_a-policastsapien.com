@@ -731,3 +731,29 @@ Hecho el 15 de noviembre de 2026 en la rama `claude/puerta-mision-fqrqo2`
 - Sonda: `_dev/verifica-puerta-mision.js`, dentro de `npm test`. Prueba las
   86 misiones del catálogo, no una de muestra.
 
+---
+
+## 13. Extraer al motor, primera tanda: hecho
+
+Hecho el 15 de noviembre de 2026 en la rama `claude/motor-examen-fqrqo2`
+(sale de la de la puerta). Es el principio de la «Fase 2» de la sección 6.5.
+
+- **Qué pasó al motor:** `_evalRng`, `_shuffleF`, `_pickF` y
+  `_injectFormaSel`. Estaban idénticas en 84 misiones (83 byte a byte y la de
+  Inglés números con otra sangría).
+- **Qué cambió en cada misión:** su página carga `js/motor-misiones.js` antes
+  que su archivo, y su archivo ya no trae esas cuatro. Nada más: mismas
+  direcciones, misma `SAVE_KEY`, mismo XP.
+- **Guarda:** cada misión pide el motor por su cuenta si la página que la
+  cargó es una copia guardada de antes, que no lo pide. Es el riesgo de caché
+  de la sección 6.6.
+- **Cómo se publican:** con el mismo nombre global de siempre, colgadas de
+  `window` con una asignación. Una misión que aún trajera su copia la declara
+  encima sin chocar.
+- **Sonda:** `_dev/verifica-misiones-motor.js`, en `npm test`.
+- **Comprobado en navegador:** las 84 misiones, antes y después, con un
+  guardado de antes: mismo XP, mismas llaves de `localStorage`, mismo texto en
+  pantalla y mismos exámenes generados.
+
+Para la siguiente tanda: añadir los nombres a `EN_EL_MOTOR` en esa sonda.
+
