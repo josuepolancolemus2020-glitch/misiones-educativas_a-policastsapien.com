@@ -27,11 +27,101 @@
   <!-- Font Awesome, local y nada más: el respaldo del CDN se quitó, porque un
        <link> externo bloquea el pintado y ya estaba aquí el mismo archivo. -->
   <link rel="stylesheet" href="css/vendor/fontawesome/css/all.min.css">
+  <!-- La señal de «ya va a abrir». Entre que la portada se pinta y que app.js
+       le pone vida a los botones pasan 1 a 3 segundos con mala señal, y en ese
+       hueco el maestro toca «Misiones», no pasa nada y cree que se trabó. Va
+       AQUÍ, en línea y después de app.css, porque tiene que estar en el primer
+       pintado: si viniera en un archivo aparte llegaría junto con lo que está
+       esperando. Solo transform y opacity: el teléfono de gama baja lo anima
+       sin tocar el hilo principal, que en esos segundos está ocupado.
+       Todo aparece con 300 ms de retraso: si la aplicación abre antes (visita
+       repetida), no se llega a ver nada y no hay parpadeo. -->
+  <style>
+    .me-txt{display:grid;place-items:center}
+    .metas-hilo,.metas-estado,.metas-pildora,.me-ok{display:none}
+    #view-inicio .app-header,.brand-center,.brand-logo{position:relative}
+    .hnb-principal{position:relative;overflow:hidden}
+    .me-txt>span{grid-area:1/1;white-space:nowrap;opacity:0}
+
+    /* Mientras carga: los botones de la portada no reciben toques, y los que
+       no son el principal se apagan, para que se lea «espera» y no «no sirve». */
+    .metas-cargando:not(.metas-lista) #view-inicio button{pointer-events:none}
+    .metas-cargando:not(.metas-lista) #view-inicio button:not(.hnb-principal){animation:me-apaga .3s ease .3s both}
+    .metas-cargando:not(.metas-lista) .hnb-principal::before{content:"";position:absolute;top:0;bottom:0;left:0;width:45%;background:linear-gradient(100deg,transparent,rgba(59,130,246,.22),transparent);transform:translateX(-110%);animation:me-barre 1.6s ease-in-out .3s infinite}
+    .metas-cargando:not(.metas-lista) .hnb-principal::after,
+    .metas-cargando .metas-hilo::before{content:"";position:absolute;left:0;bottom:0;width:100%;height:3px;background:linear-gradient(90deg,#1e3a7c,#2258d4,#3b82f6);transform-origin:0 50%;transform:scaleX(0);animation:me-avanza 10s cubic-bezier(.08,.75,.2,1) .3s both}
+
+    /* Variante A · la línea de luz: el encabezado es el tablero. */
+    .metas-cargando[data-carga=hilo] .metas-hilo{display:block;position:absolute;left:0;right:0;bottom:-1px;height:3px;overflow:hidden;pointer-events:none;opacity:0}
+    .metas-cargando:not(.metas-lista) .metas-hilo{animation:me-entra .3s ease .3s both}
+    .metas-cargando[data-carga=hilo]:not(.metas-lista) .brand-logo::after{content:"";position:absolute;top:0;bottom:0;left:0;width:40%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.8),transparent);transform:translateX(-120%);animation:me-barre 1.8s ease-in-out .3s infinite}
+    .metas-cargando[data-carga=hilo] .metas-estado{display:grid;position:absolute;left:50%;bottom:0;height:22px;transform:translateX(-50%);color:#1e3a7c;font-size:12.5px;font-weight:800;pointer-events:none}
+    .metas-cargando[data-carga=hilo]:not(.metas-lista) #view-inicio .brand-sub{animation:me-apaga0 .25s ease .3s both}
+
+    /* Variante B · la píldora de estado, abajo y al centro. */
+    .metas-cargando[data-carga=pildora] .metas-pildora{display:flex;align-items:center;gap:10px;position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:9000;padding:7px 20px 7px 7px;border-radius:999px;background:#0f1d3d;color:#fff;font-size:14.5px;font-weight:800;box-shadow:0 10px 30px rgba(15,29,61,.35);pointer-events:none;opacity:0;transform:translateX(-50%)}
+    .metas-cargando:not(.metas-lista) .metas-pildora{animation:me-sube .45s cubic-bezier(.2,.9,.3,1.15) .3s both}
+    .mp-ico{position:relative;display:grid;place-items:center;width:38px;height:38px;font-size:19px}
+    .mp-ico::before{content:"";position:absolute;inset:0;border-radius:50%;border:2.5px solid rgba(255,255,255,.15);border-top-color:#60a5fa;border-right-color:#3b82f6;animation:me-gira .9s linear infinite}
+
+    /* Los tres textos se relevan solos: no hace falta ningún guion para eso. */
+    .metas-cargando:not(.metas-lista) .me-t1{animation:me-pasa 2.4s ease .3s both}
+    .metas-cargando:not(.metas-lista) .me-t2{animation:me-pasa 2.4s ease 2.7s both}
+    .metas-cargando:not(.metas-lista) .me-t3{animation:me-entra .35s ease 5.1s both}
+
+    /* Listo, y se había llegado a ver: todo vuelve, y el botón se enciende. */
+    .metas-vista #view-inicio button:not(.hnb-principal),.metas-vista[data-carga=hilo] #view-inicio .brand-sub{animation:me-vuelve .35s ease both}
+    .metas-vista .metas-hilo{animation:me-sale .35s ease .3s both}
+    .metas-vista .metas-hilo::before{animation:me-completa .3s ease-out both}
+    .metas-vista .metas-estado{animation:me-sale .2s ease both}
+    .metas-vista .hnb-principal{animation:me-enciende .6s cubic-bezier(.3,1.7,.5,1) both}
+    .metas-vista .hnb-principal::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 2px #3b82f6,inset 0 0 18px rgba(59,130,246,.35);opacity:0;animation:me-destello .9s ease both}
+    .metas-vista[data-carga=hilo] .brand-logo::after{content:"";position:absolute;top:0;bottom:0;left:0;width:40%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.9),transparent);transform:translateX(-120%);animation:me-barre .7s ease-out both}
+    .metas-vista .mp-ico::before{animation:none;border-color:#4ade80}
+    .metas-vista .mp-ico>span,.metas-vista .me-txt>span{animation:none;opacity:0}
+    .metas-vista .metas-pildora .me-ok{display:block;animation:me-entra .2s ease both}
+    .metas-vista .metas-pildora{animation:me-baja .4s ease .5s both}
+
+    @keyframes me-apaga{to{opacity:.45}}
+    @keyframes me-apaga0{to{opacity:0}}
+    @keyframes me-vuelve{from{opacity:.45}to{opacity:1}}
+    @keyframes me-entra{from{opacity:0}to{opacity:1}}
+    @keyframes me-sale{from{opacity:1}to{opacity:0}}
+    @keyframes me-barre{to{transform:translateX(260%)}}
+    @keyframes me-gira{to{transform:rotate(360deg)}}
+    @keyframes me-avanza{12%{transform:scaleX(.38)}35%{transform:scaleX(.68)}100%{transform:scaleX(.94)}}
+    @keyframes me-completa{from{transform:scaleX(var(--desde,.7))}to{transform:scaleX(1)}}
+    @keyframes me-pasa{0%{opacity:0;transform:translateY(5px)}12%,86%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-5px)}}
+    @keyframes me-enciende{0%{transform:scale(1)}40%{transform:scale(1.05)}100%{transform:scale(1)}}
+    @keyframes me-destello{25%{opacity:1}100%{opacity:0}}
+    @keyframes me-sube{from{opacity:0;transform:translate(-50%,18px) scale(.96)}to{opacity:1;transform:translateX(-50%)}}
+    @keyframes me-baja{from{opacity:1;transform:translateX(-50%)}to{opacity:0;transform:translate(-50%,18px)}}
+
+    /* Sin movimiento: nada barre, nada gira ni rebota; la línea se queda
+       quieta y los textos solo se funden, que no es movimiento. */
+    @media (prefers-reduced-motion:reduce){
+      .metas-cargando:not(.metas-lista) .hnb-principal::before,.metas-cargando[data-carga]:not(.metas-lista) .brand-logo::after,.metas-vista[data-carga] .brand-logo::after{display:none;animation:none}
+      .metas-cargando .metas-hilo::before,.metas-cargando:not(.metas-lista) .hnb-principal::after{animation:none;transform:scaleX(.6)}
+      .mp-ico::before{animation:none;border-color:#60a5fa}
+      .metas-cargando:not(.metas-lista) .me-t1,.metas-cargando:not(.metas-lista) .me-t2{animation-name:me-funde}
+      .metas-cargando:not(.metas-lista) .metas-pildora{animation-name:me-entra}
+      .metas-vista .hnb-principal{animation:none}
+      .metas-vista .metas-pildora{animation-name:me-sale}
+      @keyframes me-funde{0%,100%{opacity:0}12%,86%{opacity:1}}
+    }
+  </style>
+  <!-- La señal explícita: app.js llama a metasLista() cuando terminó la
+       portada y los botones ya responden. No se alarga nada con relojes; el
+       único reloj es el de seguridad: si algo falló, a los 10 s se quita igual
+       y la portada queda usable con lo que haya. -->
+  <script>(function(){var h=document.documentElement,t0=performance.now(),hecho=0,q=/[?&]carga=pildora/.test(location.search);h.setAttribute('data-carga',q?'pildora':'hilo');h.classList.add('metas-cargando');window.metasLista=function(){if(hecho)return;hecho=1;var vista=performance.now()-t0>300,b=document.querySelector('.metas-hilo');if(vista){try{var m=getComputedStyle(b,'::before').transform.match(/matrix\(([-\d.e]+)/);if(m)b.style.setProperty('--desde',m[1]);}catch(e){}h.classList.add('metas-vista');}h.classList.add('metas-lista');setTimeout(function(){h.classList.remove('metas-cargando','metas-vista');},vista?1000:0);};setTimeout(window.metasLista,10000);})();</script>
   <link rel="apple-touch-icon" href="img/icon-192.png">
   <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="img/icon-512.png">
 </head>
 <body>
+  <!-- Variante B de la señal de carga (ver el <style> de arriba). -->
+  <div class="metas-pildora" role="status"><span class="mp-ico"><span>🚀</span><b class="me-ok" style="position:absolute">✓</b></span><span class="me-txt"><span class="me-t1">Preparando tus misiones…</span><span class="me-t2">Un momento más…</span><span class="me-t3">¡Casi listo!</span><span class="me-ok">¡Listo!</span></span></div>
 
   <!-- ========== INICIO ========== -->
   <div id="view-inicio" class="view active">
@@ -42,6 +132,7 @@
       <div class="brand-center">
         <div class="brand-logo">M.E.T.A.S.</div>
         <div class="brand-sub">Misiones Educativas Tecnológicas Asincrónicas y Sincrónicas</div>
+        <div class="metas-estado me-txt" role="status"><span class="me-t1">Preparando tus misiones…</span><span class="me-t2">Un momento más…</span><span class="me-t3">¡Casi listo!</span></div>
       </div>
       <div class="header-actions">
         <button class="refresh-btn" aria-label="Actualizar la aplicación" title="Actualizar (traer lo último y quedarte donde estás)">
@@ -49,6 +140,7 @@
         </button>
         <button class="notif-btn" id="notif-btn" aria-label="Mis premios" title="Mis premios">🏅</button>
       </div>
+      <span class="metas-hilo" aria-hidden="true"></span>
     </header>
     <div class="view-scroll">
 
@@ -124,7 +216,7 @@
       <!-- Navegación principal: los 4 accesos más usados, a un toque -->
       <h2 class="section-title">¿Qué quieres hacer hoy?</h2>
       <div class="home-nav-grid">
-        <button class="home-nav-btn" data-view="view-misiones">
+        <button class="home-nav-btn hnb-principal" data-view="view-misiones">
           <span class="hnb-emoji">🚀</span>
           <span class="hnb-label">Misiones</span>
         </button>
@@ -1261,7 +1353,7 @@
        Honduras sin que nadie pierda su XP. */
     window.METAS_PAISES_ON = true;
   </script>
-  <script src="js/app.js?v=521"></script>
+  <script src="js/app.js?v=538"></script>
   <!-- La fusión de los datos del aula. Va ANTES del espejo, que es quien la
        llama: sin ella el espejo sigue funcionando como antes —elige la copia
        más nueva— y por eso no revienta si un día no carga; pero con ella el
