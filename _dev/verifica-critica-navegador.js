@@ -14,7 +14,8 @@
    · después de la 50 vuelve la 1, y la forma que toca se guarda con el
      progreso y sigue ahí al recargar;
    · un progreso guardado de antes (cuando la prueba llegaba a la 30) se
-     abre sin tropiezo;
+     abre sin tropiezo, y generar la crítica no mueve la forma que le toca
+     al examen conceptual;
    · la hoja impresa dice su forma, trae los casos de la pantalla y sale
      en dos hojas carta (examen y pauta);
    · en las misiones con inglés, la Forma 7 lleva los mismos casos en los
@@ -52,9 +53,11 @@ const lista = pedidas.length ? pedidas : reparten;
 const paginaDe = slug => fs.readdirSync(path.join(L.DIR_MISIONES, slug)).find(f => f.endsWith('.html') && !f.startsWith('juego-'));
 
 /* Lo que el alumno lee de una forma: los textos de los casos, tal como
-   quedaron en la pantalla. Sin orden, para comparar conjuntos. */
+   quedaron en la pantalla. Sin orden, para comparar conjuntos. Se quita
+   el rótulo de cada caja («Caso A», «Texto B», «Causa»), que no es del
+   caso y cada misión lo llama a su manera. */
 const leerHoja = () => Array.from(document.querySelectorAll('#evalCritOut .crit-scenario, #evalCritOut .crit-compare-box, #evalCritOut .crit-ce-given'))
-  .map(e => e.textContent.replace(/\s+/g, ' ').trim());
+  .map(e => { const c = e.cloneNode(true); c.querySelectorAll('h5, .crit-ce-tag').forEach(r => r.remove()); return c.textContent.replace(/\s+/g, ' ').trim(); });
 
 (async () => {
   const nav = await abrir();
@@ -85,6 +88,7 @@ const leerHoja = () => Array.from(document.querySelectorAll('#evalCritOut .crit-
     /* De la 1 a la 50, eligiendo en el desplegable y tocando el botón. */
     const hojas = {};
     let sinTitulo = 0, vacias = 0;
+    const conceptualAntes = await page.evaluate(() => evalFormNum);
     for (let n = 1; n <= sel.formas; n++) {
       await page.selectOption('#evalCritFormaSel', String(n));
       const h = await page.evaluate(leer => {
@@ -115,6 +119,11 @@ const leerHoja = () => Array.from(document.querySelectorAll('#evalCritOut .crit-
     if (fuera.length) mal(fuera.length + ' textos pintados no están en los bancos de la misión, por ejemplo: ' + JSON.stringify(fuera[0].slice(0, 80)));
     else bien('todo lo pintado está escrito en los bancos de la misión');
 
+    /* Generar la crítica no mueve la forma que le toca al examen conceptual. */
+    const conceptualDespues = await page.evaluate(() => evalFormNum);
+    if (conceptualDespues !== conceptualAntes) mal('generar la prueba crítica movió el examen conceptual de la Forma ' + conceptualAntes + ' a la ' + conceptualDespues);
+    else bien('generar las ' + sel.formas + ' formas críticas no mueve la forma del examen conceptual');
+
     if (hojas[sel.formas] && hojas[sel.formas].siguiente !== '1') mal('después de la Forma ' + sel.formas + ' el desplegable no vuelve a la 1 (dice ' + hojas[sel.formas].siguiente + ')');
     else bien('después de la Forma ' + sel.formas + ' vuelve la Forma 1');
 
@@ -134,16 +143,17 @@ const leerHoja = () => Array.from(document.querySelectorAll('#evalCritOut .crit-
       const hoja = await ctx.newPage();
       await hoja.setContent(impresa.doc, { waitUntil: 'networkidle' });
       await hoja.waitForTimeout(900);   // el ajuste a una hoja necesita medir
-      const texto = await hoja.evaluate(() => document.body.textContent.replace(/\s+/g, ' '));
+      /* Se compara sin espacios: la pantalla y el papel no parten los
+         renglones en el mismo sitio. */
+      const texto = await hoja.evaluate(() => document.body.textContent.replace(/\s+/g, ''));
+      const visible = await hoja.evaluate(() => document.body.textContent.replace(/\s+/g, ' '));
       const pdf = path.join(os.tmpdir(), 'metas-critica-' + slug + '.pdf');
       await hoja.pdf({ path: pdf, format: 'Letter', printBackground: true, preferCSSPageSize: true });
       await hoja.close();
       const paginas = (fs.readFileSync(pdf).toString('latin1').match(/\/Type\s*\/Page[^s]/g) || []).length;
       fs.unlinkSync(pdf);
-      /* En la hoja el caso A y el B llevan su rótulo delante: se busca el
-         texto del caso, sin el rótulo de la pantalla. */
-      const faltan = impresa.casos.map(c => c.replace(/^Caso [AB]\s*/, '').replace(/^(Causa|Efecto)\s*/, '')).filter(c => texto.indexOf(c.slice(0, 60)) < 0);
-      if (!/Forma 37/.test(texto)) mal('la hoja impresa no dice «Forma ' + FORMA_IMPRESA + '»');
+      const faltan = impresa.casos.filter(c => texto.indexOf(c.replace(/\s+/g, '').slice(0, 60)) < 0);
+      if (!/Forma 37/.test(visible)) mal('la hoja impresa no dice «Forma ' + FORMA_IMPRESA + '»');
       else if (faltan.length) mal('la hoja impresa de la Forma ' + FORMA_IMPRESA + ' no trae ' + faltan.length + ' de los casos de la pantalla, por ejemplo: ' + JSON.stringify(faltan[0].slice(0, 70)));
       else if (paginas !== 2) mal('la Forma ' + FORMA_IMPRESA + ' se imprime en ' + paginas + ' hojas: tienen que ser 2 (prueba y pauta)');
       else bien('la Forma ' + FORMA_IMPRESA + ' se imprime con su número, con los casos de la pantalla y en 2 hojas carta');
@@ -169,19 +179,15 @@ const leerHoja = () => Array.from(document.querySelectorAll('#evalCritOut .crit-
 
     /* Un progreso guardado de antes: la prueba llegaba a la 30. */
     const llave = await page.evaluate(() => SAVE_KEY);
-    await page.evaluate(k => { const s = JSON.parse(localStorage.getItem(k) || '{}'); s.evalCritFormNum = 30; s.evalFormNum = 30; localStorage.setItem(k, JSON.stringify(s)); }, llave);
+    await page.evaluate(k => { const s = JSON.parse(localStorage.getItem(k) || '{}'); s.evalCritFormNum = 30; localStorage.setItem(k, JSON.stringify(s)); }, llave);
     await page.reload({ waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(800);
     const deAntes = await page.evaluate(() => {
-      /* El número del conceptual se lee al abrir, antes de entrar a la
-         evaluación: hay misiones que al entrar generan solas el examen
-         conceptual, y eso ya lo hace avanzar a la forma siguiente. */
-      const conceptual = evalFormNum;
       if (typeof go === 'function') go('s-evaluacion'); evalSwitchMode('crit');
-      return { titulo: document.getElementById('evalcrit-screen-title').textContent, sigue: evalCritFormNum, conceptual };
+      return { titulo: document.getElementById('evalcrit-screen-title').textContent, sigue: evalCritFormNum };
     });
-    if (!/Forma 30\b/.test(deAntes.titulo) || deAntes.sigue !== 31 || deAntes.conceptual !== 30) mal('con un guardado de antes en la Forma 30: «' + deAntes.titulo + '», sigue la ' + deAntes.sigue + ' y el conceptual quedó en ' + deAntes.conceptual);
-    else bien('un progreso guardado de antes, en la Forma 30, abre la 30 y sigue con la 31; el conceptual se lee como estaba');
+    if (!/Forma 30\b/.test(deAntes.titulo) || deAntes.sigue !== 31) mal('con un guardado de antes en la Forma 30: «' + deAntes.titulo + '» y sigue la ' + deAntes.sigue);
+    else bien('un progreso guardado de antes, en la Forma 30, abre la 30 y sigue con la 31');
 
     /* En inglés los bancos se cambian enteros: la misma forma tiene que
        llevar los mismos casos, que se reconocen por su llave `k`. */
