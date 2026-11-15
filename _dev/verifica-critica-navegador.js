@@ -189,23 +189,26 @@ const leerHoja = () => Array.from(document.querySelectorAll('#evalCritOut .crit-
     if (!/Forma 30\b/.test(deAntes.titulo) || deAntes.sigue !== 31) mal('con un guardado de antes en la Forma 30: «' + deAntes.titulo + '» y sigue la ' + deAntes.sigue);
     else bien('un progreso guardado de antes, en la Forma 30, abre la 30 y sigue con la 31');
 
-    /* En inglés los bancos se cambian enteros: la misma forma tiene que
-       llevar los mismos casos, que se reconocen por su llave `k`. */
+    /* En inglés los bancos se cambian enteros por los suyos. El reparto va
+       por posición, así que la misma forma tiene que sacar las mismas
+       posiciones de cada banco: se comparan esas, que no dependen del
+       idioma (los casos en inglés no siempre llevan su llave `k`). */
     const bilingue = await page.evaluate(() => typeof window.MISION_APLICAR_IDIOMA === 'function' && !!(window.MISION_EN && window.MISION_EN.data));
     if (bilingue) {
-      const llaves = () => JSON.stringify(_repartoCritica(7, critApartados()).map(ap => ap.map(c => (c && c.k) || String(c).slice(0, 12))));
-      const es = await page.evaluate('(' + llaves.toString() + ')()');
+      const posiciones = () => { const ap = critApartados(); return JSON.stringify([7, 38].map(f => _repartoCritica(f, ap).map((casos, i) => casos.map(c => ap[i][0].indexOf(c))))); };
+      const es = await page.evaluate('(' + posiciones.toString() + ')()');
       const en = await page.evaluate(fn => {
         window.MISION_APLICAR_IDIOMA('en');
-        const r = { llaves: (new Function('return (' + fn + ')()'))(), ops: document.getElementById('evalCritFormaSel').options.length, formas: _formasCritica(critApartados()) };
+        const sel = document.getElementById('evalCritFormaSel');
+        sel.value = '7'; sel.dispatchEvent(new Event('change'));
+        document.querySelector('[onclick*="genEvalCrit()"]').click();
+        const r = { posiciones: (new Function('return (' + fn + ')()'))(), ops: sel.options.length, formas: _formasCritica(critApartados()), forma: window._currentEvalCritForm, pintados: document.querySelectorAll('#evalCritOut .crit-scenario').length };
         window.MISION_APLICAR_IDIOMA('es');
         return r;
-      }, llaves.toString());
-      /* Los casos sin llave (un texto suelto) se comparan por posición:
-         basta con que haya el mismo número. */
-      const mismas = JSON.parse(es).every((ap, i) => ap.length === JSON.parse(en.llaves)[i].length && ap.every((k, j) => !/^[a-z]{2}-/.test(k) || k === JSON.parse(en.llaves)[i][j]));
-      if (!mismas || en.formas !== 50 || en.ops !== 50) mal('en inglés la Forma 7 no lleva los mismos casos que en español, o no llega a la 50 (' + en.formas + ' formas)');
-      else bien('en inglés la Forma 7 lleva los mismos casos que en español y también llega a la 50');
+      }, posiciones.toString());
+      if (es !== en.posiciones || /-1/.test(es)) mal('en inglés las Formas 7 y 38 no sacan las mismas posiciones de los bancos que en español: ' + es + ' frente a ' + en.posiciones);
+      else if (en.formas !== 50 || en.ops !== 50 || en.forma !== 7 || !en.pintados) mal('en inglés la prueba no llega a la 50 o no se genera (' + en.formas + ' formas, ' + en.ops + ' en el desplegable, Forma ' + en.forma + ')');
+      else bien('en inglés las Formas 7 y 38 sacan los mismos casos que en español, y también llega a la 50');
     }
 
     if (errores.length) errores.slice(0, 5).forEach(e => mal('error en la consola: ' + e.slice(0, 160)));

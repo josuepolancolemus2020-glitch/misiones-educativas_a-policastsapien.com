@@ -1014,8 +1014,11 @@ const evalPRBank = [
 const EVAL_FORMAS = 30;
 /* _evalRng, _shuffleF, _pickF y _injectFormaSel ya no se copian aquí: están en
    js/motor-misiones.js, que la página carga antes que este archivo. Si un teléfono
-   abre la página guardada de antes, que no lo pide, se pide aquí. */
-if (typeof _evalRng !== 'function') { (function () { var m = document.createElement('script'); m.src = '../../js/motor-misiones.js'; document.head.appendChild(m); })(); }
+   abre la página guardada de antes, que no lo pide, se pide aquí. Y también si
+   tiene guardado el motor de antes, que todavía no sabe repartir la prueba de
+   pensamiento crítico (_turnoCritica): con mala señal puede llegar este archivo
+   nuevo y servirse el motor viejo. */
+if (typeof _evalRng !== 'function' || typeof _turnoCritica !== 'function') { (function () { var m = document.createElement('script'); m.src = '../../js/motor-misiones.js'; document.head.appendChild(m); })(); }
 function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalFormNum, function (v) { evalFormNum = v; }); }
 
 function genEval(){
@@ -1335,43 +1338,38 @@ const critDesignBank = [
 
 const critDesignGuide = 'Rúbrica de 3 criterios (total 20 pts): ① PREGUNTA Y RESPUESTA DE EDAD (7 pts): fórmula correcta con «How old are you?» y respuesta con «I am [número] years old» sin usar «have». ② PRECISIÓN NUMÉRICA (7 pts): escritura y uso correcto de números del 1 al 20, cuidando excepciones (eleven, twelve, fifteen, three vs. tree). ③ FLUIDEZ Y COHERENCIA (6 pts): diálogo completo de al menos 6 líneas con saludo, intercambio de datos y despedida cortés.';
 
+/* Los apartados de la prueba, con su banco y cuántos casos saca cada uno.
+   Con esto el motor (js/motor-misiones.js) reparte las formas sin que dos
+   lleven el mismo conjunto de casos. El orden es el de la hoja. */
+function critApartados(){
+  return [[critSensorBank,2],[critErrorBank,1],[critCicloBank,1],[critCompareBank,1],[critDesignBank,1]];
+}
 function genEvalCrit(){
   sfx('click');
-  _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
-  const _sC = document.getElementById('evalCritFormaSel');
-  if (_sC && parseInt(_sC.value, 10)) evalCritFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_sC.value, 10)));
-  const cf = evalCritFormNum;
-  window._currentEvalCritForm = cf;
-  const rngC = _evalRng(200000 + cf);
-  evalCritFormNum = (evalCritFormNum % EVAL_FORMAS) + 1;
-  _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
-  saveProgress();
+  const turno=_turnoCritica(evalCritFormNum, critApartados(), function (v) { evalCritFormNum = v; });
+  const cf=turno.forma;window._currentEvalCritForm=cf;saveProgress();
+  const [sens,[err],[cic],[cmp],[dis]]=turno.casos;
   document.getElementById('evalcrit-screen-title').textContent = `🧠 Pensamiento Crítico · Forma ${cf} · Numbers and My Age`;
   evalCritAnsVisible = false;
   const out = document.getElementById('evalCritOut');
   out.innerHTML = '';
-  const sens = _pickF(critSensorBank, 2, rngC);
   const s1 = document.createElement('div');
   s1.innerHTML = `<div class="eval-section-title">I. ¿Qué dirías en esta situación? <span class="eval-pts">20 pts</span></div><div class="eval-item">${sens.map((k, i) => `<div class="crit-scenario">Caso ${i + 1}: ${k.txt}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué dirías exactamente en inglés? Justifica tu respuesta:</div><textarea class="crit-textarea" rows="2" aria-label="Sensor del caso ${i + 1} y su justificación"></textarea><div class="crit-pauta">${k.ans}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s1);
 
-  const err = _pickF(critErrorBank, 1, rngC)[0];
   const s2 = document.createElement('div');
   s2.innerHTML = `<div class="eval-section-title">II. Corrige el error conceptual <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${err.txt}</div><p style="font-size:0.85rem;margin-bottom:0.5rem;">Este comentario tiene <strong>dos errores</strong>. Corrígelos con argumentos: explica qué se dice de verdad y por qué:</p><div class="crit-q-block"><div class="crit-q-label">Error 1 y su corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 1 y su corrección"></textarea><div class="crit-pauta">${err.g1}</div></div><div class="crit-q-block"><div class="crit-q-label">Error 2 y su corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 2 y su corrección"></textarea><div class="crit-pauta">${err.g2}</div></div><div class="crit-selfscore"><label for="critScore1">Obtenido:</label><input type="number" id="critScore1" class="crit-score-input" data-score="1" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s2);
 
-  const cic = _pickF(critCicloBank, 1, rngC)[0];
   const cicloGuides = [cic.p, cic.d, cic.a];
   const s3 = document.createElement('div');
   s3.innerHTML = `<div class="eval-section-title">III. Analiza la conversación completa <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${cic.txt}</div>${critCicloQuestions.map((q, i) => `<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${cicloGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s3);
 
-  const cmp = _pickF(critCompareBank, 1, rngC)[0];
   const s4 = document.createElement('div');
   s4.innerHTML = `<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué concepto corresponde a cada caso? 2. ¿En qué se parecen? 3. ¿En qué se diferencian? Da un ejemplo de cada uno.</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s4);
 
-  const dis = _pickF(critDesignBank, 1, rngC)[0];
   const s5 = document.createElement('div');
   s5.innerHTML = `<div class="eval-section-title">V. Escribe y justifica tu diálogo <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dis}</div><div class="crit-q-block"><div class="crit-q-label">Escribe el diálogo completo en inglés para esta situación: PREGUNTA Y RESPUESTA DE EDAD, PRECISIÓN NUMÉRICA y DESPEDIDA con cortesía. Al menos 6 líneas.</div><textarea class="crit-textarea" rows="5" aria-label="Diseño y justificación del diálogo"></textarea><div class="crit-pauta">${critDesignGuide}</div></div><div class="crit-selfscore"><label for="critScore4">Obtenido:</label><input type="number" id="critScore4" class="crit-score-input" data-score="4" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s5);
@@ -1604,4 +1602,4 @@ window.addEventListener('DOMContentLoaded', ()=>{
   renderLabDisplay();
 });
 
-(function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalCrit==='function') _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
+(function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalCrit==='function') _selectorCritica(evalCritFormNum,critApartados(),function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();

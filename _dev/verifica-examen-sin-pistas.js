@@ -463,8 +463,13 @@ function formasConChoque(gen, rec, bancos, items, tema, titulo) {
   /* Con el reparto, las formas son las del motor: tantas como dé el banco
      (hasta 50) y con los casos que le tocan a cada una. Se reparten las
      posiciones de cada banco, que es de lo único que depende. */
-  const apartados = rec.reparto ? rec.picks.map(p => [(bancos[p.banco] || []).map((_, i) => i), p.n]) : null;
-  if (apartados && (typeof gen.reparto !== 'function' || rec.picks.some(p => !Array.isArray(bancos[p.banco])))) return null;
+  /* Un banco que no se deja leer como texto (el de los recorridos de
+     Programando un Robot lleva constantes del simulador) no tiene ítems
+     que comparar, pero su TAMAÑO sí hace falta: sin él las formas que se
+     arman aquí no serían las de la misión. Viene en `rec.tamanos`. */
+  const largo = p => Array.isArray(bancos[p.banco]) ? bancos[p.banco].length : (rec.tamanos || {})[p.banco];
+  const apartados = rec.reparto ? rec.picks.map(p => [Array.from({ length: largo(p) || 0 }, (_, i) => i), p.n]) : null;
+  if (apartados && (typeof gen.reparto !== 'function' || rec.picks.some(p => !(largo(p) >= p.n)))) return null;
   const total = apartados ? gen.formasCritica(apartados) : gen.formas;
   for (let f = 1; f <= total; f++) {
     const hoja = [];
@@ -697,11 +702,23 @@ function revisa(m, exigir) {
       if (!sinK.length && !chK.length) bien('Pensamiento crítico: ' + itemsK.length + ' casos, errores, comparaciones, causas y efectos sin pistas cruzadas');
     }
     if (gen) {
+      /* Los bancos declarados que no se pudieron leer del texto: su tamaño
+         se le pregunta a la misión cargada de verdad. */
+      const sinLeer = recK.reparto ? recK.picks.filter(p => !Array.isArray(m.bancos[p.banco])).map(p => p.banco) : [];
+      if (sinLeer.length) {
+        recK.tamanos = {};
+        try {
+          const L = require('./lib-formas.js');
+          const cargada = L.cargarMision(m.dir, 7);
+          sinLeer.forEach(n => { recK.tamanos[n] = cargada.correr('Array.isArray(' + n + ') ? ' + n + '.length : 0', 'tamaño'); });
+        } catch (e) { /* sin tamaño, abajo se dice que no se pudieron armar */ }
+      }
       r.critico = formasConChoque(gen, recK, m.bancos, itemsK.map(it => it), temaK, m.titulo);
       if (!r.critico) { if (exigir) mal('Pensamiento crítico: no se pudieron armar sus formas con el reparto del motor (falta un banco de los que declara critApartados)'); }
       else if (exigir) {
         if (r.critico.malas) mal('Pensamiento crítico: ' + r.critico.malas + ' de las ' + r.critico.total + ' formas llevan un choque');
-        else bien('Pensamiento crítico: las ' + r.critico.total + ' formas' + (recK.reparto ? ', repartidas por el motor,' : '') + ' sin un choque');
+        else bien('Pensamiento crítico: las ' + r.critico.total + ' formas' + (recK.reparto ? ', repartidas por el motor,' : '') + ' sin un choque' +
+          (sinLeer.length ? ' (los casos de ' + sinLeer.join(', ') + ' no se leen como texto y no entran en la comparación, igual que antes)' : ''));
       }
     }
   }
