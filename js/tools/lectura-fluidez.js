@@ -110,14 +110,42 @@ function lecVecesLeido(d, num, textoId) {
   return (d.lectura || []).filter(r => String(r.num) === String(num) && r.textoId === textoId).length;
 }
 
+/* Cuando los textos no llegan (sin señal y sin copia guardada). Lleva un
+   botón porque «recarga la página» le hacía perder al maestro el sitio
+   donde estaba; reintentar aquí mismo no. */
+function lecAvisoSinTextos(body, d) {
+  body.innerHTML = '<div class="pa-card"><p class="pa-optional-hint">📖 Los textos de lectura no cargaron en este equipo. Ábrelos una vez con internet y quedarán guardados.</p>'
+    + '<div class="ad-btn-row"><button class="pa-generate-btn" id="lec-reintentar">🔄 Intentar de nuevo</button></div></div>';
+  const b = document.getElementById('lec-reintentar');
+  if (b) b.addEventListener('click', () => adRenderLectura(body, typeof adLoad === 'function' ? adLoad() : d));
+}
+
 /* ══════════════ RENDER PRINCIPAL DE LA PESTAÑA ══════════════ */
 function adRenderLectura(body, d) {
   lecDetenerTimer();   /* cualquier re-render mata el intervalo viejo */
   if (!d.lista.length) { adSinLista(body, 'el control de lectura'); return; }
-  if (typeof LECTURA_TEXTOS === 'undefined' || typeof lecVeredicto !== 'function') {
-    body.innerHTML = '<div class="pa-card"><p class="pa-optional-hint">📖 Los textos de lectura aún no cargaron en este equipo. Recarga la página con internet una vez y quedarán guardados.</p></div>';
+  if (typeof LECTURA_TEXTOS === 'undefined') {
+    /* Los textos (980 KB) ya no viajan con la portada: los pagaba cada
+       visita, también la del maestro que solo venía a pasar lista. Se
+       piden aquí, al abrir la pestaña, y se vuelve a pintar al llegar. */
+    if (typeof window.metasCargarLecturaTextos === 'function') {
+      body.innerHTML = '<div class="pa-card"><p class="pa-optional-hint" role="status">📖 Cargando textos…</p></div>';
+      window.metasCargarLecturaTextos().then(() => {
+        /* Solo se repinta si el maestro sigue en esta pestaña: si se fue a
+           otra mientras bajaban, pintarle Lectura encima sería quitarle lo
+           que está mirando. Y con los datos de AHORA, no los de antes. */
+        if (!body.isConnected || (typeof _adTab !== 'undefined' && _adTab !== 'lec')) return;
+        adRenderLectura(body, typeof adLoad === 'function' ? adLoad() : d);
+      }).catch(() => {
+        if (!body.isConnected || (typeof _adTab !== 'undefined' && _adTab !== 'lec')) return;
+        lecAvisoSinTextos(body, d);
+      });
+      return;
+    }
+    lecAvisoSinTextos(body, d);
     return;
   }
+  if (typeof lecVeredicto !== 'function') { lecAvisoSinTextos(body, d); return; }
   if (_lecNum == null || !d.lista.some(a => String(a.num) === String(_lecNum))) _lecNum = d.lista[0].num;
   if (_lecGrado == null) _lecGrado = lecGradoGrupo(d) || 4;
   if (_lecFase === 'elegir') lecRenderElegir(body, d);

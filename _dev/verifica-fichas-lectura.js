@@ -67,6 +67,9 @@ const ESTADO = {
   await page.evaluate(st => localStorage.setItem('METAS_ADMIN_V1', JSON.stringify(st)), ESTADO);
   await page.reload();
   await page.waitForFunction(() => typeof window.lecImprimirFichas === 'function');
+  /* Los textos ya no viajan con la portada: se piden al abrir el Control
+     de lectura. La sonda no pasa por la pestaña, así que los pide ella. */
+  await page.evaluate(() => window.metasCargarLecturaTextos());
 
   for (const grado of GRADOS) {
     const html = await page.evaluate(g => {
