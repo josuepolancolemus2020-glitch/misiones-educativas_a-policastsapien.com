@@ -532,12 +532,14 @@ const critCompareBank=[
 ];
 const critCauseBank=[
   {k:'ca-zona',cause:'Los ejemplos de entrenar venían de una sola zona.',guide:'Por eso falla en el resto del país, aunque en su zona acierte.'},
-  {k:'ca-cuatro',cause:'Se juntaron ejemplos de los cuatro cultivos de la zona.',guide:'Por eso reconoce hojas de los cuatro, hasta de fincas nuevas.'},
+  {k:'ca-cuatro',cause:'Se juntaron ejemplos de los cuatro cultivos de la zona.',guide:'Por eso reconoce hojas de los cuatro, hasta de fincas nuevas.'},  {k:'ca-etiquetas',cause:'Alguien etiquetó mal muchas fotos: a los gatos les puso «perro».',guide:'Por eso la máquina aprendió a confundir gatos con perros.'},
 ];
 const critEffectBank=[
   {k:'ef-grupos',effect:'Hay que ponerles nombre a mano a los grupos.',guide:'Porque los juntó por parecido, pero no sabe cómo se llaman.'},
   {k:'ef-ajedrez',effect:'La máquina de ajedrez perdió millones de partidas antes de jugar bien.',guide:'Porque aprende probando: gana un premio solo cuando le sale bien.'},
-  {k:'ef-explicar',effect:'La máquina no sabe explicar por qué dijo «plaga».',guide:'Porque no entiende la hoja: solo la compara con las que vio.'},
+  {k:'ef-explicar',effect:'La máquina no sabe explicar por qué dijo «plaga».',guide:'Porque no entiende la hoja: solo la compara con las que vio.'},  {k:'ef-correo',effect:'El filtro de correos deja pasar un engaño de un tipo nuevo.',guide:'Porque nunca vio uno parecido entre sus ejemplos.'},
+  {k:'ef-milfotos',effect:'Después de ver mil fotos más, el programa acierta más que al principio.',guide:'Porque con más ejemplos distintos y bien etiquetados ajusta lo que aprendió.'},
+  {k:'ef-teclado',effect:'El teclado del teléfono adivina la palabra que vas a escribir.',guide:'Porque aprendió de miles de mensajes qué palabra suele seguir.'},
 ];
 function genEvalCrit(){
   sfx('click');

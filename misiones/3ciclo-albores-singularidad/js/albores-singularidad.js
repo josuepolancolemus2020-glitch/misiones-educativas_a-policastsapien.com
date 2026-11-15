@@ -532,12 +532,14 @@ const critCompareBank=[
 ];
 const critCauseBank=[
   {k:'ca-inviernos',cause:'En los dos inviernos se prometió de más.',guide:'Por eso la vara no es si algo impresiona, sino qué se prometió y para cuándo.'},
-  {k:'ca-titular',cause:'Un titular con la palabra más fuerte se comparte más.',guide:'Por eso «sacó a un jugador de un juego» se publica como «mata».'},
+  {k:'ca-titular',cause:'Un titular con la palabra más fuerte se comparte más.',guide:'Por eso «sacó a un jugador de un juego» se publica como «mata».'},  {k:'ca-medicion',cause:'Una empresa anuncia su producto sin decir cómo lo midió.',guide:'Por eso su promesa no se puede comprobar: se apunta y se espera la prueba.'},
 ];
 const critEffectBank=[
   {k:'ef-contrarias',effect:'Dos noticias contrarias resultan ser las dos ciertas.',guide:'Porque una medía anuncios y la otra infraestructura.'},
   {k:'ef-becas',effect:'Una familia se entera tarde de unas becas que sí existían.',guide:'Porque el anuncio venía marcado como patrocinado y se descartó entero.'},
-  {k:'ef-promedio',effect:'Un sistema que acierta casi siempre le falla siempre al mismo grupo.',guide:'Porque un promedio alto esconde a quién le falla: el error no cae al azar.'},
+  {k:'ef-promedio',effect:'Un sistema que acierta casi siempre le falla siempre al mismo grupo.',guide:'Porque un promedio alto esconde a quién le falla: el error no cae al azar.'},  {k:'ef-municipio',effect:'Un municipio compra una herramienta que prometía todo y a los meses la deja de usar.',guide:'Porque nadie la probó con sus propios casos antes de comprarla.'},
+  {k:'ef-expertos',effect:'Los expertos no se ponen de acuerdo sobre cuándo habrá una IA más capaz que las personas.',guide:'Porque nadie puede medir algo que todavía no existe: solo hay estimaciones.'},
+  {k:'ef-medios',effect:'La misma noticia de IA aparece contada distinto en tres medios.',guide:'Porque cada medio escoge qué destacar: hay que buscar la fuente original.'},
 ];
 function genEvalCrit(){
   sfx('click');

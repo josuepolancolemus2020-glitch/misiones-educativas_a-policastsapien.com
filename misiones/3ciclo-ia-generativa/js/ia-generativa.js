@@ -531,12 +531,14 @@ const critCompareBank=[
 ];
 const critCauseBank=[
   {k:'ca-califica',cause:'Un programa que califica redacciones aprendió solo con textos de otros países.',guide:'Por eso marca mal al que escribe como se habla aquí, con «cipote» o «pisto». Es un sesgo, y una persona revisa la nota.'},
-  {k:'ca-guardado',cause:'Lo que se escribe en internet puede quedar guardado.',guide:'Por eso no se dan datos de la familia ni fotos de otras personas.'},
+  {k:'ca-guardado',cause:'Lo que se escribe en internet puede quedar guardado.',guide:'Por eso no se dan datos de la familia ni fotos de otras personas.'},  {k:'ca-prediccion',cause:'El modelo aprendió a escribir prediciendo la palabra que suele venir después.',guide:'Por eso puede sonar seguro aunque el dato sea falso.'},
 ];
 const critEffectBank=[
   {k:'ef-dicen',effect:'Nadie puede comprobar un aviso que circula por el grupo de la comunidad.',guide:'Porque dice «dicen que…» y no dice quién lo dijo: no hay a quién preguntarle.'},
   {k:'ef-piezas',effect:'Una petición con sus cuatro piezas da un resultado mucho mejor.',guide:'Porque el modelo deja de adivinar para quién es y qué se quiere.'},
-  {k:'ef-noticia',effect:'Una noticia falsa llega a cien grupos en una tarde.',guide:'Porque cada quien la reenvió sin comprobar de dónde salió.'},
+  {k:'ef-noticia',effect:'Una noticia falsa llega a cien grupos en una tarde.',guide:'Porque cada quien la reenvió sin comprobar de dónde salió.'},  {k:'ef-huracan',effect:'Circula una imagen de un huracán sobre San Pedro Sula que nunca pasó y asusta a la gente.',guide:'Porque las imágenes también se generan, y nadie buscó de dónde salió.'},
+  {k:'ef-distintas',effect:'Dos alumnos le piden lo mismo al modelo y reciben respuestas distintas.',guide:'Porque el modelo genera cada respuesta de nuevo: no la copia de una lista.'},
+  {k:'ef-independencia',effect:'Un alumno entrega un resumen con la fecha de la Independencia equivocada.',guide:'Porque copió lo que dio el modelo sin compararlo con el libro.'},
 ];
 function genEvalCrit(){
   sfx('click');

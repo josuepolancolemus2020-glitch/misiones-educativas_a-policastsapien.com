@@ -34,10 +34,10 @@ de la misión.
 |---|---|---|---|---|
 | `2y3ciclo-robots-problemas` | **resuelta: 240** | 30 | — | — |
 | `3ciclo-peligros-ia` | **resuelta: 240** | 27 | — | — |
-| `2ciclo-como-aprende-una-maquina` | 4 | 24 | 3 | 4 |
-| `3ciclo-albores-singularidad` | 4 | 24 | 3 | 4 |
-| `3ciclo-escenarios-porvenir` | 4 | 24 | 3 | 4 |
-| `3ciclo-ia-generativa` | 4 | 24 | 3 | 4 |
+| `2ciclo-como-aprende-una-maquina` | **resuelta: 240** | 28 | — | — |
+| `3ciclo-albores-singularidad` | **resuelta: 240** | 28 | — | — |
+| `3ciclo-escenarios-porvenir` | **resuelta: 240** | 28 | — | — |
+| `3ciclo-ia-generativa` | **resuelta: 240** | 28 | — | — |
 | `2y3ciclo-programando-robot` | 48 | 23 | 1 | 2 |
 | `basica-de-que-esta-hecho-el-mundo` | 8 | 27 | 2 | 3 |
 | `2y3ciclo-electricidad-robots` | 64 | 26 | 0 | 2 |
@@ -125,7 +125,22 @@ Banco en `misiones/3ciclo-peligros-ia/js/peligros-ia.js` (línea 1726).
 - Los peligros de esta misión viven en `js/data/ia-peligros.js`: un caso nuevo
   tiene que salir de los que ya están ahí.
 
-## 3. `2ciclo-como-aprende-una-maquina`
+## 3. `2ciclo-como-aprende-una-maquina` · resuelta
+
+**Resuelta el 15 de noviembre de 2026** con los 4 casos de holgura que aprobó
+Josué: Causa +1 (fotos de gatos etiquetadas «perro») y Efecto +3 (el filtro de
+correos y el engaño nuevo, mil fotos más, el teclado que adivina la palabra).
+Ahora son **240 conjuntos** (2 × 2 × 3 × 20) y las formas 1 a 30 dan 28
+distintas: las dos que se repiten chocan por azar y se arreglan con el
+reparto sin repetición. No cambió cuántos casos saca cada apartado ni el
+generador; las formas conceptual y operativa congeladas siguen idénticas.
+
+Un retoque para no dejar pistas cruzadas (`_dev/verifica-examen-sin-pistas.js`):
+en la pauta del teclado, «qué palabra suele venir después» pasa a «qué
+palabra suele seguir», porque el efecto de las mil fotos empieza con
+«Después de ver mil fotos más».
+
+Lo que había antes:
 
 Banco en `misiones/2ciclo-como-aprende-una-maquina/js/como-aprende-una-maquina.js` (línea 1504).
 
@@ -143,7 +158,18 @@ Banco en `misiones/2ciclo-como-aprende-una-maquina/js/como-aprende-una-maquina.j
 - **Con holgura: 4 casos** (Causa +1, Efecto +3), da 240.
 - Seguirían con un solo caso: Decisión y Comparación.
 
-## 4. `3ciclo-albores-singularidad`
+## 4. `3ciclo-albores-singularidad` · resuelta
+
+**Resuelta el 15 de noviembre de 2026** con los 4 casos de holgura que aprobó
+Josué: Causa +1 (el producto anunciado sin decir cómo se midió) y Efecto +3 (el
+municipio que compra y deja de usar, los expertos que no se ponen de acuerdo,
+la misma noticia en tres medios). Ninguno cita un hecho fechado.
+Ahora son **240 conjuntos** (2 × 2 × 3 × 20) y las formas 1 a 30 dan 28
+distintas: las dos que se repiten chocan por azar y se arreglan con el
+reparto sin repetición. No cambió cuántos casos saca cada apartado ni el
+generador; las formas conceptual y operativa congeladas siguen idénticas.
+
+Lo que había antes:
 
 Banco en `misiones/3ciclo-albores-singularidad/js/albores-singularidad.js` (línea 1081).
 
@@ -163,7 +189,19 @@ Banco en `misiones/3ciclo-albores-singularidad/js/albores-singularidad.js` (lín
 - Ojo: esta misión pinta un dossier fechado (`js/data/ia-actualidad.js`). Un
   caso nuevo que cite un hecho debe llevar su fecha y su fuente en `_dev/`.
 
-## 5. `3ciclo-escenarios-porvenir`
+## 5. `3ciclo-escenarios-porvenir` · resuelta
+
+**Resuelta el 15 de noviembre de 2026** con los 4 casos de holgura que aprobó
+Josué: Causa +1 (el traductor que no conoce las palabras garífunas) y Efecto +3 (el
+taller de carpintería que contrata otro aprendiz, la cajera que aprende a
+revisar las cajas automáticas, la estudiante que conversa con un turista en
+Copán).
+Ahora son **240 conjuntos** (2 × 2 × 3 × 20) y las formas 1 a 30 dan 28
+distintas: las dos que se repiten chocan por azar y se arreglan con el
+reparto sin repetición. No cambió cuántos casos saca cada apartado ni el
+generador; las formas conceptual y operativa congeladas siguen idénticas.
+
+Lo que había antes:
 
 Banco en `misiones/3ciclo-escenarios-porvenir/js/escenarios-porvenir.js` (línea 1357).
 
@@ -181,7 +219,18 @@ Banco en `misiones/3ciclo-escenarios-porvenir/js/escenarios-porvenir.js` (línea
 - **Con holgura: 4 casos** (Causa +1, Efecto +3), da 240.
 - Seguirían con un solo caso: Decisión y Comparación.
 
-## 6. `3ciclo-ia-generativa`
+## 6. `3ciclo-ia-generativa` · resuelta
+
+**Resuelta el 15 de noviembre de 2026** con los 4 casos de holgura que aprobó
+Josué: Causa +1 (el modelo que aprendió prediciendo la palabra siguiente) y Efecto +3
+(la imagen falsa del huracán sobre San Pedro Sula, dos respuestas distintas a
+la misma petición, la fecha de la Independencia equivocada en un resumen).
+Ahora son **240 conjuntos** (2 × 2 × 3 × 20) y las formas 1 a 30 dan 28
+distintas: las dos que se repiten chocan por azar y se arreglan con el
+reparto sin repetición. No cambió cuántos casos saca cada apartado ni el
+generador; las formas conceptual y operativa congeladas siguen idénticas.
+
+Lo que había antes:
 
 Banco en `misiones/3ciclo-ia-generativa/js/ia-generativa.js` (línea 1503).
 
