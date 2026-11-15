@@ -929,8 +929,11 @@ const evalPRBank=[
 const EVAL_FORMAS = 30;
 /* _evalRng, _shuffleF, _pickF y _injectFormaSel ya no se copian aquí: están en
    js/motor-misiones.js, que la página carga antes que este archivo. Si un teléfono
-   abre la página guardada de antes, que no lo pide, se pide aquí. */
-if (typeof _evalRng !== 'function') { (function () { var m = document.createElement('script'); m.src = '../../js/motor-misiones.js'; document.head.appendChild(m); })(); }
+   abre la página guardada de antes, que no lo pide, se pide aquí. Y también si
+   tiene guardado el motor de antes, que todavía no sabe conservar las formas
+   ya impresas de la prueba de pensamiento crítico (_conFormasDeAntes): con
+   mala señal puede llegar este archivo nuevo y servirse el motor viejo. */
+if (typeof _evalRng !== 'function' || typeof _conFormasDeAntes !== 'function') { (function () { var m = document.createElement('script'); m.src = '../../js/motor-misiones.js'; document.head.appendChild(m); })(); }
 // Selector «Forma exacta»: el docente elige qué forma generar (p.ej. para
 // reimprimir la pauta de la Forma 15 que ya repartió a los alumnos).
 function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalFormNum, function (v) { evalFormNum = v; }); }
@@ -1298,14 +1301,27 @@ function _critMatch(student, ans, alts) {
     return (alts || []).some(a => normalizeEvalAnswer(a) === s);
 }
 
+/* Las formas 1 a 30 de esta prueba ya están impresas en las escuelas con
+   su pauta. Salían de un sorteo con la semilla de la forma, y así siguen
+   saliendo: aquí no se cambia ni el orden de las seis sacadas. Lo vigila
+   _dev/verifica-formas-oro.js contra la referencia congelada. */
+const CRIT_FORMAS_DE_ANTES = 30;
+function critFormaDeAntes(forma) {
+    const rng = _evalRng(200000 + forma);
+    return [_pickF(critJuezBank, 5, rng), _pickF(critReescribeBank, 5, rng), _pickF(critPosicionBank, 5, rng), _pickF(critVoseoBank, 2, rng), _pickF(critRegistroBank, 2, rng), _pickF(critDetectiveBank, 1, rng)];
+}
+/* Los apartados de la prueba, con su banco y cuántos casos saca cada uno.
+   Con esto el motor (js/motor-misiones.js) deja las formas 1 a 30 como
+   estaban y reparte las nuevas, de la 31 a la 50, sin que ninguna lleve el
+   conjunto de casos de otra. El orden es el de la hoja. */
+function critApartados() {
+    return _conFormasDeAntes([[critJuezBank, 5], [critReescribeBank, 5], [critPosicionBank, 5], [critVoseoBank, 2], [critRegistroBank, 2], [critDetectiveBank, 1]], CRIT_FORMAS_DE_ANTES, critFormaDeAntes);
+}
 function genEvalCrit() {
     sfx('click');
-    _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
-    const _sC = document.getElementById('evalCritFormaSel');
-    if (_sC && parseInt(_sC.value, 10)) evalCritFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_sC.value, 10)));
-    const cf = evalCritFormNum; window._currentEvalCritForm = cf; const rngC = _evalRng(200000 + cf);
-    evalCritFormNum = (evalCritFormNum % EVAL_FORMAS) + 1;
-    _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
+    const turno = _turnoCritica(evalCritFormNum, critApartados(), function (v) { evalCritFormNum = v; });
+    const cf = turno.forma; window._currentEvalCritForm = cf;
+    const [juItems, reItems, poItems, voItems, regItems, [deItem]] = turno.casos;
     saveProgress();
     document.getElementById('evalcrit-screen-title').textContent = `🧠 Pensamiento Crítico · Forma ${cf} · Los Pronombres`;
     evalCritAnsVisible = false;
@@ -1317,7 +1333,6 @@ function genEvalCrit() {
     out.appendChild(bar);
 
     // ── I. ¿Pronombre o determinante? (5×4=20, radios P/D autocalificables)
-    const juItems = _pickF(critJuezBank, 5, rngC);
     let juRows = '';
     juItems.forEach((it, i) => {
         juRows += `<div class="crit-q-block"><div class="crit-scenario"><span class="crit-juez-n">${i + 1}.</span> ${it.pre}<b class="crit-foco">${it.foco}</b>${it.post}</div><div class="crit-juez-opts"><label class="crit-radio"><input type="radio" name="juez${i}" value="P"> Pronombre (sustituye)</label><label class="crit-radio"><input type="radio" name="juez${i}" value="D"> Determinante (acompaña)</label></div><div class="crit-pauta">${it.t === 'P' ? 'Pronombre' : 'Determinante'}: ${it.pista}</div><div class="eval-item-feedback" id="critFbJu${i}" aria-live="polite"></div></div>`;
@@ -1327,7 +1342,6 @@ function genEvalCrit() {
     out.appendChild(s1);
 
     // ── II. Reescribe sin repetir (5×4=20, palabras clave + respuesta modelo)
-    const reItems = _pickF(critReescribeBank, 5, rngC);
     let reRows = '';
     reItems.forEach((it, i) => {
         reRows += `<div class="crit-q-block"><div class="crit-scenario"><span class="crit-juez-n">${i + 1}.</span> ${it.orig}</div><textarea class="crit-textarea" data-re="${i}" rows="2" aria-label="Reescribe la oración ${i + 1}" placeholder="Reescríbela sustituyendo con pronombres..."></textarea><div class="crit-pauta">${it.model}</div><div class="eval-item-feedback" id="critFbRe${i}" aria-live="polite"></div></div>`;
@@ -1337,7 +1351,6 @@ function genEvalCrit() {
     out.appendChild(s2);
 
     // ── III. Cambia la posición (5×4=20, inputs autocalificables con normalización de tildes)
-    const poItems = _pickF(critPosicionBank, 5, rngC);
     let poRows = '';
     poItems.forEach((it, i) => {
         poRows += `<div class="crit-q-block"><div class="crit-pos-row"><span class="crit-juez-n">${i + 1}.</span> <span class="crit-pos-given">${it.given}</span> <span class="crit-pos-arrow">→</span> <span class="crit-pos-target">${it.target}</span></div><input type="text" class="crit-pos-input" data-pos="${i}" autocomplete="off" aria-label="Reescribe cambiando la posición ${i + 1}"><div class="crit-pauta">${it.ans} · ${it.regla}</div><div class="eval-item-feedback" id="critFbPo${i}" aria-live="polite"></div></div>`;
@@ -1347,8 +1360,6 @@ function genEvalCrit() {
     out.appendChild(s3);
 
     // ── IV. Habla hondureña: vos, tú y usted (4×5=20)
-    const voItems = _pickF(critVoseoBank, 2, rngC);
-    const regItems = _pickF(critRegistroBank, 2, rngC);
     let voRows = '';
     voItems.forEach((it, i) => {
         voRows += `<div class="crit-q-block"><div class="crit-pos-row"><span class="crit-juez-n">${i + 1}.</span> <span class="crit-pos-given">${it.tu}</span> <span class="crit-pos-arrow">→ (voseo)</span></div><input type="text" class="crit-pos-input" data-vo="${i}" autocomplete="off" aria-label="Convierte al voseo ${i + 1}"><div class="crit-pauta">${it.ans}</div><div class="eval-item-feedback" id="critFbVo${i}" aria-live="polite"></div></div>`;
@@ -1362,7 +1373,6 @@ function genEvalCrit() {
     out.appendChild(s4);
 
     // ── V. Detective del texto (2 errores × 10 = 20, autoevaluación con rúbrica)
-    const deItem = _pickF(critDetectiveBank, 1, rngC)[0];
     const s5 = document.createElement('div');
     s5.innerHTML = `<div class="eval-section-title">V. Detective del texto <span class="eval-pts">20 pts · 2 errores × 10 pts</span></div><div class="eval-item"><p class="crit-q-label">Lee el párrafo. Tiene <b>2 errores</b> con pronombres. Para cada uno: <b>localiza</b> el error, <b>nombra</b> el tipo de pronombre y <b>corrígelo</b>.</p><div class="crit-scenario crit-detective-text">${deItem.text}</div><div class="crit-q-block"><div class="crit-q-label">Error 1 (tipo, problema y corrección):</div><textarea class="crit-textarea" rows="2" aria-label="Error 1"></textarea></div><div class="crit-q-block"><div class="crit-q-label">Error 2 (tipo, problema y corrección):</div><textarea class="crit-textarea" rows="2" aria-label="Error 2"></textarea></div><div class="crit-pauta">${deItem.errores.map((e, i) => `Error ${i + 1} (<b>${e.tipo}</b>): ${e.problema} Corrección: ${e.correccion}`).join('<br>')}</div><div class="crit-rubric"><strong>📋 Rúbrica (2 criterios · 10 pts c/u):</strong> 1) Localiza y <b>nombra bien el tipo</b> de pronombre de cada error. 2) <b>Corrige</b> adecuadamente respetando la concordancia y evitando la ambigüedad. <em>Bien = 10; incompleto = 5; ausente = 0.</em></div><div class="crit-selfscore"><label for="critScoreV">Obtenido (autoevaluación):</label><input type="number" id="critScoreV" class="crit-score-input" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
     out.appendChild(s5);
@@ -1801,7 +1811,7 @@ function _classroomHint(msg, ok) {
     }, 7000);
 }
 // Formas deterministas v1: selectores de forma visibles desde la carga de la página
-(function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalOp==='function') _injectFormaSel('genEvalOp','evalOpFormaSel',evalOpFormNum,function(v){evalOpFormNum=v;}); }catch(e){} try{ if(typeof genEvalCrit==='function') _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
+(function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalOp==='function') _injectFormaSel('genEvalOp','evalOpFormaSel',evalOpFormNum,function(v){evalOpFormNum=v;}); }catch(e){} try{ if(typeof genEvalCrit==='function') _selectorCritica(evalCritFormNum,critApartados(),function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
 
 // ═════════════════ 📖 CONTROL DE LECTURA ═════════════════
 // Se paga UNA vez por lectura, no por repetirla: releer el mismo texto dos o
