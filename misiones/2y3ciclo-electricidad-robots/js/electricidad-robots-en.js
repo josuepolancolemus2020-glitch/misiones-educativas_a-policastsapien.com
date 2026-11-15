@@ -530,7 +530,8 @@
 
       critSensorBank: [
         {txt:'The LED in your team’s circuit does not light up. You checked every joint and they are all firm, and the battery is new. Your classmate says the LED is broken.',ans:'Before replacing the LED, I would check whether it is connected BACKWARDS: it has POLARITY and only lights up one way (the long leg goes to +). Turn it around. If it still does not light up, then try another LED.'},
-        {txt:'You have two bulbs wired in series and neither lights up; on checking, one has a broken filament.',ans:'In SERIES there is a single path: the burned-out bulb opens the circuit and that is why both go dark. Replace the burned-out bulb, or wire them in PARALLEL so each one has its own path.'}
+        {txt:'You have two bulbs wired in series and neither lights up; on checking, one has a broken filament.',ans:'In SERIES there is a single path: the burned-out bulb opens the circuit and that is why both go dark. Replace the burned-out bulb, or wire them in PARALLEL so each one has its own path.'},
+        {txt:'The buzzer you built sounds weaker every day, even though all the joints are firm.',ans:'I would check the BATTERY: it is running down and no longer gives enough energy. You replace it with a new one and test again; if it is still weak, you check the buzzer.'}
       ],
 
       critErrorBank: [
@@ -554,7 +555,8 @@
       ],
 
       critCompareBank: [
-        {a:'A material that lets current through easily, like the copper inside the wire.',b:'A material that does not let current through, like the plastic that covers the wire.',ga:'The conductor.',gb:'The insulator.',gr:'Similarity: both are present in the very same wire and both are needed for it to work safely. Difference: the conductor forms the path of the current; the insulator wraps it and protects us. Careful: water with salts conducts, which is why you do not touch appliances with wet hands.'}
+        {a:'A material that lets current through easily, like the copper inside the wire.',b:'A material that does not let current through, like the plastic that covers the wire.',ga:'The conductor.',gb:'The insulator.',gr:'Similarity: both are present in the very same wire and both are needed for it to work safely. Difference: the conductor forms the path of the current; the insulator wraps it and protects us. Careful: water with salts conducts, which is why you do not touch appliances with wet hands.'},
+        {a:'The battery in a flashlight.',b:'The wall outlet at home.',ga:'The battery.',gb:'The wall outlet.',gr:'Similarity: both give electrical energy to a device. Difference: the battery is small, can be carried anywhere and has a low voltage, so it is good for experimenting; the wall outlet has a high voltage and is dangerous: it is never used for experiments.'}
       ],
 
       critDesignBank: [

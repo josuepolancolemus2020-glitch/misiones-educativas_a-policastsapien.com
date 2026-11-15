@@ -573,11 +573,14 @@ const critCompareBank=[
 const critCauseBank=[
   {k:'ca-casa',cause:'Una cosmovisión se aprende oyendo en la casa, no leyéndola.',guide:'Por eso todos tenemos una aunque nunca la hayamos escrito. Y por eso se averigua preguntando donde uno vive.'},
   {k:'ca-varias',cause:'En Honduras hay varias maneras de explicar el mundo, y no todas contestan igual.',guide:'Por eso ninguna se resume bien en un renglón, y por eso no se puede escribir una por todas.'},
+  {k:'ca-quebrada',cause:'El agua de la quebrada del pueblo nunca es la misma, pero la quebrada sigue ahí.',guide:'Por eso se puede decir que todo cambia y, a la vez, que algo se queda: el lugar y el nombre.'},
 ];
 const critEffectBank=[
   {k:'ef-reflejo',effect:'Una niña cree que hay dos cerros porque ve uno en la laguna.',guide:'Porque confundió lo que parece con lo que está ahí. El reflejo se ve, pero no es un cerro.'},
   {k:'ef-globo',effect:'Un globo inflado pesa un poquito más que el mismo globo vacío.',guide:'Porque el aire es materia: pesa y ocupa lugar, aunque no se vea.'},
   {k:'ef-alambre',effect:'El alambre doblado en gancho pesa lo mismo que cuando estaba derecho.',guide:'Porque solo cambió la forma: es el mismo alambre, acomodado de otro modo. No se le quitó ni se le puso nada.'},
+  {k:'ef-machete',effect:'Al machete del abuelo le cambiaron el cabo y después la hoja, y la familia sigue diciendo que es el machete del abuelo.',guide:'Porque lo que se queda es su historia y el uso que le damos, no los mismos pedazos.'},
+  {k:'ef-ternero',effect:'El ternero de la finca ahora es una vaca, y nadie lo cambió por otro animal.',guide:'Porque creció: cambió lo que decimos de él, pero sigue siendo el mismo animal.'},
 ];
 function genEvalCrit(){
   sfx('click');

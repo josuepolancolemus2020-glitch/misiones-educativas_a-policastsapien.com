@@ -580,11 +580,14 @@ const critCompareBank=[
 const critCauseBank=[
   {k:'ca-contrario',cause:'Si solo buscás lo que te da la razón, siempre vas a encontrarlo.',guide:'Por eso el cuarto paso manda buscar a quien diga lo contrario. Sin eso, comprobar se vuelve juntar aplausos.'},
   {k:'ca-memoria',cause:'La memoria se acomoda sola con el tiempo.',guide:'Por eso dos personas que estuvieron en lo mismo lo cuentan distinto, y por eso conviene escribirlo el mismo día.'},
+  {k:'ca-contado',cause:'Lo que otro cuenta pasa por su memoria y por sus ganas antes de llegarte.',guide:'Por eso conviene preguntar quién lo vio y cómo lo sabe, antes de repetirlo.'},
 ];
 const critEffectBank=[
   {k:'ef-cambiar',effect:'Alguien cambia de idea cuando le muestran una medida, y no queda mal.',guide:'Porque eso es lo que hace el quinto paso: decir antes qué te haría cambiar. Cambiar por una razón mejor no es perder.'},
   {k:'ef-moneda',effect:'Alguien que se alejó de la taza ve aparecer la moneda cuando le echan agua.',guide:'Porque la luz se dobla al salir del agua y le llega. La moneda no se movió.'},
   {k:'ef-cuadritos',effect:'Dos cuadritos pintados con el mismo lápiz se ven de distinto tono.',guide:'Porque el ojo compara con lo que tiene al lado. Tapando los fondos con un papel, quedan iguales.'},
+  {k:'ef-cinta',effect:'Dos vecinos dejan de pelear por el tamaño del solar cuando lo miden con cinta.',guide:'Porque la medida no depende de quién mira: los dos pueden comprobarla.'},
+  {k:'ef-sumar',effect:'Una niña sabe que 7 + 5 son 12 sin contar con los dedos cada vez.',guide:'Porque lo sabe razonando: no necesita volver a verlo para estar segura.'},
 ];
 function genEvalCrit(){
   sfx('click');
