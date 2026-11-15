@@ -26,6 +26,14 @@
    están contadas en `_critica-pendiente.json`: esa deuda se nombra y no
    pone la sonda en rojo; una repetición nueva, sí.
 
+   Las once de estructura propia son otro caso: sus formas 1 a 30 no se
+   repartieron de nuevo. Se congelaron tal como salían con su sorteo
+   (`--critica-de-antes`; la referencia lleva `criticaDeAntes`) y tienen
+   que seguir idénticas. Las formas nuevas, de la 31 a la 50, no pueden
+   repetir a ninguna, y se congelan aparte cuando Josué las aprueba
+   (`--critica-ampliar`); hasta entonces se nombran sin poner la sonda
+   en rojo.
+
    Si una forma congelada cambió, NO se arregla volviendo a congelar: se
    deshace el cambio. Volver a congelar es invalidar la clave impresa, y
    esa decisión es de Josué (`genera-formas-oro.js --sobrescribir`).
@@ -66,7 +74,7 @@ const sueltosSabidos = (listaPendiente && listaPendiente.fueraDeBanco) || {};
 if (!pendiente) falla('_critica-pendiente.json', 'crítica', 0, 'falta la lista de lo pendiente; se escribe con genera-formas-oro.js --pendiente-critica');
 
 let nFormas = 0, nCongeladas = 0, nPreguntas = 0;
-const deuda = [], deudaBanco = [], criticaSinCongelar = [];
+const deuda = [], deudaBanco = [], criticaSinCongelar = [], deAntesSinNuevas = [], nuevasSinCongelar = [];
 
 lista.forEach(slug => {
   let m;
@@ -92,8 +100,20 @@ lista.forEach(slug => {
     if (p.prueba === 'critica' && m.reparteCritica && !oro.pruebas[p.llave]) criticaSinCongelar.push(slug);
     /* Una crítica congelada que vuelve a sacar sus casos al azar perdió el
        reparto: sus formas ya no son las de la pauta impresa. */
-    if (p.prueba === 'critica' && oro.pruebas[p.llave] && !m.reparteCritica) falla(slug, p.llave, 0, 'tiene la crítica congelada y ya no la reparte con el motor (falta critApartados)');
+    /* Salvo la que se congeló con su sorteo de antes y todavía no ofrece
+       formas nuevas: esa sigue sacando como siempre, y es lo congelado. */
+    if (p.prueba === 'critica' && oro.pruebas[p.llave] && !m.reparteCritica) {
+      if (oro.criticaDeAntes) deAntesSinNuevas.push(slug);
+      else falla(slug, p.llave, 0, 'tiene la crítica congelada y ya no la reparte con el motor (falta critApartados)');
+    }
+    /* La que reparte con formas de antes tiene que declarar las mismas que
+       dice su referencia: si no, el motor repartiría de nuevo las impresas. */
+    if (p.prueba === 'critica' && oro.criticaDeAntes && m.reparteCritica) {
+      const declara = m.correr('critApartados().formasDeAntes || 0', 'formas de antes');
+      if (declara !== oro.criticaDeAntes) falla(slug, p.llave, 0, 'la referencia tiene congeladas sus formas 1 a ' + oro.criticaDeAntes + ' como salían antes y la misión declara ' + declara + ' formas de antes (_conFormasDeAntes)');
+    }
     const topePrueba = m.topeDe(p.prueba);
+    let sinCongelar = 0;
 
     for (let n = 1; n <= topePrueba; n++) {
       let f;
@@ -110,7 +130,8 @@ lista.forEach(slug => {
         else if (ref.texto !== hoy.texto) falla(slug, p.llave, n, 'las preguntas son las mismas pero cambió lo que se lee en la hoja impresa');
         else if (ref.hoja !== hoy.hoja) falla(slug, p.llave, n, 'dice lo mismo pero cambió cómo se ve la hoja impresa (si fue a propósito: genera-formas-oro.js --resellar-hoja ' + slug + ')');
         else nCongeladas++;
-      } else if (oro.pruebas[p.llave] && n <= (p.prueba === 'critica' ? topePrueba : oro.tope)) falla(slug, p.llave, n, 'falta en la referencia');
+      } else if (p.prueba === 'critica' && oro.criticaDeAntes && !oro.criticaAmpliada && n > oro.criticaDeAntes) sinCongelar++;
+      else if (oro.pruebas[p.llave] && n <= (p.prueba === 'critica' ? topePrueba : oro.tope)) falla(slug, p.llave, n, 'falta en la referencia');
 
       /* 3 · del banco */
       if (p.prueba === 'conceptual') {
@@ -130,6 +151,8 @@ lista.forEach(slug => {
       /* La operativa no tiene banco: sus números salen de la semilla de la
          forma. Lo que la protege es la comparación con la referencia. */
     }
+
+    if (sinCongelar) nuevasSinCongelar.push(slug + ' (' + (oro.criticaDeAntes + 1) + ' a ' + topePrueba + ')');
 
     /* 3 · del banco, en la crítica. Se mira por texto. En unas pocas
        misiones parte de la prueba la escribe el generador (una rúbrica
@@ -198,6 +221,16 @@ if (criticaSinCongelar.length) {
   console.log('\n  Por congelar · ' + criticaSinCongelar.length + ' misiones ya reparten la prueba de pensamiento crítico sin repetir y esperan el visto bueno de Josué');
   console.log('  para tener referencia (genera-formas-oro.js --critica <carpeta>):');
   criticaSinCongelar.forEach(d => console.log('    · ' + d));
+}
+if (deAntesSinNuevas.length) {
+  console.log('\n  Con su sorteo de antes · ' + deAntesSinNuevas.length + ' misiones de estructura propia tienen congelada su prueba de pensamiento crítico');
+  console.log('  tal como salía (formas 1 a 30) y todavía no ofrecen formas nuevas:');
+  deAntesSinNuevas.forEach(d => console.log('    · ' + d));
+}
+if (nuevasSinCongelar.length) {
+  console.log('\n  Por congelar · ' + nuevasSinCongelar.length + ' misiones de estructura propia ya ofrecen formas nuevas de la prueba de pensamiento crítico.');
+  console.log('  Sus formas de antes siguen idénticas; las nuevas esperan el visto bueno de Josué (genera-formas-oro.js --critica-ampliar <carpeta>):');
+  nuevasSinCongelar.forEach(d => console.log('    · ' + d));
 }
 if (deudaBanco.length) {
   console.log('\n  Pendiente conocido · en ' + deudaBanco.length + ' misiones parte de la prueba crítica la escribe el generador y no un banco');

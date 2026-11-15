@@ -354,7 +354,7 @@ function escribirOro(oro) {
   const lineas = ['{'];
   /* Lo de la crítica solo se escribe en la referencia que ya la tiene
      congelada: así las demás quedan byte a byte como estaban. */
-  ['slug', 'archivo', 'tope', 'congelado', 'desde', 'criticaCongelada', 'criticaDesde'].filter(k => k in oro)
+  ['slug', 'archivo', 'tope', 'congelado', 'desde', 'criticaCongelada', 'criticaDesde', 'criticaDeAntes', 'criticaAmpliada', 'criticaAmpliadaDesde'].filter(k => k in oro)
     .forEach(k => lineas.push('  ' + JSON.stringify(k) + ': ' + JSON.stringify(oro[k]) + ','));
   lineas.push('  "bancos": {');
   const nb = Object.keys(oro.bancos).sort();
