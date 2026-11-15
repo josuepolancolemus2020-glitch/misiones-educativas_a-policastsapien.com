@@ -921,8 +921,11 @@ const evalPRBank=[
 const EVAL_FORMAS = 30;
 /* _evalRng, _shuffleF, _pickF y _injectFormaSel ya no se copian aquí: están en
    js/motor-misiones.js, que la página carga antes que este archivo. Si un teléfono
-   abre la página guardada de antes, que no lo pide, se pide aquí. */
-if (typeof _evalRng !== 'function') { (function () { var m = document.createElement('script'); m.src = '../../js/motor-misiones.js'; document.head.appendChild(m); })(); }
+   abre la página guardada de antes, que no lo pide, se pide aquí. Y también si
+   tiene guardado el motor de antes, que todavía no sabe conservar las formas
+   ya impresas de la prueba de pensamiento crítico (_conFormasDeAntes): con
+   mala señal puede llegar este archivo nuevo y servirse el motor viejo. */
+if (typeof _evalRng !== 'function' || typeof _conFormasDeAntes !== 'function') { (function () { var m = document.createElement('script'); m.src = '../../js/motor-misiones.js'; document.head.appendChild(m); })(); }
 // Selector «Forma exacta»: el docente elige qué forma generar (p.ej. para
 // reimprimir la pauta de la Forma 15 que ya repartió a los alumnos).
 function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalFormNum, function (v) { evalFormNum = v; }); }
@@ -1145,14 +1148,76 @@ ${markers}
 </svg>`;
 }
 
+// ── II y III se calculan con la semilla de la forma: cinco puntos para
+// ubicar y cinco husos horarios. Cada uno gasta la semilla en este orden
+// exacto; cambiarlo cambiaría las formas ya impresas.
+function _critPuntosDe(rng) {
+    const puntos = [];
+    for (let i = 0; i < 5; i++) {
+        const z = critZonas[Math.floor(rng() * critZonas.length)];
+        const lat = z.lo + Math.floor(rng() * (z.hi - z.lo + 1));
+        const latH = rng() < 0.5 ? 'N' : 'S';
+        const lon = 5 + Math.floor(rng() * 170);
+        const lonH = rng() < 0.5 ? 'E' : 'O';
+        puntos.push({ lat, latH, lon, lonH, zona: z.name });
+    }
+    return puntos;
+}
+function _critHusosDe(rng) {
+    const husos = [];
+    for (let i = 0; i < 5; i++) {
+        const base = Math.floor(rng() * 24);
+        const k = 1 + Math.floor(rng() * 8);     // 1..8 husos
+        const deg = 15 * k;
+        const hemi = rng() < 0.5 ? 'E' : 'O';
+        const ans = (((base + (hemi === 'E' ? k : -k)) % 24) + 24) % 24; // Este suma, Oeste resta
+        husos.push({ base, deg, hemi, ans });
+    }
+    return husos;
+}
+/* Las formas 1 a 30 de esta prueba ya están impresas en las escuelas con
+   su pauta. Salían de un sorteo con la semilla de la forma, y así siguen
+   saliendo: los puntos del planisferio, luego los puntos y los husos
+   calculados, y al final los casos, los errores y la antípoda, en ese
+   orden. Lo vigila _dev/verifica-formas-oro.js contra la referencia
+   congelada. */
+const CRIT_FORMAS_DE_ANTES = 30;
+function critSorteoDeAntes(forma) {
+    const rng = _evalRng(200000 + forma);
+    const plItems = _pickF(critPlanisGrid, 5, rng);
+    const deItems = _critPuntosDe(rng);
+    const hzItems = _critHusosDe(rng);
+    const expItems = _pickF(critExpBank, 2, rng);
+    const erItems = _pickF(critErrBank, 2, rng);
+    const an = _pickF(critAntiBank, 1, rng)[0];
+    return { plItems, deItems, hzItems, expItems, erItems, an };
+}
+function critFormaDeAntes(forma) {
+    const s = critSorteoDeAntes(forma);
+    return [s.plItems, s.expItems, s.erItems, [s.an]];
+}
+/* Los apartados que salen de un banco, con cuántos casos saca cada uno:
+   los puntos del planisferio, los casos del explorador, los errores y la
+   antípoda. Con esto el motor (js/motor-misiones.js) deja las formas 1 a
+   30 como estaban y reparte las nuevas, de la 31 a la 50, sin que ninguna
+   lleve el conjunto de casos de otra. Las secciones II y III no entran:
+   no salen de un banco, se calculan. */
+function critApartados() {
+    return _conFormasDeAntes([[critPlanisGrid, 5], [critExpBank, 2], [critErrBank, 2], [critAntiBank, 1]], CRIT_FORMAS_DE_ANTES, critFormaDeAntes);
+}
+/* Lo que lleva una forma. Las de antes, su sorteo. Las nuevas, los casos
+   que repartió el motor, y los puntos y husos calculados con la semilla
+   de la forma, como siempre. */
+function critSorteo(forma, casos) {
+    if (forma <= CRIT_FORMAS_DE_ANTES) return critSorteoDeAntes(forma);
+    const rng = _evalRng(200000 + forma);
+    return { plItems: casos[0], deItems: _critPuntosDe(rng), hzItems: _critHusosDe(rng), expItems: casos[1], erItems: casos[2], an: casos[3][0] };
+}
 function genEvalCrit() {
     sfx('click');
-    _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
-    const _sC = document.getElementById('evalCritFormaSel');
-    if (_sC && parseInt(_sC.value, 10)) evalCritFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_sC.value, 10)));
-    const cf = evalCritFormNum; window._currentEvalCritForm = cf; const rngC = _evalRng(200000 + cf);
-    evalCritFormNum = (evalCritFormNum % EVAL_FORMAS) + 1;
-    _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
+    const turno = _turnoCritica(evalCritFormNum, critApartados(), function (v) { evalCritFormNum = v; });
+    const cf = turno.forma; window._currentEvalCritForm = cf;
+    const { plItems, deItems, hzItems, expItems, erItems, an } = critSorteo(cf, turno.casos);
     saveProgress();
     const titleEl = document.getElementById('evalcrit-screen-title');
     if (titleEl) titleEl.textContent = `🧠 Pensamiento Crítico · Forma ${cf} · Coordenadas Geográficas`;
@@ -1165,7 +1230,6 @@ function genEvalCrit() {
     out.appendChild(bar);
 
     // ── I. Lectura del planisferio (5 puntos × 4 pts = 20)
-    const plItems = _pickF(critPlanisGrid, 5, rngC);
     let plRows = '';
     plItems.forEach((p, i) => {
         plRows += `<div class="crit-coord-row"><span class="crit-coord-lbl">${'ABCDE'[i]}.</span>
@@ -1180,15 +1244,6 @@ function genEvalCrit() {
     out.appendChild(s1);
 
     // ── II. ¿Dónde estoy? (5 × 4 pts = 20)
-    const deItems = [];
-    for (let i = 0; i < 5; i++) {
-        const z = critZonas[Math.floor(rngC() * critZonas.length)];
-        const lat = z.lo + Math.floor(rngC() * (z.hi - z.lo + 1));
-        const latH = rngC() < 0.5 ? 'N' : 'S';
-        const lon = 5 + Math.floor(rngC() * 170);
-        const lonH = rngC() < 0.5 ? 'E' : 'O';
-        deItems.push({ lat, latH, lon, lonH, zona: z.name });
-    }
     let deRows = '';
     deItems.forEach((it, i) => {
         deRows += `<div class="crit-de-item"><div class="crit-scenario"><strong>${i + 1}.</strong> Un punto está en <strong>${it.lat}° ${it.latH}, ${it.lon}° ${it.lonH}</strong>.</div><div class="crit-de-fields">
@@ -1202,15 +1257,6 @@ function genEvalCrit() {
     out.appendChild(s2);
 
     // ── III. Relojero de husos horarios (5 × 4 pts = 20)
-    const hzItems = [];
-    for (let i = 0; i < 5; i++) {
-        const base = Math.floor(rngC() * 24);
-        const k = 1 + Math.floor(rngC() * 8);     // 1..8 husos
-        const deg = 15 * k;
-        const hemi = rngC() < 0.5 ? 'E' : 'O';
-        const ans = (((base + (hemi === 'E' ? k : -k)) % 24) + 24) % 24; // Este suma, Oeste resta
-        hzItems.push({ base, deg, hemi, ans });
-    }
     let hzRows = '';
     hzItems.forEach((it, i) => {
         hzRows += `<div class="crit-hz-item"><div class="crit-scenario"><strong>${i + 1}.</strong> Si en Greenwich (0°) son las <strong>${it.base}:00</strong>, ¿qué hora es a <strong>${it.deg}° ${_hemEOWord(it.hemi)}</strong>?</div><label class="crit-hz-lbl">Hora: <input class="crit-num-input crit-hz-input" type="text" inputmode="numeric" data-hz="${i}" placeholder="ej. ${it.ans} o ${it.ans}:00" aria-label="Hora en el punto ${i + 1}"></label><div class="crit-pauta">${it.deg}° ÷ 15° = ${it.deg / 15} husos hacia el ${_hemEOWord(it.hemi)} → ${it.base}:00 ${it.hemi === 'E' ? '+' : '−'} ${it.deg / 15} h = ${it.ans}:00.</div><div class="eval-item-feedback" id="critFbHz${i}" aria-live="polite"></div></div>`;
@@ -1220,7 +1266,6 @@ function genEvalCrit() {
     out.appendChild(s3);
 
     // ── IV. Problemas del explorador hondureño (2 casos × 10 pts = 20; autoevaluación por casillas)
-    const expItems = _pickF(critExpBank, 2, rngC);
     let expRows = '';
     expItems.forEach((it, i) => {
         expRows += `<div class="crit-q-block"><div class="crit-scenario">🧭 <strong>Caso ${i + 1}:</strong> ${it.case}</div><p class="crit-q-label">${it.ask}</p><textarea class="crit-textarea" rows="3" aria-label="Respuesta del caso ${i + 1}" placeholder="Justifica ubicación y ruta..."></textarea><div class="crit-selfcheck"><span class="crit-selfcheck-lbl">Autoevaluación (marca lo que cumpliste):</span>${it.crit.map(c => `<label class="crit-chk-lbl"><input type="checkbox" class="crit-exp-chk"> ${c}</label>`).join('')}</div><div class="crit-pauta">Respuesta modelo: ${it.model}</div></div>`;
@@ -1230,12 +1275,10 @@ function genEvalCrit() {
     out.appendChild(s4);
 
     // ── V. Detective del error (2 × 5 = 10) + Antípodas (10) = 20
-    const erItems = _pickF(critErrBank, 2, rngC);
     let erRows = '';
     erItems.forEach((it, i) => {
         erRows += `<div class="crit-q-block"><div class="crit-scenario">❌ ${it.bad}</div><p class="crit-q-label">Corrige la afirmación (con tus palabras, incluyendo el término correcto):</p><textarea class="crit-textarea" data-err="${i}" rows="2" aria-label="Corrección de la afirmación ${i + 1}" placeholder="Reescríbela de forma correcta..."></textarea><div class="crit-pauta">${it.fix}</div><div class="eval-item-feedback" id="critFbEr${i}" aria-live="polite"></div></div>`;
     });
-    const an = _pickF(critAntiBank, 1, rngC)[0];
     const anAns = { lat: an.lat, latH: _flipNS(an.latH), lon: 180 - an.lon, lonH: _flipEO(an.lonH) };
     const anBlock = `<div class="crit-q-block"><div class="crit-scenario">🌐 Calcula la <strong>antípoda</strong> del punto <strong>${an.lat}°${an.latH}, ${an.lon}°${an.lonH}</strong> (${an.place}). Regla: misma latitud con signo (hemisferio) contrario, y longitud 180° − la longitud dada, invirtiendo E/O.</div><div class="crit-de-fields">
 <label>Lat antípoda: <input class="crit-num-input" type="text" inputmode="numeric" data-anti-lat aria-label="Latitud de la antípoda">°</label>
@@ -1802,4 +1845,4 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 
 // Formas deterministas v1: selectores de forma visibles desde la carga de la página
-(function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalOp==='function') _injectFormaSel('genEvalOp','evalOpFormaSel',evalOpFormNum,function(v){evalOpFormNum=v;}); }catch(e){} try{ if(typeof genEvalCrit==='function') _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
+(function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalOp==='function') _injectFormaSel('genEvalOp','evalOpFormaSel',evalOpFormNum,function(v){evalOpFormNum=v;}); }catch(e){} try{ if(typeof genEvalCrit==='function') _selectorCritica(evalCritFormNum,critApartados(),function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();

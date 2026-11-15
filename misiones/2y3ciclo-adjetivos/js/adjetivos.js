@@ -938,8 +938,11 @@ const evalPRBank=[
 const EVAL_FORMAS = 30;
 /* _evalRng, _shuffleF, _pickF y _injectFormaSel ya no se copian aquí: están en
    js/motor-misiones.js, que la página carga antes que este archivo. Si un teléfono
-   abre la página guardada de antes, que no lo pide, se pide aquí. */
-if (typeof _evalRng !== 'function') { (function () { var m = document.createElement('script'); m.src = '../../js/motor-misiones.js'; document.head.appendChild(m); })(); }
+   abre la página guardada de antes, que no lo pide, se pide aquí. Y también si
+   tiene guardado el motor de antes, que todavía no sabe conservar las formas
+   ya impresas de la prueba de pensamiento crítico (_conFormasDeAntes): con
+   mala señal puede llegar este archivo nuevo y servirse el motor viejo. */
+if (typeof _evalRng !== 'function' || typeof _conFormasDeAntes !== 'function') { (function () { var m = document.createElement('script'); m.src = '../../js/motor-misiones.js'; document.head.appendChild(m); })(); }
 // Selector «Forma exacta»: el docente elige qué forma generar (p.ej. para
 // reimprimir la pauta de la Forma 15 que ya repartió a los alumnos).
 function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalFormNum, function (v) { evalFormNum = v; }); }
@@ -1313,14 +1316,27 @@ function _gradeMatch(text, groups) {
     return groups.some(g => g.every(k => s.includes(normalizeEvalAnswer(k))));
 }
 
+/* Las formas 1 a 30 de esta prueba ya están impresas en las escuelas con
+   su pauta. Salían de un sorteo con la semilla de la forma, y así siguen
+   saliendo: aquí no se cambia ni el orden de las cuatro sacadas. Lo vigila
+   _dev/verifica-formas-oro.js contra la referencia congelada. */
+const CRIT_FORMAS_DE_ANTES = 30;
+function critFormaDeAntes(forma) {
+    const rng = _evalRng(200000 + forma);
+    return [_pickF(critConcBank, 5, rng), _pickF(critGradeBank, 5, rng), _pickF(critTextBank, 1, rng), _pickF(critJudgeBank, 4, rng)];
+}
+/* Los apartados de la prueba, con su banco y cuántos casos saca cada uno.
+   Con esto el motor (js/motor-misiones.js) deja las formas 1 a 30 como
+   estaban y reparte las nuevas, de la 31 a la 50, sin que ninguna lleve el
+   conjunto de casos de otra. El orden es el de la hoja. */
+function critApartados() {
+    return _conFormasDeAntes([[critConcBank, 5], [critGradeBank, 5], [critTextBank, 1], [critJudgeBank, 4]], CRIT_FORMAS_DE_ANTES, critFormaDeAntes);
+}
 function genEvalCrit() {
     sfx('click');
-    _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
-    const _sC = document.getElementById('evalCritFormaSel');
-    if (_sC && parseInt(_sC.value, 10)) evalCritFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_sC.value, 10)));
-    const cf = evalCritFormNum; window._currentEvalCritForm = cf; const rngC = _evalRng(200000 + cf);
-    evalCritFormNum = (evalCritFormNum % EVAL_FORMAS) + 1;
-    _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
+    const turno = _turnoCritica(evalCritFormNum, critApartados(), function (v) { evalCritFormNum = v; });
+    const cf = turno.forma; window._currentEvalCritForm = cf;
+    const [coItems, grItems, [txt], juItems] = turno.casos;
     saveProgress();
     document.getElementById('evalcrit-screen-title').textContent = `🧠 Pensamiento Crítico · Forma ${cf} · Los Adjetivos`;
     evalCritAnsVisible = false;
@@ -1331,7 +1347,6 @@ function genEvalCrit() {
     out.appendChild(bar);
 
     // ── I. Detective de la concordancia (5×4=20)
-    const coItems = _pickF(critConcBank, 5, rngC);
     let coRows = '';
     coItems.forEach((it, i) => {
         coRows += `<div class="crit-q-block"><div class="crit-scenario">❌ ${it.bad}</div><div class="crit-q-label">Escribe la palabra <strong>corregida</strong>: <input class="crit-input" data-co="${i}" type="text" autocomplete="off" aria-label="Corrección ${i + 1}"></div><textarea class="crit-textarea" rows="2" aria-label="Justifica la corrección ${i + 1}" placeholder="¿Por qué está mal? Explica la concordancia..."></textarea><div class="crit-pauta">Corrección: <strong>${it.fix}</strong>. ${it.just}</div><div class="eval-item-feedback" id="critFbCo${i}" aria-live="polite"></div></div>`;
@@ -1341,7 +1356,6 @@ function genEvalCrit() {
     out.appendChild(s1);
 
     // ── II. Transforma el grado (5×4=20)
-    const grItems = _pickF(critGradeBank, 5, rngC);
     let grRows = '';
     grItems.forEach((it, i) => {
         grRows += `<div class="crit-q-block"><div class="crit-scenario">Grado positivo: <strong>${it.pos}</strong></div><div class="crit-q-label">Reescríbela en <strong>${it.grade}</strong>: <textarea class="crit-textarea" data-gr="${i}" rows="2" aria-label="Transforma al grado ${i + 1}" placeholder="Escribe la oración transformada..."></textarea></div><div class="crit-pauta">Ejemplo: ${it.model}</div><div class="eval-item-feedback" id="critFbGr${i}" aria-live="polite"></div></div>`;
@@ -1351,7 +1365,6 @@ function genEvalCrit() {
     out.appendChild(s2);
 
     // ── III. Análisis de texto breve (1 párrafo, tabla de 5 adjetivos, 5×4=20)
-    const txt = _pickF(critTextBank, 1, rngC)[0];
     let anRows = '';
     txt.adjs.forEach((a, i) => {
         anRows += `<tr><td class="crit-tbl-adj">${a.w}</td><td>${_critSel('crit-an-select', 'data-an-gen', i, CRIT_GEN)}</td><td>${_critSel('crit-an-select', 'data-an-num', i, CRIT_NUM)}</td><td>${_critSel('crit-an-select', 'data-an-gra', i, CRIT_GRA)}</td><td class="eval-item-feedback" id="critFbAn${i}" aria-live="polite"></td></tr>`;
@@ -1362,7 +1375,6 @@ function genEvalCrit() {
     out.appendChild(s3);
 
     // ── IV. Juicio crítico (4×5=20)
-    const juItems = _pickF(critJudgeBank, 4, rngC);
     let juRows = '';
     juItems.forEach((it, i) => {
         const opts = it.opts.map((op, oi) => `<label class="crit-radio"><input type="radio" name="critJu${i}" value="${oi}"> ${op}</label>`).join('');
@@ -1752,4 +1764,4 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 
 // Formas deterministas v1: selectores de forma visibles desde la carga de la página
-(function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalOp==='function') _injectFormaSel('genEvalOp','evalOpFormaSel',evalOpFormNum,function(v){evalOpFormNum=v;}); }catch(e){} try{ if(typeof genEvalCrit==='function') _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
+(function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalOp==='function') _injectFormaSel('genEvalOp','evalOpFormaSel',evalOpFormNum,function(v){evalOpFormNum=v;}); }catch(e){} try{ if(typeof genEvalCrit==='function') _selectorCritica(evalCritFormNum,critApartados(),function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();

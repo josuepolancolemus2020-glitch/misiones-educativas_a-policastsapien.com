@@ -19,6 +19,12 @@ misma Forma 7 después de construir el motor compartido
   - La prueba de pensamiento crítico (`critica`, formas 1 a 50) solo en las
     misiones que ya reparten sus formas sin repetir y cuyo banco aprobó Josué.
     La referencia lleva entonces `criticaCongelada` y `criticaDesde`.
+  - En las once misiones de estructura propia (Adjetivos, Adverbios, Áreas
+    protegidas, Eras geológicas, Coordenadas, los dos de Continentes,
+    Pronombres, Sustantivos, Verbos y Adjetivos de bachillerato) las formas
+    1 a 30 de la crítica NO se repartieron de nuevo: están congeladas tal
+    como salían con su sorteo, y la referencia lo dice con `criticaDeAntes`.
+    Sus formas 31 a 50 son nuevas y se añaden aparte (`criticaAmpliada`).
 - `_critica-pendiente.json`: la prueba de pensamiento crítico se rehízo entera
   y pasa al reparto sin repetir por tandas. Este archivo cuenta qué misiones
   siguen sacando los casos al azar y repiten formas, para que la sonda
@@ -37,6 +43,12 @@ heterogéneas.
   que ya existe las formas de la prueba de pensamiento crítico, sin tocar lo
   demás. Solo cuando Josué aprobó el banco de esa misión: desde ese momento su
   pauta impresa queda fija.
+- `node _dev/genera-formas-oro.js --critica-de-antes <carpeta>`: congela la
+  crítica de una misión de estructura propia tal como sale hoy con su sorteo
+  (formas 1 a 30), ANTES de tocarla.
+- `node _dev/genera-formas-oro.js --critica-ampliar <carpeta>`: añade después
+  las formas nuevas (31 a 50), cuando Josué las aprobó. Se niega si alguna de
+  las de antes ya no sale idéntica.
 - `node _dev/verifica-critica-sin-repetir.js` (va en `npm test`): ninguna forma
   crítica repite el conjunto de casos de otra y todo sale del banco de su misión.
 

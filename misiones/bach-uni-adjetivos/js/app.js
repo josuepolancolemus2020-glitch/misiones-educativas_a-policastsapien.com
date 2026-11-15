@@ -865,8 +865,11 @@ const evalPRBank=[
 const EVAL_FORMAS = 30;
 /* _evalRng, _shuffleF, _pickF y _injectFormaSel ya no se copian aquí: están en
    js/motor-misiones.js, que la página carga antes que este archivo. Si un teléfono
-   abre la página guardada de antes, que no lo pide, se pide aquí. */
-if (typeof _evalRng !== 'function') { (function () { var m = document.createElement('script'); m.src = '../../js/motor-misiones.js'; document.head.appendChild(m); })(); }
+   abre la página guardada de antes, que no lo pide, se pide aquí. Y también si
+   tiene guardado el motor de antes, que todavía no sabe conservar las formas
+   ya impresas de la prueba de pensamiento crítico (_conFormasDeAntes): con
+   mala señal puede llegar este archivo nuevo y servirse el motor viejo. */
+if (typeof _evalRng !== 'function' || typeof _conFormasDeAntes !== 'function') { (function () { var m = document.createElement('script'); m.src = '../../js/motor-misiones.js'; document.head.appendChild(m); })(); }
 // Selector «Forma exacta»: el docente elige qué forma generar (p.ej. para
 // reimprimir la pauta de la Forma 15 que ya repartió a los alumnos).
 function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalFormNum, function (v) { evalFormNum = v; }); }
@@ -1193,14 +1196,47 @@ function _critSel(cls, dataAttr, i, opts, label){
   return `<select class="${cls}" ${dataAttr}="${i}" aria-label="${label}"><option value="">?</option>${opts.map(o=>`<option value="${o}">${o}</option>`).join('')}</select>`;
 }
 
+/* Las formas 1 a 30 de esta prueba ya están impresas con su pauta. Salían
+   de un sorteo con la semilla de la forma, y así siguen saliendo: aquí no
+   se cambia ni el orden de las sacadas ni el barajado de las filas de la
+   matriz, que gasta la misma semilla entre la tercera sacada y la del
+   ensayo. Lo vigila _dev/verifica-formas-oro.js contra la referencia
+   congelada. */
+const CRIT_FORMAS_DE_ANTES=30;
+function critSorteoDeAntes(forma){
+  const rng=_evalRng(200000+forma);
+  const siItems=_pickF(critSintBank,5,rng);
+  const juItems=_pickF(critJuezBank,5,rng);
+  const seItems=_pickF(critSemBank,4,rng);
+  const maItems=_shuffleF(critMatrizBank,rng);
+  const enItem=_pickF(critEnsayoBank,1,rng)[0];
+  return {siItems,juItems,seItems,maItems,enItem};
+}
+function critFormaDeAntes(forma){
+  const s=critSorteoDeAntes(forma);
+  return [s.siItems,s.juItems,s.seItems,[s.enItem]];
+}
+/* Los apartados que se sacan de un banco, con cuántos casos saca cada uno
+   (la matriz de la sección IV no entra: lleva siempre sus cinco adjetivos).
+   Con esto el motor (js/motor-misiones.js) deja las formas 1 a 30 como
+   estaban y reparte las nuevas, de la 31 a la 50, sin que ninguna lleve el
+   conjunto de casos de otra. El orden es el de la hoja. */
+function critApartados(){
+  return _conFormasDeAntes([[critSintBank,5],[critJuezBank,5],[critSemBank,4],[critEnsayoBank,1]],CRIT_FORMAS_DE_ANTES,critFormaDeAntes);
+}
+/* Lo que lleva una forma. Las de antes, su sorteo. Las nuevas, los casos
+   que repartió el motor; las filas de la matriz se barajan con la semilla,
+   como siempre. */
+function critSorteo(forma,casos){
+  if(forma<=CRIT_FORMAS_DE_ANTES) return critSorteoDeAntes(forma);
+  const rng=_evalRng(200000+forma);
+  return {siItems:casos[0],juItems:casos[1],seItems:casos[2],maItems:_shuffleF(critMatrizBank,rng),enItem:casos[3][0]};
+}
 function genEvalCrit(){
   sfx('click');
-  _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;});
-  const _sC=document.getElementById('evalCritFormaSel');
-  if(_sC&&parseInt(_sC.value,10)) evalCritFormNum=Math.min(EVAL_FORMAS,Math.max(1,parseInt(_sC.value,10)));
-  const cf=evalCritFormNum; window._currentEvalCritForm=cf; const rngC=_evalRng(200000+cf);
-  evalCritFormNum=(evalCritFormNum%EVAL_FORMAS)+1;
-  _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;});
+  const turno=_turnoCritica(evalCritFormNum,critApartados(),function(v){evalCritFormNum=v;});
+  const cf=turno.forma; window._currentEvalCritForm=cf;
+  const {siItems,juItems,seItems,maItems,enItem}=critSorteo(cf,turno.casos);
   saveProgress();
   document.getElementById('evalcrit-screen-title').textContent=`🧠 Pensamiento Crítico · Forma ${cf} · El Adjetivo Avanzado (NGLE)`;
   evalCritAnsVisible=false;
@@ -1211,7 +1247,6 @@ function genEvalCrit(){
   out.appendChild(bar);
 
   // ── I. Análisis sintáctico dirigido (5×4=20): adjetivo(2) + clase(1) + función(1)
-  const siItems=_pickF(critSintBank,5,rngC);
   let siRows='';
   siItems.forEach((it,i)=>{ siRows+=`<div class="crit-q-block"><div class="crit-scenario"><strong>${i+1}.</strong> ${it.s}</div><div class="crit-field-row"><label class="crit-field">Adjetivo: <input class="crit-adj-input" data-siadj="${i}" type="text" autocomplete="off" aria-label="Adjetivo de la oración ${i+1}"></label></div><div class="crit-field-row"><label class="crit-field">Clase NGLE: ${_critSel('crit-cc-select','data-siclase',i,critClaseOpts,'Clase NGLE de la oración '+(i+1))}</label><label class="crit-field">Función: ${_critSel('crit-cc-select','data-sifunc',i,critFuncOpts,'Función sintáctica de la oración '+(i+1))}</label></div><div class="crit-pauta">Adjetivo «${it.adj}» · Clase: ${it.clase} · Función: ${it.funcion}.</div><div class="eval-item-feedback" id="critFbSi${i}" aria-live="polite"></div></div>`; });
   const s1=document.createElement('div');
@@ -1219,7 +1254,6 @@ function genEvalCrit(){
   out.appendChild(s1);
 
   // ── II. Juez de gramaticalidad (5×4=20): radio válida/agramatical (auto) + regla modelo
-  const juItems=_pickF(critJuezBank,5,rngC);
   let juRows='';
   juItems.forEach((it,i)=>{ juRows+=`<div class="crit-q-block"><div class="crit-scenario"><strong>${i+1}.</strong> <span class="crit-expr">${it.expr}</span></div><div class="crit-radio-row"><label class="crit-radio"><input type="radio" name="crju${i}" value="valida"> Válida</label><label class="crit-radio"><input type="radio" name="crju${i}" value="agramatical"> Agramatical</label></div><label class="crit-q-label" style="font-weight:400;">Justifica con la regla exacta:</label><textarea class="crit-textarea" rows="2" aria-label="Justificación de la construcción ${i+1}" placeholder="Escribe la regla que la explica..."></textarea><div class="crit-pauta">${it.valida?'Válida':'Agramatical'}. ${it.regla}</div><div class="eval-item-feedback" id="critFbJu${i}" aria-live="polite"></div></div>`; });
   const s2=document.createElement('div');
@@ -1227,7 +1261,6 @@ function genEvalCrit(){
   out.appendChild(s2);
 
   // ── III. Contraste semántico por posición (4×5=20): textarea + palabra clave
-  const seItems=_pickF(critSemBank,4,rngC);
   let seRows='';
   seItems.forEach((it,i)=>{ seRows+=`<div class="crit-q-block"><div class="crit-scenario"><strong>${i+1}.</strong> <span class="crit-expr">${it.par}</span></div><textarea class="crit-textarea" data-se="${i}" rows="2" aria-label="Contraste semántico del par ${i+1}" placeholder="Explica en 1-2 líneas el cambio de significado o el fenómeno..."></textarea><div class="crit-pauta">${it.model}</div><div class="eval-item-feedback" id="critFbSe${i}" aria-live="polite"></div></div>`; });
   const s3=document.createElement('div');
@@ -1235,7 +1268,6 @@ function genEvalCrit(){
   out.appendChild(s3);
 
   // ── IV. Matriz morfosemántica (5×4=20): 5 filas × 4 selects (1 pt c/u), orden barajado
-  const maItems=_shuffleF(critMatrizBank,rngC);
   const th=(t,extra='')=>`<th class="crit-mx-th"${extra?' style="'+extra+'"':''}>${t}</th>`;
   let maTable=`<div style="overflow-x:auto;"><table class="crit-mx-table"><thead><tr>${th('Adjetivo','text-align:left;')}${th('Género')}${th('Número')}${th('Grado')}${th('Tipología')}</tr></thead><tbody>`;
   maItems.forEach((it,i)=>{ maTable+=`<tr><td class="crit-mx-word">${it.w}</td><td>${_critSel('crit-fossil-select','data-magen',i,critGenOpts,'Género de '+it.w)}</td><td>${_critSel('crit-fossil-select','data-manum',i,critNumOpts,'Número de '+it.w)}</td><td>${_critSel('crit-fossil-select','data-magrado',i,critGradoOpts,'Grado de '+it.w)}</td><td>${_critSel('crit-fossil-select','data-matipo',i,critTipoOpts,'Tipología de '+it.w)}</td></tr>`; });
@@ -1246,7 +1278,6 @@ function genEvalCrit(){
   out.appendChild(s4);
 
   // ── V. Miniensayo NGLE (1×20): pregunta rotada + autoevaluación rúbrica 4×5
-  const enItem=_pickF(critEnsayoBank,1,rngC)[0];
   const s5=document.createElement('div');
   s5.innerHTML=`<div class="eval-section-title">V. Miniensayo NGLE <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-q-block"><div class="crit-q-label">${enItem.q}</div><textarea class="crit-textarea" rows="5" aria-label="Miniensayo NGLE"></textarea><div class="crit-pauta">Respuesta modelo: ${enItem.model}</div></div><div class="crit-rubric"><strong>📋 Rúbrica (4 criterios × 5 pts):</strong> tesis clara · terminología NGLE precisa · ejemplos propios · redacción y cohesión.</div><div class="crit-selfscore"><span>Autoevaluación:</span><label class="crit-field">Tesis <input type="number" id="critScoreTesis" class="crit-score-input" min="0" max="5" value="0"></label><label class="crit-field">Terminología <input type="number" id="critScoreTerm" class="crit-score-input" min="0" max="5" value="0"></label><label class="crit-field">Ejemplos <input type="number" id="critScoreEj" class="crit-score-input" min="0" max="5" value="0"></label><label class="crit-field">Redacción <input type="number" id="critScoreRed" class="crit-score-input" min="0" max="5" value="0"></label><span>de 20 pts</span></div></div>`;
   out.appendChild(s5);
@@ -1528,4 +1559,4 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 
 // Formas deterministas v1: selectores de forma visibles desde la carga de la página
-(function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalOp==='function') _injectFormaSel('genEvalOp','evalOpFormaSel',evalOpFormNum,function(v){evalOpFormNum=v;}); }catch(e){} try{ if(typeof genEvalCrit==='function') _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
+(function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalOp==='function') _injectFormaSel('genEvalOp','evalOpFormaSel',evalOpFormNum,function(v){evalOpFormNum=v;}); }catch(e){} try{ if(typeof genEvalCrit==='function') _selectorCritica(evalCritFormNum,critApartados(),function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();

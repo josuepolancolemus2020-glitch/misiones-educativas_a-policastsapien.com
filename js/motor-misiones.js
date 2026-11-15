@@ -14,6 +14,8 @@
    2. EL REPARTO DE LA PRUEBA DE PENSAMIENTO CRÍTICO (`_repartoCritica`,
       `_formasCritica`, `_turnoCritica`, `_selectorCritica`): cada forma,
       de la 1 a la 50, lleva un conjunto de casos que no lleva ninguna otra.
+      Una misión con formas ya impresas las conserva (`_conFormasDeAntes`)
+      y solo reparte las nuevas.
    3. LA PUERTA (`mision.html?m=<carpeta>`), que lleva a una misión.
 
    Las funciones del examen se publican con el MISMO nombre global que
@@ -560,20 +562,101 @@
     return _ruedasDe(apartados).reduce(function (total, r) { return Math.min(total * r.maneras, Number.MAX_SAFE_INTEGER); }, 1);
   }
 
+  /* ── Las misiones con formas ya impresas ──
+
+     Once misiones arman su prueba crítica con estructura propia, y sus
+     formas 1 a 30 salían de un sorteo con la semilla. Esas 30 no repetían
+     conjunto y hay maestros que las tienen impresas con su pauta: no se
+     vuelven a repartir. La misión lo dice colgando de sus apartados
+     cuántas formas son de antes y cómo salían:
+
+        _conFormasDeAntes([[banco, 5], …], 30, function (forma) {
+          return [casos del apartado 1, casos del apartado 2, …];
+        })
+
+     De ahí en adelante todo lo demás (`_repartoCritica`, `_formasCritica`,
+     `_turnoCritica`, `_selectorCritica`) recibe esos mismos apartados y ya
+     sabe qué hacer: hasta la última forma de antes devuelve lo que salía,
+     y de la siguiente en adelante sigue el reparto de siempre desde su
+     primera posición, SALTANDO los conjuntos que una forma de antes ya
+     llevó. Así ninguna forma nueva repite a otra nueva (es el mismo
+     reparto) ni a una de antes (se saltó).
+
+     Los casos nuevos de un banco se añaden AL FINAL y en otro arreglo
+     (`banco.concat(nuevos)`): el sorteo de antes baraja el banco entero,
+     y un caso más en él cambiaría las 30 formas impresas. */
+  function _conFormasDeAntes(apartados, cuantas, deAntes) {
+    if (!(cuantas >= 1) || typeof deAntes !== 'function') throw new Error('Pensamiento crítico: las formas de antes piden cuántas son y cómo salían');
+    apartados.formasDeAntes = Math.floor(cuantas);
+    apartados.deAntes = deAntes;
+    return apartados;
+  }
+
+  /* El conjunto de una forma, sin el orden: de cada apartado, las
+     posiciones de sus casos en el banco. Un caso que no está en el banco
+     de su apartado revienta aquí con su número. */
+  function _llaveDeConjunto(ruedas, casos) {
+    return ruedas.map(function (r, i) {
+      var suyos = casos && casos[i];
+      if (!Array.isArray(suyos) || suyos.length !== r.saca) throw new Error('Pensamiento crítico, apartado ' + (i + 1) + ': una forma de antes no trae los ' + r.saca + ' casos que saca');
+      return suyos.map(function (c) {
+        var pos = r.banco.indexOf(c);
+        if (pos < 0) throw new Error('Pensamiento crítico, apartado ' + (i + 1) + ': una forma de antes trae un caso que no está en su banco');
+        return pos;
+      }).sort(function (a, b) { return a - b; }).join(',');
+    }).join('|');
+  }
+
+  /* Los conjuntos que ya llevaron las formas de antes. Se guarda colgado
+     de los mismos apartados: en un turno se pregunta varias veces. */
+  function _usadosAntes(apartados, ruedas) {
+    if (apartados._usadosAntes) return apartados._usadosAntes;
+    var usados = {}, distintos = 0;
+    for (var f = 1; f <= apartados.formasDeAntes; f++) {
+      var llave = _llaveDeConjunto(ruedas, apartados.deAntes(f));
+      if (!usados[llave]) { usados[llave] = f; distintos++; }
+    }
+    return (apartados._usadosAntes = { llaves: usados, distintos: distintos });
+  }
+
   /* Cuántas formas tiene la prueba crítica de una misión: 50, o las que
-     su banco dé si no alcanza. Nunca se ofrece una forma que repita. */
-  function _formasCritica(apartados) { return Math.min(FORMAS_CRITICA, _conjuntosCritica(apartados)); }
+     su banco dé si no alcanza. Nunca se ofrece una forma que repita. Con
+     formas de antes, son esas más los conjuntos que quedaron libres. */
+  function _formasCritica(apartados) {
+    var posibles = _conjuntosCritica(apartados);
+    if (!apartados.deAntes) return Math.min(FORMAS_CRITICA, posibles);
+    return Math.min(FORMAS_CRITICA, apartados.formasDeAntes + posibles - _usadosAntes(apartados, _ruedasDe(apartados)).distintos);
+  }
 
   /* Los casos de una forma: un arreglo por apartado, en el orden en que
      se declararon. No toca los bancos. */
   function _repartoCritica(forma, apartados) {
     var f = Math.max(1, Math.floor(forma) || 1) - 1;
+    var ruedas = _ruedasDe(apartados);
+    if (!apartados.deAntes) return _repartoDeRuedas(f, ruedas);
+    var antes = apartados.formasDeAntes, usados = _usadosAntes(apartados, ruedas);
+    var posibles = _conjuntosCritica(apartados);
+    /* Agotadas las de antes y todos los conjuntos libres, vuelve la 1. */
+    f = f % (antes + posibles - usados.distintos);
+    if (f < antes) return apartados.deAntes(f + 1);
+    /* La forma nueva número n es el n-ésimo conjunto del reparto que
+       ninguna forma de antes llevó. */
+    var faltan = f - antes + 1;
+    for (var paso = 0; paso < posibles; paso++) {
+      var casos = _repartoDeRuedas(paso, ruedas);
+      if (!usados.llaves[_llaveDeConjunto(ruedas, casos)] && --faltan === 0) return casos;
+    }
+    throw new Error('Pensamiento crítico: no quedan conjuntos libres para la forma ' + forma);
+  }
+
+  /* El reparto de siempre, con `f` contando desde 0. */
+  function _repartoDeRuedas(f, ruedas) {
     /* El orden de los casos DENTRO de un apartado no cambia el conjunto,
        pero sí cómo se ve la hoja: se baraja con el generador de siempre,
        con la semilla que ya usaba esta prueba. */
     var rng = _evalRng(200000 + f + 1);
     var peso = 1, pesos = [];
-    return _ruedasDe(apartados).map(function (r) {
+    return ruedas.map(function (r) {
       /* Un apartado con una sola manera (un banco de 1, o sacar los 3 de
          3) no es una rueda: sale igual en todas las formas. */
       if (r.maneras === 1) return _shuffleF(r.banco.slice(0, r.saca), rng);
@@ -586,6 +669,48 @@
       var casos = _maneraNumero(r.banco.length, r.saca, posicion).map(function (i) { return r.banco[i]; });
       return _shuffleF(casos, rng);
     });
+  }
+
+  /* Los casos de una sección de selección, cada uno en una copia con sus
+     opciones barajadas y la posición de la correcta movida con ellas. La
+     correcta no se deja al azar de cada caso, que amontona: se REPARTE
+     entre las letras. Se toman las letras en tandas barajadas (a, b, c, d
+     en desorden; al acabarse, otra tanda), así en una misma hoja ninguna
+     letra se repite hasta que salieron todas, y el orden no se adivina.
+     Es para las formas NUEVAS de una misión con formas de antes: en las de
+     antes las opciones van como estaban, que es como las tiene el maestro
+     en su pauta. No toca el banco. `opciones` y `correcta` son los
+     nombres de esos dos campos del caso; `correcta` puede guardar la
+     posición o el texto de la opción buena. */
+  function _conOpcionesRepartidas(casos, rng, opciones, correcta) {
+    var tanda = [];
+    return casos.map(function (caso) {
+      var todas = caso[opciones], n = todas.length;
+      var porTexto = typeof caso[correcta] !== 'number';
+      var buena = porTexto ? todas.indexOf(caso[correcta]) : caso[correcta];
+      if (!tanda.length) tanda = _shuffleF(todas.map(function (_, i) { return i; }), rng);
+      var sitio = tanda.shift() % n;
+      var nuevas = _shuffleF(todas.filter(function (_, i) { return i !== buena; }), rng);
+      nuevas.splice(sitio, 0, todas[buena]);
+      var copia = {};
+      Object.keys(caso).forEach(function (k) { copia[k] = caso[k]; });
+      copia[opciones] = nuevas;
+      if (!porTexto) copia[correcta] = sitio;
+      return copia;
+    });
+  }
+
+  /* Barajar la columna de un pareado sin dejar ninguna respuesta en la
+     fila de su pregunta: un pareado alineado se contesta sin leer. Vuelve
+     a barajar con la misma semilla hasta que ninguna quede en su sitio.
+     También solo para las formas NUEVAS; las de antes van como salían. */
+  function _barajarSinFilaPropia(lista, rng) {
+    var barajada = _shuffleF(lista, rng);
+    for (var intento = 0; intento < 40 && lista.length > 1; intento++) {
+      if (!barajada.some(function (x, i) { return x === lista[i]; })) break;
+      barajada = _shuffleF(lista, rng);
+    }
+    return barajada;
   }
 
   /* El selector de la prueba crítica, con su propio tope. */
@@ -611,6 +736,9 @@
   }
 
   global._repartoCritica = _repartoCritica;
+  global._conFormasDeAntes = _conFormasDeAntes;
+  global._conOpcionesRepartidas = _conOpcionesRepartidas;
+  global._barajarSinFilaPropia = _barajarSinFilaPropia;
   global._formasCritica = _formasCritica;
   global._conjuntosCritica = _conjuntosCritica;
   global._selectorCritica = _selectorCritica;
@@ -707,7 +835,7 @@
 
   global.MotorMisiones = {
     examen: { rng: _evalRng, barajar: _shuffleF, elegir: _pickF, selectorDeForma: _injectFormaSel },
-    critica: { formasMaximas: FORMAS_CRITICA, conjuntos: _conjuntosCritica, formas: _formasCritica, reparto: _repartoCritica, selector: _selectorCritica, turno: _turnoCritica },
+    critica: { formasMaximas: FORMAS_CRITICA, conjuntos: _conjuntosCritica, formas: _formasCritica, reparto: _repartoCritica, conFormasDeAntes: _conFormasDeAntes, conOpcionesRepartidas: _conOpcionesRepartidas, barajarSinFilaPropia: _barajarSinFilaPropia, selector: _selectorCritica, turno: _turnoCritica },
     abrirPedida: abrirPedida, buscar: buscar, carpetaDe: carpetaDe
   };
 /* `globalThis` y no `window` a secas: en el navegador son lo mismo, y las
