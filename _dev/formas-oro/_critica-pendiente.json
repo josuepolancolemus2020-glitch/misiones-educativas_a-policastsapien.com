@@ -1,56 +1,8 @@
 {
   "nota": "Lo que la prueba de pensamiento crítico tiene pendiente HOY. No es una referencia. Las misiones salen de «repiten» a medida que pasan al reparto sin repetir del motor (critApartados). Sirve para que la sonda distinga esta deuda conocida de una nueva. «repiten»: misiones con formas iguales o con las mismas preguntas en otro orden. «fueraDeBanco»: misiones donde parte de la prueba no sale de un banco sino del generador (rúbrica fija o respuesta calculada), con cuántos textos distintos.",
   "contado": "2026-11-15",
-  "desde": "c90c28d",
+  "desde": "e3e0396",
   "repiten": {
-    "1ciclo-que-es-la-ia": {
-      "formas": 30,
-      "distintas": 28,
-      "iguales": 0,
-      "mismoConjunto": 2
-    },
-    "2ciclo-como-aprende-una-maquina": {
-      "formas": 30,
-      "distintas": 28,
-      "iguales": 0,
-      "mismoConjunto": 2
-    },
-    "2y3ciclo-cinco-reinos": {
-      "formas": 30,
-      "distintas": 28,
-      "iguales": 0,
-      "mismoConjunto": 2
-    },
-    "2y3ciclo-constitucion": {
-      "formas": 30,
-      "distintas": 25,
-      "iguales": 1,
-      "mismoConjunto": 4
-    },
-    "2y3ciclo-ecosistemas": {
-      "formas": 30,
-      "distintas": 26,
-      "iguales": 0,
-      "mismoConjunto": 4
-    },
-    "2y3ciclo-la-energia": {
-      "formas": 30,
-      "distintas": 23,
-      "iguales": 0,
-      "mismoConjunto": 7
-    },
-    "2y3ciclo-la-materia": {
-      "formas": 30,
-      "distintas": 24,
-      "iguales": 1,
-      "mismoConjunto": 5
-    },
-    "2y3ciclo-mayas-precolombinas": {
-      "formas": 30,
-      "distintas": 29,
-      "iguales": 1,
-      "mismoConjunto": 0
-    },
     "2y3ciclo-motores-mecanismos": {
       "formas": 30,
       "distintas": 28,
@@ -67,60 +19,6 @@
       "formas": 30,
       "distintas": 29,
       "iguales": 0,
-      "mismoConjunto": 1
-    },
-    "3ciclo-albores-singularidad": {
-      "formas": 30,
-      "distintas": 28,
-      "iguales": 0,
-      "mismoConjunto": 2
-    },
-    "3ciclo-escenarios-porvenir": {
-      "formas": 30,
-      "distintas": 28,
-      "iguales": 0,
-      "mismoConjunto": 2
-    },
-    "3ciclo-ia-generativa": {
-      "formas": 30,
-      "distintas": 28,
-      "iguales": 0,
-      "mismoConjunto": 2
-    },
-    "3ciclo-peligros-ia": {
-      "formas": 30,
-      "distintas": 27,
-      "iguales": 1,
-      "mismoConjunto": 2
-    },
-    "basica-como-se-que-se": {
-      "formas": 30,
-      "distintas": 29,
-      "iguales": 0,
-      "mismoConjunto": 1
-    },
-    "basica-de-que-esta-hecho-el-mundo": {
-      "formas": 30,
-      "distintas": 26,
-      "iguales": 0,
-      "mismoConjunto": 4
-    },
-    "basica-el-asombro": {
-      "formas": 30,
-      "distintas": 26,
-      "iguales": 1,
-      "mismoConjunto": 3
-    },
-    "basica-palabras-que-piensan": {
-      "formas": 30,
-      "distintas": 29,
-      "iguales": 0,
-      "mismoConjunto": 1
-    },
-    "basica-pensar-con-orden": {
-      "formas": 30,
-      "distintas": 28,
-      "iguales": 1,
       "mismoConjunto": 1
     }
   },

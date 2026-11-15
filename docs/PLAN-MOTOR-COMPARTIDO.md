@@ -883,8 +883,8 @@ prueba crítica y el laboratorio.
 
 Hecho el 15 de noviembre de 2026 en la rama `feat/critica-sin-repetir`
 (v538), sobre los 13 bancos ya completos de `docs/FALTANTES-BANCO-CRITICO.md`.
-Aplicado solo a La Célula y a Robots que Resuelven Problemas; las otras 51
-esperan el visto bueno de Josué y van por tandas.
+Se aplicó primero solo a La Célula y a Robots que Resuelven Problemas; las
+demás van por tandas, cada una con el visto bueno de Josué.
 
 ### El diseño
 
@@ -934,18 +934,31 @@ con 54.
   que el generador se sacó de las misiones (sección 13) no lo encontraba y se
   saltaba esa comprobación sin ponerse roja.
 
+### Tanda 1: las 33 con los mismos apartados que La Célula
+
+Josué aprobó el piloto el 15 de noviembre de 2026. La crítica de La Célula y
+de Robots que Resuelven Problemas quedó congelada en `_dev/formas-oro/`
+(formas 1 a 50), y la rama se puso al día con `main` (sello v538).
+
+Pasaron al reparto las 33 misiones que sacan Caso, Error, Decisión,
+Comparación, 2 Causas y 3 Efectos. El cambio es el mismo en todas: declarar
+`critApartados()` y llamar a `_turnoCritica`. Las 33 dan 50 conjuntos
+distintos en las formas 1 a 50. Antes, 13 de las 33 llegaban a 50 y las más
+cortas eran La Energía y La Materia (33) y El Asombro (35).
+
+Van 35 de 53. La crítica de estas 33 todavía no está congelada.
+
 ### Lo que queda
 
-- **Las otras 51**, por tandas: 33 con los mismos seis apartados que La
-  Célula, 7 de la familia de los robots y 11 con estructura propia
-  (Adjetivos, Adverbios, Áreas protegidas, Eras geológicas, Coordenadas, los
-  dos de Continentes, Pronombres, Sustantivos, Verbos y Adjetivos de
-  bachillerato). En siete de estas últimas la prueba, además de sacar casos,
-  baraja opciones o calcula datos con la semilla: se miran una por una.
+- **Las otras 18**, por tandas: 7 de la familia de los robots y 11 con
+  estructura propia (Adjetivos, Adverbios, Áreas protegidas, Eras geológicas,
+  Coordenadas, los dos de Continentes, Pronombres, Sustantivos, Verbos y
+  Adjetivos de bachillerato). En siete de estas últimas la prueba, además de
+  sacar casos, baraja opciones o calcula datos con la semilla: se miran una
+  por una.
 - **El aviso a los docentes** (decisión 1): las pautas impresas de la prueba
-  de pensamiento crítico dejan de corresponder a la forma del mismo número.
-  En esta tanda, las 30 de La Célula y las 30 de Robots que Resuelven
-  Problemas.
+  de pensamiento crítico dejan de corresponder a la forma del mismo número,
+  de la 1 a la 30, en las 35 misiones que ya reparten.
 - **Visto al probar, sin tocar:** al recargar la página, los dos
   desplegables (conceptual y crítica) enseñan «Forma 1» aunque la forma
   guardada sea otra; al generar sale la guardada. Pasa en todas las misiones
