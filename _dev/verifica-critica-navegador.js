@@ -146,7 +146,14 @@ const leerHoja = () => Array.from(document.querySelectorAll('#evalCritOut .crit-
       const real = window.open;
       window.open = () => ({ document: { write: h => { doc = h; }, close: () => {} }, print: () => {}, focus: () => {}, close: () => {} });
       try { printEvalCrit(); } finally { window.open = real; }
-      return { doc, casos: (new Function('return (' + leer + ')()'))() };
+      /* Los textos del banco de los casos de ESTA forma, sin etiquetas:
+         con ellos se reconoce un caso en el papel aunque la pantalla le
+         ponga un rótulo delante. */
+      const quita = h => { const d = document.createElement('div'); d.innerHTML = h; return d.textContent.replace(/\s+/g, ' ').trim(); };
+      const delBanco = [];
+      const junta = x => { if (typeof x === 'string') delBanco.push(quita(x)); else if (Array.isArray(x)) x.forEach(junta); else if (x && typeof x === 'object') Object.keys(x).forEach(k => junta(x[k])); };
+      junta(_repartoCritica(n, critApartados()));
+      return { doc, casos: (new Function('return (' + leer + ')()'))(), delBanco: delBanco.filter(t => t.length >= 8) };
     }, [leerHoja.toString(), tocarForma.toString(), FORMA_IMPRESA]);
     if (!impresa.doc) mal('la Forma ' + FORMA_IMPRESA + ' no generó hoja para imprimir');
     else {
@@ -162,7 +169,13 @@ const leerHoja = () => Array.from(document.querySelectorAll('#evalCritOut .crit-
       await hoja.close();
       const paginas = (fs.readFileSync(pdf).toString('latin1').match(/\/Type\s*\/Page[^s]/g) || []).length;
       fs.unlinkSync(pdf);
-      const faltan = impresa.casos.filter(c => texto.indexOf(c.replace(/\s+/g, '').slice(0, 60)) < 0);
+      /* Un caso de la pantalla está en el papel si está su arranque o, en
+         las misiones de estructura propia (que en pantalla le ponen un
+         rótulo: «Grado positivo: …»), si está el texto del banco que esa
+         caja enseña. */
+      const sinEspacios = t => t.replace(/\s+/g, '');
+      const faltan = impresa.casos.filter(c => texto.indexOf(sinEspacios(c).slice(0, 60)) < 0
+        && !impresa.delBanco.some(b => c.indexOf(b) >= 0 && texto.indexOf(sinEspacios(b).slice(0, 60)) >= 0));
       if (!/Forma 37/.test(visible)) mal('la hoja impresa no dice «Forma ' + FORMA_IMPRESA + '»');
       else if (faltan.length) mal('la hoja impresa de la Forma ' + FORMA_IMPRESA + ' no trae ' + faltan.length + ' de los casos de la pantalla, por ejemplo: ' + JSON.stringify(faltan[0].slice(0, 70)));
       else if (paginas !== 2) mal('la Forma ' + FORMA_IMPRESA + ' se imprime en ' + paginas + ' hojas: tienen que ser 2 (prueba y pauta)');
