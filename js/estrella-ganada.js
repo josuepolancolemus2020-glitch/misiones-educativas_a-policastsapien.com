@@ -45,6 +45,7 @@
      clásico sí ve por su nombre. */
 
   var huboGesto = false;
+  var generando = 0;          // dentro de genEval / genEvalOp / genEvalCrit
   var deSoloLeer = [];        // las que la misión intentó marcar al abrir
   var ESPERA = 3000;
 
@@ -190,6 +191,14 @@
          enseña que la fiesta no significa nada, y la del día que sí se la
          gana se la cree menos. */
       if (st.antesDelGesto && !st.yaEstaba) st.fiesta = callarFiesta();
+      /* ⚠️ Tampoco hay fiesta por GENERAR una prueba. Tocar un círculo de
+         forma (o «Nueva») genera, generar llama a fin('s-evaluacion') y
+         fin() lanzaba el confeti y el sonido de «sección completada»: una
+         lluvia de colores encima del examen cada vez que el alumno elegía
+         su forma, por algo que todavía no hizo y que más abajo se deshace.
+         La fiesta queda para cuando califica. Solo se calla lo de dentro
+         de fin(): el «clic» del botón suena igual. */
+      else if (generando && !st.yaEstaba) st.fiesta = callarFiesta();
       return st;
     }, function (st) {
       if (st && st.fiesta) devolverFiesta(st.fiesta);
@@ -214,6 +223,15 @@
       envolver(n,
         function () { var d = marcadas(); return d ? d.has('s-evaluacion') : true; },
         function (yaEstaba) { if (!yaEstaba) desmarcar('s-evaluacion'); });
+    });
+
+    /* Mientras se genera cualquiera de las tres pruebas, fin() no festeja
+       (ver arriba). Va en su propio envoltorio, por fuera del de la
+       estrella, y cuenta en vez de marcar por si una generación llama a
+       otra. La crítica entra aquí y no en el de arriba: su estrella no se
+       toca, solo se calla el confeti. */
+    ['genEval', 'genEvalOp', 'genEvalCrit'].forEach(function (n) {
+      envolver(n, function () { generando++; }, function () { generando--; });
     });
 
     /* Calificar sí: eso es haber hecho la sección. Y paga una vez. */

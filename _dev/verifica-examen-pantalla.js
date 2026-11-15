@@ -106,8 +106,22 @@ function raya() {
         if (typeof evalSwitchMode === 'function' && document.getElementById('evalModeBtnConcept')) evalSwitchMode('concept');
       });
       await page.waitForTimeout(150);
-      await page.evaluate(() => document.querySelector('[onclick*="genEval()"]').click());
-      await page.waitForTimeout(150);
+      /* Primero un toque de verdad (pointerdown): antes de él,
+         js/estrella-ganada.js ya calla toda fiesta, y la prueba no
+         diría nada. Luego se cuenta el confeti que cae al elegir forma. */
+      const confeti = await page.evaluate(async () => {
+        document.dispatchEvent(new Event('pointerdown', { bubbles: true }));
+        let n = 0;
+        new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(x => { if (x.classList && /confet/i.test(x.className)) n++; })))
+          .observe(document.body, { childList: true, subtree: true });
+        const sel = document.getElementById('evalFormaSel');
+        sel.parentNode.querySelector('.metas-grupo[data-grupo="0"]').click();
+        sel.querySelector('[data-forma="5"]').click();
+        await new Promise(r => setTimeout(r, 100));
+        document.querySelector('[onclick*="genEval()"]').click();
+        await new Promise(r => setTimeout(r, 150));
+        return n;
+      });
 
       const m = await page.evaluate(medir);
       const titulo = await page.evaluate(() => document.getElementById('eval-screen-title').textContent.trim());
@@ -117,6 +131,9 @@ function raya() {
       /* Unas misiones de Matemáticas nunca llevaron el nombre en el título;
          se anota para quien lo quiera unificar, pero no es de esta sonda. */
       if (!/Forma \d+ · \S/.test(titulo)) console.log('  · ' + nombre + ': el título no lleva el nombre de la misión');
+
+      if (confeti) mal(nombre + ': al elegir la forma y al tocar «Nueva» cayeron ' + confeti + ' papelitos de confeti');
+      else bien(nombre + ': elegir la forma y tocar «Nueva» no lanzan confeti');
 
       const lejos = ['tit', 'grupos', 'circulos', 'botones'].filter(k => m[k] !== null && Math.abs(m[k]) > 3);
       if (lejos.length) mal(nombre + ': descentrado ' + lejos.map(k => k + ' ' + m[k].toFixed(1) + ' px').join(', '));
