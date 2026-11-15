@@ -784,3 +784,95 @@ Hecha el 15 de noviembre de 2026 en la rama `claude/motor-html2canvas-fqrqo2`
   (sección 6.2) queda para cuando el diploma pase al motor.
 - Sonda: `_dev/verifica-html2canvas.js`, en `npm test`.
 
+---
+
+## 15. El piloto: La Célula usa el motor
+
+Hecho el 15 de noviembre de 2026 en la rama `claude/piloto-la-celula-fqrqo2`
+(sale de la de `html2canvas`). Es la «Fase 3» de la sección 6.5.
+
+Misma dirección (`misiones/2y3ciclo-la-celula/la-celula.html`), misma llave
+de guardado (`la_celula_v1`), mismo XP, misma apariencia y las 30 formas del
+examen conceptual idénticas a la referencia, hoja impresa incluida.
+
+### Cómo quedó repartida
+
+| archivo | qué es | tamaño |
+|---|---|---|
+| `js/motor-mision.js` | Lo que toda misión de la plantilla hace. Compartido | 67 KB |
+| `misiones/2y3ciclo-la-celula/js/contenido.js` | Lo que La Célula dice y pregunta. Solo datos | 42 KB |
+| `misiones/2y3ciclo-la-celula/js/la-celula-propio.js` | Lo que es solo de La Célula | 18 KB |
+
+Antes era un solo archivo, `js/la-celula.js`, de 122 KB. Ese archivo ya no
+existe.
+
+**Datos (`contenido.js`), 36 declaraciones:** llave de guardado, XP máximo y
+número de secciones; logros y niveles; tarjetas, quiz, clasifica, identifica
+y completa; los cuatro widgets; el reto; los cuatro bancos del generador de
+tareas; las dos sopas de letras; los cuatro bancos del examen conceptual y el
+tope de formas; los bancos, preguntas y pautas de la prueba crítica; las
+partes del laboratorio; y `TEXTOS`, lo que el motor escribe con el nombre, la
+materia o el color de la misión.
+
+**Motor (`motor-mision.js`):** compartir y letra grande, sonido, tema,
+guardado, logros, XP y niveles, navegación, tarjetas, quiz, clasifica,
+identifica, completa, widgets, reto, generador de tareas, sopa de letras,
+examen conceptual (generar, calificar, imprimir con clave), cambio de prueba,
+pauta y puntaje de la crítica, diploma y arranque.
+
+**Código propio (`la-celula-propio.js`):** el laboratorio (4 piezas) y armar
+e imprimir la prueba de pensamiento crítico.
+
+**Sigue en el HTML:** el texto de todas las pantallas (Aprende, Estructura,
+el laboratorio, los recursos) y los `onclick`. Y siguen aparte, sin tocar, la
+animación `js/animacion-herida.js` y la hoja de estilo.
+
+### Cuatro cosas que no salieron como decía la sección 6
+
+1. **No es `contenido.json`, es `contenido.js`.** Dos razones medidas:
+   - Los guiones compartidos de la página (`estrella-ganada.js`,
+     `metas-registro.js`) leen `SAVE_KEY`, `xp` y `done` en cuanto carga. Un
+     `.json` llega después por la red; para entonces ya leyeron vacío.
+   - Campeonísimo («Actualizar banco») lee el banco de selección múltiple de
+     cada misión buscando su declaración en los archivos de `js/` de la
+     misión. Con un `.json`, La Célula se quedaba sin preguntas ahí.
+   El archivo es solo datos y la sonda comprueba que cada declaración se puede
+   escribir como JSON: pasarlo a `.json` es mecánico el día que esos dos
+   lectores cambien.
+2. **El motor no es un objeto cerrado.** Sus funciones y variables son
+   globales, como en la misión, porque el HTML las llama por nombre y los
+   guiones compartidos las envuelven. `MotorMisiones` solo lleva lo nuevo.
+3. **La prueba crítica no pasó al motor.** Se rehace entera (decisión 1): sus
+   bancos sí quedaron como datos; armarla e imprimirla sigue como código propio.
+4. **El archivo propio tiene otro nombre.** Un teléfono con la página guardada
+   de antes pide `la-celula.js`, no lo encuentra en la red y usa su copia
+   guardada completa. Así la página vieja nunca se mezcla con el código nuevo.
+
+### Cómo se comprobó
+
+- **Formas:** `verifica-formas-oro.js` en verde en las 84; las 30 de La Célula
+  idénticas en dato, texto de la hoja y hoja completa.
+- **Navegador, antes y después:** 70 pasos recorriendo la misión entera, sin
+  guardado y con un guardado de antes (XP 61, tres secciones, dos logros, tema
+  oscuro, letra grande). Coinciden en todos el texto en pantalla, lo guardado,
+  la evidencia registrada, el XP, las secciones hechas, los logros, los avisos
+  y los ocho documentos impresos o enlaces; la estructura de la página en 66,
+  y el diploma sale idéntico byte a byte.
+- **Las 4 diferencias de estructura** son la altura que reserva la animación
+  de don Tulio según si la letra ya cargó. Pasa igual en la versión de antes
+  (5 de 14 cargas) y en la nueva (3 de 14), y 1,5 s después las dos quedan
+  iguales. No lo trae el piloto.
+- **Sondas que dejaron de ver La Célula sin ponerse rojas** al partir el
+  archivo, y se corrigieron: `verifica-bancos-tareas`,
+  `verifica-examen-sin-pistas`, `mide-reparto-respuestas` y
+  `verifica-html2canvas`. Es lo que hay que repetir en cada tanda: comparar la
+  salida de las sondas antes y después, no solo que sigan en verde.
+
+### Para la siguiente misión
+
+El motor salió de La Célula y se comparó función por función con siete
+hermanas (La Energía, La Materia, Ecosistemas, Sistema Nervioso, Mayas,
+Tipos de textos y Geografía de Honduras): salvo los textos que ahora van en
+`TEXTOS`, eran idénticas. Las que difieren de verdad entre misiones son la
+prueba crítica y el laboratorio.
+

@@ -48,13 +48,27 @@ const PRUEBAS = {
 const sha = s => crypto.createHash('sha256').update(s, 'utf8').digest('hex');
 
 /* ── qué misiones hay ────────────────────────────────────────── */
+/* El archivo donde están los bancos de la misión. En una misión de las de
+   antes es su archivo único, el que trae `genEval`. En una que ya usa el
+   motor (`js/motor-mision.js`) `genEval` vive en el motor y los bancos en
+   su `js/contenido.js`. */
 function archivoPrincipal(slug) {
   const dir = path.join(DIR_MISIONES, slug, 'js');
   if (!fs.existsSync(dir)) return null;
   const con = fs.readdirSync(dir).filter(f => f.endsWith('.js') && !/html2canvas/.test(f))
     .filter(f => /function genEval\(/.test(fs.readFileSync(path.join(dir, f), 'utf8')));
   if (con.length > 1) throw new Error(slug + ': hay ' + con.length + ' archivos con genEval (' + con.join(', ') + ')');
-  return con.length ? path.join(dir, con[0]) : null;
+  if (con.length) return path.join(dir, con[0]);
+  const contenido = path.join(dir, 'contenido.js');
+  return fs.existsSync(contenido) && usaElMotor(slug) ? contenido : null;
+}
+
+/* La página de una misión que ya usa el motor, o '' si no lo usa. */
+function usaElMotor(slug) {
+  const dir = path.join(DIR_MISIONES, slug);
+  return fs.readdirSync(dir).filter(f => f.endsWith('.html'))
+    .map(f => fs.readFileSync(path.join(dir, f), 'utf8'))
+    .find(h => /<script[^>]*\ssrc="[^"]*js\/motor-mision\.js/.test(h)) || '';
 }
 
 function listarMisiones() {
@@ -68,6 +82,28 @@ function listarMisiones() {
     dentro.push(slug);
   });
   return { dentro, fuera };
+}
+
+/* El código de una misión, entero, para las sondas que lo leen como
+   texto (buscan una función y el banco que usa). En una misión de antes
+   es su archivo. En una que usa el motor, la función está en el motor y
+   el banco en su contenido: se devuelven juntos, en el orden de la
+   página, para que esas sondas la sigan midiendo y no la salten calladas. */
+function fuenteDeMision(archivo) {
+  const propio = fs.readFileSync(archivo, 'utf8');
+  const dirJs = path.dirname(archivo), dirMision = path.dirname(dirJs);
+  if (path.basename(dirJs) !== 'js' || path.basename(archivo) !== 'contenido.js') return propio;
+  const html = usaElMotor(path.basename(dirMision));
+  if (!html) return propio;
+  const partes = [];
+  const re = /<script[^>]*\ssrc=["']([^"']+)["']/g;
+  let m;
+  while ((m = re.exec(html))) {
+    const abs = path.resolve(dirMision, m[1].split('?')[0]);
+    const suyo = path.dirname(abs) === dirJs && !/html2canvas|animacion-/.test(path.basename(abs));
+    if (/[\\/]js[\\/]motor-mision\.js$/.test(abs) || suyo) partes.push(fs.readFileSync(abs, 'utf8'));
+  }
+  return partes.join('\n');
 }
 
 /* ── la página de mentira ────────────────────────────────────── */
@@ -157,7 +193,8 @@ function cargarMision(slug, semillaAzar) {
      el generador de las formas) se carga antes, en el orden de su HTML.
      Lo demás de la página (animación, barra, teclado) no toca el examen. */
   const dirMision = path.join(DIR_MISIONES, slug);
-  const html = fs.readdirSync(dirMision).filter(f => f.endsWith('.html'))
+  const conMotor = usaElMotor(slug);
+  const html = conMotor || fs.readdirSync(dirMision).filter(f => f.endsWith('.html'))
     .map(f => fs.readFileSync(path.join(dirMision, f), 'utf8'))
     .find(h => h.includes('js/' + path.basename(js)));
   if (!html) throw new Error(slug + ': ninguna página carga ' + path.basename(js));
@@ -168,11 +205,16 @@ function cargarMision(slug, semillaAzar) {
     const src = m[1].split('?')[0];
     if (/^https?:|^\/\//.test(src)) continue;
     const abs = path.resolve(dirMision, src);
-    if (abs === js) break;
-    if (/[\\/]js[\\/]data[\\/]/.test(abs) || /[\\/]js[\\/](metas-fracciones|motor-misiones)\.js$/.test(abs)) previos.push(abs);
+    if (!conMotor && abs === js) break;
+    const compartido = /[\\/]js[\\/]data[\\/]/.test(abs) || /[\\/]js[\\/](metas-fracciones|motor-misiones|motor-mision)\.js$/.test(abs);
+    /* Con el motor, lo de la misión son varios archivos (su contenido y
+       su código propio) y van todos, en el orden de la página. Se dejan
+       fuera las animaciones, que no tocan el examen y piden un lienzo. */
+    const suyo = conMotor && path.dirname(abs) === path.join(dirMision, 'js') && !/html2canvas|animacion-/.test(path.basename(abs));
+    if (compartido || suyo) previos.push(abs);
   }
   previos.forEach(p => correr(fs.readFileSync(p, 'utf8'), p));
-  correr(fs.readFileSync(js, 'utf8'), js);
+  if (!conMotor) correr(fs.readFileSync(js, 'utf8'), js);
 
   const tiene = nombre => correr('typeof ' + nombre, 'tiene') === 'function';
   const pruebas = Object.keys(PRUEBAS).filter(p => tiene(PRUEBAS[p].gen));
@@ -329,5 +371,5 @@ function sellarForma(f) {
 
 const huellaBanco = b => ({ n: b.length, huella: sha(JSON.stringify(b)).slice(0, 16) });
 
-module.exports = { RAIZ, DIR_MISIONES, DIR_ORO, RUTA_PENDIENTE, PRUEBAS, FUERA_DE_ALCANCE, listarMisiones, cargarMision, pruebasDe,
+module.exports = { RAIZ, DIR_MISIONES, DIR_ORO, RUTA_PENDIENTE, PRUEBAS, FUERA_DE_ALCANCE, listarMisiones, usaElMotor, fuenteDeMision, cargarMision, pruebasDe,
   textoImpreso, cadenasDe, sha, bancosDe, textosFueraDeBanco, bancosConceptual, sinOrden, repetidas, rutaOro, escribirOro, leerOro, sellarForma, huellaBanco };

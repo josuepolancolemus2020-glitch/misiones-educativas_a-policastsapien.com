@@ -587,7 +587,9 @@ for (const dir of fs.readdirSync(MIS).sort()) {
     if (conPrueba) fuera.push(dir);
     continue;
   }
-  const src = sinComentarios(fs.readFileSync(archivo, 'utf8'));
+  /* En una misión que usa el motor, genEval está en el motor y los bancos
+     en su contenido: se leen juntos, o la misión se quedaría sin medir. */
+  const src = sinComentarios(require('./lib-formas.js').fuenteDeMision(archivo));
   const nombresC = ['evalCPBank', 'evalTFBank', 'evalMCBank', 'evalPRBank'];
   const nombresK = ['critCaseBank', 'critErrorBank', 'critDecisionBank', 'critCompareBank', 'critCauseBank', 'critEffectBank'];
   const htmlArchivo = fs.readdirSync(path.join(MIS, dir)).find(f => f.endsWith('.html') && !f.startsWith('juego-'));

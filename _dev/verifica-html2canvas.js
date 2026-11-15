@@ -80,6 +80,15 @@ ok('y todas con el mismo sello que la portada', otroSello.length === 0, lista(ot
 console.log('— Quien la usa, la carga —');
 const sinCargar = [];
 let usan = 0;
+/* En una misión que usa el motor, quien saca la foto es el motor
+   (js/motor-mision.js): la que tiene que cargar la biblioteca es toda
+   página que cargue el motor. */
+const motorSacaFoto = /(^|[^\w$.])html2canvas\s*\(/.test(fs.readFileSync(path.join(RAIZ, 'js', 'motor-mision.js'), 'utf8'));
+paginas.filter(p => /[\\/]misiones[\\/]/.test(p)).forEach(p => {
+  if (!motorSacaFoto || !/<script[^>]*\ssrc="[^"]*js\/motor-mision\.js/.test(fs.readFileSync(p, 'utf8'))) return;
+  usan++;
+  if (!cargaLaUnica.has(p)) sinCargar.push(rel(p));
+});
 guiones.filter(g => /[\\/]misiones[\\/]/.test(g)).forEach(g => {
   if (!/(^|[^\w$.])html2canvas\s*\(/.test(fs.readFileSync(g, 'utf8'))) return;
   usan++;
