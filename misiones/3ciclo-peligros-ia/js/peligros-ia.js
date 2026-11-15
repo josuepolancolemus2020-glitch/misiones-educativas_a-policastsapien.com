@@ -524,11 +524,16 @@ const critCompareBank=[
 const critCauseBank=[
   {k:'ca-senales',cause:'Quien engaña necesita que no pienses, que no consultes y que no contestes por donde siempre.',guide:'Por eso las tres señales están en casi toda estafa: sin ellas no funciona.'},
   {k:'ca-chat',cause:'Un chat está hecho para seguir la conversación.',guide:'Por eso tiende a darte la razón, y no sustituye a una persona.'},
+  {k:'ca-beca',cause:'El programa que revisa solicitudes de beca aprendió con las decisiones de años anteriores.',guide:'Por eso repite las injusticias de antes, si nadie revisa a quién deja fuera.'},
+  {k:'ca-cara',cause:'La cara no se puede cambiar como una contraseña.',guide:'Por eso, si alguien usa una foto de tu cara para abrir una cuenta, el daño dura mucho más.'},
 ];
 const critEffectBank=[
   {k:'ef-foto',effect:'Treinta compañeros quedan publicados con su nombre.',guide:'Porque alguien subió una foto que no era suya.'},
   {k:'ef-viaje',effect:'Una familia sube las fotos del viaje y un desconocido sabe que la casa está sola.',guide:'Porque lo que se publica queda, y lo puede ver cualquiera.'},
   {k:'ef-casa',effect:'En una casa se dice algo privado delante de un aparato que responde a la voz.',guide:'Porque para contestar tiene que estar escuchando.'},
+  {k:'ef-remedio',effect:'Una abuela gasta la pensión del mes en un remedio que, según un video, cura todo.',guide:'Porque el video con voz de doctor se puede fabricar, y nadie averiguó quién lo firma.'},
+  {k:'ef-juguete',effect:'Una empresa sabe el nombre del perro, la escuela de la niña y la hora en que se queda sola.',guide:'Porque el juguete que hace preguntas guardaba todo lo que ella le contaba.'},
+  {k:'ef-resenas',effect:'Un comedor del barrio cierra porque en pocos días le cayeron cien reseñas malas.',guide:'Porque alguien fabricó opiniones con cuentas que no eran de nadie.'},
 ];
 function genEvalCrit(){
   sfx('click');

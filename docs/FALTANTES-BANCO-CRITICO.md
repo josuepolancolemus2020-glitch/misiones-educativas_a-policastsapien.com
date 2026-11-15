@@ -33,7 +33,7 @@ de la misión.
 | misión | conjuntos hoy | distintas hoy (1 a 30) | mínimo para 50 | con holgura |
 |---|---|---|---|---|
 | `2y3ciclo-robots-problemas` | **resuelta: 240** | 30 | — | — |
-| `3ciclo-peligros-ia` | 2 | 18 | 3 | 5 |
+| `3ciclo-peligros-ia` | **resuelta: 240** | 27 | — | — |
 | `2ciclo-como-aprende-una-maquina` | 4 | 24 | 3 | 4 |
 | `3ciclo-albores-singularidad` | 4 | 24 | 3 | 4 |
 | `3ciclo-escenarios-porvenir` | 4 | 24 | 3 | 4 |
@@ -87,7 +87,25 @@ Banco en `misiones/2y3ciclo-robots-problemas/js/robots-problemas.js` (la prueba 
 - **Mínimo para 50: 4 casos** (Caso +2, Comparación +1, Diseño +1), da 96.
 - **Con holgura: 6 casos** (Caso +3, Comparación +1, Diseño +2), da 240.
 
-## 2. `3ciclo-peligros-ia`
+## 2. `3ciclo-peligros-ia` · resuelta
+
+**Resuelta el 15 de noviembre de 2026** con los 5 casos de holgura que aprobó
+Josué, todos sacados de peligros que ya están en `js/data/ia-peligros.js`:
+Causa +2 (el programa de becas que aprendió de años anteriores, la cara que no
+se cambia como una contraseña) y Efecto +3 (la abuela y el remedio del video,
+el juguete que hace preguntas, el comedor y las reseñas fabricadas). El
+remedio y la opinión fabricada siguen sin nombres, como pide ese archivo.
+Ahora son **240 conjuntos** (2 × 6 × 20) y las formas 1 a 30 dan 27
+distintas: las tres que se repiten chocan por azar y se arreglan con el
+reparto sin repetición, como las 9 de «Lo que esta lista no cubre». No cambió
+cuántos casos saca cada apartado ni el generador; las formas conceptual y
+operativa congeladas siguen idénticas.
+
+Un retoque para no dejar pistas cruzadas (`_dev/verifica-examen-sin-pistas.js`):
+en la pauta del remedio, «nadie buscó quién lo firma» pasa a «nadie averiguó
+quién lo firma», porque el caso de los videos dice «videos que no buscó».
+
+Lo que había antes:
 
 Banco en `misiones/3ciclo-peligros-ia/js/peligros-ia.js` (línea 1726).
 

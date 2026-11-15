@@ -431,7 +431,10 @@ MISIONES.forEach(m => {
   if (iDesc < 0 || iLab !== iDesc + 1) errores.push('las flechas no van estructura → descubre → lab (' + flechas.slice(0, 4).join(' → ') + ')');
   const tabs = [...html.matchAll(/data-s="(s-[a-z0-9]+)"/g)].map(x => x[1]);
   if (tabs.indexOf('s-descubre') !== tabs.indexOf('s-estructura') + 1) errores.push('la pestaña Descubre no va detrás de la de la actividad');
-  const iDatos = html.indexOf(m.datos || 'js/data/ia-descubre.js'), iJs = html.indexOf('<script src="' + m.js + '"');
+  /* El JS de la misión puede ir sellado con ?v=NN (regla 1 del CLAUDE.md):
+     sin aceptarlo, sellar la misión la ponía roja aquí sin que nada cambiara. */
+  const reJs = new RegExp('<script src="' + m.js.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(\\?v=\\d+)?"');
+  const iDatos = html.indexOf(m.datos || 'js/data/ia-descubre.js'), iJs = html.search(reJs);
   if (iDatos < 0 || iJs < 0 || iDatos > iJs) errores.push('el archivo de datos no va antes del JS de la misión');
   if (!/const TOTAL_SECTIONS=14;/.test(js)) errores.push('TOTAL_SECTIONS no es 14');
   if (!new RegExp('\\n  ' + m.logro + ':\\{icon:').test(js)) errores.push('sin el logro «' + m.logro + '»');
