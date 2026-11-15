@@ -441,7 +441,7 @@ Banco en `misiones/2y3ciclo-historia-ia/js/historia-ia.js` (línea 1686).
 ## 13. `2y3ciclo-mayas-precolombinas` · resuelta
 
 **Resuelta el 15 de noviembre de 2026** con los casos de holgura que aprobó
-Josué: Causa +1 (el cacao, de donde nos viene el chocolate) y Efecto +1 (los glifos
+Josué: Causa +1 (observaban el cielo, y por eso su calendario era muy exacto) y Efecto +1 (los glifos
 de las gradas de Copán).
 Ahora son **288 conjuntos** (4 × 3 × 2 × 3 × 4) y las formas 1 a 30 dan **29 distintas**
 (antes 19, contando conjuntos). No cambió cuántos casos saca cada apartado ni

@@ -511,7 +511,7 @@ const critCompareBank=[
 const critCauseBank=[
   {k:'cau-lago',cause:'Tenochtitlan se construyó sobre un lago.',guide:'Para sembrar, hacían islas flotantes: las chinampas.'},
   {k:'cau-patrimonio',cause:'La UNESCO declaró Patrimonio de la Humanidad las ruinas mayas de Honduras.',guide:'Llegan visitantes de todo el mundo y las ruinas se protegen para el futuro.'},
-  {k:'cau-cacao',cause:'Los mayas cultivaban el cacao y lo apreciaban mucho.',guide:'De ellos nos viene el chocolate.'},
+  {k:'cau-cielo',cause:'Los mayas observaban el cielo con mucho cuidado.',guide:'Por eso hicieron un calendario muy exacto.'},
 ];
 const critEffectBank=[
   {k:'ef-arquitectura',effect:'En las ruinas de la ciudad maya hay pirámides, templos y una cancha de pelota.',guide:'Porque los mayas fueron grandes arquitectos.'},
