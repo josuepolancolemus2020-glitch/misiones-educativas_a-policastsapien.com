@@ -97,8 +97,21 @@
     return partes.length >= 3 && partes[0] === 'misiones' ? partes[1] : '';
   }
 
+  /* Hay dos catálogos: el de las misiones del alumno (`MISSIONS`, en
+     js/data/misiones.js) y el de las misiones del maestro (`MF_AREAS`, en
+     js/tools/formacion-docente.js). De las del maestro solo cuentan las
+     que ya tienen `url`; las demás son temario que todavía no existe.
+     La puerta no decide quién puede ver una misión del maestro: eso lo
+     comprueba la propia misión al abrirse, igual que cuando se entra
+     desde las herramientas del aula. */
   function catalogo() {
-    return (typeof MISSIONS !== 'undefined' && Array.isArray(MISSIONS)) ? MISSIONS : [];
+    var lista = (typeof MISSIONS !== 'undefined' && Array.isArray(MISSIONS)) ? MISSIONS.slice() : [];
+    if (typeof MF_AREAS !== 'undefined' && Array.isArray(MF_AREAS)) {
+      MF_AREAS.forEach(function (area) {
+        (area.temas || []).forEach(function (tema) { if (tema && tema.url) lista.push(tema); });
+      });
+    }
+    return lista;
   }
 
   /* Se compara sin distinguir mayúsculas: hay una carpeta con mayúsculas

@@ -11,7 +11,8 @@
    · carpeta que no existe → aviso claro y un botón a index.html
    · sin carpeta           → lo mismo
 
-   Se comprueba con TODAS las misiones del catálogo y no con una de
+   Se comprueba con TODAS las misiones, las del alumno y las del
+   maestro (que tienen su propio catálogo), y no con una de
    muestra: una carpeta con espacios, tildes o mayúsculas es justo la
    que se rompe y la que nadie prueba a mano.
 
@@ -95,14 +96,25 @@ function abrir(busqueda) {
     oculto: clases.has('abriendo'),
     texto: porId['aviso-texto'] ? porId['aviso-texto'].textContent : '',
     enfocado: !!(porId['aviso-boton'] && porId['aviso-boton'].enfocado),
-    catalogo: vm.runInContext("typeof MISSIONS !== 'undefined' ? JSON.stringify(MISSIONS.map(function(x){return {id:x.id,url:x.url};})) : '[]'", ctx)
+    catalogo: vm.runInContext("typeof MISSIONS !== 'undefined' ? JSON.stringify(MISSIONS.map(function(x){return {id:x.id,url:x.url};})) : '[]'", ctx),
+    /* Las del maestro: los temas de MF_AREAS que ya tienen dirección. */
+    maestro: vm.runInContext("typeof MF_AREAS !== 'undefined' ? JSON.stringify([].concat.apply([], MF_AREAS.map(function(a){return a.temas.filter(function(t){return t.url;}).map(function(t){return {url:t.url};});}))) : '[]'", ctx)
   };
 }
 
 /* ── carpeta que existe ──────────────────────────────────────── */
 console.log('— Carpeta que existe: abre la misión —');
-const catalogo = JSON.parse(abrir('').catalogo);
-ok('el catálogo carga (' + catalogo.length + ' misiones)', catalogo.length > 80);
+const vacio = abrir('');
+const delAlumno = JSON.parse(vacio.catalogo), delMaestro = JSON.parse(vacio.maestro);
+ok('el catálogo del alumno carga (' + delAlumno.length + ' misiones)', delAlumno.length > 80);
+ok('el del maestro también (' + delMaestro.length + ' misiones con dirección)', delMaestro.length >= 8);
+/* Toda carpeta `docente-*` que exista tiene que poder abrirse: si se
+   publica una misión del maestro sin ponerle `url` en su catálogo, la
+   puerta diría que no existe. */
+const carpetasMaestro = fs.readdirSync(path.join(RAIZ, 'misiones')).filter(c => /^docente-/.test(c));
+const sinCatalogo = carpetasMaestro.filter(c => !delMaestro.some(t => t.url.split('/')[1] === c));
+ok('las ' + carpetasMaestro.length + ' carpetas docente-* están en el catálogo del maestro', sinCatalogo.length === 0, '      falta: ' + sinCatalogo.join(', '));
+const catalogo = delAlumno.concat(delMaestro);
 
 const malas = [];
 const carpetas = new Set();
@@ -130,6 +142,9 @@ ok('las ' + catalogo.length + ' misiones se abren por su carpeta, en su direcci�
 const celula = abrir('?m=2y3ciclo-la-celula');
 ok('?m=2y3ciclo-la-celula lleva a misiones/2y3ciclo-la-celula/la-celula.html',
   celula.destino.reemplazo === 'misiones/2y3ciclo-la-celula/la-celula.html', '      llevó a: ' + celula.destino.reemplazo);
+const docente = abrir('?m=docente-metas-sace');
+ok('?m=docente-metas-sace lleva a misiones/docente-metas-sace/metas-sace.html',
+  docente.destino.reemplazo === 'misiones/docente-metas-sace/metas-sace.html' && docente.oculto, '      llevó a: ' + docente.destino.reemplazo);
 const mayus = abrir('?m=2Y3CICLO-LA-CELULA');
 ok('no falla por mayúsculas', mayus.destino.reemplazo === celula.destino.reemplazo);
 const conOtros = abrir('?utm=x&m=2y3ciclo-la-celula');

@@ -68,7 +68,10 @@
        igual: lo que no puede pasar es quedarse en blanco para siempre. -->
   <script src="js/data/misiones.js?v=485" onerror="document.documentElement.classList.remove('abriendo')"></script>
   <script src="js/catalogo-misiones.js?v=485" onerror="document.documentElement.classList.remove('abriendo')"></script>
-  <script src="js/motor-misiones.js?v=527" onerror="document.documentElement.classList.remove('abriendo')"></script>
+  <!-- Las misiones del maestro no están en el catálogo del alumno: tienen el
+       suyo aquí. Se carga para que ?m=docente-… también abra. -->
+  <script src="js/tools/formacion-docente.js?v=506" onerror="document.documentElement.classList.remove('abriendo')"></script>
+  <script src="js/motor-misiones.js?v=528" onerror="document.documentElement.classList.remove('abriendo')"></script>
   <script>MotorMisiones.abrirPedida();</script>
 </body>
 </html>

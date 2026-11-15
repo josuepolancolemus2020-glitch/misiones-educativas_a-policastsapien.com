@@ -8,8 +8,8 @@
 
    · ninguna misión vuelve a traer su copia (pasa al crear una misión
      nueva copiando una de antes de este cambio);
-   · toda misión que usa esas funciones carga el motor, y lo carga ANTES
-     que su propio archivo;
+   · toda misión que usa esas funciones carga el motor, lo carga ANTES
+     que su propio archivo y con el mismo sello ?v= que mision.html;
    · la misión trae la guarda para el teléfono que abre una página
      guardada de antes, que no pide el motor;
    · el motor trae las cuatro funciones y el generador da los números
@@ -91,6 +91,13 @@ console.log('— Las misiones —');
 const define = n => new RegExp('(?:^|[;{}\\s])(?:function\\s+' + esc(n) + '\\s*\\(|(?:const|let|var)\\s+' + esc(n) + '\\s*=)', 'm');
 const usa = n => new RegExp('(?:^|[^\\w$.])' + esc(n) + '\\s*\\(');
 
+/* El sello con que mision.html pide el motor es el de referencia. Si una
+   página de misión lo pidiera con otro, o sin ninguno, dos teléfonos (o
+   la puerta y la misión en el mismo teléfono) podrían correr dos motores
+   distintos después de publicar. */
+const SELLO = (/src="js\/motor-misiones\.js(\?v=\d+)"/.exec(fs.readFileSync(path.join(RAIZ, 'mision.html'), 'utf8')) || [])[1];
+ok('mision.html pide el motor con sello (' + SELLO + ')', !!SELLO);
+const otroSello = [];
 const conCopia = [], sinMotor = [], motorDespues = [], sinGuarda = [], migradas = [], sinExamen = [];
 fs.readdirSync(DIR).sort().forEach(carpeta => {
   const dir = path.join(DIR, carpeta);
@@ -112,8 +119,9 @@ fs.readdirSync(DIR).sort().forEach(carpeta => {
     const suyas = paginas.filter(p => reSuyo.test(p.t));
     if (!suyas.length) sinMotor.push(carpeta + '/js/' + g + ': ninguna página lo carga');
     suyas.forEach(p => {
-      const m = /<script[^>]*\ssrc="([^"]*motor-misiones\.js)(?:\?[^"]*)?"/.exec(p.t);
+      const m = /<script[^>]*\ssrc="([^"]*motor-misiones\.js)(\?v=\d+)?"/.exec(p.t);
       if (!m || path.resolve(dir, m[1]) !== MOTOR) { sinMotor.push(carpeta + '/' + p.f); return; }
+      if (m[2] !== SELLO) otroSello.push(carpeta + '/' + p.f + ': ' + (m[2] || 'sin sello'));
       if (m.index > reSuyo.exec(p.t).index) motorDespues.push(carpeta + '/' + p.f);
     });
   });
@@ -122,6 +130,7 @@ fs.readdirSync(DIR).sort().forEach(carpeta => {
 
 ok('ninguna misión trae su copia de lo que ya está en el motor', conCopia.length === 0, lista(conCopia));
 ok('las ' + migradas.length + ' misiones que usan el examen por formas cargan el motor', sinMotor.length === 0, lista(sinMotor));
+ok('todas lo piden con el mismo sello que mision.html (' + SELLO + ')', otroSello.length === 0, lista(otroSello));
 ok('y lo cargan antes que su propio archivo', motorDespues.length === 0, lista(motorDespues));
 ok('y traen la guarda para la página guardada de antes', sinGuarda.length === 0, lista(sinGuarda));
 ok('son 84 o más (si bajan, una misión dejó de usar el examen por formas)', migradas.length >= 84, '      son ' + migradas.length);

@@ -757,3 +757,12 @@ Hecho el 15 de noviembre de 2026 en la rama `claude/motor-examen-fqrqo2`
 
 Para la siguiente tanda: añadir los nombres a `EN_EL_MOTOR` en esa sonda.
 
+Dos ajustes posteriores en la misma rama (v528):
+
+- Las 84 páginas de misión piden el motor con `?v=NN`, el mismo que
+  `mision.html`. La sonda `verifica-misiones-motor.js` exige que coincidan:
+  al sellar, se sube en `mision.html` y en las 84.
+- La puerta lee también `js/tools/formacion-docente.js`, así
+  `mision.html?m=docente-…` abre las 8 misiones del maestro. El slug es
+  siempre el nombre completo de la carpeta, sin forma corta.
+
