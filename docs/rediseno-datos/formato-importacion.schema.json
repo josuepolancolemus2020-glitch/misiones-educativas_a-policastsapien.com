@@ -1,0 +1,383 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://metas.policastsapien.com/esquemas/metas-importacion-1.json",
+  "title": "M.E.T.A.S · importación de datos del aula (versión 1)",
+  "description": "Datos extraídos de papeles o escaneos. No trae ids de la base ni usa el número de lista como llave. La app lo muestra en vista previa y el docente confirma antes de guardar.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "formato",
+    "origen",
+    "aula"
+  ],
+  "properties": {
+    "formato": {
+      "const": "metas-importacion/1"
+    },
+    "origen": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tipo",
+        "generado_at"
+      ],
+      "properties": {
+        "tipo": {
+          "enum": [
+            "escaneo",
+            "hoja_calculo",
+            "manual",
+            "sace"
+          ]
+        },
+        "generado_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "programa": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "archivos": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "nombre"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9_-]{1,20}$"
+              },
+              "nombre": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "paginas": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "aula": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "escuela",
+        "grado",
+        "seccion",
+        "anio_lectivo"
+      ],
+      "properties": {
+        "escuela": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "codigo_centro": {
+          "type": "string",
+          "maxLength": 30
+        },
+        "grado": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 12
+        },
+        "seccion": {
+          "type": "string",
+          "pattern": "^[0-9A-Za-z]{1,3}$"
+        },
+        "anio_lectivo": {
+          "type": "integer",
+          "minimum": 2020,
+          "maximum": 2100
+        },
+        "asignaturas": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          }
+        }
+      }
+    },
+    "alumnos": {
+      "type": "array",
+      "maxItems": 99,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ref",
+          "nombre_completo"
+        ],
+        "properties": {
+          "ref": {
+            "$ref": "#/$defs/ref"
+          },
+          "nombre_completo": {
+            "$ref": "#/$defs/texto_leido"
+          },
+          "identidad": {
+            "$ref": "#/$defs/texto_leido"
+          },
+          "num_lista": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 99,
+            "description": "Solo visual. Nunca se usa para emparejar."
+          },
+          "sexo": {
+            "enum": [
+              "F",
+              "M"
+            ]
+          },
+          "fecha_nacimiento": {
+            "type": "string",
+            "format": "date"
+          },
+          "encargado": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "telefono": {
+            "type": "string",
+            "maxLength": 20
+          },
+          "clave_familia": {
+            "type": "string",
+            "maxLength": 12
+          },
+          "documento_pais": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}$",
+            "default": "HN",
+            "description": "País del documento (ISO 3166-1). Solo HN exige 13 dígitos."
+          },
+          "documento_tipo": {
+            "enum": [
+              "identidad",
+              "cui",
+              "partida",
+              "pasaporte",
+              "otro"
+            ],
+            "default": "identidad"
+          }
+        }
+      }
+    },
+    "notas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "alumno",
+          "asignatura",
+          "periodo",
+          "valor"
+        ],
+        "properties": {
+          "alumno": {
+            "$ref": "#/$defs/ref"
+          },
+          "asignatura": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "periodo": {
+            "enum": [
+              "I",
+              "II",
+              "III",
+              "IV",
+              "REC"
+            ]
+          },
+          "componente": {
+            "enum": [
+              "final",
+              "acumulativo",
+              "examen"
+            ],
+            "default": "final"
+          },
+          "valor": {
+            "$ref": "#/$defs/texto_leido"
+          }
+        }
+      }
+    },
+    "colectas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ref",
+          "concepto",
+          "monto_sugerido",
+          "fecha"
+        ],
+        "properties": {
+          "ref": {
+            "$ref": "#/$defs/ref"
+          },
+          "concepto": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "monto_sugerido": {
+            "$ref": "#/$defs/texto_leido"
+          },
+          "fecha": {
+            "type": "string",
+            "format": "date"
+          },
+          "total_en_papel": {
+            "$ref": "#/$defs/texto_leido"
+          },
+          "no_corresponde": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/ref"
+            }
+          },
+          "gastos": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "fecha",
+                "concepto",
+                "monto"
+              ],
+              "properties": {
+                "fecha": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "concepto": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 160
+                },
+                "monto": {
+                  "$ref": "#/$defs/texto_leido"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "pagos": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "colecta",
+          "alumno",
+          "monto"
+        ],
+        "properties": {
+          "colecta": {
+            "$ref": "#/$defs/ref"
+          },
+          "alumno": {
+            "$ref": "#/$defs/ref"
+          },
+          "monto": {
+            "$ref": "#/$defs/texto_leido"
+          },
+          "fecha": {
+            "type": "string",
+            "format": "date"
+          },
+          "recibo_anterior": {
+            "type": "string",
+            "pattern": "^RC-[0-9A-Z]{2,8}-[0-9]{1,4}$",
+            "description": "Número del recibo del sistema viejo, si la familia lo tiene. El recibo nuevo lo pone la base."
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "ref": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]{0,19}$",
+      "description": "Referencia local dentro de este archivo. No es un id de la base."
+    },
+    "texto_leido": {
+      "description": "Un dato tal como se leyó, con su confianza y su procedencia. Los números (notas, montos) van como texto decimal; la app los valida.",
+      "oneOf": [
+        {
+          "type": "string",
+          "maxLength": 160
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "texto"
+          ],
+          "properties": {
+            "texto": {
+              "type": "string",
+              "maxLength": 160
+            },
+            "confianza": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "fuente": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "archivo": {
+                  "type": "string"
+                },
+                "pagina": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "renglon": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "columna": {
+                  "type": "string",
+                  "maxLength": 40
+                },
+                "recorte": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 4,
+                  "maxItems": 4,
+                  "description": "x, y, ancho, alto en la página, de 0 a 1"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
