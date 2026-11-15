@@ -18,7 +18,6 @@
    4. Si app.js no llega, a los 10 s se quita igual y la portada
       queda usable.
    5. Con «reducir movimiento» nada barre ni gira.
-   6. La variante B (la píldora) también aparece y se va.
 
    Uso:  node _dev/servidor-estatico.js   (en otra terminal)
          node _dev/verifica-portada-cargando.js
@@ -43,13 +42,12 @@ const foto = pg => pg.evaluate(() => {
   const h = document.documentElement;
   const op = sel => { const e = document.querySelector(sel); return e ? +getComputedStyle(e).opacity : -1; };
   const pe = sel => { const e = document.querySelector(sel); return e ? getComputedStyle(e).pointerEvents : ''; };
-  const t1 = document.querySelector('.metas-estado .me-t1');
+  const t1 = document.querySelector('.metas-pildora .me-t1');
   return {
     cls: h.className,
-    estado: document.querySelector('.metas-estado') ? getComputedStyle(document.querySelector('.metas-estado')).display : '',
     texto1: t1 ? +getComputedStyle(t1).opacity : -1,
-    hilo: op('.metas-hilo'),
     pildora: document.querySelector('.metas-pildora') ? getComputedStyle(document.querySelector('.metas-pildora')).display : '',
+    pildoraOp: op('.metas-pildora'),
     rutasOp: op('.home-nav-btn[data-view="view-rutas"]'),
     rutasPE: pe('.home-nav-btn[data-view="view-rutas"]'),
     misionesPE: pe('.hnb-principal'),
@@ -102,7 +100,7 @@ const anotaAviso = () => {
   ok('app.js avisa con metasLista() cuando ya enganchó los botones',
      /home-nav-btn[\s\S]*addEventListener[\s\S]*window\.metasLista\(\)/.test(appjs));
   ok('no promete funcionar desconectada', !/sin\s+(internet|conexi[oó]n|se[ñn]al)|offline/i.test(
-     (html.match(/class="metas-(estado|pildora)[\s\S]*?<\/div>/g) || []).join(' ')));
+     (html.match(/class="metas-pildora[\s\S]*?<\/div>/) || [''])[0]));
 
   const nav = await abrir({ args: ['--no-sandbox'] });
   const telefono = { viewport: { width: 360, height: 740 }, isMobile: true, hasTouch: true, locale: 'es-HN' };
@@ -121,8 +119,9 @@ const anotaAviso = () => {
     await pg.waitForTimeout(900);
     const d = await foto(pg);
     ok('mientras carga, la portada lleva la marca de «cargando»', /metas-cargando/.test(d.cls) && !/metas-lista/.test(d.cls), d.cls);
-    ok('se lee «Preparando tus misiones…»', d.estado === 'grid' && d.texto1 > 0.5, d);
-    ok('la línea de progreso se ve', d.hilo > 0.5, d.hilo);
+    ok('la píldora se ve abajo', d.pildora === 'flex' && d.pildoraOp > 0.5, d);
+    ok('y dice «Preparando tus misiones…»', d.texto1 > 0.5, d.texto1);
+    ok('con su anillo girando', d.gira === 'me-gira', d.gira);
     ok('los demás botones se ven apagados', d.rutasOp < 0.6, d.rutasOp);
     ok('y ningún botón recibe toques (ni Misiones ni el menú)',
        d.rutasPE === 'none' && d.misionesPE === 'none' && d.hamburguesaPE === 'none', d);
@@ -134,7 +133,7 @@ const anotaAviso = () => {
     ok('y como se había visto, el botón «se enciende»', aviso.vio === true, aviso);
     await pg.waitForTimeout(1200);
     const f = await foto(pg);
-    ok('al terminar no queda nada de la señal', !/metas-cargando|metas-vista/.test(f.cls) && f.estado === 'none', f);
+    ok('al terminar no queda nada de la señal', !/metas-cargando|metas-vista/.test(f.cls) && f.pildora === 'none', f);
     ok('los botones vuelven enteros y reciben toques', f.rutasOp === 1 && f.rutasPE === 'auto' && f.misionesPE === 'auto', f);
     const alto = await pg.evaluate(() => document.querySelector('#view-inicio .app-header').offsetHeight);
     ok('el encabezado no cambió de alto al quitarla (sin saltos)', alto < 90, alto);
@@ -187,33 +186,13 @@ const anotaAviso = () => {
     await ctx.route('**/*.supabase.co/**', r => r.abort());
     await senalLenta(ctx, 2000);
     const pg = await ctx.newPage();
-    pg.goto(BASE + '/index.html?carga=pildora').catch(() => {});
+    pg.goto(BASE + '/index.html').catch(() => {});
     await pg.waitForSelector('.hnb-principal', { state: 'attached' });
     await pg.waitForTimeout(800);
     const d = await foto(pg);
     ok('nada barre el botón', d.barre === 'none', d.barre);
     ok('el anillo no gira', d.gira === 'none', d.gira);
     ok('pero la señal se ve igual', d.pildora === 'flex', d.pildora);
-    await ctx.close();
-  }
-
-  console.log('\n6) La variante B: la píldora de estado');
-  {
-    const ctx = await nav.newContext(telefono);
-    await ctx.route('**/*.supabase.co/**', r => r.abort());
-    await senalLenta(ctx, 2000);
-    const pg = await ctx.newPage();
-    pg.goto(BASE + '/index.html?carga=pildora').catch(() => {});
-    await pg.waitForSelector('.metas-pildora', { state: 'attached' });
-    await pg.waitForTimeout(900);
-    const d = await foto(pg);
-    const op = await pg.evaluate(() => +getComputedStyle(document.querySelector('.metas-pildora')).opacity);
-    ok('la píldora se ve abajo', d.pildora === 'flex' && op > 0.5, { d: d.pildora, op });
-    ok('el anillo gira', d.gira === 'me-gira', d.gira);
-    ok('y la línea del encabezado no sale (es de la otra variante)', d.estado === 'none', d.estado);
-    await pg.waitForFunction(() => !document.documentElement.classList.contains('metas-cargando'), null, { timeout: 9000 });
-    const f = await foto(pg);
-    ok('al terminar la píldora se fue', f.pildora === 'none', f.pildora);
     await ctx.close();
   }
 
