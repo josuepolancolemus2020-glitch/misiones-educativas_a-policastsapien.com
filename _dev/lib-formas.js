@@ -37,8 +37,10 @@ const FUERA_DE_ALCANCE = {
 const fueraPorFamilia = slug => /^docente-/.test(slug) ? 'misión de docentes, sin examen por formas (decisión 4)'
   : /^prebasica-/.test(slug) ? 'Prebásica, sin examen por formas (decisión 4)' : '';
 
-/* Las tres pruebas. `oro` dice si sus formas de hoy se congelan: la de
-   pensamiento crítico se rehace entera (decisión 1) y no lleva referencia. */
+/* Las tres pruebas. `oro` dice si sus formas se congelan siempre. La de
+   pensamiento crítico se rehízo entera (decisión 1): no se congela como
+   salía antes, sino misión por misión, cuando ya reparte sus formas sin
+   repetir (`reparteCritica`) y Josué aprueba su banco. */
 const PRUEBAS = {
   conceptual: { gen: 'genEval', imprime: 'printEval', dato: '_evalPrintData', selector: 'evalFormaSel', oro: true },
   operativa:  { gen: 'genEvalOp', imprime: 'printEvalOp', dato: '_evalOpData', selector: 'evalOpFormaSel', oro: true },
@@ -219,6 +221,13 @@ function cargarMision(slug, semillaAzar) {
   const tiene = nombre => correr('typeof ' + nombre, 'tiene') === 'function';
   const pruebas = Object.keys(PRUEBAS).filter(p => tiene(PRUEBAS[p].gen));
   const tope = correr('EVAL_FORMAS', 'tope');
+  /* La prueba crítica que ya se reparte sin repetir tiene su propio tope
+     (50, o lo que dé su banco), aparte del examen conceptual. La misión lo
+     dice declarando sus apartados en `critApartados`. */
+  const reparteCritica = tiene('critApartados') && tiene('_formasCritica');
+  const topeCritica = reparteCritica ? correr('_formasCritica(critApartados())', 'tope crítica') : tope;
+  const conjuntosCritica = reparteCritica ? correr('_conjuntosCritica(critApartados())', 'conjuntos crítica') : null;
+  const topeDe = prueba => prueba === 'critica' ? topeCritica : tope;
   /* Fin de grado tiene dos exámenes conceptuales, uno por materia. */
   const materias = correr("typeof MATERIA_EVAL === 'object' && MATERIA_EVAL ? Object.keys(MATERIA_EVAL) : null", 'materias');
 
@@ -237,7 +246,7 @@ function cargarMision(slug, semillaAzar) {
     return { dato: JSON.parse(dato), impreso: documentos[0] };
   }
 
-  return { slug, js, pruebas, tope, materias, forma, correr };
+  return { slug, js, pruebas, tope, topeDe, reparteCritica, topeCritica, conjuntosCritica, materias, forma, correr };
 }
 
 /* ── lo que se guarda de cada forma ──────────────────────────── */
@@ -343,7 +352,10 @@ const RUTA_PENDIENTE = path.join(DIR_ORO, '_critica-pendiente.json');
    como un renglón, no como el archivo entero. */
 function escribirOro(oro) {
   const lineas = ['{'];
-  ['slug', 'archivo', 'tope', 'congelado', 'desde'].forEach(k => lineas.push('  ' + JSON.stringify(k) + ': ' + JSON.stringify(oro[k]) + ','));
+  /* Lo de la crítica solo se escribe en la referencia que ya la tiene
+     congelada: así las demás quedan byte a byte como estaban. */
+  ['slug', 'archivo', 'tope', 'congelado', 'desde', 'criticaCongelada', 'criticaDesde'].filter(k => k in oro)
+    .forEach(k => lineas.push('  ' + JSON.stringify(k) + ': ' + JSON.stringify(oro[k]) + ','));
   lineas.push('  "bancos": {');
   const nb = Object.keys(oro.bancos).sort();
   nb.forEach((n, i) => lineas.push('    ' + JSON.stringify(n) + ': ' + JSON.stringify(oro.bancos[n]) + (i < nb.length - 1 ? ',' : '')));

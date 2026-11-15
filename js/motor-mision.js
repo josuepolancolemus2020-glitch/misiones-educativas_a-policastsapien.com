@@ -248,9 +248,11 @@ const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Eva
 
 // ===================== PRUEBA DE PENSAMIENTO CRÍTICO =====================
 /* Aquí solo lo común: cambiar de prueba, enseñar la pauta y sumar el
-   puntaje. Armarla e imprimirla (genEvalCrit, printEvalCrit) sigue en
-   el archivo de cada misión: se rehace entera y no tenía sentido
-   pasarla al motor para volver a escribirla. */
+   puntaje. Pintarla e imprimirla (genEvalCrit, printEvalCrit) sigue en
+   el archivo de cada misión, porque los apartados de la prueba no son
+   los mismos en todas. Qué casos lleva cada forma lo reparte
+   js/motor-misiones.js con los apartados que la misión declara en
+   `critApartados`. */
 function evalSwitchMode(mode){
   sfx('click');
   const cWrap=document.getElementById('evalConceptWrap'),critWrap=document.getElementById('evalCritWrap');
@@ -308,4 +310,4 @@ window.addEventListener('DOMContentLoaded',()=>{
   renderAchPanel();
 });
 
-(function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalCrit==='function') _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
+(function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalCrit==='function') _selectorCritica(evalCritFormNum,critApartados(),function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();

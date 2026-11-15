@@ -17,10 +17,14 @@
       preguntas en otro orden. Vale para las tres pruebas.
    3. DEL BANCO. Toda pregunta de una forma está en el banco de su misión.
 
-   La prueba de pensamiento crítico no tiene referencia porque se rehace
-   entera (plan del motor, decisión 1). Las misiones que hoy repiten
-   formas en ella están contadas en `_critica-pendiente.json`: esa deuda
-   se nombra y no pone la sonda en rojo; una repetición nueva, sí.
+   La prueba de pensamiento crítico se rehízo entera (plan del motor,
+   decisión 1) y va por tandas. La misión que ya reparte sus formas sin
+   repetir (declara `critApartados`) llega hasta la Forma 50 y no puede
+   repetir ninguna; cuando Josué aprueba su banco se congela también
+   (`genera-formas-oro.js --critica`) y desde entonces se compara como
+   las otras. Las que todavía sacan los casos al azar y repiten formas
+   están contadas en `_critica-pendiente.json`: esa deuda se nombra y no
+   pone la sonda en rojo; una repetición nueva, sí.
 
    Si una forma congelada cambió, NO se arregla volviendo a congelar: se
    deshace el cambio. Volver a congelar es invalidar la clave impresa, y
@@ -62,7 +66,7 @@ const sueltosSabidos = (listaPendiente && listaPendiente.fueraDeBanco) || {};
 if (!pendiente) falla('_critica-pendiente.json', 'crítica', 0, 'falta la lista de lo pendiente; se escribe con genera-formas-oro.js --pendiente-critica');
 
 let nFormas = 0, nCongeladas = 0, nPreguntas = 0;
-const deuda = [], deudaBanco = [];
+const deuda = [], deudaBanco = [], criticaSinCongelar = [];
 
 lista.forEach(slug => {
   let m;
@@ -84,15 +88,21 @@ lista.forEach(slug => {
     const datos = {};
     hechas.push(p.llave);
     if (P.oro && !oro.pruebas[p.llave]) { falla(slug, p.llave, 0, 'la misión tiene esta prueba y la referencia no'); }
+    /* La crítica que ya se reparte pero todavía no se congeló: se dice. */
+    if (p.prueba === 'critica' && m.reparteCritica && !oro.pruebas[p.llave]) criticaSinCongelar.push(slug);
+    /* Una crítica congelada que vuelve a sacar sus casos al azar perdió el
+       reparto: sus formas ya no son las de la pauta impresa. */
+    if (p.prueba === 'critica' && oro.pruebas[p.llave] && !m.reparteCritica) falla(slug, p.llave, 0, 'tiene la crítica congelada y ya no la reparte con el motor (falta critApartados)');
+    const topePrueba = m.topeDe(p.prueba);
 
-    for (let n = 1; n <= m.tope; n++) {
+    for (let n = 1; n <= topePrueba; n++) {
       let f;
       try { f = m.forma(p.prueba, n, p.materia); }
       catch (e) { falla(slug, p.llave, n, 'no se pudo generar: ' + String(e.message).split('\n')[0]); continue; }
       datos[n] = f.dato; nFormas++;
 
       /* 1 · congeladas */
-      const ref = P.oro && oro.pruebas[p.llave] && oro.pruebas[p.llave][n];
+      const ref = oro.pruebas[p.llave] && oro.pruebas[p.llave][n];
       if (ref) {
         const hoy = L.sellarForma(f);
         const dif = primeraDiferencia(ref.dato, hoy.dato);
@@ -100,7 +110,7 @@ lista.forEach(slug => {
         else if (ref.texto !== hoy.texto) falla(slug, p.llave, n, 'las preguntas son las mismas pero cambió lo que se lee en la hoja impresa');
         else if (ref.hoja !== hoy.hoja) falla(slug, p.llave, n, 'dice lo mismo pero cambió cómo se ve la hoja impresa (si fue a propósito: genera-formas-oro.js --resellar-hoja ' + slug + ')');
         else nCongeladas++;
-      } else if (P.oro && oro.pruebas[p.llave] && n <= oro.tope) falla(slug, p.llave, n, 'falta en la referencia');
+      } else if (oro.pruebas[p.llave] && n <= (p.prueba === 'critica' ? topePrueba : oro.tope)) falla(slug, p.llave, n, 'falta en la referencia');
 
       /* 3 · del banco */
       if (p.prueba === 'conceptual') {
@@ -137,7 +147,16 @@ lista.forEach(slug => {
     /* 2 · sin repetir */
     const r = L.repetidas(datos);
     const total = r.iguales.length + r.mismoConjunto.length;
-    if (p.prueba === 'critica') {
+    /* Una forma congelada de más: el banco se achicó y la prueba ya no
+       llega hasta donde llegaba la pauta impresa. */
+    if (oro.pruebas[p.llave]) Object.keys(oro.pruebas[p.llave]).map(Number).filter(n => n > topePrueba)
+      .forEach(n => falla(slug, p.llave, n, 'está congelada y la misión ya no la ofrece (ahora llega a la Forma ' + topePrueba + ')'));
+    if (p.prueba === 'critica' && m.reparteCritica) {
+      /* La que ya se reparte no tiene deuda que perdonar. */
+      r.iguales.forEach(([a, b]) => falla(slug, p.llave, a, 'es idéntica a la Forma ' + b));
+      r.mismoConjunto.forEach(([a, b]) => falla(slug, p.llave, a, 'trae los mismos casos que la Forma ' + b + ', en otro orden'));
+      if (pendiente && pendiente[slug]) falla(slug, p.llave, 0, 'ya reparte sin repetir y sigue en la lista de pendientes: actualízala con genera-formas-oro.js --pendiente-critica');
+    } else if (p.prueba === 'critica') {
       const sabido = pendiente && pendiente[slug];
       if (total && !sabido) {
         r.iguales.forEach(([a, b]) => falla(slug, p.llave, a, 'es idéntica a la Forma ' + b));
@@ -146,7 +165,7 @@ lista.forEach(slug => {
         falla(slug, p.llave, 0, 'repite más que antes: daba ' + sabido.distintas + ' formas distintas y ahora ' + r.distintas);
       } else if (sabido && r.distintas > sabido.distintas) {
         falla(slug, p.llave, 0, 'ya repite menos (' + r.distintas + ' distintas, eran ' + sabido.distintas + '): actualiza la lista con genera-formas-oro.js --pendiente-critica');
-      } else if (sabido) deuda.push(slug + ' (' + r.distintas + ' de ' + m.tope + ')');
+      } else if (sabido) deuda.push(slug + ' (' + r.distintas + ' de ' + topePrueba + ')');
     } else {
       r.iguales.forEach(([a, b]) => falla(slug, p.llave, a, 'es idéntica a la Forma ' + b));
       r.mismoConjunto.forEach(([a, b]) => falla(slug, p.llave, a, 'trae las mismas preguntas que la Forma ' + b + ', en otro orden'));
@@ -172,8 +191,13 @@ console.log('Formas de examen · ' + lista.length + ' misiones' + (pedidas.lengt
 console.log('  ' + nFormas + ' formas generadas, ' + nCongeladas + ' comparadas con su referencia, ' + nPreguntas + ' preguntas buscadas en su banco');
 if (deuda.length) {
   console.log('\n  Pendiente conocido · la prueba de pensamiento crítico repite formas en ' + deuda.length + ' misiones.');
-  console.log('  Se rehace entera (decisión 1); no pone la sonda en rojo. Formas distintas hoy:');
+  console.log('  Todavía sacan los casos al azar; pasan al reparto por tandas. No pone la sonda en rojo. Formas distintas hoy:');
   deuda.forEach(d => console.log('    · ' + d));
+}
+if (criticaSinCongelar.length) {
+  console.log('\n  Por congelar · ' + criticaSinCongelar.length + ' misiones ya reparten la prueba de pensamiento crítico sin repetir y esperan el visto bueno de Josué');
+  console.log('  para tener referencia (genera-formas-oro.js --critica <carpeta>):');
+  criticaSinCongelar.forEach(d => console.log('    · ' + d));
 }
 if (deudaBanco.length) {
   console.log('\n  Pendiente conocido · en ' + deudaBanco.length + ' misiones parte de la prueba crítica la escribe el generador y no un banco');

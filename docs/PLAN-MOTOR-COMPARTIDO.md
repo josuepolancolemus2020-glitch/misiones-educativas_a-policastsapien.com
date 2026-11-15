@@ -876,3 +876,106 @@ Tipos de textos y Geografía de Honduras): salvo los textos que ahora van en
 `TEXTOS`, eran idénticas. Las que difieren de verdad entre misiones son la
 prueba crítica y el laboratorio.
 
+
+---
+
+## 16. La prueba de pensamiento crítico reparte sin repetir: el piloto
+
+Hecho el 15 de noviembre de 2026 en la rama `feat/critica-sin-repetir`
+(v538), sobre los 13 bancos ya completos de `docs/FALTANTES-BANCO-CRITICO.md`.
+Se aplicó primero solo a La Célula y a Robots que Resuelven Problemas; las
+demás van por tandas, cada una con el visto bueno de Josué.
+
+### El diseño
+
+- **Una sola vez, en `js/motor-misiones.js`:** `_repartoCritica(forma, apartados)`.
+  La misión declara sus apartados en `critApartados()`, con el banco de cada
+  uno y cuántos casos saca (`[[critCaseBank, 1], [critCauseBank, 2]]`), y en
+  `genEvalCrit` llama a `_turnoCritica`, que le devuelve la forma que toca y
+  sus casos. Ninguna misión elige casos por su cuenta.
+- **Cómo reparte:** cada apartado es una rueda con todas las maneras de sacar
+  sus casos. Con cada forma todas las ruedas avanzan un paso, y cada vez que
+  las ruedas de antes completan su vuelta la siguiente se adelanta un paso
+  más. Con ese adelanto ninguna forma repite el conjunto de otra hasta agotar
+  todas las combinaciones del banco. No es azar: está demostrado y la sonda lo
+  recorre entero, banco por banco.
+- **Depende de** el número de forma, el tamaño de cada banco y cuántos se
+  sacan. No del texto: la Forma 7 en inglés lleva los mismos casos.
+- **Hasta dónde llega:** `_formasCritica` da 50, o los conjuntos que permita
+  el banco si son menos. El desplegable de la crítica usa ese tope; el del
+  examen conceptual sigue en `EVAL_FORMAS` (30) y no se tocó.
+- **Congelado como el generador:** añadir o quitar un caso de un banco cambia
+  todas las formas críticas de esa misión.
+
+### Antes y después (conjuntos de casos distintos)
+
+| misión | conjuntos posibles | formas 1 a 30, antes | formas 1 a 50, antes | formas 1 a 50, ahora |
+|---|---|---|---|---|
+| `2y3ciclo-la-celula` | 120 | 26 | 42 | 50 |
+| `2y3ciclo-robots-problemas` | 240 | 30 | 47 | 50 |
+
+Las 53 misiones tienen banco para 50 conjuntos. La más justa es La Materia,
+con 54.
+
+### Cómo se vigila
+
+- `_dev/verifica-critica-sin-repetir.js` (en `npm test`): el reparto con
+  bancos de todos los tamaños, y cada misión que ya reparte, de la Forma 1 a
+  la 50, con su código de verdad. Roja si dos formas traen los mismos casos,
+  si algo no sale del banco de su misión o si el banco no llega a 50.
+- `_dev/verifica-critica-navegador.js` (tanda de navegador): lo mismo en la
+  página, eligiendo en el desplegable; la hoja impresa; un guardado de antes;
+  el inglés.
+- `_dev/verifica-formas-oro.js`: conceptual y operativa idénticas a la
+  referencia. La crítica se congela misión por misión, cuando Josué aprueba:
+  `node _dev/genera-formas-oro.js --critica <carpeta>`.
+- `_dev/verifica-examen-sin-pistas.js` arma ahora las formas críticas con el
+  reparto del motor. De paso volvió a armar las formas de las demás: desde
+  que el generador se sacó de las misiones (sección 13) no lo encontraba y se
+  saltaba esa comprobación sin ponerse roja.
+
+### Tanda 1: las 33 con los mismos apartados que La Célula
+
+Josué aprobó el piloto el 15 de noviembre de 2026. La crítica de La Célula y
+de Robots que Resuelven Problemas quedó congelada en `_dev/formas-oro/`
+(formas 1 a 50), y la rama se puso al día con `main` (sello v538).
+
+Pasaron al reparto las 33 misiones que sacan Caso, Error, Decisión,
+Comparación, 2 Causas y 3 Efectos. El cambio es el mismo en todas: declarar
+`critApartados()` y llamar a `_turnoCritica`. Las 33 dan 50 conjuntos
+distintos en las formas 1 a 50. Antes, 13 de las 33 llegaban a 50 y las más
+cortas eran La Energía y La Materia (33) y El Asombro (35).
+
+Josué aprobó la tanda y su crítica quedó congelada.
+
+### Tanda 2: las 7 de la familia de los robots
+
+Electricidad para Robots, Motores y Mecanismos, Programando un Robot, ¿Qué es
+un Robot?, Sensores, Numbers and My Age y Hello! Saludos. Sacan 2 casos de
+diagnóstico, 1 error, 1 de proceso, 1 comparación y 1 diseño. Las 7 dan 50
+conjuntos distintos; antes solo dos llegaban. Las cinco con versión en inglés
+reparten igual en los dos idiomas, porque el reparto va por posición en el
+banco. Su crítica quedó congelada al terminar.
+
+Van 42 de 53, las 42 con la crítica congelada.
+
+### Lo que queda
+
+- **Las otras 11**, con estructura propia: Adjetivos, Adverbios, Áreas
+  protegidas, Eras geológicas, Coordenadas, los dos de Continentes,
+  Pronombres, Sustantivos, Verbos y Adjetivos de bachillerato. En siete de
+  ellas la prueba, además de sacar casos, baraja opciones o calcula datos con
+  la semilla: se miran una por una. Josué decidió cerrar esta rama con las 42
+  y llevar estas 11 en otra rama, después. Mientras tanto siguen sacando sus
+  casos como antes; hoy ninguna repite dentro de sus 30 formas, y
+  `verifica-critica-sin-repetir` las nombra sin ponerse roja.
+- **El aviso a los docentes** (decisión 1): las pautas impresas de la prueba
+  de pensamiento crítico dejan de corresponder a la forma del mismo número,
+  de la 1 a la 30, en las 42 misiones que ya reparten.
+- **Visto al probar la tanda 2, sin tocar:** `verifica-mision-navegador` se
+  cae con Numbers and My Age porque espera tarjetas (`#fcW`) que esa misión
+  no tiene. Viene de antes y no es de la prueba crítica.
+- **Visto al probar, sin tocar:** al recargar la página, los dos
+  desplegables (conceptual y crítica) enseñan «Forma 1» aunque la forma
+  guardada sea otra; al generar sale la guardada. Pasa en todas las misiones
+  y viene de antes.

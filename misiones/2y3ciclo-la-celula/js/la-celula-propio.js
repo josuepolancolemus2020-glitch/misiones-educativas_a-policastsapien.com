@@ -6,8 +6,9 @@
    código que es de La Célula y de ninguna otra:
 
    · su laboratorio (explorar las partes de la célula);
-   · armar e imprimir la prueba de pensamiento crítico, que se rehace
-     entera y por eso no se pasó al motor.
+   · armar e imprimir la prueba de pensamiento crítico: qué casos lleva
+     cada forma lo reparte el motor compartido (js/motor-misiones.js);
+     aquí queda cómo se pinta y se imprime la de esta misión.
 
    Este archivo antes se llamaba la-celula.js y lo traía todo. Lleva
    otro nombre a propósito: un teléfono que abra la página guardada de
@@ -17,32 +18,38 @@
    ============================================================ */
 
 // ===================== PRUEBA DE PENSAMIENTO CRÍTICO =====================
+/* Con mala señal, un teléfono puede recibir este archivo nuevo y servirse de
+   lo guardado el motor de antes, que todavía no sabe repartir la prueba
+   (_turnoCritica). Entonces se pide el motor aquí; para cuando alguien toque
+   «Generar», ya llegó. */
+if (typeof _turnoCritica !== 'function') { (function () { var m = document.createElement('script'); m.src = '../../js/motor-misiones.js'; document.head.appendChild(m); })(); }
+/* Los apartados de la prueba, con su banco y cuántos casos saca cada uno.
+   Con esto el motor (js/motor-misiones.js) reparte las formas sin que dos
+   lleven el mismo conjunto de casos, y sabe hasta qué forma alcanza el banco.
+   El orden es el de la hoja. */
+function critApartados(){
+  return [[critCaseBank,1],[critErrorBank,1],[critDecisionBank,1],[critCompareBank,1],[critCauseBank,2],[critEffectBank,3]];
+}
 function genEvalCrit(){
   sfx('click');
-  _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
-  const _sC = document.getElementById('evalCritFormaSel');
-  if (_sC && parseInt(_sC.value, 10)) evalCritFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_sC.value, 10)));
-  const cf=evalCritFormNum;window._currentEvalCritForm=cf;const rngC = _evalRng(200000 + cf);evalCritFormNum=(evalCritFormNum%EVAL_FORMAS)+1;_injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });saveProgress();
+  const turno=_turnoCritica(evalCritFormNum, critApartados(), function (v) { evalCritFormNum = v; });
+  const cf=turno.forma;window._currentEvalCritForm=cf;saveProgress();
+  const [[kase],[err],[dec],[cmp],causes,effects]=turno.casos;
   document.getElementById('evalcrit-screen-title').textContent=`🧠 Pensamiento Crítico · Forma ${cf} · La Célula`;
   evalCritAnsVisible=false;
   const out=document.getElementById('evalCritOut');out.innerHTML='';
-  const kase=_pickF(critCaseBank,1,rngC)[0];
   const s1=document.createElement('div');
   s1.innerHTML=`<div class="eval-section-title">I. Caso de análisis: observando una célula <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q,i)=>`<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${critCaseGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s1);
-  const err=_pickF(critErrorBank,1,rngC)[0];
   const s2=document.createElement('div');
   s2.innerHTML=`<div class="eval-section-title">II. Corrige el error <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${err.txt}</div><p style="font-size:0.85rem;margin-bottom:0.5rem;">Identifica <strong>dos errores</strong> y corrígelos con tus propias palabras:</p><div class="crit-q-block"><div class="crit-q-label">Error 1 y su corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 1 y su corrección"></textarea><div class="crit-pauta">${err.g1}</div></div><div class="crit-q-block"><div class="crit-q-label">Error 2 y su corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 2 y su corrección"></textarea><div class="crit-pauta">${err.g2}</div></div><div class="crit-selfscore"><label for="critScore1">Obtenido:</label><input type="number" id="critScore1" class="crit-score-input" data-score="1" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s2);
-  const dec=_pickF(critDecisionBank,1,rngC)[0];
   const s3=document.createElement('div');
   s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: la fotosíntesis <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué recomendarías para que la planta recupere su salud? Explica por qué, relacionándolo con la fotosíntesis y los cloroplastos.</div><textarea class="crit-textarea" rows="4" aria-label="Recomendaciones y su justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s3);
-  const cmp=_pickF(critCompareBank,1,rngC)[0];
   const s4=document.createElement('div');
   s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué tipo de célula u organelo corresponde a cada caso? 2. ¿Qué función cumple cada uno? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s4);
-  const causes=_pickF(critCauseBank,2,rngC),effects=_pickF(critEffectBank,3,rngC);
   let ceRows='';
   causes.forEach((it,i)=>{ceRows+=`<div class="crit-ce-item"><div class="crit-ce-row"><div class="crit-ce-cell crit-ce-given"><span class="crit-ce-tag">Causa</span>${it.cause}</div><div class="crit-ce-cell"><span class="crit-ce-tag">Efecto</span><textarea class="crit-textarea" rows="2" aria-label="Efecto de: ${it.cause}" placeholder="Escribe el efecto..."></textarea></div></div><div class="crit-pauta">${it.guide}</div></div>`;});
   effects.forEach((it,i)=>{ceRows+=`<div class="crit-ce-item"><div class="crit-ce-row"><div class="crit-ce-cell"><span class="crit-ce-tag">Causa</span><textarea class="crit-textarea" rows="2" aria-label="Causa de: ${it.effect}" placeholder="Escribe la causa..."></textarea></div><div class="crit-ce-cell crit-ce-given"><span class="crit-ce-tag">Efecto</span>${it.effect}</div></div><div class="crit-pauta">${it.guide}</div></div>`;});
