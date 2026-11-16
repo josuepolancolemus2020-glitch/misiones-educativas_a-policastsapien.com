@@ -101,6 +101,10 @@ Sin framework ni compilación: HTML, CSS y JS planos servidos tal cual.
     `metas.colecta_*`, `metas.exencion_*`): ni `insert` ni `update` directos
     sobre pagos, gastos, reembolsos, colectas o exenciones. Una colecta
     cerrada solo se vuelve a tocar con `metas.colecta_reabrir`.
+19. **El dinero se lee siempre como texto** («150.00»): de las vistas `vd_*`,
+    `v_*`, `vf_*` o de las funciones, nunca de las columnas de las tablas (la
+    base no lo deja). En el aparato se suma y compara en centavos enteros;
+    nunca `Number()` ni `parseFloat()` sobre un monto.
 
 ## Cómo correr las pruebas
 

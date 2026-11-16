@@ -5,8 +5,8 @@ tocó Supabase ni ninguna fila de docentes, y no hubo merge. Los `.sql` se
 **probaron de verdad** en un PostgreSQL 16 local y desechable con un Supabase
 simulado (capa A, `pruebas-capa-a/`), nunca en el proyecto real. Fuera de
 `docs/rediseno-datos/` cambiaron `CLAUDE.md` (reglas 15 a 18 en la revisión 3,
-4 y 5 en la revisión 4, 18 ampliada en la revisión 6, todas con tu
-aprobación) y `_dev/supabase-local/` (revisión 6: pruebas contra
+4 y 5 en la revisión 4, 18 ampliada y 19 nueva en la revisión 6, todas con
+tu aprobación) y `_dev/supabase-local/` (revisión 6: pruebas contra
 `supabase start` y las funciones de borde; no se publica).
 
 ## Qué se quiere
@@ -396,7 +396,5 @@ pantalla y elemento con archivo:línea. Respaldo a Drive: fase futura.
 
 1. Correr en tu entorno `bash _dev/supabase-local/corre-supabase.sh` (capas A
    y A+ contra `supabase start`).
-2. Tu visto bueno a una regla 19 de `CLAUDE.md` para el dinero como texto
-   (texto en la respuesta del chat; no se tocó).
-3. Empezar el código del corte 1 en la rama: `js/datos/` contra la capa B y
+2. Empezar el código del corte 1 en la rama: `js/datos/` contra la capa B y
    la pantalla contra la capa C.
