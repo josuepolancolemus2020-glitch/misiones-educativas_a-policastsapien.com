@@ -196,6 +196,11 @@ El portal nuevo no espera a que todos los docentes carguen su aula:
    La consulta del paso 4 cuenta docentes sin vincular, vinculados sin aula y
    aulas del archivo sin aula nueva.
 
+**Avisos en vivo** (rev. 5): la familia escucha el canal de su hijo solo
+mientras el alumno siga activo (`familia_canal_ok`). Si pasa a retirado,
+trasladado o desertor, deja de recibir avisos en vivo; lo ya registrado lo
+sigue viendo al abrir el portal.
+
 Del lado del servidor, desde el paso 1, `metas_guardar_avisos` reconoce al
 docente por el código y la contraseña con que llama (no por el texto libre
 «docente» de cada fila) y, si está vinculado, no escribe nada y responde `-2`

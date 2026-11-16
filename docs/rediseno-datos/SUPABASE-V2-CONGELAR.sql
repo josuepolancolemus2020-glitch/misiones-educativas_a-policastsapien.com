@@ -32,7 +32,8 @@
 --      asistencia, avisos) se sigue viendo hasta el paso 4;
 --   f) registro_admin: no se escribe; SÍ se deja borrar (lo hace
 --      metas_cerrar_familias en el cierre de año, que sigue abierta);
---   g) se cierran: metas_guardar_admin (todas sus firmas),
+--   g) se cierran (a anon, authenticated y también service_role: ninguna
+--      función de borde las usa): metas_guardar_admin (todas sus firmas),
 --      metas_recuperar_admin_docente, metas_docente_historial,
 --      metas_docente_historial_listar, metas_docente_papelera,
 --      metas_docente_reset, metas_docente_reset_deshacer,
@@ -56,16 +57,32 @@ begin
     tg_table_name using errcode = 'MT010';
 end $$;
 
+-- Cierra también a service_role (rev. 5): ninguna función de borde usa las
+-- funciones viejas que se cierran. Las que SÍ usan (02-CUENTAS-Y-SEGURIDAD.md:
+-- metas-entrar, reset-clave, metas-salir-todos, familia-vincular) están en la
+-- lista de abajo, y pedir que se cierre una de ellas es un error, no un
+-- descuido silencioso.
 create or replace function public._metas_cerrar_funciones(p_nombres text[])
 returns void language plpgsql as $$
-declare f record;
+declare
+  f record;
+  -- metas-entrar y reset-clave (las únicas de public que llaman las
+  -- funciones de borde; las demás son de metas) y el cambio de contraseña,
+  -- que llama la app y luego metas-salir-todos.
+  de_borde constant text[] := array['metas_entrar_docente_v2', 'metas_reset_confirmar',
+                                    'metas_cambiar_clave_docente'];
 begin
+  if p_nombres && de_borde then
+    raise exception 'M.E.T.A.S: % la usa una función de borde; no se cierra aquí',
+      (select string_agg(x, ', ') from unnest(p_nombres) x where x = any (de_borde))
+      using errcode = 'MT042';
+  end if;
   for f in   -- TODAS las firmas de cada nombre (también las viejas sin contraseña)
     select p.oid::regprocedure as firma
       from pg_proc p join pg_namespace n on n.oid = p.pronamespace
      where n.nspname = 'public' and p.proname = any (p_nombres)
   loop
-    execute format('revoke execute on function %s from public, anon, authenticated', f.firma);
+    execute format('revoke execute on function %s from public, anon, authenticated, service_role', f.firma);
     raise notice 'función cerrada: %', f.firma;
   end loop;
 end $$;

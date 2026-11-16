@@ -477,11 +477,16 @@ end $$;
 -- ¿Esta sesión de familia puede escuchar este canal? Con la sesión del padre
 -- la RLS no deja leer metas.familias, y hace falta para saber si su clave
 -- todavía vale: por eso va en una función con los permisos del dueño.
+-- Solo mientras el alumno siga ACTIVO en el aula (rev. 5): un retirado,
+-- trasladado o desertor ya no recibe avisos en vivo. Lo ya registrado lo
+-- sigue viendo la familia en las vistas (familia_alumnos), como antes.
 create or replace function metas.familia_canal_ok(p_topic text)
 returns boolean language sql stable security definer set search_path = metas, pg_temp as $$
   select exists (select 1 from metas.familia_accesos fa
                    join metas.familias f on f.id = fa.familia_id and f.deleted_at is null
                                         and metas._clave_vale(fa.clave_usada, f.clave, f.clave_origen, f.clave_siguiente)
+                   join metas.alumnos a on a.id = f.alumno_id and a.deleted_at is null
+                                       and a.estado in ('activo', 'ingreso')
                   where fa.auth_uid = (select auth.uid()) and fa.revocado_at is null
                     and 'familia:' || fa.familia_id::text = p_topic)
 $$;

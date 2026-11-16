@@ -29,10 +29,17 @@ recuperados», «datos recuperados».
      dice L 200. ¿Dejar L 200?» → **[Sí]** **[No, dejar L 300]**.
 3. **¿La misma persona?**: «¿Ana María López Cruz es la misma alumna que ya
    tienes con el n.º 12?» → **[Sí, es ella]** **[No, son dos]**.
-4. **Cuando algo no se pudo anotar** por una razón del aula (no técnica), se
-   dice la razón del aula: «El pago de Ana para Excursión no quedó anotado:
-   esa colecta ya está cerrada». Un botón: «Entendido». Nunca «no se
-   sincronizó», «error», «servidor» ni «nube».
+4. **Colecta cerrada** (rev. 5): al tocar cualquier cosa de una colecta
+   cerrada (un pago, un gasto, una exención, el monto sugerido), antes de
+   nada: «Esta colecta está cerrada. ¿Reabrirla?» → **[Reabrir]**
+   **[Dejarla cerrada]**. Con «Reabrir» se abre un campo opcional «¿Por qué?
+   (puedes dejarlo en blanco)» y se sigue con lo que el docente quería
+   hacer. Si la colecta se cerró en otro aparato mientras tanto, la misma
+   pregunta sale cuando llega la respuesta de la base.
+5. **Cuando algo no se pudo anotar** por una razón del aula (no técnica), se
+   dice la razón del aula: «El pago de Ana no quedó anotado: Ana ya no está en
+   la lista». Un botón: «Entendido». Nunca «no se sincronizó», «error»,
+   «servidor» ni «nube».
 
 **Lo que cambia respecto de la revisión 2:** desaparecen la línea
 «Guardado / Guardando…», el «recibo pendiente» (sin señal, el número del

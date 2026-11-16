@@ -24,8 +24,9 @@ corte (pausa aceptada).
 ## 8.1 Corte 1: dinero, alumnos, notas, asistencia, controles, avisos y conducta
 
 **Empezar** (aprobado): en la rama, con la capa A en verde
-(`pruebas-capa-a/corre.sh`, hoy 194 pruebas: S1 a S9, M1 a M16, F1 a F6, B4,
-K0 a K10, convivencia V1 a V14, N1, N2, C5).
+(`pruebas-capa-a/corre.sh`, hoy 236 pruebas: S1 a S9, M1 a M16, CC0 a CC12,
+F1 a F6, B4, K0 a K12, convivencia V1 a V15, N1, N2, C5). Cómo correrla
+contra `supabase start`: `06`, 6.6.
 
 **Publicar**: solo con N1 y N2 resueltos (lo están en la revisión 4) y la
 misma capa A en verde **contra `supabase start`**.

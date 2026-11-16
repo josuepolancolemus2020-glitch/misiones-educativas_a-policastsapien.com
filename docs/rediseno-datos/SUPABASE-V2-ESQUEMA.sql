@@ -649,6 +649,12 @@ begin
     return new;
   end if;
   new.clave_siguiente := null;          -- nace sin siguiente
+  -- Pasado el paso 4 las claves viejas ya vencieron: ninguna se vuelve a
+  -- conservar, ni siquiera la que estaba en la copia de este docente. La base
+  -- pone una nueva; la app lo ve en clave_origen = 'nueva' e imprime la tira.
+  if v_pedida is not null and metas._claves_viejas_vencidas() then
+    v_pedida := null;
+  end if;
   if v_pedida is not null then
     if not metas._clave_era_mia(new.owner, v_pedida) then
       raise exception 'metas: esa clave no está en tus datos anteriores' using errcode = 'MT020';
@@ -689,6 +695,8 @@ create table if not exists metas.colectas (
   monto_sugerido  numeric(12,2) not null check (monto_sugerido >= 0),
   fecha           date not null,
   estado          text not null default 'abierta' check (estado in ('abierta', 'cerrada')),
+  -- lo escribe colecta_reabrir; la auditoría guarda quién, cuándo y cada motivo
+  motivo_reapertura text check (length(motivo_reapertura) <= 200),
   unique (id, owner, aula_id),
   foreign key (aula_id, owner) references metas.aulas (id, owner)
 );
@@ -1271,8 +1279,11 @@ select metas._preparar('periodos',         '{aula_id}',                 '{aula_i
 select metas._preparar('asignaturas',      '{aula_id}',                 '{aula_id,aulas}');
 select metas._preparar('alumnos',          '{aula_id}',                 '{aula_id,aulas}', 'solo_editar');
 select metas._preparar('familias',         '{aula_id,alumno_id,clave,clave_origen}', '{alumno_id,alumnos}');
-select metas._preparar('colectas',         '{aula_id}',                 '{aula_id,aulas}');
-select metas._preparar('colecta_exenciones','{aula_id,colecta_id,alumno_id}', '{colecta_id,colectas,alumno_id,alumnos}');
+-- Colectas y exenciones: solo por funciones (regla de Josué, rev. 5). Una
+-- colecta cerrada queda cerrada de verdad, y eso no se puede garantizar si
+-- el aparato puede escribir la fila directo.
+select metas._preparar('colectas',         '{aula_id}',                 '{aula_id,aulas}', 'funciones');
+select metas._preparar('colecta_exenciones','{aula_id,colecta_id,alumno_id}', '{colecta_id,colectas,alumno_id,alumnos}', 'funciones');
 select metas._preparar('pagos',            '{aula_id,colecta_id,alumno_id,monto,fecha,recibo,reemplaza_a,reemplaza_recibo}',
                                            '{colecta_id,colectas,alumno_id,alumnos}', 'funciones');
 select metas._preparar('gastos',           '{aula_id,colecta_id}',      '{aula_id,aulas,colecta_id,colectas}', 'funciones');
@@ -1317,6 +1328,38 @@ create trigger alumnos_25_protegido  before update on metas.alumnos
   for each row execute function metas.t_borrado_protegido();
 create trigger colectas_25_protegido before update on metas.colectas
   for each row execute function metas.t_borrado_protegido();
+
+-- Respaldo de «una colecta cerrada queda cerrada»: las funciones ya
+-- responden «colecta_cerrada» antes de llegar aquí; esto frena lo que no
+-- pase por ellas (un SQL a mano, una función futura que lo olvide).
+--   · en colectas: una cerrada no cambia nada mientras siga cerrada (solo
+--     colecta_reabrir la pasa a abierta);
+--   · en pagos, gastos y exenciones: nada se crea ni se cambia en una
+--     colecta cerrada.
+create or replace function metas.t_colecta_cerrada()
+returns trigger language plpgsql security definer set search_path = metas, pg_temp as $$
+declare v_estado text;
+begin
+  if tg_table_name = 'colectas' then
+    if old.estado = 'cerrada' and new.estado = 'cerrada' then
+      raise exception 'metas: esa colecta está cerrada' using errcode = 'MT050';
+    end if;
+    return new;
+  end if;
+  select estado into v_estado from metas.colectas where id = new.colecta_id for share;
+  if v_estado = 'cerrada' then
+    raise exception 'metas: esa colecta está cerrada' using errcode = 'MT050';
+  end if;
+  return new;
+end $$;
+create trigger colectas_26_cerrada before update on metas.colectas
+  for each row execute function metas.t_colecta_cerrada();
+create trigger colecta_exenciones_26_cerrada before insert or update on metas.colecta_exenciones
+  for each row execute function metas.t_colecta_cerrada();
+create trigger pagos_26_cerrada before insert or update on metas.pagos
+  for each row execute function metas.t_colecta_cerrada();
+create trigger gastos_26_cerrada before insert or update on metas.gastos
+  for each row execute function metas.t_colecta_cerrada();
 create trigger familias_30_clave     before insert or update on metas.familias
   for each row execute function metas.t_clave_familia();
 create trigger bienes_30_propietario before update on metas.bienes
@@ -1440,6 +1483,17 @@ returns jsonb language sql immutable as $$
   select (to_jsonb(g) - 'monto') || jsonb_build_object('monto', g.monto::text)
 $$;
 
+-- ¿Está cerrada? Y mientras dure la transacción, que nadie la cierre: se
+-- toma la colecta en modo compartido, siempre ANTES que el pago o el gasto
+-- (mismo orden en todas las funciones; colecta_cerrar la toma exclusiva).
+create or replace function metas._colecta_cerrada(p_colecta uuid)
+returns boolean language plpgsql volatile security definer set search_path = metas, pg_temp as $$
+declare v text;
+begin
+  select estado into v from metas.colectas where id = p_colecta for share;
+  return coalesce(v = 'cerrada', false);
+end $$;
+
 -- ── Crear un pago (o un abono) ─────────────────────────────────────────────
 -- p_conocidos: pagos activos de ESE alumno en ESA colecta que el aparato
 -- tenía a la vista cuando el docente anotó este. Si en la base hay otro que
@@ -1561,10 +1615,14 @@ begin
 end $$;
 
 -- ── Anular un pago (el dinero se devolvió o se anotó por error) ────────────
+-- En una colecta cerrada no se anula (rev. 5). Pero si el pago YA estaba
+-- anulado (un reenvío de la cola), se responde como siempre: decir «está
+-- cerrada» haría creer al docente que no quedó anotado.
 create or replace function metas.pago_anular(p_pago uuid, p_motivo text, p_op uuid)
 returns jsonb language plpgsql security definer set search_path = metas, pg_temp as $$
 declare
   v metas.pagos; w metas.pagos;
+  v_cerrada boolean;
 begin
   if not metas.es_docente() then
     raise exception 'metas: se necesita una cuenta de docente' using errcode = '42501';
@@ -1572,6 +1630,7 @@ begin
   if coalesce(trim(p_motivo), '') = '' then
     return jsonb_build_object('ok', false, 'motivo', 'falta_motivo');
   end if;
+  v_cerrada := metas._colecta_cerrada((select colecta_id from metas.pagos where id = p_pago and owner = auth.uid()));
   select * into v from metas.pagos where id = p_pago and owner = auth.uid() for update;
   if not found then return jsonb_build_object('ok', false, 'motivo', 'no_existe'); end if;
   if v.deleted_at is not null then
@@ -1582,6 +1641,9 @@ begin
                                 'actual', metas._pago_json(w));
     end if;
     return jsonb_build_object('ok', true, 'ya_estaba', true);
+  end if;
+  if v_cerrada then
+    return jsonb_build_object('ok', false, 'motivo', 'colecta_cerrada');
   end if;
   update metas.pagos set deleted_at = now(), anulado_motivo = left(p_motivo, 200)
    where id = p_pago returning * into v;
@@ -1595,6 +1657,7 @@ create or replace function metas.pago_editar(p_pago uuid, p_cambios jsonb, p_op 
 returns jsonb language plpgsql security definer set search_path = metas, pg_temp as $$
 declare
   v metas.pagos;
+  v_cerrada boolean;
 begin
   if not metas.es_docente() then
     raise exception 'metas: se necesita una cuenta de docente' using errcode = '42501';
@@ -1602,6 +1665,7 @@ begin
   if exists (select 1 from jsonb_object_keys(p_cambios) k where k not in ('nota', 'recibo_anterior')) then
     return jsonb_build_object('ok', false, 'motivo', 'campo_no_editable');   -- monto y fecha: pago_corregir
   end if;
+  v_cerrada := metas._colecta_cerrada((select colecta_id from metas.pagos where id = p_pago and owner = auth.uid()));
   select * into v from metas.pagos where id = p_pago and owner = auth.uid() for update;
   if not found then return jsonb_build_object('ok', false, 'motivo', 'no_existe'); end if;
   if v.deleted_at is not null then return jsonb_build_object('ok', false, 'motivo', 'anulado'); end if;
@@ -1609,11 +1673,219 @@ begin
      and (not p_cambios ? 'recibo_anterior' or nullif(trim(p_cambios ->> 'recibo_anterior'), '') is not distinct from v.recibo_anterior) then
     return jsonb_build_object('ok', true, 'ya_estaba', true, 'pago', metas._pago_json(v));
   end if;
+  -- Ni la nota: una colecta cerrada queda como se cerró.
+  if v_cerrada then
+    return jsonb_build_object('ok', false, 'motivo', 'colecta_cerrada');
+  end if;
   update metas.pagos set
     nota            = case when p_cambios ? 'nota' then p_cambios ->> 'nota' else nota end,
     recibo_anterior = case when p_cambios ? 'recibo_anterior' then nullif(trim(p_cambios ->> 'recibo_anterior'), '') else recibo_anterior end
   where id = p_pago returning * into v;
   return jsonb_build_object('ok', true, 'pago', metas._pago_json(v));
+end $$;
+
+-- ── Colectas y exenciones (solo por funciones, rev. 5) ─────────────────────
+-- Toda respuesta «colecta_cerrada» la app la convierte en la pregunta de dos
+-- botones «Esta colecta está cerrada. ¿Reabrirla?» → [Reabrir] llama a
+-- colecta_reabrir y repite lo que el docente quería hacer; [Dejarla cerrada]
+-- no hace nada (09-INTERFAZ.md).
+create or replace function metas._colecta_json(c metas.colectas)
+returns jsonb language sql immutable as $$
+  select (to_jsonb(c) - 'monto_sugerido') || jsonb_build_object('monto_sugerido', c.monto_sugerido::text)
+$$;
+create or replace function metas._exencion_json(e metas.colecta_exenciones)
+returns jsonb language sql immutable as $$
+  select (to_jsonb(e) - 'monto_aplicable') || jsonb_build_object('monto_aplicable', e.monto_aplicable::text)
+$$;
+
+create or replace function metas.colecta_crear(p_id uuid, p_op uuid, p_aula uuid, p_concepto text,
+                                               p_monto_sugerido text, p_fecha date)
+returns jsonb language plpgsql security definer set search_path = metas, pg_temp as $$
+declare v_uid uuid := auth.uid(); v_ya metas.colectas; r metas.colectas;
+begin
+  if not metas.es_docente() then
+    raise exception 'metas: se necesita una cuenta de docente' using errcode = '42501';
+  end if;
+  select * into v_ya from metas.colectas where id = p_id;
+  if found then
+    if v_ya.owner = v_uid and v_ya.op_creacion = p_op then
+      return jsonb_build_object('ok', true, 'ya_estaba', true, 'colecta', metas._colecta_json(v_ya));
+    end if;
+    return jsonb_build_object('ok', false, 'motivo', 'id_ocupado');
+  end if;
+  perform 1 from metas.aulas where id = p_aula and owner = v_uid and deleted_at is null for share;
+  if not found then return jsonb_build_object('ok', false, 'motivo', 'aula'); end if;
+  insert into metas.colectas (id, op_creacion, aula_id, concepto, monto_sugerido, fecha)
+  values (p_id, p_op, p_aula, p_concepto, metas._monto(p_monto_sugerido), p_fecha)
+  returning * into r;
+  return jsonb_build_object('ok', true, 'colecta', metas._colecta_json(r));
+end $$;
+
+-- Concepto, fecha y monto sugerido. El monto es dinero: si otro aparato lo
+-- cambió (o no se sabe qué veía este), se pregunta con las dos cifras.
+create or replace function metas.colecta_editar(p_colecta uuid, p_base jsonb, p_cambios jsonb, p_op uuid)
+returns jsonb language plpgsql security definer set search_path = metas, pg_temp as $$
+declare v metas.colectas; v_monto numeric;
+begin
+  if not metas.es_docente() then
+    raise exception 'metas: se necesita una cuenta de docente' using errcode = '42501';
+  end if;
+  if exists (select 1 from jsonb_object_keys(p_cambios) k where k not in ('concepto', 'fecha', 'monto_sugerido')) then
+    return jsonb_build_object('ok', false, 'motivo', 'campo_no_editable');
+  end if;
+  select * into v from metas.colectas where id = p_colecta and owner = auth.uid() for update;
+  if not found or v.deleted_at is not null then return jsonb_build_object('ok', false, 'motivo', 'no_existe'); end if;
+  if p_cambios ? 'monto_sugerido' then v_monto := metas._monto(p_cambios ->> 'monto_sugerido'); end if;
+  if (not p_cambios ? 'monto_sugerido' or v_monto = v.monto_sugerido)
+     and (not p_cambios ? 'concepto' or (p_cambios ->> 'concepto') is not distinct from v.concepto)
+     and (not p_cambios ? 'fecha' or (p_cambios ->> 'fecha')::date is not distinct from v.fecha) then
+    return jsonb_build_object('ok', true, 'ya_estaba', true, 'colecta', metas._colecta_json(v));
+  end if;
+  if v.estado = 'cerrada' then return jsonb_build_object('ok', false, 'motivo', 'colecta_cerrada'); end if;
+  if p_cambios ? 'monto_sugerido' and v.monto_sugerido is distinct from v_monto
+     and v.monto_sugerido is distinct from metas._monto_o_nulo(p_base ->> 'monto_sugerido') then
+    return jsonb_build_object('ok', false,
+      'pregunta', case when metas._monto_o_nulo(p_base ->> 'monto_sugerido') is null
+                       then 'colecta_sin_base' else 'colecta_cambiada_en_otro_aparato' end,
+      'actual', metas._colecta_json(v), 'este', jsonb_build_object('monto_sugerido', v_monto::text));
+  end if;
+  update metas.colectas set
+    concepto       = case when p_cambios ? 'concepto' then p_cambios ->> 'concepto' else concepto end,
+    fecha          = case when p_cambios ? 'fecha' then (p_cambios ->> 'fecha')::date else fecha end,
+    monto_sugerido = coalesce(v_monto, monto_sugerido)
+  where id = p_colecta returning * into v;
+  return jsonb_build_object('ok', true, 'colecta', metas._colecta_json(v));
+end $$;
+
+-- Cerrar toma la colecta EXCLUSIVA: espera a que terminen los pagos, gastos
+-- y exenciones que se están anotando en ese momento (la tienen compartida).
+create or replace function metas.colecta_cerrar(p_colecta uuid, p_op uuid)
+returns jsonb language plpgsql security definer set search_path = metas, pg_temp as $$
+declare v metas.colectas;
+begin
+  if not metas.es_docente() then
+    raise exception 'metas: se necesita una cuenta de docente' using errcode = '42501';
+  end if;
+  select * into v from metas.colectas where id = p_colecta and owner = auth.uid() for update;
+  if not found or v.deleted_at is not null then return jsonb_build_object('ok', false, 'motivo', 'no_existe'); end if;
+  if v.estado = 'cerrada' then
+    return jsonb_build_object('ok', true, 'ya_estaba', true, 'colecta', metas._colecta_json(v));
+  end if;
+  update metas.colectas set estado = 'cerrada' where id = p_colecta returning * into v;
+  return jsonb_build_object('ok', true, 'colecta', metas._colecta_json(v));
+end $$;
+
+-- Reabrir: la ÚNICA forma de volver a tocar una colecta cerrada. Queda en la
+-- auditoría (metas.auditoria: actor, ocurrido_at, campos estado y
+-- motivo_reapertura, y la fila de antes y de después). El motivo es opcional.
+create or replace function metas.colecta_reabrir(p_colecta uuid, p_motivo text default null, p_op uuid default null)
+returns jsonb language plpgsql security definer set search_path = metas, pg_temp as $$
+declare v metas.colectas;
+begin
+  if not metas.es_docente() then
+    raise exception 'metas: se necesita una cuenta de docente' using errcode = '42501';
+  end if;
+  select * into v from metas.colectas where id = p_colecta and owner = auth.uid() for update;
+  if not found or v.deleted_at is not null then return jsonb_build_object('ok', false, 'motivo', 'no_existe'); end if;
+  if v.estado = 'abierta' then
+    return jsonb_build_object('ok', true, 'ya_estaba', true, 'colecta', metas._colecta_json(v));
+  end if;
+  update metas.colectas set estado = 'abierta', motivo_reapertura = left(nullif(trim(p_motivo), ''), 200)
+   where id = p_colecta returning * into v;
+  return jsonb_build_object('ok', true, 'colecta', metas._colecta_json(v));
+end $$;
+
+-- Borrar: solo una colecta abierta y sin pagos ni gastos activos.
+create or replace function metas.colecta_borrar(p_colecta uuid, p_op uuid)
+returns jsonb language plpgsql security definer set search_path = metas, pg_temp as $$
+declare v metas.colectas;
+begin
+  if not metas.es_docente() then
+    raise exception 'metas: se necesita una cuenta de docente' using errcode = '42501';
+  end if;
+  select * into v from metas.colectas where id = p_colecta and owner = auth.uid() for update;
+  if not found then return jsonb_build_object('ok', false, 'motivo', 'no_existe'); end if;
+  if v.deleted_at is not null then return jsonb_build_object('ok', true, 'ya_estaba', true); end if;
+  if v.estado = 'cerrada' then return jsonb_build_object('ok', false, 'motivo', 'colecta_cerrada'); end if;
+  if exists (select 1 from metas.pagos  where colecta_id = p_colecta and deleted_at is null)
+     or exists (select 1 from metas.gastos where colecta_id = p_colecta and deleted_at is null) then
+    return jsonb_build_object('ok', false, 'motivo', 'tiene_pagos_o_gastos');
+  end if;
+  update metas.colectas set deleted_at = now() where id = p_colecta returning * into v;
+  return jsonb_build_object('ok', true, 'colecta', metas._colecta_json(v));
+end $$;
+
+-- Exención (a quién no le corresponde, o le corresponde menos). Una por
+-- alumno y colecta. p_monto_aplicable null = exento del todo.
+-- p_base = lo que el aparato veía: {"monto_aplicable": "25.00"} o
+-- {"monto_aplicable": null} si veía una exención total; sin la llave, el
+-- aparato creía que no había ninguna. Si en la base hay otra cosa, pregunta.
+create or replace function metas.exencion_poner(p_id uuid, p_op uuid, p_colecta uuid, p_alumno uuid,
+                                                p_monto_aplicable text default null, p_motivo text default null,
+                                                p_base jsonb default '{}'::jsonb)
+returns jsonb language plpgsql security definer set search_path = metas, pg_temp as $$
+declare
+  v_uid uuid := auth.uid();
+  v_monto numeric := case when p_monto_aplicable is null then null else metas._monto(p_monto_aplicable) end;
+  v_col metas.colectas; e metas.colecta_exenciones; r metas.colecta_exenciones;
+begin
+  if not metas.es_docente() then
+    raise exception 'metas: se necesita una cuenta de docente' using errcode = '42501';
+  end if;
+  select * into v_col from metas.colectas where id = p_colecta and owner = v_uid and deleted_at is null for share;
+  if not found then return jsonb_build_object('ok', false, 'motivo', 'colecta'); end if;
+  perform 1 from metas.alumnos where id = p_alumno and owner = v_uid and aula_id = v_col.aula_id and deleted_at is null;
+  if not found then return jsonb_build_object('ok', false, 'motivo', 'alumno'); end if;
+  perform pg_advisory_xact_lock(hashtextextended(p_colecta::text || p_alumno::text || 'exencion', 0));
+  select * into e from metas.colecta_exenciones
+   where colecta_id = p_colecta and alumno_id = p_alumno and deleted_at is null for update;
+  if found then
+    if e.monto_aplicable is not distinct from v_monto
+       and coalesce(p_motivo, e.motivo) is not distinct from e.motivo then
+      return jsonb_build_object('ok', true, 'ya_estaba', true, 'exencion', metas._exencion_json(e));
+    end if;
+    if v_col.estado = 'cerrada' then return jsonb_build_object('ok', false, 'motivo', 'colecta_cerrada'); end if;
+    if not (p_base ? 'monto_aplicable')
+       or metas._monto_o_nulo(p_base ->> 'monto_aplicable') is distinct from e.monto_aplicable then
+      return jsonb_build_object('ok', false, 'pregunta', 'exencion_cambiada_en_otro_aparato',
+        'actual', metas._exencion_json(e), 'este', jsonb_build_object('monto_aplicable', v_monto::text));
+    end if;
+    update metas.colecta_exenciones set monto_aplicable = v_monto, motivo = coalesce(p_motivo, motivo)
+     where id = e.id returning * into r;
+    return jsonb_build_object('ok', true, 'exencion', metas._exencion_json(r));
+  end if;
+  select * into r from metas.colecta_exenciones where id = p_id;
+  if found then
+    if r.owner = v_uid and r.op_creacion = p_op then
+      return jsonb_build_object('ok', true, 'ya_estaba', true, 'exencion', metas._exencion_json(r));
+    end if;
+    return jsonb_build_object('ok', false, 'motivo', 'id_ocupado');
+  end if;
+  if v_col.estado = 'cerrada' then return jsonb_build_object('ok', false, 'motivo', 'colecta_cerrada'); end if;
+  if p_base ? 'monto_aplicable' then          -- la veía y otro aparato la quitó
+    return jsonb_build_object('ok', false, 'pregunta', 'exencion_quitada_en_otro_aparato',
+      'este', jsonb_build_object('monto_aplicable', v_monto::text));
+  end if;
+  insert into metas.colecta_exenciones (id, op_creacion, aula_id, colecta_id, alumno_id, monto_aplicable, motivo)
+  values (p_id, p_op, v_col.aula_id, p_colecta, p_alumno, v_monto, p_motivo)
+  returning * into r;
+  return jsonb_build_object('ok', true, 'exencion', metas._exencion_json(r));
+end $$;
+
+create or replace function metas.exencion_quitar(p_colecta uuid, p_alumno uuid, p_op uuid)
+returns jsonb language plpgsql security definer set search_path = metas, pg_temp as $$
+declare v_cerrada boolean; e metas.colecta_exenciones;
+begin
+  if not metas.es_docente() then
+    raise exception 'metas: se necesita una cuenta de docente' using errcode = '42501';
+  end if;
+  v_cerrada := metas._colecta_cerrada(p_colecta);
+  select * into e from metas.colecta_exenciones
+   where colecta_id = p_colecta and alumno_id = p_alumno and owner = auth.uid() and deleted_at is null for update;
+  if not found then return jsonb_build_object('ok', true, 'ya_estaba', true); end if;
+  if v_cerrada then return jsonb_build_object('ok', false, 'motivo', 'colecta_cerrada'); end if;
+  update metas.colecta_exenciones set deleted_at = now() where id = e.id;
+  return jsonb_build_object('ok', true);
 end $$;
 
 -- ── Gastos de una colecta ──────────────────────────────────────────────────
@@ -1642,6 +1914,7 @@ begin
   end if;
   select * into v_col from metas.colectas where id = p_colecta and owner = v_uid and deleted_at is null for share;
   if not found then return jsonb_build_object('ok', false, 'motivo', 'colecta'); end if;
+  if v_col.estado = 'cerrada' then return jsonb_build_object('ok', false, 'motivo', 'colecta_cerrada'); end if;
   perform pg_advisory_xact_lock(hashtextextended(p_colecta::text || 'gastos', 0));
   if not p_son_distintos then
     select coalesce(jsonb_agg(metas._gasto_json(g) order by g.created_at), '[]'::jsonb) into v_otros
@@ -1664,12 +1937,16 @@ end $$;
 -- Editar: si otro aparato cambió el MONTO o la FECHA que este aparato quiere
 -- cambiar, se pregunta con los dos valores. Concepto, categoría y factura se
 -- aplican campo por campo.
+-- Sin base (el aparato no manda lo que veía): pregunta, como en los gastos
+-- del docente. En una colecta cerrada: «colecta_cerrada», salvo que el
+-- cambio ya esté hecho (reenvío de la cola).
 create or replace function metas.gasto_editar(p_gasto uuid, p_base jsonb, p_cambios jsonb, p_op uuid)
 returns jsonb language plpgsql security definer set search_path = metas, pg_temp as $$
 declare
   v metas.gastos;
   v_monto numeric;
   v_fecha date;
+  v_cerrada boolean;
 begin
   if not metas.es_docente() then
     raise exception 'metas: se necesita una cuenta de docente' using errcode = '42501';
@@ -1678,14 +1955,30 @@ begin
               where k not in ('monto', 'fecha', 'concepto', 'categoria', 'tiene_factura')) then
     return jsonb_build_object('ok', false, 'motivo', 'campo_no_editable');
   end if;
+  v_cerrada := metas._colecta_cerrada((select colecta_id from metas.gastos where id = p_gasto and owner = auth.uid()));
   select * into v from metas.gastos where id = p_gasto and owner = auth.uid() for update;
   if not found then return jsonb_build_object('ok', false, 'motivo', 'no_existe'); end if;
   if v.deleted_at is not null then return jsonb_build_object('ok', false, 'motivo', 'anulado'); end if;
   if p_cambios ? 'monto' then v_monto := metas._monto(p_cambios ->> 'monto'); end if;
   if p_cambios ? 'fecha' then v_fecha := (p_cambios ->> 'fecha')::date; end if;
-  if (p_cambios ? 'monto' and v.monto is distinct from metas._monto(p_base ->> 'monto') and v.monto is distinct from v_monto)
-     or (p_cambios ? 'fecha' and v.fecha is distinct from (p_base ->> 'fecha')::date and v.fecha is distinct from v_fecha) then
-    return jsonb_build_object('ok', false, 'pregunta', 'gasto_cambiado_en_otro_aparato',
+  if (not p_cambios ? 'monto'         or v_monto = v.monto)
+     and (not p_cambios ? 'fecha'         or v_fecha = v.fecha)
+     and (not p_cambios ? 'concepto'      or (p_cambios ->> 'concepto') is not distinct from v.concepto)
+     and (not p_cambios ? 'categoria'     or (p_cambios ->> 'categoria') is not distinct from v.categoria)
+     and (not p_cambios ? 'tiene_factura' or (p_cambios ->> 'tiene_factura')::boolean is not distinct from v.tiene_factura) then
+    return jsonb_build_object('ok', true, 'ya_estaba', true, 'gasto', metas._gasto_json(v));
+  end if;
+  if v_cerrada then
+    return jsonb_build_object('ok', false, 'motivo', 'colecta_cerrada');
+  end if;
+  if (p_cambios ? 'monto' and v.monto is distinct from v_monto
+        and v.monto is distinct from metas._monto_o_nulo(p_base ->> 'monto'))
+     or (p_cambios ? 'fecha' and v.fecha is distinct from v_fecha
+        and v.fecha is distinct from metas._fecha_o_nula(p_base ->> 'fecha')) then
+    return jsonb_build_object('ok', false,
+      'pregunta', case when (p_cambios ? 'monto' and metas._monto_o_nulo(p_base ->> 'monto') is null)
+                         or (p_cambios ? 'fecha' and metas._fecha_o_nula(p_base ->> 'fecha') is null)
+                       then 'gasto_sin_base' else 'gasto_cambiado_en_otro_aparato' end,
       'actual', metas._gasto_json(v),
       'este', jsonb_build_object('monto', coalesce(v_monto, v.monto)::text, 'fecha', coalesce(v_fecha, v.fecha)));
   end if;
@@ -1701,14 +1994,16 @@ end $$;
 
 create or replace function metas.gasto_anular(p_gasto uuid, p_motivo text, p_op uuid)
 returns jsonb language plpgsql security definer set search_path = metas, pg_temp as $$
-declare v metas.gastos;
+declare v metas.gastos; v_cerrada boolean;
 begin
   if not metas.es_docente() then
     raise exception 'metas: se necesita una cuenta de docente' using errcode = '42501';
   end if;
+  v_cerrada := metas._colecta_cerrada((select colecta_id from metas.gastos where id = p_gasto and owner = auth.uid()));
   select * into v from metas.gastos where id = p_gasto and owner = auth.uid() for update;
   if not found then return jsonb_build_object('ok', false, 'motivo', 'no_existe'); end if;
   if v.deleted_at is not null then return jsonb_build_object('ok', true, 'ya_estaba', true); end if;
+  if v_cerrada then return jsonb_build_object('ok', false, 'motivo', 'colecta_cerrada'); end if;
   update metas.gastos set deleted_at = now(), anulado_motivo = left(coalesce(nullif(trim(p_motivo), ''), 'anulado'), 200)
    where id = p_gasto returning * into v;
   return jsonb_build_object('ok', true, 'gasto', metas._gasto_json(v));
@@ -2135,7 +2430,14 @@ grant execute on function
   metas.reembolso_corregir(uuid, int, uuid, uuid, text, date, text),
   metas.reembolso_anular(uuid, text, uuid),
   metas.acta_inventario_crear(uuid, uuid, text, date, text, text, uuid, text, boolean),
-  metas.alumno_crear(uuid, uuid, uuid, jsonb, uuid[])
+  metas.alumno_crear(uuid, uuid, uuid, jsonb, uuid[]),
+  metas.colecta_crear(uuid, uuid, uuid, text, text, date),
+  metas.colecta_editar(uuid, jsonb, jsonb, uuid),
+  metas.colecta_cerrar(uuid, uuid),
+  metas.colecta_reabrir(uuid, text, uuid),
+  metas.colecta_borrar(uuid, uuid),
+  metas.exencion_poner(uuid, uuid, uuid, uuid, text, text, jsonb),
+  metas.exencion_quitar(uuid, uuid, uuid)
 to authenticated;
 
 -- ════════════════════════════════════════════════════════════════════════════

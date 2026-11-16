@@ -90,10 +90,10 @@ select metas.alumno_crear(:dani,  gen_random_uuid(), :aula, '{"nombre_completo":
 select metas.alumno_crear(:eva,   gen_random_uuid(), :aula, '{"nombre_completo":"Alumna Ficticia Cinco","num_lista":5}');
 select metas.alumno_crear(:fito,  gen_random_uuid(), :aula, '{"nombre_completo":"Alumno Ficticio Seis","num_lista":6}');
 select metas.alumno_crear(:gabi,  gen_random_uuid(), :aula, '{"nombre_completo":"Alumna Ficticia Siete","num_lista":7}');
-insert into metas.colectas (id, aula_id, concepto, monto_sugerido, fecha) values
-  (:c1, :aula, 'Excursión (ficticia)', 50, '2027-02-01'),
-  (:c2, :aula, 'Refrigerio (ficticio)', 100, '2027-02-01'),
-  (:c3, :aula, 'Monedas (ficticio)', 0, '2027-02-01');
+-- Colectas solo por funciones (rev. 5)
+select metas.colecta_crear(:c1, gen_random_uuid(), :aula, 'Excursión (ficticia)', '50', '2027-02-01');
+select metas.colecta_crear(:c2, gen_random_uuid(), :aula, 'Refrigerio (ficticio)', '100', '2027-02-01');
+select metas.colecta_crear(:c3, gen_random_uuid(), :aula, 'Monedas (ficticio)', '0', '2027-02-01');
 reset role;
 
 select prueba.ok((select count(*) from metas.alumnos) = 7, 'preparación: 7 alumnos creados');
@@ -177,8 +177,9 @@ select prueba.ok((select count(*) from pg_proc p join pg_namespace n on n.oid = 
 -- ════════════════════════════════════════════════════════════════════════════
 select prueba.como('A');
 set role authenticated;
-insert into metas.colecta_exenciones (aula_id, colecta_id, alumno_id, monto_aplicable)
-values (:aula, :c1, :carla, null), (:aula, :c1, :dani, 25), (:aula, :c1, :gabi, null);
+select metas.exencion_poner(gen_random_uuid(), gen_random_uuid(), :c1, :carla, null);
+select metas.exencion_poner(gen_random_uuid(), gen_random_uuid(), :c1, :dani, '25');
+select metas.exencion_poner(gen_random_uuid(), gen_random_uuid(), :c1, :gabi, null);
 select metas.pago_crear(gen_random_uuid(), gen_random_uuid(), :c1, :ana,  '50.00', '2027-02-02');
 select metas.pago_crear(gen_random_uuid(), gen_random_uuid(), :c1, :dani, '10.00', '2027-02-02');
 select metas.pago_crear(gen_random_uuid(), gen_random_uuid(), :c1, :fito, '70.00', '2027-02-02');
@@ -308,17 +309,95 @@ select prueba.ok((metas.pago_crear('00000000-0000-0000-0000-00000000e001', gen_r
                                    :c2, :ana, '50.00', '2027-03-03') ->> 'motivo') = 'id_ocupado',
                  'I4 mismo id con otra operación → id ocupado, no pisa');
 -- M16: una colecta cerrada no se corrige (pago_corregir respeta el cierre)
-insert into metas.colectas (id, aula_id, concepto, monto_sugerido, fecha)
-values ('00000000-0000-0000-0000-0000000c0004', :aula, 'Rifa (ficticia)', 20, '2027-02-01');
-select metas.pago_crear('00000000-0000-0000-0000-00000000e401', gen_random_uuid(),
-                        '00000000-0000-0000-0000-0000000c0004', :fito, '20.00', '2027-03-04');
-update metas.colectas set estado = 'cerrada' where id = '00000000-0000-0000-0000-0000000c0004';
+\set c4 '''00000000-0000-0000-0000-0000000c0004'''
+select metas.colecta_crear(:c4, gen_random_uuid(), :aula, 'Rifa (ficticia)', '20', '2027-02-01');
+select metas.pago_crear('00000000-0000-0000-0000-00000000e401', gen_random_uuid(), :c4, :fito, '20.00', '2027-03-04');
+select metas.gasto_crear('00000000-0000-0000-0000-00000000e402', gen_random_uuid(), :c4, '2027-03-05', 'Premio', '15.00');
+select metas.exencion_poner('00000000-0000-0000-0000-00000000e403', gen_random_uuid(), :c4, :gabi, null);
+select prueba.ok((metas.colecta_cerrar(:c4, gen_random_uuid()) ->> 'ok')::boolean, 'CC0 la docente cierra la colecta');
+select prueba.ok((metas.colecta_cerrar(:c4, gen_random_uuid()) ->> 'ya_estaba')::boolean, 'CC0 cerrarla otra vez: ya estaba');
 select prueba.ok((metas.pago_corregir('00000000-0000-0000-0000-00000000e401', '{"monto":"20.00","fecha":"2027-03-04"}',
                                       gen_random_uuid(), gen_random_uuid(), '25.00', '2027-03-04') ->> 'motivo') = 'colecta_cerrada',
                  'M16 corregir un pago de una colecta cerrada → «esa colecta ya está cerrada»');
 select prueba.ok((select count(*) = 1 and bool_and(deleted_at is null and monto = 20.00) from metas.pagos
                    where colecta_id = '00000000-0000-0000-0000-0000000c0004'),
                  'M16 el pago sigue igual: ni anulado ni reemplazado');
+
+-- CC · Una colecta cerrada queda cerrada de verdad (regla de Josué, rev. 5)
+select prueba.falla($$update metas.colectas set monto_sugerido = 30 where id = '00000000-0000-0000-0000-0000000c0004'$$,
+                    'CC1 colectas ya no se editan directo', '42501');
+select prueba.falla($$insert into metas.colectas (aula_id, concepto, monto_sugerido, fecha) values ('00000000-0000-0000-0000-0000000a0001', 'x', 1, '2027-01-01')$$,
+                    'CC1 ni se crean directo', '42501');
+select prueba.falla($$insert into metas.colecta_exenciones (aula_id, colecta_id, alumno_id) values ('00000000-0000-0000-0000-0000000a0001', '00000000-0000-0000-0000-0000000c0002', '00000000-0000-0000-0000-0000000b0002')$$,
+                    'CC1 exenciones tampoco directo', '42501');
+select prueba.ok((metas.pago_anular('00000000-0000-0000-0000-00000000e401', 'devuelto', gen_random_uuid()) ->> 'motivo') = 'colecta_cerrada',
+                 'CC2 pago_anular en colecta cerrada → «colecta_cerrada»');
+select prueba.ok((metas.pago_crear(gen_random_uuid(), gen_random_uuid(), :c4, :beto, '20.00', '2027-03-06') ->> 'motivo') = 'colecta_cerrada',
+                 'CC2 pago_crear en colecta cerrada → «colecta_cerrada»');
+select prueba.ok((metas.pago_editar('00000000-0000-0000-0000-00000000e401', '{"nota":"en sobre"}', gen_random_uuid()) ->> 'motivo') = 'colecta_cerrada',
+                 'CC2 ni la nota de un pago cambia');
+select prueba.ok((metas.gasto_crear(gen_random_uuid(), gen_random_uuid(), :c4, '2027-03-06', 'Bolsas', '5.00') ->> 'motivo') = 'colecta_cerrada',
+                 'CC3 gasto_crear en colecta cerrada → «colecta_cerrada»');
+select prueba.ok((metas.gasto_editar('00000000-0000-0000-0000-00000000e402', '{"monto":"15.00"}', '{"monto":"12.00"}', gen_random_uuid()) ->> 'motivo') = 'colecta_cerrada',
+                 'CC3 gasto_editar en colecta cerrada → «colecta_cerrada»');
+select prueba.ok((metas.gasto_anular('00000000-0000-0000-0000-00000000e402', 'x', gen_random_uuid()) ->> 'motivo') = 'colecta_cerrada',
+                 'CC3 gasto_anular en colecta cerrada → «colecta_cerrada»');
+select prueba.ok((metas.colecta_editar(:c4, '{"monto_sugerido":"20.00"}', '{"monto_sugerido":"25.00"}', gen_random_uuid()) ->> 'motivo') = 'colecta_cerrada',
+                 'CC4 cambiar el monto sugerido de una colecta cerrada → «colecta_cerrada»');
+select prueba.ok((metas.colecta_editar(:c4, '{}', '{"concepto":"Rifa grande"}', gen_random_uuid()) ->> 'motivo') = 'colecta_cerrada',
+                 'CC4 ni el concepto');
+select prueba.ok((metas.exencion_poner(gen_random_uuid(), gen_random_uuid(), :c4, :beto, '10') ->> 'motivo') = 'colecta_cerrada',
+                 'CC5 exención nueva en colecta cerrada → «colecta_cerrada»');
+select prueba.ok((metas.exencion_poner(gen_random_uuid(), gen_random_uuid(), :c4, :gabi, '5', null, '{"monto_aplicable":null}') ->> 'motivo') = 'colecta_cerrada',
+                 'CC5 cambiar una exención de colecta cerrada → «colecta_cerrada»');
+select prueba.ok((metas.exencion_quitar(:c4, :gabi, gen_random_uuid()) ->> 'motivo') = 'colecta_cerrada',
+                 'CC5 quitar una exención de colecta cerrada → «colecta_cerrada»');
+select prueba.ok((metas.colecta_borrar(:c4, gen_random_uuid()) ->> 'motivo') = 'colecta_cerrada',
+                 'CC6 una colecta cerrada no se borra');
+select prueba.ok((metas.gasto_editar('00000000-0000-0000-0000-00000000e402', '{}', '{"monto":"15.00"}', gen_random_uuid()) ->> 'ya_estaba')::boolean
+                 and (metas.exencion_poner(gen_random_uuid(), gen_random_uuid(), :c4, :gabi, null) ->> 'ya_estaba')::boolean,
+                 'CC7 pedir lo que ya está (reenvío de la cola) no dice «cerrada»: ya estaba');
+reset role;
+select prueba.ok((select count(*) filter (where p.deleted_at is null and p.monto = 20 and p.nota is null) = 1 and count(*) = 1 from metas.pagos p where p.colecta_id = :c4)
+                 and (select count(*) = 1 and bool_and(deleted_at is null and monto = 15) from metas.gastos where colecta_id = :c4)
+                 and (select count(*) = 1 and bool_and(deleted_at is null and monto_aplicable is null) from metas.colecta_exenciones where colecta_id = :c4)
+                 and (select monto_sugerido = 20 and concepto = 'Rifa (ficticia)' and deleted_at is null from metas.colectas where id = :c4),
+                 'CC8 después de todos los intentos, la colecta cerrada está exactamente como se cerró');
+-- Respaldo: ni un SQL a mano del dueño del esquema
+select prueba.falla($$update metas.colectas set monto_sugerido = 30 where id = '00000000-0000-0000-0000-0000000c0004'$$,
+                    'CC9 respaldo: una colecta cerrada no cambia ni a mano', 'MT050');
+select prueba.falla($$update metas.pagos set nota = 'x' where id = '00000000-0000-0000-0000-00000000e401'$$,
+                    'CC9 respaldo: ni un pago de una colecta cerrada', 'MT050');
+select prueba.falla($$insert into metas.colecta_exenciones (aula_id, colecta_id, alumno_id) values ('00000000-0000-0000-0000-0000000a0001', '00000000-0000-0000-0000-0000000c0004', '00000000-0000-0000-0000-0000000b0002')$$,
+                    'CC9 respaldo: ni una exención', 'MT050');
+-- Reabrir: deja registro (quién, cuándo, motivo opcional) y vuelve a dejar anotar
+set role authenticated;
+select prueba.ok((metas.colecta_reabrir(:c4, 'faltó anotar una devolución', gen_random_uuid()) ->> 'ok')::boolean,
+                 'CC10 colecta_reabrir la abre');
+select prueba.ok((metas.colecta_reabrir(:c4, null, gen_random_uuid()) ->> 'ya_estaba')::boolean, 'CC10 reabrir una abierta: ya estaba');
+select prueba.ok((metas.pago_anular('00000000-0000-0000-0000-00000000e401', 'devuelto', gen_random_uuid()) ->> 'ok')::boolean,
+                 'CC10 reabierta, el pago se anula');
+select metas.colecta_cerrar(:c4, gen_random_uuid());
+select prueba.ok((metas.pago_anular('00000000-0000-0000-0000-00000000e401', 'devuelto', gen_random_uuid()) ->> 'ya_estaba')::boolean,
+                 'CC10 cerrada otra vez, el reenvío de esa anulación responde «ya estaba», no «cerrada»');
+select prueba.ok((metas.colecta_reabrir(:c4) ->> 'ok')::boolean, 'CC10 reabrir sin motivo también se puede');
+reset role;
+select prueba.ok((select count(*) = 2
+                         and bool_and(actor = '00000000-0000-0000-0000-00000000000a' and ocurrido_at is not null
+                                      and antes ->> 'estado' = 'cerrada' and despues ->> 'estado' = 'abierta')
+                         and bool_or(despues ->> 'motivo_reapertura' = 'faltó anotar una devolución')
+                         and bool_or(despues ->> 'motivo_reapertura' is null)
+                    from metas.auditoria where tabla = 'colectas' and fila_id = :c4 and campos @> array['estado']
+                     and antes ->> 'estado' = 'cerrada'),
+                 'CC11 cada reapertura queda en la auditoría: quién, cuándo y su motivo (o sin motivo)');
+set role authenticated;
+-- Lo de siempre sigue con colecta abierta: monto sugerido con pregunta
+select prueba.ok((metas.colecta_editar(:c2, '{"monto_sugerido":"90.00"}', '{"monto_sugerido":"120.00"}', gen_random_uuid()) ->> 'pregunta')
+                 = 'colecta_cambiada_en_otro_aparato', 'CC12 monto sugerido cambiado en otro aparato → pregunta');
+select prueba.ok((metas.colecta_editar(:c2, '{}', '{"monto_sugerido":"120.00"}', gen_random_uuid()) ->> 'pregunta')
+                 = 'colecta_sin_base', 'CC12 sin base → pregunta, no error');
+select prueba.ok((metas.exencion_poner(gen_random_uuid(), gen_random_uuid(), :c1, :dani, '30') ->> 'pregunta')
+                 = 'exencion_cambiada_en_otro_aparato', 'CC12 cambiar una exención sin saber que existía → pregunta');
 -- M7: otro aparato ya lo corrigió (base vieja) → pregunta con los dos montos
 insert into t values ('m7', metas.pago_corregir('00000000-0000-0000-0000-00000000e002', '{"monto":"55.00","fecha":"2027-03-03"}',
                                                 gen_random_uuid(), gen_random_uuid(), '70.00', '2027-03-03'));
@@ -395,8 +474,12 @@ select prueba.como('A');
 set role authenticated;
 select prueba.falla($$update metas.alumnos set deleted_at = now() where id = '00000000-0000-0000-0000-0000000b0001'$$,
                     'B1 no se borra un alumno con pagos', 'MT007');
+select prueba.ok((metas.colecta_borrar('00000000-0000-0000-0000-0000000c0001', gen_random_uuid()) ->> 'motivo') = 'tiene_pagos_o_gastos',
+                 'B2 no se borra una colecta con pagos');
+reset role;
 select prueba.falla($$update metas.colectas set deleted_at = now() where id = '00000000-0000-0000-0000-0000000c0001'$$,
-                    'B2 no se borra una colecta con pagos', 'MT007');
+                    'B2 ni con un SQL a mano (respaldo del disparador)', 'MT007');
+set role authenticated;
 select prueba.falla($$update metas.aulas set deleted_at = now() where id = '00000000-0000-0000-0000-0000000a0001'$$,
                     'B2 no se borra un aula con alumnos', 'MT007');
 update metas.aulas set deleted_at = now() where id = :aula_vac;
@@ -681,6 +764,41 @@ select prueba.ok((metas.familia_vincular('00000000-0000-0000-0000-0000000000f1',
 reset role;
 select prueba.ok((select clave = '1K7QM' from metas.familias where alumno_id = :ana),
                  'K9 en ningún momento se cambió la clave entregada');
+-- R4-1: pasado el paso 4, el alta de una familia ya no conserva una clave vieja
+select prueba.como('A');
+set role authenticated;
+insert into metas.familias (aula_id, alumno_id, clave) values (:aula, :gabi, '2-PRBA');
+select prueba.ok((select clave ~ '^[A-HJ-NP-Z2-9]{10}$' and clave_origen = 'nueva' and clave_siguiente is null
+                    from metas.familias where alumno_id = :gabi),
+                 'K11 vencidas las viejas, pedir conservar «2-PRBA» (de su copia) da una clave nueva');
+reset role;
+set role service_role;
+select prueba.ok((metas.familia_vincular('00000000-0000-0000-0000-0000000000f2', '2PRBA', 'ip-k11') ->> 'ok') = 'false',
+                 'K11 y la vieja no abre a nadie');
+reset role;
+-- R4-5: el canal en vivo solo mientras el alumno siga activo
+select prueba.como('padre3');
+set role authenticated;
+select prueba.ok((select count(*) = 1 and bool_and(not metas.familia_canal_ok('familia:' || familia_id::text))
+                    from metas.familia_accesos where clave_usada = :'clave_eva'),
+                 'K12 alumna trasladada: su familia ya no escucha el canal');
+reset role;
+select prueba.como('padre2');
+set role authenticated;
+select prueba.ok((select count(*) = 1 and bool_and(metas.familia_canal_ok('familia:' || familia_id::text))
+                    from metas.familia_accesos where clave_usada = :'clave_dani'),
+                 'K12 alumno activo: su familia escucha el canal');
+reset role;
+select prueba.como('A');
+set role authenticated;
+update metas.alumnos set estado = 'retirado' where id = :dani;
+reset role;
+select prueba.como('padre2');
+set role authenticated;
+select prueba.ok((select count(*) = 1 and bool_and(not metas.familia_canal_ok('familia:' || familia_id::text))
+                    from metas.familia_accesos where clave_usada = :'clave_dani'),
+                 'K12 retirado: su familia deja de escuchar el canal');
+reset role;
 
 -- ════════════════════════════════════════════════════════════════════════════
 -- V · Convivencia con el modelo viejo (paso 1)
@@ -870,6 +988,26 @@ select prueba.falla($$select * from public._metas_consultar_avisos_padre_v1('1K7
 select prueba.falla($$select public._metas_cerrar_funciones(array['metas_guardar'])$$,
                     'V13 anon no cierra funciones', '42501');
 reset role;
+-- R4-6: las funciones viejas cerradas tampoco las llama service_role
+set role service_role;
+select prueba.falla($$select public.metas_guardar_admin('PROF-AAAA000001', 'clave-a', '[]'::jsonb)$$,
+                    'V15 service_role tampoco guarda la copia vieja', '42501');
+select prueba.falla($$select public.metas_docente_reset_deshacer('PROF-AAAA000001', 'clave-a', 'METAS_ADMIN_V1', '{}')$$,
+                    'V15 service_role tampoco restaura versiones', '42501');
+select prueba.falla($$select public.metas_recuperar_admin_docente('PROF-AAAA000001', 'clave-a')$$,
+                    'V15 service_role tampoco repone pagos', '42501');
+reset role;
+select prueba.ok(not exists (
+  select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+   where n.nspname = 'public'
+     and p.proname in ('metas_guardar_admin', 'metas_recuperar_admin_docente', 'metas_docente_historial',
+                       'metas_docente_historial_listar', 'metas_docente_papelera', 'metas_docente_reset',
+                       'metas_docente_reset_deshacer', 'metas_consultar_progreso', 'metas_restaurar_codigos')
+     and (has_function_privilege('anon', p.oid, 'execute') or has_function_privilege('authenticated', p.oid, 'execute')
+          or has_function_privilege('service_role', p.oid, 'execute'))),
+  'V15 todas las firmas cerradas en el paso 1 están cerradas a los tres roles');
+select prueba.falla($$select public._metas_cerrar_funciones(array['metas_guardar_admin', 'metas_entrar_docente_v2'])$$,
+                    'V15 pedir que se cierre una función que usa la de borde es un error, no un descuido', 'MT042');
 select prueba.ok(not exists (
   select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace
    where n.nspname = 'public'

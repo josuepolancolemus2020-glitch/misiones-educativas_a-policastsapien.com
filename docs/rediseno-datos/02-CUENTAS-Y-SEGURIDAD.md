@@ -256,7 +256,10 @@ diseño completo está en `07-VISTA-DE-PADRES.md` y `SUPABASE-V2-FAMILIAS.sql`.
      regla para vincular, ver, marcar «visto» y escuchar el canal): el
      teléfono que entró con ella deja de ver y el portal pide la tira nueva.
      Las claves nuevas no vencen.
-  Pruebas K7 a K10.
+  4. pasada la fecha, el alta de una familia ya no conserva ninguna clave
+     vieja, aunque esté en la copia de ese docente: la base pone una nueva
+     (rev. 5).
+  Pruebas K7 a K11.
 
 ## 2.8 Decisiones de la revisión 2 y lo que se pospone
 

@@ -20,6 +20,17 @@ Fase 1: diseño (revisión 2). Nada de esto está programado.
    vuelve**. Un alumno o una colecta con pagos o notas activos **no se pueden
    borrar**: el alumno pasa a `retirado`, `trasladado` o `desertor`; la
    colecta, a `cerrada`.
+4b. **Una colecta cerrada queda cerrada de verdad** (regla de Josué, rev. 5).
+   Colectas y exenciones solo se escriben por funciones (`colecta_crear`,
+   `colecta_editar`, `colecta_cerrar`, `colecta_reabrir`, `colecta_borrar`,
+   `exencion_poner`, `exencion_quitar`). En una colecta cerrada no se crea,
+   corrige, anula ni edita ningún pago o gasto, no se cambia el monto
+   sugerido, el concepto ni la fecha, no se pone ni quita una exención y no
+   se borra: la función responde `colecta_cerrada` (y un disparador lo frena
+   aunque alguien escriba a mano, `MT050`). Volver a tocarla exige
+   `colecta_reabrir`, que queda en la auditoría con quién, cuándo y el
+   motivo, si el docente lo escribió. Un reenvío de algo que ya estaba hecho
+   antes del cierre responde «ya estaba», no «cerrada».
 5. **El dinero nunca se decide solo.** Si dos aparatos no coinciden en un
    monto o una fecha de un pago, un gasto o un reembolso, se le pregunta al docente con los
    dos valores a la vista (3.5). Fuera del dinero, se aplica campo por campo.
@@ -64,7 +75,8 @@ Fase 1: diseño (revisión 2). Nada de esto está programado.
 |---|---|---|
 | crear (no dinero) | `insert` por la API con el `id` y el `op_creacion` del aparato | choca la llave primaria → se lee la fila: si su `op_creacion` es **esta** operación, ya estaba hecha; si es **otra**, es un choque de id (no debería pasar nunca) y va a rechazos **sin pisar nada** |
 | editar (no dinero) | `update cambios where id and version = base_version and deleted_at is null` | la versión ya subió → camino de 3.4 → los campos ya valen lo pedido → no se escribe nada |
-| borrar | `update set deleted_at` (lo pone la base) | ya borrada → hecho. Si es un alumno o una colecta con pagos o notas, la base lo rechaza (`MT007`) |
+| borrar | `update set deleted_at` (lo pone la base) | ya borrada → hecho. Si es un alumno con pagos o notas, la base lo rechaza (`MT007`). Una colecta se borra con `colecta_borrar` (abierta y sin pagos ni gastos activos) |
+| colectas y exenciones | `colecta_*`, `exencion_*` (funciones del servidor) | misma operación o mismo valor → `ya_estaba`; colecta cerrada → `colecta_cerrada` |
 | `alumno_crear` | función del servidor | misma operación → `ya_estaba` |
 | `pago_crear`, `gasto_crear` | función del servidor | misma operación → `ya_estaba`; nunca un segundo pago |
 | `pago_corregir` | función: anula el pago y crea su reemplazo en una sola transacción | misma operación → `ya_estaba` |
@@ -173,12 +185,13 @@ espera respuesta) esperan con ella.
 | 401 | se renueva la sesión; si no se puede, la cola **se pausa** y se pide la contraseña («Escribe tu contraseña»), sin explicar por qué |
 | `{pregunta:…}` | al almacén `preguntas`; tarjeta con dos botones (3.5, 3.6) |
 | choque de llave natural (no dinero) | camino de 3.6 |
-| error permanente (alumno borrado en otro aparato, colecta cerrada, alumno con pagos que se quiso borrar) | sale de la cola y se muestra la tarjeta «no quedó anotado», con la razón del aula |
+| `colecta_cerrada` | sale de la cola a `preguntas`: «Esta colecta está cerrada. ¿Reabrirla?» → **[Reabrir]** llama a `colecta_reabrir` y vuelve a mandar la operación · **[Dejarla cerrada]** la descarta |
+| error permanente (alumno borrado en otro aparato, alumno con pagos que se quiso borrar) | sale de la cola y se muestra la tarjeta «no quedó anotado», con la razón del aula |
 
 **Lo que no se pudo anotar.** Pocas veces pasa, porque la pantalla valida
 antes de encolar. Cuando pasa, se dice **la razón del aula**, nunca una razón
-técnica: «El pago de Ana para Excursión no quedó anotado: esa colecta ya está
-cerrada». Un solo botón: «Entendido». Se manda también a `metas.rechazos` (con
+técnica: «El pago de Ana no quedó anotado: Ana ya no está en la lista». Un
+solo botón: «Entendido». Se manda también a `metas.rechazos` (con
 tope de tamaño y de frecuencia) para soporte. Sin botón de reintentar,
 recuperar ni restaurar.
 

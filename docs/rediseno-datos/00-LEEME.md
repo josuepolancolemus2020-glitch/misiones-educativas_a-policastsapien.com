@@ -1,4 +1,4 @@
-# Rediseño de datos de M.E.T.A.S · Fase 1: diseño (revisión 4)
+# Rediseño de datos de M.E.T.A.S · Fase 1: diseño (revisión 5)
 
 Rama `rediseño-datos`. **Solo diseño**: no se modificó código de la app, no se
 tocó Supabase ni ninguna fila de docentes, y no hubo merge. Los `.sql` se
@@ -33,7 +33,50 @@ botones de sincronizar, recuperar ni restaurar, y sin ningún indicador de
 | `SUPABASE-V2-ESQUEMA.sql` | 40 tablas de datos, auditoría, recibos, funciones de dinero y de alta, vistas de totales |
 | `SUPABASE-V2-FAMILIAS.sql` | vínculo de familias, rol lector, vistas `vf_*`, totales, «visto», aviso inmediato |
 | `SUPABASE-V2-CONGELAR.sql` | candado y congelado por pasos |
-| `pruebas-capa-a/` | `corre.sh` + Supabase simulado (con los permisos de fábrica de `public`) + datos ficticios + **194 pruebas en verde** |
+| `pruebas-capa-a/` | `corre.sh` + Supabase simulado (con los permisos de fábrica de `public`) + datos ficticios + **236 pruebas en verde** |
+
+## Cambios de la revisión 5, por punto
+
+**R4-1. Pasado el paso 4, ninguna clave vieja se conserva.** Con las viejas
+vencidas, el alta de una familia ignora la clave pedida (aunque esté en la
+copia de ese docente) y la base pone una nueva. Prueba K11.
+
+**R4-2 y R4-4. Una colecta cerrada queda cerrada de verdad** (regla de
+Josué). `colectas` y `colecta_exenciones` dejan de escribirse directo: solo
+por `colecta_crear`, `colecta_editar`, `colecta_cerrar`, `colecta_reabrir`,
+`colecta_borrar`, `exencion_poner` y `exencion_quitar`. En una colecta
+cerrada responden `colecta_cerrada`: `pago_crear`, `pago_corregir`,
+`pago_anular`, `pago_editar` (ni la nota), `gasto_crear`, `gasto_editar`,
+`gasto_anular`, el monto sugerido, el concepto y la fecha, las exenciones y
+el borrado. Un disparador lo frena también a mano (`MT050`). Un reenvío de
+algo hecho antes del cierre responde «ya estaba». Reabrir solo con
+`colecta_reabrir`, que queda en la auditoría con quién, cuándo y el motivo
+opcional (`colectas.motivo_reapertura`). Todas toman la colecta antes que el
+pago o el gasto, y cerrar la toma exclusiva: no se cierra a media anotación.
+En la interfaz, «Esta colecta está cerrada. ¿Reabrirla?» → [Reabrir]
+[Dejarla cerrada] (`09`, `03`). De paso, `gasto_editar` sin base ahora
+pregunta en vez de fallar, como `gasto_docente_editar`. Pruebas CC0 a CC12.
+
+**R4-5. Canal en vivo solo con el alumno activo**: `familia_canal_ok` exige
+alumno `activo` o `ingreso`; retirado, trasladado o desertor dejan de
+recibir avisos en vivo. Prueba K12.
+
+**R4-6. `_metas_cerrar_funciones` cierra también a `service_role`**, y se
+niega (`MT042`) si se le pide cerrar una de las que usa una función de borde
+(`metas_entrar_docente_v2`, `metas_reset_confirmar`,
+`metas_cambiar_clave_docente`). Prueba V15.
+
+**Resultado**: 236 pruebas de la capa A en verde (eran 194). Quitando una a
+una las correcciones en una copia, caen 15. `npm test`: 77 sondas en verde.
+
+**Dato verificado por Josué**: las firmas y tipos de retorno de
+`metas_docente_estado_guardar`, `metas_guardar_avisos`,
+`metas_consultar_admin_padre` y `metas_consultar_avisos_padre` en el proyecto
+real coinciden con lo que supone `CONGELAR`.
+
+**Propuesta para tu aprobación**: la regla 18 de `CLAUDE.md` nombra los
+pagos, gastos y reembolsos; con esta revisión debería nombrar también
+colectas y exenciones (texto en la respuesta del chat; no se tocó).
 
 ## Cambios de la revisión 4, por punto
 
@@ -271,6 +314,9 @@ pantalla y elemento con archivo:línea. Respaldo a Drive: fase futura.
     cada familia recibe una clave nueva.
 24. **Ningún dato de dinero del archivo** para familias de docentes
     vinculados desde el paso 1, garantizado por el servidor.
+25. **Una colecta cerrada queda cerrada de verdad**: nada de dinero ni de
+    exenciones cambia hasta `colecta_reabrir`, que queda en la auditoría
+    (revisión 5).
 
 ## Riesgos
 
@@ -290,6 +336,7 @@ pantalla y elemento con archivo:línea. Respaldo a Drive: fase futura.
 
 ## Pendiente
 
-Nada de diseño pendiente de tu decisión. Lo que sigue, con tu aprobación ya
-dada: correr la capa A contra `supabase start` (vinculación con cuentas
-ficticias) y empezar el corte 1 en la rama, sin publicar.
+1. El texto de la regla 18 de `CLAUDE.md` (colectas y exenciones solo por
+   funciones).
+2. Correr la capa A contra `supabase start` (plan en `06`, 6.6) y empezar el
+   corte 1 en la rama, sin publicar.

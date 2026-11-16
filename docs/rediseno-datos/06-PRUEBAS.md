@@ -247,6 +247,7 @@ base, con las reglas de `03`, y produce el estado esperado.
 | V14 | APK vieja de una docente vinculada sube `boleta`, `materias`, `logo`, `logoSec`, `edadCorte` u `obsGrado`; o el formato v1 (lista y materias en la raíz); o varias aulas y solo una con datos del corte 1 | `-2` en cada caso, anotado con la sección que lo frenó; un `logo` u `obsGrado` **vacíos** no son datos y se guardan |
 | N1 | `metas_guardar_avisos` de una docente vinculada con «Ana López» en la fila, con su código en minúsculas o con espacios, o un recibo sin texto «docente» | `-2`, nada escrito, cada intento anotado en `metas.blob_rechazos` con el código normalizado; con contraseña equivocada `-1` (no revela si está vinculada); un docente sin vincular, como hoy |
 | N2 | La familia de una docente vinculada consulta el archivo con `metas_consultar_admin_padre` o `metas_consultar_avisos_padre` (clave en minúsculas o con espacios incluida), con filas cuyo texto «docente» no trae el código | sin pagos, cuentas claras ni recibos; sí sus notas, asistencia y avisos; la familia de un docente sin vincular ve todo; el dinero de quien se vincula después deja de verse **en el momento** en que se vincula |
+| V15 | `service_role` llama a las funciones viejas cerradas en el paso 1; se pide cerrar una que usa una función de borde | `42501` en todas; pedir cerrar `metas_entrar_docente_v2` es un error (`MT042`) |
 | C5 | `SUPABASE-V2-CONGELAR.sql` se corre dos veces | sin error; cada disparador una sola vez; el hito una vez; ninguna envoltura renombrada sobre sí misma; la copia de claves no se amplía |
 | K5 | Clave conservada que ya ocupa otra familia | `23505`; la carga rápida ofrece una clave nueva y avisa que hay que entregar tira nueva |
 | K6 | Docente que se vincula **después** del paso 1 | su copia de claves se toma al vincularse |
@@ -254,8 +255,17 @@ base, con las reglas de `03`, y produce el estado esperado.
 | K8 | Antes de la fecha del hito `claves_viejas_vencen` | la vieja y la nueva sirven |
 | K9 | Pasa la fecha | el teléfono que entró con la vieja deja de ver y de escuchar su canal; la vieja ya no vincula (`clave_vencida`); con la tira nueva se vuelve a entrar |
 | K10 | Familias con clave nueva | no vencen |
+| K11 | Pasada la fecha, el docente da de alta una familia pidiendo conservar una clave de su copia | la base pone una clave nueva; la vieja no abre a nadie |
+| K12 | Familia de un alumno trasladado o retirado | deja de escuchar el canal en vivo; la de un alumno activo lo escucha |
 | G9 | `gasto_docente_editar` sin monto base (o con una fecha base que no se entiende) | **pregunta** `gasto_sin_base` con las dos cifras, sin error y sin cambiar nada; el segundo botón (base = lo que vio) guarda; pedir el mismo monto no pregunta |
 | M16 | `pago_corregir` de un pago en una colecta cerrada | «esa colecta ya está cerrada»; el pago no se anula ni se reemplaza |
+| CC1 | Escribir directo en `colectas` o `colecta_exenciones` | `42501`: solo por funciones |
+| CC2-CC6 | En una colecta cerrada: `pago_crear`, `pago_anular`, `pago_editar`, `gasto_crear`, `gasto_editar`, `gasto_anular`, `colecta_editar` (monto sugerido o concepto), `exencion_poner` (nueva o cambiada), `exencion_quitar`, `colecta_borrar` | `colecta_cerrada` en cada una |
+| CC7 | Reenvío de algo que ya estaba hecho | «ya estaba», no «cerrada» |
+| CC8 | Después de todos los intentos | la colecta, su pago, su gasto y su exención exactamente como se cerraron |
+| CC9 | SQL a mano sobre una colecta cerrada, un pago o una exención suya | `MT050` (disparador de respaldo) |
+| CC10-CC11 | `colecta_reabrir` con y sin motivo; anular después; cerrar otra vez y reenviar la anulación | se abre; se anula; «ya estaba»; cada reapertura en la auditoría con actor, hora, estado antes y después, y el motivo |
+| CC12 | Colecta abierta: monto sugerido cambiado en otro aparato, sin base, o una exención que el aparato no sabía que existía | pregunta con las dos cifras |
 
 ### Prueba de estrés al azar (nocturna)
 
@@ -273,7 +283,7 @@ contadores de 6.1.
 | `npm run test:datos` (nueva) | capas A y B contra Supabase local en Docker | cada empujón que toque `js/datos/` o los `.sql`, y de noche |
 | `npm run test:navegador` | capa C y la prueba de estrés | de noche |
 
-## 6.5 Capa A: lo que ya corre (revisión 4)
+## 6.5 Capa A: lo que ya corre (revisión 5)
 
 ```
 bash docs/rediseno-datos/pruebas-capa-a/corre.sh
@@ -294,11 +304,11 @@ tablas viejas como en el proyecto real, y copias fieles de
 `metas_guardar_avisos`, `metas_consultar_admin_padre` y
 `metas_consultar_avisos_padre`.
 
-**Resultado: 194 pruebas en verde**: S1 a S9, M1 a M16, F1 a F6, B4 en los
-dos órdenes con **dos sesiones de verdad** (`dblink`), K0 a K10, A1 a A8, G
-(con G9), N, P, la convivencia V1 a V14, N1, N2 y C5. Con el `CONGELAR` y el
-esquema de la revisión 3, 27 de ellas fallan (y G9 rompe la corrida): las
-pruebas nuevas sí distinguen lo corregido.
+**Resultado: 236 pruebas en verde**: S1 a S9, M1 a M16, CC0 a CC12, F1 a
+F6, B4 en los dos órdenes con **dos sesiones de verdad** (`dblink`), K0 a
+K12, A1 a A8, G (con G9), N, P, la convivencia V1 a V15, N1, N2 y C5.
+Quitando una a una las correcciones de la revisión 5 (en una copia), caen 15
+de ellas; las de la revisión 4 caían 27 contra el `CONGELAR` de la revisión 3.
 
 Con los permisos de fábrica, la revisión 3 dejaba en `public` las funciones
 de disparador ejecutables por `anon` y `authenticated` (PostgreSQL no deja
@@ -325,3 +335,42 @@ cuentas ficticias, para confirmar los permisos, Realtime y Auth reales. Lo
 mismo vale para la vinculación con Supabase Auth: primero en `supabase start`
 con cuentas ficticias.
 
+## 6.6 La capa A contra `supabase start` (propuesta, revisión 5)
+
+Lo que el simulador **no** puede probar y `supabase start` sí: que el rol
+`postgres` de Supabase (que no es superusuario) salte la RLS en las
+funciones `security definer`, como suponen todas las de dinero; el JWT real
+de Auth (incluido `is_anonymous`); la exposición del esquema `metas` por la
+API; los canales privados de Realtime con nuestra política; y las funciones
+de borde. Solo cuentas ficticias; nunca `supabase link`.
+
+1. **Andamio** en `_dev/supabase-local/` (no se publica): `supabase init`
+   con la CLI fijada a una versión, y en `config.toml`: `[api] schemas`
+   con `metas`; `[auth] enable_anonymous_sign_ins = true`; registro público
+   apagado; Turnstile **apagado solo en local** (no hay clave de prueba sin
+   red) y anotado como diferencia.
+2. **Modelo viejo**: los `_privado/SUPABASE-*.sql` reales, en el orden en
+   que se pegaron (es lo más parecido al proyecto), y no la copia mínima del
+   simulador. `00-supabase-simulado.sql` se parte en dos: la parte de
+   plataforma (roles, `auth`, `realtime`) solo para el Postgres suelto, y los
+   datos ficticios para los dos.
+3. **`corre-supabase.sh`**: `supabase start`; se niega a seguir si la
+   dirección de la base no es `127.0.0.1`; aplica VINCULACION → ESQUEMA →
+   FAMILIAS → CONGELAR dos veces; crea las cuentas ficticias con la API de
+   administración de Auth local (no insertando en `auth.users`) y las
+   vincula con `metas-entrar` servida por `supabase functions serve`; corre
+   `10-pruebas.sql` (mismas 236 pruebas; `dblink` desde `extensions`).
+4. **Capa A+ por la API**, un script de Node con `@supabase/supabase-js`
+   (versión fijada, sin guardarlo en el repositorio, como Playwright):
+   - la docente entra por `metas-entrar` y crea aula, alumnos, colecta y un
+     pago por la API real (`schema('metas').rpc`); otra docente no ve nada;
+   - la APK vieja simulada llama a `metas_docente_estado_guardar` y a
+     `metas_guardar_avisos` con la llave pública: `-2`;
+   - un padre entra con sesión anónima por `familia-vincular`, se suscribe
+     al canal privado `familia:<id>` y recibe el toque cuando la docente
+     anula un pago; el de un alumno trasladado no lo recibe; un padre no
+     puede suscribirse al canal de otra familia;
+   - con la llave pública no se lee ni una fila de `metas` sin sesión;
+   - la clave vieja vence con el hito y la nueva entra.
+5. **CI**: un trabajo aparte en `.github/workflows/sondas.yml`, a mano y de
+   noche, con `supabase/setup-cli`; no frena la publicación.
