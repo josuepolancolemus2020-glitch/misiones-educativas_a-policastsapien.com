@@ -31,16 +31,37 @@ La dirección de Supabase va escrita en `nube.js`. Solo en pruebas, y solo si
 | `d.corregirPago(id, { monto, fecha })`, `d.anularPago(id, motivo)` | |
 | `d.colecta.crear / editar / cerrar / reabrir(id, motivo?)` | |
 | `d.exencion.poner / quitar` | |
+| `d.gasto.crear({ colecta_id, fecha, concepto, monto })`, `d.gasto.anular(id, motivo)` | gastos de una colecta, solo por funciones (rev. 9) |
 | `d.lista(tabla, filtro?)` | copia local **más** la cola; el dinero **siempre texto** |
 | `d.escuchar(fn)` | `fn({ tabla, id })` cuando algo cambió (por Realtime o por la cola) |
 | `d.preguntas()` | `[{ id, tipo, texto, botones: [{ etiqueta, valor }] }]`, siempre **dos** botones |
 | `await d.responder(idPregunta, valor)` | |
 | `d.pendientes()` | operaciones en la cola (para las pruebas; la pantalla no lo muestra) |
 | `d.noAnotado()` | tarjetas «no quedó anotado» con su razón del aula |
+| `await d.entendido(id)` | el único botón de esa tarjeta, «Entendido» |
+| `d.sinSenal()`, `d.alCambiarSenal(fn)` | para el punto gris de «sin señal»; lo dibuja la pantalla |
+| `d.pideContrasena()` | la sesión venció y no se pudo renovar: la pantalla pide «Escribe tu contraseña» |
+| `d.cuenta()` | `{ nombre, rol }` de la cuenta abierta, o `null` |
 | `await d.esperarCola()` | resuelve cuando la cola quedó vacía o esperando una pregunta (solo pruebas) |
 | `MetasDatos.montos.leer(texto)` | `{ ok, valor:'150.00' }` o `{ pregunta }` («1,500» y «1.500» se preguntan) |
 | `MetasDatos.montos.sumar([...textos])` | suma en centavos enteros, devuelve texto |
 | `MetasDatos.ids.nuevo()` | uuid v4 |
+
+Los errores que la pantalla puede mostrar tal cual llevan `paraElDocente:
+true` y una frase del aula, de tú («Escribe el monto con números, por
+ejemplo 150 o 150.50.»); cualquier otro error nunca se muestra (rev. 9).
+
+**Varias pestañas** (rev. 9): una sola cola por aparato. Una pestaña es la
+líder (`navigator.locks`): es la única que escribe la cola, envía, renueva la
+sesión y escucha Realtime. Las demás anotan en el almacén `entrantes` (llave
+`op_id`) y avisan por `BroadcastChannel`; la líder las pasa a la cola y les
+cuenta cómo quedó todo. `responder`, `entendido` y `salir` en otra pestaña se
+hacen en la líder. `pendientes()` cuenta también lo que esta pestaña anotó y
+la líder todavía no tomó.
+
+**Montos por aclarar** (rev. 9): mientras el docente aclara un monto ambiguo,
+lo que depende de él sale `null` en `lista('v_colecta_alumnos')` y
+`lista('v_colectas_resumen')`, con `situacion: 'por_aclarar'`; nunca «0.00».
 
 Tipos de pregunta que las pruebas esperan: `otro_pago_sin_ver`,
 `pago_cambiado_en_otro_aparato`, `colecta_cerrada`, `misma_persona`,

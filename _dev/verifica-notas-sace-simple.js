@@ -58,7 +58,7 @@ const ENC = ['ad-logo-file', 'ad-logosec-file', 'ad-boleta-centro', 'ad-bol-dire
 const COMUNES = [
   ['ad-sace-vista', null], ['ad-sace-orden-az', null], ['ad-sace-orden-gen', null], ['ad-sace-nocopy', null],
   ['ad-sace-boletas', null], ['ad-sace-bol-quien', null], ['ad-sace-cfinal', null], ['ad-sace-resumen', null],
-  ['ad-sace-versiones', null], ['ad-sace-recuperar', 'ad-sace-chip-rescate'], ['ad-sace-perdidos', 'ad-sace-chip-rescate'],
+  // (rev. 9) sin 'ad-sace-versiones' ni la ventana 🛟 (recuperar, perdidos): salen (09-INTERFAZ.md)
   ...ENC.map(id => [id, 'ad-sace-chip-encabezado'])];
 const POR_VISTA = {
   aprov: [['ad-sace-parcial', null], ['ad-sace-addmat', null], ['ad-sace-csv', null], ['ad-sace-ir-rec', null]],
@@ -138,17 +138,11 @@ const POR_VISTA = {
   comprueba('Parcial IV autorizado: están «✨ Sugerir notas» y «🔒 Bloquear sugerencia»',
     await visible(pg, 'ad-sace-sugerir') && await visible(pg, 'ad-sace-bloquear-iv'));
   await pg.evaluate(() => { const d = adLoad(); delete d.boleta.sugerirIVAuth; adSave(d); });
-  /* «Revisar notas puestas solas» solo existe cuando hubo autocompletado */
-  await pg.evaluate(() => { const d = adLoad(); d.boleta.autoRecI_III_v479 = 1; adSave(d); });
+  /* (rev. 9) La ventana 🛟 «Recuperar o revisar notas» ya no tiene chip
+     (09-INTERFAZ.md): se comprueba que no esté. */
   await pinta(pg, 'III', 'aprov');
-  const hayRev = await pg.$('#ad-sace-revisar-solas');
-  if (hayRev) {
-    await pg.click('#ad-sace-chip-rescate');
-    comprueba('con autocompletado, «Revisar notas puestas solas» está en la ventana 🛟', await visible(pg, 'ad-sace-revisar-solas'));
-    comprueba('la ventana 🛟 trae las tres opciones, cada una con su línea',
-      await pg.$$eval('#ad-sace-v-rescate .ad-sace-opcion', xs => xs.length === 3 && xs.every(x => x.querySelector('button') && x.querySelector('p').textContent.trim())));
-  } else console.log('  ·  (este grupo no ofrece «Revisar notas puestas solas»; se mira en verifica-notas-sin-pedir)');
-  await pg.evaluate(() => { const d = adLoad(); delete d.boleta.autoRecI_III_v479; adSave(d); });
+  comprueba('ya no está el chip «🛟 Recuperar o revisar notas» ni «🕓 Ver cambios guardados»',
+    !(await pg.$('#ad-sace-chip-rescate')) && !(await pg.$('#ad-sace-versiones')));
 
   /* la tabla, sin bajar la pantalla */
   await pinta(pg, 'III', 'aprov');

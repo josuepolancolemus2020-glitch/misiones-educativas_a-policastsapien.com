@@ -1,9 +1,10 @@
-# Rediseño de datos de M.E.T.A.S · Fase 1: diseño (revisión 8) · corte 1, parte 1
+# Rediseño de datos de M.E.T.A.S · revisión 9 · corte 1, parte 2
 
 Rama `rediseño-datos`. Hasta la revisión 7, **solo diseño**. Desde la
-revisión 8 existe el **motor de datos del corte 1** (`js/datos/`), todavía sin
-pantalla: ninguna página lo carga, la app que usa el docente no cambió, no se
-tocó Supabase real ni ninguna fila de docentes, y no hubo merge. Los `.sql` se
+revisión 8 existe el **motor de datos del corte 1** (`js/datos/`) y desde la
+revisión 9 **su pantalla**: Mi aula del corte 1 (`js/tools/mi-aula.js`), la
+entrada por `metas-entrar` y la entrada nueva de las familias. No se tocó
+Supabase real ni ninguna fila de docentes, y no hubo merge. Los `.sql` se
 **probaron de verdad** en un PostgreSQL 16 local y desechable con un Supabase
 simulado (capa A, `pruebas-capa-a/`), nunca en el proyecto real. Fuera de
 `docs/rediseno-datos/` cambiaron `CLAUDE.md` (reglas 15 a 18 en la revisión 3,
@@ -37,10 +38,71 @@ botones de sincronizar, recuperar ni restaurar, y sin ningún indicador de
 | `SUPABASE-V2-ESQUEMA.sql` | 40 tablas de datos, auditoría, recibos, funciones de dinero y de alta, vistas de totales |
 | `SUPABASE-V2-FAMILIAS.sql` | vínculo de familias, rol lector, vistas `vf_*`, totales, «visto», aviso inmediato |
 | `SUPABASE-V2-CONGELAR.sql` | candado y congelado por pasos |
-| `pruebas-capa-a/` | `corre.sh` + plataforma Supabase simulada + modelo viejo + datos ficticios + **288 pruebas en verde** |
-| `pruebas-capa-b/`, `pruebas-capa-c/` | capas B (cola y conflictos) y C (navegador) del corte 1, con su contrato, escritas antes del código. **La B está en verde (10/10) desde la revisión 8**; la C espera la pantalla |
+| `pruebas-capa-a/` | `corre.sh` + plataforma Supabase simulada + modelo viejo + datos ficticios + **291 pruebas en verde** |
+| `pruebas-capa-b/`, `pruebas-capa-c/` | capas B (cola y conflictos) y C (navegador) del corte 1, con su contrato, escritas antes del código. **B 12/12 y C 10/10 en verde (revisión 9)** |
 | `_dev/supabase-local/` | CLI fija, `corre-supabase.sh` (capas A, A+, B y C contra `supabase start`), funciones de borde, capa A+ y `arma-supabase-js.sh` |
-| `js/datos/` (fuera de esta carpeta) | el motor de datos del corte 1 (`03`, 3.10), sin pantalla todavía. `js/vendor/supabase.min.js`: Realtime de supabase-js 2.45.4 |
+| `js/datos/` (fuera de esta carpeta) | el motor de datos del corte 1 (`03`, 3.10). `js/vendor/supabase.min.js`: Realtime de supabase-js 2.45.4 |
+| `js/tools/mi-aula.js`, `css/mi-aula.css` (fuera de esta carpeta) | Mi aula del corte 1, la pantalla del motor (rev. 9) |
+
+## Cambios de la revisión 9 (corte 1, parte 2), por punto
+
+**Verificado aquí** con `corre-supabase.sh --todo` desde cero (Supabase local,
+CLI 3.1.0, Node 22, datos ficticios): capa A **291**, A+ **26**, B **12** y C
+**10**, todo en verde en una sola corrida; `npm test` en verde.
+
+**A. Arreglos de la parte 1**
+
+1. **Dos pestañas (H1).** Una sola cola por aparato: una pestaña líder
+   (`navigator.locks`) escribe la cola, envía, renueva la sesión y escucha
+   Realtime; las demás anotan en `entrantes` (llave `op_id`) y le avisan por
+   `BroadcastChannel`; la líder reparte el estado y la sesión nueva. Sin
+   ningún aviso visible. **B11** (dos pestañas sin señal anotan a la vez y se
+   cierran): con el código de la revisión 8 quedaban 3 pagos de 6.
+2. **Renovar la sesión (H2):** 429 y 408 son falta de red; no cierran la
+   sesión.
+3. **Canal `metas-filas` (H3):** elegí que el aviso de Realtime **solo
+   provoque releer la fila por la API** (con sesión y RLS) y nunca se guarde
+   tal como llega. No cambia el SQL, y aunque el canal llevara algo de más,
+   nada se guarda sin pasar por la vía normal. Los avisos de un mismo momento
+   se juntan en una lectura por tabla.
+4. **B4** pierde solo la respuesta de `pago_crear`, y además comprueba que
+   no salga «no quedó anotado» y que el aparato tenga su pago con el mismo id
+   y el recibo de la base. Falla si cada reenvío usa otra operación
+   (comprobado con una mutación).
+5. **`calculos.js`** tiene su prueba (**B12**) contra las vistas de la base.
+   La diferencia que había: con un monto sugerido por aclarar, el aparato
+   contaba 0 y decía «no le corresponde»; ahora lo que depende de ese monto
+   queda sin dato (`por_aclarar`).
+6. **Sonda de la regla 19**: detecta también `+x`, `x*1`, `1*x`, `x/1`,
+   `x|0`, `~~x` y `x-0` (cada una comprobada con una mutación).
+7. **`corre-supabase.sh`** espera a que la API responda 200 y a que una
+   función de `metas` ya se vea, después de `db reset` y antes de A+.
+8. **K20**: `metas.freno_devolver` da `permission denied` a anon y a una
+   sesión.
+
+**B. La pantalla**
+
+- **Mi aula del corte 1** (`js/tools/mi-aula.js`, `css/mi-aula.css`), cargada
+  en `index.html` con el motor, sellada (`?v=549`) y en el armazón de
+  `sw.js` (`meta-app-v549`). Nueve partes; dibuja solo lo que el motor
+  ofrece: el punto gris sin señal (`aria-label="Sin señal"`), las preguntas
+  de dos botones de 44 px, «no quedó anotado» con «Entendido» y «Escribe tu
+  contraseña». Al tocar algo de una colecta cerrada, antes de nada,
+  «¿Reabrirla?» y el «¿Por qué?» opcional de 09, 9.1.
+- **La entrada** de la Zona Docente entra por `metas-entrar`. Mientras haya
+  herramientas en el blob, abre además la sesión vieja para ellas, si puede;
+  esas herramientas se abren desde «Más del aula».
+- **Gastos de colecta** en el motor (`d.gasto`), solo por funciones, con su
+  pregunta de dos botones.
+- **Frases para el docente**: los errores de `datos.js` que pueden llegar a
+  la pantalla son frases del aula (`paraElDocente`); ningún otro se muestra.
+- **Familias** (`padres.html`): la entrada nueva por `familia-vincular`, la
+  frase de la clave vencida y los recibos en «L 150.00». En el sitio
+  publicado sigue como hoy hasta que haya llave de Turnstile.
+- **09**: lo quitado y lo que falta, en `09`, 9.5.
+- **Capa C**, dos cambios en la prueba (con su porqué escrito): la entrada se
+  alcanza tocando «Zona Docente» (decidido por Josué) y C6 cuenta solo los
+  nombres que pega. La capa A deja, al final, la Rifa cerrada para C4.
 
 ## Cambios de la revisión 8 (corte 1, parte 1), por punto
 
@@ -518,8 +580,11 @@ pantalla y elemento con archivo:línea. Respaldo a Drive: fase futura.
 
 ## Pendiente
 
-1. Correr en tu entorno `bash _dev/supabase-local/corre-supabase.sh --capa-b`
-   (capas A, A+ y B contra `supabase start`).
-2. Corte 1, parte 2: la pantalla contra la capa C.
-3. Antes de fijar la fecha del paso 4: activar pg_cron, y fijarla cuando
+1. Correr en tu entorno `bash _dev/supabase-local/corre-supabase.sh --todo`.
+2. Lo que falta de 09 (`09`, 9.5) y aprobar el texto nuevo de
+   `privacidad.html`.
+3. Las herramientas que siguen en el blob, al blob por sesión; después,
+   quitar la sesión vieja y «Más del aula».
+4. La llave de Turnstile del sitio para la entrada nueva de las familias.
+5. Antes de fijar la fecha del paso 4: activar pg_cron, y fijarla cuando
    falten menos de 11 meses.

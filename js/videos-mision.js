@@ -1054,13 +1054,9 @@
     ctx.vistos = vistos();
     destino.textContent = '';
 
-    /* Sin conexión los videos no se van a poder abrir. Decirlo ARRIBA
-       ahorra seis toques que no llevan a ninguna parte. La LISTA sí se
-       ve: viene del catálogo o de lo que se guardó la última vez. */
-    if (navigator.onLine === false) {
-      destino.appendChild(el('div', 'vm-sinred',
-        '📴 Ahora mismo no hay internet. La lista se ve, pero los videos necesitan conexión para reproducirse.'));
-    }
+    /* Sin señal la lista se ve igual (viene del catálogo o de la última
+       vez) y no se dice nada de la conexión: lo pide 09-INTERFAZ.md para
+       toda la app. Un video que no abre, no abre; no hace falta un aviso. */
 
     if (!lista.length) {
       var vacio = el('div', 'vm-estado');
@@ -1082,15 +1078,9 @@
     lista.forEach(function (v) { rejilla.appendChild(tarjeta(v, ctx)); });
     destino.appendChild(rejilla);
 
-    /* De dónde salió la lista, siempre escrito. Si la nube no
-       contestó, el maestro tiene que poder saber que está viendo lo
-       que traía la misión —y no creer que nadie ha puesto nada. */
-    var rotulos = {
-      catalogo: '📚 Videos incluidos con la misión',
-      nube: '☁️ Lista actualizada por el equipo de M.E.T.A.S',
-      guardado: '💾 Última lista guardada en este aparato'
-    };
-    destino.appendChild(el('p', 'vm-origen', rotulos[origen] || rotulos.catalogo));
+    /* Ya no se escribe de dónde salió la lista (de la nube, de lo guardado
+       en el aparato): es un texto técnico de guardado (09-INTERFAZ.md). */
+    void origen;
   }
 
   /* ═══════════ CÓMO SE MONTA EN UNA MISIÓN ═══════════

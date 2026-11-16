@@ -31,7 +31,8 @@ ok(i0 > 0 && plantilla.length > 2000, 'se encuentra la plantilla de Notas SACE')
 ok(!/<select\b/i.test(plantilla), 'la plantilla no tiene ningún <select>');
 ok(!/<details\b/i.test(plantilla), 'ni acordeones <details>');
 
-const ANTES = ['ad-sace-parcial', 'ad-sace-vista', 'ad-sace-recuperar', 'ad-sace-versiones', 'ad-sace-revisar-solas',
+// (rev. 9) sin 'ad-sace-versiones': «Ver cambios guardados» sale (09-INTERFAZ.md)
+const ANTES = ['ad-sace-parcial', 'ad-sace-vista', 'ad-sace-recuperar', 'ad-sace-revisar-solas',
   'ad-sace-sugerir', 'ad-sace-autorizar-iv', 'ad-sace-bloquear-iv', 'ad-sace-ir-rec', 'ad-sace-rec-aviso',
   'ad-sace-addmat', 'ad-sace-orden-az', 'ad-sace-orden-gen', 'ad-sace-nocopy', 'ad-sace-bol-quien',
   'ad-sace-boletas', 'ad-sace-cfinal', 'ad-sace-resumen', 'ad-sace-perdidos', 'ad-sace-csv-num', 'ad-sace-csv',
@@ -40,7 +41,9 @@ const ANTES = ['ad-sace-parcial', 'ad-sace-vista', 'ad-sace-recuperar', 'ad-sace
   'ad-bol-docente', 'ad-bol-lugar', 'ad-bol-municipio', 'ad-bol-depto', 'ad-bol-anio'];
 const faltan = ANTES.filter(id => !plantilla.includes('id="' + id + '"'));
 ok(!faltan.length, 'siguen los ' + ANTES.length + ' ids de antes del rediseño', faltan);
-const sinManejador = ['ad-sace-recuperar', 'ad-sace-versiones', 'ad-sace-revisar-solas', 'ad-sace-sugerir',
+ok(!plantilla.includes('id="ad-sace-versiones"') && !plantilla.includes('id="ad-sace-chip-rescate"'),
+  'y ya no están «Ver cambios guardados» ni «Recuperar o revisar notas» (09-INTERFAZ.md, rev. 9)');
+const sinManejador = ['ad-sace-recuperar', 'ad-sace-revisar-solas', 'ad-sace-sugerir',
   'ad-sace-autorizar-iv', 'ad-sace-bloquear-iv', 'ad-sace-orden-az', 'ad-sace-orden-gen', 'ad-sace-nocopy',
   'ad-sace-cfinal', 'ad-sace-resumen', 'ad-sace-perdidos', 'ad-sace-addmat', 'ad-inasis-traer']
   .filter(id => !new RegExp("getElementById\\('" + id + "'\\)\\??\\.addEventListener\\('click'").test(sace));

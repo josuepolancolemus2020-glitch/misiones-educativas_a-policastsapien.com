@@ -8,7 +8,7 @@
 // Contrato que prueban: CONTRATO.md. Escenarios: 06-PRUEBAS.md, 6.3.
 // ============================================================================
 import {
-  afirma, aparato, contadores, dineroComoTexto, escenario, faltantes, horaServidor, resultado, sql, sqlJson,
+  afirma, aparato, contadores, dineroComoTexto, dispositivo, escenario, faltantes, horaServidor, resultado, sql, sqlJson,
 } from './arnes.mjs';
 
 const falta = faltantes();
@@ -90,15 +90,23 @@ await escenario('B3 sin señal: el pago queda en la cola y al volver hay exactam
   sinContadores(desde, sql(`select string_agg(op_creacion::text, ',') from metas.pagos where id = '${id}'`).split(','));
 });
 
+// Rev. 9: se pierde SOLO la respuesta de pago_crear (antes, cualquier
+// petición: las dos pérdidas se las podía llevar una lectura de fondo y el
+// pago no se reenviaba nunca). Si cada reenvío usara una operación nueva, la
+// base diría «id ocupado» y saldría «no quedó anotado»: esta prueba lo ve.
 await escenario('B4 la respuesta se pierde después de guardar: reintenta y NO duplica', async () => {
   const tel = await entrar('telefono');
   const { colecta, alumnos } = await aulaNueva(tel);
-  tel.perderRespuestas(2);
-  tel.d.pagar({ colecta_id: colecta, alumno_id: alumnos[0], monto: '50', fecha: hoy });
+  tel.perderRespuestas(2, '/rest/v1/rpc/pago_crear');
+  const { id } = tel.d.pagar({ colecta_id: colecta, alumno_id: alumnos[0], monto: '50', fecha: hoy });
   await tel.d.esperarCola();
   const base = pagosVivos(colecta);
   afirma(base.length === 1, `${base.length} pagos (la cola repitió)`);
   afirma(tel.d.preguntas().length === 0, 'reintentar lo propio no es una pregunta');
+  afirma(tel.d.noAnotado().length === 0, 'salió «no quedó anotado»: ' + JSON.stringify(tel.d.noAnotado()));
+  const local = tel.d.lista('pagos', { colecta_id: colecta });
+  afirma(local.length === 1 && local[0].id === id && base[0].id === id, 'no es el mismo pago: ' + JSON.stringify({ local, base }));
+  afirma(base[0].recibo && local[0].recibo === base[0].recibo, 'el aparato no tiene el recibo de la base: ' + JSON.stringify({ local, base }));
 });
 
 await escenario('B5 dos aparatos sin señal le anotan a la misma alumna: se pregunta, nunca se decide solo', async () => {
@@ -226,6 +234,95 @@ await escenario('B10 al reconectar trae también lo borrado en otro aparato', as
   await tablet.d.esperarCola();
   await new Promise((r) => setTimeout(r, 1500));
   afirma(tablet.d.lista('controles', { aula_id: aula }).length === 0, 'la tablet sigue mostrando lo borrado');
+});
+
+// Rev. 9 (H1): una sola cola por aparato aunque haya varias pestañas.
+// Antes, cada pestaña numeraba su cola desde su propio contador y las dos
+// escribían «la operación 1» en el mismo IndexedDB: una pisaba a la otra.
+// El aula la arma OTRO aparato, para que las dos pestañas empiecen su cola
+// desde cero, como un docente que abre Mi aula dos veces sin señal.
+await escenario('B11 dos pestañas sin señal anotan a la vez y se cierran: ningún pago perdido ni pisado', async () => {
+  const pc = await entrar('pc');
+  const { colecta, alumnos } = await aulaNueva(pc);
+  const compu = dispositivo('compu');
+  const p1 = await compu.abrir();
+  const r = await p1.d.entrar(A.correo, A.clave);
+  afirma(r.ok, JSON.stringify(r));
+  const p2 = await compu.abrir();
+  await p1.d.esperarCola();
+  p1.sinSenal();
+  const anotados = [];
+  for (let i = 0; i < 3; i++) {
+    anotados.push(['10.00', p1.d.pagar({ colecta_id: colecta, alumno_id: alumnos[0], monto: '10', fecha: hoy }).id]);
+    anotados.push(['20.00', p2.d.pagar({ colecta_id: colecta, alumno_id: alumnos[1], monto: '20', fecha: hoy }).id]);
+  }
+  afirma(p2.d.lista('pagos', { colecta_id: colecta, alumno_id: alumnos[1] }).length === 3, 'la pestaña no ve lo que anotó');
+  await new Promise((ok) => setTimeout(ok, 300));
+  p1.cerrar();
+  p2.cerrar();
+  const p3 = await compu.abrir();
+  p3.conSenal();
+  await p3.d.esperarCola();
+  const vivos = pagosVivos(colecta);
+  afirma(vivos.length === 6, `${vivos.length} pagos en la base, no 6: ${JSON.stringify(vivos.map((v) => v.monto))}`);
+  for (const [monto, id] of anotados) {
+    afirma(vivos.some((v) => v.id === id && v.monto === monto), `el pago ${id} de L ${monto} se perdió o cambió`);
+  }
+  afirma(p3.d.preguntas().length === 0 && p3.d.noAnotado().length === 0,
+    JSON.stringify({ preguntas: p3.d.preguntas(), noAnotado: p3.d.noAnotado() }));
+});
+
+// Rev. 9: calculos.js da lo mismo que las vistas de la base, alumno por
+// alumno y colecta por colecta. Y mientras el docente aclara un monto
+// sugerido ambiguo («1,500»), el aparato NO inventa: lo que depende de ese
+// monto queda sin dato (no «0.00» ni «no le corresponde»).
+await escenario('B12 los totales del aparato son los de la base (calculos.js = vistas), también con un monto por aclarar', async () => {
+  const tel = await entrar('telefono');
+  const { aula, alumnos, colecta } = await aulaNueva(tel, 5);
+  const [a1, a2, a3, a4, a5] = alumnos;
+  tel.d.exencion.poner({ colecta_id: colecta, alumno_id: a2, monto_aplicable: '25', motivo: 'beca' });
+  tel.d.exencion.poner({ colecta_id: colecta, alumno_id: a3 });
+  tel.d.editar('alumnos', a4, { estado: 'retirado' });
+  tel.d.pagar({ colecta_id: colecta, alumno_id: a1, monto: '20', fecha: hoy });
+  tel.d.pagar({ colecta_id: colecta, alumno_id: a1, monto: '30.5', fecha: hoy });
+  tel.d.pagar({ colecta_id: colecta, alumno_id: a2, monto: '10', fecha: hoy });
+  tel.d.pagar({ colecta_id: colecta, alumno_id: a4, monto: '15', fecha: hoy });
+  tel.d.pagar({ colecta_id: colecta, alumno_id: a5, monto: '75', fecha: hoy });
+  const dudosa = tel.d.colecta.crear({ aula_id: aula, concepto: 'Uniformes (ficticio)', monto_sugerido: '1,500', fecha: hoy }).id;
+  await tel.d.esperarCola();
+
+  const pendiente = tel.d.lista('v_colectas_resumen', { colecta_id: dudosa })[0];
+  afirma(pendiente && pendiente.monto_sugerido === null && pendiente.meta === null && pendiente.falta_total === null,
+    'con el monto por aclarar se inventó un total: ' + JSON.stringify(pendiente));
+  const filasDudosa = tel.d.lista('v_colecta_alumnos', { colecta_id: dudosa });
+  afirma(filasDudosa.length === 5 && filasDudosa.every((x) => (x.alumno_id === a4
+    ? x.situacion === 'ya_no_esta' && x.aplicable === '0.00'        // retirada: eso sí se sabe
+    : x.aplicable === null && x.falta === null && x.situacion === 'por_aclarar')),
+    'con el monto por aclarar dice «no le corresponde» o «0.00»: ' + JSON.stringify(filasDudosa.slice(0, 2)));
+  const p = tel.d.preguntas();
+  afirma(p.length === 1 && p[0].tipo === 'monto_ambiguo', JSON.stringify(p));
+  await tel.d.responder(p[0].id, '1500.00');
+  await tel.d.esperarCola();
+
+  const DINERO_A = ['monto_aplicable', 'aplicable', 'pagado', 'falta', 'pago_de_mas'];
+  const DINERO_R = ['monto_sugerido', 'meta', 'recaudado', 'falta_total', 'pago_de_mas_total', 'gastado', 'saldo'];
+  const texto = (lista) => lista.map((k) => `metas.monto_texto(${k}) as ${k}`).join(', ');
+  for (const c of [colecta, dudosa]) {
+    const base = sqlJson(`select alumno_id, exento, pagos, situacion, ${texto(DINERO_A)}
+                            from metas._calc_colecta_alumnos where colecta_id = '${c}'`);
+    const local = tel.d.lista('v_colecta_alumnos', { colecta_id: c });
+    afirma(base.length === local.length && base.length === 5, `${base.length} en la base, ${local.length} aquí`);
+    for (const b of base) {
+      const l = local.find((x) => x.alumno_id === b.alumno_id);
+      const k = ['exento', 'pagos', 'situacion', ...DINERO_A].find((x) => String(l && l[x]) !== String(b[x]));
+      afirma(!k, `alumno ${b.alumno_id}, ${k}: base ${b[k]}, aparato ${l && l[k]}`);
+    }
+    const rb = sqlJson(`select esperados, pagaron, ${texto(DINERO_R)} from metas._calc_colectas_resumen where colecta_id = '${c}'`)[0];
+    const rl = tel.d.lista('v_colectas_resumen', { colecta_id: c })[0];
+    const k = ['esperados', 'pagaron', ...DINERO_R].find((x) => String(rl[x]) !== String(rb[x]));
+    afirma(!k, `resumen ${k}: base ${rb[k]}, aparato ${rl[k]}`);
+    afirma(!dineroComoTexto(local) && !dineroComoTexto([rl]), 'dinero que no es texto');
+  }
 });
 
 process.exit(resultado());

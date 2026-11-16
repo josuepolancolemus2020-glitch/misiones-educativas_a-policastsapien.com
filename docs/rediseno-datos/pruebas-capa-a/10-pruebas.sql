@@ -936,6 +936,20 @@ select prueba.ok(exists (select 1 from cron.job where jobname = 'metas-claves-ve
 update metas.hitos set at = now() - interval '1 minute' where nombre = 'claves_viejas_vencen';
 select prueba.ok(not exists (select 1 from cron.job where jobname = 'metas-claves-vencen'),
                  'K19 mover la fecha a una que ya pasó borra la tarea de la fecha anterior');
+-- K20 (rev. 9): metas.freno_devolver (rev. 8) es solo de la función de
+-- borde: ni anon ni una sesión pueden devolverse intentos a mano.
+set role anon;
+select prueba.falla($$select metas.freno_devolver('entrar-correo:a@ejemplo.invalid', '1 hour')$$,
+                    'K20 anon no llama metas.freno_devolver', '42501');
+reset role;
+select prueba.como('A');
+set role authenticated;
+select prueba.falla($$select metas.freno_devolver('entrar-correo:a@ejemplo.invalid', '1 hour')$$,
+                    'K20 una sesión de docente tampoco llama metas.freno_devolver', '42501');
+reset role;
+select prueba.ok(not has_function_privilege('public', 'metas.freno_devolver(text, interval)', 'execute')
+                 and has_function_privilege('service_role', 'metas.freno_devolver(text, interval)', 'execute'),
+                 'K20 freno_devolver: nada para public, sí para service_role');
 -- K17 (rev. 7): IP desconocida → sin freno por IP (nunca un balde común para
 -- todos); IP conocida → su freno; y el freno por familia, con o sin IP.
 set role service_role;
@@ -1283,6 +1297,15 @@ reset role;
 select prueba.ok((select count(*) >= 2 from public.registro_admin_historial where codigo = '9VIEJ'), 'V11 y deja lo borrado en el historial');
 select prueba.falla($$insert into public.registro_admin (evento_id, codigo, tipo) values ('ADA-X', 'X', 'asistencia')$$,
                     'V11 registro_admin ya no se escribe', 'MT010');
+
+-- ── Datos para la capa C (no es una prueba) ─────────────────────────────────
+-- La capa C entra como la docente A y necesita, en su aula, una colecta
+-- abierta primero (Excursión) y otra CERRADA (C4, «¿Reabrirla?»). Las
+-- pruebas de arriba dejan la Rifa reabierta: aquí se cierra.
+select prueba.como('A');
+set role authenticated;
+select metas.colecta_cerrar(:c4, gen_random_uuid());
+reset role;
 
 -- ════════════════════════════════════════════════════════════════════════════
 -- Resultado

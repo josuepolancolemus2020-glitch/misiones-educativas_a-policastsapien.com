@@ -26,9 +26,12 @@ const SITIO = process.env.METAS_SITIO || 'http://localhost:8123';
 const NUBE = { url: process.env.METAS_API, llavePublica: process.env.METAS_PUBLICA };
 const A = { correo: 'a@ejemplo.invalid', clave: 'clave-a' };
 
-if (!fs.readFileSync(path.join(RAIZ, 'index.html'), 'utf8').includes('data-metas="entrar-correo"')) {
-  console.log('… capa C escrita antes del código: index.html todavía no tiene la entrada del corte 1');
-  console.log('  (data-metas="entrar-correo"); hasta entonces esta capa no puede correr');
+// La compuerta mira la vista de Mi aula del corte 1 (rev. 9): el formulario
+// de entrada lo pinta app.js dentro de la Zona Docente, no está escrito en
+// index.html.
+if (!fs.readFileSync(path.join(RAIZ, 'index.html'), 'utf8').includes('data-metas="mi-aula"')) {
+  console.log('… capa C escrita antes del código: index.html todavía no tiene Mi aula del corte 1');
+  console.log('  (data-metas="mi-aula"); hasta entonces esta capa no puede correr');
   process.exit(2);
 }
 
@@ -68,8 +71,14 @@ async function contexto(tam) {
   await ctx.addInitScript((nube) => { window.__METAS_NUBE_DE_PRUEBA__ = nube; }, NUBE);
   return ctx;
 }
-async function entrar(pagina) {
+// La entrada del docente vive en la Zona Docente, no en la portada del
+// alumno (rev. 9, decidido por Josué): primero se toca «Zona Docente».
+async function aZonaDocente(pagina) {
   await pagina.goto(SITIO + '/index.html');
+  await pagina.click(m('ir-zona-docente'));
+}
+async function entrar(pagina) {
+  await aZonaDocente(pagina);
   await pagina.fill(m('entrar-correo'), A.correo);
   await pagina.fill(m('entrar-clave'), A.clave);
   await pagina.click(m('entrar-boton'));
@@ -169,7 +178,7 @@ await prueba('C4 colecta cerrada: «Esta colecta está cerrada. ¿Reabrirla?» �
 await prueba('C5 primera vez sin señal: una sola frase, «Para entrar la primera vez se necesita señal»', async () => {
   const ctx = await contexto(TAMANOS[0]);
   const p = await ctx.newPage();
-  await p.goto(SITIO + '/index.html');      // carga con señal (el sitio), entra sin señal
+  await aZonaDocente(p);                    // carga con señal (el sitio), entra sin señal
   await ctx.setOffline(true);
   await p.evaluate(() => window.dispatchEvent(new Event('offline')));
   await p.fill(m('entrar-correo'), A.correo);
@@ -197,7 +206,10 @@ await prueba('C6 carga rápida: pegar 43 alumnos, tocar dos veces y cortar la se
   await p.evaluate(() => window.dispatchEvent(new Event('online')));
   await p.click(m('ir-lista'));
   await p.waitForTimeout(3000);
-  afirma((await p.locator(m('alumno')).filter({ hasText: 'Alumna Ficticia C' }).count()) === 43);
+  // Solo los que pegó esta prueba (C01 a C43): la capa A ya tiene en esa
+  // aula a «Alumna Ficticia Cinco» y «Alumna Ficticia Carrera Dos» (rev. 9).
+  const pegados = await p.locator(m('alumno')).filter({ hasText: /Alumna Ficticia C\d{2}\b/ }).count();
+  afirma(pegados === 43, `${pegados} en la lista, no 43`);
   await ctx.close();
 });
 

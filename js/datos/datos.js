@@ -40,19 +40,37 @@
     for (var k in fila) if (DE_LA_BASE.indexOf(k) < 0 && fila[k] !== undefined) r[k] = fila[k];
     return r;
   }
+  // Lo que la pantalla le puede mostrar al docente tal cual: una frase del
+  // aula, de tú, sin nada técnico (09-INTERFAZ.md). La pantalla valida antes
+  // de llamar, así que casi nunca se llega aquí.
+  function aviso(texto) {
+    var e = new Error(texto);
+    e.paraElDocente = true;
+    return e;
+  }
+
   function cuenta() {
     var u = nube.uid();
-    if (!u) throw new Error('no hay una cuenta abierta en este aparato');
+    if (!u) throw aviso('Escribe tu correo y tu contraseña para entrar.');
     return u;
   }
 
   // ── Lo que ve la pantalla: copia + cola ─────────────────────────────────
+  // Lo de la cola y las preguntas va en su orden (seq); lo que esta
+  // pestaña anotó y la líder todavía no tomó, al final, en el orden en que
+  // se anotó. Una misma operación nunca se cuenta dos veces.
   function opsDe(owner, tabla) {
+    var vistas = {};
     var ops = alm.cola().filter(function (o) { return o.owner === owner && o.tabla === tabla; });
     alm.preguntas().forEach(function (p) {
       if (p.owner === owner && p.op && p.op.tabla === tabla) ops.push(p.op);
     });
-    return ops.sort(function (a, b) { return a.seq - b.seq; });
+    ops.sort(function (a, b) { return a.seq - b.seq; });
+    ops.forEach(function (o) { vistas[o.op_id] = 1; });
+    alm.misEntrantes().forEach(function (o) {
+      if (o.owner === owner && o.tabla === tabla && !vistas[o.op_id]) ops.push(o);
+    });
+    return ops;
   }
 
   function aplicar(mapa, op) {
@@ -106,6 +124,18 @@
       case 'colecta_reabrir':
         if ((f = mapa.get(op.id))) mapa.set(op.id, Object.assign(copia(f), { estado: op.tipo === 'colecta_cerrar' ? 'cerrada' : 'abierta' }));
         break;
+      case 'gasto_crear':
+        mapa.set(op.id, {
+          id: op.id, colecta_id: a.p_colecta, fecha: a.p_fecha, concepto: a.p_concepto, monto: a.p_monto || null,
+          version: 0, deleted_at: null,
+        });
+        break;
+      case 'gasto_editar':
+        if ((f = mapa.get(a.p_gasto))) mapa.set(a.p_gasto, Object.assign(copia(f), a.p_cambios));
+        break;
+      case 'gasto_anular':
+        mapa.delete(a.p_gasto);
+        break;
       case 'exencion_poner':
       case 'exencion_quitar':
         mapa.forEach(function (e, id) {
@@ -114,7 +144,7 @@
         if (op.tipo === 'exencion_poner') {
           mapa.set(op.id, {
             id: op.id, colecta_id: a.p_colecta, alumno_id: a.p_alumno, monto_aplicable: a.p_monto_aplicable,
-            motivo: a.p_motivo || null, version: 0, deleted_at: null,
+            motivo: a.p_motivo || null, version: 0, deleted_at: null, por_aclarar: !!op.por_aclarar,
           });
         }
         break;
@@ -163,14 +193,16 @@
   function leerMonto(texto, permitirCero) {
     var r = montos.leer(texto);
     if (r.pregunta) return r;
-    if (!r.ok) throw new Error('monto no válido: ' + texto);
-    if (!permitirCero && r.valor === '0.00') throw new Error('monto en cero');
+    if (!r.ok) throw aviso('Escribe el monto con números, por ejemplo 150 o 150.50.');
+    if (!permitirCero && r.valor === '0.00') throw aviso('El monto tiene que ser mayor que cero.');
     return r;
   }
 
   // El monto lo escribió el docente y es ambiguo («1,500»): la operación
   // queda anotada y espera su respuesta («¿L 1,500.00 o L 1.50?»).
   function encolarConMonto(op, lectura) {
+    // Mientras se aclara, lo que depende de ese monto queda sin dato (calculos.js).
+    if (lectura.pregunta) op.por_aclarar = true;
     if (lectura.pregunta) cola.preguntaMontoAmbiguo(op, lectura.pregunta);
     else cola.encolar(op);
     return { id: op.id };
@@ -180,7 +212,7 @@
     var u = cuenta();
     if (nombre === 'pagos') return pagar(fila);
     if (nombre === 'colectas') return colecta.crear(fila);
-    if (SOLO_FUNCIONES[nombre]) throw new Error(nombre + ' se anota con su función, no con crear');
+    if (SOLO_FUNCIONES[nombre]) throw aviso('Esto no se puede anotar aquí.');
     var id = (fila && fila.id) || M.ids.nuevo();
     var campos = limpia(fila || {});
     delete campos.id;
@@ -202,13 +234,13 @@
     if (nombre === 'colectas') return colecta.editar(id, c);
     if (nombre === 'pagos') {
       Object.keys(c).forEach(function (k) {
-        if (k !== 'nota' && k !== 'recibo_anterior') throw new Error('el monto y la fecha de un pago se corrigen con corregirPago');
+        if (k !== 'nota' && k !== 'recibo_anterior') throw aviso('Para cambiar el monto o la fecha, corrige el pago.');
       });
       cola.encolar({ owner: u, tipo: 'pago_editar', tabla: 'pagos', id: id, colecta: (M._vista.fila(u, 'pagos', id) || {}).colecta_id,
         args: { p_pago: id, p_cambios: c } });
       return { id: id };
     }
-    if (SOLO_FUNCIONES[nombre]) throw new Error(nombre + ' se cambia con su función, no con editar');
+    if (SOLO_FUNCIONES[nombre]) throw aviso('Esto no se puede cambiar aquí.');
     if (nombre === 'alumnos' && 'identidad' in c) {
       c.identidad = String(c.identidad || '').toUpperCase().replace(/[^0-9A-Z]/g, '') || null;
     }
@@ -227,8 +259,8 @@
       cola.encolar({ owner: u, tipo: 'colecta_borrar', tabla: 'colectas', id: id, colecta: id, args: { p_colecta: id } });
       return { id: id };
     }
-    if (nombre === 'pagos') throw new Error('un pago se anula con anularPago');
-    if (SOLO_FUNCIONES[nombre]) throw new Error(nombre + ' se quita con su función, no con borrar');
+    if (nombre === 'pagos') throw aviso('Un pago no se borra: se anula, con su motivo.');
+    if (SOLO_FUNCIONES[nombre]) throw aviso('Esto no se puede quitar aquí.');
     cola.encolar({ owner: u, tipo: 'borrar', tabla: nombre, id: id });
     return { id: id };
   }
@@ -251,7 +283,7 @@
   function corregirPago(id, c) {
     var u = cuenta();
     var visto = M._vista.fila(u, 'pagos', id);
-    if (!visto) throw new Error('ese pago no está');
+    if (!visto) throw aviso('Ese pago ya no está en la lista.');
     var lectura = leerMonto(c.monto == null ? visto.monto : c.monto, false);
     var nuevo = M.ids.nuevo();
     return encolarConMonto({
@@ -332,27 +364,58 @@
     },
   };
 
+  // Gastos de una colecta («cuentas claras»): solo por funciones.
+  var gasto = {
+    crear: function (g) {
+      var u = cuenta();
+      var lectura = leerMonto(g.monto, false);
+      var id = M.ids.nuevo();
+      var visto = M._vista.fila(u, 'colectas', g.colecta_id) || {};
+      var conocidos = lista('gastos', { colecta_id: g.colecta_id }).map(function (x) { return x.id; });
+      return encolarConMonto({
+        owner: u, tipo: 'gasto_crear', tabla: 'gastos', id: id, colecta: g.colecta_id,
+        args: { p_id: id, p_colecta: g.colecta_id, p_fecha: g.fecha, p_concepto: g.concepto, p_monto: lectura.valor || null,
+          p_campos: {}, p_conocidos: conocidos, p_son_distintos: false, _aula: visto.aula_id },
+      }, lectura);
+    },
+    anular: function (id, motivo) {
+      var u = cuenta();
+      var visto = M._vista.fila(u, 'gastos', id) || {};
+      cola.encolar({ owner: u, tipo: 'gasto_anular', tabla: 'gastos', id: id, colecta: visto.colecta_id,
+        args: { p_gasto: id, p_motivo: motivo } });
+      return { id: id };
+    },
+  };
+
   // ── Cuenta ─────────────────────────────────────────────────────────────
+  // Solo la líder habla con la base (rev. 9): conecta Realtime, se pone al
+  // día y manda la cola. Las demás pestañas reciben lo que ella cuenta.
+  var arrancada = null;
   function arrancar(owner) {
-    tr.conectar(owner);
+    if (!alm.esLider() || !owner) return;
+    if (arrancada !== owner) {
+      tr.desconectar();
+      tr.conectar(owner);
+      arrancada = owner;
+    }
     tr.ponerseAlDia(owner);
     cola.reanudar();
   }
+  function parar() {
+    tr.desconectar();
+    arrancada = null;
+  }
 
   async function entrar(correo, clave) {
-    var antes = nube.uid();
     var r = await nube.entrar(correo, clave);
-    if (r.ok) {
-      if (antes && antes !== nube.uid()) tr.desconectar();
-      arrancar(nube.uid());
-    }
+    if (r.ok) arrancar(nube.uid());
     return r;
   }
 
   // Con señal, termina de mandar lo pendiente antes de cerrar (el botón
   // muestra su espera normal, sin texto). Sin señal, lo guarda para esta
   // cuenta en este aparato y sale cuando esta cuenta vuelva a entrar (3.7).
-  async function salir() {
+  async function salirEnLider() {
     var u = nube.uid();
     if (!u) return;
     if (M._senal.hay()) {
@@ -364,12 +427,51 @@
         }).catch(function () {});
       }
     }
-    tr.desconectar();
+    parar();
     nube.olvidarSesion();
     var queda = alm.cola().some(function (o) { return o.owner === u; })
       || alm.preguntas().some(function (p) { return p.owner === u; });
     if (!queda) alm.olvidarCuenta(u);
     cola.revisarEspera();
+  }
+  async function salir() {
+    if (!nube.uid()) return;
+    if (alm.esLider()) return salirEnLider();
+    // Otra pestaña: lo hace la líder, que es la que tiene la cola; aquí se
+    // toma la sesión vacía que ella reparte.
+    await cola.pedirALaLider({ t: 'salir' });
+    if (nube.uid()) nube.tomarDeOtra(null);
+  }
+
+  // La sesión cambió en ESTA pestaña (entró, renovó, salió): se les cuenta
+  // a las demás. Si llegó de otra, la líder arranca o para según quién quedó.
+  nube.alCambiarSesion(function (s, deOtra) {
+    if (!deOtra) alm.enviar({ t: 'sesion', s: s });
+    if (!alm.esLider()) return;
+    if (s && s.uid) { if (deOtra) arrancar(s.uid); } else parar();
+  });
+
+  alm.alMensaje(function (m) {
+    if (m.t === 'sesion') {
+      var actual = nube.sesion();
+      if (!m.s && !actual) return;
+      if (m.s && actual && m.s.access_token === actual.access_token) return;
+      nube.tomarDeOtra(m.s || null);
+      return;
+    }
+    if (!alm.esLider()) return;
+    if (m.t === 'renovar') nube.renovar().catch(function () {});
+    else if (m.t === 'hola') { var s = nube.sesion(); if (s) alm.enviar({ t: 'sesion', s: s }); }
+    else if (m.t === 'salir') salirEnLider().then(function () { alm.enviar({ t: 'hecho', rid: m.rid }); });
+  });
+
+  // Esta pestaña pasa a ser la líder (la anterior se cerró): lee lo
+  // guardado, toma lo que anotaron las demás y sigue.
+  async function serLider() {
+    await alm.asumir();
+    nube.retomar();
+    if (nube.uid()) arrancar(nube.uid());
+    await cola.absorber();
   }
 
   var api = null;
@@ -380,13 +482,15 @@
     iniciando = (async function () {
       await alm.cargar();
       nube.retomar();
+      var soyLider = await alm.elegirLider(serLider);
       w.addEventListener('online', function () {
+        if (!alm.esLider()) return;
         cola.ahoraMismo();
         if (nube.uid()) tr.ponerseAlDia(nube.uid());
       });
       if (w.document && w.document.addEventListener) {
         w.document.addEventListener('visibilitychange', function () {
-          if (w.document.visibilityState !== 'visible') return;
+          if (w.document.visibilityState !== 'visible' || !alm.esLider()) return;
           cola.ahoraMismo();
           if (nube.uid()) tr.ponerseAlDia(nube.uid());
         });
@@ -402,6 +506,7 @@
         anularPago: anularPago,
         colecta: colecta,
         exencion: exencion,
+        gasto: gasto,
         lista: lista,
         escuchar: cola.escuchar,
         preguntas: function () {
@@ -410,14 +515,14 @@
             return { id: p.id, tipo: p.tipo, texto: p.texto, botones: p.botones.map(copia) };
           });
         },
-        responder: cola.responder,
+        responder: cola.responderEnLider,
         pendientes: function () { return nube.uid() ? cola.pendientes(nube.uid()) : 0; },
         noAnotado: function () {
           var u = nube.uid();
           return alm.noAnotado().filter(function (t) { return t.owner === u; }).map(function (t) { return { id: t.id, texto: t.texto }; });
         },
         // El único botón de la tarjeta «no quedó anotado»: «Entendido».
-        entendido: function (id) { alm.quitarNoAnotado(id); },
+        entendido: cola.entendido,
         esperarCola: cola.esperar,
         // Para el punto gris de «sin señal» (lo dibuja la pantalla).
         sinSenal: function () { return !M._senal.hay(); },
@@ -427,7 +532,12 @@
         pideContrasena: function () { return cola.pausada(); },
         cuenta: function () { var s = nube.sesion(); return s ? { nombre: s.nombre, rol: s.rol } : null; },
       };
-      if (nube.uid()) arrancar(nube.uid());
+      if (soyLider) {
+        if (nube.uid()) arrancar(nube.uid());
+        await cola.absorber();
+      } else {
+        alm.enviar({ t: 'hola' });
+      }
       return api;
     })();
     return iniciando;

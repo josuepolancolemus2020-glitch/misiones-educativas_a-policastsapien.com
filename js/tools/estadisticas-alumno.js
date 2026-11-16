@@ -509,7 +509,7 @@ function estObservaciones(x) {
       }
     });
   } else if (x.misiones && x.misiones.intentos === 0) {
-    obs.push({ ic: '🚀', nivel: 'ojo', txt: 'No aparece práctica de misiones en la nube. Si tiene acceso a un teléfono, las misiones son refuerzo gratuito en casa.' });
+    obs.push({ ic: '🚀', nivel: 'ojo', txt: 'No aparece práctica de misiones. Si tiene acceso a un teléfono, las misiones son refuerzo gratuito en casa.' });
   }
 
   /* Conducta: rasgos en lo más bajo de la escala (solo si no son todos) */
@@ -869,10 +869,10 @@ function adRenderEstadisticas(body, d) {
     </div>
 
     <div class="pa-card">
-      <div class="pa-card-title">🚀 Práctica de misiones <small class="est-sub">(lo que sube a la nube cuando practica con internet)</small></div>
+      <div class="pa-card-title">🚀 Práctica de misiones <small class="est-sub">(lo que practica en las misiones)</small></div>
       <div id="est-misiones">${estMisionesHtml(x)}</div>
       <div class="ad-btn-row">
-        <button class="pa-generate-btn ad-btn-sec" id="est-nube-btn">🔄 Consultar la nube ahora</button>
+        <button class="pa-generate-btn ad-btn-sec" id="est-nube-btn">🔄 Ver la práctica</button>
       </div>
       ${cache ? '<p class="pa-optional-hint">Última consulta: ' + adEsc(estFechaHora(cache.t)) + '. Los resultados llegan con el nº de lista que el alumno escribe: revisa que el nombre coincida.</p>' : ''}
     </div>
@@ -938,13 +938,13 @@ function adRenderEstadisticas(body, d) {
     const quien = adPrimerNombre(al.nombre) || ('#' + al.num);
     if (!await metasConfirm('Se quita del expediente de **' + quien + '** la toma de **' + firma.ppm +
       ' palabras por minuto** del ' + adFechaBonita(firma.f) + '.\n\nDeja de contar en el gráfico, en las ' +
-      'observaciones y en el informe.\n\nSi fue un error, la 🕘 papelera de la pestaña 👥 Alumnos la devuelve.',
+      'observaciones y en el informe.',
       { icono: '🗑', titulo: 'Quitar una toma de lectura', okTxt: 'Sí, quitarla' })) return;
     adUndoGuardar('Quitar una toma de lectura de #' + al.num);
     const dd = adLoad();
     if (!estQuitarToma(dd, +b.dataset.lecdel, firma)) { toast('No se encontró esa toma; vuelve a abrir la pestaña.'); return; }
     adSave(dd);
-    toast('🗑 Toma quitada — si fue un error, restaura en 🕘 (pestaña Alumnos)');
+    toast('🗑 Toma quitada');
     adRenderEstadisticas(body, adLoad());
   }));
   /* la observación se guarda mientras se escribe (como el resto de Mi
@@ -986,11 +986,10 @@ function adRenderEstadisticas(body, d) {
     const btn = document.getElementById('est-nube-btn');
     btn.disabled = true; btn.textContent = '⏳ Consultando…';
     const r = await estNubeRefrescar();
-    btn.disabled = false; btn.textContent = '🔄 Consultar la nube ahora';
-    if (r.err === 'sincuenta') { toast('👩‍🏫 Entra una vez en «Consulta en la nube» con tu correo y contraseña: ahí queda guardado tu acceso.'); return; }
-    if (r.err === 'sinred') { toast('📴 Sin conexión: se muestra la última consulta guardada.'); return; }
-    if (r.err) { toast('⚠️ No se pudo consultar la nube. Intenta de nuevo con internet.'); return; }
-    toast('☁️ Nube consultada: práctica de misiones al día.');
+    btn.disabled = false; btn.textContent = '🔄 Ver la práctica';
+    if (r.err === 'sincuenta') { toast('👩‍🏫 Entra una vez en «Resultados de mis alumnos» con tu correo y tu contraseña.'); return; }
+    if (r.err === 'sinred') return;   // sin señal no se dice nada (09-INTERFAZ.md)
+    if (r.err) { toast('No se pudo ver ahora. Intenta de nuevo en un momento.'); return; }
     adRenderEstadisticas(body, adLoad());
   });
 }
@@ -1021,12 +1020,12 @@ function estTomasHtml(x) {
   };
   return '<div class="est-tomas">' + x.lectura.slice().reverse().map(fila).join('') + '</div>' +
     '<p class="pa-optional-hint">¿Alguna fue solo una prueba? Toca 🗑 y sale del expediente, del gráfico y del ' +
-    'informe. Si te arrepientes, la 🕘 papelera de la pestaña 👥 Alumnos la devuelve.</p>';
+    'informe.</p>';
 }
 
 function estMisionesHtml(x) {
   if (x.misiones == null) {
-    return '<p class="pa-optional-hint">Aún no se ha consultado la nube en este equipo. Toca «Consultar la nube ahora» (necesita internet una vez; después queda guardado para verlo sin señal).</p>';
+    return '<p class="pa-optional-hint">Todavía no se ha visto la práctica de las misiones. Toca «Ver la práctica».</p>';
   }
   const m = x.misiones;
   /* Las que no se pudieron asignar SE DICEN, y se dicen aunque no haya ninguna
@@ -1040,7 +1039,7 @@ function estMisionesHtml(x) {
       adEsc(adGradoSeccion(x.grado, x.seccion || '1')) + '</b>) la próxima vez que abra una misión.</p>'
     : '';
   if (!m.filas.length) {
-    return sinSec + '<p class="pa-optional-hint">No hay práctica registrada de este alumno en la nube todavía. Las misiones suben solas cuando practica con internet; sin señal, quedan en su teléfono y suben después.</p>';
+    return sinSec + '<p class="pa-optional-hint">No hay práctica registrada de este alumno todavía.</p>';
   }
   const aviso = sinSec + (m.nombres.length > 1
     ? '<p class="pa-optional-hint">⚠️ Con este nº de lista llegaron varios nombres (' + m.nombres.map(adEsc).join(', ') + '): puede haber un número mal escrito.</p>' : '');
@@ -1124,7 +1123,7 @@ function estImprimirInforme(d, nums) {
     };
     const misTxt = x.misiones && x.misiones.intentos
       ? x.misiones.intentos + ' evaluación(es) en misiones · ' + x.misiones.dominadas + ' dominada(s) con 70+' + (x.misiones.minutos != null ? ' · ~' + x.misiones.minutos + ' min de práctica' : '')
-      : (x.misiones ? 'Sin práctica registrada en la nube' : 'Nube sin consultar en este equipo');
+      : (x.misiones ? 'Sin práctica registrada' : 'Práctica sin revisar');
     const lecTxt = (() => {
       if (!x.lectura.length) return null;
       const u = x.lectura[x.lectura.length - 1];
@@ -1202,7 +1201,7 @@ function estImprimirInforme(d, nums) {
           <div><i></i><b>&nbsp;</b><span>Madre, padre o encargado</span></div>
         </div>
         <p class="inf-fuente">Informe generado por M.E.T.A.S. con los registros del aula (Notas SACE, pase de lista,
-          Plan de Acción y práctica de misiones en la nube) al ${adEsc(hoy)}.</p>
+          Plan de Acción y práctica de misiones) al ${adEsc(hoy)}.</p>
       </footer>
     </section>`;
   };
@@ -1715,7 +1714,7 @@ function estImprimirInformeGrado(d) {
       <div><i></i><b>${adEsc(bol.director) || '&nbsp;'}</b><span>Director(a) · Recibido</span></div>
     </div>
     <p class="inf-fuente">Informe del grado ${adEsc(grupo)} generado por M.E.T.A.S. con los registros del aula (Notas SACE, pase de lista,
-      Plan de Acción y práctica de misiones en la nube) al ${adEsc(hoy)}. El detalle de cada alumno está en su informe individual.${
+      Plan de Acción y práctica de misiones) al ${adEsc(hoy)}. El detalle de cada alumno está en su informe individual.${
       g.pruebas ? ' No se cuenta' + (g.pruebas === 1 ? ' 1 registro de prueba del docente, ajeno' : ' ' + g.pruebas + ' registros de prueba del docente, ajenos') + ' a la matrícula.' : ''}${
       g.noCuentan ? ' No entra' + (g.noCuentan === 1 ? ' 1 ficha' : 'n ' + g.noCuentan + ' fichas') + ' de Mi aula fuera de la matrícula final (fuera de la lista oficial del SACE, trasladados o desertores).' : ''}</p>
   </footer>

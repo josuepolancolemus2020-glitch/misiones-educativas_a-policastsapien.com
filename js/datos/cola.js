@@ -67,6 +67,28 @@
 
   function avisar(tabla, id) {
     oyentes.forEach(function (f) { try { f({ tabla: tabla, id: id }); } catch (e) { /* un oyente roto no frena la cola */ } });
+    contarEstado();
+  }
+
+  // ── Varias pestañas (rev. 9) ───────────────────────────────────────────
+  // La líder cuenta a las demás cómo quedaron la cola, las preguntas y las
+  // tarjetas, y si ya no le queda nada por mandar. Se junta en un solo
+  // mensaje por vuelta, aunque cambien diez cosas.
+  var estadoPorSalir = false;
+  var quietaLider = {};          // en las otras pestañas: lo último que dijo la líder
+  var absorbidosPorContar = [];
+  function contarEstado() {
+    if (!alm.esLider() || estadoPorSalir) return;
+    estadoPorSalir = true;
+    setTimeout(function () {
+      estadoPorSalir = false;
+      var u = nube.uid();
+      var q = {};
+      if (u) q[u] = quieta();
+      var ab = absorbidosPorContar;
+      absorbidosPorContar = [];
+      alm.enviar({ t: 'estado', foto: alm.foto(), quieta: q, absorbidos: ab });
+    }, 0);
   }
 
   // ── Utilidades ─────────────────────────────────────────────────────────
@@ -131,15 +153,24 @@
     }
     return null;
   }
+  function deEsta(owner) {
+    return alm.misEntrantes().filter(function (o) { return o.owner === owner; });
+  }
   function pendientes(owner) {
-    return alm.cola().filter(function (o) { return o.owner === owner; }).length;
+    return alm.cola().filter(function (o) { return o.owner === owner; }).length + deEsta(owner).length;
   }
 
   function quieta() {
     var u = nube.uid();
+    if (!alm.esLider()) {
+      // Otra pestaña: quieta cuando la líder ya tomó todo lo de aquí y dijo
+      // que no le queda nada por mandar de esta cuenta.
+      return !u || (!deEsta(u).length && quietaLider[u] === true);
+    }
     return !corriendo && (!u || pausada || !siguiente(u));
   }
   function revisarEspera() {
+    contarEstado();
     if (!quieta()) return;
     var e = esperando;
     esperando = [];
@@ -158,6 +189,7 @@
     op.owner = op.owner || nube.uid();
     op.hecho_en = op.hecho_en || ahora();
     alm.encolar(op);
+    if (!alm.esLider()) quietaLider[op.owner] = false;
     avisar(op.tabla, op.id);
     procesar();
     return op;
@@ -248,6 +280,14 @@
       }
       return preguntar(op, 'pago_cambiado_en_otro_aparato', textoDosMontos(nombre, vivo, r.este),
         botonesDos(vivo, r.este), { actual: r.actual, vivo: vivo, este: r.este });
+    }
+    if (r.pregunta === 'otro_gasto_sin_ver') {
+      var g = (r.otros || [])[0] || {};
+      return preguntar(op, 'otro_gasto_sin_ver',
+        'En otro aparato se anotó un gasto de ' + L(g.monto) + ' (' + (g.concepto || 'sin concepto') + ') el '
+        + fechaLarga(g.fecha) + '. Aquí anotaste ' + L(a.p_monto) + '. ¿Es el mismo gasto?',
+        [{ etiqueta: 'Son dos gastos', valor: 'son_dos' }, { etiqueta: 'Es el mismo', valor: 'es_el_mismo' }],
+        { otro: g, este: { monto: a.p_monto, fecha: a.p_fecha } });
     }
     if (r.pregunta === 'pago_corregido_en_otro_aparato') {
       return preguntar(op, 'pago_corregido_en_otro_aparato',
@@ -387,6 +427,35 @@
         a.p_pago = vivo.id;
         a.p_base = { monto: vivo.monto, fecha: vivo.fecha };
         return devolver(p, op);
+      case 'otro_gasto_sin_ver':
+        if (valor === 'son_dos') {
+          a.p_son_distintos = true;
+          return devolver(p, op);
+        }
+        if (valor === 'es_el_mismo') {
+          var og = p.datos.otro;
+          if (og.monto === p.datos.este.monto) return soltar(p);
+          // Es el mismo, pero los montos no coinciden: ¿cuál queda?
+          alm.quitarPregunta(p.id);
+          alm.ponerPregunta({
+            id: M.ids.nuevo(), owner: op.owner, tipo: 'gasto_cual_monto',
+            texto: 'El gasto de ' + (og.concepto || 'esta colecta') + ': ¿' + L(og.monto) + ' o ' + L(p.datos.este.monto) + '?',
+            botones: [{ etiqueta: 'Dejar ' + L(og.monto), valor: 'dejar_actual' }, { etiqueta: 'Dejar ' + L(p.datos.este.monto), valor: 'dejar_este' }],
+            op: op, datos: { otro: og, este: p.datos.este },
+          });
+          avisar(op.tabla, op.id);
+          return revisarEspera();
+        }
+        return;
+      case 'gasto_cual_monto':
+        if (valor === 'dejar_actual') return soltar(p);
+        if (valor === 'dejar_este') {
+          op.tipo = 'gasto_editar';
+          op.id = p.datos.otro.id;
+          op.args = { p_gasto: p.datos.otro.id, p_base: { monto: p.datos.otro.monto }, p_cambios: { monto: p.datos.este.monto } };
+          return devolver(p, op);
+        }
+        return;
       case 'pago_corregido_en_otro_aparato':
         if (valor === 'dejar_actual') return soltar(p);
         if (valor === 'anular_tambien') {
@@ -415,7 +484,8 @@
         return;
       case 'monto_ambiguo':
         if (!/^\d+\.\d{2}$/.test(String(valor))) return;
-        if (op.tipo === 'pago_crear' || op.tipo === 'pago_corregir') a.p_monto = valor;
+        delete op.por_aclarar;
+        if (op.tipo === 'pago_crear' || op.tipo === 'pago_corregir' || op.tipo === 'gasto_crear') a.p_monto = valor;
         else if (op.tipo === 'colecta_crear') a.p_monto_sugerido = valor;
         else if (op.tipo === 'colecta_editar') a.p_cambios.monto_sugerido = valor;
         else if (op.tipo === 'exencion_poner') a.p_monto_aplicable = valor;
@@ -523,6 +593,7 @@
     pago_crear: 'pago', pago_corregir: 'pago', pago_anular: 'pago', pago_editar: 'pago',
     colecta_crear: 'colecta', colecta_editar: 'colecta', colecta_cerrar: 'colecta', colecta_reabrir: 'colecta',
     colecta_borrar: 'colecta', exencion_poner: 'exencion', exencion_quitar: 'exencion', alumno_crear: 'alumno',
+    gasto_crear: 'gasto', gasto_editar: 'gasto', gasto_anular: 'gasto',
   };
 
   function argsDe(op) {
@@ -708,6 +779,7 @@
   }
 
   async function procesar() {
+    if (!alm.esLider()) return;          // solo la líder habla con la base
     if (corriendo) { otraVez = true; return; }
     corriendo = true;
     try {
@@ -754,7 +826,77 @@
     procesar();
   }
 
+  // La líder toma lo anotado en otras pestañas. Lo que llegó con un monto
+  // por aclarar va derecho a su pregunta.
+  async function absorber() {
+    var tomadas = await alm.absorberEntrantes();
+    alm.cola().slice().forEach(function (op) {
+      if (op.pregunta_monto) {
+        var p = op.pregunta_monto;
+        delete op.pregunta_monto;
+        preguntaMontoAmbiguo(op, p);
+      }
+    });
+    absorbidosPorContar = absorbidosPorContar.concat(tomadas);
+    if (tomadas.length) avisar(null, null);
+    procesar();
+    contarEstado();
+  }
+
+  // Lo que se le pide a la líder desde otra pestaña, con su respuesta.
+  var pedidos = {};
+  function pedirALaLider(m) {
+    return new Promise(function (ok) {
+      var rid = M.ids.nuevo();
+      pedidos[rid] = ok;
+      m.rid = rid;
+      alm.enviar(m);
+      // Si en diez segundos nadie contesta (la líder se estaba cerrando),
+      // se sigue: lo anotado ya está guardado y lo toma la próxima líder.
+      setTimeout(function () { if (pedidos[rid]) { delete pedidos[rid]; ok(); } }, 10000);
+    });
+  }
+
+  alm.alMensaje(function (m) {
+    if (alm.esLider()) {
+      if (m.t === 'entrante') absorber();
+      else if (m.t === 'hola') contarEstado();
+      else if (m.t === 'responder') {
+        Promise.resolve(responder(m.id, m.valor)).then(function () { alm.enviar({ t: 'hecho', rid: m.rid }); });
+      } else if (m.t === 'entendido') {
+        alm.quitarNoAnotado(m.id);
+        avisar(null, null);
+        alm.enviar({ t: 'hecho', rid: m.rid });
+      }
+      return;
+    }
+    if (m.t === 'estado') {
+      alm.ponerFoto(m.foto || {}, m.absorbidos);
+      for (var k in m.quieta) quietaLider[k] = m.quieta[k];
+      avisar(null, null);
+      revisarEspera();
+    } else if (m.t === 'fila') {
+      if (alm.guardarFila(m.owner, m.tabla, m.fila)) avisar(m.tabla, m.fila.id);
+    } else if (m.t === 'olvidar') {
+      alm.olvidarCuenta(m.owner);
+      avisar(null, null);
+    } else if (m.t === 'hecho' && pedidos[m.rid]) {
+      var f = pedidos[m.rid];
+      delete pedidos[m.rid];
+      f();
+    }
+  });
+
   M._cola = {
+    absorber: absorber,
+    responderEnLider: function (id, valor) {
+      return alm.esLider() ? responder(id, valor) : pedirALaLider({ t: 'responder', id: id, valor: valor });
+    },
+    entendido: function (id) {
+      if (alm.esLider()) { alm.quitarNoAnotado(id); avisar(null, null); return Promise.resolve(); }
+      return pedirALaLider({ t: 'entendido', id: id });
+    },
+    pedirALaLider: pedirALaLider,
     encolar: encolar,
     procesar: procesar,
     ahoraMismo: ahoraMismo,
@@ -765,6 +907,13 @@
       op.op_id = op.op_id || M.ids.nuevo();
       op.owner = op.owner || nube.uid();
       op.hecho_en = op.hecho_en || ahora();
+      if (!alm.esLider()) {
+        // La pregunta la arma la líder cuando lo toma de «entrantes».
+        op.pregunta_monto = p;
+        alm.encolar(op);
+        avisar(op.tabla, op.id);
+        return;
+      }
       if (!op.seq) alm.encolar(op);
       preguntaMontoAmbiguo(op, p);
     },

@@ -1,0 +1,102 @@
+/* =====================================================================
+   M.E.T.A.S — css/mi-aula.css · Mi aula del corte 1 (js/tools/mi-aula.js)
+   ---------------------------------------------------------------------
+   Pocos elementos y grandes: todo lo que se toca mide al menos 44 px
+   (regla 6), nada se dice solo con color (✓ / ○ / 🔒 además del color) y
+   nada se corre a los lados en un teléfono de 390 px. Toda letra va
+   multiplicada por --metas-fz, como en app.css (js/letra-maestro.js).
+   ===================================================================== */
+#mi-aula { padding: 12px 14px 120px; max-width: 920px; margin: 0 auto; box-sizing: border-box; }
+#mi-aula *, #ma-tarjeta * { box-sizing: border-box; }
+
+.ma-oculto { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.ma-aula-una { margin: 0 0 10px; font-weight: 700; color: var(--muted); font-size: calc(15px * var(--metas-fz, 1)); }
+.ma-aula-elegir { display: block; margin-bottom: 10px; }
+.ma-aula-sel { min-height: 44px; }
+
+/* Las partes de Mi aula: una fila que se desliza sola, sin mover la página. */
+.ma-tabs { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 12px;
+  scrollbar-width: thin; -webkit-overflow-scrolling: touch; }
+.ma-tab { flex: 0 0 auto; min-height: 44px; padding: 0 14px; border-radius: 22px; border: 1.5px solid var(--border);
+  background: var(--surface); color: var(--text); font: inherit; font-weight: 600; cursor: pointer;
+  font-size: calc(15px * var(--metas-fz, 1)); }
+.ma-tab-on { background: var(--brand); border-color: var(--brand); color: #fff; }
+
+.ma-pant { display: flex; flex-direction: column; gap: 12px; }
+.ma-nota { margin: 0; color: var(--muted); font-size: calc(15px * var(--metas-fz, 1)); }
+.ma-aviso { margin: 4px 0 0; color: #92400e; font-weight: 600; font-size: calc(15px * var(--metas-fz, 1)); }
+.ma-titulo { margin: 0; font-size: calc(20px * var(--metas-fz, 1)); }
+.ma-resumen { margin: 0; font-size: calc(15px * var(--metas-fz, 1)); }
+.ma-et { display: flex; flex-direction: column; gap: 6px; font-weight: 600; font-size: calc(15px * var(--metas-fz, 1)); }
+
+.ma-btn { min-height: 44px; min-width: 44px; padding: 0 16px; border-radius: 12px; border: 1.5px solid var(--border);
+  background: var(--surface); color: var(--text); font: inherit; font-weight: 700; cursor: pointer;
+  font-size: calc(15px * var(--metas-fz, 1)); }
+.ma-btn-1 { background: var(--brand); border-color: var(--brand); color: #fff; }
+.ma-btn-chico { padding: 0 12px; font-weight: 600; }
+.ma-btn.ma-on, .ma-marca.ma-on, .ma-pago.ma-on { border-color: var(--brand); box-shadow: inset 0 0 0 1.5px var(--brand); }
+.ma-volver { align-self: flex-start; min-height: 44px; border: none; background: none; color: var(--brand-mid); font: inherit;
+  font-weight: 700; cursor: pointer; padding: 0; font-size: calc(15px * var(--metas-fz, 1)); }
+
+.ma-form { display: flex; flex-direction: column; gap: 8px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r-sm, 10px); padding: 12px; }
+.ma-form .pa-inp-field { min-height: 44px; }
+.ma-en-linea { flex-direction: row; flex-wrap: wrap; }
+.ma-en-linea .pa-inp-field { flex: 1 1 180px; min-width: 0; }
+.ma-fila2 { display: flex; gap: 8px; flex-wrap: wrap; }
+.ma-fila2 > * { flex: 1 1 140px; min-width: 0; }
+.ma-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.ma-radio { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 10px;
+  border: 1.5px solid var(--border); border-radius: 12px; font-size: calc(15px * var(--metas-fz, 1)); }
+
+.ma-lista, .ma-tabla, .ma-colectas, .ma-pagos { display: flex; flex-direction: column; gap: 6px; }
+.ma-al { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; }
+.ma-al-fuera { opacity: .75; }
+.ma-al-btn, .ma-colecta, .ma-pago, .ma-renglon { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 48px;
+  padding: 6px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; color: var(--text);
+  font: inherit; text-align: left; font-size: calc(15px * var(--metas-fz, 1)); }
+.ma-al-btn { border: none; background: none; cursor: pointer; }
+.ma-colecta, .ma-pago, .ma-marca { cursor: pointer; flex-wrap: wrap; }
+.ma-colecta { flex-direction: column; align-items: flex-start; gap: 2px; }
+.ma-al-edit { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 12px 10px; }
+.ma-num { flex: 0 0 auto; min-width: 26px; color: var(--muted); font-weight: 700; text-align: right; }
+.ma-nom { flex: 1 1 140px; min-width: 0; overflow-wrap: anywhere; font-weight: 600; }
+.ma-sub { color: var(--muted); font-size: calc(14px * var(--metas-fz, 1)); }
+.ma-pago .ma-sub { flex: 1 1 100%; padding-left: 36px; }
+.ma-chip { flex: 0 0 auto; padding: 2px 8px; border-radius: 10px; border: 1px solid var(--border); color: var(--muted);
+  font-size: calc(14px * var(--metas-fz, 1)); }
+.ma-check { flex: 0 0 auto; font-size: calc(20px * var(--metas-fz, 1)); font-weight: 700; }
+.ma-nota-inp { flex: 0 0 84px; width: 84px; min-height: 44px; text-align: center; }
+.ma-asis { flex-wrap: wrap; }
+.ma-botonera { display: flex; flex-wrap: wrap; gap: 4px; flex: 1 1 100%; }
+.ma-fecha { display: flex; align-items: center; gap: 8px; font-weight: 600; flex-wrap: wrap; }
+.ma-fecha .pa-inp-field { width: auto; min-height: 44px; }
+.ma-panel { border-color: var(--brand); }
+.ma-pie { display: flex; justify-content: flex-end; }
+.ma-tarjetita { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px;
+  overflow-wrap: anywhere; font-size: calc(15px * var(--metas-fz, 1)); }
+.ma-tarjetita p { margin: 4px 0 0; }
+
+/* La tarjeta: una pregunta de dos botones, «no quedó anotado» o la
+   contraseña. Abajo, encima de todo, de a una. */
+.ma-tarjeta { position: fixed; left: 0; right: 0; bottom: 0; z-index: 900; padding: 0 12px 12px; display: flex; justify-content: center;
+  pointer-events: none; }
+.ma-tarjeta[hidden] { display: none; }
+.ma-carta { pointer-events: auto; width: 100%; max-width: 560px; background: var(--surface); color: var(--text);
+  border: 2px solid var(--brand); border-radius: 16px; padding: 14px; box-shadow: 0 10px 30px rgba(15, 23, 42, .25); }
+.ma-carta-t { margin: 0 0 12px; font-weight: 600; font-size: calc(16px * var(--metas-fz, 1)); line-height: 1.4; }
+.ma-botones { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.ma-botones .ma-btn { flex: 1 1 160px; min-height: 48px; }
+
+/* Sin señal: un punto gris con la señal tachada, sin texto (09, 9.1). Con
+   señal no existe. */
+.ma-senal { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%;
+  background: #94a3b8; color: #fff; }
+.ma-senal[hidden] { display: none; }
+.ma-senal svg { width: 18px; height: 18px; }
+
+/* «Para entrar la primera vez se necesita señal» (09, 9.4): una frase
+   neutra, sin íconos de alarma. */
+.doc-primera-vez { margin: 10px 0 0; color: var(--muted); font-weight: 600; text-align: center;
+  font-size: calc(15px * var(--metas-fz, 1)); }
+.doc-primera-vez[hidden] { display: none; }

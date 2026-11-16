@@ -97,7 +97,6 @@
     '👤 Cambiar alumno': '👤 Change student',
     '⏳ Buscando…': '⏳ Searching…',
     '❌ Código no encontrado. Pídeselo de nuevo a tu maestro.': '❌ Code not found. Ask your teacher for it again.',
-    '📴 Sin internet: se confirmará al reconectar.': '📴 No internet: it will be confirmed once you reconnect.',
     '📤 Enviar resultados': '📤 Send results',
     'Estudiante': 'Student',
     /* buzón de sugerencias */

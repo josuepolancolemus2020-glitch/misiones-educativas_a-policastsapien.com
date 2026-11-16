@@ -428,6 +428,34 @@ bajó sus paquetes por un espejo local de npm.
   señal, C6 carga rápida de 43, C7 accesibilidad, C8 la clave vencida en el
   portal.
 
+**Revisión 9** (corte 1, parte 2), todo corrido aquí con `corre-supabase.sh
+--todo` desde cero: capa A **291** (K20: `freno_devolver` cerrado a anon y a
+sesiones; al final, un dato para la capa C: la Rifa queda cerrada), A+ **26**,
+B **12** y C **10**.
+
+- **B4** pierde ahora SOLO la respuesta de `pago_crear` (antes podía perder
+  la de una lectura de fondo y no probar nada) y comprueba además que no
+  salga «no quedó anotado» y que el aparato vea su pago con el mismo id y el
+  recibo de la base. Con una mutación que cambia la operación en cada
+  reenvío, B4 falla (comprobado).
+- **B11** dos pestañas del mismo aparato, sin señal, anotan a la vez y se
+  cierran: ningún pago perdido ni pisado. Con el `js/datos/` de la revisión 8
+  falla: quedan 3 pagos de 6, los de una pestaña pisados por los de la otra.
+  El arnés (`arnes.mjs`) abre varias pestañas que comparten IndexedDB,
+  `localStorage`, `BroadcastChannel` y unos `navigator.locks` de mentira.
+- **B12** `calculos.js` contra `_calc_colecta_alumnos` y
+  `_calc_colectas_resumen`, alumno por alumno (exento total, parcial,
+  retirado, abonos, pago de más) y con un monto sugerido por aclarar: el
+  aparato ya no inventa «0.00» ni «no le corresponde» (con el código de la
+  revisión 8 falla).
+- **C** cambia en dos cosas, con su porqué en `capa-c.mjs`: la entrada se
+  alcanza tocando «Zona Docente» (`ir-zona-docente`, decidido por Josué) y
+  la compuerta mira `data-metas="mi-aula"`; C6 cuenta solo los nombres que
+  pega (C01 a C43), porque la capa A ya tenía a «Alumna Ficticia Cinco».
+- `corre-supabase.sh` espera, después de `db reset` y antes de A+, a que la
+  API responda 200 **y** a que una función de `metas` (`cuenta_de`) ya se
+  vea; antes A+ fallaba a veces con 503.
+
 **Revisión 8**: `js/datos/` existe y la **capa B está en verde, 10 de 10**,
 sin cambiar el contrato, el arnés ni los escenarios. La C sigue esperando la
 pantalla (parte 2 del corte 1).

@@ -81,10 +81,12 @@
     }
   }
 
-  function fijarSesion(s) {
+  // deOtra: la sesión llegó de otra pestaña del mismo aparato, que ya la
+  // guardó; aquí solo se toma, sin volver a guardarla ni a repartirla.
+  function fijarSesion(s, deOtra) {
     sesion = s;
-    ponerLocal(LLAVE_SESION, s ? JSON.stringify(s) : null);
-    oyentesSesion.forEach(function (f) { try { f(s); } catch (e) { /* un oyente roto no tumba la sesión */ } });
+    if (!deOtra) ponerLocal(LLAVE_SESION, s ? JSON.stringify(s) : null);
+    oyentesSesion.forEach(function (f) { try { f(s, !!deOtra); } catch (e) { /* un oyente roto no tumba la sesión */ } });
   }
 
   function retomar() {
@@ -111,11 +113,33 @@
   }
 
   // Una sola renovación a la vez: si diez peticiones ven el token vencido,
-  // las diez esperan la misma.
+  // las diez esperan la misma. Y una sola pestaña renueva: la líder (rev. 9).
+  // Supabase entrega una llave de renovación NUEVA cada vez y la vieja deja
+  // de servir; si dos pestañas renovaban, la segunda usaba la llave ya gastada
+  // y se quedaba pidiendo la contraseña sin motivo. Las demás piden a la
+  // líder y reciben la sesión nueva por el canal entre pestañas.
   var renovando = null;
+  function esperarSesionNueva(vieja) {
+    return new Promise(function (ok, mal) {
+      var listo = false;
+      var f = function (s) {
+        if (listo || s === vieja) return;
+        listo = true;
+        if (s) ok(s); else mal(error('sesion'));
+      };
+      oyentesSesion.push(f);
+      if (M._almacen) M._almacen.enviar({ t: 'renovar' });
+      setTimeout(function () { if (!listo) { listo = true; mal(error('red')); } }, 15000);
+    });
+  }
   function renovar() {
     if (renovando) return renovando;
     var s = sesion;
+    if (M._almacen && !M._almacen.esLider()) {
+      renovando = esperarSesionNueva(s);
+      renovando.then(function () { renovando = null; }, function () { renovando = null; });
+      return renovando;
+    }
     renovando = (async function () {
       if (!s) throw error('sesion');
       var r = await llamar(CFG.url + '/auth/v1/token?grant_type=refresh_token', {
@@ -123,7 +147,12 @@
         headers: { apikey: CFG.llave, 'content-type': 'application/json' },
         body: JSON.stringify({ refresh_token: s.refresh_token }),
       });
-      if (r.status >= 500) throw error('red', { status: r.status });
+      // 5xx, 429 (demasiados intentos) y 408 (tardó): falta de red o de
+      // servidor, no una sesión mala. Se reintenta; la sesión no se cierra.
+      if (r.status >= 500 || r.status === 429 || r.status === 408) {
+        await r.arrayBuffer().catch(function () {});
+        throw error('red', { status: r.status });
+      }
       var j = await r.json().catch(function () { return {}; });
       if (!r.ok || !j.access_token) {
         // Otra cuenta pudo haber entrado mientras tanto: no se le borra.
@@ -239,6 +268,11 @@
     renovar: renovar,
     alCambiarSesion: function (f) { oyentesSesion.push(f); },
     olvidarSesion: function () { fijarSesion(null); },
+    // La sesión que guardó otra pestaña (al entrar, al renovar o al salir).
+    tomarDeOtra: function (s) {
+      if (s) s.uid = s.uid || uidDe(s.access_token);
+      fijarSesion(s && s.uid ? s : null, true);
+    },
     entrar: entrar,
     peticion: peticion,
     rpc: rpc,

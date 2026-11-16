@@ -36,8 +36,16 @@ frenos por IP se quedan en el corte 1. `true-client-ip` y `x-forwarded-for`
 no se usan nunca. **Antes de fijar la fecha del paso 4**: activar pg_cron, y
 fijarla cuando falten menos de 11 meses (más lejos se rechaza, `MT044`).
 
-**Corte 1, parte 1 (rev. 8)**: `js/datos/` escrito, capa B en verde. Parte 2:
-la pantalla contra la capa C.
+**Corte 1, parte 1 (rev. 8)**: `js/datos/` escrito, capa B en verde.
+
+**Corte 1, parte 2 (rev. 9)**: Mi aula del corte 1 (`js/tools/mi-aula.js`)
+sobre filas, la entrada por `metas-entrar`, la entrada nueva de las familias
+en `padres.html` (solo con la base de prueba o con Turnstile configurado) y
+la capa C en verde. Lo que todavía no pasó a filas se abre desde «Más del
+aula» con la pantalla de antes. Lo que falta de 09 está en `09`, 9.5.
+Antes de publicar: la llave de Turnstile del sitio (`padres.html`,
+`TURNSTILE_SITEKEY`), el blob por sesión para las herramientas que quedan, y
+quitar la sesión vieja.
 
 **Publicar**: solo con N1 y N2 resueltos (lo están en la revisión 4) y la
 misma capa A en verde **contra `supabase start`**.

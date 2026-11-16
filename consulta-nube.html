@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>☁️ Consulta en la Nube — M.E.T.A.S</title>
+<title>📊 Resultados de mis alumnos — M.E.T.A.S</title>
 <style>
 :root{
   --pri:#1565c0; --pri-gl:#e3f2fd; --jade:#00b894; --amber:#fdcb6e; --rojo:#d63031;
@@ -71,8 +71,8 @@ footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5
 <body>
 
 <header>
-  <h1>☁️ Consulta en la Nube — M.E.T.A.S</h1>
-  <p>Resultados de evaluaciones de <strong>todos los dispositivos</strong> de tu aula, sincronizados a Supabase.
+  <h1>📊 Resultados de mis alumnos — M.E.T.A.S</h1>
+  <p>Resultados de evaluaciones de <strong>todos los equipos</strong> de tu aula.
   Cada teléfono o tablet sube sus notas automáticamente cuando tiene internet; aquí las ves reunidas.</p>
   <div class="top-links">
     <a class="btn btn-blanco" href="index.html">🏠 Volver al inicio</a>
@@ -110,7 +110,6 @@ footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5
 
 <div class="acciones" id="acciones" style="display:none;">
   <button class="btn btn-pri" onclick="exportarCSV()">📥 Exportar CSV</button>
-  <button class="btn btn-jade" onclick="subirPendientes()">☁️ Subir pendientes de este dispositivo</button>
 </div>
 
 <div class="tabla-wrap" id="tablaWrap" style="display:none;">
@@ -120,7 +119,7 @@ footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5
   </table>
   <div class="vacio" id="vacio" style="display:none;">
     📭 No hay resultados con estos filtros.<br>
-    Si esperabas datos, verifica que tus alumnos escribieran tu nombre en el campo «Docente» y que los dispositivos hayan tenido internet para sincronizar.
+    Si esperabas datos, revisa que tus alumnos escribieran tu nombre en el campo «Docente».
   </div>
 </div>
 
@@ -132,8 +131,8 @@ footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5
       <tbody id="progBody"></tbody>
     </table>
     <div class="vacio" id="progVacio" style="display:none;">
-      📭 Aún no hay fotos de progreso en la nube.<br>
-      Se generan solas cuando los estudiantes trabajan en las misiones con internet.
+      📭 Aún no hay fotos de progreso.<br>
+      Se generan solas cuando los estudiantes trabajan en las misiones.
     </div>
   </div>
 </div>
@@ -148,7 +147,7 @@ footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5
   © 2026 Familia Polanco-Castellanos · <a href="privacidad.html">Aviso de privacidad</a>
   · <a href="terminos.html">Términos de uso</a></footer>
 
-<script src="js/metas-registro.js?v=462"></script>
+<script src="js/metas-registro.js?v=549"></script>
 <script>
 'use strict';
 /* Misma configuración predeterminada que js/metas-supabase.js */
@@ -190,7 +189,7 @@ async function entrar(){
   const correo = document.getElementById('correo').value.trim();
   const clave = document.getElementById('clave').value;
   if (!correo || !clave) { estado.textContent = '⚠️ Escribe tu correo y tu contraseña.'; return; }
-  if (navigator.onLine === false) { estado.textContent = '📴 Sin conexión: entrar necesita internet.'; return; }
+  if (navigator.onLine === false) { estado.textContent = 'Para entrar se necesita señal.'; return; }
   const btn = document.getElementById('btnConsultar');
   if (btn) btn.disabled = true;
   estado.textContent = '⏳ Entrando a tu cuenta...';
@@ -239,10 +238,10 @@ async function consultar(){
   const rpc1 = 'metas_consultar_docente';
   const rpc2 = 'metas_consultar_progreso_docente';
   const body = { p_codigo: DOCENTE.codigo, p_clave: DOCENTE.clave };
-  if (navigator.onLine === false) { estado.textContent = '📴 Sin conexión: la consulta a la nube necesita internet.'; return; }
+  if (navigator.onLine === false) { estado.textContent = 'Para ver los resultados se necesita señal.'; return; }
   const btn = document.getElementById('btnConsultar');
   if (btn) btn.disabled = true;
-  estado.textContent = '⏳ Consultando la nube...';
+  estado.textContent = '⏳ Un momento…';
   try {
     const r = await fetch(SB_URL + '/rest/v1/rpc/' + rpc1, {
       method: 'POST',
@@ -263,7 +262,7 @@ async function consultar(){
       if (!Array.isArray(PROG)) PROG = [];
     } catch(e) {}
     estado.textContent = (DATOS.length || PROG.length)
-      ? '✅ ' + DATOS.length + ' resultados y ' + PROG.length + ' fotos de progreso recibidos de la nube.'
+      ? '✅ ' + DATOS.length + ' resultados y ' + PROG.length + ' fotos de progreso.'
       : '📭 Aún no hay resultados. Dales a tus alumnos tu código de aula (lo ves en la Zona Docente) para que lo escriban al identificarse.';
     ['stats','filtros','acciones','tablaWrap','progSeccion'].forEach(id => document.getElementById(id).style.display = '');
     llenarFiltros();
@@ -283,7 +282,7 @@ async function consultar(){
    que esto no puede tocar lo de otro maestro aunque se manipule el id. */
 async function borrarFila(id, tr){
   if (!DOCENTE || !DOCENTE.codigo) return;
-  if (!confirm('¿Quitar esta fila de la nube?\n\nSe borra para siempre. Úsalo con lo que no reconozcas como práctica de tus alumnos.')) return;
+  if (!confirm('¿Quitar esta fila?\n\nSe borra para siempre. Úsalo con lo que no reconozcas como práctica de tus alumnos.')) return;
   const est = document.getElementById('estado');
   try {
     const r = await fetch(SB_URL + '/rest/v1/rpc/metas_resultados_borrar', {
@@ -304,7 +303,7 @@ async function borrarFila(id, tr){
     if (n > 0) {
       DATOS = DATOS.filter(x => String(x.id) !== String(id));
       if (tr) tr.remove();
-      est.textContent = '🗑 Fila quitada de la nube.';
+      est.textContent = '🗑 Fila quitada.';
     } else {
       est.textContent = '⚠️ No se quitó: esa fila no es de tu aula.';
     }
@@ -372,7 +371,7 @@ function pintar(){
       '</td><td>'+esc(r.grado||'—')+'</td><td>'+esc(r.mision||'—')+
       '</td><td><span class="badge b-'+esc(r.tipo)+'">'+(NOMBRE_TIPO[r.tipo]||esc(r.tipo))+'</span>'+selloSinVerificar(r)+'</td><td>'+esc(r.forma||'')+
       '</td><td>'+nota+'</td><td>'+esc(r.dispositivo||'')+'</td>' +
-      '<td>' + (r.id ? '<button class="btn-borrar" data-id="'+esc(r.id)+'" title="Quitar esta fila de la nube">🗑</button>' : '') + '</td>';
+      '<td>' + (r.id ? '<button class="btn-borrar" data-id="'+esc(r.id)+'" title="Quitar esta fila">🗑</button>' : '') + '</td>';
     if (r.verificado === false) tr.className = 'fila-sinver';
     tb.appendChild(tr);
   });
@@ -380,15 +379,13 @@ function pintar(){
   const ops=rs.filter(r=>r.tipo==='prueba_operativa'&&typeof r.nota==='number').map(r=>r.nota);
   const prom=a=>a.length?Math.round(a.reduce((s,n)=>s+n,0)/a.length):null;
   const stat=(n,l)=>'<div class="stat"><div class="n">'+n+'</div><div class="l">'+l+'</div></div>';
-  const pend = (window.METAS_SB && METAS_SB.pendientes()) || 0;
   document.getElementById('stats').innerHTML =
     stat(rs.length,'Resultados') +
     stat([...new Set(rs.map(r=>r.alumno).filter(Boolean))].length,'Alumnos') +
     stat([...new Set(rs.map(r=>r.mision).filter(Boolean))].length,'Misiones') +
     stat([...new Set(rs.map(r=>r.dispositivo).filter(Boolean))].length,'Dispositivos') +
     stat(prom(evals)!=null?prom(evals):'—','Promedio conceptual') +
-    stat(prom(ops)!=null?prom(ops):'—','Promedio operativa') +
-    stat(pend,'Por subir (este equipo)');
+    stat(prom(ops)!=null?prom(ops):'—','Promedio operativa');
 }
 
 function pintarProgreso(prog){
@@ -430,9 +427,9 @@ function exportarCSV(){
 }
 
 function subirPendientes(){
-  if(!window.METAS_SB){ alert('La capa de nube aún no carga en esta página.'); return; }
+  if(!window.METAS_SB){ alert('Todavía no está listo. Vuelve a intentar en un momento.'); return; }
   METAS_SB.sincronizar().then(r=>{
-    alert(r.enviados+' resultados subidos a la nube.\nPendientes: '+r.pendientes);
+    alert(r.enviados+' resultados enviados.');
     if(DATOS.length) consultar();
   });
 }

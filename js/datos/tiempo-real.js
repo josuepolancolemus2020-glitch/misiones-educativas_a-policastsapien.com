@@ -2,8 +2,10 @@
    M.E.T.A.S — js/datos/tiempo-real.js · lo de otro aparato, al momento
    ---------------------------------------------------------------------
    Mientras la app está abierta (03, 3.8):
-     · las tablas SIN dinero llegan por Realtime con la fila entera; si la
-       versión es mayor se reemplaza, si viene borrada se quita;
+     · de las tablas SIN dinero llega por Realtime un aviso de qué fila
+       cambió; la fila se vuelve a leer por la API (lo que trae el aviso no
+       se guarda, rev. 9); si la versión es mayor se reemplaza, si viene
+       borrada se quita;
      · las tablas CON dinero no van por ahí (su evento traería el número
        como double): la base manda un toque SIN DATOS por el canal privado
        del docente, «docente:<su uid>», con la tabla y el id, y aquí se
@@ -54,9 +56,36 @@
     }
   }
 
-  function cambioDeFila(owner, tabla, fila) {
-    if (nube.uid() !== owner || !fila || !fila.id || CON_DINERO[tabla] || TABLAS.indexOf(tabla) < 0) return;
-    guardar(owner, tabla, fila);
+  // Un aviso de Realtime de una tabla sin dinero (rev. 9): lo que trae NO se
+  // guarda. Solo dice «cambió tal fila», y la fila se vuelve a leer por la
+  // API, con la sesión y la RLS de siempre. Así el canal no es una puerta de
+  // entrada de datos: aunque llegara algo que no debía, aquí no se guarda
+  // nada que la base no entregue por la vía normal. Los avisos de un mismo
+  // momento se juntan en una sola lectura por tabla.
+  var porReleer = {};
+  var releyendo = null;
+  function cambioDeFila(owner, tabla, aviso) {
+    if (nube.uid() !== owner || !aviso || !aviso.id || CON_DINERO[tabla] || TABLAS.indexOf(tabla) < 0) return;
+    (porReleer[tabla] = porReleer[tabla] || {})[aviso.id] = 1;
+    if (!releyendo) releyendo = setTimeout(function () { releer(owner); }, 150);
+  }
+  async function releer(owner) {
+    var pedidas = porReleer;
+    porReleer = {};
+    releyendo = null;
+    for (var tabla in pedidas) {
+      var ids = Object.keys(pedidas[tabla]);
+      for (var i = 0; i < ids.length; i += 100) {
+        var tanda = ids.slice(i, i + 100);
+        try {
+          var filas = await nube.leer(tabla + '?id=in.(' + tanda.map(encodeURIComponent).join(',') + ')&select=*');
+          if (nube.uid() !== owner) return;
+          filas.forEach(function (f) { guardar(owner, tabla, f); });
+        } catch (e) {
+          // Sin señal justo ahora: lo trae «ponerse al día» al volver.
+        }
+      }
+    }
   }
 
   function conectar(owner) {

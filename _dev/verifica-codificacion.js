@@ -135,7 +135,8 @@ const TESTIGOS = {
      ?m=<carpeta>: ya no lleva ✓ ✗ ⭐ ⏳. Sus testigos son ahora las tildes
      y el símbolo que sí pinta. */
   'mision.html':        ['Misión — M.E.T.A.S.', 'No encontramos esa misión', 'qué misión abrir', '🧭'],
-  'consulta-nube.html': ['Contraseña', '☁️ Consulta en la Nube'],
+  // (rev. 9) la página se llama «Resultados de mis alumnos», sin nube (09-INTERFAZ.md)
+  'consulta-nube.html': ['Contraseña', '📊 Resultados de mis alumnos'],
   'registro.html':      ['📋 Evidencia de misiones', 'Sesión'],
   'evaluaciones.html':  ["key: 'español'", "key: 'matemáticas'", 'Banco de Evaluaciones']
 };

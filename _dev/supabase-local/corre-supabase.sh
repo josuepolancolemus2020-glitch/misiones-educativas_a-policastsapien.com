@@ -62,6 +62,30 @@ PUBLICA="${SB_ANON_KEY:-${SB_PUBLISHABLE_KEY:-}}"
 [[ "$API" =~ ^http://(127\.0\.0\.1|localhost):[0-9]+$ ]] || falla "la API no es local: $API"
 [ -n "$SERVICIO" ] && [ -n "$PUBLICA" ]                  || falla "no salieron las llaves locales de 'supabase status'"
 
+# Después de «db reset» y de cargar los .sql, la API tarda en volver a leer
+# el esquema: responde 503, o «no existe esa función», un rato. Si se seguía
+# de una vez, la capa A+ fallaba a veces con 503 (rev. 9). Se espera a que
+# responda 200 la raíz, Auth y, cuando ya está cargado, una función de metas
+# de solo lectura (cuenta_de), después de pedirle que relea el esquema.
+esperar_api() {
+  local c="" a="" f="-"
+  [ "${1:-}" = metas ] && psql "$DB" -X -q -c "notify pgrst, 'reload schema'" >/dev/null 2>&1 || true
+  for _ in $(seq 1 90); do
+    c="$(curl -s -o /dev/null -w '%{http_code}' -H "apikey: $PUBLICA" -H "Authorization: Bearer $PUBLICA" "$API/rest/v1/" || true)"
+    a="$(curl -s -o /dev/null -w '%{http_code}' -H "apikey: $PUBLICA" "$API/auth/v1/health" || true)"
+    if [ "${1:-}" = metas ]; then
+      f="$(curl -s -o /dev/null -w '%{http_code}' -X POST -H "apikey: $SERVICIO" -H "Authorization: Bearer $SERVICIO" \
+             -H 'content-type: application/json' -H 'content-profile: metas' -d '{"p_codigo":"-"}' "$API/rest/v1/rpc/cuenta_de" || true)"
+      [ "$c" = 200 ] && [ "$a" = 200 ] && [ "$f" = 200 ] && return 0
+    else
+      [ "$c" = 200 ] && [ "$a" = 200 ] && return 0
+    fi
+    sleep 1
+  done
+  falla "la API local no respondió 200 (rest: $c, auth: $a, metas: $f)"
+}
+esperar_api
+
 q() { psql "$DB" -X -q -v ON_ERROR_STOP=1 "$@"; }
 
 # Cuenta FICTICIA de Auth con un id fijo (los que usan las pruebas), creada
@@ -108,6 +132,8 @@ q -v "conninfo=host=supabase_db_$PROYECTO port=5432 user=postgres password=postg
   -f "$PRUEBAS/10-pruebas.sql"
 
 [ "$SOLO_SQL" = 1 ] && exit 0
+# La capa A cambia el esquema (funciones, vistas): la API lo vuelve a leer.
+esperar_api metas
 
 # ── 4. Capa A+: las funciones de borde y la API, de verdad ─────────────────
 echo "▶ Funciones de borde (supabase functions serve)"
@@ -153,7 +179,10 @@ if [ "$CAPA_B" = 1 ]; then
 fi
 if [ "$CAPA_C" = 1 ]; then
   echo "▶ Capa C"
-  npm install --no-save --silent --prefix "$AQUI" playwright >/dev/null
+  # Si ya hay un Playwright (con su navegador), se usa ese: otra versión
+  # bajada aquí no encuentra el navegador que ya está instalado (rev. 9).
+  (cd "$AQUI" && node -e "require.resolve('playwright')" >/dev/null 2>&1) \
+    || npm install --no-save --silent --prefix "$AQUI" playwright >/dev/null
   (cd "$RAIZ" && node _dev/servidor-estatico.js >/dev/null 2>&1) &
   SITIO_PID=$!
   trap 'terminar; kill "$SITIO_PID" 2>/dev/null || true' EXIT

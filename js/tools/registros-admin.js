@@ -269,6 +269,10 @@ function adCrucesTarjetaHtml() {
     </div>`;
 }
 function adUndoTarjetaHtml() {
+  /* (rev. 9) Sin «Revisar cruces» ni «Deshacer o restaurar»: en el modelo
+     nuevo nada se restaura de copias (09-INTERFAZ.md). */
+  return '';
+  // eslint-disable-next-line no-unreachable
   const lista = adUndoLista();
   if (!lista.length) return adCrucesTarjetaHtml();
   return adCrucesTarjetaHtml() + `
@@ -1204,10 +1208,6 @@ function renderAdmin(forzar = false) {
       <button class="pa-otab ${_adTab === 'est'   ? 'pa-otab-active' : ''}" data-adtab="est">📈 Estadísticas</button>
       <button class="pa-otab ${_adTab === 'lec'   ? 'pa-otab-active' : ''}" data-adtab="lec">📖 Lectura</button>
       <button class="pa-otab ${_adTab === 'com'   ? 'pa-otab-active' : ''}" data-adtab="com">📣 Comunicados</button>
-      <button class="pa-otab" id="ad-nube-chip" title="Nube del chatbot de padres: toca para sincronizar ahora">${(() => {
-        const n = adPendientesTotal();
-        return n ? '⏳ ' + n + ' por subir' : '☁️ al día';
-      })()}</button>
     </div>
     <div id="ad-tab-body"></div>`;
   cont.querySelectorAll('[data-gid]').forEach(b =>
@@ -1241,7 +1241,7 @@ function renderAdmin(forzar = false) {
     }));
   /* chip de nube: visible en TODAS las pestañas (antes solo en Alumnos
      se sabía si lo publicado ya subió); tocarlo sincroniza ya */
-  document.getElementById('ad-nube-chip').addEventListener('click', async () => {
+  document.getElementById('ad-nube-chip')?.addEventListener('click', async () => {
     await adSincronizarNube(true);
     adActualizarChipNube();
   });
@@ -1329,7 +1329,7 @@ function adRenderLista(body, d) {
             ${pr ? `<button class="ad-al-test" data-pnum="${a.num}"
               title="Alumno de prueba: no cuenta en el informe del grado. Tócalo para volverlo a contar."
               aria-label="Quitar la marca de alumno de prueba">🧪 de prueba</button>` : ''}
-            <button class="ad-al-del" data-delnum="${a.num}" title="Borrar esta fila (puedes restaurarla en 🕘 Deshacer)" aria-label="Borrar fila">✕</button>
+            <button class="ad-al-del" data-delnum="${a.num}" title="Borrar esta fila" aria-label="Borrar fila">✕</button>
           </div>`; }).join('')}
       </div>
       <div class="ad-btn-row">
@@ -1361,19 +1361,8 @@ function adRenderLista(body, d) {
           : ''}</p>
     </div>
 
-    <div class="pa-card">
-      <div class="pa-card-title">☁️ Nube del chatbot de padres y recuperación</div>
-      <p class="pa-optional-hint">La asistencia, las notas finales y las colaboraciones suben con la
-        <strong>clave de familia</strong> de cada alumno para que el asistente les responda a los padres.
-        Si cambiaste de equipo y te faltan notas que ya habías escrito, «Copiar notas de mis respaldos» te enseña cuáles encontró antes de copiar nada.</p>
-      <div class="ad-btn-row">
-        <button class="pa-generate-btn ad-btn-sec" id="ad-sb-sync" type="button">☁️ Sincronizar ahora</button>
-        <button class="pa-generate-btn ad-rec-btn-main" id="ad-lista-recuperar" type="button">📥 Copiar notas de mis respaldos</button>
-        <button class="pa-generate-btn ad-btn-sec" id="ad-lista-versiones" type="button">🕓 Verificar historial de versiones</button>
-        ${adVersionTieneAutocompletado(d) ? '<button class="pa-generate-btn ad-btn-sec" id="ad-lista-revisar-solas" type="button">🔎 Revisar notas que la aplicación puso sola</button>' : ''}
-      </div>
-      <p class="pa-optional-hint" id="ad-sb-status" style="margin-top:8px"></p>
-    </div>
+    <!-- (rev. 9) Sin la tarjeta «Nube del chatbot de padres y recuperación»:
+         lo de la nube sale solo y nada se recupera de copias (09-INTERFAZ.md). -->
 
     <button class="ad-puerta ad-puerta-exp" id="ad-expediente">
       <span class="ad-puerta-ic">📄</span>
@@ -1474,7 +1463,7 @@ function adRenderLista(body, d) {
   /* el expediente lee el estado COMPLETO: los gastos de bolsillo viven en la
      cuenta, no en el grupo, y también van en el legajo */
   document.getElementById('ad-expediente').addEventListener('click', () => adPrintExpediente(adState()));
-  document.getElementById('ad-sb-sync').addEventListener('click', () => adSincronizarNube(true));
+  document.getElementById('ad-sb-sync')?.addEventListener('click', () => adSincronizarNube(true));
   document.getElementById('ad-lista-recuperar')?.addEventListener('click', e => adRecuperarNotasNube(e.currentTarget, () => renderAdmin()));
   document.getElementById('ad-lista-revisar-solas')?.addEventListener('click', e => adRevisarNotasPuestasSolas(e.currentTarget, () => renderAdmin()));
   document.getElementById('ad-lista-versiones')?.addEventListener('click', () => adAbrirHistorialVersionesModal(() => renderAdmin()));
@@ -1569,7 +1558,7 @@ async function adEditarClave(num) {
     '• Escribe una clave nueva (número + 4 a 6 letras/números, ej. ' + num + '-K7QM), o\n' +
     '• Escribe **nueva** para generar otra al azar.\n\n' +
     '🔒 Si la clave se **filtró** (alguien más la conoce), escribe **nueva**: ' +
-    'al sincronizar, la vieja deja de funcionar y solo imprimes la tira nueva para esa familia.\n\n' +
+    'la vieja deja de funcionar y solo imprimes la tira nueva para esa familia.\n\n' +
     '⚠️ Si la cambias, la tira entregada antes deja de valer.', {
     icono: '🔑', titulo: 'Clave de familia', value: bonito, okTxt: 'Guardar',
     valida: t => {
@@ -1940,7 +1929,7 @@ async function adEliminarAlumnoFila(numActual, alTerminar) {
   if (!adSave(d2)) return;
   if (typeof alTerminar === 'function') alTerminar();
   if (typeof toast === 'function') {
-    toast('🗑️ Fila borrada (' + (adPrimerNombre(al.nombre) || '#' + numActual) + ') · Puedes restaurarla en «🕘 Deshacer»');
+    toast('🗑️ Fila borrada (' + (adPrimerNombre(al.nombre) || '#' + numActual) + ')');
   }
 }
 
@@ -2489,7 +2478,7 @@ function adRenderFichas(body, d) {
       <div class="pa-card-title">🗂️ Identidad y contactos</div>
       <p class="pa-optional-hint">Estos datos salen en el <strong>expediente del aula</strong>, en la hoja
         de alumnos. Escribe y <strong>Enter</strong> (o Tab) salta a la casilla siguiente; se guarda solo.
-        <strong>No se comparten con nadie</strong>: no viajan al asistente de padres, solo a tus equipos.</p>
+        <strong>No se comparten con nadie</strong>: ninguna familia los ve.</p>
       <p class="pa-optional-hint">📥 <strong>Importar lista del SACE</strong> trae identidad, nombre, sexo y
         fecha de nacimiento oficiales. Antes de guardar te enseña qué cambia y tú confirmas cada grupo;
         nunca borra fichas ni notas. La <strong>estadística</strong> cuenta solo a los alumnos de la lista
@@ -3828,13 +3817,8 @@ async function adRecuperarSolo() {
         (it.fecha ? ' (pagó el ' + adFechaBonita(it.fecha) + ')' : '')
       : '• ' + grupoTxt(it.grupo) + ' · **' + it.colectaTxt + '**: gasto «' + it.desc + '» · ' + adLps(it.monto));
     if (typeof renderAdmin === 'function') renderAdmin();
-    if (typeof metasAlert === 'function') {
-      metasAlert('Encontré **' + n + '** dato(s) de colecta que ya estaban anotados y se habían perdido. Ya están de vuelta, ' +
-        'y el asistente de padres se corrige en cuanto haya internet:\n\n' + lineas.join('\n') +
-        (items.length > 25 ? '\n… y ' + (items.length - 25) + ' más.' : '') +
-        '\n\nSi alguno lo habías quitado a propósito, entra a la colecta y quítalo otra vez: ya no volverá. ' +
-        'O usa **🕘 Deshacer** para dejar todo como estaba.', { icono: '↩️', titulo: 'Pagos recuperados' });
-    }
+    /* (rev. 9) Sin el aviso «Pagos recuperados» (09-INTERFAZ.md). */
+    void lineas;
     return n;
   } catch (_) {
     return 0;
@@ -5658,7 +5642,6 @@ function adRenderColecta(body, d) {
         <button class="pa-generate-btn ad-btn-sec ad-btn-peligro" id="ad-borrar-colecta">🗑 Eliminar colecta</button>
       </div>
       <div class="ad-btn-row">
-        <button class="pa-generate-btn ad-btn-sec" id="ad-col-perdidos" type="button">🔎 Buscar pagos o gastos perdidos</button>
       </div>
     </div>`;
 
@@ -5734,7 +5717,7 @@ function adRenderColecta(body, d) {
     adSave(dd); renderAdmin();
   });
 
-  document.getElementById('ad-col-perdidos').addEventListener('click', () => adBuscarPerdidosModal());
+  document.getElementById('ad-col-perdidos')?.addEventListener('click', () => adBuscarPerdidosModal());
   document.getElementById('ad-add-gasto').addEventListener('click', async () => {
     const desc = await metasPrompt('¿En qué se gastó?', {
       icono: '🧾', titulo: 'Anotar gasto', okTxt: 'Siguiente',
@@ -5773,7 +5756,7 @@ function adRenderColecta(body, d) {
          posición ya es de otro y se borraba el que no era. */
       const quiere = b.dataset.gf || '';
       const i = (cc.gastos || []).findIndex(x => JSON.stringify(x) === quiere);
-      if (i < 0) { toast('Ese gasto ya cambió en otro equipo: revisa la lista'); renderAdmin(); return; }
+      if (i < 0) { toast('Ese gasto cambió en otro equipo. Revisa la lista.'); renderAdmin(); return; }
       adUndoGuardar('Borrar gasto de «' + cc.concepto + '»');
       if (window.BuscarPerdidos) {
         cc.gastosQuitados = (Array.isArray(cc.gastosQuitados) ? cc.gastosQuitados : [])
@@ -5789,7 +5772,7 @@ function adRenderColecta(body, d) {
     adUndoGuardar('Eliminar colecta «' + c.concepto + '»');
     dd.colectas = dd.colectas.filter(x => x.id !== _adColectaId);
     adSave(dd); _adColectaId = null; renderAdmin();
-    toast('🗑 Colecta eliminada — si fue un error, restaura en 🕘 (pestaña Alumnos)');
+    toast('🗑 Colecta eliminada');
   });
 
   document.getElementById('ad-informe').addEventListener('click', () => adInformeColecta(d, c));
@@ -6943,8 +6926,7 @@ function adAsisRevisarModal(numIni, alCerrar) {
         <button type="button" class="pa-generate-btn ad-btn-sec" data-rf-vaciar="${r.f}">✓ Todos presentes ese día</button></div>`;
     const avisos = [];
     if (ia.otrosAnios) avisos.push(`<li>🗓 Hay <b>${ia.otrosAnios}</b> día(s) de pase de lista de <b>otros años</b>. Ya <b>no se suman</b>: solo cuenta ${adEsc(ia.anio)} (el año lectivo de la boleta).</li>`);
-    if (ia.repetidos) avisos.push(`<li>♊ <b>${ia.repetidos}</b> fecha(s) quedaron <b>repetidas</b> al sincronizar. Se cuentan una sola vez.
-      <button type="button" class="pa-generate-btn ad-btn-sec" id="ad-rf-unir">Unir las fechas repetidas</button></li>`);
+    /* (rev. 9) Sin el aviso de fechas «repetidas al sincronizar» (09-INTERFAZ.md). */
     if (huerfanas) avisos.push(`<li>❔ <b>${huerfanas}</b> falta(s) son de números de lista que ya no existen. No se suman a nadie.</li>`);
     const bloque = (tit, lista, ayuda) => lista.length ? `<details class="ad-rf-grupo"${lista.length <= 6 ? ' open' : ''}><summary>${tit} (${lista.length})</summary>
       <p class="pa-optional-hint">${ayuda}</p>${lista.map(diaFila).join('')}</details>` : '';
@@ -6961,7 +6943,7 @@ function adAsisRevisarModal(numIni, alCerrar) {
         ${avisos.length ? `<ul class="ad-rf-avisos">${avisos.join('')}</ul>` : ''}
         ${bloque('👥 Días en que faltó medio grupo o más', masivos, '¿Fue un día sin clases, un feriado o un pase de lista marcado por error? Si nadie debió contar falta, toca «Todos presentes ese día».')}
         ${bloque('📅 Faltas en sábado o domingo', finde, 'No hay clases en fin de semana: lo más seguro es que la fecha se eligió mal.')}
-        ${bloque('📥 Días pegados desde un respaldo', recuperados, 'Estos días no los marcaste aquí: vinieron de una copia vieja. Revisa que digan lo que de verdad pasó.')}
+        ${'' /* (rev. 9) sin «Días pegados desde un respaldo» */}
         <div class="pa-field"><label for="ad-rf-al">Alumno</label>
           <select id="ad-rf-al" class="pa-inp-field"><option value="">Elige un alumno…</option>
             ${lista.map(x => `<option value="${x.a.num}"${String(x.a.num) === numSel ? ' selected' : ''}>#${x.a.num} ${adEsc(x.a.nombre || '')} · 🚫 ${x.t.vol === '' ? '·' : x.t.vol} sin excusa · 📝 ${x.t.inv === '' ? '·' : x.t.inv} con excusa</option>`).join('')}
@@ -6995,7 +6977,7 @@ function adAsisRevisarModal(numIni, alCerrar) {
     }));
     ov.querySelectorAll('[data-rf-vaciar]').forEach(b => b.addEventListener('click', async () => {
       const f = b.dataset.rfVaciar;
-      if (!await metasConfirm('¿Dejar a **todos presentes** el ' + adFechaBonita(f) + '?\n\nSe quitan las faltas y excusas de ese día. Antes se guarda una copia en «🕘 Deshacer».',
+      if (!await metasConfirm('¿Dejar a **todos presentes** el ' + adFechaBonita(f) + '?\n\nSe quitan las faltas y excusas de ese día.',
         { icono: '📋', titulo: 'Revisar faltas', okTxt: 'Sí, todos presentes' })) return;
       conUndo();
       const dd = adLoad();
@@ -7206,7 +7188,7 @@ async function adAsisExcusas(body, d, forzar) {
   const hint = t => '<p class="pa-optional-hint">' + t + '</p>';
   const r = await avBuzonFilas(d, forzar);
   if (r.err === 'sinclaves') { cont.innerHTML = hint('Aún no hay claves de familia en este grupo: entrégalas en 👥 Alumnos y las familias podrán avisar sus faltas.'); return; }
-  if (r.err === 'offline') { cont.innerHTML = hint('📴 Sin internet: las excusas se revisan con conexión. El pase de lista funciona igual.'); return; }
+  if (r.err === 'offline') { cont.innerHTML = ''; return; }
   if (r.err === 'red') { cont.innerHTML = hint('⚠️ No se pudo revisar el buzón. Toca «🔄 Revisar buzón» para reintentar.'); return; }
 
   const numDe = {};
@@ -7854,7 +7836,7 @@ function adRenderControl(body, d) {
     adUndoGuardar('Eliminar el control «' + c.nombre + '»');
     dd.controles = dd.controles.filter(x => x.id !== _adControlId);
     adSave(dd); _adControlId = null; renderAdmin();
-    toast('🗑 Control eliminado — si fue un error, restaura en 🕘 (pestaña Alumnos)');
+    toast('🗑 Control eliminado');
   });
 }
 
@@ -9578,8 +9560,6 @@ function adRenderSace(body, d) {
       <div class="ad-grupo-tit">Herramientas</div>
       <div class="ad-herrs">
         <button type="button" class="ad-herr" id="ad-sace-chip-encabezado">🏫 Encabezado y logos</button>
-        <button type="button" class="ad-herr" id="ad-sace-chip-rescate">🛟 Recuperar o revisar notas</button>
-        <button type="button" class="ad-herr" id="ad-sace-versiones">🕓 Ver cambios guardados</button>
         ${!esLetra && !esInasis && !esRec ? `<button type="button" class="ad-herr" id="ad-sace-sugerir">✨ Sugerir notas</button>
         ${parcial === 'IV' ? (d.boleta && d.boleta.sugerirIVAuth
           ? '<button type="button" class="ad-herr" id="ad-sace-bloquear-iv">🔒 Bloquear sugerencia</button>'
@@ -9640,7 +9620,7 @@ function adRenderSace(body, d) {
               <input id="ad-bol-anio" class="pa-inp-field" inputmode="numeric" maxlength="4" value="${adEsc(d.boleta.anio)}" placeholder="${new Date().getFullYear()}"></div>
           </div>
           <p class="pa-optional-hint">El logo, el nombre y estos datos salen en la boleta impresa (frente y
-            <strong>reverso oficial</strong>). Se guardan y sincronizan con tus equipos. El grado y la sección
+            <strong>reverso oficial</strong>). El grado y la sección
             se toman de la pestaña <strong>Alumnos</strong>.</p>
         </div>
         </div>
@@ -10153,7 +10133,7 @@ function adRenderSace(body, d) {
     const f2 = adSugFuentes(dd2, parcial);
     const cambios2 = adSugCambios(dd2, parcial, f2);
     if (!cambios2.length) {
-      estado('✅ Nada que llenar: esas celdas ya tienen su nota (quizá se llenaron desde tu otro equipo).');
+      estado('✅ Nada que llenar: esas celdas ya tienen su nota.');
       return;
     }
     /* la foto de la papelera se guarda AQUÍ, cuando ya se sabe que algo va a
@@ -11621,15 +11601,7 @@ function adRenderCom(body, d) {
       </div>
     </div>
 
-    <div class="pa-card">
-      <div class="pa-card-title">🤖 Se publican solos</div>
-      <p class="pa-optional-hint">Al sincronizar, el asistente también recibe —sin que escribas nada—:<br>
-        📅 las <strong>fechas de los parciales</strong> que marcas en Notas SACE
-        (${conFechas ? conFechas + ' parcial(es) con fechas' : 'aún sin fechas marcadas'}) y<br>
-        💰 las <strong>cuentas claras de cada colecta</strong>: recaudado, gastado y saldo
-        (${d.colectas.length ? d.colectas.length + ' colecta(s)' : 'aún sin colectas'}).</p>
-      <p class="pa-optional-hint" id="av-sb-status"></p>
-    </div>`;
+    <!-- (rev. 9) Sin la tarjeta «Se publican solos / Al sincronizar» (09-INTERFAZ.md). -->`;
 
   const form = document.getElementById('av-form');
   const abrirForm = (prefill) => {
@@ -11851,7 +11823,7 @@ async function avBuzonCargar(d) {
   const hint = t => '<p class="pa-optional-hint">' + t + '</p>';
   const res = await avBuzonFilas(d, true);
   if (res.err === 'sinclaves') { cont.innerHTML = hint('Aún no hay claves de familia en este grupo.'); return; }
-  if (res.err === 'offline') { cont.innerHTML = hint('📴 Sin internet: el buzón se revisa con conexión.'); return; }
+  if (res.err === 'offline') { cont.innerHTML = ''; return; }
   if (res.err === 'red') {
     cont.innerHTML = hint('⚠️ No se pudo revisar el buzón (¿ya corriste SUPABASE-FASE3.sql?). Toca «🔄 Revisar buzón» para reintentar.');
     return;
@@ -12159,8 +12131,9 @@ async function adSincronizarNube(manual) {
     }
     adActualizarChipNube();
     if (st) st.textContent = '✅ Nube del chatbot al día (' + new Date().toLocaleTimeString('es-HN') + ').';
-    if (manual) toast('☁️ Registros sincronizados');
-    else if (typeof toast === 'function') {
+    /* (rev. 9) Sin «☁️ Registros sincronizados» ni «subido a la nube»
+       (09-INTERFAZ.md): el docente escribe y queda. */
+    if (false) {
       const orden = ['I', 'II', 'III', 'IV'];
       const ps = Object.keys(notasParcial).sort((a, b) => orden.indexOf(a) - orden.indexOf(b));
       const nTxt = p => notasParcial[p] === 1 ? '1 nota' : notasParcial[p] + ' notas';
@@ -12398,7 +12371,7 @@ async function avSincronizarNube(manual) {
       avSbMapSave(mapa);
     }
     if (st) st.textContent = '✅ Comunicados al día (' + new Date().toLocaleTimeString('es-HN') + ').';
-    if (manual) toast('📣 Comunicados publicados');
+    /* (rev. 9) sin «📣 Comunicados publicados» (09-INTERFAZ.md) */
   } catch (_) {
     if (st) st.textContent = '⚠️ No se pudieron publicar ahora; se reintenta solo.';
   }
@@ -12409,7 +12382,15 @@ async function avSincronizarNube(manual) {
 
 /* ── Navegación (mismo patrón que las demás herramientas) ── */
 document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('goto-admin-btn')?.addEventListener('click', async () => {
+  /* «Mi aula» abre la del corte 1, sobre filas (js/tools/mi-aula.js): la
+     lista, las notas, la asistencia, las colectas, los controles, los
+     avisos y la conducta. Lo que todavía no pasó a filas se abre desde
+     «Más del aula», con la pantalla de antes, hasta su corte (08, 8.2). */
+  document.getElementById('goto-admin-btn')?.addEventListener('click', () => {
+    if (window.metasMiAula && window.metasMiAula.cuenta()) { switchView('view-mi-aula'); return; }
+    toast('Entra con tu correo y tu contraseña en la Zona Docente');
+  });
+  document.getElementById('goto-admin-mas-btn')?.addEventListener('click', async () => {
     /* dinero y notas finales: detrás del candado del maestro */
     if (typeof paVerificarPin === 'function' &&
         !(await paVerificarPin('Los registros administrativos guardan **dinero y notas finales**:'))) return;

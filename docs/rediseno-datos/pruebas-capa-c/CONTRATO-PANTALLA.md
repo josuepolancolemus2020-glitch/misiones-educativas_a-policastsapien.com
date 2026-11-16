@@ -6,7 +6,8 @@ pantalla no depende de la prueba para nada más.
 
 | `data-metas` | dónde | qué es |
 |---|---|---|
-| `entrar-correo`, `entrar-clave`, `entrar-boton` | `index.html` | entrada del docente (`metas-entrar`) |
+| `ir-zona-docente` | `index.html`, portada | botón «Zona Docente» de la portada; la entrada vive allí, no en la portada del alumno (rev. 9, decidido por Josué) |
+| `entrar-correo`, `entrar-clave`, `entrar-boton` | `index.html`, Zona Docente | entrada del docente (`metas-entrar`) |
 | `aviso-primera-vez` | `index.html` | «Para entrar la primera vez se necesita señal» (09, 9.4) |
 | `ir-mi-aula`, `mi-aula` | `index.html` | botón y vista de Mi aula |
 | `ir-<pantalla>`, `pantalla-<pantalla>` | Mi aula | `lista`, `notas`, `asistencia`, `colectas`, `controles`, `avisos`, `conducta`, `gastos`, `carga-rapida` |

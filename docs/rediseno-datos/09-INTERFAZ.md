@@ -262,3 +262,68 @@ Mi aula y de `padres.html`. Nada más en la app habla de la conexión.
    «Imprimir tiras nuevas». A la familia, de usted, cuando su clave ya
    venció: «Esta clave ya no sirve. Escriba la clave de la tira nueva que le
    dio su docente».
+
+## 9.5 Revisión 9 (corte 1, parte 2): lo que ya se quitó y lo que falta
+
+**Lo nuevo que se ve** (`js/tools/mi-aula.js`, `css/mi-aula.css`): Mi aula
+del corte 1, sobre filas, con sus nueve partes (lista, notas, asistencia,
+colectas, controles, avisos, conducta, gastos y carga rápida). Lo único
+que dice de la conexión es el punto gris de 9.1 en la barra de arriba. Las
+preguntas de dos botones, «no quedó anotado» con «Entendido» y «Escribe tu
+contraseña» salen de a una, abajo. La entrada de la Zona Docente entra por
+`metas-entrar` y, sin señal y sin sesión, dice solo «Para entrar la primera
+vez se necesita señal».
+
+**Quitado en esta revisión** (con su sonda ajustada donde hacía falta):
+
+- Zona Docente: el estado de sincronización, el banner «Recuperar los datos
+  de mi aula», el texto de «nube» y «a salvo» al cerrar sesión y los avisos
+  de «necesita internet» (pasan a frases de señal sin alarma).
+- Ajustes: la tarjeta entera «Rescate de datos» (sincronizar ahora, imponer
+  la copia de este equipo, empezar de nuevo), los textos de «nube».
+- Mi aula de antes: el chip «por subir / al día», la tarjeta «Nube del
+  chatbot de padres y recuperación» y sus botones, «Revisar cruces»,
+  «Deshacer o restaurar», los «restaura en 🕘», «Buscar pagos o gastos
+  perdidos», el aviso «Pagos recuperados», las fechas «repetidas al
+  sincronizar», «Días pegados desde un respaldo», los chips «Recuperar o
+  revisar notas» y «Ver cambios guardados» de Notas SACE, la tarjeta «Se
+  publican solos / Al sincronizar» de Comunicados, los avisos «☁️ … subido a
+  la nube» y «Comunicados publicados».
+- Estadísticas y acumulativos: los textos de «nube», «papelera» y «en los
+  demás equipos».
+- Padres: la Zona Padres del inicio solo abre `padres.html`; en
+  `padres.html`, «datos guardados el…», «Consultando la nube…», «No pude
+  consultar la nube», «la clave quedó guardada», «no hay internet»; la
+  clave vencida dice la frase de 9.4 (con `data-metas="familia-aviso"`).
+- `consulta-nube.html` pasa a «Resultados de mis alumnos», sin «subir
+  pendientes» ni «por subir»; `registro.html`, su enlace.
+- Lado del alumno: «Sin internet: se confirmará al reconectar» (y su clave
+  en inglés), «Ahora mismo no hay internet…» y «Lista actualizada por el
+  equipo / Última lista guardada» de los videos.
+- `sw.js`: la página sin señal dice «Para entrar la primera vez se necesita
+  señal». Android: `allowBackup="false"`.
+
+**Falta, y por qué:**
+
+- **Plan de Acción y Convocatoria**: salen en su corte (`08`, 8.2); lo de
+  «nube» de Plan de Acción son 85 líneas y conviene hacerlo junto con su
+  paso a filas.
+- **`panel-docente.html`** («Restaurar claves de familia»): es la
+  herramienta de administración del proyecto; se quita cuando el paso 1
+  esté aplicado en la base real.
+- **`salida.html`**: quitar «Probar otra vez con internet» exige que la
+  respuesta se guarde sola en el teléfono y salga con señal: es un cambio de
+  funcionamiento, no de texto.
+- **`privacidad.html`**: es el aviso legal; el texto nuevo lo tiene que
+  aprobar Josué.
+- **`kit-auto-1.html`, `kit-auto-2.html`**: material de capacitación, se
+  actualiza en su corte (como dice 9.2).
+- **Cierre de año** (`registros-admin.js`): se reescribe entero (`08`).
+- Las ventanas de rescate de Notas SACE, los diálogos de `metas-docente-sync`
+  (recuperar, empezar de nuevo, usar este equipo) y el código de
+  `buscar-perdidos.js` y `revisa-cruces.js` siguen en el código **sin
+  ninguna entrada** en pantalla; se borran con las herramientas que todavía
+  viven en el blob.
+- La sesión vieja (`METAS_DOCENTE_V1`, con la contraseña) se sigue abriendo
+  al entrar, solo para las herramientas que no pasaron a filas («Más del
+  aula»); se quita cuando esas pasen al blob por sesión (`08`, 8.1).

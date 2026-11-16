@@ -1381,14 +1381,8 @@ function renderPadre() {
   const nubeHTML = `
     <div class="padre-sec padre-nube">
       <div class="padre-sec-title">🔑 Notas desde cualquier lugar</div>
-      <p class="padre-hint">Escriba la <strong>clave de la familia</strong> que le entregó el maestro
-        (empieza con el número de lista, ej. <strong>15-K7QM</strong>). Es secreta: solo su familia la conoce.</p>
-      <div class="padre-tel-row">
-        <input id="padre-codigo" class="pa-inp-field padre-codigo-inp" maxlength="12"
-               autocomplete="off" autocapitalize="characters" placeholder="ej.: 15-K7QM" value="${_pEsc(codigoIni)}">
-        <button class="padre-wa-btn" onclick="padreConsultarNube()">Consultar</button>
-      </div>
-      <div id="padre-nube-out"></div>
+      <!-- (rev. 9) La consulta con la clave de la familia vive en padres.html,
+           con su asistente: aquí solo se abre (09-INTERFAZ.md, Padres). -->
       <a class="padre-asis-btn" href="padres.html">
         <span class="padre-asis-bot" aria-hidden="true">🤖</span>
         <span class="padre-asis-txt">
@@ -1399,9 +1393,8 @@ function renderPadre() {
       </a>
     </div>`;
 
-  const avisoHTML = `
-    <p class="padre-aviso">⚠️ El resumen de arriba vive en el teléfono donde ${quien} estudia y practica.
-      Las notas con la <strong>clave de la familia</strong> sí se ven desde cualquier equipo con internet.</p>`;
+  const avisoHTML = '';   // (rev. 9) sin el aviso de dónde «vive» el resumen (09-INTERFAZ.md)
+  void codigoIni; void quien;
 
   cont.innerHTML =
     (nombre ? `<h2 class="padre-titulo">El avance de ${_pEsc(nombre)}</h2>` : '') +
@@ -1543,13 +1536,45 @@ function docenteVerClave(id, btn) {
   } catch (_) {}
 }
 
+/* Entrar (rev. 9, corte 1). La puerta es MetasDatos: la función de borde
+   metas-entrar valida la contraseña de siempre y entrega SOLO una sesión
+   (docs/rediseno-datos/02, 2.3). Sin señal y sin sesión previa, una sola
+   frase: «Para entrar la primera vez se necesita señal» (09, 9.4).
+   Mientras haya herramientas que no pasaron a filas (equipos, acumulativos,
+   plan de acción…), se abre además la sesión vieja para ellas, si se puede;
+   si no se puede, Mi aula funciona igual. Se quita el día de su corte. */
 async function docenteRecuperar() {
   const correo = (document.getElementById('doc-rec-correo')?.value || '').trim().toLowerCase();
   const clave  = (document.getElementById('doc-rec-clave')?.value || '');
+  const aviso = document.getElementById('doc-primera-vez');
+  if (aviso) { aviso.hidden = true; aviso.textContent = ''; }
   if (!correo.includes('@')) { toast('Escribe el correo con que te registraste'); return; }
   if (!clave) { toast('Escribe tu contraseña'); return; }
-  if (navigator.onLine === false) { toast('📴 Entrar necesita internet'); return; }
-  toast('⏳ Verificando…');
+  const r = window.metasMiAula ? await window.metasMiAula.entrar(correo, clave) : { ok: false, motivo: 'reintentar' };
+  if (r.ok) {
+    _docenteEntrarViejo(correo, clave);
+    renderProfile();
+    const c = window.metasMiAula.cuenta() || {};
+    toast('✅ ¡Bienvenido de vuelta, ' + String(c.nombre || 'colega').split(' ')[0] + '!');
+    return;
+  }
+  if (r.motivo === 'sin_senal') {
+    if (aviso) { aviso.textContent = 'Para entrar la primera vez se necesita señal'; aviso.hidden = false; }
+    return;
+  }
+  if (r.motivo === 'espera') {
+    await metasAlert('Demasiados intentos. Por seguridad espera un rato y vuelve a intentar.',
+      { icono: '⏳', titulo: 'Zona Docente' });
+    return;
+  }
+  if (r.motivo === 'datos') { toast('Correo o contraseña incorrectos'); return; }
+  toast('No se pudo entrar ahora. Intenta de nuevo en un momento.');
+}
+
+/* La sesión vieja, solo para lo que todavía vive en el blob. En pruebas
+   (127.0.0.1 con una base de prueba) no se toca la base real. */
+async function _docenteEntrarViejo(correo, clave) {
+  if (window.__METAS_NUBE_DE_PRUEBA__ && /^(127\.0\.0\.1|localhost)$/.test(location.hostname)) return;
   const { url, key } = _padreSbCfg();
   try {
     const r = await fetch(url + '/rest/v1/rpc/metas_entrar_docente_v2', {
@@ -1557,40 +1582,33 @@ async function docenteRecuperar() {
       headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
       body: JSON.stringify({ p_correo: correo, p_clave: clave }),
     });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    const resp = await r.json();
+    const resp = r.ok ? await r.json() : null;
     if (resp && resp.ok && resp.codigo) {
-      // ORDEN CRÍTICO: primero se guarda la sesión NUEVA y después se reclama
-      // el equipo. dsClaim descarga la nube con la sesión guardada: si se
-      // reclamara antes, bajaría la nube de la cuenta ANTERIOR (cruce de datos).
+      // ORDEN CRÍTICO: primero la sesión NUEVA y después se reclama el
+      // equipo (dsClaim descarga con la sesión guardada).
       _docenteSave({ codigo: resp.codigo, clave, nombre: resp.nombre || '', correo,
         rol: resp.rol || 'docente', t: new Date().toISOString() });
-      // Si en este equipo quedaron datos de OTRA cuenta, se descartan aquí.
       if (typeof dsClaim === 'function') dsClaim(resp.codigo);
       renderProfile();
-      toast('✅ ¡Bienvenido de vuelta, ' + String(resp.nombre || 'colega').split(' ')[0] + '!');
-    } else if (resp && resp.motivo === 'espera') {
-      await metasAlert('Demasiados intentos. Por seguridad espera 10 minutos y vuelve a intentar.',
-        { icono: '⏳', titulo: 'Zona Docente' });
-    } else {
-      toast('Correo o contraseña incorrectos');
     }
-  } catch (_) {
-    toast('⚠️ No se pudo conectar. Intenta de nuevo en un momento.');
-  }
+  } catch (_) { /* las herramientas que siguen en el blob esperan a la próxima entrada */ }
 }
 
 function renderProfile() {
   const cont = document.getElementById('docente-acceso');
   if (!cont) return;
   const d = _docenteCfg();
-
+  // La sesión de MetasDatos (corte 1) es la que cuenta; la vieja, si la hay,
+  // es solo para lo que sigue en el blob.
+  const nueva = (window.metasMiAula && window.metasMiAula.cuenta()) || null;
+  if (nueva && !d.nombre) d.nombre = nueva.nombre || '';
+  const conSesion = !!(nueva || d.codigo);
   // Las herramientas del aula solo existen para el maestro registrado:
   // sin sesión no se muestran (el alumno no tiene la cuenta del maestro).
   const _tg = document.getElementById('teacher-tools-group');
-  if (_tg) _tg.style.display = d.codigo ? '' : 'none';
+  if (_tg) _tg.style.display = conSesion ? '' : 'none';
 
-  if (!d.codigo) {
+  if (!conSesion) {
     // Visitante: formulario de suscripción
     /* Orden: primero ENTRAR (el maestro que vuelve es el caso de todos los
        días) y debajo el REGISTRO, plegado. La redacción habla de lo que el
@@ -1607,18 +1625,19 @@ function renderProfile() {
             </span>
           </div>
           <label class="doc-lbl" for="doc-rec-correo">📧 Tu correo</label>
-          <input id="doc-rec-correo" class="pa-inp-field doc-inp" maxlength="100" autocomplete="email" type="email"
+          <input id="doc-rec-correo" data-metas="entrar-correo" class="pa-inp-field doc-inp" maxlength="100" autocomplete="email" type="email"
                  placeholder="El correo con que te registraste">
           <label class="doc-lbl" for="doc-rec-clave">🔒 Tu contraseña</label>
           <div class="doc-clave-wrap">
-            <input id="doc-rec-clave" class="pa-inp-field doc-inp" type="password" maxlength="40" autocomplete="current-password"
+            <input id="doc-rec-clave" data-metas="entrar-clave" class="pa-inp-field doc-inp" type="password" maxlength="40" autocomplete="current-password"
                    placeholder="La contraseña que elegiste" oninput="docenteClaveOjito(this)">
             <button class="doc-ver-clave" aria-pressed="false" aria-controls="doc-rec-clave"
                     onclick="docenteVerClave('doc-rec-clave', this)">👁 Ver</button>
           </div>
-          <button class="doc-cta doc-cta-entrar" onclick="docenteRecuperar()">
+          <button class="doc-cta doc-cta-entrar" data-metas="entrar-boton" onclick="docenteRecuperar()">
             <span class="doc-cta-t">🚪 Entrar a mi aula</span>
           </button>
+          <p id="doc-primera-vez" class="doc-primera-vez" data-metas="aviso-primera-vez" role="status" hidden></p>
           <button class="doc-link-sutil" onclick="docenteOlvide()">¿Olvidaste tu contraseña? Te ayudamos.</button>
         </div>
 
@@ -1668,7 +1687,7 @@ function renderProfile() {
           <button class="doc-cta doc-cta-crear-firme" onclick="docenteSuscribir()">
             <span class="doc-cta-t">✨ Crear mi aula ahora</span>
           </button>
-          <p class="padre-hint doc-registro-pie">Es gratis y siempre lo será. Solo este paso necesita internet.
+          <p class="padre-hint doc-registro-pie">Es gratis y siempre lo será.
             <a href="panel-docente.html" class="doc-admin-link">¿Administrador del proyecto?</a></p>
         </div>
 
@@ -1681,34 +1700,12 @@ function renderProfile() {
 
   // Maestro con sesión: saludo, aviso del nombre y SU botón principal
   const primerNombre = String(d.nombre || '').trim().split(/\s+/)[0] || 'colega';
-  // Red de seguridad: solo cuando el aula está vacía y hay algo que restaurar
-  // (dsTieneRespaldo ya lo condiciona). Banner claro y con fecha, no un enlace
-  // suelto: aparece justo tras «Empezar de nuevo» o al abrir un equipo vacío.
-  const respaldoInfo = (typeof dsTieneRespaldo === 'function') && dsTieneRespaldo();
-  let recuperarLink = '';
-  if (respaldoInfo) {
-    let cuando = '';
-    if (respaldoInfo !== true) {
-      const f = new Date(respaldoInfo);
-      if (!isNaN(f)) cuando = ' el ' + f.toLocaleDateString('es-HN', { day: 'numeric', month: 'long' });
-    }
-    recuperarLink = `
-      <button class="doc-recuperar-banner" onclick="dsRecuperar()">
-        <span class="doc-rec-emoji">↩️</span>
-        <span class="doc-rec-txt">
-          <span class="doc-rec-t">Recuperar los datos de mi aula</span>
-          <span class="doc-rec-s">Tu aula está vacía. Si borraste todo${cuando} por error, restáuralo aquí.</span>
-        </span>
-      </button>`;
-  }
   cont.innerHTML = `
     <div class="setting-group teacher-panel-group">
       <div class="doc-saludo">
         <div class="doc-saludo-hola">👋 ¡Hola, ${_pEsc(primerNombre)}!</div>
         <div class="doc-saludo-sub">${_pEsc(d.nombre || '')}${d.escuela ? ' · ' + _pEsc(d.escuela) : ''}</div>
       </div>
-      <div class="doc-sync-hint2" id="doc-sync-status">✅ Tus datos se guardan y sincronizan solos en todos tus equipos.</div>
-      ${recuperarLink}
       <div class="doc-cuenta">
         <button class="doc-cuenta-btn" onclick="docenteCambiarClave()">
           <span class="doc-cuenta-ic">🔑</span><span>Cambiar mi contraseña</span>
@@ -1738,7 +1735,7 @@ function renderProfile() {
         <div id="doc-prog-out"></div>
       </div>
     </div>`;
-  if (typeof dsOnProfile === 'function') dsOnProfile();
+  if (d.codigo && typeof dsOnProfile === 'function') dsOnProfile();
   docenteCargarCodigoAula();
   docenteProgInit();
 }
@@ -1957,7 +1954,7 @@ async function docenteSuscribir() {
   if (nombre.split(' ').length < 2) { toast('Escribe tu nombre y al menos un apellido'); return; }
   if (!correo.includes('@') || correo.length < 5) { toast('Escribe un correo válido — con él entrarás a tu cuenta'); return; }
   if (clave.length < 6) { toast('La contraseña debe tener al menos 6 letras o números'); return; }
-  if (navigator.onLine === false) { toast('📴 Crear la cuenta necesita internet (solo esta vez)'); return; }
+  if (navigator.onLine === false) { toast('Para entrar la primera vez se necesita señal'); return; }
   toast('⏳ Creando tu cuenta…');
   const { url, key } = _padreSbCfg();
   try {
@@ -2067,17 +2064,20 @@ window.docenteOlvide = docenteOlvide;
 
 async function docenteCerrarSesion() {
   const ok = (typeof metasConfirm === 'function')
-    ? await metasConfirm('Se cerrará tu sesión y se quitarán los datos del aula **de este equipo**.\n\nTranquilo: todo está guardado en la nube de tu cuenta y volverá al iniciar sesión de nuevo. Así, si alguien más usa este equipo, no verá tu información.',
+    ? await metasConfirm('Se cerrará tu sesión en este equipo. Si alguien más lo usa, no verá tu información.',
         { icono: '🚪', titulo: 'Cerrar sesión', okTxt: 'Sí, cerrar sesión' })
     : true;
   if (!ok) return;
-  // 1) sube lo pendiente y limpia el aula de este equipo (privacidad multi-cuenta)
+  // 1) MetasDatos termina de mandar lo anotado (con señal) y cierra; sin
+  //    señal lo conserva para esta cuenta en este equipo (03, 3.7).
+  if (window.metasMiAula) await window.metasMiAula.salir();
+  // 2) lo que sigue en el blob: sube lo suyo y limpia este equipo
   if (typeof dsLogout === 'function') dsLogout();
   // 2) quita la sesión
   _docenteSave(null);
   try { localStorage.removeItem(DOCENTE_KEY); } catch (_) {}
   renderProfile();
-  toast('Sesión cerrada · datos del aula a salvo en tu nube');
+  toast('Sesión cerrada');
 }
 window.docenteCerrarSesion = docenteCerrarSesion;
 
@@ -2087,7 +2087,7 @@ window.docenteCerrarSesion = docenteCerrarSesion;
 async function docenteCambiarClave() {
   const d = _docenteCfg();
   if (!d.codigo) return;
-  if (navigator.onLine === false) { toast('📴 Cambiar la contraseña necesita internet'); return; }
+  if (navigator.onLine === false) { toast('Para cambiar la contraseña se necesita señal'); return; }
   const nueva = await metasPrompt('Escribe tu contraseña **nueva** (mínimo 6 letras o números).\nNo necesitas la anterior: este equipo ya tiene tu sesión.', {
     icono: '✏️', titulo: 'Zona Docente', type: 'password', okTxt: 'Siguiente',
     valida: v => String(v).trim().length >= 6 ? '' : 'Muy corta: usa al menos 6 letras o números.',
@@ -2131,7 +2131,7 @@ async function docenteCambiarClave() {
     } else {
       toast('⚠️ No se pudo cambiar. Si la olvidaste por completo, usa «¿Olvidaste tu contraseña?» al entrar.');
     }
-  } catch (_) { toast('⚠️ Sin conexión con la nube'); }
+  } catch (_) { toast('No se pudo cambiar ahora. Intenta de nuevo en un momento.'); }
 }
 window.docenteCambiarClave = docenteCambiarClave;
 
@@ -2203,6 +2203,7 @@ function switchView(id) {
   if (id === 'view-campeonismo' && typeof initCampeonismo === 'function') initCampeonismo();
   if (id === 'view-formacion' && typeof mfRender === 'function') mfRender();
   if (id === 'view-herr-eval' && typeof heRender === 'function') heRender();
+  if (id === 'view-mi-aula' && window.metasMiAula) window.metasMiAula.abrir();
 
   const scroll = document.querySelector(`#${id} .view-scroll`);
   if (scroll) scroll.scrollTop = 0;
@@ -2405,25 +2406,9 @@ function renderAjustes() {
       </div>`;
   }
 
-  // ── Tarjeta: rescate de datos (vive AQUÍ y no en la Zona Docente, para
-  //    que la curiosidad no lo toque en el día a día) ──
-  html += `
-    <div class="setting-group teacher-panel-group">
-      <details class="doc-mant">
-        <summary class="doc-mant-sum">🚑 Rescate de datos (casi nunca se necesita)</summary>
-        <div class="doc-mant-body">
-          <p class="doc-mant-hint">Tu aula se guarda <strong>sola</strong> en la nube de tu cuenta
-            (${_pEsc(d.correo || '')}) y se ve igual en todos tus equipos, automáticamente.
-            Estas herramientas son solo para emergencias:</p>
-          <button class="doc-sync-now" onclick="dsSyncNow(this)">🔄 Sincronizar ahora</button>
-          <p class="doc-mant-exp">Revisa la nube en este momento. Normalmente no hace falta: es automático.</p>
-          <a class="doc-usar-este-link" onclick="dsUsarEste()">🚑 Imponer la copia de ESTE equipo en todos</a>
-          <p class="doc-mant-exp">Solo si aquí ves tu aula correcta y en tus otros equipos aparece mal o vacía.</p>
-          <a class="doc-reset-link" onclick="dsReset()">🗑️ Empezar de nuevo (borrar mis datos del aula)</a>
-          <p class="doc-mant-exp">Vacía tu aula en todos tus equipos, con recuperación si fue un error.</p>
-        </div>
-      </details>
-    </div>`;
+  // (rev. 9) Sin la tarjeta «Rescate de datos» (sincronizar ahora, imponer
+  // la copia de este equipo, empezar de nuevo): en el modelo nuevo no hay
+  // copias que elegir ni que restaurar (09-INTERFAZ.md, Ajustes).
 
   cont.innerHTML = html;
   if (_ajLista) ajPintarLista();
@@ -2479,7 +2464,7 @@ function ajTipo(t) {
 async function ajGuardarPerfil() {
   const d = _docenteCfg();
   if (!d.codigo || !d.clave) return;
-  if (navigator.onLine === false) { toast('📴 Guardar el perfil necesita internet'); return; }
+  if (navigator.onLine === false) { toast('Para cambiar el perfil se necesita señal'); return; }
   const val = id => (document.getElementById(id)?.value || '').trim();
   // Una cuenta de Dirección no edita su escuela ni su municipio (son su
   // alcance; los fija el admin): esos campos ni existen en el formulario,
@@ -2492,7 +2477,7 @@ async function ajGuardarPerfil() {
     p_telefono: val('aj-ed-telefono'), p_departamento: val('aj-ed-departamento'),
     p_municipio: esDir ? (d.municipio || '') : val('aj-ed-municipio'), p_lugar: val('aj-ed-lugar'),
   };
-  toast('⏳ Guardando…');
+  toast('⏳ Un momento…');
   const { url, key } = _padreSbCfg();
   try {
     const r = await fetch(url + '/rest/v1/rpc/metas_perfil_editar', {
@@ -2546,7 +2531,7 @@ async function _ajRpc(fn, extra) {
 async function ajCargarEquipo() {
   const d = _docenteCfg();
   if (!d.codigo || !d.clave) return;
-  if (navigator.onLine === false) { toast('📴 Ver los registros necesita internet'); return; }
+  if (navigator.onLine === false) { toast('Para ver los registros se necesita señal'); return; }
   const cont = document.getElementById('aj-lista');
   if (cont) cont.innerHTML = '<p class="padre-hint" style="margin-top:10px;">⏳ Cargando…</p>';
   const rolLocal = _ajRol(_docenteCfg());
@@ -2825,13 +2810,13 @@ async function ajCargarPermisos() {
   if (!caja) return;
   _ajEngancharOnline();
   if (navigator.onLine === false) {
-    caja.innerHTML = '<p class="padre-hint" style="margin-top:10px;">📴 Ver los permisos necesita internet. Se revisará al volver la señal.</p>';
+    caja.innerHTML = '<p class="padre-hint" style="margin-top:10px;">Para ver los permisos se necesita señal.</p>';
     return;
   }
   const j = await _ajRpc('metas_permisos_listar');
   if (!j || !j.ok) {
     caja.innerHTML = '<p class="padre-hint" style="margin-top:10px;">' + (j && j.motivo === 'no_rpc'
-      ? 'La nube todavía no tiene esta parte instalada.'
+      ? 'Esta parte todavía no está lista.'
       : '⚠️ No se pudo revisar. Se intentará de nuevo al abrir esta pantalla.') + '</p>';
     return;
   }
@@ -2914,7 +2899,7 @@ let _ajResumen = null;
 async function ajCargarResumen() {
   const d = _docenteCfg();
   if (!d.codigo || !d.clave) return;
-  if (navigator.onLine === false) { toast('📴 Ver las altas necesita internet'); return; }
+  if (navigator.onLine === false) { toast('Para ver las altas se necesita señal'); return; }
   const cont = document.getElementById('aj-resumen');
   if (cont) cont.innerHTML = '<p class="padre-hint" style="margin-top:10px;">⏳ Contando…</p>';
   const { url, key } = _padreSbCfg();
@@ -3004,7 +2989,7 @@ async function ajResetClave(btn) {
   const nombre = btn.dataset.nombre || correo;
   const telefono = btn.dataset.telefono || '';
   if (!correo) return;
-  if (navigator.onLine === false) { toast('📴 Cambiar la contraseña necesita internet'); return; }
+  if (navigator.onLine === false) { toast('Para cambiar la contraseña se necesita señal'); return; }
   // Sugerencia fácil de dictar por teléfono; el admin puede escribir otra
   const sugerida = 'metas' + Math.floor(1000 + Math.random() * 9000);
   const nueva = await metasPrompt(
@@ -3077,7 +3062,7 @@ async function ajEnviarSugerencia(btn) {
   const el = document.getElementById('aj-sug-txt');
   const texto = (el?.value || '').trim();
   if (texto.length < 5) { toast('Escribe tu mensaje primero ✏️'); return; }
-  if (navigator.onLine === false) { toast('📴 Enviar el mensaje necesita internet'); return; }
+  if (navigator.onLine === false) { toast('Para enviar el mensaje se necesita señal'); return; }
   if (btn) { btn.disabled = true; }
   toast('⏳ Enviando…');
   const { url, key } = _padreSbCfg();
@@ -3107,7 +3092,7 @@ async function ajEnviarSugerencia(btn) {
 async function ajCargarBuzon() {
   const d = _docenteCfg();
   if (!d.codigo || !d.clave) return;
-  if (navigator.onLine === false) { toast('📴 El buzón necesita internet'); return; }
+  if (navigator.onLine === false) { toast('Para ver el buzón se necesita señal'); return; }
   const cont = document.getElementById('aj-buzon');
   if (cont) cont.innerHTML = '<p class="padre-hint" style="margin-top:10px;">⏳ Cargando…</p>';
   const { url, key } = _padreSbCfg();

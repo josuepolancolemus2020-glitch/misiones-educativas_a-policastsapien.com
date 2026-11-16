@@ -11,8 +11,9 @@
      (pruebas-capa-b/CONTRATO.md), y cada uno sin globales propios
      (un solo global: window.MetasDatos).
    · NUNCA Math.random (regla 16): un id repetido es un pago perdido.
-   · NUNCA Number(), parseFloat() ni parseInt() (regla 19): un monto
-     leído como número deja de ser lo que el docente escribió.
+   · NUNCA Number(), parseFloat() ni parseInt() (regla 19), ni sus atajos
+     +x, x*1, 1*x, x/1, x|0, ~~x ni x-0: un monto leído como número deja
+     de ser lo que el docente escribió.
    · NUNCA «upsert» (regla 15): un pago se crea, se corrige o se anula.
    · NUNCA la dirección de la base desde localStorage (02, 2.6): con
      METAS_SB_URL se podía mandar la sesión a un servidor ajeno.
@@ -106,6 +107,14 @@ const prohibido = [
   ['.upsert(', /\.upsert\s*\(/],
   ['localStorage METAS_SB_URL / METAS_SB_KEY', /METAS_SB_(URL|KEY)/],
   ['eval / new Function', /(^|[^.\w])eval\s*\(|new\s+Function\s*\(/],
+  // Las otras formas de volver número un texto (rev. 9): +x, x*1, 1*x, x/1,
+  // x|0, ~~x, x-0. Cualquiera de ellas sobre «150.50» da un double.
+  ['+x (más delante de un valor)', /(^|[=(,:?!&|\[{;]|\breturn|\btypeof)\s*\+\s*(?![+=\s])(?=[\w$('"\[])/],
+  ['x * 1 o 1 * x', /\*\s*1(?![\d.])|(?<![\d.\w])1\s*\*/],
+  ['x / 1', /\/\s*1(?![\d.])/],
+  ['x | 0', /(?<!\|)\|(?!\|)\s*0(?![\d.x])/],
+  ['~~x', /~~/],
+  ['x - 0', /-\s*0(?![\d.x])/],
 ];
 for (const [que, re] of prohibido) {
   const donde = Object.keys(partes).filter((n) => re.test(partes[n].codigo));

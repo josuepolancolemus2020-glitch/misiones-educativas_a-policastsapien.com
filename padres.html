@@ -204,8 +204,8 @@
   <div id="chat" aria-live="polite"></div>
   <div id="chips"></div>
   <div id="barra">
-    <input id="inp" type="text" autocomplete="off" placeholder="Escriba su pregunta o la clave…">
-    <button id="enviar" aria-label="Enviar">➤</button>
+    <input id="inp" data-metas="familia-clave" type="text" autocomplete="off" placeholder="Escriba su pregunta o la clave…">
+    <button id="enviar" data-metas="familia-entrar" aria-label="Enviar">➤</button>
   </div>
 
 <script>
@@ -334,7 +334,9 @@ function claveBonita(c)  { return String(c || '').replace(/^(\d+)/, '$1-'); }
 /* ¿El texto parece una clave de familia? (nº de lista + 4-6 letras/números) */
 function pareceClave(txt) {
   const limpio = String(txt || '').replace(/[^A-Za-z0-9]/g, '').toUpperCase();
-  return /^\d{1,3}[A-Z2-9]{4,6}$/.test(limpio) ? limpio : '';
+  // La clave vieja (nº de lista + 4 letras) o la nueva de la tira (10
+  // símbolos sin I, O, 0 ni 1, ej. K7QMX-4PA2B, docs/rediseno-datos/02, 2.7).
+  return (/^\d{1,3}[A-Z2-9]{4,6}$/.test(limpio) || /^[A-HJ-NP-Z2-9]{10}$/.test(limpio)) ? limpio : '';
 }
 /* ¿CASI una clave? (trae 0, 1, I, L u O: caracteres que nunca usamos) */
 function casiClave(txt) {
@@ -450,7 +452,7 @@ function msjMaestroHTML(r) {
 }
 function avisoCache() {
   return ROWS_CACHE && ROWS_FECHA
-    ? '<br><small>📴 (datos guardados el ' + fmtFecha(ROWS_FECHA) + ' — toque «🔄 Actualizar» con internet)</small>'
+    ? ''   /* (rev. 9) sin «datos guardados el …» (09-INTERFAZ.md) */
     : '';
 }
 /* Fecha del último dato que subió el maestro (la nube ya la manda:
@@ -471,8 +473,8 @@ function selloDatos() {
   const d = new Date(f);
   const dias = isNaN(d) ? 0 : Math.floor((Date.now() - d.getTime()) / 86400000);
   const sello = dias > 21
-    ? '<br><small>⚠️ El maestro no publica desde el ' + fmtFecha(f) + ' — si algo no cuadra, confirme en la escuela.</small>'
-    : '<br><small>🕐 Datos del maestro al ' + fmtFecha(f) + '</small>';
+    ? '<br><small>Información al ' + fmtFecha(f) + '. Si algo no cuadra, confirme en la escuela.</small>'
+    : '<br><small>Información al ' + fmtFecha(f) + '</small>';
   return sello.concat(avisoCache());
 }
 
@@ -572,18 +574,17 @@ async function conDatos() {
   const st = await consultar(codigo);
   if (st === 'ok' || st === 'cache') return true;
   if (st === 'vacio') {
-    await botSay('Aún no hay notas guardadas para la clave <strong>' + esc(claveBonita(codigo)) + '</strong>. ' +
-      'Puede ser que el maestro todavía no las suba, o que la clave tenga un error. ' +
+    await botSay('Aún no hay notas para la clave <strong>' + esc(claveBonita(codigo)) + '</strong>. ' +
+      'Puede ser que el maestro todavía no las anote, o que la clave tenga un error. ' +
       'Verifíquela con la tira impresa o pregunte al maestro. 🙏',
       ['🔄 Actualizar', '🔑 Cambiar clave', '❓ ¿Qué es la clave?']);
     return false;
   }
   if (st === 'offline') {
-    await botSay('📴 Ahorita no hay internet y todavía no tengo notas guardadas en este teléfono. ' +
-      'Intente de nuevo cuando tenga conexión.', ['🔄 Actualizar']);
+    await botSay('Todavía no tengo notas para mostrarle. Intente de nuevo en un rato.', ['🔄 Actualizar']);
     return false;
   }
-  await botSay('⚠️ No pude consultar la nube en este momento. Intente de nuevo en unos minutos.', ['🔄 Actualizar']);
+  await botSay('Ahora no pude consultar. Intente de nuevo en unos minutos.', ['🔄 Actualizar']);
   return false;
 }
 
@@ -920,7 +921,7 @@ async function respEconomia() {
       pag.map(r => '• ' + esc(r.concepto || 'Colaboración') + ' — ' + lps(r.monto) + ' ¡gracias!').join('<br>');
   }
   if (!pend.length) html += '<br><br>🎉 No tienen aportes pendientes.';
-  else html += '<br><br><small>El aporte se entrega al maestro; él lo marca recibido y aquí se actualiza.</small>';
+  else html += '<br><br><small>El aporte se entrega al maestro; cuando él lo anota, aparece aquí.</small>';
   /* Los RECIBOS no se mezclan aquí: esta respuesta es «qué debo y qué ya di»,
      y los comprobantes viven en su propia pantalla («🧾 Recibos»). Mezclarlos
      dejaba una pared de texto donde no se hallaba lo pendiente. */
@@ -1057,7 +1058,7 @@ function reciboPNG(r) {
 async function guardarRecibo(btn) {
   const folio = btn && btn.dataset.folio;
   const r = esRecibo.de(ROWS_AV || []).find(x => reciboFolio(x) === folio);
-  if (!r) { await botSay('⚠️ No encontré ese recibo. Toque «🔄 Actualizar» y pruebe de nuevo.', chipsMenu()); return; }
+  if (!r) { await botSay('No encontré ese recibo. Pruebe de nuevo en un rato.', chipsMenu()); return; }
   const txtOrig = btn.textContent;
   btn.disabled = true; btn.textContent = '⏳ Preparando…';
   let img;
@@ -1257,7 +1258,7 @@ async function buzonEnviar(texto, vista) {
     return;
   }
   if (navigator.onLine === false) {
-    await botSay('📴 Ahorita no hay internet, así que no puedo entregar el recado. Inténtelo cuando tenga conexión. 🙏', chipsMenu());
+    await botSay('Ahora no pude entregar el recado. Inténtelo de nuevo en un rato. 🙏', chipsMenu());
     return;
   }
   const { url, key } = sbCfg();
@@ -1379,7 +1380,7 @@ async function respCambiarClave() {
   cfgSave(c);
   ROWS = null; ROWS_CACHE = false;
   await botSay('Listo, borré esa clave. Escriba la nueva clave de la familia (ej. <strong>15-K7QM</strong>). 🔑' +
-    (c.codigo ? '<br><small>(Sigue guardada la de ' + esc(aliasDe(c.codigo) || claveBonita(c.codigo)) + ')</small>' : ''),
+    (c.codigo ? '<br><small>(Sigue también la de ' + esc(aliasDe(c.codigo) || claveBonita(c.codigo)) + ')</small>' : ''),
     ['❓ ¿Qué es la clave?']);
 }
 
@@ -1388,8 +1389,8 @@ async function respCambiarClave() {
 async function respCambiarHijo() {
   const lista = cfgCodigos();
   if (lista.length < 2) {
-    await botSay('Solo tengo guardada una clave. Si tiene <strong>otro hijo/a</strong> con su propia tira, ' +
-      'escriba aquí su clave (ej. <strong>8-MN3P</strong>) y quedan las dos guardadas. 👧👦', chipsMenu());
+    await botSay('Solo tengo una clave. Si tiene <strong>otro hijo/a</strong> con su propia tira, ' +
+      'escriba aquí su clave (ej. <strong>8-MN3P</strong>) y quedan las dos. 👧👦', chipsMenu());
     return;
   }
   const activo = claveGuardada();
@@ -1411,14 +1412,111 @@ function identidadClave(codigo) {
   return { num, grupo: String(grupo).trim(), doc: String(doc).trim() };
 }
 
+/* ── La base nueva (corte 1, docs/rediseno-datos/07, 7.4) ────────────────
+   El teléfono de la familia abre una sesión ANÓNIMA y se vincula con su
+   clave por la función familia-vincular, que exige un token de Turnstile en
+   cada intento. Mientras el sitio no tenga su llave de Turnstile, la base
+   nueva solo se usa con la base de PRUEBA local (127.0.0.1 / localhost):
+   en el sitio publicado el portal sigue exactamente como hoy.
+   Si la clave está en la base nueva, la familia lee SOLO las vistas vf_*;
+   si no está, se sigue con lo de siempre. */
+const TURNSTILE_SITEKEY = '';
+function nubeFamilia() {
+  const p = window.__METAS_NUBE_DE_PRUEBA__;
+  if (p && p.url && p.llavePublica && /^(127\.0\.0\.1|localhost)$/.test(location.hostname)) {
+    return { url: String(p.url).replace(/\/+$/, ''), llave: p.llavePublica, prueba: true };
+  }
+  return TURNSTILE_SITEKEY ? { url: SB_URL_DEF, llave: SB_KEY_DEF, prueba: false } : null;
+}
+const SESION_FAMILIA = 'METAS_FAMILIA_SESION_V1';
+async function sesionFamilia(n) {
+  try {
+    const s = JSON.parse(localStorage.getItem(SESION_FAMILIA) || 'null');
+    if (s && s.access_token && s.expires_at && s.expires_at - 60 > Date.now() / 1000) return s;
+  } catch (_) {}
+  const r = await fetch(n.url + '/auth/v1/signup', {
+    method: 'POST', headers: { apikey: n.llave, 'content-type': 'application/json' }, body: JSON.stringify({ data: {} }),
+  });
+  if (!r.ok) return null;
+  const j = await r.json();
+  if (!j.access_token) return null;
+  const s = { access_token: j.access_token, refresh_token: j.refresh_token, expires_at: j.expires_at };
+  try { localStorage.setItem(SESION_FAMILIA, JSON.stringify(s)); } catch (_) {}
+  return s;
+}
+// 'vinculada' | 'vencida' | 'no_esta' (no está en la base nueva, o no se
+// pudo preguntar: se sigue con lo de siempre)
+async function vincularNueva(codigo) {
+  const n = nubeFamilia();
+  if (!n) return 'no_esta';
+  try {
+    const s = await sesionFamilia(n);
+    if (!s) return 'no_esta';
+    const r = await fetch(n.url + '/functions/v1/familia-vincular', {
+      method: 'POST',
+      headers: { apikey: n.llave, authorization: 'Bearer ' + s.access_token, 'content-type': 'application/json' },
+      body: JSON.stringify({ clave: codigo, turnstile: n.prueba ? 'local' : '' }),
+    });
+    const j = await r.json().catch(() => ({}));
+    if (j.ok) return 'vinculada';
+    if (j.motivo === 'clave_vencida') return 'vencida';
+    return 'no_esta';
+  } catch (_) {
+    return 'no_esta';
+  }
+}
+async function leerNueva(vista) {
+  const n = nubeFamilia();
+  const s = n && await sesionFamilia(n);
+  if (!s) return [];
+  const r = await fetch(n.url + '/rest/v1/' + vista + '?select=*', {
+    headers: { apikey: n.llave, authorization: 'Bearer ' + s.access_token, 'accept-profile': 'metas' },
+  });
+  return r.ok ? r.json() : [];
+}
+// El dinero llega como texto («150.00») y así se muestra: «L 150.00».
+function lempiras(t) {
+  const p = String(t || '0.00').split('.');
+  return 'L ' + p[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '.' + (p[1] || '00');
+}
+async function resumenNuevo() {
+  const [hijos, pagos, avisos] = await Promise.all([leerNueva('vf_hijos'), leerNueva('vf_pagos'), leerNueva('vf_avisos')]);
+  const h = hijos[0];
+  let t = h ? '👦 <strong>' + esc(h.nombre) + '</strong>' + (h.docente ? ', con ' + esc(h.docente) : '') + '.' : '';
+  if (pagos.length) {
+    t += '<br>🧾 Recibos:<br>' + pagos.map(p => esc(p.recibo) + ' · ' + esc(p.concepto) + ' · <strong>' + lempiras(p.monto) + '</strong>'
+      + (p.corrige_al_recibo ? ' (corrige al ' + esc(p.corrige_al_recibo) + ')' : '')).join('<br>');
+  }
+  if (avisos.length) t += '<br>📣 ' + avisos.map(a => '<strong>' + esc(a.titulo) + '</strong>' + (a.texto ? ': ' + esc(a.texto) : '')).join('<br>📣 ');
+  await botSay(t || 'Todavía no hay información para esta clave.');
+}
+
 async function usarClave(codigo) {
+  const nueva = await vincularNueva(codigo);
+  if (nueva === 'vencida') {
+    // De usted, sin nada técnico (09, 9.4). Una sola en pantalla: la de un
+    // intento anterior deja de ser «la» respuesta.
+    document.querySelectorAll('[data-metas="familia-aviso"]').forEach(e => e.removeAttribute('data-metas'));
+    await botSay('<span data-metas="familia-aviso">Esta clave ya no sirve. Escriba la clave de la tira nueva que le dio su docente.</span>');
+    return;
+  }
+  if (nueva === 'vinculada') {
+    const c0 = cfgLoad();
+    c0.codigo = codigo;
+    c0.nueva = true;
+    if (!Array.isArray(c0.codigos)) c0.codigos = [];
+    if (!c0.codigos.some(x => x.codigo === codigo)) c0.codigos.push({ codigo, alias: '' });
+    cfgSave(c0);
+    await resumenNuevo();
+    return;
+  }
   const c = cfgLoad();
   c.codigo = codigo;
   if (!Array.isArray(c.codigos)) c.codigos = [];
   if (!c.codigos.some(x => x.codigo === codigo)) c.codigos.push({ codigo, alias: '' });
   cfgSave(c);
   ROWS = null;
-  await botSay('🔑 Clave <strong>' + esc(claveBonita(codigo)) + '</strong> guardada. Consultando la nube…');
+  await botSay('🔑 Clave <strong>' + esc(claveBonita(codigo)) + '</strong>. Un momento, consulto…');
   const st = await consultar(codigo);
   if (st === 'ok' || st === 'cache') {
     /* confirmación de identidad: que la familia verifique la tira */
@@ -1436,15 +1534,15 @@ async function usarClave(codigo) {
   }
   if (st === 'vacio') {
     const sospecha = /[01ILO]/.test(String(codigo).replace(/^\d+/, ''));
-    await botSay('La clave quedó guardada, pero <strong>aún no hay notas</strong> para ella. ' +
-      'Puede ser que el maestro no las haya subido todavía, o que un carácter esté equivocado — compare con la tira impresa. ' +
+    await botSay('<strong>Aún no hay notas</strong> para esta clave. ' +
+      'Puede ser que el maestro no las haya anotado todavía, o que un carácter esté equivocado — compare con la tira impresa. ' +
       (sospecha ? '<br>🔍 <strong>Ojo:</strong> las claves nunca usan <strong>0, 1, I, L</strong> ni <strong>O</strong> — revise justo esos caracteres. ' : '') +
       'Toque «🔄 Actualizar» más tarde.', ['🔄 Actualizar', '🔑 Cambiar clave']);
   } else if (st === 'offline') {
-    await botSay('📴 No hay internet en este momento. La clave quedó guardada; toque «🔄 Actualizar» cuando tenga conexión.',
+    await botSay('Ahora no pude consultar. Toque «🔄 Actualizar» en un rato.',
       ['🔄 Actualizar']);
   } else {
-    await botSay('⚠️ No pude consultar la nube. Intente «🔄 Actualizar» en unos minutos.', ['🔄 Actualizar']);
+    await botSay('Ahora no pude consultar. Intente «🔄 Actualizar» en unos minutos.', ['🔄 Actualizar']);
   }
 }
 
@@ -1741,7 +1839,7 @@ $inp.addEventListener('keydown', e => { if (e.key === 'Enter') enviar(); });
     'Le cuento cómo va su hijo/a en la escuela: notas, mensajes del maestro y consejos para apoyar en casa.');
   if (codigo) {
     const alias = aliasDe(codigo);
-    await botSay('Tengo guardada la clave <strong>' + esc(claveBonita(codigo)) + '</strong>' +
+    await botSay('Tengo la clave <strong>' + esc(claveBonita(codigo)) + '</strong>' +
       (alias ? ' (' + esc(alias) + ')' : '') + '. Consultando las notas…');
     const prev = cacheLoad(codigo);   /* para contar novedades al volver */
     const st = await consultar(codigo);
@@ -1753,10 +1851,10 @@ $inp.addEventListener('keydown', e => { if (e.key === 'Enter') enviar(); });
       await botSay('Aún no hay notas para esa clave. Toque «🔄 Actualizar» más tarde, o cambie la clave si no es la correcta.',
         ['🔄 Actualizar', '🔑 Cambiar clave', '❓ ¿Qué es la clave?']);
     } else if (st === 'offline') {
-      await botSay('📴 No hay internet ahorita y no tengo notas guardadas. Vuelva a intentarlo con conexión.',
+      await botSay('Ahora no pude consultar las notas. Vuelva a intentarlo en un rato.',
         ['🔄 Actualizar', '💡 Consejo']);
     } else {
-      await botSay('⚠️ No pude consultar la nube. Intente «🔄 Actualizar» en unos minutos.',
+      await botSay('Ahora no pude consultar. Intente «🔄 Actualizar» en unos minutos.',
         ['🔄 Actualizar', '💡 Consejo']);
     }
   } else {

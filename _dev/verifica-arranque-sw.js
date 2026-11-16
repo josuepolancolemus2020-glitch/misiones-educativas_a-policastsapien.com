@@ -304,7 +304,7 @@ function mandaElDeHoy(pag) {
       ok(r.ms < 15000, 'y sale antes de 15 s', r.ms);
       if (r.sinSenal) {
         const txt = await r.pag.evaluate(() => document.body.innerText);
-        ok(/No hay señal suficiente para abrir M\.E\.T\.A\.S por primera vez/.test(txt), 'dice «No hay señal suficiente para abrir M.E.T.A.S por primera vez»', txt);
+        ok(/Para entrar la primera vez se necesita señal/.test(txt), 'dice «Para entrar la primera vez se necesita señal» (09, 9.4)', txt);
         ok(/M\.E\.T\.A\.S\./.test(txt), 'lleva el logo (M.E.T.A.S.)');
         ok(!/sin internet|sin conexión funciona|desconectad/i.test(txt), 'no promete funcionar sin internet', txt);
         const sinFuera = await r.pag.evaluate(() =>

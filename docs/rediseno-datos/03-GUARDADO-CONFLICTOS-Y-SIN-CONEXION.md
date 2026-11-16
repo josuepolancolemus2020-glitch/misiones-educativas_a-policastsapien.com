@@ -195,6 +195,16 @@ solo botón: «Entendido». Se manda también a `metas.rechazos` (con
 tope de tamaño y de frecuencia) para soporte. Sin botón de reintentar,
 recuperar ni restaurar.
 
+**Una cola por aparato, aunque haya varias pestañas** (rev. 9, decisión de
+Josué). Una sola pestaña es la líder (`navigator.locks`): solo ella escribe
+la cola, envía, renueva la sesión (Supabase entrega una llave de renovación
+nueva cada vez; si renovaban dos pestañas, la segunda quedaba pidiendo la
+contraseña sin motivo) y escucha Realtime. Las demás anotan en `entrantes`
+(llave `op_id`: dos pestañas no pueden pisarse) y le avisan por
+`BroadcastChannel`; la líder las pasa a la cola con su número y les reparte
+cómo quedó todo y la sesión nueva. Si la líder se cierra, otra toma el
+candado y sigue con lo guardado. Sin ningún aviso visible. Prueba B11.
+
 **Una cola por cuenta.** Cada operación lleva su `owner`. Si en el aparato
 entra otra cuenta, las operaciones de la anterior no se envían con la sesión
 nueva. Al cerrar sesión: si hay señal, la app termina de enviar lo pendiente
@@ -210,9 +220,14 @@ vuelva a entrar. **Sin mensaje** (regla de interfaz, `09-INTERFAZ.md`).
 estuvieran guardadas: el docente no ve diferencia) y las preguntas de dos
 botones que esperan respuesta.
 
-**Mientras está abierta**: Realtime en un canal por aula, filtrado por
-`aula_id`, para las tablas **sin dinero**: si la `version` es mayor se
-reemplaza; si trae `deleted_at`, se quita. Las tablas **con dinero** ya no van
+**Mientras está abierta**: Realtime para las tablas **sin dinero**. Desde la
+revisión 9 el aviso **no se guarda tal como llega**: solo dice qué fila
+cambió, y esa fila se vuelve a leer por la API, con la sesión y la RLS de
+siempre (los avisos de un mismo momento, en una sola lectura por tabla); si
+la `version` es mayor se reemplaza; si trae `deleted_at`, se quita. Se eligió
+esto y no un canal privado con su política porque no cambia el SQL y porque,
+aunque el canal llevara algo de más, el aparato no guarda nada que la base no
+entregue por la vía normal. Las tablas **con dinero** ya no van
 por ese canal (su evento traería el número): la base manda un toque sin
 datos por el canal privado del docente, `docente:<su uid>`, con la tabla y el
 id, y el aparato vuelve a leer esa fila en `vd_<tabla>` (rev. 6).

@@ -216,84 +216,16 @@ function sembrado(extraBoleta) {
     conResp.cambios.filter(c => c.campo === 'Asistencia').length === 1);
   comprueba('cada cambio dice de dónde sale', conResp.cambios.every(c => c.fuente));
 
-  /* ── 3 · el botón, con vista previa ── */
-  console.log('\n── el botón «Copiar notas de mis respaldos» ──');
+  /* ── 3 y 4 · los botones de rescate (rev. 9) ──
+     «Copiar notas de mis respaldos» y «Revisar notas que la aplicación puso
+     sola» salen de la pantalla: en el modelo nuevo nada se repone de copias
+     y la ventana 🛟 ya no tiene por dónde abrirse (09-INTERFAZ.md, Notas
+     SACE). Lo que se comprueba ahora es que el chip ya no esté. */
+  console.log('\n── sin la ventana de rescate ──');
   await pg.evaluate(() => { _adTab = 'sace'; renderAdmin(true); });
-  /* desde v504 los tres botones de rescate viven en la ventana «🛟
-     Recuperar o revisar notas»: se abre antes de cada toque */
-  const rescate = () => pg.click('#ad-sace-chip-rescate');
-  await pg.waitForSelector('#ad-sace-chip-rescate');
-  await rescate();
-  await pg.waitForSelector('#ad-sace-recuperar');
-  comprueba('el botón dice lo que hace', /Recuperar notas que faltan/.test(await pg.textContent('#ad-sace-recuperar')));
-  const n0 = await notas();
-  await pg.click('#ad-sace-recuperar');
-  await pg.waitForSelector('#ad-cam-tit');
-  const filasModal = await pg.$$eval('.ad-cam-tbl tbody tr', t => t.length);
-  comprueba('antes de copiar enseña la lista: 2 datos (la nota y el día de asistencia)', filasModal === 2, filasModal);
-  comprueba('con la ventana abierta todavía no cambió nada', await notas() === n0);
-  await pg.click('#ad-cam-no');
-  await pg.waitForTimeout(200);
-  comprueba('«No copiar» no cambia nada', await notas() === n0);
-  await rescate();
-  await pg.click('#ad-sace-recuperar');
-  await pg.waitForSelector('#ad-cam-si');
-  await pg.click('#ad-cam-si');
-  await pg.waitForTimeout(400);
-  const dif = (() => { const a = llenas(n0); return pg.evaluate(() => 0).then(() => notas()).then(n => {
-    const b = llenas(n); return Object.keys(b).filter(k => a[k] !== b[k]).concat(Object.keys(a).filter(k => !(k in b))); }); })();
-  const difs = await dif;
-  comprueba('«Sí» copia esa nota y nada más', JSON.stringify(difs) === '["II|Inglés|6"]', difs);
-  comprueba('y guarda antes una copia en «🕘 Deshacer»',
-    await pg.evaluate(() => (JSON.parse(localStorage.getItem('METAS_ADMIN_UNDO_V1') || '[]')).some(u => /Copiar notas de mis respaldos/.test(u.e))));
-
-  /* ── 4 · revisar lo que el autocompletado ya puso ── */
-  console.log('\n── revisar lo que el autocompletado ya puso ──');
-  const previo = sembrado();
-  const inventado = sembrado({ autoRecI_III_v479: 1 });
-  const ig = inventado.grupos[0];
-  ig.notas.III['Matemáticas'][2] = 84;                       // «reparada»: era 58
-  ig.notas.III['Ciencias Naturales'] = { 1: 84, 2: 85, 3: 87 };
-  ig.notas.II['Responsabilidad'] = { 1: 'MB', 2: 'MB' };
-  const undoRev = [{ t: '2026-11-10T16:05:00.000Z', e: 'Autocompletar Parciales I–III (notas, personalidad y días faltados)', admin: JSON.stringify(previo) }];
-  await sembrar(inventado, { METAS_ADMIN_UNDO_V1: undoRev });
-  await pg.evaluate(() => { _adTab = 'sace'; renderAdmin(true); });
-  const hayRev = await pg.$('#ad-sace-revisar-solas');
-  comprueba('el grupo con la marca ofrece «Revisar notas que la aplicación puso sola»', !!hayRev);
-  const nInv = await notas();
-  if (hayRev) {
-    await rescate();
-    await pg.click('#ad-sace-revisar-solas');
-    await pg.waitForSelector('#ad-cam-tit');
-    const lst = await pg.$$eval('.ad-cam-tbl tbody tr', ts => ts.map(t => [...t.querySelectorAll('td')].slice(1).map(x => x.textContent.trim())));
-    comprueba('lista las 6 celdas puestas solas contra la copia de antes', lst.length === 6, lst);
-    comprueba('la nota «reparada» dice qué decía antes (58)', lst.some(f => f[1] === 'Matemáticas' && /58/.test(f[4])), lst);
-    await pg.click('#ad-cam-no');
-    await pg.waitForTimeout(200);
-    comprueba('«Cerrar sin borrar» no borra nada', await notas() === nInv);
-    await rescate();
-    await pg.click('#ad-sace-revisar-solas');
-    await pg.waitForSelector('#ad-cam-si');
-    await pg.click('#ad-cam-si');
-    await pg.waitForSelector('#mdlg-cancel');
-    comprueba('pide un segundo «Sí» antes de borrar', await notas() === nInv);
-    await pg.click('#mdlg-cancel');
-    await pg.waitForTimeout(200);
-    comprueba('y si dice que no, tampoco se borra', await notas() === nInv);
-    await rescate();
-    await pg.click('#ad-sace-revisar-solas');
-    await pg.waitForSelector('#ad-cam-si');
-    await pg.click('#ad-cam-si');
-    await pg.waitForSelector('#mdlg-ok');
-    await pg.click('#mdlg-ok');
-    await pg.waitForTimeout(400);
-    const gR = await grupo();
-    comprueba('con los dos «Sí», las notas vuelven a ser las de antes',
-      JSON.stringify(llenas(gR.notas)) === JSON.stringify(llenas(previo.grupos[0].notas)));
-    comprueba('las borradas quedan vacías ("") para que la nube de las familias también las borre',
-      gR.notas.III['Ciencias Naturales'][1] === '');
-    comprueba('y se quita la marca', !(gR.boleta && gR.boleta.autoRecI_III_v479));
-  }
+  comprueba('ya no está el chip «🛟 Recuperar o revisar notas»', !(await pg.$('#ad-sace-chip-rescate')));
+  comprueba('ni «🕓 Ver cambios guardados»', !(await pg.$('#ad-sace-versiones')));
+  void llenas; void notas; void grupo; void sembrar; void sembrado;
 
   comprueba('ningún error de JavaScript en la página', errores.length === 0, errores);
   await nav.close();

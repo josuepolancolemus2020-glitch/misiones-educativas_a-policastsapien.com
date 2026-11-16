@@ -5,7 +5,12 @@
 // js/datos/ tal como los cargará el navegador, con:
 //   · su IndexedDB (fake-indexeddb, uno por aparato);
 //   · una red que se puede cortar, demorar o que PIERDE LA RESPUESTA después
-//     de que la base ya aplicó (el caso que hoy inventa pagos);
+//     de que la base ya aplicó (el caso que hoy inventa pagos), de cualquier
+//     petición o solo de una función (rev. 9: B4 pierde solo pago_crear);
+//   · varias PESTAÑAS de un mismo aparato (rev. 9, B11): comparten
+//     IndexedDB, localStorage, el canal entre pestañas (BroadcastChannel) y
+//     los candados (navigator.locks, aquí uno de mentira con lo que usa
+//     js/datos); cada una se puede cerrar;
 //   · Math.random convertido en error (regla 16 de CLAUDE.md);
 //   · WebSocket de verdad para Realtime.
 // Los contadores de 06, 6.1 se miden en la base con psql (METAS_DB).
@@ -37,13 +42,14 @@ export function faltantes() {
 }
 
 // ── Red con fallas a pedido ────────────────────────────────────────────────
-function redCon(estado) {
+function redCon(estado, pestana) {
   return async (url, opciones) => {
+    if (pestana && pestana.cerrada) throw new TypeError('Failed to fetch');
     if (estado.modo === 'sin_senal') throw new TypeError('Failed to fetch');
     if (estado.demora) await new Promise((r) => setTimeout(r, estado.demora));
     const r = await fetch(url, opciones);
     // La base ya aplicó; el aparato no se entera (se cae la señal de vuelta).
-    if (estado.perderSiguientes > 0 && String(url).includes('/rest/v1/')) {
+    if (estado.perderSiguientes > 0 && String(url).includes(estado.perderSolo || '/rest/v1/')) {
       estado.perderSiguientes--;
       await r.arrayBuffer();
       throw new TypeError('Failed to fetch');
@@ -52,29 +58,70 @@ function redCon(estado) {
   };
 }
 
-// ── Un aparato ─────────────────────────────────────────────────────────────
-export async function aparato(nombre) {
-  const { IDBFactory, IDBKeyRange } = requerir('fake-indexeddb');
-  const red = { modo: 'normal', demora: 0, perderSiguientes: 0 };
+// Candados de mentira, compartidos por las pestañas de un aparato: solo lo
+// que usa js/datos (request con o sin ifAvailable; se sueltan al cerrar).
+function candados() {
+  const tenidos = new Map();
+  const fila = new Map();
+  function dar(nombre, quien, cb) {
+    let soltar;
+    const fin = new Promise((r) => { soltar = r; });
+    tenidos.set(nombre, { quien, soltar });
+    Promise.resolve().then(() => cb({ name: nombre })).then(() => soltar(), () => soltar());
+    fin.then(() => {
+      if (tenidos.get(nombre)?.quien !== quien) return;
+      tenidos.delete(nombre);
+      const siguiente = (fila.get(nombre) || []).shift();
+      if (siguiente) dar(nombre, siguiente.quien, siguiente.cb);
+    });
+  }
+  return {
+    para(quien) {
+      return {
+        request(nombre, opciones, cb) {
+          if (typeof opciones === 'function') { cb = opciones; opciones = {}; }
+          if (!tenidos.has(nombre)) { dar(nombre, quien, cb); return Promise.resolve(); }
+          if (opciones && opciones.ifAvailable) return Promise.resolve(cb(null));
+          (fila.get(nombre) || fila.set(nombre, []).get(nombre)).push({ quien, cb });
+          return Promise.resolve();
+        },
+      };
+    },
+    soltar(quien) {
+      for (const [nombre, l] of fila) fila.set(nombre, l.filter((x) => x.quien !== quien));
+      for (const [nombre, t] of tenidos) if (t.quien === quien) t.soltar();
+    },
+  };
+}
+
+// ── Un aparato (una pestaña) ───────────────────────────────────────────
+// compartido: lo que comparten las pestañas de un mismo aparato.
+async function pestana(nombre, compartido) {
+  const red = compartido.red;
   const oyentes = {};
-  const almacenLocal = new Map();
+  const yo = { cerrada: false, canales: [] };
+  const Canal = class extends BroadcastChannel {
+    constructor(n) { super(n); yo.canales.push(this); }
+    postMessage(m) { if (!yo.cerrada) super.postMessage(m); }
+  };
   const ventana = {
     console, setTimeout, clearTimeout, setInterval, clearInterval, queueMicrotask,
     URL, URLSearchParams, TextEncoder, TextDecoder, Headers, Request, Response, AbortController,
     structuredClone, WebSocket, atob, btoa, Blob,
     crypto: globalThis.crypto,
-    indexedDB: new IDBFactory(), IDBKeyRange,
-    fetch: redCon(red),
+    indexedDB: compartido.idb, IDBKeyRange: compartido.IDBKeyRange,
+    BroadcastChannel: Canal,
+    fetch: redCon(red, yo),
     location: { hostname: '127.0.0.1', href: 'http://127.0.0.1:8080/', origin: 'http://127.0.0.1:8080' },
-    navigator: { onLine: true, userAgent: 'capa-b/' + nombre },
+    navigator: { onLine: red.modo !== 'sin_senal', userAgent: 'capa-b/' + nombre, locks: compartido.candados.para(yo) },
     localStorage: {
-      getItem: (k) => (almacenLocal.has(k) ? almacenLocal.get(k) : null),
-      setItem: (k, v) => almacenLocal.set(k, String(v)),
-      removeItem: (k) => almacenLocal.delete(k),
+      getItem: (k) => (compartido.almacenLocal.has(k) ? compartido.almacenLocal.get(k) : null),
+      setItem: (k, v) => compartido.almacenLocal.set(k, String(v)),
+      removeItem: (k) => compartido.almacenLocal.delete(k),
     },
     addEventListener: (t, f) => ((oyentes[t] = oyentes[t] || []).push(f)),
     removeEventListener: (t, f) => (oyentes[t] = (oyentes[t] || []).filter((x) => x !== f)),
-    dispatchEvent: (e) => (oyentes[e.type] || []).forEach((f) => f(e)),
+    dispatchEvent: (e) => { if (!yo.cerrada) (oyentes[e.type] || []).forEach((f) => f(e)); },
     __METAS_NUBE_DE_PRUEBA__: { url: API, llavePublica: PUBLICA },
   };
   ventana.window = ventana;
@@ -86,14 +133,53 @@ export async function aparato(nombre) {
   vm.runInContext("Math.random = function () { throw new Error('Math.random prohibido en js/datos (regla 16)'); };", ctx);
   for (const s of SCRIPTS) vm.runInContext(fs.readFileSync(path.join(RAIZ, s), 'utf8'), ctx, { filename: s });
   const d = await ventana.MetasDatos.iniciar();
+  compartido.pestanas.push({ ventana });
 
   return {
     nombre, d, MetasDatos: ventana.MetasDatos,
-    sinSenal() { red.modo = 'sin_senal'; ventana.navigator.onLine = false; ventana.dispatchEvent({ type: 'offline' }); },
-    conSenal() { red.modo = 'normal'; ventana.navigator.onLine = true; ventana.dispatchEvent({ type: 'online' }); },
-    perderRespuestas(n) { red.perderSiguientes = n; },
+    sinSenal() { compartido.cambiarSenal('sin_senal'); },
+    conSenal() { compartido.cambiarSenal('normal'); },
+    perderRespuestas(n, solo) { red.perderSiguientes = n; red.perderSolo = solo || null; },
     demorar(ms) { red.demora = ms; },
+    // Cerrar la pestaña: deja de tener red, suelta sus candados y su canal.
+    cerrar() {
+      yo.cerrada = true;
+      compartido.candados.soltar(yo);
+      yo.canales.forEach((c) => { try { c.close(); } catch (e) { /* ya estaba cerrado */ } });
+      compartido.pestanas = compartido.pestanas.filter((p) => p.ventana !== ventana);
+    },
   };
+}
+
+function dispositivoCompartido() {
+  const { IDBFactory, IDBKeyRange } = requerir('fake-indexeddb');
+  const c = {
+    red: { modo: 'normal', demora: 0, perderSiguientes: 0, perderSolo: null },
+    idb: new IDBFactory(), IDBKeyRange,
+    almacenLocal: new Map(),
+    candados: candados(),
+    pestanas: [],
+  };
+  c.cambiarSenal = (modo) => {
+    c.red.modo = modo;
+    for (const p of c.pestanas) {
+      p.ventana.navigator.onLine = modo !== 'sin_senal';
+      p.ventana.dispatchEvent({ type: modo === 'sin_senal' ? 'offline' : 'online' });
+    }
+  };
+  return c;
+}
+
+export async function aparato(nombre) {
+  return pestana(nombre, dispositivoCompartido());
+}
+
+// Un aparato con varias pestañas: abrir() abre una más, que comparte todo
+// con las otras.
+export function dispositivo(nombre) {
+  const c = dispositivoCompartido();
+  let n = 0;
+  return { abrir: () => pestana(nombre + '-' + (++n), c) };
 }
 
 // ── La base, mirada desde afuera (como postgres, solo lectura) ────────────
