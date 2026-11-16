@@ -1439,47 +1439,6 @@ a { text-decoration: none; color: inherit; }
   border-radius: 20px;
 }
 
-/* Botón flotante discreto (Sticky pill para padres de Prebásica) */
-.btn-flotante-prebasica {
-  position: fixed;
-  bottom: calc(var(--nav-h, 68px) + 14px);
-  left: 14px;
-  z-index: 950;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
-  color: #ffffff;
-  border: 2px solid #ffedd5;
-  border-radius: 999px;
-  padding: 8px 16px 8px 12px;
-  font-family: inherit;
-  font-size: calc(0.88rem * var(--metas-fz, 1));
-  font-weight: 800;
-  box-shadow: 0 4px 16px rgba(194, 65, 12, 0.35);
-  cursor: pointer;
-  transition: transform .2s ease, box-shadow .2s ease, opacity .25s ease;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  max-width: calc(100vw - 28px);
-}
-.btn-flotante-prebasica:hover {
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 6px 20px rgba(194, 65, 12, 0.45);
-}
-.btn-flotante-prebasica:active {
-  transform: translateY(1px) scale(0.98);
-}
-.btn-flotante-prebasica-ico {
-  font-size: calc(1.25rem * var(--metas-fz, 1));
-  line-height: 1;
-}
-.btn-flotante-prebasica.oculto {
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(14px);
-}
-
 /* ====== EMPTY STATE ====== */
 .empty-state { text-align: center; padding: 48px 24px; color: var(--muted); }
 .empty-icon  { font-size: calc(44px * var(--metas-fz, 1)); margin-bottom: 12px; }

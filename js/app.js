@@ -2251,9 +2251,6 @@ function switchView(id) {
 
   const scroll = document.querySelector(`#${id} .view-scroll`);
   if (scroll) scroll.scrollTop = 0;
-  if (typeof actualizarVisibilidadBotonFlotantePrebasica === 'function') {
-    actualizarVisibilidadBotonFlotantePrebasica();
-  }
 }
 
 /* ─────────────────────────────────────────────
@@ -3241,30 +3238,6 @@ function toast(msg) {
 /* ==========================================================================
    ORIENTACIÓN Y RETORNO INTELIGENTE PARA FAMILIAS DE PREBÁSICA
    ========================================================================== */
-function actualizarVisibilidadBotonFlotantePrebasica() {
-  const btn = document.getElementById('btnFlotantePrebasica');
-  if (!btn || btn.style.display === 'none') return;
-  const viewInicio = document.getElementById('view-inicio');
-  const isInicioActivo = viewInicio && viewInicio.classList.contains('active');
-  if (!isInicioActivo) {
-    // En cualquier otra vista distinta a Inicio, mostrar siempre para volver rápido a Prebásica
-    btn.classList.remove('oculto');
-    return;
-  }
-  const zona = document.getElementById('zona-prebasica');
-  if (!zona) return;
-  const rect = zona.getBoundingClientRect();
-  const vh = window.innerHeight || document.documentElement.clientHeight || 600;
-  // Si zona-prebasica está visible en pantalla (con holgura), ocultar el botón flotante
-  const visible = (rect.top < vh - 40 && rect.bottom > 60);
-  if (visible) {
-    btn.classList.add('oculto');
-  } else {
-    btn.classList.remove('oculto');
-  }
-}
-window.actualizarVisibilidadBotonFlotantePrebasica = actualizarVisibilidadBotonFlotantePrebasica;
-
 function initPrebasicaPortalOrientation() {
   const urlParams = new URLSearchParams(window.location.search);
   const vieneDesdePrebasica = (urlParams.get('desde') === 'prebasica' || window.location.hash === '#zona-prebasica');
@@ -3337,48 +3310,6 @@ function initPrebasicaPortalOrientation() {
         window.history.replaceState({}, '', u.pathname + (u.search ? u.search : '') + (u.hash || '#zona-prebasica'));
       }
     } catch (_) {}
-  }
-
-  // 5. Botón flotante discreto (Sticky pill para familias)
-  const btnFlotante = document.getElementById('btnFlotantePrebasica');
-  if (btnFlotante) {
-    btnFlotante.style.display = 'inline-flex';
-
-    btnFlotante.onclick = function (e) {
-      e.preventDefault();
-      if (typeof switchView === 'function') {
-        switchView('view-inicio');
-      }
-      const targetZona = document.getElementById('zona-prebasica');
-      if (targetZona) {
-        targetZona.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        targetZona.classList.add('prebasica-section-highlight');
-        setTimeout(() => {
-          targetZona.classList.remove('prebasica-section-highlight');
-        }, 3000);
-      }
-    };
-
-    // Escuchar scroll del contenedor de view-inicio y de la ventana
-    const inicioScroll = document.querySelector('#view-inicio .view-scroll');
-    if (inicioScroll) {
-      inicioScroll.addEventListener('scroll', actualizarVisibilidadBotonFlotantePrebasica, { passive: true });
-    }
-    window.addEventListener('scroll', actualizarVisibilidadBotonFlotantePrebasica, { passive: true });
-    window.addEventListener('resize', actualizarVisibilidadBotonFlotantePrebasica, { passive: true });
-
-    // IntersectionObserver si está disponible
-    if (zona && 'IntersectionObserver' in window) {
-      try {
-        const obs = new IntersectionObserver(() => {
-          actualizarVisibilidadBotonFlotantePrebasica();
-        }, { threshold: [0, 0.2, 0.5, 0.8, 1.0] });
-        obs.observe(zona);
-      } catch (_) {}
-    }
-
-    // Comprobación inicial de visibilidad
-    setTimeout(actualizarVisibilidadBotonFlotantePrebasica, 300);
   }
 }
 window.initPrebasicaPortalOrientation = initPrebasicaPortalOrientation;
