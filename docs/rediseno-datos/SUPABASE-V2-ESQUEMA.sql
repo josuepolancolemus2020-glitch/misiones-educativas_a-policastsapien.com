@@ -322,16 +322,51 @@ create trigger auditoria_sin_update before update or delete on metas.auditoria
 create trigger auditoria_sin_truncate before truncate on metas.auditoria
   for each statement execute function metas.t_auditoria_inmutable();
 
+-- ── El dinero sale como TEXTO, siempre (rev. 6, R5-1) ─────────────────────
+-- JavaScript convierte todo número de JSON en un double: «150.00» llega como
+-- 150 y «0.10 + 0.20» deja de ser 0.30. Por eso la app nunca lee una columna
+-- de dinero como número: lee las vistas vd_* y v_*, las vf_* y las funciones,
+-- que devuelven el dinero como texto con dos decimales. Las columnas de
+-- dinero de las tablas ni siquiera se pueden leer directo (sección 5c).
+create or replace function metas._columnas_dinero(p_tabla text)
+returns text[] language sql immutable as $$
+  select case p_tabla
+           when 'pagos'              then array['monto']
+           when 'gastos'             then array['monto']
+           when 'gastos_docente'     then array['monto']
+           when 'reembolsos'         then array['monto']
+           when 'convocatoria_pagos' then array['monto']
+           when 'colectas'           then array['monto_sugerido']
+           when 'colecta_exenciones' then array['monto_aplicable']
+           when 'bienes'             then array['valor', 'reembolso_monto']
+           else '{}'::text[] end
+$$;
+
+-- «150.00», «0.00», null: siempre dos decimales.
+create or replace function metas.monto_texto(p numeric)
+returns text language sql immutable as $$
+  select round(p, 2)::text
+$$;
+
+-- Una fila en JSON con su dinero como texto (para la auditoría, que el
+-- docente sí lee).
+create or replace function metas._json_dinero_texto(p_tabla text, j jsonb)
+returns jsonb language sql immutable as $$
+  select coalesce(j || (select jsonb_object_agg(k, to_jsonb(metas.monto_texto((j ->> k)::numeric)))
+                          from unnest(metas._columnas_dinero(p_tabla)) k
+                         where jsonb_typeof(j -> k) = 'number'), j)
+$$;
+
 create or replace function metas.t_auditar()
 returns trigger language plpgsql security definer set search_path = metas, pg_temp as $$
 declare
   v_antes   jsonb;
-  v_despues jsonb := to_jsonb(new);
+  v_despues jsonb := metas._json_dinero_texto(tg_table_name, to_jsonb(new));
   v_campos  text[];
   v_accion  text := 'crear';
 begin
   if tg_op = 'UPDATE' then
-    v_antes  := to_jsonb(old);
+    v_antes  := metas._json_dinero_texto(tg_table_name, to_jsonb(old));
     v_accion := case when old.deleted_at is null and new.deleted_at is not null
                      then 'borrar' else 'editar' end;
     select array_agg(k order by k) into v_campos
@@ -1404,7 +1439,10 @@ create or replace function metas.t_numerar_recibo()
 returns trigger language plpgsql security definer set search_path = metas, pg_temp as $$
 declare
   v_pre    text;
-  v_anio   smallint := (extract(year from now() at time zone 'America/Tegucigalpa')::int % 100);
+  -- El año del recibo es el de la FECHA DEL PAGO, no el del reloj del
+  -- servidor (rev. 6, R5-3): un pago del 20 de diciembre anotado el 3 de
+  -- enero lleva RC-26, y cuenta en el correlativo de ese año.
+  v_anio   smallint := (extract(year from new.fecha)::int % 100);
   v_n      integer;
   v_intento int := 0;
 begin
@@ -2454,7 +2492,10 @@ to authenticated;
 --   pagado     = suma de sus pagos activos (abonos incluidos).
 --   falta      = lo que le falta: nunca negativo; 0 si está exento.
 --   pago_de_mas= lo que dio por encima de lo aplicable (solo si sigue en el aula).
-create or replace view metas.v_colecta_alumnos with (security_invoker = true) as
+-- Las vistas de cálculo (_calc_*) trabajan con números y son internas: nadie
+-- de la app las lee. Las que lee la app (v_*) salen al final de la sección,
+-- con el dinero como texto y filtradas por dueño (5c).
+create or replace view metas._calc_colecta_alumnos as
 select x.*,
        greatest(x.aplicable - x.pagado, 0)                                       as falta,
        case when x.sigue then greatest(x.pagado - x.aplicable, 0) else 0 end     as pago_de_mas,
@@ -2467,7 +2508,7 @@ select x.*,
          else 'pago_de_mas'
        end                                                                       as situacion
   from (
-    select c.id as colecta_id, c.aula_id, a.id as alumno_id, a.num_lista, a.nombre_completo, a.estado,
+    select c.owner, c.id as colecta_id, c.aula_id, a.id as alumno_id, a.num_lista, a.nombre_completo, a.estado,
            (a.estado in ('activo', 'ingreso'))                 as sigue,
            (e.id is not null)                                  as exento,
            e.monto_aplicable,
@@ -2487,8 +2528,8 @@ select x.*,
      where c.deleted_at is null
   ) x;
 
-create or replace view metas.v_colectas_resumen with (security_invoker = true) as
-select c.id as colecta_id, c.aula_id, c.concepto, c.fecha, c.estado, c.monto_sugerido,
+create or replace view metas._calc_colectas_resumen as
+select c.owner, c.id as colecta_id, c.aula_id, c.concepto, c.fecha, c.estado, c.monto_sugerido,
        coalesce(t.esperados, 0)                                 as esperados,
        coalesce(t.meta, 0)                                      as meta,
        coalesce(r.recaudado, 0)                                 as recaudado,      -- TODO pago activo, aunque el alumno ya no esté
@@ -2504,7 +2545,7 @@ select c.id as colecta_id, c.aula_id, c.concepto, c.fecha, c.estado, c.monto_sug
            sum(v.falta) filter (where v.sigue)                   as falta_total,
            sum(v.pago_de_mas)                                    as pago_de_mas_total,
            count(*) filter (where v.pagado > 0)                  as pagaron
-      from metas.v_colecta_alumnos v where v.colecta_id = c.id) t on true
+      from metas._calc_colecta_alumnos v where v.colecta_id = c.id) t on true
   left join lateral (
     select sum(p.monto) as recaudado from metas.pagos p
      where p.colecta_id = c.id and p.deleted_at is null) r on true
@@ -2520,8 +2561,8 @@ select c.id as colecta_id, c.aula_id, c.concepto, c.fecha, c.estado, c.monto_sug
 --           perdido (lo decide él; el cálculo no lo inventa).
 --   dias_espera: mientras falte algo, desde la fecha del gasto hasta hoy;
 --           cuando ya está todo, hasta la fecha del último reembolso.
-create or replace view metas.v_gastos_docente with (security_invoker = true) as
-select g.id as gasto_id, g.aula_id, g.fecha, g.tipo, g.concepto, g.cobrar_a, g.tiene_recibo, g.escuela,
+create or replace view metas._calc_gastos_docente as
+select g.owner, g.id as gasto_id, g.aula_id, g.fecha, g.tipo, g.concepto, g.cobrar_a, g.tiene_recibo, g.escuela,
        g.monto,
        coalesce(r.reembolsado, 0)                                 as reembolsado,
        greatest(g.monto - coalesce(r.reembolsado, 0), 0)          as falta,
@@ -2538,22 +2579,103 @@ select g.id as gasto_id, g.aula_id, g.fecha, g.tipo, g.concepto, g.cobrar_a, g.t
       from metas.reembolsos x where x.gasto_id = g.id and x.deleted_at is null) r on true
  where g.deleted_at is null;
 
-create or replace view metas.v_gastos_docente_resumen with (security_invoker = true) as
-select cobrar_a,
+create or replace view metas._calc_gastos_docente_resumen as
+select owner, cobrar_a,
        count(*)                                                    as gastos,
        sum(monto)                                                  as gastado,
        sum(reembolsado)                                            as reembolsado,
        sum(falta) filter (where estado <> 'no_se_cobrara')         as por_cobrar,
        max(dias_espera) filter (where estado in ('por_cobrar', 'reembolsado_parcial')) as espera_mas_larga_dias,
        round(avg(dias_espera) filter (where estado = 'reembolsado_total'), 0)         as espera_promedio_dias
-  from metas.v_gastos_docente
- group by cobrar_a;
+  from metas._calc_gastos_docente
+ group by owner, cobrar_a;
 
 -- Inventario: totales por centro y propietario (calculados).
-create or replace view metas.v_inventario_resumen with (security_invoker = true) as
-select centro, propietario, count(*) as renglones, sum(cantidad) as unidades, sum(valor) as valor
+create or replace view metas._calc_inventario_resumen as
+select owner, centro, propietario, count(*) as renglones, sum(cantidad) as unidades, sum(valor) as valor
   from metas.bienes where deleted_at is null
- group by centro, propietario;
+ group by owner, centro, propietario;
+
+-- ── 5c. Dinero como texto para la app (rev. 6, R5-1) ──────────────────────
+-- Vista con las mismas columnas que la de cálculo (o la tabla), el dinero
+-- pasado a texto, sin la columna owner, y solo las filas de la sesión.
+-- No es security_invoker: corre con el dueño (que salta la RLS) porque las
+-- columnas de dinero ya no se pueden leer con la sesión; por eso el filtro
+-- por dueño y cuenta de docente va escrito aquí, igual que en la RLS, y la
+-- vista es security_barrier para que nada de afuera se evalúe antes.
+create or replace function metas._vista_dinero_texto(p_origen text, p_vista text, p_dinero text[])
+returns void language plpgsql as $$
+declare v_sel text;
+begin
+  select string_agg(case when c.column_name = any (p_dinero)
+                         then format('metas.monto_texto(o.%1$I) as %1$I', c.column_name)
+                         else format('o.%I', c.column_name) end, ', ' order by c.ordinal_position)
+    into v_sel
+    from information_schema.columns c
+   where c.table_schema = 'metas' and c.table_name = p_origen and c.column_name <> 'owner';
+  execute format('create or replace view metas.%I with (security_barrier = true) as '
+                 'select %s from metas.%I o where o.owner = (select auth.uid()) and (select metas.es_docente())',
+                 p_vista, v_sel, p_origen);
+  execute format('revoke all on metas.%I from public, anon, authenticated', p_vista);
+  execute format('grant select on metas.%I to authenticated', p_vista);
+end $$;
+
+select metas._vista_dinero_texto('_calc_colecta_alumnos', 'v_colecta_alumnos',
+                                 array['monto_aplicable', 'aplicable', 'pagado', 'falta', 'pago_de_mas']);
+select metas._vista_dinero_texto('_calc_colectas_resumen', 'v_colectas_resumen',
+                                 array['monto_sugerido', 'meta', 'recaudado', 'falta_total', 'pago_de_mas_total', 'gastado', 'saldo']);
+select metas._vista_dinero_texto('_calc_gastos_docente', 'v_gastos_docente',
+                                 array['monto', 'reembolsado', 'falta']);
+select metas._vista_dinero_texto('_calc_gastos_docente_resumen', 'v_gastos_docente_resumen',
+                                 array['gastado', 'reembolsado', 'por_cobrar']);
+select metas._vista_dinero_texto('_calc_inventario_resumen', 'v_inventario_resumen', array['valor']);
+revoke all on metas._calc_colecta_alumnos, metas._calc_colectas_resumen, metas._calc_gastos_docente,
+              metas._calc_gastos_docente_resumen, metas._calc_inventario_resumen
+  from public, anon, authenticated;
+
+-- Las tablas con dinero: la sesión ya no lee esas columnas (un «select *»
+-- falla) y lee la fila completa en vd_<tabla>. Además salen de la
+-- publicación de Realtime, cuyo evento traería el número: en su lugar, un
+-- toque SIN DATOS por el canal privado del docente (t_tocar_docente), y la
+-- app vuelve a leer la fila en vd_<tabla>. Al insertar o editar por la API
+-- (bienes), con «Prefer: return=minimal».
+create or replace function metas.t_tocar_docente()
+returns trigger language plpgsql security definer set search_path = metas, pg_temp as $$
+begin
+  perform realtime.send(jsonb_build_object('tabla', tg_table_name, 'id', new.id,
+                                           'aula_id', to_jsonb(new) ->> 'aula_id'),
+                        'cambio', 'docente:' || new.owner::text, true);
+  return null;
+end $$;
+
+create or replace function metas._tabla_dinero_texto(p_tabla text)
+returns void language plpgsql as $$
+declare v_cols text;
+begin
+  select string_agg(quote_ident(c.column_name), ', ' order by c.ordinal_position)
+    into v_cols
+    from information_schema.columns c
+   where c.table_schema = 'metas' and c.table_name = p_tabla
+     and c.column_name <> all (metas._columnas_dinero(p_tabla));
+  execute format('revoke select on metas.%I from authenticated', p_tabla);
+  execute format('grant select (%s) on metas.%I to authenticated', v_cols, p_tabla);
+  perform metas._vista_dinero_texto(p_tabla, 'vd_' || p_tabla, metas._columnas_dinero(p_tabla));
+  execute format('alter publication supabase_realtime drop table metas.%I', p_tabla);
+  execute format('create trigger %I after insert or update on metas.%I for each row execute function metas.t_tocar_docente()',
+                 p_tabla || '_tocar_docente', p_tabla);
+end $$;
+
+select metas._tabla_dinero_texto(t)
+  from unnest(array['pagos', 'gastos', 'gastos_docente', 'reembolsos', 'convocatoria_pagos',
+                    'colectas', 'colecta_exenciones', 'bienes']) t;
+revoke all on function metas._vista_dinero_texto(text, text, text[]), metas._tabla_dinero_texto(text)
+  from public, anon, authenticated;
+grant execute on function metas.monto_texto(numeric) to authenticated;
+
+-- El canal privado del docente: solo él, con su cuenta de docente.
+create policy docentes_escuchan_su_canal on realtime.messages
+  for select to authenticated
+  using (realtime.topic() = 'docente:' || (select auth.uid())::text and (select metas.es_docente()));
 
 -- Cuándo toca la próxima acta de cada centro: la primera en cuanto hay bienes;
 -- las siguientes, 3 meses después de la última.
@@ -2641,9 +2763,7 @@ select aula_id, nombre_norm, array_agg(id order by num_lista) as alumnos, count(
   from metas.alumnos where deleted_at is null
  group by aula_id, nombre_norm having count(*) > 1;
 
-grant select on metas.v_colecta_alumnos, metas.v_colectas_resumen,
-                metas.v_gastos_docente, metas.v_gastos_docente_resumen,
-                metas.v_inventario_resumen, metas.v_proxima_acta, metas.v_bien_historia,
+grant select on metas.v_proxima_acta, metas.v_bien_historia,
                 metas.v_inasistencias_periodo, metas.v_notas_alumno, metas.v_evaluacion_resultado,
                 metas.v_eleccion_conteo, metas.v_alumnos_sin_identidad, metas.v_alumnos_homonimos
   to authenticated;

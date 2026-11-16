@@ -24,9 +24,11 @@ corte (pausa aceptada).
 ## 8.1 Corte 1: dinero, alumnos, notas, asistencia, controles, avisos y conducta
 
 **Empezar** (aprobado): en la rama, con la capa A en verde
-(`pruebas-capa-a/corre.sh`, hoy 236 pruebas: S1 a S9, M1 a M16, CC0 a CC12,
-F1 a F6, B4, K0 a K12, convivencia V1 a V15, N1, N2, C5). Cómo correrla
-contra `supabase start`: `06`, 6.6.
+(`pruebas-capa-a/corre.sh`, hoy 271 pruebas). Preparación hecha (rev. 6):
+`_dev/supabase-local/` con la CLI fija y `corre-supabase.sh`, las tres
+funciones de borde con su capa A+, y las capas B y C escritas antes del
+código (`06`, 6.6 y 6.7). Lo siguiente es el código: `js/datos/` hasta poner
+en verde la capa B, y la pantalla hasta poner en verde la capa C.
 
 **Publicar**: solo con N1 y N2 resueltos (lo están en la revisión 4) y la
 misma capa A en verde **contra `supabase start`**.

@@ -8,6 +8,8 @@
 # Necesita los binarios de PostgreSQL 16 (initdb, pg_ctl, psql) y el usuario
 # del sistema «postgres». Crea la base en una carpeta temporal, la usa y la
 # borra al terminar. Sale con error si alguna prueba falla.
+# La misma capa contra `supabase start` (Auth y Realtime de verdad):
+#   bash _dev/supabase-local/corre-supabase.sh
 # ============================================================================
 set -euo pipefail
 
@@ -36,9 +38,11 @@ como_pg "'$BIN/createdb' -h '$TMP' -p $PUERTO -U postgres metas_prueba"
 cp "$AQUI"/*.sql "$DISENO"/SUPABASE-V2-*.sql "$TMP"/
 chown postgres "$TMP"/*.sql
 
-echo "▶ Supabase simulado y archivo viejo"
-psql_pg -f "'$TMP/00-supabase-simulado.sql'"
+echo "▶ Plataforma Supabase simulada, modelo viejo y sus datos ficticios"
+psql_pg -f "'$TMP/00-plataforma-simulada.sql'"
+psql_pg -f "'$TMP/00-modelo-viejo.sql'"
 psql_pg -f "'$TMP/01-datos-viejos.sql'"
+psql_pg -f "'$TMP/01-usuarios-auth-simulados.sql'"
 echo "▶ SUPABASE-V2-VINCULACION.sql"
 psql_pg -f "'$TMP/SUPABASE-V2-VINCULACION.sql'"
 psql_pg -f "'$TMP/02-vincular-antes-del-paso1.sql'"

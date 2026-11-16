@@ -186,18 +186,18 @@ select metas.pago_crear(gen_random_uuid(), gen_random_uuid(), :c1, :fito, '70.00
 select metas.pago_crear(gen_random_uuid(), gen_random_uuid(), :c1, :eva,  '30.00', '2027-02-02');
 select metas.pago_crear(gen_random_uuid(), gen_random_uuid(), :c1, :gabi, '20.00', '2027-02-02');
 update metas.alumnos set estado = 'trasladado' where id = :eva;
-select prueba.ok((select aplicable = 0 and falta = 0 and situacion = 'no_corresponde' from metas.v_colecta_alumnos
+select prueba.ok((select aplicable = '0.00' and falta = '0.00' and situacion = 'no_corresponde' from metas.v_colecta_alumnos
                    where colecta_id = :c1 and alumno_id = :carla), 'F1 exento total: no le falta nada');
-select prueba.ok((select aplicable = 25 and pagado = 10 and falta = 15 from metas.v_colecta_alumnos
+select prueba.ok((select aplicable = '25.00' and pagado = '10.00' and falta = '15.00' from metas.v_colecta_alumnos
                    where colecta_id = :c1 and alumno_id = :dani), 'F2 exento parcial: falta 15');
-select prueba.ok((select falta = 0 and pago_de_mas = 20 and situacion = 'pago_de_mas' from metas.v_colecta_alumnos
+select prueba.ok((select falta = '0.00' and pago_de_mas = '20.00' and situacion = 'pago_de_mas' from metas.v_colecta_alumnos
                    where colecta_id = :c1 and alumno_id = :fito), 'F3 pagó de más: falta 0, pago de más 20');
-select prueba.ok((select falta = 0 and situacion = 'ya_no_esta' from metas.v_colecta_alumnos
+select prueba.ok((select falta = '0.00' and situacion = 'ya_no_esta' from metas.v_colecta_alumnos
                    where colecta_id = :c1 and alumno_id = :eva), 'F4 trasladado: no le falta, ya no está');
-select prueba.ok((select falta = 0 and pago_de_mas = 20 from metas.v_colecta_alumnos
+select prueba.ok((select falta = '0.00' and pago_de_mas = '20.00' from metas.v_colecta_alumnos
                    where colecta_id = :c1 and alumno_id = :gabi), 'F5 exento que igual pagó: pago de más 20');
-select prueba.ok((select esperados = 4 and meta = 175 and recaudado = 180 and falta_total = 65
-                          and pago_de_mas_total = 40 and pagaron = 5
+select prueba.ok((select esperados = 4 and meta = '175.00' and recaudado = '180.00' and falta_total = '65.00'
+                          and pago_de_mas_total = '40.00' and pagaron = 5
                     from metas.v_colectas_resumen where colecta_id = :c1),
                  'F resumen: esperados 4, meta 175, recaudado 180 (incluye al trasladado), falta 65');
 reset role;
@@ -319,7 +319,7 @@ select prueba.ok((metas.colecta_cerrar(:c4, gen_random_uuid()) ->> 'ya_estaba'):
 select prueba.ok((metas.pago_corregir('00000000-0000-0000-0000-00000000e401', '{"monto":"20.00","fecha":"2027-03-04"}',
                                       gen_random_uuid(), gen_random_uuid(), '25.00', '2027-03-04') ->> 'motivo') = 'colecta_cerrada',
                  'M16 corregir un pago de una colecta cerrada → «esa colecta ya está cerrada»');
-select prueba.ok((select count(*) = 1 and bool_and(deleted_at is null and monto = 20.00) from metas.pagos
+select prueba.ok((select count(*) = 1 and bool_and(deleted_at is null and monto = '20.00') from metas.vd_pagos
                    where colecta_id = '00000000-0000-0000-0000-0000000c0004'),
                  'M16 el pago sigue igual: ni anulado ni reemplazado');
 
@@ -424,7 +424,7 @@ select metas.pago_crear(gen_random_uuid(), gen_random_uuid(), :c2, :beto, '20.00
                         p_conocidos => array(select id from metas.pagos where colecta_id = :c2 and alumno_id = :beto and deleted_at is null));
 select metas.pago_crear(gen_random_uuid(), gen_random_uuid(), :c2, :beto, '20.00', '2027-03-03',
                         p_conocidos => array(select id from metas.pagos where colecta_id = :c2 and alumno_id = :beto and deleted_at is null));
-select prueba.ok((select pagado = 60 and pagos = 3 from metas.v_colecta_alumnos where colecta_id = :c2 and alumno_id = :beto),
+select prueba.ok((select pagado = '60.00' and pagos = 3 from metas.v_colecta_alumnos where colecta_id = :c2 and alumno_id = :beto),
                  'M4 tres abonos de 20: pagado 60, tres pagos');
 select prueba.ok((select count(distinct recibo) = 3 from metas.pagos where colecta_id = :c2 and alumno_id = :beto),
                  'M4 cada abono con su recibo');
@@ -460,12 +460,24 @@ begin
                              '00000000-0000-0000-0000-0000000b0006', '0.10', '2027-02-10', p_son_distintos => true);
   end loop;
 end $$;
-select prueba.ok((select recaudado = 100.00 from metas.v_colectas_resumen where colecta_id = :c3), 'M14 1 000 × 0.10 = 100.00 exacto');
+select prueba.ok((select recaudado = '100.00' from metas.v_colectas_resumen where colecta_id = :c3), 'M14 1 000 × 0.10 = 100.00 exacto');
 reset role;
 select prueba.ok((select count(distinct recibo) = count(*) and max(split_part(recibo, '-', 4)::int) - min(split_part(recibo, '-', 4)::int) + 1 = count(*)
                     from metas.pagos where owner = '00000000-0000-0000-0000-00000000000a'),
                  'R1 recibos únicos y correlativos sin huecos');
 select prueba.ok((select bool_and(recibo ~ '^RC-[0-9]{2}-[A-HJ-NP-Z2-9]{4}-[0-9]{4}$') from metas.pagos), 'R1 formato RC-AA-SSSS-NNNN');
+-- R7 (R5-3): el año del recibo sale de la FECHA del pago, no del reloj
+select prueba.como('A');
+set role authenticated;
+select metas.pago_crear('00000000-0000-0000-0000-00000000e701', gen_random_uuid(), :c2, :gabi, '5.00', '2026-12-20');
+select metas.pago_crear('00000000-0000-0000-0000-00000000e702', gen_random_uuid(), :c2, :gabi, '5.00', '2028-01-05', p_son_distintos => true);
+reset role;
+select prueba.ok((select recibo ~ '^RC-26-[A-HJ-NP-Z2-9]{4}-0001$' from metas.pagos where id = '00000000-0000-0000-0000-00000000e701'),
+                 'R7 un pago del 20 de diciembre de 2026 lleva RC-26, y abre el correlativo de ese año');
+select prueba.ok((select recibo ~ '^RC-28-[A-HJ-NP-Z2-9]{4}-0001$' from metas.pagos where id = '00000000-0000-0000-0000-00000000e702'),
+                 'R7 uno de 2028 lleva RC-28, aunque el servidor esté en otro año');
+select prueba.ok((select count(*) = 0 from metas.pagos where fecha between '2027-01-01' and '2027-12-31' and recibo not like 'RC-27-%'),
+                 'R7 los de 2027 siguen en RC-27');
 
 -- ════════════════════════════════════════════════════════════════════════════
 -- B · Borrado protegido (incluida la carrera con dos sesiones de verdad)
@@ -577,7 +589,7 @@ select prueba.falla($$select metas.alumno_crear(gen_random_uuid(), gen_random_uu
                     'A6 identidad hondureña de 12 dígitos rechazada', '23514');
 update metas.alumnos set num_lista = 40 where id = :ana;
 select prueba.ok((select count(*) = 1 from metas.familias where alumno_id = :ana and deleted_at is null)
-             and (select pagado = 50 from metas.v_colecta_alumnos where colecta_id = :c1 and alumno_id = :ana),
+             and (select pagado = '50.00' from metas.v_colecta_alumnos where colecta_id = :c1 and alumno_id = :ana),
                  'A8 cambiar el número de lista no mueve familia ni pagos');
 reset role;
 
@@ -591,7 +603,7 @@ select metas.gasto_docente_crear('00000000-0000-0000-0000-0000000e0201', gen_ran
 select metas.reembolso_crear(gen_random_uuid(), gen_random_uuid(), '00000000-0000-0000-0000-0000000e0201', '100.00', '2027-02-10');
 select metas.reembolso_crear(gen_random_uuid(), gen_random_uuid(), '00000000-0000-0000-0000-0000000e0201', '150.00', '2027-02-20',
                              p_conocidos => array(select id from metas.reembolsos where gasto_id = '00000000-0000-0000-0000-0000000e0201'));
-select prueba.ok((select estado = 'reembolsado_parcial' and falta = 50 from metas.v_gastos_docente
+select prueba.ok((select estado = 'reembolsado_parcial' and falta = '50.00' from metas.v_gastos_docente
                    where gasto_id = '00000000-0000-0000-0000-0000000e0201'), 'G2 reembolsado parcial, falta 50 (calculado)');
 select prueba.ok((metas.gasto_docente_editar('00000000-0000-0000-0000-0000000e0201', '{"monto":"300.00"}', '{"monto":"200.00"}',
                                              gen_random_uuid()) ->> 'pregunta') = 'monto_menor_que_reembolsado',
@@ -604,7 +616,7 @@ insert into t values ('g9', metas.gasto_docente_editar('00000000-0000-0000-0000-
 select prueba.ok((select v ->> 'pregunta' = 'gasto_sin_base' and v -> 'actual' ->> 'monto' = '300.00'
                          and v -> 'este' ->> 'monto' = '280.00' from t where k = 'g9'),
                  'G9 sin monto base → pregunta «¿L 300.00 o L 280.00?»');
-select prueba.ok((select monto = 300.00 from metas.gastos_docente where id = '00000000-0000-0000-0000-0000000e0201'),
+select prueba.ok((select monto = '300.00' from metas.vd_gastos_docente where id = '00000000-0000-0000-0000-0000000e0201'),
                  'G9 mientras no responda, el monto no cambia');
 select prueba.ok((metas.gasto_docente_editar('00000000-0000-0000-0000-0000000e0201', '{"fecha":"ayer"}', '{"fecha":"2027-02-02"}',
                                              gen_random_uuid()) ->> 'pregunta') = 'gasto_sin_base',
@@ -666,23 +678,23 @@ select prueba.ok((select bool_and(recaudado is not null) and count(*) >= 3 from 
 reset role;
 select prueba.como('padre2');
 set role authenticated;
-select prueba.ok((select aplicable = 25 and falta = 15 from metas.vf_colectas where colecta_id = :c1), 'F6 padre de exento parcial ve falta 15');
+select prueba.ok((select aplicable = '25.00' and falta = '15.00' from metas.vf_colectas where colecta_id = :c1), 'F6 padre de exento parcial ve falta 15');
 reset role;
 select prueba.como('padre3');
 set role authenticated;
-select prueba.ok((select aplicable = 0 and falta = 0 and situacion = 'ya_no_esta' from metas.vf_colectas where colecta_id = :c1),
+select prueba.ok((select aplicable = '0.00' and falta = '0.00' and situacion = 'ya_no_esta' from metas.vf_colectas where colecta_id = :c1),
                  'F6/P5 padre de alumna trasladada: no le corresponde nada');
 reset role;
 -- P3: el docente anula un pago → toque en el canal de esa familia
 select count(*) as antes from realtime.messages
- where topic = 'familia:' || (select id from metas.familias where alumno_id = '00000000-0000-0000-0000-0000000b0001') \gset
+ where topic = 'acceso:' || (select id from metas.familia_accesos where auth_uid = '00000000-0000-0000-0000-0000000000f1') \gset
 select prueba.como('A');
 set role authenticated;
 select metas.pago_anular((select id from metas.pagos where colecta_id = :c1 and alumno_id = :ana and deleted_at is null),
                          'devuelto a la familia', gen_random_uuid());
 reset role;
 select prueba.ok((select count(*) > :antes from realtime.messages
-                   where topic = 'familia:' || (select id from metas.familias where alumno_id = '00000000-0000-0000-0000-0000000b0001')),
+                   where topic = 'acceso:' || (select id from metas.familia_accesos where auth_uid = '00000000-0000-0000-0000-0000000000f1')),
                  'P3 anular un pago avisa al canal de esa familia');
 select prueba.como('padre1');
 set role authenticated;
@@ -739,7 +751,7 @@ select prueba.como('padre1');
 set role authenticated;
 select prueba.ok((select count(*) from metas.familia_alumnos() x where x = '00000000-0000-0000-0000-0000000b0001') = 0,
                  'K9 vencida la clave vieja, ese teléfono deja de ver a Ana');
-select prueba.ok((select count(*) = 1 and bool_and(not metas.familia_canal_ok('familia:' || familia_id::text))
+select prueba.ok((select count(*) = 1 and bool_and(not metas.familia_canal_ok('acceso:' || id::text))
                     from metas.familia_accesos where clave_usada = '1K7QM'),
                  'K9 y deja de escuchar su canal');
 reset role;
@@ -747,7 +759,7 @@ select prueba.como('padre3');
 set role authenticated;
 select prueba.ok((select count(*) from metas.familia_alumnos() x where x = '00000000-0000-0000-0000-0000000b0001') = 1,
                  'K9 quien entró con la tira nueva sigue viendo');
-select prueba.ok((select count(*) = 1 and bool_and(metas.familia_canal_ok('familia:' || familia_id::text))
+select prueba.ok((select count(*) = 1 and bool_and(metas.familia_canal_ok('acceso:' || id::text))
                     from metas.familia_accesos where clave_usada = :'clave_ana_nueva'),
                  'K9 y sigue escuchando el canal de su familia');
 reset role;
@@ -759,9 +771,36 @@ reset role;
 set role service_role;
 select prueba.ok((metas.familia_vincular('00000000-0000-0000-0000-0000000000f1', '1-K7QM', 'ip-k9') ->> 'motivo') = 'clave_vencida',
                  'K9 la clave vieja ya no vincula: «pida la tira nueva»');
+reset role;
+select count(*) as cambios_viejo from realtime.messages
+ where topic = 'acceso:' || (select id from metas.familia_accesos where auth_uid = '00000000-0000-0000-0000-0000000000f2'
+                                and clave_usada = '1K7QM') and event = 'cambio' \gset
+select prueba.ok((select count(*) = 1 from realtime.messages m join metas.familia_accesos fa on m.topic = 'acceso:' || fa.id::text
+                   where fa.auth_uid = '00000000-0000-0000-0000-0000000000f1' and fa.clave_usada = '1K7QM' and m.event = 'cerrar'),
+                 'K13 al vencer, el teléfono con la clave vieja recibe «cerrar» una sola vez por su canal');
+set role service_role;
 select prueba.ok((metas.familia_vincular('00000000-0000-0000-0000-0000000000f1', :'clave_ana_nueva', 'ip-k9') ->> 'ok')::boolean,
                  'K9 con la tira nueva vuelve a entrar');
 reset role;
+select prueba.como('padre1');
+set role authenticated;
+select prueba.ok((select count(*) from metas.familia_alumnos() x where x = '00000000-0000-0000-0000-0000000b0001') = 1,
+                 'K9 y de verdad vuelve a ver a Ana (el vínculo pasó a la clave nueva)');
+reset role;
+-- K13: un cambio de Ana le llega a quien tiene clave vigente y NO al teléfono
+-- de padre2, que sigue con la vieja aunque no se haya desconectado
+select prueba.como('A');
+set role authenticated;
+update metas.alumnos set num_lista = 41 where id = :ana;
+reset role;
+select prueba.ok((select count(*) from realtime.messages
+                   where topic = 'acceso:' || (select id from metas.familia_accesos where auth_uid = '00000000-0000-0000-0000-0000000000f2'
+                                                  and clave_usada = '1K7QM') and event = 'cambio') = :cambios_viejo,
+                 'K13 al teléfono con la clave vencida ya no le llega ningún toque');
+select prueba.ok((select count(*) > 0 from realtime.messages m join metas.familia_accesos fa on m.topic = 'acceso:' || fa.id::text
+                   where fa.auth_uid = '00000000-0000-0000-0000-0000000000f3' and fa.clave_usada = :'clave_ana_nueva'
+                     and m.event = 'cambio' and m.inserted_at > now() - interval '1 minute'),
+                 'K13 al teléfono con la tira nueva sí');
 select prueba.ok((select clave = '1K7QM' from metas.familias where alumno_id = :ana),
                  'K9 en ningún momento se cambió la clave entregada');
 -- R4-1: pasado el paso 4, el alta de una familia ya no conserva una clave vieja
@@ -779,13 +818,13 @@ reset role;
 -- R4-5: el canal en vivo solo mientras el alumno siga activo
 select prueba.como('padre3');
 set role authenticated;
-select prueba.ok((select count(*) = 1 and bool_and(not metas.familia_canal_ok('familia:' || familia_id::text))
+select prueba.ok((select count(*) = 1 and bool_and(not metas.familia_canal_ok('acceso:' || id::text))
                     from metas.familia_accesos where clave_usada = :'clave_eva'),
                  'K12 alumna trasladada: su familia ya no escucha el canal');
 reset role;
 select prueba.como('padre2');
 set role authenticated;
-select prueba.ok((select count(*) = 1 and bool_and(metas.familia_canal_ok('familia:' || familia_id::text))
+select prueba.ok((select count(*) = 1 and bool_and(metas.familia_canal_ok('acceso:' || id::text))
                     from metas.familia_accesos where clave_usada = :'clave_dani'),
                  'K12 alumno activo: su familia escucha el canal');
 reset role;
@@ -795,10 +834,116 @@ update metas.alumnos set estado = 'retirado' where id = :dani;
 reset role;
 select prueba.como('padre2');
 set role authenticated;
-select prueba.ok((select count(*) = 1 and bool_and(not metas.familia_canal_ok('familia:' || familia_id::text))
+select prueba.ok((select count(*) = 1 and bool_and(not metas.familia_canal_ok('acceso:' || id::text))
                     from metas.familia_accesos where clave_usada = :'clave_dani'),
                  'K12 retirado: su familia deja de escuchar el canal');
 reset role;
+select prueba.ok((select count(*) = 1 from realtime.messages m join metas.familia_accesos fa on m.topic = 'acceso:' || fa.id::text
+                   where fa.clave_usada = :'clave_dani' and m.event = 'cerrar'),
+                 'K14 al retirarlo, el teléfono conectado recibe «cerrar» al momento');
+select count(*) as toques_dani from realtime.messages m join metas.familia_accesos fa on m.topic = 'acceso:' || fa.id::text
+ where fa.clave_usada = :'clave_dani' and m.event = 'cambio' \gset
+select prueba.como('A');
+set role authenticated;
+update metas.alumnos set num_lista = 44 where id = :dani;
+reset role;
+select prueba.ok((select count(*) from realtime.messages m join metas.familia_accesos fa on m.topic = 'acceso:' || fa.id::text
+                   where fa.clave_usada = :'clave_dani' and m.event = 'cambio') = :toques_dani,
+                 'K14 y ningún toque más, aunque siga conectado');
+-- K15: el padre se desvincula → «cerrar» a ese teléfono
+select prueba.como('padre3');
+set role authenticated;
+select metas.familia_desvincular((select familia_id from metas.familia_accesos where clave_usada = :'clave_eva'));
+reset role;
+select prueba.ok((select count(*) = 1 from realtime.messages m join metas.familia_accesos fa on m.topic = 'acceso:' || fa.id::text
+                   where fa.clave_usada = :'clave_eva' and m.event = 'cerrar'),
+                 'K15 desvincularse manda «cerrar» a ese teléfono');
+
+-- ════════════════════════════════════════════════════════════════════════════
+-- D · El dinero sale como texto (R5-1)
+-- ════════════════════════════════════════════════════════════════════════════
+select prueba.como('A');
+set role authenticated;
+select prueba.falla($$select monto from metas.pagos$$,                     'D1 la columna monto de pagos no se lee directo', '42501');
+select prueba.falla($$select * from metas.pagos$$,                         'D1 ni con «select *»', '42501');
+select prueba.falla($$select monto from metas.gastos$$,                    'D1 gastos tampoco', '42501');
+select prueba.falla($$select monto from metas.gastos_docente$$,            'D1 gastos del docente tampoco', '42501');
+select prueba.falla($$select monto from metas.reembolsos$$,                'D1 reembolsos tampoco', '42501');
+select prueba.falla($$select monto from metas.convocatoria_pagos$$,        'D1 pagos de convocatoria tampoco', '42501');
+select prueba.falla($$select monto_sugerido from metas.colectas$$,         'D1 monto sugerido tampoco', '42501');
+select prueba.falla($$select monto_aplicable from metas.colecta_exenciones$$, 'D1 exenciones tampoco', '42501');
+select prueba.falla($$select valor from metas.bienes$$,                    'D1 valor de los bienes tampoco', '42501');
+select prueba.falla($$select * from metas._calc_colectas_resumen$$,        'D1 las vistas de cálculo (con números) no se leen', '42501');
+select prueba.ok((select count(*) > 0 from metas.pagos), 'D1 lo demás de la tabla sí se lee (ids, fechas, recibos)');
+-- Lo que llega a JavaScript: el JSON de cada fila, como lo arma la API
+select prueba.ok((select count(*) > 0 and bool_and(jsonb_typeof(to_jsonb(v) -> 'monto') = 'string'
+                                                   and (to_jsonb(v) ->> 'monto') ~ '^[0-9]+\.[0-9]{2}$')
+                    from metas.vd_pagos v),
+                 'D2 vd_pagos: cada monto es texto con dos decimales («150.00», nunca 150)');
+select prueba.ok((select bool_and(jsonb_typeof(to_jsonb(v) -> 'recaudado') = 'string' and jsonb_typeof(to_jsonb(v) -> 'saldo') = 'string')
+                    from metas.v_colectas_resumen v),
+                 'D2 v_colectas_resumen: totales como texto');
+select prueba.ok((select recaudado = '0.00' from metas.v_colectas_resumen where colecta_id = :c4),
+                 'D2 el cero también lleva sus centavos: «0.00»');
+select prueba.ok((select count(*) > 0 and bool_and(jsonb_typeof(despues -> 'monto') = 'string')
+                    from metas.auditoria where tabla = 'pagos'),
+                 'D3 la auditoría que lee el docente guarda el dinero como texto');
+reset role;
+select prueba.ok(not exists (
+  select 1
+    from pg_class k join pg_namespace n on n.oid = k.relnamespace and n.nspname = 'metas'
+    join pg_attribute a on a.attrelid = k.oid and a.attnum > 0 and not a.attisdropped
+   where k.relkind = 'v'
+     and (has_table_privilege('authenticated', k.oid, 'select') or has_table_privilege('metas_lector_familias', k.oid, 'select'))
+     and (a.attname in ('monto', 'monto_sugerido', 'monto_aplicable', 'aplicable', 'pagado', 'falta', 'pago_de_mas',
+                        'meta', 'recaudado', 'falta_total', 'pago_de_mas_total', 'gastado', 'saldo',
+                        'reembolsado', 'por_cobrar', 'reembolso_monto')
+          or (a.attname = 'valor' and k.relname in ('vd_bienes', 'v_inventario_resumen')))
+     and a.atttypid <> 'text'::regtype),
+  'D4 ninguna vista que lee la app o el portal tiene una columna de dinero que no sea texto');
+select prueba.ok(not exists (
+  select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace and n.nspname = 'metas',
+         unnest(p.proargnames, coalesce(p.proallargtypes, p.proargtypes::oid[]), coalesce(p.proargmodes, '{}'::"char"[])) as x(nombre, tipo, modo)
+   where has_function_privilege('authenticated', p.oid, 'execute')
+     and x.modo in ('o', 't', 'b')
+     and x.nombre in ('monto', 'recaudado', 'gastado', 'saldo', 'pagado', 'falta', 'aplicable')
+     and x.tipo <> 'text'::regtype),
+  'D4 ni una función que devuelva dinero como número');
+select prueba.ok((select count(*) = 0 from pg_publication_tables where pubname = 'supabase_realtime' and schemaname = 'metas'
+                   and tablename in ('pagos', 'gastos', 'gastos_docente', 'reembolsos', 'convocatoria_pagos',
+                                     'colectas', 'colecta_exenciones', 'bienes'))
+             and (select count(*) = 1 from pg_publication_tables where pubname = 'supabase_realtime' and schemaname = 'metas'
+                   and tablename = 'notas'),
+                 'D5 las tablas de dinero no van por Realtime (su evento traería el número); las demás sí');
+select count(*) as toques_a from realtime.messages where topic = 'docente:00000000-0000-0000-0000-00000000000a' \gset
+select prueba.como('A');
+set role authenticated;
+select metas.pago_crear(gen_random_uuid(), gen_random_uuid(), :c2, :gabi, '7.50', '2027-04-01', p_son_distintos => true);
+reset role;
+select prueba.ok((select count(*) = :toques_a + 1 and bool_and(not (payload ? 'monto') and event = 'cambio')
+                    from realtime.messages where topic = 'docente:00000000-0000-0000-0000-00000000000a'),
+                 'D5 en su lugar, un toque sin dinero por el canal privado de la docente');
+-- D6: el canal del docente y vd_* solo para su dueño
+select set_config('realtime.topic', 'docente:00000000-0000-0000-0000-00000000000a', false);
+select prueba.como('A');
+set role authenticated;
+select prueba.ok((select count(*) > 0 from realtime.messages), 'D6 la docente escucha su canal');
+reset role;
+select prueba.como('B');
+set role authenticated;
+select prueba.ok((select count(*) = 0 from realtime.messages), 'D6 otro docente no escucha el canal de A');
+select prueba.ok((select count(*) = 0 from metas.vd_pagos), 'D6 B no ve los pagos de A en vd_pagos');
+reset role;
+select prueba.como('padre3');
+set role authenticated;
+select prueba.ok((select count(*) = 0 from realtime.messages), 'D6 un padre tampoco');
+select prueba.ok((select count(*) = 0 from metas.vd_pagos) and (select count(*) = 0 from metas.v_colectas_resumen),
+                 'D6 ni ve vd_pagos ni los totales del docente');
+select prueba.ok((select bool_and(jsonb_typeof(to_jsonb(v) -> 'monto') = 'string') from metas.vf_pagos v)
+                 and (select bool_and(jsonb_typeof(to_jsonb(v) -> 'falta') = 'string') from metas.vf_colectas v),
+                 'D2 el portal de familias también recibe el dinero como texto');
+reset role;
+select set_config('realtime.topic', '', false);
 
 -- ════════════════════════════════════════════════════════════════════════════
 -- V · Convivencia con el modelo viejo (paso 1)

@@ -1,0 +1,61 @@
+# ============================================================================
+# M.E.T.A.S · proyecto Supabase LOCAL de pruebas (no se publica: vive en _dev/)
+# ----------------------------------------------------------------------------
+# Solo `supabase start` en esta computadora y datos ficticios. NUNCA
+# `supabase link`: corre-supabase.sh se niega a correr si encuentra el
+# proyecto vinculado (supabase/.temp/project-ref).
+# Lo que importa para el rediseño: el esquema metas expuesto por la API,
+# sesiones anónimas encendidas (padres), alta por correo apagada (las cuentas
+# de docente solo las crea metas-entrar) y las tres funciones de borde sin la
+# verificación automática del JWT (cada una revisa la sesión ella misma).
+# Diferencia con el proyecto real, anotada: Turnstile apagado (no hay clave
+# de prueba sin red); en el proyecto real es OBLIGATORIO.
+# ============================================================================
+project_id = "metas-local"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public", "metas"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 17
+
+[realtime]
+enabled = true
+
+[studio]
+enabled = false
+
+[auth]
+enabled = true
+site_url = "http://127.0.0.1:8080"
+jwt_expiry = 3600
+enable_refresh_token_rotation = true
+# Tiene que quedar encendido: Auth trata la sesión anónima como un alta. El
+# alta por correo y por SMS sí se apagan abajo.
+enable_signup = true
+enable_anonymous_sign_ins = true
+
+[auth.email]
+enable_signup = false
+enable_confirmations = false
+
+[auth.sms]
+enable_signup = false
+
+[edge_runtime]
+enabled = true
+
+[functions.metas-entrar]
+verify_jwt = false
+
+[functions.metas-salir-todos]
+verify_jwt = false
+
+[functions.familia-vincular]
+verify_jwt = false

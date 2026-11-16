@@ -41,12 +41,3 @@ insert into public.mensajes_docente (evento_id, codigo, subtipo, titulo, texto, 
    'docente ficticia a · prof-aaaa000001'),
   ('AVR-C1-7CCCC', '7CCCC', 'cuentas', '🧾 Recibo RC-0009-7 — Excursión', 'Recibido: L 30.00', current_date + 200,
    'Docente Ficticia C · PROF-CCCC000003');
-
--- Usuarios de Auth (ficticios): A, B, uno de panel SIN vínculo, y padres anónimos.
-insert into auth.users (id, email, is_anonymous) values
-  ('00000000-0000-0000-0000-00000000000a', 'prof-aaaa000001@cuentas.metas.policastsapien.com', false),
-  ('00000000-0000-0000-0000-00000000000b', 'prof-bbbb000002@cuentas.metas.policastsapien.com', false),
-  ('00000000-0000-0000-0000-0000000000c0', 'panel@ejemplo.invalid', false),
-  ('00000000-0000-0000-0000-0000000000f1', null, true),
-  ('00000000-0000-0000-0000-0000000000f2', null, true),
-  ('00000000-0000-0000-0000-0000000000f3', null, true);

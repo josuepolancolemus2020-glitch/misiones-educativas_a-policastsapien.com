@@ -1,11 +1,13 @@
-# Rediseño de datos de M.E.T.A.S · Fase 1: diseño (revisión 5)
+# Rediseño de datos de M.E.T.A.S · Fase 1: diseño (revisión 6)
 
 Rama `rediseño-datos`. **Solo diseño**: no se modificó código de la app, no se
 tocó Supabase ni ninguna fila de docentes, y no hubo merge. Los `.sql` se
 **probaron de verdad** en un PostgreSQL 16 local y desechable con un Supabase
 simulado (capa A, `pruebas-capa-a/`), nunca en el proyecto real. Fuera de
-`docs/rediseno-datos/` solo cambió `CLAUDE.md`: reglas 15 a 18 (revisión 3)
-y reglas 4 y 5 (revisión 4, con el texto que aprobaste).
+`docs/rediseno-datos/` cambiaron `CLAUDE.md` (reglas 15 a 18 en la revisión 3,
+4 y 5 en la revisión 4, 18 ampliada en la revisión 6, todas con tu
+aprobación) y `_dev/supabase-local/` (revisión 6: pruebas contra
+`supabase start` y las funciones de borde; no se publica).
 
 ## Qué se quiere
 
@@ -33,7 +35,63 @@ botones de sincronizar, recuperar ni restaurar, y sin ningún indicador de
 | `SUPABASE-V2-ESQUEMA.sql` | 40 tablas de datos, auditoría, recibos, funciones de dinero y de alta, vistas de totales |
 | `SUPABASE-V2-FAMILIAS.sql` | vínculo de familias, rol lector, vistas `vf_*`, totales, «visto», aviso inmediato |
 | `SUPABASE-V2-CONGELAR.sql` | candado y congelado por pasos |
-| `pruebas-capa-a/` | `corre.sh` + Supabase simulado (con los permisos de fábrica de `public`) + datos ficticios + **236 pruebas en verde** |
+| `pruebas-capa-a/` | `corre.sh` + plataforma Supabase simulada + modelo viejo + datos ficticios + **271 pruebas en verde** |
+| `pruebas-capa-b/`, `pruebas-capa-c/` | capas B (cola y conflictos) y C (navegador) del corte 1, con su contrato, **escritas antes del código** |
+| `_dev/supabase-local/` | CLI fija, `corre-supabase.sh` (capas A, A+, B y C contra `supabase start`), funciones de borde y capa A+ |
+
+## Cambios de la revisión 6, por punto
+
+**Verificado por Josué** en un Supabase local real (CLI 3.1.0, PG 17.11, solo
+datos ficticios): capa A 236 en verde con CONGELAR dos veces; `postgres` con
+`rolbypassrls` y las tablas de `metas` suyas sin FORCE RLS (las funciones de
+dinero escriben); por la API, insertar directo en pagos o colectas → 403,
+padre anónimo con `pago_crear` → 403, sin sesión → 401; Realtime: el padre
+vinculado recibe, otra familia «Unauthorized», un alumno trasladado ya no se
+une. Las firmas de las 4 funciones que CONGELAR renombra coinciden.
+
+**Decisiones**: `pago_editar` bloqueado en colecta cerrada, sí. Regla 18 de
+`CLAUDE.md` con el texto propuesto: agregada.
+
+**R5-1. El dinero sale como texto, siempre.** Las columnas de dinero de las
+ocho tablas que lo tienen ya **no se pueden leer** con la sesión; la fila
+completa sale de `vd_<tabla>` con el dinero en texto («150.00»). Los totales
+(`v_colecta_alumnos`, `v_colectas_resumen`, `v_gastos_docente`,
+`v_gastos_docente_resumen`, `v_inventario_resumen`) pasan a texto sobre
+vistas internas de cálculo (`_calc_*`) que nadie de la app lee; también las
+`vf_*` del portal y la auditoría. Las tablas de dinero salen de la
+publicación de Realtime (su evento traería el número) y en su lugar llega un
+toque sin datos por el canal privado `docente:<uid>`. Regla escrita en `03`,
+3.8. Pruebas D1 a D6 (y A+ R5-1).
+
+**R5-2. Canal por teléfono.** `acceso:<id del vínculo>` en vez de
+`familia:<id>`: la base decide en cada toque a qué vínculos manda, así que un
+teléfono cuya clave venció o cuyo alumno se trasladó deja de recibir al
+instante aunque siga conectado, y recibe una vez `cerrar`. Lo disparan el
+cambio de estado o el borrado del alumno, el borrado de la familia, la
+desvinculación y el hito de vencimiento; una tarea horaria opcional cubre la
+hora exacta (paso 4). Pruebas K13 a K15 (y A+ R5-2).
+De paso apareció un fallo real: volver a entrar con la tira nueva en un
+teléfono ya vinculado respondía «ok» pero dejaba el vínculo con la clave
+vencida (`on conflict do nothing`); ahora el vínculo pasa a la clave nueva.
+
+**R5-3. El año del recibo sale de la fecha del pago.** Prueba R7.
+
+**Preparación del corte 1.**
+1. `_dev/supabase-local/`: CLI fija 3.1.0, `config.toml`, `corre-supabase.sh`
+   (se niega fuera de `127.0.0.1`/`localhost` o con `supabase link`; cuentas
+   ficticias por la API de Auth; CONGELAR dos veces). Para que el mismo
+   `10-pruebas.sql` corra en los dos lados, el simulador se partió en
+   plataforma (solo Postgres suelto) y modelo viejo (los dos), y
+   `realtime.messages` usa las columnas reales (`inserted_at`).
+2. Las tres funciones de borde, completas, y la capa A+ (24 pruebas en Node
+   contra la API, Auth y Realtime reales).
+3. Capas B (10 escenarios) y C (8 pruebas; la primera en tres tamaños) del corte 1, con
+   sus contratos, escritas antes del código.
+Aquí no hay Docker: la capa A+ y la corrida contra `supabase start` quedan
+listas para correr en tu entorno (`06`, 6.6).
+
+**Resultado**: capa A, 271 en verde (eran 236); quitando una a una las
+correcciones en una copia, caen 16. `npm test`: 77 sondas en verde.
 
 ## Cambios de la revisión 5, por punto
 
@@ -336,7 +394,9 @@ pantalla y elemento con archivo:línea. Respaldo a Drive: fase futura.
 
 ## Pendiente
 
-1. El texto de la regla 18 de `CLAUDE.md` (colectas y exenciones solo por
-   funciones).
-2. Correr la capa A contra `supabase start` (plan en `06`, 6.6) y empezar el
-   corte 1 en la rama, sin publicar.
+1. Correr en tu entorno `bash _dev/supabase-local/corre-supabase.sh` (capas A
+   y A+ contra `supabase start`).
+2. Tu visto bueno a una regla 19 de `CLAUDE.md` para el dinero como texto
+   (texto en la respuesta del chat; no se tocó).
+3. Empezar el código del corte 1 en la rama: `js/datos/` contra la capa B y
+   la pantalla contra la capa C.

@@ -1,81 +1,12 @@
 -- ============================================================================
--- Capa A · Supabase SIMULADO para probar los .sql en un Postgres local
+-- Capa A · modelo VIEJO mínimo de public, con datos de fábrica
 -- ----------------------------------------------------------------------------
--- Solo para pruebas en una base desechable (la arma corre.sh). Imita lo que
--- Supabase trae de fábrica y usan nuestros archivos: roles, auth.uid(),
--- auth.jwt(), auth.users, realtime.send / realtime.topic / realtime.messages,
--- la publicación supabase_realtime y el esquema extensions con pgcrypto.
--- Más una copia MÍNIMA del modelo viejo de public (docentes, docente_estado,
--- registro_admin, mensajes_docente…) con las funciones que congelamos, para
--- probar la convivencia. Nada de esto se pega en el proyecto real.
+-- Copia MÍNIMA del modelo viejo (docentes, docente_estado, registro_admin,
+-- mensajes_docente…) con las funciones que congelamos o que usan las
+-- funciones de borde, para probar la convivencia. Corre igual en el Postgres
+-- suelto (después de 00-plataforma-simulada.sql) y en `supabase start`.
+-- Nada de esto se pega en el proyecto real.
 -- ============================================================================
-
--- ── Roles de Supabase ───────────────────────────────────────────────────────
-do $$ begin
-  if not exists (select 1 from pg_roles where rolname = 'anon')          then create role anon nologin noinherit; end if;
-  if not exists (select 1 from pg_roles where rolname = 'authenticated') then create role authenticated nologin noinherit; end if;
-  if not exists (select 1 from pg_roles where rolname = 'service_role')  then create role service_role nologin noinherit bypassrls; end if;
-end $$;
-grant usage on schema public to anon, authenticated, service_role;
-
--- Permisos de FÁBRICA de Supabase en public: todo lo que se cree aquí (tablas,
--- funciones, secuencias) nace con GRANT ALL para anon, authenticated y
--- service_role. Por eso cada función interna que nuestros archivos crean o
--- renombran en public tiene que quitarse esos permisos a mano: no basta con
--- quitárselos a PUBLIC. Va antes del modelo viejo para que sus tablas y
--- funciones nazcan con los mismos permisos que en el proyecto real.
-alter default privileges for role postgres in schema public grant all on tables    to anon, authenticated, service_role;
-alter default privileges for role postgres in schema public grant all on functions to anon, authenticated, service_role;
-alter default privileges for role postgres in schema public grant all on sequences to anon, authenticated, service_role;
-
-create schema if not exists extensions;
-create extension if not exists pgcrypto with schema extensions;
-create extension if not exists dblink;
-grant usage on schema extensions to anon, authenticated, service_role;
-
--- ── auth ────────────────────────────────────────────────────────────────────
-create schema if not exists auth;
-grant usage on schema auth to anon, authenticated, service_role;
-create table if not exists auth.users (
-  id    uuid primary key,
-  email text unique,
-  is_anonymous boolean not null default false
-);
--- Igual que Supabase: el uid sale de los «claims» del JWT de la petición.
-create or replace function auth.jwt() returns jsonb language sql stable as $$
-  select coalesce(nullif(current_setting('request.jwt.claims', true), '')::jsonb, '{}'::jsonb)
-$$;
-create or replace function auth.uid() returns uuid language sql stable as $$
-  select nullif(auth.jwt() ->> 'sub', '')::uuid
-$$;
-grant execute on function auth.jwt(), auth.uid() to public;
-
--- ── realtime ────────────────────────────────────────────────────────────────
-create schema if not exists realtime;
-grant usage on schema realtime to anon, authenticated, service_role;
-create table if not exists realtime.messages (
-  id      bigint generated always as identity primary key,
-  topic   text not null,
-  event   text,
-  payload jsonb,
-  private boolean,
-  at      timestamptz not null default clock_timestamp()
-);
-alter table realtime.messages enable row level security;
-grant select on realtime.messages to authenticated;
-create or replace function realtime.topic() returns text language sql stable as $$
-  select nullif(current_setting('realtime.topic', true), '')
-$$;
-grant execute on function realtime.topic() to public;
-create or replace function realtime.send(payload jsonb, event text, topic text, private boolean default true)
-returns void language sql security definer as $$
-  insert into realtime.messages (topic, event, payload, private) values (topic, event, payload, private)
-$$;
-do $$ begin
-  if not exists (select 1 from pg_publication where pubname = 'supabase_realtime') then
-    create publication supabase_realtime;
-  end if;
-end $$;
 
 -- ════════════════════════════════════════════════════════════════════════════
 -- Modelo VIEJO mínimo (public) para las pruebas de convivencia
@@ -84,8 +15,67 @@ create table if not exists public.docentes (
   codigo     text primary key,
   clave_hash text not null,
   nombre     text,
-  correo     text
+  correo     text,
+  rol        text not null default 'docente'
 );
+create table if not exists public.docente_intentos (
+  correo text primary key,
+  fallos int not null default 0,
+  ultimo timestamptz not null default now()
+);
+alter table public.docente_intentos enable row level security;
+
+-- Copias fieles de la entrada y del cambio de contraseña de hoy
+-- (_privado/SUPABASE-ROLES.sql:54 y _privado/SUPABASE-DOCENTES-V2.sql:308):
+-- las usan las funciones de borde metas-entrar y metas-salir-todos.
+create or replace function public.metas_entrar_docente_v2(p_correo text, p_clave text)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare
+  v_correo text := lower(trim(coalesce(p_correo,'')));
+  v_clave  text := trim(coalesce(p_clave,''));
+  v_fallos int; v_ultimo timestamptz; d record; v_ok boolean := false;
+begin
+  if v_correo = '' or v_clave = '' then return jsonb_build_object('ok', false, 'motivo', 'datos'); end if;
+  delete from public.docente_intentos where ultimo < now() - interval '1 day';
+  select i.fallos, i.ultimo into v_fallos, v_ultimo from public.docente_intentos i where i.correo = v_correo;
+  if coalesce(v_fallos, 0) >= 5 and v_ultimo > now() - interval '10 minutes' then
+    return jsonb_build_object('ok', false, 'motivo', 'espera');
+  end if;
+  select * into d from public.docentes t where lower(t.correo) = v_correo and t.correo is not null and t.correo <> '' limit 1;
+  if found then
+    v_ok := (d.clave_hash = encode(extensions.digest(v_clave, 'sha256'), 'hex'))
+         or (d.clave_hash = 'v2:' || encode(extensions.digest(v_clave || d.codigo, 'sha256'), 'hex'));
+  end if;
+  if v_ok then
+    delete from public.docente_intentos where correo = v_correo;
+    return jsonb_build_object('ok', true, 'codigo', d.codigo, 'nombre', d.nombre, 'correo', d.correo,
+                              'rol', coalesce(d.rol, 'docente'));
+  end if;
+  insert into public.docente_intentos as di (correo, fallos, ultimo) values (v_correo, 1, now())
+  on conflict (correo) do update set
+    fallos = case when di.ultimo < now() - interval '10 minutes' then 1 else di.fallos + 1 end, ultimo = now();
+  return jsonb_build_object('ok', false, 'motivo', 'datos');
+end $$;
+revoke all on function public.metas_entrar_docente_v2(text, text) from public;
+grant execute on function public.metas_entrar_docente_v2(text, text) to anon, authenticated;
+
+create or replace function public.metas_cambiar_clave_docente(p_codigo text, p_actual text, p_nueva text)
+returns boolean language plpgsql security definer set search_path = public as $$
+declare
+  v_cod text := upper(trim(coalesce(p_codigo,'')));
+  v_nueva text := trim(coalesce(p_nueva,''));
+  v_actual text := trim(coalesce(p_actual,''));
+begin
+  if length(v_nueva) < 6 then return false; end if;
+  update public.docentes d
+     set clave_hash = 'v2:' || encode(extensions.digest(v_nueva || d.codigo, 'sha256'), 'hex')
+   where d.codigo = v_cod
+     and ( d.clave_hash = encode(extensions.digest(v_actual, 'sha256'), 'hex')
+        or d.clave_hash = 'v2:' || encode(extensions.digest(v_actual || d.codigo, 'sha256'), 'hex') );
+  return found;
+end $$;
+revoke all on function public.metas_cambiar_clave_docente(text, text, text) from public;
+grant execute on function public.metas_cambiar_clave_docente(text, text, text) to anon, authenticated;
 create or replace function public._metas_docente_ok(p_codigo text, p_clave text)
 returns boolean language sql security definer stable set search_path = public as $$
   select exists (select 1 from public.docentes d

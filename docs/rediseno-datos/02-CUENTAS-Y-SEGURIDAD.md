@@ -269,11 +269,26 @@ diseño completo está en `07-VISTA-DE-PADRES.md` y `SUPABASE-V2-FAMILIAS.sql`.
   (política de lectura según `docente_permisos`).
 - **PIN de convocatorias**: **pospuesto** al corte de convocatorias.
 
-## 2.9 Boceto de la función de borde `metas-entrar` (fase aparte)
+## 2.9 Las funciones de borde (escritas, rev. 6)
 
-Boceto para revisar, no código final. Corre en Supabase Edge Functions con la
-llave de servicio; el aparato solo le manda correo y contraseña por HTTPS y
-recibe la sesión.
+Ya están escritas completas, con sus pruebas de capa A+ contra la API local:
+`_dev/supabase-local/supabase/functions/` (`metas-entrar`,
+`metas-salir-todos`, `familia-vincular` y `_compartido/comun.ts`). Viven en
+`_dev/` mientras sean de prueba; al publicarse el corte se despliegan con la
+CLI desde esa carpeta. Diferencias con el boceto de abajo:
+
+- `metas-entrar`: si dos aparatos se vinculan a la vez, borra el usuario de
+  Auth sobrante; canjea el enlace con `type: 'email'`; responde 429 con el
+  freno y 401 con datos malos.
+- `metas-salir-todos`: con la sesión del docente cierra «otras» (o «todas»);
+  con la llave de servicio y el código (lo que tiene `reset-clave`) abre una
+  sesión de esa cuenta en el servidor y cierra **todas**, incluida esa.
+- `familia-vincular`: solo sesiones anónimas; Turnstile por intento (si falta
+  el secreto, se cierra, no se abre); en local se apaga con
+  `METAS_SIN_TURNSTILE=1`, que la función ignora si no corre en
+  `supabase start`.
+
+Boceto original (revisión 2), como referencia:
 
 ```ts
 // supabase/functions/metas-entrar/index.ts  (BOCETO)

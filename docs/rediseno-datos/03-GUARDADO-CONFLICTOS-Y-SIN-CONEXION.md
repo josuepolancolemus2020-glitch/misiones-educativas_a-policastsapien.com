@@ -211,10 +211,31 @@ estuvieran guardadas: el docente no ve diferencia) y las preguntas de dos
 botones que esperan respuesta.
 
 **Mientras está abierta**: Realtime en un canal por aula, filtrado por
-`aula_id`. En tablas de dinero, el evento solo avisa: el aparato vuelve a
-pedir esa fila con los montos como texto (no usa el número que trae el
-evento). En el resto, si la `version` es mayor se reemplaza; si trae
-`deleted_at`, se quita.
+`aula_id`, para las tablas **sin dinero**: si la `version` es mayor se
+reemplaza; si trae `deleted_at`, se quita. Las tablas **con dinero** ya no van
+por ese canal (su evento traería el número): la base manda un toque sin
+datos por el canal privado del docente, `docente:<su uid>`, con la tabla y el
+id, y el aparato vuelve a leer esa fila en `vd_<tabla>` (rev. 6).
+
+**El dinero se lee siempre como texto** (rev. 6, R5-1). JavaScript convierte
+todo número de JSON en un double: «150.00» llega como 150 y 0.10 + 0.20 deja
+de ser 0.30. Por eso:
+
+- la app lee el dinero **solo** de las vistas `vd_pagos`, `vd_gastos`,
+  `vd_gastos_docente`, `vd_reembolsos`, `vd_convocatoria_pagos`,
+  `vd_colectas`, `vd_colecta_exenciones`, `vd_bienes` (la fila entera, con el
+  dinero en texto), de los totales `v_colecta_alumnos`, `v_colectas_resumen`,
+  `v_gastos_docente`, `v_gastos_docente_resumen`, `v_inventario_resumen`, de
+  las `vf_*` y de las respuestas de las funciones: todo con dos decimales
+  («150.00», «0.00»);
+- las columnas de dinero de las tablas **no se pueden leer** con la sesión
+  (un `select *` falla): no es una costumbre, la base lo impide. Al escribir
+  en `bienes` por la API, con `Prefer: return=minimal`;
+- la auditoría guarda el dinero como texto;
+- `js/datos/montos.js` suma y compara en centavos enteros, a partir del
+  texto; nunca `Number()` ni `parseFloat()` sobre un monto.
+
+Pruebas D1 a D6 (capa A) y B2, B8 (capa B).
 
 **Al reconectar**: lo cambiado desde la última hora de servidor vista,
 **incluidas las borradas**: `updated_at > cursor − 2 minutos`; lo repetido se

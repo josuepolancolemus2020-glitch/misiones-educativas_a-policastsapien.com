@@ -97,8 +97,10 @@ Sin framework ni compilación: HTML, CSS y JS planos servidos tal cual.
     Realtime), y todo archivo SQL que cree funciones en `metas` termina con
     `revoke execute on all functions in schema metas from public`.
 18. **El dinero solo se escribe por funciones del servidor** (`metas.pago_*`,
-    `metas.gasto_*`, `metas.gasto_docente_*`, `metas.reembolso_*`): ni
-    `insert` ni `update` directos sobre pagos, gastos o reembolsos.
+    `metas.gasto_*`, `metas.gasto_docente_*`, `metas.reembolso_*`,
+    `metas.colecta_*`, `metas.exencion_*`): ni `insert` ni `update` directos
+    sobre pagos, gastos, reembolsos, colectas o exenciones. Una colecta
+    cerrada solo se vuelve a tocar con `metas.colecta_reabrir`.
 
 ## Cómo correr las pruebas
 

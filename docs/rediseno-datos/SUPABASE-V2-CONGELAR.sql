@@ -493,6 +493,12 @@ select public._metas_cerrar_funciones(array[
 --   values ('claves_viejas_vencen', '2027-04-30 00:00:00-06')   -- la fecha avisada
 --   on conflict (nombre) do nothing;
 --
+--   -- Los teléfonos conectados con una clave vieja dejan de recibir toques en
+--   -- cuanto vence (la base decide en cada toque, FAMILIAS 5). Para que además
+--   -- reciban «cerrar» justo a la hora, una tarea horaria (pg_cron, que
+--   -- Supabase trae; se activa en el panel):
+--   select cron.schedule('metas-cerrar-canales', '7 * * * *', 'select metas.canales_cerrar()');
+--
 --   -- cuántas familias tienen todavía solo la clave vieja (se lee antes de la fecha)
 --   select count(*) from metas.familias
 --    where deleted_at is null and clave_origen = 'conservada' and clave_siguiente is null;

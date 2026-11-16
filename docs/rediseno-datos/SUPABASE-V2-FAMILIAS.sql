@@ -42,7 +42,9 @@ create table if not exists metas.familia_accesos (
   clave_usada  text        not null,
   alias        text        check (length(alias) <= 40),
   created_at   timestamptz not null default now(),
-  revocado_at  timestamptz
+  revocado_at  timestamptz,
+  -- cuándo se le mandó «cerrar» por su canal (rev. 6); se borra si vuelve a valer
+  canal_cerrado_at timestamptz
 );
 create unique index if not exists familia_accesos_unico on metas.familia_accesos (auth_uid, familia_id)
   where revocado_at is null;
@@ -135,9 +137,14 @@ begin
   if (select count(*) from metas.familia_accesos where auth_uid = p_uid and revocado_at is null) >= 10 then
     return jsonb_build_object('ok', false, 'motivo', 'muchos');
   end if;
+  -- Si ese teléfono ya estaba vinculado a esta familia (por ejemplo con la
+  -- clave vieja, que venció), el vínculo pasa a la clave que acaba de
+  -- escribir. Antes era «do nothing»: respondía «ok» y el vínculo seguía con
+  -- la clave vencida, así que el padre no veía nada (rev. 6).
   insert into metas.familia_accesos (auth_uid, familia_id, clave_usada, alias)
   values (p_uid, f.id, v_cl, left(coalesce(nullif(trim(p_alias), ''), split_part(a.nombre_completo, ' ', 1)), 40))
-  on conflict do nothing;
+  on conflict (auth_uid, familia_id) where revocado_at is null
+  do update set clave_usada = excluded.clave_usada, canal_cerrado_at = null;
   return jsonb_build_object('ok', true, 'familia_id', f.id, 'alias', split_part(a.nombre_completo, ' ', 1));
 end $$;
 revoke all on function metas.familia_vincular(uuid, text, text, text) from public, anon, authenticated;
@@ -256,10 +263,14 @@ select a.id as alumno_id, split_part(a.nombre_completo, ' ', 1) as nombre,
 -- exento → le corresponde 0 y no le falta nada; exento parcial → le
 -- corresponde monto_aplicable; varios abonos se suman.
 create or replace view metas.vf_colectas as
-select a.id as alumno_id, c.id as colecta_id, c.concepto, c.fecha, c.estado, c.monto_sugerido,
-       x.aplicable, x.pagado,
-       greatest(x.aplicable - x.pagado, 0)                              as falta,
-       case when a.estado in ('activo', 'ingreso') then greatest(x.pagado - x.aplicable, 0) else 0 end as pago_de_mas,
+-- El dinero sale como texto con dos decimales (rev. 6, R5-1): el portal es
+-- JavaScript y un número de JSON pierde los centavos exactos.
+select a.id as alumno_id, c.id as colecta_id, c.concepto, c.fecha, c.estado,
+       round(c.monto_sugerido, 2)::text                                as monto_sugerido,
+       round(x.aplicable, 2)::text                                     as aplicable,
+       round(x.pagado, 2)::text                                        as pagado,
+       round(greatest(x.aplicable - x.pagado, 0), 2)::text             as falta,
+       round(case when a.estado in ('activo', 'ingreso') then greatest(x.pagado - x.aplicable, 0) else 0 end, 2)::text as pago_de_mas,
        case when a.estado not in ('activo', 'ingreso') then 'ya_no_esta'
             when x.aplicable = 0 and x.pagado = 0 then 'no_corresponde'
             when x.pagado = 0 then 'debe'
@@ -283,13 +294,13 @@ select a.id as alumno_id, c.id as colecta_id, c.concepto, c.fecha, c.estado, c.m
 -- monto, el recibo viejo desaparece (anulado) y aparece el nuevo con
 -- «corrige al recibo …»; si lo anula, desaparece.
 create or replace view metas.vf_pagos as
-select p.alumno_id, p.colecta_id, c.concepto, p.monto, p.fecha, p.recibo, p.recibo_anterior,
+select p.alumno_id, p.colecta_id, c.concepto, round(p.monto, 2)::text as monto, p.fecha, p.recibo, p.recibo_anterior,
        p.reemplaza_recibo as corrige_al_recibo, p.created_at as registrado_at
   from metas.pagos p join metas.colectas c on c.id = p.colecta_id;
 
 -- Gastos de cada colecta del aula (cuentas claras), sin datos de nadie.
 create or replace view metas.vf_cuentas_claras as
-select g.colecta_id, c.concepto as colecta, g.fecha, g.concepto, g.monto
+select g.colecta_id, c.concepto as colecta, g.fecha, g.concepto, round(g.monto, 2)::text as monto
   from metas.gastos g join metas.colectas c on c.id = g.colecta_id;
 
 create or replace view metas.vf_notas as
@@ -361,7 +372,8 @@ create or replace function metas.familia_totales_colectas()
 returns table (colecta_id uuid, concepto text, recaudado text, gastado text, saldo text)
 language sql stable security definer set search_path = metas, pg_temp as $$
   select c.id, c.concepto,
-         coalesce(r.s, 0)::text, coalesce(g.s, 0)::text, (coalesce(r.s, 0) - coalesce(g.s, 0))::text
+         metas.monto_texto(coalesce(r.s, 0)), metas.monto_texto(coalesce(g.s, 0)),
+         metas.monto_texto(coalesce(r.s, 0) - coalesce(g.s, 0))
     from metas.colectas c
     left join lateral (select sum(p.monto) s from metas.pagos p
                         where p.colecta_id = c.id and p.deleted_at is null) r on true
@@ -437,9 +449,50 @@ grant select on metas.v_avisos_vistos to authenticated;
 -- ════════════════════════════════════════════════════════════════════════════
 -- 5. «De inmediato»: aviso por Realtime al teléfono del padre
 -- ════════════════════════════════════════════════════════════════════════════
--- Los padres NO se suscriben a las tablas. Se suscriben a un canal PRIVADO
--- por familia y la base les manda un toque SIN DATOS: «algo cambió». El
--- teléfono vuelve a leer las vistas vf_*.
+-- Los padres NO se suscriben a las tablas. Cada TELÉFONO vinculado se
+-- suscribe a SU canal privado, «acceso:<id de su vínculo>», y la base le manda
+-- un toque SIN DATOS: «algo cambió». El teléfono vuelve a leer las vistas vf_*.
+--
+-- Por qué un canal por vínculo y no uno por familia (rev. 6, R5-2): Realtime
+-- revisa el permiso solo al unirse. Con un canal por familia, un teléfono
+-- cuya clave venció o cuyo hijo se trasladó seguiría recibiendo los toques
+-- de los demás. Aquí la base decide en CADA toque a qué vínculos manda
+-- (_accesos_vivos): el que deja de valer no recibe nada más, al instante,
+-- aunque no se haya desconectado. Además se le manda una vez el evento
+-- «cerrar», para que el teléfono suelte el canal y le pida la tira nueva.
+create or replace function metas._acceso_vivo(p_acceso uuid)
+returns boolean language sql stable security definer set search_path = metas, pg_temp as $$
+  select exists (select 1 from metas.familia_accesos fa
+                   join metas.familias f on f.id = fa.familia_id and f.deleted_at is null
+                                        and metas._clave_vale(fa.clave_usada, f.clave, f.clave_origen, f.clave_siguiente)
+                   join metas.alumnos a on a.id = f.alumno_id and a.deleted_at is null
+                                       and a.estado in ('activo', 'ingreso')
+                  where fa.id = p_acceso and fa.revocado_at is null)
+$$;
+
+-- Manda «cerrar» a los vínculos de esas familias (todas, si null) que ya no
+-- valen y no lo recibieron. Lo llaman los disparadores de abajo y, para el
+-- vencimiento de las claves viejas, el hito y una tarea horaria (paso 4).
+create or replace function metas.canales_cerrar(p_familias uuid[] default null)
+returns integer language plpgsql volatile security definer set search_path = metas, pg_temp as $$
+declare r record; n int := 0;
+begin
+  for r in
+    select fa.id from metas.familia_accesos fa
+     where fa.canal_cerrado_at is null
+       and (p_familias is null or fa.familia_id = any (p_familias))
+       and not metas._acceso_vivo(fa.id)
+     for update of fa skip locked
+  loop
+    perform realtime.send(jsonb_build_object('motivo', 'ya_no_vale'), 'cerrar', 'acceso:' || r.id::text, true);
+    update metas.familia_accesos set canal_cerrado_at = now() where id = r.id;
+    n := n + 1;
+  end loop;
+  return n;
+end $$;
+revoke all on function metas.canales_cerrar(uuid[]) from public, anon, authenticated;
+grant execute on function metas.canales_cerrar(uuid[]) to service_role;
+
 create or replace function metas.t_tocar_familias()
 returns trigger language plpgsql security definer set search_path = metas, pg_temp as $$
 declare
@@ -451,16 +504,50 @@ begin
     v_alumno := new.id;               -- un alumno solo le importa a SU familia
   end if;
   for r in
-    select f.id from metas.familias f
+    select fa.id, fa.canal_cerrado_at
+      from metas.familias f
+      join metas.familia_accesos fa on fa.familia_id = f.id and fa.revocado_at is null
      where f.deleted_at is null
        and ( (v_alumno is not null and f.alumno_id = v_alumno)
           or (v_alumno is null and v_aula is not null and f.aula_id = v_aula) )
+       and metas._acceso_vivo(fa.id)
   loop
     perform realtime.send(jsonb_build_object('tabla', tg_table_name), 'cambio',
-                          'familia:' || r.id::text, true);
+                          'acceso:' || r.id::text, true);
+    if r.canal_cerrado_at is not null then      -- volvió a valer (p. ej. el alumno regresó)
+      update metas.familia_accesos set canal_cerrado_at = null where id = r.id;
+    end if;
   end loop;
   return null;
 end $$;
+
+-- Lo que hace que un vínculo deje de valer: el alumno cambia de estado o se
+-- borra, la familia se borra, el padre se desvincula, o vencen las claves
+-- viejas (hito). Cada uno manda «cerrar» al momento.
+create or replace function metas.t_cerrar_canales()
+returns trigger language plpgsql security definer set search_path = metas, pg_temp as $$
+begin
+  if tg_table_name = 'alumnos' then
+    perform metas.canales_cerrar(array(select f.id from metas.familias f where f.alumno_id = new.id));
+  elsif tg_table_name = 'familias' then
+    perform metas.canales_cerrar(array[new.id]);
+  elsif tg_table_name = 'familia_accesos' then
+    perform metas.canales_cerrar(array[new.familia_id]);
+  elsif tg_table_name = 'hitos' then
+    if new.nombre = 'claves_viejas_vencen' and new.at <= now() then
+      perform metas.canales_cerrar(null);
+    end if;
+  end if;
+  return null;
+end $$;
+create trigger alumnos_cerrar_canales after update of estado, deleted_at on metas.alumnos
+  for each row execute function metas.t_cerrar_canales();
+create trigger familias_cerrar_canales after update of deleted_at on metas.familias
+  for each row execute function metas.t_cerrar_canales();
+create trigger familia_accesos_cerrar_canales after update of revocado_at on metas.familia_accesos
+  for each row execute function metas.t_cerrar_canales();
+create trigger hitos_cerrar_canales after insert or update on metas.hitos
+  for each row execute function metas.t_cerrar_canales();
 
 do $$
 declare t text;
@@ -483,19 +570,16 @@ end $$;
 create or replace function metas.familia_canal_ok(p_topic text)
 returns boolean language sql stable security definer set search_path = metas, pg_temp as $$
   select exists (select 1 from metas.familia_accesos fa
-                   join metas.familias f on f.id = fa.familia_id and f.deleted_at is null
-                                        and metas._clave_vale(fa.clave_usada, f.clave, f.clave_origen, f.clave_siguiente)
-                   join metas.alumnos a on a.id = f.alumno_id and a.deleted_at is null
-                                       and a.estado in ('activo', 'ingreso')
-                  where fa.auth_uid = (select auth.uid()) and fa.revocado_at is null
-                    and 'familia:' || fa.familia_id::text = p_topic)
+                  where fa.auth_uid = (select auth.uid())
+                    and 'acceso:' || fa.id::text = p_topic
+                    and metas._acceso_vivo(fa.id))
 $$;
 grant execute on function metas.familia_canal_ok(text) to authenticated;
 
 create policy familias_escuchan_su_canal on realtime.messages
   for select to authenticated
   using (
-    realtime.topic() like 'familia:%'
+    realtime.topic() like 'acceso:%'
     and metas.es_sesion_familia()
     and metas.familia_canal_ok(realtime.topic())
   );

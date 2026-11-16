@@ -115,10 +115,22 @@ borra.
 
 Los padres no se suscriben a las tablas (recibirían filas completas). Cada
 cambio en pagos, colectas, gastos, notas, asistencia, avisos u observaciones
-dispara un **toque sin datos** en el canal privado `familia:<id>` (Realtime
-Broadcast desde la base, con política sobre `realtime.messages`). El teléfono
-del padre, al recibirlo, vuelve a leer las vistas. Además vuelve a leer al
-abrir, al volver a la pestaña y al recuperar la señal.
+dispara un **toque sin datos** (Realtime Broadcast desde la base, con política
+sobre `realtime.messages`). El teléfono del padre, al recibirlo, vuelve a leer
+las vistas. Además vuelve a leer al abrir, al volver a la pestaña y al
+recuperar la señal.
+
+**Un canal por teléfono, no por familia** (rev. 6, R5-2): cada vínculo
+escucha `acceso:<id de su vínculo>`. Realtime revisa el permiso solo al
+unirse; por eso es la base la que decide, en cada toque, a qué vínculos
+manda (`_acceso_vivo`: clave vigente y alumno activo). Cuando un vínculo deja
+de valer (traslado, retiro, clave vencida, familia borrada, el padre se
+desvincula), ese teléfono **no recibe nada más al instante**, aunque siga
+conectado, y recibe una vez el evento `cerrar` para soltar el canal y pedir
+la tira nueva. El vencimiento de las claves viejas no ocurre por un cambio de
+fila: el hito lo dispara si ya pasó la fecha, y una tarea horaria
+(`metas.canales_cerrar()`, paso 4) cubre el momento exacto. Pruebas K13 a
+K15, T1 a T3 (capa A+).
 
 «De inmediato» empieza cuando el cambio **llega a Supabase**. Si el docente lo
 hizo sin señal, el padre ve lo de antes hasta que la cola del docente lo envía
@@ -196,8 +208,8 @@ El portal nuevo no espera a que todos los docentes carguen su aula:
    La consulta del paso 4 cuenta docentes sin vincular, vinculados sin aula y
    aulas del archivo sin aula nueva.
 
-**Avisos en vivo** (rev. 5): la familia escucha el canal de su hijo solo
-mientras el alumno siga activo (`familia_canal_ok`). Si pasa a retirado,
+**Avisos en vivo** (rev. 5 y 6): la familia escucha el canal de su vínculo
+solo mientras el alumno siga activo (`familia_canal_ok`, `_acceso_vivo`). Si pasa a retirado,
 trasladado o desertor, deja de recibir avisos en vivo; lo ya registrado lo
 sigue viendo al abrir el portal.
 

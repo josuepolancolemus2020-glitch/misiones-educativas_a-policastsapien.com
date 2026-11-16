@@ -171,6 +171,8 @@ base, con las reglas de `03`, y produce el estado esperado.
 |---|---|---|
 | R1 | 300 pagos a la vez desde 3 aparatos | 300 números distintos, correlativos 0001 a 0300 sin huecos, con la serie de 4 símbolos del docente |
 | R2 | Un pago rechazado (colecta cerrada, alumno quitado) | no gasta número |
+| R7 | Un pago con fecha del 20 de diciembre de 2026 y otro de 2028, con el servidor en otro año (R5-3) | `RC-26-…-0001` y `RC-28-…-0001`: el año sale de la fecha del pago; los de 2027 siguen en `RC-27` |
+| D1-D6 | El dinero como texto (R5-1): leer `monto` (o `select *`) de pagos, gastos, gastos del docente, reembolsos, pagos de convocatoria, colectas, exenciones y bienes; leer `_calc_*`; el JSON de `vd_pagos`, `v_colectas_resumen`, `vf_pagos`, `vf_colectas`; la auditoría; el catálogo de vistas y funciones; la publicación de Realtime; el canal del docente | `42501` al leer directo; texto con dos decimales en todo lo que lee la app o el portal («0.00» incluido); ninguna vista ni función con dinero numérico; las tablas de dinero fuera de Realtime y un toque sin monto por `docente:<uid>`, que solo escucha ese docente |
 | R3 | Dos docentes | series distintas, números que nunca chocan |
 | R4 | `recibo_anterior` `RC-03EX-12` repetido en el mismo docente | el segundo se rechaza |
 | R5 | Se fuerza que la serie choque 25 veces seguidas (prueba con generador falso) | se detiene en el intento 20 con error claro; no se queda en un bucle |
@@ -257,6 +259,9 @@ base, con las reglas de `03`, y produce el estado esperado.
 | K10 | Familias con clave nueva | no vencen |
 | K11 | Pasada la fecha, el docente da de alta una familia pidiendo conservar una clave de su copia | la base pone una clave nueva; la vieja no abre a nadie |
 | K12 | Familia de un alumno trasladado o retirado | deja de escuchar el canal en vivo; la de un alumno activo lo escucha |
+| K13 | Vence la clave vieja con el teléfono conectado (R5-2) | recibe «cerrar» una sola vez; ningún toque más; el teléfono con la tira nueva sí; al volver a entrar con la tira nueva, el mismo vínculo pasa a la clave nueva y ve de nuevo |
+| K14 | Retiran al alumno con el teléfono conectado | «cerrar» al momento y ningún toque más |
+| K15 | El padre se desvincula | «cerrar» a ese teléfono |
 | G9 | `gasto_docente_editar` sin monto base (o con una fecha base que no se entiende) | **pregunta** `gasto_sin_base` con las dos cifras, sin error y sin cambiar nada; el segundo botón (base = lo que vio) guarda; pedir el mismo monto no pregunta |
 | M16 | `pago_corregir` de un pago en una colecta cerrada | «esa colecta ya está cerrada»; el pago no se anula ni se reemplaza |
 | CC1 | Escribir directo en `colectas` o `colecta_exenciones` | `42501`: solo por funciones |
@@ -283,7 +288,7 @@ contadores de 6.1.
 | `npm run test:datos` (nueva) | capas A y B contra Supabase local en Docker | cada empujón que toque `js/datos/` o los `.sql`, y de noche |
 | `npm run test:navegador` | capa C y la prueba de estrés | de noche |
 
-## 6.5 Capa A: lo que ya corre (revisión 5)
+## 6.5 Capa A: lo que ya corre (revisión 6)
 
 ```
 bash docs/rediseno-datos/pruebas-capa-a/corre.sh
@@ -304,11 +309,18 @@ tablas viejas como en el proyecto real, y copias fieles de
 `metas_guardar_avisos`, `metas_consultar_admin_padre` y
 `metas_consultar_avisos_padre`.
 
-**Resultado: 236 pruebas en verde**: S1 a S9, M1 a M16, CC0 a CC12, F1 a
+**Resultado: 271 pruebas en verde**: S1 a S9, M1 a M16, CC0 a CC12, F1 a
 F6, B4 en los dos órdenes con **dos sesiones de verdad** (`dblink`), K0 a
-K12, A1 a A8, G (con G9), N, P, la convivencia V1 a V15, N1, N2 y C5.
-Quitando una a una las correcciones de la revisión 5 (en una copia), caen 15
-de ellas; las de la revisión 4 caían 27 contra el `CONGELAR` de la revisión 3.
+K15, A1 a A8, G (con G9), N, P, R7, D1 a D6, la convivencia V1 a V15, N1, N2
+y C5. Quitando una a una las correcciones de la revisión 6 (en una copia),
+caen 16 de ellas. Josué la corrió contra `supabase start` (CLI 3.1.0, PG
+17.11) con 236 en verde en la revisión 5.
+
+El simulador va en dos archivos: `00-plataforma-simulada.sql` (lo que
+Supabase trae de fábrica; solo para el Postgres suelto) y
+`00-modelo-viejo.sql` (para los dos). Los usuarios de Auth del Postgres
+suelto van aparte (`01-usuarios-auth-simulados.sql`): contra Supabase los
+crea la API de Auth.
 
 Con los permisos de fábrica, la revisión 3 dejaba en `public` las funciones
 de disparador ejecutables por `anon` y `authenticated` (PostgreSQL no deja
@@ -335,42 +347,59 @@ cuentas ficticias, para confirmar los permisos, Realtime y Auth reales. Lo
 mismo vale para la vinculación con Supabase Auth: primero en `supabase start`
 con cuentas ficticias.
 
-## 6.6 La capa A contra `supabase start` (propuesta, revisión 5)
+## 6.6 Contra `supabase start`: capas A y A+ (revisión 6)
 
-Lo que el simulador **no** puede probar y `supabase start` sí: que el rol
-`postgres` de Supabase (que no es superusuario) salte la RLS en las
-funciones `security definer`, como suponen todas las de dinero; el JWT real
-de Auth (incluido `is_anonymous`); la exposición del esquema `metas` por la
-API; los canales privados de Realtime con nuestra política; y las funciones
-de borde. Solo cuentas ficticias; nunca `supabase link`.
+Listo en `_dev/supabase-local/` (no se publica):
 
-1. **Andamio** en `_dev/supabase-local/` (no se publica): `supabase init`
-   con la CLI fijada a una versión, y en `config.toml`: `[api] schemas`
-   con `metas`; `[auth] enable_anonymous_sign_ins = true`; registro público
-   apagado; Turnstile **apagado solo en local** (no hay clave de prueba sin
-   red) y anotado como diferencia.
-2. **Modelo viejo**: los `_privado/SUPABASE-*.sql` reales, en el orden en
-   que se pegaron (es lo más parecido al proyecto), y no la copia mínima del
-   simulador. `00-supabase-simulado.sql` se parte en dos: la parte de
-   plataforma (roles, `auth`, `realtime`) solo para el Postgres suelto, y los
-   datos ficticios para los dos.
-3. **`corre-supabase.sh`**: `supabase start`; se niega a seguir si la
-   dirección de la base no es `127.0.0.1`; aplica VINCULACION → ESQUEMA →
-   FAMILIAS → CONGELAR dos veces; crea las cuentas ficticias con la API de
-   administración de Auth local (no insertando en `auth.users`) y las
-   vincula con `metas-entrar` servida por `supabase functions serve`; corre
-   `10-pruebas.sql` (mismas 236 pruebas; `dblink` desde `extensions`).
-4. **Capa A+ por la API**, un script de Node con `@supabase/supabase-js`
-   (versión fijada, sin guardarlo en el repositorio, como Playwright):
-   - la docente entra por `metas-entrar` y crea aula, alumnos, colecta y un
-     pago por la API real (`schema('metas').rpc`); otra docente no ve nada;
-   - la APK vieja simulada llama a `metas_docente_estado_guardar` y a
-     `metas_guardar_avisos` con la llave pública: `-2`;
-   - un padre entra con sesión anónima por `familia-vincular`, se suscribe
-     al canal privado `familia:<id>` y recibe el toque cuando la docente
-     anula un pago; el de un alumno trasladado no lo recibe; un padre no
-     puede suscribirse al canal de otra familia;
-   - con la llave pública no se lee ni una fila de `metas` sin sesión;
-   - la clave vieja vence con el hito y la nueva entra.
-5. **CI**: un trabajo aparte en `.github/workflows/sondas.yml`, a mano y de
-   noche, con `supabase/setup-cli`; no frena la publicación.
+| archivo | qué es |
+|---|---|
+| `version-cli.txt` | la CLI fija: **3.1.0** (`npx supabase@3.1.0`) |
+| `supabase/config.toml` | esquema `metas` expuesto, sesiones anónimas sí, alta por correo no, funciones sin verificación automática del JWT. Turnstile apagado solo en local |
+| `corre-supabase.sh` | se niega si la base o la API no están en `127.0.0.1`/`localhost` o si la carpeta está vinculada (`supabase link`); `db reset`; modelo viejo y datos ficticios; cuentas ficticias **por la API de Auth** con ids fijos; los cuatro `.sql` (CONGELAR dos veces); capa A; las funciones con `functions serve`; capa A+ |
+| `supabase/functions/*` | `metas-entrar`, `metas-salir-todos`, `familia-vincular` (02, 2.9) |
+| `capa-a-mas.mjs` | capa A+ en Node contra la API real (abajo) |
+
+```
+bash _dev/supabase-local/corre-supabase.sh
+```
+
+(`--solo-sql` para la capa A sola; `--capa-b`, `--capa-c` o `--todo` para
+sumar las capas B y C.) Necesita Docker corriendo, Node 22 y `psql`.
+
+**Capa A+** (`capa-a-mas.mjs`, `@supabase/supabase-js` 2.45.4 instalado con
+`--no-save`): E1 a E5 (`metas-entrar`: contraseña mala, sesión sola sin
+código ni clave, vinculación transparente una sola vez, la contraseña de Auth
+no sirve, freno de 5 fallos), D1 a D4 (aula, alumnos, colecta y pago por las
+funciones; el dinero llega a JavaScript como `"150.00"`; leer la tabla o
+insertar directo, rechazado; sin sesión, 401; la app vieja recibe `-2`), P1 a
+P4 (sesión anónima real, `familia-vincular`, el padre ve solo a su hija, no
+puede llamar `pago_crear`), T1 a T3 (Realtime: su canal sí, el de otra
+familia «Unauthorized», el toque llega sin dinero; el canal del docente) y
+R5-2 (trasladan al alumno con el padre conectado: «cerrar», ningún toque
+más, no se vuelve a unir), S1 a S3 (`metas-salir-todos`).
+
+**Aquí no se pudo correr** (no hay Docker en este entorno): las capas A+ y la
+corrida de la capa A contra `supabase start` las corre Josué con el comando
+de arriba.
+
+## 6.7 Capas B y C del corte 1 (escritas antes del código, revisión 6)
+
+- **B** (`pruebas-capa-b/`): `CONTRATO.md` fija la API de `MetasDatos`;
+  `arnes.mjs` arma varios aparatos aislados (IndexedDB propio con
+  `fake-indexeddb`, red que se corta, se demora o **pierde la respuesta
+  después de guardar**, `Math.random` prohibido) y mide en la base los
+  contadores de 6.1; `escenarios.mjs`: B1 ids, B2 montos en centavos, B3 sin
+  señal, B4 respuesta perdida sin duplicar, B5 dos aparatos sin señal (las
+  dos respuestas), B6 colecta cerrada (las dos respuestas), B7 identidad y
+  homónimos, B8 Realtime con el dinero como texto, B9 una cola por cuenta,
+  B10 lo borrado al reconectar.
+- **C** (`pruebas-capa-c/`): `CONTRATO-PANTALLA.md` fija los `data-metas`;
+  `capa-c.mjs` con Playwright en 390, 800 y 1366 px: C1 ninguna palabra
+  técnica ni indicador con señal y sin corrimiento lateral en las ocho
+  pantallas, C2 el punto gris sin señal, C3 pregunta de dinero entre dos
+  aparatos (dos botones de 44 px), C4 «¿Reabrirla?», C5 primera vez sin
+  señal, C6 carga rápida de 43, C7 accesibilidad, C8 la clave vencida en el
+  portal.
+
+Mientras `js/datos/` y la pantalla nueva no existan, las dos salen con código
+2 («pendiente del corte 1») y `corre-supabase.sh` lo dice sin fallar.

@@ -1,0 +1,5 @@
+# Lo que deja la CLI y `npm install --no-save`: nada de esto se versiona.
+node_modules/
+package-lock.json
+supabase/.temp/
+supabase/.branches/
