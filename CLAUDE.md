@@ -53,11 +53,21 @@ Sin framework ni compilación: HTML, CSS y JS planos servidos tal cual.
 3. **Los números se cuentan, no se escriben**: el catálogo está en
    `js/data/misiones.js`; en papel, las cifras se fechan.
 4. **Grupos** siempre como `6º-1`, vía `adGradoSeccion`
-   (`js/tools/registros-admin.js`). No tocar `paCodigoAlumno`,
-   `adClaveFamilia`, llaves de `localStorage` ni códigos ya entregados.
-5. **Datos del maestro se fusionan** (`js/metas-fusion-aula.js`), no se elige
-   una copia. Preferencias de vista van en su propia llave, nunca en
-   `METAS_ADMIN_V1` ni `METAS_ALUMNO_V1`.
+   (`js/tools/registros-admin.js`). No tocar `paCodigoAlumno` ni las
+   llaves de `localStorage` de preferencias y del lado del alumno. Las
+   llaves de datos del docente (`METAS_ADMIN_V1`, `METAS_CODIGOS_V1`,
+   `METAS_AVISOS_V1`…) dejan de usarse con el corte que pasa ese dato a
+   filas. **Claves de familia**: las pone la base (`metas.familias`).
+   Las viejas (`n-XXXX`) sirven durante la transición y **vencen al
+   terminarla** (paso 4): cada familia recibe una clave nueva. Antes de
+   esa fecha no se cambia ninguna clave ya entregada.
+5. **Datos del maestro: una fila por dato en Supabase** (esquema
+   `metas`, por `MetasDatos`). Nunca se fusiona, nunca se repone y
+   nunca se elige una copia. Lo que todavía no pasó a filas sigue en el
+   blob con la fusión vieja (`js/metas-fusion-aula.js`) solo hasta su
+   corte, y nada que ya es fila vuelve al blob. Preferencias de vista
+   van en su propia llave de `localStorage`, nunca en `METAS_ADMIN_V1`
+   ni `METAS_ALUMNO_V1`.
 6. **Accesibilidad**: nunca `user-scalable=no`; blancos de toque de 44 px;
    nada dicho solo con color (✓/✗ además del color); todo se hace sin arrastrar.
 7. **Papel**: un informe = una hoja carta (tope de 248 mm); no se baja el
@@ -77,6 +87,24 @@ Sin framework ni compilación: HTML, CSS y JS planos servidos tal cual.
     cuando un cambio los necesite, el SQL completo va en la respuesta del chat,
     con orden, si hay que re-correr algo y cómo comprobarlo.
 14. Comentarios en español, explicando **por qué**, no qué.
+15. **Nunca «upsert» en pagos** (ni en pagos de convocatoria, ni en
+    reembolsos): un pago se crea, se corrige anulándolo y creando otro, o se
+    anula; nunca se pisa. Ver `docs/rediseno-datos/03-GUARDADO-CONFLICTOS-Y-SIN-CONEXION.md`.
+16. **Nunca `Math.random()` para generar ids**: `crypto.randomUUID()` y, si no
+    existe, `crypto.getRandomValues()`.
+17. **Toda tabla nueva del esquema `metas` pasa por `metas._preparar`** (RLS
+    por dueño, política restrictiva de cuentas, sello, sin DELETE, auditoría y
+    Realtime), y todo archivo SQL que cree funciones en `metas` termina con
+    `revoke execute on all functions in schema metas from public`.
+18. **El dinero solo se escribe por funciones del servidor** (`metas.pago_*`,
+    `metas.gasto_*`, `metas.gasto_docente_*`, `metas.reembolso_*`,
+    `metas.colecta_*`, `metas.exencion_*`): ni `insert` ni `update` directos
+    sobre pagos, gastos, reembolsos, colectas o exenciones. Una colecta
+    cerrada solo se vuelve a tocar con `metas.colecta_reabrir`.
+19. **El dinero se lee siempre como texto** («150.00»): de las vistas `vd_*`,
+    `v_*`, `vf_*` o de las funciones, nunca de las columnas de las tablas (la
+    base no lo deja). En el aparato se suma y compara en centavos enteros;
+    nunca `Number()` ni `parseFloat()` sobre un monto.
 
 ## Cómo correr las pruebas
 

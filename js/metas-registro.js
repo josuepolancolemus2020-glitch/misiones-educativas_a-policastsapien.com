@@ -532,8 +532,10 @@
     function resolverAula() {
       var cod = aulaInp.value.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
       if (cod.length < 5) { aulaMsg.textContent = ''; aulaMsg.className = 'metas-id-aulamsg'; return; }
+      // Sin señal no se dice nada: el código se revisa solo cuando vuelva
+      // (09-INTERFAZ.md, lado del alumno: sin textos técnicos de guardado).
       if (navigator.onLine === false) {
-        aulaMsg.textContent = '📴 Sin internet: se confirmará al reconectar.';
+        aulaMsg.textContent = '';
         aulaMsg.className = 'metas-id-aulamsg';
         return;
       }

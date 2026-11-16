@@ -17,6 +17,7 @@
        Va antes de app.css para que el @font-face esté cuando la hoja lo pida. -->
   <link rel="stylesheet" href="css/vendor/fuentes/fuentes.css?v=462">
   <link rel="stylesheet" href="css/app.css?v=532">
+  <link rel="stylesheet" href="css/mi-aula.css?v=550">
 
   <!-- El tamaño de letra del maestro se aplica ANTES del primer pintado:
        si se aplicara al final, vería la pantalla pequeña y luego un salto,
@@ -212,7 +213,7 @@
           <span class="hnb-emoji">⭐</span>
           <span class="hnb-label">Mi Progreso</span>
         </button>
-        <button class="home-nav-btn hnb-docente" data-view="view-perfil">
+        <button class="home-nav-btn hnb-docente" data-view="view-perfil" data-metas="ir-zona-docente">
           <span class="hnb-emoji">🏫</span>
           <span class="hnb-label">Zona Docente</span>
         </button>
@@ -580,9 +581,19 @@
              El ORDEN es vivo: lo que más usa el maestro se va al frente
              (METAS_ZD_USO_V1, lógica en app.js zdUsoOrdenar) -->
         <div class="zd-grid" id="zd-grid">
-          <button class="zd-tile" id="goto-admin-btn" data-tool="aula" title="Alumnos, claves de familia y notas">
+          <!-- Mi aula del corte 1: la lista, las notas, la asistencia, las
+               colectas, los controles, los avisos y la conducta, una fila por
+               dato en la base (js/tools/mi-aula.js). -->
+          <button class="zd-tile" id="goto-admin-btn" data-tool="aula" data-metas="ir-mi-aula" title="Lista, notas, asistencia, colectas y avisos">
             <span class="zd-ico" style="--c1:#f59e0b;--c2:#ef6c00;"><i class="fa-solid fa-briefcase"></i></span>
             <span class="zd-name">Mi aula</span>
+          </button>
+          <!-- Lo del aula que todavía no pasó a filas (equipos, acumulativos,
+               estadísticas, Notas SACE…): sigue en la pantalla de antes hasta
+               su corte (08, 8.2). Se quita el día que todo esté en filas. -->
+          <button class="zd-tile" id="goto-admin-mas-btn" data-tool="aula-mas" title="Equipos, acumulativos, estadísticas y cuadros SACE">
+            <span class="zd-ico" style="--c1:#64748b;--c2:#334155;"><i class="fa-solid fa-folder-open"></i></span>
+            <span class="zd-name">Más del aula</span>
           </button>
           <button class="zd-tile" id="goto-plan-btn" data-tool="plan" title="Notas y avisos para los padres">
             <span class="zd-ico" style="--c1:#3b82f6;--c2:#1d4ed8;"><i class="fa-solid fa-chart-column"></i></span>
@@ -661,6 +672,27 @@
       <div></div>
     </header>
     <div class="view-scroll"><div id="admin-content"></div></div>
+  </div>
+
+  <!-- ========== MI AULA (corte 1: una fila por dato) ========== -->
+  <div id="view-mi-aula" class="view">
+    <header class="app-header compact">
+      <button class="back-icon-btn" id="mi-aula-back-btn" aria-label="Volver a la Zona Docente">
+        <i class="fa-solid fa-arrow-left"></i>
+      </button>
+      <h1 class="view-title">Mi aula</h1>
+      <!-- Lo ÚNICO que la app dice de la conexión: este punto, y solo sin
+           señal (09-INTERFAZ.md, 9.1). Sin texto. Va en la caja de la
+           derecha, donde app.js y letra-maestro.js ponen sus botones. -->
+      <div class="header-actions">
+      <span class="ma-senal" data-metas="senal" role="img" aria-label="Sin señal" hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+          <path d="M2 8.5a15 15 0 0 1 20 0M5.5 12a10 10 0 0 1 13 0M9 15.5a5 5 0 0 1 6 0"/><circle cx="12" cy="19" r="1.3" fill="currentColor"/><path d="M3 3l18 18"/>
+        </svg>
+      </span>
+      </div>
+    </header>
+    <div class="view-scroll"><div id="mi-aula" data-metas="mi-aula"></div></div>
   </div>
 
   <!-- ========== GOBIERNO ESCOLAR ========== -->
@@ -1314,20 +1346,37 @@
   <script src="js/tools/cuadros-sace.js?v=507"></script>
   <script src="js/tools/buscar-perdidos.js?v=515"></script>
   <script src="js/tools/revisa-cruces.js?v=518"></script>
-  <script src="js/tools/registros-admin.js?v=522"></script>
+  <script src="js/tools/registros-admin.js?v=551"></script>
   <script src="js/tools/convocatoria.js?v=462"></script>
-  <script src="js/tools/estadisticas-alumno.js?v=506"></script>
+  <script src="js/tools/estadisticas-alumno.js?v=549"></script>
   <script src="js/tools/equipos.js?v=462"></script>
   <script src="js/data/lectura-normas.js?v=462"></script>
   <script src="js/tools/lectura-fluidez.js?v=536"></script>
   <script src="js/data/instrumentos-evaluacion.js?v=521"></script>
   <script src="js/tools/herramientas-evaluacion.js?v=524"></script>
-  <script src="js/tools/acumulativos.js?v=524"></script>
+  <script src="js/tools/acumulativos.js?v=549"></script>
   <script src="js/tools/parte-mensual.js?v=462"></script>
   <script src="js/tools/collage-maker.js?v=462"></script>
   <script src="js/tools/formacion-docente.js?v=506"></script>
   <script src="js/data/campeonismo-bank.js?v=462"></script>
   <script src="js/tools/campeonismo.js?v=462"></script>
+  <!-- El motor de datos del corte 1 (docs/rediseno-datos/03, 3.10) y su
+       pantalla. En este orden (pruebas-capa-b/CONTRATO.md); dejan un solo
+       global, window.MetasDatos, y window.metasMiAula. -->
+  <script src="js/vendor/supabase.min.js?v=549"></script>
+  <script src="js/datos/ids.js?v=549"></script>
+  <script src="js/datos/montos.js?v=549"></script>
+  <script src="js/datos/nube.js?v=549"></script>
+  <script src="js/datos/almacen.js?v=549"></script>
+  <script src="js/datos/cola.js?v=552"></script>
+  <script src="js/datos/tiempo-real.js?v=552"></script>
+  <script src="js/datos/senal.js?v=549"></script>
+  <script src="js/datos/calculos.js?v=549"></script>
+  <script src="js/datos/datos.js?v=552"></script>
+  <script src="js/datos/importar.js?v=552"></script>
+  <script src="js/tools/mi-aula.js?v=552"></script>
+  <script src="js/tools/mi-aula-papel.js?v=551"></script>
+  <script src="js/tools/mi-aula-puente.js?v=552"></script>
   <script>
     /* Países ENCENDIDOS: el alumno elige su país y el inicio se pinta con los
        colores de esa bandera. Las misiones siguen siendo de Honduras: en los
@@ -1337,14 +1386,17 @@
        Honduras sin que nadie pierda su XP. */
     window.METAS_PAISES_ON = true;
   </script>
-  <script src="js/app.js?v=539"></script>
-  <!-- La fusión de los datos del aula. Va ANTES del espejo, que es quien la
-       llama: sin ella el espejo sigue funcionando como antes —elige la copia
-       más nueva— y por eso no revienta si un día no carga; pero con ella el
-       maestro que usa el teléfono y la PC el mismo día no pierde nada. -->
+  <script src="js/app.js?v=552"></script>
+  <!-- La fusión de los datos del aula. Va ANTES del blob por sesión, que es
+       quien la llama al juntar lo de dos aparatos: con ella el maestro que
+       usa el teléfono y la PC el mismo día no pierde nada. -->
   <script src="js/metas-fusion-aula.js?v=494"></script>
   <script src="js/metas-numeracion.js?v=516"></script>
-  <script src="js/metas-docente-sync.js?v=494"></script>
+  <!-- Lo que sigue en el blob (equipos, acumulativos, lecturas, inventario,
+       plan, Campeonísimo, gobierno escolar) viaja con la sesión nueva, sin
+       contraseña: metas.blob_leer / metas.blob_guardar (CONGELAR, paso 1d).
+       Reemplaza al espejo viejo (js/metas-docente-sync.js), que ya no carga. -->
+  <script src="js/metas-blob-sesion.js?v=552"></script>
   <script src="js/tools/pwa-install.js?v=462"></script>
   <script>
     if ('serviceWorker' in navigator) {
@@ -1374,6 +1426,9 @@
     }
   </script>
 
+  <!-- Las preguntas de dos botones, «no quedó anotado» y «Escribe tu
+       contraseña» de Mi aula: de a una, abajo (js/tools/mi-aula.js). -->
+  <div id="ma-tarjeta" class="ma-tarjeta" hidden></div>
 </body>
 </html>
 

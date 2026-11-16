@@ -18,8 +18,11 @@ android {
         applicationId "com.policastsapien.metas"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 3
-        versionName "1.2"
+        /* 4: la app abre el sitio publicado (capacitor.config.json,
+           server.url) en vez de la copia de www/; instala encima de la v480
+           solo si se firma con la MISMA llave (docs/rediseno-datos/11-APK-ANDROID.md). */
+        versionCode 4
+        versionName "1.3"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.

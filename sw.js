@@ -15,7 +15,7 @@
 //    las etiquetas ?v=NN de las páginas (normativa de sellado del CLAUDE.md).
 //    CACHE_DATOS no se toca nunca: subirlo volvería a borrarle al alumno lo
 //    que tenía guardado, que es justo lo que este arreglo vino a evitar.
-const CACHE_NAME = 'meta-app-v548';
+const CACHE_NAME = 'meta-app-v552';
 const CACHE_APP = CACHE_NAME;
 const CACHE_DATOS = 'meta-datos-v1';
 
@@ -33,6 +33,25 @@ const ARMAZON = [
   './index.html',
   './manifest.json',
   './css/app.css',
+  // Mi aula del corte 1 y su motor de datos (docs/rediseno-datos/03, 3.10):
+  // tienen que estar aunque el maestro abra la app sin señal, porque es
+  // justo ahí donde anota y la cola guarda lo anotado.
+  './css/mi-aula.css',
+  './js/vendor/supabase.min.js',
+  './js/datos/ids.js',
+  './js/datos/montos.js',
+  './js/datos/nube.js',
+  './js/datos/almacen.js',
+  './js/datos/cola.js',
+  './js/datos/tiempo-real.js',
+  './js/datos/senal.js',
+  './js/datos/calculos.js',
+  './js/datos/datos.js',
+  './js/datos/importar.js',
+  './js/tools/mi-aula.js',
+  './js/tools/mi-aula-papel.js',
+  // La pantalla de antes (equipos, acumulativos…) armada desde las filas.
+  './js/tools/mi-aula-puente.js',
   // Las tipografías. La CSS pesa 6 KB y trae todas las familias sin bajar
   // ni un byte de más: cada @font-face declara su unicode-range, así que
   // el navegador solo pide la letra que la página de verdad pinta. De ahí
@@ -299,8 +318,9 @@ function traer(peticion, opciones, ms) {
 
 /* La página para cuando no hay copia guardada y la red no contesta. Va aquí
    dentro y no en un archivo: si dependiera de un archivo, ese archivo tendría
-   que llegar por la misma red que no contesta. No promete nada sin internet;
-   dice lo que pasa y deja reintentar. Sin letra ni hoja de fuera: las del
+   que llegar por la misma red que no contesta. Una sola frase neutra, la
+   misma de la entrada del docente (09-INTERFAZ.md, 9.4), y un botón para
+   intentar otra vez. Sin letra ni hoja de fuera: las del
    sistema, que ya están en el teléfono. */
 const PAGINA_SIN_SENAL = `<!DOCTYPE html>
 <html lang="es">
@@ -308,7 +328,7 @@ const PAGINA_SIN_SENAL = `<!DOCTYPE html>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#1e3a7c">
-<title>M.E.T.A.S. · Sin señal suficiente</title>
+<title>M.E.T.A.S.</title>
 <style>
   :root { color-scheme: light; }
   html, body { margin: 0; height: 100%; }
@@ -329,8 +349,8 @@ const PAGINA_SIN_SENAL = `<!DOCTYPE html>
 <main>
   <div class="logo" role="img" aria-label="M.E.T.A.S.">M.E.T.A.S.</div>
   <div class="sub">Misiones Educativas Tecnológicas Asincrónicas y Sincrónicas</div>
-  <p>No hay señal suficiente para abrir M.E.T.A.S por primera vez.</p>
-  <button type="button" id="reintentar" onclick="location.reload()">Reintentar</button>
+  <p>Para entrar la primera vez se necesita señal</p>
+  <button type="button" id="reintentar" onclick="location.reload()">Intentar otra vez</button>
 </main>
 </body>
 </html>`;

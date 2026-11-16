@@ -423,7 +423,7 @@ function acRenderUno(body, d, ac) {
   });
 
   body.querySelector('#ac-borrar').addEventListener('click', async () => {
-    const msg = 'Se borran las notas de «' + ac.titulo + '» de todos los alumnos, en este equipo y en los demás donde abras Mi aula. ¿Borrarlo?';
+    const msg = 'Se borran las notas de «' + ac.titulo + '» de todos los alumnos. ¿Borrarlo?';
     const ok = (typeof metasConfirm === 'function')
       ? await metasConfirm(msg, { icono: '🗑️', titulo: 'Borrar acumulativo', okTxt: 'Sí, borrar' })
       : window.confirm(msg);
