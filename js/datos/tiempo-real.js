@@ -31,7 +31,7 @@
   // el día de su corte.
   var TABLAS = ['aulas', 'periodos', 'asignaturas', 'alumnos', 'familias', 'colectas', 'colecta_exenciones',
     'pagos', 'gastos', 'asistencia_dias', 'asistencia', 'inasistencias_oficiales', 'notas', 'notas_personalidad',
-    'controles', 'control_valores', 'observaciones', 'avisos', 'aviso_destinatarios'];
+    'controles', 'control_valores', 'observaciones', 'avisos', 'aviso_destinatarios', 'gastos_docente', 'reembolsos'];
   var SOLAPE_MS = 2 * 60 * 1000;
   var POR_PAGINA = 1000;
 

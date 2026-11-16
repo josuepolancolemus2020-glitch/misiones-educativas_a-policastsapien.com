@@ -30,7 +30,7 @@ const fs = require('fs');
 const path = require('path');
 
 const RAIZ = path.resolve(__dirname, '..');
-const ORDEN = ['ids', 'montos', 'nube', 'almacen', 'cola', 'tiempo-real', 'senal', 'calculos', 'datos'];
+const ORDEN = ['ids', 'montos', 'nube', 'almacen', 'cola', 'tiempo-real', 'senal', 'calculos', 'datos', 'importar'];
 let fallos = 0;
 function comprueba(que, ok, detalle) {
   console.log((ok ? '  ✓ ' : '  ✗ ') + que + (ok || detalle === undefined ? '' : '  → ' + JSON.stringify(detalle)));

@@ -118,9 +118,12 @@ echo "▶ SUPABASE-V2-ESQUEMA.sql"
 q -f "$DISENO/SUPABASE-V2-ESQUEMA.sql"
 echo "▶ SUPABASE-V2-FAMILIAS.sql"
 q -f "$DISENO/SUPABASE-V2-FAMILIAS.sql"
+# Foto del catálogo antes de congelar: DESCONGELAR tiene que volver a ella.
+q -f "$PRUEBAS/03-foto-catalogo.sql" -c "select foto.tomar('antes')" >/dev/null
 echo "▶ SUPABASE-V2-CONGELAR.sql (dos veces)"
 q -f "$DISENO/SUPABASE-V2-CONGELAR.sql" >/dev/null
 q -f "$DISENO/SUPABASE-V2-CONGELAR.sql" >/dev/null || falla "CONGELAR falló la segunda vez"
+q -c "select foto.tomar('congelado')" >/dev/null
 
 # ── 3. Capa A ──────────────────────────────────────────────────────────────
 echo "▶ Capa A"
@@ -130,6 +133,14 @@ echo "▶ Capa A"
 PROYECTO="$(sed -n 's/^project_id *= *"\(.*\)"/\1/p' "$AQUI/supabase/config.toml")"
 q -v "conninfo=host=supabase_db_$PROYECTO port=5432 user=postgres password=postgres dbname=postgres" \
   -f "$PRUEBAS/10-pruebas.sql"
+# Ida y vuelta: DESCONGELAR (dos veces, debe aguantar) y CONGELAR otra vez.
+# Las capas A+, B y C corren después, con la base congelada de nuevo.
+echo "▶ SUPABASE-V2-DESCONGELAR.sql (dos veces) y CONGELAR otra vez"
+q -f "$DISENO/SUPABASE-V2-DESCONGELAR.sql" >/dev/null
+q -f "$DISENO/SUPABASE-V2-DESCONGELAR.sql" >/dev/null || falla "DESCONGELAR falló la segunda vez"
+q -f "$PRUEBAS/20-descongelar.sql"
+q -f "$DISENO/SUPABASE-V2-CONGELAR.sql" >/dev/null
+q -f "$PRUEBAS/21-recongelar.sql"
 
 [ "$SOLO_SQL" = 1 ] && exit 0
 # La capa A cambia el esquema (funciones, vistas): la API lo vuelve a leer.

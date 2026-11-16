@@ -1552,6 +1552,7 @@ async function docenteRecuperar() {
   if (!clave) { toast('Escribe tu contraseña'); return; }
   const r = window.metasMiAula ? await window.metasMiAula.entrar(correo, clave) : { ok: false, motivo: 'reintentar' };
   if (r.ok) {
+    await _docenteFichaNueva(correo);
     _docenteEntrarViejo(correo, clave);
     renderProfile();
     const c = window.metasMiAula.cuenta() || {};
@@ -1571,8 +1572,53 @@ async function docenteRecuperar() {
   toast('No se pudo entrar ahora. Intenta de nuevo en un momento.');
 }
 
-/* La sesión vieja, solo para lo que todavía vive en el blob. En pruebas
-   (127.0.0.1 con una base de prueba) no se toca la base real. */
+/* La ficha del docente en este aparato (METAS_DOCENTE_V1): código, nombre
+   y correo, para las herramientas que la leen (su nombre en la boleta, la
+   puerta de las misiones solo para docentes…). Se escribe desde la sesión
+   nueva, así que existe aunque la entrada vieja no se pueda hacer. El
+   código sale de la cuenta vinculada (metas.cuentas, que la sesión solo
+   deja leer suya). Lo que todavía vive en el blob (equipos, acumulativos,
+   lecturas, inventario, plan…) viaja con la sesión, sin contraseña:
+   js/metas-blob-sesion.js. */
+async function _docenteFichaNueva(correo) {
+  const previa = _docenteCfg();
+  const cuenta = (window.metasMiAula && window.metasMiAula.cuenta()) || {};
+  let codigo = '';
+  try {
+    const n = window.MetasDatos && window.MetasDatos._nube;
+    const filas = n ? await n.leer('cuentas?select=docente_codigo') : [];
+    codigo = (filas[0] && filas[0].docente_codigo) || '';
+  } catch (_) { /* sin señal justo ahora: se completa en la próxima entrada */ }
+  if (previa.codigo && codigo && previa.codigo !== codigo) {
+    // Otra cuenta en este aparato: su ficha no se mezcla con la nueva.
+    for (const k of Object.keys(previa)) delete previa[k];
+  }
+  const ficha = Object.assign({}, previa, {
+    codigo: codigo || previa.codigo || '', nombre: cuenta.nombre || previa.nombre || '', correo,
+    rol: cuenta.rol || previa.rol || 'docente', t: new Date().toISOString(),
+  });
+  _docenteSave(ficha);
+  if (window.MetasBlob) window.MetasBlob.alEntrar(ficha.codigo);
+}
+
+/* Al abrir la app con una sesión nueva ya abierta: el blob se pone al día. */
+function _docenteAlAbrir() {
+  if (window.metasMiAula && typeof window.metasMiAula.preparar === 'function') {
+    window.metasMiAula.preparar().then(() => {
+      if (window.metasMiAula.cuenta() && window.MetasBlob) window.MetasBlob.alEntrar(_docenteCfg().codigo);
+    });
+  }
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', _docenteAlAbrir);
+else setTimeout(_docenteAlAbrir, 0);
+
+/* La contraseña guardada, SOLO para lo de la cuenta que todavía no tiene
+   versión por sesión: el código de aula (metas_aula_mi_codigo), el perfil
+   (metas_perfil_leer / metas_perfil_editar) y lo de Dirección en Ajustes
+   (_ajRpc). Ninguna herramienta del aula la usa: el blob viaja por sesión
+   (js/metas-blob-sesion.js) y lo del corte 1 por MetasDatos. Se quita el día
+   que esas funciones tengan su versión por sesión (10-PUBLICAR.md, pendientes).
+   En pruebas (127.0.0.1 con una base de prueba) no se toca la base real. */
 async function _docenteEntrarViejo(correo, clave) {
   if (window.__METAS_NUBE_DE_PRUEBA__ && /^(127\.0\.0\.1|localhost)$/.test(location.hostname)) return;
   const { url, key } = _padreSbCfg();
@@ -1584,11 +1630,9 @@ async function _docenteEntrarViejo(correo, clave) {
     });
     const resp = r.ok ? await r.json() : null;
     if (resp && resp.ok && resp.codigo) {
-      // ORDEN CRÍTICO: primero la sesión NUEVA y después se reclama el
-      // equipo (dsClaim descarga con la sesión guardada).
-      _docenteSave({ codigo: resp.codigo, clave, nombre: resp.nombre || '', correo,
-        rol: resp.rol || 'docente', t: new Date().toISOString() });
-      if (typeof dsClaim === 'function') dsClaim(resp.codigo);
+      // Se COMPLETA la ficha que ya escribió la sesión nueva.
+      _docenteSave(Object.assign(_docenteCfg(), { codigo: resp.codigo, clave, nombre: resp.nombre || _docenteCfg().nombre || '',
+        correo, rol: resp.rol || 'docente' }));
       renderProfile();
     }
   } catch (_) { /* las herramientas que siguen en el blob esperan a la próxima entrada */ }
@@ -1735,7 +1779,6 @@ function renderProfile() {
         <div id="doc-prog-out"></div>
       </div>
     </div>`;
-  if (d.codigo && typeof dsOnProfile === 'function') dsOnProfile();
   docenteCargarCodigoAula();
   docenteProgInit();
 }
@@ -1969,12 +2012,12 @@ async function docenteSuscribir() {
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const resp = await r.json();
     if (resp && resp.ok && resp.codigo) {
-      // ORDEN CRÍTICO: sesión nueva PRIMERO, reclamo del equipo DESPUÉS
-      // (dsClaim usa la sesión guardada para hablar con la nube).
+      // La sesión nueva sale de metas-entrar, como en cualquier otra
+      // entrada (rev. 11): sin ella el blob y Mi aula no tendrían con qué.
       _docenteSave({ codigo: resp.codigo, clave, nombre, correo, escuela, tipo: _docTipo, telefono,
         departamento, municipio, lugar, rol: 'docente', t: new Date().toISOString() });
-      // Si en este equipo quedaron datos de OTRA cuenta, se descartan aquí.
-      if (typeof dsClaim === 'function') dsClaim(resp.codigo);
+      const e = window.metasMiAula ? await window.metasMiAula.entrar(correo, clave) : { ok: false };
+      if (e.ok) await _docenteFichaNueva(correo);
       renderProfile();
       toast('🎉 ¡Bienvenido, ' + nombre.split(' ')[0] + '! Tu cuenta está lista');
       return;
@@ -2068,12 +2111,13 @@ async function docenteCerrarSesion() {
         { icono: '🚪', titulo: 'Cerrar sesión', okTxt: 'Sí, cerrar sesión' })
     : true;
   if (!ok) return;
-  // 1) MetasDatos termina de mandar lo anotado (con señal) y cierra; sin
+  // 1) lo que sigue en el blob sube con la sesión TODAVÍA abierta, y se
+  //    quita de este equipo (después ya no habría con qué subirlo)
+  if (window.MetasBlob) await window.MetasBlob.salir();
+  // 2) MetasDatos termina de mandar lo anotado (con señal) y cierra; sin
   //    señal lo conserva para esta cuenta en este equipo (03, 3.7).
   if (window.metasMiAula) await window.metasMiAula.salir();
-  // 2) lo que sigue en el blob: sube lo suyo y limpia este equipo
-  if (typeof dsLogout === 'function') dsLogout();
-  // 2) quita la sesión
+  // 3) quita la sesión
   _docenteSave(null);
   try { localStorage.removeItem(DOCENTE_KEY); } catch (_) {}
   renderProfile();

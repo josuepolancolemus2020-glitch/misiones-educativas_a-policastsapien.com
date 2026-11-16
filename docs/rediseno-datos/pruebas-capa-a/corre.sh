@@ -50,6 +50,8 @@ echo "▶ SUPABASE-V2-ESQUEMA.sql"
 psql_pg -f "'$TMP/SUPABASE-V2-ESQUEMA.sql'"
 echo "▶ SUPABASE-V2-FAMILIAS.sql"
 psql_pg -f "'$TMP/SUPABASE-V2-FAMILIAS.sql'"
+# Foto del catálogo antes de congelar: DESCONGELAR tiene que volver a ella.
+psql_pg -f "'$TMP/03-foto-catalogo.sql'" -c "'select foto.tomar(\$\$antes\$\$)'" >/dev/null
 echo "▶ SUPABASE-V2-CONGELAR.sql (paso 1)"
 psql_pg -f "'$TMP/SUPABASE-V2-CONGELAR.sql'"
 # Una segunda vez, como si alguien lo pegara de nuevo en el SQL Editor: no
@@ -57,5 +59,15 @@ psql_pg -f "'$TMP/SUPABASE-V2-CONGELAR.sql'"
 echo "▶ SUPABASE-V2-CONGELAR.sql otra vez (debe aguantar)"
 psql_pg -f "'$TMP/SUPABASE-V2-CONGELAR.sql'" >/dev/null 2>&1 \
   || { echo "✘ CONGELAR falló la segunda vez"; psql_pg -f "'$TMP/SUPABASE-V2-CONGELAR.sql'"; exit 1; }
+psql_pg -c "'select foto.tomar(\$\$congelado\$\$)'" >/dev/null
 echo "▶ Pruebas"
 psql_pg -v "conninfo='host=$TMP port=$PUERTO user=postgres dbname=metas_prueba'" -f "'$TMP/10-pruebas.sql'"
+# Ida y vuelta: DESCONGELAR (dos veces, debe aguantar) y CONGELAR otra vez.
+echo "▶ SUPABASE-V2-DESCONGELAR.sql (dos veces)"
+psql_pg -f "'$TMP/SUPABASE-V2-DESCONGELAR.sql'" >/dev/null
+psql_pg -f "'$TMP/SUPABASE-V2-DESCONGELAR.sql'" >/dev/null \
+  || { echo "✘ DESCONGELAR falló la segunda vez"; exit 1; }
+psql_pg -f "'$TMP/20-descongelar.sql'"
+echo "▶ SUPABASE-V2-CONGELAR.sql otra vez"
+psql_pg -f "'$TMP/SUPABASE-V2-CONGELAR.sql'" >/dev/null
+psql_pg -f "'$TMP/21-recongelar.sql'"

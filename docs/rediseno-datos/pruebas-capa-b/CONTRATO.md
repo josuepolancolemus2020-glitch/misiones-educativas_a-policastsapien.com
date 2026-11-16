@@ -10,7 +10,8 @@ cambia primero este archivo y la prueba, y después el código.
 Scripts clásicos (sin módulos ni compilación, como el resto del sitio), en
 este orden: `js/vendor/supabase.min.js`, `js/datos/ids.js`, `montos.js`,
 `nube.js`, `almacen.js`, `cola.js`, `tiempo-real.js`, `senal.js`,
-`calculos.js`, `datos.js`. Dejan un solo global: `window.MetasDatos`.
+`calculos.js`, `datos.js` y `importar.js` (rev. 11: importar un archivo,
+`04-FORMATO-IMPORTACION.md`). Dejan un solo global: `window.MetasDatos`.
 
 La dirección de Supabase va escrita en `nube.js`. Solo en pruebas, y solo si
 `location.hostname` es `127.0.0.1` o `localhost`, se toma de

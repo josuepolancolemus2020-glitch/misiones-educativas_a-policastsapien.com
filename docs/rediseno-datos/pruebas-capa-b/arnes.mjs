@@ -34,7 +34,7 @@ export const DB = process.env.METAS_DB;
 export const SCRIPTS = [
   'js/vendor/supabase.min.js', 'js/datos/ids.js', 'js/datos/montos.js', 'js/datos/nube.js',
   'js/datos/almacen.js', 'js/datos/cola.js', 'js/datos/tiempo-real.js', 'js/datos/senal.js',
-  'js/datos/calculos.js', 'js/datos/datos.js',
+  'js/datos/calculos.js', 'js/datos/datos.js', 'js/datos/importar.js',
 ];
 
 export function faltantes() {
@@ -221,7 +221,11 @@ export function horaServidor() {
 // ── Pruebas ────────────────────────────────────────────────────────────────
 let total = 0;
 let fallas = 0;
+// METAS_SOLO=B13 corre solo los escenarios cuyo nombre empieza así (para
+// mirar uno de cerca); la corrida completa no la usa.
+const SOLO = process.env.METAS_SOLO ? new RegExp('^(' + process.env.METAS_SOLO + ')\\b') : null;
 export async function escenario(nombre, fn) {
+  if (SOLO && !SOLO.test(nombre)) return;
   total++;
   try {
     await fn();

@@ -171,6 +171,9 @@ documentos) lee las fotos del cuadro de notas o del cuaderno de colectas y
 produce **un archivo** con este formato. La app lo abre en la **misma vista
 previa** de 4.3: nada se guarda sin que el docente lo vea y lo confirme.
 
+- **Formato exacto, publicado (rev. 11): `04-FORMATO-IMPORTACION.md`.** Ya
+  está hecho: Mi aula → Alumnos → Pegar una lista → «📂 Importar un archivo»
+  (`js/datos/importar.js`). Suma familias, gastos del docente e inventario.
 - Esquema: `formato-importacion.schema.json` (JSON Schema 2020-12).
 - Ejemplo con datos **ficticios**: `ejemplo-importacion.json`.
 

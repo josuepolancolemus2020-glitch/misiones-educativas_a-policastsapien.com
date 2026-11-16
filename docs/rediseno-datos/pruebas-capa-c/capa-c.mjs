@@ -398,6 +398,259 @@ await prueba('C11 controles: un toque pone ✓ y otro la quita; «Anotados N/M �
   await ctx.close();
 });
 
+// ── Rev. 11: lo que sigue en el blob viaja por SESIÓN (CONGELAR, paso 1d) ──
+// Equipos, Acumulativos, Estadísticas, Lectura, Gastos de mi bolsillo e
+// Inventario abren la pantalla de antes. Con CONGELAR aplicado y SIN la
+// entrada vieja (en 127.0.0.1 nunca se hace), lo que se anota allí tiene que
+// llegar a la base: al blob con metas.blob_guardar, o a filas lo que es del
+// corte 1 (gastos del docente, observación del grado). Y verse en otro aparato.
+const { execFileSync } = await import('node:child_process');
+function sql(q) {
+  return execFileSync('psql', [process.env.METAS_DB, '-XAtq', '-v', 'ON_ERROR_STOP=1', '-c', q], { encoding: 'utf8' }).trim();
+}
+async function hasta(fn, que, ms = 25000) {
+  const fin = Date.now() + ms;
+  let ultimo;
+  while (Date.now() < fin) {
+    try { ultimo = await fn(); if (ultimo) return ultimo; } catch (e) { ultimo = e.message; }
+    await new Promise((ok) => setTimeout(ok, 700));
+  }
+  throw new Error(que + ' (último: ' + String(ultimo).slice(0, 160) + ')');
+}
+// Únicos por corrida: la capa C se puede volver a correr sobre la misma base.
+const GASTO_C13 = 'Copias C13 ' + Date.now().toString(36) + ' (ficticio)';
+const BLOB_A = `(select valor->>'raw' from public.docente_estado where codigo = 'PROF-AAAA000001' and k = 'METAS_ADMIN_V1')`;
+const AULA_A = `(select id from metas.aulas where owner = '00000000-0000-0000-0000-00000000000a' and escuela like '%Las Flores%' and deleted_at is null limit 1)`;
+// Lo que no puede pasar: la app vieja (con contraseña) hablando con la base.
+function vigilarViejo(p, dichas) {
+  p.on('request', (r) => {
+    if (/rpc\/(metas_docente_estado_(guardar|leer)|metas_guardar_admin|metas_guardar_avisos)\b/.test(r.url())) dichas.push(r.url());
+  });
+}
+async function aVieja(p, seccion) {
+  await p.click(m('ir-' + seccion));
+  await p.waitForSelector('#view-admin.active #ad-tab-body');
+}
+async function aEconomiaVieja(p, puerta) {
+  await p.click(m('ir-economia'));
+  await p.waitForSelector(m('pantalla-economia'));
+  await p.click(m(puerta));
+  await p.waitForSelector('#view-admin.active #ad-tab-body');
+}
+
+await prueba('C12 sin la sesión vieja: la ficha no guarda contraseña, y Equipos, Acumulativos y Lectura van al blob por sesión con su lista desde las filas', async () => {
+  const ctx = await contexto(TAMANOS[2]);
+  const p = await ctx.newPage();
+  const viejas = [];
+  vigilarViejo(p, viejas);
+  // El blob de la docente como quedó ANTES del paso 1: un grupo del mismo
+  // grado y sección que el aula de la capa A, CON su lista (el archivo) y un
+  // acumulativo suyo. Se escribe con el candado apagado solo en esta
+  // transacción: después del paso 1 ninguna app lo puede escribir así.
+  sql(`begin;
+       alter table public.docente_estado disable trigger docente_estado_candado;
+       update public.docente_estado
+          set valor = jsonb_build_object('raw', jsonb_build_object('v', 2, 'grupos', jsonb_build_array(jsonb_build_object(
+                'id', 'GVIEJO', 'grado', '6', 'seccion', '1', 'escuela', 'Escuela Ficticia Las Flores',
+                'lista', jsonb_build_array(jsonb_build_object('num', 1, 'nombre', 'Alumna de antes (ficticia)', 'clave', '1K7QM')),
+                'notas', jsonb_build_object('I', jsonb_build_object('Matemáticas', jsonb_build_object('1', '70'))),
+                'acumulativos', jsonb_build_array(jsonb_build_object('id', 'AVIEJO', 'titulo', 'Acumulativo de antes (ficticio)',
+                  'icono', '📝', 'materia', '', 'parcial', 'I', 'fecha', '2026-03-01', 'tipo', 'actividades',
+                  'calculo', 'promedio', 'criterios', jsonb_build_array(jsonb_build_object('id', 'c1', 't', 'Trabajo', 'pts', 10)),
+                  'notas', '{}'::jsonb, 'creado', 1)))))::text),
+              version = version + 1
+        where codigo = 'PROF-AAAA000001' and k = 'METAS_ADMIN_V1';
+       alter table public.docente_estado enable trigger docente_estado_candado;
+       commit;`);
+  await entrar(p);
+  const ficha = await p.evaluate(() => JSON.parse(localStorage.getItem('METAS_DOCENTE_V1') || '{}'));
+  afirma(ficha.codigo === 'PROF-AAAA000001', 'la ficha no tiene el código: ' + JSON.stringify(ficha));
+  afirma(!('clave' in ficha), 'la ficha guarda una contraseña');
+  // Equipos: la lista sale de las filas (la de Mi aula) y el reparto va al blob.
+  await aVieja(p, 'equipos');
+  const enLista = await p.evaluate(() => {
+    const st = JSON.parse(localStorage.getItem('METAS_ADMIN_V1'));
+    const g = st.grupos.find((x) => x.id === st.activo);
+    return { aula: g.aula, n: g.lista.length, nombres: g.lista.map((a) => a.nombre).join('|') };
+  });
+  afirma(enLista.aula === sql(`select ${AULA_A}`), 'el grupo activo no es el aula de Mi aula');
+  afirma(enLista.n === Number(sql(`select count(*) from metas.alumnos where aula_id = ${AULA_A} and deleted_at is null`)),
+    'la lista de la pantalla de antes no es la de las filas');
+  afirma(enLista.nombres.includes('Alumna Ficticia Cinco'), 'falta la alumna de la capa A');
+  await p.click('#eq-armar');
+  await hasta(() => sql(`select ${BLOB_A}::jsonb @? '$.grupos[*] ? (@.aula == "${enLista.aula}").equipos.reparto ? (@ != "")'`) === 't',
+    'el reparto de equipos no llegó al blob');
+  // Acumulativos: una actividad desde una plantilla.
+  await p.click('#admin-back-btn');
+  await p.waitForSelector(m('mi-aula'));
+  await aVieja(p, 'acumulativos');
+  await p.click('#ac-nuevo');
+  await p.click('[data-plant]');
+  await hasta(() => Number(sql(`select coalesce(jsonb_array_length((select g->'acumulativos' from jsonb_array_elements(${BLOB_A}::jsonb->'grupos') g where g->>'aula' = '${enLista.aula}')), 0)`)) >= 1,
+    'el acumulativo no llegó al blob');
+  // Lectura: una toma completa (arranca, marca la última palabra, contesta y guarda).
+  await p.click('#admin-back-btn');
+  await p.waitForSelector(m('mi-aula'));
+  await aVieja(p, 'lectura');
+  await p.click('#lec-empezar');
+  await p.click('#lec-arrancar');
+  await p.waitForTimeout(3300);
+  await p.locator('#lec-texto .lec-p').nth(20).click();
+  for (const b of await p.locator('[data-lecresp][data-val="1"]').all()) await b.click();
+  await p.click('#lec-terminar');
+  await p.click('#lec-guardar');
+  await hasta(() => sql(`select ${BLOB_A}::jsonb @? '$.grupos[*] ? (@.aula == "${enLista.aula}").lectura[*].ppm'`) === 't',
+    'la toma de lectura no llegó al blob');
+  // El grupo de antes del mismo grado y sección se unió al aula, con su
+  // acumulativo: no queda aparte, escondido.
+  // (el grupo conserva su id; lo que cambia es que ya es el de esa aula)
+  await hasta(() => sql(`select not (${BLOB_A}::jsonb @? '$.gruposSinAula[*] ? (@.id == "GVIEJO")')
+                          and (${BLOB_A}::jsonb @? '$.grupos[*] ? (@.id == "GVIEJO" && @.aula == "${enLista.aula}")')
+                          and (${BLOB_A}::jsonb @? '$.grupos[*] ? (@.aula == "${enLista.aula}").acumulativos[*] ? (@.id == "AVIEJO")')
+                          and not (${BLOB_A}::jsonb @? '$.grupos[*].lista[*]')`) === 't',
+    'el grupo de antes no se unió a su aula');
+  // Nada del corte 1 en el blob, y ni una llamada de la app vieja.
+  afirma(sql(`select metas._blob_bloqueado('PROF-AAAA000001', 'METAS_ADMIN_V1', ${BLOB_A}) is null`) === 't',
+    'el blob guarda algo del corte 1');
+  afirma(!viejas.length, 'la app habló con la base con la contraseña: ' + viejas[0]);
+  // Lo que es del corte 1 se abre en Mi aula, no en la pantalla de antes.
+  await p.click('#admin-content [data-adtab="lista"]');
+  await p.waitForSelector(m('pantalla-alumnos'));
+  await ctx.close();
+});
+
+await prueba('C13 Gastos de mi bolsillo: se anota y se cobra como siempre, y queda en filas (gastos_docente y su reembolso), no en el blob', async () => {
+  const ctx = await contexto(TAMANOS[0]);
+  const p = await ctx.newPage();
+  const viejas = [];
+  vigilarViejo(p, viejas);
+  await entrar(p);
+  await aEconomiaVieja(p, 'ir-gastos-bolsillo');
+  await p.fill('#ad-gsto-con', GASTO_C13);
+  await p.fill('#ad-gsto-monto', '35');
+  await p.click('#ad-gsto-add');
+  const id = await hasta(() => sql(`select id from metas.gastos_docente where concepto = '${GASTO_C13}' and deleted_at is null`),
+    'el gasto no llegó a metas.gastos_docente');
+  afirma(sql(`select monto::text from metas.gastos_docente where id = '${id}'`) === '35.00', 'el monto no es 35.00');
+  await p.click(`[data-cobrado="${id}"]`);
+  await hasta(() => sql(`select count(*) from metas.reembolsos where gasto_id = '${id}' and deleted_at is null and monto = 35`) === '1',
+    'el reembolso no quedó');
+  await p.waitForSelector(`[data-reabrir="${id}"]`);
+  afirma(sql(`select coalesce(${BLOB_A}::jsonb ? 'gastos', false)`) === 'f', 'los gastos fueron al blob');
+  // La flecha vuelve a la Economía de Mi aula.
+  await p.click('#admin-back-btn');
+  await p.waitForSelector(m('pantalla-economia'));
+  afirma(!viejas.length, 'la app habló con la base con la contraseña: ' + viejas[0]);
+  await ctx.close();
+});
+
+await prueba('C14 Inventario y Estadísticas: el inventario va al blob; la observación del grado, a metas.aulas', async () => {
+  const ctx = await contexto(TAMANOS[1]);
+  const p = await ctx.newPage();
+  await entrar(p);
+  await aEconomiaVieja(p, 'ir-inventario');
+  await p.fill('#ad-inv-nom', 'Pizarra C14 (ficticia)');
+  await p.click('#ad-inv-add');
+  await hasta(() => sql(`select ${BLOB_A}::jsonb @? '$.inventario[*] ? (@.nombre == "Pizarra C14 (ficticia)")'`) === 't',
+    'el inventario no llegó al blob');
+  await p.click('#admin-back-btn');
+  await p.waitForSelector(m('pantalla-economia'));
+  await aVieja(p, 'estadisticas');
+  await p.fill('#est-obs', 'Observación C14 del grado (ficticia)');
+  await hasta(() => sql(`select observacion_grado from metas.aulas where id = ${AULA_A}`) === 'Observación C14 del grado (ficticia)',
+    'la observación del grado no llegó a metas.aulas');
+  afirma(sql(`select metas._blob_bloqueado('PROF-AAAA000001', 'METAS_ADMIN_V1', ${BLOB_A}) is null`) === 't',
+    'el blob guarda algo del corte 1');
+  await ctx.close();
+});
+
+await prueba('C15 otro aparato: entra y ve el inventario, el gasto cobrado, el acumulativo, la toma de lectura y la observación', async () => {
+  const ctx = await contexto(TAMANOS[0]);
+  const p = await ctx.newPage();
+  await entrar(p);
+  await aEconomiaVieja(p, 'ir-inventario');
+  await p.waitForSelector('#ad-tab-body :text("Pizarra C14 (ficticia)")', { timeout: 15000 });
+  await p.click('#admin-back-btn');
+  await aEconomiaVieja(p, 'ir-gastos-bolsillo');
+  await p.waitForSelector(`#ad-tab-body .ad-gsto-ok :text("${GASTO_C13}")`, { timeout: 15000 });
+  await p.click('#admin-back-btn');
+  await p.waitForSelector(m('pantalla-economia'));
+  await aVieja(p, 'acumulativos');
+  await p.waitForSelector('#ad-tab-body [data-acid]', { timeout: 15000 });
+  await p.click('#admin-back-btn');
+  await aVieja(p, 'estadisticas');
+  await p.waitForFunction(() => (document.getElementById('est-obs') || {}).value === 'Observación C14 del grado (ficticia)',
+    null, { timeout: 15000 });
+  const tomas = await p.evaluate(() => {
+    const st = JSON.parse(localStorage.getItem('METAS_ADMIN_V1'));
+    const g = st.grupos.find((x) => x.id === st.activo);
+    return (g.lectura || []).length;
+  });
+  afirma(tomas >= 1, 'la toma de lectura no llegó a este aparato');
+  await ctx.close();
+});
+
+await prueba('C16 importar un archivo: vista previa con ✓ ⚠ ✗, preguntas de dos botones, guardar una vez y reimportar sin duplicar', async () => {
+  const ejemplo = JSON.parse(fs.readFileSync(path.join(RAIZ, 'docs/rediseno-datos/ejemplo-importacion.json'), 'utf8'));
+  ejemplo.aula.escuela = 'Escuela Ficticia C16 ' + Date.now().toString(36);
+  const archivo = { name: 'aula-6-1.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(ejemplo)) };
+  const ctx = await contexto(TAMANOS[0]);
+  const p = await ctx.newPage();
+  await entrar(p);
+  await p.click(m('ir-alumnos'));
+  await p.click(m('ir-carga-rapida'));
+  async function abrirArchivo() {
+    const elegir = p.waitForEvent('filechooser');
+    await p.click(m('importar-elegir'));
+    await (await elegir).setFiles(archivo);
+    await p.waitForSelector(m('importar-vista-previa'), { timeout: 15000 }).catch(async (e) => {
+      throw new Error('sin vista previa: ' + (await p.locator(m('importar')).innerText()).slice(0, 300));
+    });
+  }
+  await abrirArchivo();
+  const vista = await p.locator(m('importar-vista-previa')).innerText();
+  afirma(vista.includes('Vas a guardar en 6º-1') && vista.includes('(grupo nuevo)'), vista.slice(0, 200));
+  // Lo que no se puede guardar lo dice con ✗, y lo leído con duda con ⚠.
+  const malas = p.locator(`${m('importar-fila')}[data-estado="error"]`);
+  afirma(await malas.count() >= 3, 'faltan las filas con ✗');
+  afirma((await malas.first().innerText()).includes('✗'), 'una fila mala no lleva ✗');
+  afirma(/⚠ revisar/.test(vista), 'lo leído con duda no dice «revisar»');
+  // «1,500» se pregunta con dos botones; la diferencia con el cuaderno, también.
+  const dos = p.locator('[data-accion="importar-decidir"][data-clave="gastodoc:1"]');
+  afirma(await dos.count() === 2, 'el «1,500» no trae dos botones');
+  await p.click('[data-accion="importar-decidir"][data-clave="gastodoc:1"][data-valor="1500.00"]');
+  await p.waitForSelector('[data-clave="gastodoc:1"][data-valor="1500.00"][aria-pressed="true"]');
+  await p.click(m('importar-diferencia'));
+  await p.waitForSelector(`${m('importar-diferencia')}[aria-pressed="true"]`);
+  await sinProhibidos(p, 'vista previa');
+  await sinScrollLateral(p, 'vista previa');
+  await botonesDe44(p, 'vista previa');
+  const guardar = p.locator(m('importar-guardar'));
+  afirma(/Guardar \d+ datos nuevos/.test(await guardar.innerText()), await guardar.innerText());
+  await guardar.click();
+  await p.waitForSelector(m('importar-listo'));
+  const aula = await hasta(() => sql(`select id from metas.aulas where escuela = '${ejemplo.aula.escuela}' and deleted_at is null`),
+    'el aula no llegó a la base');
+  const cuenta = () => sql(`select (select count(*) from metas.alumnos where aula_id = '${aula}' and deleted_at is null) || '/'
+      || (select count(*) from metas.pagos where aula_id = '${aula}' and deleted_at is null) || '/'
+      || (select count(*) from metas.notas where aula_id = '${aula}' and deleted_at is null) || '/'
+      || (select count(*) from metas.gastos_docente where owner = '00000000-0000-0000-0000-00000000000a'
+            and concepto in ('Copias de la guía de lectura', 'Pintura para el aula') and deleted_at is null)`);
+  await hasta(() => cuenta() === '3/3/4/2', 'no llegó todo a la base', 45000);
+  afirma(sql(`select metas.monto_texto(recaudado) from metas._calc_colectas_resumen c join metas.colectas k on k.id = c.colecta_id
+              where k.aula_id = '${aula}'`) === sql(`select sum(monto)::text from metas.pagos where aula_id = '${aula}' and deleted_at is null`),
+    'lo recaudado no es la suma de los pagos');
+  // El mismo archivo otra vez: nada nuevo, y el botón no guarda nada.
+  await abrirArchivo();
+  await p.click('[data-accion="importar-decidir"][data-clave="gastodoc:1"][data-valor="1500.00"]');
+  await p.waitForSelector('[data-clave="gastodoc:1"][aria-pressed="true"]');
+  afirma(await p.locator(m('importar-guardar')).isDisabled(), 'al reimportar se puede volver a guardar');
+  afirma((await p.locator(m('importar-guardar')).innerText()).includes('No hay nada nuevo'), 'al reimportar no dice que no hay nada nuevo');
+  await p.waitForTimeout(1500);
+  afirma(cuenta() === '3/3/4/2', 'reimportar duplicó: ' + cuenta());
+  await ctx.close();
+});
+
 await navegador.close();
 console.log(fallas ? `\n✘ ${fallas} de ${total} pruebas de la capa C FALLARON` : `\n✅ Las ${total} pruebas de la capa C en verde`);
 process.exit(fallas ? 1 : 0);

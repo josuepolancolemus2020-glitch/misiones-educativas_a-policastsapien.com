@@ -1368,13 +1368,15 @@
   <script src="js/datos/montos.js?v=549"></script>
   <script src="js/datos/nube.js?v=549"></script>
   <script src="js/datos/almacen.js?v=549"></script>
-  <script src="js/datos/cola.js?v=549"></script>
-  <script src="js/datos/tiempo-real.js?v=549"></script>
+  <script src="js/datos/cola.js?v=552"></script>
+  <script src="js/datos/tiempo-real.js?v=552"></script>
   <script src="js/datos/senal.js?v=549"></script>
   <script src="js/datos/calculos.js?v=549"></script>
-  <script src="js/datos/datos.js?v=549"></script>
-  <script src="js/tools/mi-aula.js?v=550"></script>
+  <script src="js/datos/datos.js?v=552"></script>
+  <script src="js/datos/importar.js?v=552"></script>
+  <script src="js/tools/mi-aula.js?v=552"></script>
   <script src="js/tools/mi-aula-papel.js?v=551"></script>
+  <script src="js/tools/mi-aula-puente.js?v=552"></script>
   <script>
     /* Países ENCENDIDOS: el alumno elige su país y el inicio se pinta con los
        colores de esa bandera. Las misiones siguen siendo de Honduras: en los
@@ -1384,14 +1386,17 @@
        Honduras sin que nadie pierda su XP. */
     window.METAS_PAISES_ON = true;
   </script>
-  <script src="js/app.js?v=549"></script>
-  <!-- La fusión de los datos del aula. Va ANTES del espejo, que es quien la
-       llama: sin ella el espejo sigue funcionando como antes —elige la copia
-       más nueva— y por eso no revienta si un día no carga; pero con ella el
-       maestro que usa el teléfono y la PC el mismo día no pierde nada. -->
+  <script src="js/app.js?v=552"></script>
+  <!-- La fusión de los datos del aula. Va ANTES del blob por sesión, que es
+       quien la llama al juntar lo de dos aparatos: con ella el maestro que
+       usa el teléfono y la PC el mismo día no pierde nada. -->
   <script src="js/metas-fusion-aula.js?v=494"></script>
   <script src="js/metas-numeracion.js?v=516"></script>
-  <script src="js/metas-docente-sync.js?v=494"></script>
+  <!-- Lo que sigue en el blob (equipos, acumulativos, lecturas, inventario,
+       plan, Campeonísimo, gobierno escolar) viaja con la sesión nueva, sin
+       contraseña: metas.blob_leer / metas.blob_guardar (CONGELAR, paso 1d).
+       Reemplaza al espejo viejo (js/metas-docente-sync.js), que ya no carga. -->
+  <script src="js/metas-blob-sesion.js?v=552"></script>
   <script src="js/tools/pwa-install.js?v=462"></script>
   <script>
     if ('serviceWorker' in navigator) {

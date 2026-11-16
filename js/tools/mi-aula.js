@@ -89,6 +89,7 @@
   var tarjetaPintada = null;
   var excusas = {};              // por aula: { t, filas, buscando }
   var deMiAula = false;          // la pantalla de antes se abrió desde aquí
+  var importe = null;            // importar un archivo: { plan, archivo, decisiones, frase, aviso }
 
   function leerPref() {
     try { return JSON.parse(localStorage.getItem(PREF)) || {}; } catch (e) { return {}; }
@@ -305,7 +306,159 @@
           + (f.identidad ? '<span class="ma-sub">' + esc(f.identidad) + '</span>' : '') + '</li>';
       }).join('') + '</ol></div>' : '')
       + '<div class="ma-acciones"><button type="button" class="ma-btn ma-btn-1" data-metas="carga-guardar" data-accion="carga-guardar"'
-      + (cargaFilas.length ? '' : ' disabled') + '>Agregar a la lista</button></div>';
+      + (cargaFilas.length ? '' : ' disabled') + '>Agregar a la lista</button></div>'
+      + pintarImportar();
+  }
+
+  // ── 📂 Importar un archivo (04-FORMATO-IMPORTACION.md) ─────────────────
+  // Todo pasa por esta vista previa: nada se guarda hasta tocar «Guardar».
+  // Lo que ya estaba no se toca; lo que cambia un dato guardado viene sin
+  // marcar; lo que tiene error no se guarda y dice por qué (04, 4.3 y 4.4).
+  var NOMBRE_SECCION = { asignaturas: 'Asignaturas', alumnos: 'Alumnos', familias: 'Familias', notas: 'Notas',
+    colectas: 'Colectas', exenciones: 'No les corresponde', pagos: 'Pagos', gastos: 'Gastos de colecta',
+    gastosDocente: 'Gastos de mi bolsillo', reembolsos: 'Lo que me devolvieron', inventario: 'Inventario' };
+  function pintarImportar() {
+    var h = '<div class="ma-card" data-metas="importar"><div class="ma-card-cab"><h2 class="ma-h">📂 Importar un archivo</h2>'
+      + '<button type="button" class="ma-btn" data-accion="importar-elegir" data-metas="importar-elegir">Elegir el archivo</button></div>'
+      + '<p class="ma-nota">El archivo de importación de M.E.T.A.S: lista, familias, notas, colectas, gastos e inventario. '
+      + 'Antes de guardar ves todo lo que trae.</p>';
+    if (importe && importe.frase) h += '<p class="ma-aviso" role="alert">✗ ' + esc(importe.frase) + '</p>';
+    if (importe && importe.aviso) h += '<p class="ma-nota ma-nota-ok" role="status" data-metas="importar-listo">✓ ' + esc(importe.aviso) + '</p>';
+    if (!importe || !importe.plan) return h + '</div>';
+    var p = importe.plan;
+    var r = p.resumen;
+    var fila = function (txt, n, marca, extra) {
+      return '<li class="ma-renglon"><span class="ma-nom">' + txt + '</span><span class="ma-sub">' + n + ' ' + marca + '</span>'
+        + (extra || '') + '</li>';
+    };
+    h += '<div data-metas="importar-vista-previa"><p class="ma-nota"><b>Vas a guardar en ' + esc(p.aula.texto) + '</b>'
+      + (p.aula.estado === 'nuevo' ? ' (grupo nuevo)' : '') + '</p><ul class="ma-lista">'
+      + fila('Nuevos', r.nuevos, '✓')
+      + fila('Ya estaban', r.ya, '(no se tocan)')
+      + (r.cambian ? fila('Cambian un dato guardado', r.cambian, '⚠ sin marcar') : '')
+      + (r.revisar ? fila('Para revisar (se leyó con duda)', r.revisar, '⚠ revisar') : '')
+      + (r.preguntas ? fila('Falta que respondas', r.preguntas, '⚠') : '')
+      + (r.espera ? fila('Esperan a que decidas la diferencia', r.espera, '⚠') : '')
+      + (r.errores ? fila('No se pueden guardar', r.errores, '✗') : '')
+      + '</ul>';
+    // Una línea por sección, con lo que trae.
+    h += '<ul class="ma-lista">' + Object.keys(NOMBRE_SECCION).filter(function (k) { return p[k].length; }).map(function (k) {
+      var c = r.porSeccion[k] || {};
+      var partes = [];
+      if (c.nuevo || c.cambia) partes.push(((c.nuevo || 0) + (c.cambia || 0)) + ' nuevos ✓');
+      if (c.ya_estaba) partes.push(c.ya_estaba + ' ya estaban');
+      if (c.error) partes.push(c.error + ' no se guardan ✗');
+      return '<li class="ma-renglon" data-metas="importar-seccion" data-seccion="' + k + '"><span class="ma-nom">'
+        + esc(NOMBRE_SECCION[k]) + '</span><span class="ma-sub">' + esc(partes.join(' · ')) + '</span></li>';
+    }).join('') + '</ul>';
+    // Lo que pide atención: preguntas, diferencias, cambios, errores y dudas.
+    var atencion = [];
+    Object.keys(NOMBRE_SECCION).forEach(function (k) {
+      p[k].forEach(function (f) {
+        var t = '';
+        if (f.pregunta) {
+          t += '<p class="ma-nota">⚠ ' + esc(f.pregunta.texto) + '</p><div class="ma-botones">'
+            + f.pregunta.botones.map(function (b) {
+              var on = (importe.decisiones || {})[f.pregunta.clave] === b.valor;
+              return '<button type="button" class="ma-btn ma-btn-chico' + (on ? ' ma-on' : '') + '" data-accion="importar-decidir" data-clave="'
+                + esc(f.pregunta.clave) + '" data-valor="' + esc(b.valor) + '" aria-pressed="' + on + '">' + (on ? '✓ ' : '') + esc(b.etiqueta) + '</button>';
+            }).join('') + '</div>';
+        }
+        if (f.estado === 'cambia' || f.estado === 'cambia_sin_marcar') {
+          var on = f.estado === 'cambia';
+          t += '<button type="button" class="ma-btn ma-btn-chico' + (on ? ' ma-on' : '') + '" data-accion="importar-decidir" data-clave="'
+            + esc(f.marca) + '" data-valor="' + (on ? '' : 'cambiar') + '" aria-pressed="' + on + '">' + (on ? '✓ ' : '')
+            + 'Cambiar de ' + esc(f.antes) + ' a ' + esc(f.valor) + '</button>';
+        }
+        if (f.clase === 'colecta' && f.diferencia) {
+          var guardaDif = !f.retenida;
+          t += '<p class="ma-aviso">Total en el cuaderno ' + esc(L(f.papel)) + ' · sumado ' + esc(L(f.suma)) + ' · Diferencia: '
+            + esc(L(f.diferencia)) + ' ✗</p><button type="button" class="ma-btn ma-btn-chico' + (guardaDif ? ' ma-on' : '')
+            + '" data-accion="importar-decidir" data-clave="' + esc(f.marca) + '" data-valor="' + (guardaDif ? '' : 'con_diferencia')
+            + '" aria-pressed="' + guardaDif + '" data-metas="importar-diferencia">' + (guardaDif ? '✓ ' : '') + 'Guardar con la diferencia</button>';
+        } else if (f.clase === 'colecta' && f.coincide) {
+          t += '<p class="ma-nota ma-nota-ok">Total en el cuaderno: coincide ✓</p>';
+        }
+        f.errores.forEach(function (e) { if (!f.pregunta || e !== 'Hay que decir cuál monto es') t += '<p class="ma-aviso">✗ ' + esc(e) + '</p>'; });
+        f.avisos.forEach(function (a) { t += '<p class="ma-nota">⚠ ' + esc(a) + '</p>'; });
+        if (f.revisar) t += '<p class="ma-nota">⚠ revisar: se leyó con duda</p>';
+        if (t) atencion.push('<li class="ma-renglon ma-fila-col" data-metas="importar-fila" data-estado="' + esc(f.estado) + '"><span class="ma-nom">'
+          + esc(NOMBRE_SECCION[k].replace(/s$/, '')) + ': ' + esc(f.texto) + '</span>' + t + '</li>');
+      });
+    });
+    if (atencion.length) h += '<h3 class="ma-h">Para mirar antes de guardar</h3><ul class="ma-lista">' + atencion.join('') + '</ul>';
+    h += '</div><div class="ma-acciones"><button type="button" class="ma-btn" data-accion="importar-cancelar">Volver a revisar</button>'
+      + '<button type="button" class="ma-btn ma-btn-1" data-accion="importar-guardar" data-metas="importar-guardar"'
+      + (r.nuevos ? '' : ' disabled') + '>' + (r.nuevos ? 'Guardar ' + r.nuevos + (r.nuevos === 1 ? ' dato nuevo' : ' datos nuevos')
+        : 'No hay nada nuevo en este archivo') + '</button></div>';
+    return h + '</div>';
+  }
+
+  function importarElegir() {
+    // El campo de archivo vive fuera de Mi aula y sin mostrarse: lo que se
+    // toca es el botón de 44 px.
+    var inp = document.getElementById('ma-importar-archivo');
+    if (!inp) {
+      inp = document.createElement('input');
+      inp.type = 'file';
+      inp.id = 'ma-importar-archivo';
+      inp.accept = '.json,application/json';
+      inp.hidden = true;
+      inp.setAttribute('data-metas', 'importar-archivo');
+      inp.addEventListener('change', function () {
+        var f = inp.files && inp.files[0];
+        inp.value = '';
+        if (!f) return;
+        f.text().then(importarAbrir);
+      });
+      document.body.appendChild(inp);
+    }
+    inp.click();
+  }
+  // Las claves de familia que el docente tenía antes (metas.claves_archivo).
+  // Sin señal no se pueden leer: la clave se comprueba al guardar.
+  function clavesViejas() {
+    var n = window.MetasDatos && window.MetasDatos._nube;
+    if (!n || d.sinSenal()) return Promise.resolve(null);
+    return n.leer('claves_archivo?select=clave,nombre_alumno').then(function (filas) {
+      return new Map(filas.map(function (x) { return [x.clave, x.nombre_alumno]; }));
+    }).catch(function () { return null; });
+  }
+  function importarAbrir(texto) {
+    var I = window.MetasDatos.importar;
+    var l = I.leer(texto);
+    if (!l.ok) { importe = { frase: l.frase }; return pintar(); }
+    importe = { archivo: l.archivo, decisiones: {} };
+    return clavesViejas().then(function (claves) {
+      importe.claves = claves;
+      return importarPreparar();
+    });
+  }
+  function importarPreparar() {
+    if (!importe || !importe.archivo) return Promise.resolve();
+    var I = window.MetasDatos.importar;
+    return I.preparar(d, importe.archivo, { claves: importe.claves, inventario: I.inventarioLocal, decisiones: importe.decisiones })
+      .then(function (plan) { importe.plan = plan; pintar(); })
+      .catch(function () { importe = { frase: 'Ese archivo no se pudo leer entero. Revisa que sea el archivo de importación de M.E.T.A.S.' }; pintar(); });
+  }
+  // «Guardar» se apaga en cuanto se toca: tocarlo dos veces no anota dos
+  // veces (y aunque llegara a pasar, los ids salen del contenido).
+  function importarGuardar() {
+    if (!importe || !importe.plan || importe.guardando) return;
+    importe.guardando = true;
+    var b = document.querySelector('[data-metas="importar-guardar"]');
+    if (b) b.disabled = true;
+    var I = window.MetasDatos.importar;
+    var plan = importe.plan;
+    I.guardar(d, plan, { inventario: I.inventarioLocal }).then(function (r) {
+      importe = { aviso: 'Listo: ' + r.guardados + (r.guardados === 1 ? ' dato' : ' datos') + ' de tu archivo en ' + plan.aula.texto + '.' };
+      vista.aula = r.aula; guardarPref();
+      pintar();
+    }).catch(function (e) {
+      importe.guardando = false;
+      importe.frase = frase(e);
+      pintar();
+    });
   }
 
   // ── 💰 Economía ────────────────────────────────────────────────────────
@@ -860,6 +1013,10 @@
   // su candado, y la flecha de allá vuelve aquí.
   function abrirVieja(tab, sub) {
     var abrir = function () {
+      // La pantalla de antes lee su aula del aparato: se le arma desde las
+      // filas, con este mismo grupo activo (js/tools/mi-aula-puente.js).
+      var aula = aulaActual();
+      if (window.metasMiAulaPuente && aula) window.metasMiAulaPuente.preparar(aula.id);
       try {
         /* global _adTab, _adGastosOn, _adInvOn, _adColectaId, _adControlId, renderAdmin, switchView */
         _adTab = tab;
@@ -907,7 +1064,14 @@
         intentar(function () { d.editar('alumnos', b.getAttribute('data-alumno'), { estado: v, estado_fecha: hoy() }); });
         alumnoAbierto = null;
         return pintar();
-      case 'carga': subAlumnos = 'carga'; avisoCarga = ''; pintar(); return enfocarPantalla();
+      case 'carga': subAlumnos = 'carga'; avisoCarga = ''; importe = null; pintar(); return enfocarPantalla();
+      case 'importar-elegir': return importarElegir();
+      case 'importar-decidir':
+        if (!importe || !importe.decisiones) return;
+        importe.decisiones[b.getAttribute('data-clave')] = v || undefined;
+        return importarPreparar();
+      case 'importar-cancelar': importe = null; return pintar();
+      case 'importar-guardar': return importarGuardar();
       case 'alumnos': subAlumnos = ''; return pintar();
       case 'nueva-colecta': formColecta = !formColecta; pintar(); if (formColecta) enfocar('[data-form="colecta"] input'); return;
       case 'colecta': colectaAbierta = v; otroMonto = false; formGasto = false; pintar(); return enfocarPantalla();
@@ -1341,7 +1505,15 @@
       dentro = !!(_adFichasOn || _adGastosOn || _adInvOn || _adColectaId || _adControlId
         || (typeof adConvNivel === 'function' && adConvNivel()));
     } catch (e) { dentro = false; }
-    if (dentro) return;
+    // Gastos de mi bolsillo e Inventario se abren desde la Economía de Mi
+    // aula: su flecha vuelve allá, no a la Economía de antes.
+    var enEconomia = false;
+    try { enEconomia = !!(_adGastosOn || _adInvOn) && !_adColectaId; } catch (e) { enEconomia = false; }
+    if (dentro && !enEconomia) return;
+    if (enEconomia) {
+      try { _adGastosOn = 0; _adInvOn = 0; } catch (e) { /* ya cerrada */ }
+      vista.seccion = 'economia'; guardarPref();
+    }
     ev.stopImmediatePropagation();
     deMiAula = false;
     window.switchView('view-mi-aula');
@@ -1378,6 +1550,16 @@
       });
     },
     salir: function () { return d ? d.salir().then(pintarTarjeta) : Promise.resolve(); },
+    // Desde la pantalla de antes: lo que ya vive en filas se abre aquí.
+    irA: function (sec) {
+      deMiAula = false;
+      colectaAbierta = null; controlAbierto = null; alumnoAbierto = null; subAlumnos = ''; hoja = null; otroMonto = false;
+      if (sec === 'otro-grupo') formGrupo = true;
+      else if (SECCIONES.some(function (s) { return s.k === sec && !s.vieja; })) { vista.seccion = sec; guardarPref(); }
+      try { _adGastosOn = 0; _adInvOn = 0; } catch (e) { /* sin la pantalla de antes */ }
+      window.switchView('view-mi-aula');
+    },
+    elegirAula: function (id) { vista.aula = id; guardarPref(); },
   };
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', preparar);

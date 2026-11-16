@@ -327,6 +327,13 @@ vez se necesita señal».
 - La sesión vieja (`METAS_DOCENTE_V1`, con la contraseña) se sigue abriendo
   al entrar, solo para las herramientas que no pasaron a filas («Más del
   aula»); se quita cuando esas pasen al blob por sesión (`08`, 8.1).
+  **Rev. 11**: ya pasaron. Ninguna herramienta del aula la usa; queda solo
+  para lo de la cuenta sin versión por sesión (`10-PUBLICAR.md`, 7). Los
+  diálogos de `metas-docente-sync` dejaron de cargarse con él.
+- **Rev. 11, importar un archivo** (`js/tools/mi-aula.js`): en «Pegar una
+  lista», «📂 Importar un archivo» con la vista previa de 4.3, hecha con las
+  clases que ya tenía Mi aula (nada de estilo nuevo). Sus textos no usan
+  «guardado», «error» ni nada de 9.1 (lo vigila C16).
 
 ## 9.6 Revisión 10 (corte 1, parte 3): Mi aula con la forma de siempre
 

@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://metas.policastsapien.com/esquemas/metas-importacion-1.json",
   "title": "M.E.T.A.S · importación de datos del aula (versión 1)",
-  "description": "Datos extraídos de papeles o escaneos. No trae ids de la base ni usa el número de lista como llave. La app lo muestra en vista previa y el docente confirma antes de guardar.",
+  "description": "Datos extraídos de papeles o escaneos. No trae ids de la base ni usa el número de lista como llave. La app lo muestra en vista previa y el docente confirma antes de guardar. Formato publicado en 04-FORMATO-IMPORTACION.md.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -291,7 +291,8 @@
         "required": [
           "colecta",
           "alumno",
-          "monto"
+          "monto",
+          "fecha"
         ],
         "properties": {
           "colecta": {
@@ -311,6 +312,145 @@
             "type": "string",
             "pattern": "^RC-[0-9A-Z]{2,8}-[0-9]{1,4}$",
             "description": "Número del recibo del sistema viejo, si la familia lo tiene. El recibo nuevo lo pone la base."
+          }
+        }
+      }
+    },
+    "gastos_docente": {
+      "description": "Gastos que el docente pagó de su bolsillo (Gastos de mi bolsillo), con lo que ya le devolvieron. El estado («me lo pagaron») no se escribe: se calcula de los reembolsos.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "fecha",
+          "concepto",
+          "monto"
+        ],
+        "properties": {
+          "fecha": {
+            "type": "string",
+            "format": "date"
+          },
+          "tipo": {
+            "enum": [
+              "copias",
+              "transporte",
+              "materiales",
+              "refrigerio",
+              "servicio",
+              "otro"
+            ],
+            "default": "otro"
+          },
+          "concepto": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "cobrar_a": {
+            "type": "string",
+            "maxLength": 120,
+            "default": "Dirección"
+          },
+          "monto": {
+            "$ref": "#/$defs/texto_leido"
+          },
+          "tiene_recibo": {
+            "type": "boolean",
+            "default": false
+          },
+          "escuela": {
+            "type": "string",
+            "maxLength": 160
+          },
+          "reembolsos": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "fecha",
+                "monto"
+              ],
+              "properties": {
+                "fecha": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "monto": {
+                  "$ref": "#/$defs/texto_leido"
+                },
+                "quien_pago": {
+                  "type": "string",
+                  "maxLength": 120
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "inventario": {
+      "description": "Bienes del aula bajo custodia del docente (Inventario del aula).",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "fecha",
+          "nombre"
+        ],
+        "properties": {
+          "fecha": {
+            "type": "string",
+            "format": "date"
+          },
+          "nombre": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 120
+          },
+          "dueno": {
+            "enum": [
+              "mio",
+              "escuela",
+              "donado"
+            ],
+            "default": "escuela",
+            "description": "mio: propiedad del docente; escuela: del centro; donado: donación al centro."
+          },
+          "categoria": {
+            "enum": [
+              "tecnologia",
+              "mobiliario",
+              "didactico",
+              "libros",
+              "aseo",
+              "deporte",
+              "otro"
+            ],
+            "default": "otro"
+          },
+          "cantidad": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "valor": {
+            "$ref": "#/$defs/texto_leido"
+          },
+          "nota": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "donante": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "tiene_recibo": {
+            "type": "boolean",
+            "default": false
           }
         }
       }

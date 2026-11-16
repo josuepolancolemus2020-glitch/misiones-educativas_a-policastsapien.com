@@ -47,6 +47,23 @@ Antes de publicar: la llave de Turnstile del sitio (`padres.html`,
 `TURNSTILE_SITEKEY`), el blob por sesión para las herramientas que quedan, y
 quitar la sesión vieja.
 
+**Corte 1, parte 3 (rev. 11)**: listo para publicar, con su guía
+`10-PUBLICAR.md`.
+- Blob por sesión: Equipos, Acumulativos, Estadísticas, Lectura e Inventario
+  guardan con `metas.blob_leer` / `metas.blob_guardar`
+  (`js/metas-blob-sesion.js`, reemplaza a `js/metas-docente-sync.js`, que ya
+  no carga). La pantalla de antes se arma desde las filas
+  (`js/tools/mi-aula-puente.js`). «Gastos de mi bolsillo» va a filas
+  (`gastos_docente`, `reembolsos`): el candado del paso 1 no lo deja volver
+  al blob. La observación del grado va a `metas.aulas`. Capa C, C12 a C15.
+- Importar un archivo (4.4): `js/datos/importar.js`, formato exacto en
+  `04-FORMATO-IMPORTACION.md`. Capa B, B13; capa C, C16.
+- `SUPABASE-V2-DESCONGELAR.sql`, probado de ida y vuelta (capa A, 20 y 21).
+- Android: `server.url` y `versionCode 4`, sin firmar (`11-APK-ANDROID.md`).
+- Sigue pendiente: la contraseña en `METAS_DOCENTE_V1` para lo de la cuenta
+  que no tiene versión por sesión (10, 7), Turnstile del portal de familias
+  y el cierre de año.
+
 **Publicar**: solo con N1 y N2 resueltos (lo están en la revisión 4) y la
 misma capa A en verde **contra `supabase start`**.
 

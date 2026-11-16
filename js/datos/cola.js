@@ -230,6 +230,10 @@
       case 'MT007': return 'tiene pagos o notas anotados; se le puede cambiar el estado (retirado, trasladado)';
       case 'MT003': return 'lo que lo contenía ya lo habían borrado en otro aparato';
       case 'falta_motivo': return 'falta escribir por qué se anula';
+      case 'tiene_reembolsos': return 'ya tiene anotado que te lo pagaron; primero márcalo como pendiente';
+      case 'gasto': return 'ese gasto ya no está';
+      case 'MT020': return 'esa clave de familia no está en tus datos anteriores; déjala vacía y se le da una nueva';
+      case 'id_ocupado': return 'ya estaba anotado de otra forma';
       default: return 'no se pudo anotar';
     }
   }
@@ -288,6 +292,15 @@
         + fechaLarga(g.fecha) + '. Aquí anotaste ' + L(a.p_monto) + '. ¿Es el mismo gasto?',
         [{ etiqueta: 'Son dos gastos', valor: 'son_dos' }, { etiqueta: 'Es el mismo', valor: 'es_el_mismo' }],
         { otro: g, este: { monto: a.p_monto, fecha: a.p_fecha } });
+    }
+    // Dos aparatos anotaron que le devolvieron dinero del mismo gasto.
+    if (r.pregunta === 'otro_reembolso_sin_ver') {
+      var re = (r.otros || [])[0] || {};
+      return preguntar(op, 'otro_reembolso_sin_ver',
+        'En otro aparato se anotó que te devolvieron ' + L(re.monto) + ' el ' + fechaLarga(re.fecha)
+        + '. Aquí anotaste ' + L(a.p_monto) + '. ¿Es el mismo dinero?',
+        [{ etiqueta: 'Es el mismo', valor: 'es_el_mismo' }, { etiqueta: 'Son dos pagos', valor: 'son_dos' }],
+        { otro: re, este: { monto: a.p_monto, fecha: a.p_fecha } });
     }
     if (r.pregunta === 'pago_corregido_en_otro_aparato') {
       return preguntar(op, 'pago_corregido_en_otro_aparato',
@@ -447,10 +460,17 @@
           return revisarEspera();
         }
         return;
+      case 'otro_reembolso_sin_ver':
+        if (valor === 'son_dos') {
+          a.p_son_distintos = true;
+          return devolver(p, op);
+        }
+        if (valor === 'es_el_mismo') return soltar(p);
+        return;
       case 'gasto_cual_monto':
         if (valor === 'dejar_actual') return soltar(p);
         if (valor === 'dejar_este') {
-          op.tipo = 'gasto_editar';
+          op.tipo = op.tabla === 'gastos_docente' ? 'gasto_docente_editar' : 'gasto_editar';
           op.id = p.datos.otro.id;
           op.args = { p_gasto: p.datos.otro.id, p_base: { monto: p.datos.otro.monto }, p_cambios: { monto: p.datos.este.monto } };
           return devolver(p, op);
@@ -594,6 +614,8 @@
     colecta_crear: 'colecta', colecta_editar: 'colecta', colecta_cerrar: 'colecta', colecta_reabrir: 'colecta',
     colecta_borrar: 'colecta', exencion_poner: 'exencion', exencion_quitar: 'exencion', alumno_crear: 'alumno',
     gasto_crear: 'gasto', gasto_editar: 'gasto', gasto_anular: 'gasto',
+    gasto_docente_crear: 'gasto', gasto_docente_editar: 'gasto', gasto_docente_anular: 'gasto',
+    reembolso_crear: 'reembolso', reembolso_anular: 'reembolso',
   };
 
   function argsDe(op) {
@@ -622,6 +644,9 @@
       if (r[clave]) guardar(o, tabla, r[clave]);
       if (op.tipo === 'pago_corregir') marcarBorrada(o, 'pagos', op.args.p_pago);
       if (op.tipo === 'pago_anular' && !r.pago) marcarBorrada(o, 'pagos', op.args.p_pago);
+      // «Ya estaba anulado»: la base no devuelve la fila; aquí se da por quitada.
+      if (op.tipo === 'gasto_docente_anular' && !r.gasto) marcarBorrada(o, 'gastos_docente', op.args.p_gasto);
+      if (op.tipo === 'reembolso_anular' && !r.reembolso) marcarBorrada(o, 'reembolsos', op.args.p_reembolso);
       if (op.tipo === 'exencion_quitar') {
         alm.filasDe(o, 'colecta_exenciones').forEach(function (e) {
           if (!e.deleted_at && e.colecta_id === op.args.p_colecta && e.alumno_id === op.args.p_alumno) marcarBorrada(o, 'colecta_exenciones', e.id);

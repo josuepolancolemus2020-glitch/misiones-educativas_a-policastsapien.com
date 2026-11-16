@@ -1,5 +1,9 @@
 {
   "appId": "com.policastsapien.metas",
   "appName": "METAS",
-  "webDir": "www"
+  "webDir": "www",
+  "server": {
+    "url": "https://metas.policastsapien.com",
+    "cleartext": false
+  }
 }

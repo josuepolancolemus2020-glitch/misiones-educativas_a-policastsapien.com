@@ -94,7 +94,7 @@
       case 'pago_crear':
         mapa.set(op.id, {
           id: op.id, colecta_id: a.p_colecta, alumno_id: a.p_alumno, monto: a.p_monto || null, fecha: a.p_fecha,
-          nota: a.p_nota || null, recibo: null, version: 0, deleted_at: null,
+          nota: a.p_nota || null, recibo_anterior: a.p_recibo_anterior || null, recibo: null, version: 0, deleted_at: null,
         });
         break;
       case 'pago_corregir':
@@ -135,6 +135,29 @@
         break;
       case 'gasto_anular':
         mapa.delete(a.p_gasto);
+        break;
+      // Gastos del docente (de su bolsillo) y lo que le devuelven: el estado
+      // («me lo pagaron») no se guarda, se calcula de los reembolsos.
+      case 'gasto_docente_crear':
+        mapa.set(op.id, Object.assign({
+          id: op.id, fecha: a.p_fecha, tipo: a.p_tipo, concepto: a.p_concepto, cobrar_a: a.p_cobrar_a,
+          monto: a.p_monto || null, version: 0, deleted_at: null, tiene_recibo: false, aula_id: null, escuela: null,
+        }, a.p_campos || {}));
+        break;
+      case 'gasto_docente_editar':
+        if ((f = mapa.get(a.p_gasto))) mapa.set(a.p_gasto, Object.assign(copia(f), a.p_cambios));
+        break;
+      case 'gasto_docente_anular':
+        mapa.delete(a.p_gasto);
+        break;
+      case 'reembolso_crear':
+        mapa.set(op.id, {
+          id: op.id, gasto_id: a.p_gasto, fecha: a.p_fecha, monto: a.p_monto || null, quien_pago: a.p_quien_pago || null,
+          nota: a.p_nota || null, version: 0, deleted_at: null,
+        });
+        break;
+      case 'reembolso_anular':
+        mapa.delete(a.p_reembolso);
         break;
       case 'exencion_poner':
       case 'exencion_quitar':
@@ -198,6 +221,14 @@
     return r;
   }
 
+  // La importación (importar.js) manda su propio id de operación, que sale
+  // del contenido del archivo: así el mismo dato importado dos veces, o en
+  // dos aparatos, es la MISMA operación y la base lo reconoce (03, 3.3).
+  function conOp(op, extra) {
+    if (extra && extra.op_id) op.op_id = extra.op_id;
+    return op;
+  }
+
   // El monto lo escribió el docente y es ambiguo («1,500»): la operación
   // queda anotada y espera su respuesta («¿L 1,500.00 o L 1.50?»).
   function encolarConMonto(op, lectura) {
@@ -208,10 +239,10 @@
     return { id: op.id };
   }
 
-  function crear(nombre, fila) {
+  function crear(nombre, fila, extra) {
     var u = cuenta();
-    if (nombre === 'pagos') return pagar(fila);
-    if (nombre === 'colectas') return colecta.crear(fila);
+    if (nombre === 'pagos') return pagar(fila, extra);
+    if (nombre === 'colectas') return colecta.crear(fila, extra);
     if (SOLO_FUNCIONES[nombre]) throw aviso('Esto no se puede anotar aquí.');
     var id = (fila && fila.id) || M.ids.nuevo();
     var campos = limpia(fila || {});
@@ -219,11 +250,11 @@
     if (nombre === 'alumnos') {
       var aula = campos.aula_id;
       delete campos.aula_id;
-      cola.encolar({ owner: u, tipo: 'alumno_crear', tabla: 'alumnos', id: id,
-        args: { p_id: id, p_aula: aula, p_campos: campos, p_no_es: [] } });
+      cola.encolar(conOp({ owner: u, tipo: 'alumno_crear', tabla: 'alumnos', id: id,
+        args: { p_id: id, p_aula: aula, p_campos: campos, p_no_es: [] } }, extra));
       return { id: id };
     }
-    cola.encolar({ owner: u, tipo: 'crear', tabla: nombre, id: id, cambios: campos });
+    cola.encolar(conOp({ owner: u, tipo: 'crear', tabla: nombre, id: id, cambios: campos }, extra));
     return { id: id };
   }
 
@@ -266,18 +297,18 @@
   }
 
   // ── Dinero (solo por funciones del servidor, regla 18) ────────────────
-  function pagar(p) {
+  function pagar(p, extra) {
     var u = cuenta();
     var lectura = leerMonto(p.monto, false);
-    var id = M.ids.nuevo();
+    var id = p.id || M.ids.nuevo();
     // Lo que el aparato tenía a la vista de ese alumno en esa colecta: si en
     // la base hay otro pago que no estaba aquí, la base pregunta (3.5).
     var conocidos = lista('pagos', { colecta_id: p.colecta_id, alumno_id: p.alumno_id }).map(function (x) { return x.id; });
-    return encolarConMonto({
+    return encolarConMonto(conOp({
       owner: u, tipo: 'pago_crear', tabla: 'pagos', id: id, colecta: p.colecta_id,
       args: { p_id: id, p_colecta: p.colecta_id, p_alumno: p.alumno_id, p_monto: lectura.valor || null, p_fecha: p.fecha,
-        p_nota: p.nota || null, p_conocidos: conocidos, p_son_distintos: false },
-    }, lectura);
+        p_nota: p.nota || null, p_recibo_anterior: p.recibo_anterior || null, p_conocidos: conocidos, p_son_distintos: false },
+    }, extra), lectura);
   }
 
   function corregirPago(id, c) {
@@ -303,14 +334,14 @@
   }
 
   var colecta = {
-    crear: function (c) {
+    crear: function (c, extra) {
       var u = cuenta();
       var lectura = leerMonto(c.monto_sugerido, true);
       var id = c.id || M.ids.nuevo();
-      return encolarConMonto({
+      return encolarConMonto(conOp({
         owner: u, tipo: 'colecta_crear', tabla: 'colectas', id: id, colecta: id,
         args: { p_id: id, p_aula: c.aula_id, p_concepto: c.concepto, p_monto_sugerido: lectura.valor || null, p_fecha: c.fecha },
-      }, lectura);
+      }, extra), lectura);
     },
     editar: function (id, cambios) {
       var u = cuenta();
@@ -343,17 +374,17 @@
 
   var exencion = {
     // monto_aplicable vacío o null = exento del todo.
-    poner: function (e) {
+    poner: function (e, extra) {
       var u = cuenta();
       var hay = lista('colecta_exenciones', { colecta_id: e.colecta_id, alumno_id: e.alumno_id })[0];
       var lectura = { ok: true, valor: null };
       if (e.monto_aplicable != null && e.monto_aplicable !== '') lectura = leerMonto(e.monto_aplicable, true);
-      var id = M.ids.nuevo();
-      return encolarConMonto({
+      var id = e.id || M.ids.nuevo();
+      return encolarConMonto(conOp({
         owner: u, tipo: 'exencion_poner', tabla: 'colecta_exenciones', id: id, colecta: e.colecta_id,
         args: { p_id: id, p_colecta: e.colecta_id, p_alumno: e.alumno_id, p_monto_aplicable: lectura.valor || null,
           p_motivo: e.motivo || null, p_base: hay ? { monto_aplicable: hay.monto_aplicable } : {} },
-      }, lectura);
+      }, extra), lectura);
     },
     quitar: function (e) {
       var u = cuenta();
@@ -366,23 +397,66 @@
 
   // Gastos de una colecta («cuentas claras»): solo por funciones.
   var gasto = {
-    crear: function (g) {
+    crear: function (g, extra) {
       var u = cuenta();
       var lectura = leerMonto(g.monto, false);
-      var id = M.ids.nuevo();
+      var id = g.id || M.ids.nuevo();
       var visto = M._vista.fila(u, 'colectas', g.colecta_id) || {};
       var conocidos = lista('gastos', { colecta_id: g.colecta_id }).map(function (x) { return x.id; });
-      return encolarConMonto({
+      return encolarConMonto(conOp({
         owner: u, tipo: 'gasto_crear', tabla: 'gastos', id: id, colecta: g.colecta_id,
         args: { p_id: id, p_colecta: g.colecta_id, p_fecha: g.fecha, p_concepto: g.concepto, p_monto: lectura.valor || null,
           p_campos: {}, p_conocidos: conocidos, p_son_distintos: false, _aula: visto.aula_id },
-      }, lectura);
+      }, extra), lectura);
     },
     anular: function (id, motivo) {
       var u = cuenta();
       var visto = M._vista.fila(u, 'gastos', id) || {};
       cola.encolar({ owner: u, tipo: 'gasto_anular', tabla: 'gastos', id: id, colecta: visto.colecta_id,
         args: { p_gasto: id, p_motivo: motivo } });
+      return { id: id };
+    },
+  };
+
+  // Gastos del docente y sus reembolsos («Gastos de mi bolsillo»): dinero,
+  // solo por funciones. El monto de un reembolso no se cambia: se anula.
+  var gastoDocente = {
+    crear: function (g, extra) {
+      var u = cuenta();
+      var lectura = leerMonto(g.monto, false);
+      var id = g.id || M.ids.nuevo();
+      var conocidos = lista('gastos_docente').map(function (x) { return x.id; });
+      var campos = {};
+      ['tiene_recibo', 'escuela', 'aula_id'].forEach(function (k) { if (g[k] != null && g[k] !== '') campos[k] = g[k]; });
+      return encolarConMonto(conOp({
+        owner: u, tipo: 'gasto_docente_crear', tabla: 'gastos_docente', id: id,
+        args: { p_id: id, p_fecha: g.fecha, p_tipo: g.tipo || 'otro', p_concepto: g.concepto, p_cobrar_a: g.cobrar_a || 'Otro',
+          p_monto: lectura.valor || null, p_campos: campos, p_conocidos: conocidos, p_son_distintos: !!g.son_distintos },
+      }, extra), lectura);
+    },
+    anular: function (id, motivo) {
+      var u = cuenta();
+      cola.encolar({ owner: u, tipo: 'gasto_docente_anular', tabla: 'gastos_docente', id: id,
+        args: { p_gasto: id, p_motivo: motivo || 'quitado por el docente' } });
+      return { id: id };
+    },
+  };
+  var reembolso = {
+    crear: function (r, extra) {
+      var u = cuenta();
+      var lectura = leerMonto(r.monto, false);
+      var id = r.id || M.ids.nuevo();
+      var conocidos = lista('reembolsos', { gasto_id: r.gasto_id }).map(function (x) { return x.id; });
+      return encolarConMonto(conOp({
+        owner: u, tipo: 'reembolso_crear', tabla: 'reembolsos', id: id,
+        args: { p_id: id, p_gasto: r.gasto_id, p_monto: lectura.valor || null, p_fecha: r.fecha,
+          p_quien_pago: r.quien_pago || null, p_nota: r.nota || null, p_conocidos: conocidos, p_son_distintos: !!r.son_distintos },
+      }, extra), lectura);
+    },
+    anular: function (id, motivo) {
+      var u = cuenta();
+      cola.encolar({ owner: u, tipo: 'reembolso_anular', tabla: 'reembolsos', id: id,
+        args: { p_reembolso: id, p_motivo: motivo || 'quitado por el docente' } });
       return { id: id };
     },
   };
@@ -507,6 +581,8 @@
         colecta: colecta,
         exencion: exencion,
         gasto: gasto,
+        gastoDocente: gastoDocente,
+        reembolso: reembolso,
         lista: lista,
         escuchar: cola.escuchar,
         preguntas: function () {

@@ -5,16 +5,8 @@
     "generado_at": "2027-02-10T15:20:00-06:00",
     "programa": "lector de documentos (ejemplo)",
     "archivos": [
-      {
-        "id": "lista",
-        "nombre": "foto-lista.jpg",
-        "paginas": 1
-      },
-      {
-        "id": "cuaderno",
-        "nombre": "foto-cuaderno-colecta.jpg",
-        "paginas": 1
-      }
+      { "id": "lista", "nombre": "foto-lista.jpg", "paginas": 1 },
+      { "id": "cuaderno", "nombre": "foto-cuaderno-colecta.jpg", "paginas": 1 }
     ]
   },
   "aula": {
@@ -23,12 +15,7 @@
     "grado": 6,
     "seccion": "1",
     "anio_lectivo": 2027,
-    "asignaturas": [
-      "Español",
-      "Matemáticas",
-      "Ciencias Naturales",
-      "Estudios Sociales"
-    ]
+    "asignaturas": ["Español", "Matemáticas", "Ciencias Naturales", "Estudios Sociales"]
   },
   "alumnos": [
     {
@@ -37,23 +24,18 @@
       "nombre_completo": {
         "texto": "Alumna Ficticia Uno Prueba",
         "confianza": 0.98,
-        "fuente": {
-          "archivo": "lista",
-          "pagina": 1,
-          "renglon": 1
-        }
+        "fuente": { "archivo": "lista", "pagina": 1, "renglon": 1 }
       },
       "identidad": {
         "texto": "0000-2015-00001",
         "confianza": 0.95,
-        "fuente": {
-          "archivo": "lista",
-          "pagina": 1,
-          "renglon": 1,
-          "columna": "Identidad"
-        }
+        "fuente": { "archivo": "lista", "pagina": 1, "renglon": 1, "columna": "Identidad" }
       },
-      "sexo": "F"
+      "sexo": "F",
+      "fecha_nacimiento": "2015-04-12",
+      "encargado": "Madre Ficticia Uno",
+      "telefono": "9999-0001",
+      "clave_familia": "2-PRBA"
     },
     {
       "ref": "a2",
@@ -61,21 +43,12 @@
       "nombre_completo": {
         "texto": "Alumno Ficticio Dos Prueba",
         "confianza": 0.97,
-        "fuente": {
-          "archivo": "lista",
-          "pagina": 1,
-          "renglon": 2
-        }
+        "fuente": { "archivo": "lista", "pagina": 1, "renglon": 2 }
       },
       "identidad": {
         "texto": "0000201500O02",
         "confianza": 0.62,
-        "fuente": {
-          "archivo": "lista",
-          "pagina": 1,
-          "renglon": 2,
-          "columna": "Identidad"
-        }
+        "fuente": { "archivo": "lista", "pagina": 1, "renglon": 2, "columna": "Identidad", "recorte": [0.62, 0.11, 0.2, 0.03] }
       },
       "sexo": "M"
     },
@@ -84,6 +57,7 @@
       "num_lista": 3,
       "nombre_completo": "Alumna Ficticia Tres Prueba",
       "sexo": "F",
+      "encargado": "Padre Ficticio Tres",
       "clave_familia": "3-QXWZ"
     },
     {
@@ -97,30 +71,11 @@
     }
   ],
   "notas": [
-    {
-      "alumno": "a1",
-      "asignatura": "Matemáticas",
-      "periodo": "I",
-      "valor": {
-        "texto": "85",
-        "confianza": 0.99
-      }
-    },
-    {
-      "alumno": "a2",
-      "asignatura": "Matemáticas",
-      "periodo": "I",
-      "valor": {
-        "texto": "7O",
-        "confianza": 0.55
-      }
-    },
-    {
-      "alumno": "a3",
-      "asignatura": "Matemáticas",
-      "periodo": "I",
-      "valor": "92"
-    }
+    { "alumno": "a1", "asignatura": "Matemáticas", "periodo": "I", "valor": { "texto": "85", "confianza": 0.99 } },
+    { "alumno": "a2", "asignatura": "Matemáticas", "periodo": "I", "valor": { "texto": "7O", "confianza": 0.55 } },
+    { "alumno": "a3", "asignatura": "Matemáticas", "periodo": "I", "valor": "92" },
+    { "alumno": "a4", "asignatura": "Matemáticas", "periodo": "I", "valor": "85,5" },
+    { "alumno": "a1", "asignatura": "Español", "periodo": "I", "valor": "90" }
   ],
   "colectas": [
     {
@@ -131,44 +86,57 @@
       "total_en_papel": {
         "texto": "150.00",
         "confianza": 0.9,
-        "fuente": {
-          "archivo": "cuaderno",
-          "pagina": 1,
-          "renglon": 12
-        }
+        "fuente": { "archivo": "cuaderno", "pagina": 1, "renglon": 12 }
       },
-      "no_corresponde": [],
+      "no_corresponde": ["a4"],
       "gastos": [
-        {
-          "fecha": "2027-02-05",
-          "concepto": "Entradas",
-          "monto": "40.00"
-        }
+        { "fecha": "2027-02-05", "concepto": "Entradas", "monto": "40.00" }
       ]
     }
   ],
   "pagos": [
+    { "colecta": "c1", "alumno": "a1", "monto": "50.00", "fecha": "2027-02-02", "recibo_anterior": "RC-03EX-01" },
+    { "colecta": "c1", "alumno": "a2", "monto": { "texto": "50,00", "confianza": 0.93 }, "fecha": "2027-02-03" },
+    { "colecta": "c1", "alumno": "a3", "monto": "25.00", "fecha": "2027-02-03" },
+    { "colecta": "c1", "alumno": "a3", "monto": "25.00", "fecha": "2027-02-10" }
+  ],
+  "gastos_docente": [
     {
-      "colecta": "c1",
-      "alumno": "a1",
-      "monto": "50.00",
-      "fecha": "2027-02-02",
-      "recibo_anterior": "RC-03EX-01"
+      "fecha": "2027-02-05",
+      "tipo": "copias",
+      "concepto": "Copias de la guía de lectura",
+      "cobrar_a": "Dirección",
+      "monto": "120.00",
+      "tiene_recibo": true,
+      "reembolsos": [
+        { "fecha": "2027-02-20", "monto": "120.00", "quien_pago": "Dirección" }
+      ]
     },
     {
-      "colecta": "c1",
-      "alumno": "a2",
-      "monto": {
-        "texto": "50,00",
-        "confianza": 0.93
-      },
-      "fecha": "2027-02-03"
+      "fecha": "2027-02-08",
+      "tipo": "materiales",
+      "concepto": "Pintura para el aula",
+      "cobrar_a": "Sociedad de Padres",
+      "monto": { "texto": "1,500", "confianza": 0.95 }
+    }
+  ],
+  "inventario": [
+    {
+      "fecha": "2027-01-20",
+      "nombre": "Parlante (ficticio)",
+      "dueno": "mio",
+      "categoria": "tecnologia",
+      "cantidad": 1,
+      "valor": "850.00",
+      "tiene_recibo": true
     },
     {
-      "colecta": "c1",
-      "alumno": "a3",
-      "monto": "25.00",
-      "fecha": "2027-02-03"
+      "fecha": "2027-01-25",
+      "nombre": "Diccionarios (ficticios)",
+      "dueno": "donado",
+      "categoria": "libros",
+      "cantidad": 5,
+      "donante": "Familia Ficticia Cinco"
     }
   ]
 }

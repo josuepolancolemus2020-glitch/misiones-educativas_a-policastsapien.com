@@ -325,4 +325,134 @@ await escenario('B12 los totales del aparato son los de la base (calculos.js = v
   }
 });
 
+// ── Rev. 11: importar desde un archivo (04-FORMATO-IMPORTACION.md) ────────
+// El ejemplo publicado, con una sección distinta en cada corrida. Se importa,
+// se vuelve a importar en el mismo aparato y otra vez en un aparato SIN
+// SEÑAL que todavía no sabe nada: nada se duplica, y el total de la colecta
+// es la suma de sus pagos.
+await escenario('B13 importar: vista previa, guardar, reimportar sin duplicar (aquí y en otro aparato sin señal) y totales = suma de los pagos', async () => {
+  const fs = await import('node:fs');
+  const ejemplo = JSON.parse(fs.readFileSync(new URL('../ejemplo-importacion.json', import.meta.url), 'utf8'));
+  const corrida = (Number(process.hrtime.bigint() % 1679616n)).toString(36).toUpperCase();
+  ejemplo.aula.escuela = 'Escuela Ficticia Importación ' + corrida;
+  // El recibo anterior no se repite entre los pagos de la docente.
+  const recibo = 'RC-' + corrida.padStart(4, '0') + '-01';
+  ejemplo.pagos[0].recibo_anterior = recibo;
+  // Una clave vieja de la docente que ninguna familia usa todavía: como si
+  // estuviera en su copia del paso 1 (metas.claves_archivo).
+  const claveVieja = '7' + corrida.padStart(4, '0');
+  sql(`insert into metas.claves_archivo (docente_codigo, clave, nombre_alumno, origen)
+       values ('PROF-AAAA000001', '${claveVieja}', null, 'METAS_CODIGOS_V1') on conflict do nothing`);
+  ejemplo.alumnos[0].clave_familia = '7-' + corrida.padStart(4, '0');
+  const texto = JSON.stringify(ejemplo);
+  // Las claves viejas todavía no vencen (antes del paso 4): solo así se conservan.
+  const hitoAntes = sql(`select at from metas.hitos where nombre = 'claves_viejas_vencen'`);
+  sql(`delete from metas.hitos where nombre = 'claves_viejas_vencen'`);
+  try {
+    const tel = await entrar('importa-telefono');
+    const I = tel.MetasDatos.importar;
+    afirma(!I.leer('{"formato":"metas-importacion/2"}').ok, 'aceptó otra versión');
+    afirma(!I.leer('no es json').ok, 'aceptó algo que no es JSON');
+    const leido = I.leer(texto);
+    afirma(leido.ok, leido.frase);
+    const filasClaves = await tel.MetasDatos._nube.leer('claves_archivo?select=clave,nombre_alumno');
+    const claves = new Map(filasClaves.map((x) => [x.clave, x.nombre_alumno]));
+    const bienes = [];
+    const inventario = { leer: () => bienes.slice(), guardar: (arr) => { bienes.length = 0; bienes.push(...arr); } };
+
+    // Vista previa sin decisiones: lo que el docente ve antes de guardar.
+    let plan = await I.preparar(tel.d, leido.archivo, { claves, inventario });
+    const al = Object.fromEntries(plan.alumnos.map((x) => [x.ref, x]));
+    afirma(plan.aula.estado === 'nuevo', 'aula: ' + plan.aula.estado);
+    afirma(al.a1.estado === 'nuevo' && al.a3.estado === 'nuevo' && al.a4.estado === 'nuevo', 'alumnos: ' + plan.alumnos.map((x) => x.estado));
+    afirma(al.a2.estado === 'error' && al.a2.revisar && /letra/.test(al.a2.errores[0]), 'la identidad con una O: ' + JSON.stringify(al.a2));
+    afirma(al.a3.avisos.includes('Falta identidad'), 'a3 sin «falta identidad»');
+    const fam = Object.fromEntries(plan.familias.map((x) => [x.ref, x]));
+    afirma(fam.a1.campos.clave === claveVieja, 'a1 no conserva su clave vieja: ' + JSON.stringify(fam.a1));
+    afirma(fam.a3.tiraNueva && !fam.a3.campos.clave, 'a3 (clave que no estaba) no recibe una nueva');
+    const n7O = plan.notas.find((x) => x.ref === 'a2');
+    afirma(n7O.estado === 'error' && n7O.revisar, 'la nota 7O: ' + JSON.stringify(n7O));
+    afirma(plan.notas.find((x) => x.ref === 'a4').avisos.includes('El SACE usa números enteros'), 'la nota 85,5 sin aviso');
+    const col = plan.colectas[0];
+    afirma(col.retenida && col.diferencia === '50.00' && col.suma === '100.00', 'el control contra el papel: ' + JSON.stringify(col));
+    afirma(plan.pagos.every((x) => x.estado !== 'nuevo'), 'los pagos de una colecta con diferencia no esperan');
+    afirma(plan.gastosDocente[1].pregunta && /1,500.00/.test(plan.gastosDocente[1].pregunta.texto), 'el «1,500» no se pregunta');
+
+    // El docente responde: guarda con la diferencia y el monto es L 1,500.00.
+    const decisiones = { 'diferencia:c1': 'con_diferencia', 'gastodoc:1': '1500.00' };
+    plan = await I.preparar(tel.d, leido.archivo, { claves, inventario, decisiones });
+    afirma(plan.resumen.preguntas === 0 && plan.pagos.filter((x) => x.estado === 'nuevo').length === 3,
+      'después de responder: ' + JSON.stringify(plan.resumen));
+    const r = await I.guardar(tel.d, plan, { inventario });
+    await tel.d.esperarCola();
+    afirma(!tel.d.noAnotado().length, 'quedó algo sin anotar: ' + JSON.stringify(tel.d.noAnotado()));
+    const aula = r.aula;
+    const MIOS = `owner = '00000000-0000-0000-0000-00000000000a' and deleted_at is null
+                  and concepto in ('Copias de la guía de lectura', 'Pintura para el aula')`;
+    const contar = () => sqlJson(`select
+        (select count(*) from metas.aulas where id = '${aula}' and deleted_at is null) as aulas,
+        (select count(*) from metas.alumnos where aula_id = '${aula}' and deleted_at is null) as alumnos,
+        (select count(*) from metas.familias where aula_id = '${aula}' and deleted_at is null) as familias,
+        (select count(*) from metas.asignaturas where aula_id = '${aula}' and deleted_at is null) as asignaturas,
+        (select count(*) from metas.notas where aula_id = '${aula}' and deleted_at is null) as notas,
+        (select count(*) from metas.colectas where aula_id = '${aula}' and deleted_at is null) as colectas,
+        (select count(*) from metas.colecta_exenciones e join metas.colectas c on c.id = e.colecta_id
+          where c.aula_id = '${aula}' and e.deleted_at is null) as exenciones,
+        (select count(*) from metas.pagos where aula_id = '${aula}' and deleted_at is null) as pagos,
+        (select count(*) from metas.gastos g join metas.colectas c on c.id = g.colecta_id
+          where c.aula_id = '${aula}' and g.deleted_at is null) as gastos,
+        -- Los gastos de su bolsillo son del docente, no del aula: el mismo
+        -- gasto en otro archivo es el mismo gasto.
+        (select count(*) from metas.gastos_docente where ${MIOS}) as gastos_docente,
+        (select count(*) from metas.reembolsos r join metas.gastos_docente g on g.id = r.gasto_id
+          where ${MIOS.replace(/concepto|owner|deleted_at/g, 'g.$&')} and r.deleted_at is null) as reembolsos`)[0];
+    const esperado = { aulas: 1, alumnos: 3, familias: 2, asignaturas: 4, notas: 4, colectas: 1, exenciones: 1, pagos: 3, gastos: 1,
+      gastos_docente: 2, reembolsos: 1 };
+    let antes = contar();
+    afirma(JSON.stringify(antes) === JSON.stringify(esperado), 'en la base: ' + JSON.stringify(antes));
+    const f1 = sqlJson(`select clave, clave_origen, telefono from metas.familias f join metas.alumnos a on a.id = f.alumno_id
+                         where a.aula_id = '${aula}' and a.nombre_completo = 'Alumna Ficticia Uno Prueba'`)[0];
+    afirma(f1 && f1.clave === claveVieja && f1.clave_origen === 'conservada', 'la clave vieja no se conservó: ' + JSON.stringify(f1));
+    afirma(sql(`select recibo_anterior from metas.pagos where aula_id = '${aula}' and recibo_anterior is not null`) === recibo,
+      'el recibo anterior no quedó al lado');
+    afirma(sql(`select string_agg(distinct monto::text, ',') from metas.gastos_docente where ${MIOS} and concepto = 'Pintura para el aula'`) === '1500.00',
+      'el monto aclarado no es L 1,500.00');
+    afirma(bienes.length === 2, 'inventario: ' + bienes.length);
+    // Totales: lo recaudado (base y aparato) es la suma de los pagos.
+    const totalBase = sql(`select metas.monto_texto(recaudado) from metas._calc_colectas_resumen c
+                            join metas.colectas k on k.id = c.colecta_id where k.aula_id = '${aula}'`);
+    const sumaPagos = sql(`select sum(monto)::text from metas.pagos where aula_id = '${aula}' and deleted_at is null`);
+    const totalAqui = tel.d.lista('v_colectas_resumen', { colecta_id: col.id })[0].recaudado;
+    afirma(totalBase === '100.00' && sumaPagos === '100.00' && totalAqui === '100.00',
+      `recaudado en la base ${totalBase}, suma de pagos ${sumaPagos}, en el aparato ${totalAqui}`);
+
+    // Reimportar el mismo archivo en el mismo aparato: todo «ya estaba».
+    const otra = await I.preparar(tel.d, I.leer(texto).archivo, { claves, inventario, decisiones });
+    afirma(otra.resumen.nuevos === 0, 'al reimportar hay «nuevos»: ' + JSON.stringify(otra.resumen));
+    afirma((await I.guardar(tel.d, otra, { inventario })).guardados === 0, 'reimportar guardó algo');
+    await tel.d.esperarCola();
+    afirma(JSON.stringify(contar()) === JSON.stringify(esperado) && bienes.length === 2, 'reimportar duplicó: ' + JSON.stringify(contar()));
+
+    // Otro aparato SIN SEÑAL importa el mismo archivo antes de saber nada:
+    // manda las mismas operaciones, y la base las reconoce como hechas.
+    const pc = await entrar('importa-pc');
+    pc.sinSenal();
+    const bienesPc = [];
+    const invPc = { leer: () => bienesPc.slice(), guardar: (arr) => { bienesPc.length = 0; bienesPc.push(...arr); } };
+    const planPc = await pc.MetasDatos.importar.preparar(pc.d, pc.MetasDatos.importar.leer(texto).archivo,
+      { claves, inventario: invPc, decisiones });
+    await pc.MetasDatos.importar.guardar(pc.d, planPc, { inventario: invPc });
+    pc.conSenal();
+    await pc.d.esperarCola();
+    afirma(!pc.d.noAnotado().length && !pc.d.preguntas().length,
+      'el otro aparato quedó con algo: ' + JSON.stringify([pc.d.noAnotado(), pc.d.preguntas()]));
+    afirma(JSON.stringify(contar()) === JSON.stringify(esperado), 'el otro aparato duplicó: ' + JSON.stringify(contar()));
+    afirma(sql(`select metas.monto_texto(recaudado) from metas._calc_colectas_resumen c join metas.colectas k on k.id = c.colecta_id
+                where k.aula_id = '${aula}'`) === '100.00', 'el total cambió');
+  } finally {
+    if (hitoAntes) sql(`insert into metas.hitos (nombre, at) values ('claves_viejas_vencen', '${hitoAntes}')
+                        on conflict (nombre) do update set at = excluded.at`);
+  }
+});
+
 process.exit(resultado());
