@@ -22,13 +22,13 @@ const SECRETO_TURNSTILE = Deno.env.get('TURNSTILE_SECRET') ?? '';
 // alguien dejara esta variable en el proyecto real, se ignora (esLocal).
 const SIN_TURNSTILE = Deno.env.get('METAS_SIN_TURNSTILE') === '1' && esLocal();
 
-async function turnstileOk(token: string, ip: string): Promise<boolean> {
+async function turnstileOk(token: string, ip: string | null): Promise<boolean> {
   if (SIN_TURNSTILE) return true;
   if (!SECRETO_TURNSTILE || !token) return false;      // sin secreto configurado: se cierra, no se abre
   const f = new FormData();
   f.append('secret', SECRETO_TURNSTILE);
   f.append('response', token);
-  if (ip !== 'sin-ip') f.append('remoteip', ip);
+  if (ip) f.append('remoteip', ip);
   try {
     const r = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', { method: 'POST', body: f });
     const o = await r.json();
@@ -55,6 +55,8 @@ Deno.serve(async (req) => {
   if (!(await turnstileOk(texto(b.turnstile, 4096), ip))) return json({ ok: false, motivo: 'turnstile' }, 403);
 
   const { data: r, error: e2 } = await sb.schema('metas').rpc('familia_vincular', {
+    // ip null = desconocida: la base no aplica el freno por IP (y sí los de
+    // sesión y familia), en vez de juntar a todos en un balde común.
     p_uid: u.user.id, p_clave: texto(b.clave, 40), p_ip: ip, p_alias: texto(b.alias, 40) || null,
   });
   if (e2 || !r) return json({ ok: false, motivo: 'reintentar' }, 503);

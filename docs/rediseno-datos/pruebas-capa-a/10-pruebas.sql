@@ -651,6 +651,10 @@ select prueba.ok((select jsonb_array_length(contenido) = 1 and totales ->> 'valo
 update metas.bienes set valor = 950 where id = '00000000-0000-0000-0000-0000000e0301';
 select prueba.ok((select totales ->> 'valor_centro' = '900.00' from metas.actas_inventario where numero = 1),
                  'N5 editar un bien después no cambia el acta');
+select prueba.ok((select totales ->> 'valor_docente' = '0.00' and totales ->> 'valor_centro' = '0.00'
+                    from jsonb_to_record(metas.acta_inventario_crear(gen_random_uuid(), gen_random_uuid(), 'Escuela Ficticia Sin Bienes',
+                                         current_date - 5, 'A', 'Dirección') -> 'acta') as x(totales jsonb)),
+                 'N10 el acta de un centro sin bienes dice «0.00», no «0»');
 reset role;
 
 -- ════════════════════════════════════════════════════════════════════════════
@@ -858,6 +862,72 @@ reset role;
 select prueba.ok((select count(*) = 1 from realtime.messages m join metas.familia_accesos fa on m.topic = 'acceso:' || fa.id::text
                    where fa.clave_usada = :'clave_eva' and m.event = 'cerrar'),
                  'K15 desvincularse manda «cerrar» a ese teléfono');
+-- K16 (rev. 7): el paso 4 anota la fecha con anticipación. Anotarla programa
+-- el cierre de canales para esa hora; al llegar, se manda «cerrar».
+update metas.hitos set at = '2031-05-20 13:30:20+00' where nombre = 'claves_viejas_vencen';
+select prueba.ok((select schedule = '31 13 20 5 *' and command like '%metas.claves_viejas_cerrar_canales()%'
+                    from cron.job where jobname = 'metas-claves-vencen'),
+                 'K16 anotar una fecha futura programa la tarea a esa hora (UTC, al minuto siguiente)');
+-- Con la fecha en el futuro, la clave vieja de padre2 vuelve a valer; un
+-- toque de Ana se lo confirma (y le borra la marca de «cerrar»).
+select prueba.como('A');
+set role authenticated;
+update metas.alumnos set num_lista = 42 where id = :ana;
+reset role;
+select prueba.ok((select canal_cerrado_at is null from metas.familia_accesos
+                   where auth_uid = '00000000-0000-0000-0000-0000000000f2' and clave_usada = '1K7QM'),
+                 'K16 antes de la fecha, ese vínculo vale y no está cerrado');
+select prueba.ok(metas.claves_viejas_cerrar_canales() = 0, 'K16 si la tarea corriera antes de la fecha, no cierra nada');
+select count(*) as cerrar_f2 from realtime.messages
+ where topic = 'acceso:' || (select id from metas.familia_accesos where auth_uid = '00000000-0000-0000-0000-0000000000f2'
+                                and clave_usada = '1K7QM') and event = 'cerrar' \gset
+-- Llega la hora: se mueve el reloj (la fecha queda en el pasado SIN volver a
+-- disparar nada) y corre lo que pg_cron tiene guardado.
+alter table metas.hitos disable trigger hitos_cerrar_canales;
+update metas.hitos set at = now() - interval '1 second' where nombre = 'claves_viejas_vencen';
+alter table metas.hitos enable trigger hitos_cerrar_canales;
+-- (si no hubiera tarea, no corre nada y las dos pruebas de abajo fallan)
+do $$ begin execute coalesce((select command from cron.job where jobname = 'metas-claves-vencen'), 'select 1'); end $$;
+select prueba.ok((select count(*) from realtime.messages
+                   where topic = 'acceso:' || (select id from metas.familia_accesos where auth_uid = '00000000-0000-0000-0000-0000000000f2'
+                                                  and clave_usada = '1K7QM') and event = 'cerrar') = :cerrar_f2 + 1,
+                 'K16 a la hora programada, el teléfono con la clave vieja recibe «cerrar»');
+select prueba.ok(not exists (select 1 from cron.job where jobname = 'metas-claves-vencen'),
+                 'K16 y la tarea se borra sola después de correr');
+-- K17 (rev. 7): IP desconocida → sin freno por IP (nunca un balde común para
+-- todos); IP conocida → su freno; y el freno por familia, con o sin IP.
+set role service_role;
+create temp table k17 (via text, motivo text);
+grant all on k17 to public;
+do $$
+declare i int;
+begin
+  for i in 1..70 loop
+    insert into k17 select 'sin-ip', metas.familia_vincular(gen_random_uuid(), 'ZZZZZZZZZ' || chr(65 + i % 20), null) ->> 'motivo';
+  end loop;
+  for i in 1..25 loop
+    insert into k17 select 'una-ip', metas.familia_vincular(gen_random_uuid(), 'YYYYYYYYY' || chr(65 + i % 20), '203.0.113.9') ->> 'motivo';
+  end loop;
+end $$;
+reset role;
+select prueba.ok((select count(*) filter (where motivo = 'espera') = 0 and count(*) = 70 from k17 where via = 'sin-ip'),
+                 'K17 setenta intentos SIN IP de setenta teléfonos distintos: ninguno frenado por una «IP» común');
+select prueba.ok((select count(*) filter (where motivo = 'espera') > 0 from k17 where via = 'una-ip'),
+                 'K17 con la IP conocida, su freno sigue funcionando');
+select set_config('prueba.clave_beto', (select clave from metas.familias where alumno_id = :beto and deleted_at is null), false);
+set role service_role;
+do $$
+declare i int; r jsonb;
+begin
+  for i in 1..21 loop
+    r := metas.familia_vincular(gen_random_uuid(), current_setting('prueba.clave_beto'), null);
+    insert into k17 values ('familia', coalesce(r ->> 'motivo', 'ok'));
+  end loop;
+end $$;
+reset role;
+select prueba.ok((select count(*) filter (where motivo = 'ok') = 20 and count(*) filter (where motivo = 'espera') = 1
+                    from k17 where via = 'familia'),
+                 'K17 freno por familia sin IP: veinte teléfonos en una hora sí, el 21.º espera');
 
 -- ════════════════════════════════════════════════════════════════════════════
 -- D · El dinero sale como texto (R5-1)

@@ -27,12 +27,21 @@ Deno.serve(async (req) => {
 
   const sb = admin();
 
-  // 0. Freno por IP ANTES de tocar la contraseña: 30 intentos por hora.
-  const { data: libre, error: eFreno } = await sb.schema('metas').rpc('freno_ok', {
-    p_llave: 'entrar-ip:' + ipDe(req), p_max: 30, p_ventana: '1 hour',
-  });
-  if (eFreno) return json({ ok: false, motivo: 'reintentar' }, 503);
-  if (!libre) return json({ ok: false, motivo: 'espera' }, 429);
+  // 0. Frenos ANTES de tocar la contraseña.
+  //    · Por CORREO, siempre: 20 intentos por hora (además de los 5 fallos en
+  //      10 minutos de metas_entrar_docente_v2). No depende de la IP: si la IP
+  //      viniera mal, este sigue protegiendo cada cuenta sin bloquear a nadie más.
+  //    · Por IP, solo si se conoce de verdad (ipDe): 30 por hora.
+  const frenos = [{ llave: 'entrar-correo:' + correo.toLowerCase(), max: 20 }];
+  const ip = ipDe(req);
+  if (ip) frenos.push({ llave: 'entrar-ip:' + ip, max: 30 });
+  for (const f of frenos) {
+    const { data: libre, error: eFreno } = await sb.schema('metas').rpc('freno_ok', {
+      p_llave: f.llave, p_max: f.max, p_ventana: '1 hour',
+    });
+    if (eFreno) return json({ ok: false, motivo: 'reintentar' }, 503);
+    if (!libre) return json({ ok: false, motivo: 'espera' }, 429);
+  }
 
   // 1. La contraseña, como HOY (con su freno de 5 fallos por correo).
   const { data: r, error: eEntrar } = await sb.rpc('metas_entrar_docente_v2', { p_correo: correo, p_clave: clave });

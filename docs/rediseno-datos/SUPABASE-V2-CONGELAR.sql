@@ -491,13 +491,17 @@ select public._metas_cerrar_funciones(array[
 --
 --   insert into metas.hitos (nombre, at)
 --   values ('claves_viejas_vencen', '2027-04-30 00:00:00-06')   -- la fecha avisada
---   on conflict (nombre) do nothing;
+--   on conflict (nombre) do update set at = excluded.at;   -- mover la fecha reprograma la tarea
 --
---   -- Los teléfonos conectados con una clave vieja dejan de recibir toques en
---   -- cuanto vence (la base decide en cada toque, FAMILIAS 5). Para que además
---   -- reciban «cerrar» justo a la hora, una tarea horaria (pg_cron, que
---   -- Supabase trae; se activa en el panel):
---   select cron.schedule('metas-cerrar-canales', '7 * * * *', 'select metas.canales_cerrar()');
+--   -- ANTES de anotar la fecha: activar pg_cron (Database → Extensions).
+--   -- Anotarla programa sola, con pg_cron, el cierre de canales para esa hora
+--   -- exacta (tarea «metas-claves-vencen», FAMILIAS 5); sin pg_cron, anotarla
+--   -- falla (MT043) en vez de quedar a medias. Los teléfonos con una clave
+--   -- vieja dejan de recibir toques en cuanto vence (la base decide en cada
+--   -- toque); la tarea les manda además «cerrar» a esa hora. Comprobarlo:
+--   select jobname, schedule, command from cron.job where jobname = 'metas-claves-vencen';
+--   -- (y el día siguiente a la fecha: ya no está, y
+--   --  select count(*) from metas.familia_accesos where canal_cerrado_at is not null;  sube)
 --
 --   -- cuántas familias tienen todavía solo la clave vieja (se lee antes de la fecha)
 --   select count(*) from metas.familias

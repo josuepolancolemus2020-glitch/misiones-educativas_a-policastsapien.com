@@ -124,6 +124,36 @@ await prueba('E5 cinco fallos seguidos → «espera» (el freno de hoy)', async 
   afirma(r.status === 429 && r.cuerpo.motivo === 'espera', JSON.stringify(r));
 });
 
+await prueba('E6 freno por CORREO (no depende de la IP): 20 entradas por hora, la 21.ª espera', async () => {
+  const D = { correo: 'd@ejemplo.invalid', clave: 'clave-d' };
+  let r;
+  for (let i = 0; i < 20; i++) {
+    r = await funcion('metas-entrar', D);
+    afirma(r.status === 200, `entrada ${i + 1}: ${JSON.stringify(r)}`);
+  }
+  r = await funcion('metas-entrar', D);
+  afirma(r.status === 429 && r.cuerpo.motivo === 'espera', JSON.stringify(r));
+});
+
+console.log('▶ La IP de los frenos (metas-diagnostico-ip)');
+async function diagnostico(cabeceras) {
+  const r = await fetch(`${API}/functions/v1/metas-diagnostico-ip`, {
+    method: 'POST', headers: { 'content-type': 'application/json', apikey: PUBLICA, ...cabeceras }, body: '{}',
+  });
+  return r.json();
+}
+await prueba('IP1 x-forwarded-for NUNCA se usa: sin cf-connecting-ip, la IP es desconocida', async () => {
+  const r = await diagnostico({ 'x-forwarded-for': '198.51.100.7, 10.0.0.1', 'x-real-ip': '198.51.100.8' });
+  afirma(r.ok && r.ip_para_frenos === null, JSON.stringify(r));
+});
+await prueba('IP2 cf-connecting-ip válida se usa; basura no', async () => {
+  const a = await diagnostico({ 'cf-connecting-ip': '203.0.113.5' });
+  const b = await diagnostico({ 'cf-connecting-ip': 'no-es-una-ip' });
+  afirma(a.ip_para_frenos === '203.0.113.5' && b.ip_para_frenos === null, JSON.stringify({ a, b }));
+  // En local no hay Cloudflare: que el aparato pueda inventarla AQUÍ es
+  // esperable. Que no pueda en el proyecto alojado lo confirma 06, 6.8.
+});
+
 console.log('▶ La docente trabaja por la API (como la app)');
 await prueba('D1 arma su aula, dos alumnos, una colecta y un pago por las funciones', async () => {
   let r = await c.schema('metas').from('aulas').insert({
@@ -161,11 +191,16 @@ await prueba('D2 insertar directo en pagos o colectas → rechazado', async () =
   const r2 = await c.schema('metas').from('colectas').insert({ aula_id: aula, concepto: 'x', monto_sugerido: 1, fecha: '2027-03-03' });
   afirma(r1.error && r2.error, JSON.stringify({ r1: r1.error, r2: r2.error }));
 });
-await prueba('D3 sin sesión, pago_crear → 401', async () => {
+// Con los parámetros de verdad: con «{}» la API no encuentra la función
+// (404) y la prueba no diría nada del permiso.
+await prueba('D3 sin sesión (solo la llave pública), pago_crear → 401', async () => {
   const r = await fetch(`${API}/rest/v1/rpc/pago_crear`, {
-    method: 'POST', headers: { apikey: PUBLICA, 'content-type': 'application/json', 'content-profile': 'metas' }, body: '{}',
+    method: 'POST', headers: { apikey: PUBLICA, 'content-type': 'application/json', 'content-profile': 'metas' },
+    body: JSON.stringify({
+      p_id: id(), p_op: id(), p_colecta: colecta, p_alumno: beto, p_monto: '1.00', p_fecha: '2027-03-03',
+    }),
   });
-  afirma(r.status === 401 || r.status === 403, String(r.status));
+  afirma(r.status === 401, String(r.status) + ' ' + (await r.text()).slice(0, 200));
 });
 await prueba('D4 la app vieja (llave pública + contraseña) recibe -2 en avisos y en el blob', async () => {
   const pub = createClient(API, PUBLICA, sinSesion);

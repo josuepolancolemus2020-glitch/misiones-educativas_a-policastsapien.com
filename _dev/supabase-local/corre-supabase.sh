@@ -76,6 +76,8 @@ crear_usuario() {
 # ── 1. Modelo viejo, datos ficticios y cuentas de Auth ─────────────────────
 echo "▶ Modelo viejo y datos ficticios"
 q -c "create extension if not exists dblink with schema extensions"
+# pg_cron: el paso 4 programa con él el cierre de canales (FAMILIAS 5).
+q -c "create extension if not exists pg_cron with schema pg_catalog"
 q -f "$PRUEBAS/00-modelo-viejo.sql"
 q -f "$PRUEBAS/01-datos-viejos.sql"
 echo "▶ Cuentas ficticias por la API de Auth"
@@ -97,23 +99,37 @@ q -f "$DISENO/SUPABASE-V2-CONGELAR.sql" >/dev/null || falla "CONGELAR falló la 
 
 # ── 3. Capa A ──────────────────────────────────────────────────────────────
 echo "▶ Capa A"
-q -v "conninfo=$DB" -f "$PRUEBAS/10-pruebas.sql"
+# La carrera B4 abre dos sesiones con dblink DESDE la base: corre dentro de su
+# contenedor, donde 127.0.0.1:54322 no es nadie. Desde ahí, la base es
+# supabase_db_<project_id>:5432 (la red de Docker de la CLI).
+PROYECTO="$(sed -n 's/^project_id *= *"\(.*\)"/\1/p' "$AQUI/supabase/config.toml")"
+q -v "conninfo=host=supabase_db_$PROYECTO port=5432 user=postgres password=postgres dbname=postgres" \
+  -f "$PRUEBAS/10-pruebas.sql"
 
 [ "$SOLO_SQL" = 1 ] && exit 0
 
 # ── 4. Capa A+: las funciones de borde y la API, de verdad ─────────────────
 echo "▶ Funciones de borde (supabase functions serve)"
+# Un solo contenedor de funciones: si quedó uno (de una corrida anterior o de
+# un `supabase start` con edge_runtime encendido), se borra antes; si no, la
+# espera de abajo podía recibir respuesta del viejo mientras moría.
+docker rm -f "supabase_edge_runtime_$PROYECTO" >/dev/null 2>&1 || true
 REG="$(mktemp)"
 (cd "$AQUI" && npx --yes "supabase@$VERSION" functions serve --env-file supabase/functions/.env.local >"$REG" 2>&1) &
 SERVE=$!
 terminar() { kill "$SERVE" 2>/dev/null || true; pkill -f "supabase@$VERSION functions serve" 2>/dev/null || true; rm -f "$REG"; }
 trap terminar EXIT
-for _ in $(seq 1 60); do
-  c="$(curl -s -o /dev/null -w '%{http_code}' -X OPTIONS "$API/functions/v1/metas-entrar" || true)"
-  [ "$c" = 200 ] && break
+# Listo de verdad cuando el NUEVO dice que sirve, y además responde.
+c=""
+for _ in $(seq 1 90); do
+  if grep -q "Serving functions on" "$REG"; then
+    c="$(curl -s -o /dev/null -w '%{http_code}' -X OPTIONS "$API/functions/v1/metas-entrar" || true)"
+    [ "$c" = 200 ] && break
+  fi
+  kill -0 "$SERVE" 2>/dev/null || { cat "$REG"; falla "functions serve se cerró al arrancar"; }
   sleep 2
 done
-[ "${c:-}" = 200 ] || { cat "$REG"; falla "las funciones de borde no arrancaron"; }
+[ "$c" = 200 ] || { cat "$REG"; falla "las funciones de borde no arrancaron"; }
 
 echo "▶ supabase-js fijo, sin guardarlo en el repositorio"
 npm install --no-save --silent --prefix "$AQUI" @supabase/supabase-js@2.45.4 >/dev/null

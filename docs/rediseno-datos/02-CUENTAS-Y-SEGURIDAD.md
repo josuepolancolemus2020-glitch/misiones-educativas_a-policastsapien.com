@@ -188,19 +188,35 @@ averiguar una clave insertando.
 primer día. `service_role` tiene permiso de uso sobre el esquema `metas`
 solo para que las funciones de borde puedan llamar a sus funciones.
 
-**La base no lee la IP de cabeceras que el cliente puede escribir**
-(`x-forwarded-for`, `cf-connecting-ip` mandados por el aparato). La IP la
-obtienen las **funciones de borde** de la cabecera que añade la propia
-infraestructura de Supabase (el **último** valor de `x-forwarded-for`, el que
-agrega su proxy, nunca el primero), y se la pasan a `metas.freno_ok`, que solo
-la llama `service_role`. En la consulta de familias, además, cada intento
-exige un token Turnstile, que es lo que de verdad frena a un programa.
+**La IP de los frenos** (corregido en la revisión 7). La base no lee
+cabeceras: la IP se la pasan las **funciones de borde**, y la toman **solo de
+`cf-connecting-ip`**:
+
+- la documentación de Supabase dice que su plataforma pone `cf-connecting-ip`
+  en cada petición (guía *query plans*, ejemplo de restricción por IP; el
+  código de Studio la lee primero). Cloudflare documenta que trae **una sola
+  IP**, la del cliente;
+- `x-forwarded-for` **no se usa**: Cloudflare **agrega** a lo que el aparato
+  ya mandó (su página de cabeceras HTTP), así que el primer valor lo inventa
+  cualquiera; y el último puede ser un proxy interno, con lo que el freno
+  sería **un solo tope para todo el país** (30 entradas por hora entre todos
+  los docentes). La revisión 6 tomaba el último: era un error;
+- si no llega una IP válida, la función manda `null` y **no se aplica el
+  freno por IP** (`metas._freno_ip`), en vez de juntar a todos en un balde
+  «sin-ip». Quedan los frenos que no dependen de la IP: por correo en
+  `metas-entrar`, por sesión y por familia en `familia-vincular`.
+
+Lo que falta confirmar, y es requisito del corte 1: que en una función
+**alojada** `cf-connecting-ip` llega siempre y el aparato no la puede
+inventar. Se mide con `metas-diagnostico-ip` en un proyecto de prueba aparte
+(`06`, 6.8). En la consulta de familias, además, cada intento exige un token
+Turnstile, que es lo que de verdad frena a un programa.
 
 | puerta | freno |
 |---|---|
-| `metas-entrar` (docente) | el de hoy: 5 fallos por correo → 10 minutos (`docente_intentos`, sin tocar) **y** 30 intentos por hora por IP (`freno_ok('entrar-ip:'…)`), implementado en la función de borde **antes** de validar la contraseña |
+| `metas-entrar` (docente) | el de hoy: 5 fallos por correo → 10 minutos (`docente_intentos`, sin tocar); **20 intentos por hora por correo**, acierte o no (rev. 7, no depende de la IP); y 30 por hora por IP **si la IP se conoce**. Los dos primeros en la función de borde **antes** de validar la contraseña |
 | Sesión anónima de padres | CAPTCHA Turnstile obligatorio + límites de Auth por IP |
-| `familia-vincular` | token Turnstile por intento; 20 por hora por sesión; 60 por hora por IP; 20 claves equivocadas por hora por IP. Más de **2 000 claves equivocadas por hora en total** deja **una alerta** en `metas.alertas` para quien administra, pero **no bloquea** a las familias (un ataque repartido no puede dejar a todas sin entrar) |
+| `familia-vincular` | token Turnstile por intento; 20 por hora por sesión; **20 vínculos por hora por familia** (rev. 7, no depende de la IP); 60 por hora por IP y 20 claves equivocadas por hora por IP, **si la IP se conoce**. Más de **2 000 claves equivocadas por hora en total** deja **una alerta** en `metas.alertas` para quien administra, pero **no bloquea** a las familias (un ataque repartido no puede dejar a todas sin entrar) |
 | Funciones viejas que validan contraseña | quedan **congeladas** (`SUPABASE-V2-CONGELAR.sql`) |
 
 Al cambiar la contraseña (`metas_cambiar_clave_docente`) y al recuperarla por
@@ -304,6 +320,7 @@ Deno.serve(async (req) => {
 
   // 0. Freno por IP, ANTES de tocar la contraseña. La IP es la que añadió el
   //    proxy de Supabase (último valor de x-forwarded-for), nunca la primera,
+  //    [CORREGIDO en la revisión 7: solo cf-connecting-ip; ver 2.5]
   //    que la puede escribir el cliente.
   const ip = (req.headers.get('x-forwarded-for') ?? '').split(',').map(s => s.trim()).filter(Boolean).pop() ?? 'sin-ip';
   const { data: libre } = await admin.schema('metas').rpc('freno_ok',

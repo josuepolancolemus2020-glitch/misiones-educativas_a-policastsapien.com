@@ -84,6 +84,18 @@ grant execute on function metas.familia_alumnos(), metas.familia_aulas() to auth
 -- ── Vincular: SOLO la función de borde «familia-vincular» (llave de servicio)
 -- Recibe el uid de la sesión anónima (ya verificado por la función de borde
 -- con el JWT), la clave y la IP que puso la infraestructura.
+-- Freno por IP solo cuando la IP se conoce de verdad (rev. 7). La función de
+-- borde manda null si no llegó cf-connecting-ip: entonces NO se usa un balde
+-- común «sin-ip», que con una IP mal leída sería un solo tope para todas las
+-- familias del país. Quedan los frenos por sesión y por familia, que no
+-- dependen de la IP.
+create or replace function metas._freno_ip(p_prefijo text, p_ip text, p_max int, p_ventana interval)
+returns boolean language sql volatile security definer set search_path = metas, pg_temp as $$
+  select case when nullif(trim(coalesce(p_ip, '')), '') is null then true
+              else metas.freno_ok(p_prefijo || trim(p_ip), p_max, p_ventana) end
+$$;
+revoke all on function metas._freno_ip(text, text, int, interval) from public, anon, authenticated;
+
 create or replace function metas.familia_vincular(p_uid uuid, p_clave text, p_ip text, p_alias text default null)
 returns jsonb language plpgsql volatile security definer set search_path = metas, pg_temp as $$
 declare
@@ -98,11 +110,11 @@ begin
     return jsonb_build_object('ok', false, 'motivo', 'sesion');   -- una cuenta de docente no se vincula como padre
   end if;
   if not metas.freno_ok('famvinc-uid:' || p_uid, 20, interval '1 hour')
-     or not metas.freno_ok('famvinc-ip:' || coalesce(p_ip, 'sin-ip'), 60, interval '1 hour') then
+     or not metas._freno_ip('famvinc-ip:', p_ip, 60, interval '1 hour') then
     return jsonb_build_object('ok', false, 'motivo', 'espera');
   end if;
   if v_cl is null or v_cl !~ '^([A-HJ-NP-Z2-9]{10}|[0-9]{1,2}[A-Z0-9]{4})$' then
-    perform metas.freno_ok('famfallo-ip:' || coalesce(p_ip, 'sin-ip'), 20, interval '1 hour');
+    perform metas._freno_ip('famfallo-ip:', p_ip, 20, interval '1 hour');
     return jsonb_build_object('ok', false, 'motivo', 'clave');
   end if;
   select * into f from metas.familias
@@ -111,13 +123,13 @@ begin
   -- a la familia que pida la tira nueva (no revela nada útil: esa clave ya
   -- no abre nada).
   if found and not metas._clave_vale(v_cl, f.clave, f.clave_origen, f.clave_siguiente) then
-    perform metas.freno_ok('famfallo-ip:' || coalesce(p_ip, 'sin-ip'), 20, interval '1 hour');
+    perform metas._freno_ip('famfallo-ip:', p_ip, 20, interval '1 hour');
     return jsonb_build_object('ok', false, 'motivo', 'clave_vencida');
   end if;
   if not found then
     -- Fallos: por IP y además un tope GLOBAL, para que repartir el ataque
     -- entre muchas IP no sirva para recorrer claves.
-    if not metas.freno_ok('famfallo-ip:' || coalesce(p_ip, 'sin-ip'), 20, interval '1 hour') then
+    if not metas._freno_ip('famfallo-ip:', p_ip, 20, interval '1 hour') then
       return jsonb_build_object('ok', false, 'motivo', 'espera');
     end if;
     -- Tope GLOBAL: no bloquea a nadie (un ataque repartido no puede dejar a
@@ -134,6 +146,11 @@ begin
   end if;
   select * into a from metas.alumnos where id = f.alumno_id and deleted_at is null;
   if not found then return jsonb_build_object('ok', false, 'motivo', 'clave'); end if;
+  -- Freno por FAMILIA (rev. 7): 20 vínculos por hora a la misma familia, haya
+  -- IP o no. Una familia de verdad vincula unos pocos teléfonos.
+  if not metas.freno_ok('famvinc-familia:' || f.id, 20, interval '1 hour') then
+    return jsonb_build_object('ok', false, 'motivo', 'espera');
+  end if;
   if (select count(*) from metas.familia_accesos where auth_uid = p_uid and revocado_at is null) >= 10 then
     return jsonb_build_object('ok', false, 'motivo', 'muchos');
   end if;
@@ -524,6 +541,48 @@ end $$;
 -- Lo que hace que un vínculo deje de valer: el alumno cambia de estado o se
 -- borra, la familia se borra, el padre se desvincula, o vencen las claves
 -- viejas (hito). Cada uno manda «cerrar» al momento.
+-- El vencimiento de las claves viejas no es un cambio de fila: llega con el
+-- reloj. El paso 4 anota la fecha con anticipación (dos semanas de aviso),
+-- así que al anotarla se PROGRAMA el cierre de canales para esa hora exacta
+-- con pg_cron (rev. 7). Si la fecha ya pasó, se cierra en el acto.
+-- pg_cron corre en UTC y de minuto en minuto: se redondea al minuto
+-- SIGUIENTE, para no correr un poco antes de la hora y no cerrar nada.
+create or replace function metas.claves_viejas_cerrar_canales()
+returns integer language plpgsql volatile security definer set search_path = metas, pg_temp as $$
+begin
+  if not metas._claves_viejas_vencidas() then
+    return 0;                                      -- todavía no (o la fecha se movió)
+  end if;
+  return metas.canales_cerrar(null);
+end $$;
+revoke all on function metas.claves_viejas_cerrar_canales() from public, anon, authenticated;
+
+create or replace function metas._programar_cierre_canales(p_at timestamptz)
+returns text language plpgsql volatile security definer set search_path = metas, pg_temp as $$
+declare
+  v timestamp := date_trunc('minute', (p_at + interval '59 seconds') at time zone 'UTC');
+  v_cron text;
+begin
+  if p_at <= now() then
+    perform metas.canales_cerrar(null);
+    return 'cerrado_ya';
+  end if;
+  if to_regnamespace('cron') is null then
+    -- Sin pg_cron el paso 4 no está completo: que se note al anotar la fecha.
+    raise exception 'M.E.T.A.S: activa pg_cron antes de fijar la fecha en que vencen las claves'
+      using errcode = 'MT043';
+  end if;
+  v_cron := format('%s %s %s %s *', extract(minute from v)::int, extract(hour from v)::int,
+                   extract(day from v)::int, extract(month from v)::int);
+  -- Mismo nombre siempre: si la fecha se cambia, la tarea se reemplaza. Se
+  -- borra sola después de correr (si no, volvería el mismo día del año
+  -- siguiente; igual no haría nada, pero no tiene por qué quedar).
+  perform cron.schedule('metas-claves-vencen', v_cron,
+    'select metas.claves_viejas_cerrar_canales(); select cron.unschedule(''metas-claves-vencen'');');
+  return v_cron;
+end $$;
+revoke all on function metas._programar_cierre_canales(timestamptz) from public, anon, authenticated;
+
 create or replace function metas.t_cerrar_canales()
 returns trigger language plpgsql security definer set search_path = metas, pg_temp as $$
 begin
@@ -534,8 +593,8 @@ begin
   elsif tg_table_name = 'familia_accesos' then
     perform metas.canales_cerrar(array[new.familia_id]);
   elsif tg_table_name = 'hitos' then
-    if new.nombre = 'claves_viejas_vencen' and new.at <= now() then
-      perform metas.canales_cerrar(null);
+    if new.nombre = 'claves_viejas_vencen' then
+      perform metas._programar_cierre_canales(new.at);
     end if;
   end if;
   return null;

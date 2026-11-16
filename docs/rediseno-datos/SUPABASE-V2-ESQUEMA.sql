@@ -2153,7 +2153,7 @@ begin
      where gasto_id = p_gasto and deleted_at is null;
     if v_monto < v_reemb then
       return jsonb_build_object('ok', false, 'pregunta', 'monto_menor_que_reembolsado',
-        'reembolsado', v_reemb::text, 'este', jsonb_build_object('monto', v_monto::text));
+        'reembolsado', metas.monto_texto(v_reemb), 'este', jsonb_build_object('monto', metas.monto_texto(v_monto)));
     end if;
   end if;
   update metas.gastos_docente set
@@ -2344,13 +2344,14 @@ begin
   end if;
   select coalesce(jsonb_agg(jsonb_build_object(
            'bien_id', b.id, 'descripcion', b.descripcion, 'cantidad', b.cantidad::text, 'tipo', b.tipo,
-           'propietario', b.propietario, 'valor', b.valor::text, 'tiene_recibo', b.tiene_recibo,
+           'propietario', b.propietario, 'valor', metas.monto_texto(b.valor), 'tiene_recibo', b.tiene_recibo,
            'fecha_desde', b.fecha_desde, 'reembolso_fecha', b.reembolso_fecha, 'nota', b.nota)
            order by b.propietario, b.descripcion), '[]'::jsonb),
          jsonb_build_object(
            'bienes', count(*),
-           'valor_docente', coalesce(sum(b.valor) filter (where b.propietario = 'docente'), 0)::text,
-           'valor_centro',  coalesce(sum(b.valor) filter (where b.propietario = 'centro'), 0)::text)
+           -- monto_texto: un acta sin bienes dice «0.00», no «0» (rev. 7)
+           'valor_docente', metas.monto_texto(coalesce(sum(b.valor) filter (where b.propietario = 'docente'), 0)),
+           'valor_centro',  metas.monto_texto(coalesce(sum(b.valor) filter (where b.propietario = 'centro'), 0)))
     into v_contenido, v_totales
     from metas.bienes b
    where b.owner = v_uid and b.deleted_at is null

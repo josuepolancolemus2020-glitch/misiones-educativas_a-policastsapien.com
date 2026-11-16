@@ -1,4 +1,4 @@
-# Rediseño de datos de M.E.T.A.S · Fase 1: diseño (revisión 6)
+# Rediseño de datos de M.E.T.A.S · Fase 1: diseño (revisión 7)
 
 Rama `rediseño-datos`. **Solo diseño**: no se modificó código de la app, no se
 tocó Supabase ni ninguna fila de docentes, y no hubo merge. Los `.sql` se
@@ -35,9 +35,47 @@ botones de sincronizar, recuperar ni restaurar, y sin ningún indicador de
 | `SUPABASE-V2-ESQUEMA.sql` | 40 tablas de datos, auditoría, recibos, funciones de dinero y de alta, vistas de totales |
 | `SUPABASE-V2-FAMILIAS.sql` | vínculo de familias, rol lector, vistas `vf_*`, totales, «visto», aviso inmediato |
 | `SUPABASE-V2-CONGELAR.sql` | candado y congelado por pasos |
-| `pruebas-capa-a/` | `corre.sh` + plataforma Supabase simulada + modelo viejo + datos ficticios + **271 pruebas en verde** |
+| `pruebas-capa-a/` | `corre.sh` + plataforma Supabase simulada + modelo viejo + datos ficticios + **280 pruebas en verde** |
 | `pruebas-capa-b/`, `pruebas-capa-c/` | capas B (cola y conflictos) y C (navegador) del corte 1, con su contrato, **escritas antes del código** |
 | `_dev/supabase-local/` | CLI fija, `corre-supabase.sh` (capas A, A+, B y C contra `supabase start`), funciones de borde y capa A+ |
+
+## Cambios de la revisión 7, por punto
+
+**Verificado por Josué** (Supabase local real, CLI 3.1.0, Node 24, datos
+ficticios): capa A 271/271 en PG16, PG17 y Supabase local; `npm test` 77/77;
+capas B y C «pendiente»; las funciones de borde pasan con su contenedor vivo.
+La regla 19 ya estaba en la rama (commit `5a4fcfc8`).
+
+**`_dev/supabase-local` funciona tal como viene** (sus cuatro arreglos, ya
+probados por él): migración que crea el esquema `metas` vacío; `dblink` a
+`supabase_db_<project_id>:5432`; D3 con los parámetros reales y 401;
+borrar el contenedor de funciones de `supabase start` y esperar «Serving
+functions on» antes de probar. De las dos salidas del punto 4 tomé esa y dejé
+`edge_runtime` encendido, porque no tengo cómo comprobar aquí que
+`functions serve` arranque con él apagado.
+
+**5. La IP de los frenos (era un error).** La revisión 6 tomaba el último
+valor de `x-forwarded-for`. Según la documentación oficial: Supabase dice que
+su plataforma pone `cf-connecting-ip` en cada petición, y Cloudflare dice que
+trae una sola IP y que a `x-forwarded-for` le **agrega** lo suyo a lo que
+mandó el aparato. Ahora: solo `cf-connecting-ip`; sin IP válida, **sin
+freno por IP** (nunca un balde común para todos). Frenos nuevos que no
+dependen de la IP: **20 entradas por hora por correo** y **20 vínculos por
+hora por familia**. Función `metas-diagnostico-ip` (apagada salvo
+`METAS_DIAGNOSTICO=1`) y procedimiento para confirmarlo en un proyecto de
+prueba aparte (`06`, 6.8), requisito del corte 1. Pruebas K17, E6, IP1, IP2.
+
+**6. Cierre de canales a la hora del vencimiento.** Anotar la fecha del paso 4
+la **programa con pg_cron** para ese minuto (UTC, al minuto siguiente); la
+tarea cierra los canales de las claves vencidas y se borra sola. Si la fecha
+ya pasó, cierra en el acto; sin pg_cron, anotarla falla (`MT043`). Mover la
+fecha la reprograma. El simulador trae un pg_cron mínimo. Prueba K16.
+
+**7.** El acta de un centro sin bienes dice «0.00», no «0» (también el
+reembolsado de una pregunta). Prueba N10.
+
+**Resultado**: capa A, 280 en verde; capa A+, 25 pruebas (corren en tu
+entorno); `npm test`, 77 en verde.
 
 ## Cambios de la revisión 6, por punto
 
@@ -395,6 +433,8 @@ pantalla y elemento con archivo:línea. Respaldo a Drive: fase futura.
 ## Pendiente
 
 1. Correr en tu entorno `bash _dev/supabase-local/corre-supabase.sh` (capas A
-   y A+ contra `supabase start`).
-2. Empezar el código del corte 1 en la rama: `js/datos/` contra la capa B y
+   y A+ contra `supabase start`, ahora con E6, IP1 e IP2).
+2. Antes del corte 1: la prueba de `cf-connecting-ip` en un proyecto de
+   prueba aparte (`06`, 6.8).
+3. Empezar el código del corte 1 en la rama: `js/datos/` contra la capa B y
    la pantalla contra la capa C.

@@ -30,6 +30,11 @@ funciones de borde con su capa A+, y las capas B y C escritas antes del
 código (`06`, 6.6 y 6.7). Lo siguiente es el código: `js/datos/` hasta poner
 en verde la capa B, y la pantalla hasta poner en verde la capa C.
 
+**Antes de publicar el corte 1** (rev. 7): confirmar en un proyecto de prueba
+aparte que `cf-connecting-ip` trae la IP real y no se puede inventar (`06`,
+6.8); si no, se publica sin frenos por IP (quedan los de correo, sesión y
+familia). Y activar pg_cron antes de fijar la fecha del paso 4.
+
 **Publicar**: solo con N1 y N2 resueltos (lo están en la revisión 4) y la
 misma capa A en verde **contra `supabase start`**.
 

@@ -49,11 +49,21 @@ export function preflight(req: Request): Response | null {
   return null;
 }
 
-// La IP la añade la infraestructura de Supabase como ÚLTIMO valor de
-// x-forwarded-for. El primero lo puede escribir el aparato: nunca se usa.
-export function ipDe(req: Request): string {
-  const partes = (req.headers.get('x-forwarded-for') ?? '').split(',').map((s) => s.trim()).filter(Boolean);
-  return partes.pop() ?? 'sin-ip';
+// La IP del aparato, para los frenos (rev. 7). SOLO cf-connecting-ip: la
+// documentación de Supabase dice que su plataforma la pone en cada petición
+// (guía «query plans», ejemplo de restricción por IP), y Cloudflare documenta
+// que trae una sola IP, la del cliente. x-forwarded-for NO se usa: Cloudflare
+// AGREGA a lo que el aparato ya mandó, así que el primer valor lo puede
+// inventar cualquiera, y el último puede ser un proxy interno (un solo tope
+// para todo el país). Si no llega una IP válida se devuelve null y el freno
+// por IP no se aplica; quedan los frenos por cuenta, por sesión y por familia,
+// que no dependen de la IP. Confirmarlo antes del corte 1 con la función
+// metas-diagnostico-ip en un proyecto de PRUEBA aparte (06, 6.8).
+const IPV4 = /^(25[0-5]|2[0-4]\d|1?\d?\d)(\.(25[0-5]|2[0-4]\d|1?\d?\d)){3}$/;
+const IPV6 = /^[0-9a-f:]{2,39}$/i;
+export function ipDe(req: Request): string | null {
+  const ip = (req.headers.get('cf-connecting-ip') ?? '').trim();
+  return ip && (IPV4.test(ip) || (ip.includes(':') && IPV6.test(ip))) ? ip : null;
 }
 
 export function tokenDe(req: Request): string {

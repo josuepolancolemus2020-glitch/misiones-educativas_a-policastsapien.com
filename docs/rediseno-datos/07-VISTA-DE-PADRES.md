@@ -128,8 +128,11 @@ de valer (traslado, retiro, clave vencida, familia borrada, el padre se
 desvincula), ese teléfono **no recibe nada más al instante**, aunque siga
 conectado, y recibe una vez el evento `cerrar` para soltar el canal y pedir
 la tira nueva. El vencimiento de las claves viejas no ocurre por un cambio de
-fila: el hito lo dispara si ya pasó la fecha, y una tarea horaria
-(`metas.canales_cerrar()`, paso 4) cubre el momento exacto. Pruebas K13 a
+fila: al anotar la fecha (paso 4, con anticipación), la base **programa con
+pg_cron** el cierre de canales para esa hora exacta
+(`metas.claves_viejas_cerrar_canales`, tarea «metas-claves-vencen», que se
+borra sola); si la fecha ya pasó, cierra en el acto; sin pg_cron, anotar la
+fecha falla en vez de quedar a medias (rev. 7, prueba K16). Pruebas K13 a
 K15, T1 a T3 (capa A+).
 
 «De inmediato» empieza cuando el cambio **llega a Supabase**. Si el docente lo

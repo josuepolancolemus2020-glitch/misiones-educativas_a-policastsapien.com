@@ -76,6 +76,25 @@ create or replace function realtime.send(payload jsonb, event text, topic text, 
 returns void language sql security definer as $$
   insert into realtime.messages (topic, event, payload, private) values (topic, event, payload, private)
 $$;
+-- ── pg_cron (mínimo) ─────────────────────────────────────────────────────────
+-- Solo lo que usan nuestros archivos: programar y quitar una tarea por
+-- nombre. Las pruebas ejecutan el «command» guardado como si llegara la hora.
+create schema if not exists cron;
+create table if not exists cron.job (
+  jobid    bigint generated always as identity primary key,
+  jobname  text unique,
+  schedule text not null,
+  command  text not null
+);
+create or replace function cron.schedule(job_name text, schedule text, command text) returns bigint
+language sql as $$
+  insert into cron.job (jobname, schedule, command) values (job_name, schedule, command)
+  on conflict (jobname) do update set schedule = excluded.schedule, command = excluded.command
+  returning jobid
+$$;
+create or replace function cron.unschedule(job_name text) returns boolean
+language sql as $$ delete from cron.job where jobname = job_name returning true $$;
+
 do $$ begin
   if not exists (select 1 from pg_publication where pubname = 'supabase_realtime') then
     create publication supabase_realtime;

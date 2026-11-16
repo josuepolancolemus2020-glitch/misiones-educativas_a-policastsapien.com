@@ -48,6 +48,10 @@ enable_confirmations = false
 [auth.sms]
 enable_signup = false
 
+# `supabase start` levanta su propio contenedor de funciones y `functions
+# serve` lo reemplaza; si las pruebas le hablaban al viejo mientras moría,
+# caían con 502/500. corre-supabase.sh borra ese contenedor antes de `serve`
+# y espera a que el nuevo diga «Serving functions on».
 [edge_runtime]
 enabled = true
 
@@ -58,4 +62,8 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.familia-vincular]
+verify_jwt = false
+
+# Solo diagnóstico (06, 6.8); responde 404 si METAS_DIAGNOSTICO no es 1.
+[functions.metas-diagnostico-ip]
 verify_jwt = false

@@ -192,7 +192,7 @@ base, con las reglas de `03`, y produce el estado esperado.
 | # | escenario | se espera |
 |---|---|---|
 | T1 | 40 intentos de entrar desde una IP con correos distintos | a partir del 31, `espera`, **antes** de validar contraseñas |
-| T2 | El cliente manda `x-forwarded-for` y `cf-connecting-ip` inventados en cada intento | el freno no se reinicia (cuenta la IP que añade la infraestructura) |
+| T2 | El cliente manda `x-forwarded-for` y `cf-connecting-ip` inventados en cada intento | `x-forwarded-for` no se usa nunca (A+ IP1); que `cf-connecting-ip` no se pueda inventar en el proyecto alojado se confirma con 6.8; sin IP válida, frenos por correo, sesión y familia (A+ E6, capa A K17) |
 | T3 | `familia-vincular` sin token Turnstile, o con uno ya usado | rechazado |
 | T4 | 25 claves equivocadas desde una IP; 2 100 repartidas en 200 IP en una hora | `espera` desde la 21 en la primera; desde la 2 001 en total en la segunda |
 | T5 | Cambiar la contraseña; recuperarla por correo (`reset-clave`) | se llama `metas-salir-todos`: otras sesiones cerradas en el primer caso, **todas** en el segundo; su cola espera, no se pierde |
@@ -288,7 +288,7 @@ contadores de 6.1.
 | `npm run test:datos` (nueva) | capas A y B contra Supabase local en Docker | cada empujón que toque `js/datos/` o los `.sql`, y de noche |
 | `npm run test:navegador` | capa C y la prueba de estrés | de noche |
 
-## 6.5 Capa A: lo que ya corre (revisión 6)
+## 6.5 Capa A: lo que ya corre (revisión 7)
 
 ```
 bash docs/rediseno-datos/pruebas-capa-a/corre.sh
@@ -309,12 +309,15 @@ tablas viejas como en el proyecto real, y copias fieles de
 `metas_guardar_avisos`, `metas_consultar_admin_padre` y
 `metas_consultar_avisos_padre`.
 
-**Resultado: 271 pruebas en verde**: S1 a S9, M1 a M16, CC0 a CC12, F1 a
+**Resultado: 280 pruebas en verde**: S1 a S9, M1 a M16, CC0 a CC12, F1 a
 F6, B4 en los dos órdenes con **dos sesiones de verdad** (`dblink`), K0 a
-K15, A1 a A8, G (con G9), N, P, R7, D1 a D6, la convivencia V1 a V15, N1, N2
-y C5. Quitando una a una las correcciones de la revisión 6 (en una copia),
-caen 16 de ellas. Josué la corrió contra `supabase start` (CLI 3.1.0, PG
-17.11) con 236 en verde en la revisión 5.
+K17, A1 a A8, G (con G9), N (con N10), P, R7, D1 a D6, la convivencia V1 a
+V15, N1, N2 y C5. Josué corrió las 271 de la revisión 6 en verde en PG16, en
+PG17 y contra `supabase start` (CLI 3.1.0).
+
+La plataforma simulada trae un **pg_cron mínimo** (`cron.job`,
+`cron.schedule`, `cron.unschedule`); contra `supabase start`, el corredor
+activa el de verdad.
 
 El simulador va en dos archivos: `00-plataforma-simulada.sql` (lo que
 Supabase trae de fábrica; solo para el Postgres suelto) y
@@ -347,7 +350,7 @@ cuentas ficticias, para confirmar los permisos, Realtime y Auth reales. Lo
 mismo vale para la vinculación con Supabase Auth: primero en `supabase start`
 con cuentas ficticias.
 
-## 6.6 Contra `supabase start`: capas A y A+ (revisión 6)
+## 6.6 Contra `supabase start`: capas A y A+ (revisión 7)
 
 Listo en `_dev/supabase-local/` (no se publica):
 
@@ -356,7 +359,8 @@ Listo en `_dev/supabase-local/` (no se publica):
 | `version-cli.txt` | la CLI fija: **3.1.0** (`npx supabase@3.1.0`) |
 | `supabase/config.toml` | esquema `metas` expuesto, sesiones anónimas sí, alta por correo no, funciones sin verificación automática del JWT. Turnstile apagado solo en local |
 | `corre-supabase.sh` | se niega si la base o la API no están en `127.0.0.1`/`localhost` o si la carpeta está vinculada (`supabase link`); `db reset`; modelo viejo y datos ficticios; cuentas ficticias **por la API de Auth** con ids fijos; los cuatro `.sql` (CONGELAR dos veces); capa A; las funciones con `functions serve`; capa A+ |
-| `supabase/functions/*` | `metas-entrar`, `metas-salir-todos`, `familia-vincular` (02, 2.9) |
+| `supabase/migrations/00000000000000_esquema_metas.sql` | solo `create schema if not exists metas`: la API no arranca si el esquema expuesto no existe |
+| `supabase/functions/*` | `metas-entrar`, `metas-salir-todos`, `familia-vincular` (02, 2.9) y `metas-diagnostico-ip` (6.8; responde 404 si no está encendida) |
 | `capa-a-mas.mjs` | capa A+ en Node contra la API real (abajo) |
 
 ```
@@ -377,6 +381,18 @@ puede llamar `pago_crear`), T1 a T3 (Realtime: su canal sí, el de otra
 familia «Unauthorized», el toque llega sin dinero; el canal del docente) y
 R5-2 (trasladan al alumno con el padre conectado: «cerrar», ningún toque
 más, no se vuelve a unir), S1 a S3 (`metas-salir-todos`).
+
+**Arreglos de la revisión 7**, encontrados y probados por Josué (22 de 22 en
+cuatro corridas seguidas): la migración `00000000000000_esquema_metas.sql`
+crea el esquema vacío (la API no arranca si el esquema expuesto no existe);
+`dblink` corre DENTRO del contenedor de la base, así que la carrera B4 se
+conecta a `supabase_db_<project_id>:5432`; D3 manda los parámetros reales
+(con `{}` la API respondía 404 y no probaba el permiso); y antes de
+`functions serve` se borra el contenedor de funciones que levantó
+`supabase start` y se espera a que el nuevo diga «Serving functions on»
+(antes, la mitad de las veces respondía el viejo mientras moría: 502/500).
+Más tres pruebas nuevas: E6 (freno por correo) e IP1, IP2 (la IP de los
+frenos). Total de la capa A+: 25.
 
 **Aquí no se pudo correr** (no hay Docker en este entorno): las capas A+ y la
 corrida de la capa A contra `supabase start` las corre Josué con el comando
@@ -403,3 +419,43 @@ de arriba.
 
 Mientras `js/datos/` y la pantalla nueva no existan, las dos salen con código
 2 («pendiente del corte 1») y `corre-supabase.sh` lo dice sin fallar.
+
+## 6.8 La IP de los frenos en una función ALOJADA (antes del corte 1)
+
+En `supabase start` no hay Cloudflare: lo que importa se mide en un proyecto
+**de prueba aparte**, nunca en el de producción.
+
+1. Crear un proyecto de Supabase de prueba (gratuito), sin datos.
+2. Desde `_dev/supabase-local/`, desplegar solo el diagnóstico y encenderlo:
+
+   ```
+   npx supabase@3.1.0 functions deploy metas-diagnostico-ip --project-ref <proyecto-de-prueba> --no-verify-jwt
+   npx supabase@3.1.0 secrets set METAS_DIAGNOSTICO=1 --project-ref <proyecto-de-prueba>
+   ```
+
+   (`functions deploy` con `--project-ref` no vincula la carpeta; aun así,
+   si apareciera `supabase/.temp/project-ref`, borrarlo: `corre-supabase.sh`
+   se niega a correr con él.)
+3. Desde un teléfono con datos y desde una computadora con otra red, sin
+   cabeceras raras:
+
+   ```
+   curl -s -X POST https://<proyecto-de-prueba>.supabase.co/functions/v1/metas-diagnostico-ip
+   ```
+
+   **Se espera**: `ip_para_frenos` igual a la IP pública de cada aparato
+   (la que da `curl -s https://ifconfig.me`), y distinta entre los dos.
+4. Ahora inventando las cabeceras:
+
+   ```
+   curl -s -X POST -H 'cf-connecting-ip: 1.2.3.4' -H 'x-forwarded-for: 5.6.7.8' -H 'x-real-ip: 9.9.9.9' https://<proyecto-de-prueba>.supabase.co/functions/v1/metas-diagnostico-ip
+   ```
+
+   **Se espera**: `ip_para_frenos` sigue siendo la IP real, **no** `1.2.3.4`.
+   Anotar también qué trae `x-forwarded-for` (para saber qué valor hubiera
+   usado la revisión 6).
+5. Si el paso 3 o el 4 no dan lo esperado, el corte 1 **no se publica** con
+   frenos por IP: `metas-entrar` y `familia-vincular` se quedan con los
+   frenos por correo, sesión y familia (ya están) hasta resolverlo.
+6. Borrar la función del proyecto de prueba
+   (`npx supabase@3.1.0 functions delete metas-diagnostico-ip --project-ref <proyecto-de-prueba>`).
