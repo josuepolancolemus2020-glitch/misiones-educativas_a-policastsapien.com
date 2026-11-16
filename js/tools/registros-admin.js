@@ -6565,7 +6565,7 @@ function adPrintTalonario(d) {
   }).join('') + '<tr><td class="cn hand">&nbsp;</td><td class="f"></td><td class="m s"></td><td class="m"></td><td class="f"></td><td class="rc"></td><td class="e"></td></tr>';
   const talon = f => {
     const idn = idnTxt(f.a);
-    const clave = typeof adClaveFamilia === 'function' ? adClaveFamilia(d.id, f.a.num, false) : '';
+    const clave = f.a.claveFamilia != null ? f.a.claveFamilia : (typeof adClaveFamilia === 'function' ? adClaveFamilia(d.id, f.a.num, false) : '');
     const estado = f.pct == null ? '' : f.pct >= 100 ? '✓ Al día' : f.aportado === 0 ? '✗ Sin aportes' : '◐ ' + f.pct + ' % aportado';
     return `<section class="talon">
       <div class="matriz">

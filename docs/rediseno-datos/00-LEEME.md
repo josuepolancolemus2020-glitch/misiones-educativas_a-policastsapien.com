@@ -74,7 +74,7 @@ trabajar de la Mi aula de siempre y se supera en lo visual. Detalle en
   leían las hojas de main y las llama tal cual. Boletas, Cuadro final,
   resumen final, ingresos, egresos y talonario: mismo HTML letra por letra y
   misma imagen impresa con un aula ficticia (blob en main, filas en la
-  rama). `registros-admin.js` no cambió en esta revisión.
+  rama). `registros-admin.js` solo cambió en la línea de la clave del talonario.
 - **El motor y las reglas del dinero, sin cambios** (`js/datos/` igual que
   en la revisión 9). El monto de un toque es el `monto_sugerido` de la
   colecta, tal como lo da la base («50.00»).
@@ -89,9 +89,12 @@ trabajar de la Mi aula de siempre y se supera en lo visual. Detalle en
   (asistencia: todos presentes de entrada, un toque, «Todos presentes este
   día») y **C11** (controles: ✓ y quitarla, «Anotados N/M», marcar a todos
   y quitar las marcas). `METAS_SOLO=C9` corre una sola.
-- **Falta** (09, 9.6): la clave de familia en el talonario (una línea de una
-  hoja impresa, espera tu aprobación), los logos de la boleta y poner
-  exenciones desde la pantalla.
+- **La clave de familia en el talonario** sale de `metas.familias`
+  (aprobado por Josué: una sola línea de la hoja, `registros-admin.js:6568`,
+  solo de dónde sale el dato). El talonario, comparado otra vez con main con
+  las mismas claves ficticias: mismo HTML y misma imagen.
+- **Falta** (09, 9.6): los logos de la boleta y poner exenciones desde la
+  pantalla.
 
 ## Cambios de la revisión 9 (corte 1, parte 2), por punto
 

@@ -376,13 +376,16 @@ salen con el mismo HTML, letra por letra, y la misma imagen impresa, píxel
 por píxel. El dinero pasa como texto («150.00»); la suma de los pagos de un
 alumno se hace en centavos (`montos.sumar`).
 
+**La clave de familia en el talonario** (aprobado por Josué, una sola
+línea de la hoja: `js/tools/registros-admin.js:6568`): si el alumno trae
+`claveFamilia`, que `mi-aula-papel.js` toma de `metas.familias`, sale esa;
+un grupo del blob no la trae y sigue leyendo la llave vieja como en main.
+Nada cambió de cómo se ve: con las mismas claves ficticias en los dos lados
+(la llave vieja en main, filas de `familias` en la rama), el talonario sale
+con el mismo HTML y la misma imagen.
+
 **Falta, y por qué:**
 
-- **La clave de familia en el talonario**: `adPrintTalonario` la lee de la
-  llave vieja (`adClaveFamilia`), no de `metas.familias`. Para que salga hay
-  que cambiar esa línea de la hoja (`js/tools/registros-admin.js:6568`): es
-  solo de dónde sale el dato, pero es un archivo de impresión y queda para
-  tu aprobación.
 - **Los logos de la boleta**: `aulas.logo_path` todavía no tiene dónde
   vivir (Storage); mientras tanto la boleta sale como la de un grupo sin
   logo propio (el de la Secretaría sí sale).

@@ -42,6 +42,12 @@
     var maximo = alumnos.reduce(function (m, a) { return Math.max(m, a.num_lista || 0); }, 0);
     alumnos.forEach(function (a) { numDe[a.id] = a.num_lista == null ? ++maximo : a.num_lista; });
 
+    // La clave de familia del talonario sale de metas.familias (la que la
+    // familia escribe hoy). adPrintTalonario la toma de claveFamilia y, en
+    // un grupo del blob (sin ese campo), sigue leyendo la llave vieja.
+    var claveDe = {};
+    api.lista('familias', { aula_id: aula.id }).forEach(function (f) { if (f.clave) claveDe[f.alumno_id] = f.clave; });
+
     var g = {
       id: aula.id,
       escuela: aula.escuela || '',
@@ -65,7 +71,7 @@
         return {
           id: a.id, num: numDe[a.id], nombre: a.nombre_completo, idn: a.identidad || '', sexo: a.sexo || '',
           estado: a.estado || 'activo', estadoF: a.estado_fecha || '', fnac: a.fecha_nacimiento || '',
-          noCopiarSace: !!a.no_copiar_sace,
+          noCopiarSace: !!a.no_copiar_sace, claveFamilia: claveDe[a.id] || '',
         };
       }),
       materias: [],
