@@ -192,7 +192,7 @@ base, con las reglas de `03`, y produce el estado esperado.
 | # | escenario | se espera |
 |---|---|---|
 | T1 | 40 intentos de entrar desde una IP con correos distintos | a partir del 31, `espera`, **antes** de validar contraseñas |
-| T2 | El cliente manda `x-forwarded-for` y `cf-connecting-ip` inventados en cada intento | `x-forwarded-for` no se usa nunca (A+ IP1); que `cf-connecting-ip` no se pueda inventar en el proyecto alojado se confirma con 6.8; sin IP válida, frenos por correo, sesión y familia (A+ E6, capa A K17) |
+| T2 | El cliente manda `x-forwarded-for`, `true-client-ip` y `cf-connecting-ip` inventados en cada intento | `x-forwarded-for` y `true-client-ip` no se usan nunca (A+ IP1); `cf-connecting-ip` inventada la rechaza Cloudflare (403, confirmado en 6.8); sin IP válida, frenos por correo, sesión y familia (A+ E6, capa A K17) |
 | T3 | `familia-vincular` sin token Turnstile, o con uno ya usado | rechazado |
 | T4 | 25 claves equivocadas desde una IP; 2 100 repartidas en 200 IP en una hora | `espera` desde la 21 en la primera; desde la 2 001 en total en la segunda |
 | T5 | Cambiar la contraseña; recuperarla por correo (`reset-clave`) | se llama `metas-salir-todos`: otras sesiones cerradas en el primer caso, **todas** en el segundo; su cola espera, no se pierde |
@@ -394,9 +394,20 @@ conecta a `supabase_db_<project_id>:5432`; D3 manda los parámetros reales
 Más tres pruebas nuevas: E6 (freno por correo) e IP1, IP2 (la IP de los
 frenos). Total de la capa A+: 25.
 
-**Aquí no se pudo correr** (no hay Docker en este entorno): las capas A+ y la
-corrida de la capa A contra `supabase start` las corre Josué con el comando
-de arriba.
+**Revisión 8**: E6 pasa a dos pruebas, porque el freno por correo cuenta
+ahora solo los FALLOS: veinticinco entradas buenas seguidas no frenan; veinte
+contraseñas equivocadas en la hora sí, y la 21.ª espera aunque sea la buena
+(entre fallo y fallo se borra `docente_intentos`, para ver el freno de la
+hora solo). Total de la capa A+: 26. En la capa A: K16 con una fecha a 60
+días, K18 (más de 11 meses se rechaza, `MT044`), K19 (mover la fecha borra
+la tarea anterior aunque la nueva ya pasó) y G10 (lo reembolsado en cero
+dice «0.00»). Total de la capa A: 288.
+
+**Revisión 8: corrido aquí** con Docker y `supabase start` (CLI 3.1.0):
+capa A 288/288, A+ 26/26, B 10/10. Diferencias de este entorno, que no
+cambian nada del repositorio: las imágenes se bajaron de Docker Hub
+(`SUPABASE_INTERNAL_IMAGE_REGISTRY=docker.io`) y el contenedor de funciones
+bajó sus paquetes por un espejo local de npm.
 
 ## 6.7 Capas B y C del corte 1 (escritas antes del código, revisión 6)
 
@@ -417,10 +428,27 @@ de arriba.
   señal, C6 carga rápida de 43, C7 accesibilidad, C8 la clave vencida en el
   portal.
 
+**Revisión 8**: `js/datos/` existe y la **capa B está en verde, 10 de 10**,
+sin cambiar el contrato, el arnés ni los escenarios. La C sigue esperando la
+pantalla (parte 2 del corte 1).
+
 Mientras `js/datos/` y la pantalla nueva no existan, las dos salen con código
 2 («pendiente del corte 1») y `corre-supabase.sh` lo dice sin fallar.
 
 ## 6.8 La IP de los frenos en una función ALOJADA (antes del corte 1)
+
+**Hecha y CONFIRMADA** (Josué, 15/11/2026, en un proyecto alojado aparte,
+con una función temporal que solo repetía cabeceras):
+
+| qué se probó | resultado |
+|---|---|
+| `cf-connecting-ip` sin cabeceras raras | trae la IP pública real de quien llama |
+| el aparato manda su propia `cf-connecting-ip` | Cloudflare **rechaza** la petición (403, error 1000): no se puede inventar |
+| el aparato manda `x-forwarded-for` | se **descarta y se reemplaza** (igual no se usa) |
+| el aparato manda `true-client-ip` | **pasa tal cual**: lo inventa cualquiera. **Nunca se usa** (regla de `02`, 2.5, junto a `x-forwarded-for`) |
+
+Los frenos por IP se quedan en el corte 1. El procedimiento, por si hay que
+repetirlo (por ejemplo, si Supabase cambia de proveedor):
 
 En `supabase start` no hay Cloudflare: lo que importa se mide en un proyecto
 **de prueba aparte**, nunca en el de producción.

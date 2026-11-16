@@ -1,7 +1,9 @@
-# Rediseño de datos de M.E.T.A.S · Fase 1: diseño (revisión 7)
+# Rediseño de datos de M.E.T.A.S · Fase 1: diseño (revisión 8) · corte 1, parte 1
 
-Rama `rediseño-datos`. **Solo diseño**: no se modificó código de la app, no se
-tocó Supabase ni ninguna fila de docentes, y no hubo merge. Los `.sql` se
+Rama `rediseño-datos`. Hasta la revisión 7, **solo diseño**. Desde la
+revisión 8 existe el **motor de datos del corte 1** (`js/datos/`), todavía sin
+pantalla: ninguna página lo carga, la app que usa el docente no cambió, no se
+tocó Supabase real ni ninguna fila de docentes, y no hubo merge. Los `.sql` se
 **probaron de verdad** en un PostgreSQL 16 local y desechable con un Supabase
 simulado (capa A, `pruebas-capa-a/`), nunca en el proyecto real. Fuera de
 `docs/rediseno-datos/` cambiaron `CLAUDE.md` (reglas 15 a 18 en la revisión 3,
@@ -35,9 +37,92 @@ botones de sincronizar, recuperar ni restaurar, y sin ningún indicador de
 | `SUPABASE-V2-ESQUEMA.sql` | 40 tablas de datos, auditoría, recibos, funciones de dinero y de alta, vistas de totales |
 | `SUPABASE-V2-FAMILIAS.sql` | vínculo de familias, rol lector, vistas `vf_*`, totales, «visto», aviso inmediato |
 | `SUPABASE-V2-CONGELAR.sql` | candado y congelado por pasos |
-| `pruebas-capa-a/` | `corre.sh` + plataforma Supabase simulada + modelo viejo + datos ficticios + **280 pruebas en verde** |
-| `pruebas-capa-b/`, `pruebas-capa-c/` | capas B (cola y conflictos) y C (navegador) del corte 1, con su contrato, **escritas antes del código** |
-| `_dev/supabase-local/` | CLI fija, `corre-supabase.sh` (capas A, A+, B y C contra `supabase start`), funciones de borde y capa A+ |
+| `pruebas-capa-a/` | `corre.sh` + plataforma Supabase simulada + modelo viejo + datos ficticios + **288 pruebas en verde** |
+| `pruebas-capa-b/`, `pruebas-capa-c/` | capas B (cola y conflictos) y C (navegador) del corte 1, con su contrato, escritas antes del código. **La B está en verde (10/10) desde la revisión 8**; la C espera la pantalla |
+| `_dev/supabase-local/` | CLI fija, `corre-supabase.sh` (capas A, A+, B y C contra `supabase start`), funciones de borde, capa A+ y `arma-supabase-js.sh` |
+| `js/datos/` (fuera de esta carpeta) | el motor de datos del corte 1 (`03`, 3.10), sin pantalla todavía. `js/vendor/supabase.min.js`: Realtime de supabase-js 2.45.4 |
+
+## Cambios de la revisión 8 (corte 1, parte 1), por punto
+
+**Verificado aquí** (Supabase local real, CLI 3.1.0, Node 22, datos
+ficticios): capa A 288/288 en PG16 y contra `supabase start`; capa A+ 26/26;
+capa B 10/10; `npm test` 78/78. Capa C: pendiente de la pantalla (parte 2).
+
+**A. La IP de los frenos, CONFIRMADA** (prueba 6.8, hecha por Josué el
+15/11/2026 en un proyecto alojado aparte, con una función temporal que solo
+repetía cabeceras): `cf-connecting-ip` trae la IP pública real; si el
+aparato manda la suya, Cloudflare rechaza la petición (403, error 1000);
+un `x-forwarded-for` del aparato se descarta y se reemplaza; y
+`true-client-ip` enviado por el aparato **pasa tal cual**, así que nunca se
+usa (regla de `02`, 2.5, junto a `x-forwarded-for`). Los frenos por IP se
+quedan en el corte 1. Anotado en `02`, `06` (6.8), `08` y en
+`_compartido/comun.ts`.
+
+**B1. El freno por correo cuenta solo los fallos** (H2). Antes contaba
+también las entradas buenas: quien supiera el correo de un docente lo dejaba
+una hora afuera entrando bien veinte veces (o el propio docente, con tres
+aparatos). Ahora cada intento se cuenta **al llegar** (veinte a la vez no
+pasan todos) y, si la contraseña era la buena, **se devuelve**
+(`metas.freno_devolver`, nuevo en `SUPABASE-V2-VINCULACION.sql`). Lo que
+frena: veinte contraseñas equivocadas en la hora. No abre la puerta a
+adivinar: los fallos siguen contando igual, y una entrada buena no borra los
+fallos anteriores, solo no suma el suyo. Capa A+: E6 en dos pruebas
+(veinticinco entradas buenas seguidas no frenan; veinte malas sí, y la 21.ª
+espera aunque sea la buena). Con la función de antes, la primera falla en la
+entrada 21.
+
+**B2. La fecha del paso 4 y pg_cron** (H3, H4). La tarea de pg_cron no
+guarda el año: una fecha a 13 meses habría corrido el mes siguiente, sin
+cerrar nada, y se habría borrado sola. Ahora anotar una fecha a **más de 11
+meses** se rechaza con un error claro (`MT044`, «anótala cuando falten menos
+de 11 meses»), y **mover la fecha borra siempre la tarea anterior**, también
+cuando la nueva ya pasó. Capa A: K18 (tres pruebas) y K19; K16 usa ahora
+una fecha a 60 días. Con `SUPABASE-V2-FAMILIAS.sql` de la revisión 7 fallan
+esas cuatro y pasan las demás (comprobado).
+
+**B3. El «0.00» de lo reembolsado**, con su propia prueba (G10): un gasto
+del docente sin reembolsos dice «0.00» (texto), vuelve a «0.00» si su único
+reembolso se anula, y la pregunta «menos que lo reembolsado» trae «250.00».
+
+**C. El motor de datos** (`js/datos/`, nueve archivos en el orden del
+contrato, un solo global `window.MetasDatos`). Sin pantalla, sin tocar
+`padres.html`, el código viejo ni la APK. Lo que hace:
+
+- **Cola por cuenta** en IndexedDB (`metas-datos-v2`): cada cosa anotada es
+  una operación con su `op_id`; sale sola, en orden, de a una, con
+  reintentos de 2 a 60 s y al volver la señal o la app. Reenviar nunca
+  duplica (B3, B4).
+- **Dinero solo por funciones** y **siempre como texto**: `montos.js` lee lo
+  que escribe el docente (3.11; «1,500» se pregunta), suma en centavos
+  enteros con `BigInt`, y nada usa `Number()` ni `parseFloat()`.
+- **Ninguna decisión de dinero sola**: cada desacuerdo es una pregunta de dos
+  botones (otro pago sin ver, pago corregido en otro aparato, colecta
+  cerrada, monto ambiguo, exención o monto sugerido cambiado). La operación
+  espera; la cola sigue con lo que no depende de ella.
+- **Identidad**: la misma identidad une sola (el id local pasa al alumno que
+  ya estaba, también en los pagos anotados sin señal); el mismo nombre sin
+  identidad pregunta (B7).
+- **Fuera del dinero, campo por campo** con `version` (3.4); la llave
+  natural (nota, asistencia, valor de control…) convierte el segundo
+  «crear» en edición (3.6).
+- **Lo de otro aparato al momento**: Realtime para lo que no es dinero; para
+  el dinero, el toque sin datos del canal `docente:<uid>` y la fila se vuelve
+  a leer en `vd_<tabla>` (B8). Al entrar y al volver la señal, «ponerse al
+  día» con lo borrado incluido (B10), de a mil filas por `(updated_at, id)`.
+- **Totales calculados** en el aparato con las mismas fórmulas que las vistas
+  (`calculos.js`), comprobados contra la base.
+
+`js/vendor/supabase.min.js` lleva **solo Realtime** de supabase-js 2.45.4
+(realtime-js 2.10.2), armado con `_dev/supabase-local/arma-supabase-js.sh`:
+el resto de supabase-js no se usa (se entra por `metas-entrar` y la API se
+llama con `fetch`), y su módulo de Auth, solo con cargarse, escribe en
+`localStorage` una llave hecha con `Math.random` (regla 16). El `dist/umd`
+del paquete tampoco sirve tal cual: webpack busca etiquetas `<script>` al
+cargar. Sonda rápida nueva: `_dev/verifica-datos-reglas.js` (reglas 15, 16
+y 19, textos prohibidos, el armado fijo del vendor).
+
+**No se cambió el contrato ni el SQL para que la B pasara.** El único cambio
+de SQL es el de los puntos B1 y B2.
 
 ## Cambios de la revisión 7, por punto
 
@@ -60,10 +145,11 @@ su plataforma pone `cf-connecting-ip` en cada petición, y Cloudflare dice que
 trae una sola IP y que a `x-forwarded-for` le **agrega** lo suyo a lo que
 mandó el aparato. Ahora: solo `cf-connecting-ip`; sin IP válida, **sin
 freno por IP** (nunca un balde común para todos). Frenos nuevos que no
-dependen de la IP: **20 entradas por hora por correo** y **20 vínculos por
-hora por familia**. Función `metas-diagnostico-ip` (apagada salvo
-`METAS_DIAGNOSTICO=1`) y procedimiento para confirmarlo en un proyecto de
-prueba aparte (`06`, 6.8), requisito del corte 1. Pruebas K17, E6, IP1, IP2.
+dependen de la IP: **20 entradas por hora por correo** (desde la revisión 8,
+solo las fallidas) y **20 vínculos por hora por familia**. Función
+`metas-diagnostico-ip` (apagada salvo `METAS_DIAGNOSTICO=1`) y procedimiento
+para confirmarlo en un proyecto de prueba aparte (`06`, 6.8): **confirmado**
+en la revisión 8. Pruebas K17, E6, IP1, IP2.
 
 **6. Cierre de canales a la hora del vencimiento.** Anotar la fecha del paso 4
 la **programa con pg_cron** para ese minuto (UTC, al minuto siguiente); la
@@ -432,9 +518,8 @@ pantalla y elemento con archivo:línea. Respaldo a Drive: fase futura.
 
 ## Pendiente
 
-1. Correr en tu entorno `bash _dev/supabase-local/corre-supabase.sh` (capas A
-   y A+ contra `supabase start`, ahora con E6, IP1 e IP2).
-2. Antes del corte 1: la prueba de `cf-connecting-ip` en un proyecto de
-   prueba aparte (`06`, 6.8).
-3. Empezar el código del corte 1 en la rama: `js/datos/` contra la capa B y
-   la pantalla contra la capa C.
+1. Correr en tu entorno `bash _dev/supabase-local/corre-supabase.sh --capa-b`
+   (capas A, A+ y B contra `supabase start`).
+2. Corte 1, parte 2: la pantalla contra la capa C.
+3. Antes de fijar la fecha del paso 4: activar pg_cron, y fijarla cuando
+   falten menos de 11 meses.

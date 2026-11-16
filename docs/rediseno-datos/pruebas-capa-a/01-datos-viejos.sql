@@ -6,8 +6,8 @@ insert into public.docentes (codigo, clave_hash, nombre, correo) values
   ('PROF-AAAA000001', 'v2:' || encode(extensions.digest('clave-a' || 'PROF-AAAA000001', 'sha256'), 'hex'), 'Docente Ficticia A', 'a@ejemplo.invalid'),
   ('PROF-BBBB000002', 'v2:' || encode(extensions.digest('clave-b' || 'PROF-BBBB000002', 'sha256'), 'hex'), 'Docente Ficticio B', 'b@ejemplo.invalid'),
   ('PROF-CCCC000003', 'v2:' || encode(extensions.digest('clave-c' || 'PROF-CCCC000003', 'sha256'), 'hex'), 'Docente Ficticia C', 'c@ejemplo.invalid'),
--- D solo la usa la capa A+ para el freno por correo (sus 20 entradas por
--- hora quedan gastadas: ninguna otra capa entra con ella).
+-- D solo la usa la capa A+ para el freno por correo (después de sus 20
+-- contraseñas equivocadas queda frenada una hora: ninguna otra capa entra con ella).
   ('PROF-DDDD000004', 'v2:' || encode(extensions.digest('clave-d' || 'PROF-DDDD000004', 'sha256'), 'hex'), 'Docente Ficticio D', 'd@ejemplo.invalid');
 
 -- Blob de A: claves en METAS_CODIGOS_V1 y pegadas a la lista.

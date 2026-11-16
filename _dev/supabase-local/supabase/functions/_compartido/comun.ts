@@ -49,16 +49,20 @@ export function preflight(req: Request): Response | null {
   return null;
 }
 
-// La IP del aparato, para los frenos (rev. 7). SOLO cf-connecting-ip: la
-// documentación de Supabase dice que su plataforma la pone en cada petición
-// (guía «query plans», ejemplo de restricción por IP), y Cloudflare documenta
-// que trae una sola IP, la del cliente. x-forwarded-for NO se usa: Cloudflare
-// AGREGA a lo que el aparato ya mandó, así que el primer valor lo puede
-// inventar cualquiera, y el último puede ser un proxy interno (un solo tope
-// para todo el país). Si no llega una IP válida se devuelve null y el freno
-// por IP no se aplica; quedan los frenos por cuenta, por sesión y por familia,
-// que no dependen de la IP. Confirmarlo antes del corte 1 con la función
-// metas-diagnostico-ip en un proyecto de PRUEBA aparte (06, 6.8).
+// La IP del aparato, para los frenos (rev. 7). SOLO cf-connecting-ip.
+// CONFIRMADO en un proyecto alojado aparte (06, 6.8; Josué, 15/11/2026):
+//   · cf-connecting-ip trae la IP pública real de quien llama;
+//   · si el aparato manda su propia cf-connecting-ip, Cloudflare rechaza la
+//     petición (403, error 1000): no se puede inventar;
+//   · un x-forwarded-for del aparato se descarta y se reemplaza;
+//   · true-client-ip enviado por el aparato PASA TAL CUAL: lo inventa
+//     cualquiera. Nunca se usa.
+// x-forwarded-for tampoco se usa (no hace falta, y si alguna vez Cloudflare
+// cambiara a agregar en vez de reemplazar, el primer valor sería inventable
+// y el último podría ser un proxy interno: un solo tope para todo el país).
+// Si no llega una IP válida se devuelve null y el freno por IP no se aplica;
+// quedan los frenos por cuenta, por sesión y por familia, que no dependen de
+// la IP.
 const IPV4 = /^(25[0-5]|2[0-4]\d|1?\d?\d)(\.(25[0-5]|2[0-4]\d|1?\d?\d)){3}$/;
 const IPV6 = /^[0-9a-f:]{2,39}$/i;
 export function ipDe(req: Request): string | null {

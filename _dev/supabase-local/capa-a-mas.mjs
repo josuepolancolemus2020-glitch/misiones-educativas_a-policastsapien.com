@@ -8,11 +8,13 @@
 // anónimas reales y escuchan su canal privado.
 // Sale con código 1 si alguna prueba falla.
 // ============================================================================
+import { execFileSync } from 'node:child_process';
 import { createClient } from '@supabase/supabase-js';
 
 const API = process.env.METAS_API;
 const PUBLICA = process.env.METAS_PUBLICA;
 const SERVICIO = process.env.METAS_SERVICIO;
+const DB = process.env.METAS_DB;
 if (!/^http:\/\/(127\.0\.0\.1|localhost):\d+$/.test(API || '')) {
   console.error('✘ METAS_API no es local; esta capa solo corre contra supabase start');
   process.exit(1);
@@ -124,13 +126,31 @@ await prueba('E5 cinco fallos seguidos → «espera» (el freno de hoy)', async 
   afirma(r.status === 429 && r.cuerpo.motivo === 'espera', JSON.stringify(r));
 });
 
-await prueba('E6 freno por CORREO (no depende de la IP): 20 entradas por hora, la 21.ª espera', async () => {
+// E6 (rev. 8): el freno por correo cuenta solo los FALLOS. Antes contaba
+// también las entradas buenas: quien supiera el correo de un docente lo
+// dejaba una hora afuera entrando bien veinte veces (o el propio docente,
+// con tres teléfonos y una mañana de cerrar y abrir).
+await prueba('E6 freno por CORREO: veinticinco entradas buenas seguidas no lo frenan', async () => {
   const D = { correo: 'd@ejemplo.invalid', clave: 'clave-d' };
+  for (let i = 0; i < 25; i++) {
+    const r = await funcion('metas-entrar', D);
+    afirma(r.status === 200, `entrada buena ${i + 1}: ${JSON.stringify(r)}`);
+  }
+});
+// Los 5 fallos en 10 minutos de hoy frenarían antes: se borran entre un
+// intento y otro (como quien prueba despacio, de a cuatro cada diez minutos),
+// para ver el freno de la hora solo.
+await prueba('E6 freno por CORREO: veinte contraseñas equivocadas en la hora → la 21.ª espera, aunque sea la buena', async () => {
+  const D = { correo: 'd@ejemplo.invalid', clave: 'clave-d' };
+  const olvidarFallosCortos = () => execFileSync('psql', [DB, '-X', '-q', '-v', 'ON_ERROR_STOP=1', '-c',
+    `delete from public.docente_intentos where correo = '${D.correo}'`]);
   let r;
   for (let i = 0; i < 20; i++) {
-    r = await funcion('metas-entrar', D);
-    afirma(r.status === 200, `entrada ${i + 1}: ${JSON.stringify(r)}`);
+    olvidarFallosCortos();
+    r = await funcion('metas-entrar', { correo: D.correo, clave: 'mala-' + i });
+    afirma(r.status === 401 && r.cuerpo.motivo === 'datos', `fallo ${i + 1}: ${JSON.stringify(r)}`);
   }
+  olvidarFallosCortos();
   r = await funcion('metas-entrar', D);
   afirma(r.status === 429 && r.cuerpo.motivo === 'espera', JSON.stringify(r));
 });

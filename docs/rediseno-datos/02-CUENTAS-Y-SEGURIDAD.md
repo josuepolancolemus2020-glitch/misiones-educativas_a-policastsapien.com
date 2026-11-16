@@ -188,33 +188,44 @@ averiguar una clave insertando.
 primer día. `service_role` tiene permiso de uso sobre el esquema `metas`
 solo para que las funciones de borde puedan llamar a sus funciones.
 
-**La IP de los frenos** (corregido en la revisión 7). La base no lee
-cabeceras: la IP se la pasan las **funciones de borde**, y la toman **solo de
-`cf-connecting-ip`**:
+**La IP de los frenos** (corregido en la revisión 7, **confirmado** en la
+revisión 8). La base no lee cabeceras: la IP se la pasan las **funciones de
+borde**, y la toman **solo de `cf-connecting-ip`**:
 
 - la documentación de Supabase dice que su plataforma pone `cf-connecting-ip`
   en cada petición (guía *query plans*, ejemplo de restricción por IP; el
   código de Studio la lee primero). Cloudflare documenta que trae **una sola
   IP**, la del cliente;
-- `x-forwarded-for` **no se usa**: Cloudflare **agrega** a lo que el aparato
-  ya mandó (su página de cabeceras HTTP), así que el primer valor lo inventa
-  cualquiera; y el último puede ser un proxy interno, con lo que el freno
-  sería **un solo tope para todo el país** (30 entradas por hora entre todos
-  los docentes). La revisión 6 tomaba el último: era un error;
+- `x-forwarded-for` y `true-client-ip` **no se usan nunca**. `true-client-ip`
+  enviado por el aparato **pasa tal cual** hasta la función (6.8): lo inventa
+  cualquiera. `x-forwarded-for`: según la página de cabeceras de Cloudflare,
+  se **agrega** a lo que el aparato ya mandó, así que el primer valor lo
+  inventa cualquiera y el último puede ser un proxy interno, con lo que el
+  freno sería **un solo tope para todo el país** (30 entradas por hora entre
+  todos los docentes). En la prueba 6.8 lo descartó y lo reemplazó, pero no
+  hace falta depender de eso. La revisión 6 tomaba el último: era un error;
 - si no llega una IP válida, la función manda `null` y **no se aplica el
   freno por IP** (`metas._freno_ip`), en vez de juntar a todos en un balde
   «sin-ip». Quedan los frenos que no dependen de la IP: por correo en
   `metas-entrar`, por sesión y por familia en `familia-vincular`.
 
-Lo que falta confirmar, y es requisito del corte 1: que en una función
-**alojada** `cf-connecting-ip` llega siempre y el aparato no la puede
-inventar. Se mide con `metas-diagnostico-ip` en un proyecto de prueba aparte
-(`06`, 6.8). En la consulta de familias, además, cada intento exige un token
-Turnstile, que es lo que de verdad frena a un programa.
+**Confirmado en un proyecto alojado aparte** (prueba 6.8, Josué,
+15/11/2026, con una función temporal que solo repetía cabeceras):
+
+- `cf-connecting-ip` trae la IP pública real de quien llama;
+- si el aparato manda su propia `cf-connecting-ip`, Cloudflare **rechaza** la
+  petición (403, error 1000): no se puede inventar;
+- un `x-forwarded-for` enviado por el aparato se **descarta y se reemplaza**
+  (igual no se usa);
+- `true-client-ip` enviado por el aparato **pasa tal cual**: nunca se usa.
+
+Por eso los frenos por IP se quedan en el corte 1. En la consulta de
+familias, además, cada intento exige un token Turnstile, que es lo que de
+verdad frena a un programa.
 
 | puerta | freno |
 |---|---|
-| `metas-entrar` (docente) | el de hoy: 5 fallos por correo → 10 minutos (`docente_intentos`, sin tocar); **20 intentos por hora por correo**, acierte o no (rev. 7, no depende de la IP); y 30 por hora por IP **si la IP se conoce**. Los dos primeros en la función de borde **antes** de validar la contraseña |
+| `metas-entrar` (docente) | el de hoy: 5 fallos por correo → 10 minutos (`docente_intentos`, sin tocar); **20 intentos fallidos por hora por correo** (rev. 7, no depende de la IP; desde la rev. 8 una entrada buena devuelve su intento con `metas.freno_devolver`, así que entrar bien veinte veces no deja a nadie afuera); y 30 por hora por IP **si la IP se conoce**. Los dos primeros en la función de borde **antes** de validar la contraseña (el intento se cuenta al llegar) |
 | Sesión anónima de padres | CAPTCHA Turnstile obligatorio + límites de Auth por IP |
 | `familia-vincular` | token Turnstile por intento; 20 por hora por sesión; **20 vínculos por hora por familia** (rev. 7, no depende de la IP); 60 por hora por IP y 20 claves equivocadas por hora por IP, **si la IP se conoce**. Más de **2 000 claves equivocadas por hora en total** deja **una alerta** en `metas.alertas` para quien administra, pero **no bloquea** a las familias (un ataque repartido no puede dejar a todas sin entrar) |
 | Funciones viejas que validan contraseña | quedan **congeladas** (`SUPABASE-V2-CONGELAR.sql`) |
@@ -228,7 +239,7 @@ segundo, **todas**.
 
 | llave | qué | ¿secreto? |
 |---|---|---|
-| `sb-<proyecto>-auth-token` | sesión de Supabase (la maneja `supabase-js`) | token, no contraseña |
+| `sb-<proyecto>-auth-token` | sesión de Supabase (la guarda `js/datos/nube.js`; el cliente de Auth de `supabase-js` no se carga) | token, no contraseña |
 | `METAS_APARATO_ID` | uuid de este aparato, para `device_id` | no |
 | IndexedDB `metas-datos-v2` | copia de lectura de las filas y la cola de cambios | datos del aula; se borra al cerrar sesión **si la cola está vacía** |
 

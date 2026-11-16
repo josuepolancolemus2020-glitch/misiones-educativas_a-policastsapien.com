@@ -496,7 +496,10 @@ select public._metas_cerrar_funciones(array[
 --   -- ANTES de anotar la fecha: activar pg_cron (Database → Extensions).
 --   -- Anotarla programa sola, con pg_cron, el cierre de canales para esa hora
 --   -- exacta (tarea «metas-claves-vencen», FAMILIAS 5); sin pg_cron, anotarla
---   -- falla (MT043) en vez de quedar a medias. Los teléfonos con una clave
+--   -- falla (MT043) en vez de quedar a medias. Una fecha a más de 11 meses
+--   -- también falla (MT044): la tarea de pg_cron no guarda el año (rev. 8).
+--   -- Mover la fecha borra la tarea anterior, aunque la nueva ya haya pasado.
+--   -- Los teléfonos con una clave
 --   -- vieja dejan de recibir toques en cuanto vence (la base decide en cada
 --   -- toque); la tarea les manda además «cerrar» a esa hora. Comprobarlo:
 --   select jobname, schedule, command from cron.job where jobname = 'metas-claves-vencen';

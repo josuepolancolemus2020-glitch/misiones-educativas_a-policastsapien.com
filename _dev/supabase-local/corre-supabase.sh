@@ -7,8 +7,9 @@
 #   bash _dev/supabase-local/corre-supabase.sh --capa-b    # + capa B (cola y conflictos)
 #   bash _dev/supabase-local/corre-supabase.sh --capa-c    # + capa C (navegador)
 #   bash _dev/supabase-local/corre-supabase.sh --todo      # A, A+, B y C
-# Las capas B y C están escritas ANTES del código del corte 1: mientras
-# js/datos/ y la pantalla nueva no existan, dicen «pendiente» y no fallan.
+# Las capas B y C se escribieron ANTES del código del corte 1. La B corre
+# desde la revisión 8 (js/datos/ existe); la C dice «pendiente» y no falla
+# mientras la pantalla nueva no exista.
 #
 # Necesita: Docker corriendo, Node 22 o más nuevo (npx), y psql.
 # La CLI de Supabase va FIJA (version-cli.txt) y se baja con npx.

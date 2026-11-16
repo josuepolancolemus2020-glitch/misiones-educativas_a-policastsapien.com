@@ -627,6 +627,24 @@ select prueba.ok((metas.gasto_docente_editar('00000000-0000-0000-0000-0000000e02
 select prueba.ok((metas.gasto_docente_editar('00000000-0000-0000-0000-0000000e0201', '{"monto":"300.00"}', '{"monto":"280.00"}',
                                              gen_random_uuid()) -> 'gasto' ->> 'monto') = '280.00',
                  'G9 el segundo botón (base = lo que vio) guarda L 280.00');
+-- G10 (rev. 8): lo reembolsado sale como texto con sus centavos, también
+-- el cero: «0.00», nunca 0, «0» ni nulo.
+select metas.gasto_docente_crear('00000000-0000-0000-0000-0000000e0202', gen_random_uuid(), '2027-02-03', 'material',
+                                 'Cartulinas', 'Dirección', '45.00');
+select prueba.ok((select reembolsado = '0.00' and jsonb_typeof(to_jsonb(v) -> 'reembolsado') = 'string'
+                         and falta = '45.00' and estado = 'por_cobrar'
+                    from metas.v_gastos_docente v where gasto_id = '00000000-0000-0000-0000-0000000e0202'),
+                 'G10 un gasto sin reembolsos: reembolsado «0.00» (texto), no 0 ni nulo');
+select metas.reembolso_crear('00000000-0000-0000-0000-0000000e0212', gen_random_uuid(), '00000000-0000-0000-0000-0000000e0202',
+                             '45.00', '2027-02-04');
+select metas.reembolso_anular('00000000-0000-0000-0000-0000000e0212', 'se anotó en el gasto equivocado', gen_random_uuid());
+select prueba.ok((select reembolsado = '0.00' and falta = '45.00' from metas.v_gastos_docente
+                   where gasto_id = '00000000-0000-0000-0000-0000000e0202'),
+                 'G10 con su único reembolso anulado vuelve a «0.00»');
+select prueba.ok((select v ->> 'reembolsado' = '250.00' and jsonb_typeof(v -> 'reembolsado') = 'string'
+                    from (select metas.gasto_docente_editar('00000000-0000-0000-0000-0000000e0201', '{"monto":"280.00"}',
+                                                            '{"monto":"240.00"}', gen_random_uuid()) as v) x),
+                 'G10 la pregunta «menos que lo reembolsado» trae lo reembolsado como texto: «250.00»');
 insert into metas.bienes (id, centro, fecha_desde, descripcion, valor, propietario, gasto_docente_id)
 values ('00000000-0000-0000-0000-0000000e0301', 'Escuela Ficticia Las Flores', current_date - 30, 'Librero', 900, 'docente',
         '00000000-0000-0000-0000-0000000e0201');
@@ -864,8 +882,13 @@ select prueba.ok((select count(*) = 1 from realtime.messages m join metas.famili
                  'K15 desvincularse manda «cerrar» a ese teléfono');
 -- K16 (rev. 7): el paso 4 anota la fecha con anticipación. Anotarla programa
 -- el cierre de canales para esa hora; al llegar, se manda «cerrar».
-update metas.hitos set at = '2031-05-20 13:30:20+00' where nombre = 'claves_viejas_vencen';
-select prueba.ok((select schedule = '31 13 20 5 *' and command like '%metas.claves_viejas_cerrar_canales()%'
+-- (rev. 8: la fecha va a 60 días, no a 2031: más de 11 meses se rechaza, K18.
+--  A los 20 segundos de un minuto: la tarea va al minuto SIGUIENTE.)
+select date_trunc('minute', now() + interval '60 days') + interval '20 seconds' as k16_at \gset
+update metas.hitos set at = :'k16_at' where nombre = 'claves_viejas_vencen';
+select prueba.ok((select schedule = to_char((:'k16_at'::timestamptz + interval '1 minute') at time zone 'UTC',
+                                            'FMMI FMHH24 FMDD FMMM') || ' *'
+                         and command like '%metas.claves_viejas_cerrar_canales()%'
                     from cron.job where jobname = 'metas-claves-vencen'),
                  'K16 anotar una fecha futura programa la tarea a esa hora (UTC, al minuto siguiente)');
 -- Con la fecha en el futuro, la clave vieja de padre2 vuelve a valer; un
@@ -894,6 +917,25 @@ select prueba.ok((select count(*) from realtime.messages
                  'K16 a la hora programada, el teléfono con la clave vieja recibe «cerrar»');
 select prueba.ok(not exists (select 1 from cron.job where jobname = 'metas-claves-vencen'),
                  'K16 y la tarea se borra sola después de correr');
+-- K18 (rev. 8): la tarea de pg_cron no guarda el año. Una fecha a 13 meses
+-- correría el mes que viene, no cerraría nada y se borraría sola. Anotar una
+-- fecha a más de 11 meses se rechaza, con un error que dice qué hacer.
+select prueba.falla($$update metas.hitos set at = now() + interval '12 months' where nombre = 'claves_viejas_vencen'$$,
+                    'K18 una fecha a más de 11 meses se rechaza al anotarla (pg_cron no guarda el año)', 'MT044');
+select prueba.ok(prueba.error_de($$insert into metas.hitos (nombre, at) values ('claves_viejas_vencen', now() + interval '400 days')
+                                   on conflict (nombre) do update set at = excluded.at$$) like 'MT044|%11 meses%',
+                 'K18 también por el «insert … on conflict» del paso 4, y el error dice «11 meses»');
+select prueba.ok((select at <= now() from metas.hitos where nombre = 'claves_viejas_vencen')
+                 and not exists (select 1 from cron.job where jobname = 'metas-claves-vencen'),
+                 'K18 la fecha rechazada no queda anotada ni programada');
+-- K19 (rev. 8): mover la fecha borra la tarea de la fecha anterior, también
+-- cuando la nueva ya pasó (antes quedaba la vieja programada).
+update metas.hitos set at = now() + interval '10 months' where nombre = 'claves_viejas_vencen';
+select prueba.ok(exists (select 1 from cron.job where jobname = 'metas-claves-vencen'),
+                 'K19 a 10 meses sí se programa');
+update metas.hitos set at = now() - interval '1 minute' where nombre = 'claves_viejas_vencen';
+select prueba.ok(not exists (select 1 from cron.job where jobname = 'metas-claves-vencen'),
+                 'K19 mover la fecha a una que ya pasó borra la tarea de la fecha anterior');
 -- K17 (rev. 7): IP desconocida → sin freno por IP (nunca un balde común para
 -- todos); IP conocida → su freno; y el freno por familia, con o sin IP.
 set role service_role;

@@ -10,7 +10,7 @@
 // Pide:     POST { correo, clave }
 // Devuelve: 200 { ok: true, access_token, refresh_token, expires_at, nombre, rol }
 //           401 { ok: false, motivo: 'datos' }      correo o contraseña mal
-//           429 { ok: false, motivo: 'espera' }     freno (IP o 5 fallos)
+//           429 { ok: false, motivo: 'espera' }     freno (IP, 5 fallos en 10 min o 20 en la hora)
 //           503 { ok: false, motivo: 'reintentar' } algo del servidor; reintentar
 // Nunca devuelve el código del docente ni ninguna contraseña.
 // ============================================================================
@@ -28,11 +28,17 @@ Deno.serve(async (req) => {
   const sb = admin();
 
   // 0. Frenos ANTES de tocar la contraseña.
-  //    · Por CORREO, siempre: 20 intentos por hora (además de los 5 fallos en
-  //      10 minutos de metas_entrar_docente_v2). No depende de la IP: si la IP
-  //      viniera mal, este sigue protegiendo cada cuenta sin bloquear a nadie más.
+  //    · Por CORREO, siempre: 20 intentos FALLIDOS por hora (además de los 5
+  //      fallos en 10 minutos de metas_entrar_docente_v2). No depende de la
+  //      IP: si la IP viniera mal, este sigue protegiendo cada cuenta sin
+  //      bloquear a nadie más. Cada intento se cuenta al llegar, para que
+  //      veinte a la vez no pasen todos; si la contraseña era la buena, el
+  //      intento se devuelve (paso 1). Así entrar bien, aunque sean veinte
+  //      veces seguidas o desde tres teléfonos, nunca deja al docente afuera
+  //      (rev. 8). Lo que sí frena: veinte contraseñas equivocadas en la hora.
   //    · Por IP, solo si se conoce de verdad (ipDe): 30 por hora.
-  const frenos = [{ llave: 'entrar-correo:' + correo.toLowerCase(), max: 20 }];
+  const llaveCorreo = 'entrar-correo:' + correo.toLowerCase();
+  const frenos = [{ llave: llaveCorreo, max: 20 }];
   const ip = ipDe(req);
   if (ip) frenos.push({ llave: 'entrar-ip:' + ip, max: 30 });
   for (const f of frenos) {
@@ -49,6 +55,9 @@ Deno.serve(async (req) => {
   if (!r?.ok) {
     return r?.motivo === 'espera' ? json({ ok: false, motivo: 'espera' }, 429) : json({ ok: false, motivo: 'datos' }, 401);
   }
+  // La contraseña era la buena: este intento no cuenta para el freno por
+  // correo. Si devolverlo falla, se sigue igual: a lo sumo cuenta uno de más.
+  await sb.schema('metas').rpc('freno_devolver', { p_llave: llaveCorreo, p_ventana: '1 hour' });
   const codigo = String(r.codigo);
   const interno = correoInterno(codigo);
 

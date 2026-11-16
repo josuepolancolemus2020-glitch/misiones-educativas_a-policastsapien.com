@@ -1,6 +1,6 @@
 # 3. Guardado, conflictos y trabajo sin conexión
 
-Fase 1: diseño (revisión 2). Nada de esto está programado.
+Fase 1: diseño (revisión 2). Desde la revisión 8, lo del aparato (3.2 a 3.10) está programado en `js/datos/`, todavía sin pantalla.
 
 ## 3.1 Las reglas
 
@@ -266,7 +266,7 @@ archivo:línea, en `09-INTERFAZ.md`).
 
 | archivo | responsabilidad |
 |---|---|
-| `js/vendor/supabase.min.js` | `supabase-js` alojado en el sitio (sin CDN) |
+| `js/vendor/supabase.min.js` | Realtime de `supabase-js` 2.45.4 (realtime-js 2.10.2), alojado en el sitio (sin CDN), armado con `_dev/supabase-local/arma-supabase-js.sh`. Solo Realtime: lo demás no se usa, y el módulo de Auth usa `Math.random` con solo cargarse |
 | `js/datos/ids.js` | `nuevoId()`: `crypto.randomUUID`, respaldo `crypto.getRandomValues`, **nunca** `Math.random` |
 | `js/datos/montos.js` | leer lo que el docente escribe (3.11), centavos enteros, texto canónico |
 | `js/datos/nube.js` | cliente, sesión, cabeceras `x-metas-aparato` y `x-metas-op`, entrada por `metas-entrar` |

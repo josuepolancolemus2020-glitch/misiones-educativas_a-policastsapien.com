@@ -47,6 +47,20 @@ end $$;
 revoke all on function metas.freno_ok(text, int, interval) from public, anon, authenticated;
 grant execute on function metas.freno_ok(text, int, interval) to service_role;
 
+-- Devuelve el intento que freno_ok contó (rev. 8). Para el freno por correo
+-- de metas-entrar: el intento se cuenta AL LLEGAR (así veinte intentos a la
+-- vez no pasan todos antes de que alguno sume) y, si la contraseña era la
+-- buena, se devuelve. Resultado: solo los fallos se quedan en la cuenta, y
+-- quien sepa el correo de un docente no lo deja una hora fuera entrando bien
+-- veinte veces. Nunca baja de cero ni crea filas.
+create or replace function metas.freno_devolver(p_llave text, p_ventana interval)
+returns void language sql volatile security definer set search_path = metas, pg_temp as $$
+  update metas.frenos set n = greatest(n - 1, 0)
+   where llave = left(p_llave, 200) and ventana = date_bin(p_ventana, now(), timestamptz '2000-01-01')
+$$;
+revoke all on function metas.freno_devolver(text, interval) from public, anon, authenticated;
+grant execute on function metas.freno_devolver(text, interval) to service_role;
+
 -- Alertas para quien administra (no para el docente): por ejemplo, demasiadas
 -- claves de familia equivocadas en una hora en todo el sistema.
 create table if not exists metas.alertas (

@@ -547,6 +547,13 @@ end $$;
 -- con pg_cron (rev. 7). Si la fecha ya pasó, se cierra en el acto.
 -- pg_cron corre en UTC y de minuto en minuto: se redondea al minuto
 -- SIGUIENTE, para no correr un poco antes de la hora y no cerrar nada.
+-- Una tarea de pg_cron no tiene AÑO (minuto, hora, día, mes): corre la
+-- próxima vez que llega ese día y esa hora. Una fecha a 13 meses correría el
+-- mes que viene, no cerraría nada (todavía no venció) y se borraría sola: el
+-- día de verdad nadie cerraría los canales. Por eso una fecha a más de 11
+-- meses se RECHAZA al anotarla (MT044), con margen sobre el año (rev. 8).
+-- Mover la fecha borra SIEMPRE la tarea anterior, también cuando la nueva
+-- ya pasó y se cierra en el acto: la vieja no tiene por qué quedar (rev. 8).
 create or replace function metas.claves_viejas_cerrar_canales()
 returns integer language plpgsql volatile security definer set search_path = metas, pg_temp as $$
 begin
@@ -563,6 +570,19 @@ declare
   v timestamp := date_trunc('minute', (p_at + interval '59 seconds') at time zone 'UTC');
   v_cron text;
 begin
+  if p_at > now() + interval '11 months' then
+    raise exception 'M.E.T.A.S: la fecha en que vencen las claves (%) está a más de 11 meses. pg_cron no guarda el año: anótala cuando falten menos de 11 meses', p_at
+      using errcode = 'MT044';
+  end if;
+  -- La tarea de una fecha anterior se borra antes que nada, aunque la nueva
+  -- ya haya pasado. (pg_cron da error al borrar una tarea que no existe.)
+  -- (Dos «if» y no un «and»: la condición entera se prepara de una vez, y
+  -- sin pg_cron cron.job no existe.)
+  if to_regclass('cron.job') is not null then
+    if exists (select 1 from cron.job where jobname = 'metas-claves-vencen') then
+      perform cron.unschedule('metas-claves-vencen');
+    end if;
+  end if;
   if p_at <= now() then
     perform metas.canales_cerrar(null);
     return 'cerrado_ya';
