@@ -428,6 +428,21 @@ bajó sus paquetes por un espejo local de npm.
   señal, C6 carga rápida de 43, C7 accesibilidad, C8 la clave vencida en el
   portal.
 
+**Revisión 10** (corte 1, parte 3, el diseño de Mi aula), todo corrido aquí
+con `corre-supabase.sh --todo` desde cero: capa A **291**, A+ **26**, B **12**
+y C **13**. La capa C sigue el contrato nuevo (`pruebas-capa-c/CONTRATO-PANTALLA.md`):
+C1 recorre las seis secciones que viven en filas y mide que todo lo que se
+toca tenga 44 px; C3 anota de un toque en el teléfono y con «Otro monto» en
+la PC; **C9** colectas de un toque (sin cajita, «Faltan por dar» baja y
+vuelve, quitar el pago con dos botones de 44 px, «Otro monto» deja un abono),
+**C10** asistencia (todos presentes de entrada, presente → falta → excusa →
+presente, «Todos presentes este día» con su pregunta) y **C11** controles (✓
+y quitarla, «Anotados N/M · Faltan N», «Marcar a todos», «Quitar todas las
+marcas» con su pregunta). En este entorno, las imágenes de Supabase se bajan
+de Docker Hub (`SUPABASE_INTERNAL_IMAGE_REGISTRY=docker.io`) y el contenedor
+de funciones toma `supabase-js` de un espejo local de npm: son ajustes del
+entorno, no del repositorio.
+
 **Revisión 9** (corte 1, parte 2), todo corrido aquí con `corre-supabase.sh
 --todo` desde cero: capa A **291** (K20: `freno_devolver` cerrado a anon y a
 sesiones; al final, un dato para la capa C: la Rifa queda cerrada), A+ **26**,

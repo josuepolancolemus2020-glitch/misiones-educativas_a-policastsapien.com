@@ -1,4 +1,4 @@
-# Rediseño de datos de M.E.T.A.S · revisión 9 · corte 1, parte 2
+# Rediseño de datos de M.E.T.A.S · revisión 10 · corte 1, parte 3
 
 Rama `rediseño-datos`. Hasta la revisión 7, **solo diseño**. Desde la
 revisión 8 existe el **motor de datos del corte 1** (`js/datos/`) y desde la
@@ -39,10 +39,59 @@ botones de sincronizar, recuperar ni restaurar, y sin ningún indicador de
 | `SUPABASE-V2-FAMILIAS.sql` | vínculo de familias, rol lector, vistas `vf_*`, totales, «visto», aviso inmediato |
 | `SUPABASE-V2-CONGELAR.sql` | candado y congelado por pasos |
 | `pruebas-capa-a/` | `corre.sh` + plataforma Supabase simulada + modelo viejo + datos ficticios + **291 pruebas en verde** |
-| `pruebas-capa-b/`, `pruebas-capa-c/` | capas B (cola y conflictos) y C (navegador) del corte 1, con su contrato, escritas antes del código. **B 12/12 y C 10/10 en verde (revisión 9)** |
+| `pruebas-capa-b/`, `pruebas-capa-c/` | capas B (cola y conflictos) y C (navegador) del corte 1, con su contrato, escritas antes del código. **B 12/12 y C 13/13 en verde (revisión 10)** |
 | `_dev/supabase-local/` | CLI fija, `corre-supabase.sh` (capas A, A+, B y C contra `supabase start`), funciones de borde, capa A+ y `arma-supabase-js.sh` |
 | `js/datos/` (fuera de esta carpeta) | el motor de datos del corte 1 (`03`, 3.10). `js/vendor/supabase.min.js`: Realtime de supabase-js 2.45.4 |
-| `js/tools/mi-aula.js`, `css/mi-aula.css` (fuera de esta carpeta) | Mi aula del corte 1, la pantalla del motor (rev. 9) |
+| `js/tools/mi-aula.js`, `css/mi-aula.css` (fuera de esta carpeta) | Mi aula del corte 1, la pantalla del motor (rev. 9); desde la rev. 10, con la forma de trabajar de la Mi aula de siempre |
+| `js/tools/mi-aula-papel.js` (fuera de esta carpeta) | arma con las filas los datos de las hojas impresas de main, sin tocarlas (rev. 10) |
+
+## Cambios de la revisión 10 (corte 1, parte 3): el diseño de Mi aula
+
+**Verificado aquí** con `corre-supabase.sh --todo` desde cero (Supabase
+local, CLI 3.1.0, Node 22, datos ficticios): capa A **291**, A+ **26**,
+B **12** y C **13**, todo en verde en una sola corrida; `npm test` **78**
+en verde. Antes de tocar nada, la misma corrida con el código de la
+revisión 9: A 291, A+ 26, B 12, C 10.
+
+**Decisión de Josué**: la pantalla de la revisión 9 (listas con cajitas
+para escribir montos) era un paso atrás. Se conserva entera la forma de
+trabajar de la Mi aula de siempre y se supera en lo visual. Detalle en
+`09`, 9.6.
+
+- **Mi aula** (`js/tools/mi-aula.js`, `css/mi-aula.css`): grupos como
+  pastillas y las diez secciones con su ícono; cuadrícula de un toque en
+  Asistencia, colectas y Controles; Economía con sus puertas, «Mis
+  colectas» con barra y saldo; Notas SACE con parcial y sección como
+  interruptores, tabla con la columna de alumnos fija y notas por color de
+  nivel. Tarjetas con aire, un color por sección (todos AA), botones de 44
+  px o más, transiciones cortas que se apagan con `prefers-reduced-motion`,
+  sin corrimiento lateral en 390, 800 y 1366 px salvo dentro de la tabla de
+  notas. Lo único que dice de la conexión sigue siendo el punto gris.
+- **Lo que todavía vive en el blob** (Equipos, Acumulativos, Estadísticas,
+  Lectura, Gastos de mi bolsillo, Inventario) se abre desde su pastilla en
+  la pantalla de antes, con su candado, y la flecha vuelve a Mi aula.
+- **Lo impreso no se tocó**: `js/tools/mi-aula-papel.js` arma el objeto que
+  leían las hojas de main y las llama tal cual. Boletas, Cuadro final,
+  resumen final, ingresos, egresos y talonario: mismo HTML letra por letra y
+  misma imagen impresa con un aula ficticia (blob en main, filas en la
+  rama). `registros-admin.js` no cambió en esta revisión.
+- **El motor y las reglas del dinero, sin cambios** (`js/datos/` igual que
+  en la revisión 9). El monto de un toque es el `monto_sugerido` de la
+  colecta, tal como lo da la base («50.00»).
+- **La tarjeta de abajo solo se repinta si cambió**: antes se volvía a
+  dibujar con cada aviso del motor y borraba lo que el docente escribía en
+  la cajita (lo destapó C3, que fallaba de vez en cuando).
+- **Capa C** ajustada a estas pantallas (contrato en
+  `pruebas-capa-c/CONTRATO-PANTALLA.md`): C1 recorre las seis secciones en
+  filas y mide que todo lo que se toca tenga 44 px; C3 anota de un toque en
+  el teléfono y con «Otro monto» en la PC; nuevas **C9** (colectas: un
+  toque, «Faltan por dar», quitar con dos botones, «Otro monto»), **C10**
+  (asistencia: todos presentes de entrada, un toque, «Todos presentes este
+  día») y **C11** (controles: ✓ y quitarla, «Anotados N/M», marcar a todos
+  y quitar las marcas). `METAS_SOLO=C9` corre una sola.
+- **Falta** (09, 9.6): la clave de familia en el talonario (una línea de una
+  hoja impresa, espera tu aprobación), los logos de la boleta y poner
+  exenciones desde la pantalla.
 
 ## Cambios de la revisión 9 (corte 1, parte 2), por punto
 

@@ -327,3 +327,64 @@ vez se necesita señal».
 - La sesión vieja (`METAS_DOCENTE_V1`, con la contraseña) se sigue abriendo
   al entrar, solo para las herramientas que no pasaron a filas («Más del
   aula»); se quita cuando esas pasen al blob por sesión (`08`, 8.1).
+
+## 9.6 Revisión 10 (corte 1, parte 3): Mi aula con la forma de siempre
+
+**Decisión de Josué**: la pantalla de la revisión 9 (listas con cajitas para
+escribir montos) era un paso atrás. La forma de trabajar de la Mi aula de
+siempre (`js/tools/registros-admin.js` en main) se conserva entera; lo que
+cambia es de dónde salen los datos (filas, por `MetasDatos`) y cómo se ve.
+
+**Lo que se conserva, tal cual el flujo de main** (`js/tools/mi-aula.js`):
+
+- Arriba, los grupos como pastillas («6º-1» con `adGradoSeccion`, la escuela
+  solo si hay más de una, «+ Otro grupo»); debajo, las diez secciones con su
+  ícono: Alumnos, Economía, Asistencia, Equipos, Controles, Acumulativos,
+  Notas SACE, Estadísticas, Lectura, Comunicados. Equipos, Acumulativos,
+  Estadísticas y Lectura (y en Economía, Gastos de mi bolsillo e Inventario
+  del aula) abren la pantalla de antes con el mismo candado que «Más del
+  aula», hasta su corte (`08`, 8.2); su flecha vuelve a Mi aula.
+- Cuadrícula de un toque por número de lista (#N y primer nombre):
+  - Asistencia: todos presentes de entrada; un toque, 🚫 faltó; otro, 📝
+    excusa; otro, presente. «Todos presentes este día» pregunta con dos
+    botones. Debajo, las excusas de las familias (del buzón de ellas, que no
+    pasa a filas, `07`, 7.3) con «Aprobar»: la aprobada es una fila de
+    asistencia con estado «excusa» y la razón como justificación.
+  - Colectas: un toque anota el aporte completo (casilla verde con ✓ y el
+    monto). «⏳ Faltan por dar: N · ver quiénes». Solo un monto distinto
+    abre la cajita: «✎ Otro monto», una colecta sin aporte fijo, o tocar a
+    quien ya dio (cambiar el monto o quitar el pago, que pregunta con dos
+    botones). Una colecta cerrada pregunta «¿Reabrirla?» antes de nada.
+  - Controles: un toque pone ✓, otro la quita; «Anotados N/M · Faltan N»;
+    «Marcar a todos» y «Quitar todas las marcas» (esta pregunta).
+- Economía: las puertas de Gastos de mi bolsillo e Inventario, «Nueva
+  colecta o acuerdo», «Mis colectas» con barra, % que dieron y saldo, y los
+  botones de imprimir ingresos, egresos y talonario.
+- Notas SACE: parcial I a IV y sección (Aprovechamiento, Personalidad,
+  Inasistencias, Recuperación) como interruptores grandes; tabla con la
+  columna de alumnos fija y la nota coloreada por nivel (Inicial hasta 69,
+  Básico 70 a 79, Avanzado 80 a 90, Excelente 91 a 100); Enter baja al
+  siguiente alumno; «ⓘ ¿Cómo se llena?»; boletas, resumen final por grado y
+  Cuadro final del año.
+
+**Lo que se imprime no se tocó.** `js/tools/mi-aula-papel.js` arma con las
+filas el mismo objeto «grupo» que leían las hojas de main y las llama tal
+cual: `adPrintBoletas`, `adPrintResumenFinal`, `adPrintCuadroFinal`,
+`adPrintCuadroIngresos`, `adPrintCuadroEgresos`, `adPrintTalonario`. Con un
+aula ficticia equivalente (blob en main, filas en la rama), las seis hojas
+salen con el mismo HTML, letra por letra, y la misma imagen impresa, píxel
+por píxel. El dinero pasa como texto («150.00»); la suma de los pagos de un
+alumno se hace en centavos (`montos.sumar`).
+
+**Falta, y por qué:**
+
+- **La clave de familia en el talonario**: `adPrintTalonario` la lee de la
+  llave vieja (`adClaveFamilia`), no de `metas.familias`. Para que salga hay
+  que cambiar esa línea de la hoja (`js/tools/registros-admin.js:6568`): es
+  solo de dónde sale el dato, pero es un archivo de impresión y queda para
+  tu aprobación.
+- **Los logos de la boleta**: `aulas.logo_path` todavía no tiene dónde
+  vivir (Storage); mientras tanto la boleta sale como la de un grupo sin
+  logo propio (el de la Secretaría sí sale).
+- **Exenciones** («no le corresponde»): el motor las tiene; la pantalla las
+  muestra pero todavía no ofrece ponerlas.

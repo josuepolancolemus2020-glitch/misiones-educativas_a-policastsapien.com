@@ -15,7 +15,7 @@
 //    las etiquetas ?v=NN de las páginas (normativa de sellado del CLAUDE.md).
 //    CACHE_DATOS no se toca nunca: subirlo volvería a borrarle al alumno lo
 //    que tenía guardado, que es justo lo que este arreglo vino a evitar.
-const CACHE_NAME = 'meta-app-v549';
+const CACHE_NAME = 'meta-app-v550';
 const CACHE_APP = CACHE_NAME;
 const CACHE_DATOS = 'meta-datos-v1';
 
@@ -48,6 +48,7 @@ const ARMAZON = [
   './js/datos/calculos.js',
   './js/datos/datos.js',
   './js/tools/mi-aula.js',
+  './js/tools/mi-aula-papel.js',
   // Las tipografías. La CSS pesa 6 KB y trae todas las familias sin bajar
   // ni un byte de más: cada @font-face declara su unicode-range, así que
   // el navegador solo pide la letra que la página de verdad pinta. De ahí
