@@ -18,6 +18,7 @@ diseño y la pantalla no depende de la prueba para nada más.
 | `carga-pegar`, `carga-vista-previa`, `carga-fila`, `carga-guardar` | carga rápida | `04`. Anotada la lista, `carga-guardar` queda apagado |
 | `alumno-clave` (`data-estado="sin"` si aún no tiene ficha) | Alumnos, en cada fila | la clave de familia, solo para leer (`15-K7QM`, `K7QMX-4PA2B`); «sin clave de familia» si no tiene ficha |
 | `claves-preparar` → `claves`, `claves-vista-previa`, `claves-guardar`, `claves-listo`, `claves-aviso` | Alumnos | «Preparar claves de familia»: una línea, «Se crearán N claves nuevas · M ya tenían la suya» (o «Todos tus alumnos ya tienen su clave», con `claves-guardar` apagado), y Guardar / Cancelar; nada se anota hasta `claves-guardar`, que se apaga al tocarlo. Sin señal, `claves-aviso` y no arma nada |
+| `tiras-claves`; `tira-alumno` (en la fila abierta de un alumno) | Alumnos | «🖨️ Tiras de claves (QR)» de todo el aula y «🖨️ Su tira»: las tiras de main (`adTirasTodas`, `adTiraUno`) con la clave de `metas.familias`; sin ficha no hay tira. Imprimen sin señal |
 | `ir-gastos-bolsillo`, `ir-inventario` | Economía | las dos puertas; abren la pantalla de antes |
 | `nueva-colecta`, `colecta` (`data-estado="abierta|cerrada"`) | Economía | «Nueva colecta o acuerdo» y «Mis colectas» |
 | `pantalla-colecta`, `faltan`, `faltan-n` | una colecta | la colecta abierta y «Faltan por dar: N · ver quiénes» |

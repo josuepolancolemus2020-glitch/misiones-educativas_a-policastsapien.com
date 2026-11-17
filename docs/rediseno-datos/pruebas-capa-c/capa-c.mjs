@@ -734,6 +734,144 @@ await prueba('C17 claves de familia: una línea de vista previa, Guardar una vez
   }
 });
 
+// ── Tiras de la clave de familia desde Mi aula ────────────────────────────
+// «🖨️ Tiras de claves (QR)» y «🖨️ Su tira» imprimen con las MISMAS funciones
+// de main (adTirasTodas, adTiraUno), con la clave de metas.familias. Se
+// captura el HTML exacto que va a la ventana de impresión. Y con una clave
+// vieja, la tira tiene que salir idéntica, letra por letra, a la de main
+// (las funciones de main se leen de origin/main; METAS_MAIN cambia la rama).
+function deMain(nombres) {
+  const ref = process.env.METAS_MAIN || 'origin/main';
+  let src;
+  try {
+    src = execFileSync('git', ['-C', RAIZ, 'show', ref + ':js/tools/registros-admin.js'], { encoding: 'utf8', maxBuffer: 64 << 20 });
+  } catch (e) {
+    throw new Error('para comparar con main hace falta ' + ref + ' (git fetch origin main)');
+  }
+  return nombres.map((n) => {
+    const i = src.indexOf('\nfunction ' + n + '(');
+    afirma(i >= 0, n + ' no está en ' + ref);
+    return src.slice(i, src.indexOf('\n}\n', i) + 3);
+  }).join('\n');
+}
+await prueba('C18 tiras de claves: todo el aula y la de un alumno, con la clave nueva, sin señal; con una clave vieja, idéntica a main', async () => {
+  const fuenteMain = deMain(['adClaveBonita', 'adTirasTodas', 'adTiraUno']);
+  const corr = Date.now().toString(36).toUpperCase().slice(-4);
+  const nom = (x) => `${x} Ficticia C18 ${corr}`;
+  const ctx = await contexto(TAMANOS[0]);
+  try {
+    const escuela = 'Escuela Ficticia C18 ' + corr;
+    const archivo = { formato: ['metas-importacion', '1'].join('/'), aula: { escuela, grado: 5, seccion: '2', anio_lectivo: 2027 },
+      alumnos: [['a1', 1, 'Ana'], ['a2', 2, 'Beto'], ['a3', 3, 'Carla']]
+        .map(([ref, n, x]) => ({ ref, num_lista: n, nombre_completo: nom(x) })) };
+    const p = await ctx.newPage();
+    await entrar(p);
+    await p.click(m('ir-alumnos'));
+    await p.click(m('ir-carga-rapida'));
+    const elegir = p.waitForEvent('filechooser');
+    await p.click(m('importar-elegir'));
+    await (await elegir).setFiles({ name: 'aula-c18.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(archivo)) });
+    await p.waitForSelector(m('importar-vista-previa'), { timeout: 15000 });
+    await p.click(m('importar-guardar'));
+    await p.waitForSelector(m('importar-listo'));
+    const aula = await hasta(() => sql(`select id from metas.aulas where escuela = '${escuela}' and deleted_at is null`), 'el aula no llegó a la base');
+    await p.click(m('ir-alumnos'));
+    await p.waitForSelector(m('tiras-claves'));
+    // Lo que se manda a imprimir, tal cual (sin abrir la ventana).
+    await p.evaluate(() => {
+      window.__impresos = [];
+      window.adPrintAbrir = (html) => { window.__impresos.push(html); return null; };
+      window.__toasts = [];
+      const t = window.toast;
+      window.toast = (x) => { window.__toasts.push(x); return t(x); };
+    });
+    const impresos = () => p.evaluate(() => window.__impresos.slice());
+
+    // Nadie tiene ficha todavía: no se imprime nada y se dice qué hacer.
+    await p.click(m('tiras-claves'));
+    afirma((await impresos()).length === 0, 'sin claves se imprimió algo');
+    afirma((await p.evaluate(() => window.__toasts)).includes('Primero toca Preparar claves de familia'), 'sin claves, sin aviso');
+
+    // Carla se retira antes de preparar: no recibe ficha y no sale en las
+    // tiras. Ana y Beto reciben su clave nueva de la base.
+    await p.locator(`${m('alumno')} .ma-al-btn`).nth(2).click();
+    await p.click('[data-accion="estado"][data-valor="retirado"]');
+    await hasta(() => sql(`select estado from metas.alumnos where aula_id = '${aula}' and num_lista = 3`) === 'retirado', 'Carla no quedó retirada');
+    await p.click(m('claves-preparar'));
+    await p.waitForSelector(m('claves-guardar'));
+    await p.click(m('claves-guardar'));
+    await hasta(() => sql(`select count(*) from metas.familias where aula_id = '${aula}' and deleted_at is null`) === '2', 'no llegaron las fichas');
+    const clave = Object.fromEntries(sqlJson(`select a.num_lista as n, f.clave from metas.familias f join metas.alumnos a on a.id = f.alumno_id
+                                              where f.aula_id = '${aula}' and f.deleted_at is null`).map((x) => [x.n, x.clave]));
+    const bonita = (c) => c.slice(0, 5) + '-' + c.slice(5);
+    await hasta(async () => (await p.locator(m('alumno-clave')).allInnerTexts()).filter((t) => /[A-Z2-9]{5}-[A-Z2-9]{5}/.test(t)).length === 2,
+      'la lista no muestra las 2 claves');
+
+    // Todo el aula, sin señal: lo que ya está en el aparato.
+    await ctx.setOffline(true);
+    await p.click(m('tiras-claves'));
+    let h = (await impresos()).pop();
+    afirma(h, 'sin señal no se imprimieron las tiras');
+    afirma((h.match(/class="tira"/g) || []).length === 2, 'no salen 2 tiras');
+    for (const n of [1, 2]) {
+      afirma(h.includes('<div class="cod">' + bonita(clave[n]) + '</div>'), `la tira de #${n} no trae ${bonita(clave[n])}`);
+    }
+    afirma(!h.includes(nom('Carla')), 'Carla, sin ficha, salió en las tiras');
+    afirma(h.includes('img/qr-padres.png') && h.includes('padres.html') && h.includes(nom('Ana')), 'la tira no trae QR, portal o nombre');
+    // La de un alumno, desde su ficha.
+    await p.locator(`${m('alumno')} .ma-al-btn`).nth(1).click();
+    await p.click(m('tira-alumno'));
+    h = (await impresos()).pop();
+    afirma(h && (h.match(/class="tira"/g) || []).length === 1 && h.includes('<div class="cod">' + bonita(clave[2]) + '</div>')
+      && h.includes('<strong>#2</strong>'), 'la tira de Beto no trae su clave');
+    await botonesDe44(p, 'tiras');
+    await sinScrollLateral(p, 'tiras');
+    // Carla, sin ficha: «Su tira» no imprime y dice qué hacer.
+    const antes = (await impresos()).length;
+    await p.locator(`${m('alumno')} .ma-al-btn`).nth(2).click();
+    await p.click(m('tira-alumno'));
+    afirma((await impresos()).length === antes, 'sin ficha se imprimió una tira');
+    await ctx.setOffline(false);
+    afirma(sql(`select count(*) from metas.familias where aula_id = '${aula}' and deleted_at is null`) === '2', 'imprimir tocó las fichas');
+
+    // Con claves viejas, la tira de hoy (por Mi aula, con claveFamilia, y por
+    // la herramienta de antes, sin ella) es letra por letra la de main.
+    const iguales = await p.evaluate((fuente) => {
+      const g = { id: 'grupo-ficticio', grado: '6', seccion: '1', escuela: 'Escuela Ficticia Las Flores',
+        lista: [{ num: 3, nombre: 'Alumno Ficticio Tres' }, { num: 15, nombre: 'Alumna Ficticia Quince' }] };
+      const viejas = { 3: '3TRES', 15: '15K7QM' };
+      const conClave = Object.assign({}, g, { lista: g.lista.map((a) => Object.assign({ claveFamilia: viejas[a.num] }, a)) });
+      const deMapa = (id, num) => viejas[num] || '';
+      const cap = [];
+      const main = new Function('adPrintAbrir', 'adClaveFamilia', fuente + '\nreturn { adTirasTodas, adTiraUno, adClaveBonita };')(
+        (x) => cap.push(x), deMapa);
+      const hoy = [];
+      window.adPrintAbrir = (x) => { hoy.push(x); return null; };
+      const antes = window.adClaveFamilia;
+      window.adClaveFamilia = deMapa;
+      try {
+        main.adTirasTodas(g); main.adTiraUno(g, 15);
+        window.adTirasTodas(conClave); window.adTiraUno(conClave, 15);     // por Mi aula
+        window.adTirasTodas(g); window.adTiraUno(g, 15);                   // por la herramienta de antes
+      } finally {
+        window.adClaveFamilia = antes;
+      }
+      return {
+        todas: hoy[0] === cap[0] && hoy[2] === cap[0], una: hoy[1] === cap[1] && hoy[3] === cap[1],
+        trae: cap[0].includes('15-K7QM') && cap[0].includes('3-TRES') && cap[1].includes('15-K7QM'),
+        bonita: ['15K7QM', '3TRES', '5ABCD', '12ABCDEF'].every((c) => main.adClaveBonita(c, c.match(/^\d+/)[0]) === window.adClaveBonita(c, c.match(/^\d+/)[0])),
+        nueva: window.adClaveBonita('5KQMX4PA2B', 5) === '5KQMX-4PA2B' && window.adClaveBonita('ACYFS4RGM2', 7) === 'ACYFS-4RGM2',
+      };
+    }, fuenteMain);
+    afirma(iguales.trae, 'la tira de main no trae las claves viejas');
+    afirma(iguales.todas && iguales.una, 'con una clave vieja la tira ya no es la de main: ' + JSON.stringify(iguales));
+    afirma(iguales.bonita, 'una clave vieja ya no se escribe como en main');
+    afirma(iguales.nueva, 'la clave nueva no sale partida al medio');
+  } finally {
+    await ctx.close();
+  }
+});
+
 await navegador.close();
 console.log(fallas ? `\n✘ ${fallas} de ${total} pruebas de la capa C FALLARON` : `\n✅ Las ${total} pruebas de la capa C en verde`);
 process.exit(fallas ? 1 : 0);
