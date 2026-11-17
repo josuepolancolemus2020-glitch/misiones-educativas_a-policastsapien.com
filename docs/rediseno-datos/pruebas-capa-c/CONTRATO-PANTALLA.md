@@ -36,6 +36,7 @@ diseño y la pantalla no depende de la prueba para nada más.
 | `pregunta`, `pregunta-texto`, `pregunta-boton` | tarjeta | preguntas de dos botones (09, 9.1), del motor o de la pantalla (reabrir, quitar un pago, todos presentes, quitar las marcas) |
 | `no-anotado` | tarjeta | «no quedó anotado», con la razón del aula |
 | `familia-clave`, `familia-entrar`, `familia-aviso` | `padres.html` | entrada de la familia y su aviso |
+| `familia-turnstile` | `padres.html` | el cuadro de Turnstile, sobre la barra de escribir; solo a la vista mientras se revisa una clave |
 
 Textos fijos que la capa C compara palabra por palabra:
 

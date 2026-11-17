@@ -181,6 +181,13 @@
       font-size: 20px; cursor: pointer;
     }
     #enviar:active { background: var(--verde-osc); }
+    /* La comprobación de seguridad (Turnstile): aparece solo mientras se
+       revisa una clave, encima de la barra de escribir. */
+    #ts-caja {
+      flex: 0 0 auto; display: flex; justify-content: center;
+      padding: 8px 12px 0; background: var(--blanco); border-top: 1px solid var(--borde);
+    }
+    #ts-caja[hidden] { display: none; }
   </style>
 </head>
 <body>
@@ -203,6 +210,7 @@
 
   <div id="chat" aria-live="polite"></div>
   <div id="chips"></div>
+  <div id="ts-caja" data-metas="familia-turnstile" hidden></div>
   <div id="barra">
     <input id="inp" data-metas="familia-clave" type="text" autocomplete="off" placeholder="Escriba su pregunta o la clave…">
     <button id="enviar" data-metas="familia-entrar" aria-label="Enviar">➤</button>
@@ -330,7 +338,11 @@ function aliasDe(codigo) {
   return (e && e.alias) ? e.alias : '';
 }
 function claveGuardada() { return String(cfgLoad().codigo || ''); }
-function claveBonita(c)  { return String(c || '').replace(/^(\d+)/, '$1-'); }
+function claveBonita(c)  {
+  // La nueva (10 símbolos) va partida al medio, como en la tira: ACYFS-4RGM2.
+  if (/^[A-HJ-NP-Z2-9]{10}$/.test(String(c || ''))) return String(c).slice(0, 5) + '-' + String(c).slice(5);
+  return String(c || '').replace(/^(\d+)/, '$1-');
+}
 /* ¿El texto parece una clave de familia? (nº de lista + 4-6 letras/números) */
 function pareceClave(txt) {
   const limpio = String(txt || '').replace(/[^A-Za-z0-9]/g, '').toUpperCase();
@@ -1414,60 +1426,143 @@ function identidadClave(codigo) {
 
 /* ── La base nueva (corte 1, docs/rediseno-datos/07, 7.4) ────────────────
    El teléfono de la familia abre una sesión ANÓNIMA y se vincula con su
-   clave por la función familia-vincular, que exige un token de Turnstile en
-   cada intento. Mientras el sitio no tenga su llave de Turnstile, la base
-   nueva solo se usa con la base de PRUEBA local (127.0.0.1 / localhost):
-   en el sitio publicado el portal sigue exactamente como hoy.
+   clave por la función familia-vincular. Las dos puertas piden su propia
+   comprobación de Turnstile (un token sirve UNA sola vez): una para abrir la
+   sesión (Auth, con CAPTCHA) y otra para cada intento de vincular.
+   La llave del sitio es pública (la secreta vive solo en Supabase).
+   En pruebas locales (127.0.0.1 / localhost) no hay Turnstile, salvo que la
+   prueba pase su propia llave de prueba en __METAS_TURNSTILE_DE_PRUEBA__.
    Si la clave está en la base nueva, la familia lee SOLO las vistas vf_*;
    si no está, se sigue con lo de siempre. */
-const TURNSTILE_SITEKEY = '';
+const TURNSTILE_SITEKEY = '0x4AAAAAAGEh37n5GZYPdB-P';
 function nubeFamilia() {
   const p = window.__METAS_NUBE_DE_PRUEBA__;
   if (p && p.url && p.llavePublica && /^(127\.0\.0\.1|localhost)$/.test(location.hostname)) {
-    return { url: String(p.url).replace(/\/+$/, ''), llave: p.llavePublica, prueba: true };
+    return { url: String(p.url).replace(/\/+$/, ''), llave: p.llavePublica, prueba: true,
+      sitekey: String(window.__METAS_TURNSTILE_DE_PRUEBA__ || '') };
   }
-  return TURNSTILE_SITEKEY ? { url: SB_URL_DEF, llave: SB_KEY_DEF, prueba: false } : null;
+  return TURNSTILE_SITEKEY ? { url: SB_URL_DEF, llave: SB_KEY_DEF, prueba: false, sitekey: TURNSTILE_SITEKEY } : null;
 }
-const SESION_FAMILIA = 'METAS_FAMILIA_SESION_V1';
-async function sesionFamilia(n) {
-  try {
-    const s = JSON.parse(localStorage.getItem(SESION_FAMILIA) || 'null');
-    if (s && s.access_token && s.expires_at && s.expires_at - 60 > Date.now() / 1000) return s;
-  } catch (_) {}
-  const r = await fetch(n.url + '/auth/v1/signup', {
-    method: 'POST', headers: { apikey: n.llave, 'content-type': 'application/json' }, body: JSON.stringify({ data: {} }),
+
+/* Turnstile: se carga solo cuando hace falta (al revisar una clave) y se
+   pinta en #ts-caja, en modo «managed»: casi siempre pasa solo; si Cloudflare
+   duda, la familia toca la casilla. Cada token se usa una vez; después, y si
+   algo falla, el cuadro se reinicia para el siguiente intento. */
+let _tsId = null, _tsEspera = null, _tsCarga = null;
+function tsCargar() {
+  if (window.turnstile) return Promise.resolve();
+  if (!_tsCarga) {
+    _tsCarga = new Promise((ok, mal) => {
+      const sc = document.createElement('script');
+      sc.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+      sc.async = true;
+      sc.onload = () => ok();
+      sc.onerror = () => { _tsCarga = null; sc.remove(); mal(new Error('turnstile')); };
+      document.head.appendChild(sc);
+    });
+  }
+  return _tsCarga;
+}
+async function tokenTurnstile(sitekey) {
+  await tsCargar();
+  const caja = document.getElementById('ts-caja');
+  caja.hidden = false;
+  return new Promise((ok, mal) => {
+    const plazo = setTimeout(() => fin(''), 120000);
+    function fin(t) {
+      clearTimeout(plazo);
+      _tsEspera = null;
+      if (t) ok(t);
+      else { tsReiniciar(); mal(new Error('turnstile')); }
+    }
+    _tsEspera = fin;
+    if (_tsId === null) {
+      _tsId = window.turnstile.render(caja, {
+        sitekey, execution: 'execute', language: 'es',
+        callback: t => _tsEspera && _tsEspera(t),
+        'error-callback': () => { if (_tsEspera) _tsEspera(''); return true; },
+        'expired-callback': () => tsReiniciar(),
+        'timeout-callback': () => { if (_tsEspera) _tsEspera(''); },
+      });
+    } else {
+      window.turnstile.reset(_tsId);
+    }
+    window.turnstile.execute(_tsId);
   });
-  if (!r.ok) return null;
-  const j = await r.json();
-  if (!j.access_token) return null;
+}
+function tsReiniciar() {
+  try { if (_tsId !== null && window.turnstile) window.turnstile.reset(_tsId); } catch (_) {}
+}
+function tsTerminar() {
+  tsReiniciar();
+  const caja = document.getElementById('ts-caja');
+  if (caja) caja.hidden = true;
+}
+
+const SESION_FAMILIA = 'METAS_FAMILIA_SESION_V1';
+function guardarSesion(j) {
   const s = { access_token: j.access_token, refresh_token: j.refresh_token, expires_at: j.expires_at };
   try { localStorage.setItem(SESION_FAMILIA, JSON.stringify(s)); } catch (_) {}
   return s;
 }
-// 'vinculada' | 'vencida' | 'no_esta' (no está en la base nueva, o no se
-// pudo preguntar: se sigue con lo de siempre)
+// La sesión del teléfono: la guardada si sirve; si venció, se renueva (sin
+// CAPTCHA y sin perder el vínculo). Solo si no hay ninguna y se está
+// revisando una clave (nueva = true) se abre otra, con su token.
+async function sesionFamilia(n, nueva) {
+  let s = null;
+  try { s = JSON.parse(localStorage.getItem(SESION_FAMILIA) || 'null'); } catch (_) {}
+  if (s && s.access_token && s.expires_at && s.expires_at - 60 > Date.now() / 1000) return s;
+  if (s && s.refresh_token) {
+    try {
+      const r = await fetch(n.url + '/auth/v1/token?grant_type=refresh_token', {
+        method: 'POST', headers: { apikey: n.llave, 'content-type': 'application/json' },
+        body: JSON.stringify({ refresh_token: s.refresh_token }),
+      });
+      const j = r.ok ? await r.json() : {};
+      if (j.access_token) return guardarSesion(j);
+    } catch (_) {}
+  }
+  if (!nueva) return null;
+  const cuerpo = { data: {} };
+  if (n.sitekey) cuerpo.gotrue_meta_security = { captcha_token: await tokenTurnstile(n.sitekey) };
+  const r = await fetch(n.url + '/auth/v1/signup', {
+    method: 'POST', headers: { apikey: n.llave, 'content-type': 'application/json' }, body: JSON.stringify(cuerpo),
+  });
+  // Sin sesión porque la comprobación no pasó: se puede volver a intentar.
+  if (!r.ok) { if (n.sitekey) throw new Error('turnstile'); return null; }
+  const j = await r.json();
+  return j.access_token ? guardarSesion(j) : null;
+}
+// 'vinculada' | 'vencida' | 'robot' (no pasó la comprobación: se vuelve a
+// intentar) | 'no_esta' (no está en la base nueva, o no se pudo preguntar:
+// se sigue con lo de siempre)
 async function vincularNueva(codigo) {
   const n = nubeFamilia();
   if (!n) return 'no_esta';
   try {
-    const s = await sesionFamilia(n);
+    const s = await sesionFamilia(n, true);
     if (!s) return 'no_esta';
+    // Un token para ESTE intento, distinto del de la sesión.
+    const turnstile = n.sitekey ? await tokenTurnstile(n.sitekey) : (n.prueba ? 'local' : '');
     const r = await fetch(n.url + '/functions/v1/familia-vincular', {
       method: 'POST',
       headers: { apikey: n.llave, authorization: 'Bearer ' + s.access_token, 'content-type': 'application/json' },
-      body: JSON.stringify({ clave: codigo, turnstile: n.prueba ? 'local' : '' }),
+      body: JSON.stringify({ clave: codigo, turnstile }),
     });
     const j = await r.json().catch(() => ({}));
     if (j.ok) return 'vinculada';
     if (j.motivo === 'clave_vencida') return 'vencida';
+    if (j.motivo === 'turnstile') return 'robot';
     return 'no_esta';
-  } catch (_) {
-    return 'no_esta';
+  } catch (e) {
+    return e && e.message === 'turnstile' ? 'robot' : 'no_esta';
+  } finally {
+    tsTerminar();
   }
 }
 async function leerNueva(vista) {
   const n = nubeFamilia();
-  const s = n && await sesionFamilia(n);
+  const s = n && await sesionFamilia(n, false);
   if (!s) return [];
   const r = await fetch(n.url + '/rest/v1/' + vista + '?select=*', {
     headers: { apikey: n.llave, authorization: 'Bearer ' + s.access_token, 'accept-profile': 'metas' },
@@ -1479,7 +1574,9 @@ function lempiras(t) {
   const p = String(t || '0.00').split('.');
   return 'L ' + p[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '.' + (p[1] || '00');
 }
-async function resumenNuevo() {
+// callar: en el arranque, si el vínculo se perdió no se dice nada (se vuelve a
+// revisar la clave).
+async function resumenNuevo(callar) {
   const [hijos, pagos, avisos] = await Promise.all([leerNueva('vf_hijos'), leerNueva('vf_pagos'), leerNueva('vf_avisos')]);
   const h = hijos[0];
   let t = h ? '👦 <strong>' + esc(h.nombre) + '</strong>' + (h.docente ? ', con ' + esc(h.docente) : '') + '.' : '';
@@ -1488,7 +1585,9 @@ async function resumenNuevo() {
       + (p.corrige_al_recibo ? ' (corrige al ' + esc(p.corrige_al_recibo) + ')' : '')).join('<br>');
   }
   if (avisos.length) t += '<br>📣 ' + avisos.map(a => '<strong>' + esc(a.titulo) + '</strong>' + (a.texto ? ': ' + esc(a.texto) : '')).join('<br>📣 ');
+  if (!h && callar) return false;
   await botSay(t || 'Todavía no hay información para esta clave.');
+  return !!h;
 }
 
 async function usarClave(codigo) {
@@ -1500,12 +1599,21 @@ async function usarClave(codigo) {
     await botSay('<span data-metas="familia-aviso">Esta clave ya no sirve. Escriba la clave de la tira nueva que le dio su docente.</span>');
     return;
   }
+  if (nueva === 'robot') {
+    // Una clave nueva solo vive en la base nueva: el portal de antes no la
+    // conoce. Se pide otro intento en vez de decir que no hay notas.
+    if (/^[A-HJ-NP-Z2-9]{10}$/.test(codigo)) {
+      await botSay('No pude terminar la comprobación de seguridad. Toque ➤ otra vez para intentarlo de nuevo, por favor. 🙏');
+      return;
+    }
+  }
   if (nueva === 'vinculada') {
     const c0 = cfgLoad();
     c0.codigo = codigo;
     c0.nueva = true;
     if (!Array.isArray(c0.codigos)) c0.codigos = [];
-    if (!c0.codigos.some(x => x.codigo === codigo)) c0.codigos.push({ codigo, alias: '' });
+    const e0 = c0.codigos.find(x => x.codigo === codigo);
+    if (e0) e0.nueva = true; else c0.codigos.push({ codigo, alias: '', nueva: true });
     cfgSave(c0);
     await resumenNuevo();
     return;
@@ -1837,6 +1945,14 @@ $inp.addEventListener('keydown', e => { if (e.key === 'Enter') enviar(); });
   const codigo = claveGuardada();
   await botSay('¡Hola! 👋 Soy el <strong>asistente de M.E.T.A.S</strong> para madres y padres. ' +
     'Le cuento cómo va su hijo/a en la escuela: notas, mensajes del maestro y consejos para apoyar en casa.');
+  const entrada = codigo && cfgCodigos().find(x => x.codigo === codigo);
+  if (entrada && entrada.nueva && nubeFamilia()) {
+    // Ya vinculada en la base nueva: con la sesión del teléfono (renovada si
+    // venció). Si el vínculo se perdió, se vuelve a revisar la clave.
+    await botSay('Tengo la clave <strong>' + esc(claveBonita(codigo)) + '</strong>. Consultando…');
+    if (!(await resumenNuevo(true))) await usarClave(codigo);
+    return;
+  }
   if (codigo) {
     const alias = aliasDe(codigo);
     await botSay('Tengo la clave <strong>' + esc(claveBonita(codigo)) + '</strong>' +

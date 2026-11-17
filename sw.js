@@ -15,7 +15,7 @@
 //    las etiquetas ?v=NN de las páginas (normativa de sellado del CLAUDE.md).
 //    CACHE_DATOS no se toca nunca: subirlo volvería a borrarle al alumno lo
 //    que tenía guardado, que es justo lo que este arreglo vino a evitar.
-const CACHE_NAME = 'meta-app-v556';
+const CACHE_NAME = 'meta-app-v557';
 const CACHE_APP = CACHE_NAME;
 const CACHE_DATOS = 'meta-datos-v1';
 
@@ -564,6 +564,11 @@ self.addEventListener('fetch', event => {
      un video necesita internet de todas formas, y la pantalla lo dice. */
   const CASA_YT = /(^|\.)(youtube|youtube-nocookie|googlevideo|ytimg|ggpht|youtu)\.(com|be)$/;
   if (CASA_YT.test(url.hostname) || event.request.headers.has('range')) return;
+  /* Turnstile (la comprobación de seguridad del portal de las familias):
+     Cloudflare exige que su api.js se pida siempre a su dirección, sin
+     guardarlo ni servirlo de otro lado; una copia vieja deja de funcionar
+     sin avisar. Que lo atienda el navegador. */
+  if (url.hostname === 'challenges.cloudflare.com') return;
 
   const esGet = event.request.method === 'GET';
 
