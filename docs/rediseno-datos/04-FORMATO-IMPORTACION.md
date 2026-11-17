@@ -350,3 +350,41 @@ Lo que muestra la vista previa con este archivo, sin responder nada:
   ]
 }
 ```
+
+## 8. Si el archivo no traía familias: «Preparar claves de familia»
+
+Un aula traída sin la sección de familias deja a cada alumno sin fila en
+`metas.familias`, y sin esa fila no hay tira en el talonario. En **Mi aula ›
+Alumnos**, junto a «Pegar una lista», el botón **🔑 Preparar claves de
+familia** (`js/datos/claves-familia.js`) arma, con señal, la vista previa de
+las fichas que faltan en el aula que se ve. No guarda nada hasta «Guardar».
+No es `metas.familias_preparar_claves_nuevas` (esa pone la tira siguiente a
+fichas que ya existen) y no la llama.
+
+Lee los alumnos del aparato, las fichas del docente en la base (todas sus
+aulas) y sus claves de antes (`metas.claves_archivo`). Para cada alumno que
+sigue en el aula y no tiene ficha:
+
+| caso | qué propone |
+|---|---|
+| una sola clave libre con su mismo nombre (sin tildes ni mayúsculas), y nadie más sin ficha con ese nombre | conservarla, si el número de la clave cuadra con su número de lista; si no cuadra, **pregunta** |
+| la clave de su número de lista era de otro nombre que ya no está en la lista | **pregunta**: «En tus datos anteriores, la clave 15-K7QM era de … ¿Es la misma familia?» [Sí] [No, darle una nueva] |
+| una sola clave sin nombre con su número, y nadie más sin ficha con ese número (en ninguna de sus aulas) | conservarla |
+| varias claves posibles (dos con el 15, el mismo nombre repetido) | **pregunta** cuál, con un botón por clave y «Ninguna, darle una nueva» |
+| ninguna | la base pone una nueva: «Se le da una clave nueva. Entrega tira nueva» |
+| la clave con su nombre ya abre la familia de otro alumno | nueva, y el aviso dice de quién |
+| ya tiene ficha | «ya estaba»; no se toca |
+
+Libre quiere decir que no la usa ninguna ficha del docente (ni como clave ni
+como siguiente) ni ya se le propuso a otro alumno en esta misma vista previa.
+Una clave que un nombre del archivo le da a OTRO alumno suyo no se le ofrece
+a este por el número. Sin respuesta, esa fila no se anota.
+
+Al guardar: `crear('familias', { id, aula_id, alumno_id, clave? })` con el id
+y la operación que salen del alumno (como en 5: `familia` + alumno). La
+clave se manda solo cuando se conserva; la base la acepta si estaba en la
+copia de ESE docente (`metas._clave_era_mia`) y, si no se manda, sortea una
+de 10 símbolos. Tocar dos veces, u otro aparato con el mismo plan, cae en la
+misma fila. La lista de alumnos muestra la clave de cada uno, solo para leer.
+
+Pruebas: capa B, B14; capa C, C17.
