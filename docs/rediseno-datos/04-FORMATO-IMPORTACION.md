@@ -355,36 +355,24 @@ Lo que muestra la vista previa con este archivo, sin responder nada:
 
 Un aula traída sin la sección de familias deja a cada alumno sin fila en
 `metas.familias`, y sin esa fila no hay tira en el talonario. En **Mi aula ›
-Alumnos**, junto a «Pegar una lista», el botón **🔑 Preparar claves de
-familia** (`js/datos/claves-familia.js`) arma, con señal, la vista previa de
-las fichas que faltan en el aula que se ve. No guarda nada hasta «Guardar».
-No es `metas.familias_preparar_claves_nuevas` (esa pone la tira siguiente a
-fichas que ya existen) y no la llama.
+Alumnos**, debajo de «Pegar una lista», el botón **🔑 Preparar claves de
+familia** (`js/datos/claves-familia.js`) le crea la ficha, con una clave
+**nueva**, a cada alumno activo del aula que se ve que todavía no la tiene.
+Quien ya tiene ficha no se toca.
 
-Lee los alumnos del aparato, las fichas del docente en la base (todas sus
-aulas) y sus claves de antes (`metas.claves_archivo`). Para cada alumno que
-sigue en el aula y no tiene ficha:
+No se conservan claves viejas (decisión de Josué, al cerrar el año): no se
+lee `metas.claves_archivo`, no se empareja y no se pregunta. La vista previa
+es una línea, «Se crearán N claves nuevas · M ya tenían la suya» (o «Todos
+tus alumnos ya tienen su clave»), con Guardar y Cancelar. Con señal: lee las
+fichas del docente en la base, para que una ficha hecha en otro aparato
+cuente. Sin señal avisa y no arma nada.
 
-| caso | qué propone |
-|---|---|
-| una sola clave libre con su mismo nombre (sin tildes ni mayúsculas), y nadie más sin ficha con ese nombre | conservarla, si el número de la clave cuadra con su número de lista; si no cuadra, **pregunta** |
-| la clave de su número de lista era de otro nombre que ya no está en la lista | **pregunta**: «En tus datos anteriores, la clave 15-K7QM era de … ¿Es la misma familia?» [Sí] [No, darle una nueva] |
-| una sola clave sin nombre con su número, y nadie más sin ficha con ese número (en ninguna de sus aulas) | conservarla |
-| varias claves posibles (dos con el 15, el mismo nombre repetido) | **pregunta** cuál, con un botón por clave y «Ninguna, darle una nueva» |
-| ninguna | la base pone una nueva: «Se le da una clave nueva. Entrega tira nueva» |
-| la clave con su nombre ya abre la familia de otro alumno | nueva, y el aviso dice de quién |
-| ya tiene ficha | «ya estaba»; no se toca |
-
-Libre quiere decir que no la usa ninguna ficha del docente (ni como clave ni
-como siguiente) ni ya se le propuso a otro alumno en esta misma vista previa.
-Una clave que un nombre del archivo le da a OTRO alumno suyo no se le ofrece
-a este por el número. Sin respuesta, esa fila no se anota.
-
-Al guardar: `crear('familias', { id, aula_id, alumno_id, clave? })` con el id
-y la operación que salen del alumno (como en 5: `familia` + alumno). La
-clave se manda solo cuando se conserva; la base la acepta si estaba en la
-copia de ESE docente (`metas._clave_era_mia`) y, si no se manda, sortea una
-de 10 símbolos. Tocar dos veces, u otro aparato con el mismo plan, cae en la
-misma fila. La lista de alumnos muestra la clave de cada uno, solo para leer.
+Al guardar: `crear('familias', { id, aula_id, alumno_id })`, **sin clave**:
+la base sortea una de 10 símbolos (`metas.t_clave_familia`). El id y la
+operación salen del alumno (como en 5: `familia` + alumno): tocar dos veces,
+u otro aparato, cae en la misma fila. No es
+`metas.familias_preparar_claves_nuevas` (esa pone la tira siguiente a fichas
+que ya existen) y no la llama. La importación de un archivo sí conserva la
+clave que trae, si estaba en la copia del docente (3.4).
 
 Pruebas: capa B, B14; capa C, C17.
