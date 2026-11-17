@@ -975,6 +975,84 @@ await prueba('C19 portal de familias: la clave nueva entra escrita como venga, u
   }
 });
 
+// ── Compartir la clave de una familia (Copiar y WhatsApp) ────────────────
+// En la ficha abierta de un alumno CON clave: «📋 Copiar» deja el mensaje en
+// el portapapeles y avisa «Copiado»; el botón de WhatsApp abre wa.me con el
+// mensaje codificado. Sin clave, los dos botones no están. Nada va a la base.
+await prueba('C20 compartir la clave: el mensaje exacto se copia, WhatsApp abre wa.me codificado, y sin clave no hay botones', async () => {
+  const corr = Date.now().toString(36).toUpperCase().slice(-4);
+  const escuela = 'Escuela Ficticia C20 ' + corr;
+  const ctx = await contexto(TAMANOS[0]);
+  try {
+    await ctx.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: SITIO });
+    const p = await ctx.newPage();
+    await entrar(p);
+    await p.click(m('ir-alumnos'));
+    await p.click(m('ir-carga-rapida'));
+    const elegir = p.waitForEvent('filechooser');
+    await p.click(m('importar-elegir'));
+    await (await elegir).setFiles({ name: 'aula-c20.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify({
+      formato: ['metas-importacion', '1'].join('/'), aula: { escuela, grado: 2, seccion: '3', anio_lectivo: 2027 },
+      alumnos: [{ ref: 'a1', num_lista: 1, nombre_completo: `Ana María Ficticia ${corr}` },
+        { ref: 'a2', num_lista: 2, nombre_completo: `Beto Ficticio ${corr}` }] })) });
+    await p.waitForSelector(m('importar-vista-previa'), { timeout: 15000 });
+    await p.click(m('importar-guardar'));
+    await p.waitForSelector(m('importar-listo'));
+    const aula = await hasta(() => sql(`select id from metas.aulas where escuela = '${escuela}' and deleted_at is null`), 'el aula no llegó a la base');
+    await p.click(m('ir-alumnos'));
+    // Beto se retira antes de preparar: se queda sin clave.
+    await p.locator(`${m('alumno')} .ma-al-btn`).nth(1).click();
+    await p.click('[data-accion="estado"][data-valor="retirado"]');
+    await hasta(() => sql(`select estado from metas.alumnos where aula_id = '${aula}' and num_lista = 2`) === 'retirado', 'Beto no quedó retirado');
+    await p.click(m('claves-preparar'));
+    await p.waitForSelector(m('claves-guardar'));
+    await p.click(m('claves-guardar'));
+    const clave = await hasta(() => sql(`select clave from metas.familias where aula_id = '${aula}' and deleted_at is null`), 'no llegó la ficha de Ana');
+    await hasta(async () => /🔑 [A-Z2-9]{5}-[A-Z2-9]{5}/.test((await p.locator(m('alumno-clave')).first().innerText())), 'la lista no muestra la clave de Ana');
+    const esperado = `Clave de familia de Ana en M.E.T.A.S: ${clave.slice(0, 5)}-${clave.slice(5)}\n`
+      + 'Entre aquí y escríbala: https://metas.policastsapien.com/padres.html\nNo la comparta con nadie.';
+    await p.evaluate(() => {
+      window.__abiertos = [];
+      window.open = (u, d) => { window.__abiertos.push([u, d]); return null; };
+      window.__toasts = [];
+      const t = window.toast;
+      window.toast = (x) => { window.__toasts.push(x); return t(x); };
+    });
+    const pedidos = [];
+    p.on('request', (r) => { if (r.method() !== 'GET') pedidos.push(r.url()); });
+
+    // Sin clave (Beto): «Su tira» sí, Copiar y WhatsApp no.
+    await p.locator(`${m('alumno')} .ma-al-btn`).nth(1).click();
+    await p.waitForSelector(m('tira-alumno'));
+    afirma(await p.locator(`${m('clave-copiar')}, ${m('clave-whatsapp')}`).count() === 0, 'sin clave aparecen los botones de compartir');
+
+    // Con clave (Ana).
+    await p.locator(`${m('alumno')} .ma-al-btn`).nth(0).click();
+    await p.waitForSelector(m('clave-copiar'));
+    const wa = p.locator(m('clave-whatsapp'));
+    afirma(await wa.getAttribute('aria-label') === 'Enviar por WhatsApp', 'el botón de WhatsApp no tiene su nombre');
+    afirma((await wa.innerText()).trim() === '' && await wa.locator('svg path[fill="#25D366"]').count() === 1, 'el botón de WhatsApp no es solo el ícono verde');
+    afirma(await p.locator(m('clave-copiar')).getAttribute('class') === await p.locator(m('tira-alumno')).getAttribute('class'),
+      'Copiar no tiene el mismo estilo que «Su tira»');
+    await botonesDe44(p, 'compartir la clave');
+    await sinScrollLateral(p, 'compartir la clave');
+
+    await p.click(m('clave-copiar'));
+    await hasta(async () => (await p.evaluate(() => window.__toasts)).includes('Copiado'), 'no avisó «Copiado»');
+    const copiado = await p.evaluate(() => navigator.clipboard.readText());
+    afirma(copiado === esperado, 'lo copiado: ' + JSON.stringify(copiado));
+
+    await p.click(m('clave-whatsapp'));
+    const abiertos = await p.evaluate(() => window.__abiertos);
+    afirma(abiertos.length === 1 && abiertos[0][0] === 'https://wa.me/?text=' + encodeURIComponent(esperado) && abiertos[0][1] === '_blank',
+      'WhatsApp abrió: ' + JSON.stringify(abiertos));
+    afirma(!pedidos.length, 'compartir le habló a un servidor: ' + pedidos.join(', '));
+    await sinProhibidos(p, 'compartir la clave');
+  } finally {
+    await ctx.close();
+  }
+});
+
 await navegador.close();
 console.log(fallas ? `\n✘ ${fallas} de ${total} pruebas de la capa C FALLARON` : `\n✅ Las ${total} pruebas de la capa C en verde`);
 process.exit(fallas ? 1 : 0);

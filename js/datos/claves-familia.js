@@ -122,5 +122,21 @@
     return { guardados: n };
   }
 
-  M.clavesFamilia = { preparar: preparar, guardar: guardar, bonita: bonita };
+  // ── Compartir la clave con la familia ──────────────────────────────────
+  // El mensaje que el docente copia o manda por WhatsApp. Solo el PRIMER
+  // nombre (ni apellidos, ni notas, ni dinero): el mensaje puede quedar en
+  // el teléfono de cualquiera. Nada de esto se guarda ni pasa por la base.
+  var PORTAL = 'https://metas.policastsapien.com/padres.html';
+  function mensaje(nombreCompleto, claveBonita) {
+    var primero = String(nombreCompleto == null ? '' : nombreCompleto).trim().split(/\s+/)[0] || '';
+    return 'Clave de familia de ' + primero + ' en M.E.T.A.S: ' + claveBonita + '\n'
+      + 'Entre aquí y escríbala: ' + PORTAL + '\n'
+      + 'No la comparta con nadie.';
+  }
+  // Sin número: el docente elige el contacto en su WhatsApp.
+  function enlaceWhatsApp(texto) {
+    return 'https://wa.me/?text=' + encodeURIComponent(texto);
+  }
+
+  M.clavesFamilia = { preparar: preparar, guardar: guardar, bonita: bonita, mensaje: mensaje, enlaceWhatsApp: enlaceWhatsApp };
 })(window);
