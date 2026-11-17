@@ -155,6 +155,9 @@ textarea.ma-inp { min-height: 96px; resize: vertical; line-height: 1.45; }
 .ma-renglon { display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 4px 0; border-bottom: 1px solid var(--border); }
 .ma-lista-previa { list-style: decimal; padding-left: 28px; }
 .ma-lista-previa .ma-renglon { display: list-item; }
+/* La clave de familia en la lista de alumnos: entera en un renglón (no se
+   parte en el guion), y el nombre es el que cede espacio. */
+.ma-al-clave { flex: 0 0 auto; white-space: nowrap; }
 
 /* ── Economía ───────────────────────────────────────────────────────── */
 .ma-puertas { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }

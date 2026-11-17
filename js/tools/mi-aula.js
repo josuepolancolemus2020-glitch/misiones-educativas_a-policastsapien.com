@@ -90,6 +90,7 @@
   var excusas = {};              // por aula: { t, filas, buscando }
   var deMiAula = false;          // la pantalla de antes se abrió desde aquí
   var importe = null;            // importar un archivo: { plan, archivo, decisiones, frase, aviso }
+  var claves = null;             // preparar las claves de familia: { aula, plan, claves, familias, decisiones, frase, aviso }
 
   function leerPref() {
     try { return JSON.parse(localStorage.getItem(PREF)) || {}; } catch (e) { return {}; }
@@ -267,12 +268,23 @@
       + '<p class="ma-cifra" aria-label="' + enAula(aula).length + ' alumnos en el aula"><b>' + enAula(aula).length + '</b> en el aula</p></div>';
     h += '<div class="ma-card"><div class="ma-card-cab"><h2 class="ma-h">Mis alumnos</h2>'
       + '<button type="button" class="ma-btn" data-metas="ir-carga-rapida" data-accion="carga">📋 Pegar una lista</button></div>';
+    // Debajo de «Pegar una lista», en su renglón: la cabecera queda como siempre.
+    if (lista.length) {
+      h += '<div class="ma-acciones"><button type="button" class="ma-btn" data-metas="claves-preparar" data-accion="claves-preparar">'
+        + '🔑 Preparar claves de familia</button></div>';
+    }
     if (!lista.length) h += '<p class="ma-nota">Todavía no hay alumnos. Escríbelos uno por uno o pega la lista completa.</p>';
+    h += pintarClaves(aula);
+    // La clave de cada familia, solo para leer: la pone la base y no se
+    // cambia desde aquí (metas.t_clave_familia).
+    var fichaDe = {};
+    d.lista('familias', { aula_id: aula.id }).forEach(function (f) { fichaDe[f.alumno_id] = f; });
     h += '<ul class="ma-lista">' + lista.map(function (a) {
       var abierto = alumnoAbierto === a.id;
       var r = '<li class="ma-al' + (sigue(a) ? '' : ' ma-al-fuera') + '" data-metas="alumno">'
         + '<button type="button" class="ma-al-btn" data-accion="alumno" data-valor="' + esc(a.id) + '" aria-expanded="' + abierto + '">'
         + '<span class="ma-num">' + esc(num(a)) + '</span><span class="ma-nom">' + esc(a.nombre_completo) + '</span>'
+        + claveEnLista(a, fichaDe[a.id])
         + (sigue(a) ? '' : '<span class="ma-etq">' + esc(nombreEstado(a.estado)) + '</span>')
         + '<span class="ma-flecha" aria-hidden="true">›</span></button>';
       if (abierto) {
@@ -292,6 +304,118 @@
   }
   function nombreEstado(e) {
     return { activo: 'En el aula', ingreso: 'Ingresó', retirado: 'Retirado', trasladado: 'Trasladado', desertor: 'Desertor' }[e] || e;
+  }
+  // Con ficha y clave: la clave, como la lee la familia. Con ficha recién
+  // anotada sin señal, la clave todavía no existe (la sortea la base). Sin
+  // ficha, se dice; a quien ya no está en el aula no se le pide.
+  // El espacio de adelante separa la clave del nombre al leerlo en voz alta
+  // (y al copiarlo): sin él, quedaría «Ana López15-K7QM».
+  function claveEnLista(a, f) {
+    if (f && f.clave) {
+      var k = window.MetasDatos.clavesFamilia.bonita(f.clave);
+      return '<span class="ma-sub ma-al-clave" data-metas="alumno-clave"> <span aria-hidden="true">🔑</span> ' + esc(k) + '</span>';
+    }
+    if (f) return '<span class="ma-sub ma-al-clave" data-metas="alumno-clave"> <span aria-hidden="true">🔑</span> clave de familia: llega con señal</span>';
+    return sigue(a) ? '<span class="ma-sub ma-al-clave" data-metas="alumno-clave" data-estado="sin"> sin clave de familia</span>' : '';
+  }
+
+  // ── 🔑 Preparar las claves de familia (js/datos/claves-familia.js) ─────
+  // Mismo espíritu que importar: vista previa, preguntas de dos botones y
+  // nada se guarda hasta tocar «Guardar». Solo el aula que se ve.
+  function pintarClaves(aula) {
+    if (!claves || claves.aula !== aula.id) return '';
+    var h = '<div data-metas="claves">';
+    if (claves.frase) h += '<p class="ma-aviso" role="alert" data-metas="claves-aviso">✗ ' + esc(claves.frase) + '</p>';
+    if (claves.aviso) h += '<p class="ma-nota ma-nota-ok" role="status" data-metas="claves-listo">✓ ' + esc(claves.aviso) + '</p>';
+    if (claves.buscando) h += '<p class="ma-nota" role="status">Buscando tus claves de antes…</p>';
+    if (!claves.plan) return h + '</div>';
+    var p = claves.plan;
+    var r = p.resumen;
+    var fila = function (txt, n, marca) {
+      return '<li class="ma-renglon"><span class="ma-nom">' + txt + '</span><span class="ma-sub">' + n + ' ' + marca + '</span></li>';
+    };
+    h += '<div data-metas="claves-vista-previa"><p class="ma-nota"><b>Claves de familia de ' + esc(grupo(aula)) + '</b></p><ul class="ma-lista">'
+      + (r.conservan ? fila('Conservan la clave de siempre', r.conservan, '✓') : '')
+      + (r.nuevas ? fila('Reciben una clave nueva', r.nuevas, '✓') : '')
+      + fila('Ya tenían su ficha', r.ya, '(no se tocan)')
+      + (r.preguntas ? fila('Falta que respondas', r.preguntas, '⚠') : '')
+      + '</ul>';
+    var filas = p.filas.filter(function (f) { return f.estado === 'nuevo' || f.estado === 'pregunta'; });
+    if (filas.length) {
+      h += '<ul class="ma-lista">' + filas.map(function (f) {
+        var t = '';
+        if (f.estado === 'nuevo' && f.clave) t += '<span class="ma-sub">✓ Conserva su clave ' + esc(window.MetasDatos.clavesFamilia.bonita(f.clave)) + '</span>';
+        else if (f.estado === 'nuevo') t += '<span class="ma-sub">✓ Clave nueva</span>';
+        if (f.pregunta) {
+          t += '<p class="ma-nota">⚠ ' + esc(f.pregunta.texto) + '</p><div class="ma-botones">'
+            + f.pregunta.botones.map(function (b) {
+              var on = claves.decisiones[f.pregunta.clave] === b.valor;
+              return '<button type="button" class="ma-btn ma-btn-chico' + (on ? ' ma-on' : '') + '" data-accion="claves-decidir" data-metas="claves-decidir" data-clave="'
+                + esc(f.pregunta.clave) + '" data-valor="' + esc(b.valor) + '" aria-pressed="' + on + '">' + (on ? '✓ ' : '') + esc(b.etiqueta) + '</button>';
+            }).join('') + '</div>';
+        }
+        f.avisos.forEach(function (x) { t += '<p class="ma-nota">⚠ ' + esc(x) + '</p>'; });
+        return '<li class="ma-renglon ma-fila-col" data-metas="claves-fila" data-estado="' + esc(f.estado) + '" data-alumno="' + esc(f.alumno_id)
+          + '"><span class="ma-nom">#' + esc(f.num_lista == null ? '·' : f.num_lista) + ' ' + esc(f.texto) + '</span>' + t + '</li>';
+      }).join('') + '</ul>';
+      if (r.preguntas) h += '<p class="ma-nota">Las que tienen pregunta no se anotan hasta que respondas.</p>';
+    }
+    h += '</div><div class="ma-acciones"><button type="button" class="ma-btn" data-accion="claves-cancelar">Cancelar</button>'
+      + '<button type="button" class="ma-btn ma-btn-1" data-accion="claves-guardar" data-metas="claves-guardar"' + (r.nuevos ? '' : ' disabled') + '>'
+      + (r.nuevos ? 'Guardar ' + r.nuevos + (r.nuevos === 1 ? ' ficha nueva' : ' fichas nuevas') : 'No hay fichas que preparar') + '</button></div>';
+    return h + '</div>';
+  }
+  // Lee, con señal, las claves de antes y las fichas de TODAS las aulas del
+  // docente (una clave que ya abre otra familia no se repite). Sin señal no
+  // se arma nada: a ciegas, quien podía conservar su clave recibiría otra.
+  function clavesAbrir(aula) {
+    var n = window.MetasDatos && window.MetasDatos._nube;
+    if (!n || d.sinSenal()) {
+      claves = { aula: aula.id, frase: 'Para preparar las claves de familia se necesita señal. Vuelve a tocar el botón cuando tengas.' };
+      return pintar();
+    }
+    claves = { aula: aula.id, decisiones: {}, buscando: true };
+    pintar();
+    return Promise.all([clavesViejas(),
+      n.leer('familias?select=id,alumno_id,aula_id,clave,clave_siguiente&deleted_at=is.null').catch(function () { return null; })])
+      .then(function (r) {
+        if (!claves || claves.aula !== aula.id) return;
+        claves.buscando = false;
+        if (!r[0] || !r[1]) {
+          claves.frase = 'No se pudieron leer tus claves de antes. Vuelve a tocar el botón con señal.';
+          return pintar();
+        }
+        claves.claves = r[0];
+        claves.familias = r[1];
+        return clavesPreparar();
+      });
+  }
+  function clavesPreparar() {
+    if (!claves || !claves.claves) return Promise.resolve();
+    var aulaId = claves.aula;
+    return window.MetasDatos.clavesFamilia.preparar(d, aulaId, { claves: claves.claves, familias: claves.familias, decisiones: claves.decisiones })
+      .then(function (plan) { if (claves && claves.aula === aulaId) { claves.plan = plan; pintar(); } })
+      .catch(function (e) { claves = { aula: aulaId, frase: frase(e) }; pintar(); });
+  }
+  // «Guardar» se apaga en cuanto se toca; y aunque llegara dos veces, los
+  // ids salen del alumno: la misma ficha no se anota dos veces.
+  function clavesGuardar() {
+    if (!claves || !claves.plan || claves.guardando) return;
+    claves.guardando = true;
+    var b = document.querySelector('[data-metas="claves-guardar"]');
+    if (b) b.disabled = true;
+    var plan = claves.plan;
+    var aulaId = claves.aula;
+    window.MetasDatos.clavesFamilia.guardar(d, plan).then(function (r) {
+      var nuevas = plan.resumen.nuevas;
+      claves = { aula: aulaId, aviso: 'Listo: ' + r.guardados + (r.guardados === 1 ? ' ficha de familia' : ' fichas de familia') + '.'
+        + (nuevas ? ' A las de clave nueva, entrega su tira del talonario.' : '') };
+      pintar();
+    }).catch(function (e) {
+      claves.guardando = false;
+      claves.frase = frase(e);
+      pintar();
+    });
   }
 
   function pintarCarga() {
@@ -1045,7 +1169,7 @@
     switch (acc) {
       case 'aula':
         vista.aula = v; guardarPref();
-        colectaAbierta = null; controlAbierto = null; alumnoAbierto = null; hoja = null; formGrupo = false;
+        colectaAbierta = null; controlAbierto = null; alumnoAbierto = null; hoja = null; formGrupo = false; claves = null;
         pintarTarjeta();
         return pintar();
       case 'otro-grupo': formGrupo = !formGrupo; return pintar();
@@ -1053,7 +1177,7 @@
         var s = SECCIONES.filter(function (x) { return x.k === v; })[0];
         if (s && s.vieja) return abrirVieja(s.vieja);
         vista.seccion = v; guardarPref();
-        colectaAbierta = null; controlAbierto = null; alumnoAbierto = null; subAlumnos = ''; hoja = null; otroMonto = false;
+        colectaAbierta = null; controlAbierto = null; alumnoAbierto = null; subAlumnos = ''; hoja = null; otroMonto = false; claves = null;
         pintarTarjeta();
         pintar();
         enfocarPantalla();
@@ -1072,6 +1196,13 @@
         return importarPreparar();
       case 'importar-cancelar': importe = null; return pintar();
       case 'importar-guardar': return importarGuardar();
+      case 'claves-preparar': alumnoAbierto = null; return clavesAbrir(aula);
+      case 'claves-decidir':
+        if (!claves || !claves.decisiones) return;
+        claves.decisiones[b.getAttribute('data-clave')] = v || undefined;
+        return clavesPreparar();
+      case 'claves-cancelar': claves = null; return pintar();
+      case 'claves-guardar': return clavesGuardar();
       case 'alumnos': subAlumnos = ''; return pintar();
       case 'nueva-colecta': formColecta = !formColecta; pintar(); if (formColecta) enfocar('[data-form="colecta"] input'); return;
       case 'colecta': colectaAbierta = v; otroMonto = false; formGasto = false; pintar(); return enfocarPantalla();

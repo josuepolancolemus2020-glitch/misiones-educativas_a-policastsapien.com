@@ -34,7 +34,7 @@ export const DB = process.env.METAS_DB;
 export const SCRIPTS = [
   'js/vendor/supabase.min.js', 'js/datos/ids.js', 'js/datos/montos.js', 'js/datos/nube.js',
   'js/datos/almacen.js', 'js/datos/cola.js', 'js/datos/tiempo-real.js', 'js/datos/senal.js',
-  'js/datos/calculos.js', 'js/datos/datos.js', 'js/datos/importar.js',
+  'js/datos/calculos.js', 'js/datos/datos.js', 'js/datos/importar.js', 'js/datos/claves-familia.js',
 ];
 
 export function faltantes() {

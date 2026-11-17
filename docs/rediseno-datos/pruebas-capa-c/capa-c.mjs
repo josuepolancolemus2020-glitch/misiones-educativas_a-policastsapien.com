@@ -651,6 +651,113 @@ await prueba('C16 importar un archivo: vista previa con ✓ ⚠ ✗, preguntas d
   await ctx.close();
 });
 
+// ── Preparar las claves de familia ────────────────────────────────────────
+// El caso de Josué, con datos ficticios: un aula traída de un archivo SIN
+// familias. Un solo botón en Alumnos arma la vista previa (conserva, nueva,
+// pregunta), guarda una vez y la clave aparece en la lista, solo para leer.
+function sqlJson(q) {
+  return JSON.parse(sql(`select coalesce(json_agg(x), '[]') from (${q}) x`) || '[]');
+}
+await prueba('C17 claves de familia: un botón, vista previa con su pregunta, guardar una vez, la clave en la lista y tocar otra vez no duplica', async () => {
+  const corr = Date.now().toString(36).toUpperCase().slice(-4);
+  const nom = (x) => `${x} Ficticia C17 ${corr}`;
+  // Diez números de lista sin claves libres ni alumnos sin ficha de otra
+  // corrida: la capa se puede volver a correr sobre la misma base.
+  let b = 0;
+  for (let x = 10; x <= 90 && !b; x += 10) {
+    const sucio = sql(`select (select count(*) from metas.claves_archivo k
+        where k.docente_codigo = 'PROF-AAAA000001' and k.clave ~ '^[0-9]{2}[A-Z0-9]{4}$'
+          and left(k.clave, 2)::int between ${x} and ${x + 9}
+          and not exists (select 1 from metas.familias f where f.deleted_at is null and (f.clave = k.clave or f.clave_siguiente = k.clave)))
+      + (select count(*) from metas.alumnos a where a.owner = '00000000-0000-0000-0000-00000000000a' and a.deleted_at is null
+          and a.num_lista between ${x} and ${x + 9}
+          and not exists (select 1 from metas.familias f where f.alumno_id = a.id and f.deleted_at is null))`);
+    if (sucio === '0') b = x;
+  }
+  afirma(b, 'no queda un bloque de números libre en esta base');
+  const K = { ana: (b + 1) + corr, sin: (b + 2) + corr.slice(1) + 'A', beto: (b + 3) + corr.slice(1) + 'B' };
+  sql(`insert into metas.claves_archivo (docente_codigo, clave, nombre_alumno, origen) values
+       ('PROF-AAAA000001', '${K.ana}', '${nom('Ana')}', 'METAS_ADMIN_V1'),
+       ('PROF-AAAA000001', '${K.sin}', null, 'METAS_CODIGOS_V1'),
+       ('PROF-AAAA000001', '${K.beto}', '${nom('Beto')}', 'METAS_ADMIN_V1') on conflict do nothing`);
+  const hitoAntes = sql(`select at from metas.hitos where nombre = 'claves_viejas_vencen'`);
+  sql(`delete from metas.hitos where nombre = 'claves_viejas_vencen'`);
+  const ctx = await contexto(TAMANOS[0]);
+  try {
+    const escuela = 'Escuela Ficticia C17 ' + corr;
+    const archivo = { formato: ['metas-importacion', '1'].join('/'), aula: { escuela, grado: 3, seccion: '1', anio_lectivo: 2027 },
+      alumnos: [['a1', 1, 'Ana'], ['a2', 2, 'Carla'], ['a3', 3, 'Bruno'], ['a4', 4, 'Dora']]
+        .map(([ref, n, x]) => ({ ref, num_lista: b + n, nombre_completo: nom(x) })) };
+    const p = await ctx.newPage();
+    await entrar(p);
+    await p.click(m('ir-alumnos'));
+    await p.click(m('ir-carga-rapida'));
+    const elegir = p.waitForEvent('filechooser');
+    await p.click(m('importar-elegir'));
+    await (await elegir).setFiles({ name: 'aula-sin-familias.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(archivo)) });
+    await p.waitForSelector(m('importar-vista-previa'), { timeout: 15000 });
+    await p.click(m('importar-guardar'));
+    await p.waitForSelector(m('importar-listo'));
+    const aula = await hasta(() => sql(`select id from metas.aulas where escuela = '${escuela}' and deleted_at is null`), 'el aula no llegó a la base');
+    await hasta(() => sql(`select count(*) from metas.alumnos where aula_id = '${aula}' and deleted_at is null`) === '4', 'no llegaron los 4 alumnos');
+    const fichas = () => sql(`select count(*) from metas.familias where aula_id = '${aula}' and deleted_at is null`);
+    afirma(fichas() === '0', 'el archivo sin familias trajo fichas');
+    await p.click(m('ir-alumnos'));
+    await p.waitForSelector(m('claves-preparar'));
+    afirma(await p.locator(`${m('alumno-clave')}[data-estado="sin"]`).count() === 4, 'la lista no dice «sin clave de familia» en los 4');
+
+    // La vista previa: Ana conserva, Carla (sin nombre, su número) conserva,
+    // Bruno tiene pregunta (la clave era de Beto), Dora recibe una nueva.
+    await p.click(m('claves-preparar'));
+    await p.waitForSelector(m('claves-vista-previa'), { timeout: 15000 }).catch(async () => {
+      throw new Error('sin vista previa: ' + (await p.locator(m('claves')).innerText().catch(() => '')).slice(0, 300));
+    });
+    const vista = await p.locator(m('claves-vista-previa')).innerText();
+    afirma(vista.includes('Conserva su clave ' + (b + 1) + '-' + corr) && vista.includes('Conserva su clave ' + (b + 2) + '-'), 'no conserva las seguras: ' + vista.slice(0, 400));
+    afirma(vista.includes('Entrega tira nueva'), 'la nueva no dice «Entrega tira nueva»');
+    afirma(vista.includes('era de ' + nom('Beto')) && vista.includes('¿Es la misma familia?'), 'Bruno sin pregunta: ' + vista.slice(0, 400));
+    afirma(await p.locator(m('claves-decidir')).count() === 2, 'la pregunta no trae dos botones');
+    afirma(fichas() === '0', 'la vista previa ya guardó algo');
+    await sinProhibidos(p, 'claves, vista previa');
+    await sinScrollLateral(p, 'claves, vista previa');
+    await botonesDe44(p, 'claves, vista previa');
+    afirma((await p.locator(m('claves-guardar')).innerText()).includes('Guardar 3 fichas nuevas'), 'sin responder, Bruno se anotaría');
+    await p.click(`${m('claves-decidir')}[data-valor="nueva"]`);
+    await p.waitForSelector(`${m('claves-decidir')}[data-valor="nueva"][aria-pressed="true"]`);
+    const guardar = p.locator(m('claves-guardar'));
+    afirma((await guardar.innerText()).includes('Guardar 4 fichas nuevas'), await guardar.innerText());
+    await guardar.click();
+    await guardar.click({ timeout: 1500 }).catch(() => {});      // el segundo toque no anota de nuevo
+    await p.waitForSelector(m('claves-listo'));
+    await hasta(() => fichas() === '4', 'no llegaron las 4 fichas', 30000);
+    const enBase = sqlJson(`select a.num_lista as n, f.clave, f.clave_origen from metas.familias f join metas.alumnos a on a.id = f.alumno_id
+                             where f.aula_id = '${aula}' and f.deleted_at is null order by 1`);
+    afirma(enBase[0].clave === K.ana && enBase[1].clave === K.sin && enBase[0].clave_origen === 'conservada'
+      && enBase[2].clave_origen === 'nueva' && enBase[2].clave !== K.beto && enBase[3].clave_origen === 'nueva', JSON.stringify(enBase));
+
+    // La clave en la lista, solo para leer (sin campo ni botón para cambiarla).
+    await hasta(async () => {
+      const t = await p.locator(m('alumno-clave')).allInnerTexts();
+      return t.length === 4 && t.every((x) => /🔑 [0-9A-Z]+-[0-9A-Z]+/.test(x));
+    }, 'la lista no muestra las 4 claves');
+    const textos = await p.locator(m('alumno-clave')).allInnerTexts();
+    afirma(textos[0].includes((b + 1) + '-' + corr) && textos[2].includes(enBase[2].clave.slice(0, 5) + '-' + enBase[2].clave.slice(5)), textos.join(' | '));
+    afirma(await p.locator(`${m('alumno-clave')} input, ${m('alumno-clave')} button`).count() === 0, 'la clave se puede editar en la lista');
+
+    // Tocar el botón otra vez: nada nuevo.
+    await p.click(m('claves-preparar'));
+    await p.waitForSelector(m('claves-vista-previa'), { timeout: 15000 });
+    afirma(await p.locator(m('claves-guardar')).isDisabled(), 'la segunda vez se puede guardar');
+    afirma((await p.locator(m('claves-guardar')).innerText()).includes('No hay fichas que preparar'), 'la segunda vez no dice que no hay nada');
+    await p.waitForTimeout(1500);
+    afirma(fichas() === '4', 'tocar otra vez duplicó: ' + fichas());
+  } finally {
+    await ctx.close();
+    if (hitoAntes) sql(`insert into metas.hitos (nombre, at) values ('claves_viejas_vencen', '${hitoAntes}')
+                        on conflict (nombre) do update set at = excluded.at`);
+  }
+});
+
 await navegador.close();
 console.log(fallas ? `\n✘ ${fallas} de ${total} pruebas de la capa C FALLARON` : `\n✅ Las ${total} pruebas de la capa C en verde`);
 process.exit(fallas ? 1 : 0);

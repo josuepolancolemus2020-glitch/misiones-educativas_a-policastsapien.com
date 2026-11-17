@@ -455,4 +455,152 @@ await escenario('B13 importar: vista previa, guardar, reimportar sin duplicar (a
   }
 });
 
+// ── Preparar las claves de familia (js/datos/claves-familia.js) ───────────
+// Un aula traída sin familias: el botón le prepara la ficha a cada alumno que
+// no la tiene. Conserva la clave de siempre solo cuando el empareje es seguro
+// (mismo nombre, o número sin nombre y sin nadie más con ese número); si no,
+// pregunta; sin empareje, la base pone una nueva. Tocar dos veces, o desde
+// otro aparato sin señal, no duplica. Todo con datos ficticios.
+// Un bloque de diez números de lista (10-19 … 90-99) donde la docente A no
+// tiene claves viejas libres ni alumnos sin ficha que confundan el empareje.
+function bloqueLibre() {
+  for (let b = 10; b <= 90; b += 10) {
+    const sucio = sql(`select (select count(*) from metas.claves_archivo k
+        where k.docente_codigo = 'PROF-AAAA000001' and k.clave ~ '^[0-9]{2}[A-Z0-9]{4}$'
+          and left(k.clave, 2)::int between ${b} and ${b + 9}
+          and not exists (select 1 from metas.familias f where f.deleted_at is null and (f.clave = k.clave or f.clave_siguiente = k.clave)))
+      + (select count(*) from metas.alumnos a where a.owner = '00000000-0000-0000-0000-00000000000a' and a.deleted_at is null
+          and a.num_lista between ${b} and ${b + 9}
+          and not exists (select 1 from metas.familias f where f.alumno_id = a.id and f.deleted_at is null))`);
+    if (sucio === '0') return b;
+  }
+  throw new Error('no queda un bloque de números libre en esta base');
+}
+await escenario('B14 claves de familia: conserva lo seguro, pregunta lo dudoso, la base pone las nuevas y no duplica', async () => {
+  const corrida = (Number(process.hrtime.bigint() % 1679616n)).toString(36).toUpperCase().padStart(4, '0');
+  // Cuatro símbolos distintos por clave y por corrida (la clave es única en la base).
+  const cola4 = (i) => (corrida.slice(1) + 'ABCDEFGHJK'[i]).slice(-4);
+  // Diez números de lista sin claves libres ni alumnos sin ficha de otra
+  // corrida (la capa se puede volver a correr sobre la misma base).
+  const b = bloqueLibre();
+  const K = {
+    ana: (b + 1) + cola4(0),     // tenía el nombre de Ana y su número: se conserva
+    beto: (b + 2) + cola4(1),    // era de «Beto», que ya no está; ahora ese número es Bruno: se pregunta
+    carla: (b + 3) + cola4(2),   // sin nombre, solo su número: se conserva
+    dina1: (b + 4) + cola4(3),   // dos sin nombre con su número: se pregunta cuál
+    dina2: (b + 4) + cola4(4),
+    elena: b + cola4(5),         // el nombre cuadra pero el número no: se pregunta
+    gaby: (b + 7) + cola4(6),    // su clave ya abre la familia de otro alumno: nueva + aviso
+  };
+  const nombre = (n) => `${n} Ficticia ${corrida}`;
+  const filas = [
+    [K.ana, nombre('Ana')], [K.beto, nombre('Beto')], [K.carla, null], [K.dina1, null], [K.dina2, null],
+    [K.elena, nombre('Elena')], [K.gaby, nombre('Gaby')],
+  ];
+  sql(`insert into metas.claves_archivo (docente_codigo, clave, nombre_alumno, origen) values
+       ${filas.map(([c, n]) => `('PROF-AAAA000001', '${c}', ${n ? `'${n}'` : 'null'}, 'METAS_ADMIN_V1')`).join(',')}
+       on conflict do nothing`);
+  const hitoAntes = sql(`select at from metas.hitos where nombre = 'claves_viejas_vencen'`);
+  sql(`delete from metas.hitos where nombre = 'claves_viejas_vencen'`);
+  try {
+    const tel = await entrar('claves-telefono');
+    const C = tel.MetasDatos.clavesFamilia;
+    afirma(C.bonita('15k7qm') === '15-K7QM' && C.bonita('7ABCD') === '7-ABCD' && C.bonita('K7QMX4PA2B') === 'K7QMX-4PA2B',
+      'bonita: ' + [C.bonita('15k7qm'), C.bonita('7ABCD'), C.bonita('K7QMX4PA2B')]);
+    // Sin las claves de antes (sin señal) no se arma nada.
+    let sinClaves = null;
+    try { await C.preparar(tel.d, 'x', {}); } catch (e) { sinClaves = e; }
+    afirma(sinClaves && sinClaves.paraElDocente, 'sin claves se armó una vista previa');
+
+    const seccion = (Number(process.hrtime.bigint() % 46656n)).toString(36);
+    const aula = tel.d.crear('aulas', { escuela: 'Escuela Ficticia Claves ' + corrida, grado: 4, seccion,
+      anio_lectivo: 2027, docente_nombre: 'Docente Ficticia A' }).id;
+    const otra = tel.d.crear('aulas', { escuela: 'Escuela Ficticia Claves Otra ' + corrida, grado: 4, seccion,
+      anio_lectivo: 2027, docente_nombre: 'Docente Ficticia A' }).id;
+    const al = {};
+    [[1, 'Ana'], [2, 'Bruno'], [3, 'Carla'], [4, 'Dina'], [5, 'Elena'], [6, 'Fabio'], [7, 'Gaby'], [8, 'Hugo']]
+      .map(([n, x]) => [b + n, x]).forEach(([n, x]) => { al[x] = tel.d.crear('alumnos', { aula_id: aula, nombre_completo: nombre(x), num_lista: n }).id; });
+    // En la otra aula, la familia de Otto ya abre con la clave de Gaby; Hugo ya tiene ficha.
+    const otto = tel.d.crear('alumnos', { aula_id: otra, nombre_completo: nombre('Otto'), num_lista: b + 9 }).id;
+    tel.d.crear('familias', { aula_id: otra, alumno_id: otto, clave: K.gaby });
+    tel.d.crear('familias', { aula_id: aula, alumno_id: al.Hugo });
+    await tel.d.esperarCola();
+    afirma(!tel.d.noAnotado().length, 'quedó algo sin anotar al armar: ' + JSON.stringify(tel.d.noAnotado()));
+
+    const leerTodo = async (ap) => ({
+      claves: new Map((await ap.MetasDatos._nube.leer('claves_archivo?select=clave,nombre_alumno')).map((x) => [x.clave, x.nombre_alumno])),
+      familias: await ap.MetasDatos._nube.leer('familias?select=id,alumno_id,aula_id,clave,clave_siguiente&deleted_at=is.null'),
+    });
+    let leido = await leerTodo(tel);
+    let plan = await C.preparar(tel.d, aula, leido);
+    const de = (p) => Object.fromEntries(p.filas.map((f) => [f.alumno_id, f]));
+    let f = de(plan);
+    afirma(f[al.Ana].estado === 'nuevo' && f[al.Ana].clave === K.ana, 'Ana no conserva: ' + JSON.stringify(f[al.Ana]));
+    afirma(f[al.Bruno].estado === 'pregunta' && f[al.Bruno].pregunta.texto.includes(nombre('Beto'))
+      && f[al.Bruno].pregunta.texto.includes((b + 2) + '-' + K.beto.slice(2)) && f[al.Bruno].pregunta.botones.length === 2,
+      'Bruno no pregunta por la clave de Beto: ' + JSON.stringify(f[al.Bruno]));
+    afirma(f[al.Carla].estado === 'nuevo' && f[al.Carla].clave === K.carla, 'Carla (sin nombre, su número) no conserva: ' + JSON.stringify(f[al.Carla]));
+    afirma(f[al.Dina].estado === 'pregunta' && f[al.Dina].pregunta.botones.length === 3, 'Dina (dos con el 74) no pregunta cuál: ' + JSON.stringify(f[al.Dina]));
+    afirma(f[al.Elena].estado === 'pregunta', 'Elena (el número no cuadra) no pregunta: ' + JSON.stringify(f[al.Elena]));
+    afirma(f[al.Fabio].estado === 'nuevo' && !f[al.Fabio].clave && f[al.Fabio].avisos.includes('Se le da una clave nueva. Entrega tira nueva'),
+      'Fabio no recibe una nueva: ' + JSON.stringify(f[al.Fabio]));
+    afirma(f[al.Gaby].estado === 'nuevo' && !f[al.Gaby].clave && f[al.Gaby].avisos.some((x) => x.includes(nombre('Otto'))),
+      'Gaby (su clave ya es de Otto) no recibe una nueva con aviso: ' + JSON.stringify(f[al.Gaby]));
+    afirma(f[al.Hugo].estado === 'ya_estaba', 'Hugo ya tenía ficha: ' + f[al.Hugo].estado);
+    afirma(plan.resumen.nuevos === 4 && plan.resumen.preguntas === 3 && plan.resumen.ya === 1, 'resumen: ' + JSON.stringify(plan.resumen));
+
+    // Responde Dina (la segunda) y Elena (sí); Bruno queda sin responder: no se anota.
+    const decisiones = { ['clave:' + al.Dina]: K.dina2, ['clave:' + al.Elena]: K.elena };
+    plan = await C.preparar(tel.d, aula, Object.assign({ decisiones }, leido));
+    f = de(plan);
+    afirma(f[al.Dina].clave === K.dina2 && f[al.Elena].clave === K.elena && f[al.Bruno].estado === 'pregunta', 'las respuestas no se tomaron');
+    const r = await C.guardar(tel.d, plan);
+    afirma(r.guardados === 6, 'guardó ' + r.guardados + ' en vez de 6');
+    // Tocar Guardar otra vez con el mismo plan: nada nuevo.
+    afirma((await C.guardar(tel.d, plan)).guardados === 0, 'el segundo toque anotó otra vez');
+    await tel.d.esperarCola();
+    afirma(!tel.d.noAnotado().length, 'quedó algo sin anotar: ' + JSON.stringify(tel.d.noAnotado()));
+    const enBase = () => Object.fromEntries(sqlJson(`select a.nombre_completo as n, f.clave, f.clave_origen, f.clave_siguiente
+        from metas.familias f join metas.alumnos a on a.id = f.alumno_id where f.aula_id = '${aula}' and f.deleted_at is null`)
+      .map((x) => [x.n.split(' ')[0], x]));
+    let fb = enBase();
+    afirma(Object.keys(fb).sort().join() === 'Ana,Carla,Dina,Elena,Fabio,Gaby,Hugo', 'fichas en la base: ' + Object.keys(fb));
+    afirma(fb.Ana.clave === K.ana && fb.Carla.clave === K.carla && fb.Dina.clave === K.dina2 && fb.Elena.clave === K.elena
+      && ['Ana', 'Carla', 'Dina', 'Elena'].every((x) => fb[x].clave_origen === 'conservada'), 'conservadas: ' + JSON.stringify(fb));
+    afirma(['Fabio', 'Gaby', 'Hugo'].every((x) => fb[x].clave_origen === 'nueva' && /^[A-HJ-NP-Z2-9]{10}$/.test(fb[x].clave)),
+      'las nuevas no las puso la base: ' + JSON.stringify(fb));
+    // No es familias_preparar_claves_nuevas: ninguna tira siguiente.
+    afirma(Object.values(fb).every((x) => x.clave_siguiente === null), 'se preparó una clave siguiente');
+    // El talonario lee la clave de la fila del aparato (mi-aula-papel.js).
+    afirma(tel.d.lista('familias', { aula_id: aula }).filter((x) => x.clave).length === 7, 'el aparato no ve las 7 claves');
+
+    // Tocar el botón otra vez: lo hecho «ya estaba»; ahora responde Bruno (nueva).
+    leido = await leerTodo(tel);
+    plan = await C.preparar(tel.d, aula, Object.assign({ decisiones }, leido));
+    afirma(plan.resumen.nuevos === 0 && plan.resumen.ya === 7 && plan.resumen.preguntas === 1, 'otra vez: ' + JSON.stringify(plan.resumen));
+    decisiones['clave:' + al.Bruno] = 'nueva';
+    plan = await C.preparar(tel.d, aula, Object.assign({ decisiones }, leido));
+    const planBruno = plan;
+    afirma((await C.guardar(tel.d, plan)).guardados === 1, 'Bruno no se anotó');
+    await tel.d.esperarCola();
+    fb = enBase();
+    afirma(Object.keys(fb).length === 8 && fb.Bruno.clave_origen === 'nueva' && fb.Bruno.clave !== K.beto, 'Bruno: ' + JSON.stringify(fb.Bruno));
+
+    // Otro aparato sin señal anota el mismo plan: al volver, la base lo
+    // reconoce (mismos ids y operaciones) y no hay una ficha de más.
+    const pc = await entrar('claves-pc');
+    pc.sinSenal();
+    await pc.MetasDatos.clavesFamilia.guardar(pc.d, JSON.parse(JSON.stringify(planBruno)));
+    pc.conSenal();
+    await pc.d.esperarCola();
+    afirma(!pc.d.noAnotado().length && !pc.d.preguntas().length,
+      'el otro aparato quedó con algo: ' + JSON.stringify([pc.d.noAnotado(), pc.d.preguntas()]));
+    afirma(sql(`select count(*) from metas.familias where aula_id = '${aula}' and deleted_at is null`) === '8', 'el otro aparato duplicó');
+    afirma(sql(`select count(*) from metas.familias where aula_id = '${otra}' and deleted_at is null`) === '1', 'se tocó la otra aula');
+  } finally {
+    if (hitoAntes) sql(`insert into metas.hitos (nombre, at) values ('claves_viejas_vencen', '${hitoAntes}')
+                        on conflict (nombre) do update set at = excluded.at`);
+  }
+});
+
 process.exit(resultado());

@@ -58,6 +58,8 @@ quitar la sesión vieja.
   al blob. La observación del grado va a `metas.aulas`. Capa C, C12 a C15.
 - Importar un archivo (4.4): `js/datos/importar.js`, formato exacto en
   `04-FORMATO-IMPORTACION.md`. Capa B, B13; capa C, C16.
+- Preparar las claves de familia de un aula traída sin familias (04, 8):
+  `js/datos/claves-familia.js`, sin SQL nuevo. Capa B, B14; capa C, C17.
 - `SUPABASE-V2-DESCONGELAR.sql`, probado de ida y vuelta (capa A, 20 y 21).
 - Android: `server.url` y `versionCode 4`, sin firmar (`11-APK-ANDROID.md`).
 - Sigue pendiente: la contraseña en `METAS_DOCENTE_V1` para lo de la cuenta

@@ -16,6 +16,8 @@ diseño y la pantalla no depende de la prueba para nada más.
 | `ir-<sección>`, `pantalla-<sección>` | Mi aula | las que viven en filas: `alumnos`, `economia`, `asistencia`, `controles`, `notas`, `comunicados`. `ir-equipos`, `ir-acumulativos`, `ir-estadisticas` e `ir-lectura` abren la pantalla de antes hasta su corte (08, 8.2) |
 | `alumno`; `ir-carga-rapida` → `pantalla-carga-rapida` | Alumnos | una fila por alumno; «Pegar una lista» |
 | `carga-pegar`, `carga-vista-previa`, `carga-fila`, `carga-guardar` | carga rápida | `04`. Anotada la lista, `carga-guardar` queda apagado |
+| `alumno-clave` (`data-estado="sin"` si aún no tiene ficha) | Alumnos, en cada fila | la clave de familia, solo para leer (`15-K7QM`, `K7QMX-4PA2B`); «sin clave de familia» si no tiene ficha |
+| `claves-preparar` → `claves`, `claves-vista-previa`, `claves-fila` (`data-estado="nuevo|pregunta"`, `data-alumno`), `claves-decidir` (`data-valor` = la clave o `nueva`, `aria-pressed`), `claves-guardar`, `claves-listo`, `claves-aviso` | Alumnos | «Preparar claves de familia»: vista previa de las fichas que faltan en el aula (conserva / nueva / pregunta); nada se anota hasta `claves-guardar`, que se apaga al tocarlo. Sin señal, `claves-aviso` y no arma nada |
 | `ir-gastos-bolsillo`, `ir-inventario` | Economía | las dos puertas; abren la pantalla de antes |
 | `nueva-colecta`, `colecta` (`data-estado="abierta|cerrada"`) | Economía | «Nueva colecta o acuerdo» y «Mis colectas» |
 | `pantalla-colecta`, `faltan`, `faltan-n` | una colecta | la colecta abierta y «Faltan por dar: N · ver quiénes» |

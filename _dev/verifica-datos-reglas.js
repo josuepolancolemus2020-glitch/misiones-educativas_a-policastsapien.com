@@ -30,7 +30,7 @@ const fs = require('fs');
 const path = require('path');
 
 const RAIZ = path.resolve(__dirname, '..');
-const ORDEN = ['ids', 'montos', 'nube', 'almacen', 'cola', 'tiempo-real', 'senal', 'calculos', 'datos', 'importar'];
+const ORDEN = ['ids', 'montos', 'nube', 'almacen', 'cola', 'tiempo-real', 'senal', 'calculos', 'datos', 'importar', 'claves-familia'];
 let fallos = 0;
 function comprueba(que, ok, detalle) {
   console.log((ok ? '  ✓ ' : '  ✗ ') + que + (ok || detalle === undefined ? '' : '  → ' + JSON.stringify(detalle)));
@@ -84,7 +84,7 @@ function partir(fuente) {
 console.log('▶ js/datos/: archivos y orden de carga');
 const archivos = ORDEN.map((n) => path.join(RAIZ, 'js/datos', n + '.js'));
 const faltan = archivos.filter((f) => !fs.existsSync(f)).map((f) => path.relative(RAIZ, f));
-comprueba('están los nueve archivos del contrato', faltan.length === 0, faltan);
+comprueba('están todos los archivos del contrato', faltan.length === 0, faltan);
 const sobran = fs.readdirSync(path.join(RAIZ, 'js/datos')).filter((f) => !ORDEN.includes(f.replace(/\.js$/, '')));
 comprueba('no hay archivos fuera del contrato en js/datos/', sobran.length === 0, sobran);
 
