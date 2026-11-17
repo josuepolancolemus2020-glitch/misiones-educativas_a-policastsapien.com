@@ -48,8 +48,8 @@ La dirección de Supabase va escrita en `nube.js`. Solo en pruebas, y solo si
 | `MetasDatos.montos.leer(texto)` | `{ ok, valor:'150.00' }` o `{ pregunta }` («1,500» y «1.500» se preguntan) |
 | `MetasDatos.montos.sumar([...textos])` | suma en centavos enteros, devuelve texto |
 | `MetasDatos.ids.nuevo()` | uuid v4 |
-| `await MetasDatos.clavesFamilia.preparar(d, aulaId, { claves, familias, decisiones? })` | vista previa de las fichas de familia que faltan en esa aula: `{ filas, preguntas, resumen }`. `claves`: las de `metas.claves_archivo` (Map clave → nombre, o filas); `familias`: las del docente leídas de la base. Sin `claves` (sin señal) no arma nada. No guarda |
-| `await MetasDatos.clavesFamilia.guardar(d, plan)` | anota las filas «nuevo» con `d.crear('familias', { id, aula_id, alumno_id, clave? }, { op_id })`; la clave solo cuando se conserva. Ids y `op_id` salen del alumno (como `importar`) |
+| `await MetasDatos.clavesFamilia.preparar(d, aulaId, { familias })` | vista previa de las fichas de familia que faltan en esa aula: `{ filas, resumen: { nuevos, ya } }`. `familias`: las del docente leídas de la base; sin ellas (sin señal) no arma nada. No lee claves viejas ni pregunta. No guarda |
+| `await MetasDatos.clavesFamilia.guardar(d, plan)` | anota las filas «nuevo» con `d.crear('familias', { id, aula_id, alumno_id }, { op_id })`, **sin clave**: la base pone una nueva de 10 símbolos. Ids y `op_id` salen del alumno (como `importar`) |
 | `MetasDatos.clavesFamilia.bonita(clave)` | `15K7QM` → `15-K7QM`; `K7QMX4PA2B` → `K7QMX-4PA2B` |
 
 Los errores que la pantalla puede mostrar tal cual llevan `paraElDocente:
