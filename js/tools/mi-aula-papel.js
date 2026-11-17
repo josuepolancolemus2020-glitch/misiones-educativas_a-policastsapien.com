@@ -2,7 +2,8 @@
    M.E.T.A.S — js/tools/mi-aula-papel.js · lo que se imprime, desde filas
    ---------------------------------------------------------------------
    Las boletas, el resumen final por grado, el Cuadro final del año y los
-   cuadros de ingresos, egresos y el talonario son diseños aprobados por
+   cuadros de ingresos, egresos, el talonario y las tiras de la clave de
+   familia son diseños aprobados por
    Josué, y viven en js/tools/registros-admin.js (y cuadros-sace.js). Aquí
    NO se toca ni una línea de ellos: solo cambia de dónde salen sus datos.
 
@@ -162,12 +163,27 @@
     ingresos: function (g) { window.adPrintCuadroIngresos(g); },
     egresos: function (g) { window.adPrintCuadroEgresos(g); },
     talonario: function (g) { window.adPrintTalonario(g); },
+    // Las tiras de la clave de familia, con su QR al portal. Salen las de
+    // quien tiene ficha en metas.familias (claveFamilia); sin ficha, no hay
+    // tira, como en main. Solo se lee lo del aparato: imprime sin señal.
+    tiras: function (g) {
+      if (!g.lista.some(function (a) { return a.claveFamilia; })) return sinClaves();
+      window.adTirasTodas(g);
+    },
+    tira: function (g, alumnoId) {
+      var a = g.lista.filter(function (x) { return x.id === alumnoId; })[0];
+      if (!a || !a.claveFamilia) return sinClaves();
+      window.adTiraUno(g, a.num);
+    },
   };
+  function sinClaves() {
+    if (typeof window.toast === 'function') window.toast('Primero toca Preparar claves de familia');
+  }
 
   window.metasMiAulaPapel = {
     grupo: grupo,
-    imprimir: function (api, aula, que) {
-      if (HOJAS[que]) HOJAS[que](grupo(api, aula));
+    imprimir: function (api, aula, que, alumnoId) {
+      if (HOJAS[que]) HOJAS[que](grupo(api, aula), alumnoId);
     },
   };
 })();

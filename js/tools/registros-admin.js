@@ -585,6 +585,10 @@ function adSufijoClave() {
    ciego de dígitos mostraría «56-YF7», que confunde a la familia) */
 function adClaveBonita(clave, num) {
   const c = String(clave || ''), n = String(num || '');
+  /* La clave nueva de la base (10 símbolos sin I, O, 0 ni 1) no lleva el nº
+     de lista: va partida al medio, como en Mi aula (ACYFS-4RGM2). Una vieja
+     (nº + 4 a 6) mide 8 como mucho, así que sale igual que siempre. */
+  if (/^[A-HJ-NP-Z2-9]{10}$/.test(c)) return c.slice(0, 5) + '-' + c.slice(5);
   if (n && c.indexOf(n) === 0) return n + '-' + c.slice(n.length);
   return c.replace(/^(\d+)/, '$1-');
 }
@@ -1603,7 +1607,7 @@ function adTirasTodas(d) {
   const grupoTxt = adGrupoTxt(d);
   const sitio = (typeof PA_SITE !== 'undefined') ? PA_SITE : 'https://metas.policastsapien.com/';
   const filas = d.lista.slice().sort((a, b) => a.num - b.num)
-    .map(a => ({ num: a.num, nombre: a.nombre || '', codigo: adClaveFamilia(d.id, a.num) }))
+    .map(a => ({ num: a.num, nombre: a.nombre || '', codigo: a.claveFamilia != null ? a.claveFamilia : adClaveFamilia(d.id, a.num) }))
     .filter(f => f.codigo);
   const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
 <title>Claves de familia — ${adEsc(grupoTxt)}</title>
@@ -2382,7 +2386,7 @@ function adListaFilasArrastrar(cont) {
 }
 
 function adTiraUno(d, num) {
-  const codigo = adClaveFamilia(d.id, num);
+  const codigo = (d.lista.find(x => x.num === num) || {}).claveFamilia ?? adClaveFamilia(d.id, num);
   if (!codigo) { toast('No se pudo generar la clave'); return; }
   const a = d.lista.find(x => x.num === num) || { nombre: '' };
   const bonito = adClaveBonita(codigo, num);

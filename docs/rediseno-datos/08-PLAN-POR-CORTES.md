@@ -60,6 +60,10 @@ quitar la sesión vieja.
   `04-FORMATO-IMPORTACION.md`. Capa B, B13; capa C, C16.
 - Preparar las claves de familia de un aula traída sin familias (04, 8),
   todas nuevas: `js/datos/claves-familia.js`, sin SQL nuevo. Capa B, B14; capa C, C17.
+- Tiras de la clave de familia desde Mi aula (todo el aula y «Su tira»): las
+  de main (`adTirasTodas`, `adTiraUno`) con la clave de `metas.familias`,
+  armadas por `js/tools/mi-aula-papel.js`. Capa C, C18 (con una clave vieja,
+  idéntica a main).
 - `SUPABASE-V2-DESCONGELAR.sql`, probado de ida y vuelta (capa A, 20 y 21).
 - Android: `server.url` y `versionCode 4`, sin firmar (`11-APK-ANDROID.md`).
 - Sigue pendiente: la contraseña en `METAS_DOCENTE_V1` para lo de la cuenta

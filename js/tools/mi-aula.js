@@ -272,6 +272,9 @@
     if (lista.length) {
       h += '<div class="ma-acciones"><button type="button" class="ma-btn" data-metas="claves-preparar" data-accion="claves-preparar">'
         + '🔑 Preparar claves de familia</button></div>';
+      // Las tiras salen de lo que ya está en el aparato: imprimen sin señal.
+      h += '<div class="ma-acciones"><button type="button" class="ma-btn" data-metas="tiras-claves" data-accion="imprimir" data-valor="tiras">'
+        + '🖨️ Tiras de claves (QR)</button></div>';
     }
     if (!lista.length) h += '<p class="ma-nota">Todavía no hay alumnos. Escríbelos uno por uno o pega la lista completa.</p>';
     h += pintarClaves(aula);
@@ -293,7 +296,10 @@
             var on = (a.estado || 'activo') === e;
             return '<button type="button" class="ma-btn ma-btn-chico' + (on ? ' ma-on' : '') + '" data-accion="estado" data-alumno="'
               + esc(a.id) + '" data-valor="' + e + '" aria-pressed="' + on + '">' + (on ? '✓ ' : '') + esc(nombreEstado(e)) + '</button>';
-          }).join('') + '</div>';
+          }).join('') + '</div>'
+          + '<div class="ma-al-edit" role="group" aria-label="' + esc('Tira de la clave de familia de ' + a.nombre_completo) + '">'
+          + '<button type="button" class="ma-btn ma-btn-chico" data-metas="tira-alumno" data-accion="tira-alumno" data-alumno="'
+          + esc(a.id) + '">🖨️ Su tira</button></div>';
       }
       return r + '</li>';
     }).join('') + '</ul>';
@@ -1175,6 +1181,7 @@
       case 'cerrar': intentar(function () { d.colecta.cerrar(v); }); hoja = null; pintarTarjeta(); return pintar();
       case 'reabrir': reabriendo = { colecta: v, luego: null }; return pintarTarjeta();
       case 'imprimir': return imprimir(aula, v);
+      case 'tira-alumno': return imprimir(aula, 'tira', b.getAttribute('data-alumno'));
       case 'asis': return tocarAsistencia(aula, b.getAttribute('data-alumno'));
       case 'todos-presentes': return todosPresentes(aula);
       case 'aprobar-excusa':
@@ -1339,9 +1346,9 @@
     pintar();
   }
 
-  function imprimir(aula, que) {
+  function imprimir(aula, que, alumnoId) {
     if (!aula || !papel()) return;
-    papel().imprimir(d, aula, que);
+    papel().imprimir(d, aula, que, alumnoId);
   }
 
   function alCambiar(ev) {
