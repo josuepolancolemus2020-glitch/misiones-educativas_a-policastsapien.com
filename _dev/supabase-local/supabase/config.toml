@@ -9,7 +9,9 @@
 # de docente solo las crea metas-entrar) y las tres funciones de borde sin la
 # verificación automática del JWT (cada una revisa la sesión ella misma).
 # Diferencia con el proyecto real, anotada: Turnstile apagado (no hay clave
-# de prueba sin red); en el proyecto real es OBLIGATORIO.
+# de prueba sin red); en el proyecto real es OBLIGATORIO. corre-supabase.sh
+# lo enciende un rato en Auth (con la llave de PRUEBA pública de Cloudflare)
+# para la capa A+ con CAPTCHA (capa-a-mas-captcha.mjs) y lo vuelve a apagar.
 # ============================================================================
 project_id = "metas-local"
 

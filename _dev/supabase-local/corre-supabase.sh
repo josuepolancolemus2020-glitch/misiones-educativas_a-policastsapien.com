@@ -176,6 +176,56 @@ echo "▶ Capa A+"
 export METAS_API="$API" METAS_PUBLICA="$PUBLICA" METAS_SERVICIO="$SERVICIO" METAS_DB="$DB"
 node "$AQUI/capa-a-mas.mjs"
 
+# ── 4b. Capa A+ con el CAPTCHA de Auth ENCENDIDO ──────────────────────────
+# En el proyecto real el portal de las familias exige Turnstile en Auth. Aquí
+# se prueba que eso NO deja afuera al docente (metas-entrar) ni a la familia
+# que ya tenía sesión. El contenedor de Auth se vuelve a crear igual, con el
+# CAPTCHA encendido y la llave secreta de PRUEBA que Cloudflare publica para
+# eso (siempre aprueba; NO es la del proyecto, que nunca entra al repo), y al
+# terminar se deja como estaba, también si algo falla.
+# METAS_CA_EXTRA (opcional): un archivo de certificados para que Auth llegue a
+# Cloudflare desde un equipo con proxy; sin él, K8 avisa y no se cuenta.
+AUTH="supabase_auth_$PROYECTO"
+SECRETO_PRUEBA_CF="1x0000000000000000000000000000000AA"
+auth_captcha() {
+  local env img red etq=() vol=()
+  env="$(mktemp)"
+  img="$(docker inspect -f '{{.Config.Image}}' "$AUTH")"
+  red="$(docker inspect -f '{{range $k, $v := .NetworkSettings.Networks}}{{$k}}{{end}}' "$AUTH")"
+  docker inspect -f '{{range .Config.Env}}{{println .}}{{end}}' "$AUTH" \
+    | grep -v -e '^GOTRUE_SECURITY_CAPTCHA_' -e '^SSL_CERT_FILE=' -e '^$' > "$env"
+  if [ "$1" = encender ]; then
+    printf '%s\n' GOTRUE_SECURITY_CAPTCHA_ENABLED=true GOTRUE_SECURITY_CAPTCHA_PROVIDER=turnstile \
+      "GOTRUE_SECURITY_CAPTCHA_SECRET=$SECRETO_PRUEBA_CF" >> "$env"
+    if [ -n "${METAS_CA_EXTRA:-}" ]; then vol=(-v "$METAS_CA_EXTRA:/metas-ca.crt:ro"); echo SSL_CERT_FILE=/metas-ca.crt >> "$env"; fi
+  else
+    printf '%s\n' GOTRUE_SECURITY_CAPTCHA_ENABLED=false GOTRUE_SECURITY_CAPTCHA_PROVIDER= GOTRUE_SECURITY_CAPTCHA_SECRET= >> "$env"
+  fi
+  while IFS= read -r l; do [ -n "$l" ] && etq+=(--label "$l"); done \
+    < <(docker inspect -f '{{range $k, $v := .Config.Labels}}{{println (printf "%s=%s" $k $v)}}{{end}}' "$AUTH")
+  docker rm -f "$AUTH" >/dev/null
+  docker run -d --name "$AUTH" --network "$red" --network-alias auth "${etq[@]}" "${vol[@]}" --env-file "$env" "$img" auth >/dev/null
+  rm -f "$env"
+  for _ in $(seq 1 60); do
+    [ "$(curl -s -o /dev/null -w '%{http_code}' -H "apikey: $PUBLICA" "$API/auth/v1/health" || true)" = 200 ] && return 0
+    sleep 1
+  done
+  falla "Auth no volvió a responder ($1 el CAPTCHA)"
+}
+echo "▶ Capa A+ con el CAPTCHA de Auth encendido"
+export METAS_CAPTCHA_ARCHIVO="$(mktemp)"
+node "$AQUI/capa-a-mas-captcha.mjs" antes
+# Si algo corta la corrida con el CAPTCHA encendido, se apaga al salir: la
+# próxima corrida no hace `supabase start` de nuevo y lo heredaría.
+CAPTCHA_ON=1
+trap 'terminar; if [ "$CAPTCHA_ON" = 1 ]; then CAPTCHA_ON=0; auth_captcha apagar; fi' EXIT
+auth_captcha encender
+set +e; node "$AQUI/capa-a-mas-captcha.mjs"; R_CAPTCHA=$?; set -e
+CAPTCHA_ON=0
+auth_captcha apagar
+rm -f "$METAS_CAPTCHA_ARCHIVO"
+[ "$R_CAPTCHA" = 0 ] || falla "la capa A+ con CAPTCHA falló: no se enciende el CAPTCHA en el proyecto real"
+
 # Código 2 = «escrita antes del código, todavía no puede correr»: se avisa y
 # se sigue; cualquier otro distinto de 0 es una falla de verdad.
 corre_capa() {

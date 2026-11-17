@@ -872,6 +872,109 @@ await prueba('C18 tiras de claves: todo el aula y la de un alumno, con la clave 
   }
 });
 
+// ── Portal de las familias con Turnstile (07; 10, 7) ──────────────────────
+// La clave nueva de 10 símbolos entra al portal nuevo escrita como venga
+// (con o sin guion, en minúsculas). Con Turnstile, la sesión anónima lleva
+// su token y familia-vincular otro distinto (uno por intento); si la
+// comprobación falla, se pide otro intento y el cuadro se reinicia. En este
+// equipo no se llega a Cloudflare: el cuadro es uno de mentira que reparte
+// tokens, y la base local no exige CAPTCHA (eso lo prueba la capa A+, K1-K8).
+// Nada va al proyecto real, y el portal de antes no le muestra dinero.
+await prueba('C19 portal de familias: la clave nueva entra escrita como venga, un token por puerta, y el portal de antes no muestra dinero', async () => {
+  const corr = Date.now().toString(36).toUpperCase().slice(-4);
+  const nom = (x) => `${x} Ficticia C19 ${corr}`;
+  const escuela = 'Escuela Ficticia C19 ' + corr;
+  // Un aula traída sin familias; la docente le prepara las claves (todas nuevas).
+  const ctxD = await contexto(TAMANOS[0]);
+  const pd = await ctxD.newPage();
+  await entrar(pd);
+  await pd.click(m('ir-alumnos'));
+  await pd.click(m('ir-carga-rapida'));
+  const elegir = pd.waitForEvent('filechooser');
+  await pd.click(m('importar-elegir'));
+  await (await elegir).setFiles({ name: 'aula-c19.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify({
+    formato: ['metas-importacion', '1'].join('/'), aula: { escuela, grado: 4, seccion: '1', anio_lectivo: 2027 },
+    alumnos: [{ ref: 'a1', num_lista: 1, nombre_completo: nom('Ana') }] })) });
+  await pd.waitForSelector(m('importar-vista-previa'), { timeout: 15000 });
+  await pd.click(m('importar-guardar'));
+  await pd.waitForSelector(m('importar-listo'));
+  const aula = await hasta(() => sql(`select id from metas.aulas where escuela = '${escuela}' and deleted_at is null`), 'el aula no llegó a la base');
+  await pd.click(m('ir-alumnos'));
+  await pd.click(m('claves-preparar'));
+  await pd.waitForSelector(m('claves-guardar'));
+  await pd.click(m('claves-guardar'));
+  const clave = await hasta(() => sql(`select clave from metas.familias where aula_id = '${aula}' and deleted_at is null`), 'no llegó la ficha');
+  await ctxD.close();
+  afirma(/^[A-HJ-NP-Z2-9]{10}$/.test(clave), 'la clave no es nueva: ' + clave);
+  const bonita = clave.slice(0, 5) + '-' + clave.slice(5);
+
+  // El portal de antes, con esta clave: nada, y menos dinero (en la base
+  // local están sus lecturas de administración y de avisos).
+  afirma(sql(`select (select count(*) from public.metas_consultar_admin_padre('${clave}'))
+              + (select count(*) from public.metas_consultar_avisos_padre('${clave}'))`) === '0',
+    'el portal de antes devuelve algo para la clave nueva');
+  // vf_hijos muestra el primer nombre.
+  const hijo = '👦 Ana';
+
+  // Un teléfono de familia; con «turnstile», un cuadro de mentira que reparte tokens.
+  async function familia(escrita, turnstile) {
+    const ctx = await contexto(TAMANOS[0]);
+    const pedidos = [];
+    if (turnstile) {
+      await ctx.addInitScript((modo) => {
+        window.__METAS_TURNSTILE_DE_PRUEBA__ = 'llave-de-prueba';
+        let n = 0;
+        const w = { cb: {} };
+        window.__ts = { resets: 0, pintado: 0 };
+        window.turnstile = {
+          render(caja, o) { window.__ts.pintado++; w.cb = o; return 'w1'; },
+          execute() { setTimeout(() => (modo === 'falla' ? w.cb['error-callback']() : w.cb.callback('token-' + (++n))), 50); },
+          reset() { window.__ts.resets++; },
+        };
+      }, turnstile);
+    }
+    const p = await ctx.newPage();
+    p.on('request', (r) => pedidos.push({ url: r.url(), cuerpo: r.postData() || '' }));
+    await p.goto(SITIO + '/padres.html');
+    await p.fill(m('familia-clave'), escrita);
+    await p.click(m('familia-entrar'));
+    return { ctx, p, pedidos };
+  }
+  for (const escrita of [bonita.toLowerCase(), clave, clave.toLowerCase()]) {
+    const { ctx, p, pedidos } = await familia(escrita);
+    await p.waitForFunction((n) => document.querySelector('#chat').innerText.includes(n), hijo, { timeout: 15000 })
+      .catch(() => { throw new Error(`«${escrita}» no entró al portal nuevo`); });
+    afirma(!/L \d/.test(await p.locator('#chat').innerText()), 'se mostró dinero');
+    afirma(!pedidos.some((x) => /supabase\.co/.test(x.url)), 'se le habló al proyecto real');
+    await sinProhibidos(p, 'portal ' + escrita);
+    await ctx.close();
+  }
+
+  // Con Turnstile: un token para abrir la sesión y OTRO para vincular.
+  {
+    const { ctx, p, pedidos } = await familia(bonita, 'pasa');
+    await p.waitForFunction((n) => document.querySelector('#chat').innerText.includes(n), hijo, { timeout: 15000 });
+    const alta = pedidos.find((x) => /\/auth\/v1\/signup/.test(x.url));
+    const vinc = pedidos.find((x) => /familia-vincular/.test(x.url));
+    const t1 = alta && JSON.parse(alta.cuerpo).gotrue_meta_security?.captcha_token;
+    const t2 = vinc && JSON.parse(vinc.cuerpo).turnstile;
+    afirma(t1 && t2 && t1 !== t2, `los tokens: sesión ${t1}, vincular ${t2}`);
+    afirma(await p.locator(m('familia-turnstile')).isHidden(), 'el cuadro sigue a la vista después de entrar');
+    afirma(!pedidos.some((x) => /supabase\.co/.test(x.url)), 'se le habló al proyecto real');
+    await ctx.close();
+  }
+  // Si la comprobación falla: no se vincula, se pide otro intento y el cuadro se reinicia.
+  {
+    const { ctx, p, pedidos } = await familia(bonita, 'falla');
+    await p.waitForFunction(() => document.querySelector('#chat').innerText.includes('Toque ➤ otra vez'), null, { timeout: 15000 });
+    afirma(!pedidos.some((x) => /familia-vincular|\/auth\/v1\/signup/.test(x.url)), 'sin comprobación se llamó a la base');
+    afirma(await p.evaluate(() => window.__ts.resets) >= 1, 'el cuadro no se reinició');
+    afirma(!pedidos.some((x) => /supabase\.co/.test(x.url)), 'se le habló al proyecto real');
+    await sinProhibidos(p, 'portal, comprobación fallida');
+    await ctx.close();
+  }
+});
+
 await navegador.close();
 console.log(fallas ? `\n✘ ${fallas} de ${total} pruebas de la capa C FALLARON` : `\n✅ Las ${total} pruebas de la capa C en verde`);
 process.exit(fallas ? 1 : 0);

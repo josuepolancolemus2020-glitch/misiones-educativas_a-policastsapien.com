@@ -14,7 +14,7 @@ esquema `metas` expuesto en la Data API. **Falta**: `SUPABASE-V2-CONGELAR.sql`
 
 | qué | cómo se comprueba |
 |---|---|
-| Todas las capas en verde contra `supabase start` | `bash _dev/supabase-local/corre-supabase.sh --todo` termina sin ✘: capa A (291 + 13 de DESCONGELAR + 10 de volver a CONGELAR), A+ (26), B (13), C (18) |
+| Todas las capas en verde contra `supabase start` | `bash _dev/supabase-local/corre-supabase.sh --todo` termina sin ✘: capa A (291 + 13 de DESCONGELAR + 10 de volver a CONGELAR), A+ (26 + 8 con el CAPTCHA de Auth encendido), B (14), C (21) |
 | Las sondas | `npm test` termina en «✅ Las 78 sondas en verde» |
 | **No es en pleno cierre de año** (08, 8.1) | «Cerrar el año escolar» todavía es el de antes. O se publica antes de que los docentes empiecen a cerrar, o cuando ya cerraron. En noviembre, preguntar primero |
 | Aviso a los docentes, dos semanas antes (8.6) | el mensaje salió y la página «Actualiza la app de M.E.T.A.S» está lista |
@@ -206,11 +206,8 @@ duplicados, perdidos) en cero.
 
 ## 7. Lo que NO sale este día (y por qué)
 
-- **El portal nuevo de las familias**: `padres.html` tiene
-  `TURNSTILE_SITEKEY = ''`, así que en el sitio publicado el portal sigue
-  como hoy. Para encenderlo: la llave del sitio en `padres.html`, el secreto
-  `TURNSTILE_SECRET` en las funciones de borde y Turnstile obligatorio en
-  Auth. Es un cambio aparte, con su prueba.
+- **El portal nuevo de las familias**: se enciende otro día, con su propia
+  lista (sección 8).
 - **La contraseña guardada en `METAS_DOCENTE_V1`**: ninguna herramienta del
   aula la usa ya (el blob viaja por sesión). Queda solo para lo de la cuenta
   que todavía pide código y contraseña en cada llamada: el código de aula
@@ -225,3 +222,45 @@ duplicados, perdidos) en cero.
   nada. Se quita del panel (09, 9.5).
 - **«Cerrar el año escolar»** para la base nueva (08, 8.1).
 - **pg_cron**: solo hace falta antes de fijar la fecha del paso 4.
+
+## 8. Encender el portal nuevo de las familias (Turnstile)
+
+`padres.html` ya trae la llave PÚBLICA de Turnstile del sitio
+(`TURNSTILE_SITEKEY`, dominio metas.policastsapien.com, modo «managed»).
+Con ella el portal nuevo queda encendido en cuanto se publica. La llave
+SECRETA nunca entra al repositorio: se pega solo en Supabase, en los dos
+lugares de abajo.
+
+Cómo funciona: el teléfono de la familia abre una sesión anónima con un
+token de Turnstile y pide **otro** token para `familia-vincular` (un token
+sirve una sola vez). Si la comprobación falla, el cuadro se reinicia y se le
+pide a la familia otro intento. La sesión que ya tenía se renueva sin
+CAPTCHA, así que ninguna familia pierde su vínculo cuando se enciende.
+
+El docente no cambia nada: `metas-entrar` arma su sesión en el servidor
+(enlace mágico generado y canjeado ahí, `sesionPara`), y esa puerta de Auth
+no pide CAPTCHA. Lo prueba la capa A+ con el CAPTCHA encendido (K1 a K8 en
+`_dev/supabase-local/capa-a-mas-captcha.mjs`, que `corre-supabase.sh`
+corre siempre). **Sin esa capa en verde no se enciende el CAPTCHA en el
+proyecto real.** K8 (la familia abre su sesión con un token) necesita que
+Auth llegue a Cloudflare: en un equipo con salida, correr con
+`METAS_CAPTCHA_RED=1` para que cuente.
+
+El alta por correo se queda **apagada**.
+
+El mismo día, en este orden. Si una comprobación falla, se para:
+
+| paso | qué se hace | cómo se comprueba | volver atrás |
+|---|---|---|---|
+| 1 | Publicar (unir el PR; GitHub Pages) | la construcción de ese commit sale `completed / success` (CLAUDE.md, «Cómo se publica») | revertir el commit |
+| 2 | Confirmar que el docente entra | entrar a Mi aula con una cuenta de docente: abre y se ven sus grupos | (nada cambió aún en Supabase) |
+| 3 | Edge Functions → Secrets: `TURNSTILE_SECRET` = la llave secreta | aparece en la lista de secretos | borrar el secreto |
+| 4 | Authentication → Sign In / Providers: **encender las sesiones anónimas**. El alta por correo sigue apagada | el interruptor queda encendido | apagarlo |
+| 5 | Authentication → Attack Protection (Bot and Abuse Protection): **encender el CAPTCHA**, proveedor Turnstile, con la **misma** llave secreta | queda guardado | apagar el CAPTCHA |
+| 6 | Probar al docente | salir y volver a entrar a Mi aula con correo y contraseña: entra | apagar el CAPTCHA (paso 5) y avisar |
+| 7 | Probar una familia | en un teléfono, `padres.html` con la clave de una tira nueva (ej. `ACYFS-4RGM2`, con o sin guion): aparece el cuadro de Cloudflare, pasa, y el asistente dice el nombre del niño | apagar el CAPTCHA (paso 5) y las sesiones anónimas (paso 4) |
+
+Si en el paso 7 la familia ve «No pude terminar la comprobación de
+seguridad», revisar que la llave secreta del paso 3 y la del paso 5 sean la
+misma del sitio de la llave pública, y que el dominio del sitio en
+Cloudflare sea metas.policastsapien.com.
