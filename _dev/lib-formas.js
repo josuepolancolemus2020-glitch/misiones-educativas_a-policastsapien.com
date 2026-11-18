@@ -403,5 +403,5 @@ function sellarForma(f) {
 
 const huellaBanco = b => ({ n: b.length, huella: sha(JSON.stringify(b)).slice(0, 16) });
 
-module.exports = { RAIZ, DIR_MISIONES, DIR_ORO, RUTA_PENDIENTE, PRUEBAS, FUERA_DE_ALCANCE, listarMisiones, usaElMotor, fuenteDeMision, cargarMision, pruebasDe,
+module.exports = { RAIZ, DIR_MISIONES, DIR_ORO, RUTA_PENDIENTE, PRUEBAS, FUERA_DE_ALCANCE, listarMisiones, archivoPrincipal, usaElMotor, fuenteDeMision, cargarMision, pruebasDe,
   textoImpreso, cadenasDe, sha, bancosDe, textosFueraDeBanco, bancosConceptual, sinOrdenDeOpciones, sinOrden, repetidas, rutaOro, escribirOro, leerOro, sellarForma, huellaBanco };
