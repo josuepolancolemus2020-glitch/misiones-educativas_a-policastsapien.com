@@ -82,7 +82,8 @@
   var formColecta = false;
   var formGasto = false;
   var ayudaSace = false;
-  var encabezadoAbierto = false;
+  var perfilAbierto = false;     // la sección de arriba, no Notas SACE
+  var centroNuevo = false;       // el formulario en blanco para otro centro
   var cargaFilas = [];
   var cargaTexto = '';
   var avisoCarga = '';
@@ -194,7 +195,7 @@
     if (!raiz || !d) return;
     var activa = document.getElementById('view-mi-aula');
     if (activa && !activa.classList.contains('active')) return;
-    var aula = aulaActual();
+    var aula = asignarUnico(aulaActual());
     var sec = seccion();
     var h = (aula ? pintarEntradaPerfil(aula) : '') + pintarGrupos(aula);
     if (!aula || formGrupo) {
@@ -220,11 +221,25 @@
   }
 
   // Arriba de Mi aula. El aviso solo sale si este grupo todavía no tiene
-  // fila en metas.centros. La entrada fija se queda para volver a editarlo.
+  // fila en metas.centros. El formulario vive aquí, no en Notas SACE.
   function tienePerfil(aula) {
     return !!(aula && aula.centro_id && d.lista('centros', { id: aula.centro_id })[0]);
   }
+  function centrosDelDocente() {
+    return (d && d.lista('centros')) || [];
+  }
+  // Un solo centro no se pregunta: el grupo que todavía no apunta a ninguno
+  // queda con ese. Si ya apunta, no se le cambia.
+  function asignarUnico(aula) {
+    if (!aula || !d || typeof d.editar !== 'function') return aula;
+    var centros = centrosDelDocente();
+    if (centros.length !== 1 || aula.centro_id) return aula;
+    try { d.editar('aulas', aula.id, { centro_id: centros[0].id }); }
+    catch (e) { return aula; }
+    return aulaActual() || aula;
+  }
   function pintarEntradaPerfil(aula) {
+    var centros = centrosDelDocente();
     var h = '';
     if (!tienePerfil(aula)) {
       h += '<div class="ma-puertas"><button type="button" class="ma-puerta" data-metas="aviso-perfil" data-accion="perfil">'
@@ -233,8 +248,27 @@
         + '<span>Encabezado y logos de este centro</span></span>'
         + '<span class="ma-flecha" aria-hidden="true">›</span></button></div>';
     }
-    h += '<div class="ma-acciones"><button type="button" class="ma-btn" data-metas="perfil-institucional" data-accion="perfil">'
-      + '🏫 Perfil institucional</button></div>';
+    h += '<div class="ma-acciones"><button type="button" class="ma-btn" data-metas="perfil-institucional" data-accion="perfil" aria-expanded="'
+      + perfilAbierto + '">🏫 Perfil institucional</button></div>';
+    if (!perfilAbierto || !window.MetasCentro) return h;
+    h += '<section data-metas="seccion-perfil" aria-label="Perfil institucional">';
+    if (centros.length) {
+      // Las mismas pastillas de los grupos. Con uno solo no hay que elegir.
+      h += '<div class="ma-grupos" role="group" aria-label="Perfiles institucionales">';
+      if (centros.length > 1) {
+        h += centros.map(function (c) {
+          var on = !centroNuevo && aula.centro_id === c.id;
+          return '<button type="button" class="ma-grupo' + (on ? ' ma-grupo-on' : '') + '" data-metas="perfil-centro" data-accion="elegir-centro" data-valor="'
+            + esc(c.id) + '" aria-pressed="' + on + '"><span class="ma-grupo-gs">' + esc(c.nombre) + '</span></button>';
+        }).join('');
+      }
+      h += '<button type="button" class="ma-grupo ma-grupo-mas" data-metas="agregar-perfil" data-accion="agregar-perfil" aria-expanded="'
+        + centroNuevo + '">+ Agregar perfil institucional</button></div>';
+    }
+    if (centroNuevo) h += pintarEncabezado(aula, 'nuevo');
+    else if (!centros.length || centros.length === 1 || tienePerfil(aula)) h += pintarEncabezado(aula, null);
+    else h += '<p class="ma-nota">Elige el perfil de este grupo.</p>';
+    h += '</section>';
     return h;
   }
 
@@ -955,15 +989,25 @@
     h += '</div><div class="ma-card"><h2 class="ma-h">🖨️ Para imprimir</h2><div class="ma-imprimir">'
       + '<button type="button" class="ma-btn ma-btn-1" data-accion="imprimir" data-valor="boletas">🧾 Boletas de todo el grupo</button>'
       + '<button type="button" class="ma-btn" data-accion="imprimir" data-valor="resumen">📋 Resumen final por grado</button>'
-      + '<button type="button" class="ma-btn" data-accion="imprimir" data-valor="cuadro">📒 Cuadro final del año</button>'
-      + '<button type="button" class="ma-btn" data-accion="encabezado" aria-expanded="' + encabezadoAbierto + '">🏫 Encabezado y logos</button></div></div>';
-    if (encabezadoAbierto && window.MetasCentro) h += pintarEncabezado(aula);
+      + '<button type="button" class="ma-btn" data-accion="imprimir" data-valor="cuadro">📒 Cuadro final del año</button></div></div>';
     return h;
   }
 
-  function pintarEncabezado(aula) {
-    var centro = aula.centro_id ? (d.lista('centros', { id: aula.centro_id })[0] || null) : null;
-    var ini = window.MetasCentro.valoresIniciales(aula, centro);
+  function camposPerfilNuevo(aula) {
+    var vacio = function () { return { valor: '', origen: '' }; };
+    return {
+      nombre: vacio(), direccion: vacio(), aldea: vacio(), municipio: vacio(), departamento: vacio(),
+      codigo_sace: vacio(), director: vacio(), modalidad: vacio(), jornada: vacio(),
+      logo: vacio(), logo_sec: vacio(),
+      anio_lectivo: { valor: aula && aula.anio_lectivo ? String(aula.anio_lectivo) : '', origen: '' },
+    };
+  }
+  function pintarEncabezado(aula, modo) {
+    var nuevo = modo === 'nuevo';
+    var centro = (!nuevo && aula.centro_id) ? (d.lista('centros', { id: aula.centro_id })[0] || null) : null;
+    var ini = nuevo
+      ? { campos: camposPerfilNuevo(aula), ofrecido: false }
+      : window.MetasCentro.valoresIniciales(aula, centro);
     var c = ini.campos;
     function campo(nombre, et, extra) {
       return '<label class="ma-campo"><span>' + et + '</span><input class="ma-inp" data-centro="' + nombre
@@ -975,7 +1019,7 @@
       }
       return vacio;
     }
-    var h = '<form class="ma-card ma-form" data-form="centro" data-centro-id="' + esc(centro ? centro.id : '') + '">'
+    var h = '<form class="ma-card ma-form" data-form="centro" data-centro-id="' + esc(!nuevo && centro ? centro.id : '') + '">'
       + '<h2 class="ma-h">🏫 Encabezado y logos</h2>';
     if (ini.ofrecido) {
       h += '<p class="ma-nota">En este aparato había datos del centro. Quedan aquí para empezar y no pisan lo que ya está guardado.</p>';
@@ -1028,6 +1072,7 @@
     try {
       var id = window.MetasCentro.guardar(d, aula, leo.campos, leo.id || null);
       leo.form.setAttribute('data-centro-id', id);
+      centroNuevo = false;
       var aviso = leo.form.querySelector('.ma-aviso');
       if (aviso) aviso.textContent = '';
       // Ya hay perfil: el aviso de arriba no tiene que esperar a otro repintado,
@@ -1371,14 +1416,31 @@
       case 'parcial': vista.parcial = v; guardarPref(); return pintar();
       case 'sace-vista': vista.saceVista = v; guardarPref(); return pintar();
       case 'ayuda-sace': ayudaSace = !ayudaSace; return pintar();
-      case 'encabezado': encabezadoAbierto = !encabezadoAbierto; return pintar();
       case 'perfil':
-        vista.seccion = 'notas';
-        guardarPref();
-        encabezadoAbierto = true;
+        // El aviso siempre abre la sección. El botón la abre o la cierra.
+        perfilAbierto = b.getAttribute('data-metas') === 'aviso-perfil' ? true : !perfilAbierto;
+        if (!perfilAbierto) centroNuevo = false;
         pintar();
         var frm = document.querySelector('#mi-aula [data-form="centro"]');
         if (frm && frm.scrollIntoView) frm.scrollIntoView({ block: 'start' });
+        return;
+      case 'elegir-centro':
+        centroNuevo = false;
+        perfilAbierto = true;
+        if (aula && v && aula.centro_id !== v) {
+          var centroElegido = d.lista('centros', { id: v })[0];
+          intentar(function () {
+            d.editar('aulas', aula.id, { centro_id: v });
+            if (centroElegido && aula.escuela !== centroElegido.nombre) d.editar('aulas', aula.id, { escuela: centroElegido.nombre });
+          });
+        }
+        return pintar();
+      case 'agregar-perfil':
+        centroNuevo = true;
+        perfilAbierto = true;
+        pintar();
+        var frmNuevo = document.querySelector('#mi-aula [data-form="centro"]');
+        if (frmNuevo && frmNuevo.scrollIntoView) frmNuevo.scrollIntoView({ block: 'start' });
         return;
       case 'centro-quitar': return quitarLogoCentro(v, b);
       case 'materias-siempre':

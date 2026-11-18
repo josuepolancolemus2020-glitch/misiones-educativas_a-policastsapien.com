@@ -7,6 +7,36 @@
 
 let _pmSeccion = 'A';
 
+/* Arriba de «Datos del grupo»: logo a la izquierda y nombre al lado.
+   Sin perfil no se inserta nada, y el HTML de la tarjeta queda igual. */
+function pmEsc(t) {
+  return String(t == null ? '' : t).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+}
+function pmMarcaHtml() {
+  if (!window.MetasCentro || typeof MetasCentro.marca !== 'function') return '';
+  const m = MetasCentro.marca();
+  if (!m || (!m.logo && !m.nombre)) return '';
+  const img = m.logo
+    ? '<img data-metas-logo alt="" src="' + String(m.logo).replace(/["'<>]/g, '') + '" style="width:46px;height:46px;object-fit:contain;flex:0 0 46px;display:block">'
+    : '';
+  const nom = m.nombre
+    ? '<span data-metas="nombre-centro" style="font-weight:800;font-size:14px;line-height:1.2;">' + pmEsc(m.nombre) + '</span>'
+    : '';
+  return '<div data-metas="marca-centro" style="display:flex;align-items:center;gap:8px;margin:0 0 8px;">' + img + nom + '</div>';
+}
+function pmPonerMarca() {
+  const card = document.querySelector('#view-parte-mensual .parte-card');
+  if (!card) return;
+  const vieja = card.querySelector('[data-metas="marca-centro"]');
+  if (vieja) vieja.remove();
+  const html = pmMarcaHtml();
+  if (!html) return;
+  const titulo = card.querySelector('.parte-section-title');
+  if (titulo) titulo.insertAdjacentHTML('beforebegin', html);
+}
+window.pmMarcaHtml = pmMarcaHtml;
+window.pmPonerMarca = pmPonerMarca;
+
 function pmN(id) { return parseInt(document.getElementById(id)?.value) || 0; }
 function pmSet(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
 
@@ -76,6 +106,7 @@ function pmActualizar() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  pmPonerMarca();
 
   // Navegación
   document.getElementById('goto-parte-btn')?.addEventListener('click', () => switchView('view-parte-mensual'));

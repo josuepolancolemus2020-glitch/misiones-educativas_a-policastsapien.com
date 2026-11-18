@@ -387,6 +387,28 @@ function paPrint() {
 
   const avgColor   = avg >= 70 ? '#16a34a' : avg >= 60 ? '#d97706' : '#dc2626';
 
+  /* El logo y el nombre solo entran si hay perfil. Sin perfil, el título
+     azul queda en la misma línea de siempre: el HTML no cambia. Con perfil,
+     el nombre cabe al lado del logo y se recorta el relleno del título lo
+     justo para que el análisis no salte a otra hoja. */
+  const subHtml = `<div class="head-sub">📌 ${evaluacion}${parcial ? ' · Parcial ' + parcial : ''}${fechaPrueba ? ' · Realizada el ' + paFechaBonita(fechaPrueba) : ''}</div>`;
+  let bloqueCabeza = `<div class="head">
+  <div class="head-title">ANÁLISIS Y PLAN DE ACCIÓN</div>
+  ${subHtml}`;
+  if (window.MetasCentro && typeof MetasCentro.marca === 'function') {
+    const marca = MetasCentro.marca();
+    if (marca && (marca.logo || marca.nombre)) {
+      const img = marca.logo
+        ? `<img data-metas-logo alt="" src="${String(marca.logo).replace(/["'<>]/g, '')}" style="width:46px;height:46px;object-fit:contain;flex:0 0 46px;display:block;background:#fff;border-radius:4px;">`
+        : '';
+      const nom = marca.nombre
+        ? `<div data-metas="nombre-centro" style="font-size:11px;font-weight:700;line-height:1.15;margin-top:1px;">${paEsc(marca.nombre)}</div>`
+        : '';
+      bloqueCabeza = `<div class="head" style="padding-top:8px;padding-bottom:8px">
+  <div data-metas="marca-centro" style="display:flex;align-items:flex-start;gap:8px;">${img}<div style="min-width:0;flex:1;"><div class="head-title">ANÁLISIS Y PLAN DE ACCIÓN</div>${nom}${subHtml}</div></div>`;
+    }
+  }
+
   const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
 <title>Plan de Acción — ${evaluacion}</title>
 <style>
@@ -434,9 +456,7 @@ tbody tr:nth-child(even){background:#f8fafc;}
 @media print{body{padding:0;}.page{padding:8mm 12mm;}}
 </style></head><body><div class="page">
 
-<div class="head">
-  <div class="head-title">ANÁLISIS Y PLAN DE ACCIÓN</div>
-  <div class="head-sub">📌 ${evaluacion}${parcial ? ' · Parcial ' + parcial : ''}${fechaPrueba ? ' · Realizada el ' + paFechaBonita(fechaPrueba) : ''}</div>
+${bloqueCabeza}
   <div class="head-meta">
     <span><b>Grado:</b> ${grado}</span><span><b>Sección:</b> ${seccion}</span>
     <span><b>Docente:</b> ${docente}</span><span><b>Fecha:</b> ${fecha}</span>
