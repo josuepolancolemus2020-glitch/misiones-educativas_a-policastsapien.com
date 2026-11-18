@@ -65,9 +65,11 @@ as $$
    limit 80
 $$;
 
+-- Solo esta función. No se revoca el esquema entero: varias funciones de
+-- metas (disparadores y ayudas como letras_azar) no tienen GRANT propio y
+-- se llaman con el EXECUTE que PostgreSQL deja en PUBLIC. Quitárselo a
+-- todas podría frenar un alta o una nota. El inicio de sesión, metas_guardar
+-- y las consultas viejas viven en public, no aquí, pero igual no hace falta
+-- tocarlas.
 revoke all on function metas.familia_notas(text) from public, anon, authenticated;
 grant execute on function metas.familia_notas(text) to authenticated;
-
--- El EXECUTE que PostgreSQL da a PUBLIC no se quita solo. Las funciones que
--- la app ya usa tienen su GRANT a authenticated, que este revoke no toca.
-revoke execute on all functions in schema metas from public;

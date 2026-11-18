@@ -68,6 +68,9 @@ ok('la función exige sesión de familia y la clave con la que se vinculó',
   /es_sesion_familia\(\)/.test(sql) && /fa\.clave_usada = metas\.norm_clave\(p_clave\)/.test(sql));
 ok('solo la nota final, y no la borrada', /componente = 'final'/.test(sql) && /n\.deleted_at is null/.test(sql));
 ok('el valor sale como texto', /n\.valor::text/.test(sql));
+ok('el revoke es solo de esta función, no de todo el esquema',
+  /revoke all on function metas\.familia_notas\(text\) from public, anon, authenticated/.test(sql)
+  && !/revoke execute on all functions in schema metas from public/.test(sql));
 ok('la versión del portal está sellada', /familia-notas\.js\?v=559/.test(portal)
   && /CACHE_NAME = 'meta-app-v559'/.test(fs.readFileSync(path.join(RAIZ, 'sw.js'), 'utf8')));
 
