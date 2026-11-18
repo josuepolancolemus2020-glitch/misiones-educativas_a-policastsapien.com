@@ -817,9 +817,28 @@
     return hoja;
   }
 
+  /* El banco grande de la misión que está cargada, o null si no lo trae:
+     los cuatro bancos de siempre y, al lado, los cuatro nuevos. Los lee por
+     su nombre, que es el mismo en todas las misiones. Vivía en la plantilla
+     (js/motor-mision.js) y solo le servía a la misión que la usa; aquí lo
+     piden también las de archivo propio, sin copiarlo ninguna. */
+  function _bancoGrandeConceptual() {
+    if (typeof evalCPBankNuevo === 'undefined' || typeof evalTFBankNuevo === 'undefined' || typeof evalMCBankNuevo === 'undefined' || typeof evalPRBankNuevo === 'undefined') return null;
+    return { cp: { deAntes: evalCPBank, nuevas: evalCPBankNuevo }, tf: { deAntes: evalTFBank, nuevas: evalTFBankNuevo }, mc: { deAntes: evalMCBank, nuevas: evalMCBankNuevo }, pr: { deAntes: evalPRBank, nuevas: evalPRBankNuevo } };
+  }
+
+  /* Hasta qué forma llega el examen conceptual de la misión cargada: sus
+     formas de siempre (`EVAL_FORMAS`, las que tienen clave impresa) y, con
+     banco grande, las nuevas. La misión pregunta antes si esta función
+     existe: un teléfono con el motor de antes guardado no la tiene, y
+     entonces su examen se queda en las formas de siempre, que no fallan. */
+  function _topeConceptual() { return _formasConceptual(EVAL_FORMAS, _bancoGrandeConceptual()); }
+
   global._formasConceptual = _formasConceptual;
   global._repartoConceptual = _repartoConceptual;
   global._apartadosConceptual = _apartadosConceptual;
+  global._bancoGrandeConceptual = _bancoGrandeConceptual;
+  global._topeConceptual = _topeConceptual;
 
   global._repartoCritica = _repartoCritica;
   global._conFormasDeAntes = _conFormasDeAntes;
@@ -921,7 +940,7 @@
 
   global.MotorMisiones = {
     examen: { rng: _evalRng, barajar: _shuffleF, elegir: _pickF, selectorDeForma: _injectFormaSel },
-    conceptual: { formas: _formasConceptual, reparto: _repartoConceptual, apartados: _apartadosConceptual, nuevasPorSeccion: NUEVAS_POR_SECCION, deAntesPorSeccion: DE_ANTES_POR_SECCION },
+    conceptual: { formas: _formasConceptual, reparto: _repartoConceptual, apartados: _apartadosConceptual, bancoGrande: _bancoGrandeConceptual, tope: _topeConceptual, nuevasPorSeccion: NUEVAS_POR_SECCION, deAntesPorSeccion: DE_ANTES_POR_SECCION },
     critica: { formasMaximas: FORMAS_CRITICA, conjuntos: _conjuntosCritica, formas: _formasCritica, reparto: _repartoCritica, conFormasDeAntes: _conFormasDeAntes, conOpcionesRepartidas: _conOpcionesRepartidas, barajarSinFilaPropia: _barajarSinFilaPropia, selector: _selectorCritica, turno: _turnoCritica },
     abrirPedida: abrirPedida, buscar: buscar, carpetaDe: carpetaDe
   };
