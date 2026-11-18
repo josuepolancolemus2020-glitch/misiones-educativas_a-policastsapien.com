@@ -2,8 +2,13 @@
    M.E.T.A.S — js/metas-centro.js · el perfil del centro, desde la base
    ---------------------------------------------------------------------
    La base (metas.centros) es la única fuente. Cada aula apunta a su
-   centro: un docente con dos centros tiene dos filas, y el grado y la
-   sección siguen en el aula.
+   centro: un docente con dos centros tiene dos filas, y el grado, la
+   sección y las materias siguen en el aula. Al elegir un centro, Mi aula
+   muestra solo los grupos de ese centro.
+
+   El nombre del maestro vive en el centro (columna docente). Si esa
+   columna todavía no está, el nombre no se manda a la base: queda en
+   docente_nombre del grupo, que ya existía, y no se borra el que había.
 
    METAS_CENTRO_LECTURA es solo una copia de lectura para cuando la
    misión se imprime sin el motor de datos (sin señal, o en la página
@@ -55,6 +60,7 @@
       departamento: c.departamento || '',
       codigoSace: c.codigo_sace || '',
       director: c.director || '',
+      docente: c.docente || '',
       anio: c.anio_lectivo == null ? '' : String(c.anio_lectivo),
       modalidad: c.modalidad || '',
       jornada: c.jornada || '',
@@ -113,6 +119,7 @@
       departamento: tomar(c.departamento, aula && aula.departamento, bol.departamento),
       codigo_sace: tomar(c.codigo_sace, aula && aula.codigo_centro, bol.codigoCentro),
       director: tomar(c.director, aula && aula.director, bol.director),
+      docente: tomar(c.docente, aula && aula.docente_nombre, bol.docente),
       anio_lectivo: tomar(c.anio_lectivo, aula && aula.anio_lectivo, bol.anio),
       modalidad: tomar(c.modalidad, aula && aula.modalidad, bol.modalidad),
       jornada: tomar(c.jornada, aula && aula.jornada, bol.jornada),
@@ -168,7 +175,8 @@
   }
 
   // El mismo objeto que ya leían las hojas: escuela, logos y boleta.
-  // El grado, la sección y el docente del aula no se tocan.
+  // El grado y la sección del aula no se tocan. El nombre del maestro
+  // entra solo si el perfil lo trae: vacío no borra el que ya estaba.
   function aplicar(grupo, perfil) {
     if (!perfil || !grupo) return grupo;
     var b = {};
@@ -184,6 +192,7 @@
     b.modalidad = perfil.modalidad || '';
     b.jornada = perfil.jornada || '';
     b.aldea = perfil.aldea || '';
+    b.docente = perfil.docente || antes.docente || '';
     var g = {};
     for (k in grupo) g[k] = grupo[k];
     g.escuela = perfil.nombre || grupo.escuela || '';
@@ -226,12 +235,23 @@
     };
     if ('logo' in campos) fila.logo = campos.logo || null;
     if ('logo_sec' in campos) fila.logo_sec = campos.logo_sec || null;
+    // Solo si la base ya devolvió la columna: si no está, mandarla
+    // frenaría el guardado del resto del perfil.
+    if (campos._docenteEnBase) fila.docente = vacio(campos.docente);
     return fila;
   }
 
+  function docenteEnBase(api) {
+    var filas = (api && api.lista('centros')) || [];
+    return filas.some(function (c) { return Object.prototype.hasOwnProperty.call(c, 'docente'); });
+  }
+
   function guardar(api, aula, campos, idConocido) {
+    campos._docenteEnBase = docenteEnBase(api);
     var fila = filaDe(campos);
-    var id = idConocido || (aula && aula.centro_id) || null;
+    // Un perfil nuevo no se lleva el grupo que estaba abierto.
+    if (!idConocido) aula = null;
+    var id = idConocido || null;
     if (!id) {
       var mismo = (api.lista('centros') || []).filter(function (c) {
         return norm(c.nombre) === norm(fila.nombre) && Number(c.anio_lectivo) === fila.anio_lectivo;
@@ -240,13 +260,32 @@
     }
     if (id) api.editar('centros', id, fila);
     else id = api.crear('centros', fila).id;
+    var aulaId = aula && aula.id;
+    // No se mueve un grupo que ya pertenece a otro centro.
+    if (aula && aula.centro_id && aula.centro_id !== id) aula = null;
     if (aula && aula.centro_id !== id) api.editar('aulas', aula.id, { centro_id: id });
     if (aula && aula.escuela !== fila.nombre) api.editar('aulas', aula.id, { escuela: fila.nombre });
     (api.lista('aulas') || []).forEach(function (a) {
-      if (a.id !== aula.id && a.centro_id === id && a.escuela !== fila.nombre) {
+      if (a.id !== aulaId && a.centro_id === id && a.escuela !== fila.nombre) {
         api.editar('aulas', a.id, { escuela: fila.nombre });
       }
     });
+    // El nombre del maestro también queda en el grupo, donde ya se leía.
+    // Vacío no borra el que el grupo tenía.
+    if (fila.docente) {
+      (api.lista('aulas') || []).forEach(function (a) {
+        if (a.centro_id === id && a.docente_nombre !== fila.docente) {
+          api.editar('aulas', a.id, { docente_nombre: fila.docente });
+        }
+      });
+    } else if (campos.docente && String(campos.docente).trim() && !campos._docenteEnBase) {
+      var nombre = String(campos.docente).trim();
+      (api.lista('aulas') || []).forEach(function (a) {
+        if (a.centro_id === id && a.docente_nombre !== nombre) {
+          api.editar('aulas', a.id, { docente_nombre: nombre });
+        }
+      });
+    }
     refrescar(api, aula && aula.id);
     return id;
   }
@@ -433,6 +472,7 @@
     if (perfil.modalidad) b.modalidad = perfil.modalidad;
     if (perfil.jornada) b.jornada = perfil.jornada;
     if (perfil.aldea) b.aldea = perfil.aldea;
+    if (perfil.docente) b.docente = perfil.docente;
     g.boleta = b;
     return g;
   }

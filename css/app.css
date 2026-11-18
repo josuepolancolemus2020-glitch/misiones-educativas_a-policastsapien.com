@@ -2349,15 +2349,33 @@ a { text-decoration: none; color: inherit; }
 .teacher-tool-item.teacher-tool-active:hover { box-shadow: 0 2px 8px rgba(30,58,124,.15); }
 .teacher-tool-item.teacher-tool-active:active { transform: scale(.97); background: #e0ecff; }
 
-/* Botón volver en vistas secundarias */
+/* Botón volver en vistas secundarias. 44 px: en 36 el dedo fallaba
+   y, en Mi aula, la flecha quedaba tapada o fuera de la vista. */
 .back-icon-btn {
   background: none; border: none; cursor: pointer;
   font-size: calc(18px * var(--metas-fz, 1)); color: var(--brand);
-  width: 36px; height: 36px;
-  display: flex; align-items: center; justify-content: center;
-  border-radius: 50%; transition: background .15s;
+  min-width: 44px; min-height: 44px; width: auto; height: auto;
+  padding: 0 8px; gap: 4px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 999px; transition: background .15s;
+  font-weight: 800;
 }
 .back-icon-btn:active { background: var(--bg); }
+.back-txt { font-size: calc(15px * var(--metas-fz, 1)); font-weight: 800; line-height: 1; }
+/* La barra de Mi aula y de Más del aula no se esconde al bajar:
+   el volver tiene que seguir en la esquina, también en el teléfono. */
+.app-header.con-volver {
+  position: sticky; top: 0; z-index: 40;
+  background: var(--surface);
+  transform: none !important;
+  margin-bottom: 0 !important;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  padding-top: max(12px, env(safe-area-inset-top, 0px));
+}
+.app-header.con-volver .view-title {
+  min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.app-header.con-volver .back-icon-btn { justify-self: start; }
 
 /* Botón Gobierno Escolar en Herramientas del Docente */
 .teacher-ge-btn {
@@ -2415,6 +2433,11 @@ a { text-decoration: none; color: inherit; }
 .zd-name {
   font-size: calc(12.5px * var(--metas-fz, 1)); font-weight: 700; color: var(--text);
   text-align: center; line-height: 1.15; max-width: 96px;
+}
+.zd-perfil {
+  display: flex; align-items: center; width: 100%; min-height: 44px; margin: 0 0 12px;
+  padding: 0 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg);
+  color: var(--text); font: inherit; font-weight: 700; cursor: pointer; text-align: left;
 }
 /* Sello «Pronto» para la herramienta que aún no tiene contenido: se anuncia
    sin engañar, y el maestro sabe que ahí va a haber algo. */

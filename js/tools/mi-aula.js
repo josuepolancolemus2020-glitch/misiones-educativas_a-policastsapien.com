@@ -63,6 +63,11 @@
     recup: ['Solo se escribe donde el final del año quedó bajo 70.', 'El final es el promedio de los cuatro parciales.',
       'La nota de recuperación sale en el Cuadro final.'],
   };
+  var AYUDA_PERFIL = [
+    'Cada grupo pertenece a un solo centro.',
+    'Al cambiar de centro ves solo sus grupos.',
+    'El grado y las materias quedan en el grupo.',
+  ];
   // Preferencia de vista: en su propia llave (regla 5), nunca en el aula.
   var PREF = 'METAS_MI_AULA_VISTA_V1';
 
@@ -82,7 +87,8 @@
   var formColecta = false;
   var formGasto = false;
   var ayudaSace = false;
-  var perfilAbierto = false;     // la sección de arriba, no Notas SACE
+  var ayudaPerfil = false;
+  var perfilPantalla = false;    // el perfil es su pantalla: no va con las notas
   var centroNuevo = false;       // el formulario en blanco para otro centro
   var cargaFilas = [];
   var cargaTexto = '';
@@ -140,7 +146,7 @@
     });
   }
   function aulaActual() {
-    var todas = aulas();
+    var todas = aulasVisibles();
     return todas.filter(function (a) { return a.id === vista.aula; })[0] || todas[0] || null;
   }
   function alumnos(aula) {
@@ -195,13 +201,14 @@
     if (!raiz || !d) return;
     var activa = document.getElementById('view-mi-aula');
     if (activa && !activa.classList.contains('active')) return;
-    var aula = asignarUnico(aulaActual());
+    asegurarPrimerCentro();
+    var aula = aulaActual();
     var sec = seccion();
-    var h = (aula ? pintarEntradaPerfil(aula) : '') + pintarGrupos(aula);
-    if (!aula || formGrupo) {
+    var h = perfilPantalla ? pintarPantallaPerfil(aula) : (pintarBarraCentros(aula) + pintarGrupos(aula));
+    if (!perfilPantalla && (!aula || formGrupo)) {
       h += pintarFormGrupo(!aula);
     }
-    if (aula) {
+    if (!perfilPantalla && aula) {
       h += '<nav class="ma-secs" aria-label="Secciones de Mi aula">' + SECCIONES.map(function (s) {
         var on = s.k === sec;
         return '<button type="button" class="ma-sec' + (on ? ' ma-sec-on' : '') + '" data-sec="' + s.k + '" data-metas="ir-' + s.k
@@ -217,63 +224,126 @@
     var y = marco ? marco.scrollTop : 0;
     raiz.innerHTML = h;
     if (marco && marco.scrollTop !== y) marco.scrollTop = y;
+    rotularVolver();
     if (window.MetasCentro && d) window.MetasCentro.refrescar(d, aula && aula.id);
   }
 
-  // Arriba de Mi aula. El aviso solo sale si este grupo todavía no tiene
-  // fila en metas.centros. El formulario vive aquí, no en Notas SACE.
-  function tienePerfil(aula) {
-    return !!(aula && aula.centro_id && d.lista('centros', { id: aula.centro_id })[0]);
+  // El perfil es otra pantalla. Aquí solo queda el centro activo, el aviso
+  // si todavía no hay ninguno, y el acceso para editarlo.
+  function tienePerfil() {
+    return centrosDelDocente().length > 0;
   }
   function centrosDelDocente() {
-    return (d && d.lista('centros')) || [];
+    return ((d && d.lista('centros')) || []).slice().sort(function (a, b) {
+      // El que ya existía queda primero. El recién creado, sin fecha, va al final.
+      var ac = a.created_at || '9999';
+      var bc = b.created_at || '9999';
+      return String(ac).localeCompare(String(bc)) || String(a.id).localeCompare(String(b.id));
+    });
   }
-  // Un solo centro no se pregunta: el grupo que todavía no apunta a ninguno
-  // queda con ese. Si ya apunta, no se le cambia.
-  function asignarUnico(aula) {
-    if (!aula || !d || typeof d.editar !== 'function') return aula;
+  function centroActivoId() {
     var centros = centrosDelDocente();
-    if (centros.length !== 1 || aula.centro_id) return aula;
-    try { d.editar('aulas', aula.id, { centro_id: centros[0].id }); }
-    catch (e) { return aula; }
-    return aulaActual() || aula;
+    if (!centros.length) return null;
+    if (vista.centro && centros.some(function (c) { return c.id === vista.centro; })) return vista.centro;
+    var marca = (d.lista('aulas') || []).filter(function (a) { return a.id === vista.aula; })[0];
+    if (marca && marca.centro_id && centros.some(function (c) { return c.id === marca.centro_id; })) return marca.centro_id;
+    return centros[0].id;
   }
-  function pintarEntradaPerfil(aula) {
+  function centroActivo() {
+    var id = centroActivoId();
+    return id ? (centrosDelDocente().filter(function (c) { return c.id === id; })[0] || null) : null;
+  }
+  function aulasVisibles() {
+    var todas = aulas();
+    var id = centroActivoId();
+    if (!id) return todas;
+    return todas.filter(function (a) { return a.centro_id === id; });
+  }
+  // Los grupos sin centro son de la primera institución. Solo se les
+  // anota el vínculo: el grupo, sus notas y su lista no se tocan.
+  function asegurarPrimerCentro() {
+    if (!d || typeof d.editar !== 'function') return;
     var centros = centrosDelDocente();
-    var h = '';
-    if (!tienePerfil(aula)) {
+    if (!centros.length) return;
+    var primero = centros[0].id;
+    (d.lista('aulas') || []).forEach(function (a) {
+      if (!a.centro_id) {
+        try { d.editar('aulas', a.id, { centro_id: primero }); }
+        catch (e) { /* el grupo sigue en la lista */ }
+      }
+    });
+  }
+  function nombreMaestro(centro) {
+    if (!centro) return '';
+    if (centro.docente) return String(centro.docente);
+    var hermana = (d.lista('aulas') || []).filter(function (a) {
+      return a.centro_id === centro.id && a.docente_nombre;
+    })[0];
+    return hermana ? String(hermana.docente_nombre) : '';
+  }
+  function pintarSegmentos() {
+    var centros = centrosDelDocente();
+    var activo = centroActivoId();
+    if (!centros.length) return '';
+    return '<div class="ma-seg ma-centros" role="group" aria-label="Tus centros">' + centros.map(function (c) {
+      var on = !centroNuevo && c.id === activo;
+      return '<button type="button" class="ma-seg-btn" data-metas="perfil-centro" data-accion="institucion" data-valor="'
+        + esc(c.id) + '" aria-pressed="' + on + '">' + esc(c.nombre) + '</button>';
+    }).join('') + '</div>';
+  }
+  function pintarBarraCentros() {
+    var h = '<div class="ma-barra-centro">';
+    if (!tienePerfil()) {
       h += '<div class="ma-puertas"><button type="button" class="ma-puerta" data-metas="aviso-perfil" data-accion="perfil">'
         + '<span class="ma-puerta-ic" aria-hidden="true">🏫</span>'
-        + '<span class="ma-puerta-t"><b>Configura tu perfil institucional</b>'
+        + '<span class="ma-puerta-t"><b>Completa tu perfil institucional</b>'
         + '<span>Encabezado y logos de este centro</span></span>'
         + '<span class="ma-flecha" aria-hidden="true">›</span></button></div>';
     }
-    h += '<div class="ma-acciones"><button type="button" class="ma-btn" data-metas="perfil-institucional" data-accion="perfil" aria-expanded="'
-      + perfilAbierto + '">🏫 Perfil institucional</button></div>';
-    if (!perfilAbierto || !window.MetasCentro) return h;
-    h += '<section data-metas="seccion-perfil" aria-label="Perfil institucional">';
-    if (centros.length) {
-      // Las mismas pastillas de los grupos. Con uno solo no hay que elegir.
-      h += '<div class="ma-grupos" role="group" aria-label="Perfiles institucionales">';
-      if (centros.length > 1) {
-        h += centros.map(function (c) {
-          var on = !centroNuevo && aula.centro_id === c.id;
-          return '<button type="button" class="ma-grupo' + (on ? ' ma-grupo-on' : '') + '" data-metas="perfil-centro" data-accion="elegir-centro" data-valor="'
-            + esc(c.id) + '" aria-pressed="' + on + '"><span class="ma-grupo-gs">' + esc(c.nombre) + '</span></button>';
-        }).join('');
-      }
-      h += '<button type="button" class="ma-grupo ma-grupo-mas" data-metas="agregar-perfil" data-accion="agregar-perfil" aria-expanded="'
-        + centroNuevo + '">+ Agregar perfil institucional</button></div>';
+    h += pintarSegmentos();
+    h += '<div class="ma-acciones">';
+    if (tienePerfil()) {
+      h += '<button type="button" class="ma-btn" data-metas="perfil-institucional" data-accion="perfil">Perfil institucional ›</button>';
+      h += '<button type="button" class="ma-btn" data-metas="agregar-perfil" data-accion="agregar-perfil">+ Otro centro</button>';
     }
-    if (centroNuevo) h += pintarEncabezado(aula, 'nuevo');
-    else if (!centros.length || centros.length === 1 || tienePerfil(aula)) h += pintarEncabezado(aula, null);
-    else h += '<p class="ma-nota">Elige el perfil de este grupo.</p>';
-    h += '</section>';
+    h += '</div></div>';
     return h;
+  }
+  function gruposDel(id) {
+    return (d.lista('aulas') || []).filter(function (a) { return a.centro_id === id; });
+  }
+  function pintarPantallaPerfil(aula) {
+    var h = pintarSegmentos();
+    h += '<div class="ma-acciones"><button type="button" class="ma-btn" data-metas="agregar-perfil" data-accion="agregar-perfil" aria-pressed="'
+      + centroNuevo + '">+ Otro centro</button>'
+      + '<button type="button" class="ma-btn ma-btn-chico" data-accion="ayuda-perfil" aria-expanded="' + ayudaPerfil + '" aria-label="Ayuda">ⓘ</button></div>';
+    if (ayudaPerfil) h += '<ol class="ma-ayuda">' + AYUDA_PERFIL.map(function (p) { return '<li>' + esc(p) + '</li>'; }).join('') + '</ol>';
+    h += pintarEncabezado(aula, centroNuevo ? 'nuevo' : null);
+    return h;
+  }
+  function rotularVolver() {
+    var b = document.getElementById('mi-aula-back-btn');
+    if (!b) return;
+    var t = perfilPantalla ? 'Volver a Mi aula'
+      : (colectaAbierta || controlAbierto || subAlumnos) ? 'Volver'
+      : 'Volver a la Zona Docente';
+    b.setAttribute('aria-label', t);
+    var s = b.querySelector('.back-txt');
+    if (s) s.textContent = 'Volver';
+    var titulo = document.querySelector('#view-mi-aula .view-title');
+    if (titulo) titulo.textContent = perfilPantalla ? 'Perfil' : 'Mi aula';
+  }
+  function abrirPerfil(nuevo) {
+    centroNuevo = !!nuevo;
+    perfilPantalla = true;
+    ayudaPerfil = false;
+    pintar();
+    var marco = document.querySelector('#view-mi-aula .view-scroll');
+    if (marco) marco.scrollTop = 0;
   }
 
   function pintarGrupos(aula) {
-    var todas = aulas();
+    var todas = aulasVisibles();
     if (!todas.length) return '';
     var escuelas = {};
     todas.forEach(function (a) { escuelas[String(a.escuela || '').trim().toLowerCase()] = 1; });
@@ -288,13 +358,18 @@
   }
 
   function pintarFormGrupo(primero) {
+    var centro = centroActivo();
     var a = aulaActual();
+    var escuela = centro ? centro.nombre : (a ? a.escuela : '');
+    var titulo = primero ? (centro ? '🏫 Grupo de este centro' : '🏫 Tu grupo') : '🏫 Otro grupo';
+    var nota = primero
+      ? (centro ? 'Este centro todavía no tiene grupos.' : 'Escribe los datos de tu grupo para empezar.')
+      : 'Un grupo nuevo tiene su propia lista, economía, asistencia y notas.';
     return '<form class="ma-card ma-form" data-form="aula" data-metas="form-grupo">'
-      + '<h2 class="ma-h">' + (primero ? '🏫 Tu grupo' : '🏫 Otro grupo') + '</h2>'
-      + '<p class="ma-nota">' + (primero ? 'Escribe los datos de tu grupo para empezar.'
-        : 'Un grupo nuevo tiene su propia lista, economía, asistencia y notas.') + '</p>'
+      + '<h2 class="ma-h">' + titulo + '</h2>'
+      + '<p class="ma-nota">' + nota + '</p>'
       + '<label class="ma-campo"><span>Escuela</span><input class="ma-inp" name="escuela" required maxlength="160" value="'
-      + esc(a ? a.escuela : '') + '" autocomplete="off"></label>'
+      + esc(escuela) + '" autocomplete="off"></label>'
       + '<div class="ma-fila2"><label class="ma-campo"><span>Grado</span><input class="ma-inp" name="grado" inputmode="numeric" required placeholder="6"></label>'
       + '<label class="ma-campo"><span>Sección</span><input class="ma-inp" name="seccion" required maxlength="3" placeholder="1"></label></div>'
       + '<div class="ma-acciones"><button class="ma-btn ma-btn-1" type="submit">Crear el grupo</button>'
@@ -958,6 +1033,7 @@
     var sv = vista.saceVista && SACE_VISTAS.some(function (v) { return v[0] === vista.saceVista; }) ? vista.saceVista : 'aprov';
     var asig = asignaturas(aula);
     var h = '<div class="ma-card ma-card-sace">'
+      + '<button type="button" class="ma-acceso" data-metas="perfil-desde-notas" data-accion="perfil">Perfil institucional <span aria-hidden="true">›</span></button>'
       + '<div class="ma-seg-fila"><span class="ma-seg-et" id="ma-seg-parcial">Parcial</span>'
       + (sv === 'pers' || sv === 'recup'
         ? '<p class="ma-nota">' + (sv === 'recup' ? 'Al final del año, después del Parcial IV.' : 'Los cuatro parciales están a la vista.') + '</p>'
@@ -997,17 +1073,22 @@
     var vacio = function () { return { valor: '', origen: '' }; };
     return {
       nombre: vacio(), direccion: vacio(), aldea: vacio(), municipio: vacio(), departamento: vacio(),
-      codigo_sace: vacio(), director: vacio(), modalidad: vacio(), jornada: vacio(),
+      codigo_sace: vacio(), director: vacio(), docente: vacio(), modalidad: vacio(), jornada: vacio(),
       logo: vacio(), logo_sec: vacio(),
-      anio_lectivo: { valor: aula && aula.anio_lectivo ? String(aula.anio_lectivo) : '', origen: '' },
+      anio_lectivo: { valor: aula && aula.anio_lectivo ? String(aula.anio_lectivo) : String(new Date().getFullYear()), origen: '' },
     };
   }
   function pintarEncabezado(aula, modo) {
     var nuevo = modo === 'nuevo';
-    var centro = (!nuevo && aula.centro_id) ? (d.lista('centros', { id: aula.centro_id })[0] || null) : null;
+    var centroId = nuevo ? null : centroActivoId();
+    var centro = centroId ? (d.lista('centros', { id: centroId })[0] || null) : null;
     var ini = nuevo
-      ? { campos: camposPerfilNuevo(aula), ofrecido: false }
+      ? { campos: camposPerfilNuevo(aula || centroActivo()), ofrecido: false }
       : window.MetasCentro.valoresIniciales(aula, centro);
+    if (!nuevo && ini.campos.docente && !ini.campos.docente.valor) {
+      var ya = nombreMaestro(centro);
+      if (ya) ini.campos.docente = { valor: ya, origen: 'aula' };
+    }
     var c = ini.campos;
     function campo(nombre, et, extra) {
       return '<label class="ma-campo"><span>' + et + '</span><input class="ma-inp" data-centro="' + nombre
@@ -1040,6 +1121,7 @@
       + (c.logo_sec.valor ? '<button type="button" class="ma-btn" data-accion="centro-quitar" data-valor="logoSec">Quitar</button>' : '')
       + '</div></div></div></div>';
     h += campo('nombre', 'Nombre del centro educativo', ' maxlength="160" required');
+    h += campo('docente', 'Nombre del maestro(a)', ' maxlength="120"');
     h += '<div class="ma-fila2">' + campo('director', 'Nombre del director(a)', ' maxlength="120"')
       + campo('codigo_sace', 'Código SACE del centro', ' maxlength="30"') + '</div>';
     h += '<div class="ma-fila2">' + campo('direccion', 'Dirección', ' maxlength="160"')
@@ -1049,7 +1131,15 @@
     h += '<div class="ma-fila2">' + campo('anio_lectivo', 'Año lectivo', ' inputmode="numeric" maxlength="4"')
       + campo('modalidad', 'Modalidad', ' maxlength="80"') + '</div>';
     h += campo('jornada', 'Jornada', ' maxlength="80"');
-    h += '<p class="ma-nota">El grado y la sección salen del grupo. El logo se guarda a color. Si no subes el de la Secretaría, la boleta usa el oficial.</p>';
+    h += '<p class="ma-nota">El grado y la sección salen del grupo.</p>';
+    h += '<p class="ma-nota">El logo se guarda a color.</p>';
+    h += '<p class="ma-nota">Si no subes el de la Secretaría, la boleta usa el oficial.</p>';
+    if (!nuevo && centro) {
+      var gs = gruposDel(centro.id).map(function (a) { return grupo(a); });
+      h += '<p class="ma-nota" data-metas="grupos-del-centro">' + (gs.length
+        ? 'Grupos de este centro: ' + esc(gs.join(', ')) + '.'
+        : 'Este centro todavía no tiene grupos.') + '</p>';
+    }
     h += '<p class="ma-aviso" role="status"></p></form>';
     return h;
   }
@@ -1067,12 +1157,14 @@
   }
   function guardarFormCentro() {
     var leo = leerFormCentro();
+    if (!leo || !d || !window.MetasCentro) return;
     var aula = aulaActual();
-    if (!leo || !aula || !d || !window.MetasCentro) return;
+    var eraNuevo = !leo.id;
     try {
-      var id = window.MetasCentro.guardar(d, aula, leo.campos, leo.id || null);
+      var id = window.MetasCentro.guardar(d, eraNuevo ? null : aula, leo.campos, leo.id || null);
       leo.form.setAttribute('data-centro-id', id);
       centroNuevo = false;
+      if (eraNuevo) { vista.centro = id; guardarPref(); }
       var aviso = leo.form.querySelector('.ma-aviso');
       if (aviso) aviso.textContent = '';
       // Ya hay perfil: el aviso de arriba no tiene que esperar a otro repintado,
@@ -1416,32 +1508,20 @@
       case 'parcial': vista.parcial = v; guardarPref(); return pintar();
       case 'sace-vista': vista.saceVista = v; guardarPref(); return pintar();
       case 'ayuda-sace': ayudaSace = !ayudaSace; return pintar();
-      case 'perfil':
-        // El aviso siempre abre la sección. El botón la abre o la cierra.
-        perfilAbierto = b.getAttribute('data-metas') === 'aviso-perfil' ? true : !perfilAbierto;
-        if (!perfilAbierto) centroNuevo = false;
-        pintar();
-        var frm = document.querySelector('#mi-aula [data-form="centro"]');
-        if (frm && frm.scrollIntoView) frm.scrollIntoView({ block: 'start' });
-        return;
-      case 'elegir-centro':
+      case 'perfil': return abrirPerfil(false);
+      case 'institucion':
         centroNuevo = false;
-        perfilAbierto = true;
-        if (aula && v && aula.centro_id !== v) {
-          var centroElegido = d.lista('centros', { id: v })[0];
-          intentar(function () {
-            d.editar('aulas', aula.id, { centro_id: v });
-            if (centroElegido && aula.escuela !== centroElegido.nombre) d.editar('aulas', aula.id, { escuela: centroElegido.nombre });
-          });
+        formGrupo = false;
+        vista.centro = v;
+        var delCentro = aulasVisibles();
+        if (!delCentro.some(function (a) { return a.id === vista.aula; })) {
+          vista.aula = delCentro[0] ? delCentro[0].id : null;
         }
+        guardarPref();
+        colectaAbierta = null; controlAbierto = null; alumnoAbierto = null; hoja = null;
         return pintar();
-      case 'agregar-perfil':
-        centroNuevo = true;
-        perfilAbierto = true;
-        pintar();
-        var frmNuevo = document.querySelector('#mi-aula [data-form="centro"]');
-        if (frmNuevo && frmNuevo.scrollIntoView) frmNuevo.scrollIntoView({ block: 'start' });
-        return;
+      case 'agregar-perfil': return abrirPerfil(true);
+      case 'ayuda-perfil': ayudaPerfil = !ayudaPerfil; return pintar();
       case 'centro-quitar': return quitarLogoCentro(v, b);
       case 'materias-siempre':
         intentar(function () {
@@ -1706,9 +1786,22 @@
         var grado = /^\d{1,2}/.exec(datos.grado);
         if (!grado) { avisarEn(f, 'Escribe el grado con número, por ejemplo 6.'); return; }
         ok = intentar(function () {
-          var id = d.crear('aulas', { escuela: datos.escuela, grado: grado[0], seccion: datos.seccion.replace(/[^0-9A-Za-z]/g, '').slice(0, 3),
-            anio_lectivo: new Date().getFullYear() }).id;
-          vista.aula = id; guardarPref();
+          var centro = centroActivo();
+          var filaAula = {
+            escuela: datos.escuela,
+            grado: grado[0],
+            seccion: datos.seccion.replace(/[^0-9A-Za-z]/g, '').slice(0, 3),
+            anio_lectivo: centro && centro.anio_lectivo ? centro.anio_lectivo : new Date().getFullYear(),
+          };
+          if (centro) {
+            filaAula.centro_id = centro.id;
+            var maestro = nombreMaestro(centro);
+            if (maestro) filaAula.docente_nombre = maestro;
+          }
+          var id = d.crear('aulas', filaAula).id;
+          vista.aula = id;
+          if (centro) vista.centro = centro.id;
+          guardarPref();
           formGrupo = false;
         }, f);
         break;
@@ -1846,9 +1939,15 @@
 
   document.addEventListener('click', function (ev) {
     if (!ev.target.closest) return;
+    if (ev.target.closest('#zd-ir-perfil')) {
+      abrirPerfil(false);
+      if (typeof window.switchView === 'function') window.switchView('view-mi-aula');
+      return;
+    }
     if (ev.target.closest('#mi-aula-back-btn')) {
-      // La flecha sube un nivel: de una colecta, un control o la lista
-      // pegada, a su lista; si no, a la Zona Docente.
+      // La flecha sube un nivel: del perfil al aula; de una colecta, un
+      // control o la lista pegada, a su lista; si no, a la Zona Docente.
+      if (perfilPantalla) { perfilPantalla = false; centroNuevo = false; pintar(); return; }
       if (colectaAbierta || controlAbierto || subAlumnos) {
         colectaAbierta = null; controlAbierto = null; subAlumnos = ''; hoja = null; pintarTarjeta(); pintar(); return;
       }
@@ -1916,7 +2015,9 @@
     irA: function (sec) {
       deMiAula = false;
       colectaAbierta = null; controlAbierto = null; alumnoAbierto = null; subAlumnos = ''; hoja = null; otroMonto = false;
-      if (sec === 'otro-grupo') formGrupo = true;
+      perfilPantalla = sec === 'perfil';
+      if (sec === 'perfil') centroNuevo = false;
+      else if (sec === 'otro-grupo') formGrupo = true;
       else if (SECCIONES.some(function (s) { return s.k === sec && !s.vieja; })) { vista.seccion = sec; guardarPref(); }
       try { _adGastosOn = 0; _adInvOn = 0; } catch (e) { /* sin la pantalla de antes */ }
       window.switchView('view-mi-aula');
