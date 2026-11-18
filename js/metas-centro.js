@@ -337,9 +337,24 @@
     return out;
   }
 
-  // El perfil de ESTE grupo: el mismo aula, o el mismo centro con el mismo
-  // grado y la misma sección. Si no se puede saber cuál es, no se devuelve
-  // ninguno: el impreso se queda como estaba.
+  // Cuántas aulas tienen este grado y esta sección. Null si no hay
+  // lista de aulas: el impreso viejo sigue con la regla de un solo grupo.
+  function aulasDe(grado, sec) {
+    var api = w.MetasDatos;
+    if (!api || typeof api.lista !== 'function') return null;
+    var aulas = api.lista('aulas') || [];
+    if (!aulas.length) return null;
+    return aulas.filter(function (a) {
+      return String(a.grado == null ? '' : a.grado).replace(/\D/g, '') === grado
+        && String(a.seccion || '').trim().toUpperCase() === sec;
+    });
+  }
+
+  // El perfil de ESTE grupo. Manda el aula (su id es el de la fila, y esa
+  // fila apunta a su centro). Si hay dos grupos con el mismo grado y la
+  // misma sección, no se le presta el centro del otro: cada uno usa el
+  // centro_id que el docente eligió. Sin poder saber cuál es, no se
+  // devuelve ninguno y el impreso se queda como estaba.
   function perfilDe(grupo) {
     if (!grupo) return null;
     var lista = perfiles();
@@ -360,11 +375,38 @@
       if (esc && pe === esc) porNombre.push(p);
       if (grado && pg === grado && ps === sec) porGrupo.push(p);
     }
+    var mismas = aulasDe(grado, sec);
+    if (mismas && mismas.length > 1) return null;
     // Un solo 6º-1 con perfil: es este grupo, aunque el nombre que quedó
     // escrito en el aparato todavía no sea el oficial.
     if (porGrupo.length === 1) return porGrupo[0];
     if (porNombre.length === 1) return porNombre[0];
     return null;
+  }
+
+  // Logo y nombre para un papel que no es un grupo (el análisis, la
+  // papeleta, el parte, el collage). Es el centro del aula que está
+  // abierta. Si esa aula no tiene perfil, no se toma el de otra. Si no
+  // hay aula abierta y solo existe un centro, es ese.
+  function marca() {
+    var cache = leer();
+    var p = cache.actual ? get(cache.actual) : null;
+    if (!p && !cache.actual) {
+      var vistos = {};
+      var unicos = [];
+      perfiles().forEach(function (x) {
+        var id = x.perfil && x.perfil.id;
+        if (!id || vistos[id]) return;
+        vistos[id] = 1;
+        unicos.push(x.perfil);
+      });
+      if (unicos.length === 1) p = unicos[0];
+    }
+    if (!p) return null;
+    var nombre = String(p.nombre || '').trim();
+    var logo = p.logo ? String(p.logo) : '';
+    if (!nombre && !logo) return null;
+    return { nombre: nombre, logo: logo };
   }
 
   // Copia para imprimir. Sin perfil, es el mismo objeto: el HTML no cambia.
@@ -439,6 +481,7 @@
     valoresIniciales: valoresIniciales,
     paraImpreso: paraImpreso,
     textoCentro: textoCentro,
+    marca: marca,
     guardar: guardar,
     jpeg: jpeg,
     examen: examen,
