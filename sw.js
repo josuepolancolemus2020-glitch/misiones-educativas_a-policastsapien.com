@@ -15,7 +15,7 @@
 //    las etiquetas ?v=NN de las páginas (normativa de sellado del CLAUDE.md).
 //    CACHE_DATOS no se toca nunca: subirlo volvería a borrarle al alumno lo
 //    que tenía guardado, que es justo lo que este arreglo vino a evitar.
-const CACHE_NAME = 'meta-app-v558';
+const CACHE_NAME = 'meta-app-v559';
 const CACHE_APP = CACHE_NAME;
 const CACHE_DATOS = 'meta-datos-v1';
 
@@ -184,6 +184,9 @@ const STATIC_ASSETS = [
   // el aula sin señal es justo donde tienen que valerse solas.
   './css/ruta-ia.css',
   './padres.html',
+  // El texto de las notas en el portal de familias. Sin él, la página abre
+  // y la familia no ve las notas aunque la clave ya esté vinculada.
+  './js/familia-notas.js',
   './salida.html',
   './buzon.html',
   './manifest-padres.json',

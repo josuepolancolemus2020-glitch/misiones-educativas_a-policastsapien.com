@@ -723,6 +723,76 @@ set role authenticated;
 select prueba.ok((select situacion = 'debe' from metas.vf_colectas where colecta_id = :c1), 'P3 el padre ya ve «debe» tras la anulación');
 reset role;
 
+-- ════════════════════════════════════════════════════════════════════════════
+-- N · Notas de la familia: una clave ve solo a su niño
+-- ════════════════════════════════════════════════════════════════════════════
+select clave as clave_beto from metas.familias where alumno_id = :beto and deleted_at is null \gset
+select prueba.como('A');
+set role authenticated;
+insert into metas.asignaturas (id, aula_id, nombre, orden)
+values ('00000000-0000-0000-0000-0000000d0002', :aula, 'Español', 2);
+insert into metas.notas (aula_id, alumno_id, asignatura_id, periodo, componente, valor) values
+  (:aula, :ana,  :mate, 'I',   'final',       85),
+  (:aula, :ana,  '00000000-0000-0000-0000-0000000d0002', 'II', 'final', 91.50),
+  (:aula, :ana,  :mate, 'III', 'final',       40),
+  (:aula, :ana,  :mate, 'I',   'acumulativo', 33),
+  (:aula, :beto, :mate, 'I',   'final',       62);
+update metas.notas set deleted_at = now()
+ where alumno_id = :ana and periodo = 'III' and componente = 'final' and deleted_at is null;
+reset role;
+
+select prueba.como('padre1');
+set role authenticated;
+select prueba.ok((select count(*) = 2
+                    and bool_and(nombre = 'Alumna')
+                    and bool_and(valor in ('85.00', '91.50'))
+                    and bool_and(asignatura in ('Matemáticas', 'Español'))
+                    from metas.familia_notas('1-k7qm')),
+                 'N1 una clave válida muestra las notas de su hijo');
+select prueba.ok((select count(*) = 0 from metas.familia_notas(:'clave_beto'))
+              and not exists (select 1 from metas.familia_notas('1K7QM')
+                               where valor in ('62.00', '40.00', '33.00') or nombre <> 'Alumna'),
+                 'N2 esa clave no muestra las notas de otro niño, ni la borrada, ni el acumulativo');
+select prueba.ok((select bool_and(alumno_id = :ana)
+                    and count(*) filter (where componente = 'final' and valor in (85, 91.50)) = 2
+                    and not bool_or(valor = 62)
+                    and not bool_or(valor = 40)
+                  from metas.vf_notas),
+                 'N2 la vista vf_notas tampoco trae al otro niño ni la nota borrada');
+select prueba.ok((select count(*) = 0 from metas.familia_notas(''))
+              and (select count(*) = 0 from metas.familia_notas('   '))
+              and (select count(*) = 0 from metas.familia_notas('ZZZZZZZZZZ')),
+                 'N3 una clave vacía o inválida no muestra notas');
+select prueba.ok((select count(*) from metas.notas) = 0, 'N3 el padre no lee la tabla de notas');
+reset role;
+
+select prueba.como('padre2');
+set role authenticated;
+select prueba.ok((select count(*) = 0 from metas.familia_notas(:'clave_dani'))
+              and (select count(*) = 0 from metas.familia_notas('1K7QM')),
+                 'N2 la clave de otro niño no abre las notas de Ana');
+reset role;
+
+select prueba.como('panel');
+set role authenticated;
+select prueba.ok((select count(*) = 0 from metas.familia_notas('1K7QM')),
+                 'N3 una cuenta que no es de familia no ve notas');
+reset role;
+
+select prueba.como('nadie');
+set role anon;
+select prueba.falla($$select * from metas.familia_notas('1K7QM')$$,
+                    'N3 sin sesión no se puede pedir las notas', '42501');
+reset role;
+
+select set_config('request.jwt.claims',
+  '{"sub":"00000000-0000-0000-0000-0000000000f9","role":"authenticated","is_anonymous":true}', false);
+set role authenticated;
+select prueba.ok((select count(*) = 0 from metas.familia_notas('1K7QM')),
+                 'N3 una sesión sin vínculo no ve notas');
+reset role;
+select prueba.como('A');
+
 -- P12: el tope global de claves equivocadas ALERTA, no bloquea a todos
 set role service_role;
 do $$

@@ -118,6 +118,8 @@ echo "▶ SUPABASE-V2-ESQUEMA.sql"
 q -f "$DISENO/SUPABASE-V2-ESQUEMA.sql"
 echo "▶ SUPABASE-V2-FAMILIAS.sql"
 q -f "$DISENO/SUPABASE-V2-FAMILIAS.sql"
+echo "▶ SUPABASE-V2-FAMILIA-NOTAS.sql"
+q -f "$DISENO/SUPABASE-V2-FAMILIA-NOTAS.sql"
 # Foto del catálogo antes de congelar: DESCONGELAR tiene que volver a ella.
 q -f "$PRUEBAS/03-foto-catalogo.sql" -c "select foto.tomar('antes')" >/dev/null
 echo "▶ SUPABASE-V2-CONGELAR.sql (dos veces)"
