@@ -64,6 +64,18 @@ psql_pg -f "'$TMP/SUPABASE-V2-CONGELAR.sql'" >/dev/null 2>&1 \
 psql_pg -c "'select foto.tomar(\$\$congelado\$\$)'" >/dev/null
 echo "▶ Pruebas"
 psql_pg -v "conninfo='host=$TMP port=$PUERTO user=postgres dbname=metas_prueba'" -f "'$TMP/10-pruebas.sql'"
+# Perfil del centro: tabla, vínculo y RLS. Dos veces, como si se pegara de
+# nuevo. Después se deshace para dejar las aulas como estaban.
+echo "▶ SUPABASE-V2-PERFIL-CENTRO.sql (dos veces)"
+psql_pg -f "'$TMP/SUPABASE-V2-PERFIL-CENTRO.sql'" >/dev/null
+psql_pg -f "'$TMP/SUPABASE-V2-PERFIL-CENTRO.sql'" >/dev/null 2>&1 \
+  || { echo "✘ PERFIL-CENTRO falló la segunda vez"; psql_pg -f "'$TMP/SUPABASE-V2-PERFIL-CENTRO.sql'"; exit 1; }
+psql_pg -f "'$TMP/24-perfil-centro.sql'"
+echo "▶ SUPABASE-V2-PERFIL-CENTRO-DESHACER.sql (dos veces)"
+psql_pg -f "'$TMP/SUPABASE-V2-PERFIL-CENTRO-DESHACER.sql'" >/dev/null
+psql_pg -f "'$TMP/SUPABASE-V2-PERFIL-CENTRO-DESHACER.sql'" >/dev/null 2>&1 \
+  || { echo "✘ DESHACER perfil falló la segunda vez"; psql_pg -f "'$TMP/SUPABASE-V2-PERFIL-CENTRO-DESHACER.sql'"; exit 1; }
+psql_pg -f "'$TMP/25-deshacer-perfil-centro.sql'"
 # Claves viejas: solo callan si el docente ya está vinculado. Dos veces, como
 # si se pegara de nuevo. Después se deshace, para que la ida y vuelta del
 # paso 1 compare el catálogo de CONGELAR y no esta envoltura.

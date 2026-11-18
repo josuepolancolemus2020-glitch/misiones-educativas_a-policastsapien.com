@@ -82,6 +82,7 @@
   var formColecta = false;
   var formGasto = false;
   var ayudaSace = false;
+  var encabezadoAbierto = false;
   var cargaFilas = [];
   var cargaTexto = '';
   var avisoCarga = '';
@@ -215,6 +216,7 @@
     var y = marco ? marco.scrollTop : 0;
     raiz.innerHTML = h;
     if (marco && marco.scrollTop !== y) marco.scrollTop = y;
+    if (window.MetasCentro && d) window.MetasCentro.refrescar(d, aula && aula.id);
   }
 
   function pintarGrupos(aula) {
@@ -934,8 +936,85 @@
     h += '</div><div class="ma-card"><h2 class="ma-h">🖨️ Para imprimir</h2><div class="ma-imprimir">'
       + '<button type="button" class="ma-btn ma-btn-1" data-accion="imprimir" data-valor="boletas">🧾 Boletas de todo el grupo</button>'
       + '<button type="button" class="ma-btn" data-accion="imprimir" data-valor="resumen">📋 Resumen final por grado</button>'
-      + '<button type="button" class="ma-btn" data-accion="imprimir" data-valor="cuadro">📒 Cuadro final del año</button></div></div>';
+      + '<button type="button" class="ma-btn" data-accion="imprimir" data-valor="cuadro">📒 Cuadro final del año</button>'
+      + '<button type="button" class="ma-btn" data-accion="encabezado" aria-expanded="' + encabezadoAbierto + '">🏫 Encabezado y logos</button></div></div>';
+    if (encabezadoAbierto && window.MetasCentro) h += pintarEncabezado(aula);
     return h;
+  }
+
+  function pintarEncabezado(aula) {
+    var centro = aula.centro_id ? (d.lista('centros', { id: aula.centro_id })[0] || null) : null;
+    var ini = window.MetasCentro.valoresIniciales(aula, centro);
+    var c = ini.campos;
+    function campo(nombre, et, extra) {
+      return '<label class="ma-campo"><span>' + et + '</span><input class="ma-inp" data-centro="' + nombre
+        + '" value="' + esc(c[nombre].valor) + '"' + (extra || '') + ' autocomplete="off"></label>';
+    }
+    function logoCaja(id, src, propio, vacio) {
+      if (src && (propio || id === 'ma-logo-prev')) {
+        return '<img alt="" src="' + esc(src) + '"' + (propio ? ' data-propio="1"' : '') + '>';
+      }
+      return vacio;
+    }
+    var h = '<form class="ma-card ma-form" data-form="centro" data-centro-id="' + esc(centro ? centro.id : '') + '">'
+      + '<h2 class="ma-h">🏫 Encabezado y logos</h2>';
+    if (ini.ofrecido) {
+      h += '<p class="ma-nota">En este aparato había datos del centro. Quedan aquí para empezar y no pisan lo que ya está guardado.</p>';
+    }
+    h += '<div class="ma-fila2">'
+      + '<div class="ad-logo-fila"><div class="ad-logo-prev" id="ma-logo-prev">'
+      + logoCaja('ma-logo-prev', c.logo.valor, true, '<span>Sin logo</span>')
+      + '</div><div><p class="ma-nota">Logo del centro</p><div class="ma-acciones">'
+      + '<label class="ma-btn">Subir<input type="file" data-centro-logo="logo" accept="image/*" style="display:none"></label>'
+      + (c.logo.valor ? '<button type="button" class="ma-btn" data-accion="centro-quitar" data-valor="logo">Quitar</button>' : '')
+      + '</div></div></div>'
+      + '<div class="ad-logo-fila"><div class="ad-logo-prev" id="ma-logosec-prev">'
+      + (c.logo_sec.valor
+        ? '<img alt="Logo de la Secretaría" src="' + esc(c.logo_sec.valor) + '" data-propio="1">'
+        : '<img alt="Logo de la Secretaría" src="img/logo-secretaria.png">')
+      + '</div><div><p class="ma-nota">Logo de la Secretaría' + (c.logo_sec.valor ? '' : ' (oficial, ya incluido)') + '</p><div class="ma-acciones">'
+      + '<label class="ma-btn">Subir<input type="file" data-centro-logo="logoSec" accept="image/*" style="display:none"></label>'
+      + (c.logo_sec.valor ? '<button type="button" class="ma-btn" data-accion="centro-quitar" data-valor="logoSec">Quitar</button>' : '')
+      + '</div></div></div></div>';
+    h += campo('nombre', 'Nombre del centro educativo', ' maxlength="160" required');
+    h += '<div class="ma-fila2">' + campo('director', 'Nombre del director(a)', ' maxlength="120"')
+      + campo('codigo_sace', 'Código SACE del centro', ' maxlength="30"') + '</div>';
+    h += '<div class="ma-fila2">' + campo('direccion', 'Dirección', ' maxlength="160"')
+      + campo('aldea', 'Aldea', ' maxlength="120"') + '</div>';
+    h += '<div class="ma-fila2">' + campo('municipio', 'Municipio', ' maxlength="80"')
+      + campo('departamento', 'Departamento', ' maxlength="80"') + '</div>';
+    h += '<div class="ma-fila2">' + campo('anio_lectivo', 'Año lectivo', ' inputmode="numeric" maxlength="4"')
+      + campo('modalidad', 'Modalidad', ' maxlength="80"') + '</div>';
+    h += campo('jornada', 'Jornada', ' maxlength="80"');
+    h += '<p class="ma-nota">El grado y la sección salen del grupo. El logo se guarda a color. Si no subes el de la Secretaría, la boleta usa el oficial.</p>';
+    h += '<p class="ma-aviso" role="status"></p></form>';
+    return h;
+  }
+
+  function leerFormCentro() {
+    var f = document.querySelector('#mi-aula [data-form="centro"]');
+    if (!f) return null;
+    var campos = {};
+    f.querySelectorAll('[data-centro]').forEach(function (el) { campos[el.getAttribute('data-centro')] = el.value; });
+    var logo = document.querySelector('#ma-logo-prev img');
+    campos.logo = logo ? logo.getAttribute('src') : '';
+    var sec = document.querySelector('#ma-logosec-prev img');
+    campos.logo_sec = (sec && sec.getAttribute('data-propio') === '1') ? sec.getAttribute('src') : '';
+    return { form: f, campos: campos, id: f.getAttribute('data-centro-id') || null };
+  }
+  function guardarFormCentro() {
+    var leo = leerFormCentro();
+    var aula = aulaActual();
+    if (!leo || !aula || !d || !window.MetasCentro) return;
+    try {
+      var id = window.MetasCentro.guardar(d, aula, leo.campos, leo.id || null);
+      leo.form.setAttribute('data-centro-id', id);
+      var aviso = leo.form.querySelector('.ma-aviso');
+      if (aviso) aviso.textContent = '';
+    } catch (e) {
+      if (e && e.espera) return;
+      avisarEn(leo.form, frase(e));
+    }
   }
 
   function tablaSace(aula, sv, parcial, asig) {
@@ -1267,6 +1346,8 @@
       case 'parcial': vista.parcial = v; guardarPref(); return pintar();
       case 'sace-vista': vista.saceVista = v; guardarPref(); return pintar();
       case 'ayuda-sace': ayudaSace = !ayudaSace; return pintar();
+      case 'encabezado': encabezadoAbierto = !encabezadoAbierto; return pintar();
+      case 'centro-quitar': return quitarLogoCentro(v, b);
       case 'materias-siempre':
         intentar(function () {
           MATERIAS_DE_SIEMPRE.forEach(function (n, i) { d.crear('asignaturas', { aula_id: aula.id, nombre: n, orden: i + 1 }); });
@@ -1417,15 +1498,43 @@
 
   function alCambiar(ev) {
     var el = ev.target;
+    if (el.getAttribute && el.getAttribute('data-centro-logo')) return subirLogoCentro(el);
     var acc = el.getAttribute && el.getAttribute('data-accion');
     if (!acc || !d) return;
     if (acc === 'fecha') { vista.fecha = el.value || hoy(); guardarPref(); return pintar(); }
     if (acc === 'sace') return anotarSace(el);
   }
+  function subirLogoCentro(el) {
+    var file = el.files && el.files[0];
+    el.value = '';
+    if (!file || !window.MetasCentro) return;
+    var cual = el.getAttribute('data-centro-logo');
+    window.MetasCentro.jpeg(file).then(function (url) {
+      var caja = document.getElementById(cual === 'logoSec' ? 'ma-logosec-prev' : 'ma-logo-prev');
+      if (caja) {
+        caja.innerHTML = '<img alt="" src="' + String(url).replace(/"/g, '') + '"'
+          + (cual === 'logoSec' ? ' data-propio="1"' : '') + '>';
+      }
+      guardarFormCentro();
+    }).catch(function () {
+      avisarEn(document.querySelector('#mi-aula [data-form="centro"]'), 'No se pudo leer la imagen.');
+    });
+  }
+  function quitarLogoCentro(cual, boton) {
+    var caja = document.getElementById(cual === 'logoSec' ? 'ma-logosec-prev' : 'ma-logo-prev');
+    if (caja) {
+      caja.innerHTML = cual === 'logoSec'
+        ? '<img alt="Logo de la Secretaría" src="img/logo-secretaria.png">'
+        : '<span>Sin logo</span>';
+    }
+    if (boton) boton.hidden = true;
+    guardarFormCentro();
+  }
 
   // El color de la nota cambia mientras se escribe; se anota al soltar.
   function alEscribir(ev) {
     var el = ev.target;
+    if (el.getAttribute && el.getAttribute('data-centro')) return guardarFormCentro();
     if (!el.classList || !el.classList.contains('ma-mx-inp')) return;
     var tipo = el.getAttribute('data-tipo');
     if (tipo !== 'aprov' && tipo !== 'rec') return;

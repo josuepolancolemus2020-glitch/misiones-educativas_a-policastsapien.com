@@ -29,7 +29,7 @@
     colectas: 1, colecta_exenciones: 1, bienes: 1 };
   // Lo que es del corte 1 (08, 8.1). Lo de cortes siguientes se agrega aquí
   // el día de su corte.
-  var TABLAS = ['aulas', 'periodos', 'asignaturas', 'alumnos', 'familias', 'colectas', 'colecta_exenciones',
+  var TABLAS = ['centros', 'aulas', 'periodos', 'asignaturas', 'alumnos', 'familias', 'colectas', 'colecta_exenciones',
     'pagos', 'gastos', 'asistencia_dias', 'asistencia', 'inasistencias_oficiales', 'notas', 'notas_personalidad',
     'controles', 'control_valores', 'observaciones', 'avisos', 'aviso_destinatarios', 'gastos_docente', 'reembolsos'];
   var SOLAPE_MS = 2 * 60 * 1000;

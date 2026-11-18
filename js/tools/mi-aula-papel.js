@@ -54,8 +54,8 @@
       escuela: aula.escuela || '',
       grado: aula.grado == null ? '' : String(aula.grado),
       seccion: aula.seccion || '',
-      // Los logos todavía no pasan a filas (corte 1): sin logo, como un
-      // grupo que no lo subió.
+      // Sin perfil de centro todavía: igual que un grupo que no subió logo.
+      // Si el aula ya apunta a su centro, abajo se ponen el nombre y los logos.
       logo: '',
       logoSec: '',
       boleta: Object.assign({}, def, ajustes, {
@@ -153,6 +153,12 @@
       if (fuera.length) col.noCuentan = fuera;
       g.colectas.push(col);
     });
+    // El perfil del centro, si ya está en la base. Si no, el grupo queda
+    // como salía antes (nombre del aula, sin logo propio).
+    if (window.MetasCentro) {
+      var perfil = window.MetasCentro.get(aula.id);
+      if (perfil) g = window.MetasCentro.aplicar(g, perfil);
+    }
     return g;
   }
 
