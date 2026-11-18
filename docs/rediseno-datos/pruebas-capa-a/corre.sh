@@ -50,6 +50,8 @@ echo "▶ SUPABASE-V2-ESQUEMA.sql"
 psql_pg -f "'$TMP/SUPABASE-V2-ESQUEMA.sql'"
 echo "▶ SUPABASE-V2-FAMILIAS.sql"
 psql_pg -f "'$TMP/SUPABASE-V2-FAMILIAS.sql'"
+echo "▶ SUPABASE-V2-FAMILIA-NOTAS.sql"
+psql_pg -f "'$TMP/SUPABASE-V2-FAMILIA-NOTAS.sql'"
 # Foto del catálogo antes de congelar: DESCONGELAR tiene que volver a ella.
 psql_pg -f "'$TMP/03-foto-catalogo.sql'" -c "'select foto.tomar(\$\$antes\$\$)'" >/dev/null
 echo "▶ SUPABASE-V2-CONGELAR.sql (paso 1)"
@@ -62,6 +64,19 @@ psql_pg -f "'$TMP/SUPABASE-V2-CONGELAR.sql'" >/dev/null 2>&1 \
 psql_pg -c "'select foto.tomar(\$\$congelado\$\$)'" >/dev/null
 echo "▶ Pruebas"
 psql_pg -v "conninfo='host=$TMP port=$PUERTO user=postgres dbname=metas_prueba'" -f "'$TMP/10-pruebas.sql'"
+# Claves viejas: solo callan si el docente ya está vinculado. Dos veces, como
+# si se pegara de nuevo. Después se deshace, para que la ida y vuelta del
+# paso 1 compare el catálogo de CONGELAR y no esta envoltura.
+echo "▶ SUPABASE-V2-CLAVES-VIEJAS-VINCULADOS.sql (dos veces)"
+psql_pg -f "'$TMP/SUPABASE-V2-CLAVES-VIEJAS-VINCULADOS.sql'" >/dev/null
+psql_pg -f "'$TMP/SUPABASE-V2-CLAVES-VIEJAS-VINCULADOS.sql'" >/dev/null 2>&1 \
+  || { echo "✘ CLAVES-VIEJAS falló la segunda vez"; psql_pg -f "'$TMP/SUPABASE-V2-CLAVES-VIEJAS-VINCULADOS.sql'"; exit 1; }
+psql_pg -f "'$TMP/22-claves-viejas.sql'"
+echo "▶ SUPABASE-V2-CLAVES-VIEJAS-VINCULADOS-DESHACER.sql (dos veces)"
+psql_pg -f "'$TMP/SUPABASE-V2-CLAVES-VIEJAS-VINCULADOS-DESHACER.sql'" >/dev/null
+psql_pg -f "'$TMP/SUPABASE-V2-CLAVES-VIEJAS-VINCULADOS-DESHACER.sql'" >/dev/null 2>&1 \
+  || { echo "✘ DESHACER claves falló la segunda vez"; psql_pg -f "'$TMP/SUPABASE-V2-CLAVES-VIEJAS-VINCULADOS-DESHACER.sql'"; exit 1; }
+psql_pg -f "'$TMP/23-deshacer-claves.sql'"
 # Ida y vuelta: DESCONGELAR (dos veces, debe aguantar) y CONGELAR otra vez.
 echo "▶ SUPABASE-V2-DESCONGELAR.sql (dos veces)"
 psql_pg -f "'$TMP/SUPABASE-V2-DESCONGELAR.sql'" >/dev/null
