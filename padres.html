@@ -216,6 +216,7 @@
     <button id="enviar" data-metas="familia-entrar" aria-label="Enviar">➤</button>
   </div>
 
+<script src="js/familia-notas.js?v=559"></script>
 <script>
 /* ============================================================
    ASISTENTE DE PADRES — bot de reglas, sin costo y sin cuentas.
@@ -1569,6 +1570,43 @@ async function leerNueva(vista) {
   });
   return r.ok ? r.json() : [];
 }
+/* Notas de LA clave que la familia escribió. La base (metas.familia_notas)
+   devuelve solo al niño de esa clave; si no hay clave, ni se pregunta. */
+async function leerNotasDeClave(clave) {
+  const limpia = String(clave || '').replace(/[^A-Za-z0-9]/g, '');
+  if (!limpia) return { estado: 'vacio', filas: [] };
+  const n = nubeFamilia();
+  const s = n && await sesionFamilia(n, false);
+  if (!s) return { estado: 'error', filas: [] };
+  try {
+    const r = await fetch(n.url + '/rest/v1/rpc/familia_notas', {
+      method: 'POST',
+      headers: {
+        apikey: n.llave, authorization: 'Bearer ' + s.access_token,
+        'content-type': 'application/json', 'content-profile': 'metas', accept: 'application/json',
+      },
+      body: JSON.stringify({ p_clave: limpia }),
+    });
+    if (!r.ok) return { estado: 'error', filas: [] };
+    const j = await r.json();
+    return { estado: 'ok', filas: Array.isArray(j) ? j : [] };
+  } catch (_) {
+    return { estado: 'error', filas: [] };
+  }
+}
+function esClaveNueva() {
+  const codigo = claveGuardada();
+  if (!codigo || !nubeFamilia()) return false;
+  const e = cfgCodigos().find(x => x.codigo === codigo);
+  return !!(e && e.nueva);
+}
+/* Preguntas que, con la clave nueva, se responden con las notas de la base
+   nueva. El camino viejo diría «aún no hay notas» aunque sí las haya. */
+function quiereVerNotas(t) {
+  if (/actualizar|refrescar|de nuevo|recargar/.test(t)) return true;
+  if (/nota|calific|boleta|parcial|sace|\bsaco\b|como va|como esta|como le va|resumen|promedio|aprobo|aprobad|reprobo/.test(t)) return true;
+  return !!materiaEn(t);
+}
 // El dinero llega como texto («150.00») y así se muestra: «L 150.00».
 function lempiras(t) {
   const p = String(t || '0.00').split('.');
@@ -1577,16 +1615,20 @@ function lempiras(t) {
 // callar: en el arranque, si el vínculo se perdió no se dice nada (se vuelve a
 // revisar la clave).
 async function resumenNuevo(callar) {
-  const [hijos, pagos, avisos] = await Promise.all([leerNueva('vf_hijos'), leerNueva('vf_pagos'), leerNueva('vf_avisos')]);
+  const [hijos, pagos, avisos, notas] = await Promise.all([
+    leerNueva('vf_hijos'), leerNueva('vf_pagos'), leerNueva('vf_avisos'), leerNotasDeClave(claveGuardada()),
+  ]);
   const h = hijos[0];
+  if (!h && callar) return false;
   let t = h ? '👦 <strong>' + esc(h.nombre) + '</strong>' + (h.docente ? ', con ' + esc(h.docente) : '') + '.' : '';
+  if (h && window.MetasNotasFamilia) t += '<br>' + MetasNotasFamilia.html(notas.filas, notas.estado);
   if (pagos.length) {
     t += '<br>🧾 Recibos:<br>' + pagos.map(p => esc(p.recibo) + ' · ' + esc(p.concepto) + ' · <strong>' + lempiras(p.monto) + '</strong>'
       + (p.corrige_al_recibo ? ' (corrige al ' + esc(p.corrige_al_recibo) + ')' : '')).join('<br>');
   }
   if (avisos.length) t += '<br>📣 ' + avisos.map(a => '<strong>' + esc(a.titulo) + '</strong>' + (a.texto ? ': ' + esc(a.texto) : '')).join('<br>📣 ');
-  if (!h && callar) return false;
-  await botSay(t || 'Todavía no hay información para esta clave.');
+  // Ya entró: el botón «¿Qué es la clave?» del saludo solo estorba.
+  await botSay(t || 'Todavía no hay información para esta clave.', h ? [] : undefined);
   return !!h;
 }
 
@@ -1717,6 +1759,13 @@ async function manejar(txtOriginal) {
   /* norm + expand: «q debe mi ijo» → «que debe mi hijo» */
   const t = expand(norm(txtOriginal));
   if (!t) return;
+
+  /* Con la clave nueva, las notas viven en la base nueva. El camino de
+     antes no las conoce y contestaría que no hay. */
+  if (esClaveNueva() && quiereVerNotas(t)) {
+    await resumenNuevo();
+    return;
+  }
 
   /* respuesta con número del menú (1-9) */
   if (/^[1-9]$/.test(t)) { await MENU_NUM[+t - 1](t); return; }

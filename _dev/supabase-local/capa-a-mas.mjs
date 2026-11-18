@@ -262,6 +262,35 @@ await prueba('P1 un padre con clave equivocada no entra; con la buena, ve a su h
   const { data } = await padreAna.c.schema('metas').from('vf_hijos').select('alumno_id');
   afirma(data?.length === 1 && data[0].alumno_id === ana, JSON.stringify(data));
 });
+await prueba('N1 la clave de Ana muestra su nota y no la de Beto; la vacía y la ajena, nada', async () => {
+  const asig = id();
+  let r = await c.schema('metas').from('asignaturas').insert({ id: asig, aula_id: aula, nombre: 'Matemáticas', orden: 1 });
+  afirma(!r.error, JSON.stringify(r.error));
+  r = await c.schema('metas').from('notas').insert([
+    { aula_id: aula, alumno_id: ana, asignatura_id: asig, periodo: 'I', componente: 'final', valor: '85.00' },
+    { aula_id: aula, alumno_id: beto, asignatura_id: asig, periodo: 'I', componente: 'final', valor: '62.00' },
+  ]);
+  afirma(!r.error, JSON.stringify(r.error));
+  const mias = await padreAna.c.schema('metas').rpc('familia_notas', { p_clave: claveAna });
+  const texto = JSON.stringify(mias.data);
+  afirma(!mias.error && mias.data?.length === 1 && mias.data[0].valor === '85.00'
+    && mias.data[0].nombre === 'Alumna' && !texto.includes('62'), JSON.stringify(mias));
+  const ajena = await padreAna.c.schema('metas').rpc('familia_notas', { p_clave: claveBeto });
+  const vacia = await padreAna.c.schema('metas').rpc('familia_notas', { p_clave: '' });
+  const mala = await padreAna.c.schema('metas').rpc('familia_notas', { p_clave: 'ZZZZZZZZZZ' });
+  afirma(!ajena.error && ajena.data?.length === 0, JSON.stringify(ajena));
+  afirma(!vacia.error && vacia.data?.length === 0, JSON.stringify(vacia));
+  afirma(!mala.error && mala.data?.length === 0, JSON.stringify(mala));
+  const padreDeBeto = await padreNuevo();
+  const vinculo = await funcion('familia-vincular', { clave: claveBeto, turnstile: 'local' }, padreDeBeto.sesion.access_token);
+  afirma(vinculo.cuerpo.ok === true, JSON.stringify(vinculo));
+  const suyas = await padreDeBeto.c.schema('metas').rpc('familia_notas', { p_clave: claveBeto });
+  const deAna = await padreDeBeto.c.schema('metas').rpc('familia_notas', { p_clave: claveAna });
+  afirma(!suyas.error && suyas.data?.length === 1 && suyas.data[0].valor === '62.00' && !JSON.stringify(suyas.data).includes('85'),
+    JSON.stringify(suyas));
+  afirma(!deAna.error && deAna.data?.length === 0, JSON.stringify(deAna));
+  padreDeBeto.c.removeAllChannels();
+});
 await prueba('P2 sin sesión anónima, familia-vincular → 401; con la sesión de la docente, tampoco', async () => {
   const r1 = await funcion('familia-vincular', { clave: claveAna, turnstile: 'local' });
   const r2 = await funcion('familia-vincular', { clave: claveAna, turnstile: 'local' }, sesionC.access_token);
