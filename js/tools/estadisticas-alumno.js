@@ -1094,6 +1094,7 @@ function estObsQueCaben(obs, renglones) {
 }
 
 function estImprimirInforme(d, nums) {
+  if (window.MetasCentro && typeof MetasCentro.paraImpreso === 'function') d = MetasCentro.paraImpreso(d) || d;
   const alumnos = d.lista.filter(a => nums.some(n => String(n) === String(a.num)));
   if (!alumnos.length) { if (typeof toast === 'function') toast('Ese alumno ya no está en la lista'); return; }
   const grupo = adGrupoTxt(d);
@@ -1487,6 +1488,7 @@ function estDecisionGradoHtml(g) {
 }
 
 function estImprimirInformeGrado(d) {
+  if (window.MetasCentro && typeof MetasCentro.paraImpreso === 'function') d = MetasCentro.paraImpreso(d) || d;
   if (!d.lista.length) { if (typeof toast === 'function') toast('Primero llena la lista de alumnos'); return; }
   const g = estDatosGrado(d);
   if (!g.total) {

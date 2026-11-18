@@ -785,6 +785,13 @@ function adPrintAbrir(html) {
   return w;
 }
 
+/* El mismo grupo, con el perfil del centro encima, solo si ese perfil
+   existe. Si no existe, devuelve el mismo objeto: el HTML sale igual. */
+function adConPerfil(d) {
+  if (!d || !window.MetasCentro || typeof window.MetasCentro.paraImpreso !== 'function') return d;
+  return window.MetasCentro.paraImpreso(d) || d;
+}
+
 function adGradoOrdinal(grado) {
   const g = String(grado || '').trim();
   if (!g) return '';
@@ -1603,6 +1610,7 @@ function adQrSrc() {
 }
 
 function adTirasTodas(d) {
+  d = adConPerfil(d);
   if (!d.lista.length) { toast('Agrega alumnos primero'); return; }
   const grupoTxt = adGrupoTxt(d);
   const sitio = (typeof PA_SITE !== 'undefined') ? PA_SITE : 'https://metas.policastsapien.com/';
@@ -2386,6 +2394,7 @@ function adListaFilasArrastrar(cont) {
 }
 
 function adTiraUno(d, num) {
+  d = adConPerfil(d);
   const codigo = (d.lista.find(x => x.num === num) || {}).claveFamilia ?? adClaveFamilia(d.id, num);
   if (!codigo) { toast('No se pudo generar la clave'); return; }
   const a = d.lista.find(x => x.num === num) || { nombre: '' };
@@ -2970,6 +2979,7 @@ function adCuadroEdadesModal() {
 
 /* Una hoja carta: encabezado, el cuadro y las notas de quién no entra. */
 function adPrintCuadroEdades(d, corte) {
+  d = adConPerfil(d);
   const SL = window.SaceLista;
   const c = SL.cuadroEdades(d, corte);
   const bol = d.boleta || {};
@@ -3132,6 +3142,7 @@ function adResumenFinalModal() {
    2. Gráficos y estadística descriptiva, sacados del MISMO cálculo, más
       los avisos para quien revisa (quién no entró y por qué). */
 function adPrintResumenFinal(d) {
+  d = adConPerfil(d);
   const { r, cs } = adResumenDatos(d);
   const enc = adResumenEncabezado(d, r);
   const av = adResumenAvisos(r, d);
@@ -3218,6 +3229,7 @@ function adPrintResumenFinal(d) {
 /* El mismo formulario en .xlsx, para pegarlo en el consolidado del
    centro. Se arma en el teléfono; no viaja a ningún lado. */
 async function adResumenFinalExcel(d) {
+  d = adConPerfil(d);
   try {
     const { r, cs } = adResumenDatos(d);
     const enc = adResumenEncabezado(d, r);
@@ -3572,6 +3584,7 @@ function adCfEngancharInf(ov) {
 /* 🖨️ Listado de reprobados: una hoja carta para dirección y para citar a
    las familias, con las materias, la nota, la recuperación y el teléfono. */
 function adPrintListaReprobados(d) {
+  d = adConPerfil(d);
   const cf = ResumenSace.cuadroFinal(d, { SL: window.SaceLista, pers: AD_PERSONALIDAD });
   const rep = cf.filas.filter(f => f.estado === 'REPROBADO' || f.estado === 'PENDIENTE');
   const bol = d.boleta || {};
@@ -3616,6 +3629,7 @@ function adPrintListaReprobados(d) {
 }
 
 function adPrintCuadroFinal(d) {
+  d = adConPerfil(d);
   const cf = ResumenSace.cuadroFinal(d, { SL: window.SaceLista, pers: AD_PERSONALIDAD });
   const bol = d.boleta || {};
   const centro = String(d.escuela || '').trim() || 'Centro Educativo';
@@ -3662,6 +3676,7 @@ function adPrintCuadroFinal(d) {
   adPrintAbrir(html);
 }
 async function adCuadroFinalExcel(d) {
+  d = adConPerfil(d);
   try {
     const cf = ResumenSace.cuadroFinal(d, { SL: window.SaceLista, pers: AD_PERSONALIDAD });
     const tabla = ResumenSace.cuadroFinalTabla(cf, window.SaceLista.idnBonita);
@@ -4019,7 +4034,8 @@ function adExpTabla(cabs, filas, vacioTxt, rotulo, anchos) {
 }
 
 function adPrintExpediente(st) {
-  const d = st.grupos.find(g => g.id === st.activo) || st.grupos[0];
+  let d = st.grupos.find(g => g.id === st.activo) || st.grupos[0];
+  d = adConPerfil(d);
   const anio = adAnioDe(d);
   const nom = n => { const a = d.lista.find(x => String(x.num) === String(n)); return (a && a.nombre) || ''; };
   const secs = [];
@@ -4679,6 +4695,7 @@ function adGastoEnviar(txt) {
   window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank');
 }
 function adGastoTxtUno(g, d) {
+  d = adConPerfil(d);
   return '🧾 *Gasto por reembolsar*\n' +
     (adDocenteNombre() ? adDocenteNombre() + '\n' : '') +
     (g.escuela || d.escuela ? (g.escuela || d.escuela) + '\n' : '') + '\n' +
@@ -4689,6 +4706,7 @@ function adGastoTxtUno(g, d) {
     'Agradezco la gestión del reembolso.\n_Anotado con M.E.T.A.S_';
 }
 function adGastoTxtResumen(pend, d) {
+  d = adConPerfil(d);
   const total = pend.reduce((s, g) => s + (Number(g.monto) || 0), 0);
   const aQuien = [...new Set(pend.map(g => g.cobrarA || 'Dirección'))].join(' y ');
   return '🧾 *SOLICITUD DE REEMBOLSO*\n' +
@@ -4706,6 +4724,7 @@ function adGastoTxtResumen(pend, d) {
 
 /* Solicitud imprimible: la que se firma y queda archivada en dirección */
 function adPrintGastos(pend, d) {
+  d = adConPerfil(d);
   const total = pend.reduce((s, g) => s + (Number(g.monto) || 0), 0);
   const orden = pend.slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
   const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
@@ -4769,7 +4788,10 @@ function adBolsDias(iso) {
 function adBolsTramo(dias) { return AD_BOLS_TRAMOS.find(t => dias <= t.hasta); }
 
 function adPrintCuadroBolsillo(d) {
-  const escuela = String(d.escuela || '').trim();
+  /* El filtro sigue el nombre con el que se anotó cada gasto. El
+     encabezado, si hay perfil, usa el del centro. Sin perfil, es el mismo. */
+  const escuela = String((d && d.escuela) || '').trim();
+  d = adConPerfil(d);
   const todos = adGastosLoad();
   const variasEscuelas = new Set(todos.map(g => String(g.escuela || '').trim()).filter(Boolean)).size > 1;
   const lista = todos.filter(g => !variasEscuelas || !String(g.escuela || '').trim() || String(g.escuela).trim() === escuela)
@@ -5291,6 +5313,7 @@ function adRenderInventario(body, d) {
 }
 
 function adInvTxtResumen(lista, d) {
+  d = adConPerfil(d);
   const t = adInvTotales(lista);
   const linea = (x, i) => (i + 1) + '. ' + (x.cant > 1 ? x.cant + ' × ' : '') + x.nombre +
     (x.valor ? ' — ' + adLps((Number(x.valor) || 0) * (Number(x.cant) || 1)) : '') +
@@ -5327,6 +5350,7 @@ const AD_INV_COLOR = {
   mio:     { barra: '#d97706', fondo: '#fef3c7', tinta: '#92400e' },
 };
 function adPrintCuadroInventario(d) {
+  d = adConPerfil(d);
   const lista = adInvLoad().slice().sort((a, b) => String(a.fecha || '').localeCompare(String(b.fecha || '')));
   if (!lista.length) { if (typeof toast === 'function') toast('El inventario está vacío'); return; }
   const bol = d.boleta || {};
@@ -5472,6 +5496,7 @@ ${AD_CUADRO_AJUSTE}</body></html>`;
 }
 
 function adPrintInventario(lista, d) {
+  d = adConPerfil(d);
   const t = adInvTotales(lista);
   const ult = adInvUltimaActa();
   const fila = (x, i) => `<tr><td>${i + 1}</td><td>${adFechaBonita(x.fecha)}</td><td class="n">${adEsc(x.cant || 1)}</td>` +
@@ -6129,6 +6154,7 @@ const AD_CUADRO_AJUSTE = `<script>
 <\/script>`;
 
 function adPrintCuadroIngresos(d) {
+  d = adConPerfil(d);
   const D = adIngDatos(d);
   if (!D.cols.length) { if (typeof toast === 'function') toast('Aún no hay colectas hasta hoy'); return; }
   const bol = d.boleta || {};
@@ -6332,6 +6358,7 @@ function adEgrEstado(f) {
 }
 
 function adPrintCuadroEgresos(d) {
+  d = adConPerfil(d);
   const D = adEgrDatos(d);
   if (!D.cols.length) { if (typeof toast === 'function') toast('Aún no hay colectas hasta hoy'); return; }
   const bol = d.boleta || {};
@@ -6503,6 +6530,7 @@ ${AD_CUADRO_AJUSTE}</body></html>`;
    llenarlas a mano el día que entregue, y la familia firma la matriz.
    La primera hoja es el resumen de todas las colectas. */
 function adPrintTalonario(d) {
+  d = adConPerfil(d);
   const D = adIngDatos(d);
   if (!D.cols.length) { if (typeof toast === 'function') toast('Aún no hay colectas hasta hoy'); return; }
   const bol = d.boleta || {};
@@ -6659,6 +6687,7 @@ ${AD_CUADRO_AJUSTE}</body></html>`;
    Al final del día se pasa a la app, y el papel firmado queda como
    prueba: si un dato se pierde en un teléfono, aquí sigue. */
 function adPrintHojaColecta(d, c) {
+  d = adConPerfil(d);
   const bol = d.boleta || {};
   const SL = window.SaceLista;
   const fuera = c ? adColectaFuera(c, d) : new Set();
@@ -7270,6 +7299,7 @@ async function adAsisExcusas(body, d, forzar) {
 }
 
 function adPrintAsis(d, mes) {
+  d = adConPerfil(d);
   const delMes = d.asistencia.filter(r => r.f.startsWith(mes)).sort((a, b) => a.f < b.f ? -1 : 1);
   const resumen = {};
   delMes.forEach(r => Object.keys(r.aus || {}).forEach(n => {
@@ -7309,6 +7339,7 @@ ${d.lista.filter(a => resumen[a.num]).map(a => `
 /* Día por día del mes: el acta que piden en dirección cuando hay que
    justificar una falta concreta (fecha, quién y si traía excusa). */
 function adPrintAsisDias(d, mes) {
+  d = adConPerfil(d);
   const dias = d.asistencia.filter(r => r.f.startsWith(mes) && Object.keys(r.aus || {}).length)
     .sort((a, b) => a.f < b.f ? -1 : 1);
   const nomDe = num => {
@@ -7847,6 +7878,7 @@ function adRenderControl(body, d) {
 /* Hoja de control imprimible: la que se firma, se entrega en dirección
    o se lleva al aula cuando toca anotar a mano. */
 function adPrintControl(d, c) {
+  d = adConPerfil(d);
   const cc = adControl(d, c.id) || c;
   const tipo = adCtrlTipo(cc);
   const grupo = adGrupoTxt(d);
@@ -10703,6 +10735,7 @@ function adBoletaGraficoEstado(filas, mixto) {
    madre que llega por la boleta de su hijo y la nota que se corrigió y hay
    que reimprimir — antes tocaba mandar las 43 hojas para rescatar una. */
 function adPrintBoletas(d, nums) {
+  d = adConPerfil(d);
   if (!d.lista || !d.lista.length) { if (typeof toast === 'function') toast('No hay alumnos'); return; }
   const quiere = Array.isArray(nums) ? nums.map(String) : null;
   const hojas = quiere && quiere.length ? d.lista.filter(a => quiere.includes(String(a.num))) : d.lista;
@@ -11187,6 +11220,7 @@ function adCopiarFallback(txt, ok, mal) {
 }
 
 function adPrintSace(d, parcial, materia) {
+  d = adConPerfil(d);
   const ns = ((d.notas[parcial] || {})[materia]) || {};
   const grupo = adGrupoTxt(d);
   const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">

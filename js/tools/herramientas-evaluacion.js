@@ -376,7 +376,8 @@ function heTabla(h, filas, llenar) {
 }
 
 function heImprimirLista(h, llenar) {
-  const g = heGrupo(h.gid);
+  let g = heGrupo(h.gid);
+  if (window.MetasCentro && g && typeof MetasCentro.paraImpreso === 'function') g = MetasCentro.paraImpreso(g) || g;
   let al = heAlumnos(g).map(a => ({ num: a.num, nombre: a.nombre }));
   /* sin lista, filas en blanco: la hoja sirve igual, se escriben a mano */
   if (!al.length) al = Array.from({ length: 35 }, () => ({ num: '', nombre: '' }));
@@ -515,7 +516,8 @@ ${cuerpo}
 /* Una rúbrica por alumno, dos por hoja: se corta a la mitad y a cada niño
    le llega la suya, con su nombre, para que vea qué le faltó. */
 function heImprimirRubricas(h) {
-  const g = heGrupo(h.gid);
+  let g = heGrupo(h.gid);
+  if (window.MetasCentro && g && typeof MetasCentro.paraImpreso === 'function') g = MetasCentro.paraImpreso(g) || g;
   let al = heAlumnos(g);
   if (!al.length) al = [{ num: '', nombre: '' }, { num: '', nombre: '' }];
   const gn = heGrupoNombre(g);

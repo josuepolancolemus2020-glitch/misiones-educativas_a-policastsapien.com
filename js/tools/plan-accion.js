@@ -2232,6 +2232,10 @@ function paImprimirDocumentosTesis(datos, listaAlumnos, modoForzado) {
     return;
   }
   const cfg = paTesisLoadCfg(datos);
+  if (window.MetasCentro && typeof MetasCentro.textoCentro === 'function' && typeof adLoad === 'function') {
+    const centro = MetasCentro.textoCentro(adLoad(), cfg.centro);
+    if (centro && centro !== cfg.centro) cfg.centro = centro;
+  }
   const modo = modoForzado || cfg.modo || 'completo';
   const fechaHoy = new Date().toLocaleDateString('es-HN', { year: 'numeric', month: 'long', day: 'numeric' });
 

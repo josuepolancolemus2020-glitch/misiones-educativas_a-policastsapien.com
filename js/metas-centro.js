@@ -310,6 +310,104 @@
     return out;
   }
 
+  // Los perfiles que ya se pueden usar: los de la base si hay aulas, y si no
+  // la copia de lectura. Cada uno lleva el id del aula para reconocerlo.
+  function perfiles() {
+    var out = [];
+    var api = w.MetasDatos;
+    var cache = leer();
+    var por = cache.porAula || {};
+    if (api && typeof api.lista === 'function') {
+      var aulas = api.lista('aulas') || [];
+      if (aulas.length) {
+        var centros = api.lista('centros') || [];
+        aulas.forEach(function (a) {
+          if (!a.centro_id) return;
+          var c = null;
+          for (var i = 0; i < centros.length; i++) if (centros[i].id === a.centro_id) c = centros[i];
+          if (c) out.push({ aulaId: a.id, perfil: armar(a, c) });
+          else if (por[a.id]) out.push({ aulaId: a.id, perfil: por[a.id] });
+        });
+        return out;
+      }
+    }
+    Object.keys(por).forEach(function (id) {
+      if (por[id] && String(por[id].nombre || '').trim()) out.push({ aulaId: id, perfil: por[id] });
+    });
+    return out;
+  }
+
+  // El perfil de ESTE grupo: el mismo aula, o el mismo centro con el mismo
+  // grado y la misma sección. Si no se puede saber cuál es, no se devuelve
+  // ninguno: el impreso se queda como estaba.
+  function perfilDe(grupo) {
+    if (!grupo) return null;
+    var lista = perfiles();
+    if (!lista.length) return null;
+    var i;
+    for (i = 0; i < lista.length; i++) if (grupo.id && lista[i].aulaId === grupo.id) return lista[i].perfil;
+    var grado = String(grupo.grado == null ? '' : grupo.grado).replace(/\D/g, '');
+    var sec = String(grupo.seccion || '').trim().toUpperCase();
+    var esc = norm(grupo.escuela);
+    var porNombre = [];
+    var porGrupo = [];
+    for (i = 0; i < lista.length; i++) {
+      var p = lista[i].perfil;
+      var pg = String(p.grado || '').replace(/\D/g, '');
+      var ps = String(p.seccion || '').trim().toUpperCase();
+      var pe = norm(p.nombre);
+      if (esc && pe === esc && pg === grado && ps === sec) return p;
+      if (esc && pe === esc) porNombre.push(p);
+      if (grado && pg === grado && ps === sec) porGrupo.push(p);
+    }
+    // Un solo 6º-1 con perfil: es este grupo, aunque el nombre que quedó
+    // escrito en el aparato todavía no sea el oficial.
+    if (porGrupo.length === 1) return porGrupo[0];
+    if (porNombre.length === 1) return porNombre[0];
+    return null;
+  }
+
+  // Copia para imprimir. Sin perfil, es el mismo objeto: el HTML no cambia.
+  // Con perfil, solo se escribe lo que el perfil sí trae. Un hueco del
+  // perfil no borra lo que el documento ya tenía escrito a mano.
+  function paraImpreso(grupo) {
+    var perfil = perfilDe(grupo);
+    if (!perfil || !grupo) return grupo;
+    var g = {};
+    var k;
+    for (k in grupo) g[k] = grupo[k];
+    if (String(perfil.nombre || '').trim()) g.escuela = perfil.nombre;
+    if (perfil.logo) g.logo = perfil.logo;
+    if (perfil.logoSec) g.logoSec = perfil.logoSec;
+    var antes = grupo.boleta || {};
+    var b = {};
+    for (k in antes) b[k] = antes[k];
+    if (perfil.director) b.director = perfil.director;
+    if (perfil.direccion) b.lugar = perfil.direccion;
+    if (perfil.municipio) b.municipio = perfil.municipio;
+    if (perfil.departamento) b.departamento = perfil.departamento;
+    if (perfil.anio) b.anio = perfil.anio;
+    if (perfil.codigoSace) b.codigoCentro = perfil.codigoSace;
+    if (perfil.modalidad) b.modalidad = perfil.modalidad;
+    if (perfil.jornada) b.jornada = perfil.jornada;
+    if (perfil.aldea) b.aldea = perfil.aldea;
+    g.boleta = b;
+    return g;
+  }
+
+  // El nombre del centro para un impreso que no es un grupo (una
+  // convocatoria, un acta de tesis). Sin perfil, devuelve el texto de hoy.
+  function textoCentro(grupo, texto) {
+    var p = perfilDe(grupo);
+    if (!p && texto) {
+      var n = norm(texto);
+      var hits = perfiles().filter(function (x) { return norm(x.perfil.nombre) === n; });
+      if (hits.length === 1) p = hits[0].perfil;
+    }
+    if (p && String(p.nombre || '').trim()) return String(p.nombre).trim();
+    return texto == null ? '' : String(texto);
+  }
+
   function enganchar() {
     if (!w.open || w.open.__metasCentro) return;
     var abierto = w.open;
@@ -339,6 +437,8 @@
     logo: function (aulaId) { var p = get(aulaId); return p && p.logo ? p.logo : ''; },
     aplicar: aplicar,
     valoresIniciales: valoresIniciales,
+    paraImpreso: paraImpreso,
+    textoCentro: textoCentro,
     guardar: guardar,
     jpeg: jpeg,
     examen: examen,
