@@ -882,6 +882,94 @@ const evalPRBank=[
   {term:'Corredor Biológico Mesoamericano',def:'Une ecosistemas desde México hasta Panamá',k:'pr-corredor'}
 ];
 
+// ===================== EXAMEN CONCEPTUAL · BANCO GRANDE =====================
+// Los cuatro bancos de arriba son de diez, y cada forma saca cinco: el alumno
+// que se aprende las primeras formas se sabe el banco entero. Estos cuatro
+// son preguntas NUEVAS para las formas 31 a 50. Cada una de esas formas lleva,
+// por sección, tres de aquí y dos del banco de antes; las reparte el motor
+// (js/motor-misiones.js) sin que dos formas lleven el mismo conjunto.
+//
+// ⚠️ Van en arreglos APARTE a propósito. Añadir una pregunta a un banco de
+// arriba cambiaría las formas 1 a 30, que tienen clave impresa.
+// ⚠️ Y el orden de estos tampoco se cambia una vez aprobados: decide qué
+// preguntas caen en cada forma nueva.
+//
+// De dónde salen. De lo que la misión ya enseña: la ficha imprimible, la guía
+// (la sección Aprende) y las actividades. Cada pregunta lo anota en `fuente`.
+// Antes de escribirlas se contó qué preguntaban la ficha y las actividades:
+// las 61 preguntas de las actividades (Quiz, Identifica, Completa y el
+// generador de tareas) piden 17 datos, y 15 de ellos ya los pide el examen
+// (el Corredor Biológico, siete veces entre todas). El «Ponte a prueba» de la
+// ficha repite 39 de las 40 del examen. Un dato repetido cuenta UNA vez: el
+// que ya está arriba no vuelve a entrar aquí, y el que sale en varias fuentes
+// entra una sola vez, con todas anotadas. Por eso casi todo lo nuevo sale de
+// la teoría de la ficha, de la guía, de las tarjetas, de Clasifica y del
+// Laboratorio de Bosques, que enseñan más de lo que las actividades preguntan.
+//
+// Las mismas reglas de arriba, y contra los dos bancos a la vez, porque en
+// una forma nueva caen juntas preguntas de los dos:
+// · UN DATO, UNA PREGUNTA: ninguna `k` de aquí repite una de arriba.
+// · Ninguna respuesta, de aquí o de arriba, aparece escrita en otra pregunta.
+//   Por eso aquí no se nombra al manglar, al quetzal, al manatí, a La Tigra,
+//   a Lancetilla, a Río Plátano ni a Celaque: se dice «el bosque de la
+//   costa», «el ave de los bosques de neblina», «el mamífero acuático», «el
+//   jardín botánico de Tela», «el parque donde está el punto más alto».
+// · Ninguna la contesta la historia de don Tulio ni su animación: nada de la
+//   lluvia que el monte guarda, de las tomas que se secan ni de inundaciones.
+// · No entraron tres cifras de la misión que quedan por acreditar con su
+//   fuente antes de preguntarlas: los 8 ríos que nacen en Celaque, el 45 % de
+//   cobertura de bosque y los años de la plaga del gorgojo (2000-2003).
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`, y cuántas formas hay y
+// cuánto de cada forma nueva sale de aquí, `_dev/verifica-conceptual-banco-grande.js`.
+const evalTFBankNuevo=[
+  {q:'Un jardín botánico también puede ser un área protegida.',a:true,k:'tf-jardin-area',fuente:'Ficha, página 1 (Concepto clave) · Ficha, página 2 (2. Las áreas protegidas más importantes)'},
+  {q:'Honduras ya no pierde bosque: cada año tiene más.',a:false,k:'tf-pierde-bosque',fuente:'Ficha, página 3 (5. La deforestación) · Guía (Aprende): Honduras y sus bosques · Actividad Tarjetas: Deforestación en Honduras'},
+  {q:'En una ladera, los árboles ayudan a evitar los deslizamientos de tierra.',a:true,k:'tf-deslizamientos',fuente:'Guía (Aprende): Deforestación, consecuencias · Actividad Laboratorio: Bosque Nublado, Importancia'},
+  {q:'En los bosques de neblina hace calor todo el año.',a:false,k:'tf-clima-fresco',fuente:'Actividad Laboratorio: Bosque Nublado, Ubicación'},
+  {q:'El mamífero acuático que vive protegido en Cuero y Salado está en peligro de extinción.',a:true,k:'tf-peligro-extincion',fuente:'Ficha, página 2 (3. La biodiversidad y sus embajadores) · Actividad Tarjetas: Manatí · Actividad Identifica 10 · Actividad Laboratorio: Manglares, Biodiversidad'},
+  {q:'Un bosque debilitado por la sequía resiste mejor las plagas.',a:false,k:'tf-bosque-debil',fuente:'Ficha, página 3 (El gorgojo descortezador)'},
+  {q:'Un bosque es solo un grupo de árboles: los animales no forman parte de él.',a:false,k:'tf-bosque-ecosistema',fuente:'Guía (Aprende): ¿Por qué son importantes los bosques?'},
+  {q:'Los grandes mamíferos de la selva necesitan territorios enormes para vivir.',a:true,k:'tf-territorios',fuente:'Ficha, página 2 (3. La biodiversidad y sus embajadores)'},
+  {q:'La selva lluviosa de La Mosquitia está en las tierras más altas del país.',a:false,k:'tf-selva-tierras-bajas',fuente:'Actividad Clasifica: Bosque Nublado y Bosque Latifoliado · Actividad Laboratorio: Bosque Latifoliado, Ubicación · Actividad Tareas, Clasificar 3'},
+  {q:'Los bosques de la costa filtran el agua sucia antes de que llegue al mar.',a:true,k:'tf-filtra',fuente:'Actividad Laboratorio: Manglares, Importancia'}
+];
+const evalMCBankNuevo=[
+  {q:'¿Qué es la deforestación?',o:['a) el viaje de las aves en invierno','b) la desaparición de los bosques','c) el crecimiento de los árboles','d) la limpieza de las quebradas'],a:1,k:'mc-que-es-deforestacion',fuente:'Ficha, página 3 (5. La deforestación) · Guía (Aprende): Honduras y sus bosques · Actividad Tarjetas: Deforestación en Honduras'},
+  {q:'¿A qué altura sobre el nivel del mar crecen los bosques de neblina?',o:['a) entre 0 y 600 metros','b) entre 400 y 1,000 metros','c) entre 2,000 y 3,000 metros','d) a más de 5,000 metros'],a:2,k:'mc-altura-neblina',fuente:'Ficha, página 2 (Los cuatro tipos de bosque) · Guía (Aprende): Tipos de bosque en Honduras · Actividad Tarjetas: Bosque Nublado · Actividad Clasifica: Bosque Nublado y Bosque Latifoliado · Actividad Laboratorio: Bosque Nublado, Ubicación'},
+  {q:'¿Cómo consigue agua un bosque de montaña aunque no llueva?',o:['a) sus hojas atrapan la humedad de las nubes','b) el viento se la trae desde el mar','c) la saca de pozos muy profundos','d) la recibe de los lagos del valle'],a:0,k:'mc-atrapa-humedad',fuente:'Ficha, página 3 (4. Bosque y agua) · Actividad Tarjetas: Bosque e Hidrología · Actividad Clasifica: Bosque Nublado y Bosque Latifoliado · Actividad Tareas, Completar 7 · Actividad Tareas, Explicar 5'},
+  {q:'¿Dónde crece sobre todo el bosque más extenso de Honduras?',o:['a) en las islas del Caribe','b) en las playas del sur','c) en las bocas de los ríos','d) en las montañas del interior'],a:3,k:'mc-montanas-interior',fuente:'Ficha, página 2 (Los cuatro tipos de bosque) · Guía (Aprende): Tipos de bosque en Honduras · Actividad Tarjetas: Bosque de Pino-Roble · Actividad Laboratorio: Bosque de Pino-Roble, Ubicación · Actividad Tareas, Clasificar 2'},
+  {q:'¿Cuál de estas es una consecuencia de la deforestación, y no una causa?',o:['a) la tala de árboles','b) la cría de ganado','c) la plaga del gorgojo','d) la pérdida de especies'],a:3,k:'mc-consecuencia',fuente:'Ficha, página 3 (5. La deforestación) · Guía (Aprende): Deforestación, causas y consecuencias · Actividad Clasifica: Causa y Consecuencia · Actividad Tareas, Explicar 4'},
+  {q:'¿Cuál de estos animales vive en los bosques de pino de Honduras?',o:['a) el venado cola blanca','b) el cocodrilo','c) la garza','d) el mono carablanca'],a:0,k:'mc-venado',fuente:'Actividad Laboratorio: Bosque de Pino-Roble, Biodiversidad'},
+  {q:'¿Cuántos países de Centroamérica une la red de bosques que va de México a Panamá?',o:['a) solo dos','b) solo cuatro','c) los siete','d) ninguno'],a:2,k:'mc-siete-paises',fuente:'Guía (Aprende): Corredor Biológico Mesoamericano'},
+  {q:'¿Qué tienen de especial los árboles del bosque de la costa?',o:['a) sus flores se abren de noche','b) sus raíces crecen metidas en el agua','c) sus troncos no tienen corteza','d) sus frutos maduran bajo tierra'],a:1,k:'mc-raices-agua',fuente:'Guía (Aprende): Tipos de bosque en Honduras · Actividad Tarjetas: Manglares'},
+  {q:'¿Cuál de estas acciones ayuda a cuidar el bosque de tu comunidad?',o:['a) sembrar árboles','b) botar basura en la quebrada','c) cazar las aves del monte','d) cortar los árboles jóvenes'],a:0,k:'mc-sembrar',fuente:'Ficha, página 3 (En Honduras)'},
+  {q:'¿En qué año se fundó el jardín botánico de Tela?',o:['a) 1825','b) 1925','c) 1965','d) 2010'],a:1,k:'mc-1925',fuente:'Ficha, página 2 (2. Las áreas protegidas más importantes) · Actividad Tarjetas: Jardín Botánico Lancetilla'}
+];
+const evalCPBankNuevo=[
+  {q:'El sistema que reúne las áreas protegidas de Honduras tiene a su cargo más de ___ áreas.',a:'90',acc:['90','noventa'],k:'cp-90',fuente:'Ficha, página 1 (1. Honduras, un país de bosques) · Guía (Aprende): ¿Qué es el SINAPH? · Actividad Tarjetas: SINAPH · Actividad Identifica 5 · Actividad Tareas, Identificar 3'},
+  {q:'El bosque de la costa protege a las comunidades de los ___.',a:'huracanes',acc:['huracanes','huracán','huracan'],k:'cp-huracanes',fuente:'Ficha, página 2 (Los cuatro tipos de bosque) · Guía (Aprende): Tipos de bosque en Honduras · Actividad Tarjetas: Manglares · Actividad Quiz 10 · Actividad Identifica 4 · Actividad Completa 6 · Actividad Tareas, Completar 5'},
+  {q:'El jardín botánico de Tela está en el departamento de ___.',a:'Atlántida',acc:['Atlántida','Atlantida'],k:'cp-atlantida',fuente:'Ficha, página 2 (2. Las áreas protegidas más importantes) · Actividad Tarjetas: Jardín Botánico Lancetilla'},
+  {q:'Honduras es un «punto ___» mundial por la enorme cantidad de especies que tiene.',a:'caliente',acc:['caliente'],k:'cp-punto-caliente',fuente:'Ficha, página 1 (1. Honduras, un país de bosques) · Actividad Tarjetas: Biodiversidad de Honduras · Actividad Tareas, Identificar 10'},
+  {q:'El gorgojo que seca los pinares no es una enfermedad: es un ___.',a:'insecto',acc:['insecto'],k:'cp-insecto',fuente:'Ficha, página 3 (El gorgojo descortezador)'},
+  {q:'El ave de los bosques de neblina tiene una cola larga de color ___.',a:'verde',acc:['verde'],k:'cp-cola-verde',fuente:'Ficha, página 2 (3. La biodiversidad y sus embajadores) · Actividad Tarjetas: Quetzal'},
+  {q:'Honduras tiene bosques de la costa en sus dos mares: el Caribe y el ___.',a:'Pacífico',acc:['Pacífico','Pacifico'],k:'cp-pacifico',fuente:'Actividad Laboratorio: Manglares, Ubicación · Actividad Tareas, Clasificar 4'},
+  {q:'El parque donde está el punto más alto del país queda en el ___ de Honduras.',a:'occidente',acc:['occidente','oeste'],k:'cp-occidente',fuente:'Ficha, página 2 (2. Las áreas protegidas más importantes) · Actividad Tareas, Clasificar 5'},
+  {q:'Los pech, los miskitu y los tawahka son pueblos ___ de Honduras.',a:'indígenas',acc:['indígenas','indigenas'],k:'cp-indigenas',fuente:'Guía (Aprende): Reserva de Biosfera Río Plátano, Pueblos indígenas · Actividad Laboratorio: Bosque Latifoliado, Biodiversidad · Actividad Tareas, Explicar 2'},
+  {q:'Cuero y Salado es un refugio de vida ___.',a:'silvestre',acc:['silvestre'],k:'cp-vida-silvestre',fuente:'Ficha, página 1 (Concepto clave) · Ficha, página 2 (2. Las áreas protegidas más importantes) · Actividad Tarjetas: Manatí · Actividad Laboratorio: Manglares, Ubicación'}
+];
+const evalPRBankNuevo=[
+  {term:'Área protegida',def:'Territorio que la ley cuida para conservar su naturaleza',k:'pr-area-protegida',fuente:'Ficha, página 1 (Concepto clave)'},
+  {term:'Biodiversidad',def:'La variedad de seres vivos de un lugar',k:'pr-biodiversidad',fuente:'Ficha, página 6 (Ponte a prueba, IV.3)'},
+  {term:'Flora',def:'El conjunto de plantas de una región',k:'pr-flora',fuente:'Actividad Clasifica: Flora y Fauna · Actividad Reto: Flora y Fauna'},
+  {term:'Fauna',def:'Todos los animales que viven en una zona',k:'pr-fauna',fuente:'Actividad Clasifica: Flora y Fauna · Actividad Reto: Flora y Fauna'},
+  {term:'Endémico',def:'Que solo existe en un sitio y en ningún otro del mundo',k:'pr-endemico',fuente:'Actividad Laboratorio: Bosque Nublado, Biodiversidad'},
+  {term:'Hábitat',def:'El ambiente natural donde vive una especie',k:'pr-habitat',fuente:'Guía (Aprende): Tipos de bosque en Honduras · Actividad Tarjetas: Parque Nacional Celaque · Actividad Laboratorio: Bosque Nublado, Amenazas'},
+  {term:'Santuario',def:'Refugio seguro para un animal amenazado',k:'pr-santuario',fuente:'Ficha, página 2 (2. Las áreas protegidas más importantes) · Guía (Aprende): Principales áreas protegidas · Actividad Tarjetas: Manatí'},
+  {term:'Tucán',def:'Ave de la selva lluviosa',k:'pr-tucan',fuente:'Ficha, página 2 (Los cuatro tipos de bosque) · Guía (Aprende): Tipos de bosque en Honduras · Actividad Tarjetas: Bosque Latifoliado Tropical · Actividad Laboratorio: Bosque Latifoliado, Biodiversidad'},
+  {term:'Puma',def:'Felino de los bosques de neblina',k:'pr-puma',fuente:'Actividad Tarjetas: Parque Nacional Celaque · Actividad Laboratorio: Bosque Nublado, Biodiversidad'},
+  {term:'Caoba',def:'Árbol de madera preciosa',k:'pr-caoba',fuente:'Actividad Laboratorio: Bosque Latifoliado, Biodiversidad y Amenazas · Actividad Clasifica: Flora y Fauna'}
+];
+
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
 // La Forma N genera SIEMPRE el mismo examen y la misma pauta («bucle exacto»),
 // en cualquier navegador y aunque se cierre el programa. PRNG mulberry32
@@ -898,13 +986,20 @@ const EVAL_FORMAS = 30;
 if (typeof _evalRng !== 'function' || typeof _conFormasDeAntes !== 'function') { (function () { var m = document.createElement('script'); m.src = '../../js/motor-misiones.js'; document.head.appendChild(m); })(); }
 // Selector «Forma exacta»: el docente elige qué forma generar (p.ej. para
 // reimprimir la pauta de la Forma 15 que ya repartió a los alumnos).
-function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalFormNum, function (v) { evalFormNum = v; }); }
+/* Hasta qué forma llega el examen conceptual. Con banco grande (los bancos
+   evalCPBankNuevo, evalTFBankNuevo, evalMCBankNuevo y evalPRBankNuevo, que
+   van junto a los de siempre), después de las formas de siempre (EVAL_FORMAS, las que tienen
+   clave impresa) js/motor-misiones.js reparte formas nuevas. Si el teléfono
+   se sirve de lo guardado el motor de antes, que no sabe repartirlas, el
+   examen se queda en las de siempre. */
+function evalFormasTotal(){return typeof _topeConceptual==='function'?_topeConceptual():EVAL_FORMAS;}
+function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalFormNum, function (v) { evalFormNum = v; }, evalFormasTotal()); }
 
 function genEval(){
   sfx('click');
-  _evalFormaSelector(); const _selF = document.getElementById('evalFormaSel'); if (_selF && parseInt(_selF.value, 10)) evalFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_selF.value, 10))); const cf = evalFormNum; const rng = _evalRng(cf); /* la Forma cf siembra TODO el azar de esta evaluación */
+  _evalFormaSelector(); const _selF = document.getElementById('evalFormaSel'); const _topeF = evalFormasTotal(); if (_selF && parseInt(_selF.value, 10)) evalFormNum = Math.min(_topeF, Math.max(1, parseInt(_selF.value, 10))); /* Una forma nueva guardada (la 45) y el motor de antes servido de lo guardado: se vuelve a una que exista. */ if (evalFormNum > _topeF) evalFormNum = _topeF; const cf = evalFormNum; const rng = _evalRng(cf); /* Las formas nuevas del banco grande llegan ya repartidas y no gastan la semilla de las de antes. */ const nuevaF = cf > EVAL_FORMAS ? _repartoConceptual(cf, EVAL_FORMAS, _bancoGrandeConceptual()) : null; /* la Forma cf siembra TODO el azar de esta evaluación */
   window._currentEvalForm=cf;
-  evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector();
+  evalFormNum = (evalFormNum % _topeF) + 1; _evalFormaSelector();
   saveProgress();
   document.getElementById('eval-screen-title').textContent=`🎓 Evaluación Final · Forma ${cf} · El Bosque y las Áreas Protegidas`;
   evalAnsVisible=false;
@@ -913,7 +1008,7 @@ function genEval(){
   bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;
   out.appendChild(bar);
 
-  const cpItems=_pickF(evalCPBank,5, rng);
+  const cpItems=nuevaF?nuevaF.cp:_pickF(evalCPBank,5, rng);
   const s1=document.createElement('div');s1.innerHTML='<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
   cpItems.forEach((item,i)=>{
     const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='cp';d.dataset.evalIndex=i;
@@ -923,7 +1018,7 @@ function genEval(){
   });
   out.appendChild(s1);
 
-  const tfItems=_pickF(evalTFBank,5, rng);
+  const tfItems=nuevaF?nuevaF.tf:_pickF(evalTFBank,5, rng);
   const s2=document.createElement('div');s2.innerHTML='<div class="eval-section-title">II. Verdadero o Falso <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
   tfItems.forEach((item,i)=>{
     const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='tf';d.dataset.evalIndex=i;
@@ -932,7 +1027,7 @@ function genEval(){
   });
   out.appendChild(s2);
 
-  const mcItems=_pickF(evalMCBank,5, rng);
+  const mcItems=nuevaF?nuevaF.mc:_pickF(evalMCBank,5, rng);
   const s3=document.createElement('div');s3.innerHTML='<div class="eval-section-title">III. Selección Múltiple <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
   mcItems.forEach((item,i)=>{
     const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='mc';d.dataset.evalIndex=i;
@@ -942,8 +1037,8 @@ function genEval(){
   });
   out.appendChild(s3);
 
-  const prItems=_pickF(evalPRBank,5, rng);
-  const shuffledDefs=_shuffleF(prItems, rng);
+  const prItems=nuevaF?nuevaF.pr:_pickF(evalPRBank,5, rng);
+  const shuffledDefs=nuevaF?nuevaF.defs:_shuffleF(prItems, rng);
   const letters=['A','B','C','D','E'];
   const s4=document.createElement('div');s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
   const matchCard=document.createElement('div');matchCard.className='eval-item';
