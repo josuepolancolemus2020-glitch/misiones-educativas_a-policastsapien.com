@@ -135,6 +135,16 @@ echo "▶ Capa A"
 PROYECTO="$(sed -n 's/^project_id *= *"\(.*\)"/\1/p' "$AQUI/supabase/config.toml")"
 q -v "conninfo=host=supabase_db_$PROYECTO port=5432 user=postgres password=postgres dbname=postgres" \
   -f "$PRUEBAS/10-pruebas.sql"
+echo "▶ SUPABASE-V2-PERFIL-CENTRO.sql (dos veces)"
+q -f "$DISENO/SUPABASE-V2-PERFIL-CENTRO.sql" >/dev/null
+q -f "$DISENO/SUPABASE-V2-PERFIL-CENTRO.sql" >/dev/null \
+  || falla "PERFIL-CENTRO falló la segunda vez"
+q -f "$PRUEBAS/24-perfil-centro.sql"
+echo "▶ SUPABASE-V2-PERFIL-CENTRO-DESHACER.sql (dos veces)"
+q -f "$DISENO/SUPABASE-V2-PERFIL-CENTRO-DESHACER.sql" >/dev/null
+q -f "$DISENO/SUPABASE-V2-PERFIL-CENTRO-DESHACER.sql" >/dev/null \
+  || falla "DESHACER perfil falló la segunda vez"
+q -f "$PRUEBAS/25-deshacer-perfil-centro.sql"
 # Claves viejas: solo callan si el docente ya está vinculado. Dos veces.
 # Se deshace antes de la ida y vuelta del paso 1, para que el catálogo que
 # se compara sea el de CONGELAR.

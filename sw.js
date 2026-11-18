@@ -15,7 +15,7 @@
 //    las etiquetas ?v=NN de las páginas (normativa de sellado del CLAUDE.md).
 //    CACHE_DATOS no se toca nunca: subirlo volvería a borrarle al alumno lo
 //    que tenía guardado, que es justo lo que este arreglo vino a evitar.
-const CACHE_NAME = 'meta-app-v561';
+const CACHE_NAME = 'meta-app-v562';
 const CACHE_APP = CACHE_NAME;
 const CACHE_DATOS = 'meta-datos-v1';
 
@@ -49,6 +49,7 @@ const ARMAZON = [
   './js/datos/datos.js',
   './js/datos/importar.js',
   './js/datos/claves-familia.js',
+  './js/metas-centro.js',
   './js/tools/mi-aula.js',
   './js/tools/mi-aula-papel.js',
   // La pantalla de antes (equipos, acumulativos…) armada desde las filas.

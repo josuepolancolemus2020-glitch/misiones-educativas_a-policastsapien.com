@@ -53,6 +53,7 @@
     familias: ['alumno_id'],
     ajustes_docente: ['clave'],
     aulas: ['grado', 'anio_lectivo'],
+    centros: ['anio_lectivo'],
     asignaturas: ['aula_id'],
   };
   var REINTENTOS = [2000, 4000, 8000, 16000, 32000, 60000];
@@ -710,6 +711,8 @@
         return normNombre(f.escuela) === normNombre(op.cambios.escuela)
           && String(f.seccion).toUpperCase() === String(op.cambios.seccion).toUpperCase();
       });
+    } else if (op.tabla === 'centros') {
+      filas = filas.filter(function (f) { return normNombre(f.nombre) === normNombre(op.cambios.nombre); });
     } else if (op.tabla === 'asignaturas') {
       filas = filas.filter(function (f) { return normNombre(f.nombre) === normNombre(op.cambios.nombre); });
     }
