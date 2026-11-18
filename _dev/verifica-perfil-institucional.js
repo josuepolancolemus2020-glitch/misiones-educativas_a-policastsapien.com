@@ -5,7 +5,11 @@
    · en Mi aula, el aviso sale si el grupo no tiene perfil y no sale
      si ya lo tiene; al tocarlo se abre Encabezado y logos;
    · cada documento conectado, sin perfil, da el mismo HTML que da
-     otra vez (es el de hoy: el perfil no entra en la hoja).
+     otra vez (es el de hoy: el perfil no entra en la hoja);
+   · el análisis, la papeleta, el parte y el collage: sin perfil el HTML
+     no cambia; con un perfil ficticio salen el logo y el nombre;
+   · el formulario de encabezado vive en Perfil institucional, no en
+     Notas SACE, y cada grupo elige su centro cuando hay más de uno.
 
    Uso: node _dev/verifica-perfil-institucional.js
    ===================================================================== */
@@ -270,6 +274,155 @@ function probarDoc(nombre, conNombre, conLogo, fn) {
 
 docs.forEach(d => probarDoc(d[0], d[1], d[2], d[3]));
 
+/* ── Los cuatro documentos que todavía no llevaban el logo ── */
+function htmlPlan() {
+  chunks.length = 0;
+  vm.runInContext('_paStudents = ['
+    + '{ id: 1, name: "Alumna Ficticia Uno", grade: 80 },'
+    + '{ id: 2, name: "Alumno Ficticio Dos", grade: 55 }]; paPrint();', sandbox);
+  return chunks.join('');
+}
+const gPlan = grupoBase();
+ponerGrupo(gPlan);
+quitarPerfil();
+const planHoy = htmlPlan();
+const planOtra = htmlPlan();
+ok(planHoy.length > 200 && planHoy === planOtra && !planHoy.includes(LOGO) && !traePerfil(planHoy)
+  && !planHoy.includes('data-metas="marca-centro"'),
+  'el análisis, sin perfil, repite el mismo HTML de hoy');
+ponerPerfil(gPlan);
+const planCon = htmlPlan();
+const iLogoPlan = planCon.indexOf('data-metas-logo');
+const iTitPlan = planCon.indexOf('ANÁLISIS Y PLAN DE ACCIÓN');
+const iNomPlan = planCon.toLowerCase().indexOf('centro ficticio las flores');
+const iSubPlan = planCon.indexOf('class="head-sub"');
+ok(planCon.includes(LOGO) && iLogoPlan >= 0 && iLogoPlan < iTitPlan && iTitPlan < iNomPlan && iNomPlan < iSubPlan,
+  'el análisis pone el logo a la izquierda del título azul y el nombre debajo');
+ok(/width:46px;height:46px;object-fit:contain/.test(planCon), 'el logo del análisis mide 46 px y entra completo');
+quitarPerfil();
+ok(htmlPlan() === planHoy, 'el análisis, al quitar el perfil, queda otra vez como hoy');
+
+cargar('js/tools/parte-mensual.js');
+cargar('js/tools/gobierno-escolar.js');
+cargar('js/tools/collage-maker.js');
+quitarPerfil();
+ok(sandbox.pmMarcaHtml() === '', 'el parte, sin perfil, no agrega HTML');
+ponerPerfil(gPlan);
+const parte = sandbox.pmMarcaHtml();
+ok(parte.includes(LOGO) && /centro ficticio las flores/i.test(parte)
+  && parte.indexOf('data-metas-logo') < parte.toLowerCase().indexOf('centro ficticio las flores'),
+  'el parte pone el logo a la izquierda y el nombre al lado');
+ok(/width:46px;height:46px;object-fit:contain/.test(parte), 'el logo del parte mide 46 px y entra completo');
+ok(/beforebegin/.test(fs.readFileSync(path.join(RAIZ, 'js/tools/parte-mensual.js'), 'utf8'))
+  && /parte-section-title/.test(fs.readFileSync(path.join(RAIZ, 'js/tools/parte-mensual.js'), 'utf8')),
+  'el parte inserta la marca arriba del título del grupo');
+quitarPerfil();
+ok(sandbox.pmMarcaHtml() === '', 'el parte, al quitar el perfil, no deja marca');
+
+ok(sandbox.coElegirLogo('data:image/jpeg;base64,DOCENTE', LOGO) === 'data:image/jpeg;base64,DOCENTE',
+  'en el collage, si el docente sube un logo, manda el suyo');
+ok(sandbox.coElegirLogo('', LOGO) === LOGO, 'en el collage, sin logo propio, se usa el del perfil');
+ok(sandbox.coElegirLogo(null, '') === '', 'en el collage, sin perfil y sin logo propio, no hay logo');
+
+/* Papeleta: el título de la vista, con un DOM mínimo. */
+function nodoGe(tag) {
+  const n = { tag: tag, children: [], parent: null, attrs: {}, style: {}, className: '', textContent: '' };
+  n.appendChild = function (c) {
+    if (c.parent) c.parent.children = c.parent.children.filter(function (x) { return x !== c; });
+    c.parent = n;
+    n.children.push(c);
+    return c;
+  };
+  n.insertBefore = function (c, ref) {
+    if (c.parent) c.parent.children = c.parent.children.filter(function (x) { return x !== c; });
+    c.parent = n;
+    const i = ref ? n.children.indexOf(ref) : n.children.length;
+    n.children.splice(i < 0 ? n.children.length : i, 0, c);
+    return c;
+  };
+  n.remove = function () { if (n.parent) n.parent.children = n.parent.children.filter(function (x) { return x !== n; }); n.parent = null; };
+  n.setAttribute = function (k, v) { n.attrs[k] = String(v); if (k === 'class') n.className = String(v); };
+  n.getAttribute = function (k) { return Object.prototype.hasOwnProperty.call(n.attrs, k) ? n.attrs[k] : null; };
+  n.querySelector = function (sel) {
+    const todos = [];
+    (function rec(x) { todos.push(x); x.children.forEach(rec); })(n);
+    return todos.filter(function (x) { return x !== n; }).find(function (x) { return casaGe(x, sel); }) || null;
+  };
+  Object.defineProperty(n, 'parentNode', { get: function () { return n.parent; } });
+  Object.defineProperty(n, 'lastElementChild', { get: function () { return n.children[n.children.length - 1] || null; } });
+  return n;
+}
+function casaGe(n, sel) {
+  if (sel.charAt(0) === '.') return n.className === sel.slice(1) || (n.attrs.class === sel.slice(1));
+  if (sel.indexOf('[') === 0) {
+    const m = /\[([^\]=]+)(?:="([^"]*)")?\]/.exec(sel);
+    return m && (m[2] == null ? n.getAttribute(m[1]) != null : n.getAttribute(m[1]) === m[2]);
+  }
+  return false;
+}
+const headerGe = nodoGe('header');
+headerGe.className = 'app-header';
+const tituloGe = nodoGe('h1');
+tituloGe.className = 'view-title';
+tituloGe.textContent = 'Gobierno Escolar 2026';
+const cierreGe = nodoGe('div');
+headerGe.appendChild(nodoGe('button'));
+headerGe.appendChild(tituloGe);
+headerGe.appendChild(cierreGe);
+const qsAntes = sandbox.document.querySelector;
+const ceAntes = sandbox.document.createElement;
+sandbox.document.querySelector = function (sel) {
+  if (sel === '#view-gobierno .app-header') return headerGe;
+  if (headerGe.querySelector) return headerGe.querySelector(sel);
+  return null;
+};
+sandbox.document.createElement = function (tag) { return nodoGe(tag); };
+quitarPerfil();
+sandbox.gePonerMarca();
+ok(tituloGe.parent === headerGe && !headerGe.querySelector('[data-metas="marca-centro"]'),
+  'la papeleta, sin perfil, deja el título donde estaba');
+ponerPerfil(gPlan);
+sandbox.gePonerMarca();
+const marcaGe = headerGe.querySelector('[data-metas="marca-centro"]');
+const imgGe = marcaGe && marcaGe.children[0];
+const colGe = marcaGe && marcaGe.children[1];
+const nomGe = colGe && colGe.children[1];
+ok(!!marcaGe && imgGe && imgGe.getAttribute('data-metas-logo') === '' && imgGe.src === LOGO
+  && colGe && colGe.children[0] === tituloGe && nomGe && /centro ficticio las flores/i.test(nomGe.textContent),
+  'la papeleta pone el logo a la izquierda del título y el nombre debajo');
+ok(imgGe && /width:46px;height:46px;object-fit:contain/.test(imgGe.style.cssText),
+  'el logo de la papeleta mide 46 px y entra completo');
+quitarPerfil();
+sandbox.geRestaurarTitulo();
+ok(tituloGe.parent === headerGe && headerGe.children[1] === tituloGe && !headerGe.querySelector('[data-metas="marca-centro"]'),
+  'la papeleta, al quitar el perfil, deja el título otra vez como hoy');
+sandbox.document.querySelector = qsAntes;
+sandbox.document.createElement = ceAntes;
+
+/* Dos grupos 6º-1 en centros distintos: cada uno usa su centro_id. */
+const LOGO_DOS = LOGO + 'QQ==';
+sandbox.MetasDatos = {
+  lista: function (nombre) {
+    if (nombre === 'aulas') return [
+      { id: 'aula-uno', grado: 6, seccion: '1', escuela: 'Centro Uno', centro_id: 'c1' },
+      { id: 'aula-dos', grado: 6, seccion: '1', escuela: 'Centro Dos', centro_id: 'c2' },
+    ];
+    if (nombre === 'centros') return [
+      { id: 'c1', nombre: 'Centro Uno', logo: LOGO, logo_sec: '', anio_lectivo: 2026 },
+      { id: 'c2', nombre: 'Centro Dos', logo: LOGO_DOS, logo_sec: '', anio_lectivo: 2026 },
+    ];
+    return [];
+  },
+};
+const impUno = sandbox.MetasCentro.paraImpreso({ id: 'aula-uno', grado: '6', seccion: '1', escuela: 'Escrito a mano', boleta: {} });
+const impDos = sandbox.MetasCentro.paraImpreso({ id: 'aula-dos', grado: '6', seccion: '1', escuela: 'Escrito a mano', boleta: {} });
+const ajeno = { id: 'blob-viejo', grado: '6', seccion: '1', escuela: 'Escuela Escrita A Mano', boleta: { director: 'X' } };
+const impAjeno = sandbox.MetasCentro.paraImpreso(ajeno);
+ok(impUno.escuela === 'Centro Uno' && impUno.logo === LOGO, 'el primer 6º-1 usa el centro de su aula');
+ok(impDos.escuela === 'Centro Dos' && impDos.logo === LOGO_DOS, 'el segundo 6º-1 usa el otro centro');
+ok(impAjeno === ajeno, 'un grupo suelto con el mismo grado no hereda el centro del otro');
+delete sandbox.MetasDatos;
+
 /* Excel: no es HTML. Sin perfil, el centro del encabezado no cambia. */
 function excelCentro(cual) {
   let visto = null;
@@ -443,6 +596,51 @@ const con = raiz._html;
 ok(!con.includes('data-metas="aviso-perfil"') && !con.includes('Configura tu perfil institucional'),
   'con perfil, el aviso ya no sale');
 ok(con.includes('data-metas="perfil-institucional"'), 'con perfil, la entrada para editarlo sigue');
+
+/* El formulario ya no vive en Notas SACE. */
+const btnNotas = busca(raiz, '[data-valor="notas"]')[0];
+if (btnNotas) clics.forEach(fn => fn({ target: btnNotas, preventDefault() {}, stopPropagation() {} }));
+const notasHtml = raiz._html;
+const iImp = notasHtml.indexOf('Para imprimir');
+const trozoImp = iImp >= 0 ? notasHtml.slice(iImp, iImp + 700) : '';
+ok(iImp >= 0 && !/Encabezado y logos/.test(trozoImp) && !/data-accion="encabezado"/.test(trozoImp),
+  'Notas SACE, en Para imprimir, ya no tiene el botón ni la tarjeta de encabezado');
+ok(notasHtml.includes('data-metas="seccion-perfil"') && notasHtml.indexOf('data-form="centro"') < iImp,
+  'el formulario de encabezado queda en Perfil institucional, arriba');
+
+/* Dos centros: pastillas, y cada grupo guarda el suyo. */
+api.editar = function (tabla, id, cambios) {
+  const fila = (tablas[tabla] || []).filter(r => r.id === id)[0];
+  if (fila) Object.keys(cambios).forEach(k => { fila[k] = cambios[k]; });
+  return { id: id };
+};
+api.crear = function (tabla, fila) {
+  const id = fila.id || ('nuevo-' + ((tablas[tabla] || []).length + 1));
+  const row = Object.assign({ id: id, deleted_at: null }, fila);
+  (tablas[tabla] = tablas[tabla] || []).push(row);
+  return { id: id };
+};
+tablas.aulas[0].centro_id = null;
+tablas.centros.length = 0;
+tablas.centros.push(
+  { id: 'centro-1', nombre: 'Centro Uno', anio_lectivo: 2026, logo: null, logo_sec: null, direccion: null, aldea: null, municipio: null, departamento: null, codigo_sace: null, director: null, modalidad: null, jornada: null },
+  { id: 'centro-2', nombre: 'Centro Dos', anio_lectivo: 2026, logo: null, logo_sec: null, direccion: null, aldea: null, municipio: null, departamento: null, codigo_sace: null, director: null, modalidad: null, jornada: null },
+);
+tablas.aulas.push({ id: 'aula-2', escuela: 'Centro Dos', grado: 6, seccion: '1', anio_lectivo: 2026, created_at: '2026-02-02', centro_id: 'centro-2' });
+ui.metasMiAula.abrir();
+const listaPerfiles = raiz._html;
+const secPerf = listaPerfiles.slice(listaPerfiles.indexOf('seccion-perfil'), listaPerfiles.indexOf('</section>'));
+ok(listaPerfiles.includes('Centro Uno') && listaPerfiles.includes('Centro Dos')
+  && listaPerfiles.includes('+ Agregar perfil institucional') && secPerf.includes('Elige el perfil de este grupo'),
+  'con varios centros se ven las pastillas y se puede agregar otro');
+ok(secPerf.includes('Elige el perfil de este grupo') && !secPerf.includes('data-form="centro"'),
+  'si el grupo todavía no tiene centro, se le pide elegir y no se abre el formulario del otro');
+const btnCentro = busca(raiz, '[data-valor="centro-1"]')[0];
+if (btnCentro) clics.forEach(fn => fn({ target: btnCentro, preventDefault() {}, stopPropagation() {} }));
+ok(tablas.aulas[0].centro_id === 'centro-1' && tablas.aulas[1].centro_id === 'centro-2',
+  'elegir la pastilla guarda el centro de este grupo y no mueve el otro');
+ok(raiz._html.includes('data-form="centro"') && raiz._html.includes('Encabezado y logos'),
+  'al elegir el perfil se abre el mismo formulario de encabezado');
 
 console.log(fallos ? '\n✘ ' + fallos + ' comprobaciones fallaron' : '\n✅ El aviso y los impresos respetan el perfil');
 process.exit(fallos ? 1 : 0);

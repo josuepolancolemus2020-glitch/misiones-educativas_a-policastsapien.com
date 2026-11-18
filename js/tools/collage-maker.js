@@ -93,6 +93,23 @@ function _coLoadImg(file) {
   });
 }
 
+function _coLoadUrl(src) {
+  return new Promise((res, rej) => {
+    const img = new Image();
+    img.onload = () => res(img);
+    img.onerror = () => rej(new Error('Imagen inválida'));
+    img.src = src;
+  });
+}
+
+/* El logo de la foto: si el docente subió uno para este collage, manda
+   el suyo. Si no subió, se usa el del perfil. Sin ninguno, no hay logo. */
+function coElegirLogo(subido, delPerfil) {
+  if (subido) return subido;
+  return delPerfil || '';
+}
+window.coElegirLogo = coElegirLogo;
+
 /* ══════════════════════════════════════════
    LAYOUT
 ══════════════════════════════════════════ */
@@ -709,8 +726,14 @@ async function coGenerate() {
 
     // Cargar imágenes primero (logo afecta ancho útil del texto y altura mínima del banner)
     const photoImgs = await Promise.all(_coPhotos.slice(0, 6).map(_coLoadImg));
-    const logoImg   = _coLogoFile
-      ? await _coLoadImg(_coLogoFile).catch(() => null)
+    let delPerfil = '';
+    if (!_coLogoFile && window.MetasCentro && typeof MetasCentro.marca === 'function') {
+      const marca = MetasCentro.marca();
+      delPerfil = marca && marca.logo ? marca.logo : '';
+    }
+    const logoElegido = coElegirLogo(_coLogoFile, delPerfil);
+    const logoImg = logoElegido
+      ? await (_coLogoFile ? _coLoadImg(_coLogoFile) : _coLoadUrl(logoElegido)).catch(() => null)
       : null;
 
     _coImgCache  = photoImgs;

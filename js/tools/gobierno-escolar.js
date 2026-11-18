@@ -28,7 +28,62 @@ function geSave() {
 }
 
 /* Mostrar un panel y ocultar los demás */
+/* El logo y el nombre van en el título de la papeleta, y solo si hay
+   perfil. Al salir de la papeleta el título vuelve a quedar como estaba. */
+function geRestaurarTitulo() {
+  const header = document.querySelector('#view-gobierno .app-header');
+  if (!header) return;
+  const marca = header.querySelector('[data-metas="marca-centro"]');
+  if (!marca) return;
+  const titulo = marca.querySelector('.view-title');
+  if (titulo) {
+    const cierre = header.lastElementChild;
+    if (cierre && cierre !== marca) header.insertBefore(titulo, cierre);
+    else header.appendChild(titulo);
+  }
+  marca.remove();
+  header.style.gridTemplateColumns = '';
+}
+function gePonerMarca() {
+  geRestaurarTitulo();
+  if (!window.MetasCentro || typeof MetasCentro.marca !== 'function') return;
+  const m = MetasCentro.marca();
+  if (!m || (!m.logo && !m.nombre)) return;
+  const header = document.querySelector('#view-gobierno .app-header');
+  const titulo = header && header.querySelector('.view-title');
+  if (!header || !titulo || titulo.parentNode !== header) return;
+  const caja = document.createElement('div');
+  caja.setAttribute('data-metas', 'marca-centro');
+  caja.style.cssText = 'display:flex;align-items:center;gap:8px;min-width:0;justify-content:center;';
+  if (m.logo) {
+    const img = document.createElement('img');
+    img.alt = '';
+    img.setAttribute('data-metas-logo', '');
+    img.src = m.logo;
+    img.style.cssText = 'width:46px;height:46px;object-fit:contain;flex:0 0 46px;display:block;';
+    caja.appendChild(img);
+  }
+  const col = document.createElement('div');
+  col.style.cssText = 'min-width:0;text-align:center;';
+  col.appendChild(titulo);
+  if (m.nombre) {
+    const nom = document.createElement('div');
+    nom.setAttribute('data-metas', 'nombre-centro');
+    nom.textContent = m.nombre;
+    nom.style.cssText = 'font-size:12px;font-weight:700;line-height:1.15;color:var(--brand);';
+    col.appendChild(nom);
+  }
+  caja.appendChild(col);
+  const cierre = header.lastElementChild;
+  if (cierre && cierre !== titulo) header.insertBefore(caja, cierre);
+  else header.appendChild(caja);
+  header.style.gridTemplateColumns = 'minmax(44px,1fr) minmax(0,auto) minmax(44px,1fr)';
+}
+window.gePonerMarca = gePonerMarca;
+window.geRestaurarTitulo = geRestaurarTitulo;
+
 function geShowPanel(panelId) {
+  geRestaurarTitulo();
   ['ge-config-view','ge-code-view','ge-voting-view','ge-results-view'].forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
@@ -188,6 +243,7 @@ function geShowBallot(code) {
   if (fb) fb.style.display = 'none';
 
   geShowPanel('ge-voting-view');
+  gePonerMarca();
 }
 
 function geRecordVote(planilla) {

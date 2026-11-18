@@ -2248,7 +2248,7 @@ function switchView(id) {
   if (id === 'view-ajustes')  renderAjustes();
   if (id === 'view-gobierno')       renderGobiernoEscolar();
   if (id === 'view-plan-accion')    paInit();
-  if (id === 'view-parte-mensual')  { /* la UI se recalcula en tiempo real con inputs */ }
+  if (id === 'view-parte-mensual')  { if (typeof pmPonerMarca === 'function') pmPonerMarca(); }
   if (id === 'view-collage')        initCollage();
   if (id === 'view-campeonismo' && typeof initCampeonismo === 'function') initCampeonismo();
   if (id === 'view-formacion' && typeof mfRender === 'function') mfRender();
