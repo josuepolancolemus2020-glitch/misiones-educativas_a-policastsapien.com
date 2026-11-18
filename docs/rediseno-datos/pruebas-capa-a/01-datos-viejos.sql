@@ -33,7 +33,11 @@ insert into public.registro_admin (evento_id, codigo, tipo, estado, monto, docen
 -- C no se vincula: sus familias siguen viendo todo, dinero incluido.
   ('ADE-C1-7CCCC', '7CCCC', 'economia',   'pago',     30, 'Docente Ficticia C · PROF-CCCC000003'),
 -- B se vincula DESPUÉS del paso 1 (en las pruebas): su dinero deja de verse entonces.
-  ('ADE-C1-5NUEVA', '5NUEVA', 'economia', 'pago',     40, 'Profe Beto');
+  ('ADE-C1-5NUEVA', '5NUEVA', 'economia', 'pago',     40, 'Profe Beto'),
+-- Clave que solo usa la prueba del cierre de año DESPUÉS de callar las claves
+-- viejas de vinculados. No va en el blob: la copia de claves de A sigue en 4.
+  ('ADE-6CIER', '6CIER', 'economia', 'pago', 15, 'Docente Ficticia A · PROF-AAAA000001'),
+  ('ADA-6CIER', '6CIER', 'asistencia', 'ausente', null, 'Docente Ficticia A · PROF-AAAA000001');
 
 -- Avisos y recibos viejos del chatbot (mensajes_docente), mismos casos.
 insert into public.mensajes_docente (evento_id, codigo, subtipo, titulo, texto, vigente_hasta, docente) values
@@ -43,4 +47,6 @@ insert into public.mensajes_docente (evento_id, codigo, subtipo, titulo, texto, 
   ('AVR-C1-8MINU', '8MINU', 'cuentas', '🧾 Recibo RC-0001-8 — Excursión', 'Recibido: L 25.00', current_date + 200,
    'docente ficticia a · prof-aaaa000001'),
   ('AVR-C1-7CCCC', '7CCCC', 'cuentas', '🧾 Recibo RC-0009-7 — Excursión', 'Recibido: L 30.00', current_date + 200,
-   'Docente Ficticia C · PROF-CCCC000003');
+   'Docente Ficticia C · PROF-CCCC000003'),
+  ('AVI-6CIER', '6CIER', 'aviso', 'Aviso de cierre ficticio', 'Se puede borrar en la prueba', current_date + 10,
+   'Docente Ficticia A · PROF-AAAA000001');

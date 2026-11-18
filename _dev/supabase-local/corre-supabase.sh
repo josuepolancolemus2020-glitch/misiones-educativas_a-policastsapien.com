@@ -135,6 +135,19 @@ echo "▶ Capa A"
 PROYECTO="$(sed -n 's/^project_id *= *"\(.*\)"/\1/p' "$AQUI/supabase/config.toml")"
 q -v "conninfo=host=supabase_db_$PROYECTO port=5432 user=postgres password=postgres dbname=postgres" \
   -f "$PRUEBAS/10-pruebas.sql"
+# Claves viejas: solo callan si el docente ya está vinculado. Dos veces.
+# Se deshace antes de la ida y vuelta del paso 1, para que el catálogo que
+# se compara sea el de CONGELAR.
+echo "▶ SUPABASE-V2-CLAVES-VIEJAS-VINCULADOS.sql (dos veces)"
+q -f "$DISENO/SUPABASE-V2-CLAVES-VIEJAS-VINCULADOS.sql" >/dev/null
+q -f "$DISENO/SUPABASE-V2-CLAVES-VIEJAS-VINCULADOS.sql" >/dev/null \
+  || falla "CLAVES-VIEJAS falló la segunda vez"
+q -f "$PRUEBAS/22-claves-viejas.sql"
+echo "▶ SUPABASE-V2-CLAVES-VIEJAS-VINCULADOS-DESHACER.sql (dos veces)"
+q -f "$DISENO/SUPABASE-V2-CLAVES-VIEJAS-VINCULADOS-DESHACER.sql" >/dev/null
+q -f "$DISENO/SUPABASE-V2-CLAVES-VIEJAS-VINCULADOS-DESHACER.sql" >/dev/null \
+  || falla "DESHACER claves falló la segunda vez"
+q -f "$PRUEBAS/23-deshacer-claves.sql"
 # Ida y vuelta: DESCONGELAR (dos veces, debe aguantar) y CONGELAR otra vez.
 # Las capas A+, B y C corren después, con la base congelada de nuevo.
 echo "▶ SUPABASE-V2-DESCONGELAR.sql (dos veces) y CONGELAR otra vez"

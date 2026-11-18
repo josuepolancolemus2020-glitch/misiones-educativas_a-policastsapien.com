@@ -185,7 +185,32 @@ create table if not exists public.mensajes_docente (
   grado text, seccion text, docente text, anio_lectivo text,
   actualizado_en timestamptz not null default now()
 );
-create table if not exists public.plan_accion (id bigint generated always as identity primary key, codigo text);
+-- Columnas que lee metas_consultar_plan_padre (firma de
+-- _privado/SUPABASE-PLAN-FECHA-DEDUP.sql, la que usa padres.html).
+-- En la nube la tabla ya existe; aquí hace falta para envolver esa lectura.
+create table if not exists public.plan_accion (
+  id bigint generated always as identity primary key,
+  evento_id text unique,
+  codigo text,
+  num text,
+  alumno text,
+  grado text,
+  seccion text,
+  docente text,
+  evaluacion text,
+  mision text,
+  forma text,
+  tipo text,
+  parcial text,
+  nota numeric,
+  base numeric default 100,
+  nsp boolean not null default false,
+  categoria text,
+  mensaje text,
+  fecha_analisis timestamptz,
+  fecha_prueba date,
+  creado_en timestamptz not null default now()
+);
 create table if not exists public.mensajes_padre (id bigint generated always as identity primary key, codigo text);
 create table if not exists public.aviso_visto (base text, codigo text, primary key (base, codigo));
 -- Como en el proyecto real: RLS activa y SIN políticas en todo el modelo viejo
@@ -279,6 +304,48 @@ begin
 end $$;
 revoke all on function public.metas_consultar_avisos_padre(text) from public;
 grant execute on function public.metas_consultar_avisos_padre(text) to anon, authenticated;
+
+-- Copia fiel de metas_consultar_plan_padre (_privado/SUPABASE-PLAN-FECHA-DEDUP.sql).
+-- En la nube ya está (padres.html lee parcial y fecha_prueba). Aquí no se
+-- había creado: el archivo de claves viejas la envuelve y hay que probarla.
+create or replace function public.metas_consultar_plan_padre(p_codigo text)
+returns table (
+  evaluacion text, forma text, tipo text, parcial text, fecha_prueba date,
+  nota numeric, base numeric, nsp boolean,
+  categoria text, mensaje text,
+  docente text, grado text, seccion text, fecha timestamptz
+)
+language plpgsql security definer set search_path = public as $$
+begin
+  if not public.metas_rate_ok() then return; end if;
+  return query
+  select q.evaluacion, q.forma, q.tipo, q.parcial, q.fecha_prueba, q.nota, q.base, q.nsp,
+         q.categoria, q.mensaje, q.docente, q.grado, q.seccion, q.fecha
+  from (
+    select distinct on (coalesce(nullif(p.mision,''), p.evaluacion),
+                        coalesce(p.tipo,''), coalesce(p.parcial,''))
+           p.evaluacion, p.forma, p.tipo, p.parcial, p.fecha_prueba, p.nota, p.base, p.nsp,
+           p.categoria, p.mensaje, p.docente, p.grado, p.seccion,
+           coalesce(p.fecha_analisis, p.creado_en) as fecha
+    from public.plan_accion p
+    where length(regexp_replace(coalesce(p_codigo,''), '\s', '', 'g')) >= 2
+      and p.codigo = upper(regexp_replace(coalesce(p_codigo,''), '\s', '', 'g'))
+      and not (coalesce(p.parcial,'') = '' and exists (
+            select 1 from public.plan_accion p2
+            where p2.codigo = p.codigo
+              and coalesce(nullif(p2.mision,''), p2.evaluacion)
+                  = coalesce(nullif(p.mision,''), p.evaluacion)
+              and coalesce(p2.tipo,'') = coalesce(p.tipo,'')
+              and coalesce(p2.parcial,'') <> ''))
+    order by coalesce(nullif(p.mision,''), p.evaluacion),
+             coalesce(p.tipo,''), coalesce(p.parcial,''),
+             coalesce(p.fecha_analisis, p.creado_en) desc, p.id desc
+  ) q
+  order by q.fecha desc
+  limit 40;
+end $$;
+revoke all on function public.metas_consultar_plan_padre(text) from public;
+grant execute on function public.metas_consultar_plan_padre(text) to anon, authenticated;
 
 -- Copia fiel de la lógica de metas_cerrar_familias (_privado/SUPABASE-SEGURIDAD.sql).
 create or replace function public.metas_cerrar_familias(p_prof text, p_clave text, p_codigos jsonb)
