@@ -1180,11 +1180,15 @@ Celaque, el 45 % de cobertura forestal y las hectáreas del gorgojo.
 
 ### Lo que queda
 
-- **Congelar las formas 31 a 50 de las seis**, cuando Josué las apruebe:
-  `node _dev/genera-formas-oro.js --conceptual-ampliar <carpeta> …`. Hasta
-  entonces `verifica-formas-oro.js` las nombra «por congelar».
-- **El sello.** Esta rama cambia `js/motor-misiones.js`, `js/motor-mision.js`
-  y el archivo de seis misiones; se sella justo antes del merge.
+- ~~Congelar las formas 31 a 50 de las seis.~~ Josué aprobó las 240
+  preguntas el 18 de noviembre de 2026 y quedaron congeladas con
+  `genera-formas-oro.js --conceptual-ampliar` (cada referencia lleva
+  `conceptualAmpliada`). Desde entonces `verifica-formas-oro.js` compara las
+  50 formas conceptuales de las seis, y ni el texto ni el orden de sus
+  bancos nuevos se cambia.
+- ~~El sello.~~ v565: `CACHE_NAME`, las 85 páginas que piden
+  `js/motor-misiones.js`, la plantilla en La Célula y el archivo propio de
+  las seis misiones.
 - **Visto de paso, sin tocar:** en Desastres Naturales el completar del
   terremoto solo acepta «terremoto», y el propio examen dice «temblor» en
   otras preguntas. Es del banco de antes, que tiene clave impresa.
