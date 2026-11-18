@@ -1100,3 +1100,92 @@ actividades no se tocaron.
 - **Las demás misiones.** El motor ya sirve a cualquiera que use la plantilla
   (`js/motor-mision.js`); hoy solo la usa La Célula. Las preguntas se escriben
   misión por misión.
+
+---
+
+## 18. El banco grande, tanda 1: seis misiones de archivo propio
+
+Rama `feat/banco-conceptual-tanda-1` (18 de noviembre de 2026). El banco
+grande de La Célula llega a seis misiones más de Ciencias Naturales y
+Ciencias Sociales, las seis con más contenido propio entre las 18 de esas
+materias (contado en palabras: ficha, sección Aprende y datos de las
+actividades): El Sistema Nervioso, Desastres Naturales, El Sistema
+Endocrino, Áreas Protegidas de Honduras, Los Cinco Reinos y América,
+Oceanía y Antártida.
+
+### Lo que hubo que cambiar en el motor
+
+La sección 17 termina diciendo que el motor ya le sirve a cualquier misión
+que use la plantilla, y que solo la usa La Célula. Las otras 83 traen su
+propio `genEval` y se detenían en `EVAL_FORMAS`. Pasar seis misiones a la
+plantilla era tocar sus páginas, y la interfaz se está trabajando en otra
+rama. Se hizo lo mínimo:
+
+- **`js/motor-misiones.js`** lee los bancos nuevos de la misión cargada
+  (`_bancoGrandeConceptual`) y dice hasta qué forma llega
+  (`_topeConceptual`). Ese código vivía en la plantilla; ahora está una sola
+  vez y la plantilla lo pide.
+- **`_dev/conecta-banco-grande.js <carpeta>`** le hace al `genEval` de una
+  misión de archivo propio el mismo cambio que ya tiene el de la plantilla:
+  el tope se le pregunta al motor y, de la forma 31 en adelante, las cinco
+  preguntas de cada sección llegan repartidas. Se niega si no encuentra cada
+  trozo exactamente una vez, para que ninguna misión lleve su versión del
+  cambio. Hasta la forma 30 se saca igual que siempre, con la misma semilla.
+- **Con el motor de antes guardado en el teléfono** la misión conectada
+  pregunta si el motor sabe decir el tope; si no, se queda en sus 30 formas.
+  `verifica-banco-grande-navegador.js` lo prueba con el motor de `main`
+  mientras `main` no tenga `_topeConceptual`.
+
+La misión sigue sin traer lógica: declara sus cuatro bancos nuevos y nada
+más. Para la siguiente tanda: `node _dev/conecta-banco-grande.js <carpeta>`
+y escribir los bancos.
+
+### Las preguntas
+
+240 nuevas, 40 por misión, con las reglas de La Célula. Lo que se contó
+antes de escribirlas (un dato repetido entra una sola vez):
+
+| misión | preguntas de las actividades | datos que piden | ya los pedía el examen | la ficha repite del examen |
+|---|---|---|---|---|
+| El Sistema Nervioso | 75 | 33 | 22 | 36 de 40 |
+| Desastres Naturales | 75 | 22 | 18 | 39 de 40 |
+| El Sistema Endocrino | 75 | 25 | 20 | 33 de 40 |
+| Áreas Protegidas de Honduras | 61 | 17 | 15 | 39 de 40 |
+| Los Cinco Reinos | 72 | 15 | 14 | 40 de 40 |
+| América, Oceanía y Antártida | 61 | 19 | 17 | 32 de 40 |
+
+Las actividades casi no preguntan nada que el examen no pidiera ya: lo
+nuevo sale sobre todo de lo que la misión enseña sin preguntarlo (la teoría
+de la ficha, la guía, las tarjetas, los grupos de Clasifica y el
+laboratorio).
+
+**Las opciones de la selección siguen el estilo del banco de antes de cada
+misión** (minúscula inicial o mayúscula), porque una forma nueva mezcla
+preguntas de los dos y la hoja no puede llevar dos estilos.
+
+**El verdadero o falso de una hoja no sale con las cinco iguales.** Los
+bancos de antes son casi todo verdaderas (nueve de diez en El Sistema
+Nervioso), y con el primer orden dos misiones daban una forma con cinco
+verdaderas. Se arregló con el orden del banco nuevo, que es el que decide
+qué preguntas caen juntas, y `verifica-conceptual-banco-grande.js` lo mide
+desde ahora.
+
+**Datos de las misiones que no se usaron y hay que revisar aparte** (están
+en las fichas o en las páginas, que esta rama no toca): en Los Cinco
+Reinos, que en el cuerpo hay más bacterias que células propias, el pino
+entre las plantas con flor y el orden de aparición de los reinos; en
+América, Oceanía y Antártida, el largo del Amazonas frente al del Nilo y
+los 54 países del Tratado Antártico; en Áreas Protegidas, los 8 ríos de
+Celaque, el 45 % de cobertura forestal y las hectáreas del gorgojo.
+
+### Lo que queda
+
+- **Congelar las formas 31 a 50 de las seis**, cuando Josué las apruebe:
+  `node _dev/genera-formas-oro.js --conceptual-ampliar <carpeta> …`. Hasta
+  entonces `verifica-formas-oro.js` las nombra «por congelar».
+- **El sello.** Esta rama cambia `js/motor-misiones.js`, `js/motor-mision.js`
+  y el archivo de seis misiones; se sella justo antes del merge.
+- **Visto de paso, sin tocar:** en Desastres Naturales el completar del
+  terremoto solo acepta «terremoto», y el propio examen dice «temblor» en
+  otras preguntas. Es del banco de antes, que tiene clave impresa.
+- **Las otras 77 misiones** con examen conceptual siguen en 30 formas.

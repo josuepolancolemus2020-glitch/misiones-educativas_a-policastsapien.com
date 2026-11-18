@@ -451,10 +451,10 @@ const evalPRBank=[
 // Lo comprueba `_dev/verifica-examen-sin-pistas.js`, y cuántas formas hay y
 // cuánto de cada forma nueva sale de aquí, `_dev/verifica-conceptual-banco-grande.js`.
 const evalTFBankNuevo=[
-  {q:'Las señales que viajan por los nervios son eléctricas.',a:true,k:'tf-electricas',fuente:'Ficha, página 1 (1. ¿Qué es el sistema nervioso?) · Guía (Aprende): ¿Cómo viaja el impulso?'},
   {q:'El Alzheimer afecta el movimiento, pero no la memoria.',a:false,k:'tf-alzheimer-memoria',fuente:'Ficha, página 3 (6. Errores comunes) · Ficha, página 4 (Ponte a prueba, II.9) · Guía (Aprende): Enfermedades principales · Actividad Identifica 7'},
   {q:'Las órdenes de los movimientos que tú decides, como saltar, salen de la médula espinal.',a:false,k:'tf-ordenes-voluntarias',fuente:'Guía (Aprende): Sistema Nervioso Voluntario'},
   {q:'Un golpe fuerte en la cabeza no puede dañar el encéfalo, porque el cráneo lo protege del todo.',a:false,k:'tf-golpe',fuente:'Guía (Aprende): Hábitos de cuidado · Actividad Laboratorio: Cerebro, Enfermedades'},
+  {q:'Las señales que viajan por los nervios son eléctricas.',a:true,k:'tf-electricas',fuente:'Ficha, página 1 (1. ¿Qué es el sistema nervioso?) · Guía (Aprende): ¿Cómo viaja el impulso?'},
   {q:'En un momento de peligro, el corazón late más despacio.',a:false,k:'tf-peligro-corazon',fuente:'Actividad Laboratorio: SNP, Función'},
   {q:'Leer y aprender cosas nuevas fortalece las conexiones entre las neuronas.',a:true,k:'tf-leer',fuente:'Guía (Aprende): Hábitos de cuidado · Actividad Laboratorio: Cerebro, Cuidados · Actividad Tareas: Explicar 5'},
   {q:'El sistema nervioso periférico tiene una parte voluntaria y otra involuntaria.',a:true,k:'tf-snp-dos-partes',fuente:'Ficha, página 2 (3. El Sistema Nervioso Periférico) · Guía (Aprende): Sistema Nervioso Periférico · Actividad Tarjetas: SNP'},

@@ -820,10 +820,10 @@ const evalTFBankNuevo=[
   {q:'En la Antártida hay más personas en verano que en invierno.',a:true,k:'tf-verano',fuente:'Guía (Aprende): Antártida, Fauna · Actividad Laboratorio: Antártida, Sociedad'},
   {q:'La Antártida rodea al polo norte.',a:false,k:'tf-polo',fuente:'Ficha, página 4 (Ponte a prueba, II.3; aquí con el polo cambiado) · Actividad Tareas: Clasificar, Antártida'},
   {q:'Las islas pequeñas de Oceanía viven sobre todo del turismo y la pesca.',a:true,k:'tf-islas-turismo',fuente:'Actividad Laboratorio: Oceanía, Economía'},
-  {q:'En la Antártida está permitido abrir minas para vender sus minerales.',a:false,k:'tf-minas',fuente:'Ficha, página 4 (Ponte a prueba, II.1; aquí al revés) · Ficha, página 3 (4. Antártida) · Guía (Aprende): Antártida, Tratado Antártico · Actividad Tarjetas: Tratado Antártico · Actividad Laboratorio: Antártida, Economía'},
   {q:'En América hay climas muy distintos, desde el ártico hasta el desértico.',a:true,k:'tf-climas',fuente:'Actividad Laboratorio: América, Geografía · Actividad Tarjetas: América'},
-  {q:'La mayoría de los hondureños que viven en el exterior está en América del Sur.',a:false,k:'tf-migrantes',fuente:'Actividad Laboratorio: América, Sociedad · Actividad Tarjetas: Remesas en Honduras · Guía (Aprende): Honduras y América'},
+  {q:'En la Antártida está permitido abrir minas para vender sus minerales.',a:false,k:'tf-minas',fuente:'Ficha, página 4 (Ponte a prueba, II.1; aquí al revés) · Ficha, página 3 (4. Antártida) · Guía (Aprende): Antártida, Tratado Antártico · Actividad Tarjetas: Tratado Antártico · Actividad Laboratorio: Antártida, Economía'},
   {q:'La economía más grande del mundo es la de un país de América.',a:true,k:'tf-primera-economia',fuente:'Guía (Aprende): América, Economía · Actividad Laboratorio: América, Economía'},
+  {q:'La mayoría de los hondureños que viven en el exterior está en América del Sur.',a:false,k:'tf-migrantes',fuente:'Actividad Laboratorio: América, Sociedad · Actividad Tarjetas: Remesas en Honduras · Guía (Aprende): Honduras y América'},
   {q:'Oceanía tiene más habitantes que América.',a:false,k:'tf-habitantes',fuente:'Actividad Laboratorio: Oceanía, Sociedad · Actividad Laboratorio: América, Sociedad · Actividad Tarjetas: Oceanía'},
   {q:'Papúa Nueva Guinea es un país de Oceanía.',a:true,k:'tf-papua',fuente:'Ficha, página 2 (3. Oceanía, ¿Sabías que…?) · Actividad Tarjetas: Oceanía · Actividad Laboratorio: Oceanía, Geografía'}
 ];
