@@ -216,7 +216,7 @@
     <button id="enviar" data-metas="familia-entrar" aria-label="Enviar">➤</button>
   </div>
 
-<script src="js/familia-notas.js?v=559"></script>
+<script src="js/familia-notas.js?v=560"></script>
 <script>
 /* ============================================================
    ASISTENTE DE PADRES — bot de reglas, sin costo y sin cuentas.
@@ -386,7 +386,11 @@ function botSay(html, chips) {
         ? ' <button class="bub-oir" onclick="leerBurbuja(this)" title="Escuchar" aria-label="Escuchar este mensaje">🔊</button>' : '';
       div.innerHTML = '<div class="bub">' + html + oir + '</div>';
       $chat.appendChild(div);
-      if (chips) pintarChips(chips);
+      /* Sin lista, la clave nueva vuelve a poner su menú: una respuesta no
+         puede dejar la caja vacía. La clave vieja, si no trae lista, se
+         queda con los botones que ya tenía. */
+      if (Array.isArray(chips)) pintarChips(chips);
+      else if (esClaveNueva()) pintarChips(chipsMenu());
       /* Una respuesta larga (Bitácora, todas las notas) se muestra desde su
          INICIO, que es donde va lo más reciente: antes se aterrizaba al final
          y a la familia le tocaba subir buscándolo. Si el mensaje cabe en
@@ -402,8 +406,15 @@ function botSay(html, chips) {
   });
 }
 function pintarChips(lista) {
+  let items = Array.isArray(lista) ? lista.slice() : [];
+  /* Ya entró con la clave nueva: «¿Qué es la clave?» estorba, y una lista
+     vacía deja el desliz sin nada que mostrar. */
+  if (esClaveNueva()) {
+    items = items.filter(c => norm(c) !== 'que es la clave');
+    if (!items.length) items = chipsMenu().slice();
+  }
   $chips.innerHTML = '';
-  (lista || []).forEach(c => {
+  items.forEach(c => {
     const b = document.createElement('button');
     b.className = 'chip';
     b.textContent = c;
@@ -416,31 +427,54 @@ function pintarChips(lista) {
 /* ── botones que se apartan mientras se lee ──
    Se escucha el GESTO (dedo o rueda), no el scroll: cuando la vista ya
    está pegada al fondo el scroll no dispara eventos, y justo ahí es donde
-   el padre desliza hacia arriba para releer. Dedo hacia abajo = está
-   leyendo lo de antes → los botones se recogen. Dedo hacia arriba =
-   viene a la caja de escribir → reaparecen. */
+   el padre desliza hacia arriba para releer. Por eso el gesto se oye en
+   el documento, en la captura: si el chat no puede bajar más, el navegador
+   a veces no entrega el touchmove al propio #chat. Dedo hacia abajo =
+   está leyendo lo de antes → los botones se recogen. Dedo hacia arriba =
+   viene a la caja de escribir → reaparecen, también si la caja se había
+   quedado vacía. */
 let _dedoY = null;
-$chat.addEventListener('touchstart', e => { _dedoY = e.touches[0].clientY; }, { passive: true });
-$chat.addEventListener('touchmove', e => {
-  if (_dedoY == null) return;
+function _toqueEnChat(e) {
+  const n = e && e.target;
+  return !!(n && $chat && (n === $chat || ($chat.contains && $chat.contains(n))));
+}
+function reabrirChips() {
+  if (esClaveNueva() && !$chips.querySelector('button')) pintarChips(chipsMenu());
+  $chips.classList.remove('recogido');
+}
+document.addEventListener('touchstart', e => {
+  _dedoY = (_toqueEnChat(e) && e.touches && e.touches[0]) ? e.touches[0].clientY : null;
+}, { passive: true, capture: true });
+document.addEventListener('touchmove', e => {
+  if (_dedoY == null || !e.touches || !e.touches[0]) return;
   const dy = e.touches[0].clientY - _dedoY;
-  if (dy > 14)       { $chips.classList.add('recogido');    _dedoY = e.touches[0].clientY; }
-  else if (dy < -14) { $chips.classList.remove('recogido'); _dedoY = e.touches[0].clientY; }
-}, { passive: true });
-/* con ratón (computadora del maestro): la rueda hacia arriba también recoge */
-$chat.addEventListener('wheel', e => {
+  if (dy > 14)       { $chips.classList.add('recogido'); _dedoY = e.touches[0].clientY; }
+  else if (dy < -14) { reabrirChips();                   _dedoY = e.touches[0].clientY; }
+}, { passive: true, capture: true });
+/* con ratón (computadora del maestro): la rueda hacia arriba también recoge,
+   y hacia abajo (el mismo sentido que el dedo hacia arriba) los devuelve */
+document.addEventListener('wheel', e => {
+  if (!_toqueEnChat(e)) return;
   if (e.deltaY < 0) $chips.classList.add('recogido');
-  else if (e.deltaY > 0) $chips.classList.remove('recogido');
-}, { passive: true });
+  else if (e.deltaY > 0) reabrirChips();
+}, { passive: true, capture: true });
 /* Nombres CORTOS: con quince botones, cada palabra de más era un renglón
    entero menos para la conversación. */
 const CHIPS_BASE = ['📊 ¿Cómo va?', '📣 Avisos', '📝 Última nota', '📚 Todas las notas',
                     '🗓 ¿Faltó?', '🤒 Avisar falta', '🧮 Boleta del parcial',
                     '💰 Pagos', '🧾 Recibos', '📔 Bitácora', '🙂 Conducta', '🏠 ¿Cómo ayudo?',
                     '💡 Consejo', '🔄 Actualizar', '🔑 Cambiar clave'];
-/* Con más de una clave guardada aparece el conmutador de hijos */
+/* Con la clave nueva solo lo que la base nueva sí contesta. Faltas, pagos
+   pendientes, bitácora y conducta seguirían leyendo el portal viejo y
+   dirían «no hay» aunque la tira sea buena. */
+const CHIPS_NUEVA = ['📊 ¿Cómo va?', '📣 Avisos', '📝 Última nota', '📚 Todas las notas',
+                     '🧮 Boleta del parcial', '🧾 Recibos', '🏠 ¿Cómo ayudo?',
+                     '💡 Consejo', '🔄 Actualizar', '🔑 Cambiar clave'];
+/* Con más de una clave guardada aparece el conmutador de hijos.
+   La clave vieja sigue con CHIPS_BASE, tal cual. */
 function chipsMenu() {
-  return cfgCodigos().length > 1 ? ['👧 Cambiar de hijo'].concat(CHIPS_BASE) : CHIPS_BASE;
+  const base = esClaveNueva() ? CHIPS_NUEVA : CHIPS_BASE;
+  return cfgCodigos().length > 1 ? ['👧 Cambiar de hijo'].concat(base) : base;
 }
 
 /* ── tarjetas de nota ── */
@@ -1622,14 +1656,113 @@ async function resumenNuevo(callar) {
   if (!h && callar) return false;
   let t = h ? '👦 <strong>' + esc(h.nombre) + '</strong>' + (h.docente ? ', con ' + esc(h.docente) : '') + '.' : '';
   if (h && window.MetasNotasFamilia) t += '<br>' + MetasNotasFamilia.html(notas.filas, notas.estado);
-  if (pagos.length) {
-    t += '<br>🧾 Recibos:<br>' + pagos.map(p => esc(p.recibo) + ' · ' + esc(p.concepto) + ' · <strong>' + lempiras(p.monto) + '</strong>'
-      + (p.corrige_al_recibo ? ' (corrige al ' + esc(p.corrige_al_recibo) + ')' : '')).join('<br>');
-  }
-  if (avisos.length) t += '<br>📣 ' + avisos.map(a => '<strong>' + esc(a.titulo) + '</strong>' + (a.texto ? ': ' + esc(a.texto) : '')).join('<br>📣 ');
-  // Ya entró: el botón «¿Qué es la clave?» del saludo solo estorba.
-  await botSay(t || 'Todavía no hay información para esta clave.', h ? [] : undefined);
+  const rec = htmlRecibosNuevos(pagos);
+  const avi = htmlAvisosNuevos(avisos);
+  if (rec) t += '<br>' + rec;
+  if (avi) t += '<br>' + avi;
+  // Ya entró: el menú de lo que sí se puede consultar, nunca la caja vacía
+  // ni «¿Qué es la clave?».
+  await botSay(t || 'Todavía no hay información para esta clave.', chipsMenu());
   return !!h;
+}
+function htmlRecibosNuevos(pagos) {
+  if (!pagos || !pagos.length) return '';
+  return '🧾 Recibos:<br>' + pagos.map(p => esc(p.recibo) + ' · ' + esc(p.concepto) + ' · <strong>' + lempiras(p.monto) + '</strong>'
+    + (p.corrige_al_recibo ? ' (corrige al ' + esc(p.corrige_al_recibo) + ')' : '')).join('<br>');
+}
+function htmlAvisosNuevos(avisos) {
+  if (!avisos || !avisos.length) return '';
+  return '📣 ' + avisos.map(a => '<strong>' + esc(a.titulo) + '</strong>' + (a.texto ? ': ' + esc(a.texto) : '')).join('<br>📣 ');
+}
+/* Recibos de vf_pagos. El botón «💰 Pagos» no entra: esa respuesta es la
+   deuda del portal viejo, y aquí el pago ya es el recibo. */
+async function respRecibosNuevos() {
+  const pagos = await leerNueva('vf_pagos');
+  await botSay(htmlRecibosNuevos(pagos) || '🧾 Todavía no hay recibos para esta clave.', chipsMenu());
+}
+async function respAvisosNuevos() {
+  const avisos = await leerNueva('vf_avisos');
+  await botSay(htmlAvisosNuevos(avisos) || '📣 Por ahora no hay avisos del maestro.', chipsMenu());
+}
+const ORDEN_PARCIAL_NUEVO = { I: 1, II: 2, III: 3, IV: 4, REC: 5 };
+async function _notasDeLaClave() {
+  const notas = await leerNotasDeClave(claveGuardada());
+  if (!window.MetasNotasFamilia) return { estado: 'error', filas: [], html: '📝 Ahora no pude ver las notas. Intente de nuevo en un rato.' };
+  return { estado: notas.estado, filas: notas.filas, html: MetasNotasFamilia.html(notas.filas, notas.estado) };
+}
+async function respNotasNuevas() {
+  const n = await _notasDeLaClave();
+  await botSay(n.html, chipsMenu());
+}
+async function respBoletaNueva() {
+  const n = await _notasDeLaClave();
+  await botSay('🧮 <strong>Boleta del parcial</strong>:<br>' + n.html, chipsMenu());
+}
+/* No hay fecha en la fila: lo más reciente es el parcial más alto que
+   ya tiene nota (I, II, III, IV o recuperación). */
+async function respUltimaNueva() {
+  const n = await _notasDeLaClave();
+  const rows = (window.MetasNotasFamilia && n.estado !== 'error') ? MetasNotasFamilia.limpiar(n.filas) : [];
+  if (!rows.length) { await botSay(n.html, chipsMenu()); return; }
+  let per = rows[0].periodo, peso = ORDEN_PARCIAL_NUEVO[per] || 0;
+  rows.forEach(r => {
+    const k = ORDEN_PARCIAL_NUEVO[r.periodo] || 0;
+    if (k >= peso) { peso = k; per = r.periodo; }
+  });
+  const deEse = (n.filas || []).filter(f => String(f && f.periodo || '').trim() === per);
+  const cuerpo = window.MetasNotasFamilia.html(deEse, 'ok');
+  await botSay('📝 <strong>La nota más reciente</strong>:<br>' + cuerpo, chipsMenu());
+}
+/* Consejos a partir de las notas de esta clave. No se consulta el portal
+   viejo: con la tira nueva ese camino diría que no hay notas. */
+async function respAyudarNueva() {
+  const n = await _notasDeLaClave();
+  const rows = (window.MetasNotasFamilia && n.estado !== 'error') ? MetasNotasFamilia.limpiar(n.filas) : [];
+  const bajos = rows.filter(r => r.bajo);
+  let html = '🏠 <strong>Cómo ayudar en casa</strong><br>';
+  if (bajos.length) {
+    const mats = bajos.map(r => r.asignatura).filter((v, i, a) => a.indexOf(v) === i);
+    html += 'Conviene repasar <strong>' + esc(mats.join(', ')) + '</strong>:<br>• '
+      + tipsDeCategoria('debe mejorar').join('<br>• ');
+  } else if (rows.length) {
+    html += 'Va bien. Para que siga así:<br>• ' + tipsDeCategoria('muy bueno').join('<br>• ');
+  } else {
+    html += 'Esto es lo que más ayuda:<br>• ' + tipsDeCategoria('satisfactorio').join('<br>• ');
+  }
+  await botSay(html, chipsMenu());
+}
+async function enrutarClaveNueva(t) {
+  if (!esClaveNueva()) return false;
+  if (/recibo|comprobante|\bfolio\b|constancia de (pago|aporte)|respaldo del (pago|aporte)/.test(t)) {
+    await respRecibosNuevos(); return true;
+  }
+  if (/aviso|comunicad|anuncio|reunion|junta|convocatoria|evento|acto civico|suspend/.test(t)) {
+    await respAvisosNuevos(); return true;
+  }
+  if (/como ayudo|ayud|apoyar|en casa|reforzar|practicar|repasar|que hacer|que hago/.test(t)) {
+    await respAyudarNueva(); return true;
+  }
+  if (/consejo|tip|recomendacion/.test(t)) {
+    await respConsejo(); return true;
+  }
+  if (/cambiar de (hijo|hija|nino|nina)|otro hijo|otra hija|mis hijos|el otro nino|la otra nina/.test(t)) {
+    await respCambiarHijo(); return true;
+  }
+  if (/(cambiar|otra|nueva|borrar).*(clave|codigo)|cambiar clave/.test(t)) {
+    await respCambiarClave(); return true;
+  }
+  if (!quiereVerNotas(t)) return false;
+  if (/actualizar|refrescar|de nuevo|recargar|como va|como esta|como le va|resumen|avance|progreso|rendimiento|promedio/.test(t)
+      && !/ultima|ultimo|boleta|parcial/.test(t)) {
+    await resumenNuevo(); return true;
+  }
+  if (/ultima|ultimo|reciente|nota nueva/.test(t)) {
+    await respUltimaNueva(); return true;
+  }
+  if (/boleta|sace|\bparcial\b/.test(t)) {
+    await respBoletaNueva(); return true;
+  }
+  await respNotasNuevas(); return true;
 }
 
 async function usarClave(codigo) {
@@ -1760,12 +1893,9 @@ async function manejar(txtOriginal) {
   const t = expand(norm(txtOriginal));
   if (!t) return;
 
-  /* Con la clave nueva, las notas viven en la base nueva. El camino de
-     antes no las conoce y contestaría que no hay. */
-  if (esClaveNueva() && quiereVerNotas(t)) {
-    await resumenNuevo();
-    return;
-  }
+  /* Con la clave nueva, cada botón del menú se responde desde la base
+     nueva. El camino de antes no la conoce y contestaría que no hay. */
+  if (await enrutarClaveNueva(t)) return;
 
   /* respuesta con número del menú (1-9) */
   if (/^[1-9]$/.test(t)) { await MENU_NUM[+t - 1](t); return; }
@@ -1902,6 +2032,10 @@ async function manejar(txtOriginal) {
   if (!claveGuardada()) {
     await botSay('No entendí 😅. Si ya tiene la <strong>clave de la familia</strong> (ej. 15-K7QM), escríbala tal cual. ' +
       'Si no la tiene, toque el botón de abajo.', ['❓ ¿Qué es la clave?']);
+  } else if (esClaveNueva()) {
+    /* Las pistas del portal viejo (pagos, bitácora, faltas) no se ofrecen:
+       tocarlas leería datos que esta clave no tiene. */
+    await botSay('No entendí esa pregunta 😅. Toque uno de estos botones o escríbala con otras palabras.', chipsMenu());
   } else {
     _buzonPendiente = txtOriginal;
     const pista = PISTAS.find(p => p[0].test(t));
