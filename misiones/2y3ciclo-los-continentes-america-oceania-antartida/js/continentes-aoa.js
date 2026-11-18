@@ -772,6 +772,98 @@ const evalPRBank=[
   {term:'Monte Vinson',def:'La cumbre más alta de la Antártida',k:'pr-vinson'}
 ];
 
+// ===================== EXAMEN CONCEPTUAL · BANCO GRANDE =====================
+// Los cuatro bancos de arriba son de diez, y cada forma saca cinco: el alumno
+// que se aprende las primeras formas se sabe el banco entero. Estos cuatro
+// son preguntas NUEVAS para las formas 31 a 50. Cada una de esas formas lleva,
+// por sección, tres de aquí y dos del banco de antes; las reparte el motor
+// (js/motor-misiones.js) sin que dos formas lleven el mismo conjunto.
+//
+// ⚠️ Van en arreglos APARTE a propósito. Añadir una pregunta a un banco de
+// arriba cambiaría las formas 1 a 30, que tienen clave impresa.
+// ⚠️ Y el orden de estos tampoco se cambia una vez aprobados: decide qué
+// preguntas caen en cada forma nueva.
+//
+// De dónde salen. De lo que la misión ya enseña: la ficha imprimible, la guía
+// (la sección Aprende) y las actividades. Cada pregunta lo anota en `fuente`.
+// Antes de escribirlas se contó qué preguntaban la ficha y las actividades:
+// las 61 preguntas de las actividades piden 19 datos, y 17 ya los pide o los
+// deja escritos el examen (el Amazonas, los Andes, el Tratado Antártico y el
+// CAFTA-DR, seis veces cada uno). Los otros dos son porcentajes (el agua dulce
+// de la Antártida y lo que pesan las remesas) y tampoco entran: para
+// preguntarlos habría que escribir «agua dulce» o «remesas», que arriba son
+// parte de una pregunta o su respuesta. Por eso lo nuevo sale de lo que las
+// actividades ENSEÑAN sin preguntarlo (las tarjetas, el laboratorio, los
+// grupos de Clasifica), de la guía y de la ficha. Un dato repetido cuenta UNA
+// vez, con todas sus fuentes.
+// De las 40 preguntas del «Ponte a prueba» de la ficha, 32 son las del examen
+// palabra por palabra. De las ocho que no, seis dan una pregunta aquí.
+//
+// Las mismas reglas de arriba, y contra los dos bancos a la vez, porque en
+// una forma nueva caen juntas preguntas de los dos:
+// · UN DATO, UNA PREGUNTA: ninguna `k` de aquí repite una de arriba.
+// · Ninguna respuesta, de aquí o de arriba, aparece escrita en otra pregunta.
+//   Por eso aquí no se nombra al Amazonas, a los Andes, a la Gran Barrera de
+//   Coral, a los aborígenes ni a los maoríes fuera de un pareado: se dice «el
+//   río más caudaloso», «la cordillera más larga», «el arrecife más grande»,
+//   «los primeros pobladores de Australia». Y no se escriben «mar», «hielo»
+//   ni «remesas», que arriba son respuestas de completar.
+// · Ninguna la contesta la historia de doña Nely ni su animación (que «lejos»
+//   puede ser América, Oceanía o la Antártida, y la hora que es en Sídney).
+// · No entran las cifras que envejecen o que la misión da de dos maneras: los
+//   54 países que hoy firman el Tratado, la población de cada continente, lo
+//   que mide el Amazonas frente al Nilo.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`, y cuántas formas hay y
+// cuánto de cada forma nueva sale de aquí, `_dev/verifica-conceptual-banco-grande.js`.
+const evalTFBankNuevo=[
+  {q:'Costa Rica y Panamá son países de América del Norte.',a:false,k:'tf-costa-rica-panama',fuente:'Guía (Aprende): América, Regiones'},
+  {q:'En la Antártida hay más personas en verano que en invierno.',a:true,k:'tf-verano',fuente:'Guía (Aprende): Antártida, Fauna · Actividad Laboratorio: Antártida, Sociedad'},
+  {q:'La Antártida rodea al polo norte.',a:false,k:'tf-polo',fuente:'Ficha, página 4 (Ponte a prueba, II.3; aquí con el polo cambiado) · Actividad Tareas: Clasificar, Antártida'},
+  {q:'Las islas pequeñas de Oceanía viven sobre todo del turismo y la pesca.',a:true,k:'tf-islas-turismo',fuente:'Actividad Laboratorio: Oceanía, Economía'},
+  {q:'En la Antártida está permitido abrir minas para vender sus minerales.',a:false,k:'tf-minas',fuente:'Ficha, página 4 (Ponte a prueba, II.1; aquí al revés) · Ficha, página 3 (4. Antártida) · Guía (Aprende): Antártida, Tratado Antártico · Actividad Tarjetas: Tratado Antártico · Actividad Laboratorio: Antártida, Economía'},
+  {q:'En América hay climas muy distintos, desde el ártico hasta el desértico.',a:true,k:'tf-climas',fuente:'Actividad Laboratorio: América, Geografía · Actividad Tarjetas: América'},
+  {q:'La mayoría de los hondureños que viven en el exterior está en América del Sur.',a:false,k:'tf-migrantes',fuente:'Actividad Laboratorio: América, Sociedad · Actividad Tarjetas: Remesas en Honduras · Guía (Aprende): Honduras y América'},
+  {q:'La economía más grande del mundo es la de un país de América.',a:true,k:'tf-primera-economia',fuente:'Guía (Aprende): América, Economía · Actividad Laboratorio: América, Economía'},
+  {q:'Oceanía tiene más habitantes que América.',a:false,k:'tf-habitantes',fuente:'Actividad Laboratorio: Oceanía, Sociedad · Actividad Laboratorio: América, Sociedad · Actividad Tarjetas: Oceanía'},
+  {q:'Papúa Nueva Guinea es un país de Oceanía.',a:true,k:'tf-papua',fuente:'Ficha, página 2 (3. Oceanía, ¿Sabías que…?) · Actividad Tarjetas: Oceanía · Actividad Laboratorio: Oceanía, Geografía'}
+];
+const evalMCBankNuevo=[
+  {q:'¿Cuál es la temperatura más baja que se ha medido en la Antártida?',o:['a) -19.2 °C','b) -49.2 °C','c) -69.2 °C','d) -89.2 °C'],a:3,k:'mc-temperatura',fuente:'Ficha, página 5 (Ponte a prueba, III.2; con otras opciones) · Ficha, página 3 (4. Antártida) · Guía (Aprende): Antártida, Geografía · Actividad Tarjetas: Antártida · Actividad Laboratorio: Antártida, Geografía'},
+  {q:'¿Cuál de estos conocimientos desarrolló la civilización maya?',o:['a) la astronomía','b) la imprenta','c) la brújula','d) la pólvora'],a:0,k:'mc-maya-saber',fuente:'Actividad Tarjetas: Civilización maya'},
+  {q:'¿Por cuál de estos países pasa la cordillera más larga del mundo?',o:['a) Brasil','b) Canadá','c) Colombia','d) Nicaragua'],a:2,k:'mc-cordillera-pais',fuente:'Guía (Aprende): Los Andes · Actividad Tarjetas: Los Andes'},
+  {q:'¿Cuál de estos países de América exporta petróleo?',o:['a) Panamá','b) Venezuela','c) Costa Rica','d) Nicaragua'],a:1,k:'mc-petroleo',fuente:'Actividad Laboratorio: América, Economía'},
+  {q:'¿Dónde nace el río más caudaloso del mundo?',o:['a) en unas montañas muy altas','b) en un desierto de arena','c) en una isla pequeña','d) en un lago congelado'],a:0,k:'mc-nace',fuente:'Guía (Aprende): Río Amazonas · Actividad Tarjetas: Río Amazonas'},
+  {q:'¿Desde hace cuánto viven en Australia sus primeros pobladores?',o:['a) unos 600 años','b) unos 6,000 años','c) más de 60,000 años','d) más de 6 millones de años'],a:2,k:'mc-60000',fuente:'Ficha, página 2 (3. Oceanía) · Guía (Aprende): Oceanía, Pueblos originarios · Actividad Tarjetas: Aborígenes australianos · Actividad Laboratorio: Oceanía, Sociedad · Actividad Tareas: Identificar 9'},
+  {q:'¿Qué cuentan las muestras que se sacan de lo más profundo de la Antártida?',o:['a) qué animales vivirán allí','b) cómo era el clima hace miles de años','c) cuántos minerales se pueden vender','d) cuántas ciudades hubo antes'],a:1,k:'mc-clima-pasado',fuente:'Actividad Laboratorio: Antártida, Cultura (la ciencia)'},
+  {q:'De América, Oceanía y la Antártida, ¿cuál es el continente más grande?',o:['a) Oceanía','b) la Antártida','c) todos miden lo mismo','d) América'],a:3,k:'mc-mas-grande',fuente:'Guía (Aprende): América, Geografía · Actividad Laboratorio: América, Geografía · Actividad Tareas: Explicar 2 · Actividad Tareas: Clasificar, América'},
+  {q:'¿Dónde están los arrecifes de Honduras?',o:['a) en el Caribe','b) en el golfo de Fonseca','c) en el lago de Yojoa','d) en el río Ulúa'],a:0,k:'mc-arrecifes-caribe',fuente:'Guía (Aprende): Honduras y Oceanía · Actividad Laboratorio: Oceanía, Con Honduras'},
+  {q:'Además de quienes trabajan allí, ¿quiénes llegan cada año a la Antártida?',o:['a) soldados, a cuidar sus bases','b) turistas, en visitas muy controladas','c) mineros, a buscar diamantes','d) pescadores, a vivir en sus costas'],a:1,k:'mc-turistas',fuente:'Actividad Laboratorio: Antártida, Economía'}
+];
+const evalCPBankNuevo=[
+  {q:'El río más caudaloso del mundo desemboca en el océano ___.',a:'Atlántico',acc:['Atlántico'],k:'cp-atlantico',fuente:'Ficha, página 4 (Ponte a prueba, I.5) · Guía (Aprende): Río Amazonas · Actividad Tarjetas: Río Amazonas'},
+  {q:'El haka es una ___ guerrera.',a:'danza',acc:['danza','baile'],k:'cp-danza',fuente:'Ficha, página 2 (3. Oceanía) · Actividad Tarjetas: Maoríes · Actividad Laboratorio: Oceanía, Cultura'},
+  {q:'América se divide en ___ subregiones.',a:'tres',acc:['tres','3'],k:'cp-subregiones',fuente:'Ficha, página 2 (2. América) · Guía (Aprende): América, Regiones · Actividad Tarjetas: América'},
+  {q:'La Antártida fue declarada zona de ciencia y de ___.',a:'paz',acc:['paz'],k:'cp-paz',fuente:'Ficha, página 3 (4. Antártida) · Ficha, página 1 (Idea clave) · Guía (Aprende): Antártida, Tratado Antártico · Actividad Tarjetas: Tratado Antártico · Actividad Tareas: Identificar 8'},
+  {q:'El libre comercio permite vender productos a otro país sin pagar ___.',a:'aranceles',acc:['aranceles','arancel'],k:'cp-aranceles',fuente:'Ficha, página 3 (5. Honduras y el mundo) · Actividad Tarjetas: CAFTA-DR · Actividad Tareas: Identificar 4 · Actividad Tareas: Explicar 1'},
+  {q:'El bosque más grande del planeta, que crece en América del Sur, es un bosque ___.',a:'tropical',acc:['tropical'],k:'cp-tropical',fuente:'Ficha, página 4 (Ponte a prueba, I.6; con otras palabras) · Ficha, página 2 (2. América) · Guía (Aprende): Río Amazonas · Actividad Tarjetas: Río Amazonas'},
+  {q:'En Nueva Zelanda, el idioma de su pueblo originario es lengua oficial junto al ___.',a:'inglés',acc:['inglés'],k:'cp-ingles',fuente:'Actividad Tarjetas: Maoríes · Actividad Tareas: Explicar 5'},
+  {q:'En el arrecife más grande del mundo viven más de 1,500 especies de ___.',a:'peces',acc:['peces','pez'],k:'cp-peces',fuente:'Guía (Aprende): Oceanía, Gran Barrera de Coral · Actividad Tarjetas: Gran Barrera de Coral'},
+  {q:'Un río, una cordillera y un arrecife son accidentes ___.',a:'geográficos',acc:['geográficos','geográfico'],k:'cp-geograficos',fuente:'Ficha, página 1 (Objetivos de Aprendizaje) · Actividad Clasifica: Aspecto geográfico y aspecto cultural'},
+  {q:'América va desde el Ártico, en el norte, hasta la ___, en el sur.',a:'Patagonia',acc:['Patagonia'],k:'cp-patagonia',fuente:'Actividad Tarjetas: América'}
+];
+const evalPRBankNuevo=[
+  {term:'Melanesia',def:'Uno de los grupos de islas de Oceanía',k:'pr-melanesia',fuente:'Ficha, página 6 (Ponte a prueba, IV.9) · Ficha, página 2 (3. Oceanía, ¿Sabías que…?) · Guía (Aprende): Oceanía, Geografía · Actividad Tarjetas: Oceanía · Actividad Clasifica: América y Oceanía'},
+  {term:'Asia',def:'El continente más grande del planeta',k:'pr-asia',fuente:'Ficha, página 3 (6. Errores comunes)'},
+  {term:'Guatemala',def:'País vecino de Honduras donde también floreció la civilización maya',k:'pr-guatemala',fuente:'Ficha, página 2 (2. América) · Guía (Aprende): América, Civilizaciones · Actividad Tarjetas: Civilización maya · Actividad Laboratorio: América, Cultura'},
+  {term:'Tiempo del Sueño',def:'Relatos en los que se basa la cultura oral de un pueblo de Australia',k:'pr-tiempo-sueno',fuente:'Ficha, página 2 (3. Oceanía) · Actividad Tarjetas: Aborígenes australianos'},
+  {term:'Brasil',def:'La mayor economía de América del Sur',k:'pr-brasil',fuente:'Guía (Aprende): América, Economía'},
+  {term:'Ópera de Sídney',def:'Edificio de Australia reconocido por la UNESCO',k:'pr-opera',fuente:'Actividad Laboratorio: Oceanía, Cultura · Actividad Clasifica: América y Oceanía · Actividad Clasifica: Aspecto geográfico y aspecto cultural'},
+  {term:'ONU',def:'Organización por la que Honduras se relaciona con Oceanía',k:'pr-onu',fuente:'Guía (Aprende): Honduras y Oceanía · Actividad Laboratorio: Oceanía, Con Honduras'},
+  {term:'Maíz y soja',def:'Granos de los que América es el mayor productor del mundo',k:'pr-maiz-soja',fuente:'Guía (Aprende): América, Economía · Actividad Laboratorio: América, Economía'},
+  {term:'Ecoturismo marino',def:'Lo que Honduras puede aprender de Australia para cuidar sus arrecifes',k:'pr-ecoturismo',fuente:'Guía (Aprende): Honduras y Oceanía · Actividad Laboratorio: Oceanía, Con Honduras'},
+  {term:'Washington D. C.',def:'Ciudad donde tiene su sede la organización de los países de América',k:'pr-washington',fuente:'Actividad Tarjetas: OEA'}
+];
+
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
 // La Forma N genera SIEMPRE el mismo examen y la misma pauta («bucle exacto»),
 // en cualquier navegador y aunque se cierre el programa. PRNG mulberry32
@@ -788,32 +880,39 @@ const EVAL_FORMAS = 30;
 if (typeof _evalRng !== 'function' || typeof _conFormasDeAntes !== 'function') { (function () { var m = document.createElement('script'); m.src = '../../js/motor-misiones.js'; document.head.appendChild(m); })(); }
 // Selector «Forma exacta»: el docente elige qué forma generar (p.ej. para
 // reimprimir la pauta de la Forma 15 que ya repartió a los alumnos).
-function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalFormNum, function (v) { evalFormNum = v; }); }
+/* Hasta qué forma llega el examen conceptual. Con banco grande (los bancos
+   evalCPBankNuevo, evalTFBankNuevo, evalMCBankNuevo y evalPRBankNuevo, que
+   van junto a los de siempre), después de las formas de siempre (EVAL_FORMAS, las que tienen
+   clave impresa) js/motor-misiones.js reparte formas nuevas. Si el teléfono
+   se sirve de lo guardado el motor de antes, que no sabe repartirlas, el
+   examen se queda en las de siempre. */
+function evalFormasTotal(){return typeof _topeConceptual==='function'?_topeConceptual():EVAL_FORMAS;}
+function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalFormNum, function (v) { evalFormNum = v; }, evalFormasTotal()); }
 
 function genEval(){
-  sfx('click');_evalFormaSelector(); const _selF = document.getElementById('evalFormaSel'); if (_selF && parseInt(_selF.value, 10)) evalFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_selF.value, 10))); const cf = evalFormNum; const rng = _evalRng(cf); /* la Forma cf siembra TODO el azar de esta evaluación */window._currentEvalForm=cf;evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector();saveProgress();
+  sfx('click');_evalFormaSelector(); const _selF = document.getElementById('evalFormaSel'); const _topeF = evalFormasTotal(); if (_selF && parseInt(_selF.value, 10)) evalFormNum = Math.min(_topeF, Math.max(1, parseInt(_selF.value, 10))); /* Una forma nueva guardada (la 45) y el motor de antes servido de lo guardado: se vuelve a una que exista. */ if (evalFormNum > _topeF) evalFormNum = _topeF; const cf = evalFormNum; const rng = _evalRng(cf); /* Las formas nuevas del banco grande llegan ya repartidas y no gastan la semilla de las de antes. */ const nuevaF = cf > EVAL_FORMAS ? _repartoConceptual(cf, EVAL_FORMAS, _bancoGrandeConceptual()) : null; /* la Forma cf siembra TODO el azar de esta evaluación */window._currentEvalForm=cf;evalFormNum = (evalFormNum % _topeF) + 1; _evalFormaSelector();saveProgress();
   document.getElementById('eval-screen-title').textContent=`🎓 Evaluación Final · Forma ${cf} · América, Oceanía y Antártida`;
   evalAnsVisible=false;const out=document.getElementById('evalOut');out.innerHTML='';
   const bar=document.createElement('div');bar.className='eval-score-bar';
   bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;
   out.appendChild(bar);
 
-  const cpItems=_pickF(evalCPBank,5, rng);
+  const cpItems=nuevaF?nuevaF.cp:_pickF(evalCPBank,5, rng);
   const s1=document.createElement('div');s1.innerHTML='<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
   cpItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='cp';d.dataset.evalIndex=i;const qHtml=item.q.replace('___',`<input class="eval-cp-input" type="text" data-cp="${i}" autocomplete="off">`);d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text">${qHtml}</span></div><div class="eval-answer">${item.a}</div><div class="eval-item-feedback" id="evalFbCp${i}" aria-live="polite"></div>`;s1.appendChild(d);});
   out.appendChild(s1);
 
-  const tfItems=_pickF(evalTFBank,5, rng);
+  const tfItems=nuevaF?nuevaF.tf:_pickF(evalTFBank,5, rng);
   const s2=document.createElement('div');s2.innerHTML='<div class="eval-section-title">II. Verdadero o Falso <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
   tfItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='tf';d.dataset.evalIndex=i;d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+6}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-tf-opts"><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="true"> Verdadero</label><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="false"> Falso</label></div><div class="eval-answer">${item.a?'Verdadero':'Falso'}</div><div class="eval-item-feedback" id="evalFbTf${i}" aria-live="polite"></div>`;s2.appendChild(d);});
   out.appendChild(s2);
 
-  const mcItems=_pickF(evalMCBank,5, rng);
+  const mcItems=nuevaF?nuevaF.mc:_pickF(evalMCBank,5, rng);
   const s3=document.createElement('div');s3.innerHTML='<div class="eval-section-title">III. Selección Múltiple <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
   mcItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='mc';d.dataset.evalIndex=i;const optsHtml=item.o.map((op,oi)=>`<label class="eval-mc-opt"><input type="radio" name="mc${i}" value="${oi}"> ${op}</label>`).join('');d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+11}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-mc-opts">${optsHtml}</div><div class="eval-answer">${item.o[item.a]}</div><div class="eval-item-feedback" id="evalFbMc${i}" aria-live="polite"></div>`;s3.appendChild(d);});
   out.appendChild(s3);
 
-  const prItems=_pickF(evalPRBank,5, rng);const shuffledDefs=_shuffleF(prItems, rng);const letters=['A','B','C','D','E'];
+  const prItems=nuevaF?nuevaF.pr:_pickF(evalPRBank,5, rng);const shuffledDefs=nuevaF?nuevaF.defs:_shuffleF(prItems, rng);const letters=['A','B','C','D','E'];
   const s4=document.createElement('div');s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
   const matchCard=document.createElement('div');matchCard.className='eval-item';
   let colLeft='<div class="eval-match-col"><h4>📌 Términos</h4>';
