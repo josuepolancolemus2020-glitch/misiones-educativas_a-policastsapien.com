@@ -1609,7 +1609,18 @@ async function convAbordoTocar(c, x) {
    quedan 196 mm útiles, y las nueve columnas suman exactamente eso.
    Se comprueba con _dev/verifica-listado-pagos.js, que cuenta las
    páginas del PDF y mira que ninguna fila se salga del papel. */
+/* El nombre del centro del impreso. Sin perfil, la convocatoria queda igual. */
+function convConPerfil(c) {
+  if (!c || !window.MetasCentro || typeof MetasCentro.textoCentro !== 'function') return c;
+  const g = typeof adLoad === 'function' ? adLoad() : null;
+  const nombre = MetasCentro.textoCentro(g, c.escuela || '');
+  if (nombre === (c.escuela || '')) return c;
+  const copia = Object.assign({}, c);
+  copia.escuela = nombre;
+  return copia;
+}
 function convImprimirListado(c) {
+  c = convConPerfil(c);
   const si = convTodas(c).filter(x => x.va);
   if (!si.length) { toast('Todavía no hay nadie que vaya'); return; }
   const ap = Number(c.aporte) || 0;
@@ -1973,6 +1984,7 @@ function convFolioBlanco(c, n) {
 window.convFolioBlanco = convFolioBlanco;
 
 function convImprimirBoletos(c) {
+  c = convConPerfil(c);
   /* Enlace y a mano, en el mismo lote: el que apuntó el maestro sube al
      mismo bus y necesita el mismo papel. */
   const si = convTodas(c).filter(x => x.va);
@@ -2027,6 +2039,7 @@ La colilla de la izquierda la firma quien paga y se la queda usted.</p>`);
    viene impreso en las dos: es lo que empareja los dos papeles cuando
    alguien discuta en el portón. */
 function convImprimirBlancos(c, cuantos, desde) {
+  c = convConPerfil(c);
   const n = Math.max(1, Math.min(210, Math.round(Number(cuantos) || 0)));
   const d0 = Math.max(1, Math.round(Number(desde) || 1));
   const ap = Number(c.aporte) || 0;

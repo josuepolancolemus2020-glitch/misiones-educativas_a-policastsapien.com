@@ -1916,6 +1916,12 @@ function docenteImprimirProg() {
   if (!f.grado) return;
   const d = docenteProgDatos(f);
   const cfg = _docenteCfg();
+  let escuelaImp = cfg.escuela || '';
+  if (window.MetasCentro && typeof MetasCentro.textoCentro === 'function') {
+    const g = typeof adLoad === 'function' ? adLoad() : null;
+    const nombre = MetasCentro.textoCentro(g, escuelaImp);
+    if (nombre !== escuelaImp) escuelaImp = nombre;
+  }
   const fila = ({ m, meses }) =>
     `<tr><td>${SUBJECT_LABELS[m.subject] || m.subject}</td><td>${m.icon} ${m.title}</td><td>${rutaLabel(m)}</td><td>${_progMesesTxt(meses)}</td><td></td></tr>`;
   const filas = d.delMes.map(fila).join('') + d.espirales.map(fila).join('');
@@ -1931,7 +1937,7 @@ function docenteImprimirProg() {
     @media print{@page{size:letter portrait;margin:10mm;}}
     </style></head><body>
     <h1>📅 Mi Programación DCNB — ${desc}</h1>
-    <div class="sub">Plataforma M.E.T.A.S · metas.policastsapien.com · Docente: ${_pEsc(cfg.nombre || '')}${cfg.escuela ? ' · ' + _pEsc(cfg.escuela) : ''} · Documento exclusivo del docente</div>
+    <div class="sub">Plataforma M.E.T.A.S · metas.policastsapien.com · Docente: ${_pEsc(cfg.nombre || '')}${escuelaImp ? ' · ' + _pEsc(escuelaImp) : ''} · Documento exclusivo del docente</div>
     <table><thead><tr><th>Materia</th><th>Misión</th><th>Ruta y etapa (así la ve el alumno)</th><th>Meses DCNB</th><th>✔ Trabajada</th></tr></thead>
     <tbody>${filas}</tbody></table>
     <p class="pie">Asigne cada misión por su ruta y etapa, sin mencionar grados frente a los alumnos.

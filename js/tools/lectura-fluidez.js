@@ -451,6 +451,7 @@ function lecRenderResultado(body, d) {
    400 fichas con _dev/verifica-fichas-lectura.js. Si se suben, hay que
    volver a medir. */
 function lecImprimirFichas(d, grado, ids) {
+  if (window.MetasCentro && typeof MetasCentro.paraImpreso === 'function') d = MetasCentro.paraImpreso(d) || d;
   const textos = lecTextosDe(grado).filter(t => ids.indexOf(t.id) >= 0);
   if (!textos.length) { if (typeof toast === 'function') toast('No hay textos que imprimir'); return; }
   /* Solo grado y sección: adGrupoTxt() ya trae el nombre de la escuela

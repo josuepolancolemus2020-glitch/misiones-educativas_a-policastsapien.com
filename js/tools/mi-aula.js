@@ -196,7 +196,7 @@
     if (activa && !activa.classList.contains('active')) return;
     var aula = aulaActual();
     var sec = seccion();
-    var h = pintarGrupos(aula);
+    var h = (aula ? pintarEntradaPerfil(aula) : '') + pintarGrupos(aula);
     if (!aula || formGrupo) {
       h += pintarFormGrupo(!aula);
     }
@@ -217,6 +217,25 @@
     raiz.innerHTML = h;
     if (marco && marco.scrollTop !== y) marco.scrollTop = y;
     if (window.MetasCentro && d) window.MetasCentro.refrescar(d, aula && aula.id);
+  }
+
+  // Arriba de Mi aula. El aviso solo sale si este grupo todavía no tiene
+  // fila en metas.centros. La entrada fija se queda para volver a editarlo.
+  function tienePerfil(aula) {
+    return !!(aula && aula.centro_id && d.lista('centros', { id: aula.centro_id })[0]);
+  }
+  function pintarEntradaPerfil(aula) {
+    var h = '';
+    if (!tienePerfil(aula)) {
+      h += '<div class="ma-puertas"><button type="button" class="ma-puerta" data-metas="aviso-perfil" data-accion="perfil">'
+        + '<span class="ma-puerta-ic" aria-hidden="true">🏫</span>'
+        + '<span class="ma-puerta-t"><b>Configura tu perfil institucional</b>'
+        + '<span>Encabezado y logos de este centro</span></span>'
+        + '<span class="ma-flecha" aria-hidden="true">›</span></button></div>';
+    }
+    h += '<div class="ma-acciones"><button type="button" class="ma-btn" data-metas="perfil-institucional" data-accion="perfil">'
+      + '🏫 Perfil institucional</button></div>';
+    return h;
   }
 
   function pintarGrupos(aula) {
@@ -1011,6 +1030,12 @@
       leo.form.setAttribute('data-centro-id', id);
       var aviso = leo.form.querySelector('.ma-aviso');
       if (aviso) aviso.textContent = '';
+      // Ya hay perfil: el aviso de arriba no tiene que esperar a otro repintado,
+      // porque repintar ahora le borraría al docente lo que sigue escribiendo.
+      var nota = document.querySelector('#mi-aula [data-metas="aviso-perfil"]');
+      var caja = nota && nota.parentNode && nota.parentNode.classList && nota.parentNode.classList.contains('ma-puertas')
+        ? nota.parentNode : nota;
+      if (caja && caja.remove) caja.remove();
     } catch (e) {
       if (e && e.espera) return;
       avisarEn(leo.form, frase(e));
@@ -1347,6 +1372,14 @@
       case 'sace-vista': vista.saceVista = v; guardarPref(); return pintar();
       case 'ayuda-sace': ayudaSace = !ayudaSace; return pintar();
       case 'encabezado': encabezadoAbierto = !encabezadoAbierto; return pintar();
+      case 'perfil':
+        vista.seccion = 'notas';
+        guardarPref();
+        encabezadoAbierto = true;
+        pintar();
+        var frm = document.querySelector('#mi-aula [data-form="centro"]');
+        if (frm && frm.scrollIntoView) frm.scrollIntoView({ block: 'start' });
+        return;
       case 'centro-quitar': return quitarLogoCentro(v, b);
       case 'materias-siempre':
         intentar(function () {

@@ -1105,6 +1105,7 @@ function eqTexto(d) {
    las páginas del PDF, en el peor caso. */
 const EQ_LETRAS = [18, 16, 14.5, 13, 12, 11, 10];
 function eqImprimir(d) {
+  if (window.MetasCentro && typeof MetasCentro.paraImpreso === 'function') d = MetasCentro.paraImpreso(d) || d;
   const gs = eqListaParaSacar(d);
   const grupo = adGradoSeccion(d.grado, d.seccion);
   const esc = d.escuela ? String(d.escuela).trim() : '';
