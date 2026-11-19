@@ -333,9 +333,22 @@
     escribir('preguntas', function (tx) { tx.objectStore('preguntas').delete(id); });
   }
 
+  // Una sola tarjeta por fila y motivo (t.clave), con un contador. Antes se
+  // apilaba una por cada intento: el 18 de noviembre un perfil escrito
+  // letra por letra dejó una tarjeta por letra. Si el docente ya tocó
+  // «Entendido», la próxima vez sí sale una nueva.
   function ponerNoAnotado(t) {
+    var ya = t.clave ? noAnotado.filter(function (x) { return x.clave === t.clave; })[0] : null;
+    if (ya) {
+      ya.veces = (ya.veces || 1) + 1;
+      ya.texto = t.texto;
+      escribir('no_anotado', function (tx) { tx.objectStore('no_anotado').put(ya); });
+      return ya;
+    }
+    t.veces = t.veces || 1;
     noAnotado.push(t);
     escribir('no_anotado', function (tx) { tx.objectStore('no_anotado').put(t); });
+    return t;
   }
 
   function quitarNoAnotado(id) {

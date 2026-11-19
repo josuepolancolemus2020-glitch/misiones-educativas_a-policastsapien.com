@@ -117,6 +117,13 @@
   function cod(x) {
     return encodeURIComponent(String(x));
   }
+  // Vacío y null valen lo mismo: la base guarda null donde no hay nada.
+  function igual(a, b) {
+    return JSON.stringify(a === undefined ? null : a) === JSON.stringify(b === undefined ? null : b);
+  }
+  function tiene(o, k) {
+    return !!o && Object.prototype.hasOwnProperty.call(o, k);
+  }
   function ahora() {
     return new Date().toISOString();
   }
@@ -136,8 +143,10 @@
   // Una operación depende de una pregunta si menciona el id de la fila que
   // espera respuesta (un pago para el alumno cuya alta se está
   // preguntando): esa espera con ella.
+  // El nombre ocupado de un centro no frena nada: el resto del perfil ya
+  // salió sin el nombre, y lo que venga después no depende de esa respuesta.
   function bloqueados(owner) {
-    return alm.preguntas().filter(function (p) { return p.owner === owner; })
+    return alm.preguntas().filter(function (p) { return p.owner === owner && p.tipo !== 'nombre_ocupado'; })
       .map(function (p) { return p.op && p.op.id; }).filter(Boolean);
   }
   function siguiente(owner) {
@@ -216,7 +225,18 @@
     }
     if (op.tabla === 'colectas') return 'El cambio en ' + conceptoColecta(o, op.id);
     if (op.tabla === 'colecta_exenciones') return 'La exención de ' + nombreAlumno(o, op.args && op.args.p_alumno);
+    if (op.tabla === 'centros') return 'El centro';
+    if (op.tabla === 'aulas') return 'El grupo';
     return 'Este cambio';
+  }
+  // «Ya existe» (23505) dicho según lo que chocó: es la razón real, y el
+  // docente sabe qué hacer con ella. Antes caía en «no se pudo anotar».
+  // La tarjeta entera no pasa de doce palabras.
+  function razonRepetido(op) {
+    if (op.tabla === 'centros') return 'ya tienes otro centro con ese nombre';
+    if (op.tabla === 'aulas') return 'ya tienes ese grupo en ese centro';
+    if (op.tabla === 'asignaturas') return 'ya tienes esa clase en este grupo';
+    return 'ya estaba anotado igual';
   }
   function razon(op, motivo) {
     var o = op.owner;
@@ -235,12 +255,23 @@
       case 'gasto': return 'ese gasto ya no está';
       case 'MT020': return 'esa clave de familia no está en tus datos anteriores; déjala vacía y se le da una nueva';
       case 'id_ocupado': return 'ya estaba anotado de otra forma';
+      case '23505': return razonRepetido(op);
+      // Lo que dice la base con otras palabras: el motivo real, sin códigos.
+      case '23503': return 'lo que lo contenía ya no está';
+      case '23514': return 'un dato no tiene la forma correcta';
+      case '23502': return 'falta un dato obligatorio';
+      case '22001': return 'un texto es demasiado largo';
+      case '42501': return 'tu cuenta no tiene permiso para esto';
+      case 'PGRST204': return 'la base todavía no tiene ese dato';
       default: return 'no se pudo anotar';
     }
   }
   function noQuedo(op, motivo, detalle) {
     descartar(op);
-    alm.ponerNoAnotado({ id: M.ids.nuevo(), owner: op.owner, texto: queEra(op) + ' no quedó anotado: ' + razon(op, motivo) + '.' });
+    // La clave junta en una tarjeta lo que falló en la misma fila por lo
+    // mismo (almacen.js lleva la cuenta de las veces).
+    alm.ponerNoAnotado({ id: M.ids.nuevo(), owner: op.owner, clave: [op.owner, op.tabla, op.id, motivo].join('|'),
+      texto: queEra(op) + ' no quedó anotado: ' + razon(op, motivo) + '.' });
     avisar(op.tabla, op.id);
     // Para soporte. Si no llega, no pasa nada: el docente ya lo vio.
     var copia = JSON.parse(JSON.stringify(op));
@@ -526,6 +557,20 @@
           return devolver(p, op);
         }
         return;
+      case 'nombre_ocupado':
+        // «Cambiar nombre»: el centro se queda con el nombre que tenía y el
+        // docente escribe otro en el perfil. «Unirlos»: los grupos de este
+        // centro pasan al que ya tenía ese nombre. El centro que queda sin
+        // grupos no se borra: eso lo decide Josué aparte.
+        if (valor === 'cambiar_nombre' || valor === 'dejar_actual') return soltar(p);
+        if (valor === 'unir') {
+          alm.quitarPregunta(p.id);
+          if (p.datos && p.datos.otro) unirCentros(p.owner, p.datos.centro, p.datos.otro, p.datos.nombre);
+          avisar('centros', p.datos && p.datos.centro);
+          procesar();
+          return revisarEspera();
+        }
+        return;
       default:
         // Una pregunta que este aparato todavía no sabe resolver (de un corte
         // siguiente): lo único seguro es dejar lo que ya está en la base.
@@ -586,6 +631,33 @@
     if (alm.cola().indexOf(op) < 0) alm.encolar(op); else alm.actualizarOp(op);
     avisar('alumnos', existenteId);
     procesar();
+  }
+
+  // ── Dos centros con el mismo nombre ────────────────────────────────────
+  // Una edición armada aquí mismo, igual que la arma datos.js: con la
+  // versión que el aparato conoce y lo que veía de cada campo.
+  function editarAqui(owner, tabla, id, cambios) {
+    var enBase = alm.fila(owner, tabla, id);
+    var visto = (M._vista && M._vista.fila(owner, tabla, id)) || {};
+    var c = {};
+    var base = {};
+    Object.keys(cambios).forEach(function (k) {
+      if (igual(visto[k], cambios[k])) return;
+      c[k] = cambios[k];
+      base[k] = visto[k] === undefined ? null : visto[k];
+    });
+    if (!Object.keys(c).length) return;
+    encolar({ owner: owner, tipo: 'editar', tabla: tabla, id: id,
+      base_version: enBase && !enBase.deleted_at ? enBase.version : null, base: base, cambios: c });
+  }
+  function unirCentros(owner, deId, aId, nombre) {
+    var aulas = M._vista ? Array.from(M._vista.tabla(owner, 'aulas').values()) : alm.filasDe(owner, 'aulas');
+    aulas.forEach(function (a) {
+      if (a.centro_id !== deId || a.deleted_at) return;
+      var cambios = { centro_id: aId };
+      if (nombre) cambios.escuela = nombre;
+      editarAqui(owner, 'aulas', a.id, cambios);
+    });
   }
 
   // ── Envío ──────────────────────────────────────────────────────────────
@@ -700,7 +772,7 @@
   // vuelve una edición campo por campo. No es dinero: no se pregunta (3.6).
   async function llaveNatural(op) {
     var campos = LLAVE_NATURAL[op.tabla];
-    if (!campos) return noQuedo(op, 'llave', 'sin llave natural conocida');
+    if (!campos) return noQuedo(op, '23505', 'sin llave natural conocida');
     var q = campos.map(function (c) {
       var v = op.cambios[c];
       return v === null || v === undefined ? c + '=is.null' : c + '=eq.' + cod(v);
@@ -719,7 +791,7 @@
     var hay = filas[0];
     // Chocó con algo que no es su lugar natural (otra regla de la base):
     // no se insiste, para no frenar la cola entera.
-    if (!hay) return noQuedo(op, 'llave', 'sin fila en la llave natural');
+    if (!hay) return noQuedo(op, '23505', 'sin fila en la llave natural');
     guardar(op.owner, op.tabla, hay);
     var viejo = op.id;
     cambiarId(op.owner, viejo, hay.id);
@@ -727,6 +799,13 @@
     Object.keys(op.cambios).forEach(function (k) {
       if (campos.indexOf(k) < 0 && k !== 'id' && hay[k] !== op.cambios[k]) cambios[k] = op.cambios[k];
     });
+    // Dos aparatos crearon el mismo centro: un campo que este dejó vacío
+    // no borra lo que el otro ya escribió (vacío al crear no es «bórralo»).
+    if (op.tabla === 'centros') {
+      Object.keys(cambios).forEach(function (k) {
+        if (cambios[k] === null || cambios[k] === '') delete cambios[k];
+      });
+    }
     op.tipo = 'editar';
     op.id = hay.id;
     op.base_version = hay.version;
@@ -739,6 +818,22 @@
   // Editar fuera del dinero: con la versión que el aparato veía. Si otro
   // aparato ya la cambió, se lee la actual y se vuelve a aplicar SOLO lo que
   // este aparato cambió, campo por campo (3.4). Lo borrado no se revive.
+  //
+  // Y se compara con op.base (lo que el aparato veía de cada campo al
+  // anotarlo). Un campo que este aparato no cambió (vale lo mismo que su
+  // base) no se manda: así una edición vieja en cola, de cuando se mandaba
+  // la fila entera, no revive el nombre de antes. Un campo que el otro
+  // aparato cambió DESPUÉS de que este lo anotara queda como lo dejó el
+  // otro: gana lo último que se hizo.
+  function quedaDelOtro(op, hoy, k) {
+    var base = op.base || {};
+    if (!tiene(base, k) || igual(hoy[k], base[k])) return false;
+    var cuando = (op.hecho_campo && op.hecho_campo[k]) || op.hecho_en;
+    var t = Date.parse(hoy.updated_at);
+    var mio = Date.parse(cuando);
+    // Sin hora, el otro gana: no se pisa lo que no se sabe cuándo pasó.
+    return isNaN(t) || isNaN(mio) || t >= mio;
+  }
   async function enviarEditar(op) {
     var o = op.owner;
     var version = op.base_version;
@@ -751,8 +846,12 @@
         }
         guardar(o, op.tabla, hoy);
         var faltan = {};
+        var base = op.base || {};
         Object.keys(op.cambios).forEach(function (k) {
-          if (JSON.stringify(hoy[k]) !== JSON.stringify(op.cambios[k])) faltan[k] = op.cambios[k];
+          if (igual(hoy[k], op.cambios[k])) return;
+          if (tiene(base, k) && igual(op.cambios[k], base[k])) return;
+          if (quedaDelOtro(op, hoy, k)) return;
+          faltan[k] = op.cambios[k];
         });
         if (!Object.keys(faltan).length) return descartar(op);
         op.cambios = faltan;
@@ -766,12 +865,93 @@
       }
       if (r.ok) { version = null; continue; }
       var e = r.datos || {};
+      if (e.code === '23505') {
+        // El nombre ya es de otra fila: lo demás se guarda igual y el
+        // nombre se pregunta aparte, una sola vez por fila.
+        if (await nombreOcupado(op)) { version = null; continue; }
+        return;
+      }
       return noQuedo(op, e.code || ('http_' + r.status), e.message);
     }
     // Cinco vueltas sin ganarle a otro aparato: se reintenta más tarde.
     var err = new Error('red');
     err.tipo = 'red';
     throw err;
+  }
+
+  // Devuelve true si queda algo por mandar de op (sin el nombre, o el
+  // nombre ya libre). Solo los centros llevan pregunta: un grupo o una
+  // clase repetidos tienen su tarjeta con la razón.
+  async function nombreOcupado(op) {
+    var o = op.owner;
+    if (op.tabla !== 'centros' || !tiene(op.cambios, 'nombre')) {
+      noQuedo(op, '23505', 'unico');
+      return false;
+    }
+    var nombre = op.cambios.nombre;
+    var este = await leerFila('centros', op.id);
+    if (!este || este.deleted_at) {
+      if (este) guardar(o, 'centros', este);
+      noQuedo(op, 'borrada');
+      return false;
+    }
+    guardar(o, 'centros', este);
+    var mismos = await nube.leer('centros?anio_lectivo=eq.' + cod(este.anio_lectivo) + '&deleted_at=is.null&select=*');
+    var otro = mismos.filter(function (f) { return f.id !== op.id && normNombre(f.nombre) === normNombre(nombre); })[0];
+    if (otro) guardar(o, 'centros', otro);
+
+    // ¿Dos centros que se intercambian el nombre? Si el que lo tiene ya
+    // tiene anotado en la cola dejarlo, este pasa un momento a un nombre
+    // que nadie usa, el otro suelta el suyo y este toma el que quería.
+    var suya = otro && alm.cola().filter(function (x) {
+      return x !== op && x.owner === o && x.tipo === 'editar' && x.tabla === 'centros' && x.id === otro.id
+        && tiene(x.cambios, 'nombre') && normNombre(x.cambios.nombre) !== normNombre(nombre);
+    })[0];
+    if (suya) {
+      var paso = (String(este.nombre).slice(0, 140) + ' · ' + op.op_id.slice(0, 8)).trim();
+      var r = await nube.peticion('PATCH', 'centros?id=eq.' + cod(op.id) + '&deleted_at=is.null',
+        { cuerpo: { nombre: paso }, opId: op.op_id, prefer: 'return=representation' });
+      if (r.ok && Array.isArray(r.datos) && r.datos[0]) {
+        guardar(o, 'centros', r.datos[0]);
+        // El nombre de paso lo puso este aparato: no es «el otro lo cambió».
+        op.base = op.base || {};
+        op.base.nombre = paso;
+        op.hecho_campo = op.hecho_campo || {};
+        op.hecho_campo.nombre = new Date().toISOString();
+        alm.actualizarOp(op);
+        await enviar(suya);
+        return true;
+      }
+    }
+
+    // De verdad hay otro centro con ese nombre: el resto del perfil se
+    // guarda sin el nombre y se pregunta. Una sola pregunta por centro.
+    alm.preguntas().filter(function (p) {
+      return p.owner === o && p.tipo === 'nombre_ocupado' && p.datos && p.datos.centro === op.id;
+    }).forEach(function (p) { alm.quitarPregunta(p.id); });
+    var visible = otro ? otro.nombre : nombre;
+    alm.ponerPregunta({
+      id: M.ids.nuevo(), owner: o, tipo: 'nombre_ocupado',
+      texto: 'Ya hay otro centro llamado ' + visible + '. ¿Unirlos o cambiar nombre?',
+      botones: otro
+        ? [{ etiqueta: 'Unirlos', valor: 'unir' }, { etiqueta: 'Cambiar nombre', valor: 'cambiar_nombre' }]
+        : [{ etiqueta: 'Cambiar nombre', valor: 'cambiar_nombre' }],
+      // La operación de la pregunta no se aplica a lo que se ve (su tipo no
+      // es una edición): el centro se sigue viendo con su nombre de verdad.
+      op: { tipo: 'nombre_ocupado', tabla: 'centros', id: op.id, owner: o, op_id: M.ids.nuevo(), seq: op.seq,
+        cambios: { nombre: nombre } },
+      datos: { centro: op.id, otro: otro ? otro.id : null, nombre: visible },
+    });
+    var resto = {};
+    Object.keys(op.cambios).forEach(function (k) { if (k !== 'nombre') resto[k] = op.cambios[k]; });
+    op.cambios = resto;
+    if (!Object.keys(resto).length) {
+      descartar(op);
+      return false;
+    }
+    alm.actualizarOp(op);
+    avisar('centros', op.id);
+    return true;
   }
 
   async function enviarBorrar(op) {
@@ -799,6 +979,42 @@
     return Promise.resolve(noQuedo(op, 'tipo', op.tipo));
   }
 
+  // Las ediciones de una misma fila que esperan en la cola salen como UNA:
+  // un perfil escrito letra por letra (o anotado sin señal) es un solo
+  // cambio con lo último de cada campo, no diez peticiones ni diez
+  // tarjetas. Se junta hasta la primera operación de otro tipo que toque
+  // esa fila (borrarla, por ejemplo): lo que viene después de eso espera.
+  // Se hace justo antes de mandar, cuando op todavía no salió: nada que ya
+  // esté en camino se toca.
+  function juntarSeguidas(op) {
+    if (!op || op.tipo !== 'editar') return op;
+    var c = alm.cola();
+    var i = c.indexOf(op);
+    var juntas = [];
+    for (var j = i + 1; j < c.length; j++) {
+      var x = c[j];
+      if (x.owner !== op.owner) continue;
+      var misma = x.tabla === op.tabla && x.id === op.id;
+      if (misma && x.tipo === 'editar') { juntas.push(x); continue; }
+      if (misma || JSON.stringify(x).indexOf(op.id) >= 0) break;
+    }
+    if (!juntas.length) return op;
+    op.base = op.base || {};
+    op.hecho_campo = op.hecho_campo || {};
+    juntas.forEach(function (x) {
+      Object.keys(x.cambios || {}).forEach(function (k) {
+        // La base es la de la PRIMERA vez que se tocó el campo: es lo que
+        // el aparato veía antes de todo este cambio.
+        if (!tiene(op.base, k) && tiene(x.base, k)) op.base[k] = x.base[k];
+        op.cambios[k] = x.cambios[k];
+        op.hecho_campo[k] = x.hecho_en;
+      });
+      alm.sacarDeCola(x);
+    });
+    alm.actualizarOp(op);
+    return op;
+  }
+
   function programarReintento() {
     if (temporizador) return;
     var espera = REINTENTOS[Math.min(nReintento, REINTENTOS.length - 1)];
@@ -816,6 +1032,7 @@
         if (!uid || pausada) break;
         var op = siguiente(uid);
         if (!op) break;
+        juntarSeguidas(op);
         try {
           await enviar(op);
           nReintento = 0;

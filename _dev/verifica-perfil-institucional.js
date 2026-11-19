@@ -683,10 +683,51 @@ ok(raiz._html.includes('data-form="centro"') && raiz._html.includes('data-centro
 ok(tablas.aulas[0].centro_id === 'centro-1' && tablas.aulas[1].centro_id === 'centro-2',
   'abrir otro centro no cambia el centro de los grupos');
 
-const guardado = ui.MetasCentro.guardar(api, tablas.aulas[0], {
+/* El perfil se guarda una vez, no letra por letra (18 nov 2026: un centro
+   nacía con la primera letra y el nombre completo chocaba con otro igual). */
+const camposVacios = { direccion: '', aldea: '', municipio: '', departamento: '', codigo_sace: '', director: '', modalidad: '', jornada: '' };
+const tiraSi = f => { try { f(); return null; } catch (e) { return e; } };
+const antesCentros = tablas.centros.length;
+const sinConfirmar = tiraSi(() => ui.MetasCentro.guardar(api, null,
+  Object.assign({ nombre: 'Instituto Nuevo', anio_lectivo: '2026' }, camposVacios), null));
+ok(sinConfirmar && sinConfirmar.espera && tablas.centros.length === antesCentros,
+  'un centro nuevo no se crea sin tocar «Guardar perfil»');
+const corto = tiraSi(() => ui.MetasCentro.guardar(api, null,
+  Object.assign({ nombre: 'J', anio_lectivo: '2026' }, camposVacios), null, { confirmado: true }));
+ok(corto && corto.paraElDocente && /3 letras/.test(corto.message) && tablas.centros.length === antesCentros,
+  'no se crea ningún centro con menos de 3 letras');
+const repetido = tiraSi(() => ui.MetasCentro.guardar(api, null,
+  Object.assign({ nombre: '  instituto MARIA consuelo ', anio_lectivo: '2026' }, camposVacios), null, { confirmado: true }));
+ok(repetido && repetido.yaExiste && repetido.yaExiste.id === 'centro-2'
+  && repetido.message === 'Ya tienes Instituto María Consuelo. ¿Abrirlo?' && tablas.centros.length === antesCentros,
+  'un nombre que ya existe, sin importar acentos, avisa «Ya tienes…» y no crea otro');
+const ediciones = [];
+const editarDeVerdad = api.editar;
+api.editar = function (tabla, id, cambios) { ediciones.push([tabla, id, Object.assign({}, cambios)]); return editarDeVerdad(tabla, id, cambios); };
+const c1 = tablas.centros[0];
+const igualQueHoy = { nombre: c1.nombre, anio_lectivo: '2026', docente: c1.docente };
+Object.keys(camposVacios).forEach(k => { igualQueHoy[k] = ''; });
+ui.MetasCentro.guardar(api, tablas.aulas[0], Object.assign({}, igualQueHoy, { logo: '', logo_sec: '' }), 'centro-1');
+ok(ediciones.filter(e => e[0] === 'centros').length === 0, 'guardar el perfil sin cambios no manda nada a la base');
+ediciones.length = 0;
+ui.MetasCentro.guardar(api, tablas.aulas[0], Object.assign({}, igualQueHoy, { logo: '', logo_sec: '', direccion: 'Barrio El Centro' }), 'centro-1');
+const deCentro = ediciones.filter(e => e[0] === 'centros');
+ok(deCentro.length === 1 && JSON.stringify(Object.keys(deCentro[0][2])) === '["direccion"]',
+  'al centro se le manda solo el campo que cambió, sin el nombre', ediciones);
+ok(!ediciones.some(e => e[0] === 'aulas' && 'escuela' in e[2]), 'sin cambiar el nombre, los grupos no se renombran', ediciones);
+ediciones.length = 0;
+ui.MetasCentro.guardar(api, tablas.aulas[0], Object.assign({}, igualQueHoy, { logo: '', logo_sec: '', nombre: 'Instituto Maria Consuelo' }), 'centro-1');
+ok(!ediciones.some(e => e[0] === 'centros' && 'nombre' in e[2]) && tablas.centros[0].nombre === 'CEB John Arnold Cook',
+  'renombrar al nombre de otro centro no manda el nombre', ediciones);
+ok(!ediciones.some(e => e[0] === 'aulas' && 'escuela' in e[2]), 'ni le pone a los grupos el nombre del otro centro', ediciones);
+api.editar = editarDeVerdad;
+/* Guardar centro-1 le puso su maestra a su grupo, como debe; se quita para
+   que la prueba de abajo mire solo lo que hace el centro nuevo. */
+tablas.aulas.forEach(a => { delete a.docente_nombre; });
+
+const guardado = ui.MetasCentro.guardar(api, tablas.aulas[0], Object.assign({
   nombre: 'Instituto Nuevo', anio_lectivo: '2026', docente: 'Maestra Nueva',
-  direccion: '', aldea: '', municipio: '', departamento: '', codigo_sace: '', director: '', modalidad: '', jornada: '',
-}, null);
+}, camposVacios), null, { confirmado: true });
 ok(guardado && guardado !== 'centro-1' && guardado !== 'centro-2', 'un centro nuevo tiene su propia fila');
 ok(tablas.aulas[0].centro_id === 'centro-1' && tablas.aulas[1].centro_id === 'centro-2',
   'guardar un centro nuevo no se lleva los grupos que ya estaban');

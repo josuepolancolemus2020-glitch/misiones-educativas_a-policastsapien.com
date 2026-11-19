@@ -1418,10 +1418,36 @@
              apertura sin señal esperaba diez segundos por cada uno que le
              faltaba. */
           reg.addEventListener('updatefound', () => avisar(reg.installing));
+          /* Una pestaña que queda abierta días (la tablet del aula) no se
+             entera sola de que hay versión nueva: el navegador solo la busca
+             al navegar. Se le pregunta al volver a la pestaña y cada media
+             hora. */
+          const buscar = () => { reg.update().catch(() => {}); };
+          document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') buscar(); });
+          setInterval(buscar, 30 * 60 * 1000);
         }).catch(() => {});
+      });
+      /* «Hay una versión nueva». El service worker nuevo toma el control solo
+         (skipWaiting y clients.claim), pero ESTA página sigue con el JS que
+         cargó: el 18 de noviembre una pestaña abierta seguía guardando el
+         perfil letra por letra con el código de antes. Se avisa, y un toque
+         recarga. Cuando el primero toma el control (la primera visita) no
+         hay nada viejo que cambiar: solo se avisa si reemplaza a otro. */
+      let controlAnterior = navigator.serviceWorker.controller;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        const habia = controlAnterior;
+        controlAnterior = navigator.serviceWorker.controller;
+        if (!habia) return;
+        const aviso = document.getElementById('version-nueva');
+        if (aviso) aviso.hidden = false;
       });
     }
   </script>
+  <div id="version-nueva" class="version-nueva" role="status" hidden>
+    <button type="button" class="version-nueva-btn" data-metas="version-nueva" onclick="location.reload()">
+      <span>Hay una versión nueva</span><span class="version-nueva-accion">Toca para recargar</span>
+    </button>
+  </div>
 
   <!-- Las preguntas de dos botones, «no quedó anotado» y «Escribe tu
        contraseña» de Mi aula: de a una, abajo (js/tools/mi-aula.js). -->

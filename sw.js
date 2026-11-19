@@ -278,13 +278,29 @@ function purgarLecturasDeLaBase(nombres) {
   ));
 }
 
+function limpiarLoViejo() {
+  return caches.keys().then(keys =>
+    Promise.all(keys.map(key =>
+      (key.indexOf('meta-app-') === 0 && key !== CACHE_APP) ? caches.delete(key) : null
+    )).then(() => purgarLecturasDeLaBase(keys))
+  );
+}
+
+/* Una segunda pasada, unos segundos después de tomar el control. Mientras
+   este se activa, el service worker viejo todavía contesta lo que la
+   pestaña abierta ya había pedido, y al terminar lo vuelve a guardar en
+   SU caché (meta-app-vNNN) y en meta-datos-v1 (las lecturas de la base, de
+   v548 a v567). Se vio en _dev/verifica-sync-dos-aparatos.js. La pasada
+   va en la primera petición que llega después del plazo, con waitUntil:
+   así no se corta a medias. */
+const PLAZO_SEGUNDA_LIMPIEZA = 3000;
+let segundaLimpieza = 0;
+
 self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.map(key =>
-        (key.indexOf('meta-app-') === 0 && key !== CACHE_APP) ? caches.delete(key) : null
-      )).then(() => purgarLecturasDeLaBase(keys))
-    ).then(() => self.clients.claim())
+    limpiarLoViejo()
+      .then(() => { segundaLimpieza = Date.now() + PLAZO_SEGUNDA_LIMPIEZA; })
+      .then(() => self.clients.claim())
   );
 });
 
@@ -553,6 +569,10 @@ function navegarPorRed(event) {
 
 // Fetch: lo guardado primero cuando se sabe que vale; si no, la red con plazo.
 self.addEventListener('fetch', event => {
+  if (segundaLimpieza && Date.now() >= segundaLimpieza) {
+    segundaLimpieza = 0;
+    event.waitUntil(limpiarLoViejo().catch(() => {}));
+  }
   const url = new URL(event.request.url);
   const isLocal = url.origin === location.origin;
   const isImage = event.request.destination === 'image';
