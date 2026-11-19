@@ -22,7 +22,8 @@
    3. LA PUERTA (`mision.html?m=<carpeta>`), que lleva a una misión.
    4. EL CENTRO EN EL EXAMEN IMPRESO (`_envolverImpresiones`): el perfil
       del centro que el docente configura en Mi aula sale arriba de la
-      hoja, y si tiene dos centros o más se le pregunta con cuál.
+      hoja. Es el centro del grupo activo en Mi aula, y al imprimir solo
+      se pregunta el parcial y la fecha, que salen escritos.
 
    Las funciones del examen se publican con el MISMO nombre global que
    tenían dentro de cada misión, porque el resto de la misión las llama
@@ -461,8 +462,8 @@
   /* ══════════ 4 · El centro en el encabezado del examen impreso ══════════
 
      El docente configura su centro en Mi aula (nombre, logo, dirección).
-     Aquí ese perfil sale arriba de la hoja impresa del examen: logo en
-     gris a la izquierda, el nombre en mayúsculas, y en letra pequeña el
+     Aquí ese perfil sale arriba de la hoja impresa del examen: el logo a
+     color a la izquierda, el nombre en mayúsculas, y en letra pequeña el
      lugar y el nombre del maestro. La raya «Centro Educativo: ____» se
      quita, porque ya está escrito arriba.
 
@@ -478,19 +479,21 @@
      ajuste de tamaño que trae la hoja mida ya el encabezado nuevo y la
      hoja siga cabiendo en una carta.
 
-     Con dos centros o más, primero se pregunta con cuál. La impresión de
-     la misión corre dentro del toque en el botón del centro: así la
-     ventana nueva la abre un toque del docente y el navegador no la
-     bloquea.
+     El centro es el del grupo activo en Mi aula (`_centroDelExamen`).
+     Hasta v570 se preguntaba con cuál cuando había dos o más, pero el
+     docente ya lo había elegido al cambiar de grupo. Lo que sí se
+     pregunta, solo en la hoja con el logo, es el parcial y la fecha
+     (`_pedirDatosExamen`), que salen escritos con el docente y el grado.
+     Sin centro no se pregunta nada y la hoja sale como siempre.
 
      La hoja que sale de aquí lleva `data-metas-encabezado`, y
      `MetasCentro.examen` (js/metas-centro.js) ya no la toca. */
 
-  var LLAVE_CENTRO_EXAMEN = 'METAS_EXAMEN_CENTRO_V1';   // preferencia de vista: el último centro elegido
+  var LLAVE_CENTRO_EXAMEN = 'METAS_EXAMEN_CENTRO_V1';   // preferencia de vista: el último centro con que se imprimió
   var SIN_ENCABEZADO = 'sin';
   /* Cada impresión, con el dato que la misión revisa antes de imprimir.
-     Sin ese dato la misión solo avisa «genera una evaluación primero»:
-     no tiene sentido preguntar antes por el centro. */
+     Sin ese dato la misión solo avisa «genera una evaluación primero»,
+     y la envoltura la deja hacerlo sin buscar el centro. */
   var IMPRESIONES = { printEval: '_evalPrintData', printEvalOp: '_evalOpData', printEvalCrit: '_evalCritData' };
 
   function _esc(t) {
@@ -520,83 +523,131 @@
     return /^(data:image\/|https?:\/\/)/i.test(src) ? src.replace(/["'<>\s]/g, '') : '';
   }
 
-  /* La segunda raya del alumno. Las 84 misiones la escriben siempre en
-     el mismo orden, con estos rótulos: el centro como «Centro Educativo»,
-     «Instituto» o «Universidad/Instituto»; el grado como «Grado y
-     Sección», «Grado» o «Carrera/Sección»; el número como «N.º Lista»,
-     «N.º» o «N.º Cuenta». Lo vigila _dev/verifica-encabezado-centro.js
-     contra todas las hojas de las misiones. */
-  var RAYA_CENTRO = /<div class="ph-line"><strong>(?:Centro Educativo|Instituto|Universidad\/Instituto):<\/strong><span class="ph-fill">&nbsp;<\/span><strong>(Grado y Sección|Grado|Carrera\/Sección):<\/strong><span class="ph-s">&nbsp;<\/span><strong>(N\.º Lista|N\.º|N\.º Cuenta):<\/strong><span class="ph-xs">&nbsp;<\/span><\/div>/g;
+  /* El encabezado de la misión, completo: el título y las dos rayas del
+     alumno. Las 84 misiones lo escriben siempre igual (solo cambian los
+     espacios entre etiquetas): el título, la raya de Nombre, Parcial y
+     Fecha, y la del centro, con estos rótulos: el centro como «Centro
+     Educativo», «Instituto» o «Universidad/Instituto»; el grado como
+     «Grado y Sección», «Grado» o «Carrera/Sección»; el número como
+     «N.º Lista», «N.º» o «N.º Cuenta». Lo vigila
+     _dev/verifica-encabezado-centro.js contra todas las hojas. */
+  var CABEZA = new RegExp('<div class="ph">\\s*<h2>([\\s\\S]*?)<\\/h2>\\s*'
+    + '<div class="ph-line"><strong>Nombre:<\\/strong><span class="ph-fill">&nbsp;<\\/span><strong>Parcial:<\\/strong>'
+    + '<span class="ph-s">&nbsp;<\\/span><strong>Fecha:<\\/strong><span class="ph-m">&nbsp;<\\/span><\\/div>\\s*'
+    + '<div class="ph-line"><strong>(?:Centro Educativo|Instituto|Universidad\\/Instituto):<\\/strong><span class="ph-fill">&nbsp;<\\/span>'
+    + '<strong>(Grado y Sección|Grado|Carrera\\/Sección):<\\/strong><span class="ph-s">&nbsp;<\\/span>'
+    + '<strong>(N\\.º Lista|N\\.º|N\\.º Cuenta):<\\/strong><span class="ph-xs">&nbsp;<\\/span><\\/div>', 'g');
   var BLOQUE_PH = /<div class="ph">/g;
 
-  /* Sin la raya del centro, el grado ocupa lo que queda del renglón,
-     como el nombre en el de arriba. El de la universidad conserva sus
-     rótulos; los de Básica dicen todos «Grado y Sección» y «N.º de lista». */
-  function _rayaAlumno(m, grado, num) {
-    var g = grado === 'Carrera/Sección' ? grado : 'Grado y Sección';
-    var n = num === 'N.º Cuenta' ? num : 'N.º de lista';
-    return '<div class="ph-line"><strong>' + g + ':</strong><span class="ph-fill">&nbsp;</span><strong>' + n
-      + ':</strong><span class="ph-xs">&nbsp;</span></div>';
-  }
-
-  /* Compacto a propósito: el bloque suma unos 9 mm a la hoja. Las 160
-     hojas con ajuste de tamaño lo absorben solas; las 8 de Fin de grado no
-     traen ajuste y van cerca del final de la carta. El logo mide lo mismo
-     que las dos líneas de texto para no agregar alto por su cuenta. */
-  function _bloqueCentro(centro, docente) {
+  /* El encabezado con el centro, como lo pidió Josué el 19 de noviembre:
+     el logo cuadrado a la izquierda, a color y del alto del encabezado, y
+     a su derecha, en columna:
+       · el nombre del centro, en mayúsculas;
+       · en letra pequeña, el lugar, y debajo «Docente: … · Grado y
+         Sección: … · Parcial: … · Fecha: …», YA ESCRITOS: el grado sale
+         del grupo activo en Mi aula y el parcial y la fecha los elige el
+         docente al imprimir (`_pedirDatosExamen`). Lo que no se sabe
+         queda con su raya para escribirlo a mano;
+       · el título del examen;
+       · el único renglón del alumno: Nombre y N.º de lista.
+     La raya «Centro Educativo» ya no hace falta y la del grado tampoco:
+     ese lugar es el que gana el logo. La hoja de la universidad conserva
+     sus rótulos (Carrera/Sección, N.º Cuenta), y su carrera no se llena
+     con el grado de Básica.
+     LADO_LOGO es lo más grande que deja todas las hojas en sus páginas
+     de siempre: lo mide _dev/mide-paginas-encabezado.js. */
+  var LADO_LOGO = 72;
+  var RAYITA = '<span style="display:inline-block;min-width:48px;border-bottom:1px solid #555;">&nbsp;</span>';
+  function _cabezaCentro(centro, docente, datos, titulo, grado, num) {
+    datos = datos || {};
     var logo = _logoSeguro(centro.logo);
     var lugar = [];
     [centro.direccion, centro.municipio].forEach(function (p) {
       p = _txt(p);
       if (p && lugar.indexOf(p) < 0) lugar.push(p);
     });
-    var bajo = [];
-    if (lugar.length) bajo.push(_esc(lugar.join(', ')));
-    if (_txt(docente)) bajo.push('Docente: ' + _esc(_txt(docente)));
-    var lado = 'flex:none;width:34px;height:34px;';
-    return '<div data-metas-centro style="display:flex;align-items:center;gap:8px;margin:0 0 0.1rem;">'
-      + (logo ? '<img data-metas-logo alt="" src="' + logo + '" style="' + lado
-        + 'object-fit:contain;filter:grayscale(1);-webkit-filter:grayscale(1);">' : '')
-      + '<div style="flex:1;min-width:0;text-align:center;">'
-      + '<div style="font-size:11.5pt;font-weight:700;letter-spacing:0.03em;line-height:1.15;">'
+    var uni = grado === 'Carrera/Sección';
+    var g = uni ? grado : 'Grado y Sección';
+    var n = num === 'N.º Cuenta' ? num : 'N.º de lista';
+    var dato = function (t) { return _txt(t) ? _esc(_txt(t)) : RAYITA; };
+    var renglon = [];
+    if (_txt(docente)) renglon.push('Docente: ' + _esc(_txt(docente)));
+    renglon.push(g + ': ' + dato(uni ? '' : datos.grado));
+    renglon.push('Parcial: ' + dato(datos.parcial));
+    renglon.push('Fecha: ' + dato(datos.fecha));
+    var chico = 'font-size:8.5pt;color:#333;line-height:1.3;text-align:center;';
+    return '<div data-metas-centro style="display:flex;align-items:center;gap:10px;">'
+      + (logo ? '<img data-metas-logo alt="" src="' + logo + '" style="flex:none;width:' + LADO_LOGO + 'px;height:'
+        + LADO_LOGO + 'px;object-fit:contain;">' : '')
+      + '<div style="flex:1;min-width:0;">'
+      + '<div style="font-size:11.5pt;font-weight:700;letter-spacing:0.03em;line-height:1.15;text-align:center;">'
       + _esc(_txt(centro.nombre).toLocaleUpperCase('es')) + '</div>'
-      + (bajo.length ? '<div style="font-size:8.5pt;color:#333;line-height:1.2;">' + bajo.join(' · ') + '</div>' : '')
-      + '</div>'
-      /* Del otro lado, un hueco del ancho del logo: así el nombre queda
-         centrado en la hoja y no corrido a la derecha. */
-      + (logo ? '<div aria-hidden="true" style="' + lado + '"></div>' : '')
-      + '</div>';
+      + (lugar.length ? '<div style="' + chico + '">' + _esc(lugar.join(', ')) + '</div>' : '')
+      + '<div data-metas-docente style="' + chico + 'margin-bottom:2px;">' + renglon.join(' · ') + '</div>'
+      + '<h2>' + titulo + '</h2>'
+      + '<div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>' + n
+      + ':</strong><span class="ph-xs">&nbsp;</span></div>'
+      + '</div></div>';
   }
+
+  /* Lo que agrega el centro, medido en la hoja ya abierta: el alto del
+     encabezado nuevo menos el del de siempre (que va invisible al lado y
+     aquí se quita). Deja `b` (el bloque), `p` (la hoja) y `h` (lo
+     agregado; cero o menos si el nuevo es más bajo). Las dos medidas
+     salen con el mismo zoom, así que se pueden restar. */
+  var MIDE_AGREGADO = 'var b=document.querySelector("[data-metas-centro]"),a=document.querySelector("[data-metas-antes]");'
+    + 'var p=b&&b.parentElement&&b.parentElement.parentElement;var h=0;'
+    + 'if(b){h=b.getBoundingClientRect().height;if(a){h-=a.getBoundingClientRect().height;}}'
+    + 'document.querySelectorAll("[data-metas-antes]").forEach(function(x){x.parentNode.removeChild(x);});';
 
   /* El texto de la hoja, con el encabezado que toca. `centro` null es
      «Sin encabezado»: la hoja de siempre, con la raya para escribir el
      centro, solo marcada para que nadie la llene. Si una hoja no tiene la
-     forma conocida, sale así también, sin perder nada. */
-  function _hojaConEncabezado(html, centro, docente) {
+     forma conocida, sale así también, sin perder nada.
+     Junto al encabezado nuevo va, invisible y fuera del flujo, el de
+     siempre (`data-metas-antes`): el ajuste de abajo lo mide para saber
+     exactamente cuánto alto agregó el centro, y después lo quita. */
+  function _hojaConEncabezado(html, centro, docente, datos) {
     if (typeof html !== 'string' || html.indexOf('<div class="ph">') < 0) return html;
     var bloques = html.match(BLOQUE_PH).length;
-    var rayas = (html.match(RAYA_CENTRO) || []).length;
-    if (!centro || rayas !== bloques) {
+    var cabezas = (html.match(CABEZA) || []).length;
+    if (!centro || cabezas !== bloques) {
       return html.replace(BLOQUE_PH, '<div class="ph" data-metas-encabezado="' + SIN_ENCABEZADO + '">');
     }
-    var arriba = _bloqueCentro(centro, docente);
-    var out = html
-      .replace(RAYA_CENTRO, _rayaAlumno)
-      .replace(BLOQUE_PH, function () { return '<div class="ph" data-metas-encabezado="centro">' + arriba; });
+    var out = html.replace(CABEZA, function (m, titulo, grado, num) {
+      return '<div class="ph" data-metas-encabezado="centro" style="position:relative;">'
+        + _cabezaCentro(centro, docente, datos, titulo, grado, num)
+        + '<div data-metas-antes aria-hidden="true" style="position:absolute;visibility:hidden;left:0;right:0;top:0;">'
+        + m.replace(BLOQUE_PH, '') + '</div>';
+    });
     /* Las 160 hojas que traen su ajuste (`fit`) ya miden con el bloque
        puesto. Las 8 de Fin de grado no traen ajuste y van al límite de la
        carta: la operativa de 5.º tiene un milímetro libre, y el bloque la
        mandaba a una segunda hoja. A esas se les quita exactamente lo que el
        bloque agrega: la hoja queda del mismo alto que hoy y se pagina
-       igual, a cambio de verse un 3 o 4 % más chica. */
+       igual, a cambio de verse un 4 o 5 % más chica. */
+    var ajuste = '';
     if (out.indexOf('function fit(') < 0) {
-      var ajuste = '<script>(function(){var b=document.querySelector("[data-metas-centro]");'
-        + 'var p=b&&b.parentElement&&b.parentElement.parentElement;if(!p||p===document.body||p===document.documentElement)return;'
-        + 'var H=p.getBoundingClientRect().height,h=b.getBoundingClientRect().height+(parseFloat(getComputedStyle(b).marginBottom)||0);'
-        + 'if(h>0&&H>h*4)p.style.zoom=((H-h)/H).toFixed(4);})();</script>';
-      var cierre = out.lastIndexOf('</body>');
-      out = cierre >= 0 ? out.slice(0, cierre) + ajuste + out.slice(cierre) : out + ajuste;
+      ajuste = '<script>(function(){' + MIDE_AGREGADO
+        + 'if(!p||p===document.body||p===document.documentElement)return;'
+        + 'var H=p.getBoundingClientRect().height;if(h>0&&H>h*4)p.style.zoom=((H-h)/H).toFixed(4);})();</script>';
+    } else {
+      /* Una hoja con ajuste que ya llega a su zoom mínimo y aun así no cabe
+         en su meta (la operativa de Robot que decide: 260 mm de 252 con
+         zoom 0,55) no tiene de dónde sacar el bloque, y pasaba a otra hoja
+         con cualquier logo, también con el de 34 px. Solo a esas, después
+         de su propio ajuste, se les quita lo que el bloque agrega, sin
+         bajar de su meta: se paginan igual que sin el centro. Las demás
+         no se tocan. */
+      var metas = {};
+      html.replace(/fit\(\s*["']([A-Za-z0-9_-]+)["']\s*,\s*([0-9.]+)/g, function (m, id, mm) { metas[id] = parseFloat(mm); return m; });
+      ajuste = '<script>(function(){var T=' + JSON.stringify(metas) + ';' + MIDE_AGREGADO
+        + 'if(!p||!p.id||!T[p.id])return;'
+        + 'var z=parseFloat(p.style.zoom)||1,t=T[p.id]*96/25.4,H=p.getBoundingClientRect().height;if(H<=t+1)return;'
+        + 'if(h>0&&H>h*4)p.style.zoom=(z*Math.max(t,H-h)/H).toFixed(4);})();</script>';
     }
+    var cierre = out.lastIndexOf('</body>');
+    out = cierre >= 0 ? out.slice(0, cierre) + ajuste + out.slice(cierre) : out + ajuste;
     return out;
   }
 
@@ -609,7 +660,7 @@
   /* Corre la impresión de la misión con la ventana nueva vigilada: lo que
      la misión escribe en ella pasa antes por `_hojaConEncabezado`. Solo
      durante esta llamada; después `window.open` queda como estaba. */
-  function _imprimirCon(centro, original, yo, args) {
+  function _imprimirCon(centro, original, yo, args, datos) {
     var abrir = global.open;
     var docente = centro ? _docenteDe(centro) : '';
     global.open = function () {
@@ -619,7 +670,7 @@
           win.__metasEncabezado = 1;
           var escribir = win.document.write;
           win.document.write = function (html) {
-            if (typeof html === 'string') html = _hojaConEncabezado(html, centro, docente);
+            if (typeof html === 'string') html = _hojaConEncabezado(html, centro, docente, datos);
             return escribir.call(win.document, html);
           };
         }
@@ -630,61 +681,124 @@
     finally { global.open = abrir; }
   }
 
-  var CSS_CENTRO = [
-    '.metas-centro-velo{position:fixed;inset:0;z-index:2147483000;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;padding:16px;}',
-    '.metas-centro-caja{background:#fff;color:#0f172a;border-radius:16px;max-width:420px;width:100%;max-height:calc(100vh - 32px);overflow:auto;padding:20px 16px 16px;box-shadow:0 20px 50px rgba(0,0,0,.35);font-family:inherit;}',
-    '.metas-centro-tit{font-size:1.05rem;font-weight:800;margin:0 0 12px;text-align:center;line-height:1.3;}',
-    '.metas-centro-lista{display:flex;flex-direction:column;gap:8px;}',
-    '.metas-centro-op{appearance:none;-webkit-appearance:none;display:flex;align-items:center;gap:10px;width:100%;min-height:56px;padding:8px 12px;border:2px solid #cbd5e1;border-radius:12px;background:#fff;color:#0f172a;font:inherit;font-size:.95rem;font-weight:700;text-align:left;cursor:pointer;line-height:1.25;}',
-    '.metas-centro-op img{flex:none;width:40px;height:40px;object-fit:contain;filter:grayscale(1);-webkit-filter:grayscale(1);}',
-    '.metas-centro-op .metas-centro-nom{flex:1;min-width:0;}',
-    '.metas-centro-op .metas-centro-ult{display:block;font-size:.75rem;font-weight:600;color:#475569;margin-top:2px;}',
-    '.metas-centro-op[data-ultimo]{border-color:var(--pri,#1e3a7c);}',
-    '.metas-centro-op:focus-visible,.metas-centro-cerrar:focus-visible{outline:3px solid var(--pri,#1e3a7c);outline-offset:2px;}',
-    '.metas-centro-sin{font-weight:600;min-height:48px;}',
-    '.metas-centro-cerrar{appearance:none;-webkit-appearance:none;display:block;margin:12px auto 0;min-height:44px;min-width:120px;padding:0 16px;border:0;border-radius:12px;background:transparent;color:#334155;font:inherit;font-size:.9rem;font-weight:700;cursor:pointer;text-decoration:underline;}',
-    '@media print{.metas-centro-velo{display:none!important;}}'
-  ].join('\n');
-
-  function _estilosCentro(doc) {
-    if (doc.getElementById('metas-centro-css')) return;
-    var st = doc.createElement('style');
-    st.id = 'metas-centro-css';
-    st.textContent = CSS_CENTRO;
-    (doc.head || doc.documentElement).appendChild(st);
+  /* El centro con que sale la hoja. Solo sirve un centro VIVO, de la
+     lista de MetasCentro.centros(), que ya deja fuera los archivados
+     (deleted_at): un centro archivado no sale nunca, aunque sea el del
+     grupo activo o el último con que se imprimió. En este orden:
+       1. el del grupo activo en Mi aula, si está vivo y tiene nombre;
+       2. si el centro del grupo activo está archivado, el respaldo: el
+          único centro vivo, y si hay varios, ninguno (no se adivina con
+          el último usado: el docente archivó justo el que tenía abierto);
+       3. sin grupo activo, si hay un solo centro vivo, ese;
+       4. sin grupo activo y con varios, el último con que se imprimió,
+          si sigue vivo;
+       5. si no, ninguno: la hoja sin encabezado personalizado.
+     Lo de la sesión ya se miró antes de llegar aquí. */
+  function _centroDelExamen() {
+    var MC = global.MetasCentro;
+    var vivos = _centrosParaExamen();
+    var vivo = function (id) {
+      for (var i = 0; i < vivos.length; i++) if (id && vivos[i].id === id) return vivos[i];
+      return null;
+    };
+    var idActivo = '';
+    try { idActivo = typeof MC.centroActualId === 'function' ? _txt(MC.centroActualId()) : ''; } catch (e) { idActivo = ''; }
+    if (idActivo) {
+      /* Vale solo si está en la lista de vivos Y centroActual() lo da:
+         este último también mira el deleted_at del perfil del grupo y
+         los ids archivados, que pueden llegar antes que la lista nueva.
+         Sus datos prefieren la base si es más reciente. */
+      var activo = null;
+      try { activo = typeof MC.centroActual === 'function' ? MC.centroActual() : null; } catch (e) { activo = null; }
+      if (vivo(idActivo) && activo && activo.id === idActivo && _txt(activo.nombre)) return activo;
+      return vivos.length === 1 ? vivos[0] : null;
+    }
+    if (vivos.length === 1) return vivos[0];
+    return vivo(_leerUltimo());
   }
 
-  /* El selector: un botón por centro (logo y nombre) y «Sin encabezado».
-     El último elegido lleva el borde de color y el foco, para que la
-     próxima vez baste un toque. Cancelar no imprime nada. */
-  function _elegirCentro(lista, alElegir) {
-    var doc = global.document;
-    var viejo = doc.getElementById('metas-centro-velo');
-    if (viejo) viejo.parentNode.removeChild(viejo);
-    _estilosCentro(doc);
-    var ultimo = _leerUltimo();
-    var antes = doc.activeElement;
+  /* ── El parcial y la fecha que salen escritos en la hoja con el logo ──
+     Se preguntan al imprimir, en un cuadrito con los cuatro parciales y
+     la fecha (la de hoy, que se puede cambiar). El parcial que se elige
+     se recuerda para la próxima (preferencia de vista, su propia llave);
+     si nunca se eligió, se propone el que está abierto en Notas SACE. La
+     fecha no se recuerda: casi siempre es la de hoy. Una fecha borrada
+     deja la raya para escribirla a mano.
+     La impresión corre dentro del toque en «Imprimir» del cuadrito: así
+     la ventana nueva la abre un toque del docente y el navegador no la
+     bloquea. Cancelar no imprime nada. */
+  var LLAVE_PARCIAL_EXAMEN = 'METAS_EXAMEN_PARCIAL_V1';
+  var PARCIALES = ['I', 'II', 'III', 'IV'];
+  var MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
 
+  function _parcialPrevio() {
+    var v = '';
+    try { v = global.localStorage.getItem(LLAVE_PARCIAL_EXAMEN) || global.localStorage.getItem('METAS_SACE_PARCIAL') || ''; } catch (e) { v = ''; }
+    return PARCIALES.indexOf(v) >= 0 ? v : 'I';
+  }
+  function _hoyIso() {
+    var d = new Date();
+    var dos = function (x) { return (x < 10 ? '0' : '') + x; };
+    return d.getFullYear() + '-' + dos(d.getMonth() + 1) + '-' + dos(d.getDate());
+  }
+  /* «2026-11-19» → «19 de noviembre de 2026». Se arma a mano y no con
+     toLocaleDateString: así sale igual en todos los teléfonos. */
+  function _fechaLarga(iso) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(_txt(iso));
+    if (!m || +m[2] < 1 || +m[2] > 12) return '';
+    return (+m[3]) + ' de ' + MESES[+m[2] - 1] + ' de ' + m[1];
+  }
+
+  var CSS_DATOS = [
+    '.metas-datos-velo{position:fixed;inset:0;z-index:2147483000;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;padding:16px;}',
+    '.metas-datos-caja{background:#fff;color:#0f172a;border-radius:16px;max-width:400px;width:100%;max-height:calc(100vh - 32px);overflow:auto;padding:20px 16px 16px;box-shadow:0 20px 50px rgba(0,0,0,.35);font-family:inherit;}',
+    '.metas-datos-tit{font-size:1.05rem;font-weight:800;margin:0 0 4px;text-align:center;line-height:1.3;}',
+    '.metas-datos-sub{font-size:.85rem;color:#475569;margin:0 0 14px;text-align:center;line-height:1.35;}',
+    '.metas-datos-caja fieldset{border:0;margin:0 0 14px;padding:0;min-width:0;}',
+    '.metas-datos-caja legend,.metas-datos-et{display:block;font-size:.9rem;font-weight:800;margin:0 0 6px;padding:0;}',
+    '.metas-datos-parciales{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}',
+    '.metas-datos-parciales label{display:flex;align-items:center;justify-content:center;gap:6px;min-height:48px;border:2px solid #cbd5e1;border-radius:12px;font-size:1rem;font-weight:800;cursor:pointer;}',
+    '.metas-datos-parciales input{width:20px;height:20px;margin:0;accent-color:var(--pri,#1e3a7c);}',
+    '.metas-datos-parciales label:has(input:checked){border-color:var(--pri,#1e3a7c);background:#eef2ff;}',
+    '.metas-datos-fecha{display:block;width:100%;box-sizing:border-box;min-height:48px;padding:8px 12px;border:2px solid #cbd5e1;border-radius:12px;font:inherit;font-size:1rem;color:#0f172a;background:#fff;}',
+    '.metas-datos-botones{display:flex;flex-direction:column;gap:8px;margin-top:16px;}',
+    '.metas-datos-ir{appearance:none;-webkit-appearance:none;min-height:48px;border:0;border-radius:12px;background:var(--pri,#1e3a7c);color:#fff;font:inherit;font-size:1rem;font-weight:800;cursor:pointer;}',
+    '.metas-datos-cerrar{appearance:none;-webkit-appearance:none;min-height:44px;border:0;border-radius:12px;background:transparent;color:#334155;font:inherit;font-size:.9rem;font-weight:700;cursor:pointer;text-decoration:underline;}',
+    '.metas-datos-caja :focus-visible{outline:3px solid var(--pri,#1e3a7c);outline-offset:2px;}',
+    '@media print{.metas-datos-velo{display:none!important;}}'
+  ].join('\n');
+
+  function _pedirDatosExamen(alListo) {
+    var doc = global.document;
+    var viejo = doc.getElementById('metas-datos-velo');
+    if (viejo) viejo.parentNode.removeChild(viejo);
+    if (!doc.getElementById('metas-datos-css')) {
+      var st = doc.createElement('style');
+      st.id = 'metas-datos-css';
+      st.textContent = CSS_DATOS;
+      (doc.head || doc.documentElement).appendChild(st);
+    }
+    var previo = _parcialPrevio();
+    var antes = doc.activeElement;
     var velo = doc.createElement('div');
-    velo.id = 'metas-centro-velo';
-    velo.className = 'metas-centro-velo';
-    var caja = doc.createElement('div');
-    caja.className = 'metas-centro-caja';
+    velo.id = 'metas-datos-velo';
+    velo.className = 'metas-datos-velo';
+    var caja = doc.createElement('form');
+    caja.className = 'metas-datos-caja';
     caja.setAttribute('role', 'dialog');
     caja.setAttribute('aria-modal', 'true');
-    caja.setAttribute('aria-labelledby', 'metas-centro-tit');
-    var h = '<h2 class="metas-centro-tit" id="metas-centro-tit">¿Con qué centro imprimes el examen?</h2><div class="metas-centro-lista">';
-    lista.forEach(function (c) {
-      var logo = _logoSeguro(c.logo);
-      h += '<button type="button" class="metas-centro-op" data-centro="' + _esc(c.id) + '"' + (c.id === ultimo ? ' data-ultimo' : '') + '>'
-        + (logo ? '<img alt="" src="' + logo + '">' : '')
-        + '<span class="metas-centro-nom">' + _esc(_txt(c.nombre))
-        + (c.id === ultimo ? '<span class="metas-centro-ult">✓ La última vez</span>' : '') + '</span></button>';
+    caja.setAttribute('aria-labelledby', 'metas-datos-tit');
+    var h = '<h2 class="metas-datos-tit" id="metas-datos-tit">Datos del examen</h2>'
+      + '<p class="metas-datos-sub">Salen escritos en el encabezado, junto al logo.</p>'
+      + '<fieldset><legend>Parcial</legend><div class="metas-datos-parciales">';
+    PARCIALES.forEach(function (p) {
+      h += '<label><input type="radio" name="metas-parcial" value="' + p + '"' + (p === previo ? ' checked' : '') + '>' + p + '</label>';
     });
-    h += '<button type="button" class="metas-centro-op metas-centro-sin" data-centro=""' + (ultimo === SIN_ENCABEZADO ? ' data-ultimo' : '') + '>'
-      + '<span class="metas-centro-nom">Sin encabezado (como antes)'
-      + (ultimo === SIN_ENCABEZADO ? '<span class="metas-centro-ult">✓ La última vez</span>' : '') + '</span></button>';
-    h += '</div><button type="button" class="metas-centro-cerrar">Cancelar</button>';
+    h += '</div></fieldset>'
+      + '<label class="metas-datos-et" for="metas-datos-fecha">Fecha</label>'
+      + '<input class="metas-datos-fecha" id="metas-datos-fecha" type="date" value="' + _hoyIso() + '">'
+      + '<div class="metas-datos-botones"><button type="submit" class="metas-datos-ir">🖨️ Imprimir</button>'
+      + '<button type="button" class="metas-datos-cerrar">Cancelar</button></div>';
     caja.innerHTML = h;
     velo.appendChild(caja);
     doc.body.appendChild(velo);
@@ -698,27 +812,44 @@
     function teclas(ev) {
       if (ev.key === 'Escape') { ev.preventDefault(); cerrar(); return; }
       if (ev.key !== 'Tab') return;
-      // El foco no se sale del selector mientras está abierto.
-      var botones = caja.querySelectorAll('button');
-      var primero = botones[0], ultimoBtn = botones[botones.length - 1];
-      if (ev.shiftKey && doc.activeElement === primero) { ev.preventDefault(); ultimoBtn.focus(); }
-      else if (!ev.shiftKey && doc.activeElement === ultimoBtn) { ev.preventDefault(); primero.focus(); }
+      // El foco no se sale del cuadrito mientras está abierto.
+      var todos = caja.querySelectorAll('input:checked, input[type="date"], button');
+      var primero = todos[0], ultimo = todos[todos.length - 1];
+      if (ev.shiftKey && doc.activeElement === primero) { ev.preventDefault(); ultimo.focus(); }
+      else if (!ev.shiftKey && doc.activeElement === ultimo) { ev.preventDefault(); primero.focus(); }
     }
     doc.addEventListener('keydown', teclas, true);
     velo.addEventListener('click', function (ev) { if (ev.target === velo) cerrar(); });
-    caja.querySelector('.metas-centro-cerrar').addEventListener('click', cerrar);
-    Array.prototype.forEach.call(caja.querySelectorAll('.metas-centro-op'), function (b) {
-      b.addEventListener('click', function () {
-        var id = b.getAttribute('data-centro');
-        var centro = null;
-        for (var i = 0; i < lista.length; i++) if (lista[i].id === id) centro = lista[i];
-        _guardarUltimo(centro ? centro.id : SIN_ENCABEZADO);
-        cerrar();
-        alElegir(centro);
-      });
+    caja.querySelector('.metas-datos-cerrar').addEventListener('click', cerrar);
+    caja.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var marcado = caja.querySelector('input[name="metas-parcial"]:checked');
+      var parcial = marcado ? marcado.value : '';
+      if (parcial) { try { global.localStorage.setItem(LLAVE_PARCIAL_EXAMEN, parcial); } catch (e) { /* solo se pierde el recuerdo */ } }
+      var fecha = _fechaLarga(caja.querySelector('#metas-datos-fecha').value);
+      cerrar();
+      alListo({ parcial: parcial, fecha: fecha });
     });
-    var foco = caja.querySelector('[data-ultimo]') || caja.querySelector('.metas-centro-op');
+    var foco = caja.querySelector('input:checked') || caja.querySelector('input');
     if (foco) foco.focus();
+  }
+  /* Quien pregunta. Las sondas lo cambian para contestar solas. */
+  var preguntarDatos = _pedirDatosExamen;
+
+  /* El grado y la sección del grupo activo, solo si es de este centro. */
+  function _gradoDe(centro) {
+    var MC = global.MetasCentro;
+    try { return MC && typeof MC.gradoActual === 'function' ? _txt(MC.gradoActual(centro && centro.id)) : ''; } catch (e) { return ''; }
+  }
+
+  /* La hoja de verdad va a salir: js/metas-registro.js anota entonces la
+     pauta impresa (y no antes, que con «Cancelar» no se imprime nada). */
+  function _avisarImpresion(nombre) {
+    try {
+      if (typeof global.CustomEvent === 'function' && typeof global.dispatchEvent === 'function') {
+        global.dispatchEvent(new global.CustomEvent('metas:examen-impreso', { detail: { impresion: nombre } }));
+      }
+    } catch (e) { /* el registro no es razón para no imprimir */ }
   }
 
   /* js/metas-registro.js envuelve printEval y printEvalOp después (para
@@ -731,14 +862,18 @@
     var dato = IMPRESIONES[nombre];
     var envuelta = function () {
       var yo = this, args = arguments;
-      if (!global[dato] || !_conSesion()) return original.apply(yo, args);
+      if (!global[dato] || !_conSesion()) { _avisarImpresion(nombre); return original.apply(yo, args); }
       /* Con sesión, la hoja la decide siempre el motor: sin un centro con
          nombre sale la de siempre, marcada, y MetasCentro.examen no le
          pone a medias un logo o un nombre de otro lado. */
-      var lista = _centrosParaExamen();
-      if (!lista.length) return _imprimirCon(null, original, yo, args);
-      if (lista.length === 1) return _imprimirCon(lista[0], original, yo, args);
-      _elegirCentro(lista, function (centro) { _imprimirCon(centro, original, yo, args); });
+      var centro = _centroDelExamen();
+      if (!centro) { _avisarImpresion(nombre); return _imprimirCon(null, original, yo, args); }
+      _guardarUltimo(centro.id);
+      var grado = _gradoDe(centro);
+      preguntarDatos(function (elegidos) {
+        _avisarImpresion(nombre);
+        _imprimirCon(centro, original, yo, args, { grado: grado, parcial: elegidos.parcial, fecha: elegidos.fecha });
+      });
     };
     envuelta.__metasCentro = true;
     envuelta.__original = original;
@@ -1240,7 +1375,14 @@
     conceptual: { formas: _formasConceptual, reparto: _repartoConceptual, apartados: _apartadosConceptual, bancoGrande: _bancoGrandeConceptual, tope: _topeConceptual, nuevasPorSeccion: NUEVAS_POR_SECCION, deAntesPorSeccion: DE_ANTES_POR_SECCION },
     critica: { formasMaximas: FORMAS_CRITICA, conjuntos: _conjuntosCritica, formas: _formasCritica, reparto: _repartoCritica, conFormasDeAntes: _conFormasDeAntes, conOpcionesRepartidas: _conOpcionesRepartidas, barajarSinFilaPropia: _barajarSinFilaPropia, selector: _selectorCritica, turno: _turnoCritica },
     abrirPedida: abrirPedida, buscar: buscar, carpetaDe: carpetaDe,
-    centro: { hoja: _hojaConEncabezado, centros: _centrosParaExamen, envolver: _envolverImpresiones, envueltas: function () { return envueltas.slice(); } }
+    centro: {
+      hoja: _hojaConEncabezado, centros: _centrosParaExamen, envolver: _envolverImpresiones,
+      envueltas: function () { return envueltas.slice(); },
+      fechaLarga: _fechaLarga,
+      /* Para las sondas: quien contesta el cuadrito de parcial y fecha. Sin
+         argumento vuelve el cuadrito de verdad. */
+      preguntar: function (fn) { preguntarDatos = typeof fn === 'function' ? fn : _pedirDatosExamen; }
+    }
   };
 /* `globalThis` y no `window` a secas: en el navegador son lo mismo, y las
    sondas que cargan esto en Node tienen un `window` de mentira que no es el
