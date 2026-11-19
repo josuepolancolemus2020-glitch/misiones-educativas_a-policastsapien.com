@@ -303,7 +303,9 @@ function gestos(titulo, padre, menu) {
     /header\.fuera\s*\{[^}]*max-height:\s*0/.test(HTML) && !/header[^{]*\{[^}]*position:\s*fixed/.test(HTML));
   const cache = (/CACHE_NAME = 'meta-app-v(\d+)'/.exec(fs.readFileSync(path.join(RAIZ, 'sw.js'), 'utf8')) || [])[1];
   ok('el sello del portal es el de sw.js (v' + cache + ')',
-    cache === '570' && /familia-notas\.js\?v=570/.test(HTML));
+    /* El número no se escribe aquí: es el de sw.js. Con la cifra fija, cada
+       sello nuevo ponía roja esta sonda sin que el portal cambiara. */
+    !!cache && new RegExp('familia-notas\\.js\\?v=' + cache + '"').test(HTML));
 
   await gestos('clave nueva', padreNuevo(), CHIPS_NUEVOS);
   await gestos('clave vieja', padreViejo(), CHIPS_VIEJOS);
