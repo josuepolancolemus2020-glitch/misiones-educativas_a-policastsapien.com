@@ -303,7 +303,7 @@ function gestos(titulo, padre, menu) {
     /header\.fuera\s*\{[^}]*max-height:\s*0/.test(HTML) && !/header[^{]*\{[^}]*position:\s*fixed/.test(HTML));
   const cache = (/CACHE_NAME = 'meta-app-v(\d+)'/.exec(fs.readFileSync(path.join(RAIZ, 'sw.js'), 'utf8')) || [])[1];
   ok('el sello del portal es el de sw.js (v' + cache + ')',
-    cache === '568' && /familia-notas\.js\?v=568/.test(HTML));
+    cache === '569' && /familia-notas\.js\?v=569/.test(HTML));
 
   await gestos('clave nueva', padreNuevo(), CHIPS_NUEVOS);
   await gestos('clave vieja', padreViejo(), CHIPS_VIEJOS);
