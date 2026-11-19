@@ -466,8 +466,11 @@ async function escenarioA(nav) {
   ok(escriturasDe('centros').length - antes <= 2, 'el perfil se guardó una o dos veces, no una vez por letra',
     escriturasDe('centros').slice(antes));
   ok(!rechazos.length && !a2.noAnotado.length, 'no hubo ningún rechazo ni tarjeta', { rechazos, noAnotado: a2.noAnotado });
-  const est = await A.pg.locator('#mi-aula [data-metas="perfil-estado"]').innerText().catch(() => '');
-  ok(est === 'Perfil guardado ✓', 'al guardar se ve «Perfil guardado ✓»', est);
+  const est = await A.pg.locator('#mi-aula [data-metas="perfil-estado"]').evaluate(el => ({
+    label: el.getAttribute('aria-label'), texto: (el.innerText || '').replace(/\s+/g, ' ').trim(), oculto: !!el.hidden,
+  })).catch(() => null);
+  ok(est && !est.oculto && est.label === 'Perfil guardado' && est.texto === '✓',
+    'al guardar, en este aparato, la barrita con ✓ y sin texto', est);
   const aulaC2 = (tablas.aulas || []).find(a => a.centro_id === C2);
   ok(aulaC2.escuela === 'Escuela Rural', 'los grupos no se renombraron letra por letra', aulaC2);
 
@@ -584,9 +587,11 @@ async function escenarioC(nav) {
     await yo.pg.click('#mi-aula [data-metas="guardar-perfil"]');
     await dormir(300);
   }
-  const est = await B.pg.locator('#mi-aula [data-metas="perfil-estado"]').innerText().catch(() => '');
-  ok(est === 'Guardado en este aparato. Se subirá cuando haya señal.' && contarPalabras(est) <= 12,
-    'sin señal dice «Guardado en este aparato. Se subirá cuando haya señal.»', est);
+  const est = await B.pg.locator('#mi-aula [data-metas="perfil-estado"]').evaluate(el => ({
+    label: el.getAttribute('aria-label'), texto: (el.innerText || '').replace(/\s+/g, ' ').trim(), oculto: !!el.hidden,
+  })).catch(() => null);
+  ok(est && !est.oculto && est.label === 'Perfil guardado' && est.texto === '✓' && contarPalabras(est.texto) <= 12,
+    'sin señal, la misma barrita con ✓ y sin la frase larga', est);
   await Promise.all([senal(A, true), senal(B, true)]);
   await Promise.all([esperarCola(A), esperarCola(B)]);
   await alDia(A);
@@ -660,6 +665,8 @@ async function escenarioE(nav) {
   const sigue = await B.pg.evaluate(() => window.__sinRecargar);
   ok(!!visto, 'la pantalla del perfil de B muestra el nombre y el director nuevos', visto);
   ok(sigue === 'sigue', 'sin recargar la página de B');
+  const barB = await B.pg.locator('#mi-aula [data-metas="perfil-estado"]').evaluate(el => !!(el.hidden || el.hasAttribute('hidden'))).catch(() => true);
+  ok(barB, 'en B el cambio llega sin la barrita');
   const grupoB = await B.pg.evaluate(async () => (await window.MetasDatos.iniciar()).lista('aulas').map(a => a.escuela));
   ok(grupoB[0] === 'Escuela Nueva', 'el grupo de B lleva el nombre nuevo', grupoB);
   ok(!A.errores.length && !B.errores.length, 'sin errores de página', A.errores.concat(B.errores).slice(0, 3));
