@@ -105,8 +105,15 @@
   }
 
   async function llamar(url, opciones) {
+    // Copia: no se le pisa el objeto a quien llamó, por si lo reutiliza.
+    var op = {};
+    if (opciones) for (var k in opciones) op[k] = opciones[k];
+    // La caché HTTP del navegador también devolvía la lectura de antes
+    // (Supabase manda max-age). Aunque el service worker ya no la guarde,
+    // sin esto el aparato seguía releyendo la fila vieja.
+    op.cache = 'no-store';
     try {
-      return await w.fetch(url, opciones);
+      return await w.fetch(url, op);
     } catch (e) {
       throw error('red', { mensaje: String(e && e.message || e) });
     }

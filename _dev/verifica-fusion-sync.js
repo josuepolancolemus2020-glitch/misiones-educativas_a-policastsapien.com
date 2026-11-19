@@ -1,38 +1,37 @@
 /* ============================================================
-   M.E.T.A.S · El maestro no pierde su trabajo entre dos equipos
+   M.E.T.A.S · Lo que anota un aparato lo ve el otro
    ------------------------------------------------------------
-   Medido el 9 de septiembre de 2026, antes de tocar nada, con la nube
-   de mentira y el reloj de verdad:
+   Esta sonda comprobaba el espejo viejo (window.dsSync, de
+   js/metas-docente-sync.js). Ese archivo ya no se carga: la
+   portada lo dice, y lo que el maestro anota hoy viaja por
+   filas (js/datos/). Esperar dsSync la dejaba en rojo sin
+   llegar a mirar la sincronización.
 
-     el maestro pasa lista en el TELÉFONO a las 9:00, sin señal;
-     a las 20:00 pone una nota en la PC;
-     al volver la señal → **la asistencia del día desaparecía**,
-     el teléfono ni siquiera llegaba a subirla,
-     y «Recuperar» no aparecía porque el aula no estaba vacía.
+   Lo que se comprueba ahora, con el service worker ENCENDIDO
+   (serviceWorkers: 'allow'), que es como está en la tablet:
 
-   Y al revés, con el reloj del teléfono adelantado, la que se perdía
-   era la nota de la PC. Las dos direcciones perdían.
+     la tablet lee una fila;
+     en su caché queda plantada la copia vieja, que es lo que
+     el service worker de v548 servía sin volver a la base;
+     la PC cambia esa fila;
+     la tablet la vuelve a leer y tiene que ver la versión nueva.
 
-   Un día de asistencia son 43 nombres que el maestro ya no puede
-   reconstruir: no estaba mirando, estaba dando clase.
-
-   La fusión dato por dato vive en `js/metas-fusion-aula.js` y se prueba
-   sola y sin navegador con `node _dev/prueba-fusion-aula.js`. Esta sonda
-   comprueba la otra mitad, la que solo se ve abriendo la aplicación: que
-   el espejo la USE, que la copia fusionada SUBA —si no, mañana el otro
-   equipo vuelve a mandar la suya a medias— y que los dos equipos acaben
-   con lo mismo.
-
-   La nube NO se toca: se pone un Supabase de mentira con page.route.
+   Si el service worker siguiera contestando con lo guardado,
+   la tablet vería «COPIA VIEJA DEL CACHE» y la marca de tiempo
+   no avanzaría. La base de mentira vive en esta sonda: no se
+   escribe nada en Supabase.
 
    Uso:  node _dev/servidor-estatico.js   (en otra terminal)
          node _dev/verifica-fusion-sync.js
    ============================================================ */
 'use strict';
 
-const { abrir, SIN_SW } = require('./lib-navegador');
+const { abrir } = require('./lib-navegador');
 const BASE = 'http://localhost:8123';
-const COD = 'PROF-TEST', CLAVE = 'clave-de-prueba';
+const UID = '11111111-1111-4111-8111-111111111111';
+const FILA = '22222222-2222-4222-8222-222222222222';
+const T1 = '2026-11-19T03:00:00.000Z';
+const ORIGEN = 'https://uljjgrikyigdrkbikcxo.supabase.co';
 
 let fallos = 0;
 const ok = (nombre, cond, extra) => {
@@ -40,144 +39,230 @@ const ok = (nombre, cond, extra) => {
   if (!cond) fallos++;
 };
 
-/* El aula de siempre: tres alumnos de 6º-1 */
-function aula(extra) {
-  return JSON.stringify({ v: 2, activo: 'G1', grupos: [Object.assign({
-    id: 'G1', escuela: 'John Arnold Cook', grado: '6', seccion: '1',
-    materias: ['Español', 'Matemáticas'],
-    lista: [{ num: 1, nombre: 'Ana López' }, { num: 2, nombre: 'Luis Cruz' }, { num: 3, nombre: 'Sara Mejía' }],
-    colectas: [], asistencia: [], notas: {}, controles: [], bitacora: [], lectura: [], convocatorias: []
-  }, extra || {})] });
-}
-const VACIA = aula();
-const CON_ASISTENCIA = aula({ asistencia: [{ f: '2026-09-09', aus: { 2: 'F' } }] });
-const CON_NOTA = aula({ notas: { p1: { 'Español': { 1: '85' } } } });
+const filas = {
+  observaciones: [{
+    id: FILA, owner: UID, texto: 'La de antes', version: 1,
+    updated_at: T1, created_at: T1, deleted_at: null,
+  }],
+};
+const trafico = [];
+let contarLecturas = false;
+let lecturas = 0;
 
-/* Una «nube» que se comporta como el servidor: guarda por clave y versión. */
-function nubeNueva(inicial) {
-  return { datos: Object.assign({}, inicial || {}), subidas: [] };
+function copiar(o) {
+  return JSON.parse(JSON.stringify(o));
 }
-async function ponerNube(pg, nube) {
-  await pg.route('**/rest/v1/rpc/**', async route => {
-    const fn = route.request().url().split('/rpc/')[1].split('?')[0];
-    let c = {};
-    try { c = JSON.parse(route.request().postData() || '{}'); } catch (_) {}
-    const json = b => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(b) });
-    if (fn === 'metas_docente_estado_leer') {
-      return json(Object.keys(nube.datos).map(k => ({ k, valor: { raw: nube.datos[k].raw }, version: nube.datos[k].version })));
-    }
-    if (fn === 'metas_docente_estado_guardar') {
-      (c.p_entradas || []).forEach(e => {
-        nube.subidas.push({ k: e.k, raw: e.valor.raw, version: e.version });
-        nube.datos[e.k] = { raw: e.valor.raw, version: e.version };
-      });
-      return json((c.p_entradas || []).length);
-    }
-    if (fn === 'metas_docente_papelera') return json({ hay: false });
-    return json(null);
+
+function cumplir(route, status, body, tipo) {
+  const cab = {
+    'content-type': tipo || 'application/json',
+    'cache-control': 'no-store',
+    'access-control-allow-origin': '*',
+    'access-control-allow-headers': '*',
+    'access-control-allow-methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+  };
+  return route.fulfill({
+    status: status,
+    headers: cab,
+    body: body == null ? '' : (typeof body === 'string' ? body : JSON.stringify(body)),
   });
 }
 
-/* Abre la aplicación como un EQUIPO del maestro: con su sesión, su copia
-   local del aula y su versión, y sincroniza. */
-async function equipo(nav, nube, opciones) {
-  const ctx = await nav.newContext({ ...SIN_SW });
+/* La base de mentira: guarda la fila y sube la versión en cada
+   edición, como hace la de verdad. Lo demás contesta vacío para que
+   «ponerse al día» pueda recorrer sus tablas sin trabarse. */
+async function baseDeMentira(route) {
+  const req = route.request();
+  const url = new URL(req.url());
+  const metodo = req.method();
+  if (trafico.length < 80) trafico.push(metodo + ' ' + url.pathname + url.search.slice(0, 80));
+  if (metodo === 'OPTIONS') return cumplir(route, 204, '', 'text/plain');
+  if (url.pathname.indexOf('/auth/') >= 0) return cumplir(route, 200, {});
+  if (url.pathname.indexOf('/functions/') >= 0) return cumplir(route, 401, { ok: false });
+  if (url.pathname.indexOf('/rpc/blob_leer') >= 0) return cumplir(route, 200, []);
+  if (url.pathname.indexOf('/rpc/blob_guardar') >= 0) return cumplir(route, 200, 0);
+  if (url.pathname.indexOf('/rpc/') >= 0) return cumplir(route, 200, null);
+  const tabla = (url.pathname.match(/\/rest\/v1\/([a-z0-9_]+)/) || [])[1];
+  if (!tabla) return cumplir(route, 200, []);
+  if (!filas[tabla]) filas[tabla] = [];
+  const lista = filas[tabla];
+
+  if (metodo === 'GET') {
+    if (tabla === 'observaciones' && contarLecturas) lecturas++;
+    let out = lista.filter(f => !f.deleted_at);
+    const idEq = /(?:^|[?&])id=eq\.([^&]+)/.exec(url.search);
+    if (idEq) out = out.filter(f => f.id === decodeURIComponent(idEq[1]));
+    const inn = /id=in\.\(([^)]*)\)/.exec(url.search);
+    if (inn) {
+      const ids = inn[1].split(',').filter(Boolean).map(s => decodeURIComponent(s));
+      out = out.filter(f => ids.indexOf(f.id) >= 0);
+    }
+    const gte = /updated_at=gte\.([^&]+)/.exec(url.search);
+    if (gte) {
+      const t = decodeURIComponent(gte[1]).replace(/^"|"$/g, '');
+      out = out.filter(f => String(f.updated_at) >= t);
+    }
+    return cumplir(route, 200, out.map(copiar));
+  }
+
+  if (metodo === 'PATCH') {
+    let body = {};
+    try { body = JSON.parse(req.postData() || '{}'); } catch (_) { body = {}; }
+    const id = ((/(?:^|[?&])id=eq\.([^&]+)/.exec(url.search) || [])[1] || '');
+    const ver = ((/(?:^|[?&])version=eq\.([^&]+)/.exec(url.search) || [])[1] || '');
+    const row = lista.filter(f => f.id === decodeURIComponent(id) && String(f.version) === decodeURIComponent(ver) && !f.deleted_at)[0];
+    if (!row) return cumplir(route, 200, []);
+    Object.keys(body).forEach(k => {
+      if (k !== 'id' && k !== 'version' && k !== 'updated_at') row[k] = body[k];
+    });
+    row.version = row.version + 1;
+    row.updated_at = new Date().toISOString();
+    return cumplir(route, 200, [copiar(row)]);
+  }
+  return cumplir(route, 200, []);
+}
+
+const sesion = {
+  access_token: 'e30.e30.x',
+  refresh_token: 'r',
+  expires_at: Math.floor(Date.now() / 1000) + 3600,
+  uid: UID,
+  nombre: 'Prof. Prueba',
+  rol: 'docente',
+};
+
+async function aparato(nav, nombre) {
+  const ctx = await nav.newContext({
+    viewport: { width: 800, height: 900 },
+    serviceWorkers: 'allow',
+  });
+  await ctx.route('**/*supabase.co/**', baseDeMentira);
+  if (typeof ctx.routeWebSocket === 'function') {
+    try { await ctx.routeWebSocket(/supabase\.co/, ws => { try { ws.close(); } catch (_) {} }); }
+    catch (_) { /* sin esto el aviso en vivo no conecta, y la prueba no lo necesita */ }
+  }
   const pg = await ctx.newPage();
-  await ponerNube(pg, nube);
-  await pg.addInitScript(([cod, clave, raw, ver, sinFusion, baseRaw, alDia]) => {
-    /* el mismo djb2 del espejo: si la huella no calza, scanLocal re-estampa
-       la versión con Date.now() y la prueba mediría otra cosa */
-    const hash = s => { if (s == null) return '0'; let h = 5381, i = s.length; while (i) h = (h * 33) ^ s.charCodeAt(--i); return (h >>> 0).toString(36); };
-    localStorage.setItem('METAS_DOCENTE_V1', JSON.stringify({ codigo: cod, clave: clave, nombre: 'Prof. Prueba' }));
-    localStorage.setItem('METAS_DS_OWNER', cod);
-    if (raw != null) localStorage.setItem('METAS_ADMIN_V1', raw);
-    localStorage.setItem('METAS_DOCSYNC_V1', JSON.stringify({
-      /* sv < v  = editado y sin subir;  sv === v = todo subido */
-      'METAS_ADMIN_V1': { v: ver, h: hash(raw), sv: alDia ? ver : ver - 1 }
-    }));
-    if (baseRaw) localStorage.setItem('METAS_DOCSYNC_BASE_V1', JSON.stringify({ 'METAS_ADMIN_V1': baseRaw }));
-    if (sinFusion) { Object.defineProperty(window, 'MetasFusion', { value: undefined, writable: true }); }
-  }, [COD, CLAVE, opciones.raw, opciones.version, !!opciones.sinFusion, opciones.base || null, !!opciones.alDia]);
-  await pg.goto(BASE + '/index.html', { waitUntil: 'domcontentloaded' });
-  await pg.waitForFunction(() => typeof window.dsSync === 'function');
-  if (opciones.sinFusion) await pg.evaluate(() => { window.MetasFusion = undefined; });
-  await pg.evaluate(() => window.dsSync());
-  await pg.waitForTimeout(1000);
-  const leer = () => pg.evaluate(() => {
-    const d = JSON.parse(localStorage.getItem('METAS_ADMIN_V1') || '{}');
-    const g = (d.grupos || [])[0] || {};
+  const errores = [];
+  pg.on('pageerror', e => errores.push(String(e)));
+  await pg.addInitScript(s => {
+    localStorage.setItem('sb-uljjgrikyigdrkbikcxo-auth-token', JSON.stringify(s));
+  }, sesion);
+  await pg.goto(BASE + '/index.html', { waitUntil: 'load', timeout: 60000 });
+  await pg.waitForFunction(() => !!navigator.serviceWorker.controller, null, { timeout: 30000 });
+  return { ctx, pg, nombre, errores };
+}
+
+/* Pone al día y devuelve lo que el aparato guarda de la fila. */
+async function ponerseAlDia(pg) {
+  return pg.evaluate(async ({ id, uid }) => {
+    const M = window.MetasDatos;
+    if (!M || typeof M.iniciar !== 'function') return { ok: false, porque: 'sin MetasDatos' };
+    try { await M.iniciar(); }
+    catch (e) { return { ok: false, porque: 'iniciar: ' + String(e && e.message || e) }; }
+    if (!M._nube.uid()) return { ok: false, porque: 'sin sesión' };
+    try { await M._tiempoReal.ponerseAlDia(uid); }
+    catch (e) { return { ok: false, porque: 'ponerse al día: ' + String(e && e.message || e) }; }
+    const f = M._almacen.fila(uid, 'observaciones', id);
     return {
-      alumnos: (g.lista || []).length,
-      dias: (g.asistencia || []).map(x => x.f),
-      falta2: (((g.asistencia || [])[0] || {}).aus || {})[2] || null,
-      nota: (((g.notas || {}).p1 || {})['Español'] || {})[1] || null,
-      base: !!(JSON.parse(localStorage.getItem('METAS_DOCSYNC_BASE_V1') || 'null') || {})['METAS_ADMIN_V1'],
-      recuperar: !!window.dsTieneRespaldo()
+      ok: true,
+      sw: !!navigator.serviceWorker.controller,
+      version: f ? f.version : null,
+      texto: f ? f.texto : null,
+      cursor: M._almacen.meta('cursor|' + uid + '|observaciones') || null,
     };
-  });
-  const r = await leer();
-  await ctx.close();
-  return r;
+  }, { id: FILA, uid: UID });
+}
+
+/* Deja en la caché del aparato la fila vieja, en las direcciones que
+   la cola y el tiempo real vuelven a pedir. Con el fallo, la próxima
+   lectura sale de aquí y no de la base. */
+async function plantarCopiaVieja(pg) {
+  return pg.evaluate(async ({ id, uid, origen, t1 }) => {
+    const M = window.MetasDatos;
+    const cache = await caches.open('meta-datos-v1');
+    const base = origen + '/rest/v1/observaciones';
+    const vieja = JSON.stringify([{
+      id: id, owner: uid, texto: 'COPIA VIEJA DEL CACHE', version: 1,
+      updated_at: t1, created_at: t1, deleted_at: null,
+    }]);
+    const cab = { 'content-type': 'application/json' };
+    const urls = [
+      base + '?id=eq.' + id + '&select=*',
+      base + '?select=*&deleted_at=is.null&order=updated_at.asc,id.asc&limit=1000',
+    ];
+    const cursor = M._almacen.meta('cursor|' + uid + '|observaciones');
+    if (cursor) {
+      const desde = new Date(Date.parse(cursor) - 120000).toISOString();
+      urls.push(base + '?select=*&updated_at=gte.' + encodeURIComponent(desde)
+        + '&order=updated_at.asc,id.asc&limit=1000');
+    }
+    for (let i = 0; i < urls.length; i++) {
+      await cache.put(urls[i], new Response(vieja, { status: 200, headers: cab }));
+    }
+    return { urls: urls, cursor: cursor };
+  }, { id: FILA, uid: UID, origen: ORIGEN, t1: T1 });
 }
 
 (async () => {
-  console.log('M.E.T.A.S · El maestro no pierde su trabajo entre dos equipos');
+  console.log('M.E.T.A.S · Lo que anota un aparato lo ve el otro');
   const nav = await abrir();
-  const AYER = Date.now() - 24 * 3600000;
-  const T_MANANA = AYER + 9 * 3600000, T_NOCHE = AYER + 20 * 3600000;
+  console.log('\n1 · Dos aparatos, con el service worker mandando');
+  const tablet = await aparato(nav, 'tablet');
+  const pc = await aparato(nav, 'pc');
+  const t0 = await ponerseAlDia(tablet.pg);
+  const p0 = await ponerseAlDia(pc.pg);
+  ok('la tablet tiene el service worker', t0.sw === true, t0);
+  ok('la PC tiene el service worker', p0.sw === true, p0);
+  ok('las dos leen la fila de antes (versión 1)',
+    t0.ok && p0.ok && t0.version === 1 && p0.version === 1 && t0.texto === 'La de antes' && p0.texto === 'La de antes',
+    { tablet: t0, pc: p0 });
 
-  console.log('\n1 · El caso medido: lista en el teléfono, nota en la PC');
-  {
-    /* La PC ya subió su nota. El teléfono, sin señal, tiene la asistencia. */
-    const nube = nubeNueva({ 'METAS_ADMIN_V1': { raw: CON_NOTA, version: T_NOCHE } });
-    const tel = await equipo(nav, nube, { raw: CON_ASISTENCIA, version: T_MANANA, base: VACIA });
-    ok('la asistencia del teléfono NO se pierde', tel.dias.length === 1 && tel.dias[0] === '2026-09-09', tel.dias);
-    ok('la falta de Luis sigue anotada', tel.falta2 === 'F');
-    ok('la nota de la PC llega al teléfono', tel.nota === '85');
-    ok('los tres alumnos siguen ahí', tel.alumnos === 3);
-    ok('y la copia fusionada SUBE (si no, mañana vuelve a medias)',
-       nube.subidas.some(s => s.k === 'METAS_ADMIN_V1' && s.raw.indexOf('2026-09-09') > -1 && s.raw.indexOf('"85"') > -1),
-       nube.subidas.map(s => s.k));
+  console.log('\n2 · En la tablet queda la copia vieja, y la PC edita');
+  const plantada = await plantarCopiaVieja(tablet.pg);
+  ok('la copia vieja quedó en la caché de la tablet', plantada.urls.length >= 2, plantada);
+  const edicion = await pc.pg.evaluate(async (id) => {
+    const api = await window.MetasDatos.iniciar();
+    api.editar('observaciones', id, { texto: 'La de ahora' });
+    const como = await Promise.race([
+      api.esperarCola().then(() => 'lista'),
+      new Promise(ok => setTimeout(() => ok('espera'), 8000)),
+    ]);
+    return { como: como, pendientes: api.pendientes(), noAnotado: api.noAnotado() };
+  }, FILA);
+  ok('la edición de la PC sube (la cola no se queda trabada)',
+    edicion.como === 'lista' && edicion.pendientes === 0, edicion);
+  ok('la base quedó en la versión 2',
+    filas.observaciones[0].version === 2 && filas.observaciones[0].texto === 'La de ahora',
+    filas.observaciones[0]);
 
-    /* Y ahora la PC entra: tiene que recibir la asistencia del teléfono. */
-    const pc = await equipo(nav, nube, { raw: CON_NOTA, version: T_NOCHE, base: VACIA });
-    ok('los dos equipos acaban con lo mismo', pc.dias.length === 1 && pc.nota === '85', pc);
+  console.log('\n3 · La tablet relee y ve la versión nueva');
+  lecturas = 0;
+  contarLecturas = true;
+  const re = await tablet.pg.evaluate(async ({ id, uid }) => {
+    const M = window.MetasDatos;
+    const porId = await M._nube.leer('observaciones?id=eq.' + id + '&select=*');
+    await M._tiempoReal.ponerseAlDia(uid);
+    const f = M._almacen.fila(uid, 'observaciones', id);
+    return {
+      leida: porId[0] ? { version: porId[0].version, texto: porId[0].texto } : null,
+      guardada: f ? { version: f.version, texto: f.texto, updated_at: f.updated_at } : null,
+    };
+  }, { id: FILA, uid: UID });
+  ok('la relectura salió a la base y no a la caché', lecturas > 0, { lecturas: lecturas, trafico: trafico.slice(-15) });
+  ok('la lectura por id trae la versión 2',
+    !!re.leida && re.leida.version === 2 && re.leida.texto === 'La de ahora', re.leida);
+  ok('ponerse al día guarda esa versión, no la copia vieja',
+    !!re.guardada && re.guardada.version === 2 && re.guardada.texto === 'La de ahora'
+      && re.guardada.updated_at !== T1,
+    re.guardada);
+  if (fallos && (tablet.errores.length || pc.errores.length)) {
+    console.log('  errores de página:', JSON.stringify({ tablet: tablet.errores.slice(0, 3), pc: pc.errores.slice(0, 3) }));
   }
 
-  console.log('\n2 · Al revés: con el reloj del teléfono adelantado');
-  {
-    const nube = nubeNueva({ 'METAS_ADMIN_V1': { raw: CON_NOTA, version: T_MANANA } });
-    const tel = await equipo(nav, nube, { raw: CON_ASISTENCIA, version: T_NOCHE, base: VACIA });
-    ok('tampoco se pierde la nota de la PC', tel.nota === '85' && tel.dias.length === 1, tel);
-  }
-
-  console.log('\n3 · La base se guarda: es lo que distingue añadir de borrar');
-  {
-    const nube = nubeNueva({ 'METAS_ADMIN_V1': { raw: CON_NOTA, version: T_NOCHE } });
-    const tel = await equipo(nav, nube, { raw: CON_ASISTENCIA, version: T_MANANA, base: VACIA });
-    ok('queda base para la próxima sincronización', tel.base === true);
-  }
-
-  console.log('\n4 · Si la fusión no está, se hace lo de siempre — y AHÍ sale «Recuperar»');
-  {
-    const nube = nubeNueva({ 'METAS_ADMIN_V1': { raw: CON_NOTA, version: T_NOCHE } });
-    const tel = await equipo(nav, nube, { raw: CON_ASISTENCIA, version: T_MANANA, base: VACIA, sinFusion: true });
-    ok('sin la fusión la nube pisa (comportamiento de siempre, no revienta)', tel.nota === '85' && tel.dias.length === 0, tel);
-    ok('pero el botón «Recuperar» SÍ aparece, con el aula llena', tel.recuperar === true);
-  }
-
-  console.log('\n5 · El teléfono con el reloj adelantado dos años seguía trayendo lo nuevo');
-  {
-    /* Sin cambios pendientes, pero con una versión local absurda porque un día
-       se editó con el reloj mal puesto. Antes «la nube no es más nueva» lo
-       dejaba congelado: veía su aula de siempre mientras la PC trabajaba. */
-    const nube = nubeNueva({ 'METAS_ADMIN_V1': { raw: CON_NOTA, version: T_NOCHE } });
-    const tel = await equipo(nav, nube, { raw: VACIA, version: Date.now() + 730 * 24 * 3600000, alDia: true, base: VACIA });
-    ok('la nota de la PC llega igual', tel.nota === '85', tel);
-  }
-
+  await tablet.ctx.close();
+  await pc.ctx.close();
   await nav.close();
   console.log('\n' + '─'.repeat(52));
   if (fallos) { console.log(`✖ ${fallos} problema(s).`); process.exit(1); }
-  console.log('✅ Ni la asistencia del teléfono ni la nota de la PC se pierden.');
-})().catch(e => { console.error('✘ La sonda tropezó:', e.message); process.exit(1); });
+  console.log('✅ La tablet, con el service worker, ve lo que la PC acaba de anotar.');
+})().catch(e => { console.error('✘ La sonda tropezó:', e && e.stack || e); process.exit(1); });

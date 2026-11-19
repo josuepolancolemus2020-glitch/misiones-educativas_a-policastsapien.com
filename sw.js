@@ -251,15 +251,39 @@ self.addEventListener('install', event => {
   );
 });
 
-/* Al activar: se borran los ARMAZONES viejos y nada más. CACHE_DATOS
-   sobrevive al despliegue, que es justo lo que hace que el alumno conserve
-   las misiones que ya había abierto. */
+/* Host de la base. Incluye el proyecto y los subdominios (auth, rest,
+   realtime, storage): todos son datos del maestro, no un archivo de la
+   aplicación. */
+function hostDeSupabase(hostname) {
+  return /(^|\.)supabase\.co$/i.test(hostname || '');
+}
+
+/* Al activar: se borran los ARMAZONES viejos. CACHE_DATOS sobrevive al
+   despliegue, que es justo lo que hace que el alumno conserve las misiones
+   que ya había abierto.
+
+   De CACHE_DATOS sí se quitan las lecturas de Supabase que el arreglo
+   anterior había guardado ahí. Una fila vieja en esa caché hacía que la
+   cola releyera la versión de antes, perdiera los reintentos y se trabara,
+   y que el otro aparato nunca viera el cambio. Solo esas entradas: ni otro
+   caché, ni lo que el alumno ya tenía guardado. */
+function purgarLecturasDeLaBase(nombres) {
+  if (nombres.indexOf(CACHE_DATOS) < 0) return null;
+  return caches.open(CACHE_DATOS).then(cache => cache.keys().then(reqs =>
+    Promise.all(reqs.map(req => {
+      let host = '';
+      try { host = new URL(req.url).hostname; } catch (_) { return null; }
+      return hostDeSupabase(host) ? cache.delete(req) : null;
+    }))
+  ));
+}
+
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
       Promise.all(keys.map(key =>
         (key.indexOf('meta-app-') === 0 && key !== CACHE_APP) ? caches.delete(key) : null
-      ))
+      )).then(() => purgarLecturasDeLaBase(keys))
     ).then(() => self.clients.claim())
   );
 });
@@ -573,6 +597,18 @@ self.addEventListener('fetch', event => {
      guardarlo ni servirlo de otro lado; una copia vieja deja de funcionar
      sin avisar. Que lo atienda el navegador. */
   if (url.hostname === 'challenges.cloudflare.com') return;
+  /* La base del maestro no se guarda ni se sirve de aquí. Desde el sello
+     v548 esta rama de «otro dominio» respondía primero con lo guardado y
+     luego metía el GET de rest/v1 en CACHE_DATOS. La cola releía esa fila
+     vieja, perdía los cinco reintentos y la primera operación trababa todo
+     lo que el aparato tenía por subir; el aviso de tiempo real tampoco
+     avanzaba, así que la PC no veía lo que la tablet acababa de anotar.
+     Lo que no es una lectura, y lo que lleva la sesión, tampoco: ahí va el
+     dato del maestro. Se sale sin respondWith, igual que YouTube y
+     Turnstile, y lo atiende el navegador. */
+  if (hostDeSupabase(url.hostname)
+      || event.request.method !== 'GET'
+      || event.request.headers.has('authorization')) return;
 
   const esGet = event.request.method === 'GET';
 
@@ -648,10 +684,9 @@ self.addEventListener('fetch', event => {
       caches.match(event.request).then(cached => {
         if (cached && (cached.ok || cached.type === 'opaque')) return cached;
         /* Con tope solo lo que detiene la página: un guion, una hoja, una
-           letra o una imagen. Lo demás —lo que la aplicación le habla a
-           Supabase, sobre todo los POST que suben datos y pueden tardar—
-           sigue sin reloj: ahí el código de la aplicación decide, y cortar
-           una subida lenta a medias sería perderle al maestro lo que mandó. */
+           letra o una imagen. Lo demás (un recurso externo que no bloquea
+           el pintado) sigue sin reloj. La base no llega a esta rama: se
+           apartó arriba, con YouTube y Turnstile. */
         const bloquea = esGet && /^(script|style|font|image)$/.test(event.request.destination);
         const red = bloquea ? traer(event.request, {}, PLAZO_RECURSO) : fetch(event.request);
         return red.then(respuesta => {

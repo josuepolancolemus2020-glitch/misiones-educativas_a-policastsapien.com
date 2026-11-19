@@ -228,7 +228,27 @@
 
   // Al cerrar sesión con todo enviado, la copia de esa cuenta se borra del
   // aparato (02, 2.6): el próximo que entre no ve datos de otro docente.
+  // Y las lecturas de la base que el service worker había guardado en
+  // meta-datos-v1 (el mismo nombre que CACHE_DATOS en sw.js, que no cambia
+  // entre despliegues): ahí quedaban filas con nombre, notas y pagos. Solo
+  // esas entradas. La caché es del origen, así que se limpia aunque esta
+  // pestaña no sea la líder.
+  function olvidarLecturasDeLaBase() {
+    var api = w.caches;
+    if (!api || typeof api.open !== 'function') return;
+    api.open('meta-datos-v1').then(function (cache) {
+      return cache.keys().then(function (reqs) {
+        return Promise.all(reqs.map(function (req) {
+          var host = '';
+          try { host = new URL(req.url).hostname; } catch (e) { return null; }
+          if (/(^|\.)supabase\.co$/i.test(host)) return cache.delete(req);
+          return null;
+        }));
+      });
+    }).catch(function () { /* sin caché no hay nada que olvidar */ });
+  }
   function olvidarCuenta(owner) {
+    olvidarLecturasDeLaBase();
     var porCuenta = filas.get(owner);
     filas.delete(owner);
     if (!lider) return;
