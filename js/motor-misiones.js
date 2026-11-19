@@ -22,7 +22,7 @@
    3. LA PUERTA (`mision.html?m=<carpeta>`), que lleva a una misión.
    4. EL CENTRO EN EL EXAMEN IMPRESO (`_envolverImpresiones`): el perfil
       del centro que el docente configura en Mi aula sale arriba de la
-      hoja, y si tiene dos centros o más se le pregunta con cuál.
+      hoja. Es el centro del grupo activo en Mi aula, sin preguntar.
 
    Las funciones del examen se publican con el MISMO nombre global que
    tenían dentro de cada misión, porque el resto de la misión las llama
@@ -461,8 +461,8 @@
   /* ══════════ 4 · El centro en el encabezado del examen impreso ══════════
 
      El docente configura su centro en Mi aula (nombre, logo, dirección).
-     Aquí ese perfil sale arriba de la hoja impresa del examen: logo en
-     gris a la izquierda, el nombre en mayúsculas, y en letra pequeña el
+     Aquí ese perfil sale arriba de la hoja impresa del examen: el logo a
+     color a la izquierda, el nombre en mayúsculas, y en letra pequeña el
      lugar y el nombre del maestro. La raya «Centro Educativo: ____» se
      quita, porque ya está escrito arriba.
 
@@ -478,19 +478,21 @@
      ajuste de tamaño que trae la hoja mida ya el encabezado nuevo y la
      hoja siga cabiendo en una carta.
 
-     Con dos centros o más, primero se pregunta con cuál. La impresión de
-     la misión corre dentro del toque en el botón del centro: así la
-     ventana nueva la abre un toque del docente y el navegador no la
-     bloquea.
+     El centro es el del grupo activo en Mi aula (`_centroDelExamen`).
+     Hasta v570 se preguntaba con cuál cuando había dos o más, pero el
+     docente ya lo había elegido al cambiar de grupo, y la pregunta era
+     un toque de más en cada impresión. Sin pregunta, la impresión corre
+     dentro del mismo toque en «Imprimir» y el navegador no bloquea la
+     ventana nueva.
 
      La hoja que sale de aquí lleva `data-metas-encabezado`, y
      `MetasCentro.examen` (js/metas-centro.js) ya no la toca. */
 
-  var LLAVE_CENTRO_EXAMEN = 'METAS_EXAMEN_CENTRO_V1';   // preferencia de vista: el último centro elegido
+  var LLAVE_CENTRO_EXAMEN = 'METAS_EXAMEN_CENTRO_V1';   // preferencia de vista: el último centro con que se imprimió
   var SIN_ENCABEZADO = 'sin';
   /* Cada impresión, con el dato que la misión revisa antes de imprimir.
-     Sin ese dato la misión solo avisa «genera una evaluación primero»:
-     no tiene sentido preguntar antes por el centro. */
+     Sin ese dato la misión solo avisa «genera una evaluación primero»,
+     y la envoltura la deja hacerlo sin buscar el centro. */
   var IMPRESIONES = { printEval: '_evalPrintData', printEvalOp: '_evalOpData', printEvalCrit: '_evalCritData' };
 
   function _esc(t) {
@@ -541,8 +543,11 @@
 
   /* Compacto a propósito: el bloque suma unos 9 mm a la hoja. Las 160
      hojas con ajuste de tamaño lo absorben solas; las 8 de Fin de grado no
-     traen ajuste y van cerca del final de la carta. El logo mide lo mismo
-     que las dos líneas de texto para no agregar alto por su cuenta. */
+     traen ajuste y van cerca del final de la carta.
+     El logo va a color, como el docente lo subió (hasta v570 salía en
+     gris), y mide LADO_LOGO: lo más grande que deja todas las hojas en
+     una página. La medida está en _dev/mide-paginas-encabezado.js. */
+  var LADO_LOGO = 44;
   function _bloqueCentro(centro, docente) {
     var logo = _logoSeguro(centro.logo);
     var lugar = [];
@@ -553,10 +558,9 @@
     var bajo = [];
     if (lugar.length) bajo.push(_esc(lugar.join(', ')));
     if (_txt(docente)) bajo.push('Docente: ' + _esc(_txt(docente)));
-    var lado = 'flex:none;width:34px;height:34px;';
+    var lado = 'flex:none;width:' + LADO_LOGO + 'px;height:' + LADO_LOGO + 'px;';
     return '<div data-metas-centro style="display:flex;align-items:center;gap:8px;margin:0 0 0.1rem;">'
-      + (logo ? '<img data-metas-logo alt="" src="' + logo + '" style="' + lado
-        + 'object-fit:contain;filter:grayscale(1);-webkit-filter:grayscale(1);">' : '')
+      + (logo ? '<img data-metas-logo alt="" src="' + logo + '" style="' + lado + 'object-fit:contain;">' : '')
       + '<div style="flex:1;min-width:0;text-align:center;">'
       + '<div style="font-size:11.5pt;font-weight:700;letter-spacing:0.03em;line-height:1.15;">'
       + _esc(_txt(centro.nombre).toLocaleUpperCase('es')) + '</div>'
@@ -588,15 +592,31 @@
        carta: la operativa de 5.º tiene un milímetro libre, y el bloque la
        mandaba a una segunda hoja. A esas se les quita exactamente lo que el
        bloque agrega: la hoja queda del mismo alto que hoy y se pagina
-       igual, a cambio de verse un 3 o 4 % más chica. */
+       igual, a cambio de verse un 4 o 5 % más chica. */
+    var ajuste = '';
     if (out.indexOf('function fit(') < 0) {
-      var ajuste = '<script>(function(){var b=document.querySelector("[data-metas-centro]");'
+      ajuste = '<script>(function(){var b=document.querySelector("[data-metas-centro]");'
         + 'var p=b&&b.parentElement&&b.parentElement.parentElement;if(!p||p===document.body||p===document.documentElement)return;'
         + 'var H=p.getBoundingClientRect().height,h=b.getBoundingClientRect().height+(parseFloat(getComputedStyle(b).marginBottom)||0);'
         + 'if(h>0&&H>h*4)p.style.zoom=((H-h)/H).toFixed(4);})();</script>';
-      var cierre = out.lastIndexOf('</body>');
-      out = cierre >= 0 ? out.slice(0, cierre) + ajuste + out.slice(cierre) : out + ajuste;
+    } else {
+      /* Una hoja con ajuste que ya llega a su zoom mínimo y aun así no cabe
+         en su meta (la operativa de Robot que decide: 260 mm de 252 con
+         zoom 0,55) no tiene de dónde sacar el bloque, y pasaba a otra hoja
+         con cualquier logo, también con el de 34 px. Solo a esas, después
+         de su propio ajuste, se les quita lo que el bloque agrega, sin
+         bajar de su meta: se paginan igual que sin el centro. Las demás
+         no se tocan. */
+      var metas = {};
+      html.replace(/fit\(\s*["']([A-Za-z0-9_-]+)["']\s*,\s*([0-9.]+)/g, function (m, id, mm) { metas[id] = parseFloat(mm); return m; });
+      ajuste = '<script>(function(){var T=' + JSON.stringify(metas) + ';var b=document.querySelector("[data-metas-centro]");'
+        + 'var p=b&&b.parentElement&&b.parentElement.parentElement;if(!p||!p.id||!T[p.id])return;'
+        + 'var z=parseFloat(p.style.zoom)||1,t=T[p.id]*96/25.4,H=p.getBoundingClientRect().height;if(H<=t+1)return;'
+        + 'var h=b.getBoundingClientRect().height+(parseFloat(getComputedStyle(b).marginBottom)||0)*z;'
+        + 'if(h>0&&H>h*4)p.style.zoom=(z*Math.max(t,H-h)/H).toFixed(4);})();</script>';
     }
+    var cierre = out.lastIndexOf('</body>');
+    out = cierre >= 0 ? out.slice(0, cierre) + ajuste + out.slice(cierre) : out + ajuste;
     return out;
   }
 
@@ -630,95 +650,22 @@
     finally { global.open = abrir; }
   }
 
-  var CSS_CENTRO = [
-    '.metas-centro-velo{position:fixed;inset:0;z-index:2147483000;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;padding:16px;}',
-    '.metas-centro-caja{background:#fff;color:#0f172a;border-radius:16px;max-width:420px;width:100%;max-height:calc(100vh - 32px);overflow:auto;padding:20px 16px 16px;box-shadow:0 20px 50px rgba(0,0,0,.35);font-family:inherit;}',
-    '.metas-centro-tit{font-size:1.05rem;font-weight:800;margin:0 0 12px;text-align:center;line-height:1.3;}',
-    '.metas-centro-lista{display:flex;flex-direction:column;gap:8px;}',
-    '.metas-centro-op{appearance:none;-webkit-appearance:none;display:flex;align-items:center;gap:10px;width:100%;min-height:56px;padding:8px 12px;border:2px solid #cbd5e1;border-radius:12px;background:#fff;color:#0f172a;font:inherit;font-size:.95rem;font-weight:700;text-align:left;cursor:pointer;line-height:1.25;}',
-    '.metas-centro-op img{flex:none;width:40px;height:40px;object-fit:contain;filter:grayscale(1);-webkit-filter:grayscale(1);}',
-    '.metas-centro-op .metas-centro-nom{flex:1;min-width:0;}',
-    '.metas-centro-op .metas-centro-ult{display:block;font-size:.75rem;font-weight:600;color:#475569;margin-top:2px;}',
-    '.metas-centro-op[data-ultimo]{border-color:var(--pri,#1e3a7c);}',
-    '.metas-centro-op:focus-visible,.metas-centro-cerrar:focus-visible{outline:3px solid var(--pri,#1e3a7c);outline-offset:2px;}',
-    '.metas-centro-sin{font-weight:600;min-height:48px;}',
-    '.metas-centro-cerrar{appearance:none;-webkit-appearance:none;display:block;margin:12px auto 0;min-height:44px;min-width:120px;padding:0 16px;border:0;border-radius:12px;background:transparent;color:#334155;font:inherit;font-size:.9rem;font-weight:700;cursor:pointer;text-decoration:underline;}',
-    '@media print{.metas-centro-velo{display:none!important;}}'
-  ].join('\n');
-
-  function _estilosCentro(doc) {
-    if (doc.getElementById('metas-centro-css')) return;
-    var st = doc.createElement('style');
-    st.id = 'metas-centro-css';
-    st.textContent = CSS_CENTRO;
-    (doc.head || doc.documentElement).appendChild(st);
-  }
-
-  /* El selector: un botón por centro (logo y nombre) y «Sin encabezado».
-     El último elegido lleva el borde de color y el foco, para que la
-     próxima vez baste un toque. Cancelar no imprime nada. */
-  function _elegirCentro(lista, alElegir) {
-    var doc = global.document;
-    var viejo = doc.getElementById('metas-centro-velo');
-    if (viejo) viejo.parentNode.removeChild(viejo);
-    _estilosCentro(doc);
+  /* El centro con que sale la hoja, en este orden:
+       1. el del grupo activo en Mi aula, si tiene nombre y no está archivado;
+       2. si no hay activo y hay un solo centro, ese;
+       3. si hay varios, el último con que se imprimió, si todavía existe;
+       4. si no, ninguno: la hoja sin encabezado personalizado.
+     Lo de la sesión ya se miró antes de llegar aquí. */
+  function _centroDelExamen() {
+    var MC = global.MetasCentro;
+    var activo = null;
+    try { activo = typeof MC.centroActual === 'function' ? MC.centroActual() : null; } catch (e) { activo = null; }
+    if (activo && activo.id && _txt(activo.nombre)) return activo;
+    var lista = _centrosParaExamen();
+    if (lista.length === 1) return lista[0];
     var ultimo = _leerUltimo();
-    var antes = doc.activeElement;
-
-    var velo = doc.createElement('div');
-    velo.id = 'metas-centro-velo';
-    velo.className = 'metas-centro-velo';
-    var caja = doc.createElement('div');
-    caja.className = 'metas-centro-caja';
-    caja.setAttribute('role', 'dialog');
-    caja.setAttribute('aria-modal', 'true');
-    caja.setAttribute('aria-labelledby', 'metas-centro-tit');
-    var h = '<h2 class="metas-centro-tit" id="metas-centro-tit">¿Con qué centro imprimes el examen?</h2><div class="metas-centro-lista">';
-    lista.forEach(function (c) {
-      var logo = _logoSeguro(c.logo);
-      h += '<button type="button" class="metas-centro-op" data-centro="' + _esc(c.id) + '"' + (c.id === ultimo ? ' data-ultimo' : '') + '>'
-        + (logo ? '<img alt="" src="' + logo + '">' : '')
-        + '<span class="metas-centro-nom">' + _esc(_txt(c.nombre))
-        + (c.id === ultimo ? '<span class="metas-centro-ult">✓ La última vez</span>' : '') + '</span></button>';
-    });
-    h += '<button type="button" class="metas-centro-op metas-centro-sin" data-centro=""' + (ultimo === SIN_ENCABEZADO ? ' data-ultimo' : '') + '>'
-      + '<span class="metas-centro-nom">Sin encabezado (como antes)'
-      + (ultimo === SIN_ENCABEZADO ? '<span class="metas-centro-ult">✓ La última vez</span>' : '') + '</span></button>';
-    h += '</div><button type="button" class="metas-centro-cerrar">Cancelar</button>';
-    caja.innerHTML = h;
-    velo.appendChild(caja);
-    doc.body.appendChild(velo);
-    _traducir(caja);
-
-    function cerrar() {
-      doc.removeEventListener('keydown', teclas, true);
-      if (velo.parentNode) velo.parentNode.removeChild(velo);
-      try { if (antes && antes.focus) antes.focus({ preventScroll: true }); } catch (e) { }
-    }
-    function teclas(ev) {
-      if (ev.key === 'Escape') { ev.preventDefault(); cerrar(); return; }
-      if (ev.key !== 'Tab') return;
-      // El foco no se sale del selector mientras está abierto.
-      var botones = caja.querySelectorAll('button');
-      var primero = botones[0], ultimoBtn = botones[botones.length - 1];
-      if (ev.shiftKey && doc.activeElement === primero) { ev.preventDefault(); ultimoBtn.focus(); }
-      else if (!ev.shiftKey && doc.activeElement === ultimoBtn) { ev.preventDefault(); primero.focus(); }
-    }
-    doc.addEventListener('keydown', teclas, true);
-    velo.addEventListener('click', function (ev) { if (ev.target === velo) cerrar(); });
-    caja.querySelector('.metas-centro-cerrar').addEventListener('click', cerrar);
-    Array.prototype.forEach.call(caja.querySelectorAll('.metas-centro-op'), function (b) {
-      b.addEventListener('click', function () {
-        var id = b.getAttribute('data-centro');
-        var centro = null;
-        for (var i = 0; i < lista.length; i++) if (lista[i].id === id) centro = lista[i];
-        _guardarUltimo(centro ? centro.id : SIN_ENCABEZADO);
-        cerrar();
-        alElegir(centro);
-      });
-    });
-    var foco = caja.querySelector('[data-ultimo]') || caja.querySelector('.metas-centro-op');
-    if (foco) foco.focus();
+    for (var i = 0; i < lista.length; i++) if (lista[i].id === ultimo) return lista[i];
+    return null;
   }
 
   /* js/metas-registro.js envuelve printEval y printEvalOp después (para
@@ -735,10 +682,9 @@
       /* Con sesión, la hoja la decide siempre el motor: sin un centro con
          nombre sale la de siempre, marcada, y MetasCentro.examen no le
          pone a medias un logo o un nombre de otro lado. */
-      var lista = _centrosParaExamen();
-      if (!lista.length) return _imprimirCon(null, original, yo, args);
-      if (lista.length === 1) return _imprimirCon(lista[0], original, yo, args);
-      _elegirCentro(lista, function (centro) { _imprimirCon(centro, original, yo, args); });
+      var centro = _centroDelExamen();
+      if (centro) _guardarUltimo(centro.id);
+      return _imprimirCon(centro, original, yo, args);
     };
     envuelta.__metasCentro = true;
     envuelta.__original = original;

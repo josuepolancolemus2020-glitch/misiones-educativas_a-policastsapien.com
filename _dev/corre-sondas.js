@@ -77,7 +77,11 @@ const NO_SON_SONDAS = {
      compara contra misiones de primaria. Tampoco falla: es la regla con la
      que se decide, no la sonda. La sonda que sí se pone roja es
      verifica-legibilidad-ia, que le pide a la ruta de IA las metas medidas. */
-  'mide-legibilidad':       'MIDE cuánto cuesta leer una misión; no falla nunca, es la vara'
+  'mide-legibilidad':       'MIDE cuánto cuesta leer una misión; no falla nunca, es la vara',
+  /* Imprime las 168 hojas de examen con el centro y cuenta páginas por
+     tamaño de logo. Tarda minutos y no falla: con ella se eligió el
+     tamaño, y la que se pone roja es verifica-encabezado-centro-navegador. */
+  'mide-paginas-encabezado': 'MIDE las páginas de las 168 hojas por tamaño de logo; tarda minutos, no falla'
 };
 
 /* ── qué sondas hay ──────────────────────────────────────────── */

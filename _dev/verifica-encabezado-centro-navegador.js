@@ -6,16 +6,22 @@
    Educativo» en pensamiento crítico) y Fin de grado 6.º (la operativa):
 
    (a) sin sesión: la hoja sale con la raya en blanco, sin logo;
-   (b) docente con un centro: imprime directo, con logo en gris y el
-       nombre arriba, sin la raya del centro, y la hoja cabe en la carta;
-   (c) docente con dos centros: antes de imprimir aparece el selector
-       (un botón por centro y «Sin encabezado»), se imprime el elegido y
-       la próxima vez ese queda marcado;
-   (d) «Sin encabezado»: igual que (a);
-   (e) el docente cerró sesión: igual que (a), sin selector.
+   (b) docente con un centro: imprime directo, con el logo a color (38 px
+       o más, con un hueco igual del otro lado) y el nombre arriba, sin
+       la raya del centro, y la hoja cabe en la carta;
+   (c) docente con dos centros y el segundo activo en Mi aula: imprime
+       directo con el activo, y no aparece ningún selector;
+       sin activo y con uno solo, ese; sin activo y con varios, el último
+       con que se imprimió;
+   (d) sin activo, con varios y sin último: la hoja de siempre, como (a);
+       un centro activo archivado no sale;
+   (e) el docente cerró sesión: igual que (a);
+   · Fin de grado 6.º (sin ajuste propio) y la operativa de Robot que
+     decide (su ajuste ya llega al mínimo y no cabe) se paginan igual con
+     el centro que sin él.
 
    Con METAS_CAPTURAS=<carpeta> guarda las capturas del encabezado con
-   perfil, sin perfil y del selector.
+   perfil y sin perfil.
 
    Uso: node _dev/servidor-estatico.js   (en otra terminal)
         node _dev/verifica-encabezado-centro-navegador.js
@@ -31,7 +37,7 @@ const CAPTURAS = process.env.METAS_CAPTURAS || '';
 let fallos = 0;
 const ok = (c, t, extra) => { console.log((c ? '✓ ' : '✘ ') + t + (c || extra === undefined ? '' : '  → ' + JSON.stringify(extra))); if (!c) fallos++; };
 
-/* Dos logos a color, para ver en la hoja que salen en gris. */
+/* Dos logos a color: tienen que salir a color en la hoja. */
 const svg = (fondo, letra) => 'data:image/svg+xml;base64,' + Buffer.from(
   '<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><circle cx="60" cy="60" r="56" fill="' + fondo
   + '"/><circle cx="60" cy="60" r="40" fill="#ffd400"/><text x="60" y="76" font-size="44" font-family="Arial" font-weight="700" text-anchor="middle" fill="#0b3d91">'
@@ -41,16 +47,26 @@ const CENTRO_B = { id: 'c-b', nombre: 'Escuela Ficticia El Porvenir', logo: svg(
 const SESION = { codigo: 'DOC-FICTICIO', nombre: 'Docente De La Cuenta' };
 const perfilDe = c => Object.assign({ logoSec: '', grado: '6', seccion: '1', gradoSeccion: '6º-1', anio: '2027' }, c);
 
-async function preparar(pg, { centros, sesion }) {
-  await pg.evaluate(({ centros, sesion, perfiles }) => {
-    localStorage.removeItem('METAS_EXAMEN_CENTRO_V1');
+/* La copia que escribe Mi aula: un grupo por centro (aula-1, aula-2…),
+   `actual` el grupo activo (null: ninguno), y los ids archivados. */
+async function preparar(pg, { centros, sesion, actual = 'aula-1', archivados, ultimo, perfiles }) {
+  await pg.evaluate(({ centros, sesion, perfiles, actual, archivados, ultimo }) => {
+    if (ultimo) localStorage.setItem('METAS_EXAMEN_CENTRO_V1', ultimo);
+    else localStorage.removeItem('METAS_EXAMEN_CENTRO_V1');
     const porAula = {};
     perfiles.forEach((p, i) => { porAula['aula-' + (i + 1)] = p; });
-    localStorage.setItem('METAS_CENTRO_LECTURA', JSON.stringify({ actual: 'aula-1', porAula, centros }));
+    const copia = { actual, porAula, centros };
+    if (archivados) copia.archivados = archivados;
+    localStorage.setItem('METAS_CENTRO_LECTURA', JSON.stringify(copia));
     if (sesion) localStorage.setItem('METAS_DOCENTE_V1', JSON.stringify(sesion));
     else localStorage.removeItem('METAS_DOCENTE_V1');
-  }, { centros, sesion, perfiles: centros.map(perfilDe) });
+  }, { centros, sesion, actual, archivados: archivados || null, ultimo: ultimo || '', perfiles: (perfiles || centros).map(perfilDe) });
 }
+/* ¿Apareció el selector viejo, o cualquier diálogo que pregunte por el
+   centro? (La misión tiene los suyos, como la tarjeta del alumno: esos
+   no cuentan.) */
+const haySelector = pg => pg.evaluate(() => !!document.querySelector('.metas-centro-velo, .metas-centro-caja, .metas-centro-op, #metas-centro-velo')
+  || [...document.querySelectorAll('[role="dialog"]')].some(d => d.offsetParent && /centro/i.test(d.textContent)));
 
 /* Imprime y devuelve la ventana nueva ya escrita. */
 async function hojaDe(pg, accion) {
@@ -71,6 +87,9 @@ async function leerHoja(win) {
       html: ph.outerHTML,
       logo: !!img,
       filtro: img ? getComputedStyle(img).filter : '',
+      ladoLogo: img ? Math.round(img.getBoundingClientRect().width / (parseFloat(getComputedStyle(ph.parentElement).zoom) || 1)) : 0,
+      ladoHueco: (() => { const h = ph.querySelector('[data-metas-centro] > [aria-hidden="true"]'); return h ? Math.round(h.getBoundingClientRect().width / (parseFloat(getComputedStyle(ph.parentElement).zoom) || 1)) : 0; })(),
+      altoLogo: img ? Math.round(img.getBoundingClientRect().height / (parseFloat(getComputedStyle(ph.parentElement).zoom) || 1)) : 0,
       logoIzq: img ? img.getBoundingClientRect().left < ph.getBoundingClientRect().left + 20 : false,
       altoMm: pag.getBoundingClientRect().height / mm,
     };
@@ -114,7 +133,9 @@ async function captura(win, nombre) {
   win = await hojaDe(pg, () => pg.evaluate(() => printEval()));
   let h = await leerHoja(win);
   ok(h.marca === 'centro', '(b) imprime directo, sin preguntar');
-  ok(h.logo && /grayscale\(1\)/.test(h.filtro) && h.logoIzq, '(b) el logo sale en gris, arriba a la izquierda', h.filtro);
+  ok(h.logo && h.filtro === 'none' && h.logoIzq, '(b) el logo sale a color, arriba a la izquierda', h.filtro);
+  ok(h.ladoLogo >= 38 && h.altoLogo === h.ladoLogo, '(b) el logo mide 38 px o más', { ancho: h.ladoLogo, alto: h.altoLogo });
+  ok(h.ladoHueco === h.ladoLogo, '(b) el hueco de la derecha mide igual que el logo', { logo: h.ladoLogo, hueco: h.ladoHueco });
   ok(h.texto.startsWith('CENTRO DE EDUCACIÓN BÁSICA LAS FLORES Colonia Ficticia, Villanueva · Docente: Docente Ficticia'),
     '(b) el nombre en mayúsculas, y debajo el lugar y el docente', h.texto.slice(0, 120));
   ok(!/Instituto:|Centro Educativo:/.test(h.texto) && /Grado y Sección: N\.º de lista:/.test(h.texto),
@@ -130,67 +151,51 @@ async function captura(win, nombre) {
     '(b) pensamiento crítico («Centro Educativo») también');
   await win.close();
 
-  console.log('\n── (c) docente con dos centros ──');
-  await preparar(pg, { centros: [CENTRO_A, CENTRO_B], sesion: SESION });
-  let abiertas = 0;
-  const contar = () => abiertas++;
-  pg.on('popup', contar);
-  await pg.evaluate(() => printEval());
-  await pg.waitForSelector('.metas-centro-caja', { timeout: 3000 });
-  const sel = await pg.evaluate(() => {
-    const caja = document.querySelector('.metas-centro-caja');
-    const bs = [...caja.querySelectorAll('button')];
-    return {
-      dialogo: caja.getAttribute('role') === 'dialog' && caja.getAttribute('aria-modal') === 'true',
-      titulo: caja.querySelector('h2').textContent,
-      botones: bs.map(b => b.innerText.replace(/\s+/g, ' ').trim()),
-      logos: caja.querySelectorAll('.metas-centro-op img').length,
-      minAlto: Math.min(...bs.map(b => b.getBoundingClientRect().height)),
-      ancho: document.documentElement.scrollWidth,
-    };
-  });
-  ok(abiertas === 0, '(c) antes de elegir no se abre ninguna hoja');
-  ok(sel.dialogo && sel.titulo === '¿Con qué centro imprimes el examen?', '(c) aparece el selector', sel.titulo);
-  ok(sel.botones.length === 4 && sel.botones[0] === CENTRO_A.nombre && sel.botones[1] === CENTRO_B.nombre
-    && sel.botones[2] === 'Sin encabezado (como antes)' && sel.botones[3] === 'Cancelar', '(c) un botón por centro, «Sin encabezado» y Cancelar', sel.botones);
-  ok(sel.logos === 2, '(c) cada centro con su logo');
-  ok(sel.minAlto >= 44 && sel.ancho <= 390, '(c) botones de 44 px o más, sin salirse de la pantalla', sel);
-  if (CAPTURAS) await pg.screenshot({ path: path.join(CAPTURAS, 'selector-centros.png') });
-  pg.off('popup', contar);
-  win = await hojaDe(pg, () => pg.click('.metas-centro-op[data-centro="c-b"]'));
+  console.log('\n── (c) dos centros, el segundo activo en Mi aula ──');
+  await preparar(pg, { centros: [CENTRO_A, CENTRO_B], sesion: SESION, actual: 'aula-2' });
+  win = await hojaDe(pg, () => pg.evaluate(() => printEval()));
   h = await leerHoja(win);
-  ok(h.marca === 'centro' && h.texto.startsWith('ESCUELA FICTICIA EL PORVENIR Danlí · Docente: Docente De La Cuenta'),
-    '(c) se imprime el centro elegido (sin docente en el centro, el de la cuenta)', h.texto.slice(0, 100));
+  ok(h.marca === 'centro' && h.texto.startsWith('ESCUELA FICTICIA EL PORVENIR Danlí · Docente: Docente De La Cuenta') && !h.texto.includes('LAS FLORES'),
+    '(c) imprime directo con el centro activo (sin docente en el centro, el de la cuenta)', h.texto.slice(0, 100));
   await captura(win, 'con-perfil-segundo-centro.png');
   await win.close();
-  ok(await pg.evaluate(() => !document.querySelector('.metas-centro-velo') && localStorage.getItem('METAS_EXAMEN_CENTRO_V1') === 'c-b'),
-    '(c) el selector se cierra y se recuerda el elegido');
+  ok(!(await haySelector(pg)), '(c) y no aparece ningún selector');
+  ok(await pg.evaluate(() => localStorage.getItem('METAS_EXAMEN_CENTRO_V1') === 'c-b'), '(c) queda anotado como el último con que se imprimió');
 
-  await pg.evaluate(() => printEval());
-  await pg.waitForSelector('.metas-centro-caja');
-  const otra = await pg.evaluate(() => ({
-    marcado: document.querySelector('.metas-centro-op[data-ultimo]')?.getAttribute('data-centro'),
-    foco: document.activeElement?.getAttribute('data-centro'),
-    rotulo: document.querySelector('.metas-centro-op[data-ultimo]')?.innerText || '',
-  }));
-  ok(otra.marcado === 'c-b' && otra.foco === 'c-b' && /La última vez/.test(otra.rotulo), '(c) la próxima vez el último va marcado y con el foco: un toque', otra);
-  await pg.keyboard.press('Escape');
-  ok(await pg.evaluate(() => !document.querySelector('.metas-centro-velo')), '(c) Escape cierra sin imprimir');
-
-  console.log('\n── (d) «Sin encabezado» ──');
-  await pg.evaluate(() => printEval());
-  await pg.waitForSelector('.metas-centro-caja');
-  win = await hojaDe(pg, () => pg.click('.metas-centro-sin'));
+  await preparar(pg, { centros: [CENTRO_B], sesion: SESION, actual: null, perfiles: [] });
+  win = await hojaDe(pg, () => pg.evaluate(() => printEval()));
   h = await leerHoja(win);
-  ok(h.marca === 'sin' && !h.logo && h.texto === hoy.texto, '(d) la hoja de siempre, con la raya para escribir el centro', h.texto.slice(0, 120));
+  ok(h.marca === 'centro' && h.texto.startsWith('ESCUELA FICTICIA EL PORVENIR'), '(c) sin activo y con un solo centro, sale ese', h.texto.slice(0, 60));
+  await win.close();
+
+  await preparar(pg, { centros: [CENTRO_A, CENTRO_B], sesion: SESION, actual: null, perfiles: [], ultimo: 'c-b' });
+  win = await hojaDe(pg, () => pg.evaluate(() => printEvalCrit()));
+  h = await leerHoja(win);
+  ok(h.marca === 'centro' && h.texto.startsWith('ESCUELA FICTICIA EL PORVENIR') && !(await haySelector(pg)),
+    '(c) sin activo y con varios, el último con que se imprimió, sin preguntar', h.texto.slice(0, 60));
+  await win.close();
+
+  console.log('\n── (d) sin centro que elegir, y un centro activo archivado ──');
+  await preparar(pg, { centros: [CENTRO_A, CENTRO_B], sesion: SESION, actual: null, perfiles: [] });
+  win = await hojaDe(pg, () => pg.evaluate(() => printEval()));
+  h = await leerHoja(win);
+  ok(h.marca === 'sin' && !h.logo && h.texto === hoy.texto, '(d) varios, sin activo y sin último: la hoja de siempre, con la raya para escribir el centro', h.texto.slice(0, 120));
   ok(h.html.replace(' data-metas-encabezado="sin"', '') === hoy.html, '(d) el encabezado es el mismo de (a), byte por byte');
+  ok(!(await haySelector(pg)), '(d) tampoco aquí se pregunta nada');
+  await win.close();
+
+  await preparar(pg, { centros: [CENTRO_A], sesion: SESION, actual: 'aula-2', perfiles: [CENTRO_A, CENTRO_B], archivados: ['c-b'], ultimo: 'c-b' });
+  win = await hojaDe(pg, () => pg.evaluate(() => printEval()));
+  h = await leerHoja(win);
+  ok(h.marca === 'centro' && h.texto.startsWith('CENTRO DE EDUCACIÓN BÁSICA LAS FLORES') && !h.texto.includes('PORVENIR'),
+    '(d) el centro activo archivado no sale: queda el único que hay', h.texto.slice(0, 60));
   await win.close();
 
   console.log('\n── (e) el docente cerró sesión ──');
   await pg.evaluate(() => localStorage.removeItem('METAS_DOCENTE_V1'));
   win = await hojaDe(pg, () => pg.evaluate(() => printEval()));
   h = await leerHoja(win);
-  ok(!h.marca && h.html === hoy.html, '(e) sin selector y con la hoja de hoy, aunque los centros sigan guardados');
+  ok(!h.marca && h.html === hoy.html, '(e) la hoja de hoy, aunque los centros sigan guardados');
   await win.close();
 
   console.log('\n── Fin de grado 6.º, la operativa ──');
@@ -212,10 +217,38 @@ async function captura(win, nombre) {
     return (pdf.toString('latin1').match(/\/Type\s*\/Page[^s]/g) || []).length;
   };
   const sinC = await paginas(false), conC = await paginas(true);
-  ok(sinC === conC, 'y su hoja se pagina igual que hoy', { hoy: sinC, conCentro: conC });
+  ok(sinC === conC, 'y su hoja se pagina igual que hoy, con el logo nuevo', { hoy: sinC, conCentro: conC });
+
+  console.log('\n── Robot que decide, la operativa: ya en su zoom mínimo ──');
+  /* Su ajuste llega a 0,55 y aun así mide 260 mm de 252: con el centro
+     pasaba a una tercera hoja con cualquier logo. Se imprime al ancho de
+     la carta (215,9 mm menos los márgenes de 7 mm de su @page), que es
+     donde el ajuste ve los mismos renglones que el papel. */
+  await pg.goto(BASE + '/misiones/2y3ciclo-robot-decide/robot-decide.html', { waitUntil: 'load' });
+  await pg.evaluate(() => { genEvalOp(); });
+  const robot = async conSesion => {
+    await preparar(pg, { centros: [CENTRO_A], sesion: conSesion ? SESION : null });
+    const html = await pg.evaluate(() => {
+      let h = '';
+      const real = window.open;
+      window.open = () => ({ document: { write: t => { h += t; }, close() {} }, print() {}, focus() {}, close() {} });
+      try { printEvalOp(); } finally { window.open = real; }
+      return h;
+    });
+    const w = await ctx.newPage();
+    await w.setViewportSize({ width: Math.round((215.9 - 14) * 96 / 25.4), height: 1000 });
+    await w.setContent(html, { waitUntil: 'load' });
+    await w.waitForTimeout(250);
+    const marca = await w.evaluate(() => document.querySelector('.ph').getAttribute('data-metas-encabezado'));
+    const pdf = await w.pdf({ format: 'Letter', preferCSSPageSize: true });
+    await w.close();
+    return { marca, paginas: (pdf.toString('latin1').match(/\/Type\s*\/Page[^s]/g) || []).length };
+  };
+  const rHoy = await robot(false), rCon = await robot(true);
+  ok(rCon.marca === 'centro' && rHoy.paginas === rCon.paginas, 'con el centro se pagina igual que hoy (examen y pauta)', { hoy: rHoy.paginas, conCentro: rCon.paginas });
 
   ok(!errores.length, 'sin errores en la página', errores);
   await nav.close();
-  console.log(fallos ? '\n✘ ' + fallos + ' comprobaciones fallaron' : '\n✅ El examen impreso lleva el centro elegido, y sin sesión o sin encabezado sale como hoy');
+  console.log(fallos ? '\n✘ ' + fallos + ' comprobaciones fallaron' : '\n✅ El examen impreso lleva el centro activo sin preguntar, con el logo a color, y sin sesión sale como hoy');
   process.exit(fallos ? 1 : 0);
 })().catch(e => { console.error('✘ ' + (e && e.stack || e)); process.exit(1); });
