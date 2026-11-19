@@ -5,7 +5,7 @@
    aquí por tandas pequeñas; cada misión sigue en su página de siempre,
    con su misma dirección y su misma llave de guardado.
 
-   Hoy tiene tres piezas:
+   Hoy tiene cuatro piezas:
 
    1. EL EXAMEN POR FORMAS (`_evalRng`, `_shuffleF`, `_pickF`,
       `_injectFormaSel`). Estaban copiadas, idénticas, en 84 misiones.
@@ -20,6 +20,9 @@
       `_repartoConceptual`): la misión que trae un banco nuevo al lado del
       de siempre ofrece formas nuevas, repartidas con las mismas ruedas.
    3. LA PUERTA (`mision.html?m=<carpeta>`), que lleva a una misión.
+   4. EL CENTRO EN EL EXAMEN IMPRESO (`_envolverImpresiones`): el perfil
+      del centro que el docente configura en Mi aula sale arriba de la
+      hoja, y si tiene dos centros o más se le pregunta con cuál.
 
    Las funciones del examen se publican con el MISMO nombre global que
    tenían dentro de cada misión, porque el resto de la misión las llama
@@ -455,6 +458,297 @@
     });
   }
 
+  /* ══════════ 4 · El centro en el encabezado del examen impreso ══════════
+
+     El docente configura su centro en Mi aula (nombre, logo, dirección).
+     Aquí ese perfil sale arriba de la hoja impresa del examen: logo en
+     gris a la izquierda, el nombre en mayúsculas, y en letra pequeña el
+     lugar y el nombre del maestro. La raya «Centro Educativo: ____» se
+     quita, porque ya está escrito arriba.
+
+     Solo con un docente con sesión y un centro con nombre. Cualquier otro
+     (sin cuenta, alumno, familia, docente que cerró sesión) imprime la
+     hoja de siempre, con la raya en blanco.
+
+     No se toca ninguna de las 84 misiones. Cada una arma su hoja en un
+     texto y lo escribe en una ventana nueva (`printEval`, `printEvalOp`,
+     `printEvalCrit`). Las tres se envuelven al cargar: la envoltura
+     decide el centro, y mientras corre la impresión de la misión cambia
+     solo el bloque `.ph` del texto ANTES de escribirlo, para que el
+     ajuste de tamaño que trae la hoja mida ya el encabezado nuevo y la
+     hoja siga cabiendo en una carta.
+
+     Con dos centros o más, primero se pregunta con cuál. La impresión de
+     la misión corre dentro del toque en el botón del centro: así la
+     ventana nueva la abre un toque del docente y el navegador no la
+     bloquea.
+
+     La hoja que sale de aquí lleva `data-metas-encabezado`, y
+     `MetasCentro.examen` (js/metas-centro.js) ya no la toca. */
+
+  var LLAVE_CENTRO_EXAMEN = 'METAS_EXAMEN_CENTRO_V1';   // preferencia de vista: el último centro elegido
+  var SIN_ENCABEZADO = 'sin';
+  /* Cada impresión, con el dato que la misión revisa antes de imprimir.
+     Sin ese dato la misión solo avisa «genera una evaluación primero»:
+     no tiene sentido preguntar antes por el centro. */
+  var IMPRESIONES = { printEval: '_evalPrintData', printEvalOp: '_evalOpData', printEvalCrit: '_evalCritData' };
+
+  function _esc(t) {
+    return String(t == null ? '' : t).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function _txt(t) { return String(t == null ? '' : t).trim(); }
+
+  function _conSesion() {
+    var MC = global.MetasCentro;
+    return !!(MC && typeof MC.sesionDocente === 'function' && typeof MC.centros === 'function' && MC.sesionDocente());
+  }
+  /* Los centros que valen para el encabezado: hace falta la sesión del
+     docente y, de cada centro, por lo menos el nombre. */
+  function _centrosParaExamen() {
+    if (!_conSesion()) return [];
+    return (global.MetasCentro.centros() || []).filter(function (c) { return c && c.id && _txt(c.nombre); });
+  }
+
+  function _leerUltimo() { try { return global.localStorage.getItem(LLAVE_CENTRO_EXAMEN) || ''; } catch (e) { return ''; } }
+  function _guardarUltimo(v) { try { global.localStorage.setItem(LLAVE_CENTRO_EXAMEN, v); } catch (e) { /* solo se pierde el recuerdo */ } }
+
+  /* El logo solo si es una imagen de verdad: va dentro de un atributo. */
+  function _logoSeguro(src) {
+    src = _txt(src);
+    return /^(data:image\/|https?:\/\/)/i.test(src) ? src.replace(/["'<>\s]/g, '') : '';
+  }
+
+  /* La segunda raya del alumno. Las 84 misiones la escriben siempre en
+     el mismo orden, con estos rótulos: el centro como «Centro Educativo»,
+     «Instituto» o «Universidad/Instituto»; el grado como «Grado y
+     Sección», «Grado» o «Carrera/Sección»; el número como «N.º Lista»,
+     «N.º» o «N.º Cuenta». Lo vigila _dev/verifica-encabezado-centro.js
+     contra todas las hojas de las misiones. */
+  var RAYA_CENTRO = /<div class="ph-line"><strong>(?:Centro Educativo|Instituto|Universidad\/Instituto):<\/strong><span class="ph-fill">&nbsp;<\/span><strong>(Grado y Sección|Grado|Carrera\/Sección):<\/strong><span class="ph-s">&nbsp;<\/span><strong>(N\.º Lista|N\.º|N\.º Cuenta):<\/strong><span class="ph-xs">&nbsp;<\/span><\/div>/g;
+  var BLOQUE_PH = /<div class="ph">/g;
+
+  /* Sin la raya del centro, el grado ocupa lo que queda del renglón,
+     como el nombre en el de arriba. El de la universidad conserva sus
+     rótulos; los de Básica dicen todos «Grado y Sección» y «N.º de lista». */
+  function _rayaAlumno(m, grado, num) {
+    var g = grado === 'Carrera/Sección' ? grado : 'Grado y Sección';
+    var n = num === 'N.º Cuenta' ? num : 'N.º de lista';
+    return '<div class="ph-line"><strong>' + g + ':</strong><span class="ph-fill">&nbsp;</span><strong>' + n
+      + ':</strong><span class="ph-xs">&nbsp;</span></div>';
+  }
+
+  /* Compacto a propósito: el bloque suma unos 9 mm a la hoja. Las 160
+     hojas con ajuste de tamaño lo absorben solas; las 8 de Fin de grado no
+     traen ajuste y van cerca del final de la carta. El logo mide lo mismo
+     que las dos líneas de texto para no agregar alto por su cuenta. */
+  function _bloqueCentro(centro, docente) {
+    var logo = _logoSeguro(centro.logo);
+    var lugar = [];
+    [centro.direccion, centro.municipio].forEach(function (p) {
+      p = _txt(p);
+      if (p && lugar.indexOf(p) < 0) lugar.push(p);
+    });
+    var bajo = [];
+    if (lugar.length) bajo.push(_esc(lugar.join(', ')));
+    if (_txt(docente)) bajo.push('Docente: ' + _esc(_txt(docente)));
+    var lado = 'flex:none;width:34px;height:34px;';
+    return '<div data-metas-centro style="display:flex;align-items:center;gap:8px;margin:0 0 0.1rem;">'
+      + (logo ? '<img data-metas-logo alt="" src="' + logo + '" style="' + lado
+        + 'object-fit:contain;filter:grayscale(1);-webkit-filter:grayscale(1);">' : '')
+      + '<div style="flex:1;min-width:0;text-align:center;">'
+      + '<div style="font-size:11.5pt;font-weight:700;letter-spacing:0.03em;line-height:1.15;">'
+      + _esc(_txt(centro.nombre).toLocaleUpperCase('es')) + '</div>'
+      + (bajo.length ? '<div style="font-size:8.5pt;color:#333;line-height:1.2;">' + bajo.join(' · ') + '</div>' : '')
+      + '</div>'
+      /* Del otro lado, un hueco del ancho del logo: así el nombre queda
+         centrado en la hoja y no corrido a la derecha. */
+      + (logo ? '<div aria-hidden="true" style="' + lado + '"></div>' : '')
+      + '</div>';
+  }
+
+  /* El texto de la hoja, con el encabezado que toca. `centro` null es
+     «Sin encabezado»: la hoja de siempre, con la raya para escribir el
+     centro, solo marcada para que nadie la llene. Si una hoja no tiene la
+     forma conocida, sale así también, sin perder nada. */
+  function _hojaConEncabezado(html, centro, docente) {
+    if (typeof html !== 'string' || html.indexOf('<div class="ph">') < 0) return html;
+    var bloques = html.match(BLOQUE_PH).length;
+    var rayas = (html.match(RAYA_CENTRO) || []).length;
+    if (!centro || rayas !== bloques) {
+      return html.replace(BLOQUE_PH, '<div class="ph" data-metas-encabezado="' + SIN_ENCABEZADO + '">');
+    }
+    var arriba = _bloqueCentro(centro, docente);
+    var out = html
+      .replace(RAYA_CENTRO, _rayaAlumno)
+      .replace(BLOQUE_PH, function () { return '<div class="ph" data-metas-encabezado="centro">' + arriba; });
+    /* Las 160 hojas que traen su ajuste (`fit`) ya miden con el bloque
+       puesto. Las 8 de Fin de grado no traen ajuste y van al límite de la
+       carta: la operativa de 5.º tiene un milímetro libre, y el bloque la
+       mandaba a una segunda hoja. A esas se les quita exactamente lo que el
+       bloque agrega: la hoja queda del mismo alto que hoy y se pagina
+       igual, a cambio de verse un 3 o 4 % más chica. */
+    if (out.indexOf('function fit(') < 0) {
+      var ajuste = '<script>(function(){var b=document.querySelector("[data-metas-centro]");'
+        + 'var p=b&&b.parentElement&&b.parentElement.parentElement;if(!p||p===document.body||p===document.documentElement)return;'
+        + 'var H=p.getBoundingClientRect().height,h=b.getBoundingClientRect().height+(parseFloat(getComputedStyle(b).marginBottom)||0);'
+        + 'if(h>0&&H>h*4)p.style.zoom=((H-h)/H).toFixed(4);})();</script>';
+      var cierre = out.lastIndexOf('</body>');
+      out = cierre >= 0 ? out.slice(0, cierre) + ajuste + out.slice(cierre) : out + ajuste;
+    }
+    return out;
+  }
+
+  function _docenteDe(centro) {
+    if (centro && _txt(centro.docente)) return _txt(centro.docente);
+    var ses = global.MetasCentro && global.MetasCentro.sesionDocente && global.MetasCentro.sesionDocente();
+    return ses && _txt(ses.nombre) ? _txt(ses.nombre) : '';
+  }
+
+  /* Corre la impresión de la misión con la ventana nueva vigilada: lo que
+     la misión escribe en ella pasa antes por `_hojaConEncabezado`. Solo
+     durante esta llamada; después `window.open` queda como estaba. */
+  function _imprimirCon(centro, original, yo, args) {
+    var abrir = global.open;
+    var docente = centro ? _docenteDe(centro) : '';
+    global.open = function () {
+      var win = abrir.apply(global, arguments);
+      try {
+        if (win && win.document && !win.__metasEncabezado) {
+          win.__metasEncabezado = 1;
+          var escribir = win.document.write;
+          win.document.write = function (html) {
+            if (typeof html === 'string') html = _hojaConEncabezado(html, centro, docente);
+            return escribir.call(win.document, html);
+          };
+        }
+      } catch (e) { /* la hoja sale como siempre */ }
+      return win;
+    };
+    try { return original.apply(yo, args); }
+    finally { global.open = abrir; }
+  }
+
+  var CSS_CENTRO = [
+    '.metas-centro-velo{position:fixed;inset:0;z-index:2147483000;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;padding:16px;}',
+    '.metas-centro-caja{background:#fff;color:#0f172a;border-radius:16px;max-width:420px;width:100%;max-height:calc(100vh - 32px);overflow:auto;padding:20px 16px 16px;box-shadow:0 20px 50px rgba(0,0,0,.35);font-family:inherit;}',
+    '.metas-centro-tit{font-size:1.05rem;font-weight:800;margin:0 0 12px;text-align:center;line-height:1.3;}',
+    '.metas-centro-lista{display:flex;flex-direction:column;gap:8px;}',
+    '.metas-centro-op{appearance:none;-webkit-appearance:none;display:flex;align-items:center;gap:10px;width:100%;min-height:56px;padding:8px 12px;border:2px solid #cbd5e1;border-radius:12px;background:#fff;color:#0f172a;font:inherit;font-size:.95rem;font-weight:700;text-align:left;cursor:pointer;line-height:1.25;}',
+    '.metas-centro-op img{flex:none;width:40px;height:40px;object-fit:contain;filter:grayscale(1);-webkit-filter:grayscale(1);}',
+    '.metas-centro-op .metas-centro-nom{flex:1;min-width:0;}',
+    '.metas-centro-op .metas-centro-ult{display:block;font-size:.75rem;font-weight:600;color:#475569;margin-top:2px;}',
+    '.metas-centro-op[data-ultimo]{border-color:var(--pri,#1e3a7c);}',
+    '.metas-centro-op:focus-visible,.metas-centro-cerrar:focus-visible{outline:3px solid var(--pri,#1e3a7c);outline-offset:2px;}',
+    '.metas-centro-sin{font-weight:600;min-height:48px;}',
+    '.metas-centro-cerrar{appearance:none;-webkit-appearance:none;display:block;margin:12px auto 0;min-height:44px;min-width:120px;padding:0 16px;border:0;border-radius:12px;background:transparent;color:#334155;font:inherit;font-size:.9rem;font-weight:700;cursor:pointer;text-decoration:underline;}',
+    '@media print{.metas-centro-velo{display:none!important;}}'
+  ].join('\n');
+
+  function _estilosCentro(doc) {
+    if (doc.getElementById('metas-centro-css')) return;
+    var st = doc.createElement('style');
+    st.id = 'metas-centro-css';
+    st.textContent = CSS_CENTRO;
+    (doc.head || doc.documentElement).appendChild(st);
+  }
+
+  /* El selector: un botón por centro (logo y nombre) y «Sin encabezado».
+     El último elegido lleva el borde de color y el foco, para que la
+     próxima vez baste un toque. Cancelar no imprime nada. */
+  function _elegirCentro(lista, alElegir) {
+    var doc = global.document;
+    var viejo = doc.getElementById('metas-centro-velo');
+    if (viejo) viejo.parentNode.removeChild(viejo);
+    _estilosCentro(doc);
+    var ultimo = _leerUltimo();
+    var antes = doc.activeElement;
+
+    var velo = doc.createElement('div');
+    velo.id = 'metas-centro-velo';
+    velo.className = 'metas-centro-velo';
+    var caja = doc.createElement('div');
+    caja.className = 'metas-centro-caja';
+    caja.setAttribute('role', 'dialog');
+    caja.setAttribute('aria-modal', 'true');
+    caja.setAttribute('aria-labelledby', 'metas-centro-tit');
+    var h = '<h2 class="metas-centro-tit" id="metas-centro-tit">¿Con qué centro imprimes el examen?</h2><div class="metas-centro-lista">';
+    lista.forEach(function (c) {
+      var logo = _logoSeguro(c.logo);
+      h += '<button type="button" class="metas-centro-op" data-centro="' + _esc(c.id) + '"' + (c.id === ultimo ? ' data-ultimo' : '') + '>'
+        + (logo ? '<img alt="" src="' + logo + '">' : '')
+        + '<span class="metas-centro-nom">' + _esc(_txt(c.nombre))
+        + (c.id === ultimo ? '<span class="metas-centro-ult">✓ La última vez</span>' : '') + '</span></button>';
+    });
+    h += '<button type="button" class="metas-centro-op metas-centro-sin" data-centro=""' + (ultimo === SIN_ENCABEZADO ? ' data-ultimo' : '') + '>'
+      + '<span class="metas-centro-nom">Sin encabezado (como antes)'
+      + (ultimo === SIN_ENCABEZADO ? '<span class="metas-centro-ult">✓ La última vez</span>' : '') + '</span></button>';
+    h += '</div><button type="button" class="metas-centro-cerrar">Cancelar</button>';
+    caja.innerHTML = h;
+    velo.appendChild(caja);
+    doc.body.appendChild(velo);
+    _traducir(caja);
+
+    function cerrar() {
+      doc.removeEventListener('keydown', teclas, true);
+      if (velo.parentNode) velo.parentNode.removeChild(velo);
+      try { if (antes && antes.focus) antes.focus({ preventScroll: true }); } catch (e) { }
+    }
+    function teclas(ev) {
+      if (ev.key === 'Escape') { ev.preventDefault(); cerrar(); return; }
+      if (ev.key !== 'Tab') return;
+      // El foco no se sale del selector mientras está abierto.
+      var botones = caja.querySelectorAll('button');
+      var primero = botones[0], ultimoBtn = botones[botones.length - 1];
+      if (ev.shiftKey && doc.activeElement === primero) { ev.preventDefault(); ultimoBtn.focus(); }
+      else if (!ev.shiftKey && doc.activeElement === ultimoBtn) { ev.preventDefault(); primero.focus(); }
+    }
+    doc.addEventListener('keydown', teclas, true);
+    velo.addEventListener('click', function (ev) { if (ev.target === velo) cerrar(); });
+    caja.querySelector('.metas-centro-cerrar').addEventListener('click', cerrar);
+    Array.prototype.forEach.call(caja.querySelectorAll('.metas-centro-op'), function (b) {
+      b.addEventListener('click', function () {
+        var id = b.getAttribute('data-centro');
+        var centro = null;
+        for (var i = 0; i < lista.length; i++) if (lista[i].id === id) centro = lista[i];
+        _guardarUltimo(centro ? centro.id : SIN_ENCABEZADO);
+        cerrar();
+        alElegir(centro);
+      });
+    });
+    var foco = caja.querySelector('[data-ultimo]') || caja.querySelector('.metas-centro-op');
+    if (foco) foco.focus();
+  }
+
+  /* js/metas-registro.js envuelve printEval y printEvalOp después (para
+     anotar la pauta impresa), así que la marca no se ve desde afuera: se
+     lleva aquí la cuenta de lo envuelto. */
+  var envueltas = [];
+  function _envolverImpresion(nombre) {
+    var original = global[nombre];
+    if (typeof original !== 'function' || original.__metasCentro || envueltas.indexOf(nombre) >= 0) return;
+    var dato = IMPRESIONES[nombre];
+    var envuelta = function () {
+      var yo = this, args = arguments;
+      if (!global[dato] || !_conSesion()) return original.apply(yo, args);
+      /* Con sesión, la hoja la decide siempre el motor: sin un centro con
+         nombre sale la de siempre, marcada, y MetasCentro.examen no le
+         pone a medias un logo o un nombre de otro lado. */
+      var lista = _centrosParaExamen();
+      if (!lista.length) return _imprimirCon(null, original, yo, args);
+      if (lista.length === 1) return _imprimirCon(lista[0], original, yo, args);
+      _elegirCentro(lista, function (centro) { _imprimirCon(centro, original, yo, args); });
+    };
+    envuelta.__metasCentro = true;
+    envuelta.__original = original;
+    global[nombre] = envuelta;
+    envueltas.push(nombre);
+  }
+  function _envolverImpresiones() {
+    Object.keys(IMPRESIONES).forEach(function (n) { try { _envolverImpresion(n); } catch (e) { } });
+  }
+
   (function _alCargar() {
     var doc = global.document;
     if (!doc || typeof doc.addEventListener !== 'function' || typeof global.setTimeout !== 'function') return;
@@ -462,9 +756,12 @@
     /* El setTimeout espera a que terminen TODOS los DOMContentLoaded,
        también los de `window`, que es donde las misiones leen su progreso. */
     var alinear = function () { global.setTimeout(function () { try { _alinearConLaMision(); } catch (e) { } }, 0); };
+    /* Las impresiones se envuelven cuando la misión ya las declaró: su
+       archivo se carga después de este. */
+    var envolver = function () { try { _envolverImpresiones(); } catch (e) { } };
     if (doc.readyState === 'loading') {
-      doc.addEventListener('DOMContentLoaded', function () { _estilos(); acortar(); alinear(); });
-    } else { try { _estilos(); } catch (e) { } acortar(); alinear(); }
+      doc.addEventListener('DOMContentLoaded', function () { _estilos(); acortar(); alinear(); envolver(); });
+    } else { try { _estilos(); } catch (e) { } acortar(); alinear(); global.setTimeout(envolver, 0); }
     if (typeof global.addEventListener === 'function') global.addEventListener('load', alinear);
   })();
 
@@ -942,7 +1239,8 @@
     examen: { rng: _evalRng, barajar: _shuffleF, elegir: _pickF, selectorDeForma: _injectFormaSel },
     conceptual: { formas: _formasConceptual, reparto: _repartoConceptual, apartados: _apartadosConceptual, bancoGrande: _bancoGrandeConceptual, tope: _topeConceptual, nuevasPorSeccion: NUEVAS_POR_SECCION, deAntesPorSeccion: DE_ANTES_POR_SECCION },
     critica: { formasMaximas: FORMAS_CRITICA, conjuntos: _conjuntosCritica, formas: _formasCritica, reparto: _repartoCritica, conFormasDeAntes: _conFormasDeAntes, conOpcionesRepartidas: _conOpcionesRepartidas, barajarSinFilaPropia: _barajarSinFilaPropia, selector: _selectorCritica, turno: _turnoCritica },
-    abrirPedida: abrirPedida, buscar: buscar, carpetaDe: carpetaDe
+    abrirPedida: abrirPedida, buscar: buscar, carpetaDe: carpetaDe,
+    centro: { hoja: _hojaConEncabezado, centros: _centrosParaExamen, envolver: _envolverImpresiones, envueltas: function () { return envueltas.slice(); } }
   };
 /* `globalThis` y no `window` a secas: en el navegador son lo mismo, y las
    sondas que cargan esto en Node tienen un `window` de mentira que no es el

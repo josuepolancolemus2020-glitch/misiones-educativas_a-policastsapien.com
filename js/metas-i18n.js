@@ -210,6 +210,9 @@
        (el texto largo queda en aria-label y se traduce con las claves de arriba) */
     '🔄 Nueva': '🔄 New', '🧮 Calificar': '🧮 Grade', '🧮 Total': '🧮 Total',
     'Elige la forma': 'Choose the form',
+    /* el selector de centro antes de imprimir el examen (js/motor-misiones.js) */
+    '¿Con qué centro imprimes el examen?': 'Which school should the printed test show?',
+    'Sin encabezado (como antes)': 'No header (as before)', '✓ La última vez': '✓ Last time',
     '📊 Distribución de puntaje · 100 puntos': '📊 Score distribution · 100 points',
     'Cada sección vale 25 puntos (5 preguntas × 5 pts)': 'Each section is worth 25 points (5 questions × 5 pts)',
     'Completar 25 pts': 'Fill in 25 pts', 'V/F 25 pts': 'T/F 25 pts',

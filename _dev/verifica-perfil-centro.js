@@ -154,6 +154,9 @@ const igual = MC.examen(trozo);
 ok(igual === trozo, 'sin perfil, el examen queda con las mismas rayas');
 
 localStorage.setItem('METAS_CENTRO_LECTURA', JSON.stringify({ actual: 'aula-ficticia', porAula: { 'aula-ficticia': perfil } }));
+ok(MC.examen(trozo) === trozo, 'con perfil pero sin sesión docente, el examen queda con las mismas rayas');
+// El perfil solo se usa con la sesión del docente abierta en el aparato.
+localStorage.setItem('METAS_DOCENTE_V1', JSON.stringify({ codigo: 'DOC-FICTICIO', nombre: 'Docente Ficticia' }));
 const lleno = MC.examen(trozo);
 ok(lleno.includes('Centro Ficticio Las Flores') && lleno.includes('6º-1') && lleno.includes('data-metas-logo') && lleno.includes(LOGO),
   'con perfil, el examen lleva el centro, el grado y el logo');
@@ -171,6 +174,13 @@ win.document.write(trozo);
 const escrito = chunks.join('');
 ok(escrito.includes('Centro Ficticio Las Flores') && escrito.includes('6º-1'),
   'la ventana de impresión del examen también lo llena');
+
+const marcada = trozo.replace('<div class="ph">', '<div class="ph" data-metas-encabezado="sin">');
+ok(MC.examen(marcada) === marcada, 'una hoja que el motor ya armó no se toca');
+
+localStorage.removeItem('METAS_DOCENTE_V1');
+ok(MC.examen(trozo) === trozo, 'al cerrar sesión vuelven las rayas, aunque el perfil siga en el aparato');
+localStorage.setItem('METAS_DOCENTE_V1', JSON.stringify({ codigo: 'DOC-FICTICIO', nombre: 'Docente Ficticia' }));
 
 localStorage.removeItem('METAS_CENTRO_LECTURA');
 ok(MC.examen(trozo) === trozo, 'al quitar el perfil vuelven las rayas');
