@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pantalla ficticia · perfil institucional</title>
+<link rel="stylesheet" href="../css/vendor/fuentes/fuentes.css">
+<link rel="stylesheet" href="../css/app.css">
+<link rel="stylesheet" href="../css/mi-aula.css">
+<link rel="stylesheet" href="../css/vendor/fontawesome/css/all.min.css">
+</head>
+<body>
+<div id="view-mi-aula" class="view active">
+  <header class="app-header compact con-volver">
+    <button class="back-icon-btn" id="mi-aula-back-btn" type="button" aria-label="Volver">
+      <i class="fa-solid fa-arrow-left" aria-hidden="true"></i><span class="back-txt">Volver</span>
+    </button>
+    <h1 class="view-title">Mi aula</h1>
+    <div class="header-actions"></div>
+  </header>
+  <div class="view-scroll"><div id="mi-aula" data-metas="mi-aula"></div></div>
+</div>
+<div id="ma-tarjeta" hidden></div>
+<script>
+(function () {
+  var tablas = {
+    centros: [
+      { id: 'cook', nombre: 'CEB John Arnold Cook', anio_lectivo: 2026, created_at: '2026-01-01', docente: 'Ana Sofía Mejía', director: 'Carlos Rivera', codigo_sace: '051100134B10', direccion: null, aldea: null, municipio: 'Villanueva', departamento: 'Cortés', modalidad: null, jornada: 'Matutina', logo: null, logo_sec: null },
+      { id: 'consuelo', nombre: 'Instituto María Consuelo', anio_lectivo: 2026, created_at: '2026-02-01', docente: 'Ana Sofía Mejía', director: 'Lucía Romero', codigo_sace: null, direccion: null, aldea: null, municipio: null, departamento: null, modalidad: null, jornada: 'Vespertina', logo: null, logo_sec: null }
+    ],
+    aulas: [
+      { id: 'a6', escuela: 'CEB John Arnold Cook', grado: 6, seccion: '1', anio_lectivo: 2026, created_at: '2026-01-02', centro_id: 'cook', docente_nombre: 'Ana Sofía Mejía' },
+      { id: 'a5', escuela: 'CEB John Arnold Cook', grado: 5, seccion: '1', anio_lectivo: 2026, created_at: '2026-01-03', centro_id: 'cook', docente_nombre: 'Ana Sofía Mejía' },
+      { id: 'a8', escuela: 'Instituto María Consuelo', grado: 8, seccion: '1', anio_lectivo: 2026, created_at: '2026-02-02', centro_id: 'consuelo', docente_nombre: 'Ana Sofía Mejía' }
+    ],
+    alumnos: [
+      { id: 'al1', aula_id: 'a6', nombre_completo: 'Alumna Ficticia Uno', num_lista: 1, estado: 'activo' },
+      { id: 'al2', aula_id: 'a8', nombre_completo: 'Alumno Ficticio Dos', num_lista: 1, estado: 'activo' }
+    ],
+    asignaturas: [
+      { id: 'm1', aula_id: 'a6', nombre: 'Ciencias Naturales', orden: 1, created_at: '2026-01-04' },
+      { id: 'm2', aula_id: 'a6', nombre: 'Español', orden: 2, created_at: '2026-01-05' },
+      { id: 'm3', aula_id: 'a8', nombre: 'Inglés', orden: 1, created_at: '2026-02-03' },
+      { id: 'm4', aula_id: 'a8', nombre: 'Computación', orden: 2, created_at: '2026-02-04' }
+    ],
+    notas: [
+      { id: 'n1', aula_id: 'a6', alumno_id: 'al1', asignatura_id: 'm1', periodo: 'I', componente: 'final', valor: '80' },
+      { id: 'n2', aula_id: 'a6', alumno_id: 'al1', asignatura_id: 'm2', periodo: 'I', componente: 'final', valor: '90' },
+      { id: 'n3', aula_id: 'a8', alumno_id: 'al2', asignatura_id: 'm3', periodo: 'I', componente: 'final', valor: '85' },
+      { id: 'n4', aula_id: 'a8', alumno_id: 'al2', asignatura_id: 'm4', periodo: 'I', componente: 'final', valor: '70' }
+    ]
+  };
+  function lista(nombre, filtro) {
+    var rows = (tablas[nombre] || []).slice();
+    if (filtro) rows = rows.filter(function (r) {
+      return Object.keys(filtro).every(function (k) { return r[k] === filtro[k]; });
+    });
+    return rows;
+  }
+  var api = {
+    lista: lista,
+    cuenta: function () { return { id: 'docente-ficticio' }; },
+    pideContrasena: function () { return false; },
+    preguntas: function () { return []; },
+    noAnotado: function () { return []; },
+    sinSenal: function () { return false; },
+    escuchar: function () {},
+    alCambiarSenal: function () {},
+    editar: function (tabla, id, cambios) {
+      var fila = (tablas[tabla] || []).filter(function (r) { return r.id === id; })[0];
+      if (fila) Object.keys(cambios).forEach(function (k) { fila[k] = cambios[k]; });
+      return { id: id };
+    },
+    crear: function (tabla, fila) {
+      var id = 'nuevo-' + ((tablas[tabla] || []).length + 1);
+      var row = Object.assign({ id: id }, fila);
+      (tablas[tabla] = tablas[tabla] || []).push(row);
+      return { id: id };
+    }
+  };
+  window.MetasDatos = {
+    montos: { enLetras: function (m) { return String(m); } },
+    iniciar: function () {
+      return { then: function (fn) { fn(api); return this; }, catch: function () { return this; } };
+    }
+  };
+  try { localStorage.setItem('METAS_MI_AULA_VISTA_V1', JSON.stringify({ aula: 'a6', seccion: 'notas', centro: 'cook' })); } catch (e) {}
+})();
+</script>
+<script src="../js/metas-centro.js"></script>
+<script src="../js/tools/mi-aula.js"></script>
+</body>
+</html>

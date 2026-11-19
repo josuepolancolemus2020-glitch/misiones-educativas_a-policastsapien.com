@@ -2,14 +2,17 @@
    M.E.T.A.S · Perfil institucional al entrar y en los impresos
    ---------------------------------------------------------------------
    Con datos ficticios:
-   · en Mi aula, el aviso sale si el grupo no tiene perfil y no sale
-     si ya lo tiene; al tocarlo se abre Encabezado y logos;
+   · en Mi aula, el aviso sale si todavía no hay perfil y no sale si
+     ya hay uno; al tocarlo se abre el perfil en su propia pantalla;
+   · al cambiar de centro se ven solo los grupos de ese centro;
+   · un centro nuevo no se lleva los grupos que ya estaban;
+   · el nombre del maestro entra en el impreso si el perfil lo trae,
+     y vacío no borra el que ya estaba escrito;
    · cada documento conectado, sin perfil, da el mismo HTML que da
      otra vez (es el de hoy: el perfil no entra en la hoja);
    · el análisis, la papeleta, el parte y el collage: sin perfil el HTML
      no cambia; con un perfil ficticio salen el logo y el nombre;
-   · el formulario de encabezado vive en Perfil institucional, no en
-     Notas SACE, y cada grupo elige su centro cuando hay más de uno.
+   · el formulario de encabezado vive en su pantalla, no junto a Notas SACE.
 
    Uso: node _dev/verifica-perfil-institucional.js
    ===================================================================== */
@@ -423,6 +426,33 @@ ok(impDos.escuela === 'Centro Dos' && impDos.logo === LOGO_DOS, 'el segundo 6º-
 ok(impAjeno === ajeno, 'un grupo suelto con el mismo grado no hereda el centro del otro');
 delete sandbox.MetasDatos;
 
+sandbox.MetasDatos = {
+  lista: function (nombre) {
+    if (nombre === 'aulas') return [
+      { id: 'aula-uno', grado: 6, seccion: '1', escuela: 'CEB John Arnold Cook', centro_id: 'c1' },
+    ];
+    if (nombre === 'centros') return [
+      { id: 'c1', nombre: 'CEB John Arnold Cook', docente: docenteImpreso, anio_lectivo: 2026 },
+    ];
+    return [];
+  },
+};
+let docenteImpreso = '';
+const sinMaestro = sandbox.MetasCentro.paraImpreso({
+  id: 'aula-uno', grado: '6', seccion: '1', escuela: 'X',
+  boleta: { docente: 'Docente Escrita A Mano' },
+});
+ok(sinMaestro.boleta.docente === 'Docente Escrita A Mano',
+  'sin nombre en el perfil, el del impreso se queda');
+docenteImpreso = 'Maestra del Centro';
+const conMaestro = sandbox.MetasCentro.paraImpreso({
+  id: 'aula-uno', grado: '6', seccion: '1', escuela: 'X',
+  boleta: { docente: 'Docente Escrita A Mano' },
+});
+ok(conMaestro.boleta.docente === 'Maestra del Centro',
+  'el nombre del maestro del perfil sale en el impreso');
+delete sandbox.MetasDatos;
+
 /* Excel: no es HTML. Sin perfil, el centro del encabezado no cambia. */
 function excelCentro(cual) {
   let visto = null;
@@ -573,17 +603,21 @@ uiStore.setItem('METAS_MI_AULA_VISTA_V1', JSON.stringify({ aula: 'aula-1', secci
 vm.runInContext(fs.readFileSync(path.join(RAIZ, 'js/tools/mi-aula.js'), 'utf8'), ui, { filename: 'js/tools/mi-aula.js' });
 
 const sin = raiz._html;
-ok(sin.includes('Configura tu perfil institucional') && sin.includes('data-metas="aviso-perfil"'),
-  'sin perfil, arriba sale el aviso');
-ok(sin.includes('data-metas="perfil-institucional"') && sin.includes('Perfil institucional'),
-  'la entrada Perfil institucional queda a la vista');
+ok(sin.includes('Completa tu perfil institucional') && sin.includes('data-metas="aviso-perfil"'),
+  'sin perfil, arriba sale el aviso corto');
+ok(!sin.includes('data-form="centro"'), 'sin perfil, el formulario no está junto al aula');
 ok(sin.indexOf('aviso-perfil') < sin.indexOf('ma-grupos'), 'el aviso queda arriba de los grupos');
 
 const btn = busca(raiz, '[data-metas="aviso-perfil"]')[0];
 ok(!!btn, 'el aviso es un botón');
 if (btn) clics.forEach(fn => fn({ target: btn, preventDefault() {}, stopPropagation() {} }));
-ok(raiz._html.includes('data-form="centro"') && raiz._html.includes('Encabezado y logos'),
-  'al tocar el aviso se abre Encabezado y logos');
+ok(raiz._html.includes('data-form="centro"') && raiz._html.includes('Nombre del maestro(a)'),
+  'al tocar el aviso se abre el perfil, con el nombre del maestro');
+ok(!raiz._html.includes('ma-secs'), 'el perfil es su pantalla: no lleva las secciones del aula');
+
+const atras = nodo('button');
+atras.id = 'mi-aula-back-btn';
+clics.forEach(fn => fn({ target: atras, preventDefault() {}, stopPropagation() {} }));
 
 tablas.aulas[0].centro_id = 'centro-1';
 tablas.centros.push({
@@ -593,22 +627,18 @@ tablas.centros.push({
 });
 ui.metasMiAula.abrir();
 const con = raiz._html;
-ok(!con.includes('data-metas="aviso-perfil"') && !con.includes('Configura tu perfil institucional'),
+ok(!con.includes('data-metas="aviso-perfil"') && !con.includes('Completa tu perfil institucional'),
   'con perfil, el aviso ya no sale');
 ok(con.includes('data-metas="perfil-institucional"'), 'con perfil, la entrada para editarlo sigue');
+ok(!con.includes('data-form="centro"'), 'con perfil, el formulario no se mezcla con el aula');
 
-/* El formulario ya no vive en Notas SACE. */
 const btnNotas = busca(raiz, '[data-valor="notas"]')[0];
 if (btnNotas) clics.forEach(fn => fn({ target: btnNotas, preventDefault() {}, stopPropagation() {} }));
 const notasHtml = raiz._html;
-const iImp = notasHtml.indexOf('Para imprimir');
-const trozoImp = iImp >= 0 ? notasHtml.slice(iImp, iImp + 700) : '';
-ok(iImp >= 0 && !/Encabezado y logos/.test(trozoImp) && !/data-accion="encabezado"/.test(trozoImp),
-  'Notas SACE, en Para imprimir, ya no tiene el botón ni la tarjeta de encabezado');
-ok(notasHtml.includes('data-metas="seccion-perfil"') && notasHtml.indexOf('data-form="centro"') < iImp,
-  'el formulario de encabezado queda en Perfil institucional, arriba');
+ok(notasHtml.includes('data-metas="perfil-desde-notas"') && !notasHtml.includes('data-form="centro"'),
+  'Notas SACE tiene el acceso al perfil y no el formulario');
+ok(!/Encabezado y logos/.test(notasHtml), 'Notas SACE no pinta el encabezado');
 
-/* Dos centros: pastillas, y cada grupo guarda el suyo. */
 api.editar = function (tabla, id, cambios) {
   const fila = (tablas[tabla] || []).filter(r => r.id === id)[0];
   if (fila) Object.keys(cambios).forEach(k => { fila[k] = cambios[k]; });
@@ -623,24 +653,56 @@ api.crear = function (tabla, fila) {
 tablas.aulas[0].centro_id = null;
 tablas.centros.length = 0;
 tablas.centros.push(
-  { id: 'centro-1', nombre: 'Centro Uno', anio_lectivo: 2026, logo: null, logo_sec: null, direccion: null, aldea: null, municipio: null, departamento: null, codigo_sace: null, director: null, modalidad: null, jornada: null },
-  { id: 'centro-2', nombre: 'Centro Dos', anio_lectivo: 2026, logo: null, logo_sec: null, direccion: null, aldea: null, municipio: null, departamento: null, codigo_sace: null, director: null, modalidad: null, jornada: null },
+  { id: 'centro-1', nombre: 'CEB John Arnold Cook', anio_lectivo: 2026, logo: null, logo_sec: null, direccion: null, aldea: null, municipio: null, departamento: null, codigo_sace: null, director: null, docente: 'Maestra del Cook', modalidad: null, jornada: null },
+  { id: 'centro-2', nombre: 'Instituto María Consuelo', anio_lectivo: 2026, logo: null, logo_sec: null, direccion: null, aldea: null, municipio: null, departamento: null, codigo_sace: null, director: null, docente: null, modalidad: null, jornada: null },
 );
-tablas.aulas.push({ id: 'aula-2', escuela: 'Centro Dos', grado: 6, seccion: '1', anio_lectivo: 2026, created_at: '2026-02-02', centro_id: 'centro-2' });
+tablas.aulas.push({ id: 'aula-2', escuela: 'Instituto María Consuelo', grado: 8, seccion: '1', anio_lectivo: 2026, created_at: '2026-02-02', centro_id: 'centro-2' });
+uiStore.setItem('METAS_MI_AULA_VISTA_V1', JSON.stringify({ aula: 'aula-1', seccion: 'notas' }));
 ui.metasMiAula.abrir();
+ok(tablas.aulas[0].centro_id === 'centro-1' && tablas.aulas[1].centro_id === 'centro-2',
+  'el grupo sin centro queda en el primero y el otro no se mueve');
 const listaPerfiles = raiz._html;
-const secPerf = listaPerfiles.slice(listaPerfiles.indexOf('seccion-perfil'), listaPerfiles.indexOf('</section>'));
-ok(listaPerfiles.includes('Centro Uno') && listaPerfiles.includes('Centro Dos')
-  && listaPerfiles.includes('+ Agregar perfil institucional') && secPerf.includes('Elige el perfil de este grupo'),
-  'con varios centros se ven las pastillas y se puede agregar otro');
-ok(secPerf.includes('Elige el perfil de este grupo') && !secPerf.includes('data-form="centro"'),
-  'si el grupo todavía no tiene centro, se le pide elegir y no se abre el formulario del otro');
-const btnCentro = busca(raiz, '[data-valor="centro-1"]')[0];
+ok(listaPerfiles.includes('CEB John Arnold Cook') && listaPerfiles.includes('Instituto María Consuelo')
+  && listaPerfiles.includes('+ Otro centro'),
+  'los dos centros se ven y se puede agregar otro');
+ok(listaPerfiles.includes('data-valor="aula-1"') && !listaPerfiles.includes('data-valor="aula-2"'),
+  'al empezar se ven solo los grupos del centro activo');
+const btnCentro = busca(raiz, '[data-valor="centro-2"]')[0];
 if (btnCentro) clics.forEach(fn => fn({ target: btnCentro, preventDefault() {}, stopPropagation() {} }));
 ok(tablas.aulas[0].centro_id === 'centro-1' && tablas.aulas[1].centro_id === 'centro-2',
-  'elegir la pastilla guarda el centro de este grupo y no mueve el otro');
-ok(raiz._html.includes('data-form="centro"') && raiz._html.includes('Encabezado y logos'),
-  'al elegir el perfil se abre el mismo formulario de encabezado');
+  'cambiar de centro no mueve los grupos');
+ok(raiz._html.includes('data-valor="aula-2"') && !raiz._html.includes('data-valor="aula-1"'),
+  'en el otro centro se ve solo su grupo');
+ok(!raiz._html.includes('data-form="centro"'), 'cambiar de centro no abre el formulario');
+
+const btnNuevo = busca(raiz, '[data-accion="agregar-perfil"]')[0];
+if (btnNuevo) clics.forEach(fn => fn({ target: btnNuevo, preventDefault() {}, stopPropagation() {} }));
+ok(raiz._html.includes('data-form="centro"') && raiz._html.includes('data-centro-id=""')
+  && raiz._html.includes('Nombre del maestro(a)'),
+  'otro centro abre el perfil en blanco');
+ok(tablas.aulas[0].centro_id === 'centro-1' && tablas.aulas[1].centro_id === 'centro-2',
+  'abrir otro centro no cambia el centro de los grupos');
+
+const guardado = ui.MetasCentro.guardar(api, tablas.aulas[0], {
+  nombre: 'Instituto Nuevo', anio_lectivo: '2026', docente: 'Maestra Nueva',
+  direccion: '', aldea: '', municipio: '', departamento: '', codigo_sace: '', director: '', modalidad: '', jornada: '',
+}, null);
+ok(guardado && guardado !== 'centro-1' && guardado !== 'centro-2', 'un centro nuevo tiene su propia fila');
+ok(tablas.aulas[0].centro_id === 'centro-1' && tablas.aulas[1].centro_id === 'centro-2',
+  'guardar un centro nuevo no se lleva los grupos que ya estaban');
+ok(!tablas.aulas[0].docente_nombre && !tablas.aulas[1].docente_nombre,
+  'el nombre del maestro no se copia a los grupos de otro centro');
+
+const indexHtml = fs.readFileSync(path.join(RAIZ, 'index.html'), 'utf8');
+const cssVolver = fs.readFileSync(path.join(RAIZ, 'css/app.css'), 'utf8');
+ok(indexHtml.includes('id="mi-aula-back-btn"') && indexHtml.includes('class="back-txt">Volver')
+  && indexHtml.includes('id="view-mi-aula"') && indexHtml.includes('con-volver'),
+  'Mi aula muestra Volver en la barra de arriba');
+ok(indexHtml.includes('id="admin-back-btn"') && /id="view-admin"[\s\S]*con-volver/.test(indexHtml),
+  'Más del aula también muestra Volver en la barra');
+ok(/\.app-header\.con-volver[\s\S]*transform:\s*none !important/.test(cssVolver)
+  && /\.back-icon-btn[\s\S]*min-height:\s*44px/.test(cssVolver),
+  'esa barra no se esconde al bajar y el botón mide 44 px');
 
 console.log(fallos ? '\n✘ ' + fallos + ' comprobaciones fallaron' : '\n✅ El aviso y los impresos respetan el perfil');
 process.exit(fallos ? 1 : 0);

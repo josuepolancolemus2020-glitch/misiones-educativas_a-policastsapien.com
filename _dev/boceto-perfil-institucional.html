@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Boceto · Perfil institucional</title>
+<!-- Boceto de prueba: no se publica (_dev/). No lee ni guarda datos del maestro.
+     Relación: un perfil es un centro. Cada grupo pertenece a un solo centro.
+     Al cambiar de centro se ven solo los grupos de ese centro, con su grado
+     y sus materias. El perfil y los grupos que ya existen quedan como el
+     primer centro. Nada se borra. -->
+<link rel="stylesheet" href="../css/vendor/fuentes/fuentes.css">
+<style>
+:root {
+  --bg: #f0f4f9; --card: #fff; --text: #0f172a; --muted: #475569; --line: #e2e8f0;
+  --azul: #1e3a7c; --azul-suave: #eef2fb;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: 'Outfit', system-ui, sans-serif; background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.45; }
+button, input { font: inherit; }
+.nota-boceto { max-width: 720px; margin: 12px auto; padding: 10px 14px; border: 2px dashed #94a3b8; border-radius: 12px; background: var(--card); font-size: 14px; }
+.nota-boceto b { display: block; margin-bottom: 4px; }
+.marco { max-width: 720px; margin: 0 auto 28px; min-height: 100vh; background: var(--bg); }
+
+/* El volver vive en la barra de arriba y no se va con el scroll. */
+.top {
+  position: sticky; top: 0; z-index: 20; display: grid; grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center; gap: 8px; min-height: 56px; padding: 6px 12px;
+  background: var(--card); border-bottom: 1px solid var(--line);
+}
+.volver {
+  display: inline-flex; align-items: center; gap: 4px; min-height: 44px; min-width: 44px; padding: 0 10px;
+  border: none; border-radius: 999px; background: transparent; color: var(--azul); font-weight: 800; cursor: pointer;
+}
+.top h1 { margin: 0; text-align: center; font-size: 18px; color: var(--azul); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hueco { width: 44px; }
+.pag { padding: 12px 12px 32px; display: flex; flex-direction: column; gap: 12px; }
+
+.seg { display: flex; flex-wrap: wrap; gap: 6px; }
+.seg button, .chip, .fila, .sec, .grupo {
+  min-height: 44px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--card);
+  color: var(--text); font-weight: 700; cursor: pointer; padding: 8px 14px;
+}
+.seg button { flex: 1 1 160px; }
+.seg button[aria-pressed="true"] { background: var(--azul); color: #fff; border-color: var(--azul); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { background: #f1f5f9; font-weight: 650; }
+.aviso {
+  display: flex; align-items: center; gap: 10px; width: 100%; min-height: 44px; text-align: left;
+  padding: 10px 14px; border-radius: 16px; border: 1px solid var(--line); background: var(--card); cursor: pointer;
+}
+.aviso b { display: block; }
+.aviso span { color: var(--muted); font-weight: 500; }
+.aviso i { margin-left: auto; color: var(--muted); font-style: normal; font-size: 22px; }
+.grupos { display: flex; flex-wrap: wrap; gap: 8px; }
+.grupo[aria-pressed="true"] { background: var(--azul); color: #fff; border-color: var(--azul); }
+.secs { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; }
+.sec[aria-pressed="true"] { background: #1d4ed8; color: #fff; border-color: #1d4ed8; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.card h2 { margin: 0; font-size: 17px; }
+.nota { margin: 0; color: var(--muted); }
+.materias { display: flex; flex-wrap: wrap; gap: 6px; }
+.materias span { background: #eef2fb; color: var(--azul); border-radius: 999px; padding: 6px 10px; font-size: 13px; font-weight: 700; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { border-bottom: 1px solid var(--line); padding: 8px 4px; text-align: center; }
+th:first-child, td:first-child { text-align: left; }
+.campo { display: flex; flex-direction: column; gap: 4px; font-weight: 700; }
+.campo input { min-height: 48px; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 8px 12px; font-weight: 500; }
+.dos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ayuda { margin: 0; padding-left: 18px; }
+.info { align-self: flex-start; min-height: 44px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); color: var(--azul); font-weight: 700; cursor: pointer; padding: 0 12px; }
+@media (max-width: 420px) {
+  .dos { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<p class="nota-boceto">
+  <b>Boceto, no es la aplicación.</b>
+  Dos centros de ejemplo: CEB John Arnold Cook y Instituto María Consuelo.
+  Cada grupo pertenece a un centro. Al cambiar el centro solo quedan sus grupos,
+  con su grado y sus materias. El perfil no va en la misma pantalla que las notas.
+</p>
+<div class="marco">
+  <header class="top">
+    <button type="button" class="volver" id="volver">‹ Volver</button>
+    <h1 id="titulo">Mi aula</h1>
+    <span class="hueco" aria-hidden="true"></span>
+  </header>
+  <div class="pag" id="pag"></div>
+</div>
+<script>
+(function () {
+  var centros = [
+    {
+      id: 'cook',
+      nombre: 'CEB John Arnold Cook',
+      maestro: 'Ana Sofía Mejía',
+      director: 'Carlos Rivera',
+      codigo: '051100134B10',
+      anio: '2026',
+      grupos: [
+        { id: 'g1', gs: '6º-1', materias: ['Ciencias Naturales', 'Español', 'Matemáticas'] },
+        { id: 'g2', gs: '5º-1', materias: ['Ciencias Naturales', 'Educación Física'] }
+      ]
+    },
+    {
+      id: 'consuelo',
+      nombre: 'Instituto María Consuelo',
+      maestro: 'Ana Sofía Mejía',
+      director: 'Lucía Romero',
+      codigo: '0801990001',
+      anio: '2026',
+      grupos: [
+        { id: 'g3', gs: '8º-1', materias: ['Inglés', 'Computación'] },
+        { id: 'g4', gs: '9º-2', materias: ['Inglés', 'Contabilidad'] }
+      ]
+    }
+  ];
+  var estado = { pantalla: 'aula', centro: 'cook', grupo: 'g1', nuevo: false, ayuda: false, sinPerfil: false };
+
+  function centro() { return centros.filter(function (c) { return c.id === estado.centro; })[0]; }
+  function grupo() {
+    var c = centro();
+    return c.grupos.filter(function (g) { return g.id === estado.grupo; })[0] || c.grupos[0];
+  }
+  function esc(t) {
+    return String(t).replace(/[&<>"]/g, function (s) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[s];
+    });
+  }
+  function segmentos() {
+    return '<div class="seg" role="group" aria-label="Tus centros">' + centros.map(function (c) {
+      var on = !estado.nuevo && c.id === estado.centro;
+      return '<button type="button" data-centro="' + c.id + '" aria-pressed="' + on + '">' + esc(c.nombre) + '</button>';
+    }).join('') + '</div>';
+  }
+
+  function aula() {
+    var c = centro();
+    var g = grupo();
+    var h = segmentos();
+    h += '<div class="chips"><button type="button" class="chip" data-ir="perfil">Perfil institucional ›</button>'
+      + '<button type="button" class="chip" data-ir="nuevo">+ Otro centro</button></div>';
+    if (estado.sinPerfil) {
+      h += '<button type="button" class="aviso" data-ir="perfil"><span><b>Completa tu perfil institucional</b>'
+        + '<span>Encabezado y logos de este centro</span></span><i>›</i></button>';
+    }
+    h += '<div class="grupos" role="group" aria-label="Grupos de este centro">' + c.grupos.map(function (x) {
+      var on = x.id === g.id;
+      return '<button type="button" class="grupo" data-grupo="' + x.id + '" aria-pressed="' + on + '">' + esc(x.gs) + '</button>';
+    }).join('') + '<button type="button" class="grupo">+ Otro grupo</button></div>';
+    h += '<div class="secs" role="group" aria-label="Secciones"><button type="button" class="sec" aria-pressed="true">Notas SACE</button>'
+      + '<button type="button" class="sec" aria-pressed="false">Alumnos</button></div>';
+    h += '<section class="card"><h2>' + esc(g.gs) + ' · ' + esc(c.nombre) + '</h2>'
+      + '<p class="nota">Materias de este grupo.</p><div class="materias">'
+      + g.materias.map(function (m) { return '<span>' + esc(m) + '</span>'; }).join('') + '</div>'
+      + '<table><tr><th>Alumno</th>' + g.materias.map(function (m) { return '<th>' + esc(m) + '</th>'; }).join('') + '</tr>'
+      + '<tr><td>Alumna Ficticia</td>' + g.materias.map(function () { return '<td>80</td>'; }).join('') + '</tr></table>'
+      + '<button type="button" class="fila" data-ir="perfil">Perfil institucional ›</button></section>';
+    return h;
+  }
+
+  function perfil() {
+    var c = estado.nuevo ? { nombre: '', maestro: '', director: '', codigo: '', anio: '2026', grupos: [] } : centro();
+    var h = segmentos();
+    h += '<div class="chips"><button type="button" class="chip" data-ir="nuevo" aria-pressed="' + estado.nuevo + '">+ Otro centro</button>'
+      + '<button type="button" class="info" id="info">ⓘ</button></div>';
+    if (estado.ayuda) {
+      h += '<ol class="ayuda"><li>Cada grupo pertenece a un solo centro.</li>'
+        + '<li>Al cambiar de centro ves solo sus grupos.</li>'
+        + '<li>El grado y las materias quedan en el grupo.</li></ol>';
+    }
+    h += '<form class="card"><h2>Encabezado y logos</h2>'
+      + '<label class="campo">Nombre del centro educativo<input value="' + esc(c.nombre) + '"></label>'
+      + '<label class="campo">Nombre del maestro(a)<input value="' + esc(c.maestro) + '"></label>'
+      + '<div class="dos"><label class="campo">Nombre del director(a)<input value="' + esc(c.director) + '"></label>'
+      + '<label class="campo">Código SACE del centro<input value="' + esc(c.codigo) + '"></label></div>'
+      + '<label class="campo">Año lectivo<input value="' + esc(c.anio) + '"></label>'
+      + '<p class="nota">El grado y la sección salen del grupo.</p>'
+      + '<p class="nota">' + (c.grupos.length
+        ? 'Grupos de este centro: ' + c.grupos.map(function (g) { return g.gs; }).join(', ') + '.'
+        : 'Este centro todavía no tiene grupos.') + '</p></form>';
+    return h;
+  }
+
+  function pintar() {
+    document.getElementById('titulo').textContent = estado.pantalla === 'perfil' ? 'Perfil' : 'Mi aula';
+    document.getElementById('pag').innerHTML = estado.pantalla === 'perfil' ? perfil() : aula();
+  }
+
+  document.getElementById('pag').addEventListener('click', function (ev) {
+    var t = ev.target.closest('button');
+    if (!t) return;
+    if (t.id === 'info') { estado.ayuda = !estado.ayuda; pintar(); return; }
+    if (t.getAttribute('data-centro')) {
+      estado.centro = t.getAttribute('data-centro');
+      estado.nuevo = false;
+      estado.sinPerfil = false;
+      estado.grupo = centro().grupos[0].id;
+      pintar();
+      return;
+    }
+    if (t.getAttribute('data-grupo')) { estado.grupo = t.getAttribute('data-grupo'); pintar(); return; }
+    if (t.getAttribute('data-ir') === 'perfil') { estado.pantalla = 'perfil'; estado.nuevo = false; pintar(); return; }
+    if (t.getAttribute('data-ir') === 'nuevo') { estado.pantalla = 'perfil'; estado.nuevo = true; pintar(); }
+  });
+  document.getElementById('volver').addEventListener('click', function () {
+    if (estado.pantalla === 'perfil') { estado.pantalla = 'aula'; estado.nuevo = false; pintar(); }
+  });
+  pintar();
+})();
+</script>
+</body>
+</html>
