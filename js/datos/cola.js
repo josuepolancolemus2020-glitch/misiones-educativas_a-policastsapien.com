@@ -986,17 +986,27 @@
   // esa fila (borrarla, por ejemplo): lo que viene después de eso espera.
   // Se hace justo antes de mandar, cuando op todavía no salió: nada que ya
   // esté en camino se toca.
+  // Tampoco se adelanta una edición que nombra algo anotado en medio (el
+  // grupo que pasa a un centro recién creado: el centro tiene que llegar
+  // antes) ni algo que espera una pregunta.
   function juntarSeguidas(op) {
     if (!op || op.tipo !== 'editar') return op;
     var c = alm.cola();
     var i = c.indexOf(op);
     var juntas = [];
+    var enMedio = bloqueados(op.owner);
+    var nombra = function (x) {
+      var t = JSON.stringify(x.cambios || {});
+      return enMedio.some(function (id) { return id && t.indexOf(id) >= 0; });
+    };
     for (var j = i + 1; j < c.length; j++) {
       var x = c[j];
       if (x.owner !== op.owner) continue;
       var misma = x.tabla === op.tabla && x.id === op.id;
-      if (misma && x.tipo === 'editar') { juntas.push(x); continue; }
+      if (misma && x.tipo === 'editar' && !nombra(x)) { juntas.push(x); continue; }
       if (misma || JSON.stringify(x).indexOf(op.id) >= 0) break;
+      enMedio.push(x.id);
+      if (x.args && x.args.p_id) enMedio.push(x.args.p_id);
     }
     if (!juntas.length) return op;
     op.base = op.base || {};

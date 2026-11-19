@@ -149,6 +149,13 @@ function choca(tabla, fila) {
   }
   return null;
 }
+// La llave foránea de aulas.centro_id: un grupo no puede apuntar a un
+// centro que todavía no está en la base.
+function sinPadre(tabla, fila) {
+  if (tabla !== 'aulas' || !fila.centro_id) return false;
+  return !(tablas.centros || []).some(c => c.id === fila.centro_id && !c.deleted_at);
+}
+const faltaPadre = { code: '23503', message: 'insert or update on table "aulas" violates foreign key constraint "aulas_centro_fk"' };
 function repetido(regla) {
   return {
     code: '23505',
@@ -238,6 +245,7 @@ function baseDe(aparato) {
         const fila = Object.assign({ deleted_at: null }, b, { owner: UID, version: 1, created_at: t, updated_at: t });
         const regla = choca(tabla, fila);
         if (regla) { anotar(409); return cumplir(route, 409, repetido(regla)); }
+        if (sinPadre(tabla, fila)) { anotar(409); return cumplir(route, 409, faltaPadre); }
         nuevas.push(fila);
       }
       nuevas.forEach(f => { lista.push(f); avisarCambio(tabla, f); });
@@ -252,6 +260,7 @@ function baseDe(aparato) {
         const nueva = Object.assign({}, f, cuerpo || {});
         const regla = choca(tabla, nueva);
         if (regla) { anotar(409); return cumplir(route, 409, repetido(regla)); }
+        if (sinPadre(tabla, nueva)) { anotar(409); return cumplir(route, 409, faltaPadre); }
         hechas.push([f, nueva]);
       }
       const salen = hechas.map(([f, nueva]) => {
@@ -336,6 +345,13 @@ async function esperarCola(yo, ms) {
       new Promise(r => setTimeout(() => r('espera'), espera)),
     ]);
   }, ms || 15000);
+}
+
+// Lo anotado sin señal ya intentó salir y quedó en la cola. Sin esta pausa,
+// el primer intento (lanzado sin señal) puede llegar a la base justo cuando
+// la señal vuelve y salir solo: la prueba no vería la cola juntando nada.
+async function yaIntento() {
+  await dormir(800);
 }
 
 async function senal(yo, hay) {
@@ -473,6 +489,7 @@ async function escenarioA(nav) {
     }
   }, { id: C2 });
   const enCola = (await estado(A)).cola.filter(o => o.id === C2).length;
+  await yaIntento();
   const parches = escriturasDe('centros', 'PATCH').length;
   await senal(A, true);
   await esperarCola(A);
@@ -601,6 +618,7 @@ async function escenarioD(nav) {
     api.editar('centros', c1, { nombre: 'Centro Dos' });
     api.editar('centros', c2, { nombre: 'Centro Uno' });
   }, { c1: C1, c2: C2 });
+  await yaIntento();
   await senal(A, true);
   await esperarCola(A);
   await dormir(500);
@@ -730,6 +748,7 @@ async function escenarioG(nav) {
     api.crear('notas', { alumno_id: au, asignatura_id: s2, periodo: 'I', componente: 'final', valor: 80 });
     api.editar('asignaturas', s2, { nombre: 'matemáticas' });
   }, { s2: S2, au: AU });
+  await yaIntento();
   await senal(A, true);
   await esperarCola(A);
   await dormir(300);
@@ -747,6 +766,24 @@ async function escenarioG(nav) {
   });
   ok(/\(2 veces\)/.test(pintada), 'en pantalla se ve el contador «(2 veces)»', pintada);
   anotarTarjetas('A', e);
+
+  // Juntar ediciones no adelanta lo que depende de algo anotado en medio:
+  // el grupo pasa a un centro que se crea DESPUÉS de su primera edición.
+  await senal(A, false);
+  const nuevo = await A.pg.evaluate(async au => {
+    const api = await window.MetasDatos.iniciar();
+    api.editar('aulas', au, { escuela: 'Escuela G Norte' });
+    const c = api.crear('centros', { nombre: 'Escuela G Norte', anio_lectivo: 2026 });
+    api.editar('aulas', au, { centro_id: c.id });
+    return c.id;
+  }, AU);
+  await yaIntento();
+  await senal(A, true);
+  await esperarCola(A);
+  const e2 = await estado(A);
+  const au = (tablas.aulas || []).find(a => a.id === AU);
+  ok(au.centro_id === nuevo && au.escuela === 'Escuela G Norte' && !e2.noAnotado.some(t => /contenía/.test(t.texto)),
+    'la edición que nombra un centro recién creado espera a que el centro llegue', { aula: au, tarjetas: e2.noAnotado });
   await cerrar(A);
 }
 
