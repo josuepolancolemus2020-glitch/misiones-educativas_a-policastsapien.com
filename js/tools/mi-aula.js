@@ -77,7 +77,7 @@
   var colectaAbierta = null;
   var controlAbierto = null;
   var alumnoAbierto = null;
-  var subAlumnos = '';           // '' o 'carga'
+  var subAlumnos = '';           // '' , 'carga' o 'sace'
   var subComunicados = 'avisos';
   var otroMonto = false;         // el próximo toque abre la cajita en vez de anotar el monto completo
   var hoja = null;               // la cajita de un pago: { alumno, colecta }
@@ -112,6 +112,7 @@
   var deMiAula = false;          // la pantalla de antes se abrió desde aquí
   var importe = null;            // importar un archivo: { plan, archivo, decisiones, frase, aviso }
   var claves = null;             // preparar las claves de familia: { aula, plan, frase, aviso, guardando }
+  var listaSace = null;          // importar la lista del SACE: { aula, leido, plan, conf, frase, aviso, guardando }
 
   function leerPref() {
     try { return JSON.parse(localStorage.getItem(PREF)) || {}; } catch (e) { return {}; }
@@ -439,6 +440,7 @@
   // ── 👥 Alumnos ─────────────────────────────────────────────────────────
   function pintarAlumnos(aula) {
     if (subAlumnos === 'carga') return pintarCarga(aula);
+    if (subAlumnos === 'sace') return pintarListaSace(aula);
     var lista = alumnos(aula);
     var h = '<div class="ma-card ma-card-grupo"><div><p class="ma-grupo-grande">' + esc(grupo(aula)) + '</p>'
       + '<p class="ma-nota">' + esc(aula.escuela) + ' · ' + esc(aula.anio_lectivo) + '</p></div>'
@@ -452,6 +454,13 @@
       // Las tiras salen de lo que ya está en el aparato: imprimen sin señal.
       h += '<div class="ma-acciones"><button type="button" class="ma-btn" data-metas="tiras-claves" data-accion="imprimir" data-valor="tiras">'
         + '🖨️ Tiras de claves (QR)</button></div>';
+      h += '<div class="ma-acciones"><button type="button" class="ma-btn" data-metas="lista-sace-abrir" data-accion="lista-sace">'
+        + '📥 Importar lista del SACE</button></div>';
+      var oficiales = lista.filter(function (a) { return a.en_sace === true; }).length;
+      if (oficiales) {
+        h += '<p class="ma-nota" data-metas="lista-sace-cuenta">📥 En la lista oficial del SACE: <b>' + oficiales + '</b> de '
+          + lista.length + '. Los cuadros y las estadísticas cuentan solo a esos.</p>';
+      }
     }
     if (!lista.length) h += '<p class="ma-nota">Todavía no hay alumnos. Escríbelos uno por uno o pega la lista completa.</p>';
     h += pintarClaves(aula);
@@ -789,6 +798,193 @@
       pintar();
     });
   }
+
+  // ── 📥 Lista oficial del SACE ──────────────────────────────────────────
+  // La matrícula que se entrega es la del SACE: los cuadros cuentan solo a
+  // quien tiene en_sace (SaceLista.alumnosQueCuentan). Aquí se lee el CSV
+  // del SACE en el aparato (no viaja a ningún lado), se empareja con la
+  // MISMA regla de sace-lista.js (identidad de Honduras y, si no, nombre;
+  // nunca el número de lista) y se muestra todo antes de guardar. Guardar
+  // es un editar por alumno con solo lo que cambia: ni crea ni borra a
+  // nadie y no toca ninguna nota, asistencia ni inasistencia.
+  function listaSaceAbrir(aula, texto) {
+    var SL = window.SaceLista;
+    var leido = SL.parseCsv(texto);
+    if (!leido.filas.length) {
+      listaSace = { aula: aula.id, frase: 'No encontré alumnos en ese archivo. Tiene que ser el CSV del SACE con las columnas '
+        + 'num, identidad, nombre, sexo, fecha_nacimiento y edad_sace.' };
+      return pintar();
+    }
+    var plan = SL.emparejarFilas(alumnos(aula), leido.filas);
+    // Lo seguro (✓) viene confirmado; lo parecido (⚠) espera a que el
+    // maestro diga que es la misma persona.
+    var conf = { pares: {}, manuales: {}, estados: {} };
+    plan.pares.forEach(function (p, i) { if (p.seguro) conf.pares[i] = true; });
+    listaSace = { aula: aula.id, leido: leido, plan: plan, conf: conf };
+    pintar();
+  }
+  function listaSaceConf() {
+    var c = listaSace.conf;
+    return {
+      pares: Object.keys(c.pares).filter(function (i) { return c.pares[i]; }).map(Number),
+      manuales: Object.keys(c.manuales).filter(function (i) { return c.manuales[i]; })
+        .map(function (i) { return { i: +i, id: c.manuales[i] }; }),
+      estados: c.estados,
+      fecha: hoy(),
+    };
+  }
+  function listaSaceElegir(aula) {
+    var inp = document.getElementById('ma-lista-sace-archivo');
+    if (!inp) {
+      inp = document.createElement('input');
+      inp.type = 'file';
+      inp.id = 'ma-lista-sace-archivo';
+      inp.accept = '.csv,text/csv,text/plain';
+      inp.hidden = true;
+      inp.setAttribute('data-metas', 'lista-sace-archivo');
+      inp.addEventListener('change', function () {
+        var f = inp.files && inp.files[0];
+        inp.value = '';
+        var a = aulaActual();
+        if (!f || !a) return;
+        f.text().then(function (t) { listaSaceAbrir(a, t); });
+      });
+      document.body.appendChild(inp);
+    }
+    inp.click();
+  }
+  // En una fecha de nacimiento el año es lo que más importa.
+  function fechaSace(f) { return f ? fechaCorta(f) + ' de ' + String(f).slice(0, 4) : 'sin fecha'; }
+  function pintarListaSace(aula) {
+    var h = '<button type="button" class="ma-volver" data-accion="alumnos">‹ Mis alumnos</button>'
+      + '<div class="ma-card" data-metas="lista-sace"><div class="ma-card-cab"><h2 class="ma-h">📥 Lista oficial del SACE</h2>'
+      + '<button type="button" class="ma-btn" data-accion="lista-sace-elegir" data-metas="lista-sace-elegir">Elegir el archivo</button></div>'
+      + '<p class="ma-nota">El archivo CSV que bajas del SACE. Antes de guardar ves a quién encontró. '
+      + 'No se borra ningún alumno y no cambia ninguna nota.</p>';
+    var s = listaSace && listaSace.aula === aula.id ? listaSace : null;
+    if (s && s.frase) h += '<p class="ma-aviso" role="alert">✗ ' + esc(s.frase) + '</p>';
+    if (s && s.aviso) h += '<p class="ma-nota ma-nota-ok" role="status" data-metas="lista-sace-listo">✓ ' + esc(s.aviso) + '</p>';
+    if (!s || !s.plan) return h + '</div>';
+
+    var SL = window.SaceLista;
+    var lista = alumnos(aula);
+    var porId = {};
+    lista.forEach(function (a) { porId[a.id] = a; });
+    var plan = s.plan, conf = listaSaceConf();
+    var cambios = {};
+    SL.cambiosFilas(lista, plan, conf).forEach(function (x) { cambios[x.id] = x.cambios; });
+    var dentro = {};
+    conf.pares.forEach(function (i) { dentro[plan.pares[i].id] = 1; });
+    conf.manuales.forEach(function (m) { dentro[m.id] = 1; });
+    var fuera = lista.filter(function (a) { return !dentro[a.id]; });
+    var seguros = plan.pares.filter(function (p) { return p.seguro; }).length;
+    var nCambian = Object.keys(cambios).length;
+    var queCambia = function (id) {
+      var c = cambios[id];
+      if (!c) return '<span class="ma-sub">Nada que cambiar</span>';
+      var t = [];
+      if ('fecha_nacimiento' in c) t.push('Nacimiento: ' + fechaSace(porId[id].fecha_nacimiento) + ' → ' + fechaSace(c.fecha_nacimiento));
+      if ('estado' in c) t.push('Situación: ' + nombreEstado(c.estado));
+      if ('edad_sace' in c) t.push('Edad en el SACE: ' + c.edad_sace);
+      return t.length ? '<span class="ma-sub">' + esc(t.join(' · ')) + '</span>' : '';
+    };
+    var ficha = function (a) { return '#' + num(a) + ' ' + a.nombre_completo; };
+    var delSace = function (f) { return (f.num ? 'N.º ' + f.num + ' del SACE · ' : '') + f.nombre; };
+
+    h += '<div data-metas="lista-sace-vista-previa"><p class="ma-nota">El SACE trae <b>' + s.leido.filas.length + '</b> alumnos; '
+      + 'en ' + esc(grupo(aula)) + ' tienes <b>' + lista.length + '</b>.</p><ul class="ma-lista">'
+      + '<li class="ma-renglon"><span class="ma-nom">Encontrados</span><span class="ma-sub">' + seguros + ' ✓</span></li>'
+      + (plan.pares.length > seguros ? '<li class="ma-renglon"><span class="ma-nom">Para confirmar que es la misma persona</span><span class="ma-sub">'
+        + (plan.pares.length - seguros) + ' ⚠</span></li>' : '')
+      + (plan.sinFicha.length ? '<li class="ma-renglon"><span class="ma-nom">Del SACE sin alumno en Mi aula</span><span class="ma-sub">'
+        + plan.sinFicha.length + ' ✗</span></li>' : '')
+      + '<li class="ma-renglon"><span class="ma-nom">Quedan fuera de la lista oficial (no se borran)</span><span class="ma-sub">'
+      + fuera.length + '</span></li></ul>';
+    if (s.leido.errores.length) h += s.leido.errores.map(function (e) { return '<p class="ma-nota">⚠ ' + esc(e) + '</p>'; }).join('');
+
+    // ✓ y ⚠: los emparejados, en el orden del SACE.
+    h += '<h3 class="ma-h">En la lista oficial</h3><ul class="ma-lista">' + plan.pares.map(function (p, i) {
+      var a = porId[p.id];
+      var t = '<li class="ma-renglon ma-fila-col" data-metas="lista-sace-par" data-estado="' + (p.seguro ? 'seguro' : 'confirmar') + '">'
+        + '<span class="ma-nom">' + (p.seguro ? '✓ ' : '⚠ ') + esc(ficha(a)) + '</span>'
+        + '<span class="ma-sub">' + esc(delSace(p.f)) + ' · ' + (p.por === 'identidad' ? 'por identidad' : 'por nombre') + '</span>';
+      if (!p.seguro) {
+        var on = !!s.conf.pares[i];
+        t += '<p class="ma-nota">⚠ ' + esc(p.por === 'nombre' ? 'El nombre se parece. ¿Es la misma persona?'
+          : 'Coincide solo parte del nombre (' + p.por + '). ¿Es la misma persona?') + '</p>'
+          + '<button type="button" class="ma-btn ma-btn-chico' + (on ? ' ma-on' : '') + '" data-accion="lista-sace-par" data-valor="' + i
+          + '" aria-pressed="' + on + '" data-metas="lista-sace-confirmar">' + (on ? '✓ ' : '') + 'Es la misma persona</button>';
+      }
+      if (p.f.idn && !p.f.idnOk) t += '<p class="ma-nota">⚠ La identidad del SACE no tiene 13 dígitos: ' + esc(p.f.idn) + '. Revísala en el SACE.</p>';
+      if (p.f.fnacRaw && !p.f.fnacOk) t += '<p class="ma-nota">⚠ Fecha de nacimiento que no se entiende: ' + esc(p.f.fnacRaw) + '.</p>';
+      return t + (s.conf.pares[i] ? queCambia(p.id) : '') + '</li>';
+    }).join('') + '</ul>';
+
+    // ✗: del SACE sin alumno en Mi aula. Si sí tiene ficha (con otro
+    // nombre), se elige aquí; si no, se agrega con «Pegar una lista».
+    if (plan.sinFicha.length) {
+      var libres = plan.sinSace.map(function (id) { return porId[id]; }).filter(Boolean);
+      h += '<h3 class="ma-h">Del SACE sin alumno en Mi aula</h3><ul class="ma-lista">' + plan.sinFicha.map(function (f, i) {
+        var elegido = s.conf.manuales[i] || '';
+        return '<li class="ma-renglon ma-fila-col" data-metas="lista-sace-sin-ficha"><span class="ma-nom">' + (elegido ? '✓ ' : '✗ ')
+          + esc(delSace(f)) + '</span><span class="ma-sub">' + esc(f.idn || 'sin identidad') + ' · ' + esc(fechaSace(f.fnac)) + '</span>'
+          + (libres.length ? '<label class="ma-campo"><span>¿Ya está en tu lista con otro nombre?</span><select class="ma-inp" data-accion="lista-sace-mano" data-fila="' + i + '">'
+            + '<option value="">No está en mi lista</option>' + libres.map(function (a) {
+              return '<option value="' + esc(a.id) + '"' + (elegido === a.id ? ' selected' : '') + '>' + esc(ficha(a)) + '</option>';
+            }).join('') + '</select></label>' : '')
+          + (elegido ? queCambia(elegido) : '<p class="ma-nota">No se agrega solo: si es tu alumno, agrégalo con «Pegar una lista» y vuelve a importar.</p>')
+          + '</li>';
+      }).join('') + '</ul>';
+    }
+
+    // Los que quedan fuera: siguen en la lista con sus notas.
+    if (fuera.length) {
+      h += '<h3 class="ma-h">Quedan fuera de la lista oficial</h3><p class="ma-nota">Siguen en Mi aula con todas sus notas, '
+        + 'pero no entran en los cuadros. Si se fue, dilo aquí.</p><ul class="ma-lista">' + fuera.map(function (a) {
+          var e = s.conf.estados[a.id] || '';
+          return '<li class="ma-renglon ma-fila-col" data-metas="lista-sace-fuera"><span class="ma-nom">' + esc(ficha(a)) + '</span>'
+            + (sigue(a) ? '' : '<span class="ma-sub">' + esc(nombreEstado(a.estado)) + '</span>')
+            + '<div class="ma-botones" role="group" aria-label="' + esc('Situación de ' + a.nombre_completo) + '">'
+            + [['', 'Sigue igual'], ['trasladado', 'Trasladado'], ['desertor', 'Desertor']].map(function (x) {
+              var on = e === x[0];
+              return '<button type="button" class="ma-btn ma-btn-chico' + (on ? ' ma-on' : '') + '" data-accion="lista-sace-estado" data-alumno="'
+                + esc(a.id) + '" data-valor="' + x[0] + '" aria-pressed="' + on + '">' + (on ? '✓ ' : '') + x[1] + '</button>';
+            }).join('') + '</div></li>';
+        }).join('') + '</ul>';
+    }
+    h += '</div><div class="ma-acciones"><button type="button" class="ma-btn" data-accion="lista-sace-cancelar">Volver a revisar</button>'
+      + '<button type="button" class="ma-btn ma-btn-1" data-accion="lista-sace-guardar" data-metas="lista-sace-guardar"'
+      + (nCambian ? '' : ' disabled') + '>' + (nCambian ? 'Guardar la lista oficial (' + nCambian + (nCambian === 1 ? ' alumno)' : ' alumnos)')
+        : 'Ya está todo como en el SACE') + '</button></div>';
+    return h + '</div>';
+  }
+  // «Guardar» se apaga en cuanto se toca. El plan se vuelve a armar con la
+  // lista de AHORA: si otro aparato agregó o cambió alumnos mientras se
+  // revisaba, los pares tienen que seguir siendo los mismos.
+  function listaSaceGuardar(aula) {
+    var s = listaSace;
+    if (!s || !s.plan || s.guardando || s.aula !== aula.id) return;
+    s.guardando = true;
+    var b = document.querySelector('[data-metas="lista-sace-guardar"]');
+    if (b) b.disabled = true;
+    var SL = window.SaceLista;
+    var lista = alumnos(aula);
+    var plan = SL.emparejarFilas(lista, s.leido.filas);
+    var firma = function (pl) { return JSON.stringify(pl.pares.map(function (p) { return [p.f.i, p.id]; })); };
+    if (firma(plan) !== firma(s.plan)) {
+      listaSace = { aula: aula.id, frase: 'Tu lista cambió mientras revisabas. Vuelve a elegir el archivo.' };
+      return pintar();
+    }
+    var cambios = SL.cambiosFilas(lista, plan, listaSaceConf());
+    var hechos = 0;
+    cambios.forEach(function (x) {
+      if (intentar(function () { d.editar('alumnos', x.id, x.cambios); })) hechos++;
+    });
+    listaSace = { aula: aula.id, aviso: 'Listo: ' + hechos + (hechos === 1 ? ' alumno actualizado' : ' alumnos actualizados')
+      + ' con la lista del SACE. Ninguna nota cambió.' + (d.sinSenal() ? ' ' + SIN_SENAL_GUARDADO : '') };
+    pintar();
+  }
+  // ── fin de la lista oficial del SACE ─────────────────────────────────
 
   // ── 💰 Economía ────────────────────────────────────────────────────────
   function resumenDe(col) { return d.lista('v_colectas_resumen', { colecta_id: col.id })[0] || {}; }
@@ -1608,6 +1804,18 @@
       case 'claves-cancelar': claves = null; return pintar();
       case 'claves-guardar': return clavesGuardar();
       case 'alumnos': subAlumnos = ''; return pintar();
+      case 'lista-sace': subAlumnos = 'sace'; alumnoAbierto = null; listaSace = null; pintar(); return enfocarPantalla();
+      case 'lista-sace-elegir': return listaSaceElegir(aula);
+      case 'lista-sace-par':
+        if (!listaSace || !listaSace.plan) return;
+        listaSace.conf.pares[v] = !listaSace.conf.pares[v];
+        return pintar();
+      case 'lista-sace-estado':
+        if (!listaSace || !listaSace.plan) return;
+        listaSace.conf.estados[b.getAttribute('data-alumno')] = v || undefined;
+        return pintar();
+      case 'lista-sace-cancelar': listaSace = null; return pintar();
+      case 'lista-sace-guardar': return listaSaceGuardar(aula);
       case 'nueva-colecta': formColecta = !formColecta; pintar(); if (formColecta) enfocar('[data-form="colecta"] input'); return;
       case 'colecta': colectaAbierta = v; otroMonto = false; formGasto = false; pintar(); return enfocarPantalla();
       case 'colectas': colectaAbierta = null; hoja = null; otroMonto = false; pintarTarjeta(); return pintar();
@@ -1884,6 +2092,13 @@
     if (!acc || !d) return;
     if (acc === 'fecha') { vista.fecha = el.value || hoy(); guardarPref(); return pintar(); }
     if (acc === 'sace') return anotarSace(el);
+    // Emparejar a mano una fila del SACE con un alumno: uno no puede ser de dos.
+    if (acc === 'lista-sace-mano' && listaSace && listaSace.plan) {
+      var m = listaSace.conf.manuales;
+      Object.keys(m).forEach(function (i) { if (m[i] === el.value) m[i] = ''; });
+      m[el.getAttribute('data-fila')] = el.value;
+      return pintar();
+    }
   }
   function subirLogoCentro(el) {
     var file = el.files && el.files[0];

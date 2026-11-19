@@ -117,6 +117,18 @@
     if (/^(sexo|genero)$/.test(t)) return 'sexo';
     if (/^(fechanacimiento|fechadenacimiento|fnac|nacimiento)$/.test(t)) return 'fecha_nacimiento';
     if (/^(edadsace|edad)$/.test(t)) return 'edad_sace';
+    if (/^(estado|situacion|condicion)$/.test(t)) return 'estado';
+    return '';
+  }
+  /* La situación que trae el SACE, si el archivo tiene esa columna. Solo
+     se reconoce lo que el formulario conoce; lo demás queda en blanco y no
+     cambia nada de la ficha. */
+  function normEstado(s) {
+    var t = sinTildes(s).toLowerCase();
+    if (/traslad/.test(t)) return 'trasladado';
+    if (/desert/.test(t)) return 'desertor';
+    if (/ingres/.test(t)) return 'ingreso';
+    if (/activ|matricul/.test(t)) return 'activo';
     return '';
   }
 
@@ -154,6 +166,8 @@
         fnacOk: !!fnac,
         edadSace: String(r.edad_sace || '').trim()
       });
+      /* la columna es opcional: sin ella la fila queda como siempre */
+      if (orden.indexOf('estado') >= 0) filas[filas.length - 1].estado = normEstado(r.estado);
     });
     return { filas: filas, errores: errores };
   }
@@ -389,6 +403,96 @@
     return res;
   }
 
+  /* ── Mi aula por filas (metas.alumnos) ──
+     Desde el rediseño de datos cada alumno es una fila con id propio y la
+     marca vive en sus columnas: en_sace, sace_num, edad_sace,
+     fecha_nacimiento, estado y estado_fecha. Se empareja con la MISMA
+     regla de arriba (identidad de 13 dígitos y, si no, nombre), nunca por
+     número de lista: el `num` que recibe emparejar() aquí es solo el
+     orden de la fila en la lista, una llave interna que no se compara con
+     el número del SACE. La identidad solo empareja si el documento es de
+     Honduras: el SACE no trae otro país y 13 dígitos de otro documento
+     podrían coincidir por casualidad. */
+  function listaDeFilas(alumnos) {
+    return (alumnos || []).map(function (a, i) {
+      return {
+        num: i + 1, id: a.id, nombre: a.nombre_completo || '',
+        idn: (a.documento_pais || 'HN') === 'HN' ? (a.identidad || '') : '',
+        sexo: a.sexo || '', fnac: a.fecha_nacimiento || ''
+      };
+    });
+  }
+  /* El plan, sin tocar nada. Cada par dice si es SEGURO (misma identidad
+     o el mismo nombre escrito igual) o si el maestro tiene que confirmar
+     que es la misma persona. */
+  function emparejarFilas(alumnos, filas) {
+    var lista = listaDeFilas(alumnos), idDe = {}, porNum = {};
+    lista.forEach(function (a) { idDe[a.num] = a.id; porNum[a.num] = a; });
+    var plan = emparejar(lista, filas || []);
+    return {
+      pares: plan.pares.map(function (p) {
+        return {
+          f: p.f, id: idDe[p.num], por: p.por, parecido: p.parecido,
+          seguro: p.por === 'identidad' || normNombre(porNum[p.num].nombre) === normNombre(p.f.nombre)
+        };
+      }),
+      sinFicha: plan.sinFicha,
+      sinSace: plan.sinSace.map(function (n) { return idDe[n]; })
+    };
+  }
+  function edadNum(s) {
+    var m = String(s == null ? '' : s).match(/\d+/);
+    var n = m ? +m[0] : NaN;
+    return n >= 0 && n <= 99 ? n : null;
+  }
+  function mismoValor(k, a, b) {
+    if (k === 'en_sace') return !!a === !!b;
+    return String(a == null ? '' : a) === String(b == null ? '' : b);
+  }
+  /* Lo que el maestro confirmó, convertido en un editar por alumno con
+     SOLO los campos que cambian:
+       conf.pares     [índices de plan.pares confirmados]
+       conf.manuales  [{ i: fila de plan.sinFicha, id: alumno }]
+       conf.estados   { id: 'trasladado' | 'desertor' } para los que quedan fuera
+       conf.fecha     'AAAA-MM-DD' del día de la importación
+     El emparejado queda en_sace = true con el número, la edad y la fecha
+     de nacimiento del SACE (la del SACE gana), y con su traslado si el
+     SACE lo dice. Quien no está en el archivo, o no se confirmó, queda
+     en_sace = false: sigue en la lista con todas sus notas. Devuelve
+     [{ id, cambios }] y nunca toca otra tabla: ni notas, ni asistencia,
+     ni inasistencias. */
+  function cambiosFilas(alumnos, plan, conf) {
+    conf = conf || {};
+    var porId = {}, dentro = {};
+    (alumnos || []).forEach(function (a) { porId[a.id] = a; });
+    (conf.pares || []).forEach(function (i) {
+      var p = plan.pares[i];
+      if (p && porId[p.id] && !dentro[p.id]) dentro[p.id] = p.f;
+    });
+    (conf.manuales || []).forEach(function (m) {
+      var f = plan.sinFicha[m.i];
+      if (f && porId[m.id] && !dentro[m.id]) dentro[m.id] = f;
+    });
+    var fecha = conf.fecha || null, out = [];
+    (alumnos || []).forEach(function (a) {
+      var f = dentro[a.id], quiere = {};
+      var e = f ? f.estado : (conf.estados || {})[a.id];
+      if (f) {
+        quiere.en_sace = true;
+        if (f.num) quiere.sace_num = f.num;
+        if (edadNum(f.edadSace) != null) quiere.edad_sace = edadNum(f.edadSace);
+        if (f.fnacOk) quiere.fecha_nacimiento = f.fnac;
+      } else {
+        quiere.en_sace = false;
+      }
+      if (e && ESTADOS_FUERA[e] && a.estado !== e) { quiere.estado = e; quiere.estado_fecha = fecha; }
+      var cambios = {};
+      Object.keys(quiere).forEach(function (k) { if (!mismoValor(k, a[k], quiere[k])) cambios[k] = quiere[k]; });
+      if (Object.keys(cambios).length) out.push({ id: a.id, cambios: cambios });
+    });
+    return out;
+  }
+
   /* ── quién cuenta ── */
   function seFue(a) { return !!(a && ESTADOS_FUERA[a.estado]); }
   function enListaOficial(a) { return !!(a && a.sace === true); }
@@ -437,6 +541,7 @@
     fechaValida: fechaValida, normFecha: normFecha, normSexo: normSexo,
     edad: edad, edadTxt: edadTxt, parseCsv: parseCsv, normNombre: normNombre,
     similitud: similitud, emparejar: emparejar, aplicar: aplicar,
+    normEstado: normEstado, emparejarFilas: emparejarFilas, cambiosFilas: cambiosFilas,
     seFue: seFue, enListaOficial: enListaOficial, hayImportacion: hayImportacion,
     matriculaFinal: matriculaFinal, alumnosQueCuentan: alumnosQueCuentan,
     cuadroEdades: cuadroEdades
