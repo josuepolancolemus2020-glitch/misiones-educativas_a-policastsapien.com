@@ -262,7 +262,9 @@
       case '23502': return 'falta un dato obligatorio';
       case '22001': return 'un texto es demasiado largo';
       case '42501': return 'tu cuenta no tiene permiso para esto';
+      case 'PGRST202': return 'la base todavía no puede';
       case 'PGRST204': return 'la base todavía no tiene ese dato';
+      case 'MT040': return 'es el único centro que te queda';
       default: return 'no se pudo anotar';
     }
   }
@@ -990,11 +992,59 @@
     return noQuedo(op, e.code || ('http_' + r.status), e.message);
   }
 
+  // La base contestó con las filas ya archivadas o ya recuperadas.
+  // Hasta esa respuesta el aparato no las esconde: si la función no está,
+  // no se pierde nada.
+  function guardarLista(owner, tabla, filas) {
+    (filas || []).forEach(function (f) {
+      if (f && f.id && alm.guardarFila(owner, tabla, f)) avisar(tabla, f.id);
+    });
+  }
+  function olvidarArbol(owner, centroId) {
+    var aulas = alm.filasDe(owner, 'aulas').filter(function (a) { return a.centro_id === centroId; })
+      .map(function (a) { return a.id; });
+    var alumnos = alm.filasDe(owner, 'alumnos').filter(function (a) { return aulas.indexOf(a.aula_id) >= 0; })
+      .map(function (a) { return a.id; });
+    alm.nombresTablas(owner).forEach(function (tabla) {
+      alm.filasDe(owner, tabla).slice().forEach(function (f) {
+        var fuera = (tabla === 'centros' && f.id === centroId)
+          || (f.centro_id && f.centro_id === centroId)
+          || (f.aula_id && aulas.indexOf(f.aula_id) >= 0)
+          || (f.alumno_id && alumnos.indexOf(f.alumno_id) >= 0)
+          || (tabla === 'aulas' && aulas.indexOf(f.id) >= 0)
+          || (tabla === 'alumnos' && alumnos.indexOf(f.id) >= 0);
+        if (fuera) alm.quitarFila(owner, tabla, f.id);
+      });
+    });
+    avisar('centros', centroId);
+  }
+  async function enviarCentro(op) {
+    var r;
+    try {
+      r = await nube.rpc(op.tipo, { p_centro: op.id }, op.op_id);
+    } catch (e) {
+      if (e && (e.tipo === 'red' || e.tipo === 'sesion')) throw e;
+      var cod = e && e.codigo;
+      if (!cod && e && e.status === 404) cod = 'PGRST202';
+      return noQuedo(op, cod || 'PGRST202', e && e.mensaje);
+    }
+    r = r || {};
+    if (!r.ok) return noQuedo(op, r.motivo || 'error', JSON.stringify(r));
+    if (op.tipo === 'centro_borrar') olvidarArbol(op.owner, op.id);
+    else {
+      if (r.centro) guardarLista(op.owner, 'centros', [r.centro]);
+      guardarLista(op.owner, 'aulas', r.aulas);
+      guardarLista(op.owner, 'alumnos', r.alumnos);
+    }
+    return descartar(op);
+  }
+
   function enviar(op) {
     if (op.tipo === 'crear') return enviarCrear(op);
     if (op.tipo === 'editar') return enviarEditar(op);
     if (op.tipo === 'borrar') return enviarBorrar(op);
     if (op.tipo === 'desarchivar') return enviarRecuperar(op);
+    if (op.tipo === 'centro_archivar' || op.tipo === 'centro_volver' || op.tipo === 'centro_borrar') return enviarCentro(op);
     if (RPC[op.tipo]) return enviarRpc(op);
     return Promise.resolve(noQuedo(op, 'tipo', op.tipo));
   }
@@ -1152,6 +1202,9 @@
       revisarEspera();
     } else if (m.t === 'fila') {
       if (alm.guardarFila(m.owner, m.tabla, m.fila)) avisar(m.tabla, m.fila.id);
+    } else if (m.t === 'quitar') {
+      alm.quitarFila(m.owner, m.tabla, m.id);
+      avisar(m.tabla, m.id);
     } else if (m.t === 'olvidar') {
       alm.olvidarCuenta(m.owner);
       avisar(null, null);

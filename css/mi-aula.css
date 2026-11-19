@@ -113,7 +113,22 @@
 }
 .ma-chip-arch[aria-expanded="true"] { background: #e2e8f0; }
 .ma-lista-arch { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
-.ma-fila-arch { display: flex; align-items: center; gap: 8px; min-height: 44px; }
+.ma-fila-arch { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; min-height: 44px; }
+.ma-seg-on {
+  display: inline-flex; align-items: stretch; flex: 1 1 140px; min-width: 0; max-width: 100%;
+  min-height: 44px; border-radius: 10px; background: var(--surface);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, .12), inset 0 0 0 1.5px var(--ma-sec);
+}
+.ma-seg-on .ma-seg-btn { flex: 1 1 auto; min-width: 0; box-shadow: none; background: transparent; color: var(--ma-sec); }
+.ma-basura {
+  flex: 0 0 44px; width: 44px; min-height: 44px; border: 0; border-radius: 10px; background: transparent;
+  color: #64748b; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
+}
+.ma-basura svg { display: block; }
+.ma-par { display: inline-flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+.ma-pista { color: var(--ma-tx2); font-weight: 700; font-size: calc(14px * var(--metas-fz, 1)); }
+.ma-paso { margin: 0; color: var(--ma-tx2); font-weight: 800; font-size: calc(13px * var(--metas-fz, 1)); }
+.ma-borrar-inp { min-height: 48px; font-size: 18px; font-weight: 800; letter-spacing: .12em; max-width: 220px; }
 .ma-fila-arch span { flex: 1; min-width: 0; font-weight: 700; }
 .ma-linea-choque { margin: 0 0 4px; color: #92400e; font-weight: 700; }
 .ma-confirma-t { margin: 0; font-weight: 700; }
@@ -275,6 +290,7 @@ textarea.ma-inp { min-height: 96px; resize: vertical; line-height: 1.45; }
 .ma-seg-btn { flex: 1 1 auto; min-height: 44px; min-width: 52px; padding: 0 16px; border: none; border-radius: 10px; background: transparent;
   color: #334155; font: inherit; font-weight: 700; cursor: pointer; transition: background-color .15s ease, color .15s ease, box-shadow .15s ease; }
 .ma-seg-btn[aria-pressed="true"] { background: var(--surface); color: var(--ma-sec); box-shadow: 0 1px 3px rgba(15, 23, 42, .12), inset 0 0 0 1.5px var(--ma-sec); }
+.ma-seg-on .ma-seg-btn[aria-pressed="true"] { background: transparent; box-shadow: none; }
 .ma-ley-fila { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
 .ma-ley { display: flex; flex-wrap: wrap; gap: 6px; }
 .ma-ley span { padding: 4px 10px; border-radius: 999px; font-size: calc(13px * var(--metas-fz, 1)); font-weight: 700; color: #1f2937; }

@@ -100,6 +100,17 @@
   var confirmarArchivo = false;
   var avisoArchivo = '';          // 'grupos', 'ultimo' o ''
   var archivadosAbiertos = false;
+  // La papelera del chip: elige, aviso1 o aviso2. Vacío si no hay pregunta.
+  var pasoPapelera = '';
+  var pasoCentro = null;
+  var avisoLinea = '';
+  var barraAlSalir = null;
+  var ordenAlArchivar = null;
+  var alSalirConBarra = false;
+  var barraCentroHasta = 0;
+  var barraCentroTimer = null;
+  var focoBorrar = false;
+  var ICONO_BASURA = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><path d="M6.5 7l1 13h9l1-13"/></svg>';
   var choqueArchivo = null;       // { id, texto } si recuperar choca con el nombre
   var barraHasta = 0;
   var barraTimer = null;
@@ -218,6 +229,7 @@
     // el repintado se lleve el formulario.
     if (esperaPerfil) guardarFormCentro({});
     asegurarPrimerCentro();
+    prepararSalidaCentro();
     var aula = aulaActual();
     var sec = seccion();
     var h = perfilPantalla ? pintarPantallaPerfil(aula) : (pintarBarraCentros(aula) + pintarGrupos(aula));
@@ -241,6 +253,11 @@
     raiz.innerHTML = h;
     if (marco && marco.scrollTop !== y) marco.scrollTop = y;
     rotularVolver();
+    if (focoBorrar) {
+      focoBorrar = false;
+      var campoBorrar = raiz.querySelector('[data-metas="escribir-borrar"]');
+      if (campoBorrar) campoBorrar.focus();
+    }
     if (window.MetasCentro && d) window.MetasCentro.refrescar(d, aula && aula.id);
   }
 
@@ -301,10 +318,18 @@
     var centros = centrosDelDocente();
     var activo = centroActivoId();
     if (!centros.length) return '';
+    var puedeQuitar = centros.length > 1;
     return '<div class="ma-seg ma-centros" role="group" aria-label="Tus centros">' + centros.map(function (c) {
       var on = !centroNuevo && c.id === activo;
-      return '<button type="button" class="ma-seg-btn" data-metas="perfil-centro" data-accion="institucion" data-valor="'
+      var nombre = '<button type="button" class="ma-seg-btn" data-metas="perfil-centro" data-accion="institucion" data-valor="'
         + esc(c.id) + '" aria-pressed="' + on + '">' + esc(c.nombre) + '</button>';
+      // La papelera solo en el chip elegido, y nunca en el último centro vivo.
+      if (puedeQuitar && on) {
+        return '<span class="ma-seg-on">' + nombre
+          + '<button type="button" class="ma-basura" data-metas="papelera-centro" data-accion="papelera-centro" aria-label="Archivar o borrar '
+          + esc(c.nombre) + '">' + ICONO_BASURA + '</button></span>';
+      }
+      return nombre;
     }).join('') + '</div>';
   }
   function pintarBarraCentros() {
@@ -317,6 +342,9 @@
         + '<span class="ma-flecha" aria-hidden="true">›</span></button></div>';
     }
     h += pintarSegmentos();
+    h += htmlZonaPapelera();
+    h += htmlBotonArchivados();
+    h += htmlListaArchivados();
     h += '<div class="ma-acciones">';
     if (tienePerfil()) {
       h += '<button type="button" class="ma-btn" data-metas="perfil-institucional" data-accion="perfil">Perfil institucional ›</button>';
@@ -338,29 +366,144 @@
     if (n === 1) return 'Primero pasa su grupo a otro centro.';
     return 'Primero pasa sus ' + n + ' grupos a otro centro.';
   }
+  function esArchivado(id) {
+    return centrosArchivados().some(function (c) { return c.id === id; });
+  }
+  function centroPorId(id) {
+    return centrosDelDocente().filter(function (c) { return c.id === id; })[0]
+      || centrosArchivados().filter(function (c) { return c.id === id; })[0]
+      || null;
+  }
+  function piezasCentro(id) {
+    var arch = esArchivado(id);
+    var aulas = arch
+      ? d.archivados('aulas').filter(function (a) { return a.centro_id === id; })
+      : gruposDel(id);
+    var ids = {};
+    aulas.forEach(function (a) { ids[a.id] = 1; });
+    var alumnos = (arch ? d.archivados('alumnos') : d.lista('alumnos')).filter(function (a) { return ids[a.aula_id]; });
+    return { aulas: aulas, alumnos: alumnos.length };
+  }
+  function fraseArchivar(c) {
+    var n = piezasCentro(c.id).aulas;
+    if (n.length === 1) return '¿Archivar ' + c.nombre + ' y su grupo ' + grupo(n[0]) + '?';
+    if (n.length > 1) return '¿Archivar ' + c.nombre + ' y sus ' + n.length + ' grupos?';
+    return '¿Archivar ' + c.nombre + '?';
+  }
+  function fraseBorrar(c) {
+    var p = piezasCentro(c.id);
+    var g = p.aulas.length === 1 ? '1 grupo' : p.aulas.length + ' grupos';
+    var a = p.alumnos === 1 ? '1 alumno' : p.alumnos + ' alumnos';
+    return 'Se borrarán ' + c.nombre + ', ' + g + ' y ' + a + '.';
+  }
+  function htmlBarraCentro() {
+    var on = Date.now() < barraCentroHasta;
+    return '<div class="ma-barra-ok" data-metas="centro-listo" role="status" aria-label="Listo"'
+      + (on ? '' : ' hidden') + '><span class="ma-barra-ok-linea" aria-hidden="true"></span></div>';
+  }
+  function htmlPasos(c) {
+    var h = '<div class="ma-zona-archivar" data-metas="pasos-papelera">';
+    if (pasoPapelera === 'elige') {
+      h += '<p class="ma-confirma-t">' + esc(fraseArchivar(c)) + '</p><div class="ma-acciones">'
+        + '<span class="ma-par"><button type="button" class="ma-btn" data-accion="papelera-archivar" data-metas="papelera-archivar">Archivar</button>'
+        + '<span class="ma-pista">Puedes recuperarlo luego.</span></span>'
+        + '<button type="button" class="ma-btn ma-btn-peligro" data-accion="papelera-borrar" data-metas="papelera-borrar">Borrar para siempre</button>'
+        + '<button type="button" class="ma-btn" data-accion="papelera-cancelar">Cancelar</button></div>';
+    } else if (pasoPapelera === 'aviso1') {
+      h += '<p class="ma-paso">Aviso 1 de 2</p><p class="ma-confirma-t" data-metas="aviso-borrar">' + esc(fraseBorrar(c)) + '</p>'
+        + '<div class="ma-acciones"><button type="button" class="ma-btn" data-accion="papelera-seguir" data-metas="papelera-seguir">Seguir</button>'
+        + '<button type="button" class="ma-btn" data-accion="papelera-cancelar">Cancelar</button></div>';
+    } else if (pasoPapelera === 'aviso2') {
+      h += '<p class="ma-paso">Aviso 2 de 2</p><p class="ma-confirma-t">No se puede deshacer. Escribe BORRAR para confirmar.</p>'
+        + '<div class="ma-acciones"><input class="ma-inp ma-borrar-inp" data-metas="escribir-borrar" aria-label="Escribe BORRAR" autocomplete="off" autocapitalize="characters" spellcheck="false">'
+        + '<button type="button" class="ma-btn ma-btn-peligro" data-accion="papelera-confirmar" data-metas="papelera-confirmar" disabled>Borrar para siempre</button>'
+        + '<button type="button" class="ma-btn" data-accion="papelera-cancelar">Cancelar</button></div>';
+    }
+    return h + '</div>';
+  }
+  function htmlZonaPapelera() {
+    var h = htmlBarraCentro();
+    if (avisoLinea) h += '<p class="ma-confirma-t" data-metas="aviso-papelera" role="status">' + esc(avisoLinea) + '</p>';
+    if (pasoPapelera && pasoCentro && !esArchivado(pasoCentro)) {
+      var c = centroPorId(pasoCentro);
+      if (c) h += htmlPasos(c);
+    }
+    return h;
+  }
+  function htmlBotonArchivados() {
+    var n = centrosArchivados().length;
+    if (!n) return '';
+    return '<button type="button" class="ma-chip-arch" data-metas="archivados" data-accion="archivados" aria-expanded="'
+      + archivadosAbiertos + '">Archivados (' + n + ')</button>';
+  }
+  function htmlListaArchivados() {
+    if (!centrosArchivados().length || !archivadosAbiertos) return '';
+    return '<ul class="ma-lista-arch">' + centrosArchivados().map(function (c) {
+      var h = '<li><div class="ma-fila-arch"><span>' + esc(c.nombre) + '</span>'
+        + '<button type="button" class="ma-btn" data-metas="recuperar-centro" data-accion="recuperar-centro" data-valor="'
+        + esc(c.id) + '">Recuperar</button>'
+        + '<button type="button" class="ma-btn ma-btn-peligro" data-metas="borrar-archivado" data-accion="borrar-archivado" data-valor="'
+        + esc(c.id) + '">Borrar para siempre</button></div>';
+      if (choqueArchivo && choqueArchivo.id === c.id) {
+        h += '<p class="ma-linea-choque" data-metas="choque-archivo">' + esc(choqueArchivo.texto) + '</p>';
+      }
+      if (pasoPapelera && pasoCentro === c.id) h += htmlPasos(c);
+      return h + '</li>';
+    }).join('') + '</ul>';
+  }
+  function prepararSalidaCentro() {
+    if (!barraAlSalir || !d) return;
+    var vivo = centrosDelDocente().some(function (c) { return c.id === barraAlSalir; });
+    var archivado = esArchivado(barraAlSalir);
+    if (vivo) return;
+    // Archivar: ya está en Archivados y toca la barra. Borrar: ya no está en ningún lado.
+    if (alSalirConBarra && !archivado) return;
+    if (!alSalirConBarra && archivado) return;
+    var id = barraAlSalir;
+    var orden = ordenAlArchivar || [];
+    var conBarra = alSalirConBarra;
+    barraAlSalir = null;
+    ordenAlArchivar = null;
+    alSalirConBarra = false;
+    var ids = centrosDelDocente().map(function (c) { return c.id; });
+    var i = orden.indexOf(id);
+    var sig = null;
+    var k;
+    for (k = i + 1; k < orden.length; k++) if (ids.indexOf(orden[k]) >= 0) { sig = orden[k]; break; }
+    if (!sig) for (k = i - 1; k >= 0; k--) if (ids.indexOf(orden[k]) >= 0) { sig = orden[k]; break; }
+    if (sig) {
+      vista.centro = sig;
+      var del = (d.lista('aulas') || []).filter(function (a) { return a.centro_id === sig; });
+      if (!del.some(function (a) { return a.id === vista.aula; })) vista.aula = del[0] ? del[0].id : null;
+      guardarPref();
+    }
+    if (!conBarra) return;
+    barraCentroHasta = Date.now() + 2000;
+    if (barraCentroTimer) clearTimeout(barraCentroTimer);
+    barraCentroTimer = setTimeout(function () {
+      barraCentroTimer = null;
+      if (Date.now() >= barraCentroHasta) pintar();
+    }, 2000);
+  }
+  function cerrarPapelera() {
+    pasoPapelera = '';
+    pasoCentro = null;
+    avisoLinea = '';
+  }
+  function sinSenalPapelera() {
+    if (!d.sinSenal()) return false;
+    avisoLinea = 'Sin señal. No se cambió nada.';
+    pintar();
+    return true;
+  }
   function pintarPantallaPerfil(aula) {
     var h = pintarSegmentos();
-    var guardados = centrosArchivados();
+    h += htmlZonaPapelera();
     h += '<div class="ma-acciones"><button type="button" class="ma-btn" data-metas="agregar-perfil" data-accion="agregar-perfil" aria-pressed="'
       + centroNuevo + '">+ Otro centro</button>';
-    if (guardados.length) {
-      h += '<button type="button" class="ma-chip-arch" data-metas="archivados" data-accion="archivados" aria-expanded="'
-        + archivadosAbiertos + '">Archivados (' + guardados.length + ')</button>';
-    }
+    h += htmlBotonArchivados();
     h += '<button type="button" class="ma-btn ma-btn-chico" data-accion="ayuda-perfil" aria-expanded="' + ayudaPerfil + '" aria-label="Ayuda">ⓘ</button></div>';
-    if (guardados.length && archivadosAbiertos) {
-      h += '<ul class="ma-lista-arch">';
-      guardados.forEach(function (c) {
-        h += '<li><div class="ma-fila-arch"><span>' + esc(c.nombre) + '</span>'
-          + '<button type="button" class="ma-btn" data-metas="recuperar-centro" data-accion="recuperar-centro" data-valor="'
-          + esc(c.id) + '">Recuperar</button></div>';
-        if (choqueArchivo && choqueArchivo.id === c.id) {
-          h += '<p class="ma-linea-choque" data-metas="choque-archivo">' + esc(choqueArchivo.texto) + '</p>';
-        }
-        h += '</li>';
-      });
-      h += '</ul>';
-    }
+    h += htmlListaArchivados();
     if (ayudaPerfil) h += '<ol class="ma-ayuda">' + AYUDA_PERFIL.map(function (p) { return '<li>' + esc(p) + '</li>'; }).join('') + '</ol>';
     h += pintarEncabezado(aula, centroNuevo ? 'nuevo' : null);
     return h;
@@ -1655,6 +1798,7 @@
         avisoArchivo = '';
         choqueArchivo = null;
         vista.centro = v;
+        cerrarPapelera();
         var delCentro = aulasVisibles();
         if (!delCentro.some(function (a) { return a.id === vista.aula; })) {
           vista.aula = delCentro[0] ? delCentro[0].id : null;
@@ -1675,6 +1819,21 @@
         guardarPref();
         return pintar();
       case 'ayuda-perfil': ayudaPerfil = !ayudaPerfil; return pintar();
+      case 'papelera-centro': return pedirPapelera();
+      case 'papelera-archivar': return archivarDesdeChip();
+      case 'papelera-borrar':
+      case 'borrar-archivado':
+        pasoCentro = acc === 'borrar-archivado' ? v : (pasoCentro || centroActivoId());
+        pasoPapelera = 'aviso1';
+        avisoLinea = '';
+        archivadosAbiertos = acc === 'borrar-archivado' ? true : archivadosAbiertos;
+        return pintar();
+      case 'papelera-seguir':
+        pasoPapelera = 'aviso2';
+        focoBorrar = true;
+        return pintar();
+      case 'papelera-confirmar': return confirmarBorrado();
+      case 'papelera-cancelar': cerrarPapelera(); return pintar();
       case 'archivar-centro': return pedirArchivar();
       case 'cancelar-archivar': confirmarArchivo = false; return pintar();
       case 'si-archivar': return siArchivar();
@@ -1735,7 +1894,54 @@
       return pintar();
     }
     choqueArchivo = null;
+    // Con grupos o alumnos archivados junto al centro, los devuelve la base.
+    // Sin ellos, sigue el camino de siempre (solo el centro).
+    var junto = piezasCentro(c.id);
+    if (junto.aulas.length || junto.alumnos) {
+      if (sinSenalPapelera()) return;
+      d.recuperarCentroJunto(c.id);
+      return pintar();
+    }
     if (!intentar(function () { d.recuperar('centros', c.id); })) return;
+    pintar();
+  }
+  function pedirPapelera() {
+    var c = centroActivo();
+    if (!c || centrosDelDocente().length < 2) return;
+    pasoCentro = c.id;
+    pasoPapelera = 'elige';
+    avisoLinea = '';
+    pintar();
+  }
+  function archivarDesdeChip() {
+    var c = centroPorId(pasoCentro);
+    if (!c || centrosDelDocente().length < 2) { cerrarPapelera(); return pintar(); }
+    if (sinSenalPapelera()) return;
+    ordenAlArchivar = centrosDelDocente().map(function (x) { return x.id; });
+    barraAlSalir = c.id;
+    alSalirConBarra = true;
+    cerrarPapelera();
+    d.archivarCentro(c.id);
+    pintar();
+  }
+  function confirmarBorrado() {
+    var campo = document.querySelector('#mi-aula [data-metas="escribir-borrar"]');
+    if (!campo || campo.value !== 'BORRAR') return;
+    var c = centroPorId(pasoCentro);
+    if (!c) { cerrarPapelera(); return pintar(); }
+    if (sinSenalPapelera()) return;
+    if (!esArchivado(c.id)) {
+      ordenAlArchivar = centrosDelDocente().map(function (x) { return x.id; });
+      barraAlSalir = c.id;
+      alSalirConBarra = false;
+    } else {
+      barraAlSalir = c.id;
+      ordenAlArchivar = centrosDelDocente().map(function (x) { return x.id; });
+      alSalirConBarra = false;
+    }
+    var id = c.id;
+    cerrarPapelera();
+    d.borrarCentroDefinitivo(id);
     pintar();
   }
 
@@ -1915,6 +2121,11 @@
   // El color de la nota cambia mientras se escribe; se anota al soltar.
   function alEscribir(ev) {
     var el = ev.target;
+    if (el.getAttribute && el.getAttribute('data-metas') === 'escribir-borrar') {
+      var botonBorrar = document.querySelector('#mi-aula [data-metas="papelera-confirmar"]');
+      if (botonBorrar) botonBorrar.disabled = el.value !== 'BORRAR';
+      return;
+    }
     if (el.getAttribute && el.getAttribute('data-centro')) {
       pintarEstadoPerfil(el.form, '');
       return programarPerfil();
