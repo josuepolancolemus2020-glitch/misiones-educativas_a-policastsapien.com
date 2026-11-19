@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Boceto · Eliminar centro y barra al guardar</title>
+<!-- Boceto de prueba: no se publica (_dev/). No lee ni guarda datos del maestro.
+
+     Por qué existe: Josué quiere, en Perfil, poder ocultar un centro y una
+     señal mínima al guardar. Poca carga: la señal es una barrita, no una
+     frase. Este archivo se aprueba antes de programar la pantalla.
+
+     Lo que ve el docente:
+       · «Eliminar centro» al final, debajo de «Guardar perfil», en rojo
+         suave. No es la acción principal.
+       · La pregunta queda en el formulario, sin ventana: «¿Eliminar John
+         Arnold? Se ocultará en todos tus aparatos.» «Sí, eliminar» y
+         «Cancelar».
+       · Con grupos no deja: «Primero pasa sus N grupos a otro centro», con ⓘ.
+       · El último centro no se elimina: «No se puede eliminar el último centro.»
+       · Al guardar EN ESTE aparato, una barrita delgada con un ✓ verde, sin
+         texto, unos 2 s, y se va sola. El lector oye «Perfil guardado».
+       · En otro aparato el dato aparece solo: sin barrita, sin chip y sin
+         resaltar el campo.
+       · Las tarjetas viejas «no se pudo anotar» van en una sola, con
+         «(N veces)». No se quitan hasta «Entendido».
+
+     Por dentro (no se pinta): deleted_at, nunca un DELETE. centros_unico
+     solo cuenta filas con deleted_at vacío, así el mismo nombre se puede
+     volver a crear. -->
+<link rel="stylesheet" href="../css/vendor/fuentes/fuentes.css">
+<style>
+:root {
+  --bg: #f0f4f9; --card: #fff; --text: #0f172a; --muted: #475569; --line: #e2e8f0;
+  --azul: #1e3a7c; --azul-suave: #eef2fb;
+  --ok: #15803d; --ok-tx: #14532d;
+  --rojo: #b91c1c; --rojo-tx: #7f1d1d; --rojo-bg: #fee2e2; --rojo-line: #fecaca;
+  --med: #78350f; --med-bg: #fef3c7;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; font-family: 'Outfit', system-ui, sans-serif; background: #e8eef6;
+  color: var(--text); font-size: 15px; line-height: 1.45;
+}
+button, input { font: inherit; }
+.nota-boceto, .bitacora {
+  max-width: 720px; margin: 12px auto; padding: 12px 14px;
+  border: 2px dashed #94a3b8; border-radius: 12px; background: var(--card); font-size: 14px;
+}
+.nota-boceto b, .bitacora b { display: block; margin-bottom: 4px; }
+.nota-boceto p, .bitacora p { margin: 6px 0; }
+.estados { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.estados button, .btn {
+  min-height: 44px; min-width: 44px; padding: 0 14px; border-radius: 12px;
+  border: 1.5px solid var(--line); background: #f8fafc; color: var(--text);
+  font-weight: 700; cursor: pointer;
+}
+.estados button[aria-pressed="true"] { background: var(--azul); color: #fff; border-color: var(--azul); }
+.antes { margin: 8px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.antes li {
+  padding: 8px 10px; border-radius: 10px; background: #f8fafc; border: 1px solid var(--line);
+  color: var(--muted); font-size: 13px;
+}
+
+/* El marco es el celular de 360 px. En uno de verdad ocupa el ancho. */
+.telefono {
+  width: 360px; max-width: 100%; height: min(740px, 100vh); margin: 0 auto 12px;
+  background: var(--bg); border: 1px solid #cbd5e1; border-radius: 28px;
+  box-shadow: 0 12px 40px rgba(15, 23, 42, .12);
+  display: flex; flex-direction: column; position: relative; overflow: hidden;
+}
+@media (max-width: 400px) {
+  .telefono { width: 100%; height: 100vh; border: none; border-radius: 0; box-shadow: none; margin: 0; }
+}
+.top {
+  position: sticky; top: 0; z-index: 5; display: grid; grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center; gap: 8px; min-height: 56px; padding: 6px 8px;
+  background: var(--card); border-bottom: 1px solid var(--line);
+}
+.volver {
+  min-height: 44px; min-width: 44px; padding: 0 8px; border: none; border-radius: 999px;
+  background: transparent; color: var(--azul); font-weight: 800; cursor: pointer;
+}
+.top h1 { margin: 0; text-align: center; font-size: 18px; color: var(--azul); }
+.hueco { width: 44px; }
+.scroll { flex: 1; overflow: auto; padding: 12px 12px 24px; display: flex; flex-direction: column; gap: 10px; }
+.telefono.con-tarjeta .scroll { padding-bottom: 168px; }
+
+.seg { display: flex; flex-wrap: wrap; gap: 6px; }
+.seg button {
+  flex: 1 1 140px; min-height: 44px; padding: 8px 12px; border-radius: 999px;
+  border: 1.5px solid var(--line); background: var(--card); font-weight: 700; cursor: pointer;
+  line-height: 1.2; text-align: center;
+}
+.seg button[aria-pressed="true"] { background: var(--azul); color: #fff; border-color: var(--azul); }
+.acciones { display: flex; flex-wrap: wrap; gap: 8px; }
+.btn-chico { padding: 0 12px; }
+.ayuda { margin: 0; padding-left: 18px; }
+.card {
+  background: var(--card); border: 1px solid var(--line); border-radius: 18px;
+  padding: 14px; display: flex; flex-direction: column; gap: 10px;
+}
+.card h2 { margin: 0; font-size: 17px; }
+.logos { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.logo {
+  min-height: 72px; border: 1.5px dashed var(--line); border-radius: 12px;
+  display: flex; align-items: center; justify-content: center; color: var(--muted);
+  font-size: 13px; font-weight: 700; text-align: center; padding: 8px;
+}
+.campo { display: flex; flex-direction: column; gap: 4px; font-weight: 700; font-size: 14px; }
+.campo input {
+  min-height: 48px; padding: 8px 12px; border-radius: 12px; border: 1.5px solid #cbd5e1;
+  font-weight: 500; font-size: 16px; width: 100%; background: #fff; color: var(--text);
+}
+.fila2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.nota { margin: 0; color: var(--muted); }
+.info {
+  margin: 0; padding: 8px 12px; border-radius: 12px; background: var(--azul-suave);
+  color: var(--azul); font-weight: 650;
+}
+.ya {
+  margin: 0; padding: 10px 12px; border-radius: 12px; background: var(--med-bg); color: var(--med);
+  font-weight: 700; display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+}
+.aviso-corto { margin: 0; color: #92400e; font-weight: 700; }
+.pie { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.btn-1 { background: var(--azul); color: #fff; border-color: var(--azul); border-radius: 12px; }
+/* La barra mide lo mismo que el botón: si ocupa la tarjeta, el ✓ se va lejos. */
+.guardar { display: inline-flex; flex-direction: column; align-items: stretch; gap: 6px; max-width: 100%; }
+
+/* La señal de guardado: delgada, un ✓, cero palabras en la pantalla.
+   Va pegada al botón de guardar, no junto a eliminar. */
+.barra {
+  display: flex; align-items: center; gap: 6px; height: 16px; margin: 0;
+}
+.barra-linea {
+  flex: 1; height: 4px; border-radius: 999px; background: var(--ok);
+  transform-origin: left center; animation: llena .35s ease-out;
+}
+.barra-check { color: var(--ok); font-weight: 800; font-size: 16px; line-height: 1; }
+@keyframes llena { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@media (prefers-reduced-motion: reduce) {
+  .barra-linea { animation: none; }
+}
+
+.zona { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin-top: 6px; }
+.peligro {
+  color: var(--rojo); border-color: var(--rojo-line); background: transparent; font-weight: 700;
+}
+.confirma { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.confirma p { margin: 0; font-weight: 700; }
+.botones { display: flex; flex-wrap: wrap; gap: 8px; }
+.botones .btn { flex: 1 1 140px; }
+.si { background: var(--rojo-bg); color: var(--rojo-tx); border-color: var(--rojo-line); }
+
+.carta {
+  position: absolute; left: 8px; right: 8px; bottom: 8px; z-index: 6;
+  background: var(--card); border: 1px solid var(--line); border-radius: 20px;
+  padding: 14px; box-shadow: 0 12px 32px rgba(15, 23, 42, .22);
+}
+.carta p { margin: 0 0 10px; font-weight: 700; }
+.veces { font-weight: 650; white-space: nowrap; }
+.bitacora ol { margin: 6px 0 0; padding-left: 18px; }
+.bitacora li { margin: 4px 0; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="nota-boceto">
+  <b>Boceto, no es la aplicación.</b>
+  <p>El marco de abajo mide 360 px, como el celular. Nada de esto guarda datos. El rojo suave de «Eliminar centro» no es el botón principal. El amarillo solo sale si el nombre ya es de otro centro vivo: eso sí es una alerta.</p>
+  <p>Al guardar, en este aparato, aparece una barrita verde delgada con un ✓ y sin texto. Dura 2 segundos y se va sola. El lector de pantalla oye «Perfil guardado». No dice «Perfil guardado ✓» ni «Guardado en la nube ✓». Si el cambio llega de otro aparato, el dato cambia y no hay aviso ni resaltado.</p>
+  <p>Las tarjetas viejas, de antes de v569, decían todas «no se pudo anotar». Hoy se verían así, cuatro veces:</p>
+  <ul class="antes">
+    <li>Este cambio no quedó anotado: no se pudo anotar.</li>
+    <li>Este cambio no quedó anotado: no se pudo anotar.</li>
+    <li>Este cambio no quedó anotado: no se pudo anotar.</li>
+    <li>Este cambio no quedó anotado: no se pudo anotar.</li>
+  </ul>
+  <p>En el boceto quedan en una sola, con «(4 veces)». No se quita hasta tocar «Entendido».</p>
+  <div class="estados" role="group" aria-label="Situaciones del boceto">
+    <button type="button" data-preset="sin-grupos" aria-pressed="true">John Arnold, sin grupos</button>
+    <button type="button" data-preset="con-grupos" aria-pressed="false">María Consuelo, con grupos</button>
+    <button type="button" data-preset="ultimo" aria-pressed="false">Solo queda un centro</button>
+    <button type="button" data-preset="viejas" aria-pressed="false">Tarjetas viejas (4 veces)</button>
+    <button type="button" data-accion="otro">El otro aparato cambió el director</button>
+    <button type="button" data-accion="ver-final">Ver el final del formulario</button>
+  </div>
+</div>
+
+<div class="telefono" id="telefono">
+  <header class="top">
+    <button type="button" class="volver" id="volver">‹ Volver</button>
+    <h1>Perfil</h1>
+    <span class="hueco" aria-hidden="true"></span>
+  </header>
+  <div class="scroll" id="scroll"></div>
+</div>
+
+<div class="bitacora">
+  <b>Esto no lo ve el docente.</b>
+  <p>Sirve para revisar el borrado suave y que la barrita solo sale en el aparato que guardó. La sonda, cuando el boceto se apruebe, va a comprobar lo mismo.</p>
+  <ol id="log"></ol>
+</div>
+
+<script>
+(function () {
+  var BARRA_MS = 2000;
+  var barraGen = 0;
+  var estado = null;
+
+  function esc(t) {
+    return String(t == null ? '' : t).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function norm(s) {
+    return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
+  }
+  function ahora() {
+    return new Date().toISOString();
+  }
+  function base() {
+    return [
+      { id: 'ja', nombre: 'John Arnold', maestro: 'Ana Sofía Mejía', director: 'Carlos Rivera', codigo: '051100134B10',
+        direccion: 'Barrio El Centro', aldea: '', municipio: 'Tegucigalpa', departamento: 'Francisco Morazán',
+        anio: '2026', modalidad: 'Presencial', jornada: 'Matutina', grupos: [], deleted_at: null },
+      { id: 'mc', nombre: 'María Consuelo', maestro: 'Ana Sofía Mejía', director: 'Lucía Romero', codigo: '0801990001',
+        direccion: 'Colonia Kennedy', aldea: '', municipio: 'Tegucigalpa', departamento: 'Francisco Morazán',
+        anio: '2026', modalidad: 'Presencial', jornada: 'Vespertina', grupos: ['6º-1', '5º-1'], deleted_at: null }
+    ];
+  }
+  function vivos() {
+    return estado.centros.filter(function (c) { return !c.deleted_at; });
+  }
+  function activo() {
+    return estado.centros.filter(function (c) { return c.id === estado.activo && !c.deleted_at; })[0] || null;
+  }
+  function log(t) {
+    var ol = document.getElementById('log');
+    var li = document.createElement('li');
+    li.textContent = t;
+    ol.appendChild(li);
+  }
+  function limpiarLog() {
+    document.getElementById('log').innerHTML = '';
+  }
+  function marcarPreset(nombre) {
+    document.querySelectorAll('[data-preset]').forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b.getAttribute('data-preset') === nombre));
+    });
+  }
+  function cargar(preset) {
+    barraGen++;
+    estado = {
+      centros: base(), activo: 'ja', nuevo: false, confirmar: false, aviso: '',
+      ayuda: false, tarjeta: null, barra: false, corto: '', ya: null, preset: preset
+    };
+    if (preset === 'con-grupos') estado.activo = 'mc';
+    if (preset === 'ultimo') {
+      estado.centros[0].deleted_at = '2026-11-18T12:00:00.000Z';
+      estado.activo = 'mc';
+    }
+    if (preset === 'viejas') estado.tarjeta = { veces: 4 };
+    marcarPreset(preset);
+    limpiarLog();
+    if (preset === 'sin-grupos') log('John Arnold no tiene grupos. Se puede ocultar. María Consuelo queda como centro activo.');
+    if (preset === 'con-grupos') log('María Consuelo tiene 2 grupos. Eliminar no abre la pregunta: pide pasarlos.');
+    if (preset === 'ultimo') log('Solo queda María Consuelo. Aunque tenga grupos, es el último: no se puede eliminar.');
+    if (preset === 'viejas') log('Cuatro tarjetas viejas, el mismo texto «no se pudo anotar», en una sola. Siguen hasta «Entendido».');
+    pintar();
+  }
+
+  function fraseGrupos(n) {
+    if (n === 1) return 'Primero pasa su grupo a otro centro.';
+    return 'Primero pasa sus ' + n + ' grupos a otro centro.';
+  }
+  function mismoNombre(nombre, excepto) {
+    var n = norm(nombre);
+    if (!n) return null;
+    return vivos().filter(function (c) { return c.id !== excepto && norm(c.nombre) === n; })[0] || null;
+  }
+
+  function campo(et, nombre, valor) {
+    return '<label class="campo">' + esc(et)
+      + '<input data-campo="' + nombre + '" value="' + esc(valor) + '" autocomplete="off"></label>';
+  }
+  function pintar() {
+    var sc = document.getElementById('scroll');
+    var y = sc.scrollTop;
+    var tel = document.getElementById('telefono');
+    tel.classList.toggle('con-tarjeta', !!estado.tarjeta);
+    var lista = vivos();
+    var c = estado.nuevo ? null : activo();
+    var h = '<div class="seg" role="group" aria-label="Tus centros">';
+    lista.forEach(function (x) {
+      var on = !estado.nuevo && c && x.id === c.id;
+      h += '<button type="button" data-accion="centro" data-valor="' + esc(x.id) + '" aria-pressed="' + on + '">'
+        + esc(x.nombre) + '</button>';
+    });
+    h += '</div><div class="acciones"><button type="button" class="btn" data-accion="nuevo" aria-pressed="' + estado.nuevo
+      + '">+ Otro centro</button><button type="button" class="btn btn-chico" data-accion="ayuda" aria-expanded="'
+      + estado.ayuda + '" aria-label="Ayuda">ⓘ</button></div>';
+    if (estado.ayuda) {
+      h += '<ol class="ayuda"><li>Cada grupo pertenece a un solo centro.</li>'
+        + '<li>Al cambiar de centro ves solo sus grupos.</li>'
+        + '<li>El grado y las materias quedan en el grupo.</li></ol>';
+    }
+    var v = estado.nuevo ? {
+      nombre: '', maestro: '', director: '', codigo: '', direccion: '', aldea: '',
+      municipio: '', departamento: '', anio: '2026', modalidad: '', jornada: ''
+    } : c;
+    h += '<form class="card" id="form" data-centro-id="' + esc(estado.nuevo || !c ? '' : c.id) + '">';
+    h += '<h2>🏫 Encabezado y logos</h2>';
+    h += '<div class="logos"><div class="logo">Sin logo</div><div class="logo">Logo de la Secretaría</div></div>';
+    h += campo('Nombre del centro educativo', 'nombre', v.nombre);
+    if (estado.ya) {
+      h += '<p class="ya">Ya tienes ' + esc(estado.ya.nombre) + '. ¿Abrirlo?'
+        + '<button type="button" class="btn" data-accion="abrir" data-valor="' + esc(estado.ya.id) + '">Abrirlo</button></p>';
+    }
+    h += campo('Nombre del maestro(a)', 'maestro', v.maestro);
+    h += '<div class="fila2">' + campo('Nombre del director(a)', 'director', v.director)
+      + campo('Código SACE del centro', 'codigo', v.codigo) + '</div>';
+    h += '<div class="fila2">' + campo('Dirección', 'direccion', v.direccion)
+      + campo('Aldea', 'aldea', v.aldea) + '</div>';
+    h += '<div class="fila2">' + campo('Municipio', 'municipio', v.municipio)
+      + campo('Departamento', 'departamento', v.departamento) + '</div>';
+    h += '<div class="fila2">' + campo('Año lectivo', 'anio', v.anio)
+      + campo('Modalidad', 'modalidad', v.modalidad) + '</div>';
+    h += campo('Jornada', 'jornada', v.jornada);
+    h += '<p class="nota">El grado y la sección salen del grupo.</p>';
+    if (!estado.nuevo && c) {
+      h += c.grupos.length
+        ? '<p class="info"><span aria-hidden="true">ⓘ</span> Este centro tiene ' + c.grupos.length
+          + (c.grupos.length === 1 ? ' grupo' : ' grupos') + ' (' + esc(c.grupos.join(', ')) + ').</p>'
+        : '<p class="nota">Este centro todavía no tiene grupos.</p>';
+    }
+    if (estado.nuevo) h += '<p class="nota">El centro nuevo se crea al tocar «Guardar perfil».</p>';
+    if (estado.corto) h += '<p class="aviso-corto">' + esc(estado.corto) + '</p>';
+    h += '<div class="pie"><div class="guardar"><button type="submit" class="btn btn-1" data-accion="guardar">Guardar perfil</button>';
+    if (estado.barra) {
+      h += '<div class="barra" role="status" aria-live="polite" aria-label="Perfil guardado" data-boceto="barra-guardado">'
+        + '<span class="barra-linea" aria-hidden="true"></span>'
+        + '<span class="barra-check" aria-hidden="true">✓</span></div>';
+    }
+    h += '</div></div>';
+    if (!estado.nuevo && c) {
+      h += '<div class="zona" id="zona-borrar">';
+      if (estado.confirmar) {
+        h += '<div class="confirma" data-boceto="confirmar-eliminar">'
+          + '<p>¿Eliminar ' + esc(c.nombre) + '? Se ocultará en todos tus aparatos.</p>'
+          + '<div class="botones"><button type="button" class="btn si" data-accion="si-eliminar">Sí, eliminar</button>'
+          + '<button type="button" class="btn" data-accion="cancelar">Cancelar</button></div></div>';
+      } else {
+        h += '<button type="button" class="btn peligro" data-accion="eliminar" data-boceto="eliminar-centro">Eliminar centro</button>';
+        if (estado.aviso === 'grupos') {
+          h += '<p class="info" data-boceto="aviso-grupos"><span aria-hidden="true">ⓘ</span> '
+            + esc(fraseGrupos(c.grupos.length)) + '</p>';
+        }
+        if (estado.aviso === 'ultimo') {
+          h += '<p class="info" data-boceto="aviso-ultimo"><span aria-hidden="true">ⓘ</span> No se puede eliminar el último centro.</p>';
+        }
+      }
+      h += '</div>';
+    }
+    h += '</form>';
+    sc.innerHTML = h;
+    sc.scrollTop = y;
+    var vieja = tel.querySelector('.carta');
+    if (vieja) vieja.remove();
+    if (estado.tarjeta) {
+      var carta = document.createElement('div');
+      carta.className = 'carta';
+      carta.setAttribute('role', 'alert');
+      carta.setAttribute('data-boceto', 'no-anotado');
+      carta.innerHTML = '<p>Este cambio no quedó anotado: no se pudo anotar. <span class="veces">('
+        + estado.tarjeta.veces + ' veces)</span></p>'
+        + '<div class="botones"><button type="button" class="btn btn-1" data-accion="entendido">Entendido</button></div>';
+      tel.appendChild(carta);
+    }
+  }
+
+  function ver(sel) {
+    var el = document.querySelector(sel);
+    if (el && el.scrollIntoView) el.scrollIntoView({ block: 'nearest' });
+  }
+  function leer() {
+    var datos = {};
+    document.querySelectorAll('#form [data-campo]').forEach(function (el) {
+      datos[el.getAttribute('data-campo')] = el.value;
+    });
+    return datos;
+  }
+  function mostrarBarra() {
+    barraGen++;
+    var g = barraGen;
+    estado.barra = true;
+    pintar();
+    ver('[data-boceto="barra-guardado"]');
+    log('En este aparato salió la barrita, sin texto. El lector oye «Perfil guardado». No hay frase de la nube.');
+    setTimeout(function () {
+      if (g !== barraGen) return;
+      estado.barra = false;
+      pintar();
+      log('La barrita se fue sola, a los 2 segundos.');
+    }, BARRA_MS);
+  }
+  function guardar(ev) {
+    if (ev) ev.preventDefault();
+    var datos = leer();
+    estado.corto = '';
+    estado.ya = null;
+    estado.confirmar = false;
+    estado.aviso = '';
+    if (estado.nuevo) {
+      if (norm(datos.nombre).replace(/[^a-z]/g, '').length < 3) {
+        estado.corto = 'Escribe al menos 3 letras del nombre del centro.';
+        estado.barra = false;
+        pintar();
+        return;
+      }
+      var repetido = mismoNombre(datos.nombre, null);
+      if (repetido) {
+        estado.ya = { id: repetido.id, nombre: repetido.nombre };
+        estado.barra = false;
+        pintar();
+        ver('.ya');
+        log('Ese nombre ya está en un centro vivo. centros_unico no deja otro. El amarillo es la alerta.');
+        return;
+      }
+      var id = 'n' + Date.now();
+      var fila = {
+        id: id, grupos: [], deleted_at: null,
+        nombre: datos.nombre.trim(), maestro: datos.maestro.trim(), director: datos.director.trim(),
+        codigo: datos.codigo.trim(), direccion: datos.direccion.trim(), aldea: datos.aldea.trim(),
+        municipio: datos.municipio.trim(), departamento: datos.departamento.trim(),
+        anio: datos.anio.trim(), modalidad: datos.modalidad.trim(), jornada: datos.jornada.trim()
+      };
+      estado.centros.push(fila);
+      estado.activo = id;
+      estado.nuevo = false;
+      log('Se creó «' + fila.nombre + '». Si ese nombre ya se había ocultado, se puede usar otra vez: la regla solo mira centros sin fecha de borrado.');
+      mostrarBarra();
+      return;
+    }
+    var c = activo();
+    if (!c) return;
+    var otro = mismoNombre(datos.nombre, c.id);
+    if (otro) {
+      estado.ya = { id: otro.id, nombre: otro.nombre };
+      datos.nombre = c.nombre;
+    }
+    ['nombre', 'maestro', 'director', 'codigo', 'direccion', 'aldea', 'municipio', 'departamento', 'anio', 'modalidad', 'jornada']
+      .forEach(function (k) { if (datos[k] != null && !(k === 'nombre' && otro)) c[k] = datos[k].trim(); });
+    mostrarBarra();
+  }
+  function pedirEliminar() {
+    var c = activo();
+    if (!c) return;
+    estado.ya = null;
+    estado.corto = '';
+    if (vivos().length < 2) {
+      estado.confirmar = false;
+      estado.aviso = 'ultimo';
+      pintar();
+      ver('[data-boceto="aviso-ultimo"]');
+      log('No se abrió la pregunta. Es el último centro.');
+      return;
+    }
+    if (c.grupos.length) {
+      estado.confirmar = false;
+      estado.aviso = 'grupos';
+      pintar();
+      ver('[data-boceto="aviso-grupos"]');
+      log('No se abrió la pregunta. Primero hay que pasar los ' + c.grupos.length + ' grupos.');
+      return;
+    }
+    estado.aviso = '';
+    estado.confirmar = true;
+    pintar();
+    ver('.confirma .botones');
+    log('La pregunta quedó en el formulario. No hay ventana emergente.');
+  }
+  function siEliminar() {
+    var c = activo();
+    if (!c || vivos().length < 2 || c.grupos.length) return;
+    c.deleted_at = ahora();
+    var queda = vivos()[0];
+    estado.activo = queda.id;
+    estado.confirmar = false;
+    estado.aviso = '';
+    estado.nuevo = false;
+    estado.barra = false;
+    barraGen++;
+    pintar();
+    log('«' + c.nombre + '» quedó con deleted_at. No hubo DELETE. En el otro aparato se oculta al sincronizar. Ahora se ve «' + queda.nombre + '».');
+  }
+  function otroAparato() {
+    if (estado.nuevo) {
+      estado.nuevo = false;
+      estado.activo = vivos()[0] ? vivos()[0].id : estado.activo;
+    }
+    var c = activo();
+    if (!c) return;
+    var siguiente = c.director === 'Elena Vásquez' ? 'Carlos Rivera' : 'Elena Vásquez';
+    c.director = siguiente;
+    estado.barra = false;
+    estado.confirmar = false;
+    estado.aviso = '';
+    barraGen++;
+    pintar();
+    log('Llegó del otro aparato: el director ya dice «' + siguiente + '». No hay barrita, ni chip, ni resaltado del campo.');
+  }
+
+  document.getElementById('telefono').addEventListener('click', function (ev) {
+    var t = ev.target.closest('button');
+    if (!t) return;
+    var accion = t.getAttribute('data-accion');
+    if (accion === 'guardar') return;
+    if (accion === 'centro') {
+      estado.activo = t.getAttribute('data-valor');
+      estado.nuevo = false;
+      estado.confirmar = false;
+      estado.aviso = '';
+      estado.ya = null;
+      estado.corto = '';
+      pintar();
+      return;
+    }
+    if (accion === 'nuevo') {
+      estado.nuevo = true;
+      estado.confirmar = false;
+      estado.aviso = '';
+      estado.ya = null;
+      estado.corto = '';
+      pintar();
+      return;
+    }
+    if (accion === 'ayuda') { estado.ayuda = !estado.ayuda; pintar(); return; }
+    if (accion === 'eliminar') { pedirEliminar(); return; }
+    if (accion === 'cancelar') { estado.confirmar = false; pintar(); log('Cancelar dejó el centro como estaba.'); return; }
+    if (accion === 'si-eliminar') { siEliminar(); return; }
+    if (accion === 'abrir') {
+      estado.activo = t.getAttribute('data-valor');
+      estado.nuevo = false;
+      estado.ya = null;
+      pintar();
+      return;
+    }
+    if (accion === 'entendido') {
+      var n = estado.tarjeta ? estado.tarjeta.veces : 0;
+      estado.tarjeta = null;
+      pintar();
+      log('Se quitó la tarjeta porque tocaste Entendido. Eran ' + n + ' veces. Ninguna se borró sola.');
+    }
+  });
+  document.getElementById('telefono').addEventListener('submit', function (ev) {
+    guardar(ev);
+  });
+  document.getElementById('volver').addEventListener('click', function () {
+    log('Volverías a Mi aula. El boceto se queda en Perfil para que lo revises.');
+  });
+  document.querySelector('.nota-boceto').addEventListener('click', function (ev) {
+    var t = ev.target.closest('button');
+    if (!t) return;
+    if (t.getAttribute('data-preset')) { cargar(t.getAttribute('data-preset')); return; }
+    if (t.getAttribute('data-accion') === 'otro') { otroAparato(); return; }
+    if (t.getAttribute('data-accion') === 'ver-final') {
+      var z = document.getElementById('zona-borrar') || document.querySelector('[data-accion="guardar"]');
+      if (z) z.scrollIntoView({ block: 'end' });
+    }
+  });
+
+  cargar('sin-grupos');
+})();
+</script>
+</body>
+</html>
