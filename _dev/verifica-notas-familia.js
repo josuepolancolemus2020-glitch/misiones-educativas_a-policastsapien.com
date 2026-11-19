@@ -71,8 +71,10 @@ ok('el valor sale como texto', /n\.valor::text/.test(sql));
 ok('el revoke es solo de esta función, no de todo el esquema',
   /revoke all on function metas\.familia_notas\(text\) from public, anon, authenticated/.test(sql)
   && !/revoke execute on all functions in schema metas from public/.test(sql));
-ok('la versión del portal está sellada', /familia-notas\.js\?v=570/.test(portal)
-  && /CACHE_NAME = 'meta-app-v570'/.test(fs.readFileSync(path.join(RAIZ, 'sw.js'), 'utf8')));
+/* Con el mismo sello que sw.js, sin escribir la cifra: con la cifra fija,
+   cada sello nuevo ponía roja esta sonda sin que el portal cambiara. */
+const selloSw = (/CACHE_NAME = 'meta-app-v(\d+)'/.exec(fs.readFileSync(path.join(RAIZ, 'sw.js'), 'utf8')) || [])[1];
+ok('la versión del portal está sellada', !!selloSw && new RegExp('familia-notas\\.js\\?v=' + selloSw + '"').test(portal));
 
 console.log(fallos ? '\n✘ ' + fallos + ' comprobaciones fallaron' : '\n✅ Las notas de la familia se quedan en su clave');
 process.exit(fallos ? 1 : 0);

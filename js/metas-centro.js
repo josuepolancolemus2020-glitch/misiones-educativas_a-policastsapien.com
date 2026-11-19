@@ -16,7 +16,12 @@
    lee la base, esta copia se vuelve a escribir con lo que dijo la base.
    Lleva el perfil por grupo (porAula) y, aparte, la lista de centros
    (centros), porque un centro recién creado todavía no tiene grupos y
-   el examen de la misión igual tiene que poder ofrecerlo.
+   el examen de la misión igual tiene que poder usarlo.
+
+   Un centro archivado (deleted_at, desde v570) no sale en ninguna de
+   las dos: MetasDatos.lista() ya no lo trae, y la copia guarda aparte
+   los ids archivados (archivados) para que la página de la misión, que
+   no tiene el motor de datos, tampoco lo use.
 
    Todo esto se usa solo con la sesión del docente abierta en el
    aparato (METAS_DOCENTE_V1.codigo, la misma prueba de la portada y de
@@ -93,7 +98,7 @@
     var vistos = {};
     var out = [];
     filas.forEach(function (c) {
-      if (!c || !c.id || vistos[c.id]) return;
+      if (!c || !c.id || vistos[c.id] || c.deleted_at) return;
       vistos[c.id] = 1;
       var docente = c.docente || '';
       if (!docente) {
@@ -113,6 +118,18 @@
     });
     return out;
   }
+  // Los ids de los centros archivados. MetasDatos.archivados() existe
+  // desde v570; con uno más viejo no hay archivados que contar.
+  function idsArchivados(api) {
+    if (!api || typeof api.archivados !== 'function') return null;
+    try {
+      return (api.archivados('centros') || []).map(function (c) { return c && c.id; }).filter(Boolean);
+    } catch (e) { return null; }
+  }
+  function archivadoEnCopia(cache, id) {
+    return !!(id && Array.isArray(cache.archivados) && cache.archivados.indexOf(id) >= 0);
+  }
+
   function deCache(aulaId) {
     var c = leer();
     var id = aulaId || c.actual;
@@ -203,9 +220,12 @@
     // Una lista vacía no borra la que había: puede ser que la base todavía
     // no haya contestado. Un centro no se borra (la base no deja).
     var lista = listaCentros(api);
+    var arch = idsArchivados(api);
     var aulas = api.lista('aulas') || [];
     if (!aulas.length) {
-      if (lista.length) { prev.centros = lista; escribir(prev); }
+      if (lista.length) prev.centros = lista;
+      if (arch) prev.archivados = arch;
+      if (lista.length || arch) escribir(prev);
       return;
     }
     var centros = api.lista('centros') || [];
@@ -222,6 +242,8 @@
     var nuevo = { actual: actual || prev.actual || null, porAula: por };
     if (lista.length) nuevo.centros = lista;
     else if (prev.centros) nuevo.centros = prev.centros;
+    if (arch) nuevo.archivados = arch;
+    else if (prev.archivados) nuevo.archivados = prev.archivados;
     escribir(nuevo);
   }
 
@@ -251,16 +273,112 @@
         municipio: c.municipio || '', departamento: c.departamento || '', docente: c.docente || '',
       };
     };
-    if (Array.isArray(cache.centros)) return cache.centros.filter(function (c) { return c && c.id; }).map(copia);
+    var vale = function (c) { return c && c.id && !c.deleted_at && !archivadoEnCopia(cache, c.id); };
+    if (Array.isArray(cache.centros)) return cache.centros.filter(vale).map(copia);
     var vistos = {};
     var out = [];
     perfiles().forEach(function (x) {
       var p = x.perfil;
-      if (!p || !p.id || vistos[p.id]) return;
+      if (!vale(p) || vistos[p.id]) return;
       vistos[p.id] = 1;
       out.push(copia(p));
     });
     return out;
+  }
+
+  // El centro del grupo que está abierto en Mi aula, con los mismos
+  // campos que centros(). Es el que sale en el examen impreso: el docente
+  // ya lo eligió al cambiar de grupo y no se le vuelve a preguntar.
+  // El grupo está en la copia (actual) y su perfil (porAula) trae el id
+  // del centro. Si el motor de datos tiene ese centro, se usa el suyo,
+  // que es más reciente. Un centro archivado no vale: null, y el examen
+  // decide con la lista de siempre.
+  // El id del centro del grupo activo, vivo o archivado ('' si no hay
+  // grupo activo o no tiene centro). El examen lo usa para saber si el
+  // docente TIENE un centro activo aunque ya no se pueda usar: entonces
+  // no se cae al último usado (centroActual() da null en los dos casos).
+  function centroActualId() {
+    var cache = leer();
+    var aulaId = cache.actual;
+    if (!aulaId) return '';
+    var p = cache.porAula && cache.porAula[aulaId];
+    var id = p && p.id;
+    var api = w.MetasDatos;
+    if (api && typeof api.lista === 'function') {
+      var aulas = api.lista('aulas') || [];
+      for (var i = 0; i < aulas.length; i++) {
+        if (aulas[i] && aulas[i].id === aulaId) { id = aulas[i].centro_id || null; break; }
+      }
+    }
+    return id ? String(id) : '';
+  }
+
+  function centroActual() {
+    var cache = leer();
+    var aulaId = cache.actual;
+    if (!aulaId) return null;
+    var p = cache.porAula && cache.porAula[aulaId];
+    var api = w.MetasDatos;
+    var conApi = api && typeof api.lista === 'function';
+    var id = centroActualId();
+    if (!id || (p && p.id === id && p.deleted_at)) return null;
+    var arch = conApi ? idsArchivados(api) : null;
+    if (arch ? arch.indexOf(id) >= 0 : archivadoEnCopia(cache, id)) return null;
+    if (conApi) {
+      var deBase = listaCentros(api);
+      for (var j = 0; j < deBase.length; j++) if (deBase[j].id === id) return deBase[j];
+      // La base contestó con centros y este no está: se archivó.
+      if (deBase.length) return null;
+    }
+    // Sin el motor de datos, la copia. La lista de centros también es de
+    // la base: si existe y el centro ya no está en ella, se archivó.
+    var enLista = null;
+    if (Array.isArray(cache.centros) && cache.centros.length) {
+      for (var k = 0; k < cache.centros.length; k++) {
+        if (cache.centros[k] && cache.centros[k].id === id) enLista = cache.centros[k];
+      }
+      if (!enLista || enLista.deleted_at) return null;
+    }
+    // Manda el renglón de la lista, que es el mismo que da centros() (y
+    // su docente ya trae el del grupo cuando el centro no lo tiene). El
+    // perfil del grupo solo llena lo que una copia vieja no tenga.
+    var perfil = (p && p.id === id) ? p : {};
+    var de = enLista || perfil;
+    if (!enLista && !perfil.id) return null;
+    var campo = function (k) { return de[k] != null && de[k] !== '' ? de[k] : (perfil[k] || ''); };
+    return {
+      id: id,
+      nombre: campo('nombre'),
+      logo: campo('logo'),
+      direccion: campo('direccion'),
+      municipio: campo('municipio'),
+      departamento: campo('departamento'),
+      docente: campo('docente'),
+    };
+  }
+
+  // El grado y la sección del grupo activo («6º-1»), para escribirlos en
+  // el examen con el logo. Solo si ese grupo es del centro que se va a
+  // imprimir: el 6º-1 de una escuela no se le pone a la hoja de otra.
+  // Vacío si no se sabe, y la hoja deja la raya.
+  function gradoActual(centroId) {
+    var cache = leer();
+    var aulaId = cache.actual;
+    if (!aulaId) return '';
+    var api = w.MetasDatos;
+    if (api && typeof api.lista === 'function') {
+      var aulas = api.lista('aulas') || [];
+      for (var i = 0; i < aulas.length; i++) {
+        var a = aulas[i];
+        if (a && a.id === aulaId) {
+          if (centroId && a.centro_id !== centroId) return '';
+          return String(gradoTxt(a.grado, a.seccion) || '').trim();
+        }
+      }
+    }
+    var p = cache.porAula && cache.porAula[aulaId];
+    if (!p || (centroId && p.id !== centroId)) return '';
+    return String(p.gradoSeccion || '').trim();
   }
 
   // El mismo objeto que ya leían las hojas: escuela, logos y boleta.
@@ -687,6 +805,9 @@
     jpeg: jpeg,
     examen: examen,
     centros: centros,
+    centroActual: centroActual,
+    centroActualId: centroActualId,
+    gradoActual: gradoActual,
     sesionDocente: sesionDocente,
   };
 })(window);

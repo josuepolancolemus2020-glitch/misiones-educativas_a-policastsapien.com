@@ -10,16 +10,29 @@
      sus tres impresiones son printEval, printEvalOp o printEvalCrit;
    (a) sin sesión, la hoja sale igual, byte por byte, aunque el perfil
        esté guardado en el aparato;
-   (b) docente con un centro: logo en gris a la izquierda, nombre en
-       mayúsculas, lugar y docente en letra pequeña, y sin la raya del
-       centro;
+   (b) docente con un centro: logo a color, cuadrado y grande (60 px o
+       más) a la izquierda; a su derecha el nombre en mayúsculas y, en
+       letra pequeña, el lugar y «Docente: … · Grado y Sección: … ·
+       Parcial: … · Fecha: …» YA ESCRITOS (el grado del grupo activo; el
+       parcial y la fecha, los que el docente eligió al imprimir); luego
+       el título y un solo renglón del alumno: Nombre y N.º de lista;
+       sin centro no se pregunta nada, y «Cancelar» no imprime;
+   (c) el centro que sale, sin preguntar nunca:
+       · con centro activo en Mi aula entre varios, el activo;
+       · sin activo y con uno solo, ese;
+       · sin activo y con varios, el último con que se imprimió, si
+         todavía existe; si no, la hoja sin encabezado personalizado;
+       · un centro archivado no sale nunca, aunque sea el del grupo
+         activo o el último usado: con el activo archivado, el único
+         centro vivo o la hoja sin encabezado personalizado;
    (d) «Sin encabezado»: la hoja de siempre, con la raya en blanco;
    (e) el docente cerró sesión: otra vez la hoja de siempre;
-   · la lista de centros incluye los que no tienen grupos, sin repetir;
+   · la lista de centros incluye los que no tienen grupos, sin repetir,
+     y deja fuera los archivados; centroActual() da los mismos campos;
    · los impresos de Mi aula (boleta, marca, paraImpreso, textoCentro)
      salen iguales con la lista nueva en la copia y con o sin sesión.
 
-   (c), el selector de dos centros, se mira en el navegador:
+   En el navegador, con una misión de verdad:
    _dev/verifica-encabezado-centro-navegador.js.
 
    Uso: node _dev/verifica-encabezado-centro.js
@@ -68,6 +81,10 @@ cargar('js/motor-misiones.js');
 cargar('js/tools/registros-admin.js');
 const MC = sandbox.MetasCentro;
 const hoja = sandbox.MotorMisiones.centro.hoja;
+/* Junto al encabezado nuevo viaja, invisible, el de siempre: el ajuste
+   lo mide en la hoja abierta y lo quita. Lo que se ve es lo de afuera. */
+const COPIA_RE = /<div data-metas-antes[^>]*>([\s\S]*?<\/h2>[\s\S]*?<\/div>\s*<div class="ph-line">[\s\S]*?<\/div>)<\/div>/g;
+const visible = h => h.replace(COPIA_RE, '');
 
 const LOGO = 'data:image/jpeg;base64,QUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVo=';
 const LOGO2 = 'data:image/jpeg;base64,WllYV1ZVVFNSUVBPTk1MS0pJSEdGRURDQkE=';
@@ -103,7 +120,9 @@ for (const f of fuentes) {
     const bloque = s.slice(i, fin) + '</div>';
     const rel = path.relative(RAIZ, f);
     const r = hoja(bloque, centroA, 'Docente Ficticia');
-    if (!r.includes('data-metas-encabezado="centro"') || /Centro Educativo:|>Instituto:|Universidad\/Instituto:/.test(r)) malas.push(rel);
+    const copia = (r.match(COPIA_RE) || [''])[0];
+    if (!r.includes('data-metas-encabezado="centro"') || /Centro Educativo:|>Instituto:|Universidad\/Instituto:/.test(visible(r))
+      || !copia.includes(bloque.slice(bloque.indexOf('<h2>'), -6))) malas.push(rel);
     const antes = s.slice(0, i);
     const re = /function\s+([A-Za-z0-9_$]+)\s*\(/g;
     let m, ultima = null;
@@ -115,7 +134,7 @@ for (const f of fuentes) {
   }
 }
 ok(hojas >= 167, 'se encontraron las hojas de examen de las misiones', hojas);
-ok(!malas.length, 'el motor sabe ponerle el centro a cada una de las ' + hojas + ' hojas', malas.slice(0, 5).join(', '));
+ok(!malas.length, 'el motor sabe ponerle el centro a cada una de las ' + hojas + ' hojas (y lleva al lado, para medirlo, su encabezado de siempre)', malas.slice(0, 5).join(', '));
 ok(!funcionesRaras.length, 'cada hoja se imprime desde printEval, printEvalOp o printEvalCrit', funcionesRaras.slice(0, 5).join(', '));
 ok(!guardasRaras.length, 'y cada una revisa su dato antes de abrir la ventana (_evalPrintData, _evalOpData, _evalCritData)', guardasRaras.slice(0, 5).join(', '));
 
@@ -124,41 +143,74 @@ console.log('\n── el encabezado ──');
 const HOJA = fs.readFileSync(path.join(RAIZ, 'misiones/1ciclo-segundo-grado/js/centena.js'), 'utf8');
 const trozo = (HOJA.match(/<div class="ph"><h2>[\s\S]*?<\/p><\/div>/) || [''])[0];
 const DOC = '<!DOCTYPE html><html><head><style>.ph{}</style></head><body><div id="evalPage">' + trozo
-  + '<div class="sec-title">I. Completar</div></div><script>(function(){function fit(id){}fit("evalPage");})()</script></body></html>';
+  + '<div class="sec-title">I. Completar</div></div><script>(function(){function fit(id){}fit("evalPage",250,0.55,1.2);})()</script></body></html>';
 ok(trozo.includes('<strong>Centro Educativo:</strong>') && trozo.includes('<strong>Grado:</strong>'), 'la hoja de referencia trae la raya del centro');
 
-const conCentro = hoja(DOC, centroA, 'Docente Ficticia');
-const ph = conCentro.slice(conCentro.indexOf('<div class="ph"'), conCentro.indexOf('<div class="sec-title">'));
-ok(/<img data-metas-logo[^>]*filter:grayscale\(1\)/.test(ph) && ph.includes(LOGO), 'el logo sale en blanco y negro');
-ok(ph.indexOf('data-metas-logo') < ph.indexOf('CENTRO FICTICIO LAS FLORES') && ph.indexOf('CENTRO FICTICIO LAS FLORES') < ph.indexOf('<h2>'),
-  'el logo va a la izquierda, el nombre en mayúsculas arriba, y debajo el título del examen');
-ok(ph.includes('Colonia Ficticia, Villanueva · Docente: Docente Ficticia'), 'debajo del nombre, el lugar y el docente en letra pequeña');
-ok(!/Centro Educativo:|Instituto:/.test(ph), 'ya no está la raya «Centro Educativo»');
-ok(ph.includes('<strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span>'),
-  'Nombre, Parcial y Fecha quedan como estaban');
-ok(ph.includes('<strong>Grado y Sección:</strong><span class="ph-fill">&nbsp;</span><strong>N.º de lista:</strong><span class="ph-xs">&nbsp;</span>'),
-  'Grado y Sección y N.º de lista quedan en blanco para el alumno');
+const DATOS = { grado: '6º-1', parcial: 'II', fecha: '19 de noviembre de 2026' };
+const conCentro = hoja(DOC, centroA, 'Docente Ficticia', DATOS);
+const ph = visible(conCentro.slice(conCentro.indexOf('<div class="ph"'), conCentro.indexOf('<div class="sec-title">')));
+const estiloLogo = (ph.match(/<img data-metas-logo[^>]*style="([^"]*)"/) || [, ''])[1];
+const ladoLogo = parseFloat((estiloLogo.match(/width:(\d+(?:\.\d+)?)px/) || [, '0'])[1]);
+ok(ph.includes(LOGO) && !/grayscale/.test(estiloLogo), 'el logo sale a color, sin el filtro gris', estiloLogo);
+ok(ladoLogo >= 60 && estiloLogo.includes('height:' + ladoLogo + 'px'), 'el logo es cuadrado y grande: 60 px o más', ladoLogo);
+ok(!/grayscale/.test(fs.readFileSync(path.join(RAIZ, 'js/motor-misiones.js'), 'utf8')), 'en el motor ya no queda ningún filtro gris');
+const iLogo = ph.indexOf('data-metas-logo'), iNom = ph.indexOf('CENTRO FICTICIO LAS FLORES'), iLugar = ph.indexOf('Colonia Ficticia, Villanueva'),
+  iDoc = ph.indexOf('Docente: Docente Ficticia'), iH2 = ph.indexOf('<h2>'), iNombre = ph.indexOf('<strong>Nombre:</strong>');
+ok(iLogo >= 0 && iLogo < iNom && iNom < iLugar && iLugar < iDoc && iDoc < iH2 && iH2 < iNombre,
+  'el logo a la izquierda; a su derecha el nombre, el lugar, el docente, el título y el renglón del alumno, en ese orden');
+const lineaDocente = (ph.match(/<div data-metas-docente[^>]*>([\s\S]*?)<\/div>/) || [, ''])[1];
+const estiloDocente = (ph.match(/<div data-metas-docente style="([^"]*)"/) || [, ''])[1];
+const estiloLugar = (ph.match(/<div style="([^"]*)">Colonia Ficticia, Villanueva<\/div>/) || [, ''])[1];
+ok(lineaDocente === 'Docente: Docente Ficticia · Grado y Sección: 6º-1 · Parcial: II · Fecha: 19 de noviembre de 2026',
+  'el renglón del docente ya va escrito: docente, grado, parcial y fecha', lineaDocente);
+ok(estiloDocente.includes('font-size:8.5pt') && estiloLugar.includes('font-size:8.5pt'), 'con la misma letra pequeña que la dirección', estiloDocente);
+ok(ph.includes('<div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>N.º de lista:</strong><span class="ph-xs">&nbsp;</span></div>'),
+  'el alumno tiene un solo renglón: Nombre y N.º de lista');
+ok(!/Centro Educativo:|Instituto:/.test(ph) && (ph.match(/Parcial:/g) || []).length === 1 && (ph.match(/<strong>Nombre:/g) || []).length === 1
+  && !/<strong>(Parcial|Fecha|Grado y Sección):/.test(ph),
+  'ya no está la raya «Centro Educativo», ni las rayas de grado, parcial y fecha, y nada sale dos veces');
+const aMano = (visible(hoja(DOC, centroA, 'Docente Ficticia', { parcial: 'I' })).match(/<div data-metas-docente[^>]*>([\s\S]*?)<\/div>/) || [, ''])[1];
+const RAYITA_RE = '<span style="display:inline-block;min-width:\\d+px;border-bottom:1px solid #555;">&nbsp;</span>';
+ok(new RegExp('^Docente: Docente Ficticia · Grado y Sección: ' + RAYITA_RE + ' · Parcial: I · Fecha: ' + RAYITA_RE + '$').test(aMano),
+  'lo que no se sabe (sin grupo activo, fecha borrada) queda con su raya para escribirlo a mano', aMano);
+const sf = sandbox.MotorMisiones.centro.fechaLarga;
+ok(sf('2026-11-19') === '19 de noviembre de 2026' && sf('2027-01-05') === '5 de enero de 2027' && sf('') === '' && sf('2026-13-01') === '',
+  'la fecha se escribe con letras: «19 de noviembre de 2026»');
+ok(!ph.includes('aria-hidden'), 'no queda hueco a la derecha: ese espacio es para las rayas');
+const encabezadoDeSiempre = (conCentro.match(new RegExp(COPIA_RE.source)) || [, ''])[1];
+ok(encabezadoDeSiempre === trozo.slice('<div class="ph">'.length, trozo.indexOf('<p class="ph-crit">')),
+  'el encabezado de siempre va al lado, igualito, para que el ajuste mida cuánto agregó el centro');
 ok(conCentro.includes(trozo.match(/<h2>[\s\S]*?<\/h2>/)[0]) && conCentro.includes(trozo.match(/<p class="ph-crit">[\s\S]*?<\/p>/)[0]),
   'el título, la forma y el valor total no cambian');
-ok(conCentro.slice(conCentro.indexOf('<div class="sec-title">')) === DOC.slice(DOC.indexOf('<div class="sec-title">')),
+const GUARDA_RE = /<script>\(function\(\)\{var T=(\{[^}]*\});[\s\S]*?<\/script><\/body>/;
+ok(conCentro.slice(conCentro.indexOf('<div class="sec-title">')).replace(GUARDA_RE, '</body>') === DOC.slice(DOC.indexOf('<div class="sec-title">')),
   'las preguntas y el ajuste de la hoja no se tocan');
+const guarda = conCentro.match(GUARDA_RE);
+ok(guarda && guarda[1] === '{"evalPage":250}' && conCentro.indexOf(guarda[0]) > conCentro.lastIndexOf('fit("evalPage",250'),
+  'a una hoja con ajuste propio solo se le agrega, después de su ajuste, el tope para cuando ya no cabe ni en su zoom mínimo', guarda && guarda[1]);
 ok(conCentro.includes('data-metas-encabezado="centro"'), 'la hoja queda marcada para que nadie más la llene');
 const sinAjuste = DOC.replace(/<script>[\s\S]*?<\/script>/, '');
 const finDeGrado = hoja(sinAjuste, centroA, '');
-ok(!conCentro.includes('data-metas-centro]') && /<script>[^<]*data-metas-centro[^<]*zoom[^<]*<\/script><\/body>/.test(finDeGrado),
-  'solo la hoja sin ajuste propio (Fin de grado) recibe el ajuste que le quita lo que el bloque agrega');
+ok(!/var T=/.test(finDeGrado) && /<script>[^<]*data-metas-antes[^<]*\(H-h\)\/H[^<]*<\/script><\/body>/.test(finDeGrado),
+  'la hoja sin ajuste propio (Fin de grado) recibe el ajuste que le quita lo que el centro agrega (el alto nuevo menos el de siempre)');
+ok(/data-metas-antes[\s\S]*removeChild/.test((conCentro.match(GUARDA_RE) || [''])[0]) && /removeChild/.test(finDeGrado.slice(finDeGrado.lastIndexOf('<script>'))),
+  'y el encabezado de siempre se quita apenas se mide, en las dos');
 ok(!hoja(sinAjuste, null, '').includes('<script>'), '«Sin encabezado» no recibe ningún ajuste');
 
 const pelado = hoja(DOC, { id: 'c-z', nombre: 'Escuela Sin Datos' }, '');
-ok(pelado.includes('ESCUELA SIN DATOS') && !pelado.includes('<img') && !pelado.includes('aria-hidden') && !pelado.includes('font-size:8.5pt'),
-  'sin logo, sin lugar y sin docente no quedan huecos ni líneas vacías');
+const peladoV = visible(pelado);
+ok(peladoV.includes('ESCUELA SIN DATOS') && !pelado.includes('<img') && !peladoV.includes('aria-hidden')
+  && !pelado.includes('Docente:') && /data-metas-docente[^>]*>Grado y Sección: <span/.test(peladoV) && (peladoV.match(/font-size:8\.5pt/g) || []).length === 1,
+  'sin logo, sin lugar y sin docente no quedan huecos ni líneas vacías, y las rayas de grado, parcial y fecha siguen');
 const soloDocente = hoja(DOC, { id: 'c-z', nombre: 'Escuela X', municipio: 'Danlí' }, '');
 ok(soloDocente.includes('>Danlí</div>') && !soloDocente.includes('Docente:'), 'sin docente, solo el lugar');
 const malo = hoja(DOC, { id: 'c-z', nombre: '<b>Escuela</b>', logo: 'javascript:alert(1)' }, '');
 ok(!malo.includes('<b>') && !malo.includes('javascript:'), 'el nombre se escribe como texto y un logo que no es imagen no entra');
 
 const uni = '<div class="ph"><h2>T</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Universidad/Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Carrera/Sección:</strong><span class="ph-s">&nbsp;</span><strong>N.º Cuenta:</strong><span class="ph-xs">&nbsp;</span></div></div>';
-ok(hoja(uni, centroA, '').includes('<strong>Carrera/Sección:</strong><span class="ph-fill">&nbsp;</span><strong>N.º Cuenta:</strong>'),
+const uniCon = visible(hoja(uni, centroA, ''));
+ok(/data-metas-docente[^>]*>Carrera\/Sección: <span[^>]*>&nbsp;<\/span> · Parcial: /.test(visible(hoja(uni, centroA, '', DATOS)))
+  && uniCon.includes('<strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>N.º Cuenta:</strong>'),
   'la hoja universitaria conserva sus rótulos');
 
 /* (d) «Sin encabezado» */
@@ -193,21 +245,34 @@ sandbox._evalPrintData = { listo: true };
 r = imprimir();
 ok(r.html === DOC, '(a) sin sesión: la hoja sale byte por byte como hoy, aunque el perfil esté en el aparato');
 
+/* El cuadrito de parcial y fecha lo contesta la sonda: elige el II y
+   el 19 de noviembre, o cancela (no llama a `listo`). */
+let preguntas = 0, cancelar = false;
+const avisos = [];
+sandbox.CustomEvent = function (tipo, o) { this.type = tipo; this.detail = o && o.detail; };
+sandbox.dispatchEvent = ev => { avisos.push(ev.type + ':' + (ev.detail && ev.detail.impresion)); return true; };
+sandbox.MotorMisiones.centro.preguntar(listo => { preguntas++; if (!cancelar) listo({ parcial: 'II', fecha: '19 de noviembre de 2026' }); });
 localStorage.setItem('METAS_DOCENTE_V1', SESION);
 const abrirAntes = sandbox.open;
 r = imprimir();
-ok(r.html.includes('data-metas-encabezado="centro"') && r.html.includes('CENTRO FICTICIO LAS FLORES') && r.html.includes(LOGO) && !r.html.includes('Centro Educativo:'),
+ok(r.html.includes('data-metas-encabezado="centro"') && r.html.includes('CENTRO FICTICIO LAS FLORES') && r.html.includes(LOGO) && !visible(r.html).includes('Centro Educativo:'),
   '(b) docente con un centro: logo y nombre arriba, sin la raya en blanco');
-ok(r.html.includes('Docente: Docente Ficticia'), '(b) con el docente que trae el centro');
-ok(!r.html.includes('6º-1'), '(b) el grado no se llena: lo escribe el alumno');
+ok(r.html.includes('Docente: Docente Ficticia · Grado y Sección: 6º-1 · Parcial: II · Fecha: 19 de noviembre de 2026'),
+  '(b) con el docente que trae el centro, el grado del grupo activo y el parcial y la fecha elegidos');
+ok(preguntas === 1, '(b) antes de imprimir se preguntó una vez el parcial y la fecha', preguntas);
 ok(sandbox.open === abrirAntes, 'después de imprimir, window.open queda como estaba');
+ok(avisos.join() === 'metas:examen-impreso:printEval', 'el motor avisa que la hoja salió (ahí se anota la pauta impresa)', avisos.join());
+cancelar = true; avisos.length = 0;
+r = imprimir();
+ok(r.r === undefined && !r.html && !avisos.length && preguntas === 2, '«Cancelar» en el cuadrito: no se imprime nada ni se avisa', JSON.stringify({ html: r.html.length, avisos }));
+cancelar = false;
 
 localStorage.setItem('METAS_CENTRO_LECTURA', JSON.stringify({ actual: 'aula-1', porAula: { 'aula-1': perfilA }, centros: [Object.assign({}, centroA, { docente: '' })] }));
 r = imprimir();
 ok(r.html.includes('Docente: Docente De La Cuenta'), 'si el centro no trae docente, va el nombre de la cuenta');
 localStorage.setItem('METAS_DOCENTE_V1', JSON.stringify({ codigo: 'DOC-FICTICIO' }));
 r = imprimir();
-ok(!r.html.includes('Docente:') && r.html.includes('Colonia Ficticia, Villanueva</div>'), 'y si tampoco hay nombre en la cuenta, no hay línea de docente');
+ok(!r.html.includes('Docente:') && r.html.includes('Colonia Ficticia, Villanueva</div>'), 'y si tampoco hay nombre en la cuenta, no dice «Docente:»');
 
 localStorage.setItem('METAS_DOCENTE_V1', SESION);
 localStorage.setItem('METAS_CENTRO_LECTURA', JSON.stringify({ actual: 'aula-1', porAula: { 'aula-1': perfilA }, centros: [Object.assign({}, centroA, { nombre: '  ' })] }));
@@ -219,6 +284,119 @@ localStorage.removeItem('METAS_DOCENTE_V1');
 r = imprimir();
 ok(r.html === DOC, '(e) el docente cerró sesión: la hoja vuelve a salir como hoy, con la raya en blanco');
 ok(JSON.parse(localStorage.getItem('METAS_CENTRO_LECTURA')).centros.length === 1, '(e) y el perfil sigue guardado: no se borró nada');
+
+/* (c) qué centro sale, sin preguntar */
+console.log('\n── (c) el centro activo, sin selector ──');
+const centroB = { id: 'c-b', nombre: 'Escuela Ficticia El Porvenir', logo: LOGO2, direccion: '', municipio: 'Danlí', departamento: 'El Paraíso', docente: 'Docente Del Porvenir' };
+const perfilB = Object.assign({}, perfilA, { id: 'c-b', nombre: centroB.nombre, direccion: '', municipio: 'Danlí', departamento: 'El Paraíso', docente: 'Docente Del Porvenir', logo: LOGO2, seccion: '2', gradoSeccion: '6º-2' });
+const copiaDos = extra => JSON.stringify(Object.assign({ actual: 'aula-2', porAula: { 'aula-1': perfilA, 'aula-2': perfilB }, centros: [centroA, centroB] }, extra || {}));
+localStorage.setItem('METAS_DOCENTE_V1', SESION);
+localStorage.removeItem('METAS_EXAMEN_CENTRO_V1');
+let dibujos = 0;
+const appendAntes = sandbox.document.body;
+sandbox.document.body = { appendChild() { dibujos++; } };
+
+localStorage.setItem('METAS_CENTRO_LECTURA', copiaDos());
+r = imprimir();
+ok(r.html.includes('ESCUELA FICTICIA EL PORVENIR') && !r.html.includes('LAS FLORES') && r.html.includes('Grado y Sección: 6º-2 ·'),
+  '(c) con dos centros y el 6º-2 activo, sale el del grupo activo, con su grado');
+ok(dibujos === 0 && !sandbox.document.getElementById('metas-centro-velo'), '(c) y no se dibuja ningún selector de centro');
+ok(localStorage.getItem('METAS_EXAMEN_CENTRO_V1') === 'c-b', '(c) queda anotado como el último con que se imprimió');
+localStorage.setItem('METAS_CENTRO_LECTURA', copiaDos({ actual: 'aula-1' }));
+r = imprimir();
+ok(r.html.includes('CENTRO FICTICIO LAS FLORES') && localStorage.getItem('METAS_EXAMEN_CENTRO_V1') === 'c-a', '(c) al cambiar de grupo en Mi aula, cambia el centro del examen');
+
+const ca = (localStorage.setItem('METAS_CENTRO_LECTURA', copiaDos()), MC.centroActual());
+ok(ca && JSON.stringify(Object.keys(ca).sort()) === JSON.stringify(Object.keys(MC.centros()[0]).sort()) && ca.id === 'c-b' && ca.docente === 'Docente Del Porvenir',
+  'MetasCentro.centroActual() devuelve el centro activo con los mismos campos que centros()', JSON.stringify(ca));
+
+ok(MC.gradoActual('c-b') === '6º-2' && MC.gradoActual('c-a') === '' && MC.gradoActual() === '6º-2',
+  'gradoActual() da el grado del grupo activo, y nada si el centro que se imprime es otro');
+
+localStorage.removeItem('METAS_EXAMEN_CENTRO_V1');
+localStorage.setItem('METAS_CENTRO_LECTURA', JSON.stringify({ porAula: {}, centros: [centroB] }));
+ok(MC.centroActual() === null, 'sin grupo activo, centroActual() es null');
+r = imprimir();
+ok(r.html.includes('ESCUELA FICTICIA EL PORVENIR') && /Grado y Sección: <span/.test(r.html), '(c) sin activo y con un solo centro, sale ese, con la raya del grado (no hay grupo)');
+
+localStorage.setItem('METAS_CENTRO_LECTURA', JSON.stringify({ porAula: {}, centros: [centroA, centroB] }));
+localStorage.setItem('METAS_EXAMEN_CENTRO_V1', 'c-b');
+r = imprimir();
+ok(r.html.includes('ESCUELA FICTICIA EL PORVENIR') && dibujos === 0, '(c) sin activo y con varios, el último con que se imprimió, sin preguntar');
+localStorage.setItem('METAS_EXAMEN_CENTRO_V1', 'c-que-ya-no-esta');
+r = imprimir();
+ok(r.html.replace(' data-metas-encabezado="sin"', '') === DOC, '(c) si el último ya no existe, la hoja sin encabezado personalizado');
+localStorage.setItem('METAS_EXAMEN_CENTRO_V1', 'sin');
+r = imprimir();
+ok(r.html.replace(' data-metas-encabezado="sin"', '') === DOC, '(c) el «Sin encabezado» que guardaba el selector viejo tampoco inventa un centro');
+localStorage.removeItem('METAS_EXAMEN_CENTRO_V1');
+r = imprimir();
+const antesDePreguntar = preguntas;
+r = imprimir();
+ok(r.html.includes('data-metas-encabezado="sin"') && dibujos === 0 && preguntas === antesDePreguntar,
+  '(c) varios y ningún último: la hoja sin encabezado, y sin preguntar nada (ni parcial ni fecha)');
+
+console.log('\n── un centro activo archivado ──');
+localStorage.setItem('METAS_EXAMEN_CENTRO_V1', 'c-b');
+localStorage.setItem('METAS_CENTRO_LECTURA', copiaDos({ centros: [centroA], archivados: ['c-b'] }));
+ok(MC.centroActual() === null && MC.centros().length === 1, 'el centro activo archivado no es el actual ni está en la lista');
+r = imprimir();
+ok(r.html.includes('CENTRO FICTICIO LAS FLORES') && !r.html.includes('EL PORVENIR'), 'el examen no lo usa: queda el único centro que hay');
+localStorage.setItem('METAS_CENTRO_LECTURA', copiaDos({ centros: [centroA, centroB], archivados: ['c-b'] }));
+ok(MC.centroActual() === null && MC.centros().map(c => c.id).join() === 'c-a', 'con la copia de la lista todavía vieja, los ids archivados también lo sacan');
+localStorage.setItem('METAS_CENTRO_LECTURA', copiaDos({ centros: [centroA] }));
+ok(MC.centroActual() === null, 'y si la lista de la base ya no lo trae, tampoco es el actual');
+localStorage.setItem('METAS_CENTRO_LECTURA', copiaDos({ centros: [centroA, Object.assign({}, centroB, { deleted_at: '2027-03-01T00:00:00Z' })] }));
+ok(MC.centroActual() === null && MC.centros().length === 1, 'un centro con deleted_at en la copia tampoco');
+r = imprimir();
+ok(r.html.includes('CENTRO FICTICIO LAS FLORES') && dibujos === 0, 'y el examen sale con el que queda');
+
+console.log('\n── un centro archivado nunca sale al imprimir ──');
+/* Tres centros; el C es el que se archiva en cada caso. */
+const centroC = { id: 'c-c', nombre: 'Instituto Ficticio Tercero', logo: LOGO, direccion: '', municipio: 'Juticalpa', departamento: 'Olancho', docente: '' };
+const perfilC = Object.assign({}, perfilA, { id: 'c-c', nombre: centroC.nombre, gradoSeccion: '6º-3', seccion: '3' });
+const copiaTres = extra => JSON.stringify(Object.assign({ actual: 'aula-3', porAula: { 'aula-1': perfilA, 'aula-2': perfilB, 'aula-3': perfilC } }, extra));
+const salio = () => { const h = imprimir().html; return h.includes('INSTITUTO FICTICIO TERCERO') ? 'c-c' : h.includes('EL PORVENIR') ? 'c-b' : h.includes('LAS FLORES') ? 'c-a' : h.includes('data-metas-encabezado="sin"') ? 'sin' : '?'; };
+
+localStorage.setItem('METAS_EXAMEN_CENTRO_V1', 'c-b');
+localStorage.setItem('METAS_CENTRO_LECTURA', copiaTres({ centros: [centroA, centroB], archivados: ['c-c'] }));
+ok(salio() === 'sin', 'activo archivado y dos vivos: la hoja sin encabezado personalizado, aunque el último usado (B) siga vivo');
+localStorage.setItem('METAS_CENTRO_LECTURA', copiaTres({ centros: [centroA, centroB, centroC], archivados: ['c-c'] }));
+ok(salio() === 'sin', 'igual con la lista todavía vieja: los ids archivados mandan');
+localStorage.setItem('METAS_CENTRO_LECTURA', copiaTres({ centros: [centroA, centroB, Object.assign({}, centroC, { deleted_at: '2027-03-01T00:00:00Z' })] }));
+ok(salio() === 'sin', 'igual con deleted_at en el renglón de la lista');
+localStorage.setItem('METAS_CENTRO_LECTURA', copiaTres({ centros: [centroA, centroB] }));
+ok(salio() === 'sin', 'igual si la lista de la base ya no trae el centro activo');
+localStorage.setItem('METAS_CENTRO_LECTURA', copiaTres({ porAula: { 'aula-3': Object.assign({}, perfilC, { deleted_at: '2027-03-01T00:00:00Z' }) }, centros: [centroA, centroB, centroC] }));
+ok(salio() === 'sin', 'igual con deleted_at en el perfil del grupo activo');
+
+localStorage.setItem('METAS_EXAMEN_CENTRO_V1', 'c-c');
+localStorage.setItem('METAS_CENTRO_LECTURA', copiaTres({ centros: [centroA], archivados: ['c-b', 'c-c'] }));
+ok(salio() === 'c-a', 'activo archivado, último usado archivado y un solo vivo: sale el único vivo');
+
+localStorage.setItem('METAS_EXAMEN_CENTRO_V1', 'c-c');  // cada impresión anota el último: se repone
+localStorage.setItem('METAS_CENTRO_LECTURA', JSON.stringify({ porAula: {}, centros: [centroA, centroB], archivados: ['c-c'] }));
+ok(salio() === 'sin', 'sin grupo activo y con el último usado archivado: no sale (varios vivos, la hoja sin encabezado)');
+localStorage.setItem('METAS_EXAMEN_CENTRO_V1', 'c-c');  // cada impresión anota el último: se repone
+localStorage.setItem('METAS_CENTRO_LECTURA', JSON.stringify({ porAula: {}, centros: [centroA, centroB, centroC], archivados: ['c-c'] }));
+ok(salio() === 'sin', 'igual con la lista todavía vieja');
+localStorage.setItem('METAS_EXAMEN_CENTRO_V1', 'c-c');  // cada impresión anota el último: se repone
+localStorage.setItem('METAS_CENTRO_LECTURA', JSON.stringify({ porAula: {}, centros: [centroB], archivados: ['c-c'] }));
+ok(salio() === 'c-b', 'sin grupo activo, último usado archivado y un solo vivo: sale el vivo');
+
+/* Con el motor de datos (Mi aula abierta en el mismo aparato). */
+localStorage.setItem('METAS_CENTRO_LECTURA', copiaTres({ centros: [centroA, centroB, centroC] }));
+localStorage.setItem('METAS_EXAMEN_CENTRO_V1', 'c-b');
+const filasTres = [centroA, centroB, centroC].map((c, i) => Object.assign({}, c, { anio_lectivo: 2027, created_at: '2027-0' + (i + 1) + '-01T00:00:00Z' }));
+const aulasTres = [{ id: 'aula-1', centro_id: 'c-a', grado: 6, seccion: '1' }, { id: 'aula-2', centro_id: 'c-b', grado: 6, seccion: '2' }, { id: 'aula-3', centro_id: 'c-c', grado: 6, seccion: '3' }];
+sandbox.MetasDatos = { lista: t => (t === 'centros' ? filasTres.filter(c => c.id !== 'c-c') : aulasTres).map(x => Object.assign({}, x)), archivados: () => [{ id: 'c-c' }] };
+ok(salio() === 'sin', 'con el motor de datos: el centro activo archivado en la base tampoco sale, ni se cae al último usado');
+sandbox.MetasDatos = { lista: t => (t === 'centros' ? filasTres : aulasTres).map(x => Object.assign({}, x)), archivados: () => [] };
+ok(salio() === 'c-c', 'y vivo, sí sale (control: el caso de arriba no sale vacío por otra razón)');
+delete sandbox.MetasDatos;
+
+sandbox.document.body = appendAntes;
+localStorage.removeItem('METAS_EXAMEN_CENTRO_V1');
 
 /* ══════════ 4 · La lista de centros ══════════ */
 console.log('\n── la lista de centros ──');
@@ -243,6 +421,27 @@ ok(JSON.stringify(Object.keys(copia.centros[0]).sort()) === JSON.stringify(['dep
 ok(copia.centros[0].docente === 'Docente Del Grupo', 'sin docente en el centro, se toma el del grupo, como en la pantalla del perfil');
 ok(copia.actual === 'aula-1' && Object.keys(copia.porAula).join() === 'aula-1' && copia.porAula['aula-1'].nombre === centroA.nombre,
   'el perfil por grupo y el grupo abierto quedan como antes');
+
+console.log('\n── archivados, con el motor de datos ──');
+{
+  const filasConArchivado = filasCentros.concat([{ id: 'c-x', nombre: 'Centro Archivado', anio_lectivo: 2027, created_at: '2026-12-01T00:00:00Z', deleted_at: '2027-03-01T00:00:00Z' }]);
+  const api = Object.assign(apiDe({ centros: filasConArchivado, aulas: filasAulas }), { archivados: () => [{ id: 'c-x', deleted_at: '2027-03-01T00:00:00Z' }] });
+  const guardada = localStorage.getItem('METAS_CENTRO_LECTURA');
+  localStorage.removeItem('METAS_CENTRO_LECTURA');
+  MC.refrescar(api, 'aula-1');
+  const conArch = JSON.parse(localStorage.getItem('METAS_CENTRO_LECTURA'));
+  ok(conArch.centros.map(c => c.id).join() === 'c-a,c-b' && JSON.stringify(conArch.archivados) === '["c-x"]',
+    'refrescar deja fuera de la lista el centro archivado y guarda su id aparte', JSON.stringify(conArch.archivados));
+  sandbox.MetasDatos = api;
+  ok(MC.centros().map(c => c.id).join() === 'c-a,c-b', 'centros() con el motor de datos no trae el archivado');
+  ok(MC.centroActual() && MC.centroActual().id === 'c-a', 'centroActual() con el motor de datos: el centro del aula activa');
+  sandbox.MetasDatos = Object.assign(apiDe({ centros: filasCentros.map(c => c.id === 'c-a' ? Object.assign({}, c, { nombre: 'Nombre Más Reciente' }) : c), aulas: filasAulas }), { archivados: () => [] });
+  ok(MC.centroActual().nombre === 'Nombre Más Reciente', 'y si la base tiene ese centro más reciente que la copia, gana la base');
+  sandbox.MetasDatos = Object.assign(apiDe({ centros: filasCentros, aulas: filasAulas }), { archivados: () => [{ id: 'c-a' }] });
+  ok(MC.centroActual() === null, 'el centro activo archivado en la base no es el actual');
+  delete sandbox.MetasDatos;
+  localStorage.setItem('METAS_CENTRO_LECTURA', guardada);
+}
 
 const sinApi = sandbox.MetasDatos;
 ok(sinApi === undefined && MC.centros().length === 2 && MC.centros()[1].id === 'c-b', 'MetasCentro.centros() devuelve la lista desde la copia');
@@ -306,5 +505,5 @@ for (const f of archivosJs(path.join(RAIZ, 'js/tools')).concat([path.join(RAIZ, 
 }
 ok(!conPh.length, 'ningún impreso de Mi aula usa la hoja de examen (class="ph"): examen() no los toca', conPh.join(', '));
 
-console.log(fallos ? '\n✘ ' + fallos + ' comprobaciones fallaron' : '\n✅ El examen impreso lleva el centro del docente con sesión, y todo lo demás sale como hoy');
+console.log(fallos ? '\n✘ ' + fallos + ' comprobaciones fallaron' : '\n✅ El examen impreso lleva el centro activo del docente con sesión, con el grado, el parcial y la fecha escritos, y todo lo demás sale como hoy');
 process.exit(fallos ? 1 : 0);

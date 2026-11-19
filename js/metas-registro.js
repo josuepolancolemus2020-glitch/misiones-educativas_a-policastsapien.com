@@ -216,20 +216,25 @@
         '<strong>genera otra forma y califica sin mirar la pauta</strong>.';
       panel.appendChild(n);
     }
-    if (typeof window.printEval === 'function') {
-      var peOrig = window.printEval;
-      window.printEval = function () {
-        registrarPauta(window._currentEvalForm || null);
-        return peOrig.apply(this, arguments);
+    /* Si el motor de las misiones ya envolvió la impresión (js/motor-misiones.js,
+       marca __metasCentro), la pauta se anota cuando él avisa que la hoja SALE:
+       con el logo del centro, antes de imprimir se pregunta el parcial y la
+       fecha, y un «Cancelar» ahí no imprime nada ni muestra la pauta. */
+    var formaDe = { printEval: '_currentEvalForm', printEvalOp: '_currentEvalOpForm' };
+    var avisaElMotor = {};
+    Object.keys(formaDe).forEach(function (n) {
+      if (typeof window[n] !== 'function') return;
+      var orig = window[n];
+      if (orig.__metasCentro) { avisaElMotor[n] = true; return; }
+      window[n] = function () {
+        registrarPauta(window[formaDe[n]] || null);
+        return orig.apply(this, arguments);
       };
-    }
-    if (typeof window.printEvalOp === 'function') {
-      var poOrig = window.printEvalOp;
-      window.printEvalOp = function () {
-        registrarPauta(window._currentEvalOpForm || null);
-        return poOrig.apply(this, arguments);
-      };
-    }
+    });
+    window.addEventListener('metas:examen-impreso', function (ev) {
+      var n = ev && ev.detail && ev.detail.impresion;
+      if (avisaElMotor[n]) registrarPauta(window[formaDe[n]] || null);
+    });
 
     /* ⚠️ Y AQUÍ estaba el agujero por el que se caía todo el anti-trampa.
        Se registraba la pauta al IMPRIMIR, que es lo que hace el maestro, y no
