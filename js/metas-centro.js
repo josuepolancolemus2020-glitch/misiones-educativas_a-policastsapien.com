@@ -293,20 +293,34 @@
   // del centro. Si el motor de datos tiene ese centro, se usa el suyo,
   // que es más reciente. Un centro archivado no vale: null, y el examen
   // decide con la lista de siempre.
-  function centroActual() {
+  // El id del centro del grupo activo, vivo o archivado ('' si no hay
+  // grupo activo o no tiene centro). El examen lo usa para saber si el
+  // docente TIENE un centro activo aunque ya no se pueda usar: entonces
+  // no se cae al último usado (centroActual() da null en los dos casos).
+  function centroActualId() {
     var cache = leer();
     var aulaId = cache.actual;
-    if (!aulaId) return null;
+    if (!aulaId) return '';
     var p = cache.porAula && cache.porAula[aulaId];
     var id = p && p.id;
     var api = w.MetasDatos;
-    var conApi = api && typeof api.lista === 'function';
-    if (conApi) {
+    if (api && typeof api.lista === 'function') {
       var aulas = api.lista('aulas') || [];
       for (var i = 0; i < aulas.length; i++) {
         if (aulas[i] && aulas[i].id === aulaId) { id = aulas[i].centro_id || null; break; }
       }
     }
+    return id ? String(id) : '';
+  }
+
+  function centroActual() {
+    var cache = leer();
+    var aulaId = cache.actual;
+    if (!aulaId) return null;
+    var p = cache.porAula && cache.porAula[aulaId];
+    var api = w.MetasDatos;
+    var conApi = api && typeof api.lista === 'function';
+    var id = centroActualId();
     if (!id || (p && p.id === id && p.deleted_at)) return null;
     var arch = conApi ? idsArchivados(api) : null;
     if (arch ? arch.indexOf(id) >= 0 : archivadoEnCopia(cache, id)) return null;
@@ -792,6 +806,7 @@
     examen: examen,
     centros: centros,
     centroActual: centroActual,
+    centroActualId: centroActualId,
     gradoActual: gradoActual,
     sesionDocente: sesionDocente,
   };

@@ -22,7 +22,9 @@
        · sin activo y con uno solo, ese;
        · sin activo y con varios, el último con que se imprimió, si
          todavía existe; si no, la hoja sin encabezado personalizado;
-       · un centro activo archivado no sale;
+       · un centro archivado no sale nunca, aunque sea el del grupo
+         activo o el último usado: con el activo archivado, el único
+         centro vivo o la hoja sin encabezado personalizado;
    (d) «Sin encabezado»: la hoja de siempre, con la raya en blanco;
    (e) el docente cerró sesión: otra vez la hoja de siempre;
    · la lista de centros incluye los que no tienen grupos, sin repetir,
@@ -348,6 +350,51 @@ localStorage.setItem('METAS_CENTRO_LECTURA', copiaDos({ centros: [centroA, Objec
 ok(MC.centroActual() === null && MC.centros().length === 1, 'un centro con deleted_at en la copia tampoco');
 r = imprimir();
 ok(r.html.includes('CENTRO FICTICIO LAS FLORES') && dibujos === 0, 'y el examen sale con el que queda');
+
+console.log('\n── un centro archivado nunca sale al imprimir ──');
+/* Tres centros; el C es el que se archiva en cada caso. */
+const centroC = { id: 'c-c', nombre: 'Instituto Ficticio Tercero', logo: LOGO, direccion: '', municipio: 'Juticalpa', departamento: 'Olancho', docente: '' };
+const perfilC = Object.assign({}, perfilA, { id: 'c-c', nombre: centroC.nombre, gradoSeccion: '6º-3', seccion: '3' });
+const copiaTres = extra => JSON.stringify(Object.assign({ actual: 'aula-3', porAula: { 'aula-1': perfilA, 'aula-2': perfilB, 'aula-3': perfilC } }, extra));
+const salio = () => { const h = imprimir().html; return h.includes('INSTITUTO FICTICIO TERCERO') ? 'c-c' : h.includes('EL PORVENIR') ? 'c-b' : h.includes('LAS FLORES') ? 'c-a' : h.includes('data-metas-encabezado="sin"') ? 'sin' : '?'; };
+
+localStorage.setItem('METAS_EXAMEN_CENTRO_V1', 'c-b');
+localStorage.setItem('METAS_CENTRO_LECTURA', copiaTres({ centros: [centroA, centroB], archivados: ['c-c'] }));
+ok(salio() === 'sin', 'activo archivado y dos vivos: la hoja sin encabezado personalizado, aunque el último usado (B) siga vivo');
+localStorage.setItem('METAS_CENTRO_LECTURA', copiaTres({ centros: [centroA, centroB, centroC], archivados: ['c-c'] }));
+ok(salio() === 'sin', 'igual con la lista todavía vieja: los ids archivados mandan');
+localStorage.setItem('METAS_CENTRO_LECTURA', copiaTres({ centros: [centroA, centroB, Object.assign({}, centroC, { deleted_at: '2027-03-01T00:00:00Z' })] }));
+ok(salio() === 'sin', 'igual con deleted_at en el renglón de la lista');
+localStorage.setItem('METAS_CENTRO_LECTURA', copiaTres({ centros: [centroA, centroB] }));
+ok(salio() === 'sin', 'igual si la lista de la base ya no trae el centro activo');
+localStorage.setItem('METAS_CENTRO_LECTURA', copiaTres({ porAula: { 'aula-3': Object.assign({}, perfilC, { deleted_at: '2027-03-01T00:00:00Z' }) }, centros: [centroA, centroB, centroC] }));
+ok(salio() === 'sin', 'igual con deleted_at en el perfil del grupo activo');
+
+localStorage.setItem('METAS_EXAMEN_CENTRO_V1', 'c-c');
+localStorage.setItem('METAS_CENTRO_LECTURA', copiaTres({ centros: [centroA], archivados: ['c-b', 'c-c'] }));
+ok(salio() === 'c-a', 'activo archivado, último usado archivado y un solo vivo: sale el único vivo');
+
+localStorage.setItem('METAS_EXAMEN_CENTRO_V1', 'c-c');  // cada impresión anota el último: se repone
+localStorage.setItem('METAS_CENTRO_LECTURA', JSON.stringify({ porAula: {}, centros: [centroA, centroB], archivados: ['c-c'] }));
+ok(salio() === 'sin', 'sin grupo activo y con el último usado archivado: no sale (varios vivos, la hoja sin encabezado)');
+localStorage.setItem('METAS_EXAMEN_CENTRO_V1', 'c-c');  // cada impresión anota el último: se repone
+localStorage.setItem('METAS_CENTRO_LECTURA', JSON.stringify({ porAula: {}, centros: [centroA, centroB, centroC], archivados: ['c-c'] }));
+ok(salio() === 'sin', 'igual con la lista todavía vieja');
+localStorage.setItem('METAS_EXAMEN_CENTRO_V1', 'c-c');  // cada impresión anota el último: se repone
+localStorage.setItem('METAS_CENTRO_LECTURA', JSON.stringify({ porAula: {}, centros: [centroB], archivados: ['c-c'] }));
+ok(salio() === 'c-b', 'sin grupo activo, último usado archivado y un solo vivo: sale el vivo');
+
+/* Con el motor de datos (Mi aula abierta en el mismo aparato). */
+localStorage.setItem('METAS_CENTRO_LECTURA', copiaTres({ centros: [centroA, centroB, centroC] }));
+localStorage.setItem('METAS_EXAMEN_CENTRO_V1', 'c-b');
+const filasTres = [centroA, centroB, centroC].map((c, i) => Object.assign({}, c, { anio_lectivo: 2027, created_at: '2027-0' + (i + 1) + '-01T00:00:00Z' }));
+const aulasTres = [{ id: 'aula-1', centro_id: 'c-a', grado: 6, seccion: '1' }, { id: 'aula-2', centro_id: 'c-b', grado: 6, seccion: '2' }, { id: 'aula-3', centro_id: 'c-c', grado: 6, seccion: '3' }];
+sandbox.MetasDatos = { lista: t => (t === 'centros' ? filasTres.filter(c => c.id !== 'c-c') : aulasTres).map(x => Object.assign({}, x)), archivados: () => [{ id: 'c-c' }] };
+ok(salio() === 'sin', 'con el motor de datos: el centro activo archivado en la base tampoco sale, ni se cae al último usado');
+sandbox.MetasDatos = { lista: t => (t === 'centros' ? filasTres : aulasTres).map(x => Object.assign({}, x)), archivados: () => [] };
+ok(salio() === 'c-c', 'y vivo, sí sale (control: el caso de arriba no sale vacío por otra razón)');
+delete sandbox.MetasDatos;
+
 sandbox.document.body = appendAntes;
 localStorage.removeItem('METAS_EXAMEN_CENTRO_V1');
 

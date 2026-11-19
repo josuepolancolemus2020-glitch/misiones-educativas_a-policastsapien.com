@@ -19,7 +19,9 @@
        sin activo y con uno solo, ese; sin activo y con varios, el último
        con que se imprimió;
    (d) sin activo, con varios y sin último: la hoja de siempre, como (a);
-       un centro activo archivado no sale;
+       un centro archivado no sale nunca, aunque sea el activo o el último
+       usado: con el activo archivado, el único vivo o la hoja sin
+       encabezado personalizado;
    (e) el docente cerró sesión: igual que (a);
    · Fin de grado 6.º (sin ajuste propio) y la operativa de Robot que
      decide (su ajuste ya llega al mínimo y no cabe) se paginan igual con
@@ -265,6 +267,29 @@ async function captura(win, nombre) {
   h = await leerHoja(win);
   ok(h.marca === 'centro' && h.texto.startsWith('CENTRO DE EDUCACIÓN BÁSICA LAS FLORES') && !h.texto.includes('PORVENIR'),
     '(d) el centro activo archivado no sale: queda el único que hay', h.texto.slice(0, 60));
+  await win.close();
+
+  /* Tres centros: el C (aula-3) es el activo y está archivado; A y B
+     siguen vivos y B fue el último usado. No se adivina: hoja sin
+     encabezado personalizado, y sin preguntar parcial ni fecha. */
+  const CENTRO_C = { id: 'c-c', nombre: 'Instituto Ficticio Tercero', logo: CENTRO_A.logo, direccion: '', municipio: 'Juticalpa', departamento: 'Olancho', docente: '' };
+  await preparar(pg, { centros: [CENTRO_A, CENTRO_B], sesion: SESION, actual: 'aula-3', perfiles: [CENTRO_A, CENTRO_B, CENTRO_C], archivados: ['c-c'], ultimo: 'c-b' });
+  win = await hojaDe(pg, () => pg.evaluate(() => printEval()));
+  h = await leerHoja(win);
+  ok(h.marca === 'sin' && !h.logo && h.texto === hoy.texto && !(await pg.$('.metas-datos-velo')),
+    '(d) activo archivado y dos vivos: la hoja sin encabezado personalizado, aunque el último usado siga vivo', h.texto.slice(0, 80));
+  await win.close();
+
+  await preparar(pg, { centros: [CENTRO_A, CENTRO_B], sesion: SESION, actual: null, perfiles: [], archivados: ['c-c'], ultimo: 'c-c' });
+  win = await hojaDe(pg, () => pg.evaluate(() => printEval()));
+  h = await leerHoja(win);
+  ok(h.marca === 'sin' && !h.texto.includes('TERCERO'), '(d) sin grupo activo y con el último usado archivado: tampoco sale', h.texto.slice(0, 80));
+  await win.close();
+
+  await preparar(pg, { centros: [CENTRO_A, CENTRO_B, Object.assign({}, CENTRO_C, { deleted_at: '2027-03-01T00:00:00Z' })], sesion: SESION, actual: 'aula-3', perfiles: [CENTRO_A, CENTRO_B, CENTRO_C], ultimo: 'c-c' });
+  win = await hojaDe(pg, () => pg.evaluate(() => printEval()));
+  h = await leerHoja(win);
+  ok(h.marca === 'sin' && !h.texto.includes('TERCERO'), '(d) ni con deleted_at en el renglón de la lista', h.texto.slice(0, 80));
   await win.close();
 
   console.log('\n── (e) el docente cerró sesión ──');

@@ -681,22 +681,40 @@
     finally { global.open = abrir; }
   }
 
-  /* El centro con que sale la hoja, en este orden:
-       1. el del grupo activo en Mi aula, si tiene nombre y no está archivado;
-       2. si no hay activo y hay un solo centro, ese;
-       3. si hay varios, el último con que se imprimió, si todavía existe;
-       4. si no, ninguno: la hoja sin encabezado personalizado.
+  /* El centro con que sale la hoja. Solo sirve un centro VIVO, de la
+     lista de MetasCentro.centros(), que ya deja fuera los archivados
+     (deleted_at): un centro archivado no sale nunca, aunque sea el del
+     grupo activo o el último con que se imprimió. En este orden:
+       1. el del grupo activo en Mi aula, si está vivo y tiene nombre;
+       2. si el centro del grupo activo está archivado, el respaldo: el
+          único centro vivo, y si hay varios, ninguno (no se adivina con
+          el último usado: el docente archivó justo el que tenía abierto);
+       3. sin grupo activo, si hay un solo centro vivo, ese;
+       4. sin grupo activo y con varios, el último con que se imprimió,
+          si sigue vivo;
+       5. si no, ninguno: la hoja sin encabezado personalizado.
      Lo de la sesión ya se miró antes de llegar aquí. */
   function _centroDelExamen() {
     var MC = global.MetasCentro;
-    var activo = null;
-    try { activo = typeof MC.centroActual === 'function' ? MC.centroActual() : null; } catch (e) { activo = null; }
-    if (activo && activo.id && _txt(activo.nombre)) return activo;
-    var lista = _centrosParaExamen();
-    if (lista.length === 1) return lista[0];
-    var ultimo = _leerUltimo();
-    for (var i = 0; i < lista.length; i++) if (lista[i].id === ultimo) return lista[i];
-    return null;
+    var vivos = _centrosParaExamen();
+    var vivo = function (id) {
+      for (var i = 0; i < vivos.length; i++) if (id && vivos[i].id === id) return vivos[i];
+      return null;
+    };
+    var idActivo = '';
+    try { idActivo = typeof MC.centroActualId === 'function' ? _txt(MC.centroActualId()) : ''; } catch (e) { idActivo = ''; }
+    if (idActivo) {
+      /* Vale solo si está en la lista de vivos Y centroActual() lo da:
+         este último también mira el deleted_at del perfil del grupo y
+         los ids archivados, que pueden llegar antes que la lista nueva.
+         Sus datos prefieren la base si es más reciente. */
+      var activo = null;
+      try { activo = typeof MC.centroActual === 'function' ? MC.centroActual() : null; } catch (e) { activo = null; }
+      if (vivo(idActivo) && activo && activo.id === idActivo && _txt(activo.nombre)) return activo;
+      return vivos.length === 1 ? vivos[0] : null;
+    }
+    if (vivos.length === 1) return vivos[0];
+    return vivo(_leerUltimo());
   }
 
   /* ── El parcial y la fecha que salen escritos en la hoja con el logo ──
