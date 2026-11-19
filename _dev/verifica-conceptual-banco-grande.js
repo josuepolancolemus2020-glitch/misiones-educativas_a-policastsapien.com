@@ -30,6 +30,7 @@
    5. la respuesta correcta se amontona en una letra: más de dos de las
       cinco selecciones de una hoja, o más del 40 % entre todas las
       formas nuevas o en el banco nuevo tal como está escrito;
+      o el verdadero o falso de una hoja sale con las cinco iguales;
    6. un pareado de una forma nueva deja la definición en la fila de su
       término (se contesta sin leer);
    7. una pregunta nueva no dice su dato (`k`) o de dónde salió
@@ -52,7 +53,9 @@ const L = require('./lib-formas.js');
 const args = process.argv.slice(2);
 const iFormas = args.indexOf('--formas');
 const aLeer = iFormas >= 0 ? String(args[iFormas + 1] || '').split(',').map(Number).filter(Boolean) : [];
-const pedidas = args.filter((a, i) => !a.startsWith('--') && i !== iFormas + 1);
+/* Sin `--formas`, iFormas vale -1 y «el argumento que le sigue» sería el
+   primero: la carpeta pedida se perdía y la sonda medía todas. */
+const pedidas = args.filter((a, i) => !a.startsWith('--') && (iFormas < 0 || i !== iFormas + 1));
 
 const LIMITE = 0.4;                       /* ninguna letra pasa del 40 % */
 const SECCIONES = [['cp', 'Completar'], ['tf', 'Verdadero o falso'], ['mc', 'Selección'], ['pr', 'Pareados']];
@@ -200,6 +203,14 @@ conGrande.forEach(slug => {
   escrito.forEach((c, i) => { if (bancoMc.length && c / bancoMc.length > LIMITE) amontonan.push('en el banco nuevo, tal como está escrito, la ' + 'abcdef'[i] + ' lleva el ' + pct(c, bancoMc.length) + ' %'); });
   if (amontonan.length) mal('la respuesta correcta se amontona: ' + amontonan.slice(0, 5).join(' · '));
   else bien('la correcta está repartida entre las letras en las formas nuevas (' + reparto + '), y en ninguna hoja pasa de dos de cinco');
+
+  /* 5b · el verdadero o falso de una hoja no sale con las cinco iguales:
+     el alumno que lo nota contesta las cinco sin leerlas. Con un banco de
+     antes casi todo de verdaderas pasa solo; se arregla con el ORDEN del
+     banco nuevo, que es el que decide qué preguntas caen juntas. */
+  const iguales = nuevasN.filter(n => { const v = datos[n].tf.filter(it => it.a).length; return v === 0 || v === datos[n].tf.length; });
+  if (iguales.length) mal('formas con todo el verdadero o falso igual: ' + iguales.join(', ') + '. Se arregla cambiando el orden del banco nuevo de verdadero o falso');
+  else bien('en ninguna forma nueva el verdadero o falso sale con las cinco respuestas iguales');
 
   /* 6 · pareados fuera de su fila */
   const enFila = [];

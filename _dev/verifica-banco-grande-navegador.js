@@ -19,7 +19,7 @@
    · la hoja impresa de esa forma trae sus veinte preguntas, las
      opciones en el orden de la pantalla y la clave con esas letras;
    · un teléfono que recibe la plantilla nueva y se sirve de lo guardado
-     el motor de antes (el que no sabe repartir el banco grande) sigue
+     el motor de antes (el que no sabe decir hasta qué forma llega) sigue
      dando sus formas de siempre, sin un error.
 
      node _dev/servidor-estatico.js            (en otra terminal)
@@ -48,13 +48,16 @@ const lista = dentro.filter(tieneGrande);
 const paginaDe = slug => fs.readdirSync(path.join(L.DIR_MISIONES, slug)).find(f => f.endsWith('.html') && !f.startsWith('juego-'));
 
 /* El motor de antes de este cambio, tal como lo tiene guardado un
-   teléfono: el de la rama principal. Sin git (o sin esa rama) no hay con
-   qué hacer esa prueba, y se dice. */
+   teléfono: el de la rama principal, mientras todavía no sepa decir hasta
+   qué forma llega una misión (`_topeConceptual`), que es lo que la página
+   le pregunta antes de ofrecer formas nuevas. Sin git (o sin esa rama, o
+   cuando la rama principal ya lo sabe) no hay con qué hacer esa prueba, y
+   se dice. */
 function motorDeAntes() {
   for (const rama of ['origin/main', 'main']) {
     try {
       const t = execSync('git show ' + rama + ':js/motor-misiones.js', { cwd: L.RAIZ, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], maxBuffer: 16 * 1024 * 1024 });
-      if (!/_repartoConceptual/.test(t)) return t;
+      if (!/_topeConceptual/.test(t)) return t;
     } catch (e) { /* se prueba la siguiente */ }
   }
   return null;
@@ -171,7 +174,7 @@ function motorDeAntes() {
         const aviso = document.getElementById('metasIdModal'); if (aviso) aviso.remove();
         go('s-evaluacion'); genEval();
         const e = document.getElementById('evalFormaSel');
-        return { formas: e ? e.options.length : 0, tope: EVAL_FORMAS, forma: window._currentEvalForm, preguntas: window._evalPrintData ? window._evalPrintData.cp.length + window._evalPrintData.tf.length + window._evalPrintData.mc.length + window._evalPrintData.pr.terms.length : 0, viejo: typeof _repartoConceptual === 'undefined' };
+        return { formas: e ? e.options.length : 0, tope: EVAL_FORMAS, forma: window._currentEvalForm, preguntas: window._evalPrintData ? window._evalPrintData.cp.length + window._evalPrintData.tf.length + window._evalPrintData.mc.length + window._evalPrintData.pr.terms.length : 0, viejo: typeof _topeConceptual === 'undefined' };
       });
       if (!v.viejo) mal('la prueba del motor de antes no llegó a servirlo');
       else if (v.formas !== v.tope || v.preguntas !== 20 || err2.length) mal('con el motor de antes guardado ofrece ' + v.formas + ' formas (se esperaban las ' + v.tope + ' de siempre), la forma generada trae ' + v.preguntas + ' preguntas' + (err2.length ? ' y hay errores: ' + err2[0] : ''));
