@@ -81,6 +81,9 @@ async function capturar(pg, fn) {
   return pg.evaluate(f => {
     let html = '';
     const real = window.open;
+    /* El cuadrito de parcial y fecha lo contesta la herramienta, con la
+       fecha más larga del año: «30 de septiembre de 2026». */
+    if (window.MotorMisiones) MotorMisiones.centro.preguntar(listo => listo({ parcial: 'III', fecha: '30 de septiembre de 2026' }));
     window.open = () => ({ document: { write: h => { html += h; }, close() {} }, print() {}, focus() {}, close() {} });
     try { window[f](); } finally { window.open = real; }
     return html;

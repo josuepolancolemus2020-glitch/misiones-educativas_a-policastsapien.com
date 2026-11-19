@@ -6,11 +6,14 @@
    Educativo» en pensamiento crítico) y Fin de grado 6.º (la operativa):
 
    (a) sin sesión: la hoja sale con la raya en blanco, sin logo;
-   (b) docente con un centro: imprime directo; el logo a color, cuadrado
-       y grande (60 px o más) a la izquierda, y a su derecha el nombre,
-       el lugar, «Docente: …» con Grado y Sección, Parcial y Fecha, el
+   (b) docente con un centro: el logo a color, cuadrado y grande (60 px
+       o más) a la izquierda, y a su derecha el nombre, el lugar,
+       «Docente: …» con Grado y Sección, Parcial y Fecha ya escritos, el
        título y un solo renglón del alumno (Nombre y N.º de lista); la
        hoja cabe en la carta y no le queda el encabezado de siempre;
+       antes de imprimir, el cuadrito de parcial y fecha: «Cancelar» no
+       imprime ni anota la pauta; lo elegido sale escrito en letra
+       pequeña, como la dirección, y el parcial se recuerda;
    (c) docente con dos centros y el segundo activo en Mi aula: imprime
        directo con el activo, y no aparece ningún selector;
        sin activo y con uno solo, ese; sin activo y con varios, el último
@@ -77,6 +80,19 @@ async function hojaDe(pg, accion) {
   await win.waitForTimeout(150);
   return win;
 }
+/* Con el logo, antes de imprimir sale el cuadrito de parcial y fecha:
+   se contesta como el docente (toca el parcial, escribe la fecha, toca
+   «Imprimir») y se devuelve la ventana nueva. */
+async function hojaConDatos(pg, fn, { parcial, fecha } = {}) {
+  return hojaDe(pg, async () => {
+    await pg.evaluate(f => { window[f](); }, fn);
+    await pg.waitForSelector('.metas-datos-caja', { timeout: 3000 });
+    if (parcial) await pg.check('input[name="metas-parcial"][value="' + parcial + '"]');
+    if (fecha !== undefined) await pg.fill('#metas-datos-fecha', fecha);
+    await pg.click('.metas-datos-ir');
+  });
+}
+const pautasVistas = pg => pg.evaluate(() => { try { return (JSON.parse(localStorage.getItem('METAS_REGISTRO_V1')) || []).filter(e => e.tipo === 'pauta_vista').length; } catch (e) { return -1; } });
 async function leerHoja(win) {
   return win.evaluate(() => {
     const ph = document.querySelector('.ph');
@@ -94,6 +110,8 @@ async function leerHoja(win) {
       aLaDerecha: img ? ['[data-metas-docente]', 'h2'].every(sel => { const e = ph.querySelector(sel); return e && e.getBoundingClientRect().left >= img.getBoundingClientRect().right; })
         && [...ph.querySelectorAll('.ph-line strong')].filter(s => s.textContent === 'Nombre:').every(s => s.getBoundingClientRect().left >= img.getBoundingClientRect().right) : false,
       copiaQuitada: !document.querySelector('[data-metas-antes]'),
+      letraDocente: (() => { const e = ph.querySelector('[data-metas-docente]'); return e ? parseFloat(getComputedStyle(e).fontSize) : 0; })(),
+      letraLugar: (() => { const e = [...ph.querySelectorAll('[data-metas-centro] div')].find(d => /Colonia Ficticia/.test(d.textContent) && !d.children.length); return e ? parseFloat(getComputedStyle(e).fontSize) : -1; })(),
       altoLogo: img ? Math.round(img.getBoundingClientRect().height / (parseFloat(getComputedStyle(ph.parentElement).zoom) || 1)) : 0,
       logoIzq: img ? img.getBoundingClientRect().left < ph.getBoundingClientRect().left + 20 : false,
       altoMm: pag.getBoundingClientRect().height / mm,
@@ -133,53 +151,104 @@ async function captura(win, nombre) {
   await captura(win, 'sin-perfil.png');
   await win.close();
 
-  console.log('\n── (b) docente con un centro ──');
+  console.log('\n── (b) docente con un centro: el cuadrito de parcial y fecha ──');
+  /* La pauta impresa se anota a lo más una vez por minuto, y (a) acaba de
+     imprimir: se recarga la misión para mirar «Cancelar» desde cero. */
   await preparar(pg, { centros: [CENTRO_A], sesion: SESION });
-  win = await hojaDe(pg, () => pg.evaluate(() => printEval()));
+  await pg.reload({ waitUntil: 'load' });
+  await pg.evaluate(() => { genEval(); genEvalCrit(); });
+  if (await ahoraNo.count() && await ahoraNo.first().isVisible()) await ahoraNo.first().click();
+  await pg.evaluate(() => { localStorage.removeItem('METAS_EXAMEN_PARCIAL_V1'); localStorage.setItem('METAS_SACE_PARCIAL', 'III'); });
+  let abiertas = 0;
+  const contar = () => abiertas++;
+  pg.on('popup', contar);
+  await pg.evaluate(() => printEval());
+  await pg.waitForSelector('.metas-datos-caja', { timeout: 3000 });
+  const cuadro = await pg.evaluate(() => {
+    const caja = document.querySelector('.metas-datos-caja');
+    const hoy = new Date(); const dos = x => (x < 10 ? '0' : '') + x;
+    const toques = [...caja.querySelectorAll('label:has(input[type="radio"]), input[type="date"], button')];
+    return {
+      dialogo: caja.getAttribute('role') === 'dialog' && caja.getAttribute('aria-modal') === 'true',
+      titulo: caja.querySelector('h2').textContent,
+      parciales: [...caja.querySelectorAll('input[name="metas-parcial"]')].map(i => i.value + (i.checked ? '*' : '')).join(' '),
+      fecha: caja.querySelector('#metas-datos-fecha').value,
+      hoy: hoy.getFullYear() + '-' + dos(hoy.getMonth() + 1) + '-' + dos(hoy.getDate()),
+      botones: [...caja.querySelectorAll('button')].map(b => b.textContent.trim()),
+      minAlto: Math.min(...toques.map(b => b.getBoundingClientRect().height)),
+      ancho: document.documentElement.scrollWidth,
+    };
+  });
+  ok(abiertas === 0, '(b) antes de contestar no se abre ninguna hoja');
+  ok(cuadro.dialogo && cuadro.titulo === 'Datos del examen', '(b) aparece el cuadrito «Datos del examen»', cuadro.titulo);
+  ok(cuadro.parciales === 'I II III* IV', '(b) los cuatro parciales, con el que está abierto en Notas SACE ya marcado', cuadro.parciales);
+  ok(cuadro.fecha === cuadro.hoy, '(b) la fecha de hoy ya puesta', cuadro);
+  ok(cuadro.botones.join('|') === '🖨️ Imprimir|Cancelar', '(b) «Imprimir» y «Cancelar»', cuadro.botones);
+  ok(cuadro.minAlto >= 44 && cuadro.ancho <= 390, '(b) todo se toca con 44 px o más y cabe en el teléfono', cuadro);
+  if (CAPTURAS) await pg.screenshot({ path: path.join(CAPTURAS, 'cuadrito-parcial-fecha.png') });
+  const pautasAntes = await pautasVistas(pg);
+  await pg.click('.metas-datos-cerrar');
+  await pg.waitForTimeout(300);
+  ok(abiertas === 0 && !(await pg.$('.metas-datos-velo')), '(b) «Cancelar» cierra sin imprimir');
+  ok(await pautasVistas(pg) === pautasAntes, '(b) y no anota «vio la pauta»: no se imprimió nada', { antes: pautasAntes, despues: await pautasVistas(pg) });
+  pg.off('popup', contar);
+
+  win = await hojaConDatos(pg, 'printEval', { parcial: 'II', fecha: '2026-11-19' });
   let h = await leerHoja(win);
-  ok(h.marca === 'centro', '(b) imprime directo, sin preguntar');
+  ok(h.marca === 'centro', '(b) al tocar «Imprimir» sale la hoja con el centro');
   ok(h.logo && h.filtro === 'none' && h.logoIzq, '(b) el logo sale a color, arriba a la izquierda', h.filtro);
   ok(h.ladoLogo >= 60 && h.altoLogo === h.ladoLogo, '(b) el logo es cuadrado y mide 60 px o más', { ancho: h.ladoLogo, alto: h.altoLogo });
   ok(h.aLaDerecha, '(b) el docente, el título y el Nombre van a la derecha del logo, sin taparlo');
   ok(h.copiaQuitada, '(b) el encabezado de siempre, que va al lado para medir, ya no está en la hoja abierta');
-  ok(h.texto.startsWith('CENTRO DE EDUCACIÓN BÁSICA LAS FLORES Colonia Ficticia, Villanueva Docente: Docente Ficticia Grado y Sección: Parcial: Fecha:'),
-    '(b) el nombre en mayúsculas, y debajo el lugar y el docente', h.texto.slice(0, 120));
+  ok(h.texto.startsWith('CENTRO DE EDUCACIÓN BÁSICA LAS FLORES Colonia Ficticia, Villanueva Docente: Docente Ficticia · Grado y Sección: 6º-1 · Parcial: II · Fecha: 19 de noviembre de 2026'),
+    '(b) el nombre, el lugar, y ya escritos el docente, el grado, el parcial y la fecha', h.texto.slice(0, 180));
+  ok(h.letraDocente === h.letraLugar && h.letraLugar > 0, '(b) con la misma letra que la dirección', { docente: h.letraDocente, lugar: h.letraLugar });
   ok(!/Instituto:|Centro Educativo:/.test(h.texto) && /Nombre: N\.º de lista:/.test(h.texto) && (h.texto.match(/Parcial:/g) || []).length === 1,
     '(b) sin la raya del centro; el alumno tiene un solo renglón (Nombre y N.º de lista) y nada sale dos veces', h.texto);
   ok(h.texto.indexOf('Fecha:') < h.texto.indexOf('Evaluación Final · La Materia') && h.texto.indexOf('Evaluación Final · La Materia') < h.texto.indexOf('Nombre:'),
     '(b) el título del examen va entre el renglón del docente y el del alumno');
   ok(h.altoMm <= 252.5, '(b) la hoja sigue cabiendo en la carta', h.altoMm.toFixed(1));
+  ok(await pautasVistas(pg) === pautasAntes + 1, '(b) imprimir sí anota «vio la pauta», como siempre');
   await captura(win, 'con-perfil.png');
   await win.close();
 
-  win = await hojaDe(pg, () => pg.evaluate(() => printEvalCrit()));
+  await pg.evaluate(() => printEvalCrit());
+  await pg.waitForSelector('.metas-datos-caja');
+  const recordado = await pg.evaluate(() => document.querySelector('input[name="metas-parcial"]:checked').value);
+  ok(recordado === 'II', '(b) la próxima vez ya está marcado el parcial que se eligió', recordado);
+  await pg.keyboard.press('Escape');
+  ok(!(await pg.$('.metas-datos-velo')), '(b) Escape también cierra sin imprimir');
+  win = await hojaConDatos(pg, 'printEvalCrit', { fecha: '' });
   h = await leerHoja(win);
-  ok(h.marca === 'centro' && !h.texto.includes('Centro Educativo:') && h.texto.includes('CENTRO DE EDUCACIÓN BÁSICA LAS FLORES'),
-    '(b) pensamiento crítico («Centro Educativo») también');
+  ok(h.marca === 'centro' && !h.texto.includes('Centro Educativo:') && h.texto.includes('CENTRO DE EDUCACIÓN BÁSICA LAS FLORES')
+    && /Parcial: II · Fecha: ?$|Parcial: II · Fecha: (?!\d)/.test(h.texto.split('Evaluación')[0].trim()),
+    '(b) pensamiento crítico («Centro Educativo») también; con la fecha borrada queda la raya', h.texto.slice(0, 160));
   await win.close();
 
   console.log('\n── (c) dos centros, el segundo activo en Mi aula ──');
   await preparar(pg, { centros: [CENTRO_A, CENTRO_B], sesion: SESION, actual: 'aula-2' });
-  win = await hojaDe(pg, () => pg.evaluate(() => printEval()));
+  win = await hojaConDatos(pg, 'printEval', { parcial: 'IV', fecha: '2027-03-02' });
   h = await leerHoja(win);
-  ok(h.marca === 'centro' && h.texto.startsWith('ESCUELA FICTICIA EL PORVENIR Danlí Docente: Docente De La Cuenta') && !h.texto.includes('LAS FLORES'),
-    '(c) imprime directo con el centro activo (sin docente en el centro, el de la cuenta)', h.texto.slice(0, 100));
+  ok(h.marca === 'centro' && h.texto.startsWith('ESCUELA FICTICIA EL PORVENIR Danlí Docente: Docente De La Cuenta · Grado y Sección: 6º-1 · Parcial: IV · Fecha: 2 de marzo de 2027')
+    && !h.texto.includes('LAS FLORES'),
+    '(c) sale el centro activo con su grupo (sin docente en el centro, el de la cuenta)', h.texto.slice(0, 140));
   await captura(win, 'con-perfil-segundo-centro.png');
   await win.close();
-  ok(!(await haySelector(pg)), '(c) y no aparece ningún selector');
+  ok(!(await haySelector(pg)), '(c) y no aparece ningún selector de centro');
   ok(await pg.evaluate(() => localStorage.getItem('METAS_EXAMEN_CENTRO_V1') === 'c-b'), '(c) queda anotado como el último con que se imprimió');
 
   await preparar(pg, { centros: [CENTRO_B], sesion: SESION, actual: null, perfiles: [] });
-  win = await hojaDe(pg, () => pg.evaluate(() => printEval()));
+  win = await hojaConDatos(pg, 'printEval');
   h = await leerHoja(win);
-  ok(h.marca === 'centro' && h.texto.startsWith('ESCUELA FICTICIA EL PORVENIR'), '(c) sin activo y con un solo centro, sale ese', h.texto.slice(0, 60));
+  ok(h.marca === 'centro' && h.texto.startsWith('ESCUELA FICTICIA EL PORVENIR') && /Grado y Sección: · Parcial: IV/.test(h.texto.replace(/\s+/g, ' ')),
+    '(c) sin activo y con un solo centro, sale ese; sin grupo, el grado queda con su raya', h.texto.slice(0, 120));
   await win.close();
 
   await preparar(pg, { centros: [CENTRO_A, CENTRO_B], sesion: SESION, actual: null, perfiles: [], ultimo: 'c-b' });
-  win = await hojaDe(pg, () => pg.evaluate(() => printEvalCrit()));
+  win = await hojaConDatos(pg, 'printEvalCrit');
   h = await leerHoja(win);
   ok(h.marca === 'centro' && h.texto.startsWith('ESCUELA FICTICIA EL PORVENIR') && !(await haySelector(pg)),
-    '(c) sin activo y con varios, el último con que se imprimió, sin preguntar', h.texto.slice(0, 60));
+    '(c) sin activo y con varios, el último con que se imprimió, sin preguntar el centro', h.texto.slice(0, 60));
   await win.close();
 
   console.log('\n── (d) sin centro que elegir, y un centro activo archivado ──');
@@ -188,11 +257,11 @@ async function captura(win, nombre) {
   h = await leerHoja(win);
   ok(h.marca === 'sin' && !h.logo && h.texto === hoy.texto, '(d) varios, sin activo y sin último: la hoja de siempre, con la raya para escribir el centro', h.texto.slice(0, 120));
   ok(h.html.replace(' data-metas-encabezado="sin"', '') === hoy.html, '(d) el encabezado es el mismo de (a), byte por byte');
-  ok(!(await haySelector(pg)), '(d) tampoco aquí se pregunta nada');
+  ok(!(await haySelector(pg)) && !(await pg.$('.metas-datos-velo')), '(d) sin logo no se pregunta nada: ni centro, ni parcial, ni fecha');
   await win.close();
 
   await preparar(pg, { centros: [CENTRO_A], sesion: SESION, actual: 'aula-2', perfiles: [CENTRO_A, CENTRO_B], archivados: ['c-b'], ultimo: 'c-b' });
-  win = await hojaDe(pg, () => pg.evaluate(() => printEval()));
+  win = await hojaConDatos(pg, 'printEval');
   h = await leerHoja(win);
   ok(h.marca === 'centro' && h.texto.startsWith('CENTRO DE EDUCACIÓN BÁSICA LAS FLORES') && !h.texto.includes('PORVENIR'),
     '(d) el centro activo archivado no sale: queda el único que hay', h.texto.slice(0, 60));
@@ -202,13 +271,15 @@ async function captura(win, nombre) {
   await pg.evaluate(() => localStorage.removeItem('METAS_DOCENTE_V1'));
   win = await hojaDe(pg, () => pg.evaluate(() => printEval()));
   h = await leerHoja(win);
-  ok(!h.marca && h.html === hoy.html, '(e) la hoja de hoy, aunque los centros sigan guardados');
+  ok(!h.marca && h.html === hoy.html && !(await pg.$('.metas-datos-velo')), '(e) la hoja de hoy, sin preguntar nada, aunque los centros sigan guardados');
   await win.close();
 
   console.log('\n── Fin de grado 6.º, la operativa ──');
   await pg.goto(BASE + '/misiones/fin-de-grado-6to/fin-de-grado-6to.html', { waitUntil: 'load' });
   await preparar(pg, { centros: [CENTRO_A], sesion: SESION });
   await pg.evaluate(() => { evalOpNueva(); });
+  /* Aquí se mide el papel: el cuadrito lo contesta la página sola. */
+  await pg.evaluate(() => MotorMisiones.centro.preguntar(listo => listo({ parcial: 'II', fecha: '19 de noviembre de 2026' })));
   win = await hojaDe(pg, () => pg.evaluate(() => printEvalOp()));
   h = await leerHoja(win);
   ok(h.marca === 'centro' && h.logo && h.texto.includes('CENTRO DE EDUCACIÓN BÁSICA LAS FLORES') && !/Centro Educativo:|Instituto:/.test(h.texto),
@@ -233,6 +304,7 @@ async function captura(win, nombre) {
      donde el ajuste ve los mismos renglones que el papel. */
   await pg.goto(BASE + '/misiones/2y3ciclo-robot-decide/robot-decide.html', { waitUntil: 'load' });
   await pg.evaluate(() => { genEvalOp(); });
+  await pg.evaluate(() => MotorMisiones.centro.preguntar(listo => listo({ parcial: 'II', fecha: '19 de noviembre de 2026' })));
   const robot = async conSesion => {
     await preparar(pg, { centros: [CENTRO_A], sesion: conSesion ? SESION : null });
     const html = await pg.evaluate(() => {
@@ -256,6 +328,6 @@ async function captura(win, nombre) {
 
   ok(!errores.length, 'sin errores en la página', errores);
   await nav.close();
-  console.log(fallos ? '\n✘ ' + fallos + ' comprobaciones fallaron' : '\n✅ El examen impreso lleva el centro activo sin preguntar, con el logo a color, y sin sesión sale como hoy');
+  console.log(fallos ? '\n✘ ' + fallos + ' comprobaciones fallaron' : '\n✅ El examen impreso lleva el centro activo, el logo a color y el grado, parcial y fecha escritos; sin sesión sale como hoy');
   process.exit(fallos ? 1 : 0);
 })().catch(e => { console.error('✘ ' + (e && e.stack || e)); process.exit(1); });

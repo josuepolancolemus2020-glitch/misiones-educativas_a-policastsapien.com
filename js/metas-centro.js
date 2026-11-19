@@ -343,6 +343,30 @@
     };
   }
 
+  // El grado y la sección del grupo activo («6º-1»), para escribirlos en
+  // el examen con el logo. Solo si ese grupo es del centro que se va a
+  // imprimir: el 6º-1 de una escuela no se le pone a la hoja de otra.
+  // Vacío si no se sabe, y la hoja deja la raya.
+  function gradoActual(centroId) {
+    var cache = leer();
+    var aulaId = cache.actual;
+    if (!aulaId) return '';
+    var api = w.MetasDatos;
+    if (api && typeof api.lista === 'function') {
+      var aulas = api.lista('aulas') || [];
+      for (var i = 0; i < aulas.length; i++) {
+        var a = aulas[i];
+        if (a && a.id === aulaId) {
+          if (centroId && a.centro_id !== centroId) return '';
+          return String(gradoTxt(a.grado, a.seccion) || '').trim();
+        }
+      }
+    }
+    var p = cache.porAula && cache.porAula[aulaId];
+    if (!p || (centroId && p.id !== centroId)) return '';
+    return String(p.gradoSeccion || '').trim();
+  }
+
   // El mismo objeto que ya leían las hojas: escuela, logos y boleta.
   // El grado y la sección del aula no se tocan. El nombre del maestro
   // entra solo si el perfil lo trae: vacío no borra el que ya estaba.
@@ -768,6 +792,7 @@
     examen: examen,
     centros: centros,
     centroActual: centroActual,
+    gradoActual: gradoActual,
     sesionDocente: sesionDocente,
   };
 })(window);

@@ -11,10 +11,12 @@
    (a) sin sesión, la hoja sale igual, byte por byte, aunque el perfil
        esté guardado en el aparato;
    (b) docente con un centro: logo a color, cuadrado y grande (60 px o
-       más) a la izquierda; a su derecha el nombre en mayúsculas, el lugar,
-       «Docente: …» con Grado y Sección, Parcial y Fecha en el mismo
-       renglón, el título, y un solo renglón del alumno: Nombre y N.º de
-       lista;
+       más) a la izquierda; a su derecha el nombre en mayúsculas y, en
+       letra pequeña, el lugar y «Docente: … · Grado y Sección: … ·
+       Parcial: … · Fecha: …» YA ESCRITOS (el grado del grupo activo; el
+       parcial y la fecha, los que el docente eligió al imprimir); luego
+       el título y un solo renglón del alumno: Nombre y N.º de lista;
+       sin centro no se pregunta nada, y «Cancelar» no imprime;
    (c) el centro que sale, sin preguntar nunca:
        · con centro activo en Mi aula entre varios, el activo;
        · sin activo y con uno solo, ese;
@@ -142,7 +144,8 @@ const DOC = '<!DOCTYPE html><html><head><style>.ph{}</style></head><body><div id
   + '<div class="sec-title">I. Completar</div></div><script>(function(){function fit(id){}fit("evalPage",250,0.55,1.2);})()</script></body></html>';
 ok(trozo.includes('<strong>Centro Educativo:</strong>') && trozo.includes('<strong>Grado:</strong>'), 'la hoja de referencia trae la raya del centro');
 
-const conCentro = hoja(DOC, centroA, 'Docente Ficticia');
+const DATOS = { grado: '6º-1', parcial: 'II', fecha: '19 de noviembre de 2026' };
+const conCentro = hoja(DOC, centroA, 'Docente Ficticia', DATOS);
 const ph = visible(conCentro.slice(conCentro.indexOf('<div class="ph"'), conCentro.indexOf('<div class="sec-title">')));
 const estiloLogo = (ph.match(/<img data-metas-logo[^>]*style="([^"]*)"/) || [, ''])[1];
 const ladoLogo = parseFloat((estiloLogo.match(/width:(\d+(?:\.\d+)?)px/) || [, '0'])[1]);
@@ -153,14 +156,24 @@ const iLogo = ph.indexOf('data-metas-logo'), iNom = ph.indexOf('CENTRO FICTICIO 
   iDoc = ph.indexOf('Docente: Docente Ficticia'), iH2 = ph.indexOf('<h2>'), iNombre = ph.indexOf('<strong>Nombre:</strong>');
 ok(iLogo >= 0 && iLogo < iNom && iNom < iLugar && iLugar < iDoc && iDoc < iH2 && iH2 < iNombre,
   'el logo a la izquierda; a su derecha el nombre, el lugar, el docente, el título y el renglón del alumno, en ese orden');
-const lineaDocente = (ph.match(/<div class="ph-line" data-metas-docente[^>]*>[\s\S]*?<\/span><\/span><\/div>/) || [''])[0];
-ok(/Docente: Docente Ficticia<\/span>/.test(lineaDocente)
-  && /<strong>Grado y Sección:<\/strong><span class="ph-s"[^>]*>&nbsp;<\/span><strong>Parcial:<\/strong><span class="ph-s"[^>]*>&nbsp;<\/span><strong>Fecha:<\/strong><span class="ph-m"[^>]*>&nbsp;<\/span>/.test(lineaDocente),
-  'en el renglón del docente: Grado y Sección, Parcial y Fecha, en blanco para el alumno', lineaDocente);
+const lineaDocente = (ph.match(/<div data-metas-docente[^>]*>([\s\S]*?)<\/div>/) || [, ''])[1];
+const estiloDocente = (ph.match(/<div data-metas-docente style="([^"]*)"/) || [, ''])[1];
+const estiloLugar = (ph.match(/<div style="([^"]*)">Colonia Ficticia, Villanueva<\/div>/) || [, ''])[1];
+ok(lineaDocente === 'Docente: Docente Ficticia · Grado y Sección: 6º-1 · Parcial: II · Fecha: 19 de noviembre de 2026',
+  'el renglón del docente ya va escrito: docente, grado, parcial y fecha', lineaDocente);
+ok(estiloDocente.includes('font-size:8.5pt') && estiloLugar.includes('font-size:8.5pt'), 'con la misma letra pequeña que la dirección', estiloDocente);
 ok(ph.includes('<div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>N.º de lista:</strong><span class="ph-xs">&nbsp;</span></div>'),
   'el alumno tiene un solo renglón: Nombre y N.º de lista');
-ok(!/Centro Educativo:|Instituto:/.test(ph) && (ph.match(/<strong>Parcial:/g) || []).length === 1 && (ph.match(/<strong>Nombre:/g) || []).length === 1,
-  'ya no está la raya «Centro Educativo», y nada sale dos veces');
+ok(!/Centro Educativo:|Instituto:/.test(ph) && (ph.match(/Parcial:/g) || []).length === 1 && (ph.match(/<strong>Nombre:/g) || []).length === 1
+  && !/<strong>(Parcial|Fecha|Grado y Sección):/.test(ph),
+  'ya no está la raya «Centro Educativo», ni las rayas de grado, parcial y fecha, y nada sale dos veces');
+const aMano = (visible(hoja(DOC, centroA, 'Docente Ficticia', { parcial: 'I' })).match(/<div data-metas-docente[^>]*>([\s\S]*?)<\/div>/) || [, ''])[1];
+const RAYITA_RE = '<span style="display:inline-block;min-width:\\d+px;border-bottom:1px solid #555;">&nbsp;</span>';
+ok(new RegExp('^Docente: Docente Ficticia · Grado y Sección: ' + RAYITA_RE + ' · Parcial: I · Fecha: ' + RAYITA_RE + '$').test(aMano),
+  'lo que no se sabe (sin grupo activo, fecha borrada) queda con su raya para escribirlo a mano', aMano);
+const sf = sandbox.MotorMisiones.centro.fechaLarga;
+ok(sf('2026-11-19') === '19 de noviembre de 2026' && sf('2027-01-05') === '5 de enero de 2027' && sf('') === '' && sf('2026-13-01') === '',
+  'la fecha se escribe con letras: «19 de noviembre de 2026»');
 ok(!ph.includes('aria-hidden'), 'no queda hueco a la derecha: ese espacio es para las rayas');
 const encabezadoDeSiempre = (conCentro.match(new RegExp(COPIA_RE.source)) || [, ''])[1];
 ok(encabezadoDeSiempre === trozo.slice('<div class="ph">'.length, trozo.indexOf('<p class="ph-crit">')),
@@ -183,9 +196,10 @@ ok(/data-metas-antes[\s\S]*removeChild/.test((conCentro.match(GUARDA_RE) || ['']
 ok(!hoja(sinAjuste, null, '').includes('<script>'), '«Sin encabezado» no recibe ningún ajuste');
 
 const pelado = hoja(DOC, { id: 'c-z', nombre: 'Escuela Sin Datos' }, '');
-ok(visible(pelado).includes('ESCUELA SIN DATOS') && !pelado.includes('<img') && !visible(pelado).includes('aria-hidden') && !pelado.includes('font-size:8.5pt')
-  && !pelado.includes('Docente:') && pelado.includes('<strong>Grado y Sección:</strong>'),
-  'sin logo, sin lugar y sin docente no quedan huecos ni líneas vacías, y las rayas del alumno siguen');
+const peladoV = visible(pelado);
+ok(peladoV.includes('ESCUELA SIN DATOS') && !pelado.includes('<img') && !peladoV.includes('aria-hidden')
+  && !pelado.includes('Docente:') && /data-metas-docente[^>]*>Grado y Sección: <span/.test(peladoV) && (peladoV.match(/font-size:8\.5pt/g) || []).length === 1,
+  'sin logo, sin lugar y sin docente no quedan huecos ni líneas vacías, y las rayas de grado, parcial y fecha siguen');
 const soloDocente = hoja(DOC, { id: 'c-z', nombre: 'Escuela X', municipio: 'Danlí' }, '');
 ok(soloDocente.includes('>Danlí</div>') && !soloDocente.includes('Docente:'), 'sin docente, solo el lugar');
 const malo = hoja(DOC, { id: 'c-z', nombre: '<b>Escuela</b>', logo: 'javascript:alert(1)' }, '');
@@ -193,7 +207,7 @@ ok(!malo.includes('<b>') && !malo.includes('javascript:'), 'el nombre se escribe
 
 const uni = '<div class="ph"><h2>T</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Universidad/Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Carrera/Sección:</strong><span class="ph-s">&nbsp;</span><strong>N.º Cuenta:</strong><span class="ph-xs">&nbsp;</span></div></div>';
 const uniCon = visible(hoja(uni, centroA, ''));
-ok(/<strong>Carrera\/Sección:<\/strong><span class="ph-s"[^>]*>&nbsp;<\/span><strong>Parcial:<\/strong>/.test(uniCon)
+ok(/data-metas-docente[^>]*>Carrera\/Sección: <span[^>]*>&nbsp;<\/span> · Parcial: /.test(visible(hoja(uni, centroA, '', DATOS)))
   && uniCon.includes('<strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>N.º Cuenta:</strong>'),
   'la hoja universitaria conserva sus rótulos');
 
@@ -229,14 +243,27 @@ sandbox._evalPrintData = { listo: true };
 r = imprimir();
 ok(r.html === DOC, '(a) sin sesión: la hoja sale byte por byte como hoy, aunque el perfil esté en el aparato');
 
+/* El cuadrito de parcial y fecha lo contesta la sonda: elige el II y
+   el 19 de noviembre, o cancela (no llama a `listo`). */
+let preguntas = 0, cancelar = false;
+const avisos = [];
+sandbox.CustomEvent = function (tipo, o) { this.type = tipo; this.detail = o && o.detail; };
+sandbox.dispatchEvent = ev => { avisos.push(ev.type + ':' + (ev.detail && ev.detail.impresion)); return true; };
+sandbox.MotorMisiones.centro.preguntar(listo => { preguntas++; if (!cancelar) listo({ parcial: 'II', fecha: '19 de noviembre de 2026' }); });
 localStorage.setItem('METAS_DOCENTE_V1', SESION);
 const abrirAntes = sandbox.open;
 r = imprimir();
 ok(r.html.includes('data-metas-encabezado="centro"') && r.html.includes('CENTRO FICTICIO LAS FLORES') && r.html.includes(LOGO) && !visible(r.html).includes('Centro Educativo:'),
   '(b) docente con un centro: logo y nombre arriba, sin la raya en blanco');
-ok(r.html.includes('Docente: Docente Ficticia'), '(b) con el docente que trae el centro');
-ok(!r.html.includes('6º-1'), '(b) el grado no se llena: lo escribe el alumno');
+ok(r.html.includes('Docente: Docente Ficticia · Grado y Sección: 6º-1 · Parcial: II · Fecha: 19 de noviembre de 2026'),
+  '(b) con el docente que trae el centro, el grado del grupo activo y el parcial y la fecha elegidos');
+ok(preguntas === 1, '(b) antes de imprimir se preguntó una vez el parcial y la fecha', preguntas);
 ok(sandbox.open === abrirAntes, 'después de imprimir, window.open queda como estaba');
+ok(avisos.join() === 'metas:examen-impreso:printEval', 'el motor avisa que la hoja salió (ahí se anota la pauta impresa)', avisos.join());
+cancelar = true; avisos.length = 0;
+r = imprimir();
+ok(r.r === undefined && !r.html && !avisos.length && preguntas === 2, '«Cancelar» en el cuadrito: no se imprime nada ni se avisa', JSON.stringify({ html: r.html.length, avisos }));
+cancelar = false;
 
 localStorage.setItem('METAS_CENTRO_LECTURA', JSON.stringify({ actual: 'aula-1', porAula: { 'aula-1': perfilA }, centros: [Object.assign({}, centroA, { docente: '' })] }));
 r = imprimir();
@@ -269,9 +296,9 @@ sandbox.document.body = { appendChild() { dibujos++; } };
 
 localStorage.setItem('METAS_CENTRO_LECTURA', copiaDos());
 r = imprimir();
-ok(r.r === 'impreso' && r.html.includes('ESCUELA FICTICIA EL PORVENIR') && !r.html.includes('LAS FLORES'),
-  '(c) con dos centros y el 6º-2 activo, sale el del grupo activo, en el mismo toque');
-ok(dibujos === 0 && !sandbox.document.getElementById('metas-centro-velo'), '(c) y no se dibuja ningún selector');
+ok(r.html.includes('ESCUELA FICTICIA EL PORVENIR') && !r.html.includes('LAS FLORES') && r.html.includes('Grado y Sección: 6º-2 ·'),
+  '(c) con dos centros y el 6º-2 activo, sale el del grupo activo, con su grado');
+ok(dibujos === 0 && !sandbox.document.getElementById('metas-centro-velo'), '(c) y no se dibuja ningún selector de centro');
 ok(localStorage.getItem('METAS_EXAMEN_CENTRO_V1') === 'c-b', '(c) queda anotado como el último con que se imprimió');
 localStorage.setItem('METAS_CENTRO_LECTURA', copiaDos({ actual: 'aula-1' }));
 r = imprimir();
@@ -281,11 +308,14 @@ const ca = (localStorage.setItem('METAS_CENTRO_LECTURA', copiaDos()), MC.centroA
 ok(ca && JSON.stringify(Object.keys(ca).sort()) === JSON.stringify(Object.keys(MC.centros()[0]).sort()) && ca.id === 'c-b' && ca.docente === 'Docente Del Porvenir',
   'MetasCentro.centroActual() devuelve el centro activo con los mismos campos que centros()', JSON.stringify(ca));
 
+ok(MC.gradoActual('c-b') === '6º-2' && MC.gradoActual('c-a') === '' && MC.gradoActual() === '6º-2',
+  'gradoActual() da el grado del grupo activo, y nada si el centro que se imprime es otro');
+
 localStorage.removeItem('METAS_EXAMEN_CENTRO_V1');
 localStorage.setItem('METAS_CENTRO_LECTURA', JSON.stringify({ porAula: {}, centros: [centroB] }));
 ok(MC.centroActual() === null, 'sin grupo activo, centroActual() es null');
 r = imprimir();
-ok(r.html.includes('ESCUELA FICTICIA EL PORVENIR'), '(c) sin activo y con un solo centro, sale ese');
+ok(r.html.includes('ESCUELA FICTICIA EL PORVENIR') && /Grado y Sección: <span/.test(r.html), '(c) sin activo y con un solo centro, sale ese, con la raya del grado (no hay grupo)');
 
 localStorage.setItem('METAS_CENTRO_LECTURA', JSON.stringify({ porAula: {}, centros: [centroA, centroB] }));
 localStorage.setItem('METAS_EXAMEN_CENTRO_V1', 'c-b');
@@ -299,7 +329,10 @@ r = imprimir();
 ok(r.html.replace(' data-metas-encabezado="sin"', '') === DOC, '(c) el «Sin encabezado» que guardaba el selector viejo tampoco inventa un centro');
 localStorage.removeItem('METAS_EXAMEN_CENTRO_V1');
 r = imprimir();
-ok(r.html.includes('data-metas-encabezado="sin"') && dibujos === 0, '(c) varios y ningún último: la hoja sin encabezado, y sin preguntar');
+const antesDePreguntar = preguntas;
+r = imprimir();
+ok(r.html.includes('data-metas-encabezado="sin"') && dibujos === 0 && preguntas === antesDePreguntar,
+  '(c) varios y ningún último: la hoja sin encabezado, y sin preguntar nada (ni parcial ni fecha)');
 
 console.log('\n── un centro activo archivado ──');
 localStorage.setItem('METAS_EXAMEN_CENTRO_V1', 'c-b');
@@ -425,5 +458,5 @@ for (const f of archivosJs(path.join(RAIZ, 'js/tools')).concat([path.join(RAIZ, 
 }
 ok(!conPh.length, 'ningún impreso de Mi aula usa la hoja de examen (class="ph"): examen() no los toca', conPh.join(', '));
 
-console.log(fallos ? '\n✘ ' + fallos + ' comprobaciones fallaron' : '\n✅ El examen impreso lleva el centro activo del docente con sesión, sin preguntar, y todo lo demás sale como hoy');
+console.log(fallos ? '\n✘ ' + fallos + ' comprobaciones fallaron' : '\n✅ El examen impreso lleva el centro activo del docente con sesión, con el grado, el parcial y la fecha escritos, y todo lo demás sale como hoy');
 process.exit(fallos ? 1 : 0);
