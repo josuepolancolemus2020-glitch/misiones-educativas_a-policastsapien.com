@@ -971,10 +971,30 @@
     return noQuedo(op, e.code || ('http_' + r.status), e.message);
   }
 
+  // deleted_at vuelve a vacío. El filtro es el id: la base, con el SQL de
+  // recuperar, solo acepta esto en centros y si el nombre no choca.
+  async function enviarRecuperar(op) {
+    var o = op.owner;
+    var r = await nube.peticion('PATCH', op.tabla + '?id=eq.' + cod(op.id),
+      { cuerpo: { deleted_at: null }, opId: op.op_id, prefer: 'return=representation' });
+    if (r.ok && Array.isArray(r.datos) && r.datos.length) {
+      guardar(o, op.tabla, r.datos[0]);
+      return descartar(op);
+    }
+    if (r.ok) {
+      var hoy = await leerFila(op.tabla, op.id);
+      if (hoy) guardar(o, op.tabla, hoy);
+      return descartar(op);
+    }
+    var e = r.datos || {};
+    return noQuedo(op, e.code || ('http_' + r.status), e.message);
+  }
+
   function enviar(op) {
     if (op.tipo === 'crear') return enviarCrear(op);
     if (op.tipo === 'editar') return enviarEditar(op);
     if (op.tipo === 'borrar') return enviarBorrar(op);
+    if (op.tipo === 'desarchivar') return enviarRecuperar(op);
     if (RPC[op.tipo]) return enviarRpc(op);
     return Promise.resolve(noQuedo(op, 'tipo', op.tipo));
   }

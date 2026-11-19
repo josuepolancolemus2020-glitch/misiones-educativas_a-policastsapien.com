@@ -95,6 +95,11 @@
       case 'colecta_borrar':
         mapa.delete(op.id);
         break;
+      case 'desarchivar':
+        // La fila archivada no está en el mapa (se armó sin las borradas).
+        // La operación trae sus campos para que vuelva a verse al momento.
+        mapa.set(op.id, Object.assign({ id: op.id, version: 0, deleted_at: null }, op.cambios || {}));
+        break;
       case 'pago_crear':
         mapa.set(op.id, {
           id: op.id, colecta_id: a.p_colecta, alumno_id: a.p_alumno, monto: a.p_monto || null, fecha: a.p_fecha,
@@ -296,6 +301,26 @@
     return { id: id };
   }
 
+  // Los centros archivados (deleted_at) y los que están por archivarse
+  // en la cola. lista() no los trae: si los trajera, un centro oculto
+  // volvería a la barra de arriba.
+  function archivados(nombre) {
+    var u = nube.uid();
+    if (!u) return [];
+    var mapa = new Map();
+    alm.filasDe(u, nombre).forEach(function (f) {
+      if (f.deleted_at) mapa.set(f.id, f);
+    });
+    opsDe(u, nombre).forEach(function (op) {
+      if (op.tipo === 'desarchivar') mapa.delete(op.id);
+      if (op.tipo === 'borrar' || op.tipo === 'colecta_borrar') {
+        var f = alm.fila(u, nombre, op.id);
+        if (f) mapa.set(op.id, Object.assign(copia(f), { deleted_at: f.deleted_at || 'pendiente' }));
+      }
+    });
+    return Array.from(mapa.values()).map(copia);
+  }
+
   function borrar(nombre, id) {
     var u = cuenta();
     if (nombre === 'colectas') {
@@ -305,6 +330,16 @@
     if (nombre === 'pagos') throw aviso('Un pago no se borra: se anula, con su motivo.');
     if (SOLO_FUNCIONES[nombre]) throw aviso('Esto no se puede quitar aquí.');
     cola.encolar({ owner: u, tipo: 'borrar', tabla: nombre, id: id });
+    return { id: id };
+  }
+
+  // deleted_at vuelve a vacío. No es un editar: esa columna la pone la
+  // base y editar() la quita. La pantalla ya miró centros_unico.
+  function recuperar(nombre, id) {
+    var u = cuenta();
+    if (SOLO_FUNCIONES[nombre]) throw aviso('Esto no se hace desde aquí.');
+    var guardada = alm.fila(u, nombre, id) || {};
+    cola.encolar({ owner: u, tipo: 'desarchivar', tabla: nombre, id: id, cambios: limpia(guardada) });
     return { id: id };
   }
 
@@ -560,6 +595,15 @@
     await cola.absorber();
   }
 
+  // Los avisos de antes de v569 no traen clave y dicen «no se pudo anotar».
+  // El docente no los entiende y ya no tienen arreglo. No se borran:
+  // noAnotado() simplemente no los entrega. Los de ahora traen clave y
+  // el motivo real, y sí se muestran.
+  function avisoViejoGenerico(t) {
+    if (!t || t.clave) return false;
+    return /no se pudo anotar/.test(String(t.texto || ''));
+  }
+
   var api = null;
   var iniciando = null;
 
@@ -587,6 +631,8 @@
         crear: crear,
         editar: editar,
         borrar: borrar,
+        recuperar: recuperar,
+        archivados: archivados,
         pagar: pagar,
         corregirPago: corregirPago,
         anularPago: anularPago,
@@ -607,7 +653,9 @@
         pendientes: function () { return nube.uid() ? cola.pendientes(nube.uid()) : 0; },
         noAnotado: function () {
           var u = nube.uid();
-          return alm.noAnotado().filter(function (t) { return t.owner === u; }).map(function (t) {
+          return alm.noAnotado().filter(function (t) {
+            return t.owner === u && !avisoViejoGenerico(t);
+          }).map(function (t) {
             // Una sola tarjeta por fila y motivo: «veces» cuenta cuántas veces pasó.
             return { id: t.id, texto: t.texto, veces: t.veces || 1 };
           });

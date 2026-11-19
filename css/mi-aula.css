@@ -101,6 +101,23 @@
    repetido con su «Abrirlo» y la línea de cuántos grupos tiene el centro.
    Nada dicho solo con color: el ✓ y las palabras dicen lo mismo. */
 .ma-pie-perfil { align-items: center; }
+.ma-guardar { display: inline-flex; flex-direction: column; align-items: stretch; gap: 6px; max-width: 100%; }
+/* La señal de este aparato: una línea y un ✓, sin frase. Se va a los 2 s. */
+.ma-barra-ok { display: flex; align-items: center; gap: 6px; height: 16px; margin: 0; }
+.ma-barra-ok[hidden] { display: none; }
+.ma-barra-ok-linea { flex: 1; height: 4px; border-radius: 999px; background: var(--ma-ok); }
+.ma-barra-ok-check { color: var(--ma-ok); font-weight: 800; font-size: calc(16px * var(--metas-fz, 1)); line-height: 1; }
+.ma-chip-arch {
+  min-height: 44px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--border);
+  background: #f1f5f9; color: #475569; font: inherit; font-weight: 700; cursor: pointer;
+}
+.ma-chip-arch[aria-expanded="true"] { background: #e2e8f0; }
+.ma-lista-arch { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.ma-fila-arch { display: flex; align-items: center; gap: 8px; min-height: 44px; }
+.ma-fila-arch span { flex: 1; min-width: 0; font-weight: 700; }
+.ma-linea-choque { margin: 0 0 4px; color: #92400e; font-weight: 700; }
+.ma-confirma-t { margin: 0; font-weight: 700; }
+.ma-zona-archivar { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin-top: 6px; }
 .ma-estado { margin: 0; color: var(--ma-ok-tx); font-weight: 700; }
 .ma-ya { margin: 0; padding: 10px 14px; border-radius: var(--ma-r-sm); background: var(--ma-med-bg); color: var(--ma-med-tx);
   font-weight: 700; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }

@@ -207,7 +207,13 @@
   function guardarFila(owner, tabla, nueva) {
     if (!nueva || !nueva.id) return false;
     var vieja = fila(owner, tabla, nueva.id);
-    if (vieja && vieja.deleted_at && !nueva.deleted_at) return false;
+    // Una lectura atrasada no resucita la fila: si no, un aviso viejo
+    // volvería a mostrar un centro que ya se archivó. Una versión mayor
+    // sí puede dejar deleted_at vacío: es recuperarlo a propósito.
+    if (vieja && vieja.deleted_at && !nueva.deleted_at) {
+      var mayor = typeof nueva.version === 'number' && typeof vieja.version === 'number' && nueva.version > vieja.version;
+      if (!mayor) return false;
+    }
     if (vieja && typeof vieja.version === 'number' && typeof nueva.version === 'number'
         && nueva.version < vieja.version) return false;
     ponerEnMemoria(owner, tabla, nueva);
