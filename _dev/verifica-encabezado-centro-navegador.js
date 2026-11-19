@@ -6,9 +6,11 @@
    Educativo» en pensamiento crítico) y Fin de grado 6.º (la operativa):
 
    (a) sin sesión: la hoja sale con la raya en blanco, sin logo;
-   (b) docente con un centro: imprime directo, con el logo a color (38 px
-       o más, con un hueco igual del otro lado) y el nombre arriba, sin
-       la raya del centro, y la hoja cabe en la carta;
+   (b) docente con un centro: imprime directo; el logo a color, cuadrado
+       y grande (60 px o más) a la izquierda, y a su derecha el nombre,
+       el lugar, «Docente: …» con Grado y Sección, Parcial y Fecha, el
+       título y un solo renglón del alumno (Nombre y N.º de lista); la
+       hoja cabe en la carta y no le queda el encabezado de siempre;
    (c) docente con dos centros y el segundo activo en Mi aula: imprime
        directo con el activo, y no aparece ningún selector;
        sin activo y con uno solo, ese; sin activo y con varios, el último
@@ -88,7 +90,10 @@ async function leerHoja(win) {
       logo: !!img,
       filtro: img ? getComputedStyle(img).filter : '',
       ladoLogo: img ? Math.round(img.getBoundingClientRect().width / (parseFloat(getComputedStyle(ph.parentElement).zoom) || 1)) : 0,
-      ladoHueco: (() => { const h = ph.querySelector('[data-metas-centro] > [aria-hidden="true"]'); return h ? Math.round(h.getBoundingClientRect().width / (parseFloat(getComputedStyle(ph.parentElement).zoom) || 1)) : 0; })(),
+      /* Lo que va a la derecha del logo empieza después del logo. */
+      aLaDerecha: img ? ['[data-metas-docente]', 'h2'].every(sel => { const e = ph.querySelector(sel); return e && e.getBoundingClientRect().left >= img.getBoundingClientRect().right; })
+        && [...ph.querySelectorAll('.ph-line strong')].filter(s => s.textContent === 'Nombre:').every(s => s.getBoundingClientRect().left >= img.getBoundingClientRect().right) : false,
+      copiaQuitada: !document.querySelector('[data-metas-antes]'),
       altoLogo: img ? Math.round(img.getBoundingClientRect().height / (parseFloat(getComputedStyle(ph.parentElement).zoom) || 1)) : 0,
       logoIzq: img ? img.getBoundingClientRect().left < ph.getBoundingClientRect().left + 20 : false,
       altoMm: pag.getBoundingClientRect().height / mm,
@@ -134,13 +139,15 @@ async function captura(win, nombre) {
   let h = await leerHoja(win);
   ok(h.marca === 'centro', '(b) imprime directo, sin preguntar');
   ok(h.logo && h.filtro === 'none' && h.logoIzq, '(b) el logo sale a color, arriba a la izquierda', h.filtro);
-  ok(h.ladoLogo >= 38 && h.altoLogo === h.ladoLogo, '(b) el logo mide 38 px o más', { ancho: h.ladoLogo, alto: h.altoLogo });
-  ok(h.ladoHueco === h.ladoLogo, '(b) el hueco de la derecha mide igual que el logo', { logo: h.ladoLogo, hueco: h.ladoHueco });
-  ok(h.texto.startsWith('CENTRO DE EDUCACIÓN BÁSICA LAS FLORES Colonia Ficticia, Villanueva · Docente: Docente Ficticia'),
+  ok(h.ladoLogo >= 60 && h.altoLogo === h.ladoLogo, '(b) el logo es cuadrado y mide 60 px o más', { ancho: h.ladoLogo, alto: h.altoLogo });
+  ok(h.aLaDerecha, '(b) el docente, el título y el Nombre van a la derecha del logo, sin taparlo');
+  ok(h.copiaQuitada, '(b) el encabezado de siempre, que va al lado para medir, ya no está en la hoja abierta');
+  ok(h.texto.startsWith('CENTRO DE EDUCACIÓN BÁSICA LAS FLORES Colonia Ficticia, Villanueva Docente: Docente Ficticia Grado y Sección: Parcial: Fecha:'),
     '(b) el nombre en mayúsculas, y debajo el lugar y el docente', h.texto.slice(0, 120));
-  ok(!/Instituto:|Centro Educativo:/.test(h.texto) && /Grado y Sección: N\.º de lista:/.test(h.texto),
-    '(b) sin la raya del centro; quedan Grado y Sección y N.º de lista', h.texto);
-  ok(h.texto.includes('Nombre: Parcial: Fecha:') && h.texto.includes('Evaluación Final · La Materia'), '(b) nombre, parcial, fecha y el título del examen siguen');
+  ok(!/Instituto:|Centro Educativo:/.test(h.texto) && /Nombre: N\.º de lista:/.test(h.texto) && (h.texto.match(/Parcial:/g) || []).length === 1,
+    '(b) sin la raya del centro; el alumno tiene un solo renglón (Nombre y N.º de lista) y nada sale dos veces', h.texto);
+  ok(h.texto.indexOf('Fecha:') < h.texto.indexOf('Evaluación Final · La Materia') && h.texto.indexOf('Evaluación Final · La Materia') < h.texto.indexOf('Nombre:'),
+    '(b) el título del examen va entre el renglón del docente y el del alumno');
   ok(h.altoMm <= 252.5, '(b) la hoja sigue cabiendo en la carta', h.altoMm.toFixed(1));
   await captura(win, 'con-perfil.png');
   await win.close();
@@ -155,7 +162,7 @@ async function captura(win, nombre) {
   await preparar(pg, { centros: [CENTRO_A, CENTRO_B], sesion: SESION, actual: 'aula-2' });
   win = await hojaDe(pg, () => pg.evaluate(() => printEval()));
   h = await leerHoja(win);
-  ok(h.marca === 'centro' && h.texto.startsWith('ESCUELA FICTICIA EL PORVENIR Danlí · Docente: Docente De La Cuenta') && !h.texto.includes('LAS FLORES'),
+  ok(h.marca === 'centro' && h.texto.startsWith('ESCUELA FICTICIA EL PORVENIR Danlí Docente: Docente De La Cuenta') && !h.texto.includes('LAS FLORES'),
     '(c) imprime directo con el centro activo (sin docente en el centro, el de la cuenta)', h.texto.slice(0, 100));
   await captura(win, 'con-perfil-segundo-centro.png');
   await win.close();

@@ -10,9 +10,11 @@
      sus tres impresiones son printEval, printEvalOp o printEvalCrit;
    (a) sin sesión, la hoja sale igual, byte por byte, aunque el perfil
        esté guardado en el aparato;
-   (b) docente con un centro: logo a color (38 px o más) a la izquierda,
-       nombre en mayúsculas, lugar y docente en letra pequeña, y sin la
-       raya del centro;
+   (b) docente con un centro: logo a color, cuadrado y grande (60 px o
+       más) a la izquierda; a su derecha el nombre en mayúsculas, el lugar,
+       «Docente: …» con Grado y Sección, Parcial y Fecha en el mismo
+       renglón, el título, y un solo renglón del alumno: Nombre y N.º de
+       lista;
    (c) el centro que sale, sin preguntar nunca:
        · con centro activo en Mi aula entre varios, el activo;
        · sin activo y con uno solo, ese;
@@ -75,6 +77,10 @@ cargar('js/motor-misiones.js');
 cargar('js/tools/registros-admin.js');
 const MC = sandbox.MetasCentro;
 const hoja = sandbox.MotorMisiones.centro.hoja;
+/* Junto al encabezado nuevo viaja, invisible, el de siempre: el ajuste
+   lo mide en la hoja abierta y lo quita. Lo que se ve es lo de afuera. */
+const COPIA_RE = /<div data-metas-antes[^>]*>([\s\S]*?<\/h2>[\s\S]*?<\/div>\s*<div class="ph-line">[\s\S]*?<\/div>)<\/div>/g;
+const visible = h => h.replace(COPIA_RE, '');
 
 const LOGO = 'data:image/jpeg;base64,QUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVo=';
 const LOGO2 = 'data:image/jpeg;base64,WllYV1ZVVFNSUVBPTk1MS0pJSEdGRURDQkE=';
@@ -110,7 +116,9 @@ for (const f of fuentes) {
     const bloque = s.slice(i, fin) + '</div>';
     const rel = path.relative(RAIZ, f);
     const r = hoja(bloque, centroA, 'Docente Ficticia');
-    if (!r.includes('data-metas-encabezado="centro"') || /Centro Educativo:|>Instituto:|Universidad\/Instituto:/.test(r)) malas.push(rel);
+    const copia = (r.match(COPIA_RE) || [''])[0];
+    if (!r.includes('data-metas-encabezado="centro"') || /Centro Educativo:|>Instituto:|Universidad\/Instituto:/.test(visible(r))
+      || !copia.includes(bloque.slice(bloque.indexOf('<h2>'), -6))) malas.push(rel);
     const antes = s.slice(0, i);
     const re = /function\s+([A-Za-z0-9_$]+)\s*\(/g;
     let m, ultima = null;
@@ -122,7 +130,7 @@ for (const f of fuentes) {
   }
 }
 ok(hojas >= 167, 'se encontraron las hojas de examen de las misiones', hojas);
-ok(!malas.length, 'el motor sabe ponerle el centro a cada una de las ' + hojas + ' hojas', malas.slice(0, 5).join(', '));
+ok(!malas.length, 'el motor sabe ponerle el centro a cada una de las ' + hojas + ' hojas (y lleva al lado, para medirlo, su encabezado de siempre)', malas.slice(0, 5).join(', '));
 ok(!funcionesRaras.length, 'cada hoja se imprime desde printEval, printEvalOp o printEvalCrit', funcionesRaras.slice(0, 5).join(', '));
 ok(!guardasRaras.length, 'y cada una revisa su dato antes de abrir la ventana (_evalPrintData, _evalOpData, _evalCritData)', guardasRaras.slice(0, 5).join(', '));
 
@@ -135,22 +143,28 @@ const DOC = '<!DOCTYPE html><html><head><style>.ph{}</style></head><body><div id
 ok(trozo.includes('<strong>Centro Educativo:</strong>') && trozo.includes('<strong>Grado:</strong>'), 'la hoja de referencia trae la raya del centro');
 
 const conCentro = hoja(DOC, centroA, 'Docente Ficticia');
-const ph = conCentro.slice(conCentro.indexOf('<div class="ph"'), conCentro.indexOf('<div class="sec-title">'));
+const ph = visible(conCentro.slice(conCentro.indexOf('<div class="ph"'), conCentro.indexOf('<div class="sec-title">')));
 const estiloLogo = (ph.match(/<img data-metas-logo[^>]*style="([^"]*)"/) || [, ''])[1];
 const ladoLogo = parseFloat((estiloLogo.match(/width:(\d+(?:\.\d+)?)px/) || [, '0'])[1]);
-const estiloHueco = (ph.match(/<div aria-hidden="true" style="([^"]*)"/) || [, ''])[1];
 ok(ph.includes(LOGO) && !/grayscale/.test(estiloLogo), 'el logo sale a color, sin el filtro gris', estiloLogo);
-ok(ladoLogo >= 38 && estiloLogo.includes('height:' + ladoLogo + 'px'), 'el logo mide 38 px o más (cuadrado)', ladoLogo);
-ok(estiloHueco.includes('width:' + ladoLogo + 'px;height:' + ladoLogo + 'px'), 'el hueco de la derecha mide igual que el logo: el nombre queda centrado', estiloHueco);
+ok(ladoLogo >= 60 && estiloLogo.includes('height:' + ladoLogo + 'px'), 'el logo es cuadrado y grande: 60 px o más', ladoLogo);
 ok(!/grayscale/.test(fs.readFileSync(path.join(RAIZ, 'js/motor-misiones.js'), 'utf8')), 'en el motor ya no queda ningún filtro gris');
-ok(ph.indexOf('data-metas-logo') < ph.indexOf('CENTRO FICTICIO LAS FLORES') && ph.indexOf('CENTRO FICTICIO LAS FLORES') < ph.indexOf('<h2>'),
-  'el logo va a la izquierda, el nombre en mayúsculas arriba, y debajo el título del examen');
-ok(ph.includes('Colonia Ficticia, Villanueva · Docente: Docente Ficticia'), 'debajo del nombre, el lugar y el docente en letra pequeña');
-ok(!/Centro Educativo:|Instituto:/.test(ph), 'ya no está la raya «Centro Educativo»');
-ok(ph.includes('<strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span>'),
-  'Nombre, Parcial y Fecha quedan como estaban');
-ok(ph.includes('<strong>Grado y Sección:</strong><span class="ph-fill">&nbsp;</span><strong>N.º de lista:</strong><span class="ph-xs">&nbsp;</span>'),
-  'Grado y Sección y N.º de lista quedan en blanco para el alumno');
+const iLogo = ph.indexOf('data-metas-logo'), iNom = ph.indexOf('CENTRO FICTICIO LAS FLORES'), iLugar = ph.indexOf('Colonia Ficticia, Villanueva'),
+  iDoc = ph.indexOf('Docente: Docente Ficticia'), iH2 = ph.indexOf('<h2>'), iNombre = ph.indexOf('<strong>Nombre:</strong>');
+ok(iLogo >= 0 && iLogo < iNom && iNom < iLugar && iLugar < iDoc && iDoc < iH2 && iH2 < iNombre,
+  'el logo a la izquierda; a su derecha el nombre, el lugar, el docente, el título y el renglón del alumno, en ese orden');
+const lineaDocente = (ph.match(/<div class="ph-line" data-metas-docente[^>]*>[\s\S]*?<\/span><\/span><\/div>/) || [''])[0];
+ok(/Docente: Docente Ficticia<\/span>/.test(lineaDocente)
+  && /<strong>Grado y Sección:<\/strong><span class="ph-s"[^>]*>&nbsp;<\/span><strong>Parcial:<\/strong><span class="ph-s"[^>]*>&nbsp;<\/span><strong>Fecha:<\/strong><span class="ph-m"[^>]*>&nbsp;<\/span>/.test(lineaDocente),
+  'en el renglón del docente: Grado y Sección, Parcial y Fecha, en blanco para el alumno', lineaDocente);
+ok(ph.includes('<div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>N.º de lista:</strong><span class="ph-xs">&nbsp;</span></div>'),
+  'el alumno tiene un solo renglón: Nombre y N.º de lista');
+ok(!/Centro Educativo:|Instituto:/.test(ph) && (ph.match(/<strong>Parcial:/g) || []).length === 1 && (ph.match(/<strong>Nombre:/g) || []).length === 1,
+  'ya no está la raya «Centro Educativo», y nada sale dos veces');
+ok(!ph.includes('aria-hidden'), 'no queda hueco a la derecha: ese espacio es para las rayas');
+const encabezadoDeSiempre = (conCentro.match(new RegExp(COPIA_RE.source)) || [, ''])[1];
+ok(encabezadoDeSiempre === trozo.slice('<div class="ph">'.length, trozo.indexOf('<p class="ph-crit">')),
+  'el encabezado de siempre va al lado, igualito, para que el ajuste mida cuánto agregó el centro');
 ok(conCentro.includes(trozo.match(/<h2>[\s\S]*?<\/h2>/)[0]) && conCentro.includes(trozo.match(/<p class="ph-crit">[\s\S]*?<\/p>/)[0]),
   'el título, la forma y el valor total no cambian');
 const GUARDA_RE = /<script>\(function\(\)\{var T=(\{[^}]*\});[\s\S]*?<\/script><\/body>/;
@@ -162,20 +176,25 @@ ok(guarda && guarda[1] === '{"evalPage":250}' && conCentro.indexOf(guarda[0]) > 
 ok(conCentro.includes('data-metas-encabezado="centro"'), 'la hoja queda marcada para que nadie más la llene');
 const sinAjuste = DOC.replace(/<script>[\s\S]*?<\/script>/, '');
 const finDeGrado = hoja(sinAjuste, centroA, '');
-ok(!/var T=/.test(finDeGrado) && /<script>[^<]*data-metas-centro[^<]*\(H-h\)\/H[^<]*<\/script><\/body>/.test(finDeGrado),
-  'la hoja sin ajuste propio (Fin de grado) recibe el ajuste que le quita lo que el bloque agrega');
+ok(!/var T=/.test(finDeGrado) && /<script>[^<]*data-metas-antes[^<]*\(H-h\)\/H[^<]*<\/script><\/body>/.test(finDeGrado),
+  'la hoja sin ajuste propio (Fin de grado) recibe el ajuste que le quita lo que el centro agrega (el alto nuevo menos el de siempre)');
+ok(/data-metas-antes[\s\S]*removeChild/.test((conCentro.match(GUARDA_RE) || [''])[0]) && /removeChild/.test(finDeGrado.slice(finDeGrado.lastIndexOf('<script>'))),
+  'y el encabezado de siempre se quita apenas se mide, en las dos');
 ok(!hoja(sinAjuste, null, '').includes('<script>'), '«Sin encabezado» no recibe ningún ajuste');
 
 const pelado = hoja(DOC, { id: 'c-z', nombre: 'Escuela Sin Datos' }, '');
-ok(pelado.includes('ESCUELA SIN DATOS') && !pelado.includes('<img') && !pelado.includes('aria-hidden') && !pelado.includes('font-size:8.5pt'),
-  'sin logo, sin lugar y sin docente no quedan huecos ni líneas vacías');
+ok(visible(pelado).includes('ESCUELA SIN DATOS') && !pelado.includes('<img') && !visible(pelado).includes('aria-hidden') && !pelado.includes('font-size:8.5pt')
+  && !pelado.includes('Docente:') && pelado.includes('<strong>Grado y Sección:</strong>'),
+  'sin logo, sin lugar y sin docente no quedan huecos ni líneas vacías, y las rayas del alumno siguen');
 const soloDocente = hoja(DOC, { id: 'c-z', nombre: 'Escuela X', municipio: 'Danlí' }, '');
 ok(soloDocente.includes('>Danlí</div>') && !soloDocente.includes('Docente:'), 'sin docente, solo el lugar');
 const malo = hoja(DOC, { id: 'c-z', nombre: '<b>Escuela</b>', logo: 'javascript:alert(1)' }, '');
 ok(!malo.includes('<b>') && !malo.includes('javascript:'), 'el nombre se escribe como texto y un logo que no es imagen no entra');
 
 const uni = '<div class="ph"><h2>T</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Universidad/Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Carrera/Sección:</strong><span class="ph-s">&nbsp;</span><strong>N.º Cuenta:</strong><span class="ph-xs">&nbsp;</span></div></div>';
-ok(hoja(uni, centroA, '').includes('<strong>Carrera/Sección:</strong><span class="ph-fill">&nbsp;</span><strong>N.º Cuenta:</strong>'),
+const uniCon = visible(hoja(uni, centroA, ''));
+ok(/<strong>Carrera\/Sección:<\/strong><span class="ph-s"[^>]*>&nbsp;<\/span><strong>Parcial:<\/strong>/.test(uniCon)
+  && uniCon.includes('<strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>N.º Cuenta:</strong>'),
   'la hoja universitaria conserva sus rótulos');
 
 /* (d) «Sin encabezado» */
@@ -213,7 +232,7 @@ ok(r.html === DOC, '(a) sin sesión: la hoja sale byte por byte como hoy, aunque
 localStorage.setItem('METAS_DOCENTE_V1', SESION);
 const abrirAntes = sandbox.open;
 r = imprimir();
-ok(r.html.includes('data-metas-encabezado="centro"') && r.html.includes('CENTRO FICTICIO LAS FLORES') && r.html.includes(LOGO) && !r.html.includes('Centro Educativo:'),
+ok(r.html.includes('data-metas-encabezado="centro"') && r.html.includes('CENTRO FICTICIO LAS FLORES') && r.html.includes(LOGO) && !visible(r.html).includes('Centro Educativo:'),
   '(b) docente con un centro: logo y nombre arriba, sin la raya en blanco');
 ok(r.html.includes('Docente: Docente Ficticia'), '(b) con el docente que trae el centro');
 ok(!r.html.includes('6º-1'), '(b) el grado no se llena: lo escribe el alumno');
@@ -224,7 +243,7 @@ r = imprimir();
 ok(r.html.includes('Docente: Docente De La Cuenta'), 'si el centro no trae docente, va el nombre de la cuenta');
 localStorage.setItem('METAS_DOCENTE_V1', JSON.stringify({ codigo: 'DOC-FICTICIO' }));
 r = imprimir();
-ok(!r.html.includes('Docente:') && r.html.includes('Colonia Ficticia, Villanueva</div>'), 'y si tampoco hay nombre en la cuenta, no hay línea de docente');
+ok(!r.html.includes('Docente:') && r.html.includes('Colonia Ficticia, Villanueva</div>'), 'y si tampoco hay nombre en la cuenta, no dice «Docente:»');
 
 localStorage.setItem('METAS_DOCENTE_V1', SESION);
 localStorage.setItem('METAS_CENTRO_LECTURA', JSON.stringify({ actual: 'aula-1', porAula: { 'aula-1': perfilA }, centros: [Object.assign({}, centroA, { nombre: '  ' })] }));

@@ -522,71 +522,98 @@
     return /^(data:image\/|https?:\/\/)/i.test(src) ? src.replace(/["'<>\s]/g, '') : '';
   }
 
-  /* La segunda raya del alumno. Las 84 misiones la escriben siempre en
-     el mismo orden, con estos rótulos: el centro como «Centro Educativo»,
-     «Instituto» o «Universidad/Instituto»; el grado como «Grado y
-     Sección», «Grado» o «Carrera/Sección»; el número como «N.º Lista»,
-     «N.º» o «N.º Cuenta». Lo vigila _dev/verifica-encabezado-centro.js
-     contra todas las hojas de las misiones. */
-  var RAYA_CENTRO = /<div class="ph-line"><strong>(?:Centro Educativo|Instituto|Universidad\/Instituto):<\/strong><span class="ph-fill">&nbsp;<\/span><strong>(Grado y Sección|Grado|Carrera\/Sección):<\/strong><span class="ph-s">&nbsp;<\/span><strong>(N\.º Lista|N\.º|N\.º Cuenta):<\/strong><span class="ph-xs">&nbsp;<\/span><\/div>/g;
+  /* El encabezado de la misión, completo: el título y las dos rayas del
+     alumno. Las 84 misiones lo escriben siempre igual (solo cambian los
+     espacios entre etiquetas): el título, la raya de Nombre, Parcial y
+     Fecha, y la del centro, con estos rótulos: el centro como «Centro
+     Educativo», «Instituto» o «Universidad/Instituto»; el grado como
+     «Grado y Sección», «Grado» o «Carrera/Sección»; el número como
+     «N.º Lista», «N.º» o «N.º Cuenta». Lo vigila
+     _dev/verifica-encabezado-centro.js contra todas las hojas. */
+  var CABEZA = new RegExp('<div class="ph">\\s*<h2>([\\s\\S]*?)<\\/h2>\\s*'
+    + '<div class="ph-line"><strong>Nombre:<\\/strong><span class="ph-fill">&nbsp;<\\/span><strong>Parcial:<\\/strong>'
+    + '<span class="ph-s">&nbsp;<\\/span><strong>Fecha:<\\/strong><span class="ph-m">&nbsp;<\\/span><\\/div>\\s*'
+    + '<div class="ph-line"><strong>(?:Centro Educativo|Instituto|Universidad\\/Instituto):<\\/strong><span class="ph-fill">&nbsp;<\\/span>'
+    + '<strong>(Grado y Sección|Grado|Carrera\\/Sección):<\\/strong><span class="ph-s">&nbsp;<\\/span>'
+    + '<strong>(N\\.º Lista|N\\.º|N\\.º Cuenta):<\\/strong><span class="ph-xs">&nbsp;<\\/span><\\/div>', 'g');
   var BLOQUE_PH = /<div class="ph">/g;
 
-  /* Sin la raya del centro, el grado ocupa lo que queda del renglón,
-     como el nombre en el de arriba. El de la universidad conserva sus
-     rótulos; los de Básica dicen todos «Grado y Sección» y «N.º de lista». */
-  function _rayaAlumno(m, grado, num) {
-    var g = grado === 'Carrera/Sección' ? grado : 'Grado y Sección';
-    var n = num === 'N.º Cuenta' ? num : 'N.º de lista';
-    return '<div class="ph-line"><strong>' + g + ':</strong><span class="ph-fill">&nbsp;</span><strong>' + n
-      + ':</strong><span class="ph-xs">&nbsp;</span></div>';
-  }
-
-  /* Compacto a propósito: el bloque suma unos 9 mm a la hoja. Las 160
-     hojas con ajuste de tamaño lo absorben solas; las 8 de Fin de grado no
-     traen ajuste y van cerca del final de la carta.
-     El logo va a color, como el docente lo subió (hasta v570 salía en
-     gris), y mide LADO_LOGO: lo más grande que deja todas las hojas en
-     una página. La medida está en _dev/mide-paginas-encabezado.js. */
-  var LADO_LOGO = 44;
-  function _bloqueCentro(centro, docente) {
+  /* El encabezado con el centro, como lo pidió Josué el 19 de noviembre:
+     el logo cuadrado a la izquierda, a color y del alto del encabezado, y
+     a su derecha, en columna:
+       · el nombre del centro, en mayúsculas, y el lugar en letra pequeña;
+       · «Docente: …» y, en el mismo renglón, Grado y Sección, Parcial y
+         Fecha en blanco para el alumno;
+       · el título del examen;
+       · Nombre y N.º de lista.
+     La raya «Centro Educativo» ya no hace falta y se va un renglón
+     entero: ese lugar es el que gana el logo. El de la universidad
+     conserva sus rótulos (Carrera/Sección, N.º Cuenta).
+     LADO_LOGO es lo más grande que deja todas las hojas en sus páginas
+     de siempre: lo mide _dev/mide-paginas-encabezado.js. */
+  var LADO_LOGO = 72;
+  function _cabezaCentro(centro, docente, titulo, grado, num) {
     var logo = _logoSeguro(centro.logo);
     var lugar = [];
     [centro.direccion, centro.municipio].forEach(function (p) {
       p = _txt(p);
       if (p && lugar.indexOf(p) < 0) lugar.push(p);
     });
-    var bajo = [];
-    if (lugar.length) bajo.push(_esc(lugar.join(', ')));
-    if (_txt(docente)) bajo.push('Docente: ' + _esc(_txt(docente)));
-    var lado = 'flex:none;width:' + LADO_LOGO + 'px;height:' + LADO_LOGO + 'px;';
-    return '<div data-metas-centro style="display:flex;align-items:center;gap:8px;margin:0 0 0.1rem;">'
-      + (logo ? '<img data-metas-logo alt="" src="' + logo + '" style="' + lado + 'object-fit:contain;">' : '')
-      + '<div style="flex:1;min-width:0;text-align:center;">'
-      + '<div style="font-size:11.5pt;font-weight:700;letter-spacing:0.03em;line-height:1.15;">'
+    var g = grado === 'Carrera/Sección' ? grado : 'Grado y Sección';
+    var n = num === 'N.º Cuenta' ? num : 'N.º de lista';
+    var doc = _txt(docente);
+    return '<div data-metas-centro style="display:flex;align-items:center;gap:10px;">'
+      + (logo ? '<img data-metas-logo alt="" src="' + logo + '" style="flex:none;width:' + LADO_LOGO + 'px;height:'
+        + LADO_LOGO + 'px;object-fit:contain;">' : '')
+      + '<div style="flex:1;min-width:0;">'
+      + '<div style="font-size:11.5pt;font-weight:700;letter-spacing:0.03em;line-height:1.15;text-align:center;">'
       + _esc(_txt(centro.nombre).toLocaleUpperCase('es')) + '</div>'
-      + (bajo.length ? '<div style="font-size:8.5pt;color:#333;line-height:1.2;">' + bajo.join(' · ') + '</div>' : '')
-      + '</div>'
-      /* Del otro lado, un hueco del ancho del logo: así el nombre queda
-         centrado en la hoja y no corrido a la derecha. */
-      + (logo ? '<div aria-hidden="true" style="' + lado + '"></div>' : '')
-      + '</div>';
+      + (lugar.length ? '<div style="font-size:8.5pt;color:#333;line-height:1.2;text-align:center;">' + _esc(lugar.join(', ')) + '</div>' : '')
+      /* Grado, Parcial y Fecha van juntos y a la derecha. Si el nombre del
+         docente no cabe, se parte él, en su lado, y no se le corta ni se
+         lleva una raya sola al renglón de abajo. */
+      + '<div class="ph-line" data-metas-docente style="margin-top:3px;">'
+      + '<span style="flex:1 1 auto;min-width:0;font-size:9.5pt;line-height:1.15;">' + (doc ? 'Docente: ' + _esc(doc) : '') + '</span>'
+      + '<span style="flex:none;margin-left:auto;display:flex;align-items:baseline;gap:4px;font-size:0.9em;">'
+      + '<strong>' + g + ':</strong><span class="ph-s" style="min-width:44px;">&nbsp;</span>'
+      + '<strong>Parcial:</strong><span class="ph-s" style="min-width:40px;">&nbsp;</span>'
+      + '<strong>Fecha:</strong><span class="ph-m" style="min-width:64px;">&nbsp;</span></span></div>'
+      + '<h2>' + titulo + '</h2>'
+      + '<div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>' + n
+      + ':</strong><span class="ph-xs">&nbsp;</span></div>'
+      + '</div></div>';
   }
+
+  /* Lo que agrega el centro, medido en la hoja ya abierta: el alto del
+     encabezado nuevo menos el del de siempre (que va invisible al lado y
+     aquí se quita). Deja `b` (el bloque), `p` (la hoja) y `h` (lo
+     agregado; cero o menos si el nuevo es más bajo). Las dos medidas
+     salen con el mismo zoom, así que se pueden restar. */
+  var MIDE_AGREGADO = 'var b=document.querySelector("[data-metas-centro]"),a=document.querySelector("[data-metas-antes]");'
+    + 'var p=b&&b.parentElement&&b.parentElement.parentElement;var h=0;'
+    + 'if(b){h=b.getBoundingClientRect().height;if(a){h-=a.getBoundingClientRect().height;}}'
+    + 'document.querySelectorAll("[data-metas-antes]").forEach(function(x){x.parentNode.removeChild(x);});';
 
   /* El texto de la hoja, con el encabezado que toca. `centro` null es
      «Sin encabezado»: la hoja de siempre, con la raya para escribir el
      centro, solo marcada para que nadie la llene. Si una hoja no tiene la
-     forma conocida, sale así también, sin perder nada. */
+     forma conocida, sale así también, sin perder nada.
+     Junto al encabezado nuevo va, invisible y fuera del flujo, el de
+     siempre (`data-metas-antes`): el ajuste de abajo lo mide para saber
+     exactamente cuánto alto agregó el centro, y después lo quita. */
   function _hojaConEncabezado(html, centro, docente) {
     if (typeof html !== 'string' || html.indexOf('<div class="ph">') < 0) return html;
     var bloques = html.match(BLOQUE_PH).length;
-    var rayas = (html.match(RAYA_CENTRO) || []).length;
-    if (!centro || rayas !== bloques) {
+    var cabezas = (html.match(CABEZA) || []).length;
+    if (!centro || cabezas !== bloques) {
       return html.replace(BLOQUE_PH, '<div class="ph" data-metas-encabezado="' + SIN_ENCABEZADO + '">');
     }
-    var arriba = _bloqueCentro(centro, docente);
-    var out = html
-      .replace(RAYA_CENTRO, _rayaAlumno)
-      .replace(BLOQUE_PH, function () { return '<div class="ph" data-metas-encabezado="centro">' + arriba; });
+    var out = html.replace(CABEZA, function (m, titulo, grado, num) {
+      return '<div class="ph" data-metas-encabezado="centro" style="position:relative;">'
+        + _cabezaCentro(centro, docente, titulo, grado, num)
+        + '<div data-metas-antes aria-hidden="true" style="position:absolute;visibility:hidden;left:0;right:0;top:0;">'
+        + m.replace(BLOQUE_PH, '') + '</div>';
+    });
     /* Las 160 hojas que traen su ajuste (`fit`) ya miden con el bloque
        puesto. Las 8 de Fin de grado no traen ajuste y van al límite de la
        carta: la operativa de 5.º tiene un milímetro libre, y el bloque la
@@ -595,10 +622,9 @@
        igual, a cambio de verse un 4 o 5 % más chica. */
     var ajuste = '';
     if (out.indexOf('function fit(') < 0) {
-      ajuste = '<script>(function(){var b=document.querySelector("[data-metas-centro]");'
-        + 'var p=b&&b.parentElement&&b.parentElement.parentElement;if(!p||p===document.body||p===document.documentElement)return;'
-        + 'var H=p.getBoundingClientRect().height,h=b.getBoundingClientRect().height+(parseFloat(getComputedStyle(b).marginBottom)||0);'
-        + 'if(h>0&&H>h*4)p.style.zoom=((H-h)/H).toFixed(4);})();</script>';
+      ajuste = '<script>(function(){' + MIDE_AGREGADO
+        + 'if(!p||p===document.body||p===document.documentElement)return;'
+        + 'var H=p.getBoundingClientRect().height;if(h>0&&H>h*4)p.style.zoom=((H-h)/H).toFixed(4);})();</script>';
     } else {
       /* Una hoja con ajuste que ya llega a su zoom mínimo y aun así no cabe
          en su meta (la operativa de Robot que decide: 260 mm de 252 con
@@ -609,10 +635,9 @@
          no se tocan. */
       var metas = {};
       html.replace(/fit\(\s*["']([A-Za-z0-9_-]+)["']\s*,\s*([0-9.]+)/g, function (m, id, mm) { metas[id] = parseFloat(mm); return m; });
-      ajuste = '<script>(function(){var T=' + JSON.stringify(metas) + ';var b=document.querySelector("[data-metas-centro]");'
-        + 'var p=b&&b.parentElement&&b.parentElement.parentElement;if(!p||!p.id||!T[p.id])return;'
+      ajuste = '<script>(function(){var T=' + JSON.stringify(metas) + ';' + MIDE_AGREGADO
+        + 'if(!p||!p.id||!T[p.id])return;'
         + 'var z=parseFloat(p.style.zoom)||1,t=T[p.id]*96/25.4,H=p.getBoundingClientRect().height;if(H<=t+1)return;'
-        + 'var h=b.getBoundingClientRect().height+(parseFloat(getComputedStyle(b).marginBottom)||0)*z;'
         + 'if(h>0&&H>h*4)p.style.zoom=(z*Math.max(t,H-h)/H).toFixed(4);})();</script>';
     }
     var cierre = out.lastIndexOf('</body>');
