@@ -71,8 +71,8 @@ ok('el valor sale como texto', /n\.valor::text/.test(sql));
 ok('el revoke es solo de esta función, no de todo el esquema',
   /revoke all on function metas\.familia_notas\(text\) from public, anon, authenticated/.test(sql)
   && !/revoke execute on all functions in schema metas from public/.test(sql));
-ok('la versión del portal está sellada', /familia-notas\.js\?v=566/.test(portal)
-  && /CACHE_NAME = 'meta-app-v566'/.test(fs.readFileSync(path.join(RAIZ, 'sw.js'), 'utf8')));
+ok('la versión del portal está sellada', /familia-notas\.js\?v=567/.test(portal)
+  && /CACHE_NAME = 'meta-app-v567'/.test(fs.readFileSync(path.join(RAIZ, 'sw.js'), 'utf8')));
 
 console.log(fallos ? '\n✘ ' + fallos + ' comprobaciones fallaron' : '\n✅ Las notas de la familia se quedan en su clave');
 process.exit(fallos ? 1 : 0);

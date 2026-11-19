@@ -14,6 +14,14 @@
    misión se imprime sin el motor de datos (sin señal, o en la página
    de la misión). No se sube y no se fusiona: la próxima vez que Mi aula
    lee la base, esta copia se vuelve a escribir con lo que dijo la base.
+   Lleva el perfil por grupo (porAula) y, aparte, la lista de centros
+   (centros), porque un centro recién creado todavía no tiene grupos y
+   el examen de la misión igual tiene que poder ofrecerlo.
+
+   Todo esto se usa solo con la sesión del docente abierta en el
+   aparato (METAS_DOCENTE_V1.codigo, la misma prueba de la portada y de
+   js/solo-docente.js). Al cerrar sesión la copia no se borra, pero el
+   examen vuelve a salir con la raya en blanco.
 
    El logo es el mismo JPEG a color de hoy (adSubirLogo: lado mayor
    260 px, calidad 0.72). No se pasa a blanco y negro.
@@ -70,6 +78,40 @@
       seccion: aula.seccion || '',
       gradoSeccion: gradoTxt(aula.grado, aula.seccion),
     };
+  }
+  // La lista que guarda la copia: un renglón por centro, sin repetidos,
+  // en el orden en que Mi aula los muestra (el más antiguo primero). El
+  // nombre del maestro, si el centro no lo trae, sale de un grupo de ese
+  // centro que sí lo tenga, igual que en la pantalla del perfil.
+  function listaCentros(api) {
+    var filas = (api.lista('centros') || []).slice().sort(function (a, b) {
+      var ac = a.created_at || '9999';
+      var bc = b.created_at || '9999';
+      return String(ac).localeCompare(String(bc)) || String(a.id).localeCompare(String(b.id));
+    });
+    var aulas = api.lista('aulas') || [];
+    var vistos = {};
+    var out = [];
+    filas.forEach(function (c) {
+      if (!c || !c.id || vistos[c.id]) return;
+      vistos[c.id] = 1;
+      var docente = c.docente || '';
+      if (!docente) {
+        for (var i = 0; i < aulas.length; i++) {
+          if (aulas[i].centro_id === c.id && aulas[i].docente_nombre) { docente = String(aulas[i].docente_nombre); break; }
+        }
+      }
+      out.push({
+        id: c.id,
+        nombre: c.nombre || '',
+        logo: c.logo || '',
+        direccion: c.direccion || '',
+        municipio: c.municipio || '',
+        departamento: c.departamento || '',
+        docente: docente,
+      });
+    });
+    return out;
   }
   function deCache(aulaId) {
     var c = leer();
@@ -157,10 +199,16 @@
 
   function refrescar(api, actual) {
     if (!api || typeof api.lista !== 'function') return;
-    var aulas = api.lista('aulas') || [];
-    if (!aulas.length) return;
-    var centros = api.lista('centros') || [];
     var prev = leer();
+    // Una lista vacía no borra la que había: puede ser que la base todavía
+    // no haya contestado. Un centro no se borra (la base no deja).
+    var lista = listaCentros(api);
+    var aulas = api.lista('aulas') || [];
+    if (!aulas.length) {
+      if (lista.length) { prev.centros = lista; escribir(prev); }
+      return;
+    }
+    var centros = api.lista('centros') || [];
     var por = {};
     aulas.forEach(function (a) {
       var c = null;
@@ -171,7 +219,48 @@
       else if (a.centro_id && prev.porAula && prev.porAula[a.id]) por[a.id] = prev.porAula[a.id];
       else por[a.id] = null;
     });
-    escribir({ actual: actual || prev.actual || null, porAula: por });
+    var nuevo = { actual: actual || prev.actual || null, porAula: por };
+    if (lista.length) nuevo.centros = lista;
+    else if (prev.centros) nuevo.centros = prev.centros;
+    escribir(nuevo);
+  }
+
+  // ¿Hay un docente con sesión en este aparato? La misma prueba que la
+  // portada (mfLogueado) y js/solo-docente.js.
+  function sesionDocente() {
+    try {
+      var d = JSON.parse(w.localStorage.getItem('METAS_DOCENTE_V1'));
+      return d && d.codigo ? d : null;
+    } catch (e) { return null; }
+  }
+
+  // Los centros del docente, para quien imprime fuera de Mi aula (el
+  // examen de la misión). Con el motor de datos, los de la base; si no,
+  // la lista de la copia. Una copia escrita antes de que existiera la
+  // lista se arma con los perfiles de sus grupos, sin repetir centro.
+  function centros() {
+    var api = w.MetasDatos;
+    if (api && typeof api.lista === 'function') {
+      var deBase = listaCentros(api);
+      if (deBase.length) return deBase;
+    }
+    var cache = leer();
+    var copia = function (c) {
+      return {
+        id: c.id, nombre: c.nombre || '', logo: c.logo || '', direccion: c.direccion || '',
+        municipio: c.municipio || '', departamento: c.departamento || '', docente: c.docente || '',
+      };
+    };
+    if (Array.isArray(cache.centros)) return cache.centros.filter(function (c) { return c && c.id; }).map(copia);
+    var vistos = {};
+    var out = [];
+    perfiles().forEach(function (x) {
+      var p = x.perfil;
+      if (!p || !p.id || vistos[p.id]) return;
+      vistos[p.id] = 1;
+      out.push(copia(p));
+    });
+    return out;
   }
 
   // El mismo objeto que ya leían las hojas: escuela, logos y boleta.
@@ -326,8 +415,12 @@
   // Llena Centro Educativo (o Instituto) y Grado/Sección, y pone el logo
   // arriba a la izquierda de .ph. Nombre, parcial, fecha y N.º no se tocan.
   // Sin perfil, el HTML sale igual, rayas incluidas.
+  // Sin sesión no se llena nada. Una hoja que el motor de las misiones ya
+  // armó (data-metas-encabezado) no se toca: ahí el docente eligió.
   function examen(html) {
     if (typeof html !== 'string' || html.indexOf('class="ph"') < 0) return html;
+    if (html.indexOf('data-metas-encabezado') >= 0) return html;
+    if (!sesionDocente()) return html;
     var p = deCache(null);
     if (!p || (!String(p.nombre || '').trim() && !p.logo)) return html;
     var centro = String(p.nombre || '').trim() ? esc(p.nombre) : '';
@@ -525,5 +618,7 @@
     guardar: guardar,
     jpeg: jpeg,
     examen: examen,
+    centros: centros,
+    sesionDocente: sesionDocente,
   };
 })(window);
