@@ -3,31 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Boceto · Eliminar centro y barra al guardar</title>
+<title>Boceto · Archivar centro</title>
 <!-- Boceto de prueba: no se publica (_dev/). No lee ni guarda datos del maestro.
-
-     Por qué existe: Josué quiere, en Perfil, poder ocultar un centro y una
-     señal mínima al guardar. Poca carga: la señal es una barrita, no una
-     frase. Este archivo se aprueba antes de programar la pantalla.
+     Se aprueba antes de programar la pantalla.
 
      Lo que ve el docente:
-       · «Eliminar centro» al final, debajo de «Guardar perfil», en rojo
-         suave. No es la acción principal.
-       · La pregunta queda en el formulario, sin ventana: «¿Eliminar John
-         Arnold? Se ocultará en todos tus aparatos.» «Sí, eliminar» y
-         «Cancelar».
+       · «Archivar centro» al final, debajo de «Guardar perfil», en rojo
+         suave. No es la acción principal. Es el mismo borrado suave
+         (deleted_at), nunca un DELETE.
+       · La pregunta queda en el formulario: «¿Archivar John Arnold?
+         Puedes recuperarlo luego.» «Sí, archivar» y «Cancelar».
        · Con grupos no deja: «Primero pasa sus N grupos a otro centro», con ⓘ.
-       · El último centro no se elimina: «No se puede eliminar el último centro.»
+       · El último centro no se archiva.
+       · Si hay archivados, un chip discreto «Archivados (N)». Adentro, un
+         «Recuperar» por centro: deleted_at vuelve a vacío. Si el nombre
+         choca con centros_unico, una sola línea y no se recupera.
        · Al guardar EN ESTE aparato, una barrita delgada con un ✓ verde, sin
-         texto, unos 2 s, y se va sola. El lector oye «Perfil guardado».
-       · En otro aparato el dato aparece solo: sin barrita, sin chip y sin
-         resaltar el campo.
-       · Las tarjetas viejas «no se pudo anotar» van en una sola, con
-         «(N veces)». No se quitan hasta «Entendido».
+         texto, unos 2 s. El lector oye «Perfil guardado».
+       · En otro aparato el dato aparece solo, sin aviso.
+       · Los avisos viejos que dicen «no se pudo anotar» (anteriores a v569)
+         no se muestran. Siguen guardados. Los nuevos salen con su motivo,
+         uno por fila, hasta «Entendido».
 
-     Por dentro (no se pinta): deleted_at, nunca un DELETE. centros_unico
-     solo cuenta filas con deleted_at vacío, así el mismo nombre se puede
-     volver a crear. -->
+     Los casos de prueba van plegados en «Ver casos del boceto». No son
+     la aplicación. -->
 <link rel="stylesheet" href="../css/vendor/fuentes/fuentes.css">
 <style>
 :root {
@@ -43,23 +42,33 @@ body {
   color: var(--text); font-size: 15px; line-height: 1.45;
 }
 button, input { font: inherit; }
-.nota-boceto, .bitacora {
-  max-width: 720px; margin: 12px auto; padding: 12px 14px;
-  border: 2px dashed #94a3b8; border-radius: 12px; background: var(--card); font-size: 14px;
+/* Los casos no son la app: una línea gris, plegada. Al abrirla, pastillas
+   chicas y sin el azul de Perfil, para que no se confundan con la pantalla. */
+.casos { width: min(360px, 100%); margin: 0 auto; color: #64748b; font-size: 13px; }
+.casos summary {
+  min-height: 44px; display: flex; align-items: center; gap: 6px; padding: 0 12px;
+  cursor: pointer; font-weight: 650; list-style: none; color: #64748b;
 }
-.nota-boceto b, .bitacora b { display: block; margin-bottom: 4px; }
-.nota-boceto p, .bitacora p { margin: 6px 0; }
-.estados { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-.estados button, .btn {
+.casos summary::-webkit-details-marker { display: none; }
+.casos summary::before { content: '›'; font-weight: 800; color: #94a3b8; }
+.casos[open] summary::before { content: '⌄'; }
+.casos-panel {
+  margin: 0 12px 12px; padding: 8px 10px 10px; border: 1px dashed #94a3b8;
+  border-radius: 12px; background: #f8fafc;
+}
+.casos-panel p { margin: 0 0 8px; }
+.segmentos { display: flex; flex-wrap: wrap; gap: 4px; }
+.segmentos button {
+  min-height: 32px; padding: 2px 10px; border-radius: 999px; border: 1px solid #cbd5e1;
+  background: transparent; color: #64748b; font-size: 12px; font-weight: 650; cursor: pointer;
+}
+.segmentos button[aria-pressed="true"] { background: #e2e8f0; color: #334155; border-color: #94a3b8; }
+.casos ol { margin: 8px 0 0; padding-left: 18px; }
+.casos li { margin: 3px 0; }
+.btn {
   min-height: 44px; min-width: 44px; padding: 0 14px; border-radius: 12px;
   border: 1.5px solid var(--line); background: #f8fafc; color: var(--text);
   font-weight: 700; cursor: pointer;
-}
-.estados button[aria-pressed="true"] { background: var(--azul); color: #fff; border-color: var(--azul); }
-.antes { margin: 8px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
-.antes li {
-  padding: 8px 10px; border-radius: 10px; background: #f8fafc; border: 1px solid var(--line);
-  color: var(--muted); font-size: 13px;
 }
 
 /* El marco es el celular de 360 px. En uno de verdad ocupa el ancho. */
@@ -93,8 +102,18 @@ button, input { font: inherit; }
   line-height: 1.2; text-align: center;
 }
 .seg button[aria-pressed="true"] { background: var(--azul); color: #fff; border-color: var(--azul); }
-.acciones { display: flex; flex-wrap: wrap; gap: 8px; }
+.acciones { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .btn-chico { padding: 0 12px; }
+.chip-arch {
+  align-self: flex-start; min-height: 44px; padding: 0 12px; border-radius: 999px;
+  border: 1px solid var(--line); background: #f1f5f9; color: #475569;
+  font-weight: 700; font-size: 14px; cursor: pointer;
+}
+.chip-arch[aria-expanded="true"] { background: #e2e8f0; border-color: #94a3b8; }
+.lista-arch { list-style: none; margin: 0; padding: 4px 0 0; display: flex; flex-direction: column; gap: 4px; }
+.fila-arch { display: flex; align-items: center; gap: 8px; min-height: 44px; }
+.fila-arch span { flex: 1; min-width: 0; font-weight: 700; }
+.linea-choque { margin: 0 0 4px; color: #92400e; font-weight: 700; }
 .ayuda { margin: 0; padding-left: 18px; }
 .card {
   background: var(--card); border: 1px solid var(--line); border-radius: 18px;
@@ -129,7 +148,7 @@ button, input { font: inherit; }
 .guardar { display: inline-flex; flex-direction: column; align-items: stretch; gap: 6px; max-width: 100%; }
 
 /* La señal de guardado: delgada, un ✓, cero palabras en la pantalla.
-   Va pegada al botón de guardar, no junto a eliminar. */
+   Va pegada al botón de guardar, no junto a archivar. */
 .barra {
   display: flex; align-items: center; gap: 6px; height: 16px; margin: 0;
 }
@@ -159,34 +178,29 @@ button, input { font: inherit; }
   padding: 14px; box-shadow: 0 12px 32px rgba(15, 23, 42, .22);
 }
 .carta p { margin: 0 0 10px; font-weight: 700; }
-.veces { font-weight: 650; white-space: nowrap; }
-.bitacora ol { margin: 6px 0 0; padding-left: 18px; }
-.bitacora li { margin: 4px 0; }
 [hidden] { display: none !important; }
 </style>
 </head>
 <body>
-<div class="nota-boceto">
-  <b>Boceto, no es la aplicación.</b>
-  <p>El marco de abajo mide 360 px, como el celular. Nada de esto guarda datos. El rojo suave de «Eliminar centro» no es el botón principal. El amarillo solo sale si el nombre ya es de otro centro vivo: eso sí es una alerta.</p>
-  <p>Al guardar, en este aparato, aparece una barrita verde delgada con un ✓ y sin texto. Dura 2 segundos y se va sola. El lector de pantalla oye «Perfil guardado». No dice «Perfil guardado ✓» ni «Guardado en la nube ✓». Si el cambio llega de otro aparato, el dato cambia y no hay aviso ni resaltado.</p>
-  <p>Las tarjetas viejas, de antes de v569, decían todas «no se pudo anotar». Hoy se verían así, cuatro veces:</p>
-  <ul class="antes">
-    <li>Este cambio no quedó anotado: no se pudo anotar.</li>
-    <li>Este cambio no quedó anotado: no se pudo anotar.</li>
-    <li>Este cambio no quedó anotado: no se pudo anotar.</li>
-    <li>Este cambio no quedó anotado: no se pudo anotar.</li>
-  </ul>
-  <p>En el boceto quedan en una sola, con «(4 veces)». No se quita hasta tocar «Entendido».</p>
-  <div class="estados" role="group" aria-label="Situaciones del boceto">
-    <button type="button" data-preset="sin-grupos" aria-pressed="true">John Arnold, sin grupos</button>
-    <button type="button" data-preset="con-grupos" aria-pressed="false">María Consuelo, con grupos</button>
-    <button type="button" data-preset="ultimo" aria-pressed="false">Solo queda un centro</button>
-    <button type="button" data-preset="viejas" aria-pressed="false">Tarjetas viejas (4 veces)</button>
-    <button type="button" data-accion="otro">El otro aparato cambió el director</button>
-    <button type="button" data-accion="ver-final">Ver el final del formulario</button>
+<details class="casos" id="casos">
+  <summary>Ver casos del boceto</summary>
+  <div class="casos-panel">
+    <p>No es la aplicación. Nada de esto guarda datos. El marco mide 360 px.</p>
+    <div class="segmentos" role="group" aria-label="Casos del boceto">
+      <button type="button" data-preset="sin-grupos" aria-pressed="true">Sin grupos</button>
+      <button type="button" data-preset="con-grupos" aria-pressed="false">Con grupos</button>
+      <button type="button" data-preset="ultimo" aria-pressed="false">Último centro</button>
+      <button type="button" data-preset="archivados" aria-pressed="false">Archivados</button>
+      <button type="button" data-preset="choque" aria-pressed="false">Recuperar choca</button>
+      <button type="button" data-preset="aviso-nuevo" aria-pressed="false">Aviso nuevo</button>
+      <button type="button" data-preset="viejas" aria-pressed="false">Avisos viejos</button>
+      <button type="button" data-accion="otro">Otro aparato</button>
+      <button type="button" data-accion="ver-final">Ir al final</button>
+    </div>
+    <p id="nota-caso"></p>
+    <ol id="log"></ol>
   </div>
-</div>
+</details>
 
 <div class="telefono" id="telefono">
   <header class="top">
@@ -195,12 +209,6 @@ button, input { font: inherit; }
     <span class="hueco" aria-hidden="true"></span>
   </header>
   <div class="scroll" id="scroll"></div>
-</div>
-
-<div class="bitacora">
-  <b>Esto no lo ve el docente.</b>
-  <p>Sirve para revisar el borrado suave y que la barrita solo sale en el aparato que guardó. La sonda, cuando el boceto se apruebe, va a comprobar lo mismo.</p>
-  <ol id="log"></ol>
 </div>
 
 <script>
@@ -233,6 +241,9 @@ button, input { font: inherit; }
   function vivos() {
     return estado.centros.filter(function (c) { return !c.deleted_at; });
   }
+  function archivados() {
+    return estado.centros.filter(function (c) { return c.deleted_at; });
+  }
   function activo() {
     return estado.centros.filter(function (c) { return c.id === estado.activo && !c.deleted_at; })[0] || null;
   }
@@ -250,24 +261,66 @@ button, input { font: inherit; }
       b.setAttribute('aria-pressed', String(b.getAttribute('data-preset') === nombre));
     });
   }
+  function notaCaso(t) {
+    var p = document.getElementById('nota-caso');
+    if (p) p.textContent = t;
+  }
   function cargar(preset) {
     barraGen++;
     estado = {
       centros: base(), activo: 'ja', nuevo: false, confirmar: false, aviso: '',
-      ayuda: false, tarjeta: null, barra: false, corto: '', ya: null, preset: preset
+      ayuda: false, tarjeta: null, barra: false, corto: '', ya: null, preset: preset,
+      archivadosAbiertos: false, choque: null, ocultos: 0
     };
     if (preset === 'con-grupos') estado.activo = 'mc';
-    if (preset === 'ultimo') {
+    if (preset === 'ultimo' || preset === 'archivados') {
       estado.centros[0].deleted_at = '2026-11-18T12:00:00.000Z';
       estado.activo = 'mc';
+      if (preset === 'archivados') estado.archivadosAbiertos = true;
     }
-    if (preset === 'viejas') estado.tarjeta = { veces: 4 };
+    if (preset === 'choque') {
+      estado.centros.push({
+        id: 'ja-viejo', nombre: 'John Arnold', maestro: 'Ana Sofía Mejía', director: 'Carlos Rivera',
+        codigo: '051100134B10', direccion: 'Barrio El Centro', aldea: '', municipio: 'Tegucigalpa',
+        departamento: 'Francisco Morazán', anio: '2026', modalidad: 'Presencial', jornada: 'Matutina',
+        grupos: [], deleted_at: '2026-11-01T12:00:00.000Z'
+      });
+      estado.archivadosAbiertos = true;
+    }
+    if (preset === 'aviso-nuevo') {
+      estado.tarjeta = { texto: 'El centro no quedó anotado: ya tienes otro centro con ese nombre.' };
+    }
+    if (preset === 'viejas') estado.ocultos = 4;
     marcarPreset(preset);
     limpiarLog();
-    if (preset === 'sin-grupos') log('John Arnold no tiene grupos. Se puede ocultar. María Consuelo queda como centro activo.');
-    if (preset === 'con-grupos') log('María Consuelo tiene 2 grupos. Eliminar no abre la pregunta: pide pasarlos.');
-    if (preset === 'ultimo') log('Solo queda María Consuelo. Aunque tenga grupos, es el último: no se puede eliminar.');
-    if (preset === 'viejas') log('Cuatro tarjetas viejas, el mismo texto «no se pudo anotar», en una sola. Siguen hasta «Entendido».');
+    if (preset === 'sin-grupos') {
+      notaCaso('John Arnold no tiene grupos: se puede archivar.');
+      log('Archivar pone deleted_at. No hay DELETE.');
+    }
+    if (preset === 'con-grupos') {
+      notaCaso('María Consuelo tiene 2 grupos. Archivar no abre la pregunta.');
+      log('Primero hay que pasar los grupos a otro centro.');
+    }
+    if (preset === 'ultimo') {
+      notaCaso('Solo queda María Consuelo. No se puede archivar el último centro.');
+      log('John Arnold ya está archivado. El chip aparece porque hay uno.');
+    }
+    if (preset === 'archivados') {
+      notaCaso('El chip Archivados (1) abre la lista. Recuperar deja deleted_at vacío.');
+      log('La lista está abierta para ver Recuperar. En el uso real el chip empieza cerrado.');
+    }
+    if (preset === 'choque') {
+      notaCaso('Hay un John Arnold vivo y otro archivado. Recuperar avisa en una línea y no lo trae de vuelta.');
+      log('centros_unico solo mira centros con deleted_at vacío. Por eso el nombre se pudo usar otra vez.');
+    }
+    if (preset === 'aviso-nuevo') {
+      notaCaso('Este aviso es nuevo: dice el motivo y se queda hasta Entendido.');
+      log('Un aviso por fila. No se junta con otros.');
+    }
+    if (preset === 'viejas') {
+      notaCaso('Hay 4 avisos viejos guardados, los que dicen «no se pudo anotar». No se muestran y no se borran.');
+      log('Se marcan como vistos en este aparato, o se filtran si son de antes de v569. La base los conserva.');
+    }
     pintar();
   }
 
@@ -298,9 +351,28 @@ button, input { font: inherit; }
       h += '<button type="button" data-accion="centro" data-valor="' + esc(x.id) + '" aria-pressed="' + on + '">'
         + esc(x.nombre) + '</button>';
     });
-    h += '</div><div class="acciones"><button type="button" class="btn" data-accion="nuevo" aria-pressed="' + estado.nuevo
-      + '">+ Otro centro</button><button type="button" class="btn btn-chico" data-accion="ayuda" aria-expanded="'
+    h += '</div>';
+    var guardados = archivados();
+    h += '<div class="acciones"><button type="button" class="btn" data-accion="nuevo" aria-pressed="' + estado.nuevo
+      + '">+ Otro centro</button>';
+    if (guardados.length) {
+      h += '<button type="button" class="chip-arch" data-accion="archivados" data-boceto="archivados" aria-expanded="'
+        + estado.archivadosAbiertos + '">Archivados (' + guardados.length + ')</button>';
+    }
+    h += '<button type="button" class="btn btn-chico" data-accion="ayuda" aria-expanded="'
       + estado.ayuda + '" aria-label="Ayuda">ⓘ</button></div>';
+    if (guardados.length && estado.archivadosAbiertos) {
+      h += '<ul class="lista-arch" id="lista-archivados">';
+      guardados.forEach(function (x) {
+        h += '<li><div class="fila-arch"><span>' + esc(x.nombre) + '</span>'
+          + '<button type="button" class="btn" data-accion="recuperar" data-valor="' + esc(x.id) + '" data-boceto="recuperar">Recuperar</button></div>';
+        if (estado.choque && estado.choque.id === x.id) {
+          h += '<p class="linea-choque" data-boceto="choque">' + esc(estado.choque.texto) + '</p>';
+        }
+        h += '</li>';
+      });
+      h += '</ul>';
+    }
     if (estado.ayuda) {
       h += '<ol class="ayuda"><li>Cada grupo pertenece a un solo centro.</li>'
         + '<li>Al cambiar de centro ves solo sus grupos.</li>'
@@ -345,20 +417,20 @@ button, input { font: inherit; }
     }
     h += '</div></div>';
     if (!estado.nuevo && c) {
-      h += '<div class="zona" id="zona-borrar">';
+      h += '<div class="zona" id="zona-archivar">';
       if (estado.confirmar) {
-        h += '<div class="confirma" data-boceto="confirmar-eliminar">'
-          + '<p>¿Eliminar ' + esc(c.nombre) + '? Se ocultará en todos tus aparatos.</p>'
-          + '<div class="botones"><button type="button" class="btn si" data-accion="si-eliminar">Sí, eliminar</button>'
+        h += '<div class="confirma" data-boceto="confirmar-archivar">'
+          + '<p>¿Archivar ' + esc(c.nombre) + '? Puedes recuperarlo luego.</p>'
+          + '<div class="botones"><button type="button" class="btn si" data-accion="si-archivar">Sí, archivar</button>'
           + '<button type="button" class="btn" data-accion="cancelar">Cancelar</button></div></div>';
       } else {
-        h += '<button type="button" class="btn peligro" data-accion="eliminar" data-boceto="eliminar-centro">Eliminar centro</button>';
+        h += '<button type="button" class="btn peligro" data-accion="archivar" data-boceto="archivar-centro">Archivar centro</button>';
         if (estado.aviso === 'grupos') {
           h += '<p class="info" data-boceto="aviso-grupos"><span aria-hidden="true">ⓘ</span> '
             + esc(fraseGrupos(c.grupos.length)) + '</p>';
         }
         if (estado.aviso === 'ultimo') {
-          h += '<p class="info" data-boceto="aviso-ultimo"><span aria-hidden="true">ⓘ</span> No se puede eliminar el último centro.</p>';
+          h += '<p class="info" data-boceto="aviso-ultimo"><span aria-hidden="true">ⓘ</span> No se puede archivar el último centro.</p>';
         }
       }
       h += '</div>';
@@ -372,9 +444,8 @@ button, input { font: inherit; }
       var carta = document.createElement('div');
       carta.className = 'carta';
       carta.setAttribute('role', 'alert');
-      carta.setAttribute('data-boceto', 'no-anotado');
-      carta.innerHTML = '<p>Este cambio no quedó anotado: no se pudo anotar. <span class="veces">('
-        + estado.tarjeta.veces + ' veces)</span></p>'
+      carta.setAttribute('data-boceto', 'aviso-nuevo');
+      carta.innerHTML = '<p>' + esc(estado.tarjeta.texto) + '</p>'
         + '<div class="botones"><button type="button" class="btn btn-1" data-accion="entendido">Entendido</button></div>';
       tel.appendChild(carta);
     }
@@ -439,7 +510,7 @@ button, input { font: inherit; }
       estado.centros.push(fila);
       estado.activo = id;
       estado.nuevo = false;
-      log('Se creó «' + fila.nombre + '». Si ese nombre ya se había ocultado, se puede usar otra vez: la regla solo mira centros sin fecha de borrado.');
+      log('Se creó «' + fila.nombre + '». Un centro archivado con el mismo nombre no estorba: la regla solo mira los que no tienen fecha de borrado.');
       mostrarBarra();
       return;
     }
@@ -454,11 +525,12 @@ button, input { font: inherit; }
       .forEach(function (k) { if (datos[k] != null && !(k === 'nombre' && otro)) c[k] = datos[k].trim(); });
     mostrarBarra();
   }
-  function pedirEliminar() {
+  function pedirArchivar() {
     var c = activo();
     if (!c) return;
     estado.ya = null;
     estado.corto = '';
+    estado.choque = null;
     if (vivos().length < 2) {
       estado.confirmar = false;
       estado.aviso = 'ultimo';
@@ -481,7 +553,7 @@ button, input { font: inherit; }
     ver('.confirma .botones');
     log('La pregunta quedó en el formulario. No hay ventana emergente.');
   }
-  function siEliminar() {
+  function siArchivar() {
     var c = activo();
     if (!c || vivos().length < 2 || c.grupos.length) return;
     c.deleted_at = ahora();
@@ -491,9 +563,30 @@ button, input { font: inherit; }
     estado.aviso = '';
     estado.nuevo = false;
     estado.barra = false;
+    estado.archivadosAbiertos = false;
+    estado.choque = null;
     barraGen++;
     pintar();
-    log('«' + c.nombre + '» quedó con deleted_at. No hubo DELETE. En el otro aparato se oculta al sincronizar. Ahora se ve «' + queda.nombre + '».');
+    ver('[data-boceto="archivados"]');
+    log('«' + c.nombre + '» quedó con deleted_at. No hubo DELETE. En el otro aparato se oculta al sincronizar. Ahora se ve «' + queda.nombre + '». El chip Archivados lo recupera.');
+  }
+  function recuperar(id) {
+    var c = estado.centros.filter(function (x) { return x.id === id; })[0];
+    if (!c || !c.deleted_at) return;
+    var choca = mismoNombre(c.nombre, c.id);
+    if (choca) {
+      estado.choque = { id: c.id, texto: 'Ya tienes ' + choca.nombre + '.' };
+      estado.archivadosAbiertos = true;
+      pintar();
+      ver('[data-boceto="choque"]');
+      log('No se recuperó «' + c.nombre + '». Sigue archivado. La línea avisa el choque.');
+      return;
+    }
+    c.deleted_at = null;
+    estado.choque = null;
+    if (!archivados().length) estado.archivadosAbiertos = false;
+    pintar();
+    log('Se recuperó «' + c.nombre + '». deleted_at volvió a vacío y aparece con tus centros.');
   }
   function otroAparato() {
     if (estado.nuevo) {
@@ -537,9 +630,16 @@ button, input { font: inherit; }
       return;
     }
     if (accion === 'ayuda') { estado.ayuda = !estado.ayuda; pintar(); return; }
-    if (accion === 'eliminar') { pedirEliminar(); return; }
+    if (accion === 'archivar') { pedirArchivar(); return; }
     if (accion === 'cancelar') { estado.confirmar = false; pintar(); log('Cancelar dejó el centro como estaba.'); return; }
-    if (accion === 'si-eliminar') { siEliminar(); return; }
+    if (accion === 'si-archivar') { siArchivar(); return; }
+    if (accion === 'archivados') {
+      estado.archivadosAbiertos = !estado.archivadosAbiertos;
+      if (!estado.archivadosAbiertos) estado.choque = null;
+      pintar();
+      return;
+    }
+    if (accion === 'recuperar') { recuperar(t.getAttribute('data-valor')); return; }
     if (accion === 'abrir') {
       estado.activo = t.getAttribute('data-valor');
       estado.nuevo = false;
@@ -548,10 +648,9 @@ button, input { font: inherit; }
       return;
     }
     if (accion === 'entendido') {
-      var n = estado.tarjeta ? estado.tarjeta.veces : 0;
       estado.tarjeta = null;
       pintar();
-      log('Se quitó la tarjeta porque tocaste Entendido. Eran ' + n + ' veces. Ninguna se borró sola.');
+      log('Se quitó el aviso nuevo porque tocaste Entendido. Los viejos ni siquiera se muestran, y no se borran de la base.');
     }
   });
   document.getElementById('telefono').addEventListener('submit', function (ev) {
@@ -560,13 +659,13 @@ button, input { font: inherit; }
   document.getElementById('volver').addEventListener('click', function () {
     log('Volverías a Mi aula. El boceto se queda en Perfil para que lo revises.');
   });
-  document.querySelector('.nota-boceto').addEventListener('click', function (ev) {
+  document.getElementById('casos').addEventListener('click', function (ev) {
     var t = ev.target.closest('button');
     if (!t) return;
     if (t.getAttribute('data-preset')) { cargar(t.getAttribute('data-preset')); return; }
     if (t.getAttribute('data-accion') === 'otro') { otroAparato(); return; }
     if (t.getAttribute('data-accion') === 'ver-final') {
-      var z = document.getElementById('zona-borrar') || document.querySelector('[data-accion="guardar"]');
+      var z = document.getElementById('zona-archivar') || document.querySelector('[data-accion="guardar"]');
       if (z) z.scrollIntoView({ block: 'end' });
     }
   });
