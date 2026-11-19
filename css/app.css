@@ -7172,3 +7172,14 @@ body:has(.ad-sace-card) #metasInstallBtn { display: none !important; }
 .ac-bajo { color: #b91c1c; }
 .ac-vacia { color: var(--faint); }
 .ac-fila { width: 100%; }
+
+/* «Hay una versión nueva» (index.html): arriba, encima de todo, y el aviso
+   entero es el botón que recarga. 44 px de alto como cualquier toque. */
+.version-nueva { position: fixed; left: 50%; top: calc(env(safe-area-inset-top, 0px) + 10px); transform: translateX(-50%);
+  z-index: 10000; width: min(92vw, 420px); }
+.version-nueva[hidden] { display: none; }
+.version-nueva-btn { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 10px; width: 100%;
+  min-height: 44px; padding: 10px 16px; border: none; border-radius: 14px; background: #1e3a7c; color: #fff;
+  font: inherit; font-weight: 700; font-size: calc(15px * var(--metas-fz, 1)); cursor: pointer;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, .25); }
+.version-nueva-accion { text-decoration: underline; font-weight: 600; }

@@ -35,6 +35,10 @@
     for (var k in o) r[k] = o[k];
     return r;
   }
+  // Vacío y null valen lo mismo: la base guarda null donde no hay nada.
+  function igual(a, b) {
+    return JSON.stringify(a === undefined ? null : a) === JSON.stringify(b === undefined ? null : b);
+  }
   function limpia(fila) {
     var r = {};
     for (var k in fila) if (DE_LA_BASE.indexOf(k) < 0 && fila[k] !== undefined) r[k] = fila[k];
@@ -277,6 +281,14 @@
     }
     var enBase = alm.fila(u, nombre, id);
     var visto = M._vista.fila(u, nombre, id) || {};
+    // Solo va lo que cambió frente a lo que ve el aparato. Mandar la fila
+    // entera (con el nombre que no se tocó) hacía que un nombre repetido
+    // trabara también todas las ediciones siguientes de esa fila, y que
+    // una edición vieja en cola volviera a escribir el nombre de antes.
+    if (M._vista.fila(u, nombre, id)) {
+      Object.keys(c).forEach(function (k) { if (igual(visto[k], c[k])) delete c[k]; });
+      if (!Object.keys(c).length) return { id: id };
+    }
     var base = {};
     Object.keys(c).forEach(function (k) { base[k] = visto[k] === undefined ? null : visto[k]; });
     cola.encolar({ owner: u, tipo: 'editar', tabla: nombre, id: id,
@@ -595,7 +607,10 @@
         pendientes: function () { return nube.uid() ? cola.pendientes(nube.uid()) : 0; },
         noAnotado: function () {
           var u = nube.uid();
-          return alm.noAnotado().filter(function (t) { return t.owner === u; }).map(function (t) { return { id: t.id, texto: t.texto }; });
+          return alm.noAnotado().filter(function (t) { return t.owner === u; }).map(function (t) {
+            // Una sola tarjeta por fila y motivo: «veces» cuenta cuántas veces pasó.
+            return { id: t.id, texto: t.texto, veces: t.veces || 1 };
+          });
         },
         // El único botón de la tarjeta «no quedó anotado»: «Entendido».
         entendido: cola.entendido,

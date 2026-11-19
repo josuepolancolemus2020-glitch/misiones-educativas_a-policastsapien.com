@@ -90,6 +90,13 @@
   var ayudaPerfil = false;
   var perfilPantalla = false;    // el perfil es su pantalla: no va con las notas
   var centroNuevo = false;       // el formulario en blanco para otro centro
+  // El perfil se guarda una vez, no con cada letra (hasta v568 cada letra
+  // era una petición, y un centro nuevo nacía con la primera): al tocar
+  // «Guardar perfil», al salir del campo, o tras ESPERA_PERFIL sin escribir.
+  var ESPERA_PERFIL = 1500;
+  var esperaPerfil = null;
+  var perfilGuardado = null;     // id del centro cuyo perfil se acaba de guardar
+  var SIN_SENAL_GUARDADO = 'Guardado en este aparato. Se subirá cuando haya señal.';
   var cargaFilas = [];
   var cargaTexto = '';
   var avisoCarga = '';
@@ -201,6 +208,9 @@
     if (!raiz || !d) return;
     var activa = document.getElementById('view-mi-aula');
     if (activa && !activa.classList.contains('active')) return;
+    // Lo escrito en el perfil que esperaba su pausa se guarda antes de que
+    // el repintado se lleve el formulario.
+    if (esperaPerfil) guardarFormCentro({});
     asegurarPrimerCentro();
     var aula = aulaActual();
     var sec = seccion();
@@ -1121,6 +1131,9 @@
       + (c.logo_sec.valor ? '<button type="button" class="ma-btn" data-accion="centro-quitar" data-valor="logoSec">Quitar</button>' : '')
       + '</div></div></div></div>';
     h += campo('nombre', 'Nombre del centro educativo', ' maxlength="160" required');
+    // «Ya tienes María Consuelo. ¿Abrirlo?»: se llena sin repintar el
+    // formulario, para no borrarle al docente lo que sigue escribiendo.
+    h += '<div class="ma-ya" data-metas="ya-existe" role="status" hidden></div>';
     h += campo('docente', 'Nombre del maestro(a)', ' maxlength="120"');
     h += '<div class="ma-fila2">' + campo('director', 'Nombre del director(a)', ' maxlength="120"')
       + campo('codigo_sace', 'Código SACE del centro', ' maxlength="30"') + '</div>';
@@ -1135,13 +1148,41 @@
     h += '<p class="ma-nota">El logo se guarda a color.</p>';
     h += '<p class="ma-nota">Si no subes el de la Secretaría, la boleta usa el oficial.</p>';
     if (!nuevo && centro) {
+      // Cambiar el nombre aquí cambia el de estos grupos: por eso se dice.
       var gs = gruposDel(centro.id).map(function (a) { return grupo(a); });
-      h += '<p class="ma-nota" data-metas="grupos-del-centro">' + (gs.length
-        ? 'Grupos de este centro: ' + esc(gs.join(', ')) + '.'
-        : 'Este centro todavía no tiene grupos.') + '</p>';
+      h += gs.length
+        ? '<p class="ma-info" data-metas="grupos-del-centro"><span aria-hidden="true">ⓘ</span> Este centro tiene '
+          + gs.length + (gs.length === 1 ? ' grupo' : ' grupos') + ' (' + esc(gs.join(', ')) + ').</p>'
+        : '<p class="ma-nota" data-metas="grupos-del-centro">Este centro todavía no tiene grupos.</p>';
     }
+    if (nuevo) h += '<p class="ma-nota">El centro nuevo se crea al tocar «Guardar perfil».</p>';
+    var estado = !nuevo && centro && perfilGuardado === centro.id ? textoGuardado() : '';
+    h += '<div class="ma-acciones ma-pie-perfil"><button type="submit" class="ma-btn ma-btn-1" data-metas="guardar-perfil">Guardar perfil</button>'
+      + '<p class="ma-estado" data-metas="perfil-estado" role="status">' + esc(estado) + '</p></div>';
     h += '<p class="ma-aviso" role="status"></p></form>';
     return h;
+  }
+  // Con señal, «Perfil guardado ✓». Sin señal, lo que de verdad pasó: quedó
+  // en este aparato y sube solo cuando vuelva.
+  function textoGuardado() {
+    return d && d.sinSenal() ? SIN_SENAL_GUARDADO : 'Perfil guardado ✓';
+  }
+  function pintarEstadoPerfil(form, texto) {
+    var el = form && form.querySelector('[data-metas="perfil-estado"]');
+    if (el) el.textContent = texto;
+  }
+  function pintarYaExiste(form, ya) {
+    var el = form && form.querySelector('[data-metas="ya-existe"]');
+    if (!el) return;
+    if (!ya) { el.hidden = true; el.innerHTML = ''; return; }
+    var html = '<span>Ya tienes ' + esc(ya.nombre) + '. ¿Abrirlo?</span>'
+      + '<button type="button" class="ma-btn" data-metas="abrir-centro" data-accion="abrir-centro" data-valor="' + esc(ya.id) + '">Abrirlo</button>';
+    if (el.innerHTML !== html) el.innerHTML = html;
+    el.hidden = false;
+  }
+  function programarPerfil() {
+    if (esperaPerfil) clearTimeout(esperaPerfil);
+    esperaPerfil = setTimeout(function () { esperaPerfil = null; guardarFormCentro({}); }, ESPERA_PERFIL);
   }
 
   function leerFormCentro() {
@@ -1155,18 +1196,36 @@
     campos.logo_sec = (sec && sec.getAttribute('data-propio') === '1') ? sec.getAttribute('src') : '';
     return { form: f, campos: campos, id: f.getAttribute('data-centro-id') || null };
   }
-  function guardarFormCentro() {
+  // op.confirmado: el docente tocó «Guardar perfil» (o Enter). Solo así
+  // se crea un centro nuevo; salir del campo o dejar de escribir solo
+  // guarda uno que ya existe.
+  function guardarFormCentro(op) {
+    op = op || {};
+    if (esperaPerfil) { clearTimeout(esperaPerfil); esperaPerfil = null; }
     var leo = leerFormCentro();
     if (!leo || !d || !window.MetasCentro) return;
+    var MC = window.MetasCentro;
     var aula = aulaActual();
     var eraNuevo = !leo.id;
+    var ya = typeof MC.mismoNombre === 'function'
+      ? MC.mismoNombre(d, leo.campos.nombre, leo.campos.anio_lectivo, leo.id || null) : null;
+    pintarYaExiste(leo.form, ya);
+    var aviso = leo.form.querySelector('.ma-aviso');
     try {
-      var id = window.MetasCentro.guardar(d, eraNuevo ? null : aula, leo.campos, leo.id || null);
-      leo.form.setAttribute('data-centro-id', id);
-      centroNuevo = false;
-      if (eraNuevo) { vista.centro = id; guardarPref(); }
-      var aviso = leo.form.querySelector('.ma-aviso');
+      var id = MC.guardar(d, eraNuevo ? null : aula, leo.campos, leo.id || null, { confirmado: !!op.confirmado });
       if (aviso) aviso.textContent = '';
+      perfilGuardado = id;
+      if (eraNuevo) {
+        // Ya existe el centro: se repinta para que aparezca entre los tuyos.
+        // El docente acaba de tocar el botón, no está escribiendo.
+        centroNuevo = false;
+        vista.centro = id;
+        guardarPref();
+        pintar();
+        return;
+      }
+      leo.form.setAttribute('data-centro-id', id);
+      pintarEstadoPerfil(leo.form, textoGuardado());
       // Ya hay perfil: el aviso de arriba no tiene que esperar a otro repintado,
       // porque repintar ahora le borraría al docente lo que sigue escribiendo.
       var nota = document.querySelector('#mi-aula [data-metas="aviso-perfil"]');
@@ -1175,6 +1234,7 @@
       if (caja && caja.remove) caja.remove();
     } catch (e) {
       if (e && e.espera) return;
+      if (e && e.yaExiste) { pintarYaExiste(leo.form, e.yaExiste); return; }
       avisarEn(leo.form, frase(e));
     }
   }
@@ -1322,7 +1382,9 @@
         }).join('') + '</div></div>';
     } else if (hay && d.noAnotado()[0]) {
       var n = d.noAnotado()[0];
-      h = '<div class="ma-carta" data-metas="no-anotado" role="alert"><p class="ma-carta-t">' + esc(n.texto) + '</p>'
+      // Una tarjeta por fila y motivo; si pasó más de una vez, se cuenta.
+      var veces = n.veces > 1 ? ' <span class="ma-veces" data-metas="no-anotado-veces">(' + n.veces + ' veces)</span>' : '';
+      h = '<div class="ma-carta" data-metas="no-anotado" role="alert"><p class="ma-carta-t">' + esc(n.texto) + veces + '</p>'
         + '<div class="ma-botones"><button type="button" class="ma-btn ma-btn-1" data-accion="entendido" data-valor="' + esc(n.id) + '">Entendido</button></div></div>';
     } else if (d.pideContrasena()) {
       h = '<div class="ma-carta" role="dialog"><form data-form="clave"><label class="ma-campo"><span>Escribe tu contraseña</span>'
@@ -1521,6 +1583,17 @@
         colectaAbierta = null; controlAbierto = null; alumnoAbierto = null; hoja = null;
         return pintar();
       case 'agregar-perfil': return abrirPerfil(true);
+      // «Ya tienes María Consuelo. ¿Abrirlo?»: se abre ese, y lo escrito
+      // en el formulario no se manda (no se crea un centro repetido).
+      case 'abrir-centro':
+        if (esperaPerfil) { clearTimeout(esperaPerfil); esperaPerfil = null; }
+        centroNuevo = false;
+        perfilPantalla = true;
+        vista.centro = v;
+        var deEse = aulasVisibles();
+        if (!deEse.some(function (a) { return a.id === vista.aula; })) vista.aula = deEse[0] ? deEse[0].id : null;
+        guardarPref();
+        return pintar();
       case 'ayuda-perfil': ayudaPerfil = !ayudaPerfil; return pintar();
       case 'centro-quitar': return quitarLogoCentro(v, b);
       case 'materias-siempre':
@@ -1674,6 +1747,8 @@
   function alCambiar(ev) {
     var el = ev.target;
     if (el.getAttribute && el.getAttribute('data-centro-logo')) return subirLogoCentro(el);
+    // Salir de un campo del perfil que cambió: se guarda ya, sin esperar.
+    if (el.getAttribute && el.getAttribute('data-centro')) return guardarFormCentro({});
     var acc = el.getAttribute && el.getAttribute('data-accion');
     if (!acc || !d) return;
     if (acc === 'fecha') { vista.fecha = el.value || hoy(); guardarPref(); return pintar(); }
@@ -1709,7 +1784,10 @@
   // El color de la nota cambia mientras se escribe; se anota al soltar.
   function alEscribir(ev) {
     var el = ev.target;
-    if (el.getAttribute && el.getAttribute('data-centro')) return guardarFormCentro();
+    if (el.getAttribute && el.getAttribute('data-centro')) {
+      pintarEstadoPerfil(el.form, '');
+      return programarPerfil();
+    }
     if (!el.classList || !el.classList.contains('ma-mx-inp')) return;
     var tipo = el.getAttribute('data-tipo');
     if (tipo !== 'aprov' && tipo !== 'rec') return;
@@ -1782,6 +1860,11 @@
     var aula = aulaActual();
     var ok = true;
     switch (tipo) {
+      // «Guardar perfil» (o Enter en un campo): es la confirmación que crea
+      // un centro nuevo.
+      case 'centro':
+        guardarFormCentro({ confirmado: true });
+        return;
       case 'aula':
         var grado = /^\d{1,2}/.exec(datos.grado);
         if (!grado) { avisarEn(f, 'Escribe el grado con número, por ejemplo 6.'); return; }

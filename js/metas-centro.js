@@ -335,30 +335,97 @@
     return filas.some(function (c) { return Object.prototype.hasOwnProperty.call(c, 'docente'); });
   }
 
-  function guardar(api, aula, campos, idConocido) {
+  // Vacío y null valen lo mismo: la base guarda null donde no hay nada.
+  function igual(a, b) {
+    return JSON.stringify(a === undefined ? null : a) === JSON.stringify(b === undefined ? null : b);
+  }
+  // Las letras del nombre, sin contar espacios, cifras ni signos.
+  function letras(t) {
+    return String(t || '').replace(/[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ]/g, '').length;
+  }
+  function paraElDocente(texto, extra) {
+    var e = new Error(texto);
+    e.paraElDocente = true;
+    if (extra) for (var k in extra) e[k] = extra[k];
+    return e;
+  }
+
+  // ¿Ya tiene el docente otro centro con este nombre en ese año? Se compara
+  // como la base (norm_nombre: sin acentos, sin mayúsculas, sin espacios de
+  // más), que es la regla centros_unico. Devuelve {id, nombre} o null.
+  function mismoNombre(api, nombre, anio, exceptoId) {
+    var n = norm(nombre);
+    if (!n || !api || typeof api.lista !== 'function') return null;
+    var a = /^\d{4}$/.test(String(anio == null ? '' : anio).trim()) ? Number(anio) : null;
+    var c = (api.lista('centros') || []).filter(function (x) {
+      return x && x.id !== exceptoId && norm(x.nombre) === n && (a === null || Number(x.anio_lectivo) === a);
+    })[0];
+    return c ? { id: c.id, nombre: c.nombre } : null;
+  }
+
+  // Guarda el perfil UNA vez (Mi aula llama al tocar «Guardar perfil», al
+  // salir del campo o tras 1,5 s sin escribir). Hasta v568 se llamaba con
+  // cada letra: un centro nacía con la primera («J», «M») y el nombre
+  // completo chocaba con otro igual. Ahora:
+  //   · un centro NUEVO solo se crea con opciones.confirmado, con al menos
+  //     tres letras y si no hay otro igual (error con yaExiste);
+  //   · a uno que ya existe se le manda solo lo que cambió, y el nombre no
+  //     va si es de otro centro o si tiene menos de tres letras;
+  //   · el nombre de los grupos (aulas.escuela) solo se toca cuando el
+  //     nombre del centro de verdad cambió en este guardado.
+  function guardar(api, aula, campos, idConocido, opciones) {
+    opciones = opciones || {};
     campos._docenteEnBase = docenteEnBase(api);
     var fila = filaDe(campos);
     // Un perfil nuevo no se lleva el grupo que estaba abierto.
     if (!idConocido) aula = null;
     var id = idConocido || null;
+    var otro = mismoNombre(api, fila.nombre, fila.anio_lectivo, id);
+    var cortoNombre = letras(fila.nombre) < 3;
+    var visto = null;
+    var cambio = {};
     if (!id) {
-      var mismo = (api.lista('centros') || []).filter(function (c) {
-        return norm(c.nombre) === norm(fila.nombre) && Number(c.anio_lectivo) === fila.anio_lectivo;
-      })[0];
-      if (mismo) id = mismo.id;
+      if (otro) throw paraElDocente('Ya tienes ' + otro.nombre + '. ¿Abrirlo?', { yaExiste: otro });
+      if (!opciones.confirmado) {
+        var espera = new Error('confirmar');
+        espera.espera = true;
+        throw espera;
+      }
+      if (cortoNombre) throw paraElDocente('Escribe al menos 3 letras del nombre del centro.');
+      id = api.crear('centros', fila).id;
+      Object.keys(fila).forEach(function (k) { cambio[k] = 1; });
+    } else {
+      visto = (api.lista('centros') || []).filter(function (c) { return c.id === id; })[0] || {};
+      var cambios = {};
+      Object.keys(fila).forEach(function (k) { if (!igual(visto[k], fila[k])) cambios[k] = fila[k]; });
+      if ('nombre' in cambios && (otro || cortoNombre)) {
+        delete cambios.nombre;
+        if (opciones.confirmado && cortoNombre && !otro) {
+          // Lo demás sí se guarda; solo el nombre espera.
+          if (Object.keys(cambios).length) api.editar('centros', id, cambios);
+          throw paraElDocente('Escribe al menos 3 letras del nombre del centro.');
+        }
+      }
+      if (Object.keys(cambios).length) api.editar('centros', id, cambios);
+      Object.keys(cambios).forEach(function (k) { cambio[k] = 1; });
     }
-    if (id) api.editar('centros', id, fila);
-    else id = api.crear('centros', fila).id;
+    // El nombre que de verdad tiene el centro: el nuevo si se mandó, si no
+    // el que ya tenía (un nombre repetido no se le pasa a los grupos).
+    var nombreCentro = cambio.nombre ? fila.nombre : ((visto && visto.nombre) || fila.nombre);
     var aulaId = aula && aula.id;
     // No se mueve un grupo que ya pertenece a otro centro.
     if (aula && aula.centro_id && aula.centro_id !== id) aula = null;
     if (aula && aula.centro_id !== id) api.editar('aulas', aula.id, { centro_id: id });
-    if (aula && aula.escuela !== fila.nombre) api.editar('aulas', aula.id, { escuela: fila.nombre });
-    (api.lista('aulas') || []).forEach(function (a) {
-      if (a.id !== aulaId && a.centro_id === id && a.escuela !== fila.nombre) {
-        api.editar('aulas', a.id, { escuela: fila.nombre });
-      }
-    });
+    if (aula && (cambio.nombre || aula.centro_id !== id) && aula.escuela !== nombreCentro) {
+      api.editar('aulas', aula.id, { escuela: nombreCentro });
+    }
+    if (cambio.nombre) {
+      (api.lista('aulas') || []).forEach(function (a) {
+        if (a.id !== aulaId && a.centro_id === id && a.escuela !== nombreCentro) {
+          api.editar('aulas', a.id, { escuela: nombreCentro });
+        }
+      });
+    }
     // El nombre del maestro también queda en el grupo, donde ya se leía.
     // Vacío no borra el que el grupo tenía.
     if (fila.docente) {
@@ -616,6 +683,7 @@
     textoCentro: textoCentro,
     marca: marca,
     guardar: guardar,
+    mismoNombre: mismoNombre,
     jpeg: jpeg,
     examen: examen,
     centros: centros,

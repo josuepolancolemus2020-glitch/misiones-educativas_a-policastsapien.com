@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Boceto · Perfil que se guarda una vez</title>
+<!-- Boceto de prueba: no se publica (_dev/). No lee ni guarda datos del maestro.
+     Por qué existe: hasta v568 el perfil del centro se mandaba a la base con
+     CADA letra. Un centro nuevo nacía con la primera («J», «M»), el nombre
+     completo chocaba con otro centro igual y la base contestaba «ya existe»
+     (23505). Hubo 161 rechazos así el 18 de noviembre, una tarjeta por letra.
+
+     Lo que cambia en la pantalla:
+       · se guarda al tocar «Guardar perfil», al salir del campo o tras
+         1,5 s sin escribir (un centro que ya existe);
+       · un centro NUEVO solo se crea al tocar «Guardar perfil», y nunca con
+         menos de 3 letras;
+       · si el nombre ya es de otro centro tuyo (sin importar acentos), se
+         avisa antes de mandar nada: «Ya tienes María Consuelo. ¿Abrirlo?»;
+       · al guardar, «Perfil guardado ✓»; sin señal, «Guardado en este
+         aparato. Se subirá cuando haya señal.»;
+       · si el centro tiene grupos, una línea con ⓘ: «Este centro tiene N
+         grupos». Cambiar el nombre aquí cambia el de esos grupos.
+     Los tres estados se cambian con los botones de abajo. -->
+<link rel="stylesheet" href="../css/vendor/fuentes/fuentes.css">
+<style>
+:root {
+  --bg: #f0f4f9; --card: #fff; --text: #0f172a; --muted: #475569; --line: #e2e8f0;
+  --azul: #1e3a7c; --azul-suave: #eef2fb; --ok: #15803d; --ok-bg: #dcfce7; --med: #78350f; --med-bg: #fef3c7;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: 'Outfit', system-ui, sans-serif; background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.45; }
+button, input { font: inherit; }
+.nota-boceto { max-width: 720px; margin: 12px auto; padding: 10px 14px; border: 2px dashed #94a3b8; border-radius: 12px; background: var(--card); font-size: 14px; }
+.nota-boceto b { display: block; margin-bottom: 4px; }
+.estados { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.estados button { min-height: 44px; padding: 0 14px; border-radius: 999px; border: 1.5px solid var(--line); background: #f8fafc; font-weight: 700; cursor: pointer; }
+.estados button[aria-pressed="true"] { background: var(--azul); color: #fff; border-color: var(--azul); }
+.marco { max-width: 720px; margin: 0 auto 28px; padding: 0 16px; }
+.top { display: flex; align-items: center; gap: 8px; min-height: 56px; }
+.top h1 { margin: 0; font-size: 18px; color: var(--azul); }
+.volver { min-height: 44px; min-width: 44px; border: none; background: transparent; color: var(--azul); font-weight: 800; }
+.seg { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.seg button { flex: 1 1 160px; min-height: 44px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--card); font-weight: 700; }
+.seg button[aria-pressed="true"] { background: var(--azul); color: #fff; border-color: var(--azul); }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.card h2 { margin: 0; font-size: 17px; }
+.campo { display: flex; flex-direction: column; gap: 4px; font-weight: 700; font-size: 14px; }
+.campo input { min-height: 44px; padding: 8px 12px; border-radius: 12px; border: 1.5px solid var(--line); font-weight: 500; font-size: 16px; }
+.fila2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+.nota { margin: 0; color: var(--muted); font-size: 14px; }
+.info { margin: 0; padding: 8px 12px; border-radius: 12px; background: var(--azul-suave); color: var(--azul); font-weight: 600; }
+.ya { margin: 0; padding: 10px 12px; border-radius: 12px; background: var(--med-bg); color: var(--med); font-weight: 600;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.pie { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.btn { min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--card); font-weight: 800; cursor: pointer; }
+.btn-1 { background: var(--azul); color: #fff; border-color: var(--azul); }
+.estado { margin: 0; font-weight: 700; }
+.estado.ok { color: var(--ok); }
+.estado.espera { color: var(--med); }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="nota-boceto">
+  <b>Boceto: el perfil se guarda una vez, no letra por letra</b>
+  Elige un estado para ver la pantalla. Nada de esto toca datos.
+  <div class="estados" role="group" aria-label="Estado del boceto">
+    <button type="button" data-estado="existe" aria-pressed="true">Centro que ya existe</button>
+    <button type="button" data-estado="nuevo" aria-pressed="false">Centro nuevo con nombre repetido</button>
+    <button type="button" data-estado="sin-senal" aria-pressed="false">Guardado sin señal</button>
+  </div>
+</div>
+
+<div class="marco">
+  <div class="top"><button class="volver" type="button" aria-label="Volver a Mi aula">‹ Volver</button><h1>Perfil</h1></div>
+  <div class="seg" role="group" aria-label="Tus centros">
+    <button type="button" aria-pressed="true">CEB John Arnold Cook</button>
+    <button type="button" aria-pressed="false">Instituto María Consuelo</button>
+  </div>
+  <form class="card" onsubmit="return false">
+    <h2>🏫 Encabezado y logos</h2>
+    <label class="campo">Nombre del centro educativo<input id="nombre" value="CEB John Arnold Cook" maxlength="160"></label>
+    <p class="ya" id="ya" hidden>Ya tienes Instituto María Consuelo. ¿Abrirlo?
+      <button class="btn" type="button">Abrirlo</button></p>
+    <label class="campo">Nombre del maestro(a)<input value="Josué Polanco"></label>
+    <div class="fila2">
+      <label class="campo">Nombre del director(a)<input value=""></label>
+      <label class="campo">Código SACE del centro<input value=""></label>
+    </div>
+    <p class="info" id="grupos"><span aria-hidden="true">ⓘ</span> Este centro tiene 2 grupos (6º-1, 5º-2).</p>
+    <p class="nota" id="nota-nuevo" hidden>El centro nuevo se crea al tocar «Guardar perfil».</p>
+    <div class="pie">
+      <button class="btn btn-1" type="submit">Guardar perfil</button>
+      <p class="estado ok" id="estado" role="status">Perfil guardado ✓</p>
+    </div>
+  </form>
+</div>
+
+<script>
+  // Solo cambia lo que se ve: el boceto no guarda nada.
+  var estados = {
+    existe: { nombre: 'CEB John Arnold Cook', ya: false, grupos: true, nuevo: false, estado: ['ok', 'Perfil guardado ✓'] },
+    nuevo: { nombre: 'Instituto Maria Consuelo', ya: true, grupos: false, nuevo: true, estado: ['', ''] },
+    'sin-senal': { nombre: 'CEB John Arnold Cook', ya: false, grupos: true, nuevo: false,
+      estado: ['espera', 'Guardado en este aparato. Se subirá cuando haya señal.'] }
+  };
+  document.querySelectorAll('[data-estado]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      document.querySelectorAll('[data-estado]').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+      var e = estados[b.getAttribute('data-estado')];
+      document.getElementById('nombre').value = e.nombre;
+      document.getElementById('ya').hidden = !e.ya;
+      document.getElementById('grupos').hidden = !e.grupos;
+      document.getElementById('nota-nuevo').hidden = !e.nuevo;
+      var s = document.getElementById('estado');
+      s.className = 'estado ' + e.estado[0];
+      s.textContent = e.estado[1];
+    });
+  });
+</script>
+</body>
+</html>
