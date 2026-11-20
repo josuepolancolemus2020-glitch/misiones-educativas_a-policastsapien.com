@@ -13,11 +13,12 @@
        hacia el margen, porque en muchas hojas el examen llega casi hasta
        el pie;
      · que el título visible es «Evaluación · Tema · Materia» («Test · … »
-       en inglés) y el pie lleva la firma y la misma «Forma NN»;
+       en inglés) y el pie lleva la firma y la misma «Forma NN», con la
+       letra del tipo de hoja en la misma cajita («Forma 7 · C»);
      · que la dirección sale completa y en un solo renglón.
-   Avisa (sin fallar) de las misiones donde dos hojas quedan con el mismo
-   título: con el mismo número de forma, solo las distingue el contenido.
-   Josué pidió saberlo antes de decidir nada.
+   Las misiones donde dos hojas quedan con el mismo título (casi todas)
+   se distinguen por esa letra: la sonda exige que, con el mismo número de
+   forma, ninguna pareja de hojas de una misión diga lo mismo por fuera.
 
    Uso: node _dev/servidor-estatico.js   (en otra terminal)
         node _dev/verifica-examen-encabezado-limpio-navegador.js
@@ -45,6 +46,7 @@ const SESION = { codigo: 'DOC-MEDIDA', nombre: 'Docente De La Cuenta' };
 const PARES = [['genEval', 'printEval', '_evalPrintData', 'conceptual'],
   ['genEvalOp', 'printEvalOp', '_evalOpData', 'operativa'],
   ['genEvalCrit', 'printEvalCrit', '_evalCritData', 'crítica']];
+const LETRA = { conceptual: 'C', operativa: 'O', 'crítica': 'P' };
 
 let fallos = 0;
 function ok(c, msg, extra) {
@@ -99,10 +101,14 @@ async function medir(nav, html) {
     const r = pie ? pie.getBoundingClientRect() : null;
     const h2 = Array.from(document.querySelectorAll('.ph h2')).filter(h => !h.closest('[data-metas-antes]')).map(h => h.textContent.trim());
     const forma = document.querySelector('.print-foot .forma-tag');
+    const letra = document.querySelector('.print-foot .forma-tag [data-metas-letra]');
     const lugar = document.querySelector('[data-metas-lugar]');
     return {
       pieArriba: r ? window.innerHeight - r.top : null,
       titulos: h2, forma: forma ? forma.textContent.trim() : '',
+      letra: letra ? { texto: letra.textContent, letra: parseFloat(getComputedStyle(letra).fontSize), forma: parseFloat(getComputedStyle(forma).fontSize),
+        color: getComputedStyle(letra).color, alto: forma.getBoundingClientRect().height } : null,
+      altoFormaHoy: forma ? forma.getBoundingClientRect().height : 0,
       firma: !!document.querySelector('[data-metas-firma]'), rotulos: document.querySelectorAll('.print-foot .pf-item').length,
       lugar: lugar ? { texto: lugar.textContent, alto: lugar.getBoundingClientRect().height, linea: parseFloat(getComputedStyle(lugar).lineHeight) } : null,
       marca: (document.querySelector('.ph') || { getAttribute() { return ''; } }).getAttribute('data-metas-encabezado'),
@@ -184,12 +190,17 @@ async function prepararSesion(pg, conSesion) {
   });
   ok(!tituloMalo.length, 'el título visible es «Evaluación · Tema · Materia» («Test · Topic · Subject» en inglés)',
     tituloMalo.map(h => nombre(h) + ': ' + h.con.titulos.join(' / ')).join(' | '));
-  const pieMalo = hojas.filter(h => !h.con.firma || h.con.rotulos !== 0 || h.con.forma !== h.hoy.forma || !h.hoy.forma);
-  ok(!pieMalo.length, 'el pie lleva la firma, ninguno de los tres rótulos y la misma «Forma NN» de siempre',
+  const pieMalo = hojas.filter(h => !h.con.firma || h.con.rotulos !== 0 || !h.hoy.forma || h.con.forma !== h.hoy.forma + ' · ' + LETRA[h.forma]);
+  ok(!pieMalo.length, 'el pie lleva la firma, ninguno de los tres rótulos y la misma «Forma NN» de siempre con su letra («Forma 7 · C»)',
     pieMalo.map(h => nombre(h) + ': ' + h.hoy.forma + ' → ' + h.con.forma).join(' | '));
   const sinLugar = es.filter(h => !h.con.lugar || h.con.lugar.texto !== LUGAR || h.con.lugar.alto > h.con.lugar.linea * 1.5);
   ok(!sinLugar.length, 'la dirección completa (dirección, aldea, municipio, departamento) sale en un solo renglón',
     sinLugar.map(h => nombre(h) + ': ' + JSON.stringify(h.con.lugar)).join(' | '));
+
+  const letraMala = hojas.filter(h => !h.con.letra || h.con.letra.letra >= h.con.letra.forma || h.con.letra.color !== 'rgb(136, 136, 136)'
+    || h.con.letra.alto > h.hoy.altoFormaHoy + 0.5);
+  ok(!letraMala.length, 'la letra va más pequeña que «Forma», en gris, y la cajita no crece de alto',
+    letraMala.map(h => nombre(h) + ': ' + JSON.stringify(h.con.letra) + ' / hoy ' + h.hoy.altoFormaHoy).join(' | '));
 
   /* Las misiones donde dos hojas quedan con el mismo título. */
   const porMision = {};
@@ -203,8 +214,17 @@ async function prepararSesion(pg, conSesion) {
   Object.keys(porMision).forEach(k => Object.keys(porMision[k]).forEach(t => {
     if (porMision[k][t].length > 1) iguales.push(k + ': «' + t + '» (' + porMision[k][t].join(' y ') + ')');
   }));
-  console.log('\nℹ️  Misiones con dos hojas del mismo título: ' + iguales.length + ' (con el mismo número de forma, solo las distingue el contenido)');
+  console.log('\nℹ️  Misiones con dos hojas del mismo título: ' + iguales.length + ' (las distingue la letra de la cajita)');
   if (process.env.METAS_DETALLE) iguales.forEach(x => console.log('   ' + x));
+  /* Con el mismo número de forma, ninguna pareja de una misión dice lo
+     mismo por fuera: el título y la cajita juntos. */
+  const porFuera = {};
+  const repetidas = [];
+  hojas.forEach(h => {
+    const k = h.carpeta + ' · ' + h.idioma + ' · ' + (h.con.titulos[0] || '') + ' · ' + h.con.forma;
+    if (porFuera[k]) repetidas.push(nombre(h) + ' = ' + porFuera[k]); else porFuera[k] = nombre(h);
+  });
+  ok(!repetidas.length, 'ninguna hoja dice lo mismo por fuera que otra de su misión (título y «Forma NN · letra»)', repetidas.join(' | '));
 
   console.log(fallos ? '\n✘ ' + fallos + ' comprobaciones fallaron' : '\n✅ Las ' + hojas.length + ' hojas salen con el título y el pie limpios, sin ganar páginas ni subir el pie');
   process.exit(fallos ? 1 : 0);

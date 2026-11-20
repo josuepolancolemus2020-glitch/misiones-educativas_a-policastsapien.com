@@ -168,8 +168,24 @@ ok(/border:1px solid #bbb/.test(estFirma) && /border-radius:3px/.test(estFirma) 
   'con el mismo borde, esquinas y letra que la de la Forma');
 const altoFirma = parseFloat((estFirma.match(/height:(\d+)px/) || [, '99'])[1]);
 ok(/data-metas-pie style="bottom:0;/.test(pie) && altoFirma + 2 <= 23.4, 'el pie baja al fondo: su borde de arriba no sube (≤ 23,4 px desde el fondo)', altoFirma);
+/* La letra del tipo de hoja dentro de la misma cajita: «Forma 30 · C». */
+ok(JSON.stringify(C.letras()) === JSON.stringify({ printEval: 'C', printEvalCrit: 'P', printEvalOp: 'O' }),
+  'C la conceptual, P la de pensamiento crítico, O la operativa', C.letras());
+const conLetra = C.pie('<body>' + pieFuente + '</body>', 'es', 'P');
+const cajaForma = (conLetra.match(/<span class="forma-tag">([\s\S]*?<\/span>)<\/span><\/div>/) || [, ''])[1];
+ok(/^Forma 30<span data-metas-letra style="([^"]*)"> · P<\/span>$/.test(cajaForma), 'la letra va en la misma cajita: «Forma 30 · P»', cajaForma);
+const estLetra = (cajaForma.match(/data-metas-letra style="([^"]*)"/) || [, ''])[1];
+ok(/font-size:6pt/.test(estLetra) && /color:#888/.test(estLetra), 'más pequeña (6 pt, la Forma va en 7) y en gris', estLetra);
+ok(C.pie(pieFuente.replace('Forma 30', 'Form 30'), 'en', 'C').includes('>Form 30<span data-metas-letra style="font-size:6pt;color:#888;"> · C</span>'),
+  'en inglés, la misma letra');
+ok(C.pie(pieFuente.replace('Forma 30', 'Forma R-3'), 'es', 'O').includes('>Forma R-3<span data-metas-letra'), 'también en la Forma R-N de la adaptada');
+ok(!/data-metas-letra/.test(C.pie(pieFuente, 'es', 'X')) && !/data-metas-letra/.test(C.pie(pieFuente, 'es')), 'sin una de las tres letras, la cajita va sin letra');
+const motorTxt = fs.readFileSync(path.join(RAIZ, 'js/motor-misiones.js'), 'utf8');
+ok(/return _imprimirCon\(null, original, yo, args, null, letra\)/.test(motorTxt) && /fecha: elegidos\.fecha \}, letra\)/.test(motorTxt),
+  'la letra llega a la hoja con centro y sin centro');
 const pieMate = pieFuente.replace('Forma 30', 'Matemáticas · Forma 30');
-ok(C.pie(pieMate, 'es').includes('<span class="forma-tag">Matemáticas · Forma 30</span>'), '«Matemáticas · Forma N» también queda igual');
+ok(C.pie(pieMate, 'es').includes('<span class="forma-tag">Matemáticas · Forma 30</span>')
+  && C.pie(pieMate, 'es', 'C').includes('<span class="forma-tag">Matemáticas · Forma 30<span data-metas-letra'), '«Matemáticas · Forma N» también queda igual, con su letra');
 const pieEn = pieFuente.replace('N.º de Evaluación temática realizada:', 'Topic test number:').replace('Evaluación con valor en el parcial', 'Test counts toward the term grade')
   .replace('Evaluación solo de repaso', 'Practice test only').replace('Forma 30', 'Form 30');
 const pieEnLimpio = C.pie(pieEn, 'en');

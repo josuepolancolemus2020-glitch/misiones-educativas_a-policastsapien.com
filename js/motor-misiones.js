@@ -658,12 +658,23 @@
      firma es más alta, y el pie gana ese alto BAJANDO hacia el margen de
      la hoja (que sigue siendo de 5 mm), no subiendo: 21 px de cajita + 2
      de relleno = 23 px desde el fondo. Lo mide la sonda en las 184 hojas.
-     El pie se repite en cada página: la firma sale también en la pauta. */
+     El pie se repite en cada página: la firma sale también en la pauta.
+
+     Sin el tipo de prueba en el título, la conceptual y la de pensamiento
+     crítico (u operativa) de una misión se titulan igual, y sus formas se
+     cuentan por separado: la Forma 7 de una y la Forma 7 de la otra
+     quedaban idénticas por fuera. Josué eligió el 20 de noviembre una
+     letra discreta dentro de la misma cajita, en TODAS las hojas para que
+     sea parejo: «Forma 7 · C». C la conceptual (printEval), P la de
+     pensamiento crítico (printEvalCrit), O la operativa (printEvalOp).
+     En inglés va la misma letra: el maestro la reconoce igual. Más pequeña
+     y en gris, sin color; la cajita no crece de alto. */
+  var LETRA_DE = { printEval: 'C', printEvalCrit: 'P', printEvalOp: 'O' };
   var PIE = /<div class="print-foot">([\s\S]*?)<\/div>/g;
   var PIE_RENGLON = /<span class="pf-item"><strong>[^<]*<\/strong><span class="pf-(?:line|box)">(?:&nbsp;)?<\/span><\/span>/g;
-  var PIE_FORMA = /^\s*(<span class="forma-tag">[^<]*<\/span>)\s*$/;
+  var PIE_FORMA = /^\s*<span class="forma-tag">([^<]*)<\/span>\s*$/;
   var FIRMA = 'Firma del padre o encargado';
-  function _pieLimpio(html, idioma) {
+  function _pieLimpio(html, idioma, letra) {
     return html.replace(PIE, function (todo, dentro) {
       var forma = PIE_FORMA.exec(dentro.replace(PIE_RENGLON, ''));
       if (!forma) return todo;
@@ -677,7 +688,9 @@
         + 'min-width:0;height:21px;border:1px solid #bbb;border-radius:3px;padding:1px 5px;background:white;">'
         + '<span style="flex:1;border-bottom:1px solid #777;margin:0 4px;"></span>'
         + '<span style="font-size:7pt;color:#555;text-align:center;line-height:1.1;white-space:nowrap;">' + _esc(rotulo) + '</span></span>'
-        + forma[1] + '</div>';
+        + '<span class="forma-tag">' + forma[1]
+        + (/^[CPO]$/.test(letra || '') ? '<span data-metas-letra style="font-size:6pt;color:#888;"> · ' + letra + '</span>' : '')
+        + '</span></div>';
     });
   }
   function _idiomaDeHoja(html) { return /<html[^>]*\blang="en"/i.test(html) ? 'en' : 'es'; }
@@ -732,16 +745,16 @@
      Junto al encabezado nuevo va, invisible y fuera del flujo, el de
      siempre (`data-metas-antes`): el ajuste de abajo lo mide para saber
      exactamente cuánto alto agregó el centro, y después lo quita. */
-  function _hojaConEncabezado(html, centro, docente, datos) {
+  function _hojaConEncabezado(html, centro, docente, datos, letra) {
     if (typeof html !== 'string' || html.indexOf('<div class="ph">') < 0) return html;
     var bloques = html.match(BLOQUE_PH).length;
     var cabezas = (html.match(CABEZA) || []).length;
     var idioma = _idiomaDeHoja(html);
     if (!centro || cabezas !== bloques) {
-      return _pieLimpio(_titulosLimpios(html, idioma), idioma)
+      return _pieLimpio(_titulosLimpios(html, idioma), idioma, letra)
         .replace(BLOQUE_PH, '<div class="ph" data-metas-encabezado="' + SIN_ENCABEZADO + '">');
     }
-    var out = _pieLimpio(html, idioma).replace(CABEZA, function (m, titulo, grado, num) {
+    var out = _pieLimpio(html, idioma, letra).replace(CABEZA, function (m, titulo, grado, num) {
       return '<div class="ph" data-metas-encabezado="centro" style="position:relative;">'
         + _cabezaCentro(centro, docente, datos, titulo, grado, num)
         + '<div data-metas-antes aria-hidden="true" style="position:absolute;visibility:hidden;left:0;right:0;top:0;">'
@@ -787,7 +800,7 @@
   /* Corre la impresión de la misión con la ventana nueva vigilada: lo que
      la misión escribe en ella pasa antes por `_hojaConEncabezado`. Solo
      durante esta llamada; después `window.open` queda como estaba. */
-  function _imprimirCon(centro, original, yo, args, datos) {
+  function _imprimirCon(centro, original, yo, args, datos, letra) {
     var abrir = global.open;
     var docente = centro ? _docenteDe(centro) : '';
     global.open = function () {
@@ -797,7 +810,7 @@
           win.__metasEncabezado = 1;
           var escribir = win.document.write;
           win.document.write = function (html) {
-            if (typeof html === 'string') html = _hojaConEncabezado(html, centro, docente, datos);
+            if (typeof html === 'string') html = _hojaConEncabezado(html, centro, docente, datos, letra);
             return escribir.call(win.document, html);
           };
         }
@@ -994,12 +1007,13 @@
          nombre sale la de siempre, marcada, y MetasCentro.examen no le
          pone a medias un logo o un nombre de otro lado. */
       var centro = _centroDelExamen();
-      if (!centro) { _avisarImpresion(nombre); return _imprimirCon(null, original, yo, args); }
+      var letra = LETRA_DE[nombre];
+      if (!centro) { _avisarImpresion(nombre); return _imprimirCon(null, original, yo, args, null, letra); }
       _guardarUltimo(centro.id);
       var grado = _gradoDe(centro);
       preguntarDatos(function (elegidos) {
         _avisarImpresion(nombre);
-        _imprimirCon(centro, original, yo, args, { grado: grado, parcial: elegidos.parcial, fecha: elegidos.fecha });
+        _imprimirCon(centro, original, yo, args, { grado: grado, parcial: elegidos.parcial, fecha: elegidos.fecha }, letra);
       });
     };
     envuelta.__metasCentro = true;
@@ -1506,7 +1520,8 @@
       hoja: _hojaConEncabezado, centros: _centrosParaExamen, envolver: _envolverImpresiones,
       envueltas: function () { return envueltas.slice(); },
       fechaLarga: _fechaLarga, titulo: _tituloLimpio, lugar: _lugarDe, pie: _pieLimpio,
-      limpia: function (html) { var i = _idiomaDeHoja(html); return _pieLimpio(_titulosLimpios(html, i), i); },
+      limpia: function (html, letra) { var i = _idiomaDeHoja(html); return _pieLimpio(_titulosLimpios(html, i), i, letra); },
+      letras: function () { return JSON.parse(JSON.stringify(LETRA_DE)); },
       /* Para las sondas: quien contesta el cuadrito de parcial y fecha. Sin
          argumento vuelve el cuadrito de verdad. */
       preguntar: function (fn) { preguntarDatos = typeof fn === 'function' ? fn : _pedirDatosExamen; }
