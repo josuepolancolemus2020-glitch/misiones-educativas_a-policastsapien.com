@@ -390,6 +390,29 @@
     if (n.length > 1) return '¿Archivar ' + c.nombre + ' y sus ' + n.length + ' grupos?';
     return '¿Archivar ' + c.nombre + '?';
   }
+  var FRASE_SOLO_ARCHIVAR = 'Tiene pagos o notas: solo se puede archivar.';
+  function filasTodas(tabla) {
+    var vivas = (d.lista(tabla) || []);
+    var viejas = [];
+    try { viejas = d.archivados(tabla) || []; } catch (e) { viejas = []; }
+    return vivas.concat(viejas);
+  }
+  function tieneHistorial(centroId) {
+    var aulas = {};
+    filasTodas('aulas').forEach(function (a) {
+      if (a.centro_id === centroId) aulas[a.id] = 1;
+    });
+    var gastos = {};
+    var tablas = ['pagos', 'colectas', 'gastos', 'gastos_docente', 'bienes', 'notas', 'asistencia', 'notas_personalidad'];
+    var i;
+    for (i = 0; i < tablas.length; i++) {
+      if (filasTodas(tablas[i]).some(function (f) { return aulas[f.aula_id]; })) return true;
+    }
+    filasTodas('gastos_docente').forEach(function (g) {
+      if (aulas[g.aula_id]) gastos[g.id] = 1;
+    });
+    return filasTodas('reembolsos').some(function (r) { return gastos[r.gasto_id]; });
+  }
   function fraseBorrar(c) {
     var p = piezasCentro(c.id);
     var g = p.aulas.length === 1 ? '1 grupo' : p.aulas.length + ' grupos';
@@ -407,7 +430,9 @@
       h += '<p class="ma-confirma-t">' + esc(fraseArchivar(c)) + '</p><div class="ma-acciones">'
         + '<span class="ma-par"><button type="button" class="ma-btn" data-accion="papelera-archivar" data-metas="papelera-archivar">Archivar</button>'
         + '<span class="ma-pista">Puedes recuperarlo luego.</span></span>'
-        + '<button type="button" class="ma-btn ma-btn-peligro" data-accion="papelera-borrar" data-metas="papelera-borrar">Borrar para siempre</button>'
+        + (tieneHistorial(c.id)
+          ? '<p class="ma-nota" data-metas="solo-archivar">' + esc(FRASE_SOLO_ARCHIVAR) + '</p>'
+          : '<button type="button" class="ma-btn ma-btn-peligro" data-accion="papelera-borrar" data-metas="papelera-borrar">Borrar para siempre</button>')
         + '<button type="button" class="ma-btn" data-accion="papelera-cancelar">Cancelar</button></div>';
     } else if (pasoPapelera === 'aviso1') {
       h += '<p class="ma-paso">Aviso 1 de 2</p><p class="ma-confirma-t" data-metas="aviso-borrar">' + esc(fraseBorrar(c)) + '</p>'
@@ -442,8 +467,11 @@
       var h = '<li><div class="ma-fila-arch"><span>' + esc(c.nombre) + '</span>'
         + '<button type="button" class="ma-btn" data-metas="recuperar-centro" data-accion="recuperar-centro" data-valor="'
         + esc(c.id) + '">Recuperar</button>'
-        + '<button type="button" class="ma-btn ma-btn-peligro" data-metas="borrar-archivado" data-accion="borrar-archivado" data-valor="'
-        + esc(c.id) + '">Borrar para siempre</button></div>';
+        + (tieneHistorial(c.id)
+          ? '<p class="ma-nota" data-metas="solo-archivar">' + esc(FRASE_SOLO_ARCHIVAR) + '</p>'
+          : '<button type="button" class="ma-btn ma-btn-peligro" data-metas="borrar-archivado" data-accion="borrar-archivado" data-valor="'
+            + esc(c.id) + '">Borrar para siempre</button>')
+        + '</div>';
       if (choqueArchivo && choqueArchivo.id === c.id) {
         h += '<p class="ma-linea-choque" data-metas="choque-archivo">' + esc(choqueArchivo.texto) + '</p>';
       }
@@ -1824,6 +1852,7 @@
       case 'papelera-borrar':
       case 'borrar-archivado':
         pasoCentro = acc === 'borrar-archivado' ? v : (pasoCentro || centroActivoId());
+        if (tieneHistorial(pasoCentro)) { pasoPapelera = 'elige'; return pintar(); }
         pasoPapelera = 'aviso1';
         avisoLinea = '';
         archivadosAbiertos = acc === 'borrar-archivado' ? true : archivadosAbiertos;
@@ -1929,6 +1958,7 @@
     if (!campo || campo.value !== 'BORRAR') return;
     var c = centroPorId(pasoCentro);
     if (!c) { cerrarPapelera(); return pintar(); }
+    if (tieneHistorial(c.id)) { pasoPapelera = 'elige'; return pintar(); }
     if (sinSenalPapelera()) return;
     if (!esArchivado(c.id)) {
       ordenAlArchivar = centrosDelDocente().map(function (x) { return x.id; });

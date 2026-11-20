@@ -265,6 +265,7 @@
       case 'PGRST202': return 'la base todavía no puede';
       case 'PGRST204': return 'la base todavía no tiene ese dato';
       case 'MT040': return 'es el único centro que te queda';
+      case 'MT042': return 'tiene pagos o notas';
       default: return 'no se pudo anotar';
     }
   }

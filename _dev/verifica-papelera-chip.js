@@ -6,7 +6,8 @@
      · archivar pone la misma hora al centro, a sus grupos y a
        sus alumnos, y no toca lo de otro docente;
      · recuperar devuelve solo lo que se fue junto;
-     · borrar de verdad quita solo filas de ese docente;
+     · borrar de verdad solo un centro vacío: un pago, un gasto o una
+       nota (aunque esté archivada) lo niega y no se toca nada;
      · el último centro no se archiva;
      · lo archivado o borrado no sale en la lista;
      · la pantalla no ofrece «Copiar a Drive» y la papelera no
@@ -92,14 +93,26 @@ function recuperar(db, uid, id) {
   });
   return { ok: true };
 }
+const TABLAS_FRENO = ['pagos', 'colectas', 'gastos', 'gastos_docente', 'bienes', 'notas', 'asistencia', 'notas_personalidad'];
+function tieneHistorial(db, uid, id) {
+  const aulas = db.aulas.filter(function (a) { return a.owner === uid && a.centro_id === id; }).map(function (a) { return a.id; });
+  const gastos = (db.gastos_docente || []).filter(function (g) { return g.owner === uid && aulas.indexOf(g.aula_id) >= 0; }).map(function (g) { return g.id; });
+  for (let i = 0; i < TABLAS_FRENO.length; i++) {
+    const filas = db[TABLAS_FRENO[i]] || [];
+    if (filas.some(function (f) { return f.owner === uid && aulas.indexOf(f.aula_id) >= 0; })) return true;
+  }
+  return (db.reembolsos || []).some(function (r) { return r.owner === uid && gastos.indexOf(r.gasto_id) >= 0; });
+}
 function borrar(db, uid, id) {
   const centro = db.centros.filter(function (c) { return c.id === id && c.owner === uid; })[0];
   if (!centro) return { ok: false, motivo: 'ajeno' };
+  if (tieneHistorial(db, uid, id)) return { ok: false, motivo: 'historial' };
   const aulas = db.aulas.filter(function (a) { return a.owner === uid && a.centro_id === id; }).map(function (a) { return a.id; });
   function fuera(f) {
     return f.owner === uid && (f.id === id || aulas.indexOf(f.aula_id) >= 0 || aulas.indexOf(f.id) >= 0);
   }
   ['notas', 'alumnos', 'aulas', 'centros'].forEach(function (tabla) {
+    if (!db[tabla]) return;
     db[tabla] = db[tabla].filter(function (f) { return !fuera(f); });
   });
   return { ok: true };
@@ -131,16 +144,49 @@ ok('recuperar el centro de otro no toca nada', recuperar(db, 'A', 'ovidio').ok =
 archivar(db, 'A', 'cook');
 ok('el último centro no se archiva', archivar(db, 'A', 'liceo').motivo === 'ultimo' && !db.centros.filter(function (c) { return c.id === 'liceo'; })[0].deleted_at);
 
-ok('borrar quita el centro y lo que cuelga, y deja lo demás', borrar(db, 'A', 'cook').ok
-  && !db.centros.some(function (c) { return c.id === 'cook'; })
-  && !db.aulas.some(function (a) { return a.id === 'g1' || a.id === 'gViejo'; })
-  && !db.alumnos.some(function (a) { return a.id === 's1'; })
-  && !db.notas.some(function (n) { return n.id === 'n1'; })
-  && db.centros.some(function (c) { return c.id === 'liceo'; })
-  && db.centros.some(function (c) { return c.id === 'ovidio'; })
-  && db.notas.some(function (n) { return n.id === 'nB'; }));
+const fotoCook = JSON.stringify(db);
+ok('un centro con nota no se borra y no se toca nada', borrar(db, 'A', 'cook').motivo === 'historial'
+  && JSON.stringify(db) === fotoCook
+  && db.notas.some(function (n) { return n.id === 'n1'; })
+  && db.centros.some(function (c) { return c.id === 'cook'; }));
 ok('borrar el centro de otro no quita nada', borrar(db, 'A', 'ovidio').ok === false && db.aulas.some(function (a) { return a.id === 'gB'; }));
-ok('lo borrado no sale en la lista', lista(db.centros, 'A').indexOf('cook') < 0);
+ok('lo archivado no sale en la lista', lista(db.centros, 'A').indexOf('cook') < 0);
+
+function centroDePrueba(extra) {
+  const db2 = {
+    centros: [
+      { id: 'vacio', owner: 'A', nombre: 'Vacío', deleted_at: null },
+      { id: 'otro', owner: 'A', nombre: 'Otro', deleted_at: null },
+    ],
+    aulas: [{ id: 'gv', owner: 'A', centro_id: 'vacio', deleted_at: null }],
+    alumnos: [{ id: 'sv', owner: 'A', aula_id: 'gv', deleted_at: null }],
+    pagos: [], colectas: [], gastos: [], gastos_docente: [], reembolsos: [],
+    bienes: [], notas: [], asistencia: [], notas_personalidad: [],
+  };
+  if (extra) extra(db2);
+  return db2;
+}
+function seNiega(extra) {
+  const db2 = centroDePrueba(extra);
+  const foto = JSON.stringify(db2);
+  const r = borrar(db2, 'A', 'vacio');
+  return r.motivo === 'historial' && JSON.stringify(db2) === foto && db2.centros.some(function (c) { return c.id === 'vacio'; });
+}
+const limpio = centroDePrueba();
+ok('un centro vacío sí se borra', borrar(limpio, 'A', 'vacio').ok
+  && !limpio.centros.some(function (c) { return c.id === 'vacio'; })
+  && !limpio.aulas.some(function (a) { return a.id === 'gv'; })
+  && !limpio.alumnos.some(function (a) { return a.id === 'sv'; })
+  && limpio.centros.some(function (c) { return c.id === 'otro'; }));
+ok('un pago archivado impide el borrado', seNiega(function (db2) {
+  db2.pagos.push({ id: 'p1', owner: 'A', aula_id: 'gv', deleted_at: '2026-11-01' });
+}));
+ok('un gasto impide el borrado', seNiega(function (db2) {
+  db2.gastos.push({ id: 'ga1', owner: 'A', aula_id: 'gv', deleted_at: null });
+}));
+ok('una nota impide el borrado', seNiega(function (db2) {
+  db2.notas.push({ id: 'nn', owner: 'A', aula_id: 'gv', deleted_at: null });
+}));
 
 /* ── El SQL dice lo mismo ────────────────────────────────────── */
 ok('hay tres funciones del centro', /function metas\.centro_archivar\(/.test(sql)
@@ -153,6 +199,15 @@ ok('archivar toca alumnos, grupos y centro del mismo dueño',
   && /update metas\.centros[\s\S]*owner = v_uid/.test(sql));
 ok('recuperar solo la misma hora', /deleted_at = v_hora/.test(sql));
 ok('se cierra el execute público', /revoke execute on all functions in schema metas from public/.test(sql));
+const guarda = sql.slice(sql.indexOf('Antes de borrar nada'), sql.indexOf("errcode = 'MT042'"));
+ok('borrar se niega antes de tocar filas', guarda.length > 40
+  && sql.indexOf("errcode = 'MT042'") < sql.indexOf("set_config('metas.borrado_definitivo'"));
+ok('la traba mira pagos, gastos, notas y lo archivado',
+  /metas\.pagos/.test(guarda) && /metas\.gastos[^_]/.test(guarda) && /metas\.notas[^_]/.test(guarda)
+  && /notas_personalidad/.test(guarda) && /metas\.asistencia/.test(guarda)
+  && /metas\.colectas/.test(guarda) && /gastos_docente/.test(guarda)
+  && /metas\.reembolsos/.test(guarda) && /metas\.bienes/.test(guarda)
+  && !/deleted_at is null/.test(guarda));
 
 sql.split(/delete from metas\./i).slice(1).forEach(function (trozo) {
   const tabla = trozo.split(/[\s(]/)[0];
@@ -171,7 +226,8 @@ ok('la barra del centro no lleva texto', /data-metas="centro-listo"[\s\S]*aria-l
   && /centro-listo"[\s\S]{0,180}ma-barra-ok-linea/.test(aula));
 
 ['Puedes recuperarlo luego.', 'Aviso 1 de 2', 'Aviso 2 de 2', 'No se puede deshacer. Escribe BORRAR para confirmar.',
-  'Sin señal. No se cambió nada.', 'Borrar para siempre', 'Archivar', 'Seguir', 'Cancelar'].forEach(function (frase) {
+  'Sin señal. No se cambió nada.', 'Borrar para siempre', 'Archivar', 'Seguir', 'Cancelar',
+  'Tiene pagos o notas: solo se puede archivar.'].forEach(function (frase) {
   ok('«' + frase + '» cabe en 12 palabras', palabras(frase).length <= 12 && aula.indexOf(frase) >= 0, palabras(frase).length);
 });
 ok('la frase con un grupo cabe', palabras('¿Archivar María Consuel y su grupo 7º-1?').length <= 12);
@@ -181,6 +237,8 @@ ok('la pantalla arma la frase del grupo y la del borrado', /y su grupo /.test(au
 ok('archivar el chip no esconde nada hasta que la base contesta',
   /function mandarCentro\(/.test(datos) && !/case 'centro_archivar'/.test(datos.slice(datos.indexOf('function aplicar'), datos.indexOf('function tabla'))));
 ok('si la función no está, el aviso dice que la base no puede', /PGRST202': return 'la base todavía no puede'/.test(cola));
+ok('si hay historial, la base dice que solo se archiva', /MT042': return 'tiene pagos o notas'/.test(cola));
+ok('con historial la pantalla no ofrece borrar', /tieneHistorial\(c\.id\)[\s\S]{0,180}solo-archivar/.test(aula));
 ok('borrar de verdad quita la copia local solo después del ok', /op\.tipo === 'centro_borrar'\) olvidarArbol/.test(cola));
 ok('la lista no muestra filas con deleted_at', /if \(!f\.deleted_at\) mapa\.set/.test(datos));
 

@@ -17,10 +17,11 @@
 --     alumnos que se archivaron con él (la misma hora). Un grupo que ya
 --     estaba archivado antes se queda archivado. Si el nombre choca con
 --     otro centro vivo, no cambia nada (23505).
---   · centro_borrar: borra de verdad el centro y lo que cuelga de sus
---     grupos. Cada DELETE lleva owner = auth.uid(). Lo de otro maestro
---     no se toca. Si algo no se puede soltar, la transacción entera se
---     deshace y no queda un borrado a medias.
+--   · centro_borrar: borra de verdad solo un centro vacío. Si el centro
+--     o sus grupos tienen cualquier fila (también archivada) de pagos,
+--     colectas, gastos, gastos del docente, reembolsos, bienes, notas,
+--     asistencia o personalidad, se niega y no se borra nada. En ese
+--     caso solo se puede archivar. Cada DELETE lleva owner = auth.uid().
 --
 -- El docente, por la API, no puede saltarse el disparador: el permiso
 -- extra solo vale dentro de estas funciones (corren como dueño de la
@@ -32,6 +33,9 @@
 --    where n.nspname = 'metas'
 --      and proname in ('centro_archivar', 'centro_volver', 'centro_borrar');
 --   Tiene que devolver 3 filas.
+-- Con un centro que ya tenga una nota o un pago (aunque esté archivado):
+--   select metas.centro_borrar('<id del centro>');
+--   Tiene que fallar con MT042. El centro, el pago y la nota siguen.
 -- ============================================================================
 
 -- Recuperar grupos y alumnos solo desde centro_volver.
@@ -275,6 +279,44 @@ begin
   select coalesce(array_agg(id), '{}') into v_aulas
     from metas.aulas
    where owner = v_uid and centro_id = p_centro;
+
+  -- Antes de borrar nada: dinero e historial, vivos o archivados.
+  -- Si hay una sola fila, se sale y la transacción no toca nada.
+  if exists (
+    select 1 from metas.pagos
+     where owner = v_uid and aula_id = any(v_aulas)
+    union all
+    select 1 from metas.colectas
+     where owner = v_uid and aula_id = any(v_aulas)
+    union all
+    select 1 from metas.gastos
+     where owner = v_uid and aula_id = any(v_aulas)
+    union all
+    select 1 from metas.gastos_docente
+     where owner = v_uid and aula_id = any(v_aulas)
+    union all
+    select 1 from metas.reembolsos
+     where owner = v_uid
+       and gasto_id in (
+         select id from metas.gastos_docente
+          where owner = v_uid and aula_id = any(v_aulas)
+       )
+    union all
+    select 1 from metas.bienes
+     where owner = v_uid and aula_id = any(v_aulas)
+    union all
+    select 1 from metas.notas
+     where owner = v_uid and aula_id = any(v_aulas)
+    union all
+    select 1 from metas.asistencia
+     where owner = v_uid and aula_id = any(v_aulas)
+    union all
+    select 1 from metas.notas_personalidad
+     where owner = v_uid and aula_id = any(v_aulas)
+  ) then
+    raise exception 'metas: este centro tiene pagos o notas; solo se puede archivar'
+      using errcode = 'MT042';
+  end if;
 
   perform set_config('metas.borrado_definitivo', 'si', true);
 
