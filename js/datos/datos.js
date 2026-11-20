@@ -343,6 +343,14 @@
     return { id: id };
   }
 
+  // No se aplica a la vista hasta que la base contesta. Así, si la función
+  // todavía no está pegada, el centro sigue en la lista.
+  function mandarCentro(tipo, id) {
+    var u = cuenta();
+    cola.encolar({ owner: u, tipo: tipo, tabla: 'centros', id: id, args: { p_centro: id } });
+    return { id: id };
+  }
+
   // ── Dinero (solo por funciones del servidor, regla 18) ────────────────
   function pagar(p, extra) {
     var u = cuenta();
@@ -632,6 +640,11 @@
         editar: editar,
         borrar: borrar,
         recuperar: recuperar,
+        // El centro, sus grupos y sus alumnos. La base lo hace junto.
+        // Si la función todavía no está, la cola avisa y no esconde nada.
+        archivarCentro: function (id) { return mandarCentro('centro_archivar', id); },
+        recuperarCentroJunto: function (id) { return mandarCentro('centro_volver', id); },
+        borrarCentroDefinitivo: function (id) { return mandarCentro('centro_borrar', id); },
         archivados: archivados,
         pagar: pagar,
         corregirPago: corregirPago,
