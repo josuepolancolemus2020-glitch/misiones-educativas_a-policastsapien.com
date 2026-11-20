@@ -356,6 +356,23 @@ textarea.ma-inp { min-height: 96px; resize: vertical; line-height: 1.45; }
   font-size: calc(15px * var(--metas-fz, 1)); }
 .doc-primera-vez[hidden] { display: none; }
 
+/* ── La ficha del alumno: sexo y marca del SACE ──────────────────────
+   El aviso de «Aún no está en el SACE» va en letra chica bajo el nombre:
+   se ve, pero no grita (el alumno sigue en notas, asistencia y boletas).
+   Cada casilla y botón mide al menos 44 px de alto. */
+.ma-al-aviso { margin: -4px 0 8px 50px; color: var(--ma-tx2); font-size: calc(13px * var(--metas-fz, 1)); line-height: 1.35; }
+.ma-al-ficha { border-top: 1px dashed var(--border); padding-top: 10px; }
+.ma-ficha-form { align-items: flex-end; }
+.ma-ficha-form .ma-campo { flex: 1 1 170px; }
+.ma-opcion { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 6px; font-weight: 700; cursor: pointer; }
+.ma-opcion input { width: 24px; height: 44px; margin: 0; accent-color: var(--ma-sec); flex: 0 0 auto; }
+.ma-opcion-sace { padding: 0 14px; border: 1.5px solid #cbd5e1; border-radius: var(--ma-r-sm); background: var(--surface); }
+.ma-alta { margin-top: 12px; gap: 10px; }
+.ma-sexo { display: flex; flex-wrap: wrap; gap: 4px 16px; margin: 0; padding: 0; border: 0; }
+.ma-sexo legend { padding: 0; margin-bottom: 2px; font-weight: 700; font-size: calc(14px * var(--metas-fz, 1)); }
+.ma-carga-sexo { padding: 0; margin-left: auto; }
+.ma-lista-previa .ma-renglon .ma-carga-sexo { display: flex; padding: 4px 0 0; }
+
 /* ── Teléfono: un poco menos de aire, la misma calma ────────────────── */
 @media (max-width: 520px) {
   .ma-card { padding: 14px; border-radius: 16px; }
@@ -374,6 +391,7 @@ textarea.ma-inp { min-height: 96px; resize: vertical; line-height: 1.45; }
   .ma-cifra-t dd { font-size: calc(17px * var(--metas-fz, 1)); }
   .ma-mx .ma-mx-fijo { min-width: 112px; max-width: 124px; }
   .ma-imprimir .ma-btn { flex-basis: 100%; }
+  .ma-al-aviso { margin-left: 4px; }
 }
 
 /* Sin movimiento para quien lo pidió: ni hundido, ni subida, ni barra. */

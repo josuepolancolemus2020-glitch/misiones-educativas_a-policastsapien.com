@@ -34,8 +34,11 @@
     desertor:   'Desertor'
   };
   /* los que se fueron siguen en la lista con sus notas, pero ya no son
-     matrícula final */
-  var ESTADOS_FUERA = { trasladado: 1, desertor: 1 };
+     matrícula final. «Retirado» existe solo en Mi aula por filas (el
+     formulario del SACE no lo tiene): se fue igual, y antes contaba como
+     si siguiera; el Resumen final avisa para que se elija Traslado o
+     Desertor. */
+  var ESTADOS_FUERA = { trasladado: 1, desertor: 1, retirado: 1 };
 
   function digitos(s) { return String(s == null ? '' : s).replace(/\D/g, ''); }
   function idnValida(s) { return digitos(s).length === 13; }
@@ -161,6 +164,7 @@
         idnOk: idnValida(r.identidad),
         nombre: nombre,
         sexo: normSexo(r.sexo),
+        sexoRaw: String(r.sexo || '').trim(),
         fnac: fnac,
         fnacRaw: fRaw,
         fnacOk: !!fnac,
@@ -482,6 +486,9 @@
         if (f.num) quiere.sace_num = f.num;
         if (edadNum(f.edadSace) != null) quiere.edad_sace = edadNum(f.edadSace);
         if (f.fnacOk) quiere.fecha_nacimiento = f.fnac;
+        /* el sexo del SACE gana; si el SACE no lo trae bien, la ficha
+           queda como está: no se adivina por el nombre */
+        if (f.sexo === 'F' || f.sexo === 'M') quiere.sexo = f.sexo;
       } else {
         quiere.en_sace = false;
       }
@@ -491,6 +498,85 @@
       if (Object.keys(cambios).length) out.push({ id: a.id, cambios: cambios });
     });
     return out;
+  }
+
+  /* ⚠ de una fila del SACE en la vista previa: lo que no se entiende se
+     dice, no se adivina */
+  function avisosPar(f) {
+    var av = [];
+    if (!f) return av;
+    if (f.sexo !== 'F' && f.sexo !== 'M') {
+      av.push(f.sexoRaw ? 'El SACE trae un sexo que no se entiende («' + f.sexoRaw + '»): la ficha queda como está.'
+        : 'El SACE no trae el sexo: la ficha queda como está.');
+    }
+    if (f.idn && !f.idnOk) av.push('La identidad del SACE no tiene 13 dígitos: ' + f.idn + '. Revísala en el SACE.');
+    if (f.fnacRaw && !f.fnacOk) av.push('Fecha de nacimiento que no se entiende: ' + f.fnacRaw + '.');
+    return av;
+  }
+
+  /* ── la ficha del alumno en Mi aula ──
+     Todo alumno matriculado tiene ficha, aunque no tenga identidad ni esté
+     en el SACE (decisión de Josué, 20 nov. 2026). Lo único obligatorio,
+     además del nombre, es el sexo, F o M, como en el SACE: sin él, los
+     cuadros dicen 0 niñas y 0 varones. La identidad es opcional; si se
+     escribe y es de Honduras, lleva sus 13 cifras (la base lo exige).
+     Devuelve { errores, campos } con los campos ya limpios. */
+  function revisarFicha(c) {
+    c = c || {};
+    var errores = [], campos = {};
+    var nombre = String(c.nombre_completo == null ? '' : c.nombre_completo).replace(/\s+/g, ' ').trim();
+    if (nombre.length < 3) errores.push('Escribe el nombre completo.');
+    else campos.nombre_completo = nombre;
+    var sexo = String(c.sexo || '').trim().toUpperCase();
+    if (sexo !== 'F' && sexo !== 'M') errores.push('Elige si es niña (F) o niño (M).');
+    else campos.sexo = sexo;
+    if ('identidad' in c) {
+      var idn = String(c.identidad == null ? '' : c.identidad).toUpperCase().replace(/[^0-9A-Z]/g, '');
+      var pais = String(c.documento_pais || 'HN').toUpperCase();
+      if (!idn) campos.identidad = null;
+      else if (pais === 'HN' && !/^\d{13}$/.test(idn)) errores.push('La identidad lleva 13 cifras; tiene ' + idn.replace(/\D/g, '').length + '. Si no la tienes, déjala en blanco.');
+      else campos.identidad = idn;
+    }
+    if (c.fecha_nacimiento != null && String(c.fecha_nacimiento).trim() !== '') {
+      var f = normFecha(c.fecha_nacimiento);
+      if (!f) errores.push('La fecha de nacimiento no se entiende.');
+      else campos.fecha_nacimiento = f;
+    }
+    return { errores: errores, campos: campos };
+  }
+
+  /* La casilla «Registrado en SACE»: solo lo que cambia. El número de la
+     fila en el SACE es opcional (referencia, nunca llave). Desmarcar deja
+     el número como estaba: si fue sin querer, volver a marcar no lo pierde. */
+  function cambiosMarca(a, enSace, saceNum) {
+    a = a || {};
+    var c = {};
+    if (!!a.en_sace !== !!enSace) c.en_sace = !!enSace;
+    var n = parseInt(String(saceNum == null ? '' : saceNum).replace(/\D/g, ''), 10);
+    if (enSace && n >= 1 && n <= 999 && n !== a.sace_num) c.sace_num = n;
+    return c;
+  }
+
+  /* «Datos para el SACE»: las fichas que siguen en el aula y todavía no
+     están en el SACE, con lo que el SACE pide para registrarlas. Lo que
+     falta va en blanco (y se dice), nunca inventado. */
+  function datosParaSace(alumnos) {
+    return (alumnos || []).filter(function (a) { return a && a.en_sace !== true && !ESTADOS_FUERA[a.estado]; })
+      .slice().sort(function (x, y) {
+        return (x.num_lista == null ? 999 : x.num_lista) - (y.num_lista == null ? 999 : y.num_lista)
+          || String(x.nombre_completo).localeCompare(String(y.nombre_completo), 'es');
+      })
+      .map(function (a) {
+        var falta = [];
+        if (!a.identidad) falta.push('identidad');
+        if (a.sexo !== 'F' && a.sexo !== 'M') falta.push('sexo');
+        if (!a.fecha_nacimiento) falta.push('fecha de nacimiento');
+        return {
+          id: a.id, num: a.num_lista == null ? '' : a.num_lista, nombre: a.nombre_completo || '',
+          identidad: a.identidad ? ((a.documento_pais || 'HN') === 'HN' ? idnBonita(a.identidad) : a.identidad) : '',
+          sexo: a.sexo === 'F' || a.sexo === 'M' ? a.sexo : '', fecha_nacimiento: a.fecha_nacimiento || '', falta: falta
+        };
+      });
   }
 
   /* ── quién cuenta ── */
@@ -542,6 +628,7 @@
     edad: edad, edadTxt: edadTxt, parseCsv: parseCsv, normNombre: normNombre,
     similitud: similitud, emparejar: emparejar, aplicar: aplicar,
     normEstado: normEstado, emparejarFilas: emparejarFilas, cambiosFilas: cambiosFilas,
+    avisosPar: avisosPar, revisarFicha: revisarFicha, cambiosMarca: cambiosMarca, datosParaSace: datosParaSace,
     seFue: seFue, enListaOficial: enListaOficial, hayImportacion: hayImportacion,
     matriculaFinal: matriculaFinal, alumnosQueCuentan: alumnosQueCuentan,
     cuadroEdades: cuadroEdades

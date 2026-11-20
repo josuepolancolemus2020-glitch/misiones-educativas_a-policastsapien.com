@@ -77,7 +77,7 @@
   var colectaAbierta = null;
   var controlAbierto = null;
   var alumnoAbierto = null;
-  var subAlumnos = '';           // '' , 'carga' o 'sace'
+  var subAlumnos = '';           // '' , 'carga', 'sace' o 'datos-sace'
   var subComunicados = 'avisos';
   var otroMonto = false;         // el próximo toque abre la cajita en vez de anotar el monto completo
   var hoja = null;               // la cajita de un pago: { alumno, colecta }
@@ -618,6 +618,7 @@
   function pintarAlumnos(aula) {
     if (subAlumnos === 'carga') return pintarCarga(aula);
     if (subAlumnos === 'sace') return pintarListaSace(aula);
+    if (subAlumnos === 'datos-sace') return pintarDatosSace(aula);
     var lista = alumnos(aula);
     var h = '<div class="ma-card ma-card-grupo"><div><p class="ma-grupo-grande">' + esc(grupo(aula)) + '</p>'
       + '<p class="ma-nota">' + esc(aula.escuela) + ' · ' + esc(aula.anio_lectivo) + '</p></div>'
@@ -638,6 +639,13 @@
         h += '<p class="ma-nota" data-metas="lista-sace-cuenta">📥 En la lista oficial del SACE: <b>' + oficiales + '</b> de '
           + lista.length + '. Los cuadros y las estadísticas cuentan solo a esos.</p>';
       }
+      // Los que siguen en el aula y faltan en el SACE: la hoja para
+      // registrarlos allá, con lo que el SACE pide.
+      var pendientes = window.SaceLista ? window.SaceLista.datosParaSace(lista).length : 0;
+      if (pendientes) {
+        h += '<div class="ma-acciones"><button type="button" class="ma-btn" data-metas="datos-sace-abrir" data-accion="datos-sace">'
+          + '📝 Datos para el SACE (' + pendientes + ')</button></div>';
+      }
     }
     if (!lista.length) h += '<p class="ma-nota">Todavía no hay alumnos. Escríbelos uno por uno o pega la lista completa.</p>';
     h += pintarClaves(aula);
@@ -652,8 +660,10 @@
         + '<span class="ma-num">' + esc(num(a)) + '</span><span class="ma-nom">' + esc(a.nombre_completo) + '</span>'
         + claveEnLista(a, fichaDe[a.id])
         + (sigue(a) ? '' : '<span class="ma-etq">' + esc(nombreEstado(a.estado)) + '</span>')
-        + '<span class="ma-flecha" aria-hidden="true">›</span></button>';
+        + '<span class="ma-flecha" aria-hidden="true">›</span></button>'
+        + avisoFicha(a);
       if (abierto) {
+        r += pintarFicha(a);
         r += '<div class="ma-al-edit" role="group" aria-label="Situación de ' + esc(a.nombre_completo) + '">'
           + ['activo', 'retirado', 'trasladado', 'desertor'].map(function (e) {
             var on = (a.estado || 'activo') === e;
@@ -667,10 +677,96 @@
       }
       return r + '</li>';
     }).join('') + '</ul>';
-    h += '<form class="ma-en-linea" data-form="alumno"><label class="ma-oculto" for="ma-nuevo-al">Nombre completo</label>'
+    // Alta rápida: nombre y sexo (obligatorio, como en el SACE); la
+    // identidad es opcional y la marca del SACE se puede poner después.
+    h += '<form class="ma-form ma-alta" data-form="alumno" data-metas="alta-alumno"><label class="ma-oculto" for="ma-nuevo-al">Nombre completo</label>'
       + '<input class="ma-inp" id="ma-nuevo-al" name="nombre" placeholder="Nombre completo de otro alumno" required minlength="3" maxlength="120" autocomplete="off">'
+      + '<fieldset class="ma-sexo"><legend>Sexo</legend>'
+      + '<label class="ma-opcion"><input type="radio" name="sexo" value="F" required data-metas="alta-sexo-f"> Niña (F)</label>'
+      + '<label class="ma-opcion"><input type="radio" name="sexo" value="M" required data-metas="alta-sexo-m"> Niño (M)</label></fieldset>'
+      + '<label class="ma-campo"><span>Identidad (si la tienes)</span><input class="ma-inp" name="identidad" inputmode="numeric" maxlength="15" '
+      + 'placeholder="0801-2015-01234" autocomplete="off" data-metas="alta-identidad"></label>'
+      + '<label class="ma-opcion"><input type="checkbox" name="en_sace" value="1" data-metas="alta-en-sace"> Ya está registrado en el SACE</label>'
       + '<button class="ma-btn ma-btn-1" type="submit">Agregar</button></form></div>';
     return h;
+  }
+  // Debajo del nombre, en letra chica: lo que le falta a la ficha. Nada
+  // dicho solo con color.
+  function avisoFicha(a) {
+    if (!sigue(a)) return '';
+    var t = [];
+    if (a.en_sace !== true) t.push('Aún no está en el SACE: no cuenta en estadísticas');
+    if (a.sexo !== 'F' && a.sexo !== 'M') t.push('⚠ Falta el sexo');
+    if (!t.length) return '';
+    return '<p class="ma-al-aviso" data-metas="alumno-sin-sace">' + esc(t.join(' · ')) + '</p>';
+  }
+  // La ficha del alumno abierto: sexo y marca del SACE de un toque, y la
+  // identidad, la fecha de nacimiento y el número del SACE con «Guardar».
+  function pintarFicha(a) {
+    var sexoBtn = function (v, t) {
+      var on = a.sexo === v;
+      return '<button type="button" class="ma-btn ma-btn-chico' + (on ? ' ma-on' : '') + '" data-accion="ficha-sexo" data-alumno="'
+        + esc(a.id) + '" data-valor="' + v + '" aria-pressed="' + on + '" data-metas="ficha-sexo">' + (on ? '✓ ' : '') + t + '</button>';
+    };
+    return '<div class="ma-al-ficha" data-metas="ficha-alumno">'
+      + '<div class="ma-al-edit" role="group" aria-label="' + esc('Sexo de ' + a.nombre_completo) + '">'
+      + sexoBtn('F', 'Niña (F)') + sexoBtn('M', 'Niño (M)') + '</div>'
+      + '<div class="ma-al-edit"><label class="ma-opcion ma-opcion-sace"><input type="checkbox" data-accion="en-sace" data-alumno="' + esc(a.id) + '"'
+      + (a.en_sace === true ? ' checked' : '') + ' data-metas="alumno-en-sace"> Registrado en SACE</label></div>'
+      + '<form class="ma-al-edit ma-ficha-form" data-form="ficha" data-alumno="' + esc(a.id) + '">'
+      + '<label class="ma-campo"><span>Identidad (opcional)</span><input class="ma-inp" name="identidad" inputmode="numeric" maxlength="25" autocomplete="off" value="'
+      + esc(a.identidad ? ((a.documento_pais || 'HN') === 'HN' && window.SaceLista ? window.SaceLista.idnBonita(a.identidad) : a.identidad) : '') + '"></label>'
+      + '<label class="ma-campo"><span>Fecha de nacimiento</span><input class="ma-inp" type="date" name="fecha_nacimiento" value="'
+      + esc(a.fecha_nacimiento || '') + '"></label>'
+      + '<label class="ma-campo"><span>N.º en el SACE (opcional)</span><input class="ma-inp" name="sace_num" inputmode="numeric" maxlength="3" value="'
+      + esc(a.sace_num == null ? '' : a.sace_num) + '"></label>'
+      + '<button class="ma-btn" type="submit" data-metas="ficha-guardar">Guardar ficha</button></form></div>';
+  }
+
+  // ── 📝 Datos para el SACE ──────────────────────────────────────────────
+  // Las fichas que siguen en el aula y no están en el SACE, con lo que el
+  // SACE pide para registrarlas. Lo que falta va en blanco y se dice.
+  function pintarDatosSace(aula) {
+    var filas = window.SaceLista.datosParaSace(alumnos(aula));
+    var h = '<button type="button" class="ma-volver" data-accion="alumnos">‹ Mis alumnos</button>'
+      + '<div class="ma-card" data-metas="datos-sace"><div class="ma-card-cab"><h2 class="ma-h">📝 Datos para el SACE</h2>'
+      + (filas.length ? '<button type="button" class="ma-btn" data-accion="datos-sace-imprimir" data-metas="datos-sace-imprimir">🖨️ Imprimir</button>' : '')
+      + '</div><p class="ma-nota">' + (filas.length
+        ? esc(grupo(aula)) + ': ' + filas.length + (filas.length === 1 ? ' alumno que todavía no está' : ' alumnos que todavía no están')
+          + ' en el SACE. Regístralos allá y luego marca «Registrado en SACE» en su ficha (o importa la lista del SACE).'
+        : 'Todos tus alumnos ya están en el SACE.') + '</p>';
+    if (filas.length) {
+      h += '<ul class="ma-lista">' + filas.map(function (f) {
+        return '<li class="ma-renglon ma-fila-col" data-metas="datos-sace-fila"><span class="ma-nom">#' + esc(f.num) + ' ' + esc(f.nombre) + '</span>'
+          + '<span class="ma-sub">Identidad: ' + esc(f.identidad || '(sin identidad)') + ' · Sexo: ' + esc(f.sexo || '⚠ falta')
+          + ' · Nacimiento: ' + esc(f.fecha_nacimiento ? fechaSace(f.fecha_nacimiento) : '⚠ falta') + '</span></li>';
+      }).join('') + '</ul>';
+    }
+    return h + '</div>';
+  }
+  // Una hoja carta, letra del cuerpo sin achicar. Se arma con lo que hay
+  // en el aparato: imprime sin señal.
+  function imprimirDatosSace(aula) {
+    var filas = window.SaceLista.datosParaSace(alumnos(aula));
+    if (!filas.length) return;
+    var fn = function (f) { return f ? f.slice(8, 10) + '/' + f.slice(5, 7) + '/' + f.slice(0, 4) : ''; };
+    var html = '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>' + esc('Datos para el SACE · ' + grupo(aula)) + '</title><style>'
+      + '@page{size:letter;margin:12mm}*{box-sizing:border-box}body{font-family:Arial,Helvetica,sans-serif;color:#0f2350;font-size:12px;margin:0}'
+      + 'h1{font-size:16px;margin:0 0 2px}p{margin:0 0 8px;color:#33415c}table{border-collapse:collapse;width:100%}'
+      + 'th,td{border:1px solid #9aa6bd;padding:5px 6px;text-align:left;vertical-align:top}th{background:#eaf0fa;font-size:11px}'
+      + 'td.c{text-align:center}.vacio{height:22px}</style></head><body>'
+      + '<h1>Datos para registrar en el SACE</h1><p>' + esc((aula.escuela || '') + ' · ' + grupo(aula) + ' · ' + (aula.anio_lectivo || ''))
+      + ' · ' + filas.length + (filas.length === 1 ? ' alumno' : ' alumnos') + ' · ' + esc(fn(hoy())) + '</p>'
+      + '<table><thead><tr><th>#</th><th>Nombre completo</th><th>Identidad</th><th>Sexo</th><th>Fecha de nacimiento</th><th>Registrado ✓</th></tr></thead><tbody>'
+      + filas.map(function (f) {
+        return '<tr><td class="c">' + esc(f.num) + '</td><td>' + esc(f.nombre) + '</td><td>' + esc(f.identidad) + '</td><td class="c">'
+          + esc(f.sexo) + '</td><td>' + esc(fn(f.fecha_nacimiento)) + '</td><td></td></tr>';
+      }).join('') + '</tbody></table>'
+      + '<p style="margin-top:8px">Lo que está en blanco falta en la ficha de Mi aula: complétalo al registrarlo en el SACE.</p>'
+      + '<script>window.onload=function(){setTimeout(function(){window.print();},280);}<\/script></body></html>';
+    if (typeof window.adPrintAbrir === 'function') return window.adPrintAbrir(html);
+    var w = window.open('', '_blank');
+    if (w) { w.document.write(html); w.document.close(); }
   }
   function nombreEstado(e) {
     return { activo: 'En el aula', ingreso: 'Ingresó', retirado: 'Retirado', trasladado: 'Trasladado', desertor: 'Desertor' }[e] || e;
@@ -812,16 +908,25 @@
   function pintarCarga() {
     return '<button type="button" class="ma-volver" data-accion="alumnos">‹ Mis alumnos</button>'
       + '<form class="ma-card ma-form" data-form="carga-vista"><h2 class="ma-h">📋 Pegar una lista</h2>'
-      + '<label class="ma-campo"><span>Un nombre por renglón. Si tienes la identidad, va al final del renglón.</span>'
+      + '<label class="ma-campo"><span>Un nombre por renglón, con F (niña) o M (niño) al final. Si tienes la identidad, va después.</span>'
       + '<textarea class="ma-inp" name="pegado" rows="8" data-metas="carga-pegar">' + esc(cargaTexto) + '</textarea></label>'
       + '<div class="ma-acciones"><button class="ma-btn" type="submit" data-metas="carga-vista-previa">Ver cómo queda</button></div></form>'
       + (avisoCarga ? '<p class="ma-nota ma-nota-ok" role="status">' + esc(avisoCarga) + '</p>' : '')
-      + (cargaFilas.length ? '<div class="ma-card"><ol class="ma-lista ma-lista-previa">' + cargaFilas.map(function (f) {
+      + (cargaFilas.length ? '<div class="ma-card"><ol class="ma-lista ma-lista-previa">' + cargaFilas.map(function (f, i) {
+        // El sexo es obligatorio en la ficha: si el renglón no lo trae, se
+        // elige aquí con un toque.
         return '<li class="ma-renglon" data-metas="carga-fila"><span class="ma-nom">' + esc(f.nombre) + '</span>'
-          + (f.identidad ? '<span class="ma-sub">' + esc(f.identidad) + '</span>' : '') + '</li>';
-      }).join('') + '</ol></div>' : '')
+          + (f.identidad ? '<span class="ma-sub">' + esc(f.identidad) + '</span>' : '')
+          + '<span class="ma-al-edit ma-carga-sexo" role="group" aria-label="' + esc('Sexo de ' + f.nombre) + '">'
+          + [['F', 'Niña (F)'], ['M', 'Niño (M)']].map(function (x) {
+            var on = f.sexo === x[0];
+            return '<button type="button" class="ma-btn ma-btn-chico' + (on ? ' ma-on' : '') + '" data-accion="carga-sexo" data-fila="' + i
+              + '" data-valor="' + x[0] + '" aria-pressed="' + on + '">' + (on ? '✓ ' : '') + x[1] + '</button>';
+          }).join('') + '</span></li>';
+      }).join('') + '</ol>' + (cargaSinSexo() ? '<p class="ma-nota" role="status" data-metas="carga-falta-sexo">⚠ Falta el sexo de '
+        + cargaSinSexo() + ': tócalo en cada renglón.</p>' : '') + '</div>' : '')
       + '<div class="ma-acciones"><button type="button" class="ma-btn ma-btn-1" data-metas="carga-guardar" data-accion="carga-guardar"'
-      + (cargaFilas.length ? '' : ' disabled') + '>Agregar a la lista</button></div>'
+      + (cargaFilas.length && !cargaSinSexo() ? '' : ' disabled') + '>Agregar a la lista</button></div>'
       + pintarImportar();
   }
 
@@ -1061,6 +1166,8 @@
       if (!c) return '<span class="ma-sub">Nada que cambiar</span>';
       var t = [];
       if ('fecha_nacimiento' in c) t.push('Nacimiento: ' + fechaSace(porId[id].fecha_nacimiento) + ' → ' + fechaSace(c.fecha_nacimiento));
+      // El sexo del SACE gana: se ve antes de guardar.
+      if ('sexo' in c) t.push('Sexo: ' + (porId[id].sexo || 'sin anotar') + ' → ' + c.sexo);
       if ('estado' in c) t.push('Situación: ' + nombreEstado(c.estado));
       if ('edad_sace' in c) t.push('Edad en el SACE: ' + c.edad_sace);
       return t.length ? '<span class="ma-sub">' + esc(t.join(' · ')) + '</span>' : '';
@@ -1092,8 +1199,7 @@
           + '<button type="button" class="ma-btn ma-btn-chico' + (on ? ' ma-on' : '') + '" data-accion="lista-sace-par" data-valor="' + i
           + '" aria-pressed="' + on + '" data-metas="lista-sace-confirmar">' + (on ? '✓ ' : '') + 'Es la misma persona</button>';
       }
-      if (p.f.idn && !p.f.idnOk) t += '<p class="ma-nota">⚠ La identidad del SACE no tiene 13 dígitos: ' + esc(p.f.idn) + '. Revísala en el SACE.</p>';
-      if (p.f.fnacRaw && !p.f.fnacOk) t += '<p class="ma-nota">⚠ Fecha de nacimiento que no se entiende: ' + esc(p.f.fnacRaw) + '.</p>';
+      t += SL.avisosPar(p.f).map(function (x) { return '<p class="ma-nota" data-metas="lista-sace-aviso">⚠ ' + esc(x) + '</p>'; }).join('');
       return t + (s.conf.pares[i] ? queCambia(p.id) : '') + '</li>';
     }).join('') + '</ul>';
 
@@ -1485,8 +1591,20 @@
     h += '</div><div class="ma-card"><h2 class="ma-h">🖨️ Para imprimir</h2><div class="ma-imprimir">'
       + '<button type="button" class="ma-btn ma-btn-1" data-accion="imprimir" data-valor="boletas">🧾 Boletas de todo el grupo</button>'
       + '<button type="button" class="ma-btn" data-accion="imprimir" data-valor="resumen">📋 Resumen final por grado</button>'
-      + '<button type="button" class="ma-btn" data-accion="imprimir" data-valor="cuadro">📒 Cuadro final del año</button></div></div>';
+      + '<button type="button" class="ma-btn" data-accion="imprimir" data-valor="cuadro">📒 Cuadro final del año</button></div>'
+      + notaImprimirSace(aula) + '</div>';
     return h;
+  }
+
+  // El Resumen final y el Cuadro final cuentan solo a quien está en el
+  // SACE (y sigue en el aula): se dice antes de imprimir, con cuántos.
+  function notaImprimirSace(aula) {
+    var lista = alumnos(aula);
+    var cuentan = lista.filter(function (a) { return a.en_sace === true && sigue(a); }).length;
+    var faltan = window.SaceLista ? window.SaceLista.datosParaSace(lista).length : 0;
+    return '<p class="ma-nota" data-metas="imprimir-cuenta-sace">El Resumen final y el Cuadro final cuentan <b>' + cuentan + '</b> '
+      + (cuentan === 1 ? 'alumno registrado' : 'alumnos registrados') + ' en el SACE.'
+      + (faltan ? ' ' + faltan + (faltan === 1 ? ' todavía no está' : ' todavía no están') + ': mira «Datos para el SACE» en Alumnos.' : '') + '</p>';
   }
 
   function camposPerfilNuevo(aula) {
@@ -1982,6 +2100,14 @@
       case 'claves-guardar': return clavesGuardar();
       case 'alumnos': subAlumnos = ''; return pintar();
       case 'lista-sace': subAlumnos = 'sace'; alumnoAbierto = null; listaSace = null; pintar(); return enfocarPantalla();
+      case 'datos-sace': subAlumnos = 'datos-sace'; alumnoAbierto = null; pintar(); return enfocarPantalla();
+      case 'datos-sace-imprimir': return imprimirDatosSace(aula);
+      case 'ficha-sexo':
+        // Un toque: la ficha toma F o M. Solo se manda si cambia.
+        var alS = alumnos(aula).filter(function (x) { return x.id === b.getAttribute('data-alumno'); })[0];
+        if (!alS || alS.sexo === v || (v !== 'F' && v !== 'M')) return;
+        intentar(function () { d.editar('alumnos', alS.id, { sexo: v }); });
+        return pintar();
       case 'lista-sace-elegir': return listaSaceElegir(aula);
       case 'lista-sace-par':
         if (!listaSace || !listaSace.plan) return;
@@ -2093,6 +2219,10 @@
         return pintar();
       case 'sub-com': subComunicados = v; return pintar();
       case 'carga-guardar': return guardarCarga(aula);
+      case 'carga-sexo':
+        var fi = cargaFilas[+b.getAttribute('data-fila')];
+        if (fi && (v === 'F' || v === 'M')) fi.sexo = v;
+        return pintar();
       case 'entendido': d.entendido(v); return pintarTarjeta();
       case 'responder': return responder(b.getAttribute('data-pregunta'), v);
     }
@@ -2334,6 +2464,16 @@
     if (!acc || !d) return;
     if (acc === 'fecha') { vista.fecha = el.value || hoy(); guardarPref(); return pintar(); }
     if (acc === 'sace') return anotarSace(el);
+    // La casilla «Registrado en SACE»: solo en_sace, de un toque. Las notas,
+    // la asistencia y las boletas no cambian; los cuadros sí lo cuentan.
+    if (acc === 'en-sace') {
+      var aulaS = aulaActual();
+      var alE = aulaS && alumnos(aulaS).filter(function (x) { return x.id === el.getAttribute('data-alumno'); })[0];
+      if (!alE) return;
+      var cm = window.SaceLista.cambiosMarca(alE, el.checked, '');
+      if (Object.keys(cm).length) intentar(function () { d.editar('alumnos', alE.id, cm); });
+      return pintar();
+    }
     // Emparejar a mano una fila del SACE con un alumno: uno no puede ser de dos.
     if (acc === 'lista-sace-mano' && listaSace && listaSace.plan) {
       var m = listaSace.conf.manuales;
@@ -2482,9 +2622,36 @@
         }, f);
         break;
       case 'alumno':
+        // La misma regla que la ficha: sexo F o M obligatorio, identidad
+        // opcional (si viene, con sus 13 cifras).
+        var rev = window.SaceLista.revisarFicha({ nombre_completo: datos.nombre, sexo: datos.sexo, identidad: datos.identidad });
+        if (rev.errores.length) { avisarEn(f, rev.errores.join(' ')); return; }
         var n = alumnos(aula).reduce(function (x, a) { return Math.max(x, a.num_lista || 0); }, 0);
-        ok = intentar(function () { d.crear('alumnos', { aula_id: aula.id, nombre_completo: datos.nombre, num_lista: n < 99 ? n + 1 : null }); }, f);
+        var nueva = { aula_id: aula.id, nombre_completo: rev.campos.nombre_completo, sexo: rev.campos.sexo, num_lista: n < 99 ? n + 1 : null };
+        if (rev.campos.identidad) nueva.identidad = rev.campos.identidad;
+        if (datos.en_sace) nueva.en_sace = true;
+        ok = intentar(function () { d.crear('alumnos', nueva); }, f);
         if (ok) { pintar(); enfocar('#ma-nuevo-al'); return; }
+        break;
+      case 'ficha':
+        var alF = alumnos(aula).filter(function (x) { return x.id === f.getAttribute('data-alumno'); })[0];
+        if (!alF) return;
+        // El sexo se pone con sus botones, de un toque: aquí no se pide, para
+        // que una ficha vieja sin sexo pueda guardar su identidad igual.
+        var revF = window.SaceLista.revisarFicha({ nombre_completo: alF.nombre_completo, sexo: alF.sexo, identidad: datos.identidad,
+          documento_pais: alF.documento_pais, fecha_nacimiento: datos.fecha_nacimiento });
+        var errF = revF.errores.filter(function (e) { return !/niña \(F\)/.test(e); });
+        var numS = String(datos.sace_num || '').replace(/\D/g, '');
+        if (numS && !(+numS >= 1 && +numS <= 999)) errF.push('El número del SACE va de 1 a 999.');
+        if (errF.length) { avisarEn(f, errF.join(' ')); return; }
+        // Solo lo que cambia: una identidad borrada queda vacía (null).
+        var cf = {};
+        if ((revF.campos.identidad || null) !== (alF.identidad || null)) cf.identidad = revF.campos.identidad || null;
+        if ((revF.campos.fecha_nacimiento || null) !== (alF.fecha_nacimiento || null)) cf.fecha_nacimiento = revF.campos.fecha_nacimiento || null;
+        var numN = numS ? +numS : null;
+        if (numN !== (alF.sace_num == null ? null : alF.sace_num)) cf.sace_num = numN;
+        if (!Object.keys(cf).length) { avisarEn(f, 'No hay nada que cambiar.'); return; }
+        ok = intentar(function () { d.editar('alumnos', alF.id, cf); }, f);
         break;
       case 'asignatura':
         ok = intentar(function () {
@@ -2558,19 +2725,28 @@
 
   // Un nombre por renglón; si al final hay una identidad (13 cifras, con o
   // sin guiones), va aparte. Los renglones vacíos no cuentan.
+  // Un renglón: «Nombre Apellido F 0801-2015-01234». La F o la M (sola,
+  // al final del nombre) es el sexo; sin ella se elige en la vista previa.
   function leerCarga(texto) {
     return String(texto || '').split(/\r?\n/).map(function (r) { return r.replace(/\t/g, ' ').trim(); })
       .filter(function (r) { return r.length >= 3; })
       .map(function (r) {
         var m = /^(.*?)[\s,;]+(\d{4}-?\d{4}-?\d{5})$/.exec(r);
-        return m ? { nombre: m[1].trim(), identidad: m[2] } : { nombre: r, identidad: null };
+        var fila = m ? { nombre: m[1].trim(), identidad: m[2] } : { nombre: r, identidad: null };
+        var sx = /^(.*?)[\s,;]+([FfMm])$/.exec(fila.nombre);
+        fila.sexo = sx ? sx[2].toUpperCase() : '';
+        if (sx) fila.nombre = sx[1].replace(/[\s,;]+$/, '').trim();
+        return fila;
       });
+  }
+  function cargaSinSexo() {
+    return cargaFilas.filter(function (f) { return f.sexo !== 'F' && f.sexo !== 'M'; }).length;
   }
 
   // Tocar «Agregar a la lista» dos veces no anota dos veces: la vista previa
   // se vacía en cuanto se anota (lo mismo sin señal).
   function guardarCarga(aula) {
-    if (!cargaFilas.length || !aula) return;
+    if (!cargaFilas.length || !aula || cargaSinSexo()) return;
     var filas = cargaFilas;
     cargaFilas = [];
     cargaTexto = '';
@@ -2578,7 +2754,7 @@
     filas.forEach(function (f) {
       n++;
       intentar(function () {
-        var fila = { aula_id: aula.id, nombre_completo: f.nombre, num_lista: n <= 99 ? n : null };
+        var fila = { aula_id: aula.id, nombre_completo: f.nombre, sexo: f.sexo, num_lista: n <= 99 ? n : null };
         if (f.identidad) fila.identidad = f.identidad;
         d.crear('alumnos', fila);
       });

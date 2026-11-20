@@ -612,4 +612,62 @@ await escenario('B15 lista del SACE: un editar por alumno, la otra tablet ve en_
   afirma(SL.cambiosFilas(lista2, plan2, { pares: plan2.pares.map((_, i) => i), fecha: hoy }).length === 0, 'la segunda vez manda cambios');
 });
 
+await escenario('B16 casilla «Registrado en SACE»: marcar en un aparato y verlo en el otro sin recargar; desmarcar lo quita; las notas no cambian', async () => {
+  const { createRequire } = await import('node:module');
+  const SL = createRequire(import.meta.url)('../../../js/tools/sace-lista.js');
+  const tel = await entrar('sace-telefono');
+  const tablet = await entrar('sace-tablet');
+  const aula = tel.d.crear('aulas', {
+    escuela: 'Escuela Ficticia SACE B16', grado: 6, seccion: (Number(process.hrtime.bigint() % 46656n)).toString(36),
+    anio_lectivo: 2027, docente_nombre: 'Docente Ficticia A',
+  }).id;
+  // La ficha: sexo obligatorio, identidad opcional (Kira no tiene).
+  const datos = [['Alba Ficticia Uno', '0801201516001', 'F'], ['Kira Sin Papeles', '', 'F']];
+  const ids = datos.map(([n, idn, sexo], i) => {
+    const r = SL.revisarFicha({ nombre_completo: n, sexo, identidad: idn });
+    afirma(!r.errores.length, 'la ficha de ' + n + ' no pasa: ' + r.errores.join(' '));
+    const fila = { aula_id: aula, nombre_completo: r.campos.nombre_completo, sexo: r.campos.sexo, num_lista: i + 1 };
+    if (r.campos.identidad) fila.identidad = r.campos.identidad;
+    return tel.d.crear('alumnos', fila).id;
+  });
+  const asig = tel.d.crear('asignaturas', { aula_id: aula, nombre: 'Matemáticas', orden: 1 }).id;
+  ids.forEach((al, i) => tel.d.crear('notas', { aula_id: aula, alumno_id: al, asignatura_id: asig, periodo: 'I', valor: String(80 + i) }));
+  await tel.d.esperarCola();
+  const notas = () => sql(`select count(*) || '|' || coalesce(sum(valor), 0) || '|' || coalesce(max(version), 0)
+                           from metas.notas where aula_id = '${aula}' and deleted_at is null`);
+  const antes = notas();
+  afirma(antes.startsWith('2|'), 'no llegaron las 2 notas: ' + antes);
+  const kira = () => sql(`select en_sace::text || '|' || coalesce(identidad, 'sin') || '|' || sexo from metas.alumnos where id = '${ids[1]}'`);
+  afirma(kira() === 'false|sin|F', 'Kira en la base: ' + kira());
+
+  const verEn = async (d, quiere) => {
+    const fin = Date.now() + 10000;
+    while (Date.now() < fin) {
+      const a = d.lista('alumnos', { aula_id: aula }).find((x) => x.id === ids[1]);
+      if (a && !!a.en_sace === quiere) return true;
+      await new Promise((r) => setTimeout(r, 200));
+    }
+    return false;
+  };
+  await verEn(tablet.d, false);
+
+  // El teléfono marca la casilla de Kira (sin identidad).
+  const cm = SL.cambiosMarca(tel.d.lista('alumnos', { aula_id: aula }).find((x) => x.id === ids[1]), true, '');
+  afirma(JSON.stringify(cm) === '{"en_sace":true}', 'la marca manda: ' + JSON.stringify(cm));
+  tel.d.editar('alumnos', ids[1], cm);
+  await tel.d.esperarCola();
+  afirma(kira() === 'true|sin|F', 'Kira marcada en la base: ' + kira());
+  afirma(await verEn(tablet.d, true), 'la tablet no vio la marca sin recargar');
+  afirma(notas() === antes, 'marcar cambió las notas: ' + antes + ' → ' + notas());
+
+  // La tablet la desmarca; el teléfono lo ve.
+  tablet.d.editar('alumnos', ids[1], SL.cambiosMarca(tablet.d.lista('alumnos', { aula_id: aula }).find((x) => x.id === ids[1]), false, ''));
+  await tablet.d.esperarCola();
+  afirma(kira() === 'false|sin|F', 'Kira desmarcada en la base: ' + kira());
+  afirma(await verEn(tel.d, false), 'el teléfono no vio que se desmarcó');
+  afirma(notas() === antes, 'desmarcar cambió las notas: ' + antes + ' → ' + notas());
+  afirma(tablet.d.lista('notas', { aula_id: aula }).filter((n) => n.alumno_id === ids[1]).length === 1, 'Kira perdió su nota en la tablet');
+  afirma(!tel.d.noAnotado().length && !tablet.d.noAnotado().length, 'quedó algo sin anotar');
+});
+
 process.exit(resultado());

@@ -3402,6 +3402,7 @@ function adCuadroFinalModal() {
     const d = adLoad();
     const cf = ResumenSace.cuadroFinal(d, { SL: window.SaceLista, pers: AD_PERSONALIDAD });
     ov.querySelector('#ad-cf-cuerpo').innerHTML = `<style>${AD_CF_CSS}</style>
+      ${window.SaceLista.hayImportacion(d) ? '' : '<p class="ad-sace-aviso">⚠ Nadie está en la lista oficial del SACE: el Cuadro final cuenta solo a los alumnos registrados en el SACE, igual que el Resumen final. Importa la lista del SACE o marca «Registrado en SACE» en la ficha de cada alumno.</p>'}
       <p class="ad-sace-nota"><b>${cf.filas.length}</b> alumno(s)${window.SaceLista.hayImportacion(d) ? ' de la lista oficial del SACE' : ''}.
         Nota final = promedio de los cuatro parciales, redondeado. Recuperación: aprobado va «N/A»; en una materia reprobada,
         escribe la nota abajo en <b>✍️ Notas de recuperación</b> (la casilla vacía queda para escribirla a mano). ${cf.inasisOficiales ? 'Inasistencias: la <b>oficial del SACE</b> que escribiste en <b>Notas SACE → 📅 Inasistencias</b> (' + cf.inasisOficiales + ' de ' + cf.filas.length + ' alumnos)' + (cf.inasisOficiales < cf.filas.length ? '; donde está vacía, ' + (cf.inasisFuente === 'pase' ? 'las voluntarias del pase de lista.' : 'lo escrito en cada parcial.') : '.') : cf.inasisFuente === 'pase'

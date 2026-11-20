@@ -737,7 +737,11 @@
     var SL = opc.SL || raiz.SaceLista;
     var notas = (d && d.notas) || {};
     var pers = opc.pers || PERS_DEF;
-    var alumnos = SL.alumnosQueCuentan(d).slice().sort(function (a, b) { return (+a.num || 0) - (+b.num || 0); });
+    /* La MISMA regla de los cinco cuadros (calcular): solo la lista oficial
+       del SACE, sin los que se fueron. Con alumnosQueCuentan, un grupo sin
+       nadie marcado contaba a todos: los cuadros decían 0 y el Cuadro final
+       11, con la ficha sin identidad ni SACE adentro (20 nov. 2026). */
+    var alumnos = SL.matriculaFinal(d).slice().sort(function (a, b) { return (+a.num || 0) - (+b.num || 0); });
     var val = function (p, col, num) { return numero(((notas[p] || {})[col] || {})[num]); };
     var txt = function (p, col, num) { var v = ((notas[p] || {})[col] || {})[num]; return v == null ? '' : String(v).trim().toUpperCase(); };
     var m = mapearMaterias(d.materias);

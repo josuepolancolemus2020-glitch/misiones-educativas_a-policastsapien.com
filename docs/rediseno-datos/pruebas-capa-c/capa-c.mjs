@@ -233,7 +233,8 @@ await prueba('C6 carga rápida: pegar 43 alumnos, tocar dos veces y cortar la se
   await entrar(p);
   await p.click(m('ir-alumnos'));
   await p.click(m('ir-carga-rapida'));
-  const lista = Array.from({ length: 43 }, (_, i) => `Alumna Ficticia C${String(i + 1).padStart(2, '0')}`).join('\n');
+  // Con la F al final: el sexo es obligatorio en la ficha (decisión de Josué, 20 nov.).
+  const lista = Array.from({ length: 43 }, (_, i) => `Alumna Ficticia C${String(i + 1).padStart(2, '0')} F`).join('\n');
   await p.fill(m('carga-pegar'), lista);
   await p.click(m('carga-vista-previa'));
   afirma((await p.locator(m('carga-fila')).count()) === 43, 'la vista previa no muestra 43');
@@ -1156,6 +1157,108 @@ await prueba('C21 lista del SACE: vista previa ✓ ⚠ ✗, guardar una vez, la 
     afirma(await q.evaluate(() => window.__sinRecargarC21) === 1, 'la PC recargó');
     afirma(await q.locator(m('alumno')).count() === 6, 'la PC perdió un alumno');
     afirma(notas() === notasAntes, 'las notas cambiaron después');
+  } finally {
+    await tel.close();
+    await pc.close();
+  }
+});
+
+await prueba('C22 ficha: sexo obligatorio, sin identidad se guarda, la casilla «Registrado en SACE» se ve en la otra pantalla sin recargar y las notas no cambian', async () => {
+  const corr = Date.now().toString(36).toUpperCase().slice(-4);
+  const escuela = 'Escuela Ficticia C22 ' + corr;
+  const ALS = [
+    ['a1', 1, 'Alba Ficticia Uno', '0801201522001', 'F'],
+    ['a2', 2, 'Bruno Ficticio Dos', '0801201522002', 'M'],
+    ['a3', 3, 'Kira Sin Papeles', null, 'F'],
+  ];
+  const archivo = { formato: ['metas-importacion', '1'].join('/'),
+    aula: { escuela, grado: 6, seccion: '2', anio_lectivo: 2027, asignaturas: ['Español', 'Matemáticas'] },
+    alumnos: ALS.map(([ref, n, nombre, idn, sexo]) => Object.assign({ ref, num_lista: n, nombre_completo: nombre, sexo }, idn ? { identidad: idn } : {})),
+    notas: ALS.flatMap(([ref], i) => ['Español', 'Matemáticas'].map((asignatura, j) =>
+      ({ alumno: ref, asignatura, periodo: 'I', valor: String(70 + i * 5 + j) }))) };
+  const tel = await contexto(TAMANOS[0]);
+  const pc = await contexto(TAMANOS[2]);
+  try {
+    const p = await tel.newPage();
+    await entrar(p);
+    await p.click(m('ir-alumnos'));
+    await p.click(m('ir-carga-rapida'));
+    const elegir = p.waitForEvent('filechooser');
+    await p.click(m('importar-elegir'));
+    await (await elegir).setFiles({ name: 'aula-c22.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(archivo)) });
+    await p.waitForSelector(m('importar-vista-previa'), { timeout: 15000 });
+    await p.click(m('importar-guardar'));
+    await p.waitForSelector(m('importar-listo'));
+    const aula = await hasta(() => sql(`select id from metas.aulas where escuela = '${escuela}' and deleted_at is null`), 'el aula no llegó a la base');
+    const notas = () => sql(`select count(*) || '|' || coalesce(sum(valor), 0) || '|' || coalesce(max(version), 0)
+                             from metas.notas where aula_id = '${aula}' and deleted_at is null`);
+    await hasta(() => notas().startsWith('6|'), 'no llegaron las 6 notas');
+    const notasAntes = notas();
+    const enSace = (n) => sql(`select coalesce(bool_or(en_sace)::text, 'nadie') from metas.alumnos where aula_id = '${aula}' and nombre_completo = '${n}' and deleted_at is null`);
+
+    await p.click(m('ir-alumnos'));
+    await hasta(async () => (await p.locator(m('alumno-sin-sace')).count()) === 3, 'el teléfono no avisa «Aún no está en el SACE» de los 3');
+    afirma(/Aún no está en el SACE: no cuenta en estadísticas/.test(await p.locator(m('alumno-sin-sace')).first().innerText()), 'el aviso no dice lo acordado');
+
+    // Alta rápida sin sexo: el navegador no deja (required); con sexo y sin identidad, se guarda.
+    await p.fill('#ma-nuevo-al', 'Lola Ficticia Nueva');
+    await p.locator(m('alta-alumno')).locator('button[type="submit"]').click();
+    afirma(await p.evaluate(() => document.querySelector('[data-metas="alta-sexo-f"]').validity.valueMissing), 'la alta sin sexo no lo pide');
+    await p.check(m('alta-sexo-f'));
+    await p.locator(m('alta-alumno')).locator('button[type="submit"]').click();
+    const lola = await hasta(() => sql(`select sexo || '|' || coalesce(identidad, 'sin') || '|' || en_sace from metas.alumnos where aula_id = '${aula}'
+                                         and nombre_completo = 'Lola Ficticia Nueva' and deleted_at is null`), 'la alumna nueva no llegó a la base');
+    afirma(lola === 'F|sin|false', 'la alta rápida guardó: ' + lola);
+
+    // La PC, en el mismo grupo, sin recargar después.
+    const q = await pc.newPage();
+    await entrar(q);
+    await q.locator(`${m('grupo')}[title*="${escuela}"]`).first().click();
+    await q.click(m('ir-alumnos'));
+    await hasta(async () => (await q.locator(m('alumno')).count()) === 4, 'la PC no ve los 4 alumnos');
+    afirma(await q.locator(m('lista-sace-cuenta')).count() === 0, 'la PC ya dice lista oficial antes de marcar');
+    await q.evaluate(() => { window.__sinRecargarC22 = 1; });
+
+    // El teléfono abre la ficha de Kira (sin identidad) y marca la casilla.
+    await p.locator(m('alumno'), { hasText: 'Kira Sin Papeles' }).locator('button').first().click();
+    await p.waitForSelector(m('alumno-en-sace'));
+    await sinProhibidos(p, 'ficha del alumno');
+    await sinScrollLateral(p, 'ficha del alumno');
+    await botonesDe44(p, 'ficha del alumno');
+    if (process.env.METAS_CAPTURAS) {
+      fs.mkdirSync(process.env.METAS_CAPTURAS, { recursive: true });
+      await p.locator(m('alumno'), { hasText: 'Kira Sin Papeles' }).screenshot({ path: path.join(process.env.METAS_CAPTURAS, 'c22-ficha-sin-sace.png') });
+    }
+    await p.check(m('alumno-en-sace'));
+    await hasta(() => enSace('Kira Sin Papeles') === 'true', 'la casilla no llegó a la base', 30000);
+    afirma(notas() === notasAntes, 'marcar cambió las notas: ' + notasAntes + ' → ' + notas());
+    if (process.env.METAS_CAPTURAS) {
+      await p.locator(m('alumno'), { hasText: 'Kira Sin Papeles' }).screenshot({ path: path.join(process.env.METAS_CAPTURAS, 'c22-ficha-registrado.png') });
+    }
+
+    // La PC lo ve sin recargar; el aviso de Kira se va.
+    await hasta(async () => /En la lista oficial del SACE: 1 de 4/.test(await q.locator(m('lista-sace-cuenta')).innerText().catch(() => '')),
+      'la PC no ve la marca sin recargar', 20000);
+    await hasta(async () => (await q.locator(m('alumno-sin-sace')).count()) === 3, 'la PC sigue avisando de Kira');
+    afirma(await q.evaluate(() => window.__sinRecargarC22) === 1, 'la PC recargó');
+
+    // La PC la desmarca; el teléfono lo ve sin recargar.
+    await q.locator(m('alumno'), { hasText: 'Kira Sin Papeles' }).locator('button').first().click();
+    await q.uncheck(m('alumno-en-sace'));
+    await hasta(() => enSace('Kira Sin Papeles') === 'false', 'desmarcar no llegó a la base', 30000);
+    await hasta(async () => (await p.locator(m('lista-sace-cuenta')).count()) === 0, 'el teléfono no ve que se desmarcó', 20000);
+
+    // Datos para el SACE: los 4 que faltan, Kira sin identidad.
+    await p.click(m('datos-sace-abrir'));
+    await p.waitForSelector(m('datos-sace'));
+    afirma(await p.locator(m('datos-sace-fila')).count() === 4, 'Datos para el SACE no lista a los 4');
+    afirma(/sin identidad/.test(await p.locator(m('datos-sace-fila'), { hasText: 'Kira' }).innerText()), 'Kira no dice «sin identidad»');
+    await botonesDe44(p, 'datos para el SACE');
+    if (process.env.METAS_CAPTURAS) {
+      await p.locator(m('datos-sace')).screenshot({ path: path.join(process.env.METAS_CAPTURAS, 'c22-datos-para-el-sace.png') });
+    }
+    afirma(notas() === notasAntes, 'las notas cambiaron al final');
+    afirma(sql(`select count(*) from metas.alumnos where aula_id = '${aula}' and deleted_at is null`) === '4', 'se borró o se duplicó un alumno');
   } finally {
     await tel.close();
     await pc.close();
