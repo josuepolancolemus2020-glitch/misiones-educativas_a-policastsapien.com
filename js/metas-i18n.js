@@ -256,6 +256,7 @@
     'N.º de Evaluación temática realizada:': 'Topic test number:',
     'Evaluación con valor en el parcial': 'Test counts toward the term grade',
     'Evaluación solo de repaso': 'Practice test only',
+    'Firma del padre o encargado': 'Parent or guardian signature',
     '1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.':
       '1–5 (Fill in): marked by hand → ✓ (A) means a correct answer · 6–10: T=A, F=B · Visual reference only; use the official ZipGrade sheet to scan students.',
     /* mensajes de WhatsApp

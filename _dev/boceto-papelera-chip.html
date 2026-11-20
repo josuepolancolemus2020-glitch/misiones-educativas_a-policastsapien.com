@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Boceto · Papelera en el chip del centro</title>
+<!-- Boceto de prueba: no se publica (_dev/). No es la aplicación.
+     No lee, no guarda, no archiva, no borra y no copia a Drive.
+     Sirve para que Josué vea el flujo y diga si lo aprueba
+     antes de programar nada. La pantalla real no se toca. -->
+<link rel="stylesheet" href="../css/vendor/fuentes/fuentes.css">
+<style>
+:root {
+  --bg: #f0f4f9; --card: #fff; --text: #0f172a; --muted: #475569; --line: #e2e8f0;
+  --azul: #1e3a7c; --ok: #15803d; --ok-tx: #14532d;
+  --mal: #7f1d1d; --mal-bg: #fef2f2; --mal-line: #fecaca;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: #e8eef6; color: var(--text);
+  font-family: Outfit, system-ui, sans-serif; font-size: 15px; line-height: 1.45;
+}
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid #3b82f6; outline-offset: 2px; }
+.pagina { max-width: 880px; margin: 0 auto; padding: 16px 16px 64px; }
+h1 { margin: 0 0 8px; font-size: 22px; color: var(--azul); letter-spacing: -.02em; }
+h2 { margin: 28px 0 8px; font-size: 18px; color: var(--azul); }
+h3 { margin: 0 0 6px; font-size: 15px; }
+p { margin: 0 0 6px; }
+.intro { font-size: 16px; }
+.caja {
+  background: var(--card); border: 2px dashed #94a3b8; border-radius: 16px;
+  padding: 12px 14px; margin: 0 0 10px;
+}
+.caja.archivar { border-color: var(--azul); }
+.caja.borrar { border-color: var(--mal-line); }
+.caja h2 { margin: 0 0 8px; font-size: 16px; }
+.etiqueta {
+  display: inline-block; margin: 0 0 6px; padding: 2px 8px; border-radius: 999px;
+  background: #eef2fb; color: var(--azul); font-size: 13px; font-weight: 800;
+}
+.caja.borrar .etiqueta { background: var(--mal-bg); color: var(--mal); }
+.comparar { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.comparar ul { margin: 0; padding-left: 18px; }
+.comparar li { margin: 0 0 4px; }
+.marcos { display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-start; }
+figure.marco { margin: 0; display: flex; flex-direction: column; gap: 8px; }
+figcaption { font-weight: 800; color: var(--azul); font-size: 14px; }
+.pendiente {
+  margin: 0; padding: 8px 12px; border: 2px dashed #64748b; border-radius: 12px;
+  background: #fff; color: #334155; font-weight: 800; max-width: 800px;
+}
+.pie { margin: 0; color: var(--muted); font-weight: 650; max-width: 800px; }
+#frases-mal {
+  margin: 0 0 12px; padding: 12px; border-radius: 12px; background: #fee2e2; color: var(--mal); font-weight: 800;
+}
+
+/* El teléfono y la computadora usan la misma pantalla, con otro ancho. */
+.pantalla {
+  background: var(--bg); border: 1px solid var(--line); border-radius: 18px; overflow: hidden;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, .05), 0 8px 24px rgba(15, 23, 42, .06);
+  container-type: inline-size;
+}
+.movil .pantalla { width: 390px; }
+.pc .pantalla { width: 800px; }
+.top {
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px;
+  min-height: 56px; padding: 6px 12px; background: var(--card); border-bottom: 1px solid var(--line);
+}
+.volver {
+  justify-self: start; min-height: 44px; min-width: 44px; padding: 0 10px; border: 0; border-radius: 999px;
+  background: transparent; color: var(--azul); font-weight: 800;
+}
+.top h2 { margin: 0; text-align: center; font-size: 18px; color: var(--azul); }
+.hueco { justify-self: end; width: 44px; }
+.cuerpo { padding: 12px 12px 16px; display: flex; flex-direction: column; align-items: stretch; gap: 8px; }
+
+.seg {
+  display: flex; flex-wrap: wrap; gap: 4px; padding: 4px; border-radius: 14px; background: #f1f5f9;
+}
+.chip, .chip-on {
+  flex: 1 1 140px; max-width: 100%; min-width: 0; min-height: 44px; border-radius: 10px;
+}
+.chip {
+  border: 0; background: transparent; color: #334155; font-weight: 700; padding: 8px 12px; text-align: center;
+}
+.chip[aria-pressed="true"] {
+  background: #fff; color: var(--azul);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, .12), inset 0 0 0 1.5px var(--azul);
+}
+.chip-on {
+  display: flex; align-items: stretch; background: #fff; color: var(--azul);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, .12), inset 0 0 0 1.5px var(--azul);
+}
+.chip-nombre {
+  flex: 1 1 auto; min-width: 0; min-height: 44px; border: 0; background: transparent; color: inherit;
+  font-weight: 700; text-align: center; padding: 8px 2px 8px 12px; overflow-wrap: anywhere;
+}
+.basura {
+  flex: 0 0 44px; width: 44px; min-height: 44px; border: 0; border-radius: 10px; background: transparent;
+  color: #64748b; display: inline-flex; align-items: center; justify-content: center;
+}
+.basura svg { width: 16px; height: 16px; display: block; }
+
+.chip-arch {
+  align-self: flex-start; min-height: 44px; padding: 0 14px; border-radius: 999px;
+  border: 1px solid var(--line); background: #f1f5f9; color: #475569; font-weight: 800;
+}
+.barra { display: flex; align-items: center; height: 16px; }
+.barra-linea { flex: 1; height: 4px; border-radius: 999px; background: var(--ok); }
+
+.bloque { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+.pregunta, .fuerte, .ok, .nota, .paso, .pista { overflow-wrap: anywhere; }
+.pregunta { margin: 0; font-weight: 800; }
+.paso { margin: 0; color: var(--muted); font-weight: 800; font-size: 13px; }
+.fuerte { margin: 0; font-weight: 800; color: var(--mal); }
+.ok { margin: 0; font-weight: 800; color: var(--ok-tx); }
+.nota { margin: 0; color: var(--muted); font-weight: 650; }
+.pista { color: var(--muted); font-weight: 700; font-size: 14px; }
+.acciones, .escribe, .fila { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start; }
+.par { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+.btn {
+  min-height: 44px; min-width: 44px; padding: 8px 16px; border-radius: 12px;
+  border: 1.5px solid var(--line); background: var(--card); font-weight: 800; text-align: center;
+}
+.btn-peligro { color: var(--mal); background: var(--mal-bg); border-color: var(--mal-line); }
+.btn-texto { background: transparent; border-color: transparent; color: var(--muted); }
+.btn:disabled { opacity: .4; cursor: default; }
+.escribe input {
+  min-height: 48px; width: 220px; max-width: 100%; padding: 8px 12px; border-radius: 12px;
+  border: 1.5px solid var(--mal-line); background: #fff; font-size: 18px; font-weight: 800;
+  letter-spacing: .12em;
+}
+.drive {
+  display: flex; align-items: center; gap: 10px; width: 100%; max-width: 440px; min-height: 44px;
+  padding: 8px 12px; border-radius: 12px; border: 1px solid var(--line); background: #fff;
+}
+.drive b { display: block; }
+.drive span { color: var(--muted); font-weight: 650; font-size: 14px; }
+.lista { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.lista li { display: flex; flex-direction: column; align-items: stretch; gap: 8px; }
+.nom { flex: 1 1 160px; min-height: 44px; display: flex; align-items: center; font-weight: 800; }
+.grupos { display: flex; flex-wrap: wrap; gap: 8px; }
+.grupo {
+  min-height: 44px; min-width: 64px; padding: 4px 16px; border-radius: 999px;
+  border: 1.5px solid var(--azul); background: var(--azul); color: #fff; font-weight: 800;
+}
+
+@container (max-width: 520px) {
+  .bloque, .acciones, .par, .escribe, .fila { align-items: stretch; }
+  .acciones, .escribe, .fila { flex-direction: column; }
+  .par .btn, .acciones > .btn, .fila .btn, .escribe .btn, .escribe input { width: 100%; }
+}
+@media (max-width: 860px) {
+  .comparar { grid-template-columns: 1fr; }
+  .marco.pc { max-width: 100%; overflow-x: auto; }
+}
+</style>
+</head>
+<body>
+<div class="pagina">
+  <div id="portada" data-shot="00-portada">
+    <h1>Boceto. Papelera en el chip del centro</h1>
+    <p class="intro">Esto no es la aplicación. No guarda ni borra.</p>
+    <p>Estás en Mi aula. El centro elegido lleva una papelera gris, a la derecha del nombre. Un toque abre la pregunta debajo de la fila.</p>
+
+    <div class="comparar">
+      <div class="caja">
+        <h3>Hoy</h3>
+        <ul>
+          <li>Se archiva desde Perfil, al final del formulario.</li>
+          <li>Si hay grupos, no deja archivar.</li>
+          <li>Archivados solo tiene Recuperar.</li>
+          <li>No hay borrado para siempre.</li>
+          <li>No hay copia a Drive.</li>
+        </ul>
+      </div>
+      <div class="caja archivar">
+        <h3>En este boceto</h3>
+        <ul>
+          <li>La papelera está en el chip elegido.</li>
+          <li>Archivar se recupera con sus grupos y alumnos.</li>
+          <li>Borrar pide dos avisos y la palabra BORRAR.</li>
+          <li>Archivados tiene Recuperar y Borrar para siempre.</li>
+          <li>La copia a Drive queda pendiente.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>Hace falta tu sí</h2>
+    <div class="caja archivar">
+      <p class="etiqueta">Archivar</p>
+      <h2>El centro se guarda con sus grupos y alumnos</h2>
+      <p>Hoy un centro con grupos no se archiva.</p>
+      <p>Aquí se archivarían juntos el centro, sus grupos y sus alumnos.</p>
+      <p>Nada se borra. Recuperar los devuelve juntos.</p>
+      <p>No salen en exámenes ni en listas.</p>
+      <p>Hace falta tu sí.</p>
+    </div>
+    <div class="caja borrar">
+      <p class="etiqueta">Borrar para siempre</p>
+      <h2>Hoy la base no puede hacer esto</h2>
+      <p>Hoy no existe el borrado de verdad.</p>
+      <p>Solo se archiva y se puede recuperar.</p>
+      <p>Borrar para siempre pide un cambio en la base.</p>
+      <p>Ese cambio solo borra tus filas.</p>
+      <p>Las de otro maestro no se tocan.</p>
+      <p>Hace falta tu sí.</p>
+    </div>
+    <div class="caja">
+      <p class="etiqueta">Drive</p>
+      <h2>La copia solo está dibujada</h2>
+      <p>Copiar a Drive solo está dibujado.</p>
+      <p>Falta el archivo, la carpeta y la falta de señal.</p>
+      <p>Este boceto no copia nada.</p>
+    </div>
+  </div>
+
+  <p id="frases-mal" hidden></p>
+  <div id="secciones"></div>
+</div>
+
+<script>
+(function () {
+  /* El dibujo se arma aquí para que el móvil y la computadora
+     muestren el mismo flujo. No habla con la base ni con Drive. */
+  var BASURA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><path d="M6.5 7l1 13h9l1-13"/></svg>';
+  var HOJA = '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#1e3a7c" stroke-width="1.8" aria-hidden="true"><path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v6h6"/></svg>';
+
+  var FILA = [
+    { nombre: 'John Arnold Cook', grupo: '6º-1' },
+    { nombre: 'Liceo Panamericano', grupo: '9º-1' },
+    { nombre: 'María Consuelo', grupo: '8º-1' },
+    { nombre: 'María Consuel', grupo: '7º-1' }
+  ];
+
+  function esc(t) {
+    return String(t).replace(/[&<>"]/g, function (s) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[s];
+    });
+  }
+  function marcar(lista, elegido, papelera) {
+    return lista.map(function (c) {
+      var activo = c.nombre === elegido;
+      return {
+        nombre: c.nombre, grupo: c.grupo, activo: activo,
+        papelera: !!(activo && papelera)
+      };
+    });
+  }
+  function vivosSin(nombre, elegido) {
+    return marcar(FILA.filter(function (c) { return c.nombre !== nombre; }), elegido, true);
+  }
+
+  function chip(c) {
+    if (c.activo && c.papelera) {
+      return '<div class="chip-on"><button type="button" class="chip-nombre" aria-pressed="true">'
+        + esc(c.nombre) + '</button><button type="button" class="basura" aria-label="Archivar o borrar '
+        + esc(c.nombre) + '">' + BASURA + '</button></div>';
+    }
+    return '<button type="button" class="chip" aria-pressed="' + (c.activo ? 'true' : 'false') + '">'
+      + esc(c.nombre) + '</button>';
+  }
+  function btn(clase, texto, extra) {
+    return '<button type="button" class="btn ' + clase + ' frase"' + (extra || '') + '>' + esc(texto) + '</button>';
+  }
+  function opciones(pregunta) {
+    return '<p class="pregunta frase">' + esc(pregunta) + '</p><div class="acciones"><div class="par">'
+      + btn('', 'Archivar') + '<span class="pista frase">Puedes recuperarlo luego.</span></div>'
+      + btn('btn-peligro', 'Borrar para siempre') + btn('btn-texto', 'Cancelar') + '</div>';
+  }
+  function aviso1() {
+    return '<p class="paso frase">Aviso 1 de 2</p><p class="fuerte frase">Se borrarán María Consuel, 1 grupo y 0 alumnos.</p>'
+      + '<div class="acciones">' + btn('', 'Copiar a Drive primero') + btn('', 'Seguir')
+      + btn('btn-texto', 'Cancelar') + '</div>';
+  }
+  function drive() {
+    return '<div class="drive">' + HOJA + '<div><b class="frase">María Consuel</b>'
+      + '<span class="frase">Incluye perfil, grupos, alumnos y notas.</span></div></div>'
+      + '<p class="ok frase">Listo: la copia quedó en tu Drive.</p><div class="acciones">'
+      + btn('', 'Seguir') + btn('btn-texto', 'Cancelar') + '</div>';
+  }
+  function aviso2(escrito) {
+    var valor = escrito ? ' value="BORRAR"' : '';
+    var apagado = escrito ? '' : ' disabled';
+    return '<p class="paso frase">Aviso 2 de 2</p><p class="fuerte frase">No se puede deshacer. Escribe BORRAR para confirmar.</p>'
+      + '<div class="escribe"><input aria-label="Escribe BORRAR" autocomplete="off" autocapitalize="characters" spellcheck="false"'
+      + valor + ' data-confirmar><button type="button" class="btn btn-peligro frase" data-borrar' + apagado
+      + '>Borrar para siempre</button></div><div class="acciones">' + btn('btn-texto', 'Cancelar') + '</div>';
+  }
+  function filaArch(nombre, conAviso) {
+    var h = '<li><div class="fila"><span class="nom frase">' + esc(nombre) + '</span>'
+      + '<button type="button" class="btn frase" aria-label="Recuperar ' + esc(nombre) + '">Recuperar</button>'
+      + '<button type="button" class="btn btn-peligro frase" aria-label="Borrar para siempre ' + esc(nombre)
+      + '">Borrar para siempre</button></div>';
+    if (conAviso) h += '<div class="bloque">' + aviso1() + '</div>';
+    return h + '</li>';
+  }
+  function pintar(e) {
+    var activo = e.centros.filter(function (c) { return c.activo; })[0];
+    var h = '<header class="top"><button type="button" class="volver">Volver</button><h2>Mi aula</h2><span class="hueco" aria-hidden="true"></span></header><div class="cuerpo">';
+    h += '<div class="seg" role="group" aria-label="Tus centros">' + e.centros.map(chip).join('') + '</div>';
+    /* El grupo va con el chip elegido. La pregunta y Archivados quedan debajo,
+       para que el 7º-1 no parezca de un centro ya guardado. */
+    if (activo && activo.grupo) {
+      h += '<div class="grupos" role="group" aria-label="Grupos de este centro"><button type="button" class="grupo" aria-pressed="true">'
+        + esc(activo.grupo) + '</button></div>';
+    } else if (e.sinGrupos) {
+      h += '<p class="nota frase">Este centro no tiene grupos.</p>';
+    }
+    if (e.barra) {
+      h += '<div class="barra" role="status" aria-label="Listo"><span class="barra-linea" aria-hidden="true"></span></div>';
+    }
+    if (e.archivados) {
+      h += '<button type="button" class="chip-arch frase">Archivados (' + e.archivados + ')</button>';
+    }
+    if (e.bloque) h += '<div class="bloque">' + e.bloque + '</div>';
+    if (e.lista) {
+      h += '<ul class="lista">' + e.lista.map(function (f) { return filaArch(f.nombre, f.aviso); }).join('') + '</ul>';
+    }
+    return h + '</div>';
+  }
+
+  var con = marcar(FILA, 'María Consuel', true);
+  var ovidio = marcar([
+    { nombre: 'John Arnold Cook', grupo: '6º-1' },
+    { nombre: 'Liceo Panamericano', grupo: '9º-1' },
+    { nombre: 'María Consuelo', grupo: '8º-1' },
+    { nombre: 'Ovidio Decroly' }
+  ], 'Ovidio Decroly', true);
+  var queda = vivosSin('María Consuel', 'María Consuelo');
+
+  var SECCIONES = [
+    {
+      id: 'normal', titulo: '1. Normal', shot: '01-normal',
+      pies: ['La papelera va solo en el centro elegido.'],
+      estado: { centros: con }
+    },
+    {
+      id: 'con-grupos', titulo: '2. Confirmación con grupos', shot: '02-con-grupos',
+      pies: ['La pregunta queda debajo de la fila.', 'Archivar se puede recuperar. Borrar es rojo.'],
+      estado: { centros: con, bloque: opciones('¿Archivar María Consuel y su grupo 7º-1?') }
+    },
+    {
+      id: 'sin-grupos', titulo: '3. Confirmación sin grupos', shot: '03-sin-grupos',
+      pies: ['Si no hay grupos, la pregunta no los nombra.'],
+      estado: { centros: ovidio, sinGrupos: true, bloque: opciones('¿Archivar Ovidio Decroly?') }
+    },
+    {
+      id: 'aviso-1', titulo: '4. Borrar, primer aviso', shot: '04-aviso-1',
+      pies: ['Este es el primero. Todavía no se borra.'],
+      estado: { centros: con, bloque: aviso1() }
+    },
+    {
+      id: 'drive', titulo: '5. Copiar a Drive', shot: '05-drive', pendiente: true,
+      pies: ['Perfil, grupos, alumnos y notas.', 'Falta el diseño técnico.'],
+      estado: { centros: con, bloque: drive() }
+    },
+    {
+      id: 'aviso-2', titulo: '6. Borrar, segundo aviso apagado', shot: '06-aviso-2-apagado',
+      pies: ['Con el campo vacío el botón no responde.'],
+      estado: { centros: con, bloque: aviso2(false) }
+    },
+    {
+      id: 'aviso-2-listo', titulo: '7. Borrar, segundo aviso listo', shot: '07-aviso-2-listo',
+      pies: ['El botón despierta solo si escribes BORRAR.'],
+      estado: { centros: con, bloque: aviso2(true) }
+    },
+    {
+      id: 'tras-archivar', titulo: '8. Después de archivar', shot: '08-tras-archivar',
+      pies: [
+        'Sale de la fila y queda el siguiente.',
+        'Si era el último, queda el de la izquierda.',
+        'La barra verde dura 2 segundos, sin texto.',
+        'Aparece o sube Archivados.'
+      ],
+      estado: { centros: queda, barra: true, archivados: 1 }
+    },
+    {
+      id: 'tras-borrar', titulo: '9. Después de borrar', shot: '09-tras-borrar',
+      pies: ['No queda en Archivados.', 'No sale en exámenes ni en listas.'],
+      estado: { centros: queda }
+    },
+    {
+      id: 'ultimo', titulo: '10. Último centro', shot: '10-ultimo',
+      pies: ['El último centro vivo no trae papelera.', 'Desde Archivados sí se puede borrar.'],
+      estado: {
+        centros: marcar([{ nombre: 'John Arnold Cook', grupo: '6º-1' }], 'John Arnold Cook', false),
+        archivados: 3
+      }
+    },
+    {
+      id: 'archivados', titulo: '11. Archivados', shot: '11-archivados',
+      pies: ['Cada uno tiene Recuperar y Borrar para siempre.', 'La lista va en la misma pantalla.'],
+      estado: {
+        centros: queda, archivados: 2,
+        lista: [{ nombre: 'María Consuel' }, { nombre: 'Ovidio Decroly' }]
+      }
+    },
+    {
+      id: 'borrar-archivado', titulo: '12. Borrar uno archivado', shot: '12-borrar-archivado',
+      pies: ['Las mismas dos advertencias, debajo de ese centro.'],
+      estado: {
+        centros: queda, archivados: 2,
+        lista: [{ nombre: 'María Consuel', aviso: true }, { nombre: 'Ovidio Decroly' }]
+      }
+    }
+  ];
+
+  function palabras(s) {
+    return String(s).replace(/[¿?¡!.,:«»]/g, ' ').replace(/\s+/g, ' ').trim().split(' ').filter(Boolean);
+  }
+  function revisar() {
+    var mal = [];
+    document.querySelectorAll('.pantalla').forEach(function (p) {
+      var vistos = [];
+      function mirar(t) {
+        var limpio = String(t || '').replace(/\s+/g, ' ').trim();
+        if (!limpio || vistos.indexOf(limpio) !== -1) return;
+        vistos.push(limpio);
+        var n = palabras(limpio).length;
+        if (n > 12) mal.push(n + ' palabras: ' + limpio);
+      }
+      p.querySelectorAll('button, .frase, h2').forEach(function (el) { mirar(el.textContent); });
+      p.querySelectorAll('[aria-label]').forEach(function (el) { mirar(el.getAttribute('aria-label')); });
+    });
+    return mal;
+  }
+  function ligar() {
+    document.querySelectorAll('[data-confirmar]').forEach(function (input) {
+      var boton = input.parentNode.querySelector('[data-borrar]');
+      function sync() { boton.disabled = input.value !== 'BORRAR'; }
+      input.addEventListener('input', sync);
+      sync();
+    });
+  }
+  function armar() {
+    var main = document.getElementById('secciones');
+    SECCIONES.forEach(function (s) {
+      var sec = document.createElement('section');
+      sec.id = s.id;
+      sec.innerHTML = '<h2>' + esc(s.titulo) + '</h2>';
+      var marcos = document.createElement('div');
+      marcos.className = 'marcos';
+      ['movil', 'pc'].forEach(function (ancho) {
+        var fig = document.createElement('figure');
+        fig.className = 'marco ' + ancho;
+        fig.setAttribute('data-shot', s.shot + '-' + (ancho === 'movil' ? 'movil' : 'pc'));
+        var cap = ancho === 'movil' ? 'Móvil · 390' : 'Computadora';
+        fig.innerHTML = '<figcaption>' + esc(s.titulo + ' · ' + cap) + '</figcaption>'
+          + (s.pendiente ? '<p class="pendiente">Pendiente de diseño técnico. El boceto no copia nada.</p>' : '')
+          + '<div class="pantalla"></div>'
+          + (s.pies || []).map(function (p) { return '<p class="pie">' + esc(p) + '</p>'; }).join('');
+        fig.querySelector('.pantalla').innerHTML = pintar(s.estado);
+        marcos.appendChild(fig);
+      });
+      sec.appendChild(marcos);
+      main.appendChild(sec);
+    });
+    ligar();
+    var mal = revisar();
+    var caja = document.getElementById('frases-mal');
+    if (mal.length) {
+      caja.hidden = false;
+      caja.textContent = mal.join(' · ');
+      document.body.setAttribute('data-frases', 'mal');
+    } else {
+      document.body.setAttribute('data-frases', 'ok');
+    }
+    document.body.setAttribute('data-listo', '1');
+  }
+  armar();
+})();
+</script>
+</body>
+</html>

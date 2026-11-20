@@ -232,6 +232,24 @@
     return t ? Array.from(t.values()) : [];
   }
 
+  function nombresTablas(owner) {
+    var porCuenta = filas.get(owner);
+    return porCuenta ? Array.from(porCuenta.keys()) : [];
+  }
+
+  // Quita la copia local de una fila que la base ya borró de verdad.
+  // No toca otras cuentas. La líder avisa a las demás pestañas.
+  function quitarFila(owner, tabla, id) {
+    var porCuenta = filas.get(owner);
+    var t = porCuenta && porCuenta.get(tabla);
+    if (t) t.delete(id);
+    if (!lider) return;
+    escribir('filas', function (tx) {
+      tx.objectStore('filas').delete(owner + '|' + tabla + '|' + id);
+    });
+    enviar({ t: 'quitar', owner: owner, tabla: tabla, id: id });
+  }
+
   // Al cerrar sesión con todo enviado, la copia de esa cuenta se borra del
   // aparato (02, 2.6): el próximo que entre no ve datos de otro docente.
   // Y las lecturas de la base que el service worker había guardado en
@@ -397,7 +415,9 @@
     alMensaje: function (f) { oyentesMensaje.push(f); },
     fila: fila,
     filasDe: filasDe,
+    nombresTablas: nombresTablas,
     guardarFila: guardarFila,
+    quitarFila: quitarFila,
     olvidarCuenta: olvidarCuenta,
     cola: function () { return cola; },
     misEntrantes: function () { return misEntrantes; },

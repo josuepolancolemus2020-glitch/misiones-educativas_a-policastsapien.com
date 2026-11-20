@@ -28,7 +28,13 @@ async function caja(page, sel) {
     const medio = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
     return {
       w: r.width, h: r.height, top: r.top, left: r.left, bottom: r.bottom,
-      visible: r.width >= 44 && r.height >= 44 && r.top >= 0 && r.left >= 0
+      /* ⚠️ Se redondea a la unidad con que Chromium coloca las cajas (1/64 de px)
+         antes de comparar, como en verifica-notas-sace-simple. Lo que mide 44 px de
+         verdad (min-height: 44px) a veces vuelve como 43,99998 por la resta en coma
+         flotante de getBoundingClientRect, y la sonda salía roja o verde según la
+         corrida sin que cambiara un píxel. Lo que no mide 44 (43,98 o menos) sigue
+         saliendo rojo. */
+      visible: Math.round(r.width * 64) / 64 >= 44 && Math.round(r.height * 64) / 64 >= 44 && r.top >= 0 && r.left >= 0
         && r.bottom <= window.innerHeight && r.right <= window.innerWidth,
       encima: !!(medio && (medio === el || el.contains(medio))),
       texto: (el.innerText || '').trim(),

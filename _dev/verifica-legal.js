@@ -103,7 +103,13 @@ const ok = (nombre, cond, extra) => {
     const c = await enlacePadres.first().boundingBox();
     /* 44 px es lo que un dedo acierta sin mirar; es la misma regla de los
        juegos 3D y vale igual aquí. */
-    ok('y se puede tocar (44 px)', c && c.width >= 44 && c.height >= 44,
+    /* ⚠️ Se redondea a la unidad con que Chromium coloca las cajas (1/64 de px)
+       antes de comparar, como en verifica-notas-sace-simple. Lo que mide 44 px de
+       verdad (min-height: 44px) a veces vuelve como 43,99998 por la resta en coma
+       flotante de getBoundingClientRect, y la sonda salía roja o verde según la
+       corrida sin que cambiara un píxel. Lo que no mide 44 (43,98 o menos) sigue
+       saliendo rojo. */
+    ok('y se puede tocar (44 px)', c && Math.round(c.width * 64) / 64 >= 44 && Math.round(c.height * 64) / 64 >= 44,
        c && { w: Math.round(c.width), h: Math.round(c.height) });
   }
 

@@ -177,7 +177,13 @@ async function captura(win, nombre) {
       fecha: caja.querySelector('#metas-datos-fecha').value,
       hoy: hoy.getFullYear() + '-' + dos(hoy.getMonth() + 1) + '-' + dos(hoy.getDate()),
       botones: [...caja.querySelectorAll('button')].map(b => b.textContent.trim()),
-      minAlto: Math.min(...toques.map(b => b.getBoundingClientRect().height)),
+      /* ⚠️ Se redondea a la unidad con que Chromium coloca las cajas (1/64 de px)
+         antes de comparar, como en verifica-notas-sace-simple. Lo que mide 44 px de
+         verdad (min-height: 44px) a veces vuelve como 43,99998 por la resta en coma
+         flotante de getBoundingClientRect, y la sonda salía roja o verde según la
+         corrida sin que cambiara un píxel. Lo que no mide 44 (43,98 o menos) sigue
+         saliendo rojo. */
+      minAlto: Math.min(...toques.map(b => Math.round(b.getBoundingClientRect().height * 64) / 64)),
       ancho: document.documentElement.scrollWidth,
     };
   });
@@ -202,13 +208,13 @@ async function captura(win, nombre) {
   ok(h.ladoLogo >= 60 && h.altoLogo === h.ladoLogo, '(b) el logo es cuadrado y mide 60 px o más', { ancho: h.ladoLogo, alto: h.altoLogo });
   ok(h.aLaDerecha, '(b) el docente, el título y el Nombre van a la derecha del logo, sin taparlo');
   ok(h.copiaQuitada, '(b) el encabezado de siempre, que va al lado para medir, ya no está en la hoja abierta');
-  ok(h.texto.startsWith('CENTRO DE EDUCACIÓN BÁSICA LAS FLORES Colonia Ficticia, Villanueva Docente: Docente Ficticia · Grado y Sección: 6º-1 · Parcial: II · Fecha: 19 de noviembre de 2026'),
+  ok(h.texto.startsWith('CENTRO DE EDUCACIÓN BÁSICA LAS FLORES Colonia Ficticia, Villanueva, Cortés Docente: Docente Ficticia · Grado y Sección: 6º-1 · Parcial: II · Fecha: 19 de noviembre de 2026'),
     '(b) el nombre, el lugar, y ya escritos el docente, el grado, el parcial y la fecha', h.texto.slice(0, 180));
   ok(h.letraDocente === h.letraLugar && h.letraLugar > 0, '(b) con la misma letra que la dirección', { docente: h.letraDocente, lugar: h.letraLugar });
   ok(!/Instituto:|Centro Educativo:/.test(h.texto) && /Nombre: N\.º de lista:/.test(h.texto) && (h.texto.match(/Parcial:/g) || []).length === 1,
     '(b) sin la raya del centro; el alumno tiene un solo renglón (Nombre y N.º de lista) y nada sale dos veces', h.texto);
-  ok(h.texto.indexOf('Fecha:') < h.texto.indexOf('Evaluación Final · La Materia') && h.texto.indexOf('Evaluación Final · La Materia') < h.texto.indexOf('Nombre:'),
-    '(b) el título del examen va entre el renglón del docente y el del alumno');
+  ok(h.texto.indexOf('Fecha:') < h.texto.indexOf('Evaluación · La Materia · Ciencias Naturales') && h.texto.indexOf('Evaluación · La Materia · Ciencias Naturales') < h.texto.indexOf('Nombre:'),
+    '(b) el título del examen, «Evaluación · Tema · Materia», va entre el renglón del docente y el del alumno');
   ok(h.altoMm <= 252.5, '(b) la hoja sigue cabiendo en la carta', h.altoMm.toFixed(1));
   ok(await pautasVistas(pg) === pautasAntes + 1, '(b) imprimir sí anota «vio la pauta», como siempre');
   await captura(win, 'con-perfil.png');
@@ -231,7 +237,7 @@ async function captura(win, nombre) {
   await preparar(pg, { centros: [CENTRO_A, CENTRO_B], sesion: SESION, actual: 'aula-2' });
   win = await hojaConDatos(pg, 'printEval', { parcial: 'IV', fecha: '2027-03-02' });
   h = await leerHoja(win);
-  ok(h.marca === 'centro' && h.texto.startsWith('ESCUELA FICTICIA EL PORVENIR Danlí Docente: Docente De La Cuenta · Grado y Sección: 6º-1 · Parcial: IV · Fecha: 2 de marzo de 2027')
+  ok(h.marca === 'centro' && h.texto.startsWith('ESCUELA FICTICIA EL PORVENIR Danlí, El Paraíso Docente: Docente De La Cuenta · Grado y Sección: 6º-1 · Parcial: IV · Fecha: 2 de marzo de 2027')
     && !h.texto.includes('LAS FLORES'),
     '(c) sale el centro activo con su grupo (sin docente en el centro, el de la cuenta)', h.texto.slice(0, 140));
   await captura(win, 'con-perfil-segundo-centro.png');
@@ -254,11 +260,17 @@ async function captura(win, nombre) {
   await win.close();
 
   console.log('\n── (d) sin centro que elegir, y un centro activo archivado ──');
+  /* Con sesión, la hoja sin centro es la de (a) con el título y el pie
+     limpios («Evaluación · Tema · Materia» y la firma del padre), como lo
+     pidió Josué el 20 de noviembre. */
+  const hoyLimpio = await pg.evaluate(x => MotorMisiones.centro.limpia(x), hoy.html);
+  const textoLimpio = hoy.texto.replace('Evaluación Final · La Materia · Educación Básica · Ciencias Naturales', 'Evaluación · La Materia · Ciencias Naturales');
+  ok(textoLimpio !== hoy.texto && hoyLimpio !== hoy.html, '(d) la hoja de (a), con el título limpio');
   await preparar(pg, { centros: [CENTRO_A, CENTRO_B], sesion: SESION, actual: null, perfiles: [] });
   win = await hojaDe(pg, () => pg.evaluate(() => printEval()));
   h = await leerHoja(win);
-  ok(h.marca === 'sin' && !h.logo && h.texto === hoy.texto, '(d) varios, sin activo y sin último: la hoja de siempre, con la raya para escribir el centro', h.texto.slice(0, 120));
-  ok(h.html.replace(' data-metas-encabezado="sin"', '') === hoy.html, '(d) el encabezado es el mismo de (a), byte por byte');
+  ok(h.marca === 'sin' && !h.logo && h.texto === textoLimpio, '(d) varios, sin activo y sin último: la hoja de siempre, con la raya para escribir el centro', h.texto.slice(0, 120));
+  ok(h.html.replace(' data-metas-encabezado="sin"', '') === hoyLimpio, '(d) es la de (a), byte por byte, con el título y el pie limpios');
   ok(!(await haySelector(pg)) && !(await pg.$('.metas-datos-velo')), '(d) sin logo no se pregunta nada: ni centro, ni parcial, ni fecha');
   await win.close();
 
@@ -276,7 +288,7 @@ async function captura(win, nombre) {
   await preparar(pg, { centros: [CENTRO_A, CENTRO_B], sesion: SESION, actual: 'aula-3', perfiles: [CENTRO_A, CENTRO_B, CENTRO_C], archivados: ['c-c'], ultimo: 'c-b' });
   win = await hojaDe(pg, () => pg.evaluate(() => printEval()));
   h = await leerHoja(win);
-  ok(h.marca === 'sin' && !h.logo && h.texto === hoy.texto && !(await pg.$('.metas-datos-velo')),
+  ok(h.marca === 'sin' && !h.logo && h.texto === textoLimpio && !(await pg.$('.metas-datos-velo')),
     '(d) activo archivado y dos vivos: la hoja sin encabezado personalizado, aunque el último usado siga vivo', h.texto.slice(0, 80));
   await win.close();
 

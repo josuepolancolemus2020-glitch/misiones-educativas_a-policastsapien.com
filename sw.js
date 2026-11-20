@@ -15,7 +15,7 @@
 //    las etiquetas ?v=NN de las páginas (normativa de sellado del CLAUDE.md).
 //    CACHE_DATOS no se toca nunca: subirlo volvería a borrarle al alumno lo
 //    que tenía guardado, que es justo lo que este arreglo vino a evitar.
-const CACHE_NAME = 'meta-app-v573';
+const CACHE_NAME = 'meta-app-v576';
 const CACHE_APP = CACHE_NAME;
 const CACHE_DATOS = 'meta-datos-v1';
 
@@ -278,10 +278,41 @@ function purgarLecturasDeLaBase(nombres) {
   ));
 }
 
+/* Antes de borrar un armazón viejo se rescata lo que sigue valiendo.
+
+   Los service worker de antes (v13, v145...) guardaban en SU meta-app-vNNN
+   cada guion que pedía la página. Al activarse este, esa caché se borraba
+   entera, y el aviso «guardar-vistos» de la portada no alcanzaba a reponer
+   nada: sus descargas quedaban en cola detrás de las ~93 de la instalación
+   (Chromium atiende 6 a la vez por servidor) y PLAZO_INSTALA dejaba de
+   esperarlas. CACHE_DATOS quedaba vacía, y la siguiente apertura con la
+   señal colgada esperaba 10 s por cada guion que faltaba: la aplicación
+   instalada desde junio se quedaba trabada. Lo vio
+   _dev/verifica-arranque-sw.js en el CI desde el 16 de noviembre de 2026,
+   cuando la portada pasó de 41 a 55 guiones.
+
+   Se copia de caché a caché, sin tocar la red, así que no le gasta datos al
+   maestro. Solo lo propio y con sello (?v=NN): la dirección exacta es ESE
+   archivo y no otro. Lo demás (la portada, las letras, lo sin sello) pudo
+   haber cambiado y no se rescata. Lo que ya está en CACHE_DATOS no se pisa. */
+function rescatarSellados(viejo) {
+  return Promise.all([caches.open(viejo), caches.open(CACHE_DATOS)]).then(([de, a]) =>
+    de.keys().then(reqs => Promise.all(reqs.map(req => {
+      let url;
+      try { url = new URL(req.url); } catch (_) { return null; }
+      if (url.origin !== location.origin || !conSello(url)) return null;
+      return a.match(req).then(ya => ya ? null : de.match(req).then(copia =>
+        copiaValida(copia) && copia.type !== 'opaque' ? a.put(req, copia) : null));
+    })))
+  ).catch(() => {});
+}
+
 function limpiarLoViejo() {
   return caches.keys().then(keys =>
     Promise.all(keys.map(key =>
-      (key.indexOf('meta-app-') === 0 && key !== CACHE_APP) ? caches.delete(key) : null
+      (key.indexOf('meta-app-') === 0 && key !== CACHE_APP)
+        ? rescatarSellados(key).then(() => caches.delete(key))
+        : null
     )).then(() => purgarLecturasDeLaBase(keys))
   );
 }
