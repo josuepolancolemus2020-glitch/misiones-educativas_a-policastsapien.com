@@ -93,14 +93,17 @@ function recuperar(db, uid, id) {
   });
   return { ok: true };
 }
-const TABLAS_FRENO = ['pagos', 'colectas', 'gastos', 'gastos_docente', 'bienes', 'notas', 'asistencia', 'notas_personalidad'];
+const TABLAS_FRENO = ['pagos', 'colectas', 'gastos', 'gastos_docente', 'bienes', 'notas', 'asistencia', 'notas_personalidad', 'colecta_exenciones'];
 function tieneHistorial(db, uid, id) {
   const aulas = db.aulas.filter(function (a) { return a.owner === uid && a.centro_id === id; }).map(function (a) { return a.id; });
   const gastos = (db.gastos_docente || []).filter(function (g) { return g.owner === uid && aulas.indexOf(g.aula_id) >= 0; }).map(function (g) { return g.id; });
+  const conv = (db.convocatorias || []).filter(function (c) { return c.owner === uid && aulas.indexOf(c.aula_id) >= 0; }).map(function (c) { return c.id; });
   for (let i = 0; i < TABLAS_FRENO.length; i++) {
     const filas = db[TABLAS_FRENO[i]] || [];
     if (filas.some(function (f) { return f.owner === uid && aulas.indexOf(f.aula_id) >= 0; })) return true;
   }
+  if ((db.convocatoria_pagos || []).some(function (f) { return f.owner === uid && conv.indexOf(f.convocatoria_id) >= 0; })) return true;
+  if ((db.convocatoria_inscritos || []).some(function (f) { return f.owner === uid && conv.indexOf(f.convocatoria_id) >= 0; })) return true;
   return (db.reembolsos || []).some(function (r) { return r.owner === uid && gastos.indexOf(r.gasto_id) >= 0; });
 }
 function borrar(db, uid, id) {
@@ -187,6 +190,13 @@ ok('un gasto impide el borrado', seNiega(function (db2) {
 ok('una nota impide el borrado', seNiega(function (db2) {
   db2.notas.push({ id: 'nn', owner: 'A', aula_id: 'gv', deleted_at: null });
 }));
+ok('un pago de convocatoria impide el borrado', seNiega(function (db2) {
+  db2.convocatorias = [{ id: 'cv', owner: 'A', aula_id: 'gv', deleted_at: null }];
+  db2.convocatoria_pagos = [{ id: 'cp', owner: 'A', convocatoria_id: 'cv', deleted_at: '2026-11-01' }];
+}));
+ok('una exención impide el borrado', seNiega(function (db2) {
+  db2.colecta_exenciones = [{ id: 'ex', owner: 'A', aula_id: 'gv', deleted_at: null }];
+}));
 
 /* ── El SQL dice lo mismo ────────────────────────────────────── */
 ok('hay tres funciones del centro', /function metas\.centro_archivar\(/.test(sql)
@@ -207,6 +217,8 @@ ok('la traba mira pagos, gastos, notas y lo archivado',
   && /notas_personalidad/.test(guarda) && /metas\.asistencia/.test(guarda)
   && /metas\.colectas/.test(guarda) && /gastos_docente/.test(guarda)
   && /metas\.reembolsos/.test(guarda) && /metas\.bienes/.test(guarda)
+  && /metas\.colecta_exenciones/.test(guarda)
+  && /metas\.convocatoria_pagos/.test(guarda) && /metas\.convocatoria_inscritos/.test(guarda)
   && !/deleted_at is null/.test(guarda));
 
 sql.split(/delete from metas\./i).slice(1).forEach(function (trozo) {
