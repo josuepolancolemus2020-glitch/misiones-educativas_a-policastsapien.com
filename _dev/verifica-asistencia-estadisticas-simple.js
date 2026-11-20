@@ -171,8 +171,14 @@ function sembrado() {
   for (const tab of ['asis', 'est']) {
     await abrirTab(pc, tab, VISTAS);
     await pc.waitForTimeout(200);
+    /* ⚠️ Se redondea a la unidad con que Chromium coloca las cajas (1/64 de px)
+       antes de comparar, como en verifica-notas-sace-simple. Lo que mide 44 px de
+       verdad (min-height: 44px) a veces vuelve como 43,99998 por la resta en coma
+       flotante de getBoundingClientRect, y la sonda salía roja o verde según la
+       corrida sin que cambiara un píxel. Lo que no mide 44 (43,98 o menos) sigue
+       saliendo rojo. */
     const m = await pc.evaluate(() => ({ deLado: document.documentElement.scrollWidth > innerWidth,
-      chicos: [...document.querySelectorAll('#ad-tab-body .ad-herr, #ad-tab-body .ad-sace-ayuda, #est-alumno')].filter(b => b.getBoundingClientRect().height < 44).length }));
+      chicos: [...document.querySelectorAll('#ad-tab-body .ad-herr, #ad-tab-body .ad-sace-ayuda, #est-alumno')].filter(b => Math.round(b.getBoundingClientRect().height * 64) / 64 < 44).length }));
     comprueba(tab + ': la página no se corre de lado y los botones nuevos miden 44 px', !m.deLado && m.chicos === 0, m);
   }
   await pc.close();
