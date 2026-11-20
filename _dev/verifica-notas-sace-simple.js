@@ -222,7 +222,7 @@ const POR_VISTA = {
   await pg.keyboard.press('Enter');
   comprueba('Enter baja al siguiente alumno', await pg.evaluate(() => document.activeElement.dataset.ofiNum) === '2');
   await pg.keyboard.type('0');
-  const g = await pg.evaluate(() => { const d = adLoad(); return { ofi: d.inasisOficial, cf: ResumenSace.cuadroFinal(d, { SL: Object.assign({}, SaceLista, { alumnosQueCuentan: x => x.lista }), pers: AD_PERSONALIDAD }) }; });
+  const g = await pg.evaluate(() => { const d = adLoad(); return { ofi: d.inasisOficial, cf: ResumenSace.cuadroFinal(d, { SL: Object.assign({}, SaceLista, { alumnosQueCuentan: x => x.lista, matriculaFinal: x => x.lista }), pers: AD_PERSONALIDAD }) }; });
   comprueba('se guarda aparte, en inasisOficial (9 y 0), sin tocar las notas',
     JSON.stringify(g.ofi) === '{"1":9,"2":0}' && await notas(pg) === n0, g.ofi);
   comprueba('y es la que lleva el Cuadro final', g.cf.filas.find(f => f.num === 1).inasis === 9 && g.cf.filas.find(f => f.num === 2).inasis === 0 && g.cf.inasisOficiales === 2);

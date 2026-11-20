@@ -545,4 +545,129 @@ await escenario('B14 claves de familia: todas nuevas, sin preguntas, la segunda 
   }
 });
 
+// La lista oficial del SACE en filas: el teléfono importa el CSV con la
+// misma regla de la pantalla (js/tools/sace-lista.js: emparejarFilas y
+// cambiosFilas) y la tablet ve la marca por Realtime, sin recargar. Solo se
+// editan alumnos: ni una fila de notas cambia, nadie se borra.
+await escenario('B15 lista del SACE: un editar por alumno, la otra tablet ve en_sace sin recargar y las notas no cambian', async () => {
+  const { createRequire } = await import('node:module');
+  const SL = createRequire(import.meta.url)('../../../js/tools/sace-lista.js');
+  const tel = await entrar('sace-telefono');
+  const tablet = await entrar('sace-tablet');
+  const aula = tel.d.crear('aulas', {
+    escuela: 'Escuela Ficticia SACE B15', grado: 6, seccion: (Number(process.hrtime.bigint() % 46656n)).toString(36),
+    anio_lectivo: 2027, docente_nombre: 'Docente Ficticia A',
+  }).id;
+  const datos = [
+    ['Alba Ficticia Uno', '0801201515001', 'F'], ['Bruno Ficticio Dos', '0801201515002', 'M'],
+    ['Cira Ficticia Tres', null, 'F'], ['Kira Fuera Del Sace', null, 'F'],
+  ];
+  const ids = datos.map(([n, idn, sexo], i) => tel.d.crear('alumnos', {
+    aula_id: aula, nombre_completo: n, num_lista: i + 1, sexo, ...(idn ? { identidad: idn } : {}),
+  }).id);
+  const asig = tel.d.crear('asignaturas', { aula_id: aula, nombre: 'Matemáticas', orden: 1 }).id;
+  ids.forEach((al, i) => tel.d.crear('notas', { aula_id: aula, alumno_id: al, asignatura_id: asig, periodo: 'I', valor: String(70 + i * 7) }));
+  await tel.d.esperarCola();
+  const notas = () => sql(`select count(*) || '|' || coalesce(sum(valor), 0) || '|' || coalesce(max(version), 0)
+                           from metas.notas where aula_id = '${aula}' and deleted_at is null`);
+  const antes = notas();
+  afirma(antes.startsWith('4|'), 'no llegaron las 4 notas: ' + antes);
+
+  let avisos = 0;
+  tablet.d.escuchar(({ tabla }) => { if (tabla === 'alumnos') avisos++; });
+  // El número del SACE va al revés del de la lista: no debe usarse.
+  const csv = 'num;identidad;nombre;sexo;fecha_nacimiento;edad_sace;estado\n'
+    + '3;0801201515001;ALBA FICTICIA UNO;F;2015-02-10;11;Activo\n'
+    + '2;0801201515002;BRUNO FICTICIO DOS;M;2014-05-30;12;Traslado\n'
+    + '1;;CIRA FICTICIA TRES;F;2015-06-01;11;Activo\n';
+  const lista = tel.d.lista('alumnos', { aula_id: aula }).sort((a, b) => a.num_lista - b.num_lista);
+  const plan = SL.emparejarFilas(lista, SL.parseCsv(csv).filas);
+  afirma(plan.pares.length === 3 && plan.pares.every((p) => p.seguro), 'pares: ' + JSON.stringify(plan.pares.map((p) => [p.f.nombre, p.por])));
+  const cambios = SL.cambiosFilas(lista, plan, { pares: plan.pares.map((_, i) => i), fecha: hoy });
+  cambios.forEach((x) => tel.d.editar('alumnos', x.id, x.cambios));
+  await tel.d.esperarCola();
+  afirma(!tel.d.noAnotado().length && !tel.d.preguntas().length, 'quedó algo: ' + JSON.stringify([tel.d.noAnotado(), tel.d.preguntas()]));
+
+  const base = sqlJson(`select nombre_completo, en_sace, sace_num, edad_sace, fecha_nacimiento::text as fnac, estado
+                        from metas.alumnos where aula_id = '${aula}' and deleted_at is null order by num_lista`);
+  afirma(JSON.stringify(base.map((a) => [a.en_sace, a.sace_num, a.estado])) ===
+    JSON.stringify([[true, 3, 'activo'], [true, 2, 'trasladado'], [true, 1, 'activo'], [false, null, 'activo']]), 'en la base: ' + JSON.stringify(base));
+  afirma(base[0].fnac === '2015-02-10' && base[0].edad_sace === 11, 'fecha y edad del SACE: ' + JSON.stringify(base[0]));
+  afirma(notas() === antes, 'las notas cambiaron: ' + antes + ' → ' + notas());
+
+  // La tablet, sin recargar: Realtime le trae la marca.
+  const fin = Date.now() + 10000;
+  let vista = [];
+  while (Date.now() < fin) {
+    vista = tablet.d.lista('alumnos', { aula_id: aula }).filter((a) => a.en_sace === true);
+    if (vista.length === 3) break;
+    await new Promise((r) => setTimeout(r, 200));
+  }
+  afirma(avisos > 0 && vista.length === 3, 'la tablet no vio la marca: ' + JSON.stringify({ avisos, n: vista.length }));
+  afirma(tablet.d.lista('alumnos', { aula_id: aula }).length === 4, 'la tablet perdió un alumno');
+  afirma(tablet.d.lista('notas', { aula_id: aula }).length === 4, 'la tablet ve otras notas');
+  // Importar otra vez el mismo archivo no manda nada.
+  const lista2 = tablet.d.lista('alumnos', { aula_id: aula }).sort((a, b) => a.num_lista - b.num_lista);
+  const plan2 = SL.emparejarFilas(lista2, SL.parseCsv(csv).filas);
+  afirma(SL.cambiosFilas(lista2, plan2, { pares: plan2.pares.map((_, i) => i), fecha: hoy }).length === 0, 'la segunda vez manda cambios');
+});
+
+await escenario('B16 casilla «Registrado en SACE»: marcar en un aparato y verlo en el otro sin recargar; desmarcar lo quita; las notas no cambian', async () => {
+  const { createRequire } = await import('node:module');
+  const SL = createRequire(import.meta.url)('../../../js/tools/sace-lista.js');
+  const tel = await entrar('sace-telefono');
+  const tablet = await entrar('sace-tablet');
+  const aula = tel.d.crear('aulas', {
+    escuela: 'Escuela Ficticia SACE B16', grado: 6, seccion: (Number(process.hrtime.bigint() % 46656n)).toString(36),
+    anio_lectivo: 2027, docente_nombre: 'Docente Ficticia A',
+  }).id;
+  // La ficha: sexo obligatorio, identidad opcional (Kira no tiene).
+  const datos = [['Alba Ficticia Uno', '0801201516001', 'F'], ['Kira Sin Papeles', '', 'F']];
+  const ids = datos.map(([n, idn, sexo], i) => {
+    const r = SL.revisarFicha({ nombre_completo: n, sexo, identidad: idn });
+    afirma(!r.errores.length, 'la ficha de ' + n + ' no pasa: ' + r.errores.join(' '));
+    const fila = { aula_id: aula, nombre_completo: r.campos.nombre_completo, sexo: r.campos.sexo, num_lista: i + 1 };
+    if (r.campos.identidad) fila.identidad = r.campos.identidad;
+    return tel.d.crear('alumnos', fila).id;
+  });
+  const asig = tel.d.crear('asignaturas', { aula_id: aula, nombre: 'Matemáticas', orden: 1 }).id;
+  ids.forEach((al, i) => tel.d.crear('notas', { aula_id: aula, alumno_id: al, asignatura_id: asig, periodo: 'I', valor: String(80 + i) }));
+  await tel.d.esperarCola();
+  const notas = () => sql(`select count(*) || '|' || coalesce(sum(valor), 0) || '|' || coalesce(max(version), 0)
+                           from metas.notas where aula_id = '${aula}' and deleted_at is null`);
+  const antes = notas();
+  afirma(antes.startsWith('2|'), 'no llegaron las 2 notas: ' + antes);
+  const kira = () => sql(`select en_sace::text || '|' || coalesce(identidad, 'sin') || '|' || sexo from metas.alumnos where id = '${ids[1]}'`);
+  afirma(kira() === 'false|sin|F', 'Kira en la base: ' + kira());
+
+  const verEn = async (d, quiere) => {
+    const fin = Date.now() + 10000;
+    while (Date.now() < fin) {
+      const a = d.lista('alumnos', { aula_id: aula }).find((x) => x.id === ids[1]);
+      if (a && !!a.en_sace === quiere) return true;
+      await new Promise((r) => setTimeout(r, 200));
+    }
+    return false;
+  };
+  await verEn(tablet.d, false);
+
+  // El teléfono marca la casilla de Kira (sin identidad).
+  const cm = SL.cambiosMarca(tel.d.lista('alumnos', { aula_id: aula }).find((x) => x.id === ids[1]), true, '');
+  afirma(JSON.stringify(cm) === '{"en_sace":true}', 'la marca manda: ' + JSON.stringify(cm));
+  tel.d.editar('alumnos', ids[1], cm);
+  await tel.d.esperarCola();
+  afirma(kira() === 'true|sin|F', 'Kira marcada en la base: ' + kira());
+  afirma(await verEn(tablet.d, true), 'la tablet no vio la marca sin recargar');
+  afirma(notas() === antes, 'marcar cambió las notas: ' + antes + ' → ' + notas());
+
+  // La tablet la desmarca; el teléfono lo ve.
+  tablet.d.editar('alumnos', ids[1], SL.cambiosMarca(tablet.d.lista('alumnos', { aula_id: aula }).find((x) => x.id === ids[1]), false, ''));
+  await tablet.d.esperarCola();
+  afirma(kira() === 'false|sin|F', 'Kira desmarcada en la base: ' + kira());
+  afirma(await verEn(tel.d, false), 'el teléfono no vio que se desmarcó');
+  afirma(notas() === antes, 'desmarcar cambió las notas: ' + antes + ' → ' + notas());
+  afirma(tablet.d.lista('notas', { aula_id: aula }).filter((n) => n.alumno_id === ids[1]).length === 1, 'Kira perdió su nota en la tablet');
+  afirma(!tel.d.noAnotado().length && !tablet.d.noAnotado().length, 'quedó algo sin anotar');
+});
+
 process.exit(resultado());

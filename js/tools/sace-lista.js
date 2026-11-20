@@ -34,8 +34,11 @@
     desertor:   'Desertor'
   };
   /* los que se fueron siguen en la lista con sus notas, pero ya no son
-     matrícula final */
-  var ESTADOS_FUERA = { trasladado: 1, desertor: 1 };
+     matrícula final. «Retirado» existe solo en Mi aula por filas (el
+     formulario del SACE no lo tiene): se fue igual, y antes contaba como
+     si siguiera; el Resumen final avisa para que se elija Traslado o
+     Desertor. */
+  var ESTADOS_FUERA = { trasladado: 1, desertor: 1, retirado: 1 };
 
   function digitos(s) { return String(s == null ? '' : s).replace(/\D/g, ''); }
   function idnValida(s) { return digitos(s).length === 13; }
@@ -117,6 +120,18 @@
     if (/^(sexo|genero)$/.test(t)) return 'sexo';
     if (/^(fechanacimiento|fechadenacimiento|fnac|nacimiento)$/.test(t)) return 'fecha_nacimiento';
     if (/^(edadsace|edad)$/.test(t)) return 'edad_sace';
+    if (/^(estado|situacion|condicion)$/.test(t)) return 'estado';
+    return '';
+  }
+  /* La situación que trae el SACE, si el archivo tiene esa columna. Solo
+     se reconoce lo que el formulario conoce; lo demás queda en blanco y no
+     cambia nada de la ficha. */
+  function normEstado(s) {
+    var t = sinTildes(s).toLowerCase();
+    if (/traslad/.test(t)) return 'trasladado';
+    if (/desert/.test(t)) return 'desertor';
+    if (/ingres/.test(t)) return 'ingreso';
+    if (/activ|matricul/.test(t)) return 'activo';
     return '';
   }
 
@@ -149,11 +164,14 @@
         idnOk: idnValida(r.identidad),
         nombre: nombre,
         sexo: normSexo(r.sexo),
+        sexoRaw: String(r.sexo || '').trim(),
         fnac: fnac,
         fnacRaw: fRaw,
         fnacOk: !!fnac,
         edadSace: String(r.edad_sace || '').trim()
       });
+      /* la columna es opcional: sin ella la fila queda como siempre */
+      if (orden.indexOf('estado') >= 0) filas[filas.length - 1].estado = normEstado(r.estado);
     });
     return { filas: filas, errores: errores };
   }
@@ -389,6 +407,178 @@
     return res;
   }
 
+  /* ── Mi aula por filas (metas.alumnos) ──
+     Desde el rediseño de datos cada alumno es una fila con id propio y la
+     marca vive en sus columnas: en_sace, sace_num, edad_sace,
+     fecha_nacimiento, estado y estado_fecha. Se empareja con la MISMA
+     regla de arriba (identidad de 13 dígitos y, si no, nombre), nunca por
+     número de lista: el `num` que recibe emparejar() aquí es solo el
+     orden de la fila en la lista, una llave interna que no se compara con
+     el número del SACE. La identidad solo empareja si el documento es de
+     Honduras: el SACE no trae otro país y 13 dígitos de otro documento
+     podrían coincidir por casualidad. */
+  function listaDeFilas(alumnos) {
+    return (alumnos || []).map(function (a, i) {
+      return {
+        num: i + 1, id: a.id, nombre: a.nombre_completo || '',
+        idn: (a.documento_pais || 'HN') === 'HN' ? (a.identidad || '') : '',
+        sexo: a.sexo || '', fnac: a.fecha_nacimiento || ''
+      };
+    });
+  }
+  /* El plan, sin tocar nada. Cada par dice si es SEGURO (misma identidad
+     o el mismo nombre escrito igual) o si el maestro tiene que confirmar
+     que es la misma persona. */
+  function emparejarFilas(alumnos, filas) {
+    var lista = listaDeFilas(alumnos), idDe = {}, porNum = {};
+    lista.forEach(function (a) { idDe[a.num] = a.id; porNum[a.num] = a; });
+    var plan = emparejar(lista, filas || []);
+    return {
+      pares: plan.pares.map(function (p) {
+        return {
+          f: p.f, id: idDe[p.num], por: p.por, parecido: p.parecido,
+          seguro: p.por === 'identidad' || normNombre(porNum[p.num].nombre) === normNombre(p.f.nombre)
+        };
+      }),
+      sinFicha: plan.sinFicha,
+      sinSace: plan.sinSace.map(function (n) { return idDe[n]; })
+    };
+  }
+  function edadNum(s) {
+    var m = String(s == null ? '' : s).match(/\d+/);
+    var n = m ? +m[0] : NaN;
+    return n >= 0 && n <= 99 ? n : null;
+  }
+  function mismoValor(k, a, b) {
+    if (k === 'en_sace') return !!a === !!b;
+    return String(a == null ? '' : a) === String(b == null ? '' : b);
+  }
+  /* Lo que el maestro confirmó, convertido en un editar por alumno con
+     SOLO los campos que cambian:
+       conf.pares     [índices de plan.pares confirmados]
+       conf.manuales  [{ i: fila de plan.sinFicha, id: alumno }]
+       conf.estados   { id: 'trasladado' | 'desertor' } para los que quedan fuera
+       conf.fecha     'AAAA-MM-DD' del día de la importación
+     El emparejado queda en_sace = true con el número, la edad y la fecha
+     de nacimiento del SACE (la del SACE gana), y con su traslado si el
+     SACE lo dice. Quien no está en el archivo, o no se confirmó, queda
+     en_sace = false: sigue en la lista con todas sus notas. Devuelve
+     [{ id, cambios }] y nunca toca otra tabla: ni notas, ni asistencia,
+     ni inasistencias. */
+  function cambiosFilas(alumnos, plan, conf) {
+    conf = conf || {};
+    var porId = {}, dentro = {};
+    (alumnos || []).forEach(function (a) { porId[a.id] = a; });
+    (conf.pares || []).forEach(function (i) {
+      var p = plan.pares[i];
+      if (p && porId[p.id] && !dentro[p.id]) dentro[p.id] = p.f;
+    });
+    (conf.manuales || []).forEach(function (m) {
+      var f = plan.sinFicha[m.i];
+      if (f && porId[m.id] && !dentro[m.id]) dentro[m.id] = f;
+    });
+    var fecha = conf.fecha || null, out = [];
+    (alumnos || []).forEach(function (a) {
+      var f = dentro[a.id], quiere = {};
+      var e = f ? f.estado : (conf.estados || {})[a.id];
+      if (f) {
+        quiere.en_sace = true;
+        if (f.num) quiere.sace_num = f.num;
+        if (edadNum(f.edadSace) != null) quiere.edad_sace = edadNum(f.edadSace);
+        if (f.fnacOk) quiere.fecha_nacimiento = f.fnac;
+        /* el sexo del SACE gana; si el SACE no lo trae bien, la ficha
+           queda como está: no se adivina por el nombre */
+        if (f.sexo === 'F' || f.sexo === 'M') quiere.sexo = f.sexo;
+      } else {
+        quiere.en_sace = false;
+      }
+      if (e && ESTADOS_FUERA[e] && a.estado !== e) { quiere.estado = e; quiere.estado_fecha = fecha; }
+      var cambios = {};
+      Object.keys(quiere).forEach(function (k) { if (!mismoValor(k, a[k], quiere[k])) cambios[k] = quiere[k]; });
+      if (Object.keys(cambios).length) out.push({ id: a.id, cambios: cambios });
+    });
+    return out;
+  }
+
+  /* ⚠ de una fila del SACE en la vista previa: lo que no se entiende se
+     dice, no se adivina */
+  function avisosPar(f) {
+    var av = [];
+    if (!f) return av;
+    if (f.sexo !== 'F' && f.sexo !== 'M') {
+      av.push(f.sexoRaw ? 'El SACE trae un sexo que no se entiende («' + f.sexoRaw + '»): la ficha queda como está.'
+        : 'El SACE no trae el sexo: la ficha queda como está.');
+    }
+    if (f.idn && !f.idnOk) av.push('La identidad del SACE no tiene 13 dígitos: ' + f.idn + '. Revísala en el SACE.');
+    if (f.fnacRaw && !f.fnacOk) av.push('Fecha de nacimiento que no se entiende: ' + f.fnacRaw + '.');
+    return av;
+  }
+
+  /* ── la ficha del alumno en Mi aula ──
+     Todo alumno matriculado tiene ficha, aunque no tenga identidad ni esté
+     en el SACE (decisión de Josué, 20 nov. 2026). Lo único obligatorio,
+     además del nombre, es el sexo, F o M, como en el SACE: sin él, los
+     cuadros dicen 0 niñas y 0 varones. La identidad es opcional; si se
+     escribe y es de Honduras, lleva sus 13 cifras (la base lo exige).
+     Devuelve { errores, campos } con los campos ya limpios. */
+  function revisarFicha(c) {
+    c = c || {};
+    var errores = [], campos = {};
+    var nombre = String(c.nombre_completo == null ? '' : c.nombre_completo).replace(/\s+/g, ' ').trim();
+    if (nombre.length < 3) errores.push('Escribe el nombre completo.');
+    else campos.nombre_completo = nombre;
+    var sexo = String(c.sexo || '').trim().toUpperCase();
+    if (sexo !== 'F' && sexo !== 'M') errores.push('Elige si es niña (F) o niño (M).');
+    else campos.sexo = sexo;
+    if ('identidad' in c) {
+      var idn = String(c.identidad == null ? '' : c.identidad).toUpperCase().replace(/[^0-9A-Z]/g, '');
+      var pais = String(c.documento_pais || 'HN').toUpperCase();
+      if (!idn) campos.identidad = null;
+      else if (pais === 'HN' && !/^\d{13}$/.test(idn)) errores.push('La identidad lleva 13 cifras; tiene ' + idn.replace(/\D/g, '').length + '. Si no la tienes, déjala en blanco.');
+      else campos.identidad = idn;
+    }
+    if (c.fecha_nacimiento != null && String(c.fecha_nacimiento).trim() !== '') {
+      var f = normFecha(c.fecha_nacimiento);
+      if (!f) errores.push('La fecha de nacimiento no se entiende.');
+      else campos.fecha_nacimiento = f;
+    }
+    return { errores: errores, campos: campos };
+  }
+
+  /* La casilla «Registrado en SACE»: solo lo que cambia. El número de la
+     fila en el SACE es opcional (referencia, nunca llave). Desmarcar deja
+     el número como estaba: si fue sin querer, volver a marcar no lo pierde. */
+  function cambiosMarca(a, enSace, saceNum) {
+    a = a || {};
+    var c = {};
+    if (!!a.en_sace !== !!enSace) c.en_sace = !!enSace;
+    var n = parseInt(String(saceNum == null ? '' : saceNum).replace(/\D/g, ''), 10);
+    if (enSace && n >= 1 && n <= 999 && n !== a.sace_num) c.sace_num = n;
+    return c;
+  }
+
+  /* «Datos para el SACE»: las fichas que siguen en el aula y todavía no
+     están en el SACE, con lo que el SACE pide para registrarlas. Lo que
+     falta va en blanco (y se dice), nunca inventado. */
+  function datosParaSace(alumnos) {
+    return (alumnos || []).filter(function (a) { return a && a.en_sace !== true && !ESTADOS_FUERA[a.estado]; })
+      .slice().sort(function (x, y) {
+        return (x.num_lista == null ? 999 : x.num_lista) - (y.num_lista == null ? 999 : y.num_lista)
+          || String(x.nombre_completo).localeCompare(String(y.nombre_completo), 'es');
+      })
+      .map(function (a) {
+        var falta = [];
+        if (!a.identidad) falta.push('identidad');
+        if (a.sexo !== 'F' && a.sexo !== 'M') falta.push('sexo');
+        if (!a.fecha_nacimiento) falta.push('fecha de nacimiento');
+        return {
+          id: a.id, num: a.num_lista == null ? '' : a.num_lista, nombre: a.nombre_completo || '',
+          identidad: a.identidad ? ((a.documento_pais || 'HN') === 'HN' ? idnBonita(a.identidad) : a.identidad) : '',
+          sexo: a.sexo === 'F' || a.sexo === 'M' ? a.sexo : '', fecha_nacimiento: a.fecha_nacimiento || '', falta: falta
+        };
+      });
+  }
+
   /* ── quién cuenta ── */
   function seFue(a) { return !!(a && ESTADOS_FUERA[a.estado]); }
   function enListaOficial(a) { return !!(a && a.sace === true); }
@@ -437,6 +627,8 @@
     fechaValida: fechaValida, normFecha: normFecha, normSexo: normSexo,
     edad: edad, edadTxt: edadTxt, parseCsv: parseCsv, normNombre: normNombre,
     similitud: similitud, emparejar: emparejar, aplicar: aplicar,
+    normEstado: normEstado, emparejarFilas: emparejarFilas, cambiosFilas: cambiosFilas,
+    avisosPar: avisosPar, revisarFicha: revisarFicha, cambiosMarca: cambiosMarca, datosParaSace: datosParaSace,
     seFue: seFue, enListaOficial: enListaOficial, hayImportacion: hayImportacion,
     matriculaFinal: matriculaFinal, alumnosQueCuentan: alumnosQueCuentan,
     cuadroEdades: cuadroEdades

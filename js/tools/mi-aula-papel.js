@@ -73,6 +73,12 @@
           id: a.id, num: numDe[a.id], nombre: a.nombre_completo, idn: a.identidad || '', sexo: a.sexo || '',
           estado: a.estado || 'activo', estadoF: a.estado_fecha || '', fnac: a.fecha_nacimiento || '',
           noCopiarSace: !!a.no_copiar_sace, claveFamilia: claveDe[a.id] || '',
+          // La lista oficial del SACE manda en las estadísticas: sin esta
+          // marca, SaceLista.hayImportacion() daba false y los cuadros, la
+          // matrícula y el Cuadro final contaban también las fichas fuera
+          // del SACE. Mismos nombres que en el blob, para no tocar las hojas.
+          sace: a.en_sace === true, saceNum: a.sace_num == null ? '' : a.sace_num,
+          edadSace: a.edad_sace == null ? '' : String(a.edad_sace),
         };
       }),
       materias: [],
