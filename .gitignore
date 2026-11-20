@@ -2,3 +2,7 @@
 # del autor, no son del proyecto. Se quedan en el disco, fuera del repositorio.
 .claude/settings.local.json
 .idea/
+# Dependencias: desde noviembre de 2026 no se versionan. Lo único que se
+# instala es Playwright para las sondas de navegador (`npm install --no-save
+# playwright`), y eso se queda en la computadora, no en el repositorio.
+node_modules/

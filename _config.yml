@@ -1,14 +1,15 @@
 # Configuración de GitHub Pages (que construye el sitio con Jekyll).
 #
-# Existe por UNA razón: sacar `www/` del sitio publicado. Esa carpeta es la
-# copia que se lleva Capacitor a la app de Android, va desfasada A PROPÓSITO
-# —hoy sirve meta-app-v48, ciento treinta y una versiones por detrás— y estaba
-# siendo alcanzable en /www/index.html. Un teléfono que abriera esa dirección
-# se instalaba el service worker VIEJO en su propio ámbito y se quedaba con la
-# aplicación de hace meses, sin forma de enterarse.
+# Nació para sacar `www/` del sitio publicado: era la copia que se llevaba
+# Capacitor a la app de Android, iba muy atrasada y estaba siendo alcanzable
+# en /www/index.html. Un teléfono que abriera esa dirección se instalaba el
+# service worker VIEJO en su propio ámbito y se quedaba con la aplicación de
+# hace meses, sin forma de enterarse. La copia vieja (`www/`, `android/`) se
+# retiró en noviembre de 2026, pero la exclusión se queda: cuando la app se
+# monte de nuevo (_dev/ANDROID-IOS-PLAN.md), sus copias tampoco son el sitio.
 #
-# `android/`, `node_modules/` y `_dev/` se van por lo mismo: son del árbol de
-# trabajo, no del sitio.
+# `node_modules/` y `_dev/` se van por lo mismo: son del árbol de trabajo, no
+# del sitio.
 #
 # Desde la limpieza de noviembre de 2026 también se van los documentos de
 # trabajo: `_privado/` (SQL de Supabase, auditorías, propuestas, manuales),

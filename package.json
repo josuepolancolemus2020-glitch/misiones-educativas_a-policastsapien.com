@@ -4,9 +4,6 @@
   "description": "Misiones de Prebásica a 9.º con su examen y su ficha listos para fotocopiar. Las de Español, Matemáticas, Ciencias y Sociales llevan señalado su bloque del DCNB para la educación.",
   "main": "sw.js",
   "scripts": {
-    "build:www": "robocopy . www /E /XD android node_modules .git .github .claude .idea www _dev _privado docs /XF *.md *.sql package.json package-lock.json capacitor.config.json .gitignore /NFL /NDL /NJH /NJS /NC /NS & exit 0",
-    "sync": "npm run build:www && npx cap sync",
-    "install:android": "npm run build:www && npx cap sync && cd android && gradlew.bat installDebug",
     "test": "node _dev/corre-sondas.js",
     "test:navegador": "node _dev/corre-sondas.js navegador"
   },
@@ -21,14 +18,5 @@
   "bugs": {
     "url": "https://github.com/josuepolancolemus2020-glitch/misiones-educativas_a-policastsapien.com/issues"
   },
-  "homepage": "https://github.com/josuepolancolemus2020-glitch/misiones-educativas_a-policastsapien.com#readme",
-  "dependencies": {
-    "@capacitor/android": "^8.3.1",
-    "@capacitor/core": "^8.3.1",
-    "@capacitor/filesystem": "^8.1.2",
-    "@capacitor/share": "^8.0.1"
-  },
-  "devDependencies": {
-    "@capacitor/cli": "^8.3.1"
-  }
+  "homepage": "https://github.com/josuepolancolemus2020-glitch/misiones-educativas_a-policastsapien.com#readme"
 }

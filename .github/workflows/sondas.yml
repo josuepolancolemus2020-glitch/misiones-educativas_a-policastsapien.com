@@ -39,8 +39,7 @@ jobs:
         with:
           node-version: '22'
       # No se instala nada: estas sondas son Node pelado a
-      # propósito, y `node_modules` ya viene versionado en el
-      # repositorio.
+      # propósito y el proyecto no tiene dependencias.
       - name: Correr las sondas rápidas
         run: node _dev/corre-sondas.js
 
@@ -60,9 +59,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      # Playwright NO se guarda en el repositorio: `node_modules`
-      # va versionado y meterlo dentro ensuciaría el árbol en cada
-      # sesión. Es la misma regla que se sigue a mano.
+      # Playwright NO se guarda en el repositorio: se instala en
+      # cada corrida y `node_modules/` está en `.gitignore`. Es la
+      # misma regla que se sigue a mano.
       - name: Instalar Playwright (aparte, no se versiona)
         run: |
           npm install --no-save playwright
