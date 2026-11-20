@@ -403,11 +403,17 @@
       if (a.centro_id === centroId) aulas[a.id] = 1;
     });
     var gastos = {};
-    var tablas = ['pagos', 'colectas', 'gastos', 'gastos_docente', 'bienes', 'notas', 'asistencia', 'notas_personalidad'];
+    var tablas = ['pagos', 'colectas', 'gastos', 'gastos_docente', 'bienes', 'notas', 'asistencia', 'notas_personalidad', 'colecta_exenciones'];
     var i;
     for (i = 0; i < tablas.length; i++) {
       if (filasTodas(tablas[i]).some(function (f) { return aulas[f.aula_id]; })) return true;
     }
+    var convocatorias = {};
+    filasTodas('convocatorias').forEach(function (cv) {
+      if (aulas[cv.aula_id]) convocatorias[cv.id] = 1;
+    });
+    if (filasTodas('convocatoria_pagos').some(function (f) { return convocatorias[f.convocatoria_id]; })) return true;
+    if (filasTodas('convocatoria_inscritos').some(function (f) { return convocatorias[f.convocatoria_id]; })) return true;
     filasTodas('gastos_docente').forEach(function (g) {
       if (aulas[g.aula_id]) gastos[g.id] = 1;
     });
