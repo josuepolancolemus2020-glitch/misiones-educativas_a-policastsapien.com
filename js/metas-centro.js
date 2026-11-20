@@ -88,6 +88,9 @@
   // en el orden en que Mi aula los muestra (el más antiguo primero). El
   // nombre del maestro, si el centro no lo trae, sale de un grupo de ese
   // centro que sí lo tenga, igual que en la pantalla del perfil.
+  // La aldea va porque el examen impreso escribe la dirección completa
+  // (dirección, aldea, municipio, departamento). Aquí solo se lee: la
+  // copia es de lectura y nada de esto vuelve a la base.
   function listaCentros(api) {
     var filas = (api.lista('centros') || []).slice().sort(function (a, b) {
       var ac = a.created_at || '9999';
@@ -111,6 +114,7 @@
         nombre: c.nombre || '',
         logo: c.logo || '',
         direccion: c.direccion || '',
+        aldea: c.aldea || '',
         municipio: c.municipio || '',
         departamento: c.departamento || '',
         docente: docente,
@@ -269,7 +273,7 @@
     var cache = leer();
     var copia = function (c) {
       return {
-        id: c.id, nombre: c.nombre || '', logo: c.logo || '', direccion: c.direccion || '',
+        id: c.id, nombre: c.nombre || '', logo: c.logo || '', direccion: c.direccion || '', aldea: c.aldea || '',
         municipio: c.municipio || '', departamento: c.departamento || '', docente: c.docente || '',
       };
     };
@@ -351,6 +355,7 @@
       nombre: campo('nombre'),
       logo: campo('logo'),
       direccion: campo('direccion'),
+      aldea: campo('aldea'),
       municipio: campo('municipio'),
       departamento: campo('departamento'),
       docente: campo('docente'),
