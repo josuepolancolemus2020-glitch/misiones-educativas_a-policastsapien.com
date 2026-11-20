@@ -20,8 +20,9 @@
 --   · centro_borrar: borra de verdad solo un centro vacío. Si el centro
 --     o sus grupos tienen cualquier fila (también archivada) de pagos,
 --     colectas, gastos, gastos del docente, reembolsos, bienes, notas,
---     asistencia o personalidad, se niega y no se borra nada. En ese
---     caso solo se puede archivar. Cada DELETE lleva owner = auth.uid().
+--     asistencia, personalidad, pagos o inscritos de convocatoria, o
+--     exenciones, se niega y no se borra nada. En ese caso solo se puede
+--     archivar. Cada DELETE lleva owner = auth.uid().
 --
 -- El docente, por la API, no puede saltarse el disparador: el permiso
 -- extra solo vale dentro de estas funciones (corren como dueño de la
@@ -313,6 +314,23 @@ begin
     union all
     select 1 from metas.notas_personalidad
      where owner = v_uid and aula_id = any(v_aulas)
+    union all
+    select 1 from metas.colecta_exenciones
+     where owner = v_uid and aula_id = any(v_aulas)
+    union all
+    select 1 from metas.convocatoria_pagos
+     where owner = v_uid
+       and convocatoria_id in (
+         select id from metas.convocatorias
+          where owner = v_uid and aula_id = any(v_aulas)
+       )
+    union all
+    select 1 from metas.convocatoria_inscritos
+     where owner = v_uid
+       and convocatoria_id in (
+         select id from metas.convocatorias
+          where owner = v_uid and aula_id = any(v_aulas)
+       )
   ) then
     raise exception 'metas: este centro tiene pagos o notas; solo se puede archivar'
       using errcode = 'MT042';
