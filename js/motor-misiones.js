@@ -557,15 +557,153 @@
      LADO_LOGO es lo más grande que deja todas las hojas en sus páginas
      de siempre: lo mide _dev/mide-paginas-encabezado.js. */
   var LADO_LOGO = 72;
+
+  /* La dirección del centro como la pidió Josué el 20 de noviembre: los
+     cuatro campos del Perfil institucional de Mi aula, en este orden
+     (Dirección, que es la colonia o el barrio; Aldea; Municipio;
+     Departamento). El que está vacío no sale y el repetido sale una vez,
+     así no quedan comas ni espacios sueltos. */
+  function _lugarDe(centro) {
+    var vistos = {}, partes = [];
+    [centro.direccion, centro.aldea, centro.municipio, centro.departamento].forEach(function (p) {
+      p = _txt(p).replace(/\s+/g, ' ').replace(/^[,\s]+|[,\s]+$/g, '');
+      var k = p.toLocaleLowerCase('es');
+      if (p && !vistos[k]) { vistos[k] = 1; partes.push(p); }
+    });
+    return partes.join(', ');
+  }
+  /* Un solo renglón: una dirección larga (la de la aldea llega a 120
+     letras) haría crecer el encabezado y podía mandar la hoja a otra
+     página. Lo que no cabe se corta con «…». */
+  var UN_RENGLON = 'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+
+  /* ── El título de la hoja: «Evaluación · Tema · Materia» ──
+     Así lo pidió Josué el 20 de noviembre: sin «Final», sin el nivel
+     (Educación Básica, I/II/III Ciclo) y sin el tipo de prueba
+     (Competencial, Pensamiento Crítico, Prueba Operativa…): las tres hojas
+     de una misión se distinguen por la cajita «Forma NN» del pie. En
+     inglés, «Test · Topic · Subject».
+     Las 84 misiones escriben el título a su manera («Evaluación Final ·
+     Misión X · Matemática», «Examen de Matemáticas · Prueba Operativa · X
+     · Educación Básica», «Robótica · Evaluación Conceptual · X»…), así que
+     no se reescribe uno por uno: se parte en pedazos, se quita lo que no
+     va, la materia se pasa al final y lo demás es el tema. Las 184 hojas
+     las vigila _dev/verifica-examen-encabezado-limpio.js.
+     Un título que no se reconoce (con etiquetas, o que se queda sin tema)
+     sale como estaba: mejor el de siempre que uno roto. */
+  var TITULO = {
+    es: {
+      cabeza: 'Evaluación',
+      fuera: /^(Evaluación|Evaluación (Final|Conceptual|Competencial|de Repaso)|Prueba de Pensamiento Crítico|Pensamiento Crítico|Prueba Operativa|Actividades Operativas|Educación Básica|(I|II|III|II y III) Ciclo|Forma R?-?\d+)$/,
+      partir: [/^(Evaluación Final) de Misión (.+)$/, /^(Evaluación Final): (.+)$/, /^(Examen de [^:]+): (.+)$/],
+      examen: /^Examen de (.+)$/,
+      mision: /^Misión (.+)$/,
+      igual: { 'Matemática': 'Matemáticas', 'CC.NN.': 'Ciencias Naturales' },
+      materias: ['Ciencias Naturales', 'Ciencias Sociales', 'Matemáticas', 'Español', 'Lengua', 'Programación', 'Robótica',
+        'Filosofía', 'Educación Cívica', 'Inglés', 'Inteligencia Artificial', 'Gramática Española']
+    },
+    en: {
+      cabeza: 'Test',
+      fuera: /^(Test|(Final|Concept|Competency|Review|Practical|Critical Thinking) Test|Critical Thinking|Basic Education|(I|II|III|II and III) Cycle|Form R?-?\d+)$/,
+      partir: [],
+      examen: /^(.+) Exam$/,
+      mision: /^Mission (.+)$/,
+      igual: {},
+      materias: ['Robotics', 'Programming', 'English', 'Mathematics', 'Natural Sciences', 'Social Studies']
+    }
+  };
+  /* La única hoja que no dice su materia: la de pensamiento crítico de
+     Desastres Naturales. Su texto impreso no se toca (lo congela
+     _dev/verifica-formas-oro.js) y en la página de la misión no está el
+     catálogo, así que la materia se completa aquí, por el tema. */
+  var MATERIA_DE_TEMA = { 'Desastres Naturales y el Huracán Mitch': 'Ciencias Naturales' };
+  function _tituloLimpio(titulo, idioma) {
+    var L = TITULO[idioma] || TITULO.es;
+    var t = String(titulo == null ? '' : titulo);
+    if (/[<>]/.test(t)) return t;
+    var partes = [];
+    t.split(/ · | - /).forEach(function (p) {
+      p = p.trim();
+      if (!p) return;
+      for (var i = 0; i < L.partir.length; i++) {
+        var m = L.partir[i].exec(p);
+        if (m) { partes.push(m[1], m[2]); return; }
+      }
+      partes.push(p);
+    });
+    var temas = [], materias = [], deExamen = '';
+    partes.forEach(function (p) {
+      if (L.fuera.test(p)) return;
+      var e = L.examen.exec(p);
+      if (e) { deExamen = L.igual[e[1]] || e[1]; return; }
+      p = L.igual[p] || p;
+      if (L.materias.indexOf(p) >= 0) { if (materias.indexOf(p) < 0) materias.push(p); return; }
+      var mi = L.mision.exec(p);
+      temas.push(mi ? mi[1] : p);
+    });
+    if (!temas.length) return t;
+    if (!materias.length && deExamen) materias.push(deExamen);
+    if (!materias.length && idioma !== 'en' && MATERIA_DE_TEMA[temas[0]]) materias.push(MATERIA_DE_TEMA[temas[0]]);
+    return [L.cabeza].concat(temas, materias).join(' · ');
+  }
+
+  /* ── El pie de la hoja: solo la firma y la forma ──
+     Fuera «N.º de Evaluación temática realizada», «Evaluación con valor en
+     el parcial» y «Evaluación solo de repaso». La cajita «Forma NN» queda
+     tal cual, y a su izquierda va «Firma del padre o encargado», con el
+     mismo borde, letra y esquinas.
+     El pie va fijo al fondo de cada página y en muchas hojas el examen
+     llega casi hasta él: hoy mide 4,2 mm y está a 2 mm del fondo, así que
+     su borde de arriba queda a unos 6,2 mm (23,4 px). La cajita de la
+     firma es más alta, y el pie gana ese alto BAJANDO hacia el margen de
+     la hoja (que sigue siendo de 5 mm), no subiendo: 21 px de cajita + 2
+     de relleno = 23 px desde el fondo. Lo mide la sonda en las 184 hojas.
+     El pie se repite en cada página: la firma sale también en la pauta.
+
+     Sin el tipo de prueba en el título, la conceptual y la de pensamiento
+     crítico (u operativa) de una misión se titulan igual, y sus formas se
+     cuentan por separado: la Forma 7 de una y la Forma 7 de la otra
+     quedaban idénticas por fuera. Josué eligió el 20 de noviembre una
+     letra discreta dentro de la misma cajita, en TODAS las hojas para que
+     sea parejo: «Forma 7 · C». C la conceptual (printEval), P la de
+     pensamiento crítico (printEvalCrit), O la operativa (printEvalOp).
+     En inglés va la misma letra: el maestro la reconoce igual. Más pequeña
+     y en gris, sin color; la cajita no crece de alto. */
+  var LETRA_DE = { printEval: 'C', printEvalCrit: 'P', printEvalOp: 'O' };
+  var PIE = /<div class="print-foot">([\s\S]*?)<\/div>/g;
+  var PIE_RENGLON = /<span class="pf-item"><strong>[^<]*<\/strong><span class="pf-(?:line|box)">(?:&nbsp;)?<\/span><\/span>/g;
+  var PIE_FORMA = /^\s*<span class="forma-tag">([^<]*)<\/span>\s*$/;
+  var FIRMA = 'Firma del padre o encargado';
+  function _pieLimpio(html, idioma, letra) {
+    return html.replace(PIE, function (todo, dentro) {
+      var forma = PIE_FORMA.exec(dentro.replace(PIE_RENGLON, ''));
+      if (!forma) return todo;
+      var rotulo = FIRMA;
+      if (idioma === 'en') {
+        try { rotulo = global.MetasI18N && typeof global.MetasI18N.tr === 'function' ? global.MetasI18N.tr(FIRMA) : FIRMA; } catch (e) { rotulo = FIRMA; }
+        if (rotulo === FIRMA) rotulo = 'Parent or guardian signature';
+      }
+      return '<div class="print-foot" data-metas-pie style="bottom:0;justify-content:flex-end;">'
+        + '<span data-metas-firma style="display:inline-flex;flex-direction:column;justify-content:flex-end;flex:0 1 70mm;'
+        + 'min-width:0;height:21px;border:1px solid #bbb;border-radius:3px;padding:1px 5px;background:white;">'
+        + '<span style="flex:1;border-bottom:1px solid #777;margin:0 4px;"></span>'
+        + '<span style="font-size:7pt;color:#555;text-align:center;line-height:1.1;white-space:nowrap;">' + _esc(rotulo) + '</span></span>'
+        + '<span class="forma-tag">' + forma[1]
+        + (/^[CPO]$/.test(letra || '') ? '<span data-metas-letra style="font-size:6pt;color:#888;"> · ' + letra + '</span>' : '')
+        + '</span></div>';
+    });
+  }
+  function _idiomaDeHoja(html) { return /<html[^>]*\blang="en"/i.test(html) ? 'en' : 'es'; }
+  /* El título de la hoja que sale sin el encabezado del centro. */
+  var PH_TITULO = /(<div class="ph"[^>]*>\s*<h2>)([^<]*)(<\/h2>)/g;
+  function _titulosLimpios(html, idioma) {
+    return html.replace(PH_TITULO, function (m, a, t, z) { return a + _tituloLimpio(t, idioma) + z; });
+  }
   var RAYITA = '<span style="display:inline-block;min-width:48px;border-bottom:1px solid #555;">&nbsp;</span>';
   function _cabezaCentro(centro, docente, datos, titulo, grado, num) {
     datos = datos || {};
     var logo = _logoSeguro(centro.logo);
-    var lugar = [];
-    [centro.direccion, centro.municipio].forEach(function (p) {
-      p = _txt(p);
-      if (p && lugar.indexOf(p) < 0) lugar.push(p);
-    });
+    var lugar = _lugarDe(centro);
     var uni = grado === 'Carrera/Sección';
     var g = uni ? grado : 'Grado y Sección';
     var n = num === 'N.º Cuenta' ? num : 'N.º de lista';
@@ -582,9 +720,9 @@
       + '<div style="flex:1;min-width:0;">'
       + '<div style="font-size:11.5pt;font-weight:700;letter-spacing:0.03em;line-height:1.15;text-align:center;">'
       + _esc(_txt(centro.nombre).toLocaleUpperCase('es')) + '</div>'
-      + (lugar.length ? '<div style="' + chico + '">' + _esc(lugar.join(', ')) + '</div>' : '')
+      + (lugar ? '<div data-metas-lugar style="' + chico + UN_RENGLON + '">' + _esc(lugar) + '</div>' : '')
       + '<div data-metas-docente style="' + chico + 'margin-bottom:2px;">' + renglon.join(' · ') + '</div>'
-      + '<h2>' + titulo + '</h2>'
+      + '<h2>' + _tituloLimpio(titulo, 'es') + '</h2>'
       + '<div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>' + n
       + ':</strong><span class="ph-xs">&nbsp;</span></div>'
       + '</div></div>';
@@ -607,14 +745,16 @@
      Junto al encabezado nuevo va, invisible y fuera del flujo, el de
      siempre (`data-metas-antes`): el ajuste de abajo lo mide para saber
      exactamente cuánto alto agregó el centro, y después lo quita. */
-  function _hojaConEncabezado(html, centro, docente, datos) {
+  function _hojaConEncabezado(html, centro, docente, datos, letra) {
     if (typeof html !== 'string' || html.indexOf('<div class="ph">') < 0) return html;
     var bloques = html.match(BLOQUE_PH).length;
     var cabezas = (html.match(CABEZA) || []).length;
+    var idioma = _idiomaDeHoja(html);
     if (!centro || cabezas !== bloques) {
-      return html.replace(BLOQUE_PH, '<div class="ph" data-metas-encabezado="' + SIN_ENCABEZADO + '">');
+      return _pieLimpio(_titulosLimpios(html, idioma), idioma, letra)
+        .replace(BLOQUE_PH, '<div class="ph" data-metas-encabezado="' + SIN_ENCABEZADO + '">');
     }
-    var out = html.replace(CABEZA, function (m, titulo, grado, num) {
+    var out = _pieLimpio(html, idioma, letra).replace(CABEZA, function (m, titulo, grado, num) {
       return '<div class="ph" data-metas-encabezado="centro" style="position:relative;">'
         + _cabezaCentro(centro, docente, datos, titulo, grado, num)
         + '<div data-metas-antes aria-hidden="true" style="position:absolute;visibility:hidden;left:0;right:0;top:0;">'
@@ -660,7 +800,7 @@
   /* Corre la impresión de la misión con la ventana nueva vigilada: lo que
      la misión escribe en ella pasa antes por `_hojaConEncabezado`. Solo
      durante esta llamada; después `window.open` queda como estaba. */
-  function _imprimirCon(centro, original, yo, args, datos) {
+  function _imprimirCon(centro, original, yo, args, datos, letra) {
     var abrir = global.open;
     var docente = centro ? _docenteDe(centro) : '';
     global.open = function () {
@@ -670,7 +810,7 @@
           win.__metasEncabezado = 1;
           var escribir = win.document.write;
           win.document.write = function (html) {
-            if (typeof html === 'string') html = _hojaConEncabezado(html, centro, docente, datos);
+            if (typeof html === 'string') html = _hojaConEncabezado(html, centro, docente, datos, letra);
             return escribir.call(win.document, html);
           };
         }
@@ -867,12 +1007,13 @@
          nombre sale la de siempre, marcada, y MetasCentro.examen no le
          pone a medias un logo o un nombre de otro lado. */
       var centro = _centroDelExamen();
-      if (!centro) { _avisarImpresion(nombre); return _imprimirCon(null, original, yo, args); }
+      var letra = LETRA_DE[nombre];
+      if (!centro) { _avisarImpresion(nombre); return _imprimirCon(null, original, yo, args, null, letra); }
       _guardarUltimo(centro.id);
       var grado = _gradoDe(centro);
       preguntarDatos(function (elegidos) {
         _avisarImpresion(nombre);
-        _imprimirCon(centro, original, yo, args, { grado: grado, parcial: elegidos.parcial, fecha: elegidos.fecha });
+        _imprimirCon(centro, original, yo, args, { grado: grado, parcial: elegidos.parcial, fecha: elegidos.fecha }, letra);
       });
     };
     envuelta.__metasCentro = true;
@@ -1378,7 +1519,9 @@
     centro: {
       hoja: _hojaConEncabezado, centros: _centrosParaExamen, envolver: _envolverImpresiones,
       envueltas: function () { return envueltas.slice(); },
-      fechaLarga: _fechaLarga,
+      fechaLarga: _fechaLarga, titulo: _tituloLimpio, lugar: _lugarDe, pie: _pieLimpio,
+      limpia: function (html, letra) { var i = _idiomaDeHoja(html); return _pieLimpio(_titulosLimpios(html, i), i, letra); },
+      letras: function () { return JSON.parse(JSON.stringify(LETRA_DE)); },
       /* Para las sondas: quien contesta el cuadrito de parcial y fecha. Sin
          argumento vuelve el cuadrito de verdad. */
       preguntar: function (fn) { preguntarDatos = typeof fn === 'function' ? fn : _pedirDatosExamen; }
