@@ -126,8 +126,14 @@ function sembrado() {
     g.notas['1'].c1 === 90 && g.notas['1'].c5 === 85 && g.notas['6'].c2 === 77 && g.parcial && g.id, g.notas['1']);
   const ancho = await pg.evaluate(() => document.querySelector('#view-admin .view-scroll').scrollWidth);
   comprueba('nada se sale de los 360 px (la tabla se desliza en su caja)', ancho <= 360, ancho);
+  /* ⚠️ Se redondea a la unidad con que Chromium coloca las cajas (1/64 de px)
+     antes de comparar, como en verifica-notas-sace-simple. Lo que mide 44 px de
+     verdad (min-height: 44px) a veces vuelve como 43,99998 por la resta en coma
+     flotante de getBoundingClientRect, y la sonda salía roja o verde según la
+     corrida sin que cambiara un píxel. Lo que no mide 44 (43,98 o menos) sigue
+     saliendo rojo. */
   const chicos = await pg.$$eval('#ad-tab-body button, #ad-tab-body input', bs => bs.filter(b => b.offsetParent)
-    .map(b => b.getBoundingClientRect()).filter(r => r.height < 44).length);
+    .map(b => b.getBoundingClientRect()).filter(r => Math.round(r.height * 64) / 64 < 44).length);
   comprueba('lo que se toca mide 44 px de alto', chicos === 0, chicos);
 
   console.log('\n── otra asignatura ──');

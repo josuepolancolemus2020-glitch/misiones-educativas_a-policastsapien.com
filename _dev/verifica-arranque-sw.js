@@ -311,7 +311,13 @@ function mandaElDeHoy(pag) {
           [...document.querySelectorAll('link[rel=stylesheet],script[src],img')].length === 0);
         ok(sinFuera, 'no pide ni una hoja, guion ni imagen: todo viene dentro de sw.js');
         const caja = await r.pag.locator('#reintentar').boundingBox();
-        ok(caja && caja.height >= 44 && caja.width >= 44, 'el botón Reintentar mide al menos 44 px', caja);
+        /* ⚠️ Se redondea a la unidad con que Chromium coloca las cajas (1/64 de px)
+           antes de comparar, como en verifica-notas-sace-simple. Lo que mide 44 px de
+           verdad (min-height: 44px) a veces vuelve como 43,99998 por la resta en coma
+           flotante de getBoundingClientRect, y la sonda salía roja o verde según la
+           corrida sin que cambiara un píxel. Lo que no mide 44 (43,98 o menos) sigue
+           saliendo rojo. */
+        ok(caja && Math.round(caja.height * 64) / 64 >= 44 && Math.round(caja.width * 64) / 64 >= 44, 'el botón Reintentar mide al menos 44 px', caja);
         /* Vuelve la señal y se toca Reintentar: la portada abre. */
         modo = 'normal';
         soltarColgadas();
