@@ -63,7 +63,9 @@ const NO_SON_SONDAS = {
   'verifica-mision-nueva':  'pide la carpeta de la misión nueva',
   'verifica-bancos-en':     'pide la misión cuyos bancos se comparan',
   'verifica-ficha-paginas': 'cuenta las hojas de UNA ficha o de las 74: va aparte, tarda minutos',
-  'verifica-mision-navegador': 'abre Chromium sin executablePath y no arranca en este entorno',
+  /* Ya abre el navegador con lib-navegador y arranca aquí y en GitHub; lo
+     que la deja fuera es que revisa UNA misión, la que se le pasa. */
+  'verifica-mision-navegador': 'pide la misión que se quiere revisar',
   'arma-fichas-ia':         'ESCRIBE las cuatro fichas de la Ruta de la Máquina que Aprende; se corre a mano',
   'arma-ficha-mundo':       'ESCRIBE la ficha de la unidad 3 de Filosofía desde js/data/filosofia-mundo.js; se corre a mano',
   'arma-ficha-saber':       'ESCRIBE la ficha de la unidad 4 de Filosofía desde js/data/filosofia-saber.js; se corre a mano',
