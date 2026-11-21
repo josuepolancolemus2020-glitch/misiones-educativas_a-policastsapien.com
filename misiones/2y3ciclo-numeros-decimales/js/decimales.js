@@ -59,8 +59,11 @@ function toggleTheme(){ darkMode=!darkMode; document.documentElement.setAttribut
 function initTheme(){ const s=localStorage.getItem(SAVE_KEY+'_theme'); const sys=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches; darkMode=(s==='dark')||(s===null&&sys); if(darkMode){ document.documentElement.setAttribute('data-theme','dark'); document.getElementById('themeBtn').textContent='☀️ Tema'; } }
 
 // ===================== LOCALSTORAGE =====================
+/* La forma de la prueba operativa se guarda junto a la del examen conceptual:
+   sin ella, al recargar la página volvía a salir la Forma 1 y el maestro
+   repartía dos veces la misma prueba operativa a grupos distintos. */
 function saveProgress(){
-  try{ localStorage.setItem(SAVE_KEY, JSON.stringify({doneSections:Array.from(done), unlockedAch, evalFormNum, xp})); }catch(e){}
+  try{ localStorage.setItem(SAVE_KEY, JSON.stringify({doneSections:Array.from(done), unlockedAch, evalFormNum, evalOpFormNum, xp})); }catch(e){}
 }
 function loadProgress(){
   try{
@@ -69,6 +72,7 @@ function loadProgress(){
     if(s.doneSections&&Array.isArray(s.doneSections)) s.doneSections.forEach(id=>{ done.add(id); const b=document.querySelector(`[data-s="${id}"]`); if(b) b.classList.add('done'); });
     if(s.unlockedAch&&Array.isArray(s.unlockedAch)) unlockedAch=s.unlockedAch.filter(id=>ACHIEVEMENTS[id]!==undefined);
     if(s.evalFormNum) evalFormNum=s.evalFormNum;
+    if(s.evalOpFormNum) evalOpFormNum=s.evalOpFormNum;
     if(s.xp!==undefined){ xp=s.xp; updateXPBar(); }
   }catch(e){}
 }

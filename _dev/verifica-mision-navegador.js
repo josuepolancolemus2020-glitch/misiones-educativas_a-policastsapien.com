@@ -10,7 +10,9 @@ const { abrir } = require('./lib-navegador');
 
 const ruta = process.argv[2];
 if (!ruta) { console.error('Uso: node _dev/verifica-mision-navegador.js misiones/<carpeta>/<archivo>.html'); process.exit(2); }
-const BASE = process.env.METAS_BASE || 'http://localhost:8080';
+/* 8123 es donde escucha _dev/servidor-estatico.js, el que se pide arriba.
+   Con 8080 la sonda corrida tal como dice su «Uso» no encontraba la misión. */
+const BASE = process.env.METAS_BASE || 'http://localhost:8123';
 
 (async () => {
   let fallos = 0;
@@ -52,8 +54,15 @@ const BASE = process.env.METAS_BASE || 'http://localhost:8080';
   console.log('\n🃏 Flashcards, quiz y memorama');
   await page.evaluate(() => go('s-flash'));
   await page.waitForTimeout(300);
-  const fc = await page.textContent('#fcW');
-  if (!fc || !fc.trim()) mal('la primera flashcard salió vacía'); else bien('flashcard 1: ' + fc.trim().slice(0, 40));
+  /* La cara de la tarjeta se llama #fcW en la mayoría de las misiones y #fcQ
+     en las que la escriben con su pronunciación aparte (Numbers and My Age,
+     las del docente). Se pedía solo #fcW con page.textContent, que ESPERA 30 s
+     a que aparezca: con #fcQ la sonda reventaba por tiempo y no comprobaba
+     nada de lo que venía después, con la tarjeta pintada y bien. Se lee ya,
+     sin esperar: si no hay ninguna de las dos, eso sí es un fallo. */
+  const fc = await page.evaluate(() => { const c = document.querySelector('#fcW, #fcQ'); return c ? c.textContent : null; });
+  if (fc === null) mal('no hay cara de flashcard (#fcW ni #fcQ)');
+  else if (!fc.trim()) mal('la primera flashcard salió vacía'); else bien('flashcard 1: ' + fc.trim().slice(0, 40));
   /* El memorama lo trae la generación de la misión id 28, no todas. Se le pide
      solo a quien lo monta, y se sabe quién es mirando si existe la rejilla:
      exigírselo a las demás daba un rojo con la misión perfecta. */
