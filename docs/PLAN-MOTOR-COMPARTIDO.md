@@ -1193,3 +1193,131 @@ Celaque, el 45 % de cobertura forestal y las hectáreas del gorgojo.
   terremoto solo acepta «terremoto», y el propio examen dice «temblor» en
   otras preguntas. Es del banco de antes, que tiene clave impresa.
 - **Las otras 77 misiones** con examen conceptual siguen en 30 formas.
+
+---
+
+## 19. El banco grande, tanda 2: seis misiones más
+
+Rama `feat/banco-conceptual-tanda-2` (21 de noviembre de 2026). El banco
+grande llega a El Himno Nacional de Honduras, Aspectos Cívicos de Honduras,
+Héroes y Próceres de Honduras, Los Tipos de Textos, Los Mayas y las Culturas
+Precolombinas y Los Ecosistemas. Con La Célula y la tanda 1 son trece
+misiones con examen conceptual hasta la Forma 50.
+
+### Cómo se eligieron, y lo que salió mal
+
+Se contó en palabras la ficha, la sección Aprende y los datos de las
+actividades de las 77 misiones que seguían en 30 formas, con tres filtros:
+que la misión se conecte con `_dev/conecta-banco-grande.js` (las de los
+robots, las de gramática, Coordenadas, Europa-Asia-África y Eras Geológicas
+traen otro `genEval`), que sea del currículo (fuera IA y Filosofía) y que su
+examen pregunte datos y no cuentas (fuera Matemáticas, cuyas 40 preguntas de
+hoy son cálculos).
+
+**Contar palabras no es contar datos.** Con esa cuenta entraban La
+Constitución (segunda) y Los Tres Poderes (cuarta). Las dos se escribieron y
+las dos se sacaron: dieron 26 y 29 preguntas limpias, no 40. La Constitución
+no está en `_dev/leyes/`, así que esas misiones enseñan a leer una cita de
+ley con tres normas que sí están, no una lista de datos, y casi todo lo
+preguntable ya lo pide el examen de antes (su propio comentario avisa de que
+son diez por banco «a propósito»). No se rellenó. En su lugar entraron las
+dos con más contenido entre las de Ciencias Naturales y Sociales con bloque
+DCNB, la familia donde la tanda 1 encontró 40 en las seis. Para la tanda
+siguiente: antes de elegir, contar los datos que el examen no pide, no las
+palabras.
+
+### Lo que no hubo que cambiar
+
+Ni el motor ni las herramientas. Cada misión se conectó con
+`conecta-banco-grande.js` y declaró sus cuatro bancos nuevos.
+
+### Las preguntas
+
+238 nuevas. Lo que se contó antes de escribirlas, a mano y leyendo (un dato
+repetido entra una sola vez):
+
+| misión | nuevas | preguntas de las actividades | datos que piden | ya los pedía el examen | la ficha repite del examen |
+|---|---|---|---|---|---|
+| El Himno Nacional | 40 | 96 | unos 40 | 25 | 39 de 40 |
+| Aspectos Cívicos | 40 | 97 | unos 46 | 33 | 35 de 40, y 3 más piden su dato de otro modo |
+| Héroes y Próceres | 38 | 101 | unos 45 | 30 | 39 de 40 |
+| Los Tipos de Textos | 40 | 89 | unos 27 | 17 | 40 de 40 |
+| Mayas y Precolombinas | 40 | 86 | unos 35 | 25 | 40 de 40 |
+| Los Ecosistemas | 40 | 86 | unos 36 | 20 | 40 de 40 |
+
+**Héroes y Próceres lleva 38** (ocho pareados). Quitadas las preguntas de
+consejo de estudio, las que tenían pista y el dato discutido de cómo murió
+Lempira, ocho personajes no dieron dos pareados más. El motor pide tres
+nuevas por sección en cada forma y con ocho le alcanza.
+
+**Las pistas que la sonda no ve se quitaron leyendo.** En esta tanda
+salieron cinco clases, y conviene buscarlas en la siguiente:
+
+- el dato que se calcula con otros dos (el estreno del Himno, el año en que
+  se hizo oficial y «once años después»);
+- la pregunta que explica lo que otra pide reconocer (la abeja «a cambio»
+  poliniza la flor, junto al pareado del mutualismo);
+- la que tacha una opción de otra (el puma que come carne, junto a «¿qué
+  animal come solo plantas?», que lo trae de opción);
+- la que nombra lo que otra tiene por respuesta con otra palabra de la misma
+  familia («Revolución Francesa» junto a «¿qué país es el León?»);
+- y la opción que la otra ya presenta («¿qué eran Tikal y Palenque?» junto a
+  la selección que los ofrece como ciudades mayas).
+
+**Preguntas de la materia, no de cómo estudiar.** La primera versión de
+Próceres traía pareados como «Qué hizo → Lo primero que conviene aprenderse».
+Salen de la ficha, pero no son historia. Quedan como mucho dos por banco.
+
+**El verdadero o falso sin cinco iguales** pidió buscar el orden en cinco
+de las seis: intercalar verdaderas y falsas no basta, porque lo que decide
+qué cae junto es la posición en el banco.
+
+**Datos de las misiones que no se usaron y hay que revisar aparte** (están
+en las fichas o en las páginas, que esta rama no toca):
+
+- Aspectos Cívicos: el mapa como símbolo patrio menor, «el mayor bosque de
+  pino de Centroamérica», en qué parte del Escudo va la cordillera, el
+  significado del arco iris y el «Día de la Guara Roja». En `_dev/leyes/`
+  no hay ley de símbolos patrios.
+- Héroes y Próceres: que Lempira «murió peleando», la República Federal
+  «1824-1842», que Valle, Herrera y Cabañas «no tienen día propio», y el año
+  de nacimiento de Valle (1777, que ya está en el banco de antes).
+- Los Tipos de Textos: el clímax (la actividad y la ficha se contradicen),
+  la noticia como texto narrativo y el catálogo como texto descriptivo.
+- Mayas: las chinampas como «islas flotantes» y «pocas culturas lograron el
+  cero».
+- Los Ecosistemas: el Patuca como «el río más largo de Honduras», «siempre
+  hay más plantas que herbívoros», el jaguar y el mono en el bosque nublado,
+  y los superlativos del Laboratorio.
+
+### Visto de paso, sin tocar
+
+- **Opciones sin letra.** Héroes y Próceres escribe las opciones de su
+  selección sin «a)». Sus formas 1 a 30 salen sin letra y las 31 a 50 con
+  letra, porque el motor las pone al barajar y la sonda lo exige. Dentro de
+  una hoja es uniforme; entre la Forma 30 y la 31 cambia el aspecto. Les
+  pasaría igual a La Constitución y a Los Tres Poderes.
+- **Bancos de antes con clave impresa:** en Los Ecosistemas caen juntas «El
+  medio físico de un ecosistema se llama ___» y «¿Qué forma el medio
+  físico…?»; en Mayas hay tres valoraciones sin fuente («el rey más famoso»,
+  «el pueblo más numeroso», «la escritura más desarrollada»); en Los Tres
+  Poderes el banco pregunta «128 diputados», el dato que su archivo de datos
+  dice que no se puede acreditar.
+
+### Lo que queda
+
+- ~~Congelar las formas 31 a 50 de las seis.~~ Josué aprobó las 238
+  preguntas el 21 de noviembre de 2026, con Héroes y Próceres en 38, y pidió
+  un cambio antes: en El Himno Nacional salió «Cada estrofa del Himno tiene
+  un solo tema» (la cuarta habla de la colonia y además anuncia al León) y
+  entró «Según el Himno, la lucha de los indígenas no logró detener la
+  conquista». Quedaron congeladas con
+  `genera-formas-oro.js --conceptual-ampliar` (cada referencia lleva
+  `conceptualAmpliada`). Desde entonces `verifica-formas-oro.js` compara las
+  50 formas conceptuales de las seis, y ni el texto ni el orden de sus
+  bancos nuevos se cambia.
+- ~~El sello.~~ v581: `CACHE_NAME`, el archivo propio de las seis misiones y
+  el portal de familias. El motor no cambió y no se reselló.
+- **La Constitución y Los Tres Poderes** necesitan primero la Constitución
+  en `_dev/leyes/`. Con ella hay datos para sus bancos.
+- **Las otras 71 misiones** con examen conceptual siguen en 30 formas.
