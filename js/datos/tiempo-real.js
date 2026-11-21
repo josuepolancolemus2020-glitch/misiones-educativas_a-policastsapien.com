@@ -14,6 +14,8 @@
    Al entrar, al volver la señal y al volver a la app: «ponerse al día»,
    lo cambiado desde la última hora de servidor vista, INCLUIDO lo borrado
    (updated_at > cursor − 2 minutos; lo repetido se descarta por versión).
+   Un centro o un grupo borrado de verdad no vuelve en esa lista: después
+   se piden los ids que sí existen y lo que sobre en el aparato se quita.
 
    Realtime usa el RealtimeClient de supabase-js (js/vendor/supabase.min.js,
    solo esa parte: ver _dev/supabase-local/arma-supabase-js.sh) con la
@@ -64,9 +66,12 @@
   // momento se juntan en una sola lectura por tabla.
   var porReleer = {};
   var releyendo = null;
-  function cambioDeFila(owner, tabla, aviso) {
-    if (nube.uid() !== owner || !aviso || !aviso.id || CON_DINERO[tabla] || TABLAS.indexOf(tabla) < 0) return;
-    (porReleer[tabla] = porReleer[tabla] || {})[aviso.id] = 1;
+  function cambioDeFila(owner, tabla, p) {
+    // En un DELETE, p.new llega vacío: el id está en p.old. Sin eso el
+    // aviso se tira y el aparato sigue mostrando lo que ya no existe.
+    var id = p && ((p.new && p.new.id) || (p.old && p.old.id) || p.id);
+    if (nube.uid() !== owner || !id || CON_DINERO[tabla] || TABLAS.indexOf(tabla) < 0) return;
+    (porReleer[tabla] = porReleer[tabla] || {})[id] = 1;
     if (!releyendo) releyendo = setTimeout(function () { releer(owner); }, 150);
   }
   async function releer(owner) {
@@ -80,7 +85,20 @@
         try {
           var filas = await nube.leer(tabla + '?id=in.(' + tanda.map(encodeURIComponent).join(',') + ')&select=*');
           if (nube.uid() !== owner) return;
-          filas.forEach(function (f) { guardar(owner, tabla, f); });
+          var vinieron = {};
+          filas.forEach(function (f) {
+            guardar(owner, tabla, f);
+            if (f && f.id) vinieron[f.id] = 1;
+          });
+          // Centros y aulas: si la base ya no devuelve el id, se quita la
+          // copia y lo que cuelga. Con error de lectura no se quita nada.
+          if ((tabla === 'centros' || tabla === 'aulas') && M._cola && M._cola.quitarSiAusente) {
+            for (var k = 0; k < tanda.length; k++) {
+              if (vinieron[tanda[k]]) continue;
+              if (nube.uid() !== owner) return;
+              await M._cola.quitarSiAusente(owner, tabla, tanda[k]);
+            }
+          }
         } catch (e) {
           // Sin señal justo ahora: lo trae «ponerse al día» al volver.
         }
@@ -105,7 +123,7 @@
         if (estado === 'SUBSCRIBED' && reconexiones++ > 0) ponerseAlDia(owner);
       });
     cliente.channel('metas-filas:' + owner)
-      .on('postgres_changes', { event: '*', schema: 'metas' }, function (p) { cambioDeFila(owner, p.table, p.new); })
+      .on('postgres_changes', { event: '*', schema: 'metas' }, function (p) { cambioDeFila(owner, p.table, p); })
       .subscribe();
   }
 
@@ -161,6 +179,35 @@
     if (mayor && mayor !== cursor) alm.ponerMeta(llave, mayor);
   }
 
+  // Ids que la base todavía tiene, sin filtrar deleted_at: un centro
+  // archivado sigue existiendo y tiene que quedarse. Solo si las dos
+  // listas llegan enteras se puede quitar lo que falte; un corte a medias
+  // borraría centros que sí están.
+  async function traerIds(owner, tabla) {
+    var ids = [];
+    var tras = null;
+    for (var vuelta = 0; vuelta < 500; vuelta++) {
+      if (nube.uid() !== owner) return null;
+      var q = tabla + '?select=id&order=id.asc&limit=' + POR_PAGINA;
+      if (tras) q += '&id=gt.' + encodeURIComponent(tras);
+      var filas;
+      try {
+        filas = await nube.leer(q);
+      } catch (e) {
+        return null;
+      }
+      if (nube.uid() !== owner || !Array.isArray(filas)) return null;
+      for (var i = 0; i < filas.length; i++) {
+        if (filas[i] && filas[i].id) ids.push(filas[i].id);
+      }
+      if (filas.length < POR_PAGINA) return ids;
+      var ultima = filas[filas.length - 1];
+      if (!ultima || !ultima.id || ultima.id === tras) return null;
+      tras = ultima.id;
+    }
+    return null;
+  }
+
   function ponerseAlDia(owner) {
     if (alDia && alDia.owner === owner) return alDia.promesa;
     var promesa = (async function () {
@@ -172,6 +219,13 @@
           if (e && (e.tipo === 'red' || e.tipo === 'sesion')) return;   // se sigue la próxima vez
         }
       }
+      if (nube.uid() !== owner) return;
+      // La lista por hora no trae un borrado de verdad: esa fila ya no
+      // existe y su updated_at no vuelve. Los ids son la fuente.
+      var idsCentros = await traerIds(owner, 'centros');
+      var idsAulas = idsCentros && await traerIds(owner, 'aulas');
+      if (!idsCentros || !idsAulas || nube.uid() !== owner) return;
+      if (M._cola && M._cola.reconciliarAusentes) await M._cola.reconciliarAusentes(owner, idsCentros, idsAulas);
     })();
     alDia = { owner: owner, promesa: promesa };
     promesa.then(fin, fin);

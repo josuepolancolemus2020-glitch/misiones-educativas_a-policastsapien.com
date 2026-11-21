@@ -269,12 +269,20 @@
       default: return 'no se pudo anotar';
     }
   }
+  // La tarjeta de un centro o un grupo que ya no está cabe en doce palabras:
+  // es la misma frase para los dos, y el docente sabe que no va a volver.
+  function textoNoAnotado(op, motivo) {
+    if (motivo === 'no_existe' && (op.tabla === 'centros' || op.tabla === 'aulas')) {
+      return 'Ese centro o grupo ya se había borrado en otro aparato.';
+    }
+    return queEra(op) + ' no quedó anotado: ' + razon(op, motivo) + '.';
+  }
   function noQuedo(op, motivo, detalle) {
     descartar(op);
     // La clave junta en una tarjeta lo que falló en la misma fila por lo
     // mismo (almacen.js lleva la cuenta de las veces).
     alm.ponerNoAnotado({ id: M.ids.nuevo(), owner: op.owner, clave: [op.owner, op.tabla, op.id, motivo].join('|'),
-      texto: queEra(op) + ' no quedó anotado: ' + razon(op, motivo) + '.' });
+      texto: textoNoAnotado(op, motivo) });
     avisar(op.tabla, op.id);
     // Para soporte. Si no llega, no pasa nada: el docente ya lo vio.
     var copia = JSON.parse(JSON.stringify(op));
@@ -767,7 +775,20 @@
       }
       return llaveNatural(op);
     }
+    // El grupo se iba a crear en un centro que otro aparato ya borró de
+    // verdad: no se insiste, porque un reintento lo inventaría de nuevo.
+    if (e.code === '23503' && esCentroInexistente(e)) {
+      if (op.tabla === 'aulas' && op.id) alm.quitarFila(o, 'aulas', op.id);
+      return noQuedo(op, 'no_existe', e.message);
+    }
     return noQuedo(op, e.code || ('http_' + r.status), e.message);
+  }
+
+  // El mensaje de la base nombra la columna o la llave: así se distingue
+  // un centro que ya no está de cualquier otra referencia rota.
+  function esCentroInexistente(e) {
+    var t = String((e && e.message) || '') + ' ' + String((e && e.details) || '');
+    return /centro_id|aulas_centro/i.test(t);
   }
 
   // Dos aparatos crearon lo mismo sin señal (la nota de Ana del parcial I):
@@ -844,6 +865,12 @@
       if (version === null || version === undefined) {
         var hoy = await leerFila(op.tabla, op.id);
         if (!hoy || hoy.deleted_at) {
+          // No quedó ni archivada: en este aparato tampoco se sigue mostrando.
+          if (!hoy && (op.tabla === 'centros' || op.tabla === 'aulas')) {
+            if (op.tabla === 'centros') olvidarArbol(o, op.id);
+            else olvidarAula(o, op.id);
+            return noQuedo(op, 'no_existe', '0 filas');
+          }
           if (hoy) guardar(o, op.tabla, hoy);
           return noQuedo(op, 'borrada');
         }
@@ -866,8 +893,27 @@
         guardar(o, op.tabla, r.datos[0]);
         return descartar(op);
       }
-      if (r.ok) { version = null; continue; }
+      if (r.ok) {
+        // Cero filas: o cambió la versión, o el centro o el grupo ya no
+        // está. Solo en ese segundo caso se deja de insistir; si la fila
+        // sigue, se vuelve a aplicar con la versión de ahora.
+        if (op.tabla === 'centros' || op.tabla === 'aulas') {
+          var sigue = await leerFila(op.tabla, op.id);
+          if (!sigue) {
+            if (op.tabla === 'centros') olvidarArbol(o, op.id);
+            else olvidarAula(o, op.id);
+            return noQuedo(op, 'no_existe', '0 filas');
+          }
+          if (sigue.deleted_at) {
+            guardar(o, op.tabla, sigue);
+            return noQuedo(op, 'borrada');
+          }
+        }
+        version = null;
+        continue;
+      }
       var e = r.datos || {};
+      if (e.code === '23503' && esCentroInexistente(e)) return noQuedo(op, 'no_existe', e.message);
       if (e.code === '23505') {
         // El nombre ya es de otra fila: lo demás se guarda igual y el
         // nombre se pregunta aparte, una sola vez por fila.
@@ -1018,6 +1064,150 @@
       });
     });
     avisar('centros', centroId);
+  }
+  // Igual que olvidarArbol, pero de un solo grupo: el centro se queda.
+  function olvidarAula(owner, aulaId) {
+    var alumnos = alm.filasDe(owner, 'alumnos').filter(function (a) { return a.aula_id === aulaId; })
+      .map(function (a) { return a.id; });
+    alm.nombresTablas(owner).forEach(function (tabla) {
+      alm.filasDe(owner, tabla).slice().forEach(function (f) {
+        var fuera = (tabla === 'aulas' && f.id === aulaId)
+          || (f.aula_id && f.aula_id === aulaId)
+          || (f.alumno_id && alumnos.indexOf(f.alumno_id) >= 0)
+          || (tabla === 'alumnos' && alumnos.indexOf(f.id) >= 0);
+        if (fuera) alm.quitarFila(owner, tabla, f.id);
+      });
+    });
+    avisar('aulas', aulaId);
+  }
+
+  // La nube dijo qué centros y qué grupos existen (archivados incluidos).
+  // Lo que el aparato tiene de más se quita de la copia local, y lo que
+  // estaba por mandarse sale con tarjeta: no se vuelve a crear solo.
+  // Un crear que todavía no llegó a la nube no cuenta como «de más».
+  function conjunto(ids) {
+    var m = {};
+    (ids || []).forEach(function (id) { if (id) m[id] = 1; });
+    return m;
+  }
+  function centroIdDe(op) {
+    if (op.cambios && op.cambios.centro_id) return op.cambios.centro_id;
+    if (op.args && op.args.p_centro) return op.args.p_centro;
+    return null;
+  }
+  async function operacionesDe(owner) {
+    var ops = [];
+    var visto = {};
+    function sumar(op) {
+      if (!op || op.owner !== owner) return;
+      var k = op.op_id || '';
+      if (k && visto[k]) return;
+      if (k) visto[k] = 1;
+      ops.push(op);
+    }
+    alm.cola().forEach(sumar);
+    (await alm.entrantes()).forEach(sumar);
+    alm.preguntas().forEach(function (p) { if (p && p.op) sumar(p.op); });
+    return ops;
+  }
+  function rechazarAusente(op) {
+    alm.quitarEntrante(op);
+    alm.preguntas().slice().forEach(function (p) {
+      if (p && p.op && op.op_id && p.op.op_id === op.op_id) alm.quitarPregunta(p.id);
+    });
+    noQuedo(op, 'no_existe', 'ya no está');
+  }
+  async function aplicarAusentes(owner, idsCentros, idsAulas) {
+    if (nube.uid() !== owner || !Array.isArray(idsCentros) || !Array.isArray(idsAulas)) return;
+    var enNubeC = conjunto(idsCentros);
+    var enNubeA = conjunto(idsAulas);
+    var ops = await operacionesDe(owner);
+    if (nube.uid() !== owner) return;
+    var protC = {};
+    var protA = {};
+    ops.forEach(function (op) {
+      if (op.tipo === 'crear' && op.tabla === 'centros' && op.id) protC[op.id] = 1;
+    });
+    ops.forEach(function (op) {
+      if (op.tipo !== 'crear' || op.tabla !== 'aulas' || !op.id) return;
+      var c = centroIdDe(op);
+      if (c && (enNubeC[c] || protC[c])) protA[op.id] = 1;
+    });
+    var ausentesC = {};
+    alm.filasDe(owner, 'centros').forEach(function (f) {
+      if (f && f.id && !enNubeC[f.id] && !protC[f.id]) ausentesC[f.id] = 1;
+    });
+    var ausentesA = {};
+    alm.filasDe(owner, 'aulas').forEach(function (f) {
+      if (!f || !f.id) return;
+      if (f.centro_id && ausentesC[f.centro_id]) ausentesA[f.id] = 1;
+      else if (!enNubeA[f.id] && !protA[f.id]) ausentesA[f.id] = 1;
+    });
+    var alumnosAus = {};
+    alm.filasDe(owner, 'alumnos').forEach(function (f) {
+      if (f && f.id && f.aula_id && ausentesA[f.aula_id]) alumnosAus[f.id] = 1;
+    });
+    function seVa(tabla, id) {
+      var f = id && alm.fila(owner, tabla, id);
+      if (!f) return false;
+      if (tabla === 'centros') return !!ausentesC[id];
+      if (tabla === 'aulas') return !!ausentesA[id];
+      if (tabla === 'alumnos') return !!alumnosAus[id];
+      if (f.centro_id && ausentesC[f.centro_id]) return true;
+      if (f.aula_id && ausentesA[f.aula_id]) return true;
+      if (f.alumno_id && alumnosAus[f.alumno_id]) return true;
+      return false;
+    }
+    function refsDe(op) {
+      var ids = [];
+      function add(v) { if (v) ids.push(v); }
+      var c = op.cambios || {};
+      add(c.centro_id); add(c.aula_id); add(c.alumno_id);
+      var a = op.args || {};
+      add(a.p_aula); add(a.p_centro); add(a.p_alumno);
+      if (a.p_campos) { add(a.p_campos.centro_id); add(a.p_campos.aula_id); add(a.p_campos.alumno_id); }
+      var f = op.id && alm.fila(owner, op.tabla, op.id);
+      if (f) { add(f.centro_id); add(f.aula_id); add(f.alumno_id); }
+      return ids;
+    }
+    function apunta(op) {
+      if (seVa(op.tabla, op.id)) return true;
+      var ids = refsDe(op);
+      for (var i = 0; i < ids.length; i++) {
+        if (ausentesC[ids[i]] || ausentesA[ids[i]] || alumnosAus[ids[i]]) return true;
+      }
+      return false;
+    }
+    ops.slice().forEach(function (op) {
+      if (op.tabla === 'centros') {
+        if (op.tipo !== 'crear' && ausentesC[op.id]) rechazarAusente(op);
+        return;
+      }
+      if (op.tabla === 'aulas') {
+        if (ausentesA[op.id] || (op.tipo === 'crear' && !protA[op.id] && !enNubeA[op.id])) rechazarAusente(op);
+        return;
+      }
+      if (apunta(op)) rechazarAusente(op);
+    });
+    if (nube.uid() !== owner) return;
+    Object.keys(ausentesC).forEach(function (id) { olvidarArbol(owner, id); });
+    Object.keys(ausentesA).forEach(function (id) { olvidarAula(owner, id); });
+  }
+  // Realtime avisó un id que la base ya no devuelve. Los demás centros
+  // locales se tratan como si siguieran: este aviso no los vio.
+  async function quitarSiAusente(owner, tabla, id) {
+    if (!owner || !id || (tabla !== 'centros' && tabla !== 'aulas') || nube.uid() !== owner) return;
+    var centros = alm.filasDe(owner, 'centros').map(function (f) { return f.id; });
+    var aulas = alm.filasDe(owner, 'aulas').map(function (f) { return f.id; });
+    if (tabla === 'centros') {
+      centros = centros.filter(function (x) { return x !== id; });
+      var del = {};
+      alm.filasDe(owner, 'aulas').forEach(function (a) { if (a.centro_id === id) del[a.id] = 1; });
+      aulas = aulas.filter(function (x) { return !del[x]; });
+    } else {
+      aulas = aulas.filter(function (x) { return x !== id; });
+    }
+    await aplicarAusentes(owner, centros, aulas);
   }
   async function enviarCentro(op) {
     var r;
@@ -1251,5 +1441,7 @@
     escuchar: function (f) { oyentes.push(f); },
     avisar: avisar,
     revisarEspera: revisarEspera,
+    reconciliarAusentes: aplicarAusentes,
+    quitarSiAusente: quitarSiAusente,
   };
 })(window);

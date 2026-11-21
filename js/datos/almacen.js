@@ -345,6 +345,31 @@
     escribir('cola', function (tx) { tx.objectStore('cola').delete(op.seq); });
   }
 
+  // Lo que otra pestaña anotó y la líder todavía no pasó a la cola, más lo
+  // que esta pestaña dejó en «entrantes» mientras no era líder. La
+  // reconciliación lo mira para no borrar un centro que aún no se mandó.
+  async function entrantes() {
+    var vistos = {};
+    var out = [];
+    function sumar(o) {
+      if (!o) return;
+      var k = o.op_id || '';
+      if (k && vistos[k]) return;
+      if (k) vistos[k] = 1;
+      out.push(o);
+    }
+    misEntrantes.forEach(sumar);
+    (await todo('entrantes')).forEach(sumar);
+    return out;
+  }
+
+  function quitarEntrante(op) {
+    if (!op) return;
+    misEntrantes = misEntrantes.filter(function (x) { return !op.op_id || x.op_id !== op.op_id; });
+    if (!op.op_id) return;
+    escribir('entrantes', function (tx) { tx.objectStore('entrantes').delete(op.op_id); }, true);
+  }
+
   // ── Preguntas y tarjetas ───────────────────────────────────────────────
   function ponerPregunta(p) {
     preguntas = preguntas.filter(function (x) { return x.id !== p.id; });
@@ -422,6 +447,8 @@
     cola: function () { return cola; },
     misEntrantes: function () { return misEntrantes; },
     encolar: encolar,
+    entrantes: entrantes,
+    quitarEntrante: quitarEntrante,
     absorberEntrantes: absorberEntrantes,
     actualizarOp: actualizarOp,
     sacarDeCola: sacarDeCola,
