@@ -58,8 +58,8 @@
    cadenas, las plantillas y las expresiones regulares (que en los `-en.js`
    son copias del texto español); del HTML, con el texto y los atributos que
    se leen (title, aria-label, alt, placeholder); y del CSS, con los
-   `content:` que se pintan. Sin dependencias: `node_modules` va versionado
-   en este repositorio y no se le añade nada.
+   `content:` que se pintan. Sin dependencias: el proyecto no tiene ninguna
+   y no se le añade nada.
 
    Uso:  node _dev/verifica-ortografia.js            (está en `npm test`)
          node _dev/verifica-ortografia.js --detalle  (enseña cada caso entero)

@@ -32,8 +32,6 @@
    2. Dentro lleva las tres reglas que la hacen caber.
    3. La .xp-bar base sigue siendo la del molde (si alguien le
       cambia el gap o el padding, el cálculo deja de valer).
-   4. Cuánto le falta al espejo de www/ para ponerse al día
-      (AVISO, no fallo: ver la nota de abajo).
 
    Uso:  node _dev/verifica-barra-xp.js
 ============================================================= */
@@ -116,27 +114,6 @@ for (const rel of archivos) {
   firmas.set(f, (firmas.get(f) || 0) + 1);
 }
 for (const [f, n] of firmas) ok(`${n} misiones con ${f}`);
-
-/* ── 4. el espejo de www/ ───────────────────────────────────── */
-/* Esto AVISA, no falla, y el motivo está escrito en CLAUDE.md: www/ es la
-   copia que se lleva Capacitor a la app de Android, no se edita a mano y se
-   regenera con `npm run build:www` en Windows. O sea que entre una compilación
-   y la siguiente va desfasada A PROPÓSITO: darlo por fallo pintaba de rojo el
-   estado normal del repositorio, y una sonda que sale roja cuando todo está
-   bien enseña a no mirarla. Lo que sí hace falta saber es CUÁNTO le falta,
-   porque hasta que se compile la app el alumno de Android sigue con el CSS
-   viejo. */
-console.log('\n3) Espejo de www/ (aviso, no fallo)');
-let difieren = 0;
-for (const rel of archivos) {
-  const esp = path.join(RAIZ, 'www', rel);
-  if (!fs.existsSync(esp) ||
-      fs.readFileSync(path.join(RAIZ, rel), 'utf8') !== fs.readFileSync(esp, 'utf8')) difieren++;
-}
-if (!difieren) ok(`los ${archivos.length} espejos coinciden`);
-else console.log(`  ⚠ ${difieren} de ${archivos.length} copias de www/ están atrasadas.\n` +
-                 '    La app de Android seguirá con el CSS viejo hasta que se corra\n' +
-                 '    `npm run build:www` en Windows y se compile.');
 
 console.log('\n' + '─'.repeat(50));
 if (fallos) { console.log(`✖ ${fallos} problema(s): alguna misión puede desbordar la pantalla del teléfono`); process.exit(1); }

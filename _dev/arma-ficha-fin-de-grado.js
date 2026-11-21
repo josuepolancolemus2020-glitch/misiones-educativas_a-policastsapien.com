@@ -21,12 +21,9 @@
    hoja. Medir en pantalla ancha miente: las columnas se estiran y el
    texto ocupa menos alto del que ocupará en el papel.
 
-   Necesita Playwright. En este entorno se instala aparte y se BORRA al
-   terminar, porque node_modules va versionado:
+   Necesita Playwright. Se instala aparte y no se versiona
+   (node_modules/ está en .gitignore):
      npm install --no-save playwright
-     …
-     rm -rf node_modules/playwright* node_modules/.package-lock.json
-     git checkout node_modules
    ============================================================ */
 'use strict';
 const fs = require('fs');

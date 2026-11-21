@@ -24,8 +24,10 @@
    4. El aviso dice lo que de verdad pasa: que los resultados del
       alumno SUBEN SOLOS, y con qué datos.
    5. Ninguna pantalla vuelve a prometer que los datos no salen.
-   6. `www/` no se publica: es la copia vieja de Capacitor y,
-      servida, se instala su propio service worker.
+   6. `www/`, `android/` y `node_modules/` no se publican. La copia
+      vieja de Capacitor se retiró en noviembre de 2026, pero si una
+      copia nueva vuelve a aparecer en el árbol y se sirve, se instala
+      su propio service worker con una aplicación atrasada.
 
    Uso:  node _dev/servidor-estatico.js   (en otra terminal)
          node _dev/verifica-legal.js
@@ -120,15 +122,10 @@ const ok = (nombre, cond, extra) => {
 
   await nav.close();
 
-  console.log('\n6) La copia vieja de www/ no se publica');
+  console.log('\n6) Las copias de la app (www/, android/) no se publican');
   ok('hay _config.yml', fs.existsSync(path.join(RAIZ, '_config.yml')));
   const cfg = fs.existsSync(path.join(RAIZ, '_config.yml')) ? leer('_config.yml') : '';
   ['www/', 'android/', 'node_modules/'].forEach(d => ok(`excluye ${d}`, cfg.includes(d)));
-  /* Si algún día www/ se pusiera al día, esta comprobación sobra; mientras
-     esté atrás, publicarla es servir la aplicación de hace meses. */
-  const vWww = (leer('www/sw.js').match(/meta-app-v(\d+)/) || [])[1];
-  const vReal = (leer('sw.js').match(/meta-app-v(\d+)/) || [])[1];
-  console.log(`  · www/ va por v${vWww} y el sitio por v${vReal} (${vReal - vWww} versiones de diferencia)`);
 
   console.log('\n' + '─'.repeat(50));
   if (fallos) { console.log(`✖ ${fallos} problema(s).`); process.exit(1); }

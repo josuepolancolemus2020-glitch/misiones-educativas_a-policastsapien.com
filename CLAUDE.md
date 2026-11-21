@@ -26,7 +26,7 @@ dato que se afirma se puede acreditar con una fuente que está en `_dev/`.
 | `img/` | imágenes, QR de misiones (`qr-mision-<slug>.png`), iconos |
 | `_dev/` | sondas, armadores de fichas, fuentes oficiales (`leyes/`, `dcnb/`, `dcnb-pdf/`). No se publica |
 | `sw.js` | service worker: `CACHE_NAME` (armazón) y `CACHE_DATOS` (lo visitado) |
-| `www/`, `android/` | copia para Capacitor (Android). `www/` no se edita a mano |
+| `www/`, `android/` | ya no existen: la copia vieja de Capacitor se retiró en noviembre de 2026. La app de Android e iOS se monta de nuevo en enero; el plan está en `_dev/ANDROID-IOS-PLAN.md` |
 | `docs/historial/` | contexto histórico y normativas detalladas |
 
 Sin framework ni compilación: HTML, CSS y JS planos servidos tal cual.
@@ -114,8 +114,8 @@ npm run test:navegador      # sondas con Playwright; levanta su propio servidor
 ```
 
 Playwright no va versionado: se instala con `npm install --no-save playwright`
-y se borra al terminar (`node_modules` está en el repositorio). Para una sonda
-suelta:
+(`node_modules/` está en `.gitignore`; el proyecto no tiene dependencias). Para
+una sonda suelta:
 
 ```
 node _dev/servidor-estatico.js     # en otra terminal
