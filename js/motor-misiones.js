@@ -738,6 +738,119 @@
     + 'if(b){h=b.getBoundingClientRect().height;if(a){h-=a.getBoundingClientRect().height;}}'
     + 'document.querySelectorAll("[data-metas-antes]").forEach(function(x){x.parentNode.removeChild(x);});';
 
+  /* ── La hoja se ajusta a la carta, no a la ventana ──
+     El ajuste que trae cada hoja (`fit`) agranda o achica el examen y la
+     pauta hasta que cada uno llena su página. Medía dos cosas mal, y el
+     21 de noviembre de 2026 eso eran 27 hojas en tres páginas medidas al
+     ancho de la carta y 56 impresas desde una computadora (35 de ellas en
+     cuatro):
+
+     1. EL ANCHO. 55 hojas no fijan su ancho: el ajuste medía con el de la
+        ventana donde se abren. En una computadora los renglones salen
+        largos, la hoja parece corta y el ajuste la agranda; el papel
+        vuelve a partir los renglones al ancho de la carta y la hoja ya no
+        cabe. En un teléfono pasa al revés: la letra sale chica y sobra
+        media página. Ahora la hoja se dispone, también en la pantalla, al
+        ancho útil de SU carta (215,9 mm menos los márgenes de su @page):
+        el ajuste ve los mismos renglones que salen en el papel, se abra
+        donde se abra. Las que ya fijan su ancho no se tocan.
+
+     2. EL ALTO. La meta del ajuste (250 o 252 mm) es la de una hoja con
+        márgenes de 5 mm, que deja 269,4 mm. Las pruebas de pensamiento
+        crítico se imprimen con márgenes de 12,7 mm: les quedan 254 mm, y
+        la pauta de 250 más los 9 mm que la hoja guarda al fondo para el
+        pie no cabían. Esa era la tercera página, casi en blanco. Ahora
+        la meta de cada bloque no pasa de lo que de verdad le queda en su
+        página: el alto útil de la carta con sus márgenes, menos el
+        relleno de arriba (el primer bloque) y menos el pie, que va fijo
+        al fondo de cada página. Y lo que la hoja guarda al fondo es el
+        alto del pie, no 9 mm: así esas hojas casi no pierden tamaño
+        (menos de un 1 % de media, 2 % la que más; en las demás la meta no
+        cambia).
+
+     Una hoja que fija un ancho mayor que el útil de su carta (201,9 mm en
+     una de márgenes de 10 mm) la reduce el navegador al imprimir para que
+     quepa a lo ancho, y con eso le cabe más a lo alto: se cuenta igual.
+
+     Si algo de la hoja no se reconoce (sin @page, apaisada, márgenes
+     raros), sale como la escribió la misión. Lo vigila
+     _dev/verifica-examen-hoja-carta.js, y las páginas de las 168 hojas,
+     _dev/verifica-examen-dos-paginas.js. */
+  var CARTA_ANCHO_MM = 215.9, CARTA_ALTO_MM = 279.4;
+  /* El pie (firma y forma) mide 23 px desde el fondo de la página; el de
+     antes, 2 mm + 4,2 mm. Con 6,2 mm caben los dos. */
+  var PIE_MM = 6.2;
+  /* Hasta cuánto reduce el navegador una hoja más ancha que el papel. */
+  var REDUCCION_MAXIMA = 2;
+  var AJUSTE_FIT = /fit\(\s*(["'])([A-Za-z0-9_-]+)\1\s*,\s*([0-9.]+)\s*,/g;
+
+  function _aMm(t) {
+    var m = /^(-?[0-9]*\.?[0-9]+)(mm|cm|in|px|pt)?$/.exec(_txt(t));
+    if (!m) return NaN;
+    var n = parseFloat(m[1]);
+    if (m[2] === 'cm') return n * 10;
+    if (m[2] === 'in') return n * 25.4;
+    if (m[2] === 'px') return n * 25.4 / 96;
+    if (m[2] === 'pt') return n * 25.4 / 72;
+    return m[2] === 'mm' || n === 0 ? n : NaN;
+  }
+  /* Lo que la hoja dice de sí misma: el ancho y el alto útiles de su
+     carta, el relleno de arriba del cuerpo y si el cuerpo fija su ancho.
+     null si no se reconoce. */
+  function _medidasDeHoja(html) {
+    var pag = /@page\s*\{([^}]*)\}/.exec(html);
+    if (!pag || /landscape/i.test(pag[1]) || (/size\s*:/i.test(pag[1]) && !/size\s*:\s*letter\b/i.test(pag[1]))) return null;
+    var mar = /margin\s*:\s*([^;}]+)/.exec(pag[1]);
+    if (!mar) return null;
+    var v = _txt(mar[1]).split(/\s+/).map(_aMm);
+    if (!v.length || v.length > 4 || v.some(function (x) { return !(x >= 0 && x < 60); })) return null;
+    var arriba = v[0], derecha = v.length > 1 ? v[1] : arriba;
+    var abajo = v.length > 2 ? v[2] : arriba, izquierda = v.length > 3 ? v[3] : derecha;
+    /* La primera regla del cuerpo es la de la pantalla; la de imprimir
+       (el relleno del fondo) viene después, dentro de @media print. */
+    var cuerpo = /body\s*\{([^}]*)\}/.exec(html);
+    var relleno = cuerpo && /(?:^|;)\s*padding\s*:\s*([^;]+)/.exec(cuerpo[1]);
+    var rellenoArriba = relleno ? _aMm(_txt(relleno[1]).split(/\s+/)[0]) : 0;
+    var fijo = cuerpo && /(?:^|;)\s*width\s*:\s*([^;]+)/.exec(cuerpo[1]);
+    var anchoFijo = fijo ? _aMm(fijo[1]) : 0;
+    if (!(rellenoArriba >= 0) || (fijo && !(anchoFijo > 0))) return null;
+    var util = CARTA_ANCHO_MM - derecha - izquierda;
+    var reduccion = anchoFijo > util ? Math.min(REDUCCION_MAXIMA, anchoFijo / util) : 1;
+    return {
+      ancho: util, anchoFijo: anchoFijo, rellenoArriba: rellenoArriba,
+      alto: (CARTA_ALTO_MM - arriba - abajo) * reduccion
+    };
+  }
+  function _aLaCarta(html) {
+    var m = _medidasDeHoja(html);
+    var cabeza = html.indexOf('</head>');
+    if (!m || cabeza < 0 || html.indexOf('data-metas-carta') >= 0) return html;
+    var n = 0;
+    var out = html.replace(AJUSTE_FIT, function (todo, comilla, id, mm) {
+      var tope = m.alto - (n === 0 ? m.rellenoArriba : 0) - PIE_MM;
+      n++;
+      /* Hacia abajo y a la décima: la meta nunca sube, y una hoja cuya
+         meta ya cabe sale con el mismo número que escribió la misión. */
+      tope = Math.floor(tope * 10) / 10;
+      return parseFloat(mm) <= tope ? todo : 'fit(' + comilla + id + comilla + ',' + tope + ',';
+    });
+    /* El alto útil y el ancho con que se dispone van escritos en la hoja:
+       es lo que lee la sonda para saber con qué carta se midió. */
+    var estilo = '<style data-metas-carta="' + (m.anchoFijo || m.ancho).toFixed(1) + ' ' + m.alto.toFixed(1) + '">'
+      + (m.anchoFijo ? '' : '@media screen{html{width:' + m.ancho.toFixed(1) + 'mm;margin:0 auto;}}')
+      /* Los teléfonos agrandan por su cuenta la letra de una página ancha
+         (y solo en la pantalla): el ajuste mediría otra hoja. Y una
+         pantalla corriente redondea el ancho de cada letra al píxel, cosa
+         que ni el papel ni un teléfono hacen: con `geometricPrecision` la
+         letra mide en todas partes lo que mide impresa. Medido en las 168
+         hojas: sin esto, el ajuste del teléfono y el de la computadora
+         diferían en 77 (hasta 1,2 %); con esto, en ninguna. */
+      + 'html{-webkit-text-size-adjust:100%;text-size-adjust:100%;text-rendering:geometricPrecision;}'
+      + '@media print{body{padding-bottom:' + PIE_MM + 'mm;}}</style>';
+    cabeza = out.indexOf('</head>');
+    return out.slice(0, cabeza) + estilo + out.slice(cabeza);
+  }
+
   /* El texto de la hoja, con el encabezado que toca. `centro` null es
      «Sin encabezado»: la hoja de siempre, con la raya para escribir el
      centro, solo marcada para que nadie la llene. Si una hoja no tiene la
@@ -747,6 +860,8 @@
      exactamente cuánto alto agregó el centro, y después lo quita. */
   function _hojaConEncabezado(html, centro, docente, datos, letra) {
     if (typeof html !== 'string' || html.indexOf('<div class="ph">') < 0) return html;
+    /* Antes que nada: las metas de abajo se leen ya con el tope de la carta. */
+    html = _aLaCarta(html);
     var bloques = html.match(BLOQUE_PH).length;
     var cabezas = (html.match(CABEZA) || []).length;
     var idioma = _idiomaDeHoja(html);
@@ -798,11 +913,10 @@
   }
 
   /* Corre la impresión de la misión con la ventana nueva vigilada: lo que
-     la misión escribe en ella pasa antes por `_hojaConEncabezado`. Solo
-     durante esta llamada; después `window.open` queda como estaba. */
-  function _imprimirCon(centro, original, yo, args, datos, letra) {
+     la misión escribe en ella pasa antes por `cambiar`. Solo durante esta
+     llamada; después `window.open` queda como estaba. */
+  function _imprimirPasandoPor(cambiar, original, yo, args) {
     var abrir = global.open;
-    var docente = centro ? _docenteDe(centro) : '';
     global.open = function () {
       var win = abrir.apply(global, arguments);
       try {
@@ -810,7 +924,7 @@
           win.__metasEncabezado = 1;
           var escribir = win.document.write;
           win.document.write = function (html) {
-            if (typeof html === 'string') html = _hojaConEncabezado(html, centro, docente, datos, letra);
+            if (typeof html === 'string') html = cambiar(html);
             return escribir.call(win.document, html);
           };
         }
@@ -819,6 +933,17 @@
     };
     try { return original.apply(yo, args); }
     finally { global.open = abrir; }
+  }
+  function _imprimirCon(centro, original, yo, args, datos, letra) {
+    var docente = centro ? _docenteDe(centro) : '';
+    return _imprimirPasandoPor(function (html) { return _hojaConEncabezado(html, centro, docente, datos, letra); }, original, yo, args);
+  }
+  /* Sin sesión la hoja sale como la escribió la misión: ni centro, ni
+     título nuevo, ni firma. Lo único que se le pone es la medida de la
+     carta: el maestro sin cuenta también imprime, y se quedaba con la
+     tercera página. */
+  function _hojaSinSesion(html) {
+    return typeof html === 'string' && html.indexOf('<div class="ph">') >= 0 ? _aLaCarta(html) : html;
   }
 
   /* El centro con que sale la hoja. Solo sirve un centro VIVO, de la
@@ -1002,7 +1127,8 @@
     var dato = IMPRESIONES[nombre];
     var envuelta = function () {
       var yo = this, args = arguments;
-      if (!global[dato] || !_conSesion()) { _avisarImpresion(nombre); return original.apply(yo, args); }
+      if (!global[dato]) { _avisarImpresion(nombre); return original.apply(yo, args); }
+      if (!_conSesion()) { _avisarImpresion(nombre); return _imprimirPasandoPor(_hojaSinSesion, original, yo, args); }
       /* Con sesión, la hoja la decide siempre el motor: sin un centro con
          nombre sale la de siempre, marcada, y MetasCentro.examen no le
          pone a medias un logo o un nombre de otro lado. */
@@ -1517,7 +1643,7 @@
     critica: { formasMaximas: FORMAS_CRITICA, conjuntos: _conjuntosCritica, formas: _formasCritica, reparto: _repartoCritica, conFormasDeAntes: _conFormasDeAntes, conOpcionesRepartidas: _conOpcionesRepartidas, barajarSinFilaPropia: _barajarSinFilaPropia, selector: _selectorCritica, turno: _turnoCritica },
     abrirPedida: abrirPedida, buscar: buscar, carpetaDe: carpetaDe,
     centro: {
-      hoja: _hojaConEncabezado, centros: _centrosParaExamen, envolver: _envolverImpresiones,
+      hoja: _hojaConEncabezado, sinSesion: _hojaSinSesion, centros: _centrosParaExamen, envolver: _envolverImpresiones,
       envueltas: function () { return envueltas.slice(); },
       fechaLarga: _fechaLarga, titulo: _tituloLimpio, lugar: _lugarDe, pie: _pieLimpio,
       limpia: function (html, letra) { var i = _idiomaDeHoja(html); return _pieLimpio(_titulosLimpios(html, i), i, letra); },
