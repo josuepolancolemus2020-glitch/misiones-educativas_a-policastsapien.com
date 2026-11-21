@@ -1637,6 +1637,11 @@ document.addEventListener('DOMContentLoaded', () => {
     initTheme();
     loadProgress();
     upFC(); buildQz(); buildClass(); showId(); showCmp(); buildSopa(); genTask(); genEval();
+    /* La máquina se arma al cargar, como las demás actividades. Antes solo la
+       armaban los dos botones que llevan a «Máquina», y cualquier otro camino
+       que abriera la sección con go('s-maquina') la encontraba vacía: sin
+       palabras ni cajas para clasificar. */
+    maqEnsureInit();
     updateRetoButtons();
     renderAchPanel();
     document.addEventListener('click', function (e) {
