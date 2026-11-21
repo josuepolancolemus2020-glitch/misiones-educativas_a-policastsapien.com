@@ -9,7 +9,9 @@
      js/motor-mision.js) tienen la forma que el motor sabe cambiar, y
      sus tres impresiones son printEval, printEvalOp o printEvalCrit;
    (a) sin sesión, la hoja sale igual, byte por byte, aunque el perfil
-       esté guardado en el aparato;
+       esté guardado en el aparato (a una hoja de verdad solo se le pone
+       la medida de su carta, que la de aquí no declara: eso lo mira
+       _dev/verifica-examen-hoja-carta.js);
    (b) docente con un centro: logo a color, cuadrado y grande (60 px o
        más) a la izquierda; a su derecha el nombre en mayúsculas y, en
        letra pequeña, el lugar y «Docente: … · Grado y Sección: … ·

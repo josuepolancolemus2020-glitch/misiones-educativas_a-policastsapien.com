@@ -10,13 +10,13 @@
    cuentan las páginas. Se compara con la hoja de siempre (sin sesión),
    del MISMO examen generado.
 
-   ⚠️ El ancho de la ventana importa. El ajuste de la hoja (fit) mide al
-   abrirse, con el ancho de la pantalla, y el papel vuelve a partir los
-   renglones al ancho de la carta: medida en una ventana ancha, la hoja
-   crece al imprimir y parece que se pasa; en una angosta, que sobra
-   lugar. Por eso cada hoja se abre en una ventana del ancho útil de la
-   carta según SU @page (215,9 mm menos los márgenes): ahí el ajuste ve
-   los mismos renglones que salen en el papel.
+   El ancho de la ventana ya no importa: desde el 21 de noviembre de 2026
+   el motor dispone cada hoja al ancho útil de SU carta (`_aLaCarta`), se
+   abra donde se abra. Antes el ajuste medía con la ventana y había que
+   abrir cada hoja en una del ancho de la carta para acertar; se sigue
+   abriendo así, que no estorba. Lo de las páginas lo vigila
+   _dev/verifica-examen-dos-paginas.js. Y el logo no entra en la cuenta
+   del alto: el texto de su derecha mide de 88 a 97 px y el logo, 72.
 
    Por cada tamaño de logo (METAS_LADOS, en px; por defecto 34 y 44):
    · páginas del PDF con el centro y sin él (tienen que ser las mismas);
