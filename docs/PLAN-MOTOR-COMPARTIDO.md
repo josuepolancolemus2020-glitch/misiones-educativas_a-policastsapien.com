@@ -1306,9 +1306,18 @@ en las fichas o en las páginas, que esta rama no toca):
 
 ### Lo que queda
 
-- **Congelar las formas 31 a 50 de las seis**, cuando Josué apruebe las
-  preguntas: `node _dev/genera-formas-oro.js --conceptual-ampliar <carpeta>`.
-  Mientras tanto `verifica-formas-oro.js` las nombra «por congelar».
+- ~~Congelar las formas 31 a 50 de las seis.~~ Josué aprobó las 238
+  preguntas el 21 de noviembre de 2026, con Héroes y Próceres en 38, y pidió
+  un cambio antes: en El Himno Nacional salió «Cada estrofa del Himno tiene
+  un solo tema» (la cuarta habla de la colonia y además anuncia al León) y
+  entró «Según el Himno, la lucha de los indígenas no logró detener la
+  conquista». Quedaron congeladas con
+  `genera-formas-oro.js --conceptual-ampliar` (cada referencia lleva
+  `conceptualAmpliada`). Desde entonces `verifica-formas-oro.js` compara las
+  50 formas conceptuales de las seis, y ni el texto ni el orden de sus
+  bancos nuevos se cambia.
+- ~~El sello.~~ v581: `CACHE_NAME`, el archivo propio de las seis misiones y
+  el portal de familias. El motor no cambió y no se reselló.
 - **La Constitución y Los Tres Poderes** necesitan primero la Constitución
   en `_dev/leyes/`. Con ella hay datos para sus bancos.
 - **Las otras 71 misiones** con examen conceptual siguen en 30 formas.
