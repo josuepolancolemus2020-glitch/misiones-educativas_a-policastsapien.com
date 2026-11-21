@@ -498,7 +498,14 @@ const evalTFBankNuevo=[
   {q:'El Himno cuenta la historia de Honduras desde antes de la llegada de los españoles.',a:true,k:'himno-cuenta-historia',fuente:'Ficha, página 1 (1. Quién lo hizo y desde cuándo es oficial) · Guía (Aprende): ¿Qué es el Himno Nacional?'},
   {q:'El músico que compuso el Himno nunca vivió en Honduras.',a:false,k:'musico-vivio',fuente:'Ficha, página 1 (1. Quién lo hizo y desde cuándo es oficial) · Guía (Aprende): ¿Qué es el Himno Nacional? · Actividad Tarjetas: ¿Quién compuso la música?'},
   {q:'En la revolución que cuenta el Himno, el pueblo mandó a la muerte a su rey.',a:true,k:'e5-rey-muerte',fuente:'Ficha, página 5 (Quinta estrofa, Qué dice) · Actividad Laboratorio: Quinta estrofa, ¿Qué dice? · Actividad Tareas: Explicar 6'},
-  {q:'Cada estrofa del Himno tiene un solo tema.',a:true,k:'estrofa-un-tema',fuente:'Ficha, página 2 (El tema de cada parte) · Guía (Aprende): Lo que te van a preguntar · Actividad Estrofas: El Himno de un vistazo'}
+  /* Aquí iba «Cada estrofa del Himno tiene un solo tema», y es discutible: la
+     cuarta habla de la colonia y además anuncia al León. Esta sale del primer
+     verso de la tercera estrofa y de su explicación (js/data/himno.js), y
+     dice «según el Himno» porque es lo que el poema afirma. No nombra la
+     estrofa ni a Lempira: eso lo preguntan los pareados de arriba. Y no
+     escribe «inútil»: arriba una selección cita «tu inútil reclamo», de otra
+     estrofa, y la palabra repetida empujaría a contestar sin saber. */
+  {q:'Según el Himno, la lucha de los indígenas no logró detener la conquista.',a:true,k:'e3-lucha-inutil',fuente:'Ficha, página 4 (Tercera estrofa, la letra y Qué dice) · Actividad Laboratorio: Tercera estrofa, La letra · Actividad Laboratorio: Tercera estrofa, ¿Qué dice? · Actividad Tareas: Explicar 4'}
 ];
 const evalMCBankNuevo=[
   {q:'¿Durante el gobierno de quién se declaró oficial el Himno Nacional?',o:['a) Manuel Bonilla','b) Alberto de Jesús Membreño','c) Francisco Bertrand','d) Tiburcio Carías Andino'],a:1,k:'oficial-gobierno',fuente:'Ficha, página 1 (1. Quién lo hizo y desde cuándo es oficial)'},
