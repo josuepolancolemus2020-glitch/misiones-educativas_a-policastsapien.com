@@ -218,16 +218,33 @@
     return deCache(aulaId);
   }
 
+  // La copia es de lectura: cuando la base contestó, la lista queda igual
+  // a la de ella. Un centro borrado en otro aparato no se suma al que había.
+  function perfilesQueSiguen(porAula, lista) {
+    if (!porAula) return porAula;
+    var ids = {};
+    lista.forEach(function (c) { if (c && c.id) ids[c.id] = 1; });
+    var out = {};
+    Object.keys(porAula).forEach(function (aulaId) {
+      var p = porAula[aulaId];
+      if (p && p.id && !ids[p.id]) return;
+      out[aulaId] = p;
+    });
+    return out;
+  }
   function refrescar(api, actual) {
     if (!api || typeof api.lista !== 'function') return;
     var prev = leer();
     // Una lista vacía no borra la que había: puede ser que la base todavía
-    // no haya contestado. Un centro no se borra (la base no deja).
+    // no haya contestado. Si contestó, esta lista reemplaza a la copia.
     var lista = listaCentros(api);
     var arch = idsArchivados(api);
     var aulas = api.lista('aulas') || [];
     if (!aulas.length) {
-      if (lista.length) prev.centros = lista;
+      if (lista.length) {
+        prev.centros = lista;
+        prev.porAula = perfilesQueSiguen(prev.porAula, lista);
+      }
       if (arch) prev.archivados = arch;
       if (lista.length || arch) escribir(prev);
       return;
@@ -240,6 +257,7 @@
         for (var i = 0; i < centros.length; i++) if (centros[i].id === a.centro_id) c = centros[i];
       }
       if (c) por[a.id] = armar(a, c);
+      else if (lista.length) por[a.id] = null;
       else if (a.centro_id && prev.porAula && prev.porAula[a.id]) por[a.id] = prev.porAula[a.id];
       else por[a.id] = null;
     });
