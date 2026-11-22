@@ -86,10 +86,69 @@ function estSbConf() {
   return { url, key };
 }
 
+/* Lo último que se trajo, también en memoria: con 20 000 resultados la copia
+   puede no caber en el almacenamiento del teléfono, y sin esto la pestaña se
+   quedaba en blanco justo con el maestro que más práctica tiene. Lo de
+   memoria dura mientras la página esté abierta; lo guardado, para siempre. */
+let _estNubeMem = null;
 function estNubeCache() {
+  if (_estNubeMem) return _estNubeMem;
   try { const o = JSON.parse(localStorage.getItem(EST_NUBE_KEY)); return (o && typeof o === 'object') ? o : null; }
   catch (_) { return null; }
 }
+
+/* Trae TODAS las filas del maestro, por páginas. La nube entrega 1 000 filas
+   por vez y la consulta de antes no sabía pedir la siguiente: con 2 345
+   resultados, Estadísticas y el Plan de Acción contaban sobre 1 000 sin
+   decirlo. Las funciones «_pag» (SUPABASE-TOPES-Y-PAGINAS.sql) tienen la
+   MISMA regla de qué filas son del maestro y reciben un cursor (la fecha y
+   el id de la última fila). Páginas de 500 hasta que llegue una más corta,
+   con techo de 40 (20 000 filas). Si la nube aún no tiene la función nueva,
+   la de siempre, avisando si devuelve justo 1 000.
+   La misma lógica vive en consulta-nube.html (traerPaginas). */
+const EST_PAG_FILAS = 500, EST_PAG_MAX = 40;
+async function estTraerPaginas(url, key, fnPag, fnVieja, cuerpo, campoFecha) {
+  const cab = { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' };
+  const filas = [], vistos = new Set();
+  let antes = null;
+  for (let pag = 0; pag < EST_PAG_MAX; pag++) {
+    const r = await fetch(url + '/rest/v1/rpc/' + fnPag, {
+      method: 'POST', headers: cab,
+      body: JSON.stringify(Object.assign({}, cuerpo, {
+        p_antes_fecha: antes ? antes.fecha : null, p_antes_id: antes ? antes.id : null, p_limite: EST_PAG_FILAS })),
+    });
+    if (!r.ok) {
+      let falta = r.status === 404;
+      if (!falta && pag === 0) { try { const j = await r.json(); falta = !!(j && j.code === 'PGRST202'); } catch (_) {} }
+      if (pag === 0 && falta) {
+        const rv = await fetch(url + '/rest/v1/rpc/' + fnVieja, {
+          method: 'POST', headers: cab, body: JSON.stringify({ p_codigo: cuerpo.p_codigo, p_clave: cuerpo.p_clave }),
+        });
+        if (!rv.ok) throw new Error('HTTP ' + rv.status);
+        const jv = await rv.json();
+        const fv = Array.isArray(jv) ? jv : [];
+        return { filas: fv, puedeFaltar: fv.length === 1000 };
+      }
+      throw new Error('HTTP ' + r.status);
+    }
+    const j = await r.json();
+    const pagina = Array.isArray(j) ? j : [];
+    /* el progreso se ordena por su fecha de cambio: una foto que se
+       actualiza mientras se pagina puede volver a salir; se cuenta una vez */
+    pagina.forEach(f => {
+      if (f && f.id != null) { if (vistos.has(f.id)) return; vistos.add(f.id); }
+      filas.push(f);
+    });
+    if (pagina.length < EST_PAG_FILAS) return { filas };
+    const u = pagina[pagina.length - 1] || {};
+    if (u[campoFecha] == null || u.id == null) return { filas };
+    antes = { fecha: u[campoFecha], id: u.id };
+  }
+  return { filas, masEnLaNube: true };
+}
+
+/* «2 345», «20 000»: el espacio de miles del papel, que no se parte */
+function estMiles(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0'); }
 
 async function estNubeRefrescar() {
   const { url, key } = estSbConf();
@@ -97,21 +156,18 @@ async function estNubeRefrescar() {
   try { doc = JSON.parse(localStorage.getItem('METAS_DOCENTE_V1')); } catch (_) {}
   if (!doc || !doc.codigo || !doc.clave) return { err: 'sincuenta' };
   if (navigator.onLine === false) return { err: 'sinred' };
-  const rpc = async (fn) => {
-    const r = await fetch(url + '/rest/v1/rpc/' + fn, {
-      method: 'POST',
-      headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ p_codigo: doc.codigo, p_clave: doc.clave }),
-    });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    const j = await r.json();
-    return Array.isArray(j) ? j : [];
-  };
+  const cuerpo = { p_codigo: doc.codigo, p_clave: doc.clave };
   try {
-    const resultados = await rpc('metas_consultar_docente');
-    let progreso = [];
-    try { progreso = await rpc('metas_consultar_progreso_docente'); } catch (_) {}
-    const cache = { t: new Date().toISOString(), resultados, progreso };
+    const res = await estTraerPaginas(url, key, 'metas_consultar_docente_pag', 'metas_consultar_docente', cuerpo, 'creado_en');
+    let prog = { filas: [] };
+    try {
+      prog = await estTraerPaginas(url, key, 'metas_consultar_progreso_docente_pag', 'metas_consultar_progreso_docente', cuerpo, 'actualizado_en');
+    } catch (_) {}
+    const avisos = [];
+    if (res.masEnLaNube) avisos.push('Se trajeron ' + estMiles(EST_PAG_FILAS * EST_PAG_MAX) + ' resultados; hay más en la nube.');
+    if (res.puedeFaltar || prog.puedeFaltar) avisos.push('Puede que falten resultados: la nube entrega ' + estMiles(1000) + ' por vez.');
+    const cache = { t: new Date().toISOString(), resultados: res.filas, progreso: prog.filas, avisos };
+    _estNubeMem = cache;
     try { localStorage.setItem(EST_NUBE_KEY, JSON.stringify(cache)); } catch (_) {}
     return { ok: 1, cache };
   } catch (e) {
@@ -874,7 +930,12 @@ function adRenderEstadisticas(body, d) {
       <div class="ad-btn-row">
         <button class="pa-generate-btn ad-btn-sec" id="est-nube-btn">🔄 Ver la práctica</button>
       </div>
-      ${cache ? '<p class="pa-optional-hint">Última consulta: ' + adEsc(estFechaHora(cache.t)) + '. Los resultados llegan con el nº de lista que el alumno escribe: revisa que el nombre coincida.</p>' : ''}
+      ${cache ? '<p class="pa-optional-hint" id="est-nube-cuenta">Última consulta: ' + adEsc(estFechaHora(cache.t)) +
+        (Array.isArray(cache.resultados) ? ' · ' + estMiles(cache.resultados.length) + ' resultados de tu aula en la nube' : '') +
+        '. Los resultados llegan con el nº de lista que el alumno escribe: revisa que el nombre coincida.</p>' +
+        /* si faltan filas se dice aquí, junto a la cifra: un promedio sobre
+           una parte no puede pasar por el del año */
+        (cache.avisos || []).map(a => '<p class="pa-optional-hint est-nube-aviso">⚠️ ' + adEsc(a) + '</p>').join('') : ''}
     </div>
 
     <div class="pa-card">

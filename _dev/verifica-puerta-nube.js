@@ -60,7 +60,9 @@ async function abrirConsulta(nav, filas, alBorrar) {
   await pg.route('**/rest/v1/rpc/**', async route => {
     const u = route.request().url();
     const fn = u.split('/rpc/')[1].split('?')[0];
-    if (fn === 'metas_consultar_docente') {
+    /* Desde SUPABASE-TOPES-Y-PAGINAS.sql la página pide primero la consulta
+       por páginas; con tan pocas filas, la primera página las trae todas. */
+    if (fn === 'metas_consultar_docente' || fn === 'metas_consultar_docente_pag') {
       return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(filas) });
     }
     if (fn === 'metas_resultados_borrar') return alBorrar(route);

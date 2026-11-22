@@ -2015,7 +2015,21 @@ async function docenteSuscribir() {
         p_escuela: escuela, p_tipo: _docTipo, p_telefono: telefono,
         p_departamento: departamento, p_municipio: municipio, p_lugar: lugar }),
     });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
+    if (!r.ok) {
+      /* La nube pone un tope de altas por conexión y por día
+         (SUPABASE-TOPES-Y-PAGINAS.sql) y lo dice con su nombre en el error.
+         Un «no se pudo» genérico haría que el maestro lo intentara diez
+         veces más; esto le dice qué pasó y qué hacer. */
+      let err = null;
+      try { err = await r.json(); } catch (_) {}
+      const msj = String((err && (err.message || err.hint)) || '');
+      if (/tope_altas_(ip|dia)/.test(msj)) {
+        await metasAlert('Se crearon muchas cuentas desde esta conexión hoy. Prueba mañana o escríbenos.',
+          { icono: '⏳', titulo: 'Zona Docente' });
+        return;
+      }
+      throw new Error('HTTP ' + r.status);
+    }
     const resp = await r.json();
     if (resp && resp.ok && resp.codigo) {
       // La sesión nueva sale de metas-entrar, como en cualquier otra

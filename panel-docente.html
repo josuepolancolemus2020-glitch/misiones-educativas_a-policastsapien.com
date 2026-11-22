@@ -238,6 +238,32 @@ function mostrarLogin(msj){
   if (msj) document.getElementById('loginEstado').textContent = msj;
 }
 
+/* Lee una tabla entera, de 1 000 en 1 000.
+   La nube entrega como mucho 1 000 filas por vez aunque se le pidan 5 000:
+   el «limit=5000» de antes devolvía 1 000 y el panel contaba sobre esas sin
+   decirlo. Se piden páginas hasta que llegue una con menos de 1 000. El «id»
+   en el orden hace que dos filas con la misma fecha no cambien de página
+   entre una petición y otra; si aun así una fila sale dos veces (entró una
+   nueva mientras se leía), se cuenta una sola vez. El techo de 200 páginas
+   (200 000 filas) solo está para no quedarse dando vueltas si el servidor
+   respondiera mal: ningún alcance real llega ahí. */
+async function leerTodo(ruta){
+  const POR_PAGINA = 1000, TECHO = 200;
+  const filas = [], vistos = new Set();
+  for (let pag = 0; pag < TECHO; pag++) {
+    const r = await api(ruta + '&limit=' + POR_PAGINA + '&offset=' + (pag * POR_PAGINA));
+    if (!r || !r.ok) break;
+    const j = await r.json();
+    const pagina = Array.isArray(j) ? j : [];
+    pagina.forEach(f => {
+      if (f && f.id != null) { if (vistos.has(f.id)) return; vistos.add(f.id); }
+      filas.push(f);
+    });
+    if (pagina.length < POR_PAGINA) break;
+  }
+  return filas;
+}
+
 async function cargar(){
   if (!SESION) { mostrarLogin(); return; }
   const est = document.getElementById('loginEstado');
@@ -252,15 +278,11 @@ async function cargar(){
     guardarSesion(SESION); // la sesión sigue viva, solo falta autorización
     return;
   }
-  // 2) Datos del alcance (RLS filtra en el servidor)
-  const [rr, rp] = await Promise.all([
-    api('/rest/v1/resultados?select=*&order=fecha.desc.nullslast&limit=5000'),
-    api('/rest/v1/progreso?select=*&order=actualizado_en.desc&limit=2000')
+  // 2) Datos del alcance (RLS filtra en el servidor), TODAS las filas
+  [DATOS, PROG] = await Promise.all([
+    leerTodo('/rest/v1/resultados?select=*&order=fecha.desc.nullslast,id.desc'),
+    leerTodo('/rest/v1/progreso?select=*&order=actualizado_en.desc,id.desc')
   ]);
-  DATOS = (rr && rr.ok) ? await rr.json() : [];
-  PROG = (rp && rp.ok) ? await rp.json() : [];
-  if (!Array.isArray(DATOS)) DATOS = [];
-  if (!Array.isArray(PROG)) PROG = [];
   // 3) Pintar
   document.getElementById('loginCard').style.display = 'none';
   ['sesionCard','stats','filtros','acciones','tablaWrap','progSeccion'].forEach(id => document.getElementById(id).style.display = '');
