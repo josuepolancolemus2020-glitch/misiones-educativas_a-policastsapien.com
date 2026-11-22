@@ -13,6 +13,12 @@
 --    alguien llene la base en una noche: 300 × 24 = 7 200 llamadas de 200
 --    filas cada una. Aquí se ponen topes por IP y por día, pensados para
 --    que NINGÚN alumno ni maestro real llegue nunca a tocarlos.
+--    ⚠️ En Honduras, Tigo y Claro sacan a internet a miles de teléfonos
+--    por una misma IP, y el wifi de una escuela o de una capacitación
+--    también es una sola IP para todos. Por eso los topes por IP son
+--    anchos: muy por encima del día más cargado que ha tenido la nube
+--    entera, no de lo que haría un aula. Lo que frenan es a alguien que
+--    escribe en máquina, no a una ciudad compartiendo IP.
 -- 2. El maestro con más de 1 000 resultados veía 1 000: la nube entrega
 --    1 000 filas por vez y las consultas de hoy no sabían pedir la
 --    siguiente página. Aquí van dos consultas nuevas que sí saben, con la
@@ -33,13 +39,17 @@
 -- --------------------------------
 -- (datos de la nube el 21 nov 2026: 6 491 resultados, 6 584 progresos,
 --  26 docentes, resumen de progreso más grande 1 896 bytes, valor más
---  grande de docente_estado 143 KB)
+--  grande de docente_estado 143 KB. El día con más altas de maestros tuvo
+--  9; el día con más resultados sin verificar, 554; el día con más
+--  dispositivos activos, 1 376, en TODA la nube y de todas las IP juntas)
 --
 --  progreso       · actualizar (dispositivo, alumno) que ya existe: pasa
 --                   siempre por los topes de cantidad.
 --                 · alumno nuevo: máximo 60 alumnos por dispositivo (un
 --                   teléfono compartido de un aula de 43 cabe de sobra) y
---                   40 dispositivos nuevos por IP y por día.
+--                   500 dispositivos nuevos por IP y por día (más de un
+--                   tercio de los 1 376 activos del día más cargado,
+--                   todos detrás de una sola IP).
 --                 · tamaño del resumen: máximo 40 960 bytes (40 KB). El
 --                   resumen más grande que la app puede armar hoy (las 94
 --                   misiones hechas, las 16 rutas diagnosticadas y 40
@@ -54,9 +64,12 @@
 --                   la app del alumno da el envío por hecho y no reintenta.
 --  resultados     · las filas verificadas (con código de aula de un
 --                   maestro real) no se frenan NUNCA.
---                 · sin verificar: máximo 2 000 por IP y por día. Si salta,
---                   la fila se salta sin error.
---  docentes       · máximo 5 altas por IP y por día y 200 en total por día.
+--                 · sin verificar: máximo 10 000 por IP y por día (el día
+--                   con más tuvo 554 en toda la nube). Si salta, la fila se
+--                   salta sin error.
+--  docentes       · máximo 30 altas por IP y por día (una capacitación
+--                   entera con el mismo wifi; el día con más tuvo 9 en
+--                   toda la nube) y 200 en total por día.
 --                   Aquí SÍ da error (tope_altas_ip / tope_altas_dia): la
 --                   pantalla le dice al maestro qué pasó y qué hacer.
 --  docente_estado · valor de máximo 3 MB (valor_demasiado_grande). Un aula
@@ -191,11 +204,12 @@ begin
     return null;
   end if;
 
-  -- Dispositivo que la nube nunca vio: máximo 40 nuevos por IP y por día.
+  -- Dispositivo que la nube nunca vio: máximo 500 nuevos por IP y por día
+  -- (ancho a propósito: una IP de Tigo o Claro la comparten miles).
   v_ip := public._metas_ip_peticion();
   if v_ip is not null
      and not exists (select 1 from public.progreso p where p.dispositivo = new.dispositivo) then
-    if public._metas_tope_sumar('dispositivo_nuevo', v_ip) > 40 then
+    if public._metas_tope_sumar('dispositivo_nuevo', v_ip) > 500 then
       return null;
     end if;
   end if;
@@ -233,7 +247,7 @@ begin
   if v_ip is null then
     return new;
   end if;
-  if public._metas_tope_sumar('resultado_sin_verificar', v_ip) > 2000 then
+  if public._metas_tope_sumar('resultado_sin_verificar', v_ip) > 10000 then
     return null;
   end if;
   return new;
@@ -265,7 +279,7 @@ begin
   if v_ip is null then
     return new;                                  -- alta a mano desde el SQL Editor
   end if;
-  if public._metas_tope_sumar('alta_docente', v_ip) > 5 then
+  if public._metas_tope_sumar('alta_docente', v_ip) > 30 then
     raise exception 'tope_altas_ip'
       using hint = 'Se crearon muchas cuentas desde esta conexión hoy.';
   end if;
@@ -514,13 +528,15 @@ notify pgrst, 'reload schema';
 -- h) Al día siguiente: ¿alguien tocó un tope?
 --    select dia, clase, count(*) as ips, max(n) as mayor
 --      from public.metas_topes_dia group by dia, clase order by dia desc, clase;
---    → «mayor» por debajo de 40 (dispositivo_nuevo), 2 000
---      (resultado_sin_verificar) y 5 (alta_docente). Si alguna pasa, mirar
---      qué IP fue antes de pensar en subir el tope:
+--    → «mayor» por debajo de 500 (dispositivo_nuevo), 10 000
+--      (resultado_sin_verificar) y 30 (alta_docente; la fila con ip '*'
+--      es el total del día, tope 200). Si alguna pasa, mirar qué IP fue
+--      antes de pensar en subir el tope:
 --    select * from public.metas_topes_dia
---     where (clase = 'dispositivo_nuevo' and n > 40)
---        or (clase = 'resultado_sin_verificar' and n > 2000)
---        or (clase = 'alta_docente' and ip <> '*' and n > 5);
+--     where (clase = 'dispositivo_nuevo' and n > 500)
+--        or (clase = 'resultado_sin_verificar' and n > 10000)
+--        or (clase = 'alta_docente' and ip <> '*' and n > 30)
+--        or (clase = 'alta_docente' and ip = '*' and n > 200);
 --
 -- ═══════════════════════════════════════════════════════════════════════
 -- CÓMO SE DESHACE (sin borrar ningún dato)

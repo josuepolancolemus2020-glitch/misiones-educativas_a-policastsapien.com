@@ -112,11 +112,11 @@ ok('índices para el cursor', /resultados_docente_cursor_idx/.test(CODIGO) && /p
 
 console.log('\n5) Los números de los topes');
 const tiene = (q, re) => ok(q, re.test(CODIGO));
-tiene('2 000 sin verificar por IP y día', /'resultado_sin_verificar', v_ip\) > 2000/);
+tiene('10 000 sin verificar por IP y día', /'resultado_sin_verificar', v_ip\) > 10000 then/);
 tiene('lo verificado pasa siempre', /if new\.verificado is true then\s+return new;/);
 tiene('60 alumnos por dispositivo', /limit 60\) x\) >= 60/);
-tiene('40 dispositivos nuevos por IP y día', /'dispositivo_nuevo', v_ip\) > 40/);
-tiene('5 altas por IP y día → tope_altas_ip', /'alta_docente', v_ip\) > 5 then\s+raise exception 'tope_altas_ip'/);
+tiene('500 dispositivos nuevos por IP y día', /'dispositivo_nuevo', v_ip\) > 500 then/);
+tiene('30 altas por IP y día → tope_altas_ip', /'alta_docente', v_ip\) > 30 then\s+raise exception 'tope_altas_ip'/);
 tiene('200 altas al día → tope_altas_dia', /'alta_docente', '\*'\) > 200 then\s+raise exception 'tope_altas_dia'/);
 tiene('valor de 3 MB → valor_demasiado_grande', /octet_length\(new\.valor::text\) > 3145728 then\s+raise exception 'valor_demasiado_grande'/);
 tiene('nombre de clave nueva ^[A-Za-z0-9_]{1,40}$', /new\.k !~ '\^\[A-Za-z0-9_\]\{1,40\}\$'/);

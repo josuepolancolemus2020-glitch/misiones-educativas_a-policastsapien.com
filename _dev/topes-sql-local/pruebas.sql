@@ -32,26 +32,26 @@ create or replace function prueba.contador(p_clase text, p_ip text) returns int 
 $$;
 
 -- ─────────────────────────────────────────────────────────────────────────
-\echo '— docentes: 5 altas por IP y por día, 200 en total'
+\echo '— docentes: 30 altas por IP y por día, 200 en total'
 select prueba.ip('10.0.0.1');
 do $$
 declare i int; r jsonb;
 begin
-  for i in 1..5 loop
+  for i in 1..30 loop
     r := prueba.alta('Maestra Ficticia Numero ' || i, 'ficticia' || i || '@prueba.invalid');
-    perform prueba.ok('alta ' || i || ' de 5 desde la misma IP entra', (r ->> 'ok')::boolean);
+    perform prueba.ok('alta ' || i || ' de 30 desde la misma IP entra', (r ->> 'ok')::boolean);
   end loop;
 end $$;
 do $$
 begin
-  perform prueba.alta('Maestra Ficticia Numero Seis', 'ficticia6@prueba.invalid');
+  perform prueba.alta('Maestra Ficticia Treinta Y Una', 'ficticia31@prueba.invalid');
   raise exception 'no saltó';
 exception when others then
-  perform prueba.ok('la 6.ª alta desde esa IP da tope_altas_ip (error: ' || sqlerrm || ')', sqlerrm = 'tope_altas_ip');
+  perform prueba.ok('la 31.ª alta desde esa IP da tope_altas_ip (error: ' || sqlerrm || ')', sqlerrm = 'tope_altas_ip');
 end $$;
-select prueba.ok('el intento rechazado no gasta cupo (siguen 5)', prueba.contador('alta_docente', '10.0.0.1') = 5);
+select prueba.ok('el intento rechazado no gasta cupo (siguen 30)', prueba.contador('alta_docente', '10.0.0.1') = 30);
 select prueba.ok('la cuenta rechazada no quedó creada',
-  not exists (select 1 from public.docentes where correo = 'ficticia6@prueba.invalid'));
+  not exists (select 1 from public.docentes where correo = 'ficticia31@prueba.invalid'));
 -- Un correo repetido no crea nada y no gasta cupo de nadie.
 select prueba.ip('10.0.0.2');
 select prueba.ok('correo repetido: motivo correo',
@@ -77,7 +77,7 @@ select prueba.ok('desde el SQL Editor (sin API) el alta entra aunque el día est
 update public.metas_topes_dia set n = 0 where clase = 'alta_docente' and ip = '*';
 
 -- ─────────────────────────────────────────────────────────────────────────
-\echo '— resultados: lo verificado nunca se frena; sin verificar, 2 000 por IP y día'
+\echo '— resultados: lo verificado nunca se frena; sin verificar, 10 000 por IP y día'
 update public.docentes set codigo_aula = 'AULA01' where correo = 'ficticia1@prueba.invalid';
 select prueba.ip('10.0.1.1');
 create or replace function prueba.lote(prefijo text, n int, aula text default '') returns jsonb language sql as $$
@@ -90,12 +90,12 @@ $$;
 do $$
 declare i int; total int := 0;
 begin
-  for i in 1..10 loop
+  for i in 1..50 loop
     total := total + public.metas_guardar(prueba.lote('SV' || i, 200));
   end loop;
-  perform prueba.ok('2 000 sin verificar desde una IP entran (' || total || ')', total = 2000);
+  perform prueba.ok('10 000 sin verificar desde una IP entran (' || total || ')', total = 10000);
 end $$;
-select prueba.ok('la 2 001 sin verificar se salta sin error', public.metas_guardar(prueba.lote('SVX', 10)) = 0);
+select prueba.ok('la 10 001 sin verificar se salta sin error', public.metas_guardar(prueba.lote('SVX', 10)) = 0);
 select prueba.ok('…y no queda en la tabla',
   not exists (select 1 from public.resultados where evento_id like 'SVX-%'));
 select prueba.ok('las verificadas desde la misma IP entran igual',
@@ -113,7 +113,7 @@ select prueba.ip('10.0.1.2');
 select prueba.ok('otra IP sigue pudiendo', public.metas_guardar(prueba.lote('OTRA', 20)) = 20);
 
 -- ─────────────────────────────────────────────────────────────────────────
-\echo '— progreso: 60 alumnos por dispositivo, 40 dispositivos nuevos por IP, 40 KB'
+\echo '— progreso: 60 alumnos por dispositivo, 500 dispositivos nuevos por IP, 40 KB'
 select prueba.ip('10.0.2.1');
 create or replace function prueba.prog(disp text, alumno text, resumen jsonb default '{"xp_index":10}')
 returns boolean language sql as $$
@@ -132,19 +132,19 @@ select prueba.prog('D-COMPARTIDO', 'Alumno 7', '{"xp_index":999}');
 select prueba.ok('actualizar a un alumno que ya está pasa siempre',
   (select resumen ->> 'xp_index' from public.progreso where dispositivo = 'D-COMPARTIDO' and alumno = 'Alumno 7') = '999');
 do $$ declare i int; begin
-  for i in 2..40 loop perform prueba.prog('D-NUEVO-' || i, 'Alguien'); end loop;
+  for i in 2..500 loop perform prueba.prog('D-NUEVO-' || i, 'Alguien'); end loop;
 end $$;
-select prueba.ok('40 dispositivos nuevos desde una IP entran',
+select prueba.ok('500 dispositivos nuevos desde una IP entran',
   (select count(distinct dispositivo) from public.progreso
-    where dispositivo = 'D-COMPARTIDO' or dispositivo like 'D-NUEVO-%') = 40);
-select prueba.prog('D-NUEVO-41', 'Alguien');
-select prueba.ok('el 41 se salta', not exists (select 1 from public.progreso where dispositivo = 'D-NUEVO-41'));
+    where dispositivo = 'D-COMPARTIDO' or dispositivo like 'D-NUEVO-%') = 500);
+select prueba.prog('D-NUEVO-501', 'Alguien');
+select prueba.ok('el 501 se salta', not exists (select 1 from public.progreso where dispositivo = 'D-NUEVO-501'));
 select prueba.prog('D-NUEVO-5', 'Otro alumno');
 select prueba.ok('un alumno nuevo en un dispositivo ya conocido no gasta cupo de dispositivos',
   exists (select 1 from public.progreso where dispositivo = 'D-NUEVO-5' and alumno = 'Otro alumno'));
 select prueba.ip('10.0.2.2');
-select prueba.prog('D-NUEVO-41', 'Alguien');
-select prueba.ok('desde otra IP ese dispositivo sí entra', exists (select 1 from public.progreso where dispositivo = 'D-NUEVO-41'));
+select prueba.prog('D-NUEVO-501', 'Alguien');
+select prueba.ok('desde otra IP ese dispositivo sí entra', exists (select 1 from public.progreso where dispositivo = 'D-NUEVO-501'));
 -- Tamaño: 39 000 bytes pasan (más que el resumen más grande posible), 41 000 no.
 select prueba.prog('D-GRANDE', 'Grande', jsonb_build_object('relleno', repeat('a', 39000)));
 select prueba.ok('un resumen de 39 KB entra', exists (select 1 from public.progreso where dispositivo = 'D-GRANDE'));
