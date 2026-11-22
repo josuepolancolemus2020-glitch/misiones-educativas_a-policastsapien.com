@@ -3,13 +3,16 @@
 Diagnóstico hecho el 22 de noviembre de 2026 sobre `main` en `f04b745` (v582),
 en la rama `plan/espanol-primer-parcial`. **Aquí no hay misiones ni código**:
 solo qué pide el currículo, qué ya tenemos, qué falta y en qué orden hacerlo
-para tenerlo listo el 6 de diciembre.
+para tenerlo listo el 6 de diciembre. Corregido el mismo día con lo que
+dijo Josué: SEDUC reparte por meses y el primer parcial es febrero y marzo.
 
 Cómo leer las marcas:
 
 - **[DCNB p. N]** o **[CNB p. N]**: lo dice el documento oficial, en esa página
   del PDF (la que muestra el visor, no el folio impreso; en el DCNB de III
   ciclo el folio impreso es el del visor más 4).
+- **propuesta, pendiente de confirmar con la programación mensual**: el
+  mes en que va un contenido. Ninguno sale todavía de un documento oficial.
 - **[criterio del plan]**: decisión mía, razonada, que ningún documento
   oficial dice. Se puede cambiar.
 - **[pendiente de verificar]**: no lo pude confirmar. No se usa como dato
@@ -31,13 +34,22 @@ página por página con `pdftotext` sobre el PDF.
 
 ---
 
-## 0. Lo primero que hay que saber: el currículo no reparte por parciales
+## 0. Lo primero que hay que saber: el reparto mensual de SEDUC todavía no está en el repositorio
 
-1. **El DCNB de 7.º, 8.º y 9.º no dice qué va en cada parcial.** Se buscó
-   «parcial», «mes», «semana», «unidad», «bimestre» y «trimestre» en las 111
-   páginas de Comunicación de los tres grados: no aparece ninguna
-   distribución en el año. El DCNB ordena el Español en **bloques** que corren
-   todo el año:
+**Lo que dice Josué (22 de noviembre de 2026).** La SEDUC sí reparte los
+contenidos **mes a mes**, en las programaciones y los estándares mensuales. El
+año tiene **cuatro parciales de dos meses desde febrero**, y el **primer
+parcial es febrero y marzo**.
+
+**Lo que hay en el repositorio hoy.** Solo el DCNB del III ciclo, que va por
+bloques, y el CNB de Media. **Las programaciones y los estándares mensuales
+todavía no están**, así que ningún mes de este plan sale de un documento
+oficial leído:
+
+1. **El DCNB de 7.º, 8.º y 9.º no trae meses.** Se buscó «parcial», «mes»,
+   «semana», «unidad», «bimestre» y «trimestre» en las 111 páginas de
+   Comunicación de los tres grados y no aparece ninguna distribución en el
+   año. El DCNB ordena el Español en **bloques** que corren todo el año:
    - Bloque 1, Lengua oral.
    - Bloque 2, Lengua escrita: Lectura.
    - Bloque 2, Lengua escrita: Escritura.
@@ -45,58 +57,138 @@ página por página con `pdftotext` sobre el PDF.
      rotula también «Bloque 2.», con el número equivocado; en 9.º (p. 176)
      dice «Bloque 3». Es el bloque 3.
    - Bloque 4, Reflexión sobre la lengua.
-2. **El CNB de Media lo dice expresamente para 10.º**: «Cada docente puede
-   considerar el orden en el que impartirá los contenidos de acuerdo con la
-   realidad y contexto de la comunidad educativa» [CNB BCH p. 17, Notas].
-3. **11.º BCH sí viene en cuatro unidades**, una por resultado de aprendizaje
-   (RA1 a RA4) [CNB BCH p. 110]. El documento no dice que cada unidad sea un
-   parcial, pero es la lectura natural si el año tiene cuatro parciales.
-4. **No se encontró ninguna jornalización oficial de SEDUC por parciales**
-   para Español de 7.º a 11.º. Se buscó en la web «jornalización»,
-   «Programaciones Educativas Nacionales», «planificación por parciales» y
-   «primer parcial». Lo único oficial que aparece:
-   - Los libros de Español 2015 de SEDUC y la UPNFM, de los que la búsqueda
-     muestra «4 unidades de 8 lecciones, una lección por semana, 5 horas en
-     el III ciclo» y que siguen los bloques de las Programaciones (lengua
-     oral, lectura, escritura) dentro de cada lección
-     [pendiente de verificar: solo se vio el fragmento del buscador;
-     `educatrachos.hn` y `se.gob.hn` no se pueden abrir desde este
-     contenedor]. Libro de 7.º: `educatrachos.hn/media/documentos/recursos/LE-ESP7-2015-WEB.pdf`
-     y su guía `GD-ESP7-2015-WEB.pdf`. De 8.º y 9.º no apareció libro 2015.
-5. **Calendario**: la prensa publicó para 2026 cuatro parciales, el primero
-   del 13 al 20 de abril (Radio HRN, 22 de enero de 2026)
-   [pendiente de verificar: es fuente secundaria; el documento de SEDUC venía
-   en un enlace de Google Drive que no se pudo abrir]. **El calendario 2027
-   no está publicado.** Las misiones del 6 de diciembre son, entonces, para
-   el primer parcial del año lectivo 2027.
+2. **El CNB de Media no trae meses y deja el orden al docente** para 10.º:
+   «Cada docente puede considerar el orden en el que impartirá los contenidos
+   de acuerdo con la realidad y contexto de la comunidad educativa» [CNB BCH
+   p. 17, Notas]. **11.º BCH** viene en cuatro unidades, una por resultado de
+   aprendizaje (RA1 a RA4) [CNB BCH p. 110], sin fechas.
+3. **Libros de Español 2015 de SEDUC y la UPNFM**: la búsqueda web muestra
+   «4 unidades de 8 lecciones, una lección por semana, 5 horas en el III
+   ciclo» [pendiente de verificar: solo se vio el fragmento del buscador;
+   `educatrachos.hn` y `se.gob.hn` no se pueden abrir desde este contenedor].
+   Libro de 7.º: `educatrachos.hn/media/documentos/recursos/LE-ESP7-2015-WEB.pdf`
+   y su guía `GD-ESP7-2015-WEB.pdf`.
+4. **Calendario 2027**: no está publicado. Para 2026 la prensa dio la primera
+   semana de evaluación del 13 al 20 de abril (Radio HRN, 22 de enero de
+   2026), que cuadra con un primer parcial de febrero y marzo [pendiente de
+   verificar: fuente secundaria]. Las misiones del 6 de diciembre son para el
+   primer parcial de 2027.
 
-**Consecuencia para el plan [criterio del plan].** Como la plataforma es para
-cualquier centro del país y no hay reparto oficial, «primer parcial» se define
-así:
+**Por eso la tabla de febrero y marzo de la sección 1 es una propuesta,
+pendiente de confirmar con la programación mensual.** Se armó así
+[criterio del plan]:
 
 - **7.º, 8.º y 9.º**: lo que **abre cada bloque** del DCNB, en el orden en que
-  el DCNB lo escribe. Así lo cubre tanto el maestro que avanza bloque por
-  bloque como el que, igual que el libro 2015, toca todos los bloques en cada
-  semana. Lo que abre cada bloque es casi lo mismo en los tres grados, con
-  más hondura cada año, y eso permite que **una misión sirva a los tres
-  grados**.
-- **10.º**: el RA1 (el discurso oral y la comunicación), que es lo primero
-  que lista el programa.
+  el DCNB lo escribe, repartido en los dos meses. Lo que abre cada bloque es
+  casi lo mismo en los tres grados, con más hondura cada año, y eso permite
+  que **una misión sirva a los tres grados**.
+- **10.º**: los criterios del RA1 (el discurso oral y la comunicación), que es
+  lo primero que lista el programa.
 - **11.º BCH**: la Unidad I, Fundamentos de la comunicación.
 - **11.º BTP**: los primeros contenidos de su lista, que coinciden con la
   Unidad I del BCH más vicios del lenguaje, protocolo y entrevista laboral.
 
-Antes de publicar conviene que Josué confirme este criterio con dos o tres
-maestros de Español de centros distintos y, si se puede, con el índice de la
-Unidad 1 del libro de 7.º (pregunta 1 de la sección 6).
+### Cuando lleguen las programaciones y los estándares mensuales
+
+Cuando Josué suba a `_dev/dcnb-pdf/` las programaciones y los estándares
+mensuales de Español (7.º a 11.º):
+
+1. Nombrarlos sin acentos ni espacios, que digan nivel, grado y área (por
+   ejemplo `programacion-espanol-7.pdf`, `estandares-espanol-iii-ciclo.pdf`),
+   como pide `_dev/dcnb-pdf/README.md`.
+2. Probar una página: `python3 _dev/dcnb-a-markdown.py _dev/dcnb-pdf/<archivo>.pdf --prueba 10`.
+3. Convertir: `python3 _dev/dcnb-a-markdown.py _dev/dcnb-pdf/<archivo>.pdf`,
+   que deja los trozos en `_dev/dcnb/` y actualiza `_dev/dcnb/INDICE.md`.
+4. **Ajustar la tabla de la sección 1**: cada fila marcada «propuesta» se
+   cambia por el contenido oficial de febrero y marzo, con su página, y se
+   quita la marca. Si una misión de la sección 3 deja de caer en febrero o
+   marzo, baja en la prioridad; si aparece un contenido que ninguna cubre, se
+   añade.
+5. Revisar las tandas de la sección 5 con la tabla nueva **antes** de escribir
+   la misión siguiente.
 
 ---
 
-## 1. Contenidos del primer parcial por grado
+## 1. Febrero y marzo por grado
+
+> **Propuesta, pendiente de confirmar con la programación mensual.** Ningún
+> mes de estas tablas sale de un documento oficial: lo que sí es oficial es
+> el contenido, con su página del DCNB o del CNB. La columna «misión» dice
+> qué misión lo atiende (sección 3: M1 a M6 son nuevas).
+
+### 7.º grado (propuesta)
+
+| mes | bloque del DCNB | contenido | página | misión |
+|---|---|---|---|---|
+| febrero | 1. Lengua oral | Contextos discursivos formales, lengua estándar, fórmulas sociales, intención comunicativa, signos y circuito del habla | 84 | M1 |
+| febrero | 2. Lectura | Etapa estructural: partes del libro y su función | 88 | M3 |
+| febrero | 4. Reflexión | Lengua, habla y norma; signo lingüístico; variedades coloquial, estándar y formal | 110 | M2 |
+| febrero | 2. Escritura | Estrategias de producción: planeación y textualización | 95 | M5 |
+| marzo | 1. Lengua oral | Oratoria y formas de expresión oral; la entrevista | 84 y 85 | M4 |
+| marzo | 1. Lengua oral | Niveles de uso de la lengua | 86 | M2 |
+| marzo | 1. Lengua oral | Superestructuras: descripción y narración | 86 | M6 |
+| marzo | 2. Lectura | Etapas interpretativa y crítica; fichas bibliográficas y de trabajo | 88 a 90 | M3 |
+| marzo | 2. Escritura | Revisión del texto | 95 | M5 |
+| marzo | 3. Literatura | Tradición oral: leyenda, mito, fábula, cuento, anécdota | 103 | M7 (después) |
+
+### 8.º grado (propuesta)
+
+| mes | bloque del DCNB | contenido | página | misión |
+|---|---|---|---|---|
+| febrero | 1. Lengua oral | Contextos formales; signos lingüísticos y paralingüísticos; fórmulas sociales; emisión y recepción | 116 | M1 |
+| febrero | 2. Lectura | Etapas de la lectura | 121 y 122 | M3 |
+| febrero | 4. Reflexión | Lengua, habla y norma; español de América y de Honduras (seseo, yeísmo, voseo) | 149 | M2 |
+| febrero | 2. Escritura | Estrategias de producción | 131 | M5 |
+| marzo | 1. Lengua oral | Oratoria, formas de expresión oral, el discurso memorizado | 116 y 117 | M4 |
+| marzo | 1. Lengua oral | Niveles de uso; descripción por tipo y narración | 118 y 119 | M2, M6 |
+| marzo | 2. Lectura | Lectura de investigación: párrafo, fichas | 123 | M3 |
+| marzo | 3. Literatura | Tradición oral: cuento popular, mito, fábula, bombas, adivinanzas, refranes | 139 y 140 | M7 (después) |
+
+### 9.º grado (propuesta)
+
+| mes | bloque del DCNB | contenido | página | misión |
+|---|---|---|---|---|
+| febrero | 1. Lengua oral | Contextos formales; signos; fórmulas sociales; oratoria | 157 | M1, M4 |
+| febrero | 2. Lectura | Etapas de la lectura | 162 y 163 | M3 |
+| febrero | 4. Reflexión | Lengua, habla y norma; variedades; registros de distintas disciplinas | 187 | M2 |
+| febrero | 2. Escritura | Estrategias de producción | 171 | M5 |
+| marzo | 1. Lengua oral | Formas de expresión oral con simposio; el discurso y sus tipos | 158 | M4 |
+| marzo | 1. Lengua oral | Niveles de uso con modismos y jergas; descripción y narración | 160 | M2, M6 |
+| marzo | 2. Lectura | Lectura de investigación con fichas | 164 | M3 |
+| marzo | 3. Literatura | El ensayo literario; testimonio; autobiografía | 176 y 177 | sin misión (después) |
+
+### 10.º grado (propuesta, sobre los criterios del CNB BCH pp. 11 a 17)
+
+| mes | criterio del CNB | contenido | misión |
+|---|---|---|---|
+| febrero | CE1.1, CE1.2 | La comunicación y sus elementos; funciones del lenguaje; elementos no verbales de la oralidad | M1 |
+| febrero | CE1.3, CE1.4 | Discursos orales; escuchar, argumentar, negociar, consensuar | M4 |
+| febrero | CE2.1 (diagnóstico) | Categorías gramaticales | Sustantivos, Adjetivos, Pronombres, Verbos, Adverbios, El Adjetivo Avanzado |
+| marzo | CE1.5 | Situaciones comunicativas nuevas; el contexto y las personas del discurso | M1 |
+| marzo | CE1.6 | Registros y procedimientos retóricos; figuras retóricas | M2 (registros); figuras: después |
+| marzo | CE2.6 | Modos de organizar el discurso (narración, descripción, argumentación, explicación) | Los Tipos de Textos, M6 |
+
+### 11.º grado BCH (propuesta, sobre la Unidad I del CNB BCH p. 110)
+
+| mes | criterio del CNB | contenido | misión |
+|---|---|---|---|
+| febrero | CE1.1 | Reglas básicas de lectura, redacción y expresión oral; reporte de lectura | M3, M1 |
+| febrero | RA1 (contenido) | Nivel morfológico del habla | Las cinco de gramática y El Adjetivo Avanzado |
+| marzo | CE1.3 | Técnicas grupales; la entrevista; el debate, la mesa redonda y el panel | M4 |
+| marzo | RA1 (contenido) | Estereotipos discriminatorios; causas de discriminación | M2 |
+| marzo | CE1.3 | Publicidad y propaganda | sin misión (después) |
+
+**11.º BTP** [CNB BTP pp. 94 a 105], 3 horas por semana: propuesta igual a la
+del BCH, más vicios de lenguaje (barbarismo, anfibología) y protocolo en
+marzo. Pendiente de confirmar con la programación mensual del BTP.
+
+---
+
+## 1-bis. Detalle de los contenidos oficiales por grado (sin meses)
 
 ### 7.º grado [DCNB III ciclo, pp. 84 a 115]
 
-| bloque | lo que abre el bloque (primer parcial) | página |
+| bloque | lo que abre el bloque | página |
 |---|---|---|
 | 1. Lengua oral | Contextos discursivos formales; la conversación en lengua estándar; fórmulas sociales de intercambio; indicadores de la intención comunicativa; los signos y la comunicación; el circuito del habla (hablante, oyente, mensaje, código, contexto) | 84 |
 | 1. Lengua oral | Oratoria: propósitos comunicativos, estilística oral, voz, respiración y dicción, importancia del receptor. Formas de expresión oral: charlas, trabajos de equipo, asambleas escolares, paneles, foros, conferencias, debates, mesa redonda (el DCNB define cada una) | 84 y 85 |
@@ -109,14 +201,15 @@ Unidad 1 del libro de 7.º (pregunta 1 de la sección 6).
 | 3. Literatura | Textos de tradición oral del país e internacionales: la leyenda, el mito, la fábula, el cuento de tradición oral, la anécdota | 103 |
 | 4. Reflexión | Teoría lingüística: lengua, habla y norma; el signo lingüístico; historia del español (origen y formación); variedad lingüística (coloquial, estándar, formal); formas del lenguaje (oral, escrito, mímico, convencional) | 110 |
 
-Lo que sigue en el año y **no** es del primer parcial según este criterio:
+Lo que sigue en el año y que la propuesta de la sección 1 deja fuera de
+febrero y marzo:
 categorías gramaticales (p. 112), formación de palabras y vicios (p. 113),
 relaciones semánticas, puntuación y ortografía (pp. 114 y 115), textos
 funcionales y periodísticos (p. 92), poesía y teatro (pp. 105 y 106).
 
 ### 8.º grado [DCNB III ciclo, pp. 116 a 156]
 
-| bloque | primer parcial | página |
+| bloque | lo que abre el bloque | página |
 |---|---|---|
 | 1. Lengua oral | Contextos discursivos formales; signos lingüísticos y paralingüísticos en la conversación; fórmulas sociales de intercambio; mensajes orales, emisión y recepción | 116 |
 | 1. Lengua oral | Oratoria: propósitos, estilística oral, voz, respiración y dicción, la expresión corporal, importancia del receptor | 116 |
@@ -131,7 +224,7 @@ funcionales y periodísticos (p. 92), poesía y teatro (pp. 105 y 106).
 
 ### 9.º grado [DCNB III ciclo, pp. 157 a 194]
 
-| bloque | primer parcial | página |
+| bloque | lo que abre el bloque | página |
 |---|---|---|
 | 1. Lengua oral | Contextos discursivos formales; signos lingüísticos y paralingüísticos; fórmulas sociales; mensajes orales; oratoria (con la expresión corporal) | 157 |
 | 1. Lengua oral | Formas de expresión oral: asamblea, debate, mesa redonda, foro, **simposio**, panel, charlas, conferencias. **El discurso**: concepto, cualidades del orador, tipos (leído, memorizado, improvisado, ex tempore), preparación | 158 |
@@ -247,6 +340,16 @@ del motor, la de La Célula, `_privado/PLANTILLA-MISIONES.md`):
   44 px. Ficha, QR (`_dev/genera-qr-mision.py`) y enlaces en los dos sentidos.
 - Textos de lectura: escritos para la misión o de dominio público con su
   fuente. Nada copiado de un libro con derechos.
+- **Lecturas, ejemplos y ejercicios que cruzan con otras materias**
+  (Ciencias Naturales, Ciencias Sociales, Matemáticas, Cívica). La regla:
+  el objetivo, las preguntas y la ficha son de **Español**; la otra materia
+  solo pone el tema del texto o la situación. Cada dato de la otra materia
+  sale de una fuente que ya está en el repositorio (un archivo de `js/data/`
+  con sus fuentes, una misión publicada o el DCNB de esa área en `_dev/dcnb/`)
+  y se anota en el comentario del `contenido.js`. Si la misión de origen
+  marca un dato como dudoso, no se usa. Si no hay fuente, el dato no entra o
+  queda marcado **pendiente de verificar**. Las cifras inventadas para un
+  ejercicio se dicen inventadas.
 
 ### M1 · `3ciclo-la-comunicacion` · La comunicación y sus funciones
 
@@ -264,6 +367,21 @@ del motor, la de La Célula, `_privado/PLANTILLA-MISIONES.md`):
   (un aviso en el acto cívico, una nota de voz, un mensaje de texto sin tono);
   el alumno «rompe» un elemento (cambia el código, quita el contexto, mete
   ruido en el canal) y ve qué le llega al oyente. Sin arrastrar: botones.
+- **Cruces con otras materias** (el contenido de Español manda; la otra
+  materia pone la situación):
+  - *Ciencias Naturales*: el oído y el ojo como receptores del mensaje, para
+    explicar «receptor» y «canal». Fuente: la misión El Sistema Nervioso
+    (`misiones/2y3ciclo-sistema-nervioso/`).
+  - *Cívica y Ciencias Sociales*: un aviso de alerta ante una tormenta como
+    mensaje que no puede fallar (canal, ruido, código compartido). Fuente: la
+    misión Desastres Naturales (`misiones/2y3ciclo-desastres-naturales/`),
+    que ya trata las alertas y COPECO. Los colores y niveles exactos de
+    alerta, solo si esa misión los da por acreditados; si no, pendiente de
+    verificar.
+  - *Matemáticas*: la numeración maya como código: sin conocer el código, el
+    mensaje no llega. Fuente: la misión Numeración Maya (`misiones/2ciclo-numeracion-maya/`).
+  - *Cívica*: el Himno como ejemplo de función estética y apelativa, con la
+    letra de `js/data/himno.js` (contrastada verso por verso).
 - **Examen**: 80 conceptuales, 20 casos críticos (malentendidos reales en
   mensajes escritos sin tono, por ejemplo).
 - **Fuente de los datos**: el DCNB y el CNB nombran los elementos y las
@@ -286,11 +404,27 @@ del motor, la de La Célula, `_privado/PLANTILLA-MISIONES.md`):
   a un amigo, a la abuela, al director y en el periódico; el alumno elige las
   palabras y el laboratorio dice qué nivel quedó y si sirve para esa
   situación. Un segundo panel de rasgos del español de Honduras.
+- **Cruces con otras materias**:
+  - *Ciencias Sociales*: las lenguas habladas en Honduras. El DCNB de 8.º las
+    nombra: chortí, tol, tawaka, miskito, pech, garífuna e inglés criollo, y
+    menciona la zona lenca [DCNB p. 149]. Con eso entra la lista; **dónde se
+    hablan y cuántos hablantes** quedan pendientes de verificar hasta que haya
+    fuente oficial en `_dev/`.
+  - *Ciencias Naturales*: el mismo fenómeno dicho en registro científico y en
+    registro coloquial (la fotosíntesis o un ecosistema). Fuente: la misión
+    Los Ecosistemas (`misiones/2y3ciclo-ecosistemas/`).
+  - *Matemáticas*: registro técnico frente a registro de la casa
+    («cociente» y «residuo» frente a «lo que le toca a cada uno» y «lo que
+    sobra»). Fuente: la misión División de decimales (`misiones/2y3ciclo-division-decimales/`).
+  - *Cívica*: un artículo de la Constitución en registro formal y explicado a
+    un niño de 6.º, con el texto de `js/data/constitucion-honduras.js` y solo
+    lo que ese archivo acredita.
 - **Examen**: 80 conceptuales, 20 casos críticos (por ejemplo, cuándo
   corregirle el habla a alguien es útil y cuándo lo humilla).
 - **Fuente de los datos**: el DCNB nombra cada nivel y rasgo y pide
-  «respeto hacia las diferentes formas de lengua» [p. 86]. **Las lenguas
-  habladas en Honduras y la historia del español** [pendiente de verificar:
+  «respeto hacia las diferentes formas de lengua» [p. 86]. La lista de
+  lenguas de Honduras la da el DCNB [p. 149]. **La historia del español** y
+  la ubicación y número de hablantes de cada lengua [pendiente de verificar:
   no hay fuente en `_dev/`; sin ella esa parte no entra].
 
 ### M3 · `3ciclo-etapas-de-la-lectura` · Leer en tres etapas e investigar con fichas
@@ -311,6 +445,25 @@ del motor, la de La Célula, `_privado/PLANTILLA-MISIONES.md`):
   buscando en la parte correcta, y luego arma una ficha de cita y una de
   paráfrasis del mismo párrafo, y el laboratorio le señala si copió en la de
   paráfrasis.
+- **Cruces con otras materias** (las lecturas de comprensión son textos de
+  otra materia, escritos para la misión):
+  - *Ciencias Naturales*: un texto expositivo sobre cómo se descubrió la
+    célula, para practicar idea principal, ideas secundarias y la ficha de
+    resumen. Fuente: la misión La Célula (`misiones/2y3ciclo-la-celula/js/contenido.js`,
+    que trae a Hooke).
+  - *Ciencias Sociales*: un relato de los viajes de Colón para las tres
+    etapas de la lectura y la ficha de cita textual. Fuente:
+    `js/data/viajes-colon.js`; las fechas exactas de desembarco que ese
+    archivo marca como discutidas no se usan.
+  - *Ciencias Sociales*: un texto sobre la reserva del Río Plátano para la
+    ficha hemerográfica y el mapa conceptual. Fuente: la misión Áreas
+    Protegidas (`misiones/2y3ciclo-areas-protegidas-de-honduras/`).
+  - *Cívica*: la ficha bibliográfica de la Constitución de la República
+    (datos de edición pendientes de verificar hasta que la Constitución esté
+    en `_dev/leyes/`, como ya anota `docs/PLAN-MOTOR-COMPARTIDO.md`).
+  - *Matemáticas*: leer una tabla o un gráfico como técnica de síntesis
+    [DCNB p. 90: «gráficas, tablas»]; los números del ejemplo, inventados y
+    dichos como inventados, o tomados de una misión que los acredite.
 - **Examen**: 80 conceptuales, 20 casos críticos (plagio, fuente dudosa,
   resumen que cambia el sentido).
 - **Fuente**: el DCNB enumera las partes y las fichas. El formato APA 7
@@ -335,6 +488,19 @@ del motor, la de La Célula, `_privado/PLANTILLA-MISIONES.md`):
   los padres); el alumno elige forma, papeles y orden de turnos, y el
   laboratorio le explica qué pasa con su elección. Con un cronómetro de
   turnos para usarlo en clase de verdad.
+- **Cruces con otras materias**:
+  - *Ciencias Naturales y Sociales*: debate sobre cómo prepararse para la
+    temporada de lluvias en la comunidad. Fuente de los datos: la misión
+    Desastres Naturales (Mitch, COPECO, alertas).
+  - *Ciencias Sociales*: mesa redonda o panel sobre un prócer, con lo que
+    `js/data/proceres-honduras.js` da por verificado y nada más.
+  - *Cívica*: asamblea escolar para decidir algo del grado, enlazada con cómo
+    deciden los poderes del Estado (`js/data/poderes-honduras.js`; el número
+    de diputados queda fuera, porque ese mismo archivo dice que no se puede
+    acreditar).
+  - *Matemáticas*: el dinero de la excursión como tema de debate, con cuentas
+    en lempiras. Los montos son inventados y se dicen inventados; no hace
+    falta fuente.
 - **Examen**: 80 conceptuales, 20 casos críticos.
 - **Fuente**: el DCNB define las formas de expresión oral [p. 85]. Es la
   misión con menos datos por acreditar.
@@ -355,6 +521,20 @@ del motor, la de La Célula, `_privado/PLANTILLA-MISIONES.md`):
   referente, una idea repetida, falta el párrafo de transición) que el
   alumno corrige eligiendo entre opciones; el texto se rehace en pantalla.
 - **Relación**: no repite los conectores; enlaza a Marcadores Textuales.
+- **Cruces con otras materias**:
+  - *Ciencias Naturales*: escribir el informe de un experimento de los
+    estados de la materia, con su párrafo introductorio, de transición y de
+    conclusión. Fuente: la misión La Materia (`misiones/2y3ciclo-la-materia/`).
+  - *Matemáticas*: escribir el procedimiento de un problema de división de
+    decimales como texto expositivo y revisarlo por etapas. Fuente: la misión
+    División de decimales.
+  - *Ciencias Sociales*: un borrador sobre la civilización maya para revisar
+    coherencia y referente. Fuente: la misión Los Mayas y las Culturas
+    Precolombinas; **sin** las tres valoraciones que el plan del motor anota
+    como sin fuente («el rey más famoso», «el pueblo más numeroso», «la
+    escritura más desarrollada»).
+  - *Cívica*: una solicitud formal a la alcaldía, con la estructura del
+    texto y sin datos legales que no estén en `_dev/leyes/`.
 - **Examen**: 80 conceptuales, 20 casos críticos.
 
 ### M6 · `3ciclo-describir-y-narrar` · Describir y narrar: superestructuras
@@ -372,13 +552,27 @@ del motor, la de La Célula, `_privado/PLANTILLA-MISIONES.md`):
   no sabe cada uno.
 - **Por qué no se amplía Los Tipos de Textos**: su examen está congelado del 1
   al 50; lo nuevo no tendría preguntas. Sí se enlazan las dos.
+- **Cruces con otras materias**:
+  - *Ciencias Sociales y Naturales*: topografía (descripción de un lugar) de
+    la Biosfera del Río Plátano o de Pico Bonito. Fuente: la misión Áreas
+    Protegidas.
+  - *Ciencias Naturales*: cronografía (descripción de un tiempo) y narración
+    del paso del huracán Mitch. Fuente: la misión Desastres Naturales; fechas
+    y cifras solo las que esa misión acredita.
+  - *Ciencias Sociales*: etopeya de un prócer (su carácter por lo que hizo),
+    con `js/data/proceres-honduras.js`. La prosopografía (cómo era su cara y
+    su cuerpo) queda pendiente de verificar: el repositorio no tiene fuente de
+    retratos.
+  - *Matemáticas*: descripción objetiva de un sólido geométrico (caras,
+    aristas, vértices) frente a una descripción subjetiva. Fuente: la misión
+    Sólidos Geométricos (`misiones/2ciclo-solidos-geometricos/`).
 - **Examen**: 80 conceptuales, 20 casos críticos.
 
 ### Después del 6 de diciembre (no son del primer parcial o no hay fuente)
 
 - **M7 · `3ciclo-tradicion-oral`**: leyenda, mito, fábula, cuento popular,
   anécdota, bombas, adivinanzas, refranes [7.º p. 103; 8.º pp. 139 y 140].
-  Es del primer parcial según el criterio, pero los textos hondureños que
+  La propuesta la pone en marzo, pero los textos hondureños que
   necesita no tienen fuente en `_dev/` [pendiente de verificar]. Si se
   consigue la fuente antes del 3 de diciembre, entra en la última tanda.
 - **Figuras retóricas** para 10.º (CE1.6) y la poesía de 7.º a 9.º.
@@ -392,7 +586,7 @@ del motor, la de La Célula, `_privado/PLANTILLA-MISIONES.md`):
 | 8.º | 10 | 9 (falta la tradición oral) |
 | 9.º | 8 | 7 (falta el ensayo literario y el testimonio) |
 | 10.º | RA1 completo | completo (figuras retóricas solo en parte) |
-| 11.º BCH | Unidad I | completa salvo publicidad y propaganda, que va en M1 o queda para después [criterio del plan] |
+| 11.º BCH | Unidad I | completa salvo publicidad y propaganda, que queda para después |
 
 ---
 
@@ -472,9 +666,9 @@ en dos o tres días con lectura cuidadosa.
 
 | tanda | qué lleva | fechas | depende de |
 |---|---|---|---|
-| 0 | La crítica al motor (o la decisión de copiarla); sonda para misión nacida con 50 formas; fuentes que faltan subidas a `_dev/` | 23 y 24 nov | Respuestas a las preguntas 2 a 4 |
+| 0 | La crítica al motor (o la decisión de copiarla); sonda para misión nacida con 50 formas; fuentes que faltan subidas a `_dev/`; si ya llegaron, convertir las programaciones mensuales y ajustar la sección 1 | 23 y 24 nov | Respuestas a las preguntas 1 a 4 |
 | 1 | **M1 La comunicación** y **M4 Oratoria** (las dos con datos ya acreditados por el DCNB) | 25 a 27 nov | Tanda 0; forma del bloque de ficha acordada el 25 |
-| 2 | **M3 Etapas de la lectura** y **M2 Lengua, habla y norma** | 28 a 30 nov | Fuentes de APA y de lenguas de Honduras |
+| 2 | **M3 Etapas de la lectura** y **M2 Lengua, habla y norma** | 28 a 30 nov | Fuente de APA; la ubicación de las lenguas es opcional |
 | 3 | **M5 Escribir por etapas** y **M6 Describir y narrar** | 1 a 3 dic | |
 | 4 | Las seis fichas desde el motor de fichas (o el plan B), los seis QR, enlaces en los dos sentidos, catálogo, sello de versión | 4 y 5 dic | Motor de fichas |
 | - | Margen y publicación | 6 dic | Merge aprobado por Josué |
@@ -490,16 +684,17 @@ pasan a la primera semana de enero, antes de que empiece el año lectivo.
 
 ## 6. Preguntas para Josué
 
-1. **El criterio del primer parcial** (sección 0): «lo que abre cada bloque»
-   en 7.º a 9.º, el RA1 en 10.º y la Unidad I en 11.º. ¿Vale, o hay un reparto
-   de tu centro o de tu distrital que deba mandar? Si se pueden abrir
-   `educatrachos.hn` y `se.gob.hn` desde el entorno, leo el índice del libro
-   de 7.º y el calendario.
+1. **Las programaciones y los estándares mensuales de Español** de 7.º a
+   11.º: en cuanto estén en `_dev/dcnb-pdf/`, se convierten y se ajusta la
+   tabla de la sección 1 (pasos en la sección 0). Si llegan antes del 25,
+   la tanda 1 ya se escribe con el reparto oficial. Mientras tanto, ¿vale la
+   propuesta de febrero y marzo como base de trabajo?
 2. **Fuentes que faltan en `_dev/`** antes de escribir esos datos: una para
    las funciones del lenguaje y los rasgos del español (RAE: Ortografía o
    Diccionario panhispánico de dudas), una para el formato APA 7, una oficial
-   para las lenguas de Honduras y otra para los textos de tradición oral
-   hondureña. Sin ellas, esas partes quedan fuera.
+   para dónde se habla cada lengua de Honduras y cuántos la hablan (la lista
+   ya la da el DCNB), una para los textos de tradición oral hondureña y la
+   Constitución en `_dev/leyes/`. Sin ellas, esas partes quedan fuera.
 3. **La prueba crítica**: ¿la pasamos al motor en la tanda 0 (recomendado),
    o las seis la copian y se migra después?
 4. **El ciclo que muestra el catálogo** para misiones que sirven de 7.º a
