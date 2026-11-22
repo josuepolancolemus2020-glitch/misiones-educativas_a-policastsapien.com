@@ -28,6 +28,7 @@ header p{font-size:0.85rem;opacity:0.92;line-height:1.45;}
 .clave-card input{padding:0.5rem 0.7rem;border-radius:8px;border:1.5px solid var(--border);background:var(--bg);color:var(--texto);font-size:0.9rem;min-width:220px;}
 .clave-card input:focus{outline:none;border-color:var(--pri);}
 #estado{font-size:0.82rem;color:var(--gray);width:100%;line-height:1.5;}
+.aviso-paginas{margin-top:6px;color:#92400e;font-weight:600;}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0.6rem;margin-bottom:1rem;}
 .stat{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:0.7rem 0.85rem;}
 .stat .n{font-size:1.45rem;font-weight:800;color:var(--pri);}
@@ -59,6 +60,7 @@ tr:hover td{background:var(--pri-gl);}
   .b-evaluacion{background:#3a2f10;color:#f3c96b;}
   .b-prueba_operativa{background:#241b45;color:#a99af0;}
   .b-pauta_vista{background:#421515;color:#f4a09a;}
+  .aviso-paginas{color:#f3c96b;}
 }
 .nota-ok{color:var(--jade);font-weight:800;}
 .nota-media{color:#b8860b;font-weight:800;}
@@ -163,6 +165,10 @@ const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<'
 const fmtF = t => { const d=new Date(t); if(isNaN(d)) return {f:'',h:''}; const p=n=>(n<10?'0':'')+n; return {f:d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()), h:p(d.getHours())+':'+p(d.getMinutes())}; };
 
 let DATOS = [];
+/* Páginas de 500 y techo de 40 (20 000 filas): ver traerPaginas, más abajo.
+   Van aquí arriba porque consultar() corre al abrir la página, antes de que
+   el navegador llegue a la función. */
+const PAG_FILAS = 500, PAG_MAX = 40;
 
 /* Maestro con sesión (METAS_DOCENTE_V1): entra directo, sin escribir nada,
    y la nube le devuelve SOLO los resultados de sus alumnos */
@@ -232,38 +238,96 @@ async function entrar(){
   if (btn) btn.disabled = false;
 }
 
+/* Cifras con el espacio de miles que se usa en el papel: «2 345», «20 000».
+   El espacio no se parte al final de un renglón. */
+function fmtN(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0'); }
+
+/* Trae TODAS las filas del maestro, por páginas.
+   La nube entrega 1 000 filas por vez, y la consulta de antes no sabía pedir
+   la siguiente: el maestro con 2 345 resultados veía 1 000 y no se enteraba.
+   Las funciones «_pag» (SUPABASE-TOPES-Y-PAGINAS.sql) siguen con la MISMA
+   regla de qué filas son suyas y reciben un cursor: la fecha y el id de la
+   última fila que llegó. Se piden páginas de 500 hasta que llegue una más
+   corta, con un techo de 40 páginas (20 000 filas) para que un teléfono con
+   poca memoria no se quede trabado; si se llega al techo, se dice.
+   Si la nube todavía no tiene la función nueva (falta pegar el SQL), se usa
+   la de siempre, y si esa devuelve justo 1 000 se avisa que pueden faltar.
+   La misma lógica vive en js/tools/estadisticas-alumno.js (estTraerPaginas). */
+async function traerPaginas(fnPag, fnVieja, cuerpo, campoFecha){
+  const cab = { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' };
+  const filas = [], vistos = new Set();
+  let antes = null;
+  for (let pag = 0; pag < PAG_MAX; pag++) {
+    const r = await fetch(SB_URL + '/rest/v1/rpc/' + fnPag, {
+      method: 'POST', headers: cab,
+      body: JSON.stringify(Object.assign({}, cuerpo, {
+        p_antes_fecha: antes ? antes.fecha : null, p_antes_id: antes ? antes.id : null, p_limite: PAG_FILAS }))
+    });
+    if (!r.ok) {
+      if (pag === 0 && await faltaFuncion(r)) return traerVieja(fnVieja, cuerpo, cab);
+      throw new Error('HTTP ' + r.status);
+    }
+    const j = await r.json();
+    const pagina = Array.isArray(j) ? j : [];
+    /* El progreso se ordena por su fecha de cambio: una foto que se
+       actualiza mientras se pagina puede volver a salir. Se cuenta una vez. */
+    pagina.forEach(f => {
+      if (f && f.id != null) { if (vistos.has(f.id)) return; vistos.add(f.id); }
+      filas.push(f);
+    });
+    if (pagina.length < PAG_FILAS) return { filas };
+    const u = pagina[pagina.length - 1] || {};
+    if (u[campoFecha] == null || u.id == null) return { filas };
+    antes = { fecha: u[campoFecha], id: u.id };
+  }
+  return { filas, masEnLaNube: true };
+}
+/* ¿La nube dice que esa función no existe? (404, o PGRST202 de PostgREST) */
+async function faltaFuncion(r){
+  if (r.status === 404) return true;
+  try { const j = await r.json(); return !!(j && j.code === 'PGRST202'); } catch(e) { return false; }
+}
+async function traerVieja(fnVieja, cuerpo, cab){
+  const r = await fetch(SB_URL + '/rest/v1/rpc/' + fnVieja, {
+    method: 'POST', headers: cab, body: JSON.stringify({ p_codigo: cuerpo.p_codigo, p_clave: cuerpo.p_clave })
+  });
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  const j = await r.json();
+  const filas = Array.isArray(j) ? j : [];
+  return { filas, puedeFaltar: filas.length === 1000 };
+}
+
 async function consultar(){
   const estado = document.getElementById('estado');
   if (!DOCENTE) { estado.textContent = '⚠️ Entra primero con tu correo y contraseña.'; return; }
-  const rpc1 = 'metas_consultar_docente';
-  const rpc2 = 'metas_consultar_progreso_docente';
   const body = { p_codigo: DOCENTE.codigo, p_clave: DOCENTE.clave };
   if (navigator.onLine === false) { estado.textContent = 'Para ver los resultados se necesita señal.'; return; }
   const btn = document.getElementById('btnConsultar');
   if (btn) btn.disabled = true;
   estado.textContent = '⏳ Un momento…';
   try {
-    const r = await fetch(SB_URL + '/rest/v1/rpc/' + rpc1, {
-      method: 'POST',
-      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    DATOS = await r.json();
-    if (!Array.isArray(DATOS)) DATOS = [];
-    let PROG = [];
+    const res = await traerPaginas('metas_consultar_docente_pag', 'metas_consultar_docente', body, 'creado_en');
+    DATOS = res.filas;
+    let prog = { filas: [] };
     try {
-      const rp = await fetch(SB_URL + '/rest/v1/rpc/' + rpc2, {
-        method: 'POST',
-        headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      });
-      if (rp.ok) PROG = await rp.json();
-      if (!Array.isArray(PROG)) PROG = [];
+      prog = await traerPaginas('metas_consultar_progreso_docente_pag', 'metas_consultar_progreso_docente', body, 'actualizado_en');
     } catch(e) {}
+    const PROG = prog.filas;
     estado.textContent = (DATOS.length || PROG.length)
-      ? '✅ ' + DATOS.length + ' resultados y ' + PROG.length + ' fotos de progreso.'
+      ? '✅ ' + fmtN(DATOS.length) + ' resultados y ' + fmtN(PROG.length) + ' fotos de progreso.'
       : '📭 Aún no hay resultados. Dales a tus alumnos tu código de aula (lo ves en la Zona Docente) para que lo escriban al identificarse.';
+    /* Los avisos van en su propio renglón y con palabras: si faltan filas,
+       el maestro tiene que saberlo antes de sacar un promedio. */
+    const avisos = [];
+    if (res.masEnLaNube) avisos.push('Se trajeron ' + fmtN(PAG_FILAS * PAG_MAX) + ' resultados; hay más en la nube.');
+    if (prog.masEnLaNube) avisos.push('Se trajeron ' + fmtN(PAG_FILAS * PAG_MAX) + ' fotos de progreso; hay más en la nube.');
+    if (res.puedeFaltar || prog.puedeFaltar) avisos.push('Puede que falten resultados: la nube entrega ' + fmtN(1000) + ' por vez.');
+    avisos.forEach(a => {
+      const p = document.createElement('div');
+      p.className = 'aviso-paginas';
+      p.textContent = '⚠️ ' + a;
+      estado.appendChild(p);
+    });
     ['stats','filtros','acciones','tablaWrap','progSeccion'].forEach(id => document.getElementById(id).style.display = '');
     llenarFiltros();
     pintar();

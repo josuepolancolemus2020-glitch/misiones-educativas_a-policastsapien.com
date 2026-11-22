@@ -53,6 +53,60 @@
     return (h >>> 0).toString(36);
   }
 
+  // ── Topes de la base (SUPABASE-TOPES-Y-PAGINAS.sql) ────────────────────
+  // La base no guarda un valor de más de 3 MB, ni una llave nueva con un
+  // nombre raro, ni más de 16 llaves por docente, y metas.blob_guardar
+  // rechaza el LOTE ENTERO con el nombre del tope. Sin esto, el aparato
+  // volvía a mandar los mismos megas cada 10 segundos para siempre, y el
+  // docente creía que todo estaba en la nube. Ahora: lo que no cabe no se
+  // manda (se mide aquí antes), lo que la base rechaza se aparta hasta que
+  // cambie, y se le dice al docente UNA vez, con palabras.
+  // Hoy un aula de 10 grupos pesa por aquí menos de 1 MB: el tope es para
+  // que nadie llene la base, no para un docente de verdad.
+  var TOPE_VALOR = 3 * 1024 * 1024;
+  // La base mide el texto con sus espacios ({"raw": "…"}): se deja margen
+  // para no mandar algo que aquí parece caber y allá no.
+  var TOPE_AQUI = TOPE_VALOR - 16 * 1024;
+  var TOPE_RE = /valor_demasiado_grande|tope_claves|clave_no_valida/;
+  var NOMBRE_LLAVE = {
+    METAS_ADMIN_V1: 'Lo de Mi aula (equipos, acumulativos, lecturas e inventario)',
+    METAS_PLANACCION_V1: 'Tu plan de acción',
+    METAS_CAMP_V1: 'El Campeonísimo',
+    METAS_CAMP_BANK_EXTRA_V1: 'El banco de preguntas del Campeonísimo',
+    METAS_CAMP_USED_V1: 'El Campeonísimo',
+    meta_ge_v2: 'El gobierno escolar',
+  };
+  function pesoValor(raw) {
+    var t = JSON.stringify({ raw: raw });
+    try { return new w.TextEncoder().encode(t).length; } catch (e) { return unescape(encodeURIComponent(t)).length; }
+  }
+  function esTope(err) {
+    return TOPE_RE.test(String((err && (err.mensaje || err.message)) || ''));
+  }
+  function avisarTope(k) {
+    var txt = (NOMBRE_LLAVE[k] || 'Una parte de tus datos') + ' ya pesa demasiado para guardarse en la nube. ' +
+      'Lo de este aparato está a salvo, pero no llega a tus otros aparatos. Escríbenos y te ayudamos.';
+    try {
+      if (typeof w.metasAlert === 'function') w.metasAlert(txt, { icono: '⚠️', titulo: 'Tu aula en la nube' });
+      else if (typeof w.toast === 'function') w.toast('⚠️ ' + txt);
+    } catch (e) { /* el aviso es cortesía: lo de aquí ya está guardado */ }
+    try { w.console && w.console.warn && w.console.warn('M.E.T.A.S: tope de la nube en ' + k); } catch (e) {}
+  }
+  // Se anota con la huella de lo que no cupo: mientras no cambie, no se
+  // vuelve a mandar. Se avisa la PRIMERA vez que deja de caber, no en cada
+  // cambio que siga sin caber (pasar lista no puede abrir un aviso cada vez).
+  // Cuando vuelve a caber y sube, la marca se quita y un tope futuro avisa otra vez.
+  function marcarTope(k, h) {
+    var m = meta();
+    m.tope = m.tope || {};
+    var antes = m.tope[k];
+    if (antes === h) return;
+    m.tope[k] = h;
+    guardarMeta(m);
+    if (antes === undefined) avisarTope(k);
+  }
+  function apartadoPorTope(m, k, h) { return !!(m.tope && m.tope[k] === h); }
+
   // ── Lo que de METAS_ADMIN_V1 puede viajar ──────────────────────────────
   // Cada grupo conserva su id, su aula (el uuid de metas.aulas que atiende),
   // grado, sección y escuela, para emparejarlo en otro aparato. La marca
@@ -146,7 +200,12 @@
   function apartadoDe(u) { return 'METAS_BLOB_APARTADO_' + u; }
   function hayPorSubir() {
     var m = meta();
-    return LLAVES.some(function (k) { var x = local(k); return x != null && hash(x) !== ((m.k || {})[k] || {}).h; });
+    return LLAVES.some(function (k) {
+      var x = local(k);
+      if (x == null) return false;
+      var h = hash(x);
+      return h !== ((m.k || {})[k] || {}).h && !apartadoPorTope(m, k, h);
+    });
   }
   function apartar() {
     var m = meta();
@@ -239,27 +298,58 @@
       var aqui = local(k);
       if (aqui == null) return;
       var e = m.k[k] || {};
-      if (hash(aqui) === e.h) return;
+      var h = hash(aqui);
+      if (h === e.h) return;
+      if (apartadoPorTope(m, k, h)) return;                     // ya se sabe que no cabe
+      if (pesoValor(aqui) > TOPE_AQUI) { marcarTope(k, h); return; }
       entradas.push({ k: k, raw: aqui, version: Math.max(Date.now(), (e.v || 0) + 1) });
     });
     if (!entradas.length) return true;
     var aparato = typeof n.aparato === 'function' ? n.aparato() : '';
-    var escritas = await n.rpc('blob_guardar', {
-      p_entradas: entradas.map(function (x) { return { k: x.k, valor: { raw: x.raw }, version: x.version, dispositivo: aparato }; }),
-      p_forzar: false,
-    });
-    if (uid() !== u) return true;
+    function guardar(lista) {
+      return n.rpc('blob_guardar', {
+        p_entradas: lista.map(function (x) { return { k: x.k, valor: { raw: x.raw }, version: x.version, dispositivo: aparato }; }),
+        p_forzar: false,
+      });
+    }
+    var subidas = entradas;
+    var completas = true;
+    try {
+      var escritas = await guardar(entradas);
+      if (uid() !== u) return true;
+      // La base solo escribe lo que es más nuevo que lo suyo: si escribió
+      // menos, otro aparato se adelantó y hay que bajar y fusionar.
+      if (Number(escritas) !== entradas.length) return false;
+    } catch (err) {
+      if (!esTope(err)) throw err;
+      // Un tope tumbó el lote entero y la base no dice cuál fue. Con una
+      // sola entrada, es esa. Con varias, se prueba cada una sola UNA vez:
+      // las que caben se guardan y la que no, se aparta.
+      if (entradas.length === 1) {
+        marcarTope(entradas[0].k, hash(entradas[0].raw));
+        return true;
+      }
+      subidas = [];
+      for (var i = 0; i < entradas.length; i++) {
+        try {
+          var una = await guardar([entradas[i]]);
+          if (Number(una) === 1) subidas.push(entradas[i]); else completas = false;
+        } catch (e1) {
+          if (!esTope(e1)) throw e1;
+          marcarTope(entradas[i].k, hash(entradas[i].raw));
+        }
+      }
+      if (uid() !== u) return true;
+    }
     m = meta();
     m.k = m.k || {};
-    // La base solo escribe lo que es más nuevo que lo suyo: si escribió
-    // menos, otro aparato se adelantó y hay que bajar y fusionar.
-    if (Number(escritas) !== entradas.length) return false;
-    entradas.forEach(function (x) {
+    subidas.forEach(function (x) {
       m.k[x.k] = { h: hash(x.raw), v: x.version };
+      if (m.tope) delete m.tope[x.k];                           // ya cupo: fuera la marca
       ponerBase(x.k, x.raw);
     });
     guardarMeta(m);
-    return true;
+    return completas;
   }
 
   // Una vuelta: bajar, y subir lo de aquí. Si la base no aceptó todo
@@ -301,7 +391,8 @@
       var h = hash(ls(k));
       var cambio = huellas[k] !== undefined && huellas[k] !== h;
       huellas[k] = h;
-      return cambio || hash(local(k)) !== ((m.k || {})[k] || {}).h;
+      var hl = hash(local(k));
+      return cambio || (hl !== ((m.k || {})[k] || {}).h && !apartadoPorTope(m, k, hl));
     });
     if (hay) pronto();
   }

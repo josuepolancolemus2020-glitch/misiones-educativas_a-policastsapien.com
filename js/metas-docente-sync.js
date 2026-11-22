@@ -239,6 +239,23 @@
     return m;
   }
 
+  /* La nube no guarda un valor de más de 3 MB. Se mide aquí como lo mide
+     ella (el texto {"raw": "…"}), con un margen por los espacios que agrega. */
+  var DS_TOPE_AQUI = 3 * 1024 * 1024 - 16 * 1024;
+  function dsPesoValor(raw) {
+    var t = JSON.stringify({ raw: raw });
+    try { return new TextEncoder().encode(t).length; } catch (_) { return unescape(encodeURIComponent(t)).length; }
+  }
+  function dsAvisarTope(k) {
+    var txt = 'Una parte de tu aula ya pesa demasiado para guardarse en la nube. Lo de este equipo está a salvo, ' +
+      'pero no llega a tus otros equipos. Escríbenos y te ayudamos.';
+    try {
+      if (typeof window.metasAlert === 'function') window.metasAlert(txt, { icono: '⚠️', titulo: 'Tu aula en la nube' });
+      else if (typeof window.toast === 'function') window.toast('⚠️ ' + txt);
+    } catch (_) {}
+    try { console.warn('M.E.T.A.S: tope de la nube en ' + k); } catch (_) {}
+  }
+
   /* ── SUBIR ──
      force  = reconciliación manual: sube TODO y manda al servidor pisar
               sin importar versiones (p_forzar). Es la copia buena.
@@ -264,6 +281,17 @@
       var edicionReal = e.v !== e.sv;
       var semilla = !!cloudKeys && !cloudKeys.has(k) && cur != null;   // la nube no lo tiene aún
       if (!(force || edicionReal || semilla)) return;
+      /* Tope de la nube (SUPABASE-TOPES-Y-PAGINAS.sql): un valor de más de
+         3 MB no se guarda. metas_docente_estado_guardar lo descarta sin
+         error y responde «escribí menos», y eso aquí parecía un choque de
+         versiones: se volvía a subir lo mismo en cada sincronización, para
+         siempre. Ahora lo que no cabe ni se manda, y se avisa una vez. */
+      if (cur != null && dsPesoValor(cur) > DS_TOPE_AQUI) {
+        var hc = hash(cur);
+        if (e.tope !== hc) { var primera = e.tope === undefined; e.tope = hc; metaSave(m); if (primera) dsAvisarTope(k); }
+        return;
+      }
+      if (e.tope !== undefined) delete e.tope;
       var version = force ? Math.max(t, (e.cv || 0) + 1) : Math.max(e.v, (e.cv || 0) + 1);
       if (force || version !== e.v) { e.v = version; e.h = hash(cur); }
       entradas.push({ k: k, valor: { raw: cur }, version: version, dispositivo: deviceId() });
