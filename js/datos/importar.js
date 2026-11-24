@@ -26,6 +26,14 @@
        (pago_crear y compañía responden «ya_estaba», 03, 3.3).
    Nunca se usa un id que venga en el archivo (4.4, regla 1).
 
+   El mismo lector acepta también el respaldo antiguo del aula
+   (METAS_ADMIN_V1: { v:2, grupos:[{ lista, notas, asistencia }] }). De ese
+   archivo solo salen la personalidad y las inasistencias del pase de lista.
+   Los alumnos, las notas, los pagos, las colectas y los gastos no se vuelven
+   a escribir: cada rasgo y cada falta se cuelga del alumno que ya se importó,
+   por el mismo id que salió de su identidad (o de su nombre, si no tenía).
+   Si ese alumno no está, se lista y no se crea.
+
    Los montos y las notas son texto de punta a punta (regla 19): se leen con
    montos.leer y se suman en centavos.
    ===================================================================== */
@@ -39,6 +47,11 @@
   var DUENOS = ['mio', 'escuela', 'donado'];
   var CATS_INV = ['tecnologia', 'mobiliario', 'didactico', 'libros', 'aseo', 'deporte', 'otro'];
   var CATS_GASTO = ['copias', 'transporte', 'materiales', 'refrigerio', 'servicio', 'otro'];
+  // Los cinco rasgos de la boleta, con el nombre exacto que admite la base.
+  var RASGOS = ['Puntualidad', 'Espíritu de trabajo', 'Orden y presentación', 'Sociabilidad', 'Moralidad'];
+  var RASGO_NORM = {};
+  RASGOS.forEach(function (r) { RASGO_NORM[norm(r)] = r; });
+  var PERIODOS_PERS = ['I', 'II', 'III', 'IV'];
 
   // ── Ayudas ─────────────────────────────────────────────────────────────
   function montos() { return M.montos; }
@@ -90,6 +103,92 @@
   function revisar(fila, l) {
     if (l && l.confianza < 0.9) fila.revisar = true;
   }
+  // Un entero que en el respaldo viejo puede venir como texto («6», «6º»,
+  // «2026»). Sin Number() ni parseInt (regla 19): solo dígitos, a mano.
+  function digitos(t, min, max) {
+    var s = String(t == null ? '' : t).trim();
+    if (!/^\d{1,4}$/.test(s)) return null;
+    var n = 0;
+    var i;
+    for (i = 0; i < s.length; i++) n = n * 10 + (s.charCodeAt(i) - 48);
+    return n >= min && n <= max ? n : null;
+  }
+  function gradoDe(g) {
+    return digitos(String(g == null ? '' : g).trim().replace(/\s*[ºo°]\s*$/i, ''), 0, 12);
+  }
+  // La letra de la boleta, tal como la escribe el maestro o como número del
+  // SACE (4, 3, 2, 1). Vacío no es un dato. Lo que no cabe en 1 a 3 letras
+  // no se anota: la base no lo acepta.
+  function letraDe(v) {
+    var k = String(v == null ? '' : v).trim().toUpperCase().replace(/\s+/g, ' ');
+    if (!k) return '';
+    var mapa = {
+      '4': 'S', '3': 'MB', '2': 'B', '1': 'NS',
+      S: 'S', MB: 'MB', B: 'B', NS: 'NS', E: 'E', R: 'R', D: 'D', PS: 'PS', I: 'NS',
+      SOBRESALIENTE: 'S', EXCELENTE: 'S', 'MUY BUENO': 'MB', MUYBUENO: 'MB', BUENO: 'B',
+      INSUFICIENTE: 'NS', 'NO SATISFACTORIO': 'NS', 'POCO SATISFACTORIO': 'NS',
+      REGULAR: 'NS', DEFICIENTE: 'NS'
+    };
+    if (mapa[k]) return mapa[k];
+    if (/^[A-Z]{1,3}$/.test(k)) return k;
+    return null;
+  }
+  function estadoAsis(v) {
+    var k = String(v == null ? '' : v).trim().toUpperCase();
+    if (k === 'A' || k === 'AUSENTE') return 'ausente';
+    if (k === 'E' || k === 'EXCUSA') return 'excusa';
+    if (k === 'T' || k === 'TARDE') return 'tarde';
+    return null;
+  }
+  function etiquetaAsis(e) {
+    if (e === 'ausente') return 'Ausente';
+    if (e === 'excusa') return 'Con excusa';
+    if (e === 'tarde') return 'Tarde';
+    return String(e || '');
+  }
+  // Una fecha, un día. Si el respaldo dejó la misma fecha dos veces, manda
+  // la primera marca, que es la que el pase de lista enseña.
+  function unirDiasRespaldo(lista) {
+    var por = {};
+    var orden = [];
+    (lista || []).forEach(function (r) {
+      if (!r || !r.f) return;
+      var k = String(r.f).slice(0, 10);
+      if (!por[k]) { por[k] = { f: k, aus: {}, raro: {} }; orden.push(k); }
+      Object.keys(r.aus || {}).forEach(function (n) {
+        if (por[k].aus[n] || por[k].raro[n]) return;
+        var est = estadoAsis(r.aus[n]);
+        if (est) por[k].aus[n] = est;
+        else if (r.aus[n] != null && String(r.aus[n]).trim() !== '') por[k].raro[n] = r.aus[n];
+      });
+    });
+    return orden.sort().map(function (k) { return por[k]; });
+  }
+  function desenvolver(v) {
+    if (typeof v === 'string') {
+      try { return JSON.parse(v); } catch (e) { return null; }
+    }
+    if (v && typeof v === 'object' && typeof v.raw === 'string') {
+      try { return JSON.parse(v.raw); } catch (e) { return null; }
+    }
+    return v;
+  }
+  // El JSON del aula vieja, no el archivo «metas-importacion/1».
+  function respaldoDe(a) {
+    var admin = a;
+    if (a && a.METAS_ADMIN_V1 != null) admin = desenvolver(a.METAS_ADMIN_V1);
+    if (!admin || typeof admin !== 'object' || Array.isArray(admin)) return null;
+    var grupos = null;
+    if (Array.isArray(admin.grupos)) grupos = admin.grupos;
+    else if (Array.isArray(admin.lista) && (admin.notas || admin.asistencia)) grupos = [admin];
+    if (!grupos) return null;
+    return { respaldo: true, grupos: grupos };
+  }
+  function planVacio() {
+    return { aula: null, asignaturas: [], alumnos: [], familias: [], notas: [], colectas: [], exenciones: [], pagos: [],
+      gastos: [], gastosDocente: [], reembolsos: [], inventario: [], personalidad: [], asistenciaDias: [], asistencia: [],
+      preguntas: [] };
+  }
 
   // ── 1. ¿Es un archivo nuestro? ─────────────────────────────────────────
   function leer(texto) {
@@ -97,10 +196,17 @@
     try { a = JSON.parse(texto); } catch (e) {
       return { ok: false, frase: 'Ese archivo no se puede abrir. Tiene que ser un archivo de importación de M.E.T.A.S.' };
     }
+    // A veces el archivo es el texto del respaldo guardado otra vez como
+    // texto (comillas por fuera). Se abre una vez más.
+    if (typeof a === 'string') {
+      try { a = JSON.parse(a); } catch (e2) { a = null; }
+    }
     if (!a || typeof a !== 'object' || Array.isArray(a)) {
       return { ok: false, frase: 'Ese archivo no se puede abrir. Tiene que ser un archivo de importación de M.E.T.A.S.' };
     }
     if (a.formato !== FORMATO) {
+      var respaldo = respaldoDe(a);
+      if (respaldo) return { ok: true, archivo: respaldo };
       return { ok: false, frase: 'Ese archivo es de otra versión. Pide el archivo de importación de M.E.T.A.S, versión 1.' };
     }
     var au = a.aula || {};
@@ -109,6 +215,244 @@
       return { ok: false, frase: 'Al archivo le falta el aula: escuela, grado, sección y año.' };
     }
     return { ok: true, archivo: a };
+  }
+
+  // Personalidad e inasistencias del respaldo antiguo. No crea alumnos ni
+  // grupos, y no arma notas, pagos, colectas ni gastos: eso ya se importó.
+  async function prepararRespaldo(api, archivo, dec, id) {
+    var plan = planVacio();
+    var aulasPlan = [];
+    var grupos = archivo.grupos || [];
+    var g;
+    for (var ig = 0; ig < grupos.length; ig++) {
+      g = grupos[ig] || {};
+      var escuela = String(g.escuela || '').trim();
+      var grado = gradoDe(g.grado);
+      var seccion = String(g.seccion || '').trim();
+      var anio = digitos(g.boleta && g.boleta.anio != null ? g.boleta.anio : g.anio_lectivo, 2020, 2100);
+      if (!escuela || grado === null || !/^[0-9A-Za-z]{1,3}$/.test(seccion) || anio === null) {
+        var rota = nuevaFila('aula', 'error', { texto: escuela || 'Grupo sin nombre' });
+        rota.errores.push('Falta la escuela, el grado, la sección o el año');
+        aulasPlan.push(rota);
+        continue;
+      }
+      var claveAula = [norm(escuela), grado, seccion.toUpperCase(), anio].join('·');
+      var aulaHay = api.lista('aulas').filter(function (x) {
+        return [norm(x.escuela), x.grado, String(x.seccion).toUpperCase(), x.anio_lectivo].join('·') === claveAula;
+      })[0];
+      var aulaId = aulaHay ? aulaHay.id : await id('aula', claveAula);
+      var aulaYa = !!(aulaHay || api.lista('aulas', { id: aulaId })[0]);
+      var textoAula = grado + 'º-' + seccion.toUpperCase() + ' · ' + escuela + ' · ' + anio;
+      var faula = nuevaFila('aula', aulaYa ? 'ya_estaba' : 'error', { id: aulaId, texto: textoAula });
+      if (!aulaYa) faula.errores.push('Este grupo no está. No se crea.');
+      aulasPlan.push(faula);
+
+      var porNum = {};
+      var nombresVistos = {};
+      var identidadesVistas = {};
+      var lista = Array.isArray(g.lista) ? g.lista : [];
+      var ia;
+      for (ia = 0; ia < lista.length; ia++) {
+        var al0 = lista[ia];
+        if (!al0) continue;
+        var nombre = String(al0.nombre || al0.nombre_completo || '').replace(/\s+/g, ' ').trim();
+        var num = digitos(al0.num, 1, 99);
+        // El alumno de prueba no se importó en noviembre: no corre el id y
+        // sus celdas no se listan como si faltara una persona.
+        if (al0.prueba) {
+          if (num != null) porNum[String(num)] = { prueba: true, nombre: nombre, existe: false };
+          continue;
+        }
+        var limpia = String(al0.idn || al0.identidad || '').toUpperCase().replace(/[\s-]/g, '');
+        var identidad = null;
+        var mala = nombre.length < 3 || nombre.length > 120;
+        if (limpia) {
+          if (/^\d{13}$/.test(limpia)) identidad = limpia;
+          else mala = true;
+        }
+        if (identidad && identidadesVistas[identidad]) mala = true;
+        if (identidad) identidadesVistas[identidad] = true;
+        var sid = null;
+        if (!mala) {
+          var nn = norm(nombre);
+          nombresVistos[nn] = (nombresVistos[nn] || 0) + 1;
+          sid = await id('alumno', aulaId, identidad ? 'HN:' + identidad : 'n:' + nn + ':' + nombresVistos[nn]);
+        }
+        if (num == null) continue;
+        var hayAl = sid && api.lista('alumnos', { id: sid })[0];
+        if ((!hayAl || hayAl.aula_id !== aulaId) && identidad && aulaYa) {
+          hayAl = api.lista('alumnos', { aula_id: aulaId, identidad: identidad }).filter(function (x) {
+            return (x.documento_pais || 'HN') === 'HN';
+          })[0] || null;
+        }
+        porNum[String(num)] = {
+          id: hayAl && hayAl.aula_id === aulaId ? hayAl.id : sid,
+          nombre: nombre || ('n.º ' + num),
+          existe: !!(hayAl && hayAl.aula_id === aulaId),
+        };
+      }
+      var yaListe = {};
+      function faltaAlumno(num, al) {
+        var claveF = (al && al.id) || ('num:' + aulaId + ':' + num);
+        if (yaListe[claveF]) return;
+        yaListe[claveF] = true;
+        var ff = nuevaFila('alumno', 'error', {
+          id: al && al.id, texto: (al && al.nombre) || ('n.º ' + num), num_lista: digitos(num, 1, 99),
+        });
+        ff.errores.push(al && al.id ? 'No está en el grupo. No se crea.' : 'No se puede unir con la lista. No se crea.');
+        plan.alumnos.push(ff);
+      }
+
+      var notas = g.notas && typeof g.notas === 'object' ? g.notas : {};
+      var vistosPers = {};
+      var ip;
+      for (ip = 0; ip < PERIODOS_PERS.length; ip++) {
+        var periodo = PERIODOS_PERS[ip];
+        var bloque = notas[periodo];
+        if (!bloque || typeof bloque !== 'object') continue;
+        var claves = Object.keys(bloque);
+        var ic;
+        for (ic = 0; ic < claves.length; ic++) {
+          var rasgo = RASGO_NORM[norm(claves[ic])];
+          if (!rasgo) continue;
+          var celdas = bloque[claves[ic]];
+          if (!celdas || typeof celdas !== 'object') continue;
+          var nums = Object.keys(celdas);
+          var inn;
+          for (inn = 0; inn < nums.length; inn++) {
+            var letra = letraDe(celdas[nums[inn]]);
+            if (letra === '') continue;
+            var al = porNum[String(nums[inn])];
+            if (al && al.prueba) continue;
+            var texto = ((al && al.nombre) || ('n.º ' + nums[inn])) + ' · ' + rasgo + ' · parcial ' + periodo;
+            if (!aulaYa || !al || !al.existe) { faltaAlumno(nums[inn], al); continue; }
+            if (letra == null) {
+              var malaLetra = nuevaFila('personalidad', 'error', { texto: texto });
+              malaLetra.errores.push('«' + String(celdas[nums[inn]]) + '» no es una letra de personalidad');
+              plan.personalidad.push(malaLetra);
+              continue;
+            }
+            var llave = al.id + '|' + periodo + '|' + rasgo;
+            if (vistosPers[llave]) {
+              if (vistosPers[llave].valor !== letra) {
+                vistosPers[llave].avisos.push('En el respaldo hay otra letra (' + letra + '). Se deja la primera.');
+              }
+              continue;
+            }
+            var fp = nuevaFila('personalidad', 'nuevo', { texto: texto, valor: letra });
+            vistosPers[llave] = fp;
+            var yaP = api.lista('notas_personalidad', { alumno_id: al.id, periodo: periodo, rasgo: rasgo })[0];
+            fp.campos = { aula_id: aulaId, alumno_id: al.id, periodo: periodo, rasgo: rasgo, letra: letra };
+            if (yaP) {
+              fp.id = yaP.id;
+              var antesLetra = letraDe(yaP.letra);
+              if (antesLetra === letra) fp.estado = 'ya_estaba';
+              else {
+                var kn = 'pers:' + al.id + ':' + periodo + ':' + rasgo;
+                fp.estado = dec[kn] === 'cambiar' ? 'cambia' : 'cambia_sin_marcar';
+                fp.antes = antesLetra || String(yaP.letra || '');
+                fp.marca = kn;
+              }
+            } else {
+              fp.id = await id('personalidad', al.id, periodo, rasgo);
+              if (api.lista('notas_personalidad', { id: fp.id })[0]) fp.estado = 'ya_estaba';
+            }
+            plan.personalidad.push(fp);
+          }
+        }
+      }
+
+      var dias = unirDiasRespaldo(g.asistencia);
+      var idia;
+      for (idia = 0; idia < dias.length; idia++) {
+        var dia = dias[idia];
+        if (!fechaOk(dia.f)) {
+          var fe = nuevaFila('asistencia_dia', 'error', { texto: textoAula + ' · ' + String(dia.f) });
+          fe.errores.push('La fecha no se entiende');
+          if (Object.keys(dia.aus).length || Object.keys(dia.raro).length) fe.avisos.push('Esas faltas no se anotan');
+          plan.asistenciaDias.push(fe);
+          continue;
+        }
+        var quien = Object.keys(dia.aus).concat(Object.keys(dia.raro));
+        if (!aulaYa) {
+          var iq;
+          for (iq = 0; iq < quien.length; iq++) {
+            var alQ = porNum[String(quien[iq])];
+            if (alQ && alQ.prueba) continue;
+            faltaAlumno(quien[iq], alQ);
+          }
+          continue;
+        }
+        var fd = nuevaFila('asistencia_dia', 'nuevo', { texto: textoAula + ' · ' + dia.f });
+        fd.campos = { aula_id: aulaId, fecha: dia.f };
+        var yaD = api.lista('asistencia_dias', { aula_id: aulaId, fecha: dia.f })[0];
+        if (yaD) { fd.id = yaD.id; fd.estado = 'ya_estaba'; }
+        else {
+          fd.id = await id('asistencia_dia', aulaId, dia.f);
+          if (api.lista('asistencia_dias', { id: fd.id })[0]) fd.estado = 'ya_estaba';
+        }
+        plan.asistenciaDias.push(fd);
+        var raros = Object.keys(dia.raro);
+        var ir;
+        for (ir = 0; ir < raros.length; ir++) {
+          var alR = porNum[String(raros[ir])];
+          if (alR && alR.prueba) continue;
+          if (!alR || !alR.existe) { faltaAlumno(raros[ir], alR); continue; }
+          var fr = nuevaFila('asistencia', 'error', { texto: alR.nombre + ' · ' + dia.f });
+          fr.errores.push('«' + String(dia.raro[raros[ir]]) + '» no es Ausente ni Con excusa');
+          plan.asistencia.push(fr);
+        }
+        var marks = Object.keys(dia.aus);
+        var im;
+        for (im = 0; im < marks.length; im++) {
+          var est = dia.aus[marks[im]];
+          var alA = porNum[String(marks[im])];
+          if (alA && alA.prueba) continue;
+          if (!alA || !alA.existe) { faltaAlumno(marks[im], alA); continue; }
+          var fa = nuevaFila('asistencia', 'nuevo', { texto: alA.nombre + ' · ' + dia.f, valor: etiquetaAsis(est) });
+          fa.campos = { aula_id: aulaId, alumno_id: alA.id, fecha: dia.f, estado: est };
+          var yaA = api.lista('asistencia', { alumno_id: alA.id, fecha: dia.f })[0];
+          if (yaA) {
+            fa.id = yaA.id;
+            if (yaA.estado === est) fa.estado = 'ya_estaba';
+            else {
+              var ka = 'asis:' + alA.id + ':' + dia.f;
+              fa.estado = dec[ka] === 'cambiar' ? 'cambia' : 'cambia_sin_marcar';
+              fa.antes = etiquetaAsis(yaA.estado);
+              fa.marca = ka;
+            }
+          } else {
+            fa.id = await id('asistencia', alA.id, dia.f);
+            var yaId = api.lista('asistencia', { id: fa.id })[0];
+            if (yaId) {
+              fa.id = yaId.id;
+              if (yaId.estado === est) fa.estado = 'ya_estaba';
+              else {
+                var ka2 = 'asis:' + alA.id + ':' + dia.f;
+                fa.estado = dec[ka2] === 'cambiar' ? 'cambia' : 'cambia_sin_marcar';
+                fa.antes = etiquetaAsis(yaId.estado);
+                fa.marca = ka2;
+              }
+            }
+          }
+          plan.asistencia.push(fa);
+        }
+      }
+    }
+    if (!aulasPlan.length) {
+      plan.aula = nuevaFila('aula', 'error', { texto: 'Respaldo sin grupos' });
+      plan.aula.errores.push('El respaldo no trae grupos');
+    } else if (aulasPlan.length === 1) {
+      plan.aula = aulasPlan[0];
+    } else {
+      var todasYa = aulasPlan.every(function (x) { return x.estado === 'ya_estaba'; });
+      plan.aula = nuevaFila('aula', todasYa ? 'ya_estaba' : 'error', {
+        id: aulasPlan[0].id, texto: aulasPlan.map(function (x) { return x.texto; }).join(' · '),
+      });
+      if (!todasYa) plan.aula.errores.push('Hay un grupo que no está. No se crea.');
+    }
+    plan.resumen = resumir(plan);
+    return plan;
   }
 
   // ── 2. La vista previa ─────────────────────────────────────────────────
@@ -124,8 +468,8 @@
     if (!owner) throw new Error('sin cuenta');
     var mt = montos();
     async function id() { return uuidDe(await sha(owner + '|' + Array.prototype.join.call(arguments, '|'))); }
-    var plan = { aula: null, asignaturas: [], alumnos: [], familias: [], notas: [], colectas: [], exenciones: [], pagos: [],
-      gastos: [], gastosDocente: [], reembolsos: [], inventario: [], preguntas: [] };
+    if (archivo && archivo.respaldo) return prepararRespaldo(api, archivo, dec, id);
+    var plan = planVacio();
 
     // Aula: si ya hay una con la misma escuela, grado, sección y año, es esa.
     var au = archivo.aula;
@@ -529,7 +873,7 @@
   }
 
   var SECCIONES = ['asignaturas', 'alumnos', 'familias', 'notas', 'colectas', 'exenciones', 'pagos', 'gastos', 'gastosDocente',
-    'reembolsos', 'inventario'];
+    'reembolsos', 'inventario', 'personalidad', 'asistenciaDias', 'asistencia'];
   function resumir(plan) {
     var r = { nuevos: 0, ya: 0, cambian: 0, errores: 0, preguntas: 0, revisar: 0, espera: 0, porSeccion: {} };
     var todas = [plan.aula].concat.apply([plan.aula], SECCIONES.map(function (k) { return plan[k]; }));
@@ -572,6 +916,9 @@
         api.crear('familias', c, x);
       }],
       ['notas', function (f, x) { api.crear('notas', Object.assign({ id: f.id }, f.campos), x); }],
+      ['asistenciaDias', function (f, x) { api.crear('asistencia_dias', Object.assign({ id: f.id }, f.campos), x); }],
+      ['asistencia', function (f, x) { api.crear('asistencia', Object.assign({ id: f.id }, f.campos), x); }],
+      ['personalidad', function (f, x) { api.crear('notas_personalidad', Object.assign({ id: f.id }, f.campos), x); }],
       ['colectas', function (f, x) { api.colecta.crear(Object.assign({ id: f.id }, f.campos), x); }],
       ['exenciones', function (f, x) { api.exencion.poner(Object.assign({ id: f.id }, f.campos), x); }],
       ['pagos', function (f, x) { api.pagar(Object.assign({ id: f.id }, f.campos), x); }],
@@ -589,6 +936,14 @@
           n++;
         } else if (f.estado === 'cambia' && f.clase === 'nota') {
           api.editar('notas', f.id, { valor: f.campos.valor });
+          n++;
+        } else if (f.estado === 'cambia' && f.clase === 'personalidad') {
+          // El op_id sale del contenido, igual que al crear: marcarlo dos
+          // veces es la misma corrección.
+          api.editar('notas_personalidad', f.id, { letra: f.campos.letra }, await op(f));
+          n++;
+        } else if (f.estado === 'cambia' && f.clase === 'asistencia') {
+          api.editar('asistencia', f.id, { estado: f.campos.estado }, await op(f));
           n++;
         }
       }
