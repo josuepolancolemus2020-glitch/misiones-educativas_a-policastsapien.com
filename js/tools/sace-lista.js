@@ -598,6 +598,26 @@
     return (d.lista || []).filter(function (a) { return !a.prueba && !seFue(a); });
   }
 
+  /* ── Fichas del SACE sin sexo (las de antes de v577) ──
+     Los cuadros cuentan a ese alumno en T y no en N ni en V: el total deja
+     de ser N + V y nadie lo nota en la hoja. Esto solo CUENTA, para que la
+     pantalla lo diga; el sexo nunca se adivina por el nombre ni se rellena
+     solo, lo pone el maestro. Sirve con la ficha de filas (en_sace) y con
+     la del blob (sace), y entran también los que se fueron: el cuadro 5
+     los cuenta en N/V/T en su renglón de traslados. */
+  function delSace(a) { return !!a && !a.prueba && (a.en_sace === true || a.sace === true); }
+  function sexosSace(alumnos) {
+    var c = { N: 0, V: 0, sinSexo: [], total: 0 };
+    (alumnos || []).forEach(function (a) {
+      if (!delSace(a)) return;
+      c.total++;
+      if (a.sexo === 'F') c.N++;
+      else if (a.sexo === 'M') c.V++;
+      else c.sinSexo.push(a);
+    });
+    return c;
+  }
+
   /* ── cuadro «Matrícula final por edades y género» ── */
   function cuadroEdades(d, corte) {
     var mf = matriculaFinal(d), porEdad = {}, sinFecha = [], sinSexo = [];
@@ -631,7 +651,7 @@
     avisosPar: avisosPar, revisarFicha: revisarFicha, cambiosMarca: cambiosMarca, datosParaSace: datosParaSace,
     seFue: seFue, enListaOficial: enListaOficial, hayImportacion: hayImportacion,
     matriculaFinal: matriculaFinal, alumnosQueCuentan: alumnosQueCuentan,
-    cuadroEdades: cuadroEdades
+    cuadroEdades: cuadroEdades, sexosSace: sexosSace
   };
   raiz.SaceLista = API;
   if (typeof module !== 'undefined' && module.exports) module.exports = API;
