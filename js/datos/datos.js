@@ -267,7 +267,9 @@
     return { id: id };
   }
 
-  function editar(nombre, id, cambios) {
+  // extra.op_id lo manda el importador: la misma corrección, otra vez, es
+  // la misma operación. Quien no lo pasa sigue con un id nuevo, como antes.
+  function editar(nombre, id, cambios, extra) {
     var u = cuenta();
     var c = limpia(cambios || {});
     delete c.id;
@@ -296,8 +298,8 @@
     }
     var base = {};
     Object.keys(c).forEach(function (k) { base[k] = visto[k] === undefined ? null : visto[k]; });
-    cola.encolar({ owner: u, tipo: 'editar', tabla: nombre, id: id,
-      base_version: enBase && !enBase.deleted_at ? enBase.version : null, base: base, cambios: c });
+    cola.encolar(conOp({ owner: u, tipo: 'editar', tabla: nombre, id: id,
+      base_version: enBase && !enBase.deleted_at ? enBase.version : null, base: base, cambios: c }, extra));
     return { id: id };
   }
 

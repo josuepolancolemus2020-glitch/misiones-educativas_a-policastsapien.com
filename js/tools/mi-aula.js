@@ -936,7 +936,8 @@
   // marcar; lo que tiene error no se guarda y dice por qué (04, 4.3 y 4.4).
   var NOMBRE_SECCION = { asignaturas: 'Asignaturas', alumnos: 'Alumnos', familias: 'Familias', notas: 'Notas',
     colectas: 'Colectas', exenciones: 'No les corresponde', pagos: 'Pagos', gastos: 'Gastos de colecta',
-    gastosDocente: 'Gastos de mi bolsillo', reembolsos: 'Lo que me devolvieron', inventario: 'Inventario' };
+    gastosDocente: 'Gastos de mi bolsillo', reembolsos: 'Lo que me devolvieron', inventario: 'Inventario',
+    personalidad: 'Personalidad', asistenciaDias: 'Días de lista', asistencia: 'Inasistencias' };
   function pintarImportar() {
     var h = '<div class="ma-card" data-metas="importar"><div class="ma-card-cab"><h2 class="ma-h">📂 Importar un archivo</h2>'
       + '<button type="button" class="ma-btn" data-accion="importar-elegir" data-metas="importar-elegir">Elegir el archivo</button></div>'
