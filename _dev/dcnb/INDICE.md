@@ -441,6 +441,58 @@ Los PDF originales siguen en `_dev/dcnb-pdf/` y son los que acreditan una cita: 
 | [`dcneb-basica-iii-ciclo-93-ciencias-naturales-noveno-grado-3de4.md`](dcneb-basica-iii-ciclo-93-ciencias-naturales-noveno-grado-3de4.md) | Ciencias Naturales — Noveno Grado (3 de 4) | 585–591 | 7,017 |
 | [`dcneb-basica-iii-ciclo-94-ciencias-naturales-noveno-grado-4de4.md`](dcneb-basica-iii-ciclo-94-ciencias-naturales-noveno-grado-4de4.md) | Ciencias Naturales — Noveno Grado (4 de 4) | 592–603 | 4,401 |
 
+## programacion-espanol-1-6.pdf (94 páginas)
+
+Programaciones mensuales oficiales de la SEDUC: Español y Matemáticas, de 1.º a 6.º. Febrero y marzo vienen como un solo bloque.
+
+> ⚠️ 9 página(s) son solo imagen y no tienen texto aquí: 1, 2, 4, 5, 6, 61, 62, 92 y 94. Hay que verlas en el PDF.
+
+| Archivo | Sección | Páginas | Tokens |
+|---|---|---:|---:|
+| [`programacion-espanol-1-6-01-presentacion.md`](programacion-espanol-1-6-01-presentacion.md) | Presentación | 1–6 | 476 |
+| [`programacion-espanol-1-6-02-comunicacion-1de7.md`](programacion-espanol-1-6-02-comunicacion-1de7.md) | Comunicación (1 de 7) | 7–13 | 7,299 |
+| [`programacion-espanol-1-6-03-comunicacion-2de7.md`](programacion-espanol-1-6-03-comunicacion-2de7.md) | Comunicación (2 de 7) | 14–21 | 7,358 |
+| [`programacion-espanol-1-6-04-comunicacion-3de7.md`](programacion-espanol-1-6-04-comunicacion-3de7.md) | Comunicación (3 de 7) | 22–29 | 7,051 |
+| [`programacion-espanol-1-6-05-comunicacion-4de7.md`](programacion-espanol-1-6-05-comunicacion-4de7.md) | Comunicación (4 de 7) | 30–38 | 7,578 |
+| [`programacion-espanol-1-6-06-comunicacion-5de7.md`](programacion-espanol-1-6-06-comunicacion-5de7.md) | Comunicación (5 de 7) | 39–46 | 7,071 |
+| [`programacion-espanol-1-6-07-comunicacion-6de7.md`](programacion-espanol-1-6-07-comunicacion-6de7.md) | Comunicación (6 de 7) | 47–54 | 7,867 |
+| [`programacion-espanol-1-6-08-comunicacion-7de7.md`](programacion-espanol-1-6-08-comunicacion-7de7.md) | Comunicación (7 de 7) | 55–62 | 5,953 |
+| [`programacion-espanol-1-6-09-matematicas-1de2.md`](programacion-espanol-1-6-09-matematicas-1de2.md) | Matemáticas (1 de 2) | 63–78 | 7,053 |
+| [`programacion-espanol-1-6-10-matematicas-2de2.md`](programacion-espanol-1-6-10-matematicas-2de2.md) | Matemáticas (2 de 2) | 79–94 | 5,976 |
+
+## programacion-espanol-7-9.pdf (50 páginas)
+
+Programaciones mensuales oficiales de la SEDUC: Español y Matemáticas, de 7.º a 9.º. Febrero y marzo vienen como un solo bloque.
+
+> ⚠️ 9 página(s) son solo imagen y no tienen texto aquí: 1, 2, 4, 5, 6, 31, 32, 48 y 50. Hay que verlas en el PDF.
+
+| Archivo | Sección | Páginas | Tokens |
+|---|---|---:|---:|
+| [`programacion-espanol-7-9-01-presentacion-1de2.md`](programacion-espanol-7-9-01-presentacion-1de2.md) | Presentación (1 de 2) | 1–12 | 8,052 |
+| [`programacion-espanol-7-9-02-presentacion-2de2.md`](programacion-espanol-7-9-02-presentacion-2de2.md) | Presentación (2 de 2) | 13–14 | 2,620 |
+| [`programacion-espanol-7-9-03-comunicacion-1de4.md`](programacion-espanol-7-9-03-comunicacion-1de4.md) | Comunicación (1 de 4) | 15–20 | 7,911 |
+| [`programacion-espanol-7-9-04-comunicacion-2de4.md`](programacion-espanol-7-9-04-comunicacion-2de4.md) | Comunicación (2 de 4) | 21–26 | 8,102 |
+| [`programacion-espanol-7-9-05-comunicacion-3de4.md`](programacion-espanol-7-9-05-comunicacion-3de4.md) | Comunicación (3 de 4) | 27–34 | 6,941 |
+| [`programacion-espanol-7-9-06-comunicacion-4de4.md`](programacion-espanol-7-9-06-comunicacion-4de4.md) | Comunicación (4 de 4) | 35–50 | 5,817 |
+
 ---
 
-**Total: 1,588,279 tokens** repartidos en trozos consultables por separado.
+**Total: 1,691,404 tokens** repartidos en trozos consultables por separado.
+
+## Programas de Educación Media 10.º y 11.º (SEDUC, Versión Preliminar 2025)
+
+Programas curriculares oficiales de Español y Matemática de 10.º y 11.º (BCH y BTP), descargados el 24 de noviembre de 2026 de las mallas de Media de la Subdirección de Currículo y Evaluación. El detalle está en [`INDICE-media.md`](INDICE-media.md). **No traen jornalización mensual:** no dicen qué va en febrero, marzo ni en cada parcial. Organizan el año por resultados de aprendizaje (y, en el Español de 11.º del BCH, por cuatro unidades). El PDF acredita; el Markdown es la transcripción para trabajar.
+
+| Archivo | Qué es |
+|---|---|
+| [`programa-espanol-10.md`](programa-espanol-10.md) | Español 10.º, común a BCH y BTP (BCH, pp. 11–17). Cuatro resultados de aprendizaje; el docente puede ordenar los contenidos. |
+| [`programa-espanol-11-bch.md`](programa-espanol-11-bch.md) | Español 11.º del BCH, 4 horas semanales, Unidades I a IV (BCH, pp. 109–113). |
+| [`programa-espanol-11-btp.md`](programa-espanol-11-btp.md) | Español 11.º de los BTP, 3 horas semanales; no es el del BCH (Administración de Empresas, pp. 94–100; Mercadotecnia, pp. 99–104). |
+| [`programa-matematica-10.md`](programa-matematica-10.md) | Matemática 10.º, común a BCH y BTP (BCH, pp. 5–10). |
+| [`programa-matematica-11-bch.md`](programa-matematica-11-bch.md) | Matemática 11.º del BCH, 4 horas semanales (BCH, pp. 102–108). |
+| [`programa-matematicas-11-btp-asistente-ejecutivo.md`](programa-matematicas-11-btp-asistente-ejecutivo.md) | Matemáticas 11.º del BTP Asistente Ejecutivo, 3 horas semanales y 6 resultados de aprendizaje (pp. 104–108). |
+| [`programa-matematica-financiera-11-btp.md`](programa-matematica-financiera-11-btp.md) | Matemática Financiera 11.º de varios BTP (Administración de Empresas, pp. 87–93). |
+| [`../dcnb-pdf/programa-media-bch-2025.pdf`](../dcnb-pdf/programa-media-bch-2025.pdf) | Bachillerato en Ciencias y Humanidades, Versión Preliminar 2025 (170 páginas). Fuente de Español y Matemática de 10.º y de 11.º del BCH. |
+| [`../dcnb-pdf/programa-media-btp-admon-empresas-2025.pdf`](../dcnb-pdf/programa-media-btp-admon-empresas-2025.pdf) | BTP Administración de Empresas 2025. Fuente del Español de 11.º de los BTP y de la Matemática Financiera de 11.º. |
+| [`../dcnb-pdf/programa-media-btp-mercadotecnia-2025.pdf`](../dcnb-pdf/programa-media-btp-mercadotecnia-2025.pdf) | BTP Mercadotecnia 2025. El mismo Español de 11.º de los BTP y la misma Matemática Financiera. |
+| [`../dcnb-pdf/programa-media-btp-asistente-ejecutivo-2025.pdf`](../dcnb-pdf/programa-media-btp-asistente-ejecutivo-2025.pdf) | BTP Asistente Ejecutivo Bilingüe 2025. Fuente de Matemáticas de 11.º (3 horas semanales, 6 resultados de aprendizaje). |
