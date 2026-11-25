@@ -698,6 +698,60 @@ de verdad cuesta escribir, y no hay que migrarlas después.
    noviembre: una sola entrada por misión, con el ciclo «III Ciclo y
    Bachillerato».**
 
+**Hecho en la tanda 0 (25 de noviembre, rama `motor/prueba-critica-al-motor`):**
+
+- **Punto 1.** `genEvalCrit`, `printEvalCrit` y `critApartados` viven en
+  `js/motor-mision.js`. La misión pone en su `contenido.js` los seis bancos
+  (`critCaseBank`, `critErrorBank`, `critDecisionBank`, `critCompareBank`,
+  `critCauseBank`, `critEffectBank`), `critCaseQuestions`, `critCaseGuides`,
+  `critDecisionGuide` y `critTextos` con los rótulos de su tema: `caso`,
+  `decision`, `decisionPregunta`, `decisionPreguntaHoja` (opcional, la versión
+  corta para el papel) y `comparacionPregunta`. Sin banco crítico el motor
+  esconde la pestaña y no da error. `verifica-misiones-motor.js` exige la
+  prueba entera o nada. La Célula quedó idéntica: sus 50 formas salen byte a
+  byte iguales en pantalla (con la pauta), en la hoja impresa, en los datos y
+  en el progreso guardado, comparadas en el navegador antes y después.
+- **Punto 2.** Una misión nueva se anota en `_dev/formas-oro/_nacidas.json`
+  el día que nace. La vigila `_dev/verifica-mision-nacida.js`: los ocho
+  bancos del examen con 10 preguntas o más, las 50 formas conceptuales
+  distintas y del banco, y si trae crítica, 20 casos o más y 50 formas
+  distintas. No congela nada. Cuando Josué aprueba las preguntas,
+  `node _dev/genera-formas-oro.js <carpeta>` congela las 50 formas de las dos
+  pruebas de una vez y la saca de la lista. Una misión sin referencia que no
+  está en la lista sigue en rojo (puede ser una referencia perdida).
+
+**Lo que la tanda 0 vio y no arregló** (para que una misión nueva nazca solo
+con `contenido.js` + `<carpeta>-propio.js`):
+
+1. **El motor pide todos los datos de los widgets, con nombres heredados.**
+   Se probó quitando cada declaración del `contenido.js` de La Célula, una
+   por una: sin `TEXTOS`, `SAVE_KEY`, `ACHIEVEMENTS`, `fcData`, `qzData`,
+   `classGroups`, `idData`, `cmpData`, `routeSets`, `neuronPartes`,
+   `neuroPairs`, `enfermedadData`, `retoPairs`, los cuatro bancos del examen
+   o `EVAL_FORMAS`, la página revienta al cargar. Como el arranque va en
+   cadena, un dato que falta deja sin iniciar todo lo que viene después (el
+   laboratorio y el panel de logros). No impide nacer si cada misión escribe
+   las trece piezas, pero `neuronPartes` o `enfermedadData` no dicen nada en
+   una misión de Español, y no hay forma de dejar fuera un widget que no le
+   sirve. Dos salidas: documentar en `_privado/PLANTILLA-MISIONES.md` qué
+   widget pinta cada nombre (hoy no lo dice), o que el motor arranque cada
+   widget por separado y se salte el que no tiene datos. Conviene decidirlo
+   antes de la tanda 1.
+2. **La página no la arma el motor.** Cada misión copia `la-celula.html`
+   (unas 660 líneas, 13 secciones, `TOTAL_SECTIONS` atado a ellas) y cambia a
+   mano lo que lleva el nombre escrito: los títulos del examen y el
+   encabezado de la prueba crítica en pantalla («… · La Célula · Educación
+   Básica»). `verifica-mision-nueva.js` no busca restos del nombre de otra
+   misión. Riesgo: una misión de Español que dice «La Célula» en su
+   encabezado. Salidas: una sonda que busque títulos de otras misiones en el
+   HTML, o que el motor escriba esos títulos con `TEXTOS.titulo`.
+3. **El sello.** La prueba crítica pasó de `la-celula-propio.js` a
+   `motor-mision.js` sin subir `?v=` (los tres archivos de La Célula siguen en
+   `?v=565`) ni `CACHE_NAME`, como se pidió: el sello va en la tanda 4. Un
+   teléfono que juntara el motor guardado de antes con el archivo propio
+   nuevo se quedaría sin prueba crítica. Si esta tanda se fusiona a `main`
+   antes de la 4, se sella al fusionar.
+
 ### Las fichas como motor (empieza el miércoles 25)
 
 En el repositorio no hay todavía un documento de ese trabajo, así que esto
