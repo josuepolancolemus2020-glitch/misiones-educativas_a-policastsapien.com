@@ -132,6 +132,17 @@ fs.readdirSync(DIR).sort().forEach(carpeta => {
       if (m.index > reSuyo.exec(p.t).index) motorDespues.push(carpeta + '/' + p.f);
     });
   });
+  /* Una misión de la plantilla puede no llamar al motor desde ningún
+     archivo suyo: el examen y la prueba crítica los arma js/motor-mision.js
+     (así quedó La Célula al pasar su prueba crítica a la plantilla). Usa el
+     examen por formas igual, y su página tiene que pedir el motor por la
+     misma ruta y con el mismo sello que las demás. */
+  paginas.filter(p => /<script[^>]*\ssrc="[^"]*js\/motor-mision\.js/.test(p.t)).forEach(p => {
+    usaAlguna = true;
+    const m = /<script[^>]*\ssrc="([^"]*motor-misiones\.js)(\?v=\d+)?"/.exec(p.t);
+    if (!m || path.resolve(dir, m[1]) !== MOTOR) { sinMotor.push(carpeta + '/' + p.f); return; }
+    if (m[2] !== SELLO) otroSello.push(carpeta + '/' + p.f + ': ' + (m[2] || 'sin sello'));
+  });
   (usaAlguna ? migradas : sinExamen).push(carpeta);
 });
 
@@ -207,6 +218,20 @@ piloto.forEach(p => {
     '      ' + (errCont || [...nCont.fn].concat(noDatos).join(', ')));
   ok(p.carpeta + '/js/contenido.js: trae la llave de guardado y los cuatro bancos del examen',
     ['SAVE_KEY', 'evalTFBank', 'evalMCBank', 'evalCPBank', 'evalPRBank', 'TEXTOS'].every(n => nCont.dato.has(n)));
+  /* La prueba crítica es opcional, pero entera: el motor la enseña solo si
+     están todas sus piezas, y a una misión que olvidó un banco se le
+     escondería la prueba sin que nadie lo notara. Lo mismo con los rótulos
+     que la hoja lee de critTextos: uno que falte saldría «undefined». */
+  const PIEZAS_CRITICA = ['critCaseBank', 'critErrorBank', 'critDecisionBank', 'critCompareBank', 'critCauseBank', 'critEffectBank', 'critCaseQuestions', 'critCaseGuides', 'critDecisionGuide', 'critTextos'];
+  const piezas = PIEZAS_CRITICA.filter(n => nCont.dato.has(n));
+  let rotulosFaltan = [];
+  if (nCont.dato.has('critTextos') && !errCont) {
+    const t = vm.runInContext('critTextos', caja) || {};
+    rotulosFaltan = ['caso', 'decision', 'decisionPregunta', 'comparacionPregunta'].filter(k => typeof t[k] !== 'string' || !t[k].trim());
+  }
+  ok(p.carpeta + '/js/contenido.js: ' + (piezas.length ? 'trae la prueba crítica entera, con sus rótulos' : 'no trae prueba crítica (el motor no la enseña)'),
+    (piezas.length === 0 || piezas.length === PIEZAS_CRITICA.length) && rotulosFaltan.length === 0,
+    '      falta: ' + PIEZAS_CRITICA.filter(n => !nCont.dato.has(n)).concat(rotulosFaltan.map(k => 'critTextos.' + k)).join(', '));
 
   /* Lo propio: nada de lo que ya hace el motor, y ningún dato. */
   const repetidas = [], datosFuera = [];

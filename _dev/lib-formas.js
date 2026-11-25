@@ -219,12 +219,15 @@ function cargarMision(slug, semillaAzar) {
   if (!conMotor) correr(fs.readFileSync(js, 'utf8'), js);
 
   const tiene = nombre => correr('typeof ' + nombre, 'tiene') === 'function';
-  const pruebas = Object.keys(PRUEBAS).filter(p => tiene(PRUEBAS[p].gen));
+  /* En la plantilla del motor `genEvalCrit` existe siempre, traiga o no la
+     misión su banco crítico: lo que dice si hay prueba es `_hayCritica`. */
+  const sinCritica = tiene('_hayCritica') && !correr('_hayCritica()', 'hay crítica');
+  const pruebas = Object.keys(PRUEBAS).filter(p => tiene(PRUEBAS[p].gen) && !(p === 'critica' && sinCritica));
   const tope = correr('EVAL_FORMAS', 'tope');
   /* La prueba crítica que ya se reparte sin repetir tiene su propio tope
      (50, o lo que dé su banco), aparte del examen conceptual. La misión lo
      dice declarando sus apartados en `critApartados`. */
-  const reparteCritica = tiene('critApartados') && tiene('_formasCritica');
+  const reparteCritica = !sinCritica && tiene('critApartados') && tiene('_formasCritica');
   const topeCritica = reparteCritica ? correr('_formasCritica(critApartados())', 'tope crítica') : tope;
   const conjuntosCritica = reparteCritica ? correr('_conjuntosCritica(critApartados())', 'conjuntos crítica') : null;
   /* El examen conceptual con banco grande ofrece formas nuevas después de
@@ -250,7 +253,7 @@ function cargarMision(slug, semillaAzar) {
     return { dato: JSON.parse(dato), impreso: documentos[0] };
   }
 
-  return { slug, js, pruebas, tope, topeDe, topeConceptual, reparteCritica, topeCritica, conjuntosCritica, materias, forma, correr };
+  return { slug, js, pruebas, sinCritica, tope, topeDe, topeConceptual, reparteCritica, topeCritica, conjuntosCritica, materias, forma, correr };
 }
 
 /* ── lo que se guarda de cada forma ──────────────────────────── */
@@ -368,6 +371,25 @@ function textosFueraDeBanco(bancos, datos) {
 const rutaOro = slug => path.join(DIR_ORO, slug + '.json');
 const RUTA_PENDIENTE = path.join(DIR_ORO, '_critica-pendiente.json');
 
+/* Las misiones que nacen con sus 50 formas y todavía no tienen referencia.
+   Una misión nueva no tiene formas «de antes» que congelar: sus preguntas
+   se congelan el día que Josué las aprueba (genera-formas-oro.js <carpeta>,
+   que la saca de esta lista). Mientras tanto se nombra aquí, a propósito:
+   una misión sin referencia que NO está en la lista sigue siendo un fallo,
+   porque puede ser una referencia que se perdió. */
+const RUTA_NACIDAS = path.join(DIR_ORO, '_nacidas.json');
+function leerNacidas() {
+  if (!fs.existsSync(RUTA_NACIDAS)) return {};
+  return JSON.parse(fs.readFileSync(RUTA_NACIDAS, 'utf8')).nacidas || {};
+}
+function escribirNacidas(nacidas) {
+  const orden = {}; Object.keys(nacidas).sort().forEach(k => { orden[k] = nacidas[k]; });
+  fs.writeFileSync(RUTA_NACIDAS, JSON.stringify({
+    nota: 'Misiones nuevas que nacen con sus 50 formas (30 del banco de siempre y 20 del banco nuevo) y esperan el visto bueno de Josué. No es una referencia: no congela nada. Las vigila verifica-mision-nacida.js. Cuando Josué aprueba las preguntas, «node _dev/genera-formas-oro.js <carpeta>» congela sus formas y la saca de aquí.',
+    nacidas: orden
+  }, null, 2) + '\n', 'utf8');
+}
+
 /* Una forma por renglón: así un cambio en la Forma 7 se ve en `git diff`
    como un renglón, no como el archivo entero. */
 function escribirOro(oro) {
@@ -403,5 +425,5 @@ function sellarForma(f) {
 
 const huellaBanco = b => ({ n: b.length, huella: sha(JSON.stringify(b)).slice(0, 16) });
 
-module.exports = { RAIZ, DIR_MISIONES, DIR_ORO, RUTA_PENDIENTE, PRUEBAS, FUERA_DE_ALCANCE, listarMisiones, archivoPrincipal, usaElMotor, fuenteDeMision, cargarMision, pruebasDe,
+module.exports = { RAIZ, DIR_MISIONES, DIR_ORO, RUTA_PENDIENTE, RUTA_NACIDAS, leerNacidas, escribirNacidas, PRUEBAS, FUERA_DE_ALCANCE, listarMisiones, archivoPrincipal, usaElMotor, fuenteDeMision, cargarMision, pruebasDe,
   textoImpreso, cadenasDe, sha, bancosDe, textosFueraDeBanco, bancosConceptual, sinOrdenDeOpciones, sinOrden, repetidas, rutaOro, escribirOro, leerOro, sellarForma, huellaBanco };

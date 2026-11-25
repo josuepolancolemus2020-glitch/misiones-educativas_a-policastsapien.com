@@ -42,9 +42,12 @@ let fallos = 0;
 const mal = m => { console.log('  ❌ ' + m); fallos++; };
 const bien = m => console.log('  ✅ ' + m);
 
-/* Las que reparten se reconocen en su código, sin abrir el navegador. */
+/* Las que reparten se reconocen en su código, sin abrir el navegador. En
+   las de la plantilla, `critApartados` está en el motor (js/motor-mision.js)
+   y reparte si el contenido de la misión trae su banco crítico. */
 const reparten = L.listarMisiones().dentro.filter(slug => {
   const dir = path.join(L.DIR_MISIONES, slug, 'js');
+  if (L.usaElMotor(slug)) return /^(?:const|let|var)\s+critCaseBank\s*=/m.test(fs.readFileSync(path.join(dir, 'contenido.js'), 'utf8'));
   return fs.readdirSync(dir).some(f => f.endsWith('.js') && /function\s+critApartados\s*\(/.test(fs.readFileSync(path.join(dir, f), 'utf8')));
 });
 pedidas.forEach(s => { if (!reparten.includes(s)) { console.error('✘ ' + s + ' no reparte todavía su prueba crítica (no declara critApartados)'); process.exit(2); } });

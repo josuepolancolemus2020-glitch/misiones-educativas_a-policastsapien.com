@@ -147,7 +147,9 @@ async function prepararSesion(pg, conSesion) {
         await pg.goto(BASE + m.url, { waitUntil: 'load', timeout: 20000 });
         await pg.waitForTimeout(150);
         for (const [gen, imp, dato, forma] of PARES) {
-          const hay = await pg.evaluate(([g, p]) => typeof window[g] === 'function' && typeof window[p] === 'function', [gen, imp]);
+          /* En la plantilla del motor genEvalCrit existe siempre; si la misión
+             no trae banco crítico (_hayCritica), no tiene esa prueba. */
+          const hay = await pg.evaluate(([g, p]) => typeof window[g] === 'function' && typeof window[p] === 'function' && !(g === 'genEvalCrit' && typeof window._hayCritica === 'function' && !window._hayCritica()), [gen, imp]);
           if (!hay) continue;
           const listo = await pg.evaluate(([g, d]) => { try { window[g](); } catch (e) { return 'error: ' + e.message; } return window[d] ? 'ok' : 'sin dato'; }, [gen, dato]);
           if (listo !== 'ok') { errores.push(m.carpeta + ' · ' + forma + ' · ' + idioma + ': ' + listo); continue; }

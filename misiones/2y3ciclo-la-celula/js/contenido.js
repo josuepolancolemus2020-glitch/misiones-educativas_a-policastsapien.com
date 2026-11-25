@@ -414,6 +414,18 @@ const evalPRBankNuevo=[
 // membrana y la mitocondria, que están en la célula animal y en la vegetal, y
 // la piedra, que no está hecha de células. Ninguno nombra la pared ni los
 // cloroplastos, que son lo que el caso I pide reconocer.
+// Lo que la hoja de la prueba crítica dice con el tema de esta misión: el
+// rótulo del caso y de la decisión, y lo que se pregunta en la decisión y en
+// la comparación. Lo demás de la hoja (corrige el error, causas y efectos, el
+// encabezado) es igual en todas las misiones y lo escribe el motor. La
+// pregunta de la decisión va más corta en papel, para que quepa en la hoja.
+const critTextos={
+  caso:'Caso de análisis: observando una célula',
+  decision:'Toma de decisiones: la fotosíntesis',
+  decisionPregunta:'¿Qué recomendarías para que la planta recupere su salud? Explica por qué, relacionándolo con la fotosíntesis y los cloroplastos.',
+  decisionPreguntaHoja:'¿Qué recomendarías para que la planta recupere su salud? Explica por qué, relacionándolo con la fotosíntesis.',
+  comparacionPregunta:'1. ¿Qué tipo de célula u organelo corresponde a cada caso? 2. ¿Qué función cumple cada uno? 3. ¿Por qué no son lo mismo?'
+};
 const critCaseBank=[
   {k:'ca-ana',txt:'Ana observa al microscopio una célula que tiene pared celular, varios cloroplastos verdes y una gran vacuola central que ocupa casi todo su interior.'},
   {k:'ca-dibujo',txt:'Un estudiante dibuja una célula que presenta una cubierta rígida por fuera, cloroplastos con clorofila y una vacuola central muy grande.'},
