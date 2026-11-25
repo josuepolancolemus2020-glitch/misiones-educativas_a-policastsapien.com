@@ -58,6 +58,11 @@
    ya no sale idéntica, si una forma repite el conjunto de otra o si ya
    estaban congeladas.
 
+   Una misión NUEVA nace con sus 50 formas y espera en `_nacidas.json`
+   (ver verifica-mision-nacida.js). Cuando Josué aprueba sus preguntas,
+   `node _dev/genera-formas-oro.js <carpeta>` congela de una vez el examen
+   conceptual (1 a 50) y la prueba crítica, y la saca de esa lista.
+
    `--resellar-hoja` es para cuando se cambia a propósito CÓMO se ve la
    hoja (un margen, un color) sin cambiar lo que dice. Solo actualiza la
    huella de la hoja, y solo si el dato y el texto que se lee siguen
@@ -263,6 +268,9 @@ lista.forEach(slug => {
   L.escribirOro(oro);
   const peso = fs.statSync(L.rutaOro(slug)).size; bytes += peso; escritas++;
   console.log('  ✔ ' + slug.padEnd(52) + Object.keys(oro.pruebas).map(p => p + ' 1–' + m.topeDe(p)).join(' · ').padEnd(58) + kb(peso));
+  /* Una misión nueva que se congela deja de estar «por congelar». */
+  const nacidas = L.leerNacidas();
+  if (nacidas[slug]) { delete nacidas[slug]; L.escribirNacidas(nacidas); console.log('    ' + slug + ' sale de _nacidas.json: sus 50 formas ya tienen referencia'); }
 });
 
 /* La lista de la crítica solo se escribe la primera vez o si se pide: es

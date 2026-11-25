@@ -134,7 +134,10 @@ conGrande.forEach(slug => {
 
   /* 1 · las de antes, como su referencia */
   const oro = L.leerOro(slug);
-  if (!oro || !oro.pruebas.conceptual) mal('no tiene referencia de sus formas de antes (_dev/formas-oro/)');
+  /* Una misión nueva no tiene formas de antes ni claves impresas: espera
+     en _nacidas.json a que Josué apruebe sus preguntas. */
+  if (!oro && L.leerNacidas()[slug]) bien('nació con sus ' + total + ' formas y todavía no tiene referencia: espera el visto bueno de Josué (_nacidas.json)');
+  else if (!oro || !oro.pruebas.conceptual) mal('no tiene referencia de sus formas de antes (_dev/formas-oro/)');
   else {
     const movidas = [];
     for (let n = 1; n <= deAntes; n++) if (!oro.pruebas.conceptual[n] || JSON.stringify(oro.pruebas.conceptual[n].dato) !== JSON.stringify(datos[n])) movidas.push(n);

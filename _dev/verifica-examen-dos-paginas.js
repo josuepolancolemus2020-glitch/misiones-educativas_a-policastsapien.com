@@ -171,7 +171,9 @@ async function medir(ctx, html, ancho, alto) {
         await pg.goto(BASE + m.url, { waitUntil: 'load', timeout: 30000 });
         await pg.waitForTimeout(150);
         for (const [gen, imp, dato, tipo] of PARES) {
-          const hay = await pg.evaluate(([g, p]) => typeof window[g] === 'function' && typeof window[p] === 'function', [gen, imp]);
+          /* En la plantilla del motor genEvalCrit existe siempre; si la misión
+             no trae banco crítico (_hayCritica), no tiene esa prueba. */
+          const hay = await pg.evaluate(([g, p]) => typeof window[g] === 'function' && typeof window[p] === 'function' && !(g === 'genEvalCrit' && typeof window._hayCritica === 'function' && !window._hayCritica()), [gen, imp]);
           if (!hay) continue;
           const vistas = new Set();
           for (let n = 0; n < FORMAS; n++) {
