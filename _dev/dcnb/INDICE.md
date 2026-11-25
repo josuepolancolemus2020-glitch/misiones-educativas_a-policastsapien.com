@@ -478,3 +478,21 @@ Programaciones mensuales oficiales de la SEDUC: Español y Matemáticas, de 7.º
 ---
 
 **Total: 1,691,404 tokens** repartidos en trozos consultables por separado.
+
+## Programas de Educación Media 10.º y 11.º (SEDUC, Versión Preliminar 2025)
+
+Programas curriculares oficiales de Español y Matemática de 10.º y 11.º (BCH y BTP), descargados el 24 de noviembre de 2026 de las mallas de Media de la Subdirección de Currículo y Evaluación. El detalle está en [`INDICE-media.md`](INDICE-media.md). **No traen jornalización mensual:** no dicen qué va en febrero, marzo ni en cada parcial. Organizan el año por resultados de aprendizaje (y, en el Español de 11.º del BCH, por cuatro unidades). El PDF acredita; el Markdown es la transcripción para trabajar.
+
+| Archivo | Qué es |
+|---|---|
+| [`programa-espanol-10.md`](programa-espanol-10.md) | Español 10.º, común a BCH y BTP (BCH, pp. 11–17). Cuatro resultados de aprendizaje; el docente puede ordenar los contenidos. |
+| [`programa-espanol-11-bch.md`](programa-espanol-11-bch.md) | Español 11.º del BCH, 4 horas semanales, Unidades I a IV (BCH, pp. 109–113). |
+| [`programa-espanol-11-btp.md`](programa-espanol-11-btp.md) | Español 11.º de los BTP, 3 horas semanales; no es el del BCH (Administración de Empresas, pp. 94–100; Mercadotecnia, pp. 99–104). |
+| [`programa-matematica-10.md`](programa-matematica-10.md) | Matemática 10.º, común a BCH y BTP (BCH, pp. 5–10). |
+| [`programa-matematica-11-bch.md`](programa-matematica-11-bch.md) | Matemática 11.º del BCH, 4 horas semanales (BCH, pp. 102–108). |
+| [`programa-matematicas-11-btp-asistente-ejecutivo.md`](programa-matematicas-11-btp-asistente-ejecutivo.md) | Matemáticas 11.º del BTP Asistente Ejecutivo, 3 horas semanales y 6 resultados de aprendizaje (pp. 104–108). |
+| [`programa-matematica-financiera-11-btp.md`](programa-matematica-financiera-11-btp.md) | Matemática Financiera 11.º de varios BTP (Administración de Empresas, pp. 87–93). |
+| [`../dcnb-pdf/programa-media-bch-2025.pdf`](../dcnb-pdf/programa-media-bch-2025.pdf) | Bachillerato en Ciencias y Humanidades, Versión Preliminar 2025 (170 páginas). Fuente de Español y Matemática de 10.º y de 11.º del BCH. |
+| [`../dcnb-pdf/programa-media-btp-admon-empresas-2025.pdf`](../dcnb-pdf/programa-media-btp-admon-empresas-2025.pdf) | BTP Administración de Empresas 2025. Fuente del Español de 11.º de los BTP y de la Matemática Financiera de 11.º. |
+| [`../dcnb-pdf/programa-media-btp-mercadotecnia-2025.pdf`](../dcnb-pdf/programa-media-btp-mercadotecnia-2025.pdf) | BTP Mercadotecnia 2025. El mismo Español de 11.º de los BTP y la misma Matemática Financiera. |
+| [`../dcnb-pdf/programa-media-btp-asistente-ejecutivo-2025.pdf`](../dcnb-pdf/programa-media-btp-asistente-ejecutivo-2025.pdf) | BTP Asistente Ejecutivo Bilingüe 2025. Fuente de Matemáticas de 11.º (3 horas semanales, 6 resultados de aprendizaje). |

@@ -777,3 +777,5 @@ Abiertas:
    Honduras y cuántos la hablan; la Constitución en `_dev/leyes/`.
 3. **Programaciones mensuales de Media**: si existen, subirlas para cambiar
    las filas «propuesta» de 10.º y 11.º (pasos en la sección 0).
+
+Agregados el 24 nov los programas oficiales de 10.º y 11.º (BCH y BTP, Versión Preliminar 2025) en `_dev/dcnb/programa-*.md`; sin reparto por meses. Pendiente revisar con Josué si reemplazan la propuesta sobre el CNB para Media y si los parónimos (presentes en 10.º) vuelven como apartado Para Media.
