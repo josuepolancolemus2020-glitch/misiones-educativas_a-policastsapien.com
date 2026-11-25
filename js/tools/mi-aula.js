@@ -77,7 +77,11 @@
   var colectaAbierta = null;
   var controlAbierto = null;
   var alumnoAbierto = null;
-  var subAlumnos = '';           // '' , 'carga', 'sace' o 'datos-sace'
+  var subAlumnos = '';           // '' , 'carga', 'sace', 'datos-sace' o 'sin-sexo'
+  // Las fichas que estaban sin sexo al abrir «Completar el sexo»: se quedan
+  // a la vista aunque ya tengan uno, para que un toque equivocado se vea y
+  // se corrija ahí mismo, sin ir a buscarlo en la lista de 43.
+  var sinSexoIds = null;
   var subComunicados = 'avisos';
   var otroMonto = false;         // el próximo toque abre la cajita en vez de anotar el monto completo
   var hoja = null;               // la cajita de un pago: { alumno, colecta }
@@ -619,6 +623,7 @@
     if (subAlumnos === 'carga') return pintarCarga(aula);
     if (subAlumnos === 'sace') return pintarListaSace(aula);
     if (subAlumnos === 'datos-sace') return pintarDatosSace(aula);
+    if (subAlumnos === 'sin-sexo') return pintarSinSexo(aula);
     var lista = alumnos(aula);
     var h = '<div class="ma-card ma-card-grupo"><div><p class="ma-grupo-grande">' + esc(grupo(aula)) + '</p>'
       + '<p class="ma-nota">' + esc(aula.escuela) + ' · ' + esc(aula.anio_lectivo) + '</p></div>'
@@ -639,6 +644,7 @@
         h += '<p class="ma-nota" data-metas="lista-sace-cuenta">📥 En la lista oficial del SACE: <b>' + oficiales + '</b> de '
           + lista.length + '. Los cuadros y las estadísticas cuentan solo a esos.</p>';
       }
+      h += avisoSinSexo(aula);
       // Los que siguen en el aula y faltan en el SACE: la hoja para
       // registrarlos allá, con lo que el SACE pide.
       var pendientes = window.SaceLista ? window.SaceLista.datosParaSace(lista).length : 0;
@@ -721,6 +727,51 @@
       + '<label class="ma-campo"><span>N.º en el SACE (opcional)</span><input class="ma-inp" name="sace_num" inputmode="numeric" maxlength="3" value="'
       + esc(a.sace_num == null ? '' : a.sace_num) + '"></label>'
       + '<button class="ma-btn" type="submit" data-metas="ficha-guardar">Guardar ficha</button></form></div>';
+  }
+
+  // ── ♀♂ Fichas del SACE sin sexo ────────────────────────────────────────
+  // Las fichas de antes de v577 pueden no tener sexo. Los cuadros las cuentan
+  // en T y no en N ni en V, así que N + V deja de dar el total y en la hoja
+  // no se nota. Aquí se dice con números, antes de imprimir. El sexo lo pone
+  // el maestro con un toque: nunca se adivina por el nombre.
+  function avisoSinSexo(aula) {
+    var c = window.SaceLista ? window.SaceLista.sexosSace(alumnos(aula)) : null;
+    if (!c || !c.sinSexo.length) return '';
+    var n = c.sinSexo.length, uno = n === 1;
+    return '<div class="ma-aviso-rec ma-aviso-sexo" role="status" data-metas="sace-sin-sexo">'
+      + '<p class="ma-aviso-sexo-t"><b>⚠ ' + n + (uno ? ' alumno del SACE sin sexo: no sale' : ' alumnos del SACE sin sexo: no salen')
+      + ' en N/V. Complét' + (uno ? 'alo' : 'alos') + '.</b><br>'
+      + '<span data-metas="sace-sin-sexo-cuenta">Del SACE: ' + c.total + ' = ' + c.N + (c.N === 1 ? ' niña' : ' niñas') + ' (N) + '
+      + c.V + (c.V === 1 ? ' varón' : ' varones') + ' (V) + ' + n + ' sin sexo. En los cuadros, N + V da ' + (c.N + c.V)
+      + ' y no ' + c.total + ' mientras falte' + (uno ? '' : 'n') + '.</span></p>'
+      + '<button type="button" class="ma-btn" data-accion="sin-sexo" data-metas="sin-sexo-abrir">♀♂ Completar '
+      + (uno ? 'su ficha' : 'las ' + n + ' fichas') + '</button></div>';
+  }
+  function pintarSinSexo(aula) {
+    var todos = alumnos(aula);
+    var ids = sinSexoIds || window.SaceLista.sexosSace(todos).sinSexo.map(function (a) { return a.id; });
+    var fichas = todos.filter(function (a) { return ids.indexOf(a.id) >= 0; });
+    var faltan = fichas.filter(function (a) { return a.sexo !== 'F' && a.sexo !== 'M'; }).length;
+    var h = '<button type="button" class="ma-volver" data-accion="alumnos">‹ Mis alumnos</button>'
+      + '<div class="ma-card" data-metas="sin-sexo"><div class="ma-card-cab"><h2 class="ma-h">♀♂ Alumnos del SACE sin sexo</h2></div>'
+      + '<p class="ma-nota" data-metas="sin-sexo-faltan">' + (faltan
+        ? (faltan === 1 ? 'Falta 1' : 'Faltan ' + faltan) + ' de ' + fichas.length
+          + '. Toca Niña (F) o Niño (M) como sale en la lista del SACE o en su partida.'
+        : '✓ Listo: ' + (fichas.length === 1 ? 'la ficha ya tiene' : 'las ' + fichas.length + ' fichas ya tienen')
+          + ' sexo. Ahora N + V da el total del SACE.') + '</p>'
+      + avisoSinSexo(aula).replace(/<button[\s\S]*?<\/button>/, '');
+    h += '<ul class="ma-lista">' + fichas.map(function (a) {
+      var b = function (v, t) {
+        var on = a.sexo === v;
+        return '<button type="button" class="ma-btn ma-btn-chico' + (on ? ' ma-on' : '') + '" data-accion="ficha-sexo" data-alumno="'
+          + esc(a.id) + '" data-valor="' + v + '" aria-pressed="' + on + '" data-metas="ficha-sexo">' + (on ? '✓ ' : '') + t + '</button>';
+      };
+      return '<li class="ma-al" data-metas="sin-sexo-fila"><p class="ma-renglon"><span class="ma-num">' + esc(num(a)) + '</span>'
+        + '<span class="ma-nom">' + esc(a.nombre_completo) + '</span></p>'
+        + '<div class="ma-al-edit" role="group" aria-label="' + esc('Sexo de ' + a.nombre_completo) + '">'
+        + b('F', 'Niña (F)') + b('M', 'Niño (M)') + '</div></li>';
+    }).join('') + '</ul>';
+    return h + '</div>';
   }
 
   // ── 📝 Datos para el SACE ──────────────────────────────────────────────
@@ -1605,7 +1656,8 @@
     var faltan = window.SaceLista ? window.SaceLista.datosParaSace(lista).length : 0;
     return '<p class="ma-nota" data-metas="imprimir-cuenta-sace">El Resumen final y el Cuadro final cuentan <b>' + cuentan + '</b> '
       + (cuentan === 1 ? 'alumno registrado' : 'alumnos registrados') + ' en el SACE.'
-      + (faltan ? ' ' + faltan + (faltan === 1 ? ' todavía no está' : ' todavía no están') + ': mira «Datos para el SACE» en Alumnos.' : '') + '</p>';
+      + (faltan ? ' ' + faltan + (faltan === 1 ? ' todavía no está' : ' todavía no están') + ': mira «Datos para el SACE» en Alumnos.' : '') + '</p>'
+      + avisoSinSexo(aula);
   }
 
   function camposPerfilNuevo(aula) {
@@ -2099,7 +2151,17 @@
       case 'claves-preparar': alumnoAbierto = null; return clavesAbrir(aula);
       case 'claves-cancelar': claves = null; return pintar();
       case 'claves-guardar': return clavesGuardar();
-      case 'alumnos': subAlumnos = ''; return pintar();
+      case 'alumnos': subAlumnos = ''; sinSexoIds = null; return pintar();
+      case 'sin-sexo':
+        // Se llega desde Alumnos o desde Notas SACE › Para imprimir: se va a
+        // Alumnos con solo esas fichas a la vista.
+        sinSexoIds = window.SaceLista.sexosSace(alumnos(aula)).sinSexo.map(function (a) { return a.id; });
+        vista.seccion = 'alumnos'; guardarPref();
+        colectaAbierta = null; controlAbierto = null; alumnoAbierto = null; hoja = null; otroMonto = false; claves = null;
+        subAlumnos = 'sin-sexo';
+        pintarTarjeta();
+        pintar();
+        return enfocarPantalla();
       case 'lista-sace': subAlumnos = 'sace'; alumnoAbierto = null; listaSace = null; pintar(); return enfocarPantalla();
       case 'datos-sace': subAlumnos = 'datos-sace'; alumnoAbierto = null; pintar(); return enfocarPantalla();
       case 'datos-sace-imprimir': return imprimirDatosSace(aula);

@@ -318,8 +318,12 @@ textarea.ma-inp { min-height: 96px; resize: vertical; line-height: 1.45; }
 .ma-mx-inp:focus { outline: none; background: rgba(37, 99, 235, .1); box-shadow: inset 0 0 0 2px var(--ma-sec); }
 .ma-mx-inp[aria-invalid="true"] { box-shadow: inset 0 0 0 2px #dc2626; }
 .ma-mx-na { color: var(--ma-tx2); background: #f8fafc; min-width: 56px; }
-.ma-aviso-rec { margin: 0; padding: 10px 14px; border-radius: var(--ma-r-sm); background: var(--ma-med-bg); color: var(--ma-med-tx);
+.ma-aviso-rec, .ma-aviso-sexo { margin: 0; padding: 10px 14px; border-radius: var(--ma-r-sm); background: var(--ma-med-bg); color: var(--ma-med-tx);
   display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+/* Fichas del SACE sin sexo: la cuenta en su renglón y el botón debajo;
+   en Alumnos y en «Para imprimir» va separada de lo de arriba. */
+.ma-aviso-sexo { margin: 10px 0 0; }
+.ma-aviso-sexo-t { margin: 0; flex: 1 1 240px; line-height: 1.4; }
 
 /* ── El toque se siente: un leve hundido, corto ─────────────────────── */
 .ma-ch:active, .ma-btn:active, .ma-sec:active, .ma-grupo:active, .ma-colecta:active, .ma-puerta:active { transform: scale(.97); }
