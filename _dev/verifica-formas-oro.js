@@ -43,6 +43,14 @@
    (`--conceptual-ampliar`; la referencia lleva `conceptualAmpliada`) y
    desde entonces se comparan como las de antes.
 
+   Una misión NUEVA nace con sus 50 formas y no tiene formas de antes que
+   congelar. Mientras Josué no apruebe sus preguntas va nombrada en
+   `_nacidas.json`: no tiene referencia y no pone la sonda en rojo por
+   eso, pero sus formas igual no pueden repetirse y tienen que salir del
+   banco. Lo demás que le toca (las 50 formas, nada congelado) lo mira
+   `verifica-mision-nacida.js`. Una misión sin referencia que no está en
+   esa lista sí es un fallo: puede ser una referencia que se perdió.
+
    Si una forma congelada cambió, NO se arregla volviendo a congelar: se
    deshace el cambio. Volver a congelar es invalidar la clave impresa, y
    esa decisión es de Josué (`genera-formas-oro.js --sobrescribir`).
@@ -83,14 +91,22 @@ const sueltosSabidos = (listaPendiente && listaPendiente.fueraDeBanco) || {};
 if (!pendiente) falla('_critica-pendiente.json', 'crítica', 0, 'falta la lista de lo pendiente; se escribe con genera-formas-oro.js --pendiente-critica');
 
 let nFormas = 0, nCongeladas = 0, nPreguntas = 0;
+const nacidas = L.leerNacidas();
+const nacidasSinCongelar = [];
 const deuda = [], deudaBanco = [], criticaSinCongelar = [], deAntesSinNuevas = [], nuevasSinCongelar = [], conceptualSinCongelar = [];
 
 lista.forEach(slug => {
   let m;
   try { m = L.cargarMision(slug, 7); }
   catch (e) { falla(slug, 'carga', 0, String(e.message).split('\n')[0]); return; }
-  const oro = L.leerOro(slug);
-  if (!oro) { falla(slug, 'referencia', 0, 'no tiene formas congeladas. Si es una misión nueva: node _dev/genera-formas-oro.js ' + slug); return; }
+  const oroGuardado = L.leerOro(slug);
+  const nacida = !oroGuardado && !!nacidas[slug];
+  if (!oroGuardado && !nacida) { falla(slug, 'referencia', 0, 'no tiene formas congeladas. Si es una misión nueva, va en _dev/formas-oro/_nacidas.json hasta que Josué apruebe sus preguntas; aprobadas: node _dev/genera-formas-oro.js ' + slug); return; }
+  if (oroGuardado && nacidas[slug]) falla(slug, 'referencia', 0, 'ya tiene sus formas congeladas y sigue en _nacidas.json: sácala de la lista');
+  if (nacida) nacidasSinCongelar.push(slug);
+  /* La nacida se mide igual que las demás, contra una referencia vacía:
+     nada que comparar, pero sí que no repita y que todo salga del banco. */
+  const oro = oroGuardado || { tope: m.tope, pruebas: {}, bancos: {} };
   if (oro.tope !== m.tope) falla(slug, 'tope', 0, 'la referencia tiene ' + oro.tope + ' formas y la misión ahora ' + m.tope);
 
   const bancos = L.bancosDe(m);
@@ -104,9 +120,9 @@ lista.forEach(slug => {
     const P = L.PRUEBAS[p.prueba];
     const datos = {};
     hechas.push(p.llave);
-    if (P.oro && !oro.pruebas[p.llave]) { falla(slug, p.llave, 0, 'la misión tiene esta prueba y la referencia no'); }
+    if (P.oro && !oro.pruebas[p.llave] && !nacida) { falla(slug, p.llave, 0, 'la misión tiene esta prueba y la referencia no'); }
     /* La crítica que ya se reparte pero todavía no se congeló: se dice. */
-    if (p.prueba === 'critica' && m.reparteCritica && !oro.pruebas[p.llave]) criticaSinCongelar.push(slug);
+    if (p.prueba === 'critica' && m.reparteCritica && !oro.pruebas[p.llave] && !nacida) criticaSinCongelar.push(slug);
     /* Una crítica congelada que vuelve a sacar sus casos al azar perdió el
        reparto: sus formas ya no son las de la pauta impresa. */
     /* Salvo la que se congeló con su sorteo de antes y todavía no ofrece
@@ -221,6 +237,7 @@ lista.forEach(slug => {
 
 /* Una referencia sin misión: se borró o se renombró la carpeta, y con
    ella se fue la URL del QR impreso. */
+if (!pedidas.length) Object.keys(nacidas).forEach(slug => { if (!dentro.includes(slug)) falla(slug, 'nacida', 0, 'está en _nacidas.json y no es una misión del alcance'); });
 if (!pedidas.length && fs.existsSync(L.DIR_ORO)) {
   fs.readdirSync(L.DIR_ORO).filter(f => f.endsWith('.json') && !f.startsWith('_')).forEach(f => {
     const slug = f.slice(0, -5);
@@ -255,6 +272,11 @@ if (conceptualSinCongelar.length) {
   console.log('\n  Por congelar · ' + conceptualSinCongelar.length + ' misiones ofrecen formas nuevas del examen conceptual con su banco grande.');
   console.log('  Sus formas de antes siguen idénticas; las nuevas esperan el visto bueno de Josué y no tienen referencia todavía:');
   conceptualSinCongelar.forEach(d => console.log('    · ' + d));
+}
+if (nacidasSinCongelar.length) {
+  console.log('\n  Nacidas · ' + nacidasSinCongelar.length + ' misiones nuevas con sus 50 formas, sin referencia todavía. No repiten y todo sale de su banco;');
+  console.log('  esperan el visto bueno de Josué (genera-formas-oro.js <carpeta>, que las saca de _nacidas.json):');
+  nacidasSinCongelar.forEach(d => console.log('    · ' + d));
 }
 if (deudaBanco.length) {
   console.log('\n  Pendiente conocido · en ' + deudaBanco.length + ' misiones parte de la prueba crítica la escribe el generador y no un banco');
