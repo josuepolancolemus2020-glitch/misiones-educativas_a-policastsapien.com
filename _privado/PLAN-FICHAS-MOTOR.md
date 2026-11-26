@@ -37,6 +37,10 @@ La forma del bloque y las reglas están en `_privado/PLANTILLA-FICHAS.md`.
   `qr-mision-<slug>.png`.
 - Las fichas de N5 y N1 nacieron con bloque y sin copiar: 40 preguntas de
   práctica cada una, ninguna del examen.
+- Tanda 2 de Español (26 de noviembre): las fichas de N4 y N3 nacieron igual,
+  con bloque y sin copiar (40 preguntas de práctica cada una, que ensayan una
+  por una las 40 del banco de las formas 1 a 30). Armadas en la memoria salen
+  en 7 hojas; se vuelven a medir cuando tengan su QR.
 
 ## Hecho en el primer PR
 

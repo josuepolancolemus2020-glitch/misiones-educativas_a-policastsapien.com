@@ -136,7 +136,7 @@ lenguaje libre de discriminación sociocultural, étnica y de género» (N1).
 | Lengua oral | «Perífrasis verbales: sinónimos y antónimos» (así viene escrito; ver nota) | N6 |
 | Lengua oral | Lenguaje científico-técnico. Lenguaje popular y familiar | N1 |
 | Lectura | Partes del libro, su función y su uso: glosario, capítulos, bibliografía | N4 |
-| Lectura | Textos informativos: el periódico. La lectura como medio de transmisión de cultura | N3 |
+| Lectura | Textos informativos: el periódico. La lectura como medio de transmisión de cultura | N3 (el periódico); la lectura como medio de transmisión de cultura, N2 (tanda 3) |
 | Lectura | Textos funcionales: cartas de lector. Acta | N3 |
 | Lectura | Textos narrativos: el cuento en Honduras. Descriptivos: biografía | N2 |
 | Lectura | El comentario crítico, resúmenes, sinopsis | N4 |
@@ -470,6 +470,15 @@ Nombre de carpeta provisional; se fija al escribirla.
   (inicio, desarrollo, cierre); la descripción de personajes; quién narra
   (protagonista, testigo, narrador que lo sabe todo); la biografía como texto
   descriptivo; escribir un cuento corto.
+- **La lectura como medio de transmisión de cultura** (8.º, [Prog. 7-9, PDF
+  p. 15]; el DCNB la trae como contenido actitudinal: «Reconoce la lectura
+  como medio de comunicación y de transmisión de cultura de los pueblos»,
+  pp. 89 y 122). **Decidido el 26 de noviembre, al revisar el PR 61: va aquí,
+  en la tanda 3**, y no en N3 ni en N4, que no se tocan. Lleva una tarjeta de
+  redacción nuestra (el DCNB la nombra y no la explica) y dos preguntas en el
+  examen: una de verdadero o falso y una de selección. El cuento de tradición
+  oral es el mejor ejemplo: lo que una comunidad cuenta pasa de una
+  generación a otra.
 - **Actividades**: Ordena las partes de un cuento; Identifica quién narra;
   Clasifica rasgos de un personaje (cómo es por fuera, cómo es por dentro);
   generador de «cuenta lo que te contaron en tu casa».
@@ -815,6 +824,70 @@ Palabra en la insignia del encabezado (hoy dice «Ruta de la Palabra · Español
 armadas (`verifica-ficha-paginas.js`). El nombre de los archivos
 (`n5-escribir`, `n1-conversacion`: la carpeta sin el prefijo del ciclo) se
 puede cambiar hasta que se generen los QR; después ya no.
+
+**Hecho en la tanda 2 (26 de noviembre): N4 y N3.** Las dos nacen sobre la
+plantilla, con la forma de N5 y N1 (página, `contenido.js`,
+`<archivo>-propio.js` y `js/ficha.js`), anotadas en
+`_dev/misiones-nacidas.json` y sin nada congelado.
+
+- **N4 · `3ciclo-n4-leer-para-investigar` · Leer para investigar**
+  (`n4-leer-para-investigar.html`). Laboratorio «el libro desarmado», con un
+  libro inventado («Un mundo que no se ve») y tres pasos: buscar cada
+  respuesta en su parte, armar la ficha y resumir un capítulo; el resumen se
+  escribe en un recuadro y el laboratorio señala las frases copiadas (seis
+  palabras seguidas iguales al texto), sin decir que entiende lo escrito.
+  Cruces: el descubrimiento de la célula (misión La Célula), los viajes de
+  Colón (`js/data/viajes-colon.js`, sin días de desembarco) como tabla y como
+  sinopsis, y los colores de las alertas (Desastres Naturales).
+  **No se hizo la ficha bibliográfica de la Constitución**: sus datos de
+  edición siguen sin estar en `_dev/leyes/`.
+- **N3 · `3ciclo-n3-periodico` · El periódico y los textos de todos los días**
+  (`n3-periodico.html`). Laboratorio «la redacción del periódico escolar»:
+  con unos mismos hechos inventados se arma una noticia, una carta de lector
+  y un acta. Cruces: Río Plátano (misión Áreas Protegidas), la alerta
+  temprana y COPECO (Desastres Naturales), el reglamento por artículos y una
+  tabla de lluvia con números inventados y dichos inventados. No nombra
+  ningún periódico real ni la línea editorial de ninguno.
+- **Redacción nuestra.** El DCNB nombra y no define casi nada de lo que
+  estas dos misiones enseñan (para qué sirve cada parte del libro, qué datos
+  lleva cada ficha, qué es una noticia, un titular o una sección). Cada
+  cabecera de `contenido.js` lo lista. En N4 la ficha bibliográfica se
+  enseña por sus datos, **sin un orden obligatorio**, y APA solo se nombra en
+  «Para Media». En N3, las seis preguntas y «titular, encabezado y cuerpo»
+  se aplican a la noticia, aunque el DCNB (p. 97) los dice de la crónica.
+- **Las fichas.** Las dos traen su bloque; la práctica ensaya una por una
+  las 40 del banco de las formas 1 a 30. Armadas en la memoria y medidas con
+  un QR prestado, cada una sale en 7 hojas; la hoja más llena tiene 240.8 mm
+  de contenido (N3, hoja 2) y 237.9 mm (N4, hoja 3). Hay que volver a
+  medirlas en la tanda 4 con su QR.
+- **Sello v587** al final de la tanda.
+
+**Lo que la tanda 2 deja para la 4**, además de lo que dejó la 1: lo mismo
+para N4 y N3 (catálogo, QR, ficha impresa, enlace a la ficha desde Recursos,
+insignia de la Ruta, pregunta en `js/data/diagnosticos.js`), y enlazar entre
+sí las misiones nuevas cuando estén en el catálogo (hoy Recursos solo enlaza
+a misiones publicadas). En N3 el reglamento del grado se dice «apegado al
+reglamento de toda la escuela» y no «reglamento general», porque la sonda de
+nombres propios toma «reglamento general» por un nombre.
+
+**Decidido al revisar el PR 61 (26 de noviembre):**
+
+- «La lectura como medio de transmisión de cultura» (8.º, [Prog. 7-9, PDF
+  p. 15]) estaba asignada a N3 en la sección 1 y no se trató en N3 ni en N4.
+  **Pasa a N2 «El cuento», en la tanda 3**, con una tarjeta de redacción
+  nuestra y dos preguntas (una de verdadero o falso y una de selección). La
+  sección 1 y la 3.3 ya lo dicen.
+- En N3, la pregunta `cp-periodico` del banco de las formas 31 a 50 se
+  cambió por `cp-hecho`; `cp-postura` y `cp-linea` se separaron (la postura es
+  ante un asunto concreto; la línea editorial, lo que el periódico defiende
+  siempre), y `cp-numero` ya no admite «fecha».
+- En N4 se igualó el largo de las opciones de selección: la correcta era la
+  más larga en 15 de las 20 del examen y en 9 de las 10 de la práctica, y
+  quedó en 4 de 20 y en 1 de 10. Al escribir N6 y N2 hay que medirlo desde el
+  principio. Las letras repetidas en una hoja (tres de cinco) se dejan: las
+  reparte el motor.
+- Cada definición que es redacción nuestra lo dice ahora también en el
+  `curriculo` de su pregunta, no solo en la cabecera.
 
 ### Las fichas como motor (empieza el miércoles 25)
 

@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión El periódico y los textos de todos los días | policastsapien.com</title>
+<meta name="description" content="Misión El periódico y los textos de todos los días: la noticia, las cartas, el acta, el reglamento y el informe, con juegos, retos y logros. PolicastSapien.">
+<meta property="og:title" content="Misión El periódico y los textos de todos los días">
+<meta property="og:description" content="Juega, aprende y desbloquea todos los logros. PolicastSapien.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Misiones PolicastSapien">
+<meta property="og:url" content="https://metas.policastsapien.com/misiones/3ciclo-n3-periodico/n3-periodico.html">
+<link rel="stylesheet" href="../../css/vendor/fuentes/fuentes.css">
+<link rel="stylesheet" href="css/n3-periodico.css">
+<!-- La barra de secciones, arriba y siempre a la vista. Va DESPUÉS del CSS
+     de la misión a propósito: de ahí saca su color, y así sobrescribe su
+     position:static sin un solo !important. -->
+<link rel="stylesheet" href="../../css/barra-secciones.css">
+<!-- El acierto y el error NO se dicen solo con color: uno de cada doce
+     niños no distingue el rojo del verde. Va DESPUÉS del CSS de la misión,
+     que es lo que le deja pisar sus reglas. -->
+<link rel="stylesheet" href="../../css/senal-no-color.css">
+<link rel="stylesheet" href="../../css/lab-legible.css">
+<!-- Que las actividades se puedan hacer sin el dedo: el foco visible.
+     Va con js/teclado-actividades.js, que pone las paradas de tabulador
+     y hace que Enter y la barra espaciadora sirvan de algo. -->
+<link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La estrella se gana: antes del primer toque del alumno no se marca
+     ninguna sección, generar una prueba no la da y el XP no se vuelve a
+     ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
+     antes de que el arranque de la misión lo llame. -->
+<script src="../../js/estrella-ganada.js"></script>
+</head>
+<body>
+
+<div class="xp-bar" role="status" aria-label="Barra de progreso XP">
+  <a href="../../index.html?view=misiones&filter=español" class="xp-back-btn" title="Regresar a misiones de Español">
+    <svg class="xp-back-arrow" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H5M12 5l-7 7 7 7"/></svg>
+    <img src="../../img/logo.png" alt="Logo" class="xp-back-logo">
+  </a>
+  <span class="xp-lbl">🎮 XP</span>
+  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <a href="#" class="xp-share-wa" onclick="compartirMision(); return false;" title="Compartir misión por WhatsApp" aria-label="Compartir misión por WhatsApp">
+    <img src="../../img/comparte_whatsapp.webp" alt="WhatsApp" class="xp-share-icon">
+  </a>
+  <span class="xp-pts" id="xpPts">⭐ 0</span>
+  <span class="xp-lvl" id="xpLvl">Aprendiz 🌱</span>
+</div>
+
+<header class="hero" role="banner">
+  <div class="hero-inner">
+    <div class="hero-mascot" aria-hidden="true">📰</div>
+    <div class="hero-text">
+      <h1>Misión <span>El periódico y los textos de todos los días</span></h1>
+      <p class="sub">¡Lee la noticia con ojo crítico y escribe la carta, el acta o el reglamento que cada situación pide! ✉️</p>
+      <div class="badge">✍️ Ruta de la Palabra · Español · 7.º a 11.º grado</div>
+    </div>
+  </div>
+</header>
+
+<main class="main" id="main-content">
+
+<!-- ===== APRENDE ===== -->
+<div class="sec active" id="s-aprende" role="tabpanel">
+<div class="card ac-amber" data-situacion>
+    <h2>🗣️ «Dicen que el viernes no hay clases»</h2>
+    <p>El miércoles, en el recreo, alguien soltó: «Dicen que el viernes no hay clases». A la hora de salida ya lo repetía medio instituto,
+    y nadie sabía quién lo había dicho primero. El jueves, el periódico mural amaneció con esta nota: «El viernes habrá clases normales,
+    informó ayer la dirección. La reunión de docentes será por la tarde, después de la salida». El viernes llegaron todos menos tres,
+    que se habían quedado con el rumor. (La historia es inventada.)</p>
+    <div class="tip"><span class="ti">❓</span><div>Las dos frases hablaban de lo mismo. ¿Qué tenía la segunda que no tenía la primera?
+    Decía <strong>quién lo informó</strong>, <strong>cuándo</strong> y <strong>qué iba a pasar</strong> exactamente.
+    Esa es la diferencia entre un rumor y una noticia. De eso trata esta misión: de leer y escribir los textos que usamos todos los días.</div></div>
+  </div>
+
+  <div class="card ac-teal">
+    <h2>📰 ¿Qué es un periódico?</h2>
+    <div class="grado-fila"><span class="grado">7.º</span><span class="grado">8.º</span><span class="grado">9.º</span></div>
+    <p>Un <strong>periódico</strong> es una publicación que <strong>sale cada cierto tiempo</strong>, cada día o cada semana, con noticias y otros textos.
+    Lo escriben los <strong>periodistas</strong>, que buscan la información y redactan las noticias. También hay periódicos hechos por alumnos:
+    el <strong>periódico escolar</strong>, que se arma con el aporte de toda la clase, y el <strong>periódico mural</strong>, que se pega en una pared
+    de la escuela para que todos lo lean.</p>
+    <p>En un periódico no todo son noticias: también hay <strong>entrevistas</strong> (alguien pregunta y una persona invitada responde), reportajes,
+    textos de opinión y anuncios. Y no todo es letra: las <strong>fotografías</strong> también dan información, y debajo de cada una va su
+    <strong>pie de foto</strong>, un texto breve que explica la imagen.</p>
+    <p><span class="grado">9.º</span> Para que encuentres rápido lo que buscas, el periódico agrupa sus textos según el tema, en <strong>secciones</strong>:</p>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">🗞️ Noticias</div><div class="t-info">Lo que acaba de pasar</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">💬 Opinión</div><div class="t-info">El editorial y las cartas de los lectores</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">⚽ Deportes</div><div class="t-info">Partidos, torneos y marcadores</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">🎭 Cultura</div><div class="t-info">Música, teatro, danza, libros y fiestas</div></div>
+      <div class="type-chip tc-purple"><div class="t-art">📋 Clasificados</div><div class="t-info">Anuncios breves de quien vende, compra o busca algo</div></div>
+    </div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>🗞️ La noticia y sus seis preguntas</h2>
+    <div class="grado-fila"><span class="grado">8.º</span> <span style="font-size:0.82rem;color:var(--gray);">y se lee desde 7.º</span></div>
+    <p>La <strong>noticia</strong> es el texto que <strong>informa de un hecho reciente</strong>. Una noticia completa responde seis preguntas:</p>
+    <div class="stat-bar">
+      <div class="stat-item"><div class="stat-label">❓ ¿Qué?</div><div class="stat-val">Lo que pasó</div></div>
+      <div class="stat-item"><div class="stat-label">👤 ¿Quién?</div><div class="stat-val">Quién lo hizo</div></div>
+      <div class="stat-item"><div class="stat-label">📅 ¿Cuándo?</div><div class="stat-val">El día y la hora</div></div>
+      <div class="stat-item"><div class="stat-label">📍 ¿Dónde?</div><div class="stat-val">El lugar</div></div>
+      <div class="stat-item"><div class="stat-label">🔧 ¿Cómo?</div><div class="stat-val">De qué manera</div></div>
+      <div class="stat-item"><div class="stat-label">💡 ¿Por qué?</div><div class="stat-val">La causa</div></div>
+    </div>
+    <p>Se arma con <strong>tres piezas</strong>, en este orden: el <strong>titular</strong> (el título, en letras grandes), el <strong>encabezado</strong>
+    (el primer párrafo, con lo más importante) y el <strong>cuerpo</strong> (los detalles).</p>
+    <div class="ex-box">
+      <span class="ex-tag ex-d">🔠 Titular</span><br>
+      <span><span class="hl">Noveno expone sobre la Biosfera del Río Plátano</span></span><br>
+      <span class="ex-tag ex-d">📌 Encabezado</span><br>
+      <span>Los alumnos de noveno grado expusieron ayer, en el salón de actos, sobre la Reserva de la Biosfera del Río Plátano.</span><br>
+      <span class="ex-tag ex-d">📄 Cuerpo</span><br>
+      <span>Explicaron que la UNESCO la declaró Patrimonio de la Humanidad en 1982, que cubre 832,000 hectáreas en La Mosquitia y que en ella viven los pueblos pech, miskitu, tawahka y garífuna. «Queríamos que toda la escuela la conociera», dijo una de las expositoras.</span>
+    </div>
+    <p style="font-size:0.85rem;color:var(--gray);">La exposición es inventada para esta misión. Los datos de la Reserva son los de la misión
+    <a href="../2y3ciclo-areas-protegidas-de-honduras/2y3ciclo-areas-protegidas-de-honduras.html">Áreas Protegidas de Honduras</a>.</p>
+    <div class="tip"><span class="ti">💡</span><div>Una buena noticia dice <strong>de dónde salió la información</strong>: esa es su <strong>fuente</strong>
+    («informó la dirección», «dijo una de las expositoras»). Y su titular dice lo mismo que el texto: <strong>no promete lo que la noticia no cuenta</strong>.</div></div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>⚖️ Hecho y opinión</h2>
+    <div class="grado-fila"><span class="grado">7.º</span><span class="grado">8.º</span><span class="grado">9.º</span></div>
+    <p>Para leer un periódico con cabeza propia hay que separar dos cosas:</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>📰 Hecho</h4>
+        <p>Algo que <strong>pasó y se puede comprobar</strong>: contando, midiendo o preguntando. «Llovió tres días seguidos».</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>💬 Opinión</h4>
+        <p>Lo que <strong>una persona piensa</strong> sobre algo que pasó. «Fue el peor invierno que recuerdo».</p>
+      </div>
+    </div>
+    <div class="ex-box">
+      <span class="ex-tag ex-d">🧭 Cada cosa en su lugar</span><br>
+      <span>En la noticia van los <span class="hl">hechos</span>, contados con <span class="hl2">objetividad</span>: tal como fueron, sin inclinarse por nadie. La <span class="hl3">opinión</span> tiene su sitio en otros textos, como el editorial y la carta de lector.</span>
+    </div>
+  </div>
+
+  <div class="card ac-purple">
+    <h2>🔢 Los números de una noticia</h2>
+    <div class="grado-fila"><span class="grado">7.º</span><span class="grado">8.º</span><span class="grado">9.º</span></div>
+    <p>Muchas noticias traen una <strong>tabla</strong> o una <strong>gráfica</strong>. Leerla es parte de leer la noticia. Esta, con datos
+    <strong>inventados para practicar</strong>, dice cuántos árboles sembró cada grado:</p>
+    <div class="stat-bar">
+      <div class="stat-item"><div class="stat-label">Séptimo</div><div class="stat-val">25 árboles</div></div>
+      <div class="stat-item"><div class="stat-label">Octavo</div><div class="stat-val">40 árboles</div></div>
+      <div class="stat-item"><div class="stat-label">Noveno</div><div class="stat-val">35 árboles</div></div>
+    </div>
+    <div class="tip"><span class="ti">🧮</span><div>¿Qué grado sembró más? Octavo. ¿Cuántos sembraron entre los tres? 25 + 40 + 35 = 100.
+    Si el titular dijera «Noveno, el grado que más sembró», la tabla lo desmentiría: <strong>los números también se leen con cuidado</strong>.</div></div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-estructura')">
+    <span class="nsb-icon">✉️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== TEXTOS ===== -->
+<div class="sec" id="s-estructura" role="tabpanel">
+<div class="card ac-teal">
+    <h2>🧭 La postura del periódico y sus lectores</h2>
+    <div class="grado-fila"><span class="grado">9.º</span></div>
+    <p>Dos periódicos pueden contar el mismo hecho y comentarlo de maneras distintas. La posición que un periódico toma ante un problema es su
+    <strong>postura</strong>, y las ideas que defiende una y otra vez forman su <strong>línea editorial</strong>. Se lee en el
+    <strong>editorial</strong>: un texto de opinión razonada que <strong>no lleva firma</strong>, porque ahí habla el periódico.</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>👥 Tipo de lectores</h4>
+        <p>Cada periódico, y cada sección, se escribe <strong>pensando en quién lo va a leer</strong>. Una página de adivinanzas y dibujos para colorear es para niños; los Clasificados, para quien quiere comprar o vender.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🔎 Leer con sentido crítico</h4>
+        <p>Pregúntate: ¿esto es un hecho o una opinión? ¿Quién lo dice? ¿Para qué lectores está escrito?</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>✉️ Tres cartas distintas</h2>
+    <p>Toda carta tiene un <strong>remitente</strong> (quien la escribe y la envía), un <strong>destinatario</strong> (quien la recibe) y un
+    <strong>asunto</strong> (aquello de lo que trata). Y lleva casi siempre las mismas partes: <strong>lugar y fecha, saludo, cuerpo</strong>
+    (donde va el mensaje), <strong>despedida y firma</strong>.</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>💌 Carta personal <span class="grado">7.º</span><span class="grado">8.º</span></h4>
+        <p>Va a <strong>alguien cercano</strong>: un familiar o un amigo. Su estilo es espontáneo y su lenguaje, <strong>sincero, afectivo y sencillo</strong>.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>📮 Carta de lector <span class="grado">8.º</span></h4>
+        <p>Va a <strong>un periódico, una revista o un autor</strong>. Das tu <strong>valoración</strong> (si te pareció bien o mal lo que leíste), tu punto de vista, una crítica o una <strong>sugerencia</strong>. Con razones, con respeto y con un tono más formal.</p>
+      </div>
+    </div>
+    <div class="vs-grid">
+      <div class="vs-box vs-c">
+        <h4>🐄 Carta de venta <span class="grado">8.º</span></h4>
+        <p>Es un <strong>documento legal</strong> que deja constancia de una venta, por ejemplo de ganado. Nombra al <strong>vendedor</strong> (entrega el animal y recibe el dinero), al <strong>comprador</strong> (paga y se queda con él) y lo que se vende, y lleva las firmas.</p>
+      </div>
+      <div class="vs-box vs-d">
+        <h4>🧩 ¿Cuál escribo?</h4>
+        <p>Depende de <strong>a quién</strong> le escribes y <strong>para qué</strong>: contar, opinar o dejar constancia.</p>
+      </div>
+    </div>
+    <div class="dos-voces">
+      <div class="dv-a"><span class="dv-t">💌 Una carta personal</span>Siguatepeque, 10 de febrero de 2027.<br>Querido tío Marvin: ¿Cómo le va con la cosecha? Aquí ya empezaron las clases y me tocó sentarme junto a la ventana. Lo extraño mucho. Un abrazo fuerte. Su sobrina, Dania.</div>
+      <div class="dv-b"><span class="dv-t">📮 Una carta de lector</span>Señores del periódico: Leí su nota sobre la temporada de lluvias. Me parece bien que expliquen la alerta temprana y sus colores (verde, amarillo y rojo), pero faltó decir qué hace cada familia cuando la alerta cambia. Sugiero publicar los avisos de COPECO, la institución que coordina la prevención y la respuesta ante los desastres. Atentamente, Óscar Rivera, lector de noveno grado.</div>
+    </div>
+    <p style="font-size:0.85rem;color:var(--gray);">Las dos cartas son inventadas para esta misión.</p>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>📝 El acta</h2>
+    <div class="grado-fila"><span class="grado">8.º</span></div>
+    <p>El <strong>acta</strong> es el documento que <strong>registra todo lo sucedido, tratado y acordado en una reunión</strong>. La redacta el
+    <strong>secretario</strong> a medida que la reunión se desarrolla, no después. Lleva estas partes, en este orden:</p>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">1. Número del acta</div><div class="t-info">Para saber cuál fue primero</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">2. Lugar, hora y fecha</div><div class="t-info">Dónde y cuándo se reunieron</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">3. Asistentes y ausentes</div><div class="t-info">Quiénes llegaron y quiénes no</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">4. Orden del día</div><div class="t-info">La lista de los puntos que se van a tratar</div></div>
+      <div class="type-chip tc-purple"><div class="t-art">5. Relato y acuerdos</div><div class="t-info">Lo que se trató y lo que el grupo decidió</div></div>
+      <div class="type-chip tc-blue"><div class="t-art">6. Cierre</div><div class="t-info">Hora en que terminó y firmas del secretario y de quien presidió</div></div>
+    </div>
+    <div class="ex-box">
+      <span class="ex-tag ex-d">⭐ Cómo se escribe un acta</span><br>
+      <span>Con <span class="hl">fidelidad</span> (lo que pasó, tal como pasó, le guste o no a quien escribe), <span class="hl2">objetividad</span> (sin inclinarse por nadie) y <span class="hl3">exactitud</span> (las horas, los días y los nombres, sin equivocaciones). También con concisión, claridad, sencillez y corrección.</span>
+    </div>
+  </div>
+
+  <div class="card ac-amber">
+    <h2>📜 El reglamento</h2>
+    <div class="grado-fila"><span class="grado">9.º</span></div>
+    <p>Un <strong>reglamento</strong> es un conjunto ordenado de reglas que un grupo se da <strong>para funcionar mejor</strong>. Cada regla es una
+    <strong>norma</strong> que todo el grupo se compromete a cumplir; va numerada y se llama <strong>artículo</strong>, igual que en las leyes
+    (la Constitución de la República, por ejemplo, se cita por artículos: «artículo 162»).</p>
+    <p>El reglamento interno de tu grado <strong>se apega al reglamento de toda la escuela</strong>: no lo puede contradecir.</p>
+    <div class="ex-box">
+      <span class="ex-tag ex-d">📜 Reglamento del aula (ejemplo)</span><br>
+      <span><span class="hl">Artículo 1.</span> Llegamos puntuales a clase.<br><span class="hl">Artículo 2.</span> Pedimos la palabra antes de hablar.<br><span class="hl">Artículo 3.</span> Cuidamos los libros y los pupitres, que son de todos.</span>
+    </div>
+  </div>
+
+  <div class="card ac-purple">
+    <h2>📊 El informe interpretativo</h2>
+    <div class="grado-fila"><span class="grado">7.º</span></div>
+    <p>Un <strong>informe interpretativo</strong> no solo narra hechos: los <strong>interpreta y analiza</strong> para sacar <strong>conclusiones</strong>
+    y dar <strong>recomendaciones</strong>. Antes de escribirlo se hace un <strong>cronograma</strong> (un calendario con las etapas de la investigación)
+    y se busca información sobre el tema. Sus partes van así:</p>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">1. Carátula</div><div class="t-info">La primera hoja: título y autores</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">2. Índice</div><div class="t-info">Dice en qué página empieza cada apartado</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">3. Introducción</div><div class="t-info">Presenta el tema</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">4. Cuerpo</div><div class="t-info">Los datos y su análisis</div></div>
+      <div class="type-chip tc-purple"><div class="t-art">5. Conclusiones</div><div class="t-info">Lo que se saca en claro</div></div>
+      <div class="type-chip tc-blue"><div class="t-art">6. Recomendaciones</div><div class="t-info">Lo que el informe aconseja hacer</div></div>
+      <div class="type-chip tc-teal"><div class="t-art">7. Bibliografía</div><div class="t-info">Lista de los libros consultados</div></div>
+    </div>
+  </div>
+
+  <div class="card ac-blue">
+    <h2>🎓 Para Media</h2>
+    <div class="grado-fila"><span class="grado">Para Media</span> <span style="font-size:0.82rem;color:var(--gray);">11.º grado</span></div>
+    <p>En 11.º, el programa del Bachillerato Técnico Profesional vuelve al periódico como <strong>género periodístico</strong> (la prensa en Honduras)
+    y estudia los <strong>documentos comerciales</strong>: la carta comercial, el acta, el comunicado, el aviso y la circular.</p>
+    <p>El del Bachillerato en Ciencias y Humanidades estudia <strong>la prensa</strong> y la redacción de <strong>comunicados, avisos y correspondencia</strong>.
+    De esos documentos aquí solo van los nombres: tu docente te dará el formato de cada uno.</p>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-lab')">
+    <span class="nsb-icon">🧪</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== LAB ===== -->
+<div class="sec" id="s-lab" role="tabpanel">
+<div class="card ac-jade">
+    <h2>🧪 Laboratorio: la redacción del periódico escolar</h2>
+    <p style="margin-bottom:0.8rem;">Con los mismos hechos se pueden escribir tres textos distintos. Elige cuál vas a escribir y ármalo paso a paso:
+    el laboratorio te dirá si cada pieza le sirve a ese texto y por qué.</p>
+    <div id="lab-sentence" class="lab-sentence">📋 Los hechos</div>
+    <div class="lab-controls">
+      <div class="lab-group">
+        <span class="lab-group-label">✍️ ¿Qué vas a escribir?</span>
+        <button class="lab-btn lab-cont-btn" data-texto="noticia" aria-pressed="false" onclick="redElige('noticia')">📰 Una noticia</button>
+        <button class="lab-btn lab-cont-btn" data-texto="carta" aria-pressed="false" onclick="redElige('carta')">📮 Una carta de lector</button>
+        <button class="lab-btn lab-cont-btn" data-texto="acta" aria-pressed="false" onclick="redElige('acta')">📝 Un acta</button>
+      </div>
+    </div>
+    <div id="rd-pasos"></div>
+    <div class="lab-stage" style="margin-top:1rem;">
+      <div id="lab-display" class="lab-display-box" role="status" aria-live="polite"></div>
+    </div>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;justify-content:center;">
+      <button class="lab-btn" onclick="redReinicia()">🔄 Empezar de nuevo</button>
+    </div>
+  </div>
+  <div class="card ac-gold">
+    <h2>🔍 ¿Qué cambia de un texto a otro?</h2>
+    <p style="margin-bottom:0.6rem;">Los hechos son los mismos. Lo que cambia es para qué se escribe, y eso cambia todo lo demás:</p>
+    <div id="rd-compara"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
+    <span class="nsb-icon">🃏</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== FLASHCARDS ===== -->
+<div class="sec" id="s-flash" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🃏 Tarjetas: toca para voltear</h2>
+    <div class="fc-wrap">
+      <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
+        <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">🃏 Toca · Enter para voltear</div></div>
+        <div class="fc-back"><div class="fca" id="fcA"></div></div>
+      </div>
+    </div>
+    <div class="fc-nav">
+      <button class="btn btn-d" onclick="prevFC()">◀ Anterior</button>
+      <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 14</span>
+      <button class="btn btn-pri" onclick="nextFC()">Siguiente ▶</button>
+    </div>
+    <div id="fbFlash" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-quiz')">
+    <span class="nsb-icon">🧠</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== QUIZ ===== -->
+<div class="sec" id="s-quiz" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>🧠 Quiz de Comprensión</h2>
+    <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 9</p>
+    <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
+    <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkQz()">✔ Verificar</button><button class="btn btn-pri" onclick="nextQz()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetQz()">🔄 Reiniciar Quiz</button>
+    </div>
+    <div id="fbQz" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-clasifica')">
+    <span class="nsb-icon">🗂️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== CLASIFICA ===== -->
+<div class="sec" id="s-clasifica" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🗂️ Clasifica los textos por su función</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.5rem;">Selecciona un trozo de texto del banco y toca la columna donde va.</p>
+    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: usa el botón «Variar grupo» varias veces. Practicar con otras categorías te ayuda a dominar el tema.</p>
+    <div class="word-bank" id="clsBank" role="list"></div>
+    <div class="drop-cols">
+      <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda"><h4 id="col-left-head">Columna A</h4><div id="items-left"></div></div>
+      <div class="drop-col" id="col-right" role="list" aria-label="Columna derecha"><h4 id="col-right-head">Columna B</h4><div id="items-right"></div></div>
+    </div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkClass()">✔ Verificar</button>
+      <button class="btn btn-pri" onclick="nextClassGroup()">🔄 Variar grupo</button>
+      <button class="btn btn-d" onclick="resetClass()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbCls" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-identifica')">
+    <span class="nsb-icon">🔍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== IDENTIFICA ===== -->
+<div class="sec" id="s-identifica" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🔍 Identifica la sección o la parte del periódico</h2>
+    <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca en la oración la palabra que se te pide:</p>
+    <div class="id-sent" id="idSent" role="group"></div>
+    <div class="id-info" id="idInfo" role="status" aria-live="polite" style="font-size:0.82rem;color:var(--gray);font-style:italic;margin-top:0.4rem;"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextId()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetId()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbId" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-completa')">
+    <span class="nsb-icon">✏️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== COMPLETA ===== -->
+<div class="sec" id="s-completa" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>✏️ Completa el acta</h2>
+    <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
+    <div class="cmp-sent" id="cmpSent"></div>
+    <div class="cmp-opts" id="cmpOpts" role="group"></div>
+    <button class="btn btn-g" onclick="checkCmp()">✔ Verificar</button><button class="btn btn-pri" onclick="nextCmp()">▶ Siguiente</button>
+    <div id="fbCmp" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-widgets')">
+    <span class="nsb-icon">🧩</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== WIDGETS ===== -->
+<!-- Los cuatro widgets llevan los ids por lo que hacen (describe, empareja,
+     situacion): son los que el motor busca primero. Sus datos, en
+     js/contenido.js, se llaman igual: ordenaData, describeData,
+     emparejaData y situacionData. -->
+<div class="sec" id="s-widgets" role="tabpanel">
+
+  <div class="card ac-teal">
+    <h2>🔗 Ordena las partes</h2>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Usa las flechas <strong>▲ ▼</strong> para poner las partes en orden, de la primera a la última:</p>
+    <div class="sort-list" id="routeList"></div>
+    <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkRoute()">✅ Verificar orden</button>
+      <button class="btn btn-pri" onclick="nextRoute()">🔄 Nueva secuencia</button>
+    </div>
+    <div id="fbRoute" class="fb" role="alert"></div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>🔎 ¿En qué sección sale? ¿Qué texto es?</h2>
+    <p class="id-prog" id="describeProg" aria-live="polite">Pista 1 de 8</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Lee la pista y elige la sección del periódico o el texto que le corresponde:</p>
+    <div class="neuron-desc" id="describeDesc">Cargando...</div>
+    <div class="cmp-opts" id="describeOpts" role="group" style="margin-top:0.8rem;"></div>
+    <div id="fbDescribe" class="fb" role="alert"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextDescribe()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetDescribe()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>📰 Ponle titular</h2>
+    <p class="id-prog" id="emparejaProg" aria-live="polite">1 de 5</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Lee el hecho (es inventado) y elige el titular que dice lo mismo, sin exagerar ni opinar:</p>
+    <div class="neuro-trans-display" id="emparejaTerm">Cargando...</div>
+    <div class="qz-opts" id="emparejaOpts" role="group" style="margin-top:0.8rem;"></div>
+    <div id="fbEmpareja" class="fb" role="alert"></div>
+    <div style="margin-top:0.8rem;">
+      <button class="btn btn-d" onclick="resetEmpareja()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <div class="card ac-purple">
+    <h2>🧭 ¿Qué texto necesitas?</h2>
+    <p class="id-prog" id="situacionProg" aria-live="polite">1 de 6</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Lee la situación y elige el texto que hay que escribir:</p>
+    <div class="neuro-trans-display" id="situacionTerm">Cargando...</div>
+    <div class="qz-opts" id="situacionOpts" role="group" style="margin-top:0.8rem;"></div>
+    <div id="fbSituacion" class="fb" role="alert"></div>
+    <div style="margin-top:0.8rem;">
+      <button class="btn btn-d" onclick="resetSituacion()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-reto')">
+    <span class="nsb-icon">🏆</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== RETO ===== -->
+<div class="sec" id="s-reto" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🏆 Reto Final: ¡30 segundos!</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.8rem;">Decide rápido de qué lado va cada frase o cada palabra.</p>
+    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: al terminar, usa «Variar pareja» para jugar con otras categorías.</p>
+    <div class="game" aria-live="polite">
+      <div class="reto-timer" id="retoTimer">⏱ 30</div>
+      <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
+      <div class="reto-btns">
+        <button class="btn btn-pri" onclick="">📰 Hecho</button>
+        <button class="btn btn-sec" onclick="">💬 Opinión</button>
+      </div>
+      <div class="reto-score" id="retoScore" aria-live="polite">✅ 0 correctas | ❌ 0 errores</div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="startReto()">🚀 ¡Iniciar!</button>
+      <button class="btn btn-g" onclick="nextRetoPair()">🔄 Variar pareja</button>
+      <button class="btn btn-d" onclick="resetReto()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbReto" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-sopa')">
+    <span class="nsb-icon">🤍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== SOPA ===== -->
+<div class="sec" id="s-sopa" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🤍 Sopa de Letras</h2>
+    <div class="sopa-words" id="sopaWords"></div>
+    <p class="sopa-hint" id="sopaHint">👆 Toca la primera letra y luego la última (o desliza el dedo sobre la palabra)</p>
+    <div class="sopa-container">
+      <div class="sopa-grid" id="sopaGrid"></div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextSopaSet()">🔄 Variar sopa</button>
+    </div>
+    <div id="fbSopa" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tareas')">
+    <span class="nsb-icon">📋</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== TAREAS ===== -->
+<div class="sec" id="s-tareas" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>📋 Generador de Tareas</h2>
+    <div class="tg-controls">
+      <select class="tg-sel" id="tgType">
+        <option value="identify">🔍 Identificar</option>
+        <option value="classify">🗂️ Clasificar</option>
+        <option value="complete">✏️ Completar oraciones</option>
+        <option value="explain">📰 Titulares y explicar</option>
+      </select>
+      <select class="tg-sel" id="tgCount">
+        <option value="5">5 tareas</option>
+        <option value="8" selected>8 tareas</option>
+        <option value="10">10 tareas</option>
+        <option value="15">15 tareas</option>
+      </select>
+      <button class="btn btn-pri" onclick="genTask()">⚡ Generar</button>
+      <button class="btn btn-d" onclick="toggleAns()">👁 Respuestas</button>
+    </div>
+    <div id="tgOut"></div>
+  </div>
+<div class="card ac-teal">
+    <h2>🏠 Tarea para la casa: el periódico en mis manos</h2>
+    <p>Consigue un periódico. Sirve uno de papel, aunque sea viejo, o pídele a una persona mayor que te enseñe uno en su teléfono.
+    Si no hay, usa el <strong>periódico mural</strong> de tu escuela. Anota en tu cuaderno:</p>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">1. Tres secciones</div><div class="t-info">Sus nombres y de qué trata cada una</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">2. Un titular</div><div class="t-info">Cópialo y di qué preguntas responde su noticia</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">3. Un hecho y una opinión</div><div class="t-info">Una oración de cada clase, y di cómo las distinguiste</div></div>
+    </div>
+    <div class="tip"><span class="ti">🤝</span><div>No hace falta comprar nada: lo que importa es leer con atención y separar lo que pasó de lo que alguien opina.</div></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')">
+    <span class="nsb-icon">🎓</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== EVALUACIÓN ===== -->
+<div class="sec" id="s-evaluacion" role="tabpanel">
+  <div class="eval-mode-toggle" role="tablist" aria-label="Tipo de evaluación">
+    <button class="eval-mode-btn active" id="evalModeBtnConcept" role="tab" aria-selected="true" onclick="evalSwitchMode('concept')">🎓 Evaluación Conceptual</button>
+    <button class="eval-mode-btn" id="evalModeBtnCrit" role="tab" aria-selected="false" onclick="evalSwitchMode('crit')">🧠 Pensamiento Crítico</button>
+  </div>
+  <div id="evalConceptWrap">
+  <div class="card ac-purple">
+    <div class="eval-print-header">
+      <h2>Evaluación Final · El periódico y los textos de todos los días · Español</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>N.º Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
+    </div>
+    <h2 id="eval-screen-title">🎓 Evaluación Final · El periódico y los textos de todos los días</h2>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
+      <button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="gradeEval()">🧮 Calificar prueba</button>
+      <button class="btn btn-amber" onclick="printEval()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOut"></div>
+  </div>
+  </div>
+  <div id="evalCritWrap" style="display:none;">
+  <div class="card ac-amber">
+    <div class="eval-print-header">
+      <h2>Evaluación Competencial · Pensamiento Crítico · El periódico y los textos de todos los días · Español</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>N.º Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · 5 secciones de 20 puntos</p>
+    </div>
+    <h2 id="evalcrit-screen-title">🧠 Prueba de Pensamiento Crítico · El periódico y los textos de todos los días</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Responde cada caso con tus propias palabras (en pantalla o en tu cuaderno), compara con la <strong>Pauta</strong> y anótate el puntaje de cada sección. <strong>Genera una nueva prueba cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEvalCrit()">🔄 Nueva Prueba</button>
+      <button class="btn btn-d" onclick="toggleEvalCritAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="calcCritTotal()">🧮 Calcular Total</button>
+      <button class="btn btn-amber" onclick="printEvalCrit()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalCritOut"></div>
+  </div>
+  </div>
+  <div id="eval-pauta-sheet"></div>
+  <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,var(--pri),var(--sec));">
+    <span class="nsb-icon">🏅</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi Constancia</span></span>
+    <span class="nsb-arrow">📰</span>
+  </button>
+</div>
+
+<div class="sec" id="s-recursos" role="tabpanel">
+  <div class="card ac-blue">
+    <h2>📁 Recursos del Tema</h2>
+<div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
+      <p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">📄 Ficha didáctica imprimible</p>
+      <p style="font-size:0.9rem;margin-bottom:0;">La ficha imprimible de esta misión (teoría, actividades y rúbrica en papel) estará disponible aquí cuando la misión se publique en el catálogo.</p>
+    </div>
+    <p style="font-size:0.9rem;margin-bottom:0.6rem;"><strong>Para seguir practicando</strong> con misiones que ya están publicadas:</p>
+    <p style="font-size:0.9rem;margin-bottom:0.4rem;">📚 Para reconocer para qué se escribe cada texto: <a href="../2y3ciclo-tipos-de-textos/tipos-de-textos.html">Los Tipos de Textos</a>.</p>
+    <p style="font-size:0.9rem;margin-bottom:0.4rem;">🌿 La Reserva del Río Plátano, la de la noticia de ejemplo: <a href="../2y3ciclo-areas-protegidas-de-honduras/2y3ciclo-areas-protegidas-de-honduras.html">Áreas Protegidas de Honduras</a>.</p>
+    <p style="font-size:0.9rem;margin-bottom:0;">🌀 La alerta temprana y COPECO, de la carta de lector de ejemplo: <a href="../2y3ciclo-desastres-naturales/desastres-naturales.html">Desastres Naturales y el Huracán Mitch</a>.</p>
+  </div>
+</div>
+
+</main>
+
+<!-- DIPLOMA -->
+<div class="diploma-overlay" id="diplomaOverlay" role="dialog" aria-modal="true">
+  <div class="diploma-card">
+    <div class="diploma-stars" id="diplStars">⭐⭐⭐</div>
+    <div class="diploma-title">CONSTANCIA DE LOGRO</div>
+    <div class="diploma-sub">Misión El periódico y los textos de todos los días</div>
+    <div class="diploma-mascot" aria-hidden="true">📰</div>
+    <div class="diploma-name" id="diplName">Estudiante</div>
+    <div class="diploma-pct" id="diplPct" style="color:var(--jade)">0%</div>
+    <div class="diploma-bar-wrap"><div class="diploma-bar" id="diplBar" style="width:0%"></div></div>
+    <div class="diploma-msg" id="diplMsg">¡Sigue adelante!</div>
+    <div class="diploma-date" id="diplDate"></div>
+    <div class="diploma-ach" id="diplAch"></div>
+    <div class="diploma-fam">🏠 Proyecto Educativo M.E.T.A.S</div>
+    <hr style="margin:0.8rem 0;border-color:var(--border);">
+    <input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..." oninput="updateDiplomaName(this.value)">
+    <div class="diploma-actions">
+      <button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button>
+      <button class="btn btn-pri" onclick="captureDiploma()">📷 Guardar foto</button>
+      <button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOGROS -->
+<div class="ach-panel" id="achPanel" role="region" aria-label="Logros desbloqueados">
+  <h4>🏅 Mis Logros</h4>
+  <div id="achList"></div>
+</div>
+
+<!-- NAV -->
+<nav class="nav" role="tablist" aria-label="Secciones de la misión">
+  <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-estructura" data-s="s-estructura" onclick="go('s-estructura')"><span class="ico">✉️</span> Textos</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lab" data-s="s-lab" onclick="go('s-lab')"><span class="ico">🧪</span> Lab</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash" onclick="go('s-flash')"><span class="ico">🃏</span> Tarjetas</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz" onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-clasifica" data-s="s-clasifica" onclick="go('s-clasifica')"><span class="ico">🗂️</span> Clasifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica" onclick="go('s-identifica')"><span class="ico">🔍</span> Identifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa" onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-widgets" data-s="s-widgets" onclick="go('s-widgets')"><span class="ico">🧩</span> Widgets</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto" onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa" onclick="go('s-sopa')"><span class="ico">🤍</span> Sopa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">🎓</span> Evaluación</button>
+  <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);" aria-haspopup="dialog"><span class="ico">🏅</span> Constancia</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-recursos" data-s="s-recursos" onclick="go('s-recursos')"><span class="ico">📁</span> Recursos</button>
+</nav>
+
+<footer class="credits">
+  <p class="fam">🏠 Proyecto Educativo M.E.T.A.S</p>
+  <p class="ppl">Desarrolladores: Josué E. Polanco_Evelyn Castellanos_Jael &amp; Angelly Polanco</p>
+  <div class="mot">«Limita el uso del teléfono móvil solo como herramienta de aprendizaje de lo contrario puede ser perjudicial» 🌱 · Lee, interactúa, recuerda el saber.</div>
+  <div class="cred-contact">
+    <span>💬 <a href="mailto:josuepolancolemus2020@gmail.com">📧 josuepolancolemus2020@gmail.com</a></span>
+    <span>🌐 <a href="https://policastsapien.com/" target="_blank">🔗 policastsapien.com</a></span>
+  </div>
+  <div class="cred-tools">
+    <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+    <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+    <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
+    <button class="cred-btn" onclick="toggleLetra()">🔤 Letra</button>
+    <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+  </div>
+</footer>
+
+  <script src="../../js/html2canvas.min.js?v=462"></script>
+  <script src="../../js/metas-centro.js?v=575"></script>
+  <script src="../../js/motor-misiones.js?v=579"></script>
+  <!-- La misión son tres archivos. El motor compartido hace lo que toda
+       misión hace; contenido.js es lo que esta dice y pregunta (solo
+       datos); y n3-periodico-propio.js, lo que es solo suyo (su
+       laboratorio). En ese orden. La ficha imprimible tiene su bloque en
+       js/ficha.js, que esta página no carga. -->
+  <script src="../../js/motor-mision.js?v=587"></script>
+  <script src="js/contenido.js?v=587"></script>
+  <script src="js/n3-periodico-propio.js?v=587"></script>
+  <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
+  <script src="../../js/metas-presentacion.js"></script>
+  <script src="../../js/metas-registro.js?v=571"></script>
+<script src="../../js/barra-secciones.js"></script>
+<script src="../../js/teclado-actividades.js"></script>
+</body>
+</html>
