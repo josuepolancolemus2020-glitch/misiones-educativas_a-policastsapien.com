@@ -136,7 +136,7 @@ lenguaje libre de discriminación sociocultural, étnica y de género» (N1).
 | Lengua oral | «Perífrasis verbales: sinónimos y antónimos» (así viene escrito; ver nota) | N6 |
 | Lengua oral | Lenguaje científico-técnico. Lenguaje popular y familiar | N1 |
 | Lectura | Partes del libro, su función y su uso: glosario, capítulos, bibliografía | N4 |
-| Lectura | Textos informativos: el periódico. La lectura como medio de transmisión de cultura | N3 |
+| Lectura | Textos informativos: el periódico. La lectura como medio de transmisión de cultura | N3 (el periódico); la lectura como medio de transmisión de cultura, N2 (tanda 3) |
 | Lectura | Textos funcionales: cartas de lector. Acta | N3 |
 | Lectura | Textos narrativos: el cuento en Honduras. Descriptivos: biografía | N2 |
 | Lectura | El comentario crítico, resúmenes, sinopsis | N4 |
@@ -470,6 +470,15 @@ Nombre de carpeta provisional; se fija al escribirla.
   (inicio, desarrollo, cierre); la descripción de personajes; quién narra
   (protagonista, testigo, narrador que lo sabe todo); la biografía como texto
   descriptivo; escribir un cuento corto.
+- **La lectura como medio de transmisión de cultura** (8.º, [Prog. 7-9, PDF
+  p. 15]; el DCNB la trae como contenido actitudinal: «Reconoce la lectura
+  como medio de comunicación y de transmisión de cultura de los pueblos»,
+  pp. 89 y 122). **Decidido el 26 de noviembre, al revisar el PR 61: va aquí,
+  en la tanda 3**, y no en N3 ni en N4, que no se tocan. Lleva una tarjeta de
+  redacción nuestra (el DCNB la nombra y no la explica) y dos preguntas en el
+  examen: una de verdadero o falso y una de selección. El cuento de tradición
+  oral es el mejor ejemplo: lo que una comunidad cuenta pasa de una
+  generación a otra.
 - **Actividades**: Ordena las partes de un cuento; Identifica quién narra;
   Clasifica rasgos de un personaje (cómo es por fuera, cómo es por dentro);
   generador de «cuenta lo que te contaron en tu casa».
@@ -857,12 +866,28 @@ plantilla, con la forma de N5 y N1 (página, `contenido.js`,
 para N4 y N3 (catálogo, QR, ficha impresa, enlace a la ficha desde Recursos,
 insignia de la Ruta, pregunta en `js/data/diagnosticos.js`), y enlazar entre
 sí las misiones nuevas cuando estén en el catálogo (hoy Recursos solo enlaza
-a misiones publicadas). **Para que Josué decida:** «la lectura como medio de
-transmisión de cultura» (8.º, [Prog. 7-9, PDF p. 15]) está asignada a N3 en
-la sección 1 y no está entre los temas de su ficha (sección 3.3): no se
-trató en ninguna de las dos; y en N3 el reglamento del grado se dice
-«apegado al reglamento de toda la escuela» y no «reglamento general», porque
-la sonda de nombres propios toma «reglamento general» por un nombre.
+a misiones publicadas). En N3 el reglamento del grado se dice «apegado al
+reglamento de toda la escuela» y no «reglamento general», porque la sonda de
+nombres propios toma «reglamento general» por un nombre.
+
+**Decidido al revisar el PR 61 (26 de noviembre):**
+
+- «La lectura como medio de transmisión de cultura» (8.º, [Prog. 7-9, PDF
+  p. 15]) estaba asignada a N3 en la sección 1 y no se trató en N3 ni en N4.
+  **Pasa a N2 «El cuento», en la tanda 3**, con una tarjeta de redacción
+  nuestra y dos preguntas (una de verdadero o falso y una de selección). La
+  sección 1 y la 3.3 ya lo dicen.
+- En N3, la pregunta `cp-periodico` del banco de las formas 31 a 50 se
+  cambió por `cp-hecho`; `cp-postura` y `cp-linea` se separaron (la postura es
+  ante un asunto concreto; la línea editorial, lo que el periódico defiende
+  siempre), y `cp-numero` ya no admite «fecha».
+- En N4 se igualó el largo de las opciones de selección: la correcta era la
+  más larga en 15 de las 20 del examen y en 9 de las 10 de la práctica, y
+  quedó en 4 de 20 y en 1 de 10. Al escribir N6 y N2 hay que medirlo desde el
+  principio. Las letras repetidas en una hoja (tres de cinco) se dejan: las
+  reparte el motor.
+- Cada definición que es redacción nuestra lo dice ahora también en el
+  `curriculo` de su pregunta, no solo en la cabecera.
 
 ### Las fichas como motor (empieza el miércoles 25)
 
