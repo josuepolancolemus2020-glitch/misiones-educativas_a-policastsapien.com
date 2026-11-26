@@ -518,8 +518,13 @@ body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
 
 /* Las cuatro etapas, en fila en la computadora y en columna en el teléfono. */
 .etapas{display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;margin:0.8rem 0;}
-.etapa{background:var(--pri-gl);border:1.5px solid var(--pri);border-radius:12px;padding:0.6rem 0.7rem;font-size:0.9rem;line-height:1.45;}
-.etapa b{display:block;font-family:'Fredoka',sans-serif;font-size:1rem;margin-bottom:0.2rem;}
+.etapa{background:var(--pri-gl);border:1.5px solid var(--pri);border-radius:12px;padding:0.6rem 0.7rem;font-size:1rem;line-height:1.45;}
+.etapa b{display:block;font-family:'Fredoka',sans-serif;font-size:1.05rem;margin-bottom:0.2rem;}
+/* Con la letra grande puesta (así abre la misión) los párrafos crecen un
+   cuarto y estas cajas, que son <div>, no: se les sube aquí para que se
+   lean igual que el texto de al lado. */
+body.letra-grande .etapa,body.letra-grande .oracion-partes span{font-size:1.2rem;}
+body.letra-grande .oracion-partes small{font-size:0.95rem;}
 @media (max-width:640px){.etapas{grid-template-columns:1fr;}}
 
 /* La oración partida en sus piezas. Cada pieza dice qué es debajo. */
