@@ -26,6 +26,18 @@ La forma del bloque y las reglas están en `_privado/PLANTILLA-FICHAS.md`.
 5. Los trece datos que pide `js/motor-mision.js` se resuelven en el primer
    commit de la tanda 1 de Español, no aquí.
 
+## Hecho después, en la tanda 1 de Español (26 de noviembre)
+
+- La decisión 5: `js/motor-mision.js` ya no pide los trece datos (ver
+  `_privado/PLAN-ESPANOL-PRIMER-PARCIAL.md`, «Hecho en la tanda 1»).
+- `_dev/arma-ficha.js` arma en la memoria, sin escribir y sin pedir el QR, la
+  ficha de una misión nacida (`enMemoria`). Con eso las dos sondas de fichas
+  vigilan la práctica de N5 y N1 desde su bloque, antes de que la ficha esté
+  impresa. El armador comprueba además que `qr` tenga la forma
+  `qr-mision-<slug>.png`.
+- Las fichas de N5 y N1 nacieron con bloque y sin copiar: 40 preguntas de
+  práctica cada una, ninguna del examen.
+
 ## Hecho en el primer PR
 
 - `_dev/lib-ficha.js`: el lector que estaba dentro de

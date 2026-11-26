@@ -752,6 +752,68 @@ con `contenido.js` + `<carpeta>-propio.js`):
    nuevo se quedaría sin prueba crítica. Si esta tanda se fusiona a `main`
    antes de la 4, se sella al fusionar.
 
+**Hecho en la tanda 1 (26 de noviembre, primer commit, solo motor):** los
+puntos 1 y 2 de arriba.
+
+- **Punto 1.** `js/motor-mision.js` arranca cada paso por su cuenta
+  (`_arranca`). El widget sin datos no se pinta y esconde su tarjeta; la
+  sección que se queda vacía esconde su pestaña y la flecha que llevaba a ella
+  salta a la que sigue; el que revienta lo dice en la consola sin llevarse a
+  los demás. `MotorMisiones.arranque` guarda qué pasó con cada paso. Los
+  cuatro widgets con nombre heredado tienen nombre por lo que hacen, y los de
+  antes siguen valiendo de respaldo:
+
+  | antes | ahora | qué pinta |
+  |---|---|---|
+  | `routeSets` | `ordenaData` | Widgets: ordena la secuencia |
+  | `neuronPartes` | `describeData` | Widgets: de la descripción al nombre (`desc`, `ans`, `opts`) |
+  | `neuroPairs` (`trans`, `func`) | `emparejaData` (`term`, `resp`) | Widgets: de un término a lo suyo |
+  | `enfermedadData` (`disease`, `characteristic`) | `situacionData` (`term`, `resp`) | Widgets: de un caso a su respuesta |
+  | `idData[].art` | `idData[].busca` | Identifica: lo que se pide tocar |
+
+  Los ids de la página van igual (`describeOpts`, `emparejaTerm`,
+  `situacionTerm`, `fbDescribe`… y los botones `nextDescribe()`,
+  `resetDescribe()`, `resetEmpareja()`, `resetSituacion()`). `fcData`,
+  `qzData`, `classGroups`, `cmpData` y `retoPairs` no cambian de nombre: ya
+  nombran su widget y los leen por ese nombre otras herramientas
+  (`verifica-mision-nueva.js`, `mide-reparto-respuestas.js`). `TEXTOS`,
+  `SAVE_KEY`, `ACHIEVEMENTS`, los niveles, las sopas y las tareas tienen valor
+  de reserva; `TEXTOS` admite `nivel` para el encabezado de la hoja (de
+  reserva, «Educación Básica»). Lo único que el motor no suple es el examen.
+  La Célula quedó igual: sus 50 formas congeladas salen idénticas. Lo prueba
+  `verifica-motor-arranque.js` (quita cada dato de La Célula, uno por uno, y
+  carga los nombres nuevos) y, de noche, `verifica-motor-arranque-navegador.js`.
+- **Punto 2.** Se eligió la sonda: `verifica-titulos-ajenos.js`. Cada misión
+  de la plantilla lleva su `TEXTOS.titulo` en sus ocho sitios (pestaña,
+  og:title, `<h1>`, los dos encabezados de examen, los dos títulos de examen
+  en pantalla y la constancia), su og:url es la suya, y en lo que se lee de
+  la página no aparece el título de otra misión, salvo dentro de un enlace a
+  esa misión. También mira que dos misiones no compartan `SAVE_KEY`.
+- **La lista de nacidas se anota fuera de `formas-oro/`.** La tanda 1 no
+  podía tocar `_dev/formas-oro/`, y la lista vivía ahí. Ahora
+  `_dev/lib-formas.js` lee dos: `_dev/formas-oro/_nacidas.json` (la de antes,
+  vacía) y `_dev/misiones-nacidas.json`, donde están N5 y N1. Al congelar,
+  `genera-formas-oro.js` saca la misión de la que la tenga. **Pendiente de
+  decisión de Josué:** dejarlo así o volver a una sola lista.
+- **La ficha de una nacida se vigila desde su bloque.** `arma-ficha.js` sabe
+  armarla en la memoria sin pedir el QR (`enMemoria`), y con eso
+  `verifica-ficha-no-copia-examen.js` y `verifica-examen-sin-pistas.js` le
+  exigen a la práctica lo mismo que a una ficha armada, desde hoy.
+- **Página y CSS.** N5 y N1 comparten, letra por letra, todo lo que no es de
+  cada una (se armaron con una misma plantilla de trabajo a partir de la
+  página de La Célula; el HTML que queda en el repositorio es plano y se
+  edita a mano). Paleta: la de Marcadores Textuales.
+
+**Lo que la tanda 1 dejó para la 4** (además de lo que ya decía la tabla de
+la sección 5): el enlace de cada misión a su ficha (hoy la tarjeta de
+Recursos dice que la ficha llega con el catálogo), la etapa de la Ruta de la
+Palabra en la insignia del encabezado (hoy dice «Ruta de la Palabra · Español
+· 7.º a 11.º grado»), una pregunta de cada misión en
+`js/data/diagnosticos.js`, y volver a medir las hojas de las dos fichas ya
+armadas (`verifica-ficha-paginas.js`). El nombre de los archivos
+(`n5-escribir`, `n1-conversacion`: la carpeta sin el prefijo del ciclo) se
+puede cambiar hasta que se generen los QR; después ya no.
+
 ### Las fichas como motor (empieza el miércoles 25)
 
 En el repositorio no hay todavía un documento de ese trabajo, así que esto
