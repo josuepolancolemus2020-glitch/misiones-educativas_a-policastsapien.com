@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión Escribir por etapas | policastsapien.com</title>
+<meta name="description" content="Misión Escribir por etapas: planear, escribir el borrador, revisar y pasar la versión final; el párrafo y la oración. Misión interactiva de Español con juegos, retos y logros. PolicastSapien.">
+<meta property="og:title" content="Misión Escribir por etapas">
+<meta property="og:description" content="Juega, aprende y desbloquea todos los logros. PolicastSapien.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Misiones PolicastSapien">
+<meta property="og:url" content="https://metas.policastsapien.com/misiones/3ciclo-n5-escribir/n5-escribir.html">
+<link rel="stylesheet" href="../../css/vendor/fuentes/fuentes.css">
+<link rel="stylesheet" href="css/n5-escribir.css">
+<!-- La barra de secciones, arriba y siempre a la vista. Va DESPUÉS del CSS
+     de la misión a propósito: de ahí saca su color, y así sobrescribe su
+     position:static sin un solo !important. -->
+<link rel="stylesheet" href="../../css/barra-secciones.css">
+<!-- El acierto y el error NO se dicen solo con color: uno de cada doce
+     niños no distingue el rojo del verde. Va DESPUÉS del CSS de la misión,
+     que es lo que le deja pisar sus reglas. -->
+<link rel="stylesheet" href="../../css/senal-no-color.css">
+<link rel="stylesheet" href="../../css/lab-legible.css">
+<!-- Que las actividades se puedan hacer sin el dedo: el foco visible.
+     Va con js/teclado-actividades.js, que pone las paradas de tabulador
+     y hace que Enter y la barra espaciadora sirvan de algo. -->
+<link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La estrella se gana: antes del primer toque del alumno no se marca
+     ninguna sección, generar una prueba no la da y el XP no se vuelve a
+     ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
+     antes de que el arranque de la misión lo llame. -->
+<script src="../../js/estrella-ganada.js"></script>
+</head>
+<body>
+
+<div class="xp-bar" role="status" aria-label="Barra de progreso XP">
+  <a href="../../index.html?view=misiones&filter=español" class="xp-back-btn" title="Regresar a misiones de Español">
+    <svg class="xp-back-arrow" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H5M12 5l-7 7 7 7"/></svg>
+    <img src="../../img/logo.png" alt="Logo" class="xp-back-logo">
+  </a>
+  <span class="xp-lbl">🎮 XP</span>
+  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <a href="#" class="xp-share-wa" onclick="compartirMision(); return false;" title="Compartir misión por WhatsApp" aria-label="Compartir misión por WhatsApp">
+    <img src="../../img/comparte_whatsapp.webp" alt="WhatsApp" class="xp-share-icon">
+  </a>
+  <span class="xp-pts" id="xpPts">⭐ 0</span>
+  <span class="xp-lvl" id="xpLvl">Aprendiz 🌱</span>
+</div>
+
+<header class="hero" role="banner">
+  <div class="hero-inner">
+    <div class="hero-mascot" aria-hidden="true">📝</div>
+    <div class="hero-text">
+      <h1>Misión <span>Escribir por etapas</span></h1>
+      <p class="sub">Nadie escribe bien de un tirón. Aprende a planear, a revisar y a armar párrafos y oraciones que se entienden a la primera. ✏️</p>
+      <div class="badge">✍️ Ruta de la Palabra · Español · 7.º a 11.º grado</div>
+    </div>
+  </div>
+</header>
+
+<main class="main" id="main-content">
+
+<!-- ===== APRENDE ===== -->
+<div class="sec active" id="s-aprende" role="tabpanel">
+<div class="card ac-amber" data-situacion>
+    <h2>🗒️ La nota que nadie entendió</h2>
+    <p>Keila tenía que avisar a las familias de su grado que la reunión se cambiaba al jueves. La escribió en
+    el recreo, de un tirón, y la mandó: «La reunión que era hoy ya no va a ser porque la maestra no puede
+    entonces es el jueves a la misma hora pero en el otro lado». El jueves llegó la cuarta parte de las
+    familias. Unas fueron el día que no era y otras esperaron en el aula equivocada.</p>
+    <div class="tip"><span class="ti">❓</span><div>¿Qué le faltó a la nota de Keila? No le faltaron ganas ni
+    letras. Le faltó <strong>lo que hace un escritor antes y después de escribir</strong>. Es lo que vas a
+    ver en esta misión.</div></div>
+  </div>
+
+  <div class="card ac-teal">
+    <h2>✏️ Escribir tiene etapas</h2>
+    <p><span class="grado">7.º</span><span class="grado">8.º</span><span class="grado">9.º</span> Un texto no sale bien a la primera, y no es porque escribas mal: es
+    que <strong>escribir se hace por etapas</strong>. Quien las sigue no escribe más: escribe mejor y se
+    equivoca menos delante del lector.</p>
+    <div class="etapas">
+      <div class="etapa"><b>1. 🧭 Planear</b>Decides de qué, para qué y para quién escribes, y ordenas tus ideas.</div>
+      <div class="etapa"><b>2. ✏️ Borrador</b>Escribes todo siguiendo tu plan. Saldrá con errores: para eso es.</div>
+      <div class="etapa"><b>3. 🔍 Revisar</b>Lees lo escrito, lo comparas con tu plan y lo corriges.</div>
+      <div class="etapa"><b>4. 📄 Versión final</b>Lo pasas en limpio, con el formato que elegiste.</div>
+    </div>
+    <div class="tip"><span class="ti">💡</span><div><strong>El borrador no es un texto malo:</strong> es un
+    texto sin terminar. Lo malo es entregar el borrador.</div></div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>🧭 Antes de escribir: planear</h2>
+    <p><span class="grado">7.º</span><span class="grado">8.º</span><span class="grado">9.º</span> Planear es contestar cuatro preguntas antes de la primera línea:</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>📌 ¿De qué? El tema</h4>
+        <p>El <strong>asunto</strong> del que vas a escribir. Si es muy grande, se achica: no «el agua», sino «por qué se evapora el agua».</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🎯 ¿Para qué? El propósito</h4>
+        <p>Informar, contar, pedir algo, convencer. Con otro <strong>propósito</strong>, el mismo tema da otro texto.</p>
+      </div>
+    </div>
+    <div class="vs-grid">
+      <div class="vs-box vs-c">
+        <h4>👤 ¿Para quién? El destinatario</h4>
+        <p>No se le escribe igual a una amiga que al director. El <strong>destinatario</strong> decide las palabras y el trato.</p>
+      </div>
+      <div class="vs-box vs-d">
+        <h4>🗂️ ¿Cómo? El tipo y el formato</h4>
+        <p>¿Será una carta, un afiche, un informe, un cuento? El <strong>formato</strong> es la forma que tendrá tu texto.</p>
+      </div>
+    </div>
+    <div class="ex-box">
+      <span class="ex-tag ex-d">🗂️ Después de las preguntas, el esquema</span><br>
+      <span>Buscas la <span class="hl">información</span> que te hace falta y la ordenas en un <span class="hl2">esquema</span>: tus ideas en fila, con sus temas y subtemas. Ese es el plan con que vas a escribir.</span>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>🔍 Después del borrador: revisar</h2>
+    <p><span class="grado">7.º</span><span class="grado">8.º</span><span class="grado">9.º</span> Revisar no es buscar tildes y ya. Es leer tu texto como si fuera de otro y hacerle estas preguntas:</p>
+    <div class="stat-bar">
+      <div class="stat-item"><div class="stat-label">🤝 Concordancia</div><div class="stat-val">¿Las palabras van de acuerdo?</div></div>
+      <div class="stat-item"><div class="stat-label">💡 Claridad</div><div class="stat-val">¿Se entiende a la primera?</div></div>
+      <div class="stat-item"><div class="stat-label">✅ Corrección</div><div class="stat-val">¿Ortografía y puntuación?</div></div>
+      <div class="stat-item"><div class="stat-label">🧵 Coherencia</div><div class="stat-val">¿Todo habla del tema, en orden?</div></div>
+    </div>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>📋 Compara con tu plan</h4>
+        <p>¿Dijiste lo que querías decir? ¿Sobra algo? ¿Hay una idea <strong>repetida</strong>? Se quita.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>👥 Que otro lo lea</h4>
+        <p>Lo que para ti está claro, para otro puede no estarlo. Los cambios que te sugieran, si sirven, los pones.</p>
+      </div>
+    </div>
+    <div class="vs-grid">
+      <div class="vs-box vs-c">
+        <h4>📖 El diccionario a la mano</h4>
+        <p>Antes, durante y después de escribir: para el significado de una palabra y para cómo se escribe.</p>
+      </div>
+      <div class="vs-box vs-d">
+        <h4>🔗 Que las ideas vayan enlazadas</h4>
+        <p>Eso es la <strong>cohesión</strong>, y se logra con conectores. Los practicas en
+        <a href="../2y3ciclo-marcadores-textuales/marcadores-textuales.html">Marcadores Textuales</a>; las tildes, en
+        <a href="../2y3ciclo-acentuacion/acentuacion-II-III-ciclo-basica.html">La Acentuación</a>.</p>
+      </div>
+    </div>
+    <div class="tip"><span class="ti">🎓</span><div><span class="grado">Para Media</span> En 10.º el programa lo llama
+    <strong>la escritura como proceso</strong> y nombra tres pasos: <strong>planificación, ejecución y
+    revisión</strong>. Son las mismas etapas: la ejecución es escribir el borrador.</div></div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-estructura')">
+    <span class="nsb-icon">🧱</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== PÁRRAFO ===== -->
+<div class="sec" id="s-estructura" role="tabpanel">
+<div class="card ac-teal">
+    <h2>📦 El párrafo y su idea principal</h2>
+    <p><span class="grado">8.º</span> Un <strong>párrafo</strong> es un grupo de oraciones que tratan <strong>una misma idea</strong>.
+    Se cierra con <strong>punto y aparte</strong>. Dentro hay una <strong>idea principal</strong>, la que dice lo
+    más importante, y varias <strong>ideas secundarias</strong> que la apoyan o la explican.</p>
+    <div class="ex-box">
+      <span class="ex-tag ex-d">🔬 Un párrafo de Ciencias Naturales</span><br>
+      <span><span class="hl">El agua puede cambiar de estado.</span> Cuando el hielo se derrite, pasa de sólido a líquido: eso se llama fusión. Cuando el agua hierve, pasa de líquido a gas: eso se llama evaporación.</span>
+    </div>
+    <div class="tip"><span class="ti">💡</span><div>La oración resaltada es la <strong>idea principal</strong>. Las
+    otras dos son <strong>secundarias</strong>: dan los ejemplos. Si a este párrafo le agregas «Mi perro se llama
+    Canelo», lo rompes: esa oración no es de aquí.</div></div>
+  </div>
+
+  <div class="card ac-amber">
+    <h2>🧱 Cuatro tipos de párrafo</h2>
+    <p><span class="grado">7.º</span> descriptivo, narrativo y expositivo · <span class="grado">8.º</span> se suma el persuasivo. Se distinguen por lo que hacen:</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>🖼️ Descriptivo: dice cómo es</h4>
+        <p>«El volcán es alto, de laderas verdes y cumbre nublada». Lleva muchos adjetivos.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>📖 Narrativo: cuenta qué pasó</h4>
+        <p>«Ayer subimos al volcán, nos llovió en el camino y bajamos de noche». Los hechos van uno después de otro.</p>
+      </div>
+    </div>
+    <div class="vs-grid">
+      <div class="vs-box vs-c">
+        <h4>📊 Expositivo: explica</h4>
+        <p>«Al hervir, el agua pasa de líquido a gas: eso se llama evaporación». Da datos, sin opinar.</p>
+      </div>
+      <div class="vs-box vs-d">
+        <h4>📣 Persuasivo: busca convencer</h4>
+        <p>«Cuidemos la quebrada, porque de ella bebe toda la aldea». Pide algo y da una razón.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>🔤 La oración: sujeto, verbo y complemento</h2>
+    <p><span class="grado">8.º</span> Toda oración contesta dos preguntas: <strong>¿de quién o de qué se habla?</strong> (el
+    <strong>sujeto</strong>) y <strong>¿qué se dice?</strong> (el <strong>predicado</strong>). El centro del
+    predicado es el <strong>verbo</strong>, y lo que lo acompaña son sus <strong>complementos</strong>.</p>
+    <div class="oracion-partes" aria-label="La mitocondria produce la energía de la célula, partida en sujeto, verbo y complemento">
+      <span>La mitocondria<small>sujeto</small></span>
+      <span>produce<small>verbo</small></span>
+      <span>la energía de la célula<small>complemento</small></span>
+    </div>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>👤 Tres cosas del sujeto</h4>
+        <p>Si está escrito, es <strong>expreso</strong>: «<em>Carlos</em> madrugó». En «Llegamos tarde» nadie escribió «nosotros», pero se sabe quiénes: es <strong>tácito</strong>. Y en «Ana y Luis estudian» es <strong>compuesto</strong>: son dos.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🧩 Los complementos</h4>
+        <p>Dicen <strong>cuándo</strong>, <strong>dónde</strong> o <strong>cómo</strong> (complementos circunstanciales): «Llegaron <em>ayer</em>». La gramática nombra además el objeto directo y el indirecto.</p>
+      </div>
+    </div>
+    <div class="ex-box">
+      <span class="ex-tag ex-d">🤝 La concordancia</span><br>
+      <span><span class="grado">7.º</span><span class="grado">8.º</span> Las palabras de la oración <span class="hl">van de acuerdo</span> en género y número: «los niños <span class="hl2">corren</span>», no «los niños corre»; «la casa <span class="hl3">blanca</span>», no «la casa blanco».</span>
+    </div>
+  </div>
+
+  <div class="card ac-purple">
+    <h2>🔗 Dos oraciones en una: la coordinación</h2>
+    <p><span class="grado">9.º</span> Una <strong>oración simple</strong> es un sujeto con su predicado. Una <strong>oración compuesta</strong>
+    junta dos o más. Cuando las une una <strong>conjunción</strong> y las dos valen lo mismo, están
+    <strong>coordinadas</strong>. Hay cuatro clases:</p>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">➕ Copulativas</div><div class="t-info">y, e, ni · suman: «Llovió <strong>y</strong> se fue la luz»</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">↔️ Disyuntivas</div><div class="t-info">o, u · dan a elegir: «Estudias <strong>o</strong> descansas»</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">⚡ Adversativas</div><div class="t-info">pero, sin embargo, no obstante · oponen: «Quise ir, <strong>pero</strong> no pude»</div></div>
+      <div class="type-chip tc-purple"><div class="t-art">💬 Explicativas</div><div class="t-info">es decir, esto es, o sea · aclaran: «Se evaporó, <strong>es decir</strong>, pasó a gas»</div></div>
+    </div>
+    <div class="tip"><span class="ti">💡</span><div>Si las dos oraciones van pegadas <strong>solo con una coma</strong>,
+    sin conjunción, están <strong>yuxtapuestas</strong>: «Llegué, vi la nota».</div></div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>💭 El ensayo corto</h2>
+    <p><span class="grado">9.º</span> El <strong>ensayo</strong> es un texto en que el autor <strong>da su opinión</strong> sobre un tema
+    que él mismo elige. Por eso es <strong>subjetivo</strong>: se escribe desde la propia mirada, con libertad,
+    pero con razones. Se prepara como todo texto, por etapas:</p>
+    <div class="etapas">
+      <div class="etapa"><b>1. Tema</b>Lo eliges y lo delimitas: «¿Sirve la norma de no gritar en el aula?».</div>
+      <div class="etapa"><b>2. Esquema</b>Tres partes: presentación, desarrollo y conclusión.</div>
+      <div class="etapa"><b>3. Redacción</b>Escribes siguiendo el esquema, con tus razones y ejemplos.</div>
+      <div class="etapa"><b>4. Revisión</b>Lo corriges y elaboras la versión final.</div>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-lab')">
+    <span class="nsb-icon">🧪</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== LAB ===== -->
+<div class="sec" id="s-lab" role="tabpanel">
+<div class="card ac-jade">
+    <h2>🧪 Laboratorio: la mesa de revisión</h2>
+    <p style="font-size:0.95rem;color:var(--gray);margin-bottom:0.8rem;">Aquí hay tres borradores, cada uno con tres fallas. Arréglalas una por una, eligiendo la opción que de verdad corrige, y mira cómo queda el texto.</p>
+    <div class="lab-controls" style="margin-bottom:0.9rem;">
+      <div class="lab-group" role="group" aria-label="Elige un borrador">
+        <button class="lab-btn mesa-borr" type="button" data-borrador="hielo" aria-pressed="true" onclick="mesaElige('hielo')">🧊 El experimento</button>
+        <button class="lab-btn mesa-borr" type="button" data-borrador="division" aria-pressed="false" onclick="mesaElige('division')">➗ La división</button>
+        <button class="lab-btn mesa-borr" type="button" data-borrador="copan" aria-pressed="false" onclick="mesaElige('copan')">🗿 Copán</button>
+      </div>
+    </div>
+    <div id="lab-sentence" class="lab-sentence">Cargando el borrador…</div>
+    <div class="lab-stage">
+      <div id="lab-display" class="lab-display-box" aria-live="polite"></div>
+    </div>
+    <div id="mesa-falla" class="mesa-falla" aria-live="polite"></div>
+    <div id="mesa-opciones" class="mesa-opciones" role="group" aria-label="Opciones para arreglar la falla"></div>
+    <div id="mesa-fb" class="fb" role="alert"></div>
+    <div class="mesa-pie">
+      <span id="mesa-prog" class="mesa-prog" aria-live="polite"></span>
+      <button class="btn btn-d" type="button" onclick="mesaReinicia()">🔄 Empezar este borrador de nuevo</button>
+    </div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
+    <span class="nsb-icon">🃏</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== FLASHCARDS ===== -->
+<div class="sec" id="s-flash" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🃏 Tarjetas: toca para voltear</h2>
+    <div class="fc-wrap">
+      <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
+        <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">🃏 Toca · Enter para voltear</div></div>
+        <div class="fc-back"><div class="fca" id="fcA"></div></div>
+      </div>
+    </div>
+    <div class="fc-nav">
+      <button class="btn btn-d" onclick="prevFC()">◀ Anterior</button>
+      <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 14</span>
+      <button class="btn btn-pri" onclick="nextFC()">Siguiente ▶</button>
+    </div>
+    <div id="fbFlash" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-quiz')">
+    <span class="nsb-icon">🧠</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== QUIZ ===== -->
+<div class="sec" id="s-quiz" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>🧠 Quiz de Comprensión</h2>
+    <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 9</p>
+    <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
+    <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkQz()">✔ Verificar</button><button class="btn btn-pri" onclick="nextQz()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetQz()">🔄 Reiniciar Quiz</button>
+    </div>
+    <div id="fbQz" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-clasifica')">
+    <span class="nsb-icon">🗂️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== CLASIFICA ===== -->
+<div class="sec" id="s-clasifica" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🗂️ Clasifica</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.5rem;">Toca una frase del banco y luego la columna donde va.</p>
+    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: usa el botón «Variar grupo» varias veces. Practicar con otras categorías te ayuda a dominar el tema.</p>
+    <div class="word-bank" id="clsBank" role="list"></div>
+    <div class="drop-cols">
+      <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda"><h4 id="col-left-head">Columna A</h4><div id="items-left"></div></div>
+      <div class="drop-col" id="col-right" role="list" aria-label="Columna derecha"><h4 id="col-right-head">Columna B</h4><div id="items-right"></div></div>
+    </div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkClass()">✔ Verificar</button>
+      <button class="btn btn-pri" onclick="nextClassGroup()">🔄 Variar grupo</button>
+      <button class="btn btn-d" onclick="resetClass()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbCls" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-identifica')">
+    <span class="nsb-icon">🔍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== IDENTIFICA ===== -->
+<div class="sec" id="s-identifica" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🔍 Identifica en la oración</h2>
+    <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra que se te pide:</p>
+    <div class="id-sent" id="idSent" role="group"></div>
+    <div class="id-info" id="idInfo" role="status" aria-live="polite" style="font-size:0.82rem;color:var(--gray);font-style:italic;margin-top:0.4rem;"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextId()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetId()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbId" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-completa')">
+    <span class="nsb-icon">✏️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== COMPLETA ===== -->
+<div class="sec" id="s-completa" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>✏️ Completa con la conjunción que coordina</h2>
+    <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
+    <div class="cmp-sent" id="cmpSent"></div>
+    <div class="cmp-opts" id="cmpOpts" role="group"></div>
+    <button class="btn btn-g" onclick="checkCmp()">✔ Verificar</button><button class="btn btn-pri" onclick="nextCmp()">▶ Siguiente</button>
+    <div id="fbCmp" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-widgets')">
+    <span class="nsb-icon">🧩</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== WIDGETS ===== -->
+<!-- Los cuatro widgets llevan los ids por lo que hacen (describe, empareja,
+     situacion): son los que el motor busca primero. Sus datos, en
+     js/contenido.js, se llaman igual: ordenaData, describeData,
+     emparejaData y situacionData. -->
+<div class="sec" id="s-widgets" role="tabpanel">
+
+  <div class="card ac-teal">
+    <h2>🔗 Ordena la secuencia</h2>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Usa las flechas <strong>▲ ▼</strong> para poner los pasos en orden, del primero al último:</p>
+    <div class="sort-list" id="routeList"></div>
+    <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkRoute()">✅ Verificar orden</button>
+      <button class="btn btn-pri" onclick="nextRoute()">🔄 Nueva secuencia</button>
+    </div>
+    <div id="fbRoute" class="fb" role="alert"></div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>🧭 ¿En qué etapa está?</h2>
+    <p class="id-prog" id="describeProg" aria-live="polite">Caso 1 de 8</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Lee lo que hace cada estudiante y di en qué etapa de la escritura está:</p>
+    <div class="neuron-desc" id="describeDesc">Cargando...</div>
+    <div class="cmp-opts" id="describeOpts" role="group" style="margin-top:0.8rem;"></div>
+    <div id="fbDescribe" class="fb" role="alert"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextDescribe()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetDescribe()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>🔗 Empareja: conjunción y clase de coordinación</h2>
+    <p class="id-prog" id="emparejaProg" aria-live="polite">1 de 5</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">¿Qué clase de coordinación forman estas conjunciones?</p>
+    <div class="neuro-trans-display" id="emparejaTerm">Cargando...</div>
+    <div class="qz-opts" id="emparejaOpts" role="group" style="margin-top:0.8rem;"></div>
+    <div id="fbEmpareja" class="fb" role="alert"></div>
+    <div style="margin-top:0.8rem;">
+      <button class="btn btn-d" onclick="resetEmpareja()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <div class="card ac-purple">
+    <h2>🩺 ¿Qué le falla a esta oración?</h2>
+    <p class="id-prog" id="situacionProg" aria-live="polite">1 de 6</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Lee la oración como si la revisaras y di qué hay que corregir:</p>
+    <div class="neuro-trans-display" id="situacionTerm">Cargando...</div>
+    <div class="qz-opts" id="situacionOpts" role="group" style="margin-top:0.8rem;"></div>
+    <div id="fbSituacion" class="fb" role="alert"></div>
+    <div style="margin-top:0.8rem;">
+      <button class="btn btn-d" onclick="resetSituacion()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-reto')">
+    <span class="nsb-icon">🏆</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== RETO ===== -->
+<div class="sec" id="s-reto" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🏆 Reto Final: ¡30 segundos!</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.8rem;">Clasifica cada frase lo más rápido que puedas.</p>
+    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: al terminar, usa «Variar pareja» para jugar con otras categorías.</p>
+    <div class="game" aria-live="polite">
+      <div class="reto-timer" id="retoTimer">⏱ 30</div>
+      <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
+      <div class="reto-btns">
+        <button class="btn btn-pri" onclick="">Simple</button>
+        <button class="btn btn-sec" onclick="">Compuesta</button>
+      </div>
+      <div class="reto-score" id="retoScore" aria-live="polite">✅ 0 correctas | ❌ 0 errores</div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="startReto()">🚀 ¡Iniciar!</button>
+      <button class="btn btn-g" onclick="nextRetoPair()">🔄 Variar pareja</button>
+      <button class="btn btn-d" onclick="resetReto()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbReto" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-sopa')">
+    <span class="nsb-icon">🤍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== SOPA ===== -->
+<div class="sec" id="s-sopa" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🤍 Sopa de Letras</h2>
+    <div class="sopa-words" id="sopaWords"></div>
+    <p class="sopa-hint" id="sopaHint">👆 Toca la primera letra y luego la última (o desliza el dedo sobre la palabra)</p>
+    <div class="sopa-container">
+      <div class="sopa-grid" id="sopaGrid"></div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextSopaSet()">🔄 Variar sopa</button>
+    </div>
+    <div id="fbSopa" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tareas')">
+    <span class="nsb-icon">📋</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== TAREAS ===== -->
+<div class="sec" id="s-tareas" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>📋 Generador de Tareas</h2>
+    <div class="tg-controls">
+      <select class="tg-sel" id="tgType">
+        <option value="identify">🔍 Identificar</option>
+        <option value="classify">🗂️ Clasificar</option>
+        <option value="complete">✏️ Completar oraciones</option>
+        <option value="explain">💡 Explicar</option>
+      </select>
+      <select class="tg-sel" id="tgCount">
+        <option value="5">5 tareas</option>
+        <option value="8" selected>8 tareas</option>
+        <option value="10">10 tareas</option>
+        <option value="15">15 tareas</option>
+      </select>
+      <button class="btn btn-pri" onclick="genTask()">⚡ Generar</button>
+      <button class="btn btn-d" onclick="toggleAns()">👁 Respuestas</button>
+    </div>
+    <div id="tgOut"></div>
+  </div>
+<div class="card ac-teal">
+    <h2>✍️ Tarea de escritura con lista de revisión</h2>
+    <p>Escribe un párrafo de cinco oraciones sobre algo que sepas hacer bien (una comida, un juego, un oficio de tu casa). Hazlo por etapas y marca cada paso en tu cuaderno:</p>
+    <p><strong>1. Plan:</strong> anota el tema, el propósito y el destinatario.<br>
+    <strong>2. Borrador:</strong> escríbelo sin detenerte a corregir.<br>
+    <strong>3. Revisión:</strong> pásale esta lista. ☐ ¿Las palabras van de acuerdo en género y número? ☐ ¿Se entiende a la primera? ☐ ¿Todas las oraciones hablan del tema? ☐ ¿Hay algo repetido? ☐ ¿Lo leyó otra persona?<br>
+    <strong>4. Versión final:</strong> pásalo en limpio.</p>
+    <p style="font-size:0.9rem;color:var(--gray);">Entrega las tres hojas: el plan, el borrador con sus tachones y la versión final. Los tachones no bajan puntos: son la prueba de que revisaste.</p>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')">
+    <span class="nsb-icon">🎓</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== EVALUACIÓN ===== -->
+<div class="sec" id="s-evaluacion" role="tabpanel">
+  <div class="eval-mode-toggle" role="tablist" aria-label="Tipo de evaluación">
+    <button class="eval-mode-btn active" id="evalModeBtnConcept" role="tab" aria-selected="true" onclick="evalSwitchMode('concept')">🎓 Evaluación Conceptual</button>
+    <button class="eval-mode-btn" id="evalModeBtnCrit" role="tab" aria-selected="false" onclick="evalSwitchMode('crit')">🧠 Pensamiento Crítico</button>
+  </div>
+  <div id="evalConceptWrap">
+  <div class="card ac-purple">
+    <div class="eval-print-header">
+      <h2>Evaluación Final · Escribir por etapas · III Ciclo y Bachillerato · Español</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>N.º Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
+    </div>
+    <h2 id="eval-screen-title">🎓 Evaluación Final · Escribir por etapas</h2>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
+      <button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="gradeEval()">🧮 Calificar prueba</button>
+      <button class="btn btn-amber" onclick="printEval()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOut"></div>
+  </div>
+  </div>
+  <div id="evalCritWrap" style="display:none;">
+  <div class="card ac-amber">
+    <div class="eval-print-header">
+      <h2>Evaluación Competencial · Pensamiento Crítico · Escribir por etapas · III Ciclo y Bachillerato</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>N.º Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · 5 secciones de 20 puntos</p>
+    </div>
+    <h2 id="evalcrit-screen-title">🧠 Prueba de Pensamiento Crítico · Escribir por etapas</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Responde cada caso con tus propias palabras (en pantalla o en tu cuaderno), compara con la <strong>Pauta</strong> y anótate el puntaje de cada sección. <strong>Genera una nueva prueba cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEvalCrit()">🔄 Nueva Prueba</button>
+      <button class="btn btn-d" onclick="toggleEvalCritAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="calcCritTotal()">🧮 Calcular Total</button>
+      <button class="btn btn-amber" onclick="printEvalCrit()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalCritOut"></div>
+  </div>
+  </div>
+  <div id="eval-pauta-sheet"></div>
+  <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,var(--pri),var(--sec));">
+    <span class="nsb-icon">🏅</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi Constancia</span></span>
+    <span class="nsb-arrow">📝</span>
+  </button>
+</div>
+
+<div class="sec" id="s-recursos" role="tabpanel">
+  <div class="card ac-blue">
+    <h2>📁 Recursos del Tema</h2>
+<p style="font-size:0.95rem;margin-bottom:0.8rem;">La <strong>ficha imprimible</strong> de esta misión (teoría, práctica y rúbrica en papel) estará aquí cuando la misión entre al catálogo.</p>
+    <p style="font-size:0.95rem;margin-bottom:0;">Mientras tanto, estas misiones completan lo que aquí se nombra de paso: los conectores, en
+    <a href="../2y3ciclo-marcadores-textuales/marcadores-textuales.html">Marcadores Textuales</a>; las tildes, en
+    <a href="../2y3ciclo-acentuacion/acentuacion-II-III-ciclo-basica.html">La Acentuación</a>; y qué hace que un texto sea narrativo, descriptivo o expositivo, en
+    <a href="../2y3ciclo-tipos-de-textos/tipos-de-textos.html">Los Tipos de Textos</a>.</p>
+  </div>
+</div>
+
+</main>
+
+<!-- DIPLOMA -->
+<div class="diploma-overlay" id="diplomaOverlay" role="dialog" aria-modal="true">
+  <div class="diploma-card">
+    <div class="diploma-stars" id="diplStars">⭐⭐⭐</div>
+    <div class="diploma-title">CONSTANCIA DE LOGRO</div>
+    <div class="diploma-sub">Misión Escribir por etapas</div>
+    <div class="diploma-mascot" aria-hidden="true">📝</div>
+    <div class="diploma-name" id="diplName">Estudiante</div>
+    <div class="diploma-pct" id="diplPct" style="color:var(--jade)">0%</div>
+    <div class="diploma-bar-wrap"><div class="diploma-bar" id="diplBar" style="width:0%"></div></div>
+    <div class="diploma-msg" id="diplMsg">¡Sigue adelante!</div>
+    <div class="diploma-date" id="diplDate"></div>
+    <div class="diploma-ach" id="diplAch"></div>
+    <div class="diploma-fam">🏠 Proyecto Educativo M.E.T.A.S</div>
+    <hr style="margin:0.8rem 0;border-color:var(--border);">
+    <input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..." oninput="updateDiplomaName(this.value)">
+    <div class="diploma-actions">
+      <button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button>
+      <button class="btn btn-pri" onclick="captureDiploma()">📷 Guardar foto</button>
+      <button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOGROS -->
+<div class="ach-panel" id="achPanel" role="region" aria-label="Logros desbloqueados">
+  <h4>🏅 Mis Logros</h4>
+  <div id="achList"></div>
+</div>
+
+<!-- NAV -->
+<nav class="nav" role="tablist" aria-label="Secciones de la misión">
+  <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-estructura" data-s="s-estructura" onclick="go('s-estructura')"><span class="ico">🧱</span> Párrafo</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lab" data-s="s-lab" onclick="go('s-lab')"><span class="ico">🧪</span> Lab</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash" onclick="go('s-flash')"><span class="ico">🃏</span> Tarjetas</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz" onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-clasifica" data-s="s-clasifica" onclick="go('s-clasifica')"><span class="ico">🗂️</span> Clasifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica" onclick="go('s-identifica')"><span class="ico">🔍</span> Identifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa" onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-widgets" data-s="s-widgets" onclick="go('s-widgets')"><span class="ico">🧩</span> Widgets</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto" onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa" onclick="go('s-sopa')"><span class="ico">🤍</span> Sopa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">🎓</span> Evaluación</button>
+  <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);" aria-haspopup="dialog"><span class="ico">🏅</span> Constancia</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-recursos" data-s="s-recursos" onclick="go('s-recursos')"><span class="ico">📁</span> Recursos</button>
+</nav>
+
+<footer class="credits">
+  <p class="fam">🏠 Proyecto Educativo M.E.T.A.S</p>
+  <p class="ppl">Desarrolladores: Josué E. Polanco_Evelyn Castellanos_Jael &amp; Angelly Polanco</p>
+  <div class="mot">«Limita el uso del teléfono móvil solo como herramienta de aprendizaje de lo contrario puede ser perjudicial» 🌱 · Lee, interactúa, recuerda el saber.</div>
+  <div class="cred-contact">
+    <span>💬 <a href="mailto:josuepolancolemus2020@gmail.com">📧 josuepolancolemus2020@gmail.com</a></span>
+    <span>🌐 <a href="https://policastsapien.com/" target="_blank">🔗 policastsapien.com</a></span>
+  </div>
+  <div class="cred-tools">
+    <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+    <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+    <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
+    <button class="cred-btn" onclick="toggleLetra()">🔤 Letra</button>
+    <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+  </div>
+</footer>
+
+  <script src="../../js/html2canvas.min.js?v=462"></script>
+  <script src="../../js/metas-centro.js?v=575"></script>
+  <script src="../../js/motor-misiones.js?v=579"></script>
+  <!-- La misión son tres archivos. El motor compartido hace lo que toda
+       misión hace; contenido.js es lo que esta dice y pregunta (solo
+       datos); y n5-escribir-propio.js, lo que es solo suyo (su
+       laboratorio). En ese orden. La ficha imprimible tiene su bloque en
+       js/ficha.js, que esta página no carga. -->
+  <script src="../../js/motor-mision.js?v=586"></script>
+  <script src="js/contenido.js?v=586"></script>
+  <script src="js/n5-escribir-propio.js?v=586"></script>
+  <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
+  <script src="../../js/metas-presentacion.js"></script>
+  <script src="../../js/metas-registro.js?v=571"></script>
+<script src="../../js/barra-secciones.js"></script>
+<script src="../../js/teclado-actividades.js"></script>
+</body>
+</html>
