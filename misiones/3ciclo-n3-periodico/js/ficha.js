@@ -179,7 +179,7 @@ const FICHA = {
       { q: 'En el periódico de Kevin, los marcadores van en unas páginas y los anuncios en otras: son dos ___ distintas.', a: 'secciones', ensaya: 'cp-secciones' },
       { q: 'El equipo analizó sus datos y, al final del informe, escribió lo que sacó en claro: sus ___.', a: 'conclusiones', ensaya: 'cp-conclusiones' },
       { q: '«Reparan el puente de la aldea» encabeza un texto que informa de algo que acaba de pasar: una ___.', a: 'noticia', ensaya: 'cp-noticia' },
-      { q: 'Un periódico defiende la tala y otro la critica: cada uno tiene su ___ ante ese problema.', a: 'postura', ensaya: 'cp-postura' },
+      { q: 'Un periódico dio su opinión sobre la tala: está en contra. Esa posición ante un solo problema es su ___.', a: 'postura', ensaya: 'cp-postura' },
       { q: 'En la carta de Óscar, la parte más larga, donde cuenta todo lo que quiere decir, es el ___.', a: 'cuerpo', ensaya: 'cp-cuerpo' },
       { q: 'Los alumnos de séptimo pegaron sus textos en la pared del pasillo: hicieron un periódico ___.', a: 'mural', ensaya: 'cp-mural' }
     ],
