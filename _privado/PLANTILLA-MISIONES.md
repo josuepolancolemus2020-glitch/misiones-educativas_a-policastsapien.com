@@ -3,6 +3,18 @@
 Receta para crear una **misión nueva** rápido y **ahorrando tokens**.
 En una sesión nueva basta con decir: **"Sigue PLANTILLA-MISIONES para una misión de [materia], tema [X]"**.
 
+> **Desde noviembre de 2026 una misión nueva nace sobre la plantilla del
+> motor** (`js/motor-mision.js`), como La Célula y las de Español del primer
+> parcial: una página, un `js/contenido.js` con solo datos, un
+> `js/<slug>-propio.js` con su laboratorio y un `js/ficha.js` con el bloque de
+> su ficha. No se copia el JS de una misión vieja. Qué dato pinta cada widget
+> y con qué nombre se pide está en la cabecera de `js/motor-mision.js`
+> («Lo que trae la misión»); la misión que no trae un dato se queda sin ese
+> widget, sin romperse. Modelos: `misiones/3ciclo-n5-escribir/` y
+> `misiones/3ciclo-n1-conversacion/`. Lo que sigue en este documento son los
+> estándares de siempre (colores, redacción, reparto de respuestas, formas),
+> que valen igual.
+
 ---
 
 ## ⭐ Prompt de arranque (copia y pega en una sesión NUEVA)

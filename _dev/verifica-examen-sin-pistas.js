@@ -506,6 +506,7 @@ const { limpiaHtml, itemsFicha, fichaDe } = require('./lib-ficha.js');
 
 /* ── Recorrer las misiones ──────────────────────────────────────── */
 const revisadas = [], pendientes = [], fuera = [];
+const NACIDAS = require('./lib-formas.js').leerNacidas();
 
 for (const dir of fs.readdirSync(MIS).sort()) {
   const jsDir = path.join(MIS, dir, 'js');
@@ -537,7 +538,15 @@ for (const dir of fs.readdirSync(MIS).sort()) {
   const nuevas = itemsConceptual(bancos, 'Nuevo');
   const conK = conceptual.filter(it => it.k).length;
   const ficha = fichaDe(dir, html);
-  const m = { dir, archivo, src, bancos, conceptual, nuevas, ficha, titulo: palabrasTitulo(html) };
+  /* La misión nacida trae el bloque de su ficha, pero la ficha impresa se
+     arma después (cuando entra al catálogo y tiene QR). Se arma en la
+     memoria para medirle la práctica desde ya: una pista entre dos
+     preguntas se arregla más barato hoy que con la ficha fotocopiada. */
+  let fichaHtml = null;
+  if (!ficha && NACIDAS[dir] && fs.existsSync(path.join(jsDir, 'ficha.js'))) {
+    try { fichaHtml = require('./arma-ficha.js').enMemoria(dir); } catch (e) { fichaHtml = { rechazo: e.message }; }
+  }
+  const m = { dir, archivo, src, bancos, conceptual, nuevas, ficha, fichaHtml, titulo: palabrasTitulo(html) };
   if (conK === 0) pendientes.push(m);
   else revisadas.push(m);
 }
@@ -673,8 +682,10 @@ function revisa(m, exigir) {
   }
 
   /* 3 · La ficha */
-  if (m.ficha) {
-    const htmlFicha = fs.readFileSync(m.ficha, 'utf8');
+  if (m.fichaHtml && m.fichaHtml.rechazo && exigir) mal('Ficha: el armador se niega a armar el bloque de esta misión nacida: ' + m.fichaHtml.rechazo);
+  if (m.ficha || (m.fichaHtml && m.fichaHtml.html)) {
+    const htmlFicha = m.ficha ? fs.readFileSync(m.ficha, 'utf8') : m.fichaHtml.html;
+    if (!m.ficha) m.ficha = m.fichaHtml.archivo + '.html (de su bloque, sin armar todavía)';
     const leida = itemsFicha(htmlFicha);
     const tituloF = palabrasTitulo(htmlFicha);
     if (!leida) { if (exigir) ojo('la ficha ' + path.basename(m.ficha) + ' no tiene la forma de siempre: se revisa leyéndola'); }

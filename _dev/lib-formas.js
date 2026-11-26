@@ -378,16 +378,33 @@ const RUTA_PENDIENTE = path.join(DIR_ORO, '_critica-pendiente.json');
    una misión sin referencia que NO está en la lista sigue siendo un fallo,
    porque puede ser una referencia que se perdió. */
 const RUTA_NACIDAS = path.join(DIR_ORO, '_nacidas.json');
+/* La lista vive en dos archivos, y se lee junta. La primera está dentro de
+   `formas-oro/`, que es la carpeta de lo congelado; la segunda, fuera,
+   nació con la tanda 1 de Español (26 de noviembre de 2026), que tenía que
+   anotar dos misiones nuevas SIN tocar `formas-oro/`: anotar un nacimiento
+   no congela nada, y no debería obligar a entrar en la carpeta de las
+   claves impresas. Una misión nueva se anota en la de fuera. */
+const RUTA_NACIDAS_FUERA = path.join(__dirname, 'misiones-nacidas.json');
+const NOTA_NACIDAS = 'Misiones nuevas que nacen con sus 50 formas (30 del banco de siempre y 20 del banco nuevo) y esperan el visto bueno de Josué. No es una referencia: no congela nada. Las vigila verifica-mision-nacida.js. Cuando Josué aprueba las preguntas, «node _dev/genera-formas-oro.js <carpeta>» congela sus formas y la saca de aquí.';
+const _nacidasDe = ruta => fs.existsSync(ruta) ? (JSON.parse(fs.readFileSync(ruta, 'utf8')).nacidas || {}) : {};
 function leerNacidas() {
-  if (!fs.existsSync(RUTA_NACIDAS)) return {};
-  return JSON.parse(fs.readFileSync(RUTA_NACIDAS, 'utf8')).nacidas || {};
+  return Object.assign({}, _nacidasDe(RUTA_NACIDAS), _nacidasDe(RUTA_NACIDAS_FUERA));
 }
+/* Se llama al congelar una misión, con la lista ya sin ella. Cada archivo
+   se queda con las suyas que sigan en la lista, y solo se reescribe el que
+   cambia: así congelar una misión anotada fuera no toca `formas-oro/` más
+   que para escribir su referencia. Una que no estaba en ninguno va fuera. */
 function escribirNacidas(nacidas) {
-  const orden = {}; Object.keys(nacidas).sort().forEach(k => { orden[k] = nacidas[k]; });
-  fs.writeFileSync(RUTA_NACIDAS, JSON.stringify({
-    nota: 'Misiones nuevas que nacen con sus 50 formas (30 del banco de siempre y 20 del banco nuevo) y esperan el visto bueno de Josué. No es una referencia: no congela nada. Las vigila verifica-mision-nacida.js. Cuando Josué aprueba las preguntas, «node _dev/genera-formas-oro.js <carpeta>» congela sus formas y la saca de aquí.',
-    nacidas: orden
-  }, null, 2) + '\n', 'utf8');
+  const escribe = (ruta, lista) => {
+    const orden = {}; Object.keys(lista).sort().forEach(k => { orden[k] = lista[k]; });
+    fs.writeFileSync(ruta, JSON.stringify({ nota: NOTA_NACIDAS, nacidas: orden }, null, 2) + '\n', 'utf8');
+  };
+  const dentro = _nacidasDe(RUTA_NACIDAS), fuera = _nacidasDe(RUTA_NACIDAS_FUERA);
+  const quedan = lista => { const q = {}; Object.keys(lista).forEach(k => { if (k in nacidas) q[k] = nacidas[k]; }); return q; };
+  const qDentro = quedan(dentro), qFuera = quedan(fuera);
+  Object.keys(nacidas).forEach(k => { if (!(k in dentro) && !(k in fuera)) qFuera[k] = nacidas[k]; });
+  if (JSON.stringify(qDentro) !== JSON.stringify(dentro)) escribe(RUTA_NACIDAS, qDentro);
+  if (JSON.stringify(qFuera) !== JSON.stringify(fuera) || !fs.existsSync(RUTA_NACIDAS_FUERA)) escribe(RUTA_NACIDAS_FUERA, qFuera);
 }
 
 /* Una forma por renglón: así un cambio en la Forma 7 se ve en `git diff`
@@ -425,5 +442,5 @@ function sellarForma(f) {
 
 const huellaBanco = b => ({ n: b.length, huella: sha(JSON.stringify(b)).slice(0, 16) });
 
-module.exports = { RAIZ, DIR_MISIONES, DIR_ORO, RUTA_PENDIENTE, RUTA_NACIDAS, leerNacidas, escribirNacidas, PRUEBAS, FUERA_DE_ALCANCE, listarMisiones, archivoPrincipal, usaElMotor, fuenteDeMision, cargarMision, pruebasDe,
+module.exports = { RAIZ, DIR_MISIONES, DIR_ORO, RUTA_PENDIENTE, RUTA_NACIDAS, RUTA_NACIDAS_FUERA, leerNacidas, escribirNacidas, PRUEBAS, FUERA_DE_ALCANCE, listarMisiones, archivoPrincipal, usaElMotor, fuenteDeMision, cargarMision, pruebasDe,
   textoImpreso, cadenasDe, sha, bancosDe, textosFueraDeBanco, bancosConceptual, sinOrdenDeOpciones, sinOrden, repetidas, rutaOro, escribirOro, leerOro, sellarForma, huellaBanco };

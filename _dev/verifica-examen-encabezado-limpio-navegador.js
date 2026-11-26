@@ -2,8 +2,9 @@
    M.E.T.A.S · El examen impreso con el encabezado limpio, en el papel
    ---------------------------------------------------------------------
    Abre las hojas de examen de TODAS las misiones (conceptual, operativa
-   y pensamiento crítico: 168), y las de las misiones bilingües también
-   en inglés (16), como las imprime el docente con su sesión y su centro,
+   y pensamiento crítico: 172 el 26 de noviembre de 2026, con las dos
+   primeras de Español del primer parcial), y las de las misiones
+   bilingües también en inglés (16), como las imprime el docente con su sesión y su centro,
    con una dirección larga (dirección, aldea, municipio y departamento).
    Cada una se compara con la MISMA hoja impresa sin sesión, que es la de
    siempre (no pasa por el motor). Comprueba:
@@ -172,7 +173,10 @@ async function prepararSesion(pg, conSesion) {
   const es = hojas.filter(h => h.idioma === 'es'), en = hojas.filter(h => h.idioma === 'en');
   const nombre = h => h.carpeta + ' · ' + h.forma + (h.idioma === 'en' ? ' · inglés' : '');
   ok(!errores.length, 'todas las hojas se pudieron generar', errores.join(' | '));
-  if (!SOLO) ok(es.length === 168 && en.length === 16, 'se midieron las 168 hojas y las 16 en inglés', { es: es.length, en: en.length });
+  /* Cada misión nueva suma sus hojas: se pide un piso y no una cifra exacta,
+     para que la sonda avise si una hoja deja de medirse y no cada vez que
+     nace una misión. */
+  if (!SOLO) ok(es.length >= 172 && en.length === 16, 'se midieron ' + es.length + ' hojas (172 o más: si bajan, alguna dejó de imprimirse) y las 16 en inglés', { es: es.length, en: en.length });
 
   const masPaginas = hojas.filter(h => h.con.paginas > h.hoy.paginas);
   ok(!masPaginas.length, 'ninguna hoja gana páginas (' + hojas.length + ' hojas)',

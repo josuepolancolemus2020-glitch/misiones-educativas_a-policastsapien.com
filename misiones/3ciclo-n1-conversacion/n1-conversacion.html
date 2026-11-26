@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión Conversar en lengua estándar | policastsapien.com</title>
+<meta name="description" content="Misión Conversar en lengua estándar: lo verbal, lo no verbal y los niveles de la lengua, con juegos, retos y logros. PolicastSapien.">
+<meta property="og:title" content="Misión Conversar en lengua estándar">
+<meta property="og:description" content="Juega, aprende y desbloquea todos los logros. PolicastSapien.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Misiones PolicastSapien">
+<meta property="og:url" content="https://metas.policastsapien.com/misiones/3ciclo-n1-conversacion/n1-conversacion.html">
+<link rel="stylesheet" href="../../css/vendor/fuentes/fuentes.css">
+<link rel="stylesheet" href="css/n1-conversacion.css">
+<!-- La barra de secciones, arriba y siempre a la vista. Va DESPUÉS del CSS
+     de la misión a propósito: de ahí saca su color, y así sobrescribe su
+     position:static sin un solo !important. -->
+<link rel="stylesheet" href="../../css/barra-secciones.css">
+<!-- El acierto y el error NO se dicen solo con color: uno de cada doce
+     niños no distingue el rojo del verde. Va DESPUÉS del CSS de la misión,
+     que es lo que le deja pisar sus reglas. -->
+<link rel="stylesheet" href="../../css/senal-no-color.css">
+<link rel="stylesheet" href="../../css/lab-legible.css">
+<!-- Que las actividades se puedan hacer sin el dedo: el foco visible.
+     Va con js/teclado-actividades.js, que pone las paradas de tabulador
+     y hace que Enter y la barra espaciadora sirvan de algo. -->
+<link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La estrella se gana: antes del primer toque del alumno no se marca
+     ninguna sección, generar una prueba no la da y el XP no se vuelve a
+     ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
+     antes de que el arranque de la misión lo llame. -->
+<script src="../../js/estrella-ganada.js"></script>
+</head>
+<body>
+
+<div class="xp-bar" role="status" aria-label="Barra de progreso XP">
+  <a href="../../index.html?view=misiones&filter=español" class="xp-back-btn" title="Regresar a misiones de Español">
+    <svg class="xp-back-arrow" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H5M12 5l-7 7 7 7"/></svg>
+    <img src="../../img/logo.png" alt="Logo" class="xp-back-logo">
+  </a>
+  <span class="xp-lbl">🎮 XP</span>
+  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <a href="#" class="xp-share-wa" onclick="compartirMision(); return false;" title="Compartir misión por WhatsApp" aria-label="Compartir misión por WhatsApp">
+    <img src="../../img/comparte_whatsapp.webp" alt="WhatsApp" class="xp-share-icon">
+  </a>
+  <span class="xp-pts" id="xpPts">⭐ 0</span>
+  <span class="xp-lvl" id="xpLvl">Aprendiz 🌱</span>
+</div>
+
+<header class="hero" role="banner">
+  <div class="hero-inner">
+    <div class="hero-mascot" aria-hidden="true">🗣️</div>
+    <div class="hero-text">
+      <h1>Misión <span>Conversar en lengua estándar</span></h1>
+      <p class="sub">¡Elige tus palabras, tu tono y tus gestos según con quién hablas y para qué! 💬</p>
+      <div class="badge">✍️ Ruta de la Palabra · Español · 7.º a 11.º grado</div>
+    </div>
+  </div>
+</header>
+
+<main class="main" id="main-content">
+
+<!-- ===== APRENDE ===== -->
+<div class="sec active" id="s-aprende" role="tabpanel">
+<div class="card ac-amber" data-situacion>
+    <h2>🧾 La constancia de Brayan</h2>
+    <p>Brayan necesitaba una constancia de estudios para pedir una beca. Entró a la dirección viendo su teléfono
+    y dijo: «Profe, deme el papel ese». El director no supo de qué papel le hablaba y siguió con lo suyo.
+    Al día siguiente Brayan volvió. Tocó la puerta, lo miró y dijo: «Buenos días, director. ¿Sería tan amable
+    de darme una constancia de estudios? La necesito para una beca». En cinco minutos la tenía en la mano.</p>
+    <div class="tip"><span class="ti">❓</span><div>Brayan era el mismo y quería lo mismo. ¿Qué cambió?
+    Cambiaron sus <strong>palabras</strong>, su <strong>voz</strong> y hasta <strong>hacia dónde miraba</strong>.
+    De eso trata esta misión: de elegir cómo hablar según con quién hablas y para qué.</div></div>
+  </div>
+
+  <div class="card ac-teal">
+    <h2>🗣️ ¿Qué es conversar en lengua estándar?</h2>
+    <div class="grado-fila"><span class="grado">7.º</span><span class="grado">8.º</span><span class="grado">9.º</span></div>
+    <p>En tu casa hablas de una manera y con tus amigos, de otra. La <strong>lengua estándar</strong> es la forma de hablar que
+    <strong>se entiende en todo el país</strong> y que se usa en la escuela, en un trámite o ante un grupo.
+    No reemplaza tu manera de hablar en casa: <strong>se suma</strong> a ella, para cuando la situación la pide.</p>
+    <p>Las personas que toman parte en una conversación se llaman <strong>interlocutores</strong>. Y cada situación pide su
+    grado de <strong>formalidad</strong>: un acto cívico pide más seriedad que el recreo.</p>
+    <div class="tip">
+      <span class="ti">💡</span>
+      <div><strong>Un ejemplo:</strong> «¿Sería tan amable de indicarme dónde queda el centro de salud?». Cualquier persona
+      la entiende, en cualquier parte del país, y a nadie le suena mal.</div>
+    </div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>🤝 Las fórmulas sociales de intercambio</h2>
+    <div class="grado-fila"><span class="grado">9.º</span> <span style="font-size:0.82rem;color:var(--gray);">y se practican desde 7.º</span></div>
+    <p>Son las frases de trato que todos esperan en una conversación. Parecen pequeñas, pero <strong>abren la puerta</strong>
+    a que te escuchen:</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>👋 Saludar</h4>
+        <p>«Buenos días», «buenas tardes», «¿cómo ha estado?». Es lo primero al llegar.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🚪 Despedirse</h4>
+        <p>«Hasta luego», «que le vaya bien». Es lo último antes de irte.</p>
+      </div>
+    </div>
+    <div class="vs-grid">
+      <div class="vs-box vs-c">
+        <h4>🙏 Dar las gracias</h4>
+        <p>«Muchas gracias», «se lo agradezco». Cuando recibes un favor o una atención.</p>
+      </div>
+      <div class="vs-box vs-d">
+        <h4>✋ Respetar el uso de la palabra</h4>
+        <p>Esperas tu turno, levantas la mano y no interrumpes a quien habla.</p>
+      </div>
+    </div>
+    <div class="ex-box">
+      <span class="ex-tag ex-d">🌼 Las fórmulas de cortesía</span><br>
+      <span>«<span class="hl">Por favor</span>», «<span class="hl2">con permiso</span>» y «<span class="hl3">disculpe</span>» acompañan a las fórmulas sociales y hacen más fácil cualquier petición.</span>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>💬 Lo verbal y 🙌 lo no verbal</h2>
+    <div class="grado-fila"><span class="grado">7.º</span><span class="grado">8.º</span><span class="grado">9.º</span></div>
+    <p>Cuando conversas no solo hablan tus palabras. Hay <strong>dos lenguajes</strong> trabajando a la vez:</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>💬 Lenguaje verbal</h4>
+        <p>Comunica <strong>con palabras</strong>, habladas o escritas: una conversación, una charla, una carta, un mensaje de texto.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🙌 Lenguaje no verbal</h4>
+        <p>Comunica <strong>sin palabras</strong>: los gestos, las expresiones del rostro, la mirada, la postura, las señales, los íconos y los símbolos.</p>
+      </div>
+    </div>
+    <div class="ex-box">
+      <span class="ex-tag ex-d">👀 Cuando los dos no dicen lo mismo</span><br>
+      <span>Si dices «<span class="hl">sí, te escucho</span>» sin levantar la vista del teléfono, tus palabras dicen una cosa y tu cuerpo dice otra. Quien conversa contigo se fija en las dos, y así nacen los <span class="hl2">malentendidos</span>: entiende otra cosa que la que quisiste decir.</span>
+    </div>
+  </div>
+
+  <div class="card ac-purple">
+    <h2>🎵 La voz también habla</h2>
+    <div class="grado-fila"><span class="grado">8.º</span></div>
+    <p>Con las <strong>mismas palabras</strong> puedes decir cosas distintas. Lo deciden tres indicadores de tu <strong>intención</strong>, que es lo que buscas al hablar (pedir, avisar, bromear o regañar):</p>
+    <div class="stat-bar">
+      <div class="stat-item"><div class="stat-label">🎵 Entonación</div><div class="stat-val">La voz sube o baja</div></div>
+      <div class="stat-item"><div class="stat-label">🔊 Énfasis</div><div class="stat-val">Más fuerza en lo importante</div></div>
+      <div class="stat-item"><div class="stat-label">⏸️ Pausas</div><div class="stat-val">Silencios entre ideas</div></div>
+    </div>
+    <div class="ex-box">
+      <span class="ex-tag ex-d">🔊 Prueba en voz alta</span><br>
+      <span>«<span class="hl">MAÑANA</span> es el examen» avisa del día. «Mañana es el <span class="hl2">EXAMEN</span>» avisa de lo que viene. Y «¿Mañana es el examen?», con la voz subiendo al final, ya es una pregunta.</span>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-estructura')">
+    <span class="nsb-icon">📶</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== NIVELES ===== -->
+<div class="sec" id="s-estructura" role="tabpanel">
+<div class="card ac-teal">
+    <h2>📶 Los niveles de uso de la lengua</h2>
+    <div class="grado-fila"><span class="grado">7.º</span><span class="grado">8.º</span><span class="grado">9.º</span></div>
+    <p>Todos hablamos el mismo idioma, pero no lo usamos igual en todas partes. Esas maneras distintas se llaman
+    <strong>niveles de uso de la lengua</strong>, y se agrupan así:</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>👄 Formas orales</h4>
+        <p>Popular · Familiar · Vulgar · Regionalismos<br><span class="grado">9.º</span> y también modismos y jergas</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>✍️ Formas escritas</h4>
+        <p>Culto · Científico-técnico · Literario</p>
+      </div>
+    </div>
+    <div class="vs-grid">
+      <div class="vs-box vs-c">
+        <h4>📣 Formas mixtas</h4>
+        <p>Publicitario · Periodístico</p>
+      </div>
+      <div class="vs-box vs-d">
+        <h4>🧭 ¿Cuál es el mejor?</h4>
+        <p>Ninguno. Cada nivel <strong>sirve para una situación</strong>: lo que cuenta es elegir bien.</p>
+      </div>
+    </div>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">🛒 Popular <span class="grado">7.º</span></div><div class="t-info">El de todos los días: la calle, el mercado, el bus</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">🗺️ Regional <span class="grado">7.º</span></div><div class="t-info">Palabras propias de una zona</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">🏠 Familiar <span class="grado">8.º</span></div><div class="t-info">El de la casa, con confianza</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">🎓 Culto <span class="grado">9.º</span></div><div class="t-info">Cuidado y formal: el de una ley o un discurso</div></div>
+      <div class="type-chip tc-purple"><div class="t-art">🔬 Científico-técnico</div><div class="t-info">Términos exactos de las ciencias y los oficios</div></div>
+      <div class="type-chip tc-blue"><div class="t-art">🏫 Lengua estándar</div><div class="t-info">La que se entiende en todo el país</div></div>
+    </div>
+  </div>
+
+  <div class="card ac-amber">
+    <h2>🔬 Lo mismo, dicho de dos maneras</h2>
+    <div class="grado-fila"><span class="grado">7.º</span><span class="grado">8.º</span><span class="grado">9.º</span></div>
+    <p>El lenguaje <strong>científico-técnico</strong> usa términos exactos. El <strong>popular</strong> lo dice con palabras de todos los días.
+    Los dos dicen la verdad: cambia a quién se lo dices.</p>
+    <div class="dos-voces">
+      <div class="dv-a"><span class="dv-t">🔬 En clase de Ciencias</span>«Un ecosistema es el conjunto de los seres vivos de un lugar, su medio físico y las relaciones entre ellos».</div>
+      <div class="dv-b"><span class="dv-t">🛒 A tu hermano pequeño</span>«En el monte todo va amarrado: las plantas, los animales, el agua y la tierra se necesitan».</div>
+    </div>
+    <div class="dos-voces">
+      <div class="dv-a"><span class="dv-t">🔬 En clase de Ciencias</span>«Los productores fabrican su alimento por fotosíntesis».</div>
+      <div class="dv-b"><span class="dv-t">🛒 A tu hermano pequeño</span>«Las plantas hacen su propia comida con la luz del sol».</div>
+    </div>
+    <div class="dos-voces">
+      <div class="dv-a"><span class="dv-t">🔢 En clase de Matemáticas</span>«Dividendo», «cociente» y «residuo».</div>
+      <div class="dv-b"><span class="dv-t">🛒 En la casa</span>«Lo que se va a repartir», «lo que le toca a cada uno» y «lo que sobra».</div>
+    </div>
+    <div class="tip"><span class="ti">💡</span><div>Las palabras que oyes en tu casa o en tu barrio, como «pisto» por dinero o «cipote» por niño,
+    también son parte de la lengua. Con quien las conoce, sirven; con quien no, conviene la lengua estándar.</div></div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>🎤 Hablar ante otros</h2>
+    <p>En la escuela no solo conversas de dos en dos. Estas son las formas de hablar en grupo de este parcial:</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>🎤 Charla <span class="grado">7.º</span><span class="grado">8.º</span><span class="grado">9.º</span></h4>
+        <p>Una persona <strong>expone un tema</strong> y las demás escuchan. Se prepara: tema, fecha, responsables y materiales de apoyo (tarjetas con las ideas clave, láminas con dibujos grandes, afiches, carteles). Quienes escuchan son el público.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🧑‍🤝‍🧑 Trabajo de equipo <span class="grado">7.º</span></h4>
+        <p>Varios compañeros se reparten las tareas para una misma meta. Todos opinan y todos escuchan.</p>
+      </div>
+    </div>
+    <div class="vs-grid">
+      <div class="vs-box vs-c">
+        <h4>💬 Diálogo <span class="grado">8.º</span></h4>
+        <p>Dos o más personas se alternan para hablar y responderse, respetando los turnos.</p>
+      </div>
+      <div class="vs-box vs-d">
+        <h4>🏫 Asamblea escolar <span class="grado">9.º</span></h4>
+        <p>Reúne a personas con <strong>un propósito común</strong> para llegar a <strong>conclusiones</strong> sobre un problema. La preparan el coordinador, los organizadores y el comité de planeamiento.</p>
+      </div>
+    </div>
+    <div class="ex-box">
+      <span class="ex-tag ex-d">⭐ Cinco cualidades de quien habla bien</span><br>
+      <span><span class="hl">Claridad</span>, <span class="hl2">concisión</span> (las palabras justas), <span class="hl3">coherencia</span> (las ideas en orden lógico), sencillez y naturalidad.</span>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>🕊️ Un lenguaje libre de discriminación</h2>
+    <div class="grado-fila"><span class="grado">7.º</span><span class="grado">8.º</span><span class="grado">9.º</span></div>
+    <p>Hablar distinto <strong>no es hablar mal</strong>. Cada quien habla como aprendió en su casa y en su comunidad, y esa forma de hablar
+    merece el mismo respeto que la tuya. Un lenguaje libre de discriminación <strong>no se burla ni rebaja</strong> a nadie por su origen,
+    por ser niña o niño ni por su manera de hablar.</p>
+    <div class="tip"><span class="ti">🇭🇳</span><div><strong>Honduras habla en varias lenguas.</strong> Además del español, en nuestro país
+    se hablan el chortí, el tol, el tawaka, el miskito, el pech, el garífuna y el inglés criollo.</div></div>
+    <div class="ex-box">
+      <span class="ex-tag ex-d">🤝 Opinar también tiene reglas</span><br>
+      <span>Das tu opinión <span class="hl">con razones</span>, escuchas y respetas la de los demás, y entre todos buscan <span class="hl2">negociar</span> (cada parte cede un poco) y llegar a un <span class="hl3">acuerdo</span>.</span>
+    </div>
+  </div>
+
+  <div class="card ac-purple">
+    <h2>⚖️ La lengua culta: un artículo de la Constitución</h2>
+    <div class="grado-fila"><span class="grado">9.º</span></div>
+    <p>Las leyes se escriben en lengua culta, con palabras cuidadas y precisas. Así dice el artículo 162 de la Constitución de la República:</p>
+    <div class="dos-voces">
+      <div class="dv-a"><span class="dv-t">⚖️ En lengua culta</span>«Por su carácter informativo y formativo la docencia tiene formación social y humana que determina para el educador responsabilidades científicas y morales frente a sus discípulos, frente a la institución en que labora y ante la sociedad».</div>
+      <div class="dv-b"><span class="dv-t">🏠 Con palabras sencillas</span>Quien enseña tiene una responsabilidad grande, por lo que sabe y por cómo se comporta: con sus alumnos, con su centro educativo y con toda la sociedad.</div>
+    </div>
+  </div>
+
+  <div class="card ac-blue">
+    <h2>🎓 Para Media</h2>
+    <div class="grado-fila"><span class="grado">Para Media</span> <span style="font-size:0.82rem;color:var(--gray);">10.º y 11.º grado</span></div>
+    <p>En 10.º, el circuito del habla se estudia como <strong>situación de comunicación</strong>, con seis elementos:
+    <strong>emisor, receptor, canal, mensaje, código y contexto</strong>.</p>
+    <p>El programa de 10.º relaciona esos elementos con las <strong>seis funciones del lenguaje</strong>: referencial, estética, metalingüística,
+    fática, emotiva y apelativa. De los elementos y de las funciones aquí solo van los nombres: tu docente te dará la definición de cada uno.</p>
+    <p>En 11.º se estudian además los <strong>estereotipos discriminatorios</strong> de tipo étnico, de género o religioso: ideas hechas sobre
+    un grupo que se cuelan en la manera de hablar.</p>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-lab')">
+    <span class="nsb-icon">🧪</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== LAB ===== -->
+<div class="sec" id="s-lab" role="tabpanel">
+<div class="card ac-jade">
+    <h2>🧪 Laboratorio: la misma noticia, cuatro bocas</h2>
+    <p style="margin-bottom:0.8rem;">Tienes que dar un aviso. Elige a quién se lo das y arma cómo se lo dices: el laboratorio te dirá
+    qué nivel te quedó y si sirve para esa situación.</p>
+    <div id="lab-sentence" class="lab-sentence">📢 El aviso</div>
+    <div class="lab-controls">
+      <div class="lab-group">
+        <span class="lab-group-label">👥 ¿A quién se lo dices?</span>
+        <button class="lab-btn lab-cont-btn" data-boca="amigo" aria-pressed="false" onclick="bocasElige('amigo')">🧢 A tu mejor amigo</button>
+        <button class="lab-btn lab-cont-btn" data-boca="abuela" aria-pressed="false" onclick="bocasElige('abuela')">👵 A tu abuela</button>
+        <button class="lab-btn lab-cont-btn" data-boca="director" aria-pressed="false" onclick="bocasElige('director')">🏫 Al director</button>
+        <button class="lab-btn lab-cont-btn" data-boca="charla" aria-pressed="false" onclick="bocasElige('charla')">🎤 A todo el grado</button>
+      </div>
+    </div>
+    <div id="cb-pasos"></div>
+    <div class="lab-stage" style="margin-top:1rem;">
+      <div id="lab-display" class="lab-display-box" role="status" aria-live="polite"></div>
+    </div>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;justify-content:center;">
+      <button class="lab-btn" onclick="bocasReinicia()">🔄 Empezar de nuevo</button>
+    </div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
+    <span class="nsb-icon">🃏</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== FLASHCARDS ===== -->
+<div class="sec" id="s-flash" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🃏 Tarjetas: toca para voltear</h2>
+    <div class="fc-wrap">
+      <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
+        <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">🃏 Toca · Enter para voltear</div></div>
+        <div class="fc-back"><div class="fca" id="fcA"></div></div>
+      </div>
+    </div>
+    <div class="fc-nav">
+      <button class="btn btn-d" onclick="prevFC()">◀ Anterior</button>
+      <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 14</span>
+      <button class="btn btn-pri" onclick="nextFC()">Siguiente ▶</button>
+    </div>
+    <div id="fbFlash" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-quiz')">
+    <span class="nsb-icon">🧠</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== QUIZ ===== -->
+<div class="sec" id="s-quiz" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>🧠 Quiz de Comprensión</h2>
+    <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 9</p>
+    <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
+    <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkQz()">✔ Verificar</button><button class="btn btn-pri" onclick="nextQz()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetQz()">🔄 Reiniciar Quiz</button>
+    </div>
+    <div id="fbQz" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-clasifica')">
+    <span class="nsb-icon">🗂️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== CLASIFICA ===== -->
+<div class="sec" id="s-clasifica" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🗂️ Clasifica las frases</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.5rem;">Selecciona una frase del banco y toca la columna donde va.</p>
+    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: usa el botón «Variar grupo» varias veces. Practicar con otras categorías te ayuda a dominar el tema.</p>
+    <div class="word-bank" id="clsBank" role="list"></div>
+    <div class="drop-cols">
+      <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda"><h4 id="col-left-head">Columna A</h4><div id="items-left"></div></div>
+      <div class="drop-col" id="col-right" role="list" aria-label="Columna derecha"><h4 id="col-right-head">Columna B</h4><div id="items-right"></div></div>
+    </div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkClass()">✔ Verificar</button>
+      <button class="btn btn-pri" onclick="nextClassGroup()">🔄 Variar grupo</button>
+      <button class="btn btn-d" onclick="resetClass()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbCls" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-identifica')">
+    <span class="nsb-icon">🔍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== IDENTIFICA ===== -->
+<div class="sec" id="s-identifica" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🔍 Identifica la señal o la fórmula</h2>
+    <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca en la oración la palabra que se te pide:</p>
+    <div class="id-sent" id="idSent" role="group"></div>
+    <div class="id-info" id="idInfo" role="status" aria-live="polite" style="font-size:0.82rem;color:var(--gray);font-style:italic;margin-top:0.4rem;"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextId()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetId()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbId" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-completa')">
+    <span class="nsb-icon">✏️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== COMPLETA ===== -->
+<div class="sec" id="s-completa" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>✏️ Completa la fórmula social</h2>
+    <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
+    <div class="cmp-sent" id="cmpSent"></div>
+    <div class="cmp-opts" id="cmpOpts" role="group"></div>
+    <button class="btn btn-g" onclick="checkCmp()">✔ Verificar</button><button class="btn btn-pri" onclick="nextCmp()">▶ Siguiente</button>
+    <div id="fbCmp" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-widgets')">
+    <span class="nsb-icon">🧩</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== WIDGETS ===== -->
+<!-- Los cuatro widgets llevan los ids por lo que hacen (describe, empareja,
+     situacion): son los que el motor busca primero. Sus datos, en
+     js/contenido.js, se llaman igual: ordenaData, describeData,
+     emparejaData y situacionData. -->
+<div class="sec" id="s-widgets" role="tabpanel">
+
+  <div class="card ac-teal">
+    <h2>🔗 Ordena los pasos</h2>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Usa las flechas <strong>▲ ▼</strong> para poner los pasos en orden, del primero al último:</p>
+    <div class="sort-list" id="routeList"></div>
+    <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkRoute()">✅ Verificar orden</button>
+      <button class="btn btn-pri" onclick="nextRoute()">🔄 Nueva secuencia</button>
+    </div>
+    <div id="fbRoute" class="fb" role="alert"></div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>🔎 ¿De qué se habla?</h2>
+    <p class="id-prog" id="describeProg" aria-live="polite">Pista 1 de 8</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Lee la pista y elige a qué se refiere:</p>
+    <div class="neuron-desc" id="describeDesc">Cargando...</div>
+    <div class="cmp-opts" id="describeOpts" role="group" style="margin-top:0.8rem;"></div>
+    <div id="fbDescribe" class="fb" role="alert"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextDescribe()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetDescribe()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>🔁 Del término técnico al de todos los días</h2>
+    <p class="id-prog" id="emparejaProg" aria-live="polite">1 de 5</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">¿Cómo se lo dirías a alguien que no conoce la palabra?</p>
+    <div class="neuro-trans-display" id="emparejaTerm">Cargando...</div>
+    <div class="qz-opts" id="emparejaOpts" role="group" style="margin-top:0.8rem;"></div>
+    <div id="fbEmpareja" class="fb" role="alert"></div>
+    <div style="margin-top:0.8rem;">
+      <button class="btn btn-d" onclick="resetEmpareja()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <div class="card ac-purple">
+    <h2>🗣️ Dilo en lengua estándar</h2>
+    <p class="id-prog" id="situacionProg" aria-live="polite">1 de 6</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Tienes que decir esto mismo a una persona adulta que no conoces. ¿Cuál es la mejor versión?</p>
+    <div class="neuro-trans-display" id="situacionTerm">Cargando...</div>
+    <div class="qz-opts" id="situacionOpts" role="group" style="margin-top:0.8rem;"></div>
+    <div id="fbSituacion" class="fb" role="alert"></div>
+    <div style="margin-top:0.8rem;">
+      <button class="btn btn-d" onclick="resetSituacion()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-reto')">
+    <span class="nsb-icon">🏆</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== RETO ===== -->
+<div class="sec" id="s-reto" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🏆 Reto Final: ¡30 segundos!</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.8rem;">Decide rápido de qué lado va cada palabra o frase.</p>
+    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: al terminar, usa «Variar pareja» para jugar con otras categorías.</p>
+    <div class="game" aria-live="polite">
+      <div class="reto-timer" id="retoTimer">⏱ 30</div>
+      <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
+      <div class="reto-btns">
+        <button class="btn btn-pri" onclick="">💬 Verbal</button>
+        <button class="btn btn-sec" onclick="">🙌 No verbal</button>
+      </div>
+      <div class="reto-score" id="retoScore" aria-live="polite">✅ 0 correctas | ❌ 0 errores</div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="startReto()">🚀 ¡Iniciar!</button>
+      <button class="btn btn-g" onclick="nextRetoPair()">🔄 Variar pareja</button>
+      <button class="btn btn-d" onclick="resetReto()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbReto" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-sopa')">
+    <span class="nsb-icon">🤍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== SOPA ===== -->
+<div class="sec" id="s-sopa" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🤍 Sopa de Letras</h2>
+    <div class="sopa-words" id="sopaWords"></div>
+    <p class="sopa-hint" id="sopaHint">👆 Toca la primera letra y luego la última (o desliza el dedo sobre la palabra)</p>
+    <div class="sopa-container">
+      <div class="sopa-grid" id="sopaGrid"></div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextSopaSet()">🔄 Variar sopa</button>
+    </div>
+    <div id="fbSopa" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tareas')">
+    <span class="nsb-icon">📋</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== TAREAS ===== -->
+<div class="sec" id="s-tareas" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>📋 Generador de Tareas</h2>
+    <div class="tg-controls">
+      <select class="tg-sel" id="tgType">
+        <option value="identify">🔍 Identificar</option>
+        <option value="classify">🗂️ Clasificar</option>
+        <option value="complete">✏️ Completar oraciones</option>
+        <option value="explain">💡 Explicar</option>
+      </select>
+      <select class="tg-sel" id="tgCount">
+        <option value="5">5 tareas</option>
+        <option value="8" selected>8 tareas</option>
+        <option value="10">10 tareas</option>
+        <option value="15">15 tareas</option>
+      </select>
+      <button class="btn btn-pri" onclick="genTask()">⚡ Generar</button>
+      <button class="btn btn-d" onclick="toggleAns()">👁 Respuestas</button>
+    </div>
+    <div id="tgOut"></div>
+  </div>
+<div class="card ac-teal">
+    <h2>🏠 Tarea para la casa: las palabras de mi comunidad</h2>
+    <p>Pregunta a una persona mayor de tu casa o de tu barrio por <strong>tres palabras o expresiones</strong> que se usen en tu comunidad
+    y que quizá no se entiendan en otra zona del país. Anótalas en tu cuaderno en una tabla de tres columnas:</p>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">1. La expresión</div><div class="t-info">Tal como te la dijeron</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">2. Qué quiere decir</div><div class="t-info">Con tus palabras</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">3. En lengua estándar</div><div class="t-info">Cómo se la dirías a alguien de otra zona</div></div>
+    </div>
+    <div class="tip"><span class="ti">🤝</span><div>Ninguna expresión está «mal dicha»: es parte de cómo habla tu comunidad. Llévalas a clase y compárenlas con respeto.</div></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')">
+    <span class="nsb-icon">🎓</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== EVALUACIÓN ===== -->
+<div class="sec" id="s-evaluacion" role="tabpanel">
+  <div class="eval-mode-toggle" role="tablist" aria-label="Tipo de evaluación">
+    <button class="eval-mode-btn active" id="evalModeBtnConcept" role="tab" aria-selected="true" onclick="evalSwitchMode('concept')">🎓 Evaluación Conceptual</button>
+    <button class="eval-mode-btn" id="evalModeBtnCrit" role="tab" aria-selected="false" onclick="evalSwitchMode('crit')">🧠 Pensamiento Crítico</button>
+  </div>
+  <div id="evalConceptWrap">
+  <div class="card ac-purple">
+    <div class="eval-print-header">
+      <h2>Evaluación Final · Conversar en lengua estándar · Español</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>N.º Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
+    </div>
+    <h2 id="eval-screen-title">🎓 Evaluación Final · Conversar en lengua estándar</h2>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
+      <button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="gradeEval()">🧮 Calificar prueba</button>
+      <button class="btn btn-amber" onclick="printEval()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOut"></div>
+  </div>
+  </div>
+  <div id="evalCritWrap" style="display:none;">
+  <div class="card ac-amber">
+    <div class="eval-print-header">
+      <h2>Evaluación Competencial · Pensamiento Crítico · Conversar en lengua estándar · Español</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>N.º Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · 5 secciones de 20 puntos</p>
+    </div>
+    <h2 id="evalcrit-screen-title">🧠 Prueba de Pensamiento Crítico · Conversar en lengua estándar</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Responde cada caso con tus propias palabras (en pantalla o en tu cuaderno), compara con la <strong>Pauta</strong> y anótate el puntaje de cada sección. <strong>Genera una nueva prueba cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEvalCrit()">🔄 Nueva Prueba</button>
+      <button class="btn btn-d" onclick="toggleEvalCritAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="calcCritTotal()">🧮 Calcular Total</button>
+      <button class="btn btn-amber" onclick="printEvalCrit()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalCritOut"></div>
+  </div>
+  </div>
+  <div id="eval-pauta-sheet"></div>
+  <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,var(--pri),var(--sec));">
+    <span class="nsb-icon">🏅</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi Constancia</span></span>
+    <span class="nsb-arrow">🗣️</span>
+  </button>
+</div>
+
+<div class="sec" id="s-recursos" role="tabpanel">
+  <div class="card ac-blue">
+    <h2>📁 Recursos del Tema</h2>
+<div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
+      <p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">📄 Ficha didáctica imprimible</p>
+      <p style="font-size:0.9rem;margin-bottom:0;">La ficha imprimible de esta misión (teoría, actividades y rúbrica en papel) estará disponible aquí cuando la misión se publique en el catálogo.</p>
+    </div>
+    <p style="font-size:0.9rem;margin-bottom:0.6rem;"><strong>Para seguir practicando</strong> con misiones que ya están publicadas:</p>
+    <p style="font-size:0.9rem;margin-bottom:0.4rem;">🔗 Para unir bien tus ideas al hablar y al escribir: <a href="../2y3ciclo-marcadores-textuales/marcadores-textuales.html">Marcadores Textuales</a>.</p>
+    <p style="font-size:0.9rem;margin-bottom:0;">📚 Para reconocer para qué se escribe cada texto: <a href="../2y3ciclo-tipos-de-textos/tipos-de-textos.html">Los Tipos de Textos</a>.</p>
+  </div>
+</div>
+
+</main>
+
+<!-- DIPLOMA -->
+<div class="diploma-overlay" id="diplomaOverlay" role="dialog" aria-modal="true">
+  <div class="diploma-card">
+    <div class="diploma-stars" id="diplStars">⭐⭐⭐</div>
+    <div class="diploma-title">CONSTANCIA DE LOGRO</div>
+    <div class="diploma-sub">Misión Conversar en lengua estándar</div>
+    <div class="diploma-mascot" aria-hidden="true">🗣️</div>
+    <div class="diploma-name" id="diplName">Estudiante</div>
+    <div class="diploma-pct" id="diplPct" style="color:var(--jade)">0%</div>
+    <div class="diploma-bar-wrap"><div class="diploma-bar" id="diplBar" style="width:0%"></div></div>
+    <div class="diploma-msg" id="diplMsg">¡Sigue adelante!</div>
+    <div class="diploma-date" id="diplDate"></div>
+    <div class="diploma-ach" id="diplAch"></div>
+    <div class="diploma-fam">🏠 Proyecto Educativo M.E.T.A.S</div>
+    <hr style="margin:0.8rem 0;border-color:var(--border);">
+    <input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..." oninput="updateDiplomaName(this.value)">
+    <div class="diploma-actions">
+      <button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button>
+      <button class="btn btn-pri" onclick="captureDiploma()">📷 Guardar foto</button>
+      <button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOGROS -->
+<div class="ach-panel" id="achPanel" role="region" aria-label="Logros desbloqueados">
+  <h4>🏅 Mis Logros</h4>
+  <div id="achList"></div>
+</div>
+
+<!-- NAV -->
+<nav class="nav" role="tablist" aria-label="Secciones de la misión">
+  <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-estructura" data-s="s-estructura" onclick="go('s-estructura')"><span class="ico">📶</span> Niveles</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lab" data-s="s-lab" onclick="go('s-lab')"><span class="ico">🧪</span> Lab</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash" onclick="go('s-flash')"><span class="ico">🃏</span> Tarjetas</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz" onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-clasifica" data-s="s-clasifica" onclick="go('s-clasifica')"><span class="ico">🗂️</span> Clasifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica" onclick="go('s-identifica')"><span class="ico">🔍</span> Identifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa" onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-widgets" data-s="s-widgets" onclick="go('s-widgets')"><span class="ico">🧩</span> Widgets</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto" onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa" onclick="go('s-sopa')"><span class="ico">🤍</span> Sopa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">🎓</span> Evaluación</button>
+  <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);" aria-haspopup="dialog"><span class="ico">🏅</span> Constancia</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-recursos" data-s="s-recursos" onclick="go('s-recursos')"><span class="ico">📁</span> Recursos</button>
+</nav>
+
+<footer class="credits">
+  <p class="fam">🏠 Proyecto Educativo M.E.T.A.S</p>
+  <p class="ppl">Desarrolladores: Josué E. Polanco_Evelyn Castellanos_Jael &amp; Angelly Polanco</p>
+  <div class="mot">«Limita el uso del teléfono móvil solo como herramienta de aprendizaje de lo contrario puede ser perjudicial» 🌱 · Lee, interactúa, recuerda el saber.</div>
+  <div class="cred-contact">
+    <span>💬 <a href="mailto:josuepolancolemus2020@gmail.com">📧 josuepolancolemus2020@gmail.com</a></span>
+    <span>🌐 <a href="https://policastsapien.com/" target="_blank">🔗 policastsapien.com</a></span>
+  </div>
+  <div class="cred-tools">
+    <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+    <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+    <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
+    <button class="cred-btn" onclick="toggleLetra()">🔤 Letra</button>
+    <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+  </div>
+</footer>
+
+  <script src="../../js/html2canvas.min.js?v=462"></script>
+  <script src="../../js/metas-centro.js?v=575"></script>
+  <script src="../../js/motor-misiones.js?v=579"></script>
+  <!-- La misión son tres archivos. El motor compartido hace lo que toda
+       misión hace; contenido.js es lo que esta dice y pregunta (solo
+       datos); y n1-conversacion-propio.js, lo que es solo suyo (su
+       laboratorio). En ese orden. La ficha imprimible tiene su bloque en
+       js/ficha.js, que esta página no carga. -->
+  <script src="../../js/motor-mision.js?v=586"></script>
+  <script src="js/contenido.js?v=586"></script>
+  <script src="js/n1-conversacion-propio.js?v=586"></script>
+  <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
+  <script src="../../js/metas-presentacion.js"></script>
+  <script src="../../js/metas-registro.js?v=571"></script>
+<script src="../../js/barra-secciones.js"></script>
+<script src="../../js/teclado-actividades.js"></script>
+</body>
+</html>

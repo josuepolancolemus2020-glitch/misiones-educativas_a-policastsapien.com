@@ -1,0 +1,7 @@
+{
+  "nota": "Misiones nuevas que nacen con sus 50 formas (30 del banco de siempre y 20 del banco nuevo) y esperan el visto bueno de Josué. No es una referencia: no congela nada. Las vigila verifica-mision-nacida.js. Cuando Josué aprueba las preguntas, «node _dev/genera-formas-oro.js <carpeta>» congela sus formas y la saca de aquí.",
+  "nacidas": {
+    "3ciclo-n1-conversacion": "Nació el 26 de noviembre de 2026 (tanda 1 de Español del primer parcial). Espera el visto bueno de Josué.",
+    "3ciclo-n5-escribir": "Nació el 26 de noviembre de 2026 (tanda 1 de Español del primer parcial). Espera el visto bueno de Josué."
+  }
+}

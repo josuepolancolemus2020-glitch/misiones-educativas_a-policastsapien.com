@@ -216,8 +216,13 @@ piloto.forEach(p => {
   ok(p.carpeta + '/js/contenido.js: solo datos (' + nCont.dato.size + ' declaraciones, ninguna función, nada que toque la página)',
     !errCont && nCont.fn.size === 0 && noDatos.length === 0 && !/\bdocument\b|\bwindow\b|localStorage|=>/.test(cont.replace(/\/\*[\s\S]*?\*\/|^\s*\/\/.*$/gm, '').replace(/'(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*"|`(?:[^`\\]|\\.)*`/g, "''")),
     '      ' + (errCont || [...nCont.fn].concat(noDatos).join(', ')));
-  ok(p.carpeta + '/js/contenido.js: trae la llave de guardado y los cuatro bancos del examen',
-    ['SAVE_KEY', 'evalTFBank', 'evalMCBank', 'evalCPBank', 'evalPRBank', 'TEXTOS'].every(n => nCont.dato.has(n)));
+  /* Lo único que el motor no sabe suplir es el examen: los widgets que no
+     traen datos se saltan, y los textos, la llave y los logros tienen
+     reserva (lo prueba verifica-motor-arranque.js). Que la misión declare
+     su título lo exige verifica-titulos-ajenos.js, que lo necesita para
+     saber qué nombre es el suyo. */
+  ok(p.carpeta + '/js/contenido.js: trae su examen (los cuatro bancos y EVAL_FORMAS)',
+    ['evalTFBank', 'evalMCBank', 'evalCPBank', 'evalPRBank', 'EVAL_FORMAS'].every(n => nCont.dato.has(n)));
   /* La prueba crítica es opcional, pero entera: el motor la enseña solo si
      están todas sus piezas, y a una misión que olvidó un banco se le
      escondería la prueba sin que nadie lo notara. Lo mismo con los rótulos

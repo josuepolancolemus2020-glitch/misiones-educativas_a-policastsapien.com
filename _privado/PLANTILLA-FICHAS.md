@@ -31,6 +31,15 @@ pregunta. **No se baja el tamaño de la letra.** `node _dev/arma-ficha.js
 --revisa` dice, sin escribir, si la ficha publicada es la que sale del bloque
 (sirve para saber si alguien la editó a mano).
 
+### La ficha de una misión que acaba de nacer
+
+Una misión nueva nace con su bloque, pero su ficha se arma después, cuando
+entra al catálogo y tiene QR. Mientras tanto no queda sin vigilar: las sondas
+la arman en la memoria (`enMemoria`, en `_dev/arma-ficha.js`) y le exigen lo
+mismo que a una armada. Solo vale para las misiones anotadas como nacidas
+(`_dev/misiones-nacidas.json`). El día que se arme de verdad se miden sus
+hojas con `verifica-ficha-paginas.js` y se enlaza desde la misión.
+
 ## La forma del bloque
 
 ```js

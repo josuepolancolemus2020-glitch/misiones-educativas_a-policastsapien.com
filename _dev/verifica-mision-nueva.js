@@ -38,7 +38,18 @@ refs.forEach(r => {
   if (!fs.existsSync(p)) mal('falta el archivo ' + r);
   else if (r.endsWith('.js')) jsSrc += '\n' + fs.readFileSync(p, 'utf8');
 });
-if (fallos === 0) bien(refs.length + ' archivos locales referenciados y presentes');
+/* Una misión de la plantilla (js/motor-mision.js) no trae sus funciones: las
+   trae el motor, que la página pide de fuera de su carpeta. Sin leerlo, esta
+   sonda daba por huérfanos los cuarenta `onclick` de la página (go, genEval,
+   checkQz…) con todo en su sitio, y decía que el panel de la nota había
+   cambiado de formato cuando el que lo pinta es el motor. */
+const motorPlantilla = (html.match(/<script[^>]*\ssrc="([^"]*js\/motor-mision\.js)(?:\?[^"]*)?"/) || [])[1];
+if (motorPlantilla) {
+  const p = path.join(dir, motorPlantilla);
+  if (!fs.existsSync(p)) mal('falta el motor de la plantilla: ' + motorPlantilla);
+  else jsSrc += '\n' + fs.readFileSync(p, 'utf8');
+}
+if (fallos === 0) bien(refs.length + ' archivos locales referenciados y presentes' + (motorPlantilla ? ', más el motor de la plantilla' : ''));
 
 // ── 2. Cada onclick del HTML tiene su función en el JS ───────────────────
 console.log('\n🖱️  Funciones onclick');

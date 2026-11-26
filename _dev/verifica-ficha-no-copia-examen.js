@@ -29,6 +29,13 @@
       práctica nombre un dato (`k`) que el examen de verdad pregunta, y
       que la ficha publicada sea, letra por letra, la que sale del
       bloque: una ficha armada no se edita a mano.
+   3-bis. LA MISIÓN NACIDA SE VIGILA DESDE SU BLOQUE. Una misión nueva
+      (la lista de nacidas, `_dev/misiones-nacidas.json`) nace con el bloque de su ficha,
+      pero la ficha impresa se arma después, cuando la misión entra al
+      catálogo y tiene su QR. Mientras tanto se arma en la memoria, sin
+      escribirla, y se le exige lo mismo que a una armada: cero copias y
+      cada `ensaya` con su dato. Solo a las nacidas: a una misión
+      publicada que deja de enlazar su ficha se le sigue diciendo.
    4. LA FICHA QUE NO SE PUEDE LEER SE NOMBRA. Las que no tienen la
       forma de siempre (Inteligencia Artificial, Filosofía, Fin de
       grado) no se dan por limpias: están en la lista `sinLeer` del
@@ -116,6 +123,7 @@ const nombreFicha = it => it.banco.replace('ficha ', '') + '.' + it.i + ' «' + 
 
 /* ── Recorrer ───────────────────────────────────────────────── */
 const { dentro, fuera } = L.listarMisiones();
+const nacidas = L.leerNacidas();
 const lista = pedidas.length ? dentro.filter(s => pedidas.includes(s)) : dentro;
 if (pedidas.length && !lista.length) { console.log('❌ No hay ninguna misión con examen que se llame ' + pedidas.join(', ')); process.exit(1); }
 
@@ -127,11 +135,21 @@ let totalCopias = 0, totalPreguntas = 0;
 console.log('\n🔎 La práctica de cada ficha contra el examen de su misión\n');
 for (const slug of lista) {
   const rutaFicha = F.fichaDe(slug, paginaDe(slug));
-  if (!rutaFicha) { mal(slug + ': su página no enlaza ninguna ficha que exista'); continue; }
-  const ficha = path.basename(rutaFicha, '.html');
-  const html = fs.readFileSync(rutaFicha, 'utf8');
-  const leida = F.itemsFicha(html);
   const bloque = bloqueDe(slug);
+  /* La nacida: su ficha todavía no está impresa. Se arma en la memoria. */
+  let sinArmar = null;
+  if (!rutaFicha && nacidas[slug]) {
+    if (!bloque) { mal(slug + ': es una misión nacida y no trae el bloque de su ficha (js/ficha.js): una misión nueva nace con él'); continue; }
+    try { sinArmar = require('./arma-ficha.js').enMemoria(slug); }
+    catch (e) {
+      if (!(e instanceof require('./arma-ficha.js').Rechazo)) throw e;
+      mal(slug + ': el armador se niega a armar su ficha: ' + e.message); continue;
+    }
+  }
+  if (!rutaFicha && !sinArmar) { mal(slug + ': su página no enlaza ninguna ficha que exista'); continue; }
+  const ficha = sinArmar ? sinArmar.archivo : path.basename(rutaFicha, '.html');
+  const html = sinArmar ? sinArmar.html : fs.readFileSync(rutaFicha, 'utf8');
+  const leida = F.itemsFicha(html);
   if (!leida) {
     noLeidas.push(ficha);
     if (bloque) mal(ficha + ': tiene bloque (js/ficha.js) y el lector no la entiende: el armador y el lector ya no hablan igual');
@@ -152,7 +170,7 @@ for (const slug of lista) {
     /* Y es la que sale de su bloque. Una ficha armada que alguien retocó a
        mano dice una cosa en el papel y otra en sus datos, y el siguiente
        armado se lleva el retoque sin avisar. */
-    const difiere = require('./arma-ficha.js').difiereDelBloque(slug);
+    const difiere = sinArmar ? '' : require('./arma-ficha.js').difiereDelBloque(slug);
     if (difiere) mal(ficha + ': ' + difiere + ' (node _dev/arma-ficha.js ' + slug + ')');
     if (ch.length) ch.forEach(c => mal(ficha + ' · ' + nombreFicha(c.it) + ' es ' + c.por + ' de ' + c.e.banco + ' ' + c.e.i));
     const P = bloque.practica || {};
@@ -163,7 +181,8 @@ for (const slug of lista) {
       else ensayados.add(k);
     }));
     if (!ch.length) {
-      bien(ficha + ': ' + leida.items.length + ' preguntas de práctica y ninguna es del examen; ensaya ' + ensayados.size + ' de los ' + datos.size + ' datos que preguntan sus pruebas');
+      bien(ficha + ': ' + leida.items.length + ' preguntas de práctica y ninguna es del examen; ensaya ' + ensayados.size + ' de los ' + datos.size + ' datos que preguntan sus pruebas'
+        + (sinArmar ? ' (misión nacida: se leyó de su bloque, la ficha impresa todavía no está armada)' : ''));
       limpias.push({ slug, ficha, items: leida.items, vf, examen });
     }
     continue;
