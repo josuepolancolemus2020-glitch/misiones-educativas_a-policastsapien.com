@@ -775,6 +775,24 @@ Para no hacer dos veces:
   leyendo el mismo bloque. Lo escrito no se pierde.
 - Las fichas de Español que ya existen (9) no se tocan en este trabajo.
 
+**Hecho el 26 de noviembre (rama del motor de fichas, aprobado por Josué):**
+el motor de fichas existe y es un armador, `_dev/arma-ficha.js`. La forma del
+bloque quedó acordada y está en `_privado/PLANTILLA-FICHAS.md`:
+
+- **El bloque no va dentro de `contenido.js`**: va en su propio archivo,
+  `misiones/<carpeta>/js/ficha.js`, que la página de la misión no carga. Así
+  el alumno no descarga la ficha y cambiarla no obliga a resellar la misión.
+  La tanda 1 escribe ese archivo con la forma de la plantilla.
+- **La práctica de la ficha no copia el examen.** Cada pregunta de «Ponte a
+  Prueba» ensaya un dato del examen (`ensaya` nombra su `k`) con otra
+  pregunta. El armador se niega a armar una práctica copiada y lo vigila
+  `_dev/verifica-ficha-no-copia-examen.js`. Para una misión nueva esto quiere
+  decir escribir 40 preguntas de práctica además de las 80 del examen.
+- **El plan B ya no hace falta**: no habrá `_dev/arma-ficha-espanol.js`.
+- La ficha piloto fue Los Tipos de Textos, una de las 9 de Español que ya
+  existían. Las otras 8 pasan al bloque en su tanda
+  (`_privado/PLAN-FICHAS-MOTOR.md`).
+
 ---
 
 ## 5. Estimación: cuántas tandas hacen falta
