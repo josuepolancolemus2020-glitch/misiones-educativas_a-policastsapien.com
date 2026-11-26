@@ -346,7 +346,7 @@ if (require.main === module) {
     if (t.dato === 'TEXTOS') {
       let tx = { impresion: {}, diploma: [] };
       try { tx = JSON.parse(p.corre('JSON.stringify(_T())', 'textos')); } catch (e) { /* el motor no tiene textos de reserva */ }
-      if (tx.titulo !== 'La Célula' || tx.nivel !== 'Educación Básica' || !tx.impresion.acento || tx.diploma.length !== 5) fallas.push('sin TEXTOS los textos de reserva no alcanzan: ' + JSON.stringify(tx).slice(0, 120));
+      if (tx.titulo !== 'La Célula' || !tx.impresion.acento || tx.diploma.length !== 5) fallas.push('sin TEXTOS los textos de reserva no alcanzan: ' + JSON.stringify(tx).slice(0, 120));
     }
     ok('sin ' + t.dato + ': ' + (t.paso ? 'no pinta «' + t.paso + '», esconde su tarjeta y ' : '') + 'todo lo demás arranca igual', fallas.length === 0, fallas.join(' · '));
   });

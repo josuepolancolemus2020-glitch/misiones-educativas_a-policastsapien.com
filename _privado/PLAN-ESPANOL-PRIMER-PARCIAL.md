@@ -778,8 +778,10 @@ puntos 1 y 2 de arriba.
   nombran su widget y los leen por ese nombre otras herramientas
   (`verifica-mision-nueva.js`, `mide-reparto-respuestas.js`). `TEXTOS`,
   `SAVE_KEY`, `ACHIEVEMENTS`, los niveles, las sopas y las tareas tienen valor
-  de reserva; `TEXTOS` admite `nivel` para el encabezado de la hoja (de
-  reserva, «Educación Básica»). Lo único que el motor no suple es el examen.
+  de reserva. Lo único que el motor no suple es el examen. El nivel no se
+  escribe en la hoja impresa: el encabezado limpio (`js/motor-misiones.js`)
+  deja «Evaluación · Tema · Materia», así que una misma hoja sirve de 7.º a
+  11.º sin decir «Educación Básica».
   La Célula quedó igual: sus 50 formas congeladas salen idénticas. Lo prueba
   `verifica-motor-arranque.js` (quita cada dato de La Célula, uno por uno, y
   carga los nombres nuevos) y, de noche, `verifica-motor-arranque-navegador.js`.

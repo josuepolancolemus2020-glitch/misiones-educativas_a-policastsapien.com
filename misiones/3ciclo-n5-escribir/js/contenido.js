@@ -99,7 +99,6 @@ const TEXTOS={
   titulo:'Escribir por etapas',
   emoji:'📝',
   materia:'Español',
-  nivel:'III Ciclo y Bachillerato',
   confeti:['#0f766e','#4ba89f','#d97706','#f59e0b','#fde68a'],
   impresion:{acento:'#c49000',fondo:'#fef9e7'},
   rutaEtiqueta:'Secuencia',
