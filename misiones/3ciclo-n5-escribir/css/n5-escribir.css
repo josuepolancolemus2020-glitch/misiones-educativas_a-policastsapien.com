@@ -509,6 +509,28 @@ body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
 .am-raiz .ce-flecha-punta { fill: #1f2937; }
 
 
+/* ===== Blancos de toque de 44 px =====
+   El CSS de la plantilla trae los botones de las actividades en 32 y 38 px
+   de alto, las opciones en 32, las flechas de «Ordena» en 23 y las
+   respuestas del examen en pantalla en 19. Un dedo acierta sin mirar a
+   partir de 44, que es la regla del proyecto. Aquí se suben, en esta
+   misión, sin tocar la letra. La sopa de letras no entra: sus casillas
+   dependen del ancho del teléfono, y se puede tocar la primera letra y la
+   última en vez de deslizar. */
+.btn,.eval-controls .btn,.cmp-opt,.qz-opt,.wb-item,.drop-item,.tg-sel,.eval-mode-btn,.cred-btn{min-height:44px;}
+.cmp-opt{min-width:44px;}
+/* Los botones del examen: js/motor-misiones.js les pone 32 px con su propia
+   regla; aquí se le gana con el id de la sección. */
+#s-evaluacion .eval-controls .btn{min-height:44px;}
+.btn,.cmp-opt,.wb-item,.drop-item{display:inline-flex;align-items:center;justify-content:center;}
+.sort-arrows{flex-direction:row;gap:6px;}
+.sort-arrow{min-width:44px;min-height:44px;font-size:1rem;}
+.eval-tf-opt,.eval-mc-opt{min-height:44px;cursor:pointer;}
+.eval-tf-opt input,.eval-mc-opt input{width:22px;height:22px;flex-shrink:0;}
+.eval-cp-input,.eval-match-select{min-height:44px;}
+.eval-match-select{min-width:56px;}
+.xp-back-btn,.xp-share-wa{min-height:44px;min-width:44px;display:inline-flex;align-items:center;justify-content:center;}
+
 /* ===== Lo propio de esta misión: su laboratorio ===== */
 /* La etiqueta que dice para qué grado es cada contenido. Lleva borde y
    texto: no se lee solo por el color. */
