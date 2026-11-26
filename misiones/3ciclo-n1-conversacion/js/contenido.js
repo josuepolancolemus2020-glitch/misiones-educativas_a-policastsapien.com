@@ -71,7 +71,10 @@
        preguntan. Dónde se habla cada lengua de Honduras y cuántas
        personas la hablan, tampoco: solo van sus nombres.
      · Las funciones del lenguaje (Media) van con su nombre y nada más:
-       sus definiciones están pendientes de una fuente. El examen no
+       sus definiciones están pendientes de una fuente. Los seis
+       elementos de la comunicación, igual: la tarjeta «Para Media» los
+       nombra y no los explica con palabras nuestras (decisión de Josué
+       al revisar el PR 60). El examen no
        pregunta nada que sea solo de Media, porque una forma le puede
        tocar a un alumno de 7.º.
      · Qué hace el coordinador de una asamblea no lo describe el DCNB: lo

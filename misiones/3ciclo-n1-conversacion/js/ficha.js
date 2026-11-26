@@ -21,6 +21,9 @@
        · pareados de aplicar: el término se une con lo que pasa en una
          escena corta (Karla en la dirección), no con su definición.
      Lo vigila `_dev/verifica-ficha-no-copia-examen.js`.
+     Las 40 ensayan, una por una, las 40 del banco de las formas 1 a 30
+     (los cuatro bancos de siempre de `contenido.js`), que son las que el
+     alumno tiene más cerca: ninguna se queda sin su práctica.
 
    ► De dónde sale lo que afirma: de las mismas fuentes que la misión
      (la programación de 7.º a 9.º, PDF pp. 7, 15 y 23, y el DCNB, pp. 84
@@ -160,14 +163,14 @@ const FICHA = {
 
   practica: {
     completar: [
-      { q: 'Cruzar los brazos o encogerse de hombros son ___ que comunican sin palabras.', a: 'gestos', ensaya: 'cp-gesto' },
+      { q: 'Levantar las cejas de sorpresa o apretar los labios de enojo son expresiones del ___.', a: 'rostro', ensaya: 'cp-rostro' },
       { q: 'Cuando la voz sube al final de «¿Vienes mañana?», lo que cambia es la ___.', a: 'entonación', ensaya: 'cp-entonacion' },
-      { q: 'Si dices «¡HOY es la entrega!» marcando fuerte la primera palabra, le pones ___ a «hoy».', a: 'énfasis', ensaya: 'cp-enfasis' },
+      { q: 'Para preparar la asamblea, en el grado de Kenia nombraron una coordinadora, dos organizadores y un comité de ___.', a: 'planeamiento', ensaya: 'cp-planeamiento' },
       { q: 'En «Llegó el bus. (Silencio). Súbanse todos», el silencio entre las dos ideas es una ___.', a: 'pausa', ensaya: 'cp-pausa' },
-      { q: 'Tu tío te llama por teléfono: él es el hablante y tú eres el ___.', a: 'oyente', ensaya: 'cp-oyente' },
+      { q: 'Tu prima creció lejos y dice un término que en tu aldea nadie conoce, porque es propio de su región: es un ___.', a: 'regionalismo', ensaya: 'cp-regionalismo' },
       { q: 'En el circuito del habla, «mañana no hay clases» es el ___ que te da tu maestra.', a: 'mensaje', ensaya: 'cp-mensaje' },
       { q: 'Decir «buenas noches, que descansen» al salir de una visita es ___.', a: 'despedirse', ensaya: 'cp-despedirse' },
-      { q: 'Con tus primos hablas con confianza: usas el nivel ___.', a: 'familiar', ensaya: 'cp-familiar' },
+      { q: 'La enfermera da una charla sobre el lavado de manos: ella expone y los alumnos la ___.', a: 'escuchan', ensaya: 'cp-escuchan' },
       { q: 'Quien da un aviso sin palabras de más habla con ___.', a: 'concisión', ensaya: 'cp-concision' },
       { q: 'En el trabajo de equipo hablas cuando te toca: respetas tu ___.', a: 'turno', ensaya: 'cp-turno' }
     ],
@@ -190,7 +193,7 @@ const FICHA = {
       { q: 'Vas a dar una charla sobre el reciclaje. ¿Qué te sirve como material de apoyo?', o: ['un cartel con dibujos', 'hablar más rápido', 'un chiste largo', 'llegar tarde'], a: 0, ensaya: 'mc-material' },
       { q: '«El agua pasa de líquido a gas: se evapora». Esa oración usa el lenguaje…', o: ['literario', 'científico-técnico', 'vulgar', 'publicitario'], a: 1, ensaya: 'mc-tecnico' },
       { q: 'Tu hermanito pregunta qué es un ecosistema y le dices: «Es como el monte, con sus plantas y sus animales». Eso es explicar con…', o: ['prisa', 'enojo', 'sencillez', 'desgano'], a: 2, ensaya: 'mc-sencillez' },
-      { q: 'En Matemáticas dices «residuo». En la casa, con palabras de todos los días, sería…', o: ['lo que se reparte', 'lo que sobra', 'el que reparte', 'lo que le toca a cada uno'], a: 1, ensaya: 'mc-cociente' },
+      { q: 'En la casa dices: «Repartimos 20 tortillas entre 5 y a cada quien le tocaron 4». En la clase de Matemáticas, ese 4 se llama…', o: ['el dividendo', 'el divisor', 'el cociente', 'el residuo'], a: 2, ensaya: 'mc-cociente' },
       { q: 'Además del español, ¿cuál de estas es una lengua de Honduras?', o: ['el francés', 'el chino', 'el tawaka', 'el alemán'], a: 2, ensaya: 'mc-pech' },
       { q: 'El coordinador le dio la palabra a Josué y tú también quieres opinar. ¿Qué haces?', o: ['hablar encima de él', 'levantar la mano y aguardar', 'salirte del aula', 'reírte'], a: 1, ensaya: 'mc-esperar' },
       { q: '«Ese río viene bravo, mejor no se meta». Esa manera de hablar es la…', o: ['técnica', 'literaria', 'periodística', 'popular'], a: 3, ensaya: 'mc-popular' }
@@ -198,9 +201,9 @@ const FICHA = {
     /* Pareados de aplicar: el término se une con lo que pasa en la escena.
        El examen lo une con su definición o con otro ejemplo. */
     pareados: {
-      intro: '<div class="historia"><b>Lee esta escena:</b> Karla toca la puerta de la dirección: «Perdone la molestia». Entra, ve a los ojos a la licenciada y dice: «Buenos días, licenciada. Vengo por mi constancia». La licenciada le responde y se la entrega. «Se lo agradezco mucho», dice Karla. Y al salir: «Con permiso, que pase buen día».</div>',
+      intro: '<div class="historia"><b>Lee esta escena:</b> Karla toca la puerta de la dirección: «Perdone la molestia». En la pared hay un afiche, «¡Matricúlate ya! ¡Últimos cupos!», y un cuadro con un verso: «El viento peinaba los pinos dormidos». Karla entra, se queda de pie, derecha, frente al escritorio, ve a los ojos a la licenciada y dice: «Buenos días, licenciada. Vengo por mi constancia». La licenciada le responde y se la entrega. «Se lo agradezco mucho», dice Karla. Y al salir: «Con permiso, que pase buen día».</div>',
       columnaA: 'Columna A',
-      columnaB: 'Columna B: lo que pasa en la escena',
+      columnaB: 'Columna B: lo que se ve o se oye en la escena',
       anchoA: '30%',
       pares: [
         { term: 'Saludo', def: '«Buenos días, licenciada»', ensaya: 'pr-saludo' },
@@ -209,9 +212,9 @@ const FICHA = {
         { term: 'Disculpa', def: '«Perdone la molestia»', ensaya: 'pr-disculpa' },
         { term: 'Mirada', def: 'Karla ve a los ojos a quien le habla', ensaya: 'pr-mirada' },
         { term: 'Código', def: 'El español, que las dos comparten', ensaya: 'pr-codigo' },
-        { term: 'Intención', def: 'Conseguir su constancia: a eso vino Karla', ensaya: 'pr-intencion' },
-        { term: 'Interlocutor', def: 'La licenciada, con quien Karla conversa', ensaya: 'pr-interlocutor' },
-        { term: 'Formalidad', def: 'Karla trata de «usted» porque está en una oficina', ensaya: 'pr-formalidad' },
+        { term: 'Postura', def: 'Karla se queda de pie, derecha, frente al escritorio', ensaya: 'pr-postura' },
+        { term: 'Literario', def: 'El verso del cuadro: «El viento peinaba los pinos dormidos»', ensaya: 'pr-literario' },
+        { term: 'Publicitario', def: 'El afiche: «¡Matricúlate ya! ¡Últimos cupos!»', ensaya: 'pr-publicitario' },
         { term: 'Diálogo', def: 'Karla habla, la licenciada responde, y así se alternan', ensaya: 'pr-dialogo' }
       ]
     }
