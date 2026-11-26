@@ -62,7 +62,7 @@ function go(id){sfx('click');document.querySelectorAll('.sec').forEach(s=>s.clas
 // ===================== FLASHCARD DATA =====================
 const fcData=[
   {w:'Tipos de texto',a:'📚 Son las <strong>distintas clases de textos</strong> que existen según su <strong>propósito comunicativo</strong> (para qué se escriben). Los principales son <strong>narrativo, descriptivo, expositivo, argumentativo, instructivo y dialogado</strong>.'},
-  {w:'Texto narrativo',a:'📖 <strong>Cuenta hechos o historias</strong> que les suceden a unos personajes en un tiempo y un lugar. Tiene <strong>inicio, nudo y desenlace</strong>. Ejemplos: cuento, novela, fábula, leyenda y noticia.'},
+  {w:'Texto narrativo',a:'📖 <strong>Cuenta hechos o historias</strong> que les suceden a unos personajes en un tiempo y un lugar. Tiene <strong>inicio, nudo y desenlace</strong>. Ejemplos: cuento, novela, fábula y leyenda.'},
   {w:'Texto descriptivo',a:'🖼️ <strong>Describe cómo son</strong> personas, animales, lugares u objetos. Usa muchos <strong>adjetivos</strong> y responde a "¿cómo es?". Ejemplos: un retrato, un paisaje, la descripción de un objeto.'},
   {w:'Texto expositivo',a:'📊 <strong>Informa y explica</strong> un tema de forma clara y objetiva, sin dar opiniones. Ejemplos: un artículo de enciclopedia, un texto de ciencias o un informe. También se llama <strong>informativo</strong>.'},
   {w:'Texto argumentativo',a:'⚖️ <strong>Defiende una opinión (tesis)</strong> con razones o argumentos para <strong>convencer</strong> al lector. Ejemplos: un ensayo, un artículo de opinión o una reseña.'},
@@ -261,11 +261,15 @@ const identifyTaskDB=[
   {s:'Los textos literarios buscan crear belleza; los no literarios tienen una función práctica.',type:'Literario vs. no literario'},
   {s:'Los conectores unen las ideas de un texto: de tiempo, de orden o de causa.',type:'Los conectores'},
 ];
+// La noticia no está en esta tabla a propósito. Pedía escribir su «tipo» y la
+// clave decía «Expositivo/Narrativo»: dos respuestas para una casilla, y sin
+// fuente que diga cuál. La misión enseña de la noticia lo que no tiene duda
+// (es un texto no literario, que informa un hecho real) y no la clasifica más.
 const classifyTaskDB=[
   {w:'Cuento',gen:'Narrativo',n:'Literario',g:'Contar',t:'Relata una historia con personajes'},
   {w:'Receta',gen:'Instructivo',n:'No literario',g:'Indicar pasos',t:'Explica cómo preparar un plato'},
   {w:'Poema',gen:'Poético',n:'Literario',g:'Emocionar',t:'Expresa sentimientos en verso'},
-  {w:'Noticia',gen:'Expositivo/Narrativo',n:'No literario',g:'Informar',t:'Informa sobre un hecho real'},
+  {w:'Leyenda',gen:'Narrativo',n:'Literario',g:'Contar',t:'Relata una historia, como la de El Cadejo'},
   {w:'Ensayo',gen:'Argumentativo',n:'No literario',g:'Convencer',t:'Defiende una opinión con razones'},
   {w:'Retrato',gen:'Descriptivo',n:'Puede ser literario',g:'Describir',t:'Dice cómo es una persona'},
   {w:'Obra de teatro',gen:'Dialogado',n:'Literario',g:'Representar',t:'Historia contada con diálogos'},
@@ -741,20 +745,24 @@ function printEvalCrit(){
 }
 
 // ===================== LABORATORIO DE TEXTOS =====================
+// Dos cosas que este Laboratorio ya no dice (eran datos dudosos, anotados al
+// revisar el banco grande): la noticia como ejemplo de texto narrativo, y el
+// catálogo y el anuncio como textos descriptivos. El examen pregunta que un
+// anuncio quiere convencer: llamarlo descriptivo aquí lo contradecía.
 const parteData={
   narrativo:{
     nombre:'Texto narrativo',icon:'📖',
     queEs:{title:'¿Qué es?',info:'• <strong>Cuenta hechos o historias</strong> que les suceden a unos personajes<br>• Los hechos ocurren en un <strong>tiempo</strong> y un <strong>lugar</strong><br>• Su propósito es <strong>contar y entretener</strong><br>• Puede ser real (una anécdota) o imaginario (un cuento)<br>• Es un tipo de texto muy común en la literatura'},
     estructura:{title:'Estructura',info:'• <strong>Inicio</strong>: se presentan los personajes y el lugar<br>• <strong>Nudo</strong>: aparece el conflicto o problema<br>• <strong>Desenlace</strong>: se resuelve la historia<br>• Interviene un <strong>narrador</strong>, que es la voz que cuenta<br>• Hay <strong>personajes</strong> principales y secundarios'},
     marcas:{title:'Cómo reconocerlo',info:'• <strong>Verbos de acción</strong>, casi siempre en <strong>pasado</strong><br>• <strong>Conectores de tiempo</strong>: después, luego, entonces, al final<br>• Presencia de un <strong>narrador</strong> y personajes<br>• Los hechos se ordenan en el <strong>tiempo</strong><br>• Responde a: "¿qué pasó?"'},
-    ejemplos:{title:'Ejemplos',info:'• El <strong>cuento</strong><br>• La <strong>novela</strong><br>• La <strong>fábula</strong> (deja una enseñanza)<br>• La <strong>leyenda</strong> y el <strong>mito</strong><br>• La <strong>noticia</strong> y la <strong>anécdota</strong>'}
+    ejemplos:{title:'Ejemplos',info:'• El <strong>cuento</strong><br>• La <strong>novela</strong><br>• La <strong>fábula</strong> (deja una enseñanza)<br>• La <strong>leyenda</strong> y el <strong>mito</strong><br>• La <strong>anécdota</strong>'}
   },
   descriptivo:{
     nombre:'Texto descriptivo',icon:'🖼️',
     queEs:{title:'¿Qué es?',info:'• <strong>Describe cómo son</strong> personas, animales, lugares u objetos<br>• Es como "pintar con palabras"<br>• Su propósito es que el lector <strong>imagine</strong> lo descrito<br>• Suele acompañar a otros tipos de texto<br>• Responde a la pregunta "¿cómo es?"'},
     estructura:{title:'Estructura',info:'• Se suele ir de lo <strong>general a lo particular</strong><br>• Puede seguir un <strong>orden en el espacio</strong> (de arriba abajo, de fuera adentro)<br>• Primero se nombra el objeto y luego sus <strong>cualidades</strong><br>• No tiene una acción que avance en el tiempo<br>• Se organiza por detalles'},
     marcas:{title:'Cómo reconocerlo',info:'• Abundancia de <strong>adjetivos</strong> (alto, brillante, suave)<br>• Verbos en <strong>presente</strong> o copulativos (ser, estar, parecer)<br>• Uso de <strong>comparaciones</strong> ("blanco como la nieve")<br>• No cuenta hechos, solo cualidades<br>• Responde a: "¿cómo es?"'},
-    ejemplos:{title:'Ejemplos',info:'• El <strong>retrato</strong> de una persona<br>• La descripción de un <strong>paisaje</strong><br>• La descripción de un <strong>objeto</strong> o animal<br>• Los <strong>catálogos</strong> y anuncios<br>• Partes descriptivas dentro de un cuento'}
+    ejemplos:{title:'Ejemplos',info:'• El <strong>retrato</strong> de una persona<br>• La descripción de un <strong>paisaje</strong><br>• La descripción de un <strong>objeto</strong> o animal<br>• Partes descriptivas dentro de un cuento'}
   },
   expositivo:{
     nombre:'Texto expositivo',icon:'📊',
