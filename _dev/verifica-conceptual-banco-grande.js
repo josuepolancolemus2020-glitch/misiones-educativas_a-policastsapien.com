@@ -136,7 +136,7 @@ conGrande.forEach(slug => {
   const oro = L.leerOro(slug);
   /* Una misión nueva no tiene formas de antes ni claves impresas: espera
      en _nacidas.json a que Josué apruebe sus preguntas. */
-  if (!oro && L.leerNacidas()[slug]) bien('nació con sus ' + total + ' formas y todavía no tiene referencia: espera el visto bueno de Josué (_nacidas.json)');
+  if (!oro && L.leerNacidas()[slug]) bien('nació con sus ' + total + ' formas y todavía no tiene referencia: espera el visto bueno de Josué (lista de nacidas)');
   else if (!oro || !oro.pruebas.conceptual) mal('no tiene referencia de sus formas de antes (_dev/formas-oro/)');
   else {
     const movidas = [];
