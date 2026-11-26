@@ -50,7 +50,10 @@ const PROCERES = [
     hizo: [
       'Unió a los pueblos lencas para defender su tierra de los conquistadores.',
       'Resistió desde el Peñol de Cerquín, un cerro que le servía de fortaleza.',
-      'Murió peleando, hacia 1537, y nunca se supo dónde quedó enterrado.'
+      /* Decía «Murió peleando». Cómo murió se discute (la tradición cuenta una
+         emboscada y otros relatos, un combate) y en `_dev/` no hay fuente que
+         lo zanje: queda lo que nadie discute, el año aproximado y la tumba. */
+      'Murió hacia 1537, y nunca se supo dónde quedó enterrado.'
     ],
     porque: 'Es el Héroe Nacional porque defendió a su pueblo cuando nadie más podía hacerlo. No fundó un país ni firmó un papel: peleó por la gente que ya vivía aquí, y por eso su nombre está en la moneda y en un departamento entero.',
     dato: 'Es el único hondureño que se nombra en el Himno Nacional, en la tercera estrofa.',
@@ -75,7 +78,10 @@ const PROCERES = [
     clave: 'morazan', nombre: 'Francisco Morazán', apodo: 'Paladín de la Unión Centroamericana', emoji: '⚔️',
     clase: 'prócer',
     nota: 'También se le llama héroe, y con razón: peleó por su idea hasta morir. Las dos formas son correctas.',
-    epoca: 'La República Federal, 1824-1842',
+    /* Decía «1824-1842». 1842 es el año en que murió él, no el final de la
+       Federación, y los años de la Federación no están en ninguna fuente del
+       repositorio: la época se nombra sin fecharla. */
+    epoca: 'La República Federal',
     nacio: 'Nació en Tegucigalpa el 3 de octubre de 1792',
     papel: 'Presidente de la República Federal de Centro América',
     hizo: [
@@ -83,7 +89,9 @@ const PROCERES = [
       'Impulsó la educación pública y quiso quitarles privilegios a unos pocos.',
       'Peleó hasta el final por mantener unidas a las cinco naciones. No lo consiguió.'
     ],
-    porque: 'Es el hondureño más conocido fuera de Honduras, y no por ganar: por no rendirse. Su idea (que Centroamérica valía más junta que repartida) sigue discutiéndose hoy.',
+    /* Decía «Es el hondureño más conocido fuera de Honduras»: un superlativo
+       que nadie midió. Se queda la razón, que es lo que se enseña. */
+    porque: 'No se le recuerda por ganar: se le recuerda por no rendirse. Su idea (que Centroamérica valía más junta que repartida) sigue discutiéndose hoy.',
     dato: 'Nació un 3 de octubre y murió un 15 de septiembre, el día de la Independencia, en 1842.',
     fecha: { dia: '3 de octubre', que: 'Natalicio de Francisco Morazán' }
   },

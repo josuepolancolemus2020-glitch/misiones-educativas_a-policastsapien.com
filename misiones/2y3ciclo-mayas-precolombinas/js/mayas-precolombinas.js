@@ -180,7 +180,7 @@ function nextRoute(){sfx('click');currentRouteIdx=(currentRouteIdx+1)%routeSets.
 const neuronPartes=[
   {desc:'La gran ciudad maya de Honduras, Patrimonio de la Humanidad',ans:'Copán',opts:['Copán','Tikal','Tenochtitlan','Cusco']},
   {desc:'La escalera de Copán con el texto maya más largo',ans:'Escalinata Jeroglífica',opts:['Escalinata Jeroglífica','Altar Q','Estela A','Juego de pelota']},
-  {desc:'El número que los mayas conocían y pocas culturas lograron',ans:'El cero',opts:['El cero','El millón','El número pi','La fracción']},
+  {desc:'El número que fue un gran avance de la numeración maya',ans:'El cero',opts:['El cero','El millón','El número pi','La fracción']},
   {desc:'El libro sagrado de los mayas quichés',ans:'Popol Vuh',opts:['Popol Vuh','Códice Real','Altar Q','Chilam Balam']},
   {desc:'El fundador de la dinastía de Copán',ans:"Yax K'uk' Mo'",opts:["Yax K'uk' Mo'",'18 Conejo','Moctezuma','Atahualpa']},
   {desc:'El pueblo indígena más numeroso de Honduras',ans:'Los lencas',opts:['Los lencas','Los chortís','Los pech','Los tawahkas']},
@@ -281,8 +281,8 @@ const completeTaskDB=[
 const explainQuestions=[
   {q:'¿Qué significa «precolombino» y de dónde viene la palabra?',ans:'Es todo lo que existió en América antes de la llegada de Cristóbal Colón en 1492. Viene de «pre» (antes) y «colombino» (de Colón).'},
   {q:'¿Quiénes fueron los mayas y dónde vivieron?',ans:'Una gran civilización de Mesoamérica (sur de México, Guatemala, Belice y el occidente de Honduras y El Salvador). No fueron un solo reino, sino ciudades-estado como Tikal, Palenque y Copán.'},
-  {q:'¿Por qué Copán es importante para Honduras?',ans:'Porque fue una de las ciudades mayas más brillantes: tiene la Escalinata Jeroglífica, estelas y el Altar Q con sus 16 reyes. Hoy es Parque Arqueológico y Patrimonio de la Humanidad (UNESCO).'},
-  {q:'Menciona tres logros de los mayas y explica uno.',ans:'Escritura jeroglífica, numeración con el cero, calendario preciso, astronomía y arquitectura. Por ejemplo, su numeración usaba puntos y barras y contaba de 20 en 20, e incluía el cero, un avance que pocas culturas lograron.'},
+  {q:'¿Por qué Copán es importante para Honduras?',ans:'Porque fue una gran ciudad maya: tiene la Escalinata Jeroglífica, estelas y el Altar Q con sus 16 reyes. Hoy es Parque Arqueológico y Patrimonio de la Humanidad (UNESCO).'},
+  {q:'Menciona tres logros de los mayas y explica uno.',ans:'Escritura jeroglífica, numeración con el cero, calendario preciso, astronomía y arquitectura. Por ejemplo, su numeración usaba puntos y barras y contaba de 20 en 20, e incluía el cero, que fue un gran avance.'},
   {q:'¿Qué pueblos precolombinos habitaban Honduras además de los mayas?',ans:'Los lencas (los más numerosos, en el centro y occidente), los chortís (occidente, emparentados con los mayas), y los tolupanes, pech y tawahkas en los bosques del centro y oriente.'},
 ];
 let ansVisible=false;
@@ -447,7 +447,8 @@ const evalPRBank=[
 //   quiere decir «precolombino», de 1492, de que la ciudad ya estaba
 //   abandonada cuando llegó Colón ni de la lengua de su bisabuela.
 // · Las chinampas se preguntan como «islas donde cultivaban los aztecas»: la
-//   misión dice «flotantes», y no flotaban.
+//   misión decía «flotantes», y no flotaban. El Laboratorio ya no lo dice; la
+//   guía de la prueba crítica (`cau-lago`) lo conserva porque está congelada.
 // Lo comprueba `_dev/verifica-examen-sin-pistas.js`, y cuántas formas hay y
 // cuánto de cada forma nueva sale de aquí, `_dev/verifica-conceptual-banco-grande.js`.
 const evalTFBankNuevo=[
@@ -698,6 +699,10 @@ function printEvalCrit(){
 }
 
 // ===================== LABORATORIO DEL MUNDO PRECOLOMBINO =====================
+/* El Laboratorio decía que las chinampas eran «islas flotantes» (no flotaban)
+   y que mayas, aztecas e incas «son las más conocidas»; las Tareas, que «pocas
+   culturas lograron» el cero y que Copán fue de las ciudades «más brillantes».
+   Son valoraciones sin fuente en el repositorio: se dicen sin el superlativo. */
 const parteData={
   mayas:{
     nombre:'Los mayas',icon:'🏛️',
@@ -729,10 +734,10 @@ const parteData={
   },
   america:{
     nombre:'Las civilizaciones de América',icon:'🌎',
-    estructura:{title:'¿Qué es?',info:'• Las <strong>grandes civilizaciones</strong> precolombinas del continente<br>• Mayas, <strong>aztecas</strong> e <strong>incas</strong> son las más conocidas<br>• Todas florecieron antes de 1492'},
+    estructura:{title:'¿Qué es?',info:'• Las <strong>grandes civilizaciones</strong> precolombinas del continente<br>• Entre ellas están los mayas, los <strong>aztecas</strong> y los <strong>incas</strong><br>• Todas florecieron antes de 1492'},
     funcion:{title:'Características',info:'• <strong>Aztecas:</strong> centro de México, capital Tenochtitlan<br>• <strong>Incas:</strong> los Andes, capital Cusco<br>• <strong>Mayas:</strong> Mesoamérica, ciudades como Copán'},
     ubicacion:{title:'Ejemplos',info:'• <strong>Tenochtitlan</strong> se construyó sobre un lago<br>• <strong>Machu Picchu</strong>, ciudad inca en la montaña<br>• <strong>Copán</strong>, la joya maya de Honduras'},
-    dato:{title:'Dato curioso',info:'• Los incas construían caminos de <strong>miles de kilómetros</strong><br>• Los aztecas cultivaban en <strong>islas flotantes</strong> (chinampas)<br>• América domesticó el <strong>maíz, el cacao y la papa</strong>'}
+    dato:{title:'Dato curioso',info:'• Los incas construían caminos de <strong>miles de kilómetros</strong><br>• Los aztecas cultivaban en islas llamadas <strong>chinampas</strong><br>• América domesticó el <strong>maíz, el cacao y la papa</strong>'}
   }
 };
 let labParte='mayas',labAspecto='estructura';

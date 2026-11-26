@@ -69,7 +69,7 @@ const fcData=[
   {w:'El Escudo Nacional',a:'🛡️ Un <strong>triángulo equilátero</strong> con un volcán entre dos torres, el arco iris y el sol naciente, dentro de un óvalo.'},
   {w:'El Himno Nacional',a:'🎵 Letra de <strong>Augusto C. Coello</strong> y música de <strong>Carlos Hartling</strong>. Tiene un <strong>coro y siete estrofas</strong>.'},
   {w:'La séptima estrofa',a:'\u270B La que se canta en los actos: es el <strong>juramento</strong> de defender la Bandera y la patria.'},
-  {w:'El pino',a:'🌲 El <strong>árbol nacional</strong> desde 1928. Honduras tiene el mayor bosque de pino de Centroamérica.'},
+  {w:'El pino',a:'🌲 El <strong>árbol nacional</strong> desde 1928. Es el árbol que más abunda en las montañas del país.'},
   {w:'La orquídea',a:'🌺 La <strong>flor nacional</strong> desde 1969: la <em>Rhyncholaelia digbyana</em>. Antes lo era la rosa, que no es de aquí.'},
   {w:'La guara roja',a:'🦜 El <strong>ave nacional</strong> desde 1993 (<em>Ara macao</em>). Vive en Copán y en La Mosquitia.'},
   {w:'El venado cola blanca',a:'🦌 El <strong>mamífero nacional</strong> desde 1993, el mismo día que la guara roja.'},
@@ -109,15 +109,22 @@ function checkQz(){if(qzSel<0)return fb('fbQz','Selecciona una respuesta.',false
 function resetQz(){sfx('click');qzIdx=0;qzSel=-1;qzDone=false;showQz();document.getElementById('fbQz').classList.remove('show');}
 
 // ===================== CLASIFICACIÓN =====================
+/* Aquí y en el Reto salían «El mapa» como símbolo menor y un «Día de la Guara
+   Roja» entre las fechas. Ninguna fuente del repositorio acredita que el mapa
+   sea símbolo patrio ni que ese día exista (en `_dev/leyes/` no hay ley de
+   símbolos): salieron de las actividades. Tampoco se dice ya que Honduras
+   tenga «el mayor bosque de pino de Centroamérica» ni en qué parte del Escudo
+   va la cordillera. Lo que queda en los bancos del examen y de la prueba
+   crítica no se toca: sus formas están congeladas con clave impresa. */
 const classGroups=[
   {label:['Símbolo mayor','Símbolo menor'],headA:'🎖️ Símbolo mayor',headB:'🌿 Símbolo menor',colA:'mayor',colB:'menor',
-   words:[{w:'La Bandera',t:'mayor'},{w:'El pino',t:'menor'},{w:'El Escudo',t:'mayor'},{w:'La orquídea',t:'menor'},{w:'El Himno Nacional',t:'mayor'},{w:'La guara roja',t:'menor'},{w:'El venado cola blanca',t:'menor'},{w:'El mapa de Honduras',t:'menor'}]},
+   words:[{w:'La Bandera',t:'mayor'},{w:'El pino',t:'menor'},{w:'El Escudo',t:'mayor'},{w:'La orquídea',t:'menor'},{w:'El Himno Nacional',t:'mayor'},{w:'La guara roja',t:'menor'},{w:'El venado cola blanca',t:'menor'}]},
   {label:['Está en la Bandera','Está en el Escudo'],headA:'🏳️ En la Bandera',headB:'🛡️ En el Escudo',colA:'ban',colB:'esc',
    words:[{w:'Cinco estrellas',t:'ban'},{w:'Un volcán',t:'esc'},{w:'Franja blanca en medio',t:'ban'},{w:'Dos torres',t:'esc'},{w:'Azul turquesa',t:'ban'},{w:'El arco iris',t:'esc'},{w:'Tres franjas',t:'ban'},{w:'Cornucopias',t:'esc'},{w:'Aljabas con flechas',t:'esc'},{w:'Robles y pinos',t:'esc'}]},
   {label:['Prócer o héroe','No es prócer'],headA:'🏅 Prócer o héroe',headB:'🚫 No es prócer',colA:'pro',colB:'no',
    words:[{w:'Lempira',t:'pro'},{w:'Cristóbal Colón',t:'no'},{w:'Francisco Morazán',t:'pro'},{w:'Carlos Hartling',t:'no'},{w:'José Cecilio del Valle',t:'pro'},{w:'Pedro de Alvarado',t:'no'},{w:'José Trinidad Cabañas',t:'pro'},{w:'Hernán Cortés',t:'no'},{w:'Dionisio de Herrera',t:'pro'},{w:'William Walker',t:'no'}]},
   {label:['Fecha de septiembre','Otro mes del año'],headA:'📅 En septiembre',headB:'🗓️ En otro mes',colA:'sep',colB:'otro',
-   words:[{w:'Día de la Bandera',t:'sep'},{w:'Día de Lempira',t:'otro'},{w:'Independencia de Centroamérica',t:'sep'},{w:'Día del Estudiante',t:'otro'},{w:'Día del Niño Hondureño',t:'sep'},{w:'Día de las Fuerzas Armadas',t:'otro'},{w:'Día del Maestro Hondureño',t:'sep'},{w:'Día de la Guara Roja',t:'otro'}]},
+   words:[{w:'Día de la Bandera',t:'sep'},{w:'Día de Lempira',t:'otro'},{w:'Independencia de Centroamérica',t:'sep'},{w:'Día del Estudiante',t:'otro'},{w:'Día del Niño Hondureño',t:'sep'},{w:'Día de las Fuerzas Armadas',t:'otro'},{w:'Día del Maestro Hondureño',t:'sep'}]},
 ];
 let currentClassGroupIdx=0,clsSelectedWord=null;
 function buildClass(){const group=classGroups[currentClassGroupIdx];document.getElementById('col-left-head').textContent=group.headA;document.getElementById('col-right-head').textContent=group.headB;const bank=document.getElementById('clsBank');bank.innerHTML='';clsSelectedWord=null;document.getElementById('items-left').innerHTML='';document.getElementById('items-right').innerHTML='';_shuffle([...group.words]).forEach(w=>{const el=document.createElement('div');el.className='wb-item';el.textContent=w.w;el.dataset.t=w.t;el.onclick=()=>{document.querySelectorAll('.wb-item').forEach(i=>i.classList.remove('sel-word'));el.classList.add('sel-word');clsSelectedWord=el;sfx('click');};bank.appendChild(el);});['col-left','col-right'].forEach(colId=>{const col=document.getElementById(colId);col.onclick=(e)=>{if(!clsSelectedWord||e.target.classList.contains('drop-item'))return;const targetId=colId==='col-left'?'items-left':'items-right';const wordsCol=document.getElementById(targetId);const item=document.createElement('div');item.className='drop-item';item.textContent=clsSelectedWord.textContent;item.dataset.t=clsSelectedWord.dataset.t;const original=clsSelectedWord;item.onclick=(ev)=>{ev.stopPropagation();if(clsSelectedWord!==null){col.click();}else{document.getElementById('clsBank').appendChild(original);original.classList.remove('sel-word');item.remove();if(typeof sfx==='function')sfx('click');}};wordsCol.appendChild(item);clsSelectedWord.remove();clsSelectedWord=null;sfx('click');};});}
@@ -226,7 +233,7 @@ function resetEnfer(){sfx('click');enferIdx=0;showEnfer();}
 // ===================== RETO FINAL =====================
 const retoPairs=[
   {label:['Símbolo mayor','Símbolo menor'],btnA:'🎖️ Mayor',btnB:'🌿 Menor',colA:'mayor',colB:'menor',
-   words:[{w:'La Bandera',t:'mayor'},{w:'El pino',t:'menor'},{w:'El Escudo',t:'mayor'},{w:'La orquídea',t:'menor'},{w:'El Himno',t:'mayor'},{w:'La guara roja',t:'menor'},{w:'El Venado',t:'menor'},{w:'El mapa',t:'menor'}]},
+   words:[{w:'La Bandera',t:'mayor'},{w:'El pino',t:'menor'},{w:'El Escudo',t:'mayor'},{w:'La orquídea',t:'menor'},{w:'El Himno',t:'mayor'},{w:'La guara roja',t:'menor'},{w:'El Venado',t:'menor'}]},
   {label:['Prócer o héroe','No es prócer'],btnA:'🏅 Prócer',btnB:'🚫 No lo es',colA:'pro',colB:'no',
    words:[{w:'Lempira',t:'pro'},{w:'Cristóbal Colón',t:'no'},{w:'Morazán',t:'pro'},{w:'Carlos Hartling',t:'no'},{w:'José Cecilio del Valle',t:'pro'},{w:'Pedro de Alvarado',t:'no'},{w:'José Trinidad Cabañas',t:'pro'},{w:'Hernán Cortés',t:'no'},{w:'Dionisio de Herrera',t:'pro'},{w:'William Walker',t:'no'}]},
   {label:['En la Bandera','En el Escudo'],btnA:'🏳️ Bandera',btnB:'🛡️ Escudo',colA:'ban',colB:'esc',
@@ -270,7 +277,7 @@ const classifyTaskDB=[
   {w:'La Bandera Nacional',gen:'Tres franjas y cinco estrellas azul turquesa',n:'Símbolo mayor',g:'Decreto del 16 de febrero de 1866',t:'Se le rinde homenaje el 1 de septiembre'},
   {w:'El Escudo Nacional',gen:'Triángulo con un volcán entre dos torres',n:'Símbolo mayor',g:'Decreto del 3 de octubre de 1825',t:'Lleva la fecha 15 de septiembre de 1821'},
   {w:'El Himno Nacional',gen:'Un coro y siete estrofas',n:'Símbolo mayor',g:'Oficializado en 1915',t:'Letra de Augusto C. Coello y música de Carlos Hartling'},
-  {w:'El pino',gen:'El árbol que más abunda en las montañas del país',n:'Símbolo menor',g:'Declarado árbol nacional en 1928',t:'Honduras tiene el mayor bosque de pino de Centroamérica'},
+  {w:'El pino',gen:'El árbol que más abunda en las montañas del país',n:'Símbolo menor',g:'Declarado árbol nacional en 1928',t:'Fue el primer símbolo menor que se declaró'},
   {w:'La orquídea',gen:'Flor blanco-verdosa de fragancia nocturna',n:'Símbolo menor',g:'Declarada flor nacional en 1969',t:'Sustituyó a la rosa, que no es originaria del país'},
   {w:'La guara roja',gen:'Ave de plumaje rojo, azul y amarillo',n:'Símbolo menor',g:'Declarada ave nacional en 1993',t:'Vuela libre sobre las ruinas de Copán'},
   {w:'El venado cola blanca',gen:'Mamífero veloz de los bosques y sabanas',n:'Símbolo menor',g:'Declarado mamífero nacional en 1993',t:'Se declaró el mismo día que la guara roja'},
@@ -290,7 +297,7 @@ const explainQuestions=[
   {q:'¿Cuáles son los símbolos patrios mayores y por qué se llaman así?',ans:'Son la Bandera, el Escudo y el Himno Nacional. Se llaman mayores porque representan al Estado de Honduras ante el mundo: son los que se usan en los actos oficiales, en los documentos del Gobierno y cuando el país se presenta fuera de sus fronteras.'},
   {q:'Describe la Bandera Nacional y explica qué significa cada parte.',ans:'Tiene tres franjas horizontales del mismo ancho: azul turquesa arriba, blanca en medio y azul turquesa abajo, con cinco estrellas azul turquesa en el centro. El azul representa los dos mares que bañan al país y el cielo; el blanco, la paz y la pureza del pueblo; y las cinco estrellas, las cinco naciones de la antigua Federación de Centroamérica.'},
   {q:'¿Quiénes hicieron el Himno Nacional y cuántas estrofas tiene?',ans:'La letra es de Augusto C. Coello y la música del alemán Carlos Hartling. Tiene un coro y siete estrofas. En los actos escolares se canta el coro, la séptima estrofa y otra vez el coro.'},
-  {q:'Menciona los símbolos patrios menores de Honduras y di qué es cada uno.',ans:'El pino (árbol nacional), la orquídea Rhyncholaelia digbyana (flor nacional), la guara roja (ave nacional), el venado cola blanca (mamífero nacional) y el mapa del territorio nacional.'},
+  {q:'Menciona los símbolos patrios menores de Honduras y di qué es cada uno.',ans:'El pino (árbol nacional), la orquídea Rhyncholaelia digbyana (flor nacional), la guara roja (ave nacional), y el venado cola blanca (mamífero nacional).'},
   {q:'¿Quién fue Lempira y por qué es el Héroe Nacional?',ans:'Fue un cacique lenca que dirigió la mayor resistencia indígena contra la conquista española, hacia 1537, en el Peñol de Cerquín. Es Héroe Nacional porque defendió su tierra y su pueblo. Su nombre lo llevan la moneda de Honduras y un departamento del país.'},
   {q:'¿Por qué se recuerda a Francisco Morazán?',ans:'Porque luchó por mantener unida a Centroamérica en una sola nación. Fue presidente de la República Federal de Centro América y por eso se le llama el Paladín de la Unión Centroamericana. Nació el 3 de octubre de 1792 y murió el 15 de septiembre de 1842.'},
   {q:'Escribe tres formas de mostrar respeto a los símbolos patrios.',ans:'Respuesta abierta. Por ejemplo: estar de pie, firme y en silencio mientras se canta el Himno; no dejar que la Bandera toque el suelo y guardarla limpia y doblada; y quedarse quieto cuando pasa la Bandera en el desfile.'},
@@ -796,7 +803,7 @@ const parteData={
   escudo:{
     nombre:'El Escudo Nacional',icon:'🛡️',
     estructura:{title:'¿Qué es?',info:'• El <strong>símbolo patrio mayor</strong> del Estado de Honduras<br>• Va en los <strong>documentos oficiales</strong>, los sellos y la moneda<br>• Es el <strong>más antiguo</strong> de los tres símbolos mayores'},
-    funcion:{title:'¿Cómo es?',info:'• Un <strong>triángulo equilátero</strong> dentro de un óvalo<br>• En su base, un <strong>volcán entre dos torres</strong>, con el arco iris y el sol naciente<br>• Arriba, una cordillera con <strong>robles y pinos</strong>, herramientas de minería, <strong>aljabas</strong> con flechas y <strong>cornucopias</strong>'},
+    funcion:{title:'¿Cómo es?',info:'• Un <strong>triángulo equilátero</strong> dentro de un óvalo<br>• En su base, un <strong>volcán entre dos torres</strong>, con el arco iris y el sol naciente<br>• Lleva también una cordillera con <strong>robles y pinos</strong>, herramientas de minería, <strong>aljabas</strong> con flechas y <strong>cornucopias</strong>'},
     ubicacion:{title:'¿Qué significa?',info:'• El <strong>triángulo:</strong> la igualdad, porque sus tres lados miden lo mismo<br>• Las <strong>torres:</strong> la defensa y la soberanía del territorio<br>• Las <strong>cornucopias:</strong> la abundancia y la riqueza de la tierra'},
     dato:{title:'Dato curioso',info:'• Creado el <strong>3 de octubre de 1825</strong>, con Dionisio de Herrera de jefe de Estado<br>• El óvalo lleva escrito: <strong>República de Honduras, libre, soberana e independiente</strong><br>• Al principio decía «Estado de Honduras de la Federación del Centro», porque el país todavía era parte de la Federación'}
   },
@@ -811,8 +818,8 @@ const parteData={
     nombre:'Los símbolos menores',icon:'🌲',
     estructura:{title:'¿Qué son?',info:'• Los símbolos que representan la <strong>naturaleza y el territorio</strong> del país<br>• No sustituyen a los mayores: los <strong>acompañan</strong><br>• Se declararon <strong>mucho después</strong> que la Bandera, el Escudo y el Himno'},
     funcion:{title:'¿Cuáles son?',info:'• <strong>El pino:</strong> árbol nacional (1928)<br>• <strong>La orquídea</strong> <em>Rhyncholaelia digbyana</em>: flor nacional (1969)<br>• <strong>La guara roja</strong> y <strong>el venado cola blanca</strong>: ave y mamífero nacionales (1993)'},
-    ubicacion:{title:'¿Dónde se ven?',info:'• El <strong>pino</strong> cubre las montañas: Honduras tiene el mayor bosque de pino de Centroamérica<br>• La <strong>guara roja</strong> vuela sobre Copán y en La Mosquitia<br>• El <strong>venado</strong> vive en bosques y sabanas de todo el país'},
-    dato:{title:'Dato curioso',info:'• De 1946 a 1969 la flor nacional fue <strong>la rosa</strong>: se cambió porque no nace en Honduras<br>• La guara roja y el venado se declararon <strong>el mismo día</strong>, el 28 de junio de 1993<br>• El <strong>mapa</strong> del territorio también se cuenta entre los símbolos: 18 departamentos y dos mares'}
+    ubicacion:{title:'¿Dónde se ven?',info:'• El <strong>pino</strong> es el árbol que más abunda en las montañas del país<br>• La <strong>guara roja</strong> vuela sobre Copán y en La Mosquitia<br>• El <strong>venado</strong> vive en bosques y sabanas de todo el país'},
+    dato:{title:'Dato curioso',info:'• De 1946 a 1969 la flor nacional fue <strong>la rosa</strong>: se cambió porque no nace en Honduras<br>• La guara roja y el venado se declararon <strong>el mismo día</strong>, el 28 de junio de 1993<br>• Junto a ellos se estudia el <strong>mapa</strong> del territorio: 18 departamentos y dos mares'}
   },
   proceres:{
     nombre:'Próceres y héroes',icon:'🏅',

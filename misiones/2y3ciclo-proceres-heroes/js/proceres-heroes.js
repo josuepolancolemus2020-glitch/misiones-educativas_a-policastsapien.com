@@ -118,7 +118,11 @@ const classGroups=[
    words:[{w:'Lempira',t:'antes'},{w:'Dionisio de Herrera',t:'despues'},{w:'Francisco Morazán',t:'despues'},{w:'La resistencia lenca',t:'antes'},{w:'La República Federal',t:'despues'},{w:'El Peñol de Cerquín',t:'antes'},{w:'La Reforma Liberal',t:'despues'},{w:'El primer jefe de Estado',t:'despues'}]},
   {label:['Su obra fue la educación','Su obra fue el gobierno'],headA:'📚 Educación',headB:'🏛️ Gobierno',colA:'edu',colB:'gob',
    words:[{w:'José Trinidad Reyes',t:'edu'},{w:'Dionisio de Herrera',t:'gob'},{w:'Ramón Rosa',t:'edu'},{w:'José Trinidad Cabañas',t:'gob'},{w:'La primera universidad',t:'edu'},{w:'El primer Estado de Honduras',t:'gob'},{w:'El Código de Instrucción Pública',t:'edu'},{w:'La República Federal',t:'gob'}]},
-  {label:['Tiene su día en el calendario','No tiene día propio'],headA:'📅 Tiene su día',headB:'📖 Sin día propio',colA:'si',colB:'no',
+  /* La segunda columna decía «No tiene día propio». Que Valle, Herrera o
+     Cabañas no tengan día en ningún calendario no lo acredita ninguna fuente
+     del repositorio: lo que sí se sabe es qué fechas enseña la Ruta de la
+     Patria (20 de julio, 3 de octubre y 17 de septiembre). */
+  {label:['Tiene su día en el calendario','No está en las fechas que estudiaste'],headA:'📅 Tiene su día',headB:'📖 No está en esas fechas',colA:'si',colB:'no',
    words:[{w:'Lempira',t:'si'},{w:'José Cecilio del Valle',t:'no'},{w:'Francisco Morazán',t:'si'},{w:'Dionisio de Herrera',t:'no'},{w:'José Trinidad Reyes',t:'si'},{w:'Ramón Rosa',t:'no'},{w:'Marco Aurelio Soto',t:'no'},{w:'José Trinidad Cabañas',t:'no'}]}
 ];
 let currentClassGroupIdx=0,clsSelectedWord=null;
@@ -217,7 +221,7 @@ const enfermedadData=[
   {disease:'Defendió a su pueblo de la conquista española',characteristic:'Héroe',opts:['Héroe','Prócer']},
   {disease:'Redactó el Acta de Independencia',characteristic:'Prócer',opts:['Prócer','Héroe']},
   {disease:'Fue el primer jefe de Estado del país',characteristic:'Prócer',opts:['Prócer','Héroe']},
-  {disease:'Murió peleando en el Peñol de Cerquín',characteristic:'Héroe',opts:['Héroe','Prócer']},
+  {disease:'Resistió desde el Peñol de Cerquín',characteristic:'Héroe',opts:['Héroe','Prócer']},
   {disease:'Fundó la primera universidad de Honduras',characteristic:'Prócer',opts:['Prócer','Héroe']},
   {disease:'Unió a los pueblos lencas para resistir',characteristic:'Héroe',opts:['Héroe','Prócer']},
   {disease:'Impulsó el Código de Instrucción Pública',characteristic:'Prócer',opts:['Prócer','Héroe']},
@@ -272,7 +276,7 @@ const identifyTaskDB=[
 const classifyTaskDB=[
   {w:'Lempira',gen:'Defendió a su pueblo de la conquista',n:'Hacia 1537, antes de la Independencia',g:'El Héroe Nacional',t:'Su nombre está en la moneda y en un departamento'},
   {w:'José Cecilio del Valle',gen:'Redactó el Acta de Independencia',n:'1821',g:'El Sabio Valle',t:'La Independencia se escribió, no se peleó'},
-  {w:'Francisco Morazán',gen:'Presidió la República Federal',n:'1824-1842',g:'Paladín de la Unión Centroamericana',t:'Nació un 3 de octubre y murió un 15 de septiembre'},
+  {w:'Francisco Morazán',gen:'Presidió la República Federal',n:'Después de la Independencia',g:'Paladín de la Unión Centroamericana',t:'Nació un 3 de octubre y murió un 15 de septiembre'},
   {w:'Dionisio de Herrera',gen:'Primer jefe de Estado de Honduras',n:'1824',g:'El primero en gobernar',t:'Bajo su gobierno nació el Escudo Nacional'},
   {w:'José Trinidad Cabañas',gen:'Presidente honrado',n:'Mediados del siglo XIX',g:'El caballero sin tacha y sin miedo',t:'Salió del gobierno tan pobre como entró'},
   {w:'José Trinidad Reyes',gen:'Fundó la primera universidad',n:'Mediados del siglo XIX',g:'El padre Reyes',t:'Por él, el Día del Maestro es el 17 de septiembre'},

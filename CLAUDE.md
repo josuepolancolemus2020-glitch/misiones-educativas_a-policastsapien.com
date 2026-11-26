@@ -73,7 +73,12 @@ Sin framework ni compilación: HTML, CSS y JS planos servidos tal cual.
 7. **Papel**: un informe = una hoja carta (tope de 248 mm); no se baja el
    tamaño de letra del cuerpo; selección múltiple = "rellena el círculo", no ✗.
 8. **Una misión nueva** no está terminada sin ficha, QR generado con
-   `_dev/genera-qr-mision.py` y enlaces en los dos sentidos.
+   `_dev/genera-qr-mision.py` y enlaces en los dos sentidos. La ficha nueva
+   no se escribe a mano: se escribe su bloque (`misiones/<carpeta>/js/ficha.js`)
+   y la arma `_dev/arma-ficha.js` (`_privado/PLANTILLA-FICHAS.md`). **La
+   práctica de la ficha ensaya los datos del examen con otras preguntas, nunca
+   con las mismas**; las fichas viejas que todavía copian están contadas en
+   `_dev/fichas-copia-pendientes.json`, que solo baja.
 9. **Bilingües**: al cambiar una cadena española, cambiar también su clave en
    el `-en.js` y en `js/metas-i18n.js`.
 10. **Datos que pinta la pantalla viven en un solo archivo** de `js/data/`

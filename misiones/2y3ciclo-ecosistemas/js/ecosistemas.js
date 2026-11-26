@@ -262,7 +262,7 @@ const identifyTaskDB=[
   {s:'La ecología estudia las relaciones de los seres vivos con su medio.',type:'Ecología'},
 ];
 const classifyTaskDB=[
-  {w:'Bosque nublado',gen:'Terrestre',n:'Montañas altas (Celaque, La Tigra)',g:'Quetzal, jaguar, orquídeas',t:'Deforestación'},
+  {w:'Bosque nublado',gen:'Terrestre',n:'Montañas altas (Celaque, La Tigra)',g:'Quetzal, tucán, orquídeas',t:'Deforestación'},
   {w:'Arrecife de coral',gen:'Acuático (marino)',n:'Islas de la Bahía',g:'Corales, peces, tortugas',t:'Calentamiento del mar'},
   {w:'Manglar',gen:'Acuático (costero)',n:'Costas y golfo de Fonseca',g:'Mangle, cangrejos, garzas',t:'Tala y camaroneras'},
   {w:'Bosque de pino',gen:'Terrestre',n:'Montañas (Olancho)',g:'Pino, venado, carpintero',t:'Incendios y gorgojo'},
@@ -283,7 +283,7 @@ const explainQuestions=[
   {q:'¿Qué diferencia hay entre factores bióticos y abióticos? Da un ejemplo de cada uno.',ans:'Los factores bióticos son los seres vivos (una planta, un animal). Los abióticos son los componentes sin vida (el agua, la luz, el suelo, la temperatura).'},
   {q:'Explica los tres papeles de un ecosistema: productores, consumidores y descomponedores.',ans:'Los productores (plantas y algas) fabrican su alimento por fotosíntesis; los consumidores (animales) comen a otros seres vivos; los descomponedores (hongos y bacterias) reciclan la materia muerta.'},
   {q:'¿Qué es una cadena alimenticia y de dónde viene la energía?',ans:'Es una serie que muestra quién se come a quién. La energía viene del Sol, pasa a los productores y luego a los consumidores; disminuye en cada nivel.'},
-  {q:'Menciona dos ecosistemas de Honduras y descríbelos brevemente.',ans:'Por ejemplo: el bosque nublado (montaña con niebla, hogar del quetzal) y el arrecife de coral de las Islas de la Bahía (parte del segundo arrecife más grande del mundo).'},
+  {q:'Menciona dos ecosistemas de Honduras y descríbelos brevemente.',ans:'Por ejemplo: el bosque nublado (montaña con niebla, hogar del quetzal) y el arrecife de coral de las Islas de la Bahía (parte del gran arrecife Mesoamericano).'},
 ];
 let ansVisible=false;
 function genTask(){sfx('click');const type=document.getElementById('tgType').value;const count=parseInt(document.getElementById('tgCount').value);ansVisible=false;const out=document.getElementById('tgOut');out.innerHTML='';if(type==='identify')genIdentifyTask(out,count);else if(type==='classify')genClassifyTask(out,count);else if(type==='complete')genCompleteTask(out,count);else if(type==='explain')genExplainTask(out,count);fin('s-tareas');}
@@ -713,20 +713,26 @@ function printEvalCrit(){
 }
 
 // ===================== LABORATORIO DE LA CÉLULA =====================
+/* Aquí había datos que ninguna fuente del repositorio acredita y se quitaron o
+   se suavizaron: «arriba de 1500 m», Celaque «el más alto del país», el mono y
+   el jaguar entre los animales del bosque nublado, el arrecife «segundo más
+   grande del mundo», «una de las mayores biodiversidades del planeta», el pinar
+   «uno de los más extensos» y el Patuca «el río más largo de Honduras». El día
+   que entre la fuente a `_dev/`, vuelven con ella. */
 const parteData={
   bosquenublado:{
     nombre:'Bosque nublado',icon:'🌫️',
     estructura:{title:'¿Qué es?',info:'• Bosque de <strong>montaña alta</strong> casi siempre cubierto de <strong>niebla</strong><br>• Muy <strong>húmedo</strong> y de gran <strong>biodiversidad</strong><br>• Sus árboles están cubiertos de <strong>musgos, orquídeas y bromelias</strong><br>• Es un ecosistema <strong>terrestre</strong>'},
-    funcion:{title:'¿Dónde está?',info:'• En las <strong>montañas altas</strong> de Honduras (arriba de 1500 m)<br>• Parque Nacional <strong>La Tigra</strong>, <strong>Cusuco</strong> y <strong>Celaque</strong> (el más alto del país)<br>• Zonas frescas y muy lluviosas'},
-    ubicacion:{title:'Seres vivos',info:'• El <strong>quetzal</strong> y el tucán<br>• El <strong>mono</strong>, el jaguar y el puma<br>• Ranas, salamandras y muchos insectos<br>• <strong>Orquídeas</strong>, helechos gigantes y musgos'},
+    funcion:{title:'¿Dónde está?',info:'• En las <strong>montañas altas</strong> de Honduras<br>• Parque Nacional <strong>La Tigra</strong>, <strong>Cusuco</strong> y <strong>Celaque</strong><br>• Zonas frescas y muy lluviosas'},
+    ubicacion:{title:'Seres vivos',info:'• El <strong>quetzal</strong> y el tucán<br>• Ranas, salamandras y muchos insectos<br>• <strong>Orquídeas</strong>, helechos gigantes y musgos'},
     dato:{title:'Dato curioso',info:'• La <strong>niebla es su "lluvia"</strong>: el agua se condensa en las hojas<br>• Son <strong>fábricas de agua</strong> que alimentan ríos y abastecen ciudades como Tegucigalpa<br>• Guardan especies que no viven en ningún otro lugar'}
   },
   arrecife:{
     nombre:'Arrecife de coral',icon:'🐠',
-    estructura:{title:'¿Qué es?',info:'• Ecosistema <strong>marino</strong> construido por los <strong>corales</strong> (animales diminutos)<br>• Estructuras duras de <strong>carbonato de calcio</strong><br>• Una de las mayores <strong>biodiversidades</strong> del planeta: la "selva del mar"'},
+    estructura:{title:'¿Qué es?',info:'• Ecosistema <strong>marino</strong> construido por los <strong>corales</strong> (animales diminutos)<br>• Estructuras duras de <strong>carbonato de calcio</strong><br>• De gran <strong>biodiversidad</strong>: la "selva del mar"'},
     funcion:{title:'¿Dónde está?',info:'• En el <strong>mar Caribe</strong> hondureño<br>• En las <strong>Islas de la Bahía</strong>: Roatán, Utila y Guanaja<br>• Forma parte del <strong>arrecife Mesoamericano</strong>'},
     ubicacion:{title:'Seres vivos',info:'• <strong>Corales</strong> de muchas formas y colores<br>• Peces de colores, <strong>tortugas marinas</strong> y langostas<br>• El <strong>tiburón ballena</strong> (que se ve en Utila)<br>• Estrellas de mar y erizos'},
-    dato:{title:'Dato curioso',info:'• El <strong>coral es un animal</strong>, no una planta ni una roca<br>• El arrecife Mesoamericano es el <strong>segundo más grande del mundo</strong>, tras la Gran Barrera de Australia<br>• Un aumento de la temperatura del mar puede "blanquear" y matar los corales'}
+    dato:{title:'Dato curioso',info:'• El <strong>coral es un animal</strong>, no una planta ni una roca<br>• El arrecife de Honduras es un tramo del <strong>gran arrecife Mesoamericano</strong><br>• Un aumento de la temperatura del mar puede "blanquear" y matar los corales'}
   },
   manglar:{
     nombre:'Manglar',icon:'🌊',
@@ -737,7 +743,7 @@ const parteData={
   },
   pinar:{
     nombre:'Bosque de pino',icon:'🌲',
-    estructura:{title:'¿Qué es?',info:'• Bosque <strong>terrestre</strong> dominado por <strong>pinos y ocotes</strong><br>• Uno de los bosques <strong>más extensos</strong> de Honduras<br>• Suelos secos y clima templado'},
+    estructura:{title:'¿Qué es?',info:'• Bosque <strong>terrestre</strong> dominado por <strong>pinos y ocotes</strong><br>• Un bosque <strong>muy extendido</strong> en Honduras<br>• Suelos secos y clima templado'},
     funcion:{title:'¿Dónde está?',info:'• En las <strong>montañas</strong> de casi todo el país<br>• Grandes pinares en <strong>Olancho</strong>, El Paraíso y Francisco Morazán<br>• En tierras altas y medias'},
     ubicacion:{title:'Seres vivos',info:'• El <strong>pino</strong> y el ocote<br>• El <strong>venado cola blanca</strong> y el coyote<br>• Ardillas, conejos y armadillos<br>• Pájaros <strong>carpinteros</strong> y muchas aves'},
     dato:{title:'Dato curioso',info:'• El <strong>pino</strong> es uno de los símbolos de los bosques de Honduras<br>• Dos grandes amenazas: los <strong>incendios</strong> y el <strong>gorgojo descortezador</strong> del pino<br>• De los pinos se obtiene madera y resina'}
@@ -747,7 +753,7 @@ const parteData={
     estructura:{title:'¿Qué es?',info:'• Ecosistema <strong>acuático de agua dulce</strong> en movimiento<br>• Conecta las <strong>montañas con el mar</strong><br>• El agua corre y arrastra nutrientes'},
     funcion:{title:'¿Dónde está?',info:'• En los ríos de Honduras: el <strong>Patuca</strong>, el <strong>Ulúa</strong>, el <strong>Coco</strong> y el <strong>Choluteca</strong><br>• Nacen en las montañas y desembocan en el mar'},
     ubicacion:{title:'Seres vivos',info:'• Peces como el <strong>cuyamel</strong> y la tilapia<br>• <strong>Camarones</strong> de río, cangrejos y caracoles<br>• <strong>Garzas</strong>, martines pescadores y nutrias<br>• Plantas acuáticas en las orillas'},
-    dato:{title:'Dato curioso',info:'• El <strong>río Patuca</strong> es el más largo de Honduras<br>• Los ríos nos dan <strong>agua, pesca y riego</strong> para los cultivos<br>• La <strong>contaminación</strong> y la basura son su mayor amenaza'}
+    dato:{title:'Dato curioso',info:'• Los ríos nos dan <strong>agua, pesca y riego</strong> para los cultivos<br>• La <strong>contaminación</strong> y la basura son su mayor amenaza'}
   }
 };
 let labParte='bosquenublado',labAspecto='estructura';
