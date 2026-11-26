@@ -816,6 +816,54 @@ armadas (`verifica-ficha-paginas.js`). El nombre de los archivos
 (`n5-escribir`, `n1-conversacion`: la carpeta sin el prefijo del ciclo) se
 puede cambiar hasta que se generen los QR; después ya no.
 
+**Hecho en la tanda 2 (26 de noviembre): N4 y N3.** Las dos nacen sobre la
+plantilla, con la forma de N5 y N1 (página, `contenido.js`,
+`<archivo>-propio.js` y `js/ficha.js`), anotadas en
+`_dev/misiones-nacidas.json` y sin nada congelado.
+
+- **N4 · `3ciclo-n4-leer-para-investigar` · Leer para investigar**
+  (`n4-leer-para-investigar.html`). Laboratorio «el libro desarmado», con un
+  libro inventado («Un mundo que no se ve») y tres pasos: buscar cada
+  respuesta en su parte, armar la ficha y resumir un capítulo; el resumen se
+  escribe en un recuadro y el laboratorio señala las frases copiadas (seis
+  palabras seguidas iguales al texto), sin decir que entiende lo escrito.
+  Cruces: el descubrimiento de la célula (misión La Célula), los viajes de
+  Colón (`js/data/viajes-colon.js`, sin días de desembarco) como tabla y como
+  sinopsis, y los colores de las alertas (Desastres Naturales).
+  **No se hizo la ficha bibliográfica de la Constitución**: sus datos de
+  edición siguen sin estar en `_dev/leyes/`.
+- **N3 · `3ciclo-n3-periodico` · El periódico y los textos de todos los días**
+  (`n3-periodico.html`). Laboratorio «la redacción del periódico escolar»:
+  con unos mismos hechos inventados se arma una noticia, una carta de lector
+  y un acta. Cruces: Río Plátano (misión Áreas Protegidas), la alerta
+  temprana y COPECO (Desastres Naturales), el reglamento por artículos y una
+  tabla de lluvia con números inventados y dichos inventados. No nombra
+  ningún periódico real ni la línea editorial de ninguno.
+- **Redacción nuestra.** El DCNB nombra y no define casi nada de lo que
+  estas dos misiones enseñan (para qué sirve cada parte del libro, qué datos
+  lleva cada ficha, qué es una noticia, un titular o una sección). Cada
+  cabecera de `contenido.js` lo lista. En N4 la ficha bibliográfica se
+  enseña por sus datos, **sin un orden obligatorio**, y APA solo se nombra en
+  «Para Media». En N3, las seis preguntas y «titular, encabezado y cuerpo»
+  se aplican a la noticia, aunque el DCNB (p. 97) los dice de la crónica.
+- **Las fichas.** Las dos traen su bloque; la práctica ensaya una por una
+  las 40 del banco de las formas 1 a 30. Armadas en la memoria y medidas con
+  un QR prestado, cada una sale en 7 hojas; la hoja más llena tiene 240.8 mm
+  de contenido (N3, hoja 2) y 237.9 mm (N4, hoja 3). Hay que volver a
+  medirlas en la tanda 4 con su QR.
+- **Sello v587** al final de la tanda.
+
+**Lo que la tanda 2 deja para la 4**, además de lo que dejó la 1: lo mismo
+para N4 y N3 (catálogo, QR, ficha impresa, enlace a la ficha desde Recursos,
+insignia de la Ruta, pregunta en `js/data/diagnosticos.js`), y enlazar entre
+sí las misiones nuevas cuando estén en el catálogo (hoy Recursos solo enlaza
+a misiones publicadas). **Para que Josué decida:** «la lectura como medio de
+transmisión de cultura» (8.º, [Prog. 7-9, PDF p. 15]) está asignada a N3 en
+la sección 1 y no está entre los temas de su ficha (sección 3.3): no se
+trató en ninguna de las dos; y en N3 el reglamento del grado se dice
+«apegado al reglamento de toda la escuela» y no «reglamento general», porque
+la sonda de nombres propios toma «reglamento general» por un nombre.
+
 ### Las fichas como motor (empieza el miércoles 25)
 
 En el repositorio no hay todavía un documento de ese trabajo, así que esto
