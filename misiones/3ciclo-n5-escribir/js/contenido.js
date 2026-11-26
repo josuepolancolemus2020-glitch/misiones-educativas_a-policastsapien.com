@@ -53,6 +53,15 @@
        pero no lo define. «Un grupo de oraciones que tratan una misma
        idea» es la definición de siempre de la escuela; no se pregunta en
        el examen como dato.
+     · Qué es el complemento circunstancial. El DCNB lo nombra entre
+       los modificadores del predicado (p. 151: «complemento
+       circunstancial de tiempo y de modo»; la programación de 1.º a 6.º
+       nombra también el de lugar) y no lo define. La definición de la
+       guía y de la ficha («la palabra o el grupo de palabras que
+       acompaña al verbo y dice en qué circunstancias pasa lo que el
+       verbo cuenta: cuándo, dónde o cómo») es REDACCIÓN NUESTRA, pedida
+       por Josué al revisar el PR 60. No se dice que se pueda quitar sin
+       que la oración cambie, porque no siempre es así («Vive cerca»).
      · El objeto directo y el indirecto se nombran (DCNB p. 151) y no
        se definen ni se preguntan: en `_dev/` no hay gramática que los
        defina. El predicado verbal y el nominal, igual: quedan fuera.
@@ -424,7 +433,7 @@ const evalTFBankNuevo=[
 ];
 const evalMCBankNuevo=[
   {q:'«Estudié mucho, ___ no pude terminar el examen». ¿Qué va en el espacio?',o:['a) o','b) ni','c) pero','d) es decir'],a:2,k:'mc-pero-examen',fuente:'Guía (Aprende): Dos oraciones en una: la coordinación · Actividad Completa 1',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (coordinación adversativa)'},
-  {q:'El programa de 10.º dice que escribir es un proceso de tres pasos: planificación, ejecución y…',o:['a) impresión','b) dictado','c) portada','d) revisión'],a:3,k:'mc-media-proceso',fuente:'Guía (Aprende): Después del borrador: revisar (Para Media) · Ficha, página 3 (Para Media)',grado:'Media',curriculo:'CNB de 10.º, CE2.5 («la escritura como proceso: planificación, ejecución y revisión»)'},
+  {q:'El programa de 10.º dice que escribir es un proceso de tres pasos: planificación, ejecución y…',o:['a) impresión','b) dictado','c) portada','d) revisión'],a:3,k:'mc-media-proceso',fuente:'Guía (Aprende): Después del borrador: revisar (Para Media) · Ficha, página 2 (Para Media)',grado:'Media',curriculo:'CNB de 10.º, CE2.5 («la escritura como proceso: planificación, ejecución y revisión»)'},
   {q:'En «El perro negro de mi vecino ladra toda la noche», ¿cuál es la palabra principal del sujeto?',o:['a) negro','b) vecino','c) noche','d) perro'],a:3,k:'mc-nucleo',fuente:'Actividad Identifica 2 y 6',grado:'9.º',curriculo:'DCNB p. 189 (núcleo del sujeto)'},
   {q:'En «Mañana entregaremos el informe», ¿qué palabra dice cuándo?',o:['a) Mañana','b) entregaremos','c) el','d) informe'],a:0,k:'mc-cuando',fuente:'Guía (Aprende): La oración: sujeto, verbo y complemento · Actividad Identifica 3',grado:'8.º',curriculo:'DCNB p. 151 (complemento circunstancial de tiempo)'},
   {q:'Notas que dos oraciones de tu párrafo dicen exactamente lo mismo. ¿Qué haces?',o:['a) Dejas las dos','b) Las copias otra vez','c) Quitas una','d) Agregas una tercera igual'],a:2,k:'mc-repetida',fuente:'Guía (Aprende): Después del borrador: revisar · Actividad Laboratorio: El experimento, falla 2',grado:'7.º a 9.º',curriculo:'DCNB p. 95 (revisión del texto: progresión temática)'},

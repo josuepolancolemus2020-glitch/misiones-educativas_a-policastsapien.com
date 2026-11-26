@@ -12,7 +12,9 @@
      mismo que a una armada (`_dev/verifica-ficha-no-copia-examen.js`,
      `_dev/verifica-examen-sin-pistas.js`). Las hojas se midieron con
      ese borrador el 26 de noviembre de 2026: las siete caben, y la que
-     más ocupa (la 4, donde empieza la práctica) llega a 246 mm de 248. Al
+     más ocupa (la 4, donde empieza la práctica) llega a 246 mm de 248.
+     El 27 se añadió la definición de complemento circunstancial y el
+     recuadro «Para Media» pasó de la hoja 3 a la 2, junto a la revisión. Al
      armarla de verdad hay que volver a medirlas con
      `node _dev/verifica-ficha-paginas.js ficha-n5-escribir`.
 
@@ -97,6 +99,7 @@ const FICHA = {
         ['🔗 Cohesión', '¿Las ideas van enlazadas con conectores?', '«Llovió. Llegué tarde» → «Llovió; por eso, llegué tarde»']
       ] } },
       { caja: 'idea', html: '💡 <b>Tres ayudas para revisar:</b> compara el texto con <strong>tu plan</strong> (¿dijiste lo que querías?, ¿hay algo repetido?); pide que <strong>otra persona</strong> lo lea y te diga qué no entiende; y ten el <strong>diccionario</strong> a la mano. Si una frase se burla de alguien por cómo habla o de dónde es, se cambia por una que respete.' },
+      { caja: 'hn', html: '🎓 <b>Para Media:</b> el programa de 10.º llama a todo esto <strong>la escritura como proceso</strong> y nombra tres pasos: <strong>planificación, ejecución y revisión</strong>. Son las mismas etapas: la ejecución es escribir el borrador.' },
       { h2: '📦 4. El párrafo' },
       { p: '<span class="grado">8.º</span> Un <strong>párrafo</strong> es un grupo de oraciones que tratan una misma idea. Se cierra con <strong>punto y aparte</strong>. Tiene una <strong>idea principal</strong>, la que dice lo más importante, y varias <strong>ideas secundarias</strong> que la apoyan o la explican.' },
       { tabla: { cab: ['Tipo de párrafo', 'Qué hace', 'Ejemplo'], filas: [
@@ -116,7 +119,8 @@ const FICHA = {
       <div>produce<small>verbo</small></div>
       <div>la energía de la célula<small>complemento</small></div>
     </div>` },
-      { caja: 'idea', html: '💡 <b>Tres cosas del sujeto:</b> si está escrito es <strong>expreso</strong> («<em>Carlos</em> madrugó»); si no lo está, es <strong>tácito</strong> («Llegamos tarde»: nosotros); y es <strong>compuesto</strong> cuando son dos o más («Ana y Luis estudian»). Los complementos que dicen <strong>cuándo, dónde o cómo</strong> se llaman circunstanciales: «Llegaron <em>ayer</em>».' },
+      { caja: 'idea', html: '💡 <b>Tres cosas del sujeto:</b> si está escrito es <strong>expreso</strong> («<em>Carlos</em> madrugó»); si no lo está, es <strong>tácito</strong> («Llegamos tarde»: nosotros); y es <strong>compuesto</strong> cuando son dos o más («Ana y Luis estudian»).' },
+      { caja: 'regla', html: '⚡ <b>El complemento circunstancial</b> es la palabra o el grupo de palabras que acompaña al verbo y dice <strong>en qué circunstancias</strong> pasa lo que el verbo cuenta: <strong>cuándo</strong> (de tiempo), <strong>dónde</strong> (de lugar) o <strong>cómo</strong> (de modo). Lo encuentras preguntándole al verbo: «¿cuándo llegaron?» → «Llegaron <em>ayer</em>».' },
       { h2: '🔗 6. Dos oraciones en una: la coordinación' },
       { p: '<span class="grado">9.º</span> Una <strong>oración simple</strong> es un sujeto con su predicado. Una <strong>compuesta</strong> junta dos o más. Si las une una conjunción y las dos valen lo mismo, están <strong>coordinadas</strong>:' },
       { tabla: { cab: ['Clase', 'Conjunciones', 'Qué hace', 'Ejemplo'], filas: [
@@ -125,16 +129,15 @@ const FICHA = {
         ['Adversativa', 'pero, sin embargo, no obstante', 'Opone', '«Quise ir, <b>pero</b> no pude».'],
         ['Explicativa', 'es decir, esto es, o sea', 'Aclara', '«Se evaporó, <b>es decir</b>, pasó a gas».']
       ] } },
-      { caja: 'truco', html: '🧠 <b>Sin conjunción:</b> si dos oraciones van pegadas solo con una coma o un punto y coma, están <strong>yuxtapuestas</strong>: «Llegué, vi la nota».' },
+      { caja: 'truco', html: '🧠 <b>Sin conjunción:</b> dos oraciones pegadas solo con una coma están <strong>yuxtapuestas</strong>: «Llegué, vi la nota».' },
       { h2: '💭 7. El ensayo corto' },
-      { p: '<span class="grado">9.º</span> En el <strong>ensayo</strong> el autor da <strong>su opinión</strong> sobre un tema que él mismo elige, con libertad pero con razones. Se prepara por etapas: se elige y se delimita el tema; se hace el esquema con sus tres partes (<strong>presentación, desarrollo y conclusión</strong>); se redacta siguiendo el esquema; se revisa y se elabora la versión final.' },
+      { p: '<span class="grado">9.º</span> En el <strong>ensayo</strong> el autor da <strong>su opinión</strong> sobre un tema que él mismo elige, con libertad pero con razones. Se prepara por etapas: se elige y se delimita el tema, se hace el esquema (<strong>presentación, desarrollo y conclusión</strong>), se redacta, se revisa y se elabora la versión final.' },
       { h2: '⚠️ 8. Errores comunes: ¡no caigas en ellos!' },
       { tabla: { k: 'normal', cab: ['Error', 'Por qué está mal', 'Lo correcto'], filas: [
         ['Entregar el borrador', 'Lleva las fallas que una lectura más habría quitado.', 'Revisar y pasar la versión final ✔'],
         ['Creer que revisar es solo poner tildes', 'También se mira si se entiende y si todo habla del tema.', 'Concordancia, claridad, corrección y coherencia ✔'],
         ['Poner «pero» entre dos ideas que se suman', '«Pero» opone: el lector espera un contraste que no llega.', 'Para sumar, «y»; para oponer, «pero» ✔']
-      ] } },
-      { caja: 'hn', html: '🎓 <b>Para Media:</b> el programa de 10.º llama a todo esto <strong>la escritura como proceso</strong> y nombra tres pasos: <strong>planificación, ejecución y revisión</strong>. Son las mismas etapas: la ejecución es escribir el borrador.' }
+      ] } }
     ],
 
     /* ───────── Hoja 4: la práctica ───────── */
