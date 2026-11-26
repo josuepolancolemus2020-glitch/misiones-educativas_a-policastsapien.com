@@ -39,7 +39,8 @@
    ► El libro de la ficha modelo («Un mundo que no se ve») no existe: se
      inventó para la misión, y la ficha lo dice. Los datos de la célula
      salen de la misión La Célula; los viajes de Colón, de
-     `js/data/viajes-colon.js`.
+     `js/data/viajes-colon.js`; que los departamentos son dieciocho, de la
+     misión Geografía de Honduras.
 
    ► Cada tema dice para qué grado es, igual que en la misión.
 
@@ -192,7 +193,7 @@ const FICHA = {
       { q: 'En «El río creció. Llovió toda la noche y el agua tapó el puente», las dos últimas oraciones dan detalles: son ideas ___.', a: 'secundarias', ensaya: 'cp-secundarias' },
       { q: 'Antes del primer capítulo, una maestra presenta la obra en dos páginas: eso es el ___.', a: 'prólogo', ensaya: 'cp-prologo' },
       { q: 'Leíste un capítulo y lo contaste en cinco renglones, a tu manera: hiciste un resumen ___.', a: 'parafraseado', ensaya: 'cp-parafraseado' },
-      { q: 'Para ubicar el departamento de Gracias a Dios, Óscar abrió el ___ del aula.', a: 'atlas', ensaya: 'cp-atlas' },
+      { q: 'En el aula hay un libro grande que trae, uno por página, los mapas de los dieciocho departamentos: es un ___.', a: 'atlas', ensaya: 'cp-atlas' },
       { q: 'Si escribes: Según Zelaya, «toda célula proviene de otra célula», hiciste una cita ___.', a: 'textual', ensaya: 'cp-textual' },
       { q: 'Al terminar su informe, Keyla puso la lista de los libros que consultó: es la ___.', a: 'bibliografía', ensaya: 'cp-bibliografia' },
       { q: 'Marlon escribió «Viajes de Colón», abrió una llave y dentro puso los cuatro años: hizo una ___.', a: 'sinopsis', ensaya: 'cp-sinopsis' }
@@ -210,16 +211,16 @@ const FICHA = {
       { q: 'Una tabla solo sirve en Matemáticas: nunca ayuda a resumir un texto.', a: false, ensaya: 'tf-tabla' }
     ],
     seleccion: [
-      { q: 'Al final de un libro de Historia hay copias de cartas antiguas y dos planos que amplían lo explicado. ¿Cómo se llama esa parte?', o: ['la dedicatoria', 'el lomo', 'el anexo o apéndice', 'el forro'], a: 2, ensaya: 'mc-anexo' },
-      { q: 'En la ficha de un libro lees «Tegucigalpa, 2024». ¿Qué datos son esos?', o: ['el lugar y el año de publicación', 'el precio y el peso', 'el número de páginas', 'el color de la pasta'], a: 0, ensaya: 'mc-ficha-anio' },
-      { q: 'Josué quiere leer un artículo corto sobre los mayas y otro sobre los planetas, los dos en la misma obra. ¿Dónde los busca?', o: ['en un directorio telefónico', 'en una enciclopedia', 'en un calendario', 'en un recibo'], a: 1, ensaya: 'mc-enciclopedia' },
-      { q: 'Dania terminó el libro y escribió: «No estoy de acuerdo con el final, porque…». ¿En qué etapa de la lectura está?', o: ['en la de hojear', 'en la de buscar el libro', 'en ninguna', 'en la crítica o evaluativa'], a: 3, ensaya: 'mc-evaluativa' },
-      { q: 'En tu resumen repetiste «importante» seis veces. ¿Qué te da otras palabras que digan lo mismo?', o: ['el horario de clases', 'el directorio', 'el diccionario de sinónimos y antónimos', 'la agenda'], a: 2, ensaya: 'mc-sinonimos' },
-      { q: 'Un video dice que «los científicos» descubrieron algo, pero no dice cuáles ni dónde se publicó. ¿Qué haces antes de usar ese dato?', o: ['lo copio tal cual', 'lo pongo sin decir de dónde salió', 'le cambio dos palabras', 'lo comparo con otra fuente que sí diga quién lo afirma'], a: 3, ensaya: 'mc-fuente-dudosa' },
+      { q: 'Al final de un libro de Historia hay copias de cartas antiguas y dos planos que amplían lo explicado. ¿Cómo se llama esa parte?', o: ['la dedicatoria del autor', 'el lomo', 'el anexo o apéndice', 'el forro de plástico'], a: 2, ensaya: 'mc-anexo' },
+      { q: 'En la ficha de un libro lees «Tegucigalpa, 2024». ¿Qué datos son esos?', o: ['el lugar y el año de publicación', 'el precio de venta y el peso del libro', 'el número de páginas', 'el color de la pasta'], a: 0, ensaya: 'mc-ficha-anio' },
+      { q: 'Josué quiere leer un artículo corto sobre los mayas y otro sobre los planetas, los dos en la misma obra. ¿Dónde los busca?', o: ['en un directorio telefónico', 'en una enciclopedia', 'en un calendario de pared', 'en un recibo'], a: 1, ensaya: 'mc-enciclopedia' },
+      { q: 'Dania terminó el libro y escribió: «No estoy de acuerdo con el final, porque…». ¿En qué etapa de la lectura está?', o: ['en la de hojear', 'en la de buscar el libro en el estante', 'en ninguna', 'en la crítica o evaluativa'], a: 3, ensaya: 'mc-evaluativa' },
+      { q: 'En tu resumen repetiste «importante» seis veces. ¿Qué te da otras palabras que digan lo mismo?', o: ['el horario de clases de todo el instituto', 'el directorio', 'el diccionario de sinónimos y antónimos', 'la agenda'], a: 2, ensaya: 'mc-sinonimos' },
+      { q: 'Un video dice que «los científicos» descubrieron algo, pero no dice cuáles ni dónde se publicó. ¿Qué haces antes de usar ese dato?', o: ['lo copio tal cual', 'lo pongo en mi trabajo sin decir a nadie de dónde salió', 'le cambio dos palabras', 'lo busco en otra fuente que diga quién lo afirma'], a: 3, ensaya: 'mc-fuente-dudosa' },
       { q: 'Lee: «El huerto del grado dio su primera cosecha. Salieron rábanos, cilantro y unos tomates pequeños». ¿Cuál es la idea principal?', o: ['salieron rábanos', 'el huerto del grado dio su primera cosecha', 'los tomates eran pequeños', 'también salió cilantro'], a: 1, ensaya: 'mc-idea-principal' },
-      { q: 'En un libro ves un numerito junto a una frase y, abajo de la hoja, el autor y la obra de donde se tomó. ¿Qué es eso?', o: ['una cita bibliográfica al pie de página', 'un adorno', 'una errata', 'el precio'], a: 0, ensaya: 'mc-cita-pie' },
-      { q: 'Tu equipo va a investigar sobre el mercado de tu comunidad. ¿Con qué conviene empezar?', o: ['con el dibujo de la carátula', 'con pasar el trabajo en limpio', 'con hacerse preguntas: ¿qué?, ¿dónde?, ¿cuándo?, ¿cómo? y ¿por qué?', 'con el título en colores'], a: 2, ensaya: 'mc-preguntas' },
-      { q: 'El índice de una novela dice: «1. La llegada · 2. El viaje · 3. El regreso». ¿Qué son esas tres divisiones?', o: ['tres autores', 'tres capítulos', 'tres portadas', 'tres forros'], a: 1, ensaya: 'mc-capitulos' }
+      { q: 'En un libro ves un numerito junto a una frase y, abajo de la hoja, el autor y la obra de donde se tomó. ¿Qué es eso?', o: ['una cita bibliográfica al pie de página', 'un adorno que la imprenta puso para llenar el espacio', 'una errata', 'el precio'], a: 0, ensaya: 'mc-cita-pie' },
+      { q: 'Tu equipo va a investigar sobre el mercado de tu comunidad. ¿Con qué conviene empezar?', o: ['con el dibujo de la carátula', 'con pasar todo el trabajo en limpio y ponerle su carátula', 'con hacerse preguntas como ¿qué?, ¿dónde? y ¿por qué?', 'con el título en colores'], a: 2, ensaya: 'mc-preguntas' },
+      { q: 'El índice de una novela dice: «1. La llegada · 2. El viaje · 3. El regreso». ¿Qué son esas tres divisiones?', o: ['tres ilustradores', 'tres capítulos', 'tres dedicatorias', 'tres forros'], a: 1, ensaya: 'mc-capitulos' }
     ],
     /* Pareados de aplicar: el término se une con lo que pasa en la escena.
        El examen lo une con su definición. */
