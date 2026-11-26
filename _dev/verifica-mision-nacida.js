@@ -102,7 +102,7 @@ casos.forEach(({ slug, nacida }) => {
   if (nacida) {
     if (L.leerOro(slug)) mal('ya tiene formas congeladas: no es una nacida (sácala de _nacidas.json)');
     else bien('no tiene nada congelado: sus formas esperan el visto bueno de Josué');
-    if (!nacidas[slug]) mal('no está en _dev/formas-oro/_nacidas.json: anótala, o verifica-formas-oro la pone en rojo por no tener referencia');
+    if (!nacidas[slug]) mal('no está en la lista de nacidas (_dev/misiones-nacidas.json): anótala, o verifica-formas-oro la pone en rojo por no tener referencia');
     if (pendiente[slug]) mal('está en _critica-pendiente.json, que es la deuda de las misiones de antes');
   }
 

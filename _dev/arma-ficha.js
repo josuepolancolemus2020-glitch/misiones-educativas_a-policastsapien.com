@@ -121,11 +121,15 @@ function barajaB(n, semilla) {
 }
 
 /* ── Comprobar el bloque antes de escribir nada ─────────────── */
-function comprueba(B, carpeta, examen) {
+/* `sinQr`: la ficha de una misión recién nacida se comprueba antes de que
+   exista su QR (los QR se generan cuando la misión entra al catálogo). Solo
+   se salta eso: todo lo demás se le exige igual. */
+function comprueba(B, carpeta, examen, sinQr) {
   ['archivo', 'mision', 'asignatura', 'nivel', 'tema', 'qr'].forEach(c => exige(typeof B[c] === 'string' && B[c].trim(), 'falta «' + c + '» en el bloque'));
   exige(/^ficha-[a-z0-9-]+$/.test(B.archivo), '«archivo» tiene que ser ficha-<slug>, sin .html');
   exige(PALETAS[B.asignatura], 'no hay paleta para la asignatura «' + B.asignatura + '». Las que hay: ' + Object.keys(PALETAS).join(', '));
-  exige(fs.existsSync(path.join(RAIZ, 'img', B.qr)), 'no existe img/' + B.qr + ' (se genera con _dev/genera-qr-mision.py)');
+  exige(/^qr-mision-[a-z0-9-]+\.png$/.test(B.qr), '«qr» tiene que ser qr-mision-<slug>.png');
+  exige(sinQr || fs.existsSync(path.join(RAIZ, 'img', B.qr)), 'no existe img/' + B.qr + ' (se genera con _dev/genera-qr-mision.py)');
   exige(Array.isArray(B.objetivos) && B.objetivos.length, 'faltan los objetivos');
   exige(Array.isArray(B.hojas) && B.hojas.length, 'faltan las hojas');
   const P = B.practica || {};
@@ -360,6 +364,21 @@ function difiereDelBloque(carpeta) {
   }
 }
 
+/* La ficha de una misión que todavía no se armó, en la memoria: la misma
+   que escribiría `arma`, sin escribirla y sin pedir su QR. Es para las
+   sondas, que así vigilan la práctica de una misión nacida (que no copie
+   el examen, que ninguna pregunta regale otra) desde el día en que se
+   escribe su bloque y no desde el día en que se imprime. Si el bloque está
+   mal, lanza el mismo Rechazo que `arma`. */
+function enMemoria(carpeta) {
+  const B = leeBloque(carpeta);
+  B._carpeta = carpeta;
+  comprueba(B, carpeta, examenDe(carpeta), true);
+  const html = pinta(B);
+  relee(B, html);
+  return { html, bloque: B, archivo: B.archivo };
+}
+
 function conBloque() {
   return fs.readdirSync(L.DIR_MISIONES).sort().filter(c => fs.existsSync(path.join(L.DIR_MISIONES, c, 'js', 'ficha.js')));
 }
@@ -383,4 +402,4 @@ if (require.main === module) {
   process.exit(mal ? 1 : 0);
 }
 
-module.exports = { arma, difiereDelBloque, conBloque, leeBloque, pinta, comprueba, examenDe, PALETAS, Rechazo };
+module.exports = { arma, enMemoria, difiereDelBloque, conBloque, leeBloque, pinta, comprueba, examenDe, PALETAS, Rechazo };

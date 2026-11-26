@@ -117,7 +117,10 @@ function loQueSeLee(html, carpeta) {
    como en el título, y entre palabras completas. */
 function reTitulo(titulo) {
   const [primera, ...resto] = titulo.split(/\s+/);
-  const cabeza = resto.length ? '[' + esc(primera[0].toUpperCase()) + esc(primera[0].toLowerCase()) + ']' + esc(primera.slice(1)) : esc(primera);
+  /* «Escribir por etapas» no lleva más mayúscula que la primera: en
+     minúscula es una frase cualquiera, y solo se busca tal como se titula. */
+  const hayNombre = resto.some(p => /^\p{Lu}/u.test(p));
+  const cabeza = hayNombre ? '[' + esc(primera[0].toUpperCase()) + esc(primera[0].toLowerCase()) + ']' + esc(primera.slice(1)) : esc(primera);
   return new RegExp('(?<![\\p{L}\\p{N}])' + [cabeza].concat(resto.map(esc)).join('\\s+') + '(?![\\p{L}\\p{N}])', 'u');
 }
 

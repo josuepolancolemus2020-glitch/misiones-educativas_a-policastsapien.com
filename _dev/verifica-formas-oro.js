@@ -101,7 +101,7 @@ lista.forEach(slug => {
   catch (e) { falla(slug, 'carga', 0, String(e.message).split('\n')[0]); return; }
   const oroGuardado = L.leerOro(slug);
   const nacida = !oroGuardado && !!nacidas[slug];
-  if (!oroGuardado && !nacida) { falla(slug, 'referencia', 0, 'no tiene formas congeladas. Si es una misión nueva, va en _dev/formas-oro/_nacidas.json hasta que Josué apruebe sus preguntas; aprobadas: node _dev/genera-formas-oro.js ' + slug); return; }
+  if (!oroGuardado && !nacida) { falla(slug, 'referencia', 0, 'no tiene formas congeladas. Si es una misión nueva, va en la lista de nacidas (_dev/misiones-nacidas.json) hasta que Josué apruebe sus preguntas; aprobadas: node _dev/genera-formas-oro.js ' + slug); return; }
   if (oroGuardado && nacidas[slug]) falla(slug, 'referencia', 0, 'ya tiene sus formas congeladas y sigue en _nacidas.json: sácala de la lista');
   if (nacida) nacidasSinCongelar.push(slug);
   /* La nacida se mide igual que las demás, contra una referencia vacía:
