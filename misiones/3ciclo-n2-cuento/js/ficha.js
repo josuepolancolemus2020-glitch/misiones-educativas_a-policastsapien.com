@@ -218,7 +218,7 @@ const FICHA = {
       { q: 'En Honduras no hay más cuentos que los de tradición oral: ningún escritor del país ha escrito uno.', a: false, ensaya: 'tf-cuento-honduras' }
     ],
     seleccion: [
-      { q: 'En el cuento del arriero aparecen las mulas, el guacal y los caminos de antes. ¿Qué recibe quien lo lee hoy?', o: ['Una receta para cocinar frijoles', 'Algo de las costumbres de su gente', 'Una prueba de que el perro existe', 'Un mapa exacto para llegar al pueblo'], a: 1, ensaya: 'mc-cultura' },
+      { q: 'En el cuento del arriero aparecen las mulas, el guacal y los caminos de antes. ¿Qué recibe quien lo lee hoy?', o: ['El nombre de quien inventó el cuento', 'Algo de las costumbres de su gente', 'Una prueba de que el perro existe', 'La noticia de lo que pasó ayer en el pueblo'], a: 1, ensaya: 'mc-cultura' },
       { q: '¿Cuál de estas personas está contando un cuento de tradición oral?', o: ['Un señor que lee el periódico en voz alta', 'Un tío que repite lo que le contaba su papá', 'Una alumna que copia un poema del libro', 'Un locutor que lee los anuncios de la radio'], a: 1, ensaya: 'mc-oral-cual' },
       { q: 'En un cuento, ¿qué parte va entre el inicio y el cierre?', o: ['El título', 'El planteamiento', 'El desarrollo', 'El punto de vista'], a: 2, ensaya: 'mc-orden-partes' },
       { q: '«Yo me escondí debajo de la cama y cerré los ojos». ¿Quién cuenta lo que pasó?', o: ['Alguien que lo supo después', 'Una vecina que lo vio por la ventana', 'El dueño de la casa de al lado', 'El personaje que se escondió'], a: 3, ensaya: 'mc-yo-vereda' },
@@ -226,7 +226,7 @@ const FICHA = {
       { q: '¿Con cuál de estas oraciones empezarías un cuento?', o: ['«Y así terminó el largo viaje de los tres hermanos»', '«Entonces el puente empezó a crujir»', '«Hace muchos años vivía en Olancho un herrero»', '«Por eso nadie volvió a entrar en la cueva»'], a: 2, ensaya: 'mc-es-inicio' },
       { q: 'Una alumna quiere que la biografía que prepara sea de fiar. ¿Qué le sirve más?', o: ['Preguntar fechas y lugares a su gente', 'Agregarle una hazaña para que emocione', 'Contarla como un cuento de espantos', 'Escribirla sin decir de quién es'], a: 0, ensaya: 'mc-biografia-antes' },
       { q: '¿Cuál de estas oraciones describe, en vez de contar un hecho?', o: ['«La abuela encendió una vela»', '«El río se llevó el puente»', '«Toño corrió hasta su casa»', '«La casa era de adobe y teja»'], a: 3, ensaya: 'mc-describe' },
-      { q: 'Al escribir un cuento, ¿qué paso va de primero?', o: ['Pasarlo en limpio', 'Planear lo que va a pasar', 'Corregir las faltas de ortografía', 'Ponerle el título'], a: 1, ensaya: 'mc-pasos-ultimo' },
+      { q: 'Al escribir un cuento, ¿con qué paso se empieza?', o: ['Pasarlo en limpio', 'Planear lo que va a pasar', 'Corregir las faltas de ortografía', 'Ponerle el título'], a: 1, ensaya: 'mc-pasos-ultimo' },
       { q: '«Marta callaba, pero se moría de ganas de contarlo; su mamá, mientras tanto, ya lo sospechaba». ¿En qué palabras se nota que este narrador lo sabe todo?', o: ['«Marta callaba» y «su mamá, mientras tanto»', '«callaba» y «contarlo»', '«se moría de ganas» y «lo sospechaba»', '«Marta» y «su mamá»'], a: 2, ensaya: 'mc-sabe-todo' }
     ],
     /* Pareados de aplicar: el término se une con lo que dice el cuento.
