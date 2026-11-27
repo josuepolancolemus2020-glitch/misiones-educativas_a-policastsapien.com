@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión El cuento | policastsapien.com</title>
+<meta name="description" content="Misión El cuento: la tradición oral de Honduras, las partes del cuento, los personajes, quién narra y la biografía, con juegos, retos y logros. PolicastSapien.">
+<meta property="og:title" content="Misión El cuento">
+<meta property="og:description" content="Juega, aprende y desbloquea todos los logros. PolicastSapien.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Misiones PolicastSapien">
+<meta property="og:url" content="https://metas.policastsapien.com/misiones/3ciclo-n2-cuento/n2-cuento.html">
+<link rel="stylesheet" href="../../css/vendor/fuentes/fuentes.css">
+<link rel="stylesheet" href="css/n2-cuento.css">
+<!-- La barra de secciones, arriba y siempre a la vista. Va DESPUÉS del CSS
+     de la misión a propósito: de ahí saca su color, y así sobrescribe su
+     position:static sin un solo !important. -->
+<link rel="stylesheet" href="../../css/barra-secciones.css">
+<!-- El acierto y el error NO se dicen solo con color: uno de cada doce
+     niños no distingue el rojo del verde. Va DESPUÉS del CSS de la misión,
+     que es lo que le deja pisar sus reglas. -->
+<link rel="stylesheet" href="../../css/senal-no-color.css">
+<link rel="stylesheet" href="../../css/lab-legible.css">
+<!-- Que las actividades se puedan hacer sin el dedo: el foco visible.
+     Va con js/teclado-actividades.js, que pone las paradas de tabulador
+     y hace que Enter y la barra espaciadora sirvan de algo. -->
+<link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La estrella se gana: antes del primer toque del alumno no se marca
+     ninguna sección, generar una prueba no la da y el XP no se vuelve a
+     ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
+     antes de que el arranque de la misión lo llame. -->
+<script src="../../js/estrella-ganada.js"></script>
+</head>
+<body>
+
+<div class="xp-bar" role="status" aria-label="Barra de progreso XP">
+  <a href="../../index.html?view=misiones&filter=español" class="xp-back-btn" title="Regresar a misiones de Español">
+    <svg class="xp-back-arrow" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H5M12 5l-7 7 7 7"/></svg>
+    <img src="../../img/logo.png" alt="Logo" class="xp-back-logo">
+  </a>
+  <span class="xp-lbl">🎮 XP</span>
+  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <a href="#" class="xp-share-wa" onclick="compartirMision(); return false;" title="Compartir misión por WhatsApp" aria-label="Compartir misión por WhatsApp">
+    <img src="../../img/comparte_whatsapp.webp" alt="WhatsApp" class="xp-share-icon">
+  </a>
+  <span class="xp-pts" id="xpPts">⭐ 0</span>
+  <span class="xp-lvl" id="xpLvl">Aprendiz 🌱</span>
+</div>
+
+<header class="hero" role="banner">
+  <div class="hero-inner">
+    <div class="hero-mascot" aria-hidden="true">🌙</div>
+    <div class="hero-text">
+      <h1>Misión <span>El cuento</span></h1>
+      <p class="sub">¡Escucha los cuentos de tu gente, descubre cómo están hechos y escribe el tuyo! 🐕</p>
+      <div class="badge">✍️ Ruta de la Palabra · Español · III Ciclo</div>
+    </div>
+  </div>
+</header>
+
+<main class="main" id="main-content">
+
+<!-- ===== APRENDE ===== -->
+<div class="sec active" id="s-aprende" role="tabpanel">
+<div class="card ac-amber" data-situacion>
+    <h2>🌙 «Eso me lo contó mi abuela»</h2>
+    <p>Se fue la luz en toda la colonia. La abuela de Nahomy encendió una vela y dijo: «Vengan, les voy a contar lo que le pasó a mi tata
+    en el camino viejo». Nahomy nunca ha visto ese cuento en un libro. Su abuela tampoco: se lo oyó a su papá, y él, al suyo. (La historia es inventada.)</p>
+    <div class="tip"><span class="ti">❓</span><div>¿Cómo llegó hasta Nahomy un cuento que nadie escribió? <strong>De boca en boca</strong>:
+    alguien lo contó, otro lo escuchó y lo volvió a contar. De eso trata esta misión: de los cuentos que se cuentan, de cómo están hechos
+    por dentro, de quién los narra y de cómo escribir el tuyo.</div></div>
+  </div>
+
+  <div class="card ac-teal">
+    <h2>🗣️ La tradición oral</h2>
+    <p>La <strong>tradición oral</strong> es todo lo que un pueblo se pasa <strong>de boca en boca</strong>, de una generación a otra, sin escribirlo:
+    cuentos, consejos, canciones, adivinanzas. Un <strong>cuento</strong> es una narración corta e inventada, con pocos personajes.
+    Hay cuentos de dos familias:</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>🗣️ Cuento de tradición oral</h4>
+        <p>Es <strong>anónimo</strong>: nadie sabe quién lo inventó. Se aprende <strong>escuchando</strong>. Cada quien lo cuenta con sus palabras, y por eso tiene <strong>varias versiones</strong>.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>✍️ Cuento de autor</h4>
+        <p>Lo escribió y lo firmó una persona: su <strong>autor</strong> o su autora. Se aprende <strong>leyendo</strong>. Su texto <strong>no cambia</strong>, porque está escrito.</p>
+      </div>
+    </div>
+    <p>En Honduras se cuentan, de noche y bajito, muchos cuentos de espantos. Estos tres los conoce casi todo el mundo:</p>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">🐕 El Cadejo</div><div class="t-info">Un perro que se aparece de noche en los caminos. Dicen que el blanco acompaña al caminante y que el negro lo asusta</div></div>
+      <div class="type-chip tc-purple"><div class="t-art">👻 La Sucia</div><div class="t-info">Una mujer de blanco que se aparece de noche junto a los ríos y las quebradas</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">👣 El Sisimite</div><div class="t-info">Un ser peludo de la montaña. Dicen que tiene los pies al revés, y que por eso sus huellas engañan</div></div>
+    </div>
+    <div class="tip"><span class="ti">🤝</span><div>Un cuento de tradición oral no se mide por si pasó de verdad: es <strong>literatura</strong>, no una noticia.
+    Y si en tu casa lo cuentan distinto, <strong>esa versión también vale</strong>. Quien escucha un cuento, el <strong>oyente</strong>, lo respeta y no interrumpe.</div></div>
+    <p style="font-size:0.85rem;color:var(--gray);">En la biblioteca de tu centro hay cuentos de escritores de Honduras y de otros países de América. Pídele uno a tu docente: con esta misión ya sabrás leerlo por partes.</p>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>🐕 Un cuento completo: el arriero y los dos perros</h2>
+    <p>Lee este cuento de tradición oral. Va partido en sus <strong>tres partes</strong>, cada una con su rótulo:</p>
+    <div class="lectura">
+      <div class="lec-t">El arriero y los dos perros</div>
+      <div class="lec-n">Cuento de la tradición oral de Honduras. Esta versión la escribimos para la misión: en tu casa quizá lo cuentan distinto.</div>
+      <div class="lec-parte lp-ini"><span class="lec-rot">🚪 INICIO</span>
+      <p>Cuentan que don Chema era arriero. Era un hombre flaco, de bigote blanco, callado y muy trabajador. Una tarde volvía de vender frijoles en el pueblo y la noche lo agarró en el camino viejo, solo con su mula.</p></div>
+      <div class="lec-parte lp-des"><span class="lec-rot">🌀 DESARROLLO</span>
+      <p>De pronto, la mula se paró en seco. Entre los pinos brillaban dos ojos rojos como brasas: era un perro negro, enorme, que arrastraba una cadena. Don Chema quiso correr y las piernas no le obedecieron. Entonces salió del monte un perro blanco y se plantó entre él y el animal negro. Los dos perros se gruñeron largo rato, hasta que el negro retrocedió y se perdió en la oscuridad.</p></div>
+      <div class="lec-parte lp-cie"><span class="lec-rot">🏁 CIERRE</span>
+      <p>El perro blanco caminó junto a la mula hasta la primera casa del pueblo. Cuando don Chema se volvió para darle las gracias, ya no estaba. Desde esa noche, dicen, el arriero dejaba siempre un guacal de agua en la cerca, por si el perro blanco volvía a pasar.</p></div>
+    </div>
+    <p>Es el cuento del <strong>Cadejo</strong>. Fíjate en cómo empieza: «Cuentan que…». Así avisa quien narra que el cuento no es suyo: lo recibió de otros.</p>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>🧱 Las tres partes del cuento</h2>
+    <p>Todo cuento, hasta el más corto, tiene tres partes y van siempre en este orden:</p>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">🚪 1. Inicio</div><div class="t-info">Presenta a los personajes y dice dónde y cuándo pasa la historia. También se llama <strong>planteamiento</strong></div></div>
+      <div class="type-chip tc-gold"><div class="t-art">🌀 2. Desarrollo</div><div class="t-info">Aparece un problema y los personajes hacen algo para enfrentarlo. Es la parte más larga. También se llama <strong>nudo</strong></div></div>
+      <div class="type-chip tc-jade"><div class="t-art">🏁 3. Cierre</div><div class="t-info">El problema se resuelve, para bien o para mal, y la historia termina. También se llama <strong>desenlace</strong></div></div>
+    </div>
+    <p>Hay palabras que <strong>indican tiempo</strong> y te avisan en qué parte vas:</p>
+    <div class="stat-bar">
+      <div class="stat-item"><div class="stat-label">Para empezar</div><div class="stat-val">«Había una vez», «Cuentan que», «Hace muchos años»</div></div>
+      <div class="stat-item"><div class="stat-label">Para seguir</div><div class="stat-val">«De pronto», «entonces», «después», «al rato»</div></div>
+      <div class="stat-item"><div class="stat-label">Para cerrar</div><div class="stat-val">«Finalmente», «desde ese día», «y colorín colorado, este cuento se ha acabado»</div></div>
+    </div>
+    <div class="tip"><span class="ti">💡</span><div>Para saber dónde termina el inicio, busca <strong>la oración en que aparece el problema</strong>: ahí empieza el desarrollo. En el cuento del arriero es «De pronto, la mula se paró en seco».</div></div>
+  </div>
+
+  <div class="card ac-purple">
+    <h2>👤 Los personajes y el ambiente</h2>
+    <p>Los <strong>personajes</strong> son los seres que actúan en el cuento: personas, animales o seres imaginarios. El <strong>personaje principal</strong>,
+    o <strong>protagonista</strong>, vive la historia de principio a fin. Los <strong>secundarios</strong> lo acompañan, lo ayudan o se le oponen.
+    En el cuento del arriero, don Chema es el protagonista; los dos perros y la mula son secundarios.</p>
+    <p>Un cuento <strong>narra</strong> (cuenta lo que pasa) y también <strong>describe</strong> (dice cómo es algo o alguien). A un personaje se le describe de dos maneras:</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>👀 Por fuera</h4>
+        <p>Lo que <strong>se ve</strong>: «Era un hombre <strong>flaco</strong>, de <strong>bigote blanco</strong>».</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>💭 Por dentro</h4>
+        <p>Su <strong>manera de ser</strong>: «Era <strong>callado</strong> y muy <strong>trabajador</strong>».</p>
+      </div>
+    </div>
+    <div class="dos-voces">
+      <div class="dv-a"><span class="dv-t">🏃 Narra</span>«La mula se paró en seco». Cuenta un hecho: algo pasó.</div>
+      <div class="dv-b"><span class="dv-t">🖼️ Describe</span>«Era un perro negro, enorme». Dice cómo es: no pasa nada todavía.</div>
+    </div>
+    <p>El <strong>ambiente</strong> es el lugar y el tiempo en que pasa el cuento: «el camino viejo, de noche». Y cuando los personajes hablan entre ellos,
+    eso es un <strong>diálogo</strong>.</p>
+    <div class="tip"><span class="ti">🌄</span><div>Un cuento inventado puede pasar en un lugar de verdad: una aldea de Olancho, un barrio de Tegucigalpa, la orilla de un río que conoces.</div></div>
+  </div>
+
+  <div class="card ac-blue">
+    <h2>🌎 Leer también es heredar</h2>
+    <p>Cuando un pueblo cuenta sus historias, les pasa a los más jóvenes mucho más que un rato de susto: les pasa <strong>lo que sabe, lo que cree,
+    lo que teme, sus costumbres y su manera de hablar</strong>. A todo eso junto se le llama <strong>cultura</strong>.</p>
+    <p>Mientras el cuento solo se cuenta, llega hasta donde llega la voz. Cuando alguien <strong>lo escribe</strong>, llega más lejos: lo puede leer
+    quien vive en otro lugar y quien nacerá muchos años después. Por eso se dice que <strong>la lectura es un medio de comunicación y de transmisión
+    de la cultura de los pueblos</strong>.</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>🏠 Si lees un cuento de tu tierra</h4>
+        <p>Recibes una herencia: las palabras, los lugares y los oficios de tu gente. En el cuento del arriero están las mulas, el guacal y los caminos de antes.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>✈️ Si lees un cuento de otro país</h4>
+        <p>Conoces a un pueblo en el que nunca has estado: cómo vive, cómo habla, qué le importa.</p>
+      </div>
+    </div>
+    <div class="tip"><span class="ti">📖</span><div>Cada vez que escribes el cuento que te contaron en tu casa, haces que no se pierda. Tú también transmites cultura.</div></div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-estructura')">
+    <span class="nsb-icon">🎙️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== NARRADOR ===== -->
+<div class="sec" id="s-estructura" role="tabpanel">
+<div class="card ac-teal">
+    <h2>🎥 ¿Quién narra? El punto de vista</h2>
+    <p>El <strong>narrador</strong> es la <strong>voz que cuenta</strong> el cuento. No es lo mismo que el autor: el autor es la persona que escribe;
+    el narrador es la voz que el autor eligió para contar. Según <strong>quién narra</strong>, el lector se entera de unas cosas y de otras no:
+    a eso se le llama <strong>punto de vista</strong>.</p>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">🙋 El protagonista</div><div class="t-info">Primera persona («yo»). Cuenta lo que le pasó a él mismo. Sabe lo que vio, pensó y sintió</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">👀 Un testigo</div><div class="t-info">Primera persona («yo vi»). Es un personaje que cuenta lo que le pasó a otro. Solo sabe lo que vio y oyó</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">📷 Narrador objetivo</div><div class="t-info">Tercera persona («él», «ella»). No es personaje. Cuenta solo lo que se ve y se oye, como una cámara</div></div>
+      <div class="type-chip tc-purple"><div class="t-art">🌟 Narrador omnisciente</div><div class="t-info">Tercera persona («él», «ella»). No es personaje. Lo sabe todo: hasta lo que cada uno piensa y siente</div></div>
+    </div>
+    <p>El mismo momento del cuento del arriero, contado por dos narradores:</p>
+    <div class="dos-voces">
+      <div class="dv-a"><span class="dv-t">🙋 Narra el protagonista</span>«<strong>Yo</strong> quise correr, pero las piernas no <strong>me</strong> obedecieron».</div>
+      <div class="dv-b"><span class="dv-t">🌟 Narra un omnisciente</span>«<strong>Don Chema</strong> quiso correr y las piernas no <strong>le</strong> obedecieron; <strong>pensó</strong> en su mula y se quedó».</div>
+    </div>
+    <div class="tip"><span class="ti">⚠️</span><div>Cuando escribas, <strong>no cambies de narrador a medio cuento</strong>. Si empezaste con «yo», sigue con «yo» hasta el final.</div></div>
+  </div>
+
+  <div class="card ac-purple">
+    <h2>🇭🇳 ¿Quién habla en el Himno?</h2>
+    <p>No todas las voces dicen «yo» o «ella». Lee el primer verso de la primera estrofa del Himno Nacional:</p>
+    <div class="ex-box">
+      <span class="ex-tag ex-d">🎵 «India virgen y hermosa dormías»</span><br>
+      <span>La «India virgen» es la tierra hondureña antes de la llegada de los europeos. La voz del poema no habla <span class="hl">de</span> ella: le habla <span class="hl2">a</span> ella, de <span class="hl3">«tú»</span>. Se nota en el verbo: «dormías», «tus mares». Eso es hablar en segunda persona.</span>
+    </div>
+    <p style="font-size:0.85rem;color:var(--gray);">El verso y su explicación están en la misión
+    <a href="../2y3ciclo-himno-nacional/himno-nacional.html">El Himno Nacional de Honduras</a>.</p>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>📜 La biografía</h2>
+    <p>Una <strong>biografía</strong> es un texto que cuenta <strong>la vida de una persona real</strong>. Se parece al cuento en que narra hechos en orden;
+    se diferencia en que <strong>nada es inventado</strong>.</p>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">1. Es real</div><div class="t-info">Los hechos se averiguan: se pregunta, se lee, se comprueba</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">2. La escribe otra persona</div><div class="t-info">Por eso va en tercera persona: «nació», «estudió», «fue»</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">3. Sigue el orden de una vida</div><div class="t-info">Del nacimiento en adelante, con fechas y lugares</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">4. Describe a la persona</div><div class="t-info">Dice cómo era y por qué se le recuerda</div></div>
+    </div>
+    <div class="lectura">
+      <div class="lec-t">Francisco Morazán</div>
+      <div class="lec-n">Biografía corta, escrita para la misión con datos comprobados.</div>
+      <p>Francisco Morazán nació en Tegucigalpa el 3 de octubre de 1792. Llegó a ser presidente de la República Federal de Centro América, que unía a Guatemala, El Salvador, Honduras, Nicaragua y Costa Rica. Impulsó la educación pública y peleó hasta el final por mantener unidas a las cinco naciones. Murió el 15 de septiembre de 1842. No se le recuerda por ganar: se le recuerda por no rendirse.</p>
+    </div>
+    <p>Con las fechas de una biografía se puede armar una <strong>línea de tiempo</strong> y sacar cuentas:</p>
+    <div class="linea-tiempo" role="img" aria-label="Línea de tiempo de Francisco Morazán: 1792, nace en Tegucigalpa; después, presidente de la República Federal; 1842, muere">
+      <div><span class="lt-a">1792</span>Nace en Tegucigalpa</div>
+      <div><span class="lt-a">Después</span>Presidente de la República Federal</div>
+      <div><span class="lt-a">1842</span>Muere el 15 de septiembre</div>
+    </div>
+    <div class="tip"><span class="ti">➗</span><div>Para saber cuántos años hay entre dos fechas, <strong>resta</strong>: si una maestra nació en 1950 y empezó a dar clases en 1972, entre un año y otro hay 22 años (1972 menos 1950). El ejemplo es inventado.</div></div>
+    <p>Cuando una persona escribe su propia vida, el texto ya no es una biografía: es una <strong>autobiografía</strong>.</p>
+    <p style="font-size:0.85rem;color:var(--gray);">Los datos de Morazán son los de la misión
+    <a href="../2y3ciclo-proceres-heroes/proceres-heroes.html">Héroes y Próceres de Honduras</a>.</p>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>✍️ Escribe y cuenta tu cuento</h2>
+    <p>Un cuento no sale bien al primer intento. Se escribe <strong>por pasos</strong>:</p>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">1. Planea</div><div class="t-info">Decide los personajes, el lugar y el problema. Y decide quién narra</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">2. Escribe el borrador</div><div class="t-info">Es un texto de prueba: inicio, desarrollo y cierre, sin miedo a tachar</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">3. Revisa</div><div class="t-info">Léelo para corregirlo: ¿se entiende?, ¿el problema se resuelve?, ¿cambiaste de narrador?</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">4. Versión final</div><div class="t-info">Pásalo en limpio y ponle un título, que va arriba y anuncia de qué trata</div></div>
+    </div>
+    <p>Y si lo vas a <strong>contar en voz alta</strong>, como la abuela de Nahomy:</p>
+    <div class="ex-box">
+      <span class="ex-tag ex-d">🎙️ Tres consejos para narrar</span><br>
+      <span>Sé <span class="hl">breve</span>: no te vayas por las ramas. Mantén el <span class="hl2">hilo</span> de la historia, sin saltar de un asunto a otro. Y haz <span class="hl3">pausas</span> en los momentos de suspenso: el silencio también cuenta.</span>
+    </div>
+  </div>
+
+  <div class="card ac-amber">
+    <h2>🌧️ Un relato de hoy: la noche que subió el río</h2>
+    <p>La tradición oral no es cosa del pasado. Así nace un relato que una familia repetirá por años:</p>
+    <div class="lectura">
+      <div class="lec-t">La noche que subió el río</div>
+      <div class="lec-n">Relato inventado para la misión. El huracán Mitch y sus lluvias de 1998 sí son reales.</div>
+      <p>«Yo ya era una muchacha cuando vino el Mitch, a finales de octubre de 1998», cuenta doña Chela. «Llovió días enteros, sin parar. Una noche mi papá oyó que el río sonaba distinto y nos sacó a todos de la casa. Subimos a la escuela con lo que llevábamos puesto. Al amanecer, donde estaba la cocina solo había agua color de barro. Desde entonces, en mi familia, cuando el río suena distinto nadie espera a que amanezca».</p>
+    </div>
+    <p>Doña Chela narra en <strong>primera persona</strong>: es la protagonista de su relato. Sus nietos lo contarán en tercera: «Mi abuela ya era una muchacha cuando…».
+    Y con el relato les deja algo que sirve: <strong>qué hacer cuando el río crece</strong>.</p>
+    <p style="font-size:0.85rem;color:var(--gray);">Lo que pasó con el huracán lo cuenta la misión
+    <a href="../2y3ciclo-desastres-naturales/desastres-naturales.html">Desastres Naturales y el Huracán Mitch</a>.</p>
+  </div>
+
+  <div class="card ac-blue">
+    <h2>🎓 Para Media</h2>
+    <p>En el Bachillerato este tema sigue. El programa de 10.º estudia cómo se organizan los textos <strong>narrativos, descriptivos, argumentativos y expositivos</strong>,
+    y el de 11.º, los <strong>géneros narrativos</strong>.</p>
+    <p>De esos temas aquí solo van los nombres: tu docente te los explicará cuando lleguen.</p>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-lab')">
+    <span class="nsb-icon">🧪</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== LAB ===== -->
+<div class="sec" id="s-lab" role="tabpanel">
+<div class="card ac-jade">
+    <h2>🧪 Laboratorio: la cámara del narrador</h2>
+    <p style="margin-bottom:0.8rem;">Un mismo suceso se puede contar con cuatro voces. Elige una escena y cambia quién narra:
+    verás qué sabe y qué no sabe cada narrador.</p>
+    <div class="cn-paso">
+      <div class="cn-paso-t">🎬 Elige una escena</div>
+      <div class="cn-ops" id="cn-escenas" role="group" aria-label="Escenas"></div>
+    </div>
+    <div class="cn-paso">
+      <div class="cn-paso-t">🎙️ Elige quién narra</div>
+      <div class="cn-ops" id="cn-narradores" role="group" aria-label="Narradores"></div>
+    </div>
+    <div class="lab-stage" style="margin-top:1rem;">
+      <div id="lab-display" class="lab-display-box" role="status" aria-live="polite"></div>
+    </div>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;justify-content:center;">
+      <button class="lab-btn" style="min-height:44px;" onclick="camReinicia()">🔄 Empezar de nuevo</button>
+    </div>
+    <p style="font-size:0.85rem;color:var(--gray);margin-top:0.8rem;">La escena de la quebrada es una versión nuestra del cuento de la Sucia. La del río es inventada.</p>
+  </div>
+  <div class="card ac-gold">
+    <h2>🦴 El esqueleto de tu cuento</h2>
+    <p style="margin-bottom:0.6rem;">Antes de escribir se planea. Elige una opción de cada grupo y el laboratorio te arma el plan en tres partes. El cierre lo pones tú.</p>
+    <div id="cn-esqueleto"></div>
+    <div class="lab-stage" style="margin-top:1rem;">
+      <div id="cn-plan" class="lab-display-box" role="status" aria-live="polite"></div>
+    </div>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;justify-content:center;">
+      <button class="lab-btn" style="min-height:44px;" onclick="esqReinicia()">🔄 Elegir de nuevo</button>
+    </div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
+    <span class="nsb-icon">🃏</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== FLASHCARDS ===== -->
+<div class="sec" id="s-flash" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🃏 Tarjetas: toca para voltear</h2>
+    <div class="fc-wrap">
+      <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
+        <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">🃏 Toca · Enter para voltear</div></div>
+        <div class="fc-back"><div class="fca" id="fcA"></div></div>
+      </div>
+    </div>
+    <div class="fc-nav">
+      <button class="btn btn-d" onclick="prevFC()">◀ Anterior</button>
+      <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 14</span>
+      <button class="btn btn-pri" onclick="nextFC()">Siguiente ▶</button>
+    </div>
+    <div id="fbFlash" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-quiz')">
+    <span class="nsb-icon">🧠</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== QUIZ ===== -->
+<div class="sec" id="s-quiz" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>🧠 Quiz de Comprensión</h2>
+    <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 9</p>
+    <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
+    <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkQz()">✔ Verificar</button><button class="btn btn-pri" onclick="nextQz()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetQz()">🔄 Reiniciar Quiz</button>
+    </div>
+    <div id="fbQz" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-clasifica')">
+    <span class="nsb-icon">🗂️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== CLASIFICA ===== -->
+<div class="sec" id="s-clasifica" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🗂️ Clasifica: ¿de qué lado va?</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.5rem;">Selecciona una frase o una palabra del banco y toca la columna donde va.</p>
+    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: usa el botón «Variar grupo» varias veces. Practicar con otras categorías te ayuda a dominar el tema.</p>
+    <div class="word-bank" id="clsBank" role="list"></div>
+    <div class="drop-cols">
+      <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda"><h4 id="col-left-head">Columna A</h4><div id="items-left"></div></div>
+      <div class="drop-col" id="col-right" role="list" aria-label="Columna derecha"><h4 id="col-right-head">Columna B</h4><div id="items-right"></div></div>
+    </div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkClass()">✔ Verificar</button>
+      <button class="btn btn-pri" onclick="nextClassGroup()">🔄 Variar grupo</button>
+      <button class="btn btn-d" onclick="resetClass()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbCls" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-identifica')">
+    <span class="nsb-icon">🔍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== IDENTIFICA ===== -->
+<div class="sec" id="s-identifica" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🔍 Identifica la palabra clave</h2>
+    <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca en la oración la palabra que se te pide:</p>
+    <div class="id-sent" id="idSent" role="group"></div>
+    <div class="id-info" id="idInfo" role="status" aria-live="polite" style="font-size:0.82rem;color:var(--gray);font-style:italic;margin-top:0.4rem;"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextId()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetId()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbId" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-completa')">
+    <span class="nsb-icon">✏️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== COMPLETA ===== -->
+<div class="sec" id="s-completa" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>✏️ Completa: ¿quién narra y en qué parte va?</h2>
+    <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
+    <div class="cmp-sent" id="cmpSent"></div>
+    <div class="cmp-opts" id="cmpOpts" role="group"></div>
+    <button class="btn btn-g" onclick="checkCmp()">✔ Verificar</button><button class="btn btn-pri" onclick="nextCmp()">▶ Siguiente</button>
+    <div id="fbCmp" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-widgets')">
+    <span class="nsb-icon">🧩</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== WIDGETS ===== -->
+<!-- Los cuatro widgets llevan los ids por lo que hacen (describe, empareja,
+     situacion): son los que el motor busca primero. Sus datos, en
+     js/contenido.js, se llaman igual: ordenaData, describeData,
+     emparejaData y situacionData. -->
+<div class="sec" id="s-widgets" role="tabpanel">
+
+  <div class="card ac-teal">
+    <h2>🔗 Ponlo en orden</h2>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Usa las flechas <strong>▲ ▼</strong> para ordenar lo que pasa en cada cuento, los pasos para escribir y los hechos de una vida, del primero al último.</p>
+    <div class="sort-list" id="routeList"></div>
+    <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkRoute()">✅ Verificar orden</button>
+      <button class="btn btn-pri" onclick="nextRoute()">🔄 Nueva secuencia</button>
+    </div>
+    <div id="fbRoute" class="fb" role="alert"></div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>🎙️ ¿Quién narra aquí?</h2>
+    <p class="id-prog" id="describeProg" aria-live="polite">Fragmento 1 de 8</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Lee el fragmento y elige quién lo está contando:</p>
+    <div class="neuron-desc" id="describeDesc">Cargando...</div>
+    <div class="cmp-opts" id="describeOpts" role="group" style="margin-top:0.8rem;"></div>
+    <div id="fbDescribe" class="fb" role="alert"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextDescribe()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetDescribe()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>🧱 ¿En qué parte del cuento va?</h2>
+    <p class="id-prog" id="emparejaProg" aria-live="polite">1 de 6</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Lee la oración y elige a qué parte del cuento pertenece:</p>
+    <div class="neuro-trans-display" id="emparejaTerm">Cargando...</div>
+    <div class="qz-opts" id="emparejaOpts" role="group" style="margin-top:0.8rem;"></div>
+    <div id="fbEmpareja" class="fb" role="alert"></div>
+    <div style="margin-top:0.8rem;">
+      <button class="btn btn-d" onclick="resetEmpareja()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <div class="card ac-purple">
+    <h2>🩺 ¿Qué le pasa a este cuento?</h2>
+    <p class="id-prog" id="situacionProg" aria-live="polite">1 de 6</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Lee el caso y elige qué hay que arreglarle al cuento:</p>
+    <div class="neuro-trans-display" id="situacionTerm">Cargando...</div>
+    <div class="qz-opts" id="situacionOpts" role="group" style="margin-top:0.8rem;"></div>
+    <div id="fbSituacion" class="fb" role="alert"></div>
+    <div style="margin-top:0.8rem;">
+      <button class="btn btn-d" onclick="resetSituacion()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-reto')">
+    <span class="nsb-icon">🏆</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== RETO ===== -->
+<div class="sec" id="s-reto" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🏆 Reto Final: ¡30 segundos!</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.8rem;">Decide rápido de qué lado va cada frase o cada palabra.</p>
+    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: al terminar, usa «Variar pareja» para jugar con otras categorías.</p>
+    <div class="game" aria-live="polite">
+      <div class="reto-timer" id="retoTimer">⏱ 30</div>
+      <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
+      <div class="reto-btns">
+        <button class="btn btn-pri" onclick="">🙋 Primera («yo»)</button>
+        <button class="btn btn-sec" onclick="">👉 Tercera («él», «ella»)</button>
+      </div>
+      <div class="reto-score" id="retoScore" aria-live="polite">✅ 0 correctas | ❌ 0 errores</div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="startReto()">🚀 ¡Iniciar!</button>
+      <button class="btn btn-g" onclick="nextRetoPair()">🔄 Variar pareja</button>
+      <button class="btn btn-d" onclick="resetReto()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbReto" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-sopa')">
+    <span class="nsb-icon">🤍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== SOPA ===== -->
+<div class="sec" id="s-sopa" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🤍 Sopa de Letras</h2>
+    <div class="sopa-words" id="sopaWords"></div>
+    <p class="sopa-hint" id="sopaHint">👆 Toca la primera letra y luego la última (o desliza el dedo sobre la palabra)</p>
+    <div class="sopa-container">
+      <div class="sopa-grid" id="sopaGrid"></div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextSopaSet()">🔄 Variar sopa</button>
+    </div>
+    <div id="fbSopa" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tareas')">
+    <span class="nsb-icon">📋</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== TAREAS ===== -->
+<div class="sec" id="s-tareas" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>📋 Generador de Tareas</h2>
+    <div class="tg-controls">
+      <select class="tg-sel" id="tgType">
+        <option value="identify">🔍 Identificar</option>
+        <option value="classify">🗂️ Clasificar</option>
+        <option value="complete">✏️ Completar oraciones</option>
+        <option value="explain">💬 Explicar, contar y escribir</option>
+      </select>
+      <select class="tg-sel" id="tgCount">
+        <option value="5">5 tareas</option>
+        <option value="8" selected>8 tareas</option>
+        <option value="10">10 tareas</option>
+        <option value="15">15 tareas</option>
+      </select>
+      <button class="btn btn-pri" onclick="genTask()">⚡ Generar</button>
+      <button class="btn btn-d" onclick="toggleAns()">👁 Respuestas</button>
+    </div>
+    <div id="tgOut"></div>
+  </div>
+<div class="card ac-teal">
+    <h2>🏠 Tarea para la casa: cuenta lo que te contaron</h2>
+    <p>Los cuentos de tu casa no están en ningún libro: están en la memoria de tu gente. Pídele a una persona mayor que te cuente uno, y anota en tu cuaderno:</p>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">1. El cuento, con tus palabras</div><div class="t-info">Con su inicio, su desarrollo y su cierre</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">2. Quién te lo contó</div><div class="t-info">Y de quién lo aprendió esa persona</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">3. Cómo es el personaje</div><div class="t-info">Dos rasgos por fuera y dos por dentro</div></div>
+    </div>
+    <div class="tip"><span class="ti">🤝</span><div>No hace falta comprar nada: solo escuchar con atención y sin interrumpir. Si tu versión es distinta de la de un compañero, ninguna está mal.</div></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')">
+    <span class="nsb-icon">🎓</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== EVALUACIÓN ===== -->
+<div class="sec" id="s-evaluacion" role="tabpanel">
+  <div class="eval-mode-toggle" role="tablist" aria-label="Tipo de evaluación">
+    <button class="eval-mode-btn active" id="evalModeBtnConcept" role="tab" aria-selected="true" onclick="evalSwitchMode('concept')">🎓 Evaluación Conceptual</button>
+    <button class="eval-mode-btn" id="evalModeBtnCrit" role="tab" aria-selected="false" onclick="evalSwitchMode('crit')">🧠 Pensamiento Crítico</button>
+  </div>
+  <div id="evalConceptWrap">
+  <div class="card ac-purple">
+    <div class="eval-print-header">
+      <h2>Evaluación Final · El cuento · Español</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>N.º Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
+    </div>
+    <h2 id="eval-screen-title">🎓 Evaluación Final · El cuento</h2>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
+      <button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="gradeEval()">🧮 Calificar prueba</button>
+      <button class="btn btn-amber" onclick="printEval()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOut"></div>
+  </div>
+  </div>
+  <div id="evalCritWrap" style="display:none;">
+  <div class="card ac-amber">
+    <div class="eval-print-header">
+      <h2>Evaluación Competencial · Pensamiento Crítico · El cuento · Español</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>N.º Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · 5 secciones de 20 puntos</p>
+    </div>
+    <h2 id="evalcrit-screen-title">🧠 Prueba de Pensamiento Crítico · El cuento</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Responde cada caso con tus propias palabras (en pantalla o en tu cuaderno), compara con la <strong>Pauta</strong> y anótate el puntaje de cada sección. <strong>Genera una nueva prueba cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEvalCrit()">🔄 Nueva Prueba</button>
+      <button class="btn btn-d" onclick="toggleEvalCritAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="calcCritTotal()">🧮 Calcular Total</button>
+      <button class="btn btn-amber" onclick="printEvalCrit()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalCritOut"></div>
+  </div>
+  </div>
+  <div id="eval-pauta-sheet"></div>
+  <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,var(--pri),var(--sec));">
+    <span class="nsb-icon">🏅</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi Constancia</span></span>
+    <span class="nsb-arrow">🌙</span>
+  </button>
+</div>
+
+<div class="sec" id="s-recursos" role="tabpanel">
+  <div class="card ac-blue">
+    <h2>📁 Recursos del Tema</h2>
+<div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
+      <p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">📄 Ficha didáctica imprimible</p>
+      <p style="font-size:0.9rem;margin-bottom:0;">La ficha imprimible de esta misión (teoría, actividades y rúbrica en papel) estará disponible aquí cuando la misión se publique en el catálogo.</p>
+    </div>
+    <p style="font-size:0.9rem;margin-bottom:0.6rem;"><strong>Para seguir practicando</strong> con misiones que ya están publicadas:</p>
+    <p style="font-size:0.9rem;margin-bottom:0.4rem;">📚 Para distinguir el texto narrativo de los demás: <a href="../2y3ciclo-tipos-de-textos/tipos-de-textos.html">Los Tipos de Textos</a>.</p>
+    <p style="font-size:0.9rem;margin-bottom:0.4rem;">🔗 Las palabras que enlazan y ordenan lo que cuentas: <a href="../2y3ciclo-marcadores-textuales/marcadores-textuales.html">Marcadores Textuales</a>.</p>
+    <p style="font-size:0.9rem;margin-bottom:0.4rem;">🎨 Las palabras con que se describe a un personaje: <a href="../2y3ciclo-adjetivos/adjetivos-II-IIICiclo.html">Los Adjetivos</a>.</p>
+    <p style="font-size:0.9rem;margin-bottom:0.4rem;">🏛️ Las vidas de Morazán, de Herrera y de Cabañas, para escribir sus biografías: <a href="../2y3ciclo-proceres-heroes/proceres-heroes.html">Héroes y Próceres de Honduras</a>.</p>
+    <p style="font-size:0.9rem;margin-bottom:0.4rem;">🇭🇳 El verso «India virgen y hermosa dormías» y los demás: <a href="../2y3ciclo-himno-nacional/himno-nacional.html">El Himno Nacional de Honduras</a>.</p>
+    <p style="font-size:0.9rem;margin-bottom:0;">🌀 Lo que pasó en 1998, para entender el relato del río: <a href="../2y3ciclo-desastres-naturales/desastres-naturales.html">Desastres Naturales y el Huracán Mitch</a>.</p>
+  </div>
+  <div class="card ac-purple">
+    <h2>🧑‍🏫 Para el docente</h2>
+    <p style="font-size:0.95rem;">Esta misión cubre el cuento en el primer parcial (febrero y marzo) de los tres grados del III Ciclo. Los temas no llevan etiqueta de grado en la pantalla del alumno; según la programación mensual de Español, a cada grado le toca esto:</p>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">7.º grado</div><div class="t-info">El cuento de tradición oral; la descripción de personajes; escribir un cuento (borrador, revisión y versión final)</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">8.º grado</div><div class="t-info">Inicio, desarrollo y cierre; el cuento en Honduras y el cuento de autores nacionales; la biografía; la lectura como transmisión de cultura</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">9.º grado</div><div class="t-info">El cuento de tradición oral; el punto de vista (quién narra)</div></div>
+    </div>
+    <p style="font-size:0.95rem;">Tres cosas que conviene que sepas antes de usarla:</p>
+    <p style="font-size:0.95rem;margin-bottom:0.4rem;">1. <strong>Los cuentos del Cadejo, de la Sucia y del Sisimite son versiones propias</strong> de la tradición oral, escritas para la misión. No son cita de ningún libro. Si en tu comunidad se cuentan de otra manera, usa esa versión: es justo lo que la misión enseña.</p>
+    <p style="font-size:0.95rem;margin-bottom:0.4rem;">2. <strong>No trae ningún cuento de autor.</strong> Para el «cuento de autores nacionales» de 8.º, lleva al aula un cuento de la biblioteca de tu centro; la tarea de explicar pide a los alumnos buscar uno y resumir sus tres partes.</p>
+    <p style="font-size:0.95rem;margin-bottom:0;">3. <strong>La leyenda como género no se define aquí</strong>: la programación la pone en abril. Tampoco los nombres «prosopografía» y «etopeya»: la misión dice «por fuera» y «por dentro».</p>
+  </div>
+</div>
+
+</main>
+
+<!-- DIPLOMA -->
+<div class="diploma-overlay" id="diplomaOverlay" role="dialog" aria-modal="true">
+  <div class="diploma-card">
+    <div class="diploma-stars" id="diplStars">⭐⭐⭐</div>
+    <div class="diploma-title">CONSTANCIA DE LOGRO</div>
+    <div class="diploma-sub">Misión El cuento</div>
+    <div class="diploma-mascot" aria-hidden="true">🌙</div>
+    <div class="diploma-name" id="diplName">Estudiante</div>
+    <div class="diploma-pct" id="diplPct" style="color:var(--jade)">0%</div>
+    <div class="diploma-bar-wrap"><div class="diploma-bar" id="diplBar" style="width:0%"></div></div>
+    <div class="diploma-msg" id="diplMsg">¡Sigue adelante!</div>
+    <div class="diploma-date" id="diplDate"></div>
+    <div class="diploma-ach" id="diplAch"></div>
+    <div class="diploma-fam">🏠 Proyecto Educativo M.E.T.A.S</div>
+    <hr style="margin:0.8rem 0;border-color:var(--border);">
+    <input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..." oninput="updateDiplomaName(this.value)">
+    <div class="diploma-actions">
+      <button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button>
+      <button class="btn btn-pri" onclick="captureDiploma()">📷 Guardar foto</button>
+      <button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOGROS -->
+<div class="ach-panel" id="achPanel" role="region" aria-label="Logros desbloqueados">
+  <h4>🏅 Mis Logros</h4>
+  <div id="achList"></div>
+</div>
+
+<!-- NAV -->
+<nav class="nav" role="tablist" aria-label="Secciones de la misión">
+  <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-estructura" data-s="s-estructura" onclick="go('s-estructura')"><span class="ico">🎙️</span> Narrador</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lab" data-s="s-lab" onclick="go('s-lab')"><span class="ico">🧪</span> Lab</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash" onclick="go('s-flash')"><span class="ico">🃏</span> Tarjetas</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz" onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-clasifica" data-s="s-clasifica" onclick="go('s-clasifica')"><span class="ico">🗂️</span> Clasifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica" onclick="go('s-identifica')"><span class="ico">🔍</span> Identifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa" onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-widgets" data-s="s-widgets" onclick="go('s-widgets')"><span class="ico">🧩</span> Widgets</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto" onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa" onclick="go('s-sopa')"><span class="ico">🤍</span> Sopa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">🎓</span> Evaluación</button>
+  <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);" aria-haspopup="dialog"><span class="ico">🏅</span> Constancia</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-recursos" data-s="s-recursos" onclick="go('s-recursos')"><span class="ico">📁</span> Recursos</button>
+</nav>
+
+<footer class="credits">
+  <p class="fam">🏠 Proyecto Educativo M.E.T.A.S</p>
+  <p class="ppl">Desarrolladores: Josué E. Polanco_Evelyn Castellanos_Jael &amp; Angelly Polanco</p>
+  <div class="mot">«Limita el uso del teléfono móvil solo como herramienta de aprendizaje de lo contrario puede ser perjudicial» 🌱 · Lee, interactúa, recuerda el saber.</div>
+  <div class="cred-contact">
+    <span>💬 <a href="mailto:josuepolancolemus2020@gmail.com">📧 josuepolancolemus2020@gmail.com</a></span>
+    <span>🌐 <a href="https://policastsapien.com/" target="_blank">🔗 policastsapien.com</a></span>
+  </div>
+  <div class="cred-tools">
+    <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+    <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+    <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
+    <button class="cred-btn" onclick="toggleLetra()">🔤 Letra</button>
+    <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+  </div>
+</footer>
+
+  <script src="../../js/html2canvas.min.js?v=462"></script>
+  <script src="../../js/metas-centro.js?v=575"></script>
+  <script src="../../js/motor-misiones.js?v=579"></script>
+  <!-- La misión son tres archivos. El motor compartido hace lo que toda
+       misión hace; contenido.js es lo que esta dice y pregunta (solo
+       datos); y n2-cuento-propio.js, lo que es solo suyo (su
+       laboratorio). En ese orden. La ficha imprimible tiene su bloque en
+       js/ficha.js, que esta página no carga. -->
+  <script src="../../js/motor-mision.js?v=588"></script>
+  <script src="js/contenido.js?v=588"></script>
+  <script src="js/n2-cuento-propio.js?v=588"></script>
+  <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
+  <script src="../../js/metas-presentacion.js"></script>
+  <script src="../../js/metas-registro.js?v=571"></script>
+<script src="../../js/barra-secciones.js"></script>
+<script src="../../js/teclado-actividades.js"></script>
+</body>
+</html>
