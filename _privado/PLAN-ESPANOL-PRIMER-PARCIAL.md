@@ -939,7 +939,7 @@ para otra tanda (no se tocó).
   230.8 mm de contenido. Hay que volver a medirla en la tanda 4 con su QR.
 - **La mitad del examen es de 9.º.** Prefijos, sufijos, neologismos,
   polisemia, siglas y acrónimos están en febrero y marzo solo en 9.º [Prog.
-  7-9, PDF p. 23], y son la mitad de los temas de N6: 39 de las 80
+  7-9, PDF p. 23], y son la mitad de los temas de N6: 38 de las 80
   preguntas llevan `grado: '9.º'`. El estándar de lectura de 7.º y 8.º ya pide «palabras con
   múltiples significados, acrónimos y siglas» [pp. 7 y 15] y el DCNB de 7.º
   trae la formación de palabras (p. 113), pero no en ese bimestre. Pendiente
