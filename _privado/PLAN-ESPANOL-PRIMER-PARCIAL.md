@@ -889,6 +889,114 @@ nombres propios toma «reglamento general» por un nombre.
 - Cada definición que es redacción nuestra lo dice ahora también en el
   `curriculo` de su pregunta, no solo en la cabecera.
 
+**Hecho en la tanda 3 (27 de noviembre): solo N6.** N2 «El cuento» queda
+para otra tanda (no se tocó).
+
+- **N6 · `3ciclo-n6-palabras` · Las palabras y sus significados**
+  (`n6-palabras.html`). Misma forma que las otras cuatro (página,
+  `contenido.js`, `n6-palabras-propio.js` y `js/ficha.js`), anotada en
+  `_dev/misiones-nacidas.json` y sin nada congelado. Laboratorio «la fábrica
+  de palabras», con dos paneles: en el primero se elige una palabra base
+  (cargar, contar, borrar, correcto, zapato, color) y se le pone un prefijo, un
+  sufijo o los dos; en el segundo, una misma palabra (raíz, hoja, red, nube)
+  cambia de significado en tres oraciones y el laboratorio señala la pista
+  del contexto. Cruces: el manglar y «las guarderías del mar» (Los
+  Ecosistemas), la raíz cuadrada de 196 (Potencias y Raíces Cuadradas),
+  COPECO (Desastres Naturales), «red neuronal» (`js/data/ia-conceptos.js`) y
+  el verso «Tu bandera es un lampo de cielo» (`js/data/himno.js`).
+- **Sin RAE.** En `_dev/` sigue sin haber diccionario ni ortografía de la
+  RAE, así que: el laboratorio no dice que una palabra «no existe», dice que
+  «no está en la lista de este laboratorio» y manda al diccionario (es lo que
+  pide el DCNB, p. 113); los neologismos son ejemplos de uso común y de
+  ninguno se afirma que la RAE lo acepte; los prefijos y los sufijos son de
+  todos los días y se dan con el significado que tienen en sus palabras de
+  ejemplo. Lo que hay que verificar cuando llegue la fuente está listado en
+  la cabecera de `contenido.js` y en el PR: el significado de cada prefijo y
+  sufijo, si bio-, geo-, foto-, tele-, micro- y eco- se llaman prefijos (así
+  los llama el DCNB, «prefijos griegos»), la definición de acrónimo y los
+  neologismos de ejemplo.
+- **Redacción nuestra.** Casi todas las definiciones (sinónimo, antónimo,
+  contexto, denotación, connotación, prefijo, sufijo, neologismo, polisemia,
+  sigla, acrónimo): la programación y el DCNB las nombran y no las definen.
+  Va dicho en la cabecera y en el `curriculo` de cada pregunta.
+- **Siglas.** Solo cinco, todas con su nombre acreditado en el repositorio:
+  COPECO, ONU, UNAH, IHSS e IA. Los nombres falsos que sirven de distractor
+  están dichos inventados en su `curriculo`.
+- **Sin etiquetas de grado a la vista.** La página dice «III Ciclo» y ninguna
+  tarjeta lleva «7.º», «8.º» ni «9.º» (decisión de Josué). El grado de cada
+  pregunta sigue en su campo `grado`, que la pantalla no pinta. El bloque de
+  la ficha tampoco pone etiquetas en los títulos: el reparto por grado va en
+  la nota del docente. N5, N1, N4 y N3 todavía las muestran: se quitan en la
+  tanda 4, cuando los indicadores por grado pasen a Recursos.
+- **Lo medido** (reglas de la revisión de la tanda 2): la correcta es la
+  opción más larga en 3 de las 20 selecciones del examen y en 1 de las 10 de
+  la práctica (la más corta se midió al revisar el PR 62: ver abajo); ninguna de las 20 respuestas de completar del examen está
+  escrita en otro de los 80 enunciados, ni ninguna de las 10 de la práctica
+  en el resto de su hoja; cada completar tiene una sola respuesta (el nombre
+  que se enseñó o la palabra que sale de armar las piezas del enunciado).
+- **La ficha.** Armada en la memoria y medida con un QR prestado sale en 8
+  hojas (4 de teoría, 3 de práctica y la del docente); la más llena tiene
+  230.8 mm de contenido. Hay que volver a medirla en la tanda 4 con su QR.
+- **La mitad del examen es de 9.º.** Prefijos, sufijos, neologismos,
+  polisemia, siglas y acrónimos están en febrero y marzo solo en 9.º [Prog.
+  7-9, PDF p. 23], y son la mitad de los temas de N6: 38 de las 80
+  preguntas llevan `grado: '9.º'`. El estándar de lectura de 7.º y 8.º ya pide «palabras con
+  múltiples significados, acrónimos y siglas» [pp. 7 y 15] y el DCNB de 7.º
+  trae la formación de palabras (p. 113), pero no en ese bimestre. Pendiente
+  de decisión de Josué: dejarlo así (como N3, que pregunta la línea
+  editorial) o separar un examen de 7.º y 8.º.
+- **Una segunda lectura.** Antes del PR las 80 preguntas y la práctica se
+  leyeron otra vez, una por una, buscando respuestas dobles, distractores
+  que se descartan solos y preguntas que regalan otra. Salieron 22
+  hallazgos, ninguno grave, y se aplicaron: entre ellos, que COPECO no se
+  forma con las iniciales sino con dos letras de cada palabra (la guía ya
+  lo dice), que en Honduras el de la computadora es «mouse» y no «ratón»
+  (el ejemplo pasó a «nube» y «navegar») y que «cafetal» no se parte limpio
+  (el ejemplo de -al es «maizal»).
+- **Sello v588** al final de la tanda.
+
+**Decidido al revisar el PR 62 (27 de noviembre):**
+
+- **Lo que dice la RAE**, dicho por Josué (la fuente sigue sin estar en
+  `_dev/`): el diccionario (DLE) llama a bio-, geo-, tele-, micro- y foto-
+  «elementos compositivos», no prefijos, y define la sigla como
+  «abreviación gráfica». N6 mantiene la forma del DCNB («prefijos que
+  vienen del griego») y lleva una nota breve en la guía y en la ficha con
+  el nombre del diccionario; y ya no dice que la sigla sea una palabra.
+- **Los 38 de 80 de 9.º se quedan.** La nota del docente avisa que la
+  misión cubre los tres grados y que prefijos, sufijos, neologismos, siglas
+  y polisemia son sobre todo de 9.º.
+- **El `nivel` de la ficha** es «III Ciclo y Bachillerato», como N1, N3 y
+  N4. La nota de la rúbrica con «usted» se queda (es plantilla común) y la
+  ficha de 8 hojas también.
+- **Ni la más larga ni la más corta.** La correcta era la opción más corta
+  demasiadas veces. Quedó así, contando solo cuando es la única: en el
+  examen, la más larga en 3 de 20 y la más corta en 4 de 20; en la
+  práctica, 1 y 3 de 10. Al escribir N2 hay que medir las dos.
+- **Preguntas cambiadas:** `mc-ero` usa «cartero» («carpintero» viene del
+  latín y no se forma con -ero); `mc-abundante` cambia un distractor;
+  `cp-contingencias` lleva pista de función; `cp-rapido` pasó a `cp-llorar`,
+  sin pista de letras; el falso de IHSS dice «es un acrónimo, porque se lee
+  de corrido» (`tf-ihss-acronimo`). Como esa frase deja escrita la palabra
+  «acrónimo» y lo que quiere decir, el completar que la pedía
+  (`cp-acronimo`) ya no podía caer con ella: pasó a `cp-ia`, que pregunta
+  de qué palabra es inicial la «I» de «IA».
+- **«Inteligencia artificial» va en minúsculas**, como la escribe la RAE
+  (dato de Josué). La sonda de nombres propios pide las dos mayúsculas
+  cuando las dos palabras van seguidas y en minúscula; no se cambió la
+  sonda ni se enseñó la mayúscula: en N6 el nombre solo aparece abriendo
+  frase («Inteligencia artificial») y `cp-ia` no lo escribe de corrido. Es
+  la misma salida que «reglamento de toda la escuela» en N3. Queda para
+  decidir si la sonda debe dejar de pedir esas mayúsculas en todo el sitio.
+- En la nota de los pareados de la práctica, el ejemplo de -al es
+  «platanal».
+
+**Lo que la tanda 3 deja para la 4**, además de lo que dejaron la 1 y la 2:
+lo mismo para N6 (catálogo, QR, ficha impresa, enlace a la ficha desde
+Recursos, insignia de la Ruta, pregunta en `js/data/diagnosticos.js`), pasar
+los indicadores por grado a Recursos y quitar las etiquetas de grado de N5,
+N1, N4 y N3.
+
 ### Las fichas como motor (empieza el miércoles 25)
 
 En el repositorio no hay todavía un documento de ese trabajo, así que esto
