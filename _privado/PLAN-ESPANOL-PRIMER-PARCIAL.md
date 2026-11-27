@@ -930,7 +930,7 @@ para otra tanda (no se tocó).
   tanda 4, cuando los indicadores por grado pasen a Recursos.
 - **Lo medido** (reglas de la revisión de la tanda 2): la correcta es la
   opción más larga en 3 de las 20 selecciones del examen y en 1 de las 10 de
-  la práctica; ninguna de las 20 respuestas de completar del examen está
+  la práctica (la más corta se midió al revisar el PR 62: ver abajo); ninguna de las 20 respuestas de completar del examen está
   escrita en otro de los 80 enunciados, ni ninguna de las 10 de la práctica
   en el resto de su hoja; cada completar tiene una sola respuesta (el nombre
   que se enseñó o la palabra que sale de armar las piezas del enunciado).
@@ -954,6 +954,35 @@ para otra tanda (no se tocó).
   (el ejemplo pasó a «nube» y «navegar») y que «cafetal» no se parte limpio
   (el ejemplo de -al es «maizal»).
 - **Sello v588** al final de la tanda.
+
+**Decidido al revisar el PR 62 (27 de noviembre):**
+
+- **Lo que dice la RAE**, dicho por Josué (la fuente sigue sin estar en
+  `_dev/`): el diccionario (DLE) llama a bio-, geo-, tele-, micro- y foto-
+  «elementos compositivos», no prefijos, y define la sigla como
+  «abreviación gráfica». N6 mantiene la forma del DCNB («prefijos que
+  vienen del griego») y lleva una nota breve en la guía y en la ficha con
+  el nombre del diccionario; y ya no dice que la sigla sea una palabra.
+- **Los 38 de 80 de 9.º se quedan.** La nota del docente avisa que la
+  misión cubre los tres grados y que prefijos, sufijos, neologismos, siglas
+  y polisemia son sobre todo de 9.º.
+- **El `nivel` de la ficha** es «III Ciclo y Bachillerato», como N1, N3 y
+  N4. La nota de la rúbrica con «usted» se queda (es plantilla común) y la
+  ficha de 8 hojas también.
+- **Ni la más larga ni la más corta.** La correcta era la opción más corta
+  demasiadas veces. Quedó así, contando solo cuando es la única: en el
+  examen, la más larga en 3 de 20 y la más corta en 4 de 20; en la
+  práctica, 1 y 3 de 10. Al escribir N2 hay que medir las dos.
+- **Preguntas cambiadas:** `mc-ero` usa «cartero» («carpintero» viene del
+  latín y no se forma con -ero); `mc-abundante` cambia un distractor;
+  `cp-contingencias` lleva pista de función; `cp-rapido` pasó a `cp-llorar`,
+  sin pista de letras; el falso de IHSS dice «es un acrónimo, porque se lee
+  de corrido» (`tf-ihss-acronimo`). Como esa frase deja escrita la palabra
+  «acrónimo» y lo que quiere decir, el completar que la pedía
+  (`cp-acronimo`) ya no podía caer con ella: pasó a `cp-ia`, que pide la
+  sigla de «inteligencia artificial».
+- En la nota de los pareados de la práctica, el ejemplo de -al es
+  «platanal».
 
 **Lo que la tanda 3 deja para la 4**, además de lo que dejaron la 1 y la 2:
 lo mismo para N6 (catálogo, QR, ficha impresa, enlace a la ficha desde
