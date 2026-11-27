@@ -159,8 +159,8 @@ const FICHA = {
         ['-ería', 'lugar donde se hace o se vende', 'zapatería, librería'],
         ['-dor, -ante', 'el que hace la acción', 'pescador, cantante'],
         ['-ito · -ón, -ona', 'pequeño · grande', 'perrito · zapatón, casona'],
-        ['-oso · -ble', 'que tiene mucho · que se puede', 'lluvioso · lavable'],
-        ['-mente · -al', 'de cierta manera · terreno sembrado', 'lentamente · cafetal, maizal']
+        ['-oso · -able', 'que tiene mucho · que se puede', 'lluvioso · lavable'],
+        ['-mente · -al', 'de cierta manera · terreno sembrado', 'lentamente · maizal, arrozal']
       ] } },
       { caja: 'truco', html: '🧠 <b>Ojo:</b> no toda combinación de piezas da una palabra. Si armas una por tu cuenta, compruébala en el diccionario antes de usarla.' }
     ],
@@ -168,7 +168,7 @@ const FICHA = {
     /* ───────── Hoja 4 ───────── */
     [
       { h2: '🆕 6. Neologismos', pegado: true },
-      { p: 'Un <strong>neologismo</strong> es una <strong>palabra nueva</strong> que entra a la lengua para nombrar algo que antes no existía: con la tecnología llegaron «chatear» y «escanear». A veces una <strong>palabra de siempre gana un significado nuevo</strong>: el «ratón» ya no es solo un animal, es también el aparato con que mueves la flecha en la pantalla; la «nube» es también el lugar de internet donde se guardan archivos.' },
+      { p: 'Un <strong>neologismo</strong> es una <strong>palabra nueva</strong> que entra a la lengua para nombrar algo que antes no existía: con la tecnología llegaron «chatear» y «escanear». A veces una <strong>palabra de siempre gana un significado nuevo</strong>: la «nube» ya no es solo la del cielo, es también el lugar de internet donde se guardan archivos; «navegar» ya no es solo ir en barco, es también pasar de una página a otra en internet.' },
       { h2: '🔀 7. Polisemia' },
       { caja: 'regla', html: '⚡ <b>Polisemia</b> es que una sola palabra tenga varios significados. El contexto dice cuál vale en cada oración.' },
       { tabla: { cab: ['Oración', '¿Qué significa «raíz» ahí?'], k: 'normal', filas: [
@@ -177,12 +177,12 @@ const FICHA = {
         ['«La raíz de "librero" es "libr-"».', 'Parte de una palabra.']
       ] } },
       { h2: '🔠 8. Siglas y acrónimos' },
-      { p: 'Una <strong>sigla</strong> es una palabra formada con las <strong>iniciales</strong> de un nombre largo; se escribe con mayúsculas. Unas se leen letra por letra. Las que se leen de corrido, como una palabra cualquiera, son <strong>acrónimos</strong>.' },
+      { p: 'Una <strong>sigla</strong> es una palabra formada con las <strong>iniciales</strong> de un nombre largo (algunas toman más de una letra de cada palabra); se escribe con mayúsculas. Unas se leen letra por letra. Las que se leen de corrido, como una palabra cualquiera, son <strong>acrónimos</strong>.' },
       { tabla: { cab: ['Sigla', 'Nombre completo', '¿Cómo se lee?'], filas: [
         ['IHSS', 'Instituto Hondureño de Seguridad Social', 'Letra por letra.'],
         ['ONU', 'Organización de las Naciones Unidas', 'De corrido: es un acrónimo.'],
         ['UNAH', 'Universidad Nacional Autónoma de Honduras', 'De corrido: es un acrónimo.'],
-        ['COPECO', 'Comisión Permanente de Contingencias', 'De corrido: es un acrónimo.']
+        ['COPECO', 'Comisión Permanente de Contingencias', 'De corrido: es un acrónimo. Toma dos letras de cada palabra.']
       ] } },
       { caja: 'idea', html: '💡 <b>Al escribir:</b> pon el nombre completo la primera vez que uses una sigla que tu lector quizá no conoce. Después ya puedes usar solo la sigla.' },
       { html: '<div class="media">🎓 <b>Para Media:</b> el programa de 10.º estudia los <strong>prefijos y sufijos grecolatinos</strong> y suma los <strong>parónimos</strong> y los <strong>homónimos</strong>. El de 11.º vuelve al <strong>lenguaje denotativo</strong>, a los <strong>neologismos</strong> y a los <strong>regionalismos</strong>. Aquí solo van los nombres.</div>' }
@@ -211,11 +211,11 @@ const FICHA = {
 
   practica: {
     completar: [
-      { q: '«Lleno» y «vacío» forman una pareja de ___: cada palabra dice lo opuesto de la otra.', a: 'antónimos', ensaya: 'cp-antonimos' },
+      { q: '«Lleno» y «vacío» dicen lo opuesto una de la otra: por eso se llaman ___.', a: 'antónimos', ensaya: 'cp-antonimos' },
       { q: '«Planta» nombra un ser vivo, la parte de abajo del pie y un piso de un edificio. A eso de tener varios significados se le dice ___.', a: 'polisemia', ensaya: 'cp-polisemia' },
       { q: 'Hace unos años nadie decía «escanear». Como es una palabra recién llegada a la lengua, es un ___.', a: 'neologismo', ensaya: 'cp-neologismo' },
-      { q: 'Keyla arregló su cuarto y su hermano lo revolvió todo. Con el prefijo «des-» y el verbo «ordenar» se dice lo que hizo el hermano: ___.', a: 'desordenar', ensaya: 'cp-deshacer' },
-      { q: 'El lugar donde se venden libros se nombra con la raíz «libr-» y el sufijo «-ería»: ___.', a: 'librería', ensaya: 'cp-zapateria' },
+      { q: 'Con el prefijo «des-» y el verbo «ordenar» se forma otro verbo, que dice lo opuesto: ___.', a: 'desordenar', ensaya: 'cp-deshacer' },
+      { q: 'El lugar donde se venden libros se nombra con la raíz «libr-» y el sufijo «-ería»: ___.', a: 'librería', ensaya: 'cp-fruteria' },
       { q: 'Con las cuatro iniciales de «Universidad Nacional Autónoma de Honduras» se escribe la sigla ___.', a: 'UNAH', ensaya: 'cp-onu' },
       { q: '«Panadero», «panadería» y «panecillo» salen de una misma palabra de tres letras: ___.', a: 'pan', ensaya: 'cp-flor' },
       { q: '«Barco» está antes que «casa» en el diccionario porque sus palabras siguen el orden ___.', a: 'alfabético', ensaya: 'cp-alfabetico' },
@@ -229,33 +229,33 @@ const FICHA = {
       { q: '«Cipote» y «chunche» son formas de hablar de una región, y no errores.', a: true, ensaya: 'tf-pulperia' },
       { q: 'Un poema usa casi siempre las palabras con su significado directo, sin sugerir nada.', a: false, ensaya: 'tf-poema-connotativo' },
       { q: 'En un informe de laboratorio predomina el valor denotativo de las palabras.', a: true, ensaya: 'tf-ciencias-denotativo' },
-      { q: 'En «releer», la pieza «re-» va delante de la raíz: por eso es un prefijo.', a: true, ensaya: 'tf-prefijo-final' },
-      { q: 'Cuando aparece un invento, la lengua puede recibir una palabra nueva para nombrarlo.', a: true, ensaya: 'tf-lengua-cambia' },
-      { q: '«IHSS» se forma con la última letra de cada palabra de «Instituto Hondureño de Seguridad Social».', a: false, ensaya: 'tf-unah' },
+      { q: 'En «incontable» hay un prefijo delante de la raíz y un sufijo detrás.', a: true, ensaya: 'tf-dos-piezas' },
+      { q: '«Hipotenusa» es un término técnico, no una palabra del habla popular.', a: true, ensaya: 'tf-fotosintesis' },
+      { q: 'En la sigla «IHSS», la «H» es la inicial de «Hospital».', a: false, ensaya: 'tf-unah' },
       { q: 'Un diccionario de Medicina es un diccionario especializado.', a: true, ensaya: 'tf-especializado' }
     ],
     seleccion: [
       { q: '«La casa de mi tía es amplia». ¿Qué palabra dice lo mismo que «amplia»?', o: ['angosta', 'grande', 'antigua', 'lejana'], a: 1, ensaya: 'mc-sencillo' },
       { q: '¿Qué palabra significa lo opuesto de «valiente»?', o: ['fuerte', 'audaz', 'cobarde', 'atrevido'], a: 2, ensaya: 'mc-abundante' },
       { q: '«Los buzos hallaron un banco de sardinas». En esa oración, «banco» nombra…', o: ['un asiento de madera', 'una oficina de dinero', 'un montón de tierra', 'un grupo de peces'], a: 3, ensaya: 'mc-banco' },
-      { q: 'No sabes qué es un «pentagrama» y quieres la explicación de un músico. Te conviene buscar en…', o: ['un diccionario de Música', 'un atlas de América', 'un álbum de fotos', 'una guía de teléfonos'], a: 0, ensaya: 'mc-hipotenusa' },
+      { q: 'No sabes qué es un «pentagrama» y quieres la explicación de un músico. Te conviene buscar en…', o: ['un diccionario de Música', 'un diccionario de Medicina', 'un diccionario de Matemáticas', 'un diccionario de sinónimos'], a: 0, ensaya: 'mc-hipotenusa' },
       { q: '«Ese niño es un terremoto». Con esa expresión se quiere decir que el niño…', o: ['vive en una zona de temblores', 'es muy inquieto', 'estudia Ciencias Naturales', 'se cayó al suelo'], a: 1, ensaya: 'mc-corazon-oro' },
       { q: 'En «prever» y «preescolar», la pieza «pre-» quiere decir…', o: ['debajo', 'contra', 'muchos', 'antes'], a: 3, ensaya: 'mc-pre' },
       { q: 'En «zapatero», «jardinero» y «cocinero», el sufijo «-ero» señala…', o: ['un oficio', 'un lugar', 'un tamaño', 'un color'], a: 0, ensaya: 'mc-ero' },
-      { q: '¿Cuál de estas oraciones usa vocabulario técnico de las Matemáticas?', o: ['«Nos tocaron unos confites a cada uno»', '«Sobraron dos y me los comí yo»', '«El cociente es 3 y el residuo es 2»', '«Partimos la bolsa entre los cuatro»'], a: 2, ensaya: 'mc-tecnico' },
+      { q: '¿Cuál de estas oraciones usa vocabulario técnico de las Matemáticas?', o: ['«Nos tocaron unos confites a cada uno»', '«Sobraron dos y me los comí yo»', '«El cociente es 5 y el residuo es 1»', '«Partimos la bolsa entre los cuatro»'], a: 2, ensaya: 'mc-tecnico' },
       { q: '¿Cuál de estos textos está escrito en lenguaje no literario?', o: ['Un cuento de espantos de mi abuelo', 'Una canción de cuna muy antigua', 'El manual de una licuadora', 'Un poema dedicado a la madre'], a: 2, ensaya: 'mc-literario' },
-      { q: '«COPECO» se escribe con letras iniciales de…', o: ['Comisión Permanente de Contingencias', 'Comité de Padres del Colegio', 'Cooperativa de Pesca de la Costa', 'Consejo Popular de Comunidades'], a: 0, ensaya: 'mc-ihss' }
+      { q: '¿Qué nombre completo se esconde en «COPECO»?', o: ['Comisión Permanente de Contingencias', 'Comité Pedagógico del Colegio', 'Cooperativa de Pesca de la Costa', 'Consejo Pesquero de Comunidades'], a: 0, ensaya: 'mc-ihss' }
     ],
     /* Pareados de aplicar: el término se une con lo que dice la nota.
        El examen lo une con su significado. */
     pareados: {
-      intro: '<div class="historia"><b>Lee esta nota de Óscar:</b> «El sábado mi abuelo me llevó a su cafetal. Tuve que rehacer la mochila, porque había olvidado el antimosquitos. Caminamos lentamente por una vereda llena de mariposas multicolores. Empezamos a cortar café a las siete y subimos hasta lo más alto de la finca. Mi abuelo me explicó que la lluvia y el sol son factores sin vida, y que al repartir doce sacos entre cuatro mulas el resultado es tres. Al volver me dio diez lempiras: “Tomá, para que tengás dinero”, me dijo».</div>',
+      intro: '<div class="historia"><b>Lee esta nota de Óscar:</b> «El sábado mi abuelo me llevó a su cafetal. Tuve que rehacer la mochila, porque había olvidado la crema antimosquitos. Caminamos lentamente por una vereda llena de mariposas multicolores. Empezamos a cortar café a las siete y subimos hasta lo más alto de la finca. Mi abuelo me explicó que la lluvia y el sol son factores sin vida, y que al repartir doce sacos entre cuatro mulas el resultado es tres. Al volver me dio diez lempiras: “Tomá, para que tengás dinero”, me dijo».</div>',
       columnaA: 'Columna A',
       columnaB: 'Columna B: lo que dice la nota',
       anchoA: '24%',
       pares: [
         { term: 're-', def: '«rehacer la mochila»', ensaya: 'pr-re' },
-        { term: 'anti-', def: '«había olvidado el antimosquitos»', ensaya: 'pr-anti' },
+        { term: 'anti-', def: '«la crema antimosquitos»', ensaya: 'pr-anti' },
         { term: 'multi-', def: '«mariposas multicolores»', ensaya: 'pr-multi' },
         { term: '-al', def: '«me llevó a su cafetal»', ensaya: 'pr-al' },
         { term: '-mente', def: '«caminamos lentamente»', ensaya: 'pr-mente' },

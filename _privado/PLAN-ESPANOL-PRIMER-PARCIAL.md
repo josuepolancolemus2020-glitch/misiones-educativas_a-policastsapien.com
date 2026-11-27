@@ -897,7 +897,7 @@ para otra tanda (no se tocó).
   `contenido.js`, `n6-palabras-propio.js` y `js/ficha.js`), anotada en
   `_dev/misiones-nacidas.json` y sin nada congelado. Laboratorio «la fábrica
   de palabras», con dos paneles: en el primero se elige una palabra base
-  (cargar, contar, borrar, útil, zapato, color) y se le pone un prefijo, un
+  (cargar, contar, borrar, correcto, zapato, color) y se le pone un prefijo, un
   sufijo o los dos; en el segundo, una misma palabra (raíz, hoja, red, nube)
   cambia de significado en tres oraciones y el laboratorio señala la pista
   del contexto. Cruces: el manglar y «las guarderías del mar» (Los
@@ -929,7 +929,7 @@ para otra tanda (no se tocó).
   la nota del docente. N5, N1, N4 y N3 todavía las muestran: se quitan en la
   tanda 4, cuando los indicadores por grado pasen a Recursos.
 - **Lo medido** (reglas de la revisión de la tanda 2): la correcta es la
-  opción más larga en 4 de las 20 selecciones del examen y en 2 de las 10 de
+  opción más larga en 3 de las 20 selecciones del examen y en 1 de las 10 de
   la práctica; ninguna de las 20 respuestas de completar del examen está
   escrita en otro de los 80 enunciados, ni ninguna de las 10 de la práctica
   en el resto de su hoja; cada completar tiene una sola respuesta (el nombre
@@ -945,6 +945,14 @@ para otra tanda (no se tocó).
   trae la formación de palabras (p. 113), pero no en ese bimestre. Pendiente
   de decisión de Josué: dejarlo así (como N3, que pregunta la línea
   editorial) o separar un examen de 7.º y 8.º.
+- **Una segunda lectura.** Antes del PR las 80 preguntas y la práctica se
+  leyeron otra vez, una por una, buscando respuestas dobles, distractores
+  que se descartan solos y preguntas que regalan otra. Salieron 22
+  hallazgos, ninguno grave, y se aplicaron: entre ellos, que COPECO no se
+  forma con las iniciales sino con dos letras de cada palabra (la guía ya
+  lo dice), que en Honduras el de la computadora es «mouse» y no «ratón»
+  (el ejemplo pasó a «nube» y «navegar») y que «cafetal» no se parte limpio
+  (el ejemplo de -al es «maizal»).
 - **Sello v588** al final de la tanda.
 
 **Lo que la tanda 3 deja para la 4**, además de lo que dejaron la 1 y la 2:

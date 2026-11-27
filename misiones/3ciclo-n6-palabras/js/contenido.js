@@ -134,7 +134,7 @@
        (debajo), anti- (contra), bi- (dos), tri- (tres), multi- (muchos);
        -ero (oficio), -ería (lugar donde se hace o se vende), -dor (el
        que hace la acción), -ante (el que hace la acción), -ito
-       (pequeño), -ón y -ona (grande), -oso (que tiene mucho), -ble (que
+       (pequeño), -ón y -ona (grande), -oso (que tiene mucho), -able (que
        se puede), -mente (de manera), -al (terreno sembrado), -idad
        (cualidad) y -ear (forma un verbo). PENDIENTE DE VERIFICAR CON LA
        RAE: muchos de estos tienen otros significados en otras palabras;
@@ -147,12 +147,14 @@
        solo va en la guía, no en el examen.
      · «Neologismo»: palabra nueva, o significado nuevo de una palabra
        de siempre, que entra a la lengua para nombrar algo nuevo. Los
-       ejemplos («chatear», «escanear»; el «ratón» de la computadora, la
-       «nube» donde se guardan archivos) son de uso común. NO SE AFIRMA
+       ejemplos («chatear», «escanear»; la «nube» donde se guardan archivos,
+       «navegar» por internet). No va el «ratón» de la computadora: en
+       Honduras se le dice «mouse» son de uso común. NO SE AFIRMA
        qué diccionario los recoge ni cuáles acepta la RAE: queda
        pendiente de verificar.
      · «Polisemia»: que una sola palabra tenga varios significados.
-     · «Sigla»: palabra formada con las iniciales de un nombre.
+     · «Sigla»: palabra formada con las iniciales de un nombre (COPECO
+       toma las dos primeras letras de cada palabra, y la guía lo dice).
        «Acrónimo»: la sigla que se lee de corrido, como una palabra.
        PENDIENTE DE VERIFICAR CON LA RAE: el término «acrónimo» tiene
        además otro uso (palabra formada con trozos de otras) que aquí no
@@ -234,7 +236,7 @@ const fcData=[
   {w:'Lenguaje literario y no literario',a:'✨ El <strong>literario</strong> (cuentos, poemas) busca la belleza y usa mucho la connotación. El <strong>no literario</strong> (un informe, una receta, un libro de Ciencias) busca informar con exactitud: en él predomina la denotación.'},
   {w:'Prefijo',a:'⬅️ Pieza que se pone <strong>delante</strong> de la raíz y le cambia el significado: <strong>re-</strong> (volver a) en «releer»; <strong>des-</strong> (lo contrario) en «deshacer»; <strong>sub-</strong> (debajo) en «subsuelo».'},
   {w:'Sufijo',a:'➡️ Pieza que se pone <strong>detrás</strong> de la raíz: <strong>-ero</strong> (oficio) en «panadero»; <strong>-ería</strong> (lugar) en «zapatería»; <strong>-ito</strong> (pequeño) en «perrito».'},
-  {w:'Neologismo',a:'🆕 <strong>Palabra nueva</strong>, o significado nuevo de una palabra de siempre, que entra a la lengua para nombrar algo nuevo: «chatear», «escanear», el «ratón» de la computadora.'},
+  {w:'Neologismo',a:'🆕 <strong>Palabra nueva</strong>, o significado nuevo de una palabra de siempre, que entra a la lengua para nombrar algo nuevo: «chatear», «escanear», la «nube» donde se guardan archivos.'},
   {w:'Polisemia',a:'🔀 Que <strong>una sola palabra tenga varios significados</strong>: «raíz» (la de la planta, la de un número y la de una palabra). El contexto dice cuál es.'},
   {w:'Siglas y acrónimos',a:'🔠 La <strong>sigla</strong> se forma con las iniciales de un nombre: IHSS, Instituto Hondureño de Seguridad Social. Si se lee de corrido, como una palabra, es un <strong>acrónimo</strong>: ONU, COPECO.'},
 ];
@@ -249,7 +251,7 @@ const qzData=[
   {q:'«Tienes un corazón de oro» usa las palabras con…',o:['a) denotación','b) orden alfabético','c) vocabulario técnico','d) connotación'],c:3},
   {q:'En «releer», la pieza «re-» es un…',o:['a) prefijo','b) sufijo','c) sinónimo','d) acrónimo'],c:0},
   {q:'¿Cuál de estas palabras lleva un sufijo que indica oficio?',o:['a) casita','b) lluvioso','c) zapatero','d) subsuelo'],c:2},
-  {q:'«COPECO» es la sigla de…',o:['a) Comité Popular de Comercio','b) Colegio Pedagógico de Comayagua','c) Comisión Permanente de Contingencias','d) Corporación Petrolera de Copán'],c:2},
+  {q:'«COPECO» es la sigla de…',o:['a) Comité Pesquero de la Costa','b) Colegio Pedagógico de Comayagua','c) Comisión Permanente de Contingencias','d) Corporación Petrolera de Copán'],c:2},
 ];
 
 // ===================== CLASIFICA =====================
@@ -274,7 +276,7 @@ const idData=[
   {s:['El','agua','corre','por','el','subsuelo.'],c:5,busca:'la palabra que lleva el prefijo sub-'},
   {s:['Dejó','el','dibujo','incompleto.'],c:3,busca:'la palabra que lleva el prefijo in-'},
   {s:['El','gato','logró','deshacer','el','nudo.'],c:3,busca:'la palabra que lleva el prefijo des-'},
-  {s:['La','bandera','tricolor','ondea','en','el','patio.'],c:2,busca:'la palabra que lleva el prefijo tri-'},
+  {s:['Hizo','una','pulsera','tricolor','para','su','prima.'],c:3,busca:'la palabra que lleva el prefijo tri-'},
   {s:['Mi','tío','es','el','zapatero','del','barrio.'],c:4,busca:'la palabra que lleva el sufijo -ero'},
   {s:['Compramos','un','cuaderno','en','la','librería.'],c:5,busca:'la palabra que lleva el sufijo -ería'},
   {s:['Fue','un','fin','de','semana','lluvioso.'],c:5,busca:'la palabra que lleva el sufijo -oso'},
@@ -338,7 +340,7 @@ const retoPairs=[
   {label:['Sinónimos','Antónimos'],btnA:'🔁 Sinónimos',btnB:'↔️ Antónimos',colA:'sin',colB:'ant',
    words:[{w:'lindo · bonito',t:'sin'},{w:'día · noche',t:'ant'},{w:'empezar · iniciar',t:'sin'},{w:'alto · bajo',t:'ant'},{w:'feliz · dichoso',t:'sin'},{w:'lleno · vacío',t:'ant'},{w:'andar · caminar',t:'sin'},{w:'dulce · amargo',t:'ant'},{w:'auto · carro',t:'sin'},{w:'reír · llorar',t:'ant'}]},
   {label:['Prefijo','Sufijo'],btnA:'⬅️ Prefijo',btnB:'➡️ Sufijo',colA:'pre',colB:'suf',
-   words:[{w:'rehacer',t:'pre'},{w:'librería',t:'suf'},{w:'desordenar',t:'pre'},{w:'florero',t:'suf'},{w:'submarino',t:'pre'},{w:'perrito',t:'suf'},{w:'imposible',t:'pre'},{w:'pescador',t:'suf'},{w:'bicolor',t:'pre'},{w:'casona',t:'suf'}]},
+   words:[{w:'rehacer',t:'pre'},{w:'librería',t:'suf'},{w:'desordenar',t:'pre'},{w:'florero',t:'suf'},{w:'submarino',t:'pre'},{w:'perrito',t:'suf'},{w:'inútil',t:'pre'},{w:'pescador',t:'suf'},{w:'bicolor',t:'pre'},{w:'casona',t:'suf'}]},
   {label:['Denotación','Connotación'],btnA:'📘 Denotación',btnB:'🎭 Connotación',colA:'den',colB:'con',
    words:[{w:'«El hielo es agua sólida»',t:'den'},{w:'«La noticia me dejó helado»',t:'con'},{w:'«La mesa tiene cuatro patas»',t:'den'},{w:'«Metí la pata»',t:'con'},{w:'«El perro ladra»',t:'den'},{w:'«Llueve a cántaros»',t:'con'},{w:'«El río lleva agua»',t:'den'},{w:'«Lloró un río de lágrimas»',t:'con'},{w:'«La nube tapa el sol»',t:'den'},{w:'«Anda en las nubes»',t:'con'}]},
 ];
@@ -462,8 +464,8 @@ const evalTFBank=[
   {q:'Decir «pulpería» en vez de «tienda» es hablar mal.',a:false,k:'tf-pulperia',grado:'7.º',curriculo:'Prog. 7-9, PDF p. 7 (regionalismos; lenguaje popular, regional) · DCNB p. 86 (respeto hacia las diferentes formas de lengua utilizadas por los miembros de la comunidad) · la definición de regionalismo es redacción nuestra'},
   {q:'En los poemas abundan las palabras usadas con valor connotativo.',a:true,k:'tf-poema-connotativo',grado:'7.º a 9.º',curriculo:'Prog. 7-9, PDF pp. 7, 15 y 23 (denotación y connotación) · DCNB pp. 106, 143 y 180 (predominio del valor connotativo del lenguaje en los textos líricos)'},
   {q:'En el texto de un libro de Ciencias predominan las palabras usadas con valor connotativo.',a:false,k:'tf-ciencias-denotativo',grado:'7.º a 9.º',curriculo:'Prog. 7-9, PDF pp. 7, 15 y 23 (denotación y connotación) · DCNB pp. 108, 146 y 183 (el valor denotativo de la lengua en los textos expositivos)'},
-  {q:'El prefijo es la pieza que se agrega al final de una palabra.',a:false,k:'tf-prefijo-final',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (prefijos, sufijos) · DCNB pp. 113 y 191 (prefijos y sufijos) · dónde va cada pieza es redacción nuestra'},
-  {q:'Al español ya no le entran palabras nuevas: las que tiene son las de siempre.',a:false,k:'tf-lengua-cambia',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (neologismos) · la definición de neologismo es redacción nuestra'},
+  {q:'Una palabra puede llevar un prefijo o un sufijo, pero nunca los dos a la vez.',a:false,k:'tf-dos-piezas',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (prefijos, sufijos) · DCNB pp. 113 y 153 (analizan palabras compuestas o derivadas para identificar sus componentes) · que una palabra puede llevar las dos piezas es redacción nuestra'},
+  {q:'«Fotosíntesis» es una palabra del habla popular.',a:false,k:'tf-fotosintesis',grado:'7.º y 8.º',curriculo:'Prog. 7-9, PDF pp. 7 y 15 (vocabulario técnico y científico; lenguaje científico-técnico; lenguaje popular) · DCNB pp. 86 y 118 (formas orales: popular; formas escritas: científico/técnico) · el término, de la misión de los ecosistemas (misiones/2y3ciclo-ecosistemas/) · qué es vocabulario técnico es redacción nuestra'},
   {q:'«UNAH» se forma con las iniciales de «Universidad Nacional Autónoma de Honduras».',a:true,k:'tf-unah',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (siglas y acrónimos); pp. 7 y 15 (acrónimos y siglas, en el estándar de lectura) · el nombre, como lo escribe la misión de la Ley Fundamental de Educación (misiones/docente-ley-fundamental-aula/) · que la sigla se forma con las iniciales es redacción nuestra'},
   {q:'El diccionario especializado de una materia explica los términos propios de esa materia.',a:true,k:'tf-especializado',grado:'8.º y 9.º',curriculo:'Prog. 7-9, PDF pp. 15 y 23 (uso de diccionarios especializados) · DCNB p. 124 (diccionarios especializados) · la explicación es redacción nuestra'}
 ];
@@ -471,7 +473,7 @@ const evalMCBank=[
   {q:'«El examen fue sencillo». ¿Qué palabra puede ocupar el lugar de «sencillo» sin cambiar lo que dice la oración?',o:['a) extenso','b) reciente','c) fácil','d) extraño'],a:2,k:'mc-sencillo',grado:'7.º a 9.º',curriculo:'Prog. 7-9, PDF pp. 7, 15 y 23 (sinónimos y antónimos) · la definición de sinónimo es redacción nuestra'},
   {q:'¿Qué palabra significa lo contrario de «abundante»?',o:['a) numeroso','b) escaso','c) pesado','d) lejano'],a:1,k:'mc-abundante',grado:'7.º a 9.º',curriculo:'Prog. 7-9, PDF pp. 7, 15 y 23 (sinónimos y antónimos) · la definición de antónimo es redacción nuestra'},
   {q:'«Nos sentamos en el banco del parque». En esa oración, «banco» nombra…',o:['a) un asiento','b) un grupo de peces','c) una oficina donde se guarda dinero','d) un montón de arena'],a:0,k:'mc-banco',grado:'8.º y 9.º',curriculo:'Prog. 7-9, PDF pp. 15 y 23 (el contexto) y p. 23 (polisemia); pp. 7 y 15 (palabras con múltiples significados, en el estándar de lectura) · DCNB pp. 88, 121 y 162 (el sentido de la frase en que está ubicada la palabra) · la definición de polisemia es redacción nuestra'},
-  {q:'Quieres una explicación completa de la palabra «hipotenusa». ¿Dónde conviene buscarla?',o:['a) En un atlas de Honduras','b) En el periódico de ayer','c) En un libro de cuentos','d) En un diccionario de Matemáticas'],a:3,k:'mc-hipotenusa',grado:'8.º y 9.º',curriculo:'Prog. 7-9, PDF pp. 15 y 23 (uso de diccionarios especializados) · DCNB p. 124 (diccionarios especializados… para asegurarse del uso apropiado de los términos desconocidos) · qué es un diccionario especializado es redacción nuestra'},
+  {q:'Quieres una explicación completa de la palabra «hipotenusa». ¿Dónde conviene buscarla?',o:['a) En un diccionario de Música','b) En un diccionario de Medicina','c) En un diccionario de sinónimos','d) En un diccionario de Matemáticas'],a:3,k:'mc-hipotenusa',grado:'8.º y 9.º',curriculo:'Prog. 7-9, PDF pp. 15 y 23 (uso de diccionarios especializados) · DCNB p. 124 (diccionarios especializados… para asegurarse del uso apropiado de los términos desconocidos) · qué es un diccionario especializado es redacción nuestra'},
   {q:'«Mi abuela tiene un corazón de oro». Con esa expresión se quiere decir que la abuela…',o:['a) guarda una joya','b) tiene mucho dinero','c) es muy bondadosa','d) está enferma del corazón'],a:2,k:'mc-corazon-oro',grado:'7.º a 9.º',curriculo:'Prog. 7-9, PDF pp. 7, 15 y 23 (denotación y connotación) · DCNB pp. 108, 146 y 183 (el valor connotativo de algunas expresiones en la comunicación cotidiana) · la definición de connotación es redacción nuestra'},
   {q:'En «prehistoria» y «precalentar», el prefijo «pre-» significa…',o:['a) contra','b) antes','c) debajo','d) otra vez'],a:1,k:'mc-pre',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (prefijos, sufijos) · DCNB pp. 113 y 191 (los prefijos, sus significados y la función de modificar el significado de las palabras) · el significado de este prefijo es redacción nuestra, pendiente de verificar con la RAE'},
   {q:'En «panadero», «lechero» y «carpintero», el sufijo «-ero» indica…',o:['a) un oficio','b) un lugar','c) un tamaño','d) una cantidad'],a:0,k:'mc-ero',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (prefijos, sufijos) · DCNB pp. 113 y 191 (sufijos) · el significado de este sufijo es redacción nuestra, pendiente de verificar con la RAE'},
@@ -483,8 +485,8 @@ const evalCPBank=[
   {q:'Las palabras que significan lo contrario una de la otra, como «frío» y «caliente», se llaman ___.',a:'antónimos',acc:['antónimos','antonimos','antónimo','antonimo'],k:'cp-antonimos',grado:'7.º a 9.º',curriculo:'Prog. 7-9, PDF pp. 7, 15 y 23 (sinónimos y antónimos) · la definición es redacción nuestra'},
   {q:'Que una sola palabra tenga varios significados, como «hoja» (la del árbol y la del cuaderno), se llama ___.',a:'polisemia',acc:['polisemia'],k:'cp-polisemia',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (polisemia); pp. 7 y 15 (palabras con múltiples significados, en el estándar de lectura) · la definición es redacción nuestra'},
   {q:'Una palabra nueva, que entra a la lengua para nombrar algo que antes no existía, es un ___.',a:'neologismo',acc:['neologismo','neologismos'],k:'cp-neologismo',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (neologismos) · la definición es redacción nuestra'},
-  {q:'Si a «hacer» le pones delante el prefijo «des-», se forma la palabra ___.',a:'deshacer',acc:['deshacer'],k:'cp-deshacer',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (prefijos, sufijos) · DCNB pp. 113 y 191 (prefijos; analizan palabras derivadas para identificar sus componentes) · que el prefijo va delante es redacción nuestra'},
-  {q:'Con «zapato» y el sufijo «-ería» se forma ___, el lugar donde se venden zapatos.',a:'zapatería',acc:['zapatería','zapateria'],k:'cp-zapateria',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (prefijos, sufijos) · DCNB pp. 113 y 191 (sufijos) · el significado de este sufijo es redacción nuestra, pendiente de verificar con la RAE'},
+  {q:'Con el verbo «hacer» y el prefijo «des-» se forma el verbo ___.',a:'deshacer',acc:['deshacer'],k:'cp-deshacer',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (prefijos, sufijos) · DCNB pp. 113 y 191 (prefijos; analizan palabras derivadas para identificar sus componentes) · el significado de este prefijo es redacción nuestra, pendiente de verificar con la RAE'},
+  {q:'Con «fruta» y el sufijo «-ería» se forma ___, el lugar donde se vende fruta.',a:'frutería',acc:['frutería','fruteria'],k:'cp-fruteria',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (prefijos, sufijos) · DCNB pp. 113 y 191 (sufijos) · el significado de este sufijo es redacción nuestra, pendiente de verificar con la RAE'},
   {q:'La sigla de «Organización de las Naciones Unidas» se escribe con sus tres iniciales: ___.',a:'ONU',acc:['ONU','onu','O.N.U.'],k:'cp-onu',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (siglas y acrónimos); pp. 7 y 15 (acrónimos y siglas, en el estándar de lectura) · el nombre, como lo escribe el DCNB de II ciclo (Ciencias Sociales de 6.º) · que la sigla se forma con las iniciales es redacción nuestra'},
   {q:'«Florero», «florista» y «florecer» comparten una parte que no cambia, su raíz: ___.',a:'flor',acc:['flor','flor-'],k:'cp-flor',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (prefijos, sufijos) · DCNB p. 153 (el elemento que no varía, manteniéndose siempre fijo: lexema o raíz) y p. 113 (lexema, morfema)'},
   {q:'En el diccionario, las palabras van en orden ___: primero las que empiezan con a, luego las que empiezan con b, y así.',a:'alfabético',acc:['alfabético','alfabetico'],k:'cp-alfabetico',grado:'7.º',curriculo:'Prog. 7-9, PDF p. 7 (uso del diccionario) · DCNB p. 91 (textos de consulta: el diccionario) · cómo se usa el diccionario es redacción nuestra'},
@@ -495,7 +497,7 @@ const evalPRBank=[
   {term:'re-',def:'Volver a hacer algo',k:'pr-re',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (prefijos, sufijos) · DCNB pp. 113 y 191 (prefijos latinos y sus significados) · el significado de este prefijo es redacción nuestra, pendiente de verificar con la RAE'},
   {term:'anti-',def:'Contra; que se opone a algo',k:'pr-anti',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (prefijos, sufijos) · DCNB pp. 153, 154 y 191 (prefijos griegos y sus significados) · el significado de este prefijo es redacción nuestra, pendiente de verificar con la RAE'},
   {term:'multi-',def:'Muchos, varios',k:'pr-multi',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (prefijos, sufijos) · DCNB pp. 113 y 191 (prefijos latinos y sus significados) · el significado de este prefijo es redacción nuestra, pendiente de verificar con la RAE'},
-  {term:'-al',def:'Terreno sembrado de una planta',k:'pr-al',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (prefijos, sufijos) · DCNB pp. 113 y 191 (sufijos) · el significado de este sufijo (el de «cafetal» y «maizal») es redacción nuestra, pendiente de verificar con la RAE'},
+  {term:'-al',def:'Terreno sembrado de una planta',k:'pr-al',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (prefijos, sufijos) · DCNB pp. 113 y 191 (sufijos) · el significado de este sufijo (el de «maizal» y «arrozal») es redacción nuestra, pendiente de verificar con la RAE'},
   {term:'-mente',def:'De cierta manera',k:'pr-mente',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (prefijos, sufijos) · DCNB pp. 113 y 191 (sufijos) · el significado de este sufijo es redacción nuestra, pendiente de verificar con la RAE'},
   {term:'Iniciar',def:'Significa lo mismo que «comenzar»',k:'pr-iniciar',grado:'7.º a 9.º',curriculo:'Prog. 7-9, PDF pp. 7, 15 y 23 (sinónimos y antónimos) · la definición de sinónimo es redacción nuestra'},
   {term:'Ascender',def:'Significa lo contrario de «bajar»',k:'pr-ascender',grado:'7.º a 9.º',curriculo:'Prog. 7-9, PDF pp. 7, 15 y 23 (sinónimos y antónimos) · la definición de antónimo es redacción nuestra'},
@@ -539,10 +541,10 @@ const evalMCBankNuevo=[
   {q:'«Este puente es seguro: puedes pasar sin miedo». ¿Qué palabra dice lo contrario de «seguro» en esa oración?',o:['a) indeciso','b) peligroso','c) desconfiado','d) asegurado'],a:1,k:'mc-seguro',fuente:'Guía (Aprende): Sinónimos y antónimos · Ficha, página 1 (1. Sinónimos y antónimos)',grado:'8.º',curriculo:'Prog. 7-9, PDF p. 15 (el contexto: sinónimos, antónimos) · que un antónimo sirve o no según la oración es redacción nuestra'},
   {q:'«La raíz cuadrada de 196 es 14». En esa oración, «raíz» es una palabra de…',o:['a) las Ciencias Naturales','b) la Gramática','c) las Matemáticas','d) la Odontología'],a:2,k:'mc-raiz-196',fuente:'Guía (Aprende): Polisemia · Actividad «¿Qué significa aquí?» 2',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (polisemia; lenguaje técnico); pp. 7 y 15 (palabras con múltiples significados, en el estándar de lectura) · el dato, de la misión de las potencias (misiones/2ciclo-potencias-raices/) · la definición de polisemia es redacción nuestra'},
   {q:'¿En cuál de estas oraciones se usa «estrella» con su significado directo, sin sugerir nada más?',o:['a) «Mi hermana es la estrella del equipo»','b) «Dicen que naciste con muy buena estrella»','c) «Anoche brillaba una estrella cerca de la Luna»','d) «Ese cantante ya es una estrella de la radio»'],a:2,k:'mc-estrella',fuente:'Guía (Aprende): Denotación y connotación · Actividad Clasifica: Significado directo (denotación)',grado:'7.º a 9.º',curriculo:'Prog. 7-9, PDF pp. 7, 15 y 23 (denotación y connotación) · la definición de denotación es redacción nuestra'},
-  {q:'El Himno Nacional dice: «Tu bandera es un lampo de cielo». Un «lampo» es un resplandor. Con esa comparación, el verso sugiere…',o:['a) que la bandera resplandece','b) que la bandera es de vidrio','c) que la bandera cayó de una nube','d) que la bandera alumbra de noche'],a:0,k:'mc-himno',fuente:'Guía (Aprende): Denotación y connotación · Ficha, página 2 (4. Denotación y connotación)',grado:'7.º a 9.º',curriculo:'Prog. 7-9, PDF pp. 7, 15 y 23 (denotación y connotación) · DCNB pp. 106, 143 y 180 (predominio del valor connotativo del lenguaje en los textos líricos; comentan las connotaciones de comparaciones y metáforas) · el verso y el significado de «lampo», de js/data/himno.js · qué sugiere el verso es lectura nuestra'},
+  {q:'El Himno Nacional dice: «Tu bandera es un lampo de cielo». Un «lampo» es un resplandor. Con esa imagen, el verso sugiere…',o:['a) que la bandera brilla como el cielo','b) que la bandera está hecha de vidrio','c) que la bandera cayó de una nube gris','d) que la bandera alumbra por la noche'],a:0,k:'mc-himno',fuente:'Guía (Aprende): Denotación y connotación · Ficha, página 2 (4. Denotación y connotación)',grado:'7.º a 9.º',curriculo:'Prog. 7-9, PDF pp. 7, 15 y 23 (denotación y connotación) · DCNB pp. 106, 143 y 180 (predominio del valor connotativo del lenguaje en los textos líricos; comentan las connotaciones de comparaciones y metáforas) · el verso y el significado de «lampo», de js/data/himno.js · qué sugiere el verso es lectura nuestra'},
   {q:'Un diccionario «bilingüe» trae las palabras en…',o:['a) un idioma','b) tres idiomas','c) muchos idiomas','d) dos idiomas'],a:3,k:'mc-bilingue',fuente:'Guía (Aprende): Prefijos de todos los días · Ficha, página 3 (5. La palabra por dentro)',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (prefijos, sufijos) · DCNB pp. 113 y 191 (prefijos latinos y sus significados) · el significado de este prefijo es redacción nuestra, pendiente de verificar con la RAE'},
   {q:'¿Cuál de estas palabras nombra una casa grande?',o:['a) casita','b) casero','c) caserío','d) casona'],a:3,k:'mc-casona',fuente:'Guía (Aprende): Sufijos de todos los días · Ficha, página 3 (5. La palabra por dentro)',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (prefijos, sufijos) · DCNB p. 191 (sufijos: on, ona, ito, ante) · el significado de este sufijo es redacción nuestra, pendiente de verificar con la RAE'},
-  {q:'Con la tecnología, algunas palabras de siempre ganaron un significado nuevo. ¿En cuál oración tiene «ratón» ese significado nuevo?',o:['a) «El gato persiguió al ratón»','b) «Mueve el ratón y haz clic en el botón»','c) «Un ratón se comió el queso»','d) «Vimos un ratón en la bodega»'],a:1,k:'mc-raton',fuente:'Guía (Aprende): Neologismos · Ficha, página 4 (6. Neologismos)',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (neologismos; polisemia) · que una palabra de siempre gana un significado nuevo es redacción nuestra; el ejemplo es de uso común (pendiente de verificar con la RAE)'},
+  {q:'Con la tecnología, algunas palabras de siempre ganaron un significado nuevo. ¿En cuál oración tiene «nube» ese significado nuevo?',o:['a) «Una nube tapó el sol toda la tarde»','b) «Subí la tarea a la nube»','c) «Esa nube trae bastante agua»','d) «Vimos una nube con forma de pez»'],a:1,k:'mc-nube',fuente:'Guía (Aprende): Neologismos · Ficha, página 4 (6. Neologismos)',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (neologismos; polisemia) · que una palabra de siempre gana un significado nuevo es redacción nuestra; el ejemplo es de uso común (pendiente de verificar con la RAE)'},
   {q:'En un cuento lees «Los niños corrían». ¿Con qué palabra buscas ese verbo en el diccionario?',o:['a) corrían','b) corro','c) correr','d) corrida'],a:2,k:'mc-correr',fuente:'Guía (Aprende): El diccionario y sus parientes · Ficha, página 1 (2. El diccionario)',grado:'7.º',curriculo:'Prog. 7-9, PDF p. 7 (uso del diccionario) · DCNB p. 91 (textos de consulta: el diccionario) · cómo se usa el diccionario es redacción nuestra'},
   {q:'«Dame una mano con estas cajas». En esa oración, «dar una mano» quiere decir…',o:['a) ayudar','b) saludar','c) aplaudir','d) empujar'],a:0,k:'mc-dar-mano',fuente:'Guía (Aprende): Denotación y connotación · Ficha, página 2 (4. Denotación y connotación)',grado:'7.º a 9.º',curriculo:'Prog. 7-9, PDF pp. 7, 15 y 23 (denotación y connotación) · DCNB pp. 108, 146 y 183 (el valor connotativo de algunas expresiones en la comunicación cotidiana) · la definición de connotación es redacción nuestra'}
 ];
@@ -550,7 +552,7 @@ const evalCPBankNuevo=[
   {q:'La sigla que se lee de corrido, como una palabra cualquiera (por ejemplo, «UNAH»), se llama ___.',a:'acrónimo',acc:['acrónimo','acronimo','acrónimos','acronimos'],k:'cp-acronimo',fuente:'Guía (Aprende): Siglas y acrónimos · Ficha, página 4 (8. Siglas y acrónimos)',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (siglas y acrónimos); pp. 7 y 15 (acrónimos y siglas, en el estándar de lectura) · la definición es redacción nuestra, pendiente de verificar con la RAE'},
   {q:'«COPECO» quiere decir «Comisión Permanente de ___».',a:'Contingencias',acc:['Contingencias','contingencias','Contingencia','contingencia'],k:'cp-contingencias',fuente:'Guía (Aprende): Siglas y acrónimos · Actividad «Desarrolla la sigla» 1',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (siglas y acrónimos); pp. 7 y 15 (acrónimos y siglas, en el estándar de lectura) · el nombre, de la misión de los desastres naturales (misiones/2y3ciclo-desastres-naturales/) · que la sigla se forma con las iniciales es redacción nuestra'},
   {q:'Lo contrario de «posible» se forma con el prefijo «im-»: ___.',a:'imposible',acc:['imposible'],k:'cp-imposible',fuente:'Guía (Aprende): Prefijos de todos los días · Ficha, página 3 (5. La palabra por dentro)',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (prefijos, sufijos) · DCNB pp. 113 y 191 (prefijos latinos y sus significados) · el significado de este prefijo es redacción nuestra, pendiente de verificar con la RAE'},
-  {q:'Con el prefijo «sub-» y la palabra «marino» se nombra el barco que navega bajo el agua: ___.',a:'submarino',acc:['submarino'],k:'cp-submarino',fuente:'Guía (Aprende): Prefijos de todos los días · Actividad Reto: Prefijo',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (prefijos, sufijos) · DCNB pp. 113 y 191 (prefijos latinos y sus significados) · el significado de este prefijo es redacción nuestra, pendiente de verificar con la RAE'},
+  {q:'Con el prefijo «sub-» y la palabra «marino» se nombra el barco que navega bajo el agua: ___.',a:'submarino',acc:['submarino'],k:'cp-submarino',fuente:'Guía (Aprende): Prefijos de todos los días · Ficha, página 3 (5. La palabra por dentro)',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (prefijos, sufijos) · DCNB pp. 113 y 191 (prefijos latinos y sus significados) · el significado de este prefijo es redacción nuestra, pendiente de verificar con la RAE'},
   {q:'Con el verbo «pescar» y el sufijo «-dor» se nombra a quien vive de la pesca: ___.',a:'pescador',acc:['pescador','pescadora'],k:'cp-pescador',fuente:'Guía (Aprende): Sufijos de todos los días · Actividad Reto: Sufijo',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (prefijos, sufijos) · DCNB pp. 113 y 191 (sufijos) · el significado de este sufijo es redacción nuestra, pendiente de verificar con la RAE'},
   {q:'Una palabra que se usa en una región y no en todos los lugares donde se habla español, como «cipote» por «niño», es un ___.',a:'regionalismo',acc:['regionalismo','regionalismos'],k:'cp-regionalismo',fuente:'Guía (Aprende): Palabras técnicas y palabras de aquí · Ficha, página 2 (3. Vocabulario técnico y regionalismos)',grado:'7.º',curriculo:'Prog. 7-9, PDF p. 7 (regionalismos; lenguaje popular, regional) · DCNB p. 86 (formas orales: regionalismos) · la definición es redacción nuestra; «cipote» es un ejemplo del habla popular, el mismo de la misión de la conversación'},
   {q:'Se llama ___ al uso de una palabra con su significado directo, sin sugerir nada más.',a:'denotación',acc:['denotación','denotacion'],k:'cp-denotacion',fuente:'Guía (Aprende): Denotación y connotación · Ficha, página 2 (4. Denotación y connotación)',grado:'7.º a 9.º',curriculo:'Prog. 7-9, PDF pp. 7, 15 y 23 (denotación y connotación) · DCNB pp. 108, 146 y 183 (valor denotativo) · la definición es redacción nuestra'},
@@ -574,7 +576,8 @@ const evalPRBankNuevo=[
 // ===================== PRUEBA DE PENSAMIENTO CRÍTICO =====================
 // Los casos son malentendidos de verdad: una palabra con dos significados
 // en un mensaje sin contexto, una sigla o un término técnico que el lector
-// no conoce. Todas las situaciones son inventadas. La pauta del caso es la
+// no conoce. Todas las situaciones son inventadas, también la nota de la
+// alerta amarilla. La pauta del caso es la
 // misma para los dos casos del banco: por eso tienen la misma forma (un
 // mensaje corto, dos personas que entienden dos cosas y un tropiezo).
 const critTextos={
@@ -609,7 +612,7 @@ const critErrorBank=[
    g2:'no toda combinación forma una palabra: la que uno arma se comprueba en el diccionario antes de usarla.'},
 ];
 const critDecisionBank=[
-  'Escribes para el periódico mural una nota sobre la temporada de lluvias y pones: «COPECO declaró alerta amarilla» (la nota es inventada). Un compañero de séptimo grado la lee y te dice que no sabe qué es COPECO.',
+  'Escribes para el periódico mural una nota sobre la temporada de lluvias y pones: «COPECO declaró alerta amarilla». Un compañero de séptimo grado la lee y te dice que no sabe qué es COPECO.',
   'Tu equipo va a exponer sobre el manglar ante los padres de familia. El borrador dice: «Los factores abióticos del ecosistema condicionan a los productores». Tu abuela, que irá a la exposición, lo leyó y no entendió la oración.',
 ];
 const critDecisionGuide='Las siglas y las palabras técnicas son exactas, pero solo sirven si quien lee las entiende. Se recomienda no quitarlas, sino explicarlas la primera vez que aparecen: escribir el nombre completo junto a la sigla (Comisión Permanente de Contingencias) y poner al lado de cada término técnico una explicación con palabras de todos los días o un ejemplo. Así el texto sigue siendo exacto y lo entiende también quien no conoce el tema.';
@@ -670,7 +673,7 @@ const fabricaPalabras={
   },
   sufijos:{
     dor:{txt:'-dor',sig:'el que hace la acción'},
-    ble:{txt:'-ble',sig:'que se puede'},
+    ble:{txt:'-able',sig:'que se puede'},
     mente:{txt:'-mente',sig:'de manera'},
     idad:{txt:'-idad',sig:'cualidad'},
     ero:{txt:'-ero',sig:'oficio'},
@@ -685,13 +688,14 @@ const fabricaPalabras={
        're|':{s:'Volver a cargar.',ej:'Hay que recargar la lámpara.'},
        'des|':{s:'Lo contrario de cargar: quitar la carga.',ej:'Ayúdame a descargar el camión.'},
        '|dor':{s:'La persona o el aparato que carga.',ej:'Préstame el cargador del teléfono.'},
-       're|ble':{s:'Que se puede volver a cargar.',ej:'Compré una lámpara recargable.'}
+       're|ble':{s:'Que se puede volver a cargar.',ej:'Compré una lámpara recargable.'},
+       'des|ble':{s:'Que se puede descargar. Se dice de lo que se baja de internet a un aparato.',ej:'La guía trae un mapa descargable.'}
      }},
     {id:'contar',palabra:'contar',prefijos:['re','des','in'],sufijos:['dor','ble'],conSufijo:{dor:'contador',ble:'contable'},
      salen:{
        're|':{s:'Volver a contar.',ej:'Hubo que recontar los votos del grado.'},
        'des|':{s:'Quitar una parte de la cuenta: rebajar.',ej:'Me van a descontar diez lempiras.'},
-       '|dor':{s:'La persona o el aparato que cuenta.',ej:'El contador del agua marca lo que se gastó.'},
+       '|dor':{s:'La persona o el aparato que cuenta.',ej:'El contador de la luz marca lo que se gastó.'},
        '|ble':{s:'Que se puede contar.',ej:'Las sillas del aula son contables.'},
        'in|ble':{s:'Que no se puede contar.',ej:'Las estrellas son incontables.'}
      }},
@@ -701,12 +705,11 @@ const fabricaPalabras={
        '|ble':{s:'Que se puede borrar.',ej:'Usa un marcador borrable.'},
        'in|ble':{s:'Que no se puede borrar. Delante de b, el prefijo in- se escribe im-.',ej:'Fue un día imborrable.'}
      }},
-    {id:'util',palabra:'útil',prefijos:['in','re','sub'],sufijos:['mente','idad'],conSufijo:{mente:'útilmente',idad:'utilidad'},
+    {id:'correcto',palabra:'correcto',prefijos:['in','re','sub'],sufijos:['mente','ito'],conSufijo:{mente:'correctamente',ito:'correctito'},
      salen:{
-       'in|':{s:'Que no es útil: que no sirve.',ej:'Un paraguas roto es inútil.'},
-       '|idad':{s:'Cualidad de útil: lo que algo tiene de provechoso.',ej:'El diccionario es de gran utilidad.'},
-       'in|mente':{s:'De manera inútil: en vano.',ej:'Esperamos inútilmente: el bus no pasó.'},
-       'in|idad':{s:'Cualidad de inútil.',ej:'Comprobó la inutilidad de discutir.'}
+       'in|':{s:'Que no es correcto: que tiene errores.',ej:'El resultado de la suma es incorrecto.'},
+       '|mente':{s:'De manera correcta.',ej:'Escribió correctamente su nombre.'},
+       'in|mente':{s:'De manera incorrecta.',ej:'Midió incorrectamente la mesa.'}
      }},
     {id:'zapato',palabra:'zapato',prefijos:['re','sub'],sufijos:['ero','eria','ito','on'],conSufijo:{ero:'zapatero',eria:'zapatería',ito:'zapatito',on:'zapatón'},
      salen:{
