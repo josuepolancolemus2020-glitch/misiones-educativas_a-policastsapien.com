@@ -979,8 +979,15 @@ para otra tanda (no se tocó).
   sin pista de letras; el falso de IHSS dice «es un acrónimo, porque se lee
   de corrido» (`tf-ihss-acronimo`). Como esa frase deja escrita la palabra
   «acrónimo» y lo que quiere decir, el completar que la pedía
-  (`cp-acronimo`) ya no podía caer con ella: pasó a `cp-ia`, que pide la
-  sigla de «inteligencia artificial».
+  (`cp-acronimo`) ya no podía caer con ella: pasó a `cp-ia`, que pregunta
+  de qué palabra es inicial la «I» de «IA».
+- **«Inteligencia artificial» va en minúsculas**, como la escribe la RAE
+  (dato de Josué). La sonda de nombres propios pide las dos mayúsculas
+  cuando las dos palabras van seguidas y en minúscula; no se cambió la
+  sonda ni se enseñó la mayúscula: en N6 el nombre solo aparece abriendo
+  frase («Inteligencia artificial») y `cp-ia` no lo escribe de corrido. Es
+  la misma salida que «reglamento de toda la escuela» en N3. Queda para
+  decidir si la sonda debe dejar de pedir esas mayúsculas en todo el sitio.
 - En la nota de los pareados de la práctica, el ejemplo de -al es
   «platanal».
 

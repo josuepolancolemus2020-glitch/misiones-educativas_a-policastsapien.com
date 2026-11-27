@@ -93,7 +93,14 @@
        Universidad Nacional Autónoma de Honduras
        (misiones/docente-ley-fundamental-aula/); IHSS, Instituto
        Hondureño de Seguridad Social (misiones/docente-estatuto-derechos/);
-       IA, inteligencia artificial (`js/data/ia-conceptos.js`).
+       IA, inteligencia artificial (`js/data/ia-conceptos.js`). ⚠️ El
+       nombre va en minúsculas, que es como lo escribe la RAE (dato de
+       Josué, revisión del PR 62). La sonda de nombres propios pide las dos
+       mayúsculas cuando las dos palabras van seguidas y en minúscula, así
+       que la misión no lo escribe así en lo que lee el alumno: al
+       desarrollar la sigla el nombre abre la frase («Inteligencia
+       artificial»), y el completar pregunta una inicial sin escribir el
+       nombre de corrido. No se enseña una mayúscula que no corresponde.
 
    ► REDACCIÓN NUESTRA (no hay definición en `_dev/`; se escribió clara
      para III Ciclo y no es cita de nadie). La programación y el DCNB
@@ -327,10 +334,10 @@ const describeData=[
 // cada nombre está en la cabecera.
 const emparejaData=[
   {term:'COPECO',resp:'Comisión Permanente de Contingencias',opts:['Comisión Permanente de Contingencias','Organización de las Naciones Unidas','Universidad Nacional Autónoma de Honduras','Instituto Hondureño de Seguridad Social']},
-  {term:'ONU',resp:'Organización de las Naciones Unidas',opts:['Organización de las Naciones Unidas','Comisión Permanente de Contingencias','Inteligencia Artificial','Universidad Nacional Autónoma de Honduras']},
+  {term:'ONU',resp:'Organización de las Naciones Unidas',opts:['Organización de las Naciones Unidas','Comisión Permanente de Contingencias','Inteligencia artificial','Universidad Nacional Autónoma de Honduras']},
   {term:'UNAH',resp:'Universidad Nacional Autónoma de Honduras',opts:['Universidad Nacional Autónoma de Honduras','Instituto Hondureño de Seguridad Social','Organización de las Naciones Unidas','Comisión Permanente de Contingencias']},
-  {term:'IHSS',resp:'Instituto Hondureño de Seguridad Social',opts:['Instituto Hondureño de Seguridad Social','Inteligencia Artificial','Universidad Nacional Autónoma de Honduras','Organización de las Naciones Unidas']},
-  {term:'IA',resp:'Inteligencia Artificial',opts:['Inteligencia Artificial','Comisión Permanente de Contingencias','Instituto Hondureño de Seguridad Social','Universidad Nacional Autónoma de Honduras']},
+  {term:'IHSS',resp:'Instituto Hondureño de Seguridad Social',opts:['Instituto Hondureño de Seguridad Social','Inteligencia artificial','Universidad Nacional Autónoma de Honduras','Organización de las Naciones Unidas']},
+  {term:'IA',resp:'Inteligencia artificial',opts:['Inteligencia artificial','Comisión Permanente de Contingencias','Instituto Hondureño de Seguridad Social','Universidad Nacional Autónoma de Honduras']},
 ];
 // Widget 4: «¿dónde lo buscas?»
 const situacionData=[
@@ -556,7 +563,7 @@ const evalMCBankNuevo=[
   {q:'«Dame una mano con estas cajas». En esa oración, «dar una mano» quiere decir…',o:['a) ayudar','b) saludar','c) aplaudir','d) empujar'],a:0,k:'mc-dar-mano',fuente:'Guía (Aprende): Denotación y connotación · Ficha, página 2 (4. Denotación y connotación)',grado:'7.º a 9.º',curriculo:'Prog. 7-9, PDF pp. 7, 15 y 23 (denotación y connotación) · DCNB pp. 108, 146 y 183 (el valor connotativo de algunas expresiones en la comunicación cotidiana) · la definición de connotación es redacción nuestra'}
 ];
 const evalCPBankNuevo=[
-  {q:'La sigla de «Inteligencia Artificial» se escribe con sus dos iniciales: ___.',a:'IA',acc:['IA','ia','I.A.'],k:'cp-ia',fuente:'Actividad «Desarrolla la sigla» 5 · Ficha, página 4 (8. Siglas y acrónimos)',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (siglas y acrónimos); pp. 7 y 15 (acrónimos y siglas, en el estándar de lectura) · la sigla, como la usa js/data/ia-conceptos.js · que la sigla se forma con las iniciales es redacción nuestra'},
+  {q:'En la sigla «IA», la «A» es la inicial de «artificial» y la «I», la de ___.',a:'inteligencia',acc:['inteligencia','Inteligencia'],k:'cp-ia',fuente:'Actividad «Desarrolla la sigla» 5 · Ficha, página 4 (8. Siglas y acrónimos)',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (siglas y acrónimos); pp. 7 y 15 (acrónimos y siglas, en el estándar de lectura) · la sigla, como la usa js/data/ia-conceptos.js · que la sigla se forma con las iniciales es redacción nuestra'},
   {q:'«COPECO», la institución que coordina la prevención y la respuesta ante los desastres, es la Comisión Permanente de ___.',a:'Contingencias',acc:['Contingencias','contingencias','Contingencia','contingencia'],k:'cp-contingencias',fuente:'Guía (Aprende): Siglas y acrónimos · Actividad «Desarrolla la sigla» 1',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (siglas y acrónimos); pp. 7 y 15 (acrónimos y siglas, en el estándar de lectura) · el nombre y lo que hace la institución, de la misión de los desastres naturales (misiones/2y3ciclo-desastres-naturales/) · COPECO toma las dos primeras letras de cada palabra de su nombre (CO, PE, CO), no solo las iniciales'},
   {q:'Lo contrario de «posible» se forma con el prefijo «im-»: ___.',a:'imposible',acc:['imposible'],k:'cp-imposible',fuente:'Guía (Aprende): Prefijos de todos los días · Ficha, página 3 (5. La palabra por dentro)',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (prefijos, sufijos) · DCNB pp. 113 y 191 (prefijos latinos y sus significados) · el significado de este prefijo es redacción nuestra, pendiente de verificar con la RAE'},
   {q:'Con el prefijo «sub-» y la palabra «marino» se nombra el barco que navega bajo el agua: ___.',a:'submarino',acc:['submarino'],k:'cp-submarino',fuente:'Guía (Aprende): Prefijos de todos los días · Ficha, página 3 (5. La palabra por dentro)',grado:'9.º',curriculo:'Prog. 7-9, PDF p. 23 (prefijos, sufijos) · DCNB pp. 113 y 191 (prefijos latinos y sus significados) · el significado de este prefijo es redacción nuestra, pendiente de verificar con la RAE'},
@@ -747,7 +754,7 @@ const fabricaPalabras={
     {palabra:'red',oraciones:[
       {txt:'El pescador lanzó la red al agua.',sentido:'Tejido de hilos para atrapar peces.',pista:'«pescador» y «al agua».'},
       {txt:'La escuela ya tiene red de internet.',sentido:'Conjunto de aparatos conectados entre sí.',pista:'«de internet».'},
-      {txt:'Con una red neuronal, la máquina reconoce caras y voces.',sentido:'En Inteligencia Artificial: muchas cuentas pequeñas conectadas en capas. No es un cerebro.',pista:'«neuronal» y «la máquina»: se habla de tecnología.'}
+      {txt:'Con una red neuronal, la máquina reconoce caras y voces.',sentido:'En las máquinas que aprenden: muchas cuentas pequeñas conectadas en capas. No es un cerebro.',pista:'«neuronal» y «la máquina»: se habla de tecnología.'}
     ]},
     {palabra:'nube',oraciones:[
       {txt:'Una nube gris tapó el sol.',sentido:'Lo que vemos en el cielo, de donde cae la lluvia.',pista:'«gris» y «tapó el sol».'},

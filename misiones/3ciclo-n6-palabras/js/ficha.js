@@ -181,7 +181,7 @@ const FICHA = {
       { p: 'Una <strong>sigla</strong> es una abreviación que se forma con las <strong>iniciales</strong> de un nombre largo (algunas toman más de una letra de cada palabra); se escribe con mayúsculas. Unas se leen letra por letra. Las que se leen de corrido, como una palabra cualquiera, son <strong>acrónimos</strong>.' },
       { tabla: { cab: ['Sigla', 'Nombre completo', '¿Cómo se lee?'], filas: [
         ['IHSS', 'Instituto Hondureño de Seguridad Social', 'Letra por letra.'],
-        ['IA', 'Inteligencia Artificial', 'Letra por letra.'],
+        ['IA', 'Inteligencia artificial', 'Letra por letra.'],
         ['ONU', 'Organización de las Naciones Unidas', 'De corrido: es un acrónimo.'],
         ['UNAH', 'Universidad Nacional Autónoma de Honduras', 'De corrido: es un acrónimo.'],
         ['COPECO', 'Comisión Permanente de Contingencias', 'De corrido: es un acrónimo. Toma dos letras de cada palabra.']
