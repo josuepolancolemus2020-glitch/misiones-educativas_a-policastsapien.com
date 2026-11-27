@@ -890,7 +890,9 @@ nombres propios toma «reglamento general» por un nombre.
   `curriculo` de su pregunta, no solo en la cabecera.
 
 **Hecho en la tanda 3 (27 de noviembre): solo N6.** N2 «El cuento» queda
-para otra tanda (no se tocó).
+para otra tanda (no se tocó). *Nota posterior: N2 se escribió ese mismo día,
+después de fusionar el PR 62; está más abajo, en «Hecho en la tanda 3,
+segunda parte».*
 
 - **N6 · `3ciclo-n6-palabras` · Las palabras y sus significados**
   (`n6-palabras.html`). Misma forma que las otras cuatro (página,
@@ -996,6 +998,93 @@ lo mismo para N6 (catálogo, QR, ficha impresa, enlace a la ficha desde
 Recursos, insignia de la Ruta, pregunta en `js/data/diagnosticos.js`), pasar
 los indicadores por grado a Recursos y quitar las etiquetas de grado de N5,
 N1, N4 y N3.
+
+**Hecho en la tanda 3, segunda parte (27 de noviembre): N2.** Con esta
+están escritas las seis misiones del plan.
+
+- **N2 · `3ciclo-n2-cuento` · El cuento** (`n2-cuento.html`). Misma forma
+  que las otras cinco (página, `contenido.js`, `n2-cuento-propio.js` y
+  `js/ficha.js`), anotada en `_dev/misiones-nacidas.json` y sin nada
+  congelado. Laboratorio «la cámara del narrador», con dos paneles: en el
+  primero, un mismo suceso (la mujer de la quebrada; la noche que subió el
+  río) contado por el protagonista, un testigo, el narrador objetivo y el
+  omnisciente, con lo que sabe y no sabe cada uno; en el segundo, «el
+  esqueleto de tu cuento», que arma el plan en tres partes con el personaje,
+  el ambiente, el problema y el narrador que elige el alumno. El cierre no
+  se lo da: lo decide él.
+- **Los textos: solo tradición oral, en versión propia.** No llegaron
+  fuentes a `_dev/`. Josué pidió leyendas de la tradición oral contadas con
+  palabras propias y, si se podía verificar, un cuento de un autor
+  hondureño en dominio público (Froylán Turcios). **No se pudo verificar**:
+  desde la sesión no se alcanzan ni Wikisource ni la Biblioteca Virtual
+  Cervantes, así que la misión **no trae ningún texto de autor ni nombra a
+  ninguno**. Lleva «El arriero y los dos perros» (versión propia del
+  Cadejo) entero, la Sucia en el laboratorio y el Sisimite en una tarjeta y
+  un pareado; la guía y la ficha dicen que son versiones escritas para la
+  misión. Del «cuento de autores nacionales» de 8.º enseña la diferencia con
+  el de tradición oral y manda a buscar uno a la biblioteca del centro. La
+  lista de autores sigue pendiente (pregunta 2 de la sección 6).
+- **La leyenda como género no se toca.** El DCNB de 7.º (p. 86) pide «un
+  cuento de tradición oral: leyenda o mito», y la programación deja la
+  leyenda para abril: los tres relatos se tratan como cuentos de tradición
+  oral, y ni la guía ni el examen definen «leyenda». Tampoco se usan
+  «prosopografía» ni «etopeya» (abril en 7.º): se dice «por fuera» y «por
+  dentro».
+- **La lectura como transmisión de cultura** va en la tarjeta «Leer también
+  es heredar» (redacción nuestra entera) y lleva sus dos preguntas en el
+  banco de las formas 1 a 30: `tf-cultura` y `mc-cultura`. La práctica de la
+  ficha ensaya las dos.
+- **Cruces.** La biografía de Morazán y las cuentas de años (Morazán,
+  Herrera y, en la práctica, Cabañas) con `js/data/proceres-honduras.js`; no
+  se dice «vivió 50 años», porque murió unos días antes de cumplirlos: se
+  pregunta cuántos años hay entre un año y otro. El relato del río, con los
+  datos del Mitch de Desastres Naturales. El verso «India virgen y hermosa
+  dormías» (`js/data/himno.js`) como ejemplo de segunda persona: es una
+  pregunta de lectura del verso, la única que roza un punto de vista que la
+  misión no desarrolla. **Pendiente de decisión de Josué:** dejarla o
+  quitarla.
+- **Sin etiquetas de grado a la vista.** El reparto por grado está en la
+  tarjeta «Para el docente» de Recursos y en la nota del docente de la
+  ficha. De las 80 preguntas: 17 de 7.º, 29 de 8.º, 18 de 9.º, 10 de 7.º y
+  9.º, 4 de 7.º y 8.º y 2 de los tres grados.
+- **Lo medido.** La correcta es la única opción más larga en 1 de las 20
+  selecciones del examen y la única más corta en 3; en la práctica, 0 y 0.
+  Ninguna de las 20 respuestas de completar del examen está escrita en otro
+  de los 80 enunciados, ni ninguna de las 10 de la práctica en el resto de
+  su hoja. Para lograrlo, fuera de su completar no se escriben
+  «protagonista», «testigo», «omnisciente» ni «objetivo»: se dice «el
+  personaje que lo vivió», «un personaje que solo lo vio», «alguien que lo
+  sabe todo». 57 de las 80 dicen en su `curriculo` que se apoyan en
+  redacción nuestra.
+- **Una segunda lectura** independiente, pregunta por pregunta, dejó 37
+  hallazgos y se aplicaron casi todos. Los que más pesaban: cuatro
+  completar admitían otra respuesta (`cp-generacion`, `cp-testigo`,
+  `cp-hilo`, `cp-acabado`); tres pareados encajaban en dos términos (los
+  que usaban una oración de ejemplo como término, cambiados por «El
+  lector», «El tema» y «La línea de tiempo»); varios distractores se
+  descartaban solos; en el verdadero o falso, las frases con «siempre» o
+  «tiene que» eran todas falsas y las de «puede», casi todas verdaderas; y
+  en el cuento modelo el problema se resolvía dentro del párrafo rotulado
+  «desarrollo» (la retirada del perro negro pasó al cierre). No se cambió:
+  las comillas rectas del banco de errores de la prueba crítica y el
+  «usted» de la nota de la rúbrica, que son de la plantilla común.
+- **La ficha.** Armada en la memoria y medida con un QR prestado sale en 8
+  hojas (4 de teoría, 3 de práctica y la del docente); la más llena tiene
+  235.8 mm de contenido. La selección va entera en su hoja. Hay que volver a
+  medirla en la tanda 4 con su QR.
+- **El tope del resumen en la nube.** Con N2 son 100 carpetas de misiones, y
+  `verifica-topes-sql.js` se puso roja: el triple del resumen de progreso
+  más grande posible (3 × 13 693 = 41 079 bytes) pasó el tope de 40 KB. Se
+  subió a 60 KB en `_privado/SUPABASE-TOPES-Y-PAGINAS.sql`; hay que pegar la
+  función `_metas_topes_progreso` en el SQL Editor. Mientras no se pegue no
+  se rompe nada: un resumen real no llega a la tercera parte.
+- **Sello v589** al final.
+
+**Lo que N2 deja para la tanda 4**, igual que las otras cinco: catálogo, QR,
+ficha impresa, enlace a la ficha desde Recursos, insignia de la Ruta y
+pregunta en `js/data/diagnosticos.js`. Y, cuando haya fuentes: un cuento de
+autor hondureño con su cita, y contrastar los tres relatos con una
+recopilación escrita.
 
 ### Las fichas como motor (empieza el miércoles 25)
 
