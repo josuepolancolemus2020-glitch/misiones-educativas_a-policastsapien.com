@@ -1048,7 +1048,8 @@ están escritas las seis misiones del plan.
   ficha. De las 80 preguntas: 17 de 7.º, 29 de 8.º, 18 de 9.º, 10 de 7.º y
   9.º, 4 de 7.º y 8.º y 2 de los tres grados.
 - **Lo medido.** La correcta es la única opción más larga en 1 de las 20
-  selecciones del examen y la única más corta en 3; en la práctica, 0 y 0.
+  selecciones del examen y la única más corta en 4 (eran 3 antes de los
+  distractores nuevos de `mc-narrar-bien`, PR 63); en la práctica, 0 y 0.
   Ninguna de las 20 respuestas de completar del examen está escrita en otro
   de los 80 enunciados, ni ninguna de las 10 de la práctica en el resto de
   su hoja. Para lograrlo, fuera de su completar no se escriben
@@ -1079,6 +1080,32 @@ están escritas las seis misiones del plan.
   función `_metas_topes_progreso` en el SQL Editor. Mientras no se pegue no
   se rompe nada: un resumen real no llega a la tercera parte.
 - **Sello v589** al final.
+
+**Decidido al revisar el PR 63 (27 de noviembre):** Josué lo aprobó con
+seis arreglos, todos aplicados.
+
+- `cp-objetivo` acepta también «observador» (es el único completar con dos
+  respuestas, y la cabecera del examen lo dice).
+- Fuera «primero», que apuntaba a la respuesta de `cp-primera`: `cp-nacio`
+  dice «el que va al comienzo es ___» y, en la práctica, la selección de los
+  pasos pregunta «¿con qué paso se empieza?».
+- `mc-ambiente-cual`: «cómo termina» en vez de «cómo acaba» (chocaba con
+  `cp-acabado`).
+- `mc-narrar-bien` y `mc-cultura` (examen y práctica) llevan los
+  distractores que escribió Josué.
+- `pr-revision` dice en su `curriculo` que la definición es redacción
+  nuestra.
+- Al comprobar que no nacieran pistas nuevas salieron tres, y se
+  reescribió el texto nuestro, no el de Josué: `tf-oral-cambia` ya no dice
+  «palabra por palabra» (lo dice el distractor nuevo); los tres completar
+  que cambian de persona empiezan «Cuéntalo con otra voz» y no «Cambia de
+  narrador» (era la respuesta de `mc-cambio-narrador`); y `mc-cultura` dice
+  «copió en un cuaderno» y no «dejó escritos», que la sonda juntaba con el
+  pareado del autor.
+- **Queda sin hacer el extra:** citar en `pr-sisimite` la definición del
+  diccionario de la RAE. Se pidió acceso a `dle.rae.es` y Josué lo aprobó,
+  pero el sitio rechaza las consultas automáticas. No se escribe de
+  memoria: queda anotado como pendiente en el `curriculo` de la pregunta.
 
 **Lo que N2 deja para la tanda 4**, igual que las otras cinco: catálogo, QR,
 ficha impresa, enlace a la ficha desde Recursos, insignia de la Ruta y
