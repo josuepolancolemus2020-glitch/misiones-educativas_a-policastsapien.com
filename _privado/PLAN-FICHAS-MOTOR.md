@@ -46,6 +46,11 @@ La forma del bloque y las reglas están en `_privado/PLANTILLA-FICHAS.md`.
   formas 1 a 30). Es la primera que no pone etiquetas de grado en los
   títulos: el reparto por grado va en la nota del docente. Armada en la
   memoria sale en 8 hojas (4 de teoría); se vuelve a medir con su QR.
+- Tanda 3 de Español, segunda parte (27 de noviembre): la ficha de N2
+  nació igual, con bloque y sin copiar (40 de práctica que ensayan las 40
+  del banco de las formas 1 a 30), sin etiquetas de grado. Armada en la
+  memoria sale en 8 hojas (4 de teoría); la más llena, 235.8 mm. Se vuelve a
+  medir con su QR.
 
 ## Hecho en el primer PR
 

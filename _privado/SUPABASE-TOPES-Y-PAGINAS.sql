@@ -50,11 +50,15 @@
 --                   500 dispositivos nuevos por IP y por día (más de un
 --                   tercio de los 1 376 activos del día más cargado,
 --                   todos detrás de una sola IP).
---                 · tamaño del resumen: máximo 40 960 bytes (40 KB). El
---                   resumen más grande que la app puede armar hoy (las 94
---                   misiones hechas, las 16 rutas diagnosticadas y 40
---                   insignias) mide 13 129 bytes; 3 × 13 129 = 39 387, y
---                   se redondea a 40 KB. Este tope sí mira también las
+--                 · tamaño del resumen: máximo 61 440 bytes (60 KB). El
+--                   resumen más grande que la app puede armar hoy (las 100
+--                   carpetas de misiones hechas, las 16 rutas
+--                   diagnosticadas y 40 insignias) mide 13 693 bytes;
+--                   3 × 13 693 = 41 079. Con 94 carpetas cabía en 40 KB;
+--                   al llegar a 100 (con El cuento, el 27 de noviembre de
+--                   2026) el triple se pasó por 119 bytes y el tope se
+--                   subió a 60 KB, que da holgura para unas 70 misiones
+--                   más. Este tope sí mira también las
 --                   actualizaciones: si solo mirara las filas nuevas, se
 --                   saltaría creando la fila chica y engordándola después.
 --                   Un resumen real nunca llega (la sonda
@@ -187,7 +191,7 @@ begin
   -- Tamaño (ver la cabecera: 3 × el resumen más grande posible). Se mira
   -- también en las actualizaciones, porque metas_guardar_progreso actualiza
   -- con INSERT … ON CONFLICT y este disparador ve las dos.
-  if new.resumen is not null and octet_length(new.resumen::text) > 40960 then
+  if new.resumen is not null and octet_length(new.resumen::text) > 61440 then
     return null;
   end if;
 
